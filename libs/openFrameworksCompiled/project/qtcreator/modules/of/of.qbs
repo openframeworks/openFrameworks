@@ -7,6 +7,7 @@ import "helpers.js" as Helpers
 
 Module{
     name: "ofCore"
+    property string msys2root: "c:/msys64"
     property string ofRoot: {
         if(FileInfo.isAbsolutePath(project.of_root)){
             return project.of_root;
@@ -31,22 +32,40 @@ Module{
     }
     property stringList addons
 
-    readonly property stringList LIBS_EXCEPTIONS: [
-        "glew",
-        "cairo",
-        "glu",
-        "poco",
-        "quicktime",
-        "videoInput",
-        "freetype",
-        "FreeImage",
-        "assimp",
-        "glut",
-        "rtAudio",
-        "openssl",
-        "boost",
-        "openFrameworksCompiled"
-    ]
+    readonly property stringList LIBS_EXCEPTIONS: {
+        if(qbs.targetOS.indexOf("linux")!=-1){
+            return [
+                "glew",
+                "cairo",
+                "glu",
+                "poco",
+                "quicktime",
+                "videoInput",
+                "freetype",
+                "FreeImage",
+                "assimp",
+                "glut",
+                "rtAudio",
+                "openssl",
+                "boost",
+                "openFrameworksCompiled"
+            ];
+        }else{
+            return [
+                "glew",
+                "cairo",
+                "poco",
+                "freetype",
+                "FreeImage",
+                "assimp",
+                "glut",
+                "rtAudio",
+                "openssl",
+                "boost",
+                "openFrameworksCompiled"
+            ];
+        }
+    }
 
     readonly property stringList PKG_CONFIGS: {
         if(qbs.targetOS.indexOf("linux")!=-1){
@@ -80,20 +99,30 @@ Module{
         }
     }
 
-    readonly property stringList ADDITIONAL_LIBS: [
-        "glut",
-        "X11",
-        "Xrandr",
-        "Xxf86vm",
-        "Xi",
-        "Xcursor",
-        "dl",
-        "pthread",
-        "freeimage",
-        "rtaudio",
-        "boost_filesystem",
-        "boost_system",
-    ]
+    readonly property stringList ADDITIONAL_LIBS: {
+        if(qbs.targetOS.contains("linux")){
+            return [
+                "glut",
+                "X11",
+                "Xrandr",
+                "Xxf86vm",
+                "Xi",
+                "Xcursor",
+                "dl",
+                "pthread",
+                "freeimage",
+                "rtaudio",
+                "boost_filesystem",
+                "boost_system",
+            ];
+        }else{
+            return [
+                'opengl32', 'gdi32', 'msimg32', 'glu32', 'dsound', 'winmm', 'strmiids',
+                'uuid', 'ole32', 'oleaut32', 'setupapi', 'wsock32', 'ws2_32', 'Iphlpapi', 'Comdlg32',
+                'freeimage', 'boost_filesystem-mt', 'boost_system-mt', 'freetype', 'cairo','pthread'
+            ];
+        }
+    }
 
     readonly property stringList PKG_CONFIG_INCLUDES: {
         return Helpers.pkgconfig(PKG_CONFIGS,["--cflags-only-I"]).map(function(element){
@@ -122,6 +151,17 @@ Module{
         }
         includes.push(ofRoot+'/libs/poco/include');
         includes = includes.concat(PKG_CONFIG_INCLUDES);
+        if(qbs.targetOS.indexOf("windows")>-1){
+            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include'));
+            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/cairo'));
+            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/glib-2.0'));
+            includes.push(FileInfo.joinPaths(msys2root,'mingw32/lib/glib-2.0/include'));
+            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/pixman-1'));
+            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/freetype2'));
+            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/harfbuzz'));
+            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/libpng16'));
+        }
+
         return includes;
     }
 
@@ -145,6 +185,10 @@ Module{
                 ret.push("-l" + libname);
             }
         }
+        if(qbs.targetOS.contains("windows")){
+            ret.push("-L"+FileInfo.joinPaths(msys2root,"mingw32/lib"));
+        }
+
         return STATIC_LIBS.concat(ret);
     }
 
@@ -291,7 +335,14 @@ Module{
         return ldflags;
     }
 
-    readonly property stringList DEFINES: ['GCC_HAS_REGEX', 'OF_USING_GTK', 'OF_USING_MPG123']
+    readonly property stringList DEFINES: {
+        var defines = ['GCC_HAS_REGEX', 'OF_USING_GTK', 'OF_USING_MPG123'];
+
+        if(qbs.targetOS.indexOf("windows")>-1){
+            defines.concat(['UNICODE','_UNICODE','POCO_STATIC']);
+        }
+        return defines;
+    }
 
     property stringList pkgConfigs: []
     property pathList includePaths: []
@@ -304,7 +355,7 @@ Module{
         name: "cpp"
     }
 
-    cpp.cxxLanguageVersion: "c++14"
+    //cpp.cxxLanguageVersion: "c++14"
     cpp.warningLevel: 'default'
     cpp.cFlags: PKG_CONFIG_CFLAGS
         .concat(['-Wno-unused-parameter'])
@@ -313,7 +364,7 @@ Module{
         .concat(cFlags)
 
     cpp.cxxFlags: PKG_CONFIG_CFLAGS
-        .concat(['-Wno-unused-parameter'])
+        .concat(['-Wno-unused-parameter','-std=gnu++14'])
         .concat(ADDON_PKG_CONFIG_CFLAGS)
         .concat(ADDON_CFLAGS)
         .concat(cxxFlags)
@@ -338,6 +389,11 @@ Module{
     Properties{
         condition: qbs.buildVariant.contains("release")
         cpp.defines: ['NDEBUG'].concat(DEFINES).concat(defines)
+    }
+
+    Properties{
+        condition: qbs.targetOS.contains("windows")
+        cpp.cxxStandardLibrary: ""
     }
 
     Group{

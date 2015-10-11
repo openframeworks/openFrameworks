@@ -74,6 +74,14 @@ Product{
         return filteredSource;
     }
 
+    readonly property string make: {
+        if(qbs.targetOS.contains("windows")){
+            return FileInfo.joinPaths(of.msys2root,"usr/bin/make");
+        }else{
+            return "make";
+        }
+    }
+
     Transformer {
         condition: qbs.buildVariant.contains('debug') && !product.qbsBuild
         inputs: files
@@ -81,8 +89,8 @@ Product{
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworksDebug.a")
              fileTags: "staticlibrary"
         }
-        prepare: {
-            var qbsCmd = new Command("make", ['Debug','-j4']);
+        prepare: {           
+            var qbsCmd = new Command(product.make, ['Debug','-j4']);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
@@ -99,7 +107,7 @@ Product{
              fileTags: "staticlibrary"
         }
         prepare: {
-            var qbsCmd = new Command("make", ['Release','-j4']);
+            var qbsCmd = new Command(product.make, ['Release','-j4']);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;

@@ -21,12 +21,15 @@ function listDirsRecursive(dir){
         return ret;
     }
     var find = new Process();
-    var command = "find " + dir + " -type d";
-
-    find.exec("sh", ['-c',command])
+    var params = [dir,'-type','d'];
+    find.exec("find", params)
     if(find.exitCode()!==0){
         var error = find.readStdErr();
-        throw("error: " + error)
+        find.exec("C:\\msys64\\usr\\bin\\find", params);
+        if(find.exitCode()!==0){
+            var error = find.readStdErr();
+            throw("error: " + error)
+        }
     }
     var line = find.readLine();
     while(line.trim()!==""){
@@ -66,19 +69,23 @@ function findSourceRecursive(dir){
         return ret;
     }
     var find = new Process();
-    var command = 'find ' + dir + ' -name *.cpp'
-              +' -or -name *.h'
-              +' -or -name *.hpp'
-              +' -or -name *.cxx'
-              +' -or -name *.cc'
-              +' -or -name *.c++'
-              +' -or -name *.s'
-              +' -or -name *.S'
-              +' -or -name *.c';
-    find.exec("sh", ['-c',command])
+    var params = [dir ,'-name', '*.cpp'
+                  ,'-or', '-name', '*.h'
+                  ,'-or', '-name', '*.hpp'
+                  ,'-or', '-name', '*.cxx'
+                  ,'-or', '-name', '*.cc'
+                  ,'-or', '-name', '*.c++'
+                  ,'-or', '-name', '*.s'
+                  ,'-or', '-name', '*.S'
+                  ,'-or', '-name', '*.c'];
+    find.exec("find", params);
     if(find.exitCode()!==0){
         var error = find.readStdErr();
-        throw("error: " + error)
+        find.exec("C:\\msys64\\usr\\bin\\find", params);
+        if(find.exitCode()!==0){
+            var error = find.readStdErr();
+            throw("error: " + error)
+        }
     }
     var line = find.readLine();
     while(line.trim()!==""){
