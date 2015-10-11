@@ -36,7 +36,7 @@ static int pixelBitsFromPixelFormat(ofPixelFormat format){
 		case OF_PIXELS_NV21:
 		case OF_PIXELS_YV12:
 		case OF_PIXELS_I420:
-			return 4;
+			return 12;
 
 		case OF_PIXELS_UV:
 		case OF_PIXELS_VU:
@@ -125,6 +125,7 @@ static ofImageType ofImageTypeFromPixelFormat(ofPixelFormat pixelFormat){
 		break;
 	case OF_PIXELS_BGR:
 	case OF_PIXELS_RGB:
+	case OF_PIXELS_RGB565:
 		return OF_IMAGE_COLOR;
 		break;
 	case OF_PIXELS_BGRA:
@@ -383,8 +384,9 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 	}
 
 	int newSize = bytesFromPixelFormat<PixelType>(w,h,format);
+	int oldSize = getTotalBytes();
 	//we check if we are already allocated at the right size
-	if(bAllocated && newSize==getTotalBytes()){
+	if(bAllocated && newSize==oldSize){
         pixelFormat = format;
         width = w;
         height = h;
@@ -713,6 +715,7 @@ int ofPixels_<PixelType>::getNumPlanes() const{
 		case OF_PIXELS_RGBA:
 		case OF_PIXELS_BGRA:
 		case OF_PIXELS_GRAY:
+		case OF_PIXELS_GRAY_ALPHA:
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UYVY:
 		case OF_PIXELS_Y:
@@ -721,18 +724,18 @@ int ofPixels_<PixelType>::getNumPlanes() const{
 		case OF_PIXELS_UV:
 		case OF_PIXELS_VU:
 			return 1;
-			break;
 		case OF_PIXELS_NV12:
 		case OF_PIXELS_NV21:
 			return 2;
-			break;
 		case OF_PIXELS_YV12:
 		case OF_PIXELS_I420:
 			return 3;
-			break;
-		default:
+		case OF_PIXELS_NUM_FORMATS:
+		case OF_PIXELS_NATIVE:
+		case OF_PIXELS_UNKNOWN:
 			return 0;
 	}
+	return 0;
 }
 
 template<typename PixelType>
@@ -746,8 +749,14 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getPlane(int planeIdx){
 		case OF_PIXELS_RGBA:
 		case OF_PIXELS_BGRA:
 		case OF_PIXELS_GRAY:
+		case OF_PIXELS_GRAY_ALPHA:
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UYVY:
+		case OF_PIXELS_Y:
+		case OF_PIXELS_U:
+		case OF_PIXELS_V:
+		case OF_PIXELS_UV:
+		case OF_PIXELS_VU:
 			plane.setFromExternalPixels(pixels,width,height,pixelFormat);
 			break;
 		case OF_PIXELS_NV12:
@@ -796,7 +805,9 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getPlane(int planeIdx){
 				break;
 			}
 			break;
-		default:
+		case OF_PIXELS_NUM_FORMATS:
+		case OF_PIXELS_NATIVE:
+		case OF_PIXELS_UNKNOWN:
 			break;
 	}
 	return plane;
@@ -859,9 +870,8 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getChannel(int channel) const{
 	channelPixels.allocate(width,height,1);
 	channel = ofClamp(channel,0,channels-1);
 	iterator channelPixel = channelPixels.begin();
-	const_iterator _end = end();
-	for(const_iterator i=begin()+channel;i<_end;i+=channels,++channelPixel){
-		*channelPixel = *i;
+	for(auto p: getConstPixelsIter()){
+		*channelPixel++ = p[channel];
 	}
 	return channelPixels;
 }
@@ -869,13 +879,12 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getChannel(int channel) const{
 template<typename PixelType>
 void ofPixels_<PixelType>::setChannel(int channel, const ofPixels_<PixelType> channelPixels){
 	int channels = channelsFromPixelFormat(pixelFormat);
-	if(channels==0) return;
+    if(channels==0) return;
 
-	channel = ofClamp(channel,0,channels-1);
+    channel = ofClamp(channel,0,channels-1);
 	const_iterator channelPixel = channelPixels.begin();
-	iterator _end = end();
-	for(iterator i=begin()+channel;i<_end;i+=channels,++channelPixel){
-		*i = *channelPixel;
+	for(auto p: getPixelsIter()){
+	    p[channel] = *channelPixel++;
 	}
 
 }
@@ -909,16 +918,16 @@ void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, int x, int y, int
 		}
 
 		// this prevents having to do a check for bounds in the for loop;
-		int minX = MAX(x, 0) * getNumChannels();
-		int maxX = MIN(x+_width, width) * getNumChannels();
+		int minX = MAX(x, 0);
+		int maxX = MIN(x+_width, width);
 		int minY = MAX(y, 0);
 		int maxY = MIN(y+_height, height);
 
 
-		iterator newPixel = toPix.begin();
-		for(ConstLine line = getConstLines().begin()+minY; line!=getConstLines().begin()+maxY; ++line ){
-			for(const_iterator pixel = line.begin()+minX; pixel<line.begin()+maxX; ++pixel){
-				*newPixel++ = *pixel;
+		auto newPixel = toPix.getPixelsIter().begin();
+		for(auto line: getConstLines(minY, maxY - minY)){
+			for(auto pixel: line.getPixels(minX, maxX - minX)){
+				newPixel++ = pixel;
 			}
 		}
 	}

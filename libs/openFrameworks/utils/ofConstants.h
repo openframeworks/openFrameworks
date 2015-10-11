@@ -35,7 +35,7 @@ enum ofTargetPlatform{
 // Cross-platform deprecation warning
 #ifdef __GNUC__
 	// clang also has this defined. deprecated(message) is only for gcc>=4.5
-	#if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 5)
+	#if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || __GNUC__ > 4
         #define OF_DEPRECATED_MSG(message, func) func __attribute__ ((deprecated(message)))
     #else
         #define OF_DEPRECATED_MSG(message, func) func __attribute__ ((deprecated))
@@ -705,6 +705,8 @@ enum ofPixelFormat{
 	OF_PIXELS_V,
 	OF_PIXELS_UV,
 	OF_PIXELS_VU,
+
+	OF_PIXELS_NUM_FORMATS,
 
 	OF_PIXELS_UNKNOWN=-1,
 	OF_PIXELS_NATIVE=-2

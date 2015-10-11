@@ -198,7 +198,7 @@ endif
 # targets that are "recipe" only -- that is recipes that respond to specific
 # requests, not filenames or lists of filenames.  .PNONY targets are used to 
 # avoid conflict with files of the same name and to improve performance.
-.PHONY: all Debug Release after clean CleanDebug CleanRelease help
+.PHONY: all Debug Release after clean CleanDebug CleanRelease help force
 
 Release: 
 ifndef ABIS_TO_COMPILE_RELEASE
@@ -228,19 +228,24 @@ DebugABI: $(TARGET)
 all: 
 	@$(MAKE) --no-print-directory Debug
 	@$(MAKE) --no-print-directory Release
+	
+$(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags: force
+	@mkdir -p $(OF_CORE_OBJ_OUTPUT_PATH)
+	@if [ "$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))" != "$(strip $$(cat $@))" ]; then echo $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))> $@; fi
+	
 
 #This rule does the compilation
-$(OF_CORE_OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.cpp 
+$(OF_CORE_OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.cpp $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUTPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
 
-$(OF_CORE_OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.mm
+$(OF_CORE_OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.mm $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUTPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
 
-$(OF_CORE_OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.m
+$(OF_CORE_OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.m $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CC) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUTPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
@@ -249,17 +254,17 @@ $(OF_CORE_OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.m
 # $(TARGET) : $(OF_CORE_OBJ_FILES) means that each of the items in the 
 # $(OF_CORE_OBJ_FILES) must be processed first  
 ifeq ($(SHAREDCORE),1)
-$(TARGET) : $(OF_CORE_OBJ_FILES) 
+$(TARGET) : $(OF_CORE_OBJ_FILES) $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Creating library " $(TARGET)
 	@mkdir -p $(@D)
 	$(CC) -shared $(OF_CORE_OBJ_FILES) -o $@  
 else ifeq ($(BYTECODECORE),1)
-$(TARGET) : $(OF_CORE_OBJ_FILES) 
+$(TARGET) : $(OF_CORE_OBJ_FILES) $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Creating library " $(TARGET)
 	@mkdir -p $(@D)
 	$(CC) $(OF_CORE_OBJ_FILES) -o $@  
 else
-$(TARGET) : $(OF_CORE_OBJ_FILES) 
+$(TARGET) : $(OF_CORE_OBJ_FILES) $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Creating library " $(TARGET)
 	@mkdir -p $(@D)
 	$(AR) ${ARFLAGS} "$@" $(OF_CORE_OBJ_FILES)
