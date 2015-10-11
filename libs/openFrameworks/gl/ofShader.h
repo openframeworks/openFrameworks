@@ -54,7 +54,6 @@ public:
 	void setUniformTexture(const string & name, const ofBaseHasTexture& img, int textureLocation) const;
 	void setUniformTexture(const string & name, const ofTexture& img, int textureLocation) const;
 	void setUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation) const;
-	void setUniformTextureBuffer(const string & name, const ofTexture& tex, const ofBufferObject & buffer, int textureLocation)  const;
 	
 	// set a single uniform value
 	void setUniform1i(const string & name, int v1) const;
