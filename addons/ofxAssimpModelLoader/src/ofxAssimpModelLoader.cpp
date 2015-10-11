@@ -143,8 +143,13 @@ void ofxAssimpModelLoader::calculateDimensions(){
 	normalizedScale = scene_max.x-scene_min.x;
 	normalizedScale = MAX(scene_max.y - scene_min.y,normalizedScale);
 	normalizedScale = MAX(scene_max.z - scene_min.z,normalizedScale);
-	normalizedScale = 1.f / normalizedScale;
-	normalizedScale *= normalizeFactor;
+    if (abs(normalizedScale) < std::numeric_limits<float>::epsilon()){
+        ofLogWarning("ofxAssimpModelLoader") << "Error calculating normalized scale of scene" << endl;
+        normalizedScale = 1.0;
+    } else {
+        normalizedScale = 1.f / normalizedScale;
+        normalizedScale *= normalizeFactor;
+    }
     
     updateModelMatrix();
 }
@@ -440,6 +445,10 @@ void ofxAssimpModelLoader::updateBones() {
 			modelMeshes[i].validCache = false;
 		}
         
+        if (mesh->mNumBones == 0){
+            continue;
+        }
+        
 		modelMeshes[i].animatedPos.assign(modelMeshes[i].animatedPos.size(), aiVector3D(0.0f));
 		if(mesh->HasNormals()){
 			modelMeshes[i].animatedNorm.assign(modelMeshes[i].animatedNorm.size(), aiVector3D(0.0f));
@@ -619,17 +628,32 @@ void ofxAssimpModelLoader::getBoundingBoxWithMinVector( aiVector3D* min, aiVecto
 
 //-------------------------------------------
 void ofxAssimpModelLoader::getBoundingBoxForNode(const ofxAssimpMeshHelper & mesh, aiVector3D* min, aiVector3D* max){
-	for (auto & animPos: mesh.animatedPos){
-		auto tmp = ofVec3f(animPos.x,animPos.y,animPos.z) * mesh.matrix;
-		
-		min->x = MIN(min->x,tmp.x);
-		min->y = MIN(min->y,tmp.y);
-		min->z = MIN(min->z,tmp.z);
+    if (mesh.animatedPos.size() == 0){
+        for (size_t i=0; i<mesh.mesh->mNumVertices; i++){
+            auto vertex = mesh.mesh->mVertices[i];
+            auto tmp = ofVec3f(vertex.x,vertex.y,vertex.z) * mesh.matrix;
+            
+            min->x = MIN(min->x,tmp.x);
+            min->y = MIN(min->y,tmp.y);
+            min->z = MIN(min->z,tmp.z);
+            
+            max->x = MAX(max->x,tmp.x);
+            max->y = MAX(max->y,tmp.y);
+            max->z = MAX(max->z,tmp.z);
+        }
+    } else {
+        for (auto & animPos: mesh.animatedPos){
+            auto tmp = ofVec3f(animPos.x,animPos.y,animPos.z) * mesh.matrix;
+            
+            min->x = MIN(min->x,tmp.x);
+            min->y = MIN(min->y,tmp.y);
+            min->z = MIN(min->z,tmp.z);
 
-		max->x = MAX(max->x,tmp.x);
-		max->y = MAX(max->y,tmp.y);
-		max->z = MAX(max->z,tmp.z);
-	}
+            max->x = MAX(max->x,tmp.x);
+            max->y = MAX(max->y,tmp.y);
+            max->z = MAX(max->z,tmp.z);
+        }
+    }
 }
 
 //-------------------------------------------
