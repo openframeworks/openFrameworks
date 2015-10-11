@@ -294,9 +294,11 @@ void ofxAssimpModelLoader::loadGLResources(){
         meshHelper.validCache = true;
         meshHelper.hasChanged = false;
 
-        meshHelper.animatedPos.resize(mesh->mNumVertices);
-        if(mesh->HasNormals()){
-        	meshHelper.animatedNorm.resize(mesh->mNumVertices);
+        if(hasAnimations()){
+			meshHelper.animatedPos.resize(mesh->mNumVertices);
+			if(mesh->HasNormals()){
+				meshHelper.animatedNorm.resize(mesh->mNumVertices);
+			}
         }
 
 
@@ -418,6 +420,9 @@ void ofxAssimpModelLoader::updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix)
 }
 
 void ofxAssimpModelLoader::updateBones() {
+    if (!hasAnimations()){
+        return;
+    }
     // update mesh position for the animation
 	for(unsigned int i=0; i<modelMeshes.size(); ++i) {
 		// current mesh we are introspecting
@@ -444,10 +449,6 @@ void ofxAssimpModelLoader::updateBones() {
 			modelMeshes[i].hasChanged = true;
 			modelMeshes[i].validCache = false;
 		}
-        
-        if (mesh->mNumBones == 0){
-            continue;
-        }
         
 		modelMeshes[i].animatedPos.assign(modelMeshes[i].animatedPos.size(), aiVector3D(0.0f));
 		if(mesh->HasNormals()){
@@ -486,9 +487,11 @@ void ofxAssimpModelLoader::updateGLResources(){
     for (unsigned int i = 0; i < modelMeshes.size(); ++i){
     	if(modelMeshes[i].hasChanged){
 			const aiMesh* mesh = modelMeshes[i].mesh;
-			modelMeshes[i].vbo.updateVertexData(&modelMeshes[i].animatedPos[0].x,mesh->mNumVertices);
-			if(mesh->HasNormals()){
-                modelMeshes[i].vbo.updateNormalData(&modelMeshes[i].animatedNorm[0].x,mesh->mNumVertices);
+			if(hasAnimations()){
+				modelMeshes[i].vbo.updateVertexData(&modelMeshes[i].animatedPos[0].x,mesh->mNumVertices);
+				if(mesh->HasNormals()){
+					modelMeshes[i].vbo.updateNormalData(&modelMeshes[i].animatedNorm[0].x,mesh->mNumVertices);
+				}
 			}
 			modelMeshes[i].hasChanged = false;
     	}
@@ -628,7 +631,7 @@ void ofxAssimpModelLoader::getBoundingBoxWithMinVector( aiVector3D* min, aiVecto
 
 //-------------------------------------------
 void ofxAssimpModelLoader::getBoundingBoxForNode(const ofxAssimpMeshHelper & mesh, aiVector3D* min, aiVector3D* max){
-    if (mesh.animatedPos.size() == 0){
+    if (!hasAnimations()){
         for (size_t i=0; i<mesh.mesh->mNumVertices; i++){
             auto vertex = mesh.mesh->mVertices[i];
             auto tmp = ofVec3f(vertex.x,vertex.y,vertex.z) * mesh.matrix;
@@ -839,8 +842,10 @@ ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(string name){
 			if(!modelMeshes[i].validCache){
 				modelMeshes[i].cachedMesh.clearVertices();
 				modelMeshes[i].cachedMesh.clearNormals();
-				modelMeshes[i].cachedMesh.addVertices(aiVecVecToOfVecVec(modelMeshes[i].animatedPos));
-				modelMeshes[i].cachedMesh.addNormals(aiVecVecToOfVecVec(modelMeshes[i].animatedNorm));
+				if(hasAnimations()){
+					modelMeshes[i].cachedMesh.addVertices(aiVecVecToOfVecVec(modelMeshes[i].animatedPos));
+					modelMeshes[i].cachedMesh.addNormals(aiVecVecToOfVecVec(modelMeshes[i].animatedNorm));
+				}
 				modelMeshes[i].validCache = true;
 			}
 			return modelMeshes[i].cachedMesh;
