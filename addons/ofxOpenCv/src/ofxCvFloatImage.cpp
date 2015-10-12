@@ -480,7 +480,6 @@ IplImage*  ofxCvFloatImage::getCv8BitsImage() {
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::allocateTexture(){
 	tex.allocate(floatPixels);
-	tex.setRGToRGBASwizzles(true);
 }
 
 //--------------------------------------------------------------------------------

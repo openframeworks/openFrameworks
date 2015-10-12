@@ -87,47 +87,87 @@ public:
 
 	void clear();
 
-	ofParameter<bool> getBool(const string& name) const;
-	ofParameter<int> getInt(const string& name) const;
-	ofParameter<float> getFloat(const string& name) const;
-	ofParameter<char> getChar(const string& name) const;
-	ofParameter<string> getString(const string& name) const;
-	ofParameter<ofPoint> getPoint(const string& name) const;
-	ofParameter<ofVec2f> getVec2f(const string& name) const;
-	ofParameter<ofVec3f> getVec3f(const string& name) const;
-	ofParameter<ofVec4f> getVec4f(const string& name) const;
-	ofParameter<ofColor> getColor(const string& name) const;
-	ofParameter<ofShortColor> getShortColor(const string& name) const;
-	ofParameter<ofFloatColor> getFloatColor(const string& name) const;
+	const ofParameter<bool> & getBool(const string& name) const;
+	const ofParameter<int> & getInt(const string& name) const;
+	const ofParameter<float> & getFloat(const string& name) const;
+	const ofParameter<char> & getChar(const string& name) const;
+	const ofParameter<string> & getString(const string& name) const;
+	const ofParameter<ofPoint> & getPoint(const string& name) const;
+	const ofParameter<ofVec2f> & getVec2f(const string& name) const;
+	const ofParameter<ofVec3f> & getVec3f(const string& name) const;
+	const ofParameter<ofVec4f> & getVec4f(const string& name) const;
+	const ofParameter<ofColor> & getColor(const string& name) const;
+	const ofParameter<ofShortColor> & getShortColor(const string& name) const;
+	const ofParameter<ofFloatColor> & getFloatColor(const string& name) const;
+	const ofParameterGroup & getGroup(const string& name) const;
 
-	ofParameterGroup getGroup(const string& name) const;
+
+	const ofParameter<bool> & getBool(std::size_t pos) const;
+	const ofParameter<int> & getInt(std::size_t pos) const;
+	const ofParameter<float> & getFloat(std::size_t pos) const;
+	const ofParameter<char> & getChar(std::size_t pos) const;
+	const ofParameter<string> & getString(std::size_t pos) const;
+	const ofParameter<ofPoint> & getPoint(std::size_t pos) const;
+	const ofParameter<ofVec2f> & getVec2f(std::size_t pos) const;
+	const ofParameter<ofVec3f> & getVec3f(std::size_t pos) const;
+	const ofParameter<ofVec4f> & getVec4f(std::size_t pos) const;
+	const ofParameter<ofColor> & getColor(std::size_t pose) const;
+	const ofParameter<ofShortColor> & getShortColor(std::size_t pos) const;
+	const ofParameter<ofFloatColor> & getFloatColor(std::size_t pos) const;
+	const ofParameterGroup & getGroup(std::size_t pos) const;
+
+	ofParameter<bool> & getBool(const string& name);
+	ofParameter<int> & getInt(const string& name);
+	ofParameter<float> & getFloat(const string& name);
+	ofParameter<char> & getChar(const string& name);
+	ofParameter<string> & getString(const string& name);
+	ofParameter<ofPoint> & getPoint(const string& name);
+	ofParameter<ofVec2f> & getVec2f(const string& name);
+	ofParameter<ofVec3f> & getVec3f(const string& name);
+	ofParameter<ofVec4f> & getVec4f(const string& name);
+	ofParameter<ofColor> & getColor(const string& name);
+	ofParameter<ofShortColor> & getShortColor(const string& name);
+	ofParameter<ofFloatColor> & getFloatColor(const string& name);
+	ofParameterGroup & getGroup(const string& name);
 
 
-	ofParameter<bool> getBool(std::size_t pos) const;
-	ofParameter<int> getInt(std::size_t pos) const;
-	ofParameter<float> getFloat(std::size_t pos) const;
-	ofParameter<char> getChar(std::size_t pos) const;
-	ofParameter<string> getString(std::size_t pos) const;
-	ofParameter<ofPoint> getPoint(std::size_t pos) const;
-	ofParameter<ofVec2f> getVec2f(std::size_t pos) const;
-	ofParameter<ofVec3f> getVec3f(std::size_t pos) const;
-	ofParameter<ofVec4f> getVec4f(std::size_t pos) const;
-	ofParameter<ofColor> getColor(std::size_t pose) const;
-	ofParameter<ofShortColor> getShortColor(std::size_t pos) const;
-	ofParameter<ofFloatColor> getFloatColor(std::size_t pos) const;
-	ofParameterGroup getGroup(std::size_t pos) const;
+	ofParameter<bool> & getBool(std::size_t pos);
+	ofParameter<int> & getInt(std::size_t pos);
+	ofParameter<float> & getFloat(std::size_t pos);
+	ofParameter<char> & getChar(std::size_t pos);
+	ofParameter<string> & getString(std::size_t pos);
+	ofParameter<ofPoint> & getPoint(std::size_t pos);
+	ofParameter<ofVec2f> & getVec2f(std::size_t pos);
+	ofParameter<ofVec3f> & getVec3f(std::size_t pos);
+	ofParameter<ofVec4f> & getVec4f(std::size_t pos);
+	ofParameter<ofColor> & getColor(std::size_t pose);
+	ofParameter<ofShortColor> & getShortColor(std::size_t pos);
+	ofParameter<ofFloatColor> & getFloatColor(std::size_t pos);
+	ofParameterGroup & getGroup(std::size_t pos);
 
-	ofAbstractParameter & get(const string& name) const;
-	ofAbstractParameter & get(std::size_t pos) const;
+	const ofAbstractParameter & get(const string& name) const;
+	const ofAbstractParameter & get(std::size_t pos) const;
 
-	ofAbstractParameter & operator[](const string& name) const;
-	ofAbstractParameter & operator[](std::size_t pos) const;
+	const ofAbstractParameter & operator[](const string& name) const;
+	const ofAbstractParameter & operator[](std::size_t pos) const;
+
+	ofAbstractParameter & get(const string& name);
+	ofAbstractParameter & get(std::size_t pos);
+
+	ofAbstractParameter & operator[](const string& name);
+	ofAbstractParameter & operator[](std::size_t pos);
 
 	template<typename ParameterType>
-	ofParameter<ParameterType> get(const string& name) const;
+	const ofParameter<ParameterType> & get(const string& name) const;
 
 	template<typename ParameterType>
-	ofParameter<ParameterType> get(std::size_t pos) const;
+	const ofParameter<ParameterType> & get(std::size_t pos) const;
+
+	template<typename ParameterType>
+	ofParameter<ParameterType> & get(const string& name);
+
+	template<typename ParameterType>
+	ofParameter<ParameterType> & get(std::size_t pos);
 
 	std::size_t size() const;
 	string getName(std::size_t position) const;
@@ -199,12 +239,22 @@ private:
 };
 
 template<typename ParameterType>
-ofParameter<ParameterType> ofParameterGroup::get(const string& name) const{
+const ofParameter<ParameterType> & ofParameterGroup::get(const string& name) const{
+	return static_cast<const ofParameter<ParameterType>& >(get(name));
+}
+
+template<typename ParameterType>
+const ofParameter<ParameterType> & ofParameterGroup::get(std::size_t pos) const{
+	return static_cast<const ofParameter<ParameterType>& >(get(pos));
+}
+
+template<typename ParameterType>
+ofParameter<ParameterType> & ofParameterGroup::get(const string& name){
 	return static_cast<ofParameter<ParameterType>& >(get(name));
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> ofParameterGroup::get(std::size_t pos) const{
+ofParameter<ParameterType> & ofParameterGroup::get(std::size_t pos){
 	return static_cast<ofParameter<ParameterType>& >(get(pos));
 }
 
@@ -338,6 +388,7 @@ template<typename ParameterType>
 class ofParameter: public ofAbstractParameter{
 public:
 	ofParameter();
+	ofParameter(const ofParameter<ParameterType> & v);
 	ofParameter(const ParameterType & v);
 	ofParameter(const string& name, const ParameterType & v);
 	ofParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
@@ -372,7 +423,7 @@ public:
 	bool isSerializable() const;
 	bool isReadOnly() const;
 
-	void makeReferenceTo(ofParameter<ParameterType> mom);
+	void makeReferenceTo(ofParameter<ParameterType> & mom);
 
 	ofParameter<ParameterType> & operator=(const ofParameter<ParameterType> & v);
 	const ParameterType & operator=(const ParameterType & v);
@@ -479,6 +530,11 @@ template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter()
 :obj(std::make_shared<Value>())
 ,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)){}
+
+template<typename ParameterType>
+ofParameter<ParameterType>::ofParameter(const ofParameter<ParameterType> & v)
+:obj(v.obj)
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) {}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const ParameterType & v)
@@ -797,7 +853,7 @@ inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator>>=(cons
 }
 
 template<typename ParameterType>
-void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> mom){
+void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> & mom){
 	obj = mom.obj;
 }
 
