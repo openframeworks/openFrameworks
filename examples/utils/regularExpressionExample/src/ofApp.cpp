@@ -17,7 +17,7 @@ void ofApp::setup(){
     countedOccurrences = Parser::countOccurencesInRegex(text, "[^\\s]+");
     
     // To parse a text file
-    file.open(ofToDataPath("BohemianRhapsody.lrc"), ofFile::ReadWrite, false);
+    file.open(ofToDataPath("HeadShouldersKneesAndToes.lrc"), ofFile::ReadWrite, false);
     string line;
     while(getline(file,line)){
         if(line.empty() == false) {
