@@ -11,6 +11,7 @@
 #include "ofVec4f.h"
 #include "ofParameterGroup.h"
 #include "ofParameter.h"
+#include "ofBufferObject.h"
 #include <regex>
 #ifdef TARGET_ANDROID
 #include "ofxAndroidUtils.h"
@@ -652,9 +653,19 @@ void ofShader::setUniformTexture(const string & name, const ofTexture& tex, int 
 		if (!ofIsGLProgrammableRenderer()){
 			glEnable(texData.textureTarget);
 			glBindTexture(texData.textureTarget, texData.textureID);
+#ifndef TARGET_OPENGLES
+			if (texData.bufferId != 0) {
+				glTexBuffer(GL_TEXTURE_BUFFER, texData.glInternalFormat, texData.bufferId);
+			}
+#endif
 			glDisable(texData.textureTarget);
 		} else {
 			glBindTexture(texData.textureTarget, texData.textureID);
+#ifndef TARGET_OPENGLES
+			if (texData.bufferId != 0) {
+				glTexBuffer(GL_TEXTURE_BUFFER, texData.glInternalFormat, texData.bufferId);
+			}
+#endif
 		}
 		setUniform1i(name, textureLocation);
 		glActiveTexture(GL_TEXTURE0);

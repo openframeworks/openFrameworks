@@ -333,9 +333,11 @@ void ofTexture::allocate(const ofFloatPixels& pix, bool bUseARBExtention){
 void ofTexture::allocateAsBufferTexture(const ofBufferObject & buffer, int glInternalFormat){
 	texData.glInternalFormat = glInternalFormat;
 	texData.textureTarget = GL_TEXTURE_BUFFER;
+	texData.bufferId = buffer.getId();
 	allocate(texData,0,0);
+	buffer.bind(GL_TEXTURE_BUFFER);
 	glBindTexture(texData.textureTarget,texData.textureID);
-	glTexBuffer(GL_TEXTURE_BUFFER, glInternalFormat,buffer.getId());
+	glTexBuffer(GL_TEXTURE_BUFFER, glInternalFormat, texData.bufferId);
 	glBindTexture(texData.textureTarget,0);
 }
 #endif

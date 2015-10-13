@@ -185,6 +185,7 @@ public:
 		wrapModeHorizontal = GL_CLAMP_TO_EDGE;
 		wrapModeVertical = GL_CLAMP_TO_EDGE;
 		hasMipmap = false;
+		bufferId = 0;
 
 	}
 
@@ -210,6 +211,7 @@ public:
 	GLint wrapModeHorizontal; ///< How will the texture wrap around horizontally?
 	GLint wrapModeVertical; ///< How will the texture wrap around vertically?
 	
+	unsigned int bufferId; ///< Optionally if the texture is backed by a buffer so we can bind it
 private:
 	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
