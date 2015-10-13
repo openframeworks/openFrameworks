@@ -304,7 +304,7 @@ function build() {
 	else
 		mkdir -p build/$TYPE
 		cd build/$TYPE
-		cmake -G "Unix Makefiles" -DCMAKE_CXX_COMPILER=/mingw32/bin/clang++.exe -DCMAKE_C_COMPILER=/mingw32/bin/clang.exe -DCMAKE_CXX_FLAGS=-DNDEBUG -DCMAKE_C_FLAGS=-DNDEBUG ../../
+		cmake -G "Unix Makefiles" -DCMAKE_CXX_COMPILER=/mingw32/bin/g++.exe -DCMAKE_C_COMPILER=/mingw32/bin/gcc.exe -DCMAKE_CXX_FLAGS=-DNDEBUG -DCMAKE_C_FLAGS=-DNDEBUG ../../
 		make
 	fi
 }
