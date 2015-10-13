@@ -24,11 +24,13 @@ function listDirsRecursive(dir){
     var params = [dir,'-type','d'];
     find.exec("find", params)
     if(find.exitCode()!==0){
-        var error = find.readStdErr();
         find.exec("C:\\msys64\\usr\\bin\\find", params);
         if(find.exitCode()!==0){
-            var error = find.readStdErr();
-            throw("error: " + error)
+            find.exec("C:\\msys32\\usr\\bin\\find", params);
+            if(find.exitCode()!==0){
+                var error = find.readStdErr();
+                throw("error: " + error)
+            }
         }
     }
     var line = find.readLine();
@@ -80,11 +82,13 @@ function findSourceRecursive(dir){
                   ,'-or', '-name', '*.c'];
     find.exec("find", params);
     if(find.exitCode()!==0){
-        var error = find.readStdErr();
         find.exec("C:\\msys64\\usr\\bin\\find", params);
         if(find.exitCode()!==0){
-            var error = find.readStdErr();
-            throw("error: " + error)
+            find.exec("C:\\msys32\\usr\\bin\\find", params);
+            if(find.exitCode()!==0){
+                var error = find.readStdErr();
+                throw("error: " + error)
+            }
         }
     }
     var line = find.readLine();
