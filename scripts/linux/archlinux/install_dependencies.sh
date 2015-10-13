@@ -44,5 +44,5 @@ if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
 	
     DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
     cd ${DIR}/../../apothecary
-    ./apothecary update poco -j${cores}
+    ./apothecary -j${cores} update poco
 fi
