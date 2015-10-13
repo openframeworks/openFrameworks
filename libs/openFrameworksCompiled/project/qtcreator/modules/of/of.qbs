@@ -187,6 +187,7 @@ Module{
         }
         if(qbs.targetOS.contains("windows")){
             ret.push("-L"+FileInfo.joinPaths(msys2root,"mingw32/lib"));
+            //ret.push("-fuse-ld=gold");
         }
 
         return STATIC_LIBS.concat(ret);
