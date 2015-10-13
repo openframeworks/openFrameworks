@@ -58,7 +58,7 @@ function build() {
 				-DGLFW_BUILD_TESTS=OFF \
 				-DGLFW_BUILD_EXAMPLES=OFF \
 				-DBUILD_SHARED_LIBS=OFF \
-				-DCMAKE_C_COMPILER=/mingw32/bin/clang.exe
+				-DCMAKE_C_COMPILER=/mingw32/bin/gcc.exe
 
  		make -j${PARALLEL_MAKE}
  		make install
