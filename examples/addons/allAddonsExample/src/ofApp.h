@@ -1,10 +1,10 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofXml.h"
 #include "ofxOpenCv.h"
 #include "ofxNetwork.h"
 #include "ofxOsc.h"
-#include "ofxXmlSettings.h"
 #include "ofx3DModelLoader.h"
 #include "ofxAssimpModelLoader.h"
 #include "ofxThreadedImageLoader.h"
@@ -29,6 +29,8 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
 
+		ofXml settings;
+
 		// we don't actually use these
         // just checking to see if they
         // all work in the same place :)
@@ -37,7 +39,6 @@ class ofApp : public ofBaseApp{
         ofxTCPClient client;
         ofxTCPServer server;
         ofxOscSender osc_sender;
-        ofxXmlSettings settings;
         ofx3DModelLoader modelLoader;
 		ofxAssimpModelLoader betterModelLoader;
 		ofxThreadedImageLoader threadedLoader;
