@@ -266,6 +266,10 @@ Module{
                 });
             }
             sources = sources.concat(addonSources);
+            var addon_config = FileInfo.joinPaths(addonPath,"addon_config.mk");
+            if(File.exists(addon_config)){
+                sources.push(addon_config);
+            }
         }
         return sources;
     }

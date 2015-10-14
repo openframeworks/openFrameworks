@@ -172,7 +172,11 @@ function parseConfig(configPath, variable, currentValue, platform, prefix){
                         });
                         if(prefix!==undefined){
                             valuesList = valuesList.map(function(element){
-                                return prefix + element
+                                if(!FileInfo.isAbsolutePath(element)){
+                                    return prefix + element;
+                                }else{
+                                    return element;
+                                }
                             });
                         }
                         values = values.concat(valuesList)
@@ -186,7 +190,11 @@ function parseConfig(configPath, variable, currentValue, platform, prefix){
                         });
                         if(prefix!==undefined){
                             values = values.map(function(element){
-                                return prefix + element
+                                if(!FileInfo.isAbsolutePath(element)){
+                                    return prefix + element;
+                                }else{
+                                    return element;
+                                }
                             });
                         }
                     }
