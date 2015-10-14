@@ -368,7 +368,9 @@ ofFile::~ofFile(){
 
 //-------------------------------------------------------------------------------------------------------------
 ofFile::ofFile(const ofFile & mom)
-:mode(Reference)
+:basic_ios()
+,fstream()
+,mode(Reference)
 ,binary(true){
 	copyFrom(mom);
 }
