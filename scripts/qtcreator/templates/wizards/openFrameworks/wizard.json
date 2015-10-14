@@ -265,8 +265,7 @@
                 {
                     "source": "qtcreator.qbs",
                     "target": "%{QbsFile}",
-                    "openAsProject": true,
-                    "condition": "%{JS: '%{BuildSystem}' === 'qbs'}"
+                    "openAsProject": true
                 },
                 {
                     "source": "src/main.cpp",
