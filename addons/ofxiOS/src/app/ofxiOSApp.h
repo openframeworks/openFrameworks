@@ -12,9 +12,8 @@
 #include "ofMain.h"
 #include "ofEvents.h"
 #include "ofxiOSAlerts.h"
-#include "ofxMultiTouch.h"
 
-class ofxiOSApp : public ofSimpleApp, public ofxiOSAlertsListener, public ofxMultiTouchListener {
+class ofxiOSApp : public ofSimpleApp, public ofxiOSAlertsListener {
 	
 public:
 	virtual void setup() {};
