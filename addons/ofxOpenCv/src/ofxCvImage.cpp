@@ -4,7 +4,7 @@
 #include "ofxCvColorImage.h"
 #include "ofxCvFloatImage.h"
 #include "ofxCvBlob.h"
-
+#include "ofConstants.h"
 
 
 
@@ -18,6 +18,11 @@ ofxCvImage::ofxCvImage() {
 	bAllocated		= false;
     bPixelsDirty    = true;
     bRoiPixelsDirty = true;
+    cvImageTemp = nullptr;
+    bAnchorIsPct = false;
+    cvImage = nullptr;
+    ipldepth = 0;
+    iplchannels = 0;
 }
 
 //--------------------------------------------------------------------------------
