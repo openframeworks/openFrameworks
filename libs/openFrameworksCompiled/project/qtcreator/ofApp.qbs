@@ -10,7 +10,7 @@ CppApplication{
     consoleApplication: false
     destinationDirectory: Helpers.normalize(FileInfo.joinPaths(project.sourceDirectory,"bin"))
     qbsSearchPaths: "."
-    platform: of.platform
+    readonly property string platform: of.platform
 
     Depends{
         name: "of"
