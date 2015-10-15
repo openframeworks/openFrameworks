@@ -25,6 +25,18 @@
     return self;
 }
 
+- (void) setupSharedSession {
+	static BOOL audioSessionSetup = NO;
+	if(audioSessionSetup) {
+		return;
+	}
+	[[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error: nil];
+	UInt32 doSetProperty = 1;
+	AudioSessionSetProperty (kAudioSessionProperty_OverrideCategoryMixWithOthers, sizeof(doSetProperty), &doSetProperty);
+	[[AVAudioSession sharedInstance] setActive: YES error: nil];
+	audioSessionSetup = YES;
+}
+
 - (void)dealloc {
     [self unloadSound];
     [super dealloc];
@@ -45,7 +57,7 @@
 
 - (BOOL)loadWithURL:(NSURL*)url {
     [self unloadSound];
-    
+	[self setupSharedSession];
     NSError * error = nil;
     self.player = [[[AVAudioPlayer alloc] initWithContentsOfURL:url
                                                           error:&error] autorelease];
