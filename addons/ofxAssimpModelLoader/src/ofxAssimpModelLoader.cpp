@@ -280,6 +280,12 @@ void ofxAssimpModelLoader::loadGLResources(){
         meshHelper.validCache = true;
         meshHelper.hasChanged = false;
 
+		int numOfAnimations = scene->mNumAnimations;
+		for (int i = 0; i<numOfAnimations; i++) {
+			aiAnimation * animation = scene->mAnimations[i];
+			animations.push_back(ofxAssimpAnimation(scene, animation));
+		}
+
         if(hasAnimations()){
 			meshHelper.animatedPos.resize(mesh->mNumVertices);
 			if(mesh->HasNormals()){
@@ -328,11 +334,7 @@ void ofxAssimpModelLoader::loadGLResources(){
         //modelMeshes.push_back(meshHelper);
     }
     
-    int numOfAnimations = scene->mNumAnimations;
-    for(int i=0; i<numOfAnimations; i++) {
-        aiAnimation * animation = scene->mAnimations[i];
-        animations.push_back(ofxAssimpAnimation(scene, animation));
-    }
+
 
     ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): finished";
 }
