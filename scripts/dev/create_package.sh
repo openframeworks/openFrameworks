@@ -338,7 +338,7 @@ function createPackage {
 	if [ "$pkg_platform" = "linux" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
 		npm install > /dev/null
-		npm run build:linux323232 > /dev/null
+		npm run build:linux32 > /dev/null
 		mv dist/projectGenerator-linux-ia32 ${pkg_ofroot}/projectGenerator-linux
 		cd ${pkg_ofroot}
 		sed -i "s/osx/linux/g" projectGenerator-linux/resources/app/settings.json
