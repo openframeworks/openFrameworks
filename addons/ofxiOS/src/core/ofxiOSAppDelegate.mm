@@ -58,7 +58,8 @@
     
     // set the root application path
     ofSetDataPathRoot([[NSString stringWithFormat:@"%@/", [[NSBundle mainBundle] resourcePath]] cStringUsingEncoding:NSUTF8StringEncoding]);
-    
+	
+#ifdef TARGET_IOS
 	// show or hide status bar depending on OF_WINDOW or OF_FULLSCREEN
     [[UIApplication sharedApplication] setStatusBarHidden:(ofxiOSGetOFWindow()->getWindowMode() == OF_FULLSCREEN)];
 	
@@ -113,17 +114,20 @@
     }
     
     BOOL bIsPortrait = UIInterfaceOrientationIsPortrait( iOrient );
+#endif
 	
 	CGRect frame = [[UIScreen mainScreen] bounds];
-	
+#ifdef TARGET_IOS
 	if( (!bIsPortrait && bDoesHWOrientation)) {
 		float tWidth    = frame.size.width;
 		float tHeight   = frame.size.height;
 		frame.size.width    = tHeight;
 		frame.size.height   = tWidth;
 	}
-	
 	ofOrientation defaultOrient = ofGetOrientation();
+#endif
+	
+	
 	
     // check if app delegate is being extended.
     // if not, create a new view controller.
@@ -132,7 +136,8 @@
 		
         self.glViewController = [[[ofxiOSViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()] autorelease];
         self.window.rootViewController = self.glViewController;
-        
+		
+#ifdef TARGET_IOS
         ofOrientation requested = ofGetOrientation();
 		UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationPortrait;
 		switch (requested) {
@@ -157,7 +162,8 @@
             [self.glViewController rotateToInterfaceOrientation:interfaceOrientation animated:false];
             ofSetOrientation(requested);
         }
-        
+#endif
+		
     }
 }
 
@@ -179,7 +185,9 @@
 	
     // stop listening for orientation change notifications
     [[NSNotificationCenter defaultCenter] removeObserver: self];
+#ifdef TARGET_IOS
     [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+#endif
 }
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
@@ -200,6 +208,7 @@
 }
 #endif
 
+#ifdef TARGET_IOS
 //------------------------------------------------------------------------------------------- device rotation callback.
 - (void)receivedRotate:(NSNotification*)notification {
 	UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
@@ -216,6 +225,7 @@
     }
 }
 
+#endif
 //------------------------------------------------------------------------------------------- external display.
 
 /**

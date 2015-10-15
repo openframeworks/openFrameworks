@@ -14,11 +14,13 @@ class ofxiOSApp;
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app;
 
+#ifdef TARGET_IOS
 - (UIInterfaceOrientation)currentInterfaceOrientation;
 - (void)setCurrentInterfaceOrientation:(UIInterfaceOrientation) orient;
 - (void)rotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
                             animated:(BOOL)animated;
 - (BOOL)isReadyToRotate;
+#endif
 
 @end
 

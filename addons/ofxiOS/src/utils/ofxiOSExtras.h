@@ -139,7 +139,6 @@ void ofxiOSEnableLoopInThread();
 
 
 OF_DEPRECATED_MSG("ofxiOSSetOrientation is deprecated, use ofSetOrientation instead.", void ofxiOSSetOrientation(ofOrientation orientation));
-OF_DEPRECATED_MSG("ofxiOSGetOrientation is deprecated, use ofGetOrientation instead.", UIDeviceOrientation ofxiOSGetOrientation());
 
 
 // load an image from the app bundle into a texture
@@ -164,9 +163,11 @@ bool ofxiOSUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int targe
 
 bool ofxiOSCGImageToPixels(CGImageRef & ref, unsigned char * pixels);
 
+#ifdef TARGET_IOS
 // save current opengl screen to photos app
 // based on code from http://www.bit-101.com/blog/?p=1861
 void ofxiOSScreenGrab(id delegate);
+#endif
 
 
 // utility fuctions for converting strings and NSStrings back and forth

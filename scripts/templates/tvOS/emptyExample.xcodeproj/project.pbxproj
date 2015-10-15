@@ -1,0 +1,439 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		84C8DB691BC37247001606C1 /* CoreOF.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 84C8DB621BC37247001606C1 /* CoreOF.xcconfig */; };
+		84C8DB741BC3726E001606C1 /* Project.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 84C8DB721BC3726E001606C1 /* Project.xcconfig */; };
+		84C8DB801BC3732E001606C1 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C8DB751BC3732E001606C1 /* Accelerate.framework */; };
+		84C8DB811BC3732E001606C1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C8DB761BC3732E001606C1 /* AudioToolbox.framework */; };
+		84C8DB821BC3732E001606C1 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C8DB771BC3732E001606C1 /* AVFoundation.framework */; };
+		84C8DB831BC3732E001606C1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C8DB781BC3732E001606C1 /* CoreGraphics.framework */; };
+		84C8DB841BC3732E001606C1 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C8DB791BC3732E001606C1 /* CoreLocation.framework */; };
+		84C8DB851BC3732E001606C1 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C8DB7A1BC3732E001606C1 /* CoreMedia.framework */; };
+		84C8DB861BC3732E001606C1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C8DB7B1BC3732E001606C1 /* CoreVideo.framework */; };
+		84C8DB871BC3732E001606C1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C8DB7C1BC3732E001606C1 /* Foundation.framework */; };
+		84C8DB881BC3732E001606C1 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C8DB7D1BC3732E001606C1 /* OpenAL.framework */; };
+		84C8DB891BC3732E001606C1 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C8DB7E1BC3732E001606C1 /* OpenGLES.framework */; };
+		84C8DB8A1BC3732E001606C1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C8DB7F1BC3732E001606C1 /* UIKit.framework */; };
+		84C8DBA41BC37A49001606C1 /* libtvOS+OFLib_Debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C8DB6F1BC37247001606C1 /* libtvOS+OFLib_Debug.a */; };
+		84C8DBAC1BC37F72001606C1 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C8DBA91BC37F72001606C1 /* main.mm */; };
+		84C8DBAD1BC37F72001606C1 /* ofApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C8DBAB1BC37F72001606C1 /* ofApp.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		84C8DB6E1BC37247001606C1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84C8DB661BC37247001606C1 /* tvOS+OFLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8446395C1BC343E000F24926;
+			remoteInfo = "tvOS+OFLib";
+		};
+		84C8DBA21BC37A28001606C1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84C8DB661BC37247001606C1 /* tvOS+OFLib.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8446395B1BC343E000F24926;
+			remoteInfo = "tvOS+OFLib";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		84463AC61BC370DF00F24926 /* emptyExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = emptyExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		84C8DB621BC37247001606C1 /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CoreOF.xcconfig; sourceTree = "<group>"; };
+		84C8DB661BC37247001606C1 /* tvOS+OFLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "tvOS+OFLib.xcodeproj"; sourceTree = "<group>"; };
+		84C8DB721BC3726E001606C1 /* Project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Project.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C8DB751BC3732E001606C1 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		84C8DB761BC3732E001606C1 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		84C8DB771BC3732E001606C1 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		84C8DB781BC3732E001606C1 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		84C8DB791BC3732E001606C1 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		84C8DB7A1BC3732E001606C1 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		84C8DB7B1BC3732E001606C1 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		84C8DB7C1BC3732E001606C1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		84C8DB7D1BC3732E001606C1 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
+		84C8DB7E1BC3732E001606C1 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		84C8DB7F1BC3732E001606C1 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		84C8DBA91BC37F72001606C1 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		84C8DBAA1BC37F72001606C1 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofApp.h; sourceTree = "<group>"; };
+		84C8DBAB1BC37F72001606C1 /* ofApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofApp.mm; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84463AC31BC370DF00F24926 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C8DBA41BC37A49001606C1 /* libtvOS+OFLib_Debug.a in Frameworks */,
+				84C8DB801BC3732E001606C1 /* Accelerate.framework in Frameworks */,
+				84C8DB811BC3732E001606C1 /* AudioToolbox.framework in Frameworks */,
+				84C8DB821BC3732E001606C1 /* AVFoundation.framework in Frameworks */,
+				84C8DB831BC3732E001606C1 /* CoreGraphics.framework in Frameworks */,
+				84C8DB841BC3732E001606C1 /* CoreLocation.framework in Frameworks */,
+				84C8DB851BC3732E001606C1 /* CoreMedia.framework in Frameworks */,
+				84C8DB861BC3732E001606C1 /* CoreVideo.framework in Frameworks */,
+				84C8DB871BC3732E001606C1 /* Foundation.framework in Frameworks */,
+				84C8DB881BC3732E001606C1 /* OpenAL.framework in Frameworks */,
+				84C8DB891BC3732E001606C1 /* OpenGLES.framework in Frameworks */,
+				84C8DB8A1BC3732E001606C1 /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		84463ABD1BC370DF00F24926 = {
+			isa = PBXGroup;
+			children = (
+				84C8DB8E1BC37378001606C1 /* addons */,
+				84C8DB8B1BC3733E001606C1 /* libs */,
+				84463AC81BC370DF00F24926 /* emptyExample */,
+				84C8DB611BC37247001606C1 /* openFrameworks */,
+				84463AC71BC370DF00F24926 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		84463AC71BC370DF00F24926 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84463AC61BC370DF00F24926 /* emptyExample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84463AC81BC370DF00F24926 /* emptyExample */ = {
+			isa = PBXGroup;
+			children = (
+				84C8DBA81BC37F72001606C1 /* src */,
+			);
+			path = emptyExample;
+			sourceTree = "<group>";
+		};
+		84C8DB611BC37247001606C1 /* openFrameworks */ = {
+			isa = PBXGroup;
+			children = (
+				84C8DB721BC3726E001606C1 /* Project.xcconfig */,
+				84C8DB621BC37247001606C1 /* CoreOF.xcconfig */,
+				84C8DB661BC37247001606C1 /* tvOS+OFLib.xcodeproj */,
+			);
+			name = openFrameworks;
+			path = ../../../libs/openFrameworksCompiled/project/tvOS;
+			sourceTree = "<group>";
+		};
+		84C8DB671BC37247001606C1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84C8DB6F1BC37247001606C1 /* libtvOS+OFLib_Debug.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84C8DB8B1BC3733E001606C1 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				84C8DB8C1BC3735F001606C1 /* core */,
+			);
+			name = libs;
+			sourceTree = "<group>";
+		};
+		84C8DB8C1BC3735F001606C1 /* core */ = {
+			isa = PBXGroup;
+			children = (
+				84C8DB8D1BC37366001606C1 /* core frameworks */,
+			);
+			name = core;
+			sourceTree = "<group>";
+		};
+		84C8DB8D1BC37366001606C1 /* core frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				84C8DB751BC3732E001606C1 /* Accelerate.framework */,
+				84C8DB761BC3732E001606C1 /* AudioToolbox.framework */,
+				84C8DB771BC3732E001606C1 /* AVFoundation.framework */,
+				84C8DB781BC3732E001606C1 /* CoreGraphics.framework */,
+				84C8DB791BC3732E001606C1 /* CoreLocation.framework */,
+				84C8DB7A1BC3732E001606C1 /* CoreMedia.framework */,
+				84C8DB7B1BC3732E001606C1 /* CoreVideo.framework */,
+				84C8DB7C1BC3732E001606C1 /* Foundation.framework */,
+				84C8DB7D1BC3732E001606C1 /* OpenAL.framework */,
+				84C8DB7E1BC3732E001606C1 /* OpenGLES.framework */,
+				84C8DB7F1BC3732E001606C1 /* UIKit.framework */,
+			);
+			name = "core frameworks";
+			sourceTree = "<group>";
+		};
+		84C8DB8E1BC37378001606C1 /* addons */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = addons;
+			sourceTree = "<group>";
+		};
+		84C8DBA81BC37F72001606C1 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				84C8DBA91BC37F72001606C1 /* main.mm */,
+				84C8DBAA1BC37F72001606C1 /* ofApp.h */,
+				84C8DBAB1BC37F72001606C1 /* ofApp.mm */,
+			);
+			path = src;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		84463AC51BC370DF00F24926 /* emptyExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84463AF01BC370DF00F24926 /* Build configuration list for PBXNativeTarget "emptyExample" */;
+			buildPhases = (
+				84463AC21BC370DF00F24926 /* Sources */,
+				84463AC31BC370DF00F24926 /* Frameworks */,
+				84463AC41BC370DF00F24926 /* Resources */,
+				84C8DBA11BC37A16001606C1 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				84C8DBA31BC37A28001606C1 /* PBXTargetDependency */,
+			);
+			name = emptyExample;
+			productName = emptyExample;
+			productReference = 84463AC61BC370DF00F24926 /* emptyExample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84463ABE1BC370DF00F24926 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0710;
+				ORGANIZATIONNAME = cc.openframeworks.tvOS;
+				TargetAttributes = {
+					84463AC51BC370DF00F24926 = {
+						CreatedOnToolsVersion = 7.1;
+					};
+				};
+			};
+			buildConfigurationList = 84463AC11BC370DF00F24926 /* Build configuration list for PBXProject "emptyExample" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 84463ABD1BC370DF00F24926;
+			productRefGroup = 84463AC71BC370DF00F24926 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 84C8DB671BC37247001606C1 /* Products */;
+					ProjectRef = 84C8DB661BC37247001606C1 /* tvOS+OFLib.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				84463AC51BC370DF00F24926 /* emptyExample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		84C8DB6F1BC37247001606C1 /* libtvOS+OFLib_Debug.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libtvOS+OFLib_Debug.a";
+			remoteRef = 84C8DB6E1BC37247001606C1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		84463AC41BC370DF00F24926 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C8DB691BC37247001606C1 /* CoreOF.xcconfig in Resources */,
+				84C8DB741BC3726E001606C1 /* Project.xcconfig in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		84C8DBA11BC37A16001606C1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "rsync -avz --exclude='.DS_Store' \"${SRCROOT}/bin/data/\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84463AC21BC370DF00F24926 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C8DBAD1BC37F72001606C1 /* ofApp.mm in Sources */,
+				84C8DBAC1BC37F72001606C1 /* main.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		84C8DBA31BC37A28001606C1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "tvOS+OFLib";
+			targetProxy = 84C8DBA21BC37A28001606C1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		84463AEE1BC370DF00F24926 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C8DB721BC3726E001606C1 /* Project.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "ofxtvOS-Info.plist";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		84463AEF1BC370DF00F24926 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C8DB721BC3726E001606C1 /* Project.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "ofxtvOS-Info.plist";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		84463AF11BC370DF00F24926 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				GCC_PREFIX_HEADER = ofxtvOS_Prefix.pch;
+				HEADER_SEARCH_PATHS = "$(OF_CORE_HEADERS)";
+				INFOPLIST_FILE = "ofxtvOS-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = emptyExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		84463AF21BC370DF00F24926 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				GCC_PREFIX_HEADER = ofxtvOS_Prefix.pch;
+				HEADER_SEARCH_PATHS = "$(OF_CORE_HEADERS)";
+				INFOPLIST_FILE = "ofxtvOS-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = emptyExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84463AC11BC370DF00F24926 /* Build configuration list for PBXProject "emptyExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84463AEE1BC370DF00F24926 /* Debug */,
+				84463AEF1BC370DF00F24926 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84463AF01BC370DF00F24926 /* Build configuration list for PBXNativeTarget "emptyExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84463AF11BC370DF00F24926 /* Debug */,
+				84463AF21BC370DF00F24926 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 84463ABE1BC370DF00F24926 /* Project object */;
+}

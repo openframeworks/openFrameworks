@@ -9,8 +9,10 @@
 #import "ofxiOSEAGLView.h"
 
 @interface ofxiOSViewController() <EAGLViewDelegate> {
+#ifdef TARGET_IOS
     UIInterfaceOrientation currentInterfaceOrientation;
     UIInterfaceOrientation pendingInterfaceOrientation;
+#endif
     BOOL bReadyToRotate;
     BOOL bFirstUpdate;
 	BOOL bAnimated;
@@ -22,14 +24,17 @@
 @synthesize glView;
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
-    currentInterfaceOrientation = pendingInterfaceOrientation = UIInterfaceOrientationPortrait;
+	
     if((self = [super init])) {
+#ifdef TARGET_IOS
+		currentInterfaceOrientation = pendingInterfaceOrientation = UIInterfaceOrientationPortrait;
         currentInterfaceOrientation = pendingInterfaceOrientation = self.interfaceOrientation;
 		if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
 			bReadyToRotate  = NO;
 		}else{
 			bReadyToRotate  = YES;
 		}
+#endif
         bFirstUpdate    = NO;
 		bAnimated		= NO;
         
@@ -68,7 +73,8 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
+	
+#ifdef TARGET_IOS
     // rotation of the glView only works properly after viewDidAppear.
     // this is something to do with either the bounds, center or transform properties not being initialised earlier.
     // so now that glView is ready, we rotate it to the pendingInterfaceOrientation.
@@ -77,6 +83,7 @@
 		bFirstUpdate    = YES;
 		[self rotateToInterfaceOrientation:pendingInterfaceOrientation animated:NO];
 	}
+#endif
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -105,6 +112,7 @@
     //
 }
 
+#ifdef TARGET_IOS
 //-------------------------------------------------------------- orientation.
 - (UIInterfaceOrientation)currentInterfaceOrientation {
     return currentInterfaceOrientation;
@@ -252,6 +260,8 @@
 	// Deprecated in iOS 8. See viewWillTransitionToSize below.
 }
 
+#endif
+
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
     
@@ -335,6 +345,7 @@
     // You can use this method to show views, change the layout of views, or make other changes to your app.
 }
 
+#ifdef TARGET_IOS
 //-------------------------------------------------------------- iOS5 and earlier.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
     return (toInterfaceOrientation == currentInterfaceOrientation);
@@ -365,6 +376,7 @@
 - (BOOL)shouldAutorotate {
 	return YES;
 }
+#endif
 #endif
 
 - (BOOL)isReadyToRotate {

@@ -4,6 +4,8 @@
 
 #include "AVFoundationVideoGrabber.h"
 
+#ifdef TARGET_IOS
+
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <CoreGraphics/CoreGraphics.h>
@@ -558,5 +560,6 @@ ofPixelFormat AVFoundationVideoGrabber::getPixelFormat() {
 	}
 }
 
+#endif
 
 

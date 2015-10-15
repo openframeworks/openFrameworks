@@ -6,7 +6,7 @@
  *  Copyright 2009 stfj. All rights reserved.
  *
  */
-
+#ifdef TARGET_IOS
 #import "ofxiOSImagePicker.h"
 
 //C++ class implementations
@@ -560,3 +560,5 @@ bool ofxiOSImagePicker::getImageUpdated(){
 }
 
 @end
+
+#endif

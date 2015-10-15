@@ -27,7 +27,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
  * ***********************************************************************/ 
-
+#ifdef TARGET_IOS
 #include <Availability.h>
 
 #include "ofxiOSMapKit.h"
@@ -263,3 +263,5 @@ void ofxiOSMapKit::errorLoadingMap(string errorDescription) {
 		o->errorLoadingMap(errorDescription);
 	}
 }
+
+#endif

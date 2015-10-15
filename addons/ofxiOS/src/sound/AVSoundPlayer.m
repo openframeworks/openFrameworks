@@ -224,9 +224,13 @@
 }
 
 - (void) audioPlayerEndInterruption:(AVAudioPlayer *)player withFlags:(NSUInteger)flags {
+#ifdef TARGET_IOS
 	if(flags == AVAudioSessionInterruptionFlags_ShouldResume) {
 		[self.player play];
 	}
+#elseif TARGET_OS_TV
+	//
+#endif
 }
 
 @end
