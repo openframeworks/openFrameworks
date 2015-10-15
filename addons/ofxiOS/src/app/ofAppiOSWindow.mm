@@ -29,13 +29,12 @@
  *
  * ***********************************************************************/ 
 
-#import "ofMain.h"
-#import "ofGLProgrammableRenderer.h"
-#import "ofAppiOSWindow.h"
-#import "ofxiOSEAGLView.h"
-#import "ofxiOSAppDelegate.h"
-#import "ofxiOSViewController.h"
-#import "ofxiOSExtras.h"
+#include "ofAppiOSWindow.h"
+#include "ofGLRenderer.h"
+#include "ofGLProgrammableRenderer.h"
+#include "ofxiOSAppDelegate.h"
+#include "ofxiOSViewController.h"
+#include "ofxiOSEAGLView.h"
 
 //----------------------------------------------------------------------------------- instance.
 static ofAppiOSWindow * _instance = NULL;
