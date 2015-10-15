@@ -19,8 +19,8 @@
 #include "ofxAssimpAnimation.h"
 #include "ofxAssimpTexture.h"
 
-class aiScene;
-class aiNode;
+struct aiScene;
+struct aiNode;
 
 class ofxAssimpModelLoader{
 
