@@ -4,6 +4,8 @@
 //  http://julapy.com/blog
 //
 
+#pragma once
+
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 

@@ -17,7 +17,7 @@
  *
  */
 
-#import "ofxiOSCoreLocation.h"
+#include "ofxiOSCoreLocation.h"
 
 //C++ class implementations
 
