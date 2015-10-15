@@ -29,11 +29,14 @@
  *
  * ***********************************************************************/
 
-#import "ofMain.h"
-#import "ofxiOSAppDelegate.h"
-#import "ofxiOSViewController.h"
-#import "ofxiOSExtras.h"
-#import "ofxiOSExternalDisplay.h"
+#include "ofxiOSAppDelegate.h"
+#include "ofxiOSViewController.h"
+#include "ofxiOSExternalDisplay.h"
+#include "ofxiOSExtras.h"
+#include "ofxiOSAlerts.h"
+#include "ofxiOSEAGLView.h"
+#include "ofAppiOSWindow.h"
+#include "ofAppRunner.h"
 
 @implementation ofxiOSAppDelegate
 

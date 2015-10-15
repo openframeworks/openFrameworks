@@ -7,7 +7,10 @@
  *
  */
 
-#import "ofxiOSKeyboard.h"
+#include "ofxiOSKeyboard.h"
+#include "ofxiOSExtras.h"
+#include "ofAppiOSWindow.h"
+#include "ofAppRunner.h"
 
 //C++ class implementations
 
