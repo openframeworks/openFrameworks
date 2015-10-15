@@ -26,7 +26,7 @@ error() {
 }
 trap 'error ${LINENO}' ERR
 
-
+export PG_OF_PATH=$(cat ~/.ofprojectgenerator/config)
 cd $(cat ~/.ofprojectgenerator/config)
 git fetch upstreamhttps
 git reset --hard upstreamhttps/master
