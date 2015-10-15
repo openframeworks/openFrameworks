@@ -15,12 +15,14 @@ int main(){
 
 
 #ifdef TARGET_ANDROID
-#include <jni.h>
+void OFAndroidInit()
+{
+    //application scope init
+}
 
-//========================================================================
-extern "C"{
-	void Java_cc_openframeworks_OFAndroid_init( JNIEnv*  env, jobject  thiz ){
-		main();
-	}
+void OFAndroidCreate()
+{
+	//activity scope init
+	main();
 }
 #endif
