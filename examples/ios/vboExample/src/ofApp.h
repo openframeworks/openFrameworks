@@ -1,8 +1,6 @@
 #pragma once
 
-#include "ofMain.h"
 #include "ofxiOS.h"
-#include "ofxiOSExtras.h"
 
 #define GRID_WIDTH  16
 #define GRID_HEIGHT 16

@@ -31,9 +31,8 @@
 
 #pragma once
 
-#import "ofAppBaseWindow.h"
+#include "ofAppBaseWindow.h"
 #include "ofxiOSConstants.h"
-#include "ofWindowSettings.h"
 
 class ofiOSWindowSettings: public ofGLESWindowSettings{
 public:

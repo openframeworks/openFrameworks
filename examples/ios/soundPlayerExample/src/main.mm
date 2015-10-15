@@ -1,5 +1,3 @@
-#include "ofMain.h"
-#include "ofAppiOSWindow.h"
 #include "ofApp.h"
 
 int main() {

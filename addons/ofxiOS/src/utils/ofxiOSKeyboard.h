@@ -6,10 +6,10 @@
  *
  */
 
-#import <UIKit/UIKit.h>
-#import "ofMain.h"
-#import "ofxiOSExtras.h"
 #pragma once
+
+#import <UIKit/UIKit.h>
+#include "ofConstants.h"
 
 @interface ofxiOSKeyboardDelegate : NSObject <UITextFieldDelegate>
 {

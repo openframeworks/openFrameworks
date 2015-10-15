@@ -3,6 +3,8 @@
 //  Created by lukasz karluk on 12/12/11.
 //
 
+#pragma once
+
 #import <UIKit/UIKit.h>
 
 class ofxiOSApp;

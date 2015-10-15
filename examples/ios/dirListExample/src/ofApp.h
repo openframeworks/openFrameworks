@@ -1,9 +1,6 @@
-#ifndef _TEST_APP
-#define _TEST_APP
+#pragma once
 
-#include "ofMain.h"
 #include "ofxiOS.h"
-#include "ofxiOSExtras.h"
 
 class ofApp : public ofxiOSApp {
 
@@ -34,6 +31,3 @@ class ofApp : public ofxiOSApp {
         int currentImage;
 
 };
-
-#endif
-
