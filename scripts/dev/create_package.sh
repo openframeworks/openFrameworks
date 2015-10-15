@@ -129,14 +129,7 @@ function deleteEclipse {
 
 
 function createProjectFiles {
-    if [ "$pkg_platform" == "win_cb" ]; then	
-        echo "Creating project files"
-	    # copy config.make and Makefile into every subfolder
-	    for example in $pkg_ofroot/examples/*/*; do
-	        cp $pkg_ofroot/scripts/templates/win_cb/config.make ${example}
-	        cp $pkg_ofroot/scripts/templates/win_cb/Makefile ${example}
-	    done
-    elif [ "$pkg_platform" != "android" ]; then
+    if [ "$pkg_platform" != "android" ]; then
         cd ${main_ofroot}/apps/projectGenerator
         git pull origin master
         cd commandLine
@@ -144,7 +137,7 @@ function createProjectFiles {
         PROJECT_OPTIMIZATION_CFLAGS_RELEASE=-O3 make -j2 > /dev/null
         cd ${pkg_ofroot}
         echo "Creating project files for $pkg_platform"
-        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p ${pkg_platform} -o $pkg_ofroot $pkg_ofroot/examples > /dev/null
+        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pkg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
     fi
     cd ${pkg_ofroot}
 }
