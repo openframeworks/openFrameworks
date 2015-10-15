@@ -26,8 +26,11 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
     ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): loading \"" << file.getFileName()
 		<< "\" from \"" << file.getEnclosingDirectory() << "\"";
     
-    if(scene != NULL){
+    if(scene.get() != nullptr){
         clear();
+		// we reset the shared_ptr explicitly here, to force the old 
+		// aiScene to be deleted **before** a new aiScene is created.
+		scene.reset();
     }
     
     // sets various properties & flags to a default preference
@@ -45,8 +48,11 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
     
     ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): loading from memory buffer \"." << extension << "\"";
     
-    if(scene != NULL){
+    if(scene.get() != nullptr){
         clear();
+		// we reset the shared_ptr explicitly here, to force the old 
+		// aiScene to be deleted **before** a new aiScene is created.
+		scene.reset();
     }
     
     // sets various properties & flags to a default preference
