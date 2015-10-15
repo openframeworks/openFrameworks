@@ -1,8 +1,6 @@
 #pragma once
 
-#include "ofMain.h"
 #include "ofxiOS.h"
-#include "ofxiOSExtras.h"
 #include "ofxOsc.h"
 
 // listen on port 12345

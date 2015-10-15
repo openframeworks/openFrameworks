@@ -1,5 +1,3 @@
-#include "ofMain.h"
-#include "ofAppiOSWindow.h"
 #include "SquareApp.h"
 
 int main(){
