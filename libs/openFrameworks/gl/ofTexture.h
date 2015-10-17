@@ -663,6 +663,8 @@ class ofTexture : public ofBaseDraws {
 	/// \param sy Subsection y axis offset within the texture.
 	/// \param sw Subsection width within the texture.
 	/// \param sh Subsection height within the texture.
+	/// \param vflipped Takes into account the flipped state in OF.
+	/// \param rectMode rectMode Taking x,y as the center or the top left corner.
 	ofMesh getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh, bool vflipped, ofRectMode rectMode) const;
 
 	/// \brief Bind the texture.
