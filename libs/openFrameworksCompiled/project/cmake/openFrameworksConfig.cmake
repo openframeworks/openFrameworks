@@ -1,4 +1,4 @@
-get_filename_component(openFrameworksRoot "${CMAKE_CURRENT_LIST_DIR}/../" ABSOLUTE)
+get_filename_component(openFrameworksRoot "${CMAKE_CURRENT_LIST_DIR}/../../../../" ABSOLUTE)
 
 # Having to make the following distinction is a result of
 # openFrameworks being not properly deployed into standard lib/include
