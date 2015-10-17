@@ -10,7 +10,7 @@ if [ $EUID != 0 ]; then
 fi
 
 if [ "$1" == "-y" ]; then
-    FORCE_YES=-y
+    FORCE_YES="-y --force-yes"
 fi 
 
 MAJOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f1 -d. | sed "s/\t//g")
@@ -38,9 +38,6 @@ else
 fi
 
 apt-get update
-if [ "$FORCE_YES" == "-y" ]; then
-    apt-get dist-upgrade -y
-fi
 
 GSTREAMER_VERSION=0.10
 GSTREAMER_FFMPEG=gstreamer${GSTREAMER_VERSION}-ffmpeg
