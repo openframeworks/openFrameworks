@@ -38,7 +38,7 @@ else
 fi
 
 apt-get update
-if [ $FORCE_YES -eq 1 ]; then
+if [ "$FORCE_YES" == "-y" ]; then
     apt-get dist-upgrade -y
 fi
 
