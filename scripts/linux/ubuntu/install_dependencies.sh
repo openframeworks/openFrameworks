@@ -38,6 +38,9 @@ else
 fi
 
 apt-get update
+if [ $FORCE_YES -eq 1 ]; then
+    apt-get dist-upgrade -y
+fi
 
 GSTREAMER_VERSION=0.10
 GSTREAMER_FFMPEG=gstreamer${GSTREAMER_VERSION}-ffmpeg
