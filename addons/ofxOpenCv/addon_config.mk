@@ -128,3 +128,9 @@ android/armeabi-v7a:
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_core.a 
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_flann.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_contrib.a
+
+
+ios:
+	# osx/iOS only, any framework that should be included in the project
+	ADDON_FRAMEWORKS = AssetsLibrary
+
