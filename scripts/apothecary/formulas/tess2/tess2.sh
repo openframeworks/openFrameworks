@@ -35,9 +35,7 @@ function download() {
 function prepare() {
 	
 	# check if the patch was applied, if not then patch
-	if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/tess2.patch 2>/dev/null ; then
-		patch -p1 -u -N  < $FORMULA_DIR/tess2.patch
-	fi
+	patch -p1 -u -N  < $FORMULA_DIR/tess2.patch
 
 	# copy in build script and CMake toolchains adapted from Assimp
 	if [ "$OS" == "osx" ] ; then
@@ -89,7 +87,7 @@ function build() {
 
 			echo "Building library slice for ${OSX_ARCH}..."
 
-			cmake -G 'Unix Makefiles' \
+			cmake -G 'Unix Makefiles'  -DNDEBUG
 				.
 			make clean >> "${LOG}" 2>&1
 			make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
@@ -120,12 +118,12 @@ function build() {
 		if [ $ARCH == 32 ] ; then
 			mkdir -p build_vs_32
 			cd build_vs_32
-			cmake .. -G "Visual Studio $VS_VER"
+			cmake .. -G "Visual Studio $VS_VER" -DCMAKE_CXX_FLAGS=-DNDEBUG -DCMAKE_C_FLAGS=-DNDEBUG
 			vs-build "tess2.sln"
 		elif [ $ARCH == 64 ] ; then
 			mkdir -p build_vs_64
 			cd build_vs_64
-			cmake .. -G "Visual Studio $VS_VER Win64"
+			cmake .. -G "Visual Studio $VS_VER Win64" -DCMAKE_CXX_FLAGS=-DNDEBUG -DCMAKE_C_FLAGS=-DNDEBUG
 			vs-build "tess2.sln" Build "Release|x64"
 		fi
 		
@@ -298,7 +296,7 @@ function build() {
     	cp -v $FORMULA_DIR/CMakeLists.txt .
     	mkdir -p build
     	cd build
-    	emcmake cmake .. -DCMAKE_C_FLAGS=-DNDEBUG
+    	emcmake cmake .. -DCMAKE_CXX_FLAGS=-DNDEBUG -DCMAKE_C_FLAGS=-DNDEBUG
     	emmake make -j${PARALLEL_MAKE}
 		
 	else
