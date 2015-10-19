@@ -121,6 +121,9 @@ PLATFORM SPECIFIC
 ### osx
 	/ moved system framework dependencies from Xcode project to CoreOF.xcconfig
 	/ removed GLUT from project template, see libs/glut/lib/osx if you need GLUT
+	/ made XCode-generated library names use lib prefix. A symlink is created to
+	  the old name in order not to break programs, but this will change in an
+	  upcoming release.
 
 CORE ADDONS
 -----------
