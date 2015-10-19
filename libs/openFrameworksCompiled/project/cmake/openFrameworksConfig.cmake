@@ -76,7 +76,7 @@ find_library(BOOST_SYSTEM_LIB boost_system)
 find_library(BOOST_FILESYSTEM_LIB boost_filesystem)
 find_library(GL_LIB GL)
 find_library(GLEW_LIB GLEW)
-find_library(GLFW_LIB glfw3)
+find_library(GLFW_LIB glfw3 NAMES glfw)
 find_library(CAIRO_LIB cairo)
 find_library(FONTCONFIG_LIB fontconfig)
 find_library(FREETYPE_LIB freetype)
@@ -133,8 +133,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     
     # libraries
     set(openFrameworks_LIBRARIES
-        ${openFrameworksRoot}/libs/tess2/lib/linux64/libtess2.a
         ${openFrameworks_LIBRARIES}
+        ${openFrameworksRoot}/libs/tess2/lib/linux64/libtess2.a
         ${openFrameworksRoot}/libs/kiss/lib/${PLATFORM}/libkiss.a
         ${X11_LIB}
         ${PTHREAD_LIB}
