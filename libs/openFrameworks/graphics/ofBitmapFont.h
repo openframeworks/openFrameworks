@@ -16,16 +16,19 @@ class ofRectangle;
  
  */
 
-class ofBitmapFont{
-public:
-	ofBitmapFont();
-	~ofBitmapFont();
-	ofMesh getMesh(const string & text, int x, int y, ofDrawBitmapMode mode=OF_BITMAPMODE_MODEL_BILLBOARD, bool vFlipped=true) const;
-	const ofTexture & getTexture() const;
-	ofRectangle getBoundingBox(const string & text, int x, int y) const;
-private:
-	static void init();
-	static ofPixels pixels;
-	void unloadTexture();
-	mutable ofTexture texture;
+class ofBitmapFont
+{
+  public:
+    ofBitmapFont ();
+    ~ofBitmapFont ();
+    ofMesh getMesh (const string & text, int x, int y, ofDrawBitmapMode mode =
+                    OF_BITMAPMODE_MODEL_BILLBOARD, bool vFlipped =
+                    true) const;
+    const ofTexture & getTexture () const;
+    ofRectangle getBoundingBox (const string & text, int x, int y) const;
+  private:
+    static void init ();
+    static ofPixels pixels;
+    void unloadTexture ();
+    mutable ofTexture texture;
 };

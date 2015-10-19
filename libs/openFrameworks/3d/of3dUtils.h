@@ -11,7 +11,7 @@ class ofVec3f;
 /// green (+y) and blue (+z), starting from the origin. 
 //
 /// \param size The size at which to draw the axes.
-void ofDrawAxis(float size);
+void ofDrawAxis (float size);
 
 /// \brief Draws grid planes representing the current reference frame.
 ///
@@ -31,7 +31,9 @@ void ofDrawAxis(float size);
 /// \param x Whether or not the yz plane (at x=0) is drawn.
 /// \param y Whether or not the xz plane (at y=0) is drawn.
 /// \param z Whether or not the xy plane (at z=0) is drawn.
-void ofDrawGrid(float stepSize = 1.25f, size_t numberOfSteps = 8, bool labels = false, bool x = true, bool y = true, bool z = true);
+void ofDrawGrid (float stepSize = 1.25f, size_t numberOfSteps =
+                 8, bool labels = false, bool x = true, bool y =
+                 true, bool z = true);
 
 /// \brief Draws the YZ grid plane representing the current reference frame.
 ///
@@ -44,7 +46,8 @@ void ofDrawGrid(float stepSize = 1.25f, size_t numberOfSteps = 8, bool labels = 
 /// \param stepSize distance between (parallel) lines on the grid
 /// \param numberOfSteps number of lines to draw on each side of the central axis of the grid. A number of 8 will draw 8 lines on each side of the central axis, plus one line at the central axis.
 /// \param labels Whether or not labels are drawn.
-void ofDrawGridPlane(float stepSize = 1.25f, size_t numberOfSteps = 8, bool labels = false );
+void ofDrawGridPlane (float stepSize = 1.25f, size_t numberOfSteps =
+                      8, bool labels = false);
 
 /// \brief Draws an arrow with the current color. 
 ///
@@ -62,11 +65,13 @@ void ofDrawGridPlane(float stepSize = 1.25f, size_t numberOfSteps = 8, bool labe
 /// \param start The start point (tail) of the arrow, expressed as an ofVec3f.
 /// \param end The end point (head) of the arrow, expressed as an ofVec3f. 
 /// \param headSize The size of the arrowhead. 
-void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize = 0.05f);
+void ofDrawArrow (const ofVec3f & start, const ofVec3f & end, float headSize =
+                  0.05f);
 
 /// \brief This function renders a set of 3 axis-aligned circular bands, centered at the origin.
 ///
 /// \param radius The radius of the circular bands. 
 /// \param stripWidth The width of the circular bands. The default is 10 units. 
 /// \param circleRes The resolution of the circular bands. The default is 60 segments.
-void ofDrawRotationAxes(float radius, float stripWidth = 10, int circleRes = 60);
+void ofDrawRotationAxes (float radius, float stripWidth = 10, int circleRes =
+                         60);

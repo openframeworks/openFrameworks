@@ -81,9 +81,9 @@
 /// saturation.
 ///
 /// \tparam PixelType The data type used to represent a single pixel value.
-template<typename PixelType>
-class ofColor_{
-public:
+template < typename PixelType > class ofColor_
+{
+  public:
     /// \name Create an ofColor
     /// \{
 
@@ -93,11 +93,10 @@ public:
     ///     ofColor c;
     ///     ofSetColor(c); // Draw color is now white.
     /// ~~~~
-    ofColor_():
-        r(limit()),
-        g(limit()),
-        b(limit()),
-        a(limit()) {};
+  ofColor_ ():
+    r (limit ()), g (limit ()), b (limit ()), a (limit ())
+    {
+    };
 
     /// \brief Construct an ofColor_ by using channel values.
     ///
@@ -113,7 +112,7 @@ public:
     /// \param green The green component.
     /// \param blue The blue component.
     /// \param alpha The alpha component.
-    ofColor_(float red, float green, float blue, float alpha = limit());
+    ofColor_ (float red, float green, float blue, float alpha = limit ());
 
     /// \brief Construct a grayscale ofColor_ by specifying a single number.
     ///
@@ -127,7 +126,7 @@ public:
     /// ~~~~
     /// \param gray A grayscale value.
     /// \param alpha The opacity of the color.
-    ofColor_(float gray, float alpha = limit());
+    ofColor_ (float gray, float alpha = limit ());
 
     /// \brief Construct an ofColor_ from an existing ofColor_.
     ///
@@ -144,8 +143,8 @@ public:
     ///          precision representation.
     ///
     /// \param color The ofColor_ to copy.
-    template<typename SrcType>
-    ofColor_(const ofColor_<SrcType>& color);
+    template < typename SrcType >
+        ofColor_ (const ofColor_ < SrcType > &color);
 
     /// \brief Construct an ofColor_ from an existing ofColor_.
     ///
@@ -155,7 +154,7 @@ public:
     ///
     /// \param color The ofColor_ to copy.
     /// \param alpha The new alpha value to replace the alpha value in color.
-    ofColor_(const ofColor_<PixelType>& color, float alpha);
+    ofColor_ (const ofColor_ < PixelType > &color, float alpha);
 
     /// \brief Create an ofColor_ from an HSB representation.
     ///
@@ -179,10 +178,10 @@ public:
     /// \param saturation The saturation of the color.
     /// \param brightness The brightness of the color.
     /// \param alpha The alpha value of the color.
-    static ofColor_<PixelType> fromHsb(float hue,
-                                       float saturation,
-                                       float brightness,
-                                       float alpha = limit());
+    static ofColor_ < PixelType > fromHsb (float hue,
+                                           float saturation,
+                                           float brightness,
+                                           float alpha = limit ());
 
     /// \brief Create an ofColor_ from a hexadecimal value.
     ///
@@ -199,7 +198,8 @@ public:
     ///
     /// \param hexColor A color in hexadecimal form.
     /// \param alpha The alpha value of the color.
-    static ofColor_<PixelType> fromHex(int hexColor, float alpha = limit());
+    static ofColor_ < PixelType > fromHex (int hexColor, float alpha =
+                                           limit ());
 
     /// \}
 
@@ -208,14 +208,16 @@ public:
 
     /// \brief A union representing the internal data
     /// \sa r, g, b and a
-    union {
-        struct {
-            PixelType r; ///< \brief The red color component.
-            PixelType g; ///< \brief The green color component.
-            PixelType b; ///< \brief The blue color component.
-            PixelType a; ///< \brief The alpha color component.
+    union
+    {
+        struct
+        {
+            PixelType r;        ///< \brief The red color component.
+            PixelType g;        ///< \brief The green color component.
+            PixelType b;        ///< \brief The blue color component.
+            PixelType a;        ///< \brief The alpha color component.
         };
-        PixelType v[4]; ///< \brief The pixel values as an array.
+        PixelType v[4];         ///< \brief The pixel values as an array.
     };
 
     /// \}
@@ -238,7 +240,7 @@ public:
     /// \param green The green component.
     /// \param blue The blue component.
     /// \param alpha The alpha component.
-    void set(float red, float green, float blue, float alpha = limit());
+    void set (float red, float green, float blue, float alpha = limit ());
 
     /// \brief Set a grayscale ofColor_ by specifying a single number.
     ///
@@ -255,14 +257,14 @@ public:
     ///
     /// \param gray A grayscale value.
     /// \param alpha The opacity of the color.
-    void set(float gray, float alpha = limit());
+    void set (float gray, float alpha = limit ());
 
     /// \brief Set an ofColor_ from an existing ofColor_.
     ///
     /// This will use the R, G, B and A components from the passed color.
     ///
     /// \param color The ofColor_ to copy.
-    void set(const ofColor_<PixelType>& color);
+    void set (const ofColor_ < PixelType > &color);
 
     /// \brief Set an ofColor_ from a hexadecimal representation.
     ///
@@ -285,7 +287,7 @@ public:
     ///
     /// \param hexColor An RGB color in hexadecimal form.
     /// \param alpha The alpha value of the color.
-    void setHex(int hexColor, float alpha = limit());
+    void setHex (int hexColor, float alpha = limit ());
 
     /// \brief Set the hue of this color.
     ///
@@ -295,11 +297,11 @@ public:
     /// ~~~~
     ///
     /// \param hue A hue value to set in the range of 0 - limit().
-    void setHue(float hue);
+    void setHue (float hue);
 
     /// \brief Set the hue angle of this color.
     /// \param angle A hue angle value to set in the range of 0 - 360 degrees.
-    void setHueAngle(float angle);
+    void setHueAngle (float angle);
 
     /// \brief Set the saturation of this color.
     ///
@@ -312,7 +314,7 @@ public:
     ///
     /// \param saturation A saturation value value in the range of 0 - limit().
     /// \sa http://en.wikipedia.org/wiki/HSL_and_HSV
-    void setSaturation(float saturation);
+    void setSaturation (float saturation);
 
     /// \brief Set the brightness of this color.
     ///
@@ -322,17 +324,15 @@ public:
     /// ~~~~
     ///
     /// \param brightness A brightness value to set in the range of 0 - limit().
-    void setBrightness(float brightness);
+    void setBrightness (float brightness);
 
     /// \brief Set the color using HSB components.
     /// \param hue A hue value to set in the range of 0 - limit().
     /// \param saturation A saturation value to set in the range of 0 - limit().
     /// \param brightness A brightness value to set in the range of 0 - limit().
     /// \param alpha An alpha value to set in the range of 0 - limit().
-    void setHsb(float hue,
-                float saturation,
-                float brightness,
-                float alpha = limit());
+    void setHsb (float hue,
+                 float saturation, float brightness, float alpha = limit ());
 
     /// \}
 
@@ -351,7 +351,7 @@ public:
     /// ~~~~
     ///
     /// \returns A reference to itself.
-    ofColor_<PixelType>& clamp();
+    ofColor_ < PixelType > &clamp ();
 
     /// \brief Invert the R, G and B components.
     ///
@@ -379,7 +379,7 @@ public:
     /// ~~~~
     ///
     /// \returns A reference to itself.
-    ofColor_<PixelType>& invert();
+    ofColor_ < PixelType > &invert ();
 
     /// \brief Normalize the R, G and B components.
     ///
@@ -401,7 +401,7 @@ public:
     /// ~~~~~
     ///
     /// \returns A reference to itself.
-    ofColor_<PixelType>& normalize();
+    ofColor_ < PixelType > &normalize ();
 
     /// \brief A linear interpolation between all components of two colors.
     ///
@@ -425,7 +425,8 @@ public:
     ///     A value of 0.0 will yield an unchanged color.  A value of 1.0
     ///     will yield the target color.
     /// \returns A reference to itself.
-    ofColor_<PixelType>& lerp(const ofColor_<PixelType>& target, float amount);
+    ofColor_ < PixelType > &lerp (const ofColor_ < PixelType > &target,
+                                  float amount);
 
     /// \}
 
@@ -435,24 +436,24 @@ public:
     /// \brief A non-destructive version of clamp().
     /// \sa clamp()
     /// \returns A copy of this color, clamped.
-    ofColor_<PixelType> getClamped() const;
+    ofColor_ < PixelType > getClamped ()const;
 
     /// \brief A non-destructive version of invert().
     /// \sa invert()
     /// \returns A copy of this color, inverted.
-    ofColor_<PixelType> getInverted() const;
+    ofColor_ < PixelType > getInverted ()const;
 
     /// \brief A non-destructive version of normalize().
     /// \sa normalize()
     /// \returns A copy of this color, normalized.
-    ofColor_<PixelType> getNormalized() const;
+    ofColor_ < PixelType > getNormalized ()const;
 
 
     /// \brief A non-destructive version of lerp().
     /// \sa lerp()
     /// \returns A copy of this color, lerped.
-    ofColor_<PixelType> getLerped(const ofColor_<PixelType>& target,
-                                  float amount) const;
+    ofColor_ < PixelType > getLerped (const ofColor_ < PixelType > &target,
+                                      float amount) const;
 
     /// \brief Get a 24-bit hexadecimal representation of the RGB color.
     ///
@@ -464,7 +465,7 @@ public:
     /// \warning This method does _not_ encode the alpha component.
     ///
     /// \returns An integer representing an RGB color.
-    int getHex() const;
+    int getHex () const;
 
     /// \brief Get the Hue of this color.
     ///
@@ -473,7 +474,7 @@ public:
     /// always be returned in the range 0 - limit().
     ///
     /// \returns The Hue value in the range 0 - limit().
-    float getHue() const;
+    float getHue () const;
 
     /// \brief Get the Hue angle of this color.
     ///
@@ -482,7 +483,7 @@ public:
     /// always be returned in degrees in the range 0 - 360.
     ///
     /// \returns The Hue angle in the range 0 - 360.
-    float getHueAngle() const;
+    float getHueAngle () const;
 
     /// \brief Get the Saturation of this color.
     ///
@@ -491,7 +492,7 @@ public:
     /// will always be returned in the range 0 - limit().
     ///
     /// \returns The saturation in the range 0 - limit().
-    float getSaturation() const;
+    float getSaturation () const;
 
     /// \brief Calculate the brightness of of the R, G and B components.
     ///
@@ -500,7 +501,7 @@ public:
     /// Processing (HSB).  Note that brightness is also called "Value".
     ///
     /// \returns the brightness in the range 0 - limit().
-    float getBrightness() const;
+    float getBrightness () const;
 
     /// \brief Calculate the lightness of the R, G and B components.
     ///
@@ -508,7 +509,7 @@ public:
     /// method of calculating lightness is used by the Lab and HSL color spaces.
     ///
     /// \returns the lightness in the range 0 - limit().
-    float getLightness() const;
+    float getLightness () const;
 
     /// \brief Extract the hue, saturation and brightness (HSB) from this color.
     ///
@@ -524,10 +525,10 @@ public:
     /// \param hue A reference to the hue to fill. Will be in the range of
     ///     0 - limit().
     /// \param saturation A reference to the saturation to fill. Will be in the
-	///		range of 0 - limit().
+    ///             range of 0 - limit().
     /// \param brightness A reference to the brightness to fill. Will be in the
     ///     range of 0 - limit().
-    void getHsb(float& hue, float& saturation, float& brightness) const;
+    void getHsb (float &hue, float &saturation, float &brightness) const;
 
     /// \brief Get the maximum value of a color component.
     ///
@@ -538,7 +539,7 @@ public:
     /// Use this function to get this maximum number.
     ///
     /// \returns The value associated with a fully saturated color component.
-    static float limit();
+    static float limit ();
 
     /// \}
 
@@ -556,8 +557,9 @@ public:
     ///
     /// \param color The color to assign.
     /// \returns A reference to itself.
-    template<typename SrcType>
-    ofColor_<PixelType>& operator = (const ofColor_<SrcType>& color);
+    template < typename SrcType >
+        ofColor_ < PixelType > &operator = (const ofColor_ < SrcType >
+                                            &color);
 
     /// \brief Assign a color using a grayscale value.
     ///
@@ -576,15 +578,15 @@ public:
     ///
     /// \param value The grayscale value.
     /// \returns A reference to itself.
-    ofColor_<PixelType>& operator = (const float& value);
+    ofColor_ < PixelType > &operator = (const float &value);
 
     /// \brief Test two colors for equality.
     /// \returns true iff the R, G, B and A components are all equal.
-    bool operator == (const ofColor_<PixelType>& color) const;
+    bool operator == (const ofColor_ < PixelType > &color) const;
 
     /// \brief Test two colors for inequality.
     /// \returns true iff any of the R, G, B or A components are not equal.
-    bool operator != (const ofColor_<PixelType>& color) const;
+    bool operator != (const ofColor_ < PixelType > &color) const;
 
     /// \brief Clamped addition operator.
     ///
@@ -594,7 +596,8 @@ public:
     ///
     /// \param color The color to add.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator +  (const ofColor_<PixelType>& color) const;
+    ofColor_ < PixelType > operator + (const ofColor_ < PixelType >
+                                       &color) const;
 
     /// \brief Clamped addition operator.
     ///
@@ -604,7 +607,7 @@ public:
     ///
     /// \param color The value to add.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator +  (const float& color) const;
+    ofColor_ < PixelType > operator + (const float &color) const;
 
     /// \brief Clamped addition operator.
     ///
@@ -614,7 +617,7 @@ public:
     ///
     /// \param color The color to add.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator += (const ofColor_<PixelType>& color);
+    ofColor_ < PixelType > &operator += (const ofColor_ < PixelType > &color);
 
     /// \brief Clamped addition operator.
     ///
@@ -624,7 +627,7 @@ public:
     ///
     /// \param color The value to add.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator += (const float& color);
+    ofColor_ < PixelType > &operator += (const float &color);
 
     /// \brief Clamped subtraction operator.
     ///
@@ -635,7 +638,8 @@ public:
     ///
     /// \param color The color to subtract.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator -  (const ofColor_<PixelType>& color) const;
+    ofColor_ < PixelType > operator - (const ofColor_ < PixelType >
+                                       &color) const;
 
     /// \brief Clamped subtraction operator.
     ///
@@ -645,7 +649,7 @@ public:
     ///
     /// \param value The value to subtract.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator -  (const float& value) const;
+    ofColor_ < PixelType > operator - (const float &value) const;
 
     /// \brief Clamped subtraction operator.
     ///
@@ -653,7 +657,7 @@ public:
     ///
     /// \param color The color to subtract.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator -= (const ofColor_<PixelType>& color);
+    ofColor_ < PixelType > &operator -= (const ofColor_ < PixelType > &color);
 
     /// \brief Clamped subtraction operator.
     ///
@@ -663,7 +667,7 @@ public:
     ///
     /// \param color The value to subtract.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator -= (const float& color);
+    ofColor_ < PixelType > &operator -= (const float &color);
 
     /// \brief Clamped multiplication operator.
     ///
@@ -674,7 +678,8 @@ public:
     ///
     /// \param color The color to multiply.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator *  (const ofColor_<PixelType>& color) const;
+    ofColor_ < PixelType > operator * (const ofColor_ < PixelType >
+                                       &color) const;
 
     /// \brief Clamped scalar multiplication operator.
     ///
@@ -684,7 +689,7 @@ public:
     ///
     /// \param value The value to multiply.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator *  (const float& value) const;
+    ofColor_ < PixelType > operator * (const float &value) const;
 
     /// \brief Clamped multiplication operator.
     ///
@@ -695,7 +700,7 @@ public:
     ///
     /// \param color The color to multiply.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator *= (const ofColor_<PixelType>& color);
+    ofColor_ < PixelType > &operator *= (const ofColor_ < PixelType > &color);
 
     /// \brief Clamped scalar multiplication operator.
     ///
@@ -705,7 +710,7 @@ public:
     ///
     /// \param value The scaler value.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator *= (const float& value);
+    ofColor_ < PixelType > &operator *= (const float &value);
 
     /// \brief Clamped division operator.
     ///
@@ -715,7 +720,8 @@ public:
     ///
     /// \param color The divisor color.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator /  (const ofColor_<PixelType>& color) const;
+    ofColor_ < PixelType > operator / (const ofColor_ < PixelType >
+                                       &color) const;
 
     /// \brief Clamped scalar division operator.
     ///
@@ -725,7 +731,7 @@ public:
     ///
     /// \param value The divisor value.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator /  (const float& value) const;
+    ofColor_ < PixelType > operator / (const float &value) const;
 
     /// \brief Clamped division operator.
     ///
@@ -733,7 +739,7 @@ public:
     ///
     /// \param color The divisor color.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator /= (const ofColor_<PixelType>& color);
+    ofColor_ < PixelType > &operator /= (const ofColor_ < PixelType > &color);
 
     /// \brief Clamped scalar division operator.
     ///
@@ -743,7 +749,7 @@ public:
     ///
     /// \param value The divisor value.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator /= (const float& value);
+    ofColor_ < PixelType > &operator /= (const float &value);
 
     /// \brief Array subscript operator.
     ///
@@ -757,7 +763,7 @@ public:
     ///
     /// \param n An index 0-3 of the component to get.
     /// \returns The value of the requested component.
-    const PixelType& operator [] (std::size_t n) const;
+    const PixelType & operator [] (std::size_t n) const;
 
     /// \brief Array subscript operator.
     ///
@@ -771,7 +777,7 @@ public:
     ///
     /// \param n An index 0-3 of the component to get.
     /// \returns The value of the requested component.
-	PixelType& operator [] (std::size_t n);
+    PixelType & operator [](std::size_t n);
 
     /// \brief An output stream operator.
     ///
@@ -800,12 +806,19 @@ public:
     /// \param os An output stream reference.
     /// \param color The color to write to the output stream.
     /// \returns The passed output stream reference, useful for method chaining.
-    friend ostream& operator << (ostream& os, const ofColor_<PixelType>& color) {
-        if(sizeof(PixelType) == 1) {
-            os << (int) color.r << ", " << (int) color.g << ", " << (int) color.b << ", " << (int) color.a;
-        } else {
-            os << color.r << ", " << color.g << ", " << color.b << ", " << color.a;
-        }
+    friend ostream & operator << (ostream & os,
+                                  const ofColor_ < PixelType > &color)
+    {
+        if (sizeof (PixelType) == 1)
+          {
+              os << (int) color.r << ", " << (int) color.
+                  g << ", " << (int) color.b << ", " << (int) color.a;
+          }
+        else
+          {
+              os << color.r << ", " << color.g << ", " << color.
+                  b << ", " << color.a;
+          }
         return os;
     }
 
@@ -832,29 +845,33 @@ public:
     /// \param is An input stream reference.
     /// \param color The color to fill with the input stream.
     /// \returns The passed input stream reference, useful for method chaining.
-    friend istream& operator >> (istream& is, ofColor_<PixelType>& color) {
-        if(sizeof(PixelType) == 1) {
-            int component;
-            is >> std::skipws >> component;
-            color.r = component;
-            is.ignore(1);
-            is >> std::skipws >> component;
-            color.g = component;
-            is.ignore(1);
-            is >> std::skipws >> component;
-            color.b = component;
-            is.ignore(1);
-            is >> std::skipws >> component;
-            color.a = component;
-        }else{
-            is >> std::skipws >> color.r;
-            is.ignore(1);
-            is >> std::skipws >> color.g;
-            is.ignore(1);
-            is >> std::skipws >> color.b;
-            is.ignore(1);
-            is >> std::skipws >> color.a;
-        }
+    friend istream & operator >> (istream & is, ofColor_ < PixelType > &color)
+    {
+        if (sizeof (PixelType) == 1)
+          {
+              int component;
+              is >> std::skipws >> component;
+              color.r = component;
+              is.ignore (1);
+              is >> std::skipws >> component;
+              color.g = component;
+              is.ignore (1);
+              is >> std::skipws >> component;
+              color.b = component;
+              is.ignore (1);
+              is >> std::skipws >> component;
+              color.a = component;
+          }
+        else
+          {
+              is >> std::skipws >> color.r;
+              is.ignore (1);
+              is >> std::skipws >> color.g;
+              is.ignore (1);
+              is >> std::skipws >> color.b;
+              is.ignore (1);
+              is >> std::skipws >> color.a;
+          }
         return is;
     }
 
@@ -877,32 +894,38 @@ public:
     ///
     /// \{
 
-    static const ofColor_<PixelType> white, gray, black, red, green, blue, cyan, magenta,
-    yellow,aliceBlue,antiqueWhite,aqua,aquamarine,azure,beige,bisque,blanchedAlmond,
-    blueViolet,brown,burlyWood,cadetBlue,chartreuse,chocolate,coral,cornflowerBlue,cornsilk,
-    crimson,darkBlue,darkCyan,darkGoldenRod,darkGray,darkGrey,darkGreen,darkKhaki,
-    darkMagenta,darkOliveGreen,darkorange,darkOrchid,darkRed,darkSalmon,darkSeaGreen,
-    darkSlateBlue,darkSlateGray,darkSlateGrey,darkTurquoise,darkViolet,deepPink,
-    deepSkyBlue,dimGray,dimGrey,dodgerBlue,fireBrick,floralWhite,forestGreen,fuchsia,
-    gainsboro,ghostWhite,gold,goldenRod,grey,greenYellow,honeyDew,hotPink,indianRed,indigo,
-    ivory,khaki,lavender,lavenderBlush,lawnGreen,lemonChiffon,lightBlue,lightCoral,
-    lightCyan,lightGoldenRodYellow,lightGray,lightGrey,lightGreen,lightPink,lightSalmon,
-    lightSeaGreen,lightSkyBlue,lightSlateGray,lightSlateGrey,lightSteelBlue,lightYellow,
-    lime,limeGreen,linen,maroon,mediumAquaMarine,mediumBlue,mediumOrchid,mediumPurple,
-    mediumSeaGreen,mediumSlateBlue,mediumSpringGreen,mediumTurquoise,mediumVioletRed,
-    midnightBlue,mintCream,mistyRose,moccasin,navajoWhite,navy,oldLace,olive,oliveDrab,
-    orange,orangeRed,orchid,paleGoldenRod,paleGreen,paleTurquoise,paleVioletRed,papayaWhip,
-    peachPuff,peru,pink,plum,powderBlue,purple,rosyBrown,royalBlue,saddleBrown,salmon,
-    sandyBrown,seaGreen,seaShell,sienna,silver,skyBlue,slateBlue,slateGray,slateGrey,snow,
-    springGreen,steelBlue,blueSteel,tan,teal,thistle,tomato,turquoise,violet,wheat,whiteSmoke,
-    yellowGreen;
+    static const ofColor_ < PixelType > white, gray, black, red, green, blue,
+        cyan, magenta, yellow, aliceBlue, antiqueWhite, aqua, aquamarine,
+        azure, beige, bisque, blanchedAlmond, blueViolet, brown, burlyWood,
+        cadetBlue, chartreuse, chocolate, coral, cornflowerBlue, cornsilk,
+        crimson, darkBlue, darkCyan, darkGoldenRod, darkGray, darkGrey,
+        darkGreen, darkKhaki, darkMagenta, darkOliveGreen, darkorange,
+        darkOrchid, darkRed, darkSalmon, darkSeaGreen, darkSlateBlue,
+        darkSlateGray, darkSlateGrey, darkTurquoise, darkViolet, deepPink,
+        deepSkyBlue, dimGray, dimGrey, dodgerBlue, fireBrick, floralWhite,
+        forestGreen, fuchsia, gainsboro, ghostWhite, gold, goldenRod, grey,
+        greenYellow, honeyDew, hotPink, indianRed, indigo, ivory, khaki,
+        lavender, lavenderBlush, lawnGreen, lemonChiffon, lightBlue,
+        lightCoral, lightCyan, lightGoldenRodYellow, lightGray, lightGrey,
+        lightGreen, lightPink, lightSalmon, lightSeaGreen, lightSkyBlue,
+        lightSlateGray, lightSlateGrey, lightSteelBlue, lightYellow, lime,
+        limeGreen, linen, maroon, mediumAquaMarine, mediumBlue, mediumOrchid,
+        mediumPurple, mediumSeaGreen, mediumSlateBlue, mediumSpringGreen,
+        mediumTurquoise, mediumVioletRed, midnightBlue, mintCream, mistyRose,
+        moccasin, navajoWhite, navy, oldLace, olive, oliveDrab, orange,
+        orangeRed, orchid, paleGoldenRod, paleGreen, paleTurquoise,
+        paleVioletRed, papayaWhip, peachPuff, peru, pink, plum, powderBlue,
+        purple, rosyBrown, royalBlue, saddleBrown, salmon, sandyBrown,
+        seaGreen, seaShell, sienna, silver, skyBlue, slateBlue, slateGray,
+        slateGrey, snow, springGreen, steelBlue, blueSteel, tan, teal,
+        thistle, tomato, turquoise, violet, wheat, whiteSmoke, yellowGreen;
 
     /// \}
 
 
-private:
-    template<typename SrcType>
-    void copyFrom(const ofColor_<SrcType>& mom);
+  private:
+    template < typename SrcType >
+        void copyFrom (const ofColor_ < SrcType > &mom);
 
 };
 
@@ -911,48 +934,57 @@ private:
 
 /// \typedef ofColor
 /// \brief A typedef representing an 8-bit (`unsigned char`) RGBA color.
-typedef ofColor_<unsigned char> ofColor;
+typedef ofColor_ < unsigned char >ofColor;
 
 /// \typedef ofShortColor
 /// \brief A typedef representing a 16-bit (`unsigned short`) RGBA color.
-typedef ofColor_<unsigned short> ofShortColor;
+typedef ofColor_ < unsigned short >ofShortColor;
 
 /// \typedef ofFloatColor
 /// \brief A typedef representing a floating (`float`) point RGBA color.
-typedef ofColor_<float> ofFloatColor;
+typedef ofColor_ < float >ofFloatColor;
 
 /// \}
 
 
-template<typename PixelType>
-template<typename SrcType>
-ofColor_<PixelType>::ofColor_(const ofColor_<SrcType> & mom){
-	copyFrom(mom);
+template < typename PixelType >
+    template < typename SrcType >
+    ofColor_ < PixelType >::ofColor_ (const ofColor_ < SrcType > &mom)
+{
+    copyFrom (mom);
 }
 
-template<typename PixelType>
-template<typename SrcType>
-ofColor_<PixelType> & ofColor_<PixelType>::operator=(const ofColor_<SrcType> & mom){
-	copyFrom(mom);
-	return *this;
+template < typename PixelType >
+    template < typename SrcType >
+    ofColor_ < PixelType > &ofColor_ <
+    PixelType >::operator= (const ofColor_ < SrcType > &mom)
+{
+    copyFrom (mom);
+    return *this;
 }
 
-template<typename PixelType>
-template<typename SrcType>
-void ofColor_<PixelType>::copyFrom(const ofColor_<SrcType> & mom){
-	const float srcMax = mom.limit();
-	const float dstMax = limit();
-	const float factor = dstMax / srcMax;
+template < typename PixelType >
+    template < typename SrcType >
+    void ofColor_ < PixelType >::copyFrom (const ofColor_ < SrcType > &mom)
+{
+    const float srcMax = mom.limit ();
+    const float dstMax = limit ();
+    const float factor = dstMax / srcMax;
 
-	if(sizeof(SrcType) == sizeof(float)) {
-		// coming from float we need a special case to clamp the values
-		for(int i = 0; i < 4; i++){
-			v[i] = ofClamp(mom[i], 0, 1) * factor;
-		}
-	} else{
-		// everything else is a straight scaling
-		for(int i = 0; i < 4; i++){
-			v[i] = mom[i] * factor;
-		}
-	}
+    if (sizeof (SrcType) == sizeof (float))
+      {
+          // coming from float we need a special case to clamp the values
+          for (int i = 0; i < 4; i++)
+            {
+                v[i] = ofClamp (mom[i], 0, 1) * factor;
+            }
+      }
+    else
+      {
+          // everything else is a straight scaling
+          for (int i = 0; i < 4; i++)
+            {
+                v[i] = mom[i] * factor;
+            }
+      }
 }

@@ -36,14 +36,15 @@
 ///
 /// \warning While ofRectangle takes ofPoint (a typedef for ofVec3f, a 3D
 /// vector), all ofRectangle operations are 2D only, ignoring the z-component.
-class ofRectangle{
-public:
+class ofRectangle
+{
+  public:
 
     /// \name Constructor
     /// \{
 
     /// \brief Construct a rectangle with zero width and zero height at 0, 0.
-    ofRectangle();
+    ofRectangle ();
 
     /// \brief Construct a rectangle using position and size.
     ///
@@ -54,7 +55,7 @@ public:
     /// \param py The y-position of the rectangle.
     /// \param w The width of the rectangle.
     /// \param h The height of the rectangle.
-    ofRectangle(float px, float py, float w, float h);
+    ofRectangle (float px, float py, float w, float h);
 
     /// \brief Construct a rectangle from a point and dimensions.
     ///
@@ -66,11 +67,11 @@ public:
     /// \param p The ofPoint representing the position of the rectangle.
     /// \param w The width of the rectangle.
     /// \param h The height of the rectangle.
-    ofRectangle(const ofPoint& p, float w, float h);
+      ofRectangle (const ofPoint & p, float w, float h);
 
     /// \brief Construct a rectangle by copying another rectangle.
     /// \param rect The rectangle to copy.
-    ofRectangle(const ofRectangle& rect);
+      ofRectangle (const ofRectangle & rect);
 
     /// \brief Construct a rectangle by defining two corners.
     ///
@@ -78,10 +79,10 @@ public:
     ///
     /// \param p0 An ofPoint representing the upper left hand corner.
     /// \param p1 An ofPoint representing the lower right hand corner.
-    ofRectangle(const ofPoint& p0, const ofPoint& p1);
+      ofRectangle (const ofPoint & p0, const ofPoint & p1);
 
     /// \brief Destroy the rectangle.
-    virtual ~ofRectangle();
+      virtual ~ ofRectangle ();
 
     /// \}
 
@@ -97,7 +98,7 @@ public:
     /// \param py The new y-position.
     /// \param w The new width.
     /// \param h The new height.
-    void set(float px, float py, float w, float h);
+    void set (float px, float py, float w, float h);
 
     /// \brief Set the position and size of the rectangle.
     ///
@@ -109,11 +110,11 @@ public:
     /// \param p The new position.
     /// \param w The new width.
     /// \param h The new height.
-    void set(const ofPoint& p, float w, float h);
+    void set (const ofPoint & p, float w, float h);
 
     /// \brief Set the position and size by copying them from anohter rectangle.
     /// \param rect The rectangle to copy.
-    void set(const ofRectangle& rect);
+    void set (const ofRectangle & rect);
 
     /// \brief Set the position and size of the rectangle using corners.
     ///
@@ -121,40 +122,40 @@ public:
     ///
     /// \param p0 The ofPoint representing the upper left hand corner.
     /// \param p1 The ofPoint representing the lower right hand corner.
-    void set(const ofPoint& p0, const ofPoint& p1);
+    void set (const ofPoint & p0, const ofPoint & p1);
 
     /// \brief Set the x-position of the rectangle.
     /// \param px The new x-position.
-    void setX(float px);
+    void setX (float px);
 
     /// \brief Set the y-position of the rectangle.
     /// \param py The new y-position.
-    void setY(float py);
+    void setY (float py);
 
     /// \brief Set the width of the rectangle.
     /// \param w The new width.
-    void setWidth(float w);
+    void setWidth (float w);
 
     /// \brief Set the height of the rectangle.
     /// \param h The new height.
-    void setHeight(float h);
+    void setHeight (float h);
 
     /// \brief Set the position of the rectangle.
     /// \param px The new x-position.
     /// \param py The new y-position.
-    void setPosition(float px, float py);
+    void setPosition (float px, float py);
 
     /// \brief Set the position of the rectangle.
     ///
     /// \warning The z-component of the passed ofPoint is ignored.
     ///
     /// \param p The position as an ofPoint.
-    void setPosition(const ofPoint& p);
+    void setPosition (const ofPoint & p);
 
-	/// \brief Set the size of the rectangle.
-	/// \param w The new width.
-	/// \param h The new height.
-	void setSize(float w, float h);
+    /// \brief Set the size of the rectangle.
+    /// \param w The new width.
+    /// \param h The new height.
+    void setSize (float w, float h);
 
     /// \brief Set position and size of the rectangle from the center.
     ///
@@ -165,7 +166,7 @@ public:
     /// \param py The y-position of the rectangle's center.
     /// \param w The width of the rectangle.
     /// \param h The height of the rectangle.
-    void setFromCenter(float px, float py, float w, float h);
+    void setFromCenter (float px, float py, float w, float h);
 
     /// \brief Set position and size of the rectangle from the center.
     ///
@@ -175,7 +176,7 @@ public:
     /// \param p The position of the rectangle's center as an ofPoint.
     /// \param w The width of the rectangle.
     /// \param h The height of the rectangle.
-    void setFromCenter(const ofPoint& p, float w, float h);
+    void setFromCenter (const ofPoint & p, float w, float h);
 
     /// \}
 
@@ -185,22 +186,22 @@ public:
     /// \brief Translate the rectangle's position by an x and y amount.
     /// \param dx The amount to translate in the x direction.
     /// \param dy The amount to translate in the y direction.
-    void translate(float dx, float dy);
+    void translate (float dx, float dy);
 
     /// \brief Translate the rectangle's position by an x and y amount.
     ///
     /// \warning The z-component of the passed ofPoint is ignored.
     ///
     /// \param dp The amount to translate as an ofPoint.
-    void translate(const ofPoint& dp);
+    void translate (const ofPoint & dp);
 
     /// \brief Translate the x-position of the rectangle.
     /// \param dx The amount to translate on the x-axis.
-    void translateX(float dx);
+    void translateX (float dx);
 
     /// \brief Translate the y-position of the rectangle.
     /// \param dy The amount to translate on the y-axis.
-    void translateY(float dy);
+    void translateY (float dy);
 
     /// \brief Scale the rectangle.
     ///
@@ -208,7 +209,7 @@ public:
     /// position.
     ///
     /// \param s The scaling factor.
-    void scale(float s);
+    void scale (float s);
 
     /// \brief Scale the rectangle.
     ///
@@ -230,7 +231,7 @@ public:
     /// ~~~~
     /// \param sX The width-scaling factor.
     /// \param sY The height-scaling factor.
-    void scale(float sX, float sY);
+    void scale (float sX, float sY);
 
     /// \brief Scale the rectangle.
     ///
@@ -255,21 +256,21 @@ public:
     /// \warning The z-component of the passed ofPoint is ignored.
     ///
     /// \param s The scaling factor.
-    void scale(const ofPoint& s);
+    void scale (const ofPoint & s);
 
     /// \brief Scale the width of the rectangle.
     ///
     /// This will scale the width but will not change the position or height.
     ///
     /// \param sX The width-scaling factor.
-    void scaleWidth(float sX);
+    void scaleWidth (float sX);
 
     /// \brief Scale the height of the rectangle.
     ///
     /// This will scale the height but will not change the position and width.
     ///
     /// \param sY The height-scaling factor.
-    void scaleHeight(float sY);
+    void scaleHeight (float sY);
 
     /// \brief Scales both the width and height the ofRectangle from its center.
     ///
@@ -277,7 +278,7 @@ public:
     /// height, x, and y will be adjusted.
     ///
     /// \param s The scaling factor.
-    void scaleFromCenter(float s);
+    void scaleFromCenter (float s);
 
     /// \brief Scales both the width and height the ofRectangle from its center.
     ///
@@ -286,7 +287,7 @@ public:
     ///
     /// \param sX the width-scaling factor.
     /// \param sY the height-scaling factor.
-    void scaleFromCenter(float sX, float sY);
+    void scaleFromCenter (float sX, float sY);
 
     /// \brief Scales both the width and height the ofRectangle from its center.
     ///
@@ -309,7 +310,7 @@ public:
     /// \warning The z-component of the passed ofPoint is ignored.
     ///
     /// \param s The scaling factor.
-    void scaleFromCenter(const ofPoint& s);
+    void scaleFromCenter (const ofPoint & s);
 
     /// \brief Scale the rectanle using a target ofRectangle and ofScaleMode.
     ///
@@ -365,8 +366,8 @@ public:
     ///
     /// \param targetRect The Target Rectangle to scale to.
     /// \param scaleMode The scale mode to use when scaling.
-    void scaleTo(const ofRectangle& targetRect,
-                 ofScaleMode scaleMode = OF_SCALEMODE_FIT);
+    void scaleTo (const ofRectangle & targetRect,
+                  ofScaleMode scaleMode = OF_SCALEMODE_FIT);
 
 
     /// \brief Scale the rectangle using a target ofRectangle and parameters.
@@ -390,10 +391,10 @@ public:
     /// \param subjectAspectRatioMode Aspect ratio scaling mode.
     /// \param sharedHorzAnchor The horizontal alignment method.
     /// \param sharedVertAnchor The vertical alignment method.
-    void scaleTo(const ofRectangle& targetRect,
-                 ofAspectRatioMode subjectAspectRatioMode,
-                 ofAlignHorz sharedHorzAnchor = OF_ALIGN_HORZ_CENTER,
-                 ofAlignVert sharedVertAnchor = OF_ALIGN_VERT_CENTER);
+    void scaleTo (const ofRectangle & targetRect,
+                  ofAspectRatioMode subjectAspectRatioMode,
+                  ofAlignHorz sharedHorzAnchor = OF_ALIGN_HORZ_CENTER,
+                  ofAlignVert sharedVertAnchor = OF_ALIGN_VERT_CENTER);
 
     /// \brief Scale the rectangle using a target ofRectangle and parameters.
     ///
@@ -434,12 +435,12 @@ public:
     /// \param modelVertAnchor The target vertical alignment method.
     /// \param subjectHorzAnchor The subject horizontal alignment method.
     /// \param subjectVertAnchor The subject vertical alignment method.
-    void scaleTo(const ofRectangle& targetRect,
-                 ofAspectRatioMode subjectAspectRatioMode,
-                 ofAlignHorz modelHorzAnchor,
-                 ofAlignVert modelVertAnchor,
-                 ofAlignHorz subjectHorzAnchor,
-                 ofAlignVert subjectVertAnchor);
+    void scaleTo (const ofRectangle & targetRect,
+                  ofAspectRatioMode subjectAspectRatioMode,
+                  ofAlignHorz modelHorzAnchor,
+                  ofAlignVert modelVertAnchor,
+                  ofAlignHorz subjectHorzAnchor,
+                  ofAlignVert subjectVertAnchor);
 
     /// \}
 
@@ -466,8 +467,8 @@ public:
     ///
     /// \param targetX The x-position to align this rectangle to.
     /// \param thisHorzAnchor The edge of this rectangle to align.
-    void alignToHorz(const float& targetX,
-                     ofAlignHorz thisHorzAnchor = OF_ALIGN_HORZ_CENTER);
+    void alignToHorz (const float &targetX,
+                      ofAlignHorz thisHorzAnchor = OF_ALIGN_HORZ_CENTER);
 
     /// \brief Horizontally align two rectangles.
     ///
@@ -482,8 +483,8 @@ public:
     ///
     /// \param targetRect The target rectangle to align this rectangle to.
     /// \param sharedAnchor The common edge of the rectangles to align.
-    void alignToHorz(const ofRectangle& targetRect,
-                     ofAlignHorz sharedAnchor = OF_ALIGN_HORZ_CENTER);
+    void alignToHorz (const ofRectangle & targetRect,
+                      ofAlignHorz sharedAnchor = OF_ALIGN_HORZ_CENTER);
 
     /// \brief Horizontally align two rectangles.
     ///
@@ -496,9 +497,9 @@ public:
     /// \param targetRect The target rectangle to align this rectangle to.
     /// \param targetHorzAnchor The edge of the other rectangle to align.
     /// \param thisHorzAnchor The edge of this rectangle to align.
-    void alignToHorz(const ofRectangle& targetRect,
-                     ofAlignHorz targetHorzAnchor,
-                     ofAlignHorz thisHorzAnchor);
+    void alignToHorz (const ofRectangle & targetRect,
+                      ofAlignHorz targetHorzAnchor,
+                      ofAlignHorz thisHorzAnchor);
 
     /// \brief Vertically align this ofRectangle to a target y-position.
     ///
@@ -521,8 +522,8 @@ public:
     ///
     /// \param targetY The target y-position to align this rectangle to.
     /// \param sharedAnchor The alignment position of this ofRectangle to use.
-    void alignToVert(const float& targetY,
-                     ofAlignVert sharedAnchor = OF_ALIGN_VERT_CENTER);
+    void alignToVert (const float &targetY,
+                      ofAlignVert sharedAnchor = OF_ALIGN_VERT_CENTER);
 
     /// \brief Vertically align this ofRectangle to another target ofRectangle.
     ///
@@ -533,8 +534,8 @@ public:
     ///
     /// \param targetRect The target ofRectangle to align this rectangle to.
     /// \param sharedAnchor The alignment position for both rectangles to use.
-    void alignToVert(const ofRectangle& targetRect,
-                     ofAlignVert sharedAnchor = OF_ALIGN_VERT_CENTER);
+    void alignToVert (const ofRectangle & targetRect,
+                      ofAlignVert sharedAnchor = OF_ALIGN_VERT_CENTER);
 
 
     /// \brief Vertically align this ofRectangle to another target ofRectangle.
@@ -545,9 +546,9 @@ public:
     /// \param targetRect The target ofRectangle to align this rectangle to.
     /// \param targetVertAnchor The alignment anchor for this rectangle.
     /// \param thisVertAnchor The alignment anchor for the other rectangle.
-    void alignToVert(const ofRectangle& targetRect,
-                     ofAlignVert targetVertAnchor,
-                     ofAlignVert thisVertAnchor);
+    void alignToVert (const ofRectangle & targetRect,
+                      ofAlignVert targetVertAnchor,
+                      ofAlignVert thisVertAnchor);
 
     /// \brief Align this ofRectangle to an ofPoint in both x- and y dimentions.
     ///
@@ -578,9 +579,9 @@ public:
     /// \param targetPoint The target ofPoint to align to.
     /// \param thisHorzAnchor The horizontal alignment anchor.
     /// \param thisVertAnchor The vertical alignment anchor.
-    void alignTo(const ofPoint& targetPoint,
-                ofAlignHorz thisHorzAnchor = OF_ALIGN_HORZ_CENTER,
-                ofAlignVert thisVertAnchor = OF_ALIGN_VERT_CENTER);
+    void alignTo (const ofPoint & targetPoint,
+                  ofAlignHorz thisHorzAnchor = OF_ALIGN_HORZ_CENTER,
+                  ofAlignVert thisVertAnchor = OF_ALIGN_VERT_CENTER);
 
     /// \brief Vertically align this ofRectangle to another target ofRectangle.
     ///
@@ -597,9 +598,9 @@ public:
     /// \param targetRect The target ofRectangle to align this rectangle to.
     /// \param sharedHorzAnchor The alignment anchor for both rectangles.
     /// \param sharedVertAnchor The alignment anchor for both rectangles.
-    void alignTo(const ofRectangle& targetRect,
-                 ofAlignHorz sharedHorzAnchor = OF_ALIGN_HORZ_CENTER,
-                 ofAlignVert sharedVertAnchor = OF_ALIGN_VERT_CENTER);
+    void alignTo (const ofRectangle & targetRect,
+                  ofAlignHorz sharedHorzAnchor = OF_ALIGN_HORZ_CENTER,
+                  ofAlignVert sharedVertAnchor = OF_ALIGN_VERT_CENTER);
 
 
     /// \brief Vertically align this ofRectangle to another target ofRectangle.
@@ -616,11 +617,10 @@ public:
     /// \param targetVertAnchor The horizontal alignment anchor for the target rectangle.
     /// \param thisHorzAnchor The horizontal alignment anchor for this rectangle.
     /// \param thisVertAnchor The vertical alignment anchor for this rectangle.
-    void alignTo(const ofRectangle& targetRect,
-                 ofAlignHorz targetHorzAnchor,
-                 ofAlignVert targetVertAnchor,
-                 ofAlignHorz thisHorzAnchor,
-                 ofAlignVert thisVertAnchor);
+    void alignTo (const ofRectangle & targetRect,
+                  ofAlignHorz targetHorzAnchor,
+                  ofAlignVert targetVertAnchor,
+                  ofAlignHorz thisHorzAnchor, ofAlignVert thisVertAnchor);
 
     /// \}
 
@@ -639,7 +639,7 @@ public:
     /// \param px The x-coordinate to test.
     /// \param py The y-coordinate to test.
     /// \returns true if px and py are inside this ofRectangle.
-    bool inside(float px, float py) const;
+    bool inside (float px, float py) const;
 
     /// \brief Determines if the ofPoint is within the ofRectangle.
     ///
@@ -654,7 +654,7 @@ public:
     ///
     /// \param p The point to test.
     /// \returns true if the point p is inside this ofRectangle.
-    bool inside(const ofPoint& p) const;
+    bool inside (const ofPoint & p) const;
 
     /// \brief Determines if another ofRectangle is within the ofRectangle.
     ///
@@ -663,7 +663,7 @@ public:
     ///
     /// \param rect The ofRectangle to test.
     /// \returns true if all four corners of the rect are within this rectangle.
-    bool inside(const ofRectangle& rect) const;
+    bool inside (const ofRectangle & rect) const;
 
     /// \brief Determines if a line segment is within the ofRectangle.
     ///
@@ -677,7 +677,7 @@ public:
     /// \param p0 The first point to test.
     /// \param p1 The second point to test.
     /// \returns true if both points are inside the rectangle.
-    bool inside(const ofPoint& p0, const ofPoint& p1) const;
+    bool inside (const ofPoint & p0, const ofPoint & p1) const;
 
     /// \brief Determines if another rectangle intersects with the ofRectangle.
     ///
@@ -687,7 +687,7 @@ public:
     /// \param rect The rectangle to test.
     /// \returns `true` if the area contained within the ofRectangle overlaps
     ///     with the area contained within the passed ofRectangle.
-    bool intersects(const ofRectangle& rect) const;
+    bool intersects (const ofRectangle & rect) const;
 
     /// \brief Determines if a line segment intersects with the ofRectangle.
     ///
@@ -698,7 +698,7 @@ public:
     /// \returns `true` if the line segment defined by the two passed ofPoints
     ///     either crosses the perimeter of the ofRectangle or is completely
     ///     contained within.
-    bool intersects(const ofPoint& p0, const ofPoint& p1) const;
+    bool intersects (const ofPoint & p0, const ofPoint & p1) const;
 
     /// \brief Grow the ofRectangle to include the given (x, y) coordinates.
     ///
@@ -708,7 +708,7 @@ public:
     ///
     /// \param px The x-coordinate to include.
     /// \param py The y-coordiante to include.
-    void growToInclude(float px, float py);
+    void growToInclude (float px, float py);
 
     /// \brief Grow the ofRectangle to include the given point.
     ///
@@ -719,7 +719,7 @@ public:
     /// rectangle, this rectangle will remain unchanged.
     ///
     /// \param p The position to include.
-    void growToInclude(const ofPoint& p);
+    void growToInclude (const ofPoint & p);
 
     /// \brief Grow the ofRectangle to include the given ofRectangle.
     ///
@@ -728,7 +728,7 @@ public:
     /// rectangle, this rectangle will remain unchanged.
     ///
     /// \param rect The rectangle to include.
-    void growToInclude(const ofRectangle& rect);
+    void growToInclude (const ofRectangle & rect);
 
     /// \brief Grow the ofRectangle to include the given line segment.
     ///
@@ -740,7 +740,7 @@ public:
     ///
     /// \param p0 The first point to include.
     /// \param p1 The second point to include.
-    void growToInclude(const ofPoint& p0, const ofPoint& p1);
+    void growToInclude (const ofPoint & p0, const ofPoint & p1);
 
     /// \brief Get the intersecting area between this rectangle and another.
     ///
@@ -759,7 +759,7 @@ public:
     /// \param rect The rectangle to intersect.
     /// \returns A new ofRectangle representing the intersecting area or an
     ///          empty rectangle (0, 0, 0, 0) if there is no intersection.
-    ofRectangle getIntersection(const ofRectangle& rect) const;
+    ofRectangle getIntersection (const ofRectangle & rect) const;
 
     /// \brief Get the union area between this rectangle and anohter.
     ///
@@ -767,7 +767,7 @@ public:
     /// \param rect The rectangle to unite with.
     /// \returns A new ofRectangle whose area contains both the area of the
     ///          this rectangle and the passed rectangle..
-    ofRectangle getUnion(const ofRectangle& rect) const;
+    ofRectangle getUnion (const ofRectangle & rect) const;
 
     /// \}
 
@@ -802,7 +802,7 @@ public:
     /// >= 0. This method can be used to ensure that the rectangle is
     /// "standardized". If the rectangle is non-standard, it will modify the x /
     /// width and y / height values into their respective standardized versions.
-    void standardize();
+    void standardize ();
 
     /// \brief Get the standardized representation of this rectangle..
     ///
@@ -810,7 +810,7 @@ public:
     /// of the standardize() method.
     ///
     /// \returns the Standardized version of this ofRectangle.
-    ofRectangle getStandardized() const;
+    ofRectangle getStandardized () const;
 
     /// \brief Returns true if this ofRectangle is standardized.
     ///
@@ -818,7 +818,7 @@ public:
     /// of the standardize() method.
     ///
     /// \returns true if both width >= 0 and height >= 0.
-    bool isStandardized() const;
+    bool isStandardized () const;
 
     /// \}
 
@@ -840,7 +840,7 @@ public:
     /// ~~~~
     ///
     /// \returns The area of the rectangle.
-    float getArea() const;
+    float getArea () const;
 
 
     /// \brief Gets the perimeter of the ofRectangle.
@@ -858,7 +858,7 @@ public:
     /// ~~~~
     ///
     /// \returns The perimeter of the rectangle.
-    float getPerimeter() const;
+    float getPerimeter () const;
 
     /// \brief Gets the ratio of width to height of the ofRectangle.
     ///
@@ -873,74 +873,74 @@ public:
     /// ~~~~
     ///
     /// \returns The aspect ratio of the rectangle.
-    float getAspectRatio() const;
+    float getAspectRatio () const;
 
     /// \brief Determines if the ofRectangle's area is zero.
     /// \sa getArea().
     /// \returns true if both the width == 0 and height == 0.
-    bool isEmpty() const;
+    bool isEmpty () const;
 
     /// \brief Get the minimum x- and y- coordinates of the ofRectangle.
     /// \returns The minimum x- and y- coordinates of the rectangle.
-    ofPoint getMin() const;
+    ofPoint getMin () const;
 
     /// \brief Get the maximum x- and y- coordinates of the ofRectangle.
     /// \returns The maximum x- and y- coordinates of the rectangle.
-    ofPoint getMax() const;
+    ofPoint getMax () const;
 
     /// \brief Get the smallest x-position of the ofRectangle.
     /// \returns The smallest x-position of the rectangle.
-    float getMinX() const;
+    float getMinX () const;
 
     /// \brief Get the largest x-position of the ofRectangle.
     /// \returns The largest x-position of the rectangle.
-    float getMaxX() const;
+    float getMaxX () const;
 
     /// \brief Get the smallest y-position of the ofRectangle.
     /// \returns The smallest y-position of the rectangle.
-    float getMinY() const;
+    float getMinY () const;
 
     /// \brief Get the largest y-position of the ofRectangle.
     /// \returns The largest y-position of the rectangle.
-    float getMaxY() const;
+    float getMaxY () const;
 
     /// \brief Gets the x-position of the left edge of the ofRectangle.
     /// \sa getMinX()
     /// \returns The x-position of the left edge of the rectangle.
-    float getLeft() const;
+    float getLeft () const;
 
     /// \brief Gets the x-position of the right edge of the ofRectangle.
     /// \sa getMaxX()
     /// \returns The y-position of the right edge of the rectangle.
-    float getRight() const;
+    float getRight () const;
 
     /// \brief Gets the y-position of the top edge of the ofRectangle.
     /// \sa getMinY()
     /// \returns The y-position of the top edge of the rectangle.
-    float getTop() const;
+    float getTop () const;
 
     /// \brief Gets the y-position of the bottom edge of the ofRectangle.
     /// \sa getMaxY()
     /// \returns The y-position of the bottom edge of the rectangle.
-    float getBottom() const;
+    float getBottom () const;
 
     /// \brief Get the top-left coordinates of the ofRectangle.
     /// \sa getMin()
     /// \returns The top-left coordinates of the rectangle.
-    ofPoint getTopLeft() const;
+    ofPoint getTopLeft () const;
 
     /// \brief Get the top-right coordinates of the ofRectangle.
     /// \returns The top-right coordinates of the rectangle.
-    ofPoint getTopRight() const;
+    ofPoint getTopRight () const;
 
     /// \brief Get the bottom-left coordinates of the ofRectangle.
     /// \returns The bottom-left coordinates of the rectangle.
-    ofPoint getBottomLeft() const;
+    ofPoint getBottomLeft () const;
 
     /// \brief Get the bottom-right coordinates of the ofRectangle.
     /// \sa getMax()
     /// \returns The bottom-right coordinates of the rectangle.
-    ofPoint getBottomRight() const;
+    ofPoint getBottomRight () const;
 
     /// \brief A convenience method that returns the value of one of
     /// the horizontal edges of the ofRectangle using the `ofAlignHorz` enum.
@@ -956,7 +956,7 @@ public:
     ///
     /// \param anchor The anchor position to query.
     /// \returns the value of the referenced anchor position.
-    float getHorzAnchor(ofAlignHorz anchor) const;
+    float getHorzAnchor (ofAlignHorz anchor) const;
 
     /// \brief A convenience method that returns the value of one of the
     /// vertical edges of the ofRectangle using the ofAlignVert enum.
@@ -972,14 +972,14 @@ public:
     ///
     /// \param anchor The anchor position to query.
     /// \returns the value of the referenced anchor position.
-    float getVertAnchor(ofAlignVert anchor) const;
+    float getVertAnchor (ofAlignVert anchor) const;
 
     /// \brief Get the ofRectangle's position.
     ///
     /// \warning The z-component of the returned ofPoint is undefined.
     ///
     /// \returns The rectangle's position.
-    ofPoint getPosition() const;
+    ofPoint getPosition () const;
 
     /// \brief Get a reference to the ofRectangle's position.
     ///
@@ -988,30 +988,30 @@ public:
     /// ofRectangle operations.
     ///
     /// \returns A reference to the position of the rectangle.
-    ofPoint& getPositionRef();
+      ofPoint & getPositionRef ();
 
     /// \brief Get the coordiantes of the ofRectangle's center.
     ///
     /// \warning The z-component of the returned ofPoint will always be 0.
     ///
     /// \returns The coordinates of the center of the rectangle (z = 0).
-    ofPoint getCenter() const;
+    ofPoint getCenter () const;
 
     /// \brief Gets the x-position of the ofRectangle.
     /// \returns The x-position of the rectangle.
-    float getX() const;
+    float getX () const;
 
     /// \brief Gets the y-position of the ofRectangle.
     /// \returns the y-position of the rectangle.
-    float getY() const;
+    float getY () const;
 
     /// \brief Gets the width of the ofRectangle.
     /// \returns The width of the rectangle.
-    float getWidth() const;
+    float getWidth () const;
 
     /// \brief Gets the height of the ofRectangle.
     /// \returns The height of the rectangle.
-    float getHeight() const;
+    float getHeight () const;
 
     /// \}
 
@@ -1021,33 +1021,33 @@ public:
     /// \brief Assignment operator.
     /// \param rect The rectangle to assign.
     /// \returns A reference to this rectangle.
-    ofRectangle& operator = (const ofRectangle& rect);
+      ofRectangle & operator = (const ofRectangle & rect);
 
     /// \brief Returns a new ofRectangle where the x and y-positions of the
     /// rectangle are offset by the (x, y) coordinates of the ofPoint.
     /// \param p The point to translate.
     /// \returns The translated ofRectangle.
-    ofRectangle operator + (const ofPoint& p);
+    ofRectangle operator + (const ofPoint & p);
 
-	/// \brief Returns a new ofRectangle where the x and y-positions of the
-	/// rectangle are offset by the (x, y) coordinates of the ofPoint.
-	/// \param p The point to translate.
-	/// \returns The translated ofRectangle.
-	ofRectangle operator - (const ofPoint& p);
+    /// \brief Returns a new ofRectangle where the x and y-positions of the
+    /// rectangle are offset by the (x, y) coordinates of the ofPoint.
+    /// \param p The point to translate.
+    /// \returns The translated ofRectangle.
+    ofRectangle operator - (const ofPoint & p);
 
     /// \brief If both ofRectangles have the same x, y, width, and height,
     /// they are considered equal.
     /// \param rect The rectangle to compare.
     /// \returns True if the rectangles are equal.
-    bool operator == (const ofRectangle& rect) const;
+    bool operator == (const ofRectangle & rect) const;
 
     /// \brief If the two ofRectangles differ in x, y, width, or height, they
     /// are considered unequal.
     /// \param rect The rectangle to compare.
     /// \returns True if the rectangles are not equal.
-    bool operator != (const ofRectangle& rect) const;
-    
-    bool isZero() const;
+    bool operator != (const ofRectangle & rect) const;
+
+    bool isZero () const;
 
 
     /// \}
@@ -1063,10 +1063,10 @@ public:
     ofPoint position;
 
     /// \brief The x-position of the ofRectangle.
-    float& x;
+    float &x;
 
     /// \brief The y-position of the ofRectangle.
-    float& y;
+    float &y;
 
     /// \brief The width of the ofRectangle.
     float width;
@@ -1080,8 +1080,8 @@ public:
 /// \cond INTERNAL
 /// \warning The internal z-component of the ofPoint is preserved even though it
 /// is not used.
-ostream& operator<<(ostream& os, const ofRectangle& rect);
+ostream & operator<< (ostream & os, const ofRectangle & rect);
 /// \warning The internal z-component of the ofPoint is preserved even though it
 /// is not used.
-istream& operator>>(istream& is, ofRectangle& rect);
+istream & operator>> (istream & is, ofRectangle & rect);
 /// \endcond

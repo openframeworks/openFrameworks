@@ -23,39 +23,49 @@
 /// ![tessellation](graphics/tessellation.jpg)
 class ofTessellator
 {
-public:	
-	ofTessellator();
-	~ofTessellator();
+  public:
+    ofTessellator ();
+    ~ofTessellator ();
 
-	/// \brief Copy constructor to copy properties from one tessellator to another. 
-	ofTessellator(const ofTessellator & mom);
+    /// \brief Copy constructor to copy properties from one tessellator to another. 
+    ofTessellator (const ofTessellator & mom);
 
-	/// \brief Operator overloading to copy properties from one tessellator to another. 
-	ofTessellator & operator=(const ofTessellator & mom);
+    /// \brief Operator overloading to copy properties from one tessellator to another. 
+      ofTessellator & operator= (const ofTessellator & mom);
 
-	/// \brief Tessellates a vector of ofPolyline instances into a single
-	/// ofMesh instance using the winding mode set in ofPolyWindingMode.
-	void tessellateToMesh( const vector<ofPolyline>& src, ofPolyWindingMode polyWindingMode, ofMesh & dstmesh, bool bIs2D=false );
-	
-	/// \brief Tessellates a ofPolyline instance into a single ofMesh instance
-	/// using the winding mode set in ofPolyWindingMode.
-	void tessellateToMesh( const ofPolyline& src,  ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D=false );
+    /// \brief Tessellates a vector of ofPolyline instances into a single
+    /// ofMesh instance using the winding mode set in ofPolyWindingMode.
+    void tessellateToMesh (const vector < ofPolyline > &src,
+                           ofPolyWindingMode polyWindingMode,
+                           ofMesh & dstmesh, bool bIs2D = false);
 
-	/// \brief Tessellates a vector of ofPolyline instances into vector of
-	/// ofPolyline instances using the winding mode set in ofPolyWindingMode.	
-	void tessellateToPolylines( const vector<ofPolyline>& src, ofPolyWindingMode polyWindingMode, vector<ofPolyline>& dstpoly, bool bIs2D=false );
+    /// \brief Tessellates a ofPolyline instance into a single ofMesh instance
+    /// using the winding mode set in ofPolyWindingMode.
+    void tessellateToMesh (const ofPolyline & src,
+                           ofPolyWindingMode polyWindingMode,
+                           ofMesh & dstmesh, bool bIs2D = false);
 
-	/// \brief Tessellate multiple polylines into a single polyline.
-	void tessellateToPolylines( const ofPolyline & src, ofPolyWindingMode polyWindingMode, vector<ofPolyline>& dstpoly, bool bIs2D=false );
+    /// \brief Tessellates a vector of ofPolyline instances into vector of
+    /// ofPolyline instances using the winding mode set in ofPolyWindingMode.       
+    void tessellateToPolylines (const vector < ofPolyline > &src,
+                                ofPolyWindingMode polyWindingMode,
+                                vector < ofPolyline > &dstpoly, bool bIs2D =
+                                false);
 
-private:
-	
-	void performTessellation( ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D );
-	void performTessellation(ofPolyWindingMode polyWindingMode, vector<ofPolyline>& dstpoly, bool bIs2D );
-	void init();
+    /// \brief Tessellate multiple polylines into a single polyline.
+    void tessellateToPolylines (const ofPolyline & src,
+                                ofPolyWindingMode polyWindingMode,
+                                vector < ofPolyline > &dstpoly, bool bIs2D =
+                                false);
 
-	TESStesselator * cacheTess;
-	TESSalloc tessAllocator;
+  private:
+
+    void performTessellation (ofPolyWindingMode polyWindingMode,
+                              ofMesh & dstmesh, bool bIs2D);
+    void performTessellation (ofPolyWindingMode polyWindingMode,
+                              vector < ofPolyline > &dstpoly, bool bIs2D);
+    void init ();
+
+    TESStesselator *cacheTess;
+    TESSalloc tessAllocator;
 };
-
-
