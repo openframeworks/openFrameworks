@@ -10,189 +10,205 @@
 #include "ofBufferObject.h"
 #include <map>
 
-class ofVbo {
-public:
-	
-	ofVbo();
-	ofVbo(const ofVbo & mom);
-	ofVbo & operator=(const ofVbo& mom);
-	~ofVbo();
+class ofVbo
+{
+  public:
 
-	void setMesh(const ofMesh & mesh, int usage);
-	void setMesh(const ofMesh & mesh, int usage, bool useColors, bool useTextures, bool useNormals);
-	
-	void setVertexData(const ofVec3f * verts, int total, int usage);
-	void setVertexData(const ofVec2f * verts, int total, int usage);
+    ofVbo ();
+    ofVbo (const ofVbo & mom);
+      ofVbo & operator= (const ofVbo & mom);
+     ~ofVbo ();
 
-	void setColorData(const ofFloatColor * colors, int total, int usage);
-	void setNormalData(const ofVec3f * normals, int total, int usage);	
-	void setTexCoordData(const ofVec2f * texCoords, int total, int usage);
-	void setIndexData(const ofIndexType * indices, int total, int usage);
+    void setMesh (const ofMesh & mesh, int usage);
+    void setMesh (const ofMesh & mesh, int usage, bool useColors,
+                  bool useTextures, bool useNormals);
 
-	void setVertexData(const float * vert0x, int numCoords, int total, int usage, int stride=0);
-	void setColorData(const float * color0r, int total, int usage, int stride=0);
-	void setNormalData(const float * normal0x, int total, int usage, int stride=0);
-	void setTexCoordData(const float * texCoord0x, int total, int usage, int stride=0);
+    void setVertexData (const ofVec3f * verts, int total, int usage);
+    void setVertexData (const ofVec2f * verts, int total, int usage);
 
-	void setAttributeData(int location, const float * vert0x, int numCoords, int total, int usage, int stride=0);
+    void setColorData (const ofFloatColor * colors, int total, int usage);
+    void setNormalData (const ofVec3f * normals, int total, int usage);
+    void setTexCoordData (const ofVec2f * texCoords, int total, int usage);
+    void setIndexData (const ofIndexType * indices, int total, int usage);
+
+    void setVertexData (const float *vert0x, int numCoords, int total,
+                        int usage, int stride = 0);
+    void setColorData (const float *color0r, int total, int usage,
+                       int stride = 0);
+    void setNormalData (const float *normal0x, int total, int usage,
+                        int stride = 0);
+    void setTexCoordData (const float *texCoord0x, int total, int usage,
+                          int stride = 0);
+
+    void setAttributeData (int location, const float *vert0x, int numCoords,
+                           int total, int usage, int stride = 0);
 
 #ifndef TARGET_OPENGLES
-	/// used to send an attribute per instance(s) instead of per vertex.
-	/// will send per vertex if set to 0 or to the number of instances if >0
-	///
-	/// see textureBufferInstancedExample
-	/// and https://www.opengl.org/sdk/docs/man4/html/glVertexAttribDivisor.xhtml
-	void setAttributeDivisor(int location, int divisor);
+    /// used to send an attribute per instance(s) instead of per vertex.
+    /// will send per vertex if set to 0 or to the number of instances if >0
+    ///
+    /// see textureBufferInstancedExample
+    /// and https://www.opengl.org/sdk/docs/man4/html/glVertexAttribDivisor.xhtml
+    void setAttributeDivisor (int location, int divisor);
 #endif
 
-	void setVertexBuffer(ofBufferObject & buffer, int numCoords, int stride, int offset=0);
-	void setColorBuffer(ofBufferObject & buffer, int stride, int offset=0);
-	void setNormalBuffer(ofBufferObject & buffer, int stride, int offset=0);
-	void setTexCoordBuffer(ofBufferObject & buffer, int stride, int offset=0);
-	void setIndexBuffer(ofBufferObject & buffer);
-	
-	void setAttributeBuffer(int location, ofBufferObject & buffer, int numCoords, int stride, int offset=0);
+    void setVertexBuffer (ofBufferObject & buffer, int numCoords, int stride,
+                          int offset = 0);
+    void setColorBuffer (ofBufferObject & buffer, int stride, int offset = 0);
+    void setNormalBuffer (ofBufferObject & buffer, int stride, int offset =
+                          0);
+    void setTexCoordBuffer (ofBufferObject & buffer, int stride, int offset =
+                            0);
+    void setIndexBuffer (ofBufferObject & buffer);
 
-	ofBufferObject & getVertexBuffer();
-	ofBufferObject & getColorBuffer();
-	ofBufferObject & getNormalBuffer();
-	ofBufferObject & getTexCoordBuffer();
-	ofBufferObject & getIndexBuffer();
-	ofBufferObject & getAttributeBuffer(int location);
+    void setAttributeBuffer (int location, ofBufferObject & buffer,
+                             int numCoords, int stride, int offset = 0);
 
-	const ofBufferObject & getVertexBuffer() const;
-	const ofBufferObject & getColorBuffer() const;
-	const ofBufferObject & getNormalBuffer() const;
-	const ofBufferObject & getTexCoordBuffer() const;
-	const ofBufferObject & getIndexBuffer() const;
+      ofBufferObject & getVertexBuffer ();
+      ofBufferObject & getColorBuffer ();
+      ofBufferObject & getNormalBuffer ();
+      ofBufferObject & getTexCoordBuffer ();
+      ofBufferObject & getIndexBuffer ();
+      ofBufferObject & getAttributeBuffer (int location);
 
-	const ofBufferObject & getAttributeBuffer(int location) const;
+    const ofBufferObject & getVertexBuffer () const;
+    const ofBufferObject & getColorBuffer () const;
+    const ofBufferObject & getNormalBuffer () const;
+    const ofBufferObject & getTexCoordBuffer () const;
+    const ofBufferObject & getIndexBuffer () const;
 
-	void updateMesh(const ofMesh & mesh);
+    const ofBufferObject & getAttributeBuffer (int location) const;
 
-	void updateVertexData(const ofVec3f * verts, int total);
-	void updateVertexData(const ofVec2f * verts, int total);
-	void updateColorData(const ofFloatColor * colors, int total);
-	void updateNormalData(const ofVec3f * normals, int total);	
-	void updateTexCoordData(const ofVec2f * texCoords, int total);
-	void updateIndexData(const ofIndexType * indices, int total);
-	
-	void updateVertexData(const float * ver0x, int total);
-	void updateColorData(const float * color0r, int total);
-	void updateNormalData(const float * normal0x, int total);
-	void updateTexCoordData(const float * texCoord0x, int total);
+    void updateMesh (const ofMesh & mesh);
 
-	void updateAttributeData(int location, const float * vert0x, int total);
+    void updateVertexData (const ofVec3f * verts, int total);
+    void updateVertexData (const ofVec2f * verts, int total);
+    void updateColorData (const ofFloatColor * colors, int total);
+    void updateNormalData (const ofVec3f * normals, int total);
+    void updateTexCoordData (const ofVec2f * texCoords, int total);
+    void updateIndexData (const ofIndexType * indices, int total);
 
-	void enableColors();
-	void enableNormals();
-	void enableTexCoords();
-	void enableIndices();
+    void updateVertexData (const float *ver0x, int total);
+    void updateColorData (const float *color0r, int total);
+    void updateNormalData (const float *normal0x, int total);
+    void updateTexCoordData (const float *texCoord0x, int total);
 
-	void disableColors();
-	void disableNormals();
-	void disableTexCoords();
-	void disableIndices();
+    void updateAttributeData (int location, const float *vert0x, int total);
 
-	GLuint getVaoId() const;
-	GLuint getVertId() const;
-	GLuint getColorId() const;
-	GLuint getNormalId() const;
-	GLuint getTexCoordId() const;
-	GLuint getIndexId() const;
-	
-	/// returns OpenGL memory object id for GL buffer holding attribute data
-	GLuint  getAttributeId(int AttrPos_) const;
-	
-	bool getIsAllocated() const;
-	bool getUsingVerts() const;
-	bool getUsingColors() const;
-	bool getUsingNormals() const;
-	bool getUsingTexCoords() const;
-	bool getUsingIndices() const;
-	
-	void draw(int drawMode, int first, int total) const;
-	void drawElements(int drawMode, int amt, int offsetelements = 0) const;
-	
-	void drawInstanced(int drawMode, int first, int total, int primCount) const;
-	void drawElementsInstanced(int drawMode, int amt, int primCount) const;
-	
-	void bind() const;
-	void unbind() const;
+    void enableColors ();
+    void enableNormals ();
+    void enableTexCoords ();
+    void enableIndices ();
 
-	void clear();
+    void disableColors ();
+    void disableNormals ();
+    void disableTexCoords ();
+    void disableIndices ();
 
-	void clearVertices();
-	void clearNormals();
-	void clearColors();
-	void clearTexCoords();
-	void clearIndices();
-	
-	void clearAttribute(int attributePos_);
+    GLuint getVaoId () const;
+    GLuint getVertId () const;
+    GLuint getColorId () const;
+    GLuint getNormalId () const;
+    GLuint getTexCoordId () const;
+    GLuint getIndexId () const;
 
-	int getNumVertices() const;
-	int getNumIndices() const;
-	
-	bool hasAttribute(int attributePos_) const;
+    /// returns OpenGL memory object id for GL buffer holding attribute data
+    GLuint getAttributeId (int AttrPos_) const;
 
-private:
+    bool getIsAllocated () const;
+    bool getUsingVerts () const;
+    bool getUsingColors () const;
+    bool getUsingNormals () const;
+    bool getUsingTexCoords () const;
+    bool getUsingIndices () const;
 
-	struct VertexAttribute{
-		VertexAttribute();
-		bool isAllocated() const;
-		void allocate();
-		void bind() const;
-		void unbind() const;
-		void setData(GLsizeiptr bytes, const void * data, GLenum usage);
-		void updateData(GLintptr offset, GLsizeiptr bytes, const void * data);
-		void setData(const float * attrib0x, int numCoords, int total, int usage, int stride, bool normalize=false);
-		void setBuffer(ofBufferObject & buffer, int numCoords, int stride, int offset);
-		void enable() const;
-		void disable() const;
-		GLuint getId() const;
-		ofBufferObject buffer;
-		GLsizei stride;
-		GLsizeiptr offset;
-		int numCoords;
-		GLuint location;
-		bool normalize;
-		int divisor;
-	};
+    void draw (int drawMode, int first, int total) const;
+    void drawElements (int drawMode, int amt, int offsetelements = 0) const;
 
-	struct IndexAttribute{
-		IndexAttribute();
-		bool isAllocated() const;
-		void allocate();
-		void bind() const;
-		void unbind() const;
-		void setData(GLsizeiptr bytes, const void * data, GLenum usage);
-		void updateData(GLintptr offset, GLsizeiptr bytes, const void * data);
-		GLuint getId() const;
-		ofBufferObject buffer;
-	};
+    void drawInstanced (int drawMode, int first, int total,
+                        int primCount) const;
+    void drawElementsInstanced (int drawMode, int amt, int primCount) const;
 
-	GLuint vaoID;
-	mutable bool vaoChanged;
+    void bind () const;
+    void unbind () const;
 
-	IndexAttribute indexAttribute;
+    void clear ();
 
-	mutable bool bUsingVerts;		// need at least vertex data
-	mutable bool bUsingTexCoords;
-	mutable bool bUsingColors;
-	mutable bool bUsingNormals;
-	mutable bool bUsingIndices;
+    void clearVertices ();
+    void clearNormals ();
+    void clearColors ();
+    void clearTexCoords ();
+    void clearIndices ();
 
-	int	totalVerts;
-	int	totalIndices;
+    void clearAttribute (int attributePos_);
 
-	VertexAttribute positionAttribute;
-	VertexAttribute colorAttribute;
-	VertexAttribute texCoordAttribute;
-	VertexAttribute normalAttribute;
-	map<int,VertexAttribute> customAttributes;
-	
-	static bool vaoChecked;
-	static bool vaoSupported;
+    int getNumVertices () const;
+    int getNumIndices () const;
 
-	VertexAttribute & getOrCreateAttr(int location);
+    bool hasAttribute (int attributePos_) const;
+
+  private:
+
+    struct VertexAttribute
+    {
+        VertexAttribute ();
+        bool isAllocated () const;
+        void allocate ();
+        void bind () const;
+        void unbind () const;
+        void setData (GLsizeiptr bytes, const void *data, GLenum usage);
+        void updateData (GLintptr offset, GLsizeiptr bytes, const void *data);
+        void setData (const float *attrib0x, int numCoords, int total,
+                      int usage, int stride, bool normalize = false);
+        void setBuffer (ofBufferObject & buffer, int numCoords, int stride,
+                        int offset);
+        void enable () const;
+        void disable () const;
+        GLuint getId () const;
+        ofBufferObject buffer;
+        GLsizei stride;
+        GLsizeiptr offset;
+        int numCoords;
+        GLuint location;
+        bool normalize;
+        int divisor;
+    };
+
+    struct IndexAttribute
+    {
+        IndexAttribute ();
+        bool isAllocated () const;
+        void allocate ();
+        void bind () const;
+        void unbind () const;
+        void setData (GLsizeiptr bytes, const void *data, GLenum usage);
+        void updateData (GLintptr offset, GLsizeiptr bytes, const void *data);
+        GLuint getId () const;
+        ofBufferObject buffer;
+    };
+
+    GLuint vaoID;
+    mutable bool vaoChanged;
+
+    IndexAttribute indexAttribute;
+
+    mutable bool bUsingVerts;   // need at least vertex data
+    mutable bool bUsingTexCoords;
+    mutable bool bUsingColors;
+    mutable bool bUsingNormals;
+    mutable bool bUsingIndices;
+
+    int totalVerts;
+    int totalIndices;
+
+    VertexAttribute positionAttribute;
+    VertexAttribute colorAttribute;
+    VertexAttribute texCoordAttribute;
+    VertexAttribute normalAttribute;
+      map < int, VertexAttribute > customAttributes;
+
+    static bool vaoChecked;
+    static bool vaoSupported;
+
+      VertexAttribute & getOrCreateAttr (int location);
 };

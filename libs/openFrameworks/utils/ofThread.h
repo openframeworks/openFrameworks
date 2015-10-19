@@ -66,10 +66,12 @@
 /// and only allows the user to receive more valuable debugging information
 /// about the uncaught exception.  Users should design ofThread subclasses to
 /// catch and respond to all anticipated exceptions.
-class ofThread: protected Poco::Runnable {
-public:
+class ofThread:protected
+    Poco::Runnable
+{
+  public:
     /// \brief Create an ofThread.
-    ofThread();
+    ofThread ();
 
     /// \brief Destroy the ofThread.
     /// \warning The destructor WILL NOT stop the thread or wait for
@@ -79,19 +81,23 @@ public:
     ///     is stopped and the thread's resources are released.
     ///     Improper release of resources or memory can lead to
     ///     segementation faults and other errors.
-    virtual ~ofThread();
+    virtual ~
+    ofThread ();
 
     /// \brief Check the running status of the thread.
     /// \returns true iff the thread is currently running.
-    bool isThreadRunning() const;
+    bool
+    isThreadRunning () const;
 
     /// \brief Get the unique thread id.
     /// \note This is NOT the the same as the operating thread id!
-    int getThreadId() const;
+    int
+    getThreadId () const;
 
     /// \brief Get the unique thread name, in the form of "Thread id#"
     /// \returns the Thread ID string.
-    std::string getThreadName() const;
+    std::string
+    getThreadName () const;
 
     /// \deprecated
     /// \brief Start the thread with options.
@@ -99,15 +105,16 @@ public:
     /// \param mutexesBlock Set blocking to true if you want the mutex to
     ///        block when lock() is called.
     /// \param verbose use verbose logging methods.
-    OF_DEPRECATED_MSG("Use startThread(bool blocking = true) instead.",
-                      void startThread(bool mutexesBlock, bool verbose) );
+    OF_DEPRECATED_MSG ("Use startThread(bool blocking = true) instead.",
+                       void startThread (bool mutexesBlock, bool verbose));
 
     /// \brief Start the thread with options.
     /// \param mutexBlocks Set blocking to true if you want the mutex to
     ///        block when lock() is called.
     /// \note Subclasses can directly access the mutex and employ thier
     ///       own locking strategy.
-    void startThread(bool mutexBlocks = true);
+    void
+    startThread (bool mutexBlocks = true);
 
     /// \brief Try to lock the mutex.
     ///
@@ -117,13 +124,15 @@ public:
     /// was successfully acquired.
     ///
     /// \returns true iff the lock was successfully acquired.
-    bool lock();
+    bool
+    lock ();
 
     /// \brief Unlock the mutex.
     ///
     /// This will only unlocks the mutex if it was previously by the same
     /// calling thread.
-    void unlock();
+    void
+    unlock ();
 
     /// \brief Stop the thread.
     ///
@@ -132,7 +141,8 @@ public:
     /// threadedFunction() by calling isThreadRunning().  If the user wants
     /// to both stop the thread AND wait for the thread to finish
     /// processing, the user should call waitForThread(true, ...).
-    void stopThread();
+    void
+    stopThread ();
 
     /// \brief Wait for the thread to exit (aka "joining" the thread).
     ///
@@ -167,8 +177,9 @@ public:
     /// \sa http://pocoproject.org/docs/Poco.Condition.html
     /// \sa http://pocoproject.org/docs/Poco.Event.html
     /// \sa http://pocoproject.org/docs/Poco.Semaphore.html
-    void waitForThread(bool callStopThread = true,
-                       long milliseconds = INFINITE_JOIN_TIMEOUT);
+    void
+    waitForThread (bool callStopThread = true,
+                   long milliseconds = INFINITE_JOIN_TIMEOUT);
 
     /// \brief Tell the thread to sleep for a certain amount of milliseconds.
     ///
@@ -177,25 +188,25 @@ public:
     ///
     ///     void MyThreadedClass::threadedFunction()
     ///     {
-    ///		    // start
-    ///		    while(isThreadRunning())
+    ///             // start
+    ///             while(isThreadRunning())
     ///         {
     ///             // bReadyToProcess can be set from outside the threadedFuntion.
     ///             // perhaps by another thread that downloads data, or loads
     ///             // some media, etc.
     ///
-    ///		    	if(bReadyToProcess == true)
+    ///                 if(bReadyToProcess == true)
     ///             {
-    ///		    		// do some time intensive processing
-    ///		    		bReadyToProcess = false;
-    ///		    	}
+    ///                         // do some time intensive processing
+    ///                         bReadyToProcess = false;
+    ///                 }
     ///             else
     ///             {
-    ///		    		// sleep the thread to give up some cpu
-    ///		    		sleep(20);
-    ///		    	}
-    ///		    }
-    ///		    // done
+    ///                         // sleep the thread to give up some cpu
+    ///                         sleep(20);
+    ///                 }
+    ///             }
+    ///             // done
     ///     }
     ///
     /// If the user does not give the thread a chance to sleep, the
@@ -204,7 +215,8 @@ public:
     /// performance.
     ///
     /// \param milliseconds The number of milliseconds to sleep.
-    void sleep(long milliseconds);
+    void
+    sleep (long milliseconds);
 
     /// \brief Tell the thread to give up its CPU time other threads.
     ///
@@ -215,7 +227,8 @@ public:
     /// processing time to the next thread, instead of waiting for
     /// number of milliseconds. In some cases, this behavior will
     /// be preferred.
-    void yield();
+    void
+    yield ();
 
     /// \brief Query whether the current thread is active.
     ///
@@ -247,7 +260,8 @@ public:
     /// card.
     ///
     /// \returns True iff this ofThread the currently active thread.
-    bool isCurrentThread() const;
+    bool
+    isCurrentThread () const;
 
     /// \brief Get a reference to the underlying Poco thread.
     ///
@@ -256,7 +270,8 @@ public:
     /// underlying Poco::Thread directly.
     ///
     /// \returns A reference to the backing Poco thread.
-    Poco::Thread& getPocoThread();
+    Poco::Thread &
+    getPocoThread ();
 
     /// \brief Get a const reference to the underlying Poco thread.
     ///
@@ -265,7 +280,9 @@ public:
     /// underlying Poco::Thread directly.
     ///
     /// \returns A reference to the backing Poco thread.
-    const Poco::Thread& getPocoThread() const;
+    const
+        Poco::Thread &
+    getPocoThread () const;
 
     /// \brief A query to see if the current thread is the main thread.
     ///
@@ -284,12 +301,15 @@ public:
     ///     }
     ///
     /// \returns true iff the current thread is the main thread.
-    static bool isMainThread();
+    static
+        bool
+    isMainThread ();
 
     /// \deprecated
     /// \warning This function is dangerous and should no longer be used.
-    OF_DEPRECATED_MSG("use ofThread::getCurrentPocoThread() == &yourThread.getPocoThread() to compare threads.",
-                      static ofThread* getCurrentThread());
+    OF_DEPRECATED_MSG
+        ("use ofThread::getCurrentPocoThread() == &yourThread.getPocoThread() to compare threads.",
+         static ofThread * getCurrentThread ());
 
     /// \brief Get the current Poco thread.
     ///
@@ -300,16 +320,19 @@ public:
     ///
     /// \returns A pointer to the current active thread OR 0 iff the main
     ///     application thread is active.
-    static Poco::Thread* getCurrentPocoThread();
+    static
+        Poco::Thread *
+    getCurrentPocoThread ();
 
-    enum {
+    enum
+    {
         INFINITE_JOIN_TIMEOUT = -1
             ///< \brief A sentinal value for an infinite join timeout.
             ///<
             ///< Primarily used with the waitForThread() method.
     };
 
-protected:
+  protected:
     /// \brief The thread's run function.
     ///
     /// Users must overide this in your their derived class
@@ -344,10 +367,12 @@ protected:
     ///         }
     ///     }
     ///
-    virtual void threadedFunction();
+    virtual void
+    threadedFunction ();
 
     /// \brief The Poco::Thread that runs the Poco::Runnable.
-    Poco::Thread thread;
+    Poco::Thread
+        thread;
 
     /// \brief The internal mutex called through lock() & unlock().
     ///
@@ -356,33 +381,52 @@ protected:
     ///
     ///     ofScopedLock lock(mutex);
     ///
-    mutable std::mutex mutex;
+    mutable
+        std::mutex
+        mutex;
 
-private:
-    void run();
-        ///< \brief Implements Poco::Runnable::run().
+  private:
+    void
+    run ();
+    ///< \brief Implements Poco::Runnable::run().
 
-    Poco::AtomicCounter _threadRunning;
-        ///< \brief Is the thread running?
+    Poco::AtomicCounter
+        _threadRunning;
+    ///< \brief Is the thread running?
 
-    Poco::AtomicCounter _mutexBlocks;
-        ///< \brief Should the mutex block?
+    Poco::AtomicCounter
+        _mutexBlocks;
+    ///< \brief Should the mutex block?
 
-    bool threadBeingWaitedFor;
+    bool
+        threadBeingWaitedFor;
 
 };
 
 #else
 
-class ofThread{
-public:
-	void lock(){}
-	void unlock(){}
-	void startThread(){}
-	void stopThread(){};
-	bool isThreadRunning(){return false;}
+class ofThread
+{
+  public:
+    void lock ()
+    {
+    }
+    void unlock ()
+    {
+    }
+    void startThread ()
+    {
+    }
+    void stopThread ()
+    {
+    };
+    bool isThreadRunning ()
+    {
+        return false;
+    }
 
-    enum {
+    enum
+    {
         INFINITE_JOIN_TIMEOUT = LONG_MAX
     };
 };

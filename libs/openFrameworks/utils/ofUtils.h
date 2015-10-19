@@ -2,12 +2,12 @@
 
 #include "ofConstants.h"
 #include "utf8.h"
-#include <bitset> // For ofToBinary.
+#include <bitset>               // For ofToBinary.
 
 #include "ofLog.h"
 
-#ifdef TARGET_WIN32	 // For ofLaunchBrowser.
-	#include <shellapi.h>
+#ifdef TARGET_WIN32             // For ofLaunchBrowser.
+#include <shellapi.h>
 #endif
 
 /// \name Elapsed Time
@@ -19,7 +19,7 @@
 /// ofGetElapsedTimeMillis() and ofGetElapsedTimeMicros() to zero.
 ///
 /// \note This is called on the first frame during app startup.
-void ofResetElapsedTimeCounter();
+void ofResetElapsedTimeCounter ();
 
 /// \brief Get the elapsed time in seconds.
 ///
@@ -28,7 +28,7 @@ void ofResetElapsedTimeCounter();
 /// program startup.
 ///
 /// \returns the floating point elapsed time in seconds.
-float ofGetElapsedTimef();
+float ofGetElapsedTimef ();
 
 
 /// \brief Get the elapsed time in milliseconds.
@@ -38,7 +38,7 @@ float ofGetElapsedTimef();
 /// program startup.
 ///
 /// \returns the elapsed time in milliseconds (1000 milliseconds = 1 second).
-uint64_t ofGetElapsedTimeMillis();
+uint64_t ofGetElapsedTimeMillis ();
 
 /// \brief Get the elapsed time in microseconds.
 ///
@@ -47,11 +47,11 @@ uint64_t ofGetElapsedTimeMillis();
 /// startup.
 ///
 /// \returns the elapsed time in microseconds (1000000 microseconds = 1 second).
-uint64_t ofGetElapsedTimeMicros();
+uint64_t ofGetElapsedTimeMicros ();
 
 /// \brief Get the number of frames rendered since the program started.
 /// \returns the number of frames rendered since the program started.
-uint64_t ofGetFrameNum();
+uint64_t ofGetFrameNum ();
 
 /// \}
 
@@ -60,34 +60,34 @@ uint64_t ofGetFrameNum();
 
 /// \brief Get the seconds after the minute.
 /// \returns the seconds after the minute [0-59].
-int ofGetSeconds();
+int ofGetSeconds ();
 
 /// \brief Get minutes after the hour.
 /// \returns the minutes after the hour [0-59].
-int ofGetMinutes();
+int ofGetMinutes ();
 
 /// \brief Get the hour of the day.
 /// \returns the hour of the day [0-23].
-int ofGetHours();
+int ofGetHours ();
 
 /// \brief Get the number of seconds since Midnight, January 1, 1970.
 ///
 /// Resolution is in seconds.
 ///
 /// \returns the number of seconds since Midnight, January 1, 1970 (epoch time).
-unsigned int ofGetUnixTime();
+unsigned int ofGetUnixTime ();
 
 /// \brief Get the system time in milliseconds.
 /// \returns the system time in milliseconds.
-uint64_t ofGetSystemTime();
+uint64_t ofGetSystemTime ();
 
 /// \brief Get the system time in microseconds.
 /// \returns the system time in microseconds.
-uint64_t ofGetSystemTimeMicros();
+uint64_t ofGetSystemTimeMicros ();
 
 /// \brief Sleeps the current thread for the specified amount of milliseconds.
 /// \param millis The number of millseconds to sleep.
-void ofSleepMillis(int millis);
+void ofSleepMillis (int millis);
 
 /// \brief Formats the current system time according to the given format.
 ///
@@ -95,7 +95,7 @@ void ofSleepMillis(int millis);
 /// 2011-01-15-18-29-35-299).
 ///
 /// \returns the current time as a string with the default format.
-string ofGetTimestampString();
+string ofGetTimestampString ();
 
 /// \brief Formats the current system time according to the given format.
 ///
@@ -132,26 +132,26 @@ string ofGetTimestampString();
 /// \param timestampFormat The formatting pattern.
 /// \returns the formatted timestamp as a string.
 /// \warning an invalid timestampFormat may crash windows apps.
-string ofGetTimestampString(const string& timestampFormat);
+string ofGetTimestampString (const string & timestampFormat);
 
 /// \brief Get the current year.
 /// \returns the current year.
-int ofGetYear();
+int ofGetYear ();
 
 /// \brief Get the current month.
 /// \returns the current month [1-12].
-int ofGetMonth();
+int ofGetMonth ();
 
 /// \brief Get the current day within the month.
 /// \returns the day witin the month [1-31].
-int ofGetDay();
+int ofGetDay ();
 
 /// \brief Get the current weekday.
 ///
 /// Values 0 = Sunday, 1 = Monday, ..., 6 = Saturday.
 ///
 /// \returns the current weekday [0-6].
-int ofGetWeekday();
+int ofGetWeekday ();
 
 /// \}
 
@@ -162,13 +162,13 @@ int ofGetWeekday();
 ///
 /// This function causes ofToDataPath() to respect the relative path set
 /// with ofSetDataPathRoot().  This is enabled by default.
-void ofEnableDataPath();
+void ofEnableDataPath ();
 
 /// \brief Disable the use of the data path.
 ///
 /// This function causes ofToDataPath() to ignore the relative path set
 /// with ofSetDataPathRoot().
-void ofDisableDataPath();
+void ofDisableDataPath ();
 
 /// \brief Make a path relative to the location of the data/ folder.
 ///
@@ -181,7 +181,7 @@ void ofDisableDataPath();
 /// \param path The path to make relative to the data/ folder.
 /// \param absolute Set to true to return an absolute path.
 /// \returns the new path, unless paths were disabled with ofDisableDataPath().
-string ofToDataPath(const string& path, bool absolute=false);
+string ofToDataPath (const string & path, bool absolute = false);
 
 /// \brief Reset the working directory to the platform default.
 ///
@@ -190,7 +190,7 @@ string ofToDataPath(const string& path, bool absolute=false);
 /// working directory to the resources directory in the bundle in osx. This
 /// will restore it to the exe dir or whatever was the current dir when the
 /// application was started
-bool ofRestoreWorkingDirectoryToDefault();
+bool ofRestoreWorkingDirectoryToDefault ();
 
 /// \brief Set the relative path to the data/ folder from the executable.
 ///
@@ -200,7 +200,7 @@ bool ofRestoreWorkingDirectoryToDefault();
 ///
 /// \warning The provided path must have a trailing slash (/).
 /// \param root The path to the data/ folder relative to the app executable.
-void ofSetDataPathRoot(const string& root);
+void ofSetDataPathRoot (const string & root);
 
 
 /// \}
@@ -212,9 +212,10 @@ void ofSetDataPathRoot(const string& root);
 /// \tparam T the type contained by the vector.
 /// \param values The vector of values to modify.
 /// \sa http://www.cplusplus.com/reference/algorithm/random_shuffle/
-template<class T>
-void ofRandomize(vector<T>& values) {
-	random_shuffle(values.begin(), values.end());
+template < class T > void
+ofRandomize (vector < T > &values)
+{
+    random_shuffle (values.begin (), values.end ());
 }
 
 /// \brief Conditionally remove values from a vector.
@@ -255,9 +256,11 @@ void ofRandomize(vector<T>& values) {
 /// \param values The vector of values to modify.
 /// \param shouldErase A boolean function as described above.
 /// \sa http://www.cplusplus.com/reference/algorithm/remove_if/
-template<class T, class BoolFunction>
-void ofRemove(vector<T>& values, BoolFunction shouldErase) {
-	values.erase(remove_if(values.begin(), values.end(), shouldErase), values.end());
+template < class T, class BoolFunction > void
+ofRemove (vector < T > &values, BoolFunction shouldErase)
+{
+    values.erase (remove_if (values.begin (), values.end (), shouldErase),
+                  values.end ());
 }
 
 /// \brief Sort a vector of values into ascending order.
@@ -269,9 +272,10 @@ void ofRemove(vector<T>& values, BoolFunction shouldErase) {
 /// \tparam T the type contained by the vector.
 /// \param values The vector of values to be sorted.
 /// \sa http://www.cplusplus.com/reference/algorithm/sort/
-template<class T>
-void ofSort(vector<T>& values) {
-	sort(values.begin(), values.end());
+template < class T > void
+ofSort (vector < T > &values)
+{
+    sort (values.begin (), values.end ());
 }
 
 /// \brief Sort a vector of values into an order defined by a comparator.
@@ -314,9 +318,10 @@ void ofSort(vector<T>& values) {
 /// \param values The vector of values to be sorted.
 /// \param compare The comparison function.
 /// \sa http://www.cplusplus.com/reference/algorithm/sort/
-template<class T, class BoolFunction>
-void ofSort(vector<T>& values, BoolFunction compare) {
-	sort(values.begin(), values.end(), compare);
+template < class T, class BoolFunction > void
+ofSort (vector < T > &values, BoolFunction compare)
+{
+    sort (values.begin (), values.end (), compare);
 }
 
 /// \brief Search for a target value in a vector of values.
@@ -325,9 +330,11 @@ void ofSort(vector<T>& values, BoolFunction compare) {
 /// \param target The target value to be found.
 /// \returns true the index of the first target value found.
 /// \sa http://www.cplusplus.com/reference/iterator/distance/
-template <class T>
-std::size_t ofFind(const vector<T>& values, const T& target) {
-	return distance(values.begin(), find(values.begin(), values.end(), target));
+template < class T >
+    std::size_t ofFind (const vector < T > &values, const T & target)
+{
+    return distance (values.begin (),
+                     find (values.begin (), values.end (), target));
 }
 
 /// \brief Search for a target value in a vector of values.
@@ -335,9 +342,10 @@ std::size_t ofFind(const vector<T>& values, const T& target) {
 /// \param values The vector of values to be searched.
 /// \param target The target value to be found.
 /// \returns true if at least one value equal to the target value is found.
-template <class T>
-bool ofContains(const vector<T>& values, const T& target) {
-	return ofFind(values, target) != values.size();
+template < class T >
+    bool ofContains (const vector < T > &values, const T & target)
+{
+    return ofFind (values, target) != values.size ();
 }
 
 
@@ -373,19 +381,23 @@ bool ofContains(const vector<T>& values, const T& target) {
 /// \param ignoreEmpty Set to true to remove empty tokens.
 /// \param trim Set to true to trim the resulting tokens.
 /// \returns A vector of strings split with the delimiter.
-vector<string> ofSplitString(const string& source, const string& delimiter, bool ignoreEmpty = false, bool trim = false);
+vector < string > ofSplitString (const string & source,
+                                 const string & delimiter, bool ignoreEmpty =
+                                 false, bool trim = false);
 
 /// \brief Join a vector of strings together into one string.
 /// \param stringElements The vector of strings to join.
 /// \param delimiter The delimiter to put betweeen each string.
-string ofJoinString(const vector<string>& stringElements, const string& delimiter);
+string ofJoinString (const vector < string > &stringElements,
+                     const string & delimiter);
 
 /// \brief Replace all occurrences of a string with another string.
 /// \note The input string is passed by reference, so it will be modified.
 /// \param input The string to run the replacement on.
 /// \param searchStr The string to be replaced.
 /// \param replaceStr The string to put in place.
-void ofStringReplace(string& input, const string& searchStr, const string& replaceStr);
+void ofStringReplace (string & input, const string & searchStr,
+                      const string & replaceStr);
 
 /// \brief Check if string contains another string.
 /// 
@@ -398,12 +410,13 @@ void ofStringReplace(string& input, const string& searchStr, const string& repla
 /// ~~~
 /// \param haystack The string to check for occurrence in.
 /// \param needle The string to check for.
-bool ofIsStringInString(const string& haystack, const string& needle);
+bool ofIsStringInString (const string & haystack, const string & needle);
 
 /// \brief Check how many times a string contains another string.
 /// \param haystack The string to check for occurrence in .
 /// \param needle The string to check for.
-std::size_t ofStringTimesInString(const string& haystack, const string& needle);
+std::size_t ofStringTimesInString (const string & haystack,
+                                   const string & needle);
 
 /// \brief Converts all characters in a string to lowercase.
 ///
@@ -418,7 +431,7 @@ std::size_t ofStringTimesInString(const string& haystack, const string& needle);
 ///
 /// \param src The UTF-8 encoded string to convert to lowercase.
 /// \returns the UTF-8 encoded string as all lowercase characters.
-string ofToLower(const string& src, const string & locale="");
+string ofToLower (const string & src, const string & locale = "");
 
 /// \brief Converts all characters in the string to uppercase.
 ///
@@ -433,24 +446,24 @@ string ofToLower(const string& src, const string & locale="");
 ///
 /// \param src The UTF-8 encoded string to convert to uppercase.
 /// \returns the UTF-8 encoded string as all uppercase characters.
-string ofToUpper(const string& src, const string & locale="");
+string ofToUpper (const string & src, const string & locale = "");
 
-string ofTrimFront(const string & src, const string & locale = "");
-string ofTrimBack(const string & src, const string & locale = "");
-string ofTrim(const string & src, const string & locale = "");
+string ofTrimFront (const string & src, const string & locale = "");
+string ofTrimBack (const string & src, const string & locale = "");
+string ofTrim (const string & src, const string & locale = "");
 
-void ofAppendUTF8(string & str, int utf8);
+void ofAppendUTF8 (string & str, int utf8);
 
 /// \brief Convert a variable length argument to a string.
 /// \param format a printf-style format string.
 /// \returns A string representation of the argument list.
-string ofVAArgsToString(const char * format, ...);
+string ofVAArgsToString (const char *format, ...);
 
 /// \brief Convert a variable length argument to a string.
 /// \param format A printf-style format string.
 /// \param args A variable argument list.
 /// \returns A string representation of the argument list.
-string ofVAArgsToString(const char * format, va_list args);
+string ofVAArgsToString (const char *format, va_list args);
 
 /// \}
 
@@ -465,19 +478,19 @@ string ofVAArgsToString(const char * format, va_list args);
 ///
 /// Example:
 /// ~~~~{.cpp}
-///		std::string str = "framerate is ";
-///		str += ofToString(ofGetFrameRate()) + " fps";
-///		// The string now containes something like "framerate is 60 fps".
+///             std::string str = "framerate is ";
+///             str += ofToString(ofGetFrameRate()) + " fps";
+///             // The string now containes something like "framerate is 60 fps".
 /// ~~~~
 ///
 /// \tparam T The data type of the value to convert to a string.
 /// \param value The value to convert to a string.
 /// \returns A string representing the value or an empty string on failure.
-template <class T>
-string ofToString(const T& value){
-	ostringstream out;
-	out << value;
-	return out.str();
+template < class T > string ofToString (const T & value)
+{
+    ostringstream out;
+    out << value;
+    return out.str ();
 }
 
 /// \brief Convert a value to a string with a specific precision.
@@ -488,11 +501,11 @@ string ofToString(const T& value){
 /// \param value The value to convert to a string.
 /// \param precision The precision to use when converting to a string.
 /// \returns The string representation of the value.
-template <class T>
-string ofToString(const T& value, int precision){
-	ostringstream out;
-	out << fixed << setprecision(precision) << value;
-	return out.str();
+template < class T > string ofToString (const T & value, int precision)
+{
+    ostringstream out;
+    out << fixed << setprecision (precision) << value;
+    return out.str ();
 }
 
 /// \brief Convert a value to a string with a specific width and fill
@@ -504,11 +517,11 @@ string ofToString(const T& value, int precision){
 /// \param width The width of the value to use when converting to a string.
 /// \param fill The character to use when padding the converted string.
 /// \returns The string representation of the value.
-template <class T>
-string ofToString(const T& value, int width, char fill ){
-	ostringstream out;
-	out << fixed << setfill(fill) << setw(width) << value;
-	return out.str();
+template < class T > string ofToString (const T & value, int width, char fill)
+{
+    ostringstream out;
+    out << fixed << setfill (fill) << setw (width) << value;
+    return out.str ();
 }
 
 /// \brief Convert a value to a string with a specific precision, width and filll
@@ -521,11 +534,13 @@ string ofToString(const T& value, int width, char fill ){
 /// \param width The width of the value to use when converting to a string.
 /// \param fill The character to use when padding the converted string.
 /// \returns The string representation of the value.
-template <class T>
-string ofToString(const T& value, int precision, int width, char fill ){
-	ostringstream out;
-	out << fixed << setfill(fill) << setw(width) << setprecision(precision) << value;
-	return out.str();
+template < class T >
+    string ofToString (const T & value, int precision, int width, char fill)
+{
+    ostringstream out;
+    out << fixed << setfill (fill) << setw (width) << setprecision (precision)
+        << value;
+    return out.str ();
 }
 
 /// \brief Convert a vector of values to a comma-delimited string.
@@ -536,19 +551,21 @@ string ofToString(const T& value, int precision, int width, char fill ){
 /// \tparam T The data type held by the vector.
 /// \param values The vector of values to be converted to a string.
 /// \returns a comma-delimited string representation of the intput values.
-template<class T>
-string ofToString(const vector<T>& values) {
-	stringstream out;
-	int n = values.size();
-	out << "{";
-	if(n > 0) {
-		for(int i = 0; i < n - 1; i++) {
-			out << values[i] << ", ";
-		}
-		out << values[n - 1];
-	}
-	out << "}";
-	return out.str();
+template < class T > string ofToString (const vector < T > &values)
+{
+    stringstream out;
+    int n = values.size ();
+    out << "{";
+    if (n > 0)
+      {
+          for (int i = 0; i < n - 1; i++)
+            {
+                out << values[i] << ", ";
+            }
+          out << values[n - 1];
+      }
+    out << "}";
+    return out.str ();
 }
 
 /// \brief Convert a string represetnation to another type.
@@ -558,9 +575,9 @@ string ofToString(const vector<T>& values) {
 /// \tparam T The target data type.
 /// \param value The string value to convert to type T.
 /// \returns the string converted to the target data type T.
-template<class T>
-T ofFromString(const string & value){
-	T data;
+template < class T > T ofFromString (const string & value)
+{
+    T data;
     stringstream ss;
     ss << value;
     ss >> data;
@@ -570,8 +587,7 @@ T ofFromString(const string & value){
 /// \brief Convert a string represetnation to another string.
 /// \param value The string value to convert to another string.
 /// \returns the string converted to another string.
-template<>
-string ofFromString(const string & value);
+template <> string ofFromString (const string & value);
 
 /// \brief Convert a string represetnation to another string.
 ///
@@ -579,8 +595,7 @@ string ofFromString(const string & value);
 ///
 /// \param value The string value to convert to another string.
 /// \returns the string converted to a c-style string.
-template<>
-const char * ofFromString(const string & value);
+template <> const char *ofFromString (const string & value);
 
 /// \}
 
@@ -595,7 +610,7 @@ const char * ofFromString(const string & value);
 ///
 /// \param intString The string representation of the integer.
 /// \returns the integer represented by the string or 0 on failure.
-int ofToInt(const string& intString);
+int ofToInt (const string & intString);
 
 // --------------------------------------------
 /// \name Number conversion
@@ -608,7 +623,7 @@ int ofToInt(const string& intString);
 ///
 /// \param intString The string representation of the long integer.
 /// \returns the long integer represented by the string or 0 on failure.
-int64_t ofToInt64(const string& intString);
+int64_t ofToInt64 (const string & intString);
 
 /// \brief Convert a string to a float.
 ///
@@ -617,7 +632,7 @@ int64_t ofToInt64(const string& intString);
 ///
 /// \param floatString string representation of the float.
 /// \returns the float represented by the string or 0 on failure.
-float ofToFloat(const string& floatString);
+float ofToFloat (const string & floatString);
 
 /// \brief Convert a string to a double.
 ///
@@ -626,7 +641,7 @@ float ofToFloat(const string& floatString);
 ///
 /// \param doubleString The string representation of the double.
 /// \returns the double represented by the string or 0 on failure.
-double ofToDouble(const string& doubleString);
+double ofToDouble (const string & doubleString);
 
 /// \brief Convert a string to a boolean.
 ///
@@ -636,7 +651,7 @@ double ofToDouble(const string& doubleString);
 ///
 /// \param boolString The string representation of the boolean.
 /// \returns the boolean represented by the string or 0 on failure.
-bool ofToBool(const string& boolString);
+bool ofToBool (const string & boolString);
 
 /// \brief Converts any value to its equivalent hexadecimal representation.
 ///
@@ -646,19 +661,20 @@ bool ofToBool(const string& boolString);
 /// \tparam T The data type of the value to convert to a hexadecimal string.
 /// \param value The value to convert to a hexadecimal string.
 /// \returns the hexadecimal string representation of the value.
-template <class T>
-string ofToHex(const T& value) {
-	ostringstream out;
-	// pretend that the value is a bunch of bytes
-	unsigned char* valuePtr = (unsigned char*) &value;
-	// the number of bytes is determined by the datatype
-	int numBytes = sizeof(T);
-	// the bytes are stored backwards (least significant first)
-	for(int i = numBytes - 1; i >= 0; i--) {
-		// print each byte out as a 2-character wide hex value
-		out << setfill('0') << setw(2) << hex << (int) valuePtr[i];
-	}
-	return out.str();
+template < class T > string ofToHex (const T & value)
+{
+    ostringstream out;
+    // pretend that the value is a bunch of bytes
+    unsigned char *valuePtr = (unsigned char *) &value;
+    // the number of bytes is determined by the datatype
+    int numBytes = sizeof (T);
+    // the bytes are stored backwards (least significant first)
+    for (int i = numBytes - 1; i >= 0; i--)
+      {
+          // print each byte out as a 2-character wide hex value
+          out << setfill ('0') << setw (2) << hex << (int) valuePtr[i];
+      }
+    return out.str ();
 }
 
 /// \brief Convert a string to a hexadecimal string.
@@ -668,8 +684,7 @@ string ofToHex(const T& value) {
 ///
 /// \param value The value to convert to a hexadecimal string.
 /// \returns a hexadecimal string.
-template <>
-string ofToHex(const string& value);
+template <> string ofToHex (const string & value);
 
 /// \brief Convert a c-style string to a hexadecimal string.
 ///
@@ -678,7 +693,7 @@ string ofToHex(const string& value);
 ///
 /// \param value The value to convert to a hexadecimal string.
 /// \returns a hexadecimal string.
-string ofToHex(const char* value);
+string ofToHex (const char *value);
 
 /// \brief Convert a string representing an integer in hexadecimal to a string.
 ///
@@ -687,7 +702,7 @@ string ofToHex(const char* value);
 ///
 /// \param intHexString The string representing an integer in hexadecimal.
 /// \returns the integer represented by the string.
-int ofHexToInt(const string& intHexString);
+int ofHexToInt (const string & intHexString);
 
 /// \brief Convert a string representing an char in hexadecimal to a char.
 ///
@@ -696,7 +711,7 @@ int ofHexToInt(const string& intHexString);
 ///
 /// \param charHexString The string representing an char in hexadecimal.
 /// \returns the char represented by the string.
-char ofHexToChar(const string& charHexString);
+char ofHexToChar (const string & charHexString);
 
 /// \brief Convert a string representing an float in hexadecimal to a float.
 ///
@@ -705,7 +720,7 @@ char ofHexToChar(const string& charHexString);
 ///
 /// \param floatHexString The string representing an float in hexadecimal.
 /// \returns the float represented by the string.
-float ofHexToFloat(const string& floatHexString);
+float ofHexToFloat (const string & floatHexString);
 
 /// \brief Convert a string representing an string in hexadecimal to a string.
 ///
@@ -714,7 +729,7 @@ float ofHexToFloat(const string& floatHexString);
 ///
 /// \param stringHexString The string representing an string in hexadecimal.
 /// \returns the string represented by the string.
-string ofHexToString(const string& stringHexString);
+string ofHexToString (const string & stringHexString);
 
 /// \brief Convert a string representation of a char to a actual char.
 ///
@@ -725,7 +740,7 @@ string ofHexToString(const string& stringHexString);
 ///
 /// \param charString The char string to convert.
 /// \returns The string as a char or 0 on failure.
-char ofToChar(const string& charString);
+char ofToChar (const string & charString);
 
 /// \brief Converts any datatype value to a string of only 1s and 0s.
 ///
@@ -735,9 +750,11 @@ char ofToChar(const string& charString);
 /// \tparam T The data type of the value to convert to a binary string.
 /// \param value The data to convert to a binary string.
 /// \returns a binary string.
-template <class T>
-string ofToBinary(const T& value) {
-	return std::bitset<8 * sizeof(T)>(*reinterpret_cast<const uint64_t*>(&value)).to_string();
+template < class T > string ofToBinary (const T & value)
+{
+    return std::bitset < 8 * sizeof (T) > (*reinterpret_cast <
+                                           const uint64_t *
+                                           >(&value)).to_string ();
 }
 
 /// \brief Converts a string value to a string of only 1s and 0s.
@@ -747,8 +764,7 @@ string ofToBinary(const T& value) {
 ///
 /// \param value The string to convert to a binary string.
 /// \returns a binary string.
-template <>
-string ofToBinary(const string& value);
+template <> string ofToBinary (const string & value);
 
 /// \brief Converts a c-style string to a string of only 1s and 0s.
 ///
@@ -757,7 +773,7 @@ string ofToBinary(const string& value);
 ///
 /// \param value The c-style string to convert to a binary string.
 /// \returns a binary string.
-string ofToBinary(const char* value);
+string ofToBinary (const char *value);
 
 /// \brief Convert a binary string to an int.
 ///
@@ -766,7 +782,7 @@ string ofToBinary(const char* value);
 ///
 /// \value The binary string.
 /// \returns the integer represented by the string or 0 on failure.
-int ofBinaryToInt(const string& value);
+int ofBinaryToInt (const string & value);
 
 /// \brief Convert a binary string to an char.
 ///
@@ -775,7 +791,7 @@ int ofBinaryToInt(const string& value);
 ///
 /// \value The binary string.
 /// \returns the char represented by the string or 0 on failure.
-char ofBinaryToChar(const string& value);
+char ofBinaryToChar (const string & value);
 
 /// \brief Convert a binary string to a float.
 ///
@@ -784,7 +800,7 @@ char ofBinaryToChar(const string& value);
 ///
 /// \value The binary string.
 /// \returns the float represented by the string or 0 on failure.
-float ofBinaryToFloat(const string& value);
+float ofBinaryToFloat (const string & value);
 
 /// \brief Convert a binary string to ASCII characters.
 ///
@@ -793,7 +809,7 @@ float ofBinaryToFloat(const string& value);
 ///
 /// \value The binary string.
 /// \returns the ASCII string represented by the string.
-string ofBinaryToString(const string& value);
+string ofBinaryToString (const string & value);
 
 /// \}
 
@@ -807,7 +823,7 @@ string ofBinaryToString(const string& value);
 ///
 /// \sa http://semver.org/
 /// \returns The string representation of the version (e.g. `0.9.0`).
-string 	ofGetVersionInfo();
+string ofGetVersionInfo ();
 
 /// \brief Get the major version number of openFrameworks.
 ///
@@ -815,7 +831,7 @@ string 	ofGetVersionInfo();
 ///
 /// \sa http://semver.org/
 /// \returns The major version number.
-unsigned int ofGetVersionMajor();
+unsigned int ofGetVersionMajor ();
 
 /// \brief Get the minor version number of openFrameworks.
 ///
@@ -823,7 +839,7 @@ unsigned int ofGetVersionMajor();
 ///
 /// \sa http://semver.org/
 /// \returns The minor version number.
-unsigned int ofGetVersionMinor();
+unsigned int ofGetVersionMinor ();
 
 /// \brief Get the patch version number of openFrameworks.
 ///
@@ -831,7 +847,7 @@ unsigned int ofGetVersionMinor();
 ///
 /// \sa http://semver.org/
 /// \returns The patch version number.
-unsigned int ofGetVersionPatch();
+unsigned int ofGetVersionPatch ();
 
 /// \brief Get the pre-release version of openFrameworks.
 ///
@@ -844,7 +860,7 @@ unsigned int ofGetVersionPatch();
 ///
 /// \sa http://semver.org/
 /// \returns The pre-release version string.
-std::string ofGetVersionPreRelease();
+std::string ofGetVersionPreRelease ();
 
 
 /// \}
@@ -858,13 +874,13 @@ std::string ofGetVersionPreRelease();
 ///
 /// Example:
 /// ~~~~{.cpp}
-///		ofSaveScreen("screen.png"); // Will save screen.png in the /data folder.
+///             ofSaveScreen("screen.png"); // Will save screen.png in the /data folder.
 /// ~~~~
 ///
 /// The output file type will be deduced from the given file name.
 ///
 /// \param filename The image output file.
-void ofSaveScreen(const string& filename);
+void ofSaveScreen (const string & filename);
 
 /// \brief Saves the current frame as a PNG image.
 ///
@@ -872,14 +888,14 @@ void ofSaveScreen(const string& filename);
 /// The count will be restarted each time the program is restarted.
 ///
 /// \param bUseViewport Set to true if the current viewport should be used.
-void ofSaveFrame(bool bUseViewport = false);
+void ofSaveFrame (bool bUseViewport = false);
 
 /// \brief Saves the current viewport as an image.
 ///
 /// The output file type will be deduced from the given file name.
 ///
 /// \param filename The image output file.
-void ofSaveViewport(const string& filename);
+void ofSaveViewport (const string & filename);
 
 
 /// \}
@@ -892,17 +908,17 @@ void ofSaveViewport(const string& filename);
 /// \param uriEncodeQuery true if the query parameters in the given URL have
 /// already been URL encoded.
 #ifndef TARGET_EMSCRIPTEN
-void ofLaunchBrowser(const string& url, bool uriEncodeQuery=false);
+void ofLaunchBrowser (const string & url, bool uriEncodeQuery = false);
 #endif
 
 /// \brief Executes a system command. Similar to run a command in terminal.
 /// \note Will block until the executed program/command has finished.
 /// \returns the system command output as string. 
-string ofSystem(const string& command);
+string ofSystem (const string & command);
 
 /// \brief Get the target platform of the current system.
 /// \returns the current ofTargetPlatform.
-ofTargetPlatform ofGetTargetPlatform();
+ofTargetPlatform ofGetTargetPlatform ();
 
 
 /// Allows to iterate over a string's utf8 codepoints.
@@ -915,16 +931,17 @@ ofTargetPlatform ofGetTargetPlatform();
 ///
 /// which will iterate through all the utf8 codepoints in the
 /// string.
-class ofUTF8Iterator{
-public:
-	ofUTF8Iterator(const string & str);
-	utf8::iterator<std::string::const_iterator> begin() const;
-	utf8::iterator<std::string::const_iterator> end() const;
-	utf8::iterator<std::string::const_reverse_iterator> rbegin() const;
-	utf8::iterator<std::string::const_reverse_iterator> rend() const;
+class ofUTF8Iterator
+{
+  public:
+    ofUTF8Iterator (const string & str);
+      utf8::iterator < std::string::const_iterator > begin () const;
+      utf8::iterator < std::string::const_iterator > end () const;
+      utf8::iterator < std::string::const_reverse_iterator > rbegin () const;
+      utf8::iterator < std::string::const_reverse_iterator > rend () const;
 
-private:
-	std::string src_valid;
+  private:
+      std::string src_valid;
 };
 
 /// \}
@@ -932,9 +949,11 @@ private:
 
 
 /*! \cond PRIVATE */
-namespace of{
-namespace priv{
-    void setWorkingDirectoryToDefault();
-}
+namespace of
+{
+    namespace priv
+    {
+        void setWorkingDirectoryToDefault ();
+    }
 }
 /*! \endcond */

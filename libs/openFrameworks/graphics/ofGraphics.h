@@ -25,7 +25,7 @@
 ///     ofDrawRectangle(10,10,100,100);
 /// }
 /// ~~~~
-void ofSetColor(int r, int g, int b);
+void ofSetColor (int r, int g, int b);
 
 /// \brief Sets the draw color with r,g,b,a 0-255.
 ///
@@ -41,10 +41,10 @@ void ofSetColor(int r, int g, int b);
 ///     ofDisableAlphaBlending();   // turn it back off, if you don't need it
 /// }
 /// ~~~~
-void ofSetColor(int r, int g, int b, int a);
-void ofSetColor(const ofColor & color);
-void ofSetColor(const ofColor & color, int _a);
-void ofSetColor(int gray);
+void ofSetColor (int r, int g, int b, int a);
+void ofSetColor (const ofColor & color);
+void ofSetColor (const ofColor & color, int _a);
+void ofSetColor (int gray);
 
 /// Sets the draw color with r,g,b, passed in as a hex. Hex is a conventient
 /// way to write colors.
@@ -56,7 +56,7 @@ void ofSetColor(int gray);
 ///     ofSetColor(0x00ff00);  // green  (0,255,0);
 /// }
 /// ~~~~
-void ofSetHexColor( int hexColor );
+void ofSetHexColor (int hexColor);
 
 /// \brief Draw shapes as outlines with the current draw color.
 /// ~~~~{.cpp}
@@ -66,7 +66,7 @@ void ofSetHexColor( int hexColor );
 ///     ofDrawRectangle(10,10,100,100);  //draws only the outline in blue
 /// }
 /// ~~~~
-void ofNoFill();
+void ofNoFill ();
 
 /// \brief Draw shapes filled with the current draw color.
 /// ~~~~{.cpp}
@@ -76,16 +76,17 @@ void ofNoFill();
 ///     ofDrawRect(10,10,100,100);  //draws the rectangle filled in blue
 /// }
 /// ~~~~
-void ofFill();
-ofFillFlag ofGetFill();
+void ofFill ();
+ofFillFlag ofGetFill ();
 
 /// \}
 /// \name Background Color
 /// \{
 
 /// \brief Returns the current background color as an ofColor.
-ofColor ofGetBackgroundColor();
-OF_DEPRECATED_MSG("Use ofGetBackgroundColor instead",ofColor ofGetBackground());
+ofColor ofGetBackgroundColor ();
+OF_DEPRECATED_MSG ("Use ofGetBackgroundColor instead",
+                   ofColor ofGetBackground ());
 
 
 /// \brief Sets the background color.
@@ -101,9 +102,9 @@ OF_DEPRECATED_MSG("Use ofGetBackgroundColor instead",ofColor ofGetBackground());
 ///     ofBackground(255,0,0);  // Sets the background color to red
 /// }
 /// ~~~~
-void ofBackground(int r, int g, int b, int a=255);
-void ofBackground(int brightness, int alpha = 255);
-void ofBackground(const ofColor & c);
+void ofBackground (int r, int g, int b, int a = 255);
+void ofBackground (int brightness, int alpha = 255);
+void ofBackground (const ofColor & c);
 
 /// \brief Sets the background color using a hex color value.
 /// ~~~~{.cpp}
@@ -111,7 +112,7 @@ void ofBackground(const ofColor & c);
 ///     ofBackgroundHex(0xff0000);  // Sets the background color to red
 /// }
 /// ~~~~
-void ofBackgroundHex(int hexColor, int alpha = 255);
+void ofBackgroundHex (int hexColor, int alpha = 255);
 
 
 /// \brief Sets the background color to a gradient.
@@ -163,7 +164,8 @@ void ofBackgroundHex(int hexColor, int alpha = 255);
 ///       // Sets the background to a bar gradient
 /// }
 /// ~~~~
-void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode = OF_GRADIENT_CIRCULAR);
+void ofBackgroundGradient (const ofColor & start, const ofColor & end,
+                           ofGradientMode mode = OF_GRADIENT_CIRCULAR);
 
 /// \brief Sets the background color. It takes as input r,g,b (0-255). The
 /// background is cleared automatically, just before the draw() command, so
@@ -176,9 +178,9 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 ///     ofSetBackgroundColor(255,0,0);  // Sets the background color to red
 /// }
 /// ~~~~
-void ofSetBackgroundColor(int r, int g, int b, int a=255);
-void ofSetBackgroundColor(int brightness, int alpha = 255);
-void ofSetBackgroundColor(const ofColor & c);
+void ofSetBackgroundColor (int r, int g, int b, int a = 255);
+void ofSetBackgroundColor (int brightness, int alpha = 255);
+void ofSetBackgroundColor (const ofColor & c);
 
 /// \brief Sets the background color using a hex color value.
 /// ~~~~{.cpp}
@@ -186,7 +188,7 @@ void ofSetBackgroundColor(const ofColor & c);
 ///     ofSetBackgroundColorHex(0xff0000);  // Sets the background color to red
 /// }
 /// ~~~~
-void ofSetBackgroundColorHex(int hexColor, int alpha = 255);
+void ofSetBackgroundColorHex (int hexColor, int alpha = 255);
 
 /// \brief Sets the background clearing function to be auto (default) or not. If non-
 /// auto, then background clearing will not occur per frame (at the start of
@@ -203,8 +205,8 @@ void ofSetBackgroundColorHex(int hexColor, int alpha = 255);
 ///     }
 /// }
 /// ~~~~
-void ofSetBackgroundAuto(bool bManual);		// default is true
-bool ofGetBackgroundAuto();
+void ofSetBackgroundAuto (bool bManual);        // default is true
+bool ofGetBackgroundAuto ();
 
 /// \brief Clears the color and depth bits of current renderer and replaces it with
 /// an RGB color.
@@ -240,7 +242,7 @@ bool ofGetBackgroundAuto();
 ///
 /// [1]: http://www.openframeworks.cc/documentation/gl/ofFbo.html
 /// [2]: http://www.opengl.org/sdk/docs/man/xhtml/glClear.xml
-void ofClear(float r, float g, float b, float a=0);
+void ofClear (float r, float g, float b, float a = 0);
 
 /// \brief Clears the color and depth bits of current renderer and replaces it with a
 /// grayscale value.
@@ -251,7 +253,7 @@ void ofClear(float r, float g, float b, float a=0);
 ///     // Clears current screen and replaces it with a grayscale value.
 /// }
 /// ~~~~
-void ofClear(float brightness, float a=0);
+void ofClear (float brightness, float a = 0);
 
 /// \brief Clears the color and depth bits of current renderer and replaces it with
 /// an ofColor.
@@ -264,11 +266,11 @@ void ofClear(float brightness, float a=0);
 /// }
 /// ~~~~
 
-void ofClear(const ofColor & c);
-void ofClearAlpha();
+void ofClear (const ofColor & c);
+void ofClearAlpha ();
 
 // OF's access to settings (bgAuto, origin, corner mode):
-OF_DEPRECATED_MSG("Use ofGetBackgroundAuto instead",bool ofbClearBg());
+OF_DEPRECATED_MSG ("Use ofGetBackgroundAuto instead", bool ofbClearBg ());
 
 /// \}
 /// \name 2D Primitives Drawing
@@ -280,9 +282,12 @@ OF_DEPRECATED_MSG("Use ofGetBackgroundAuto instead",bool ofbClearBg());
 ///     ofDrawTriangle(50,10,10,40,90,40);
 /// }
 /// ~~~~
-void ofDrawTriangle(float x1,float y1,float x2,float y2,float x3, float y3);
-void ofDrawTriangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3);
-void ofDrawTriangle(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3);
+void ofDrawTriangle (float x1, float y1, float x2, float y2, float x3,
+                     float y3);
+void ofDrawTriangle (float x1, float y1, float z1, float x2, float y2,
+                     float z2, float x3, float y3, float z3);
+void ofDrawTriangle (const ofPoint & p1, const ofPoint & p2,
+                     const ofPoint & p3);
 
 /// \brief Draws a circle, centered at x,y, with a given radius.
 ///
@@ -295,9 +300,9 @@ void ofDrawTriangle(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3);
 /// fill requires calling ofNoFill and ofSetColor for drawing stroke and
 /// ofFill and again ofSetColor for filled solid color circle.
 ///
-void ofDrawCircle(float x, float y, float radius);
-void ofDrawCircle(float x, float y, float z, float radius);
-void ofDrawCircle(const ofPoint & p, float radius);
+void ofDrawCircle (float x, float y, float radius);
+void ofDrawCircle (float x, float y, float z, float radius);
+void ofDrawCircle (const ofPoint & p, float radius);
 
 /// \brief Draws an ellipse from point (x,y) with a given width (w) and height (h).
 /// ~~~~{.cpp}
@@ -305,9 +310,9 @@ void ofDrawCircle(const ofPoint & p, float radius);
 ///     ofDrawEllipse(10,10,50,30);
 /// }
 /// ~~~~
-void ofDrawEllipse(float x, float y, float width, float height);
-void ofDrawEllipse(float x, float y, float z, float width, float height);
-void ofDrawEllipse(const ofPoint & p, float width, float height);
+void ofDrawEllipse (float x, float y, float width, float height);
+void ofDrawEllipse (float x, float y, float z, float width, float height);
+void ofDrawEllipse (const ofPoint & p, float width, float height);
 
 /// Draws a line between two points: (x1,y1),(x2,y2).
 /// ~~~~{.cpp}
@@ -315,9 +320,9 @@ void ofDrawEllipse(const ofPoint & p, float width, float height);
 ///     ofDrawLine(10,10,100,100);
 /// }
 /// ~~~~
-void ofDrawLine(float x1,float y1,float x2,float y2);
-void ofDrawLine(float x1,float y1,float z1,float x2,float y2,float z2);
-void ofDrawLine(const ofPoint & p1, const ofPoint & p2);
+void ofDrawLine (float x1, float y1, float x2, float y2);
+void ofDrawLine (float x1, float y1, float z1, float x2, float y2, float z2);
+void ofDrawLine (const ofPoint & p1, const ofPoint & p2);
 
 /// \brief Draws a rectangle from point x,y with a given width and height.
 /// ~~~~{.cpp}
@@ -325,7 +330,7 @@ void ofDrawLine(const ofPoint & p1, const ofPoint & p2);
 ///     ofDrawRect(10,10,100,100);
 /// }
 /// ~~~~
-void ofDrawRectangle(float x1,float y1,float w,float h);
+void ofDrawRectangle (float x1, float y1, float w, float h);
 
 
 /// \brief Draws an rectangle from the given rectangle.
@@ -340,7 +345,7 @@ void ofDrawRectangle(float x1,float y1,float w,float h);
 ///     ofDrawRectangle(rect);
 /// }
 /// ~~~~
-void ofDrawRectangle(const ofRectangle & r);
+void ofDrawRectangle (const ofRectangle & r);
 
 
 /// \brief Draws an rectangle from point p, with a given width and height.
@@ -353,7 +358,7 @@ void ofDrawRectangle(const ofRectangle & r);
 ///     ofDrawRectangle(p, 80, 80); // Draw the rectangle
 /// }
 /// ~~~~
-void ofDrawRectangle(const ofPoint & p,float w,float h);
+void ofDrawRectangle (const ofPoint & p, float w, float h);
 
 
 /// Draws an rectangle from point X, Y at depth Z with a given width and height.
@@ -362,7 +367,7 @@ void ofDrawRectangle(const ofPoint & p,float w,float h);
 ///     ofDrawRectangle(10,10,-100, 80, 80); // Draw a rectangle at 100 pixels in depth
 /// }
 /// ~~~~
-void ofDrawRectangle(float x,float y,float z,float w,float h);
+void ofDrawRectangle (float x, float y, float z, float w, float h);
 
 /// \brief Draws a rounded rectangle from the given rectangle using given
 /// radius.
@@ -378,7 +383,7 @@ void ofDrawRectangle(float x,float y,float z,float w,float h);
 ///     ofDrawRectRounded(myRect, 10);
 /// }
 /// ~~~~
-void ofDrawRectRounded(const ofRectangle & b, float r);
+void ofDrawRectRounded (const ofRectangle & b, float r);
 
 /// \brief Draws a rectangle from point p with a given width, height and radius of
 /// rounded corners.
@@ -390,7 +395,7 @@ void ofDrawRectRounded(const ofRectangle & b, float r);
 ///     ofDrawRectRounded( p, 100, 100, 10 );
 /// }
 /// ~~~~
-void ofDrawRectRounded(const ofPoint & p, float w, float h, float r);
+void ofDrawRectRounded (const ofPoint & p, float w, float h, float r);
 
 
 /// \brief Draws a rectangle from point X, Y with a given width, height and radius of
@@ -401,7 +406,7 @@ void ofDrawRectRounded(const ofPoint & p, float w, float h, float r);
 ///     ofDrawRectRounded(10, 10, 100, 100, 10);
 /// }
 /// ~~~~
-void ofDrawRectRounded(float x, float y, float w, float h, float r);
+void ofDrawRectRounded (float x, float y, float w, float h, float r);
 
 
 /// \brief Draws a rectangle from point X, Y, at depth Z with a given width, height and
@@ -412,7 +417,7 @@ void ofDrawRectRounded(float x, float y, float w, float h, float r);
 ///     ofDrawRectRounded(10, 10, 10, 100, 100, 10);
 /// }
 /// ~~~~
-void ofDrawRectRounded(float x, float y, float z, float w, float h, float r);
+void ofDrawRectRounded (float x, float y, float z, float w, float h, float r);
 
 
 /// \brief Draws a rounded rectangle from point X, Y, at depth Z with a given width,
@@ -423,10 +428,9 @@ void ofDrawRectRounded(float x, float y, float z, float w, float h, float r);
 ///     ofDrawRectRounded(10, 10, 10, 100, 100, 10);
 /// }
 /// ~~~~
-void ofDrawRectRounded(const ofPoint & p, float w, float h, float topLeftRadius,
-					   float topRightRadius,
-					   float bottomRightRadius,
-					   float bottomLeftRadius);
+void ofDrawRectRounded (const ofPoint & p, float w, float h,
+                        float topLeftRadius, float topRightRadius,
+                        float bottomRightRadius, float bottomLeftRadius);
 
 
 /// \brief Draws a rounded rectangle from the given rectangle using different given
@@ -443,10 +447,9 @@ void ofDrawRectRounded(const ofPoint & p, float w, float h, float topLeftRadius,
 ///     ofDrawRectRounded( myRect, 10, 20, 30, 40 );
 /// }
 /// ~~~~
-void ofDrawRectRounded(const ofRectangle & b, float topLeftRadius,
-					   float topRightRadius,
-					   float bottomRightRadius,
-					   float bottomLeftRadius);
+void ofDrawRectRounded (const ofRectangle & b, float topLeftRadius,
+                        float topRightRadius,
+                        float bottomRightRadius, float bottomLeftRadius);
 
 /// \brief Draws a rounded rectangle from point X, Y, at depth Z with a given width,
 /// height and different radius for each rounded corner.
@@ -456,67 +459,118 @@ void ofDrawRectRounded(const ofRectangle & b, float topLeftRadius,
 ///     ofDrawRectRounded(10, 10, 10, 100, 100, 10, 20, 30, 40);
 /// }
 /// ~~~~
-void ofDrawRectRounded(float x, float y, float z, float w, float h, float topLeftRadius,
-					   float topRightRadius,
-					   float bottomRightRadius,
-					   float bottomLeftRadius);
+void ofDrawRectRounded (float x, float y, float z, float w, float h,
+                        float topLeftRadius, float topRightRadius,
+                        float bottomRightRadius, float bottomLeftRadius);
 
 /// \brief Draws a curve from point (x1, y1) to point (x2, y2). The curve is shaped by
 /// the two control points (x0,y0) and (x3,y3).
-void ofDrawCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+void ofDrawCurve (float x0, float y0, float x1, float y1, float x2, float y2,
+                  float x3, float y3);
 
 /// \brief Draws a 3-dimensional curve from point (x1, y1, z1) to point (x2, y2, z2).
 /// The curve is shaped by the two control points (x0, y0, z0) and (x3, y3, z3).
-void ofDrawCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
-void ofDrawBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
-void ofDrawBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
+void ofDrawCurve (float x0, float y0, float z0, float x1, float y1, float z1,
+                  float x2, float y2, float z2, float x3, float y3, float z3);
+void ofDrawBezier (float x0, float y0, float x1, float y1, float x2, float y2,
+                   float x3, float y3);
+void ofDrawBezier (float x0, float y0, float z0, float x1, float y1, float z1,
+                   float x2, float y2, float z2, float x3, float y3,
+                   float z3);
 
-OF_DEPRECATED_MSG("Use ofDrawTriangle instead",void ofTriangle(float x1,float y1,float x2,float y2,float x3, float y3));
-OF_DEPRECATED_MSG("Use ofDrawTriangle instead",void ofTriangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3));
-OF_DEPRECATED_MSG("Use ofDrawTriangle instead",void ofTriangle(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3));
+OF_DEPRECATED_MSG ("Use ofDrawTriangle instead",
+                   void ofTriangle (float x1, float y1, float x2, float y2,
+                                    float x3, float y3));
+OF_DEPRECATED_MSG ("Use ofDrawTriangle instead",
+                   void ofTriangle (float x1, float y1, float z1, float x2,
+                                    float y2, float z2, float x3, float y3,
+                                    float z3));
+OF_DEPRECATED_MSG ("Use ofDrawTriangle instead",
+                   void ofTriangle (const ofPoint & p1, const ofPoint & p2,
+                                    const ofPoint & p3));
 
-OF_DEPRECATED_MSG("Use ofDrawCircle instead",void ofCircle(float x, float y, float radius));
-OF_DEPRECATED_MSG("Use ofDrawCircle instead",void ofCircle(float x, float y, float z, float radius));
-OF_DEPRECATED_MSG("Use ofDrawCircle instead",void ofCircle(const ofPoint & p, float radius));
+OF_DEPRECATED_MSG ("Use ofDrawCircle instead",
+                   void ofCircle (float x, float y, float radius));
+OF_DEPRECATED_MSG ("Use ofDrawCircle instead",
+                   void ofCircle (float x, float y, float z, float radius));
+OF_DEPRECATED_MSG ("Use ofDrawCircle instead",
+                   void ofCircle (const ofPoint & p, float radius));
 
-OF_DEPRECATED_MSG("Use ofDrawEllipse instead",void ofEllipse(float x, float y, float width, float height));
-OF_DEPRECATED_MSG("Use ofDrawEllipse instead",void ofEllipse(float x, float y, float z, float width, float height));
-OF_DEPRECATED_MSG("Use ofDrawEllipse instead",void ofEllipse(const ofPoint & p, float width, float height));
+OF_DEPRECATED_MSG ("Use ofDrawEllipse instead",
+                   void ofEllipse (float x, float y, float width,
+                                   float height));
+OF_DEPRECATED_MSG ("Use ofDrawEllipse instead",
+                   void ofEllipse (float x, float y, float z, float width,
+                                   float height));
+OF_DEPRECATED_MSG ("Use ofDrawEllipse instead",
+                   void ofEllipse (const ofPoint & p, float width,
+                                   float height));
 
-OF_DEPRECATED_MSG("Use ofDrawLine instead",void ofLine(float x1,float y1,float x2,float y2));
-OF_DEPRECATED_MSG("Use ofDrawLine instead",void ofLine(float x1,float y1,float z1,float x2,float y2,float z2));
-OF_DEPRECATED_MSG("Use ofDrawLine instead",void ofLine(const ofPoint & p1, const ofPoint & p2));
+OF_DEPRECATED_MSG ("Use ofDrawLine instead",
+                   void ofLine (float x1, float y1, float x2, float y2));
+OF_DEPRECATED_MSG ("Use ofDrawLine instead",
+                   void ofLine (float x1, float y1, float z1, float x2,
+                                float y2, float z2));
+OF_DEPRECATED_MSG ("Use ofDrawLine instead",
+                   void ofLine (const ofPoint & p1, const ofPoint & p2));
 
-OF_DEPRECATED_MSG("Use ofDrawRectangle instead",void ofRect(float x1,float y1,float w,float h));
-OF_DEPRECATED_MSG("Use ofDrawRectangle instead",void ofRect(const ofRectangle & r));
-OF_DEPRECATED_MSG("Use ofDrawRectangle instead",void ofRect(const ofPoint & p,float w,float h));
-OF_DEPRECATED_MSG("Use ofDrawRectangle instead",void ofRect(float x,float y,float z,float w,float h));
+OF_DEPRECATED_MSG ("Use ofDrawRectangle instead",
+                   void ofRect (float x1, float y1, float w, float h));
+OF_DEPRECATED_MSG ("Use ofDrawRectangle instead",
+                   void ofRect (const ofRectangle & r));
+OF_DEPRECATED_MSG ("Use ofDrawRectangle instead",
+                   void ofRect (const ofPoint & p, float w, float h));
+OF_DEPRECATED_MSG ("Use ofDrawRectangle instead",
+                   void ofRect (float x, float y, float z, float w, float h));
 
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(const ofRectangle & b, float r));
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(const ofPoint & p, float w, float h, float r));
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(float x, float y, float w, float h, float r));
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(float x, float y, float z, float w, float h, float r));
+OF_DEPRECATED_MSG ("Use ofDrawRectRounded instead",
+                   void ofRectRounded (const ofRectangle & b, float r));
+OF_DEPRECATED_MSG ("Use ofDrawRectRounded instead",
+                   void ofRectRounded (const ofPoint & p, float w, float h,
+                                       float r));
+OF_DEPRECATED_MSG ("Use ofDrawRectRounded instead",
+                   void ofRectRounded (float x, float y, float w, float h,
+                                       float r));
+OF_DEPRECATED_MSG ("Use ofDrawRectRounded instead",
+                   void ofRectRounded (float x, float y, float z, float w,
+                                       float h, float r));
 
 //----------------------------------------------------------
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(const ofPoint & p, float w, float h, float topLeftRadius,
-																	 float topRightRadius,
-																	 float bottomRightRadius,
-																	 float bottomLeftRadius));
+OF_DEPRECATED_MSG ("Use ofDrawRectRounded instead",
+                   void ofRectRounded (const ofPoint & p, float w, float h,
+                                       float topLeftRadius,
+                                       float topRightRadius,
+                                       float bottomRightRadius,
+                                       float bottomLeftRadius));
 
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(const ofRectangle & b, float topLeftRadius,
-																	 float topRightRadius,
-																	 float bottomRightRadius,
-																	 float bottomLeftRadius));
+OF_DEPRECATED_MSG ("Use ofDrawRectRounded instead",
+                   void ofRectRounded (const ofRectangle & b,
+                                       float topLeftRadius,
+                                       float topRightRadius,
+                                       float bottomRightRadius,
+                                       float bottomLeftRadius));
 
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(float x, float y, float z, float w, float h, float topLeftRadius,
-																	 float topRightRadius,
-																	 float bottomRightRadius,
-																	 float bottomLeftRadius));
+OF_DEPRECATED_MSG ("Use ofDrawRectRounded instead",
+                   void ofRectRounded (float x, float y, float z, float w,
+                                       float h, float topLeftRadius,
+                                       float topRightRadius,
+                                       float bottomRightRadius,
+                                       float bottomLeftRadius));
 
-OF_DEPRECATED_MSG("Use ofDrawCurve instead",void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3));
-OF_DEPRECATED_MSG("Use ofDrawCurve instead",void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3));
-OF_DEPRECATED_MSG("Use ofDrawBezier instead",void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3));
-OF_DEPRECATED_MSG("Use ofDrawBezier instead",void ofBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3));
+OF_DEPRECATED_MSG ("Use ofDrawCurve instead",
+                   void ofCurve (float x0, float y0, float x1, float y1,
+                                 float x2, float y2, float x3, float y3));
+OF_DEPRECATED_MSG ("Use ofDrawCurve instead",
+                   void ofCurve (float x0, float y0, float z0, float x1,
+                                 float y1, float z1, float x2, float y2,
+                                 float z2, float x3, float y3, float z3));
+OF_DEPRECATED_MSG ("Use ofDrawBezier instead",
+                   void ofBezier (float x0, float y0, float x1, float y1,
+                                  float x2, float y2, float x3, float y3));
+OF_DEPRECATED_MSG ("Use ofDrawBezier instead",
+                   void ofBezier (float x0, float y0, float z0, float x1,
+                                  float y1, float z1, float x2, float y2,
+                                  float z2, float x3, float y3, float z3));
 
 
 /// \}
@@ -539,14 +593,14 @@ OF_DEPRECATED_MSG("Use ofDrawBezier instead",void ofBezier(float x0, float y0, f
 /// ~~~~
 ///
 /// \sa ofEndShape()
-void ofBeginShape();
+void ofBeginShape ();
 
 /// \brief Specifies a single point of a shape. To be called between ofBeginShape() and
 /// ofEndShape().
-void ofVertex(float x, float y);
-void ofVertex(float x, float y, float z);
-void ofVertex(ofPoint & p);
-void ofVertices(const vector <ofPoint> & polyPoints);
+void ofVertex (float x, float y);
+void ofVertex (float x, float y, float z);
+void ofVertex (ofPoint & p);
+void ofVertices (const vector < ofPoint > &polyPoints);
 
 /// \brief Specifies a single point of a shape. The difference from ofVertex is that
 /// the line describing the edge of the shape between two points will be a
@@ -554,19 +608,22 @@ void ofVertices(const vector <ofPoint> & polyPoints);
 /// using the catmull from formula.
 ///
 /// This function has to be called between ofBeginShape() and ofEndShape().
-void ofCurveVertex(float x, float y);
-void ofCurveVertex(float x, float y, float z);
-void ofCurveVertex(ofPoint & p);
+void ofCurveVertex (float x, float y);
+void ofCurveVertex (float x, float y, float z);
+void ofCurveVertex (ofPoint & p);
 
 /// \brief Draws a curve through a series of vertices stored as a vector of
 /// ofPoints. Should be called between ofBeginShape() and ofEndShape().
-void ofCurveVertices(const vector <ofPoint> & curvePoints);
+void ofCurveVertices (const vector < ofPoint > &curvePoints);
 
 /// \brief Describes a bezier curve through three points of a shape. To be called
 /// between ofBeginShape() and ofEndShape().
-void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
-void ofBezierVertex(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3);
-void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
+void ofBezierVertex (float x1, float y1, float x2, float y2, float x3,
+                     float y3);
+void ofBezierVertex (const ofPoint & p1, const ofPoint & p2,
+                     const ofPoint & p3);
+void ofBezierVertex (float x1, float y1, float z1, float x2, float y2,
+                     float z2, float x3, float y3, float z3);
 
 
 /// \brief This tells the program that your shape is finished and that it should now
@@ -576,7 +633,7 @@ void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, 
 ///
 /// \param bClose If you set it to true it will automatically close your
 /// shape for you. Default false.
-void ofEndShape(bool bClose = false);
+void ofEndShape (bool bClose = false);
 
 /// \brief Allows you to draw multiple contours within one shape. Call this
 /// between ofBeginShape() and ofEndShape() to create a new contour for your
@@ -584,7 +641,7 @@ void ofEndShape(bool bClose = false);
 ///
 /// \param bClose If set to true then the previous contour will be
 /// automatically closed. Default false
-void ofNextContour(bool bClose = false);  // for multi contour shapes!
+void ofNextContour (bool bClose = false);       // for multi contour shapes!
 
 
 /// \}
@@ -601,7 +658,7 @@ void ofNextContour(bool bClose = false);  // for multi contour shapes!
 ///     OF_BITMAPMODE_VIEWPORT
 ///     OF_BITMAPMODE_MODEL
 ///     OF_BITMAPMODE_MODEL_BILLBOARD
-void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
+void ofSetDrawBitmapMode (ofDrawBitmapMode mode);
 
 /// \brief Draws a bitmapped string, on screen, at point (x,y).
 ///
@@ -632,16 +689,23 @@ void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
 /// with a small typeface, non-anti-aliased, as a suitable alternative.
 ///
 /// \sa ofTrueTypeFont
-template<typename T>
-void ofDrawBitmapString(const T & textString, float x, float y);
-template<typename T>
-void ofDrawBitmapString(const T & textString, const ofPoint & p);
-template<typename T>
-void ofDrawBitmapString(const T & textString, float x, float y, float z);
-template<>
-void ofDrawBitmapString(const string & textString, float x, float y, float z);
-void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
-void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
+template < typename T >
+    void ofDrawBitmapString (const T & textString, float x, float y);
+template < typename T >
+    void ofDrawBitmapString (const T & textString, const ofPoint & p);
+template < typename T >
+    void ofDrawBitmapString (const T & textString, float x, float y, float z);
+template <>
+    void ofDrawBitmapString (const string & textString, float x, float y,
+                             float z);
+void ofDrawBitmapStringHighlight (string text, const ofPoint & position,
+                                  const ofColor & background =
+                                  ofColor::black, const ofColor & foreground =
+                                  ofColor::white);
+void ofDrawBitmapStringHighlight (string text, int x, int y,
+                                  const ofColor & background =
+                                  ofColor::black, const ofColor & foreground =
+                                  ofColor::white);
 
 
 /// \}
@@ -649,9 +713,9 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& backg
 /// \{
 
 /// \brief Resets openGL screen coordinates and values back to OF defaults.
-void ofSetupGraphicDefaults();
+void ofSetupGraphicDefaults ();
 
-void ofSetupScreen();
+void ofSetupScreen ();
 
 /// \brief Tells you if rectangle drawing mode is set to drawn from the center or drawn
 /// from the top left corner, as set with the ofSetRectMode() function.
@@ -669,7 +733,7 @@ void ofSetupScreen();
 /// }
 /// ~~~~
 /// \sa ofSetRectMode()
-ofRectMode  ofGetRectMode();
+ofRectMode ofGetRectMode ();
 
 /// \brief Sets the resolution for the ofDrawCircle command. By default, the circle is 22
 /// points, but if you need to draw larger circles, you can adjust the
@@ -684,8 +748,8 @@ ofRectMode  ofGetRectMode();
 ///     ofDrawCircle(450,150,100);          //draws a fine circle
 /// }
 /// ~~~~
-void ofSetCircleResolution(int res);      // if there 22 is a problem, you can change it here
-void ofSetCurveResolution(int res);
+void ofSetCircleResolution (int res);   // if there 22 is a problem, you can change it here
+void ofSetCurveResolution (int res);
 
 
 /// \brief Sets the width of the ofDrawLine() called after.
@@ -697,18 +761,18 @@ void ofSetCurveResolution(int res);
 ///     ofDrawLine(10,100,100,10);  // draw fat line
 /// }
 /// ~~~~
-void ofSetLineWidth(float lineWidth);
+void ofSetLineWidth (float lineWidth);
 
 /// \brief Set depth testing on or off to either sort by z-depth (`true`)
 /// or draw order (`false`).
-void ofSetDepthTest(bool depthTest);
+void ofSetDepthTest (bool depthTest);
 
 
 /// \brief Turns on depth testing so rendering happens according to z-depth rather
 /// than draw order.
 ///
 /// \sa ofDisableDepthTest()
-void ofEnableDepthTest();
+void ofEnableDepthTest ();
 
 /// \brief Turn off depth testing so rendering happens in draw order rather than by
 /// z-depth.
@@ -740,7 +804,7 @@ void ofEnableDepthTest();
 /// ~~~~
 ///
 /// \sa ofEnableDepthTest()
-void ofDisableDepthTest();
+void ofDisableDepthTest ();
 
 /// \brief Sets and enables the blend mode for drawing. The options are:
 ///
@@ -752,20 +816,20 @@ void ofDisableDepthTest();
 ///     OF_BLENDMODE_SCREEN
 ///
 /// There is a blendingExample in the openFrameworks examples > graphics
-void ofEnableBlendMode(ofBlendMode blendMode);
+void ofEnableBlendMode (ofBlendMode blendMode);
 
 /// \brief Disable the current blend mode.
-void ofDisableBlendMode();
+void ofDisableBlendMode ();
 
 /// \brief Turn on point sprite.
 ///
 /// Textures can be mapped onto points. By default, point size is 1pt. So
 /// texture is not shown correctly. You can change point size by
 /// `glPointSize(GLfloat size).
-void ofEnablePointSprites();
+void ofEnablePointSprites ();
 
 /// \brief Turn off point sprites
-void ofDisablePointSprites();
+void ofDisablePointSprites ();
 
 /// \brief Turns on alpha blending (which is on by default since OF version 0.8.0).
 /// It simply wraps opengl commands that enable blending, and turn on a common
@@ -780,7 +844,7 @@ void ofDisablePointSprites();
 ///     ofDrawRectangle(120,20,100,100);     // draws the rect without alpha
 /// }
 /// ~~~~
-void ofEnableAlphaBlending();  // this just turns on and off opengl blending, the common mode
+void ofEnableAlphaBlending ();  // this just turns on and off opengl blending, the common mode
 
 /// \brief Turn off alpha blending.
 /// ~~~~{.cpp}
@@ -794,30 +858,30 @@ void ofEnableAlphaBlending();  // this just turns on and off opengl blending, th
 /// ~~~~
 ///
 /// \sa ofEnableAlphaBlending()
-void ofDisableAlphaBlending();
+void ofDisableAlphaBlending ();
 
-void ofEnableSmoothing();
+void ofEnableSmoothing ();
 
 /// \brief Turn off smoothing. Currently, this only works for lines. You can draw a
 /// filled object, and then draw the outline with smoothing enabled to get
 /// smoothing effects on filled shapes.
-void ofDisableSmoothing();
+void ofDisableSmoothing ();
 
 /// Enables anti-aliasing (smoothing) for lines.
-void ofEnableAntiAliasing();
+void ofEnableAntiAliasing ();
 
 /// \brief Turns off anti-aliasing (smoothing).
-void ofDisableAntiAliasing();
+void ofDisableAntiAliasing ();
 
 // drawing style - combines color, fill, blending and smoothing
-ofStyle ofGetStyle();
+ofStyle ofGetStyle ();
 
 /// \brief Set the current style of the ofGraphics.
 /// \param style contains information of the graphics style such as
 /// ofColor, ofFill, polyMode and others.
 ///
 /// \sa See ofStyle for more details.
-void ofSetStyle(ofStyle style);
+void ofSetStyle (ofStyle style);
 
 /// \brief Saves the current style settings for the ofGraphics after its call.
 /// Usage of ofPushStyle and ofPopStyle allow users to have more control of
@@ -837,12 +901,12 @@ void ofSetStyle(ofStyle style);
 /// }
 /// ~~~~
 /// sa ofPopStyle()
-void ofPushStyle();
+void ofPushStyle ();
 
 /// \brief Restores the prior style settings. It needs to be called after ofPushStyle.
 ///
 /// \sa ofPushStyle()
-void ofPopStyle();
+void ofPopStyle ();
 
 /// \brief Sets the drawing behavior for overlapping parts of the same polygon.
 ///
@@ -853,7 +917,7 @@ void ofPopStyle();
 ///     OF_POLY_WINDING_POSITIVE
 ///     OF_POLY_WINDING_NEGATIVE
 ///     OF_POLY_WINDING_ABS_GEQ_TWO
-void ofSetPolyMode(ofPolyWindingMode mode);
+void ofSetPolyMode (ofPolyWindingMode mode);
 
 /// \brief Sets the mode for drawing rectangles and other rectangular objects, if
 /// they are corner aligned, or drawn so that the x,y position is the center
@@ -870,7 +934,7 @@ void ofSetPolyMode(ofPolyWindingMode mode);
 ///     // both rectangles are drawn at the same place
 /// }
 /// ~~~~
-void ofSetRectMode(ofRectMode mode);
+void ofSetRectMode (ofRectMode mode);
 
 /// \}
 /// \name Transformation
@@ -889,15 +953,15 @@ void ofSetRectMode(ofRectMode mode);
 ///     ofDrawCircle(10, 10, 5);    // draw a circle
 /// }
 /// ~~~~
-void ofPushMatrix();
+void ofPushMatrix ();
 
 /// \brief Restores the prior coordinate system.
 ///
 /// \sa ofPushMatrix()
-void ofPopMatrix();
+void ofPopMatrix ();
 
 /// \brief Query the current (oF internal) Transformation Matrix state.
-ofMatrix4x4 ofGetCurrentMatrix(ofMatrixMode matrixMode);
+ofMatrix4x4 ofGetCurrentMatrix (ofMatrixMode matrixMode);
 
 /// \brief Query the current (oF internal) Orientation Matrix state.
 /// \note  The matrix returned is the matrix openFrameworks uses internally
@@ -906,7 +970,7 @@ ofMatrix4x4 ofGetCurrentMatrix(ofMatrixMode matrixMode);
 ///
 ///        Currently, only GL Programmable Renderer and GL Renderer
 ///        implement ofGetCurrentOrientationMatrix.
-ofMatrix4x4 ofGetCurrentOrientationMatrix();
+ofMatrix4x4 ofGetCurrentOrientationMatrix ();
 
 /// \brief Query the current (oF internal) Normal Matrix state.
 /// \note  The matrix returned is the transposed of the inverse of the
@@ -914,7 +978,7 @@ ofMatrix4x4 ofGetCurrentOrientationMatrix();
 ///
 ///        Currently, only GL Programmable Renderer and GL Renderer
 ///        implement ofGetCurrentNormalMatrix.
-ofMatrix4x4 ofGetCurrentNormalMatrix();
+ofMatrix4x4 ofGetCurrentNormalMatrix ();
 
 /// \brief Translate by (x,y,z) vector of our coordinate system.
 /// The call of ofTranslate() modifies graphics positions.
@@ -927,11 +991,11 @@ ofMatrix4x4 ofGetCurrentNormalMatrix();
 ///     ofDrawRectangle(0, 0, 10, 10);       // draw a rect at that position
 /// }
 /// ~~~~
-void ofTranslate(float x, float y, float z = 0);
+void ofTranslate (float x, float y, float z = 0);
 
-void ofTranslate(const ofPoint & p);
+void ofTranslate (const ofPoint & p);
 
-void ofScale(float xAmnt, float yAmnt, float zAmnt = 1);
+void ofScale (float xAmnt, float yAmnt, float zAmnt = 1);
 
 /// \brief Produces a rotation around the vector (vecX,vecY,vecZ).
 ///
@@ -948,10 +1012,10 @@ void ofScale(float xAmnt, float yAmnt, float zAmnt = 1);
 /// \param vecX specifies the x coordinates of a vector
 /// \param vecY specifies the y coordinates of a vector
 /// \param vecZ specifies the z coordinates of a vector
-void ofRotate(float degrees, float vecX, float vecY, float vecZ);
+void ofRotate (float degrees, float vecX, float vecY, float vecZ);
 
 /// \brief Rotate around the z-axis
-void ofRotate(float degrees);
+void ofRotate (float degrees);
 
 /// \brief Produces a rotation around the X-axis of our coordinate
 /// system represented by the vector (1,0,0).
@@ -962,7 +1026,7 @@ void ofRotate(float degrees);
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
-void ofRotateX(float degrees);
+void ofRotateX (float degrees);
 
 /// \brief Produces a rotation around the Y-axis of our coordinate
 /// system represented by the vector (1,0,0).
@@ -973,7 +1037,7 @@ void ofRotateX(float degrees);
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
-void ofRotateY(float degrees);
+void ofRotateY (float degrees);
 
 /// \brief Produces a rotation around the Z-axis of our coordinate
 /// system represented by the vector (1,0,0).
@@ -984,7 +1048,7 @@ void ofRotateY(float degrees);
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
-void ofRotateZ(float degrees);
+void ofRotateZ (float degrees);
 
 
 /// \}
@@ -992,14 +1056,14 @@ void ofRotateZ(float degrees);
 /// \{
 
 void ofLoadIdentityMatrix (void);
-void ofLoadMatrix (const ofMatrix4x4 & m);   // Andreas: I've included both a ofMatrix4x4* and a float* version here,
+void ofLoadMatrix (const ofMatrix4x4 & m);      // Andreas: I've included both a ofMatrix4x4* and a float* version here,
 void ofLoadMatrix (const float *m);     // ideally we would always use ofMatrix4x4, but in a lot of temporary
-void ofMultMatrix (const ofMatrix4x4 & m);  // ofMatrix4x4 objects when interacting with non-OF code
+void ofMultMatrix (const ofMatrix4x4 & m);      // ofMatrix4x4 objects when interacting with non-OF code
 void ofMultMatrix (const float *m);
-void ofSetMatrixMode(ofMatrixMode matrixMode);
-void ofLoadViewMatrix(const ofMatrix4x4 & m);
-void ofMultViewMatrix(const ofMatrix4x4 & m);
-ofMatrix4x4 ofGetCurrentViewMatrix();
+void ofSetMatrixMode (ofMatrixMode matrixMode);
+void ofLoadViewMatrix (const ofMatrix4x4 & m);
+void ofMultViewMatrix (const ofMatrix4x4 & m);
+ofMatrix4x4 ofGetCurrentViewMatrix ();
 
 
 /// \}
@@ -1007,58 +1071,69 @@ ofMatrix4x4 ofGetCurrentViewMatrix();
 /// \{
 
 // push and pop all matrices and viewport
-void ofPushView();
+void ofPushView ();
 
-void ofPopView();
+void ofPopView ();
 
 /// \brief Get if view is flipped vertically
-bool ofIsVFlipped();
+bool ofIsVFlipped ();
 
 /// \brief Setup the drawing viewport
 /// \param viewport A rectangle describing the size and position of the viewport.
 /// If the width or height are set to 0, it will assume the size to be the window
 /// size (ofGetWidth(), ofGetHeight())
-void ofViewport(ofRectangle viewport);
+void ofViewport (ofRectangle viewport);
 
 /// \brief Setup the drawing viewport
 /// \param x The x position of the viewport
 /// \param y The y position of the viewport
 /// \param width The width of the viewport, defaults to ofGetWidth()
 /// \param height The height of the viewport, defaults to ofGetHeight()
-void ofViewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped());
+void ofViewport (float x = 0, float y = 0, float width = -1, float height =
+                 -1, bool vflip = ofIsVFlipped ());
 
 /// \brief Get the position and size of the current viewport
 /// \returns A rectangle describing the viewport
-ofRectangle ofGetCurrentViewport();
+ofRectangle ofGetCurrentViewport ();
 
 /// \brief Get the position and size of the native viewport
 /// \returns A rectangle describing the viewport
-ofRectangle ofGetNativeViewport();
+ofRectangle ofGetNativeViewport ();
 
 /// \brief Get the width of the current viewport
 /// \returns A width in pixels
-int ofGetViewportWidth();
+int ofGetViewportWidth ();
 
 /// \brief Get the height of the current viewport
 /// \returns A height in pixels
-int ofGetViewportHeight();
+int ofGetViewportHeight ();
 
 
 // if nearDist or farDist are 0 assume defaults (calculated based on width / height)
-void ofSetupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
-void ofSetupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
+void ofSetupScreenPerspective (float width = -1, float height =
+                               -1, float fov = 60, float nearDist =
+                               0, float farDist = 0);
+void ofSetupScreenOrtho (float width = -1, float height = -1, float nearDist =
+                         -1, float farDist = 1);
 
-OF_DEPRECATED_MSG("ofSetupScreenPerspective() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
-				  void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float fov = 60, float nearDist = 0, float farDist = 0)
-				  );
-OF_DEPRECATED_MSG("ofSetupScreenOrtho() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
-				  void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float nearDist = -1, float farDist = 1)
-				  );
+OF_DEPRECATED_MSG
+    ("ofSetupScreenPerspective() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
+     void ofSetupScreenPerspective (float width, float height,
+                                    ofOrientation orientation, bool vFlip =
+                                    ofIsVFlipped (), float fov =
+                                    60, float nearDist = 0, float farDist =
+                                    0));
+OF_DEPRECATED_MSG
+    ("ofSetupScreenOrtho() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
+     void ofSetupScreenOrtho (float width, float height,
+                              ofOrientation orientation, bool vFlip =
+                              ofIsVFlipped (), float nearDist =
+                              -1, float farDist = 1));
 
-int ofOrientationToDegrees(ofOrientation orientation);
+int ofOrientationToDegrees (ofOrientation orientation);
 
-void ofSetCoordHandedness(ofHandednessType handedness);
-ofHandednessType ofGetCoordHandedness();
+void ofSetCoordHandedness (ofHandednessType handedness);
+ofHandednessType ofGetCoordHandedness ();
 
 /// \}
 /// \name Screen Saving
@@ -1079,37 +1154,44 @@ ofHandednessType ofGetCoordHandedness();
 /// }
 /// ~~~~
 /// \sa End drawing with ofEndSaveScreenAsPDF()
-void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
+void ofBeginSaveScreenAsPDF (string filename, bool bMultipage =
+                             false, bool b3D = false, ofRectangle outputsize =
+                             ofRectangle (0, 0, 0, 0));
 
 /// \brief Terminates draw to PDF through ofCairoRenderer and outputs the file.
 /// \sa ofBeginSaveScreenAsPDF()
-void ofEndSaveScreenAsPDF();
+void ofEndSaveScreenAsPDF ();
 
 /// \brief Begin rendering to a SVG file.
 /// \sa ofEndSaveScreenAsSVG(), ofBeginSaveScreenAsPDF()
-void ofBeginSaveScreenAsSVG(string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
+void ofBeginSaveScreenAsSVG (string filename, bool bMultipage =
+                             false, bool b3D = false, ofRectangle outputsize =
+                             ofRectangle (0, 0, 0, 0));
 
 /// \brief Terminates draw to SVG and outputs the file.
 /// \sa ofBeginSaveScreenAsSVG()
-void ofEndSaveScreenAsSVG();
+void ofEndSaveScreenAsSVG ();
 
 /// \}
 
 
 //--------------------------------------------------
-template<typename T>
-void ofDrawBitmapString(const T & textString, const ofPoint & p){
-	ofDrawBitmapString(textString, p.x, p.y, p.z);
+template < typename T > void
+ofDrawBitmapString (const T & textString, const ofPoint & p)
+{
+    ofDrawBitmapString (textString, p.x, p.y, p.z);
 }
 
 //--------------------------------------------------
-template<typename T>
-void ofDrawBitmapString(const T & textString, float x, float y){
-	ofDrawBitmapString(textString, x, y, 0.0f);
+template < typename T > void
+ofDrawBitmapString (const T & textString, float x, float y)
+{
+    ofDrawBitmapString (textString, x, y, 0.0f);
 }
 
 //--------------------------------------------------
-template<typename T>
-void ofDrawBitmapString(const T & textString, float x, float y, float z){
-	ofDrawBitmapString(ofToString(textString),x,y,z);
+template < typename T > void
+ofDrawBitmapString (const T & textString, float x, float y, float z)
+{
+    ofDrawBitmapString (ofToString (textString), x, y, z);
 }

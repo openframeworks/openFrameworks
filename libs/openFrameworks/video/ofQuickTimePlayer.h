@@ -5,97 +5,93 @@
 #include "ofPixels.h"
 
 #ifdef OF_VIDEO_PLAYER_QUICKTIME
-	#include "ofQtUtils.h"
+#include "ofQtUtils.h"
 
-class ofQuickTimePlayer : public ofBaseVideoPlayer{
+class ofQuickTimePlayer:public ofBaseVideoPlayer
+{
 
-	public:
+  public:
 
-		ofQuickTimePlayer();
-		~ofQuickTimePlayer();
+    ofQuickTimePlayer ();
+    ~ofQuickTimePlayer ();
 
-		 bool			load(string name);
-		 void			closeMovie();	
-		 void			close();
-		 void			update();
+    bool load (string name);
+    void closeMovie ();
+    void close ();
+    void update ();
 
-		 void			play();
-		 void			stop();
-		 
-		 void			clearMemory();
-		 
-		bool            setPixelFormat(ofPixelFormat pixelFormat);
-		ofPixelFormat   getPixelFormat() const;		 
-	
-		 bool 			isFrameNew() const;
+    void play ();
+    void stop ();
 
-		 ofPixels&			getPixels();
-		 const ofPixels&	getPixels() const;
-		
-		 float 			getWidth() const;
-		 float 			getHeight() const;
+    void clearMemory ();
 
-		 bool			isPaused() const;
-		 bool			isLoaded() const;
-		 bool			isPlaying() const;		 
+    bool setPixelFormat (ofPixelFormat pixelFormat);
+    ofPixelFormat getPixelFormat () const;
 
-		 float 			getPosition() const;
-		 float 			getDuration() const;
-		 int			getTotalNumFrames() const;
-		 float			getSpeed() const;
-		 bool			getIsMovieDone() const;
-		 ofLoopType 	getLoopState() const;
+    bool isFrameNew () const;
 
-		 void 			setPosition(float pct);
-		 void 			setVolume(float volume);
-		 void 			setLoopState(ofLoopType state);
-		 void   		setSpeed(float speed);
-		 void			setFrame(int frame);  // frame 0 = first frame...
-		 void 			setPaused(bool bPause);
+      ofPixels & getPixels ();
+    const ofPixels & getPixels () const;
 
-		 int			getCurrentFrame() const;
+    float getWidth () const;
+    float getHeight () const;
 
-		 void			firstFrame();
-		 void			nextFrame();
-		 void			previousFrame();
-		 
-		 mutable bool	bHavePixelsChanged;
-		 
-		 
-		
-	protected:
-		void createImgMemAndGWorld();
-		void start();
+    bool isPaused () const;
+    bool isLoaded () const;
+    bool isPlaying () const;
 
-		ofPixels		 	pixels;
-		int					width, height;
-		bool				bLoaded;
+    float getPosition () const;
+    float getDuration () const;
+    int getTotalNumFrames () const;
+    float getSpeed () const;
+    bool getIsMovieDone () const;
+    ofLoopType getLoopState () const;
 
-		//these are public because the ofQuickTimePlayer implementation has some callback functions that need access
-		//todo - fix this
+    void setPosition (float pct);
+    void setVolume (float volume);
+    void setLoopState (ofLoopType state);
+    void setSpeed (float speed);
+    void setFrame (int frame);  // frame 0 = first frame...
+    void setPaused (bool bPause);
 
-		int					nFrames;				// number of frames
-		bool				allocated;				// so we know to free pixels or not
+    int getCurrentFrame () const;
 
-		ofLoopType			currentLoopState;
-		bool 				bStarted;
-		bool 				bPlaying;
-		bool 				bPaused;
-		bool 				bIsFrameNew;			// if we are new
-		float				speed;		
-		
-		MovieDrawingCompleteUPP myDrawCompleteProc;
-		MovieController  	thePlayer;
-		GWorldPtr 			offscreenGWorld;
-		Movie 			 	moviePtr;
-		unsigned char * 	offscreenGWorldPixels;	// 32 bit: argb (qt k32ARGBPixelFormat)
-		void				qtGetFrameCount(Movie & movForcount);
+    void firstFrame ();
+    void nextFrame ();
+    void previousFrame ();
+
+    mutable bool bHavePixelsChanged;
+
+
+
+  protected:
+    void createImgMemAndGWorld ();
+    void start ();
+
+    ofPixels pixels;
+    int width, height;
+    bool bLoaded;
+
+    //these are public because the ofQuickTimePlayer implementation has some callback functions that need access
+    //todo - fix this
+
+    int nFrames;                // number of frames
+    bool allocated;             // so we know to free pixels or not
+
+    ofLoopType currentLoopState;
+    bool bStarted;
+    bool bPlaying;
+    bool bPaused;
+    bool bIsFrameNew;           // if we are new
+    float speed;
+
+    MovieDrawingCompleteUPP myDrawCompleteProc;
+    MovieController thePlayer;
+    GWorldPtr offscreenGWorld;
+    Movie moviePtr;
+    unsigned char *offscreenGWorldPixels;       // 32 bit: argb (qt k32ARGBPixelFormat)
+    void qtGetFrameCount (Movie & movForcount);
 
 };
 
 #endif
-
-
-
-
-

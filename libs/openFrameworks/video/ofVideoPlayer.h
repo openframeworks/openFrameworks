@@ -6,150 +6,151 @@
 #include "ofTypes.h"
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
-	#include "ofGstVideoPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofGstVideoPlayer
+#include "ofGstVideoPlayer.h"
+#define OF_VID_PLAYER_TYPE ofGstVideoPlayer
 #endif
 
 #ifdef OF_VIDEO_PLAYER_QUICKTIME
-	#include "ofQuickTimePlayer.h"
-	#define OF_VID_PLAYER_TYPE ofQuickTimePlayer
+#include "ofQuickTimePlayer.h"
+#define OF_VID_PLAYER_TYPE ofQuickTimePlayer
 #endif
 
 #ifdef OF_VIDEO_PLAYER_QTKIT
-	#include "ofQTKitPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofQTKitPlayer
+#include "ofQTKitPlayer.h"
+#define OF_VID_PLAYER_TYPE ofQTKitPlayer
 #endif
 
 #ifdef OF_VIDEO_PLAYER_AVFOUNDATION
-    #include "ofAVFoundationPlayer.h"
-    #define OF_VID_PLAYER_TYPE ofAVFoundationPlayer
+#include "ofAVFoundationPlayer.h"
+#define OF_VID_PLAYER_TYPE ofAVFoundationPlayer
 #endif
 
 #ifdef OF_VIDEO_PLAYER_DIRECTSHOW
-    #include "ofDirectShowPlayer.h"
-    #define OF_VID_PLAYER_TYPE ofDirectShowPlayer
+#include "ofDirectShowPlayer.h"
+#define OF_VID_PLAYER_TYPE ofDirectShowPlayer
 #endif
 
 #ifdef OF_VIDEO_PLAYER_IOS
-	#include "ofxiOSVideoPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofxiOSVideoPlayer
+#include "ofxiOSVideoPlayer.h"
+#define OF_VID_PLAYER_TYPE ofxiOSVideoPlayer
 #endif
 
 #ifdef OF_VIDEO_PLAYER_ANDROID
-	#include "ofxAndroidVideoPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofxAndroidVideoPlayer
+#include "ofxAndroidVideoPlayer.h"
+#define OF_VID_PLAYER_TYPE ofxAndroidVideoPlayer
 #endif
 
 #ifdef OF_VIDEO_PLAYER_EMSCRIPTEN
-	#include "ofxEmscriptenVideoPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofxEmscriptenVideoPlayer
+#include "ofxEmscriptenVideoPlayer.h"
+#define OF_VID_PLAYER_TYPE ofxEmscriptenVideoPlayer
 #endif
 
 //---------------------------------------------
-class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
+class ofVideoPlayer:public ofBaseVideoPlayer, public ofBaseVideoDraws
+{
 
-	public:
+  public:
 
-		ofVideoPlayer ();
+    ofVideoPlayer ();
 
 
-		bool 				load(string name);
-		void				loadAsync(string name);
-		OF_DEPRECATED_MSG("Use load instead",bool loadMovie(string name));
+    bool load (string name);
+    void loadAsync (string name);
+      OF_DEPRECATED_MSG ("Use load instead", bool loadMovie (string name));
 
-		string				getMoviePath() const;
+    string getMoviePath () const;
 
-		bool				setPixelFormat(ofPixelFormat pixelFormat);
-		ofPixelFormat		getPixelFormat() const;
-		
-		void 				closeMovie();
-		void 				close();		
+    bool setPixelFormat (ofPixelFormat pixelFormat);
+    ofPixelFormat getPixelFormat () const;
 
-		void				update();
-		void 				play();
-		void 				stop();
+    void closeMovie ();
+    void close ();
 
-		bool 				isFrameNew() const;
-		ofPixels& 			getPixels();
-		const ofPixels&		getPixels() const;
-        OF_DEPRECATED_MSG("Use getPixels() instead", ofPixels&	getPixelsRef());
-        OF_DEPRECATED_MSG("Use getPixels() instead", const ofPixels&  getPixelsRef() const);
-		float 				getPosition() const;
-		float 				getSpeed() const;
-		float 				getDuration() const;
-		bool				getIsMovieDone() const;
+    void update ();
+    void play ();
+    void stop ();
 
-		void 				setPosition(float pct);
-		void 				setVolume(float volume); // 0..1
-		void 				setLoopState(ofLoopType state);
-		ofLoopType			getLoopState() const;
-		void   				setSpeed(float speed);
-		void				setFrame(int frame);  // frame 0 = first frame...
+    bool isFrameNew () const;
+      ofPixels & getPixels ();
+    const ofPixels & getPixels () const;
+      OF_DEPRECATED_MSG ("Use getPixels() instead",
+                         ofPixels & getPixelsRef ());
+      OF_DEPRECATED_MSG ("Use getPixels() instead",
+                         const ofPixels & getPixelsRef ()const);
+    float getPosition () const;
+    float getSpeed () const;
+    float getDuration () const;
+    bool getIsMovieDone () const;
 
-		void 				setUseTexture(bool bUse);
-		bool 				isUsingTexture() const;
-		ofTexture &			getTexture();
-		const ofTexture &	getTexture() const;
-		OF_DEPRECATED_MSG("Use getTexture",ofTexture &			getTextureReference());
-		OF_DEPRECATED_MSG("Use getTexture",const ofTexture &	getTextureReference() const);
-		vector<ofTexture> & getTexturePlanes();
-		const vector<ofTexture> & getTexturePlanes() const;
-		void 				draw(float x, float y, float w, float h) const;
-		void 				draw(float x, float y) const;
-		using ofBaseDraws::draw;
+    void setPosition (float pct);
+    void setVolume (float volume);      // 0..1
+    void setLoopState (ofLoopType state);
+    ofLoopType getLoopState () const;
+    void setSpeed (float speed);
+    void setFrame (int frame);  // frame 0 = first frame...
 
-		void 				bind() const;
-		void 				unbind() const;
+    void setUseTexture (bool bUse);
+    bool isUsingTexture () const;
+      ofTexture & getTexture ();
+    const ofTexture & getTexture () const;
+      OF_DEPRECATED_MSG ("Use getTexture",
+                         ofTexture & getTextureReference ());
+      OF_DEPRECATED_MSG ("Use getTexture",
+                         const ofTexture & getTextureReference ()const);
+      vector < ofTexture > &getTexturePlanes ();
+    const vector < ofTexture > &getTexturePlanes () const;
+    void draw (float x, float y, float w, float h) const;
+    void draw (float x, float y) const;
+    using ofBaseDraws::draw;
 
-		//the anchor is the point the image is drawn around.
-		//this can be useful if you want to rotate an image around a particular point.
-        void				setAnchorPercent(float xPct, float yPct);	//set the anchor as a percentage of the image width/height ( 0.0-1.0 range )
-        void				setAnchorPoint(float x, float y);				//set the anchor point in pixels
-        void				resetAnchor();								//resets the anchor to (0, 0)
+    void bind () const;
+    void unbind () const;
 
-		void 				setPaused(bool bPause);
+    //the anchor is the point the image is drawn around.
+    //this can be useful if you want to rotate an image around a particular point.
+    void setAnchorPercent (float xPct, float yPct);     //set the anchor as a percentage of the image width/height ( 0.0-1.0 range )
+    void setAnchorPoint (float x, float y);     //set the anchor point in pixels
+    void resetAnchor ();        //resets the anchor to (0, 0)
 
-		int					getCurrentFrame() const;
-		int					getTotalNumFrames() const;
+    void setPaused (bool bPause);
 
-		void				firstFrame();
-		void				nextFrame();
-		void				previousFrame();
+    int getCurrentFrame () const;
+    int getTotalNumFrames () const;
 
-		float 				getHeight() const;
-		float 				getWidth() const;
+    void firstFrame ();
+    void nextFrame ();
+    void previousFrame ();
 
-		bool				isPaused() const;
-		bool				isLoaded() const;
-		bool				isPlaying() const;
-		bool 				isInitialized() const;
+    float getHeight () const;
+    float getWidth () const;
 
-		void				setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer);
-		shared_ptr<ofBaseVideoPlayer>	getPlayer();
-		const shared_ptr<ofBaseVideoPlayer>	getPlayer() const;
+    bool isPaused () const;
+    bool isLoaded () const;
+    bool isPlaying () const;
+    bool isInitialized () const;
 
-		template<typename PlayerType>
-		shared_ptr<PlayerType> getPlayer(){
-			return dynamic_pointer_cast<PlayerType>(getPlayer());
-		}
+    void setPlayer (shared_ptr < ofBaseVideoPlayer > newPlayer);
+      shared_ptr < ofBaseVideoPlayer > getPlayer ();
+    const shared_ptr < ofBaseVideoPlayer > getPlayer () const;
 
-		template<typename PlayerType>
-		const shared_ptr<PlayerType> getPlayer() const{
-			return dynamic_pointer_cast<PlayerType>(getPlayer());
-		}
+      template < typename PlayerType > shared_ptr < PlayerType > getPlayer ()
+    {
+        return dynamic_pointer_cast < PlayerType > (getPlayer ());
+    }
 
-	private:
-		void initDefaultPlayer();
-		shared_ptr<ofBaseVideoPlayer>		player;
-		
-		vector<ofTexture> tex;
-		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
-		bool bUseTexture;
-		mutable ofPixelFormat internalPixelFormat;
-	    string moviePath;
+    template < typename PlayerType >
+        const shared_ptr < PlayerType > getPlayer () const
+    {
+        return dynamic_pointer_cast < PlayerType > (getPlayer ());
+    }
+
+  private:
+    void initDefaultPlayer ();
+    shared_ptr < ofBaseVideoPlayer > player;
+
+    vector < ofTexture > tex;
+    ofTexture *playerTex;       // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
+    bool bUseTexture;
+    mutable ofPixelFormat internalPixelFormat;
+    string moviePath;
 };
-
-
-
-
-
