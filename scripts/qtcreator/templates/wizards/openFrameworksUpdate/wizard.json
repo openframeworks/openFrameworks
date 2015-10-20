@@ -136,13 +136,13 @@
                     "source": "qtcreator_update.qbs",
                     "target": "%{QbsFile}",
                     "openAsProject": true,
-                    "condition": "%{JS: Util.exists('%{ProjectDirectory}/addons.make')
+                    "condition": "%{JS: Util.exists('%{ProjectDirectory}/addons.make') }"
                 },
                 {
                     "source": "qtcreator_update_no_addons.qbs",
                     "target": "%{QbsFile}",
                     "openAsProject": true,
-                    "condition": "%{JS: !Util.exists('%{ProjectDirectory}/addons.make')
+                    "condition": "%{JS: !Util.exists('%{ProjectDirectory}/addons.make') }"
                 },
                 {
                     "source": "Makefile",
