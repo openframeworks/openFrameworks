@@ -332,6 +332,40 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int
 }
 
 template<typename PixelType>
+void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int width, int height, ofPixelFormat _pixelFormat, std::vector<int> strides) {
+	int channels = channelsFromPixelFormat(_pixelFormat);
+	if(channels==0) return;
+
+	if(width*channels==strides[0]){
+		setFromPixels(newPixels,width,height,_pixelFormat);
+		return;
+	}
+
+	allocate(width, height, _pixelFormat);
+
+	const unsigned char* src = (unsigned char*) newPixels;
+	unsigned char* dst =  (unsigned char*) pixels;
+	// Y Plane
+	for(int i = 0; i < height; i++) {
+		memcpy(dst, src, width);
+		src += strides[0];
+		dst += width;
+	}
+	// U Plane
+	for(int i = 0; i < height /2; i++){
+		memcpy(dst,src,width/2);
+		src += strides[1];
+		dst += width/2;
+	}
+	// V Plane
+	for(int i = 0; i < height /2; i++){
+		memcpy(dst,src,width/2);
+		src += strides[2];
+		dst += width/2;
+	}
+}
+
+template<typename PixelType>
 void ofPixels_<PixelType>::swap(ofPixels_<PixelType> & pix){
 	std::swap(pixels,pix.pixels);
 	std::swap(width, pix.width);
