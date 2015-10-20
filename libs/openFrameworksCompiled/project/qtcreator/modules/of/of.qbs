@@ -193,19 +193,25 @@ Module{
         return STATIC_LIBS.concat(ret);
     }
 
+    readonly property stringList addonsMake: {
+        var allAddons = [];
+        try{
+            var addonsmake = new TextFile(project.sourceDirectory + "/addons.make");
+            while(!addonsmake.atEof()){
+                var line = addonsmake.readLine().trim();
+                allAddons.push(line);
+                var addonPath = ofRoot + '/addons/' + line;
+                var dependencies = Helpers.parseAddonConfig(addonPath, "ADDON_DEPENDENCIES", [], platform);
+                allAddons = allAddons.concat(dependencies);
+            }
+        }catch(e){}
+        return allAddons;
+    }
+
     readonly property stringList ADDONS: {
         var allAddons = [];
         if(addons===undefined){
-            try{
-                var addonsmake = new TextFile(project.sourceDirectory + "/addons.make");
-                while(!addonsmake.atEof()){
-                    var line = addonsmake.readLine().trim();
-                    allAddons.push(line);
-                    var addonPath = ofRoot + '/addons/' + line;
-                    var dependencies = Helpers.parseAddonConfig(addonPath, "ADDON_DEPENDENCIES", [], platform);
-                    allAddons = allAddons.concat(dependencies);
-                }
-            }catch(e){}
+            allAddons = addonsMake;
         }else{
             allAddons = addons;
         }
