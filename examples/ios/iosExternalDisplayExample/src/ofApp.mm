@@ -285,6 +285,7 @@ void ofApp::deviceOrientationChanged(int newOrientation){
 
 //--------------------------------------------------------------
 void ofApp::externalDisplayConnected(){
+    [ofxiOSGetAppDelegate() createExternalWindowWithPreferredMode]; // create external window as soon as external screen is connected to prevent unwanted mirroring.
     ofLogVerbose("external display connected.");
     presentExternalDisplayPopup();
 }
