@@ -567,7 +567,7 @@ function createPackage {
         cd $pkg_ofroot/..
         mkdir of_v${pkg_version}_${pkg_platform}_release
         mv ${pkgfolder}/* of_v${pkg_version}_${pkg_platform}_release
-        zip -r of_v${pkg_version}_${pkg_platform}_release.zip of_v${pkg_version}_${pkg_platform}_release > /dev/null
+        zip --symlinks -r of_v${pkg_version}_${pkg_platform}_release.zip of_v${pkg_version}_${pkg_platform}_release > /dev/null
         rm -Rf of_v${pkg_version}_${pkg_platform}_release
     fi
 }
