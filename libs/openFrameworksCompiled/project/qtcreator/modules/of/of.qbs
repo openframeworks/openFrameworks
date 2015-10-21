@@ -8,6 +8,7 @@ import "helpers.js" as Helpers
 Module{
     name: "ofCore"
     property string msys2root: "c:/msys64"
+
     property string ofRoot: {
         if(FileInfo.isAbsolutePath(project.of_root)){
             return project.of_root;
@@ -15,21 +16,25 @@ Module{
             return FileInfo.joinPaths(project.sourceDirectory, project.of_root);
         }
     }
+
     property string platform: {
-        if(qbs.targetOS.indexOf("linux")>-1){
+        if(qbs.targetOS.contains("linux")){
             if(qbs.architecture==="x86_64"){
                 return "linux64";
             }else if(qbs.architecture==="x86"){
                 return "linux";
             }else{
-                throw(qbs.architecture + " not supported yet")
+                throw(qbs.architecture + " not supported yet");
             }
-        }else if(qbs.targetOS.indexOf("windows")>-1){
+        }else if(qbs.targetOS.contains("windows")){
             return "win_cb";
-        }else{
-            throw(qbs.targetOS + " not supported yet")
+        }/*else if(qbs.targetOS.contains("osx")){
+            return "osx";
+        }*/else{
+            throw(qbs.targetOS + " not supported yet");
         }
     }
+
     property stringList addons
 
     readonly property stringList LIBS_EXCEPTIONS: {
@@ -125,17 +130,29 @@ Module{
     }
 
     readonly property stringList PKG_CONFIG_INCLUDES: {
-        return Helpers.pkgconfig(PKG_CONFIGS,["--cflags-only-I"]).map(function(element){
-            return element.substr(2).trim()
-        })
+        if(platform.contains("linux") || platform === "win_cb"){
+            return Helpers.pkgconfig(PKG_CONFIGS,["--cflags-only-I"]).map(function(element){
+                return element.substr(2).trim()
+            });
+        }else{
+            return [];
+        }
     }
 
     readonly property stringList PKG_CONFIG_CFLAGS: {
-        return (Helpers.pkgconfig(PKG_CONFIGS,["--cflags-only-other"]))
+        if(platform.contains("linux") || platform === "win_cb"){
+            return (Helpers.pkgconfig(PKG_CONFIGS,["--cflags-only-other"]));
+        }else{
+            return [];
+        }
     }
 
     readonly property stringList PKG_CONFIG_LDFLAGS: {
-        return (Helpers.pkgconfig(PKG_CONFIGS,["--libs"]))
+        if(platform.contains("linux") || platform === "win_cb"){
+            return (Helpers.pkgconfig(PKG_CONFIGS,["--libs"]));
+        }else{
+            return [];
+        }
     }
 
     readonly property pathList INCLUDE_PATHS: {
@@ -409,6 +426,6 @@ Module{
 
     Group{
         name: "addons"
-        files: ADDONS_SOURCES
+        files: parent.ADDONS_SOURCES
     }
 }
