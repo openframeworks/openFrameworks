@@ -480,6 +480,6 @@ Module{
 
     Group{
         name: "addons"
-        files: parent.ADDONS_SOURCES
+        files: of.ADDONS_SOURCES
     }
 }
