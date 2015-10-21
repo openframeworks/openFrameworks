@@ -230,7 +230,6 @@
  */
 
 - (void)handleScreenConnectNotification:(NSNotification*)aNotification {
-    [self createExternalWindowWithPreferredMode]; // create external window as soon as external screen is connected to prevent unwanted mirroring.
     ofxiOSExternalDisplay::alertExternalDisplayConnected(); // alert any OF apps listening for a new external device.
 }
 
@@ -240,7 +239,7 @@
 }
 
 - (void)handleScreenModeDidChangeNotification:(NSNotification*)aNotification {
-    //
+	ofxiOSExternalDisplay::alertExternalDisplayChanged();
 }
 
 //-------------------------------------------------------------------------------------------
