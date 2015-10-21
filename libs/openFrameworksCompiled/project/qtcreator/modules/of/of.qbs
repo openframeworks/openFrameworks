@@ -28,9 +28,9 @@ Module{
             }
         }else if(qbs.targetOS.contains("windows")){
             return "win_cb";
-        }/*else if(qbs.targetOS.contains("osx")){
+        }else if(qbs.targetOS.contains("osx")){
             return "osx";
-        }*/else{
+        }else{
             throw(qbs.targetOS + " not supported yet");
         }
     }
@@ -55,7 +55,7 @@ Module{
                 "boost",
                 "openFrameworksCompiled"
             ];
-        }else{
+        }else if(platform==="win_cb"){
             return [
                 "glew",
                 "cairo",
@@ -69,6 +69,14 @@ Module{
                 "boost",
                 "openFrameworksCompiled"
             ];
+        }else if(platform==="osx"){
+            return [
+                "poco",
+                "quicktime",
+                "glut",
+                "openFrameworksCompiled",
+            ];
+
         }
     }
 
@@ -101,6 +109,8 @@ Module{
                 "openssl",
                 "glew",
             ].concat(pkgConfigs)
+        }else{
+            return [];
         }
     }
 
@@ -120,7 +130,7 @@ Module{
                 "boost_filesystem",
                 "boost_system",
             ];
-        }else{
+        }else if(platform === "win_cb"){
             return [
                 'opengl32', 'gdi32', 'msimg32', 'glu32', 'dsound', 'winmm', 'strmiids',
                 'uuid', 'ole32', 'oleaut32', 'setupapi', 'wsock32', 'ws2_32', 'Iphlpapi', 'Comdlg32',
@@ -168,7 +178,7 @@ Module{
         }
         includes.push(ofRoot+'/libs/poco/include');
         includes = includes.concat(PKG_CONFIG_INCLUDES);
-        if(qbs.targetOS.indexOf("windows")>-1){
+        if(platform === "win_cb"){
             includes.push(FileInfo.joinPaths(msys2root,'mingw32/include'));
             includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/cairo'));
             includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/glib-2.0'));
@@ -184,13 +194,23 @@ Module{
 
     readonly property pathList STATIC_LIBS: {
         var staticLibraries = Helpers.findLibsRecursive(ofRoot + "/libs",platform,LIBS_EXCEPTIONS);
-        staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNetSSL.a');
-        staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNet.a');
-        staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoCrypto.a');
-        staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoUtil.a');
-        staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoJSON.a');
-        staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoXML.a');
-        staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoFoundation.a');
+        if(platform === "osx"){
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoNetSSL.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoNet.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoCrypto.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoUtil.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoJSON.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoXML.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoFoundation.a');
+        }else{
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNetSSL.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNet.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoCrypto.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoUtil.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoJSON.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoXML.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoFoundation.a');
+        }
         return(staticLibraries)
     }
 
@@ -391,11 +411,45 @@ Module{
         .concat(ADDON_CFLAGS)
         .concat(cFlags)
 
-    cpp.cxxFlags: PKG_CONFIG_CFLAGS
-        .concat(['-Wno-unused-parameter','-std=gnu++14'])
-        .concat(ADDON_PKG_CONFIG_CFLAGS)
-        .concat(ADDON_CFLAGS)
-        .concat(cxxFlags)
+    Properties{
+        condition: qbs.targetOS.contains("linux") || platform === "win_cb"
+        cpp.cxxFlags: PKG_CONFIG_CFLAGS
+            .concat(['-Wno-unused-parameter','-std=gnu++14'])
+            .concat(ADDON_PKG_CONFIG_CFLAGS)
+            .concat(ADDON_CFLAGS)
+            .concat(cxxFlags)
+    }
+
+    Properties{
+        condition: qbs.targetOS.contains("osx")
+
+        cpp.cxxFlags: PKG_CONFIG_CFLAGS
+            .concat(['-Wno-unused-parameter','-std=c++11'])
+            .concat(ADDON_PKG_CONFIG_CFLAGS)
+            .concat(ADDON_CFLAGS)
+            .concat(cxxFlags)
+
+        cpp.frameworks: [
+                'Accelerate',
+                'AGL',
+                'AppKit',
+                'ApplicationServices',
+                'AudioToolbox',
+                'AVFoundation',
+                'Cocoa',
+                'CoreAudio',
+                'CoreFoundation',
+                'CoreMedia',
+                'CoreServices',
+                'CoreVideo',
+                'IOKit',
+                'OpenGL',
+                'QuartzCore',
+        ]
+
+        cpp.installNamePrefix: "@rpath"
+        cpp.rpath: "@executable_path/"
+    }
 
     cpp.includePaths: INCLUDE_PATHS
         .concat(ADDON_INCLUDES)
@@ -420,7 +474,7 @@ Module{
     }
 
     Properties{
-        condition: qbs.targetOS.contains("windows")
+        condition: platform === "win_cb"
         cpp.cxxStandardLibrary: ""
     }
 
