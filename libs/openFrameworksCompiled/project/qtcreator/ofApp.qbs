@@ -52,4 +52,25 @@ CppApplication{
             return [cpLibsCmd];
         }
     }
+
+    // Copy osx dylibs into bundle and run install_name_tool on the binary
+    Transformer {
+        condition: qbs.targetOS.contains("osx")
+        Artifact {
+            filePath: FileInfo.joinPaths(parent.destinationDirectory, parent.targetName + ".app", "Contents/MacOS/libfmodex.dylib")
+            fileTags: "preprocessed_file"
+        }
+        prepare: {
+            var cpLibsCmd = new JavaScriptCommand();
+            cpLibsCmd.description = "copying dynamic libraries";
+            cpLibsCmd.silent = false;
+            cpLibsCmd.highlight = 'filegen';
+            cpLibsCmd.sourceCode = function(){
+                var exportDir = Helpers.normalize(FileInfo.joinPaths(project.path, project.of_root, "libs/fmodex/lib", product.platform));
+                File.copy(FileInfo.joinPaths(exportDir,"libfmodex.dylib"), FileInfo.joinPaths(product.destinationDirectory, product.targetName + ".app", "Contents/MacOS/libfmodex.dylib"));
+            }
+            return [cpLibsCmd];
+
+        }
+    }
 }
