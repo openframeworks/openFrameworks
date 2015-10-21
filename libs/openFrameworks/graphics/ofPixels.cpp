@@ -336,7 +336,7 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int
 	int channels = channelsFromPixelFormat(_pixelFormat);
 	if(channels==0) return;
 
-	if(width*channels==strides[0]){
+	if(width==strides[0] && width/2==strides[1] && width/2==strides[2]){
 		setFromPixels(newPixels,width,height,_pixelFormat);
 		return;
 	}
