@@ -960,39 +960,39 @@ void ofBoxPrimitive::set( float width, float height, float depth, int resWidth, 
     
     //FRONT, resY, resX
     strides[ SIDE_FRONT ][0] = 0;
-    strides[ SIDE_FRONT ][1] = (resY-1)*(resX-1)*6;
+    strides[ SIDE_FRONT ][1] = (resY)*(resX)*6;
     vertices[SIDE_FRONT][0] = 0;
-    vertices[SIDE_FRONT][1] = resX * resY;
+    vertices[SIDE_FRONT][1] = (resX+1) * (resY+1);
     
     //RIGHT, resY, resZ
     strides[ SIDE_RIGHT ][0] = strides[ SIDE_FRONT ][0] + strides[ SIDE_FRONT ][1];
-    strides[ SIDE_RIGHT ][1] = (resY-1)*(resZ-1)*6;
+    strides[ SIDE_RIGHT ][1] = (resY)*(resZ)*6;
     vertices[SIDE_RIGHT][0] = vertices[SIDE_FRONT][0] + vertices[SIDE_FRONT][1];
-    vertices[SIDE_RIGHT][1] = resY * resZ;
+    vertices[SIDE_RIGHT][1] = (resY+1) * (resZ+1);
     
     //LEFT, resY, resZ
     strides[ SIDE_LEFT ][0] = strides[ SIDE_RIGHT ][0] + strides[ SIDE_RIGHT ][1];
-    strides[ SIDE_LEFT ][1] = (resY-1)*(resZ-1)*6;
+    strides[ SIDE_LEFT ][1] = (resY)*(resZ)*6;
     vertices[SIDE_LEFT][0] = vertices[SIDE_RIGHT][0] + vertices[SIDE_RIGHT][1];
-    vertices[SIDE_LEFT][1] = resY * resZ;
+    vertices[SIDE_LEFT][1] = (resY+1) * (resZ+1);
     
     //BACK, resY, resX
     strides[ SIDE_BACK ][0] = strides[ SIDE_LEFT ][0] + strides[ SIDE_LEFT ][1];
-    strides[ SIDE_BACK ][1] = (resY-1)*(resX-1)*6;
+    strides[ SIDE_BACK ][1] = (resY)*(resX)*6;
     vertices[SIDE_BACK][0] = vertices[SIDE_LEFT][0] + vertices[SIDE_LEFT][1];
-    vertices[SIDE_BACK][1] = resY * resX;
+    vertices[SIDE_BACK][1] = (resY+1) * (resZ+1);
     
     //TOP, resZ, resX
     strides[ SIDE_TOP ][0] = strides[ SIDE_BACK ][0] + strides[ SIDE_BACK ][1];
-    strides[ SIDE_TOP ][1] = (resZ-1)*(resX-1)*6;
+    strides[ SIDE_TOP ][1] = (resZ)*(resX)*6;
     vertices[SIDE_TOP][0] = vertices[SIDE_BACK][0] + vertices[SIDE_BACK][1];
-    vertices[SIDE_TOP][1] = resZ * resX;
+    vertices[SIDE_TOP][1] = (resY+1) * (resZ+1);
     
     //BOTTOM, resZ, resX
     strides[ SIDE_BOTTOM ][0] = strides[ SIDE_TOP ][0]+strides[ SIDE_TOP ][1];
-    strides[ SIDE_BOTTOM ][1] = (resZ-1)*(resX-1)*6;
+    strides[ SIDE_BOTTOM ][1] = (resZ)*(resX)*6;
     vertices[SIDE_BOTTOM][0] = vertices[SIDE_TOP][0] + vertices[SIDE_TOP][1];
-    vertices[SIDE_BOTTOM][1] = resZ * resX;
+    vertices[SIDE_BOTTOM][1] = (resY+1) * (resZ+1);
     
     getMesh() = ofMesh::box( getWidth(), getHeight(), getDepth(), getResolution().x, getResolution().y, getResolution().z );
     
