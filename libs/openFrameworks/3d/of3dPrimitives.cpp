@@ -540,31 +540,31 @@ void ofCylinderPrimitive::set(float _radius, float _height, int radiusSegments, 
     int indexStep = 2;
     if(mode == OF_PRIMITIVE_TRIANGLES) {
         indexStep = 6;
-        resX = std::max(resX-1,0);
+        resX = std::max(resX,0);
     }
     
     // 0 -> top cap
     strides[0][0] = 0;
-    strides[0][1] = resX * resZ * indexStep;
+    strides[0][1] = (resX+1) * (resZ+1) * indexStep;
     vertices[0][0] = 0;
-    vertices[0][1] = getResolution().x * getResolution().z;
+    vertices[0][1] = (getResolution().x+1) * (getResolution().z+1);
     
     // 1 -> cylinder //
     if(bCapped) {
-        strides[1][0] = strides[0][0] + strides[0][1];
-        vertices[1][0] = vertices[0][0] + vertices[0][1];
+        strides[1][0]	= strides[0][0] + strides[0][1];
+        vertices[1][0]	= vertices[0][0] + vertices[0][1];
     } else {
-        strides[1][0] = 0;
-        vertices[1][0] = 0;
+        strides[1][0]	= 0;
+        vertices[1][0]	= 0;
     }
-    strides[1][1] = resX * resY * indexStep;
-    vertices[1][1] = getResolution().x * getResolution().y;
+    strides[1][1] = (resX+1) * (resY+1) * indexStep;
+    vertices[1][1] = (getResolution().x+1) * (getResolution().y+1);
     
     // 2 -> bottom cap
     strides[2][0] = strides[1][0] + strides[1][1];
-    strides[2][1] = resX * resZ * indexStep;
+    strides[2][1] = (resX+1) * (resZ+1) * indexStep;
     vertices[2][0] = vertices[1][0]+vertices[1][1];
-    vertices[2][1] = getResolution().x * getResolution().z;
+    vertices[2][1] = (getResolution().x+1) * (getResolution().z+1);
     
     
     getMesh() = ofMesh::cylinder( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, getCapped(), mode );
