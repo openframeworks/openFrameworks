@@ -773,14 +773,14 @@ void ofConePrimitive::set( float _radius, float _height, int radiusSegments, int
     }
     
     strides[ 0 ][0] = 0;
-    strides[ 0 ][1] = (resX)*(resY) * indexStep;
+    strides[ 0 ][1] = (resX+1)*(resY+1) * indexStep;
     vertices[0][0] = 0;
-    vertices[0][1] = getResolution().x * getResolution().y;
+    vertices[0][1] = (getResolution().x+1) * (getResolution().y+1);
     
     strides[ 1 ][0] = strides[ 0 ][0] + strides[ 0 ][1];
-    strides[ 1 ][1] = (resX)*(resZ) * indexStep;
+    strides[ 1 ][1] = (resX+1)*(resZ+1) * indexStep;
     vertices[1][0] = vertices[0][0] + vertices[0][1];
-    vertices[1][1] = getResolution().x * getResolution().z;
+    vertices[1][1] = (getResolution().x+1) * (getResolution().z+1);
     
     getMesh() = ofMesh::cone( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, mode );
     
