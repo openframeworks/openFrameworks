@@ -394,7 +394,7 @@ const ofQuaternion ofQuaternion::operator*(const ofQuaternion& rhs) const {
 //----------------------------------------
 ofQuaternion& ofQuaternion::operator*=(const ofQuaternion& rhs) {
     float x = rhs._v.w * _v.x + rhs._v.x * _v.w + rhs._v.y * _v.z - rhs._v.z * _v.y;
-    float y = rhs._v.w * _v.y - rhs._v.x * _v.z + rhs._v.y * _v.w + rhs._v.z * _v.x;
+    float y = rhs._v.w * _v.y + rhs._v.x * _v.z + rhs._v.y * _v.w - rhs._v.z * _v.x;
     float z = rhs._v.w * _v.z + rhs._v.x * _v.y - rhs._v.y * _v.x + rhs._v.z * _v.w;
     _v.w = rhs._v.w * _v.w - rhs._v.x * _v.x - rhs._v.y * _v.y - rhs._v.z * _v.z;
     
