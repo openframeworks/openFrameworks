@@ -344,10 +344,15 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	// if path is already absolute, just return it
 	if (inputPath.is_absolute()) {
 		try {
-			return std::filesystem::canonical(inputPath).string();
+            auto outpath = std::filesystem::canonical(inputPath);
+            if(std::filesystem::is_directory(outpath)){
+                return ofFilePath::addTrailingSlash(outpath.string());
+            }else{
+                return outpath.string();
+            }
 		}
 		catch (...) {
-			return inputPath.string();
+            return inputPath.string();
 		}
 	}
 
@@ -377,14 +382,19 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	if(makeAbsolute){
 	    // then we return the absolute form of the path
 	    try {
-	        return std::filesystem::canonical(std::filesystem::absolute(outputPath)).string();
+            auto outpath = std::filesystem::canonical(std::filesystem::absolute(outputPath));
+            if(std::filesystem::is_directory(outpath)){
+                return ofFilePath::addTrailingSlash(outpath.string());
+            }else{
+                return outpath.string();
+            }
 	    }
 	    catch (std::exception &) {
-	        return std::filesystem::absolute(outputPath).string();
+            return std::filesystem::absolute(outputPath).string();
 	    }
 	}else{
 		// or output the relative path
-		return outputPath.string();
+        return outputPath.string();
 	}
 }
 
