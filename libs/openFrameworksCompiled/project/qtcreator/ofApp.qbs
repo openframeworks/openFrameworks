@@ -66,9 +66,8 @@ CppApplication{
             cpLibsCmd.silent = false;
             cpLibsCmd.highlight = 'filegen';
             cpLibsCmd.sourceCode = function(){
-                var exportDir = Helpers.normalize(FileInfo.joinPaths(project.path, project.of_root, "libs/fmodex/lib", product.platform));
+                var exportDir = Helpers.normalize(FileInfo.joinPaths(project.path, project.of_root, "libs/fmodex/lib", product.platform));                
                 File.copy(FileInfo.joinPaths(exportDir,"libfmodex.dylib"), FileInfo.joinPaths(product.destinationDirectory, product.targetName + ".app", "Contents/MacOS/libfmodex.dylib"));
-                File.copy(FileInfo.joinPaths(project.of_root,'libs/openFrameworksCompiled/project/osx/icon-debug.icns'));
             }
             return [cpLibsCmd];
 
@@ -88,8 +87,8 @@ CppApplication{
             cpCmd.silent = false;
             cpCmd.highlight = 'filegen';
             cpCmd.sourceCode = function(){
-                var src = FileInfo.joinPaths(project.of_root,'libs/openFrameworksCompiled/project/osx/icon.icns');
-                var dst = FileInfo.joinPaths(parent.destinationDirectory, parent.targetName + ".app", "Contents/Resources/icon.icns");
+                var src = FileInfo.joinPaths(project.path, project.of_root,'libs/openFrameworksCompiled/project/osx/icon.icns');
+                var dst = FileInfo.joinPaths(product.destinationDirectory, product.targetName + ".app", "Contents/Resources/icon.icns");
                 File.copy(src, dst);
             }
             return [cpCmd];
@@ -100,7 +99,7 @@ CppApplication{
     Transformer {
         condition: qbs.targetOS.contains("osx") && qbs.buildVariant.contains("debug")
         Artifact {
-            filePath: FileInfo.joinPaths(parent.destinationDirectory, parent.targetName + ".app", "Contents/Resources/icon-debug.icns")
+            filePath: FileInfo.joinPaths(product.destinationDirectory, product.targetName + ".app", "Contents/Resources/icon-debug.icns")
             fileTags: "preprocessed_file"
         }
         prepare: {
@@ -109,8 +108,8 @@ CppApplication{
             cpCmd.silent = false;
             cpCmd.highlight = 'filegen';
             cpCmd.sourceCode = function(){
-                var src = FileInfo.joinPaths(project.of_root,'libs/openFrameworksCompiled/project/osx/icon-debug.icns');
-                var dst = FileInfo.joinPaths(parent.destinationDirectory, parent.targetName + ".app", "Contents/Resources/icon-debug.icns");
+                var src = FileInfo.joinPaths(project.path, project.of_root,'libs/openFrameworksCompiled/project/osx/icon-debug.icns');
+                var dst = FileInfo.joinPaths(product.destinationDirectory, product.targetName + ".app", "Contents/Resources/icon-debug.icns");
                 File.copy(src, dst);
             }
             return [cpCmd];
