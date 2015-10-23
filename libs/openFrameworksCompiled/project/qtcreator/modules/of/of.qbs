@@ -342,6 +342,17 @@ Module{
         return libs;
     }
 
+    readonly property stringList ADDON_FRAMEWORKS: {
+        var frameworks = [];
+        for(var addon in ADDONS){
+            var addonPath = ADDONS[addon];
+            var addonFrameworks = [];
+            addonFrameworks = Helpers.parseAddonConfig(addonPath, "ADDON_FRAMEWORKS", addonFrameworks, platform, addonPath+"/");
+            frameworks = frameworks.concat(addonFrameworks);
+        }
+        return frameworks;
+    }
+
     readonly property stringList ADDON_PKG_CONFIGS: {
         var pkgconfigs = [];
         for(var addon in ADDONS){
@@ -398,9 +409,15 @@ Module{
     property stringList cxxFlags: []
     property stringList linkerFlags: []
     property stringList defines: []
+    property stringList frameworks: []
 
     Depends{
         name: "cpp"
+    }
+
+    Depends{
+        condition: platform==="osx"
+        name: "bundle"
     }
 
     //cpp.cxxLanguageVersion: "c++14"
@@ -445,10 +462,13 @@ Module{
                 'IOKit',
                 'OpenGL',
                 'QuartzCore',
-        ]
+        ].concat(frameworks)
+        .concat(ADDON_FRAMEWORKS)
 
         cpp.installNamePrefix: "@rpath"
         cpp.rpath: "@executable_path/"
+
+        bundle.infoPlist: {"CFBundleIconFile": "icon.icns"}
     }
 
     cpp.includePaths: INCLUDE_PATHS
