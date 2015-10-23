@@ -177,8 +177,10 @@ class ofApp: public ofxUnitTestsApp{
         ofLogNotice() << "";
         ofLogNotice() << "tests #4462";
         test_eq(ofToDataPath("movies/",true).back(), '/', "absolute ofToDataPath with / should end in /");
+        test_eq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without / should not end in /");
         ofDirectory("movies").create();
         test_eq(ofToDataPath("movies/",true).back(), '/', "absolute ofToDataPath with / should end in /");
+        test_eq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without / should not end in /");
 
 
         //========================================================================
