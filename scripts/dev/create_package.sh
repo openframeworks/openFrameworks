@@ -77,7 +77,7 @@ git clone $REPO --depth=1 --branch=$BRANCH ${pkgfolder} 2> /dev/null
 gitfinishedok=$?
 if [ $gitfinishedok -ne 0 ]; then
     echo "Error connecting to github"
-    exit
+    exit 1
 fi
 
 cd ${pkgfolder}
@@ -89,7 +89,7 @@ git clone $PG_REPO --depth=1 --branch=$PG_BRANCH 2> /dev/null
 gitfinishedok=$?
 if [ $gitfinishedok -ne 0 ]; then
     echo "Error connecting to github"
-    exit
+    exit 1
 fi
 
 cd $packageroot
