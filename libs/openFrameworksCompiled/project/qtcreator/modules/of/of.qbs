@@ -438,7 +438,7 @@ Module{
     }
 
     Properties{
-        condition: qbs.targetOS.contains("osx")
+        condition: platform === "osx"
 
         cpp.cxxFlags: PKG_CONFIG_CFLAGS
             .concat(['-Wno-unused-parameter','-std=c++11'])
@@ -467,8 +467,16 @@ Module{
 
         cpp.installNamePrefix: "@rpath"
         cpp.rpath: "@executable_path/"
+    }
 
-        bundle.infoPlist: {"CFBundleIconFile": "icon.icns"}
+    Properties{
+        condition: qbs.buildVariant.contains("debug") && platform === "osx"
+        bundle.infoPlist: ({"CFBundleIconFile":"icon-debug.icns"})
+    }
+
+    Properties{
+        condition: qbs.buildVariant.contains("release") && platform === "osx"
+        bundle.infoPlist: ({"CFBundleIconFile":"icon.icns"})
     }
 
     cpp.includePaths: INCLUDE_PATHS
