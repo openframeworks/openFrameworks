@@ -439,9 +439,10 @@ Module{
 
     Properties{
         condition: platform === "osx"
+        cpp.cxxLanguageVersion: "c++11"
 
         cpp.cxxFlags: PKG_CONFIG_CFLAGS
-            .concat(['-Wno-unused-parameter','-std=c++11'])
+            .concat(['-Wno-unused-parameter'])
             .concat(ADDON_PKG_CONFIG_CFLAGS)
             .concat(ADDON_CFLAGS)
             .concat(cxxFlags)
