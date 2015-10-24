@@ -1,5 +1,6 @@
 #include "ofMain.h"
 #include "ofxUnitTests.h"
+#include "ofAppNoWindow.h"
 
 bool aprox_eq(const ofVec3f & v1, const ofVec3f & v2){
     bool eq = abs(v1.x - v2.x) < 0.0001 &&
@@ -38,12 +39,14 @@ public:
 
 //========================================================================
 int main( ){
-    ofSetupOpenGL(1024,768,OF_WINDOW);			// <-------- setup the GL context
-
+    auto window = make_shared<ofAppNoWindow>();
+    auto app = make_shared<ofApp>();
     // this kicks off the running of my app
     // can be OF_WINDOW or OF_FULLSCREEN
     // pass in width and height too:
-    ofRunApp(new ofApp());
+    ofRunApp(window, app);
+    ofRunMainLoop();
+
 
 }
 
