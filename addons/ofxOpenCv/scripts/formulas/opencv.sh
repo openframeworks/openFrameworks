@@ -59,11 +59,10 @@ function build() {
     echo "Log:" >> "${LOG}" 2>&1
     set +e
     cmake .. -DCMAKE_INSTALL_PREFIX=$LIB_FOLDER \
-      -DGLFW_BUILD_UNIVERSAL=ON \
       -DCMAKE_OSX_DEPLOYMENT_TARGET=10.7 \
       -DENABLE_FAST_MATH=OFF \
-      -DCMAKE_CXX_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3" \
-      -DCMAKE_C_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3" \
+      -DCMAKE_CXX_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3 -arch i386 -arch x86_64" \
+      -DCMAKE_C_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3 -arch i386 -arch x86_64" \
       -DCMAKE_BUILD_TYPE="Release" \
       -DBUILD_SHARED_LIBS=OFF \
       -DBUILD_DOCS=OFF \

@@ -113,6 +113,7 @@ PLATFORM SPECIFIC
 ### linux and arm linux
 	+ opencv libs are now installed in the system, rerun install_dependencies if you
 	  are having problems compiling projects that use opencv
+	+ allow passing -j<num_jobs> to compileOF.sh
 
 ### windows
 	+ activated high precission timming to fix inaccurate fps calculations

@@ -96,7 +96,7 @@ function build() {
 		local API="--with-wasapi --with-ds" # asio as well?
 		mkdir -p build
 		cd build
-		cmake .. -G "Unix Makefiles"  -DAUDIO_WINDOWS_WASAPI=ON -DAUDIO_WINDOWS_DS=ON -DAUDIO_WINDOWS_ASIO=ON -DCMAKE_C_COMPILER=/mingw32/bin/clang.exe -DCMAKE_CXX_COMPILER=/mingw32/bin/clang++.exe -DBUILD_TESTING=OFF
+		cmake .. -G "Unix Makefiles"  -DAUDIO_WINDOWS_WASAPI=ON -DAUDIO_WINDOWS_DS=ON -DAUDIO_WINDOWS_ASIO=ON -DCMAKE_C_COMPILER=/mingw32/bin/gcc.exe -DCMAKE_CXX_COMPILER=/mingw32/bin/g++.exe -DBUILD_TESTING=OFF
 		make
 	fi
 

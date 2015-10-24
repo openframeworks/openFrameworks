@@ -11,6 +11,7 @@
 #include "ofVec4f.h"
 #include "ofParameterGroup.h"
 #include "ofParameter.h"
+#include "ofBufferObject.h"
 #include <regex>
 #ifdef TARGET_ANDROID
 #include "ofxAndroidUtils.h"
@@ -187,11 +188,24 @@ bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDi
 	if(shader == 0) {
 		ofLogError("ofShader") << "setupShaderFromSource(): failed creating " << nameForType(type) << " shader";
 		return false;
+	} else {
+		// if the shader object has been allocated successfully on the GPU 
+		// we must retain it so that it can be de-allocated again, once
+		// this ofShader object has been discarded, or re-allocated.
+		// we need to do this at this point in the code path, since early 
+		// return statements might prevent us from retaining later.
+		retainShader(shader);
 	}
 
 	// parse for includes
 	string src = parseForIncludes( source , sourceDirectoryPath);
-	
+
+	// store source code (that's the expanded source with all includes copied in)
+	// we need to store this here, and before shader compilation, 
+	// so that any shader compilation errors can be 
+	// traced down to the correct shader source code line.
+	shaders[type] = { type, shader, source, src, sourceDirectoryPath };
+
 	// compile shader
 	const char* sptr = src.c_str();
 	int ssize = src.size();
@@ -219,12 +233,6 @@ bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDi
 		checkShaderInfoLog(shader, type, OF_LOG_ERROR);
 		return false;
 	}
-
-	
-	// store source code (that's the expanded source with all includes copied in)
-	shaders[type] = {type, shader, source, src, sourceDirectoryPath};
-	retainShader(shader);
-
 	return true;
 }
 
@@ -382,7 +390,7 @@ bool ofShader::checkProgramLinkStatus(GLuint program) {
 		ofLogError("ofShader") << "checkProgramLinkStatus(): program failed to link";
 		checkProgramInfoLog(program);
 		return false;
-	}
+	}										  
 	return true;
 }
 
@@ -406,7 +414,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 			if (std::regex_search(infoString, matches, intel) || std::regex_search(infoString, matches, nvidia_ati)){
 				ofBuffer buf = shaders[type].expandedSource;
 				ofBuffer::Line line = buf.getLines().begin();
-				int  offendingLineNumber = ofToInt(matches[1]) + 1;
+				int  offendingLineNumber = ofToInt(matches[1]);
 				ostringstream msg;
 				msg << "ofShader: " + nameForType(type) + ", offending line " << offendingLineNumber << " :"<< endl;
 				for(int i=0; line != buf.getLines().end(); line++, i++ ){
@@ -652,9 +660,19 @@ void ofShader::setUniformTexture(const string & name, const ofTexture& tex, int 
 		if (!ofIsGLProgrammableRenderer()){
 			glEnable(texData.textureTarget);
 			glBindTexture(texData.textureTarget, texData.textureID);
+#ifndef TARGET_OPENGLES
+			if (texData.bufferId != 0) {
+				glTexBuffer(GL_TEXTURE_BUFFER, texData.glInternalFormat, texData.bufferId);
+			}
+#endif
 			glDisable(texData.textureTarget);
 		} else {
 			glBindTexture(texData.textureTarget, texData.textureID);
+#ifndef TARGET_OPENGLES
+			if (texData.bufferId != 0) {
+				glTexBuffer(GL_TEXTURE_BUFFER, texData.glInternalFormat, texData.bufferId);
+			}
+#endif
 		}
 		setUniform1i(name, textureLocation);
 		glActiveTexture(GL_TEXTURE0);

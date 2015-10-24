@@ -1708,6 +1708,11 @@ void ofGLRenderer::enableTextureTarget(const ofTexture & tex, int textureLocatio
 	glClientActiveTexture(GL_TEXTURE0+textureLocation);
 	glEnable( tex.getTextureData().textureTarget);
 	glBindTexture( tex.getTextureData().textureTarget, (GLuint)tex.getTextureData().textureID);
+#ifndef TARGET_OPENGLES
+	if(tex.getTextureData().bufferId!=0){
+		glTexBuffer(GL_TEXTURE_BUFFER, tex.getTextureData().glInternalFormat, tex.getTextureData().bufferId);
+	}
+#endif
 	textureLocationsEnabled.insert(textureLocation);
 }
 
