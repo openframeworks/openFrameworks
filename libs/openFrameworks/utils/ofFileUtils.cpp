@@ -694,7 +694,7 @@ bool ofFile::copyTo(const string& _path, bool bRelativeToData, bool overwrite) c
 		path = ofToDataPath(path);
 	}
 	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(isFile() && ofFile(path).isDirectory()){
+		if(isFile() && ofFile(path,ofFile::Reference).isDirectory()){
 			path = ofFilePath::join(path,getFileName());
 		}
 		if(ofFile::doesFileExist(path, bRelativeToData)){
@@ -736,7 +736,7 @@ bool ofFile::moveTo(const string& _path, bool bRelativeToData, bool overwrite){
 		path = ofToDataPath(path);
 	}
 	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(isFile() && ofFile(path).isDirectory()){
+		if(isFile() && ofFile(path,ofFile::Reference).isDirectory()){
 			path = ofFilePath::join(path,getFileName());
 		}
 		if(ofFile::doesFileExist(path, bRelativeToData)){
@@ -841,13 +841,13 @@ bool ofFile::operator>=(const ofFile & file) const {
 //------------------------------------------------------------------------------------------------------------
 
 bool ofFile::copyFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData,  bool overwrite){
-	return ofFile(pathSrc).copyTo(pathDst,bRelativeToData,overwrite);
+	return ofFile(pathSrc,ofFile::Reference).copyTo(pathDst,bRelativeToData,overwrite);
 }
 
 //be careful with slashes here - appending a slash when moving a folder will causes mad headaches
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::moveFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData, bool overwrite){
-	return ofFile(pathSrc).moveTo(pathDst, bRelativeToData, overwrite);
+	return ofFile(pathSrc,ofFile::Reference).moveTo(pathDst, bRelativeToData, overwrite);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -856,7 +856,7 @@ bool ofFile::doesFileExist(const std::string& _fPath, bool bRelativeToData){
 	if(bRelativeToData){
 		fPath = ofToDataPath(fPath);
 	}
-	ofFile file(fPath);
+	ofFile file(fPath,ofFile::Reference);
 	return !fPath.empty() && file.exists();
 }
 
@@ -866,7 +866,7 @@ bool ofFile::removeFile(const std::string& _path, bool bRelativeToData){
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	return ofFile(path).remove();
+	return ofFile(path,ofFile::Reference).remove();
 }
 
 
@@ -1025,7 +1025,7 @@ bool ofDirectory::copyTo(const std::string& _path, bool bRelativeToData, bool ov
 				return false;
 			}
 		}else{
-			ofFile(file->path()).copyTo(dst.string(),false);
+			ofFile(file->path(),ofFile::Reference).copyTo(dst.string(),false);
 		}
 	}
 
@@ -1220,7 +1220,7 @@ bool ofDirectory::removeDirectory(const std::string& _path, bool deleteIfNotEmpt
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	return ofFile(path).remove(deleteIfNotEmpty);
+	return ofFile(path,ofFile::Reference).remove(deleteIfNotEmpty);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1418,7 +1418,7 @@ string ofFilePath::getFileName(const std::string& _filePath, bool bRelativeToDat
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getBaseName(const std::string& filePath){
-	return ofFile(filePath).getBaseName();
+	return ofFile(filePath,ofFile::Reference).getBaseName();
 }
 
 //------------------------------------------------------------------------------------------------------------
