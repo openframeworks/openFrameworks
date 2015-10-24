@@ -17,6 +17,7 @@ class ofParameterGroup;
 class ofVec2f;
 class ofVec3f;
 class ofVec4f;
+class ofBufferObject;
 
 class ofShader {
 public:

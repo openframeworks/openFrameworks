@@ -1218,7 +1218,7 @@ void ofGLProgrammableRenderer::enableTextureTarget(const ofTexture & tex, int te
 	}
 
 	if((currentTextureTarget!=OF_NO_TEXTURE) && currentShader){
-		currentShader->setUniformTexture("src_tex_unit"+ofToString(textureLocation),tex.texData.textureTarget,tex.texData.textureID,textureLocation);
+		currentShader->setUniformTexture("src_tex_unit"+ofToString(textureLocation),tex,textureLocation);
 	}
 }
 

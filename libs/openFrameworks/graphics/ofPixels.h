@@ -132,6 +132,8 @@ public:
 	void setFromExternalPixels(PixelType * newPixels,int w, int h, ofPixelFormat pixelFormat);
 	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride);
 	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, ofPixelFormat pixelFormat, int stride);
+	/// \brief used to copy i420 pixels from gstreamer when (width % 4) != 0
+	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, ofPixelFormat pixelFormat, std::vector<int> strides);
 	
 	void swap(ofPixels_<PixelType> & pix);
 

@@ -77,7 +77,7 @@ git clone $REPO --depth=1 --branch=$BRANCH ${pkgfolder} 2> /dev/null
 gitfinishedok=$?
 if [ $gitfinishedok -ne 0 ]; then
     echo "Error connecting to github"
-    exit
+    exit 1
 fi
 
 cd ${pkgfolder}
@@ -89,7 +89,7 @@ git clone $PG_REPO --depth=1 --branch=$PG_BRANCH 2> /dev/null
 gitfinishedok=$?
 if [ $gitfinishedok -ne 0 ]; then
     echo "Error connecting to github"
-    exit
+    exit 1
 fi
 
 cd $packageroot
@@ -129,14 +129,7 @@ function deleteEclipse {
 
 
 function createProjectFiles {
-    if [ "$pkg_platform" == "win_cb" ]; then	
-        echo "Creating project files"
-	    # copy config.make and Makefile into every subfolder
-	    for example in $pkg_ofroot/examples/*/*; do
-	        cp $pkg_ofroot/scripts/templates/win_cb/config.make ${example}
-	        cp $pkg_ofroot/scripts/templates/win_cb/Makefile ${example}
-	    done
-    elif [ "$pkg_platform" != "android" ]; then
+    if [ "$pkg_platform" != "android" ]; then
         cd ${main_ofroot}/apps/projectGenerator
         git pull origin master
         cd commandLine
@@ -144,7 +137,7 @@ function createProjectFiles {
         PROJECT_OPTIMIZATION_CFLAGS_RELEASE=-O3 make -j2 > /dev/null
         cd ${pkg_ofroot}
         echo "Creating project files for $pkg_platform"
-        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p ${pkg_platform} -o $pkg_ofroot $pkg_ofroot/examples > /dev/null
+        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pkg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
     fi
     cd ${pkg_ofroot}
 }
@@ -315,7 +308,7 @@ function createPackage {
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
 		cd ${pkg_ofroot}/projectGenerator-vs/resources/app/app/
-		wget http://192.237.185.151/projectGenerator/projectGenerator-vs.zip 2> /dev/null
+		wget http://198.61.170.130/projectGenerator/projectGenerator-vs.zip 2> /dev/null
 		unzip projectGenerator-vs.zip 2> /dev/null
 		rm projectGenerator-vs.zip
 		cd ${pkg_ofroot}
@@ -328,7 +321,7 @@ function createPackage {
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-osx
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
-		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
+		wget http://198.61.170.130/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
 		sed -i "s/osx/osx/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
     if [ "$pkg_platform" = "ios" ]; then
@@ -338,14 +331,14 @@ function createPackage {
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-ios
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
-		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-ios/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
+		wget http://198.61.170.130/projectGenerator/projectGenerator_osx -O projectGenerator-ios/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
 		sed -i "s/osx/ios/g" projectGenerator-ios/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
 	
 	if [ "$pkg_platform" = "linux" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
 		npm install > /dev/null
-		npm run build:linux > /dev/null
+		npm run build:linux32 > /dev/null
 		mv dist/projectGenerator-linux-ia32 ${pkg_ofroot}/projectGenerator-linux
 		cd ${pkg_ofroot}
 		sed -i "s/osx/linux/g" projectGenerator-linux/resources/app/settings.json
@@ -364,9 +357,11 @@ function createPackage {
 	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
 	    cd ${pkg_ofroot}
 		mv apps/projectGenerator/commandLine .
+		mv apps/projectGenerator/ofxProjectGenerator .
 		rm -rf apps/projectGenerator
 		mkdir apps/projectGenerator
 		mv commandLine apps/projectGenerator/
+		mv ofxProjectGenerator apps/projectGenerator/
 		cd apps/projectGenerator/commandLine
 		deleteCodeblocks
 		deleteVS
@@ -572,7 +567,7 @@ function createPackage {
         cd $pkg_ofroot/..
         mkdir of_v${pkg_version}_${pkg_platform}_release
         mv ${pkgfolder}/* of_v${pkg_version}_${pkg_platform}_release
-        zip -r of_v${pkg_version}_${pkg_platform}_release.zip of_v${pkg_version}_${pkg_platform}_release > /dev/null
+        zip --symlinks -r of_v${pkg_version}_${pkg_platform}_release.zip of_v${pkg_version}_${pkg_platform}_release > /dev/null
         rm -Rf of_v${pkg_version}_${pkg_platform}_release
     fi
 }
