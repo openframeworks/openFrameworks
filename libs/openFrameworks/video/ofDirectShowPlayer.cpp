@@ -497,7 +497,7 @@ class DirectShowVideo : public ISampleGrabberCB{
             return false;
         }
 
-        m_pGrabber->SetCallback(this, 0);
+        hr = m_pGrabber->SetCallback(this, 0);
         if (FAILED(hr)){
             tearDown(); 
             return false;
