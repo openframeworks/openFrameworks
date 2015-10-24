@@ -296,7 +296,7 @@ endif
 
 # find all sources inside the project's source directory (recursively)
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-OF_PROJECT_SOURCE_FILES = $(shell $(FIND) $(OF_PROJECT_SOURCE_PATHS) -maxdepth 1 -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" -or -name "*.S" | grep -v "/\.[^\.]")
+OF_PROJECT_SOURCE_FILES = $(shell $(FIND) $(OF_PROJECT_SOURCE_PATHS) -maxdepth 1 -name "*.mm" -or -name "*.m" -or -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" -or -name "*.S" | grep -v "/\.[^\.]")
 
 ################################################################################
 # PROJECT HEADER INCLUDES (-I ...)
@@ -495,7 +495,7 @@ ifdef MAKEFILE_DEBUG
 endif
 
 
-OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(patsubst %.S,%.o,$(OF_PROJECT_SOURCE_FILES))))))
+OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(patsubst %.S,%.o,$(patsubst %.mm,%.o,$(patsubst %.m,%.o,$(OF_PROJECT_SOURCE_FILES))))))))
 OBJS_WITH_PREFIX = $(addprefix $(OF_PROJECT_OBJ_OUTPUT_PATH),$(OF_PROJECT_OBJ_FILES))
 OBJS_WITHOUT_EXTERNAL = $(subst $(strip $(PROJECT_EXTERNAL_SOURCE_PATHS)),,$(OBJS_WITH_PREFIX))
 OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(OBJS_WITHOUT_EXTERNAL))
