@@ -178,7 +178,8 @@ public:
     inline const ofQuaternion operator -(const ofQuaternion& rhs) const;    ///< Binary subtraction
     inline const ofQuaternion operator -() const;                           ///< returns the negative of the quaternion. calls operator -() on the Vec4
     
-    inline ostream& operator<<(ostream& os);
+    friend inline ostream& operator<<(ostream& os, const ofQuaternion& q);
+
     inline istream& operator>>(istream& is);
     
     /// \}
@@ -199,8 +200,8 @@ ofQuaternion::ofQuaternion() {
 
 
 //----------------------------------------
-ostream& ofQuaternion::operator<<(ostream& os) {
-    os << _v.x << ", " << _v.y << ", " << _v.z << ", " << _v.w;
+ostream& operator<<(ostream& os, const ofQuaternion& q) {
+    os << q._v.x << ", " << q._v.y << ", " << q._v.z << ", " << q._v.w;
     return os;
 }
 
@@ -385,7 +386,7 @@ ofQuaternion& ofQuaternion::operator *=(float rhs) {
 //----------------------------------------
 const ofQuaternion ofQuaternion::operator*(const ofQuaternion& rhs) const {
     return ofQuaternion(rhs._v.w*_v.x + rhs._v.x*_v.w + rhs._v.y*_v.z - rhs._v.z*_v.y,
-                        rhs._v.w*_v.y - rhs._v.x*_v.z + rhs._v.y*_v.w + rhs._v.z*_v.x,
+                        rhs._v.w*_v.y + rhs._v.x*_v.z + rhs._v.y*_v.w - rhs._v.z*_v.x,
                         rhs._v.w*_v.z + rhs._v.x*_v.y - rhs._v.y*_v.x + rhs._v.z*_v.w,
                         rhs._v.w*_v.w - rhs._v.x*_v.x - rhs._v.y*_v.y - rhs._v.z*_v.z);
 }
@@ -394,7 +395,7 @@ const ofQuaternion ofQuaternion::operator*(const ofQuaternion& rhs) const {
 //----------------------------------------
 ofQuaternion& ofQuaternion::operator*=(const ofQuaternion& rhs) {
     float x = rhs._v.w * _v.x + rhs._v.x * _v.w + rhs._v.y * _v.z - rhs._v.z * _v.y;
-    float y = rhs._v.w * _v.y - rhs._v.x * _v.z + rhs._v.y * _v.w + rhs._v.z * _v.x;
+    float y = rhs._v.w * _v.y + rhs._v.x * _v.z + rhs._v.y * _v.w - rhs._v.z * _v.x;
     float z = rhs._v.w * _v.z + rhs._v.x * _v.y - rhs._v.y * _v.x + rhs._v.z * _v.w;
     _v.w = rhs._v.w * _v.w - rhs._v.x * _v.x - rhs._v.y * _v.y - rhs._v.z * _v.z;
     
