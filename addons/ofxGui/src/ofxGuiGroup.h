@@ -24,9 +24,11 @@ class ofxGuiGroup : public ofxBaseGui {
             float header = defaultHeight;
             bool showHeader = true;
             bool exclusiveToggles = false;
+			bool distributeEvenly = false;
 		};
 
-        ofxGuiGroup();
+		ofxGuiGroup();
+		ofxGuiGroup(const Config & config);
         ofxGuiGroup(const ofParameterGroup & parameters, const Config & groupConfig = Config(), const Config &itemConfig = ofxBaseGui::Config());
 		virtual ~ofxGuiGroup();
 
@@ -61,37 +63,37 @@ class ofxGuiGroup : public ofxBaseGui {
 
         template<typename T, class Config>
         typename std::enable_if<std::is_arithmetic<T>::value, void>::type add(ofParameter<T> & p, const Config & config){
-            add(new ofxSlider<T>(p, config));
+			add(new ofxSlider<T>(p, config));
         }
 
-        template<class Config>
-        void add(ofParameter <bool> & parameter, const Config & config);
+		template<class Config>
+		void add(ofParameter <bool> & parameter, const Config & config);
 
-        template<class Config>
-        void add(ofParameter <std::string> & parameter, const Config & config);
+		template<class Config>
+		void add(ofParameter <std::string> & parameter, const Config & config);
 
-        template<class Config>
-        void add(ofParameter <ofVec2f> & parameter, const Config & config);
+		template<class Config>
+		void add(ofParameter <ofVec2f> & parameter, const Config & config);
 
-        template<class Config>
-        void add(ofParameter <ofVec3f> & parameter, const Config & config);
+		template<class Config>
+		void add(ofParameter <ofVec3f> & parameter, const Config & config);
 
-        template<class Config>
-        void add(ofParameter <ofVec4f> & parameter, const Config & config);
+		template<class Config>
+		void add(ofParameter <ofVec4f> & parameter, const Config & config);
 
-        template<class Config>
-        void add(ofParameter <ofColor> & parameter, const Config & config);
+		template<class Config>
+		void add(ofParameter <ofColor> & parameter, const Config & config);
 
-        template<class Config>
-        void add(ofParameter <ofShortColor> & parameter, const Config & config);
+		template<class Config>
+		void add(ofParameter <ofShortColor> & parameter, const Config & config);
 
-        template<class Config>
-        void add(ofParameter <ofFloatColor> & parameter, const Config & config);
+		template<class Config>
+		void add(ofParameter <ofFloatColor> & parameter, const Config & config);
 
 		template<class GuiType, typename Type, class Config>
 		void add(ofParameter<Type> p, const Config & config);
 
-        template<class GuiType=ofxGuiGroup, class CGroup, class CItem=ofxBaseGui::Config>
+		template<class GuiType=ofxGuiGroup, class CGroup, class CItem=ofxBaseGui::Config>
         void add(ofParameterGroup p, const CGroup & groupConfig, const CItem & itemConfig = ofxBaseGui::Config());
 
 		template<class GuiType, class Config>
@@ -139,12 +141,12 @@ class ofxGuiGroup : public ofxBaseGui {
         virtual void setShape(float x, float y, float w, float h);
 
         void setShowHeader(bool show);
+		void setDistributeEvenly(bool distribute);
 
         void setExclusiveToggles(bool exclusive);
         bool setActiveToggle(int index);
-        bool setActiveToggle(ofxToggle* toggle);
-        int getActiveToggleIndex() const;
-		ofEvent<int> activeToggleChanged;
+		bool setActiveToggle(ofxToggle* toggle);
+		ofParameter<int>& getActiveToggleIndex();
 
 	protected:
 		virtual void render();
@@ -170,8 +172,9 @@ class ofxGuiGroup : public ofxBaseGui {
         bool bShowHeader;
         bool bExclusiveToggles;
 		bool bGuiActive;
+		bool bDistributeEvenly;
 
-        int active_toggle_index;
+		ofParameter<int> active_toggle_index;
         bool processToggles(ofxToggle *toggle, ofMouseEventArgs a);
         void setOneToggleActive();
         void deactivateAllOtherToggles(ofxToggle* toggle);

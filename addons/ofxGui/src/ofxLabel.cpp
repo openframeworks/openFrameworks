@@ -78,7 +78,7 @@ void ofxValueLabel<Type>::render() {
 	if(blendMode!=OF_BLENDMODE_ALPHA){
 		ofEnableAlphaBlending();
 	}
-    ofSetColor(textColor);
+	ofSetColor(thisTextColor);
 
     bindFontTexture();
     textMesh.draw();

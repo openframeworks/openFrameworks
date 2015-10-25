@@ -183,10 +183,16 @@ template<typename Type>
 void ofxSlider<Type>::generateDraw(){
 	bg.clear();
 	bar.clear();
+	border.clear();
 
 	bg.setFillColor(thisBackgroundColor);
 	bg.setFilled(true);
-	bg.rectangle(b);
+	bg.rectangle(b.x+1, b.y+1, b.width-2, b.height-2);
+
+	border.setStrokeColor(thisBorderColor);
+	border.setFilled(false);
+	border.setStrokeWidth(1);
+	border.rectangle(b);
 
     float valAsPct;
     if(layout == ofxBaseGui::Horizontal){
@@ -258,6 +264,7 @@ template<typename Type>
 void ofxSlider<Type>::render(){
 	ofColor c = ofGetStyle().color;
 
+	border.draw();
 	bg.draw();
 	bar.draw();
 

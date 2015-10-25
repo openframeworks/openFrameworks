@@ -111,7 +111,7 @@ void ofxTabbedPages::render(){
 
     tabBorder.clear();
     if(activePage){
-        tabBorder.setStrokeWidth(2);
+		tabBorder.setStrokeWidth(3);
         tabBorder.setFilled(false);
         tabBorder.setStrokeColor(thisBackgroundColor);
         tabBorder.moveTo(activeToggle->getShape().getBottomLeft() - ofPoint(-1, 1));

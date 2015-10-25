@@ -9,13 +9,21 @@ ofxMinimalToggle::ofxMinimalToggle() :
 
 ofxMinimalToggle::ofxMinimalToggle(ofParameter <bool> val, const Config & config)
 :ofxToggle(val,config){
-	thisBorderColor = thisFillColor;
-    if(b.width == 0) {
+	if(b.width == 0) {
         b.width = ofxBaseGui::getTextWidth(val.getName(), config.shape.height);
     }
 }
 
 ofxMinimalToggle::~ofxMinimalToggle(){
+}
+
+ofxMinimalToggle & ofxMinimalToggle::setup(ofParameter <bool> val, const Config & config){
+	ofxToggle::setup(val, config);
+	thisBorderColor = thisFillColor;
+	if(b.width == 0) {
+		b.width = ofxBaseGui::getTextWidth(val.getName(), config.shape.height);
+	}
+	return *this;
 }
 
 ofxMinimalToggle & ofxMinimalToggle::setup(ofParameter <bool> val, float width, float height){
@@ -38,12 +46,12 @@ void ofxMinimalToggle::generateDraw(){
 
 	bg.clear();
 	bg.setFillColor(thisBackgroundColor);
-	bg.rectangle(b.getPosition() + checkboxRect.getTopLeft(), checkboxRect.width, checkboxRect.height);
+	bg.rectangle(b.getPosition() + checkboxRect.getTopLeft()+ofPoint(1,1), checkboxRect.width-2, checkboxRect.height-2);
 
 	fg.clear();
 	fg.setFilled(true);
 	fg.setFillColor(thisFillColor);
-	fg.rectangle(b.getPosition() + checkboxRect.getTopLeft(), checkboxRect.width, checkboxRect.height);
+	fg.rectangle(b.getPosition() + checkboxRect.getTopLeft()+ofPoint(1,1), checkboxRect.width-2, checkboxRect.height-2);
 
 	border.clear();
 	border.setFilled(false);

@@ -10,6 +10,7 @@ class ofxMinimalToggle : public ofxToggle {
         virtual ~ofxMinimalToggle();
         ofxMinimalToggle(ofParameter <bool> val, const Config & config = Config());
 
+		ofxMinimalToggle & setup(ofParameter <bool> val, const Config & config = Config());
         ofxMinimalToggle & setup(ofParameter <bool> val, float width = defaultWidth, float height = defaultHeight);
         ofxMinimalToggle & setup(const std::string & toggleName, bool val, float width = defaultWidth, float height = defaultHeight);
 

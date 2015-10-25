@@ -13,6 +13,10 @@ ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const Config & gr
     setup(_parameters, groupConfig, itemConfig);
 }
 
+ofxGuiGroup::ofxGuiGroup(const Config & config){
+	setup(config);
+}
+
 ofxGuiGroup::~ofxGuiGroup(){
 	for(auto e: collection){
 		ofRemoveListener(e->sizeChangedE,this,&ofxGuiGroup::sizeChangedCB);
@@ -29,6 +33,7 @@ ofxGuiGroup & ofxGuiGroup::setup(const Config & config){
     minimized = config.minimized;
     bShowHeader = config.showHeader;
 	bExclusiveToggles = config.exclusiveToggles;
+	bDistributeEvenly = config.distributeEvenly;
     bGuiActive = false;
     this->config = config;
     registerMouseEvents();
@@ -75,6 +80,7 @@ ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 	b.width = defaultWidth;
     layout = Config().layout;
 	bExclusiveToggles = Config().exclusiveToggles;
+	bDistributeEvenly = Config().distributeEvenly;
 	clear();
 	filename = _filename;
 	bGuiActive = false;
@@ -209,8 +215,8 @@ void ofxGuiGroup::add(ofxBaseGui * element){
     }
 
     //change size of group if element is bigger than group
-    b.height = element->getShape().getBottom() + 1 - b.y;
-    if(getShape().getRight()+ 1 < element->getShape().getRight()) {
+	b.height = max(b.height, element->getShape().getBottom() + 1 - b.y);
+	if(getShape().getRight()+ 1 < element->getShape().getRight() && !bDistributeEvenly) {
         b.width = element->getShape().getRight() + 1 - b.x;
     }
 
@@ -218,7 +224,7 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 	ofAddListener(element->sizeChangedE,this,&ofxGuiGroup::sizeChangedCB);
 
 	parameters.add(element->getParameter());
-	setNeedsRedraw();
+	sizeChangedCB();
 
     if(bExclusiveToggles) {
         setOneToggleActive();
@@ -261,7 +267,7 @@ void ofxGuiGroup::setWidthElements(float w){
         sizeChangedCB();
         setNeedsRedraw();
     }
-    else{
+	else{
         //TODO
     }
 }
@@ -542,17 +548,32 @@ void ofxGuiGroup::sizeChangedCB(){
             }
             b.height = y - b.y;
         }else{
-            float max_h = 0;
-            for(auto & e: collection){
-                e->setPosition(x,y + spacing);
-                x += e->getWidth() + spacing;
-                if(max_h < e->getHeight()){
-                    max_h = e->getHeight();
-                }
-            }
-            y += max_h+spacing;
-            b.width = x - b.x;
-            b.height = y - b.y;
+			float max_h = 0;
+			if(bDistributeEvenly){
+				float e_width = (b.getRight()-x-1)/collection.size()-spacing;
+				for(auto & e: collection){
+					e->sizeChangedE.disable();
+					e->setSize(e_width, e->getHeight());
+					e->sizeChangedE.enable();
+					e->setPosition(x,y + spacing);
+					x+=e_width+spacing;
+					if(max_h < e->getHeight()){
+						max_h = e->getHeight();
+					}
+				}
+
+			}else {
+				for(auto & e: collection){
+					e->setPosition(x,y + spacing);
+					x += e->getWidth() + spacing;
+					if(max_h < e->getHeight()){
+						max_h = e->getHeight();
+					}
+				}
+			}
+			b.width = max(b.width, x - b.x);
+			y += max_h+spacing;
+			b.height = y - b.y;
         }
     }
     else {
@@ -605,16 +626,22 @@ void ofxGuiGroup::setPosition(float x, float y){
 
 void ofxGuiGroup::setSize(float w, float h){
     ofxBaseGui::setSize(w,h);
-    setWidthElements(w * .98);
+	if(layout == ofxBaseGui::Vertical){
+		setWidthElements(w * .98);
+	}else{
+		sizeChangedCB();
+	}
 }
 
 void ofxGuiGroup::setShape(ofRectangle r){
-    ofxBaseGui::setShape(r);
+	setSize(r.width, r.height);
+	setPosition(r.x, r.y);
     setWidthElements(r.width * .98);
 }
 
 void ofxGuiGroup::setShape(float x, float y, float w, float h){
-    ofxBaseGui::setShape(x,y,w,h);
+	setSize(w, h);
+	setPosition(x, y);
     setWidthElements(w * .98);
 }
 
@@ -647,13 +674,15 @@ bool ofxGuiGroup::setActiveToggle(ofxToggle* toggle) {
 }
 
 bool ofxGuiGroup::setActiveToggle(int index) {
-    if(ofxToggle* toggle = dynamic_cast<ofxToggle*>(collection[index])) {
-        return setActiveToggle(toggle);
-    }
-    else {
-        ofLogError("ofxGuiGroup", "cannot activate control " + ofToString(index) + " because it's no ofxToggle.");
-        return false;
-    }
+	if(index >= 0 && index < collection.size()){
+		if(ofxToggle* toggle = dynamic_cast<ofxToggle*>(collection[index])) {
+			return setActiveToggle(toggle);
+		}
+		else {
+			ofLogError("ofxGuiGroup", "cannot activate control " + ofToString(index) + " because it's no ofxToggle.");
+			return false;
+		}
+	}
 }
 
 void ofxGuiGroup::deactivateAllOtherToggles(ofxToggle *toggle) {
@@ -664,8 +693,7 @@ void ofxGuiGroup::deactivateAllOtherToggles(ofxToggle *toggle) {
                    *t = false;
                 }
                 else {
-                    active_toggle_index = i;
-					ofNotifyEvent(activeToggleChanged, i);
+					active_toggle_index.set(i);
                 }
             }
         }
@@ -684,6 +712,10 @@ void ofxGuiGroup::setOneToggleActive() {
 }
 
 
-int ofxGuiGroup::getActiveToggleIndex() const {
+ofParameter<int>& ofxGuiGroup::getActiveToggleIndex() {
     return active_toggle_index;
+}
+
+void ofxGuiGroup::setDistributeEvenly(bool distribute){
+	bDistributeEvenly = distribute;
 }

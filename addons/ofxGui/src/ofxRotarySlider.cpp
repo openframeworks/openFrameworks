@@ -18,14 +18,20 @@ template <typename Type>
 void ofxRotarySlider <Type>::generateDraw(){
 
 	float inner_r = min(this->b.width, this->b.height) / 6;
-	float outer_r = min(this->b.width, this->b.height) / 2;
+	float outer_r = min(this->b.width, this->b.height) / 2-1;
 
 	this->bg.clear();
 	this->bar.clear();
+	this->border.clear();
+
+	this->border.setStrokeColor(this->thisBorderColor);
+	this->border.setStrokeWidth(1);
+	this->border.setFilled(false);
+	arcStrip(this->border, this->b.getCenter(), outer_r, inner_r, 1);
 
 	this->bg.setFillColor(this->thisBackgroundColor);
 	this->bg.setFilled(true);
-	arcStrip(this->bg, this->b.getCenter(), outer_r, inner_r, 1);
+	arcStrip(this->bg, this->b.getCenter(), outer_r-1, inner_r+1, 1);
 
 	float val = ofMap(this->value, this->value.getMin(), this->value.getMax(), 0, 1);
 	this->bar.setFillColor(this->thisFillColor);
@@ -62,6 +68,7 @@ void ofxRotarySlider <Type>::render(){
 
 	this->bg.draw();
 	this->bar.draw();
+	this->border.draw();
 
 	ofBlendMode blendMode = ofGetStyle().blendingMode;
 	if(blendMode != OF_BLENDMODE_ALPHA){

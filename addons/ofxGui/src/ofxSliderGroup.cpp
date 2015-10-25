@@ -10,7 +10,7 @@ template<class VecType>
 ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> value, const Config & config)
 :ofxGuiGroup(ofParameterGroup(), config)
 ,sliderChanging(false){
-    setup(value, config.shape.width, config.shape.height);
+	setup(value, config);
 }
 
 template<class VecType>
@@ -21,7 +21,16 @@ ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> value, float width, f
 
 template<class VecType>
 ofxVecSlider_<VecType> & ofxVecSlider_<VecType>::setup(ofParameter<VecType> value, float width, float height){
-    ofxGuiGroup::setup(value.getName(), "", 0, 0);
+	ofxGuiGroup::Config config;
+	config.shape.width = width;
+	config.shape.height= height;
+    return setup(value, config);
+}
+
+template<class VecType>
+ofxVecSlider_<VecType> & ofxVecSlider_<VecType>::setup(ofParameter<VecType> value, const Config & config){
+	ofxGuiGroup::setup(config);
+	setName(value.getName());
     
     parameters.clear();
     
@@ -33,10 +42,10 @@ ofxVecSlider_<VecType> & ofxVecSlider_<VecType>::setup(ofParameter<VecType> valu
     VecType val = value;
     VecType min = value.getMin();
     VecType max = value.getMax();
-    ofxFloatSlider::Config config = ofxFloatSlider::Config();
+	ofxFloatSlider::Config sliderconfig = ofxFloatSlider::Config();
     for (int i=0; i<VecType::DIM; i++) {
     	ofParameter<float> p(names[i], val[i], min[i], max[i]);
-        add(p,config);
+		add(p,sliderconfig);
         p.addListener(this, & ofxVecSlider_::changeSlider);
     }
 
@@ -108,7 +117,7 @@ template<class ColorType>
 ofxColorSlider_<ColorType>::ofxColorSlider_(ofParameter<ofColor_<ColorType>> value, const Config & config)
 :ofxGuiGroup(ofParameterGroup(), config)
 ,sliderChanging(false){
-    setup(value, config.shape.width, config.shape.height);
+	setup(value, config);
 }
 
 template<class ColorType>
@@ -119,7 +128,16 @@ ofxColorSlider_<ColorType>::ofxColorSlider_(ofParameter<ofColor_<ColorType> > va
 
 template<class ColorType>
 ofxColorSlider_<ColorType> & ofxColorSlider_<ColorType>::setup(ofParameter<ofColor_<ColorType> > value, float width, float height){
-    ofxGuiGroup::setup(value.getName(), "", 0, 0);
+	ofxGuiGroup::Config config;
+	config.shape.width = width;
+	config.shape.height= height;
+	return setup(value, config);
+}
+
+template<class ColorType>
+ofxColorSlider_<ColorType> & ofxColorSlider_<ColorType>::setup(ofParameter<ofColor_<ColorType> > value, const Config & config){
+	ofxGuiGroup::setup(config);
+	setName(value.getName());
     parameters.clear();
 
     const string names[4] = {"r", "g", "b", "a"};
@@ -130,10 +148,15 @@ ofxColorSlider_<ColorType> & ofxColorSlider_<ColorType>::setup(ofParameter<ofCol
     ofColor_<ColorType> val = value;
     ofColor_<ColorType> min = value.getMin();
     ofColor_<ColorType> max = value.getMax();
-    typename ofxSlider<ColorType>::Config config = typename ofxSlider<ColorType>::Config();
+	typename ofxSlider<ColorType>::Config sliderconfig = typename ofxSlider<ColorType>::Config();
+	if(config.layout == ofxBaseGui::Vertical){
+		sliderconfig.layout = ofxBaseGui::Horizontal;
+	}else{
+		sliderconfig.layout = ofxBaseGui::Vertical;
+	}
     for (int i=0; i<4; i++) {
     	ofParameter<ColorType> p(names[i], val[i], min[i], max[i]);
-        add<ofxSlider<ColorType>>(p,config);
+		add<ofxSlider<ColorType>>(p,sliderconfig);
         p.addListener(this, & ofxColorSlider_::changeSlider);
         collection[i]->setFillColor(value.get());
     }

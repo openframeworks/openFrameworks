@@ -66,7 +66,7 @@ protected:
 	virtual void generateDraw();
 	virtual void generateText();
 	void valueChanged(Type & value);
-	ofPath bg, bar;
+	ofPath bg, bar, border;
 	ofVboMesh textMesh;
 };
 
