@@ -32,8 +32,15 @@
 #include "ofAppiOSWindow.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
-#include "ofxiOSAppDelegate.h"
-#include "ofxiOSViewController.h"
+#if TARGET_OS_IOS
+    #include "ofxiOSAppDelegate.h"
+    #include "ofxiOSViewController.h"
+    const string appDelegateName = "ofxiOSAppDelegate";
+#elif TARGET_OS_TV
+    #include "ofxtvOSAppDelegate.h"
+    #include "ofxtvOSViewController.h"
+    const string appDelegateName = "ofxtvOSAppDelegate";
+#endif
 #include "ofxiOSEAGLView.h"
 
 //----------------------------------------------------------------------------------- instance.
@@ -112,11 +119,11 @@ void ofAppiOSWindow::setupOpenGL(int w, int h, ofWindowMode screenMode) {
 }
 
 void ofAppiOSWindow::loop() {
-    startAppWithDelegate("ofxiOSAppDelegate");
+    startAppWithDelegate(appDelegateName);
 }
 
 void ofAppiOSWindow::run(ofBaseApp * appPtr){
-    startAppWithDelegate("ofxiOSAppDelegate");
+    startAppWithDelegate(appDelegateName);
 }
 
 void ofAppiOSWindow::startAppWithDelegate(string appDelegateClassName) {
@@ -191,6 +198,7 @@ ofWindowMode ofAppiOSWindow::getWindowMode() {
 	return settings.windowMode;
 }
 
+#if TARGET_OS_IOS
 //----------------------------------------------------------------------------------- orientation.
 void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
     if(orientation == toOrientation) {
@@ -248,30 +256,6 @@ bool ofAppiOSWindow::doesHWOrientation() {
 }
 
 //-----------------------------------------------------------------------------------
-void ofAppiOSWindow::setWindowTitle(string title) {
-    // not supported on iOS.
-}
-
-void ofAppiOSWindow::setFullscreen(bool fullscreen) {
-#if TARGET_OS_IOS
-    [[UIApplication sharedApplication] setStatusBarHidden:fullscreen withAnimation:UIStatusBarAnimationSlide];
-#endif
-	if(fullscreen) {
-        settings.windowMode = OF_FULLSCREEN;
-    } else {
-        settings.windowMode = OF_WINDOW;
-    }
-}
-
-void ofAppiOSWindow::toggleFullscreen() {
-	if(settings.windowMode == OF_FULLSCREEN) {
-        setFullscreen(false);
-    } else {
-        setFullscreen(true);
-    }
-}
-
-//-----------------------------------------------------------------------------------
 bool ofAppiOSWindow::enableHardwareOrientation() {
     return (settings.enableHardwareOrientation = true);
 }
@@ -287,6 +271,34 @@ bool ofAppiOSWindow::enableOrientationAnimation() {
 bool ofAppiOSWindow::disableOrientationAnimation() {
     return (settings.enableHardwareOrientationAnimation = false);
 }
+
+#endif
+
+//-----------------------------------------------------------------------------------
+void ofAppiOSWindow::setWindowTitle(string title) {
+    // not supported on iOS.
+}
+
+void ofAppiOSWindow::setFullscreen(bool fullscreen) {
+#if TARGET_OS_IOS
+    [[UIApplication sharedApplication] setStatusBarHidden:fullscreen withAnimation:UIStatusBarAnimationSlide];
+#endif
+    if(fullscreen) {
+        settings.windowMode = OF_FULLSCREEN;
+    } else {
+        settings.windowMode = OF_WINDOW;
+    }
+}
+
+void ofAppiOSWindow::toggleFullscreen() {
+    if(settings.windowMode == OF_FULLSCREEN) {
+        setFullscreen(false);
+    } else {
+        setFullscreen(true);
+    }
+}
+
+
 
 //-----------------------------------------------------------------------------------
 bool ofAppiOSWindow::enableRendererES2() {

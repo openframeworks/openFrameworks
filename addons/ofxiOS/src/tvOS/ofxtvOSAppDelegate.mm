@@ -34,8 +34,14 @@
     ofSetDataPathRoot([[NSString stringWithFormat:@"%@/", [[NSBundle mainBundle] resourcePath]] cStringUsingEncoding:NSUTF8StringEncoding]);
     
 
-    
     //NSNotificationCenter * center = [NSNotificationCenter defaultCenter];
+    CGRect frame = [[UIScreen mainScreen] bounds];
+    NSString * appDelegateClassName = [[self class] description];
+    if ([appDelegateClassName isEqualToString:@"ofxtvOSAppDelegate"]) { // app delegate is not being extended.
+        
+        self.glViewController = [[[ofxtvOSViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()] autorelease];
+        self.window.rootViewController = self.glViewController;
+    }
     
 }
 
