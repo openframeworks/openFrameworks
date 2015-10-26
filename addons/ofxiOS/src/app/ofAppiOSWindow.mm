@@ -40,6 +40,10 @@
     #include "ofxtvOSAppDelegate.h"
     #include "ofxtvOSViewController.h"
     const string appDelegateName = "ofxtvOSAppDelegate";
+#else
+	#include "ofxiOSAppDelegate.h"
+	#include "ofxiOSViewController.h"
+	const string appDelegateName = "ofxiOSAppDelegate";
 #endif
 #include "ofxiOSEAGLView.h"
 
