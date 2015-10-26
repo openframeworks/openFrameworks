@@ -28,7 +28,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
  * ***********************************************************************/ 
-
+#include <TargetConditionals.h>
 #include "ofAppiOSWindow.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
@@ -201,7 +201,7 @@ void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
     bool bResized = bOrientationPortraitOne != bOrientationPortraitTwo;
 
     orientation = toOrientation;
-#ifdef TARGET_IOS
+#if TARGET_OS_IOS
     UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationPortrait;
     switch (orientation) {
         case OF_ORIENTATION_DEFAULT:
@@ -253,7 +253,7 @@ void ofAppiOSWindow::setWindowTitle(string title) {
 }
 
 void ofAppiOSWindow::setFullscreen(bool fullscreen) {
-#ifdef TARGET_IOS
+#if TARGET_OS_IOS
     [[UIApplication sharedApplication] setStatusBarHidden:fullscreen withAnimation:UIStatusBarAnimationSlide];
 #endif
 	if(fullscreen) {

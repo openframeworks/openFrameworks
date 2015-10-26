@@ -1,5 +1,3 @@
-#include "ofMain.h"
-#include "ofAppiOSWindow.h"
 #include "ofApp.h"
 
 int main() {
@@ -17,5 +15,5 @@ int main() {
     settings.windowMode = OF_FULLSCREEN;
     ofCreateWindow(settings);
     
-	return ofRunApp(new ofApp);
+    return ofRunApp(new ofApp);
 }

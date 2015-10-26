@@ -10,6 +10,9 @@
 #define ofxtvOS_h
 
 #include "ofMain.h"
+
+#ifdef TARGET_OF_TVOS
+
 #include "ofAppiOSWindow.h"
 #include "ofxiOSConstants.h"
 #include "ofxiOSExtensions.h"
@@ -20,5 +23,6 @@
 #include "ofxiOSExtras.h"
 #include "ofxAccelerometer.h"
 
+#endif
 
 #endif /* ofxtvOS_h */

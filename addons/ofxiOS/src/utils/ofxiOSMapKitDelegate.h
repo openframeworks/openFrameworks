@@ -30,7 +30,8 @@
 
 #pragma once
 
-#ifdef TARGET_IOS
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS
 
 #import <MapKit/MapKit.h>
 

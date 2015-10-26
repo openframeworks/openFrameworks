@@ -28,7 +28,8 @@
  *
  * ***********************************************************************/
 
-#ifdef TARGET_IOS
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS
 
 #include "ofxiOSMapKitDelegate.h"
 #include "ofxiOSMapKit.h"
