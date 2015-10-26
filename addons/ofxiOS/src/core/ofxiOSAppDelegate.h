@@ -47,9 +47,7 @@
 - (BOOL)application:(UIApplication*)application
       handleOpenURL:(NSURL*)url;
 
-#ifdef TARGET_IOS
 - (void)receivedRotate:(NSNotification*)notification;
-#endif
 
 - (BOOL)createExternalWindowWithPreferredMode;
 - (BOOL)createExternalWindowWithScreenModeIndex:(NSInteger)screenModeIndex;
