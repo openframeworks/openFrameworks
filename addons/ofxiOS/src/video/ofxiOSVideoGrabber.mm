@@ -1,7 +1,8 @@
 #include "ofxiOSVideoGrabber.h"
 #include "AVFoundationVideoGrabber.h"
 
-#ifdef TARGET_IOS
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS
 
 ofxiOSVideoGrabber::ofxiOSVideoGrabber() {
 	grabber = shared_ptr<AVFoundationVideoGrabber>(new AVFoundationVideoGrabber());

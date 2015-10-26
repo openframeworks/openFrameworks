@@ -5,6 +5,7 @@
 //
 
 #import "AVSoundPlayer.h"
+#include <TargetConditionals.h>
 
 @interface AVSoundPlayer() {
     BOOL bMultiPlay;
@@ -244,11 +245,11 @@
 }
 
 - (void) audioPlayerEndInterruption:(AVAudioPlayer *)player withFlags:(NSUInteger)flags {
-#ifdef TARGET_IOS
+#if TARGET_OS_IOS
 	if(flags == AVAudioSessionInterruptionFlags_ShouldResume) {
 		[self.player play];
 	}
-#elseif TARGET_OS_TV
+#elif TARGET_OS_TV
 	//
 #endif
 }

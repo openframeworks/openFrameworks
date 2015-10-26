@@ -35,7 +35,7 @@
 #if TARGET_OS_IOS
 #include "ofxiOSAppDelegate.h"
 #include "ofxiOSViewController.h"
-#elif TARGET_OS_TVOS
+#elif TARGET_OS_TV
 #include "ofxtvOSAppDelegate.h"
 #include "ofxtvOSViewController.h"
 #endif
@@ -162,7 +162,7 @@ ofxiOSAppDelegate * ofxiOSGetAppDelegate() {
 ofxiOSViewController * ofxiOSGetViewController() {
 	return [ofxiOSGetAppDelegate() glViewController];
 }
-#elif TARGET_OS_TVOS
+#elif TARGET_OS_TV
 //--------------------------------------------------------------
 ofxtvOSAppDelegate * ofxiOSGetAppDelegate() {
     return [[UIApplication sharedApplication] delegate];
@@ -170,7 +170,7 @@ ofxtvOSAppDelegate * ofxiOSGetAppDelegate() {
 
 //--------------------------------------------------------------
 ofxtvOSViewController * ofxiOSGetViewController() {
-    return [ofxtvOSGetAppDelegate() glViewController];
+    return [ofxiOSGetAppDelegate() glViewController];
 }
 
 #endif
@@ -236,7 +236,7 @@ void ofxiOSSetOrientation(ofOrientation orientation) {
     ofSetOrientation(orientation);
 }
 
-#ifdef TARGET_IOS
+#if TARGET_OS_IOS
 //--------------------------------------------------------------
 UIDeviceOrientation ofxiOSGetOrientation() {
     return (UIDeviceOrientation)ofGetOrientation();
@@ -504,7 +504,7 @@ void ofxiOSLaunchBrowser(string url) {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:ofxStringToNSString(url)]];
 }
 
-#ifdef TARGET_IOS
+#if TARGET_OS_IOS
 //--------------------------------------------------------------
 void ofxiOSSetClipboardString(string clipboardString) {
     [UIPasteboard generalPasteboard].string = [NSString stringWithUTF8String:clipboardString.c_str()];
@@ -553,7 +553,7 @@ void releaseData(void *info, const void *data, size_t dataSize) {
 	free((void*)data);		// free the 
 }
 
-#ifdef TARGET_IOS
+#if TARGET_OS_IOS
 void ofxiOSScreenGrab(id delegate) {
 	CGRect rect = [[UIScreen mainScreen] bounds];
 	

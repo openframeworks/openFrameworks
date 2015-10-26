@@ -32,6 +32,8 @@
 
 #import <QuartzCore/QuartzCore.h>
 
+#include <TargetConditionals.h>
+
 #import "EAGLView.h"
 
 #import "ES1Renderer.h"
@@ -124,7 +126,8 @@ andPreferedRenderer:(ESRendererVersion)version
             
             
         }
-#ifdef TARGET_IOS
+
+#if TARGET_OS_IOS
 		self.multipleTouchEnabled = true;
 #endif
 		self.opaque = true;

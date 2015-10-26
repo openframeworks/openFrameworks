@@ -43,8 +43,13 @@
 #include "ofxiOSConstants.h"
 
 class ofAppiOSWindow;
+#if TARGET_OS_IOS
 @class ofxiOSAppDelegate;
 @class ofxiOSViewController;
+#elif TARGET_OS_TV
+@class ofxtvOSAppDelegate;
+@class ofxtvOSViewController;
+#endif
 @class ofxiOSEAGLView;
 
 // this is the new way for getting device info.
@@ -93,7 +98,7 @@ ofxiOSAppDelegate * ofxiOSGetAppDelegate();
 
 // return iphone view controller.
 ofxiOSViewController * ofxiOSGetViewController();
-#elif TARGET_OS_TVOS
+#elif TARGET_OS_TV
 // return application delegate
 ofxtvOSAppDelegate * ofxiOSGetAppDelegate();
 
@@ -170,7 +175,7 @@ bool ofxiOSUIImageToOFTexture(UIImage * uiImage, ofTexture & outTexture, int tar
 
 bool ofxiOSCGImageToPixels(CGImageRef & ref, unsigned char * pixels);
 
-#ifdef TARGET_IOS
+#if TARGET_OS_IOS
 // save current opengl screen to photos app
 // based on code from http://www.bit-101.com/blog/?p=1861
 void ofxiOSScreenGrab(id delegate);

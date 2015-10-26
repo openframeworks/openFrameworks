@@ -36,9 +36,10 @@
 
 #pragma once
 
-#ifdef TARGET_IOS
-
 #include "ofMain.h"
+
+#ifndef TARGET_OF_TVOS
+
 #include "ofAppiOSWindow.h"
 #include "ofxiOSConstants.h"
 #include "ofxiOSExtensions.h"

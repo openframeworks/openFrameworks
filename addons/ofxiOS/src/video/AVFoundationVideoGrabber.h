@@ -3,8 +3,8 @@
  */
 
 #pragma once
-
-#ifdef TARGET_IOS
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS
 
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
