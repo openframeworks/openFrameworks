@@ -379,9 +379,10 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		wchar_t szFileName[MAX_PATH];
 		memset(szFileName, 0, sizeof(szFileName));
 
-		//this is if the dir
+		//the dir, if specified
 		wchar_t szDir[MAX_PATH];
 
+		//the title if specified
 		wchar_t szTitle[MAX_PATH];
 		if(defaultPath!=""){
 			wcscpy(szDir,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
@@ -396,6 +397,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		}
 
 		ofn.lpstrFilter = L"All\0";
+		ofn.lpstrFile = szFileName;
 		ofn.nMaxFile = MAX_PATH;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
