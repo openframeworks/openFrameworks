@@ -36,6 +36,8 @@
 
 #pragma once
 
+#ifdef TARGET_IOS
+
 #include "ofMain.h"
 #include "ofAppiOSWindow.h"
 #include "ofxiOSConstants.h"
@@ -46,3 +48,5 @@
 #include "ofxiOSApp.h"
 #include "ofxiOSExtras.h"
 #include "ofxAccelerometer.h"
+
+#endif

@@ -30,6 +30,9 @@
  * ***********************************************************************/
 
 #include "ofxiOSAppDelegate.h"
+
+#if TARGET_OS_IOS
+
 #include "ofxiOSViewController.h"
 #include "ofxiOSExternalDisplay.h"
 #include "ofxiOSExtras.h"
@@ -360,3 +363,5 @@
 
 
 @end
+
+#endif

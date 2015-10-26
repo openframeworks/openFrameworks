@@ -3,6 +3,9 @@
  */
 
 #include "AVFoundationVideoGrabber.h"
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS
+
 #include "ofxiOSExtras.h"
 #include "ofAppRunner.h"
 
@@ -553,5 +556,6 @@ ofPixelFormat AVFoundationVideoGrabber::getPixelFormat() {
 	}
 }
 
+#endif
 
 

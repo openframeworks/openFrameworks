@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS
+
 #import <CoreLocation/CoreLocation.h>
 
 @interface ofxiOSCoreLocationDelegate : NSObject <CLLocationManagerDelegate>
@@ -106,4 +109,6 @@ class ofxiOSCoreLocation
 };
 
 #define ofxiPhoneCoreLocation ofxiOSCoreLocation
+
+#endif
 

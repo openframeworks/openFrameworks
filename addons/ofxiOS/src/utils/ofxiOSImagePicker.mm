@@ -8,6 +8,8 @@
  */
 
 #include "ofxiOSImagePicker.h"
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS
 
 //C++ class implementations
 
@@ -560,3 +562,5 @@ bool ofxiOSImagePicker::getImageUpdated(){
 }
 
 @end
+
+#endif

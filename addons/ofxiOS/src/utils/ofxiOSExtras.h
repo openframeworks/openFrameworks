@@ -37,6 +37,7 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#include <TargetConditionals.h>
 
 #include "ofBaseTypes.h"
 #include "ofxiOSConstants.h"
@@ -86,11 +87,20 @@ UIView * ofxiOSGetGLParentView();
 // return OpenFrameworks iPhone Window
 ofAppiOSWindow * ofxiOSGetOFWindow();
 
+#if TARGET_OS_IOS
 // return application delegate
 ofxiOSAppDelegate * ofxiOSGetAppDelegate();
 
 // return iphone view controller.
 ofxiOSViewController * ofxiOSGetViewController();
+#elif TARGET_OS_TVOS
+// return application delegate
+ofxtvOSAppDelegate * ofxiOSGetAppDelegate();
+
+// return iphone view controller.
+ofxtvOSViewController * ofxiOSGetViewController();
+#endif
+
 
 // brings the OpenGL view to the front of any other UIViews
 // the OpenGL view will receive touchXXXXX events, but other UIViews will not
@@ -133,10 +143,10 @@ void ofxiOSUnlockGLContext();
 // disabled by default
 void ofxiOSEnableLoopInThread();
 
-
+#if TARGET_OS_IOS
 OF_DEPRECATED_MSG("ofxiOSSetOrientation is deprecated, use ofSetOrientation instead.", void ofxiOSSetOrientation(ofOrientation orientation));
 OF_DEPRECATED_MSG("ofxiOSGetOrientation is deprecated, use ofGetOrientation instead.", UIDeviceOrientation ofxiOSGetOrientation());
-
+#endif
 
 // load an image from the app bundle into a texture
 // NOTE: renamed this function to something more clearer

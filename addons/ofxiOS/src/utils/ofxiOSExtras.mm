@@ -31,8 +31,14 @@
 
 
 #include "ofxiOSExtras.h"
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS
 #include "ofxiOSAppDelegate.h"
 #include "ofxiOSViewController.h"
+#elif TARGET_OS_TVOS
+#include "ofxtvOSAppDelegate.h"
+#include "ofxtvOSViewController.h"
+#endif
 #include "ofxiOSEAGLView.h"
 #include "ofAppiOSWindow.h"
 #include "ofAppRunner.h"
@@ -146,7 +152,7 @@ ofAppiOSWindow * ofxiOSGetOFWindow() {
 	return ofAppiOSWindow::getInstance();
 }
 
-
+#if TARGET_OS_IOS
 //--------------------------------------------------------------
 ofxiOSAppDelegate * ofxiOSGetAppDelegate() {
 	return [[UIApplication sharedApplication] delegate];
@@ -156,6 +162,18 @@ ofxiOSAppDelegate * ofxiOSGetAppDelegate() {
 ofxiOSViewController * ofxiOSGetViewController() {
 	return [ofxiOSGetAppDelegate() glViewController];
 }
+#elif TARGET_OS_TVOS
+//--------------------------------------------------------------
+ofxtvOSAppDelegate * ofxiOSGetAppDelegate() {
+    return [[UIApplication sharedApplication] delegate];
+}
+
+//--------------------------------------------------------------
+ofxtvOSViewController * ofxiOSGetViewController() {
+    return [ofxtvOSGetAppDelegate() glViewController];
+}
+
+#endif
 
 //--------------------------------------------------------------
 void ofxiOSSendGLViewToFront() {

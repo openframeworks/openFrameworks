@@ -3,6 +3,9 @@
 //  Created by lukasz karluk on 12/12/11.
 //
 
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS
+
 #import <QuartzCore/QuartzCore.h>
 
 #include "ofxiOSViewController.h"
@@ -378,3 +381,5 @@
 #endif
 
 @end
+
+#endif

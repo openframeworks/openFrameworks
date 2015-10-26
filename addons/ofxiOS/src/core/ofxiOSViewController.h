@@ -5,6 +5,9 @@
 
 #pragma once
 
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS
+
 #import <UIKit/UIKit.h>
 
 class ofxiOSApp;
@@ -26,3 +29,4 @@ class ofxiOSApp;
 
 #define ofxPhoneViewController ofxiOSViewController
 
+#endif
