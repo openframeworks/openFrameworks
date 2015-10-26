@@ -33,8 +33,14 @@
 		return;
 	}
 	[[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error: nil];
-	UInt32 doSetProperty = 1;
-	AudioSessionSetProperty (kAudioSessionProperty_OverrideCategoryMixWithOthers, sizeof(doSetProperty), &doSetProperty);
+    AVAudioSession * audioSession = [AVAudioSession sharedInstance];
+    NSError * err = nil;
+    // need to configure set the audio category, and override to it route the audio to the speaker
+    if([audioSession respondsToSelector:@selector(setCategory:withOptions:error:)]) {
+        if(![audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
+             						  withOptions:AVAudioSessionCategoryOptionMixWithOthers
+                                        error:&err]) { err = nil; }
+    }
 	[[AVAudioSession sharedInstance] setActive: YES error: nil];
 	audioSessionSetup = YES;
 }

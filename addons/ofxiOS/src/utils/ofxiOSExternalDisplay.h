@@ -9,6 +9,9 @@
 
 #include "ofConstants.h"
 
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS
+
 struct ofxiOSExternalDisplayMode{
     int width;
     int height;
@@ -50,3 +53,5 @@ public:
 };
 
 #define ofxiPhoneExternalDisplay ofxiOSExternalDisplay
+
+#endif

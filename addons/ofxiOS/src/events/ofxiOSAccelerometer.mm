@@ -32,8 +32,11 @@
 
 #import <UIKit/UIKit.h>
 
-#include "ofUtils.h"
 #include "ofxAccelerometer.h"
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS
+
+#include "ofUtils.h"
 
 /************ Interface for iPhone Accelerometer Delegate ************/
 @interface ofxiOSAccelerometerDelegate : NSObject <UIAccelerometerDelegate> {
@@ -87,3 +90,5 @@ void ofxAccelerometerHandler::exit() {
 }
 
 @end
+
+#endif
