@@ -23,6 +23,7 @@
 		84C8DBA41BC37A49001606C1 /* libtvOS+OFLib_Debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C8DB6F1BC37247001606C1 /* libtvOS+OFLib_Debug.a */; };
 		84C8DBAC1BC37F72001606C1 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C8DBA91BC37F72001606C1 /* main.mm */; };
 		84C8DBAD1BC37F72001606C1 /* ofApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C8DBAB1BC37F72001606C1 /* ofApp.mm */; };
+		9957D93C1BDDE4020002D53C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9957D93B1BDDE4020002D53C /* Images.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 		84C8DBA91BC37F72001606C1 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		84C8DBAA1BC37F72001606C1 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofApp.h; sourceTree = "<group>"; };
 		84C8DBAB1BC37F72001606C1 /* ofApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofApp.mm; sourceTree = "<group>"; };
+		9957D93B1BDDE4020002D53C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 			isa = PBXGroup;
 			children = (
 				84C8DBA81BC37F72001606C1 /* src */,
+				9957D93B1BDDE4020002D53C /* Images.xcassets */,
 			);
 			path = emptyExample;
 			sourceTree = "<group>";
@@ -258,6 +261,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9957D93C1BDDE4020002D53C /* Images.xcassets in Resources */,
 				84C8DB691BC37247001606C1 /* CoreOF.xcconfig in Resources */,
 				84C8DB741BC3726E001606C1 /* Project.xcconfig in Resources */,
 			);
@@ -389,6 +393,8 @@
 		84463AF11BC370DF00F24926 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Launch Image";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				GCC_PREFIX_HEADER = ofxtvOS_Prefix.pch;
 				HEADER_SEARCH_PATHS = "$(OF_CORE_HEADERS)";
@@ -402,6 +408,8 @@
 		84463AF21BC370DF00F24926 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Launch Image";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				GCC_PREFIX_HEADER = ofxtvOS_Prefix.pch;
 				HEADER_SEARCH_PATHS = "$(OF_CORE_HEADERS)";
