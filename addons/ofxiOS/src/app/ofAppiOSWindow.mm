@@ -32,7 +32,7 @@
 #include "ofAppiOSWindow.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
     #include "ofxiOSAppDelegate.h"
     #include "ofxiOSViewController.h"
     const string appDelegateName = "ofxiOSAppDelegate";
@@ -40,10 +40,6 @@
     #include "ofxtvOSAppDelegate.h"
     #include "ofxtvOSViewController.h"
     const string appDelegateName = "ofxtvOSAppDelegate";
-#else
-	#include "ofxiOSAppDelegate.h"
-	#include "ofxiOSViewController.h"
-	const string appDelegateName = "ofxiOSAppDelegate";
 #endif
 #include "ofxiOSEAGLView.h"
 
@@ -202,7 +198,7 @@ ofWindowMode ofAppiOSWindow::getWindowMode() {
 	return settings.windowMode;
 }
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 //----------------------------------------------------------------------------------- orientation.
 void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
     if(orientation == toOrientation) {
@@ -213,7 +209,7 @@ void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
     bool bResized = bOrientationPortraitOne != bOrientationPortraitTwo;
 
     orientation = toOrientation;
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
     UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationPortrait;
     switch (orientation) {
         case OF_ORIENTATION_DEFAULT:
@@ -284,7 +280,7 @@ void ofAppiOSWindow::setWindowTitle(string title) {
 }
 
 void ofAppiOSWindow::setFullscreen(bool fullscreen) {
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
     [[UIApplication sharedApplication] setStatusBarHidden:fullscreen withAnimation:UIStatusBarAnimationSlide];
 #endif
     if(fullscreen) {

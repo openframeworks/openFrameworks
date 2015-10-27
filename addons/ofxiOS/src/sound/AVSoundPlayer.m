@@ -245,7 +245,7 @@
 }
 
 - (void) audioPlayerEndInterruption:(AVAudioPlayer *)player withFlags:(NSUInteger)flags {
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 	if(flags == AVAudioSessionInterruptionFlags_ShouldResume) {
 		[self.player play];
 	}
