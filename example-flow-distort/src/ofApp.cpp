@@ -6,7 +6,7 @@ using namespace cv;
 void ofApp::setup() {
 	ofSetVerticalSync(true);
 	ofSetFrameRate(120);
-	cam.initGrabber(320, 240);
+	cam.setup(320, 240);
 	
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
 	stepSize = 8;

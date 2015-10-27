@@ -2,7 +2,7 @@
 
 void ofApp::setup() {
     useGaussian = false;
-    cam.initGrabber(640, 480);
+    cam.setup(640, 480);
 }
 
 void ofApp::update() {

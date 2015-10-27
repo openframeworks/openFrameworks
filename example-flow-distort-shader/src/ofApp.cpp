@@ -4,7 +4,7 @@ using namespace ofxCv;
 using namespace cv;
 
 void ofApp::setup() {
-	cam.initGrabber(1280, 720);
+	cam.setup(1280, 720);
     motionAmplifier.setup(cam.getWidth(), cam.getHeight(), 2, .25);
 }
 

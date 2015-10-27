@@ -9,7 +9,7 @@ void ofApp::setup() {
 	finder.setup("haarcascade_frontalface_default.xml");
 	finder.setPreset(ObjectFinder::Fast);
 	finder.getTracker().setSmoothingRate(.3);
-	cam.initGrabber(640, 480);
+	cam.setup(640, 480);
 	sunglasses.load("sunglasses.png");
 	ofEnableAlphaBlending();
 }
