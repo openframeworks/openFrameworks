@@ -649,7 +649,9 @@ void ofxCvImage::undistort( float radialDistX, float radialDistY,
 	}							
     float camIntrinsics[] = { focalX, 0, centerX, 0, focalY, centerY, 0, 0, 1 };
     float distortionCoeffs[] = { radialDistX, radialDistY, tangentDistX, tangentDistY };
-    cvUnDistortOnce( cvImage, cvImageTemp, camIntrinsics, distortionCoeffs, 1 );
+	CvMat _a = cvMat( 3, 3, CV_32F, (void*)camIntrinsics );
+    CvMat _k = cvMat( 4, 1, CV_32F, (void*)distortionCoeffs );
+    cvUndistort2( cvImage, cvImageTemp, &_a, &_k, 0 );
 	swapTemp();
     flagImageChanged();
 }
@@ -707,7 +709,7 @@ void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B, const ofPo
     cvsrc[3].x = D.x;
     cvsrc[3].y = D.y;
 
-    cvWarpPerspectiveQMatrix( cvsrc, cvdst, translate );  // calculate homography
+    cvGetPerspectiveTransform( cvsrc, cvdst, translate );  // calculate homography
     cvWarpPerspective( cvImage, cvImageTemp, translate );
     swapTemp();
     flagImageChanged();
@@ -742,7 +744,7 @@ void ofxCvImage::warpIntoMe( ofxCvImage& mom, const ofPoint src[4], const ofPoin
     		cvdst[i].x = dst[i].x;
     		cvdst[i].y = dst[i].y;
     	}
-    	cvWarpPerspectiveQMatrix( cvsrc, cvdst, translate );  // calculate homography
+    	cvGetPerspectiveTransform( cvsrc, cvdst, translate );  // calculate homography
     	cvWarpPerspective( mom.getCvImage(), cvImage, translate);
         flagImageChanged();
     	cvReleaseMat( &translate );

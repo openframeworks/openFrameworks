@@ -440,6 +440,7 @@ Module{
     Properties{
         condition: platform === "osx"
         cpp.cxxLanguageVersion: "c++11"
+        cpp.cxxStandardLibrary: "libc++"
 
         cpp.cxxFlags: PKG_CONFIG_CFLAGS
             .concat(['-Wno-unused-parameter'])
@@ -468,6 +469,11 @@ Module{
 
         cpp.installNamePrefix: "@rpath"
         cpp.rpath: "@executable_path/"
+    }
+
+    Properties{
+        condition: platform === "win_cb"
+        cpp.cxxStandardLibrary: ""
     }
 
     Properties{
@@ -500,11 +506,6 @@ Module{
     Properties{
         condition: qbs.buildVariant.contains("release")
         cpp.defines: ['NDEBUG'].concat(DEFINES).concat(defines)
-    }
-
-    Properties{
-        condition: platform === "win_cb"
-        cpp.cxxStandardLibrary: ""
     }
 
     Group{
