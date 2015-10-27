@@ -898,10 +898,20 @@ function apothecaryDepend() {
 function apothecaryDependencies() {
 	if [ ${#FORMULA_DEPENDS[@]} -gt 0 ] ; then
 		for depend in "${FORMULA_DEPENDS[@]}" ; do
-			pushd ../..
-			apothecaryDepend $1 $depend
-			popd
+
+            #store where we are
+            CUR_DIR=$(pwd)
+
+            #change back to APOTHECARY_DIR to run new script
+            cd $APOTHECARY_DIR
+            apothecaryDepend $1 $depend
+
+            #restore dir to where we are
+            cd $CUR_DIR
 		done
+
+        #also have to cd back to the APOTHECARY_DIR for the next commands to work
+        cd $APOTHECARY_DIR
 	fi
 }
 
