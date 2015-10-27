@@ -37,7 +37,7 @@ extern "C" {
 #endif
 
 #if defined( __APPLE_CC__)
-	#include <TargetConditionals.h>
+    #include <TargetConditionals.h>
 #endif
 
 // See OpenGL Red Book for description of the winding rules
@@ -120,9 +120,9 @@ enum TessElementType
 
 typedef float TESSreal;
 #if TARGET_OS_IPHONE || ANDROID || __ARMEL__ || EMSCRIPTEN
-	typedef unsigned short TESSindex;
+    typedef unsigned short TESSindex;
 #else
-	typedef unsigned int TESSindex;
+    typedef unsigned int TESSindex;
 #endif
 typedef struct TESStesselator TESStesselator;
 typedef struct TESSalloc TESSalloc;

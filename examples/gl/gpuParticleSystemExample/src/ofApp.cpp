@@ -37,7 +37,7 @@ void ofApp::setup(){
     numParticles = textureRes * textureRes;
     
     // 1. Making arrays of float pixels with position information
-    float * pos = new float[numParticles*3];
+    vector<float> pos(numParticles*3);
     for (int x = 0; x < textureRes; x++){
         for (int y = 0; y < textureRes; y++){
             int i = textureRes * y + x;
@@ -48,24 +48,22 @@ void ofApp::setup(){
         }
     }
     // Load this information in to the FBO's texture
-    posPingPong.allocate(textureRes, textureRes,GL_RGB32F);
-    posPingPong.src->getTexture().loadData(pos, textureRes, textureRes, GL_RGB);
-    posPingPong.dst->getTexture().loadData(pos, textureRes, textureRes, GL_RGB);
-    delete [] pos;    // Delete the array
+    posPingPong.allocate(textureRes, textureRes, GL_RGB32F);
+    posPingPong.src->getTexture().loadData(pos.data(), textureRes, textureRes, GL_RGB);
+    posPingPong.dst->getTexture().loadData(pos.data(), textureRes, textureRes, GL_RGB);
     
     
     // 2. Making arrays of float pixels with velocity information and the load it to a texture
-    float * vel = new float[numParticles*3];
+    vector<float> vel(numParticles*3);
     for (int i = 0; i < numParticles; i++){
         vel[i*3 + 0] = ofRandom(-1.0,1.0);
         vel[i*3 + 1] = ofRandom(-1.0,1.0);
         vel[i*3 + 2] = 1.0;
     }
     // Load this information in to the FBO's texture
-    velPingPong.allocate(textureRes, textureRes,GL_RGB32F);
-    velPingPong.src->getTexture().loadData(vel, textureRes, textureRes, GL_RGB);
-    velPingPong.dst->getTexture().loadData(vel, textureRes, textureRes, GL_RGB);
-    delete [] vel; // Delete the array
+    velPingPong.allocate(textureRes, textureRes, GL_RGB32F);
+    velPingPong.src->getTexture().loadData(vel.data(), textureRes, textureRes, GL_RGB);
+    velPingPong.dst->getTexture().loadData(vel.data(), textureRes, textureRes, GL_RGB);
     
     // Loading and setings of the variables of the textures of the particles
     sparkImg.load("spark.png");
