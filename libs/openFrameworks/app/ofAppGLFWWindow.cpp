@@ -207,6 +207,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 					settings.width = mode->width;
 					settings.height = mode->height;
 					setWindowShape(settings.width, settings.height);
+					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 				}
 			}else{
 				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
