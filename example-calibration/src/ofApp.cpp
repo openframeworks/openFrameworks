@@ -9,7 +9,7 @@ const int startCleaning = 10; // start cleaning outliers after this many samples
 
 void ofApp::setup() {
 	ofSetVerticalSync(true);
-	cam.initGrabber(640, 480);
+	cam.setup(640, 480);
 	
 	FileStorage settings(ofToDataPath("settings.yml"), FileStorage::READ);
 	if(settings.isOpened()) {

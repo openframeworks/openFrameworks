@@ -8,7 +8,7 @@ void ofApp::setup() {
 	ofSetFrameRate(120);
     finder.setup("haarcascade_frontalface_default.xml");
     finder.setPreset(ObjectFinder::Fast);
-	cam.initGrabber(640, 480);
+	cam.setup(640, 480);
 }
 
 void ofApp::update() {

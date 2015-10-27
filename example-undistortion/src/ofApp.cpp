@@ -5,7 +5,7 @@ using namespace cv;
 
 void ofApp::setup() {
 	ofSetVerticalSync(true);
-	cam.initGrabber(640, 480);
+	cam.setup(640, 480);
 	calibration.setFillFrame(true); // true by default
 	calibration.load("mbp-2011-isight.yml");
 	imitate(undistorted, cam);

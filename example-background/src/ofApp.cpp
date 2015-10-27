@@ -4,7 +4,7 @@ using namespace ofxCv;
 using namespace cv;
 
 void ofApp::setup() {
-	cam.initGrabber(640, 480);
+	cam.setup(640, 480);
 	background.setLearningTime(900);
 	background.setThresholdValue(10);
 }

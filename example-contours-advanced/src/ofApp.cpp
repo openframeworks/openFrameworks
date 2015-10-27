@@ -4,7 +4,7 @@ using namespace ofxCv;
 using namespace cv;
 
 void ofApp::setup() {
-	cam.initGrabber(640, 480);
+	cam.setup(640, 480);
 	contourFinder.setMinAreaRadius(10);
 	contourFinder.setMaxAreaRadius(150);
 	//contourFinder.setInvert(true); // find black instead of white
