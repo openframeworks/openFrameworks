@@ -1025,7 +1025,7 @@ public class OFAndroid {
     static {
     	try{
     	    String arch = System.getProperty("os.arch");
-    	    if(arch.equals("armv71") || arch.equals("arch64")){
+    	    if(arch.contains("arm")){
         		Log.i("OF","static init");
         		System.loadLibrary("neondetection"); 
 	        	if(hasNeon()){
