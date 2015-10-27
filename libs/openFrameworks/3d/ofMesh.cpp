@@ -32,10 +32,6 @@ ofMesh::ofMesh(ofPrimitiveMode mode, const vector<ofVec3f>& verts){
 }
 
 //--------------------------------------------------------------
-ofMesh::~ofMesh(){
-}
-
-//--------------------------------------------------------------
 void ofMesh::clear(){
 	if(!vertices.empty()){
 		bVertsChanged = true;

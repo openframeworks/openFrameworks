@@ -133,6 +133,12 @@ CORE ADDONS
 ### ofxKinect
     / Bugfix for kinects not keeping their IDs when using multiple kinects.
 
+### ofx3DModelLoader
+    - Removed, ofxAssimpModelLoader already loads 3D studio models and it was using some really old gl calls
+
+### ofxAssimpModelLoader
+    / Updated to assimp 3
+
 PROJECT GENERATOR
 -----------------
 
