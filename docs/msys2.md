@@ -87,6 +87,16 @@ FAQ / Common problems
 
 The executable looks for ssleay32.dll and libeay32.dll and it first finds a version that doesn't support TLS v1.1. Often it happens with Intel iCls software. The solution is to move the your_msys2_directory\mingw32\bin path before the conflicting path. If the conflicting path is in the system PATH and you do not have administrative privileges, copy/link ssleay32.dll and libeay32.dll from your_msys2_directory\mingw32\bin to the executable folder.
 
+- "I'm on a corporate network with a proxy. I cannot download packages with pacman."
+
+You may need to set HTTP_PROXY and HTTPS_PROXY environment variables.
+
+    From a DOS/CMD prompt :    
+    set http_proxy=http://your_proxy:your_port
+    set http_proxy=http://username:password@your_proxy:your_port
+    set https_proxy=https://your_proxy:your_port
+    set https_proxy=https://username:password@your_proxy:your_port
+Don't forget to escape special characters in your password...
 
 
 
