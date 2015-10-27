@@ -113,6 +113,7 @@ PLATFORM SPECIFIC
 ### linux and arm linux
 	+ opencv libs are now installed in the system, rerun install_dependencies if you
 	  are having problems compiling projects that use opencv
+	+ allow passing -j<num_jobs> to compileOF.sh
 
 ### windows
 	+ activated high precission timming to fix inaccurate fps calculations
@@ -131,6 +132,12 @@ CORE ADDONS
 
 ### ofxKinect
     / Bugfix for kinects not keeping their IDs when using multiple kinects.
+
+### ofx3DModelLoader
+    - Removed, ofxAssimpModelLoader already loads 3D studio models and it was using some really old gl calls
+
+### ofxAssimpModelLoader
+    / Updated to assimp 3
 
 PROJECT GENERATOR
 -----------------

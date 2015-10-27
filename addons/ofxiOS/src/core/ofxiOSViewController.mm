@@ -5,8 +5,8 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-#import "ofxiOSViewController.h"
-#import "ofxiOSEAGLView.h"
+#include "ofxiOSViewController.h"
+#include "ofxiOSEAGLView.h"
 
 @interface ofxiOSViewController() <EAGLViewDelegate> {
     UIInterfaceOrientation currentInterfaceOrientation;

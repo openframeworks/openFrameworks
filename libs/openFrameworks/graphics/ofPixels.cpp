@@ -332,6 +332,60 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int
 }
 
 template<typename PixelType>
+void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int width, int height, ofPixelFormat _pixelFormat, std::vector<int> strides) {
+	int channels = channelsFromPixelFormat(_pixelFormat);
+	if(channels==0) return;
+
+	switch(pixelFormat){
+	case OF_PIXELS_I420: {
+	    if(strides.size() != 3){
+		ofLogError("ofPixels") << "number of planes for I420 should be 3";
+		break;
+	    }
+
+	    if(width==strides[0] && width/2==strides[1] && width/2==strides[2]){
+		setFromPixels(newPixels,width,height,_pixelFormat);
+		return;
+	    }
+
+	    allocate(width, height, _pixelFormat);
+
+	    const unsigned char* src = (unsigned char*) newPixels;
+	    unsigned char* dst =  (unsigned char*) pixels;
+	    // Y Plane
+	    for(int i = 0; i < height; i++) {
+		memcpy(dst, src, width);
+		src += strides[0];
+		dst += width;
+	    }
+	    // U Plane
+	    for(int i = 0; i < height /2; i++){
+		memcpy(dst,src,width/2);
+		src += strides[1];
+		dst += width/2;
+	    }
+	    // V Plane
+	    for(int i = 0; i < height /2; i++){
+		memcpy(dst,src,width/2);
+		src += strides[2];
+		dst += width/2;
+	    }
+	    break;
+	}
+	case OF_PIXELS_RGB:
+	case OF_PIXELS_RGBA:
+	case OF_PIXELS_GRAY:
+	case OF_PIXELS_GRAY_ALPHA:
+	    setFromAlignedPixels(newPixels,width,height,_pixelFormat,strides[0]);
+	    return;
+	default:
+	    ofLogError("ofPixels") << "setFromAlignedPixels with planes strides: pixel format not supported yet";
+	    break;
+	}
+	return;
+}
+
+template<typename PixelType>
 void ofPixels_<PixelType>::swap(ofPixels_<PixelType> & pix){
 	std::swap(pixels,pix.pixels);
 	std::swap(width, pix.width);

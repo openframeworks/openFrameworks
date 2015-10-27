@@ -133,6 +133,10 @@ void ofBufferObject::updateData(GLintptr offset, GLsizeiptr bytes, const void * 
 	unbind(this->data->lastTarget);
 }
 
+void ofBufferObject::updateData(GLsizeiptr bytes, const void * data){
+    updateData(0,bytes,data);
+}
+
 #ifndef TARGET_OPENGLES
 void * ofBufferObject::map(GLenum access){
 	if(!this->data) return nullptr;

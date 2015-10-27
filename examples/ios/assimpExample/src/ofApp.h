@@ -1,12 +1,7 @@
 #pragma once
 
-#include "ofMain.h"
 #include "ofxiOS.h"
-#include "ofxiOSExtras.h"
-#include "ofMain.h"
-
 #include "ofxAssimpModelLoader.h"
-#include "ofVboMesh.h"
 
 class ofApp : public ofxiOSApp{
 

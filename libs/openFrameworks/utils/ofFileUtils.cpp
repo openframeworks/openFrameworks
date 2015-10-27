@@ -368,7 +368,9 @@ ofFile::~ofFile(){
 
 //-------------------------------------------------------------------------------------------------------------
 ofFile::ofFile(const ofFile & mom)
-:mode(Reference)
+:basic_ios()
+,fstream()
+,mode(Reference)
 ,binary(true){
 	copyFrom(mom);
 }
@@ -639,9 +641,10 @@ bool ofFile::isDevice() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isHidden() const {
-#ifdef TARGET_WINDOWS
+#ifdef TARGET_WIN32
+	return false;
 #else
-	return myFile.filename().string()[0] == '.';
+	return myFile.filename() != "." && myFile.filename() != ".." && myFile.filename().string()[0] == '.';
 #endif
 }
 
@@ -1092,10 +1095,6 @@ std::size_t ofDirectory::listDir(){
 		return 0;
 	}
 	
-	// File::list(vector<File>) is broken on windows as of march 23, 2011...
-	// so we need to use File::list(vector<string>) and build a vector<File>
-	// in the future the following can be replaced width: cur.list(files);
-	vector<string>fileStrings;
 	std::filesystem::directory_iterator end_iter;
 	if ( std::filesystem::exists(myDir) && std::filesystem::is_directory(myDir)){
 		for( std::filesystem::directory_iterator dir_iter(myDir) ; dir_iter != end_iter ; ++dir_iter){
@@ -1112,11 +1111,12 @@ std::size_t ofDirectory::listDir(){
 		});
 	}
 
+
 	if(!extensions.empty() && !ofContains(extensions, (string)"*")){
 		ofRemove(files, [&](ofFile & file){
 			return std::find(extensions.begin(), extensions.end(), ofToLower(file.getExtension())) == extensions.end();
 		});
-	}
+	}        
 
 	if(ofGetLogLevel() == OF_LOG_VERBOSE){
 		for(int i = 0; i < (int)size(); i++){
