@@ -43,7 +43,7 @@
 #include "ofxiOSConstants.h"
 
 class ofAppiOSWindow;
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 @class ofxiOSAppDelegate;
 @class ofxiOSViewController;
 #elif TARGET_OS_TV
@@ -92,7 +92,7 @@ UIView * ofxiOSGetGLParentView();
 // return OpenFrameworks iPhone Window
 ofAppiOSWindow * ofxiOSGetOFWindow();
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 // return application delegate
 ofxiOSAppDelegate * ofxiOSGetAppDelegate();
 
@@ -148,7 +148,7 @@ void ofxiOSUnlockGLContext();
 // disabled by default
 void ofxiOSEnableLoopInThread();
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 OF_DEPRECATED_MSG("ofxiOSSetOrientation is deprecated, use ofSetOrientation instead.", void ofxiOSSetOrientation(ofOrientation orientation));
 OF_DEPRECATED_MSG("ofxiOSGetOrientation is deprecated, use ofGetOrientation instead.", UIDeviceOrientation ofxiOSGetOrientation());
 #endif
@@ -175,7 +175,7 @@ bool ofxiOSUIImageToOFTexture(UIImage * uiImage, ofTexture & outTexture, int tar
 
 bool ofxiOSCGImageToPixels(CGImageRef & ref, unsigned char * pixels);
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 // save current opengl screen to photos app
 // based on code from http://www.bit-101.com/blog/?p=1861
 void ofxiOSScreenGrab(id delegate);

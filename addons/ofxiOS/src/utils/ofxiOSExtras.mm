@@ -32,7 +32,7 @@
 
 #include "ofxiOSExtras.h"
 #include <TargetConditionals.h>
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 #include "ofxiOSAppDelegate.h"
 #include "ofxiOSViewController.h"
 #elif TARGET_OS_TV
@@ -152,7 +152,7 @@ ofAppiOSWindow * ofxiOSGetOFWindow() {
 	return ofAppiOSWindow::getInstance();
 }
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 //--------------------------------------------------------------
 ofxiOSAppDelegate * ofxiOSGetAppDelegate() {
 	return [[UIApplication sharedApplication] delegate];
@@ -236,7 +236,7 @@ void ofxiOSSetOrientation(ofOrientation orientation) {
     ofSetOrientation(orientation);
 }
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 //--------------------------------------------------------------
 UIDeviceOrientation ofxiOSGetOrientation() {
     return (UIDeviceOrientation)ofGetOrientation();
@@ -504,7 +504,7 @@ void ofxiOSLaunchBrowser(string url) {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:ofxStringToNSString(url)]];
 }
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 //--------------------------------------------------------------
 void ofxiOSSetClipboardString(string clipboardString) {
     [UIPasteboard generalPasteboard].string = [NSString stringWithUTF8String:clipboardString.c_str()];
@@ -553,7 +553,7 @@ void releaseData(void *info, const void *data, size_t dataSize) {
 	free((void*)data);		// free the 
 }
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 void ofxiOSScreenGrab(id delegate) {
 	CGRect rect = [[UIScreen mainScreen] bounds];
 	

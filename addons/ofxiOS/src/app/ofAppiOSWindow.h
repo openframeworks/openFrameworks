@@ -166,7 +166,7 @@ public:
 	virtual ofPoint getWindowSize();
 	virtual ofPoint getScreenSize();
     
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 	virtual void setOrientation(ofOrientation orientation);
 	virtual ofOrientation getOrientation();
     virtual bool doesHWOrientation();
