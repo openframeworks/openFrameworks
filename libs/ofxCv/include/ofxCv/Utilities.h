@@ -168,23 +168,27 @@ namespace ofxCv {
 	// allocation
 	// only happens when necessary
 	template <class T> inline void allocate(T& img, int width, int height, int cvType) {
-		int iw = getWidth(img), ih = getHeight(img);
-		int it = getCvImageType(img);
-		if(iw != width || ih != height || it != cvType) {
-			img.allocate(width, height, getOfImageType(cvType));
-		}
+        if (!img.isAllocated() ||
+            getWidth(img) != width ||
+            getHeight(img) != height ||
+            getCvImageType(img) != cvType)
+        {
+            img.allocate(width, height, getOfImageType(cvType));
+        }
 	}
     inline void allocate(ofTexture& img, int width, int height, int cvType) {
-        int iw = getWidth(img), ih = getHeight(img);
-        int it = getCvImageType(img);
-        if(iw != width || ih != height || it != cvType) {
+        if (!img.isAllocated() ||
+            getWidth(img) != width ||
+            getHeight(img) != height ||
+            getCvImageType(img) != cvType)
+        {
             img.allocate(width, height, getGlImageType(cvType));
         }
     }
 	inline void allocate(Mat& img, int width, int height, int cvType) {
-		int iw = getWidth(img), ih = getHeight(img);
-		int it = getCvImageType(img);
-		if(iw != width || ih != height || it != cvType) {
+        if (getWidth(img) != width ||
+            getHeight(img) != height ||
+            getCvImageType(img) != cvType) {
 			img.create(height, width, cvType);
 		}
 	}
