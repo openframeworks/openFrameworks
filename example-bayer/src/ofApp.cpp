@@ -6,8 +6,8 @@ using namespace cv;
 void ofApp::setup() {
 	ofSetVerticalSync(true);
 
-	bayer.loadImage("bayer.png");
-	rgb.loadImage("rgb.png");
+	bayer.load("bayer.png");
+	rgb.load("rgb.png");
 	
 	bayerType = 0;
 }
