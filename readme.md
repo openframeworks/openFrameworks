@@ -81,7 +81,7 @@ The rest of ofxCv is mostly helper functions (for example, `threshold()`) and wr
 `toCv()` is used to convert openFrameworks data to OpenCv data. For example:
 
 	ofImage img;
-	img.loadImage("image.png");
+	img.load("image.png");
 	Mat imgMat = toCv(img);
 
 This creates a wrapper for `img` called `imgMat`. To create a deep copy, use `clone()`:
