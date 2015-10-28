@@ -274,7 +274,7 @@ namespace ofxCv {
 	
 	template <class T>
 	int Tracker<T>::getIndexFromLabel(unsigned int label) const {
-		return getCurrent(label).getIndex();
+		return currentLabelMap.find(label)->second->getIndex();
 	}
 	
 	template <class T>
