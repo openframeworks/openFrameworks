@@ -9,7 +9,7 @@ void ofApp::setup() {
 	
 	objectFinder.setup(ofToDataPath("haarcascade_frontalface_default.xml"));
 	objectFinder.setPreset(ObjectFinder::Fast);
-	cam.initGrabber(640, 480);
+	cam.setup(640, 480);
 	cropped.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
 }
 

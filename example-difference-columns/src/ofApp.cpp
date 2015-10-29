@@ -5,7 +5,7 @@ using namespace cv;
 
 void ofApp::setup() {
 	ofSetVerticalSync(true);
-	cam.initGrabber(320, 240);
+	cam.setup(320, 240);
 	
 	// imitate() will set up previous and diff
 	// so they have the same size and type as cam

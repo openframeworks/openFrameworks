@@ -6,7 +6,7 @@ using namespace cv;
 void ofApp::setup() {
     ofBackground(0);
     
-	camera.initGrabber(320, 240);
+	camera.setup(320, 240);
 	
     gui.setup();
     

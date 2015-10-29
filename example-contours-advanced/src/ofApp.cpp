@@ -4,7 +4,7 @@ using namespace ofxCv;
 using namespace cv;
 
 void ofApp::setup() {
-	cam.initGrabber(640, 480);
+	cam.setup(640, 480);
 	contourFinder.setMinAreaRadius(10);
 	contourFinder.setMaxAreaRadius(150);
 	//contourFinder.setInvert(true); // find black instead of white
@@ -43,14 +43,14 @@ void ofApp::draw() {
 		ofVec2f ellipseSize = toOf(ellipse.size);
 		ofTranslate(ellipseCenter.x, ellipseCenter.y);
 		ofRotate(ellipse.angle);
-		ofEllipse(0, 0, ellipseSize.x, ellipseSize.y);
+		ofDrawEllipse(0, 0, ellipseSize.x, ellipseSize.y);
 		ofPopMatrix();
 		
 		// minimum area circle that encloses the contour
 		ofSetColor(cyanPrint);
 		float circleRadius;
 		ofVec2f circleCenter = toOf(contourFinder.getMinEnclosingCircle(i, circleRadius));
-		ofCircle(circleCenter, circleRadius);
+		ofDrawCircle(circleCenter, circleRadius);
 		
 		// convex hull of the contour
 		ofSetColor(yellowPrint);
@@ -60,7 +60,7 @@ void ofApp::draw() {
 		// defects of the convex hull
 		vector<cv::Vec4i> defects = contourFinder.getConvexityDefects(i);
 		for(int j = 0; j < defects.size(); j++) {
-			ofLine(defects[j][0], defects[j][1], defects[j][2], defects[j][3]);
+			ofDrawLine(defects[j][0], defects[j][1], defects[j][2], defects[j][3]);
 		}
 		
 		// some different styles of contour centers
@@ -68,11 +68,11 @@ void ofApp::draw() {
 		ofVec2f average = toOf(contourFinder.getAverage(i));
 		ofVec2f center = toOf(contourFinder.getCenter(i));
 		ofSetColor(cyanPrint);
-		ofCircle(centroid, 1);
+		ofDrawCircle(centroid, 1);
 		ofSetColor(magentaPrint);
-		ofCircle(average, 1);
+		ofDrawCircle(average, 1);
 		ofSetColor(yellowPrint);
-		ofCircle(center, 1);
+		ofDrawCircle(center, 1);
 		
 		// you can also get the area and perimeter using ofPolyline:
 		// ofPolyline::getArea() and ofPolyline::getPerimeter()
@@ -86,7 +86,7 @@ void ofApp::draw() {
 		ofPushMatrix();
 		ofTranslate(centroid.x, centroid.y);
 		ofScale(5, 5);
-		ofLine(0, 0, balance.x, balance.y);
+		ofDrawLine(0, 0, balance.x, balance.y);
 		ofPopMatrix();
 	}
 
@@ -98,13 +98,13 @@ void ofApp::draw() {
 	ofTranslate(8, 75);
 	ofFill();
 	ofSetColor(0);
-	ofRect(-3, -3, 64+6, 64+6);
+	ofDrawRectangle(-3, -3, 64+6, 64+6);
 	ofSetColor(targetColor);
-	ofRect(0, 0, 64, 64);
+	ofDrawRectangle(0, 0, 64, 64);
 }
 
 void ofApp::mousePressed(int x, int y, int button) {
-	targetColor = cam.getPixelsRef().getColor(x, y);
+	targetColor = cam.getPixels().getColor(x, y);
 	contourFinder.setTargetColor(targetColor, trackingColorMode);
 }
 

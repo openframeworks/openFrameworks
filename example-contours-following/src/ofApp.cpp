@@ -35,7 +35,7 @@ void Glow::draw() {
 		size = ofMap(ofGetElapsedTimef() - startedDying, 0, dyingTime, size, 0, true);
 	}
 	ofNoFill();
-	ofCircle(cur, size);
+	ofDrawCircle(cur, size);
 	ofSetColor(color);
 	all.draw();
 	ofSetColor(255);
@@ -47,7 +47,7 @@ void ofApp::setup() {
 	ofSetVerticalSync(true);
 	ofBackground(0);
 	
-	movie.loadMovie("video.mov");
+	movie.load("video.mov");
 	movie.play();
 	
 	contourFinder.setMinAreaRadius(1);

@@ -8,8 +8,7 @@ public:
 	void setup();
 	void update();
 	void draw();
-	
+
 	ofVideoGrabber cam;
-	ofPixels gray;
-	ofImage edge;
+	ofImage gray, edge, sobel;
 };
