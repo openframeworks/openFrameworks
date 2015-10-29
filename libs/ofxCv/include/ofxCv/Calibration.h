@@ -27,12 +27,12 @@ namespace ofxCv {
 	
 	class Intrinsics {
 	public:
-        void setup(float focalLengthMm, cv::Size imageSizePx, cv::Size2d sensorSizeMm, cv::Point2d principalPointPct = cv::Point2d(.5,.5));
-		void setup(Mat cameraMatrix, cv::Size imageSizePx, cv::Size2d sensorSizeMm = cv::Size2d(0, 0));
+        void setup(float focalLengthMm, cv::Size imageSizePx, cv::Size2f sensorSizeMm, cv::Point2d principalPointPct = cv::Point2d(.5,.5));
+		void setup(Mat cameraMatrix, cv::Size imageSizePx, cv::Size2f sensorSizeMm = cv::Size2f(0, 0));
 		void setImageSize(cv::Size imgSize);
 		Mat getCameraMatrix() const;
 		cv::Size getImageSize() const;
-		cv::Size2d getSensorSize() const;
+		cv::Size2f getSensorSize() const;
 		cv::Point2d getFov() const;
 		double getFocalLength() const;
 		double getAspectRatio() const;
@@ -42,7 +42,7 @@ namespace ofxCv {
         void updateValues();
 		Mat cameraMatrix;
         cv::Size imageSize;
-        cv::Size2d sensorSize;
+        cv::Size2f sensorSize;
 		cv::Point2d fov;
 		double focalLength, aspectRatio;
 		Point2d principalPoint;
