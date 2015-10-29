@@ -308,13 +308,9 @@ static const string fragmentShader = R"(
 
 		ambient += light.ambient.rgb * attenuation;
 		diffuse += light.diffuse.rgb * nDotVP * attenuation;
-)"
 #ifndef TARGET_OPENGLES
-	R"(
 #define SPECULAR_REFLECTION
-	)"
 #endif
-R"(
 #ifndef SPECULAR_REFLECTION
 		// ha! no branching :)
 		pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
