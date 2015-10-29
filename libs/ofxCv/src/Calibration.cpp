@@ -6,7 +6,7 @@ namespace ofxCv {
     
     using namespace cv;
     
-    void Intrinsics::setup(float focalLength, cv::Size imageSize, cv::Size2d sensorSize, cv::Point2d principalPoint) {
+    void Intrinsics::setup(float focalLength, cv::Size imageSize, cv::Size2f sensorSize, cv::Point2d principalPoint) {
         float focalPixels = (focalLength / sensorSize.width) * imageSize.width;
         float fx = focalPixels; // focal length in pixels on x
         float fy = focalPixels;  // focal length in pixels on y
@@ -18,7 +18,7 @@ namespace ofxCv {
                           0, 0, 1);
         setup(cameraMatrix, imageSize, sensorSize);
     }
-    void Intrinsics::setup(Mat cameraMatrix, cv::Size imageSize, cv::Size2d sensorSize) {
+    void Intrinsics::setup(Mat cameraMatrix, cv::Size imageSize, cv::Size2f sensorSize) {
         this->cameraMatrix = cameraMatrix;
         this->imageSize = imageSize;
         this->sensorSize = sensorSize;
@@ -47,7 +47,7 @@ namespace ofxCv {
         return imageSize;
     }
     
-    cv::Size2d Intrinsics::getSensorSize() const {
+    cv::Size2f Intrinsics::getSensorSize() const {
         return sensorSize;
     }
     
@@ -131,7 +131,7 @@ namespace ofxCv {
         imagePoints.clear();
         FileStorage fs(ofToDataPath(filename, absolute), FileStorage::READ);
         cv::Size imageSize;
-        cv::Size2d sensorSize;
+        cv::Size2f sensorSize;
         Mat cameraMatrix;
         fs["cameraMatrix"] >> cameraMatrix;
         fs["imageSize_width"] >> imageSize.width;
