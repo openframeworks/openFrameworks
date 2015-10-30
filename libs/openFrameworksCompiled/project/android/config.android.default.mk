@@ -108,7 +108,7 @@ endif
 TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 
 DATA_FILES = $(shell find bin/data -type f 2>/dev/null)
-RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
+RESNAME=ofdataresources
 RESFILE=$(RESNAME).zip
 
 ifeq ($(ABI),armv7)
