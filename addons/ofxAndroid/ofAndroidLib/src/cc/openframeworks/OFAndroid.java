@@ -1024,15 +1024,20 @@ public class OFAndroid {
 	 
     static {
     	try{
-    		Log.i("OF","static init");
-    		System.loadLibrary("neondetection"); 
-	    	if(hasNeon()){
-	    		Log.i("OF","loading neon optimized library");
-	    		System.loadLibrary("OFAndroidApp_neon");
-	    	}else{
-	    		Log.i("OF","loading not-neon optimized library");
-	    		System.loadLibrary("OFAndroidApp");
-	    	}
+    	    String arch = System.getProperty("os.arch");
+    	    if(arch.contains("arm")){
+        		Log.i("OF","static init");
+        		System.loadLibrary("neondetection"); 
+	        	if(hasNeon()){
+	        		Log.i("OF","loading neon optimized library");
+	        		System.loadLibrary("OFAndroidApp_neon");
+	        	}else{
+	        		Log.i("OF","loading not-neon optimized library");
+	        		System.loadLibrary("OFAndroidApp");
+	        	}
+	        }else{
+	        	System.loadLibrary("OFAndroidApp");
+	        }
     	}catch(Throwable e){
     		Log.i("OF","failed neon detection, loading not-neon library",e);
     		System.loadLibrary("OFAndroidApp");
