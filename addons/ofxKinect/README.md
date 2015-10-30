@@ -67,6 +67,13 @@ Also, you can add a set of udev rules which allow you to run a Kinect app withou
 
 Precompiled libfreenect drivers and libusb-win32 libs are included for Windows.
 
+New install instructions: 
+However on some new Windows OS it might be a struggle to install 
+
+The easiest way to add the drivers is to use the Free USB Driver tool: http://zadig.akeo.ie/
+Select your Xbox Camera, Xbox Audio and Xbox Motor in the drop down and then select the libusb-win32( v1.2.6.0 ) driver from the driver menu and click install. ( you will need to do this three times, once for the camera, then motor, then audio ).  This advice comes from the https://github.com/OpenKinect/libfreenect#windows ReadMe. 
+
+Old install instructions: 
 Make sure to install or update the libfreenect Kinect camera, motor, and audio drivers through Windows Device Manager by pointing it to the driver folder:
 <pre>
 ofxKinect/libs/libfreenect/platform/windows/inf
