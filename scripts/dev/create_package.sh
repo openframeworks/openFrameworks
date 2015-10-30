@@ -139,7 +139,7 @@ function createProjectFiles {
         echo "Creating project files for $pkg_platform"
         ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pkg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
     elif [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
-        for examle_group in $pkg_ofroot/examples/*; do
+        for example_group in $pkg_ofroot/examples/*; do
             for example in $pkg_ofroot/examples/$example_group/*; do
                 cp $pkg_ofroot/scripts/templates/linux/Makefile $pkg_ofroot/examples/$example_group/$example/
                 cp $pkg_ofroot/scripts/templates/linux/config.make $pkg_ofroot/examples/$example_group/$example/
