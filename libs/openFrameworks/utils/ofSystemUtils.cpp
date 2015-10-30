@@ -375,13 +375,18 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		HWND hwnd = WindowFromDC(wglGetCurrentDC());
 		ofn.hwndOwner = hwnd;
 
+		//the file name and path
 		wchar_t szFileName[MAX_PATH];
+		memset(szFileName, 0, sizeof(szFileName));
+
+		//the dir, if specified
+		wchar_t szDir[MAX_PATH];
+
+		//the title if specified
 		wchar_t szTitle[MAX_PATH];
 		if(defaultPath!=""){
-			wcscpy(szFileName,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
-		}else{
-		    //szFileName = L"";
-			memset(szFileName,  0, sizeof(szFileName));
+			wcscpy(szDir,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+			ofn.lpstrInitialDir = szDir;
 		}
 
 		if (windowTitle != "") {
@@ -400,6 +405,10 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 
 		if(GetOpenFileName(&ofn)) {
 			results.filePath = convertWideToNarrow(szFileName);
+		}
+		else {
+			//this should throw an error on failure unless its just the user canceling out
+			DWORD err = CommDlgExtendedError();
 		}
 
 	} else {
