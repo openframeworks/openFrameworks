@@ -359,7 +359,7 @@ typedef TESSindex ofIndexType;
 		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__)
 			#define HAS_TLS 1
 		#endif
-	#else
+    #elif !defined(TARGET_WIN32) || _MSC_VER
 		#define HAS_TLS 1
 	#endif
 #endif
