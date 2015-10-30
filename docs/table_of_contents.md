@@ -12,6 +12,7 @@ Getting started
 * [OS X](osx.md) — A guide to install on OS X.
 * [Code::Block](codeblocks.md) — A guide to configure Code::Block on Windows.
 * [Visual Studio](visualstudio.md) — A guide to configure Visual Studio on Windows.
+* [MSYS2](msys2.md) — A guide to install on Windows using MSYS2.
 
 Usage
 -----
