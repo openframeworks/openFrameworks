@@ -9,6 +9,8 @@ Installing MSYS2
 First, install MSYS2 using the [one-click installer](https://msys2.github.io/) or 
 directly unzipping the archive from their [repository](http://sourceforge.net/projects/msys2/files/Base/x86_64/)
 
+If you are going to use QtCreator you should install msys2 in the default install folder, c:\msys64
+
 Open a MSYS2 shell and update the system packages :
 
     pacman --noconfirm  --needed -Sy bash pacman pacman-mirrors msys2-runtime
@@ -37,27 +39,25 @@ Open an **MINGW32** shell and compile oF libraries:
 
 You can speed-up compilation using parallel build `make -j${NUMBER_OF_PROCESSORS}`
 
-Compile the videoinput lib (This step shouldn't be required for the official 0.9.0 release !)
-
-	pacman --noconfirm  --needed -Sy git
-	cd your_oF_directory/scripts/apothecary
-	./apothecary update videoinput
-
-
-
 
 Setting the PATH variable
 -------------------------
 On MSYS2, openFrameworks needs the dlls that are provided by MSYS2 package manager `pacman`. The PATH variable tells the system where to look for these dlls. On Windows, the system starts to look into the executable folder, then into the folders defined in system PATH and finally into the folders defined in user PATH.
 
-Open a Windows cmd prompt and set you user PATH (**WARNING** This will override your current user PATH! Adapt to include other needed paths.)
+You can find how to set the PATH in windows here: http://www.computerhope.com/issues/ch000549.htm
 
-    setx PATH "your_msys2_directory\mingw32\bin;your_oF_directory\export\win_cb;your_other_paths"
+You'll need to add your_msys2_directory\mingw32\bin;your_msys2_directory\usr\bin to your PATH, which usually is:
+
+        c:\msys64\mingw32\bin;c:\msys64\usr\bin
+        
+You can also set the PATH from the command line: open a Windows cmd prompt and set you user PATH
+
+        setx PATH "%PATH%;your_msys2_directory\mingw32\bin;your_msys2_directory\usr\bin;"
 
 If you have administrative privileges, you can directly set the system PATH. All users will benefit of it...
 
 That's all, now go to the your_oF_directory/examples folder, where you will find 
-the examples, and have fun!  
+the examples, and have fun! 
 
 Running examples
 ----------------
@@ -80,6 +80,13 @@ syntax is the usual syntax in makefiles, there's help comments inside the file.
 
 addons.make: if you want to use an addon which is inside the addons folder, just 
 add its name in a new line in this file.
+
+QtCreator
+---------
+
+With msys2 you can also use QtCreator as an IDE, you can find more information in the corresponding setup guide:
+
+http://openframeworks.cc/setup/qtcreator
 
 FAQ / Common problems
 --------------------- 
