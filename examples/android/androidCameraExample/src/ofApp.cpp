@@ -3,7 +3,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	ofBackground(255,255,255);
+	ofBackground(0,0,0);
 	ofSetLogLevel(OF_LOG_NOTICE);
 	ofSetOrientation(OF_ORIENTATION_90_LEFT);
 	grabber.setup(320,240);
@@ -27,12 +27,21 @@ void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
-	ofSetHexColor(0xFFFFFF);
-	grabber.draw(20,20);
+void ofApp::draw(){    
+    // Calculate aspect ratio of grabber image
+    float grabberAspectRatio = grabber.getWidth() / grabber.getHeight();
+
+    // Draw camera image centered in the window
+    ofSetHexColor(0xFFFFFF);
+	ofSetRectMode(OF_RECTMODE_CENTER);
+	grabber.draw(ofGetWidth()/2, ofGetHeight()/2, ofGetHeight()*grabberAspectRatio , ofGetHeight());
+
+	// Draw text gui
+	ofSetRectMode(OF_RECTMODE_CORNER);
+	ofDrawRectangle(0, 0, 300, 50);
 	ofSetHexColor(0x000000);
-	ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate()),20,350);
-	ofDrawBitmapString("camera fps: " + ofToString(camera_fps),20,370);
+	ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate()),20,20);
+	ofDrawBitmapString("camera fps: " + ofToString(camera_fps),20,40);
 }
 
 //--------------------------------------------------------------
