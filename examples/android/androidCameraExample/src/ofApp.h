@@ -37,4 +37,7 @@ class ofApp : public ofxAndroidApp{
 		int camera_fps;
 		int frames_one_sec;
 
+		bool frontalFacing;
+		int orientation;
+
 };
