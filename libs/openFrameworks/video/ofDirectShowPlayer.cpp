@@ -1102,7 +1102,11 @@ bool ofDirectShowPlayer::load(string path){
 
     close();
     player = new DirectShowVideo();
-    return player->loadMovie(path); 
+    bool loadOk = player->loadMovie(path);
+    if( !loadOk ){
+        ofLogError("ofDirectShowPlayer") << " Cannot load video of this file type.  Make sure you have codecs installed on your system.  OF recommends the free K-Lite Codec pack. " << endl;
+    }
+    return loadOk;
 }
 
 void ofDirectShowPlayer::close(){
