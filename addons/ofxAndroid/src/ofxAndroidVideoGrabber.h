@@ -37,13 +37,41 @@ public:
 
 	//should implement!
 	void setVerbose(bool bTalkToMe);
-	void setDeviceID(int _deviceID);
+
+
+	/// Set desired frame rate of the camera.
+	/// By default will the camera pick the highest frame rate available
 	void setDesiredFrameRate(int framerate);
+
+	/// Set specific camera device id.
+	/// Must be a value between 0 and numCameras.
+	/// Default is first back facing camera
+	void setDeviceID(int _deviceID);
+
 	void videoSettings();
 	bool setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat getPixelFormat() const;
 
 	// specifics android
+
+	/// Get number of cameras available
+	int getNumCameras();
+
+	/// Get device id of back facing camera.
+	/// Returns -1 if no match is found
+	int getBackCamera();
+
+	/// Get device id of front facing (selfie) camera.
+	/// Returns -1 if no match is found
+	int getFrontCamera();
+
+	/// Get the physical orientation of the camera. Typically on a phone the camera mounted in
+	/// landscape mode, this returns
+	int getCameraOrientation();
+
+	/// Returns true if the camera is frontal facing. Use getFrontCamera() or getBackCamera()
+	/// to specify the camera during initialization
+	int getIsCameraFacingFront();
 
 	bool setAutoFocus(bool autofocus);
 
@@ -53,7 +81,8 @@ public:
 
 	struct Data;
 private:
-	bool supportsTextureRendering();
+	int getCameraFacing(int facing);
+	bool initCamera();
 
 	// only to be used internally to resize;
 	ofPixelsRef getAuxBuffer();

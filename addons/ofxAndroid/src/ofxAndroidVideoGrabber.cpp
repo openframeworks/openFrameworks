@@ -207,7 +207,7 @@ void ofxAndroidVideoGrabber::update(){
         vFlipTextureMatrix.scale(1,-1,1);
         vFlipTextureMatrix.translate(0,1,0);
         ofMatrix4x4 textureMatrix(m);
-        data->texture.setTextureMatrix( /*vFlipTextureMatrix **/ textureMatrix );
+        data->texture.setTextureMatrix(vFlipTextureMatrix * textureMatrix );
 
         ofGetJNIEnv()->ReleaseFloatArrayElements(data->matrixJava,m,0);
 
@@ -231,11 +231,6 @@ bool ofxAndroidVideoGrabber::setup(int w, int h){
 		return false;
 	}
 
-	JNIEnv *env = ofGetJNIEnv();
-	if(!env) return false;
-
-	jclass javaClass = env->FindClass("cc/openframeworks/OFAndroidVideoGrabber");
-
 	ofLogNotice() << "initializing camera with external texture";
 	ofTextureData td;
 	td.width = w;
@@ -252,23 +247,37 @@ bool ofxAndroidVideoGrabber::setup(int w, int h){
 	data->texture.texData = td;
 	data->texture.texData.bAllocated = true;
 	data->loadTexture();
+	data->width = w;
+	data->height = h;
+
+	bool bInit = initCamera();
+	if(!bInit) return false;
+
+	ofLogVerbose("ofxAndroidVideoGrabber") << "initGrabber(): camera initialized correctly";
+	data->appPaused = false;
+	return true;
+}
+
+bool ofxAndroidVideoGrabber::initCamera(){
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env) return false;
+
+	jclass javaClass = getJavaClass();
 
 	jmethodID javaInitGrabber = env->GetMethodID(javaClass,"initGrabber","(IIII)V");
 	if(data->javaVideoGrabber && javaInitGrabber){
-		env->CallVoidMethod(data->javaVideoGrabber,javaInitGrabber,w,h,data->attemptFramerate,data->texture.texData.textureID);
+		env->CallVoidMethod(data->javaVideoGrabber,javaInitGrabber,data->width,data->height,data->attemptFramerate,data->texture.texData.textureID);
 	} else {
 		ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): couldn't get OFAndroidVideoGrabber init grabber method";
 		return false;
 	}
 
 	//ofLogVerbose("ofxAndroidVideoGrabber") << "initGrabber(): new frame callback size: " << (int) width << "x" << (int) height;
-	data->frontPixels.allocate(w,h,getPixelFormat());
+	data->frontPixels.allocate(data->width,data->height,getPixelFormat());
 	data->bGrabberInited = true;
 
-	ofLogVerbose("ofxAndroidVideoGrabber") << "initGrabber(): camera initialized correctly";
-	data->appPaused = false;
 	return true;
-}
+};
 
 bool ofxAndroidVideoGrabber::isInitialized() const{
 	return data->bGrabberInited;
@@ -289,6 +298,74 @@ void ofxAndroidVideoGrabber::setVerbose(bool bTalkToMe){
 
 }
 
+int ofxAndroidVideoGrabber::getCameraFacing(int facing){
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env) return -1;
+
+	jclass javaClass = getJavaClass();
+
+	jmethodID javagetCameraFacing = env->GetMethodID(javaClass,"getCameraFacing","(I)I");
+	if(data->javaVideoGrabber && javagetCameraFacing){
+		return env->CallIntMethod(data->javaVideoGrabber,javagetCameraFacing,facing);
+	} else {
+		ofLogError("ofxAndroidVideoGrabber") << "getCameraFacing(): couldn't get OFAndroidVideoGrabber getCameraFacing method";
+		return -1;
+	}
+}
+
+int ofxAndroidVideoGrabber::getBackCamera(){
+	return getCameraFacing(0);
+}
+
+int ofxAndroidVideoGrabber::getFrontCamera(){
+	return getCameraFacing(1);
+}
+
+int ofxAndroidVideoGrabber::getNumCameras(){
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env) return 0;
+
+	jclass javaClass = getJavaClass();
+
+	jmethodID javagetNumCameras= env->GetMethodID(javaClass,"getNumCameras","()I");
+	if(data->javaVideoGrabber && javagetNumCameras){
+		return env->CallIntMethod(data->javaVideoGrabber,javagetNumCameras);
+	} else {
+		ofLogError("ofxAndroidVideoGrabber") << "getNumCameras(): couldn't get OFAndroidVideoGrabber getNumCameras method";
+		return 0;
+	}
+}
+
+int ofxAndroidVideoGrabber::getCameraOrientation(){
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env) return 0;
+
+	jclass javaClass = getJavaClass();
+
+	jmethodID javagetCameraOrientation= env->GetMethodID(javaClass,"getCameraOrientation","()I");
+	if(data->javaVideoGrabber && javagetCameraOrientation){
+		return env->CallIntMethod(data->javaVideoGrabber,javagetCameraOrientation);
+	} else {
+		ofLogError("ofxAndroidVideoGrabber") << "getCameraOrientation(): couldn't get OFAndroidVideoGrabber getCameraOrientation method";
+		return 0;
+	}
+}
+
+int ofxAndroidVideoGrabber::getIsCameraFacingFront(){
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env) return 0;
+
+	jclass javaClass = getJavaClass();
+
+	jmethodID javagetIsCameraFacingFront= env->GetMethodID(javaClass,"getIsCameraFacingFront","()Z");
+	if(data->javaVideoGrabber && javagetIsCameraFacingFront){
+		return env->CallBooleanMethod(data->javaVideoGrabber,javagetIsCameraFacingFront);
+	} else {
+		ofLogError("ofxAndroidVideoGrabber") << "getIsCameraFacingFront(): couldn't get OFAndroidVideoGrabber getIsCameraFacingFront method";
+		return 0;
+	}
+}
+
 void ofxAndroidVideoGrabber::setDeviceID(int _deviceID){
 
 	JNIEnv *env = ofGetJNIEnv();
@@ -299,7 +376,7 @@ void ofxAndroidVideoGrabber::setDeviceID(int _deviceID){
 	jmethodID javasetDeviceID = env->GetMethodID(javaClass,"setDeviceID","(I)V");
 	if(data->javaVideoGrabber && javasetDeviceID){
 		env->CallVoidMethod(data->javaVideoGrabber,javasetDeviceID,_deviceID);
-	}else{
+	} else {
 		ofLogError("ofxAndroidVideoGrabber") << "setDeviceID(): couldn't get OFAndroidVideoGrabber setDeviceID method";
 		return;
 	}
@@ -584,7 +661,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 
     data->width = width;
     data->height = height;
-
+/*
 	auto currentFrame = (unsigned char*)env->GetPrimitiveArrayCritical(array, NULL);
 	if(!currentFrame) return 1;
 
@@ -611,14 +688,9 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 	if(needsResize){
 		data->backPixels.resize(data->frontPixels.getWidth(), data->frontPixels.getHeight(), OF_INTERPOLATE_NEAREST_NEIGHBOR);
 	}
-	/*acc_time += ofGetSystemTime() - time_one_frame;
-	num_frames ++;
-	if(ofGetSystemTime() - time_prev_out > 5000){
-		time_prev_out = ofGetSystemTime();
-		ofLogNotice("ofxAndroidVideoGrabber") << "avg time: " << float(acc_time)/float(num_frames);
-	}*/
 
-	env->ReleasePrimitiveArrayCritical(array,currentFrame ,0);
+
+	env->ReleasePrimitiveArrayCritical(array,currentFrame ,0);*/
 	data->newPixels = true;
 	return 0;
 }
