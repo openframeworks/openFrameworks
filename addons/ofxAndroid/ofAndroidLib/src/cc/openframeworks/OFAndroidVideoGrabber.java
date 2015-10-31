@@ -106,7 +106,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		for(Integer i : config.getSupportedPreviewFrameRates()){
 			Log.i("OF",i.toString());
 		}
-		
+
 		Log.i("OF", "Grabber default format: " + config.getPreviewFormat());
 		Log.i("OF", "Grabber default preview size: " + config.getPreviewSize().width + "," + config.getPreviewSize().height);
 		config.setPictureSize(w, h);
@@ -129,18 +129,25 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		height = config.getPreviewSize().height;
 		if(width!=w || height!=h)  Log.w("OF","camera size different than asked for, resizing (this can slow the app)");
 		
-		
-		if(_targetFps!=-1){
-			config = camera.getParameters();
-			config.setPreviewFrameRate(_targetFps);
-			try{
-				camera.setParameters(config);
-			}catch(Exception e){
-				Log.e("OF","couldn init camera", e);
-			}
-		}
-		
-		targetFps = _targetFps;
+        targetFps = _targetFps;
+
+        // If target fps is not defined, then take the maximum fps
+        if(targetFps == -1) {
+            for(Integer i : config.getSupportedPreviewFrameRates()){
+                if(targetFps < i) {
+                    targetFps = i;
+                }
+            }
+        }
+
+        config = camera.getParameters();
+        config.setPreviewFrameRate(targetFps);
+        try{
+            camera.setParameters(config);
+        } catch(Exception e){
+            Log.e("OF","couldn init camera", e);
+        }
+
 		Log.i("OF","camera settings: " + width + "x" + height);
 		
 		// it actually needs (width*height) * 3/2
