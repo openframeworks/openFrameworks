@@ -81,6 +81,8 @@ typedef enum _playerLoopType{
     BOOL bSeeking;
     BOOL bSampleVideo; // default to YES
     BOOL bSampleAudio; // default to NO
+	
+	NSLock* asyncLock;
 }
 
 @property (nonatomic, retain) AVPlayer * player;

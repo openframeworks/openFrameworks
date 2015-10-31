@@ -44,45 +44,49 @@ bool ofAVFoundationPlayer::load(string name) {
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 
+	NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
+	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
+	
+	BOOL bStream = NO;
+	
+	bStream = bStream || (ofIsStringInString(name, "http://"));
+	bStream = bStream || (ofIsStringInString(name, "https://"));
+	bStream = bStream || (ofIsStringInString(name, "rtsp://"));
+	
+	NSURL * url = nil;
+	if(bStream == YES) {
+		url = [NSURL URLWithString:videoPath];
+	} else {
+		url = [NSURL fileURLWithPath:videoLocalPath];
+	}
+
+	bFrameNew = false;
+	
+	
     // dispose videoplayer, clear pixels, clear texture
     if(videoPlayer != nullptr) {
         
-        pixels.clear();
-        videoTexture.clear();
-        
-        // dispose videoplayer
-        disposePlayer();
-        
-        if (_videoTextureRef != nullptr) {
-            killTexture();
-        }
-        
-        videoPlayer = nullptr;
+//        pixels.clear();
+//        videoTexture.clear();
+//        
+//        // dispose videoplayer
+//        disposePlayer();
+//        
+//        if (_videoTextureRef != nullptr) {
+//            killTexture();
+//        }
+//        
+//        videoPlayer = nullptr;
+		
+		// use existing player
+		bool bLoaded = [videoPlayer loadWithURL:url async:bAsync];
+		return bLoaded;
+		
     }
-    bFrameNew = false;
-
 	
     // create a new player
     videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
     [videoPlayer setWillBeUpdatedExternally:YES];
-
-
-	
-    NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
-    NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
-
-    BOOL bStream = NO;
-
-    bStream = bStream || (ofIsStringInString(name, "http://"));
-    bStream = bStream || (ofIsStringInString(name, "https://"));
-    bStream = bStream || (ofIsStringInString(name, "rtsp://"));
-
-    NSURL * url = nil;
-    if(bStream == YES) {
-        url = [NSURL URLWithString:videoPath];
-    } else {
-        url = [NSURL fileURLWithPath:videoLocalPath];
-    }
 
     bool bLoaded = [videoPlayer loadWithURL:url async:bAsync];
 	
