@@ -31,6 +31,8 @@ struct ofxAndroidVideoGrabber::Data{
 	void onAppResume();
 	void loadTexture();
 	void reloadTexture();
+    int width;
+    int height;
 };
 
 map<int,weak_ptr<ofxAndroidVideoGrabber::Data>> & instances(){
@@ -339,11 +341,11 @@ void ofxAndroidVideoGrabber::setDesiredFrameRate(int framerate){
 }
 
 float ofxAndroidVideoGrabber::getHeight() const{
-	return data->frontPixels.getHeight();
+    return data->height;
 }
 
 float ofxAndroidVideoGrabber::getWidth() const{
-	return data->frontPixels.getWidth();
+    return data->width;
 }
 
 bool ofxAndroidVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
@@ -596,6 +598,9 @@ jint
 Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thiz, jbyteArray array, jint width, jint height, jint cameraId){
 	auto data = instances()[cameraId].lock();
 	if(!data) return 1;
+
+    data->width = width;
+    data->height = height;
 
 	auto currentFrame = (unsigned char*)env->GetPrimitiveArrayCritical(array, NULL);
 	if(!currentFrame) return 1;
