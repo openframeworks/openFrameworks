@@ -281,8 +281,8 @@ function build() {
 		echo "Completed Assimp for $TYPE | $ARCH | $VS_VER"
 
 
-	elif [ "$TYPE" == "win_cb" ] ; then
-		echoWarning "TODO: win_cb build"
+	elif [ "$TYPE" == "msys2" ] ; then
+		echoWarning "TODO: msys2 build"
 
 	elif [ "$TYPE" == "android" ] ; then
         

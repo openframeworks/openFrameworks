@@ -84,7 +84,7 @@ linuxarmv7l:
     ADDON_INCLUDES_EXCLUDE = libs/opencv
     ADDON_INCLUDES_EXCLUDE += libs/opencv/%
 	
-win_cb:
+msys2:
 	ADDON_PKG_CONFIG_LIBRARIES = opencv
 	ADDON_LIBS_EXCLUDE = libs/opencv/%
     ADDON_INCLUDES_EXCLUDE = libs/opencv

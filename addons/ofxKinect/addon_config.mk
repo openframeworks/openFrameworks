@@ -100,7 +100,7 @@ linux:
     ADDON_INCLUDES_EXCLUDE += libs/libusb-win32/%
 	ADDON_INCLUDES_EXCLUDE += libs/libusb-1.0/%
 	
-win_cb:
+msys2:
 	# source files, these will be usually parsed from the file system looking
 	# in the src folders in libs and the root of the addon. if your addon needs
 	# to include files in different places or a different set of files per platform

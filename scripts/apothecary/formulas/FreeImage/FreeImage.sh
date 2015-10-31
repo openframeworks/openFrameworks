@@ -7,7 +7,7 @@
 # Makefile build system, 
 # some Makefiles are out of date so patching/modification may be required
 
-FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" "emscripten")
+FORMULA_TYPES=( "osx" "vs" "msys2" "ios" "android" "emscripten")
 
 # define the version
 VER=3170 # 3.16.0
@@ -19,7 +19,7 @@ GIT_TAG=3.17.0
 # download the source code and unpack it into LIB_NAME
 function download() {
 
-	if [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
+	if [ "$TYPE" == "vs" -o "$TYPE" == "msys2" ] ; then
 		# For win32, we simply download the pre-compiled binaries.
 		curl -LO http://downloads.sourceforge.net/freeimage/FreeImage"$VER"Win32Win64.zip
 		unzip -qo FreeImage"$VER"Win32Win64.zip
@@ -352,7 +352,7 @@ function copy() {
 	    cp -v Dist/*.h $1/include
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage.a $1/lib/$TYPE/freeimage.a
-	elif [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "vs" -o "$TYPE" == "msys2" ] ; then
 		mkdir -p $1/include #/Win32
 		#mkdir -p $1/include/x64
 	    cp -v Dist/x32/*.h $1/include #/Win32/

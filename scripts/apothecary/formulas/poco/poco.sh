@@ -48,7 +48,7 @@ function prepare() {
 		git reset --hard $SHA
 	fi
 	
-	if [ "$TYPE" != "win_cb" ] && [ "$TYPE" != "linux" ]; then
+	if [ "$TYPE" != "msys2" ] && [ "$TYPE" != "linux" ]; then
 		# manually prepare dependencies
 		apothecaryDependencies download
 		apothecaryDependencies prepare
@@ -219,7 +219,7 @@ function build() {
 			cmd //c buildwin.cmd ${VS_VER}0 upgrade static_md both x64 nosamples notests
 			cmd //c buildwin.cmd ${VS_VER}0 build static_md both x64 nosamples notests
 		fi
-	elif [ "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "msys2" ] ; then
 	    cp $FORMULA_DIR/MinGWConfig64 build/config/MinGW
 		local BUILD_OPTS="--no-tests --no-samples --static  --no-sharedlibs --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
@@ -483,7 +483,7 @@ function copy() {
 			cp -v lib64/*.lib $1/lib/$TYPE/x64
 		fi
 		
-	elif [ "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "msys2" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -vf lib/MinGW/i686/*.a $1/lib/$TYPE
 		#cp -vf lib/MinGW/x86_64/*.a $1/lib/$TYPE

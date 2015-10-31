@@ -7,7 +7,7 @@
 # FmodEX is downloaded as a binary from the fmod.org website and copied 
 # into the openFrameworks library directory.
 
-FORMULA_TYPES=( "osx" "vs" "win_cb" )
+FORMULA_TYPES=( "osx" "vs" "msys2" )
 
 # define the version
 VER=44221
