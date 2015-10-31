@@ -218,12 +218,9 @@ public class OFAndroid {
 	    		}
 	    		
 	    		
-	    		String app_name="";
 				try {
 					int app_name_id = Class.forName(packageName+".R$string").getField("app_name").getInt(null);
-					app_name = ofActivity.getResources().getText(app_name_id).toString().toLowerCase(Locale.US);
-					Log.i("OF","app name: " + app_name);
-					
+
 					if(copydata){
 						StatFs stat = new StatFs(dataPath);
 						double sdAvailSize = (double)stat.getAvailableBlocks()
@@ -238,8 +235,7 @@ public class OFAndroid {
 		    					fileId = files[i].getInt(null);
 		    					String resName = ofActivity.getResources().getText(fileId).toString();
 		    					fileName = resName.substring(resName.lastIndexOf("/"));
-		    					Log.i("OF","checking " + fileName);
-		    					if(fileName.equals("/" + app_name + "resources.zip")){
+		    					if(fileName.equals("/ofdataresources.zip")){
 		    						
 			    					from = ofActivity.getResources().openRawResource(fileId);
 									try{

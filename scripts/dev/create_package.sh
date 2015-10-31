@@ -129,7 +129,7 @@ function deleteEclipse {
 
 
 function createProjectFiles {
-    if [ "$pkg_platform" != "android" ]; then
+    if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
         cd ${main_ofroot}/apps/projectGenerator
         git pull origin master
         cd commandLine
@@ -138,6 +138,13 @@ function createProjectFiles {
         cd ${pkg_ofroot}
         echo "Creating project files for $pkg_platform"
         ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pkg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
+    elif [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
+        for example_group in $pkg_ofroot/examples/*; do
+            for example in $example_group/*; do
+                cp $pkg_ofroot/scripts/templates/linux/Makefile $example/
+                cp $pkg_ofroot/scripts/templates/linux/config.make $example/
+            done
+        done
     fi
     cd ${pkg_ofroot}
 }
