@@ -5,12 +5,20 @@
 void ofApp::setup(){
 	ofBackground(0,0,0);
 	ofSetLogLevel(OF_LOG_NOTICE);
-	ofSetOrientation(OF_ORIENTATION_90_LEFT);
-	grabber.setup(320,240);
+	//ofSetOrientation(OF_ORIENTATION_90_LEFT);
+
+	std::shared_ptr<ofxAndroidVideoGrabber> androidGrabber = grabber.getGrabber<ofxAndroidVideoGrabber>();
+	androidGrabber->setDeviceID(androidGrabber->getFrontCamera());
+
+
+	grabber.setup(1280,960);
 
 	one_second_time = ofGetElapsedTimeMillis();
 	camera_fps = 0;
 	frames_one_sec = 0;
+
+	orientation = androidGrabber->getCameraOrientation();
+	frontalFacing = androidGrabber->getIsCameraFacingFront();
 }
 
 //--------------------------------------------------------------
@@ -34,14 +42,29 @@ void ofApp::draw(){
     // Draw camera image centered in the window
     ofSetHexColor(0xFFFFFF);
 	ofSetRectMode(OF_RECTMODE_CENTER);
-	grabber.draw(ofGetWidth()/2, ofGetHeight()/2, ofGetHeight()*grabberAspectRatio , ofGetHeight());
+
+	if(ofGetWidth() > ofGetHeight()) {
+		grabber.draw(ofGetWidth() / 2, ofGetHeight() / 2, ofGetHeight() * grabberAspectRatio,
+					 ofGetHeight());
+	} else {
+		grabber.draw(ofGetWidth() / 2, ofGetHeight() / 2, ofGetWidth(),
+					 ofGetWidth()  * 1.0/grabberAspectRatio);
+
+	}
 
 	// Draw text gui
 	ofSetRectMode(OF_RECTMODE_CORNER);
-	ofDrawRectangle(0, 0, 300, 50);
+	ofDrawRectangle(0, 0, 300, 100);
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate()),20,20);
 	ofDrawBitmapString("camera fps: " + ofToString(camera_fps),20,40);
+
+	if(frontalFacing) {
+		ofDrawBitmapString("facing: front", 20, 60);
+	}  else {
+		ofDrawBitmapString("facing: back", 20, 60);
+	}
+	ofDrawBitmapString("orientation: " + ofToString(orientation) ,20,80);
 }
 
 //--------------------------------------------------------------
@@ -61,7 +84,15 @@ void ofApp::windowResized(int w, int h){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(int x, int y, int id){
+	std::shared_ptr<ofxAndroidVideoGrabber> androidGrabber = grabber.getGrabber<ofxAndroidVideoGrabber>();
 
+	if(frontalFacing) {
+		androidGrabber->setDeviceID(androidGrabber->getBackCamera());
+	} else {
+		androidGrabber->setDeviceID(androidGrabber->getFrontCamera());
+	}
+	orientation = androidGrabber->getCameraOrientation();
+	frontalFacing = androidGrabber->getIsCameraFacingFront();
 }
 
 //--------------------------------------------------------------
