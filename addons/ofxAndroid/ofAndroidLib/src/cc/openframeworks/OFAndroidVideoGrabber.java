@@ -41,7 +41,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
         }
 	}
 
-    public int getNumCameras() {
+    public int getNumCameras(){
         return Camera.getNumberOfCameras();
     }
 
@@ -215,10 +215,14 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
         return cameraOrientation;
     }
 
-    public boolean getIsCameraFacingFront(){
-        return cameraFacing == Camera.CameraInfo.CAMERA_FACING_FRONT;
+    public int getFacingOfCamera(int _deviceID){
+        if(_deviceID == -1) _deviceID = deviceID;
+
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        Camera.getCameraInfo(_deviceID, info);
+        return info.facing;
     }
-	
+
 	public boolean setAutoFocus(boolean autofocus){
 		
 		if(initialized){

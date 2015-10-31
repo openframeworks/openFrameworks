@@ -174,7 +174,20 @@ void ofxAndroidVideoGrabber::Data::onAppResume(){
 	appPaused = false;
 }
 vector<ofVideoDevice> ofxAndroidVideoGrabber::listDevices() const{
-	return vector<ofVideoDevice>();
+
+	vector<ofVideoDevice> devices;
+
+	int numDevices = getNumCameras();
+	for(int i = 0; i < numDevices; i++){
+		int facing = getFacingOfCamera(i);
+		ofVideoDevice vd;
+		vd.deviceName = facing == 0? "Back" : "Front";
+		vd.id = i;
+		vd.bAvailable = true;
+		devices.push_back(vd);
+	}
+
+	return devices;
 }
 
 bool ofxAndroidVideoGrabber::isFrameNew() const{
@@ -298,7 +311,7 @@ void ofxAndroidVideoGrabber::setVerbose(bool bTalkToMe){
 
 }
 
-int ofxAndroidVideoGrabber::getCameraFacing(int facing){
+int ofxAndroidVideoGrabber::getCameraFacing(int facing)const{
 	JNIEnv *env = ofGetJNIEnv();
 	if(!env) return -1;
 
@@ -313,15 +326,15 @@ int ofxAndroidVideoGrabber::getCameraFacing(int facing){
 	}
 }
 
-int ofxAndroidVideoGrabber::getBackCamera(){
+int ofxAndroidVideoGrabber::getBackCamera()const{
 	return getCameraFacing(0);
 }
 
-int ofxAndroidVideoGrabber::getFrontCamera(){
+int ofxAndroidVideoGrabber::getFrontCamera()const{
 	return getCameraFacing(1);
 }
 
-int ofxAndroidVideoGrabber::getNumCameras(){
+int ofxAndroidVideoGrabber::getNumCameras() const{
 	JNIEnv *env = ofGetJNIEnv();
 	if(!env) return 0;
 
@@ -336,7 +349,7 @@ int ofxAndroidVideoGrabber::getNumCameras(){
 	}
 }
 
-int ofxAndroidVideoGrabber::getCameraOrientation(){
+int ofxAndroidVideoGrabber::getCameraOrientation()const{
 	JNIEnv *env = ofGetJNIEnv();
 	if(!env) return 0;
 
@@ -351,17 +364,17 @@ int ofxAndroidVideoGrabber::getCameraOrientation(){
 	}
 }
 
-int ofxAndroidVideoGrabber::getIsCameraFacingFront(){
+int ofxAndroidVideoGrabber::getFacingOfCamera(int device)const{
 	JNIEnv *env = ofGetJNIEnv();
 	if(!env) return 0;
 
 	jclass javaClass = getJavaClass();
 
-	jmethodID javagetIsCameraFacingFront= env->GetMethodID(javaClass,"getIsCameraFacingFront","()Z");
-	if(data->javaVideoGrabber && javagetIsCameraFacingFront){
-		return env->CallBooleanMethod(data->javaVideoGrabber,javagetIsCameraFacingFront);
+	jmethodID javagetFacingOfCamera= env->GetMethodID(javaClass,"getFacingOfCamera","(I)I");
+	if(data->javaVideoGrabber && javagetFacingOfCamera){
+		return env->CallIntMethod(data->javaVideoGrabber,javagetFacingOfCamera, device);
 	} else {
-		ofLogError("ofxAndroidVideoGrabber") << "getIsCameraFacingFront(): couldn't get OFAndroidVideoGrabber getIsCameraFacingFront method";
+		ofLogError("ofxAndroidVideoGrabber") << "getFacingOfCamera(): couldn't get OFAndroidVideoGrabber getFacingOfCamera method";
 		return 0;
 	}
 }

@@ -19,7 +19,6 @@ public:
 	ofxAndroidVideoGrabber();
 	~ofxAndroidVideoGrabber();
 
-	//needs implementing
 	vector<ofVideoDevice>	listDevices() const;
 	bool	setup(int w, int h);
 	bool	isInitialized() const;
@@ -54,34 +53,36 @@ public:
 
 	// specifics android
 
-	/// Get number of cameras available
-	int getNumCameras();
-
 	/// Get device id of back facing camera.
 	/// Returns -1 if no match is found
-	int getBackCamera();
+	int getBackCamera()const;
 
 	/// Get device id of front facing (selfie) camera.
 	/// Returns -1 if no match is found
-	int getFrontCamera();
+	int getFrontCamera()const;
 
 	/// Get the physical orientation of the camera. Typically on a phone the camera mounted in
-	/// landscape mode, this returns
-	int getCameraOrientation();
+	/// landscape mode, this returns 90
+	int getCameraOrientation()const;
 
-	/// Returns true if the camera is frontal facing. Use getFrontCamera() or getBackCamera()
-	/// to specify the camera during initialization
-	int getIsCameraFacingFront();
+	/// Get facing of camera.
+	/// Leave device = -1 to get selected cameras facing
+	///
+	/// Returns 0 on backfacing camera, and 1 on frontal facing camera.
+	int getFacingOfCamera(int device=-1)const;
 
 	bool setAutoFocus(bool autofocus);
 
 	ofTexture *	getTexturePtr();
 
-	ofEvent<ofPixels> newFrameE;
-
 	struct Data;
 private:
-	int getCameraFacing(int facing);
+	int getCameraFacing(int facing)const;
+
+	/// Get number of cameras available
+	int getNumCameras()const;
+
+
 	bool initCamera();
 
 	// only to be used internally to resize;
