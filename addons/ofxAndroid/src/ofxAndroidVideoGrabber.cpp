@@ -226,20 +226,8 @@ ofTexture *	ofxAndroidVideoGrabber::getTexturePtr(){
 }
 
 bool ofxAndroidVideoGrabber::supportsTextureRendering(){
-	static bool supportsTexture = false;
-	static bool supportChecked = false;
-	if(!supportChecked){
-		JNIEnv *env = ofGetJNIEnv();
-		if(!env){
-			ofLogError("ofxAndroidVideoGrabber") << "init grabber failed :  couldn't get environment using GetEnv()";
-			return false;
-		}
-
-		jmethodID supportsTextureMethod = env->GetStaticMethodID(getJavaClass(),"supportsTextureRendering","()Z");
-		supportsTexture = env->CallStaticBooleanMethod(getJavaClass(),supportsTextureMethod);
-		supportChecked = true;
-	}
-	return supportsTexture;
+    // TODO: Remove function
+    return true;
 }
 
 bool ofxAndroidVideoGrabber::setup(int w, int h){

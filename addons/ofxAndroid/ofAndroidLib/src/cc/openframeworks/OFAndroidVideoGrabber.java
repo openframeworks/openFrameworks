@@ -29,34 +29,20 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		return instanceId;
 	}
 	
-	public static boolean supportsTextureRendering(){
-		try {
-			Class.forName("android.graphics.SurfaceTexture");
-			return true;
-		} catch (ClassNotFoundException e) {
-			return false;
-		}
-	}
-	
 	public void initGrabber(int w, int h, int _targetFps){
 		initGrabber(w,h,_targetFps,0);
 	}
 	
 	public void setTexture(int texID){
-		if(supportsTextureRendering()){
-			try {
-				// get SurfaceTexture class and create an instance
-				Class<?> surfaceTextureClass = Class.forName("android.graphics.SurfaceTexture");
-				Constructor<?> constructor = surfaceTextureClass.getConstructor(int.class);
-				surfaceTexture = constructor.newInstance(texID);
-				
-				// set texture as preview surface for camera
-				Method setPreviewTexture = camera.getClass().getMethod("setPreviewTexture", surfaceTextureClass);
-				setPreviewTexture.invoke(camera, surfaceTexture);
-			} catch (Exception e1) {
-				Log.e("OF","Error initializing gl surface",e1);
-			} 
-		}
+        try {
+            // Create surface texture instance
+            surfaceTexture = new SurfaceTexture(texID);
+
+            // set texture as preview surface for camera
+            camera.setPreviewTexture(surfaceTexture);
+        } catch (Exception e1) {
+            Log.e("OF","Error initializing gl surface",e1);
+        }
 	}
 	
 	public void initGrabber(int w, int h, int _targetFps, int texID){
@@ -164,27 +150,17 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	}
 	
 	public void update(){
-		if(supportsTextureRendering()){
-			Class<?> surfaceTextureClass;
-			try {
-				surfaceTextureClass = Class.forName("android.graphics.SurfaceTexture");
-				Method updateTexImage = surfaceTextureClass.getMethod("updateTexImage");
-				if(surfaceTexture != null) updateTexImage.invoke(surfaceTexture);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//SurfaceTexture surface = (SurfaceTexture)surfaceTexture;
-			//surface.updateTexImage();
-		}
+        try {
+            surfaceTexture.updateTexImage();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 	}
 
 	public void getTextureMatrix(float[] mtx) {
-		Class<?> surfaceTextureClass;
 		try {
-			surfaceTextureClass = Class.forName("android.graphics.SurfaceTexture");
-			Method getTransformMatrix = surfaceTextureClass.getMethod("getTransformMatrix",float[].class);
-			if(surfaceTexture != null) getTransformMatrix.invoke(surfaceTexture,mtx);
+			if(surfaceTexture != null) surfaceTexture.getTransformMatrix(mtx);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -237,15 +213,11 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 				Log.e("OF", "problem trying to close camera thread", e);
 			}
 			camera.setPreviewCallback(null);
-			if(supportsTextureRendering()){
-				try {
-					Class<?> surfaceTextureClass = Class.forName("android.graphics.SurfaceTexture");
-					Method setPreviewTexture = camera.getClass().getMethod("setPreviewTexture", surfaceTextureClass);
-					setPreviewTexture.invoke(camera, (Object)null);
-				} catch (Exception e) {
-				}
-			}
-			camera.release();
+            try {
+                camera.setPreviewTexture(surfaceTexture);
+            } catch (Exception e) {
+            }
+            camera.release();
 			orientationListener.disable();
 		}
 	}
@@ -287,13 +259,13 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 			Camera.class.getMethod("setPreviewCallbackWithBuffer", Camera.PreviewCallback.class).invoke(camera, this);
 			Log.i("OF","setting camera callback with buffer");
 		} catch (SecurityException e) {
-			Log.e("OF","security exception, check permissions in your AndroidManifest to acces to the camera",e);
+			Log.e("OF","security exception, check permissions in your AndroidManifest to access to the camera",e);
 		} catch (NoSuchMethodException e) {
 			try {
 				Camera.class.getMethod("setPreviewCallback", Camera.PreviewCallback.class).invoke(camera, this);
 				Log.i("OF","setting camera callback without buffer");
 			} catch (SecurityException e1) {
-				Log.e("OF","security exception, check permissions in your AndroidManifest to acces to the camera",e1);
+				Log.e("OF","security exception, check permissions in your AndroidManifest to access to the camera",e1);
 			} catch (Exception e1) {
 				Log.e("OF","cannot create callback, the camera can only be used from api v7",e1);
 			} 
@@ -356,7 +328,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	private boolean previewStarted = false;
 	private Method addBufferMethod;
 	private OrientationListener orientationListener;
-	Object surfaceTexture;
+	SurfaceTexture surfaceTexture;
 	
 
 }
