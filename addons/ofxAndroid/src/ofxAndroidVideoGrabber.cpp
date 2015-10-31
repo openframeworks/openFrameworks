@@ -192,26 +192,25 @@ void ofxAndroidVideoGrabber::update(){
 		data->newPixels = false;
 		data->bIsFrameNew = true;
 
-		if(supportsTextureRendering()){
-			jmethodID update = ofGetJNIEnv()->GetMethodID(getJavaClass(), "update", "()V");
-			ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber, update);
+		jmethodID update = ofGetJNIEnv()->GetMethodID(getJavaClass(), "update", "()V");
+        ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber, update);
 
-			jmethodID javaGetTextureMatrix = ofGetJNIEnv()->GetMethodID(getJavaClass(),"getTextureMatrix","([F)V");
-			if(!javaGetTextureMatrix){
-				ofLogError("ofxAndroidVideoPlayer") << "update(): couldn't get java javaGetTextureMatrix for VideoPlayer";
-				return;
-			}
-			ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber,javaGetTextureMatrix,data->matrixJava);
-			jfloat * m = ofGetJNIEnv()->GetFloatArrayElements(data->matrixJava,0);
+        jmethodID javaGetTextureMatrix = ofGetJNIEnv()->GetMethodID(getJavaClass(),"getTextureMatrix","([F)V");
+        if(!javaGetTextureMatrix){
+            ofLogError("ofxAndroidVideoPlayer") << "update(): couldn't get java javaGetTextureMatrix for VideoPlayer";
+            return;
+        }
+        ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber,javaGetTextureMatrix,data->matrixJava);
+        jfloat * m = ofGetJNIEnv()->GetFloatArrayElements(data->matrixJava,0);
 
-			ofMatrix4x4 vFlipTextureMatrix;
-			vFlipTextureMatrix.scale(1,-1,1);
-			vFlipTextureMatrix.translate(0,1,0);
-			ofMatrix4x4 textureMatrix(m);
-			data->texture.setTextureMatrix( vFlipTextureMatrix * textureMatrix );
+        ofMatrix4x4 vFlipTextureMatrix;
+        vFlipTextureMatrix.scale(1,-1,1);
+        vFlipTextureMatrix.translate(0,1,0);
+        ofMatrix4x4 textureMatrix(m);
+        data->texture.setTextureMatrix( /*vFlipTextureMatrix **/ textureMatrix );
 
-			ofGetJNIEnv()->ReleaseFloatArrayElements(data->matrixJava,m,0);
-		}
+        ofGetJNIEnv()->ReleaseFloatArrayElements(data->matrixJava,m,0);
+
 	}else{
 		data->bIsFrameNew = false;
 	}
@@ -223,13 +222,7 @@ void ofxAndroidVideoGrabber::close(){
 
 
 ofTexture *	ofxAndroidVideoGrabber::getTexturePtr(){
-	if(supportsTextureRendering()) return &data->texture;
-	else return nullptr;
-}
-
-bool ofxAndroidVideoGrabber::supportsTextureRendering(){
-    // TODO: Remove function
-    return true;
+	return &data->texture;
 }
 
 bool ofxAndroidVideoGrabber::setup(int w, int h){
@@ -243,39 +236,29 @@ bool ofxAndroidVideoGrabber::setup(int w, int h){
 
 	jclass javaClass = env->FindClass("cc/openframeworks/OFAndroidVideoGrabber");
 
-	if(supportsTextureRendering()){
-		ofLogNotice() << "initializing camera with external texture";
-		ofTextureData td;
-		td.width = w;
-		td.height = h;
-		td.tex_w = td.width;
-		td.tex_h = td.height;
-		td.tex_t = 1; // Hack!
-		td.tex_u = 1;
-		td.textureTarget = GL_TEXTURE_EXTERNAL_OES;
-		td.glInternalFormat = GL_RGBA;
-		td.bFlipTexture = false;
+	ofLogNotice() << "initializing camera with external texture";
+	ofTextureData td;
+	td.width = w;
+	td.height = h;
+	td.tex_w = td.width;
+	td.tex_h = td.height;
+	td.tex_t = 1; // Hack!
+	td.tex_u = 1;
+	td.textureTarget = GL_TEXTURE_EXTERNAL_OES;
+	td.glInternalFormat = GL_RGBA;
+	td.bFlipTexture = false;
 
-		// hack to initialize gl resources from outside ofTexture
-		data->texture.texData = td;
-		data->texture.texData.bAllocated = true;
-		data->loadTexture();
+	// hack to initialize gl resources from outside ofTexture
+	data->texture.texData = td;
+	data->texture.texData.bAllocated = true;
+	data->loadTexture();
 
-		jmethodID javaInitGrabber = env->GetMethodID(javaClass,"initGrabber","(IIII)V");
-		if(data->javaVideoGrabber && javaInitGrabber){
-			env->CallVoidMethod(data->javaVideoGrabber,javaInitGrabber,w,h,data->attemptFramerate,data->texture.texData.textureID);
-		}else{
-			ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): couldn't get OFAndroidVideoGrabber init grabber method";
-			return false;
-		}
-	}else{
-		jmethodID javaInitGrabber = env->GetMethodID(javaClass,"initGrabber","(III)V");
-		if(data->javaVideoGrabber && javaInitGrabber){
-			env->CallVoidMethod(data->javaVideoGrabber,javaInitGrabber,w,h,data->attemptFramerate);
-		}else{
-			ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): couldn't get OFAndroidVideoGrabber init grabber method";
-			return false;
-		}
+	jmethodID javaInitGrabber = env->GetMethodID(javaClass,"initGrabber","(IIII)V");
+	if(data->javaVideoGrabber && javaInitGrabber){
+		env->CallVoidMethod(data->javaVideoGrabber,javaInitGrabber,w,h,data->attemptFramerate,data->texture.texData.textureID);
+	} else {
+		ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): couldn't get OFAndroidVideoGrabber init grabber method";
+		return false;
 	}
 
 	//ofLogVerbose("ofxAndroidVideoGrabber") << "initGrabber(): new frame callback size: " << (int) width << "x" << (int) height;

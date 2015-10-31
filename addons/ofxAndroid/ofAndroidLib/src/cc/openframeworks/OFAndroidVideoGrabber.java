@@ -29,10 +29,6 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		return instanceId;
 	}
 	
-	public void initGrabber(int w, int h, int _targetFps){
-		initGrabber(w,h,_targetFps,0);
-	}
-	
 	public void setTexture(int texID){
         try {
             // Create surface texture instance
@@ -50,23 +46,14 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 			camera = Camera.open();
 		else{			
 			try {
-				int numCameras = (Integer) Camera.class.getMethod("getNumberOfCameras").invoke(null);
-				Class<?> cameraInfoClass = Class.forName("android.hardware.Camera$CameraInfo");
-				Object cameraInfo = null;
-				Field field = null;
-		        if ( cameraInfoClass != null ) {
-		            cameraInfo = cameraInfoClass.newInstance();
-		        }
-		        if ( cameraInfo != null ) {
-		            field = cameraInfo.getClass().getField( "facing" );
-		        }
-				Method getCameraInfoMethod = Camera.class.getMethod( "getCameraInfo", Integer.TYPE, cameraInfoClass );
+				int numCameras = Camera.getNumberOfCameras();
+				Camera.CameraInfo cameraInfo = null;
 				for(int i=0;i<numCameras;i++){
-					getCameraInfoMethod.invoke( null, i, cameraInfo );
-	                int facing = field.getInt( cameraInfo );
+                    Camera.getCameraInfo(i, cameraInfo);
+					int facing = cameraInfo.facing;
 	                Log.v("OF","Camera " + i + " facing: " + facing);
 				}
-				camera = (Camera) Camera.class.getMethod("open", Integer.TYPE).invoke(null, deviceID);
+				camera = Camera.open(deviceID);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				Log.e("OF","Error trying to open specific camera, trying default",e);
@@ -100,7 +87,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		config.setPreviewFormat(ImageFormat.NV21);
         try{
 			Method setRecordingHint = config.getClass().getMethod("setRecordingHint",boolean.class);
-			setRecordingHint.invoke(config, true);
+			setRecordingHint.invoke(config, false);
         }catch(Exception e){
         	Log.i("OF","couldn't set recording hint");
         }
@@ -161,6 +148,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	public void getTextureMatrix(float[] mtx) {
 		try {
 			if(surfaceTexture != null) surfaceTexture.getTransformMatrix(mtx);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -254,27 +242,16 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	public void run() {
 		thread.setPriority(Thread.MAX_PRIORITY);
 		try {
-			addBufferMethod = Camera.class.getMethod("addCallbackBuffer", byte[].class);
-			addBufferMethod.invoke(camera, buffer);
-			Camera.class.getMethod("setPreviewCallbackWithBuffer", Camera.PreviewCallback.class).invoke(camera, this);
+			camera.addCallbackBuffer(buffer);
+            camera.setPreviewCallbackWithBuffer(this);
+
 			Log.i("OF","setting camera callback with buffer");
 		} catch (SecurityException e) {
 			Log.e("OF","security exception, check permissions in your AndroidManifest to access to the camera",e);
-		} catch (NoSuchMethodException e) {
-			try {
-				Camera.class.getMethod("setPreviewCallback", Camera.PreviewCallback.class).invoke(camera, this);
-				Log.i("OF","setting camera callback without buffer");
-			} catch (SecurityException e1) {
-				Log.e("OF","security exception, check permissions in your AndroidManifest to access to the camera",e1);
-			} catch (Exception e1) {
-				Log.e("OF","cannot create callback, the camera can only be used from api v7",e1);
-			} 
 		} catch (Exception e) {
 			Log.e("OF","error adding callback",e);
 		}
 		
-		//camera.addCallbackBuffer(buffer);
-		//camera.setPreviewCallbackWithBuffer(this);
 		try{
 			camera.startPreview();
 			previewStarted = true;
