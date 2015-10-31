@@ -29,7 +29,8 @@ static NSString * const kRateKey = @"rate";
 #endif
 
 
-static const NSString * ItemStatusContext;
+static const void *ItemStatusContext = &ItemStatusContext;
+static const void *PlayerRateContext = &ItemStatusContext;
 
 
 - (id)init {
@@ -37,13 +38,14 @@ static const NSString * ItemStatusContext;
 	if(self) {
 		
 		// create avplayer
-		self.player = [[[AVPlayer alloc] init] autorelease];
+//		self.player = [[[AVPlayer alloc] init] autorelease];
+//		
+//		[_player addObserver:self
+//				  forKeyPath:kRateKey
+//					 options:NSKeyValueObservingOptionNew
+//					 context:nil];
 		
-		[_player addObserver:self
-				  forKeyPath:kRateKey
-					 options:NSKeyValueObservingOptionNew
-					 context:nil];
-		
+		asyncLock = [[NSLock alloc] init];
 		
 #if USE_VIDEO_OUTPUT
 		// create videooutput queue
@@ -94,7 +96,8 @@ static const NSString * ItemStatusContext;
 }
 
 #if USE_VIDEO_OUTPUT
-- (void)createVideoOutput {
+- (void)createVideoOutput
+{
 #ifdef TARGET_IOS
 	NSDictionary *pixBuffAttributes = @{(id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA)};
 #elif defined(TARGET_OSX)
@@ -121,33 +124,22 @@ static const NSString * ItemStatusContext;
 	
 	// destroy player
 	if(self.player != nil) {
-		[_player removeObserver:self forKeyPath:kRateKey];
+		[self removeTimeObserverFromPlayer];
+		[_player removeObserver:self forKeyPath:kRateKey context:&PlayerRateContext];
 		self.player = nil;
 		[_player release];
 	}
-
+	
 #if USE_VIDEO_OUTPUT
+	// destroy video output
 	if (self.videoOutput != nil) {
 		self.videoOutput = nil;
 	}
 	dispatch_release(_myVideoOutputQueue);
-
 #endif
-
-	if(self.assetReaderVideoTrackOutput != nil) {
-		self.assetReaderVideoTrackOutput = nil;
-	}
-
-	if(self.assetReader != nil) {
-		[self.assetReader cancelReading];
-		self.assetReader = nil;
-		self.assetReaderVideoTrackOutput = nil;
-		self.assetReaderAudioTrackOutput = nil;
-	}
-
-	if(self.asset != nil) {
-		self.asset = nil;
-	}
+	
+	// release lock
+	[asyncLock autorelease];
 
 	[super dealloc];
 }
@@ -170,12 +162,10 @@ static const NSString * ItemStatusContext;
 
 - (BOOL)loadWithURL:(NSURL*)url async:(BOOL)bAsync {
 	
-	[self unloadVideo];     // unload video if one is already loaded.
-	
 	NSDictionary *options = @{(id)AVURLAssetPreferPreciseDurationAndTimingKey:@(YES)};
-	self.asset = [AVURLAsset URLAssetWithURL:url options:options];
+	AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url options:options];
 	
-	if(self.asset == nil) {
+	if(asset == nil) {
 		NSLog(@"error loading asset: %@", [url description]);
 		return NO;
 	}
@@ -189,9 +179,10 @@ static const NSString * ItemStatusContext;
 	}
 	
 	dispatch_async(queue, ^{
-		[self.asset loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:kTracksKey] completionHandler:^{
+		[asset loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:kTracksKey] completionHandler:^{
+			
 			NSError * error = nil;
-			AVKeyValueStatus status = [self.asset statusOfValueForKey:kTracksKey error:&error];
+			AVKeyValueStatus status = [asset statusOfValueForKey:kTracksKey error:&error];
 			
 			if(status != AVKeyValueStatusLoaded) {
 				NSLog(@"error loading asset tracks: %@", [error localizedDescription]);
@@ -201,9 +192,9 @@ static const NSString * ItemStatusContext;
 				return;
 			}
 			
-			duration = [self.asset duration];
+			CMTime _duration = [asset duration];
 			
-			if(CMTimeCompare(duration, kCMTimeZero) == 0) {
+			if(CMTimeCompare(_duration, kCMTimeZero) == 0) {
 				NSLog(@"track loaded with zero duration.");
 				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
@@ -214,7 +205,7 @@ static const NSString * ItemStatusContext;
 			// TODO
 			// why not reading infinite media?
 			// how about playing back HLS streams?
-			if(isfinite([self getDurationInSec]) == NO) {
+			if(isfinite(CMTimeGetSeconds(duration)) == NO) {
 				NSLog(@"track loaded with infinite duration.");
 				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
@@ -222,11 +213,27 @@ static const NSString * ItemStatusContext;
 				return;
 			}
 			
+			//------------------------------------------------------------
+			//------------------------------------------------------------ use asset
+			// good to go
+			if (bAsync) {
+				[asyncLock lock];
+			}
+
+			// clean up
+			[self unloadVideo];     // unload video if one is already loaded.
+			
+			// set asset
+			self.asset = asset;
+			
+			// create asset reader
 			BOOL bOk = [self createAssetReaderWithTimeRange:CMTimeRangeMake(kCMTimeZero, duration)];
 			if(bOk == NO) {
 				NSLog(@"problem with creating asset reader.");
 				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
+				} else {
+					[asyncLock unlock];
 				}
 				return;
 			}
@@ -236,14 +243,18 @@ static const NSString * ItemStatusContext;
 				NSLog(@"no video tracks found.");
 				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
+				} else {
+					[asyncLock unlock];
 				}
 				return;
 			}
+			
 			
 			AVAssetTrack * videoTrack = [videoTracks objectAtIndex:0];
 			frameRate = videoTrack.nominalFrameRate;
 			videoWidth = [videoTrack naturalSize].width;
 			videoHeight = [videoTrack naturalSize].height;
+			duration = _duration;
 			
 			NSLog(@"video loaded at %li x %li @ %f fps", (long)videoWidth, (long)videoHeight, frameRate);
 			
@@ -251,54 +262,77 @@ static const NSString * ItemStatusContext;
 			
 			
 			//------------------------------------------------------------ create player item.
-			self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset];
+			AVPlayerItem* playerItem = [AVPlayerItem playerItemWithAsset:self.asset];
 			
-			if (self.playerItem) {
-				
-				[self.playerItem addObserver:self
-								  forKeyPath:kStatusKey
-									 options:0
-									 context:&ItemStatusContext];
-				
-				NSNotificationCenter * notificationCenter = [NSNotificationCenter defaultCenter];
-				[notificationCenter addObserver:self
-									   selector:@selector(playerItemDidReachEnd)
-										   name:AVPlayerItemDidPlayToEndTimeNotification
-										 object:self.playerItem];
-				
-				//AVPlayerItemPlaybackStalledNotification only exists from OS X 10.9 or iOS 6.0 and up
-				#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1090) || (__IPHONE_OS_VERSION_MIN_REQUIRED >= 60000)
-				[notificationCenter addObserver:self
-									   selector:@selector(playerItemDidStall)
-										   name:AVPlayerItemPlaybackStalledNotification
-										 object:self.playerItem];
-				#endif 
-				
-#if USE_VIDEO_OUTPUT
-				// safety
-				if (self.videoOutput == nil) {
-					[self createVideoOutput];
-				}
-				
-				// add video output
-				[self.playerItem addOutput:self.videoOutput];
-#endif
-				
-				// set playerItem
-				[_player replaceCurrentItemWithPlayerItem:self.playerItem];
-				
-				// add timeobserver?
-				[self addTimeObserverToPlayer];
-				
-				// loaded
-				bLoaded = true;
-				
-			} else {
+			if (!playerItem) {
 				NSLog(@"could not create AVPlayerItem");
+				if(bAsync == NO){
+					dispatch_semaphore_signal(sema);
+				} else {
+					[asyncLock unlock];
+				}
+				return;
 			}
+			
+			self.playerItem = playerItem;
+			
+			//------------------------------------------------------------ player item.
+			[self.playerItem addObserver:self
+							  forKeyPath:kStatusKey
+								 options:0
+								 context:&ItemStatusContext];
+			
+
+			[[NSNotificationCenter defaultCenter] addObserver:self
+													 selector:@selector(playerItemDidReachEnd)
+														 name:AVPlayerItemDidPlayToEndTimeNotification
+													   object:self.playerItem];
+			
+			//AVPlayerItemPlaybackStalledNotification only exists from OS X 10.9 or iOS 6.0 and up
+#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1090) || (__IPHONE_OS_VERSION_MIN_REQUIRED >= 60000)
+			[notificationCenter addObserver:self
+								   selector:@selector(playerItemDidStall)
+									   name:AVPlayerItemPlaybackStalledNotification
+									 object:self.playerItem];
+#endif
+			
+#if USE_VIDEO_OUTPUT
+			// safety
+			if (self.videoOutput == nil) {
+				[self createVideoOutput];
+			}
+			
+			// add video output
+			[self.playerItem addOutput:self.videoOutput];
+#endif
+			
+			
+			
+			// destroy player if any
+			if(self.player != nil) {
+				[self removeTimeObserverFromPlayer];
+				[self.player removeObserver:self forKeyPath:kRateKey];
+				self.player = nil;
+				[_player release];
+			}
+			
+			// create new player
+			_player = [[AVPlayer playerWithPlayerItem:self.playerItem] retain];
+			[self.player addObserver:self
+						  forKeyPath:kRateKey
+							 options:NSKeyValueObservingOptionNew
+							 context:&PlayerRateContext];
+			// add timeobserver?
+			[self addTimeObserverToPlayer];
+			
+			
+			// loaded
+			bLoaded = true;			
 			
 			if(bAsync == NO){
 				dispatch_semaphore_signal(sema);
+			} else {
+				[asyncLock unlock];
 			}
 		}];
 	});
@@ -307,12 +341,90 @@ static const NSString * ItemStatusContext;
 	if(bAsync == NO){
 		dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
 		dispatch_release(sema);
-		
 		return bLoaded;
 	} else {
 		dispatch_release(sema);
 		return YES;
 	}
+}
+
+
+#pragma mark - unload video
+- (void)unloadVideo {
+	
+	bReady = NO;
+	bLoaded = NO;
+	bPlayStateBeforeLoad = NO;
+	bUpdateFirstFrame = YES;
+	bNewFrame = NO;
+	bPlaying = NO;
+	bFinished = NO;
+	bWasPlayingBackwards = NO;
+	
+	videoSampleTime = kCMTimeNegativeInfinity;
+	audioSampleTime = kCMTimeNegativeInfinity;
+	synchSampleTime = kCMTimeInvalid;
+	duration = kCMTimeZero;
+	currentTime = kCMTimeZero;
+	
+	videoWidth = 0;
+	videoHeight = 0;
+	
+	
+	if (self.asset != nil) {
+		[self.asset cancelLoading];
+		self.asset = nil;
+	}
+	
+	if(self.assetReader != nil) {
+		[self.assetReader cancelReading];
+		self.assetReader = nil;
+		self.assetReaderVideoTrackOutput = nil;
+		self.assetReaderAudioTrackOutput = nil;
+	}
+	
+	if(self.playerItem != nil) {
+		
+		[self.playerItem removeObserver:self forKeyPath:kStatusKey context:&ItemStatusContext];
+		
+		[[NSNotificationCenter defaultCenter] removeObserver:self
+														name:AVPlayerItemDidPlayToEndTimeNotification
+													  object:self.playerItem];
+		
+		//AVPlayerItemPlaybackStalledNotification only exists from OS X 10.9 or iOS 6.0 and up
+#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1090) || (__IPHONE_OS_VERSION_MIN_REQUIRED >= 60000)
+		[notificationCenter removeObserver:self
+									  name:AVPlayerItemPlaybackStalledNotification
+									object:self.playerItem];
+#endif
+		
+#if USE_VIDEO_OUTPUT
+		// remove output
+		[self.playerItem removeOutput:self.videoOutput];
+#endif
+		
+		[self.playerItem cancelPendingSeeks];
+		self.playerItem = nil;
+	}
+
+	
+	if(videoSampleBuffer) {
+		CFRelease(videoSampleBuffer);
+		videoSampleBuffer = nil;
+	}
+	
+	if(audioSampleBuffer) {
+		CFRelease(audioSampleBuffer);
+		audioSampleBuffer = nil;
+	}
+	
+#if USE_VIDEO_OUTPUT
+	// destroy video info
+	if (_videoInfo) {
+		CFRelease(_videoInfo);
+		_videoInfo = nil;
+	}
+#endif
 }
 
 
@@ -324,6 +436,7 @@ static const NSString * ItemStatusContext;
 }
 
 
+#pragma mark -
 - (BOOL)createAssetReaderWithTimeRange:(CMTimeRange)timeRange {
 	
 	videoSampleTime = videoSampleTimePrev = kCMTimeNegativeInfinity;
@@ -451,81 +564,28 @@ static const NSString * ItemStatusContext;
 }
 
 
-
-
-- (void)unloadVideo {
-	
-	bReady = NO;
-	bLoaded = NO;
-	bPlayStateBeforeLoad = NO;
-	bUpdateFirstFrame = YES;
-	bNewFrame = NO;
-	bPlaying = NO;
-	bFinished = NO;
-	bWasPlayingBackwards = NO;
-	
-	videoSampleTime = kCMTimeNegativeInfinity;
-	audioSampleTime = kCMTimeNegativeInfinity;
-	synchSampleTime = kCMTimeInvalid;
-	duration = kCMTimeZero;
-	currentTime = kCMTimeZero;
-	
-	videoWidth = 0;
-	videoHeight = 0;
-	
-	if(self.playerItem != nil) {
-		[self.playerItem removeObserver:self forKeyPath:kStatusKey];
-		
-		NSNotificationCenter * notificationCenter = [NSNotificationCenter defaultCenter];
-		[notificationCenter removeObserver:self
-									  name:AVPlayerItemDidPlayToEndTimeNotification
-									object:self.playerItem];
-		
-		//AVPlayerItemPlaybackStalledNotification only exists from OS X 10.9 or iOS 6.0 and up
-		#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1090) || (__IPHONE_OS_VERSION_MIN_REQUIRED >= 60000)
-		[notificationCenter removeObserver:self
-									  name:AVPlayerItemPlaybackStalledNotification
-									object:self.playerItem];
-		#endif
-		
-		self.playerItem = nil;
-	}
-
-	
-	if(videoSampleBuffer) {
-		CFRelease(videoSampleBuffer);
-		videoSampleBuffer = nil;
-	}
-	
-	if(audioSampleBuffer) {
-		CFRelease(audioSampleBuffer);
-		audioSampleBuffer = nil;
-	}
-	
-	[self removeTimeObserverFromPlayer];
-	
-#if USE_VIDEO_OUTPUT
-	// destroy video info
-	if (_videoInfo) {
-		CFRelease(_videoInfo);
-	}
-#endif
-}
-
 //---------------------------------------------------------- player callbacks.
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
 	
 	if(context == &ItemStatusContext) {
-		dispatch_async(dispatch_get_main_queue(), ^{
-			bReady = true;
-			
-			[self update]; // update as soon is ready so pixels are loaded.
-			[self setVolume:volume]; // set volume for current video.
-			
-			if(bAutoPlayOnLoad || bPlayStateBeforeLoad) {
-				[self play];
-			}
-		});
+		
+		if ([self.playerItem status] == AVPlayerItemStatusReadyToPlay) {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				bReady = true;
+				
+				[self update]; // update as soon is ready so pixels are loaded.
+				[self setVolume:volume]; // set volume for current video.
+				
+				if(bAutoPlayOnLoad || bPlayStateBeforeLoad) {
+					[self play];
+				}
+			});
+		} else if ([self.playerItem status] == AVPlayerItemStatusUnknown) {
+			NSLog(@"AVPlayerItemStatusUnknown");
+		} else if ([self.playerItem status] == AVPlayerItemStatusFailed) {
+			NSLog(@"AVPlayerItemStatusFailed");
+		}
+
 		return;
 	}
 	
@@ -620,8 +680,8 @@ static const NSString * ItemStatusContext;
 #endif
 }
 
-- (void)updateFromVideoOutput {
 #if USE_VIDEO_OUTPUT
+- (void)updateFromVideoOutput {
 	OSStatus err = noErr;
 	
 	// get time from player
@@ -687,8 +747,8 @@ static const NSString * ItemStatusContext;
 		// no new frame for time
 		bNewFrame = NO;
 	}
-#endif
 }
+#endif
 
 - (void)updateFromAssetReader {
 	
