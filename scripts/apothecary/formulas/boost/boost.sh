@@ -5,7 +5,7 @@
 # 
 # uses a own build system
 
-FORMULA_TYPES=( "osx" "win_cb" "ios" "android" "emscripten" "vs" )
+FORMULA_TYPES=( "osx" "msys2" "ios" "android" "emscripten" "vs" )
 
 # define the version
 VERSION=1.58.0

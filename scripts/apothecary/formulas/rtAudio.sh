@@ -6,7 +6,7 @@
 #
 # uses an autotools build system
 
-FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "win_cb" )
+FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "msys2" )
 
 #FORMULA_DEPENDS=( "pkg-config" )
 
@@ -92,7 +92,7 @@ function build() {
 			vs-build "rtaudio_static.vcxproj" Build "Debug|x64"
 		fi
 
-	elif [ "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "msys2" ] ; then
 		local API="--with-wasapi --with-ds" # asio as well?
 		mkdir -p build
 		cd build
@@ -126,7 +126,7 @@ function copy() {
 		fi
 		
 
-	elif [ "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "msys2" ] ; then
 		cp -v build/librtaudio_static.a $1/lib/$TYPE/librtaudio.a
 	
 	else

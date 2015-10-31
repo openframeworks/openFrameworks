@@ -193,7 +193,7 @@ Edit the Makefile config files:
 	</pre>
 	* select the "Linker settings" tab, add the following to Other liker options:
 	<pre>
-	..\..\..\addons\ofxKinect\libs\libusb-win32\lib\win_cb\libusb.lib
+	..\..\..\addons\ofxKinect\libs\libusb-win32\lib\msys2\libusb.lib
 	</pre>
 
 Notes

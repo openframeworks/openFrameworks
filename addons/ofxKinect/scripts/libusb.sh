@@ -43,12 +43,12 @@ function copy() {
 	mkdir -p $1/include
 	mkdir -p $1/lib/vs/Win32
 	mkdir -p $1/lib/vs/x64
-	mkdir -p $1/lib/win_cb
+	mkdir -p $1/lib/msys2
 
 	# copy libs
 	cp -v libusb-debug/lib/msvc/libusb.lib $1/lib/vs/Win32/libusbd.lib
 	cp -v libusb-debug/lib/msvc_x64/libusb.lib $1/lib/vs/x64/libusbd.lib
-	cp -v libusb-debug/lib/msvc/libusb.lib $1/lib/win_cb/libusbd.lib
+	cp -v libusb-debug/lib/msvc/libusb.lib $1/lib/msys2/libusbd.lib
 
 	### Release
 
@@ -66,7 +66,7 @@ function copy() {
 	# copy libs
 	cp -v libusb/lib/msvc/libusb.lib $1/lib/vs/Win32
 	cp -v libusb/lib/msvc_x64/libusb.lib $1/lib/vs/x64
-	cp -v libusb/lib/msvc/libusb.lib $1/lib/win_cb
+	cp -v libusb/lib/msvc/libusb.lib $1/lib/msys2
 }
 
 # executed inside the lib src dir

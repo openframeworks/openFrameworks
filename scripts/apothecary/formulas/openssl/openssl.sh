@@ -3,7 +3,7 @@
 # openssl
 
 # define the version
-FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "vs" "msys2" "ios" "android" )
 
 VER=1.0.2c
 VERDIR=1.0.2
@@ -274,7 +274,7 @@ function build() {
 			mkdir ms/x64
 			cmd //c buildwin.cmd x64 "${WINPATH}"
 		fi
-	# elif [ "$TYPE" == "win_cb" ] ; then
+	# elif [ "$TYPE" == "msys2" ] ; then
 	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
 
 	# 	# # Locate the path of the openssl libs distributed with openFrameworks.
@@ -284,7 +284,7 @@ function build() {
 	# 	# local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
 
 	# 	# local OPENSSL_INCLUDE=$OF_LIBS_OPENSSL_ABS_PATH/include
-	# 	# local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/win_cb
+	# 	# local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/msys2
 
 	# 	# ./configure $BUILD_OPTS \
 	# 	# 			--include-path=$OPENSSL_INCLUDE \
@@ -653,7 +653,7 @@ function copy() {
 		git checkout $1/include/openssl/opensslconf_osx.h
     	git checkout $1/include/openssl/opensslconf_android.h
     	git checkout $1/include/openssl/opensslconf_win32.h
-	# elif [ "$TYPE" == "win_cb" ] ; then
+	# elif [ "$TYPE" == "msys2" ] ; then
 	# 	mkdir -p $1/lib/$TYPE
 	# 	cp -v lib/MinGW/i686/*.a $1/lib/$TYPE
 	
