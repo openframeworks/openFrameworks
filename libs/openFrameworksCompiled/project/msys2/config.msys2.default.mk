@@ -25,15 +25,25 @@
 #   core source code.
 ##########################################################################################
 
-PLATFORM_PROJECT_DEBUG_BIN_NAME=$(APPNAME)_debug
+
+
+
 PLATFORM_PROJECT_RELEASE_BIN_NAME=$(APPNAME)
+ifeq ($(LIB_ARCH),x64)
+	PLATFORM_PROJECT_RELEASE_BIN_NAME=$(PLATFORM_PROJECT_RELEASE_BIN_NAME)_x64
+endif
+PLATFORM_PROJECT_DEBUG_BIN_NAME=$(PLATFORM_PROJECT_RELEASE_BIN_NAME)_debug
+
 PLATFORM_RUN_COMMAND = 
-#ifneq (,$(findstring MINMGW64_NT,$(PLATFORM_OS)))
-MSYS2_ROOT = /mingw32
-#PLATFORM_CFLAGS += -std=gnu++14 -I$(MSYS2_ROOT)/include/cairo -I$(MSYS2_ROOT)/include/glib-2.0 -I$(MSYS2_ROOT)/lib/glib-2.0/include -I$(MSYS2_ROOT)/include/pixman-1 -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include/freetype2 -I$(MSYS2_ROOT)/include/harfbuzz -I$(MSYS2_ROOT)/include/libpng16 -DUNICODE -D_UNICODE -DPOCO_STATIC 
+ifeq ($(LIB_ARCH),x64)
+	MSYS2_ROOT = /mingw64
+else ifeq ($(LIB_ARCH),Win32)
+	MSYS2_ROOT = /mingw32
+else
+	$(error openFrameworks cannot use MSYS shell $(PLATFORM_ARCH). Use Mingw32 or Mingw64 shell instead)
+endif
 PLATFORM_CFLAGS += -std=gnu++14  -DUNICODE -D_UNICODE -DPOCO_STATIC 
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER 
-#PLATFORM_LDFLAGS += -L$(MSYS_ROOT)/lib -lpthread
 PLATFORM_LDFLAGS += -lpthread
 #ifeq ($(PLATFORM_ARCH),x86_64)
 CC = $(MSYS2_ROOT)/bin/gcc
@@ -180,6 +190,15 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 
 
+ifeq ($(LIB_ARCH),x64)
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/lib/Win32/%
+endif
+ifeq ($(LIB_ARCH),Win32)
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/lib/x64/%
+endif
+
+
+
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS
 #   These are header search paths that are platform specific and are specified 
@@ -221,6 +240,7 @@ PLATFORM_LIBRARIES += freeimage boost_filesystem-mt boost_system-mt freetype cai
 
 #PLATFORM_CFLAGS += -std=gnu++14 -I$(MSYS2_ROOT)/include/glib-2.0 -I$(MSYS2_ROOT)/lib/glib-2.0/include -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include/harfbuzz -DUNICODE -D_UNICODE -DPOCO_STATIC 
 PLATFORM_PKG_CONFIG_LIBRARIES =
+PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
 PLATFORM_PKG_CONFIG_LIBRARIES += cairo
 PLATFORM_PKG_CONFIG_LIBRARIES += zlib
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl

@@ -99,10 +99,13 @@ ifndef PLATFORM_LIB_SUBPATH
         endif
     else ifneq (,$(findstring MINGW32_NT,$(PLATFORM_OS)))
         PLATFORM_LIB_SUBPATH=msys2
+		LIB_ARCH=Win32
     else ifneq (,$(findstring MSYS_NT,$(PLATFORM_OS)))
-        PLATFORM_LIB_SUBPATH=msys2
+        $(error openFrameworks cannot use MSYS shell $(PLATFORM_ARCH). Use Mingw32 shell instead)
     else ifneq (,$(findstring MINGW64_NT,$(PLATFORM_OS)))
-        PLATFORM_LIB_SUBPATH=msys2
+		#$(error openFrameworks doesn't support 64bits with MSYS2 $(PLATFORM_ARCH). Use Mingw32 shell instead)
+		PLATFORM_LIB_SUBPATH=msys2
+		LIB_ARCH=x64
     else ifeq ($(PLATFORM_OS),Android)
         PLATFORM_LIB_SUBPATH=android
     else ifeq ($(PLATFORM_OS),Darwin)
@@ -193,6 +196,10 @@ endif
 
 ifndef OF_CORE_LIB_PATH
     OF_CORE_LIB_PATH=$(OF_LIBS_OF_COMPILED_PATH)/lib/$(PLATFORM_LIB_SUBPATH)
+endif
+
+ifdef LIB_ARCH
+    OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH)/$(LIB_ARCH)
 endif
 
 ################################################################################
