@@ -26,8 +26,8 @@ architectures:
 
 notes:
   * armv7s removed since potential performance gains not worth the binary size increase, see #3423 for more discussion
-  * arm64 supported until Xcode 5 (OS X 10.8+)
-  * Apple iOS store requires 64bit support
+  * arm64 supported until Xcode 6 (OS X 10.9+)
+  * Apple iOS store requires 64bit support and submission with Xcode 6+
 
 
 # Linux #
