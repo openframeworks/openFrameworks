@@ -966,6 +966,12 @@ if [ "$TYPE" == "" ] ; then
 	case "$OS" in
 		windows)
 			TYPE="vs" ;;
+		mingw64)
+			TYPE="msys2"
+			ARCH=64 ;;
+		mingw32)
+			TYPE="msys2"
+			ARCH=32 ;;
 		*)
 			TYPE=$OS ;;
 	esac
