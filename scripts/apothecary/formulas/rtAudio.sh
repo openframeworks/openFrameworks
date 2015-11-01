@@ -32,7 +32,15 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	: # noop
+	if [ "$TYPE" == "msys2" ] ; then
+		cp RtAudio.cpp RtAudio.cpp.orig
+
+		# patch as includes are not recognized by Cmake ??? Dirty but works...
+		sed -i "s|include \"asiosys.h\"|include \"include/asiosys.h\"|" RtAudio.cpp
+		sed -i "s|include \"asio.h\"|include \"include/asio.h\"|" RtAudio.cpp
+		sed -i "s|include \"iasiothiscallresolver.h\"|include \"include/iasiothiscallresolver.h\"|" RtAudio.cpp
+		sed -i "s|include \"asiodrivers.h\"|include \"include/asiodrivers.h\"|" RtAudio.cpp
+	fi
 }
 
 # executed inside the lib src dir
@@ -94,9 +102,20 @@ function build() {
 
 	elif [ "$TYPE" == "msys2" ] ; then
 		local API="--with-wasapi --with-ds" # asio as well?
+		if [ $ARCH == 32 ] ; then
+			TOOLCHAIN_FILE=$APOTHECARY_DIR/toolchains/mingw32.cmake
+		elif [ $ARCH == 64 ] ; then
+			TOOLCHAIN_FILE=$APOTHECARY_DIR/toolchains/mingw64.cmake
+		fi
+		
+		echo Compiling $ARCH bits version of rtAudio
 		mkdir -p build
 		cd build
-		cmake .. -G "Unix Makefiles"  -DAUDIO_WINDOWS_WASAPI=ON -DAUDIO_WINDOWS_DS=ON -DAUDIO_WINDOWS_ASIO=ON -DCMAKE_C_COMPILER=/mingw32/bin/gcc.exe -DCMAKE_CXX_COMPILER=/mingw32/bin/g++.exe -DBUILD_TESTING=OFF
+		rm -f CMakeCache.txt Makefile
+		rm -rf CMakeFiles 
+		#rm -f cmake_install.cmake cmake_uninstall.cmake CMakeCache.txt install_manifest.txt Makefile
+		cmake .. -G "Unix Makefiles"  -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_FILE \
+				 -DAUDIO_WINDOWS_WASAPI=ON -DAUDIO_WINDOWS_DS=ON -DAUDIO_WINDOWS_ASIO=ON -DBUILD_TESTING=OFF
 		make
 	fi
 
