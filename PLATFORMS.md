@@ -1,4 +1,4 @@
-As of 0.9, the following platforms are supported:
+openFrameworks currently supports the following platforms:
 
 # Android #
 
