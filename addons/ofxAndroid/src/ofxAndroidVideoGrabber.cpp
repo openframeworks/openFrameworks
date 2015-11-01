@@ -327,15 +327,13 @@ ofPixels& ofxAndroidVideoGrabber::getPixels(){
 		}
 
 
-
-		//time_one_frame = ofGetSystemTime();
 		if(data->internalPixelFormat==OF_PIXELS_RGB){
 			ConvertYUV2RGB(currentFrame, 					// y component
 						   currentFrame+(data->width*data->height),			// uv components
 						   pixels.getData(),data->width,data->height);
-		}else if(data->internalPixelFormat==OF_PIXELS_RGB565){
+		} else if(data->internalPixelFormat==OF_PIXELS_RGB565){
 			ConvertYUV2toRGB565(currentFrame,pixels.getData(),data->width,data->height);
-		}else if(data->internalPixelFormat==OF_PIXELS_MONO){
+		} else if(data->internalPixelFormat==OF_PIXELS_MONO){
 			pixels.setFromPixels(currentFrame,data->width,data->height,OF_IMAGE_GRAYSCALE);
 		}
 

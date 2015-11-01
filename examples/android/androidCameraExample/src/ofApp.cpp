@@ -4,25 +4,31 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofBackground(0,0,0);
-	//ofSetLogLevel(OF_LOG_NOTICE);
-	//ofSetOrientation(OF_ORIENTATION_90_LEFT);
 
+	// List devices
+	// The device name contains information about the direction of the camera
+	vector<ofVideoDevice> devices = grabber.listDevices();
+	for(int i=0;i<devices.size(); i++){
+		ofLog()<<"Device "<<i<<": "<<devices[i].deviceName;
+	}
+
+	// Set the pixel format for getPixels to monochrome
+	// (other image formats will include heavy pixel conversion)
+	grabber.setPixelFormat(OF_PIXELS_MONO);
+
+	// Start the grabber
+	grabber.setup(1280,960);
+
+	// Get the native android grabber referene for android specific functions
 	std::shared_ptr<ofxAndroidVideoGrabber> androidGrabber = grabber.getGrabber<ofxAndroidVideoGrabber>();
 
-	// Select specific facing camera
-	//androidGrabber->setDeviceID(androidGrabber->getFrontCamera());
-
-	grabber.setPixelFormat(OF_PIXELS_RGB);
-	grabber.setup(640,480);
-
-	grabberImage.allocate(grabber.getWidth(), grabber.getHeight(), OF_IMAGE_COLOR);
+	// Get the orientation and facing of the current camera
+	orientation = androidGrabber->getCameraOrientation();
+	facing = androidGrabber->getFacingOfCamera();
 
 	one_second_time = ofGetElapsedTimeMillis();
 	camera_fps = 0;
 	frames_one_sec = 0;
-
-	orientation = androidGrabber->getCameraOrientation();
-	facing = androidGrabber->getFacingOfCamera();
 }
 
 //--------------------------------------------------------------
@@ -35,8 +41,8 @@ void ofApp::update(){
 			frames_one_sec = 0;
 			one_second_time = ofGetElapsedTimeMillis();
 		}
-		//grabber.getPixels();
-		//grabberImage.setFromPixels(grabber.getPixels());
+
+		grabberImage.setFromPixels(grabber.getPixels());
 	}
 }
 
@@ -67,7 +73,7 @@ void ofApp::draw(){
 	ofSetRectMode(OF_RECTMODE_CORNER);
 
 	// Draw the image through raw pixels
-	grabberImage.draw(0,110, 300, 300*grabberAspectRatio);
+	grabberImage.draw(0,110, 300, 300*1.0/grabberAspectRatio);
 
 	// Draw text gui
 	ofDrawRectangle(0, 0, 300, 100);
@@ -100,14 +106,19 @@ void ofApp::windowResized(int w, int h){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(int x, int y, int id){
+	// Swap between back and front camera
+
+	// Get the native android video grabber
 	std::shared_ptr<ofxAndroidVideoGrabber> androidGrabber = grabber.getGrabber<ofxAndroidVideoGrabber>();
 
+	// If the current camera is frontal, then choose the back camera
 	if(facing == 1) {
 		androidGrabber->setDeviceID(androidGrabber->getBackCamera());
 	} else {
 		androidGrabber->setDeviceID(androidGrabber->getFrontCamera());
 	}
 
+	// Read current orientation and facing out again
 	orientation = androidGrabber->getCameraOrientation();
 	facing = androidGrabber->getFacingOfCamera();
 }
