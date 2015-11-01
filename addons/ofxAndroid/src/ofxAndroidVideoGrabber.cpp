@@ -400,15 +400,15 @@ int ofxAndroidVideoGrabber::getNumCameras() const{
 	}
 }
 
-int ofxAndroidVideoGrabber::getCameraOrientation()const{
+int ofxAndroidVideoGrabber::getCameraOrientation(int device)const{
 	JNIEnv *env = ofGetJNIEnv();
 	if(!env) return 0;
 
 	jclass javaClass = getJavaClass();
 
-	jmethodID javagetCameraOrientation= env->GetMethodID(javaClass,"getCameraOrientation","()I");
+	jmethodID javagetCameraOrientation= env->GetMethodID(javaClass,"getCameraOrientation","(I)I");
 	if(data->javaVideoGrabber && javagetCameraOrientation){
-		return env->CallIntMethod(data->javaVideoGrabber,javagetCameraOrientation);
+		return env->CallIntMethod(data->javaVideoGrabber,javagetCameraOrientation, device);
 	} else {
 		ofLogError("ofxAndroidVideoGrabber") << "getCameraOrientation(): couldn't get OFAndroidVideoGrabber getCameraOrientation method";
 		return 0;

@@ -1,13 +1,9 @@
 package cc.openframeworks;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
-
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -163,7 +159,6 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
         Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(deviceID, info);
 
-        cameraFacing = info.facing;
         cameraOrientation = info.orientation;
 
 		//orientationListener = new OrientationListener(OFAndroid.getContext());
@@ -233,8 +228,12 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		}
 	}
 
-    public int getCameraOrientation(){
-        return cameraOrientation;
+    public int getCameraOrientation(int _deviceID){
+		if(_deviceID == -1) _deviceID = deviceID;
+
+		Camera.CameraInfo info = new Camera.CameraInfo();
+		Camera.getCameraInfo(_deviceID, info);
+		return info.orientation;
     }
 
     public int getFacingOfCamera(int _deviceID){
@@ -380,17 +379,14 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	private int width, height, targetFps;
 	private int texID;
     private int cameraOrientation;
-    private int cameraFacing;
 	private Thread thread;
 	private ReentrantLock threadLock;
 	private int instanceId;
 	private static int nextId=0;
 	public static Map<Integer,OFAndroidVideoGrabber> camera_instances = new HashMap<Integer,OFAndroidVideoGrabber>();
-	//private static OFCameraSurface cameraSurface = null;
-	//private static ViewGroup rootViewGroup = null;
 	private boolean initialized = false;
 	private boolean previewStarted = false;
-	private OrientationListener orientationListener;
+	//private OrientationListener orientationListener;
 	SurfaceTexture surfaceTexture;
 	
 

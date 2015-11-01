@@ -63,7 +63,7 @@ public:
 
 	/// Get the physical orientation of the camera. Typically on a phone the camera mounted in
 	/// landscape mode, this returns 90
-	int getCameraOrientation()const;
+	int getCameraOrientation(int device=-1)const;
 
 	/// Get facing of camera.
 	/// Leave device = -1 to get selected cameras facing
