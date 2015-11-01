@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 import android.annotation.SuppressLint;
@@ -23,6 +24,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	public OFAndroidVideoGrabber(){
 		instanceId=nextId++;
 		camera_instances.put(instanceId, this);
+		threadLock = new ReentrantLock();
 	}
 	
 	public int getId(){
@@ -112,7 +114,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		config.setPreviewFormat(ImageFormat.NV21);
         try{
 			Method setRecordingHint = config.getClass().getMethod("setRecordingHint",boolean.class);
-			setRecordingHint.invoke(config, false);
+			setRecordingHint.invoke(config, true);
         }catch(Exception e){
         	Log.i("OF","couldn't set recording hint");
         }
@@ -153,7 +155,8 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
         if(buffer == null || buffer.length != bufferSize) {
             // it actually needs (width*height) * 3/2
             bufferSize = bufferSize * ImageFormat.getBitsPerPixel(config.getPreviewFormat()) / 8;
-            buffer = new byte[bufferSize];
+            buffer[0] = new byte[bufferSize];
+            buffer[1] = new byte[bufferSize];
         }
 
         // Get camera info
@@ -199,6 +202,25 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+       try {
+            // Add the other buffer to the callback queue to indicate we are ready for new frame
+            camera.addCallbackBuffer(buffer[bufferFlipFlip?0:1]);
+            bufferFlipFlip = !bufferFlipFlip;
+        } catch (Exception e) {
+            Log.e("OF", "error adding buffer", e);
+        }
+	}
+
+	// Getting the current frame data as byte array
+	// Notice: this locks the thread, you need to  call releaseFrameData() when done
+	public byte[] getFrameData(){
+		threadLock.lock();
+		return buffer[bufferFlipFlip?0:1];
+	}
+
+	public void releaseFrameData(){
+		threadLock.unlock();
 	}
 
 	public void getTextureMatrix(float[] mtx) {
@@ -281,24 +303,28 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		//Log.i("OF","video buffer length: " + data.length);
 		//Log.i("OF", "size: " + camera.getParameters().getPreviewSize().width + "x" + camera.getParameters().getPreviewSize().height);
 		//Log.i("OF", "format " + camera.getParameters().getPreviewFormat());
-		newFrame(data, width, height, instanceId);
-		if(addBufferMethod!=null){
-			try {
-				addBufferMethod.invoke(camera, buffer);
-			} catch (Exception e) {
-				Log.e("OF","error adding buffer",e);
-			} 
-		}
-		//camera.addCallbackBuffer(data);
-		
+		threadLock.lock();
+
+		// Tell the of app that a new frame has arrived
+		newFrame(width, height, instanceId);
+
+		/*try {
+            camera.addCallbackBuffer(buffer[0]);
+        } catch (Exception e) {
+            Log.e("OF","error adding buffer",e);
+        }*/
+
+		threadLock.unlock();
 	}
 
 	public void run() {
 		thread.setPriority(Thread.MAX_PRIORITY);
 		try {
-			//camera.addCallbackBuffer(buffer);
-            //camera.setPreviewCallbackWithBuffer(this);
-            camera.setPreviewCallback(this);
+            // Add both callback buffers to the queue
+			camera.addCallbackBuffer(buffer[0]);
+            //camera.addCallbackBuffer(buffer[1]);
+            camera.setPreviewCallbackWithBuffer(this);
+            //camera.setPreviewCallback(this);
 
 			Log.i("OF","setting camera callback with buffer");
 		} catch (SecurityException e) {
@@ -343,18 +369,20 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		
 	}
 	
-	public static native int newFrame(byte[] data, int width, int height, int cameraId);
+	public static native int newFrame(int width, int height, int cameraId);
 	
 	
 
 	private Camera camera;
 	private int deviceID = -1;
-	private byte[] buffer = null;
+	private byte[][] buffer = {null, null};
+    private boolean bufferFlipFlip = false;
 	private int width, height, targetFps;
-    private int texID;
+	private int texID;
     private int cameraOrientation;
     private int cameraFacing;
 	private Thread thread;
+	private ReentrantLock threadLock;
 	private int instanceId;
 	private static int nextId=0;
 	public static Map<Integer,OFAndroidVideoGrabber> camera_instances = new HashMap<Integer,OFAndroidVideoGrabber>();
@@ -362,7 +390,6 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	//private static ViewGroup rootViewGroup = null;
 	private boolean initialized = false;
 	private boolean previewStarted = false;
-	private Method addBufferMethod;
 	private OrientationListener orientationListener;
 	SurfaceTexture surfaceTexture;
 	
