@@ -11,8 +11,12 @@ if [ "$OS" == "darwin" ]; then
 	OS="osx"
 elif [ "$OS" == "windowsnt" ] ; then
 	OS="vs"
-elif [ "${OS:0:5}" == "mingw" -o "$OS" == "msys_nt-6.3" ]; then
+elif [ "${OS:0:7}" == "mingw32"]; then
 	OS="msys2"
+	ARCH=32
+elif [ "${OS:0:7}" == "mingw64"]; then
+	OS="msys2"
+	ARCH=64
 elif [ "$OS" == "linux" ]; then
 	ARCH=`uname -m`
 	if [ "$ARCH" == "i386" -o "$ARCH" == "i686" ] ; then
