@@ -325,6 +325,8 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	if (!enableDataPath)
 		return path;
 
+    bool hasTrailingSlash = std::filesystem::path(path).generic_string().back()=='/';
+
 	// if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
 	if (defaultWorkingDirectory() != std::filesystem::current_path()) {
@@ -335,8 +337,8 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 		}
 	}
 #endif
-	// this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
 
+	// this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
 	const auto  & dataPath = dataPathRoot();
 	std::filesystem::path inputPath(path);
 	std::filesystem::path outputPath;
@@ -344,10 +346,15 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	// if path is already absolute, just return it
 	if (inputPath.is_absolute()) {
 		try {
-			return std::filesystem::canonical(inputPath).string();
+            auto outpath = std::filesystem::canonical(inputPath);
+            if(std::filesystem::is_directory(outpath) && hasTrailingSlash){
+                return ofFilePath::addTrailingSlash(outpath.string());
+            }else{
+                return outpath.string();
+            }
 		}
 		catch (...) {
-			return inputPath.string();
+            return inputPath.string();
 		}
 	}
 
@@ -377,14 +384,19 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	if(makeAbsolute){
 	    // then we return the absolute form of the path
 	    try {
-	        return std::filesystem::canonical(std::filesystem::absolute(outputPath)).string();
+            auto outpath = std::filesystem::canonical(std::filesystem::absolute(outputPath));
+            if(std::filesystem::is_directory(outpath) && hasTrailingSlash){
+                return ofFilePath::addTrailingSlash(outpath.string());
+            }else{
+                return outpath.string();
+            }
 	    }
 	    catch (std::exception &) {
-	        return std::filesystem::absolute(outputPath).string();
+            return std::filesystem::absolute(outputPath).string();
 	    }
 	}else{
 		// or output the relative path
-		return outputPath.string();
+        return outputPath.string();
 	}
 }
 

@@ -105,10 +105,6 @@ void ofInit(){
 								// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
 	#endif
 
-	ofSeedRandom();
-	ofResetElapsedTimeCounter();
-	of::priv::setWorkingDirectoryToDefault();
-
 #ifdef TARGET_LINUX
 	if(std::locale().name() == "C"){
 		try{
@@ -123,6 +119,11 @@ void ofInit(){
 		}
 	}
 #endif
+
+	
+	ofSeedRandom();
+	ofResetElapsedTimeCounter();
+	of::priv::setWorkingDirectoryToDefault();
 }
 
 //--------------------------------------

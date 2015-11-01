@@ -9,6 +9,10 @@ if [ $EUID != 0 ]; then
     exit 1
 fi
 
+if [ "$1" == "-y" ]; then
+    FORCE_YES=-y
+fi 
+
 MAJOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f1 -d. | sed "s/\t//g")
 MINOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f2 -d.)
 
@@ -71,7 +75,7 @@ then
 fi
 
 echo "installing OF dependencies"
-apt-get install freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem${BOOST_VER}-dev
+apt-get ${FORCE_YES} install freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem${BOOST_VER}-dev
 exit_code=$?
 if [ $exit_code != 0 ]; then
     echo "error installing dependencies, there could be an error with your internet connection"
@@ -81,7 +85,7 @@ fi
 
 
 echo "installing gstreamer"
-apt-get install libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good
+apt-get ${FORCE_YES} install libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good
 exit_code=$?
 if [ $exit_code != 0 ]; then
 	echo "error installing gstreamer, there could be an error with your internet connection"
@@ -115,5 +119,5 @@ if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
 	
     DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
     cd ${DIR}/../../apothecary
-    ./apothecary update poco -j${cores}
+    ./apothecary -j${cores} update poco
 fi

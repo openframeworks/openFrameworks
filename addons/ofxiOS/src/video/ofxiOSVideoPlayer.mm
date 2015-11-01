@@ -1,5 +1,6 @@
-#import "ofxiOSVideoPlayer.h"
-#import "ofxiOSExtras.h"
+#include "ofxiOSVideoPlayer.h"
+#include "ofxiOSExtras.h"
+#include "ofxiOSEAGLView.h"
 #import "AVFoundationVideoPlayer.h"
 
 CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
