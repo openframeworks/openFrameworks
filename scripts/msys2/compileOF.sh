@@ -24,7 +24,7 @@ then
 	exit 1
 fi
 
-cd ${SCRIPTPATH}/../../../libs/openFrameworksCompiled/project
+cd ${SCRIPTPATH}/../../libs/openFrameworksCompiled/project
 make -j$JOBS Debug
 exit_code=$?
 if [ $exit_code != 0 ]; then

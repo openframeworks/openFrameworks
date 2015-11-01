@@ -1019,29 +1019,33 @@ public class OFAndroid {
     public static native boolean hasNeon();
 	 
     static {
-    	try{
-    	    String arch = System.getProperty("os.arch");
-    	    if(arch.contains("arm")){
-        		Log.i("OF","static init");
-        		System.loadLibrary("neondetection"); 
-	        	if(hasNeon()){
-	        		Log.i("OF","loading neon optimized library");
-	        		System.loadLibrary("OFAndroidApp_neon");
-	        	}else{
-	        		Log.i("OF","loading not-neon optimized library");
-	        		System.loadLibrary("OFAndroidApp");
-	        	}
-	        }else{
-	        	System.loadLibrary("OFAndroidApp");
-	        }
-    	}catch(Throwable e){
-    		Log.i("OF","failed neon detection, loading not-neon library",e);
-    		System.loadLibrary("OFAndroidApp");
-    	}
-    	Log.i("OF","initializing app");
+        
+        Log.i("OF","static init");
+        
+        try {
+            Log.i("OF","loading x86 library");
+            System.loadLibrary("OFAndroidApp_x86");
+        }
+        catch(Throwable ex)	{
+            Log.i("OF","failed x86 loading, trying neon detection",e);
+            
+            try{
+                System.loadLibrary("neondetection");
+                if(hasNeon()){
+                    Log.i("OF","loading neon optimized library");
+                    System.loadLibrary("OFAndroidApp_neon");
+                }
+                else{
+                    Log.i("OF","loading not-neon optimized library");
+                    System.loadLibrary("OFAndroidApp");
+                }
+            }catch(Throwable e){
+                Log.i("OF","failed neon detection, loading not-neon library",e);
+                System.loadLibrary("OFAndroidApp");
+            }
+        }
+        Log.i("OF","initializing app");
     }
-
-
 
 	public static SurfaceView getGLContentView() {
         return mGLView;
