@@ -51,16 +51,28 @@ function build() {
 			vs-build "GLFW.sln" Build "Release|x64"
 		fi
 	elif [ "$TYPE" == "msys2" ]; then
-	
-		# *nix build system
-		cmake . -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=$BUILD_ROOT_DIR \
-				-DGLFW_BUILD_DOCS=OFF \
-				-DGLFW_BUILD_TESTS=OFF \
-				-DGLFW_BUILD_EXAMPLES=OFF \
-				-DBUILD_SHARED_LIBS=OFF \
-				-DCMAKE_C_COMPILER=/mingw32/bin/gcc.exe
-
- 		make -j${PARALLEL_MAKE}
+		#Do some cleaning
+		rm -rf $BUILD_ROOT_DIR/$ARCH
+		rm -f CMakeCache.txt
+		rm -rf CMakeFiles
+		rm -f cmake_install.cmake cmake_uninstall.cmake CMakeCache.txt install_manifest.txt Makefile
+		if [ $ARCH == 32 ] ; then
+			cmake . -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=$APOTHECARY_DIR/toolchains/mingw32.cmake \
+					-DCMAKE_INSTALL_PREFIX=$BUILD_ROOT_DIR/$ARCH \
+					-DGLFW_BUILD_DOCS=OFF \
+					-DGLFW_BUILD_TESTS=OFF \
+					-DGLFW_BUILD_EXAMPLES=OFF \
+					-DBUILD_SHARED_LIBS=OFF
+		elif [ $ARCH == 64 ] ; then
+			cmake . -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=$APOTHECARY_DIR/toolchains/mingw64.cmake \
+					-DCMAKE_INSTALL_PREFIX=$BUILD_ROOT_DIR/$ARCH \
+					-DGLFW_BUILD_DOCS=OFF \
+					-DGLFW_BUILD_TESTS=OFF \
+					-DGLFW_BUILD_EXAMPLES=OFF \
+					-DBUILD_SHARED_LIBS=OFF
+		fi
+		echo Compiling $ARCH bits version of GLFW
+		make -j${PARALLEL_MAKE}
  		make install
 	else
 		# *nix build system
@@ -98,7 +110,18 @@ function copy() {
 			mkdir -p $1/lib/$TYPE/x64
 			cp -v build_vs_64/src/Release/glfw3.lib $1/lib/$TYPE/x64/glfw3.lib
 		fi
-	    
+	elif [ "$TYPE" == "msys2" ]; then
+		# copy headers
+		cp -Rv $BUILD_ROOT_DIR/$ARCH/include/GLFW/* $1/include/GLFW/
+		# copy lib
+		if [ $ARCH == 32 ] ; then
+			mkdir -p $1/lib/$TYPE/Win32
+			cp -Rv $BUILD_ROOT_DIR/$ARCH/lib/libglfw3.a $1/lib/$TYPE/Win32/libglfw3.a
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p $1/lib/$TYPE/x64
+			cp -Rv $BUILD_ROOT_DIR/$ARCH/lib/libglfw3.a $1/lib/$TYPE/x64/libglfw3.a
+		fi
+	
 	elif [ "$TYPE" == "osx" ]; then
 		# Standard *nix style copy.
 		# copy headers
