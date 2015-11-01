@@ -149,10 +149,10 @@ PLATFORM_LDFLAGS += -pthread
 ################################################################################
 
 # Broadcom hardware interface library
-PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include
-PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/IL
-PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vcos/pthreads
-PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vmcs_host/linux
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/IL
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vcos/pthreads
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/linux
 
 
 ##########################################################################################
@@ -164,7 +164,7 @@ PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vmcs_host/linux
 #   Note: Leave a leading space when adding list items with the += operator
 ##########################################################################################
 
-PLATFORM_LIBRARY_SEARCH_PATHS += /opt/vc/lib
+PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
 
 
 ################################################################################
