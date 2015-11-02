@@ -48,12 +48,12 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){    
-    // Calculate aspect ratio of grabber image
-    float grabberAspectRatio = grabber.getWidth() / grabber.getHeight();
+	// Calculate aspect ratio of grabber image
+	float grabberAspectRatio = grabber.getWidth() / grabber.getHeight();
 
-    // Draw camera image centered in the window
+	// Draw camera image centered in the window
 	ofPushMatrix();
-    ofSetHexColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	ofSetRectMode(OF_RECTMODE_CENTER);
 
 	ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);

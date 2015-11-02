@@ -205,24 +205,24 @@ void ofxAndroidVideoGrabber::update(){
 		// Call update in the java code
 		// This will tell the camera api that we are ready for a new frame
 		jmethodID update = ofGetJNIEnv()->GetMethodID(getJavaClass(), "update", "()V");
-        ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber, update);
+		ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber, update);
 
 		// Get the texture matrix
-        jmethodID javaGetTextureMatrix = ofGetJNIEnv()->GetMethodID(getJavaClass(),"getTextureMatrix","([F)V");
-        if(!javaGetTextureMatrix){
-            ofLogError("ofxAndroidVideoPlayer") << "update(): couldn't get java javaGetTextureMatrix for VideoPlayer";
-            return;
-        }
-        ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber,javaGetTextureMatrix,data->matrixJava);
-        jfloat * m = ofGetJNIEnv()->GetFloatArrayElements(data->matrixJava,0);
+		jmethodID javaGetTextureMatrix = ofGetJNIEnv()->GetMethodID(getJavaClass(),"getTextureMatrix","([F)V");
+		if(!javaGetTextureMatrix){
+			ofLogError("ofxAndroidVideoPlayer") << "update(): couldn't get java javaGetTextureMatrix for VideoPlayer";
+			return;
+		}
+		ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber,javaGetTextureMatrix,data->matrixJava);
+		jfloat * m = ofGetJNIEnv()->GetFloatArrayElements(data->matrixJava,0);
 
-        ofMatrix4x4 vFlipTextureMatrix;
-        vFlipTextureMatrix.scale(1,-1,1);
-        vFlipTextureMatrix.translate(0,1,0);
-        ofMatrix4x4 textureMatrix(m);
-        data->texture.setTextureMatrix(vFlipTextureMatrix * textureMatrix );
+		ofMatrix4x4 vFlipTextureMatrix;
+		vFlipTextureMatrix.scale(1,-1,1);
+		vFlipTextureMatrix.translate(0,1,0);
+		ofMatrix4x4 textureMatrix(m);
+		data->texture.setTextureMatrix(vFlipTextureMatrix * textureMatrix );
 
-        ofGetJNIEnv()->ReleaseFloatArrayElements(data->matrixJava,m,0);
+		ofGetJNIEnv()->ReleaseFloatArrayElements(data->matrixJava,m,0);
 	} else {
 		data->bIsFrameNew = false;
 	}
@@ -438,11 +438,11 @@ void ofxAndroidVideoGrabber::setDesiredFrameRate(int framerate){
 }
 
 float ofxAndroidVideoGrabber::getHeight() const{
-    return data->height;
+	return data->height;
 }
 
 float ofxAndroidVideoGrabber::getWidth() const{
-    return data->width;
+	return data->width;
 }
 
 bool ofxAndroidVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
@@ -470,85 +470,85 @@ ofPixelFormat ofxAndroidVideoGrabber::getPixelFormat() const{
  {
 	static bool inited = false;
 	if(inited) return;
-    long int crv,cbu,cgu,cgv;
-    int i,ind;
+	long int crv,cbu,cgu,cgv;
+	int i,ind;
 
-    crv = 104597; cbu = 132201;  /* fra matrise i global.h */
-    cgu = 25675;  cgv = 53279;
+	crv = 104597; cbu = 132201;  /* fra matrise i global.h */
+	cgu = 25675;  cgv = 53279;
 
-    for (i = 0; i < 256; i++) {
-       crv_tab[i] = (i-128) * crv;
-       cbu_tab[i] = (i-128) * cbu;
-       cgu_tab[i] = (i-128) * cgu;
-       cgv_tab[i] = (i-128) * cgv;
-       tab_76309[i] = 76309*(i-16);
-    }
+	for (i = 0; i < 256; i++) {
+	   crv_tab[i] = (i-128) * crv;
+	   cbu_tab[i] = (i-128) * cbu;
+	   cgu_tab[i] = (i-128) * cgu;
+	   cgv_tab[i] = (i-128) * cgv;
+	   tab_76309[i] = 76309*(i-16);
+	}
 
-    for (i=0; i<384; i++)
-       clp[i] =0;
-    ind=384;
-    for (i=0;i<256; i++)
-        clp[ind++]=i;
-    ind=640;
-    for (i=0;i<384;i++)
-        clp[ind++]=255;
+	for (i=0; i<384; i++)
+	   clp[i] =0;
+	ind=384;
+	for (i=0;i<256; i++)
+		clp[ind++]=i;
+	ind=640;
+	for (i=0;i<384;i++)
+		clp[ind++]=255;
 
-    inited = true;
+	inited = true;
  }
 
  void ConvertYUV2RGB(unsigned char *src0,unsigned char *src1,unsigned char *dst_ori,
-                                  int width,int height)
+								  int width,int height)
  {
-     register int y1,y2,u,v;
-     register unsigned char *py1,*py2;
-     register int i,j, c1, c2, c3, c4;
-     register unsigned char *d1, *d2;
+	 register int y1,y2,u,v;
+	 register unsigned char *py1,*py2;
+	 register int i,j, c1, c2, c3, c4;
+	 register unsigned char *d1, *d2;
 
-     int width3 = 3*width;
-     py1=src0;
-     py2=py1+width;
-     d1=dst_ori;
-     d2=d1+width3;
-     for (j = 0; j < height; j += 2) {
-         for (i = 0; i < width; i += 2) {
+	 int width3 = 3*width;
+	 py1=src0;
+	 py2=py1+width;
+	 d1=dst_ori;
+	 d2=d1+width3;
+	 for (j = 0; j < height; j += 2) {
+		 for (i = 0; i < width; i += 2) {
 
-             v = *src1++;
-             u = *src1++;
+			 v = *src1++;
+			 u = *src1++;
 
-             c1 = crv_tab[v];
-             c2 = cgu_tab[u];
-             c3 = cgv_tab[v];
-             c4 = cbu_tab[u];
+			 c1 = crv_tab[v];
+			 c2 = cgu_tab[u];
+			 c3 = cgv_tab[v];
+			 c4 = cbu_tab[u];
 
-             //up-left
-             y1 = tab_76309[*py1++];
-             *d1++ = clp[384+((y1 + c1)>>16)];
-             *d1++ = clp[384+((y1 - c2 - c3)>>16)];
-             *d1++ = clp[384+((y1 + c4)>>16)];
+			 //up-left
+			 y1 = tab_76309[*py1++];
+			 *d1++ = clp[384+((y1 + c1)>>16)];
+			 *d1++ = clp[384+((y1 - c2 - c3)>>16)];
+			 *d1++ = clp[384+((y1 + c4)>>16)];
 
-             //down-left
-             y2 = tab_76309[*py2++];
-             *d2++ = clp[384+((y2 + c1)>>16)];
-             *d2++ = clp[384+((y2 - c2 - c3)>>16)];
-             *d2++ = clp[384+((y2 + c4)>>16)];
+			 //down-left
+			 y2 = tab_76309[*py2++];
+			 *d2++ = clp[384+((y2 + c1)>>16)];
+			 *d2++ = clp[384+((y2 - c2 - c3)>>16)];
+			 *d2++ = clp[384+((y2 + c4)>>16)];
 
-             //up-right
-             y1 = tab_76309[*py1++];
-             *d1++ = clp[384+((y1 + c1)>>16)];
-             *d1++ = clp[384+((y1 - c2 - c3)>>16)];
-             *d1++ = clp[384+((y1 + c4)>>16)];
+			 //up-right
+			 y1 = tab_76309[*py1++];
+			 *d1++ = clp[384+((y1 + c1)>>16)];
+			 *d1++ = clp[384+((y1 - c2 - c3)>>16)];
+			 *d1++ = clp[384+((y1 + c4)>>16)];
 
-             //down-right
-             y2 = tab_76309[*py2++];
-             *d2++ = clp[384+((y2 + c1)>>16)];
-             *d2++ = clp[384+((y2 - c2 - c3)>>16)];
-             *d2++ = clp[384+((y2 + c4)>>16)];
-         }
-         d1 += width3;
-         d2 += width3;
-         py1+=   width;
-         py2+=   width;
-     }
+			 //down-right
+			 y2 = tab_76309[*py2++];
+			 *d2++ = clp[384+((y2 + c1)>>16)];
+			 *d2++ = clp[384+((y2 - c2 - c3)>>16)];
+			 *d2++ = clp[384+((y2 + c4)>>16)];
+		 }
+		 d1 += width3;
+		 d2 += width3;
+		 py1+=   width;
+		 py2+=   width;
+	 }
 
 
 }
@@ -565,122 +565,122 @@ ofPixelFormat ofxAndroidVideoGrabber::getPixelFormat() const{
 
 //we tackle the conversion two pixels at a time for greater speed
 void ConvertYUV2toRGB565(unsigned char* yuvs, unsigned char* rgbs, int width, int height) {
-    //the end of the luminance data
-    int lumEnd = width * height;
-    //points to the next luminance value pair
-    int lumPtr = 0;
-    //points to the next chromiance value pair
-    int chrPtr = lumEnd;
-    //points to the next byte output pair of RGB565 value
-    int outPtr = 0;
-    //the end of the current luminance scanline
-    int lineEnd = width;
-    register int R, G, B;
-    register int Y1;
-    register int Y2;
-    register int Cr;
-    register int Cb;
+	//the end of the luminance data
+	int lumEnd = width * height;
+	//points to the next luminance value pair
+	int lumPtr = 0;
+	//points to the next chromiance value pair
+	int chrPtr = lumEnd;
+	//points to the next byte output pair of RGB565 value
+	int outPtr = 0;
+	//the end of the current luminance scanline
+	int lineEnd = width;
+	register int R, G, B;
+	register int Y1;
+	register int Y2;
+	register int Cr;
+	register int Cb;
 
-    while (true) {
+	while (true) {
 
-        //skip back to the start of the chromiance values when necessary
-        if (lumPtr == lineEnd) {
-            if (lumPtr == lumEnd) break; //we've reached the end
-            //division here is a bit expensive, but's only done once per scanline
-            chrPtr = lumEnd + ((lumPtr  >> 1) / width) * width;
-            lineEnd += width;
-        }
+		//skip back to the start of the chromiance values when necessary
+		if (lumPtr == lineEnd) {
+			if (lumPtr == lumEnd) break; //we've reached the end
+			//division here is a bit expensive, but's only done once per scanline
+			chrPtr = lumEnd + ((lumPtr  >> 1) / width) * width;
+			lineEnd += width;
+		}
 
-        //read the luminance and chromiance values
-        Y1 = yuvs[lumPtr++] & 0xff;
-        Y2 = yuvs[lumPtr++] & 0xff;
-        Cr = (yuvs[chrPtr++] & 0xff) - 128;
-        Cb = (yuvs[chrPtr++] & 0xff) - 128;
+		//read the luminance and chromiance values
+		Y1 = yuvs[lumPtr++] & 0xff;
+		Y2 = yuvs[lumPtr++] & 0xff;
+		Cr = (yuvs[chrPtr++] & 0xff) - 128;
+		Cb = (yuvs[chrPtr++] & 0xff) - 128;
 
-        //generate first RGB components
-        B = Y1 + ((454 * Cb) >> 8);
-        if(B < 0) B = 0; else if(B > 255) B = 255;
-        G = Y1 - ((88 * Cb + 183 * Cr) >> 8);
-        if(G < 0) G = 0; else if(G > 255) G = 255;
-        R = Y1 + ((359 * Cr) >> 8);
-        if(R < 0) R = 0; else if(R > 255) R = 255;
-        //NOTE: this assume little-endian encoding
-        rgbs[outPtr++]  = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
-        rgbs[outPtr++]  = (unsigned char) ((R & 0xf8) | (G >> 5));
+		//generate first RGB components
+		B = Y1 + ((454 * Cb) >> 8);
+		if(B < 0) B = 0; else if(B > 255) B = 255;
+		G = Y1 - ((88 * Cb + 183 * Cr) >> 8);
+		if(G < 0) G = 0; else if(G > 255) G = 255;
+		R = Y1 + ((359 * Cr) >> 8);
+		if(R < 0) R = 0; else if(R > 255) R = 255;
+		//NOTE: this assume little-endian encoding
+		rgbs[outPtr++]  = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+		rgbs[outPtr++]  = (unsigned char) ((R & 0xf8) | (G >> 5));
 
-        //generate second RGB components
-        B = Y2 + ((454 * Cb) >> 8);
-        if(B < 0) B = 0; else if(B > 255) B = 255;
-        G = Y2 - ((88 * Cb + 183 * Cr) >> 8);
-        if(G < 0) G = 0; else if(G > 255) G = 255;
-        R = Y2 + ((359 * Cr) >> 8);
-        if(R < 0) R = 0; else if(R > 255) R = 255;
-        //NOTE: this assume little-endian encoding
-        rgbs[outPtr++]  = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
-        rgbs[outPtr++]  = (unsigned char) ((R & 0xf8) | (G >> 5));
-    }
+		//generate second RGB components
+		B = Y2 + ((454 * Cb) >> 8);
+		if(B < 0) B = 0; else if(B > 255) B = 255;
+		G = Y2 - ((88 * Cb + 183 * Cr) >> 8);
+		if(G < 0) G = 0; else if(G > 255) G = 255;
+		R = Y2 + ((359 * Cr) >> 8);
+		if(R < 0) R = 0; else if(R > 255) R = 255;
+		//NOTE: this assume little-endian encoding
+		rgbs[outPtr++]  = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+		rgbs[outPtr++]  = (unsigned char) ((R & 0xf8) | (G >> 5));
+	}
 }
 void ConvertYUV2toRGB565_2(unsigned char *src0,unsigned char *src1,unsigned char *dst_ori,
-                                 int width,int height)
+								 int width,int height)
 {
-    register int y1,y2,u,v;
-    register unsigned char *py1,*py2;
-    register int i,j, c1, c2, c3, c4;
-    register unsigned char *d1, *d2;
-    register int R,G,B;
-    int width2 = 2*width;
-    py1=src0;
-    py2=py1+width;
-    d1=dst_ori;
-    d2=d1+width2;
-    for (j = 0; j < height; j += 2) {
-        for (i = 0; i < width; i += 2) {
+	register int y1,y2,u,v;
+	register unsigned char *py1,*py2;
+	register int i,j, c1, c2, c3, c4;
+	register unsigned char *d1, *d2;
+	register int R,G,B;
+	int width2 = 2*width;
+	py1=src0;
+	py2=py1+width;
+	d1=dst_ori;
+	d2=d1+width2;
+	for (j = 0; j < height; j += 2) {
+		for (i = 0; i < width; i += 2) {
 
-            v = *src1++;
-            u = *src1++;
+			v = *src1++;
+			u = *src1++;
 
-            c1 = crv_tab[v];
-            c2 = cgu_tab[u];
-            c3 = cgv_tab[v];
-            c4 = cbu_tab[u];
+			c1 = crv_tab[v];
+			c2 = cgu_tab[u];
+			c3 = cgv_tab[v];
+			c4 = cbu_tab[u];
 
-            //up-left
-            y1 = tab_76309[*py1++];
-            R = clp[384+((y1 + c1)>>16)];
-            G = clp[384+((y1 - c2 - c3)>>16)];
-            B = clp[384+((y1 + c4)>>16)];
-            *d1++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
-            *d1++ = (unsigned char) ((R & 0xf8) | (G >> 5));
+			//up-left
+			y1 = tab_76309[*py1++];
+			R = clp[384+((y1 + c1)>>16)];
+			G = clp[384+((y1 - c2 - c3)>>16)];
+			B = clp[384+((y1 + c4)>>16)];
+			*d1++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+			*d1++ = (unsigned char) ((R & 0xf8) | (G >> 5));
 
-            //down-left
-            y2 = tab_76309[*py2++];
-            B = clp[384+((y2 + c1)>>16)];
-            G = clp[384+((y2 - c2 - c3)>>16)];
-            R = clp[384+((y2 + c4)>>16)];
-            *d2++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
-            *d2++ = (unsigned char) ((R & 0xf8) | (G >> 5));
+			//down-left
+			y2 = tab_76309[*py2++];
+			B = clp[384+((y2 + c1)>>16)];
+			G = clp[384+((y2 - c2 - c3)>>16)];
+			R = clp[384+((y2 + c4)>>16)];
+			*d2++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+			*d2++ = (unsigned char) ((R & 0xf8) | (G >> 5));
 
-            //up-right
-            y1 = tab_76309[*py1++];
-            R = clp[384+((y1 + c1)>>16)];
-            G = clp[384+((y1 - c2 - c3)>>16)];
-            B = clp[384+((y1 + c4)>>16)];
-            *d1++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
-            *d1++ = (unsigned char) ((R & 0xf8) | (G >> 5));
+			//up-right
+			y1 = tab_76309[*py1++];
+			R = clp[384+((y1 + c1)>>16)];
+			G = clp[384+((y1 - c2 - c3)>>16)];
+			B = clp[384+((y1 + c4)>>16)];
+			*d1++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+			*d1++ = (unsigned char) ((R & 0xf8) | (G >> 5));
 
-            //down-right
-            y2 = tab_76309[*py2++];
-            B = clp[384+((y2 + c1)>>16)];
-            G = clp[384+((y2 - c2 - c3)>>16)];
-            R = clp[384+((y2 + c4)>>16)];
-            *d2++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
-            *d2++ = (unsigned char) ((R & 0xf8) | (G >> 5));
-        }
-        d1 += width2;
-        d2 += width2;
-        py1+=   width;
-        py2+=   width;
-    }
+			//down-right
+			y2 = tab_76309[*py2++];
+			B = clp[384+((y2 + c1)>>16)];
+			G = clp[384+((y2 - c2 - c3)>>16)];
+			R = clp[384+((y2 + c4)>>16)];
+			*d2++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+			*d2++ = (unsigned char) ((R & 0xf8) | (G >> 5));
+		}
+		d1 += width2;
+		d2 += width2;
+		py1+=   width;
+		py2+=   width;
+	}
 
 
 }
@@ -725,7 +725,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 		data->bNewBackFrame=true;
 	}
 
-    data->newPixels = true;
+	data->newPixels = true;
 
 	return 0;
 }

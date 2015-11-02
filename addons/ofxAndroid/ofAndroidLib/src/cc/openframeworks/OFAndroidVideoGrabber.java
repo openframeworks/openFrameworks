@@ -35,74 +35,74 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		}
 
 		try {
-            // Create surface texture instance
+			// Create surface texture instance
 			surfaceTexture = new SurfaceTexture(texID);
 
 			// set texture as preview surface for camera
-            camera.setPreviewTexture(surfaceTexture);
-        } catch (Exception e1) {
-            Log.e("OF","Error initializing gl surface",e1);
-        }
+			camera.setPreviewTexture(surfaceTexture);
+		} catch (Exception e1) {
+			Log.e("OF","Error initializing gl surface",e1);
+		}
 	}
 
-    public int getNumCameras(){
+	public int getNumCameras(){
 		if (Build.VERSION.SDK_INT < 9) {
 			return 1;
 		}
 
 		return Camera.getNumberOfCameras();
-    }
+	}
 
-    public int getCameraFacing(int facing){
+	public int getCameraFacing(int facing){
 		if (Build.VERSION.SDK_INT < 9) {
 			return 0;
 		}
 
 		int numCameras = Camera.getNumberOfCameras();
-        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-        for(int i=0;i<numCameras;i++){
-            Camera.getCameraInfo(i, cameraInfo);
-            int _facing = cameraInfo.facing;
-            if(_facing == facing){
-                return i;
-            }
-        }
-        return -1;
-    }
+		Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+		for(int i=0;i<numCameras;i++){
+			Camera.getCameraInfo(i, cameraInfo);
+			int _facing = cameraInfo.facing;
+			if(_facing == facing){
+				return i;
+			}
+		}
+		return -1;
+	}
 
-    public void setDeviceID(int _deviceId){
-        deviceID = _deviceId;
+	public void setDeviceID(int _deviceId){
+		deviceID = _deviceId;
 
-        if(initialized){
-            stopGrabber();
+		if(initialized){
+			stopGrabber();
 
-            initGrabber(width, height, targetFps, texID);
-        }
-    }
+			initGrabber(width, height, targetFps, texID);
+		}
+	}
 
 	public void initGrabber(int w, int h, int _targetFps, int _texID){
-        if(camera != null){
-            camera.release();
-        }
+		if(camera != null){
+			camera.release();
+		}
 
 		if(deviceID==-1)
-            deviceID = getCameraFacing(0);
+			deviceID = getCameraFacing(0);
 
-        try {
+		try {
 			if (Build.VERSION.SDK_INT >= 9) {
 				camera = Camera.open(deviceID);
 			} else {
 				camera = Camera.open();
 			}
 		} catch (Exception e) {
-            Log.e("OF","Error trying to open specific camera, trying default",e);
-            camera = Camera.open();
-        }
+			Log.e("OF","Error trying to open specific camera, trying default",e);
+			camera = Camera.open();
+		}
 
-        if(_texID != -1) {
-            texID = _texID;
-            setTexture(texID);
-        }
+		if(_texID != -1) {
+			texID = _texID;
+			setTexture(texID);
+		}
 
 		Camera.Parameters config = camera.getParameters();
 		
@@ -126,12 +126,12 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		config.setPictureSize(w, h);
 		config.setPreviewSize(w, h);
 		config.setPreviewFormat(ImageFormat.NV21);
-        try{
+		try{
 			Method setRecordingHint = config.getClass().getMethod("setRecordingHint",boolean.class);
 			setRecordingHint.invoke(config, true);
-        }catch(Exception e){
-        	Log.i("OF","couldn't set recording hint");
-        }
+		}catch(Exception e){
+			Log.i("OF","couldn't set recording hint");
+		}
 		try{
 			camera.setParameters(config);
 		}catch(Exception e){
@@ -143,37 +143,37 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		height = config.getPreviewSize().height;
 		if(width!=w || height!=h)  Log.w("OF","camera size different than asked for, resizing (this can slow the app)");
 		
-        targetFps = _targetFps;
+		targetFps = _targetFps;
 
-        // If target fps is not defined, then take the maximum fps
-        if(targetFps == -1) {
-            for(Integer i : config.getSupportedPreviewFrameRates()){
-                if(targetFps < i) {
-                    targetFps = i;
-                }
-            }
-        }
+		// If target fps is not defined, then take the maximum fps
+		if(targetFps == -1) {
+			for(Integer i : config.getSupportedPreviewFrameRates()){
+				if(targetFps < i) {
+					targetFps = i;
+				}
+			}
+		}
 
-        Log.i("OF", "Grabber fps: " + targetFps);
-        config = camera.getParameters();
-        config.setPreviewFrameRate(targetFps);
-        try{
-            camera.setParameters(config);
-        } catch(Exception e){
-            Log.e("OF","couldn init camera", e);
-        }
+		Log.i("OF", "Grabber fps: " + targetFps);
+		config = camera.getParameters();
+		config.setPreviewFrameRate(targetFps);
+		try{
+			camera.setParameters(config);
+		} catch(Exception e){
+			Log.e("OF","couldn init camera", e);
+		}
 
 		Log.i("OF", "camera settings: " + width + "x" + height);
 
-        int bufferSize = width * height;
-        if(buffer == null || buffer.length != bufferSize) {
-            // it actually needs (width*height) * 3/2
-            bufferSize = bufferSize * ImageFormat.getBitsPerPixel(config.getPreviewFormat()) / 8;
-            buffer[0] = new byte[bufferSize];
-            buffer[1] = new byte[bufferSize];
-        }
+		int bufferSize = width * height;
+		if(buffer == null || buffer.length != bufferSize) {
+			// it actually needs (width*height) * 3/2
+			bufferSize = bufferSize * ImageFormat.getBitsPerPixel(config.getPreviewFormat()) / 8;
+			buffer[0] = new byte[bufferSize];
+			buffer[1] = new byte[bufferSize];
+		}
 
-        //orientationListener = new OrientationListener(OFAndroid.getContext());
+		//orientationListener = new OrientationListener(OFAndroid.getContext());
 		//orientationListener.enable();
 		
 		thread = new Thread(this);
@@ -181,38 +181,38 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		initialized = true;
 	}
 
-    public void stopGrabber(){
-        if(initialized){
-            Log.i("OF", "stopping camera");
-            camera.stopPreview();
-            previewStarted = false;
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                Log.e("OF", "problem trying to close camera thread", e);
-            }
-            camera.setPreviewCallback(null);
-            try {
+	public void stopGrabber(){
+		if(initialized){
+			Log.i("OF", "stopping camera");
+			camera.stopPreview();
+			previewStarted = false;
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				Log.e("OF", "problem trying to close camera thread", e);
+			}
+			camera.setPreviewCallback(null);
+			try {
 				if (Build.VERSION.SDK_INT >= 11) {
 					camera.setPreviewTexture(surfaceTexture);
 				}
 			} catch (Exception e) {
-            }
-            camera.release();
-            //orientationListener.disable();
-            initialized = false;
-        }
-    }
+			}
+			camera.release();
+			//orientationListener.disable();
+			initialized = false;
+		}
+	}
 	
 	public void update(){
-        try {
+		try {
 			if (Build.VERSION.SDK_INT >= 11) {
 				surfaceTexture.updateTexImage();
 			}
 		} catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		try {
 			// Add the other buffer to the callback queue to indicate we are ready for new frame
@@ -248,7 +248,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		}
 	}
 
-    public int getCameraOrientation(int _deviceID){
+	public int getCameraOrientation(int _deviceID){
 		if (android.os.Build.VERSION.SDK_INT < 9) {
 			return 0;
 		}
@@ -259,19 +259,19 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		info = new Camera.CameraInfo();
 		Camera.getCameraInfo(_deviceID, info);
 		return info.orientation;
-    }
+	}
 
-    public int getFacingOfCamera(int _deviceID){
+	public int getFacingOfCamera(int _deviceID){
 		if (android.os.Build.VERSION.SDK_INT < 9) {
 			return 0;
 		}
 
-        if(_deviceID == -1) _deviceID = deviceID;
+		if(_deviceID == -1) _deviceID = deviceID;
 
-        Camera.CameraInfo info = new Camera.CameraInfo();
-        Camera.getCameraInfo(_deviceID, info);
-        return info.facing;
-    }
+		Camera.CameraInfo info = new Camera.CameraInfo();
+		Camera.getCameraInfo(_deviceID, info);
+		return info.facing;
+	}
 
 	public boolean setAutoFocus(boolean autofocus){
 		
@@ -341,9 +341,9 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	public void run() {
 		thread.setPriority(Thread.MAX_PRIORITY);
 		try {
-            // Add the first callback buffer to the queue
+			// Add the first callback buffer to the queue
 			camera.addCallbackBuffer(buffer[0]);
-            camera.setPreviewCallbackWithBuffer(this);
+			camera.setPreviewCallbackWithBuffer(this);
 
 			Log.i("OF","setting camera callback with buffer");
 		} catch (SecurityException e) {
@@ -360,8 +360,8 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		}
 	}
 
-    // Currently not used
-    private class OrientationListener extends OrientationEventListener{
+	// Currently not used
+	private class OrientationListener extends OrientationEventListener{
 		private int rotation = -1;
 
 		public OrientationListener(Context context) {
@@ -395,7 +395,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	private Camera camera;
 	private int deviceID = -1;
 	private byte[][] buffer = {null, null};
-    private boolean bufferFlipFlip = false;
+	private boolean bufferFlipFlip = false;
 	private int width, height, targetFps;
 	private int texID;
 	private Thread thread;
