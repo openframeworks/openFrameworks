@@ -20,19 +20,21 @@ public:
 	~ofxAndroidVideoGrabber();
 
 	vector<ofVideoDevice>	listDevices() const;
-	bool	setup(int w, int h);
-	bool	isInitialized() const;
+	bool setup(int w, int h);
+	bool isInitialized() const;
 
-	bool	isFrameNew() const;
-	void	update();
+	bool isFrameNew() const;
+	void update();
 
 	ofPixels& getPixels();
 	const ofPixels&	getPixels() const;
 
-	void	close();
+	void setUsePixels(bool usePixels);
 
-	float	getHeight() const;
-	float	getWidth() const;
+	void close();
+
+	float getHeight() const;
+	float getWidth() const;
 
 	//should implement!
 	void setVerbose(bool bTalkToMe);
@@ -83,7 +85,6 @@ private:
 
 	/// Get number of cameras available
 	int getNumCameras()const;
-
 
 	bool initCamera();
 

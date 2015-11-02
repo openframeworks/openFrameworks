@@ -15,13 +15,12 @@
 struct ofxAndroidVideoGrabber::Data{
 	bool bIsFrameNew;
 	bool bGrabberInited;
+	bool bUsePixels;
 	int width;
 	int height;
-	unsigned char *rawFrameData[2];
-	bool rawFrameDataFlipFlip;
 	ofPixelFormat internalPixelFormat;
-	ofPixels frontPixels;
-	ofPixels backPixels;
+	ofPixels pixelBuffer[2];
+	bool pixelBufferFlipFlip;
 	ofTexture texture;
 	jfloatArray matrixJava;
 	int cameraId;
@@ -35,7 +34,6 @@ struct ofxAndroidVideoGrabber::Data{
 	void onAppPause();
 	void onAppResume();
 	void loadTexture();
-	void reloadTexture();
 };
 
 map<int,weak_ptr<ofxAndroidVideoGrabber::Data>> & instances(){
@@ -67,6 +65,7 @@ ofxAndroidVideoGrabber::Data::Data()
 ,appPaused(false)
 ,newPixels(false)
 ,attemptFramerate(-1)
+,bUsePixels(true)
 ,javaVideoGrabber(nullptr){
 	JNIEnv *env = ofGetJNIEnv();
 
@@ -130,20 +129,6 @@ void ofxAndroidVideoGrabber::Data::loadTexture(){
 
 }
 
-void ofxAndroidVideoGrabber::Data::reloadTexture(){
-
-	JNIEnv *env = ofGetJNIEnv();
-	if (!env) {
-		ofLogError("ofxAndroidVideoGrabber") << "reloadTexture(): couldn't get environment using GetEnv()";
-		return;
-	}
-	jmethodID javasetTexture = env->GetMethodID(getJavaClass(),"setTexture","(I)V");
-	if(!javasetTexture){
-		ofLogError("ofxAndroidVideoPlayer") << "reloadTexture(): couldn't get java setTexture for VideoPlayer";
-		return;
-	}
-	env->CallVoidMethod(javaVideoGrabber,javasetTexture,texture.getTextureData().textureID);
-}
 
 ofxAndroidVideoGrabber::ofxAndroidVideoGrabber()
 :data(new Data){
@@ -310,7 +295,6 @@ bool ofxAndroidVideoGrabber::initCamera(){
 	}
 
 	//ofLogVerbose("ofxAndroidVideoGrabber") << "initGrabber(): new frame callback size: " << (int) width << "x" << (int) height;
-	data->frontPixels.allocate(data->width,data->height,getPixelFormat());
 	data->bGrabberInited = true;
 
 	return true;
@@ -323,53 +307,16 @@ bool ofxAndroidVideoGrabber::isInitialized() const{
 void ofxAndroidVideoGrabber::videoSettings(){
 }
 
+void ofxAndroidVideoGrabber::setUsePixels(bool usePixels){
+	data->bUsePixels = usePixels;
+}
+
 ofPixels& ofxAndroidVideoGrabber::getPixels(){
-	JNIEnv *env = ofGetJNIEnv();
-	if(!env) return data->backPixels;
-
-	jclass javaClass = getJavaClass();
-
-	jmethodID javagetFrameData= env->GetMethodID(javaClass,"getFrameData","()[B");
-	jmethodID javareleaseFrameData= env->GetMethodID(javaClass,"releaseFrameData","()V");
-	if(data->javaVideoGrabber && javagetFrameData && javareleaseFrameData){
-		jbyteArray arr = (jbyteArray) env->CallObjectMethod(data->javaVideoGrabber, javagetFrameData);
-
-		auto currentFrame = (unsigned char*)env->GetPrimitiveArrayCritical(arr, NULL);
-		//if(!currentFrame) return 1;
-
-		ofPixels & pixels = data->backPixels;
-		bool needsResize=false;
-		if(pixels.getWidth()!=data->width || pixels.getHeight()!=data->height){
-			needsResize = true;
-			pixels.allocate(data->width,data->height,data->internalPixelFormat);
-		}
-
-
-		if(data->internalPixelFormat==OF_PIXELS_RGB){
-			ConvertYUV2RGB(currentFrame, 					// y component
-						   currentFrame+(data->width*data->height),			// uv components
-						   pixels.getData(),data->width,data->height);
-		} else if(data->internalPixelFormat==OF_PIXELS_RGB565){
-			ConvertYUV2toRGB565(currentFrame,pixels.getData(),data->width,data->height);
-		} else if(data->internalPixelFormat==OF_PIXELS_MONO){
-			pixels.setFromPixels(currentFrame,data->width,data->height,OF_IMAGE_GRAYSCALE);
-		}
-
-		if(needsResize){
-			data->backPixels.resize(data->frontPixels.getWidth(), data->frontPixels.getHeight(), OF_INTERPOLATE_NEAREST_NEIGHBOR);
-		}
-
-		env->ReleasePrimitiveArrayCritical(arr, currentFrame, 0);
-
-		env->CallVoidMethod(data->javaVideoGrabber, javareleaseFrameData);
-
-		//return env->CallIntMethod(data->javaVideoGrabber,javagetFrameData);
-	} else {
-		ofLogError("ofxAndroidVideoGrabber") << "getFrameData(): couldn't get OFAndroidVideoGrabber getFrameData method";
+	if(!data->bUsePixels){
+		ofLogNotice()<<"Calling getPixels will not return frame data when setUsePixels(false) has been set";
 	}
 
-
-	return data->backPixels;
+	return data->pixelBuffer[data->pixelBufferFlipFlip];
 }
 
 const ofPixels& ofxAndroidVideoGrabber::getPixels() const {
@@ -733,12 +680,45 @@ void ConvertYUV2toRGB565_2(unsigned char *src0,unsigned char *src1,unsigned char
 
 extern "C"{
 jint
-Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thiz, jint width, jint height, jint cameraId){
+Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thiz, jbyteArray array, jint width, jint height, jint cameraId){
 	auto data = instances()[cameraId].lock();
 	if(!data) return 1;
-    data->width = width;
-    data->height = height;
-	data->newPixels = true;
+
+	if(data->bUsePixels) {
+
+		auto currentFrame = (unsigned char *) env->GetPrimitiveArrayCritical(array, NULL);
+
+		if (!currentFrame) return 1;
+
+		ofPixels &pixels = data->pixelBuffer[!data->pixelBufferFlipFlip];
+		bool needsResize = false;
+		if (pixels.getWidth() != width || pixels.getHeight() != height) {
+			needsResize = true;
+			pixels.allocate(width, height, data->internalPixelFormat);
+		}
+
+		if (data->internalPixelFormat == OF_PIXELS_RGB) {
+			ConvertYUV2RGB(currentFrame,                    // y component
+						   currentFrame + (width * height),            // uv components
+						   pixels.getData(), width, height);
+		} else if (data->internalPixelFormat == OF_PIXELS_RGB565) {
+			ConvertYUV2toRGB565(currentFrame, pixels.getData(), width, height);
+		} else if (data->internalPixelFormat == OF_PIXELS_MONO) {
+			pixels.setFromPixels(currentFrame, width, height, OF_IMAGE_GRAYSCALE);
+		}
+
+		if (needsResize) {
+			pixels.resize(data->width, data->height, OF_INTERPOLATE_NEAREST_NEIGHBOR);
+		}
+
+		env->ReleasePrimitiveArrayCritical(array, currentFrame, 0);
+
+		// Switch pixel buffer
+		data->pixelBufferFlipFlip = !data->pixelBufferFlipFlip;
+	}
+
+    data->newPixels = true;
+
 	return 0;
 }
 }

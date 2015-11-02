@@ -39,7 +39,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 
 		try {
             // Create surface texture instance
-				surfaceTexture = new SurfaceTexture(texID);
+			surfaceTexture = new SurfaceTexture(texID);
 
 			// set texture as preview surface for camera
             camera.setPreviewTexture(surfaceTexture);
@@ -216,14 +216,6 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-       try {
-            // Add the other buffer to the callback queue to indicate we are ready for new frame
-            camera.addCallbackBuffer(buffer[bufferFlipFlip?0:1]);
-            bufferFlipFlip = !bufferFlipFlip;
-        } catch (Exception e) {
-            Log.e("OF", "error adding buffer", e);
-        }
 	}
 
 	// Getting the current frame data as byte array
@@ -334,18 +326,15 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		//Log.i("OF","video buffer length: " + data.length);
 		//Log.i("OF", "size: " + camera.getParameters().getPreviewSize().width + "x" + camera.getParameters().getPreviewSize().height);
 		//Log.i("OF", "format " + camera.getParameters().getPreviewFormat());
-		threadLock.lock();
 
 		// Tell the of app that a new frame has arrived
-		newFrame(width, height, instanceId);
+		newFrame(data, width, height, instanceId);
 
-		/*try {
+		try {
             camera.addCallbackBuffer(buffer[0]);
         } catch (Exception e) {
             Log.e("OF","error adding buffer",e);
-        }*/
-
-		threadLock.unlock();
+        }
 	}
 
 	public void run() {
@@ -400,7 +389,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		
 	}
 	
-	public static native int newFrame(int width, int height, int cameraId);
+	public static native int newFrame(byte[] data, int width, int height, int cameraId);
 	
 	
 

@@ -16,15 +16,15 @@ void ofApp::setup(){
 	// (other image formats will include heavy pixel conversion)
 	grabber.setPixelFormat(OF_PIXELS_MONO);
 
-	// Start the grabber
-	grabber.setup(1280,960);
+	// Hint the grabber if you don't need pixel data for better performance
+	//((ofxAndroidVideoGrabber*)grabber.getGrabber().get())->setUsePixels(false);
 
-	// Get the native android grabber referene for android specific functions
-	std::shared_ptr<ofxAndroidVideoGrabber> androidGrabber = grabber.getGrabber<ofxAndroidVideoGrabber>();
+	// Start the grabber
+	grabber.setup(1920,1080);
 
 	// Get the orientation and facing of the current camera
-	orientation = androidGrabber->getCameraOrientation();
-	facing = androidGrabber->getFacingOfCamera();
+	orientation = ((ofxAndroidVideoGrabber*)grabber.getGrabber().get())->getCameraOrientation();
+	facing = ((ofxAndroidVideoGrabber*)grabber.getGrabber().get())->getFacingOfCamera();
 
 	one_second_time = ofGetElapsedTimeMillis();
 	camera_fps = 0;
@@ -109,7 +109,7 @@ void ofApp::touchDown(int x, int y, int id){
 	// Swap between back and front camera
 
 	// Get the native android video grabber
-	std::shared_ptr<ofxAndroidVideoGrabber> androidGrabber = grabber.getGrabber<ofxAndroidVideoGrabber>();
+	ofxAndroidVideoGrabber* androidGrabber = (ofxAndroidVideoGrabber*)grabber.getGrabber().get();
 
 	// If the current camera is frontal, then choose the back camera
 	if(facing == 1) {
