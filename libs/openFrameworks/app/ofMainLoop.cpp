@@ -96,6 +96,7 @@ void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> a
 			ofAddListener(ofxAndroidEvents().cancelPressed,androidApp,&ofxAndroidApp::cancelPressed,OF_EVENT_ORDER_APP);
 			ofAddListener(ofxAndroidEvents().backPressed,androidApp,&ofxAndroidApp::backPressed,OF_EVENT_ORDER_APP);
 			ofAddListener(ofxAndroidEvents().networkConnected,androidApp,&ofxAndroidApp::networkConnectedEvent,OF_EVENT_ORDER_APP);
+			ofAddListener(ofxAndroidEvents().deviceOrientationChanged,androidApp,&ofxAndroidApp::deviceOrientationChangedEvent,OF_EVENT_ORDER_APP);
 			ofAddListener(ofxAndroidEvents().pause,androidApp,&ofxAndroidApp::pause,OF_EVENT_ORDER_APP);
 			ofAddListener(ofxAndroidEvents().resume,androidApp,&ofxAndroidApp::resume,OF_EVENT_ORDER_APP);
 			ofAddListener(ofxAndroidEvents().unloadGL,androidApp,&ofxAndroidApp::unloadGL,OF_EVENT_ORDER_APP);
@@ -187,6 +188,7 @@ void ofMainLoop::exit(){
 			ofRemoveListener(ofxAndroidEvents().cancelPressed,androidApp,&ofxAndroidApp::cancelPressed,OF_EVENT_ORDER_APP);
 			ofRemoveListener(ofxAndroidEvents().backPressed,androidApp,&ofxAndroidApp::backPressed,OF_EVENT_ORDER_APP);
 			ofRemoveListener(ofxAndroidEvents().networkConnected,androidApp,&ofxAndroidApp::networkConnectedEvent,OF_EVENT_ORDER_APP);
+			ofRemoveListener(ofxAndroidEvents().deviceOrientationChanged,androidApp,&ofxAndroidApp::deviceOrientationChangedEvent,OF_EVENT_ORDER_APP);
 			ofRemoveListener(ofxAndroidEvents().pause,androidApp,&ofxAndroidApp::pause,OF_EVENT_ORDER_APP);
 			ofRemoveListener(ofxAndroidEvents().resume,androidApp,&ofxAndroidApp::resume,OF_EVENT_ORDER_APP);
 			ofRemoveListener(ofxAndroidEvents().unloadGL,androidApp,&ofxAndroidApp::unloadGL,OF_EVENT_ORDER_APP);
