@@ -3,9 +3,7 @@ package cc.openframeworks;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
@@ -21,7 +19,6 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	public OFAndroidVideoGrabber(){
 		instanceId=nextId++;
 		camera_instances.put(instanceId, this);
-		threadLock = new ReentrantLock();
 	}
 	
 	public int getId(){
@@ -216,17 +213,25 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+		try {
+			// Add the other buffer to the callback queue to indicate we are ready for new frame
+			camera.addCallbackBuffer(buffer[bufferFlipFlip?0:1]);
+			bufferFlipFlip = !bufferFlipFlip;
+		} catch (Exception e) {
+			Log.e("OF", "error adding buffer", e);
+		}
 	}
 
 	// Getting the current frame data as byte array
 	// Notice: this locks the thread, you need to  call releaseFrameData() when done
 	public byte[] getFrameData(){
-		threadLock.lock();
+		//threadLock.lock();
 		return buffer[bufferFlipFlip?0:1];
 	}
 
 	public void releaseFrameData(){
-		threadLock.unlock();
+		//threadLock.unlock();
 	}
 
 	public void getTextureMatrix(float[] mtx) {
@@ -330,21 +335,15 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		// Tell the of app that a new frame has arrived
 		newFrame(data, width, height, instanceId);
 
-		try {
-            camera.addCallbackBuffer(buffer[0]);
-        } catch (Exception e) {
-            Log.e("OF","error adding buffer",e);
-        }
+		// Don't add in the buffer again, but instead wait for the cpp code to call update
 	}
 
 	public void run() {
 		thread.setPriority(Thread.MAX_PRIORITY);
 		try {
-            // Add both callback buffers to the queue
+            // Add the first callback buffer to the queue
 			camera.addCallbackBuffer(buffer[0]);
-            //camera.addCallbackBuffer(buffer[1]);
             camera.setPreviewCallbackWithBuffer(this);
-            //camera.setPreviewCallback(this);
 
 			Log.i("OF","setting camera callback with buffer");
 		} catch (SecurityException e) {
@@ -400,13 +399,11 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	private int width, height, targetFps;
 	private int texID;
 	private Thread thread;
-	private ReentrantLock threadLock;
 	private int instanceId;
 	private static int nextId=0;
 	public static Map<Integer,OFAndroidVideoGrabber> camera_instances = new HashMap<Integer,OFAndroidVideoGrabber>();
 	private boolean initialized = false;
 	private boolean previewStarted = false;
-	//private OrientationListener orientationListener;
 	SurfaceTexture surfaceTexture;
 	
 

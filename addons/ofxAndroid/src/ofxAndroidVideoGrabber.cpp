@@ -19,8 +19,8 @@ struct ofxAndroidVideoGrabber::Data{
 	int width;
 	int height;
 	ofPixelFormat internalPixelFormat;
-	ofPixels pixelBuffer[2];
-	bool pixelBufferFlipFlip;
+	bool bNewBackFrame;
+	ofPixels frontBuffer, backBuffer;
 	ofTexture texture;
 	jfloatArray matrixJava;
 	int cameraId;
@@ -196,9 +196,18 @@ void ofxAndroidVideoGrabber::update(){
 		data->newPixels = false;
 		data->bIsFrameNew = true;
 
+		if (data->bNewBackFrame && data->bUsePixels) {
+			//std::unique_lock <std::mutex> lck(data->mtx);
+			std::swap(data->backBuffer, data->frontBuffer);
+			data->bNewBackFrame = false;
+		}
+
+		// Call update in the java code
+		// This will tell the camera api that we are ready for a new frame
 		jmethodID update = ofGetJNIEnv()->GetMethodID(getJavaClass(), "update", "()V");
         ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber, update);
 
+		// Get the texture matrix
         jmethodID javaGetTextureMatrix = ofGetJNIEnv()->GetMethodID(getJavaClass(),"getTextureMatrix","([F)V");
         if(!javaGetTextureMatrix){
             ofLogError("ofxAndroidVideoPlayer") << "update(): couldn't get java javaGetTextureMatrix for VideoPlayer";
@@ -214,8 +223,7 @@ void ofxAndroidVideoGrabber::update(){
         data->texture.setTextureMatrix(vFlipTextureMatrix * textureMatrix );
 
         ofGetJNIEnv()->ReleaseFloatArrayElements(data->matrixJava,m,0);
-
-	}else{
+	} else {
 		data->bIsFrameNew = false;
 	}
 }
@@ -316,7 +324,7 @@ ofPixels& ofxAndroidVideoGrabber::getPixels(){
 		ofLogNotice()<<"Calling getPixels will not return frame data when setUsePixels(false) has been set";
 	}
 
-	return data->pixelBuffer[data->pixelBufferFlipFlip];
+	return data->frontBuffer;
 }
 
 const ofPixels& ofxAndroidVideoGrabber::getPixels() const {
@@ -685,12 +693,13 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 	if(!data) return 1;
 
 	if(data->bUsePixels) {
-
-		auto currentFrame = (unsigned char *) env->GetPrimitiveArrayCritical(array, NULL);
+		jboolean isCopy;
+		auto currentFrame = (unsigned char *) env->GetByteArrayElements(array, &isCopy);
+		//ofLog()<<"Is copy: "<<(isCopy?true:false);
 
 		if (!currentFrame) return 1;
 
-		ofPixels &pixels = data->pixelBuffer[!data->pixelBufferFlipFlip];
+		ofPixels &pixels = data->backBuffer;
 		bool needsResize = false;
 		if (pixels.getWidth() != width || pixels.getHeight() != height) {
 			needsResize = true;
@@ -711,10 +720,9 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 			pixels.resize(data->width, data->height, OF_INTERPOLATE_NEAREST_NEIGHBOR);
 		}
 
-		env->ReleasePrimitiveArrayCritical(array, currentFrame, 0);
+		env->ReleaseByteArrayElements(array, (jbyte*)currentFrame, 0);
 
-		// Switch pixel buffer
-		data->pixelBufferFlipFlip = !data->pixelBufferFlipFlip;
+		data->bNewBackFrame=true;
 	}
 
     data->newPixels = true;
