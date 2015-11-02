@@ -11,6 +11,7 @@ import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
+import android.os.Build;
 import android.util.Log;
 import android.view.OrientationEventListener;
 
@@ -26,13 +27,21 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	public int getId(){
 		return instanceId;
 	}
-	
-	public void setTexture(int texID){
-        try {
-            // Create surface texture instance
-            surfaceTexture = new SurfaceTexture(texID);
 
-            // set texture as preview surface for camera
+	public static boolean supportsTextureRendering(){
+		return Build.VERSION.SDK_INT >= 11;
+	}
+
+	public void setTexture(int texID){
+		if (Build.VERSION.SDK_INT < 11) {
+			return;
+		}
+
+		try {
+            // Create surface texture instance
+				surfaceTexture = new SurfaceTexture(texID);
+
+			// set texture as preview surface for camera
             camera.setPreviewTexture(surfaceTexture);
         } catch (Exception e1) {
             Log.e("OF","Error initializing gl surface",e1);
@@ -40,11 +49,19 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	}
 
     public int getNumCameras(){
-        return Camera.getNumberOfCameras();
+		if (Build.VERSION.SDK_INT < 9) {
+			return 1;
+		}
+
+		return Camera.getNumberOfCameras();
     }
 
     public int getCameraFacing(int facing){
-        int numCameras = Camera.getNumberOfCameras();
+		if (Build.VERSION.SDK_INT < 9) {
+			return 0;
+		}
+
+		int numCameras = Camera.getNumberOfCameras();
         Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
         for(int i=0;i<numCameras;i++){
             Camera.getCameraInfo(i, cameraInfo);
@@ -75,8 +92,12 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
             deviceID = getCameraFacing(0);
 
         try {
-            camera = Camera.open(deviceID);
-        } catch (Exception e) {
+			if (Build.VERSION.SDK_INT >= 9) {
+				camera = Camera.open(deviceID);
+			} else {
+				camera = Camera.open();
+			}
+		} catch (Exception e) {
             Log.e("OF","Error trying to open specific camera, trying default",e);
             camera = Camera.open();
         }
@@ -145,7 +166,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
             Log.e("OF","couldn init camera", e);
         }
 
-		Log.i("OF","camera settings: " + width + "x" + height);
+		Log.i("OF", "camera settings: " + width + "x" + height);
 
         int bufferSize = width * height;
         if(buffer == null || buffer.length != bufferSize) {
@@ -155,13 +176,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
             buffer[1] = new byte[bufferSize];
         }
 
-        // Get camera info
-        Camera.CameraInfo info = new Camera.CameraInfo();
-        Camera.getCameraInfo(deviceID, info);
-
-        cameraOrientation = info.orientation;
-
-		//orientationListener = new OrientationListener(OFAndroid.getContext());
+        //orientationListener = new OrientationListener(OFAndroid.getContext());
 		//orientationListener.enable();
 		
 		thread = new Thread(this);
@@ -181,8 +196,10 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
             }
             camera.setPreviewCallback(null);
             try {
-                camera.setPreviewTexture(surfaceTexture);
-            } catch (Exception e) {
+				if (Build.VERSION.SDK_INT >= 11) {
+					camera.setPreviewTexture(surfaceTexture);
+				}
+			} catch (Exception e) {
             }
             camera.release();
             //orientationListener.disable();
@@ -192,8 +209,10 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	
 	public void update(){
         try {
-            surfaceTexture.updateTexImage();
-        } catch (Exception e) {
+			if (Build.VERSION.SDK_INT >= 11) {
+				surfaceTexture.updateTexImage();
+			}
+		} catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -219,6 +238,10 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	}
 
 	public void getTextureMatrix(float[] mtx) {
+		if (android.os.Build.VERSION.SDK_INT < 9) {
+			return;
+		}
+
 		try {
 			if(surfaceTexture != null) surfaceTexture.getTransformMatrix(mtx);
 
@@ -229,14 +252,23 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	}
 
     public int getCameraOrientation(int _deviceID){
+		if (android.os.Build.VERSION.SDK_INT < 9) {
+			return 0;
+		}
+
 		if(_deviceID == -1) _deviceID = deviceID;
 
-		Camera.CameraInfo info = new Camera.CameraInfo();
+		Camera.CameraInfo info = null;
+		info = new Camera.CameraInfo();
 		Camera.getCameraInfo(_deviceID, info);
 		return info.orientation;
     }
 
     public int getFacingOfCamera(int _deviceID){
+		if (android.os.Build.VERSION.SDK_INT < 9) {
+			return 0;
+		}
+
         if(_deviceID == -1) _deviceID = deviceID;
 
         Camera.CameraInfo info = new Camera.CameraInfo();
@@ -378,7 +410,6 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
     private boolean bufferFlipFlip = false;
 	private int width, height, targetFps;
 	private int texID;
-    private int cameraOrientation;
 	private Thread thread;
 	private ReentrantLock threadLock;
 	private int instanceId;
