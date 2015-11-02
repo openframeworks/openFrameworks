@@ -13,14 +13,26 @@ public class OFOrientationListener extends OrientationEventListener {
 	}
 
 	private int lastOrientation;
+	private boolean firstCheck = true;
+
+	@Override
+	public void enable() {
+		checkOrientation();
+		super.enable();
+	}
 
 	@Override
 	public void onOrientationChanged(int orientation) {
+		checkOrientation();
+	}
+
+	private void checkOrientation(){
 		WindowManager windowManager = (WindowManager)OFAndroid.getContext().getSystemService(Context.WINDOW_SERVICE);
 		Display display = windowManager.getDefaultDisplay();
 
-		if(lastOrientation != display.getRotation()){
+		if(lastOrientation != display.getRotation() || firstCheck){
 			lastOrientation = display.getRotation();
+			firstCheck = false;
 
 			int ofOrientation;
 			switch (display.getRotation()) {
