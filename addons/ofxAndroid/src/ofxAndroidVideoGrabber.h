@@ -75,6 +75,8 @@ public:
 
 	ofTexture *	getTexturePtr();
 
+	bool supportsTextureRendering();
+
 	struct Data;
 private:
 	int getCameraFacing(int facing)const;
