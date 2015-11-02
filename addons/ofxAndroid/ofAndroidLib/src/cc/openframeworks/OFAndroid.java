@@ -32,6 +32,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
+import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
@@ -698,17 +699,21 @@ public class OFAndroid {
     public static void setScreenOrientation(int orientation){
     	OFAndroid.orientation = orientation;
     	switch(orientation){
-    	case 0:
+		case 180:
+			if (Build.VERSION.SDK_INT >= 9) {
+				ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+				break;
+			}
+		case 0:
     		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     		break;
-    	case 90:
+		case 270:
+			if (Build.VERSION.SDK_INT >= 9) {
+				ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+				break;
+			}
+		case 90:
     		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-    		break;
-    	case 270:
-    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-    		break;
-    	case 180:
-    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     		break;
     	case -1:
     		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
