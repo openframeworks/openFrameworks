@@ -3,6 +3,7 @@
 export LC_ALL=C
 
 examples_dir=../../examples
+examples_prefix="$examples_dir/"
 
 system=msys2
 copy_makefiles () {
@@ -21,6 +22,31 @@ echo_and_log () {
 	echo $str $'\r' >> $logfile
 }
 
+echo_category() {
+	local cat=$1
+	local category_short=${cat#$examples_prefix}
+	echo $'\r'$'\r' >> $logfile
+	echo_and_log "================================================================="
+	echo -e "\e[1mcategory $category_short\e[0m"
+	echo "category $category_short" $'\r' >> $logfile
+	echo_and_log "================================================================="
+	
+}
+
+echo_success() {
+	#echo_and_log "[Success]"
+	echo -e "\e[32m[Success]\e[0m"
+	echo " " $'\r'>> $logfile
+	echo "[Success]" $'\r'>> $logfile
+	(( example_success++ ))
+}
+
+echo_failed() {
+	echo -e "\e[31;7m[Failed]\e[0m"
+	echo " " $'\r'>> $logfile
+	echo "[Failed]" $'\r'>> $logfile
+	(( example_fail++ ))
+}
 
 
 MAKEFLAGS=-j$NUMBER_OF_PROCESSORS
@@ -43,18 +69,12 @@ do
             continue
     fi
     
-	
-	echo $'\r'$'\r' >> $logfile
-	echo_and_log "================================================================="
-	echo_and_log "category $category"
-	echo_and_log "================================================================="
-    
+	echo_category $category
 	
     for example in $( find $category -mindepth 1 -maxdepth 1 -type d | grep -v osx )
     do    
 		
-		echo "-----------------------------------------------------------------"
-		echo_and_log "Building $example"
+		echo_and_log "Building ${example#$examples_prefix}"
 		(( example_total++ ))
 		#if [ "$example" = "$examples_dir/3d/cameraLensOffsetExample" ]; then
 		#		echo "   [Skipped]" >> $logfile
@@ -69,17 +89,13 @@ do
 		
 		copy_makefiles $example
 		#ERROR=$(</tmp/Error)
-        make -j8 -C $example 2>>$logfile
+        make -j8 -C $example 1>>$logfile 2>>$logfile
         ret=$?
         if [ $ret -ne 0 ]; then
-			#echo error compiling $example
-			echo_and_log "   [Failed]$'\r'" >> $logfile
-			(( example_fail++ ))
-			example_fail_list="$example_fail_list $example"
+			echo_failed
+			example_fail_list="$example_fail_list ${example#$examples_prefix}"
 		else
-			echo "   [Success]$'\r'" >> $logfile
-			(( example_success++ ))
-			#delete_makefiles $example
+			echo_success
         fi
 		#delete_makefiles $example
 		
@@ -89,12 +105,14 @@ do
 done
 
 
-echo_and_log " "
-echo_and_log ""
-echo_and_log ""
-echo_and_log ""
-echo_and_log ""
+echo 
+echo_and_log 
+echo_and_log "================================================================="
+echo_and_log "Success:$example_success - Skipped:$example_skipped - Failed:$example_fail - total:$example_total"
+echo_and_log "================================================================="
 
-echo_and_log "Examples success:$example_success - skipped:$example_skipped - failed:$example_fail - total:$example_total"
-echo_and_log "Failed examples"
-echo_and_log $example_fail_list
+if [ $example_fail -gt 0 ]; then 
+	echo_and_log "Failed examples :"
+	echo_and_log "$example_fail_list"
+	echo_and_log "================================================================="
+fi
