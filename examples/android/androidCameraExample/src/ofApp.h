@@ -21,6 +21,7 @@ class ofApp : public ofxAndroidApp{
 		void touchDoubleTap(int x, int y, int id);
 		void touchCancelled(int x, int y, int id);
 		void swipe(ofxAndroidSwipeDir swipeDir, int id);
+		void deviceOrientationChanged(ofOrientation newOrientation);
 
 		void pause();
 		void stop();
@@ -40,7 +41,9 @@ class ofApp : public ofxAndroidApp{
 		int camera_fps;
 		int frames_one_sec;
 
-		bool facing;
-		int orientation;
+		bool cameraFacingFront;
+		int cameraOrientation;
+
+		int appOrientation;
 
 };
