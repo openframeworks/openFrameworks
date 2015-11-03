@@ -27,11 +27,8 @@ while [[ $# > 0 ]] ; do
 	exit 1
 done
 
-#if uname -s = MINGW64 then
-arch=x86_64
-#else
+
 arch=i686
-#fi
 
 pacman -Sy
 pacman -Su
