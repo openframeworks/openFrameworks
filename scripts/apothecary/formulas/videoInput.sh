@@ -6,7 +6,7 @@
 #
 # Visual Studio & Code Blocks projects are provided
 
-FORMULA_TYPES=( "vs" "win_cb" )
+FORMULA_TYPES=( "vs" "msys2" )
 
 # define the version
 VER=master
@@ -39,7 +39,7 @@ function build() {
 			vs-build "videoInput.sln" Build "Release|x64"
 			vs-build "videoInput.sln" Build "Debug|x64"
 		fi
-	elif [ "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "msys2" ] ; then
 		cd msys2
 		make 
 	fi
@@ -78,7 +78,7 @@ function clean() {
 	if [ "$TYPE" == "vs" ] ; then
 		cd videoInputSrcAndDemos/VS-videoInputcompileAsLib
 		vs-clean "videoInput.sln"
-	elif [ "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "msys2" ] ; then
 		cd videoInputSrcAndDemos/msys2
 		make clean
 	fi

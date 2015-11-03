@@ -31,7 +31,7 @@ cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 ./create_package.sh linux64 $version master
 ./create_package.sh linuxarmv6l $version master
 ./create_package.sh linuxarmv7l $version master
-./create_package.sh win_cb $version master
+./create_package.sh msys2 $version master
 ./create_package.sh vs $version master
 ./create_package.sh ios $version master
 ./create_package.sh osx $version master
