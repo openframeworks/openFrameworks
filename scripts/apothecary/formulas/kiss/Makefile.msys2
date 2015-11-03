@@ -1,0 +1,25 @@
+CC=/mingw32/bin/gcc.exe
+AR=/mingw32/bin/ar.exe
+CFLAGS=-I. -I./tools
+
+LIB=libkiss.a
+LIBDEST=./lib/msys2/
+
+LIBSRC=kiss_fft.c tools/kiss_fftr.c 
+
+LIBOBJ=$(LIBSRC:.c=.o)
+
+install: $(LIB)
+	@echo lib Makefile - installing $(LIB)
+	mkdir -p $(LIBDEST)
+	@install -m 444 $(LIB) $(LIBDEST)
+
+$(LIB): $(LIBOBJ)
+	@echo lib Makefile - archiving $(LIB)
+	@$(AR) r $(LIB) $(LIBOBJ)
+
+.c.o:
+	@echo lib Makefile - compiling $<
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+
