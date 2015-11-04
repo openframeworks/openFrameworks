@@ -674,7 +674,7 @@ bool ofxGuiGroup::setActiveToggle(ofxToggle* toggle) {
 }
 
 bool ofxGuiGroup::setActiveToggle(int index) {
-	if(index >= 0 && index < collection.size()){
+	if(index >= 0 && index < (int)collection.size()){
 		if(ofxToggle* toggle = dynamic_cast<ofxToggle*>(collection[index])) {
 			return setActiveToggle(toggle);
 		}
@@ -683,6 +683,7 @@ bool ofxGuiGroup::setActiveToggle(int index) {
 			return false;
 		}
 	}
+	return false;
 }
 
 void ofxGuiGroup::deactivateAllOtherToggles(ofxToggle *toggle) {
