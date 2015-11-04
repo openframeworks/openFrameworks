@@ -108,7 +108,7 @@ endif
 TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 
 DATA_FILES = $(shell find bin/data -type f 2>/dev/null)
-RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
+RESNAME=ofdataresources
 RESFILE=$(RESNAME).zip
 
 ifeq ($(ABI),armv7)
@@ -131,8 +131,8 @@ endif
 
 ifeq ($(ABI),x86)
 	ABI_PATH = x86
-	PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
-	PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
+    PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_x86.so
+    PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_x86.so
 endif
 
 PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/$(ABI)/libopenFrameworks.a
@@ -224,13 +224,13 @@ PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections
 ################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os -DNDEBUG
 
 # RELEASE options
 PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -s
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -O0 -g -D_DEBUG
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -O0 -g3 -DANDROID_NDK -D_DEBUG -DDEBUG #-D_GLIBCXX_DEBUG
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -505,12 +505,14 @@ afterplatform:$(RESFILE)
 	else \
 		rm -r libs/armeabi 2> /dev/null; \
 	fi; \
-	if [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ] || [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
+	if [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ] && [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
 		ABIS="$$ABIS armeabi-v7a"; \
 	elif [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ]; then \
+		ABIS="$$ABIS armeabi-v7a"; \
 		rm libs/armeabi-v7a/libOFAndroidApp_neon.so 2> /dev/null; \
 		rm libs/armeabi-v7a/libneondetection.so 2> /dev/null; \
 	elif [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
+		ABIS="$$ABIS armeabi-v7a"; \
 		rm libs/armeabi-v7a/libOFAndroidApp.so 2> /dev/null; \
 	else \
 		rm -r libs/armeabi-v7a 2> /dev/null; \

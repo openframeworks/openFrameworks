@@ -4,7 +4,7 @@
 #include "ofxCvColorImage.h"
 #include "ofxCvFloatImage.h"
 #include "ofxCvBlob.h"
-
+#include "ofConstants.h"
 
 
 
@@ -18,6 +18,11 @@ ofxCvImage::ofxCvImage() {
 	bAllocated		= false;
     bPixelsDirty    = true;
     bRoiPixelsDirty = true;
+    cvImageTemp = nullptr;
+    bAnchorIsPct = false;
+    cvImage = nullptr;
+    ipldepth = 0;
+    iplchannels = 0;
 }
 
 //--------------------------------------------------------------------------------
@@ -45,7 +50,8 @@ void ofxCvImage::allocate( int w, int h ) {
 	bAllocated = true;
 
     if( bUseTexture ) {
-        tex.allocate( width, height, glchannels );
+    	allocatePixels(w,h);
+        allocateTexture();
         bTextureDirty = true;
     }
 }
@@ -415,12 +421,6 @@ void ofxCvImage::updateTexture(){
 		ofLogWarning("ofxCvImage") << "updateTexture(): image not allocated";	
 	} else if(bUseTexture ) {
 		if( bTextureDirty ) {
-			if(tex.getWidth() != width || tex.getHeight() != height) {
-				//ROI was changed
-				// reallocating texture - this could be faster with ROI support
-				tex.clear();
-				tex.allocate( width, height, glchannels );
-			}
 			tex.loadData( getPixels() );
 			bTextureDirty = false;
 		}
@@ -433,38 +433,6 @@ void ofxCvImage::draw( float x, float y, float w, float h ) const {
     	ofxCvImage* mutImage = const_cast<ofxCvImage*>(this);
     	mutImage->updateTexture();
         tex.draw(x,y, w,h);
-    } else {
-        #ifdef TARGET_OPENGLES
-            ofLogError("ofxCvImage") << "draw(): textureless drawing mode not supported in OpenGL ES";
-        #else
-            // this is slower than the typical draw method based on textures
-            // but useful when dealing with threads GL textures often don't work
-            ofLogNotice("ofxCvImage") << "draw(): using textureless drawing mode";
-            ofLogNotice("ofxCvImage") << "draw(): drawing is slower, aligned to the window, & does not support rotation";
-
-            if( x == 0) {
-                ofLogNotice("ofxCvImage") << "draw(): x position cannot be 0 in textureless drawing mode, setting to 0.01";
-				x += 0.01;
-            }
-
-            if(bAnchorIsPct){
-                x -= anchor.x * w;
-                y -= anchor.y * h;
-            }else{
-                x -= anchor.x;
-                y -= anchor.y;
-            }
-
-            glRasterPos2f( x, y+h );
-
-            IplImage* tempImg;
-            tempImg = cvCreateImage( cvSize((int)w, (int)h), ipldepth, iplchannels );
-            cvResize( cvImage, tempImg, CV_INTER_NN );
-            cvFlip( tempImg, tempImg, 0 );
-            glDrawPixels( tempImg->width, tempImg->height ,
-                          glchannels, gldepth, tempImg->imageData );
-            cvReleaseImage( &tempImg );
-        #endif
     }
 }
 
@@ -479,17 +447,11 @@ void ofxCvImage::drawROI( float x, float y, float w, float h ) const {
     if( bUseTexture ) {
         ofRectangle roi = getROI();
         if( bTextureDirty ) {
-            if(tex.getWidth() != roi.width || tex.getHeight() != roi.height) {
-                //ROI was changed
-                // reallocating texture - this could be faster with ROI support
-                tex.clear();
-                tex.allocate( (int)roi.width, (int)roi.height, glchannels );
-            }
             tex.loadData( getRoiPixels() );
             bTextureDirty = false;
         }
 
-        tex.draw(x,y, w,h);
+        tex.drawSubsection(x,y, w,h,0,0,roi.width,roi.height);
 
     } else {
         ofLogError("ofxCvImage") << "drawROI(): textureless drawing mode not implemented";
@@ -687,7 +649,9 @@ void ofxCvImage::undistort( float radialDistX, float radialDistY,
 	}							
     float camIntrinsics[] = { focalX, 0, centerX, 0, focalY, centerY, 0, 0, 1 };
     float distortionCoeffs[] = { radialDistX, radialDistY, tangentDistX, tangentDistY };
-    cvUnDistortOnce( cvImage, cvImageTemp, camIntrinsics, distortionCoeffs, 1 );
+	CvMat _a = cvMat( 3, 3, CV_32F, (void*)camIntrinsics );
+    CvMat _k = cvMat( 4, 1, CV_32F, (void*)distortionCoeffs );
+    cvUndistort2( cvImage, cvImageTemp, &_a, &_k, 0 );
 	swapTemp();
     flagImageChanged();
 }
@@ -745,7 +709,7 @@ void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B, const ofPo
     cvsrc[3].x = D.x;
     cvsrc[3].y = D.y;
 
-    cvWarpPerspectiveQMatrix( cvsrc, cvdst, translate );  // calculate homography
+    cvGetPerspectiveTransform( cvsrc, cvdst, translate );  // calculate homography
     cvWarpPerspective( cvImage, cvImageTemp, translate );
     swapTemp();
     flagImageChanged();
@@ -780,7 +744,7 @@ void ofxCvImage::warpIntoMe( ofxCvImage& mom, const ofPoint src[4], const ofPoin
     		cvdst[i].x = dst[i].x;
     		cvdst[i].y = dst[i].y;
     	}
-    	cvWarpPerspectiveQMatrix( cvsrc, cvdst, translate );  // calculate homography
+    	cvGetPerspectiveTransform( cvsrc, cvdst, translate );  // calculate homography
     	cvWarpPerspective( mom.getCvImage(), cvImage, translate);
         flagImageChanged();
     	cvReleaseMat( &translate );

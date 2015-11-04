@@ -150,20 +150,20 @@ void ofMaterial::updateMaterial(const ofShader & shader,ofGLProgrammableRenderer
 void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
 	for(size_t i=0;i<ofLightsData().size();i++){
 		string idx = ofToString(i);
-		if(ofLightsData()[i].expired() || !ofLightsData()[i].lock()->isEnabled){
+		shared_ptr<ofLight::Data> light = ofLightsData()[i].lock();
+		if(!light || !light->isEnabled){
 			shader.setUniform1f("lights["+idx+"].enabled",0);
 			continue;
 		}
-		shared_ptr<ofLight::Data> light = ofLightsData()[i].lock();
 		ofVec4f lightEyePosition = light->position * renderer.getCurrentViewMatrix();
 		shader.setUniform1f("lights["+idx+"].enabled",1);
 		shader.setUniform1f("lights["+idx+"].type", light->lightType);
-		shader.setUniform4fv("lights["+idx+"].position", &lightEyePosition.x);
-		shader.setUniform4fv("lights["+idx+"].ambient", &light->ambientColor.r);
-		shader.setUniform4fv("lights["+idx+"].specular", &light->specularColor.r);
-		shader.setUniform4fv("lights["+idx+"].diffuse", &light->diffuseColor.r);
+		shader.setUniform4f("lights["+idx+"].position", lightEyePosition);
+		shader.setUniform4f("lights["+idx+"].ambient", light->ambientColor);
+		shader.setUniform4f("lights["+idx+"].specular", light->specularColor);
+		shader.setUniform4f("lights["+idx+"].diffuse", light->diffuseColor);
 
-		if(light->lightType==OF_LIGHT_POINT || light->lightType==OF_LIGHT_AREA){
+		if(light->lightType!=OF_LIGHT_DIRECTIONAL){
 			shader.setUniform1f("lights["+idx+"].constantAttenuation", light->attenuation_constant);
 			shader.setUniform1f("lights["+idx+"].linearAttenuation", light->attenuation_linear);
 			shader.setUniform1f("lights["+idx+"].quadraticAttenuation", light->attenuation_quadratic);
@@ -173,34 +173,31 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			ofVec3f direction = light->position + light->direction;
 			direction = direction * renderer.getCurrentViewMatrix();
 			direction = direction - lightEyePosition;
-			shader.setUniform3fv("lights["+idx+"].spotDirection", &direction.x);
+			shader.setUniform3f("lights["+idx+"].spotDirection", direction.normalize());
 			shader.setUniform1f("lights["+idx+"].spotExponent", light->exponent);
 			shader.setUniform1f("lights["+idx+"].spotCutoff", light->spotCutOff);
 			shader.setUniform1f("lights["+idx+"].spotCosCutoff", cos(ofDegToRad(light->spotCutOff)));
 		}else if(light->lightType==OF_LIGHT_DIRECTIONAL){
 			ofVec3f halfVector = (ofVec3f(0,0,1) + lightEyePosition).getNormalized();
-			shader.setUniform3fv("lights["+idx+"].halfVector", &halfVector.x);
+			shader.setUniform3f("lights["+idx+"].halfVector", halfVector);
 		}else if(light->lightType==OF_LIGHT_AREA){
 			shader.setUniform1f("lights["+idx+"].width", light->width);
 			shader.setUniform1f("lights["+idx+"].height", light->height);
 			ofVec3f direction = light->position + light->direction;
 			direction = direction * renderer.getCurrentViewMatrix();
 			direction = direction - lightEyePosition;
+			shader.setUniform3f("lights["+idx+"].spotDirection", direction.normalize());
 			ofVec3f right = light->position + light->right;
 			right = right * renderer.getCurrentViewMatrix();
 			right = right - lightEyePosition;
 			ofVec3f up = right.getCrossed(direction);
-			shader.setUniform3fv("lights["+idx+"].spotDirection", &direction.x);
-			shader.setUniform3fv("lights["+idx+"].right", &right.x);
-			shader.setUniform3fv("lights["+idx+"].up", &up.x);
+			shader.setUniform3f("lights["+idx+"].right", right.normalize());
+			shader.setUniform3f("lights["+idx+"].up", up.normalize());
 		}
 	}
 }
 
-#define STRINGIFY(x) #x
-
-static const string vertexShader = STRINGIFY(
-	OUT vec4 outColor; // this is the ultimate color for this vertex
+static const string vertexShader = R"(
 	OUT vec2 outtexcoord; // pass the texCoord if needed
 	OUT vec3 transformedNormal;
 	OUT vec3 eyePosition3;
@@ -219,7 +216,6 @@ static const string vertexShader = STRINGIFY(
 
 
 	void main (void){
-		float alphaFade = 1.0;
 		vec4 eyePosition = modelViewMatrix * position;
 		vec3 tempNormal = (normalMatrix * normal).xyz;
 		transformedNormal = normalize(tempNormal);
@@ -228,15 +224,13 @@ static const string vertexShader = STRINGIFY(
 		outtexcoord = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
 		gl_Position = modelViewProjectionMatrix * position;
 	}
-);
+)";
 
 
-static const string fragmentShader = STRINGIFY(
-	IN vec4 outColor; // this is the ultimate color for this vertex
+static const string fragmentShader = R"(
 	IN vec2 outtexcoord; // pass the texCoord if needed
 	IN vec3 transformedNormal;
 	// Eye-coordinate position of vertex
-	IN vec4 eyePosition;
 	IN vec3 eyePosition3;
 
 
@@ -308,23 +302,28 @@ static const string fragmentShader = STRINGIFY(
 		// Normalize the vector from surface to light position
 		VP = normalize(VP);
 		halfVector = normalize(VP + eye);
-
-		nDotVP = max(0.0, dot(normal, VP));
 		nDotHV = max(0.0, dot(normal, halfVector));
+		nDotVP = max(0.0, dot(normal, VP));
 
-		// ha! no branching :)
-		// fresnel factor, produces artifacts on spot lights
-		// http://en.wikibooks.org/wiki/GLSL_Programming/Unity/Specular_Highlights_at_Silhouettes
-		/*float w = pow(1.0 - max(0.0, dot(halfVector, VP)), 5.0);
-		vec3 specularReflection = attenuation * vec3(light.specular.rgb)
-		  * mix(vec3(mat_specular.rgb), vec3(1.0), w)
-		  * pow(nDotHV, mat_shininess);
-		specular += mix(vec3(0.0), specularReflection, step(0.0000001, nDotVP));*/
-		pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
 
 		ambient += light.ambient.rgb * attenuation;
 		diffuse += light.diffuse.rgb * nDotVP * attenuation;
+#ifndef TARGET_OPENGLES
+#define SPECULAR_REFLECTION
+#endif
+#ifndef SPECULAR_REFLECTION
+		// ha! no branching :)
+		pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
 		specular += light.specular.rgb * pf * nDotVP * attenuation;
+#else
+		// fresnel factor
+		// http://en.wikibooks.org/wiki/GLSL_Programming/Unity/Specular_Highlights_at_Silhouettes
+		float w = pow(1.0 - max(0.0, dot(halfVector, VP)), 5.0);
+		vec3 specularReflection = attenuation * vec3(light.specular.rgb)
+		  * mix(vec3(mat_specular.rgb), vec3(1.0), w)
+		  * pow(nDotHV, mat_shininess);
+		specular += mix(vec3(0.0), specularReflection, step(0.0000001, nDotVP));
+#endif
 	}
 
 	void directionalLight(in lightData light, in vec3 normal, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
@@ -343,25 +342,26 @@ static const string fragmentShader = STRINGIFY(
 	}
 
 	void spotLight(in lightData light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
-		float nDotVP;// = max(dot(normal,normalize(vec3(light.position))),0.0);
+		float nDotVP; // = max(dot(normal,normalize(vec3(light.position))),0.0);
 		float nDotHV;       // normal . light half vector
 		float pf;
 		float d;            // distance from surface to light source
 		vec3  VP;           // direction from surface to light position
 		vec3 eye = vec3 (0.0, 0.0, 1.0);
 		float spotEffect;
-		float attenuation;
+		float attenuation=1.0;
 		vec3  halfVector;   // direction of maximum highlights
 		// Compute vector from surface to light position
-		VP = vec3 (light.position.xyz) - ecPosition3;
-		spotEffect = dot(normalize(light.spotDirection), -normalize(VP));
+		VP = light.position.xyz - ecPosition3;
+		spotEffect = dot(light.spotDirection, -normalize(VP));
 
 		if (spotEffect > light.spotCosCutoff) {
 			// Compute distance between surface and light position
 			d = length(VP);
 			spotEffect = pow(spotEffect, light.spotExponent);
-			attenuation = spotEffect / d;
+			attenuation = spotEffect / (light.constantAttenuation + light.linearAttenuation * d + light.quadraticAttenuation * d * d);
 
+			VP = normalize(VP);
 			halfVector = normalize(VP + eye);
 			nDotHV = max(0.0, dot(normal, halfVector));
 			nDotVP = max(0.0, dot(normal, VP));
@@ -370,9 +370,11 @@ static const string fragmentShader = STRINGIFY(
 
 			diffuse += light.diffuse.rgb * nDotVP * attenuation;
 			specular += light.specular.rgb * pf * nDotVP * attenuation;
+
 		}
 
 		ambient += light.ambient.rgb * attenuation;
+
 	}
 
 
@@ -385,9 +387,9 @@ static const string fragmentShader = STRINGIFY(
 	}
 
 	void areaLight(in lightData light, in vec3 N, in vec3 V, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
-		vec3 right = normalize(light.right);
-		vec3 pnormal = normalize(light.spotDirection);
-		vec3 up = normalize(light.up);
+		vec3 right = light.right;
+		vec3 pnormal = light.spotDirection;
+		vec3 up = light.up;
 
 		//width and height of the area light:
 		float width = light.width*0.5;
@@ -455,15 +457,15 @@ static const string fragmentShader = STRINGIFY(
 
 		////////////////////////////////////////////////////////////
 		// now add the material info
-		\n#ifdef HAS_TEXTURE\n
+		#ifdef HAS_TEXTURE
 			vec4 tex = TEXTURE(tex0, outtexcoord);
 			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * tex + vec4(specular,1.0) * mat_specular + mat_emissive;
-		\n#else\n
+		#else
 			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * mat_diffuse + vec4(specular,1.0) * mat_specular + mat_emissive;
-		\n#endif\n
+		#endif
 		FRAG_COLOR = clamp( localColor, 0.0, 1.0 );
 	}
-);
+)";
 
 
 static string shaderHeader(string header, int maxLights, bool hasTexture){

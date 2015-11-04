@@ -6,15 +6,17 @@ openFrameworks is a C++ toolkit for creative coding.
 
 Getting started
 ---------------
-* [Android](android.md) — A guide to install on Android environment.
-* [Linux](linux.md) — A guide to install on Linux environment.
-* [OS X](osx.md) — A guide to install on OS X environment.
-* [Code::Block](codeblocks.md) — A guide to configure Code::Block on Windows environment.
-* [Visual Studio](visualstudio.md) — A guide to configure Visual Studio on Windows environment.
+* [Android Eclipse](android_eclipse.md) — A guide to install for Android using the Eclipse IDE.
+* [Android Studio](android_studio.md) - A guide to install for Android Studio IDE.
+* [Linux](linux.md) — A guide to install on Linux.
+* [OS X](osx.md) — A guide to install on OS X.
+* [Code::Block](codeblocks.md) — A guide to configure Code::Block on Windows.
+* [Visual Studio](visualstudio.md) — A guide to configure Visual Studio on Windows.
+* [MSYS2](msys2.md) — A guide to install on Windows using MSYS2.
 
 Usage
 -----
-* [Examples and Apps](apps.md) — An introduction to making use of openFrameworks core.
+* [Examples and Apps](apps.md) — An introduction to openFrameworks.
 * [projectGenerator](projectgenerator.md) — Usage of the tool to generate projects.
 
 About
@@ -24,4 +26,6 @@ About
 
 More
 ----
-* [Wiki](http://wiki.openframeworks.cc) — Going further with openFrameworks.
+* [Reference](http://openframeworks.cc/documentation) — openFrameworks reference.
+* [Tutorials](http://openframeworks.cc/tutorials) — openFrameworks tutorials.
+* [Forum](http://forum.openframeworks.cc) — The openFrameworks forum.

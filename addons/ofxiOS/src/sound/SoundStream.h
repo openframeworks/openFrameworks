@@ -5,6 +5,8 @@
 //
 //
 
+#pragma once
+
 #import <UIKit/UIKit.h>
 #import <AudioToolbox/AudioToolbox.h>
 

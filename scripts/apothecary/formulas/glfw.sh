@@ -6,7 +6,7 @@
 #
 # uses a CMake build system
 
-FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "msys2" "ios" "android" )
 
 # define the version
 VER=3.0.4
@@ -50,7 +50,7 @@ function build() {
 			cmake .. -G "Visual Studio $VS_VER Win64"
 			vs-build "GLFW.sln" Build "Release|x64"
 		fi
-	elif [ "$TYPE" == "win_cb" ]; then
+	elif [ "$TYPE" == "msys2" ]; then
 	
 		# *nix build system
 		cmake . -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=$BUILD_ROOT_DIR \
@@ -58,7 +58,7 @@ function build() {
 				-DGLFW_BUILD_TESTS=OFF \
 				-DGLFW_BUILD_EXAMPLES=OFF \
 				-DBUILD_SHARED_LIBS=OFF \
-				-DCMAKE_C_COMPILER=/mingw32/bin/clang.exe
+				-DCMAKE_C_COMPILER=/mingw32/bin/gcc.exe
 
  		make -j${PARALLEL_MAKE}
  		make install

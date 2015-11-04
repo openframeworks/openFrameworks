@@ -122,19 +122,33 @@ static const NSString * ItemStatusContext;
 	// destroy player
 	if(self.player != nil) {
 		[_player removeObserver:self forKeyPath:kRateKey];
-		
 		self.player = nil;
 		[_player release];
 	}
-	
+
 #if USE_VIDEO_OUTPUT
 	if (self.videoOutput != nil) {
 		self.videoOutput = nil;
 	}
-	
 	dispatch_release(_myVideoOutputQueue);
+
 #endif
-	
+
+	if(self.assetReaderVideoTrackOutput != nil) {
+		self.assetReaderVideoTrackOutput = nil;
+	}
+
+	if(self.assetReader != nil) {
+		[self.assetReader cancelReading];
+		self.assetReader = nil;
+		self.assetReaderVideoTrackOutput = nil;
+		self.assetReaderAudioTrackOutput = nil;
+	}
+
+	if(self.asset != nil) {
+		self.asset = nil;
+	}
+
 	[super dealloc];
 }
 
@@ -252,11 +266,13 @@ static const NSString * ItemStatusContext;
 										   name:AVPlayerItemDidPlayToEndTimeNotification
 										 object:self.playerItem];
 				
-				
+				//AVPlayerItemPlaybackStalledNotification only exists from OS X 10.9 or iOS 6.0 and up
+				#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1090) || (__IPHONE_OS_VERSION_MIN_REQUIRED >= 60000)
 				[notificationCenter addObserver:self
 									   selector:@selector(playerItemDidStall)
 										   name:AVPlayerItemPlaybackStalledNotification
 										 object:self.playerItem];
+				#endif 
 				
 #if USE_VIDEO_OUTPUT
 				// safety
@@ -464,9 +480,13 @@ static const NSString * ItemStatusContext;
 		[notificationCenter removeObserver:self
 									  name:AVPlayerItemDidPlayToEndTimeNotification
 									object:self.playerItem];
+		
+		//AVPlayerItemPlaybackStalledNotification only exists from OS X 10.9 or iOS 6.0 and up
+		#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1090) || (__IPHONE_OS_VERSION_MIN_REQUIRED >= 60000)
 		[notificationCenter removeObserver:self
 									  name:AVPlayerItemPlaybackStalledNotification
 									object:self.playerItem];
+		#endif
 		
 		self.playerItem = nil;
 	}
@@ -656,6 +676,9 @@ static const NSString * ItemStatusContext;
 			bNewFrame = NO;
 			return;
 		}
+		
+		// release temp buffer
+		CVBufferRelease(buffer);
 		
 		videoSampleTime = time;
 		
@@ -872,7 +895,7 @@ static const NSString * ItemStatusContext;
 	if (frames < 0) {
 
 		double timeSec = CMTimeGetSeconds(currentTime) - (1.0/frameRate);
-		[self seekToTime:CMTimeMakeWithSeconds(timeSec, NSEC_PER_SEC)];
+		[self seekToTime:CMTimeMakeWithSeconds(timeSec, NSEC_PER_SEC) withTolerance:kCMTimeZero];
 		
 	} else if (![self isFinished] && frames > 0) {
 
