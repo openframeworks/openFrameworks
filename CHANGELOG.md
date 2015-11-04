@@ -213,20 +213,44 @@ PLATFORM SPECIFIC
 
 CORE ADDONS
 -----------
-### ofxOpenCV
-	/ updated ofxCvHaarFinder to not use textures on internal image objects, allowing for usage within threads.
-
-### ofxSynth
-    - Removed, see ofxMaxim for a replacement (https://github.com/micknoise/Maximilian)
-
-### ofxKinect
-    / Bugfix for kinects not keeping their IDs when using multiple kinects.
 
 ### ofx3DModelLoader
-    - Removed, ofxAssimpModelLoader already loads 3D studio models and it was using some really old gl calls
+	- removed as it was using some really old gl calls and ofxAssimpModelLoader already loads 3D studio models
 
 ### ofxAssimpModelLoader
-    / Updated to assimp 3
+	/ Updated to assimp 3
+
+### ofxGui
+	+ extendent ofxBaseGui
+
+### ofxiOSVideoPlayer
+	/ API update
+	/ ofxButton::valueChanged() includes sender
+
+### ofxKinect
+	/ Bugfix for kinects not keeping their IDs when using multiple kinects
+	+ 64bit updates for Microsoft Windows
+
+### ofxNetwork
+	+ peek() to look into sockets
+
+### ofxOpenCV
+	/ updated ofxCvHaarFinder to not use textures on internal image objects, allowing for usage within threads.
+	/ removed OpenCV binary libraries, installation moved to Linux package managers
+	/ OpenCV updated to 2.4.9
+
+### ofxSynth
+	- Removed, see ofxMaxim for a replacement (https://github.com/micknoise/Maximilian)
+
+### ofxTCPManager
+	+ timeout after 5 seconds by default
+	/ using std mutexes to lock
+
+### ofxUDPManager
+	/ updated error logging
+
+### ofxMultiTouch
+	- Removed - functionality provided by core events
 
 PROJECT GENERATOR
 -----------------
