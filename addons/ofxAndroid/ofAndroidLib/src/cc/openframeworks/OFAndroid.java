@@ -1027,7 +1027,7 @@ public class OFAndroid {
             System.loadLibrary("OFAndroidApp_x86");
         }
         catch(Throwable ex)	{
-            Log.i("OF","failed x86 loading, trying neon detection",e);
+            Log.i("OF","failed x86 loading, trying neon detection",ex);
             
             try{
                 System.loadLibrary("neondetection");
@@ -1039,8 +1039,8 @@ public class OFAndroid {
                     Log.i("OF","loading not-neon optimized library");
                     System.loadLibrary("OFAndroidApp");
                 }
-            }catch(Throwable e){
-                Log.i("OF","failed neon detection, loading not-neon library",e);
+            }catch(Throwable ex2){
+                Log.i("OF","failed neon detection, loading not-neon library",ex2);
                 System.loadLibrary("OFAndroidApp");
             }
         }

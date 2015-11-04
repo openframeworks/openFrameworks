@@ -25,11 +25,11 @@ You are now ready to install openFrameworks.
 Installing openFrameworks
 -------------------------
 
-Download and unzip the win_cb version of oF.
+Download and unzip the msys2 version of oF.
 
 Open an MSYS shell and install OF dependencies:
 
-    cd your_oF_directory/scripts/win_cb/msys2
+    cd your_oF_directory/scripts/msys2
     ./install_dependencies.sh`
 	
 Open an **MINGW32** shell and compile oF libraries:
