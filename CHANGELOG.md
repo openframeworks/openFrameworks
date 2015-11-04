@@ -7,6 +7,32 @@ OF 0.9.0
           / modified
 
 ------------------------------------------------------------------------------
+GENERAL
+-------
+
++ added a new Project Generator
++ added CODE_OF_CONDUCT.md based on the Contributor Covenant and Berlin Code of Conduct, iteratively refined through group discussion
+/ fixed many typos, warnings related to unused variables, memory leaks, implicit conversions, types, duplicated and missing definitions.
+/ promoted many methods to const-correctness
++ added automated testing on several OSes via travis-ci.org
+/ Poco updated to 1.6
+/ Freetype updated to 2.5.5
+/ FreeImage updated to 3.17
+/ OpenSSL updated to 1.01j
+- removed internal use of deprecated methods and unnecessary code
+/ moving towards C++11
+- removed ofThreadLogger
+- Makefile enforces recompilation when flags change
+/ many examples fixed/adjusted to new code base
++ Apothecary received a lot of fixes and updates to adjust to the new codebase
++ more and better logging
++ added defined, but not implemented functions
++ more documentation and some fixes
++ support for semantic versioning
++ higher precision and monotonic timers
++ added (some) basic unit tests
++ allow passing -j to compileOF.sh for parallel compilation
++ QtCreator project files and wizard added
 
 CORE
 ----
