@@ -1,5 +1,5 @@
 #!/bin/bash
-# $1 -> platform: win_cb, linux, linux64, vs, osx, ios, all
+# $1 -> platform: msys2, linux, linux64, vs, osx, ios, all
 # $2 -> version number: 006
 #
 # This script removes folders clones the openFrameworks repo 
@@ -28,11 +28,11 @@ PG_BRANCH=master
 
 hostArch=`uname`
 
-if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ]; then
+if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
-    echo win_cb, linux, linux64, linuxarmv6l, linuxarmv7l, vs, osx, android, ios, all
+    echo msys2, linux, linux64, linuxarmv6l, linuxarmv7l, vs, osx, android, ios, all
     exit 1
 fi
 
@@ -40,7 +40,7 @@ if [ "$version" == "" ]; then
     echo usage: 
     echo ./create_package.sh platform version [branch]
     echo platform:
-    echo win_cb, linux, linux64, vs, osx, android, ios, all
+    echo msys2, linux, linux64, vs, osx, android, ios, all
     echo 
     echo branch:
     echo master, stable
@@ -129,7 +129,7 @@ function deleteEclipse {
 
 
 function createProjectFiles {
-    if [ "$pkg_platform" != "android" ]; then
+    if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
         cd ${main_ofroot}/apps/projectGenerator
         git pull origin master
         cd commandLine
@@ -138,6 +138,13 @@ function createProjectFiles {
         cd ${pkg_ofroot}
         echo "Creating project files for $pkg_platform"
         ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pkg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
+    elif [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
+        for example_group in $pkg_ofroot/examples/*; do
+            for example in $example_group/*; do
+                cp $pkg_ofroot/scripts/templates/linux/Makefile $example/
+                cp $pkg_ofroot/scripts/templates/linux/config.make $example/
+            done
+        done
     fi
     cd ${pkg_ofroot}
 }
@@ -158,7 +165,7 @@ function createPackage {
     rm -r $pkg_ofroot/apps/devApps
     
     #remove projectGenerator folder
-    if [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "win_cb" ]; then
+    if [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "msys2" ]; then
     	rm -rf $pkg_ofroot/apps/projectGenerator
     fi
 
@@ -235,7 +242,7 @@ function createPackage {
         rm -Rf utils/fileOpenSaveDialogExample
 	fi
 	
-	if [ "$pkg_platform" == "win_cb" ] || [ "$pkg_platform" == "vs" ]; then
+	if [ "$pkg_platform" == "msys2" ] || [ "$pkg_platform" == "vs" ]; then
 	    rm -Rf video/osxHighPerformanceVideoPlayerExample
 	    rm -Rf video/osxVideoRecorderExample
 	    rm -Rf gles
@@ -260,39 +267,39 @@ function createPackage {
 
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 linuxarmv6l linuxarmv7l osx win_cb vs ios android"
+        otherplatforms="linux64 linuxarmv6l linuxarmv7l osx msys2 vs ios android"
     fi
 
     if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux linuxarmv6l linuxarmv7l osx win_cb vs ios android"
+        otherplatforms="linux linuxarmv6l linuxarmv7l osx msys2 vs ios android"
     fi
 
     if [ "$pkg_platform" = "linuxarmv6l" ]; then
-        otherplatforms="linux64 linux linuxarmv7l osx win_cb vs ios android"
+        otherplatforms="linux64 linux linuxarmv7l osx msys2 vs ios android"
     fi
     
     if [ "$pkg_platform" = "linuxarmv7l" ]; then
-        otherplatforms="linux64 linux linuxarmv6l osx win_cb vs ios android"
+        otherplatforms="linux64 linux linuxarmv6l osx msys2 vs ios android"
     fi
     
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l win_cb vs ios android"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs ios android"
     fi
 
-    if [ "$pkg_platform" = "win_cb" ]; then
+    if [ "$pkg_platform" = "msys2" ]; then
         otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs ios android"
     fi
 
     if [ "$pkg_platform" = "vs" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx win_cb ios android"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 ios android"
     fi
 
     if [ "$pkg_platform" = "ios" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l win_cb vs android"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs android"
     fi
 
     if [ "$pkg_platform" = "android" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx win_cb vs ios"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 vs ios"
     fi
     
     
@@ -384,7 +391,7 @@ function createPackage {
         rm -Rf $libsnotinmac
     elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
         rm -Rf $libsnotinlinux
-    elif [ "$pkg_platform" = "win_cb" ]; then
+    elif [ "$pkg_platform" = "msys2" ]; then
         rm -Rf $libsnotinmingw
     elif [ "$pkg_platform" = "vs" ]; then
         rm -Rf $libsnotinvs
@@ -485,7 +492,7 @@ function createPackage {
 	if [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
     	rm -Rf $otherplatforms
 	else
-    	rm -Rf win_cb vs osx ios
+    	rm -Rf msys2 vs osx ios
 	fi
 	
     #delete omap4 scripts for non armv7l
@@ -528,7 +535,7 @@ function createPackage {
         cp docs/visualstudio.md INSTALL.md
     fi
     
-    if [ "$platform" = "win_cb" ]; then
+    if [ "$platform" = "msys2" ]; then
         cp docs/codeblocks.md INSTALL.md
     fi
     
