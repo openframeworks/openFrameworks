@@ -31,7 +31,6 @@ GENERAL
 + support for semantic versioning
 + higher precision and monotonic timers
 + added (some) basic unit tests
-+ allow passing -j to compileOF.sh for parallel compilation
 + QtCreator project files and wizard added
 
 
@@ -163,29 +162,54 @@ PLATFORM SPECIFIC
 -----------------
 
 ### Emscripten
-	+ New platform!
+	+ new platform!
+	/ Raspberry Pi 2 is now default ARMv7 variant
 
 ### ofxiOS
-	+ xcode 6.0 updates
+	+ Xcode 6.0 updates
 	+ deployment target moved up to iOS 5.1.1
+	+ iOS ARM64 C++11 support
+	/ tab-indentation specified in the openFrameworks Xcode project (ofApp is still user-specified)
+	/ AVSoundPlayer now uses shared audio session to better cooperate with AVFoundationVideoPlayer
+	/ no longer calling ofReloadGLResources in ofxiOS
+	+ ofxiOSKeybaord exposes UITextField
+	+ added ofAppiOSWindow::Settings for controlling the app settings
+	/ replaced ofPtr with shared_ptr in ofxiOSVideoGrabber
+	- removed old target checks
+	+ adjusted scale factor for iPhone6 and iPhone6+
+	+ added simulator support iPhones
+	+ hint at using SDK 5.0 or later
 
-### android
-	+ fix camera stretching artifacts experienced on some devices when using 16:9
-	  aspect ratios
-	+ remove support for arm5 since no devices seem to have that cpu anymore and it
-	  was problematic with certain libraries
+### Android
+	+ fix camera stretching artifacts experienced on some devices when using 16:9 aspect ratios
+	+ support for Android Studio
+	+ remove support for ARM5 since no devices seem to have that cpu anymore and it was problematic with certain libraries
+	- removed statistics and globals
+	+ added multiwindow and touch support
+	+ added helper method ofCallStaticVoidJavaMethod()
+	/ better handling of video when app is paused
+	/ getTextureReference() refactored to getTexture()
+	+ added gradle.properties file
 
-### linux and arm linux
-	+ opencv libs are now installed in the system, rerun install_dependencies if you
-	  are having problems compiling projects that use opencv
-	+ allow passing -j<num_jobs> to compileOF.sh
+### Linux (incl. ARM)
+	+ allow passing -j<num_jobs> to compileOF.sh for parallel compilation
+	/ native package managers handle OpenCV libraries
+	/ adjusted Makefile for Raspberry Pi 2
 
-### windows
-	+ activated high precission timming to fix inaccurate fps calculations
+### Microsoft Windows
+	+ activated high precision timing to fix inaccurate fps calculations
+	/ multiprocessor compilation enabled by default
+	/ added support for Visual Studio 2015 and Windows 10
 
-### osx
-	/ moved system framework dependencies from Xcode project to CoreOF.xcconfig
+### OSX and iOS
+	/ moved ofApp system framework dependencies from Xcode project to CoreOF.xcconfig
 	/ removed GLUT from project template, see libs/glut/lib/osx if you need GLUT
+	/ tab-indentation specified in the openFrameworks Xcode project (ofApp is still user-specified)
+	/ use robocopy instead of xcopy in the post-build step to minimize file transfers
+	+ 10.8+ support
+	/ empty clipboard doesn’t crash anymore
+	/ compilation via Makefile also works without Xcode
+	/ unified AVFoundation video player
 
 CORE ADDONS
 -----------
