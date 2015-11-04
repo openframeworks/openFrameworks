@@ -108,7 +108,7 @@ endif
 TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 
 DATA_FILES = $(shell find bin/data -type f 2>/dev/null)
-RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
+RESNAME=ofdataresources
 RESFILE=$(RESNAME).zip
 
 ifeq ($(ABI),armv7)
@@ -131,8 +131,8 @@ endif
 
 ifeq ($(ABI),x86)
 	ABI_PATH = x86
-	PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
-	PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
+    PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_x86.so
+    PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_x86.so
 endif
 
 PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/$(ABI)/libopenFrameworks.a

@@ -6,7 +6,7 @@
 #
 # an autotools project
 
-FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" "emscripten" )
+FORMULA_TYPES=( "osx" "vs" "msys2" "ios" "android" "emscripten" )
 
 # define the version
 VER=2.5.5
@@ -92,7 +92,7 @@ function build() {
 		vs-build "freetype.vcxproj" Build "Release|x64"
 		cd ../../../
 	
-	elif [ "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "msys2" ] ; then
 		# configure with arch
 		if [ $ARCH ==  32 ] ; then
 			./configure CFLAGS="-arch i386"
@@ -367,9 +367,9 @@ function copy() {
 		mkdir -p $1/lib/$TYPE/x64		
 		cp -v objs/vc2010/Win32/freetype$FVER.lib $1/lib/$TYPE/Win32/libfreetype.lib
 		cp -v objs/vc2010/x64/freetype$FVER.lib $1/lib/$TYPE/x64/libfreetype.lib
-	elif [ "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "msys2" ] ; then
 		# cp -v lib/$TYPE/libfreetype.a $1/lib/$TYPE/libfreetype.a
-		echoWarning "TODO: copy win_cb lib"
+		echoWarning "TODO: copy msys2 lib"
 	elif [ "$TYPE" == "android" ] ; then
 		cp -v build/$TYPE/armeabi-v7a/lib/libfreetype.a $1/lib/$TYPE/armeabi-v7a/libfreetype.a
 		cp -v build/$TYPE/x86/lib/libfreetype.a $1/lib/$TYPE/x86/libfreetype.a

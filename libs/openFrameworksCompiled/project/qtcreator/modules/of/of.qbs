@@ -27,7 +27,7 @@ Module{
                 throw(qbs.architecture + " not supported yet");
             }
         }else if(qbs.targetOS.contains("windows")){
-            return "win_cb";
+            return "msys2";
         }else if(qbs.targetOS.contains("osx")){
             return "osx";
         }else{
@@ -55,7 +55,7 @@ Module{
                 "boost",
                 "openFrameworksCompiled"
             ];
-        }else if(platform==="win_cb"){
+        }else if(platform==="msys2"){
             return [
                 "glew",
                 "cairo",
@@ -130,7 +130,7 @@ Module{
                 "boost_filesystem",
                 "boost_system",
             ];
-        }else if(platform === "win_cb"){
+        }else if(platform === "msys2"){
             return [
                 'opengl32', 'gdi32', 'msimg32', 'glu32', 'dsound', 'winmm', 'strmiids',
                 'uuid', 'ole32', 'oleaut32', 'setupapi', 'wsock32', 'ws2_32', 'Iphlpapi', 'Comdlg32',
@@ -140,7 +140,7 @@ Module{
     }
 
     readonly property stringList PKG_CONFIG_INCLUDES: {
-        if(platform.contains("linux") || platform === "win_cb"){
+        if(platform.contains("linux") || platform === "msys2"){
             return Helpers.pkgconfig(PKG_CONFIGS,["--cflags-only-I"]).map(function(element){
                 return element.substr(2).trim()
             });
@@ -150,7 +150,7 @@ Module{
     }
 
     readonly property stringList PKG_CONFIG_CFLAGS: {
-        if(platform.contains("linux") || platform === "win_cb"){
+        if(platform.contains("linux") || platform === "msys2"){
             return (Helpers.pkgconfig(PKG_CONFIGS,["--cflags-only-other"]));
         }else{
             return [];
@@ -158,7 +158,7 @@ Module{
     }
 
     readonly property stringList PKG_CONFIG_LDFLAGS: {
-        if(platform.contains("linux") || platform === "win_cb"){
+        if(platform.contains("linux") || platform === "msys2"){
             return (Helpers.pkgconfig(PKG_CONFIGS,["--libs"]));
         }else{
             return [];
@@ -178,7 +178,7 @@ Module{
         }
         includes.push(ofRoot+'/libs/poco/include');
         includes = includes.concat(PKG_CONFIG_INCLUDES);
-        if(platform === "win_cb"){
+        if(platform === "msys2"){
             includes.push(FileInfo.joinPaths(msys2root,'mingw32/include'));
             includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/cairo'));
             includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/glib-2.0'));
@@ -429,7 +429,7 @@ Module{
         .concat(cFlags)
 
     Properties{
-        condition: qbs.targetOS.contains("linux") || platform === "win_cb"
+        condition: qbs.targetOS.contains("linux") || platform === "msys2"
         cpp.cxxFlags: PKG_CONFIG_CFLAGS
             .concat(['-Wno-unused-parameter','-std=gnu++14'])
             .concat(ADDON_PKG_CONFIG_CFLAGS)
@@ -440,6 +440,7 @@ Module{
     Properties{
         condition: platform === "osx"
         cpp.cxxLanguageVersion: "c++11"
+        cpp.cxxStandardLibrary: "libc++"
 
         cpp.cxxFlags: PKG_CONFIG_CFLAGS
             .concat(['-Wno-unused-parameter'])
@@ -468,6 +469,11 @@ Module{
 
         cpp.installNamePrefix: "@rpath"
         cpp.rpath: "@executable_path/"
+    }
+
+    Properties{
+        condition: platform === "msys2"
+        cpp.cxxStandardLibrary: ""
     }
 
     Properties{
@@ -500,11 +506,6 @@ Module{
     Properties{
         condition: qbs.buildVariant.contains("release")
         cpp.defines: ['NDEBUG'].concat(DEFINES).concat(defines)
-    }
-
-    Properties{
-        condition: platform === "win_cb"
-        cpp.cxxStandardLibrary: ""
     }
 
     Group{

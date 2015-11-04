@@ -462,7 +462,9 @@ int ofAppGLFWWindow::getCurrentMonitor(){
 		glfwGetMonitorPos(monitors[iC], &xM, &yM);
 		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[iC]);
 		ofRectangle monitorRect(xM, yM, desktopMode->width, desktopMode->height);
-		if (monitorRect.inside(xW, yW)){
+		bool bPointMatch = xW >= monitorRect.getMinX() && yW >= monitorRect.getMinY() && xW < monitorRect.getMaxX() && yW < monitorRect.getMaxY();
+		//		if (monitorRect.inside(xW, yW)){
+		if( bPointMatch ) {
 			return iC;
 			break;
 		}
