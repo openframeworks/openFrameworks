@@ -19,14 +19,14 @@ notes: VM
 versions: iOS 5 - 8 (FAT Bundle with libc++ for all archs)
 
 architectures:
-  * armv7
-  * arm64
+  * ARMv7
+  * ARM64
   * i386
   * x86_64
 
 notes:
-  * armv7s removed since potential performance gains not worth the binary size increase, see #3423 for more discussion
-  * arm64 supported until Xcode 6 (OS X 10.9+)
+  * ARMv7s removed since potential performance gains not worth the binary size increase, see #3423 for more discussion
+  * ARM64 supported until Xcode 6 (OS X 10.9+)
   * Apple iOS store requires 64bit support and submission with Xcode 6+
 
 
@@ -37,8 +37,8 @@ versions: Debian, Arch, Ubuntu, Fedora
 architectures:
   * x86 (i386)
   * x86_64
-  * armv6l
-  * armv7l
+  * ARMv6l
+  * ARMv7l
 	
 # Microsoft Windows #
 
