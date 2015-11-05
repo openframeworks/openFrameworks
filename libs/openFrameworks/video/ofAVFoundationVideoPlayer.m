@@ -41,6 +41,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		_player = nil;
 		
 		asyncLock = [[NSLock alloc] init];
+		deallocCond = nil;
 		
 #if USE_VIDEO_OUTPUT
 		// create videooutput queue
@@ -115,6 +116,11 @@ static const void *PlayerRateContext = &ItemStatusContext;
 {
 	[asyncLock lock];
 	
+	// create a condition
+	deallocCond = [[NSCondition alloc] init];
+	[deallocCond lock];
+	
+	
 	// unload current video
 	[self unloadVideo];
 	
@@ -124,9 +130,14 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 	[asyncLock unlock];
 	
-	// release lock
+	// wait for unloadVideo to finish
+	[deallocCond wait];
+	[deallocCond unlock];
+	
+	// release locks
 	[asyncLock autorelease];
-
+	[deallocCond release];
+	
 	[super dealloc];
 }
 
@@ -366,7 +377,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 #pragma mark - unload video
 - (void)unloadVideo {
-	
+
 	bReady = NO;
 	bLoaded = NO;
 //	bPlayStateBeforeLoad = NO;
@@ -442,6 +453,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 		
 		@autoreleasepool {
+			
+			[asyncLock lock];
 			
 			// relase assetreader
 			if (currentReader != nil) {
@@ -531,8 +544,16 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				currentAudioSampleBuffer = nil;
 			}
 			
+			[asyncLock unlock];
+			
+			if (deallocCond != nil) {
+				[deallocCond lock];
+				[deallocCond signal];
+				[deallocCond unlock];
+			}
 		}
 	});
+	
 }
 
 
@@ -809,9 +830,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 	// get time from player
 	CMTime time = [_player currentTime];
-	
-//	NSLog(@"current time: %f", CMTimeGetSeconds(time));
-	
+
 	if ([self.videoOutput hasNewPixelBufferForItemTime:time]) {
 		
 		bNewFrame = YES;
@@ -931,7 +950,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			bNewFrame = NO;
 			return;
 		}
-
+		
 		[self createAssetReaderWithTimeRange:CMTimeRangeMake(currentTime, duration)];
 	}
 	
@@ -1313,7 +1332,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 }
 
 - (void)setSpeed:(float)value {
-	
 	if (!bSeeking && bWasPlayingBackwards && value > 0.0) {
 		// create assetReaders if we played backwards earlier
 		[self createAssetReaderWithTimeRange:CMTimeRangeMake(currentTime, duration)];
