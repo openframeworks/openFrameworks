@@ -28,7 +28,7 @@ ofAVFoundationPlayer::ofAVFoundationPlayer() {
 
 //--------------------------------------------------------------
 ofAVFoundationPlayer::~ofAVFoundationPlayer() {
-    close();
+    disposePlayer();
 }
 
 //--------------------------------------------------------------
@@ -61,27 +61,14 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 	}
 
 	bFrameNew = false;
+	bResetPixels = true;
+	bUpdatePixels = true;
+	bUpdateTexture = true;
 	
-	
-    // dispose videoplayer, clear pixels, clear texture
+    // reuse videoplayer
     if(videoPlayer != nullptr) {
-        
-//        pixels.clear();
-//        videoTexture.clear();
-//        
-//        // dispose videoplayer
-//        disposePlayer();
-//        
-//        if (_videoTextureRef != nullptr) {
-//            killTexture();
-//        }
-//        
-//        videoPlayer = nullptr;
-		
 		// use existing player
-		bool bLoaded = [videoPlayer loadWithURL:url async:bAsync];
-		return bLoaded;
-		
+		return [videoPlayer loadWithURL:url async:bAsync];
     }
 	
     // create a new player
@@ -90,10 +77,9 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 
     bool bLoaded = [videoPlayer loadWithURL:url async:bAsync];
 	
-    bResetPixels = true;
-    bUpdatePixels = true;
-    bUpdateTexture = true;
-
+	pixels.clear();
+	videoTexture.clear();
+	
     bool bCreateTextureCache = true;
     bCreateTextureCache = bCreateTextureCache && (bTextureCacheSupported == true);
     bCreateTextureCache = bCreateTextureCache && (_videoTextureCache == nullptr);
@@ -138,21 +124,35 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::disposePlayer() {
 	
-    if (videoPlayer == nullptr)
-        return;
+	if (videoPlayer != nullptr) {
 
-    // pause player, stop updates
-    [videoPlayer pause];
+		// clear pixels
+		pixels.clear();
+		videoTexture.clear();
+		
+		[videoPlayer pause];
+		
+		// dispose videoplayer
+		__block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
+		videoPlayer = nullptr;
+		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+			@autoreleasepool {
+				[currentPlayer autorelease];
+			}
+		});
 
-    // dispose videoplayer
-    __block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
+	}
+	
+	// in any case get rid of the textures
+	if(bTextureCacheSupported == true) {
+		killTextureCache();
+	}
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        
-        @autoreleasepool {
-            [currentPlayer autorelease];
-        }
-    });
+	
+	bFrameNew = false;
+	bResetPixels = false;
+	bUpdatePixels = false;
+	bUpdateTexture = false;
 }
 
 //--------------------------------------------------------------
@@ -160,17 +160,11 @@ void ofAVFoundationPlayer::close() {
     if(videoPlayer != nullptr) {
 		
         pixels.clear();
-        
         videoTexture.clear();
 
-        disposePlayer();
-
-        videoPlayer = nullptr;
-    }
-	
-    // in any case get rid of the textures
-    if(bTextureCacheSupported == true) {
-        killTextureCache();
+		[videoPlayer pause];
+		
+		[videoPlayer unloadVideo];
     }
 	
     bFrameNew = false;
@@ -243,7 +237,7 @@ void ofAVFoundationPlayer::draw(const ofRectangle & rect) {
 }
 
 void ofAVFoundationPlayer::draw(float x, float y, float w, float h) {
-    if(videoPlayer != nullptr) {
+    if(isLoaded()) {
         getTexturePtr()->draw(x, y, w, h);
     }
 }
@@ -362,7 +356,7 @@ ofPixels & ofAVFoundationPlayer::getPixels() {
 //--------------------------------------------------------------
 ofTexture * ofAVFoundationPlayer::getTexturePtr() {
     
-    if(isLoaded() == false) {
+    if(isLoaded() == false) {		
         return &videoTexture;
     }
     
