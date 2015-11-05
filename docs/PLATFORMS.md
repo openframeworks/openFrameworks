@@ -2,11 +2,11 @@ openFrameworks currently supports the following platforms:
 
 # Android #
 
-versions: ?
+versions: 2.2+
 
 architectures:
   * armeabi-v7a
-  * i386
+  * x86 (i686)
 
 
 # Emscripten #
@@ -35,20 +35,23 @@ notes:
 versions: Debian, Arch, Ubuntu, Fedora
 
 architectures:
-  * i386
+  * x86 (i386)
   * x86_64
   * armv6l
   * armv7l
 	
 # Microsoft Windows #
 
-versions: Win7 - Win8
+versions: Win7 - Win10
 
-architectures: ?
+architectures:
+  * x86
+  * x86_64
 
 notes:
-  * Visual Studio 2012 for i386
-  * MinGW / Codeblocks 12.11 for i386
+  * Visual Studio 2012 for x86
+  * Visual Studio 2015
+  * MinGW / Codeblocks 12.11 for x86
 
 
 # OS X #
