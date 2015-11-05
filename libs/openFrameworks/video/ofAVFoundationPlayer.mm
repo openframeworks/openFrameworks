@@ -43,7 +43,7 @@ bool ofAVFoundationPlayer::load(string name) {
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
-
+	
 	NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
 	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
 	
@@ -130,8 +130,6 @@ void ofAVFoundationPlayer::disposePlayer() {
 		pixels.clear();
 		videoTexture.clear();
 		
-		[videoPlayer pause];
-		
 		// dispose videoplayer
 		__block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
 		videoPlayer = nullptr;
@@ -161,8 +159,6 @@ void ofAVFoundationPlayer::close() {
 		
         pixels.clear();
         videoTexture.clear();
-
-		[videoPlayer pause];
 		
 		[videoPlayer unloadVideo];
     }
