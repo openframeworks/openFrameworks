@@ -306,7 +306,7 @@ public:
 
 	const ofMesh & getTessellation() const;
 
-	void simplify(float tolerance=0.3);
+	void simplify(float tolerance=0.3f);
 
 	void translate(const ofPoint & p);
 	void rotate(float az, const ofVec3f& axis );
@@ -315,6 +315,8 @@ public:
 	/// the ofPath contains. These changes are non-reversible, so for instance
 	/// scaling by 0,0 zeros out all data.
 	void scale(float x, float y);
+
+	void append(const ofPath & path);
 
 	/// \}
 	/// \name Path Mode

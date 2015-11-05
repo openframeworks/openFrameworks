@@ -99,10 +99,6 @@ public:
 
 	void setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNormal=false );
 
-	/// \cond INTERNAL
-	virtual ~ofMesh();
-	/// \endcond
-
 	/// \}
 	/// \name Mesh Mode
 	/// \{
@@ -140,8 +136,8 @@ public:
 	///	
 	///	![image of a simple cylinder](3d/cylinder.jpg)
   	///
-	static ofMesh cylinder(float radius, float height, int radiusSegments=12, 
-		int heightSegments=6, int numCapSegments=2, bool bCapped = true, 
+	static ofMesh cylinder(float radius, float height, int radiusSegments=12,
+		int heightSegments=6, int numCapSegments=2, bool bCapped = true,
 		ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
 
 	/// \brief A helper method that returns a cone made of triangles. 
@@ -278,7 +274,7 @@ public:
 	/// \brief Remove a normal.
 	void removeNormal(ofIndexType index);
 
-	/// \todo
+	/// \todo Documentation.
 	void setNormal(ofIndexType index, const ofVec3f& n);
 
 	/// \brief Remove all the normals.
@@ -314,7 +310,7 @@ public:
 	/// Use disableNormals() to turn normals off.
 	/// Normals are enabled by default when they are added to the mesh.
 	virtual void enableNormals();
-	/// \brief Disable mesh normals. 
+	/// \brief Disable mesh normals.
 	/// Use enableNormals() to turn normals back on.
 	virtual void disableNormals();
 	virtual bool usingNormals() const;
@@ -343,7 +339,8 @@ public:
 	/// \name Colors
 	/// \{
 
-	/// \brief \returns the color at the index in the colors vector.
+	/// \brief Get the color at the index in the colors vector.
+    /// \returns the color at the index in the colors vector.
 	ofFloatColor getColor(ofIndexType i) const;
 
 	/// \brief This adds a color to the mesh,

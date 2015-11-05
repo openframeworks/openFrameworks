@@ -90,11 +90,7 @@ ofFbo::Settings::Settings(std::shared_ptr<ofBaseGLRenderer> renderer) {
 	minFilter				= GL_LINEAR;
 	maxFilter				= GL_LINEAR;
 	numSamples				= 0;
-	if(renderer){
-		this->renderer = renderer;
-	}else{
-		this->renderer = ofGetGLRenderer();
-	}
+	this->renderer = renderer;
 }
 
 //--------------------------------------------------------------
@@ -455,7 +451,12 @@ void ofFbo::allocate(Settings _settings) {
 	if(!checkGLSupport()) return;
 
 	clear();
-	settings.renderer = _settings.renderer;
+	auto renderer = _settings.renderer.lock();
+	if(renderer){
+		settings.renderer = renderer;
+	}else{
+		settings.renderer = ofGetGLRenderer();
+	}
 
 	// check that passed values are correct
 	if(_settings.width <= 0 || _settings.height <= 0){
@@ -635,7 +636,11 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 		glRenderbufferStorageMultisample(GL_RENDERBUFFER, settings.numSamples, internalFormat, settings.width, settings.height);
 	}
 #else
-	glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, ofNextPow2(settings.width), ofNextPow2(settings.height));
+	if(ofGLSupportsNPOTTextures()){
+		glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, settings.width, settings.height);
+	}else{
+		glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, ofNextPow2(settings.width), ofNextPow2(settings.height));
+	}
 #endif
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachmentPoint, GL_RENDERBUFFER, buffer);
 	return buffer;

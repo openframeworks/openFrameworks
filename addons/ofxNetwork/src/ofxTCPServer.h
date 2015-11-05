@@ -16,9 +16,14 @@ class ofxTCPServer : public ofThread{
 
 		ofxTCPServer();
 		~ofxTCPServer();
+
+		// ofxTCPServer can't be copied to avoid problems with destruction
+		ofxTCPServer(const ofxTCPServer & mom) = delete;
+		ofxTCPServer & operator=(const ofxTCPServer & mom) = delete;
+
 		void setVerbose(bool _verbose);
 		bool setup(int _port, bool blocking = false);
-		void setMessageDelimiter(string delim);
+		void setMessageDelimiter(std::string delim);
 	
 		bool close();
 		bool disconnectClient(int clientID);
@@ -30,7 +35,7 @@ class ofxTCPServer : public ofThread{
 		bool isConnected();
 
 		int getClientPort(int clientID);
-		string getClientIP(int clientID);
+		std::string getClientIP(int clientID);
 
 		bool isClientConnected(int clientID);
 
@@ -38,8 +43,8 @@ class ofxTCPServer : public ofThread{
 		//is added to the end of the string which is
 		//used to indicate the end of the message to
 		//the receiver see: STR_END_MSG (ofTCPClient.h)
-		bool send(int clientID, string message);
-		bool sendToAll(string message);
+		bool send(int clientID, std::string message);
+		bool sendToAll(std::string message);
 
 
 		// same as send for binary data
@@ -65,7 +70,7 @@ class ofxTCPServer : public ofThread{
 		//eg: if you want to send "Hello World" from other
 		//software and want to receive it as a string
 		//sender should send "Hello World[/TCP]"
-		string receive(int clientID);
+		std::string receive(int clientID);
 
 		// same as receive for binary data
 		int receiveRawMsg(int clientID, char * receiveBytes,  int numBytes);
@@ -81,23 +86,19 @@ class ofxTCPServer : public ofThread{
 
 
 	private:
-		// private copy so this can't be copied to avoid problems with destruction
-		ofxTCPServer(const ofxTCPServer & mom){};
-		ofxTCPServer & operator=(const ofxTCPServer & mom){return *this;}
-
 		ofxTCPClient & getClient(int clientID);
 		bool isClientSetup(int clientID);
 
 		void threadedFunction();
 
 		ofxTCPManager			TCPServer;
-		map<int,ofPtr<ofxTCPClient> >	TCPConnections;
+		std::map<int,std::shared_ptr<ofxTCPClient> >	TCPConnections;
 		std::mutex					mConnectionsLock;
 
 		bool			connected;
-		string			str;
+		std::string			str;
 		int				idCount, port;
 		bool			bClientBlocking;
-		string			messageDelimiter;
+		std::string			messageDelimiter;
 
 };

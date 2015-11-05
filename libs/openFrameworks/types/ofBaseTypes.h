@@ -715,7 +715,7 @@ public:
 	/// \param z The z-coordinate of the box's origin.
 	/// \param width The width of the box.
 	/// \param height The height of the box.
-	/// \param height The depth of the box.
+	/// \param depth The depth of the box.
 	virtual void drawBox( float x, float y, float z, float width, float height, float depth) const;
 
 	/// \brief Draws a cube with the specified size, starting from the specified coordinates.
@@ -745,7 +745,7 @@ public:
 	/// \param position an ofPoint which contains the (x,y,z) coordinates for the box's reference corner.
 	/// \param width The width of the box.
 	/// \param height The height of the box.
-	/// \param height The depth of the box.
+	/// \param depth The depth of the box.
 	virtual void drawBox(const ofPoint& position, float width, float height, float depth) const;
 
 	/// \brief Draws a cube with the specified size, starting from the specified position.
@@ -776,7 +776,7 @@ public:
 	///
 	/// \param width The width of the box.
 	/// \param height The height of the box.
-	/// \param height The depth of the box.
+	/// \param depth The depth of the box.
 	virtual void drawBox( float width, float height, float depth ) const;
 
 	virtual void drawAxis(float size) const;
@@ -791,7 +791,7 @@ public:
 	using ofBaseRenderer::draw;
 	virtual void draw(const ofTexture & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
 	virtual void draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const=0;
-	virtual void drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const=0;
+	virtual void drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int offsetelements) const=0;
 	virtual void drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const=0;
 	virtual void drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const=0;
 	virtual void draw(const ofVboMesh & mesh, ofPolyRenderMode renderType) const=0;

@@ -8,47 +8,24 @@
 
 #define IS_OS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
 
-#define USE_VIDEO_OUTPUT (defined(MAC_OS_X_VERSION_10_8) || defined(iOS6))
+
 
 static NSString * const kTracksKey = @"tracks";
-static NSString * const kPlayableKey = @"playable";
 static NSString * const kStatusKey = @"status";
 static NSString * const kRateKey = @"rate";
-static NSString * const kCurrentItemKey = @"currentItem";
-
-@interface ofAVFoundationVideoPlayer ()
-{
-	AVAssetReader * _assetReader;
-	AVAssetReaderTrackOutput * _assetReaderVideoTrackOutput;
-	AVAssetReaderTrackOutput * _assetReaderAudioTrackOutput;
-	
-	CMVideoFormatDescriptionRef _videoInfo;
-	dispatch_queue_t _myVideoOutputQueue;
-}
-
-@property (nonatomic, retain) AVAssetReader * assetReader;
-@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderVideoTrackOutput;
-@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderAudioTrackOutput;
-
-#if USE_VIDEO_OUTPUT
-@property (nonatomic, retain) AVPlayerItemVideoOutput *videoOutput;
-#endif
-
-@end
-
-
 
 //---------------------------------------------------------- video player.
 @implementation ofAVFoundationVideoPlayer
 
 @synthesize player = _player;
+@synthesize asset = _asset;
 @synthesize playerItem = _playerItem;
 
 @synthesize assetReader = _assetReader;
 @synthesize assetReaderVideoTrackOutput = _assetReaderVideoTrackOutput;
 @synthesize assetReaderAudioTrackOutput = _assetReaderAudioTrackOutput;
 #if USE_VIDEO_OUTPUT
-@synthesize videoOutput;
+@synthesize videoOutput = _videoOutput;
 #endif
 
 
@@ -68,17 +45,17 @@ static const NSString * ItemStatusContext;
 					 context:nil];
 		
 		
+#if USE_VIDEO_OUTPUT
 		// create videooutput queue
 		_myVideoOutputQueue = dispatch_queue_create(NULL, NULL);
 		
-#if USE_VIDEO_OUTPUT
 		// create videooutput
 		[self createVideoOutput];
+		
+		_videoInfo = nil;
 #endif
 	
 		
-		
-		_videoInfo = nil;
 		timeObserver = nil;
 		
 		videoSampleBuffer = nil;
@@ -145,20 +122,33 @@ static const NSString * ItemStatusContext;
 	// destroy player
 	if(self.player != nil) {
 		[_player removeObserver:self forKeyPath:kRateKey];
-		
 		self.player = nil;
 		[_player release];
 	}
-	
+
 #if USE_VIDEO_OUTPUT
 	if (self.videoOutput != nil) {
 		self.videoOutput = nil;
 	}
-#endif
-	
-	
 	dispatch_release(_myVideoOutputQueue);
-	
+
+#endif
+
+	if(self.assetReaderVideoTrackOutput != nil) {
+		self.assetReaderVideoTrackOutput = nil;
+	}
+
+	if(self.assetReader != nil) {
+		[self.assetReader cancelReading];
+		self.assetReader = nil;
+		self.assetReaderVideoTrackOutput = nil;
+		self.assetReaderAudioTrackOutput = nil;
+	}
+
+	if(self.asset != nil) {
+		self.asset = nil;
+	}
+
 	[super dealloc];
 }
 
@@ -276,11 +266,13 @@ static const NSString * ItemStatusContext;
 										   name:AVPlayerItemDidPlayToEndTimeNotification
 										 object:self.playerItem];
 				
-				
+				//AVPlayerItemPlaybackStalledNotification only exists from OS X 10.9 or iOS 6.0 and up
+				#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1090) || (__IPHONE_OS_VERSION_MIN_REQUIRED >= 60000)
 				[notificationCenter addObserver:self
 									   selector:@selector(playerItemDidStall)
 										   name:AVPlayerItemPlaybackStalledNotification
 										 object:self.playerItem];
+				#endif 
 				
 #if USE_VIDEO_OUTPUT
 				// safety
@@ -488,9 +480,13 @@ static const NSString * ItemStatusContext;
 		[notificationCenter removeObserver:self
 									  name:AVPlayerItemDidPlayToEndTimeNotification
 									object:self.playerItem];
+		
+		//AVPlayerItemPlaybackStalledNotification only exists from OS X 10.9 or iOS 6.0 and up
+		#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1090) || (__IPHONE_OS_VERSION_MIN_REQUIRED >= 60000)
 		[notificationCenter removeObserver:self
 									  name:AVPlayerItemPlaybackStalledNotification
 									object:self.playerItem];
+		#endif
 		
 		self.playerItem = nil;
 	}
@@ -508,10 +504,12 @@ static const NSString * ItemStatusContext;
 	
 	[self removeTimeObserverFromPlayer];
 	
+#if USE_VIDEO_OUTPUT
 	// destroy video info
 	if (_videoInfo) {
 		CFRelease(_videoInfo);
 	}
+#endif
 }
 
 //---------------------------------------------------------- player callbacks.
@@ -645,7 +643,7 @@ static const NSString * ItemStatusContext;
 			err = CMVideoFormatDescriptionCreateForImageBuffer(NULL, buffer, &_videoInfo);
 		}
 		if (err) {
-			NSLog(@"Error at CMVideoFormatDescriptionCreateForImageBuffer %d", err);
+			NSLog(@"Error at CMVideoFormatDescriptionCreateForImageBuffer %ld", (long)err);
 			bNewFrame = NO;
 			return;
 		}
@@ -674,10 +672,13 @@ static const NSString * ItemStatusContext;
 												 &sampleTimingInfo,
 												 &videoSampleBuffer);
 		if (err) {
-			NSLog(@"Error at CMSampleBufferCreateForImageBuffer %d", err);
+			NSLog(@"Error at CMSampleBufferCreateForImageBuffer %ld", (long)err);
 			bNewFrame = NO;
 			return;
 		}
+		
+		// release temp buffer
+		CVBufferRelease(buffer);
 		
 		videoSampleTime = time;
 		
@@ -894,7 +895,7 @@ static const NSString * ItemStatusContext;
 	if (frames < 0) {
 
 		double timeSec = CMTimeGetSeconds(currentTime) - (1.0/frameRate);
-		[self seekToTime:CMTimeMakeWithSeconds(timeSec, NSEC_PER_SEC)];
+		[self seekToTime:CMTimeMakeWithSeconds(timeSec, NSEC_PER_SEC) withTolerance:kCMTimeZero];
 		
 	} else if (![self isFinished] && frames > 0) {
 

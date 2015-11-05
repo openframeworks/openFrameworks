@@ -29,8 +29,6 @@ ofxCvFloatImage::ofxCvFloatImage( const ofxCvFloatImage& _mom ) {
 void ofxCvFloatImage::init() {
     ipldepth = IPL_DEPTH_32F;
     iplchannels = 1;
-    gldepth = GL_FLOAT;
-    glchannels = GL_LUMINANCE;
     bFloatPixelsDirty = true;
     cvGrayscaleImage = NULL;
     scaleMin = 0.0f;
@@ -476,6 +474,17 @@ IplImage*  ofxCvFloatImage::getCv8BitsImage() {
 		setROI(lastROI);
 	}
 	return cvGrayscaleImage;
+}
+
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::allocateTexture(){
+	tex.allocate(floatPixels);
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::allocatePixels(int w, int h){
+	floatPixels.allocate(w,h,OF_PIXELS_GRAY);
 }
 
 //--------------------------------------------------------------------------------

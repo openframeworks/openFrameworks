@@ -185,6 +185,7 @@ public:
 		wrapModeHorizontal = GL_CLAMP_TO_EDGE;
 		wrapModeVertical = GL_CLAMP_TO_EDGE;
 		hasMipmap = false;
+		bufferId = 0;
 
 	}
 
@@ -210,6 +211,7 @@ public:
 	GLint wrapModeHorizontal; ///< How will the texture wrap around horizontally?
 	GLint wrapModeVertical; ///< How will the texture wrap around vertically?
 	
+	unsigned int bufferId; ///< Optionally if the texture is backed by a buffer so we can bind it
 private:
 	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
@@ -297,8 +299,8 @@ class ofTexture : public ofBaseDraws {
 	/// \sa allocate(int w, int h, int glInternalFormat)
 	/// \param w Desired width in pixels.
 	/// \param h Desired height in pixels.
-	/// \param glInternalFormat
-	/// \param glFormat
+	/// \param glInternalFormat The internal openGL format.
+	/// \param glFormat The openGL format.
 	/// \param pixelType GL pixel type: GL_UNSIGNED_BYTE, GL_FLOAT, etc.
 	virtual void allocate(int w, int h, int glInternalFormat, int glFormat, int pixelType);
 	
@@ -313,7 +315,7 @@ class ofTexture : public ofBaseDraws {
 	/// \sa allocate(int w, int h, int glInternalFormat)
 	/// \param w Desired width in pixels.
 	/// \param h Desired height in pixels.
-	/// \param glInternalFormat
+	/// \param glInternalFormat The internal openGL format.
 	/// \param bUseARBExtension Set to true to use rectangular textures.
 	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtension);
 
@@ -647,7 +649,6 @@ class ofTexture : public ofBaseDraws {
 	/// \param sh Subsection height within the texture.
 	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
-	ofMesh getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh, bool vflipped, ofRectMode rectMode) const;
 	ofMesh getQuad(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const;
 
 	/// \brief Get a mesh that has the texture coordinates set.
@@ -662,7 +663,9 @@ class ofTexture : public ofBaseDraws {
 	/// \param sy Subsection y axis offset within the texture.
 	/// \param sw Subsection width within the texture.
 	/// \param sh Subsection height within the texture.
-	ofMesh getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	/// \param vflipped Takes into account the flipped state in OF.
+	/// \param rectMode rectMode Taking x,y as the center or the top left corner.
+	ofMesh getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh, bool vflipped, ofRectMode rectMode) const;
 
 	/// \brief Bind the texture.
 	///

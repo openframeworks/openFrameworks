@@ -242,12 +242,12 @@ public:
 	/// // v1.match(v2, 0.01) is false (because (70.5-70) > 0.01)
 	/// ~~~~
 	/// 
-    bool match( const ofVec3f& vec, float tolerance=0.0001 ) const;
+    bool match( const ofVec3f& vec, float tolerance = 0.0001f ) const;
     /**
 	 * Checks if vectors look in the same direction.
 	 */
-    bool isAligned( const ofVec3f& vec, float tolerance=0.0001 ) const;
-    bool isAlignedRad( const ofVec3f& vec, float tolerance=0.0001 ) const;
+    bool isAligned( const ofVec3f& vec, float tolerance = 0.0001f ) const;
+    bool isAlignedRad( const ofVec3f& vec, float tolerance = 0.0001f ) const;
     
 	/// \brief Returns 'true' if this vector is pointing in the same direction as
 	/// 'vec', with an angle error threshold 'tolerance' in degrees (default
@@ -258,7 +258,7 @@ public:
 	/// ofVec3f v2 = ofVec3f(4, 2, 7);
 	/// // v1.align(v2, 0.0) is true
 	/// ~~~~
-    bool align( const ofVec3f& vec, float tolerance=0.0001 ) const;
+    bool align( const ofVec3f& vec, float tolerance = 0.0001f ) const;
     
 	/// \brief Returns 'true' if this vector is pointing in the same direction
 	/// as 'vec', with an angle error threshold 'tolerance' in radians
@@ -269,7 +269,7 @@ public:
 	/// ofVec3f v2 = ofVec3f(4, 2, 7);
 	/// // v1.align(v2, 0.0) is true
 	/// ~~~~
-    bool alignRad( const ofVec3f& vec, float tolerance=0.0001 ) const;
+    bool alignRad( const ofVec3f& vec, float tolerance = 0.0001f ) const;
 	
 	
     /// \}

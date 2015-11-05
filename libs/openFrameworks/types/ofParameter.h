@@ -87,47 +87,87 @@ public:
 
 	void clear();
 
-	ofParameter<bool> getBool(const string& name) const;
-	ofParameter<int> getInt(const string& name) const;
-	ofParameter<float> getFloat(const string& name) const;
-	ofParameter<char> getChar(const string& name) const;
-	ofParameter<string> getString(const string& name) const;
-	ofParameter<ofPoint> getPoint(const string& name) const;
-	ofParameter<ofVec2f> getVec2f(const string& name) const;
-	ofParameter<ofVec3f> getVec3f(const string& name) const;
-	ofParameter<ofVec4f> getVec4f(const string& name) const;
-	ofParameter<ofColor> getColor(const string& name) const;
-	ofParameter<ofShortColor> getShortColor(const string& name) const;
-	ofParameter<ofFloatColor> getFloatColor(const string& name) const;
+	const ofParameter<bool> & getBool(const string& name) const;
+	const ofParameter<int> & getInt(const string& name) const;
+	const ofParameter<float> & getFloat(const string& name) const;
+	const ofParameter<char> & getChar(const string& name) const;
+	const ofParameter<string> & getString(const string& name) const;
+	const ofParameter<ofPoint> & getPoint(const string& name) const;
+	const ofParameter<ofVec2f> & getVec2f(const string& name) const;
+	const ofParameter<ofVec3f> & getVec3f(const string& name) const;
+	const ofParameter<ofVec4f> & getVec4f(const string& name) const;
+	const ofParameter<ofColor> & getColor(const string& name) const;
+	const ofParameter<ofShortColor> & getShortColor(const string& name) const;
+	const ofParameter<ofFloatColor> & getFloatColor(const string& name) const;
+	const ofParameterGroup & getGroup(const string& name) const;
 
-	ofParameterGroup getGroup(const string& name) const;
+
+	const ofParameter<bool> & getBool(std::size_t pos) const;
+	const ofParameter<int> & getInt(std::size_t pos) const;
+	const ofParameter<float> & getFloat(std::size_t pos) const;
+	const ofParameter<char> & getChar(std::size_t pos) const;
+	const ofParameter<string> & getString(std::size_t pos) const;
+	const ofParameter<ofPoint> & getPoint(std::size_t pos) const;
+	const ofParameter<ofVec2f> & getVec2f(std::size_t pos) const;
+	const ofParameter<ofVec3f> & getVec3f(std::size_t pos) const;
+	const ofParameter<ofVec4f> & getVec4f(std::size_t pos) const;
+	const ofParameter<ofColor> & getColor(std::size_t pose) const;
+	const ofParameter<ofShortColor> & getShortColor(std::size_t pos) const;
+	const ofParameter<ofFloatColor> & getFloatColor(std::size_t pos) const;
+	const ofParameterGroup & getGroup(std::size_t pos) const;
+
+	ofParameter<bool> & getBool(const string& name);
+	ofParameter<int> & getInt(const string& name);
+	ofParameter<float> & getFloat(const string& name);
+	ofParameter<char> & getChar(const string& name);
+	ofParameter<string> & getString(const string& name);
+	ofParameter<ofPoint> & getPoint(const string& name);
+	ofParameter<ofVec2f> & getVec2f(const string& name);
+	ofParameter<ofVec3f> & getVec3f(const string& name);
+	ofParameter<ofVec4f> & getVec4f(const string& name);
+	ofParameter<ofColor> & getColor(const string& name);
+	ofParameter<ofShortColor> & getShortColor(const string& name);
+	ofParameter<ofFloatColor> & getFloatColor(const string& name);
+	ofParameterGroup & getGroup(const string& name);
 
 
-	ofParameter<bool> getBool(std::size_t pos) const;
-	ofParameter<int> getInt(std::size_t pos) const;
-	ofParameter<float> getFloat(std::size_t pos) const;
-	ofParameter<char> getChar(std::size_t pos) const;
-	ofParameter<string> getString(std::size_t pos) const;
-	ofParameter<ofPoint> getPoint(std::size_t pos) const;
-	ofParameter<ofVec2f> getVec2f(std::size_t pos) const;
-	ofParameter<ofVec3f> getVec3f(std::size_t pos) const;
-	ofParameter<ofVec4f> getVec4f(std::size_t pos) const;
-	ofParameter<ofColor> getColor(std::size_t pose) const;
-	ofParameter<ofShortColor> getShortColor(std::size_t pos) const;
-	ofParameter<ofFloatColor> getFloatColor(std::size_t pos) const;
-	ofParameterGroup getGroup(std::size_t pos) const;
+	ofParameter<bool> & getBool(std::size_t pos);
+	ofParameter<int> & getInt(std::size_t pos);
+	ofParameter<float> & getFloat(std::size_t pos);
+	ofParameter<char> & getChar(std::size_t pos);
+	ofParameter<string> & getString(std::size_t pos);
+	ofParameter<ofPoint> & getPoint(std::size_t pos);
+	ofParameter<ofVec2f> & getVec2f(std::size_t pos);
+	ofParameter<ofVec3f> & getVec3f(std::size_t pos);
+	ofParameter<ofVec4f> & getVec4f(std::size_t pos);
+	ofParameter<ofColor> & getColor(std::size_t pose);
+	ofParameter<ofShortColor> & getShortColor(std::size_t pos);
+	ofParameter<ofFloatColor> & getFloatColor(std::size_t pos);
+	ofParameterGroup & getGroup(std::size_t pos);
 
-	ofAbstractParameter & get(const string& name) const;
-	ofAbstractParameter & get(std::size_t pos) const;
+	const ofAbstractParameter & get(const string& name) const;
+	const ofAbstractParameter & get(std::size_t pos) const;
 
-	ofAbstractParameter & operator[](const string& name) const;
-	ofAbstractParameter & operator[](std::size_t pos) const;
+	const ofAbstractParameter & operator[](const string& name) const;
+	const ofAbstractParameter & operator[](std::size_t pos) const;
+
+	ofAbstractParameter & get(const string& name);
+	ofAbstractParameter & get(std::size_t pos);
+
+	ofAbstractParameter & operator[](const string& name);
+	ofAbstractParameter & operator[](std::size_t pos);
 
 	template<typename ParameterType>
-	ofParameter<ParameterType> get(const string& name) const;
+	const ofParameter<ParameterType> & get(const string& name) const;
 
 	template<typename ParameterType>
-	ofParameter<ParameterType> get(std::size_t pos) const;
+	const ofParameter<ParameterType> & get(std::size_t pos) const;
+
+	template<typename ParameterType>
+	ofParameter<ParameterType> & get(const string& name);
+
+	template<typename ParameterType>
+	ofParameter<ParameterType> & get(std::size_t pos);
 
 	std::size_t size() const;
 	string getName(std::size_t position) const;
@@ -199,12 +239,22 @@ private:
 };
 
 template<typename ParameterType>
-ofParameter<ParameterType> ofParameterGroup::get(const string& name) const{
+const ofParameter<ParameterType> & ofParameterGroup::get(const string& name) const{
+	return static_cast<const ofParameter<ParameterType>& >(get(name));
+}
+
+template<typename ParameterType>
+const ofParameter<ParameterType> & ofParameterGroup::get(std::size_t pos) const{
+	return static_cast<const ofParameter<ParameterType>& >(get(pos));
+}
+
+template<typename ParameterType>
+ofParameter<ParameterType> & ofParameterGroup::get(const string& name){
 	return static_cast<ofParameter<ParameterType>& >(get(name));
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> ofParameterGroup::get(std::size_t pos) const{
+ofParameter<ParameterType> & ofParameterGroup::get(std::size_t pos){
 	return static_cast<ofParameter<ParameterType>& >(get(pos));
 }
 
@@ -262,6 +312,62 @@ namespace priv{
 		static ofColor_<T> min() { return ofColor_<T>(0,0); };
 		static ofColor_<T> max() { return ofColor_<T>(ofColor_<T>::limit(),ofColor_<T>::limit()); };
 	};
+
+
+	// detection of stream operators
+	typedef char yes;
+	typedef char (&no)[2];
+
+	struct anyx { template <class T> anyx(const T &); };
+
+	no operator << (const anyx &, const anyx &);
+	no operator >> (const anyx &, const anyx &);
+
+
+	template <class T> yes check(T const&);
+	no check(no);
+
+	template <typename T>
+	struct has_loading_support {
+	    static istream & stream;
+	    static T & x;
+	    static const bool value = sizeof(check(stream >> x)) == sizeof(yes);
+	};
+
+	template <typename T>
+	struct has_saving_support {
+	    static ostream & stream;
+	    static T & x;
+	    static const bool value = sizeof(check(stream << x)) == sizeof(yes);
+	};
+
+	template <typename T>
+	struct has_stream_operators {
+	    static const bool can_load = has_loading_support<T>::value;
+	    static const bool can_save = has_saving_support<T>::value;
+	    static const bool value = can_load && can_save;
+	};
+
+	template<typename ParameterType>
+	typename std::enable_if<of::priv::has_saving_support<ParameterType>::value, std::string>::type toStringImpl(const ParameterType & value){
+	    return ofToString(value);
+	}
+
+	template<typename ParameterType>
+	typename std::enable_if<!of::priv::has_saving_support<ParameterType>::value, std::string>::type toStringImpl(const ParameterType & value){
+	    throw std::exception();
+	}
+
+	template<typename ParameterType>
+	typename std::enable_if<of::priv::has_loading_support<ParameterType>::value, ParameterType>::type fromStringImpl(const std::string & str){
+	    return ofFromString<ParameterType>(str);
+	}
+
+	template<typename ParameterType>
+	typename std::enable_if<!of::priv::has_loading_support<ParameterType>::value, ParameterType>::type fromStringImpl(const std::string & str){
+	    throw std::exception();
+
+	}
 }
 }
 /*! \endcond */
@@ -282,6 +388,7 @@ template<typename ParameterType>
 class ofParameter: public ofAbstractParameter{
 public:
 	ofParameter();
+	ofParameter(const ofParameter<ParameterType> & v);
 	ofParameter(const ParameterType & v);
 	ofParameter(const string& name, const ParameterType & v);
 	ofParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
@@ -297,7 +404,9 @@ public:
 
 	ParameterType getMax() const;
 
-	string toString() const;
+
+	std::string toString() const;
+    void fromString(const std::string & name);
 
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method, int prio=OF_EVENT_ORDER_AFTER_APP){
@@ -314,7 +423,7 @@ public:
 	bool isSerializable() const;
 	bool isReadOnly() const;
 
-	void makeReferenceTo(ofParameter<ParameterType> mom);
+	void makeReferenceTo(ofParameter<ParameterType> & mom);
 
 	ofParameter<ParameterType> & operator=(const ofParameter<ParameterType> & v);
 	const ParameterType & operator=(const ParameterType & v);
@@ -351,12 +460,10 @@ public:
 	ofParameter<ParameterType> & set(const string& name, const ParameterType & v);
 	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
 
-    ofParameter<ParameterType> & setWithoutEventNotifcations(const ParameterType & v);
+    ofParameter<ParameterType> & setWithoutEventNotifications(const ParameterType & v);
 
 	void setMin(const ParameterType & min);
 	void setMax(const ParameterType & max);
-
-	void fromString(const string & name);
 
 	void setSerializable(bool serializable);
 	shared_ptr<ofAbstractParameter> newReference() const;
@@ -425,6 +532,11 @@ ofParameter<ParameterType>::ofParameter()
 ,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)){}
 
 template<typename ParameterType>
+ofParameter<ParameterType>::ofParameter(const ofParameter<ParameterType> & v)
+:obj(v.obj)
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) {}
+
+template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const ParameterType & v)
 :obj(std::make_shared<Value>(v))
 ,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) {}
@@ -475,7 +587,7 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name,
 }
 
 template<typename ParameterType>
-inline ofParameter<ParameterType> & ofParameter<ParameterType>::setWithoutEventNotifcations(const ParameterType & v){
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::setWithoutEventNotifications(const ParameterType & v){
     noEventsSetValue(v);
     return *this;
 }
@@ -558,7 +670,7 @@ void ofParameter<ParameterType>::setSerializable(bool serializable){
 
 template<typename ParameterType>
 bool ofParameter<ParameterType>::isSerializable() const{
-	return obj->serializable;
+	return of::priv::has_stream_operators<ParameterType>::value && obj->serializable;
 }
 
 template<typename ParameterType>
@@ -602,16 +714,23 @@ string ofParameter<ParameterType>::getName() const{
 }
 
 template<typename ParameterType>
-string ofParameter<ParameterType>::toString() const{
-	return ofToString(obj->value);
+inline std::string ofParameter<ParameterType>::toString() const{
+    try{
+        return of::priv::toStringImpl(obj->value);
+    }catch(...){
+        ofLogError("ofParameter") << "Trying to serialize non-serializable parameter";
+        return "";
+    }
 }
-
 
 template<typename ParameterType>
-void ofParameter<ParameterType>::fromString(const string & str){
-	set(ofFromString<ParameterType>(str));
+inline void ofParameter<ParameterType>::fromString(const std::string & str){
+    try{
+        set(of::priv::fromStringImpl<ParameterType>(str));
+    }catch(...){
+        ofLogError("ofParameter") << "Trying to de-serialize non-serializable parameter";
+    }
 }
-
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::enableEvents(){
@@ -624,7 +743,7 @@ void ofParameter<ParameterType>::disableEvents(){
 }
 
 template<typename ParameterType>
-inline ParameterType ofParameter<ParameterType>::operator++(int v){
+inline ParameterType ofParameter<ParameterType>::operator++(int){
 	ParameterType r = obj->value;
 	obj->value++;
 	set(obj->value);
@@ -639,7 +758,7 @@ inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator++(){
 }
 
 template<typename ParameterType>
-inline ParameterType ofParameter<ParameterType>::operator--(int v){
+inline ParameterType ofParameter<ParameterType>::operator--(int){
 	ParameterType r = obj->value;
 	obj->value--;
 	set(obj->value);
@@ -734,7 +853,7 @@ inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator>>=(cons
 }
 
 template<typename ParameterType>
-void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> mom){
+void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> & mom){
 	obj = mom.obj;
 }
 
@@ -759,12 +878,13 @@ void ofParameter<ParameterType>::setParent(ofParameterGroup & parent){
 ///
 /// \sa ofParameter
 /// \tparam ParameterType The data wrapped by the ofParameter.
-/// \tparam ParameterType The type of the "friend" class with write access.
+/// \tparam Friend The type of the "friend" class with write access.
 template<typename ParameterType,typename Friend>
 class ofReadOnlyParameter: public ofAbstractParameter{
 public:
 	ofReadOnlyParameter();
 	ofReadOnlyParameter(ofParameter<ParameterType> & p);
+	ofReadOnlyParameter(ofReadOnlyParameter<ParameterType,Friend> & p);
 	ofReadOnlyParameter(const ParameterType & v);
 	ofReadOnlyParameter(const string& name, const ParameterType & v);
 	ofReadOnlyParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
@@ -861,6 +981,10 @@ inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(){}
 
 template<typename ParameterType,typename Friend>
 inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(ofParameter<ParameterType> & p)
+:parameter(p){}
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(ofReadOnlyParameter<ParameterType,Friend> & p)
 :parameter(p){}
 
 template<typename ParameterType,typename Friend>
@@ -990,7 +1114,7 @@ inline const ParameterType & ofReadOnlyParameter<ParameterType,Friend>::operator
 
 
 template<typename ParameterType,typename Friend>
-inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::operator++(int v){
+inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::operator++(int){
 	return parameter++;
 }
 
@@ -1001,7 +1125,7 @@ inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<Parameter
 
 
 template<typename ParameterType,typename Friend>
-inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::operator--(int v){
+inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::operator--(int){
 	return parameter--;
 }
 
@@ -1120,7 +1244,7 @@ inline void ofReadOnlyParameter<ParameterType,Friend>::fromString(const string &
 
 template<typename ParameterType,typename Friend>
 shared_ptr<ofAbstractParameter> ofReadOnlyParameter<ParameterType,Friend>::newReference() const{
-	return shared_ptr<ofReadOnlyParameter<ParameterType,Friend>>(*this);
+	return std::make_shared<ofReadOnlyParameter<ParameterType,Friend>>(*this);
 }
 
 template<typename ParameterType,typename Friend>

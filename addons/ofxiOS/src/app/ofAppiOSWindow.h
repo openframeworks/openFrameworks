@@ -31,9 +31,8 @@
 
 #pragma once
 
-#import "ofAppBaseWindow.h"
+#include "ofAppBaseWindow.h"
 #include "ofxiOSConstants.h"
-#include "ofWindowSettings.h"
 
 class ofiOSWindowSettings: public ofGLESWindowSettings{
 public:
@@ -47,6 +46,7 @@ public:
     ,enableHardwareOrientationAnimation(false)
     ,enableSetupScreen(true) {
         windowMode = OF_FULLSCREEN;
+		setupOrientation = OF_ORIENTATION_DEFAULT;
         glesVersion = 1;
     }
     
@@ -76,6 +76,7 @@ public:
             enableHardwareOrientation = iosSettings->enableHardwareOrientation;
             enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
             enableSetupScreen = iosSettings->enableSetupScreen;
+			setupOrientation = iosSettings->setupOrientation;
         } else {
             enableRetina = false;
             retinaScale = 0;
@@ -85,6 +86,7 @@ public:
             enableHardwareOrientation = false;
             enableHardwareOrientationAnimation = false;
             enableSetupScreen = true;
+			setupOrientation = OF_ORIENTATION_DEFAULT;
         }
     }
 
@@ -108,6 +110,7 @@ public:
             enableHardwareOrientation = iosSettings->enableHardwareOrientation;
             enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
             enableSetupScreen = iosSettings->enableSetupScreen;
+			setupOrientation = iosSettings->setupOrientation;
         }
     }
 
@@ -121,6 +124,8 @@ public:
     bool enableHardwareOrientation;
     bool enableHardwareOrientationAnimation;
     bool enableSetupScreen;
+	ofOrientation setupOrientation;
+	
 };
 
 
@@ -141,6 +146,7 @@ public:
     void setup(const ofWindowSettings & _settings);
     void setup(const ofGLESWindowSettings & _settings);
     void setup(const ofiOSWindowSettings & _settings);
+	void setup();
     
     void run(ofBaseApp * appPtr);
     OF_DEPRECATED_MSG("Use setup(const ofiOSWindowSettings & settings); instead.", virtual void setupOpenGL(int w, int h, ofWindowMode screenMode) );

@@ -533,38 +533,38 @@ void ofCylinderPrimitive::set(float _radius, float _height, int radiusSegments, 
     bCapped = _bCapped;
     resolution.set( radiusSegments, heightSegments, capSegments );
     
-    int resX = getResolution().x;
-    int resY = getResolution().y-1;
-    int resZ = getResolution().z-1;
+    int resX = std::max(getResolution().x,0.0f);
+    int resY = std::max(getResolution().y-1,0.0f);
+    int resZ = std::max(getResolution().z-1,0.0f);
     
     int indexStep = 2;
     if(mode == OF_PRIMITIVE_TRIANGLES) {
         indexStep = 6;
-        resX = resX-1;
+        resX = std::max(resX,0);
     }
     
     // 0 -> top cap
     strides[0][0] = 0;
-    strides[0][1] = resX * resZ * indexStep;
+    strides[0][1] = (resX+1) * (resZ+1) * indexStep;
     vertices[0][0] = 0;
-    vertices[0][1] = getResolution().x * getResolution().z;
+    vertices[0][1] = (getResolution().x+1) * (getResolution().z+1);
     
     // 1 -> cylinder //
     if(bCapped) {
-        strides[1][0] = strides[0][0] + strides[0][1];
-        vertices[1][0] = vertices[0][0] + vertices[0][1];
+        strides[1][0]	= strides[0][0] + strides[0][1];
+        vertices[1][0]	= vertices[0][0] + vertices[0][1];
     } else {
-        strides[1][0] = 0;
-        vertices[1][0] = 0;
+        strides[1][0]	= 0;
+        vertices[1][0]	= 0;
     }
-    strides[1][1] = resX * resY * indexStep;
-    vertices[1][1] = getResolution().x * getResolution().y;
+    strides[1][1] = (resX+1) * (resY+1) * indexStep;
+    vertices[1][1] = (getResolution().x+1) * (getResolution().y+1);
     
     // 2 -> bottom cap
     strides[2][0] = strides[1][0] + strides[1][1];
-    strides[2][1] = resX * resZ * indexStep;
+    strides[2][1] = (resX+1) * (resZ+1) * indexStep;
     vertices[2][0] = vertices[1][0]+vertices[1][1];
-    vertices[2][1] = getResolution().x * getResolution().z;
+    vertices[2][1] = (getResolution().x+1) * (getResolution().z+1);
     
     
     getMesh() = ofMesh::cylinder( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, getCapped(), mode );
@@ -762,25 +762,25 @@ void ofConePrimitive::set( float _radius, float _height, int radiusSegments, int
     height = _height;
     resolution.set(radiusSegments, heightSegments, capSegments);
     
-    int resX = getResolution().x;
-    int resY = getResolution().y-1;
-    int resZ = getResolution().z-1;
+    int resX = std::max(getResolution().x, 0.0f);
+    int resY = std::max(getResolution().y-1, 0.0f);
+    int resZ = std::max(getResolution().z-1, 0.0f);
     
     int indexStep = 2;
     if(mode == OF_PRIMITIVE_TRIANGLES) {
         indexStep = 6;
-        resX = resX-1;
+        resX = std::max(resX-1, 0);
     }
     
     strides[ 0 ][0] = 0;
-    strides[ 0 ][1] = (resX)*(resY) * indexStep;
+    strides[ 0 ][1] = (resX+1)*(resY+1) * indexStep;
     vertices[0][0] = 0;
-    vertices[0][1] = getResolution().x * getResolution().y;
+    vertices[0][1] = (getResolution().x+1) * (getResolution().y+1);
     
     strides[ 1 ][0] = strides[ 0 ][0] + strides[ 0 ][1];
-    strides[ 1 ][1] = (resX)*(resZ) * indexStep;
+    strides[ 1 ][1] = (resX+1)*(resZ+1) * indexStep;
     vertices[1][0] = vertices[0][0] + vertices[0][1];
-    vertices[1][1] = getResolution().x * getResolution().z;
+    vertices[1][1] = (getResolution().x+1) * (getResolution().z+1);
     
     getMesh() = ofMesh::cone( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, mode );
     
@@ -960,39 +960,39 @@ void ofBoxPrimitive::set( float width, float height, float depth, int resWidth, 
     
     //FRONT, resY, resX
     strides[ SIDE_FRONT ][0] = 0;
-    strides[ SIDE_FRONT ][1] = (resY-1)*(resX-1)*6;
+    strides[ SIDE_FRONT ][1] = (resY)*(resX)*6;
     vertices[SIDE_FRONT][0] = 0;
-    vertices[SIDE_FRONT][1] = resX * resY;
+    vertices[SIDE_FRONT][1] = (resX+1) * (resY+1);
     
     //RIGHT, resY, resZ
     strides[ SIDE_RIGHT ][0] = strides[ SIDE_FRONT ][0] + strides[ SIDE_FRONT ][1];
-    strides[ SIDE_RIGHT ][1] = (resY-1)*(resZ-1)*6;
+    strides[ SIDE_RIGHT ][1] = (resY)*(resZ)*6;
     vertices[SIDE_RIGHT][0] = vertices[SIDE_FRONT][0] + vertices[SIDE_FRONT][1];
-    vertices[SIDE_RIGHT][1] = resY * resZ;
+    vertices[SIDE_RIGHT][1] = (resY+1) * (resZ+1);
     
     //LEFT, resY, resZ
     strides[ SIDE_LEFT ][0] = strides[ SIDE_RIGHT ][0] + strides[ SIDE_RIGHT ][1];
-    strides[ SIDE_LEFT ][1] = (resY-1)*(resZ-1)*6;
+    strides[ SIDE_LEFT ][1] = (resY)*(resZ)*6;
     vertices[SIDE_LEFT][0] = vertices[SIDE_RIGHT][0] + vertices[SIDE_RIGHT][1];
-    vertices[SIDE_LEFT][1] = resY * resZ;
+    vertices[SIDE_LEFT][1] = (resY+1) * (resZ+1);
     
     //BACK, resY, resX
     strides[ SIDE_BACK ][0] = strides[ SIDE_LEFT ][0] + strides[ SIDE_LEFT ][1];
-    strides[ SIDE_BACK ][1] = (resY-1)*(resX-1)*6;
+    strides[ SIDE_BACK ][1] = (resY)*(resX)*6;
     vertices[SIDE_BACK][0] = vertices[SIDE_LEFT][0] + vertices[SIDE_LEFT][1];
-    vertices[SIDE_BACK][1] = resY * resX;
+    vertices[SIDE_BACK][1] = (resY+1) * (resZ+1);
     
     //TOP, resZ, resX
     strides[ SIDE_TOP ][0] = strides[ SIDE_BACK ][0] + strides[ SIDE_BACK ][1];
-    strides[ SIDE_TOP ][1] = (resZ-1)*(resX-1)*6;
+    strides[ SIDE_TOP ][1] = (resZ)*(resX)*6;
     vertices[SIDE_TOP][0] = vertices[SIDE_BACK][0] + vertices[SIDE_BACK][1];
-    vertices[SIDE_TOP][1] = resZ * resX;
+    vertices[SIDE_TOP][1] = (resY+1) * (resZ+1);
     
     //BOTTOM, resZ, resX
     strides[ SIDE_BOTTOM ][0] = strides[ SIDE_TOP ][0]+strides[ SIDE_TOP ][1];
-    strides[ SIDE_BOTTOM ][1] = (resZ-1)*(resX-1)*6;
+    strides[ SIDE_BOTTOM ][1] = (resZ)*(resX)*6;
     vertices[SIDE_BOTTOM][0] = vertices[SIDE_TOP][0] + vertices[SIDE_TOP][1];
-    vertices[SIDE_BOTTOM][1] = resZ * resX;
+    vertices[SIDE_BOTTOM][1] = (resY+1) * (resZ+1);
     
     getMesh() = ofMesh::box( getWidth(), getHeight(), getDepth(), getResolution().x, getResolution().y, getResolution().z );
     

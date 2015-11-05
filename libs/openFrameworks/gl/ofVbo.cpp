@@ -906,8 +906,8 @@ void ofVbo::draw(int drawMode, int first, int total) const{
 }
 
 //--------------------------------------------------------------
-void ofVbo::drawElements(int drawMode, int amt) const{
-	ofGetGLRenderer()->drawElements(*this,drawMode,amt);
+void ofVbo::drawElements(int drawMode, int amt, int offsetelements) const{
+	ofGetGLRenderer()->drawElements(*this,drawMode,amt,offsetelements);
 }
 
 //--------------------------------------------------------------

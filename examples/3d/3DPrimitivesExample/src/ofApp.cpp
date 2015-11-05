@@ -45,9 +45,9 @@ void ofApp::setup(){
     pointLight3.setSpecularColor( ofFloatColor(18.f/255.f,150.f/255.f,135.f/255.f) );
     
     // shininess is a value between 0 - 128, 128 being the most shiny //
-	material.setShininess( 120 );
+    material.setShininess( 120 );
     // the light highlight of the material //
-	material.setSpecularColor(ofColor(255, 255, 255, 255));
+    material.setSpecularColor(ofColor(255, 255, 255, 255));
     
     ofSetSphereResolution(24);
     
@@ -87,14 +87,15 @@ void ofApp::draw() {
     pointLight.enable();
     pointLight2.enable();
     pointLight3.enable();
-    
-	material.begin();
-    
-    
-    ofSetColor(180);
+
+
+
+    // draw the outer sphere
+    material.begin();
     ofNoFill();
     ofDrawSphere(ofGetWidth()/2, ofGetHeight()/2, ofGetWidth());
-    
+    material.end();
+
     if(mode == 1 || mode == 3) texture.getTexture().bind();
     if(mode == 2) vidGrabber.getTexture().bind();
     
@@ -112,7 +113,7 @@ void ofApp::draw() {
         float planeAngleX = ofGetElapsedTimef()*3.6;
         float planeAngleInc = 3.f/(float)planeDims.x;
         ofVec3f vert;
-        for(int i = 0; i < deformPlane.getNumIndices(); i++ ) {
+        for(size_t i = 0; i < deformPlane.getNumIndices(); i++ ) {
             planeAngleX += planeAngleInc;
             int ii = deformPlane.getIndex( i );
             vert = deformPlane.getVertex( ii );
@@ -120,10 +121,18 @@ void ofApp::draw() {
             deformPlane.setVertex( ii, vert );
         }
     }
+
+    if(!bFill && bWireframe){
+        // if we are only drawing the wireframe, use
+        // the material to draw it, otherwise the material
+        // will be bound and unbound for every geometry
+        // and the wireframe will be drawn in black
+        material.begin();
+    }
     
     if(bFill) {
+        material.begin();
         ofFill();
-        ofSetColor(255);
         if(mode == 3) {
             plane.transformGL();
             deformPlane.draw();
@@ -131,31 +140,26 @@ void ofApp::draw() {
         } else {
             plane.draw();
         }
+        material.end();
     }
+
     if(bWireframe) {
         ofNoFill();
         ofSetColor(0, 0, 0);
-        if(!bFill) ofSetColor(255);
         plane.setPosition(plane.getPosition().x, plane.getPosition().y, plane.getPosition().z+1);
-        //if(bFill) {
-        if( mode == 3 ) {
-            ofSetColor(255);
-        }
         plane.drawWireframe();
-        //}
         plane.setPosition(plane.getPosition().x, plane.getPosition().y, plane.getPosition().z-2);
         
     }
-    
-    
+
     // Box //
     box.setPosition(ofGetWidth()*.5, ofGetHeight()*.25, 0);
     box.rotate(spinX, 1.0, 0.0, 0.0);
     box.rotate(spinY, 0, 1.0, 0.0);
     
     if(bFill) {
+        material.begin();
         ofFill();
-        ofSetColor(255);
         if(mode == 3) {
             box.transformGL();
             for(int i = 0; i < ofBoxPrimitive::SIDES_TOTAL; i++ ) {
@@ -168,15 +172,13 @@ void ofApp::draw() {
         } else {
             box.draw();
         }
+        material.end();
     }
+
     if(bWireframe) {
         ofNoFill();
         ofSetColor(0, 0, 0);
-        if(!bFill) ofSetColor(255);
         box.setScale(1.01f);
-        if(mode == 3) {
-            ofSetColor(255);
-        }
         box.drawWireframe();
         box.setScale(1.f);
     }
@@ -193,13 +195,13 @@ void ofApp::draw() {
     }
     
     if(bFill) {
+        material.begin();
         ofFill();
-        ofSetColor(255);
         if(mode == 3) {
             float angle = ofGetElapsedTimef()*3.2;
             float strength = (sin( angle+.25 )) * .5f * 5.f;
             ofVec3f faceNormal;
-            for(int i = 0; i < triangles.size(); i++ ) {
+            for(size_t i = 0; i < triangles.size(); i++ ) {
                 // store the face normal here.
                 // we change the vertices, which makes the face normal change
                 // every time that we call getFaceNormal //
@@ -211,12 +213,12 @@ void ofApp::draw() {
             sphere.getMesh().setFromTriangles( triangles );
         }
         sphere.draw();
-        
+        material.end();
     }
+
     if(bWireframe) {
         ofNoFill();
         ofSetColor(0, 0, 0);
-        if(!bFill) ofSetColor(255);
         sphere.setScale(1.01f);
         sphere.drawWireframe();
         sphere.setScale(1.f);
@@ -233,13 +235,13 @@ void ofApp::draw() {
     }
     
     if(bFill) {
+        material.begin();
         ofFill();
-        ofSetColor(255);
         
         if(mode == 3) {
             float angle = (ofGetElapsedTimef() * 1.4);
             ofVec3f faceNormal;
-            for(int i = 0; i < triangles.size(); i++ ) {
+            for(size_t i = 0; i < triangles.size(); i++ ) {
                 float frc = ofSignedNoise(angle* (float)i * .1, angle*.05) * 4;
                 faceNormal = triangles[i].getFaceNormal();
                 for(int j = 0; j < 3; j++ ) {
@@ -250,11 +252,12 @@ void ofApp::draw() {
         }
         
         icoSphere.draw();
+        material.end();
     }
+
     if(bWireframe) {
         ofNoFill();
         ofSetColor(0, 0, 0);
-        if(!bFill) ofSetColor(255);
         icoSphere.setScale(1.01f);
         icoSphere.drawWireframe();
         icoSphere.setScale(1.f);
@@ -272,8 +275,8 @@ void ofApp::draw() {
     cylinder.rotate(spinX, 1.0, 0.0, 0.0);
     cylinder.rotate(spinY, 0, 1.0, 0.0);
     if(bFill) {
+        material.begin();
         ofFill();
-        ofSetColor(255);
         if(mode == 3) {
             cylinder.transformGL();
             ofPushMatrix(); {
@@ -297,11 +300,12 @@ void ofApp::draw() {
         } else {
             cylinder.draw();
         }
+        material.end();
     }
+
     if(bWireframe) {
         ofNoFill();
         ofSetColor(0, 0, 0);
-        if(!bFill || mode == 3) ofSetColor(255);
         cylinder.setScale(1.01f);
         cylinder.drawWireframe();
         cylinder.setScale(1.0f);
@@ -318,8 +322,8 @@ void ofApp::draw() {
         body        = cone.getConeMesh();
     }
     if(bFill) {
+        material.begin();
         ofFill();
-        ofSetColor(255);
         if(mode == 3) {
             cone.transformGL();
             ofPushMatrix();
@@ -339,14 +343,19 @@ void ofApp::draw() {
         } else {
             cone.draw();
         }
+        material.end();
     }
+
     if(bWireframe) {
         ofNoFill();
         ofSetColor(0, 0, 0);
-        if(!bFill || mode == 3) ofSetColor(255);
         cone.setScale(1.01f);
         cone.drawWireframe();
         cone.setScale(1.0f);
+    }
+
+    if(!bFill && bWireframe){
+        material.end();
     }
     
     if(mode == 1 || mode == 3) texture.getTexture().unbind();

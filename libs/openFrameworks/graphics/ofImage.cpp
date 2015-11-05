@@ -579,7 +579,6 @@ template<typename PixelType>
 ofImage_<PixelType>& ofImage_<PixelType>::operator=(const ofImage_<PixelType>& mom) {
 	if(&mom==this) return *this;
 	clone(mom);
-	update();
 
 	#if defined(TARGET_ANDROID)
 	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
@@ -593,7 +592,7 @@ template<typename PixelType>
 ofImage_<PixelType>::ofImage_(const ofImage_<PixelType>& mom) {
 	clear();
 	clone(mom);
-	update();
+
 	#if defined(TARGET_ANDROID)
 	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
@@ -784,10 +783,7 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 
 	// take care of texture allocation --
 	if (pixels.isAllocated() && bUseTexture){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
-		if(ofIsGLProgrammableRenderer() && (pixels.getPixelFormat()==OF_PIXELS_GRAY || pixels.getPixelFormat()==OF_PIXELS_GRAY_ALPHA)){
-			tex.setRGToRGBASwizzles(true);
-		}
+		tex.allocate(pixels);
 	}
 	
 	width	= pixels.getWidth();
@@ -957,9 +953,6 @@ void ofImage_<PixelType>::update(){
 		int glInternalFormat = ofGetGlInternalFormat(pixels);
 		if(!tex.isAllocated() || tex.getWidth() != width || tex.getHeight() != height || tex.getTextureData().glInternalFormat != glInternalFormat){
 			tex.allocate(pixels);
-			if(ofIsGLProgrammableRenderer() && (pixels.getPixelFormat()==OF_PIXELS_GRAY || pixels.getPixelFormat()==OF_PIXELS_GRAY_ALPHA)){
-				tex.setRGToRGBASwizzles(true);
-			}
 		}else{
 			tex.loadData(pixels);
 		}

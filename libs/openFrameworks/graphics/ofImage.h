@@ -16,7 +16,7 @@
 /// the pixels.
 ///
 
-/// \todo
+/// \todo Needs documentation.
 enum ofImageQualityType {
     OF_IMAGE_QUALITY_BEST,
     OF_IMAGE_QUALITY_HIGH,
@@ -25,7 +25,7 @@ enum ofImageQualityType {
     OF_IMAGE_QUALITY_WORST
 };
 
-/// \todo
+/// \todo Needs documentation.
 enum ofImageFormat {
     OF_IMAGE_FORMAT_BMP     = 0,
     OF_IMAGE_FORMAT_ICO     = 1,
@@ -68,36 +68,37 @@ enum ofImageFormat {
 //----------------------------------------------------
 // FreeImage based stuff
 
-/// \todo
+/// \todo Needs documentation.
 bool ofLoadImage(ofPixels & pix, string path);
 bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer);
 
-/// \todo
+/// \todo Needs documentation.
 bool ofLoadImage(ofFloatPixels & pix, string path);
 bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer);
 
-/// \todo
+/// \todo Needs documentation.
 bool ofLoadImage(ofShortPixels & pix, string path);
 bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer);
 
-/// \todo
+/// \todo Needs documentation.
 bool ofLoadImage(ofTexture & tex, string path);
 bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer);
 
-/// \todo
+/// \todo Needs documentation.
 void ofSaveImage(ofPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
-/// \todo
+/// \todo Needs documentation.
 void ofSaveImage(ofFloatPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(ofFloatPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
-/// \todo
+/// \todo Needs documentation.
 void ofSaveImage(ofShortPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
-// when we exit, we shut down ofImage
-/// \todo
+/// \brief Deallocates FreeImage resources.
+///
+/// Used internally during shutdown.
 void ofCloseFreeImage();
 
 
@@ -300,16 +301,16 @@ public:
     /// \brief Returns whether the ofImage has a texture or not.
     ///
     /// If the ofImage doesn't have a texture, nothing will be drawn to the screen.
-    /// \returns Returns whether the ofImage has a texture or not.
+    /// \returns true if the ofImage is using a texture.
     bool isUsingTexture() const;
     
-    /// \brief Returns the texture that the ofImage contains.
+    /// \brief Returns a reference to the texture that the ofImage contains.
     ///
     /// You can use this to directly manipulate the texture itself, but keep in
     /// mind that if you manipulate the texture directly, there is no simple way
     /// to copy the data from the texture back to the pixels and keep the ofImage in sync.
     ///
-    /// \returns Returns the texture that the ofImage contains.
+    /// \returns A reference to the texture that the ofImage contains.
     ofTexture & getTexture();
     const ofTexture & getTexture() const;
     OF_DEPRECATED_MSG("Use getTexture",ofTexture & getTextureReference());

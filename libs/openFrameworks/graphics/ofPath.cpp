@@ -5,7 +5,7 @@
 #if defined(TARGET_EMSCRIPTEN)
 	ofTessellator ofPath::tessellator;
 #elif HAS_TLS
-        thread_local ofTessellator ofPath::tessellator;
+    thread_local ofTessellator ofPath::tessellator;
 #endif
 
 ofPath::Command::Command(Type type)
@@ -759,6 +759,19 @@ void ofPath::scale(float x, float y){
 				polylines[i][j].x*=x;
 				polylines[i][j].y*=y;
 			}
+		}
+	}
+	flagShapeChanged();
+}
+
+void ofPath::append(const ofPath & path){
+	if(mode==COMMANDS){
+		for(auto & command: path.getCommands()){
+			addCommand(command);
+		}
+	}else{
+		for(auto & poly: path.getOutline()){
+			polylines.push_back(poly);
 		}
 	}
 	flagShapeChanged();

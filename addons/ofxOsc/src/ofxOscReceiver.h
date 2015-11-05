@@ -51,25 +51,34 @@ class ofxOscReceiver : public osc::OscPacketListener
 {
 public:
 	ofxOscReceiver();
-	~ofxOscReceiver();
+	ofxOscReceiver(const ofxOscReceiver & mom);
+	ofxOscReceiver & operator=(const ofxOscReceiver & mom);
 
 	/// listen_port is the port to listen for messages on
-	void setup( int listen_port, bool allowReuse = true );
+	void setup( int listen_port );
 
 	/// returns true if there are any messages waiting for collection
 	bool hasWaitingMessages();
 	/// take the next message on the queue of received messages, copy its details into message, and
 	/// remove it from the queue. return false if there are no more messages to be got, otherwise
 	/// return true
-	bool getNextMessage( ofxOscMessage* );
+	OF_DEPRECATED_MSG("Pass a reference instead of a pointer", bool getNextMessage( ofxOscMessage* msg));
+	bool getNextMessage( ofxOscMessage& msg );
 
 	bool getParameter(ofAbstractParameter & parameter);
 
+	/// disables port reuse reuse which allows to use the same port by several sockets
+	void disableReuse();
+
+	/// enabled broadcast capabilities (usually no need to call this, enabled by default)
+	void enableReuse();
+
 protected:
 	/// process an incoming osc message and add it to the queue
-	virtual void ProcessMessage( const osc::ReceivedMessage &m, const IpEndpointName& remoteEndpoint );
+	virtual void ProcessMessage( const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint );
 
 private:
+	void setup(osc::UdpListeningReceiveSocket * socket);
 	// shutdown the listener
 	void shutdown();
 
@@ -79,28 +88,14 @@ private:
 #else
 	static void* startThread( void* ofxOscReceiverInstance );
 #endif
-	// queue of osc messages
-	std::deque< ofxOscMessage* > messages;
 
 	// socket to listen on
-	UdpListeningReceiveSocket* listen_socket;
+	std::unique_ptr<osc::UdpListeningReceiveSocket, std::function<void(osc::UdpListeningReceiveSocket*)>> listen_socket;
 
-	// mutex helpers
-	void grabMutex();
-	void releaseMutex();
+	std::thread listen_thread;
+	ofThreadChannel<ofxOscMessage> messagesChannel;
 
-#ifdef TARGET_WIN32
-	// thread to listen with
-	HANDLE thread;
-	// mutex for the thread queue
-	HANDLE mutex;
-#else
-	// thread to listen with
-	pthread_t thread;
-	// mutex for the message queue
-	pthread_mutex_t mutex;
-#endif
-	// ready to be deleted
-	bool socketHasShutdown;
+	bool allowReuse;
+	int listen_port;
 
 };

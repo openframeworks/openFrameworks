@@ -32,10 +32,6 @@ ofMesh::ofMesh(ofPrimitiveMode mode, const vector<ofVec3f>& verts){
 }
 
 //--------------------------------------------------------------
-ofMesh::~ofMesh(){
-}
-
-//--------------------------------------------------------------
 void ofMesh::clear(){
 	if(!vertices.empty()){
 		bVertsChanged = true;
@@ -1164,12 +1160,16 @@ ofMesh ofMesh::getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex, 
 		else mesh.disableNormals();
 	}
 
-	int offsetIndex = getIndex(startIndex);
+	ofIndexType offsetIndex = getIndex(startIndex);
 	bool bFoundLessThanZero = false;
 	for(ofIndexType i = startIndex; i < endIndex; i++) {
-		ofIndexType index = getIndex(i) - offsetIndex;
-		index = 0;
-		bFoundLessThanZero = true;
+		ofIndexType index;
+		if(getIndex(i)<offsetIndex){
+			index = 0;
+			bFoundLessThanZero = true;
+		}else{
+			index = getIndex(i) - offsetIndex;
+		}
 		mesh.addIndex( index );
 	}
 
@@ -1785,12 +1785,12 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 		//newFaces.resize(size);
 		for (ofIndexType i=0; i<size/12; i++)
 		{
-			int i1 = faces[i*3];
-			int i2 = faces[i*3+1];
-			int i3 = faces[i*3+2];
-			int i12 = vertices.size();
-			int i23 = i12+1;
-			int i13 = i12+2;
+			std::size_t i1 = faces[i*3];
+			std::size_t i2 = faces[i*3+1];
+			std::size_t i3 = faces[i*3+2];
+			std::size_t i12 = vertices.size();
+			std::size_t i23 = i12+1;
+			std::size_t i13 = i12+2;
 			ofVec3f v1 = vertices[i1];
 			ofVec3f v2 = vertices[i2];
 			ofVec3f v3 = vertices[i3];
@@ -1945,7 +1945,7 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
 	ofVec3f normal;
 	ofVec3f up(0,1,0);
 
-	int vertOffset = 0;
+	std::size_t vertOffset = 0;
 
 	float maxTexY   = heightSegments-1.f;
 	if(capSegs > 0) {
@@ -2137,7 +2137,7 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
 	ofVec2f tcoord;
 	ofVec3f up(0,1,0);
 
-	int vertOffset = 0;
+	std::size_t vertOffset = 0;
 
 	float maxTexY = heightSegments-1.f;
 	if(capSegs > 0) {
@@ -2283,7 +2283,7 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
 	ofVec3f vert;
 	ofVec2f texcoord;
 	ofVec3f normal;
-	int vertOffset = 0;
+	std::size_t vertOffset = 0;
 
 	// TRIANGLES //
 
