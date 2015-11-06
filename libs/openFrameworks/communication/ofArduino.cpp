@@ -215,11 +215,11 @@ void ofArduino::update() {
 int ofArduino::getAnalog(int pin) const {
 	if (pinCapabilities.count(pin) < 1) {
 		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
+		return -1;
 	}
 	if (!pinCapabilities[pin].analogSupported) {
 		ofLogError("ofArduino") << "Analog is not supported for this pin";
-		return;
+		return -1;
 	}
 	if (_analogHistory[pin].size() > 0) {
 		return _analogHistory[pin].front();
@@ -232,7 +232,7 @@ int ofArduino::getAnalog(int pin) const {
 int ofArduino::getDigital(int pin) const {
 	if (pinCapabilities.count(pin) < 1) {
 		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
+		return -1;
 	}
 	if ((_digitalPinMode[pin] == ARD_INPUT || _digitalPinMode[pin] == ARD_INPUT_PULLUP) && _digitalHistory[pin].size() > 0) {
 		return _digitalHistory[pin].front();
@@ -248,11 +248,11 @@ int ofArduino::getDigital(int pin) const {
 int ofArduino::getPwm(int pin) const {
 	if (pinCapabilities.count(pin) < 1) {
 		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
+		return -1;
 	}
 	if (!pinCapabilities[pin].pwmSupported) {
 		ofLogError("ofArduino") << "PWM is not supported for this pin";
-		return;
+		return -1;
 	}
 	if (_digitalPinMode[pin] == ARD_PWM) {
 		return _digitalPinValue[pin];
@@ -273,7 +273,7 @@ string ofArduino::getString() const {
 int ofArduino::getDigitalPinMode(int pin) const {
 	if (pinCapabilities.count(pin) < 1) {
 		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
+		return -1;
 	}
 	return _digitalPinMode[pin];
 }
@@ -482,11 +482,11 @@ void ofArduino::sendDigitalPinMode(int pin, int mode) {
 int ofArduino::getAnalogPinReporting(int pin) const {
 	if (pinCapabilities.count(pin) < 1) {
 		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
+		return -1;
 	}
 	if (!pinCapabilities[pin].analogSupported) {
 		ofLogError("ofArduino") << "Analog is not supported for this pin";
-		return;
+		return -1;
 	}
 	return _analogPinReporting[pin];
 }
@@ -494,11 +494,11 @@ int ofArduino::getAnalogPinReporting(int pin) const {
 list <int> * ofArduino::getAnalogHistory(int pin) {
 	if (pinCapabilities.count(pin) < 1) {
 		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
+		return NULL;
 	}
 	if (!pinCapabilities[pin].analogSupported) {
 		ofLogError("ofArduino") << "Analog is not supported for this pin";
-		return;
+		return NULL;
 	}
 	return &_analogHistory[pin];
 }
@@ -506,7 +506,7 @@ list <int> * ofArduino::getAnalogHistory(int pin) {
 list <int> * ofArduino::getDigitalHistory(int pin) {
 	if (pinCapabilities.count(pin) < 1) {
 		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
+		return NULL;
 	}
 	return &_digitalHistory[pin];
 }
@@ -1017,11 +1017,11 @@ void ofArduino::sendServoAttach(int pin, int minPulse, int maxPulse) {
 int ofArduino::getServo(int pin) const {
 	if (pinCapabilities.count(pin) < 1) {
 		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
+		return -1;
 	}
 	if (!pinCapabilities[pin].servoSupported) {
 		ofLogError("ofArduino") << "Servo Control is not supported for pin" + ofToString(pin);
-		return;
+		return -1;
 	}
 	if (_digitalPinMode[pin] == ARD_SERVO) {
 		return _digitalPinValue[pin];
