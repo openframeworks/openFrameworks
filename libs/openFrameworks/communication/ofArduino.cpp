@@ -1,4 +1,7 @@
 /*
+ * 11/5/15:
+ *   - updated for arduino 2.4.4 and configurable firmata
+ *
  * 1/9/13:
  *   - Fixed issue where digitalPinchange
  *
@@ -210,6 +213,14 @@ void ofArduino::update() {
 }
 
 int ofArduino::getAnalog(int pin) const {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].analogSupported) {
+		ofLogError("ofArduino") << "Analog is not supported for this pin";
+		return;
+	}
 	if (_analogHistory[pin].size() > 0) {
 		return _analogHistory[pin].front();
 	}
@@ -219,7 +230,11 @@ int ofArduino::getAnalog(int pin) const {
 }
 
 int ofArduino::getDigital(int pin) const {
-	if (_digitalPinMode[pin] == ARD_INPUT && _digitalHistory[pin].size() > 0) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if ((_digitalPinMode[pin] == ARD_INPUT || _digitalPinMode[pin] == ARD_INPUT_PULLUP) && _digitalHistory[pin].size() > 0) {
 		return _digitalHistory[pin].front();
 	}
 	else if (_digitalPinMode[pin] == ARD_OUTPUT) {
@@ -231,6 +246,14 @@ int ofArduino::getDigital(int pin) const {
 }
 
 int ofArduino::getPwm(int pin) const {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].pwmSupported) {
+		ofLogError("ofArduino") << "PWM is not supported for this pin";
+		return;
+	}
 	if (_digitalPinMode[pin] == ARD_PWM) {
 		return _digitalPinValue[pin];
 	}
@@ -248,11 +271,19 @@ string ofArduino::getString() const {
 }
 
 int ofArduino::getDigitalPinMode(int pin) const {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
 	return _digitalPinMode[pin];
 }
 
 void ofArduino::sendDigital(int pin, int value, bool force) {
-	if ((_digitalPinMode[pin] == ARD_INPUT || _digitalPinMode[pin] == ARD_OUTPUT) && (_digitalPinValue[pin] != value || force)) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if ((_digitalPinMode[pin] == ARD_INPUT || _digitalPinMode[pin] == ARD_INPUT_PULLUP || _digitalPinMode[pin] == ARD_OUTPUT) && (_digitalPinValue[pin] != value || force)) {
 
 		_digitalPinValue[pin] = value;
 
@@ -273,6 +304,14 @@ void ofArduino::sendDigital(int pin, int value, bool force) {
 }
 
 void ofArduino::sendPwm(int pin, int value, bool force) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].pwmSupported) {
+		ofLogError("ofArduino") << "PWM is not supported for this pin";
+		return;
+	}
 	if (_digitalPinMode[pin] == ARD_PWM && (_digitalPinValue[pin] != value || force)) {
 		sendByte(ANALOG_MESSAGE + pin);
 		sendValueAsTwo7bitBytes(value);
@@ -359,6 +398,7 @@ void ofArduino::sendDigitalPinMode(int pin, int mode) {
 	}
 	switch (mode) {
 	case ARD_INPUT:
+	case ARD_INPUT_PULLUP:
 		if (!pinCapabilities[pin].inputSupported) {
 			ofLogError("ofArduino") << "Input is not supported for this pin";
 			return;
@@ -412,6 +452,12 @@ void ofArduino::sendDigitalPinMode(int pin, int mode) {
 			return;
 		}
 		break;
+	case ARD_SERIAL:
+		if (!pinCapabilities[pin].serialSupported) {
+			ofLogError("ofArduino") << "Serial is not supported for pin" + ofToString(pin);
+			return;
+		}
+		break;
 	default:
 		ofLogError("ofArduino") << "Mode is not supported";
 		return;
@@ -434,14 +480,34 @@ void ofArduino::sendDigitalPinMode(int pin, int mode) {
 }
 
 int ofArduino::getAnalogPinReporting(int pin) const {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].analogSupported) {
+		ofLogError("ofArduino") << "Analog is not supported for this pin";
+		return;
+	}
 	return _analogPinReporting[pin];
 }
 
 list <int> * ofArduino::getAnalogHistory(int pin) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].analogSupported) {
+		ofLogError("ofArduino") << "Analog is not supported for this pin";
+		return;
+	}
 	return &_analogHistory[pin];
 }
 
 list <int> * ofArduino::getDigitalHistory(int pin) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
 	return &_digitalHistory[pin];
 }
 
@@ -705,6 +771,54 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 		}
 
 		break;
+	case SERIAL_MESSAGE:
+	{
+		Serial_Data reply;
+
+		it = data.begin();
+		unsigned char command = *it & 0xF0;
+		unsigned char portId = *it & 0x0F;
+		it++;    // skip the first byte, which is the command and port
+
+		while (it != data.end()) {
+			buffer = *it;
+			it++;
+			buffer += *it << 7;
+			it++;
+			str += buffer;
+		}
+		switch (portId) {
+		case HW_SERIAL0:
+			reply.portID = HW_SERIAL0;
+			break;
+		case HW_SERIAL1:
+			reply.portID = HW_SERIAL1;
+			break;
+		case HW_SERIAL2:
+			reply.portID = HW_SERIAL2;
+			break;
+		case HW_SERIAL3:
+			reply.portID = HW_SERIAL3;
+			break;
+		case SW_SERIAL0:
+			reply.portID = SW_SERIAL0;
+			break;
+		case SW_SERIAL1:
+			reply.portID = SW_SERIAL1;
+			break;
+		case SW_SERIAL2:
+			reply.portID = SW_SERIAL2;
+			break;
+		case SW_SERIAL3:
+			reply.portID = SW_SERIAL3;
+			break;
+		default:
+			ofLogError("Arduino Serial") << "Port does not exist or is not defined";
+		}
+		reply.data = str;
+		ofNotifyEvent(ESerialDataRecieved, reply, this);
+	}
+	break;
 	case CAPABILITY_RESPONSE:
 	{
 		it = data.begin();
@@ -718,6 +832,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 			firmataPwmSupported,
 			firmataServoSupported,
 			firmataI2cSupported,
+			firmataSerialSupported,
 			firmataOnewireSupported,
 			firmataStepperSupported,
 			firmataEncoderSupported = false;
@@ -729,7 +844,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 				pinCapabilities[pin].outputSupported = true;
 				firmataInputSupported = true;
 				firmataOutputSupported = true;
-				it += 4;
+				it += 6;
 				break;
 			case ARD_ANALOG:
 				pinCapabilities[pin].analogSupported = true;
@@ -750,6 +865,11 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 				break;
 			case ARD_I2C:
 				pinCapabilities[pin].i2cSupported = true;
+				firmataI2cSupported = true;
+				it += 2;
+				break;
+			case ARD_SERIAL:
+				pinCapabilities[pin].serialSupported = true;
 				firmataI2cSupported = true;
 				it += 2;
 				break;
@@ -801,7 +921,7 @@ void ofArduino::processDigitalPort(int port, unsigned char value) {
 
 	for (int i = 0; i<8; ++i) {
 		pin = i + (port * 8);
-		if (_digitalPinMode[pin] == ARD_INPUT) {
+		if (_digitalPinMode[pin] == ARD_INPUT || _digitalPinMode[pin] == ARD_INPUT_PULLUP) {
 			if (!_digitalHistory[pin].empty())
 				previous = _digitalHistory[pin].front();
 			else previous = 0;
@@ -860,6 +980,14 @@ int ofArduino::getValueFromTwo7bitBytes(unsigned char lsb, unsigned char msb) {
 }
 
 void ofArduino::sendServo(int pin, int value, bool force) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].servoSupported) {
+		ofLogError("ofArduino") << "Servo Control is not supported for pin" + ofToString(pin);
+		return;
+	}
 	if (_digitalPinMode[pin] == ARD_SERVO && (_digitalPinValue[pin] != value || force)) {
 		sendByte(ANALOG_MESSAGE + pin);
 		sendValueAsTwo7bitBytes(value);
@@ -868,6 +996,14 @@ void ofArduino::sendServo(int pin, int value, bool force) {
 }
 
 void ofArduino::sendServoAttach(int pin, int minPulse, int maxPulse) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].servoSupported) {
+		ofLogError("ofArduino") << "Servo Control is not supported for pin" + ofToString(pin);
+		return;
+	}
 	sendByte(START_SYSEX);
 
 	sendByte(SERVO_CONFIG);
@@ -879,6 +1015,14 @@ void ofArduino::sendServoAttach(int pin, int minPulse, int maxPulse) {
 }
 
 int ofArduino::getServo(int pin) const {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].servoSupported) {
+		ofLogError("ofArduino") << "Servo Control is not supported for pin" + ofToString(pin);
+		return;
+	}
 	if (_digitalPinMode[pin] == ARD_SERVO) {
 		return _digitalPinValue[pin];
 	}
@@ -917,7 +1061,7 @@ void  ofArduino::sendStepper2Wire(int dirPin, int stepPin, int stepsPerRev) {
 		sendByte(STEPPER_DATA);
 		sendByte(STEPPER_CONFIG);
 		sendByte(_numSteppers);
-		sendByte(DRIVER);
+		sendByte(FIRMATA_STEPPER_DRIVER);
 		sendValueAsTwo7bitBytes(stepsPerRev);
 		sendByte(dirPin);
 		sendByte(stepPin);
@@ -969,7 +1113,7 @@ void  ofArduino::sendStepper4Wire(int pin1, int pin2, int pin3, int pin4, int st
 		sendByte(STEPPER_DATA);
 		sendByte(STEPPER_CONFIG);
 		sendByte(_numSteppers);
-		sendByte(FOUR_WIRE);
+		sendByte(FIRMATA_STEPPER_FOUR_WIRE);
 		sendValueAsTwo7bitBytes(stepsPerRev);
 		sendByte(pin1);
 		sendByte(pin2);
@@ -1037,13 +1181,6 @@ void ofArduino::sendStepperMove(int stepperID, int direction, int numSteps, int 
 *
 ********************************************/
 
-/**
-* Sends a I2C config request to the arduino board with an optional
-* value in microseconds to delay an I2C Read.  Must be called before
-* an I2C Read or Write
-* @param {number} delay in microseconds to set for I2C Read
-*/
-
 void  ofArduino::sendI2CConfig(int delay) {
 	delay = delay || 0;
 	sendByte(START_SYSEX);
@@ -1055,19 +1192,13 @@ void  ofArduino::sendI2CConfig(int delay) {
 	_i2cConfigured = true;
 }
 
-/**
-* Asks the arduino to send an I2C request to a device
-* @param {number} slaveAddress The address of the I2C device
-* @param {Array} bytes The bytes to send to the device
-*/
-
 void  ofArduino::sendI2CWriteRequest(char slaveAddress, unsigned char * bytes, int numOfBytes) {
 
 	if (_i2cConfigured) {
 		sendByte(START_SYSEX);
 		sendByte(I2C_REQUEST);
 		sendByte(slaveAddress);
-		sendByte(WRITE << 3);
+		sendByte(FIRMATA_I2C_WRITE << 3);
 
 		for (int i = 0, length = numOfBytes; i < length; i++) {
 			sendValueAsTwo7bitBytes(bytes[i]);
@@ -1086,7 +1217,7 @@ void  ofArduino::sendI2CWriteRequest(char slaveAddress, vector<char> bytes) {
 		sendByte(START_SYSEX);
 		sendByte(I2C_REQUEST);
 		sendByte(slaveAddress);
-		sendByte(WRITE << 3);
+		sendByte(FIRMATA_I2C_WRITE << 3);
 
 		for (int i = 0, length = bytes.size(); i < length; i++) {
 			sendValueAsTwo7bitBytes(bytes[i]);
@@ -1098,19 +1229,7 @@ void  ofArduino::sendI2CWriteRequest(char slaveAddress, vector<char> bytes) {
 		ofLogError("Arduino") << "I2C was not configured, did you send an I2C config request?";
 	}
 }
-/**
-* Write data to a register
-*
-* @param {number} address      The address of the I2C device.
-* @param {array} cmdRegOrData  An array of bytes
-*
-* Write a command to a register
-*
-* @param {number} address      The address of the I2C device.
-* @param {number} cmdRegOrData The register
-* @param {array} inBytes       An array of bytes
-*
-*/
+
 void  ofArduino::i2cWrite(char address, unsigned char * bytes, int numOfBytes) {
 	/**
 	* registerOrData:
@@ -1126,7 +1245,7 @@ void  ofArduino::i2cWrite(char address, unsigned char * bytes, int numOfBytes) {
 		sendByte(START_SYSEX);
 		sendByte(I2C_REQUEST);
 		sendByte(address);
-		sendByte(WRITE << 3);
+		sendByte(FIRMATA_I2C_WRITE << 3);
 
 		for (int i = 0, length = numOfBytes; i < length; i++) {
 			sendValueAsTwo7bitBytes(bytes[i]);
@@ -1139,22 +1258,13 @@ void  ofArduino::i2cWrite(char address, unsigned char * bytes, int numOfBytes) {
 	}
 }
 
-/**
-* Write data to a register
-*
-* @param {number} address    The address of the I2C device.
-* @param {number} register   The register.
-* @param {number} byte       The byte value to write.
-*
-*/
-
 void  ofArduino::i2cWriteReg(char address, int reg, int byte) {
 
 	if (_i2cConfigured) {
 		sendByte(START_SYSEX);
 		sendByte(I2C_REQUEST);
 		sendByte(address);
-		sendByte(WRITE << 3);
+		sendByte(FIRMATA_I2C_WRITE << 3);
 		sendValueAsTwo7bitBytes(reg);
 		sendValueAsTwo7bitBytes(byte);
 		sendByte(END_SYSEX);
@@ -1164,21 +1274,13 @@ void  ofArduino::i2cWriteReg(char address, int reg, int byte) {
 	}
 }
 
-
-/**
-* Asks the arduino to request bytes from an I2C device
-* @param {number} slaveAddress The address of the I2C device
-* @param {number} numBytes The number of bytes to receive.
-* @param {function} callback A function to call when we have received the bytes.
-*/
-
 void  ofArduino::sendI2CReadRequest(char address, unsigned char numBytes) {
 
 	if (_i2cConfigured) {
 		sendByte(START_SYSEX);
 		sendByte(I2C_REQUEST);
 		sendByte(address);
-		sendByte(READ << 3);
+		sendByte(FIRMATA_I2C_READ << 3);
 		sendValueAsTwo7bitBytes(numBytes);
 		sendByte(END_SYSEX);
 	}
@@ -1187,25 +1289,13 @@ void  ofArduino::sendI2CReadRequest(char address, unsigned char numBytes) {
 	}
 }
 
-// TODO: Refactor i2cRead and i2cReadOnce
-//      to share most operations.
-
-/**
-* Initialize a continuous I2C read.
-*
-* @param {number} address    The address of the I2C device
-* @param {number} register   Optionally set the register to read from.
-* @param {number} numBytes   The number of bytes to receive.
-*
-*/
-
 void  ofArduino::i2cRead(char address, unsigned char reg, int bytesToRead) {
 
 	if (_i2cConfigured) {
 		sendByte(START_SYSEX);
 		sendByte(I2C_REQUEST);
 		sendByte(address);
-		sendByte(CONTINUOUS_READ << 3);
+		sendByte(FIRMATA_I2C_CONTINUOUS_READ << 3);
 		sendValueAsTwo7bitBytes(reg);
 		sendValueAsTwo7bitBytes(bytesToRead);
 		sendByte(END_SYSEX);
@@ -1216,27 +1306,13 @@ void  ofArduino::i2cRead(char address, unsigned char reg, int bytesToRead) {
 	}
 }
 
-/**
-* Perform a single I2C read
-*
-* Supersedes sendI2CReadRequest
-*
-* Read bytes from address
-*
-* @param {number} address    The address of the I2C device
-* @param {number} register   Optionally set the register to read from.
-* @param {number} numBytes   The number of bytes to receive.
-*
-*/
-
-
 void  ofArduino::i2cReadOnce(char address, unsigned char reg, int bytesToRead) {
 
 	if (_i2cConfigured) {
 		sendByte(START_SYSEX);
 		sendByte(I2C_REQUEST);
 		sendByte(address);
-		sendByte(READ << 3);
+		sendByte(FIRMATA_I2C_READ << 3);
 		sendValueAsTwo7bitBytes(reg);
 		sendValueAsTwo7bitBytes(bytesToRead);
 		sendByte(END_SYSEX);
@@ -1261,13 +1337,15 @@ bool ofArduino::isI2CConfigured() {
 *
 ********************************************/
 
-///**
-//* Configure the passed pin as the controller in a 1-wire bus.
-//* Pass as enableParasiticPower true if you want the data pin to power the bus.
-//* @param pin
-//* @param enableParasiticPower
-//*/
 void  ofArduino::sendOneWireConfig(int pin, bool enableParasiticPower) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].onewireSupported) {
+		ofLogError("ofArduino") << "Onewire is not supported for this pin";
+		return;
+	}
 	sendByte(START_SYSEX);
 	sendByte(ONEWIRE_DATA);
 	sendByte(ONEWIRE_CONFIG_REQUEST);
@@ -1276,29 +1354,40 @@ void  ofArduino::sendOneWireConfig(int pin, bool enableParasiticPower) {
 	sendByte(END_SYSEX);
 };
 
-///**
-//* Searches for 1-wire devices on the bus.  The passed callback should accept
-//* and error argument and an array of device identifiers.
-//* @param pin
-//* @param callback
-//*/
 void  ofArduino::sendOneWireSearch(int pin) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].onewireSupported) {
+		ofLogError("ofArduino") << "Onewire is not supported for this pin";
+		return;
+	}
 	sendOneWireSearch(ONEWIRE_SEARCH_REQUEST, pin);
 };
 
-///**
-//* Searches for 1-wire devices on the bus in an alarmed state.  The passed callback
-//* should accept and error argument and an array of device identifiers.
-//* @param pin
-//* @param callback
-//*/
 void  ofArduino::sendOneWireAlarmsSearch(int pin) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].onewireSupported) {
+		ofLogError("ofArduino") << "Onewire is not supported for this pin";
+		return;
+	}
 	sendOneWireSearch(ONEWIRE_SEARCH_ALARMS_REQUEST, pin);
 };
 
-
 //needs to notify event handler
 void  ofArduino::sendOneWireSearch(char type, int pin) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].onewireSupported) {
+		ofLogError("ofArduino") << "Onewire is not supported for this pin";
+		return;
+	}
 	sendByte(START_SYSEX);
 	sendByte(ONEWIRE_DATA);
 	sendByte(type);
@@ -1306,72 +1395,81 @@ void  ofArduino::sendOneWireSearch(char type, int pin) {
 	sendByte(END_SYSEX);
 }
 
-///**
-//* Reads data from a device on the bus.
-//*
-//* N.b. ConfigurableFirmata will issue the 1-wire select command internally.
-//* @param pin
-//* @param device
-//* @param numBytesToRead
-//* @param callback
-//*/
 void  ofArduino::sendOneWireRead(int pin, vector<unsigned char> devices, int numBytesToRead) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].onewireSupported) {
+		ofLogError("ofArduino") << "Onewire is not supported for this pin";
+		return;
+	}
 	int correlationId = floor(ofRandomuf() * 255);
 	vector<unsigned char> b;
 	sendOneWireRequest(pin, ONEWIRE_READ_REQUEST_BIT, devices, numBytesToRead, correlationId, 0, b);
 }
 
-///**
-//* Resets all devices on the bus.
-//* @param pin
-//*/
 void  ofArduino::sendOneWireReset(int pin) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].onewireSupported) {
+		ofLogError("ofArduino") << "Onewire is not supported for this pin";
+		return;
+	}
 	vector<unsigned char> a, b;
 	sendOneWireRequest(pin, ONEWIRE_RESET_REQUEST_BIT, a, 0, 0, 0, b);
 };
 
-///**
-//* Writes data to the bus to be received by the passed device.  The device
-//* should be obtained from a previous call to sendOneWireSearch.
-//*
-//* N.b. ConfigurableFirmata will issue the 1-wire select command internally.
-//* @param pin
-//* @param device
-//* @param data
-//*/
 void  ofArduino::sendOneWireWrite(int pin, vector<unsigned char> devices, vector<unsigned char> data) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].onewireSupported) {
+		ofLogError("ofArduino") << "Onewire is not supported for this pin";
+		return;
+	}
 	sendOneWireRequest(pin, ONEWIRE_WRITE_REQUEST_BIT, devices, 0, 0, 0, data);
 };
 
-///**
-//* Tells firmata to not do anything for the passed amount of ms.  For when you
-//* need to give a device attached to the bus time to do a calculation.
-//* @param pin
-//*/
 void  ofArduino::sendOneWireDelay(int pin, unsigned int delay) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].onewireSupported) {
+		ofLogError("ofArduino") << "Onewire is not supported for this pin";
+		return;
+	}
 	vector<unsigned char> a, b;
 	sendOneWireRequest(pin, ONEWIRE_DELAY_REQUEST_BIT, a, 0, 0, delay, b);
 };
 
-///**
-//* Sends the passed data to the passed device on the bus, reads the specified
-//* number of bytes.
-//*
-//* N.b. ConfigurableFirmata will issue the 1-wire select command internally.
-//* @param pin
-//* @param device
-//* @param data
-//* @param numBytesToRead
-//* @param callback
-//*/
 void  ofArduino::sendOneWireWriteAndRead(int pin, vector<unsigned char> devices, vector<unsigned char> data, int numBytesToRead) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].onewireSupported) {
+		ofLogError("ofArduino") << "Onewire is not supported for this pin";
+		return;
+	}
 	int correlationId = floor(ofRandomuf() * 255);
 	sendOneWireRequest(pin, ONEWIRE_WRITE_REQUEST_BIT | ONEWIRE_READ_REQUEST_BIT, devices, numBytesToRead, correlationId, 0, data);
 }
 
 //// see http://firmata.org/wiki/Proposals#OneWire_Proposal
 void  ofArduino::sendOneWireRequest(int pin, unsigned char subcommand, vector<unsigned char> devices, int numBytesToRead, unsigned char correlationId, unsigned int delay, vector<unsigned char> dataToWrite) {
-
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].onewireSupported) {
+		ofLogError("ofArduino") << "Onewire is not supported for this pin";
+		return;
+	}
 	vector<unsigned char> bytes;
 	bytes.resize(16);
 
@@ -1380,7 +1478,7 @@ void  ofArduino::sendOneWireRequest(int pin, unsigned char subcommand, vector<un
 	}
 
 	if (devices.size() > 0) {
-		for (int i = 0; i<devices.size(); i++) {
+		for (int i = 0; i < devices.size(); i++) {
 			bytes[i] = devices[i];
 		}
 	}
@@ -1403,7 +1501,7 @@ void  ofArduino::sendOneWireRequest(int pin, unsigned char subcommand, vector<un
 	}
 
 	if (dataToWrite.size() > 0) {
-		for (int i = 0; i<dataToWrite.size(); i++) {
+		for (int i = 0; i < dataToWrite.size(); i++) {
 			bytes.push_back(dataToWrite[i]);
 		}
 	}
@@ -1415,7 +1513,7 @@ void  ofArduino::sendOneWireRequest(int pin, unsigned char subcommand, vector<un
 	int shift = 0;
 	int previous = 0;
 	//i dont think this is safe
-	for (int i = 0; i<bytes.size(); i++) {
+	for (int i = 0; i < bytes.size(); i++) {
 		if (shift == 0) {
 			sendByte(bytes[i] & 0x7f);
 			shift++;
@@ -1532,3 +1630,94 @@ void ofArduino::purge() {
 	for (int i = 0; i < 5; i++)
 		sendByte(END_SYSEX);
 }
+
+/********************************************
+*
+*
+*				Serial Functions
+*
+*
+********************************************/
+
+void ofArduino::sendSerialConfig(Serial_Ports portID, int baud, int rxPin, int txPin) {
+
+	if (portID > 7 && rxPin < 0 && txPin < 0) {
+		ofLogError("ofArduino") << "Both RX and TX pins must be defined when using Software Serial.";
+		return;
+	}
+
+	baud = baud || 57600;
+
+	sendByte(START_SYSEX);
+	sendByte(SERIAL_MESSAGE);
+	sendByte(SERIAL_CONFIG | portID);
+	sendByte(baud & 0x007F);
+	sendByte((baud >> 7) & 0x007F);
+	sendByte((baud >> 14) & 0x007F);
+
+	if (portID > 7 && rxPin >= 0 && txPin >= 0) {
+		sendByte(rxPin);
+		sendByte(txPin);
+	}
+	else if (portID > 7) {
+		ofLogError("ofArduino") << "Both RX and TX pins must be defined when using Software Serial.";
+	}
+
+	sendByte(END_SYSEX);
+};
+
+void ofArduino::serialWrite(Serial_Ports portID, unsigned char * bytes, int numOfBytes) {
+	sendByte(START_SYSEX);
+	sendByte(SERIAL_MESSAGE);
+	sendByte(SERIAL_WRITE | portID);
+	for (int i = 0; i < numOfBytes; i++) {
+		sendValueAsTwo7bitBytes(bytes[i]);
+	}
+	sendByte(END_SYSEX);
+};
+
+void ofArduino::serialRead(Serial_Ports portID, int maxBytesToRead) {
+	sendByte(START_SYSEX);
+	sendByte(SERIAL_MESSAGE);
+	sendByte(SERIAL_READ | portID);
+	sendByte(FIRMATA_SERIAL_READ_CONTINUOUS);
+
+	if (maxBytesToRead > 0) {
+		sendValueAsTwo7bitBytes(maxBytesToRead);
+	}
+
+	sendByte(END_SYSEX);
+};
+
+void ofArduino::serialStop(Serial_Ports portID) {
+	sendByte(START_SYSEX);
+	sendByte(SERIAL_MESSAGE);
+	sendByte(SERIAL_READ | portID);
+	sendByte(FIRMATA_SERIAL_STOP_READING);
+	sendByte(END_SYSEX);
+};
+
+void ofArduino::serialClose(Serial_Ports portID) {
+	sendByte(START_SYSEX);
+	sendByte(SERIAL_MESSAGE);
+	sendByte(SERIAL_CLOSE | portID);
+	sendByte(END_SYSEX);
+};
+
+void ofArduino::serialFlush(Serial_Ports portID) {
+	sendByte(START_SYSEX);
+	sendByte(SERIAL_MESSAGE);
+	sendByte(SERIAL_FLUSH | portID);
+	sendByte(END_SYSEX);
+};
+
+void ofArduino::serialListen(Serial_Ports portID) {
+	// listen only applies to software serial ports
+	if (portID < 8) {
+		return;
+	}
+	sendByte(START_SYSEX);
+	sendByte(SERIAL_MESSAGE);
+	sendByte(SERIAL_LISTEN | portID);
+	sendByte(END_SYSEX);
+};
