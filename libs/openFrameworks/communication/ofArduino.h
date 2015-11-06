@@ -46,6 +46,7 @@
 #define REPORT_DIGITAL			0xD0 // enable digital input by port pair
  //
 #define SET_PIN_MODE			0xF4 // set a pin to INPUT/OUTPUT/PWM/etc
+#define SET_DIGITAL_PIN_VALUE   0xF5 // set value of an individual digital pin
  //
 #define REPORT_VERSION			0xF9 // report protocol version
 #define SYSTEM_RESET			0xFF // reset from MIDI
@@ -55,32 +56,33 @@
 
  // extended command set using sysex (0-127/0x00-0x7F)
  /* 0x00-0x0F reserved for user-defined commands */
-#define ENCODER_DATA			0x61 // reply with encoders current positions
-#define SERVO_CONFIG			0x70 // set max angle, minPulse, maxPulse, freq
-#define STRING_DATA				0x71 // a string message with 14-bits per char
-#define STEPPER_DATA			0x72 // control a stepper motor
-#define ONEWIRE_DATA			0x73 // send an OneWire read/write/reset/select/skip/search request
-#define SHIFT_DATA				0x75 // a bitstream to/from a shift register
-#define I2C_REQUEST				0x76 // send an I2C read/write request
-#define I2C_REPLY				0x77 // a reply to an I2C read request
-#define I2C_CONFIG				0x78 // config I2C settings such as delay times and power pins
-#define EXTENDED_ANALOG			0x6F // analog write (PWM, Servo, etc) to any pin
-#define PIN_STATE_QUERY			0x6D // ask for a pin's current mode and value
-#define PIN_STATE_RESPONSE		0x6E // reply with pin's current mode and value
-#define CAPABILITY_QUERY		0x6B // ask for supported modes and resolution of all pins
-#define CAPABILITY_RESPONSE		0x6C // reply with supported modes and resolution
-#define ANALOG_MAPPING_QUERY	0x69 // ask for mapping of analog to pin numbers
-#define ANALOG_MAPPING_RESPONSE	0x6A // reply with mapping info
-#define REPORT_FIRMWARE			0x79 // report name and version of the firmware
-#define SAMPLING_INTERVAL		0x7A // set the poll rate of the main loop
-#define SCHEDULER_DATA			0x7B // send a createtask/deletetask/addtotask/schedule/querytasks/querytask request to the scheduler
-#define SYSEX_NON_REALTIME		0x7E // MIDI Reserved for non-realtime messages
-#define SYSEX_REALTIME			0x7F // MIDI Reserved for realtime messages
+#define SERIAL_MESSAGE          0x60 // communicate with serial devices, including other boards
+#define ENCODER_DATA            0x61 // reply with encoders current positions
+#define SERVO_CONFIG            0x70 // set max angle, minPulse, maxPulse, freq
+#define STRING_DATA             0x71 // a string message with 14-bits per char
+#define STEPPER_DATA            0x72 // control a stepper motor
+#define ONEWIRE_DATA            0x73 // send an OneWire read/write/reset/select/skip/search request
+#define SHIFT_DATA              0x75 // a bitstream to/from a shift register
+#define I2C_REQUEST             0x76 // send an I2C read/write request
+#define I2C_REPLY               0x77 // a reply to an I2C read request
+#define I2C_CONFIG              0x78 // config I2C settings such as delay times and power pins
+#define EXTENDED_ANALOG         0x6F // analog write (PWM, Servo, etc) to any pin
+#define PIN_STATE_QUERY         0x6D // ask for a pin's current mode and value
+#define PIN_STATE_RESPONSE      0x6E // reply with pin's current mode and value
+#define CAPABILITY_QUERY        0x6B // ask for supported modes and resolution of all pins
+#define CAPABILITY_RESPONSE     0x6C // reply with supported modes and resolution
+#define ANALOG_MAPPING_QUERY    0x69 // ask for mapping of analog to pin numbers
+#define ANALOG_MAPPING_RESPONSE 0x6A // reply with mapping info
+#define REPORT_FIRMWARE         0x79 // report name and version of the firmware
+#define SAMPLING_INTERVAL       0x7A // set the poll rate of the main loop
+#define SCHEDULER_DATA          0x7B // send a createtask/deletetask/addtotask/schedule/querytasks/querytask request to the scheduler
+#define SYSEX_NON_REALTIME      0x7E // MIDI Reserved for non-realtime messages
+#define SYSEX_REALTIME          0x7F // MIDI Reserved for realtime messages
  // these are DEPRECATED to make the naming more consistent
-#define FIRMATA_STRING			0x71 // same as STRING_DATA
-#define SYSEX_I2C_REQUEST		0x76 // same as I2C_REQUEST
-#define SYSEX_I2C_REPLY			0x77 // same as I2C_REPLY
-#define SYSEX_SAMPLING_INTERVAL	0x7A // same as SAMPLING_INTERVAL
+#define FIRMATA_STRING          0x71 // same as STRING_DATA
+#define SYSEX_I2C_REQUEST       0x76 // same as I2C_REQUEST
+#define SYSEX_I2C_REPLY         0x77 // same as I2C_REPLY
+#define SYSEX_SAMPLING_INTERVAL 0x7A // same as SAMPLING_INTERVAL
 
  // pin modes
 #define ARD_INPUT				0x00 // defined in Arduino.h
@@ -93,6 +95,8 @@
 #define ARD_ONEWIRE				0x07 // pin configured for 1-wire
 #define ARD_STEPPER				0x08 // pin configured for stepper motor
 #define ARD_ENCODER				0x09 // pin configured for rotary encoders
+#define ARD_SERIAL              0x0A // pin configured for serial communication
+#define ARD_INPUT_PULLUP        0x0B // enable internal pull-up resistor for pin
 #define ARD_IGNORE				0x7F // pin configured to be ignored by digitalWrite and capabilityResponse
 #define TOTAL_PIN_MODES			11
 
@@ -133,15 +137,24 @@
 #define REGISTER_NOT_SPECIFIED			-1
 
 //Encoder Subcommands
-#define MAX_ENCODERS									5 // arbitrary value, may need to adjust
-#define ENCODER_ATTACH									0x00
-#define ENCODER_REPORT_POSITION							0x01
-#define ENCODER_REPORT_POSITIONS						0x02
-#define ENCODER_RESET_POSITION							0x03
-#define ENCODER_REPORT_AUTO								0x04
-#define ENCODER_DETACH									0x05
-#define ENCODER_DIRECTION_MASK							0x40 // B01000000
-#define ENCODER_CHANNEL_MASK							0x3F // B00111111
+#define MAX_ENCODERS					5 // arbitrary value, may need to adjust
+#define ENCODER_ATTACH					0x00
+#define ENCODER_REPORT_POSITION			0x01
+#define ENCODER_REPORT_POSITIONS		0x02
+#define ENCODER_RESET_POSITION			0x03
+#define ENCODER_REPORT_AUTO				0x04
+#define ENCODER_DETACH					0x05
+#define ENCODER_DIRECTION_MASK			0x40 // B01000000
+#define ENCODER_CHANNEL_MASK			0x3F // B00111111
+
+//Serial Subcommands
+#define SERIAL_CONFIG					0x10
+#define SERIAL_WRITE					0x20
+#define SERIAL_READ						0x30
+#define SERIAL_REPLY					0x40
+#define SERIAL_CLOSE					0x50
+#define SERIAL_FLUSH					0x60
+#define SERIAL_LISTEN					0x70
 
 // OF specific settings
 //these are given by the capability query
@@ -163,26 +176,27 @@ struct supportedPinTypes {
 	bool	pwmSupported = false;
 	bool	servoSupported = false;
 	bool	i2cSupported = false;
+	bool	serialSupported = false;
 	bool	onewireSupported = false;
 	bool	stepperSupported = false;
 	bool	encoderSupported = false;
 };
 
 enum Stepper_Interface {
-	DRIVER = 1,
-	TWO_WIRE = 2,
-	FOUR_WIRE = 3
+	FIRMATA_STEPPER_DRIVER = 1,
+	FIRMATA_STEPPER_TWO_WIRE = 2,
+	FIRMATA_STEPPER_FOUR_WIRE = 3
 };
 
 enum Direction {
-	CCW = 0,
-	CW = 1
+	FIRMATA_STEPPER_CCW = 0,
+	FIRMATA_STEPPER_CW = 1
 };
 enum i2c_modes {
-	WRITE = 0x00,
-	READ = 1,
-	CONTINUOUS_READ = 2,
-	STOP_READING = 3
+	FIRMATA_I2C_WRITE = 0x00,
+	FIRMATA_I2C_READ = 1,
+	FIRMATA_I2C_CONTINUOUS_READ = 2,
+	FIRMATA_I2C_STOP_READING = 3
 };
 
 struct I2C_Data {
@@ -201,6 +215,28 @@ struct Stepper_Data {
 	int		id;
 	int		type;
 	int		data;
+};
+
+enum Serial_Modes {
+	FIRMATA_SERIAL_READ_CONTINUOUS = 0x00,
+	FIRMATA_SERIAL_STOP_READING = 0x01
+};
+
+/// ids for hardware and software serial ports on the board
+enum Serial_Ports {
+	HW_SERIAL0 = 0x00,
+	HW_SERIAL1 = 0x01,
+	HW_SERIAL2 = 0x02,
+	HW_SERIAL3 = 0x03,
+	SW_SERIAL0 = 0x08,
+	SW_SERIAL1 = 0x09,
+	SW_SERIAL2 = 0x10,
+	SW_SERIAL3 = 0x11
+};
+
+struct Serial_Data {
+	Serial_Ports	portID;
+	string			data;
 };
 
 /// \brief This is a way to control an Arduino that has had the firmata library
@@ -457,6 +493,10 @@ public:
 	/// \brief triggered when the encoder returns data after a read request
 	ofEvent<const vector<Encoder_Data> > EEncoderDataRecieved;
 
+	/// \brief triggered when a Serial message is received. Returns which 
+	/// port and its data
+	ofEvent<const Serial_Data> ESerialDataRecieved;
+
 	/// \}
 	/// \name Servos
 	/// \{
@@ -479,6 +519,8 @@ public:
 	int getServo(int pin) const;
 
 	/// \}
+	/// \name Stepper
+	/// \{
 
 	/// -- stepper
 	void sendStepper2Wire(int dirPin, int stepPin, int stepsPerRev = 200);
@@ -491,26 +533,134 @@ public:
 	/// set the steps to move
 
 
+	/// \}
+	/// \name I2C
+	/// \{
+
+	/// \brief Sends a I2C config request
+	///
+	///  Must be called before an I2C Read or Write
+	/// \param {number} delay in microseconds to set for I2C Read
 	void sendI2CConfig(int delay);
 	bool isI2CConfigured();
+
+	/// \brief Asks the arduino to send an I2C request to a device
+	///
+	/// \param {number} slaveAddress The address of the I2C device
+	/// \param {Array} bytes The bytes to send to the device
 	void sendI2CWriteRequest(char slaveAddress, unsigned char * bytes, int numOfBytes);
 	void sendI2CWriteRequest(char slaveAddress, vector<char> bytes);
+
+	/// \brief Write data to a register
+	///
+	/// \param {number} address      The address of the I2C device.
+	/// \param {array} cmdRegOrData  An array of bytes
+	///
+	/// Write a command to a register
+	///
+	/// \param {number} address      The address of the I2C device.
+	/// \param {number} cmdRegOrData The register
+	/// \param {array} inBytes       An array of bytes
+	///
 	void i2cWrite(char address, unsigned char * bytes, int numOfBytes);
+
+	/// \brief Write data to a register
+	///
+	/// \param {number} address    The address of the I2C device.
+	/// \param {number} register   The register.
+	/// \param {number} byte       The byte value to write.
+	///
 	void i2cWriteReg(char address, int reg, int byte);
+
+	/// \brief Asks the arduino to request bytes from an I2C device
+	///
+	/// \param {number} slaveAddress The address of the I2C device
+	/// \param {number} numBytes The number of bytes to receive.
+	/// \param {function} callback A function to call when we have received the bytes.
 	void sendI2CReadRequest(char address, unsigned char numBytes);
+
+	/// \brief Initialize a continuous I2C read.
+	///
+	/// \param {number} address    The address of the I2C device
+	/// \param {number} register   Optionally set the register to read from.
+	/// \param {number} numBytes   The number of bytes to receive.
 	void i2cRead(char address, unsigned char reg, int bytesToRead);
+
+	/// \brief Perform a single I2C read
+	///
+	/// Supersedes sendI2CReadRequest
+	///
+	/// Read bytes from address
+	///
+	/// \param {number} address    The address of the I2C device
+	/// \param {number} register   Optionally set the register to read from.
+	/// \param {number} numBytes   The number of bytes to receive.
 	void i2cReadOnce(char address, unsigned char reg, int bytesToRead);
 
+	/// \}
+	/// \name OneWire
+	/// \{
+
+	/// \brief Configure the passed pin as the controller in a 1-wire bus.
+	///
+	/// Pass as enableParasiticPower true if you want the data pin to power the bus.
+	/// \param pin
+	/// \param enableParasiticPower
+	///
 	void sendOneWireConfig(int pin, bool enableParasiticPower);
+
+	/// \brief Searches for 1-wire devices on the bus.  
+	///
+	/// \param pin
 	void sendOneWireSearch(int pin);
+
+	/// \brief Searches for 1-wire devices on the bus in an alarmed state.  
+	///
+	/// \param pin
 	void sendOneWireAlarmsSearch(int pin);
 	void sendOneWireSearch(char type, int pin);
+
+	/// \brief Reads data from a device on the bus.
+	///
+	/// N.b. ConfigurableFirmata will issue the 1-wire select command internally.
+	/// \param pin
+	/// \param device
+	/// \param numBytesToRead
+	/// \param callback
 	void sendOneWireRead(int pin, vector<unsigned char> devices, int numBytesToRead);
+	
+	/// \brief Resets all devices on the bus.
+	/// \param pin
 	void sendOneWireReset(int pin);
+
+	/// \brief Writes data to the bus to be received by the passed device.  
+	///
+	/// The device should be obtained from a previous call to sendOneWireSearch. ConfigurableFirmata will issue the 1-wire select command internally.
+	/// \param pin
+	/// \param device
+	/// \param data
 	void sendOneWireWrite(int pin, vector<unsigned char> devices, vector<unsigned char> data);
+
+	/// \brief Tells firmata to not do anything for the passed amount of ms.
+	/// 
+	/// For when you need to give a device attached to the bus time to do a calculation.
+	/// \param pin
 	void sendOneWireDelay(int pin, unsigned int delay);
+
+	/// \brief Sends the passed data to the passed device on the bus, reads the specified number of bytes.
+	///
+	/// ConfigurableFirmata will issue the 1-wire select command internally.
+	/// \param pin
+	/// \param device
+	/// \param data
+	/// \param numBytesToRead
+	/// \param callback
 	void sendOneWireWriteAndRead(int pin, vector<unsigned char> devices, vector<unsigned char> data, int numBytesToRead);
 	void sendOneWireRequest(int pin, unsigned char subcommand, vector<unsigned char> devices, int numBytesToRead, unsigned char correlationId, unsigned int delay, vector<unsigned char> dataToWrite);
+
+	/// \}
+	/// \name Encoder
+	/// \{
 
 	void attachEncoder(int pinA, int pinB);
 	void getEncoderPosition(int encoderNum);
@@ -519,6 +669,57 @@ public:
 	void enableEncoderReporting();
 	void disableEncoderReporting();
 	void detachEncoder(int encoderNum);
+
+	/// \}
+	/// \name Serial
+	/// \{
+
+	/// \brief Asks the Arduino to configure a hardware or serial port.
+	///
+	/// \param portID The serial port to use (HW_SERIAL1, HW_SERIAL2, HW_SERIAL3, SW_SERIAL0, SW_SERIAL1, SW_SERIAL2, SW_SERIAL3)
+	/// \param baud  The baud rate of the serial port
+	/// \param rxPin [SW Serial only] The RX pin of the SoftwareSerial instance
+	/// \param txPin [SW Serial only] The TX pin of the SoftwareSerial instance
+	void sendSerialConfig(Serial_Ports portID, int baud, int rxPin, int txPin);
+
+	/// \brief Write an array of bytes to the specified serial port.
+	///
+	/// \param portId The serial port to write to.
+	/// \param bytes An array of bytes to write to the serial port.
+	/// \param numOfBytes length of the array of bytes.
+	void serialWrite(Serial_Ports port, unsigned char * bytes, int numOfBytes);
+
+	/// \brief  Start continuous reading of the specified serial port.
+	///
+	/// The port is checked for data each iteration of the main Arduino loop.
+	/// \param portId The serial port to start reading continuously.
+	/// \param  maxBytesToRead [Optional] The maximum number of bytes to read per iteration.
+	/// \note If there are less bytes in the buffer, the lesser number of bytes will be returned. A value of 0 indicates that all available bytes in the buffer should be read.
+	void serialRead(Serial_Ports port, int maxBytesToRead);
+
+	/// \brief Stop continuous reading of the specified serial port.
+	///
+	/// This does not close the port, it stops reading it but keeps the port open.
+	/// \param portId The serial port to stop reading.
+	void serialStop(Serial_Ports portID);
+
+	/// \brief  Close the specified serial port.
+	///
+	/// \param portId The serial port to close.
+	void serialClose(Serial_Ports portID);
+
+	/// \brief Flush the specified serial port.
+	///
+	/// For hardware serial, this waits for the transmission of outgoing serial data to complete.For software serial, this removed any buffered incoming serial data.
+	/// \param portId The serial port to listen on.
+	void serialFlush(Serial_Ports portID);
+
+	/// \brief For SoftwareSerial only. Only a single SoftwareSerial instance can read data at a time.
+	///
+	/// Call this method to set this port to be the reading port in the case there are multiple SoftwareSerial instances.
+	/// \param portId The serial port to flush.
+	void serialListen(Serial_Ports portID);
+
 
 	map<int, supportedPinTypes> getPinCapabilities() { return pinCapabilities; }
 
@@ -529,15 +730,8 @@ private:
 	mutable int _totalDigitalPins; ///\< \brief Indicate the total number of digital pins of the board in use.
 
 	void sendDigitalPinReporting(int pin, int mode);
-	// sets pin reporting to ARD_ON or ARD_OFF
-	// enables / disables reporting for the pins port
 
 	void sendDigitalPortReporting(int port, int mode);
-	// sets port reporting to ARD_ON or ARD_OFF
-	// enables / disables reporting for ports 0-2
-	// port 0: pins 2-7  (0,1 are serial RX/TX)
-	// port 1: pins 8-13 (14,15 are disabled for the crystal)
-	// port 2: pins 16-21 analog pins used as digital, all analog reporting will be turned off if this is set to ARD_ON
 
 	void purge();
 
@@ -568,9 +762,6 @@ private:
 	int _minorFirmwareVersion;
 	string _firmwareName;
 
-	// sum of majorFirmwareVersion * 10 + minorFirmwareVersion -> Firmata (?)
-	//int _firmwareVersionSum;
-
 	list <vector <unsigned char> > _sysExHistory;
 	// maintains a history of received sysEx messages (excluding SysEx messages in the extended command set)
 
@@ -578,19 +769,15 @@ private:
 	// maintains a history of received strings
 
 	//we dont know the number of pintypes until we do a configuration request so just a placeholder for now
-	//mutable list <int> _analogHistory[ARD_TOTAL_ANALOG_PINS];
 	mutable vector<list <int> > _analogHistory;
 	// a history of received data for each analog pin
 
-	//mutable list <int> _digitalHistory[ARD_TOTAL_DIGITAL_PINS];
 	mutable vector<list <int> > _digitalHistory;
 	// a history of received data for each digital pin
 
-	//mutable int _digitalPinMode[ARD_TOTAL_DIGITAL_PINS];
 	mutable vector<int> _digitalPinMode;
 	// the modes for all digital pins
 
-	//mutable int _digitalPinValue[ARD_TOTAL_DIGITAL_PINS];
 	mutable vector<int> _digitalPinValue;
 	// the last set values (DIGITAL/PWM) on all digital pins
 
@@ -600,11 +787,9 @@ private:
 	mutable int _digitalPortReporting[ARD_TOTAL_PORTS];
 	// whether pin reporting is enabled / disabled
 
-	//mutable int _digitalPinReporting[ARD_TOTAL_DIGITAL_PINS];
 	mutable vector<int> _digitalPinReporting;
 	// whether pin reporting is enabled / disabled
 
-	//mutable int _analogPinReporting[ARD_TOTAL_ANALOG_PINS];
 	mutable vector<int> _analogPinReporting;
 	// whether pin reporting is enabled / disabled
 
@@ -614,7 +799,6 @@ private:
 
 	float connectTime; ///< \brief This represents the (running) time of establishing a serial connection.
 
-	//mutable int _servoValue[ARD_TOTAL_DIGITAL_PINS];
 	mutable vector<int> _servoValue;
 	// the last set servo values
 
@@ -636,9 +820,10 @@ private:
 		firmataI2cSupported,
 		firmataOnewireSupported,
 		firmataStepperSupported,
-		firmataEncoderSupported;
+		firmataEncoderSupported,
+		firmataSerialSupported;
 
-	map<int, supportedPinTypes> pinCapabilities;
+	mutable map<int, supportedPinTypes> pinCapabilities;
 };
 
 typedef ofArduino ofStandardFirmata;
