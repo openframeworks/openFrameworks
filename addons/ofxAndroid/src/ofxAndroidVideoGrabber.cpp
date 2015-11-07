@@ -229,7 +229,16 @@ void ofxAndroidVideoGrabber::update(){
 }
 
 void ofxAndroidVideoGrabber::close(){
-
+    JNIEnv *env = ofGetJNIEnv();
+    jclass javaClass = getJavaClass();
+    jmethodID javaCloseGrabber = env->GetMethodID(javaClass,"close","()V");
+    if(data->javaVideoGrabber && javaCloseGrabber){
+        env->CallVoidMethod(data->javaVideoGrabber,javaCloseGrabber);
+    } else {
+        ofLogError("ofxAndroidVideoGrabber") << "close(): couldn't get OFAndroidVideoGrabber close grabber method";
+    }
+    
+    data->bGrabberInited = false;
 }
 
 
