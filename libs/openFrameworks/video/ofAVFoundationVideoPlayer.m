@@ -556,6 +556,13 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 }
 
+- (void)close
+{
+	[asyncLock lock];
+	[self unloadVideo];
+	[asyncLock unlock];
+}
+
 
 #pragma mark - AVPlayerItemOutputPullDelegate
 
