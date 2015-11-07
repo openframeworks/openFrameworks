@@ -32,6 +32,27 @@ ofAVFoundationPlayer::~ofAVFoundationPlayer() {
 }
 
 //--------------------------------------------------------------
+ofAVFoundationPlayer& ofAVFoundationPlayer::operator=(ofAVFoundationPlayer other)
+{
+	// clear pixels
+	pixels.clear();
+	videoTexture.clear();
+	
+	// in any case get rid of the textures
+	if(bTextureCacheSupported == true) {
+		killTextureCache();
+	}
+
+	bFrameNew = false;
+	bResetPixels = false;
+	bUpdatePixels = false;
+	bUpdateTexture = false;
+	
+	std::swap(videoPlayer, other.videoPlayer);
+	return *this;
+}
+
+//--------------------------------------------------------------
 void ofAVFoundationPlayer::loadAsync(string name){
     loadPlayer(name, true);
 }
@@ -132,13 +153,14 @@ void ofAVFoundationPlayer::disposePlayer() {
 		
 		// dispose videoplayer
 		__block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
-		videoPlayer = nullptr;
 		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
 			@autoreleasepool {
-				[currentPlayer autorelease];
+				[currentPlayer unloadVideo]; // synchronious call to unload video
+				[currentPlayer autorelease]; // release
 			}
 		});
-
+		
+		videoPlayer = nullptr;
 	}
 	
 	// in any case get rid of the textures
