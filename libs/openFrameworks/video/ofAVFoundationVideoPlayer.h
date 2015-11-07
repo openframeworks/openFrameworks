@@ -127,6 +127,7 @@ typedef enum _playerLoopType{
 - (void)setEnableAudioSampling:(BOOL)value;
 - (void)setSynchSampleTime:(CMTime)time;
 - (void)setSynchSampleTimeInSec:(double)time;
+
 - (CMTime)getVideoSampleTime;
 - (double)getVideoSampleTimeInSec;
 - (CMTime)getAudioSampleTime;
@@ -144,6 +145,7 @@ typedef enum _playerLoopType{
 - (int)getDurationInFrames;
 - (int)getCurrentFrameNum;
 - (float)getFrameRate;
+
 - (void)setFrame:(int)frame;
 - (void)setPosition:(float)position;
 - (float)getPosition;
@@ -156,5 +158,6 @@ typedef enum _playerLoopType{
 - (void)setAutoplay:(BOOL)bAutoplay;
 - (BOOL)getAutoplay;
 - (void)setWillBeUpdatedExternally:(BOOL)value;
+- (void)close;
 
 @end
