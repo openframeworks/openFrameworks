@@ -6,7 +6,7 @@ versions: 2.2+
 
 architectures:
   * armeabi-v7a
-  * x86 (i686)
+  * x86
 
 
 # Emscripten #
@@ -21,7 +21,7 @@ versions: iOS 5 - 8 (FAT Bundle with libc++ for all archs)
 architectures:
   * ARMv7
   * ARM64
-  * i386
+  * x86
   * x86_64
 
 notes:
@@ -35,7 +35,7 @@ notes:
 versions: Debian, Arch, Ubuntu, Fedora
 
 architectures:
-  * x86 (i386)
+  * x86
   * x86_64
   * ARMv6l
   * ARMv7l
@@ -58,7 +58,7 @@ notes:
 versions: 10.7 - 10.10 (FAT Bundle)
 
 architectures:
-  * i386 (with libc++)
+  * x86 (with libc++)
   * x86_64 (with libc++)
 
 notes:
