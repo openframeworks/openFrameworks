@@ -160,7 +160,7 @@ void ofAVFoundationPlayer::close() {
         pixels.clear();
         videoTexture.clear();
 		
-		[videoPlayer unloadVideo];
+		[videoPlayer close];
     }
 	
     bFrameNew = false;
