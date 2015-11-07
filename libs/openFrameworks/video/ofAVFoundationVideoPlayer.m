@@ -266,9 +266,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				NSLog(@"problem with creating asset reader.");
 				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
-				} else {
-					[asyncLock unlock];
 				}
+				[asyncLock unlock];
 				return;
 			}
 			
@@ -291,25 +290,23 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				NSLog(@"could not create AVPlayerItem");
 				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
-				} else {
-					[asyncLock unlock];
 				}
+				[asyncLock unlock];
 				return;
 			}
 			
-			self.playerItem = playerItem;
-			
 			//------------------------------------------------------------ player item.
+			self.playerItem = playerItem;
 			[self.playerItem addObserver:self
 							  forKeyPath:kStatusKey
 								 options:0
 								 context:&ItemStatusContext];
 			
-
-			[[NSNotificationCenter defaultCenter] addObserver:self
-													 selector:@selector(playerItemDidReachEnd)
-														 name:AVPlayerItemDidPlayToEndTimeNotification
-													   object:self.playerItem];
+			NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
+			[notificationCenter addObserver:self
+								   selector:@selector(playerItemDidReachEnd)
+									   name:AVPlayerItemDidPlayToEndTimeNotification
+									 object:self.playerItem];
 			
 			//AVPlayerItemPlaybackStalledNotification only exists from OS X 10.9 or iOS 6.0 and up
 #if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1090) || (__IPHONE_OS_VERSION_MIN_REQUIRED >= 60000)
@@ -331,8 +328,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			
 			
 			//------------------------------------------------------------ recreate player.
-			// destroy player if any
-			if(self.player != nil) {
+			// destroy player if any - should never be the case!!
+			if(_player != nil) {
 				NSLog(@"loading - remove player");
 				[self removeTimeObserverFromPlayer];
 				[self.player removeObserver:self forKeyPath:kRateKey context:&PlayerRateContext];
@@ -354,8 +351,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			
 			if(bAsync == NO){
 				dispatch_semaphore_signal(sema);
-			} else {
-				
 			}
 			
 			[asyncLock unlock];
@@ -397,29 +392,27 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	videoHeight = 0;
 	
 
-	// remove observers
-	if (_playerItem != nil) {
-		[_playerItem removeObserver:self forKeyPath:kStatusKey context:&ItemStatusContext];
-	}
-	
-	if (self.player != nil) {
-		[self.player removeObserver:self forKeyPath:kRateKey context:&PlayerRateContext];
-	}
-	
-	
 	// a reference to all the variables for the block
 	__block AVAsset* currentAsset = _asset;
 	__block AVAssetReader* currentReader = _assetReader;
 	__block AVAssetReaderTrackOutput* currentVideoTrack = _assetReaderVideoTrackOutput;
 	__block AVAssetReaderTrackOutput* currentAudioTrack = _assetReaderAudioTrackOutput;
 	__block AVPlayerItem* currentItem = _playerItem;
-	__block AVPlayerItemVideoOutput* currentVideoOutput = _videoOutput;
-	__block CMVideoFormatDescriptionRef currentVideoInfo = _videoInfo;
 	__block AVPlayer* currentPlayer = _player;
 	__block id currentTimeObserver = timeObserver;
 	
 	__block CMSampleBufferRef currentVideoSampleBuffer = videoSampleBuffer;
 	__block CMSampleBufferRef currentAudioSampleBuffer = audioSampleBuffer;
+	
+#if USE_VIDEO_OUTPUT
+	__block AVPlayerItemVideoOutput* currentVideoOutput = _videoOutput;
+	__block CMVideoFormatDescriptionRef currentVideoInfo = _videoInfo;
+	
+	_videoOutput = nil;
+	self.videoOutput = nil;
+	
+	_videoInfo = nil;
+#endif
 	
 	// set all to nil
 	// cleanup happens in the block
@@ -437,11 +430,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 	_playerItem = nil;
 	self.playerItem = nil;
-	
-	_videoOutput = nil;
-	self.videoOutput = nil;
-	
-	_videoInfo = nil;
 	
 	_player = nil;
 	self.player = nil;
@@ -484,11 +472,12 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			if(currentItem != nil) {
 				
 				[currentItem cancelPendingSeeks];
-//				[currentItem removeObserver:self forKeyPath:kStatusKey context:&ItemStatusContext];
+				[currentItem removeObserver:self forKeyPath:kStatusKey context:&ItemStatusContext];
 				
-				[[NSNotificationCenter defaultCenter] removeObserver:self
-																name:AVPlayerItemDidPlayToEndTimeNotification
-															  object:currentItem];
+				NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
+				[notificationCenter removeObserver:self
+											  name:AVPlayerItemDidPlayToEndTimeNotification
+											object:currentItem];
 				
 				//AVPlayerItemPlaybackStalledNotification only exists from OS X 10.9 or iOS 6.0 and up
 #if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1090) || (__IPHONE_OS_VERSION_MIN_REQUIRED >= 60000)
@@ -521,7 +510,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			
 			// destroy current player
 			if (currentPlayer != nil) {
-//				[currentPlayer removeObserver:self forKeyPath:kRateKey context:&PlayerRateContext];
+				[currentPlayer removeObserver:self forKeyPath:kRateKey context:&PlayerRateContext];
 
 				if (currentTimeObserver != nil) {
 					[currentPlayer removeTimeObserver:currentTimeObserver];
