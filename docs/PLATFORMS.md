@@ -49,7 +49,6 @@ architectures:
   * x86_64
 
 notes:
-  * Visual Studio 2012 for x86
   * Visual Studio 2015
   * MSYS2
   * MinGW / Codeblocks 12.11 for x86
