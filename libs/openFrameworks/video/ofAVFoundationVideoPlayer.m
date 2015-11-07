@@ -114,15 +114,11 @@ static const void *PlayerRateContext = &ItemStatusContext;
 //---------------------------------------------------------- cleanup / dispose.
 - (void)dealloc
 {
-	[asyncLock lock];
+	NSLog(@"player dealloc: %p", self);
 	
-	// create a condition
-	deallocCond = [[NSCondition alloc] init];
-	[deallocCond lock];
-	
-	
-	// unload current video
 	[self unloadVideo];
+	
+	[asyncLock lock];
 	
 #if USE_VIDEO_OUTPUT
 	dispatch_release(_myVideoOutputQueue);
@@ -130,13 +126,11 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 	[asyncLock unlock];
 	
-	// wait for unloadVideo to finish
-	[deallocCond wait];
-	[deallocCond unlock];
-	
 	// release locks
 	[asyncLock autorelease];
-	[deallocCond release];
+//	[deallocCond release];
+	
+	
 	
 	[super dealloc];
 }
@@ -254,7 +248,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			[asyncLock lock];
 			
 			// clean up
-			[self unloadVideo];     // unload video if one is already loaded.
+			[self unloadVideoAsync];     // unload video if one is already loaded.
 			
 			// set asset
 			self.asset = asset;
@@ -371,7 +365,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 
 #pragma mark - unload video
-- (void)unloadVideo {
+- (void)unloadVideoAsync {
 
 	bReady = NO;
 	bLoaded = NO;
@@ -545,10 +539,26 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 }
 
+- (void)unloadVideo
+{
+	// create a condition
+	deallocCond = [[NSCondition alloc] init];
+	[deallocCond lock];
+	
+	// unload current video
+	[self unloadVideoAsync];
+	
+	// wait for unloadVideoAsync to finish
+	[deallocCond wait];
+	[deallocCond unlock];
+	
+	[deallocCond release];
+}
+
 - (void)close
 {
 	[asyncLock lock];
-	[self unloadVideo];
+	[self unloadVideoAsync];
 	[asyncLock unlock];
 }
 
