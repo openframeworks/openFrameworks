@@ -106,10 +106,13 @@ void ofApp::windowResized(int w, int h){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(int x, int y, int id){
-	// Swap between back and front camera
+    // Swap between back and front camera
 
 	// Get the native android video grabber
-	ofxAndroidVideoGrabber* androidGrabber = (ofxAndroidVideoGrabber*)grabber.getGrabber().get();
+    ofxAndroidVideoGrabber* androidGrabber = (ofxAndroidVideoGrabber*)grabber.getGrabber().get();
+
+	// First close the camera
+	grabber.close();
 
 	// If the current camera is frontal, then choose the back camera
 	if(facing == 1) {
@@ -117,6 +120,9 @@ void ofApp::touchDown(int x, int y, int id){
 	} else {
 		androidGrabber->setDeviceID(androidGrabber->getFrontCamera());
 	}
+
+	// Open the camera
+	grabber.setup(grabber.getWidth(), grabber.getHeight());
 
 	// Read current orientation and facing out again
 	orientation = androidGrabber->getCameraOrientation();

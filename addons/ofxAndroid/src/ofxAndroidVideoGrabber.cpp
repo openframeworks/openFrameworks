@@ -413,6 +413,7 @@ int ofxAndroidVideoGrabber::getFacingOfCamera(int device)const{
 }
 
 void ofxAndroidVideoGrabber::setDeviceID(int _deviceID){
+	if(isInitialized()) ofLogNotice("ofxAndroidVideoGrabber") << "setDeviceID(): call close before changing device id";
 
 	JNIEnv *env = ofGetJNIEnv();
 	if(!env) return;
