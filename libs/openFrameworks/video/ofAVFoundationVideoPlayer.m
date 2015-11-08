@@ -115,8 +115,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 //---------------------------------------------------------- cleanup / dispose.
 - (void)dealloc
 {
-	NSLog(@"player dealloc: %p", self);
-	
 	[self unloadVideo];
 	
 	[asyncLock lock];
@@ -339,7 +337,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			//------------------------------------------------------------ recreate player.
 			// destroy player if any - should never be the case!!
 			if(_player != nil) {
-				NSLog(@"loading - remove player");
 				[self removeTimeObserverFromPlayer];
 				[self.player removeObserver:self forKeyPath:kRateKey context:&PlayerRateContext];
 				self.player = nil;
