@@ -11,7 +11,7 @@ for category in $( find ../../examples -maxdepth 1 -type d )
 do
     if [ "$category" = "../../examples/android" ]; then
        	echo "-----------------------------------------------------------------"
-        echo building ALL android examples in $category
+        echo running ALL android examples in $category
 
         for example in $( find $category -maxdepth 1 -type d )
         do
