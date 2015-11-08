@@ -82,6 +82,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		loop = LOOP_NONE;
 		bSeeking = NO;
 		bSampleVideo = YES;
+		bIsUnloaded = NO;
 		
 		// do not sample audio by default
 		// we are lacking interfaces for audiodata
@@ -128,8 +129,11 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 	// release locks
 	[asyncLock autorelease];
-//	[deallocCond release];
 	
+	if (deallocCond != nil) {
+		[deallocCond release];
+		deallocCond = nil;
+	}
 	
 	
 	[super dealloc];
@@ -167,13 +171,12 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	BOOL _bLoaded = bLoaded;
 	BOOL _bPlayStateBeforeLoad = bPlayStateBeforeLoad;
 	
-//
-//	// reset
+	// set internal state
 	bReady = NO;
 	bLoaded = NO;
 	bPlayStateBeforeLoad = NO;
 	
-	
+	// going to load
 	dispatch_semaphore_t sema = dispatch_semaphore_create(0);
 	dispatch_queue_t queue;
 	if(bAsync == YES){
@@ -247,8 +250,20 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			// good to go
 			[asyncLock lock];
 			
+			if (bIsUnloaded) {
+				// player was unloaded before we could load everting
+				bIsUnloaded = NO;
+				if(bAsync == NO){
+					dispatch_semaphore_signal(sema);
+				}
+				[asyncLock unlock];
+				return;
+			}
+			
 			// clean up
 			[self unloadVideoAsync];     // unload video if one is already loaded.
+			
+			bIsUnloaded = NO;
 			
 			// set asset
 			self.asset = asset;
@@ -367,6 +382,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 #pragma mark - unload video
 - (void)unloadVideoAsync {
 
+	bIsUnloaded = YES;
 	bReady = NO;
 	bLoaded = NO;
 //	bPlayStateBeforeLoad = NO;
@@ -553,6 +569,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	[deallocCond unlock];
 	
 	[deallocCond release];
+	deallocCond = nil;
 }
 
 - (void)close
@@ -1273,26 +1290,30 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	return CMTimeGetSeconds(duration);
 }
 
-- (float)getFrameRate{
+- (float)getFrameRate {
 	return frameRate;
 }
 
-- (int)getDurationInFrames{
+- (int)getDurationInFrames {
 	return [self getDurationInSec] * [self getFrameRate];
 }
 
-- (int)getCurrentFrameNum{
+- (int)getCurrentFrameNum {
 	return [self getCurrentTimeInSec] * [self getFrameRate];
 }
 
 - (void)setPosition:(float)position {
-	double time = [self getDurationInSec] * position;
-	[self seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC)];
+	if ([self isReady]) {
+		double time = [self getDurationInSec] * position;
+		[self seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC)];
+	}
 }
 
-- (void)setFrame:(int)frame{
-	float position = frame / (float)[self getDurationInFrames];
-	[self setPosition:position];
+- (void)setFrame:(int)frame {
+	if ([self isReady]) {
+		float position = frame / (float)[self getDurationInFrames];
+		[self setPosition:position];
+	}
 }
 
 - (float)getPosition {
@@ -1301,13 +1322,14 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 - (void)setVolume:(float)value {
 	
-	if (self.playerItem == nil) {
-		return;
-	}
 	if(![self isReady]) {
 		return;
 	}
-
+	
+	if (self.playerItem == nil) {
+		return;
+	}
+	
 	volume = value;
 	
 	NSArray * audioTracks = [self.playerItem.asset tracksWithMediaType:AVMediaTypeAudio];
@@ -1338,6 +1360,15 @@ static const void *PlayerRateContext = &ItemStatusContext;
 }
 
 - (void)setSpeed:(float)value {
+	
+	if(![self isReady]) {
+		return;
+	}
+	
+	if (_player == nil) {
+		return;
+	}
+	
 	if (!bSeeking && bWasPlayingBackwards && value > 0.0) {
 		// create assetReaders if we played backwards earlier
 		[self createAssetReaderWithTimeRange:CMTimeRangeMake(currentTime, duration)];
