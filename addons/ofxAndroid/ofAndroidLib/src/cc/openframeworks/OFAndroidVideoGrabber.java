@@ -76,6 +76,11 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 
 	public void setDeviceID(int _deviceId){
 		deviceID = _deviceId;
+
+		if(initialized){
+			stopGrabber();
+			initGrabber(width, height, targetFps, texID);
+		}
 	}
 
 	public void initGrabber(int w, int h, int _targetFps, int _texID){
