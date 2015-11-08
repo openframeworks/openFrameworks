@@ -213,12 +213,12 @@ void ofArduino::update() {
 }
 
 int ofArduino::getAnalog(int pin) const {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (pinCapabilities.count((firstAnalogPin + pin) < _totalDigitalPins ? (firstAnalogPin + pin) : pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString((firstAnalogPin + pin) < _totalDigitalPins ? (firstAnalogPin + pin) : pin) + " does not exist on the current board";
 		return -1;
 	}
-	if (!pinCapabilities[pin].analogSupported) {
-		ofLogError("ofArduino") << "Analog is not supported for this pin";
+	if (!pinCapabilities[(firstAnalogPin + pin) < _totalDigitalPins ? (firstAnalogPin + pin) : pin].analogSupported) {
+		ofLogError("ofArduino") << "Analog is not supported for pin " + ofToString((firstAnalogPin + pin) < _totalDigitalPins ? (firstAnalogPin + pin) : pin);
 		return -1;
 	}
 	if (_analogHistory[pin].size() > 0) {
@@ -313,7 +313,7 @@ void ofArduino::sendPwm(int pin, int value, bool force) {
 		return;
 	}
 	if (_digitalPinMode[pin] == ARD_PWM && (_digitalPinValue[pin] != value || force)) {
-		sendByte(ANALOG_MESSAGE + pin);
+		sendByte(ANALOG_MESSAGE | pin);
 		sendValueAsTwo7bitBytes(value);
 		_digitalPinValue[pin] = value;
 	}
@@ -979,21 +979,13 @@ int ofArduino::getValueFromTwo7bitBytes(unsigned char lsb, unsigned char msb) {
 	return (msb << 7) | lsb;
 }
 
-void ofArduino::sendServo(int pin, int value, bool force) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
-	}
-	if (!pinCapabilities[pin].servoSupported) {
-		ofLogError("ofArduino") << "Servo Control is not supported for pin" + ofToString(pin);
-		return;
-	}
-	if (_digitalPinMode[pin] == ARD_SERVO && (_digitalPinValue[pin] != value || force)) {
-		sendByte(ANALOG_MESSAGE + pin);
-		sendValueAsTwo7bitBytes(value);
-		_digitalPinValue[pin] = value;
-	}
-}
+/********************************************
+*
+*
+*				Servo Functions
+*
+*
+********************************************/
 
 void ofArduino::sendServoAttach(int pin, int minPulse, int maxPulse) {
 	if (pinCapabilities.count(pin) < 1) {
@@ -1005,13 +997,42 @@ void ofArduino::sendServoAttach(int pin, int minPulse, int maxPulse) {
 		return;
 	}
 	sendByte(START_SYSEX);
-
 	sendByte(SERVO_CONFIG);
 	sendByte(pin);
 	sendValueAsTwo7bitBytes(minPulse);
 	sendValueAsTwo7bitBytes(maxPulse);
 	sendByte(END_SYSEX);
 	_digitalPinMode[pin] = ARD_SERVO;
+}
+
+void ofArduino::sendServo(int pin, int value, bool force) {
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return;
+	}
+	if (!pinCapabilities[pin].servoSupported) {
+		ofLogError("ofArduino") << "Servo Control is not supported for pin " + ofToString(pin);
+		return;
+	}
+	if (_digitalPinMode[pin] != ARD_SERVO) {
+		ofLogError("ofArduino") << "Servo Control is not configured for pin " + ofToString(pin) + ". Did you send a servo attach message?";
+		return;
+	}
+	if (_digitalPinValue[pin] != value || force) {
+		if (pin > 15) {
+			sendByte(START_SYSEX);
+			sendByte(EXTENDED_ANALOG);
+			sendByte(pin);
+			sendValueAsTwo7bitBytes(value);
+			sendByte(END_SYSEX);
+
+		}
+		else {
+			sendByte(ANALOG_MESSAGE | pin);
+			sendValueAsTwo7bitBytes(value);
+			_digitalPinValue[pin] = value;
+		}
+	}
 }
 
 int ofArduino::getServo(int pin) const {
