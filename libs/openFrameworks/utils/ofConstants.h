@@ -3,9 +3,9 @@
 
 //-------------------------------
 #define OF_VERSION_MAJOR 0
-#define OF_VERSION_MINOR 9
+#define OF_VERSION_MINOR 10
 #define OF_VERSION_PATCH 0
-#define OF_VERSION_PRE_RELEASE "stable"
+#define OF_VERSION_PRE_RELEASE "master"
 
 //-------------------------------
 
