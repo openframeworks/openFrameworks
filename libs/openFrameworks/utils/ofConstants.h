@@ -4,7 +4,7 @@
 //-------------------------------
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 9
-#define OF_VERSION_PATCH 0
+#define OF_VERSION_PATCH 1
 #define OF_VERSION_PRE_RELEASE "master"
 
 //-------------------------------
@@ -17,7 +17,7 @@ enum ofLoopType{
 
 enum ofTargetPlatform{
 	OF_TARGET_OSX,
-	OF_TARGET_WINGCC,
+    OF_TARGET_MINGW,
 	OF_TARGET_WINVS,
 	OF_TARGET_IOS,
 	OF_TARGET_ANDROID,
