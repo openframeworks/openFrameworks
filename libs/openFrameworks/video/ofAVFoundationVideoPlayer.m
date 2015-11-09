@@ -170,6 +170,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	BOOL _bPlayStateBeforeLoad = bPlayStateBeforeLoad;
 	
 	// set internal state
+	bIsUnloaded = NO;
 	bReady = NO;
 	bLoaded = NO;
 	bPlayStateBeforeLoad = NO;
