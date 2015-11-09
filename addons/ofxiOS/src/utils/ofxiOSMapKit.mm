@@ -28,11 +28,10 @@
  *
  * ***********************************************************************/ 
 
-#include <Availability.h>
-
 #include "ofxiOSMapKit.h"
-#include "ofxiOSExtras.h"
 #include "ofxiOSMapKitDelegate.h"
+#include "ofxiOSExtras.h"
+#include "ofAppRunner.h"
 
 ofxiOSMapKit::ofxiOSMapKit() {
 	mapView = nil;

@@ -100,9 +100,6 @@
 		BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
 		BB24E0CD10DA9F4800E9C588 /* ofxAccelerometer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB24E02110DA7C6100E9C588 /* ofxAccelerometer.cpp */; };
 		BB24E0DC10DA9F5700E9C588 /* ofxAccelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E02210DA7C6100E9C588 /* ofxAccelerometer.h */; };
-		E485F8191363242200E939D3 /* ofxMultiTouch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E485F8161363242100E939D3 /* ofxMultiTouch.cpp */; };
-		E485F81A1363242200E939D3 /* ofxMultiTouch.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F8171363242100E939D3 /* ofxMultiTouch.h */; };
-		E485F81B1363242200E939D3 /* ofxMultiTouchListener.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F8181363242100E939D3 /* ofxMultiTouchListener.h */; };
 		E4F76E19176CB27200798745 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D6F176CB27200798745 /* of3dPrimitives.cpp */; };
 		E4F76E1A176CB27200798745 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76D70176CB27200798745 /* of3dPrimitives.h */; };
 		E4F76E1B176CB27200798745 /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D71176CB27200798745 /* of3dUtils.cpp */; };
@@ -320,9 +317,6 @@
 		E41D3E9113B38BE900A75A5D /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		E41D3E9213B38BE900A75A5D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = SOURCE_ROOT; };
 		E41D3E9313B38BE900A75A5D /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = SOURCE_ROOT; };
-		E485F8161363242100E939D3 /* ofxMultiTouch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxMultiTouch.cpp; path = ../../../../addons/ofxMultiTouch/src/ofxMultiTouch.cpp; sourceTree = SOURCE_ROOT; };
-		E485F8171363242100E939D3 /* ofxMultiTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMultiTouch.h; path = ../../../../addons/ofxMultiTouch/src/ofxMultiTouch.h; sourceTree = SOURCE_ROOT; };
-		E485F8181363242100E939D3 /* ofxMultiTouchListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMultiTouchListener.h; path = ../../../../addons/ofxMultiTouch/src/ofxMultiTouchListener.h; sourceTree = SOURCE_ROOT; };
 		E4F76D6F176CB27200798745 /* of3dPrimitives.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; fileEncoding = 4; path = of3dPrimitives.cpp; sourceTree = "<group>"; };
 		E4F76D70176CB27200798745 /* of3dPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dPrimitives.h; sourceTree = "<group>"; };
 		E4F76D71176CB27200798745 /* of3dUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; fileEncoding = 4; path = of3dUtils.cpp; sourceTree = "<group>"; };
@@ -628,7 +622,6 @@
 		BB16F26B0F2B646B00518274 /* addons */ = {
 			isa = PBXGroup;
 			children = (
-				E485F8111363242100E939D3 /* ofxMultiTouch */,
 				BB24E01C10DA7C6100E9C588 /* ofxAccelerometer */,
 				BB24E02310DA7C6100E9C588 /* ofxiOS */,
 			);
@@ -688,26 +681,6 @@
 			);
 			name = core;
 			sourceTree = "<group>";
-		};
-		E485F8111363242100E939D3 /* ofxMultiTouch */ = {
-			isa = PBXGroup;
-			children = (
-				E485F8151363242100E939D3 /* src */,
-			);
-			name = ofxMultiTouch;
-			path = ../../../../addons/ofxMultiTouch;
-			sourceTree = SOURCE_ROOT;
-		};
-		E485F8151363242100E939D3 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				E485F8161363242100E939D3 /* ofxMultiTouch.cpp */,
-				E485F8171363242100E939D3 /* ofxMultiTouch.h */,
-				E485F8181363242100E939D3 /* ofxMultiTouchListener.h */,
-			);
-			name = src;
-			path = ../../../../addons/ofxMultiTouch/src;
-			sourceTree = SOURCE_ROOT;
 		};
 		E4F76D69176CB27200798745 /* openFrameworks */ = {
 			isa = PBXGroup;
@@ -1009,8 +982,6 @@
 				67833F8B19F8996300DBE7AA /* ofBufferObject.h in Headers */,
 				E4F76EB8176CB27200798745 /* ofVideoPlayer.h in Headers */,
 				BB24E0DC10DA9F5700E9C588 /* ofxAccelerometer.h in Headers */,
-				E485F81A1363242200E939D3 /* ofxMultiTouch.h in Headers */,
-				E485F81B1363242200E939D3 /* ofxMultiTouchListener.h in Headers */,
 				15594F0F15C55AC900727FF2 /* EAGLView.h in Headers */,
 				15594F1015C55AC900727FF2 /* ES1Renderer.h in Headers */,
 				15594F1115C55AC900727FF2 /* ES2Renderer.h in Headers */,
@@ -1157,7 +1128,6 @@
 				E4F76EB5176CB27200798745 /* ofVideoGrabber.cpp in Sources */,
 				E4F76EB7176CB27200798745 /* ofVideoPlayer.cpp in Sources */,
 				BB24E0CD10DA9F4800E9C588 /* ofxAccelerometer.cpp in Sources */,
-				E485F8191363242200E939D3 /* ofxMultiTouch.cpp in Sources */,
 				15594F0C15C55AC900727FF2 /* EAGLView.m in Sources */,
 				9979E8281A1CDBD4007E55D1 /* ofMainLoop.cpp in Sources */,
 				15594F0D15C55AC900727FF2 /* ES1Renderer.m in Sources */,
@@ -1206,6 +1176,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
@@ -1231,6 +1202,7 @@
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;

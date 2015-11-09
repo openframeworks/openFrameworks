@@ -5,6 +5,8 @@
 //  Created by lukasz karluk on 5/07/12.
 //
 
+#pragma once
+
 #import <UIKit/UIKit.h>
 #import "EAGLView.h"
 
@@ -16,9 +18,6 @@ class ofAppiOSWindow;
 
 @protected
     NSMutableDictionary	* activeTouches;
-    ofxiOSApp * app;
-    ofAppiOSWindow * window;
-    
 	ofVec3f * screenSize;   // because ofVec3f is forward declared,
 	ofVec3f * windowSize;   // these values have to be pointers.
 	ofVec3f * windowPos;

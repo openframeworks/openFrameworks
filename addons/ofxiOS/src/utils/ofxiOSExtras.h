@@ -37,18 +37,14 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
-#import "ofMain.h"
-#import "ofxiOS.h"
-#import "ofxiOSConstants.h"
-#import "ofAppiOSWindow.h"
-#import "ofxiOSAppDelegate.h"
-#import "ofxiOSEAGLView.h"
-#import "ofxiOSKeyboard.h"
-#import "ofxiOSCoreLocation.h"
-#import "ofxiOSImagePicker.h"
-#import "ofxiOSMapKit.h"
-#include <sys/sysctl.h>
 
+#include "ofBaseTypes.h"
+#include "ofxiOSConstants.h"
+
+class ofAppiOSWindow;
+@class ofxiOSAppDelegate;
+@class ofxiOSViewController;
+@class ofxiOSEAGLView;
 
 // this is the new way for getting device info.
 // we can add other parameters later.
@@ -79,22 +75,22 @@ string ofxiOSGetDeviceRevision();
 ofxiOSDeviceInfo ofxiOSGetDeviceInfo();
 
 // return application key UIWindow
-UIWindow *ofxiOSGetUIWindow();
+UIWindow * ofxiOSGetUIWindow();
 
 // return openglview
-ofxiOSEAGLView *ofxiOSGetGLView();
+ofxiOSEAGLView * ofxiOSGetGLView();
 
 // return opengl parent view
 UIView * ofxiOSGetGLParentView();
 
 // return OpenFrameworks iPhone Window
-ofAppiOSWindow* ofxiOSGetOFWindow();
+ofAppiOSWindow * ofxiOSGetOFWindow();
 
 // return application delegate
-ofxiOSAppDelegate *ofxiOSGetAppDelegate();
+ofxiOSAppDelegate * ofxiOSGetAppDelegate();
 
 // return iphone view controller.
-ofxiOSViewController *ofxiOSGetViewController();
+ofxiOSViewController * ofxiOSGetViewController();
 
 // brings the OpenGL view to the front of any other UIViews
 // the OpenGL view will receive touchXXXXX events, but other UIViews will not
@@ -145,12 +141,12 @@ OF_DEPRECATED_MSG("ofxiOSGetOrientation is deprecated, use ofGetOrientation inst
 // load an image from the app bundle into a texture
 // NOTE: renamed this function to something more clearer
 // WAS: void iPhoneLoadImageFromBundle(NSString *filename, GLuint *spriteTexture);
-bool ofxiOSBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture);
+bool ofxiOSBundleImageToGLTexture(NSString * filename, GLuint * spriteTexture);
 
 // load an image from UIImage into an opengl texture
 // NOTE: renamed this function to something more clearer
 // WAS: void iPhoneLoadImageFromUIImage(UIImage *uiImage, GLuint *spriteTexture);
-bool ofxiOSUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture);
+bool ofxiOSUIImageToGLTexture(UIImage * uiImage, GLuint * spriteTexture);
 
 
 // create an ofImage out of a UIImage
@@ -158,9 +154,9 @@ bool ofxiOSUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture);
 // targetWidth, targetHeight are target dimensions (UIImage is resized to this size and ofImage is created)
 // .... omit targetWidth & targetHeight to use original image dimensions and not resize
 // TODO: take into consideration UI image orentation
-bool ofxiOSUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth = 0, int targetHeight = 0);
+bool ofxiOSUIImageToOFImage(UIImage * uiImage, ofImage & outImage, int targetWidth = 0, int targetHeight = 0);
 
-bool ofxiOSUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int targetWidth, int targetHeight);
+bool ofxiOSUIImageToOFTexture(UIImage * uiImage, ofTexture & outTexture, int targetWidth, int targetHeight);
 
 bool ofxiOSCGImageToPixels(CGImageRef & ref, unsigned char * pixels);
 

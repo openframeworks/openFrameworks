@@ -14,8 +14,10 @@ void ofApp::setup(){
 	buffer.setData(matrices,GL_STREAM_DRAW);
 
 	// using GL_RGBA32F allows to read each row of each matrix
-	// as a float vec4 from the shader
-	tex.allocate(buffer,GL_RGBA32F);
+	// as a float vec4 from the shader.
+	// Note that we're allocating the texture as a Buffer Texture:
+	// https://www.opengl.org/wiki/Buffer_Texture
+	tex.allocateAsBufferTexture(buffer,GL_RGBA32F);
 
 	// now we bind the texture to the shader as a uniform
 	// so we can read the texture buffer from it
@@ -32,7 +34,7 @@ void ofApp::setup(){
 	// we want each box to have a different color so let's add
 	// as many colors as boxes
 	mesh.getColors().resize(matrices.size());
-	for(int i=0;i<mesh.getColors().size();i++){
+	for(size_t i=0;i<mesh.getColors().size();i++){
 		mesh.getColors()[i] = ofColor::fromHsb(i % 255, 255, 255);
 	}
 
@@ -53,7 +55,7 @@ void ofApp::update(){
 	float spacing = 0.5;
 	float now = ofGetElapsedTimef();
 	float cloudSize = ofGetWidth()*4;
-	for(int i=0;i<matrices.size();i++){
+	for(size_t i=0;i<matrices.size();i++){
 		ofNode node;
 
 		float t = (now + i * spacing) * movementSpeed;

@@ -38,10 +38,7 @@
 
 
 #include "SoundEngine.h"
-#include <CoreAudio/CoreAudioTypes.h>
 #include "ofBaseSoundPlayer.h"
-#include "ofUtils.h"
-#include "ofPoint.h"
 #include "ofTypes.h"
 
 //globals

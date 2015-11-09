@@ -40,7 +40,7 @@ public:
 	void draw(const ofTexture & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
 	void draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const;
-	void drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const;
+	void drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int offsetelements = 0) const;
 	void drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const;
 	void drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const;
 	void draw(const ofVboMesh & mesh, ofPolyRenderMode renderType) const;
@@ -203,9 +203,10 @@ public:
 	void end(const ofFbo & fbo);
 
 	void bind(const ofFbo & fbo);
+#ifndef TARGET_OPENGLES
+	void bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint);
+#endif
 	void unbind(const ofFbo & fbo);
-
-	const GLuint& getCurrentFramebufferId() const { return currentFramebufferId; };
 
 	int getGLVersionMajor();
 	int getGLVersionMinor();
@@ -231,6 +232,7 @@ private:
 	ofMatrixStack matrixStack;
 	bool normalsEnabled;
 	bool lightingEnabled;
+        bool materialBound;
 	set<int> textureLocationsEnabled;
 
 	int alphaMaskTextureTarget;
@@ -242,6 +244,7 @@ private:
 	ofPath path;
 	const ofAppBaseWindow * window;
 
+	deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
 	GLuint defaultFramebufferId;		///< default GL_FRAMEBUFFER_BINDING, windowing frameworks might want to set this to their MSAA framebuffer, defaults to 0
 	GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
 

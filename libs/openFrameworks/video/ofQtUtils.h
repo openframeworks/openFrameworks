@@ -23,7 +23,7 @@
 
 //p2cstr depreciation fix - thanks pickard!
 #ifdef TARGET_OSX
-	#define p2cstr(aStr) CFStringGetCStringPtr(CFStringCreateWithPascalString(NULL, aStr, kCFStringEncodingMacRoman),kCFStringEncodingMacRoman)
+	#define p2cstr(aStr) CFStringGetCStringPtr(CFStringCreateWithPascalString(nullptr, aStr, kCFStringEncodingMacRoman),kCFStringEncodingMacRoman)
 #endif
 
 //-------------------------- helpful for rgba->rgb conversion

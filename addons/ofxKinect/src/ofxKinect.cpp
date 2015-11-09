@@ -144,8 +144,8 @@ bool ofxKinect::init(bool infrared, bool video, bool texture) {
 	distancePixels.set(0);
 
 	if(bUseTexture) {
-		depthTex.allocate(width, height, GL_LUMINANCE);
-		videoTex.allocate(width, height, infrared ? GL_LUMINANCE : GL_RGB);
+		depthTex.allocate(depthPixels);
+		videoTex.allocate(videoPixels);
 	}
 
 	if(!kinectContext.isInited()) {
@@ -364,7 +364,7 @@ void ofxKinect::update() {
 		}
 
 		if(bUseTexture) {
-			videoTex.loadData(videoPixels.getData(), width, height, bIsVideoInfrared?GL_LUMINANCE:GL_RGB);
+			videoTex.loadData(videoPixels);
 		}
 	} else {
 		bIsFrameNewVideo = false;
@@ -383,7 +383,7 @@ void ofxKinect::update() {
 		}
 
 		if(bUseTexture) {
-			depthTex.loadData(depthPixels.getData(), width, height, GL_LUMINANCE);
+			depthTex.loadData(depthPixels);
 		}
 	} else {
 		bIsFrameNewDepth = false;

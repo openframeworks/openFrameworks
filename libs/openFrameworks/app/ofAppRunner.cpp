@@ -21,7 +21,7 @@
 
 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
-#if defined(TARGET_OSX)
+#if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
 	#include "ofQtUtils.h"
 #endif
 
@@ -31,44 +31,50 @@
 
 
 //--------------------------------------
-shared_ptr<ofMainLoop> & mainLoop(){
-	static shared_ptr<ofMainLoop> mainLoop(new ofMainLoop);
-	return mainLoop;
+namespace{
+    shared_ptr<ofMainLoop> & mainLoop(){
+        static shared_ptr<ofMainLoop> * mainLoop(new shared_ptr<ofMainLoop>(new ofMainLoop));
+        return *mainLoop;
+    }
+
+    bool & initialized(){
+        static bool * initialized = new bool(false);
+        return *initialized;
+    }
+
+    #if defined(TARGET_LINUX) || defined(TARGET_OSX)
+        #include <signal.h>
+        #include <string.h>
+        void ofSignalHandler(int signum){
+            char* pSignalString = strsignal(signum);
+
+            if(pSignalString){
+                ofLogVerbose("ofSignalHandler") << pSignalString;
+            }else{
+                ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
+            }
+
+            signal(SIGTERM, nullptr);
+            signal(SIGQUIT, nullptr);
+            signal(SIGINT,  nullptr);
+            signal(SIGHUP,  nullptr);
+            signal(SIGABRT, nullptr);
+
+            if(mainLoop()){
+                mainLoop()->shouldClose(signum);
+            }
+        }
+    #endif
 }
+
+
 
 void ofExitCallback();
 void ofURLFileLoaderShutdown();
 
-#if defined(TARGET_LINUX) || defined(TARGET_OSX)
-	#include <signal.h>
-	#include <string.h>
-
-	static void ofSignalHandler(int signum){
-
-		char* pSignalString = strsignal(signum);
-
-		if(pSignalString){
-			ofLogVerbose("ofSignalHandler") << pSignalString;
-		}else{
-			ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
-		}
-
-		signal(SIGTERM, NULL);
-		signal(SIGQUIT, NULL);
-		signal(SIGINT,  NULL);
-		signal(SIGHUP,  NULL);
-		signal(SIGABRT, NULL);
-
-		if(mainLoop()){
-			mainLoop()->shouldClose(signum);
-		}
-	}
-#endif
-
 void ofInit(){
-	static bool initialized = false;
-	if(initialized) return;
-	initialized = true;
+	if(initialized()) return;
+	initialized() = true;
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
     // manage own exit
@@ -99,22 +105,25 @@ void ofInit(){
 								// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
 	#endif
 
-	ofSeedRandom();
-	ofResetElapsedTimeCounter();
-	ofSetWorkingDirectoryToDefault();
-
 #ifdef TARGET_LINUX
 	if(std::locale().name() == "C"){
 		try{
 			std::locale::global(std::locale("C.UTF-8"));
 		}catch(...){
-			ofLogWarning("ofInit") << "Couldn't set UTF-8 locale, string manipulation functions\n"
-					"won't work correctly for non ansi characters unless you specify a UTF-8 locale\n"
-					"manually using std::locale::global(std::locale(\"locale\"))\n"
-					"available locales can be queried with 'locale -a' in a terminal.";
+			if(ofToLower(std::locale("").name()).find("utf-8")==std::string::npos){
+				ofLogWarning("ofInit") << "Couldn't set UTF-8 locale, string manipulation functions\n"
+						"won't work correctly for non ansi characters unless you specify a UTF-8 locale\n"
+						"manually using std::locale::global(std::locale(\"locale\"))\n"
+						"available locales can be queried with 'locale -a' in a terminal.";
+			}
 		}
 	}
 #endif
+
+	
+	ofSeedRandom();
+	ofResetElapsedTimeCounter();
+	of::priv::setWorkingDirectoryToDefault();
 }
 
 //--------------------------------------
@@ -135,9 +144,13 @@ int ofRunApp(ofBaseApp * OFSA){
 //--------------------------------------
 int ofRunApp(shared_ptr<ofBaseApp> app){
 	mainLoop()->run(app);
-	return mainLoop()->loop();
+	auto ret = ofRunMainLoop();
+	app.reset();
+#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
+	ofExitCallback();
+#endif
+	return ret;
 }
-
 
 //--------------------------------------
 void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app){
@@ -145,7 +158,8 @@ void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app){
 }
 
 int ofRunMainLoop(){
-	return mainLoop()->loop();
+	auto ret = mainLoop()->loop();
+	return ret;
 }
 
 //--------------------------------------
@@ -175,9 +189,11 @@ shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
 //							at the end of the application
 
 void ofExitCallback(){
+	if(!initialized()) return;
+
 	// controlled destruction of the mainLoop before
 	// any other deinitialization
-	mainLoop().reset();
+	mainLoop()->exit();
 
 	// everything should be destroyed here, except for
 	// static objects
@@ -217,6 +233,8 @@ void ofExitCallback(){
 	// static deinitialization happens after this finishes
 	// every object should have ended by now and won't receive any
 	// events
+
+	initialized() = false;
 }
 
 //--------------------------------------

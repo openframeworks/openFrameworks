@@ -3,9 +3,10 @@
 # openssl
 
 # define the version
-FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "vs" "msys2" "ios" "android" )
 
 VER=1.0.2c
+VERDIR=1.0.2
 CSTANDARD=gnu11 # c89 | c99 | c11 | gnu11
 COMPILER_TYPE=clang # clang, gcc
 
@@ -15,11 +16,11 @@ function download() {
 	local FILENAME=openssl-$VER
 
 	if ! [ -f $FILENAME ]; then
-		curl -O https://www.openssl.org/source/$FILENAME.tar.gz
+		curl -O https://www.openssl.org/source/old/$VERDIR/$FILENAME.tar.gz
 	fi
 
 	if ! [ -f $FILENAME.sha1 ]; then
-		curl -O https://www.openssl.org/source/$FILENAME.tar.gz.sha1
+		curl -O https://www.openssl.org/source/old/$VERDIR/$FILENAME.tar.gz.sha1
 	fi
 	if [ "$TYPE" == "vs" ] ; then
 		#hasSha=$(cmd.exe /c 'call 'CertUtil' '-hashfile' '$FILENAME.tar.gz' 'SHA1'')
@@ -273,7 +274,7 @@ function build() {
 			mkdir ms/x64
 			cmd //c buildwin.cmd x64 "${WINPATH}"
 		fi
-	# elif [ "$TYPE" == "win_cb" ] ; then
+	# elif [ "$TYPE" == "msys2" ] ; then
 	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
 
 	# 	# # Locate the path of the openssl libs distributed with openFrameworks.
@@ -283,7 +284,7 @@ function build() {
 	# 	# local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
 
 	# 	# local OPENSSL_INCLUDE=$OF_LIBS_OPENSSL_ABS_PATH/include
-	# 	# local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/win_cb
+	# 	# local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/msys2
 
 	# 	# ./configure $BUILD_OPTS \
 	# 	# 			--include-path=$OPENSSL_INCLUDE \
@@ -551,27 +552,27 @@ function build() {
 		perl -pi -e 's/^_ANDROID_EABI=(.*)$/#_ANDROID_EABI=\1/g' Setenv-android.sh
 		perl -pi -e 's/^_ANDROID_ARCH=(.*)$/#_ANDROID_ARCH=\1/g' Setenv-android.sh
 		perl -pi -e 's/^_ANDROID_API=(.*)$/#_ANDROID_API=\1/g' Setenv-android.sh
+		export _ANDROID_API=$ANDROID_PLATFORM
 		
         # armv7
+        echoInfo "Compiling armv7"
         export _ANDROID_EABI=arm-linux-androideabi-4.9
 		export _ANDROID_ARCH=arch-arm
-		export _ANDROID_API=android-21
         local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/armeabi-v7a
         mkdir -p $BUILD_TO_DIR
         source Setenv-android.sh
         ./config --openssldir=$BUILD_TO_DIR no-ssl2 no-ssl3 no-comp no-hw no-engine no-shared
         make clean
         make depend -j${PARALLEL_MAKE}
-        make all -j${PARALLEL_MAKE}
+        make build_libs -j${PARALLEL_MAKE}
         mkdir -p $BUILD_TO_DIR/lib
 		cp libssl.a $BUILD_TO_DIR/lib/
         cp libcrypto.a $BUILD_TO_DIR/lib/
         
         # x86
-        ABI=x86
-        export _ANDROID_EABI=arm-linux-androideabi-4.9
-		export _ANDROID_ARCH=arch-arm
-		export _ANDROID_API=android-21
+        echoInfo "Compiling x86"
+        export _ANDROID_EABI=x86-4.9
+		export _ANDROID_ARCH=arch-x86
         local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/x86
         mkdir -p $BUILD_TO_DIR
         source Setenv-android.sh
@@ -652,7 +653,7 @@ function copy() {
 		git checkout $1/include/openssl/opensslconf_osx.h
     	git checkout $1/include/openssl/opensslconf_android.h
     	git checkout $1/include/openssl/opensslconf_win32.h
-	# elif [ "$TYPE" == "win_cb" ] ; then
+	# elif [ "$TYPE" == "msys2" ] ; then
 	# 	mkdir -p $1/lib/$TYPE
 	# 	cp -v lib/MinGW/i686/*.a $1/lib/$TYPE
 	

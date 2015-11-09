@@ -67,6 +67,13 @@ Also, you can add a set of udev rules which allow you to run a Kinect app withou
 
 Precompiled libfreenect drivers and libusb-win32 libs are included for Windows.
 
+New install instructions: 
+However on some new Windows OS it might be a struggle to install 
+
+The easiest way to add the drivers is to use the Free USB Driver tool: http://zadig.akeo.ie/
+Select your Xbox Camera, Xbox Audio and Xbox Motor in the drop down and then select the libusb-win32( v1.2.6.0 ) driver from the driver menu and click install. ( you will need to do this three times, once for the camera, then motor, then audio ).  This advice comes from the https://github.com/OpenKinect/libfreenect#windows ReadMe. 
+
+Old install instructions: 
 Make sure to install or update the libfreenect Kinect camera, motor, and audio drivers through Windows Device Manager by pointing it to the driver folder:
 <pre>
 ofxKinect/libs/libfreenect/platform/windows/inf
@@ -160,35 +167,13 @@ Edit the Makefile config files:
 	</pre>
 	* repeat for the "Release" configuration
 	
-#### Windows (Codeblocks):
+#### Windows (Msys2):
 
-* add the ofxPd sources to the project:
-	* right-click on your project in the project tree
-	* select "Add Files Recursively ..."
-	* navigate and choose the ofxKinect/src folder
-* add search paths and libraries to link:
-	* right-click on your project in the project tree
-	* select "Build options..."
-	* make sure the project name is selected in the tree (not release or debug)
-	* select the "Search directories" tab, click add the search paths:
-	<pre>
-	..\\..\\..\addons\ofxKinect\src
-	..\\..\\..\addons\ofxKinect\libs\libfreenect\src
-	..\\..\\..\addons\ofxKinect\libs\libfreenect\include
-	..\\..\\..\addons\ofxKinect\libs\libfreenect\platform\windows
-	..\\..\\..\addons\ofxKinect\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0
-	..\\..\\..\addons\ofxKinect\libs\libusb-win32\include
-	</pre>
-	* select the "Linker settings" tab, add the following to Link libraries:
-	<pre>
-	m
-	pthread
-	</pre>
-	* select the "Linker settings" tab, add the following to Other liker options:
-	<pre>
-	..\..\..\addons\ofxKinect\libs\libusb-win32\lib\win_cb\libusb.lib
-	</pre>
+Install libusb using
 
+    pacman --needed -Sy mingw-w64-i686-libusb
+
+	
 Notes
 -----
 

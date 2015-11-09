@@ -35,118 +35,80 @@
 #include <assert.h>
 
 ofxOscReceiver::ofxOscReceiver()
+:allowReuse(true)
+,listen_port(0)
 {
-	listen_socket = NULL;
 }
 
-void ofxOscReceiver::setup( int listen_port, bool allowReuse )
+ofxOscReceiver::ofxOscReceiver(const ofxOscReceiver & mom)
+:allowReuse(mom.allowReuse)
+,listen_port(mom.listen_port){
+	if(mom.listen_socket){
+		setup(listen_port);
+	}
+}
+
+ofxOscReceiver & ofxOscReceiver::operator=(const ofxOscReceiver & mom){
+	if(this == &mom) return *this;
+
+	allowReuse = mom.allowReuse;
+	listen_port = mom.listen_port;
+	if(mom.listen_socket){
+		setup(listen_port);
+	}
+	return *this;
+}
+
+void ofxOscReceiver::setup( int listen_port )
 {
-    if( UdpSocket::GetUdpBufferSize() == 0 ){
-        UdpSocket::SetUdpBufferSize(65535);
+    if( osc::UdpSocket::GetUdpBufferSize() == 0 ){
+    	osc::UdpSocket::SetUdpBufferSize(65535);
     }
     
 	// if we're already running, shutdown before running again
-	if ( listen_socket )
+	if ( listen_socket ){
 		shutdown();
-	
-	// create the mutex
-	#ifdef TARGET_WIN32
-	mutex = CreateMutexA( NULL, FALSE, NULL );
-	#else
-	pthread_mutex_init( &mutex, NULL );
-	#endif
+	}
 	
 	// create socket
-	socketHasShutdown = false;
-	listen_socket = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, listen_port ), this, allowReuse );
+	auto socket = new osc::UdpListeningReceiveSocket( osc::IpEndpointName( osc::IpEndpointName::ANY_ADDRESS, listen_port ), this, allowReuse );
+	auto deleter = [](osc::UdpListeningReceiveSocket*socket){
+		// tell the socket to shutdown
+		socket->Break();
+		delete socket;
+	};
+	auto new_ptr = std::unique_ptr<osc::UdpListeningReceiveSocket, decltype(deleter)>(socket, deleter);
+	listen_socket = std::move(new_ptr);
 
-	// start thread
-	#ifdef TARGET_WIN32
-	thread	= CreateThread(
-							   NULL,              // default security attributes
-							   0,                 // use default stack size
-							&ofxOscReceiver::startThread,        // thread function
-							   (void*)this,             // argument to thread function
-							   0,                 // use default creation flags
-							   NULL);             // we don't the the thread id
+	listen_thread = std::thread([this]{
+		listen_socket->Run();
+	});
 
-	#else
-	pthread_create( &thread, NULL, &ofxOscReceiver::startThread, (void*)this );
-	#endif
+	// detach thread so we don't have to wait on it before creating a new socket
+	// or on destruction, the custom deleter for the socket unique_ptr already
+	// does the right thing
+	listen_thread.detach();
+
+	this->listen_port = listen_port;
 }
 
 void ofxOscReceiver::shutdown()
 {
-	if ( listen_socket )
-	{
-		// tell the socket to shutdown
-		listen_socket->AsynchronousBreak();
-		// wait for shutdown to complete
-		while (!socketHasShutdown)
-		{
-			#ifdef TARGET_WIN32
-			Sleep(1);
-			#else
-			// sleep 0.1ms
-			usleep(100);
-			#endif
-		}
-		
-		// thread will clean up itself
-		
-		// clean up the mutex
-		#ifdef TARGET_WIN32
-		ReleaseMutex( mutex );
-		#else
-		pthread_mutex_destroy( &mutex );	
-		#endif
-		
-		// delete the socket
-		delete listen_socket;
-		listen_socket = NULL;
-	}
+	listen_socket.reset();
 }
 
-ofxOscReceiver::~ofxOscReceiver()
+void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint )
 {
-	shutdown();
-}
-
-#ifdef TARGET_WIN32
-DWORD WINAPI
-#else
-void*
-#endif
-
-ofxOscReceiver::startThread( void* receiverInstance )
-{
-	// cast the instance
-	ofxOscReceiver* instance = (ofxOscReceiver*)receiverInstance;
-	// start the socket listener
-	instance->listen_socket->Run();
-	// socket listener has finished - remember this fact
-	instance->socketHasShutdown = true;
-	// return
-    #ifdef TARGET_WIN32
-	return 0;
-    #else
-	return NULL;
-    #endif
-}
-
-void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndpointName& remoteEndpoint )
-{
-
 	// convert the message to an ofxOscMessage
-	ofxOscMessage* ofMessage = new ofxOscMessage();
+	ofxOscMessage msg;
 
 	// set the address
-	ofMessage->setAddress( m.AddressPattern() );
+	msg.setAddress( m.AddressPattern() );
     
 	// set the sender ip/host
-	char endpoint_host[ IpEndpointName::ADDRESS_STRING_LENGTH ];
+	char endpoint_host[ osc::IpEndpointName::ADDRESS_STRING_LENGTH ];
 	remoteEndpoint.AddressAsString( endpoint_host );
-    ofMessage->setRemoteEndpoint( endpoint_host, remoteEndpoint.port );
+    msg.setRemoteEndpoint( endpoint_host, remoteEndpoint.port );
 
 	// transfer the arguments
 	for ( osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
@@ -154,35 +116,35 @@ void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndp
 		  ++arg )
 	{
 		if ( arg->IsInt32() )
-			ofMessage->addIntArg( arg->AsInt32Unchecked() );
+			msg.addIntArg( arg->AsInt32Unchecked() );
 		else if ( arg->IsInt64() )
-			ofMessage->addInt64Arg( arg->AsInt64Unchecked() );
+			msg.addInt64Arg( arg->AsInt64Unchecked() );
 		else if ( arg->IsFloat() )
-			ofMessage->addFloatArg( arg->AsFloatUnchecked() );
+			msg.addFloatArg( arg->AsFloatUnchecked() );
 		else if ( arg->IsDouble() )
-			ofMessage->addDoubleArg( arg->AsDoubleUnchecked() );
+			msg.addDoubleArg( arg->AsDoubleUnchecked() );
 		else if ( arg->IsString() )
-			ofMessage->addStringArg( arg->AsStringUnchecked() );
+			msg.addStringArg( arg->AsStringUnchecked() );
 		else if ( arg->IsSymbol() )
-			ofMessage->addSymbolArg( arg->AsSymbolUnchecked() );
+			msg.addSymbolArg( arg->AsSymbolUnchecked() );
 		else if ( arg->IsChar() )
-			ofMessage->addCharArg( arg->AsCharUnchecked() );
+			msg.addCharArg( arg->AsCharUnchecked() );
 		else if ( arg->IsMidiMessage() )
-			ofMessage->addMidiMessageArg( arg->AsMidiMessageUnchecked() );
+			msg.addMidiMessageArg( arg->AsMidiMessageUnchecked() );
 		else if ( arg->IsBool())
-			ofMessage->addBoolArg( arg->AsBoolUnchecked() );
+			msg.addBoolArg( arg->AsBoolUnchecked() );
 		else if ( arg->IsInfinitum() )
-			ofMessage->addTriggerArg();
+			msg.addTriggerArg();
 		else if ( arg->IsTimeTag() )
-			ofMessage->addTimetagArg( arg->AsTimeTagUnchecked() );
+			msg.addTimetagArg( arg->AsTimeTagUnchecked() );
 		else if ( arg->IsRgbaColor() )
-			ofMessage->addRgbaColorArg( arg->AsRgbaColorUnchecked() );
+			msg.addRgbaColorArg( arg->AsRgbaColorUnchecked() );
 		else if ( arg->IsBlob() ){
             const char * dataPtr;
             osc::osc_bundle_element_size_t len = 0;
             arg->AsBlobUnchecked((const void*&)dataPtr, len);
             ofBuffer buffer(dataPtr, len);
-			ofMessage->addBlobArg( buffer );
+			msg.addBlobArg( buffer );
 		}
 		else
 		{
@@ -190,80 +152,32 @@ void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndp
 		}
 	}
 
-	// now add to the queue
-
-	// at this point we are running inside the thread created by startThread,
-	// so anyone who calls hasWaitingMessages() or getNextMessage() is coming
-	// from a different thread
-
-	// so we have to practise shared memory management
-
-	// grab a lock on the queue
-	grabMutex();
-
-	// add incoming message on to the queue
-	messages.push_back( ofMessage );
-
-	// release the lock
-	releaseMutex();
+	// send msg to main thread
+	messagesChannel.send( std::move(msg) );
 }
 
 bool ofxOscReceiver::hasWaitingMessages()
 {
-	// grab a lock on the queue
-	grabMutex();
-
-	// check the length of the queue
-	int queue_length = (int)messages.size();
-
-	// release the lock
-	releaseMutex();
-
-	// return whether we have any messages
-	return queue_length > 0;
+	return !messagesChannel.empty();
 }
 
-bool ofxOscReceiver::getNextMessage( ofxOscMessage* message )
+bool ofxOscReceiver::getNextMessage( ofxOscMessage * message )
 {
-	// grab a lock on the queue
-	grabMutex();
-
-	// check if there are any to be got
-	if ( messages.size() == 0 )
-	{
-		// no: release the mutex
-		releaseMutex();
-		return false;
-	}
-
-	// copy the message from the queue to message
-	ofxOscMessage* src_message = messages.front();
-	message->copy( *src_message );
-
-	// now delete the src message
-	delete src_message;
-	// and remove it from the queue
-	messages.pop_front();
-
-	// release the lock on the queue
-	releaseMutex();
-
-	// return success
-	return true;
+	return getNextMessage(*message);
 }
 
+bool ofxOscReceiver::getNextMessage( ofxOscMessage & message )
+{
+	return messagesChannel.tryReceive(message);
+}
 
-bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
+bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter)
+{
 	ofxOscMessage msg;
-	if ( messages.size() == 0 ) return false;
-	while(hasWaitingMessages()){
+	while(messagesChannel.tryReceive(msg)){
 		ofAbstractParameter * p = &parameter;
-        
-        getNextMessage(&msg);
         vector<string> address = ofSplitString(msg.getAddress(),"/",true);
-                
         for(unsigned int i=0;i<address.size();i++){
-            
             if(p) {
                 if(address[i]==p->getEscapedName()){
                     if(p->type()==typeid(ofParameterGroup).name()){
@@ -295,20 +209,16 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
 	return true;
 }
 
-void ofxOscReceiver::grabMutex()
-{
-#ifdef TARGET_WIN32
-	WaitForSingleObject( mutex, INFINITE );
-#else
-	pthread_mutex_lock( &mutex );
-#endif
+void ofxOscReceiver::disableReuse(){
+	allowReuse = false;
+	if(listen_socket){
+		setup(listen_port);
+	}
 }
 
-void ofxOscReceiver::releaseMutex()
-{
-#ifdef TARGET_WIN32
-	ReleaseMutex( mutex );
-#else
-	pthread_mutex_unlock( &mutex );
-#endif
+void ofxOscReceiver::enableReuse(){
+	allowReuse = true;
+	if(listen_socket){
+		setup(listen_port);
+	}
 }

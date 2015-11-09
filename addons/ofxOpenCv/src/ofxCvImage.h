@@ -154,6 +154,8 @@ class ofxCvImage : public ofBaseImage {
 
   protected:
 
+    virtual void allocateTexture() = 0;
+    virtual void allocatePixels(int w, int h) = 0;
     bool matchingROI( const ofRectangle& rec1, const ofRectangle& rec2 );
     virtual void  setImageROI( IplImage* img, const ofRectangle& rect );
     virtual void  resetImageROI( IplImage* img );
@@ -172,9 +174,6 @@ class ofxCvImage : public ofBaseImage {
                               
     int ipldepth;             // IPL_DEPTH_8U, IPL_DEPTH_16U, IPL_DEPTH_32F, ...
     int iplchannels;          // 1, 3, 4, ...
-
-    int gldepth;              // GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_FLOAT, ...
-    int glchannels;           // GL_LUMINANCE, GL_RGB, GL_RGBA, ...
     
     ofPixels pixels;	  // not width stepped for getPixels(), allocated on demand
     ofPixels roiPixels;

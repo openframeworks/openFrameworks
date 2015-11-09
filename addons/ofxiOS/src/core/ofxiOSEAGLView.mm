@@ -5,19 +5,18 @@
 //  Created by lukasz karluk on 5/07/12.
 //
 
-#import "ofxiOSEAGLView.h"
-
-#import "ofMain.h"
-#import "ofAppiOSWindow.h"
-#import "ofGLProgrammableRenderer.h"
-#import "ofxiOSApp.h"
-#import "ofxiOSExtensions.h"
+#include "ofxiOSEAGLView.h"
+#include "ofxiOSApp.h"
+#include "ofAppiOSWindow.h"
+#include "ofGLRenderer.h"
+#include "ofGLProgrammableRenderer.h"
 
 static ofxiOSEAGLView * _instanceRef = nil;
 
 @interface ofxiOSEAGLView() {
     BOOL bInit;
-	shared_ptr<ofBaseApp> appSharedPtr;
+	shared_ptr<ofAppiOSWindow> window;
+	shared_ptr<ofxiOSApp> app;
 }
 - (void)updateDimensions;
 @end
@@ -33,12 +32,14 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr {
-    
-    window = ofAppiOSWindow::getInstance();
-    if(window == NULL) {
+	
+	window = dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
+	
+    if(window.get() == NULL) {
         ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView::initWithFrame - window is NULL");
         return nil;
     }
+	
     ESRendererVersion preferedRendererVersion = (ESRendererVersion)window->getSettings().glesVersion;
     
     self = [self initWithFrame:frame
@@ -53,28 +54,15 @@ static ofxiOSEAGLView * _instanceRef = nil;
         
         _instanceRef = self;
         
-        app = appPtr;
+        app = shared_ptr<ofxiOSApp>(appPtr);
         activeTouches = [[NSMutableDictionary alloc] init];
                 
         screenSize = new ofVec3f();
         windowSize = new ofVec3f();
         windowPos = new ofVec3f();
+		ofSetOrientation(window->getOrientation());
         [self updateDimensions];
-        
-        if(window->isProgrammableRenderer()){
-            static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(window->getSettings().glesVersion, 0);
-        } else{
-            static_cast<ofGLRenderer*>(window->renderer().get())->setup();
-        }
-        
-        if(app != ofGetAppPtr()) {      // check if already running.
-			appSharedPtr = shared_ptr<ofBaseApp>(app);
-            ofRunApp(appSharedPtr);		// this fallback only case occurs when app not created in main().
-        }
-        ofxiOSAlerts.addListener(app);
-
-        ofDisableTextureEdgeHack();
-        
+		
         bInit = YES;
     }
     
@@ -82,12 +70,37 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (void)setup {
-    if(window != NULL){
-        window->events().notifySetup();
-        window->renderer()->clear();
-    } else {
-        ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView setup. Failed setup. window is NULL");
-    }
+	if(window.get() == NULL) {
+		ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView setup. Failed setup. window is NULL");
+		return;
+	}
+	
+	if(app.get() != ofGetAppPtr()) { // check if already running.
+		
+		ofSetMainLoop(shared_ptr<ofMainLoop>(NULL)); // destroy old main loop.
+		auto mainLoop = std::make_shared<ofMainLoop>(); // make new main loop.
+		ofSetMainLoop(mainLoop);
+		
+		ofiOSWindowSettings windowSettings = window->getSettings();
+		window = NULL;
+
+		window = dynamic_pointer_cast<ofAppiOSWindow>(ofCreateWindow(windowSettings));
+
+		ofRunApp(app);
+	}
+	
+	if(window->isProgrammableRenderer() == true) {
+		static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(window->getSettings().glesVersion, 0);
+	} else{
+		static_cast<ofGLRenderer*>(window->renderer().get())->setup();
+	}
+	
+	ofxiOSAlerts.addListener(app.get());
+	
+	ofDisableTextureEdgeHack();
+	
+	window->events().notifySetup();
+	window->renderer()->clear();
 }
 
 - (void)destroy {
@@ -97,24 +110,22 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 	window->events().notifyExit();
 	
+    ofxiOSAlerts.removeListener(app.get());
+
 	ofGetMainLoop()->exit();
 	
-    [activeTouches release];
-    
-    delete screenSize;
-    screenSize = NULL;
-    delete windowSize;
-    windowSize = NULL;
-    delete windowPos;
-    windowPos = NULL;
-    
-    ofxiOSAlerts.removeListener(app);
-
-	appSharedPtr = shared_ptr<ofBaseApp>((app = NULL));
-	ofSetAppPtr(appSharedPtr);
-    
-    window = NULL;
-    
+	app = NULL;
+	window = NULL;
+	
+	[activeTouches release];
+	
+	delete screenSize;
+	screenSize = NULL;
+	delete windowSize;
+	windowSize = NULL;
+	delete windowPos;
+	windowPos = NULL;
+	
     _instanceRef = nil;
     
     bInit = NO;
@@ -252,8 +263,10 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
         if([touch tapCount] == 2){
-            ofNotifyEvent(window->events().touchDoubleTap,touchArgs);	// send doubletap
+			touchArgs.type = ofTouchEventArgs::doubleTap;
+			ofNotifyEvent(window->events().touchDoubleTap,touchArgs);	// send doubletap
         }
+		touchArgs.type = ofTouchEventArgs::down;
 		ofNotifyEvent(window->events().touchDown,touchArgs);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
 	}	
 }
@@ -285,6 +298,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
+		touchArgs.type = ofTouchEventArgs::move;
 		ofNotifyEvent(window->events().touchMoved, touchArgs);
 	}
 }
@@ -319,6 +333,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
+		touchArgs.type = ofTouchEventArgs::up;
 		ofNotifyEvent(window->events().touchUp, touchArgs);
 	}
 }
@@ -347,6 +362,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
+		touchArgs.type = ofTouchEventArgs::cancel;
 		ofNotifyEvent(window->events().touchCancelled, touchArgs);
 	}
 	

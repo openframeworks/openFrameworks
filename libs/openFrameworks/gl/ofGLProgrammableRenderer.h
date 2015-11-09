@@ -8,19 +8,18 @@
 #include "of3dGraphics.h"
 #include "ofBitmapFont.h"
 #include "ofPath.h"
+#include "ofMaterial.h"
 
 
 class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
 class ofVbo;
-class ofMaterial;
 static const int OF_NO_TEXTURE=-1;
 
 class ofGLProgrammableRenderer: public ofBaseGLRenderer{
 public:
-	ofGLProgrammableRenderer(const ofAppBaseWindow * window);
-	~ofGLProgrammableRenderer();
+    ofGLProgrammableRenderer(const ofAppBaseWindow * window);
 
 	void setup(int glVersionMajor, int glVersionMinor);
 
@@ -43,7 +42,7 @@ public:
 	void draw(const ofTexture & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
     void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
 	void draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const;
-	void drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const;
+	void drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int offsetelements = 0) const;
 	void drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const;
 	void drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const;
 	void draw(const ofVboMesh & mesh, ofPolyRenderMode renderType) const;
@@ -190,9 +189,10 @@ public:
 	void unbind(const ofCamera & camera);
 
 	void bind(const ofFbo & fbo);
+#ifndef TARGET_OPENGLES
+	void bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint);
+#endif
 	void unbind(const ofFbo & fbo);
-
-	const GLuint& getCurrentFramebufferId() const { return currentFramebufferId; };
 
 	void begin(const ofFbo & fbo, bool setupPerspective);
 	void end(const ofFbo & fbo);
@@ -207,15 +207,15 @@ public:
 	const ofShader * getVideoShader(const ofBaseVideoDraws & video) const;
 	void setVideoShaderUniforms(const ofBaseVideoDraws & video, const ofShader & shader) const;
 
-	void enableLighting(){};
-	void disableLighting(){};
-	void enableSeparateSpecularLight(){};
-	void disableSeparateSpecularLight(){}
-	bool getLightingEnabled(){return true;}
+    void enableLighting();
+    void disableLighting();
+    bool getLightingEnabled();
+    void enableSeparateSpecularLight(){}
+    void disableSeparateSpecularLight(){}
 	void setSmoothLighting(bool b){}
 	void setGlobalAmbientColor(const ofColor& c){}
-	void enableLight(int lightIndex){}
-	void disableLight(int lightIndex){}
+    void enableLight(int lightIndex);
+    void disableLight(int lightIndex);
 	void setLightSpotlightCutOff(int lightIndex, float spotCutOff){}
 	void setLightSpotConcentration(int lightIndex, float exponent){}
 	void setLightAttenuation(int lightIndex, float constant, float linear, float quadratic ){}
@@ -314,6 +314,5 @@ private:
 	// framebuffer binding state
 	deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
 	GLuint defaultFramebufferId;		///< default GL_FRAMEBUFFER_BINDING, windowing frameworks might want to set this to their MSAA framebuffer, defaults to 0
-	GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
-
+    GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
 };

@@ -29,7 +29,7 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 			ofLogError("ofQuickTimePlayer") << "createMovieFromPath(): couldn't load movie, FSPathMakeRef failed: OSErr " << result;
 			return false;
 		}
-		result = FSGetCatalogInfo(&fsref, kFSCatInfoNone, NULL, NULL, &theFSSpec, NULL);
+		result = FSGetCatalogInfo(&fsref, kFSCatInfoNone, nullptr, nullptr, &theFSSpec, nullptr);
 		if (result) {
 			ofLogError("ofQuickTimePlayer") << "createMovieFromPath(): couldn't load movie, FSGetCatalogInfo failed: OSErr ", result;
 			return false;
@@ -105,9 +105,9 @@ ofQuickTimePlayer::ofQuickTimePlayer (){
 	//--------------------------------------------------------------
    #if defined(TARGET_WIN32) || defined(TARGET_OSX)
     //--------------------------------------------------------------
-    	moviePtr	 				= NULL;
+    	moviePtr	 				= nullptr;
     	allocated 					= false;
-        offscreenGWorld				= NULL;
+        offscreenGWorld				= nullptr;
 	//--------------------------------------------------------------
 	#endif
 	//--------------------------------------------------------------
@@ -217,7 +217,7 @@ void ofQuickTimePlayer::closeMovie(){
 	    DisposeMovie (moviePtr);
 		DisposeMovieDrawingCompleteUPP(myDrawCompleteProc);
 
-		moviePtr = NULL;
+		moviePtr = nullptr;
         
     }
 
@@ -245,9 +245,9 @@ void ofQuickTimePlayer::createImgMemAndGWorld(){
 	pixels.allocate(width,height,OF_IMAGE_COLOR);
 
 	#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
-		QTNewGWorldFromPtr (&(offscreenGWorld), k32ARGBPixelFormat, &(movieRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * width);		
+		QTNewGWorldFromPtr (&(offscreenGWorld), k32ARGBPixelFormat, &(movieRect), nullptr, nullptr, 0, (offscreenGWorldPixels), 4 * width);
 	#else
-		QTNewGWorldFromPtr (&(offscreenGWorld), k24RGBPixelFormat, &(movieRect), NULL, NULL, 0, (pixels.getPixels()), 3 * width);
+		QTNewGWorldFromPtr (&(offscreenGWorld), k24RGBPixelFormat, &(movieRect), nullptr, nullptr, 0, (pixels.getPixels()), 3 * width);
 	#endif
 
 	LockPixels(GetGWorldPixMap(offscreenGWorld));
@@ -258,7 +258,7 @@ void ofQuickTimePlayer::createImgMemAndGWorld(){
     // if both are called, the app will crash after a few ofVideoPlayer object have been deleted
 
 	#ifndef TARGET_WIN32
-        SetGWorld (offscreenGWorld, NULL);
+        SetGWorld (offscreenGWorld, nullptr);
 	#endif
 	SetMovieGWorld (moviePtr, offscreenGWorld, nil);
 
@@ -331,7 +331,7 @@ bool ofQuickTimePlayer::load(string name){
 			createImgMemAndGWorld();
 		}
 
-		if (moviePtr == NULL){
+		if (moviePtr == nullptr){
 			return false;
 		}
 

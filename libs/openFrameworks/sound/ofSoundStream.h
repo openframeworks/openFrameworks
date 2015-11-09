@@ -30,7 +30,7 @@
 /// \param nOutputChannels number of requested output channels (i.e. 2 for stereo).
 /// \param nInputChannels number of requested input channels.
 /// \param appPtr pointer to the app which will own the sound stream (optional).
-void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = NULL);
+void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = nullptr);
 
 /// \brief Sets up and starts a global ofSoundStream.
 /// \param nOutputChannels number of requested output channels (i.e. 2 for stereo).

@@ -121,7 +121,7 @@ public:
     void makeRotate(float angle1, const ofVec3f& axis1, float angle2, const ofVec3f& axis2, float angle3, const ofVec3f& axis3);
     
     
-    /// \briew Make a rotation Quat which will rotate vec1 to vec2.
+    /// \brief Make a rotation Quat which will rotate vec1 to vec2.
     /// Generally take a dot product to get the angle between these
     /// and then use a cross product to get the rotation axis
     /// Watch out for the two special cases when the vectors
@@ -408,14 +408,14 @@ ofQuaternion& ofQuaternion::operator*=(const ofQuaternion& rhs) {
 
 //----------------------------------------
 ofQuaternion ofQuaternion::operator /(float rhs) const {
-    float div = 1.0 / rhs;
+    float div = 1.0f / rhs;
     return ofQuaternion(_v.x*div, _v.y*div, _v.z*div, _v.w*div);
 }
 
 
 //----------------------------------------
 ofQuaternion& ofQuaternion::operator /=(float rhs) {
-    float div = 1.0 / rhs;
+    float div = 1.0f / rhs;
     _v.x *= div;
     _v.y *= div;
     _v.z *= div;
