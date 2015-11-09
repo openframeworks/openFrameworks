@@ -6,10 +6,11 @@ openFrameworks is a C++ toolkit for creative coding.
 
 Getting started
 ---------------
+* [supported platforms](PLATFORMS.md) - A list of supported hardware and software platforms.
+* [Linux](linux.md) — A guide to install on Linux environment.
+* [OS X](osx.md) — A guide to install on OS X environment.
 * [Android Eclipse](android_eclipse.md) — A guide to install for Android using the Eclipse IDE.
 * [Android Studio](android_studio.md) - A guide to install for Android Studio IDE.
-* [Linux](linux.md) — A guide to install on Linux.
-* [OS X](osx.md) — A guide to install on OS X.
 * [Code::Block](codeblocks.md) — A guide to configure Code::Block on Windows.
 * [Visual Studio](visualstudio.md) — A guide to configure Visual Studio on Windows.
 * [MSYS2](msys2.md) — A guide to install on Windows using MSYS2.

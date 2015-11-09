@@ -74,7 +74,7 @@ creating projects or adding addons to existing ones. It will be compiled when
 you run the install_dependencies.sh script.
 
 To use it open the executable in OF_ROOT/projectGenerator.  You can find more
-instructions in that folder too.
+instructions in docs/projectgenerator.md
 
 
 d) Code::Blocks Wizard
