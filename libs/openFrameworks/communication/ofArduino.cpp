@@ -61,6 +61,7 @@ ofArduino::ofArduino() {
 	_totalDigitalPins = 0;
 	_executeMultiByteCommand = 0x00; // 0x00 a pin mode (input), not a command in Firmata -> fail hard
 	_multiByteChannel = 0;
+	_firstAnalogPin = -1;
 
 	for (unsigned char & e : _storedInputData) {
 		e = UCHAR_MAX;
@@ -116,8 +117,8 @@ void ofArduino::initPins() {
 	_digitalPinReporting.resize(_totalDigitalPins + 1);
 	_servoValue.resize(_totalDigitalPins + 1);
 
-	_analogHistory.resize(_totalDigitalPins - firstAnalogPin + 1);
-	_analogPinReporting.resize(_totalDigitalPins - firstAnalogPin + 1);
+	_analogHistory.resize(_totalDigitalPins - _firstAnalogPin + 1);
+	_analogPinReporting.resize(_totalDigitalPins - _firstAnalogPin + 1);
 
 	// ports
 	for (int i = 0; i < ARD_TOTAL_PORTS; ++i) {
@@ -126,15 +127,15 @@ void ofArduino::initPins() {
 	}
 
 	// digital pins
-	for (int i = 0; i < firstAnalogPin; ++i) {
+	for (int i = 0; i < _firstAnalogPin; ++i) {
 		_digitalPinValue[i] = -1;
 		_digitalPinMode[i] = ARD_OUTPUT;
 		_digitalPinReporting[i] = ARD_OFF;
 	}
 
 	// analog in pins
-	for (int i = firstAnalogPin; i < _totalDigitalPins; ++i) {
-		_analogPinReporting[i - firstAnalogPin] = ARD_OFF;
+	for (int i = _firstAnalogPin; i < _totalDigitalPins; ++i) {
+		_analogPinReporting[i - _firstAnalogPin] = ARD_OFF;
 		// analog pins used as digital
 		_digitalPinMode[i] = ARD_ANALOG;
 		_digitalPinValue[i] = -1;
@@ -160,7 +161,7 @@ bool ofArduino::connect(const std::string & device, int baud) {
 // the preferred method is to listen for the EInitialized event in your application
 bool ofArduino::isArduinoReady() {
 	if (bUseDelay) {
-		if (_initialized || (ofGetElapsedTimef() - connectTime) > OF_ARDUINO_DELAY_LENGTH) {
+		if (!_initialized && (ofGetElapsedTimef() - connectTime) > OF_ARDUINO_DELAY_LENGTH) {
 			sendPinCapabilityRequest();
 			connected = true;
 		}
@@ -213,14 +214,14 @@ void ofArduino::update() {
 }
 
 int ofArduino::getAnalog(int pin) const {
-	if (pinCapabilities.count((firstAnalogPin + pin) < _totalDigitalPins ? (firstAnalogPin + pin) : pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString((firstAnalogPin + pin) < _totalDigitalPins ? (firstAnalogPin + pin) : pin) + " does not exist on the current board";
+	if (!isAnalogPin(pin)) {
 		return -1;
 	}
-	if (!pinCapabilities[(firstAnalogPin + pin) < _totalDigitalPins ? (firstAnalogPin + pin) : pin].analogSupported) {
-		ofLogError("ofArduino") << "Analog is not supported for pin " + ofToString((firstAnalogPin + pin) < _totalDigitalPins ? (firstAnalogPin + pin) : pin);
+	if (_digitalPinMode[convertAnalogPinToDigital(pin)] != ARD_ANALOG) {
+		ofLogError("ofArduino") << "Analog Input has not been configured for this pin";
 		return -1;
 	}
+	pin = convertDigitalPinToAnalog(pin);
 	if (_analogHistory[pin].size() > 0) {
 		return _analogHistory[pin].front();
 	}
@@ -230,8 +231,7 @@ int ofArduino::getAnalog(int pin) const {
 }
 
 int ofArduino::getDigital(int pin) const {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isPin(pin)) {
 		return -1;
 	}
 	if ((_digitalPinMode[pin] == ARD_INPUT || _digitalPinMode[pin] == ARD_INPUT_PULLUP) && _digitalHistory[pin].size() > 0) {
@@ -246,8 +246,7 @@ int ofArduino::getDigital(int pin) const {
 }
 
 int ofArduino::getPwm(int pin) const {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isPin(pin)) {
 		return -1;
 	}
 	if (!pinCapabilities[pin].pwmSupported) {
@@ -271,16 +270,14 @@ string ofArduino::getString() const {
 }
 
 int ofArduino::getDigitalPinMode(int pin) const {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isPin(pin)) {
 		return -1;
 	}
 	return _digitalPinMode[pin];
 }
 
 void ofArduino::sendDigital(int pin, int value, bool force) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isPin(pin)) {
 		return;
 	}
 	if ((_digitalPinMode[pin] == ARD_INPUT || _digitalPinMode[pin] == ARD_INPUT_PULLUP || _digitalPinMode[pin] == ARD_OUTPUT) && (_digitalPinValue[pin] != value || force)) {
@@ -304,8 +301,7 @@ void ofArduino::sendDigital(int pin, int value, bool force) {
 }
 
 void ofArduino::sendPwm(int pin, int value, bool force) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isPin(pin)) {
 		return;
 	}
 	if (!pinCapabilities[pin].pwmSupported) {
@@ -359,6 +355,7 @@ void ofArduino::sendFirmwareVersionRequest() {
 	sendByte(END_SYSEX);
 }
 
+//this currently isn't supported as the resonse is not mapped
 void ofArduino::sendPinCofigurationRequest() {
 	sendByte(START_SYSEX);
 	sendByte(PIN_STATE_QUERY);
@@ -371,29 +368,33 @@ void ofArduino::sendPinCapabilityRequest() {
 	sendByte(END_SYSEX);
 }
 
+void ofArduino::sendAnalogMappingRequest()
+{
+	sendByte(START_SYSEX);
+	sendByte(ANALOG_MAPPING_QUERY);
+	sendByte(END_SYSEX);
+}
+
 void ofArduino::sendReset() {
 	sendByte(SYSTEM_RESET);
 }
 
 void ofArduino::sendAnalogPinReporting(int pin, int mode) {
-	if (pinCapabilities.count((firstAnalogPin + pin) < _totalDigitalPins ? (firstAnalogPin + pin) : pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString((firstAnalogPin + pin) < _totalDigitalPins ? (firstAnalogPin + pin) : pin) + " does not exist on the current board";
+	if (!isAnalogPin(pin)) {
 		return;
 	}
-	if (!pinCapabilities[(firstAnalogPin + pin) < _totalDigitalPins ? (firstAnalogPin + pin) : pin].analogSupported) {
-		ofLogError("ofArduino") << "Analog is not supported for pin " + ofToString((firstAnalogPin + pin) < _totalDigitalPins ? (firstAnalogPin + pin) : pin);
-		return;
-	}
-	_digitalPinMode[(firstAnalogPin + pin) < _totalDigitalPins ? (firstAnalogPin + pin) : pin] = ARD_ANALOG;
 
-	sendByte(REPORT_ANALOG | pin);
+	//the digital pin mode needs the digital pin #
+	_digitalPinMode[convertAnalogPinToDigital(pin)] = ARD_ANALOG;
+
+	//the sent message needs the analog pin #
+	sendByte(REPORT_ANALOG | convertDigitalPinToAnalog(pin));
 	sendByte(mode);
 	_analogPinReporting[pin] = mode;
 }
 
 void ofArduino::sendDigitalPinMode(int pin, int mode) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isPin(pin)) {
 		return;
 	}
 	switch (mode) {
@@ -480,32 +481,32 @@ void ofArduino::sendDigitalPinMode(int pin, int mode) {
 }
 
 int ofArduino::getAnalogPinReporting(int pin) const {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isAnalogPin(pin)) {
 		return -1;
 	}
-	if (!pinCapabilities[pin].analogSupported) {
-		ofLogError("ofArduino") << "Analog is not supported for this pin";
+	if (_digitalPinMode[convertAnalogPinToDigital(pin)] != ARD_ANALOG) {
+		ofLogError("ofArduino") << "Analog Input has not been configured for this pin";
 		return -1;
 	}
+	//these are just safety checks
+	pin = convertDigitalPinToAnalog(pin);
 	return _analogPinReporting[pin];
 }
 
 list <int> * ofArduino::getAnalogHistory(int pin) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isAnalogPin(pin)) {
 		return NULL;
 	}
-	if (!pinCapabilities[pin].analogSupported) {
-		ofLogError("ofArduino") << "Analog is not supported for this pin";
+	if (_digitalPinMode[convertAnalogPinToDigital(pin)] != ARD_ANALOG) {
+		ofLogError("ofArduino") << "Analog Input has not been configured for this pin";
 		return NULL;
 	}
+	pin = convertDigitalPinToAnalog(pin);
 	return &_analogHistory[pin];
 }
 
 list <int> * ofArduino::getDigitalHistory(int pin) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isPin(pin)) {
 		return NULL;
 	}
 	return &_digitalHistory[pin];
@@ -850,7 +851,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 				pinCapabilities[pin].analogSupported = true;
 				it += 2;
 				if (!firmataAnalogSupported)
-					firstAnalogPin = pin;
+					_firstAnalogPin = pin;
 				firmataAnalogSupported = true;
 				break;
 			case ARD_PWM:
@@ -898,7 +899,43 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 			}
 		}
 		_totalDigitalPins = pin;
-		initPins();
+		if (!_initialized) {
+			sendAnalogMappingRequest();
+		}
+	}
+	break;
+	case ANALOG_MAPPING_RESPONSE:
+	{
+		it = data.begin();
+		int pin = 0;
+		bool fAPin = false;
+		it++;    // skip the first byte, which is the string command
+
+		while (it != data.end()) {
+			//from the firmata protocol
+			//analog channel corresponding to pin x, or 127 if pin x does not support analog
+			if (*it != 127) {
+				analogPinMap.emplace(int(*it), pin);
+
+				//these should be set by the capability query but just incase
+				pinCapabilities[pin].analogSupported = true;
+				if (!firmataAnalogSupported)
+					firmataAnalogSupported = true;
+
+				//lets also make sure that the capability response and this match up
+				if (!fAPin) {
+					if (pin != _firstAnalogPin)
+						ofLogError("ofArduino") << "Capabaility Query and Analog Map don't match up";
+					_firstAnalogPin = pin;
+					fAPin = true;
+				}
+			}
+			pin++;
+			*it++;
+		}
+		if (!_initialized) {
+			initPins();
+		}
 	}
 	break;
 	default:    // the message isn't in Firmatas extended command set
@@ -988,8 +1025,7 @@ int ofArduino::getValueFromTwo7bitBytes(unsigned char lsb, unsigned char msb) {
 ********************************************/
 
 void ofArduino::sendServoAttach(int pin, int minPulse, int maxPulse) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isPin(pin)) {
 		return;
 	}
 	if (!pinCapabilities[pin].servoSupported) {
@@ -1006,8 +1042,7 @@ void ofArduino::sendServoAttach(int pin, int minPulse, int maxPulse) {
 }
 
 void ofArduino::sendServo(int pin, int value, bool force) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isPin(pin)) {
 		return;
 	}
 	if (!pinCapabilities[pin].servoSupported) {
@@ -1036,8 +1071,7 @@ void ofArduino::sendServo(int pin, int value, bool force) {
 }
 
 int ofArduino::getServo(int pin) const {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isPin(pin)) {
 		return -1;
 	}
 	if (!pinCapabilities[pin].servoSupported) {
@@ -1061,12 +1095,10 @@ int ofArduino::getServo(int pin) const {
 ********************************************/
 
 void  ofArduino::sendStepper2Wire(int dirPin, int stepPin, int stepsPerRev) {
-	if (pinCapabilities.count(dirPin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(dirPin) + " does not exist on the current board";
+	if (!isPin(dirPin)) {
 		return;
 	}
-	if (pinCapabilities.count(stepPin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(stepPin) + " does not exist on the current board";
+	if (!isPin(stepPin)) {
 		return;
 	}
 	if (!pinCapabilities[dirPin].stepperSupported) {
@@ -1097,20 +1129,16 @@ void  ofArduino::sendStepper2Wire(int dirPin, int stepPin, int stepsPerRev) {
 }
 
 void  ofArduino::sendStepper4Wire(int pin1, int pin2, int pin3, int pin4, int stepsPerRev) {
-	if (pinCapabilities.count(pin1) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin1) + " does not exist on the current board";
+	if (!isPin(pin1)) {
 		return;
 	}
-	if (pinCapabilities.count(pin2) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin2) + " does not exist on the current board";
+	if (!isPin(pin2)) {
 		return;
 	}
-	if (pinCapabilities.count(pin3) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin3) + " does not exist on the current board";
+	if (!isPin(pin3)) {
 		return;
 	}
-	if (pinCapabilities.count(pin4) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin4) + " does not exist on the current board";
+	if (!isPin(pin4)) {
 		return;
 	}
 	if (!pinCapabilities[pin1].stepperSupported) {
@@ -1359,8 +1387,7 @@ bool ofArduino::isI2CConfigured() {
 ********************************************/
 
 void  ofArduino::sendOneWireConfig(int pin, bool enableParasiticPower) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isPin(pin)) {
 		return;
 	}
 	if (!pinCapabilities[pin].onewireSupported) {
@@ -1376,33 +1403,16 @@ void  ofArduino::sendOneWireConfig(int pin, bool enableParasiticPower) {
 };
 
 void  ofArduino::sendOneWireSearch(int pin) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
-	}
-	if (!pinCapabilities[pin].onewireSupported) {
-		ofLogError("ofArduino") << "Onewire is not supported for this pin";
-		return;
-	}
 	sendOneWireSearch(ONEWIRE_SEARCH_REQUEST, pin);
 };
 
 void  ofArduino::sendOneWireAlarmsSearch(int pin) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
-	}
-	if (!pinCapabilities[pin].onewireSupported) {
-		ofLogError("ofArduino") << "Onewire is not supported for this pin";
-		return;
-	}
 	sendOneWireSearch(ONEWIRE_SEARCH_ALARMS_REQUEST, pin);
 };
 
 //needs to notify event handler
 void  ofArduino::sendOneWireSearch(char type, int pin) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isPin(pin)) {
 		return;
 	}
 	if (!pinCapabilities[pin].onewireSupported) {
@@ -1417,74 +1427,33 @@ void  ofArduino::sendOneWireSearch(char type, int pin) {
 }
 
 void  ofArduino::sendOneWireRead(int pin, vector<unsigned char> devices, int numBytesToRead) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
-	}
-	if (!pinCapabilities[pin].onewireSupported) {
-		ofLogError("ofArduino") << "Onewire is not supported for this pin";
-		return;
-	}
 	int correlationId = floor(ofRandomuf() * 255);
 	vector<unsigned char> b;
 	sendOneWireRequest(pin, ONEWIRE_READ_REQUEST_BIT, devices, numBytesToRead, correlationId, 0, b);
 }
 
 void  ofArduino::sendOneWireReset(int pin) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
-	}
-	if (!pinCapabilities[pin].onewireSupported) {
-		ofLogError("ofArduino") << "Onewire is not supported for this pin";
-		return;
-	}
 	vector<unsigned char> a, b;
 	sendOneWireRequest(pin, ONEWIRE_RESET_REQUEST_BIT, a, 0, 0, 0, b);
 };
 
 void  ofArduino::sendOneWireWrite(int pin, vector<unsigned char> devices, vector<unsigned char> data) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
-	}
-	if (!pinCapabilities[pin].onewireSupported) {
-		ofLogError("ofArduino") << "Onewire is not supported for this pin";
-		return;
-	}
 	sendOneWireRequest(pin, ONEWIRE_WRITE_REQUEST_BIT, devices, 0, 0, 0, data);
 };
 
 void  ofArduino::sendOneWireDelay(int pin, unsigned int delay) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
-	}
-	if (!pinCapabilities[pin].onewireSupported) {
-		ofLogError("ofArduino") << "Onewire is not supported for this pin";
-		return;
-	}
 	vector<unsigned char> a, b;
 	sendOneWireRequest(pin, ONEWIRE_DELAY_REQUEST_BIT, a, 0, 0, delay, b);
 };
 
 void  ofArduino::sendOneWireWriteAndRead(int pin, vector<unsigned char> devices, vector<unsigned char> data, int numBytesToRead) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
-		return;
-	}
-	if (!pinCapabilities[pin].onewireSupported) {
-		ofLogError("ofArduino") << "Onewire is not supported for this pin";
-		return;
-	}
 	int correlationId = floor(ofRandomuf() * 255);
 	sendOneWireRequest(pin, ONEWIRE_WRITE_REQUEST_BIT | ONEWIRE_READ_REQUEST_BIT, devices, numBytesToRead, correlationId, 0, data);
 }
 
 //// see http://firmata.org/wiki/Proposals#OneWire_Proposal
 void  ofArduino::sendOneWireRequest(int pin, unsigned char subcommand, vector<unsigned char> devices, int numBytesToRead, unsigned char correlationId, unsigned int delay, vector<unsigned char> dataToWrite) {
-	if (pinCapabilities.count(pin) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+	if (!isPin(pin)) {
 		return;
 	}
 	if (!pinCapabilities[pin].onewireSupported) {
@@ -1568,12 +1537,10 @@ void  ofArduino::sendOneWireRequest(int pin, unsigned char subcommand, vector<un
 ********************************************/
 
 void ofArduino::attachEncoder(int pinA, int pinB) {
-	if (pinCapabilities.count(pinA) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pinA) + " does not exist on the current board";
+	if (!isPin(pinA)) {
 		return;
 	}
-	if (pinCapabilities.count(pinB) < 1) {
-		ofLogError("ofArduino") << "Pin " + ofToString(pinB) + " does not exist on the current board";
+	if (!isPin(pinB)) {
 		return;
 	}
 	if (!pinCapabilities[pinA].encoderSupported) {
@@ -1742,3 +1709,82 @@ void ofArduino::serialListen(Serial_Ports portID) {
 	sendByte(SERIAL_LISTEN | portID);
 	sendByte(END_SYSEX);
 };
+
+
+
+//this is mostly safe except for the teensy 2.0, it has 12 analog outs starting at 22 going down to 11
+//the problem arises if they mean digital pin 11 or analog pin 11 which are not the same
+//digital pin 11 is analog pin 10 and analog pin 11 is digital pin 22
+bool ofArduino::isAnalogPin(int pin) const
+{
+	if (isPin(convertAnalogPinToDigital(pin))) {
+		if (pin < _firstAnalogPin) // this probably means they are using the Analog pin #
+		{
+			if (analogPinMap.count(pin) < 1) { //the pin doesnt exist in the analog pin mapping
+				ofLogError("ofArduino") << "Analog is not supported for pin " + ofToString(pin);
+				return false;
+			}
+			return true;
+		}
+		else //they are using the digital pin #
+		{
+			if (pinCapabilities.count(pin) < 1) {
+				ofLogError("ofArduino") << "Analog is not supported for pin " + ofToString(pin);
+				return false;
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+
+//this should only be false if the pin is negative or greater than the number of pins on the board
+//just incase we check against the pin capability map if for some reason a pin doesn't exist
+//pin 0 & 1 are outliers because they dont exist in the capability query but technically exist
+//we cant really use pin 0 & 1 though as it messes up the serial communication
+bool ofArduino::isPin(int pin) const
+{
+	if (pin < 0 || pin > _totalDigitalPins) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return false;
+	}
+	if (pinCapabilities.count(pin) < 1) {
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " does not exist on the current board";
+		return false;
+	}
+	return true;
+}
+
+//this returns the pin if its already not within the analog pin map
+//we need this to check between digital and analog pin mappings
+int ofArduino::convertAnalogPinToDigital(int pin) const
+{
+	if (pin < analogPinMap.size()) {
+		if (analogPinMap.count(pin) > 0) {
+			return analogPinMap[pin];
+		}
+		else {
+			ofLogError("ofArduino") << "Pin " + ofToString(pin) + " is not an Analog Pin";
+			return -1;
+		}
+	}
+	return pin;
+}
+
+//this returns the pin if its already within the analog pin map
+//we need this to check between digital and analog pin mappings
+int ofArduino::convertDigitalPinToAnalog(int pin) const
+{
+	if (pin > analogPinMap.size()) {
+		for (auto aPin : analogPinMap)
+			if (aPin.second == pin) {
+				return aPin.first;
+			}
+		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " is not an Analog Pin";
+		return -1;
+	}
+	return pin; //this pin is already in the range of analog pins
+}
+
+//these functions can't really account for user error 
