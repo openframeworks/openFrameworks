@@ -342,6 +342,8 @@ public:
 
 	void sendPinCapabilityRequest();
 
+	void sendAnalogMappingRequest();
+
 	/// \brief This will cause your Arduino to reset and boot into the program again.
 	void sendReset();
 
@@ -810,7 +812,7 @@ private:
 
 	int _encoderID;
 
-	int firstAnalogPin;
+	int _firstAnalogPin;
 
 	bool firmataInputSupported,
 		firmataOutputSupported,
@@ -824,6 +826,13 @@ private:
 		firmataSerialSupported;
 
 	mutable map<int, supportedPinTypes> pinCapabilities;
+	mutable map<int, int> analogPinMap;
+
+	bool isAnalogPin(int pin) const;
+	bool isPin(int pin) const;
+
+	int convertAnalogPinToDigital(int pin) const;
+	int convertDigitalPinToAnalog(int pin) const;
 };
 
 typedef ofArduino ofStandardFirmata;
