@@ -10,8 +10,7 @@ ofFpsCounter::ofFpsCounter()
 ,secsThen(0)
 ,nanosThen(0)
 ,fps(0)
-,lastFrameTime(0)
-,targetFps(60){
+,lastFrameTime(0){
 	ofGetMonotonicTime(secsThen,nanosThen);
 }
 
@@ -22,8 +21,7 @@ ofFpsCounter::ofFpsCounter(double targetFPS)
 ,secsThen(0)
 ,nanosThen(0)
 ,fps(targetFPS)
-,lastFrameTime(0)
-,targetFps(targetFPS){
+,lastFrameTime(0){
 	ofGetMonotonicTime(secsThen,nanosThen);
 }
 
@@ -67,11 +65,11 @@ double ofFpsCounter::getFps() const{
 	return fps;
 }
 
-unsigned int ofFpsCounter::getNumFrames() const{
+uint64_t ofFpsCounter::getNumFrames() const{
 	return nFrameCount;
 }
 
-unsigned long long ofFpsCounter::getLastFrameNanos() const{
+uint64_t ofFpsCounter::getLastFrameNanos() const{
 	return lastFrameTime;
 }
 

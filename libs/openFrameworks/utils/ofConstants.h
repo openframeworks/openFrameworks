@@ -4,7 +4,7 @@
 //-------------------------------
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 9
-#define OF_VERSION_PATCH 0
+#define OF_VERSION_PATCH 1
 #define OF_VERSION_PRE_RELEASE "master"
 
 //-------------------------------
@@ -17,7 +17,7 @@ enum ofLoopType{
 
 enum ofTargetPlatform{
 	OF_TARGET_OSX,
-	OF_TARGET_WINGCC,
+    OF_TARGET_MINGW,
 	OF_TARGET_WINVS,
 	OF_TARGET_IOS,
 	OF_TARGET_ANDROID,
@@ -35,7 +35,7 @@ enum ofTargetPlatform{
 // Cross-platform deprecation warning
 #ifdef __GNUC__
 	// clang also has this defined. deprecated(message) is only for gcc>=4.5
-	#if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 5)
+	#if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || __GNUC__ > 4
         #define OF_DEPRECATED_MSG(message, func) func __attribute__ ((deprecated(message)))
     #else
         #define OF_DEPRECATED_MSG(message, func) func __attribute__ ((deprecated))
@@ -94,14 +94,18 @@ enum ofTargetPlatform{
 
 // then the the platform specific includes:
 #ifdef TARGET_WIN32
-
 	#define GLEW_STATIC
+	#define GLEW_NO_GLU
 	#include "GL/glew.h"
 	#include "GL/wglew.h"
    	#include "glu.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
+		//TODO: Fix this in the code instead of disabling the warnings
+		#define _CRT_SECURE_NO_WARNINGS
+		#define _WINSOCK_DEPRECATED_NO_WARNINGS
+
 		#include <stdint.h>
 		#include <functional>
 		#pragma warning(disable : 4068)		// unknown pragmas
@@ -294,7 +298,7 @@ typedef TESSindex ofIndexType;
         #define OF_VIDEO_PLAYER_ANDROID
     #elif defined(TARGET_OF_IOS)
         #define OF_VIDEO_PLAYER_IOS
-	#elif defined(TARGET_WIN32) && !defined(__MINGW32__)
+	#elif defined(TARGET_WIN32)
         #define OF_VIDEO_PLAYER_DIRECTSHOW
     #elif defined(TARGET_OSX)
         //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
@@ -348,12 +352,14 @@ typedef TESSindex ofIndexType;
 #endif
 
 //------------------------------------------------ thread local storage
-// xcode has a bug where it won't support tls on some versions even
+// clang has a bug where it won't support tls on some versions even
 // on c++11, this is a workaround that bug
-#if !defined(TARGET_OSX) && !defined(TARGET_OF_IOS)
-	#define HAS_TLS 1
-#elif __clang__
-	#if __has_feature(cxx_thread_local)
+#ifndef HAS_TLS
+	#if __clang__
+		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__)
+			#define HAS_TLS 1
+		#endif
+    #elif !defined(TARGET_WIN32) || _MSC_VER
 		#define HAS_TLS 1
 	#endif
 #endif
@@ -702,6 +708,8 @@ enum ofPixelFormat{
 	OF_PIXELS_V,
 	OF_PIXELS_UV,
 	OF_PIXELS_VU,
+
+	OF_PIXELS_NUM_FORMATS,
 
 	OF_PIXELS_UNKNOWN=-1,
 	OF_PIXELS_NATIVE=-2

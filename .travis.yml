@@ -1,27 +1,70 @@
-language: node_js
-node_js: '0.10'
-env:
-  global:
-    - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
-branches:
-  only:
-    - master
-notifications:
-  email:
-    - jonas@halfdanj.dk
-before_install:
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then sudo apt-get install python-software-properties; fi'
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then sudo apt-add-repository -y ppa:libreoffice/libreoffice-4-2; fi'
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then sudo apt-get update; fi'
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then sudo apt-get install doxygen; fi'
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then sudo apt-get install ncftp; fi'
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then gem install sass --version "=3.2.12"; fi'
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then gem install compass --version "=0.12.2"; fi'
+language: c++
+compiler: gcc
+sudo: true
+matrix:
+  include:
+    # fully specify builds, include can't dynamically expand matrix entries
+    # relative order of sudo and env is important so that addons: is recognized
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: TARGET="linux"
+      addons:
+        apt:
+          sources:
+          - ubuntu-toolchain-r-test
+          packages:
+          - gcc-4.9
+          - g++-4.9
+    - os: osx
+      compiler: clang
+      env: TARGET="osx"
+    - os: osx
+      compiler: clang
+      env: TARGET="ios"
+    - os: linux
+      sudo: false
+      env: TARGET="android" OPT="armv7"
+      cache:
+        directories:
+        - ~/android-ndk-r10e
+    - os: linux
+      sudo: false
+      env: TARGET="android" OPT="x86"
+      cache:
+        directories:
+        - ~/android-ndk-r10e
+    - os: linux
+      sudo: false
+      env:
+      - TARGET="docs"
+      - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
+      addons:
+        apt:
+          packages:
+          - python-software-properties
+          - doxygen
+          - ncftp
+  # Exclude the default build that would otherwise be generated
+  # see https://github.com/travis-ci/travis-ci/issues/1228
+  exclude:
+    - compiler: gcc
+  allow_failures:
+    # temporary until we find out how to prevent (spurious) build failures
+    - env:
+      - TARGET="docs"
+      - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
+install:
+    - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "docs" ]; then
+        scripts/ci/$TARGET/install.sh;
+      fi
 script:
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then cd scripts/; fi'
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then git clone https://github.com/halfdanJ/ofDocGenerator; fi'
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then cd ofDocGenerator; fi'
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then npm install; fi'
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then npm run start; fi'
+    - scripts/ci/$TARGET/build.sh $OPT
+    - if [ "$TARGET" == "osx" ] || [ "$TARGET" == "linux" ]; then
+        scripts/ci/$TARGET/run_tests.sh;
+      fi
 after_success:
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" && $FTP_USER ]]; then ncftpput -R -v -u $FTP_USER -p $FTP_PASSWORD 104.130.212.175 / output/*; fi'
+    # this will only run fully on a commit, not a PR, due to secure above
+    if [ "$TARGET" == "docs" ]; then scripts/ci/$TARGET/after_success.sh; fi
+git:
+    depth: 10

@@ -77,6 +77,8 @@ public:
     void nextFrame();
     void previousFrame();
 
+	ofAVFoundationPlayer& operator=(ofAVFoundationPlayer other);
+	
 #ifdef __OBJC__
 	ofAVFoundationVideoPlayer * getAVFoundationVideoPlayer();
 #else
@@ -110,13 +112,13 @@ protected:
 	ofTexture videoTexture;
 	
 #ifdef TARGET_OF_IOS
-	CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
-	CVOpenGLESTextureRef _videoTextureRef = NULL;
+	CVOpenGLESTextureCacheRef _videoTextureCache = nullptr;
+	CVOpenGLESTextureRef _videoTextureRef = nullptr;
 #endif
 	
 #ifdef TARGET_OSX
-	CVOpenGLTextureCacheRef _videoTextureCache = NULL;
-	CVOpenGLTextureRef _videoTextureRef = NULL;
+	CVOpenGLTextureCacheRef _videoTextureCache = nullptr;
+	CVOpenGLTextureRef _videoTextureRef = nullptr;
 #endif
 };
 

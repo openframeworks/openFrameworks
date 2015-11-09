@@ -51,7 +51,7 @@ uint64_t ofGetElapsedTimeMicros();
 
 /// \brief Get the number of frames rendered since the program started.
 /// \returns the number of frames rendered since the program started.
-int ofGetFrameNum();
+uint64_t ofGetFrameNum();
 
 /// \}
 
@@ -185,9 +185,12 @@ string ofToDataPath(const string& path, bool absolute=false);
 
 /// \brief Reset the working directory to the platform default.
 ///
-/// The default working directory is usually in a data/ folder next to the
-/// openFrameworks application.
-void ofSetWorkingDirectoryToDefault();
+/// The default working directory is where the application was started from
+/// or the exe directory in case of osx bundles. GLUT might change the default
+/// working directory to the resources directory in the bundle in osx. This
+/// will restore it to the exe dir or whatever was the current dir when the
+/// application was started
+bool ofRestoreWorkingDirectoryToDefault();
 
 /// \brief Set the relative path to the data/ folder from the executable.
 ///
@@ -308,8 +311,8 @@ void ofSort(vector<T>& values) {
 ///    9, 8, 7, 6, 5, 4, 3, 2, 1, 0.
 ///
 /// \tparam T the type contained by the vector.
-/// \param The vector of values to be sorted.
-/// \param The comparison function.
+/// \param values The vector of values to be sorted.
+/// \param compare The comparison function.
 /// \sa http://www.cplusplus.com/reference/algorithm/sort/
 template<class T, class BoolFunction>
 void ofSort(vector<T>& values, BoolFunction compare) {
@@ -323,7 +326,7 @@ void ofSort(vector<T>& values, BoolFunction compare) {
 /// \returns true the index of the first target value found.
 /// \sa http://www.cplusplus.com/reference/iterator/distance/
 template <class T>
-unsigned int ofFind(const vector<T>& values, const T& target) {
+std::size_t ofFind(const vector<T>& values, const T& target) {
 	return distance(values.begin(), find(values.begin(), values.end(), target));
 }
 
@@ -400,7 +403,7 @@ bool ofIsStringInString(const string& haystack, const string& needle);
 /// \brief Check how many times a string contains another string.
 /// \param haystack The string to check for occurrence in .
 /// \param needle The string to check for.
-int ofStringTimesInString(const string& haystack, const string& needle);
+std::size_t ofStringTimesInString(const string& haystack, const string& needle);
 
 /// \brief Converts all characters in a string to lowercase.
 ///
@@ -432,9 +435,9 @@ string ofToLower(const string& src, const string & locale="");
 /// \returns the UTF-8 encoded string as all uppercase characters.
 string ofToUpper(const string& src, const string & locale="");
 
-string ofTrimFront(const string & src);
-string ofTrimBack(const string & src);
-string ofTrim(const string & src);
+string ofTrimFront(const string & src, const string & locale = "");
+string ofTrimBack(const string & src, const string & locale = "");
+string ofTrim(const string & src, const string & locale = "");
 
 void ofAppendUTF8(string & str, int utf8);
 
@@ -590,16 +593,29 @@ const char * ofFromString(const string & value);
 /// Converts a `std::string` representation of an int (e.g., `"3"`) to an actual
 /// `int`.
 ///
-/// \param The string representation of the integer.
+/// \param intString The string representation of the integer.
 /// \returns the integer represented by the string or 0 on failure.
 int ofToInt(const string& intString);
+
+// --------------------------------------------
+/// \name Number conversion
+/// \{
+
+/// \brief Convert a string to a int64_t.
+///
+/// Converts a `std::string` representation of a long integer
+/// (e.g., `"9223372036854775807"`) to an actual `int64_t`.
+///
+/// \param intString The string representation of the long integer.
+/// \returns the long integer represented by the string or 0 on failure.
+int64_t ofToInt64(const string& intString);
 
 /// \brief Convert a string to a float.
 ///
 /// Converts a std::string representation of a float (e.g., `"3.14"`) to an
 /// actual `float`.
 ///
-/// \param The string representation of the float.
+/// \param floatString string representation of the float.
 /// \returns the float represented by the string or 0 on failure.
 float ofToFloat(const string& floatString);
 
@@ -608,7 +624,7 @@ float ofToFloat(const string& floatString);
 /// Converts a std::string representation of a double (e.g., `"3.14"`) to an
 /// actual `double`.
 ///
-/// \param The string representation of the double.
+/// \param doubleString The string representation of the double.
 /// \returns the double represented by the string or 0 on failure.
 double ofToDouble(const string& doubleString);
 
@@ -618,7 +634,7 @@ double ofToDouble(const string& doubleString);
 /// actual `bool` using a case-insensitive comparison against the words `"true"`
 /// and `"false"`.
 ///
-/// \param The string representation of the boolean.
+/// \param boolString The string representation of the boolean.
 /// \returns the boolean represented by the string or 0 on failure.
 bool ofToBool(const string& boolString);
 
@@ -721,16 +737,7 @@ char ofToChar(const string& charString);
 /// \returns a binary string.
 template <class T>
 string ofToBinary(const T& value) {
-	ostringstream out;
-	const char* data = (const char*) &value;
-	// the number of bytes is determined by the datatype
-	int numBytes = sizeof(T);
-	// the bytes are stored backwards (least significant first)
-	for(int i = numBytes - 1; i >= 0; i--) {
-		bitset<8> cur(data[i]);
-		out << cur;
-	}
-	return out.str();
+	return std::bitset<8 * sizeof(T)>(*reinterpret_cast<const uint64_t*>(&value)).to_string();
 }
 
 /// \brief Converts a string value to a string of only 1s and 0s.
@@ -911,13 +918,23 @@ ofTargetPlatform ofGetTargetPlatform();
 class ofUTF8Iterator{
 public:
 	ofUTF8Iterator(const string & str);
-	utf8::iterator<const char*> begin() const;
-	utf8::iterator<const char*> end() const;
+	utf8::iterator<std::string::const_iterator> begin() const;
+	utf8::iterator<std::string::const_iterator> end() const;
+	utf8::iterator<std::string::const_reverse_iterator> rbegin() const;
+	utf8::iterator<std::string::const_reverse_iterator> rend() const;
 
 private:
-	utf8::iterator<const char*> _begin;
-	utf8::iterator<const char*> _end;
-	string src_valid;
+	std::string src_valid;
 };
 
 /// \}
+
+
+
+/*! \cond PRIVATE */
+namespace of{
+namespace priv{
+    void setWorkingDirectoryToDefault();
+}
+}
+/*! \endcond */

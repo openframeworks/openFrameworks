@@ -38,6 +38,7 @@
 #define INCLUDED_OSCPACK_IPENDPOINTNAME_H
 
 
+namespace osc{
 class IpEndpointName{
     static unsigned long GetHostByName( const char *s );
 public:
@@ -78,6 +79,7 @@ inline bool operator==( const IpEndpointName& lhs, const IpEndpointName& rhs )
 inline bool operator!=( const IpEndpointName& lhs, const IpEndpointName& rhs )
 {
 	return !(lhs == rhs);
+}
 }
 
 #endif /* INCLUDED_OSCPACK_IPENDPOINTNAME_H */

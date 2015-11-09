@@ -20,7 +20,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 
-    Modified by Philip Whitfield (undef.ch)
+	Modified by Philip Whitfield (undef.ch)
 
  ==============================================================================*/
 #include "ofAppEGLWindow.h"
@@ -34,13 +34,13 @@
 #include <assert.h>
 
 // native events
-struct udev*         udev;
-struct udev_device*  dev;
+struct udev* udev;
+struct udev_device* dev;
 struct udev_monitor* mon;
-static int  udev_fd     = -1;
+static int udev_fd = -1;
 
-static int  keyboard_fd = -1; // defaults to 0 ie console
-static int  mouse_fd    = -1; // defaults to 0 
+static int keyboard_fd = -1; // defaults to 0 ie console
+static int mouse_fd	= -1; // defaults to 0
 
 // minimal map
 const int lowercase_map[] = {
@@ -79,11 +79,11 @@ static struct termios tc;
 static struct termios ots;
 
 typedef struct {
-	int   mouseButtonState;
+	int mouseButtonState;
 } MouseState;
 
 // TODO, make this match the upcoming additions to ofWindow
-#define MOUSE_BUTTON_LEFT_MASK        1
+#define MOUSE_BUTTON_LEFT_MASK		1
 #define MOUSE_BUTTON_MIDDLE_MASK 1 << 1
 #define MOUSE_BUTTON_RIGHT_MASK  2 << 1
 
@@ -132,10 +132,10 @@ static int filter_mouse(const struct dirent *d) {
 		__ip += __l; __rd += __l; } } \
 		} while (0)
 static const struct {
-	unsigned int   width;
-	unsigned int   height;
-	unsigned int   bpp; /* 2:RGB16, 3:RGB, 4:RGBA */
-	unsigned char  rle_pixel_data[382 + 1];
+	unsigned int width;
+	unsigned int height;
+	unsigned int bpp; /* 2:RGB16, 3:RGB, 4:RGBA */
+	unsigned char rle_pixel_data[382 + 1];
 } mouse_cursor_data = {
 		12, 19, 4,
 		"\1\0\0\0\377\213\377\377\377\0\202\0\0\0\377\212\377\377\377\0\3\0\0\0\377"
@@ -192,22 +192,22 @@ static const char* eglErrorString(EGLint err) {
 // TODO: remove these when they enter system headers
 // From : https://github.com/raspberrypi/userland/blob/master/interface/vmcs_host/vc_vchi_dispmanx.h
 #ifndef ELEMENT_CHANGE_LAYER
-#define ELEMENT_CHANGE_LAYER          (1<<0)
+#define ELEMENT_CHANGE_LAYER		  (1<<0)
 #endif
 #ifndef ELEMENT_CHANGE_OPACITY
-#define ELEMENT_CHANGE_OPACITY        (1<<1)
+#define ELEMENT_CHANGE_OPACITY		(1<<1)
 #endif
 #ifndef ELEMENT_CHANGE_DEST_RECT
-#define ELEMENT_CHANGE_DEST_RECT      (1<<2)
+#define ELEMENT_CHANGE_DEST_RECT	  (1<<2)
 #endif
 #ifndef ELEMENT_CHANGE_SRC_RECT
-#define ELEMENT_CHANGE_SRC_RECT       (1<<3)
+#define ELEMENT_CHANGE_SRC_RECT	   (1<<3)
 #endif
 #ifndef ELEMENT_CHANGE_MASK_RESOURCE
 #define ELEMENT_CHANGE_MASK_RESOURCE  (1<<4)
 #endif
 #ifndef ELEMENT_CHANGE_TRANSFORM
-#define ELEMENT_CHANGE_TRANSFORM      (1<<5)
+#define ELEMENT_CHANGE_TRANSFORM	  (1<<5)
 #endif
 #endif
 
@@ -219,14 +219,14 @@ ofAppEGLWindow::Settings::Settings()
 	eglWindowOpacity = 255;
 
 	// these are usually set as default, but set them here just to be sure
-	frameBufferAttributes[EGL_RED_SIZE]     = 8; // 8 bits for red
+	frameBufferAttributes[EGL_RED_SIZE]	 = 8; // 8 bits for red
 	frameBufferAttributes[EGL_GREEN_SIZE]   = 8; // 8 bits for green
-	frameBufferAttributes[EGL_BLUE_SIZE]    = 8; // 8 bits for blue
+	frameBufferAttributes[EGL_BLUE_SIZE]	= 8; // 8 bits for blue
 	frameBufferAttributes[EGL_ALPHA_SIZE]   = 8; // 8 bits for alpha
 	frameBufferAttributes[EGL_LUMINANCE_SIZE] = EGL_DONT_CARE; // 8 bits for alpha
 	frameBufferAttributes[EGL_DEPTH_SIZE]   = 24; // 24 bits for depth
 	frameBufferAttributes[EGL_STENCIL_SIZE] = 8; // 8 bits for stencil
-	frameBufferAttributes[EGL_SAMPLES]      = 1;
+	frameBufferAttributes[EGL_SAMPLES]	  = 1;
 
 	initialClearColor = ofColor(0.15 * 255, 0.15 * 255, 0.15 * 255, 255);
 
@@ -240,14 +240,14 @@ ofAppEGLWindow::Settings::Settings(const ofGLESWindowSettings & settings)
 	eglWindowOpacity = 255;
 
 	// these are usually set as default, but set them here just to be sure
-	frameBufferAttributes[EGL_RED_SIZE]     = 8; // 8 bits for red
+	frameBufferAttributes[EGL_RED_SIZE]	 = 8; // 8 bits for red
 	frameBufferAttributes[EGL_GREEN_SIZE]   = 8; // 8 bits for green
-	frameBufferAttributes[EGL_BLUE_SIZE]    = 8; // 8 bits for blue
+	frameBufferAttributes[EGL_BLUE_SIZE]	= 8; // 8 bits for blue
 	frameBufferAttributes[EGL_ALPHA_SIZE]   = 8; // 8 bits for alpha
 	frameBufferAttributes[EGL_LUMINANCE_SIZE] = EGL_DONT_CARE; // 8 bits for alpha
 	frameBufferAttributes[EGL_DEPTH_SIZE]   = 24; // 24 bits for depth
 	frameBufferAttributes[EGL_STENCIL_SIZE] = 8; // 8 bits for stencil
-	frameBufferAttributes[EGL_SAMPLES]      = 1;
+	frameBufferAttributes[EGL_SAMPLES]	  = 1;
 
 	initialClearColor = ofColor(0.15 * 255, 0.15 * 255, 0.15 * 255, 255);
 
@@ -258,8 +258,23 @@ ofAppEGLWindow::Settings::Settings(const ofGLESWindowSettings & settings)
 //------------------------------------------------------------
 ofAppEGLWindow::ofAppEGLWindow() {
 	keyboardDetected = false;
-	mouseDetected	= false;
+	mouseDetected = false;
 	threadTimeout = ofThread::INFINITE_JOIN_TIMEOUT;
+	bNewScreenMode = false;
+	buttonInUse = -1;
+	bEnableSetupScreen = false;
+	bShowCursor = true;
+	nFramesSinceWindowResized = 0;
+	mouseScaleX = 2.0f;
+	mouseScaleY = 2.0f;
+	isUsingX11 = false;
+	isWindowInited = false;
+	isSurfaceInited = false;
+	x11Display = NULL;
+	x11Screen = NULL;
+	x11ScreenNum = 0l;
+	glesVersion = 1;
+
 	if(instance!=NULL){
 		ofLogError("ofAppEGLWindow") << "trying to create more than one instance";
 	}
@@ -376,13 +391,13 @@ void ofAppEGLWindow::setup(const ofGLESWindowSettings & settings){
 //------------------------------------------------------------
 void ofAppEGLWindow::setup(const Settings & _settings) {
 	settings = _settings;
-	windowMode      = OF_WINDOW;
-	bNewScreenMode  = true;
+	windowMode = OF_WINDOW;
+	bNewScreenMode = true;
 	nFramesSinceWindowResized = 0;
-	buttonInUse     = 0;
-	bEnableSetupScreen  = true;
-	eglDisplayString   = "";
-	orientation     = OF_ORIENTATION_DEFAULT;
+	buttonInUse	= 0;
+	bEnableSetupScreen = true;
+	eglDisplayString = "";
+	orientation = OF_ORIENTATION_DEFAULT;
 
 	//TODO: 2.0f is an arbitrary factor that makes mouse speed ok at 1024x768,
 	// to be totally correct we might need to take into account screen size
@@ -390,7 +405,7 @@ void ofAppEGLWindow::setup(const Settings & _settings) {
 	mouseScaleX = 2.0f;
 	mouseScaleY = 2.0f;
 
-	isUsingX11      = false;
+	isUsingX11 = false;
 	isWindowInited  = false;
 	isSurfaceInited = false;
 
@@ -474,11 +489,11 @@ void ofAppEGLWindow::setup(const Settings & _settings) {
 	}
 
 	makeCurrent();
-    if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
-    	static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glesVersion,0);
-    }else{
-    	static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
-    }
+	if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
+		static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glesVersion,0);
+	}else{
+		static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
+	}
 }
 
 //------------------------------------------------------------
@@ -621,7 +636,7 @@ bool ofAppEGLWindow::createSurface() {
 
 	// create a surface
 	eglSurface = eglCreateWindowSurface( eglDisplay, // our display handle
-			eglConfig,    // our first config
+			eglConfig,	// our first config
 			nativeWindow, // our native window
 			attribute_list_window_surface); // surface attribute list
 
@@ -926,15 +941,15 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
 #ifdef TARGET_RASPBERRY_PI
 
 			VC_RECT_T dst_rect;
-			dst_rect.x      = (int32_t)newRect.x;
-			dst_rect.y      = (int32_t)newRect.y;
-			dst_rect.width  = (int32_t)newRect.width;
+			dst_rect.x = (int32_t)newRect.x;
+			dst_rect.y = (int32_t)newRect.y;
+			dst_rect.width = (int32_t)newRect.width;
 			dst_rect.height = (int32_t)newRect.height;
 
 			VC_RECT_T src_rect;
-			src_rect.x      = 0;
-			src_rect.y      = 0;
-			src_rect.width  = (int32_t)newRect.width << 16;
+			src_rect.x = 0;
+			src_rect.y = 0;
+			src_rect.width = (int32_t)newRect.width << 16;
 			src_rect.height = (int32_t)newRect.height << 16;
 
 			DISPMANX_UPDATE_HANDLE_T dispman_update = vc_dispmanx_update_start(0);
@@ -947,18 +962,15 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
 					&dst_rect,
 					&src_rect,
 					0, // mask (we aren't changing it here)
-#ifdef USE_DISPMANX_TRANSFORM_T
 					(DISPMANX_TRANSFORM_T)0);
-#else
-			(VC_IMAGE_TRANSFORM_T)0);
-#endif
+
 
 			vc_dispmanx_update_submit_sync(dispman_update);
 
 			// next time swapBuffers is called, it will be resized based on this eglwindow size data
 			dispman_native_window.element = dispman_element;
-			dispman_native_window.width   = (int32_t)newRect.width;
-			dispman_native_window.height  = (int32_t)newRect.height; // don't forget!
+			dispman_native_window.width = (int32_t)newRect.width;
+			dispman_native_window.height = (int32_t)newRect.height; // don't forget!
 
 			currentWindowRect = newRect;
 
@@ -1157,9 +1169,9 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
 		y = ofClamp(y, 0, screenSize.y - currentWindowRect.height);
 
 		VC_RECT_T dst_rect;
-		dst_rect.x      = (int32_t)x;
-		dst_rect.y      = (int32_t)y;
-		dst_rect.width  = (int32_t)currentWindowRect.width;
+		dst_rect.x = (int32_t)x;
+		dst_rect.y = (int32_t)y;
+		dst_rect.width = (int32_t)currentWindowRect.width;
 		dst_rect.height = (int32_t)currentWindowRect.height;
 
 		dispman_update = vc_dispmanx_update_start(0);
@@ -1172,11 +1184,8 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
 				&dst_rect,
 				NULL,
 				0,
-#ifdef USE_DISPMANX_TRANSFORM_T
-(DISPMANX_TRANSFORM_T)0);
-#else
-	(VC_IMAGE_TRANSFORM_T)0);
-#endif
+				(DISPMANX_TRANSFORM_T)0);
+
 
 vc_dispmanx_update_submit_sync(dispman_update);
 
@@ -1244,11 +1253,11 @@ void ofAppEGLWindow::setFullscreen(bool fullscreen){
 	if( windowMode == OF_GAME_MODE) return;
 
 	if(fullscreen && windowMode != OF_FULLSCREEN){
-		bNewScreenMode  = true;
-		windowMode      = OF_FULLSCREEN;
+		bNewScreenMode = true;
+		windowMode = OF_FULLSCREEN;
 	}else if(!fullscreen && windowMode != OF_WINDOW) {
-		bNewScreenMode  = true;
-		windowMode      = OF_WINDOW;
+		bNewScreenMode = true;
+		windowMode = OF_WINDOW;
 	}
 }
 
@@ -1442,7 +1451,7 @@ void ofAppEGLWindow::readNativeUDevEvents() {
 	/* Check if our file descriptor has received data. */
 	if (ret > 0 && FD_ISSET(udev_fd, &fds)) {
 		/* Make the call to receive the device.
-           select() ensured that this will not block. */
+		   select() ensured that this will not block. */
 		dev = udev_monitor_receive_device(mon);
 		if (dev) {
 			// TODO: finish auto connect
@@ -1817,15 +1826,15 @@ bool ofAppEGLWindow::createRPiNativeWindow(const ofRectangle& requestedWindowRec
 	//////////////////////////
 	VC_RECT_T dst_rect;
 
-	dst_rect.x      = (int32_t)windowRect.x;
-	dst_rect.y      = (int32_t)windowRect.y;
-	dst_rect.width  = (int32_t)windowRect.width;
+	dst_rect.x = (int32_t)windowRect.x;
+	dst_rect.y = (int32_t)windowRect.y;
+	dst_rect.width = (int32_t)windowRect.width;
 	dst_rect.height = (int32_t)windowRect.height;
 
 	VC_RECT_T src_rect;
 
-	src_rect.x      = 0;
-	src_rect.y      = 0;
+	src_rect.x = 0;
+	src_rect.y = 0;
 	src_rect.width  = dst_rect.width << 16;
 	src_rect.height = dst_rect.height << 16;
 
@@ -1872,8 +1881,8 @@ bool ofAppEGLWindow::createRPiNativeWindow(const ofRectangle& requestedWindowRec
 	// set dispman_native_window to zero
 	memset(&dispman_native_window, 0x0, sizeof(EGL_DISPMANX_WINDOW_T));
 	dispman_native_window.element = dispman_element;
-	dispman_native_window.width   = (int32_t)windowRect.width;
-	dispman_native_window.height  = (int32_t)windowRect.height;
+	dispman_native_window.width = (int32_t)windowRect.width;
+	dispman_native_window.height = (int32_t)windowRect.height;
 
 	// set background to black (not required)
 	vc_dispmanx_display_set_background(dispman_update, dispman_display, 0x00, 0x00, 0x00);
@@ -1893,20 +1902,20 @@ bool ofAppEGLWindow::createRPiNativeWindow(const ofRectangle& requestedWindowRec
 bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRect){
 
 	// X11 variables
-	x11Window      = 0;
-	x11Display     = 0;
-	x11ScreenNum   = 0; // TODO: settings.screenNum?
-	x11Screen      = 0;
-	XVisualInfo*  x11Visual   = 0; // TODO does this need to be deleted?
-	Colormap      x11Colormap = 0;
+	x11Window = 0;
+	x11Display = 0;
+	x11ScreenNum = 0; // TODO: settings.screenNum?
+	x11Screen = 0;
+	XVisualInfo* x11Visual = 0; // TODO does this need to be deleted?
+	Colormap x11Colormap = 0;
 
 	/*
-    Step 0 - Create a NativeWindowType that we can use it for OpenGL ES output
+	Step 0 - Create a NativeWindowType that we can use it for OpenGL ES output
 	 */
-	Window               sRootWindow;
+	Window sRootWindow;
 	XSetWindowAttributes sWA;
-	unsigned int         ui32Mask;
-	int                  i32Depth;
+	unsigned int ui32Mask;
+	int i32Depth;
 
 	//ofRectangle screenRect = getScreenRect();
 

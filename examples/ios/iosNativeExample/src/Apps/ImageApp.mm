@@ -30,8 +30,8 @@ void ImageApp::update(){
 
 //--------------------------------------------------------------
 void ImageApp::draw() {
-    int x = (ofGetWidth()  - image.width)  * 0.5;
-    int y = (ofGetHeight() - image.height) * 0.5;
+    int x = (ofGetWidth()  - image.getWidth())  * 0.5;
+    int y = (ofGetHeight() - image.getHeight()) * 0.5;
     int p = 0;
     
 	ofSetColor(ofColor::white);

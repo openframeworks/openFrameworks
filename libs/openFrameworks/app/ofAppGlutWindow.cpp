@@ -5,8 +5,13 @@
 #include "ofGLRenderer.h"
 
 #ifdef TARGET_WIN32
-	#define GLUT_BUILDING_LIB
-	#include "glut.h"
+	#if (_MSC_VER) 
+		#define GLUT_BUILDING_LIB
+		#include "glut.h"
+	#else
+		#include <GL/glut.h>
+		#include <GL/freeglut_ext.h>
+	#endif
 #endif
 #ifdef TARGET_OSX
     #include <OpenGL/OpenGL.h>
@@ -51,7 +56,7 @@ static ofAppGlutWindow * instance;
 //------------------------------------------------
 
 static WNDPROC currentWndProc;
-static HWND handle  = NULL;
+static HWND handle  = nullptr;
 
 // This function takes in a wParam from the WM_DROPFILES message and
 // prints all the files to a message box.
@@ -79,7 +84,6 @@ void HandleFiles(WPARAM wParam)
     // the current file being queried.
     int count = DragQueryFile(hDrop, 0xFFFFFFFF, szName, MAX_PATH);
 
-	#ifdef _MSC_VER
     // Here we go through all the files that were drag and dropped then display them
     for(int i = 0; i < count; i++)
     {
@@ -101,23 +105,6 @@ void HandleFiles(WPARAM wParam)
         // Bring up a message box that displays the current file being processed
         //MessageBox(GetForegroundWindow(), szName, L"Current file received", MB_OK);
     }
-#else
-
-    HDROP hdrop = (HDROP)(wParam);
-	int index, length;
-	count = DragQueryFile(hdrop, 0xFFFFFFFF, NULL, 0);
-	for (index=0; index<count; ++index) {
-	  length = DragQueryFile(hdrop, index, NULL, 0);
-	  if (length > 0) {
-	    TCHAR* lpstr = new TCHAR[length+1];
-	    DragQueryFile(hdrop, index, lpstr, length+1);
-	    string temp = lpstr;
-	    info.files.push_back(temp);
-	    delete[] lpstr;
-	  }
-	}
-
-	#endif
 
     // Finally, we destroy the HDROP handle so the extra memory
     // allocated by the application is released.
@@ -338,6 +325,12 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 	if (settings.isPositionSet()) {
 		setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 	}
+
+#ifdef TARGET_OSX
+	// The osx implementation of glut changes the cwd, this restores it
+	// to wherever it was when the app was started
+	ofRestoreWorkingDirectoryToDefault();
+#endif
 }
 
 #ifdef TARGET_LINUX
@@ -474,7 +467,7 @@ void ofAppGlutWindow::setWindowShape(int w, int h){
 //------------------------------------------------------------
 void ofAppGlutWindow::hideCursor(){
 	#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
-		 CGDisplayHideCursor(NULL);
+		 CGDisplayHideCursor(0);
 	#else
 		glutSetCursor(GLUT_CURSOR_NONE);
 	#endif
@@ -483,7 +476,7 @@ void ofAppGlutWindow::hideCursor(){
 //------------------------------------------------------------
 void ofAppGlutWindow::showCursor(){
 	#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
-		 CGDisplayShowCursor(NULL);
+		 CGDisplayShowCursor(0);
 	#else
 		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 	#endif

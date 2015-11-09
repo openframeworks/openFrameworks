@@ -1079,7 +1079,7 @@ ofHandednessType ofGetCoordHandedness();
 /// }
 /// ~~~~
 /// \sa End drawing with ofEndSaveScreenAsPDF()
-void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle viewport = ofRectangle(0,0,0,0));
+void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
 
 /// \brief Terminates draw to PDF through ofCairoRenderer and outputs the file.
 /// \sa ofBeginSaveScreenAsPDF()
@@ -1087,7 +1087,7 @@ void ofEndSaveScreenAsPDF();
 
 /// \brief Begin rendering to a SVG file.
 /// \sa ofEndSaveScreenAsSVG(), ofBeginSaveScreenAsPDF()
-void ofBeginSaveScreenAsSVG(string filename, bool bMultipage = false, bool b3D = false, ofRectangle viewport = ofRectangle(0,0,0,0));
+void ofBeginSaveScreenAsSVG(string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
 
 /// \brief Terminates draw to SVG and outputs the file.
 /// \sa ofBeginSaveScreenAsSVG()

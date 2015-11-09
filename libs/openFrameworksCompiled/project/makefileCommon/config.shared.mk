@@ -34,6 +34,8 @@ ifeq ($(CC),$(EMSCRIPTEN)/emcc)
 	PLATFORM_OS=emscripten
 endif
 
+FIND=find
+
 # if not defined, determine this platform's operating system via uname -s
 ifndef PLATFORM_OS 
     # determine from the uname if not defined manually
@@ -80,7 +82,11 @@ ifndef PLATFORM_LIB_SUBPATH
             $(error This makefile does not support your architecture $(PLATFORM_ARCH))
         endif
     else ifneq (,$(findstring MINGW32_NT,$(PLATFORM_OS)))
-        PLATFORM_LIB_SUBPATH=win_cb
+        PLATFORM_LIB_SUBPATH=msys2
+    else ifneq (,$(findstring MSYS_NT,$(PLATFORM_OS)))
+        PLATFORM_LIB_SUBPATH=msys2
+    else ifneq (,$(findstring MINGW64_NT,$(PLATFORM_OS)))
+        PLATFORM_LIB_SUBPATH=msys2
     else ifeq ($(PLATFORM_OS),Android)
         PLATFORM_LIB_SUBPATH=android
     else ifeq ($(PLATFORM_OS),Darwin)
@@ -196,7 +202,7 @@ $(error This package doesn't support your platform, probably you downloaded the 
 endif
 
 # generate a list of valid core platform variants from the files in the platform makefiles directory
-AVAILABLE_PLATFORM_VARIANTS=$(shell find $(OF_PLATFORM_MAKEFILES)/config.*.mk -maxdepth 1 -type f | sed -E 's/.*\.([^\.]*)\.mk/\1/' )
+AVAILABLE_PLATFORM_VARIANTS=$(shell $(FIND) $(OF_PLATFORM_MAKEFILES)/config.*.mk -maxdepth 1 -type f | sed -E 's/.*\.([^\.]*)\.mk/\1/' )
 AVAILABLE_PLATFORM_VARIANTS+=default
 
 # check to see if we have a file for the desired variant.  if not, quit and list the variants.
@@ -212,6 +218,8 @@ ifdef ABI_PATH
 else
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)
 endif
+
+PLATFORM_PKG_CONFIG ?= pkg-config
 
 
 ################################ FLAGS #########################################
@@ -239,7 +247,7 @@ CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
 
 # find all of the source directories
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_SOURCE_PATHS=$(shell find $(OF_LIBS_OPENFRAMEWORKS_PATH) -maxdepth 1 -mindepth 1 -type d | grep -v "/\.[^\.]" )
+ALL_OF_CORE_SOURCE_PATHS=$(shell $(FIND) $(OF_LIBS_OPENFRAMEWORKS_PATH) -maxdepth 1 -mindepth 1 -type d | grep -v "/\.[^\.]" )
 
 # create a list of core source PATHS, filtering out any  items that have a match in the CORE_EXCLUSIONS list
 OF_CORE_SOURCE_PATHS=$(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_SOURCE_PATHS))
@@ -251,7 +259,7 @@ OF_CORE_HEADER_PATHS = $(OF_LIBS_OPENFRAMEWORKS_PATH) $(OF_CORE_SOURCE_PATHS)
 
 # add folders or single files to exclude fromt he compiled lib
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_THIRDPARTY_HEADER_PATHS = $(shell find $(OF_LIBS_PATH)/*/include -type d | grep -v "/\.[^\.]")
+ALL_OF_CORE_THIRDPARTY_HEADER_PATHS = $(shell $(FIND) $(OF_LIBS_PATH)/*/include -type d | grep -v "/\.[^\.]")
 
 # filter out all excluded files / folders that were defined above
 OF_CORE_THIRDPARTY_HEADER_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_HEADER_PATHS))
@@ -266,13 +274,13 @@ CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_PKG_CONFIG_LIBRARIES)
 
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
 $(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
-	ifneq ($(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --exists; echo $$?),0)
+	ifneq ($(shell $(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --exists; echo $$?),0)
 $(error couldn't find some pkg-config packages, did you run the latest install_dependencies.sh?)
 	endif
 	ifeq ($(CROSS_COMPILING),1)
-		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
+		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);$(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
 	else
-		OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
+		OF_CORE_INCLUDES_CFLAGS += $(shell $(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
 	endif
 endif
 
@@ -304,8 +312,8 @@ OF_CORE_BASE_CXXFLAGS=$(PLATFORM_CXXFLAGS)
 # search the directories in the source folders for all .cpp files
 # filter out all excluded files / folders that were defined above
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-OF_CORE_SOURCE_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOURCE_PATHS) -name "*.cpp" -or -name "*.mm" -or -name "*.m" | grep -v "/\.[^\.]"))
-OF_CORE_HEADER_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell find $(OF_CORE_SOURCE_PATHS) -name "*.h" | grep -v "/\.[^\.]"))
+OF_CORE_SOURCE_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell $(FIND) $(OF_CORE_SOURCE_PATHS) -name "*.cpp" -or -name "*.mm" -or -name "*.m" | grep -v "/\.[^\.]"))
+OF_CORE_HEADER_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell $(FIND) $(OF_CORE_SOURCE_PATHS) -name "*.h" | grep -v "/\.[^\.]"))
 
 
 

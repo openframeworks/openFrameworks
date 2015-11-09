@@ -1,5 +1,6 @@
-#import "ofxiOSVideoPlayer.h"
-#import "ofxiOSExtras.h"
+#include "ofxiOSVideoPlayer.h"
+#include "ofxiOSExtras.h"
+#include "ofxiOSEAGLView.h"
 #import "AVFoundationVideoPlayer.h"
 
 CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
@@ -343,7 +344,7 @@ void ofxiOSVideoPlayer::initTextureCache() {
                                                        imageBuffer,             // CVImageBufferRef sourceImage
                                                        NULL,                    // CFDictionaryRef textureAttributes
                                                        texData.textureTarget,   // GLenum target
-                                                       texData.glTypeInternal,  // GLint internalFormat
+                                                       texData.glInternalFormat,  // GLint internalFormat
                                                        texData.width,           // GLsizei width
                                                        texData.height,          // GLsizei height
                                                        GL_BGRA,                 // GLenum format

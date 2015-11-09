@@ -43,10 +43,10 @@ ofEvent<ofHttpResponse> & ofURLResponseEvent(){
 class ofURLFileLoaderImpl: public ofThread, public ofBaseURLFileLoader{
 public:
 	ofURLFileLoaderImpl();
-    ofHttpResponse get(string url);
-    int getAsync(string url, string name=""); // returns id
-    ofHttpResponse saveTo(string url, string path);
-    int saveAsync(string url, string path);
+    ofHttpResponse get(const string& url);
+    int getAsync(const string& url, const string& name=""); // returns id
+    ofHttpResponse saveTo(const string& url, const string& path);
+    int saveAsync(const string& url, const string& path);
 	void remove(int id);
 	void clear();
     void stop();
@@ -87,31 +87,30 @@ ofURLFileLoaderImpl::ofURLFileLoaderImpl() {
 	}
 }
 
-ofHttpResponse ofURLFileLoaderImpl::get(string url) {
+ofHttpResponse ofURLFileLoaderImpl::get(const string& url) {
     ofHttpRequest request(url,url);
     return handleRequest(request);
 }
 
 
-int ofURLFileLoaderImpl::getAsync(string url, string name){
-	if(name=="") name=url;
-	ofHttpRequest request(url,name);
+int ofURLFileLoaderImpl::getAsync(const string& url, const string& name){
+    ofHttpRequest request(url, name.empty() ? url : name);
 	requests.send(request);
 	start();
-	return request.getID();
+	return request.getId();
 }
 
 
-ofHttpResponse ofURLFileLoaderImpl::saveTo(string url, string path){
+ofHttpResponse ofURLFileLoaderImpl::saveTo(const string& url, const string& path){
     ofHttpRequest request(url,path,true);
     return handleRequest(request);
 }
 
-int ofURLFileLoaderImpl::saveAsync(string url, string path){
+int ofURLFileLoaderImpl::saveAsync(const string& url, const string& path){
 	ofHttpRequest request(url,path,true);
 	requests.send(request);
 	start();
-	return request.getID();
+	return request.getId();
 }
 
 void ofURLFileLoaderImpl::remove(int id){
@@ -148,7 +147,7 @@ void ofURLFileLoaderImpl::threadedFunction() {
 		}
 		ofHttpRequest request;
 		if(requests.receive(request)){
-			if(cancelledRequests.find(request.getID())==cancelledRequests.end()){
+			if(cancelledRequests.find(request.getId())==cancelledRequests.end()){
 				ofHttpResponse response(handleRequest(request));
 				int status = response.status;
 				if(!responses.send(move(response))){
@@ -243,19 +242,19 @@ ofURLFileLoader::ofURLFileLoader()
 :impl(new ofxEmscriptenURLFileLoader){}
 #endif
 
-ofHttpResponse ofURLFileLoader::get(string url){
+ofHttpResponse ofURLFileLoader::get(const string& url){
 	return impl->get(url);
 }
 
-int ofURLFileLoader::getAsync(string url, string name){
+int ofURLFileLoader::getAsync(const string& url, const string& name){
 	return impl->getAsync(url,name);
 }
 
-ofHttpResponse ofURLFileLoader::saveTo(string url, string path){
+ofHttpResponse ofURLFileLoader::saveTo(const string& url, const string& path){
 	return impl->saveTo(url,path);
 }
 
-int ofURLFileLoader::saveAsync(string url, string path){
+int ofURLFileLoader::saveAsync(const string& url, const string& path){
 	return impl->saveAsync(url,path);
 }
 
@@ -282,19 +281,69 @@ static ofURLFileLoader & getFileLoader(){
 	return *fileLoader;
 }
 
-ofHttpResponse ofLoadURL(string url){
+
+ofHttpRequest::ofHttpRequest()
+:saveTo(false)
+,id(nextID++)
+{
+}
+
+ofHttpRequest::ofHttpRequest(const string& url, const string& name,bool saveTo)
+:url(url)
+,name(name)
+,saveTo(saveTo)
+,id(nextID++)
+{
+}
+
+int ofHttpRequest::getId() const {
+	return id;
+}
+
+int ofHttpRequest::getID(){
+	return id;
+}
+
+
+ofHttpResponse::ofHttpResponse()
+:status(0)
+{
+}
+
+ofHttpResponse::ofHttpResponse(const ofHttpRequest& request, const ofBuffer& data, int status, const string& error)
+:request(request)
+,data(data)
+,status(status)
+,error(error)
+{
+}
+
+ofHttpResponse::ofHttpResponse(const ofHttpRequest& request, int status, const string& error)
+:request(request)
+,status(status)
+,error(error)
+{
+}
+
+ofHttpResponse::operator ofBuffer&(){
+	return data;
+}
+
+
+
+ofHttpResponse ofLoadURL(const string& url){
 	return getFileLoader().get(url);
 }
 
-int ofLoadURLAsync(string url, string name){
+int ofLoadURLAsync(const string&  url, const string&  name){
 	return getFileLoader().getAsync(url,name);
 }
 
-ofHttpResponse ofSaveURLTo(string url, string path){
+ofHttpResponse ofSaveURLTo(const string& url, const string& path){
 	return getFileLoader().saveTo(url,path);
 }
 
-int ofSaveURLAsync(string url, string path){
+int ofSaveURLAsync(const string& url, const string& path){
 	return getFileLoader().saveAsync(url,path);
 }
 

@@ -27,7 +27,12 @@ ofVboMesh::ofVboMesh(const ofMesh & mom)
 
 void ofVboMesh::operator=(const ofMesh & mom)
 {
-	((ofMesh&)(*this)) = mom;
+	(*(ofMesh*)this) = mom;
+	getVertices();
+	getColors();
+	getTexCoords();
+	getNormals();
+	getIndices();
 }
 
 ofVboMesh::~ofVboMesh(){
