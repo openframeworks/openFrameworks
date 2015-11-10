@@ -117,7 +117,7 @@ CON_YELLOW="\033[33m"
 CON_GREEN="\033[32m"
 
 # used to filter out bad build types
-VALID_TYPES=( "osx" "linux" "linux64" "linuxarmv6l" "linuxarmv7l" "vs" "msys2" "ios" "android" "emscripten" )
+VALID_TYPES=( "osx" "linux" "linux64" "linuxarmv6l" "linuxarmv7l" "vs" "msys2" "ios" "tvos" "android" "emscripten" )
 
 # verbose mode bool
 A_VERBOSE=0
