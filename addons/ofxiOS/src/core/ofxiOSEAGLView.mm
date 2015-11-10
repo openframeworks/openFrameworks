@@ -510,13 +510,13 @@ static ofxiOSEAGLView * _instanceRef = nil;
         GCMicroGamepad *microPad = controller.microGamepad;
         microPad.buttonA.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
             [self controllerButtonEvent:controllerID
-                               withType:ofControllerEventArgs::Type::buttonA
+                               withType:ofControllerEventArgs::Type::microButtonA
                               withValue:value
                             withPressed:pressed];
         };
         microPad.buttonX.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
             [self controllerButtonEvent:controllerID
-                               withType:ofControllerEventArgs::Type::buttonX
+                               withType:ofControllerEventArgs::Type::microButtonX
                               withValue:value
                             withPressed:pressed];
         };

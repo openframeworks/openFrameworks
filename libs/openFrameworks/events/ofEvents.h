@@ -193,7 +193,9 @@ public:
         r2Button,
         infoButton,
         leftThumbstick,
-        rightThumbstick
+        rightThumbstick,
+        microButtonA,
+        microButtonX
     };
     
     ofControllerEventArgs()
