@@ -24,6 +24,7 @@
 		84C8DBAC1BC37F72001606C1 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C8DBA91BC37F72001606C1 /* main.mm */; };
 		84C8DBAD1BC37F72001606C1 /* ofApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C8DBAB1BC37F72001606C1 /* ofApp.mm */; };
 		9957D93C1BDDE4020002D53C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9957D93B1BDDE4020002D53C /* Images.xcassets */; };
+		99752D361BF220CC0026316A /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99752D351BF220CC0026316A /* GameController.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		84C8DBAA1BC37F72001606C1 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofApp.h; sourceTree = "<group>"; };
 		84C8DBAB1BC37F72001606C1 /* ofApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofApp.mm; sourceTree = "<group>"; };
 		9957D93B1BDDE4020002D53C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		99752D351BF220CC0026316A /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99752D361BF220CC0026316A /* GameController.framework in Frameworks */,
 				84C8DBA41BC37A49001606C1 /* libtvOS+OFLib_Debug.a in Frameworks */,
 				84C8DB801BC3732E001606C1 /* Accelerate.framework in Frameworks */,
 				84C8DB811BC3732E001606C1 /* AudioToolbox.framework in Frameworks */,
@@ -91,6 +94,7 @@
 		84463ABD1BC370DF00F24926 = {
 			isa = PBXGroup;
 			children = (
+				99752D351BF220CC0026316A /* GameController.framework */,
 				84C8DB8E1BC37378001606C1 /* addons */,
 				84C8DB8B1BC3733E001606C1 /* libs */,
 				84463AC81BC370DF00F24926 /* emptyExample */,

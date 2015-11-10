@@ -10,6 +10,8 @@
 #include "ofAppiOSWindow.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
+#include <TargetConditionals.h>
+#import <GameController/GameController.h>
 
 static ofxiOSEAGLView * _instanceRef = nil;
 
@@ -62,6 +64,19 @@ static ofxiOSEAGLView * _instanceRef = nil;
         windowPos = new ofVec3f();
 		ofSetOrientation(window->getOrientation());
         [self updateDimensions];
+        
+        NSNotificationCenter * center = [NSNotificationCenter defaultCenter];
+        [center addObserver:self
+                   selector:@selector(controllerDidConnect)
+                       name:GCControllerDidConnectNotification
+                     object:nil];
+        [center addObserver:self
+                   selector:@selector(controllerDidDisconnect)
+                       name:GCControllerDidDisconnectNotification
+                     object:nil];
+        
+        [self controllerDidConnect];
+        
 		
         bInit = YES;
     }
@@ -135,6 +150,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 - (void)dealloc {
     [self destroy];
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
     [super dealloc];
 }
 
@@ -369,6 +385,179 @@ static ofxiOSEAGLView * _instanceRef = nil;
 	[self touchesEnded:touches withEvent:event];
 }
 
+- (void)controllerButtonEvent:(int)controllerID withType:(ofControllerEventArgs::Type)type withValue:(float)value withPressed:(BOOL)pressed {
+    ofControllerEventArgs controllerArgs;
+    controllerArgs.buttonType = type;
+    controllerArgs.value = value;
+    controllerArgs.isPressed = pressed;
+    controllerArgs.controllerID = controllerID;
+    if(pressed == true) {
+        ofNotifyEvent(window->events().controllerPressed, controllerArgs);
+    } else {
+        ofNotifyEvent(window->events().controllerReleased, controllerArgs);
+    }
+}
+
+- (void)controllerThumbstickEvent:(int)controllerID withType:(ofControllerEventArgs::Type)type withX:(float)xValue withY:(float)yValue {
+    ofControllerEventArgs controllerArgs;
+    controllerArgs.buttonType = type;
+    controllerArgs.x = xValue;
+    controllerArgs.y = yValue;
+    controllerArgs.controllerID = controllerID;
+    ofNotifyEvent(window->events().controllerPressed, controllerArgs);
+
+}
+
+#pragma mark - Notification Center
+-(void) controllerDidConnect
+{
+    [[GCController controllers] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop){
+        GCController *controller=(GCController *)obj;
+        int controllerID = (int)idx;
+        string vendorName = [controller.vendorName UTF8String];
+        long playerIndex = controller.playerIndex;
+        ofLog(OF_LOG_VERBOSE, "Controller connected: id:" + ofToString(idx) + " vendor:" + vendorName + " playerIndex:" + ofToString(playerIndex));
+        GCGamepad * pad = controller.gamepad;
+        pad.buttonA.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::buttonA
+                              withValue:value
+                            withPressed:pressed];
+        };
+        pad.buttonB.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::buttonB
+                              withValue:value
+                            withPressed:pressed];
+        };
+        pad.buttonX.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::buttonX
+                              withValue:value
+                            withPressed:pressed];
+        };
+        pad.buttonY.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::buttonY
+                              withValue:value
+                            withPressed:pressed];
+        };
+        pad.dpad.up.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::upButton
+                              withValue:value
+                            withPressed:pressed];
+        };
+        pad.dpad.down.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::downButton
+                              withValue:value
+                            withPressed:pressed];
+        };
+        pad.dpad.left.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::leftButton
+                              withValue:value
+                            withPressed:pressed];
+        };
+        pad.dpad.right.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::rightButton
+                              withValue:value
+                            withPressed:pressed];
+        };
+        
+        // -------------------------- Extended Game Pad
+        GCExtendedGamepad *extendPad = controller.extendedGamepad;
+        extendPad.leftThumbstick.valueChangedHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue){
+            [self controllerThumbstickEvent:controllerID
+                                   withType:ofControllerEventArgs::Type::leftThumbstick
+                                      withX:xValue
+                                      withY:yValue];
+        };
+        extendPad.rightThumbstick.valueChangedHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue){
+            [self controllerThumbstickEvent:controllerID
+                                   withType:ofControllerEventArgs::Type::rightThumbstick
+                                      withX:xValue
+                                      withY:yValue];
+        };
+        extendPad.leftShoulder.valueChangedHandler= ^ (GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::l1Button
+                              withValue:value
+                            withPressed:pressed];
+        };
+        extendPad.rightShoulder.valueChangedHandler= ^ (GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::r1Button
+                              withValue:value
+                            withPressed:pressed];
+        };
+        extendPad.rightTrigger.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::r2Button
+                              withValue:value
+                            withPressed:pressed];
+        };
+        extendPad.leftTrigger.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::l2Button
+                              withValue:value
+                            withPressed:pressed];
+        };
+#if TARGET_OS_TV
+        // -------------------------- Micro Game Pad (AppleTV)
+        GCMicroGamepad *microPad = controller.microGamepad;
+        microPad.buttonA.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::buttonA
+                              withValue:value
+                            withPressed:pressed];
+        };
+        microPad.buttonX.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::buttonX
+                              withValue:value
+                            withPressed:pressed];
+        };
+        microPad.dpad.up.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::upButton
+                              withValue:value
+                            withPressed:pressed];
+        };
+        microPad.dpad.down.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::downButton
+                              withValue:value
+                            withPressed:pressed];
+        };
+        microPad.dpad.left.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::leftButton
+                              withValue:value
+                            withPressed:pressed];
+        };
+        microPad.dpad.right.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
+            [self controllerButtonEvent:controllerID
+                               withType:ofControllerEventArgs::Type::rightButton
+                              withValue:value
+                            withPressed:pressed];
+        };
+
+#endif
+        
+    
+    }];
+    
+    
+}
+-(void) controllerDidDisconnect
+{
+    [GCController startWirelessControllerDiscoveryWithCompletionHandler:^{
+        ofLog(OF_LOG_VERBOSE, "startWirelessControllerDiscoveryWithCompletionHandler");
+    }];
+}
 
 
 @end

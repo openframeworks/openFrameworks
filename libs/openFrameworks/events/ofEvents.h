@@ -173,6 +173,57 @@ class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
 	float xaccel, yaccel;
 };
 
+class ofControllerEventArgs : public ofEventArgs {
+public:
+    enum Type {
+        none,
+        leftButton,
+        rightButton,
+        upButton,
+        downButton,
+        buttonX,
+        buttonA,
+        buttonB,
+        buttonY,
+        leftThumbStickButton,
+        rightThumbStickButton,
+        l1Button,
+        l2Button,
+        r1Button,
+        r2Button,
+        infoButton,
+        leftThumbstick,
+        rightThumbstick
+    };
+    
+    ofControllerEventArgs()
+     :buttonType(none)
+     ,value(0)
+     ,isPressed(false)
+     ,controllerID(0)
+     ,x(0)
+     ,y(0){
+        
+    }
+    
+    ofControllerEventArgs(Type type, float theValue, bool pressed)
+     :buttonType(type)
+     ,value(theValue)
+     ,isPressed(pressed)
+     ,controllerID(0)
+     ,x(0)
+     ,y(0)
+    {
+        
+    }
+
+    Type buttonType;
+    float value;
+    float x, y;
+    bool isPressed;
+    int controllerID;
+};
+
 class ofResizeEventArgs : public ofEventArgs {
 public:
 	ofResizeEventArgs()
@@ -222,6 +273,9 @@ class ofCoreEvents {
 	ofEvent<ofTouchEventArgs>	touchMoved;
 	ofEvent<ofTouchEventArgs>	touchDoubleTap;
 	ofEvent<ofTouchEventArgs>	touchCancelled;
+    
+    ofEvent<ofControllerEventArgs>  controllerPressed;
+    ofEvent<ofControllerEventArgs>  controllerReleased;
 
 	ofEvent<ofMessage>			messageEvent;
 	ofEvent<ofDragInfo>			fileDragEvent;
@@ -310,6 +364,12 @@ void ofRegisterTouchEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFT
 }
 
 template<class ListenerClass>
+void ofRegisterControllerEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
+    ofAddListener(ofEvents().controllerPressed, listener, &ListenerClass::controllerPressed,prio);
+    ofAddListener(ofEvents().controllerReleased, listener, &ListenerClass::controllerReleased,prio);
+}
+
+template<class ListenerClass>
 void ofRegisterGetMessages(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
 	ofAddListener(ofEvents().messageEvent, listener, &ListenerClass::gotMessage,prio);
 }
@@ -343,6 +403,12 @@ void ofUnregisterTouchEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_A
 	ofRemoveListener(ofEvents().touchMoved, listener, &ListenerClass::touchMoved,prio);
 	ofRemoveListener(ofEvents().touchUp, listener, &ListenerClass::touchUp,prio);
 	ofRemoveListener(ofEvents().touchCancelled, listener, &ListenerClass::touchCancelled,prio);
+}
+
+template<class ListenerClass>
+void ofUnregisterControllerEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
+    ofRemoveListener(ofEvents().controllerPressed, listener, &ListenerClass::controllerPressed,prio);
+    ofRemoveListener(ofEvents().controllerReleased, listener, &ListenerClass::controllerReleased,prio);
 }
 
 template<class ListenerClass>

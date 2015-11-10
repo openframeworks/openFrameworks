@@ -89,6 +89,8 @@ void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> a
 		ofAddListener(window->events().touchDown,app.get(),&ofBaseApp::touchDown,OF_EVENT_ORDER_APP);
 		ofAddListener(window->events().touchMoved,app.get(),&ofBaseApp::touchMoved,OF_EVENT_ORDER_APP);
 		ofAddListener(window->events().touchUp,app.get(),&ofBaseApp::touchUp,OF_EVENT_ORDER_APP);
+        ofAddListener(window->events().controllerPressed,app.get(),&ofBaseApp::controllerPressed,OF_EVENT_ORDER_APP);
+        ofAddListener(window->events().controllerReleased,app.get(),&ofBaseApp::controllerReleased,OF_EVENT_ORDER_APP);
 #ifdef TARGET_ANDROID
 		auto androidApp = dynamic_cast<ofxAndroidApp*>(app.get());
 		if(androidApp){
@@ -180,6 +182,8 @@ void ofMainLoop::exit(){
 		ofRemoveListener(window->events().touchDown,app.get(),&ofBaseApp::touchDown,OF_EVENT_ORDER_APP);
 		ofRemoveListener(window->events().touchMoved,app.get(),&ofBaseApp::touchMoved,OF_EVENT_ORDER_APP);
 		ofRemoveListener(window->events().touchUp,app.get(),&ofBaseApp::touchUp,OF_EVENT_ORDER_APP);
+        ofRemoveListener(window->events().controllerPressed,app.get(),&ofBaseApp::controllerPressed,OF_EVENT_ORDER_APP);
+        ofRemoveListener(window->events().controllerReleased,app.get(),&ofBaseApp::controllerReleased,OF_EVENT_ORDER_APP);
 #ifdef TARGET_ANDROID
 		auto androidApp = dynamic_cast<ofxAndroidApp*>(app.get());
 		if(androidApp){

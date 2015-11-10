@@ -91,6 +91,8 @@ void ofCoreEvents::disable(){
 	touchMoved.disable();
 	touchDoubleTap.disable();
 	touchCancelled.disable();
+    controllerPressed.disable();
+    controllerReleased.disable();
 	messageEvent.disable();
 	fileDragEvent.disable();
 }
@@ -115,6 +117,8 @@ void ofCoreEvents::enable(){
 	touchMoved.enable();
 	touchDoubleTap.enable();
 	touchCancelled.enable();
+    controllerPressed.enable();
+    controllerReleased.enable();
 	messageEvent.enable();
 	fileDragEvent.enable();
 }
