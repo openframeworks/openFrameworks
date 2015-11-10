@@ -304,7 +304,7 @@ private:
 	friend void ofUnloadAllFontTextures();
 	friend void ofReloadAllFontTextures();
 #endif
-	FT_Face		face;
+	shared_ptr<FT_Face>		face;
 	void		unloadTextures();
 	void		reloadTextures();
 	static bool	initLibraries();
