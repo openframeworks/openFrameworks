@@ -94,7 +94,6 @@
 		84463ABD1BC370DF00F24926 = {
 			isa = PBXGroup;
 			children = (
-				99752D351BF220CC0026316A /* GameController.framework */,
 				84C8DB8E1BC37378001606C1 /* addons */,
 				84C8DB8B1BC3733E001606C1 /* libs */,
 				84463AC81BC370DF00F24926 /* emptyExample */,
@@ -158,6 +157,7 @@
 		84C8DB8D1BC37366001606C1 /* core frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				99752D351BF220CC0026316A /* GameController.framework */,
 				84C8DB751BC3732E001606C1 /* Accelerate.framework */,
 				84C8DB761BC3732E001606C1 /* AudioToolbox.framework */,
 				84C8DB771BC3732E001606C1 /* AVFoundation.framework */,
