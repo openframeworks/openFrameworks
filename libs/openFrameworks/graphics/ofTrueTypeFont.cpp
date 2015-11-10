@@ -375,8 +375,9 @@ ofTrueTypeFont::ofTrueTypeFont(){
 
 //------------------------------------------------------------------
 ofTrueTypeFont::~ofTrueTypeFont(){
-
-	if(face) FT_Done_Face(face);
+	if(face && face.use_count() <= 1) {
+		FT_Done_Face(*face.get());
+	}
 	#if defined(TARGET_ANDROID)
 	ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
 	ofRemoveListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
@@ -394,7 +395,7 @@ void ofTrueTypeFont::reloadTextures(){
 	}
 }
 
-static bool loadFontFace(const std::string& _fontname, int _fontSize, FT_Face & face, std::string& filename){
+static bool loadFontFace(const std::string& _fontname, int _fontSize, shared_ptr<FT_Face> & _face, std::string& filename){
 	std::string fontname = _fontname;
 	filename = ofToDataPath(fontname,true);
 	ofFile fontFile(filename,ofFile::Reference);
@@ -429,7 +430,7 @@ static bool loadFontFace(const std::string& _fontname, int _fontSize, FT_Face & 
 		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): \"" << fontname << "\" not a file in data loading system font from \"" << filename << "\"";
 	}
 	FT_Error err;
-	err = FT_New_Face( library, filename.c_str(), fontID, &face );
+	err = FT_New_Face( library, filename.c_str(), fontID, _face.get() );
 	if (err) {
 		// simple error table in lieu of full table (see fterrors.h)
 		string errorString = "unknown freetype";
@@ -472,23 +473,26 @@ bool ofTrueTypeFont::load(const std::string& _filename, int _fontSize, bool _bAn
 	dpi 				= _dpi;
 
 	//--------------- load the library and typeface
-
+	
+	if( !face ) {
+		face = shared_ptr<FT_Face>( new FT_Face);
+	}
 
 	if(!loadFontFace(_filename,_fontSize,face,filename)){
         return false;
 	}
 
 
-	FT_Set_Char_Size( face, fontSize << 6, fontSize << 6, dpi, dpi);
-	float fontUnitScale = ((float)fontSize * dpi) / (72 * face->units_per_EM);
-	lineHeight = face->height * fontUnitScale;
-	ascenderHeight = face->ascender * fontUnitScale;
-	descenderHeight = face->descender * fontUnitScale;
-	glyphBBox.set(face->bbox.xMin * fontUnitScale,
-				  face->bbox.yMin * fontUnitScale,
-				  (face->bbox.xMax - face->bbox.xMin) * fontUnitScale,
-				  (face->bbox.yMax - face->bbox.yMin) * fontUnitScale);
-	useKerning = FT_HAS_KERNING( face );
+	FT_Set_Char_Size( *face, fontSize << 6, fontSize << 6, dpi, dpi);
+	float fontUnitScale = ((float)fontSize * dpi) / (72 * (*face)->units_per_EM);
+	lineHeight = (*face)->height * fontUnitScale;
+	ascenderHeight = (*face)->ascender * fontUnitScale;
+	descenderHeight = (*face)->descender * fontUnitScale;
+	glyphBBox.set( (*face)->bbox.xMin * fontUnitScale,
+				  (*face)->bbox.yMin * fontUnitScale,
+				  ((*face)->bbox.xMax - (*face)->bbox.xMin) * fontUnitScale,
+				  ((*face)->bbox.yMax - (*face)->bbox.yMin) * fontUnitScale);
+	useKerning = FT_HAS_KERNING( (*face) );
 
 	//------------------------------------------------------
 	//kerning would be great to support:
@@ -521,14 +525,14 @@ bool ofTrueTypeFont::load(const std::string& _filename, int _fontSize, bool _bAn
 		//------------------------------------------ anti aliased or not:
 		int glyph = (unsigned char)(i+NUM_CHARACTER_TO_START);
 		if (glyph == 0xA4) glyph = 0x20AC; // hack to load the euro sign, all codes in 8859-15 match with utf-32 except for this one
-		err = FT_Load_Glyph( face, FT_Get_Char_Index( face, glyph ), bAntiAliased ?  FT_LOAD_FORCE_AUTOHINT : FT_LOAD_DEFAULT );
+		err = FT_Load_Glyph( *face, FT_Get_Char_Index( *face, glyph ), bAntiAliased ?  FT_LOAD_FORCE_AUTOHINT : FT_LOAD_DEFAULT );
         if(err){
 			ofLogError("ofTrueTypeFont") << "loadFont(): FT_Load_Glyph failed for char " << i << ": FT_Error " << err;
 
 		}
 
-		if (bAntiAliased == true) FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
-		else FT_Render_Glyph(face->glyph, FT_RENDER_MODE_MONO);
+		if (bAntiAliased == true) FT_Render_Glyph((*face)->glyph, FT_RENDER_MODE_NORMAL);
+		else FT_Render_Glyph((*face)->glyph, FT_RENDER_MODE_MONO);
 
 		//------------------------------------------
 
@@ -539,7 +543,7 @@ bool ofTrueTypeFont::load(const std::string& _filename, int _fontSize, bool _bAn
 			}
 
 			//int character = i + NUM_CHARACTER_TO_START;
-			charOutlines[i] = makeContoursForCharacter( face );
+			charOutlines[i] = makeContoursForCharacter( *face );
 			charOutlinesContour[i] = charOutlines[i];
 			charOutlinesContour[i].setFilled(false);
 			charOutlinesContour[i].setStrokeWidth(1);
@@ -563,7 +567,7 @@ bool ofTrueTypeFont::load(const std::string& _filename, int _fontSize, bool _bAn
 
 		// -------------------------
 		// info about the character:
-		FT_Bitmap& bitmap= face->glyph->bitmap;
+		FT_Bitmap& bitmap= (*face)->glyph->bitmap;
 
 		// Note: Using decltype here to avoid warnings across
 		// platforms using differing versions of freetype 2.
@@ -572,15 +576,15 @@ bool ofTrueTypeFont::load(const std::string& _filename, int _fontSize, bool _bAn
 
 		cps[i].characterIndex	= i;
 		cps[i].glyph			= glyph;
-		cps[i].height 			= face->glyph->metrics.height>>6;
-		cps[i].width 			= face->glyph->metrics.width>>6;
-		cps[i].bearingX			= face->glyph->metrics.horiBearingX>>6;
-		cps[i].bearingY			= face->glyph->metrics.horiBearingY>>6;
-		cps[i].xmin				= face->glyph->bitmap_left;
+		cps[i].height 			= (*face)->glyph->metrics.height>>6;
+		cps[i].width 			= (*face)->glyph->metrics.width>>6;
+		cps[i].bearingX			= (*face)->glyph->metrics.horiBearingX>>6;
+		cps[i].bearingY			= (*face)->glyph->metrics.horiBearingY>>6;
+		cps[i].xmin				= (*face)->glyph->bitmap_left;
 		cps[i].xmax				= cps[i].xmin + cps[i].width;
-		cps[i].ymin				= -face->glyph->bitmap_top;
+		cps[i].ymin				= -(*face)->glyph->bitmap_top;
 		cps[i].ymax				= cps[i].ymin + cps[i].height;
-		cps[i].advance			= face->glyph->metrics.horiAdvance>>6;
+		cps[i].advance			= (*face)->glyph->metrics.horiAdvance>>6;
 
 
 		cps[i].tW				= cps[i].width;
@@ -848,7 +852,7 @@ void ofTrueTypeFont::drawChar(int c, float x, float y, bool vFlipped) const{
 int ofTrueTypeFont::getKerning(int c, int prevC) const{
     if(useKerning){
         FT_Vector kerning;
-        FT_Get_Kerning(face, FT_Get_Char_Index(face, prevC), FT_Get_Char_Index(face, c), FT_KERNING_UNFITTED, &kerning);
+        FT_Get_Kerning(*face, FT_Get_Char_Index(*face, prevC), FT_Get_Char_Index(*face, c), FT_KERNING_UNFITTED, &kerning);
         return kerning.x>>6;
     }else{
         return 0;
