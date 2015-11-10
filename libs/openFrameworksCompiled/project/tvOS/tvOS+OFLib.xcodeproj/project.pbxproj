@@ -106,6 +106,7 @@
 		9957D9341BDDDC9B0002D53C /* ofXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8F51BDDDC9B0002D53C /* ofXml.cpp */; };
 		9957D9351BDDDC9B0002D53C /* ofVideoGrabber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8F81BDDDC9B0002D53C /* ofVideoGrabber.cpp */; };
 		9957D9361BDDDC9B0002D53C /* ofVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8FA1BDDDC9B0002D53C /* ofVideoPlayer.cpp */; };
+		99752D301BF20A4C0026316A /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99752D2F1BF20A4C0026316A /* GameController.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -338,6 +339,7 @@
 		9957D8F91BDDDC9B0002D53C /* ofVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVideoGrabber.h; sourceTree = "<group>"; };
 		9957D8FA1BDDDC9B0002D53C /* ofVideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVideoPlayer.cpp; sourceTree = "<group>"; };
 		9957D8FB1BDDDC9B0002D53C /* ofVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVideoPlayer.h; sourceTree = "<group>"; };
+		99752D2F1BF20A4C0026316A /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -345,6 +347,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99752D301BF20A4C0026316A /* GameController.framework in Frameworks */,
 				84463AAF1BC3452400F24926 /* AudioToolbox.framework in Frameworks */,
 				84463AB01BC3452400F24926 /* AVFoundation.framework in Frameworks */,
 				84463AB11BC3452400F24926 /* CoreAudio.framework in Frameworks */,
@@ -570,6 +573,7 @@
 		84463ABB1BC3453B00F24926 /* core frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				99752D2F1BF20A4C0026316A /* GameController.framework */,
 				84463AA51BC3452400F24926 /* AudioToolbox.framework */,
 				84463AA61BC3452400F24926 /* AVFoundation.framework */,
 				84463AA71BC3452400F24926 /* CoreAudio.framework */,
