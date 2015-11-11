@@ -1003,12 +1003,13 @@ ofMatrix4x4 ofGetCurrentViewMatrix();
 
 
 /// \}
-/// \name View Setup
+/// \name Viewport Setup
 /// \{
 
-// push and pop all matrices and viewport
+/// \brief Stores the current viewport and matrix settings
 void ofPushView();
 
+/// \brief Restores the viewport and matrix settings set by ofPushView()
 void ofPopView();
 
 /// \brief Get if view is flipped vertically
