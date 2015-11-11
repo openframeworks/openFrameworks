@@ -72,16 +72,6 @@ public:
     /// \brief Create an ofThread.
     ofThread();
 
-    /// \brief Destroy the ofThread.
-    /// \warning The destructor WILL NOT stop the thread or wait for
-    ///     the underlying Poco::Thread to finish.  For threads that
-    ///     require the correct deallocation of resources, the user
-    ///     MUST call waitForThread(...); to ensure that the thread
-    ///     is stopped and the thread's resources are released.
-    ///     Improper release of resources or memory can lead to
-    ///     segementation faults and other errors.
-    virtual ~ofThread();
-
     /// \brief Check the running status of the thread.
     /// \returns true iff the thread is currently running.
     bool isThreadRunning() const;
@@ -320,10 +310,10 @@ protected:
 
     /// \brief The internal mutex called through lock() & unlock().
     ///
-    /// This mutext can also be used with ofScopedLock within the threaded
-    /// function by calling:
+    /// This mutext can also be used with std::unique_lock or lock_guard
+    /// within the threaded function by calling:
     ///
-    ///     ofScopedLock lock(mutex);
+    ///     std::unique_lock<std::mutex> lock(mutex);
     ///
     std::mutex mutex;
 
@@ -339,8 +329,8 @@ private:
     std::atomic<bool> mutexBlocks;
 
     std::string name;
+    std::condition_variable condition;
 
-    std::condition_variable joinCondition;
 
 };
 
