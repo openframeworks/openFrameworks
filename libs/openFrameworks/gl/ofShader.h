@@ -25,6 +25,8 @@ public:
 	~ofShader();
 	ofShader(const ofShader & shader);
 	ofShader & operator=(const ofShader & shader);
+    ofShader(ofShader && shader);
+    ofShader & operator=(ofShader && shader);
 	
 	bool load(string shaderName);
 	bool load(string vertName, string fragName, string geomName="");

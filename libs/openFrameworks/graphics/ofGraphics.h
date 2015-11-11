@@ -121,12 +121,12 @@ void ofBackgroundHex(int hexColor, int alpha = 255);
 ///
 /// Accepted modes are:
 ///
-/// Circular: `OF_GRADIENT_CIRCULAR`
-/// Linear: `OF_GRADIENT_LINEAR`
-/// Bar: `OF_GRADIENT_BAR`
+/// - Circular: `OF_GRADIENT_CIRCULAR`
+/// - Linear: `OF_GRADIENT_LINEAR`
+/// - Bar: `OF_GRADIENT_BAR`
 ///
 /// **Background Gradient: Circular:**
-/// ![Background Gradient Circular](graphics/bkgGradient_circular.png)
+/// ![Background Gradient Circular](bkgGradient_circular.png)
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///
@@ -139,7 +139,7 @@ void ofBackgroundHex(int hexColor, int alpha = 255);
 /// ~~~~
 ///
 /// **Background Gradient: Linear:**
-/// ![Background Gradient Linear](graphics/bkgGradient_linear.png)
+/// ![Background Gradient Linear](bkgGradient_linear.png)
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///
@@ -152,7 +152,7 @@ void ofBackgroundHex(int hexColor, int alpha = 255);
 /// ~~~~
 ///
 /// **Background Gradient: Bar:**
-/// ![Background Gradient Bar](graphics/bkgGradient_bar.png)
+/// ![Background Gradient Bar](bkgGradient_bar.png)
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///
@@ -1022,7 +1022,7 @@ bool ofIsVFlipped();
 void ofViewport(ofRectangle viewport);
 
 /// \brief Setup the drawing viewport
-/// \param x The x position of the viewport
+/// \param x The x position of the viewport
 /// \param y The y position of the viewport
 /// \param width The width of the viewport, defaults to ofGetWidth()
 /// \param height The height of the viewport, defaults to ofGetHeight()

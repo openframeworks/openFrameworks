@@ -36,7 +36,7 @@ void ofTrueTypeFont::setGlobalDpi(int newDpi){
 }
 
 //--------------------------------------------------------
-static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
+static ofTTFCharacter makeContoursForCharacter(FT_Face face){
 
 		//int num			= face->glyph->outline.n_points;
 		int nContours	= face->glyph->outline.n_contours;
@@ -359,8 +359,7 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	letterSpacing = 1;
     spaceSize = 0;
 
-	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
-	face = nullptr;
+    stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
 	ascenderHeight = 0;
 	bAntiAliased = 0;
 	bFullCharacterSet = 0;
@@ -375,26 +374,188 @@ ofTrueTypeFont::ofTrueTypeFont(){
 
 //------------------------------------------------------------------
 ofTrueTypeFont::~ofTrueTypeFont(){
-
-	if(face) FT_Done_Face(face);
-	#if defined(TARGET_ANDROID)
+#if defined(TARGET_ANDROID)
 	ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
 	ofRemoveListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
-	#endif
+#endif
 }
 
+//------------------------------------------------------------------
+ofTrueTypeFont::ofTrueTypeFont(const ofTrueTypeFont& mom){
+#if defined(TARGET_ANDROID)
+    if(mom.isLoaded()){
+        ofAddListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
+        ofAddListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
+    }
+#endif
+    bLoadedOk = mom.bLoadedOk;
+    bAntiAliased = mom.bAntiAliased;
+    bFullCharacterSet = mom.bFullCharacterSet;
+    nCharacters = mom.nCharacters;
+
+    charOutlines = mom.charOutlines;
+    charOutlinesNonVFlipped = mom.charOutlinesNonVFlipped;
+    charOutlinesContour = mom.charOutlinesContour;
+    charOutlinesNonVFlippedContour = mom.charOutlinesNonVFlippedContour;
+
+    lineHeight = mom.lineHeight;
+    ascenderHeight = mom.ascenderHeight;
+    descenderHeight = mom.descenderHeight;
+    glyphBBox = mom.glyphBBox;
+    letterSpacing = mom.letterSpacing;
+    spaceSize = mom.spaceSize;
+
+    cps = mom.cps; // properties for each character
+
+    fontSize = mom.fontSize;
+    bMakeContours = mom.bMakeContours;
+    simplifyAmt = mom.simplifyAmt;
+    dpi = mom.dpi;
+
+    filename = mom.filename;
+
+    texAtlas = mom.texAtlas;
+    useKerning = mom.useKerning;
+    face = mom.face;
+}
+
+//------------------------------------------------------------------
+ofTrueTypeFont & ofTrueTypeFont::operator=(const ofTrueTypeFont& mom){
+    if(this == &mom) return *this;
+#if defined(TARGET_ANDROID)
+    if(mom.isLoaded()){
+        ofAddListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
+        ofAddListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
+    }
+#endif
+    bLoadedOk = mom.bLoadedOk;
+    bAntiAliased = mom.bAntiAliased;
+    bFullCharacterSet = mom.bFullCharacterSet;
+    nCharacters = mom.nCharacters;
+
+    charOutlines = mom.charOutlines;
+    charOutlinesNonVFlipped = mom.charOutlinesNonVFlipped;
+    charOutlinesContour = mom.charOutlinesContour;
+    charOutlinesNonVFlippedContour = mom.charOutlinesNonVFlippedContour;
+
+    lineHeight = mom.lineHeight;
+    ascenderHeight = mom.ascenderHeight;
+    descenderHeight = mom.descenderHeight;
+    glyphBBox = mom.glyphBBox;
+    letterSpacing = mom.letterSpacing;
+    spaceSize = mom.spaceSize;
+
+    cps = mom.cps; // properties for each character
+
+    fontSize = mom.fontSize;
+    bMakeContours = mom.bMakeContours;
+    simplifyAmt = mom.simplifyAmt;
+    dpi = mom.dpi;
+
+    filename = mom.filename;
+
+    texAtlas = mom.texAtlas;
+    useKerning = mom.useKerning;
+    face = mom.face;
+    return *this;
+}
+
+//------------------------------------------------------------------
+ofTrueTypeFont::ofTrueTypeFont(ofTrueTypeFont&& mom){
+#if defined(TARGET_ANDROID)
+    if(mom.isLoaded()){
+        ofAddListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
+        ofAddListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
+    }
+#endif
+    bLoadedOk = mom.bLoadedOk;
+    bAntiAliased = mom.bAntiAliased;
+    bFullCharacterSet = mom.bFullCharacterSet;
+    nCharacters = mom.nCharacters;
+
+    charOutlines = std::move(mom.charOutlines);
+    charOutlinesNonVFlipped = std::move(mom.charOutlinesNonVFlipped);
+    charOutlinesContour = std::move(mom.charOutlinesContour);
+    charOutlinesNonVFlippedContour = std::move(mom.charOutlinesNonVFlippedContour);
+
+    lineHeight = mom.lineHeight;
+    ascenderHeight = mom.ascenderHeight;
+    descenderHeight = mom.descenderHeight;
+    glyphBBox = mom.glyphBBox;
+    letterSpacing = mom.letterSpacing;
+    spaceSize = mom.spaceSize;
+
+    cps = mom.cps; // properties for each character
+
+    fontSize = mom.fontSize;
+    bMakeContours = mom.bMakeContours;
+    simplifyAmt = mom.simplifyAmt;
+    dpi = mom.dpi;
+
+    filename = mom.filename;
+
+    texAtlas = mom.texAtlas;
+    useKerning = mom.useKerning;
+    face = mom.face;
+}
+
+//------------------------------------------------------------------
+ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
+    if(this == &mom) return *this;
+#if defined(TARGET_ANDROID)
+    if(mom.isLoaded()){
+        ofAddListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
+        ofAddListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
+    }
+#endif
+    bLoadedOk = mom.bLoadedOk;
+    bAntiAliased = mom.bAntiAliased;
+    bFullCharacterSet = mom.bFullCharacterSet;
+    nCharacters = mom.nCharacters;
+
+    charOutlines = std::move(mom.charOutlines);
+    charOutlinesNonVFlipped = std::move(mom.charOutlinesNonVFlipped);
+    charOutlinesContour = std::move(mom.charOutlinesContour);
+    charOutlinesNonVFlippedContour = std::move(mom.charOutlinesNonVFlippedContour);
+
+    lineHeight = mom.lineHeight;
+    ascenderHeight = mom.ascenderHeight;
+    descenderHeight = mom.descenderHeight;
+    glyphBBox = mom.glyphBBox;
+    letterSpacing = mom.letterSpacing;
+    spaceSize = mom.spaceSize;
+
+    cps = mom.cps; // properties for each character
+
+    fontSize = mom.fontSize;
+    bMakeContours = mom.bMakeContours;
+    simplifyAmt = mom.simplifyAmt;
+    dpi = mom.dpi;
+
+    filename = mom.filename;
+
+    texAtlas = mom.texAtlas;
+    useKerning = mom.useKerning;
+    face = mom.face;
+    return *this;
+}
+
+//------------------------------------------------------------------
 void ofTrueTypeFont::unloadTextures(){
 	if(!bLoadedOk) return;
 	texAtlas.clear();
 }
 
+//------------------------------------------------------------------
 void ofTrueTypeFont::reloadTextures(){
 	if(bLoadedOk){
 		load(filename, fontSize, bAntiAliased, bFullCharacterSet, bMakeContours, simplifyAmt, dpi);
 	}
 }
 
-static bool loadFontFace(const std::string& _fontname, int _fontSize, FT_Face & face, std::string& filename){
+//------------------------------------------------------------------
+static std::shared_ptr<FT_FaceRec_> loadFontFace(const std::string& _fontname, int _fontSize, std::string& filename){
+    FT_Face face;
 	std::string fontname = _fontname;
 	filename = ofToDataPath(fontname,true);
 	ofFile fontFile(filename,ofFile::Reference);
@@ -424,7 +585,7 @@ static bool loadFontFace(const std::string& _fontname, int _fontSize, FT_Face & 
 #endif
 		if(filename == "" ){
 			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font \"" << fontname << "\"";
-			return false;
+            return nullptr;
 		}
 		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): \"" << fontname << "\" not a file in data loading system font from \"" << filename << "\"";
 	}
@@ -435,11 +596,12 @@ static bool loadFontFace(const std::string& _fontname, int _fontSize, FT_Face & 
 		string errorString = "unknown freetype";
 		if(err == 1) errorString = "INVALID FILENAME";
 		ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't create new face for \"" << fontname << "\": FT_Error " << err << " " << errorString;
-		return false;
+        return nullptr;
 	}
 
-	return true;
+    return std::shared_ptr<FT_FaceRec_>(face, FT_Done_Face);
 }
+
 //-----------------------------------------------------------
 bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliased, bool _bFullCharacterSet, bool _makeContours, float _simplifyAmt, int _dpi) {
 	return load(_filename, _fontSize, _bAntiAliased, _bFullCharacterSet, _makeContours, _simplifyAmt, _dpi);
@@ -474,12 +636,13 @@ bool ofTrueTypeFont::load(const std::string& _filename, int _fontSize, bool _bAn
 	//--------------- load the library and typeface
 
 
-	if(!loadFontFace(_filename,_fontSize,face,filename)){
+    face = loadFontFace(_filename,_fontSize,filename);
+    if(!face){
         return false;
 	}
 
 
-	FT_Set_Char_Size( face, fontSize << 6, fontSize << 6, dpi, dpi);
+    FT_Set_Char_Size( face.get(), fontSize << 6, fontSize << 6, dpi, dpi);
 	float fontUnitScale = ((float)fontSize * dpi) / (72 * face->units_per_EM);
 	lineHeight = face->height * fontUnitScale;
 	ascenderHeight = face->ascender * fontUnitScale;
@@ -521,7 +684,7 @@ bool ofTrueTypeFont::load(const std::string& _filename, int _fontSize, bool _bAn
 		//------------------------------------------ anti aliased or not:
 		int glyph = (unsigned char)(i+NUM_CHARACTER_TO_START);
 		if (glyph == 0xA4) glyph = 0x20AC; // hack to load the euro sign, all codes in 8859-15 match with utf-32 except for this one
-		err = FT_Load_Glyph( face, FT_Get_Char_Index( face, glyph ), bAntiAliased ?  FT_LOAD_FORCE_AUTOHINT : FT_LOAD_DEFAULT );
+        err = FT_Load_Glyph( face.get(), FT_Get_Char_Index( face.get(), glyph ), bAntiAliased ?  FT_LOAD_FORCE_AUTOHINT : FT_LOAD_DEFAULT );
         if(err){
 			ofLogError("ofTrueTypeFont") << "loadFont(): FT_Load_Glyph failed for char " << i << ": FT_Error " << err;
 
@@ -539,7 +702,7 @@ bool ofTrueTypeFont::load(const std::string& _filename, int _fontSize, bool _bAn
 			}
 
 			//int character = i + NUM_CHARACTER_TO_START;
-			charOutlines[i] = makeContoursForCharacter( face );
+            charOutlines[i] = makeContoursForCharacter( face.get() );
 			charOutlinesContour[i] = charOutlines[i];
 			charOutlinesContour[i].setFilled(false);
 			charOutlinesContour[i].setStrokeWidth(1);
@@ -848,7 +1011,7 @@ void ofTrueTypeFont::drawChar(int c, float x, float y, bool vFlipped) const{
 int ofTrueTypeFont::getKerning(int c, int prevC) const{
     if(useKerning){
         FT_Vector kerning;
-        FT_Get_Kerning(face, FT_Get_Char_Index(face, prevC), FT_Get_Char_Index(face, c), FT_KERNING_UNFITTED, &kerning);
+        FT_Get_Kerning(face.get(), FT_Get_Char_Index(face.get(), prevC), FT_Get_Char_Index(face.get(), c), FT_KERNING_UNFITTED, &kerning);
         return kerning.x>>6;
     }else{
         return 0;
