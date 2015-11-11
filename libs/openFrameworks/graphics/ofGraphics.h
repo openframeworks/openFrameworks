@@ -958,17 +958,17 @@ void ofRotate(float degrees);
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     ofRotateX(45); //rotates the coordinate system 45 degrees around the x-axis
-///     ofDrawRea20,20,100,100);
+///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
 void ofRotateX(float degrees);
 
 /// \brief Produces a rotation around the Y-axis of our coordinate
-/// system represented by the vector (1,0,0).
+/// system represented by the vector (0,1,0).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateY(45); //rotates the coordinate system 45 degrees around the x-axis
+///     ofRotateY(45); //rotates the coordinate system 45 degrees around the y-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
@@ -976,11 +976,11 @@ void ofRotateX(float degrees);
 void ofRotateY(float degrees);
 
 /// \brief Produces a rotation around the Z-axis of our coordinate
-/// system represented by the vector (1,0,0).
+/// system represented by the vector (0,0,1).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateZ(45); //rotates the coordinate system 45 degrees around the x-axis
-///     ofDrawRea20,20,100,100);
+///     ofRotateZ(45); //rotates the coordinate system 45 degrees around the z-axis
+///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
@@ -1003,12 +1003,13 @@ ofMatrix4x4 ofGetCurrentViewMatrix();
 
 
 /// \}
-/// \name View Setup
+/// \name Viewport Setup
 /// \{
 
-// push and pop all matrices and viewport
+/// \brief Stores the current viewport and matrix settings
 void ofPushView();
 
+/// \brief Restores the viewport and matrix settings set by ofPushView()
 void ofPopView();
 
 /// \brief Get if view is flipped vertically
