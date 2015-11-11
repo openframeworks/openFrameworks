@@ -292,6 +292,12 @@ ofFbo::ofFbo(const ofFbo & mom){
 	textures = mom.textures;
 	dirty = mom.dirty;
 	defaultTextureIndex = mom.defaultTextureIndex;
+    activeDrawBuffers = mom.activeDrawBuffers;
+    if(fbo!=0){
+    #ifdef TARGET_ANDROID
+        ofAddListener(ofxAndroidEvents().reloadGL,this,&ofFbo::reloadFbo);
+    #endif
+    }
 }
 
 //--------------------------------------------------------------
@@ -306,11 +312,11 @@ ofFbo & ofFbo::operator=(const ofFbo & mom){
 	fboTextures = mom.fboTextures;
 	if(settings.numSamples){
 		retainFB(fboTextures);
-	}
-	if(mom.settings.depthStencilAsTexture){
-		depthBufferTex = mom.depthBufferTex;
-	}else{
-		depthBuffer = mom.depthBuffer;
+    }
+    if(mom.settings.depthStencilAsTexture){
+        depthBufferTex = mom.depthBufferTex;
+    }else{
+        depthBuffer = mom.depthBuffer;
 		retainRB(depthBuffer);
 	}
 	stencilBuffer = mom.stencilBuffer;
@@ -323,7 +329,69 @@ ofFbo & ofFbo::operator=(const ofFbo & mom){
 	textures = mom.textures;
 	dirty = mom.dirty;
 	defaultTextureIndex = mom.defaultTextureIndex;
+    activeDrawBuffers = mom.activeDrawBuffers;
+    if(fbo!=0){
+    #ifdef TARGET_ANDROID
+        ofAddListener(ofxAndroidEvents().reloadGL,this,&ofFbo::reloadFbo);
+    #endif
+    }
 	return *this;
+}
+
+ofFbo::ofFbo(ofFbo && mom)
+:settings(std::move(mom.settings))
+,fbo(mom.fbo)
+,fboTextures(mom.fboTextures)
+,depthBuffer(mom.depthBuffer)
+,stencilBuffer(mom.stencilBuffer)
+,colorBuffers(std::move(mom.colorBuffers))
+,textures(std::move(mom.textures))
+,depthBufferTex(std::move(mom.depthBufferTex))
+,activeDrawBuffers(std::move(mom.activeDrawBuffers))
+,dirty(std::move(mom.dirty))
+,defaultTextureIndex(std::move(mom.defaultTextureIndex))
+,bIsAllocated(std::move(mom.bIsAllocated)){
+    if(fbo!=0){
+    #ifdef TARGET_ANDROID
+        ofAddListener(ofxAndroidEvents().reloadGL,this,&ofFbo::reloadFbo);
+    #endif
+    }
+    mom.fbo = 0;
+    mom.depthBuffer = 0;
+    mom.fboTextures = 0;
+    mom.stencilBuffer = 0;
+}
+
+ofFbo & ofFbo::operator=(ofFbo && mom){
+    if(&mom==this) return *this;
+    clear();
+    settings = std::move(mom.settings);
+    bIsAllocated = std::move(mom.bIsAllocated);
+
+    fbo = mom.fbo;
+    fboTextures = mom.fboTextures;
+    if(mom.settings.depthStencilAsTexture){
+        depthBufferTex = std::move(mom.depthBufferTex);
+    }else{
+        depthBuffer = mom.depthBuffer;
+    }
+    stencilBuffer = std::move(mom.stencilBuffer);
+
+    colorBuffers = std::move(mom.colorBuffers);
+    textures = std::move(mom.textures);
+    dirty = std::move(mom.dirty);
+    defaultTextureIndex = std::move(mom.defaultTextureIndex);
+
+    if(fbo!=0){
+    #ifdef TARGET_ANDROID
+        ofAddListener(ofxAndroidEvents().reloadGL,this,&ofFbo::reloadFbo);
+    #endif
+    }
+    mom.fbo = 0;
+    mom.depthBuffer = 0;
+    mom.fboTextures = 0;
+    mom.stencilBuffer = 0;
+    return *this;
 }
 
 //--------------------------------------------------------------

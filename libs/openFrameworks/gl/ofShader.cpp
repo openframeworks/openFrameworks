@@ -139,6 +139,41 @@ ofShader & ofShader::operator=(const ofShader & mom){
 	return *this;
 }
 
+ofShader::ofShader(ofShader && mom)
+:program(std::move(mom.program))
+,bLoaded(std::move(mom.bLoaded))
+,shaders(std::move(mom.shaders))
+,uniformsCache(std::move(mom.uniformsCache))
+,attributesBindingsCache(std::move(mom.attributesBindingsCache)){
+    if(mom.bLoaded){
+    #ifdef TARGET_ANDROID
+        ofAddListener(ofxAndroidEvents().unloadGL,this,&ofShader::unloadGL);
+    #endif
+    }
+    mom.bLoaded = false;
+}
+
+ofShader & ofShader::operator=(ofShader && mom){
+    if(this == &mom) {
+        return *this;
+    }
+    if(bLoaded){
+        unload();
+    }
+    program = std::move(mom.program);
+    bLoaded = std::move(mom.bLoaded);
+    shaders = std::move(mom.shaders);
+    attributesBindingsCache = std::move(mom.attributesBindingsCache);
+    uniformsCache = std::move(mom.uniformsCache);
+    if(mom.bLoaded){
+    #ifdef TARGET_ANDROID
+        ofAddListener(ofxAndroidEvents().unloadGL,this,&ofShader::unloadGL);
+    #endif
+    }
+    mom.bLoaded = false;
+    return *this;
+}
+
 //--------------------------------------------------------------
 bool ofShader::load(string shaderName) {
 	return load(shaderName + ".vert", shaderName + ".frag");
