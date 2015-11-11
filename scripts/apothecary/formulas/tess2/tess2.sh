@@ -64,23 +64,12 @@ function build() {
 			rm -f CMakeCache.txt
 			set +e
 
-			# Choose which stdlib to use:
-			# i386    : libstdc++
-			# x86_64  : libc++
-
-			case $OSX_ARCH in
-				i386 )
-					#	choose libstdc++ for i386
-					STD_LIB_FLAGS="-stdlib=libstdc++"
-					;;
-				x86_64 )
-					STD_LIB_FLAGS="-stdlib=libc++"
-					;;
-			esac
+			STD_LIB_FLAGS="-stdlib=libc++"
+		
 			
 			OPTIM_FLAGS="-O3"				 # 	choose "fastest" optimisation
 
-			export CFLAGS="-arch $OSX_ARCH $OPTIM_FLAGS -DNDEBUG"
+			export CFLAGS="-arch $OSX_ARCH $OPTIM_FLAGS -DNDEBUG -fPIC -mmacosx-version-min=${OSX_MIN_SDK_VER}"
 			export CPPFLAGS=$CFLAGS
 			export LINKFLAGS="$CFLAGS $STD_LIB_FLAGS"
 			export LDFLAGS="$LINKFLAGS"
@@ -90,10 +79,11 @@ function build() {
 
 			echo "Building library slice for ${OSX_ARCH}..."
 
-			cmake -G 'Unix Makefiles'  -DNDEBUG
-				.
-			make clean >> "${LOG}" 2>&1
+			cmake -G 'Unix Makefiles' \
+ 				.
+ 			make clean >> "${LOG}" 2>&1
 			make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
+
 
 			# now we need to create a directory were we can keep our current build result.
 
@@ -114,7 +104,7 @@ function build() {
 
 		LOG="build-tess2-${VER}-lipo.log"
 		lipo -create $LIPO_SLICES \
-			 -output libtess2.a \
+			 -output build/libtess2.a \
 			 > "${LOG}" 2>&1
 
 	elif [ "$TYPE" == "vs" ] ; then
