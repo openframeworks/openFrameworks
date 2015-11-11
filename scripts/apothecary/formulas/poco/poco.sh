@@ -59,7 +59,7 @@ function prepare() {
 	fi
 
 	# make backups of the ios config files since we need to edit them
-	if [ "$TYPE" == "ios" ] ; then
+	if [[ "$TYPE" == "ios" ||  "$TYPE" == "tvos" ]] ; then
 		mkdir -p lib/$TYPE
 		mkdir -p lib/iPhoneOS
 
@@ -232,18 +232,27 @@ function build() {
 		rm -f lib/MinGW/i686/*d.a
 		rm -f lib/MinGW/x86_64/*d.a
 
-	elif [ "$TYPE" == "ios" ] ; then
-
-
-		SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
+	elif [[ "$TYPE" == "ios" || "$TYPE" == "tvos" ]] ; then
 		set -e
+		SDKVERSION=""
+        if [ "${TYPE}" == "tvos" ]; then 
+            SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`
+        elif [ "$TYPE" == "ios"]; then
+            SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
+        fi
 		CURRENTPATH=`pwd`
 
 		DEVELOPER=$XCODE_DEV_ROOT
 		TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
 		VERSION=$VER
 
-		local IOS_ARCHS="i386 x86_64 armv7 arm64"
+		local IOS_ARCHS
+        if [ "${TYPE}" == "tvos" ]; then 
+            IOS_ARCHS="x86_64 arm64"
+        elif [ "$TYPE" == "ios"]; then
+            IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
+        fi
+
 		echo "--------------------"
 		echo $CURRENTPATH
 
@@ -288,26 +297,54 @@ function build() {
 		do
 			MIN_IOS_VERSION=$IOS_MIN_SDK_VER
 		    # min iOS version for arm64 is iOS 7
-
+		
 		    if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
 		    	MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
 		    elif [ "${IOS_ARCH}" == "i386" ]; then
-		    	MIN_IOS_VERSION=5.1 # 6.0 to prevent start linking errors
+		    	MIN_IOS_VERSION=7.0 # 6.0 to prevent start linking errors
 		    fi
 		    export IPHONE_SDK_VERSION_MIN=$IOS_MIN_SDK_VER
 
 			export POCO_TARGET_OSARCH=$IOS_ARCH
 
 			MIN_TYPE=-miphoneos-version-min=
+
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
-				PLATFORM="iPhoneSimulator"
-				BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_SIMULATOR
-				MIN_TYPE=-mios-simulator-version-min=
+                if [ "${TYPE}" == "tvos" ]; then 
+                    PLATFORM="AppleTVSimulator"
+                    BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_SIMULATOR
+                elif [ "$TYPE" == "ios"]; then
+                    PLATFORM="iPhoneSimulator"
+                    BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_SIMULATOR
+                fi
 			else
-				PLATFORM="iPhoneOS"
-				BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_SIMULATOR
+                if [ "${TYPE}" == "tvos" ]; then 
+                    PLATFORM="AppleTVOS"
+                    BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_SIMULATOR
+                elif [ "$TYPE" == "ios"]; then
+                    PLATFORM="iPhoneOS"
+                    BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_SIMULATOR
+                fi
 			fi
+
+			if [ "${TYPE}" == "tvos" ]; then 
+    		    MIN_TYPE=-mtvos-version-min=
+    		    if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
+    		    	MIN_TYPE=-mtvos-simulator-version-min=
+    		    fi
+            elif [ "$TYPE" == "ios"]; then
+                MIN_TYPE=-miphoneos-version-min=
+                if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
+                    MIN_TYPE=-mios-simulator-version-min=
+                fi
+            fi
+
+            BITCODE=""
+            if [[ "$TYPE" == "tvos" ]]; then
+                BITCODE=-fembed-bitcode;
+                MIN_IOS_VERSION=9.0
+            fi
 
 			export CROSS_TOP="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer"
 			export CROSS_SDK="${PLATFORM}${SDKVERSION}.sdk"
@@ -319,9 +356,9 @@ function build() {
 
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
-				export OSFLAGS="-arch $POCO_TARGET_OSARCH -fPIC -DPOCO_ENABLE_CPP11 -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$IPHONE_SDK_VERSION_MIN"
+				export OSFLAGS="-arch $POCO_TARGET_OSARCH $BITCODE -DNDEBUG -std=c++11 -stdlib=libc++ -fPIC -DPOCO_ENABLE_CPP11 -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$MIN_IOS_VERSION"
 			else
-				export OSFLAGS="-arch $POCO_TARGET_OSARCH -fPIC -DPOCO_ENABLE_CPP11 -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$IPHONE_SDK_VERSION_MIN"
+				export OSFLAGS="-arch $POCO_TARGET_OSARCH $BITCODE -DNDEBUG -std=c++11 -stdlib=libc++ -fPIC -DPOCO_ENABLE_CPP11 -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$MIN_IOS_VERSION"
 			fi
 			echo "--------------------"
 			echo "Making Poco-${VER} for ${PLATFORM} ${SDKVERSION} ${IOS_ARCH} : iOS Minimum=$MIN_IOS_VERSION"
@@ -338,7 +375,7 @@ function build() {
 		    fi
 		    echo "--------------------"
 		    echo "Running make for ${IOS_ARCH}"
-			make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
+			make 
 			if [ $? != 0 ];
 		    then
 		    	tail -n 100 "${LOG}"
@@ -358,10 +395,21 @@ function build() {
 		cd lib/iPhoneOS
 		# link into universal lib, strip "lib" from filename
 		local lib
-		for lib in $( ls -1 i386) ; do
+		for lib in $( ls -1 arm64) ; do
 			local renamedLib=$(echo $lib | sed 's|lib||')
 			if [ ! -e $renamedLib ] ; then
-				lipo -c armv7/$lib arm64/$lib i386/$lib x86_64/$lib -o ../ios/$renamedLib
+				echo "renamed";
+				if [[ "${TYPE}" == "tvos" ]] ; then 
+					lipo -c arm64/$lib \
+					x86_64/$lib \
+					-o ../ios/$renamedLib
+				elif [[ "$TYPE" == "ios" ]]; then
+					lipo -c armv7/$lib \
+					arm64/$lib \
+					i386/$lib \
+					x86_64/$lib \
+					-o ../ios/$renamedLib
+				fi
 			fi
 		done
 
@@ -470,7 +518,7 @@ function copy() {
 	if [ "$TYPE" == "osx" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Darwin/*.a $1/lib/$TYPE
-	elif [ "$TYPE" == "ios" ] ; then
+	elif [[ "$TYPE" == "ios" || "$TYPE" == "tvos" ]] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/$TYPE/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "vs" ] ; then
