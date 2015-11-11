@@ -150,12 +150,12 @@ function build() {
 
 			if [[ "${OSX_ARCH}" == "i386" ]]; then
 		    	# 386 -> libstdc++
-		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -stdlib=libstdc++ -mmacosx-version-min=${OSX_MIN_SDK_VER}"
+		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -fPIC -stdlib=libstdc++ -mmacosx-version-min=${OSX_MIN_SDK_VER}"
 		    	CONFIG_TARGET=darwin-i386-cc
 		    	export CC="${THECOMPILER} ${OSX_C_FLAGS}"
 		    elif [ "${OSX_ARCH}" == "x86_64" ]; then
 		    	# 86_64 -> libc++
-		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -stdlib=libc++ -mmacosx-version-min=${OSX_MIN_SDK_VER}"
+		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -fPIC -stdlib=libc++ -mmacosx-version-min=${OSX_MIN_SDK_VER}"
 				CONFIG_TARGET=darwin64-x86_64-cc
 		    	export CC="${THECOMPILER} ${OSX_C_FLAGS}"
 		    fi
