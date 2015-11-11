@@ -5,7 +5,7 @@
 # define the version
 FORMULA_TYPES=( "osx" "vs" "msys2" "ios" "tvos" "android" )
 
-VER=1.0.2c
+VER=1.0.2d
 VERDIR=1.0.2
 CSTANDARD=gnu11 # c89 | c99 | c11 | gnu11
 COMPILER_TYPE=clang # clang, gcc
@@ -16,11 +16,11 @@ function download() {
 	local FILENAME=openssl-$VER
 
 	if ! [ -f $FILENAME ]; then
-		curl -O https://www.openssl.org/source/old/$VERDIR/$FILENAME.tar.gz
+		curl -O https://www.openssl.org/source/$FILENAME.tar.gz
 	fi
 
 	if ! [ -f $FILENAME.sha1 ]; then
-		curl -O https://www.openssl.org/source/old/$VERDIR/$FILENAME.tar.gz.sha1
+		curl -O https://www.openssl.org/source/$FILENAME.tar.gz.sha1
 	fi
 	if [ "$TYPE" == "vs" ] ; then
 		#hasSha=$(cmd.exe /c 'call 'CertUtil' '-hashfile' '$FILENAME.tar.gz' 'SHA1'')
@@ -150,12 +150,12 @@ function build() {
 
 			if [[ "${OSX_ARCH}" == "i386" ]]; then
 		    	# 386 -> libstdc++
-		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -stdlib=libstdc++"
+		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -stdlib=libstdc++ -mmacosx-version-min=${OSX_MIN_SDK_VER}"
 		    	CONFIG_TARGET=darwin-i386-cc
 		    	export CC="${THECOMPILER} ${OSX_C_FLAGS}"
 		    elif [ "${OSX_ARCH}" == "x86_64" ]; then
 		    	# 86_64 -> libc++
-		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -stdlib=libc++"
+		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -stdlib=libc++ -mmacosx-version-min=${OSX_MIN_SDK_VER}"
 				CONFIG_TARGET=darwin64-x86_64-cc
 		    	export CC="${THECOMPILER} ${OSX_C_FLAGS}"
 		    fi
@@ -342,6 +342,7 @@ function build() {
 		do
 			# make sure backed up
 			cp "Configure" "Configure.orig" 
+            cp "apps/speed.c" "apps/speed.c.orig" 
 			cp "Makefile" "Makefile.orig"
 
 			if [ "${COMPILER_TYPE}" == "clang" ]; then
@@ -350,6 +351,24 @@ function build() {
 				export THECOMPILER=${BUILD_TOOLS}/usr/bin/gcc
 			fi
 			echo "The compiler: $THECOMPILER"
+
+            ## Fix for tvOS fork undef 9.0
+            if [ "${TYPE}" == "tvos" ]; then
+
+            # Patch apps/speed.c to not use fork() since it's not available on tvOS
+                export LC_CTYPE=C 
+                export LANG=C 
+                sed -i -- 's/define HAVE_FORK 1/define HAVE_FORK 0/' "apps/speed.c"
+                # Patch Configure to build for tvOS, not iOS
+                export LANG=C 
+                sed -i -- 's/D\_REENTRANT\:iOS/D\_REENTRANT\:tvOS/' "Configure"
+                chmod u+x ./Configure 
+            #     export LC_CTYPE=C 
+            #     export LANG=C
+            #     sed -ie "s!\"defined(OPENSSL_SYS_NETWARE)\"!\"defined(OPENSSL_SYS_NETWARE) || defined(TARGET_IOS)\"!" "./apps/speed.c"
+                
+            #     sed -ie "s!\"-D_REENTRANT:iOS\"!\"-D_REENTRANT:tvOS\"!" "./Configure"
+            fi
 
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
@@ -430,24 +449,26 @@ function build() {
 			export CROSS_SDK="${PLATFORM}${SDKVERSION}.sdk"
 			export BUILD_TOOLS="${DEVELOPER}"
 
-			export CC="${THECOMPILER} -arch ${IOS_ARCH} -std=${CSTANDARD}"
-			mkdir -p "$CURRENTPATH/build/$TYPE/$IOS_ARCH"
-			LOG="$CURRENTPATH/build/$TYPE/$IOS_ARCH/build-openssl-${VER}.log"
-			
-			MIN_IOS_VERSION=$IOS_MIN_SDK_VER
-		    # min iOS version for arm64 is iOS 7
-		
-		    if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
-		    	MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
-		    elif [ "${IOS_ARCH}" == "i386" ]; then
-		    	MIN_IOS_VERSION=5.1 # 6.0 to prevent start linking errors
-		    fi
+            MIN_IOS_VERSION=$IOS_MIN_SDK_VER
+            # min iOS version for arm64 is iOS 7
+        
+            if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
+                MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
+            elif [ "${IOS_ARCH}" == "i386" ]; then
+                MIN_IOS_VERSION=5.1 # 6.0 to prevent start linking errors
+            fi
 
             BITCODE=""
             if [[ "$TYPE" == "tvos" ]]; then
                 BITCODE=-fembed-bitcode;
                 MIN_IOS_VERSION=9.0
             fi
+
+			export CC="${THECOMPILER} -arch ${IOS_ARCH} -std=${CSTANDARD} $BITCODE"
+			mkdir -p "$CURRENTPATH/build/$TYPE/$IOS_ARCH"
+			LOG="$CURRENTPATH/build/$TYPE/$IOS_ARCH/build-openssl-${VER}.log"
+			
+			
 
 			echo "Compiler: $CC"
 			echo "Building openssl-${VER} for ${PLATFORM} ${SDKVERSION} ${IOS_ARCH} : iOS Minimum=$MIN_IOS_VERSION"
@@ -538,6 +559,7 @@ function build() {
 			cp "crypto/ui/ui_openssl.c.orig" "crypto/ui/ui_openssl.c"
 			cp "Makefile.orig" "Makefile"
 			cp "Configure.orig" "Configure"
+            cp "apps/speed.c.orig" "apps/speed.c"
 
 			unset CC CFLAG CFLAGS EXTRAFLAGS THECOMPILER
 
