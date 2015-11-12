@@ -190,15 +190,7 @@ function build() {
 		echo "Running make"
 		LOG="$CURRENTPATH/build/$TYPE/poco-make-x86_64-${VER}.log"
 		make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
-		if [ $? != 0 ];
-		then
-			tail -n 100 "${LOG}"
-	    	echo "Problem while make - Please check ${LOG}"
-	    	exit 1
-	    else
-	    	tail -n 100 "${LOG}"
-	    	echo "Make Successful"
-	    fi
+		tail -n 100 "${LOG}"
 
 		unset POCO_ENABLE_CPP11
 
