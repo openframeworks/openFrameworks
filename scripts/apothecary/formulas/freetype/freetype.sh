@@ -9,12 +9,12 @@
 FORMULA_TYPES=( "osx" "vs" "msys2" "ios" "tvos" "android" "emscripten" )
 
 # define the version
-VER=2.6.1
-FVER=261
+VER=2.5.5
+FVER=255
 
 # tools for git use
 GIT_URL=http://git.savannah.gnu.org/r/freetype/freetype2.git
-GIT_TAG=VER-2-6-1
+GIT_TAG=VER-2-5-5
 
 # download the source code and unpack it into LIB_NAME
 function download() {
