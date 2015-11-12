@@ -275,11 +275,11 @@ function build() {
 		# link into universal lib
 		echo "Running lipo to create fat lib"
 		echo "Please stand by..."
-        if [ "${TYPE}" == "tvos" ]; then 
+        if [[ "${TYPE}" == "tvos" ]] ; then 
             lipo -create libfreeimage-arm64.a \
                     libfreeimage-x86_64.a \
                     -output freeimage.a >> "${LOG}" 2>&1
-        elif [ "$TYPE" == "ios"]; then
+        elif [[ "$TYPE" == "ios" ]]; then
 		    #			libfreeimage-armv7s.a \
 		    lipo -create libfreeimage-armv7.a \
 					libfreeimage-arm64.a \
@@ -298,19 +298,22 @@ function build() {
 		fi
 
 		lipo -info freeimage.a
-		echo "--------------------"
-		echo "Stripping any lingering symbols"
-		echo "Please stand by..."
-		# validate all stripped debug:
-		strip -x freeimage.a  >> "${LOG}" 2>&1
-		if [ $? != 0 ];
-		then 
-            tail -n 10 "${LOG}"
-		    echo "Problem while stripping lib - Please check ${LOG}"
-		    exit 1
-		else
-		    echo "Strip Successful for ${LOG}"
-		fi
+
+        if [[ "$TYPE" == "ios" ]]; then
+    		echo "--------------------"
+    		echo "Stripping any lingering symbols"
+    		echo "Please stand by..."
+    		# validate all stripped debug:
+    		strip -x freeimage.a  >> "${LOG}" 2>&1
+    		if [ $? != 0 ];
+    		then 
+                tail -n 10 "${LOG}"
+    		    echo "Problem while stripping lib - Please check ${LOG}"
+    		    exit 1
+    		else
+    		    echo "Strip Successful for ${LOG}"
+    		fi
+        fi
 		cd ../../
 
 		echo "--------------------"
