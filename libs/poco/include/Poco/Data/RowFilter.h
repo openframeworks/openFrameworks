@@ -125,7 +125,7 @@ public:
 		/// Returns the number of comparisons removed.
 
 	void toggleNot();
-		/// Togless the NOT operator for this filter;
+		/// Toggles the NOT operator for this filter;
 
 	bool isNot() const;
 		/// Returns true if filter is NOT-ed, false otherwise.

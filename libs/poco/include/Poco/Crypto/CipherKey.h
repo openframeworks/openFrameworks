@@ -47,6 +47,16 @@ class Crypto_API CipherKey
 	///     std::string salt("asdff8723lasdf(**923412");
 	///     CipherKey key("aes-256", password, salt);
 	///
+	/// You may also control the digest and the number of iterations used to generate the key
+	/// by specifying the specific values. Here we create a key with the same data as before,
+	/// except that we use 100 iterations instead of DEFAULT_ITERATION_COUNT, and sha1 instead of
+	/// the default md5:
+	///
+	///     std::string password = "secret";
+	///     std::string salt("asdff8723lasdf(**923412");
+	///     std::string digest ("sha1");
+	///     CipherKey key("aes-256", password, salt, 100, digest);
+	///
 {
 public:
 	typedef CipherKeyImpl::Mode Mode;
@@ -63,9 +73,10 @@ public:
 	CipherKey(const std::string& name, 
 		const std::string& passphrase, 
 		const std::string& salt = "",
-		int iterationCount = DEFAULT_ITERATION_COUNT);
+		int iterationCount = DEFAULT_ITERATION_COUNT,
+		const std::string& digest = "md5");
 		/// Creates a new CipherKeyImpl object using the given
-		/// cipher name, passphrase, salt value and iteration count.
+		/// cipher name, passphrase, salt value, iteration count and digest.
 
 	CipherKey(const std::string& name, 
 		const ByteVec& key, 

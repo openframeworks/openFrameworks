@@ -118,12 +118,23 @@ public:
 		/// specified in a call to load() or the 
 		/// constructor.
 		
+	static std::string prefix();
+		/// Returns the platform-specific filename prefix
+		/// for shared libraries.
+		/// Most platforms would return "lib" as prefix, while
+	    /// on Cygwin, the "cyg" prefix will be returned.
+		
 	static std::string suffix();
 		/// Returns the platform-specific filename suffix
 		/// for shared libraries (including the period).
 		/// In debug mode, the suffix also includes a
 		/// "d" to specify the debug version of a library.
 		
+	static std::string getOSName(const std::string& name);
+		/// Returns the platform-specific filename 
+		/// for shared libraries by prefixing and suffixing name
+		/// with prefix() and suffix()
+
 private:
 	SharedLibrary(const SharedLibrary&);
 	SharedLibrary& operator = (const SharedLibrary&);

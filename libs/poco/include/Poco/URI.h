@@ -42,8 +42,15 @@ class Foundation_API URI
 	/// The class automatically performs a few normalizations on
 	/// all URIs and URI parts passed to it:
 	///   * scheme identifiers are converted to lower case
-	///   * percent-encoded characters are decoded
+	///   * percent-encoded characters are decoded (except for the query string)
 	///   * optionally, dot segments are removed from paths (see normalize())
+	///
+	/// Note that dealing with query strings requires some precautions, as, internally,
+	/// query strings are stored in percent-encoded form, while all other parts of the URI
+	/// are stored in decoded form. While parsing query strings from properly encoded URLs
+	/// generally works, explicitly setting query strings with setQuery() or extracting
+	/// query strings with getQuery() may lead to ambiguities. See the descriptions of
+	/// setQuery(), setRawQuery(), getQuery() and getRawQuery() for more information.
 {
 public:
 	typedef std::vector<std::pair<std::string, std::string> > QueryParameters;
@@ -156,7 +163,7 @@ public:
 		/// the user-info, host, port components accordingly.
 		
 	const std::string& getPath() const;
-		/// Returns the path part of the URI.
+		/// Returns the decoded path part of the URI.
 		
 	void setPath(const std::string& path);
 		/// Sets the path part of the URI.
@@ -223,10 +230,10 @@ public:
 		/// Sets the path, query and fragment parts of the URI.
 		
 	std::string getPathEtc() const;
-		/// Returns the path, query and fragment parts of the URI.
+		/// Returns the encoded path, query and fragment parts of the URI.
 		
 	std::string getPathAndQuery() const;
-		/// Returns the path and query parts of the URI.	
+		/// Returns the encoded path and query parts of the URI.	
 		
 	void resolve(const std::string& relativeURI);
 		/// Resolves the given relative URI against the base URI.

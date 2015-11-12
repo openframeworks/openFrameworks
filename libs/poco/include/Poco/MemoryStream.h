@@ -20,6 +20,7 @@
 #define Foundation_MemoryStream_INCLUDED
 
 
+#include "Poco/Bugcheck.h"
 #include "Poco/Foundation.h"
 #include "Poco/StreamUtil.h"
 #include <streambuf>
@@ -72,6 +73,74 @@ public:
 	virtual int_type underflow()
 	{
 		return char_traits::eof();
+	}
+
+	virtual pos_type seekoff(off_type off, std::ios_base::seekdir way, std::ios_base::openmode which = std::ios_base::in | std::ios_base::out)
+	{
+		const pos_type fail = off_type(-1);
+		off_type newoff = off_type(-1);
+
+		if ((which & std::ios_base::in) != 0)
+		{
+			if (this->gptr() == 0)
+				return fail;
+
+			if (way == std::ios_base::beg)
+			{
+				newoff = 0;
+			}
+			else if (way == std::ios_base::cur)
+			{
+				// cur is not valid if both in and out are specified (Condition 3)
+				if ((which & std::ios_base::out) != 0)
+					return fail;
+				newoff = this->gptr() - this->eback();
+			}
+			else if (way == std::ios_base::end)
+			{
+				newoff = this->egptr() - this->eback();
+			}
+			else
+			{
+				poco_bugcheck();
+			}
+
+			if ((newoff + off) < 0 || (this->egptr() - this->eback()) < (newoff + off))
+				return fail;
+			this->setg(this->eback(), this->eback() + newoff + off, this->egptr());
+		}
+
+		if ((which & std::ios_base::out) != 0)
+		{
+			if (this->pptr() == 0)
+				return fail;
+
+			if (way == std::ios_base::beg)
+			{
+				newoff = 0;
+			}
+			else if (way == std::ios_base::cur)
+			{
+				// cur is not valid if both in and out are specified (Condition 3)
+				if ((which & std::ios_base::in) != 0)
+					return fail;
+				newoff = this->pptr() - this->pbase();
+			}
+			else if (way == std::ios_base::end)
+			{
+				newoff = this->epptr() - this->pbase();
+			}
+			else
+			{
+				poco_bugcheck();
+			}
+
+			if (newoff + off < 0 || (this->epptr() - this->pbase()) < newoff + off)
+				return fail;
+			this->pbump((int)(newoff + off - (this->pptr() - this->pbase())));
+		}
+
+		return newoff;
 	}
 
 	virtual int sync()

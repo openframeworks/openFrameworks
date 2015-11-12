@@ -69,7 +69,7 @@ class JSON_API Template
 	///
 	///     <? ifexist query ?> <? else ?> <? endif ?>
 	/// ----
-	/// This can be used to check the existance of the value.
+	/// This can be used to check the existence of the value.
 	/// Use this for example when a zero value is ok (which returns false for <? if ?>.
 	/// 
 	///     <? for variable query ?> <? endfor ?>

@@ -157,8 +157,15 @@ private:
 
 
 //
-// We provide an instantiation for char
+// We provide an instantiation for char.
 //
+// Visual C++ needs a workaround - explicitly importing the template
+// instantiation - to avoid duplicate symbols due to multiple
+// instantiations in different libraries.
+//
+#if defined(_MSC_VER) && defined(POCO_DLL) && !defined(Foundation_EXPORTS)
+template class Foundation_API BasicBufferedStreamBuf<char, std::char_traits<char> >;
+#endif
 typedef BasicBufferedStreamBuf<char, std::char_traits<char> > BufferedStreamBuf;
 
 

@@ -30,9 +30,37 @@ namespace Poco {
 
 class Foundation_API MutexImpl
 {
+public:
+	enum MutexTypeImpl
+	{
+		MUTEX_RECURSIVE_IMPL,
+		MUTEX_NONRECURSIVE_IMPL,
+	};
+
 protected:
-	MutexImpl();
+	explicit MutexImpl(MutexTypeImpl type);
 	~MutexImpl();
+	void lockImpl();
+	bool tryLockImpl();
+	bool tryLockImpl(long milliseconds);
+	void unlockImpl();
+	
+private:
+	CRITICAL_SECTION _cs;
+	int _lockCount;
+	const bool _recursive;
+
+private:
+	MutexImpl(const MutexImpl&);
+	MutexImpl& operator = (const MutexImpl&);
+};
+
+
+class Foundation_API FastMutexImpl
+{
+protected:
+	FastMutexImpl();
+	~FastMutexImpl();
 	void lockImpl();
 	bool tryLockImpl();
 	bool tryLockImpl(long milliseconds);
@@ -43,13 +71,17 @@ private:
 };
 
 
-typedef MutexImpl FastMutexImpl;
-
-
 //
 // inlines
 //
-inline void MutexImpl::lockImpl()
+inline void MutexImpl::unlockImpl()
+{
+	--_lockCount;
+	LeaveCriticalSection(&_cs);
+}
+
+
+inline void FastMutexImpl::lockImpl()
 {
 	try
 	{
@@ -62,7 +94,7 @@ inline void MutexImpl::lockImpl()
 }
 
 
-inline bool MutexImpl::tryLockImpl()
+inline bool FastMutexImpl::tryLockImpl()
 {
 	try
 	{
@@ -75,7 +107,7 @@ inline bool MutexImpl::tryLockImpl()
 }
 
 
-inline void MutexImpl::unlockImpl()
+inline void FastMutexImpl::unlockImpl()
 {
 	LeaveCriticalSection(&_cs);
 }

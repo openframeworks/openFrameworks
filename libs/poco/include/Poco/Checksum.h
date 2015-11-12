@@ -69,7 +69,7 @@ public:
 		/// Returns the calculated checksum.
 
 	Type type() const;
-		/// Which type of checksum are we calulcating
+		/// Which type of checksum are we calculating.
 
 private:
 	Type         _type;

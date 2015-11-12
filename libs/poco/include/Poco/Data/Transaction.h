@@ -36,7 +36,7 @@ class Data_API Transaction
 	/// transaction is in progress. If not, a new transaction is created.
 	/// When the Transaction is destroyed, and commit() has been called,
 	/// nothing is done. Otherwise, the current transaction is rolled back.
-	/// See Transaction for more detaisl nad purpose of this template.
+	/// See Transaction for more details and purpose of this template.
 {
 public:
 	Transaction(Poco::Data::Session& session, Poco::Logger* pLogger = 0);
@@ -56,7 +56,7 @@ public:
 		/// reference as an argument.
 		///
 		/// When transaction is created using this constructor, it is executed and
-		/// commited automatically. If no error occurs, rollback is disabled and does
+		/// committed automatically. If no error occurs, rollback is disabled and does
 		/// not occur at destruction time. If an error occurs resulting in exception being
 		/// thrown, the transaction is rolled back and exception propagated to calling code.
 		/// 
@@ -84,7 +84,7 @@ public:
 
 	~Transaction();
 		/// Destroys the Transaction.
-		/// Rolls back the current database transaction if it has not been commited
+		/// Rolls back the current database transaction if it has not been committed
 		/// (by calling commit()), or rolled back (by calling rollback()).
 		///
 		/// If an exception is thrown during rollback, the exception is logged
@@ -111,13 +111,13 @@ public:
 
 	void execute(const std::vector<std::string>& sql);
 		/// Executes all the SQL statements supplied in the vector and, after the last
-		/// one is sucesfully executed, commits the transaction.
+		/// one is successfully executed, commits the transaction.
 		/// If an error occurs during execution, transaction is rolled back.
 		/// Passing true value for commit disables rollback during destruction
 		/// of this Transaction object.
 
 	template <typename T>
-	void transact(T& t)
+	void transact(const T& t)
 		/// Executes the transactor and, unless transactor throws an exception, 
 		/// commits the transaction.
 	{

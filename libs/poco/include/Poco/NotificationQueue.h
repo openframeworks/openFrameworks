@@ -125,6 +125,10 @@ public:
 	void clear();
 		/// Removes all notifications from the queue.
 		
+	bool remove(Notification::Ptr pNotification);
+		/// Removes a notification from the queue.
+		/// Returns true if remove succeeded, false otherwise
+
 	bool hasIdleThreads() const;	
 		/// Returns true if the queue has at least one thread waiting 
 		/// for a notification.

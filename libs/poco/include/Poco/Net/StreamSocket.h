@@ -47,7 +47,7 @@ public:
 		/// Creates a stream socket and connects it to
 		/// the socket specified by address.
 
-	explicit StreamSocket(IPAddress::Family family);
+	explicit StreamSocket(SocketAddress::Family family);
 		/// Creates an unconnected stream socket
 		/// for the given address family.
 		///
@@ -111,7 +111,7 @@ public:
 
 	int sendBytes(Poco::FIFOBuffer& buffer);
 		/// Sends the contents of the given buffer through
-		/// the socket. FIFOBuffer has writable/readable transiton
+		/// the socket. FIFOBuffer has writable/readable transition
 		/// notifications which may be enabled to notify the caller when
 		/// the buffer transitions between empty, partially full and
 		/// full states.
@@ -137,7 +137,7 @@ public:
 	int receiveBytes(Poco::FIFOBuffer& buffer);
 		/// Receives data from the socket and stores it
 		/// in buffer. Up to length bytes are received. FIFOBuffer has 
-		/// writable/readable transiton notifications which may be enabled 
+		/// writable/readable transition notifications which may be enabled 
 		/// to notify the caller when the buffer transitions between empty, 
 		/// partially full and full states.
 		///
@@ -160,7 +160,7 @@ public:
 
 	StreamSocket(SocketImpl* pImpl);
 		/// Creates the Socket and attaches the given SocketImpl.
-		/// The socket takes owership of the SocketImpl.
+		/// The socket takes ownership of the SocketImpl.
 		///
 		/// The SocketImpl must be a StreamSocketImpl, otherwise
 		/// an InvalidArgumentException will be thrown.

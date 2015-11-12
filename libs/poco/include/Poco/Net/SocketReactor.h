@@ -83,7 +83,7 @@ class Net_API SocketReactor: public Poco::Runnable
 	/// becomes writable. The ErrorNotification will be dispatched if
 	/// there is an error condition on a socket.
 	///
-	/// If the timeout expires and no event has occured, a
+	/// If the timeout expires and no event has occurred, a
 	/// TimeoutNotification will be dispatched to all event handlers
 	/// registered for it. This is done in the onTimeout() method
 	/// which can be overridden by subclasses to perform custom
@@ -158,7 +158,7 @@ public:
 		///     reactor.addEventHandler(obs);
 
 	bool hasEventHandler(const Socket& socket, const Poco::AbstractObserver& observer);
-		/// Returns true if the observer is reistered with SocketReactor for the given socket.
+		/// Returns true if the observer is registered with SocketReactor for the given socket.
 
 	void removeEventHandler(const Socket& socket, const Poco::AbstractObserver& observer);
 		/// Unregisters an event handler with the SocketReactor.

@@ -24,6 +24,25 @@
 #include <float.h>
 #include <math.h>
 
+#ifndef _SW_INEXACT
+#	define _SW_INEXACT 0x00000001 // inexact (precision)
+#endif
+#ifndef _SW_UNDERFLOW
+#	define _SW_UNDERFLOW 0x00000002 // underflow
+#endif
+#ifndef _SW_OVERFLOW
+#	define _SW_OVERFLOW 0x00000004 // overflow
+#endif
+#ifndef _SW_ZERODIVIDE
+#	define _SW_ZERODIVIDE 0x00000008 // zero divide
+#endif
+#ifndef _SW_INVALID
+#	define _SW_INVALID 0x00000010 // invalid
+#endif
+#ifndef _SW_DENORMAL
+#	define _SW_DENORMAL 0x00080000 // denormal status bit
+#endif
+
 
 namespace Poco {
 
@@ -33,24 +52,24 @@ class Foundation_API FPEnvironmentImpl
 protected:
 	enum RoundingModeImpl
 	{
-		FP_ROUND_DOWNWARD_IMPL   = RC_DOWN,
-		FP_ROUND_UPWARD_IMPL     = RC_UP,
-		FP_ROUND_TONEAREST_IMPL  = RC_NEAR,
-		FP_ROUND_TOWARDZERO_IMPL = RC_CHOP
+		FP_ROUND_DOWNWARD_IMPL   = _RC_DOWN,
+		FP_ROUND_UPWARD_IMPL     = _RC_UP,
+		FP_ROUND_TONEAREST_IMPL  = _RC_NEAR,
+		FP_ROUND_TOWARDZERO_IMPL = _RC_CHOP
 	};
 	enum FlagImpl
 	{
-		FP_DIVIDE_BY_ZERO_IMPL = SW_ZERODIVIDE,
-		FP_INEXACT_IMPL        = SW_INEXACT,
-		FP_OVERFLOW_IMPL       = SW_OVERFLOW,
-		FP_UNDERFLOW_IMPL      = SW_UNDERFLOW,
-		FP_INVALID_IMPL        = SW_INVALID
+		FP_DIVIDE_BY_ZERO_IMPL = _SW_ZERODIVIDE,
+		FP_INEXACT_IMPL        = _SW_INEXACT,
+		FP_OVERFLOW_IMPL       = _SW_OVERFLOW,
+		FP_UNDERFLOW_IMPL      = _SW_UNDERFLOW,
+		FP_INVALID_IMPL        = _SW_INVALID
 	};
 	FPEnvironmentImpl();
 	FPEnvironmentImpl(const FPEnvironmentImpl& env);
 	~FPEnvironmentImpl();
 	FPEnvironmentImpl& operator = (const FPEnvironmentImpl& env);
-	void keepCurrentImpl();		
+	void keepCurrentImpl();
 	static void clearFlagsImpl();
 	static bool isFlagImpl(FlagImpl flag);	
 	static void setRoundingModeImpl(RoundingModeImpl mode);

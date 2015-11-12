@@ -24,6 +24,7 @@
 #include "Poco/Util/MapConfiguration.h"
 #include <istream>
 #include <ostream>
+#include <list>
 
 
 namespace Poco {
@@ -60,21 +61,25 @@ public:
 	PropertyFileConfiguration();
 		/// Creates an empty PropertyFileConfiguration.
 
-	PropertyFileConfiguration(std::istream& istr);
+	PropertyFileConfiguration(std::istream& istr, bool preserveComment = false);
 		/// Creates an PropertyFileConfiguration and loads the configuration data
 		/// from the given stream, which must be in properties file format.
+		/// Set the preserveComment to preserve the comments in the given stream.
 		
-	PropertyFileConfiguration(const std::string& path);
+	PropertyFileConfiguration(const std::string& path, bool preserveComment = false);
 		/// Creates an PropertyFileConfiguration and loads the configuration data
 		/// from the given file, which must be in properties file format.
+		/// Set the preserveComment to preserve the comments in the given stream.
 		
-	void load(std::istream& istr);
+	void load(std::istream& istr, bool preserveComment = false);
 		/// Loads the configuration data from the given stream, which 
 		/// must be in properties file format.
+		/// Set the preserveComment to preserve the comments in the given stream.
 		
-	void load(const std::string& path);
+	void load(const std::string& path, bool preserveComment = false);
 		/// Loads the configuration data from the given file, which 
 		/// must be in properties file format.
+		/// Set the preserveComment to preserve the comments in the given stream.
 		
 	void save(std::ostream& ostr) const;
 		/// Writes the configuration data to the given stream.
@@ -87,10 +92,28 @@ public:
 		/// Writes the configuration data to the given file.
 
 protected:
+	void setRaw(const std::string& key, const std::string& value);
+	void removeRaw(const std::string& key);
 	~PropertyFileConfiguration();
 	
 private:
+	typedef std::list<std::string> FileContent;
+	typedef std::map<std::string, FileContent::iterator> KeyFileContentItMap;
+
 	void parseLine(std::istream& istr);
+	void skipSpace(std::istream& istr) const;
+	bool isComment(int c) const ;
+	void saveComment(std::istream& istr);
+	void skipLine(std::istream& istr) const;
+	void saveKeyValue(std::istream& istr);
+	bool isNewLine(int c) const;
+	bool isKeyValueSeparator(int c) const;
+	std::string composeOneLine(const std::string& key, const std::string& value) const;
+
+	bool _preserveComment;
+	FileContent _fileContent;
+	KeyFileContentItMap _keyFileContentItMap;
+
 	static int readChar(std::istream& istr);
 };
 

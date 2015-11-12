@@ -160,6 +160,12 @@ public:
 		/// Returns true if session pool is active (not shut down).
 
 protected:
+	virtual void customizeSession(Session& session);
+		/// Can be overridden by subclass to perform custom initialization
+		/// of a newly created database session.
+		///
+		/// The default implementation does nothing.
+
 	typedef Poco::AutoPtr<PooledSessionHolder>    PooledSessionHolderPtr;
 	typedef Poco::AutoPtr<PooledSessionImpl>      PooledSessionImplPtr;
 	typedef std::list<PooledSessionHolderPtr>     SessionList;

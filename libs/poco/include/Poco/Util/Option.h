@@ -60,7 +60,7 @@ class Util_API Option
 	///
 	/// Option instances are value objects.
 	///
-	/// Typcally, after construction, an Option object is immediately
+	/// Typically, after construction, an Option object is immediately
 	/// passed to an Options object.
 	///
 	/// An Option object can be created by chaining the constructor

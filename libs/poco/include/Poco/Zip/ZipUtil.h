@@ -5,14 +5,14 @@
 //
 // Library: Zip
 // Package: Zip
-// Module:  ZipUtil
+// Module:	ZipUtil
 //
 // Definition of the ZipUtil class.
 //
 // Copyright (c) 2007, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
-// SPDX-License-Identifier:	BSL-1.0
+// SPDX-License-Identifier: BSL-1.0
 //
 
 
@@ -39,9 +39,13 @@ public:
 
 	static Poco::UInt32 get32BitValue(const char* pVal, const Poco::UInt32 pos);
 
+	static Poco::UInt64 get64BitValue(const char* pVal, const Poco::UInt32 pos);
+	
 	static void set16BitValue(const Poco::UInt16 val, char* pVal, const Poco::UInt32 pos);
 
 	static void set32BitValue(const Poco::UInt32 val, char* pVal, const Poco::UInt32 pos);
+
+	static void set64BitValue(const Poco::UInt64 val, char* pVal, const Poco::UInt32 pos);
 
 	static Poco::DateTime parseDateTime(const char* pVal, const Poco::UInt32 timePos, const Poco::UInt32 datePos);
 
@@ -78,6 +82,14 @@ inline Poco::UInt32 ZipUtil::get32BitValue(const char* pVal, const Poco::UInt32 
 }
 
 
+inline Poco::UInt64 ZipUtil::get64BitValue(const char* pVal, const Poco::UInt32 pos)
+{
+	Poco::UInt64 val = ZipUtil::get32BitValue(pVal, pos+4);
+	val = (val << 32) | ZipUtil::get32BitValue(pVal, pos);
+	return val;
+}
+
+
 inline void ZipUtil::set16BitValue(const Poco::UInt16 val, char* pVal, const Poco::UInt32 pos)
 {
 	pVal[pos] = static_cast<char>(val);
@@ -91,6 +103,19 @@ inline void ZipUtil::set32BitValue(const Poco::UInt32 val, char* pVal, const Poc
 	pVal[pos+1] = static_cast<char>(val>>8);
 	pVal[pos+2] = static_cast<char>(val>>16);
 	pVal[pos+3] = static_cast<char>(val>>24);
+}
+
+
+inline void ZipUtil::set64BitValue(const Poco::UInt64 val, char* pVal, const Poco::UInt32 pos)
+{
+	pVal[pos] = static_cast<char>(val);
+	pVal[pos+1] = static_cast<char>(val>>8);
+	pVal[pos+2] = static_cast<char>(val>>16);
+	pVal[pos+3] = static_cast<char>(val>>24);
+	pVal[pos+4] = static_cast<char>(val>>32);
+	pVal[pos+5] = static_cast<char>(val>>40);
+	pVal[pos+6] = static_cast<char>(val>>48);
+	pVal[pos+7] = static_cast<char>(val>>56);
 }
 
 

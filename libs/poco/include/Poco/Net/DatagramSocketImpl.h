@@ -39,7 +39,7 @@ public:
 		/// be an IPv6 socket. Otherwise, it will be
 		/// an IPv4 socket.
 
-	explicit DatagramSocketImpl(IPAddress::Family family);
+	explicit DatagramSocketImpl(SocketAddress::Family family);
 		/// Creates an unconnected datagram socket.
 		///
 		/// The socket will be created for the
