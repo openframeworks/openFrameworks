@@ -8,11 +8,13 @@
 # specify specfic build configs in poco/config using ./configure --config=NAME
 
 # define the version
-VER=1.6.0-release
+VER=1.6.2-release
 
 # tools for git use
 GIT_URL=https://github.com/pocoproject/poco
-GIT_TAG=poco-1.6.0-release
+GIT_TAG=poco-1.6.2-release
+
+FORMULA_TYPES=( "osx" "ios" "tvos" "android" "emscripten" "vs" )
 
 #dependencies
 FORMULA_DEPENDS=( "openssl" )
@@ -25,7 +27,7 @@ FORMULA_DEPENDS_MANUAL=1
 # 3rd Party libraries.  See https://github.com/pocoproject/poco/blob/develop/README
 # for more information.
 
-SHA=
+SHA=f8dee428ab61499753e9b2f81f8a5b9ea1dc74e4
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -48,11 +50,10 @@ function prepare() {
 		git reset --hard $SHA
 	fi
 	
-	if [ "$TYPE" != "msys2" ] && [ "$TYPE" != "linux" ]; then
+	if [ "$TYPE" != "msys2" ] && [ "$TYPE" != "linux" ] && [ "$TYPE" != "ios" ] && [ "$TYPE" != "tvos" ]; then
 		# manually prepare dependencies
 		apothecaryDependencies download
 		apothecaryDependencies prepare
-
 		# Build and copy all dependencies in preparation
 		apothecaryDepend build openssl
 		apothecaryDepend copy openssl
@@ -64,6 +65,11 @@ function prepare() {
 		mkdir -p lib/iPhoneOS
 
 		cd build/config
+
+		if [[ "$TYPE" == "tvos" ]]; then 
+			cp $FORMULA_DIR/AppleTV AppleTV
+			cp $FORMULA_DIR/AppleTVSimulator AppleTVSimulator
+		fi
 
 		cp iPhoneSimulator-clang-libc++ iPhoneSimulator-clang-libc++.orig
 		cp iPhone-clang-libc++ iPhone-clang-libc++.orig
@@ -313,7 +319,7 @@ function build() {
 			then
                 if [ "${TYPE}" == "tvos" ]; then 
                     PLATFORM="AppleTVSimulator"
-                    BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_SIMULATOR
+                    BUILD_POCO_CONFIG="AppleTVSimulator"
                 elif [ "$TYPE" == "ios"]; then
                     PLATFORM="iPhoneSimulator"
                     BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_SIMULATOR
@@ -321,10 +327,10 @@ function build() {
 			else
                 if [ "${TYPE}" == "tvos" ]; then 
                     PLATFORM="AppleTVOS"
-                    BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_SIMULATOR
+                    BUILD_POCO_CONFIG="AppleTV"
                 elif [ "$TYPE" == "ios"]; then
                     PLATFORM="iPhoneOS"
-                    BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_SIMULATOR
+                    BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_IPHONE
                 fi
 			fi
 
@@ -341,9 +347,11 @@ function build() {
             fi
 
             BITCODE=""
+            NOFORK=""
             if [[ "$TYPE" == "tvos" ]]; then
                 BITCODE=-fembed-bitcode;
                 MIN_IOS_VERSION=9.0
+                NOFORK="-DPOCO_NO_FORK_EXEC"
             fi
 
 			export CROSS_TOP="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer"
@@ -356,15 +364,15 @@ function build() {
 
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
-				export OSFLAGS="-arch $POCO_TARGET_OSARCH $BITCODE -DNDEBUG -std=c++11 -stdlib=libc++ -fPIC -DPOCO_ENABLE_CPP11 -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$MIN_IOS_VERSION"
+				export OSFLAGS="-arch $POCO_TARGET_OSARCH $BITCODE -DNDEBUG $NOFORK -fPIC -DPOCO_ENABLE_CPP11 -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$MIN_IOS_VERSION"
 			else
-				export OSFLAGS="-arch $POCO_TARGET_OSARCH $BITCODE -DNDEBUG -std=c++11 -stdlib=libc++ -fPIC -DPOCO_ENABLE_CPP11 -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$MIN_IOS_VERSION"
+				export OSFLAGS="-arch $POCO_TARGET_OSARCH $BITCODE -DNDEBUG $NOFORK -fPIC -DPOCO_ENABLE_CPP11 -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$MIN_IOS_VERSION"
 			fi
 			echo "--------------------"
 			echo "Making Poco-${VER} for ${PLATFORM} ${SDKVERSION} ${IOS_ARCH} : iOS Minimum=$MIN_IOS_VERSION"
 			echo "--------------------"
 			echo "Configuring for ${IOS_ARCH} ..."
-			./configure $BUILD_OPTS --config=$BUILD_POCO_CONFIG_IPHONE > "${LOG}" 2>&1
+			./configure $BUILD_OPTS --config=$BUILD_POCO_CONFIG > "${LOG}" 2>&1
 
 			if [ $? != 0 ]; then
 				tail -n 100 "${LOG}"
@@ -375,7 +383,8 @@ function build() {
 		    fi
 		    echo "--------------------"
 		    echo "Running make for ${IOS_ARCH}"
-			make 
+		    echo "${LOG}"
+			make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
 			if [ $? != 0 ];
 		    then
 		    	tail -n 100 "${LOG}"
@@ -392,26 +401,34 @@ function build() {
 
 		done
 
-		cd lib/iPhoneOS
-		# link into universal lib, strip "lib" from filename
-		local lib
-		for lib in $( ls -1 arm64) ; do
-			local renamedLib=$(echo $lib | sed 's|lib||')
-			if [ ! -e $renamedLib ] ; then
-				echo "renamed";
-				if [[ "${TYPE}" == "tvos" ]] ; then 
-					lipo -c arm64/$lib \
-					x86_64/$lib \
-					-o ../ios/$renamedLib
-				elif [[ "$TYPE" == "ios" ]]; then
-					lipo -c armv7/$lib \
-					arm64/$lib \
-					i386/$lib \
-					x86_64/$lib \
-					-o ../ios/$renamedLib
+		if [[ "${TYPE}" == "tvos" ]] ; then
+			cd lib/AppleTVOS
+			# link into universal lib, strip "lib" from filename
+			local lib
+			for lib in $( ls -1 arm64) ; do
+				local renamedLib=$(echo $lib | sed 's|lib||')
+				if [ ! -e $renamedLib ] ; then
+						lipo -c arm64/$lib \
+						../AppleTVSimulator/x86_64/$lib \
+						-o ../tvos/$renamedLib
 				fi
-			fi
-		done
+			done
+		elif [[ "$TYPE" == "ios" ]]; then
+			cd lib/iPhoneOS
+			# link into universal lib, strip "lib" from filename
+			local lib
+			for lib in $( ls -1 arm64) ; do
+				local renamedLib=$(echo $lib | sed 's|lib||')
+				if [ ! -e $renamedLib ] ; then
+						lipo -c armv7/$lib \
+						arm64/$lib \
+						i386/$lib \
+						x86_64/$lib \
+						-o ../ios/$renamedLib
+				fi
+			done
+		fi
+		
 
 		cd ../../
 
