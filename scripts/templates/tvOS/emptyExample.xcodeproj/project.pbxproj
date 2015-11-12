@@ -23,8 +23,8 @@
 		84C8DBA41BC37A49001606C1 /* libtvOS+OFLib_Debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C8DB6F1BC37247001606C1 /* libtvOS+OFLib_Debug.a */; };
 		84C8DBAC1BC37F72001606C1 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C8DBA91BC37F72001606C1 /* main.mm */; };
 		84C8DBAD1BC37F72001606C1 /* ofApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C8DBAB1BC37F72001606C1 /* ofApp.mm */; };
-		9957D93C1BDDE4020002D53C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9957D93B1BDDE4020002D53C /* Images.xcassets */; };
 		99752D361BF220CC0026316A /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99752D351BF220CC0026316A /* GameController.framework */; };
+		9998920C1BF4D40400DCECB0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9998920B1BF4D40400DCECB0 /* Images.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,8 +63,8 @@
 		84C8DBA91BC37F72001606C1 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		84C8DBAA1BC37F72001606C1 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofApp.h; sourceTree = "<group>"; };
 		84C8DBAB1BC37F72001606C1 /* ofApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofApp.mm; sourceTree = "<group>"; };
-		9957D93B1BDDE4020002D53C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		99752D351BF220CC0026316A /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
+		9998920B1BF4D40400DCECB0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +94,7 @@
 		84463ABD1BC370DF00F24926 = {
 			isa = PBXGroup;
 			children = (
+				9998920A1BF4D40400DCECB0 /* mediaAssets */,
 				84C8DB8E1BC37378001606C1 /* addons */,
 				84C8DB8B1BC3733E001606C1 /* libs */,
 				84463AC81BC370DF00F24926 /* emptyExample */,
@@ -114,7 +115,6 @@
 			isa = PBXGroup;
 			children = (
 				84C8DBA81BC37F72001606C1 /* src */,
-				9957D93B1BDDE4020002D53C /* Images.xcassets */,
 			);
 			path = emptyExample;
 			sourceTree = "<group>";
@@ -189,6 +189,14 @@
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
+		};
+		9998920A1BF4D40400DCECB0 /* mediaAssets */ = {
+			isa = PBXGroup;
+			children = (
+				9998920B1BF4D40400DCECB0 /* Images.xcassets */,
+			);
+			path = mediaAssets;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -265,7 +273,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9957D93C1BDDE4020002D53C /* Images.xcassets in Resources */,
+				9998920C1BF4D40400DCECB0 /* Images.xcassets in Resources */,
 				84C8DB691BC37247001606C1 /* CoreOF.xcconfig in Resources */,
 				84C8DB741BC3726E001606C1 /* Project.xcconfig in Resources */,
 			);
