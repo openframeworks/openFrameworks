@@ -8,6 +8,6 @@
 
 TVOS_SDK           = AppleTVSimulator
 POCO_TARGET_OSARCH = x86_64
-OSFLAGS            = -arch $(POCO_TARGET_OSARCH) -isysroot $(TVOS_SDK_BASE) -mtvos-simulator-version-min=$(TVOS_SDK_VERSION_MIN)
+OSFLAGS            = -arch $(POCO_TARGET_OSARCH) -isysroot $(TVOS_SDK_BASE) -mtvos-simulator-version-min=$(TVOS_SDK_VERSION_MIN) -fembed-bitcode
 
 include $(POCO_BASE)/build/config/AppleTV
