@@ -343,7 +343,7 @@ function build() {
 function copy() {
 	
 	# headers
-	rm -r $1/include
+	rm -rf $1/include
 	mkdir -p $1/include
 	cp -Rv Include/* $1/include/
 
