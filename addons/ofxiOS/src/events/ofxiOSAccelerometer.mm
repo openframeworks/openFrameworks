@@ -91,4 +91,23 @@ void ofxAccelerometerHandler::exit() {
 
 @end
 
+#else 
+
+@interface ofxiOSAccelerometerDelegate : NSObject {
+}
+
+@end
+
+// define instance of delegate
+static ofxiOSAccelerometerDelegate* iOSAccelerometerDelegate;
+
+/************ Impementation of standard C++ accel interface tailored for iPhone ************/
+// call this to setup the accelerometer
+void ofxAccelerometerHandler::setup() {
+
+}
+void ofxAccelerometerHandler::exit() {
+    
+}
+
 #endif
