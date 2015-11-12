@@ -8,11 +8,11 @@
 # specify specfic build configs in poco/config using ./configure --config=NAME
 
 # define the version
-VER=1.6.2-release
+VER=1.6.1-release
 
 # tools for git use
 GIT_URL=https://github.com/pocoproject/poco
-GIT_TAG=poco-1.6.2-release
+GIT_TAG=poco-1.6.1-release
 
 FORMULA_TYPES=( "osx" "ios" "tvos" "android" "emscripten" "vs" )
 
@@ -432,24 +432,25 @@ function build() {
 
 		cd ../../
 
-		echo "--------------------"
-		echo "Stripping any lingering symbols"
+		if [[ "$TYPE" == "ios" ]]; then
+			echo "--------------------"
+			echo "Stripping any lingering symbols"
 
-		cd lib/$TYPE
-		SLOG="$CURRENTPATH/lib/$TYPE-stripping.log"
-		local TOBESTRIPPED
-		for TOBESTRIPPED in $( ls -1) ; do
-			strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
-			if [ $? != 0 ];
-		    then
-		    	tail -n 100 "${SLOG}"
-		    	echo "Problem while stripping lib - Please check ${SLOG}"
-		    	exit 1
-		    else
-		    	echo "Strip Successful for ${SLOG}"
-		    fi
-		done
-
+			cd lib/$TYPE
+			SLOG="$CURRENTPATH/lib/$TYPE-stripping.log"
+			local TOBESTRIPPED
+			for TOBESTRIPPED in $( ls -1) ; do
+				strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
+				if [ $? != 0 ];
+			    then
+			    	tail -n 100 "${SLOG}"
+			    	echo "Problem while stripping lib - Please check ${SLOG}"
+			    	exit 1
+			    else
+			    	echo "Strip Successful for ${SLOG}"
+			    fi
+			done
+		fi
 		cd ../../
 
 		echo "--------------------"
