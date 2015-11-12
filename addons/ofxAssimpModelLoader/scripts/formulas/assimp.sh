@@ -14,7 +14,7 @@ GIT_URL=
 # GIT_URL=https://github.com/assimp/assimp.git
 GIT_TAG=
 
-FORMULA_TYPES=( "osx" "osx-clang-libc++" "ios" "tvos" "android" "emscripten" "vs" )
+FORMULA_TYPES=( "osx" "ios" "tvos" "android" "emscripten" "vs" )
 
 # download the source code and unpack it into LIB_NAME
 function download() {
