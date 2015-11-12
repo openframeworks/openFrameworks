@@ -917,7 +917,7 @@ function apothecaryDependencies() {
 }
 
 function  dump_output() {
-	if [ -z ${$BUILD_OUTPUT} ]; then
+	if [ -z ${BUILD_OUTPUT} ]; then
 		echo "BUILD_OUTPUT not set."
 	else 
 		echo Tailing the last 500 lines of output:
