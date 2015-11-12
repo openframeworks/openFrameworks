@@ -243,7 +243,7 @@ function build() {
 		SDKVERSION=""
         if [ "${TYPE}" == "tvos" ]; then 
             SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`
-        elif [ "$TYPE" == "ios"]; then
+        elif [ "$TYPE" == "ios" ]; then
             SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
         fi
 		CURRENTPATH=`pwd`
@@ -255,7 +255,7 @@ function build() {
 		local IOS_ARCHS
         if [ "${TYPE}" == "tvos" ]; then 
             IOS_ARCHS="x86_64 arm64"
-        elif [ "$TYPE" == "ios"]; then
+        elif [ "$TYPE" == "ios" ]; then
             IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
         fi
 
@@ -320,7 +320,7 @@ function build() {
                 if [ "${TYPE}" == "tvos" ]; then 
                     PLATFORM="AppleTVSimulator"
                     BUILD_POCO_CONFIG="AppleTVSimulator"
-                elif [ "$TYPE" == "ios"]; then
+                elif [ "$TYPE" == "ios" ]; then
                     PLATFORM="iPhoneSimulator"
                     BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_SIMULATOR
                 fi
@@ -328,7 +328,7 @@ function build() {
                 if [ "${TYPE}" == "tvos" ]; then 
                     PLATFORM="AppleTVOS"
                     BUILD_POCO_CONFIG="AppleTV"
-                elif [ "$TYPE" == "ios"]; then
+                elif [ "$TYPE" == "ios" ]; then
                     PLATFORM="iPhoneOS"
                     BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_IPHONE
                 fi
@@ -339,7 +339,7 @@ function build() {
     		    if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
     		    	MIN_TYPE=-mtvos-simulator-version-min=
     		    fi
-            elif [ "$TYPE" == "ios"]; then
+            elif [ "$TYPE" == "ios" ]; then
                 MIN_TYPE=-miphoneos-version-min=
                 if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
                     MIN_TYPE=-mios-simulator-version-min=
@@ -422,8 +422,8 @@ function build() {
 				if [ ! -e $renamedLib ] ; then
 						lipo -c armv7/$lib \
 						arm64/$lib \
-						i386/$lib \
-						x86_64/$lib \
+						../iPhoneSimulator/i386/$lib \
+						../iPhoneSimulator/x86_64/$lib \
 						-o ../ios/$renamedLib
 				fi
 			done
@@ -450,8 +450,9 @@ function build() {
 			    	echo "Strip Successful for ${SLOG}"
 			    fi
 			done
+			cd ../../
 		fi
-		cd ../../
+		
 
 		echo "--------------------"
 		echo "Reseting changed files back to originals"

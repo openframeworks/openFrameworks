@@ -114,7 +114,7 @@ function build() {
 		local IOS_ARCHS
         if [ "${TYPE}" == "tvos" ]; then 
             IOS_ARCHS="arm64 x86_64"
-        elif [ "$TYPE" == "ios"]; then
+        elif [ "$TYPE" == "ios" ]; then
             IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
         fi
 
@@ -129,7 +129,7 @@ function build() {
 		SDKVERSION=""
         if [ "${TYPE}" == "tvos" ]; then 
             SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`
-        elif [ "$TYPE" == "ios"]; then
+        elif [ "$TYPE" == "ios" ]; then
             SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
         fi
 
@@ -179,13 +179,13 @@ function build() {
 			then
 	            if [ "${TYPE}" == "tvos" ]; then 
 	                PLATFORM="AppleTVSimulator"
-	            elif [ "$TYPE" == "ios"]; then
+	            elif [ "$TYPE" == "ios" ]; then
 	                PLATFORM="iPhoneSimulator"
 	            fi
 			else
 	            if [ "${TYPE}" == "tvos" ]; then 
 	                PLATFORM="AppleTVOS"
-	            elif [ "$TYPE" == "ios"]; then
+	            elif [ "$TYPE" == "ios" ]; then
 	                PLATFORM="iPhoneOS"
 	            fi
 			fi
@@ -205,7 +205,7 @@ function build() {
 			    if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
 			    	MIN_TYPE=-mtvos-version-min=
 			    fi
-	        elif [ "$TYPE" == "ios"]; then
+	        elif [ "$TYPE" == "ios" ]; then
 	            MIN_TYPE=-miphoneos-version-min=
 	            if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
 	                MIN_TYPE=-mios-simulator-version-min=
@@ -291,7 +291,7 @@ function build() {
 						libfreetype-x86_64.a \
 						-output libfreetype.a \
 				 	>> "${LOG}" 2>&1
-		elif [ "$TYPE" == "ios"]; then
+		elif [ "$TYPE" == "ios" ]; then
 			# libfreetype-armv7s.a  \
 			lipo -create libfreetype-armv7.a \
 						libfreetype-arm64.a \

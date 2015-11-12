@@ -68,9 +68,9 @@ function build() {
 		export TARGET_IOS
         
         local IOS_ARCHS
-        if [ "${TYPE}" == "tvos" ]; then 
+        if [[ "${TYPE}" == "tvos" ]]; then 
             IOS_ARCHS="x86_64 arm64"
-        elif [ "$TYPE" == "ios"]; then
+        elif [[ "$TYPE" == "ios" ]]; then
             IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
         fi
 
@@ -80,9 +80,9 @@ function build() {
         echo $CURRENTPATH
 
 		SDKVERSION=""
-        if [ "${TYPE}" == "tvos" ]; then 
+        if [[ "${TYPE}" == "tvos" ]]; then 
             SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`
-        elif [ "$TYPE" == "ios"]; then
+        elif [[ "$TYPE" == "ios" ]]; then
             SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
         fi
 
@@ -136,13 +136,13 @@ function build() {
             then
                 if [ "${TYPE}" == "tvos" ]; then 
                     PLATFORM="AppleTVSimulator"
-                elif [ "$TYPE" == "ios"]; then
+                elif [ "$TYPE" == "ios" ]; then
                     PLATFORM="iPhoneSimulator"
                 fi
             else
                 if [ "${TYPE}" == "tvos" ]; then 
                     PLATFORM="AppleTVOS"
-                elif [ "$TYPE" == "ios"]; then
+                elif [ "$TYPE" == "ios" ]; then
                     PLATFORM="iPhoneOS"
                 fi
             fi
@@ -160,13 +160,13 @@ function build() {
             elif [ "${IOS_ARCH}" == "i386" ]; then
                 MIN_IOS_VERSION=7.0 # 6.0 to prevent start linking errors
             fi
-
+            MIN_TYPE=-miphoneos-version-min=
             if [ "${TYPE}" == "tvos" ]; then 
                 MIN_TYPE=-mtvos-version-min=
                 if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
                     MIN_TYPE=-mtvos-simulator-version-min=
                 fi
-            elif [ "$TYPE" == "ios"]; then
+            elif [ "$TYPE" == "ios" ]; then
                 MIN_TYPE=-miphoneos-version-min=
                 if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
                     MIN_TYPE=-mios-simulator-version-min=
