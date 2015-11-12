@@ -108,6 +108,7 @@ REL_FORMULAS_DIR=formulas
 REL_BUILD_DIR=build
 REL_LIBS_DIR=../../libs
 REL_ADDONS_DIR=../../addons
+CHECKOUT=YES
 
 # ansi console escape codes
 CON_DEFAULT="\033[0m"
@@ -916,7 +917,7 @@ function apothecaryDependencies() {
 }
 
 function  dump_output() {
-	if [ -z ${$BUILD_OUTPUT+x} ]; then
+	if [ -z ${$BUILD_OUTPUT} ]; then
 		echo "BUILD_OUTPUT not set."
 	else 
 		echo Tailing the last 500 lines of output:
@@ -927,7 +928,7 @@ function  error_handler() {
 	echo ERROR: An error was encountered with the build.
 	dump_output
 	# nicely terminate the ping output loop
-	if [ -z ${PING_LOOP_PID+x} ]; then
+	if [ -z ${PING_LOOP_PID} ]; then
 		echo "Loop PID not set."
 	else 
 		kill $PING_LOOP_PID

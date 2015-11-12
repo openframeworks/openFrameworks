@@ -362,12 +362,9 @@ function build() {
             if [ "${TYPE}" == "tvos" ]; then
 
             # Patch apps/speed.c to not use fork() since it's not available on tvOS
-                export LC_CTYPE=C 
-                export LANG=C 
-                sed -i -- 's/define HAVE_FORK 1/define HAVE_FORK 0/' "apps/speed.c"
+                LC_ALL=C sed -i -- 's/define HAVE_FORK 1/define HAVE_FORK 0/' "apps/speed.c"
                 # Patch Configure to build for tvOS, not iOS
-                export LANG=C 
-                sed -i -- 's/D\_REENTRANT\:iOS/D\_REENTRANT\:tvOS/' "Configure"
+                LC_ALL=C sed -i -- 's/D\_REENTRANT\:iOS/D\_REENTRANT\:tvOS/' "Configure"
                 chmod u+x ./Configure 
             #     export LC_CTYPE=C 
             #     export LANG=C
@@ -398,8 +395,8 @@ function build() {
                     LC_CTYPE=C
                 fi
 
-				sed -ie "s!\"debug-darwin-i386-cc\",\"cc:-arch i386 -g3!\"debug-darwin-i386-cc\",\"$THECOMPILER:-arch i386 -g3!" Configure
-				sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"$THECOMPILER:-arch x86_64 -O3!" Configure
+				LC_ALL=C sed -ie "s!\"debug-darwin-i386-cc\",\"cc:-arch i386 -g3!\"debug-darwin-i386-cc\",\"$THECOMPILER:-arch i386 -g3!" Configure
+				LC_ALL=C sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"$THECOMPILER:-arch x86_64 -O3!" Configure
 
                 # reset LANG if it was defined
 				if test ${OLD_LANG+defined};
@@ -415,7 +412,7 @@ function build() {
 
 			else
 				cp "crypto/ui/ui_openssl.c" "crypto/ui/ui_openssl.c.orig"
-				sed -ie "s!static volatile sig_atomic_t intr_signal;!static volatile intr_signal;!" "crypto/ui/ui_openssl.c"
+				LC_ALL=C sed -ie "s!static volatile sig_atomic_t intr_signal;!static volatile intr_signal;!" "crypto/ui/ui_openssl.c"
 				if [ "${TYPE}" == "tvos" ]; then 
                     PLATFORM="AppleTVOS"
                 elif [ "$TYPE" == "ios" ]; then
@@ -436,7 +433,7 @@ function build() {
                     LC_CTYPE=C
                 fi
 
-				sed -ie "s!\"iphoneos-cross\",\"llvm-gcc:-O3!\"iphoneos-cross\",\"$THECOMPILER:-Os!" Configure
+				LC_ALL=C sed -ie "s!\"iphoneos-cross\",\"llvm-gcc:-O3!\"iphoneos-cross\",\"$THECOMPILER:-Os!" Configure
 
                 # reset LANG if it was defined
 				if test ${OLD_LANG+defined};
@@ -524,7 +521,7 @@ function build() {
                 LC_CTYPE=C
             fi
 
-			sed -ie "s!^CFLAG=!CFLAG=-isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -arch $IOS_ARCH -Os -fPIC $BITCODE -stdlib=libc++ $MIN_TYPE$MIN_IOS_VERSION !" Makefile
+			LC_ALL=C sed -ie "s!^CFLAG=!CFLAG=-isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -arch $IOS_ARCH -Os -fPIC $BITCODE -stdlib=libc++ $MIN_TYPE$MIN_IOS_VERSION !" Makefile
 
             # reset LANG if it was defined
 			if test ${OLD_LANG+defined};
@@ -675,7 +672,9 @@ function copy() {
 	# opensslconf.h that detects the platform and includes the 
 	# correct one. Then every platform checkouts the rest of the config
 	# files that were deleted here
-	mv include/openssl/opensslconf.h include/openssl/opensslconf_${TYPE}.h
+    if [ -f include/openssl/opensslconf.h]; then
+	   mv include/openssl/opensslconf.h include/openssl/opensslconf_${TYPE}.h
+    fi
     cp -RHv include/openssl/* $1/include/openssl/
     cp -v $FORMULA_DIR/opensslconf.h $1/include/openssl/opensslconf.h
 
