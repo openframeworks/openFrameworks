@@ -313,7 +313,7 @@ function build() {
         local IOS_ARCHS
         if [ "${TYPE}" == "tvos" ]; then 
             IOS_ARCHS="x86_64 arm64"
-        elif [ "$TYPE" == "ios"]; then
+        elif [ "$TYPE" == "ios" ]; then
             IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
         fi
 		local STDLIB="libc++"
@@ -321,7 +321,7 @@ function build() {
         SDKVERSION=""
         if [ "${TYPE}" == "tvos" ]; then 
             SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`
-        elif [ "$TYPE" == "ios"]; then
+        elif [ "$TYPE" == "ios" ]; then
             SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
         fi
 
@@ -376,7 +376,7 @@ function build() {
 			then
 				if [ "${TYPE}" == "tvos" ]; then 
                     PLATFORM="AppleTVSimulator"
-                elif [ "$TYPE" == "ios"]; then
+                elif [ "$TYPE" == "ios" ]; then
                     PLATFORM="iPhoneSimulator"
                 fi
 
@@ -414,7 +414,7 @@ function build() {
 				sed -ie "s!static volatile sig_atomic_t intr_signal;!static volatile intr_signal;!" "crypto/ui/ui_openssl.c"
 				if [ "${TYPE}" == "tvos" ]; then 
                     PLATFORM="AppleTVOS"
-                elif [ "$TYPE" == "ios"]; then
+                elif [ "$TYPE" == "ios" ]; then
                     PLATFORM="iPhoneOS"
                 fi
 
@@ -499,7 +499,7 @@ function build() {
                 if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
                     MIN_TYPE=-mtvos-simulator-version-min=
                 fi
-            elif [ "$TYPE" == "ios"]; then
+            elif [ "$TYPE" == "ios" ]; then
                 MIN_TYPE=-miphoneos-version-min=
                 if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
                     MIN_TYPE=-mios-simulator-version-min=
@@ -583,7 +583,7 @@ function build() {
             lipo -create arm64/ssl.a \
                         x86_64/ssl.a \
                         -output ssl.a
-        elif [ "$TYPE" == "ios"]; then
+        elif [ "$TYPE" == "ios" ]; then
     		lipo -create armv7/crypto.a \
     					arm64/crypto.a \
     					i386/crypto.a \
@@ -683,19 +683,27 @@ function copy() {
 	if [ "$TYPE" == "osx" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/$TYPE/*.a $1/lib/$TYPE
-		git checkout $1/include/openssl/opensslconf_osx.h
-        git checkout $1/include/openssl/opensslconf_ios.h
-    	git checkout $1/include/openssl/opensslconf_android.h
-    	git checkout $1/include/openssl/opensslconf_vs.h
-    	git checkout $1/include/openssl/opensslconf_win32.h
+        if [[ "$CHECKOUT" == "NO" ]]; then 
+            echo "no git checkout"
+        else 
+    		git checkout $1/include/openssl/opensslconf_osx.h
+            git checkout $1/include/openssl/opensslconf_ios.h
+        	git checkout $1/include/openssl/opensslconf_android.h
+        	git checkout $1/include/openssl/opensslconf_vs.h
+        	git checkout $1/include/openssl/opensslconf_win32.h
+        fi
 	elif [[ "$TYPE" == "ios" || "${TYPE}" == "tvos" ]] ; then
 	 	mkdir -p $1/lib/$TYPE
 	 	cp -v lib/$TYPE/*.a $1/lib/$TYPE
-		git checkout $1/include/openssl/opensslconf_osx.h
-        git checkout $1/include/openssl/opensslconf_ios.h
-    	git checkout $1/include/openssl/opensslconf_android.h
-    	git checkout $1/include/openssl/opensslconf_vs.h
-    	git checkout $1/include/openssl/opensslconf_win32.h
+        if [[ "$CHECKOUT" == "NO" ]]; then 
+            echo "no git checkout"
+        else 
+    		git checkout $1/include/openssl/opensslconf_osx.h
+            git checkout $1/include/openssl/opensslconf_ios.h
+        	git checkout $1/include/openssl/opensslconf_android.h
+        	git checkout $1/include/openssl/opensslconf_vs.h
+        	git checkout $1/include/openssl/opensslconf_win32.h
+        fi
 	elif [ "$TYPE" == "vs" ] ; then	 
 		if [ $ARCH == 32 ] ; then
 			rm -rf $1/lib/$TYPE/Win32

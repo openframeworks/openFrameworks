@@ -217,9 +217,9 @@ function build() {
     # This was quite helpful as a reference: https://github.com/x2on/OpenSSL-for-iPhone
     # Refer to the other script if anything drastic changes for future versions
     SDKVERSION=""
-    if [ "${TYPE}" == "tvos" ]; then 
+    if [[ "${TYPE}" == "tvos" ]]; then 
         SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`
-    elif [ "$TYPE" == "ios"]; then
+    elif [[ "$TYPE" == "ios" ]]; then
         SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
     fi
     set -e
@@ -230,9 +230,9 @@ function build() {
     VERSION=$VER
 
     local IOS_ARCHS
-    if [ "${TYPE}" == "tvos" ]; then 
+    if [[ "${TYPE}" == "tvos" ]]; then 
         IOS_ARCHS="x86_64 arm64"
-    elif [ "$TYPE" == "ios"]; then
+    elif [[ "$TYPE" == "ios" ]]; then
         IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
     fi
 
@@ -272,16 +272,16 @@ function build() {
   
       if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
         MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
-      elif [ "${IOS_ARCH}" == "i386" ]; then
+      elif [[ "${IOS_ARCH}" == "i386" ]]; then
         MIN_IOS_VERSION=7.0 # 6.0 to prevent start linking errors
       fi
 
-      if [ "${TYPE}" == "tvos" ]; then 
+      if [[ "${TYPE}" == "tvos" ]]; then 
       MIN_TYPE=-mtvos-version-min=
       if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
         MIN_TYPE=-mtvos-simulator-version-min=
       fi
-      elif [ "$TYPE" == "ios"]; then
+      elif [[ "$TYPE" == "ios" ]]; then
           MIN_TYPE=-miphoneos-version-min=
           if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
               MIN_TYPE=-mios-simulator-version-min=
@@ -293,18 +293,18 @@ function build() {
 
       if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
       then
-        if [ "${TYPE}" == "tvos" ]; then 
+        if [[ "${TYPE}" == "tvos" ]]; then 
             PLATFORM="AppleTVSimulator"
             ISSIM="TRUE"
-        elif [ "$TYPE" == "ios"]; then
+        elif [[ "$TYPE" == "ios" ]]; then
             PLATFORM="iPhoneSimulator"
             ISSIM="TRUE"
         fi
       else
-        if [ "${TYPE}" == "tvos" ]; then 
+        if [[ "${TYPE}" == "tvos" ]]; then 
             PLATFORM="AppleTVOS"
             ISSIM="FALSE"
-        elif [ "$TYPE" == "ios"]; then
+        elif [[ "$TYPE" == "ios" ]]; then
             PLATFORM="iPhoneOS"
             ISSIM="FALSE"
         fi
@@ -446,7 +446,7 @@ function build() {
     mkdir -p lib/$TYPE
     echo "--------------------"
     echo "Creating Fat Libs"
-    cd build/iOS
+    cd "build/$TYPE"
     # link into universal lib, strip "lib" from filename
     local lib
     rm -rf arm64/lib/pkgconfig
