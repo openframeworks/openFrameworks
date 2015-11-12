@@ -312,7 +312,7 @@ function build() {
 		cd ../../
 		lipo -info lib/$TYPE/libfreetype.a
 
-		if [ "$TYPE" == "ios"]; then
+		if [[ "$TYPE" == "ios" ]]; then
 			echo "--------------------"
 			echo "Stripping any lingering symbols"
 
