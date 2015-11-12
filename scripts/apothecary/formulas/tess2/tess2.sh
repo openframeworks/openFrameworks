@@ -299,7 +299,7 @@ function build() {
 		mv builddir/$TYPE/libtess2.a lib/$TYPE/libtess2.a
 		lipo -info lib/$TYPE/libtess2.a
 
-		if [ "$TYPE" == "ios"]; then
+		if [[ "$TYPE" == "ios" ]]; then
 			echo "--------------------"
 			echo "Stripping any lingering symbols"
 

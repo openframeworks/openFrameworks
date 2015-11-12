@@ -239,7 +239,7 @@ function build() {
 		lipo -c "build/$TYPE/i386/lib/libssl.a" "build/$TYPE/x86_64/lib/libssl.a" -o "lib/$TYPE/ssl.a"
 
         cd lib/$TYPE
-        if [ "$TYPE" == "ios"]; then
+        if [[ "$TYPE" == "ios" ]]; then
             SLOG="$CURRENTPATH/lib/$TYPE-stripping.log"
             local TOBESTRIPPED
             for TOBESTRIPPED in $( ls -1) ; do
