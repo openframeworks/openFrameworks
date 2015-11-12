@@ -312,19 +312,21 @@ function build() {
 		cd ../../
 		lipo -info lib/$TYPE/libfreetype.a
 
-		echo "--------------------"
-		echo "Stripping any lingering symbols"
+		if [ "$TYPE" == "ios"]; then
+			echo "--------------------"
+			echo "Stripping any lingering symbols"
 
-		SLOG="$CURRENTPATH/lib/$TYPE/freetype-stripping.log"
+			SLOG="$CURRENTPATH/lib/$TYPE/freetype-stripping.log"
 
-		strip -x lib/$TYPE/libfreetype.a >> "${SLOG}" 2>&1
-		if [ $? != 0 ];
-		then 
-			tail -n 100 "${SLOG}"
-		    echo "Problem while stripping lib - Please check ${SLOG}"
-		    exit 1
-		else
-		    echo "Strip Successful for ${SLOG}"
+			strip -x lib/$TYPE/libfreetype.a >> "${SLOG}" 2>&1
+			if [ $? != 0 ];
+			then 
+				tail -n 100 "${SLOG}"
+			    echo "Problem while stripping lib - Please check ${SLOG}"
+			    exit 1
+			else
+			    echo "Strip Successful for ${SLOG}"
+			fi
 		fi
 
 		echo "--------------------"

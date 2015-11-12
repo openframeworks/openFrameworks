@@ -255,9 +255,11 @@ EOF
 	        fi
 
 	        echo "---------------"
-	        echo "Now strip the binary"
-	        strip -x $OUTPUT_DIR_LIB/boost_$NAME.a
-	        echo "---------------"
+	        if [[ "$TYPE" == "ios" ]]; then
+		        echo "Now strip the binary"
+		        strip -x $OUTPUT_DIR_LIB/boost_$NAME.a
+		        echo "---------------"
+	   		fi
 	    done
 	    echo "done"
 		echo "---------------"
