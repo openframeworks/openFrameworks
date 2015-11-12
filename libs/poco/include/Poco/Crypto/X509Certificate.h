@@ -128,7 +128,7 @@ public:
 		/// certificate.
 		///
 		/// Returns true if verification against the issuer certificate
-		/// was successfull, false otherwise.
+		/// was successful, false otherwise.
 
 	const X509* certificate() const;
 		/// Returns the underlying OpenSSL certificate.

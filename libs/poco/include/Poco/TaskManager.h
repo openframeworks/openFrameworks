@@ -26,6 +26,7 @@
 #include "Poco/AutoPtr.h"
 #include "Poco/NotificationCenter.h"
 #include "Poco/Timestamp.h"
+#include "Poco/ThreadPool.h"
 #include <list>
 
 
@@ -33,7 +34,6 @@ namespace Poco {
 
 
 class Notification;
-class ThreadPool;
 class Exception;
 
 
@@ -52,7 +52,7 @@ public:
 	typedef AutoPtr<Task>      TaskPtr;
 	typedef std::list<TaskPtr> TaskList;
 
-	TaskManager();
+	TaskManager(ThreadPool::ThreadAffinityPolicy affinityPolicy = ThreadPool::TAP_DEFAULT);
 		/// Creates the TaskManager, using the
 		/// default ThreadPool.
 
@@ -63,10 +63,10 @@ public:
 	~TaskManager();
 		/// Destroys the TaskManager.
 
-	void start(Task* pTask);
+	void start(Task* pTask, int cpu = -1);
 		/// Starts the given task in a thread obtained
-		/// from the thread pool.
-		///
+		/// from the thread pool,
+		/// on specified cpu.
 		/// The TaskManager takes ownership of the Task object
 		/// and deletes it when it it finished.
 

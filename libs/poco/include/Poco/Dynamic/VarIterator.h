@@ -143,7 +143,7 @@ namespace std
 	template<>
 	inline void swap<Poco::Dynamic::VarIterator>(Poco::Dynamic::VarIterator& s1, 
 		Poco::Dynamic::VarIterator& s2)
-		/// Full template specalization of std:::swap for VarIterator
+		/// Full template specialization of std:::swap for VarIterator
 	{
 		s1.swap(s2);
 	}

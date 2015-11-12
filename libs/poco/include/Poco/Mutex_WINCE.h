@@ -30,8 +30,15 @@ namespace Poco {
 
 class Foundation_API MutexImpl
 {
+public:
+	enum MutexTypeImpl
+	{
+		MUTEX_RECURSIVE_IMPL,
+		MUTEX_NONRECURSIVE_IMPL,
+	};
+
 protected:
-	MutexImpl();
+	explicit MutexImpl(MutexTypeImpl type);
 	~MutexImpl();
 	void lockImpl();
 	bool tryLockImpl();
@@ -40,10 +47,28 @@ protected:
 	
 private:
 	HANDLE _mutex;
+	int _lockCount;
+	const bool _recursive;
+
+private:
+	MutexImpl(const MutexImpl&);
+	MutexImpl& operator = (const MutexImpl&);
 };
 
 
-typedef MutexImpl FastMutexImpl;
+class Foundation_API FastMutexImpl
+{
+protected:
+	FastMutexImpl();
+	~FastMutexImpl();
+	void lockImpl();
+	bool tryLockImpl();
+	bool tryLockImpl(long milliseconds);
+	void unlockImpl();
+	
+private:
+	HANDLE _mutex;
+};
 
 
 } // namespace Poco

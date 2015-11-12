@@ -53,7 +53,7 @@ class RecursiveDirectoryIterator
 	/// The class can follow different traversal strategies:
 	///     * depth-first strategy;
 	///     * siblings-first strategy.
-	/// The stategies are set by template parameter.
+	/// The strategies are set by template parameter.
 	/// There are two corresponding typedefs:
 	///     * SimpleRecursiveDirectoryIterator;
 	///     * SiblingsFirstRecursiveDirectoryIterator.
@@ -66,9 +66,8 @@ public:
 
 	enum
 	{
-		D_INFINITE = 0
+		D_INFINITE = 0 /// Constant for infinite traverse depth.
 	};
-		/// Constant for infinite traverse depth.
 
 	RecursiveDirectoryIterator()
 		/// Creates the end iterator.
@@ -76,31 +75,34 @@ public:
 	{
 	}
 
-	RecursiveDirectoryIterator(const std::string& path, UInt16 maxDepth = D_INFINITE);
+	RecursiveDirectoryIterator(const std::string& path, UInt16 maxDepth = D_INFINITE)
 		/// Creates a recursive directory iterator for the given path.
-
-	RecursiveDirectoryIterator(const MyType& iterator)
-		/// Creates a copy of another recursive directory iterator.
-		: _pImpl(iterator._pImpl), _path(iterator._path), _file(iterator._file)
+		: _pImpl(new ImplType(path, maxDepth)), _path(Path(_pImpl->get())), _file(_path)
 	{
 	}
 
-	RecursiveDirectoryIterator(const DirectoryIterator& iterator, UInt16 maxDepth = D_INFINITE)
+	RecursiveDirectoryIterator(const MyType& iterator):
+		/// Creates a copy of another recursive directory iterator.
+		_pImpl(iterator._pImpl), _path(iterator._path), _file(iterator._file)
+	{
+	}
+
+	RecursiveDirectoryIterator(const DirectoryIterator& iterator, UInt16 maxDepth = D_INFINITE):
 		/// Creates a recursive directory iterator for the path of
 		/// non-recursive directory iterator.
-		: _pImpl(new ImplType(iterator->path(), maxDepth)), _path(Path(_pImpl->get())), _file(_path)
+		_pImpl(new ImplType(iterator->path(), maxDepth)), _path(Path(_pImpl->get())), _file(_path)
 	{
 	}
 
-	RecursiveDirectoryIterator(const File& file, UInt16 maxDepth = D_INFINITE)
+	RecursiveDirectoryIterator(const File& file, UInt16 maxDepth = D_INFINITE):
 		/// Creates a recursive directory iterator for the given path.
-		: _pImpl(new ImplType(file.path(), maxDepth)), _path(Path(_pImpl->get())), _file(_path)
+		_pImpl(new ImplType(file.path(), maxDepth)), _path(Path(_pImpl->get())), _file(_path)
 	{
 	}
 
-	RecursiveDirectoryIterator(const Path& path, UInt16 maxDepth = D_INFINITE)
+	RecursiveDirectoryIterator(const Path& path, UInt16 maxDepth = D_INFINITE):
 		/// Creates a recursive directory iterator for the given path.
-		: _pImpl(new ImplType(path.toString(), maxDepth)), _path(Path(_pImpl->get())), _file(_path)
+		_pImpl(new ImplType(path.toString(), maxDepth)), _path(Path(_pImpl->get())), _file(_path)
 	{
 	}
 

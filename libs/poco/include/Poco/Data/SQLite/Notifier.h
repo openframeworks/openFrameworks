@@ -46,7 +46,7 @@ class SQLite_API Notifier
 	/// 
 	/// There can be only one set of callbacks per session (i.e. registering a new
 	/// callback automatically unregisters the previous one). All callbacks are 
-	/// registered and enabled at Notifier contruction time and can be disabled
+	/// registered and enabled at Notifier construction time and can be disabled
 	/// at a later point time.
 {
 public:
@@ -119,9 +119,9 @@ public:
 		/// and triggers the event.
 
 	static int sqliteCommitCallbackFn(void* pVal);
-		/// Commit callback event dispatcher. If an exception occurs, it is catched inside this function,
+		/// Commit callback event dispatcher. If an exception occurs, it is caught inside this function,
 		/// non-zero value is returned, which causes SQLite engine to turn commit into a rollback.
-		/// Therefore, callers should check for return value - if it is zero, callback completed succesfuly
+		/// Therefore, callers should check for return value - if it is zero, callback completed successfuly
 		/// and transaction was committed.
 
 	static void sqliteRollbackCallbackFn(void* pVal);

@@ -117,6 +117,7 @@ inline void BSONReader::read<Binary::Ptr>(Binary::Ptr& to)
 template<>
 inline void BSONWriter::write<Binary::Ptr>(Binary::Ptr& from)
 {
+	_writer << (Poco::Int32) from->buffer().size();
 	_writer << from->subtype();
 	_writer.writeRaw((char*) from->buffer().begin(), from->buffer().size());
 }

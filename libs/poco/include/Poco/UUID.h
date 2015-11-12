@@ -46,10 +46,12 @@ class Foundation_API UUID
 public:
 	enum Version
 	{
-		UUID_TIME_BASED = 0x01,
-		UUID_DCE_UID    = 0x02,
-		UUID_NAME_BASED = 0x03,
-		UUID_RANDOM     = 0x04
+		UUID_TIME_BASED      = 0x01,
+		UUID_DCE_UID         = 0x02,
+		UUID_NAME_BASED      = 0x03,
+		UUID_RANDOM          = 0x04,
+		UUID_NAME_BASED_SHA1 = 0x05
+		
 	};
 
 	UUID();
@@ -141,7 +143,7 @@ protected:
 	static void appendHex(std::string& str, UInt8 n);
 	static void appendHex(std::string& str, UInt16 n);
 	static void appendHex(std::string& str, UInt32 n);
-	static UInt8 nibble(char hex);
+	static Int16 nibble(char hex);
 	void fromNetwork();
 	void toNetwork();
 

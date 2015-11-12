@@ -35,7 +35,7 @@ public:
 	StreamSocketImpl();
 		/// Creates a StreamSocketImpl.
 
-	explicit StreamSocketImpl(IPAddress::Family addressFamily);
+	explicit StreamSocketImpl(SocketAddress::Family addressFamily);
 		/// Creates a SocketImpl, with the underlying
 		/// socket initialized for the given address family.
 		

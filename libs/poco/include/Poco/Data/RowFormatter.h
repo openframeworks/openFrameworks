@@ -40,7 +40,7 @@ class Data_API RowFormatter
 	/// Row formatter can be either passed to the RecordSet at construction time,
 	/// like in the following example:
 	///
-	/// RecordSet rs(session. "SELECT * FROM Table", new MyRowFormater);
+	/// RecordSet rs(session, "SELECT * FROM Table", new MyRowFormater);
 	///
 	/// or it can be supplied to the statement as in the following example:
 	///
@@ -51,9 +51,9 @@ class Data_API RowFormatter
 	/// Statement always has the ownership of the row formatter and shares
 	/// it with rows through RecordSet.
 	///
-	/// To accomodate for various formatting needs, a formatter can operate in two modes:
+	/// To accommodate for various formatting needs, a formatter can operate in two modes:
 	/// 
-	///	  - progressive: formatted individual row strings are gemerated and returned from each 
+	///	  - progressive: formatted individual row strings are generated and returned from each 
 	///     call to formatValues;
 	///     std::string& formatNames(const NameVecPtr, std::string&) and
 	///     std::string& formatValues(const ValueVec&, std::string&) member calls should be
@@ -65,7 +65,7 @@ class Data_API RowFormatter
 	///     void formatValues(const ValueVec&) member calls should be used in this case
 	///
 	/// When formatter is used in conjunction with Row/RecordSet, the formatting members corresponding
-	/// to the formater mode are expected to be implemented. If a call is propagated to this parent
+	/// to the formatter mode are expected to be implemented. If a call is propagated to this parent
 	/// class, the functions do nothing or silently return empty string respectively.
 	///
 {
@@ -134,10 +134,10 @@ public:
 		/// to empty strings and row count to INVALID_ROW_COUNT.
 
 	Mode getMode() const;
-		/// Returns the formater mode.
+		/// Returns the formatter mode.
 
 	void setMode(Mode mode);
-		/// Sets the fromatter mode.
+		/// Sets the formatter mode.
 
 protected:
 
@@ -146,6 +146,12 @@ protected:
 
 	void setPostfix(const std::string& postfix);
 		/// Sets the postfix for the formatter
+
+	virtual void adjustPrefix();
+		/// Adjusts prefix after it has been set.
+		/// No-op here, called by setTotalRowCount and
+		/// should be implemented by inheriting classes, 
+		/// if needed.
 
 private:
 
@@ -174,6 +180,7 @@ inline int RowFormatter::getTotalRowCount() const
 inline void RowFormatter::setTotalRowCount(int count)
 {
 	_totalRowCount = count;
+	adjustPrefix();
 }
 
 
@@ -210,6 +217,11 @@ inline RowFormatter::Mode RowFormatter::getMode() const
 inline void RowFormatter::setMode(Mode mode)
 {
 	_mode = mode;
+}
+
+
+inline void RowFormatter::adjustPrefix()
+{
 }
 
 

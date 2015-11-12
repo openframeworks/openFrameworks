@@ -38,14 +38,20 @@ class Util_API WinRegistryKey
 public:
 	typedef std::vector<std::string> Keys;
 	typedef std::vector<std::string> Values;
-	
-	enum Type 
+
+	enum Type
 	{
-		REGT_NONE = 0, 
-		REGT_STRING = 1, 
-		REGT_STRING_EXPAND = 2, 
+		REGT_NONE = 0,
+		REGT_STRING = 1,
+		REGT_STRING_EXPAND = 2,
 		REGT_BINARY = 3,
-		REGT_DWORD = 4, 
+		REGT_DWORD = 4,
+		REGT_DWORD_BIG_ENDIAN = 5,
+		REGT_LINK = 6,
+		REGT_MULTI_STRING = 7,
+		REGT_RESOURCE_LIST = 8,
+		REGT_FULL_RESOURCE_DESCRIPTOR = 9,
+		REGT_RESOURCE_REQUIREMENTS_LIST = 10,
 		REGT_QWORD = 11
 	};
 
@@ -78,7 +84,7 @@ public:
 	void setString(const std::string& name, const std::string& value);
 		/// Sets the string value (REG_SZ) with the given name.
 		/// An empty name denotes the default value.
-		
+
 	std::string getString(const std::string& name);
 		/// Returns the string value (REG_SZ) with the given name.
 		/// An empty name denotes the default value.
@@ -88,7 +94,7 @@ public:
 	void setStringExpand(const std::string& name, const std::string& value);
 		/// Sets the expandable string value (REG_EXPAND_SZ) with the given name.
 		/// An empty name denotes the default value.
-		
+
 	std::string getStringExpand(const std::string& name);
 		/// Returns the string value (REG_EXPAND_SZ) with the given name.
 		/// An empty name denotes the default value.
@@ -97,7 +103,7 @@ public:
 		///
 		/// Throws a NotFoundException if the value does not exist.
 
-	void setBinary(const std::string& name, const std::vector<char>& value); 
+	void setBinary(const std::string& name, const std::vector<char>& value);
 		/// Sets the string value (REG_BINARY) with the given name.
 		/// An empty name denotes the default value.
 
@@ -110,7 +116,7 @@ public:
 	void setInt(const std::string& name, int value);
 		/// Sets the numeric (REG_DWORD) value with the given name.
 		/// An empty name denotes the default value.
-		
+
 	int getInt(const std::string& name);
 		/// Returns the numeric value (REG_DWORD) with the given name.
 		/// An empty name denotes the default value.
@@ -144,7 +150,7 @@ public:
 
 	Type type(const std::string& name);
 		/// Returns the type of the key value.
-		
+
 	bool exists(const std::string& name);
 		/// Returns true iff the given value exists under that key.
 
@@ -153,7 +159,7 @@ public:
 
 	void values(Values& vals);
 		/// Appends all value names to vals;
-		
+
 	bool isReadOnly() const;
 		/// Returns true iff the key has been opened for read-only access only.
 
@@ -162,6 +168,7 @@ protected:
 	void close();
 	std::string key() const;
 	std::string key(const std::string& valueName) const;
+	HKEY handle();
 	void handleSetError(const std::string& name);
 	static HKEY handleFor(const std::string& rootKey);
 
@@ -169,7 +176,7 @@ private:
 	WinRegistryKey();
 	WinRegistryKey(const WinRegistryKey&);
 	WinRegistryKey& operator = (const WinRegistryKey&);
-	
+
 	HKEY        _hRootKey;
 	std::string _subKey;
 	HKEY        _hKey;

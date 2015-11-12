@@ -160,11 +160,11 @@ public:
 		/// on a Saturday, week 1 will be the week starting on Monday, January 3.
 		/// January 1 and 2 will fall within week 0 (or the last week of the previous year).
 		///
-		/// For 2007, which starts on a Monday, week 1 will be the week startung on Monday, January 1.
+		/// For 2007, which starts on a Monday, week 1 will be the week starting on Monday, January 1.
 		/// There will be no week 0 in 2007.
 	
 	int day() const;
-		/// Returns the day witin the month (1 to 31).
+		/// Returns the day within the month (1 to 31).
 		
 	int dayOfWeek() const;
 		/// Returns the weekday (0 to 6, where
@@ -247,7 +247,7 @@ protected:
 		/// Computes the Julian day for an UTC time.
 	
 	static double toJulianDay(int year, int month, int day, int hour = 0, int minute = 0, int second = 0, int millisecond = 0, int microsecond = 0);
-		/// Computes the Julian day for a gregorian calendar date and time.
+		/// Computes the Julian day for a Gregorian calendar date and time.
 		/// See <http://vsg.cape.com/~pbaum/date/jdimp.htm>, section 2.3.1 for the algorithm.
 	
 	static Timestamp::UtcTimeVal toUtcTime(double julianDay);

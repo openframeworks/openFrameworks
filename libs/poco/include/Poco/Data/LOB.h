@@ -205,7 +205,7 @@ namespace std
 	template<>
 	inline void swap<Poco::Data::BLOB>(Poco::Data::BLOB& b1, 
 		Poco::Data::BLOB& b2)
-		/// Full template specalization of std:::swap for BLOB
+		/// Full template specialization of std:::swap for BLOB
 	{
 		b1.swap(b2);
 	}
@@ -213,7 +213,7 @@ namespace std
 	template<>
 	inline void swap<Poco::Data::CLOB>(Poco::Data::CLOB& c1, 
 		Poco::Data::CLOB& c2)
-		/// Full template specalization of std:::swap for CLOB
+		/// Full template specialization of std:::swap for CLOB
 	{
 		c1.swap(c2);
 	}

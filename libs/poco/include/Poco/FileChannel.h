@@ -23,6 +23,7 @@
 #include "Poco/Foundation.h"
 #include "Poco/Channel.h"
 #include "Poco/Timestamp.h"
+#include "Poco/Timespan.h"
 #include "Poco/Mutex.h"
 
 
@@ -54,7 +55,7 @@ class Foundation_API FileChannel: public Channel
 	///
 	/// The rotation strategy can be specified with the
 	/// "rotation" property, which can take one of the
-	/// follwing values:
+	/// following values:
 	///
 	///   * never:         no log rotation
 	///   * [day,][hh]:mm: the file is rotated on specified day/time
@@ -152,7 +153,7 @@ class Foundation_API FileChannel: public Channel
 	//  or whether it's allowed to stay in the system's file buffer for some time. 
 	/// Valid values are:
 	///
-	///   * true:  Every essages is immediately flushed to the log file (default).
+	///   * true:  Every message is immediately flushed to the log file (default).
 	///   * false: Messages are not immediately flushed to the log file.
 	///
 	/// The rotateOnOpen property specifies whether an existing log file should be 
@@ -243,6 +244,11 @@ protected:
 	void purge();
 
 private:
+	bool setNoPurge(const std::string& value);
+	int extractDigit(const std::string& value, std::string::const_iterator* nextToDigit = NULL) const;
+	void setPurgeStrategy(PurgeStrategy* strategy);
+	Timespan::TimeDiff extractFactor(const std::string& value, std::string::const_iterator start) const;
+
 	std::string      _path;
 	std::string      _times;
 	std::string      _rotation;

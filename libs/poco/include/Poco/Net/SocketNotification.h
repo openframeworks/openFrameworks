@@ -96,7 +96,7 @@ public:
 
 
 class Net_API TimeoutNotification: public SocketNotification
-	/// This notification is sent if no other event has occured
+	/// This notification is sent if no other event has occurred
 	/// for a specified time.
 {
 public:

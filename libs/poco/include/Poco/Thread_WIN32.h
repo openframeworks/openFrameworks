@@ -31,14 +31,14 @@ namespace Poco {
 
 class Foundation_API ThreadImpl
 {
-public:	
+public:
 	typedef DWORD TIDImpl;
 	typedef void (*Callable)(void*);
 
 #if defined(_DLL)
-	typedef DWORD (WINAPI *Entry)(LPVOID);
+	typedef DWORD (WINAPI* Entry)(LPVOID);
 #else
-	typedef unsigned (__stdcall *Entry)(void*);
+	typedef unsigned (__stdcall* Entry)(void*);
 #endif
 
 	enum Priority
@@ -55,7 +55,7 @@ public:
 		POLICY_DEFAULT_IMPL = 0
 	};
 
-	ThreadImpl();				
+	ThreadImpl();
 	~ThreadImpl();
 
 	TIDImpl tidImpl() const;
@@ -66,6 +66,8 @@ public:
 	static int getMinOSPriorityImpl(int policy);
 	static int getMaxOSPriorityImpl(int policy);
 	void setStackSizeImpl(int size);
+	void setAffinityImpl(int cpu);
+	int getAffinityImpl() const;
 	int getStackSizeImpl() const;
 	void startImpl(SharedPtr<Runnable> pTarget);
 	void joinImpl();
@@ -75,7 +77,7 @@ public:
 	static void yieldImpl();
 	static ThreadImpl* currentImpl();
 	static TIDImpl currentTidImpl();
-    
+
 protected:
 #if defined(_DLL)
 	static DWORD WINAPI runnableEntry(LPVOID pThread);
@@ -107,7 +109,7 @@ private:
 		{
 			TlsSetValue(_slot, pThread);
 		}
-	
+
 	private:
 		DWORD _slot;
 	};
@@ -117,6 +119,7 @@ private:
 	DWORD _threadId;
 	int _prio;
 	int _stackSize;
+	int _cpu;
 
 	static CurrentThreadHolder _currentThreadHolder;
 };

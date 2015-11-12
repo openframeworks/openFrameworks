@@ -80,7 +80,7 @@ class Net_API TCPServer: public Poco::Runnable
 public:
 	TCPServer(TCPServerConnectionFactory::Ptr pFactory, Poco::UInt16 portNumber = 0, TCPServerParams::Ptr pParams = 0);
 		/// Creates the TCPServer, with ServerSocket listening on the given port.
-		/// Default port is zero, allowing any availble port. The port number
+		/// Default port is zero, allowing any available port. The port number
 		/// can be queried through TCPServer::port() member.
 		///
 		/// The server takes ownership of the TCPServerConnectionFactory
