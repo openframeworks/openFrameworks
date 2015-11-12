@@ -722,6 +722,8 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
     ofPushMatrix();
     ofMultMatrix(modelMatrix);
     
+    int curRenderType = -1;
+    
     for(unsigned int i=0; i<modelMeshes.size(); i++) {
         ofxAssimpMeshHelper & mesh = modelMeshes[i];
         
@@ -747,6 +749,13 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
         
         ofEnableBlendMode(mesh.blendMode);
 #ifndef TARGET_OPENGLES
+        
+        //avoid setting it over and over again for the same type.
+        if( curRenderType != renderType ){
+            glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+            curRenderType = renderType;
+        }
+        
         mesh.vbo.drawElements(GL_TRIANGLES,mesh.indices.size());
 #else
         switch(renderType){
@@ -774,6 +783,12 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
         
         ofPopMatrix();
     }
+    
+    #ifndef TARGET_OPENGLES
+        if( curRenderType != OF_MESH_FILL ){
+            glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(OF_MESH_FILL));
+        }
+    #endif
 
     ofPopMatrix();
     ofPopStyle();
