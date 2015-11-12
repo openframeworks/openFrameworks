@@ -94,14 +94,14 @@ function build() {
 		local IOS_ARCHS
         if [ "${TYPE}" == "tvos" ]; then 
             IOS_ARCHS="x86_64 arm64"
-        elif [ "$TYPE" == "ios"]; then
+        elif [ "$TYPE" == "ios" ]; then
             IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
         fi
 
 		SDKVERSION=""
         if [ "${TYPE}" == "tvos" ]; then 
             SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`
-        elif [ "$TYPE" == "ios"]; then
+        elif [ "$TYPE" == "ios" ]; then
             SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
         fi
 
@@ -151,7 +151,7 @@ function build() {
 			MIN_TYPE=-mtvos-version-min=
 			BITCODE=-fembed-bitcode;
 			MIN_IOS_VERSION=9.0
-        elif [ "$TYPE" == "ios"]; then
+        elif [ "$TYPE" == "ios" ]; then
 	        local CROSS_TOP_IOS="${DEVELOPER}/Platforms/iPhoneOS.platform/Developer"
 			local CROSS_SDK_IOS="iPhoneOS${SDKVERSION}.sdk"
 			local CROSS_TOP_SIM="${DEVELOPER}/Platforms/iPhoneSimulator.platform/Developer"
