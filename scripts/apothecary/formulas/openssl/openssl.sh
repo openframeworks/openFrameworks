@@ -239,19 +239,21 @@ function build() {
 		lipo -c "build/$TYPE/i386/lib/libssl.a" "build/$TYPE/x86_64/lib/libssl.a" -o "lib/$TYPE/ssl.a"
 
         cd lib/$TYPE
-        SLOG="$CURRENTPATH/lib/$TYPE-stripping.log"
-        local TOBESTRIPPED
-        for TOBESTRIPPED in $( ls -1) ; do
-            strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
-            if [ $? != 0 ];
-            then
-                tail -n 100 "${SLOG}"
-                echo "Problem while stripping lib - Please check ${SLOG}"
-                exit 1
-            else
-                echo "Strip Successful for ${SLOG}"
-            fi
-        done
+        if [ "$TYPE" == "ios"]; then
+            SLOG="$CURRENTPATH/lib/$TYPE-stripping.log"
+            local TOBESTRIPPED
+            for TOBESTRIPPED in $( ls -1) ; do
+                strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
+                if [ $? != 0 ];
+                then
+                    tail -n 100 "${SLOG}"
+                    echo "Problem while stripping lib - Please check ${SLOG}"
+                    exit 1
+                else
+                    echo "Strip Successful for ${SLOG}"
+                fi
+            done
+        fi
 
         cd ../../
 		
