@@ -263,7 +263,7 @@ function build() {
 		echo "-----------------"
 		echo `pwd`
 		echo "Finished for all architectures."
-		mkdir -p "$CURRENTPATH/builddir/$TYPE/$IOS_ARCH"
+		mkdir -p "$CURRENTPATH/builddir/$TYPE/"
 		LOG="$CURRENTPATH/builddir/$TYPE/build-tess2-${VER}-lipo.log"
 
 		mkdir -p "lib/$TYPE"
