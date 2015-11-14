@@ -5,12 +5,12 @@
 # http://opencv.org
 #
 # uses a CMake build system
- 
+
 FORMULA_TYPES=( "osx" "ios" "vs" "android" "emscripten" )
- 
+
 # define the version
 VER=2.4.9
- 
+
 # tools for git use
 GIT_URL=https://github.com/Itseez/opencv.git
 GIT_TAG=$VER
@@ -22,7 +22,7 @@ local LIB_FOLDER64="$LIB_FOLDER-64"
 local LIB_FOLDER_IOS="$LIB_FOLDER-IOS"
 local LIB_FOLDER_IOS_SIM="$LIB_FOLDER-IOSIM"
 
- 
+
 # download the source code and unpack it into LIB_NAME
 function download() {
   curl -Lk https://github.com/Itseez/opencv/archive/$VER.tar.gz -o opencv-$VER.tar.gz
@@ -30,7 +30,7 @@ function download() {
   mv opencv-$VER $1
   rm opencv*.tar.gz
 }
- 
+
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
   : # noop
@@ -47,7 +47,7 @@ function prepare() {
 # executed inside the lib src dir
 function build() {
   rm -f CMakeCache.txt
- 
+
   LIB_FOLDER="$BUILD_DIR/opencv/build/$TYPE/"
 
   if [ "$TYPE" == "osx" ] ; then
@@ -113,13 +113,13 @@ function build() {
     echo "Running make install"
     make install | tee ${LOG}
     echo "Make install Successful"
-    
+
     echo "--------------------"
     echo "Joining all libs in one"
     outputlist="lib/lib*.a"
     libtool -static $outputlist -o "$LIB_FOLDER/lib/opencv.a" | tee ${LOG}
     echo "Joining all libs in one Successful"
-	
+
   elif [ "$TYPE" == "vs" ] ; then
     rm -f CMakeCache.txt
 	#LIB_FOLDER="$BUILD_DIR/opencv/build/$TYPE"
@@ -164,7 +164,7 @@ function build() {
 		-DBUILD_SHARED_LIBS=OFF \
 		-DWITH_PNG=OFF \
 		-DWITH_OPENCL=OFF \
-		-DWITH_PVAPI=OFF  | tee ${LOG} 
+		-DWITH_PVAPI=OFF  | tee ${LOG}
 		vs-build "OpenCV.sln"
 		vs-build "OpenCV.sln" Build "Debug"
 	elif [ $ARCH == 64 ] ; then
@@ -203,11 +203,11 @@ function build() {
 		-DBUILD_SHARED_LIBS=OFF \
 		-DWITH_PNG=OFF \
 		-DWITH_OPENCL=OFF \
-		-DWITH_PVAPI=OFF  | tee ${LOG} 
+		-DWITH_PVAPI=OFF  | tee ${LOG}
 		vs-build "OpenCV.sln" Build "Release|x64"
 		vs-build "OpenCV.sln" Build "Debug|x64"
 	fi
-    
+
   elif [ "$TYPE" == "ios" ] ; then
 
     local LIB_FOLDER_IOS="$BUILD_ROOT_DIR/$TYPE/iOS/opencv"
@@ -216,10 +216,10 @@ function build() {
 
     # This was quite helpful as a reference: https://github.com/x2on/OpenSSL-for-iPhone
     # Refer to the other script if anything drastic changes for future versions
-    SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version` 
+    SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
     set -e
     CURRENTPATH=`pwd`
-    
+
     DEVELOPER=$XCODE_DEV_ROOT
     TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
     VERSION=$VER
@@ -232,24 +232,24 @@ function build() {
 
 
     # Validate environment
-    case $XCODE_DEV_ROOT in  
+    case $XCODE_DEV_ROOT in
          *\ * )
                echo "Your Xcode path contains whitespaces, which is not supported."
                exit 1
               ;;
     esac
-    case $CURRENTPATH in  
+    case $CURRENTPATH in
          *\ * )
                echo "Your path contains whitespaces, which is not supported by 'make install'."
                exit 1
               ;;
-    esac 
+    esac
 
 
 
     export THECOMPILER=$TOOLCHAIN/usr/bin
-     
-    
+
+
 
       # loop through architectures! yay for loops!
     for IOS_ARCH in ${IOS_ARCHS}
@@ -266,7 +266,7 @@ function build() {
         fi
         export IPHONE_SDK_VERSION_MIN=$IOS_MIN_SDK_VER
 
-      
+
       echo "The compiler: $THECOMPILER"
       MIN_TYPE=-miphoneos-version-min=
       if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
@@ -279,7 +279,7 @@ function build() {
         ISSIM="FALSE"
       fi
 
-      
+
       export CROSS_TOP="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer"
       export CROSS_SDK="${PLATFORM}${SDKVERSION}.sdk"
       export BUILD_TOOLS="${DEVELOPER}"
@@ -447,15 +447,15 @@ function build() {
     cd ../../
 
   # end if iOS
-  
+
   elif [ "$TYPE" == "android" ]; then
     export ANDROID_NDK=${ANDROID_NDK_ROOT}
     cd platforms
     cp ${FORMULA_DIR}/android.toolchain.cmake android/
-    
+
     rm -rf build_android_arm
     rm -rf build_android_x86
-    
+
     scripts/cmake_android_arm.sh \
       -DCMAKE_BUILD_TYPE="Release" \
       -DBUILD_SHARED_LIBS=OFF \
@@ -493,7 +493,7 @@ function build() {
     cd build_android_arm
     make -j${PARALLEL_MAKE}
     cd ..
-    
+
     scripts/cmake_android_x86.sh \
       -DCMAKE_BUILD_TYPE="Release" \
       -DBUILD_SHARED_LIBS=OFF \
@@ -531,7 +531,7 @@ function build() {
     cd build_android_x86
     make -j${PARALLEL_MAKE}
     cd ..
-    
+
   elif [ "$TYPE" == "emscripten" ]; then
     mkdir -p build_${TYPE}
     cd build_${TYPE}
@@ -572,7 +572,7 @@ function build() {
       -DBUILD_PERF_TESTS=OFF
     make -j${PARALLEL_MAKE}
     make install
-  fi 
+  fi
 
 }
 
@@ -591,19 +591,19 @@ function copy() {
     # copy headers
 
     LIB_FOLDER="$BUILD_DIR/opencv/build/$TYPE/"
-    
+
     cp -R $LIB_FOLDER/include/ $1/include/
- 
+
     # copy lib
     cp -R $LIB_FOLDER/lib/opencv.a $1/lib/$TYPE/
-	
-  elif [ "$TYPE" == "vs" ] ; then 
+
+  elif [ "$TYPE" == "vs" ] ; then
 		if [ $ARCH == 32 ] ; then
 			mkdir -p $1/lib/$TYPE/Win32
 			#copy the cv libs
 			cp -v build_vs_32/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
 			cp -v build_vs_32/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
-			#copy the zlib 
+			#copy the zlib
 			cp -v build_vs_32/3rdparty/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
 			cp -v build_vs_32/3rdparty/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
 		elif [ $ARCH == 64 ] ; then
@@ -611,7 +611,7 @@ function copy() {
 			#copy the cv libs
 			cp -v build_vs_64/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
 			cp -v build_vs_64/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
-			#copy the zlib 
+			#copy the zlib
 			cp -v build_vs_64/3rdparty/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
 			cp -v build_vs_64/3rdparty/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
 		fi
@@ -627,11 +627,11 @@ function copy() {
   elif [ "$TYPE" == "android" ]; then
     cp -r include/opencv $1/include/
     cp -r include/opencv2 $1/include/
-    
+
     rm -f platforms/build_android_arm/lib/armeabi-v7a/*pch_dephelp.a
     rm -f platforms/build_android_arm/lib/armeabi-v7a/*.so
     cp -r platforms/build_android_arm/lib/armeabi-v7a $1/lib/$TYPE/
-    
+
     rm -f platforms/build_android_x86/lib/x86/*pch_dephelp.a
     rm -f platforms/build_android_x86/lib/x86/*.so
     cp -r platforms/build_android_x86/lib/x86 $1/lib/$TYPE/
@@ -643,7 +643,7 @@ function copy() {
   cp -v LICENSE $1/license/
 
 }
- 
+
 # executed inside the lib src dir
 function clean() {
   if [ "$TYPE" == "osx" ] ; then
