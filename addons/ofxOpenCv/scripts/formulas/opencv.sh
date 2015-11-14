@@ -96,28 +96,28 @@ function build() {
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
       -DBUILD_TESTS=OFF \
-      -DBUILD_PERF_TESTS=OFF | tee ${LOG}
+      -DBUILD_PERF_TESTS=OFF 2>&1 | tee -a ${LOG}
     echo "CMAKE Successful"
     echo "--------------------"
     echo "Running make clean"
 
-    make clean | tee ${LOG}
+    make clean 2>&1 | tee -a ${LOG}
     echo "Make Clean Successful"
 
     echo "--------------------"
     echo "Running make"
-    make -j${PARALLEL_MAKE} | tee ${LOG}
+    make -j${PARALLEL_MAKE} 2>&1 | tee -a ${LOG}
     echo "Make  Successful"
 
     echo "--------------------"
     echo "Running make install"
-    make install | tee ${LOG}
+    make install 2>&1 | tee -a ${LOG}
     echo "Make install Successful"
 
     echo "--------------------"
     echo "Joining all libs in one"
     outputlist="lib/lib*.a"
-    libtool -static $outputlist -o "$LIB_FOLDER/lib/opencv.a" | tee ${LOG}
+    libtool -static $outputlist -o "$LIB_FOLDER/lib/opencv.a" 2>&1 | tee -a ${LOG}
     echo "Joining all libs in one Successful"
 
   elif [ "$TYPE" == "vs" ] ; then
