@@ -51,11 +51,11 @@ function build() {
   LIB_FOLDER="$BUILD_DIR/opencv/build/$TYPE/"
 
   if [ "$TYPE" == "osx" ] ; then
-    rm -f CMakeCache.txt
     LOG="$LIB_FOLDER/opencv2-${VER}.log"
     echo "Logging to $LOG"
     mkdir -p $LIB_FOLDER
     cd build
+    rm -f CMakeCache.txt
     echo "Log:" >> "${LOG}" 2>&1
     set +e
     cmake .. -DCMAKE_INSTALL_PREFIX=$LIB_FOLDER \
