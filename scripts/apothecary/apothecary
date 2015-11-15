@@ -71,8 +71,8 @@ if [ "$(${APOTHECARY_DIR}/ostype.sh)" == "osx" ]; then
 
     # used when building some libs for osx
     OSX_LATEST_SDK="xcrun -sdk macosx --show-sdk-version"
-    OSX_SDK_VER=10.10
-    OSX_MIN_SDK_VER=10.7
+    OSX_SDK_VER=10.11
+    OSX_MIN_SDK_VER=10.9
 
     # used when building for ios, the sdks you have installed are found in:
     # $XCODE_DEV_ROOT/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator#.#.sdk
@@ -917,18 +917,18 @@ function apothecaryDependencies() {
 }
 
 function  dump_output() {
-	if [ -z ${BUILD_OUTPUT} ]; then
+	if [ -z "$BUILD_OUTPUT" ]; then
 		echo "BUILD_OUTPUT not set."
 	else 
 		echo Tailing the last 500 lines of output:
-		tail -500 $BUILD_OUTPUT  
+		tail -500 "$BUILD_OUTPUT"  
 	fi
 }
 function  error_handler() {
 	echo ERROR: An error was encountered with the build.
 	dump_output
 	# nicely terminate the ping output loop
-	if [ -z ${PING_LOOP_PID} ]; then
+	if [ -z "$PING_LOOP_PID" ]; then
 		echo "Loop PID not set."
 	else 
 		kill $PING_LOOP_PID

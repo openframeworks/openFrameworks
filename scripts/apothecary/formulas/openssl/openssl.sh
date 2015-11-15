@@ -72,6 +72,13 @@ function prepare() {
  	elif  [ "$TYPE" == "osx" ] ; then
 		mkdir -p lib/$TYPE
 		mkdir -p lib/include
+        mkdir -p lib/$TYPE/i386
+        mkdir -p lib/$TYPE/x86_64
+
+        cp Makefile Makefile.orig
+        cp Configure Configure1.orig
+
+        #cp $FORMULA_DIR/Configure Configure
  	elif  [ "$TYPE" == "vs" ] ; then
 		if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/winOpenSSL.patch 2>/dev/null ; then
 			patch -p1 -u < $FORMULA_DIR/winOpenSSL.patch
@@ -83,9 +90,46 @@ function prepare() {
 function build() {
 	
 	if [ "$TYPE" == "osx" ] ; then
+
+        set -e
+        CURRENTPATH=`pwd`
+
+        DEVELOPER=$XCODE_DEV_ROOT
+        TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
+        SDKVERSION=""
+        SDKVERSION=`xcrun -sdk macosx --show-sdk-version`
+
+        if [ "${COMPILER_TYPE}" == "clang" ]; then
+                export THECOMPILER=clang
+            else
+                export THECOMPILER=gcc
+            fi
+
+        # Validate environment
+        case $XCODE_DEV_ROOT in  
+             *\ * )
+                   echo "Your Xcode path contains whitespaces, which is not supported."
+                   exit 1
+                  ;;
+        esac
+        case $CURRENTPATH in  
+             *\ * )
+                   echo "Your path contains whitespaces, which is not supported by 'make install'."
+                   exit 1
+                  ;;
+        esac 
+        local TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain 
+        
+        export OSX_CC=$TOOLCHAIN/usr/bin/$THECOMPILER
+        export OSX_CXX=$TOOLCHAIN/usr/bin/$THECOMPILER++
+        export LD=$TOOLCHAIN/usr/bin/ld
+        export AR=$TOOLCHAIN/usr/bin/ar
+        export AS=$TOOLCHAIN/usr/bin/as
+        export NM=$TOOLCHAIN/usr/bin/nm
+        export RANLIB=$TOOLCHAIN/usr/bin/ranlib
 		
 		local BUILD_OPTS="-no-shared -no-asm -no-ec_nistp_64_gcc_128 -no-gmp -no-jpake -no-krb5 -no-md2 -no-rc5 -no-rfc3779 -no-sctp -no-shared -no-store -no-unit-test -no-zlib -no-zlib-dynamic"
-		local OSX_ARCHS="x86_64 i386"
+		local OSX_ARCHS="i386 x86_64"
 		
 		VERSION=$VER
 		CURRENTPATH=`pwd`
@@ -95,6 +139,9 @@ function build() {
 		for OSX_ARCH in ${OSX_ARCHS}
 			do
 			
+            make -j 1 clean 
+            rm -rf build/$TYPE/OSX_ARCH
+            rm -rf *.a # remove temp lib from main directory
 			# Back up configure & makefile
 
 			cp "Configure" "Configure.orig" 
@@ -105,63 +152,30 @@ function build() {
 
 			#create logfile
 			LOG="$CURRENTPATH/build/$TYPE/$OSX_ARCH/build-openssl-${VER}.log"
-
-			
-			if [ "${COMPILER_TYPE}" == "clang" ]; then
-				export THECOMPILER=clang
-			else
-				export THECOMPILER=gcc
-			fi
-
-			echo "Using Compiler: $THECOMPILER"
-
-			# unset LANG if defined
-			if test ${LANG+defined};
-			then
-				OLD_LANG=$LANG
-				unset LANG
-			fi
-
-            # unset LC_CTYPE if defined
-            if test ${LC_CTYPE+defined};
-            then
-                OLD_LC_CTYPE=$LC_CTYPE
-                LC_CTYPE=C
-            fi
+			echo "Using Compiler: $THECOMPILER for $OSX_ARCH"
 
             # patch the Configure file to make sure the correct compiler is invoked.
 			export LC_CTYPE=C
             export LANG=C
-            sed -ie "s!\"darwin-i386-cc\",\"cc:-arch i386 -g3!\"darwin-i386-cc\",\"${THECOMPILER}:-arch i386 -g3!" Configure
+            sed -ie "s!\"darwin-i386-cc\",\"cc:-arch i386 -O3!\"darwin-i386-cc\",\"cc:-arch i386 -O3!" Configure
+            
             export LC_CTYPE=C
             export LANG=C
-            sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"$THECOMPILER:-arch x86_64 -O3!" Configure
-
-            # reset LANG if it was defined
-			if test ${OLD_LANG+defined};
-			then
-				export LANG=$OLD_LANG
-			fi
-
-            # reset LC_CTYPE if it was defined
-            if test ${OLD_LC_CTYPE+defined};
-            then
-                export LC_CTYPE=$OLD_LC_CTYPE
-            fi
+            sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!" Configure
 
    			OSX_C_FLAGS="" 		# Flags for stdlib, std and arch
    			CONFIG_TARGET=""	# Which one of the target presets to use
 
 			if [[ "${OSX_ARCH}" == "i386" ]]; then
 		    	# 386 -> libstdc++
-		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -fPIC -stdlib=libstdc++ -mmacosx-version-min=${OSX_MIN_SDK_VER}"
+		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -fPIC -stdlib=libc++ -mmacosx-version-min=${OSX_MIN_SDK_VER}"
 		    	CONFIG_TARGET=darwin-i386-cc
-		    	export CC="${THECOMPILER} ${OSX_C_FLAGS}"
+		    	export CC="${OSX_CC} ${OSX_C_FLAGS}"
 		    elif [ "${OSX_ARCH}" == "x86_64" ]; then
 		    	# 86_64 -> libc++
 		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -fPIC -stdlib=libc++ -mmacosx-version-min=${OSX_MIN_SDK_VER}"
 				CONFIG_TARGET=darwin64-x86_64-cc
-		    	export CC="${THECOMPILER} ${OSX_C_FLAGS}"
+		    	export CC="${OSX_CC} ${OSX_C_FLAGS}"
 		    fi
 
 	    	echo "Configure for target: $CONFIG_TARGET"
@@ -204,13 +218,21 @@ function build() {
                 export LC_CTYPE=$OLD_LC_CTYPE
             fi
 
-			echo "Running make for ${OSX_ARCH}"
-			echo "Please stand by..."
-
-			# Must run at -j 1 (single thread only else will fail)
-			# this is super annoying, but true for OS X, as well as iOS.
-			make -j 1 >> "${LOG}" 2>&1
-			
+            export BUILD_OUTPUT=$LOG
+            export PING_SLEEP=30s
+            export PING_LOOP_PID
+            trap 'error_handler' ERR
+            bash -c "while true; do echo \$(date) - Building OpenSSL ...; sleep $PING_SLEEP; done" &
+PING_LOOP_PID=$!
+            echo "Running make for ${OSX_ARCH}"
+            echo "Please stand by..."
+            # Must run at -j 1 (single thread only else will fail)
+            # this is super annoying, but true for OS X, as well as iOS.
+            make -j 1 >> "${BUILD_OUTPUT}" 2>&1
+            dump_output
+            kill $PING_LOOP_PID
+			trap - ERR
+            
 			if [ $? != 0 ];
 		    then 
                 tail -n 100 "${LOG}"
@@ -222,16 +244,17 @@ function build() {
 
 			set -e
 			make -j 1 install >> "${LOG}" 2>&1
-			make -j 1 clean >> "${LOG}" 2>&1
+			make -j 1 clean 
 
 			# restore configure & makefile
 
 			cp "Configure.orig" "Configure" 
 			cp "Makefile.orig" "Makefile"
 
-			unset CC CFLAG CFLAGS EXTRAFLAGS THECOMPILER
+            rm -rf *.a # remove temp lib from main directory
+			unset CC CFLAG CFLAGS EXTRAFLAGS
 		done
-
+        unset THECOMPILER
 		# Stage includes
 		echo "Staging includes"
 
@@ -243,7 +266,7 @@ function build() {
 		lipo -c "build/$TYPE/i386/lib/libssl.a" "build/$TYPE/x86_64/lib/libssl.a" -o "lib/$TYPE/ssl.a"
 
         cd lib/$TYPE
-        if [[ "$TYPE" == "ios" ]]; then
+        if [[ "$TYPE" == "osx" ]]; then
             SLOG="$CURRENTPATH/lib/$TYPE-stripping.log"
             local TOBESTRIPPED
             for TOBESTRIPPED in $( ls -1) ; do
@@ -529,10 +552,21 @@ function build() {
                 export LC_CTYPE=$OLD_LC_CTYPE
             fi
 
+            export BUILD_OUTPUT=$LOG
+            export PING_SLEEP=30s
+            export PING_LOOP_PID
+            trap 'error_handler' ERR
+            bash -c "while true; do echo \$(date) - Building OpenSSL ...; sleep $PING_SLEEP; done" &
+PING_LOOP_PID=$!
+
 			echo "Running make for ${IOS_ARCH}"
 			echo "Please stand by..."
 			# Must run at -j 1 (single thread only else will fail)
-			make >> "${LOG}" 2>&1
+			make >> "${BUILD_OUTPUT}" 2>&1
+            dump_output
+            kill $PING_LOOP_PID
+            trap - ERR
+
 			if [ $? != 0 ];
 		    then 
                 tail -n 100 "${LOG}"
@@ -557,6 +591,8 @@ function build() {
 			cp "Makefile.orig" "Makefile"
 			cp "Configure.orig" "Configure"
             cp "apps/speed.c.orig" "apps/speed.c"
+
+
 
 			unset CC CFLAG CFLAGS EXTRAFLAGS THECOMPILER
 
@@ -666,12 +702,18 @@ function copy() {
 	# opensslconf.h that detects the platform and includes the 
 	# correct one. Then every platform checkouts the rest of the config
 	# files that were deleted here
-    if [ -f include/openssl/opensslconf.h]; then
-	   mv include/openssl/opensslconf.h include/openssl/opensslconf_${TYPE}.h
-    fi
-    cp -RHv include/openssl/* $1/include/openssl/
-    cp -v $FORMULA_DIR/opensslconf.h $1/include/openssl/opensslconf.h
+     if [[ "$TYPE" == "osx" || "$TYPE" == "ios" || "$TYPE" == "tvos" ]] ; then
+        if [ -f lib/include/openssl/opensslconf.h ]; then
+            mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_${TYPE}.h
+        fi
+        cp -RHv lib/include/openssl/* $1/include/openssl/
+        cp -v $FORMULA_DIR/opensslconf.h $1/include/openssl/opensslconf.h
 
+    elif [ -f include/openssl/opensslconf.h ]; then
+        mv include/openssl/opensslconf.h include/openssl/opensslconf_${TYPE}.h
+        cp -RHv include/openssl/* $1/include/openssl/
+        cp -v $FORMULA_DIR/opensslconf.h $1/include/openssl/opensslconf.h
+    fi
 	# suppress file not found errors
 	#same here doesn't seem to be a solid reason to delete the files
 	#rm -rf $1/lib/$TYPE/* 2> /dev/null
@@ -784,6 +826,13 @@ function clean() {
 	# 	make clean ANDROID_ABI=armeabi-v7a
 	# 	make clean ANDROID_ABI=x86
 	# 	unset PATH
+    elif [[ "$TYPE" == "osx" ]] ; then
+        make clean
+        # clean up old build folder
+        rm -rf /build
+        # clean up compiled libraries
+        rm -rf /lib
+        rm -rf *.a
 	else
 	 	make clean
 	fi
