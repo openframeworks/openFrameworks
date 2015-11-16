@@ -72,8 +72,6 @@ function prepare() {
  	elif  [ "$TYPE" == "osx" ] ; then
 		mkdir -p lib/$TYPE
 		mkdir -p lib/include
-        mkdir -p lib/$TYPE/i386
-        mkdir -p lib/$TYPE/x86_64
 
         cp Makefile Makefile.orig
         cp Configure Configure1.orig
@@ -217,11 +215,13 @@ function build() {
             then
                 export LC_CTYPE=$OLD_LC_CTYPE
             fi
+            set -o pipefail  # trace ERR through pipes
+            set -o errtrace  # trace ERR through 'time command' and other functions
 
             export BUILD_OUTPUT=$LOG
             export PING_SLEEP=30s
             export PING_LOOP_PID
-            trap 'error_handler' ERR
+            trap 'error_handler ${LINENO} ${?}' ERR
             bash -c "while true; do echo \$(date) - Building OpenSSL ...; sleep $PING_SLEEP; done" &
 PING_LOOP_PID=$!
             echo "Running make for ${OSX_ARCH}"
@@ -266,23 +266,23 @@ PING_LOOP_PID=$!
 		lipo -c "build/$TYPE/i386/lib/libssl.a" "build/$TYPE/x86_64/lib/libssl.a" -o "lib/$TYPE/ssl.a"
 
         cd lib/$TYPE
-        if [[ "$TYPE" == "osx" ]]; then
-            SLOG="$CURRENTPATH/lib/$TYPE-stripping.log"
-            local TOBESTRIPPED
-            for TOBESTRIPPED in $( ls -1) ; do
-                strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
-                if [ $? != 0 ];
-                then
-                    tail -n 100 "${SLOG}"
-                    echo "Problem while stripping lib - Please check ${SLOG}"
-                    exit 1
-                else
-                    echo "Strip Successful for ${SLOG}"
-                fi
-            done
-        fi
+        SLOG="$CURRENTPATH/lib/$TYPE-stripping.log"
+        local TOBESTRIPPED
+        for TOBESTRIPPED in $( ls *.a) ; do
+            strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
+            if [ $? != 0 ];
+            then
+                tail -n 100 "${SLOG}"
+                echo "Problem while stripping lib - Please check ${SLOG}"
+                exit 1
+            else
+                echo "Strip Successful for ${SLOG}"
+            fi
+        done
 
         cd ../../
+
+        echo "Build Finished!"
 		
 		# ------------ END OS X Recipe.
 
