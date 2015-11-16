@@ -95,6 +95,7 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
+      -DWITH_OPENEXR=OFF \
       -DBUILD_TESTS=OFF \
       -DBUILD_PERF_TESTS=OFF | tee ${LOG}
     echo "CMAKE Successful"
@@ -106,20 +107,20 @@ function build() {
 
     echo "--------------------"
     echo "Running make"
-    make -j${PARALLEL_MAKE} | tee ${LOG}
+    make -j${PARALLEL_MAKE} 2>&1 | tee -a ${LOG}
     echo "Make  Successful"
 
     echo "--------------------"
     echo "Running make install"
     make install | tee ${LOG}
     echo "Make install Successful"
-    
+
     echo "--------------------"
     echo "Joining all libs in one"
     outputlist="lib/lib*.a"
-    libtool -static $outputlist -o "$LIB_FOLDER/lib/opencv.a" | tee ${LOG}
+    libtool -static $outputlist -o "$LIB_FOLDER/lib/opencv.a" 2>&1 | tee -a ${LOG}
     echo "Joining all libs in one Successful"
-	
+
   elif [ "$TYPE" == "vs" ] ; then
     rm -f CMakeCache.txt
 	#LIB_FOLDER="$BUILD_DIR/opencv/build/$TYPE"
@@ -384,6 +385,9 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
+      -DWITH_EIGEN=OFF \
+      -DWITH_OPENEXR=OFF \
+      -DBUILD_OPENEXR=OFF \
       -DBUILD_TESTS=OFF \
       -DBUILD_PERF_TESTS=OFF >> "${LOG}" 2>&1
 
@@ -530,6 +534,7 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
+      -DWITH_EIGEN=OFF
       -DBUILD_TESTS=OFF \
       -DBUILD_PERF_TESTS=OFF
     cd build_android_arm
@@ -568,6 +573,7 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
+      -DWITH_EIGEN=OFF \
       -DBUILD_TESTS=OFF \
       -DBUILD_PERF_TESTS=OFF
     cd build_android_x86
@@ -610,6 +616,7 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
+      -DWITH_EIGEN=OFF \
       -DBUILD_TESTS=OFF \
       -DBUILD_PERF_TESTS=OFF
     make -j${PARALLEL_MAKE}

@@ -71,6 +71,12 @@ public:
 	/// \brief Destroy the ofTrueTypeFont.
 	virtual ~ofTrueTypeFont();
 
+    ofTrueTypeFont(const ofTrueTypeFont& mom);
+    ofTrueTypeFont & operator=(const ofTrueTypeFont& mom);
+
+    ofTrueTypeFont(ofTrueTypeFont&& mom);
+    ofTrueTypeFont & operator=(ofTrueTypeFont&& mom);
+
 	/// \name Load Font
 	/// \{
 				
@@ -135,7 +141,7 @@ public:
 
 	/// \}
 	/// \name Font Size
-	/// \{
+	/// \{
 
 	/// \brief Returns the size of the font.
 	/// \returns Size of font, set when font was loaded.
@@ -256,7 +262,7 @@ public:
 	const ofMesh & getStringMesh(const std::string& s, float x, float y, bool vflip=true) const;
 	const ofTexture & getFontTexture() const;
 
-	/// \}
+	/// \}
 	
 protected:
 	/// \cond INTERNAL
@@ -304,7 +310,7 @@ private:
 	friend void ofUnloadAllFontTextures();
 	friend void ofReloadAllFontTextures();
 #endif
-	FT_Face		face;
+    std::shared_ptr<FT_FaceRec_> face;
 	void		unloadTextures();
 	void		reloadTextures();
 	static bool	initLibraries();
