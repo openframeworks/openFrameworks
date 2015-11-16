@@ -385,6 +385,9 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
+      -DWITH_EIGEN=OFF \
+      -DWITH_OPENEXR=OFF \
+      -DBUILD_OPENEXR=OFF \
       -DBUILD_TESTS=OFF \
       -DBUILD_PERF_TESTS=OFF >> "${LOG}" 2>&1
 
@@ -531,6 +534,7 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
+      -DWITH_EIGEN=OFF
       -DBUILD_TESTS=OFF \
       -DBUILD_PERF_TESTS=OFF
     cd build_android_arm
@@ -569,6 +573,7 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
+      -DWITH_EIGEN=OFF \
       -DBUILD_TESTS=OFF \
       -DBUILD_PERF_TESTS=OFF
     cd build_android_x86
@@ -611,6 +616,7 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
+      -DWITH_EIGEN=OFF \
       -DBUILD_TESTS=OFF \
       -DBUILD_PERF_TESTS=OFF
     make -j${PARALLEL_MAKE}
