@@ -123,10 +123,16 @@ void ofxAndroidVideoGrabber::Data::loadTexture(){
 	glTexParameterf(texture.texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(texture.texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameterf(texture.texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	if (!ofIsGLProgrammableRenderer()) {
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	}
+
+	//glBindTexture(texture.texData.textureTarget,0);
 
 	glDisable(texture.texData.textureTarget);
 
+	// This is very important - otherwise the glDeleteTextures is called
+	texture.setUseExternalTextureID(texture.texData.textureID);
 }
 
 
