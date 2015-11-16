@@ -162,7 +162,16 @@ function build() {
 	    echo "--------------------"
 		echo "Running make"
 		LOG="$CURRENTPATH/build/$TYPE/poco-make-i386-${VER}.log"
-		make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
+		export BUILD_OUTPUT=$LOG
+	    export PING_SLEEP=30s
+	    export PING_LOOP_PID
+	    trap 'error_handler' ERR
+	    bash -c "while true; do echo \$(date) - Building Poco ...; sleep $PING_SLEEP; done" &
+PING_LOOP_PID=$!
+		make -j${PARALLEL_MAKE} >> "${BUILD_OUTPUT}" 2>&1
+		dump_output
+		kill $PING_LOOP_PID
+		trap - ERR
 		if [ $? != 0 ];
 		then
 			tail -n 100 "${LOG}"
@@ -189,8 +198,17 @@ function build() {
 	    echo "--------------------"
 		echo "Running make"
 		LOG="$CURRENTPATH/build/$TYPE/poco-make-x86_64-${VER}.log"
-		make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
-		tail -n 100 "${LOG}"
+		export BUILD_OUTPUT=$LOG
+	    export PING_SLEEP=30s
+	    export PING_LOOP_PID
+	    trap 'error_handler' ERR
+	    bash -c "while true; do echo \$(date) - Building Poco ...; sleep $PING_SLEEP; done" &
+PING_LOOP_PID=$!
+
+		make -j${PARALLEL_MAKE} >> "${BUILD_OUTPUT}" 2>&1
+		dump_output
+		kill $PING_LOOP_PID
+		trap - ERR
 
 		unset POCO_ENABLE_CPP11
 
