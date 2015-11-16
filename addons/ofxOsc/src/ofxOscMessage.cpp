@@ -476,8 +476,8 @@ ofxOscMessage& ofxOscMessage::copy( const ofxOscMessage& other )
 			args.push_back( new ofxOscArgTimetag( other.getArgAsTimetag( i ) ) );
 		else if ( argType == OFXOSC_TYPE_BLOB )
 			args.push_back( new ofxOscArgBlob( other.getArgAsBlob( i ) ) );
-		//else if ( argType == OFXOSC_TYPE_RGBA_COLOR )
-		//	args.push_back( new ofxOscArgRgbaColor( other.getArgAsRgbaColor( i ) ) );
+		else if ( argType == OFXOSC_TYPE_RGBA_COLOR )
+			args.push_back( new ofxOscArgRgbaColor( other.getArgAsRgbaColor( i ) ) );
 		else
 		{
 			assert( false && "bad argument type" );
