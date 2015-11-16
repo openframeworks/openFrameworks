@@ -933,6 +933,8 @@ void ofTranslate(const ofPoint & p);
 
 void ofScale(float xAmnt, float yAmnt, float zAmnt = 1);
 
+void ofScale(const ofPoint & p);
+
 /// \brief Produces a rotation around the vector (vecX,vecY,vecZ).
 ///
 /// All graphics drawn after ofRotate is called are rotated. Use ofPushMatrix()

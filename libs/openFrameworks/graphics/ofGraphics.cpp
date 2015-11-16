@@ -244,6 +244,10 @@ void ofScale(float xAmnt, float yAmnt, float zAmnt){
 	ofGetCurrentRenderer()->scale(xAmnt, yAmnt, zAmnt);
 }
 
+
+void ofScale(const ofPoint & p) { 
+	ofScale(p.x, p.y, p.z); 
+}
 //----------------------------------------------------------
 void ofRotate(float degrees, float vecX, float vecY, float vecZ){
 	ofGetCurrentRenderer()->rotate(degrees, vecX, vecY, vecZ);
