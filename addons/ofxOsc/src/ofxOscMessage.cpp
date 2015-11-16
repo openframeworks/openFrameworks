@@ -336,7 +336,16 @@ ofBuffer ofxOscMessage::getArgAsBlob( int index ) const
         return ((ofxOscArgBlob*)args[index])->get();
 }
 
-
+int32_t ofxOscMessage::getArgAsRgbaColor( int index ) const
+{
+    if ( getArgType(index) != OFXOSC_TYPE_BLOB )
+    {
+        ofLogError("ofxOscMessage") << "getArgAsRgbaColor(): argument " << index << " is not a rgba color";
+        return 0;
+    }
+    else
+        return ((ofxOscArgRgbaColor*)args[index])->get();
+}
 
 /*
 
