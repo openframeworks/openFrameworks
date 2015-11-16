@@ -71,7 +71,7 @@ ofxOscArgType ofxOscMessage::getArgType( int index ) const
         return args[index]->getType();
 }
 
-string ofxOscMessage::getArgTypeName( int index ) const
+std::string ofxOscMessage::getArgTypeName( int index ) const
 {
     if ( index >= (int)args.size() )
     {
@@ -378,12 +378,12 @@ void ofxOscMessage::addDoubleArg( double argument )
 	args.push_back( new ofxOscArgDouble( argument ) );
 }
 
-void ofxOscMessage::addStringArg( string argument )
+void ofxOscMessage::addStringArg( const std::string &argument )
 {
 	args.push_back( new ofxOscArgString( argument ) );
 }
 
-void ofxOscMessage::addSymbolArg( string argument )
+void ofxOscMessage::addSymbolArg( const std::string &argument )
 {
 	args.push_back( new ofxOscArgSymbol( argument ) );
 }
@@ -423,7 +423,7 @@ void ofxOscMessage::addTimetagArg( int64_t argument )
 	args.push_back( new ofxOscArgBool( argument ) );
 }
 
-void ofxOscMessage::addBlobArg( ofBuffer argument )
+void ofxOscMessage::addBlobArg( const ofBuffer &argument )
 {
 	args.push_back( new ofxOscArgBlob( argument ) );
 }
