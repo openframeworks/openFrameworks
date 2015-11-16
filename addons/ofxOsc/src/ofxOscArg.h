@@ -151,7 +151,7 @@ public:
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_FLOAT; };
-	string getTypeName() { return "f"; };
+    std::string getTypeName() { return "f"; };
 
 	/// return value
 	float get() const { return value; };
@@ -184,7 +184,7 @@ private:
 class ofxOscArgString : public ofxOscArg
 {
 public:
-	ofxOscArgString( std::string _value ) { value = _value; };
+	ofxOscArgString( const std::string &_value ) { value = _value; };
 	~ofxOscArgString() {};
 
 	/// return the type of this argument
@@ -192,10 +192,10 @@ public:
 	std::string getTypeName() { return "s"; };
 
 	/// return value
-	std::string get() const { return value; }
+	const std::string &get() const { return value; }
 	/// set value
 	void set( const char* _value ) { value = _value; };
-	void set( std::string _value ) {value = _value; };
+	void set( const std::string &_value ) {value = _value; };
 
 private:
 	std::string value;
@@ -204,7 +204,7 @@ private:
 class ofxOscArgSymbol : public ofxOscArgString
 {
 public:
-	ofxOscArgSymbol( std::string _value ) : ofxOscArgString(_value){};
+	ofxOscArgSymbol( const std::string &_value ) : ofxOscArgString(_value){};
 	~ofxOscArgSymbol() {};
 
 	/// return the type of this argument
@@ -296,7 +296,7 @@ public:
 class ofxOscArgBlob : public ofxOscArg
 {
 public:
-	ofxOscArgBlob( ofBuffer _value ){
+	ofxOscArgBlob( const ofBuffer &_value ){
         value = _value;
     }
     ~ofxOscArgBlob(){};
@@ -306,7 +306,7 @@ public:
 	std::string getTypeName() { return "b"; };
 
 	/// return value
-	ofBuffer get() const { return value; };
+	const ofBuffer &get() const { return value; };
 	/// set value
 	void set( const char * _value, unsigned int length ) { value.set(_value, length); };
 
@@ -317,7 +317,7 @@ private:
 class ofxOscArgRgbaColor : public ofxOscArg
 {
 public:
-	ofxOscArgRgbaColor( int32_t _value ) {value = _value;};
+	ofxOscArgRgbaColor( int32_t _value ) { value = _value; };
 	~ofxOscArgRgbaColor() {};
 
 	/// return the type of this argument
