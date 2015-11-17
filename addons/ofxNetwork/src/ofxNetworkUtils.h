@@ -115,9 +115,12 @@ inline int ofxNetworkCheckErrno(const char* file, int line) {
 		ofLogError("ofxNetwork") << file << ": " << line << " EINVAL: invalid argument";
 		break;
 #if !defined(TARGET_WIN32)
-	case OFXNETWORK_ERROR(AGAIN):
+#if defined(EAGAIN) && defined(EWOULDBLOCK) && EAGAIN != EWOULDBLOCK
+	case EAGAIN:
+		// Not an error worth reporting, this is normal if the socket is non-blocking
 		//ofLogError("ofxNetwork") << file << ": " << line << " EAGAIN: try again";
 		break;
+#endif
 #endif
 	case OFXNETWORK_ERROR(WOULDBLOCK):
 		// Not an error worth reporting, this is normal if the socket is non-blocking
