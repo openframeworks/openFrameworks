@@ -19,9 +19,9 @@
 #endif
 
 
-#define ofxNetworkCheckError() ofxNetworkCheckErrno(__FILE__,ofToString(__LINE__))
+#define ofxNetworkCheckError() ofxNetworkCheckErrno(__FILE__, __LINE__)
 
-inline int ofxNetworkCheckErrno(const string & file, const string & line){
+inline int ofxNetworkCheckErrno(const char* file, int line) {
 	#ifdef TARGET_WIN32
 		int	err	= WSAGetLastError();
 	#else
@@ -115,10 +115,16 @@ inline int ofxNetworkCheckErrno(const string & file, const string & line){
 		ofLogError("ofxNetwork") << file << ": " << line << " EINVAL: invalid argument";
 		break;
 #if !defined(TARGET_WIN32)
-	case OFXNETWORK_ERROR(AGAIN):
+#if !defined(EWOULDBLOCK) || EAGAIN != EWOULDBLOCK
+	case EAGAIN:
+		// Not an error worth reporting, this is normal if the socket is non-blocking
 		//ofLogError("ofxNetwork") << file << ": " << line << " EAGAIN: try again";
 		break;
 #endif
+#endif
+	case OFXNETWORK_ERROR(WOULDBLOCK):
+		// Not an error worth reporting, this is normal if the socket is non-blocking
+		break;
 	default:
 		ofLogError("ofxNetwork") << file << ": " << line << " unknown error: " << err << " see errno.h for description of the error";
 		break;
