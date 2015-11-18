@@ -18,7 +18,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="Background" translatesAutoresizingMaskIntoConstraints="NO" id="1Ps-5a-wQE">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" translatesAutoresizingMaskIntoConstraints="NO" id="1Ps-5a-wQE">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <animations/>
                             </imageView>
@@ -33,6 +33,8 @@
                         <animations/>
                         <color key="backgroundColor" red="0.90196078431372551" green="0.90196078431372551" blue="0.90196078431372551" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="1Ps-5a-wQE" firstAttribute="centerX" secondItem="hCy-Sg-N4N" secondAttribute="centerX" id="0OI-2L-cEK"/>
+                            <constraint firstItem="1Ps-5a-wQE" firstAttribute="bottom" secondItem="xb3-aO-Qok" secondAttribute="top" id="MQO-GI-am3"/>
                             <constraint firstItem="1Ps-5a-wQE" firstAttribute="width" secondItem="Ze5-6b-2t3" secondAttribute="width" id="dq4-Qv-rDP"/>
                             <constraint firstItem="hCy-Sg-N4N" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="hF8-3a-UTD"/>
                             <constraint firstItem="1Ps-5a-wQE" firstAttribute="height" secondItem="Ze5-6b-2t3" secondAttribute="height" id="hsl-L6-dMb"/>
