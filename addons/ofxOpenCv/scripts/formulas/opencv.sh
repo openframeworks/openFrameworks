@@ -51,11 +51,11 @@ function build() {
   LIB_FOLDER="$BUILD_DIR/opencv/build/$TYPE/"
 
   if [ "$TYPE" == "osx" ] ; then
-    rm -f CMakeCache.txt
     LOG="$LIB_FOLDER/opencv2-${VER}.log"
     echo "Logging to $LOG"
     mkdir -p $LIB_FOLDER
     cd build
+    rm -f CMakeCache.txt
     echo "Log:" >> "${LOG}" 2>&1
     set +e
     cmake .. -DCMAKE_INSTALL_PREFIX=$LIB_FOLDER \
@@ -97,12 +97,12 @@ function build() {
       -DWITH_PVAPI=OFF \
       -DWITH_OPENEXR=OFF \
       -DBUILD_TESTS=OFF \
-      -DBUILD_PERF_TESTS=OFF | tee ${LOG}
+      -DBUILD_PERF_TESTS=OFF 2>&1 | tee -a ${LOG}
     echo "CMAKE Successful"
     echo "--------------------"
     echo "Running make clean"
 
-    make clean | tee ${LOG}
+    make clean 2>&1 | tee -a ${LOG}
     echo "Make Clean Successful"
 
     echo "--------------------"
@@ -112,7 +112,7 @@ function build() {
 
     echo "--------------------"
     echo "Running make install"
-    make install | tee ${LOG}
+    make install 2>&1 | tee -a ${LOG}
     echo "Make install Successful"
 
     echo "--------------------"
