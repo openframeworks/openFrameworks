@@ -5,6 +5,7 @@
 
 #import "ImageAppViewController.h"
 #import "ofxiOSExtras.h"
+#import "ofAppiOSWindow.h"
 
 @implementation ImageAppViewController
 
