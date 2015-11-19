@@ -345,10 +345,28 @@ int	ofxUDPManager::Receive(char* pBuff, const int iSize)
 void ofxUDPManager::SetTimeoutSend(int	timeoutInSeconds)
 {
 	m_dwTimeoutSend= timeoutInSeconds;
+
+	if (m_hSocket != INVALID_SOCKET) {
+		struct timeval timeout;
+
+		timeout.tv_sec = m_dwTimeoutSend;
+		timeout.tv_usec = 0;
+
+		setsockopt(m_hSocket, SOL_SOCKET, SO_SNDTIMEO, (char*) &timeout, sizeof(struct timeval));
+	}	
 }
 void ofxUDPManager::SetTimeoutReceive(int timeoutInSeconds)
 {
 	m_dwTimeoutReceive=	timeoutInSeconds;
+
+	if (m_hSocket != INVALID_SOCKET) {
+		struct timeval timeout;
+
+		timeout.tv_sec = m_dwTimeoutReceive;
+		timeout.tv_usec = 0;
+
+		setsockopt(m_hSocket, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(struct timeval));
+	}	
 }
 int	ofxUDPManager::GetTimeoutSend()
 {
