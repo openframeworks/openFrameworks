@@ -5,6 +5,7 @@
 
 #import "TriangleAppViewController.h"
 #import "ofxiOSExtras.h"
+#import "ofAppiOSWindow.h"
 
 @implementation TriangleAppViewController
 
