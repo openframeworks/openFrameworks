@@ -184,6 +184,12 @@ class ofApp: public ofxUnitTestsApp{
 
 
         //========================================================================
+        ofLogNotice() << "";
+        ofLogNotice() << "tests #4598";
+        test_eq(ofToDataPath("").back(),'a',"ofToDataPath with empty string shouldn't crash");
+
+
+        //========================================================================
 		// clean test files
 		dir.open(".");
 		for(auto f: dir){
