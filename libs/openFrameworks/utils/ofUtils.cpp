@@ -325,7 +325,7 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	if (!enableDataPath)
 		return path;
 
-    bool hasTrailingSlash = std::filesystem::path(path).generic_string().back()=='/';
+    bool hasTrailingSlash = !path.empty() && std::filesystem::path(path).generic_string().back()=='/';
 
 	// if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
