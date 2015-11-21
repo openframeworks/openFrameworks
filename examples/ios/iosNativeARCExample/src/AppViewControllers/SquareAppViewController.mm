@@ -5,6 +5,7 @@
 
 #import "SquareAppViewController.h"
 #import "ofxiOSExtras.h"
+#import "ofAppiOSWindow.h"
 
 @implementation SquareAppViewController
 

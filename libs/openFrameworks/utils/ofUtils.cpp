@@ -1013,7 +1013,7 @@ ofTargetPlatform ofGetTargetPlatform(){
     #if (_MSC_VER)
         return OF_TARGET_WINVS;
     #else
-        return OF_TARGET_WINGCC;
+        return OF_TARGET_MINGW;
     #endif
 #elif defined(TARGET_ANDROID)
     return OF_TARGET_ANDROID;

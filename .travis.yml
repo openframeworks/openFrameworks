@@ -34,26 +34,27 @@ matrix:
       cache:
         directories:
         - ~/android-ndk-r10e
-    - os: linux
-      sudo: false
-      env:
-      - TARGET="docs"
-      - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
-      addons:
-        apt:
-          packages:
-          - python-software-properties
-          - doxygen
-          - ncftp
+    # disable docs test for now
+    #- os: linux
+    #  sudo: false
+    #  env:
+    #  - TARGET="docs"
+    #  - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
+    #  addons:
+    #    apt:
+    #      packages:
+    #      - python-software-properties
+    #      - doxygen
+    #      - ncftp
   # Exclude the default build that would otherwise be generated
   # see https://github.com/travis-ci/travis-ci/issues/1228
   exclude:
     - compiler: gcc
-  allow_failures:
-    # temporary until we find out how to prevent (spurious) build failures
-    - env:
-      - TARGET="docs"
-      - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
+  #allow_failures:
+  #  # temporary until we find out how to prevent (spurious) build failures
+  #  - env:
+  #    - TARGET="docs"
+  #    - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
 install:
     - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "docs" ]; then
         scripts/ci/$TARGET/install.sh;
