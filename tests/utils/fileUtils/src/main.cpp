@@ -167,9 +167,9 @@ class ofApp: public ofxUnitTestsApp{
         ofLogNotice() << "tests #4299";
         test_eq(std::filesystem::path(ofFilePath::getCurrentWorkingDirectory()), initial_cwd, "ofFilePath::getCurrentWorkingDirectory()");
 #ifdef TARGET_OSX
-        test_eq(ofToDataPath("",false),"../../../data","ofToDataPath relative");
+        test_eq(ofToDataPath("",false),"../../../data/","ofToDataPath relative");
 #else
-        test_eq(ofToDataPath("",false),"data","ofToDataPath relative");
+        test_eq(ofToDataPath("",false),"data/","ofToDataPath relative");
 #endif
 
 
@@ -186,8 +186,20 @@ class ofApp: public ofxUnitTestsApp{
         //========================================================================
         ofLogNotice() << "";
         ofLogNotice() << "tests #4598";
-        test_eq(ofToDataPath("").back(),'a',"ofToDataPath with empty string shouldn't crash");
+        test_eq(ofToDataPath("").back(),'/',"ofToDataPath with empty string shouldn't crash");
 
+        //========================================================================
+        ofLogNotice() << "";
+        ofLogNotice() << "tests #4563";
+#ifdef TARGET_LINUX 
+        test_eq(ofToDataPath("a.txt"), "data/a.txt","#4563 test1");
+        test_eq(ofToDataPath("data.txt"), "data/data.txt", "#4563 test2");
+        test_eq(ofToDataPath(""), "data/", "#4563 test3");
+#elif defined(TARGET_OSX)
+        test_eq(ofToDataPath("a.txt"), "../../../data/a.txt","#4563 test1");
+        test_eq(ofToDataPath("data.txt"), "../../../data/data.txt", "#4563 test2");
+        test_eq(ofToDataPath(""), "../../../data/", "#4563 test3");
+#endif
 
         //========================================================================
 		// clean test files
