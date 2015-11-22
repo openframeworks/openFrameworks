@@ -7,6 +7,8 @@ std::filesystem::path initial_cwd;
 class ofApp: public ofxUnitTestsApp{
 	void run(){
 		ofDirectory dir(".");
+        dir.create(true);
+        dir.exists();
 		for(auto f: dir){
 			f.setWriteable(true);
 			if(f.isDirectory()){
@@ -201,6 +203,7 @@ class ofApp: public ofxUnitTestsApp{
         test_eq(ofToDataPath(""), "../../../data/", "#4563 test3");
 #endif
 
+
         //========================================================================
 		// clean test files
 		dir.open(".");
@@ -212,6 +215,14 @@ class ofApp: public ofxUnitTestsApp{
 				f.remove();
 			}
 		}
+
+        //========================================================================
+        ofLogNotice() << "#4564";
+        dir.remove(true);
+        ofDirectory currentVideoDirectory(ofToDataPath("../../../video", true));
+        auto path = currentVideoDirectory.path();
+        std::string pathEnd("data/../../../video/");
+        test_eq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
 	}
 };
 
