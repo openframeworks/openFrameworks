@@ -914,7 +914,7 @@ ofDirectory::ofDirectory(const std::filesystem::path & path){
 void ofDirectory::open(const std::filesystem::path & path){
 	originalDirectory = ofFilePath::getPathForDirectory(path.string());
 	files.clear();
-	myDir = std::filesystem::path(ofToDataPath(originalDirectory));
+    myDir = std::filesystem::path(ofToDataPath(originalDirectory));
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -928,9 +928,9 @@ bool ofDirectory::create(bool recursive){
 	if(!myDir.string().empty()){
 		try{
 			if(recursive){
-				std::filesystem::create_directories(myDir);
+                std::filesystem::create_directories(myDir);
 			}else{
-				std::filesystem::create_directory(myDir);
+                std::filesystem::create_directory(myDir);
 			}
 		}
 		catch(std::exception & except){
@@ -1077,9 +1077,9 @@ bool ofDirectory::remove(bool recursive){
 
 	try{
 		if(recursive){
-			std::filesystem::remove_all(myDir);
+            std::filesystem::remove_all(std::filesystem::canonical(myDir));
 		}else{
-			std::filesystem::remove(myDir);
+            std::filesystem::remove(std::filesystem::canonical(myDir));
 		}
 	}catch(std::exception & except){
 		ofLogError("ofDirectory") << "remove(): unable to remove file/directory: " << except.what();
@@ -1559,14 +1559,17 @@ std::string ofFilePath::makeRelative(const std::string & from, const std::string
     // Find common base
     for( std::filesystem::path::const_iterator toEnd( pathTo.end() ), fromEnd( pathFrom.end() ) ; itrFrom != fromEnd && itrTo != toEnd && *itrFrom == *itrTo; ++itrFrom, ++itrTo );
     // Navigate backwards in directory to reach previously found base
-    for( std::filesystem::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom )
-    {
-        if( (*itrFrom) != "." )
+    for( std::filesystem::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom ){
+        if( (*itrFrom) != "." ){
             ret /= "..";
+        }
     }
     // Now navigate down the directory branch
-    for( ; itrTo != pathTo.end() ; ++itrTo )
-        ret /= *itrTo;
+    for( ; itrTo != pathTo.end() ; ++itrTo ){
+        if( itrTo->string() != "."){
+            ret /= *itrTo;
+        }
+    }
 
     return ret.string();
 }
