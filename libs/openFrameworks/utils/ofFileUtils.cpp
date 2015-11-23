@@ -187,47 +187,67 @@ void ofBuffer::resetLineReader(){
 }
 
 //--------------------------------------------------
-vector<char>::iterator ofBuffer::begin(){
+std::vector<char>::iterator ofBuffer::begin(){
 	return buffer.begin();
 }
 
 //--------------------------------------------------
-vector<char>::iterator ofBuffer::end(){
+std::vector<char>::iterator ofBuffer::end(){
 	return buffer.end();
 }
 
 //--------------------------------------------------
-vector<char>::const_iterator ofBuffer::begin() const{
+std::vector<char>::const_iterator ofBuffer::begin() const{
 	return buffer.begin();
 }
 
 //--------------------------------------------------
-vector<char>::const_iterator ofBuffer::end() const{
+std::vector<char>::const_iterator ofBuffer::end() const{
 	return buffer.end();
 }
 
 //--------------------------------------------------
-vector<char>::reverse_iterator ofBuffer::rbegin(){
+std::vector<char>::const_iterator ofBuffer::cbegin() const{
+    return buffer.cbegin();
+}
+
+//--------------------------------------------------
+std::vector<char>::const_iterator ofBuffer::cend() const{
+    return buffer.cend();
+}
+
+//--------------------------------------------------
+std::vector<char>::reverse_iterator ofBuffer::rbegin(){
 	return buffer.rbegin();
 }
 
 //--------------------------------------------------
-vector<char>::reverse_iterator ofBuffer::rend(){
+std::vector<char>::reverse_iterator ofBuffer::rend(){
 	return buffer.rend();
 }
 
 //--------------------------------------------------
-vector<char>::const_reverse_iterator ofBuffer::rbegin() const{
+std::vector<char>::const_reverse_iterator ofBuffer::rbegin() const{
 	return buffer.rbegin();
 }
 
 //--------------------------------------------------
-vector<char>::const_reverse_iterator ofBuffer::rend() const{
+std::vector<char>::const_reverse_iterator ofBuffer::rend() const{
 	return buffer.rend();
 }
 
 //--------------------------------------------------
-ofBuffer::Line::Line(vector<char>::iterator _begin, vector<char>::iterator _end)
+std::vector<char>::const_reverse_iterator ofBuffer::crbegin() const{
+    return buffer.crbegin();
+}
+
+//--------------------------------------------------
+std::vector<char>::const_reverse_iterator ofBuffer::crend() const{
+    return buffer.crend();
+}
+
+//--------------------------------------------------
+ofBuffer::Line::Line(std::vector<char>::iterator _begin, std::vector<char>::iterator _end)
 	:_current(_begin)
 	,_begin(_begin)
 	,_end(_end){
@@ -1318,23 +1338,43 @@ bool ofDirectory::operator>=(const ofDirectory & dir) const{
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::const_iterator ofDirectory::begin() const{
+std::vector<ofFile>::const_iterator ofDirectory::begin() const{
 	return getFiles().begin();
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::const_iterator ofDirectory::end() const{
+std::vector<ofFile>::const_iterator ofDirectory::end() const{
 	return files.end();
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::const_reverse_iterator ofDirectory::rbegin() const{
-	return getFiles().rbegin();
+std::vector<ofFile>::const_iterator ofDirectory::cbegin() const{
+    return getFiles().cbegin();
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
-	return files.rend();
+std::vector<ofFile>::const_iterator ofDirectory::cend() const{
+    return files.cend();
+}
+
+//------------------------------------------------------------------------------------------------------------
+std::vector<ofFile>::const_reverse_iterator ofDirectory::rbegin() const{
+    return getFiles().rbegin();
+}
+
+//------------------------------------------------------------------------------------------------------------
+std::vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
+    return files.rend();
+}
+
+//------------------------------------------------------------------------------------------------------------
+std::vector<ofFile>::const_reverse_iterator ofDirectory::crbegin() const{
+	return getFiles().crbegin();
+}
+
+//------------------------------------------------------------------------------------------------------------
+std::vector<ofFile>::const_reverse_iterator ofDirectory::crend() const{
+	return files.crend();
 }
 
 

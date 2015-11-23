@@ -50,17 +50,21 @@ public:
 	OF_DEPRECATED_MSG("use a lines iterator instead",bool isLastLine());
 	OF_DEPRECATED_MSG("use a lines iterator instead",void resetLineReader());
     
-	friend ostream & operator<<(ostream & ostr, const ofBuffer & buf);
-	friend istream & operator>>(istream & istr, ofBuffer & buf);
+	friend std::ostream & operator<<(std::ostream & ostr, const ofBuffer & buf);
+	friend std::istream & operator>>(std::istream & istr, ofBuffer & buf);
 
-	vector<char>::iterator begin();
-	vector<char>::iterator end();
-	vector<char>::const_iterator begin() const;
-	vector<char>::const_iterator end() const;
-	vector<char>::reverse_iterator rbegin();
-	vector<char>::reverse_iterator rend();
-	vector<char>::const_reverse_iterator rbegin() const;
-	vector<char>::const_reverse_iterator rend() const;
+	std::vector<char>::iterator begin();
+	std::vector<char>::iterator end();
+	std::vector<char>::const_iterator begin() const;
+	std::vector<char>::const_iterator end() const;
+	std::vector<char>::const_iterator cbegin() const;
+	std::vector<char>::const_iterator cend() const;
+	std::vector<char>::reverse_iterator rbegin();
+	std::vector<char>::reverse_iterator rend();
+	std::vector<char>::const_reverse_iterator rbegin() const;
+	std::vector<char>::const_reverse_iterator rend() const;
+	std::vector<char>::const_reverse_iterator crbegin() const;
+	std::vector<char>::const_reverse_iterator crend() const;
 
 	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
 		Line(vector<char>::iterator _begin, vector<char>::iterator _end);
@@ -328,10 +332,14 @@ public:
 	static bool doesDirectoryExist(const std::string& dirPath, bool bRelativeToData = true);
 	static bool removeDirectory(const std::string& path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
 
-	vector<ofFile>::const_iterator begin() const;
-	vector<ofFile>::const_iterator end() const;
-	vector<ofFile>::const_reverse_iterator rbegin() const;
-	vector<ofFile>::const_reverse_iterator rend() const;
+	std::vector<ofFile>::const_iterator begin() const;
+	std::vector<ofFile>::const_iterator end() const;
+	std::vector<ofFile>::const_iterator cbegin() const;
+	std::vector<ofFile>::const_iterator cend() const;
+	std::vector<ofFile>::const_reverse_iterator rbegin() const;
+	std::vector<ofFile>::const_reverse_iterator rend() const;
+	std::vector<ofFile>::const_reverse_iterator crbegin() const;
+	std::vector<ofFile>::const_reverse_iterator crend() const;
 
 private:
 	std::filesystem::path myDir;
