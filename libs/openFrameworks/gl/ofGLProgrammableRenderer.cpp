@@ -1833,15 +1833,15 @@ void ofGLProgrammableRenderer::drawString(const ofTrueTypeFont & font, string te
 
 #ifdef TARGET_OPENGLES
 static const string vertex_shader_header =
-		"precision mediump float;\n"
 		"%extensions%\n"
+		"precision mediump float;\n"
 		"#define IN attribute\n"
 		"#define OUT varying\n"
 		"#define TEXTURE texture2D\n"
 		"#define TARGET_OPENGLES\n";
 static const string fragment_shader_header =
-		"precision mediump float;\n"
 		"%extensions%\n"
+		"precision mediump float;\n"
 		"#define IN varying\n"
 		"#define OUT\n"
 		"#define TEXTURE texture2D\n"
