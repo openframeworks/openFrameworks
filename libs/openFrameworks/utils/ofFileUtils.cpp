@@ -1149,7 +1149,7 @@ std::size_t ofDirectory::listDir(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-std::string ofDirectory::getOriginalDirectory() const {
+const std::string &ofDirectory::getOriginalDirectory() const {
 	return originalDirectory;
 }
 

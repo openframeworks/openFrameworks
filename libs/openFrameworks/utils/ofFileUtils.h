@@ -289,7 +289,7 @@ public:
 	std::size_t listDir(const std::string& path);
 	std::size_t listDir();
 
-	std::string getOriginalDirectory() const;
+	const std::string &getOriginalDirectory() const;
 	std::string getName(std::size_t position) const; // e.g., "image.png"
 	std::string getPath(std::size_t position) const;
 	ofFile getFile(std::size_t position, ofFile::Mode mode=ofFile::Reference, bool binary=false) const;
