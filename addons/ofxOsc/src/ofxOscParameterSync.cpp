@@ -16,7 +16,7 @@ ofxOscParameterSync::~ofxOscParameterSync(){
 }
 
 
-void ofxOscParameterSync::setup(ofParameterGroup & group, int localPort, const string& host, int remotePort){
+void ofxOscParameterSync::setup(ofParameterGroup & group, int localPort, const std::string& host, int remotePort){
 	syncGroup = group;
 	ofAddListener(syncGroup.parameterChangedE(),this,&ofxOscParameterSync::parameterChanged);
 	sender.setup(host,remotePort);
