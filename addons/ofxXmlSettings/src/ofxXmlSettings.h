@@ -73,6 +73,7 @@ class ofxXmlSettings: public ofBaseFileSerializer{
 		int 	getValue(const string&  tag, int            defaultValue, int which = 0);
 		double 	getValue(const string&  tag, double         defaultValue, int which = 0);
 		string 	getValue(const string&  tag, const string& 	defaultValue, int which = 0);
+		long long getValue(const string&  tag, long long 	defaultValue, int which = 0);
 
 		int 	setValue(const string&  tag, int            value, int which = 0);
 		int 	setValue(const string&  tag, double         value, int which = 0);
