@@ -382,7 +382,7 @@ afterplatform: $(TARGET_NAME)
 
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/libs/* bin/$(BIN_NAME).app/Contents/MacOS
-	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/libs/Frameworks/* bin/$(BIN_NAME).app/Contents/MacOS
+	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/Frameworks/* bin/$(BIN_NAME).app/Contents/MacOS
 	
 	
 ifdef PROJECT_AFTER_OSX
