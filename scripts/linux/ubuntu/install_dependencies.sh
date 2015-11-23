@@ -159,4 +159,8 @@ if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
     DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
     cd ${DIR}/../../apothecary
     ./apothecary -j${cores} update poco
+    WHO=`who am i`;ID=`echo ${WHO%% *}`
+    GROUP_ID=`id --group -n ${ID}`
+    chown -R $ID:$GROUP_ID build/poco
+    chown -R $ID:$GROUP_ID ../../libs/poco
 fi
