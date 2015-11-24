@@ -52,10 +52,64 @@
 	#define MAXPATHLEN 1024
 #endif
 
-static bool enableDataPath = true;
-static uint64_t startTimeSeconds;   //  better at the first frame ?? (currently, there is some delay from static init, to running.
-static uint64_t startTimeNanos;
+namespace{
+    bool enableDataPath = true;
+    uint64_t startTimeSeconds;   //  better at the first frame ?? (currently, there is some delay from static init, to running.
+    uint64_t startTimeNanos;
+#ifdef TARGET_OSX
+    clock_serv_t cs;
+#endif
 
+    //--------------------------------------------------
+    string defaultDataPath(){
+    #if defined TARGET_OSX
+        try{
+            return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/")).string();
+        }catch(...){
+            return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
+        }
+    #elif defined TARGET_ANDROID
+            return string("sdcard/");
+    #else
+            try{
+                return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).string();
+            }catch(...){
+                return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
+            }
+    #endif
+    }
+
+    //--------------------------------------------------
+    std::filesystem::path & defaultWorkingDirectory(){
+            static auto * defaultWorkingDirectory = new std::filesystem::path();
+            return * defaultWorkingDirectory;
+    }
+
+    //--------------------------------------------------
+    std::filesystem::path & dataPathRoot(){
+            static auto * dataPathRoot = new std::filesystem::path(defaultDataPath());
+            return *dataPathRoot;
+    }
+}
+
+namespace of{
+namespace priv{
+    void initutils(){
+#ifdef TARGET_OSX
+        host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cs);
+#endif
+        defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
+        ofResetElapsedTimeCounter();
+        ofSeedRandom();
+    }
+
+    void endutils(){
+#ifdef TARGET_OSX
+        mach_port_deallocate(mach_task_self(), cs);
+#endif
+    }
+}
+}
 
 //--------------------------------------
 void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds){
@@ -65,11 +119,8 @@ void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds){
 	seconds = now.tv_sec;
 	nanoseconds = now.tv_nsec;
 #elif defined(TARGET_OSX)
-	clock_serv_t cs;
-	mach_timespec_t now;
-	host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cs);
-	clock_get_time(cs, &now);
-	mach_port_deallocate(mach_task_self(), cs);
+        mach_timespec_t now;
+        clock_get_time(cs, &now);
 	seconds = now.tv_sec;
 	nanoseconds = now.tv_nsec;
 #elif defined( TARGET_WIN32 )
@@ -263,46 +314,6 @@ void ofEnableDataPath(){
 //--------------------------------------------------
 void ofDisableDataPath(){
 	enableDataPath = false;
-}
-
-//--------------------------------------------------
-string defaultDataPath(){
-#if defined TARGET_OSX
-    try{
-        return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/")).string();
-    }catch(...){
-        return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
-    }
-#elif defined TARGET_ANDROID
-	return string("sdcard/");
-#else
-	try{
-	    return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).string();
-	}catch(...){
-	    return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
-	}
-#endif
-}
-
-//--------------------------------------------------
-static std::filesystem::path & defaultWorkingDirectory(){
-	static auto * defaultWorkingDirectory = new std::filesystem::path();
-	return * defaultWorkingDirectory;
-}
-
-//--------------------------------------------------
-static std::filesystem::path & dataPathRoot(){
-	static auto * dataPathRoot = new std::filesystem::path(defaultDataPath());
-	return *dataPathRoot;
-}
-
-namespace of{
-namespace priv{
-    //--------------------------------------------------
-    void setWorkingDirectoryToDefault(){
-        defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
-    }
-}
 }
 
 //--------------------------------------------------
