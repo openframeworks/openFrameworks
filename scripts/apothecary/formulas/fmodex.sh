@@ -61,10 +61,10 @@ function build() {
 
 	if [ "$TYPE" == "osx" ]; then
 
-		cd lib
-		install_name_tool -id "@executable_name/../Frameworks/libfmodex.dylib" libfmodex.dylib
-		echo "install_name_tool -id '@executable_name/../Frameworks/libfmodex.dylib' libfmodex.dylib"
-		cd ../
+		#cd lib
+		#install_name_tool -id "@executable_name/../Frameworks/libfmodex.dylib" libfmodex.dylib
+		#echo "install_name_tool -id '@executable_name/../Frameworks/libfmodex.dylib' libfmodex.dylib"
+		#cd ../
 
 	else 
 		echo "build not needed for $TYPE"
