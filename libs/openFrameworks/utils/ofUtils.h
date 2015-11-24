@@ -348,7 +348,7 @@ bool ofContains(const vector<T>& values, const T& target) {
 /// \name String Manipulation
 /// \{
 
-/// \brief Splits a string using a delimiter.
+/// \brief Splits a string using a delimiter.
 ///
 /// ofSplitString splits a string and returns the collection of string
 /// tokens inside of a std::vector<std::string>.
@@ -935,6 +935,8 @@ private:
 namespace of{
 namespace priv{
     void setWorkingDirectoryToDefault();
+    void initutils();
+    void endutils();
 }
 }
 /*! \endcond */
