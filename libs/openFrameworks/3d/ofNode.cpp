@@ -351,6 +351,7 @@ void ofNode::orbit(float longitude, float latitude, float radius, ofNode& center
 void ofNode::resetTransform() {
 	setPosition(ofVec3f());
 	setOrientation(ofVec3f());
+    setScale({1.f,1.f,1.f});
 }
 
 //----------------------------------------

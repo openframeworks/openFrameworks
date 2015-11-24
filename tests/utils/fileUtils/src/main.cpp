@@ -7,6 +7,8 @@ std::filesystem::path initial_cwd;
 class ofApp: public ofxUnitTestsApp{
 	void run(){
 		ofDirectory dir(".");
+        dir.create(true);
+        dir.exists();
 		for(auto f: dir){
 			f.setWriteable(true);
 			if(f.isDirectory()){
@@ -167,9 +169,9 @@ class ofApp: public ofxUnitTestsApp{
         ofLogNotice() << "tests #4299";
         test_eq(std::filesystem::path(ofFilePath::getCurrentWorkingDirectory()), initial_cwd, "ofFilePath::getCurrentWorkingDirectory()");
 #ifdef TARGET_OSX
-        test_eq(ofToDataPath("",false),"../../../data","ofToDataPath relative");
+        test_eq(ofToDataPath("",false),"../../../data/","ofToDataPath relative");
 #else
-        test_eq(ofToDataPath("",false),"data","ofToDataPath relative");
+        test_eq(ofToDataPath("",false),"data/","ofToDataPath relative");
 #endif
 
 
@@ -184,6 +186,25 @@ class ofApp: public ofxUnitTestsApp{
 
 
         //========================================================================
+        ofLogNotice() << "";
+        ofLogNotice() << "tests #4598";
+        test_eq(ofToDataPath("").back(),'/',"ofToDataPath with empty string shouldn't crash");
+
+        //========================================================================
+        ofLogNotice() << "";
+        ofLogNotice() << "tests #4563";
+#ifdef TARGET_LINUX 
+        test_eq(ofToDataPath("a.txt"), "data/a.txt","#4563 test1");
+        test_eq(ofToDataPath("data.txt"), "data/data.txt", "#4563 test2");
+        test_eq(ofToDataPath(""), "data/", "#4563 test3");
+#elif defined(TARGET_OSX)
+        test_eq(ofToDataPath("a.txt"), "../../../data/a.txt","#4563 test1");
+        test_eq(ofToDataPath("data.txt"), "../../../data/data.txt", "#4563 test2");
+        test_eq(ofToDataPath(""), "../../../data/", "#4563 test3");
+#endif
+
+
+        //========================================================================
 		// clean test files
 		dir.open(".");
 		for(auto f: dir){
@@ -194,6 +215,14 @@ class ofApp: public ofxUnitTestsApp{
 				f.remove();
 			}
 		}
+
+        //========================================================================
+        ofLogNotice() << "#4564";
+        dir.remove(true);
+        ofDirectory currentVideoDirectory(ofToDataPath("../../../video", true));
+        auto path = currentVideoDirectory.path();
+        std::string pathEnd("data/../../../video/");
+        test_eq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
 	}
 };
 

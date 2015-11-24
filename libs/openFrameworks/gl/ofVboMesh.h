@@ -8,7 +8,7 @@ public:
 	using ofMesh::draw;
 	ofVboMesh();
 	ofVboMesh(const ofMesh & mom);
-	void operator=(const ofMesh & mom);
+    void operator=(const ofMesh & mom);
 	virtual ~ofVboMesh();
 	void setUsage(int usage);
 

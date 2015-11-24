@@ -336,7 +336,16 @@ ofBuffer ofxOscMessage::getArgAsBlob( int index ) const
         return ((ofxOscArgBlob*)args[index])->get();
 }
 
-
+int32_t ofxOscMessage::getArgAsRgbaColor( int index ) const
+{
+    if ( getArgType(index) != OFXOSC_TYPE_RGBA_COLOR )
+    {
+        ofLogError("ofxOscMessage") << "getArgAsRgbaColor(): argument " << index << " is not a rgba color";
+        return 0;
+    }
+    else
+        return ((ofxOscArgRgbaColor*)args[index])->get();
+}
 
 /*
 
@@ -467,8 +476,8 @@ ofxOscMessage& ofxOscMessage::copy( const ofxOscMessage& other )
 			args.push_back( new ofxOscArgTimetag( other.getArgAsTimetag( i ) ) );
 		else if ( argType == OFXOSC_TYPE_BLOB )
 			args.push_back( new ofxOscArgBlob( other.getArgAsBlob( i ) ) );
-		//else if ( argType == OFXOSC_TYPE_RGBA_COLOR )
-		//	args.push_back( new ofxOscArgRgbaColor( other.getArgAsRgbaColor( i ) ) );
+		else if ( argType == OFXOSC_TYPE_RGBA_COLOR )
+			args.push_back( new ofxOscArgRgbaColor( other.getArgAsRgbaColor( i ) ) );
 		else
 		{
 			assert( false && "bad argument type" );

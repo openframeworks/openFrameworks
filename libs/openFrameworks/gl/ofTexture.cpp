@@ -186,6 +186,18 @@ ofTexture::ofTexture(const ofTexture & mom){
 #endif
 }
 
+ofTexture::ofTexture(ofTexture && mom){
+    anchor = mom.anchor;
+    bAnchorIsPct = mom.bAnchorIsPct;
+    texData = mom.texData;
+    bWantsMipmap = mom.bWantsMipmap;
+    mom.texData.bAllocated = 0;
+    mom.texData.textureID = 0;
+#ifdef TARGET_ANDROID
+    registerTexture(this);
+#endif
+}
+
 //----------------------------------------------------------
 ofTexture& ofTexture::operator=(const ofTexture & mom){
 	if(!texData.bUseExternalTextureID){
@@ -200,6 +212,23 @@ ofTexture& ofTexture::operator=(const ofTexture & mom){
 	unregisterTexture(this);
 #endif
 	return *this;
+}
+
+//----------------------------------------------------------
+ofTexture& ofTexture::operator=(ofTexture && mom){
+    if(!texData.bUseExternalTextureID){
+        release(texData.textureID);
+    }
+    anchor = mom.anchor;
+    bAnchorIsPct = mom.bAnchorIsPct;
+    texData = mom.texData;
+    bWantsMipmap = mom.bWantsMipmap;
+    mom.texData.bAllocated = 0;
+    mom.texData.textureID = 0;
+#ifdef TARGET_ANDROID
+    unregisterTexture(this);
+#endif
+    return *this;
 }
 
 //----------------------------------------------------------
