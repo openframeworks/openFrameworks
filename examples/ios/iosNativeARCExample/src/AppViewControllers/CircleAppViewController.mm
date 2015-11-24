@@ -5,6 +5,7 @@
 
 #import "CircleAppViewController.h"
 #import "ofxiOSExtras.h"
+#import "ofAppiOSWindow.h"
 
 @implementation CircleAppViewController
 

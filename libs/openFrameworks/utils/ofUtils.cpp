@@ -325,7 +325,7 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	if (!enableDataPath)
 		return path;
 
-    bool hasTrailingSlash = std::filesystem::path(path).generic_string().back()=='/';
+    bool hasTrailingSlash = !path.empty() && std::filesystem::path(path).generic_string().back()=='/';
 
 	// if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
@@ -361,19 +361,19 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	// here we check whether path already refers to the data folder by looking for common elements
 	// if the path begins with the full contents of dataPathRoot then the data path has already been added
 	// we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
-	auto strippedDataPath = dataPath.string();
+    auto dirDataPath = dataPath.string();
 	// also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
-	strippedDataPath = ofFilePath::removeTrailingSlash(strippedDataPath);
+    dirDataPath = ofFilePath::addTrailingSlash(dirDataPath);
 
-	auto relativeStrippedDataPath = ofFilePath::makeRelative(std::filesystem::current_path().string(),dataPath.string());
-	relativeStrippedDataPath  = ofFilePath::removeTrailingSlash(relativeStrippedDataPath);
+    auto relativeDirDataPath = ofFilePath::makeRelative(std::filesystem::current_path().string(),dataPath.string());
+    relativeDirDataPath  = ofFilePath::addTrailingSlash(relativeDirDataPath);
 
-	if (inputPath.string().find(strippedDataPath) != 0 && inputPath.string().find(relativeStrippedDataPath)!=0) {
+    if (inputPath.string().find(dirDataPath) != 0 && inputPath.string().find(relativeDirDataPath)!=0) {
 		// inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
 	    if(makeAbsolute){
-	        outputPath = dataPath / inputPath;
+            outputPath = dirDataPath / inputPath;
 	    }else{
-	        outputPath = relativeStrippedDataPath / inputPath;
+            outputPath = relativeDirDataPath / inputPath;
 	    }
 	} else {
 		// inputPath already contains data path, so no need to change
@@ -1013,7 +1013,7 @@ ofTargetPlatform ofGetTargetPlatform(){
     #if (_MSC_VER)
         return OF_TARGET_WINVS;
     #else
-        return OF_TARGET_WINGCC;
+        return OF_TARGET_MINGW;
     #endif
 #elif defined(TARGET_ANDROID)
     return OF_TARGET_ANDROID;

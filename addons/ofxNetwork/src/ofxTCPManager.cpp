@@ -182,7 +182,6 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
         FD_ZERO(&fd);
         FD_SET(m_hSocket, &fd);
         timeval	tv=	{(time_t)m_dwTimeoutConnect, 0};
-        fd_set fdset;
         if(select(m_hSocket+1,NULL,&fd,NULL,&tv)== 1) {
             int so_error;
             socklen_t len = sizeof so_error;
@@ -340,7 +339,15 @@ int ofxTCPManager::Receive(char* pBuff, const int iSize)
   		}
   	}
   	int ret = recv(m_hSocket, pBuff, iSize, 0);
-  	if(ret==-1)  ofxNetworkCheckError();
+	if (SOCKET_ERROR == ret)
+	{
+		int err = ofxNetworkCheckError();
+		if (OFXNETWORK_ERROR(WOULDBLOCK) == err)
+		{
+			// Non-blocking socket, no data to receive
+			ret = 0;
+		}
+	}
 	return ret;
 }
 
