@@ -43,6 +43,8 @@ function download() {
 			rm fmodapi${VER}mac-installer.dmg
 			# unmount drive image
 			hdiutil detach "/Volumes/FMOD Programmers API Mac/" -quiet 
+
+			
 	fi
 
 	echo "downloaded fmodex"
@@ -56,7 +58,20 @@ function prepare() {
 
 # executed inside the lib src dir
 function build() {
-	echo "build not needed for $TYPE"
+
+	if [ "$TYPE" == "osx" ]; then
+
+		cd lib
+		install_name_tool -id "@executable_name/../Frameworks/libfmodex.dylib" libfmodex.dylib
+		echo "install_name_tool -id '@executable_name/../Frameworks/libfmodex.dylib' libfmodex.dylib"
+		cd ../
+
+	else 
+		echo "build not needed for $TYPE"
+
+	fi
+
+	
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
@@ -68,6 +83,8 @@ function copy() {
 		cp -Rv inc/* $1/include
 		# library files
 		cp -Rv lib/libfmodex.dylib $1/lib/$TYPE/
+
+		cp -Rv lib/libfmodex.dylib $1/../../export/$TYPE/libs/
 	fi
 
 	# copy license files
