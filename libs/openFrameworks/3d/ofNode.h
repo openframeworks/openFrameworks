@@ -114,7 +114,7 @@ public:
 	ofQuaternion getGlobalOrientation() const;
 	ofVec3f getGlobalScale() const;
 
-	/// \}	
+	/// \}	
 	/// \name Setters
 	/// \{
 
@@ -142,7 +142,7 @@ public:
 	void setScale(const ofVec3f& s);
 	
 	/// \}
-	/// \name Modifiers
+	/// \name Modifiers
 	/// \{
 
 	/// \brief Move by arbitrary amount
@@ -182,13 +182,25 @@ public:
 	void rotateAround(const ofQuaternion& q, const ofVec3f& point);
 	
 	/// \brief Rotate around arbitrary axis by angle around point
-	void rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point);	
+    void rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point);
+
+    /// \brief Orient node to look at position (-z axis pointing to position)
+    ///
+    /// This version calculates the up vector by rotating {0,1,0} by the same
+    /// angle that will rotate {0,0,1} to the current position - lookAtPosition
+    void lookAt(const ofVec3f& lookAtPosition);
 
 	/// \brief Orient node to look at position (-z axis pointing to position)
-	void lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector = ofVec3f(0, 1, 0));
+    void lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector);
+
+    /// \brief Orient node to look at node (-z axis pointing to node)
+    ///
+    /// This version calculates the up vector by rotating {0,1,0} by the same
+    /// angle that will rotate {0,0,1} to the current position - lookAtPosition
+    void lookAt(const ofNode& lookAtNode);
 	
 	/// \brief Orient node to look at node (-z axis pointing to node)
-	void lookAt(const ofNode& lookAtNode, const ofVec3f& upVector = ofVec3f(0, 1, 0));
+    void lookAt(const ofNode& lookAtNode, const ofVec3f& upVector);
 	
 	/// \brief Orbit object around target at radius
 	void orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint = ofVec3f(0, 0, 0));
