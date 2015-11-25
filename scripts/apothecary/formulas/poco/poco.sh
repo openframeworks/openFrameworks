@@ -8,11 +8,11 @@
 # specify specfic build configs in poco/config using ./configure --config=NAME
 
 # define the version
-VER=1.6.1-release
+VER=1.6.0-release
 
 # tools for git use
 GIT_URL=https://github.com/pocoproject/poco
-GIT_TAG=poco-1.6.1-release
+GIT_TAG=poco-1.6.0-release
 
 FORMULA_TYPES=( "osx" "ios" "tvos" "android" "emscripten" "vs" "linux" "linux64" "linuxarmv6l" "linuxarmv7l")
 
@@ -27,7 +27,7 @@ FORMULA_DEPENDS_MANUAL=1
 # 3rd Party libraries.  See https://github.com/pocoproject/poco/blob/develop/README
 # for more information.
 
-SHA=f8dee428ab61499753e9b2f81f8a5b9ea1dc74e4
+SHA=
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -215,8 +215,8 @@ PING_LOOP_PID=$!
 		cd lib/Darwin
 
 		# delete debug builds
-		rm i386/*d.a
-		rm x86_64/*d.a
+		rm -f i386/*d.a
+		rm -f x86_64/*d.a
 
 		# link into universal lib, strip "lib" from filename
 		local lib
@@ -522,8 +522,8 @@ PING_LOOP_PID=$!
 
 		echo `pwd`
 
-		rm -v lib/Android/armeabi-v7a/*d.a
-		rm -v lib/Android/x86/*d.a
+		rm -f lib/Android/armeabi-v7a/*d.a
+		rm -f lib/Android/x86/*d.a
 
 		export PATH=$OLD_PATH
 
@@ -532,7 +532,7 @@ PING_LOOP_PID=$!
 		./configure $BUILD_OPTS
 		make -j${PARALLEL_MAKE}
 		# delete debug builds
-		rm lib/Linux/$(uname -m)/*d.a
+		rm -f lib/Linux/$(uname -m)/*d.a
 	else
 		echoWarning "TODO: build $TYPE lib"
 	fi
