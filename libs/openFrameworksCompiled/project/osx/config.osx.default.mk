@@ -378,11 +378,9 @@ afterplatform: $(TARGET_NAME)
 
 	@echo TARGET=$(TARGET)
 
-	@install_name_tool -change @executable_path/../Frameworks/GLUT.framework/Versions/A/GLUT @executable_path/GLUT.framework/Versions/A/GLUT $(TARGET)
 
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/libs/* bin/$(BIN_NAME).app/Contents/MacOS
-	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/libs/Frameworks/* bin/$(BIN_NAME).app/Contents/MacOS
 	
 	
 ifdef PROJECT_AFTER_OSX
