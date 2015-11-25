@@ -56,6 +56,12 @@ ipch/
 local.properties
 .externalToolBuilders
 
+# Android Studio
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+
 ##################
 # operating system
 ##################
