@@ -231,6 +231,14 @@ void ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& poi
 }
 
 //----------------------------------------
+void ofNode::lookAt(const ofVec3f& lookAtPosition){
+    ofQuaternion q;
+    q.makeRotate({0.f,0.f,1.f}, getPosition() - lookAtPosition);
+    auto up = q * ofVec3f(0.f,1.f,0.f);
+    lookAt(lookAtPosition, up);
+}
+
+//----------------------------------------
 void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
 	if(parent) upVector = upVector * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix());	
 	ofVec3f zaxis = (getGlobalPosition() - lookAtPosition).getNormalized();
@@ -245,6 +253,14 @@ void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
 		
 		setGlobalOrientation(m.getRotate());
 	}
+}
+
+//----------------------------------------
+void ofNode::lookAt(const ofNode& lookAtNode){
+    ofQuaternion q;
+    q.makeRotate({0.f,0.f,1.f}, getPosition() - lookAtNode.getGlobalPosition());
+    auto up = q * ofVec3f(0.f,1.f,0.f);
+    lookAt(lookAtNode, up);
 }
 
 //----------------------------------------
@@ -351,7 +367,7 @@ void ofNode::orbit(float longitude, float latitude, float radius, ofNode& center
 void ofNode::resetTransform() {
 	setPosition(ofVec3f());
 	setOrientation(ofVec3f());
-    setScale({1.f,1.f,1.f});
+    	setScale({1.f,1.f,1.f});
 }
 
 //----------------------------------------
