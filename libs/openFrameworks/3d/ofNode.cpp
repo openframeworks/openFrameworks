@@ -232,10 +232,15 @@ void ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& poi
 
 //----------------------------------------
 void ofNode::lookAt(const ofVec3f& lookAtPosition){
-    ofQuaternion q;
-    q.makeRotate({0.f,0.f,1.f}, getPosition() - lookAtPosition);
-    auto up = q * ofVec3f(0.f,1.f,0.f);
-    lookAt(lookAtPosition, up);
+    auto relPosition = (getGlobalPosition() - lookAtPosition);
+    auto radius = relPosition.length();
+    if(radius>0){
+        auto latitude = ofRadToDeg(acos(relPosition.y / radius)) - 90;
+        auto longitude = ofRadToDeg(atan2(relPosition.x , relPosition.z));
+        ofQuaternion q(latitude, ofVec3f(1,0,0), longitude, ofVec3f(0,1,0), 0, ofVec3f(0,0,1));
+        setGlobalOrientation(q);
+    }
+
 }
 
 //----------------------------------------
@@ -257,10 +262,7 @@ void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
 
 //----------------------------------------
 void ofNode::lookAt(const ofNode& lookAtNode){
-    ofQuaternion q;
-    q.makeRotate({0.f,0.f,1.f}, getPosition() - lookAtNode.getGlobalPosition());
-    auto up = q * ofVec3f(0.f,1.f,0.f);
-    lookAt(lookAtNode, up);
+    lookAt(lookAtNode.getGlobalPosition());
 }
 
 //----------------------------------------
@@ -349,7 +351,6 @@ ofVec3f ofNode::getGlobalScale() const {
 
 //----------------------------------------
 void ofNode::orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint) {
-	
 	ofQuaternion q(latitude, ofVec3f(1,0,0), longitude, ofVec3f(0,1,0), 0, ofVec3f(0,0,1));
 	setPosition((ofVec3f(0,0,radius)-centerPoint)*q +centerPoint);
 	setOrientation(q);
@@ -367,7 +368,7 @@ void ofNode::orbit(float longitude, float latitude, float radius, ofNode& center
 void ofNode::resetTransform() {
 	setPosition(ofVec3f());
 	setOrientation(ofVec3f());
-    	setScale({1.f,1.f,1.f});
+    setScale({1.f,1.f,1.f});
 }
 
 //----------------------------------------
