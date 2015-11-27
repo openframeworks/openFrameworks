@@ -154,9 +154,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 		glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_ES_API);
 		if(settings.glesVersion>=1){
-			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer);
+			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
 		}else{
-			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer);
+			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
 		}
 	#else
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);

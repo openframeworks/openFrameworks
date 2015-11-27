@@ -230,11 +230,11 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlay
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
 
-ifeq ($(LINUX_ARM),1)
+#ifeq ($(LINUX_ARM),1)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
-else
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
-endif
+#else
+#	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
+#endif
 
 # third party
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
@@ -295,11 +295,13 @@ PLATFORM_HEADER_SEARCH_PATHS =
 PLATFORM_LIBRARIES =
 
 ifneq ($(LINUX_ARM),1)
+ifeq ($(findstring TARGET_OPENGLES,$(PLATFORM_DEFINES)),)
 	PLATFORM_LIBRARIES += glut
 	
 	#PLATFORM_LIBRARIES += gstgl-1.0 
 	#PLATFORM_LIBRARIES += SM 
 	#PLATFORM_LIBRARIES += ICE
+endif
 endif
 ifneq ($(PLATFORM_ARCH),armv6l)
     PLATFORM_LIBRARIES += X11 
