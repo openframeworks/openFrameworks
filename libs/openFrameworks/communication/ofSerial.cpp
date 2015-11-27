@@ -578,9 +578,6 @@ int ofSerial::readByte(){
 			ofLogError("ofSerial") << "readByte(): couldn't read from port: " << errno << " " << strerror(errno);
 			return OF_SERIAL_ERROR;
 		}
-		if(nRead == 0){
-			return OF_SERIAL_NO_DATA;
-		}
 
 	#elif defined( TARGET_WIN32 )
 
@@ -596,6 +593,10 @@ int ofSerial::readByte(){
 		return OF_SERIAL_ERROR;
 
 	#endif
+
+	if(nRead == 0){
+		return OF_SERIAL_NO_DATA;
+	}
 
 	return tmpByte;
 }
