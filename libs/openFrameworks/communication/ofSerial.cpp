@@ -579,12 +579,20 @@ int ofSerial::readByte(){
 			return OF_SERIAL_ERROR;
 		}
 
+		if(nRead == 0){
+			return OF_SERIAL_NO_DATA;
+		}
+
 	#elif defined( TARGET_WIN32 )
 
 		DWORD nRead;
 		if(!ReadFile(hComm, &tmpByte, 1, &nRead, 0)){
 			ofLogError("ofSerial") << "readByte(): couldn't read from port";
 			return OF_SERIAL_ERROR;
+		}
+	
+		if(nRead == 0){
+			return OF_SERIAL_NO_DATA;
 		}
 
 	#else
@@ -593,10 +601,6 @@ int ofSerial::readByte(){
 		return OF_SERIAL_ERROR;
 
 	#endif
-
-	if(nRead == 0){
-		return OF_SERIAL_NO_DATA;
-	}
 
 	return tmpByte;
 }
