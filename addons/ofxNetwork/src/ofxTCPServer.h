@@ -27,6 +27,7 @@ class ofxTCPServer : public ofThread{
 	
 		bool close();
 		bool disconnectClient(int clientID);
+        bool disconnectAllClients();
 
 		int getNumClients(); //total number of clients - not sutible for iterating through clients with
 		int getLastID(); //this returns the last current id number if you want to loop through with a for loop 
