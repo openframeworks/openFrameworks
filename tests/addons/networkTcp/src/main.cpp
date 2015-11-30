@@ -6,6 +6,9 @@
 class ofApp: public ofxUnitTestsApp{
 public:
 	void testNonBlocking(){
+		ofLogNotice() << "---------------------------------------";
+		ofLogNotice() << "testNonBlocking";
+
 		int port = ofRandom(15000, 65535);
 
 		ofxTCPServer server;
@@ -41,6 +44,10 @@ public:
 	}
 
 	void testBlocking(){
+		ofLogNotice() << "";
+		ofLogNotice() << "---------------------------------------";
+		ofLogNotice() << "testBlocking";
+
 		int port = ofRandom(15000, 65535);
 
 		ofxTCPServer server;
@@ -57,6 +64,10 @@ public:
 	}
 
 	void disconnectionAutoDetection(){
+		ofLogNotice() << "";
+		ofLogNotice() << "---------------------------------------";
+		ofLogNotice() << "disconnectionAutoDetection";
+
 		int port = ofRandom(15000, 65535);
 
 		ofxTCPServer server;
@@ -78,11 +89,75 @@ public:
 		test(!server.isClientConnected(1), "server detects disconnection");
 	}
 
+	void testSendRaw(){
+		ofLogNotice() << "";
+		ofLogNotice() << "---------------------------------------";
+		ofLogNotice() << "testSendRaw";
+
+		int port = ofRandom(15000, 65535);
+
+		ofxTCPServer server;
+		test(server.setup(port,true), "blocking server");
+
+		ofxTCPClient client;
+		test(client.setup("127.0.0.1", port, true), "blocking client");
+
+		std::string messageSent = "message";
+		test(client.sendRaw(messageSent), "send blocking from client");
+
+		std::vector<char> messageReceived(messageSent.size()+1, 0);
+		int received = 0;
+		do{
+			auto ret = server.receiveRawBytes(0, messageReceived.data() + received, messageSent.size());
+			test(ret>0, "received blocking from server");
+			if(ret>0){
+				received += ret;
+			}else{
+				break;
+			}
+		}while(received<messageSent.size());
+
+		test_eq(messageSent, std::string(messageReceived.data()), "messageSent == messageReceived");
+	}
+
+	void testSendRawBytes(){
+		ofLogNotice() << "";
+		ofLogNotice() << "---------------------------------------";
+		ofLogNotice() << "testSendRawBytes";
+
+		int port = ofRandom(15000, 65535);
+
+		ofxTCPServer server;
+		test(server.setup(port,true), "blocking server");
+
+		ofxTCPClient client;
+		test(client.setup("127.0.0.1", port, true), "blocking client");
+
+		std::string messageSent = "message";
+		test(client.sendRawBytes(messageSent.c_str(), messageSent.size()), "send blocking from client");
+
+		std::vector<char> messageReceived(messageSent.size()+1, 0);
+		int received = 0;
+		do{
+			auto ret = server.receiveRawBytes(0, messageReceived.data() + received, messageSent.size());
+			test(ret>0, "received blocking from server");
+			if(ret>0){
+				received += ret;
+			}else{
+				break;
+			}
+		}while(received<messageSent.size());
+
+		test_eq(messageSent, std::string(messageReceived.data()), "messageSent == messageReceived");
+	}
+
 	void run(){
 		ofSeedRandom(ofGetSeconds());
 		testNonBlocking();
 		testBlocking();
 		disconnectionAutoDetection();
+		testSendRaw();
+		testSendRawBytes();
 	}
 };
 
