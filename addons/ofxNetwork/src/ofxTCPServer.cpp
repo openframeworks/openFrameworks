@@ -50,12 +50,14 @@ void ofxTCPServer::setMessageDelimiter(std::string delim){
 
 //--------------------------
 bool ofxTCPServer::close(){
+    stopThread();
 	if( !TCPServer.Close() ){
 		ofLogWarning("ofxTCPServer") << "close(): couldn't close connections";
-		waitForThread(true); //stop the thread
+		waitForThread(false); // wait for the thread to finish
 		return false;
-	}else{
-		waitForThread(true); //stop the thread
+    }else{
+        ofLogVerbose("ofxTCPServer") << "Closing server";
+		waitForThread(false); // wait for the thread to finish
 		return true;
 	}
 }
@@ -115,7 +117,7 @@ std::string ofxTCPServer::receive(int clientID){
 	}
 	
 	if( !getClient(clientID).isConnected() ){
-		disconnectClient(clientID);
+        TCPConnections.erase(clientID);
 		return "";
 	}
 
@@ -308,9 +310,6 @@ void ofxTCPServer::threadedFunction(){
 	}
 	idCount = 0;
 	std::unique_lock<std::mutex> Lock( mConnectionsLock );
-	for(auto & conn: TCPConnections){
-		conn.second->close();
-	}
 	TCPConnections.clear();
 	connected = false;
 	ofLogVerbose("ofxTCPServer") << "listening thread stopped";
