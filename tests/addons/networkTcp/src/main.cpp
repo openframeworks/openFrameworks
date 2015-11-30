@@ -22,25 +22,36 @@ public:
 		std::string messageReceived;
 
 		test(client.send(messageSent), "send non blocking from client");
-		for(int i=0;i<10 && !received;i++){
-			ofSleepMillis(200);
-			messageReceived = server.receive(0);
-			if(messageReceived == messageSent){
-				received = true;
+		for(int i=0;i<server.getLastID();i++){
+			if(!server.isClientConnected(i)){
+				continue;
 			}
+			for(int i=0;i<10 && !received;i++){
+				ofSleepMillis(200);
+				messageReceived = server.receive(i);
+				if(messageReceived == messageSent){
+					received = true;
+				}
+			}
+			test(received, "receive non blocking from server");
 		}
-		test(received, "receive non blocking from server");
 
-		test(server.send(0,messageSent), "send non blocking from server");
-		messageReceived = "";
-		for(int i=0;i<10 && !received;i++){
-			ofSleepMillis(200);
-			messageReceived = client.receive();
-			if(messageReceived == messageSent){
-				received = true;
+		for(int i=0;i<server.getLastID();i++){
+			if(!server.isClientConnected(i)){
+				continue;
 			}
+			test(server.send(i,messageSent), "send non blocking from server");
+			messageReceived = "";
+			for(int i=0;i<10 && !received;i++){
+				ofSleepMillis(200);
+				messageReceived = client.receive();
+				if(messageReceived == messageSent){
+					received = true;
+				}
+			}
+			test(received, "receive non blocking from client");
+			break;
 		}
-		test(received, "receive non blocking from client");
 	}
 
 	void testBlocking(){
@@ -57,10 +68,18 @@ public:
 		test(client.setup("127.0.0.1",port,true), "blocking client");
 
 		std::string messageSent = "message";
+		bool foundConnectedClient = false;
 		test(client.send(messageSent), "send blocking from client");
-		test_eq(server.receive(0), messageSent, "receive blocking from server");
-		test(server.send(0, messageSent), "send blocking from server");
-		test_eq(client.receive(), messageSent, "receive blocking from client");
+		for(int i=0;i<server.getLastID();i++){
+			if(!server.isClientConnected(i)){
+				continue;
+			}
+			test_eq(server.receive(i), messageSent, "receive blocking from server");
+			test(server.send(i, messageSent), "send blocking from server");
+			test_eq(client.receive(), messageSent, "receive blocking from client");
+			break;
+		}
+		if(!foundConnectedClient) test(false, "found connected client");
 	}
 
 	void disconnectionAutoDetection(){
@@ -79,7 +98,7 @@ public:
 		test(server.isConnected(), "server is still connected");
 		test(client.isConnected(), "client is still connected");
 
-		test(server.disconnectClient(0), "server closes correctly");
+		test(server.disconnectAllClients(), "server closes correctly");
 		test(!client.isConnected(), "client detects disconnection");
 
 		test(client.setup("127.0.0.1",port,true), "client reconnects");
@@ -107,15 +126,21 @@ public:
 
 		std::vector<char> messageReceived(messageSent.size()+1, 0);
 		int received = 0;
-		do{
-			auto ret = server.receiveRawBytes(0, messageReceived.data() + received, messageSent.size());
-			test(ret>0, "received blocking from server");
-			if(ret>0){
-				received += ret;
-			}else{
-				break;
+		for(int i=0;i<server.getLastID();i++){
+			if(!server.isClientConnected(i)){
+				continue;
 			}
-		}while(received<messageSent.size());
+			do{
+				auto ret = server.receiveRawBytes(i, messageReceived.data() + received, messageSent.size());
+				test(ret>0, "received blocking from server");
+				if(ret>0){
+					received += ret;
+				}else{
+					break;
+				}
+			}while(received<messageSent.size());
+			break;
+		}
 
 		test_eq(messageSent, std::string(messageReceived.data()), "messageSent == messageReceived");
 	}
@@ -138,15 +163,21 @@ public:
 
 		std::vector<char> messageReceived(messageSent.size()+1, 0);
 		int received = 0;
-		do{
-			auto ret = server.receiveRawBytes(0, messageReceived.data() + received, messageSent.size());
-			test(ret>0, "received blocking from server");
-			if(ret>0){
-				received += ret;
-			}else{
-				break;
+		for(int i=0;i<server.getLastID();i++){
+			if(!server.isClientConnected(i)){
+				continue;
 			}
-		}while(received<messageSent.size());
+			do{
+				auto ret = server.receiveRawBytes(i, messageReceived.data() + received, messageSent.size());
+				test(ret>0, "received blocking from server");
+				if(ret>0){
+					received += ret;
+				}else{
+					break;
+				}
+			}while(received<messageSent.size());
+			break;
+		}
 
 		test_eq(messageSent, std::string(messageReceived.data()), "messageSent == messageReceived");
 	}
@@ -169,6 +200,6 @@ int main( ){
 	// can be OF_WINDOW or OF_FULLSCREEN
 	// pass in width and height too:
 	ofRunApp(window, app);
-	ofRunMainLoop();
+	return ofRunMainLoop();
 }
 
