@@ -36,6 +36,9 @@ inline int ofxNetworkCheckErrno(const char* file, int line) {
 	case OFXNETWORK_ERROR(CONNRESET):
 		ofLogError("ofxNetwork") << file << ": " << line << " ECONNRESET: connection closed by peer";
 		break;
+	case OFXNETWORK_ERROR(CONNABORTED):
+		ofLogError("ofxNetwork") << file << ": " << line << " ECONNABORTED: connection aborted by peer";
+		break;
 	case OFXNETWORK_ERROR(INTR):
 		ofLogError("ofxNetwork") << file << ": " << line << " EINTR: receive interrupted by a signal, before any data available";
 		break;

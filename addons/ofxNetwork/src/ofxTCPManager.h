@@ -206,6 +206,9 @@ public:
 	bool CheckHost(const char *pAddrStr);
 	void CleanUp();
 
+	// Tries to detect half open connection http://stackoverflow.com/a/283387
+	bool CheckIsConnected();
+
 private:
 	// private copy so this can't be copied to avoid problems with destruction
 	ofxTCPManager(const ofxTCPManager & mom){};
