@@ -186,7 +186,7 @@ bool ofxTCPManager::Accept(ofxTCPManager& sConnect)
   }
 
   iSize= sizeof(sockaddr_in);
-  sConnect.m_hSocket= accept(m_hSocket, (sockaddr*)&addr, &iSize);
+  sConnect.m_hSocket = accept(m_hSocket, (sockaddr*)&addr, &iSize);
   bool ret = (sConnect.m_hSocket != INVALID_SOCKET);
   if(!ret && !m_closing) ofxNetworkCheckError();
   return ret;
