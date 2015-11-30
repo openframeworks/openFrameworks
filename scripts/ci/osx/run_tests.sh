@@ -12,7 +12,8 @@ for group in *; do
 				cp ../../../scripts/templates/osx/Makefile .
 				cp ../../../scripts/templates/osx/config.make .
 				make Debug
-				make RunDebug
+				cd bin
+				./${test}_debug
                                 cd $ROOT/tests
 			fi
 		done
