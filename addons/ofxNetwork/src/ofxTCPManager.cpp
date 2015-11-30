@@ -215,9 +215,9 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
 	SetNonBlocking(true);
 
     int ret = connect(m_hSocket, (sockaddr *)&addr_in, sizeof(sockaddr));
-    
+	int err = ofxNetworkCheckError();
     // set a timeout
-    if (ret < 0 && ofxNetworkCheckError() == OFXNETWORK_ERROR(INPROGRESS) && m_dwTimeoutConnect != NO_TIMEOUT) {
+    if (ret < 0 && (err == OFXNETWORK_ERROR(INPROGRESS) || err == OFXNETWORK_ERROR(WOULDBLOCK)) && m_dwTimeoutConnect != NO_TIMEOUT) {
         fd_set fd;
         FD_ZERO(&fd);
         FD_SET(m_hSocket, &fd);
