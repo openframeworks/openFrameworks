@@ -187,7 +187,8 @@ bool ofxTCPClient::sendRaw(string message){
 bool ofxTCPClient::sendRawBytes(const char* rawBytes, const int numBytes){
 	if( numBytes <= 0) return false;
 	int ret = TCPClient.SendAll(rawBytes, numBytes);
-	int errorCode = ofxNetworkCheckError();
+    int errorCode = 0;
+    if(ret<0) errorCode = ofxNetworkCheckError();
 	if( isClosingCondition(ret, errorCode) ){
 		ofLogError("ofxTCPClient") << "sendRawBytes(): sending failed";
 		close();
