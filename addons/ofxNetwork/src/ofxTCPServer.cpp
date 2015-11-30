@@ -80,6 +80,13 @@ bool ofxTCPServer::disconnectClient(int clientID){
 }
 
 //--------------------------
+bool ofxTCPServer::disconnectAllClients(){
+    std::unique_lock<std::mutex> Lock( mConnectionsLock );
+    TCPConnections.clear();
+    return true;
+}
+
+//--------------------------
 bool ofxTCPServer::send(int clientID, std::string message){
 	std::unique_lock<std::mutex> Lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
