@@ -91,7 +91,8 @@ private:
         //don't use this one
         //for server to use internally only!
         //--------------------------
-        bool setupConnectionIdx(int _index, bool blocking);
+		bool setupConnectionIdx(int _index, bool blocking);
+		bool isClosingCondition(int messageSize, int errorCode);
 		friend class ofxTCPServer;
 
 		ofxTCPManager	TCPClient;
