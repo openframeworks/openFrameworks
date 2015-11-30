@@ -3,9 +3,9 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	//setup the server to listen on 11999
+	// setup the server to listen on 11999
 	TCP.setup(11999);
-	//optionally set the delimiter to something else.  The delimiter in the client and the server have to be the same, default being [/TCP]
+	// optionally set the delimiter to something else.  The delimiter in the client and the server have to be the same, default being [/TCP]
 	TCP.setMessageDelimiter("\n");
 	lastSent = 0;
 }
@@ -14,8 +14,8 @@ void ofApp::setup(){
 void ofApp::update(){
 	ofBackground(20, 20, 20);
 
-	//for each client lets send them a message letting them know what port they are connected on
-	//we throttle the message sending frequency to once every 100ms
+	// for each client lets send them a message letting them know what port they are connected on
+	// we throttle the message sending frequency to once every 100ms
 	uint64_t now = ofGetElapsedTimeMillis();
 	if(now - lastSent >= 100){
 		for(int i = 0; i < TCP.getLastID(); i++){
@@ -39,32 +39,32 @@ void ofApp::draw(){
 
 	ofSetHexColor(0xDDDDDD);
 
-	//for each connected client lets get the data being sent and lets print it to the screen
+	// for each connected client lets get the data being sent and lets print it to the screen
 	for(unsigned int i = 0; i < (unsigned int)TCP.getLastID(); i++){
 
 		if( !TCP.isClientConnected(i) )continue;
 
-		//give each client its own color
+		// give each client its own color
 		ofSetColor(255 - i*30, 255 - i * 20, 100 + i*40);
 
-		//calculate where to draw the text
+		// calculate where to draw the text
 		int xPos = 15;
 		int yPos = 80 + (12 * i * 4);
 
-		//get the ip and port of the client
+		// get the ip and port of the client
 		string port = ofToString( TCP.getClientPort(i) );
 		string ip   = TCP.getClientIP(i);
 		string info = "client "+ofToString(i)+" -connected from "+ip+" on port: "+port;
 
 
-		//if we don't have a string allocated yet
-		//lets create one
+		// if we don't have a string allocated yet
+		// lets create one
 		if(i >= storeText.size() ){
 			storeText.push_back( string() );
 		}
 
-		//receive all the available messages, separated by \n
-		//and keep only the last one
+		// receive all the available messages, separated by \n
+		// and keep only the last one
         string str;
         string tmp;
         do{
@@ -77,7 +77,7 @@ void ofApp::draw(){
 			storeText[i] = str;
 		}
 
-		//draw the info text and the received text bellow it
+		// draw the info text and the received text bellow it
 		ofDrawBitmapString(info, xPos, yPos);
 		ofDrawBitmapString(storeText[i], 25, yPos + 20);
 
