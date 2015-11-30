@@ -77,6 +77,7 @@ void ofxTCPManager::CleanUp() {
 
 //--------------------------------------------------------------------------------
 bool ofxTCPManager::CheckIsConnected(){
+#ifdef TARGET_WIN32
 	fd_set fd;
 	FD_ZERO(&fd);
 	FD_SET(m_hSocket, &fd);
@@ -96,8 +97,25 @@ bool ofxTCPManager::CheckIsConnected(){
 				return false;
 			}
 		}
-	}
-	return true;
+    }
+    return true;
+#else
+    bool wasBlocking = nonBlocking;
+    SetNonBlocking(false);
+    struct timeval timeout;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 1;
+    if(setsockopt(m_hSocket, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout))<0){
+        return true;
+    }
+    char buffer;
+    int ret = recv(m_hSocket, &buffer, 1, MSG_PEEK);
+    SetNonBlocking(wasBlocking);
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 0;
+    setsockopt(m_hSocket, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
+    return ret!=0;
+#endif
 }
 
 //--------------------------------------------------------------------------------
