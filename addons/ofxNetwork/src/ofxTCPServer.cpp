@@ -84,9 +84,9 @@ bool ofxTCPServer::send(int clientID, std::string message){
 		ofLogWarning("ofxTCPServer") << "send(): client " << clientID << " doesn't exist";
 		return false;
 	}else{
-		getClient(clientID).send(message);
+        auto ret = getClient(clientID).send(message);
 		if(!getClient(clientID).isConnected()) TCPConnections.erase(clientID);
-		return true;
+        return ret;
 	}
 }
 
@@ -300,7 +300,7 @@ void ofxTCPServer::threadedFunction(){
 			std::unique_lock<std::mutex> Lock( mConnectionsLock );
 			//	take owenership of socket from NewClient
 			TCPConnections[acceptId] = client;
-			TCPConnections[acceptId]->setup(acceptId, bClientBlocking);
+            TCPConnections[acceptId]->setupConnectionIdx(acceptId, bClientBlocking);
 			TCPConnections[acceptId]->setMessageDelimiter(messageDelimiter);
 			ofLogVerbose("ofxTCPServer") << "client " << acceptId << " connected on port " << TCPConnections[acceptId]->getPort();
 			if(acceptId == idCount) idCount++;

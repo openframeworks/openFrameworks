@@ -200,20 +200,36 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
 ///Theo added - Choose to set nonBLocking - default mode is to block
 bool ofxTCPManager::SetNonBlocking(bool useNonBlocking)
 {
-	nonBlocking		= useNonBlocking;
+	if(useNonBlocking==nonBlocking){
+		return true;
+	}
+    auto prevNonBlocking = nonBlocking;
+    nonBlocking = useNonBlocking;
 
 	#ifdef TARGET_WIN32
 		unsigned long arg = nonBlocking;
 		int retVal = ioctlsocket(m_hSocket,FIONBIO,&arg);
 	#else
-		int arg = nonBlocking;
-		int retVal = ioctl(m_hSocket,FIONBIO,&arg);
+		int flags = fcntl(m_hSocket, F_GETFL, 0);
+		int retVal;
+		if(useNonBlocking){
+			retVal = fcntl(m_hSocket, F_SETFL, flags | O_NONBLOCK);
+		}else{
+			retVal = fcntl(m_hSocket, F_SETFL, flags & ~O_NONBLOCK);
+		}
 	#endif
 
 	bool ret = (retVal >= 0);
-	if(!ret) ofxNetworkCheckError();
+	if(!ret){
+		ofxNetworkCheckError();
+		nonBlocking = prevNonBlocking;
+	}
 
 	return ret;
+}
+
+bool ofxTCPManager::IsNonBlocking(){
+    return nonBlocking;
 }
 
 //--------------------------------------------------------------------------------
@@ -257,10 +273,9 @@ unsigned long GetTickCount(){
 /// SOCKET_ERROR in case of a problem.
 int ofxTCPManager::Send(const char* pBuff, const int iSize)
 {
-  if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
+    if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
 
-  if (m_dwTimeoutSend	!= NO_TIMEOUT)
-	{
+    if (m_dwTimeoutSend	!= NO_TIMEOUT){
 		fd_set fd;
 		FD_ZERO(&fd);
 		FD_SET(m_hSocket, &fd);
@@ -309,7 +324,7 @@ int ofxTCPManager::SendAll(const char* pBuff, const int iSize)
 		if (ret == -1) { err = ofxNetworkCheckError(); break; }
 		total += ret;
 		bytesleft -=ret;
-		if (GetTickCount() - timestamp > m_dwTimeoutSend * 1000) return SOCKET_TIMEOUT;
+        if (GetTickCount() - timestamp > m_dwTimeoutSend * 1000) return SOCKET_TIMEOUT;
 	}
 
 	if(err == EPIPE || err == ECONNRESET || err == ECONNABORTED ){ Close(); return 0; }
