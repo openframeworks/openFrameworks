@@ -122,7 +122,6 @@ inline int ofxNetworkCheckErrno(const char* file, int line) {
 	case OFXNETWORK_ERROR(WOULDBLOCK):
 	case OFXNETWORK_ERROR(INPROGRESS):
 	case OFXNETWORK_ERROR(ALREADY):
-		//ofLogWarning("ofxNetwork") << file << ": " << line << " EINPROGRESS: the socket is non-blocking and the connection could not be established immediately";
 		// Not an error worth reporting, this is normal if the socket is non-blocking
 		break;
 	default:
