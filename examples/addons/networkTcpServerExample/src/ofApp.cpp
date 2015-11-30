@@ -4,6 +4,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	//we run at 60 fps!
+    ofSetLogLevel(OF_LOG_VERBOSE);
 	ofSetVerticalSync(true);
 
 	//setup the server to listen on 11999
@@ -61,7 +62,12 @@ void ofApp::draw(){
 		}
 
 		//we only want to update the text we have recieved there is data
-		string str = TCP.receive(i);
+        string str;
+        string tmp;
+        do{
+            str = tmp;
+            tmp = TCP.receive(i);
+		}while(tmp!="");
 
 		if(str.length() > 0){
 			storeText[i] = str;
