@@ -9,18 +9,15 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
     ofSetBackgroundColor(230, 230, 230);
 
-	//our typing position
-	pos		= 0;
-
 	//our send and recieve strings
 	msgTx	= "";
 	msgRx	= "";
 
     //connect to the server - if this fails or disconnects
     //we'll check every few seconds to see if the server exists
-	tcpClient.setup("127.0.0.1", 11999);
+    tcpClient.setup("192.168.2.42", 11999);
 
-	//optionally set the delimiter to something else.  The delimter in the client and the server have to be the same
+    //optionally set the delimiter to something else.  The delimiter in the client and the server have to be the same
 	tcpClient.setMessageDelimiter("\n");
 	
 	connectTime = 0;
@@ -79,15 +76,14 @@ void ofApp::keyPressed(int key){
 	if(tcpClient.isConnected()){
 		if(key == OF_KEY_RETURN) key = '\n';
 		if(key == OF_KEY_BACKSPACE || key == OF_KEY_DEL){
-			if( pos > 1 ){
-				pos--;
-				msgTx = msgTx.substr(0,pos);
-			}else{
-				msgTx = "";
-			}
+            if( !msgTx.empty()){
+                msgTx = msgTx.substr(0, msgTx.size()-1);
+            }
 		}else{
-			msgTx.append(1, (char) key);
-			pos++;
+            if(msgTx.back() == '\n'){
+                msgTx.clear();
+            }
+            msgTx += (char) key;
         }
         tcpClient.send(msgTx);
 	}
