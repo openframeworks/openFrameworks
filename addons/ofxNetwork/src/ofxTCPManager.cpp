@@ -285,8 +285,7 @@ int ofxTCPManager::Send(const char* pBuff, const int iSize)
 			return(SOCKET_TIMEOUT);
 		}
 	}
-    int ret = send(m_hSocket, pBuff, iSize, 0);
-    if(ret==-1) ofxNetworkCheckError();
+	int ret = send(m_hSocket, pBuff, iSize, 0);
 	return ret;
 }
 
@@ -317,19 +316,15 @@ int ofxTCPManager::SendAll(const char* pBuff, const int iSize)
 	int bytesleft = iSize;
 	int ret=-1;
 
-	int err = 0;
-
 	while (total < iSize) {
 		ret = send(m_hSocket, pBuff + total, bytesleft, 0);
-		if (ret == -1) { err = ofxNetworkCheckError(); break; }
+		if (ret == -1) { break; }
 		total += ret;
 		bytesleft -=ret;
         if (GetTickCount() - timestamp > m_dwTimeoutSend * 1000) return SOCKET_TIMEOUT;
 	}
 
-	if(err == EPIPE || err == ECONNRESET || err == ECONNABORTED ){ Close(); return 0; }
-
-	return ret==-1 && bytesleft == iSize?SOCKET_ERROR:total;
+	return ret==SOCKET_ERROR ? SOCKET_ERROR : total;
 }
 
 
@@ -353,17 +348,7 @@ int ofxTCPManager::Receive(char* pBuff, const int iSize)
   			return(SOCKET_TIMEOUT);
   		}
   	}
-  	int ret = recv(m_hSocket, pBuff, iSize, 0);
-	if (SOCKET_ERROR == ret)
-	{
-		int err = ofxNetworkCheckError();
-		if (OFXNETWORK_ERROR(WOULDBLOCK) == err)
-		{
-			// Non-blocking socket, no data to receive
-			ret = 0;
-		}
-	}
-	return ret;
+	return recv(m_hSocket, pBuff, iSize, 0);
 }
 
 
@@ -378,18 +363,7 @@ int ofxTCPManager::PeekReceive(char* pBuff, const int iSize)
 	if (m_hSocket == INVALID_SOCKET) 
 		return(SOCKET_ERROR);
  
-  	int ret = recv(m_hSocket, pBuff, iSize, MSG_PEEK);
-
-	if(ret==-1)  
-	{
-		//	if socket is non-blocking, the result is likely to be EWOULDBLOCK (no data) so return zero-bytes
-		int NetError = ofxNetworkCheckError();
-		if ( NetError == OFXNETWORK_ERROR(WOULDBLOCK) )
-			return 0;
-		//	error
-		return SOCKET_ERROR;
-	}
-	return ret;
+	return recv(m_hSocket, pBuff, iSize, MSG_PEEK);
 }
 
 //--------------------------------------------------------------------------------
@@ -419,34 +393,27 @@ int ofxTCPManager::ReceiveAll(char* pBuff, const int iSize)
 
 	do {
 		int ret= recv(m_hSocket, pBuff+totalBytes, iSize-totalBytes, 0);
-		if (ret==0 && totalBytes != iSize) return SOCKET_ERROR;
+		if (ret==0 && totalBytes != iSize){
+			if(m_dwTimeoutReceive != NO_TIMEOUT){
+				return SOCKET_ERROR;
+			}else{
+				return SOCKET_TIMEOUT;
+			}
+		}
 		if (ret < 0){
-			ofxNetworkCheckError();
 			return SOCKET_ERROR;
 		}
 		if (GetTickCount() - timestamp > m_dwTimeoutReceive * 1000) return SOCKET_TIMEOUT;
 		totalBytes += ret;
 		#ifndef TARGET_WIN32
-			usleep(20000); //should be 20ms
+			usleep(2000); //should be 20ms
 		#else
-			Sleep(20);
+			Sleep(2);
 		#endif
 		if (GetTickCount() - stamp > 10000)
 			return SOCKET_TIMEOUT;
 	}while(totalBytes < iSize);
 
-/*
-	if (totalBytes > 0)
-	{
-		char out[400];
-		sprintf(out, "%d bytes received:", totalBytes);
-		int len = strlen(out);
-		memcpy((char*)out + len, pBuff, totalBytes);
-		len += totalBytes;
-		out[len] = 0;
-		OutputDebugString(out);
-	}
-*/
 	return totalBytes;
 }
 
