@@ -12,8 +12,8 @@ for group in *; do
 				cp ../../../scripts/templates/osx/Makefile .
 				cp ../../../scripts/templates/osx/config.make .
 				make Debug
-                                cd bin
                                 binname=$(basename ${test})
+				cd bin/${binname}_debug.app/Contents/MacOS/
                                 ./${binname}_debug
                                 errorcode=$?
                                 if [[ $errorcode -ne 0 ]]; then
