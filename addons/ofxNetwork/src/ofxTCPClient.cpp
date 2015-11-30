@@ -215,7 +215,7 @@ static void removeZeros(char * buffer, int size){
 
 //--------------------------
 bool ofxTCPClient::isClosingCondition(int messageSize, int errorCode){
-	return (messageSize==-1 && ( errorCode == OFXNETWORK_ERROR(CONNRESET) || errorCode == OFXNETWORK_ERROR(CONNABORTED) || errorCode == OFXNETWORK_ERROR(CONNREFUSED) || errorCode == EPIPE || errorCode == OFXNETWORK_ERROR(NOTCONN) ))
+	return errorCode == OFXNETWORK_ERROR(CONNRESET) || errorCode == OFXNETWORK_ERROR(CONNABORTED) || errorCode == OFXNETWORK_ERROR(CONNREFUSED) || errorCode == EPIPE || errorCode == OFXNETWORK_ERROR(NOTCONN)
 			|| (messageSize == 0 && !TCPClient.IsNonBlocking() && TCPClient.GetTimeoutReceive()!=NO_TIMEOUT);
 }
 
