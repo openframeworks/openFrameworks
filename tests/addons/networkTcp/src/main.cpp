@@ -17,6 +17,9 @@ public:
 		ofxTCPClient client;
 		test(client.setup("127.0.0.1",port,false), "non blocking client");
 
+		// wait for connection to be made
+		ofSleepMillis(500);
+
 		bool received = false;
 		std::string messageSent = "message";
 		std::string messageReceived;
@@ -67,6 +70,9 @@ public:
 		ofxTCPClient client;
 		test(client.setup("127.0.0.1",port,true), "blocking client");
 
+		// wait for connection to be made
+		ofSleepMillis(500);
+
 		std::string messageSent = "message";
 		bool foundConnectedClient = false;
 		test(client.send(messageSent), "send blocking from client");
@@ -74,9 +80,10 @@ public:
 			if(!server.isClientConnected(i)){
 				continue;
 			}
-			test_eq(server.receive(i), messageSent, "receive blocking from server");
-			test(server.send(i, messageSent), "send blocking from server");
+			test_eq(server.receive(0), messageSent, "receive blocking from server");
+			test(server.send(0, messageSent), "send blocking from server");
 			test_eq(client.receive(), messageSent, "receive blocking from client");
+			foundConnectedClient = true;
 			break;
 		}
 		if(!foundConnectedClient) test(false, "found connected client");
@@ -94,6 +101,9 @@ public:
 
 		ofxTCPClient client;
 		test(client.setup("127.0.0.1",port,true), "blocking client");
+
+		// wait for connection to be made
+		ofSleepMillis(500);
 
 		test(server.isConnected(), "server is still connected");
 		test(client.isConnected(), "client is still connected");
@@ -123,6 +133,10 @@ public:
 
 		std::string messageSent = "message";
 		test(client.sendRaw(messageSent), "send blocking from client");
+
+		// wait for connection to be made
+		ofSleepMillis(500);
+
 
 		std::vector<char> messageReceived(messageSent.size()+1, 0);
 		int received = 0;
@@ -157,6 +171,10 @@ public:
 
 		ofxTCPClient client;
 		test(client.setup("127.0.0.1", port, true), "blocking client");
+
+		// wait for connection to be made
+		ofSleepMillis(500);
+
 
 		std::string messageSent = "message";
 		test(client.sendRawBytes(messageSent.c_str(), messageSent.size()), "send blocking from client");
