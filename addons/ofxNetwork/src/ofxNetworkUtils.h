@@ -83,12 +83,6 @@ inline int ofxNetworkCheckErrno(const char* file, int line) {
 	case OFXNETWORK_ERROR(ADDRINUSE):
 		ofLogError("ofxNetwork") << file << ": " << line << " EADDRINUSE: the socket address of the given addr is already in use";
 		break;
-	case OFXNETWORK_ERROR(INPROGRESS):
-		ofLogWarning("ofxNetwork") << file << ": " << line << " EINPROGRESS: the socket is non-blocking and the connection could not be established immediately";
-		break;
-	case EALREADY:
-		ofLogError("ofxNetwork") << file << ": " << line << " EALREADY: the socket is non-blocking and already has a pending connection in progress";
-		break;
 	case ENOPROTOOPT:
 		ofLogError("ofxNetwork") << file << ": " << line << " ENOPROTOOPT: the optname doesn't make sense for the given level";
 		break;
@@ -126,10 +120,13 @@ inline int ofxNetworkCheckErrno(const char* file, int line) {
 #endif
 #endif
 	case OFXNETWORK_ERROR(WOULDBLOCK):
+	case OFXNETWORK_ERROR(INPROGRESS):
+	case OFXNETWORK_ERROR(ALREADY):
+		//ofLogWarning("ofxNetwork") << file << ": " << line << " EINPROGRESS: the socket is non-blocking and the connection could not be established immediately";
 		// Not an error worth reporting, this is normal if the socket is non-blocking
 		break;
 	default:
-		ofLogError("ofxNetwork") << file << ": " << line << " unknown error: " << err << " see errno.h for description of the error";
+		ofLogVerbose("ofxNetwork") << file << ": " << line << " unknown error: " << err << " see errno.h for description of the error";
 		break;
 	}
 
