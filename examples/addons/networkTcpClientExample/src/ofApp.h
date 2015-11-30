@@ -31,12 +31,9 @@ class ofApp : public ofBaseApp{
 
 		float counter;
 		int connectTime;
-		int deltaTime;
-
-		bool weConnected;
+        int deltaTime;
 
 		int size;
-		int pos;
-		bool typed;
+        int pos;
 };
 
