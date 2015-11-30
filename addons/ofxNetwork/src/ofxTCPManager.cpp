@@ -211,11 +211,12 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
 	addr_in.sin_addr  = *((struct in_addr *)he->h_addr);
 
 	// set to non-blocking before connect
-	bool wasBlocking = nonBlocking;
-	SetNonBlocking(true);
+    bool wasBlocking = nonBlocking;
+    SetNonBlocking(true);
 
     int ret = connect(m_hSocket, (sockaddr *)&addr_in, sizeof(sockaddr));
-	int err = ofxNetworkCheckError();
+    int err = 0;
+    if(ret<0) err = ofxNetworkCheckError();
     // set a timeout
     if (ret < 0 && (err == OFXNETWORK_ERROR(INPROGRESS) || err == OFXNETWORK_ERROR(WOULDBLOCK)) && m_dwTimeoutConnect != NO_TIMEOUT) {
         fd_set fd;
@@ -236,7 +237,7 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
         }
     }
 
-	SetNonBlocking(wasBlocking);
+    SetNonBlocking(wasBlocking);
     
 	return ret>=0;
 }
@@ -304,11 +305,7 @@ int ofxTCPManager::Write(const char* pBuff, const int iSize)
 //(mainly time comparision)
 #ifndef TARGET_WIN32
 unsigned long GetTickCount(){
-  timeb bsdTime;
-  ftime(&bsdTime);
-
-   unsigned long msSinceUnix = (bsdTime.time*1000) + bsdTime.millitm;
-   return msSinceUnix;
+  return ofGetSystemTime();
 }
 #endif
 
