@@ -13,7 +13,8 @@ for group in *; do
 				cp ../../../scripts/templates/linux/config.make .
 				make Debug
 				cd bin
-				./${test}_debug
+				binname=$(basename ${test})
+				./${binname}_debug
 				cd $ROOT/tests
 			fi
 		done

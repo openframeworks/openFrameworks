@@ -12,8 +12,10 @@ for group in *; do
 				cp ../../../scripts/templates/osx/Makefile .
 				cp ../../../scripts/templates/osx/config.make .
 				make Debug
-				cd bin
-				./${test}_debug
+                                cd bin
+                                binname=$(basename ${test})
+                                ./${binname}_debug
+
                                 cd $ROOT/tests
 			fi
 		done
