@@ -87,7 +87,11 @@ bool ofxTCPManager::CheckIsConnected(){
 		getsockopt(m_hSocket, SOL_SOCKET, SO_ERROR, (char*)&so_error, &len);
 		if (so_error == 0) {
 			u_long toread;
+#ifdef TARGET_WIN32
 			ioctlsocket(m_hSocket, FIONREAD, &toread);
+#else
+			ioctl(m_hSocket, FIONREAD, &toread);
+#endif
 			if (toread == 0) {
 				return false;
 			}
