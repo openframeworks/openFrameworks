@@ -77,6 +77,7 @@ void ofxTCPManager::CleanUp() {
 
 //--------------------------------------------------------------------------------
 bool ofxTCPManager::CheckIsConnected(){
+#ifdef TARGET_WIN32
 	fd_set fd;
 	FD_ZERO(&fd);
 	FD_SET(m_hSocket, &fd);
@@ -96,8 +97,25 @@ bool ofxTCPManager::CheckIsConnected(){
 				return false;
 			}
 		}
-	}
-	return true;
+    }
+    return true;
+#else
+    bool wasBlocking = nonBlocking;
+    SetNonBlocking(false);
+    struct timeval timeout;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 1;
+    if(setsockopt(m_hSocket, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout))<0){
+        return true;
+    }
+    char buffer;
+    int ret = recv(m_hSocket, &buffer, 1, MSG_PEEK);
+    SetNonBlocking(wasBlocking);
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 0;
+    setsockopt(m_hSocket, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
+    return ret!=0;
+#endif
 }
 
 //--------------------------------------------------------------------------------
@@ -168,7 +186,7 @@ bool ofxTCPManager::Accept(ofxTCPManager& sConnect)
   }
 
   iSize= sizeof(sockaddr_in);
-  sConnect.m_hSocket= accept(m_hSocket, (sockaddr*)&addr, &iSize);
+  sConnect.m_hSocket = accept(m_hSocket, (sockaddr*)&addr, &iSize);
   bool ret = (sConnect.m_hSocket != INVALID_SOCKET);
   if(!ret && !m_closing) ofxNetworkCheckError();
   return ret;
@@ -196,28 +214,31 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
 	bool wasBlocking = nonBlocking;
 	SetNonBlocking(true);
 
-	bool ret = (connect(m_hSocket, (sockaddr *)&addr_in, sizeof(sockaddr)) != SOCKET_ERROR);
+    int ret = connect(m_hSocket, (sockaddr *)&addr_in, sizeof(sockaddr));
     
     // set a timeout
-    if (m_dwTimeoutConnect != NO_TIMEOUT) {
+    if (ret < 0 && ofxNetworkCheckError() == OFXNETWORK_ERROR(INPROGRESS) && m_dwTimeoutConnect != NO_TIMEOUT) {
         fd_set fd;
         FD_ZERO(&fd);
         FD_SET(m_hSocket, &fd);
         timeval	tv=	{(time_t)m_dwTimeoutConnect, 0};
-        if(select(m_hSocket+1,NULL,&fd,NULL,&tv)== 1) {
+        ret = select(m_hSocket+1,NULL,&fd,NULL,&tv);
+        if(ret<0){
+            ofxNetworkCheckError();
+        }
+        if(ret== 1) {
             int so_error;
             socklen_t len = sizeof so_error;
             getsockopt(m_hSocket, SOL_SOCKET, SO_ERROR, (char*)&so_error, &len);
             if (so_error == 0) {
-                return true;
+                ret = true;
             } 
         }
     }
 
 	SetNonBlocking(wasBlocking);
     
-    if(!ret) ofxNetworkCheckError();    
-	return ret;
+	return ret>=0;
 }
 
 //--------------------------------------------------------------------------------
@@ -309,8 +330,7 @@ int ofxTCPManager::Send(const char* pBuff, const int iSize)
 			return(SOCKET_TIMEOUT);
 		}
 	}
-	int ret = send(m_hSocket, pBuff, iSize, 0);
-	return ret;
+	return send(m_hSocket, pBuff, iSize, 0);
 }
 
 //--------------------------------------------------------------------------------
@@ -342,13 +362,13 @@ int ofxTCPManager::SendAll(const char* pBuff, const int iSize)
 
 	while (total < iSize) {
 		ret = send(m_hSocket, pBuff + total, bytesleft, 0);
-		if (ret == -1) { break; }
+        if (ret == SOCKET_ERROR) { return SOCKET_ERROR; }
 		total += ret;
 		bytesleft -=ret;
         if (GetTickCount() - timestamp > m_dwTimeoutSend * 1000) return SOCKET_TIMEOUT;
 	}
 
-	return ret==SOCKET_ERROR ? SOCKET_ERROR : total;
+	return total;
 }
 
 
@@ -359,10 +379,9 @@ int ofxTCPManager::SendAll(const char* pBuff, const int iSize)
 ///
 int ofxTCPManager::Receive(char* pBuff, const int iSize)
 {
-  if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
+    if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
 
-  if (m_dwTimeoutReceive	!= NO_TIMEOUT)
-  	{
+    if (m_dwTimeoutReceive	!= NO_TIMEOUT){
   		fd_set fd;
   		FD_ZERO(&fd);
   		FD_SET(m_hSocket, &fd);
