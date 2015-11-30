@@ -4,6 +4,7 @@
 #include "ofThread.h"
 #include "ofxTCPManager.h"
 #include <map>
+#include <condition_variable>
 
 #define TCP_MAX_CLIENTS  32
 
@@ -95,6 +96,7 @@ class ofxTCPServer : public ofThread{
 		ofxTCPManager			TCPServer;
 		std::map<int,std::shared_ptr<ofxTCPClient> >	TCPConnections;
 		std::mutex					mConnectionsLock;
+        std::condition_variable serverReady;
 
 		bool			connected;
 		std::string			str;

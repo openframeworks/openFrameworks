@@ -38,6 +38,8 @@ bool ofxTCPServer::setup(int _port, bool blocking){
 	bClientBlocking = blocking;
 
 	startThread();
+    std::unique_lock<std::mutex> lck(mConnectionsLock);
+    serverReady.wait(lck);
 	return true;
 }
 
@@ -299,6 +301,11 @@ void ofxTCPServer::threadedFunction(){
 		if( !TCPServer.Listen(TCP_MAX_CLIENTS) ){
 			if(isThreadRunning()) ofLogError("ofxTCPServer") << "listening failed";
 		}
+
+        {
+            std::unique_lock<std::mutex> Lock( mConnectionsLock );
+            serverReady.notify_one();
+        }
 		
 		//	we need to lock here, but can't as it blocks...
 		//	so use a temporary to not block the lock 
