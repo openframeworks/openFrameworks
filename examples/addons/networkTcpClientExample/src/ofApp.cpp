@@ -4,9 +4,6 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
-	// we don't want to be running to fast
-	ofSetVerticalSync(true);
     ofSetBackgroundColor(230, 230, 230);
 
 	//our send and recieve strings
