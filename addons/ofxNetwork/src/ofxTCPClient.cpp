@@ -51,7 +51,7 @@ bool ofxTCPClient::setup(string ip, int _port, bool blocking){
 //don't use this one
 //for server to use internally only!
 //--------------------------
-bool ofxTCPClient::setup(int _index, bool blocking){
+bool ofxTCPClient::setupConnectionIdx(int _index, bool blocking){
 	index = _index;
 
 	//this fetches the port that the server
@@ -72,11 +72,11 @@ bool ofxTCPClient::setup(int _index, bool blocking){
 //--------------------------
 bool ofxTCPClient::close(){
 	if( connected ){
-
 		if( !TCPClient.Close() ){
 			ofLogError("ofxTCPClient") << "close(): couldn't close client";
 			return false;
 		}else{
+            ofLogVerbose("ofxTCPClient") << "closing client";
 			connected = false;
 			return true;
 		}
@@ -107,7 +107,7 @@ bool ofxTCPClient::send(string message){
 	message = partialPrevMsg + message + messageDelimiter;
 	message += (char)0; //for flash
 	int ret = TCPClient.SendAll( message.c_str(), message.length() );
-	if( ret == 0 ){
+	if( ret == 0 && !TCPClient.IsNonBlocking() && TCPClient.GetTimeoutSend()!=NO_TIMEOUT){
 		ofLogWarning("ofxTCPClient") << "send(): client disconnected";
 		close();
 		return false;
@@ -143,7 +143,7 @@ bool ofxTCPClient::sendRawMsg(const char * msg, int size){
 	tmpBuffSend.append(messageDelimiter.c_str(),messageDelimiter.size());
 
 	int ret = TCPClient.SendAll( tmpBuffSend.getData(), tmpBuffSend.size() );
-	if( ret == 0 ){
+	if( ret == 0 && !TCPClient.IsNonBlocking() && TCPClient.GetTimeoutSend()!=NO_TIMEOUT ){
 		ofLogWarning("ofxTCPClient") << "sendRawMsg(): client disconnected";
 		close();
 		return false;
@@ -225,7 +225,7 @@ string ofxTCPClient::receive(){
 
 	// check for connection reset or disconnection
 	int errorCode = ofxNetworkCheckError();
-	if((length==-1 && ( errorCode == ECONNRESET || errorCode == ECONNABORTED )) || length == 0){
+	if((length==-1 && ( errorCode == ECONNRESET || errorCode == ECONNABORTED || errorCode == EPIPE )) || (length == 0 && !TCPClient.IsNonBlocking() && TCPClient.GetTimeoutReceive()!=NO_TIMEOUT)){
 		close();
 		if(tmpStr.length()==0) // return if there's no more data left in the buffer
 			return "";
@@ -306,7 +306,7 @@ int ofxTCPClient::peekReceiveRawBytes(char * receiveBuffer, int numBytes){
 //--------------------------
 string ofxTCPClient::receiveRaw(){
 	messageSize = TCPClient.Receive(tmpBuff, TCP_MAX_MSG_SIZE);
-	if(messageSize==0){
+	if(messageSize==0 && !TCPClient.IsNonBlocking() && TCPClient.GetTimeoutReceive()!=NO_TIMEOUT){
 		close();
 	}else if(messageSize<TCP_MAX_MSG_SIZE) {
         // null terminate!!
