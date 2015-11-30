@@ -30,6 +30,7 @@ void ofApp::update(){
 			msgRx = str;
         }
     }else{
+		msgTx = "";
         // if we are not connected lets try and reconnect every 5 seconds
 		deltaTime = ofGetElapsedTimeMillis() - connectTime;
 
@@ -54,12 +55,10 @@ void ofApp::draw(){
         }else{
             ofDrawBitmapString("status: type something to send data to port 11999", 15, 55);
         }
+		ofDrawBitmapString("from server: \n" + msgRx, 15, 270);
     }else{
         ofDrawBitmapString("status: server not found. launch server app and check ports!\n\nreconnecting in "+ofToString( (5000 - deltaTime) / 1000 )+" seconds", 15, 55);
 	}
-
-	ofDrawBitmapString("from server: \n"+msgRx, 15, 270);
-
 }
 
 
@@ -75,12 +74,12 @@ void ofApp::keyPressed(int key){
                 msgTx = msgTx.substr(0, msgTx.size()-1);
             }
 		}else{
-            if(msgTx.back() == '\n'){
-                msgTx.clear();
-            }
             msgTx += (char) key;
         }
         tcpClient.send(msgTx);
+		if (!msgTx.empty() && msgTx.back() == '\n') {
+			msgTx.clear();
+		}
 	}
 }
 

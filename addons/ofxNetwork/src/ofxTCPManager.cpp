@@ -67,6 +67,7 @@ bool ofxTCPManager::Close()
 	return(true);
 }
 
+//--------------------------------------------------------------------------------
 void ofxTCPManager::CleanUp() {
 	#ifdef TARGET_WIN32
 		WSACleanup();
@@ -75,29 +76,50 @@ void ofxTCPManager::CleanUp() {
 }
 
 //--------------------------------------------------------------------------------
+bool ofxTCPManager::CheckIsConnected(){
+	fd_set fd;
+	FD_ZERO(&fd);
+	FD_SET(m_hSocket, &fd);
+	timeval tv = { (time_t)0, 1 };
+	if (select(0, &fd, NULL, NULL, &tv) == 1) {
+		int so_error;
+		socklen_t len = sizeof so_error;
+		getsockopt(m_hSocket, SOL_SOCKET, SO_ERROR, (char*)&so_error, &len);
+		if (so_error == 0) {
+			u_long toread;
+			ioctlsocket(m_hSocket, FIONREAD, &toread);
+			if (toread == 0) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+//--------------------------------------------------------------------------------
 bool ofxTCPManager::Create()
 {
-  if (m_hSocket != INVALID_SOCKET) return(false);
-  m_closing = false;
+	if (m_hSocket != INVALID_SOCKET) return(false);
+	m_closing = false;
 
-  m_hSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_IP);
+	m_hSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_IP);
 
-  bool ret = (m_hSocket != INVALID_SOCKET);
+	bool ret = (m_hSocket != INVALID_SOCKET);
 
-  if(!ret) ofxNetworkCheckError();
+	if(!ret) ofxNetworkCheckError();
 
-  return ret;
+	return ret;
 }
 
 
 //--------------------------------------------------------------------------------
 bool ofxTCPManager::Listen(int iMaxConnections)
 {
-  if (m_hSocket == INVALID_SOCKET) return(false);
-  m_iMaxConnections = iMaxConnections;
-  bool ret = (listen(m_hSocket, iMaxConnections)!= SOCKET_ERROR);
-  if(!ret) ofxNetworkCheckError();
-  return ret;
+	if (m_hSocket == INVALID_SOCKET) return(false);
+	m_iMaxConnections = iMaxConnections;
+	bool ret = (listen(m_hSocket, iMaxConnections)!= SOCKET_ERROR);
+	if(!ret) ofxNetworkCheckError();
+	return ret;
 }
 
 bool ofxTCPManager::Bind(unsigned short usPort)
@@ -167,12 +189,8 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
 	addr_in.sin_addr  = *((struct in_addr *)he->h_addr);
 
 	// set to non-blocking before connect
-	#ifdef TARGET_WIN32
-		unsigned long iMode = 1;
-		if (m_dwTimeoutConnect != NO_TIMEOUT) ioctlsocket(m_hSocket, FIONBIO, &iMode);
-	#else
-		if (m_dwTimeoutConnect != NO_TIMEOUT) fcntl(m_hSocket, F_SETFL, O_NONBLOCK);
-	#endif
+	bool wasBlocking = nonBlocking;
+	SetNonBlocking(true);
 
 	bool ret = (connect(m_hSocket, (sockaddr *)&addr_in, sizeof(sockaddr)) != SOCKET_ERROR);
     
@@ -191,6 +209,8 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
             } 
         }
     }
+
+	SetNonBlocking(wasBlocking);
     
     if(!ret) ofxNetworkCheckError();    
 	return ret;
