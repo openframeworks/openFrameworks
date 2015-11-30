@@ -33,7 +33,6 @@ class ofApp : public ofBaseApp{
 		int connectTime;
         int deltaTime;
 
-		int size;
-        int pos;
+        int size;
 };
 
