@@ -3,14 +3,11 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	//we run at 60 fps!
-    ofSetLogLevel(OF_LOG_VERBOSE);
-	ofSetVerticalSync(true);
-
 	//setup the server to listen on 11999
 	TCP.setup(11999);
-	//optionally set the delimiter to something else.  The delimter in the client and the server have to be the same, default being [/TCP]
+	//optionally set the delimiter to something else.  The delimiter in the client and the server have to be the same, default being [/TCP]
 	TCP.setMessageDelimiter("\n");
+	lastSent = 0;
 }
 
 //--------------------------------------------------------------
@@ -18,10 +15,15 @@ void ofApp::update(){
 	ofBackground(20, 20, 20);
 
 	//for each client lets send them a message letting them know what port they are connected on
-	for(int i = 0; i < TCP.getLastID(); i++){
-		if( !TCP.isClientConnected(i) )continue;
-	
-		TCP.send(i, "hello client - you are connected on port - "+ofToString(TCP.getClientPort(i)) );
+	//we throttle the message sending frequency to once every 100ms
+	uint64_t now = ofGetElapsedTimeMillis();
+	if(now - lastSent >= 100){
+		for(int i = 0; i < TCP.getLastID(); i++){
+			if( !TCP.isClientConnected(i) ) continue;
+
+			TCP.send(i, "hello client - you are connected on port - "+ofToString(TCP.getClientPort(i)) );
+		}
+		lastSent = now;
 	}
 
 }
@@ -61,7 +63,8 @@ void ofApp::draw(){
 			storeText.push_back( string() );
 		}
 
-		//we only want to update the text we have recieved there is data
+		//receive all the available messages, separated by \n
+		//and keep only the last one
         string str;
         string tmp;
         do{
@@ -69,6 +72,7 @@ void ofApp::draw(){
             tmp = TCP.receive(i);
 		}while(tmp!="");
 
+		// if there was a message set it to the corresponding client
 		if(str.length() > 0){
 			storeText[i] = str;
 		}
