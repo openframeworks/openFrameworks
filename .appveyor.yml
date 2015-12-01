@@ -20,13 +20,11 @@ test_script:
     
     if "%PLATFORM%" equ "x86" set TESTS_PLATFORM=Win32
     
-    FOR /D %%G IN (*) DO (
-        echo %APPVEYOR_BUILD_FOLDER%\tests\%%G
+    FOR /D %%G IN (*) DO ( echo %APPVEYOR_BUILD_FOLDER%\tests\%%G
         
         cd %APPVEYOR_BUILD_FOLDER%\tests\%%G
         
-        FOR /D %%E IN (*) DO (
-            echo %APPVEYOR_BUILD_FOLDER%\tests\%%G\%%E
+        FOR /D %%E IN (*) DO ( echo %APPVEYOR_BUILD_FOLDER%\tests\%%G\%%E
             
             cd %APPVEYOR_BUILD_FOLDER%\tests\%%G\%%E
             
