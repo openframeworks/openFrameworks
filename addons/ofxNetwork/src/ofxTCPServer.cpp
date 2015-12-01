@@ -37,9 +37,10 @@ bool ofxTCPServer::setup(int _port, bool blocking){
 	port			= _port;
 	bClientBlocking = blocking;
 
+	std::unique_lock<std::mutex> lck(mConnectionsLock);
 	startThread();
-    std::unique_lock<std::mutex> lck(mConnectionsLock);
     serverReady.wait(lck);
+
 	return true;
 }
 
@@ -70,7 +71,7 @@ ofxTCPClient & ofxTCPServer::getClient(int clientID){
 
 //--------------------------
 bool ofxTCPServer::disconnectClient(int clientID){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLogWarning("ofxTCPServer") << "disconnectClient(): client " << clientID << " doesn't exist";
 		return false;
@@ -83,14 +84,14 @@ bool ofxTCPServer::disconnectClient(int clientID){
 
 //--------------------------
 bool ofxTCPServer::disconnectAllClients(){
-    std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
     TCPConnections.clear();
     return true;
 }
 
 //--------------------------
 bool ofxTCPServer::send(int clientID, std::string message){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLogWarning("ofxTCPServer") << "send(): client " << clientID << " doesn't exist";
 		return false;
@@ -103,7 +104,7 @@ bool ofxTCPServer::send(int clientID, std::string message){
 
 //--------------------------
 bool ofxTCPServer::sendToAll(std::string message){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	if(TCPConnections.size() == 0) return false;
 
 	std::vector<int> disconnect;
@@ -119,7 +120,7 @@ bool ofxTCPServer::sendToAll(std::string message){
 
 //--------------------------
 std::string ofxTCPServer::receive(int clientID){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLogWarning("ofxTCPServer") << "receive(): client " << clientID << " doesn't exist";
 		return "client " + ofToString(clientID) + "doesn't exist";
@@ -135,7 +136,7 @@ std::string ofxTCPServer::receive(int clientID){
 
 //--------------------------
 bool ofxTCPServer::sendRawBytes(int clientID, const char * rawBytes, const int numBytes){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLogWarning("ofxTCPServer") << "sendRawBytes(): client " << clientID << " doesn't exist";
 		
@@ -148,7 +149,7 @@ bool ofxTCPServer::sendRawBytes(int clientID, const char * rawBytes, const int n
 
 //--------------------------
 bool ofxTCPServer::sendRawBytesToAll(const char * rawBytes, const int numBytes){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	if(TCPConnections.size() == 0 || numBytes <= 0) return false;
 
 	for(auto & conn: TCPConnections){
@@ -162,7 +163,7 @@ bool ofxTCPServer::sendRawBytesToAll(const char * rawBytes, const int numBytes){
 
 //--------------------------
 bool ofxTCPServer::sendRawMsg(int clientID, const char * rawBytes, const int numBytes){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLogWarning("ofxTCPServer") << "sendRawMsg(): client " << clientID << " doesn't exist";
 		return false;
@@ -174,7 +175,7 @@ bool ofxTCPServer::sendRawMsg(int clientID, const char * rawBytes, const int num
 
 //--------------------------
 bool ofxTCPServer::sendRawMsgToAll(const char * rawBytes, const int numBytes){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	if(TCPConnections.empty() || numBytes <= 0) return false;
 
 	for(auto & conn: TCPConnections){
@@ -187,7 +188,7 @@ bool ofxTCPServer::sendRawMsgToAll(const char * rawBytes, const int numBytes){
 
 //--------------------------
 int ofxTCPServer::getNumReceivedBytes(int clientID){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLogWarning("ofxTCPServer") << "getNumReceivedBytes(): client " << clientID << " doesn't exist";
 		return 0;
@@ -198,7 +199,7 @@ int ofxTCPServer::getNumReceivedBytes(int clientID){
 
 //--------------------------
 int ofxTCPServer::receiveRawBytes(int clientID, char * receiveBytes,  int numBytes){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLogWarning("ofxTCPServer") << "receiveRawBytes(): client " << clientID << " doesn't exist";
 		return 0;
@@ -210,7 +211,7 @@ int ofxTCPServer::receiveRawBytes(int clientID, char * receiveBytes,  int numByt
 
 //--------------------------
 int ofxTCPServer::peekReceiveRawBytes(int clientID, char * receiveBytes,  int numBytes){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
 		return 0;
@@ -221,7 +222,7 @@ int ofxTCPServer::peekReceiveRawBytes(int clientID, char * receiveBytes,  int nu
 
 //--------------------------
 int ofxTCPServer::receiveRawMsg(int clientID, char * receiveBytes,  int numBytes){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLogWarning("ofxTCPServer") << "receiveRawMsg(): client " << clientID << " doesn't exist";
 		return 0;
@@ -232,7 +233,7 @@ int ofxTCPServer::receiveRawMsg(int clientID, char * receiveBytes,  int numBytes
 
 //--------------------------
 int ofxTCPServer::getClientPort(int clientID){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLogWarning("ofxTCPServer") << "getClientPort(): client " << clientID << " doesn't exist";
 		return 0;
@@ -242,7 +243,7 @@ int ofxTCPServer::getClientPort(int clientID){
 
 //--------------------------
 std::string ofxTCPServer::getClientIP(int clientID){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLogWarning("ofxTCPServer") << "getClientIP(): client " << clientID << " doesn't exist";
 		return "000.000.000.000";
@@ -277,8 +278,23 @@ bool ofxTCPServer::isClientSetup(int clientID){
 
 //--------------------------
 bool ofxTCPServer::isClientConnected(int clientID){
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	return isClientSetup(clientID) && getClient(clientID).isConnected();
+}
+
+
+void ofxTCPServer::waitConnectedClient(){
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
+	if(TCPConnections.empty()){
+		serverReady.wait(lck);
+	}
+}
+
+void ofxTCPServer::waitConnectedClient(int ms){
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
+	if(TCPConnections.empty()){
+		serverReady.wait_for(lck, std::chrono::milliseconds(ms));
+	}
 }
 
 //don't call this
@@ -303,7 +319,7 @@ void ofxTCPServer::threadedFunction(){
 		}
 
         {
-            std::unique_lock<std::mutex> Lock( mConnectionsLock );
+			std::unique_lock<std::mutex> lck( mConnectionsLock );
             serverReady.notify_one();
         }
 		
@@ -313,17 +329,18 @@ void ofxTCPServer::threadedFunction(){
 		if( !TCPServer.Accept( client->TCPClient ) ){
 			if(isThreadRunning()) ofLogError("ofxTCPServer") << "couldn't accept client " << acceptId;
 		}else{
-			std::unique_lock<std::mutex> Lock( mConnectionsLock );
+			std::unique_lock<std::mutex> lck( mConnectionsLock );
 			//	take owenership of socket from NewClient
 			TCPConnections[acceptId] = client;
             TCPConnections[acceptId]->setupConnectionIdx(acceptId, bClientBlocking);
 			TCPConnections[acceptId]->setMessageDelimiter(messageDelimiter);
 			ofLogVerbose("ofxTCPServer") << "client " << acceptId << " connected on port " << TCPConnections[acceptId]->getPort();
 			if(acceptId == idCount) idCount++;
+			serverReady.notify_all();
 		}
 	}
 	idCount = 0;
-	std::unique_lock<std::mutex> Lock( mConnectionsLock );
+	std::unique_lock<std::mutex> lck( mConnectionsLock );
 	TCPConnections.clear();
 	connected = false;
 	ofLogVerbose("ofxTCPServer") << "listening thread stopped";

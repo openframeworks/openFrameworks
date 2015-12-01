@@ -194,7 +194,7 @@ bool ofxTCPManager::Accept(ofxTCPManager& sConnect)
 
 
 //--------------------------------------------------------------------------------
-bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
+bool ofxTCPManager::Connect(const char *pAddrStr, unsigned short usPort)
 {
   sockaddr_in addr_in= {0};
   struct hostent *he;
@@ -212,32 +212,37 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
 
 	// set to non-blocking before connect
     bool wasBlocking = nonBlocking;
-    SetNonBlocking(true);
+	if(m_dwTimeoutConnect != NO_TIMEOUT){
+		SetNonBlocking(true);
+	}
 
     int ret = connect(m_hSocket, (sockaddr *)&addr_in, sizeof(sockaddr));
     int err = 0;
     if(ret<0) err = ofxNetworkCheckError();
     // set a timeout
     if (ret < 0 && (err == OFXNETWORK_ERROR(INPROGRESS) || err == OFXNETWORK_ERROR(WOULDBLOCK)) && m_dwTimeoutConnect != NO_TIMEOUT) {
-        fd_set fd;
+		fd_set fd;
         FD_ZERO(&fd);
         FD_SET(m_hSocket, &fd);
         timeval	tv=	{(time_t)m_dwTimeoutConnect, 0};
         ret = select(m_hSocket+1,NULL,&fd,NULL,&tv);
-        if(ret<0){
-            ofxNetworkCheckError();
-        }
-        if(ret== 1) {
-            int so_error;
-            socklen_t len = sizeof so_error;
-            getsockopt(m_hSocket, SOL_SOCKET, SO_ERROR, (char*)&so_error, &len);
-            if (so_error == 0) {
-                ret = true;
+		if(ret < 0 && ofxNetworkCheckError() != OFXNETWORK_ERROR(INTR)){
+			ret = SOCKET_ERROR;
+		}else if(ret > 0) {
+			socklen_t len = sizeof err;
+			if (getsockopt(m_hSocket, SOL_SOCKET, SO_ERROR, (char*)&err, &len)<0){
+				ret = SOCKET_ERROR;
+			}else if(err != 0) {
+				ret = SOCKET_ERROR;
             } 
-        }
+		}else{
+			ret = SOCKET_TIMEOUT;
+		}
     }
 
-    SetNonBlocking(wasBlocking);
+	if(m_dwTimeoutConnect != NO_TIMEOUT){
+		SetNonBlocking(wasBlocking);
+	}
     
 	return ret>=0;
 }

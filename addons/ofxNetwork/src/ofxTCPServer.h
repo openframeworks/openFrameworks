@@ -85,7 +85,8 @@ class ofxTCPServer : public ofThread{
 		//amount of filled-bytes returned
 		int peekReceiveRawBytes(int clientID, char * receiveBytes,  int numBytes);
 
-
+		void waitConnectedClient();
+		void waitConnectedClient(int ms);
 
 	private:
 		ofxTCPClient & getClient(int clientID);
