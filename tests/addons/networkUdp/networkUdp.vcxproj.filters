@@ -30,6 +30,12 @@
 		<Filter Include="addons\ofxNetwork\src">
 			<UniqueIdentifier>{3D1C10C7-8F35-E796-9C70-F5F3}</UniqueIdentifier>
 		</Filter>
+		<Filter Include="addons\ofxUnitTests">
+			<UniqueIdentifier>{99AF7102-9423-91D4-8CD7-6602}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="addons\ofxUnitTests\src">
+			<UniqueIdentifier>{6DB6A1EA-29BB-7859-928B-898A}</UniqueIdentifier>
+		</Filter>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="src\ofApp.h">
@@ -52,6 +58,9 @@
 		</ClInclude>
 		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.h">
 			<Filter>addons\ofxNetwork\src</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxUnitTests\src\ofxUnitTests.h">
+			<Filter>addons\ofxUnitTests\src</Filter>
 		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
