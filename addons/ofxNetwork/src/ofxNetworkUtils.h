@@ -38,10 +38,7 @@ inline int ofxNetworkCheckErrno(const char* file, int line) {
 		break;
 	case OFXNETWORK_ERROR(CONNABORTED):
 		ofLogError("ofxNetwork") << file << ": " << line << " ECONNABORTED: connection aborted by peer";
-		break;
-	case OFXNETWORK_ERROR(INTR):
-		ofLogError("ofxNetwork") << file << ": " << line << " EINTR: receive interrupted by a signal, before any data available";
-		break;
+        break;
 	case OFXNETWORK_ERROR(NOTCONN):
 		ofLogError("ofxNetwork") << file << ": " << line << " ENOTCONN: trying to receive before establishing a connection";
 		break;
@@ -122,7 +119,10 @@ inline int ofxNetworkCheckErrno(const char* file, int line) {
 	case OFXNETWORK_ERROR(WOULDBLOCK):
 	case OFXNETWORK_ERROR(INPROGRESS):
 	case OFXNETWORK_ERROR(ALREADY):
-		// Not an error worth reporting, this is normal if the socket is non-blocking
+        // Not an error worth reporting, this is normal if the socket is non-blocking
+        break;
+    case OFXNETWORK_ERROR(INTR):
+        //ofLogError("ofxNetwork") << file << ": " << line << " EINTR: receive interrupted by a signal, before any data available";
 		break;
 	default:
 		ofLogVerbose("ofxNetwork") << file << ": " << line << " unknown error: " << err << " see errno.h for description of the error";
