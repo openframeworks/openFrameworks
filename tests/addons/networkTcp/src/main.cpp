@@ -5,7 +5,7 @@
 
 class ofApp: public ofxUnitTestsApp{
 public:
-	void testNonBlocking(){
+	void testNonBlocking(int timeout = 0){
 		ofLogNotice() << "---------------------------------------";
 		ofLogNotice() << "testNonBlocking";
 
@@ -192,6 +192,40 @@ public:
 		test(now-then<6000, "Connect waits 5s to timeout, waited: " + ofToString(now - then));
 	}
 
+	void testReceiveTimeout(){
+		ofLogNotice() << "";
+		ofLogNotice() << "---------------------------------------";
+		ofLogNotice() << "testReceiveTimeout";
+
+		int port = ofRandom(15000, 65535);
+		ofxTCPManager server;
+		test(server.Create(), "server socket creation");
+		test(server.Bind(port), "server socket bind");
+		test(server.Listen(1), "server socket listen");
+		std::condition_variable done;
+		std::mutex mtx;
+		std::thread serverThread([&]{
+			ofxTCPManager client;
+			test(server.Accept(client), "server socket accept");
+			std::unique_lock<std::mutex> lck(mtx);
+			done.wait(lck);
+		});
+
+		ofxTCPManager client;
+		test(client.Create(), "client socket create");
+		test(client.Connect("127.0.0.1", port), "client socket connect");
+
+		ofSleepMillis(100);
+		client.SetTimeoutReceive(5);
+		auto then = ofGetElapsedTimeMillis();
+		char buffer;
+		test_eq(client.Receive(&buffer,1), SOCKET_TIMEOUT, "socket timeouts on no receive");
+		auto now = ofGetElapsedTimeMillis();
+		test(now-then>=5000, "Connect waits 5s to timeout, waited: " + ofToString(now - then));
+		done.notify_all();
+		serverThread.join();
+	}
+
 	void run(){
 		ofSeedRandom(ofGetSeconds());
 		testNonBlocking();
@@ -200,6 +234,7 @@ public:
 		testSendRaw();
 		testSendRawBytes();
 		testWrongConnect();
+		testReceiveTimeout();
 	}
 };
 
