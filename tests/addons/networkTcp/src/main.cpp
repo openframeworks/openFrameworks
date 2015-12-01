@@ -188,7 +188,7 @@ public:
 		test(client.Create(), "socket creation");
 		auto then = ofGetElapsedTimeMillis();
 		test(!client.Connect("127.0.0.1", 200), "connect to non open port, if this fails the port might be really open:");
-		auto now = ofGetElapsedTimeMillis();
+        auto now = ofGetElapsedTimeMillis();
 		test(now-then<6000, "Connect waits 5s to timeout, waited: " + ofToString(now - then));
 	}
 
@@ -221,7 +221,7 @@ public:
 		char buffer;
 		test_eq(client.Receive(&buffer,1), SOCKET_TIMEOUT, "socket timeouts on no receive");
 		auto now = ofGetElapsedTimeMillis();
-		test(now-then>=5000, "Connect waits 5s to timeout, waited: " + ofToString(now - then));
+        test(now-then>=5000, "Connect waits 5s to timeout, waited: " + ofToString(now - then));
 		done.notify_all();
 		serverThread.join();
 	}
@@ -240,6 +240,7 @@ public:
 
 //========================================================================
 int main( ){
+    ofInit();
 	auto window = make_shared<ofAppNoWindow>();
 	auto app = make_shared<ofApp>();
 	// this kicks off the running of my app
