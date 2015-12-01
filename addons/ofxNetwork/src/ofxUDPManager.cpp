@@ -21,7 +21,8 @@ ofxUDPManager::ofxUDPManager()
 	#endif
 
 	m_hSocket= INVALID_SOCKET;
-	m_dwTimeoutReceive=	OF_UDP_DEFAULT_TIMEOUT;
+	m_dwTimeoutReceive = OF_UDP_DEFAULT_TIMEOUT;
+    m_dwTimeoutSend = OF_UDP_DEFAULT_TIMEOUT;
 
 	canGetRemoteAddress	= false;
 	nonBlocking			= true;
