@@ -314,6 +314,7 @@ class ofApp: public ofxUnitTestsApp{
 
 //========================================================================
 int main( ){
+	ofInit();
 	auto window = make_shared<ofAppNoWindow>();
 	auto app = make_shared<ofApp>();
 	// this kicks off the running of my app
