@@ -246,7 +246,9 @@ int ofxTCPManager::WaitReceive(time_t timeoutSeconds, time_t timeoutMicros){
 	fd_set fd;
 	FD_ZERO(&fd);
 	FD_SET(m_hSocket, &fd);
-	timeval	tv{timeoutSeconds, timeoutMicros};
+	timeval	tv;
+	tv.tv_sec = timeoutSeconds;
+	tv.tv_usec = timeoutMicros;
 	auto ret = select(m_hSocket+1,&fd,NULL,NULL,&tv);
 	if(ret == 0){
 		return SOCKET_TIMEOUT;
@@ -264,7 +266,9 @@ int ofxTCPManager::WaitSend(time_t timeoutSeconds, time_t timeoutMicros){
 	fd_set fd;
 	FD_ZERO(&fd);
 	FD_SET(m_hSocket, &fd);
-	timeval	tv{timeoutSeconds, timeoutMicros};
+	timeval	tv;
+	tv.tv_sec = timeoutSeconds;
+	tv.tv_usec = timeoutMicros;
 	auto ret = select(m_hSocket+1,NULL,&fd,NULL,&tv);
 	if(ret == 0){
 		return SOCKET_TIMEOUT;
