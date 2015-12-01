@@ -232,6 +232,7 @@ class ofApp: public ofxUnitTestsApp{
 //========================================================================
 int main( ){
     initial_cwd = std::filesystem::current_path();
+	ofInit();
 	auto window = std::make_shared<ofAppNoWindow>();
 	auto app = std::make_shared<ofApp>();
 	ofRunApp(window, app);
