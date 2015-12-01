@@ -221,22 +221,14 @@ bool ofxTCPManager::Connect(const char *pAddrStr, unsigned short usPort)
     if(ret<0) err = ofxNetworkCheckError();
     // set a timeout
     if (ret < 0 && (err == OFXNETWORK_ERROR(INPROGRESS) || err == OFXNETWORK_ERROR(WOULDBLOCK)) && m_dwTimeoutConnect != NO_TIMEOUT) {
-		fd_set fd;
-        FD_ZERO(&fd);
-        FD_SET(m_hSocket, &fd);
-        timeval	tv=	{(time_t)m_dwTimeoutConnect, 0};
-        ret = select(m_hSocket+1,NULL,&fd,NULL,&tv);
-		if(ret < 0 && ofxNetworkCheckError() != OFXNETWORK_ERROR(INTR)){
-			ret = SOCKET_ERROR;
-		}else if(ret > 0) {
+		ret = WaitSend(m_dwTimeoutConnect, 0);
+		if(ret == 0) {
 			socklen_t len = sizeof err;
 			if (getsockopt(m_hSocket, SOL_SOCKET, SO_ERROR, (char*)&err, &len)<0){
 				ret = SOCKET_ERROR;
 			}else if(err != 0) {
 				ret = SOCKET_ERROR;
             } 
-		}else{
-			ret = SOCKET_TIMEOUT;
 		}
     }
 
@@ -248,7 +240,42 @@ bool ofxTCPManager::Connect(const char *pAddrStr, unsigned short usPort)
 }
 
 //--------------------------------------------------------------------------------
-///Theo added - Choose to set nonBLocking - default mode is to block
+int ofxTCPManager::WaitReceive(time_t timeoutSeconds, time_t timeoutMicros){
+	if (m_hSocket == INVALID_SOCKET) return SOCKET_ERROR;
+
+	fd_set fd;
+	FD_ZERO(&fd);
+	FD_SET(m_hSocket, &fd);
+	timeval	tv{timeoutSeconds, timeoutMicros};
+	auto ret = select(m_hSocket+1,&fd,NULL,NULL,&tv);
+	if(ret == 0){
+		return SOCKET_TIMEOUT;
+	}else if(ret < 0){
+		return SOCKET_ERROR;
+	}else{
+		return 0;
+	}
+}
+
+//--------------------------------------------------------------------------------
+int ofxTCPManager::WaitSend(time_t timeoutSeconds, time_t timeoutMicros){
+	if (m_hSocket == INVALID_SOCKET) return SOCKET_ERROR;
+
+	fd_set fd;
+	FD_ZERO(&fd);
+	FD_SET(m_hSocket, &fd);
+	timeval	tv{timeoutSeconds, timeoutMicros};
+	auto ret = select(m_hSocket+1,NULL,&fd,NULL,&tv);
+	if(ret == 0){
+		return SOCKET_TIMEOUT;
+	}else if(ret < 0){
+		return SOCKET_ERROR;
+	}else{
+		return 0;
+	}
+}
+
+//--------------------------------------------------------------------------------
 bool ofxTCPManager::SetNonBlocking(bool useNonBlocking)
 {
 	if(useNonBlocking==nonBlocking){
@@ -290,29 +317,18 @@ int ofxTCPManager::Write(const char* pBuff, const int iSize)
 	int iBytesTemp;
 	const char* pTemp= pBuff;
 
-  do {
-	  iBytesTemp= Send(pTemp, iSize - iBytesSent);
-    // error occured?
-    if (iBytesTemp == SOCKET_ERROR) return(SOCKET_ERROR);
-    if (iBytesTemp == SOCKET_TIMEOUT) return(SOCKET_TIMEOUT);
+	do {
+		iBytesTemp= Send(pTemp, iSize - iBytesSent);
+		// error occured?
+		if (iBytesTemp == SOCKET_ERROR) return(SOCKET_ERROR);
+		if (iBytesTemp == SOCKET_TIMEOUT) return(SOCKET_TIMEOUT);
 
 		iBytesSent+= iBytesTemp;
 		pTemp+= iBytesTemp;
 	} while(iBytesSent < iSize);
 
-  return(iBytesSent);
+	return(iBytesSent);
 }
-
-//--------------------------------------------------------------------------------
-//Theo added - alternative to GetTickCount for windows
-//This version returns the milliseconds since the unix epoch
-//Should be good enough for what it is being used for here
-//(mainly time comparision)
-#ifndef TARGET_WIN32
-unsigned long GetTickCount(){
-  return ofGetSystemTime();
-}
-#endif
 
 //--------------------------------------------------------------------------------
 /// Return values:
@@ -323,13 +339,9 @@ int ofxTCPManager::Send(const char* pBuff, const int iSize)
     if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
 
     if (m_dwTimeoutSend	!= NO_TIMEOUT){
-		fd_set fd;
-		FD_ZERO(&fd);
-		FD_SET(m_hSocket, &fd);
-		timeval	tv=	{(time_t)m_dwTimeoutSend, 0};
-		if(select(m_hSocket+1,NULL,&fd,NULL,&tv)== 0)
-		{
-			return(SOCKET_TIMEOUT);
+		auto ret = WaitSend(m_dwTimeoutSend,0);
+		if(ret!=0){
+			return ret;
 		}
 	}
 	return send(m_hSocket, pBuff, iSize, 0);
@@ -341,33 +353,38 @@ int ofxTCPManager::Send(const char* pBuff, const int iSize)
 /// SOCKET_ERROR in case of a problem.
 int ofxTCPManager::SendAll(const char* pBuff, const int iSize)
 {
-  if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
+	if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
 
-
-	unsigned long timestamp= GetTickCount();
-
-	if (m_dwTimeoutSend	!= NO_TIMEOUT)
-	{
-		fd_set fd;
-		FD_ZERO(&fd);
-		FD_SET(m_hSocket, &fd);
-		timeval	tv=	{(time_t)m_dwTimeoutSend, 0};
-		if(select(m_hSocket+1,NULL,&fd,NULL,&tv)== 0)
-		{
-			return(SOCKET_TIMEOUT);
-		}
-	}
-
+	auto timestamp = ofGetElapsedTimeMicros();
+	auto timeleftSecs = m_dwTimeoutSend;
+	auto timeleftMicros = 0;
 	int total= 0;
 	int bytesleft = iSize;
 	int ret=-1;
 
 	while (total < iSize) {
+		if (m_dwTimeoutSend	!= NO_TIMEOUT){
+			auto ret = WaitSend(timeleftSecs,timeleftMicros);
+			if(ret!=0){
+				return ret;
+			}
+		}
 		ret = send(m_hSocket, pBuff + total, bytesleft, 0);
-        if (ret == SOCKET_ERROR) { return SOCKET_ERROR; }
+		if (ret == SOCKET_ERROR) {
+			return SOCKET_ERROR;
+		}
 		total += ret;
 		bytesleft -=ret;
-        if (GetTickCount() - timestamp > m_dwTimeoutSend * 1000) return SOCKET_TIMEOUT;
+		if (m_dwTimeoutSend	!= NO_TIMEOUT){
+			auto now = ofGetElapsedTimeMicros();
+			auto diff = now - timestamp;
+			if (diff > m_dwTimeoutSend * 1000000){
+				return SOCKET_TIMEOUT;
+			}
+			float timeFloat = m_dwTimeoutSend - diff/1000000.;
+			timeleftSecs = timeFloat;
+			timeleftMicros = (timeFloat - timeleftSecs) * 1000000;
+		}
 	}
 
 	return total;
@@ -383,16 +400,12 @@ int ofxTCPManager::Receive(char* pBuff, const int iSize)
 {
     if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
 
-    if (m_dwTimeoutReceive	!= NO_TIMEOUT){
-  		fd_set fd;
-  		FD_ZERO(&fd);
-  		FD_SET(m_hSocket, &fd);
-  		timeval	tv=	{(time_t)m_dwTimeoutSend, 0};
-  		if(select(m_hSocket+1,&fd,NULL,NULL,&tv)== 0)
-  		{
-  			return(SOCKET_TIMEOUT);
-  		}
-  	}
+	if (m_dwTimeoutReceive	!= NO_TIMEOUT){
+		auto ret = WaitReceive(m_dwTimeoutReceive,0);
+		if(ret!=0){
+			return ret;
+		}
+	}
 	return recv(m_hSocket, pBuff, iSize, 0);
 }
 
@@ -405,8 +418,14 @@ int ofxTCPManager::Receive(char* pBuff, const int iSize)
 ///
 int ofxTCPManager::PeekReceive(char* pBuff, const int iSize)
 {
-	if (m_hSocket == INVALID_SOCKET) 
-		return(SOCKET_ERROR);
+	if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
+
+	if (m_dwTimeoutReceive	!= NO_TIMEOUT){
+		auto ret = WaitReceive(m_dwTimeoutReceive,0);
+		if(ret!=0){
+			return ret;
+		}
+	}
  
 	return recv(m_hSocket, pBuff, iSize, MSG_PEEK);
 }
@@ -419,44 +438,37 @@ int ofxTCPManager::ReceiveAll(char* pBuff, const int iSize)
 {
 	if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
 
-	unsigned long timestamp= GetTickCount();
-
-	if (m_dwTimeoutReceive	!= NO_TIMEOUT)
-	{
-		fd_set fd;
-		FD_ZERO(&fd);
-		FD_SET(m_hSocket, &fd);
-		timeval	tv=	{(time_t)m_dwTimeoutSend, 0};
-		if(select(m_hSocket+1,&fd,NULL,NULL,&tv)== 0)
-		{
-			return(SOCKET_TIMEOUT);
-		}
-	}
+	auto timestamp = ofGetElapsedTimeMicros();
+	auto timeleftSecs = m_dwTimeoutReceive;
+	auto timeleftMicros = 0;
 	int totalBytes=0;
 
-	unsigned long stamp = GetTickCount();
-
 	do {
-		int ret= recv(m_hSocket, pBuff+totalBytes, iSize-totalBytes, 0);
-		if (ret==0 && totalBytes != iSize){
-			if(m_dwTimeoutReceive != NO_TIMEOUT){
-				return SOCKET_ERROR;
-			}else{
-				return SOCKET_TIMEOUT;
+		if (m_dwTimeoutReceive	!= NO_TIMEOUT){
+			auto ret = WaitReceive(timeleftSecs, timeleftMicros);
+			if(ret!=0){
+				return ret;
 			}
+		}
+		int ret = recv(m_hSocket, pBuff+totalBytes, iSize-totalBytes, 0);
+		if (ret==0 && totalBytes != iSize){
+			return SOCKET_ERROR;
 		}
 		if (ret < 0){
 			return SOCKET_ERROR;
 		}
-		if (GetTickCount() - timestamp > m_dwTimeoutReceive * 1000) return SOCKET_TIMEOUT;
 		totalBytes += ret;
-		#ifndef TARGET_WIN32
-			usleep(2000); //should be 20ms
-		#else
-			Sleep(2);
-		#endif
-		if (GetTickCount() - stamp > 10000)
-			return SOCKET_TIMEOUT;
+
+		if (m_dwTimeoutReceive	!= NO_TIMEOUT){
+			auto now = ofGetElapsedTimeMicros();
+			auto diff = now - timestamp;
+			if(diff > m_dwTimeoutReceive){
+				return SOCKET_TIMEOUT;
+			}
+			float timeFloat = m_dwTimeoutSend - diff/1000000.;
+			timeleftSecs = timeFloat;
+			timeleftMicros = (timeFloat - timeleftSecs) * 1000000;
+		}
 	}while(totalBytes < iSize);
 
 	return totalBytes;
