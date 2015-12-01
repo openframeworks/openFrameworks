@@ -17,8 +17,7 @@ public:
 		ofxTCPClient client;
 		test(client.setup("127.0.0.1",port,false), "non blocking client");
 
-		// wait for connection to be made
-		ofSleepMillis(500);
+		server.waitConnectedClient(500);
 
 		bool received = false;
 		std::string messageSent = "message";
@@ -71,22 +70,13 @@ public:
 		test(client.setup("127.0.0.1",port,true), "blocking client");
 
 		// wait for connection to be made
-		ofSleepMillis(500);
+		server.waitConnectedClient(500);
 
 		std::string messageSent = "message";
-		bool foundConnectedClient = false;
 		test(client.send(messageSent), "send blocking from client");
-		for(int i=0;i<server.getLastID();i++){
-			if(!server.isClientConnected(i)){
-				continue;
-			}
-			test_eq(server.receive(0), messageSent, "receive blocking from server");
-			test(server.send(0, messageSent), "send blocking from server");
-			test_eq(client.receive(), messageSent, "receive blocking from client");
-			foundConnectedClient = true;
-			break;
-		}
-		if(!foundConnectedClient) test(false, "found connected client");
+		test_eq(server.receive(0), messageSent, "receive blocking from server");
+		test(server.send(0, messageSent), "send blocking from server");
+		test_eq(client.receive(), messageSent, "receive blocking from client");
 	}
 
 	void disconnectionAutoDetection(){
@@ -103,7 +93,7 @@ public:
 		test(client.setup("127.0.0.1",port,true), "blocking client");
 
 		// wait for connection to be made
-		ofSleepMillis(500);
+		server.waitConnectedClient(500);
 
 		test(server.isConnected(), "server is still connected");
 		test(client.isConnected(), "client is still connected");
@@ -135,26 +125,20 @@ public:
 		test(client.sendRaw(messageSent), "send blocking from client");
 
 		// wait for connection to be made
-		ofSleepMillis(500);
+		server.waitConnectedClient(500);
 
 
 		std::vector<char> messageReceived(messageSent.size()+1, 0);
 		int received = 0;
-		for(int i=0;i<server.getLastID();i++){
-			if(!server.isClientConnected(i)){
-				continue;
+		do{
+			auto ret = server.receiveRawBytes(0, messageReceived.data() + received, messageSent.size());
+			test(ret>0, "received blocking from server");
+			if(ret>0){
+				received += ret;
+			}else{
+				break;
 			}
-			do{
-				auto ret = server.receiveRawBytes(i, messageReceived.data() + received, messageSent.size());
-				test(ret>0, "received blocking from server");
-				if(ret>0){
-					received += ret;
-				}else{
-					break;
-				}
-			}while(received<messageSent.size());
-			break;
-		}
+		}while(received<messageSent.size());
 
 		test_eq(messageSent, std::string(messageReceived.data()), "messageSent == messageReceived");
 	}
@@ -173,7 +157,7 @@ public:
 		test(client.setup("127.0.0.1", port, true), "blocking client");
 
 		// wait for connection to be made
-		ofSleepMillis(500);
+		server.waitConnectedClient(500);
 
 
 		std::string messageSent = "message";
@@ -181,23 +165,31 @@ public:
 
 		std::vector<char> messageReceived(messageSent.size()+1, 0);
 		int received = 0;
-		for(int i=0;i<server.getLastID();i++){
-			if(!server.isClientConnected(i)){
-				continue;
+		do{
+			auto ret = server.receiveRawBytes(0, messageReceived.data() + received, messageSent.size());
+			test(ret>0, "received blocking from server");
+			if(ret>0){
+				received += ret;
+			}else{
+				break;
 			}
-			do{
-				auto ret = server.receiveRawBytes(i, messageReceived.data() + received, messageSent.size());
-				test(ret>0, "received blocking from server");
-				if(ret>0){
-					received += ret;
-				}else{
-					break;
-				}
-			}while(received<messageSent.size());
-			break;
-		}
+		}while(received<messageSent.size());
 
 		test_eq(messageSent, std::string(messageReceived.data()), "messageSent == messageReceived");
+	}
+
+	void testWrongConnect(){
+		ofLogNotice() << "";
+		ofLogNotice() << "---------------------------------------";
+		ofLogNotice() << "testWrongConnect";
+
+		ofxTCPManager client;
+		client.SetTimeoutConnect(5);
+		test(client.Create(), "socket creation");
+		auto then = ofGetElapsedTimeMillis();
+		test(!client.Connect("127.0.0.1", 200), "connect to non open port, if this fails the port might be really open:");
+		auto now = ofGetElapsedTimeMillis();
+		test(now-then<6000, "Connect waits 5s to timeout, waited: " + ofToString(now - then));
 	}
 
 	void run(){
@@ -207,6 +199,7 @@ public:
 		disconnectionAutoDetection();
 		testSendRaw();
 		testSendRawBytes();
+		testWrongConnect();
 	}
 };
 

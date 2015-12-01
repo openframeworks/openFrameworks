@@ -66,7 +66,7 @@ SetTimeoutReceive()
 	#include <sys/ioctl.h>
 
 #ifndef TARGET_ANDROID
-    #include <sys/signal.h>
+	#include <sys/signal.h>
 #else
 	#include <signal.h>
 #endif
@@ -175,7 +175,7 @@ public:
 	bool Close();
 	bool Create();
 	bool Listen(int iMaxConnections);
-	bool Connect(char *pAddrStr, unsigned short usPort);
+	bool Connect(const char *pAddrStr, unsigned short usPort);
 	bool Bind(unsigned short usPort);
 	bool Accept(ofxTCPManager& sock);
 	//sends the data, but it is not guaranteed that really all data will be sent
@@ -230,5 +230,4 @@ private:
   bool nonBlocking;
   static bool m_bWinsockInit;
   bool m_closing;
-
 };
