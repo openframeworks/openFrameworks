@@ -172,14 +172,12 @@
 	</ItemDefinitionGroup>
 	<ItemGroup>
 		<ClCompile Include="src\main.cpp" />
-		<ClCompile Include="src\ofApp.cpp" />
 		<ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.cpp" />
 		<ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.cpp" />
 		<ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.cpp" />
 		<ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.cpp" />
 	</ItemGroup>
 	<ItemGroup>
-		<ClInclude Include="src\ofApp.h" />
 		<ClInclude Include="..\..\..\addons\ofxUnitTests\src\ofxUnitTests.h" />
 		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.h" />
 		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetworkUtils.h" />

@@ -172,10 +172,8 @@
 	</ItemDefinitionGroup>
 	<ItemGroup>
 		<ClCompile Include="src\main.cpp" />
-		<ClCompile Include="src\ofApp.cpp" />
 	</ItemGroup>
 	<ItemGroup>
-		<ClInclude Include="src\ofApp.h" />
 		<ClInclude Include="..\..\..\addons\ofxUnitTests\src\ofxUnitTests.h" />
 	</ItemGroup>
 	<ItemGroup>
