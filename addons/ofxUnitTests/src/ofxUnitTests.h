@@ -62,6 +62,8 @@ public:
 };
 
 
+
+
 #ifdef TARGET_WIN32
 
 
@@ -81,9 +83,12 @@ std::string ofxAppveyorAPIURL(){
 }
 
 void ofxAppveyorAPISend(const std::string & str, const std::string & entryPoint){
+	auto url = ofFilePath::join(ofxAppveyorAPIURL(), entryPoint);
+	cout << "Sending: " << str << endl;
+	cout << "to " << url;
 	ofHttpRequest req;
 	req.method = ofHttpRequest::POST;
-	req.url = ofFilePath::join(ofxAppveyorAPIURL(), entryPoint);
+	req.url = url;
 	req.body = str;
 	req.contentType = "text/json; charset=utf-8";
 	ofURLFileLoader loader;
