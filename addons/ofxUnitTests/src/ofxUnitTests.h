@@ -81,6 +81,15 @@ class ofAppveyorChannel: public ofBaseLoggerChannel{
 		return "\"" + msg + "\"";
 	}
 
+	void send(const std::string & str){
+		ofHttpRequest req;
+		req.method = ofHttpRequest::POST;
+		req.url = ofxAppveyorAPIURL();
+		req.body = str;
+		req.contentType = "text/json; charset=utf-8";
+		ofURLFileLoader loader;
+		loader.handleRequest(req);
+	}
 
 
 public:
@@ -99,11 +108,7 @@ public:
 		str << var("details") << value("");
 		str << "}";
 
-		ofHttpRequest req;
-		req.method = ofHttpRequest::POST;
-		req.url = ofxAppveyorAPIURL();
-		ofURLFileLoader loader;
-		loader.handleRequest(req);
+		send(str.str());
 	}
 
 	void log(ofLogLevel level, const std::string & module, const char* format, ...){
@@ -128,11 +133,7 @@ public:
 		str << var("details") << value("");
 		str << "}";
 
-		ofHttpRequest req;
-		req.method = ofHttpRequest::POST;
-		req.url = ofxAppveyorAPIURL();
-		ofURLFileLoader loader;
-		loader.handleRequest(req);
+		send(str.str());
 	}
 };
 #endif

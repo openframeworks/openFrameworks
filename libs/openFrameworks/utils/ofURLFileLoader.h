@@ -12,6 +12,8 @@ public:
 	string				name;
 	bool				saveTo;
 	map<string,string>	headers;
+	string				body; // usually only for post
+	string				contentType;
 
 	int getId() const;
 	OF_DEPRECATED_MSG("Use ofGetId().", int getID());
