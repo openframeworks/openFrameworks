@@ -50,8 +50,6 @@ public:
 	}
 
 	void log(ofLogLevel level, const std::string & module, const char* format, va_list args){
-		//thanks stefan!
-		//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
 		fprintf(stdout, (CON_BOLD + getColor(level) + "[%s] " + CON_DEFAULT).c_str(), ofGetLogLevelName(level, true).c_str());
 		if(module != ""){
 			fprintf(stdout, "%s: ", module.c_str());
@@ -102,7 +100,7 @@ public:
 		if(module!=""){
 			msg = module + ": " + msg;
 		}
-		totalOut += "[" + ofGetLogLevelName(level) + "]\t\t" + msg + "^\r^\n";
+		totalOut += "[" + ofGetLogLevelName(level) + "]\t\t" + msg + "\n";
 		ofSystem("appveyor AddMessage \"" + msg + "\" -Category " + category(level));
 	}
 
