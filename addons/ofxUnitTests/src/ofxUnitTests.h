@@ -144,7 +144,7 @@ class ofxUnitTestsApp: public ofBaseApp{
 		}
 		ofLogNotice() << "took " << ofToString(now-then) << "ms";
 #ifdef TARGET_WIN32
-		if(appveyorLogger){
+		if(ofxAppveyorAPIURL()!=""){
 			auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
 			auto projectName = projectDir.stem();
 			auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
