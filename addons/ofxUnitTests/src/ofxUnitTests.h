@@ -80,7 +80,7 @@ std::string ofxAppveyorAPIURL(){
 	return std::string(pszOldVal.begin(), pszOldVal.end());
 }
 
-void ofxAppveyorAPISend(const std::string & str, std::string & entryPoint){
+void ofxAppveyorAPISend(const std::string & str, const std::string & entryPoint){
 	ofHttpRequest req;
 	req.method = ofHttpRequest::POST;
 	req.url = ofFilePath::join(ofxAppveyorAPIURL(), entryPoint);
