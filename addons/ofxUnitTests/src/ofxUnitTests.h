@@ -102,7 +102,7 @@ public:
 		if(module!=""){
 			msg = module + ": " + msg;
 		}
-		totalOut += "[" + category(level) + "]\t\t" + msg + "\r\n";
+		totalOut += "[" + ofGetLogLevelName(level) + "]\t\t" + msg + "\\r\\n";
 		ofSystem("appveyor AddMessage \"" + msg + "\" -Category " + category(level));
 	}
 
