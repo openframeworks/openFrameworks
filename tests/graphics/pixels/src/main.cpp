@@ -298,15 +298,15 @@ class ofApp: public ofxUnitTestsApp{
 			}
 			test_eq(pixels.getNumPlanes(),getNumPlanes(pixelFormat),"getNumPlanes() " + format);
 			test_eq(pixels.getPixelFormat(),pixelFormat,"getPixelFormat() " + format);
-			test_eq(pixels.getPlane(0).getData(),pixels.getData(),"getPlane(0)==getData() " + format);
+            test_eq((uint64_t)pixels.getPlane(0).getData(), (uint64_t)pixels.getData(),"getPlane(0)==getData() " + format);
 			test_eq(pixels.getTotalBytes(),w*h*bpp/8,"getTotalBytes() " + format);
 
 			if(hasWorkingIterators(pixelFormat)){
-				test_eq(pixels.getLine(0).begin(),pixels.getData(),"getLine(0).begin()==getData() " + format);
-				test_eq(pixels.getLine(0).end(),pixels.getData()+(w*bpp/8),"getLine(0).end()==getData()+(w*3) " + format);
-				test_eq(pixels.getLine(h-1).begin(),pixels.getData()+(w*bpp/8*(h-1)),"getLine(h-1).begin()==getData()+(w*bpp/8*(h-1)) " + format);
-				test_eq(pixels.getLine(h-1).end(),pixels.end(),"getLine(h-1).end()==end() " + format);
-				test_eq(&pixels.getLine(0).getPixel(10)[0],pixels.getData()+(10*bpp/8),"getLine(0).getPixel(10)[0]==pixels.getData()+(10*bpp/8)");
+                test_eq((uint64_t)pixels.getLine(0).begin(), (uint64_t)pixels.getData(),"getLine(0).begin()==getData() " + format);
+                test_eq((uint64_t)pixels.getLine(0).end(), (uint64_t)pixels.getData()+(w*bpp/8),"getLine(0).end()==getData()+(w*3) " + format);
+                test_eq((uint64_t)pixels.getLine(h-1).begin(), (uint64_t)pixels.getData()+(w*bpp/8*(h-1)),"getLine(h-1).begin()==getData()+(w*bpp/8*(h-1)) " + format);
+                test_eq((uint64_t)pixels.getLine(h-1).end(), (uint64_t)pixels.end(),"getLine(h-1).end()==end() " + format);
+                test_eq((uint64_t)&pixels.getLine(0).getPixel(10)[0], (uint64_t)pixels.getData()+(10*bpp/8),"getLine(0).getPixel(10)[0]==pixels.getData()+(10*bpp/8)");
 			}
 		}
 	}
