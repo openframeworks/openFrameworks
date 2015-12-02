@@ -9,7 +9,7 @@ FOR /D %%G IN (*) DO (
         cd %APPVEYOR_BUILD_FOLDER%\tests\%%G\%%E
         msbuild %%E.sln /p:Configuration=Debug /p:Platform=%TESTS_PLATFORM%
         cd bin
-        vstest.console /logger:Appveyor %%E_debug.exe
+        %%E_debug.exe
         if "%errorlevel%" neq "0" EXIT /B 1
     )
 )

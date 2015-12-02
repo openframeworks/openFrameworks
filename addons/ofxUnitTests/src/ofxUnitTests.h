@@ -61,9 +61,94 @@ public:
 	}
 };
 
+
+#ifdef TARGET_WIN32
+#define APPVEYOR_API_URL TEXT("APPVEYOR_API_URL")
+
+std::string ofxAppveyorAPIURL(){
+	const size_t BUFSIZE = 4096;
+	std::vector<char> pszOldVal(BUFSIZE, 0);
+	GetEnvironmentVariableA(APPVEYOR_API_URL, pszOldVal.data(), BUFSIZE);
+	return std::string(pszOldVal.begin(), pszOldVal.end());
+}
+
+class ofAppveyorChannel: public ofBaseLoggerChannel{
+	std::string var(std::string msg){
+		return "\"" + msg + "\": ";
+	}
+
+	std::string value(std::string msg){
+		return "\"" + msg + "\"";
+	}
+
+
+
+public:
+	void log(ofLogLevel level, const std::string & module, const std::string & message){
+		std::stringstream str;
+		str << "{";
+		str << var("message");
+
+		if(module != ""){
+			str << value(module + ": " + message) << ",";
+		}else{
+			str << value(message);
+		}
+
+		str << var("category") << value(ofGetLogLevelName(level)) << ",";
+		str << var("details") << value("");
+		str << "}";
+
+		ofHttpRequest req;
+		req.method = ofHttpRequest::POST;
+		req.url = ofxAppveyorAPIURL();
+		ofURLFileLoader loader;
+		loader.handleRequest(req);
+	}
+
+	void log(ofLogLevel level, const std::string & module, const char* format, ...){
+		va_list args;
+		va_start(args, format);
+		log(level, module, format, args);
+		va_end(args);
+	}
+
+	void log(ofLogLevel level, const std::string & module, const char* format, va_list args){
+		std::stringstream str;
+		str << "{";
+		str << var("message");
+
+		if(module != ""){
+			str << value(module + ": " + ofVAArgsToString(format,args)) << ",";
+		}else{
+			str << value(ofVAArgsToString(format,args));
+		}
+
+		str << var("category") << value(ofGetLogLevelName(level)) << ",";
+		str << var("details") << value("");
+		str << "}";
+
+		ofHttpRequest req;
+		req.method = ofHttpRequest::POST;
+		req.url = ofxAppveyorAPIURL();
+		ofURLFileLoader loader;
+		loader.handleRequest(req);
+	}
+};
+#endif
+
 class ofxUnitTestsApp: public ofBaseApp{
 	void setup(){
+#ifdef TARGET_WIN32
+		if(ofxAppveyorAPIURL()!=""){
+			ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel>(new ofAppveyorChannel));
+			ofLogNotice() << "Not running in Appveyor";
+		}else{
+			ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel>(new ofColorsLoggerChannel));
+		}
+#else
 		ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel>(new ofColorsLoggerChannel));
+#endif
 		run();
 
 		if(numTestsFailed == 0){
