@@ -72,95 +72,6 @@ std::string ofxAppveyorAPIURL(){
 	GetEnvironmentVariableA("APPVEYOR_API_URL", pszOldVal.data(), BUFSIZE);
 	return std::string(pszOldVal.begin(), pszOldVal.end());
 }
-
-/*std::string ofxAppveyorAPIVar(std::string msg){
-	return "\"" + msg + "\": ";
-}
-
-std::string ofxAppveyorAPIValue(std::string msg){
-	return "\"" + msg + "\"";
-}
-
-void ofxAppveyorAPISend(const std::string & str, const std::string & entryPoint){
-	auto url = ofxAppveyorAPIURL() + entryPoint;
-	cout << "Sending: " << str << endl;
-	cout << "to " << url << endl;
-	ofHttpRequest req;
-	req.method = ofHttpRequest::POST;
-	req.url = url;
-	req.body = str;
-	req.contentType = "text/json; charset=utf-8";
-	ofURLFileLoader loader;
-	auto res = loader.handleRequest(req);
-	if(res.status!=200){
-		cout << "Error " << res.status << ": " << res.error << endl;
-		cout << res.data.getText() << endl;
-	}
-}
-
-void ofxAppveyorAPISend(const std::string & str){
-	ofxAppveyorAPISend(str, "api/build/messages");
-}
-
-class ofAppveyorChannel: public ofBaseLoggerChannel{
-
-	std::string var(std::string msg){
-		return ofxAppveyorAPIVar(msg);
-	}
-
-	std::string value(std::string msg){
-		return ofxAppveyorAPIValue(msg);
-	}
-
-	void send(const std::string & str){
-		ofxAppveyorAPISend(str);
-	}
-
-
-public:
-	void log(ofLogLevel level, const std::string & module, const std::string & message){
-		std::stringstream str;
-		str << "{";
-		str << var("message");
-
-		if(module != ""){
-			str << value(module + ": " + message) << ", ";
-		}else{
-			str << value(message) << ", ";
-		}
-
-		str << var("category") << value(ofGetLogLevelName(level)) << ", ";
-		str << var("details") << value("");
-		str << "}";
-
-		send(str.str());
-	}
-
-	void log(ofLogLevel level, const std::string & module, const char* format, ...){
-		va_list args;
-		va_start(args, format);
-		log(level, module, format, args);
-		va_end(args);
-	}
-
-	void log(ofLogLevel level, const std::string & module, const char* format, va_list args){
-		std::stringstream str;
-		str << "{";
-		str << var("message");
-
-		if(module != ""){
-			str << value(module + ": " + ofVAArgsToString(format,args)) << ", ";
-		}else{
-			str << value(ofVAArgsToString(format,args));
-		}
-
-		str << var("category") << value(ofGetLogLevelName(level)) << ", ";
-		str << var("details") << value("");
-		str << "}";
-
-		send(str.str());
-	}
-};*/
 #endif
 
 class ofAppveyorSystemChannel: public ofBaseLoggerChannel{
@@ -179,47 +90,43 @@ class ofAppveyorSystemChannel: public ofBaseLoggerChannel{
 		}
 	}
 
+	std::string totalOut;
+
 public:
-void log(ofLogLevel level, const std::string & module, const std::string & message){
-	auto msg = message;
-	if(module!=""){
-		msg = module + ": " + msg;
+	std::string getTotalOut(){
+		return totalOut;
 	}
-	ofSystem("appveyor AddMessage " + msg + " -Category " + category(level));
-}
 
-void log(ofLogLevel level, const std::string & module, const char* format, ...){
-	va_list args;
-	va_start(args, format);
-	log(level, module, format, args);
-	va_end(args);
-}
-
-void log(ofLogLevel level, const std::string & module, const char* format, va_list args){
-	auto msg = ofVAArgsToString(format,args);
-	if(module!=""){
-		msg = module + ": " + msg;
+	void log(ofLogLevel level, const std::string & module, const std::string & message){
+		auto msg = message;
+		if(module!=""){
+			msg = module + ": " + msg;
+		}
+		totalOut += "[" + category(level) + "]\t\t" + msg + "\r\n";
+		ofSystem("appveyor AddMessage \"" + msg + "\" -Category " + category(level));
 	}
-	ofSystem("appveyor AddMessage " + msg + " -Category " + category(level));
-}
+
+	void log(ofLogLevel level, const std::string & module, const char* format, ...){
+		va_list args;
+		va_start(args, format);
+		log(level, module, format, args);
+		va_end(args);
+	}
+
+	void log(ofLogLevel level, const std::string & module, const char* format, va_list args){
+		auto msg = ofVAArgsToString(format,args);
+		log(level, module, msg);
+	}
 };
 
 class ofxUnitTestsApp: public ofBaseApp{
 
-/*#ifdef TARGET_WIN32
-	std::string var(std::string msg){
-		return ofxAppveyorAPIVar(msg);
-	}
-
-	std::string value(std::string msg){
-		return ofxAppveyorAPIValue(msg);
-	}
-#endif*/
-
 	void setup(){
 #ifdef TARGET_WIN32
+		std::shared_ptr<ofAppveyorSystemChannel> appveyorLogger;
 		if(ofxAppveyorAPIURL()!=""){
-			ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel>(new ofAppveyorSystemChannel));
+			appveyorLogger.reset(new ofAppveyorSystemChannel);
+			ofSetLoggerChannel(appveyorLogger);
 		}else{
 			ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel>(new ofColorsLoggerChannel));
 			ofLogNotice() << "Not running in Appveyor";
@@ -231,7 +138,7 @@ class ofxUnitTestsApp: public ofBaseApp{
 		run();
 		auto now = ofGetElapsedTimeMillis();
 
-		bool passed = numTestsFailed>0;
+		bool passed = numTestsFailed==0;
 		if(passed){
 			ofLogNotice() << numTestsPassed << "/" << numTestsTotal << " tests passed";
 		}else{
@@ -239,24 +146,12 @@ class ofxUnitTestsApp: public ofBaseApp{
 		}
 		ofLogNotice() << "took " << ofToString(now-then) << "ms";
 #ifdef TARGET_WIN32
-
-		auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
-		auto projectName = projectDir.stem();
-		auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
-		ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then));
-		/*std::stringstream str;
-		str << "{";
-		str <<	var("testName") << value(projectName.string()) << ", ";
-		str <<	var("testFramework") << value("ofxUnitTests") << ", ";
-		str <<	var("fileName") << value(exeName.string()) << ", ";
-		str <<	var("outcome") << value(passed?"Passed":"Failed") << ", ";
-		str <<	var("durationMilliseconds") << value(ofToString(now-then)) << ", ";
-		str <<	var("ErrorMessage") << value("") << ", ";
-		str <<	var("ErrorStackTrace") << value("") << ", ";
-		str <<	var("StdOut") << value("") << ", ";
-		str <<	var("StdErr") << value("");
-		str << "}";
-		ofxAppveyorAPISend(str.str(), "api/tests");*/
+		if(appveyorLogger){
+			auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
+			auto projectName = projectDir.stem();
+			auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
+			ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then) + " -StdOut \"" + appveyorLogger.getTotalOut() + "\"");
+		}
 #endif
 
 		ofExit(numTestsFailed);
