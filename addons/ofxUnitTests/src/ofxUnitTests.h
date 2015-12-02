@@ -123,7 +123,7 @@ public:
 		if(module != ""){
 			str << value(module + ": " + message) << ",";
 		}else{
-			str << value(message);
+			str << value(message) << ",";
 		}
 
 		str << var("category") << value(ofGetLogLevelName(level)) << ",";
