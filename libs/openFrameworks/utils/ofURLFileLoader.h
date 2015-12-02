@@ -16,6 +16,11 @@ public:
 	int getId() const;
 	OF_DEPRECATED_MSG("Use ofGetId().", int getID());
 
+	enum Method{
+		GET,
+		POST
+	} method;
+
 private:
 	int					id;
 	static int			nextID;

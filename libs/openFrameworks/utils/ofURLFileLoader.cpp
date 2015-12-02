@@ -172,26 +172,31 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 		std::string path(uri.getPathAndQuery());
 		if (path.empty()) path = "/";
 
-		HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
+		std::unique_ptr<HTTPRequest> req;
+		if(request.method==ofHttpRequest::GET){
+			req = std::make_unique<HTTPRequest>(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
+		}else{
+			req = std::make_unique<HTTPRequest>(HTTPRequest::HTTP_POST, path, HTTPMessage::HTTP_1_1);
+		}
 		for(map<string,string>::iterator it = request.headers.begin(); it!=request.headers.end(); it++){
-			req.add(it->first,it->second);
+			req->add(it->first,it->second);
 		}
 		HTTPResponse res;
-		shared_ptr<HTTPSession> session;
+		std::unique_ptr<HTTPSession> session;
 		istream * rs;
 		if(uri.getScheme()=="https"){
 			 //const Poco::Net::Context::Ptr context( new Poco::Net::Context( Poco::Net::Context::CLIENT_USE, "", "", "rootcert.pem" ) );
 			HTTPSClientSession * httpsSession = new HTTPSClientSession(uri.getHost(), uri.getPort());//,context);
 			httpsSession->setTimeout(Poco::Timespan(120,0));
-			httpsSession->sendRequest(req);
+			httpsSession->sendRequest(*req);
 			rs = &httpsSession->receiveResponse(res);
-			session = shared_ptr<HTTPSession>(httpsSession);
+			session = std::make_unique<HTTPSession>(httpsSession);
 		}else{
 			HTTPClientSession * httpSession = new HTTPClientSession(uri.getHost(), uri.getPort());
 			httpSession->setTimeout(Poco::Timespan(120,0));
-			httpSession->sendRequest(req);
+			httpSession->sendRequest(*req);
 			rs = &httpSession->receiveResponse(res);
-			session = shared_ptr<HTTPSession>(httpSession);
+			session = std::make_unique<HTTPSession>(httpSession);
 		}
 		if(!request.saveTo){
 			return ofHttpResponse(request,*rs,res.getStatus(),res.getReason());
@@ -285,6 +290,7 @@ static ofURLFileLoader & getFileLoader(){
 ofHttpRequest::ofHttpRequest()
 :saveTo(false)
 ,id(nextID++)
+,method(GET)
 {
 }
 
@@ -293,6 +299,7 @@ ofHttpRequest::ofHttpRequest(const string& url, const string& name,bool saveTo)
 ,name(name)
 ,saveTo(saveTo)
 ,id(nextID++)
+,method(GET)
 {
 }
 
