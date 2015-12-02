@@ -64,6 +64,15 @@ public:
 
 #ifdef TARGET_WIN32
 
+
+std::string ofxAppveyorAPIVar(std::string msg){
+	return "\"" + msg + "\": ";
+}
+
+std::string ofxAppveyorAPIValue(std::string msg){
+	return "\"" + msg + "\"";
+}
+
 std::string ofxAppveyorAPIURL(){
 	const size_t BUFSIZE = 4096;
 	std::vector<char> pszOldVal(BUFSIZE, 0);
@@ -71,23 +80,28 @@ std::string ofxAppveyorAPIURL(){
 	return std::string(pszOldVal.begin(), pszOldVal.end());
 }
 
+void ofxAppveyorAPISend(const std::string & str, std::string & entryPoint = "api/build/messages"){
+	ofHttpRequest req;
+	req.method = ofHttpRequest::POST;
+	req.url = ofFilePath::join(ofxAppveyorAPIURL(), entryPoint);
+	req.body = str;
+	req.contentType = "text/json; charset=utf-8";
+	ofURLFileLoader loader;
+	loader.handleRequest(req);
+}
+
 class ofAppveyorChannel: public ofBaseLoggerChannel{
+
 	std::string var(std::string msg){
-		return "\"" + msg + "\": ";
+		return ofxAppveyorAPIVar(msg);
 	}
 
 	std::string value(std::string msg){
-		return "\"" + msg + "\"";
+		return ofxAppveyorAPIValue(msg);
 	}
 
 	void send(const std::string & str){
-		ofHttpRequest req;
-		req.method = ofHttpRequest::POST;
-		req.url = ofxAppveyorAPIURL();
-		req.body = str;
-		req.contentType = "text/json; charset=utf-8";
-		ofURLFileLoader loader;
-		loader.handleRequest(req);
+		ofxAppveyorAPISend(str);
 	}
 
 
@@ -138,6 +152,17 @@ public:
 #endif
 
 class ofxUnitTestsApp: public ofBaseApp{
+
+#ifdef TARGET_WIN32
+	std::string var(std::string msg){
+		return ofxAppveyorAPIVar(msg);
+	}
+
+	std::string value(std::string msg){
+		return ofxAppveyorAPIValue(msg);
+	}
+#endif
+
 	void setup(){
 #ifdef TARGET_WIN32
 		if(ofxAppveyorAPIURL()!=""){
@@ -149,13 +174,37 @@ class ofxUnitTestsApp: public ofBaseApp{
 #else
 		ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel>(new ofColorsLoggerChannel));
 #endif
+		auto then = ofGetElapsedTimeMillis();
 		run();
+		auto now = ofGetElapsedTimeMillis();
 
-		if(numTestsFailed == 0){
+		bool passed = numTestsFailed>0;
+		if(passed){
 			ofLogNotice() << numTestsPassed << "/" << numTestsTotal << " tests passed";
 		}else{
 			ofLogError() <<  numTestsFailed << "/" << numTestsTotal << " tests failed";
 		}
+		ofLogNotice() << "took " << ofToString(now-then) << "ms";
+
+#ifdef TARGET_WIN32
+		auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
+		auto projectName = projectDir.stem();
+		auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
+		std::stringstream str;
+		str << "{";
+		str <<	var("testName") << value(projectName.string()) << ", ";
+		str <<	var("testFramework") << value("ofxUnitTests") << ", ";
+		str <<	var("fileName") << value(exeName.string()) << ", ";
+		str <<	var("outcome") << value(passed?"Passed":"Failed") << ", ";
+		str <<	var("durationMilliseconds") << value(ofToString(now-then)) << ", ";
+		str <<	var("ErrorMessage") << value("") << ", ";
+		str <<	var("ErrorStackTrace") << value("") << ", ";
+		str <<	var("StdOut") << value("") << ", ";
+		str <<	var("StdErr") << value("");
+		str << "}";
+		ofxAppveyorAPISend(str.str(), "api/tests");
+#endif
+
 		ofExit(numTestsFailed);
 	}
 	virtual void run() = 0;
