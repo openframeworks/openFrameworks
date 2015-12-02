@@ -80,7 +80,7 @@ std::string ofxAppveyorAPIURL(){
 	return std::string(pszOldVal.begin(), pszOldVal.end());
 }
 
-void ofxAppveyorAPISend(const std::string & str, std::string & entryPoint = "api/build/messages"){
+void ofxAppveyorAPISend(const std::string & str, std::string & entryPoint){
 	ofHttpRequest req;
 	req.method = ofHttpRequest::POST;
 	req.url = ofFilePath::join(ofxAppveyorAPIURL(), entryPoint);
@@ -88,6 +88,10 @@ void ofxAppveyorAPISend(const std::string & str, std::string & entryPoint = "api
 	req.contentType = "text/json; charset=utf-8";
 	ofURLFileLoader loader;
 	loader.handleRequest(req);
+}
+
+void ofxAppveyorAPISend(const std::string & str){
+	ofxAppveyorAPISend(str, "api/build/messages")
 }
 
 class ofAppveyorChannel: public ofBaseLoggerChannel{
