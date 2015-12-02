@@ -91,7 +91,7 @@ void ofxAppveyorAPISend(const std::string & str, const std::string & entryPoint)
 }
 
 void ofxAppveyorAPISend(const std::string & str){
-	ofxAppveyorAPISend(str, "api/build/messages")
+	ofxAppveyorAPISend(str, "api/build/messages");
 }
 
 class ofAppveyorChannel: public ofBaseLoggerChannel{
