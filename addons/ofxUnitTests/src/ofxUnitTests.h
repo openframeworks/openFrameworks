@@ -99,7 +99,7 @@ void ofxAppveyorAPISend(const std::string & str, const std::string & entryPoint)
 	}
 }
 
-void ofxAppveyorAPISend(const std::string & str){
+void ofxAppveyorAPISendMessage(const std::string & str){
 	ofxAppveyorAPISend(str, "api/build/messages");
 }
 
@@ -164,6 +164,47 @@ public:
 };
 #endif
 
+class ofAppveyorSystemChannel: public ofBaseLoggerChannel{
+
+	std::string category(ofLogLevel level){
+		std::string category;
+		switch(level){
+			case OF_LOG_VERBOSE:
+			case OF_LOG_NOTICE:
+				return "Information";
+			case OF_LOG_WARNING:
+				return "Warning";
+			default:
+				return "Error";
+			break;
+		}
+	}
+
+public:
+void log(ofLogLevel level, const std::string & module, const std::string & message){
+	auto msg = message;
+	if(module!=""){
+		msg = module + ": " + msg;
+	}
+	ofSystem("appveyor AddMessage " + msg + " -Category " + category(level));
+}
+
+void log(ofLogLevel level, const std::string & module, const char* format, ...){
+	va_list args;
+	va_start(args, format);
+	log(level, module, format, args);
+	va_end(args);
+}
+
+void log(ofLogLevel level, const std::string & module, const char* format, va_list args){
+	auto msg = ofVAArgsToString(format,args);
+	if(module!=""){
+		msg = module + ": " + msg;
+	}
+	ofSystem("appveyor AddMessage " + msg + " -Category " + category(level));
+}
+};
+
 class ofxUnitTestsApp: public ofBaseApp{
 
 #ifdef TARGET_WIN32
@@ -179,10 +220,10 @@ class ofxUnitTestsApp: public ofBaseApp{
 	void setup(){
 #ifdef TARGET_WIN32
 		if(ofxAppveyorAPIURL()!=""){
-			ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel>(new ofAppveyorChannel));
-			ofLogNotice() << "Not running in Appveyor";
+			ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel>(new ofAppveyorSystemChannel));
 		}else{
 			ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel>(new ofColorsLoggerChannel));
+			ofLogNotice() << "Not running in Appveyor";
 		}
 #else
 		ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel>(new ofColorsLoggerChannel));
@@ -198,12 +239,13 @@ class ofxUnitTestsApp: public ofBaseApp{
 			ofLogError() <<  numTestsFailed << "/" << numTestsTotal << " tests failed";
 		}
 		ofLogNotice() << "took " << ofToString(now-then) << "ms";
-
 #ifdef TARGET_WIN32
+
 		auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
 		auto projectName = projectDir.stem();
 		auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
-		std::stringstream str;
+		ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then));
+		/*std::stringstream str;
 		str << "{";
 		str <<	var("testName") << value(projectName.string()) << ", ";
 		str <<	var("testFramework") << value("ofxUnitTests") << ", ";
@@ -215,7 +257,7 @@ class ofxUnitTestsApp: public ofBaseApp{
 		str <<	var("StdOut") << value("") << ", ";
 		str <<	var("StdErr") << value("");
 		str << "}";
-		ofxAppveyorAPISend(str.str(), "api/tests");
+		ofxAppveyorAPISend(str.str(), "api/tests");*/
 #endif
 
 		ofExit(numTestsFailed);
