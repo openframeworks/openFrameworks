@@ -95,6 +95,7 @@ void ofxAppveyorAPISend(const std::string & str, const std::string & entryPoint)
 	auto res = loader.handleRequest(req);
 	if(res.status!=200){
 		cout << "Error " << res.status << ": " << res.error << endl;
+		cout << res.data.getText() << endl;
 	}
 }
 
@@ -124,12 +125,12 @@ public:
 		str << var("message");
 
 		if(module != ""){
-			str << value(module + ": " + message) << ",";
+			str << value(module + ": " + message) << ", ";
 		}else{
-			str << value(message) << ",";
+			str << value(message) << ", ";
 		}
 
-		str << var("category") << value(ofGetLogLevelName(level)) << ",";
+		str << var("category") << value(ofGetLogLevelName(level)) << ", ";
 		str << var("details") << value("");
 		str << "}";
 
@@ -149,12 +150,12 @@ public:
 		str << var("message");
 
 		if(module != ""){
-			str << value(module + ": " + ofVAArgsToString(format,args)) << ",";
+			str << value(module + ": " + ofVAArgsToString(format,args)) << ", ";
 		}else{
 			str << value(ofVAArgsToString(format,args));
 		}
 
-		str << var("category") << value(ofGetLogLevelName(level)) << ",";
+		str << var("category") << value(ofGetLogLevelName(level)) << ", ";
 		str << var("details") << value("");
 		str << "}";
 
