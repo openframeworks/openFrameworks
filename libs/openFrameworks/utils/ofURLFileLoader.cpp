@@ -188,13 +188,27 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 			 //const Poco::Net::Context::Ptr context( new Poco::Net::Context( Poco::Net::Context::CLIENT_USE, "", "", "rootcert.pem" ) );
 			HTTPSClientSession * httpsSession = new HTTPSClientSession(uri.getHost(), uri.getPort());//,context);
 			httpsSession->setTimeout(Poco::Timespan(120,0));
-			httpsSession->sendRequest(*req);
+			auto & send = httpsSession->sendRequest(*req);
+			if(request.body!=""){
+				req->setContentLength( request.body.length() );
+				send << request.body << std::flush;
+			}
+			if(request.contentType!=""){
+				req->setContentType(request.contentType);
+			}
 			rs = &httpsSession->receiveResponse(res);
 			session.reset(httpsSession);
 		}else{
 			HTTPClientSession * httpSession = new HTTPClientSession(uri.getHost(), uri.getPort());
 			httpSession->setTimeout(Poco::Timespan(120,0));
-			httpSession->sendRequest(*req);
+			auto & send = httpSession->sendRequest(*req);
+			if(request.body!=""){
+				req->setContentLength( request.body.length() );
+				send << request.body << std::flush;
+			}
+			if(request.contentType!=""){
+				req->setContentType(request.contentType);
+			}
 			rs = &httpSession->receiveResponse(res);
 			session.reset(httpSession);
 		}
