@@ -182,7 +182,7 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 			req->add(it->first,it->second);
 		}
 		HTTPResponse res;
-		std::unique_ptr<HTTPSession> session;
+		std::shared_ptr<HTTPSession> session;
 		istream * rs;
 		if(uri.getScheme()=="https"){
 			 //const Poco::Net::Context::Ptr context( new Poco::Net::Context( Poco::Net::Context::CLIENT_USE, "", "", "rootcert.pem" ) );
@@ -190,13 +190,13 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 			httpsSession->setTimeout(Poco::Timespan(120,0));
 			httpsSession->sendRequest(*req);
 			rs = &httpsSession->receiveResponse(res);
-			session = std::make_unique<HTTPSession>(httpsSession);
+			session.reset(httpsSession);
 		}else{
 			HTTPClientSession * httpSession = new HTTPClientSession(uri.getHost(), uri.getPort());
 			httpSession->setTimeout(Poco::Timespan(120,0));
 			httpSession->sendRequest(*req);
 			rs = &httpSession->receiveResponse(res);
-			session = std::make_unique<HTTPSession>(httpSession);
+			session.reset(httpSession);
 		}
 		if(!request.saveTo){
 			return ofHttpResponse(request,*rs,res.getStatus(),res.getReason());
@@ -298,8 +298,8 @@ ofHttpRequest::ofHttpRequest(const string& url, const string& name,bool saveTo)
 :url(url)
 ,name(name)
 ,saveTo(saveTo)
-,id(nextID++)
 ,method(GET)
+,id(nextID++)
 {
 }
 
