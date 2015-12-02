@@ -150,7 +150,7 @@ class ofxUnitTestsApp: public ofBaseApp{
 			auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
 			auto projectName = projectDir.stem();
 			auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
-			ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then) + " -StdOut \"" + appveyorLogger.getTotalOut() + "\"");
+			ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then) + " -StdOut \"" + appveyorLogger->getTotalOut() + "\"");
 		}
 #endif
 
