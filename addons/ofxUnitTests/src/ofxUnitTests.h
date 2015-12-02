@@ -65,9 +65,7 @@ public:
 
 
 #ifdef TARGET_WIN32
-
-
-std::string ofxAppveyorAPIVar(std::string msg){
+/*std::string ofxAppveyorAPIVar(std::string msg){
 	return "\"" + msg + "\": ";
 }
 
@@ -99,7 +97,7 @@ void ofxAppveyorAPISend(const std::string & str, const std::string & entryPoint)
 	}
 }
 
-void ofxAppveyorAPISendMessage(const std::string & str){
+void ofxAppveyorAPISend(const std::string & str){
 	ofxAppveyorAPISend(str, "api/build/messages");
 }
 
@@ -161,7 +159,7 @@ public:
 
 		send(str.str());
 	}
-};
+};*/
 #endif
 
 class ofAppveyorSystemChannel: public ofBaseLoggerChannel{
@@ -207,7 +205,7 @@ void log(ofLogLevel level, const std::string & module, const char* format, va_li
 
 class ofxUnitTestsApp: public ofBaseApp{
 
-#ifdef TARGET_WIN32
+/*#ifdef TARGET_WIN32
 	std::string var(std::string msg){
 		return ofxAppveyorAPIVar(msg);
 	}
@@ -215,7 +213,7 @@ class ofxUnitTestsApp: public ofBaseApp{
 	std::string value(std::string msg){
 		return ofxAppveyorAPIValue(msg);
 	}
-#endif
+#endif*/
 
 	void setup(){
 #ifdef TARGET_WIN32
