@@ -13,7 +13,7 @@ FOR /D %%G IN (*) DO (
             appveyor AddTest -Name %%E -Framework ofxUnitTests -FileName %%E.sln -Outcome Failed -Duration 0 -StdOut "Error compiling"
             SET STATUS=1
         ) else (
-            cd bin &
+            cd bin
             %%E_debug.exe
             if ERRORLEVEL 1 echo "Finished with error" & SET STATUS=1
         )
