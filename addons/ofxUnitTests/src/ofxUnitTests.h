@@ -120,7 +120,7 @@ public:
 class ofxUnitTestsApp: public ofBaseApp{
 
 	void setup(){
-#ifdef TARGET_WIN32
+/*#ifdef TARGET_WIN32
 		std::shared_ptr<ofAppveyorSystemChannel> appveyorLogger;
 		if(ofxAppveyorAPIURL()!=""){
 			appveyorLogger.reset(new ofAppveyorSystemChannel);
@@ -129,9 +129,9 @@ class ofxUnitTestsApp: public ofBaseApp{
 			ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel>(new ofColorsLoggerChannel));
 			ofLogNotice() << "Not running in Appveyor";
 		}
-#else
+#else*/
 		ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel>(new ofColorsLoggerChannel));
-#endif
+//#endif
 		auto then = ofGetElapsedTimeMillis();
 		run();
 		auto now = ofGetElapsedTimeMillis();
@@ -148,7 +148,7 @@ class ofxUnitTestsApp: public ofBaseApp{
 			auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
 			auto projectName = projectDir.stem();
 			auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
-			ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then) + " -StdOut \"" + appveyorLogger->getTotalOut() + "\"");
+			ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then) /*+ " -StdOut \"" + appveyorLogger->getTotalOut() + "\""*/);
 		}
 #endif
 
