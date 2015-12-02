@@ -11,7 +11,9 @@ FOR /D %%G IN (*) DO (
         msbuild %%E.sln /p:Configuration=Debug /p:Platform=%TESTS_PLATFORM%
         cd bin
         %%E_debug.exe
-        if NOT %ERRORLEVEL%==0 SET STATUS=1
+        SET TEST_STATUS=%ERRORLEVEL%
+        echo "Finished with status %TEST_STATUS%"
+        if %TEST_STATUS% 1 SET STATUS=1
     )
 )
 cd ..
