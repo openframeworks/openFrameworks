@@ -102,7 +102,7 @@ public:
 		if(module!=""){
 			msg = module + ": " + msg;
 		}
-		totalOut += "[" + ofGetLogLevelName(level) + "]\t\t" + msg + "\r\n";
+		totalOut += "[" + ofGetLogLevelName(level) + "]\t\t" + msg + "`r`n";
 		ofSystem("appveyor AddMessage \"" + msg + "\" -Category " + category(level));
 	}
 
@@ -150,7 +150,7 @@ class ofxUnitTestsApp: public ofBaseApp{
 			auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
 			auto projectName = projectDir.stem();
 			auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
-			ofSystem("Add-AppveyorTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then) + " -StdOut \"" + appveyorLogger->getTotalOut() + "\"");
+			ofSystem("powershell \"& \"\"Add-AppveyorTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then) + " -StdOut \"" + appveyorLogger->getTotalOut() + "\"\"\"");
 		}
 #endif
 
