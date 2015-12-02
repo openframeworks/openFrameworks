@@ -83,7 +83,7 @@ std::string ofxAppveyorAPIURL(){
 }
 
 void ofxAppveyorAPISend(const std::string & str, const std::string & entryPoint){
-	auto url = ofFilePath::join(ofxAppveyorAPIURL(), entryPoint);
+	auto url = ofxAppveyorAPIURL() + entryPoint;
 	cout << "Sending: " << str << endl;
 	cout << "to " << url;
 	ofHttpRequest req;
