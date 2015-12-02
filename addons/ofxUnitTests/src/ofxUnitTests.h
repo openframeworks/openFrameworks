@@ -85,14 +85,17 @@ std::string ofxAppveyorAPIURL(){
 void ofxAppveyorAPISend(const std::string & str, const std::string & entryPoint){
 	auto url = ofxAppveyorAPIURL() + entryPoint;
 	cout << "Sending: " << str << endl;
-	cout << "to " << url;
+	cout << "to " << url << endl;
 	ofHttpRequest req;
 	req.method = ofHttpRequest::POST;
 	req.url = url;
 	req.body = str;
 	req.contentType = "text/json; charset=utf-8";
 	ofURLFileLoader loader;
-	loader.handleRequest(req);
+	auto res = loader.handleRequest(req);
+	if(res.status!=200){
+		cout << "Error " << res.status << ": " << res.error << endl;
+	}
 }
 
 void ofxAppveyorAPISend(const std::string & str){
