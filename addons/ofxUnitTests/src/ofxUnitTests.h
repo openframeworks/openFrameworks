@@ -63,12 +63,11 @@ public:
 
 
 #ifdef TARGET_WIN32
-#define APPVEYOR_API_URL TEXT("APPVEYOR_API_URL")
 
 std::string ofxAppveyorAPIURL(){
 	const size_t BUFSIZE = 4096;
 	std::vector<char> pszOldVal(BUFSIZE, 0);
-	GetEnvironmentVariableA(APPVEYOR_API_URL, pszOldVal.data(), BUFSIZE);
+	GetEnvironmentVariableA("APPVEYOR_API_URL", pszOldVal.data(), BUFSIZE);
 	return std::string(pszOldVal.begin(), pszOldVal.end());
 }
 
