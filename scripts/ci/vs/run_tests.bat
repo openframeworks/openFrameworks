@@ -1,5 +1,6 @@
 cd %APPVEYOR_BUILD_FOLDER%\tests
 set TESTS_PLATFORM=%PLATFORM%
+set STATUS=0
 if "%PLATFORM%" equ "x86" set TESTS_PLATFORM=Win32
 FOR /D %%G IN (*) DO ( 
     echo %APPVEYOR_BUILD_FOLDER%\tests\%%G
@@ -10,7 +11,9 @@ FOR /D %%G IN (*) DO (
         msbuild %%E.sln /p:Configuration=Debug /p:Platform=%TESTS_PLATFORM%
         cd bin
         %%E_debug.exe
-        if "%errorlevel%" neq "0" EXIT /B 1
+        if NOT %ERRORLEVEL%==0 SET STATUS=1
     )
 )
 cd ..
+echo "Tests finished with status %STATUS%"
+exit /B %STATUS%
