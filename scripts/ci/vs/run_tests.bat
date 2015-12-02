@@ -13,7 +13,7 @@ FOR /D %%G IN (*) DO (
         %%E_debug.exe
         SET TEST_STATUS=%ERRORLEVEL%
         echo "Finished with status %TEST_STATUS%"
-        if %TEST_STATUS% 1 SET STATUS=1
+        if %TEST_STATUS% EQU 0 echo "No errors found" else SET STATUS=1
     )
 )
 cd ..
