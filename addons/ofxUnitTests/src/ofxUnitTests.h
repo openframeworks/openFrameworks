@@ -71,7 +71,7 @@ std::string ofxAppveyorAPIURL(){
     if(size>0){
         return std::string(pszOldVal.begin(), pszOldVal.begin()+size);
     }else{
-        return ""
+        return "";
     }
 }
 #endif
