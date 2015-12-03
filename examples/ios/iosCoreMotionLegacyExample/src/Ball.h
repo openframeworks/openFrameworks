@@ -34,9 +34,9 @@ class Ball{
         }
 	
         //----------------------------------------------------------------	
-        void update() {
-            vel.x += ACCELEROMETER_FORCE * ofxAccelerometer.getForce().x * ofRandomuf();
-            vel.y += -ACCELEROMETER_FORCE * ofxAccelerometer.getForce().y * ofRandomuf();        // this one is subtracted cos world Y is opposite to opengl Y
+        void update(const ofVec3f & accelerometerData) {
+            vel.x += ACCELEROMETER_FORCE * accelerometerData.x * ofRandomuf();
+            vel.y += -ACCELEROMETER_FORCE * accelerometerData.y * ofRandomuf();        // this one is subtracted cos world Y is opposite to opengl Y
 		
             // add vel to pos
             pos += vel;

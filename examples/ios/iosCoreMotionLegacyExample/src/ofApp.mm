@@ -7,7 +7,7 @@ void ofApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
 	
 	// initialize the accelerometer
-	ofxAccelerometer.setup();
+    coreMotion.setupAccelerometer();
 	
 	balls.assign(10, Ball());
 	
@@ -23,10 +23,14 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update() {
+    
+    coreMotion.update();
+    accelerometerData = coreMotion.getAccelerometerData();
+    
 	for(int i=0; i < balls.size(); i++){
-		balls[i].update();
+		balls[i].update(accelerometerData);
 	}
-    ofLog(OF_LOG_VERBOSE, "x = %f, y = %f", ofxAccelerometer.getForce().x, ofxAccelerometer.getForce().y);
+    ofLog(OF_LOG_VERBOSE, "x = %f, y = %f", accelerometerData.x, accelerometerData.y);
 }
 
 //--------------------------------------------------------------
@@ -34,7 +38,7 @@ void ofApp::draw() {
 	ofSetColor(54);
 	ofDrawBitmapString("Multitouch and Accel Example", 10, 20);
 
-	float angle = 180 - RAD_TO_DEG * atan2( ofxAccelerometer.getForce().y, ofxAccelerometer.getForce().x );
+	float angle = 180 - RAD_TO_DEG * atan2(accelerometerData.y, accelerometerData.x);
 
 	ofEnableAlphaBlending();
 	ofSetColor(255);
