@@ -178,7 +178,7 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 		}else{
 			pocoMethod = HTTPRequest::HTTP_POST;
 		}
-		HTTPRequest req(pocoMethod, "api/tests", HTTPMessage::HTTP_1_1);
+		HTTPRequest req(pocoMethod, path, HTTPMessage::HTTP_1_1);
 		for(map<string,string>::iterator it = request.headers.begin(); it!=request.headers.end(); it++){
 			req.add(it->first,it->second);
 		}
