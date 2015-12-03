@@ -197,7 +197,8 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 		}
 		if(request.body!=""){
 			req.setContentLength( request.body.length() );
-			send << request.body << std::flush;
+			send.write(request.body.c_str(), request.body.size());
+			send << std::flush;
 		}
 
 		auto & rs = session->receiveResponse(res);
