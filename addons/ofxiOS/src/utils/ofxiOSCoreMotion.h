@@ -5,10 +5,10 @@
     - Attitude also has quaternion (used to spin the box in the example)
  */
 
-#include "ofMatrix4x4.h"
-#import <CoreMotion/CMMotionManager.h>
-
 #pragma once
+
+#import <CoreMotion/CoreMotion.h>
+#include "ofMatrix4x4.h"
 
 class ofxiOSCoreMotion {
 
