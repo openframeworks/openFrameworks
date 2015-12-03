@@ -168,6 +168,13 @@ class ofxUnitTestsApp: public ofBaseApp{
 					var_value("outcome", passed?"Passed":"Failed") + ", " +
 					var_value("durationMilliseconds", ofToString(now-then)) +
 				"}";
+        ofURLFileLoader http;
+        auto res = http.handleRequest(req);
+        if(res.status!=200){
+            ofLogError() << res.status << ", " << res.error;
+            cout << res.data.getText() << endl;
+        }
+
 		ofExit(numTestsFailed);
 	}
 	virtual void run() = 0;
