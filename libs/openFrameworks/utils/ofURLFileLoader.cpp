@@ -172,48 +172,37 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 		std::string path(uri.getPathAndQuery());
 		if (path.empty()) path = "/";
 
-		std::unique_ptr<HTTPRequest> req;
+		std::string pocoMethod;
 		if(request.method==ofHttpRequest::GET){
-			req = std::make_unique<HTTPRequest>(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
+			pocoMethod = HTTPRequest::HTTP_GET;
 		}else{
-			req = std::make_unique<HTTPRequest>(HTTPRequest::HTTP_POST, path, HTTPMessage::HTTP_1_1);
+			pocoMethod = HTTPRequest::HTTP_POST;
 		}
+		HTTPRequest req(pocoMethod, path, HTTPMessage::HTTP_1_1);
 		for(map<string,string>::iterator it = request.headers.begin(); it!=request.headers.end(); it++){
-			req->add(it->first,it->second);
+			req.add(it->first,it->second);
 		}
 		HTTPResponse res;
-		std::shared_ptr<HTTPSession> session;
-		istream * rs;
+		std::shared_ptr<HTTPClientSession> session;
 		if(uri.getScheme()=="https"){
 			 //const Poco::Net::Context::Ptr context( new Poco::Net::Context( Poco::Net::Context::CLIENT_USE, "", "", "rootcert.pem" ) );
-			HTTPSClientSession * httpsSession = new HTTPSClientSession(uri.getHost(), uri.getPort());//,context);
-			httpsSession->setTimeout(Poco::Timespan(120,0));
-			auto & send = httpsSession->sendRequest(*req);
-			if(request.body!=""){
-				req->setContentLength( request.body.length() );
-				send << request.body << std::flush;
-			}
-			if(request.contentType!=""){
-				req->setContentType(request.contentType);
-			}
-			rs = &httpsSession->receiveResponse(res);
-			session.reset(httpsSession);
+			session.reset(new HTTPSClientSession(uri.getHost(), uri.getPort()));//,context);
 		}else{
-			HTTPClientSession * httpSession = new HTTPClientSession(uri.getHost(), uri.getPort());
-			httpSession->setTimeout(Poco::Timespan(120,0));
-			auto & send = httpSession->sendRequest(*req);
-			if(request.body!=""){
-				req->setContentLength( request.body.length() );
-				send << request.body << std::flush;
-			}
-			if(request.contentType!=""){
-				req->setContentType(request.contentType);
-			}
-			rs = &httpSession->receiveResponse(res);
-			session.reset(httpSession);
+			session.reset(new HTTPClientSession(uri.getHost(), uri.getPort()));
 		}
+		session->setTimeout(Poco::Timespan(120,0));
+		auto & send = session->sendRequest(req);
+		if(request.contentType!=""){
+			req.setContentType(request.contentType);
+		}
+		if(request.body!=""){
+			req.setContentLength( request.body.length() );
+			send << request.body << std::flush;
+		}
+
+		auto & rs = session->receiveResponse(res);
 		if(!request.saveTo){
-			return ofHttpResponse(request,*rs,res.getStatus(),res.getReason());
+			return ofHttpResponse(request,rs,res.getStatus(),res.getReason());
 		}else{
 			ofFile saveTo(request.name,ofFile::WriteOnly,true);
 			char aux_buffer[1024];
@@ -222,9 +211,9 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 			while (n > 0){
 				// we resize to size+1 initialized to 0 to have a 0 at the end for strings
 				saveTo.write(aux_buffer,n);
-				if (rs->good()){
-					rs->read(aux_buffer, 1024);
-					n = rs->gcount();
+				if (rs.good()){
+					rs.read(aux_buffer, 1024);
+					n = rs.gcount();
 				}
 				else n = 0;
 			}
