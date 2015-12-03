@@ -196,7 +196,8 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 			req.setContentType(request.contentType);
 		}
 		if(request.body!=""){
-			req.setContentLength( request.body.length() );
+			//req.setContentLength( request.body.length() );
+			req.add("Content-Length", ofToString(request.body.length()));
 			send.write(request.body.c_str(), request.body.size());
 			send << std::flush;
 		}
