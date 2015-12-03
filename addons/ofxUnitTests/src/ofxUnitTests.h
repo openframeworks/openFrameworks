@@ -144,31 +144,32 @@ class ofxUnitTestsApp: public ofBaseApp{
 		}
 		ofLogNotice() << "took " << ofToString(now-then) << "ms";
 #ifdef TARGET_WIN32
-		/*if(ofxAppveyorAPIURL()!=""){
-            ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then));
-		}*/
-#endif
-		auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
-		auto projectName = projectDir.stem();
-		auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
-		ofHttpRequest req;
-		req.headers["Accept"] = "application/json";
-		req.headers["Content-type"] = "application/json";
-        req.method = ofHttpRequest::POST;
-		req.body =
-				"{ " +
-                    json_var_value("testName", projectName.string()) + ", " +
-                    json_var_value("testFramework", "ofxUnitTests") + ", " +
-                    json_var_value("fileName", exeName.string()) + ", " +
-                    json_var_value("outcome", passed?"Passed":"Failed") + ", " +
-                    json_var_value("durationMilliseconds", ofToString(now-then)) +
-				"}";
-        ofURLFileLoader http;
-        auto res = http.handleRequest(req);
-        if(res.status!=200){
-            ofLogError() << res.status << ", " << res.error;
-            cout << res.data.getText() << endl;
+        if(ofxAppveyorAPIURL()!=""){
+            //ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then));
+            auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
+            auto projectName = projectDir.stem();
+            auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
+            ofHttpRequest req;
+            req.headers["Accept"] = "application/json";
+            req.headers["Content-type"] = "application/json";
+            req.method = ofHttpRequest::POST;
+            req.url = ofxAppveyorAPIURL() + "api/tests";
+            req.body =
+                    "{ " +
+                        json_var_value("testName", projectName.string()) + ", " +
+                        json_var_value("testFramework", "ofxUnitTests") + ", " +
+                        json_var_value("fileName", exeName.string()) + ", " +
+                        json_var_value("outcome", passed?"Passed":"Failed") + ", " +
+                        json_var_value("durationMilliseconds", ofToString(now-then)) +
+                    "}";
+            ofURLFileLoader http;
+            auto res = http.handleRequest(req);
+            if(res.status!=200){
+                ofLogError() << res.status << ", " << res.error;
+                cout << res.data.getText() << endl;
+            }
         }
+#endif
 
 		ofExit(numTestsFailed);
     }
