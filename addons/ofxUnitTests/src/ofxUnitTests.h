@@ -139,7 +139,7 @@ class ofxUnitTestsApp: public ofBaseApp{
 			ofLogNotice() << "Not running in Appveyor";
 		}
 #else*/
-        auto logger = std::shared_ptr<ofBaseLoggerChannel>(new ofColorsLoggerChannel);
+        auto logger = std::shared_ptr<ofColorsLoggerChannel>(new ofColorsLoggerChannel);
         ofSetLoggerChannel(logger);
 //#endif
 		auto then = ofGetElapsedTimeMillis();
