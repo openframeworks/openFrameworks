@@ -191,15 +191,16 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 			session.reset(new HTTPClientSession(uri.getHost(), uri.getPort()));
 		}
 		session->setTimeout(Poco::Timespan(120,0));
-		auto & send = session->sendRequest(req);
 		if(request.contentType!=""){
 			req.setContentType(request.contentType);
 		}
 		if(request.body!=""){
-			//req.setContentLength( request.body.length() );
-			req.add("Content-Length", ofToString(request.body.length()));
+			req.setContentLength( request.body.length() );
+			auto & send = session->sendRequest(req);
 			send.write(request.body.c_str(), request.body.size());
 			send << std::flush;
+		}else{
+			session->sendRequest(req);
 		}
 
 		auto & rs = session->receiveResponse(res);
