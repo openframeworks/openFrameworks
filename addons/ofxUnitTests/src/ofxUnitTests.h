@@ -165,6 +165,7 @@ class ofxUnitTestsApp: public ofBaseApp{
             ofURLFileLoader http;
             auto res = http.handleRequest(req);
             if(res.status!=200){
+                ofLogError() << "sending to " << req.url;
                 ofLogError() << res.status << ", " << res.error;
                 cout << res.data.getText() << endl;
             }
