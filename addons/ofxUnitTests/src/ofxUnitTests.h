@@ -35,16 +35,20 @@ class ofColorsLoggerChannel: public ofBaseLoggerChannel{
     std::string totalOut;
 public:
     void log(ofLogLevel level, const std::string & module, const std::string & message){
-        std::stringstream str;
-		// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout
-        str << "[" << ofGetLogLevelName(level, true)  << "] ";
-		// only print the module name if it's not ""
+		std::stringstream str;
+
+		str << "[" << ofGetLogLevelName(level, true)  << "] ";
+		std::cout << "[" << ofGetLogLevelName(level, true)  << "] ";
+
 		if(module != ""){
             str << module << ": ";
+			std::cout << module << ": ";
 		}
-        str << CON_BOLD << getColor(level) << message << CON_DEFAULT << std::endl;
-        totalOut += str.str();
-        std::cout << str.str();
+
+		str << message << std::endl;
+		std::cout << CON_BOLD << getColor(level) << message << CON_DEFAULT << std::endl;
+
+		totalOut += str.str();
     }
 
     void log(ofLogLevel level, const std::string & module, const char* format, ...){
