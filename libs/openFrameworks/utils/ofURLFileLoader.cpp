@@ -171,14 +171,14 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 		URI uri(request.url);
 		std::string path(uri.getPathAndQuery());
 		if (path.empty()) path = "/";
-
+		cout << "sending to " << path << endl;
 		std::string pocoMethod;
 		if(request.method==ofHttpRequest::GET){
 			pocoMethod = HTTPRequest::HTTP_GET;
 		}else{
 			pocoMethod = HTTPRequest::HTTP_POST;
 		}
-		HTTPRequest req(pocoMethod, path, HTTPMessage::HTTP_1_1);
+		HTTPRequest req(pocoMethod, "api/tests", HTTPMessage::HTTP_1_1);
 		for(map<string,string>::iterator it = request.headers.begin(); it!=request.headers.end(); it++){
 			req.add(it->first,it->second);
 		}
