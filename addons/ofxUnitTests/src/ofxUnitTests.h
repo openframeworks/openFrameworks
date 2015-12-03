@@ -119,6 +119,10 @@ public:
 
 class ofxUnitTestsApp: public ofBaseApp{
 
+	std::string var_value(const std::string & var, const std::string & value){
+		return "\"" + var + "\": \"" + value + "\"";
+	}
+
 	void setup(){
 /*#ifdef TARGET_WIN32
 		std::shared_ptr<ofAppveyorSystemChannel> appveyorLogger;
@@ -144,14 +148,26 @@ class ofxUnitTestsApp: public ofBaseApp{
 		}
 		ofLogNotice() << "took " << ofToString(now-then) << "ms";
 #ifdef TARGET_WIN32
-		if(ofxAppveyorAPIURL()!=""){
-			auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
-			auto projectName = projectDir.stem();
-			auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
+		/*if(ofxAppveyorAPIURL()!=""){
 			ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then) /*+ " -StdOut \"" + appveyorLogger->getTotalOut() + "\""*/);
-		}
+		}*/
 #endif
-
+		auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
+		auto projectName = projectDir.stem();
+		auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
+		ofHttpRequest req;
+		req.headers["Accept"] = "application/json";
+		req.headers["Content-type"] = "application/json";
+		req.method = ofHttpRequest::POST;
+		//req.contentType = "application/json";
+		req.body =
+				"{ " +
+					var_value("testName", projectName.string()) + ", " +
+					var_value("testFramework", "ofxUnitTests") + ", " +
+					var_value("fileName", exeName.string()) + ", " +
+					var_value("outcome", passed?"Passed":"Failed") + ", " +
+					var_value("durationMilliseconds", ofToString(now-then)) +
+				"}";
 		ofExit(numTestsFailed);
 	}
 	virtual void run() = 0;
