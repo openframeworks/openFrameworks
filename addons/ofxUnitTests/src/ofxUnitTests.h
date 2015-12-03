@@ -119,10 +119,6 @@ public:
 
 class ofxUnitTestsApp: public ofBaseApp{
 
-	std::string var_value(const std::string & var, const std::string & value){
-		return "\"" + var + "\": \"" + value + "\"";
-	}
-
 	void setup(){
 /*#ifdef TARGET_WIN32
 		std::shared_ptr<ofAppveyorSystemChannel> appveyorLogger;
@@ -149,7 +145,7 @@ class ofxUnitTestsApp: public ofBaseApp{
 		ofLogNotice() << "took " << ofToString(now-then) << "ms";
 #ifdef TARGET_WIN32
 		/*if(ofxAppveyorAPIURL()!=""){
-			ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then) /*+ " -StdOut \"" + appveyorLogger->getTotalOut() + "\""*/);
+            ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then));
 		}*/
 #endif
 		auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
@@ -158,15 +154,14 @@ class ofxUnitTestsApp: public ofBaseApp{
 		ofHttpRequest req;
 		req.headers["Accept"] = "application/json";
 		req.headers["Content-type"] = "application/json";
-		req.method = ofHttpRequest::POST;
-		//req.contentType = "application/json";
+        req.method = ofHttpRequest::POST;
 		req.body =
 				"{ " +
-					var_value("testName", projectName.string()) + ", " +
-					var_value("testFramework", "ofxUnitTests") + ", " +
-					var_value("fileName", exeName.string()) + ", " +
-					var_value("outcome", passed?"Passed":"Failed") + ", " +
-					var_value("durationMilliseconds", ofToString(now-then)) +
+                    json_var_value("testName", projectName.string()) + ", " +
+                    json_var_value("testFramework", "ofxUnitTests") + ", " +
+                    json_var_value("fileName", exeName.string()) + ", " +
+                    json_var_value("outcome", passed?"Passed":"Failed") + ", " +
+                    json_var_value("durationMilliseconds", ofToString(now-then)) +
 				"}";
         ofURLFileLoader http;
         auto res = http.handleRequest(req);
@@ -176,10 +171,12 @@ class ofxUnitTestsApp: public ofBaseApp{
         }
 
 		ofExit(numTestsFailed);
-	}
-	virtual void run() = 0;
+    }
 
 protected:
+
+    virtual void run() = 0;
+
 	void test(bool test, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(test){
@@ -217,6 +214,10 @@ protected:
 	}
 
 private:
+    std::string json_var_value(const std::string & var, const std::string & value){
+        return "\"" + var + "\": \"" + value + "\"";
+    }
+
 	int numTestsTotal = 0;
 	int numTestsPassed = 0;
 	int numTestsFailed = 0;
