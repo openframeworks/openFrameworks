@@ -31,32 +31,37 @@ class ofColorsLoggerChannel: public ofBaseLoggerChannel{
 			return CON_DEFAULT;
 		}
 	}
+
+    std::string totalOut;
 public:
-	void log(ofLogLevel level, const std::string & module, const std::string & message){
+    void log(ofLogLevel level, const std::string & module, const std::string & message){
+        std::stringstream str;
 		// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout
-		std::cout << "[" << ofGetLogLevelName(level, true)  << "] ";
+        str << "[" << ofGetLogLevelName(level, true)  << "] ";
 		// only print the module name if it's not ""
 		if(module != ""){
-			std::cout << module << ": ";
+            str << module << ": ";
 		}
-		std::cout << CON_BOLD << getColor(level) << message << CON_DEFAULT << std::endl;
-	}
+        str << CON_BOLD << getColor(level) << message << CON_DEFAULT << std::endl;
+        totalOut += str.str();
+        std::cout << str.str();
+    }
 
-	void log(ofLogLevel level, const std::string & module, const char* format, ...){
-		va_list args;
-		va_start(args, format);
-		log(level, module, format, args);
-		va_end(args);
-	}
+    void log(ofLogLevel level, const std::string & module, const char* format, ...){
+        va_list args;
+        va_start(args, format);
+        log(level, module, format, args);
+        va_end(args);
+    }
 
-	void log(ofLogLevel level, const std::string & module, const char* format, va_list args){
-		fprintf(stdout, (CON_BOLD + getColor(level) + "[%s] " + CON_DEFAULT).c_str(), ofGetLogLevelName(level, true).c_str());
-		if(module != ""){
-			fprintf(stdout, "%s: ", module.c_str());
-		}
-		vfprintf(stdout, format, args);
-		fprintf(stdout, "\n");
-	}
+    void log(ofLogLevel level, const std::string & module, const char* format, va_list args){
+        auto msg = ofVAArgsToString(format,args);
+        log(level, module, msg);
+    }
+
+    std::string getStdOut(){
+        return totalOut;
+    }
 };
 
 
@@ -134,7 +139,8 @@ class ofxUnitTestsApp: public ofBaseApp{
 			ofLogNotice() << "Not running in Appveyor";
 		}
 #else*/
-		ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel>(new ofColorsLoggerChannel));
+        auto logger = std::shared_ptr<ofBaseLoggerChannel>(new ofColorsLoggerChannel);
+        ofSetLoggerChannel(logger);
 //#endif
 		auto then = ofGetElapsedTimeMillis();
 		run();
@@ -165,6 +171,7 @@ class ofxUnitTestsApp: public ofBaseApp{
                         json_var_value("fileName", exeName.string()) + ", " +
                         json_var_value("outcome", passed?"Passed":"Failed") + ", " +
                         json_var_value("durationMilliseconds", ofToString(now-then)) +
+                        json_var_value("StdOut", logger->getStdOut())
                     "}";
             ofURLFileLoader http;
             auto res = http.handleRequest(req);
