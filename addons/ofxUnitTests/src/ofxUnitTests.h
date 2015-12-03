@@ -170,8 +170,8 @@ class ofxUnitTestsApp: public ofBaseApp{
                         json_var_value("testFramework", "ofxUnitTests") + ", " +
                         json_var_value("fileName", exeName.string()) + ", " +
                         json_var_value("outcome", passed?"Passed":"Failed") + ", " +
-                        json_var_value("durationMilliseconds", ofToString(now-then)) +
-                        json_var_value("StdOut", logger->getStdOut())
+                        json_var_value("durationMilliseconds", ofToString(now-then)) + ", " +
+                        json_var_value("StdOut", logger->getStdOut()) +
                     "}";
             ofURLFileLoader http;
             auto res = http.handleRequest(req);
