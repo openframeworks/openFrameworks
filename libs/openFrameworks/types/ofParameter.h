@@ -483,14 +483,14 @@ private:
 	public:
 		Value()
 		:min(of::priv::TypeInfo<ParameterType>::min())
-		,max(of::priv::TypeInfo<ParameterType>::min())
+		,max(of::priv::TypeInfo<ParameterType>::max())
 		,bInNotify(false)
 		,serializable(true){};
 
 		Value(ParameterType v)
 		:value(v)
 		,min(of::priv::TypeInfo<ParameterType>::min())
-		,max(of::priv::TypeInfo<ParameterType>::min())
+		,max(of::priv::TypeInfo<ParameterType>::max())
 		,bInNotify(false)
 		,serializable(true){};
 
@@ -498,7 +498,7 @@ private:
 		:name(name)
 		,value(v)
 		,min(of::priv::TypeInfo<ParameterType>::min())
-		,max(of::priv::TypeInfo<ParameterType>::min())
+		,max(of::priv::TypeInfo<ParameterType>::max())
 		,bInNotify(false)
 		,serializable(true){};
 
