@@ -183,7 +183,7 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 			req.add(it->first,it->second);
 		}
 		HTTPResponse res;
-		std::shared_ptr<HTTPClientSession> session;
+		std::unique_ptr<HTTPClientSession> session;
 		if(uri.getScheme()=="https"){
 			 //const Poco::Net::Context::Ptr context( new Poco::Net::Context( Poco::Net::Context::CLIENT_USE, "", "", "rootcert.pem" ) );
 			session.reset(new HTTPSClientSession(uri.getHost(), uri.getPort()));//,context);
@@ -206,8 +206,8 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 		}else{
 			ofFile saveTo(request.name,ofFile::WriteOnly,true);
 			char aux_buffer[1024];
-			rs->read(aux_buffer, 1024);
-			std::streamsize n = rs->gcount();
+			rs.read(aux_buffer, 1024);
+			std::streamsize n = rs.gcount();
 			while (n > 0){
 				// we resize to size+1 initialized to 0 to have a 0 at the end for strings
 				saveTo.write(aux_buffer,n);
@@ -292,8 +292,8 @@ static ofURLFileLoader & getFileLoader(){
 
 ofHttpRequest::ofHttpRequest()
 :saveTo(false)
-,id(nextID++)
 ,method(GET)
+,id(nextID++)
 {
 }
 
