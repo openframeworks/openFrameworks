@@ -81,12 +81,12 @@
 				<string>BB16EBD90F2B2AB500518274</string>
 				<string>BBE5EAB80F49AD8400F28951</string>
 				<string>53F323EB10A20EDB00E0DAE4</string>
-				<string>5326AEA810A23A0500278DE6</string>
 				<string>E41D400B13B39D2100A75A5D</string>
 				<string>E41D400C13B39D2100A75A5D</string>
 				<string>E41D400D13B39D2100A75A5D</string>
 				<string>E41D400E13B39D2100A75A5D</string>
 				<string>67DFA53619F92A69003B3434</string>
+				<string>5326AEA810A23A0500278DE6</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
@@ -327,8 +327,8 @@
 				<string>1DF5F4DF0D08C38300B7A737</string>
 				<string>1D30AB110D05D00D00671497</string>
 				<string>288765FC0DF74451002DB57D</string>
-				<string>5326AEA710A23A0500278DE6</string>
 				<string>67DFA53419F92A5E003B3434</string>
+				<string>5326AEA710A23A0500278DE6</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -510,6 +510,17 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
+		<key>6948EE371B920CB800B5AC1A</key>
+		<dict>
+			<key>children</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>local_addons</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>9255DD331112741900D6945E</key>
 		<dict>
 			<key>buildActionMask</key>
@@ -590,17 +601,6 @@
 			<string>PBXGroup</string>
 			<key>name</key>
 			<string>addons</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>6948EE371B920CB800B5AC1A</key>
-		<dict>
-			<key>children</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>local_addons</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
