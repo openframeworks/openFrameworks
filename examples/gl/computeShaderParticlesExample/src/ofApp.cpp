@@ -51,7 +51,7 @@ void ofApp::update(){
 
 	compute.begin();
 	compute.setUniforms(shaderUniforms);
-	compute.setUniform1f("timeLastFrame",ofGetLastFrameTime());
+	compute.setUniform1f("timeSinceLastFrame",ofGetTimeSinceLastFrame()());
 	compute.setUniform1f("elapsedTime",ofGetElapsedTimef());
 	float size = 4;
 	atractor1.set(ofMap(ofNoise(ofGetElapsedTimef()*0.3),0,1,-ofGetWidth()*size,ofGetWidth()*size),
