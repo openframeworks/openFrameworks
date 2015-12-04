@@ -87,6 +87,7 @@
 				<string>E41D400E13B39D2100A75A5D</string>
 				<string>67DFA53619F92A69003B3434</string>
 				<string>5326AEA810A23A0500278DE6</string>
+				<string>67B399D31C119F920065DC1B</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
@@ -329,6 +330,7 @@
 				<string>288765FC0DF74451002DB57D</string>
 				<string>67DFA53419F92A5E003B3434</string>
 				<string>5326AEA710A23A0500278DE6</string>
+				<string>67B399D21C119F920065DC1B</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -487,6 +489,26 @@
 		<dict>
 			<key>fileRef</key>
 			<string>678E130F17951549005B6D19</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>67B399D21C119F920065DC1B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>CoreMotion.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/CoreMotion.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>67B399D31C119F920065DC1B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>67B399D21C119F920065DC1B</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
