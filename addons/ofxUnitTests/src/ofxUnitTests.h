@@ -37,8 +37,8 @@ public:
     void log(ofLogLevel level, const std::string & module, const std::string & message){
 		std::stringstream str;
 
-		str << "[" << ofGetLogLevelName(level, true)  << "] ";
-		std::cout << "[" << ofGetLogLevelName(level, true)  << "] ";
+		str << "[ " << ofGetLogLevelName(level, true)  << "] ";
+		std::cout << "[ " << ofGetLogLevelName(level, true)  << "] ";
 
 		if(module != ""){
             str << module << ": ";
@@ -183,6 +183,8 @@ class ofxUnitTestsApp: public ofBaseApp{
                 ofLogError() << "sending to " << req.url;
                 ofLogError() << res.status << ", " << res.error;
                 cout << res.data.getText() << endl;
+				ofLogError() << "for body:";
+				cout << res.body << endl;
             }
         }
 #endif
