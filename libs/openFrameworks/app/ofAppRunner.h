@@ -58,7 +58,8 @@ float 		ofGetFrameRate();
 float 		ofGetTargetFrameRate();
 uint64_t	ofGetFrameNum();
 void 		ofSetFrameRate(int targetRate);
-double		ofGetLastFrameTime();
+double      ofGetTimeSinceLastFrame();
+OF_DEPRECATED_MSG("ofGetLastFrameTime() is deprecated, use ofGetTimeSinceLastFrame() instead", double ofGetLastFrameTime());
 
 void		ofSetOrientation(ofOrientation orientation, bool vFlip=true);
 ofOrientation			ofGetOrientation();
