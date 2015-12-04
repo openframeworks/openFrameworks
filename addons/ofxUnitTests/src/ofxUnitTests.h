@@ -163,6 +163,8 @@ class ofxUnitTestsApp: public ofBaseApp{
             auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
             auto projectName = projectDir.stem();
             auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
+			auto stdOut = logger->getStdOut();
+			ofStringReplace(stdOut, "\"", "\\\"");
             ofHttpRequest req;
             req.headers["Accept"] = "application/json";
             req.headers["Content-type"] = "application/json";
@@ -175,7 +177,7 @@ class ofxUnitTestsApp: public ofBaseApp{
                         json_var_value("fileName", exeName.string()) + ", " +
                         json_var_value("outcome", passed?"Passed":"Failed") + ", " +
                         json_var_value("durationMilliseconds", ofToString(now-then)) + ", " +
-                        json_var_value("StdOut", logger->getStdOut()) +
+						json_var_value("StdOut", stdOut) +
                     "}";
             ofURLFileLoader http;
             auto res = http.handleRequest(req);
