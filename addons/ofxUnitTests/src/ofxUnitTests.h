@@ -184,7 +184,7 @@ class ofxUnitTestsApp: public ofBaseApp{
                 ofLogError() << res.status << ", " << res.error;
                 cout << res.data.getText() << endl;
 				ofLogError() << "for body:";
-				cout << res.body << endl;
+				cout << req.body << endl;
             }
         }
 #endif
