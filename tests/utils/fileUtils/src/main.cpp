@@ -91,7 +91,12 @@ class ofApp: public ofxUnitTestsApp{
 		//========================================================================
 		ofLogNotice() << "";
 		ofLogNotice() << "testing ofDirectory";
-		test_eq(ofDirectory(".").getFiles().size(),size_t(3),"ofDirectory::ofDirectory with path",ofToString(ofDirectory(".").getFiles().size()));
+		if(!test_eq(ofDirectory(".").getFiles().size(), size_t(3), "ofDirectory::ofDirectory with path",ofToString(ofDirectory(".").getFiles().size()))){
+			ofLogError() << "data folder contains: ";
+			for(auto & f: ofDirectory(".").getFiles()){
+				ofLogError() << f.path();
+			}
+		}
 
 		test(ofDirectory("d1").create(),"ofDirectory::create");
 		test(ofDirectory("d1").isDirectory(),"ofDirectory::isDirectory");
