@@ -204,27 +204,37 @@ class ofApp: public ofxUnitTestsApp{
         ofLogNotice() << "";
         ofLogNotice() << "tests #4299";
         test_eq(std::filesystem::path(ofFilePath::getCurrentWorkingDirectory()), initial_cwd, "ofFilePath::getCurrentWorkingDirectory()");
-#ifdef TARGET_OSX
-        test_eq(ofToDataPath("",false),"../../../data/","ofToDataPath relative");
-#else
-        test_eq(ofToDataPath("",false),"data/","ofToDataPath relative");
-#endif
+		if(ofGetTargetPlatform()==OF_TARGET_OSX){
+			test_eq(ofToDataPath("",false),"../../../data/","ofToDataPath relative");
+		}else if(ofGetTargetPlatform()==OF_TARGET_WINVS || ofGetTargetPlatform()==OF_TARGET_MINGW){
+			test_eq(ofToDataPath("",false),"data\\","ofToDataPath relative");
+		}else{
+			test_eq(ofToDataPath("",false),"data/","ofToDataPath relative");
+		}
 
 
         //========================================================================
         ofLogNotice() << "";
         ofLogNotice() << "tests #4462";
-        test_eq(ofToDataPath("movies/",true).back(), '/', "absolute ofToDataPath with / should end in /");
-        test_eq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without / should not end in /");
-        ofDirectory("movies").create();
-        test_eq(ofToDataPath("movies/",true).back(), '/', "absolute ofToDataPath with / should end in /");
-        test_eq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without / should not end in /");
+		if(ofGetTargetPlatform()==OF_TARGET_WINVS || ofGetTargetPlatform()==OF_TARGET_MINGW){
+			test_eq(ofToDataPath("movies\\",true).back(), '\\', "absolute ofToDataPath with \\ should end in \\");
+			test_eq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without \\ should not end in \\");
+			ofDirectory("movies").create();
+			test_eq(ofToDataPath("movies\\",true).back(), '\\', "absolute ofToDataPath with \\ should end in \\");
+			test_eq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without \\ should not end in \\");
+		}else{
+			test_eq(ofToDataPath("movies/",true).back(), '/', "absolute ofToDataPath with / should end in /");
+			test_eq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without / should not end in /");
+			ofDirectory("movies").create();
+			test_eq(ofToDataPath("movies/",true).back(), '/', "absolute ofToDataPath with / should end in /");
+			test_eq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without / should not end in /");
+		}
 
 
         //========================================================================
         ofLogNotice() << "";
         ofLogNotice() << "tests #4598";
-        test_eq(ofToDataPath("").back(),'/',"ofToDataPath with empty string shouldn't crash");
+		test_eq(ofToDataPath("").back(), std::filesystem::path::preferred_separator, "ofToDataPath with empty string shouldn't crash");
 
         //========================================================================
         ofLogNotice() << "";
@@ -255,10 +265,17 @@ class ofApp: public ofxUnitTestsApp{
         //========================================================================
         ofLogNotice() << "#4564";
         dir.remove(true);
-        ofDirectory currentVideoDirectory(ofToDataPath("../../../video", true));
-        auto path = currentVideoDirectory.path();
-        std::string pathEnd("data/../../../video/");
-        test_eq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
+		if(ofGetTargetPlatform()==OF_TARGET_WINVS || ofGetTargetPlatform()==OF_TARGET_MINGW){
+			ofDirectory currentVideoDirectory(ofToDataPath("..\\..\\..\\video", true));
+			auto path = currentVideoDirectory.path();
+			std::string pathEnd("data\\..\\..\\..\\video\\");
+			test_eq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
+		}else{
+			ofDirectory currentVideoDirectory(ofToDataPath("../../../video", true));
+			auto path = currentVideoDirectory.path();
+			std::string pathEnd("data/../../../video/");
+			test_eq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
+		}
 	}
 };
 
