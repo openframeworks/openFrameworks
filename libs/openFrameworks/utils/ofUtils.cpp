@@ -115,7 +115,7 @@ namespace priv{
 void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds){
 #if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)) || defined(TARGET_EMSCRIPTEN)
 	struct timespec now;
-	clock_gettime(CLOCK_MONOTONIC, &now);
+    clock_gettime(CLOCK_MONOTONIC_RAW, &now);
 	seconds = now.tv_sec;
 	nanoseconds = now.tv_nsec;
 #elif defined(TARGET_OSX)
@@ -1032,5 +1032,20 @@ ofTargetPlatform ofGetTargetPlatform(){
     return OF_TARGET_IOS;
 #elif defined(TARGET_EMSCRIPTEN)
     return OF_TARGET_EMSCRIPTEN;
+#endif
+}
+
+std::string ofGetEnv(const std::string & var){
+#ifdef TARGET_WIN32
+	const size_t BUFSIZE = 4096;
+	std::vector<char> pszOldVal(BUFSIZE, 0);
+	auto size = GetEnvironmentVariableA(var, pszOldVal.data(), BUFSIZE);
+	if(size>0){
+		return std::string(pszOldVal.begin(), pszOldVal.begin()+size);
+	}else{
+		return "";
+	}
+#else
+	return getenv(var.c_str());
 #endif
 }
