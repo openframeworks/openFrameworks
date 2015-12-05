@@ -211,11 +211,40 @@ ofPixels_<PixelType>::ofPixels_(const ofPixels_<PixelType> & mom){
 }
 
 template<typename PixelType>
+ofPixels_<PixelType>::ofPixels_(ofPixels_<PixelType> && mom)
+:pixels(mom.pixels)
+,width(mom.width)
+,height(mom.height)
+,pixelsSize(mom.pixelsSize)
+,bAllocated(mom.bAllocated)
+,pixelsOwner(mom.pixelsOwner)
+,pixelFormat(mom.pixelFormat){
+	mom.pixelsOwner = false;
+}
+
+template<typename PixelType>
 ofPixels_<PixelType>& ofPixels_<PixelType>::operator=(const ofPixels_<PixelType> & mom){
 	if(this==&mom) {
 		return * this;
 	}
 	copyFrom( mom );
+	return *this;
+}
+
+template<typename PixelType>
+ofPixels_<PixelType>& ofPixels_<PixelType>::operator=(ofPixels_<PixelType> && mom){
+	if(this==&mom) {
+		return * this;
+	}
+	clear();
+	pixels = mom.pixels;
+	width = mom.width;
+	height = mom.height;
+	pixelsSize = mom.pixelsSize;
+	bAllocated = mom.bAllocated;
+	pixelsOwner = mom.pixelsOwner;
+	pixelFormat = mom.pixelFormat;
+	mom.pixelsOwner = false;
 	return *this;
 }
 
@@ -864,7 +893,7 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getPlane(int planeIdx){
 		case OF_PIXELS_UNKNOWN:
 			break;
 	}
-	return plane;
+	return std::move(plane);
 }
 
 template<typename PixelType>
@@ -927,7 +956,7 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getChannel(int channel) const{
 	for(auto p: getConstPixelsIter()){
 		*channelPixel++ = p[channel];
 	}
-	return channelPixels;
+	return std::move(channelPixels);
 }
 
 template<typename PixelType>
