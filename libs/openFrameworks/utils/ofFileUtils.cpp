@@ -1513,7 +1513,7 @@ string ofFilePath::getUserHomeDir(){
 		// getenv will return any Environent Variable on Windows
 		// USERPROFILE is the key on Windows 7 but it might be HOME
 		// in other flavours of windows...need to check XP and NT...
-		return string(getenv("USERPROFILE"));
+		return ofGetEnv("USERPROFILE");
 	#elif !defined(TARGET_EMSCRIPTEN)
 		struct passwd * pw = getpwuid(getuid());
 		return pw->pw_dir;
