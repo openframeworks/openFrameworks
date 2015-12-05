@@ -905,6 +905,8 @@ string ofSystem(const string& command);
 ofTargetPlatform ofGetTargetPlatform();
 
 
+std::string ofGetEnv(const std::string & var);
+
 /// Allows to iterate over a string's utf8 codepoints.
 /// The easiest way to use it is with a c++11 range style
 /// for loop like:
