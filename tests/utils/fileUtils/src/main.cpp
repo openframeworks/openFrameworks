@@ -34,7 +34,9 @@ class ofApp: public ofxUnitTestsApp{
 		test_eq(ofFile("test.txt").getAbsolutePath(), ofFilePath::join(ofToDataPath("",true),"test.txt"),"ofFile::getAbsolutePath");
 
 		ofFile("noread").create();
-		boost::filesystem::permissions(ofToDataPath("noread"),boost::filesystem::no_perms);
+		boost::system::error_code error;
+		boost::filesystem::permissions(ofToDataPath("noread"),boost::filesystem::no_perms, error);
+		test(!error, "error setting no read permissions, " + error.message());
 		test(!ofFile("noread").canRead(),"!ofFile::canRead");
 
 		ofFile("nowrite").create();
