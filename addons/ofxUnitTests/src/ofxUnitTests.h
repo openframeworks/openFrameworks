@@ -165,6 +165,9 @@ class ofxUnitTestsApp: public ofBaseApp{
             auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
 			auto stdOut = logger->getStdOut();
 			ofStringReplace(stdOut, "\"", "\\\"");
+            if(stdOut.length()>1000){
+                stdOut = stdOut.substr(0,1000);
+            }
             ofHttpRequest req;
             req.headers["Accept"] = "application/json";
             req.headers["Content-type"] = "application/json";
