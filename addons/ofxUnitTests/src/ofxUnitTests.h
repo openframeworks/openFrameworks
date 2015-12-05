@@ -166,6 +166,7 @@ class ofxUnitTestsApp: public ofBaseApp{
 			auto stdOut = logger->getStdOut();
             ofStringReplace(stdOut, "\\", "\\\\");
             ofStringReplace(stdOut, "\"", "\\\"");
+            stdOut = "</pre>" + stdOut + "<pre>";
             ofHttpRequest req;
             req.headers["Accept"] = "application/json";
             req.headers["Content-type"] = "application/json";
