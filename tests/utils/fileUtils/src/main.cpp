@@ -91,7 +91,13 @@ class ofApp: public ofxUnitTestsApp{
 		//========================================================================
 		ofLogNotice() << "";
 		ofLogNotice() << "testing ofDirectory";
-		if(!test_eq(ofDirectory(".").getFiles().size(), size_t(3), "ofDirectory::ofDirectory with path",ofToString(ofDirectory(".").getFiles().size()))){
+		size_t numFilesCreated;
+		if(ofGetTargetPlatform()!=OF_TARGET_MINGW && ofGetTargetPlatform()!=OF_TARGET_WINVS){
+			numFilesCreated = 3;
+		}else{
+			numFilesCreated = 2;
+		}
+		if(!test_eq(ofDirectory(".").getFiles().size(), numFilesCreated, "ofDirectory::ofDirectory with path")){
 			ofLogError() << "data folder contains: ";
 			for(auto & f: ofDirectory(".").getFiles()){
 				ofLogError() << f.path();
@@ -108,7 +114,10 @@ class ofApp: public ofxUnitTestsApp{
 
 		test(ofDirectory("d1").canRead(),"ofDirectory::canRead");
 		test(ofDirectory("d1").canWrite(),"ofDirectory::canWrite");
-		test(ofDirectory("d1").canExecute(),"ofDirectory::canExecute");
+		if(ofGetTargetPlatform()!=OF_TARGET_MINGW && ofGetTargetPlatform()!=OF_TARGET_WINVS){
+			// this doesn't make sense in windows
+			test(ofDirectory("d1").canExecute(),"ofDirectory::canExecute");
+		}
 
 		ofDirectory("noreaddir").create();
 		ofDirectory("noreaddir").setReadOnly();
