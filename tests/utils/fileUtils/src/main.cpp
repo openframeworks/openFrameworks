@@ -33,20 +33,23 @@ class ofApp: public ofxUnitTestsApp{
 		test_eq(ofFile("test.txt").getBaseName(),"test","ofFile::getBaseName",ofFile("test.txt").getBaseName());
 		test_eq(ofFile("test.txt").getAbsolutePath(), ofFilePath::join(ofToDataPath("",true),"test.txt"),"ofFile::getAbsolutePath");
 
-		ofFile("noread").create();
-		{
-			ofFile fw("noread",ofFile::WriteOnly);
-			fw << "testing";
-		}
-		boost::system::error_code error;
-		boost::filesystem::permissions(ofToDataPath("noread"), boost::filesystem::no_perms, error);
-		test(!error, "error setting no read permissions, " + error.message());
-		if(!test(!ofFile("noread").canRead(),"!ofFile::canRead")){
-			ofFile fr("noread");
-			std::string str;
-			fr >> str;
-			cout << "testing if file can be really read" << endl;
-			cout << str << endl;
+		if(ofGetTargetPlatform()!=OF_TARGET_MINGW && ofGetTargetPlatform()!=OF_TARGET_WINVS){
+			// seems you can't effectively set a file to not be read in windows
+			ofFile("noread").create();
+			{
+				ofFile fw("noread",ofFile::WriteOnly);
+				fw << "testing";
+			}
+			boost::system::error_code error;
+			boost::filesystem::permissions(ofToDataPath("noread"), boost::filesystem::no_perms, error);
+			test(!error, "error setting no read permissions, " + error.message());
+			if(!test(!ofFile("noread").canRead(),"!ofFile::canRead")){
+				ofFile fr("noread");
+				std::string str;
+				fr >> str;
+				cout << "testing if file can be really read" << endl;
+				cout << str << endl;
+			}
 		}
 
 		ofFile("nowrite").create();
