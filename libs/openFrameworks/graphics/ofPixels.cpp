@@ -236,6 +236,7 @@ ofPixels_<PixelType>& ofPixels_<PixelType>::operator=(ofPixels_<PixelType> && mo
 	if(this==&mom) {
 		return * this;
 	}
+	clear();
 	pixels = mom.pixels;
 	width = mom.width;
 	height = mom.height;
