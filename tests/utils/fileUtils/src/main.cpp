@@ -34,10 +34,20 @@ class ofApp: public ofxUnitTestsApp{
 		test_eq(ofFile("test.txt").getAbsolutePath(), ofFilePath::join(ofToDataPath("",true),"test.txt"),"ofFile::getAbsolutePath");
 
 		ofFile("noread").create();
+		{
+			ofFile fw("noread");
+			fw << "testing";
+		}
 		boost::system::error_code error;
-		boost::filesystem::permissions(ofToDataPath("noread"),boost::filesystem::no_perms, error);
+		boost::filesystem::permissions(ofToDataPath("noread"), boost::filesystem::no_perms, error);
 		test(!error, "error setting no read permissions, " + error.message());
-		test(!ofFile("noread").canRead(),"!ofFile::canRead");
+		if(!test(!ofFile("noread").canRead(),"!ofFile::canRead")){
+			ofFile fr("noread");
+			std::string str;
+			fr >> str;
+			cout << "testing if file can be really read" << endl;
+			cout << str << endl;
+		}
 
 		ofFile("nowrite").create();
 		ofFile("nowrite").setReadOnly();
