@@ -171,7 +171,7 @@ protected:
 	}
 
 	template<typename T1, typename T2>
-	bool test_eq(T1 t1, T2 t2, const std::string & testName, const std::string & msg, const std::string & file, int line){
+	bool test_eq(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(t1==t2){
 			ofLogNotice() << testName << " passed";
@@ -179,8 +179,9 @@ protected:
 			return true;
 		}else{
 			ofLogError() << testName << " failed " << msg;
-			ofLogError() << "value1 " << t1;
-			ofLogError() << "value2 " << t2;
+			ofLogError() << "test_eq(" << v1 << ", " << v2 << ")";
+			ofLogError() << "value1: " << v1 << " is " << t1;
+			ofLogError() << "value2: " << v2 << " is " << t2;
 			ofLogError() << file << ": " << line;
 			numTestsFailed++;
 			return false;
@@ -188,8 +189,54 @@ protected:
 	}
 
 	template<typename T1, typename T2>
-	bool test_eq(T1 t1, T2 t2, const std::string & testName, const std::string & file, int line){
-		return test_eq(t1,t2,testName,"",file,line);
+	bool test_eq(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
+		return test_eq(t1,t2,v1,v2,testName,"",file,line);
+	}
+
+	template<typename T1, typename T2>
+	bool test_gt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
+		numTestsTotal++;
+		if(t1>t2){
+			ofLogNotice() << testName << " passed";
+			numTestsPassed++;
+			return true;
+		}else{
+			ofLogError() << testName << " failed " << msg;
+			ofLogError() << "test_gt(" << v1 << ", " << v2 << ")";
+			ofLogError() << "value1: " << v1 << " is " << t1;
+			ofLogError() << "value2: " << v2 << " is " << t2;
+			ofLogError() << file << ": " << line;
+			numTestsFailed++;
+			return false;
+		}
+	}
+
+	template<typename T1, typename T2>
+	bool test_gt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
+		return test_gt(t1,t2,v1,v2,testName,"",file,line);
+	}
+
+	template<typename T1, typename T2>
+	bool test_lt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
+		numTestsTotal++;
+		if(t1<t2){
+			ofLogNotice() << testName << " passed";
+			numTestsPassed++;
+			return true;
+		}else{
+			ofLogError() << testName << " failed " << msg;
+			ofLogError() << "test_lt(" << v1 << ", " << v2 << ")";
+			ofLogError() << "value1: " << v1 << " is " << t1;
+			ofLogError() << "value2: " << v2 << " is " << t2;
+			ofLogError() << file << ": " << line;
+			numTestsFailed++;
+			return false;
+		}
+	}
+
+	template<typename T1, typename T2>
+	bool test_lt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
+		return test_lt(t1,t2,v1,v2,testName,"",file,line);
 	}
 
 private:
@@ -249,4 +296,6 @@ private:
 };
 
 #define test(x, ...) this->test(x,__VA_ARGS__,__FILE__,__LINE__)
-#define test_eq(x, ...) this->test_eq(x,__VA_ARGS__,__FILE__,__LINE__)
+#define test_eq(x,y, ...) this->test_eq(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define test_gt(x,y, ...) this->test_gt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define test_lt(x,y, ...) this->test_lt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
