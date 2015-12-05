@@ -1046,6 +1046,11 @@ std::string ofGetEnv(const std::string & var){
 		return "";
 	}
 #else
-	return getenv(var.c_str());
+	auto value = getenv(var.c_str());
+	if(value){
+		return value;
+	}else{
+		return "";
+	}
 #endif
 }
