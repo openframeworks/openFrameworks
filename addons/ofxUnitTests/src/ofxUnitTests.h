@@ -152,40 +152,44 @@ protected:
 
     virtual void run() = 0;
 
-	void test(bool test, const std::string & testName, const std::string & msg, const std::string & file, int line){
+	bool test(bool test, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(test){
 			ofLogNotice() << testName << " passed";
 			numTestsPassed++;
+			return true;
 		}else{
 			ofLogError() << testName << " failed " << msg;
 			ofLogError() << file << ": " << line;
 			numTestsFailed++;
+			return false;
 		}
 	}
 
-	void test(bool test, const std::string & testName, const std::string & file, int line){
+	bool test(bool test, const std::string & testName, const std::string & file, int line){
 		this->test(test,testName,"",file,line);
 	}
 
 	template<typename T1, typename T2>
-	void test_eq(T1 t1, T2 t2, const std::string & testName, const std::string & msg, const std::string & file, int line){
+	bool test_eq(T1 t1, T2 t2, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(t1==t2){
 			ofLogNotice() << testName << " passed";
 			numTestsPassed++;
+			return true;
 		}else{
 			ofLogError() << testName << " failed " << msg;
 			ofLogError() << "value1 " << t1;
 			ofLogError() << "value2 " << t2;
 			ofLogError() << file << ": " << line;
 			numTestsFailed++;
+			return false;
 		}
 	}
 
 	template<typename T1, typename T2>
-	void test_eq(T1 t1, T2 t2, const std::string & testName, const std::string & file, int line){
-		test_eq(t1,t2,testName,"",file,line);
+	bool test_eq(T1 t1, T2 t2, const std::string & testName, const std::string & file, int line){
+		return test_eq(t1,t2,testName,"",file,line);
 	}
 
 private:
