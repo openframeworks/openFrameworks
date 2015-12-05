@@ -175,7 +175,7 @@ class ofxUnitTestsApp: public ofBaseApp{
                         json_var_value("testName", projectName.string()) + ", " +
                         json_var_value("testFramework", "ofxUnitTests") + ", " +
                         json_var_value("fileName", exeName.string()) + ", " +
-						json_var_value("outcome", "Passed") + ", " +
+						json_var_value("outcome", passed?"Passed":"Failed") + ", " +
                         json_var_value("durationMilliseconds", ofToString(now-then)) + ", " +
 						json_var_value("StdOut", stdOut) +
                     "}";
