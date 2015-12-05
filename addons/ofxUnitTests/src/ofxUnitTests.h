@@ -167,7 +167,7 @@ protected:
 	}
 
 	bool test(bool test, const std::string & testName, const std::string & file, int line){
-		this->test(test,testName,"",file,line);
+		return this->test(test,testName,"",file,line);
 	}
 
 	template<typename T1, typename T2>
