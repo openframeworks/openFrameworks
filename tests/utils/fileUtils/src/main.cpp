@@ -154,21 +154,28 @@ class ofApp: public ofxUnitTestsApp{
 		ofLogNotice() << "testing ofFilePath";
 		test_eq(ofFilePath::getFileExt("test.txt"),"txt","ofFilePath::getFileExt");
 		test_eq(ofFilePath::removeExt("test.txt"),"test","ofFilePath::removeExt");
-		test_eq(ofFilePath::removeExt("/home/user/file.txt"),"/home/user/file","ofFilePath::removeExt absolute path");
-		test_eq(ofFilePath::addLeadingSlash("test"),"/test","ofFilePath::addLeadingSlash");
-		test_eq(ofFilePath::addLeadingSlash("/test"),"/test","ofFilePath::addLeadingSlash");
-		test_eq(ofFilePath::addTrailingSlash("test"),"test/","ofFilePath::addTrailingSlash");
-		test_eq(ofFilePath::addTrailingSlash("test/"),"test/","ofFilePath::addTrailingSlash");
-		test_eq(ofFilePath::removeTrailingSlash("test/"),"test","ofFilePath::removeTrailingSlash");
-		test_eq(ofFilePath::getPathForDirectory("dir/other"),"dir/other/","ofFilePath::getPathForDirectory");
-		test_eq(ofFilePath::getPathForDirectory("dir/other/"),"dir/other/","ofFilePath::getPathForDirectory with trailing /");
-#ifdef TARGET_WIN32
-		test(ofFilePath::isAbsolute("c:\\test"),"ofFilePath::isAbsolute");
-#else
-		test(ofFilePath::isAbsolute("/test"),"ofFilePath::isAbsolute");
-#endif
+		if(ofGetTargetPlatform()!=OF_TARGET_MINGW && ofGetTargetPlatform()!=OF_TARGET_WINVS){
+			test_eq(ofFilePath::removeExt("/home/user/file.txt"),"/home/user/file","ofFilePath::removeExt absolute path");
+			test_eq(ofFilePath::addLeadingSlash("test"),"/test","ofFilePath::addLeadingSlash");
+			test_eq(ofFilePath::addLeadingSlash("/test"),"/test","ofFilePath::addLeadingSlash");
+			test_eq(ofFilePath::addTrailingSlash("test"),"test/","ofFilePath::addTrailingSlash");
+			test_eq(ofFilePath::addTrailingSlash("test/"),"test/","ofFilePath::addTrailingSlash");
+			test_eq(ofFilePath::removeTrailingSlash("test/"),"test","ofFilePath::removeTrailingSlash");
+			test_eq(ofFilePath::getPathForDirectory("dir/other"),"dir/other/","ofFilePath::getPathForDirectory");
+			test_eq(ofFilePath::getPathForDirectory("dir/other/"),"dir/other/","ofFilePath::getPathForDirectory with trailing /");
+			test(ofFilePath::isAbsolute("/test"),"ofFilePath::isAbsolute");
+		}else{
+			test_eq(ofFilePath::removeExt("c:\\users\\user\\file.txt"),"c:\\users\\user\\file","ofFilePath::removeExt absolute path");
+			test_eq(ofFilePath::addLeadingSlash("test"),"\\test","ofFilePath::addLeadingSlash");
+			test_eq(ofFilePath::addLeadingSlash("\\test"),"\\test","ofFilePath::addLeadingSlash");
+			test_eq(ofFilePath::addTrailingSlash("test"),"test\\","ofFilePath::addTrailingSlash");
+			test_eq(ofFilePath::addTrailingSlash("test\\"),"test\\","ofFilePath::addTrailingSlash");
+			test_eq(ofFilePath::removeTrailingSlash("test\\"),"test","ofFilePath::removeTrailingSlash");
+			test_eq(ofFilePath::getPathForDirectory("dir\\other"),"dir\\other\\","ofFilePath::getPathForDirectory");
+			test_eq(ofFilePath::getPathForDirectory("dir\\other\\"),"dir\\other\\","ofFilePath::getPathForDirectory with trailing \\");
+			test(ofFilePath::isAbsolute("c:\\test"),"ofFilePath::isAbsolute");
+		}
 		test_eq(ofFilePath::getFileName("test/test.txt"),"test.txt","ofFilePath::getFileName",ofFilePath::getFileName("test/test.txt"));
-
 		test_eq(ofFilePath::getBaseName("test/test.txt"),"test","ofFilePath::getBaseName",ofFilePath::getBaseName("test/test.txt"));
 		test_eq(ofFilePath::getBaseName(ofFilePath::removeTrailingSlash(ofFilePath::getEnclosingDirectory("testdir/test.txt"))),"testdir","ofFilePath::getEnclosingDirectory",ofFilePath::getBaseName(ofFilePath::getEnclosingDirectory("testdir/test.txt")));
 #ifdef TARGET_WIN32
