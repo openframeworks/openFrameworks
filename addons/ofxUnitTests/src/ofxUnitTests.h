@@ -30,9 +30,9 @@ class ofColorsLoggerChannel: public ofBaseLoggerChannel{
 		default:
 			return CON_DEFAULT;
 		}
-	}
-
-    std::string totalOut;
+    }
+    std::string stdOut;
+    std::string stdErr;
 public:
     void log(ofLogLevel level, const std::string & module, const std::string & message){
 		std::stringstream str;
@@ -48,7 +48,11 @@ public:
 		str << message << std::endl;
 		std::cout << CON_BOLD << getColor(level) << message << CON_DEFAULT << std::endl;
 
-		totalOut += str.str();
+        if(level>OF_LOG_WARNING){
+            stdErr += str.str();
+        }else{
+            stdOut += str.str();
+        }
     }
 
     void log(ofLogLevel level, const std::string & module, const char* format, ...){
@@ -64,7 +68,11 @@ public:
     }
 
     std::string getStdOut(){
-        return totalOut;
+        return stdOut;
+    }
+
+    std::string getStdErr(){
+        return stdErr;
     }
 };
 
@@ -101,19 +109,24 @@ class ofAppveyorSystemChannel: public ofBaseLoggerChannel{
 		}
 	}
 
-	std::string totalOut;
+    std::string stdOut;
+    std::string stdErr;
 
 public:
-	std::string getTotalOut(){
-		return totalOut;
+    std::string getStdOut(){
+        return stdOut;
 	}
+
+    std::string getStdErr(){
+        return stdErr;
+    }
 
 	void log(ofLogLevel level, const std::string & module, const std::string & message){
 		auto msg = message;
 		if(module!=""){
 			msg = module + ": " + msg;
 		}
-		totalOut += "[" + ofGetLogLevelName(level) + "]\t\t" + msg + "\n";
+        stdOut += "[" + ofGetLogLevelName(level) + "]\t\t" + msg + "\n";
 		ofSystem("appveyor AddMessage \"" + msg + "\" -Category " + category(level));
 	}
 
@@ -166,7 +179,9 @@ class ofxUnitTestsApp: public ofBaseApp{
 			auto stdOut = logger->getStdOut();
             ofStringReplace(stdOut, "\\", "\\\\");
             ofStringReplace(stdOut, "\"", "\\\"");
-            stdOut = "</pre>" + stdOut + "<pre>";
+            auto stdErr = logger->getStdErr();
+            ofStringReplace(stdErr, "\\", "\\\\");
+            ofStringReplace(stdErr, "\"", "\\\"");
             ofHttpRequest req;
             req.headers["Accept"] = "application/json";
             req.headers["Content-type"] = "application/json";
@@ -179,7 +194,8 @@ class ofxUnitTestsApp: public ofBaseApp{
                         json_var_value("fileName", exeName.string()) + ", " +
 						json_var_value("outcome", passed?"Passed":"Failed") + ", " +
                         json_var_value("durationMilliseconds", ofToString(now-then)) + ", " +
-						json_var_value("StdOut", stdOut) +
+                        json_var_value("StdOut", stdOut) + ", " +
+                        json_var_value("StdErr", stdErr) +
                     "}";
             ofURLFileLoader http;
             auto res = http.handleRequest(req);
