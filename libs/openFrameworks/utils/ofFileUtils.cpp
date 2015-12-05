@@ -84,6 +84,12 @@ void ofBuffer::set(const string & text){
 }
 
 //--------------------------------------------------
+void ofBuffer::setall(char mem){
+    buffer.assign(buffer.size() - 1, mem);
+    buffer.resize(buffer.size() + 1, 0);
+}
+
+//--------------------------------------------------
 void ofBuffer::append(const string& _buffer){
 	append(_buffer.c_str(), _buffer.size());
 }
@@ -104,6 +110,11 @@ void ofBuffer::allocate(std::size_t _size){
 	clear();
 	//we always add a 0 at the end to avoid problems with strings
 	buffer.resize(_size + 1, 0);
+}
+
+void ofBuffer::resize(std::size_t _size){
+    //we always add a 0 at the end to avoid problems with strings
+    buffer.resize(_size + 1, 0);
 }
 
 //--------------------------------------------------
@@ -554,14 +565,14 @@ string ofFile::getAbsolutePath() const {
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canRead() const {
 	auto perm = std::filesystem::status(myFile).permissions();
-#ifdef TARGET_WIN32
+/*#ifdef TARGET_WIN32
 	DWORD attr = GetFileAttributes(myFile.native().c_str());
 	if (attr == INVALID_FILE_ATTRIBUTES)
 	{
 		return false;
 	}
 	return true;
-#else
+#else*/
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
 	if(geteuid() == info.st_uid){
@@ -571,7 +582,7 @@ bool ofFile::canRead() const {
 	}else{
 		return perm & std::filesystem::others_read;
 	}
-#endif
+//#endif
 }
 
 //------------------------------------------------------------------------------------------------------------
