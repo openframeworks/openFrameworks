@@ -35,7 +35,7 @@ class ofApp: public ofxUnitTestsApp{
 
 		ofFile("noread").create();
 		{
-			ofFile fw("noread");
+			ofFile fw("noread",ofFile::WriteOnly);
 			fw << "testing";
 		}
 		boost::system::error_code error;
