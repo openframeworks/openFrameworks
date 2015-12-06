@@ -171,7 +171,6 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 		URI uri(request.url);
 		std::string path(uri.getPathAndQuery());
 		if (path.empty()) path = "/";
-		cout << "sending to " << path << endl;
 		std::string pocoMethod;
 		if(request.method==ofHttpRequest::GET){
 			pocoMethod = HTTPRequest::HTTP_GET;
