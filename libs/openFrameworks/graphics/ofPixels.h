@@ -65,6 +65,7 @@ public:
 	ofPixels_();
 	~ofPixels_();
 	ofPixels_(const ofPixels_<PixelType> & mom);
+	ofPixels_(ofPixels_<PixelType> && mom);
 
 	template<typename SrcType>
 	ofPixels_(const ofPixels_<SrcType> & mom);
@@ -115,6 +116,7 @@ public:
 	void clear();
 
 	ofPixels_<PixelType>& operator=(const ofPixels_<PixelType> & mom);
+	ofPixels_<PixelType>& operator=(ofPixels_<PixelType> && mom);
 
 	template<typename SrcType>
 	ofPixels_<PixelType>& operator=(const ofPixels_<SrcType> & mom);
