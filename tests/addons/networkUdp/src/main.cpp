@@ -92,6 +92,21 @@ class ofApp: public ofxUnitTestsApp{
 		test(ret>=0, "client receiving block");
 		messageReceived.assign(bufferReceive.begin(), bufferReceive.end());
 		test_eq(messageSent, messageReceived, "server messageSent == client messageReceived");
+
+
+		test(client.Send(messageSent.c_str(), messageSent.size()), "client send blocking 2nd time");
+		ret = server.Receive(bufferReceive.data(), messageSent.size());
+		test(ret>=0, "server receiving block 2nd time");
+		messageReceived.assign(bufferReceive.begin(), bufferReceive.end());
+		test_eq(messageSent, messageReceived, "2nd client messageSent == server messageReceived");
+
+
+		test(server.Send(messageSent.c_str(), messageSent.size()), "server send blocking 2nd time");
+		bufferReceive.assign(messageSent.size(),0);
+		ret = client.Receive(bufferReceive.data(), messageSent.size());
+		test(ret>=0, "client receiving block 2nd time");
+		messageReceived.assign(bufferReceive.begin(), bufferReceive.end());
+		test_eq(messageSent, messageReceived, "2nd server messageSent == client messageReceived");
 	}
 
 	void testTimeOutRecv(){
@@ -107,7 +122,9 @@ class ofApp: public ofxUnitTestsApp{
 		auto ret = server.Receive(&c,1);
 		auto now = ofGetElapsedTimeMillis();
 		test_eq(ret,SOCKET_TIMEOUT,"socket receive timeout");
-		test(now-then>=5000, "socket receive timeouts after 5s");
+		// seems timers in the test servers are not very accurate so
+		// we test this with a margin of 500ms
+        test_gt(now-then, 4500, "socket receive timeouts after 5s");
 	}
 
 	void run(){
