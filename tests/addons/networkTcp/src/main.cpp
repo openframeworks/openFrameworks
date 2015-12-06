@@ -245,11 +245,15 @@ public:
 		server.waitConnectedClient(500);
 
 		string str;
+		string received;
 		for(int i=0;i<TCP_MAX_MSG_SIZE;i++){
 			str.append(ofToString((int)ofRandom(10)));
 		}
-		test(client.send(str), "could send max size");
-		test_eq(client.receive(),str,"received max size message == sent message");
+		test(server.sendRawMsg(0, str.c_str(), str.size()), "could send max size");
+		do{
+			received += client.receiveRaw();
+		}while(received.size()<str.size());
+		test_eq(received, str, "received max size message == sent message");
 	}
 
 	void run(){
