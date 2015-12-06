@@ -1034,3 +1034,23 @@ ofTargetPlatform ofGetTargetPlatform(){
     return OF_TARGET_EMSCRIPTEN;
 #endif
 }
+
+std::string ofGetEnv(const std::string & var){
+#ifdef TARGET_WIN32
+	const size_t BUFSIZE = 4096;
+	std::vector<char> pszOldVal(BUFSIZE, 0);
+	auto size = GetEnvironmentVariableA(var.c_str(), pszOldVal.data(), BUFSIZE);
+	if(size>0){
+		return std::string(pszOldVal.begin(), pszOldVal.begin()+size);
+	}else{
+		return "";
+	}
+#else
+	auto value = getenv(var.c_str());
+	if(value){
+		return value;
+	}else{
+		return "";
+	}
+#endif
+}
