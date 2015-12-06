@@ -33,9 +33,24 @@ class ofApp: public ofxUnitTestsApp{
 		test_eq(ofFile("test.txt").getBaseName(),"test","ofFile::getBaseName",ofFile("test.txt").getBaseName());
 		test_eq(ofFile("test.txt").getAbsolutePath(), ofFilePath::join(ofToDataPath("",true),"test.txt"),"ofFile::getAbsolutePath");
 
-		ofFile("noread").create();
-		boost::filesystem::permissions(ofToDataPath("noread"),boost::filesystem::no_perms);
-		test(!ofFile("noread").canRead(),"!ofFile::canRead");
+		if(ofGetTargetPlatform()!=OF_TARGET_MINGW && ofGetTargetPlatform()!=OF_TARGET_WINVS){
+			// seems you can't effectively set a file to not be read in windows
+			ofFile("noread").create();
+			{
+				ofFile fw("noread",ofFile::WriteOnly);
+				fw << "testing";
+			}
+			boost::system::error_code error;
+			boost::filesystem::permissions(ofToDataPath("noread"), boost::filesystem::no_perms, error);
+			test(!error, "error setting no read permissions, " + error.message());
+			if(!test(!ofFile("noread").canRead(),"!ofFile::canRead")){
+				ofFile fr("noread");
+				std::string str;
+				fr >> str;
+				cout << "testing if file can be really read" << endl;
+				cout << str << endl;
+			}
+		}
 
 		ofFile("nowrite").create();
 		ofFile("nowrite").setReadOnly();
@@ -76,7 +91,18 @@ class ofApp: public ofxUnitTestsApp{
 		//========================================================================
 		ofLogNotice() << "";
 		ofLogNotice() << "testing ofDirectory";
-		test_eq(ofDirectory(".").getFiles().size(),size_t(3),"ofDirectory::ofDirectory with path",ofToString(ofDirectory(".").getFiles().size()));
+		size_t numFilesCreated;
+		if(ofGetTargetPlatform()!=OF_TARGET_MINGW && ofGetTargetPlatform()!=OF_TARGET_WINVS){
+			numFilesCreated = 3;
+		}else{
+			numFilesCreated = 2;
+		}
+		if(!test_eq(ofDirectory(".").getFiles().size(), numFilesCreated, "ofDirectory::ofDirectory with path")){
+			ofLogError() << "data folder contains: ";
+			for(auto & f: ofDirectory(".").getFiles()){
+				ofLogError() << f.path();
+			}
+		}
 
 		test(ofDirectory("d1").create(),"ofDirectory::create");
 		test(ofDirectory("d1").isDirectory(),"ofDirectory::isDirectory");
@@ -88,7 +114,10 @@ class ofApp: public ofxUnitTestsApp{
 
 		test(ofDirectory("d1").canRead(),"ofDirectory::canRead");
 		test(ofDirectory("d1").canWrite(),"ofDirectory::canWrite");
-		test(ofDirectory("d1").canExecute(),"ofDirectory::canExecute");
+		if(ofGetTargetPlatform()!=OF_TARGET_MINGW && ofGetTargetPlatform()!=OF_TARGET_WINVS){
+			// this doesn't make sense in windows
+			test(ofDirectory("d1").canExecute(),"ofDirectory::canExecute");
+		}
 
 		ofDirectory("noreaddir").create();
 		ofDirectory("noreaddir").setReadOnly();
@@ -125,21 +154,28 @@ class ofApp: public ofxUnitTestsApp{
 		ofLogNotice() << "testing ofFilePath";
 		test_eq(ofFilePath::getFileExt("test.txt"),"txt","ofFilePath::getFileExt");
 		test_eq(ofFilePath::removeExt("test.txt"),"test","ofFilePath::removeExt");
-		test_eq(ofFilePath::removeExt("/home/user/file.txt"),"/home/user/file","ofFilePath::removeExt absolute path");
-		test_eq(ofFilePath::addLeadingSlash("test"),"/test","ofFilePath::addLeadingSlash");
-		test_eq(ofFilePath::addLeadingSlash("/test"),"/test","ofFilePath::addLeadingSlash");
-		test_eq(ofFilePath::addTrailingSlash("test"),"test/","ofFilePath::addTrailingSlash");
-		test_eq(ofFilePath::addTrailingSlash("test/"),"test/","ofFilePath::addTrailingSlash");
-		test_eq(ofFilePath::removeTrailingSlash("test/"),"test","ofFilePath::removeTrailingSlash");
-		test_eq(ofFilePath::getPathForDirectory("dir/other"),"dir/other/","ofFilePath::getPathForDirectory");
-		test_eq(ofFilePath::getPathForDirectory("dir/other/"),"dir/other/","ofFilePath::getPathForDirectory with trailing /");
-#ifdef TARGET_WIN32
-		test(ofFilePath::isAbsolute("c:\\test"),"ofFilePath::isAbsolute");
-#else
-		test(ofFilePath::isAbsolute("/test"),"ofFilePath::isAbsolute");
-#endif
+		if(ofGetTargetPlatform()!=OF_TARGET_MINGW && ofGetTargetPlatform()!=OF_TARGET_WINVS){
+			test_eq(ofFilePath::removeExt("/home/user/file.txt"),"/home/user/file","ofFilePath::removeExt absolute path");
+			test_eq(ofFilePath::addLeadingSlash("test"),"/test","ofFilePath::addLeadingSlash");
+			test_eq(ofFilePath::addLeadingSlash("/test"),"/test","ofFilePath::addLeadingSlash");
+			test_eq(ofFilePath::addTrailingSlash("test"),"test/","ofFilePath::addTrailingSlash");
+			test_eq(ofFilePath::addTrailingSlash("test/"),"test/","ofFilePath::addTrailingSlash");
+			test_eq(ofFilePath::removeTrailingSlash("test/"),"test","ofFilePath::removeTrailingSlash");
+			test_eq(ofFilePath::getPathForDirectory("dir/other"),"dir/other/","ofFilePath::getPathForDirectory");
+			test_eq(ofFilePath::getPathForDirectory("dir/other/"),"dir/other/","ofFilePath::getPathForDirectory with trailing /");
+			test(ofFilePath::isAbsolute("/test"),"ofFilePath::isAbsolute");
+		}else{
+			test_eq(ofFilePath::removeExt("c:\\users\\user\\file.txt"),"c:\\users\\user\\file","ofFilePath::removeExt absolute path");
+			test_eq(ofFilePath::addLeadingSlash("test"),"\\test","ofFilePath::addLeadingSlash");
+			test_eq(ofFilePath::addLeadingSlash("\\test"),"\\test","ofFilePath::addLeadingSlash");
+			test_eq(ofFilePath::addTrailingSlash("test"),"test\\","ofFilePath::addTrailingSlash");
+			test_eq(ofFilePath::addTrailingSlash("test\\"),"test\\","ofFilePath::addTrailingSlash");
+			test_eq(ofFilePath::removeTrailingSlash("test\\"),"test","ofFilePath::removeTrailingSlash");
+			test_eq(ofFilePath::getPathForDirectory("dir\\other"),"dir\\other\\","ofFilePath::getPathForDirectory");
+			test_eq(ofFilePath::getPathForDirectory("dir\\other\\"),"dir\\other\\","ofFilePath::getPathForDirectory with trailing \\");
+			test(ofFilePath::isAbsolute("c:\\test"),"ofFilePath::isAbsolute");
+		}
 		test_eq(ofFilePath::getFileName("test/test.txt"),"test.txt","ofFilePath::getFileName",ofFilePath::getFileName("test/test.txt"));
-
 		test_eq(ofFilePath::getBaseName("test/test.txt"),"test","ofFilePath::getBaseName",ofFilePath::getBaseName("test/test.txt"));
 		test_eq(ofFilePath::getBaseName(ofFilePath::removeTrailingSlash(ofFilePath::getEnclosingDirectory("testdir/test.txt"))),"testdir","ofFilePath::getEnclosingDirectory",ofFilePath::getBaseName(ofFilePath::getEnclosingDirectory("testdir/test.txt")));
 #ifdef TARGET_WIN32
@@ -168,27 +204,37 @@ class ofApp: public ofxUnitTestsApp{
         ofLogNotice() << "";
         ofLogNotice() << "tests #4299";
         test_eq(std::filesystem::path(ofFilePath::getCurrentWorkingDirectory()), initial_cwd, "ofFilePath::getCurrentWorkingDirectory()");
-#ifdef TARGET_OSX
-        test_eq(ofToDataPath("",false),"../../../data/","ofToDataPath relative");
-#else
-        test_eq(ofToDataPath("",false),"data/","ofToDataPath relative");
-#endif
+		if(ofGetTargetPlatform()==OF_TARGET_OSX){
+			test_eq(ofToDataPath("",false),"../../../data/","ofToDataPath relative");
+		}else if(ofGetTargetPlatform()==OF_TARGET_WINVS || ofGetTargetPlatform()==OF_TARGET_MINGW){
+			test_eq(ofToDataPath("",false),"data\\","ofToDataPath relative");
+		}else{
+			test_eq(ofToDataPath("",false),"data/","ofToDataPath relative");
+		}
 
 
         //========================================================================
         ofLogNotice() << "";
         ofLogNotice() << "tests #4462";
-        test_eq(ofToDataPath("movies/",true).back(), '/', "absolute ofToDataPath with / should end in /");
-        test_eq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without / should not end in /");
-        ofDirectory("movies").create();
-        test_eq(ofToDataPath("movies/",true).back(), '/', "absolute ofToDataPath with / should end in /");
-        test_eq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without / should not end in /");
+		if(ofGetTargetPlatform()==OF_TARGET_WINVS || ofGetTargetPlatform()==OF_TARGET_MINGW){
+			test_eq(ofToDataPath("movies\\",true).back(), '\\', "absolute ofToDataPath with \\ should end in \\");
+			test_eq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without \\ should not end in \\");
+			ofDirectory("movies").create();
+			test_eq(ofToDataPath("movies\\",true).back(), '\\', "absolute ofToDataPath with \\ should end in \\");
+			test_eq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without \\ should not end in \\");
+		}else{
+			test_eq(ofToDataPath("movies/",true).back(), '/', "absolute ofToDataPath with / should end in /");
+			test_eq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without / should not end in /");
+			ofDirectory("movies").create();
+			test_eq(ofToDataPath("movies/",true).back(), '/', "absolute ofToDataPath with / should end in /");
+			test_eq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without / should not end in /");
+		}
 
 
         //========================================================================
         ofLogNotice() << "";
         ofLogNotice() << "tests #4598";
-        test_eq(ofToDataPath("").back(),'/',"ofToDataPath with empty string shouldn't crash");
+		test_eq(ofToDataPath("").back(), std::filesystem::path::preferred_separator, "ofToDataPath with empty string shouldn't crash");
 
         //========================================================================
         ofLogNotice() << "";
@@ -219,10 +265,17 @@ class ofApp: public ofxUnitTestsApp{
         //========================================================================
         ofLogNotice() << "#4564";
         dir.remove(true);
-        ofDirectory currentVideoDirectory(ofToDataPath("../../../video", true));
-        auto path = currentVideoDirectory.path();
-        std::string pathEnd("data/../../../video/");
-        test_eq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
+		if(ofGetTargetPlatform()==OF_TARGET_WINVS || ofGetTargetPlatform()==OF_TARGET_MINGW){
+			ofDirectory currentVideoDirectory(ofToDataPath("..\\..\\..\\video", true));
+			auto path = currentVideoDirectory.path();
+			std::string pathEnd("data\\..\\..\\..\\video\\");
+			test_eq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
+		}else{
+			ofDirectory currentVideoDirectory(ofToDataPath("../../../video", true));
+			auto path = currentVideoDirectory.path();
+			std::string pathEnd("data/../../../video/");
+			test_eq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
+		}
 	}
 };
 
