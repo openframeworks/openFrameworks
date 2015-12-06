@@ -115,7 +115,7 @@ namespace priv{
 void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds){
 #if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)) || defined(TARGET_EMSCRIPTEN)
 	struct timespec now;
-    clock_gettime(CLOCK_MONOTONIC_RAW, &now);
+	clock_gettime(CLOCK_MONOTONIC_RAW, &now);
 	seconds = now.tv_sec;
 	nanoseconds = now.tv_nsec;
 #elif defined(TARGET_OSX)
