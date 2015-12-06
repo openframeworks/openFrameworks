@@ -228,6 +228,30 @@ public:
 		serverThread.join();
 	}
 
+	void testSendMaxSize(){
+		ofLogNotice() << "";
+		ofLogNotice() << "---------------------------------------";
+		ofLogNotice() << "testSendMaxSize tests #3478";
+
+		int port = ofRandom(15000, 65535);
+
+		ofxTCPServer server;
+		test(server.setup(port,true), "blocking server");
+
+		ofxTCPClient client;
+		test(client.setup("127.0.0.1", port, true), "blocking client");
+
+		// wait for connection to be made
+		server.waitConnectedClient(500);
+
+		string str;
+		for(int i=0;i<TCP_MAX_MSG_SIZE;i++){
+			str.append(ofToString((int)ofRandom(10)));
+		}
+		test(client.send(str), "could send max size");
+		test_eq(client.receive(),str,"received max size message == sent message");
+	}
+
 	void run(){
 		ofSeedRandom(ofGetSeconds());
 		testNonBlocking();
@@ -237,6 +261,7 @@ public:
 		testSendRawBytes();
 		testWrongConnect();
 		testReceiveTimeout();
+		testSendMaxSize();
 	}
 };
 
