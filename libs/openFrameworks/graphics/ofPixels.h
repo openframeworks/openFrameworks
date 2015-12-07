@@ -989,16 +989,16 @@ inline int ofPixels_<PixelType>::Line::getLineNum() const{
 template<typename PixelType>
 inline ofPixels_<PixelType> ofPixels_<PixelType>::Line::asPixels(){
 	ofPixels_<PixelType> pixels;
-	pixels.setFromExternalPixels(_begin,stride,1,pixelFormat);
-	return pixels;
+	pixels.setFromExternalPixels(_begin,stride/componentsPerPixel,1,pixelFormat);
+	return std::move(pixels);
 }
 
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline const ofPixels_<PixelType> ofPixels_<PixelType>::Line::asPixels() const{
 	ofPixels_<PixelType> pixels;
-	pixels.setFromExternalPixels(_begin,stride,1,pixelFormat);
-	return pixels;
+	pixels.setFromExternalPixels(_begin,stride/componentsPerPixel,1,pixelFormat);
+	return std::move(pixels);
 }
 
 //----------------------------------------------------------------------
