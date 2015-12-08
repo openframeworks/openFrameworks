@@ -748,24 +748,26 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
         [cocoaWindow makeFirstResponder:cocoaWindow.contentView];
  
 	}else if( windowMode == OF_WINDOW ){
-        int nonFullScreenX = windowRect.x;
-        int nonFullScreenY = windowRect.y;
-        
-        int nonFullScreenW = windowRect.width;
-        int nonFullScreenH = windowRect.height;
- 
+	
+		// set window shape if started in fullscreen
+		if(windowRect.width == 0 && windowRect.height == 0) {
+			windowRect.x = getWindowPosition().x;
+			windowRect.y = getWindowPosition().y;
+			windowRect.width = getWindowSize().x;
+			windowRect.height = getWindowSize().y;
+		}
         
 		[NSApp setPresentationOptions:NSApplicationPresentationDefault];
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
 		[cocoaWindow setStyleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask];
  
-		setWindowShape(nonFullScreenW, nonFullScreenH);
+		setWindowShape(windowRect.width, windowRect.height);
  
 		//----------------------------------------------------
 		// if we have recorded the screen posion, put it there
 		// if not, better to let the system do it (and put it where it wants)
 		if (ofGetFrameNum() > 0){
-			setWindowPosition(nonFullScreenX, nonFullScreenY);
+			setWindowPosition(windowRect.x, windowRect.y);
 		}
  
 		//----------------------------------------------------
