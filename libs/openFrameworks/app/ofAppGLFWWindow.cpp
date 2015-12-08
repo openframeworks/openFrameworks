@@ -153,10 +153,10 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.glesVersion);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 		glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_ES_API);
-        if(settings.glesVersion>=2){
-            currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
+		if(settings.glesVersion>=1){
+			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer);
 		}else{
-            currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
+			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer);
 		}
 	#else
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
@@ -693,6 +693,13 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		ofVec3f screenSize = getScreenSize();
  
 		ofRectangle allScreensSpace;
+		
+		// save window shape before going fullscreen
+		ofPoint pos = getWindowPosition();
+		windowRect.x = pos.x;
+		windowRect.y = pos.y;
+		windowRect.width = windowW;
+		windowRect.height = windowH;
  
         if( settings.multiMonitorFullScreen && monitorCount > 1 ){
  
@@ -730,16 +737,22 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
             setWindowShape(screenSize.x, screenSize.y);
 			setWindowPosition(0,0);
 		}
+		
+		// make sure to save current pos if not specified in settings
+		if( settings.isPositionSet() ) {
+			ofVec3f pos = getWindowPosition();
+			settings.setPosition(ofVec2f(pos.x, pos.y));
+		}
  
         //make sure the window is getting the mouse/key events
         [cocoaWindow makeFirstResponder:cocoaWindow.contentView];
  
 	}else if( windowMode == OF_WINDOW ){
-        int nonFullScreenX = getWindowPosition().x;
-        int nonFullScreenY = getWindowPosition().y;
+        int nonFullScreenX = windowRect.x;
+        int nonFullScreenY = windowRect.y;
         
-        int nonFullScreenW = getWindowSize().x;
-        int nonFullScreenH = getWindowSize().y;
+        int nonFullScreenW = windowRect.width;
+        int nonFullScreenH = windowRect.height;
  
         
 		[NSApp setPresentationOptions:NSApplicationPresentationDefault];
@@ -752,7 +765,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		// if we have recorded the screen posion, put it there
 		// if not, better to let the system do it (and put it where it wants)
 		if (ofGetFrameNum() > 0){
-			setWindowPosition(nonFullScreenX,nonFullScreenY);
+			setWindowPosition(nonFullScreenX, nonFullScreenY);
 		}
  
 		//----------------------------------------------------
