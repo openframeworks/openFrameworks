@@ -95,7 +95,6 @@ public:
 private:
 	vector<char> 	buffer;
 	Line			currentLine;
-	size_t			position;
 };
 
 //--------------------------------------------------
