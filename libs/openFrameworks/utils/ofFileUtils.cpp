@@ -21,28 +21,24 @@
 
 //--------------------------------------------------
 ofBuffer::ofBuffer()
-:currentLine(end(),end())
-,position(0){
+:currentLine(end(),end()){
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(const char * _buffer, std::size_t size)
 :buffer(_buffer,_buffer+size)
-,currentLine(end(),end())
-,position(size){
+,currentLine(end(),end()){
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(const string & text)
 :buffer(text.begin(),text.end())
-,currentLine(end(),end())
-,position(text.size()){
+,currentLine(end(),end()){
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(istream & stream, size_t ioBlockSize)
-:currentLine(end(),end())
-,position(0){
+:currentLine(end(),end()){
 	set(stream, ioBlockSize);
 }
 
@@ -53,7 +49,6 @@ bool ofBuffer::set(istream & stream, size_t ioBlockSize){
 		return false;
 	}else{
 		buffer.clear();
-		position = 0;
 	}
 
 	vector<char> aux_buffer(ioBlockSize);
@@ -66,7 +61,7 @@ bool ofBuffer::set(istream & stream, size_t ioBlockSize){
 
 //--------------------------------------------------
 void ofBuffer::setall(char mem){
-	buffer.assign(position, mem);
+	buffer.assign(buffer.size(), mem);
 }
 
 //--------------------------------------------------
@@ -81,7 +76,6 @@ bool ofBuffer::writeTo(ostream & stream) const {
 //--------------------------------------------------
 void ofBuffer::set(const char * _buffer, std::size_t _size){
 	buffer.assign(_buffer, _buffer+_size);
-	position = _size;
 }
 
 //--------------------------------------------------
@@ -96,22 +90,17 @@ void ofBuffer::append(const string& _buffer){
 
 //--------------------------------------------------
 void ofBuffer::append(const char * _buffer, std::size_t _size){
-	auto newPosition = position + _size;
-	if (newPosition > buffer.size()) {
-		buffer.resize(newPosition);
-	}
-	memcpy(buffer.data() + position, _buffer, _size);
-	position = newPosition;
+	buffer.insert(buffer.end(), _buffer, _buffer + _size);
 }
 
 //--------------------------------------------------
 void ofBuffer::reserve(size_t size){
-	buffer.resize(size);
+	buffer.reserve(size);
 }
 
 //--------------------------------------------------
 void ofBuffer::clear(){
-	position = 0;
+	buffer.clear();
 }
 
 //--------------------------------------------------
@@ -122,23 +111,16 @@ void ofBuffer::allocate(std::size_t _size){
 //--------------------------------------------------
 void ofBuffer::resize(std::size_t _size){
 	buffer.resize(_size);
-	position = _size;
 }
 
 
 //--------------------------------------------------
 char * ofBuffer::getData(){
-	if(position == 0){
-		return nullptr;
-	}
 	return buffer.data();
 }
 
 //--------------------------------------------------
 const char * ofBuffer::getData() const{
-	if(position == 0){
-		return nullptr;
-	}
 	return buffer.data();
 }
 
@@ -157,7 +139,7 @@ string ofBuffer::getText() const {
 	if(buffer.empty()){
 		return "";
 	}
-	return std::string(buffer.begin(), buffer.begin()+position);
+	return std::string(buffer.begin(), buffer.end());
 }
 
 //--------------------------------------------------
@@ -173,7 +155,7 @@ ofBuffer & ofBuffer::operator=(const string & text){
 
 //--------------------------------------------------
 std::size_t ofBuffer::size() const {
-	return position;
+	return buffer.size();
 }
 
 //--------------------------------------------------
@@ -209,7 +191,7 @@ vector<char>::iterator ofBuffer::begin(){
 
 //--------------------------------------------------
 vector<char>::iterator ofBuffer::end(){
-	return buffer.begin() + position;
+	return buffer.end();
 }
 
 //--------------------------------------------------
@@ -219,12 +201,12 @@ vector<char>::const_iterator ofBuffer::begin() const{
 
 //--------------------------------------------------
 vector<char>::const_iterator ofBuffer::end() const{
-	return buffer.begin() + position;
+	return buffer.end();
 }
 
 //--------------------------------------------------
 vector<char>::reverse_iterator ofBuffer::rbegin(){
-	return buffer.rend() - position;
+	return buffer.rbegin();
 }
 
 //--------------------------------------------------
@@ -234,7 +216,7 @@ vector<char>::reverse_iterator ofBuffer::rend(){
 
 //--------------------------------------------------
 vector<char>::const_reverse_iterator ofBuffer::rbegin() const{
-	return buffer.rend() - position;
+	return buffer.rbegin();
 }
 
 //--------------------------------------------------
