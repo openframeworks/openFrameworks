@@ -21,27 +21,28 @@
 
 //--------------------------------------------------
 ofBuffer::ofBuffer()
-:currentLine(end(),end()){
-	buffer.resize(1);
+:currentLine(end(),end())
+,position(0){
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(const char * _buffer, std::size_t size)
 :buffer(_buffer,_buffer+size)
-,currentLine(end(),end()){
-	buffer.resize(buffer.size()+1,0);
+,currentLine(end(),end())
+,position(size){
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(const string & text)
 :buffer(text.begin(),text.end())
-,currentLine(end(),end()){
-	buffer.resize(buffer.size()+1,0);
+,currentLine(end(),end())
+,position(text.size()){
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(istream & stream, size_t ioBlockSize)
-:currentLine(end(),end()){
+:currentLine(end(),end())
+,position(0){
 	set(stream, ioBlockSize);
 }
 
@@ -52,15 +53,20 @@ bool ofBuffer::set(istream & stream, size_t ioBlockSize){
 		return false;
 	}else{
 		buffer.clear();
+		position = 0;
 	}
 
 	vector<char> aux_buffer(ioBlockSize);
 	while(stream.good()){
 		stream.read(&aux_buffer[0], ioBlockSize);
-		buffer.insert(buffer.end(),aux_buffer.begin(),aux_buffer.begin()+stream.gcount());
+		append(aux_buffer.data(), stream.gcount());
 	}
-	buffer.push_back(0);
 	return true;
+}
+
+//--------------------------------------------------
+void ofBuffer::setall(char mem){
+	buffer.assign(position, mem);
 }
 
 //--------------------------------------------------
@@ -68,19 +74,19 @@ bool ofBuffer::writeTo(ostream & stream) const {
 	if(stream.bad()){
 		return false;
 	}
-	stream.write(&(buffer[0]), buffer.size() - 1);
+	stream.write(buffer.data(), buffer.size());
 	return stream.good();
 }
 
 //--------------------------------------------------
 void ofBuffer::set(const char * _buffer, std::size_t _size){
-	buffer.assign(_buffer,_buffer+_size);
-	buffer.resize(buffer.size()+1,0);
+	buffer.assign(_buffer, _buffer+_size);
+	position = _size;
 }
 
 //--------------------------------------------------
 void ofBuffer::set(const string & text){
-	set(text.c_str(),text.size());
+	set(text.c_str(), text.size());
 }
 
 //--------------------------------------------------
@@ -90,45 +96,59 @@ void ofBuffer::append(const string& _buffer){
 
 //--------------------------------------------------
 void ofBuffer::append(const char * _buffer, std::size_t _size){
-	buffer.insert(buffer.end()-1,_buffer,_buffer+_size);
-	buffer.back() = 0;
+	auto newPosition = position + _size;
+	if (newPosition > buffer.size()) {
+		buffer.resize(newPosition);
+	}
+	memcpy(buffer.data() + position, _buffer, _size);
+	position = newPosition;
+}
+
+//--------------------------------------------------
+void ofBuffer::reserve(size_t size){
+	buffer.resize(size);
 }
 
 //--------------------------------------------------
 void ofBuffer::clear(){
-	buffer.resize(1,0);
+	position = 0;
 }
 
 //--------------------------------------------------
 void ofBuffer::allocate(std::size_t _size){
-	clear();
-	//we always add a 0 at the end to avoid problems with strings
-	buffer.resize(_size + 1, 0);
+	resize(_size);
 }
 
 //--------------------------------------------------
+void ofBuffer::resize(std::size_t _size){
+	buffer.resize(_size);
+	position = _size;
+}
+
+
+//--------------------------------------------------
 char * ofBuffer::getData(){
-	if(buffer.empty()){
+	if(position == 0){
 		return nullptr;
 	}
-	return &buffer[0];
+	return buffer.data();
 }
 
 //--------------------------------------------------
 const char * ofBuffer::getData() const{
-	if(buffer.empty()){
+	if(position == 0){
 		return nullptr;
 	}
-	return &buffer[0];
+	return buffer.data();
 }
 
 //--------------------------------------------------
-char *ofBuffer::getBinaryBuffer(){
+char * ofBuffer::getBinaryBuffer(){
 	return getData();
 }
 
 //--------------------------------------------------
-const char *ofBuffer::getBinaryBuffer() const {
+const char * ofBuffer::getBinaryBuffer() const {
 	return getData();
 }
 
@@ -137,7 +157,7 @@ string ofBuffer::getText() const {
 	if(buffer.empty()){
 		return "";
 	}
-	return &buffer[0];
+	return std::string(buffer.begin(), buffer.begin()+position);
 }
 
 //--------------------------------------------------
@@ -152,12 +172,8 @@ ofBuffer & ofBuffer::operator=(const string & text){
 }
 
 //--------------------------------------------------
-long ofBuffer::size() const {
-	if(buffer.empty()){
-		return 0;
-	}
-	//we always add a 0 at the end to avoid problems with strings
-	return buffer.size() - 1;
+std::size_t ofBuffer::size() const {
+	return position;
 }
 
 //--------------------------------------------------
@@ -193,7 +209,7 @@ vector<char>::iterator ofBuffer::begin(){
 
 //--------------------------------------------------
 vector<char>::iterator ofBuffer::end(){
-	return buffer.end();
+	return buffer.begin() + position;
 }
 
 //--------------------------------------------------
@@ -203,12 +219,12 @@ vector<char>::const_iterator ofBuffer::begin() const{
 
 //--------------------------------------------------
 vector<char>::const_iterator ofBuffer::end() const{
-	return buffer.end();
+	return buffer.begin() + position;
 }
 
 //--------------------------------------------------
 vector<char>::reverse_iterator ofBuffer::rbegin(){
-	return buffer.rbegin();
+	return buffer.rend() - position;
 }
 
 //--------------------------------------------------
@@ -218,7 +234,7 @@ vector<char>::reverse_iterator ofBuffer::rend(){
 
 //--------------------------------------------------
 vector<char>::const_reverse_iterator ofBuffer::rbegin() const{
-	return buffer.rbegin();
+	return buffer.rend() - position;
 }
 
 //--------------------------------------------------
@@ -300,9 +316,9 @@ bool ofBuffer::Line::empty() const{
 }
 
 //--------------------------------------------------
-ofBuffer::Lines::Lines(vector<char> & buffer)
-:_begin(buffer.begin())
-,_end(buffer.end()){}
+ofBuffer::Lines::Lines(vector<char>::iterator begin, vector<char>::iterator end)
+:_begin(begin)
+,_end(end){}
 
 //--------------------------------------------------
 ofBuffer::Line ofBuffer::Lines::begin(){
@@ -316,7 +332,7 @@ ofBuffer::Line ofBuffer::Lines::end(){
 
 //--------------------------------------------------
 ofBuffer::Lines ofBuffer::getLines(){
-	return ofBuffer::Lines(buffer);
+	return ofBuffer::Lines(begin(), end());
 }
 
 //--------------------------------------------------
