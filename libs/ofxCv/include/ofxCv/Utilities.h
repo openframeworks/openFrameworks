@@ -9,21 +9,23 @@
 
 #pragma once
 
-#include "ofMain.h"
 #include "opencv2/opencv.hpp"
+#include "ofRectangle.h"
+#include "ofTexture.h"
+#include "ofPixels.h"
+#include "ofBaseTypes.h"
+#include "ofPolyline.h"
+#include "ofVectorMath.h"
 
 namespace ofxCv {
-	
-	using namespace cv;
-	
 	// these functions are for accessing Mat, ofPixels and ofImage consistently.
 	// they're very important for imitate().
 	
 	// width, height
 	template <class T> inline int getWidth(T& src) {return src.getWidth();}
 	template <class T> inline int getHeight(T& src) {return src.getHeight();}
-	inline int getWidth(Mat& src) {return src.cols;}
-	inline int getHeight(Mat& src) {return src.rows;}
+	inline int getWidth(cv::Mat& src) {return src.cols;}
+	inline int getHeight(cv::Mat& src) {return src.rows;}
 	template <class T> inline bool getAllocated(T& src) {
 		return getWidth(src) > 0 && getHeight(src) > 0;
 	}
@@ -32,7 +34,7 @@ namespace ofxCv {
     inline int getDepth(int cvImageType) {
         return CV_MAT_DEPTH(cvImageType);
     }
-	inline int getDepth(Mat& mat) {
+	inline int getDepth(cv::Mat& mat) {
 		return mat.depth();
 	}
     inline int getDepth(ofTexture& tex) {
@@ -91,7 +93,7 @@ namespace ofxCv {
 			case OF_IMAGE_GRAYSCALE: default: return 1;
 		}
 	}
-	inline int getChannels(Mat& mat) {
+	inline int getChannels(cv::Mat& mat) {
 		return mat.channels();
 	}
     inline int getChannels(ofTexture& tex) {
@@ -185,7 +187,7 @@ namespace ofxCv {
             img.allocate(width, height, getGlImageType(cvType));
         }
     }
-	inline void allocate(Mat& img, int width, int height, int cvType) {
+	inline void allocate(cv::Mat& img, int width, int height, int cvType) {
         if (getWidth(img) != width ||
             getHeight(img) != height ||
             getCvImageType(img) != cvType) {
@@ -193,8 +195,7 @@ namespace ofxCv {
 		}
 	}
 	// ofVideoPlayer/Grabber can't be allocated, so we assume we don't need to do anything
-	inline void allocate(ofVideoPlayer& img, int width, int height, int cvType) {}
-	inline void allocate(ofVideoGrabber& img, int width, int height, int cvType) {}
+	inline void allocate(ofBaseVideoDraws & img, int width, int height, int cvType) {}
 	
 	// imitate() is good for preparing buffers
 	// it's like allocate(), but uses the size and type of the original as a reference
@@ -213,7 +214,7 @@ namespace ofxCv {
 	
 	// maximum possible values for that depth or matrix
 	float getMaxVal(int cvDepth);
-	float getMaxVal(const Mat& mat);
+	float getMaxVal(const cv::Mat& mat);
 	int getTargetChannelsFromCode(int conversionCode);
     
 	// toCv functions
@@ -226,27 +227,27 @@ namespace ofxCv {
 	// is used for small objects where the compiler can optimize the copying if
 	// necessary. the reference is avoided to make inline toCv/toOf use easier.
 	
-	Mat toCv(Mat& mat);
-	template <class T> inline Mat toCv(ofPixels_<T>& pix) {
-		return Mat(pix.getHeight(), pix.getWidth(), getCvImageType(pix), pix.getData(), 0);
+	cv::Mat toCv(cv::Mat& mat);
+	template <class T> inline cv::Mat toCv(ofPixels_<T>& pix) {
+		return cv::Mat(pix.getHeight(), pix.getWidth(), getCvImageType(pix), pix.getData(), 0);
 	}
-	template <class T> inline Mat toCv(ofBaseHasPixels_<T>& img) {
+	template <class T> inline cv::Mat toCv(ofBaseHasPixels_<T>& img) {
 		return toCv(img.getPixels());
 	}
-	Mat toCv(ofMesh& mesh);
-	Point2f toCv(ofVec2f vec);
-	Point3f toCv(ofVec3f vec);
+	cv::Mat toCv(ofMesh& mesh);
+	cv::Point2f toCv(ofVec2f vec);
+	cv::Point3f toCv(ofVec3f vec);
 	cv::Rect toCv(ofRectangle rect);
-	vector<cv::Point2f> toCv(const ofPolyline& polyline);
-	vector<cv::Point2f> toCv(const vector<ofVec2f>& points);
-	vector<cv::Point3f> toCv(const vector<ofVec3f>& points);
-	Scalar toCv(ofColor color);
+	std::vector<cv::Point2f> toCv(const ofPolyline& polyline);
+	std::vector<cv::Point2f> toCv(const std::vector<ofVec2f>& points);
+	std::vector<cv::Point3f> toCv(const std::vector<ofVec3f>& points);
+	cv::Scalar toCv(ofColor color);
 	
 	// cross-toolkit, cross-bitdepth copying
 	template <class S, class D>
 	void copy(S& src, D& dst, int dstDepth) {
 		imitate(dst, src, getCvImageType(getChannels(src), dstDepth));
-		Mat srcMat = toCv(src), dstMat = toCv(dst);
+		cv::Mat srcMat = toCv(src), dstMat = toCv(dst);
 		if(srcMat.type() == dstMat.type()) {
 			srcMat.copyTo(dstMat);
 		} else {
@@ -270,11 +271,11 @@ namespace ofxCv {
 	}
 	
 	// toOf functions
-	ofVec2f toOf(Point2f point);
-	ofVec3f toOf(Point3f point);
+	ofVec2f toOf(cv::Point2f point);
+	ofVec3f toOf(cv::Point3f point);
 	ofRectangle toOf(cv::Rect rect);
 	ofPolyline toOf(cv::RotatedRect rect);
-	template <class T> inline ofPolyline toOf(const vector<cv::Point_<T> >& contour) {
+	template <class T> inline ofPolyline toOf(const std::vector<cv::Point_<T> >& contour) {
 		ofPolyline polyline;
 		polyline.resize(contour.size());
 		for(int i = 0; i < (int)contour.size(); i++) {
@@ -285,11 +286,11 @@ namespace ofxCv {
 		return polyline;
 	}
 	template <class T>
-	void toOf(Mat mat, ofPixels_<T>& pixels) {
+	void toOf(cv::Mat mat, ofPixels_<T>& pixels) {
 		pixels.setFromExternalPixels(mat.ptr<T>(), mat.cols, mat.rows, mat.channels());
 	}
 	template <class T>
-	void toOf(Mat mat, ofImage_<T>& img) {
+	void toOf(cv::Mat mat, ofImage_<T>& img) {
 		imitate(img, mat);
 		toOf(mat, img.getPixels());
 	}

@@ -1,6 +1,9 @@
-#include "ObjectFinder.h"
+#include "ofxCv/ObjectFinder.h"
+#include "ofGraphics.h"
 
 namespace ofxCv {
+	using namespace cv;
+
 	ObjectFinder::ObjectFinder()
 	:rescale(1)
 	,multiScaleFactor(1.1)

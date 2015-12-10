@@ -1,16 +1,15 @@
 #pragma once
 
 #include "ofxCv.h"
+#include "ofVectorMath.h"
 
 namespace ofxCv {
-	
-	using namespace cv;
 	
 	// Kalman filter for positioning
 	template <class T>
 	class KalmanPosition_ {
-		KalmanFilter KF;
-		Mat_<T> measurement, prediction, estimated;
+		cv::KalmanFilter KF;
+		cv::Mat_<T> measurement, prediction, estimated;
 	public:
 		// smoothness, rapidness: smaller is more smooth/rapid
 		// bUseAccel: set true to smooth out velocity

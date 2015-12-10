@@ -21,6 +21,7 @@
 
 #include "ofxCv/Utilities.h"
 #include "ofxCv/Tracker.h"
+#include "ofRectangle.h"
 
 #include "ofxCv.h"
 namespace ofxCv {
@@ -70,7 +71,7 @@ namespace ofxCv {
 		float minSizeScale, maxSizeScale;
 		cv::Mat gray, graySmall;
 		cv::CascadeClassifier classifier;
-		vector<cv::Rect> objects;
+		std::vector<cv::Rect> objects;
 		RectTracker tracker;
 	};
 }
