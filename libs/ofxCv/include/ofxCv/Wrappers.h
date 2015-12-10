@@ -40,9 +40,9 @@
 
 namespace ofxCv {
 
-	void loadMat(cv::Mat& mat, string filename);
-	void saveMat(cv::Mat mat, string filename);
-	void saveImage(cv::Mat& mat, string filename, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+	void loadMat(cv::Mat& mat, std::string filename);
+	void saveMat(cv::Mat mat, std::string filename);
+	void saveImage(cv::Mat& mat, std::string filename, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 	// wrapThree are based on functions that operate on three Mat objects.
 	// the first two are inputs, and the third is an output. for example,
@@ -252,7 +252,7 @@ cv::name(xMat, yMat, resultMat);\
 		imitate(dst, src);
 		cv::Mat srcMat = toCv(src), dstMat = toCv(dst);
 		if(srcMat.channels() > 1) {
-			vector<cv::Mat> srcEach, dstEach;
+			std::vector<cv::Mat> srcEach, dstEach;
 			split(srcMat, srcEach);
 			split(dstMat, dstEach);
 			for(int i = 0; i < srcEach.size(); i++) {
@@ -322,11 +322,11 @@ cv::name(xMat, yMat, resultMat);\
 
 	// dst does not imitate src
 	template <class S, class D>
-	void warpPerspective(S& src, D& dst, vector<cv::Point2f>& dstPoints, int flags = cv::INTER_LINEAR) {
+	void warpPerspective(S& src, D& dst, std::vector<cv::Point2f>& dstPoints, int flags = cv::INTER_LINEAR) {
 		cv::Mat srcMat = toCv(src), dstMat = toCv(dst);
 		int w = srcMat.cols;
 		int h = srcMat.rows;
-		vector<cv::Point2f> srcPoints(4);
+		std::vector<cv::Point2f> srcPoints(4);
 		srcPoints[0] = cv::Point2f(0, 0);
 		srcPoints[1] = cv::Point2f(w, 0);
 		srcPoints[2] = cv::Point2f(w, h);
@@ -337,11 +337,11 @@ cv::name(xMat, yMat, resultMat);\
 
 	// dst does not imitate src
 	template <class S, class D>
-	void unwarpPerspective(S& src, D& dst, vector<cv::Point2f>& srcPoints, int flags = cv::INTER_LINEAR) {
+	void unwarpPerspective(S& src, D& dst, std::vector<cv::Point2f>& srcPoints, int flags = cv::INTER_LINEAR) {
 		cv::Mat srcMat = toCv(src), dstMat = toCv(dst);
 		int w = dstMat.cols;
 		int h = dstMat.rows;
-		vector<cv::Point2f> dstPoints(4);
+		std::vector<cv::Point2f> dstPoints(4);
 		dstPoints[0] = cv::Point2f(0, 0);
 		dstPoints[1] = cv::Point2f(w, 0);
 		dstPoints[2] = cv::Point2f(w, h);
@@ -375,15 +375,15 @@ cv::name(xMat, yMat, resultMat);\
 
 	// for contourArea() and arcLength(), see ofPolyline::getArea() and getPerimiter()
 	ofPolyline convexHull(const ofPolyline& polyline);
-	vector<cv::Vec4i> convexityDefects(const vector<cv::Point>& contour);
-	vector<cv::Vec4i> convexityDefects(const ofPolyline& polyline);
+	std::vector<cv::Vec4i> convexityDefects(const std::vector<cv::Point>& contour);
+	std::vector<cv::Vec4i> convexityDefects(const ofPolyline& polyline);
 	cv::RotatedRect minAreaRect(const ofPolyline& polyline);
 	cv::RotatedRect fitEllipse(const ofPolyline& polyline);
 	void fitLine(const ofPolyline& polyline, ofVec2f& point, ofVec2f& direction);
 
 	// kind of obscure function, draws filled polygons on the CPU
 	template <class D>
-	void fillPoly(vector<cv::Point>& points, D& dst) {
+	void fillPoly(std::vector<cv::Point>& points, D& dst) {
 		cv::Mat dstMat = toCv(dst);
 		const cv::Point* ppt[1] = { &(points[0]) };
 		int npt[] = { (int) points.size() };
@@ -439,6 +439,6 @@ cv::name(xMat, yMat, resultMat);\
     }
 
 	// finds the 3x4 matrix that best describes the (premultiplied) affine transformation between two point clouds
-	ofMatrix4x4 estimateAffine3D(vector<ofVec3f>& from, vector<ofVec3f>& to, float accuracy = .99);
-	ofMatrix4x4 estimateAffine3D(vector<ofVec3f>& from, vector<ofVec3f>& to, vector<unsigned char>& outliers, float accuracy = .99);
+	ofMatrix4x4 estimateAffine3D(std::vector<ofVec3f>& from, std::vector<ofVec3f>& to, float accuracy = .99);
+	ofMatrix4x4 estimateAffine3D(std::vector<ofVec3f>& from, std::vector<ofVec3f>& to, std::vector<unsigned char>& outliers, float accuracy = .99);
 }

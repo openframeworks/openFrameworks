@@ -208,7 +208,7 @@ namespace ofxCv {
 	float autorotate(S& src, T& thresh, D& dst) {
 		imitate(dst, src);
 		cv::Mat srcMat = toCv(src), threshMat = toCv(thresh);
-		vector<cv::Vec4i> lines;
+		std::vector<cv::Vec4i> lines;
 		double distanceResolution = 1;
 		double angleResolution = CV_PI / 180;
 		// these three values are just heuristics that have worked for me
@@ -221,7 +221,7 @@ namespace ofxCv {
 		return rotationAmount;
 	}
 	
-	vector<cv::Point2f> getConvexPolygon(const vector<cv::Point2f>& convexHull, int targetPoints);
+	std::vector<cv::Point2f> getConvexPolygon(const std::vector<cv::Point2f>& convexHull, int targetPoints);
 	
 	static const ofColor cyanPrint = ofColor::fromHex(0x00abec);
 	static const ofColor magentaPrint = ofColor::fromHex(0xec008c);

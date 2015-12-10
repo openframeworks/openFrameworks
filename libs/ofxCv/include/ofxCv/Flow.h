@@ -73,22 +73,22 @@ namespace ofxCv {
 		void setPyramidLevels(int levels);
 		
 		//returns tracking features for this image
-		vector<ofPoint> getFeatures();
-		vector<ofPoint> getCurrent();
-		vector<ofVec2f> getMotion();
+		std::vector<ofPoint> getFeatures();
+		std::vector<ofPoint> getCurrent();
+		std::vector<ofVec2f> getMotion();
 		
 		// recalculates features to track
 		void resetFeaturesToTrack();
-		void setFeaturesToTrack(const vector<ofVec2f> & features);
-		void setFeaturesToTrack(const vector<cv::Point2f> & features);
+		void setFeaturesToTrack(const std::vector<ofVec2f> & features);
+		void setFeaturesToTrack(const std::vector<cv::Point2f> & features);
         void resetFlow();
 	protected:
 		
 		void drawFlow(ofRectangle r);
 		void calcFlow(cv::Mat prev, cv::Mat next);
-		void calcFeaturesToTrack(vector<cv::Point2f> & features, cv::Mat next);
+		void calcFeaturesToTrack(std::vector<cv::Point2f> & features, cv::Mat next);
 		
-		vector<cv::Point2f> prevPts, nextPts;
+		std::vector<cv::Point2f> prevPts, nextPts;
 		
 		//LK feature finding parameters
 		int windowSize;
@@ -105,10 +105,10 @@ namespace ofxCv {
 		bool calcFeaturesNextFrame;
 		
 		//pyramid + err/status data
-		vector<cv::Mat> pyramid;
-		vector<cv::Mat> prevPyramid;
-		vector<uchar> status;
-		vector<float> err;
+		std::vector<cv::Mat> pyramid;
+		std::vector<cv::Mat> prevPyramid;
+		std::vector<uchar> status;
+		std::vector<float> err;
 	};
 	
 	class FlowFarneback : public Flow {

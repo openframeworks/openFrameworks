@@ -238,9 +238,9 @@ namespace ofxCv {
 	cv::Point2f toCv(ofVec2f vec);
 	cv::Point3f toCv(ofVec3f vec);
 	cv::Rect toCv(ofRectangle rect);
-	vector<cv::Point2f> toCv(const ofPolyline& polyline);
-	vector<cv::Point2f> toCv(const vector<ofVec2f>& points);
-	vector<cv::Point3f> toCv(const vector<ofVec3f>& points);
+	std::vector<cv::Point2f> toCv(const ofPolyline& polyline);
+	std::vector<cv::Point2f> toCv(const std::vector<ofVec2f>& points);
+	std::vector<cv::Point3f> toCv(const std::vector<ofVec3f>& points);
 	cv::Scalar toCv(ofColor color);
 	
 	// cross-toolkit, cross-bitdepth copying
@@ -275,7 +275,7 @@ namespace ofxCv {
 	ofVec3f toOf(cv::Point3f point);
 	ofRectangle toOf(cv::Rect rect);
 	ofPolyline toOf(cv::RotatedRect rect);
-	template <class T> inline ofPolyline toOf(const vector<cv::Point_<T> >& contour) {
+	template <class T> inline ofPolyline toOf(const std::vector<cv::Point_<T> >& contour) {
 		ofPolyline polyline;
 		polyline.resize(contour.size());
 		for(int i = 0; i < (int)contour.size(); i++) {

@@ -52,8 +52,8 @@ namespace ofxCv {
 	public:
 		Calibration();
 		
-		void save(string filename, bool absolute = false) const;
-		void load(string filename, bool absolute = false);
+		void save(std::string filename, bool absolute = false) const;
+		void load(std::string filename, bool absolute = false);
 		void reset();
 
 		void setPatternType(CalibrationPattern patternType);
@@ -65,8 +65,8 @@ namespace ofxCv {
 		bool add(cv::Mat img);
 		bool clean(float minReprojectionError = 2.f);
 		bool calibrate();
-		bool calibrateFromDirectory(string directory);
-		bool findBoard(cv::Mat img, vector<cv::Point2f> &pointBuf, bool refine = true);
+		bool calibrateFromDirectory(std::string directory);
+		bool findBoard(cv::Mat img, std::vector<cv::Point2f> &pointBuf, bool refine = true);
 		void setIntrinsics(Intrinsics& distortedIntrinsics);
         void setDistortionCoefficients(float k1, float k2, float p1, float p2, float k3=0, float k4=0, float k5=0, float k6=0);
         
@@ -74,7 +74,7 @@ namespace ofxCv {
 		void undistort(cv::Mat src, cv::Mat dst, int interpolationMode = cv::INTER_NEAREST);
 		
 		ofVec2f undistort(ofVec2f& src) const;
-		void undistort(vector<ofVec2f>& src, vector<ofVec2f>& dst) const;
+		void undistort(std::vector<ofVec2f>& src, std::vector<ofVec2f>& dst) const;
 		
 		bool getTransformation(Calibration& dst, cv::Mat& rotation, cv::Mat& translation);
 		
@@ -91,7 +91,7 @@ namespace ofxCv {
 		int size() const;
 		cv::Size getPatternSize() const;
 		float getSquareSize() const;
-		static vector<cv::Point3f> createObjectPoints(cv::Size patternSize, float squareSize, CalibrationPattern patternType);
+		static std::vector<cv::Point3f> createObjectPoints(cv::Size patternSize, float squareSize, CalibrationPattern patternType);
 		
 		void customDraw();
 		void draw(int i) const;
@@ -99,7 +99,7 @@ namespace ofxCv {
 		void draw3d(int i) const;
 		
 		bool isReady();
-		vector<vector<cv::Point2f> > imagePoints;
+		std::vector<std::vector<cv::Point2f> > imagePoints;
 		
 	protected:
 		CalibrationPattern patternType;
@@ -109,11 +109,11 @@ namespace ofxCv {
 		
 		cv::Mat distCoeffs;
 		
-		vector<cv::Mat> boardRotations, boardTranslations;
-		vector<vector<cv::Point3f> > objectPoints;
+		std::vector<cv::Mat> boardRotations, boardTranslations;
+		std::vector<std::vector<cv::Point3f> > objectPoints;
 		
 		float reprojectionError;
-		vector<float> perViewErrors;
+		std::vector<float> perViewErrors;
 		
 		bool fillFrame;
 		cv::Mat undistortBuffer;

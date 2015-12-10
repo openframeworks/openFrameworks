@@ -44,12 +44,12 @@ namespace ofxCv {
 			findContours(toCv(img));
 		}
 		void findContours(cv::Mat img);
-		const vector<vector<cv::Point> >& getContours() const;
-		const vector<ofPolyline>& getPolylines() const;
-		const vector<cv::Rect>& getBoundingRects() const;
+		const std::vector<std::vector<cv::Point> >& getContours() const;
+		const std::vector<ofPolyline>& getPolylines() const;
+		const std::vector<cv::Rect>& getBoundingRects() const;
 		
 		unsigned int size() const;
-		vector<cv::Point>& getContour(unsigned int i);
+		std::vector<cv::Point>& getContour(unsigned int i);
 		ofPolyline& getPolyline(unsigned int i);
 		
 		cv::Rect getBoundingRect(unsigned int i) const;
@@ -59,12 +59,12 @@ namespace ofxCv {
 		cv::Vec2f getBalance(unsigned int i) const; // difference between centroid and center
 		double getContourArea(unsigned int i) const;
 		double getArcLength(unsigned int i) const;
-		vector<cv::Point> getConvexHull(unsigned int i) const;
-		vector<cv::Vec4i> getConvexityDefects(unsigned int i) const;
+		std::vector<cv::Point> getConvexHull(unsigned int i) const;
+		std::vector<cv::Vec4i> getConvexityDefects(unsigned int i) const;
 		cv::RotatedRect getMinAreaRect(unsigned int i) const;
 		cv::Point2f getMinEnclosingCircle(unsigned int i, float& radius) const;
 		cv::RotatedRect getFitEllipse(unsigned int i) const;
-		vector<cv::Point> getFitQuad(unsigned int i) const;
+		std::vector<cv::Point> getFitQuad(unsigned int i) const;
 		cv::Vec2f getVelocity(unsigned int i) const;
 		
 		RectTracker& getTracker();
@@ -103,11 +103,11 @@ namespace ofxCv {
 		float minArea, maxArea;
 		bool minAreaNorm, maxAreaNorm;
 		
-		vector<vector<cv::Point> > contours;
-		vector<ofPolyline> polylines;
+		std::vector<std::vector<cv::Point> > contours;
+		std::vector<ofPolyline> polylines;
 		
 		RectTracker tracker;
-		vector<cv::Rect> boundingRects;
+		std::vector<cv::Rect> boundingRects;
 
 		int contourFindingMode;
 		bool sortBySize;

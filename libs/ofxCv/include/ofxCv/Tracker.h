@@ -131,13 +131,13 @@ namespace ofxCv {
 		virtual ~Tracker(){};
 		void setPersistence(unsigned int persistence);
 		void setMaximumDistance(float maximumDistance);
-		virtual const vector<unsigned int>& track(const vector<T>& objects);
+		virtual const std::vector<unsigned int>& track(const std::vector<T>& objects);
 		
 		// organized in the order received by track()
-		const vector<unsigned int>& getCurrentLabels() const;
-		const vector<unsigned int>& getPreviousLabels() const;
-		const vector<unsigned int>& getNewLabels() const;
-		const vector<unsigned int>& getDeadLabels() const;
+		const std::vector<unsigned int>& getCurrentLabels() const;
+		const std::vector<unsigned int>& getPreviousLabels() const;
+		const std::vector<unsigned int>& getNewLabels() const;
+		const std::vector<unsigned int>& getDeadLabels() const;
 		unsigned int getLabelFromIndex(unsigned int i) const;
 		
 		// organized by label
@@ -161,7 +161,7 @@ namespace ofxCv {
 	}
 	
 	template <class T>
-	const vector<unsigned int>& Tracker<T>::track(const vector<T>& objects) {
+	const std::vector<unsigned int>& Tracker<T>::track(const std::vector<T>& objects) {
 		previous = current;
 		int n = objects.size();
 		int m = previous.size();
@@ -169,7 +169,7 @@ namespace ofxCv {
 		// build NxM distance matrix
 		typedef std::pair<int, int> MatchPair;
 		typedef std::pair<MatchPair, float> MatchDistancePair;
-		vector<MatchDistancePair> all;
+		std::vector<MatchDistancePair> all;
 		for(int i = 0; i < n; i++) {
 			for(int j = 0; j < m; j++) {
 				float curDistance = trackingDistance(objects[i], previous[j].object);
@@ -186,8 +186,8 @@ namespace ofxCv {
 		currentLabels.clear();
 		currentLabels.resize(n);
 		current.clear();
-		vector<bool> matchedObjects(n, false);
-		vector<bool> matchedPrevious(m, false);
+		std::vector<bool> matchedObjects(n, false);
+		std::vector<bool> matchedPrevious(m, false);
 		// walk through matches in order
 		for(int k = 0; k < (int)all.size(); k++) {
 			MatchPair& match = all[k].first;
@@ -245,17 +245,17 @@ namespace ofxCv {
 	}
 	
 	template <class T>
-	const vector<unsigned int>& Tracker<T>::getCurrentLabels() const {
+	const std::vector<unsigned int>& Tracker<T>::getCurrentLabels() const {
 		return currentLabels;
 	}
 	
 	template <class T>
-	const vector<unsigned int>& Tracker<T>::getPreviousLabels() const {
+	const std::vector<unsigned int>& Tracker<T>::getPreviousLabels() const {
 		return previousLabels;
 	}
 	
 	template <class T>
-	const vector<unsigned int>& Tracker<T>::getNewLabels() const {
+	const std::vector<unsigned int>& Tracker<T>::getNewLabels() const {
 		return newLabels;
 	}
 	
@@ -318,8 +318,8 @@ namespace ofxCv {
 		float getSmoothingRate() const {
 			return smoothingRate;
 		}
-		const vector<unsigned int>& track(const vector<cv::Rect>& objects) {
-			const vector<unsigned int>& labels = Tracker<cv::Rect>::track(objects);
+		const std::vector<unsigned int>& track(const std::vector<cv::Rect>& objects) {
+			const std::vector<unsigned int>& labels = Tracker<cv::Rect>::track(objects);
 			// add new objects, update old objects
 			for(int i = 0; i < labels.size(); i++) {
 				unsigned int label = labels[i];
@@ -398,10 +398,10 @@ namespace ofxCv {
 	template <class T, class F>
 	class TrackerFollower : public Tracker<T> {
 	protected:
-		vector<unsigned int> labels;
-		vector<F> followers;
+		std::vector<unsigned int> labels;
+		std::vector<F> followers;
 	public:
-		const vector<unsigned int>& track(const vector<T>& objects) {
+		const std::vector<unsigned int>& track(const std::vector<T>& objects) {
 			Tracker<T>::track(objects);
 			// kill missing, update old
 			for(int i = 0; i < labels.size(); i++) {
@@ -430,7 +430,7 @@ namespace ofxCv {
 			}
 			return labels;
 		}
-		vector<F>& getFollowers() {
+		std::vector<F>& getFollowers() {
 			return followers;
 		}
 	};
