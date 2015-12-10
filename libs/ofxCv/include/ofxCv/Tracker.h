@@ -50,9 +50,6 @@
 #include "ofMath.h"
 
 namespace ofxCv {
-	
-	using namespace cv;
-	
 	float trackingDistance(const cv::Rect& a, const cv::Rect& b);
 	float trackingDistance(const cv::Point2f& a, const cv::Point2f& b);
 	

@@ -159,7 +159,11 @@ namespace ofxCv {
 	
 	cv::Point2f ContourFinder::getCentroid(unsigned int i) const {
 		Moments m = moments(contours[i]);
-		return cv::Point2f(m.m10 / m.m00, m.m01 / m.m00);
+		if(m.m00!=0){
+			return cv::Point2f(m.m10 / m.m00, m.m01 / m.m00);
+		}else{
+			return cv::Point2f(0, 0);
+		}
 	}
 	
 	cv::Point2f ContourFinder::getAverage(unsigned int i) const {

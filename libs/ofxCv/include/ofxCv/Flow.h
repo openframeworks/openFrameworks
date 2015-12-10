@@ -4,8 +4,6 @@
 
 namespace ofxCv {
 	
-	using namespace cv;
-	
 	class Flow {
 	public:
         // should constructor be protected?
@@ -21,7 +19,7 @@ namespace ofxCv {
 		void calcOpticalFlow(T& lastImage, T& currentImage) {
             calcOpticalFlow(toCv(lastImage), toCv(currentImage));
         }
-		void calcOpticalFlow(Mat lastImage, Mat currentImage);
+		void calcOpticalFlow(cv::Mat lastImage, cv::Mat currentImage);
 		
 		//call with subsequent images to do running optical flow. 
 		//the Flow class internally stores the last image for convenience
@@ -29,7 +27,7 @@ namespace ofxCv {
 		void calcOpticalFlow(T& currentImage) {
             calcOpticalFlow(toCv(currentImage));
         }
-		void calcOpticalFlow(Mat nextImage);
+		void calcOpticalFlow(cv::Mat nextImage);
 		
 		void draw();
 		void draw(float x, float y);
@@ -41,13 +39,13 @@ namespace ofxCv {
         virtual void resetFlow();
         
     private:
-		Mat last, curr;
+		cv::Mat last, curr;
         
     protected:
 		bool hasFlow;
 		
 		//specific flow implementation
-		virtual void calcFlow(Mat prev, Mat next) = 0;
+		virtual void calcFlow(cv::Mat prev, cv::Mat next) = 0;
 		//specific drawing implementation
 		virtual void drawFlow(ofRectangle r) = 0;
 	};
@@ -87,8 +85,8 @@ namespace ofxCv {
 	protected:
 		
 		void drawFlow(ofRectangle r);
-		void calcFlow(Mat prev, Mat next);
-		void calcFeaturesToTrack(vector<cv::Point2f> & features, Mat next);
+		void calcFlow(cv::Mat prev, cv::Mat next);
+		void calcFeaturesToTrack(vector<cv::Point2f> & features, cv::Mat next);
 		
 		vector<cv::Point2f> prevPts, nextPts;
 		
@@ -130,7 +128,7 @@ namespace ofxCv {
 		void setPolySigma(float polySigma);
 		void setUseGaussian(bool gaussian);
 		
-        Mat& getFlow();
+		cv::Mat& getFlow();
 		ofVec2f getTotalFlow();
 		ofVec2f getAverageFlow();		
 		ofVec2f getFlowOffset(int x, int y);
@@ -145,7 +143,7 @@ namespace ofxCv {
 		cv::Mat flow;
 
 		void drawFlow(ofRectangle rect);
-		void calcFlow(Mat prev, Mat next);
+		void calcFlow(cv::Mat prev, cv::Mat next);
 		
 		float pyramidScale;
 		int numLevels;
