@@ -21,6 +21,7 @@
 
 #include "ofxCv/Utilities.h"
 #include "ofxCv/Tracker.h"
+#include "ofRectangle.h"
 
 #include "ofxCv.h"
 namespace ofxCv {

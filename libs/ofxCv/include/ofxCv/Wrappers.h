@@ -27,9 +27,10 @@
 
 #pragma once
 
-#include "ofMain.h"
 #include "opencv2/opencv.hpp"
 #include "ofxCv/Utilities.h"
+#include "ofVectorMath.h"
+#include "ofImage.h"
 
 // coherent line drawing
 #include "imatrix.h"

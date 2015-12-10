@@ -20,6 +20,7 @@
 #pragma once
 
 #include "ofxCv.h"
+#include "ofNode.h"
 
 namespace ofxCv {
 	class Intrinsics {

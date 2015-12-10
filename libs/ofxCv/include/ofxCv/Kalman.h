@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxCv.h"
+#include "ofVectorMath.h"
 
 namespace ofxCv {
 	

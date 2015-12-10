@@ -1,4 +1,5 @@
 #include "ofxCv/ObjectFinder.h"
+#include "ofGraphics.h"
 
 namespace ofxCv {
 	using namespace cv;

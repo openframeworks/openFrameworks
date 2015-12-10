@@ -1,5 +1,6 @@
 #include "ofxCv/Helpers.h"
 #include "ofxCv/Utilities.h"
+#include "ofGraphics.h"
 
 namespace ofxCv {
 	

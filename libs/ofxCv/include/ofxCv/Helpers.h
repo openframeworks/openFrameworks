@@ -6,7 +6,9 @@
 #pragma once
 
 #include "opencv2/opencv.hpp"
-#include "ofMain.h"
+#include "ofVectorMath.h"
+#include "ofRectangle.h"
+#include "ofColor.h"
 
 namespace ofxCv {
 	

@@ -9,8 +9,13 @@
 
 #pragma once
 
-#include "ofMain.h"
 #include "opencv2/opencv.hpp"
+#include "ofRectangle.h"
+#include "ofTexture.h"
+#include "ofPixels.h"
+#include "ofBaseTypes.h"
+#include "ofPolyline.h"
+#include "ofVectorMath.h"
 
 namespace ofxCv {
 	// these functions are for accessing Mat, ofPixels and ofImage consistently.
@@ -190,8 +195,7 @@ namespace ofxCv {
 		}
 	}
 	// ofVideoPlayer/Grabber can't be allocated, so we assume we don't need to do anything
-	inline void allocate(ofVideoPlayer& img, int width, int height, int cvType) {}
-	inline void allocate(ofVideoGrabber& img, int width, int height, int cvType) {}
+	inline void allocate(ofBaseVideoDraws & img, int width, int height, int cvType) {}
 	
 	// imitate() is good for preparing buffers
 	// it's like allocate(), but uses the size and type of the original as a reference

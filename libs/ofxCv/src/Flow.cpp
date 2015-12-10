@@ -1,4 +1,5 @@
 #include "ofxCv/Flow.h"
+#include "ofGraphics.h"
 
 namespace ofxCv {
 	
