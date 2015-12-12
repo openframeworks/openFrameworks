@@ -10,6 +10,8 @@ public:
 	ofFbo();
 	ofFbo(const ofFbo & mom);
 	ofFbo & operator=(const ofFbo & fbo);
+    ofFbo(ofFbo && mom);
+    ofFbo & operator=(ofFbo && fbo);
 	virtual ~ofFbo();
 
 	void allocate(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);

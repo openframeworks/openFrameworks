@@ -77,6 +77,8 @@ public:
     void nextFrame();
     void previousFrame();
 
+	ofAVFoundationPlayer& operator=(ofAVFoundationPlayer other);
+	
 #ifdef __OBJC__
 	ofAVFoundationVideoPlayer * getAVFoundationVideoPlayer();
 #else

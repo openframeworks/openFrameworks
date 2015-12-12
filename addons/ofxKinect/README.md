@@ -167,35 +167,13 @@ Edit the Makefile config files:
 	</pre>
 	* repeat for the "Release" configuration
 	
-#### Windows (Codeblocks):
+#### Windows (Msys2):
 
-* add the ofxPd sources to the project:
-	* right-click on your project in the project tree
-	* select "Add Files Recursively ..."
-	* navigate and choose the ofxKinect/src folder
-* add search paths and libraries to link:
-	* right-click on your project in the project tree
-	* select "Build options..."
-	* make sure the project name is selected in the tree (not release or debug)
-	* select the "Search directories" tab, click add the search paths:
-	<pre>
-	..\\..\\..\addons\ofxKinect\src
-	..\\..\\..\addons\ofxKinect\libs\libfreenect\src
-	..\\..\\..\addons\ofxKinect\libs\libfreenect\include
-	..\\..\\..\addons\ofxKinect\libs\libfreenect\platform\windows
-	..\\..\\..\addons\ofxKinect\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0
-	..\\..\\..\addons\ofxKinect\libs\libusb-win32\include
-	</pre>
-	* select the "Linker settings" tab, add the following to Link libraries:
-	<pre>
-	m
-	pthread
-	</pre>
-	* select the "Linker settings" tab, add the following to Other liker options:
-	<pre>
-	..\..\..\addons\ofxKinect\libs\libusb-win32\lib\win_cb\libusb.lib
-	</pre>
+Install libusb using
 
+    pacman --needed -Sy mingw-w64-i686-libusb
+
+	
 Notes
 -----
 

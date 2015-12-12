@@ -122,9 +122,9 @@ getRange(Type min, Type max, float width){
 template<typename Type>
 bool ofxSlider<Type>::mouseScrolled(ofMouseEventArgs & args){
 	if(mouseInside){
-		if(args.y>0 || args.y<0){
+		if(args.scrollY>0 || args.scrollY<0){
 			double range = getRange(value.getMin(),value.getMax(),b.width);
-			Type newValue = value + ofMap(args.y,-1,1,-range, range);
+			Type newValue = value + ofMap(args.scrollY,-1,1,-range, range);
 			newValue = ofClamp(newValue,value.getMin(),value.getMax());
 			value = newValue;
 		}

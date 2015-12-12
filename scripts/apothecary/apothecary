@@ -71,13 +71,13 @@ if [ "$(${APOTHECARY_DIR}/ostype.sh)" == "osx" ]; then
 
     # used when building some libs for osx
     OSX_LATEST_SDK="xcrun -sdk macosx --show-sdk-version"
-    OSX_SDK_VER=10.10
+    OSX_SDK_VER=10.11
     OSX_MIN_SDK_VER=10.7
 
     # used when building for ios, the sdks you have installed are found in:
     # $XCODE_DEV_ROOT/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator#.#.sdk
     IOS_LATEST_SDK="xcrun -sdk iphoneos --show-sdk-version" # stupid hack to keep my syntax highlighting from breaking :P
-    IOS_SDK_VER=8.1
+    IOS_SDK_VER=9.1
     IOS_MIN_SDK_VER=5.1
 fi
 
@@ -108,6 +108,7 @@ REL_FORMULAS_DIR=formulas
 REL_BUILD_DIR=build
 REL_LIBS_DIR=../../libs
 REL_ADDONS_DIR=../../addons
+CHECKOUT=YES
 
 # ansi console escape codes
 CON_DEFAULT="\033[0m"
@@ -117,7 +118,7 @@ CON_YELLOW="\033[33m"
 CON_GREEN="\033[32m"
 
 # used to filter out bad build types
-VALID_TYPES=( "osx" "linux" "linux64" "linuxarmv6l" "linuxarmv7l" "vs" "win_cb" "ios" "android" "emscripten" )
+VALID_TYPES=( "osx" "linux" "linux64" "linuxarmv6l" "linuxarmv7l" "vs" "msys2" "ios" "tvos" "android" "emscripten" )
 
 # verbose mode bool
 A_VERBOSE=0
@@ -152,7 +153,7 @@ commands:
   
 options:
   -t	specify libary type when building, detects type from OS by default
-	valid types: osx, linux, linux64, linuxarmv6l, linuxarmv7l, vs, win_cb, ios, android
+	valid types: osx, linux, linux64, linuxarmv6l, linuxarmv7l, vs, msys2, ios, tvos, android
 
   -a	specify architecture, either 32 or 64 (default is 32 bit)
 	note: not currently needed, reserved for future use
@@ -913,6 +914,34 @@ function apothecaryDependencies() {
         #also have to cd back to the APOTHECARY_DIR for the next commands to work
         cd $APOTHECARY_DIR
 	fi
+}
+
+function  dump_output() {
+	if [ -z "$BUILD_OUTPUT" ]; then
+		echo "BUILD_OUTPUT not set."
+	else 
+		echo Tailing the last 500 lines of output:
+		tail -500 "$BUILD_OUTPUT"  
+	fi
+}
+function  error_handler() {
+
+
+	echo ERROR: An error was encountered with the build.
+	dump_output
+	# nicely terminate the ping output loop
+	if [ -z "$PING_LOOP_PID" ]; then
+		echo "Loop PID not set."
+	else 
+		kill $PING_LOOP_PID || true
+	fi
+
+	JOB="$0"              # job name
+    LASTLINE="$1"         # line of error occurrence
+    LASTERR="$2"          # error code
+    echo "ERROR in ${JOB} : line ${LASTLINE} with exit code ${LASTERR}"
+
+	exit "${LASTERR}"
 }
 
 ################################################################################
