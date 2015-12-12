@@ -241,7 +241,7 @@ void ofVideoGrabber::close(){
 	if(grabber){
 		grabber->close();
 	}
-	if(!grabber->getTexturePtr()) tex.clear();
+	tex.clear();
 }
 
 //--------------------------------------------------------------------

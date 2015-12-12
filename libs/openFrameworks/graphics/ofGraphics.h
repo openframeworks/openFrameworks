@@ -121,12 +121,12 @@ void ofBackgroundHex(int hexColor, int alpha = 255);
 ///
 /// Accepted modes are:
 ///
-/// Circular: `OF_GRADIENT_CIRCULAR`
-/// Linear: `OF_GRADIENT_LINEAR`
-/// Bar: `OF_GRADIENT_BAR`
+/// - Circular: `OF_GRADIENT_CIRCULAR`
+/// - Linear: `OF_GRADIENT_LINEAR`
+/// - Bar: `OF_GRADIENT_BAR`
 ///
 /// **Background Gradient: Circular:**
-/// ![Background Gradient Circular](graphics/bkgGradient_circular.png)
+/// ![Background Gradient Circular](bkgGradient_circular.png)
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///
@@ -139,7 +139,7 @@ void ofBackgroundHex(int hexColor, int alpha = 255);
 /// ~~~~
 ///
 /// **Background Gradient: Linear:**
-/// ![Background Gradient Linear](graphics/bkgGradient_linear.png)
+/// ![Background Gradient Linear](bkgGradient_linear.png)
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///
@@ -152,7 +152,7 @@ void ofBackgroundHex(int hexColor, int alpha = 255);
 /// ~~~~
 ///
 /// **Background Gradient: Bar:**
-/// ![Background Gradient Bar](graphics/bkgGradient_bar.png)
+/// ![Background Gradient Bar](bkgGradient_bar.png)
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///
@@ -933,6 +933,8 @@ void ofTranslate(const ofPoint & p);
 
 void ofScale(float xAmnt, float yAmnt, float zAmnt = 1);
 
+void ofScale(const ofPoint & p);
+
 /// \brief Produces a rotation around the vector (vecX,vecY,vecZ).
 ///
 /// All graphics drawn after ofRotate is called are rotated. Use ofPushMatrix()
@@ -958,17 +960,17 @@ void ofRotate(float degrees);
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     ofRotateX(45); //rotates the coordinate system 45 degrees around the x-axis
-///     ofDrawRea20,20,100,100);
+///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
 void ofRotateX(float degrees);
 
 /// \brief Produces a rotation around the Y-axis of our coordinate
-/// system represented by the vector (1,0,0).
+/// system represented by the vector (0,1,0).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateY(45); //rotates the coordinate system 45 degrees around the x-axis
+///     ofRotateY(45); //rotates the coordinate system 45 degrees around the y-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
@@ -976,11 +978,11 @@ void ofRotateX(float degrees);
 void ofRotateY(float degrees);
 
 /// \brief Produces a rotation around the Z-axis of our coordinate
-/// system represented by the vector (1,0,0).
+/// system represented by the vector (0,0,1).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateZ(45); //rotates the coordinate system 45 degrees around the x-axis
-///     ofDrawRea20,20,100,100);
+///     ofRotateZ(45); //rotates the coordinate system 45 degrees around the z-axis
+///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
@@ -1003,12 +1005,13 @@ ofMatrix4x4 ofGetCurrentViewMatrix();
 
 
 /// \}
-/// \name View Setup
+/// \name Viewport Setup
 /// \{
 
-// push and pop all matrices and viewport
+/// \brief Stores the current viewport and matrix settings
 void ofPushView();
 
+/// \brief Restores the viewport and matrix settings set by ofPushView()
 void ofPopView();
 
 /// \brief Get if view is flipped vertically
@@ -1021,7 +1024,7 @@ bool ofIsVFlipped();
 void ofViewport(ofRectangle viewport);
 
 /// \brief Setup the drawing viewport
-/// \param x The x position of the viewport
+/// \param x The x position of the viewport
 /// \param y The y position of the viewport
 /// \param width The width of the viewport, defaults to ofGetWidth()
 /// \param height The height of the viewport, defaults to ofGetHeight()

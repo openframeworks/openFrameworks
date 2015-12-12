@@ -8,7 +8,7 @@
 | ✓C      | copy only, written & tested                
 | N/A     | not applicable
 
-| Lib                             | osx | linux | linux64 | linuxarmv6l | linuxarmv7l | vs | win_cb | ios | android |
+| Lib                             | osx | linux | linux64 | linuxarmv6l | linuxarmv7l | vs | msys2 | ios | android |
 |---------------------------------|-----|-------|---------|-------------|-------------|----|--------|-----|---------|
 | FreeImage                       | ✓   | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | ✓   | ✗       |
 | FreeType                        | ✓   | N/A   | N/A     | N/A         | N/A         | ?  | ?      | ✓   | ?       |

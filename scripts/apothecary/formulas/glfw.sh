@@ -6,7 +6,7 @@
 #
 # uses a CMake build system
 
-FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "msys2" "ios" "android" )
 
 # define the version
 VER=3.0.4
@@ -50,7 +50,7 @@ function build() {
 			cmake .. -G "Visual Studio $VS_VER Win64"
 			vs-build "GLFW.sln" Build "Release|x64"
 		fi
-	elif [ "$TYPE" == "win_cb" ]; then
+	elif [ "$TYPE" == "msys2" ]; then
 	
 		# *nix build system
 		cmake . -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=$BUILD_ROOT_DIR \
@@ -102,9 +102,13 @@ function copy() {
 	elif [ "$TYPE" == "osx" ]; then
 		# Standard *nix style copy.
 		# copy headers
-		cp -Rv $BUILD_ROOT_DIR/include/GLFW/* $1/include/GLFW/
+		if [ -d $BUILD_ROOT_DIR/include/GLFW/ ] ; then
+			cp -Rv $BUILD_ROOT_DIR/include/GLFW/* $1/include/GLFW/
+		fi
 		# copy lib
-		cp -Rv $BUILD_ROOT_DIR/lib/libglfw3.a $1/lib/$TYPE/glfw3.a
+		if [ -d $BUILD_ROOT_DIR/lib/ ] ; then
+			cp -Rv $BUILD_ROOT_DIR/lib/libglfw3.a $1/lib/$TYPE/glfw3.a
+		fi
 		
 	else
 		# Standard *nix style copy.
