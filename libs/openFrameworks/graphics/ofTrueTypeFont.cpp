@@ -20,61 +20,116 @@
 #include "ofAppRunner.h"
 #include "utf8.h"
 
-constexpr ofUnicode::range ofUnicode::Latin;
-constexpr ofUnicode::range ofUnicode::Latin1Supplement;
-constexpr ofUnicode::range ofUnicode::Greek;
-constexpr ofUnicode::range ofUnicode::Cyrillic;
-constexpr ofUnicode::range ofUnicode::Arabic;
-constexpr ofUnicode::range ofUnicode::ArabicSupplement;
-constexpr ofUnicode::range ofUnicode::ArabicExtendedA;
-constexpr ofUnicode::range ofUnicode::Devanagari;
-constexpr ofUnicode::range ofUnicode::HangulJamo;
-constexpr ofUnicode::range ofUnicode::VedicExtensions;
-constexpr ofUnicode::range ofUnicode::LatinExtendedAdditional;
-constexpr ofUnicode::range ofUnicode::GreekExtended;
-constexpr ofUnicode::range ofUnicode::GeneralPunctuation;
-constexpr ofUnicode::range ofUnicode::SuperAndSubScripts;
-constexpr ofUnicode::range ofUnicode::CurrencySymbols;
-constexpr ofUnicode::range ofUnicode::LetterLikeSymbols;
-constexpr ofUnicode::range ofUnicode::NumberForms;
-constexpr ofUnicode::range ofUnicode::Arrows;
-constexpr ofUnicode::range ofUnicode::MathOperators;
-constexpr ofUnicode::range ofUnicode::MiscTechnical;
-constexpr ofUnicode::range ofUnicode::BoxDrawing;
-constexpr ofUnicode::range ofUnicode::BlockElement;
-constexpr ofUnicode::range ofUnicode::GeometricShapes;
-constexpr ofUnicode::range ofUnicode::MiscSymbols;
-constexpr ofUnicode::range ofUnicode::Dingbats;
-constexpr ofUnicode::range ofUnicode::Hiragana;
-constexpr ofUnicode::range ofUnicode::Katakana;
-constexpr ofUnicode::range ofUnicode::HangulCompatJamo;
-constexpr ofUnicode::range ofUnicode::KatakanaPhoneticExtensions;
-constexpr ofUnicode::range ofUnicode::CJKLettersAndMonths;
-constexpr ofUnicode::range ofUnicode::CJKUnified;
-constexpr ofUnicode::range ofUnicode::DevanagariExtended;
-constexpr ofUnicode::range ofUnicode::HangulExtendedA;
-constexpr ofUnicode::range ofUnicode::HangulSyllables;
-constexpr ofUnicode::range ofUnicode::HangulExtendedB;
-constexpr ofUnicode::range ofUnicode::AlphabeticPresentationForms;
-constexpr ofUnicode::range ofUnicode::ArabicPresFormsA;
-constexpr ofUnicode::range ofUnicode::ArabicPresFormsB;
-constexpr ofUnicode::range ofUnicode::KatakanaHalfAndFullwidthForms;
-constexpr ofUnicode::range ofUnicode::KanaSupplement;
-constexpr ofUnicode::range ofUnicode::RumiNumericalSymbols;
-constexpr ofUnicode::range ofUnicode::ArabicMath;
-constexpr ofUnicode::range ofUnicode::MiscSymbolsAndPictographs;
-constexpr ofUnicode::range ofUnicode::Emoticons;
-constexpr ofUnicode::range ofUnicode::TransportAndMap;
-constexpr ofUnicode::range ofUnicode::Space;
+//constexpr ofUnicode::range ofUnicode::Latin;
+//constexpr ofUnicode::range ofUnicode::Latin1Supplement;
+//constexpr ofUnicode::range ofUnicode::Greek;
+//constexpr ofUnicode::range ofUnicode::Cyrillic;
+//constexpr ofUnicode::range ofUnicode::Arabic;
+//constexpr ofUnicode::range ofUnicode::ArabicSupplement;
+//constexpr ofUnicode::range ofUnicode::ArabicExtendedA;
+//constexpr ofUnicode::range ofUnicode::Devanagari;
+//constexpr ofUnicode::range ofUnicode::HangulJamo;
+//constexpr ofUnicode::range ofUnicode::VedicExtensions;
+//constexpr ofUnicode::range ofUnicode::LatinExtendedAdditional;
+//constexpr ofUnicode::range ofUnicode::GreekExtended;
+//constexpr ofUnicode::range ofUnicode::GeneralPunctuation;
+//constexpr ofUnicode::range ofUnicode::SuperAndSubScripts;
+//constexpr ofUnicode::range ofUnicode::CurrencySymbols;
+//constexpr ofUnicode::range ofUnicode::LetterLikeSymbols;
+//constexpr ofUnicode::range ofUnicode::NumberForms;
+//constexpr ofUnicode::range ofUnicode::Arrows;
+//constexpr ofUnicode::range ofUnicode::MathOperators;
+//constexpr ofUnicode::range ofUnicode::MiscTechnical;
+//constexpr ofUnicode::range ofUnicode::BoxDrawing;
+//constexpr ofUnicode::range ofUnicode::BlockElement;
+//constexpr ofUnicode::range ofUnicode::GeometricShapes;
+//constexpr ofUnicode::range ofUnicode::MiscSymbols;
+//constexpr ofUnicode::range ofUnicode::Dingbats;
+//constexpr ofUnicode::range ofUnicode::Hiragana;
+//constexpr ofUnicode::range ofUnicode::Katakana;
+//constexpr ofUnicode::range ofUnicode::HangulCompatJamo;
+//constexpr ofUnicode::range ofUnicode::KatakanaPhoneticExtensions;
+//constexpr ofUnicode::range ofUnicode::CJKLettersAndMonths;
+//constexpr ofUnicode::range ofUnicode::CJKUnified;
+//constexpr ofUnicode::range ofUnicode::DevanagariExtended;
+//constexpr ofUnicode::range ofUnicode::HangulExtendedA;
+//constexpr ofUnicode::range ofUnicode::HangulSyllables;
+//constexpr ofUnicode::range ofUnicode::HangulExtendedB;
+//constexpr ofUnicode::range ofUnicode::AlphabeticPresentationForms;
+//constexpr ofUnicode::range ofUnicode::ArabicPresFormsA;
+//constexpr ofUnicode::range ofUnicode::ArabicPresFormsB;
+//constexpr ofUnicode::range ofUnicode::KatakanaHalfAndFullwidthForms;
+//constexpr ofUnicode::range ofUnicode::KanaSupplement;
+//constexpr ofUnicode::range ofUnicode::RumiNumericalSymbols;
+//constexpr ofUnicode::range ofUnicode::ArabicMath;
+//constexpr ofUnicode::range ofUnicode::MiscSymbolsAndPictographs;
+//constexpr ofUnicode::range ofUnicode::Emoticons;
+//constexpr ofUnicode::range ofUnicode::TransportAndMap;
+//constexpr ofUnicode::range ofUnicode::Space;
 
-constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Emoji;
-constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Japanese;
-constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Chinese;
-constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Korean;
-constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Arabic;
-constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Latin;
-constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Greek;
-constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Cyrillic;
+const std::initializer_list<ofUnicode::range> ofAlphabet::Emoji {
+    ofUnicode::Space,
+    ofUnicode::Hiragana,
+    ofUnicode::Katakana,
+    ofUnicode::KatakanaPhoneticExtensions,
+    ofUnicode::CJKLettersAndMonths,
+    ofUnicode::CJKUnified
+};
+
+const std::initializer_list<ofUnicode::range> ofAlphabet::Japanese {
+    ofUnicode::Space,
+    ofUnicode::Hiragana,
+    ofUnicode::Katakana,
+    ofUnicode::KatakanaPhoneticExtensions,
+    ofUnicode::CJKLettersAndMonths,
+    ofUnicode::CJKUnified
+};
+
+const std::initializer_list<ofUnicode::range> ofAlphabet::Chinese {
+    ofUnicode::Space,
+    ofUnicode::CJKLettersAndMonths,
+    ofUnicode::CJKUnified
+};
+
+const std::initializer_list<ofUnicode::range> ofAlphabet::Korean {
+    ofUnicode::Space,
+    ofUnicode::HangulJamo,
+    ofUnicode::HangulCompatJamo,
+    ofUnicode::HangulExtendedA,
+    ofUnicode::HangulExtendedB,
+    ofUnicode::HangulSyllables
+};
+
+const std::initializer_list<ofUnicode::range> ofAlphabet::Arabic {
+    ofUnicode::Space,
+    ofUnicode::Arabic,
+    ofUnicode::ArabicExtendedA,
+    ofUnicode::ArabicMath,
+    ofUnicode::ArabicPresFormsA,
+    ofUnicode::ArabicPresFormsB
+};
+
+const std::initializer_list<ofUnicode::range> ofAlphabet::Devanagari {
+    ofUnicode::Devanagari,
+    ofUnicode::DevanagariExtended,
+    ofUnicode::VedicExtensions
+};
+
+const std::initializer_list<ofUnicode::range> ofAlphabet::Latin {
+    ofUnicode::Latin1Supplement,
+    ofUnicode::LatinExtendedAdditional
+};
+
+const std::initializer_list<ofUnicode::range> ofAlphabet::Greek {
+    ofUnicode::Space,
+    ofUnicode::Greek,
+    ofUnicode::GreekExtended
+};
+
+const std::initializer_list<ofUnicode::range> ofAlphabet::Cyrillic {
+    ofUnicode::Space,
+    ofUnicode::Cyrillic
+};
 
 const ofTrueTypeFont::glyphProps ofTrueTypeFont::invalidProps{
 	-1,
