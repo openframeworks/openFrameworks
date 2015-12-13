@@ -43,11 +43,16 @@ void ofTrueTypeShutdown();
 class ofUnicode{
 public:
 	struct range{
-		uint32_t begin;
-		uint32_t end;
-
-		uint32_t getNumGlyphs() const{
+		std::uint32_t begin;
+		std::uint32_t end;
+		
+		constexpr std::uint32_t getNumGlyphs() const{
 			return end - begin + 1;
+		}
+		range &operator=(const range &rhs) {
+			begin = rhs.begin;
+			end = rhs.end;
+			return *this;
 		}
 	};
 
@@ -102,69 +107,15 @@ public:
 
 class ofAlphabet{
 public:
-	static constexpr std::initializer_list<ofUnicode::range> Emoji {
-		ofUnicode::Space,
-		ofUnicode::Hiragana,
-		ofUnicode::Katakana,
-		ofUnicode::KatakanaPhoneticExtensions,
-		ofUnicode::CJKLettersAndMonths,
-		ofUnicode::CJKUnified
-	};
-
-	static constexpr std::initializer_list<ofUnicode::range> Japanese {
-		ofUnicode::Space,
-		ofUnicode::Hiragana,
-		ofUnicode::Katakana,
-		ofUnicode::KatakanaPhoneticExtensions,
-		ofUnicode::CJKLettersAndMonths,
-		ofUnicode::CJKUnified
-	};
-
-	static constexpr std::initializer_list<ofUnicode::range> Chinese {
-		ofUnicode::Space,
-		ofUnicode::CJKLettersAndMonths,
-		ofUnicode::CJKUnified
-	};
-
-	static constexpr std::initializer_list<ofUnicode::range> Korean {
-		ofUnicode::Space,
-		ofUnicode::HangulJamo,
-		ofUnicode::HangulCompatJamo,
-		ofUnicode::HangulExtendedA,
-		ofUnicode::HangulExtendedB,
-		ofUnicode::HangulSyllables
-	};
-
-	static constexpr std::initializer_list<ofUnicode::range> Arabic {
-		ofUnicode::Space,
-		ofUnicode::Arabic,
-		ofUnicode::ArabicExtendedA,
-		ofUnicode::ArabicMath,
-		ofUnicode::ArabicPresFormsA,
-		ofUnicode::ArabicPresFormsB
-	};
-
-	static constexpr std::initializer_list<ofUnicode::range> Devanagari{
-		ofUnicode::Devanagari,
-		ofUnicode::DevanagariExtended,
-		ofUnicode::VedicExtensions
-	};
-
-	static constexpr std::initializer_list<ofUnicode::range> Latin {
-		ofUnicode::Latin1Supplement,
-		ofUnicode::LatinExtendedAdditional
-	};
-
-	static constexpr std::initializer_list<ofUnicode::range> Greek {
-		ofUnicode::Space,
-		ofUnicode::Greek,
-		ofUnicode::GreekExtended
-	};
-
-	static constexpr std::initializer_list<ofUnicode::range> Cyrillic {
-		ofUnicode::Space,
-		ofUnicode::Cyrillic
-	};
+	static const std::initializer_list<ofUnicode::range> Emoji;
+	static const std::initializer_list<ofUnicode::range> Japanese;
+	static const std::initializer_list<ofUnicode::range> Chinese;
+	static const std::initializer_list<ofUnicode::range> Korean;
+	static const std::initializer_list<ofUnicode::range> Arabic;
+	static const std::initializer_list<ofUnicode::range> Devanagari;
+	static const std::initializer_list<ofUnicode::range> Latin;
+	static const std::initializer_list<ofUnicode::range> Greek;
+	static const std::initializer_list<ofUnicode::range> Cyrillic;
 };
 
 
