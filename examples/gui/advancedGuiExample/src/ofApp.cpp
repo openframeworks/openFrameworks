@@ -53,7 +53,7 @@ void ofApp::setup(){
 
     matrix.setup("matrix", 3);
     matrix.setExclusiveToggles(true);
-    ofAddListener(matrix.activeToggleChanged, this, &ofApp::updateMatrixIndex);
+	matrix.getActiveToggleIndex().addListener(this, &ofApp::updateMatrixIndex);
 	for(unsigned int i = 0; i < matrix_params.size(); i++){
         matrix.add<ofxMinimalToggle>(matrix_params.at(i));
     }
