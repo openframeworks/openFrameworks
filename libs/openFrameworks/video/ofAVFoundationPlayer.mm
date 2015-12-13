@@ -28,7 +28,28 @@ ofAVFoundationPlayer::ofAVFoundationPlayer() {
 
 //--------------------------------------------------------------
 ofAVFoundationPlayer::~ofAVFoundationPlayer() {
-    close();
+    disposePlayer();
+}
+
+//--------------------------------------------------------------
+ofAVFoundationPlayer& ofAVFoundationPlayer::operator=(ofAVFoundationPlayer other)
+{
+	// clear pixels
+	pixels.clear();
+	videoTexture.clear();
+	
+	// in any case get rid of the textures
+	if(bTextureCacheSupported == true) {
+		killTextureCache();
+	}
+
+	bFrameNew = false;
+	bResetPixels = false;
+	bUpdatePixels = false;
+	bUpdateTexture = false;
+	
+	std::swap(videoPlayer, other.videoPlayer);
+	return *this;
 }
 
 //--------------------------------------------------------------
@@ -43,53 +64,43 @@ bool ofAVFoundationPlayer::load(string name) {
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
+	
+	NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
+	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
+	
+	BOOL bStream = NO;
+	
+	bStream = bStream || (ofIsStringInString(name, "http://"));
+	bStream = bStream || (ofIsStringInString(name, "https://"));
+	bStream = bStream || (ofIsStringInString(name, "rtsp://"));
+	
+	NSURL * url = nil;
+	if(bStream == YES) {
+		url = [NSURL URLWithString:videoPath];
+	} else {
+		url = [NSURL fileURLWithPath:videoLocalPath];
+	}
 
-    // dispose videoplayer, clear pixels, clear texture
+	bFrameNew = false;
+	bResetPixels = true;
+	bUpdatePixels = true;
+	bUpdateTexture = true;
+	
+    // reuse videoplayer
     if(videoPlayer != nullptr) {
-        
-        pixels.clear();
-        videoTexture.clear();
-        
-        // dispose videoplayer
-        disposePlayer();
-        
-        if (_videoTextureRef != nullptr) {
-            killTexture();
-        }
-        
-        videoPlayer = nullptr;
+		// use existing player
+		return [videoPlayer loadWithURL:url async:bAsync];
     }
-    bFrameNew = false;
-
 	
     // create a new player
     videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
     [videoPlayer setWillBeUpdatedExternally:YES];
 
-
-	
-    NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
-    NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
-
-    BOOL bStream = NO;
-
-    bStream = bStream || (ofIsStringInString(name, "http://"));
-    bStream = bStream || (ofIsStringInString(name, "https://"));
-    bStream = bStream || (ofIsStringInString(name, "rtsp://"));
-
-    NSURL * url = nil;
-    if(bStream == YES) {
-        url = [NSURL URLWithString:videoPath];
-    } else {
-        url = [NSURL fileURLWithPath:videoLocalPath];
-    }
-
     bool bLoaded = [videoPlayer loadWithURL:url async:bAsync];
 	
-    bResetPixels = true;
-    bUpdatePixels = true;
-    bUpdateTexture = true;
-
+	pixels.clear();
+	videoTexture.clear();
+	
     bool bCreateTextureCache = true;
     bCreateTextureCache = bCreateTextureCache && (bTextureCacheSupported == true);
     bCreateTextureCache = bCreateTextureCache && (_videoTextureCache == nullptr);
@@ -134,21 +145,34 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::disposePlayer() {
 	
-    if (videoPlayer == nullptr)
-        return;
+	if (videoPlayer != nullptr) {
 
-    // pause player, stop updates
-    [videoPlayer pause];
+		// clear pixels
+		pixels.clear();
+		videoTexture.clear();
+		
+		// dispose videoplayer
+		__block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
+		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+			@autoreleasepool {
+				[currentPlayer unloadVideo]; // synchronious call to unload video
+				[currentPlayer autorelease]; // release
+			}
+		});
+		
+		videoPlayer = nullptr;
+	}
+	
+	// in any case get rid of the textures
+	if(bTextureCacheSupported == true) {
+		killTextureCache();
+	}
 
-    // dispose videoplayer
-    __block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        
-        @autoreleasepool {
-            [currentPlayer autorelease];
-        }
-    });
+	
+	bFrameNew = false;
+	bResetPixels = false;
+	bUpdatePixels = false;
+	bUpdateTexture = false;
 }
 
 //--------------------------------------------------------------
@@ -156,17 +180,9 @@ void ofAVFoundationPlayer::close() {
     if(videoPlayer != nullptr) {
 		
         pixels.clear();
-        
         videoTexture.clear();
-
-        disposePlayer();
-
-        videoPlayer = nullptr;
-    }
-	
-    // in any case get rid of the textures
-    if(bTextureCacheSupported == true) {
-        killTextureCache();
+		
+		[videoPlayer close];
     }
 	
     bFrameNew = false;
@@ -239,7 +255,7 @@ void ofAVFoundationPlayer::draw(const ofRectangle & rect) {
 }
 
 void ofAVFoundationPlayer::draw(float x, float y, float w, float h) {
-    if(videoPlayer != nullptr) {
+    if(isLoaded()) {
         getTexturePtr()->draw(x, y, w, h);
     }
 }
@@ -358,7 +374,7 @@ ofPixels & ofAVFoundationPlayer::getPixels() {
 //--------------------------------------------------------------
 ofTexture * ofAVFoundationPlayer::getTexturePtr() {
     
-    if(isLoaded() == false) {
+    if(isLoaded() == false) {		
         return &videoTexture;
     }
     

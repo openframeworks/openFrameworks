@@ -1,6 +1,10 @@
 #include "ofSoundStream.h"
 #include "ofAppRunner.h"
 
+#if defined(OF_SOUND_PLAYER_FMOD)
+#include "ofSoundPlayer.h"
+#endif
+
 namespace{
     ofSoundStream systemSoundStream;
 }
@@ -100,6 +104,9 @@ void ofSoundStream::setDevice(const ofSoundDevice &device) {
 //------------------------------------------------------------
 bool ofSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
 	if( soundStream ){
+#if defined(OF_SOUND_PLAYER_FMOD)
+		ofFmodSetBuffersize(bufferSize);
+#endif
 		return soundStream->setup(app, outChannels, inChannels, sampleRate, bufferSize, nBuffers);
 	}
 	return false;
@@ -132,6 +139,9 @@ void ofSoundStream::setOutput(ofBaseSoundOutput &soundOutput){
 //------------------------------------------------------------
 bool ofSoundStream::setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
 	if( soundStream ){
+#if defined(OF_SOUND_PLAYER_FMOD)
+		ofFmodSetBuffersize(bufferSize);
+#endif
 		return soundStream->setup(outChannels, inChannels, sampleRate, bufferSize, nBuffers);
 	}
 	return false;

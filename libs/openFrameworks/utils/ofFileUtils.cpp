@@ -474,7 +474,7 @@ bool ofFile::create(){
 	if(!myFile.string().empty()){
 		auto oldmode = this->mode;
 		auto oldpath = path();
-		success = open(path(),ofFile::WriteOnly);
+		success = open(path(),ofFile::WriteOnly,binary);
 		close();
 		open(oldpath,oldmode,binary);
 	}
@@ -752,11 +752,18 @@ bool ofFile::moveTo(const string& _path, bool bRelativeToData, bool overwrite){
 	}
 
 	try{
+		auto mode = this->mode;
+		if(mode != ofFile::Reference){
+			changeMode(ofFile::Reference, binary);
+		}
 		if(!ofDirectory(ofFilePath::getEnclosingDirectory(path,bRelativeToData)).exists()){
 			ofFilePath::createEnclosingDirectory(path, bRelativeToData);
 		}
 		std::filesystem::rename(myFile,path);
 		myFile = path;
+		if(mode != ofFile::Reference){
+			changeMode(mode, binary);
+		}
 	}
 	catch(std::exception & except){
 		ofLogError("ofFile") << "moveTo(): unable to move \"" << path << "\":" << except.what();
@@ -894,7 +901,7 @@ ofDirectory::ofDirectory(const std::filesystem::path & path){
 void ofDirectory::open(const std::filesystem::path & path){
 	originalDirectory = ofFilePath::getPathForDirectory(path.string());
 	files.clear();
-	myDir = std::filesystem::path(ofToDataPath(originalDirectory));
+    myDir = std::filesystem::path(ofToDataPath(originalDirectory));
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -908,9 +915,9 @@ bool ofDirectory::create(bool recursive){
 	if(!myDir.string().empty()){
 		try{
 			if(recursive){
-				std::filesystem::create_directories(myDir);
+                std::filesystem::create_directories(myDir);
 			}else{
-				std::filesystem::create_directory(myDir);
+                std::filesystem::create_directory(myDir);
 			}
 		}
 		catch(std::exception & except){
@@ -1057,9 +1064,9 @@ bool ofDirectory::remove(bool recursive){
 
 	try{
 		if(recursive){
-			std::filesystem::remove_all(myDir);
+            std::filesystem::remove_all(std::filesystem::canonical(myDir));
 		}else{
-			std::filesystem::remove(myDir);
+            std::filesystem::remove(std::filesystem::canonical(myDir));
 		}
 	}catch(std::exception & except){
 		ofLogError("ofDirectory") << "remove(): unable to remove file/directory: " << except.what();
@@ -1506,7 +1513,7 @@ string ofFilePath::getUserHomeDir(){
 		// getenv will return any Environent Variable on Windows
 		// USERPROFILE is the key on Windows 7 but it might be HOME
 		// in other flavours of windows...need to check XP and NT...
-		return string(getenv("USERPROFILE"));
+		return ofGetEnv("USERPROFILE");
 	#elif !defined(TARGET_EMSCRIPTEN)
 		struct passwd * pw = getpwuid(getuid());
 		return pw->pw_dir;
@@ -1523,14 +1530,17 @@ string ofFilePath::makeRelative(const std::string & from, const std::string & to
     // Find common base
     for( std::filesystem::path::const_iterator toEnd( pathTo.end() ), fromEnd( pathFrom.end() ) ; itrFrom != fromEnd && itrTo != toEnd && *itrFrom == *itrTo; ++itrFrom, ++itrTo );
     // Navigate backwards in directory to reach previously found base
-    for( std::filesystem::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom )
-    {
-        if( (*itrFrom) != "." )
+    for( std::filesystem::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom ){
+        if( (*itrFrom) != "." ){
             ret /= "..";
+        }
     }
     // Now navigate down the directory branch
-    for( ; itrTo != pathTo.end() ; ++itrTo )
-        ret /= *itrTo;
+    for( ; itrTo != pathTo.end() ; ++itrTo ){
+        if( itrTo->string() != "."){
+            ret /= *itrTo;
+        }
+    }
 
     return ret.string();
 }
