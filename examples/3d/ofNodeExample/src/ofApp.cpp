@@ -12,7 +12,7 @@
  not find the word `ofNode` in the code but both ofLight and ofBoxPrimitive
  inherith from ofNode, allowing us to access all its powerful methods.
  
- In this example we want to create a car with 2 headlamp, and we want to move the lights
+ In this example we want to create a car with 2 headlamps, and we want to move the lights
  together with the car, without re-calculating the position of the 2 light.
  We define only how the car should move into the space, the light just need to stay on the front
  of the car, their movement it's just a consequence of the movement of the car.
