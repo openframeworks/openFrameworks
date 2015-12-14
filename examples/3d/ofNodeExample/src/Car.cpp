@@ -17,8 +17,10 @@ void Car::setup(){
     lightR.move(45,20,-51);
     lightL.tilt(-20);
     lightR.tilt(-20);
-    lightR.setSpotlight();
-    lightL.setSpotlight();
+	lightL.setSpotlight();
+	lightR.setSpotlight();
+	lightL.setDiffuseColor(ofFloatColor::yellow);
+	lightR.setDiffuseColor(ofFloatColor::yellow);
     lightL.setup();
     lightR.setup();
 }
@@ -35,11 +37,11 @@ void Car::draw(){
 void Car::update(){
     vel += acceleration;
     vel *= 0.9;
+	acceleration *= 0.99;
     // here we are defining the vector that contains the direction
     // in which the car should move, that is defined by the z-axis of the car and the velocity
     auto velVector = geometry.getZAxis() * -vel;
-    geometry.move(velVector);
-    acceleration = 0;
+	geometry.move(velVector);
 }
 
 void Car::brake(){
