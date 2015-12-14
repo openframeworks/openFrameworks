@@ -20,53 +20,6 @@
 #include "ofAppRunner.h"
 #include "utf8.h"
 
-//constexpr ofUnicode::range ofUnicode::Latin;
-//constexpr ofUnicode::range ofUnicode::Latin1Supplement;
-//constexpr ofUnicode::range ofUnicode::Greek;
-//constexpr ofUnicode::range ofUnicode::Cyrillic;
-//constexpr ofUnicode::range ofUnicode::Arabic;
-//constexpr ofUnicode::range ofUnicode::ArabicSupplement;
-//constexpr ofUnicode::range ofUnicode::ArabicExtendedA;
-//constexpr ofUnicode::range ofUnicode::Devanagari;
-//constexpr ofUnicode::range ofUnicode::HangulJamo;
-//constexpr ofUnicode::range ofUnicode::VedicExtensions;
-//constexpr ofUnicode::range ofUnicode::LatinExtendedAdditional;
-//constexpr ofUnicode::range ofUnicode::GreekExtended;
-//constexpr ofUnicode::range ofUnicode::GeneralPunctuation;
-//constexpr ofUnicode::range ofUnicode::SuperAndSubScripts;
-//constexpr ofUnicode::range ofUnicode::CurrencySymbols;
-//constexpr ofUnicode::range ofUnicode::LetterLikeSymbols;
-//constexpr ofUnicode::range ofUnicode::NumberForms;
-//constexpr ofUnicode::range ofUnicode::Arrows;
-//constexpr ofUnicode::range ofUnicode::MathOperators;
-//constexpr ofUnicode::range ofUnicode::MiscTechnical;
-//constexpr ofUnicode::range ofUnicode::BoxDrawing;
-//constexpr ofUnicode::range ofUnicode::BlockElement;
-//constexpr ofUnicode::range ofUnicode::GeometricShapes;
-//constexpr ofUnicode::range ofUnicode::MiscSymbols;
-//constexpr ofUnicode::range ofUnicode::Dingbats;
-//constexpr ofUnicode::range ofUnicode::Hiragana;
-//constexpr ofUnicode::range ofUnicode::Katakana;
-//constexpr ofUnicode::range ofUnicode::HangulCompatJamo;
-//constexpr ofUnicode::range ofUnicode::KatakanaPhoneticExtensions;
-//constexpr ofUnicode::range ofUnicode::CJKLettersAndMonths;
-//constexpr ofUnicode::range ofUnicode::CJKUnified;
-//constexpr ofUnicode::range ofUnicode::DevanagariExtended;
-//constexpr ofUnicode::range ofUnicode::HangulExtendedA;
-//constexpr ofUnicode::range ofUnicode::HangulSyllables;
-//constexpr ofUnicode::range ofUnicode::HangulExtendedB;
-//constexpr ofUnicode::range ofUnicode::AlphabeticPresentationForms;
-//constexpr ofUnicode::range ofUnicode::ArabicPresFormsA;
-//constexpr ofUnicode::range ofUnicode::ArabicPresFormsB;
-//constexpr ofUnicode::range ofUnicode::KatakanaHalfAndFullwidthForms;
-//constexpr ofUnicode::range ofUnicode::KanaSupplement;
-//constexpr ofUnicode::range ofUnicode::RumiNumericalSymbols;
-//constexpr ofUnicode::range ofUnicode::ArabicMath;
-//constexpr ofUnicode::range ofUnicode::MiscSymbolsAndPictographs;
-//constexpr ofUnicode::range ofUnicode::Emoticons;
-//constexpr ofUnicode::range ofUnicode::TransportAndMap;
-//constexpr ofUnicode::range ofUnicode::Space;
-
 const std::initializer_list<ofUnicode::range> ofAlphabet::Emoji {
     ofUnicode::Space,
     ofUnicode::Hiragana,
