@@ -68,10 +68,10 @@ void ofApp::keyPressed(int key){
             car.brake();
             break;
         case OF_KEY_LEFT:
-            car.steer(+0.8);
+			car.steer(+1);
             break;
         case OF_KEY_RIGHT:
-            car.steer(-0.8);
+			car.steer(-1);
             break;
         default:
             break;
