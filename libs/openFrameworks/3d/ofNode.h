@@ -5,6 +5,7 @@
 #include "of3dUtils.h"
 #include "ofAppRunner.h"
 #include "ofParameter.h"
+#include <array>
 
 
 /// \brief A generic 3d object in space with transformation (position, rotation, scale).
