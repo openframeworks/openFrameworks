@@ -307,6 +307,7 @@
 //http://stackoverflow.com/questions/25935006/ios8-interface-rotation-methods-not-called
 
 //borg
+#ifdef __IPHONE_8_0
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
 
 	CGPoint center;
@@ -329,6 +330,7 @@
 		self.glView.frame = CGRectMake(0, 0, size.width,size.height);
 	}
 }
+#endif
 
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
