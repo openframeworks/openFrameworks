@@ -8,14 +8,10 @@ class ofApp: public ofxUnitTestsApp{
 	}
 };
 
-//========================================================================
-int main( ){
-	auto window = make_shared<ofAppNoWindow>();
-	auto app = make_shared<ofApp>();
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-	ofRunApp(window, app);
+int main(){
+	// To create an application with no Window, we pass pointers to our
+	// ofAppNoWindow class and our ofApp to ofRunApp. Then we call the
+	// ofRunMainLoop() function to start the program.
+	ofRunApp(std::make_shared<ofAppNoWindow>(), std::make_shared<ofApp>());
 	ofRunMainLoop();
-
 }
