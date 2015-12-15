@@ -29,5 +29,6 @@ class ofApp : public ofBaseApp{
 		ofTrueTypeFont  monosm;
 
 		vector <string> storeText;
+		uint64_t lastSent;
 };
 

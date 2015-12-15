@@ -51,7 +51,7 @@ bool ofxTCPClient::setup(string ip, int _port, bool blocking){
 //don't use this one
 //for server to use internally only!
 //--------------------------
-bool ofxTCPClient::setup(int _index, bool blocking){
+bool ofxTCPClient::setupConnectionIdx(int _index, bool blocking){
 	index = _index;
 
 	//this fetches the port that the server
@@ -72,11 +72,11 @@ bool ofxTCPClient::setup(int _index, bool blocking){
 //--------------------------
 bool ofxTCPClient::close(){
 	if( connected ){
-
 		if( !TCPClient.Close() ){
 			ofLogError("ofxTCPClient") << "close(): couldn't close client";
 			return false;
 		}else{
+            ofLogVerbose("ofxTCPClient") << "closing client";
 			connected = false;
 			return true;
 		}
@@ -107,7 +107,9 @@ bool ofxTCPClient::send(string message){
 	message = partialPrevMsg + message + messageDelimiter;
 	message += (char)0; //for flash
 	int ret = TCPClient.SendAll( message.c_str(), message.length() );
-	if( ret == 0 ){
+    int errorCode = 0;
+    if(ret<0) errorCode = ofxNetworkCheckError();
+	if( isClosingCondition(ret, errorCode) ){
 		ofLogWarning("ofxTCPClient") << "send(): client disconnected";
 		close();
 		return false;
@@ -127,6 +129,7 @@ bool ofxTCPClient::send(string message){
 	}
 }
 
+//--------------------------
 bool ofxTCPClient::sendRawMsg(const char * msg, int size){
 
 	// tcp is a stream oriented protocol
@@ -142,8 +145,10 @@ bool ofxTCPClient::sendRawMsg(const char * msg, int size){
 	tmpBuffSend.append(msg,size);
 	tmpBuffSend.append(messageDelimiter.c_str(),messageDelimiter.size());
 
-	int ret = TCPClient.SendAll( tmpBuffSend.getData(), tmpBuffSend.size() );
-	if( ret == 0 ){
+    int ret = TCPClient.SendAll( tmpBuffSend.getData(), tmpBuffSend.size() );
+    int errorCode = 0;
+    if(ret<0) errorCode = ofxNetworkCheckError();
+	if( isClosingCondition(ret, errorCode) ){
 		ofLogWarning("ofxTCPClient") << "sendRawMsg(): client disconnected";
 		close();
 		return false;
@@ -166,26 +171,30 @@ bool ofxTCPClient::sendRawMsg(const char * msg, int size){
 //--------------------------
 bool ofxTCPClient::sendRaw(string message){
 	if( message.length() == 0) return false;
-
-	if( !TCPClient.SendAll(message.c_str(), message.length()) ){
+    int ret = TCPClient.SendAll(message.c_str(), message.length());
+    int errorCode = 0;
+    if(ret<0) errorCode = ofxNetworkCheckError();
+	if( isClosingCondition(ret, errorCode) ){
 		ofLogError("ofxTCPClient") << "sendRawBytes(): sending failed";
 		close();
 		return false;
 	}else{
-		return true;
+		return ret > 0;
 	}
 }
 
 //--------------------------
 bool ofxTCPClient::sendRawBytes(const char* rawBytes, const int numBytes){
 	if( numBytes <= 0) return false;
-
-	if( !TCPClient.SendAll(rawBytes, numBytes) ){
+	int ret = TCPClient.SendAll(rawBytes, numBytes);
+    int errorCode = 0;
+    if(ret<0) errorCode = ofxNetworkCheckError();
+	if( isClosingCondition(ret, errorCode) ){
 		ofLogError("ofxTCPClient") << "sendRawBytes(): sending failed";
 		close();
 		return false;
 	}else{
-		return true;
+		return ret > 0;
 	}
 }
 
@@ -209,10 +218,15 @@ static void removeZeros(char * buffer, int size){
 }
 
 //--------------------------
-string ofxTCPClient::receive(){
+bool ofxTCPClient::isClosingCondition(int messageSize, int errorCode){
+	return (messageSize == SOCKET_ERROR && (errorCode == OFXNETWORK_ERROR(CONNRESET) || errorCode == OFXNETWORK_ERROR(CONNABORTED) || errorCode == OFXNETWORK_ERROR(CONNREFUSED) || errorCode == EPIPE || errorCode == OFXNETWORK_ERROR(NOTCONN)))
+		|| (messageSize == 0 && !TCPClient.IsNonBlocking() && TCPClient.GetTimeoutReceive()!=NO_TIMEOUT);
+}
 
+//--------------------------
+string ofxTCPClient::receive(){
 	str    = "";
-	int length=-2;
+	int length=0;
 	//only get data from the buffer if we don't have already some complete message
 	if(tmpStr.find(messageDelimiter)==string::npos){
 		memset(tmpBuff,  0, TCP_MAX_MSG_SIZE+1); //one more so there's always a \0 at the end for string concat
@@ -223,9 +237,10 @@ string ofxTCPClient::receive(){
 		}
 	}
 
-	// check for connection reset or disconnection
-	int errorCode = ofxNetworkCheckError();
-	if((length==-1 && ( errorCode == ECONNRESET || errorCode == ECONNABORTED )) || length == 0){
+    // check for connection reset or disconnection
+    int errorCode = 0;
+    if(length<0) errorCode = ofxNetworkCheckError();
+	if(isClosingCondition(length,errorCode)){
 		close();
 		if(tmpStr.length()==0) // return if there's no more data left in the buffer
 			return "";
@@ -239,7 +254,7 @@ string ofxTCPClient::receive(){
 	return str;
 }
 
-
+//--------------------------
 static int findDelimiter(char * data, int size, string delimiter){
 	unsigned int posInDelimiter=0;
 	for(int i=0;i<size;i++){
@@ -253,6 +268,7 @@ static int findDelimiter(char * data, int size, string delimiter){
 	return -1;
 }
 
+//--------------------------
 int ofxTCPClient::receiveRawMsg(char * receiveBuffer, int numBytes){
 	int length=-2;
 	//only get data from the buffer if we don't have already some complete message
@@ -285,9 +301,11 @@ int ofxTCPClient::receiveRawMsg(char * receiveBuffer, int numBytes){
 
 //--------------------------
 int ofxTCPClient::receiveRawBytes(char * receiveBuffer, int numBytes){
-	messageSize = TCPClient.Receive(receiveBuffer, numBytes);
+    messageSize = TCPClient.Receive(receiveBuffer, numBytes);
+    int errorCode = 0;
+    if(messageSize<0) errorCode = ofxNetworkCheckError();
 	//	0 is not an error... -1 is
-	if ( messageSize == SOCKET_ERROR ){
+	if(isClosingCondition(messageSize, errorCode)){
 		close();
 	}
 	return messageSize;
@@ -295,9 +313,10 @@ int ofxTCPClient::receiveRawBytes(char * receiveBuffer, int numBytes){
 
 //--------------------------
 int ofxTCPClient::peekReceiveRawBytes(char * receiveBuffer, int numBytes){
-	messageSize = TCPClient.PeekReceive(receiveBuffer, numBytes);
-	//	network error, kill client
-	if ( messageSize == SOCKET_ERROR ){
+    messageSize = TCPClient.PeekReceive(receiveBuffer, numBytes);
+    int errorCode = 0;
+    if(messageSize<0) errorCode = ofxNetworkCheckError();
+    if(isClosingCondition(messageSize, errorCode)){
 		close();
 	}
 	return messageSize;
@@ -305,10 +324,12 @@ int ofxTCPClient::peekReceiveRawBytes(char * receiveBuffer, int numBytes){
 
 //--------------------------
 string ofxTCPClient::receiveRaw(){
-	messageSize = TCPClient.Receive(tmpBuff, TCP_MAX_MSG_SIZE);
-	if(messageSize==0){
+    messageSize = TCPClient.Receive(tmpBuff, TCP_MAX_MSG_SIZE);
+    int errorCode = 0;
+    if(messageSize<0) errorCode = ofxNetworkCheckError();
+	if(isClosingCondition(messageSize, errorCode)){
 		close();
-	}else if(messageSize<TCP_MAX_MSG_SIZE) {
+	}else if(messageSize>=0 && messageSize<TCP_MAX_MSG_SIZE) {
         // null terminate!!
         tmpBuff[messageSize] = 0;
     }
@@ -318,6 +339,11 @@ string ofxTCPClient::receiveRaw(){
 
 //--------------------------
 bool ofxTCPClient::isConnected(){
+	if (connected) {
+		if (!TCPClient.CheckIsConnected()) {
+			close();
+		}
+	}
 	return connected;
 }
 
@@ -330,9 +356,3 @@ int ofxTCPClient::getPort(){
 string ofxTCPClient::getIP(){
 	return ipAddr;
 }
-
-
-
-
-
-

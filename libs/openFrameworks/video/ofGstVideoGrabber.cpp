@@ -230,9 +230,13 @@ static void get_supported_framerates (ofGstVideoFormat &video_format, GstStructu
 		ofLogVerbose("ofGstVideoGrabber") << "get_supported_framerates(): from "
 				<< numerator_min << "/" << denominator_max
 				<< " to " << numerator_max << "/" << denominator_min;
-
-		for (int i = numerator_min; i <= numerator_max; i++){
-			for (int j = denominator_min; j <= denominator_max; j++){
+        if(denominator_max==1 && numerator_max>1000000){
+            // workaround for #4647 where some camera seems to
+            // return a really high value for num_max crashing the app
+            numerator_max = 1000;
+        }
+        for (int i = numerator_min; i <= numerator_max; i++){
+            for (int j = denominator_min; j <= denominator_max; j++){
 				framerate.numerator = i;
 				framerate.denominator = j;
 				video_format.framerates.push_back(framerate);

@@ -17,13 +17,6 @@ ofAVFoundationPlayer::ofAVFoundationPlayer() {
     bResetPixels = false;
     bUpdatePixels = false;
     bUpdateTexture = false;
-    bTextureCacheSupported = false;
-#ifdef TARGET_OF_IOS
-    bTextureCacheSupported = (CVOpenGLESTextureCacheCreate != nullptr);
-#endif
-#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_4)
-	bTextureCacheSupported = true;
-#endif
 }
 
 //--------------------------------------------------------------
@@ -38,10 +31,8 @@ ofAVFoundationPlayer& ofAVFoundationPlayer::operator=(ofAVFoundationPlayer other
 	pixels.clear();
 	videoTexture.clear();
 	
-	// in any case get rid of the textures
-	if(bTextureCacheSupported == true) {
-		killTextureCache();
-	}
+	// get rid of the textures
+	killTextureCache();
 
 	bFrameNew = false;
 	bResetPixels = false;
@@ -102,7 +93,6 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 	videoTexture.clear();
 	
     bool bCreateTextureCache = true;
-    bCreateTextureCache = bCreateTextureCache && (bTextureCacheSupported == true);
     bCreateTextureCache = bCreateTextureCache && (_videoTextureCache == nullptr);
     
     if(bCreateTextureCache == true) {
@@ -163,10 +153,8 @@ void ofAVFoundationPlayer::disposePlayer() {
 		videoPlayer = nullptr;
 	}
 	
-	// in any case get rid of the textures
-	if(bTextureCacheSupported == true) {
-		killTextureCache();
-	}
+	// get rid of the textures
+	killTextureCache();
 
 	
 	bFrameNew = false;
@@ -382,28 +370,7 @@ ofTexture * ofAVFoundationPlayer::getTexturePtr() {
         return &videoTexture;
     }
     
-    if(bTextureCacheSupported == true) {
-        
-        initTextureCache();
-        
-    } else {
-        
-        /**
-         *  no video texture cache.
-         *  load texture from pixels.
-         *  this method is the slower alternative.
-         */
-        
-        int maxTextureSize = 0;
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-        
-        if(getWidth() > maxTextureSize || getHeight() > maxTextureSize) {
-            ofLogWarning("ofAVFoundationPlayer") << "getTexturePtr(): " << getWidth() << "x" << getHeight() << " video image is bigger then max supported texture size " << maxTextureSize << ".";
-            return nullptr;
-        }
-        
-        videoTexture.loadData(getPixels());
-    }
+    initTextureCache();
     
     bUpdateTexture = false;
     
