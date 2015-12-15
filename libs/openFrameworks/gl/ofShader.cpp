@@ -545,7 +545,15 @@ bool ofShader::linkProgram() {
 		for(GLint i = 0; i < numUniforms; i++) {
 			glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName.data());
 			string name(uniformName.begin(), uniformName.begin()+length);
+			// some drivers return uniform_name[0] for array uniforms
+			// instead of the real uniform name
 			uniformsCache[name] = glGetUniformLocation(program, name.c_str());
+			auto arrayPos = name.find('[');
+			if(arrayPos!=std::string::npos){
+				name = name.substr(0, arrayPos);
+			}
+			uniformsCache[name] = glGetUniformLocation(program, name.c_str());
+			ofLogVerbose("ofShader") <<  name << " -> " << uniformsCache[name];
 		}
 
 #ifdef TARGET_ANDROID
