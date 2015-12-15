@@ -551,9 +551,8 @@ bool ofShader::linkProgram() {
 			auto arrayPos = name.find('[');
 			if(arrayPos!=std::string::npos){
 				name = name.substr(0, arrayPos);
+				uniformsCache[name] = glGetUniformLocation(program, name.c_str());
 			}
-			uniformsCache[name] = glGetUniformLocation(program, name.c_str());
-			ofLogVerbose("ofShader") <<  name << " -> " << uniformsCache[name];
 		}
 
 #ifdef TARGET_ANDROID
