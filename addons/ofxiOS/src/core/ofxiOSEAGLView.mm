@@ -559,5 +559,17 @@ static ofxiOSEAGLView * _instanceRef = nil;
     }];
 }
 
+#if TARGET_OS_TV
+- (void)handleTap:(UITapGestureRecognizer *)sender {
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        NSLog(@"Menu button released");
+        ofControllerEventArgs controllerArgs;
+        controllerArgs.buttonType = ofControllerEventArgs::menuButton;
+        controllerArgs.isPressed = NO;
+        controllerArgs.controllerID = -1;
+        ofNotifyEvent(window->events().controllerReleased, controllerArgs);
+    }
+}
+#endif
 
 @end
