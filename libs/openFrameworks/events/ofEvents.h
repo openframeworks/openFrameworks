@@ -177,6 +177,8 @@ class ofControllerEventArgs : public ofEventArgs {
 public:
     enum Type {
         none,
+        connected,
+        disconnected,
         leftButton,
         rightButton,
         upButton,
@@ -196,11 +198,15 @@ public:
         rightThumbstick,
         microButtonA,
         microButtonX,
+        microLeftButton,
+        microRightButton,
+        microUpButton,
+        microDownButton,
         menuButton
     };
     
     ofControllerEventArgs()
-     :buttonType(none)
+     :eventType(none)
      ,value(0)
      ,isPressed(false)
      ,controllerID(0)
@@ -210,7 +216,7 @@ public:
     }
     
     ofControllerEventArgs(Type type, float theValue, bool pressed)
-     :buttonType(type)
+     :eventType(type)
      ,value(theValue)
      ,isPressed(pressed)
      ,controllerID(0)
@@ -220,7 +226,7 @@ public:
         
     }
 
-    Type buttonType;
+    Type eventType;
     float value;
     float x, y;
     bool isPressed;
