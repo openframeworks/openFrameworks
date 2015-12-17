@@ -1,15 +1,14 @@
-#include "ofMain.h"
+#include "ofAppRunner.h"
 #include "ofApp.h"
 
-//========================================================================
-int main( ){
 
+int main(){
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	int windowWidth = 1024;
 	int windowHeight = 500;
-	
+
 	#ifdef TARGET_OPENGLES
-    	ofGLESWindowSettings settings;
+	ofGLESWindowSettings settings;
 	settings.width = windowWidth;
 	settings.height = windowHeight;
 	settings.setGLESVersion(2);
@@ -18,6 +17,6 @@ int main( ){
 	ofSetupOpenGL(windowWidth, windowHeight, OF_WINDOW);
 	#endif
 
-	ofRunApp( new ofApp());
+	return ofRunApp(std::make_shared<ofApp>());
 
 }

@@ -1,7 +1,7 @@
+#include "ofAppRunner.h"
 #include "ofApp.h"
 
 int main(){
-
     //  here are the most commonly used iOS window settings.
     //------------------------------------------------------
     ofiOSWindowSettings settings;
@@ -12,10 +12,11 @@ int main(){
     settings.enableHardwareOrientation = false; // enables native view orientation.
     settings.enableHardwareOrientationAnimation = false; // enables native orientation changes to be animated.
     settings.glesVersion = OFXIOS_RENDERER_ES1; // type of renderer to use, ES1, ES2, etc.
-    
-    ofAppiOSWindow * window = (ofAppiOSWindow *)(ofCreateWindow(settings).get());
-    
+
+    ofAppiOSWindow* window = (ofAppiOSWindow*)(ofCreateWindow(settings).get());
+
     bool bUseNative = true;
+
     if (bUseNative){
         /**
          *
@@ -29,17 +30,20 @@ int main(){
          *  The AppDelegate must extend ofxiOSAppDelegate.
          *
          **/
-        
+
         window->startAppWithDelegate("MyAppDelegate");
+
+        return 0;
     }
-    else {
+    else
+    {
         /**
          *
          *  This is the normal way of running an app using ofxiOS.
          *  This code has been left in this example to show that ofxiOS still works
          *
          **/
-        
-        return ofRunApp(new ofApp());
-    }
+
+         return ofRunApp(std::make_shared<ofApp>());
+     }
 }
