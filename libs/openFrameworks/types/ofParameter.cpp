@@ -63,3 +63,67 @@ istream& operator>>(istream& is, ofAbstractParameter& p){
 	p.fromString(str);
 	return is;
 }
+
+
+
+ofParameter<void>::ofParameter()
+:obj(new Value){
+
+}
+
+ofParameter<void>::ofParameter(const string& name)
+:obj(new Value(name)){
+
+}
+
+void ofParameter<void>::setName(const string & name){
+	obj->name = name;
+}
+
+string ofParameter<void>::getName() const{
+	return obj->name;
+}
+
+std::string ofParameter<void>::toString() const{
+	return "";
+}
+
+void ofParameter<void>::fromString(const std::string & name){
+
+}
+
+void ofParameter<void>::trigger(){
+	ofNotifyEvent(obj->changedE,this);
+}
+
+void ofParameter<void>::enableEvents(){
+	obj->changedE.enable();
+}
+
+void ofParameter<void>::disableEvents(){
+	obj->changedE.disable();
+}
+
+bool ofParameter<void>::isSerializable() const{
+	return obj->serializable;
+}
+
+bool ofParameter<void>::isReadOnly() const{
+	return false;
+}
+
+void ofParameter<void>::makeReferenceTo(ofParameter<void> & mom){
+	*this = mom;
+}
+
+void ofParameter<void>::setSerializable(bool serializable){
+	obj->serializable = serializable;
+}
+
+shared_ptr<ofAbstractParameter> ofParameter<void>::newReference() const{
+	return std::make_shared<ofParameter<void>>(*this);
+}
+
+void ofParameter<void>::setParent(ofParameterGroup & parent){
+	obj->parents.emplace_back(parent.obj);
+}

@@ -868,6 +868,68 @@ void ofParameter<ParameterType>::setParent(ofParameterGroup & parent){
 	obj->parents.emplace_back(parent.obj);
 }
 
+template<>
+class ofParameter<void>: public ofAbstractParameter{
+public:
+	ofParameter();
+	ofParameter(const string& name);
+
+	void setName(const string & name);
+	string getName() const;
+
+	std::string toString() const;
+    void fromString(const std::string & name);
+
+	template<class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method, int prio=OF_EVENT_ORDER_AFTER_APP){
+		ofAddListener(obj->changedE,listener,method,prio);
+	}
+
+	template<class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method, int prio=OF_EVENT_ORDER_AFTER_APP){
+		ofRemoveListener(obj->changedE,listener,method,prio);
+	}
+
+	void trigger();
+
+	void enableEvents();
+	void disableEvents();
+	bool isSerializable() const;
+	bool isReadOnly() const;
+
+	void makeReferenceTo(ofParameter<void> & mom);
+
+	void setSerializable(bool serializable);
+	shared_ptr<ofAbstractParameter> newReference() const;
+
+	void setParent(ofParameterGroup & _parent);
+
+	const ofParameterGroup getFirstParent() const{
+		auto first = std::find_if(obj->parents.begin(),obj->parents.end(),[](weak_ptr<ofParameterGroup::Value> p){return p.lock()!=nullptr;});
+		if(first!=obj->parents.end()){
+			return first->lock();
+		}else{
+			return shared_ptr<ofParameterGroup::Value>(nullptr);
+		}
+	}
+private:
+	class Value{
+	public:
+		Value()
+		:serializable(false){};
+
+		Value(string name)
+		:name(name)
+		,serializable(false){};
+
+		string name;
+		ofEvent<void> changedE;
+		bool serializable;
+		vector<weak_ptr<ofParameterGroup::Value>> parents;
+	};
+	shared_ptr<Value> obj;
+};
+
 
 
 /// \brief ofReadOnlyParameter holds a value and notifies its listeners when it changes.
