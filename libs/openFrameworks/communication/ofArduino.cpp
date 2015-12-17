@@ -1,6 +1,6 @@
 /*
  * 11/5/15:
- *   - updated for arduino 2.4.4 and configurable firmata
+ *   - updated for arduino 2.5.0 and configurable firmata
  *
  * 1/9/13:
  *   - Fixed issue where digitalPinchange
@@ -90,8 +90,6 @@ ofArduino::ofArduino() {
 	connected = false;
 	connectTime = 0.0f;
 
-	_majorProtocolVersion = 0;
-	_minorProtocolVersion = 0;
 	_majorFirmwareVersion = 0;
 	_minorFirmwareVersion = 0;
 	_firmwareName = "Unknown";
@@ -206,8 +204,9 @@ void ofArduino::update() {
 	int bytesToRead = _port.available();
 	if (bytesToRead > 0) {
 		bytesToProcess.resize(bytesToRead);
-		_port.readBytes(&bytesToProcess[0], bytesToRead);
-		for (int i = 0; i < bytesToRead; i++) {
+		//its possible we dont get all the bytes
+		int bytesRead = _port.readBytes(&bytesToProcess[0], bytesToRead);
+		for (int i = 0; i < bytesRead; i++) {
 			processData((char)(bytesToProcess[i]));
 		}
 	}
@@ -218,7 +217,7 @@ int ofArduino::getAnalog(int pin) const {
 		return -1;
 	}
 	if (_digitalPinMode[convertAnalogPinToDigital(pin)] != ARD_ANALOG) {
-		ofLogError("ofArduino") << "Analog Input has not been configured for this pin";
+		ofLogError("ofArduino") << "Analog Input has not been configured for pin " << pin;
 		return -1;
 	}
 	pin = convertDigitalPinToAnalog(pin);
@@ -250,7 +249,7 @@ int ofArduino::getPwm(int pin) const {
 		return -1;
 	}
 	if (!pinCapabilities[pin].pwmSupported) {
-		ofLogError("ofArduino") << "PWM is not supported for this pin";
+		ofLogError("ofArduino") << "PWM is not supported for pin " << pin;
 		return -1;
 	}
 	if (_digitalPinMode[pin] == ARD_PWM) {
@@ -305,7 +304,7 @@ void ofArduino::sendPwm(int pin, int value, bool force) {
 		return;
 	}
 	if (!pinCapabilities[pin].pwmSupported) {
-		ofLogError("ofArduino") << "PWM is not supported for this pin";
+		ofLogError("ofArduino") << "PWM is not supported for pin " << pin;
 		return;
 	}
 	if (_digitalPinMode[pin] == ARD_PWM && (_digitalPinValue[pin] != value || force)) {
@@ -336,7 +335,7 @@ void ofArduino::sendSysExEnd() {
 
 void ofArduino::sendString(string str) {
 	sendByte(START_SYSEX);
-	sendByte(FIRMATA_STRING);
+	sendByte(STRING_DATA);
 	string::iterator it = str.begin();
 	while (it != str.end()) {
 		sendValueAsTwo7bitBytes(*it);
@@ -375,6 +374,14 @@ void ofArduino::sendAnalogMappingRequest()
 	sendByte(END_SYSEX);
 }
 
+void ofArduino::sendPinStateQuery(int pin)
+{
+	sendByte(START_SYSEX);
+	sendByte(PIN_STATE_QUERY);
+	sendByte(pin & 0x7f);
+	sendByte(END_SYSEX);
+}
+
 void ofArduino::sendReset() {
 	sendByte(SYSTEM_RESET);
 }
@@ -390,7 +397,7 @@ void ofArduino::sendAnalogPinReporting(int pin, int mode) {
 	//the sent message needs the analog pin #
 	sendByte(REPORT_ANALOG | convertDigitalPinToAnalog(pin));
 	sendByte(mode);
-	_analogPinReporting[pin] = mode;
+	_analogPinReporting[convertDigitalPinToAnalog(pin)] = mode;
 }
 
 void ofArduino::sendDigitalPinMode(int pin, int mode) {
@@ -401,55 +408,55 @@ void ofArduino::sendDigitalPinMode(int pin, int mode) {
 	case ARD_INPUT:
 	case ARD_INPUT_PULLUP:
 		if (!pinCapabilities[pin].inputSupported) {
-			ofLogError("ofArduino") << "Input is not supported for this pin";
+			ofLogError("ofArduino") << "Input is not supported for pin " << pin;
 			return;
 		}
 		break;
 	case ARD_OUTPUT:
 		if (!pinCapabilities[pin].outputSupported) {
-			ofLogError("ofArduino") << "Output is not supported for this pin";
+			ofLogError("ofArduino") << "Output is not supported for pin " << pin;
 			return;
 		}
 		break;
 	case ARD_ANALOG:
 		if (!pinCapabilities[pin].analogSupported) {
-			ofLogError("ofArduino") << "Analog is not supported for this pin";
+			ofLogError("ofArduino") << "Analog is not supported for pin " << pin;
 			return;
 		}
 		break;
 	case ARD_PWM:
 		if (!pinCapabilities[pin].pwmSupported) {
-			ofLogError("ofArduino") << "PWM is not supported for this pin";
+			ofLogError("ofArduino") << "PWM is not supported for pin " << pin;
 			return;
 		}
 		break;
 	case ARD_SERVO:
 		if (!pinCapabilities[pin].servoSupported) {
-			ofLogError("ofArduino") << "Servo Control is not supported for this pin";
+			ofLogError("ofArduino") << "Servo Control is not supported for pin " << pin;
 			return;
 		}
 		break;
 	case ARD_I2C:
 		if (!pinCapabilities[pin].i2cSupported) {
-			ofLogError("ofArduino") << "I2C is not supported for this pin";
+			ofLogError("ofArduino") << "I2C is not supported for pin " << pin;
 			return;
 		}
 		break;
 	case ARD_ONEWIRE:
 		if (!pinCapabilities[pin].onewireSupported) {
-			ofLogError("ofArduino") << "Onewire is not supported for this pin";
+			ofLogError("ofArduino") << "Onewire is not supported for pin " << pin;
 			return;
 		}
 		break;
 	case ARD_STEPPER:
 		if (!pinCapabilities[pin].stepperSupported) {
-			ofLogError("ofArduino") << "Stepper Control is not supported for this pin";
+			ofLogError("ofArduino") << "Stepper Control is not supported for pin " << pin;
 			return;
 		}
 		break;
 	case ARD_ENCODER:
 		if (!pinCapabilities[pin].encoderSupported) {
-			ofLogError("ofArduino") << "Encoder Control is not supported for this pin";
+			ofLogError("ofArduino") << "Encoder Control is not supported for pin " << pin;
 			return;
 		}
 		break;
@@ -471,7 +478,7 @@ void ofArduino::sendDigitalPinMode(int pin, int mode) {
 
 	// turn on or off reporting on the port
 
-	if (mode == ARD_INPUT) {
+	if (mode == ARD_INPUT || mode == ARD_INPUT_PULLUP) {
 		sendDigitalPinReporting(pin, ARD_ON);
 	}
 	else {
@@ -485,7 +492,7 @@ int ofArduino::getAnalogPinReporting(int pin) const {
 		return -1;
 	}
 	if (_digitalPinMode[convertAnalogPinToDigital(pin)] != ARD_ANALOG) {
-		ofLogError("ofArduino") << "Analog Input has not been configured for this pin";
+		ofLogError("ofArduino") << "Analog Input has not been configured for pin " << pin;
 		return -1;
 	}
 	//these are just safety checks
@@ -498,7 +505,7 @@ list <int> * ofArduino::getAnalogHistory(int pin) {
 		return NULL;
 	}
 	if (_digitalPinMode[convertAnalogPinToDigital(pin)] != ARD_ANALOG) {
-		ofLogError("ofArduino") << "Analog Input has not been configured for this pin";
+		ofLogError("ofArduino") << "Analog Input has not been configured for pin " << pin;
 		return NULL;
 	}
 	pin = convertDigitalPinToAnalog(pin);
@@ -518,14 +525,6 @@ list <vector <unsigned char> > * ofArduino::getSysExHistory() {
 
 list <string> * ofArduino::getStringHistory() {
 	return &_stringHistory;
-}
-
-int ofArduino::getMajorProtocolVersion() const {
-	return _majorProtocolVersion;
-}
-
-int ofArduino::getMinorProtocolVersion() const {
-	return _minorProtocolVersion;
 }
 
 int ofArduino::getMajorFirmwareVersion() const {
@@ -572,9 +571,9 @@ void ofArduino::processData(unsigned char inputData) {
 				break;
 
 			case REPORT_VERSION:    // report version
-				_majorProtocolVersion = _storedInputData[1];
-				_minorProtocolVersion = _storedInputData[0];
-				ofNotifyEvent(EProtocolVersionReceived, _majorProtocolVersion, this);
+				_majorFirmwareVersion = _storedInputData[1];
+				_minorFirmwareVersion = _storedInputData[0];
+				ofNotifyEvent(EFirmwareVersionReceived, _majorFirmwareVersion, this);
 				break;
 
 			case ANALOG_MESSAGE:
@@ -663,6 +662,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 	// act on reserved sysEx messages (extended commands) or trigger SysEx event...
 	switch (data.front()) {  //first byte in buffer is command
 	case REPORT_FIRMWARE:
+		ofLogVerbose("ofArduino") << "Recieved Firmware Report";
 		it = data.begin();
 		it++;    // skip the first byte, which is the firmware version command
 		_majorFirmwareVersion = *it;
@@ -688,7 +688,8 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 
 		break;
 
-	case FIRMATA_STRING:
+	case STRING_DATA:
+		ofLogVerbose("ofArduino") << "Recieved Firamta String";
 		it = data.begin();
 		it++;    // skip the first byte, which is the string command
 		while (it != data.end()) {
@@ -707,8 +708,9 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 		ofNotifyEvent(EStringReceived, str, this);
 		break;
 	case I2C_REPLY:
+		ofLogVerbose("ofArduino") << "Recieved I2C Reply";
 		if (data.size() > 7 && (data.size() - 5) % 2 == 0) {
-			I2C_Data i2creply;
+			Firmata_I2C_Data i2creply;
 			it = data.begin();
 			it++; // skip the first byte, which is the string command
 
@@ -732,10 +734,11 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 		}
 		break;
 	case ENCODER_DATA:
+		ofLogVerbose("ofArduino") << "Recieved Encoder Data";
 		if (data.size() % 5 == 1) {
 
-			vector<Encoder_Data> encoderReply;
-			Encoder_Data tempEncoderReply;
+			vector<Firmata_Encoder_Data> encoderReply;
+			Firmata_Encoder_Data tempEncoderReply;
 			int encoderPos = 0;
 			unsigned char encBuffer[4];
 
@@ -764,7 +767,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 				tempEncoderReply.position = encoderPos;
 				encoderReply.push_back(tempEncoderReply);
 			}
-			ofNotifyEvent(EEncoderDataRecieved, encoderReply, this);
+			ofNotifyEvent(EEncoderDataReceived, encoderReply, this);
 		}
 		else {
 			ofLogError("Arduino Encoder") << "Incorrect Number of Bytes recieved, possible buffer overflow";
@@ -774,7 +777,8 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 		break;
 	case SERIAL_MESSAGE:
 	{
-		Serial_Data reply;
+		ofLogVerbose("ofArduino") << "Recieved Serial Message";
+		Firmata_Serial_Data reply;
 
 		it = data.begin();
 		unsigned char command = *it & 0xF0;
@@ -817,11 +821,12 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 			ofLogError("Arduino Serial") << "Port does not exist or is not defined";
 		}
 		reply.data = str;
-		ofNotifyEvent(ESerialDataRecieved, reply, this);
+		ofNotifyEvent(ESerialDataReceived, reply, this);
 	}
 	break;
 	case CAPABILITY_RESPONSE:
 	{
+		ofLogVerbose("ofArduino") << "Recieved Capability Response";
 		it = data.begin();
 		it += 2; // skip the first byte, which is the string command
 
@@ -906,17 +911,18 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 	break;
 	case ANALOG_MAPPING_RESPONSE:
 	{
+		ofLogVerbose("ofArduino") << "Recieved Analog Map Query Response";
 		it = data.begin();
 		int pin = 0;
 		bool fAPin = false;
 		it++;    // skip the first byte, which is the string command
-
+		_totalAnalogPins = 0;
 		while (it != data.end()) {
 			//from the firmata protocol
 			//analog channel corresponding to pin x, or 127 if pin x does not support analog
 			if (*it != 127) {
 				analogPinMap.emplace(int(*it), pin);
-
+				_totalAnalogPins++;
 				//these should be set by the capability query but just incase
 				pinCapabilities[pin].analogSupported = true;
 				if (!firmataAnalogSupported)
@@ -925,7 +931,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 				//lets also make sure that the capability response and this match up
 				if (!fAPin) {
 					if (pin != _firstAnalogPin)
-						ofLogError("ofArduino") << "Capabaility Query and Analog Map don't match up";
+						ofLogNotice("ofArduino") << "Capabaility Query and Analog Map don't match up";
 					_firstAnalogPin = pin;
 					fAPin = true;
 				}
@@ -938,7 +944,62 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 		}
 	}
 	break;
+	case PIN_STATE_RESPONSE:
+	{
+		ofLogVerbose("ofArduino") << "Recieved Pin State Query Response";
+		it = data.begin();
+		it++;    // skip the first byte, which is the string command
+		int pin = *it++;
+		Firmata_Pin_Modes mode;
+		switch (*it++) {
+		case ARD_INPUT:
+			mode = Firmata_Pin_Modes::MODE_INPUT;
+			break;
+		case ARD_INPUT_PULLUP:
+			mode = Firmata_Pin_Modes::MODE_INPUT_PULLUP;
+			break;
+		case ARD_OUTPUT:
+			mode = Firmata_Pin_Modes::MODE_OUTPUT;
+			break;
+		case ARD_ANALOG:
+			mode = Firmata_Pin_Modes::MODE_ANALOG;
+			break;
+		case ARD_PWM:
+			mode = Firmata_Pin_Modes::MODE_PWM;
+			break;
+		case ARD_SERVO:
+			mode = Firmata_Pin_Modes::MODE_SERVO;
+			break;
+		case ARD_I2C:
+			mode = Firmata_Pin_Modes::MODE_I2C;
+			break;
+		case ARD_SERIAL:
+			mode = Firmata_Pin_Modes::MODE_SERIAL;
+			break;
+		case ARD_ONEWIRE:
+			mode = Firmata_Pin_Modes::MODE_ONEWIRE;
+			break;
+		case ARD_STEPPER:
+			mode = Firmata_Pin_Modes::MODE_STEPPER;
+			break;
+		case ARD_ENCODER:
+			mode = Firmata_Pin_Modes::MODE_ENCODER;
+			break;
+		}
+		int val;
+		int shift = 0;
+		while (it != data.end()) {
+			val = *it << shift;
+			it++;
+			shift += 7;
+		} //clear whatever is left
+		int pinVal[2] = { pin, val };
+		pair<int, Firmata_Pin_Modes> reply(pin, mode);
+		ofNotifyEvent(EPinStateResponseReceived, reply, this);
+	}
+	break;
 	default:    // the message isn't in Firmatas extended command set
+		ofLogVerbose("ofArduino") << "This message isn't in Firmatas extended command set";
 		_sysExHistory.push_front(data);
 		if ((int)_sysExHistory.size() > _sysExHistoryLength) {
 			_sysExHistory.pop_back();
@@ -951,6 +1012,8 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 
 void ofArduino::processDigitalPort(int port, unsigned char value) {
 
+	if (!_initialized)
+		return;
 	unsigned char mask;
 	int previous;
 	int i;
@@ -958,7 +1021,7 @@ void ofArduino::processDigitalPort(int port, unsigned char value) {
 
 	for (int i = 0; i<8; ++i) {
 		pin = i + (port * 8);
-		if (_digitalPinMode[pin] == ARD_INPUT || _digitalPinMode[pin] == ARD_INPUT_PULLUP) {
+		if (pin <= _totalDigitalPins && (_digitalPinMode[pin] == ARD_INPUT || _digitalPinMode[pin] == ARD_INPUT_PULLUP)) {
 			if (!_digitalHistory[pin].empty())
 				previous = _digitalHistory[pin].front();
 			else previous = 0;
@@ -984,19 +1047,11 @@ void ofArduino::sendDigitalPortReporting(int port, int mode) {
 }
 
 void ofArduino::sendDigitalPinReporting(int pin, int mode) {
-	_digitalPinReporting[pin] = mode;
-	if (mode == ARD_ON) {	// enable reporting for the port
-		sendDigitalPortReporting(pin >> 3, mode);
-	}
-	else if (mode == ARD_OFF) {
-		bool send = true;
-		int port = pin >> 3;
-		for (int i = 0; i < 8; i++) {
-			if (_digitalPinReporting[port * 8 + i] == ARD_ON)
-				send = false;
-		}
-		if (send)
-			sendDigitalPortReporting(port, ARD_OFF);
+	
+	int port = floor(pin / 8);
+	if (mode == ARD_OFF || mode == ARD_ON) {
+		_digitalPinReporting[pin] = mode;
+		sendDigitalPortReporting(port, mode);
 	}
 }
 
@@ -1391,7 +1446,7 @@ void  ofArduino::sendOneWireConfig(int pin, bool enableParasiticPower) {
 		return;
 	}
 	if (!pinCapabilities[pin].onewireSupported) {
-		ofLogError("ofArduino") << "Onewire is not supported for this pin";
+		ofLogError("ofArduino") << "Onewire is not supported for pin " << pin;
 		return;
 	}
 	sendByte(START_SYSEX);
@@ -1416,7 +1471,7 @@ void  ofArduino::sendOneWireSearch(char type, int pin) {
 		return;
 	}
 	if (!pinCapabilities[pin].onewireSupported) {
-		ofLogError("ofArduino") << "Onewire is not supported for this pin";
+		ofLogError("ofArduino") << "Onewire is not supported for pin " << pin;
 		return;
 	}
 	sendByte(START_SYSEX);
@@ -1457,7 +1512,7 @@ void  ofArduino::sendOneWireRequest(int pin, unsigned char subcommand, vector<un
 		return;
 	}
 	if (!pinCapabilities[pin].onewireSupported) {
-		ofLogError("ofArduino") << "Onewire is not supported for this pin";
+		ofLogError("ofArduino") << "Onewire is not supported for pin " << pin;
 		return;
 	}
 	vector<unsigned char> bytes;
@@ -1544,11 +1599,11 @@ void ofArduino::attachEncoder(int pinA, int pinB) {
 		return;
 	}
 	if (!pinCapabilities[pinA].encoderSupported) {
-		ofLogError("ofArduino") << "Encoder Control is not supported for pin" + ofToString(pinA);
+		ofLogError("ofArduino") << "Encoder Control is not supported for pin " + ofToString(pinA);
 		return;
 	}
 	if (!pinCapabilities[pinB].encoderSupported) {
-		ofLogError("ofArduino") << "Encoder Control is not supported for pin" + ofToString(pinB);
+		ofLogError("ofArduino") << "Encoder Control is not supported for pin " + ofToString(pinB);
 		return;
 	}
 	if (_encoderID < MAX_ENCODERS) {
@@ -1627,7 +1682,7 @@ void ofArduino::purge() {
 *
 ********************************************/
 
-void ofArduino::sendSerialConfig(Serial_Ports portID, int baud, int rxPin, int txPin) {
+void ofArduino::sendSerialConfig(Firmata_Serial_Ports portID, int baud, int rxPin, int txPin) {
 
 	if (portID > 7 && rxPin < 0 && txPin < 0) {
 		ofLogError("ofArduino") << "Both RX and TX pins must be defined when using Software Serial.";
@@ -1654,7 +1709,7 @@ void ofArduino::sendSerialConfig(Serial_Ports portID, int baud, int rxPin, int t
 	sendByte(END_SYSEX);
 };
 
-void ofArduino::serialWrite(Serial_Ports portID, unsigned char * bytes, int numOfBytes) {
+void ofArduino::serialWrite(Firmata_Serial_Ports portID, unsigned char * bytes, int numOfBytes) {
 	sendByte(START_SYSEX);
 	sendByte(SERIAL_MESSAGE);
 	sendByte(SERIAL_WRITE | portID);
@@ -1664,7 +1719,7 @@ void ofArduino::serialWrite(Serial_Ports portID, unsigned char * bytes, int numO
 	sendByte(END_SYSEX);
 };
 
-void ofArduino::serialRead(Serial_Ports portID, int maxBytesToRead) {
+void ofArduino::serialRead(Firmata_Serial_Ports portID, int maxBytesToRead) {
 	sendByte(START_SYSEX);
 	sendByte(SERIAL_MESSAGE);
 	sendByte(SERIAL_READ | portID);
@@ -1677,7 +1732,7 @@ void ofArduino::serialRead(Serial_Ports portID, int maxBytesToRead) {
 	sendByte(END_SYSEX);
 };
 
-void ofArduino::serialStop(Serial_Ports portID) {
+void ofArduino::serialStop(Firmata_Serial_Ports portID) {
 	sendByte(START_SYSEX);
 	sendByte(SERIAL_MESSAGE);
 	sendByte(SERIAL_READ | portID);
@@ -1685,21 +1740,21 @@ void ofArduino::serialStop(Serial_Ports portID) {
 	sendByte(END_SYSEX);
 };
 
-void ofArduino::serialClose(Serial_Ports portID) {
+void ofArduino::serialClose(Firmata_Serial_Ports portID) {
 	sendByte(START_SYSEX);
 	sendByte(SERIAL_MESSAGE);
 	sendByte(SERIAL_CLOSE | portID);
 	sendByte(END_SYSEX);
 };
 
-void ofArduino::serialFlush(Serial_Ports portID) {
+void ofArduino::serialFlush(Firmata_Serial_Ports portID) {
 	sendByte(START_SYSEX);
 	sendByte(SERIAL_MESSAGE);
 	sendByte(SERIAL_FLUSH | portID);
 	sendByte(END_SYSEX);
 };
 
-void ofArduino::serialListen(Serial_Ports portID) {
+void ofArduino::serialListen(Firmata_Serial_Ports portID) {
 	// listen only applies to software serial ports
 	if (portID < 8) {
 		return;
