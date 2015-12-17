@@ -821,8 +821,8 @@
 				9957D8FC1BDDDC9B0002D53C /* video */,
 			);
 			name = openFrameworks;
-			path = /Users/danielrosser/Documents/openFrameworks/libs/openFrameworksCompiled/project/ios/../../../openFrameworks;
-			sourceTree = "<absolute>";
+			path = ../../../openFrameworks;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
