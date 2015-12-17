@@ -387,7 +387,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 - (void)controllerButtonEvent:(int)controllerID withType:(ofControllerEventArgs::Type)type withValue:(float)value withPressed:(BOOL)pressed {
     ofControllerEventArgs controllerArgs;
-    controllerArgs.buttonType = type;
+    controllerArgs.eventType = type;
     controllerArgs.value = value;
     controllerArgs.isPressed = pressed;
     controllerArgs.controllerID = controllerID;
@@ -400,7 +400,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 - (void)controllerThumbstickEvent:(int)controllerID withType:(ofControllerEventArgs::Type)type withX:(float)xValue withY:(float)yValue {
     ofControllerEventArgs controllerArgs;
-    controllerArgs.buttonType = type;
+    controllerArgs.eventType = type;
     controllerArgs.x = xValue;
     controllerArgs.y = yValue;
     controllerArgs.controllerID = controllerID;
@@ -417,6 +417,13 @@ static ofxiOSEAGLView * _instanceRef = nil;
         string vendorName = [controller.vendorName UTF8String];
         long playerIndex = controller.playerIndex;
         ofLog(OF_LOG_VERBOSE, "Controller connected: id:" + ofToString(idx) + " vendor:" + vendorName + " playerIndex:" + ofToString(playerIndex));
+        
+        ofControllerEventArgs controllerArgs;
+        controllerArgs.eventType = ofControllerEventArgs::connected;
+        controllerArgs.controllerID = controllerID;
+        controllerArgs.value = playerIndex;
+        ofNotifyEvent(window->events().controllerPressed, controllerArgs);
+        
         GCGamepad * pad = controller.gamepad;
         pad.buttonA.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
             [self controllerButtonEvent:controllerID
@@ -522,25 +529,25 @@ static ofxiOSEAGLView * _instanceRef = nil;
         };
         microPad.dpad.up.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
             [self controllerButtonEvent:controllerID
-                               withType:ofControllerEventArgs::Type::upButton
+                               withType:ofControllerEventArgs::Type::microUpButton
                               withValue:value
                             withPressed:pressed];
         };
         microPad.dpad.down.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
             [self controllerButtonEvent:controllerID
-                               withType:ofControllerEventArgs::Type::downButton
+                               withType:ofControllerEventArgs::Type::microDownButton
                               withValue:value
                             withPressed:pressed];
         };
         microPad.dpad.left.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
             [self controllerButtonEvent:controllerID
-                               withType:ofControllerEventArgs::Type::leftButton
+                               withType:ofControllerEventArgs::Type::microLeftButton
                               withValue:value
                             withPressed:pressed];
         };
         microPad.dpad.right.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
             [self controllerButtonEvent:controllerID
-                               withType:ofControllerEventArgs::Type::rightButton
+                               withType:ofControllerEventArgs::Type::microRightButton
                               withValue:value
                             withPressed:pressed];
         };
@@ -554,6 +561,11 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 -(void) controllerDidDisconnect
 {
+    ofControllerEventArgs controllerArgs;
+    controllerArgs.eventType = ofControllerEventArgs::disconnected;
+    controllerArgs.controllerID = -1;
+    ofNotifyEvent(window->events().controllerPressed, controllerArgs);
+    
     [GCController startWirelessControllerDiscoveryWithCompletionHandler:^{
         ofLog(OF_LOG_VERBOSE, "startWirelessControllerDiscoveryWithCompletionHandler");
     }];
