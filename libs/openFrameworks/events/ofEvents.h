@@ -205,8 +205,14 @@ public:
         menuButton
     };
     
+    enum ControllerType {
+        GENERIC,
+        REMOTE,
+    };
+    
     ofControllerEventArgs()
      :eventType(none)
+     ,controllerType(GENERIC)
      ,value(0)
      ,isPressed(false)
      ,controllerID(0)
@@ -215,8 +221,9 @@ public:
         
     }
     
-    ofControllerEventArgs(Type type, float theValue, bool pressed)
+    ofControllerEventArgs(Type type, ControllerType controller, float theValue, bool pressed)
      :eventType(type)
+     ,controllerType(controller)
      ,value(theValue)
      ,isPressed(pressed)
      ,controllerID(0)
@@ -231,6 +238,8 @@ public:
     float x, y;
     bool isPressed;
     int controllerID;
+    ControllerType controllerType;
+    
 };
 
 class ofResizeEventArgs : public ofEventArgs {
