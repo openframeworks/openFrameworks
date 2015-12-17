@@ -34,8 +34,8 @@
  * software can test whether it will be compatible with the currently
  * installed firmware. */
 #define FIRMATA_MAJOR_VERSION	2 // for non-compatible changes
-#define FIRMATA_MINOR_VERSION	4 // for backwards compatible changes
-#define FIRMATA_BUGFIX_VERSION	4 // for bugfix releases
+#define FIRMATA_MINOR_VERSION	5 // for backwards compatible changes
+#define FIRMATA_BUGFIX_VERSION	0 // for bugfix releases
 
 #define FIRMATA_MAX_DATA_BYTES	64 // max number of data bytes in incoming messages
 
@@ -78,11 +78,6 @@
 #define SCHEDULER_DATA          0x7B // send a createtask/deletetask/addtotask/schedule/querytasks/querytask request to the scheduler
 #define SYSEX_NON_REALTIME      0x7E // MIDI Reserved for non-realtime messages
 #define SYSEX_REALTIME          0x7F // MIDI Reserved for realtime messages
- // these are DEPRECATED to make the naming more consistent
-#define FIRMATA_STRING          0x71 // same as STRING_DATA
-#define SYSEX_I2C_REQUEST       0x76 // same as I2C_REQUEST
-#define SYSEX_I2C_REPLY         0x77 // same as I2C_REPLY
-#define SYSEX_SAMPLING_INTERVAL 0x7A // same as SAMPLING_INTERVAL
 
  // pin modes
 #define ARD_INPUT				0x00 // defined in Arduino.h
@@ -98,7 +93,7 @@
 #define ARD_SERIAL              0x0A // pin configured for serial communication
 #define ARD_INPUT_PULLUP        0x0B // enable internal pull-up resistor for pin
 #define ARD_IGNORE				0x7F // pin configured to be ignored by digitalWrite and capabilityResponse
-#define TOTAL_PIN_MODES			11
+#define TOTAL_PIN_MODES			13
 
 //Stepper Subcommands
 #define MAX_STEPPERS			6 // arbitrary value... may need to adjust
@@ -182,48 +177,62 @@ struct supportedPinTypes {
 	bool	encoderSupported = false;
 };
 
-enum Stepper_Interface {
+enum Firmata_Pin_Modes {
+	MODE_INPUT,
+	MODE_OUTPUT,
+	MODE_INPUT_PULLUP,
+	MODE_ANALOG,
+	MODE_PWM,
+	MODE_SERVO,
+	MODE_I2C,
+	MODE_SERIAL,
+	MODE_ONEWIRE,
+	MODE_STEPPER,
+	MODE_ENCODER
+};
+
+enum Firmata_Stepper_Interface {
 	FIRMATA_STEPPER_DRIVER = 1,
 	FIRMATA_STEPPER_TWO_WIRE = 2,
 	FIRMATA_STEPPER_FOUR_WIRE = 3
 };
 
-enum Direction {
+enum Firmata_Stepper_Direction {
 	FIRMATA_STEPPER_CCW = 0,
 	FIRMATA_STEPPER_CW = 1
 };
-enum i2c_modes {
+enum Firmata_I2C_Modes {
 	FIRMATA_I2C_WRITE = 0x00,
 	FIRMATA_I2C_READ = 1,
 	FIRMATA_I2C_CONTINUOUS_READ = 2,
 	FIRMATA_I2C_STOP_READING = 3
 };
 
-struct I2C_Data {
+struct Firmata_I2C_Data {
 	int		address;
 	int		reg;
 	string	data;
 };
 
-struct Encoder_Data {
+struct Firmata_Encoder_Data {
 	int		ID;
 	bool	direction;
 	int		position;
 };
 
-struct Stepper_Data {
+struct Firmata_Stepper_Data {
 	int		id;
 	int		type;
 	int		data;
 };
 
-enum Serial_Modes {
+enum Firmata_Serial_Modes {
 	FIRMATA_SERIAL_READ_CONTINUOUS = 0x00,
 	FIRMATA_SERIAL_STOP_READING = 0x01
 };
 
 /// ids for hardware and software serial ports on the board
-enum Serial_Ports {
+enum Firmata_Serial_Ports {
 	HW_SERIAL0 = 0x00,
 	HW_SERIAL1 = 0x01,
 	HW_SERIAL2 = 0x02,
@@ -234,8 +243,8 @@ enum Serial_Ports {
 	SW_SERIAL3 = 0x11
 };
 
-struct Serial_Data {
-	Serial_Ports	portID;
+struct Firmata_Serial_Data {
+	Firmata_Serial_Ports	portID;
 	string			data;
 };
 
@@ -344,6 +353,8 @@ public:
 
 	void sendAnalogMappingRequest();
 
+	void sendPinStateQuery(int pin);
+
 	/// \brief This will cause your Arduino to reset and boot into the program again.
 	void sendReset();
 
@@ -409,12 +420,6 @@ public:
 	/// \returns the last received string.
 	string getString() const;
 
-	/// \brief Returns the major firmware version
-	int getMajorProtocolVersion() const;
-
-	/// \returns the minor firmware version.
-	int getMinorProtocolVersion() const;
-
 	/// \returns the major firmware version.
 	int getMajorFirmwareVersion() const;
 
@@ -468,10 +473,6 @@ public:
 	/// command set is received, the SysEx message is passed as an argument
 	ofEvent <const vector <unsigned char> > ESysExReceived;
 
-	/// \brief Triggered when a protocol version is received, the major version
-	/// is passed as an argument.
-	ofEvent <const int> EProtocolVersionReceived;
-
 	/// \brief Triggered when a firmware version is received, the major version
 	/// is passed as an argument.
 	ofEvent <const int> EFirmwareVersionReceived;
@@ -487,17 +488,19 @@ public:
 
 	/// \brief triggered when a stepper has finished rotating. Returns which 
 	/// stepper has complted its rotation
-	ofEvent<const Stepper_Data> EStepperDataRecieved;
+	ofEvent<const Firmata_Stepper_Data> EStepperDataReceived;
 
 	/// \brief triggered when the I2C bus returns data after a read request
-	ofEvent<const I2C_Data> EI2CDataRecieved;
+	ofEvent<const Firmata_I2C_Data> EI2CDataRecieved;
 
 	/// \brief triggered when the encoder returns data after a read request
-	ofEvent<const vector<Encoder_Data> > EEncoderDataRecieved;
+	ofEvent<const vector<Firmata_Encoder_Data> > EEncoderDataReceived;
 
 	/// \brief triggered when a Serial message is received. Returns which 
 	/// port and its data
-	ofEvent<const Serial_Data> ESerialDataRecieved;
+	ofEvent<const Firmata_Serial_Data> ESerialDataReceived;
+
+	ofEvent<const pair<int, Firmata_Pin_Modes> > EPinStateResponseReceived;
 
 	/// \}
 	/// \name Servos
@@ -682,14 +685,14 @@ public:
 	/// \param baud  The baud rate of the serial port
 	/// \param rxPin [SW Serial only] The RX pin of the SoftwareSerial instance
 	/// \param txPin [SW Serial only] The TX pin of the SoftwareSerial instance
-	void sendSerialConfig(Serial_Ports portID, int baud, int rxPin, int txPin);
+	void sendSerialConfig(Firmata_Serial_Ports portID, int baud, int rxPin, int txPin);
 
 	/// \brief Write an array of bytes to the specified serial port.
 	///
 	/// \param portId The serial port to write to.
 	/// \param bytes An array of bytes to write to the serial port.
 	/// \param numOfBytes length of the array of bytes.
-	void serialWrite(Serial_Ports port, unsigned char * bytes, int numOfBytes);
+	void serialWrite(Firmata_Serial_Ports port, unsigned char * bytes, int numOfBytes);
 
 	/// \brief  Start continuous reading of the specified serial port.
 	///
@@ -697,39 +700,44 @@ public:
 	/// \param portId The serial port to start reading continuously.
 	/// \param  maxBytesToRead [Optional] The maximum number of bytes to read per iteration.
 	/// \note If there are less bytes in the buffer, the lesser number of bytes will be returned. A value of 0 indicates that all available bytes in the buffer should be read.
-	void serialRead(Serial_Ports port, int maxBytesToRead);
+	void serialRead(Firmata_Serial_Ports port, int maxBytesToRead);
 
 	/// \brief Stop continuous reading of the specified serial port.
 	///
 	/// This does not close the port, it stops reading it but keeps the port open.
 	/// \param portId The serial port to stop reading.
-	void serialStop(Serial_Ports portID);
+	void serialStop(Firmata_Serial_Ports portID);
 
 	/// \brief  Close the specified serial port.
 	///
 	/// \param portId The serial port to close.
-	void serialClose(Serial_Ports portID);
+	void serialClose(Firmata_Serial_Ports portID);
 
 	/// \brief Flush the specified serial port.
 	///
 	/// For hardware serial, this waits for the transmission of outgoing serial data to complete.For software serial, this removed any buffered incoming serial data.
 	/// \param portId The serial port to listen on.
-	void serialFlush(Serial_Ports portID);
+	void serialFlush(Firmata_Serial_Ports portID);
 
 	/// \brief For SoftwareSerial only. Only a single SoftwareSerial instance can read data at a time.
 	///
 	/// Call this method to set this port to be the reading port in the case there are multiple SoftwareSerial instances.
 	/// \param portId The serial port to flush.
-	void serialListen(Serial_Ports portID);
+	void serialListen(Firmata_Serial_Ports portID);
 
 
 	map<int, supportedPinTypes> getPinCapabilities() { return pinCapabilities; }
+
+	int getTotalPins() { return _totalDigitalPins; }
+
+	int getNumAnalogPins() { return _totalAnalogPins; }
 
 private:
 	mutable bool _initialized; ///\< \brief Indicate that pins are initialized.
 
 	void initPins();
 	mutable int _totalDigitalPins; ///\< \brief Indicate the total number of digital pins of the board in use.
+	mutable int _totalAnalogPins;
 
 	void sendDigitalPinReporting(int pin, int mode);
 
@@ -758,8 +766,6 @@ private:
 	// --- data holders
 	unsigned char _storedInputData[FIRMATA_MAX_DATA_BYTES];
 	vector <unsigned char> _sysExData;
-	int _majorProtocolVersion;
-	int _minorProtocolVersion;
 	int _majorFirmwareVersion;
 	int _minorFirmwareVersion;
 	string _firmwareName;
@@ -827,6 +833,7 @@ private:
 
 	mutable map<int, supportedPinTypes> pinCapabilities;
 	mutable map<int, int> analogPinMap;
+
 
 	bool isAnalogPin(int pin) const;
 	bool isPin(int pin) const;
