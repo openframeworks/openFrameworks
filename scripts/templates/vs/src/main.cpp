@@ -1,3 +1,4 @@
+#include "ofAppRunner.h"
 #include "ofApp.h"
 
 int main(){
@@ -6,5 +7,5 @@ int main(){
 	// can be set here. Window shape and fullscreen status can changed elsewhere
 	// with ofSetWindowShape(x, y) and ofSetFullscreen(fullscreen) respectively.
 	ofSetupOpenGL(1024, 768, OF_WINDOW);
-	ofRunApp(std::make_shared<ofApp>());
+	return ofRunApp(std::make_shared<ofApp>());
 }

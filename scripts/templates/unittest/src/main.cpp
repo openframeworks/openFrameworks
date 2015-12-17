@@ -1,4 +1,4 @@
-#include "ofMain.h"
+#include "ofAppRunner.h"
 #include "ofAppNoWindow.h"
 #include "ofxUnitTests.h"
 
@@ -8,10 +8,13 @@ class ofApp: public ofxUnitTestsApp{
 	}
 };
 
+
 int main(){
-	// To create an application with no Window, we pass pointers to our
-	// ofAppNoWindow class and our ofApp to ofRunApp. Then we call the
-	// ofRunMainLoop() function to start the program.
-	ofRunApp(std::make_shared<ofAppNoWindow>(), std::make_shared<ofApp>());
-	ofRunMainLoop();
+
+	auto window = std::make_shared<ofAppNoWindow>();
+	auto app = std::make_shared<ofApp>();
+
+	ofRunApp(window,app);
+
+	return ofRunMainLoop();
 }

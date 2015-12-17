@@ -1,3 +1,4 @@
+#include "ofAppRunner.h"
 #include "ofApp.h"
 
 int main(){
@@ -12,7 +13,11 @@ int main(){
     settings.enableHardwareOrientationAnimation = false; // Enables native orientation changes to be animated.
     settings.glesVersion = OFXIOS_RENDERER_ES1; // The type of renderer to use, ES1, ES2, ES3.
     settings.windowMode = OF_FULLSCREEN;
-    ofCreateWindow(settings);
 
-	return ofRunApp(std::make_shared<ofApp>());
+    auto window = ofCreateWindow(settings);
+	auto app = std::make_shared<ofApp>();
+
+    ofRunApp(window,app);
+
+	return ofRunMainLoop();
 }
