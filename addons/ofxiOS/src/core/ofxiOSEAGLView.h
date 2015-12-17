@@ -6,7 +6,7 @@
 //
 
 #pragma once
-
+#include <TargetConditionals.h>
 #import <UIKit/UIKit.h>
 #import "EAGLView.h"
 
@@ -34,6 +34,9 @@ class ofAppiOSWindow;
 - (void)updateDimensions;
 - (void)destroy;
 - (CGPoint)orientateTouchPoint:(CGPoint)touchPoint;
+#if TARGET_OS_TV
+- (void)handleTap:(UITapGestureRecognizer *)sender;
+#endif
 
 @end
 

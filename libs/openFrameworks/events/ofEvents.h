@@ -195,7 +195,8 @@ public:
         leftThumbstick,
         rightThumbstick,
         microButtonA,
-        microButtonX
+        microButtonX,
+        menuButton
     };
     
     ofControllerEventArgs()

@@ -9,6 +9,7 @@
 #include "ofxiOSEAGLView.h"
 
 @interface ofxtvOSViewController() <EAGLViewDelegate> {
+    UITapGestureRecognizer *tapRecognizer;
 }
 @end
 
@@ -44,6 +45,10 @@
     [self.view addSubview:self.glView];
     [self.glView performSelector:@selector(setup) withObject:nil afterDelay:0];
     [self.glView startAnimation];
+    
+    tapRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleTap:)];
+    tapRecognizer.allowedPressTypes = @[[NSNumber numberWithInteger:UIPressTypeMenu]];
+    [self.view addGestureRecognizer:tapRecognizer];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -88,6 +93,10 @@
     // The window adjusts the bounds of the view controller’s view.
     // This causes the view to layout its subviews, triggering the view controller’s viewWillLayoutSubviews method.
     // When this method runs, you can query the app object’s statusBarOrientation property to determine the current user interface layout.
+}
+
+- (void)handleTap:(UITapGestureRecognizer *)sender {
+    [self.glView handleTap:sender];
 }
 
 @end
