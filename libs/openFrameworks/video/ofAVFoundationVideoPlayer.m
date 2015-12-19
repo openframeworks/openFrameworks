@@ -353,6 +353,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			// add timeobserver?
 			[self addTimeObserverToPlayer];
 			
+			_player.volume = volume;
+			
 			// loaded
 			bLoaded = true;
 			
@@ -1334,19 +1336,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 	volume = value;
 	
-	NSArray * audioTracks = [self.playerItem.asset tracksWithMediaType:AVMediaTypeAudio];
-	NSMutableArray * allAudioParams = [NSMutableArray array];
-	for(AVAssetTrack * track in audioTracks) {
-		AVMutableAudioMixInputParameters * audioInputParams = [AVMutableAudioMixInputParameters audioMixInputParameters];
-		[audioInputParams setVolume:volume atTime:kCMTimeZero];
-		[audioInputParams setTrackID:[track trackID]];
-		[allAudioParams addObject:audioInputParams];
-	}
-	
-	AVMutableAudioMix * audioMix = [AVMutableAudioMix audioMix];
-	[audioMix setInputParameters:allAudioParams];
-	
-	[self.playerItem setAudioMix:audioMix];
+	_player.volume = volume;
 }
 
 - (float)getVolume {
