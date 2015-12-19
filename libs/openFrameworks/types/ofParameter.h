@@ -873,6 +873,10 @@ public:
 	ofParameter();
 	ofParameter(const string& name);
 
+	void set(const string & name){
+		setName(name);
+	}
+
 	void setName(const string & name);
 	string getName() const;
 
