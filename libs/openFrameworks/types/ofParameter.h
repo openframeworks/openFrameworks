@@ -183,7 +183,7 @@ public:
 	string toString() const;
 	void fromString(const string& name);
 
-	bool contains(const string& name);
+	bool contains(const string& name) const;
 
 	ofAbstractParameter & back();
 	ofAbstractParameter & front();
