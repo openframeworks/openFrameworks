@@ -41,9 +41,10 @@
 #include "NetworkingUtils.h"
 
 
+namespace osc{
 unsigned long IpEndpointName::GetHostByName( const char *s )
 {
-	return ::GetHostByName(s);
+	return osc::GetHostByName(s);
 }
 
 
@@ -85,4 +86,5 @@ void IpEndpointName::AddressAndPortAsString( char *s ) const
 				(int)port );
 		}
 	}	
+}
 }

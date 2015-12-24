@@ -7,13 +7,34 @@ OF 0.9.0
           / modified
 
 ------------------------------------------------------------------------------
+GENERAL
+-------
+
++ added a new Project Generator
++ added CODE_OF_CONDUCT.md based on the Contributor Covenant and Berlin Code of Conduct, iteratively refined through group discussion
+/ code cleanup (fixed many typos, warnings, memleaks, implicit conversions, types, const-correctness, duplicated and missing definitions/functions, removed internal use of deprecated methods and unnecessary code)
++ move towards C++11
++ added automated (unit) testing on several OSes via travis-ci.org
+/ updated third party libraries (Poco 1.6, Freetype 2.5.5, FreeImage 3.17, OpenSSL 1.01j)
++ higher precision and monotonic timers
+/ documentation and many examples fixed/adjusted to new code base
++ QtCreator project files and wizard added
++ Apothecary received a lot of fixes and updates to adjust to the new codebase
++ Makefile enforces recompilation when flags change
+
 
 CORE
 ----
+
 ### app
 	/ setupOpenGL and ofApp___Window use ofWindowMode instead of int
 	/ fix exit callbacks to allow for calling of the destructors, and better signal handling
 	/ changed windowEntry event to mouseEntered/mouseExted, added these callbacks when registering for mouse events
+	+ clipboard supports UTF8
+	+ added scrollwheel support for GLFW
+	/ ofAppNoWindow refactored to remove unused methods
+	+ main loop can be set via ofSetMainLoop()
+	+ support for semantic versioning
 
 ### 3d
 	/ ofEasyCam: removes roll rotation when rotating inside the arcball
@@ -21,19 +42,27 @@ CORE
 	/ ofDrawGrid: arguments changed to ```float stepSize, size_t numberOfSteps``` instead of ```float scale, float ticks```
 	/ ofDrawGridPlane: arguments changed to ```float stepSize, size_t numberOfSteps``` instead of ```float scale, float ticks```
 	/ ofCamera: fix calculations on first frame or before first call to begin
+	+ ofCamera: orthograpic projection with coordinates relative to viewport
+	/ ofNode orbit now uses quaternions to avoid Gimball Lock
+	/ ofGraphics immediate mode style primitives renamed to ofDraw*
+
+### communication
+	/ ofArduino: added missing initializations
+	/ easyCam: zRot flipped correctly
+
+### events
+	+ added isEnabled() and size() to ofBaseEvent
 
 ### gl
-	+ Programmable lights and materials
-	+ New area light type on programmable renderer
-	+ Separate model matrix
+	+ programmable lights and materials
+	+ new area light type on programmable renderer
+	+ separate model matrix
 	+ ofBufferObject wraps GL buffers for easy use, see compute shader
 	  and pixel buffer examples for usage
 	+ ofGetCurrentNormalMatrix
 	+ ofSetOpenGL(ES)Version, allows to set any specific GL version
-	+ ofTexture::enableMipmap() auto-generate mipmaps on load - for textures which support
-	  mipmaps (that's TEXTURE_2D textures loaded after ofDisableArbTex() )
-	+ ofTexture::generateMipmap() generate mipmap after a texture was loaded,
-	  if the texture target supports mipmaps (see above).
+	+ ofTexture::enableMipmap() auto-generate mipmaps on load - for textures which support mipmaps (that's TEXTURE_2D textures loaded after ofDisableArbTex() )
+	+ ofTexture::generateMipmap() generate mipmap after a texture was loaded, if the texture target supports mipmaps (see above).
 	+ ofTexture::disableMipmap() disables auto-generation of mipmap for texture
 	- removed compressed mipmaps based on deprecated glu methods
 	- ofSetTextureWrap() : deprecated (use corresponding ofTexture member method)
@@ -42,95 +71,179 @@ CORE
 	- ofSetMinMagFilters() : deprecated (use corresponding ofTexture member method)
 	- ofGetUsingCustomMinMagFilters() : deprecated
 	- ofRestoreMinMagFilters() : deprecated
+	+ ofTexture::allocateAsBufferTexture(), a dedicated way to allocate ofTextures as Buffer Texture. Useful to pass large amounts of uniform data to shaders. See TextureBufferInstanceExample
 	+ ofShader: report offending lines on compiling errors
+	+ ofShader: setUniformMatrix now accepts an (optional) count parameter, so you can pass an array of matrices
 	+ ofGLUtils: better support for half float types
-	/ getTextureReference -> getTexture
-	/ ofVbo refector: ofVbo will, in programmable renderer, automatically recognise
-	  attribute locations 0, 1, 2, 3 as position, color, texture, normal attributes
-	  can be set using either using convenience methods e.g.
-	  `ofVbo::setTexCoordData(...)` or the more flexible
-	  `ofVbo::setAttributeData(ofShader::TEXCOORD_ATTRIBUTE, ...)` which allows
-	  for 3d texture coordinates.
+	/ syntax change: getTextureReference() -> getTexture()
+	/ GPU optimisations giving the GPU driver more leverage to optimise drawing speed
+	/ ofVbo refector: ofVbo will, in programmable renderer, automatically recognise attribute locations 0, 1, 2, 3 as position, color, texture, normal attributes can be set using either using convenience methods e.g. `ofVbo::setTexCoordData(...)` or the more flexible `ofVbo::setAttributeData(ofShader::TEXCOORD_ATTRIBUTE, ...)` which allows for 3D texture coordinates.
 	/ Fix ofTexture::readToPixels for non RGBA or 4 aligned formats
 	/ Rename ofTextureData.glTypeInternal -> ofTextureDataData.glInternalFormat (this brings the parameter's name into sync with the OpenGL enum it represents)
+	/ Rename ofFbo::destroy -> clear to be consistent with other classes
+	+ added Data struct to ofMaterial
+	/ drawElements() now has an offset into the index buffer
+
+
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing
 	+ ofDrawBitmapString: can draw any type not only strings
 	/ ofImage: can load image via https
-	/ getPixelsRef() deprecated and getPixels() now returns ofPixels
-	  temporarily ofPixels auto casts to unsigned char* so old code
-	  is still compatible
+	/ getPixelsRef() deprecated and getPixels() now returns ofPixels temporarily ofPixels auto casts to unsigned char* so old code is still compatible
 	/ ofPixels::getPixels() -> getData()
-	+ ofPixels support for YUV formats, the prefered allocation method
-	  changes from channels to ofPixelFormat like:
-		pix.allocate(w,h,OF_PIXELS_RGB)
+	+ ofPixels support for YUV formats, the prefered allocation method changes from channels to ofPixelFormat like: pix.allocate(w,h,OF_PIXELS_RGB)
 	/ fixed ofSetBackgroundColor
 	/ added ofGetBackgroundColor and ofGetBackgroundAuto
 	- removed ofbBGColor and ofbBGClear
 	/ ofImage::loadImage() -> load()
 	/ ofImage::saveImage() -> save()
 	+ ofBeginSaveScreenAsSVG
+	/ ofPolyline::addVertexes changed to ofPolyline::addVertices
+	/ ofImage allows pixel color access via index
+	/ ellipse supported correctly in ofCairoRenderer
+
+### math
+	/ updated ofMath.h
+	+ ofVecXf based ofNoise functions
+
+### projectGenerator
+	/ moved apps & common code for PG to a separate repo
+	+ added a new app to replace the simple and legacy projectGenerators, using an HTML-based frontend built with electron
+	/ updated commandline PG with more features & better output, both for standalone use and to support the electron-based PG
+	+ added support for local addons outside the ../../../addons folder via the commandLine PG and the addons.make file
+	+ added templates for platform-specific configs, different OpenGL versions, etc
+	+ added scrolling feature for addons panel in legacy PG
 
 ### sound
 	/ ofFmodSoundPlayer: fix for file handles not being closed
-    / Deprecated all ofBaseSoundInput/Output methods that do not take an ofSoundBuffer.
-### utils
-	/ better timming in fps calculation
-	+ ofFpsCounter allows to easily meassure the fps of any element
-	+ ofTimer allows to create a precise periodic waitable timer
-	+ ofThreadChannel: thread synchronization primitive to make it
-	  easier to work with threads avoiding the need for mutexes in
-	  most cases. see example/utils/threadChannelExample
-	/ ofBuffer::getBinaryBuffer() -> getData()
+	+ ofSoundBuffer class for encapsulating a buffer of raw samples (see new soundBufferExample)
+	+ ofSoundDevice class for representing sound i/o devices
+	+ ofSoundStream::getMatchingDevices() for finding sound devices by name and / or channel count
+	/ deprecated all ofBaseSoundInput/Output methods that do not take an ofSoundBuffer
+	/ ofSoundPlayer::getIsPlaying() changed to ::isPlaying()
+	- removed ofSoundStream::listDevices(), see ::getDeviceList() or ::printDeviceList()
 
-### video
-	/ gstreamer: fix memory leaks when closing a video element
-	+ gstreamer: support for YUV formats when using the programmable renderer
-	  using OF_PIXELS_NATIVE as pixel format will choose the fastest format
-	/ gstreamer: faster reload by default and optional asynchronous load
-	/ ofVideoPlayer::loadMovie() -> load()
-	/ ofVideoGrabber::initGrabber() -> setup()
 ### types
 	+ ofRectangle: added `setSize` method.
 	+ ofRectangle: added `operator -` method.
+
+### utils
+	/ better timing in fps calculation
+	+ ofFpsCounter allows to easily meassure the fps of any element
+	+ ofTimer allows to create a precise periodic waitable timer
+	/ ofBuffer::getBinaryBuffer() -> getData()
+	+ ofThreadChannel introduced for easier multithreading
+	/ ofSerial::enumerateDevices() -> listDevices()
+	/ "ms" is now always 3 digits long when generating timestamps
+	- removed ofThreadLogger
+	+ more and better logging
+
+### video
+	/ gstreamer: fix memory leaks when closing a video element
+	+ gstreamer: support for YUV formats when using the programmable renderer using OF_PIXELS_NATIVE as pixel format will choose the fastest format
+	/ gstreamer: faster reload by default and optional asynchronous load
+	/ ofVideoPlayer::loadMovie() -> load()
+	/ ofVideoGrabber::initGrabber() -> setup()
+	/ AVFoundation player is now the default for OS X 10.8+
+	+ AVFoundation player now has a loadAsync for asynchronous video loading
+	/ DirectShow video player is now default for Microsoft Windows
+	/ Replaced deprecated methods in ofAVFoundationPlayer
+	+ test for player during initialization
+
 
 PLATFORM SPECIFIC
 -----------------
 
 ### Emscripten
-	+ New platform!
+	+ new platform!
+	/ Raspberry Pi 2 is now default ARMv7 variant
 
 ### ofxiOS
-	+ xcode 6.0 updates
+	+ Xcode 6.0 updates
 	+ deployment target moved up to iOS 5.1.1
+	+ iOS ARM64 C++11 support
+	/ tab-indentation specified in the openFrameworks Xcode project (ofApp is still user-specified)
+	/ AVSoundPlayer now uses shared audio session to better cooperate with AVFoundationVideoPlayer
+	/ no longer calling ofReloadGLResources in ofxiOS
+	+ ofxiOSKeybaord exposes UITextField
+	+ added ofAppiOSWindow::Settings for controlling the app settings
+	/ replaced ofPtr with shared_ptr in ofxiOSVideoGrabber
+	- removed old target checks
+	+ adjusted scale factor for iPhone6 and iPhone6+
+	+ added simulator support iPhones
+	+ hint at using SDK 5.0 or later
 
-### android
-	+ fix camera stretching artifacts experienced on some devices when using 16:9
-	  aspect ratios
-	+ remove support for arm5 since no devices seem to have that cpu anymore and it
-	  was problematic with certain libraries
+### Android
+	+ fix camera stretching artifacts experienced on some devices when using 16:9 aspect ratios
+	+ support for Android Studio
+	+ remove support for ARM5 since no devices seem to have that cpu anymore and it was problematic with certain libraries
+	- removed statistics and globals
+	+ added multiwindow and touch support
+	+ added helper method ofCallStaticVoidJavaMethod()
+	/ better handling of video when app is paused
+	/ getTextureReference() refactored to getTexture()
+	+ added gradle.properties file
 
-### linux and arm linux
-	+ opencv libs are now installed in the system, rerun install_dependencies if you
-	  are having problems compiling projects that use opencv
+### Linux (incl. ARM)
+	+ allow passing -j<num_jobs> to compileOF.sh for parallel compilation
+	/ native package managers handle OpenCV libraries
+	/ adjusted Makefile for Raspberry Pi 2
 
-### windows
-	+ activated high precission timming to fix inaccurate fps calculations
+### Microsoft Windows
+	+ activated high precision timing to fix inaccurate fps calculations
+	/ multiprocessor compilation enabled by default
+	/ added support for Visual Studio 2015 and Windows 10
 
-### osx
-	/ moved system framework dependencies from Xcode project to CoreOF.xcconfig
+### OSX and iOS
+	/ moved ofApp system framework dependencies from Xcode project to CoreOF.xcconfig
 	/ removed GLUT from project template, see libs/glut/lib/osx if you need GLUT
+	/ tab-indentation specified in the openFrameworks Xcode project (ofApp is still user-specified)
+	/ use robocopy instead of xcopy in the post-build step to minimize file transfers
+	+ 10.8+ support
+	/ empty clipboard doesn’t crash anymore
+	/ compilation via Makefile also works without Xcode
+	/ unified AVFoundation video player
 
 CORE ADDONS
 -----------
-### ofxOpenCV
-	/ updated ofxCvHaarFinder to not use textures on internal image objects, allowing for usage within threads.
 
-### ofxSynth
-    - Removed, see ofxMaxim for a replacement (https://github.com/micknoise/Maximilian)
+### ofx3DModelLoader
+	- removed as it was using some really old gl calls and ofxAssimpModelLoader already loads 3D studio models
+
+### ofxAssimpModelLoader
+	/ Updated to assimp 3
+
+### ofxGui
+	+ extendent ofxBaseGui
+
+### ofxiOSVideoPlayer
+	/ API update
+	/ ofxButton::valueChanged() includes sender
 
 ### ofxKinect
-    / Bugfix for kinects not keeping their IDs when using multiple kinects.
+	/ Bugfix for kinects not keeping their IDs when using multiple kinects
+	+ 64bit updates for Microsoft Windows
+
+### ofxNetwork
+	+ peek() to look into sockets
+
+### ofxOpenCV
+	/ updated ofxCvHaarFinder to not use textures on internal image objects, allowing for usage within threads.
+	/ removed OpenCV binary libraries, installation moved to Linux package managers
+	/ OpenCV updated to 2.4.9
+
+### ofxSynth
+	- Removed, see ofxMaxim for a replacement (https://github.com/micknoise/Maximilian)
+
+### ofxTCPManager
+	+ timeout after 5 seconds by default
+	/ using std mutexes to lock
+
+### ofxUDPManager
+	/ updated error logging
+
+### ofxMultiTouch
+	- Removed - functionality provided by core events
 
 PROJECT GENERATOR
 -----------------

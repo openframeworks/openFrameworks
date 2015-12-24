@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ofMain.h"
-#include "ofxiOSExtras.h"
+#include "ofxiOS.h"
+#include "ofxiOSMapKit.h"
 
 class ofApp : public ofxiOSApp, ofxiOSMapKitListener{
 	

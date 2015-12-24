@@ -31,9 +31,9 @@ ofCairoRenderer::~ofCairoRenderer(){
 	close();
 }
 
-void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle _viewport){
-	if( _viewport.width == 0 || _viewport.height == 0 ){
-		_viewport.set(0, 0, ofGetViewportWidth(), ofGetViewportHeight());
+void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
+	if( outputsize.width == 0 || outputsize.height == 0 ){
+		outputsize.set(0, 0, ofGetViewportWidth(), ofGetViewportHeight());
 	}
 
 	filename = _filename;
@@ -65,22 +65,22 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	switch(type){
 	case PDF:
 		if(filename==""){
-			surface = cairo_pdf_surface_create_for_stream(&ofCairoRenderer::stream_function,this,_viewport.width, _viewport.height);
+			surface = cairo_pdf_surface_create_for_stream(&ofCairoRenderer::stream_function,this,outputsize.width, outputsize.height);
 		}else{
-			surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
+			surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),outputsize.width, outputsize.height);
 		}
 		break;
 	case SVG:
 		if(filename==""){
-			surface = cairo_svg_surface_create_for_stream(&ofCairoRenderer::stream_function,this,_viewport.width, _viewport.height);
+			surface = cairo_svg_surface_create_for_stream(&ofCairoRenderer::stream_function,this,outputsize.width, outputsize.height);
 		}else{
-			surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
+			surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),outputsize.width, outputsize.height);
 		}
 		break;
 	case IMAGE:
-		imageBuffer.allocate(_viewport.width, _viewport.height, OF_PIXELS_BGRA);
+		imageBuffer.allocate(outputsize.width, outputsize.height, OF_PIXELS_BGRA);
 		imageBuffer.set(0);
-		surface = cairo_image_surface_create_for_data(imageBuffer.getData(),CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height,_viewport.width*4);
+		surface = cairo_image_surface_create_for_data(imageBuffer.getData(),CAIRO_FORMAT_ARGB32,outputsize.width, outputsize.height,outputsize.width*4);
 		break;
 	case FROM_FILE_EXTENSION:
 		ofLogFatalError("ofCairoRenderer") << "setup(): couldn't determine type from extension for filename: \"" << _filename << "\"!";
@@ -92,16 +92,16 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 
 	cr = cairo_create(surface);
 	cairo_set_antialias(cr,CAIRO_ANTIALIAS_SUBPIXEL);
-	viewportRect = _viewport;
-	originalViewport = _viewport;
+	viewportRect = outputsize;
+	originalViewport = outputsize;
 	viewport(viewportRect);
 	page = 0;
 	b3D = b3D_;
 	multiPage = multiPage_;
 }
 
-void ofCairoRenderer::setupMemoryOnly(Type _type, bool multiPage_, bool b3D_, ofRectangle _viewport){
-	setup("",_type,multiPage_,b3D_,_viewport);
+void ofCairoRenderer::setupMemoryOnly(Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
+	setup("",_type,multiPage_,b3D_,outputsize);
 }
 
 void ofCairoRenderer::flush(){
@@ -128,8 +128,7 @@ void ofCairoRenderer::close(){
 
 
 void ofCairoRenderer::startRender(){
-	if(!surface || !cr)
-		setStyle(currentStyle);
+	setStyle(currentStyle);
 	if(page==0 || !multiPage){
 		page=1;
 	}else{
@@ -709,6 +708,7 @@ void ofCairoRenderer::setColor(int r, int g, int b){
 //--------------------------------------------
 void ofCairoRenderer::setColor(int r, int g, int b, int a){
 	cairo_set_source_rgba(cr, (float)r/255.0, (float)g/255.0, (float)b/255.0, (float)a/255.0);
+	currentStyle.color.set(r,g,b,a);
 };
 
 //--------------------------------------------
@@ -928,6 +928,7 @@ void ofCairoRenderer::viewport(ofRectangle v){
 void ofCairoRenderer::viewport(float x, float y, float width, float height, bool invertY){
 	if(width < 0) width = originalViewport.width;
 	if(height < 0) height = originalViewport.height;
+	cout << "setting viewport to:" << width << ", " << height << endl;
 
 	if (invertY){
 		y = -y;
@@ -948,12 +949,12 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 //----------------------------------------------------------
 void ofCairoRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist){
 	if(!b3D) return;
-	if(width < 0) width = viewportRect.width;
-	if(height < 0) height = viewportRect.height;
+	if(width < 0) width = originalViewport.width;
+	if(height < 0) height = originalViewport.height;
 	ofOrientation orientation = ofGetOrientation();
 
-	float viewW = viewportRect.width;
-	float viewH = viewportRect.height;
+	float viewW = originalViewport.width;
+	float viewH = originalViewport.height;
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -1169,6 +1170,7 @@ void ofCairoRenderer::clear(){
 	if(!surface || ! cr) return;
 	cairo_set_source_rgba(cr,currentStyle.bgColor.r/255., currentStyle.bgColor.g/255., currentStyle.bgColor.b/255., currentStyle.bgColor.a/255.);
 	cairo_paint(cr);
+	setColor(currentStyle.color);
 }
 
 //----------------------------------------------------------
@@ -1176,6 +1178,7 @@ void ofCairoRenderer::clear(float r, float g, float b, float a) {
 	if(!surface || ! cr) return;
 	cairo_set_source_rgba(cr,r/255., g/255., b/255., a/255.);
 	cairo_paint(cr);
+	setColor(currentStyle.color);
 
 }
 
@@ -1209,7 +1212,7 @@ void ofCairoRenderer::pushStyle(){
 
 void ofCairoRenderer::popStyle(){
 	if( styleHistory.size() ){
-		setStyle(styleHistory.front());
+		setStyle(styleHistory.back());
 		styleHistory.pop_back();
 	}
 }

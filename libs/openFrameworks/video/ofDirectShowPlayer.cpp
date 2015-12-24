@@ -497,7 +497,7 @@ class DirectShowVideo : public ISampleGrabberCB{
             return false;
         }
 
-        m_pGrabber->SetCallback(this, 0);
+        hr = m_pGrabber->SetCallback(this, 0);
         if (FAILED(hr)){
             tearDown(); 
             return false;
@@ -583,8 +583,8 @@ class DirectShowVideo : public ISampleGrabberCB{
     
             AM_MEDIA_TYPE mt;
             ZeroMemory(&mt,sizeof(AM_MEDIA_TYPE));
-
-            m_pGrabber->GetConnectedMediaType(&mt);
+			
+            hr = m_pGrabber->GetConnectedMediaType(&mt);
             if (FAILED(hr)){
                 printf("unable to call GetConnectedMediaType\n");
                 tearDown(); 
@@ -604,7 +604,7 @@ class DirectShowVideo : public ISampleGrabberCB{
             IPin* pinIn = 0;
             IPin* pinOut = 0;
 
-            m_pGraph->FindFilterByName(L"Video Renderer", &m_pVideoRenderer);
+            hr = m_pGraph->FindFilterByName(L"Video Renderer", &m_pVideoRenderer);
             if (FAILED(hr)){
                 printf("failed to find the video renderer\n");
                 tearDown();
@@ -1102,7 +1102,11 @@ bool ofDirectShowPlayer::load(string path){
 
     close();
     player = new DirectShowVideo();
-    return player->loadMovie(path); 
+    bool loadOk = player->loadMovie(path);
+    if( !loadOk ){
+        ofLogError("ofDirectShowPlayer") << " Cannot load video of this file type.  Make sure you have codecs installed on your system.  OF recommends the free K-Lite Codec pack. " << endl;
+    }
+    return loadOk;
 }
 
 void ofDirectShowPlayer::close(){

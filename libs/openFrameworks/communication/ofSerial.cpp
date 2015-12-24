@@ -398,28 +398,16 @@ bool ofSerial::setup(string portName, int baud){
 		// now try the settings:
 		COMMCONFIG cfg;
 		DWORD cfgSize;
-		char buf[80];
+		WCHAR buf[80];
 
 		cfgSize = sizeof(cfg);
 		GetCommConfig(hComm, &cfg, &cfgSize);
 		int bps = baud;
-		sprintf(buf, "baud=%d parity=N data=8 stop=1", bps);
+		swprintf(buf, L"baud=%d parity=N data=8 stop=1", bps);
 
-		#if (_MSC_VER)	// microsoft visual studio
-			// msvc doesn't like BuildCommDCB,
-			//so we need to use this version: BuildCommDCBA
-			if(!BuildCommDCBA(buf, &cfg.dcb)){
-				ofLogError("ofSerial") << "setup(): unable to build comm dcb, (" << buf << ")";
-			}
-
-		#else
-
-			if(!BuildCommDCB(buf, &cfg.dcb)){
-				ofLogError("ofSerial") << "setup(): unable to build comm dcb, (" << buf << ")";
-			}
-
-		#endif
-
+		if(!BuildCommDCBW(buf, &cfg.dcb)){
+			ofLogError("ofSerial") << "setup(): unable to build comm dcb, (" << buf << ")";
+		}
 
 		// Set baudrate and bits etc.
 		// Note that BuildCommDCB() clears XON/XOFF and hardware control by default
@@ -590,6 +578,7 @@ int ofSerial::readByte(){
 			ofLogError("ofSerial") << "readByte(): couldn't read from port: " << errno << " " << strerror(errno);
 			return OF_SERIAL_ERROR;
 		}
+
 		if(nRead == 0){
 			return OF_SERIAL_NO_DATA;
 		}
@@ -600,6 +589,10 @@ int ofSerial::readByte(){
 		if(!ReadFile(hComm, &tmpByte, 1, &nRead, 0)){
 			ofLogError("ofSerial") << "readByte(): couldn't read from port";
 			return OF_SERIAL_ERROR;
+		}
+	
+		if(nRead == 0){
+			return OF_SERIAL_NO_DATA;
 		}
 
 	#else

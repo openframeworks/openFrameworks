@@ -101,13 +101,17 @@ void ofThread::waitForThread(bool callStopThread, long milliseconds){
 			return; // waitForThread should only be called outside thread
 		}
 
-        if (INFINITE_JOIN_TIMEOUT == milliseconds){
-            thread.join();
-        }else{
-            // Wait for "joinWaitMillis" milliseconds for thread to finish
-            if(!thread.tryJoin(milliseconds)){
-				// unable to completely wait for thread
+        try{
+            if (INFINITE_JOIN_TIMEOUT == milliseconds){
+                thread.join();
+            }else{
+                // Wait for "joinWaitMillis" milliseconds for thread to finish
+                if(!thread.tryJoin(milliseconds)){
+                    // unable to completely wait for thread
+                }
             }
+        }catch(...){
+            
         }
     }
 }
