@@ -65,9 +65,6 @@ bool ofVideoGrabber::setup(int w, int h, bool setUseTexture){
 				ofPixels plane = grabber->getPixels().getPlane(i);
 				tex.push_back(ofTexture());
 				tex[i].allocate(plane);
-				if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
-					tex[i].setRGToRGBASwizzles(true);
-				}
 			}
 		}
 	}
@@ -163,7 +160,7 @@ const ofPixels& ofVideoGrabber::getPixelsRef() const{
 
 //------------------------------------
 ofTexture & ofVideoGrabber::getTexture(){
-	if(grabber->getTexturePtr() == NULL){
+	if(grabber->getTexturePtr() == nullptr){
 		return tex[0];
 	}
 	else{
@@ -173,7 +170,7 @@ ofTexture & ofVideoGrabber::getTexture(){
 
 //------------------------------------
 const ofTexture & ofVideoGrabber::getTexture() const{
-	if(grabber->getTexturePtr() == NULL){
+	if(grabber->getTexturePtr() == nullptr){
 		return tex[0];
 	}
 	else{
@@ -193,7 +190,7 @@ const ofTexture & ofVideoGrabber::getTextureReference() const{
 
 //------------------------------------
 vector<ofTexture> & ofVideoGrabber::getTexturePlanes(){
-	if(grabber->getTexturePtr() != NULL){
+	if(grabber->getTexturePtr() != nullptr){
 		tex.clear();
 		tex.push_back(*grabber->getTexturePtr());
 	}
@@ -202,7 +199,7 @@ vector<ofTexture> & ofVideoGrabber::getTexturePlanes(){
 
 //------------------------------------
 const vector<ofTexture> & ofVideoGrabber::getTexturePlanes() const{
-	if(grabber->getTexturePtr() != NULL){
+	if(grabber->getTexturePtr() != nullptr){
 		ofVideoGrabber* mutThis = const_cast<ofVideoGrabber*>(this);
 		mutThis->tex.clear();
 		mutThis->tex.push_back(*grabber->getTexturePtr());
@@ -231,9 +228,6 @@ void ofVideoGrabber::update(){
 				bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glInternalFormat != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
 				if(bDiffPixFormat || !tex[i].isAllocated() ){
 					tex[i].allocate(plane);
-					if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
-						tex[i].setRGToRGBASwizzles(true);
-					}
 				}else{
 					tex[i].loadData(plane);
 				}
@@ -247,7 +241,7 @@ void ofVideoGrabber::close(){
 	if(grabber){
 		grabber->close();
 	}
-	if(!grabber->getTexturePtr()) tex.clear();
+	tex.clear();
 }
 
 //--------------------------------------------------------------------

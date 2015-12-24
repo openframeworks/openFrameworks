@@ -56,7 +56,7 @@ void ofBufferObject::allocate(GLsizeiptr bytes, const void * data, GLenum usage)
 }
 
 bool ofBufferObject::isAllocated() const{
-	return data.get() != NULL;
+	return data.get() != nullptr;
 }
 
 void ofBufferObject::bind(GLenum target) const{
@@ -75,11 +75,15 @@ void ofBufferObject::bindBase(GLenum target,GLuint index) const{
 	if(data){
 		glBindBufferBase(target,index,data->id);
 		data->lastTarget = target;
+		data->isBound = true;
 	}
 }
 
 void ofBufferObject::unbindBase(GLenum target,GLuint index) const{
 	glBindBufferBase(target,index,0);
+	if(data){
+		data->isBound = false;
+	}
 }
 
 void ofBufferObject::bindRange(GLenum target,GLuint index, GLintptr offset, GLsizeiptr size) const{
@@ -133,9 +137,13 @@ void ofBufferObject::updateData(GLintptr offset, GLsizeiptr bytes, const void * 
 	unbind(this->data->lastTarget);
 }
 
+void ofBufferObject::updateData(GLsizeiptr bytes, const void * data){
+    updateData(0,bytes,data);
+}
+
 #ifndef TARGET_OPENGLES
 void * ofBufferObject::map(GLenum access){
-	if(!this->data) return NULL;
+	if(!this->data) return nullptr;
 
 #ifdef GLEW_ARB_direct_state_access
 	if (data->useDSA) {
@@ -144,11 +152,19 @@ void * ofBufferObject::map(GLenum access){
 #endif
 
 	/// --------| invariant: direct state access is not available
-
-	if(data->lastTarget==GL_PIXEL_PACK_BUFFER){
-		bind(GL_PIXEL_UNPACK_BUFFER);
-	}else{
-		bind(data->lastTarget);
+	if(!data->isBound){
+		// if the buffer wasn't already bound and the operation
+		// is one of unpack/pack buffer alternate between the 2
+		// since the tipical use is to pack to copy to the buffer
+		// then unpack to copy from it.
+		// for more advanced usages one can just bind the buffer
+		// before mapping
+		if(data->lastTarget==GL_PIXEL_PACK_BUFFER){
+			data->lastTarget = GL_PIXEL_UNPACK_BUFFER;
+		}else if(data->lastTarget == GL_PIXEL_UNPACK_BUFFER){
+			data->lastTarget = GL_PIXEL_PACK_BUFFER;
+		}
+		glBindBuffer(data->lastTarget, data->id);
 	}
 	return glMapBuffer(data->lastTarget,access);
 }
@@ -166,11 +182,13 @@ void ofBufferObject::unmap(){
 	/// --------| invariant: direct state access is not available
 
 	glUnmapBuffer(data->lastTarget);
-	unbind(data->lastTarget);
+	if(!data->isBound){
+		unbind(data->lastTarget);
+	}
 }
 
 void * ofBufferObject::mapRange(GLintptr offset, GLsizeiptr length, GLenum access){
-	if(!this->data) return NULL;
+	if(!this->data) return nullptr;
 
 #ifdef GLEW_ARB_direct_state_access
 	if (data->useDSA) {

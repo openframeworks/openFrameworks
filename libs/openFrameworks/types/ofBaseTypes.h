@@ -72,7 +72,9 @@ public:
 	/// \param y Draw position on the y axis.
 	/// \param w Draw width.
 	/// \param h Draw height.
-	virtual void draw(float x, float y, float w, float h) const=0;
+    virtual void draw(float x, float y, float w, float h) const{
+        draw(x, y, getWidth(), getHeight());
+    }
 
 	/// \brief Draw at a position at the native size.
 	///
@@ -411,8 +413,8 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	/// \note Subclasses should implement this method only if internal API can
 	/// upload video grabber pixels directly to an ofTexture.
 	///
-	/// \returns the internal ofTexture pointer or NULL if not available.
-	virtual ofTexture * getTexturePtr(){ return NULL; }
+	/// \returns the internal ofTexture pointer or nullptr if not available.
+	virtual ofTexture * getTexturePtr(){ return nullptr; }
 
 	/// \brief Set the video grabber's hardware verbosity level.
 	/// \param bTalkToMe true if verbose grabber logging feedback is required.
@@ -454,7 +456,7 @@ public:
 	
 	virtual void				play() = 0;
 	virtual void				stop() = 0;
-	virtual ofTexture *			getTexturePtr(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
+	virtual ofTexture *			getTexturePtr(){return nullptr;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
 
 	virtual float 				getWidth() const = 0;
 	virtual float 				getHeight() const = 0;
@@ -715,7 +717,7 @@ public:
 	/// \param z The z-coordinate of the box's origin.
 	/// \param width The width of the box.
 	/// \param height The height of the box.
-	/// \param height The depth of the box.
+	/// \param depth The depth of the box.
 	virtual void drawBox( float x, float y, float z, float width, float height, float depth) const;
 
 	/// \brief Draws a cube with the specified size, starting from the specified coordinates.
@@ -745,7 +747,7 @@ public:
 	/// \param position an ofPoint which contains the (x,y,z) coordinates for the box's reference corner.
 	/// \param width The width of the box.
 	/// \param height The height of the box.
-	/// \param height The depth of the box.
+	/// \param depth The depth of the box.
 	virtual void drawBox(const ofPoint& position, float width, float height, float depth) const;
 
 	/// \brief Draws a cube with the specified size, starting from the specified position.
@@ -776,7 +778,7 @@ public:
 	///
 	/// \param width The width of the box.
 	/// \param height The height of the box.
-	/// \param height The depth of the box.
+	/// \param depth The depth of the box.
 	virtual void drawBox( float width, float height, float depth ) const;
 
 	virtual void drawAxis(float size) const;
@@ -791,7 +793,7 @@ public:
 	using ofBaseRenderer::draw;
 	virtual void draw(const ofTexture & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
 	virtual void draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const=0;
-	virtual void drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const=0;
+	virtual void drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int offsetelements) const=0;
 	virtual void drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const=0;
 	virtual void drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const=0;
 	virtual void draw(const ofVboMesh & mesh, ofPolyRenderMode renderType) const=0;

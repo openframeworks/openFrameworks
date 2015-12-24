@@ -10,25 +10,37 @@
 
 //--------------------------------------------------------------
 ofAVFoundationPlayer::ofAVFoundationPlayer() {
-    videoPlayer = NULL;
+    videoPlayer = nullptr;
     pixelFormat = OF_PIXELS_RGBA;
 	
     bFrameNew = false;
     bResetPixels = false;
     bUpdatePixels = false;
     bUpdateTexture = false;
-    bTextureCacheSupported = false;
-#ifdef TARGET_OF_IOS
-    bTextureCacheSupported = (CVOpenGLESTextureCacheCreate != NULL);
-#endif
-#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_4)
-	bTextureCacheSupported = true;
-#endif
 }
 
 //--------------------------------------------------------------
 ofAVFoundationPlayer::~ofAVFoundationPlayer() {
-    close();
+    disposePlayer();
+}
+
+//--------------------------------------------------------------
+ofAVFoundationPlayer& ofAVFoundationPlayer::operator=(ofAVFoundationPlayer other)
+{
+	// clear pixels
+	pixels.clear();
+	videoTexture.clear();
+	
+	// get rid of the textures
+	killTextureCache();
+
+	bFrameNew = false;
+	bResetPixels = false;
+	bUpdatePixels = false;
+	bUpdateTexture = false;
+	
+	std::swap(videoPlayer, other.videoPlayer);
+	return *this;
 }
 
 //--------------------------------------------------------------
@@ -43,56 +55,45 @@ bool ofAVFoundationPlayer::load(string name) {
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
+	
+	NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
+	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
+	
+	BOOL bStream = NO;
+	
+	bStream = bStream || (ofIsStringInString(name, "http://"));
+	bStream = bStream || (ofIsStringInString(name, "https://"));
+	bStream = bStream || (ofIsStringInString(name, "rtsp://"));
+	
+	NSURL * url = nil;
+	if(bStream == YES) {
+		url = [NSURL URLWithString:videoPath];
+	} else {
+		url = [NSURL fileURLWithPath:videoLocalPath];
+	}
 
-    // dispose videoplayer, clear pixels, clear texture
-    if(videoPlayer != NULL) {
-        
-        pixels.clear();
-        videoTexture.clear();
-        
-        // dispose videoplayer
-        disposePlayer();
-        
-        if (_videoTextureRef != NULL) {
-            killTexture();
-        }
-        
-        videoPlayer = NULL;
+	bFrameNew = false;
+	bResetPixels = true;
+	bUpdatePixels = true;
+	bUpdateTexture = true;
+	
+    // reuse videoplayer
+    if(videoPlayer != nullptr) {
+		// use existing player
+		return [videoPlayer loadWithURL:url async:bAsync];
     }
-    bFrameNew = false;
-
 	
     // create a new player
     videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
     [videoPlayer setWillBeUpdatedExternally:YES];
 
-
-	
-    NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
-    NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
-
-    BOOL bStream = NO;
-
-    bStream = bStream || (ofIsStringInString(name, "http://"));
-    bStream = bStream || (ofIsStringInString(name, "https://"));
-    bStream = bStream || (ofIsStringInString(name, "rtsp://"));
-
-    NSURL * url = nil;
-    if(bStream == YES) {
-        url = [NSURL URLWithString:videoPath];
-    } else {
-        url = [NSURL fileURLWithPath:videoLocalPath];
-    }
-
     bool bLoaded = [videoPlayer loadWithURL:url async:bAsync];
 	
-    bResetPixels = true;
-    bUpdatePixels = true;
-    bUpdateTexture = true;
-
+	pixels.clear();
+	videoTexture.clear();
+	
     bool bCreateTextureCache = true;
-    bCreateTextureCache = bCreateTextureCache && (bTextureCacheSupported == true);
-    bCreateTextureCache = bCreateTextureCache && (_videoTextureCache == NULL);
+    bCreateTextureCache = bCreateTextureCache && (_videoTextureCache == nullptr);
     
     if(bCreateTextureCache == true) {
 
@@ -100,26 +101,26 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
         
 #if defined(TARGET_OF_IOS) && defined(__IPHONE_6_0)
         err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
-                                           NULL,
+                                           nullptr,
                                            [EAGLContext currentContext],
-                                           NULL,
+                                           nullptr,
                                            &_videoTextureCache);
 #endif
         
 #if defined(TARGET_OF_IOS) && !defined(__IPHONE_6_0)
         err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
-                                           NULL,
+                                           nullptr,
                                            (__bridge void *)[EAGLContext currentContext],
-                                           NULL,
+                                           nullptr,
                                            &_videoTextureCache);
 #endif
         
 #ifdef TARGET_OSX
         err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault,
-                                         NULL,
+                                         nullptr,
                                          CGLGetCurrentContext(),
                                          CGLGetPixelFormat(CGLGetCurrentContext()),
-                                         NULL,
+                                         nullptr,
                                          &_videoTextureCache);
 #endif
         
@@ -134,39 +135,42 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::disposePlayer() {
 	
-    if (videoPlayer == NULL)
-        return;
+	if (videoPlayer != nullptr) {
 
-    // pause player, stop updates
-    [videoPlayer pause];
+		// clear pixels
+		pixels.clear();
+		videoTexture.clear();
+		
+		// dispose videoplayer
+		__block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
+		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+			@autoreleasepool {
+				[currentPlayer unloadVideo]; // synchronious call to unload video
+				[currentPlayer autorelease]; // release
+			}
+		});
+		
+		videoPlayer = nullptr;
+	}
+	
+	// get rid of the textures
+	killTextureCache();
 
-    // dispose videoplayer
-    __block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        
-        @autoreleasepool {
-            [currentPlayer autorelease];
-        }
-    });
+	
+	bFrameNew = false;
+	bResetPixels = false;
+	bUpdatePixels = false;
+	bUpdateTexture = false;
 }
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::close() {
-    if(videoPlayer != NULL) {
+    if(videoPlayer != nullptr) {
 		
         pixels.clear();
-        
         videoTexture.clear();
-
-        disposePlayer();
-
-        videoPlayer = NULL;
-    }
-	
-    // in any case get rid of the textures
-    if(bTextureCacheSupported == true) {
-        killTextureCache();
+		
+		[videoPlayer close];
     }
 	
     bFrameNew = false;
@@ -239,14 +243,14 @@ void ofAVFoundationPlayer::draw(const ofRectangle & rect) {
 }
 
 void ofAVFoundationPlayer::draw(float x, float y, float w, float h) {
-    if(videoPlayer != NULL) {
+    if(isLoaded()) {
         getTexturePtr()->draw(x, y, w, h);
     }
 }
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::play() {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         ofLogWarning("ofAVFoundationPlayer") << "play(): video not loaded.";
     }
     
@@ -255,7 +259,7 @@ void ofAVFoundationPlayer::play() {
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::stop() {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return;
     }
     
@@ -265,7 +269,7 @@ void ofAVFoundationPlayer::stop() {
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::isFrameNew() const {
-    if(videoPlayer != NULL) {
+    if(videoPlayer != nullptr) {
         return bFrameNew;
     }	
     return false;
@@ -358,7 +362,7 @@ ofPixels & ofAVFoundationPlayer::getPixels() {
 //--------------------------------------------------------------
 ofTexture * ofAVFoundationPlayer::getTexturePtr() {
     
-    if(isLoaded() == false) {
+    if(isLoaded() == false) {		
         return &videoTexture;
     }
     
@@ -366,28 +370,7 @@ ofTexture * ofAVFoundationPlayer::getTexturePtr() {
         return &videoTexture;
     }
     
-    if(bTextureCacheSupported == true) {
-        
-        initTextureCache();
-        
-    } else {
-        
-        /**
-         *  no video texture cache.
-         *  load texture from pixels.
-         *  this method is the slower alternative.
-         */
-        
-        int maxTextureSize = 0;
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-        
-        if(getWidth() > maxTextureSize || getHeight() > maxTextureSize) {
-            ofLogWarning("ofAVFoundationPlayer") << "getTexturePtr(): " << getWidth() << "x" << getHeight() << " video image is bigger then max supported texture size " << maxTextureSize << ".";
-            return NULL;
-        }
-        
-        videoTexture.loadData(getPixels());
-    }
+    initTextureCache();
     
     bUpdateTexture = false;
     
@@ -440,7 +423,7 @@ void ofAVFoundationPlayer::initTextureCache() {
     err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault,     // CFAllocatorRef allocator
                                                        _videoTextureCache,      // CVOpenGLESTextureCacheRef textureCache
                                                        imageBuffer,             // CVImageBufferRef sourceImage
-                                                       NULL,                    // CFDictionaryRef textureAttributes
+                                                       nullptr,                    // CFDictionaryRef textureAttributes
                                                        texData.textureTarget,   // GLenum target
                                                        texData.glInternalFormat,  // GLint internalFormat
                                                        texData.width,           // GLsizei width
@@ -456,10 +439,10 @@ void ofAVFoundationPlayer::initTextureCache() {
     
 #ifdef TARGET_OSX
     
-    err = CVOpenGLTextureCacheCreateTextureFromImage(NULL,
+    err = CVOpenGLTextureCacheCreateTextureFromImage(nullptr,
                                                      _videoTextureCache,
                                                      imageBuffer,
-                                                     NULL,
+                                                     nullptr,
                                                      &_videoTextureRef);
 
     textureCacheID = CVOpenGLTextureGetName(_videoTextureRef);
@@ -486,7 +469,7 @@ void ofAVFoundationPlayer::initTextureCache() {
     CVOpenGLESTextureCacheFlush(_videoTextureCache, 0);
     if(_videoTextureRef) {
         CFRelease(_videoTextureRef);
-        _videoTextureRef = NULL;
+        _videoTextureRef = nullptr;
     }
     
 #endif
@@ -496,7 +479,7 @@ void ofAVFoundationPlayer::initTextureCache() {
     CVOpenGLTextureCacheFlush(_videoTextureCache, 0);
     if(_videoTextureRef) {
         CVOpenGLTextureRelease(_videoTextureRef);
-        _videoTextureRef = NULL;
+        _videoTextureRef = nullptr;
     }
     
 #endif
@@ -506,12 +489,12 @@ void ofAVFoundationPlayer::killTexture() {
 #ifdef TARGET_OF_IOS
     if(_videoTextureRef) {
         CFRelease(_videoTextureRef);
-        _videoTextureRef = NULL;
+        _videoTextureRef = nullptr;
     }
 #elif defined TARGET_OSX
-    if (_videoTextureRef != NULL) {
+    if (_videoTextureRef != nullptr) {
         CVOpenGLTextureRelease(_videoTextureRef);
-        _videoTextureRef = NULL;
+        _videoTextureRef = nullptr;
     }
 #endif
 }
@@ -523,14 +506,14 @@ void ofAVFoundationPlayer::killTextureCache() {
 #ifdef TARGET_OF_IOS
     if(_videoTextureCache) {
         CFRelease(_videoTextureCache);
-        _videoTextureCache = NULL;
+        _videoTextureCache = nullptr;
     }
 #endif
     
 #ifdef TARGET_OSX
-    if(_videoTextureCache != NULL) {
+    if(_videoTextureCache != nullptr) {
         CVOpenGLTextureCacheRelease(_videoTextureCache);
-        _videoTextureCache = NULL;
+        _videoTextureCache = nullptr;
     }
     
 #endif
@@ -538,7 +521,7 @@ void ofAVFoundationPlayer::killTextureCache() {
 
 //--------------------------------------------------------------
 float ofAVFoundationPlayer::getWidth() const {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return 0;
     }
     
@@ -547,7 +530,7 @@ float ofAVFoundationPlayer::getWidth() const {
 
 //--------------------------------------------------------------
 float ofAVFoundationPlayer::getHeight() const {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return 0;
     }
     
@@ -556,7 +539,7 @@ float ofAVFoundationPlayer::getHeight() const {
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::isPaused() const {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return false;
     }
     
@@ -565,7 +548,7 @@ bool ofAVFoundationPlayer::isPaused() const {
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::isLoaded() const {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return false;
     }
     
@@ -574,7 +557,7 @@ bool ofAVFoundationPlayer::isLoaded() const {
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::isPlaying() const {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return false;
     }
     
@@ -583,7 +566,7 @@ bool ofAVFoundationPlayer::isPlaying() const {
 
 //--------------------------------------------------------------
 float ofAVFoundationPlayer::getPosition() const {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return 0;
     }
     
@@ -592,7 +575,7 @@ float ofAVFoundationPlayer::getPosition() const {
 
 //--------------------------------------------------------------
 float ofAVFoundationPlayer::getSpeed() const {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return 0;
     }
     
@@ -601,7 +584,7 @@ float ofAVFoundationPlayer::getSpeed() const {
 
 //--------------------------------------------------------------
 float ofAVFoundationPlayer::getDuration() const {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return 0;
     }
     
@@ -610,7 +593,7 @@ float ofAVFoundationPlayer::getDuration() const {
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::getIsMovieDone() const {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return false;
     }
     
@@ -619,7 +602,7 @@ bool ofAVFoundationPlayer::getIsMovieDone() const {
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::setPaused(bool bPause) {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return;
     }
     
@@ -632,7 +615,7 @@ void ofAVFoundationPlayer::setPaused(bool bPause) {
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::setPosition(float pct) {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return;
     }
     
@@ -641,7 +624,7 @@ void ofAVFoundationPlayer::setPosition(float pct) {
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::setVolume(float volume) {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return;
     }
     if(volume > 1.0) {
@@ -653,7 +636,7 @@ void ofAVFoundationPlayer::setVolume(float volume) {
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::setLoopState(ofLoopType state) {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return;
     }
 	
@@ -662,7 +645,7 @@ void ofAVFoundationPlayer::setLoopState(ofLoopType state) {
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::setSpeed(float speed) {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return;
     }
     
@@ -671,7 +654,7 @@ void ofAVFoundationPlayer::setSpeed(float speed) {
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::setFrame(int frame) {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return;
     }
 
@@ -680,7 +663,7 @@ void ofAVFoundationPlayer::setFrame(int frame) {
 
 //--------------------------------------------------------------
 int	ofAVFoundationPlayer::getCurrentFrame() const {
-    if(videoPlayer == NULL){
+    if(videoPlayer == nullptr){
         return 0;
     }
     return [videoPlayer getCurrentFrameNum];
@@ -688,7 +671,7 @@ int	ofAVFoundationPlayer::getCurrentFrame() const {
 
 //--------------------------------------------------------------
 int	ofAVFoundationPlayer::getTotalNumFrames() const {
-    if(videoPlayer == NULL){
+    if(videoPlayer == nullptr){
         return 0;
     }
     return [videoPlayer getDurationInFrames];
@@ -696,7 +679,7 @@ int	ofAVFoundationPlayer::getTotalNumFrames() const {
 
 //--------------------------------------------------------------
 ofLoopType	ofAVFoundationPlayer::getLoopState() const {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return OF_LOOP_NONE;
     }
     
@@ -709,7 +692,7 @@ ofLoopType	ofAVFoundationPlayer::getLoopState() const {
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::firstFrame() {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return;
     }
     
@@ -718,7 +701,7 @@ void ofAVFoundationPlayer::firstFrame() {
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::nextFrame() {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return;
     }
 
@@ -727,7 +710,7 @@ void ofAVFoundationPlayer::nextFrame() {
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::previousFrame() {
-    if(videoPlayer == NULL) {
+    if(videoPlayer == nullptr) {
         return;
     }
 

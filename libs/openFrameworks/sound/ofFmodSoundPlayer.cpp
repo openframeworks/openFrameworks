@@ -4,11 +4,11 @@
 #include "ofUtils.h"
 
 
-bool bFmodInitialized_ = false;
-bool bUseSpectrum_ = false;
-float fftValues_[8192];			//
-float fftInterpValues_[8192];			//
-float fftSpectrum_[8192];		// maximum #ofFmodSoundPlayer is 8192, in fmodex....
+static bool bFmodInitialized_ = false;
+static float fftValues_[8192];			//
+static float fftInterpValues_[8192];			//
+static float fftSpectrum_[8192];		// maximum #ofFmodSoundPlayer is 8192, in fmodex....
+static unsigned int buffersize = 1024;
 
 
 // ---------------------  static vars
@@ -124,6 +124,10 @@ float * ofFmodSoundGetSpectrum(int nBands){
 	return fftInterpValues_;
 }
 
+void ofFmodSetBuffersize(unsigned int bs){
+	buffersize = bs;
+}
+
 // ------------------------------------------------------------
 // ------------------------------------------------------------
 
@@ -151,15 +155,25 @@ ofFmodSoundPlayer::~ofFmodSoundPlayer(){
 // this should only be called once
 void ofFmodSoundPlayer::initializeFmod(){
 	if(!bFmodInitialized_){
+		
 		FMOD_System_Create(&sys);
+		
+		// set buffersize, keep number of buffers
+		unsigned int bsTmp;
+		int nbTmp;
+		FMOD_System_GetDSPBufferSize(sys, &bsTmp, &nbTmp);
+		FMOD_System_SetDSPBufferSize(sys, buffersize, nbTmp);
+
 		#ifdef TARGET_LINUX
 			FMOD_System_SetOutput(sys,FMOD_OUTPUTTYPE_ALSA);
 		#endif
-		FMOD_System_Init(sys, 32, FMOD_INIT_NORMAL, NULL);  //do we want just 32 channels?
+		FMOD_System_Init(sys, 32, FMOD_INIT_NORMAL, nullptr);  //do we want just 32 channels?
 		FMOD_System_GetMasterChannelGroup(sys, &channelgroup);
 		bFmodInitialized_ = true;
 	}
 }
+
+
 
 
 //---------------------------------------
@@ -200,7 +214,7 @@ bool ofFmodSoundPlayer::load(string fileName, bool stream){
 	int fmodFlags =  FMOD_SOFTWARE;
 	if(stream)fmodFlags =  FMOD_SOFTWARE | FMOD_CREATESTREAM;
 
-	result = FMOD_System_CreateSound(sys, fileName.c_str(),  fmodFlags, NULL, &sound);
+	result = FMOD_System_CreateSound(sys, fileName.c_str(),  fmodFlags, nullptr, &sound);
 
 	if (result != FMOD_OK){
 		bLoadedOk = false;

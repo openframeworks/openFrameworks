@@ -176,7 +176,7 @@ PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os -DNDEBUG
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
@@ -378,11 +378,14 @@ afterplatform: $(TARGET_NAME)
 
 	@echo TARGET=$(TARGET)
 
-	@install_name_tool -change ./libfmodex.dylib @executable_path/libs/libfmodex.dylib $(TARGET)
-	@install_name_tool -change @executable_path/../Frameworks/GLUT.framework/Versions/A/GLUT @executable_path/Frameworks/GLUT.framework/Versions/A/GLUT $(TARGET)
 
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
-	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/$(BIN_NAME).app/Contents/MacOS
+	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/libs/* bin/$(BIN_NAME).app/Contents/MacOS
+	
+	
+ifdef PROJECT_AFTER_OSX
+	${PROJECT_AFTER_OSX}
+endif	
 
 	@echo
 	@echo "     compiling done"

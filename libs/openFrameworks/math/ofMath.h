@@ -150,6 +150,9 @@ float ofNormalize(float value, float min, float max);
 /// \param outputMin The lower bound of the output range.
 /// \param outputMax The upper bound of the output range.
 /// \param clamp True if the value should be clamped to [outputMin, outputMax).
+/// \note If the absolute difference between inputMin and inputMax is less than
+///		  FLT_EPSILON, outputMin will be returned to prevent divide by zero
+///		  errors.
 /// \returns a mapped floating point number.
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp = false);
 
@@ -369,7 +372,7 @@ float ofAngleDifferenceRadians(float currentAngle, float targetAngle);
 float ofWrap(float value, float from, float to);
 
 // \brief Convenience function for ofWrap(), constrained between -PI...PI
-float ofWrapRadians(float angle, float from = -PI, float to=+PI);
+float ofWrapRadians(float angle, float from = static_cast<float>(-PI), float to=static_cast<float>(PI));
 
 // \brief Convenience function for ofWrap(), constrained between -180...180
 float ofWrapDegrees(float angle, float from = -180, float to=+180);
@@ -534,7 +537,7 @@ template<typename Type>
 Type ofInterpolateCosine(const Type& y1, const Type& y2, float pct){
 	float pct2;
 
-	pct2 = (1-cos(pct*PI))/2;
+	pct2 = (1-cos(pct*static_cast<float>(PI)))/2;
 	return(y1*(1-pct2)+y2*pct2);
 }
 

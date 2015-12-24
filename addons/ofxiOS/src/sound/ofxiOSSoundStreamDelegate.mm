@@ -4,9 +4,9 @@
 //  http://julapy.com/blog
 //
 
-#import "ofxiOSSoundStreamDelegate.h"
-#import "ofBaseTypes.h"
-#import "ofSoundBuffer.h"
+#include "ofxiOSSoundStreamDelegate.h"
+#include "ofBaseTypes.h"
+#include "ofSoundBuffer.h"
 
 @interface ofxiOSSoundStreamDelegate() {
 	ofBaseSoundInput * soundInputApp;

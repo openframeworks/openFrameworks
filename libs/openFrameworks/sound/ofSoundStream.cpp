@@ -1,12 +1,17 @@
 #include "ofSoundStream.h"
 #include "ofAppRunner.h"
 
-ofSoundStream soundStreamInput;
-ofSoundStream soundStreamOutput;	
+#if defined(OF_SOUND_PLAYER_FMOD)
+#include "ofSoundPlayer.h"
+#endif
+
+namespace{
+    ofSoundStream systemSoundStream;
+}
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr){
-	if( appPtr == NULL ){
+	if( appPtr == nullptr ){
 		appPtr = ofGetAppPtr();
 	}
 	ofSoundStreamSetup(nOutputChannels, nInputChannels, appPtr, 44100, 256, 4);
@@ -19,30 +24,27 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate,
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers){
-	soundStreamOutput.setup(appPtr, nOutputChannels, nInputChannels, sampleRate, bufferSize, nBuffers);
+    systemSoundStream.setup(appPtr, nOutputChannels, nInputChannels, sampleRate, bufferSize, nBuffers);
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStop(){
-	soundStreamOutput.stop();
-	soundStreamInput.stop();
+    systemSoundStream.stop();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStart(){
-	soundStreamOutput.start();
-	soundStreamInput.start();
+    systemSoundStream.start();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamClose(){
-	soundStreamOutput.close();
-	soundStreamInput.close();
+    systemSoundStream.close();
 }
 
 //------------------------------------------------------------
 vector<ofSoundDevice> ofSoundStreamListDevices(){
-	vector<ofSoundDevice> deviceList = soundStreamOutput.getDeviceList();
+	vector<ofSoundDevice> deviceList = systemSoundStream.getDeviceList();
 	ofLogNotice("ofSoundStreamListDevices") << std::endl << deviceList;
 	return deviceList;
 }
@@ -102,6 +104,9 @@ void ofSoundStream::setDevice(const ofSoundDevice &device) {
 //------------------------------------------------------------
 bool ofSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
 	if( soundStream ){
+#if defined(OF_SOUND_PLAYER_FMOD)
+		ofFmodSetBuffersize(bufferSize);
+#endif
 		return soundStream->setup(app, outChannels, inChannels, sampleRate, bufferSize, nBuffers);
 	}
 	return false;
@@ -134,6 +139,9 @@ void ofSoundStream::setOutput(ofBaseSoundOutput &soundOutput){
 //------------------------------------------------------------
 bool ofSoundStream::setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
 	if( soundStream ){
+#if defined(OF_SOUND_PLAYER_FMOD)
+		ofFmodSetBuffersize(bufferSize);
+#endif
 		return soundStream->setup(outChannels, inChannels, sampleRate, bufferSize, nBuffers);
 	}
 	return false;

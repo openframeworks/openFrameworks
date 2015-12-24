@@ -32,11 +32,18 @@ ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& _mom ) {
 void ofxCvGrayscaleImage::init() {
     ipldepth = IPL_DEPTH_8U;
     iplchannels = 1;
-    gldepth = GL_UNSIGNED_BYTE;
-    glchannels = GL_LUMINANCE;
     briConLutMatrix = cvCreateMat(1,256,CV_8UC1);
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvGrayscaleImage::allocateTexture(){
+	tex.allocate(pixels);
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvGrayscaleImage::allocatePixels(int w, int h){
+	pixels.allocate(w,h,OF_PIXELS_GRAY);
+}
 
 // Set Pixel Data - Arrays
 //-------------------------------------------------------------------------------------

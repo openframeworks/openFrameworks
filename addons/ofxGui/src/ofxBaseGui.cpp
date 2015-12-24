@@ -1,7 +1,9 @@
 #include "ofxBaseGui.h"
-#include "ofXml.h"
 #include "ofImage.h"
 #include "ofBitmapFont.h"
+#ifndef TARGET_EMSCRIPTEN
+#include "ofXml.h"
+#endif
 using namespace std;
 
 
@@ -63,9 +65,11 @@ bool ofxBaseGui::useTTF = false;
 ofBitmapFont ofxBaseGui::bitmapFont;
 
 ofxBaseGui::ofxBaseGui(){
-	parent = NULL;
+	parent = nullptr;
 	currentFrame = ofGetFrameNum();
-	serializer = std::shared_ptr <ofBaseFileSerializer>(new ofXml);
+#ifndef TARGET_EMSCRIPTEN
+    serializer = std::make_shared<ofXml>();
+#endif
 
 	thisHeaderBackgroundColor = headerBackgroundColor;
 	thisBackgroundColor = backgroundColor;
@@ -83,8 +87,8 @@ ofxBaseGui::ofxBaseGui(){
 
 }
 
-void ofxBaseGui::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
-	font.load(filename, fontsize, _bAntiAliased, _bFullCharacterSet, dpi);
+void ofxBaseGui::loadFont(const std::string& filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
+	font.load(filename, fontsize, _bAntiAliased, _bFullCharacterSet, false, 0, dpi);
 	fontLoaded = true;
 	useTTF = true;
 }
@@ -166,15 +170,23 @@ ofRectangle ofxBaseGui::getTextBoundingBox(const string & text, float x, float y
 	}
 }
 
-void ofxBaseGui::saveToFile(string filename){
-	serializer->load(filename);
-	saveTo(*serializer);
-	serializer->save(filename);
+void ofxBaseGui::saveToFile(const std::string& filename){
+	if(serializer){
+		serializer->load(filename);
+		saveTo(*serializer);
+		serializer->save(filename);
+	}else{
+		ofLogError("ofxGui") << "element has no serializer to save to";
+	}
 }
 
-void ofxBaseGui::loadFromFile(string filename){
-	serializer->load(filename);
-	loadFrom(*serializer);
+void ofxBaseGui::loadFromFile(const std::string& filename){
+	if(serializer){
+		serializer->load(filename);
+		loadFrom(*serializer);
+	}else{
+		ofLogError("ofxGui") << "element has no serializer to load from";
+	}
 }
 
 
@@ -195,11 +207,11 @@ string ofxBaseGui::getName(){
 	return getParameter().getName();
 }
 
-void ofxBaseGui::setName(string _name){
+void ofxBaseGui::setName(const std::string& _name){
 	getParameter().setName(_name);
 }
 
-void ofxBaseGui::setPosition(ofPoint p){
+void ofxBaseGui::setPosition(const ofPoint & p){
 	setPosition(p.x, p.y);
 }
 
@@ -225,39 +237,39 @@ void ofxBaseGui::setShape(float x, float y, float w, float h){
 	sizeChangedCB();
 }
 
-ofPoint ofxBaseGui::getPosition(){
+ofPoint ofxBaseGui::getPosition() const {
 	return ofPoint(b.x, b.y);
 }
 
-ofRectangle ofxBaseGui::getShape(){
+ofRectangle ofxBaseGui::getShape() const {
 	return b;
 }
 
-float ofxBaseGui::getWidth(){
+float ofxBaseGui::getWidth() const {
 	return b.width;
 }
 
-float ofxBaseGui::getHeight(){
+float ofxBaseGui::getHeight() const {
 	return b.height;
 }
 
-ofColor ofxBaseGui::getHeaderBackgroundColor(){
+ofColor ofxBaseGui::getHeaderBackgroundColor() const {
 	return thisHeaderBackgroundColor;
 }
 
-ofColor ofxBaseGui::getBackgroundColor(){
+ofColor ofxBaseGui::getBackgroundColor() const {
 	return thisBackgroundColor;
 }
 
-ofColor ofxBaseGui::getBorderColor(){
+ofColor ofxBaseGui::getBorderColor() const {
 	return thisBorderColor;
 }
 
-ofColor ofxBaseGui::getTextColor(){
+ofColor ofxBaseGui::getTextColor() const {
 	return thisTextColor;
 }
 
-ofColor ofxBaseGui::getFillColor(){
+ofColor ofxBaseGui::getFillColor() const {
 	return thisFillColor;
 }
 
@@ -329,7 +341,7 @@ void ofxBaseGui::setNeedsRedraw(){
 	needsRedraw = true;
 }
 
-string ofxBaseGui::saveStencilToHex(ofImage & img){
+string ofxBaseGui::saveStencilToHex(const ofImage & img){
 	stringstream strm;
 	int width = img.getWidth();
 	int height = img.getHeight();

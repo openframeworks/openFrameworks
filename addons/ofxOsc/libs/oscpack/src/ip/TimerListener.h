@@ -38,10 +38,12 @@
 #define INCLUDED_OSCPACK_TIMERLISTENER_H
 
 
+namespace osc{
 class TimerListener{
 public:
     virtual ~TimerListener() {}
     virtual void TimerExpired() = 0;
 };
+}
 
 #endif /* INCLUDED_OSCPACK_TIMERLISTENER_H */

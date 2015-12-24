@@ -65,7 +65,7 @@ void ofSoundBuffer::toShortPCM(vector <short> & dst) const {
 
 void ofSoundBuffer::toShortPCM(short * dst) const {
 	for(std::size_t i = 0; i < size(); i++){
-		dst[i] = buffer[i] * float(numeric_limits <short>::max());
+		dst[i] = buffer[i]*float(numeric_limits<short>::max());
 	}
 }
 
@@ -73,19 +73,19 @@ vector <float> & ofSoundBuffer::getBuffer(){
 	return buffer;
 }
 
-const vector <float> & ofSoundBuffer::getBuffer() const {
+const vector<float> & ofSoundBuffer::getBuffer() const{
 	return buffer;
 }
 
-uint64_t ofSoundBuffer::getDurationMS() const {
+uint64_t ofSoundBuffer::getDurationMS() const{
 	return uint64_t(getNumFrames()) * uint64_t(1000) / uint64_t(samplerate);
 }
 
-uint64_t ofSoundBuffer::getDurationMicros() const {
+uint64_t ofSoundBuffer::getDurationMicros() const{
 	return uint64_t(getNumFrames()) * uint64_t(1000000) / uint64_t(samplerate);
 }
 
-uint64_t ofSoundBuffer::getDurationNanos() const {
+uint64_t ofSoundBuffer::getDurationNanos() const{
 	return uint64_t(getNumFrames()) * uint64_t(1000000000) / uint64_t(samplerate);
 }
 
@@ -117,8 +117,10 @@ void ofSoundBuffer::set(float value){
 	checkSizeAndChannelsConsistency("set");
 }
 
-bool ofSoundBuffer::checkSizeAndChannelsConsistency(string function){
-	if(function.size() != 0){
+bool ofSoundBuffer::checkSizeAndChannelsConsistency(const std::string& _function ) {
+	std::string function = _function;
+
+	if ( function.size()!= 0 ){
 		function += ": ";
 	}
 	if((size() % channels) != 0){
@@ -132,7 +134,7 @@ float & ofSoundBuffer::operator[](std::size_t pos){
 	return buffer[pos];
 }
 
-const float & ofSoundBuffer::operator[](std::size_t pos) const {
+const float & ofSoundBuffer::operator[](std::size_t pos) const{
 	return buffer[pos];
 }
 
@@ -184,7 +186,7 @@ void ofSoundBuffer::copyTo(ofSoundBuffer & soundBuffer, std::size_t nFrames, std
 	copyTo(&soundBuffer[0], nFrames, outChannels, fromFrame, loop);
 }
 
-void ofSoundBuffer::copyTo(ofSoundBuffer & outBuffer, std::size_t fromFrame, bool loop) const {
+void ofSoundBuffer::copyTo(ofSoundBuffer & outBuffer, std::size_t fromFrame, bool loop) const{
 	copyTo(&outBuffer[0], outBuffer.getNumFrames(), outBuffer.getNumChannels(), fromFrame, loop);
 }
 
@@ -195,11 +197,11 @@ void ofSoundBuffer::addTo(ofSoundBuffer & soundBuffer, std::size_t nFrames, std:
 	addTo(&soundBuffer.getBuffer()[0], nFrames, outChannels, fromFrame, loop);
 }
 
-void ofSoundBuffer::addTo(ofSoundBuffer & outBuffer, std::size_t fromFrame, bool loop) const {
+void ofSoundBuffer::addTo(ofSoundBuffer & outBuffer, std::size_t fromFrame, bool loop) const{
 	addTo(&outBuffer[0], outBuffer.getNumFrames(), outBuffer.getNumChannels(), fromFrame, loop);
 }
 
-void ofSoundBuffer::copyTo(float * outBuffer, std::size_t nFrames, std::size_t outChannels, std::size_t fromFrame, bool loop) const {
+void ofSoundBuffer::copyTo(float * outBuffer, std::size_t nFrames, std::size_t outChannels, std::size_t fromFrame, bool loop) const{
 	// figure out how many frames we can copy before we need to stop or loop
 	std::size_t nFramesToCopy = nFrames;
 	if((fromFrame + nFrames) >= this->getNumFrames()){

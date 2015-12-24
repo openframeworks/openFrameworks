@@ -30,7 +30,7 @@ void ofApp::update(){
 	// of the window
 	
 	waveform.clear();
-	for(int i = 0; i < lastBuffer.getNumFrames(); i++) {
+	for(size_t i = 0; i < lastBuffer.getNumFrames(); i++) {
 		float sample = lastBuffer.getSample(i, 0);
 		float x = ofMap(i, 0, lastBuffer.getNumFrames(), 0, ofGetWidth());
 		float y = ofMap(sample, -1, 1, 0, ofGetHeight());
@@ -62,7 +62,7 @@ void ofApp::audioOut(ofSoundBuffer &outBuffer) {
 	// frequencies, and pulses the volume of each sine wave individually. In
 	// other words, 3 oscillators and 3 LFOs.
 	
-	for(int i = 0; i < outBuffer.getNumFrames(); i++) {
+	for(size_t i = 0; i < outBuffer.getNumFrames(); i++) {
 		
 		// build up a chord out of sine waves at 3 different frequencies
 		float sampleLow = sin(wavePhase);

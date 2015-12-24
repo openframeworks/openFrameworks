@@ -39,7 +39,6 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	
 	ofSetColor(225);
 	verdana14.drawString("Font Example - use keyboard to type", 30, 35);
 

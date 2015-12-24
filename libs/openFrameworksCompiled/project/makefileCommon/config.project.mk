@@ -3,11 +3,11 @@
 # lists of source files, search paths, libraries, etc.
 #
 ifndef OF_ROOT
-    OF_ROOT= ../../..
+    OF_ROOT= $(realpath ../../..)
 endif
 
 ifndef PROJECT_ROOT
-    PROJECT_ROOT= .
+    PROJECT_ROOT= $(realpath .)
 endif
 
 
@@ -16,20 +16,20 @@ OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefile
 
 
 ################################################################################
-# OF CORE LIBRARIES (-l ...) (not used during core compilation, but variables are 
+# OF CORE LIBRARIES (-l ...) (not used during core compilation, but variables are
 #    used during project compilation)
 ################################################################################
 
-# construct the full paths of the core's platform specific static libs 
+# construct the full paths of the core's platform specific static libs
 ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS = $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)
 
 # create a list of all core platform libraries
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_LIBS_PATHS = $(shell find $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -type d -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]" )
+ALL_OF_CORE_LIBS_PATHS = $(shell $(FIND) $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -type d -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]" )
 
 # create a list of all core lib directories that have libsorder.make
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_LIBSORDER_MAKE_FILES = $(shell find $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -name libsorder.make -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]" )
+ALL_OF_CORE_LIBSORDER_MAKE_FILES = $(shell $(FIND) $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -name libsorder.make -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]" )
 
 # create a list of all of the core libs that require ordering
 OF_CORE_LIBS_THAT_NEED_ORDER = $(subst /lib/$(ABI_LIB_SUBPATH)/libsorder.make,,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES))
@@ -38,20 +38,20 @@ OF_CORE_LIBS_THAT_NEED_ORDER = $(subst /lib/$(ABI_LIB_SUBPATH)/libsorder.make,,$
 # by removing those that do from the list of all platform libraries
 OF_CORE_LIBS_THAT_DONT_NEED_ORDER = $(filter-out $(OF_CORE_LIBS_THAT_NEED_ORDER),$(subst /lib/$(ABI_LIB_SUBPATH),,$(ALL_OF_CORE_LIBS_PATHS)))
 
-# create a list of all static libs in the core lib dir, using only 
+# create a list of all static libs in the core lib dir, using only
 # the static libs that don't need order
 # 2> /dev/null consumes file not found errors from find searches
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 # TODO: create a varaible for core specific static lib suffix
-OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell find $(addsuffix /lib/$(ABI_LIB_SUBPATH),$(OF_CORE_LIBS_THAT_DONT_NEED_ORDER)) -name *.a 2> /dev/null | grep -v "/\.[^\.]" )
+OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell $(FIND) $(addsuffix /lib/$(ABI_LIB_SUBPATH),$(OF_CORE_LIBS_THAT_DONT_NEED_ORDER)) -name *.a 2> /dev/null | grep -v "/\.[^\.]" )
 # create a list of all static lib files for the libs that need order
 # NOTE. this is the most unintuitive line of make script magic in here
 # How does it work?
-# 1. Explode each libsorder.make file using cat.  
+# 1. Explode each libsorder.make file using cat.
 # 2. For each lib listed in the libsorder.make file, look back at the
-#    _original_ path for the libsorder.make file itself, and construct 
-#    a path for each of the ordered static libs.  Thus, each exploded 
-#    static lib will get its path from the path of the libsorder.make 
+#    _original_ path for the libsorder.make file itself, and construct
+#    a path for each of the ordered static libs.  Thus, each exploded
+#    static lib will get its path from the path of the libsorder.make
 #    in which it was listed.
 # 3. Add all of them to the ordered files.
 #    sed 's/[ ]*#.*//g' strips all comments beginning with #
@@ -62,10 +62,10 @@ OF_CORE_LIBS_PLATFORM_LIBS_STATICS += $(foreach v,$(ALL_OF_CORE_LIBSORDER_MAKE_F
 
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 ifeq ($(PLATFORM_OS),Linux)
-	ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell find $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)/*.so -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
+	ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell $(FIND) $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)/*.so -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
 else
 	ifeq ($(PLATFORM_OS),Darwin)
-		ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell find $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)/*.dylib -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
+		ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell $(FIND) $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)/*.dylib -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
 	endif
 endif
 
@@ -81,7 +81,7 @@ OF_CORE_THIRDPARTY_SHARED_LIBS := $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_
 # OF PLATFORM LDFLAGS
 ################################################################################
 
-ifeq ($(PLATFORM_OS),Linux) 
+ifeq ($(PLATFORM_OS),Linux)
 	OF_CORE_LIBRARY_LDFLAGS = $(addprefix -L,$(dir $(OF_CORE_THIRDPARTY_SHARED_LIBS)))
 	OF_CORE_LIBRARY_LDFLAGS += $(addprefix -l,$(patsubst lib%,%,$(basename $(notdir $(OF_CORE_THIRDPARTY_SHARED_LIBS)))))
 endif
@@ -92,10 +92,10 @@ OF_CORE_LIBRARY_LDFLAGS += $(addprefix -L,$(PLATFORM_LIBRARY_SEARCH_PATHS))
 # DEBUG INFO
 ################################################################################
 ifdef MAKEFILE_DEBUG
-    $(info =============================configure.core.flags.make========================)   
+    $(info =============================configure.core.flags.make========================)
     $(info ---OF_CORE_LIBS_LDFLAGS---)
     $(foreach v, $(OF_CORE_LIBS_LDFLAGS),$(info $(v)))
-    
+
     $(info ---OF_CORE_LIBS---)
     $(foreach v, $(OF_CORE_LIBS),$(info $(v)))
 endif
@@ -122,19 +122,19 @@ endif
 
 
 ifdef ABI
-	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(ABI)/$(TARGET_NAME)/
+	OF_PROJECT_OBJ_OUTPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(ABI)/$(TARGET_NAME)/
 else
-	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)/
+	OF_PROJECT_OBJ_OUTPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)/
 endif
 
 ################################################################################
 # for reference, please see the following:
 # https://github.com/benben/ofxAddonTemplate
 
-# we will process addons if there is an 
+# we will process addons if there is an
 # addons.make file OR PLATFORM_REQUIRED_ADDONS is defined
-# we do it this way because gnu make can't do logical ORs 
-B_PROCESS_ADDONS = 
+# we do it this way because gnu make can't do logical ORs
+B_PROCESS_ADDONS =
 ifdef PLATFORM_REQUIRED_ADDONS
     B_PROCESS_ADDONS = yes
 endif
@@ -156,15 +156,15 @@ ifdef B_PROCESS_ADDONS
     # (to escape # in make, you must use \#)
     # sed '/^$/d' removes all empty lines
     # (to escape $ in make, you must use $$)
-    REQUESTED_PROJECT_ADDONS := $(shell cat $(PROJECT_ROOT)/addons.make 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d' )
+    REQUESTED_PROJECT_ADDONS := $(shell cat $(PROJECT_ROOT)/addons.make 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d')
 
     # deal with platform specfic addons
     # remove any platform specific addons that were already added to the addons.make file
     REQUESTED_PROJECT_ADDONS := $(filter-out $(PLATFORM_REQUIRED_ADDONS),$(REQUESTED_PROJECT_ADDONS))
 
-    # define a function to remove duplicates without using sort, because sort 
-    # will place the list in lexicographic order, and we want to respect the 
-    # user's addons.make order.  
+    # define a function to remove duplicates without using sort, because sort
+    # will place the list in lexicographic order, and we want to respect the
+    # user's addons.make order.
     remove-dupes-func = $(if $1,$(strip $(word 1,$1) \
                         $(call $0,$(filter-out $(word 1,$1),$1))))
 
@@ -179,8 +179,10 @@ ifdef B_PROCESS_ADDONS
     VALID_PROJECT_ADDONS = $(filter $(REQUESTED_PROJECT_ADDONS),$(ALL_INSTALLED_ADDONS))
 
     # create a list of the invalid addons
-    INVALID_PROJECT_ADDONS = $(filter-out $(VALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
+    INVALID_GLOBAL_ADDONS = $(filter-out $(VALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
 
+	INVALID_PROJECT_ADDONS = $(filter-out $(INVALID_GLOBAL_ADDONS), $(wildcard $(INVALID_GLOBAL_ADDONS)))
+	
     # if any invalid addons are found, throw a warning, but don't cause an error
     ifneq ($(INVALID_PROJECT_ADDONS),)
         $(warning The following unknown addons will be ignored:)
@@ -205,6 +207,10 @@ ifdef B_PROCESS_ADDONS
     ifneq ($(PROJECT_ADDONS),)
 		include $(OF_SHARED_MAKEFILES_PATH)/config.addons.mk
     endif
+    
+    ifdef ADDON_PATHS
+    	PROJECT_ADDON_PATHS = $(addsuffix /,$(call remove-dupes-func,$(ADDON_PATHS:%/=%)))
+    endif
 endif
 
 # generate the list of core libraries
@@ -221,9 +227,9 @@ OF_CORE_LIBS += $(PLATFORM_SHARED_LIBRARIES)
 CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
 	ifeq ($(CROSS_COMPILING),1)
-		OF_CORE_LIBS += $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
+		OF_CORE_LIBS += $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);$(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
 	else
-		OF_CORE_LIBS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
+		OF_CORE_LIBS += $(shell $(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
 	endif
 endif
 
@@ -233,26 +239,29 @@ OF_CORE_LIBS += $(addprefix -l,$(PLATFORM_LIBRARIES))
 # add the list of addon includes
 ifneq ($(strip $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)),)
 	ifeq ($(CROSS_COMPILING),1)
-		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
+		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);$(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
 	else
-		OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
+		OF_CORE_INCLUDES_CFLAGS += $(shell $(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
 	endif
 endif
 
 ################################################################################
-# CLEAN PROJECT EXCLUSIONS 
+# CLEAN PROJECT EXCLUSIONS
 ################################################################################
 
 OF_PROJECT_EXCLUSIONS := $(strip $(PROJECT_EXCLUSIONS))
 
-# add defaults here TODO: should these always be 
+# add defaults here TODO: should these always be
 OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin
 OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/obj
 OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/.git
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin%
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/obj%
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin/%
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/obj/%
 OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/.git/%
 OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj/%
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/build
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/build/%
 
 
 ################################################################################
@@ -262,8 +271,8 @@ OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj
 # exclude all items from source according to the config.make file
 
 # create a list of all dirs in the project root that might be valid project
-# source directories 
-ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 \
+# source directories
+ALL_OF_PROJECT_SOURCE_PATHS = $(shell $(FIND) $(PROJECT_ROOT) -mindepth 1 \
                                                            -type d \
                                                            -not -path "./bin/*" \
                                                            -not -path "./obj/*" \
@@ -271,10 +280,10 @@ ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 \
                                                            -not -path "*/\.*")
 ifneq ($(PROJECT_EXTERNAL_SOURCE_PATHS),)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(PROJECT_EXTERNAL_SOURCE_PATHS)
-	ALL_OF_PROJECT_SOURCE_PATHS += $(shell find $(PROJECT_EXTERNAL_SOURCE_PATHS) -mindepth 1 -type d | grep -v "/\.[^\.]")
+	ALL_OF_PROJECT_SOURCE_PATHS += $(shell $(FIND) $(PROJECT_EXTERNAL_SOURCE_PATHS) -mindepth 1 -type d | grep -v "/\.[^\.]")
 endif
 
-# be included as locations for header searches via 
+# be included as locations for header searches via
 OF_PROJECT_SOURCE_PATHS = $(filter-out $(OF_PROJECT_EXCLUSIONS),$(ALL_OF_PROJECT_SOURCE_PATHS))
 
 ifdef MAKEFILE_DEBUG
@@ -287,16 +296,14 @@ endif
 
 # find all sources inside the project's source directory (recursively)
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-OF_PROJECT_SOURCE_FILES = $(shell find $(OF_PROJECT_SOURCE_PATHS) -maxdepth 1 -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" -or -name "*.S" | grep -v "/\.[^\.]")
+OF_PROJECT_SOURCE_FILES = $(shell $(FIND) $(OF_PROJECT_SOURCE_PATHS) -maxdepth 1 -name "*.mm" -or -name "*.m" -or -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" -or -name "*.S" | grep -v "/\.[^\.]")
 
 ################################################################################
 # PROJECT HEADER INCLUDES (-I ...)
 ################################################################################
 
-OF_PROJECT_INCLUDES := $(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(OF_PROJECT_SOURCE_PATHS))
-OF_PROJECT_INCLUDES += $(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(PROJECT_ADDONS_INCLUDES))
-
-OF_PROJECT_INCLUDES_CFLAGS = $(addprefix -I,$(OF_PROJECT_INCLUDES))
+OF_PROJECT_INCLUDES_CFLAGS := $(addprefix -I,$(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(OF_PROJECT_SOURCE_PATHS)))
+OF_ADDON_INCLUDES_CFLAGS += $(addprefix -I,$(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(PROJECT_ADDONS_INCLUDES)))
 
 ifdef MAKEFILE_DEBUG
     $(info ---OF_PROJECT_INCLUDES_CFLAGS---)
@@ -304,14 +311,14 @@ ifdef MAKEFILE_DEBUG
 endif
 
 ################################################################################
-# PROJECT LIBRARIES (-l ...) (not used during core compilation, but vars are 
+# PROJECT LIBRARIES (-l ...) (not used during core compilation, but vars are
 #    used during project compilation)
 ################################################################################
 
 # TODO - do we look for search paths or search ... or ?
 # TODO - can libs be included in the template?
 # TODO - + frameworks?
-OF_PROJECT_LIBS := 
+OF_PROJECT_LIBS :=
 OF_PROJECT_LIBS += $(PROJECT_ADDONS_LIBS)
 #OF_PROJECT_LIBS_LDFLAGS = $(addprefix -l,$(OF_PROJECT_LIBS))
 
@@ -335,9 +342,6 @@ OF_PROJECT_CFLAGS += $(PROJECT_CFLAGS)
 OF_PROJECT_CFLAGS += $(PROJECT_ADDONS_CFLAGS)
 OF_PROJECT_CFLAGS += $(USER_CFLAGS) # legacy
 OF_PROJECT_CFLAGS += $(OF_PROJECT_DEFINES_CFLAGS)
-OF_PROJECT_CFLAGS += $(OF_PROJECT_INCLUDES_CFLAGS)
-OF_PROJECT_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
-
 OF_PROJECT_CXXFLAGS = $(OF_CORE_BASE_CXXFLAGS)
 
 
@@ -407,6 +411,9 @@ CFLAGS = $(strip $(ALL_CFLAGS))
 # clean up all extra whitespaces in the CFLAGS
 CXXFLAGS = $(strip $(ALL_CXXFLAGS))
 
+PROJECT_INCLUDE_CFLAGS = $(strip $(OF_CORE_INCLUDES_CFLAGS) $(OF_PROJECT_INCLUDES_CFLAGS) $(OF_ADDON_INCLUDES_CFLAGS))
+ADDON_INCLUDE_CFLAGS = $(strip $(OF_CORE_INCLUDES_CFLAGS) $(OF_ADDON_INCLUDES_CFLAGS))
+
 ################################################################################
 # LDFLAGS
 ################################################################################
@@ -423,8 +430,8 @@ LDFLAGS = $(strip $(ALL_LDFLAGS))
 
 # Optimization flags
 
-PROJECT_OPTIMIZATION_CFLAGS_DEBUG = 
-PROJECT_OPTIMIZATION_CFLAGS_DEBUG += 
+PROJECT_OPTIMIZATION_CFLAGS_DEBUG =
+PROJECT_OPTIMIZATION_CFLAGS_DEBUG +=
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	ifeq ($(strip $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)),)
@@ -432,13 +439,13 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	else
 		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
 	endif
-	
+
     ifdef PLATFORM_CORELIB_DEBUG_TARGET
     	TARGET_LIBS += $(PLATFORM_CORELIB_DEBUG_TARGET)
     else
     	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
     endif
-    
+
 	ifeq ($(strip $(PROJECT_OPTIMIZATION_LDFLAGS_DEBUG)),)
 		OPTIMIZATION_LDFLAGS = $(PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG)
 	else
@@ -452,13 +459,13 @@ ifeq ($(findstring Release,$(TARGET_NAME)),Release)
 	else
 		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)
 	endif
-	
+
     ifdef PLATFORM_CORELIB_RELEASE_TARGET
     	TARGET_LIBS += $(PLATFORM_CORELIB_RELEASE_TARGET)
     else
     	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
     endif
-    
+
 	ifeq ($(strip $(PROJECT_OPTIMIZATION_LDFLAGS_RELEASE)),)
 	    OPTIMIZATION_LDFLAGS = $(PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE)
 	else
@@ -469,10 +476,10 @@ endif
 
 ################################################################################
 # OBJECT AND DEPENDENCY FILES DEFINITIONS
-#	Object file paths are generated here (as opposed to with the rest of the 
+#	Object file paths are generated here (as opposed to with the rest of the
 #   flags) because we want to place them in target-specific folders. We
 #   determine targets above. We –could– determine the target info earlier if we
-#   wanted to.  It's here because that's approximately where it was in the 
+#   wanted to.  It's here because that's approximately where it was in the
 #   legacy makefiles.
 ################################################################################
 
@@ -488,8 +495,8 @@ ifdef MAKEFILE_DEBUG
 endif
 
 
-OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(patsubst %.S,%.o,$(OF_PROJECT_SOURCE_FILES))))))
-OBJS_WITH_PREFIX = $(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH),$(OF_PROJECT_OBJ_FILES))
+OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(patsubst %.S,%.o,$(patsubst %.mm,%.o,$(patsubst %.m,%.o,$(OF_PROJECT_SOURCE_FILES))))))))
+OBJS_WITH_PREFIX = $(addprefix $(OF_PROJECT_OBJ_OUTPUT_PATH),$(OF_PROJECT_OBJ_FILES))
 OBJS_WITHOUT_EXTERNAL = $(subst $(strip $(PROJECT_EXTERNAL_SOURCE_PATHS)),,$(OBJS_WITH_PREFIX))
 OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(OBJS_WITHOUT_EXTERNAL))
 OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
