@@ -38,6 +38,7 @@
 #define INCLUDED_OSCPACK_NETWORKINGUTILS_H
 
 
+namespace osc{
 // in general NetworkInitializer is only used internally, but if you're 
 // application creates multiple sockets from different threads at runtime you
 // should instantiate one of these in main just to make sure the networking
@@ -51,6 +52,7 @@ public:
 
 // return ip address of host name in host byte order
 unsigned long GetHostByName( const char *name );
+}
 
 
 #endif /* INCLUDED_OSCPACK_NETWORKINGUTILS_H */

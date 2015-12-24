@@ -35,7 +35,7 @@ fi
 
 
 echo "installing OF dependencies"
-apt-get install freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev python-lxml python-argparse libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev libopencv-dev libegl1-mesa-dev libgles1-mesa-dev libgles2-mesa-dev libassimp-dev librtaudio-dev libboost-filesystem-dev
+apt-get install freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev libopencv-dev libegl1-mesa-dev libgles1-mesa-dev libgles2-mesa-dev libassimp-dev librtaudio-dev libboost-filesystem-dev
 exit_code=$?
 if [ $exit_code != 0 ]; then
     echo "error installing dependencies, there could be an error with your internet connection"
@@ -52,3 +52,40 @@ if [ $exit_code != 0 ]; then
 	exit $exit_code
 fi
 
+if [ -f /opt/vc/include/bcm_host.h ]; then
+    echo "detected Raspberry Pi"
+    echo "installing gstreamer omx"
+    apt-get install  gstreamer${GSTREAMER_VERSION}-omx
+fi
+
+OS_CODENAME=$(cat /etc/os-release | grep VERSION= | sed "s/VERSION\=\"\(.*\)\"/\1/")
+
+if [ "$OS_CODENAME" = "7 (wheezy)" ]; then
+    echo "detected wheezy, installing g++4.8 for c++11 compatibility"
+    apt-get install g++-4.8
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 20
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
+    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.6 20
+    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
+fi
+
+export LC_ALL=C
+GCC_MAJOR_GT_4=$(expr `gcc -dumpversion | cut -f1 -d.` \> 4)
+if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
+    echo
+    echo
+    echo "It seems you are running gcc 5 or later, due to incomatible ABI with previous versions"
+    echo "we need to recompile poco. This will take a while"
+    read -p "Press any key to continue... " -n1 -s
+    
+	sys_cores=$(getconf _NPROCESSORS_ONLN)
+	if [ $sys_cores -gt 1 ]; then
+		cores=$(($sys_cores-1))
+	else
+		cores=1
+	fi
+	
+    DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+    cd ${DIR}/../../apothecary
+    ./apothecary -j${cores} update poco
+fi

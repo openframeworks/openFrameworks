@@ -37,37 +37,69 @@
 #include <assert.h>
 
 ofxOscSender::ofxOscSender()
+:broadcast(true)
+,port(0)
 {
-	socket = NULL;
 }
 
-ofxOscSender::~ofxOscSender()
-{
-	if ( socket )
-		shutdown();
+ofxOscSender::ofxOscSender(const ofxOscSender & mom)
+:broadcast(mom.broadcast)
+,hostname(mom.hostname)
+,port(mom.port){
+	if(mom.socket){
+		setup(hostname,port);
+	}
 }
 
-void ofxOscSender::setup( std::string hostname, int port, bool enableBroadcast )
+ofxOscSender & ofxOscSender::operator=(const ofxOscSender & mom){
+	if(this == &mom) return *this;
+
+	broadcast = mom.broadcast;
+	hostname = mom.hostname;
+	port = mom.port;
+	if(mom.socket){
+		setup(hostname,port);
+	}
+	return *this;
+}
+
+void ofxOscSender::setup( const std::string &hostname, int port )
 {
-    if( UdpSocket::GetUdpBufferSize() == 0 ){
-        UdpSocket::SetUdpBufferSize(65535);
+    if( osc::UdpSocket::GetUdpBufferSize() == 0 ){
+    	osc::UdpSocket::SetUdpBufferSize(65535);
     }
 
-	if ( socket )
-		shutdown();
-	
-    socket = new UdpTransmitSocket(IpEndpointName( hostname.c_str(), port), enableBroadcast);
+    socket.reset(new osc::UdpTransmitSocket(osc::IpEndpointName( hostname.c_str(), port), broadcast));
+    this->hostname = hostname;
+    this->port = port;
+}
+
+void ofxOscSender::disableBroadcast()
+{
+	broadcast = false;
+	if(socket){
+		setup(hostname, port);
+	}
+}
+
+void ofxOscSender::enableBroadcast()
+{
+	broadcast = true;
+	if(socket){
+		setup(hostname, port);
+	}
 }
 
 void ofxOscSender::shutdown()
 {
-	if ( socket )
-		delete socket;
-	socket = NULL;
+	socket.reset();
 }
 
 void ofxOscSender::sendBundle( ofxOscBundle& bundle )
 {
+	if(!socket){
+		ofLogError("ofxOscSender") << "trying to send before setup";
+	}
     //setting this much larger as it gets trimmed down to the size its using before being sent.
     //TODO: much better if we could make this dynamic? Maybe have ofxOscBundle return its size?
 	static const int OUTPUT_BUFFER_SIZE = 327680;
@@ -82,6 +114,9 @@ void ofxOscSender::sendBundle( ofxOscBundle& bundle )
 
 void ofxOscSender::sendMessage( ofxOscMessage& message, bool wrapInBundle )
 {
+	if(!socket){
+		ofLogError("ofxOscSender") << "trying to send before setup";
+	}
     //setting this much larger as it gets trimmed down to the size its using before being sent.
     //TODO: much better if we could make this dynamic? Maybe have ofxOscMessage return its size?
     static const int OUTPUT_BUFFER_SIZE = 327680;
@@ -99,8 +134,8 @@ void ofxOscSender::sendMessage( ofxOscMessage& message, bool wrapInBundle )
 void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
 	if(!parameter.isSerializable()) return;
 	if(parameter.type()==typeid(ofParameterGroup).name()){
-		string address = "/";
-		const vector<string> hierarchy = parameter.getGroupHierarchyNames();
+        std::string address = "/";
+        const std::vector<std::string> hierarchy = parameter.getGroupHierarchyNames();
 		for(int i=0;i<(int)hierarchy.size()-1;i++){
 			address+=hierarchy[i] + "/";
 		}
@@ -108,8 +143,8 @@ void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
 		appendParameter(bundle,parameter,address);
 		sendBundle(bundle);
 	}else{
-		string address = "";
-		const vector<string> hierarchy = parameter.getGroupHierarchyNames();
+        std::string address = "";
+        const std::vector<std::string> hierarchy = parameter.getGroupHierarchyNames();
 		for(int i=0;i<(int)hierarchy.size()-1;i++){
 			address+= "/" + hierarchy[i];
 		}
@@ -121,11 +156,11 @@ void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
 }
 
 
-void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractParameter & parameter, string address){
+void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractParameter & parameter, const std::string &address){
 	if(parameter.type()==typeid(ofParameterGroup).name()){
 		ofxOscBundle bundle;
 		const ofParameterGroup & group = static_cast<const ofParameterGroup &>(parameter);
-		for(int i=0;i<group.size();i++){
+		for(std::size_t i=0;i<group.size();i++){
 			const ofAbstractParameter & p = group[i];
 			if(p.isSerializable()){
 				appendParameter(bundle,p,address+group.getEscapedName()+"/");
@@ -141,7 +176,7 @@ void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractPara
 	}
 }
 
-void ofxOscSender::appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, string address){
+void ofxOscSender::appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, const std::string &address){
 	msg.setAddress(address+parameter.getEscapedName());
 	if(parameter.type()==typeid(ofParameter<int>).name()){
 		msg.addIntArg(parameter.cast<int>());

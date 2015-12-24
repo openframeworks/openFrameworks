@@ -1,5 +1,3 @@
-#include "ofMain.h"
-#include "ofAppiOSWindow.h"
 #include "SquareApp.h"
 
 int main(){
@@ -15,8 +13,7 @@ int main(){
     settings.enableHardwareOrientationAnimation = false; // enables native orientation changes to be animated.
     settings.glesVersion = OFXIOS_RENDERER_ES1; // type of renderer to use, ES1, ES2, etc.
     
-    shared_ptr<ofAppBaseWindow> windowBase = ofCreateWindow(settings);
-    ofAppiOSWindow * window = (ofAppiOSWindow *)(windowBase.get());
+    ofAppiOSWindow * window = (ofAppiOSWindow *)(ofCreateWindow(settings).get());
     
     bool bUseNative = true;
     if (bUseNative){

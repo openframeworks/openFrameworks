@@ -11,6 +11,21 @@ void ofApp::setup(){
 	font.load("type/verdana.ttf", 80, true, false, true, 0.4, 72);
 	shader.load("shaders/noise.vert", "shaders/noise.frag");
 
+	auto textShapes = font.getStringAsPoints("openFrameworks");
+	ofRectangle boundingBox;
+	for(auto glyph: textShapes){
+		text.append(glyph);
+		for(auto outline: glyph.getOutline()){
+			boundingBox = boundingBox.getUnion(outline.getBoundingBox());
+		}
+	}
+
+	boundingBox.alignTo(ofGetCurrentViewport(), OF_ALIGN_HORZ_CENTER, OF_ALIGN_VERT_CENTER);
+	ofVec2f textPos(boundingBox.getX(), boundingBox.getMaxY());
+
+	text.translate(textPos);
+	text.setFillColor(ofColor(245, 58, 135));
+
 	doShader = false;
 }
 
@@ -21,12 +36,6 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
-	ofSetColor(225);
-
-	ofSetColor(245, 58, 135);
-	ofFill();
-
 	if( doShader ){
 		shader.begin();
 		//we want to pass in some varrying values to animate our type / color
@@ -35,12 +44,12 @@ void ofApp::draw(){
 
 		//we also pass in the mouse position
 		//we have to transform the coords to what the shader is expecting which is 0,0 in the center and y axis flipped.
-		shader.setUniform2f("mouse", mouseX - ofGetWidth()/2, ofGetHeight()/2-mouseY );
+		shader.setUniform2f("mouse", ofGetMouseX() - ofGetWidth()/2, ofGetHeight()/2-ofGetMouseY() );
 
 	}
 
 		//finally draw our text
-		font.drawStringAsShapes("openFrameworks", 90, 260);
+		text.draw();
 
 	if( doShader ){
 		shader.end();
@@ -109,7 +118,7 @@ void ofApp::resume(){
 
 //--------------------------------------------------------------
 void ofApp::reloadTextures(){
-	shader.load("shaders/noise.vert", "shaders/noise.frag");
+
 }
 
 //--------------------------------------------------------------

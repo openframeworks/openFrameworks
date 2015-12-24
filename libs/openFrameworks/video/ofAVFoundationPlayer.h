@@ -77,6 +77,8 @@ public:
     void nextFrame();
     void previousFrame();
 
+	ofAVFoundationPlayer& operator=(ofAVFoundationPlayer other);
+	
 #ifdef __OBJC__
 	ofAVFoundationVideoPlayer * getAVFoundationVideoPlayer();
 #else
@@ -103,7 +105,6 @@ protected:
     bool bResetPixels;
     bool bUpdatePixels;
     bool bUpdateTexture;
-    bool bTextureCacheSupported;
 	
     ofPixels pixels;
 	ofPixelFormat pixelFormat;

@@ -3,9 +3,10 @@
 # openssl
 
 # define the version
-FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "vs" "msys2" "ios" "tvos" "android" )
 
-VER=1.0.2c
+VER=1.0.2d
+VERDIR=1.0.2
 CSTANDARD=gnu11 # c89 | c99 | c11 | gnu11
 COMPILER_TYPE=clang # clang, gcc
 
@@ -43,7 +44,7 @@ function download() {
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
 
-	if [ "$TYPE" == "ios" ] ; then
+	if [[ "$TYPE" == "ios" || "${TYPE}" == "tvos" ]] ; then
 		# create output directories
 		mkdir -p "src"
 		mkdir -p "bin"
@@ -71,6 +72,11 @@ function prepare() {
  	elif  [ "$TYPE" == "osx" ] ; then
 		mkdir -p lib/$TYPE
 		mkdir -p lib/include
+
+        cp Makefile Makefile.orig
+        cp Configure Configure1.orig
+
+        #cp $FORMULA_DIR/Configure Configure
  	elif  [ "$TYPE" == "vs" ] ; then
 		if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/winOpenSSL.patch 2>/dev/null ; then
 			patch -p1 -u < $FORMULA_DIR/winOpenSSL.patch
@@ -82,9 +88,46 @@ function prepare() {
 function build() {
 	
 	if [ "$TYPE" == "osx" ] ; then
+
+        set -e
+        CURRENTPATH=`pwd`
+
+        DEVELOPER=$XCODE_DEV_ROOT
+        TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
+        SDKVERSION=""
+        SDKVERSION=`xcrun -sdk macosx --show-sdk-version`
+
+        if [ "${COMPILER_TYPE}" == "clang" ]; then
+                export THECOMPILER=clang
+            else
+                export THECOMPILER=gcc
+            fi
+
+        # Validate environment
+        case $XCODE_DEV_ROOT in  
+             *\ * )
+                   echo "Your Xcode path contains whitespaces, which is not supported."
+                   exit 1
+                  ;;
+        esac
+        case $CURRENTPATH in  
+             *\ * )
+                   echo "Your path contains whitespaces, which is not supported by 'make install'."
+                   exit 1
+                  ;;
+        esac 
+        local TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain 
+        
+        export OSX_CC=$TOOLCHAIN/usr/bin/$THECOMPILER
+        export OSX_CXX=$TOOLCHAIN/usr/bin/$THECOMPILER++
+        export LD=$TOOLCHAIN/usr/bin/ld
+        export AR=$TOOLCHAIN/usr/bin/ar
+        export AS=$TOOLCHAIN/usr/bin/as
+        export NM=$TOOLCHAIN/usr/bin/nm
+        export RANLIB=$TOOLCHAIN/usr/bin/ranlib
 		
 		local BUILD_OPTS="-no-shared -no-asm -no-ec_nistp_64_gcc_128 -no-gmp -no-jpake -no-krb5 -no-md2 -no-rc5 -no-rfc3779 -no-sctp -no-shared -no-store -no-unit-test -no-zlib -no-zlib-dynamic"
-		local OSX_ARCHS="x86_64 i386"
+		local OSX_ARCHS="i386 x86_64"
 		
 		VERSION=$VER
 		CURRENTPATH=`pwd`
@@ -94,6 +137,9 @@ function build() {
 		for OSX_ARCH in ${OSX_ARCHS}
 			do
 			
+            make -j 1 clean 
+            rm -rf build/$TYPE/OSX_ARCH
+            rm -rf *.a # remove temp lib from main directory
 			# Back up configure & makefile
 
 			cp "Configure" "Configure.orig" 
@@ -104,59 +150,30 @@ function build() {
 
 			#create logfile
 			LOG="$CURRENTPATH/build/$TYPE/$OSX_ARCH/build-openssl-${VER}.log"
-
-			
-			if [ "${COMPILER_TYPE}" == "clang" ]; then
-				export THECOMPILER=clang
-			else
-				export THECOMPILER=gcc
-			fi
-
-			echo "Using Compiler: $THECOMPILER"
-
-			# unset LANG if defined
-			if test ${LANG+defined};
-			then
-				OLD_LANG=$LANG
-				unset LANG
-			fi
-
-            # unset LC_CTYPE if defined
-            if test ${LC_CTYPE+defined};
-            then
-                OLD_LC_CTYPE=$LC_CTYPE
-                LC_CTYPE=C
-            fi
+			echo "Using Compiler: $THECOMPILER for $OSX_ARCH"
 
             # patch the Configure file to make sure the correct compiler is invoked.
-			sed -ie "s!\"darwin-i386-cc\",\"cc:-arch i386 -g3!\"darwin-i386-cc\",\"${THECOMPILER}:-arch i386 -g3!" Configure
-			sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"$THECOMPILER:-arch x86_64 -O3!" Configure
-
-            # reset LANG if it was defined
-			if test ${OLD_LANG+defined};
-			then
-				export LANG=$OLD_LANG
-			fi
-
-            # reset LC_CTYPE if it was defined
-            if test ${OLD_LC_CTYPE+defined};
-            then
-                export LC_CTYPE=$OLD_LC_CTYPE
-            fi
+			export LC_CTYPE=C
+            export LANG=C
+            sed -ie "s!\"darwin-i386-cc\",\"cc:-arch i386 -O3!\"darwin-i386-cc\",\"cc:-arch i386 -O3!" Configure
+            
+            export LC_CTYPE=C
+            export LANG=C
+            sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!" Configure
 
    			OSX_C_FLAGS="" 		# Flags for stdlib, std and arch
    			CONFIG_TARGET=""	# Which one of the target presets to use
 
 			if [[ "${OSX_ARCH}" == "i386" ]]; then
 		    	# 386 -> libstdc++
-		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -stdlib=libstdc++"
+		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -fPIC -stdlib=libc++ -mmacosx-version-min=${OSX_MIN_SDK_VER}"
 		    	CONFIG_TARGET=darwin-i386-cc
-		    	export CC="${THECOMPILER} ${OSX_C_FLAGS}"
+		    	export CC="${OSX_CC} ${OSX_C_FLAGS}"
 		    elif [ "${OSX_ARCH}" == "x86_64" ]; then
 		    	# 86_64 -> libc++
-		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -stdlib=libc++"
+		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -fPIC -stdlib=libc++ -mmacosx-version-min=${OSX_MIN_SDK_VER}"
 				CONFIG_TARGET=darwin64-x86_64-cc
-		    	export CC="${THECOMPILER} ${OSX_C_FLAGS}"
+		    	export CC="${OSX_CC} ${OSX_C_FLAGS}"
 		    fi
 
 	    	echo "Configure for target: $CONFIG_TARGET"
@@ -198,14 +215,24 @@ function build() {
             then
                 export LC_CTYPE=$OLD_LC_CTYPE
             fi
+            set -o pipefail  # trace ERR through pipes
+            set -o errtrace  # trace ERR through 'time command' and other functions
 
-			echo "Running make for ${OSX_ARCH}"
-			echo "Please stand by..."
-
-			# Must run at -j 1 (single thread only else will fail)
-			# this is super annoying, but true for OS X, as well as iOS.
-			make -j 1 >> "${LOG}" 2>&1
-			
+            export BUILD_OUTPUT=$LOG
+            export PING_SLEEP=30s
+            export PING_LOOP_PID
+            trap 'error_handler ${LINENO} ${?}' ERR
+            bash -c "while true; do echo \$(date) - Building OpenSSL ...; sleep $PING_SLEEP; done" &
+PING_LOOP_PID=$!
+            echo "Running make for ${OSX_ARCH}"
+            echo "Please stand by..."
+            # Must run at -j 1 (single thread only else will fail)
+            # this is super annoying, but true for OS X, as well as iOS.
+            make -j 1 >> "${BUILD_OUTPUT}" 2>&1
+            dump_output
+            kill $PING_LOOP_PID
+			trap - ERR
+            
 			if [ $? != 0 ];
 		    then 
                 tail -n 100 "${LOG}"
@@ -217,16 +244,17 @@ function build() {
 
 			set -e
 			make -j 1 install >> "${LOG}" 2>&1
-			make -j 1 clean >> "${LOG}" 2>&1
+			make -j 1 clean 
 
 			# restore configure & makefile
 
 			cp "Configure.orig" "Configure" 
 			cp "Makefile.orig" "Makefile"
 
-			unset CC CFLAG CFLAGS EXTRAFLAGS THECOMPILER
+            rm -rf *.a # remove temp lib from main directory
+			unset CC CFLAG CFLAGS EXTRAFLAGS
 		done
-
+        unset THECOMPILER
 		# Stage includes
 		echo "Staging includes"
 
@@ -240,7 +268,7 @@ function build() {
         cd lib/$TYPE
         SLOG="$CURRENTPATH/lib/$TYPE-stripping.log"
         local TOBESTRIPPED
-        for TOBESTRIPPED in $( ls -1) ; do
+        for TOBESTRIPPED in $( ls *.a) ; do
             strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
             if [ $? != 0 ];
             then
@@ -253,6 +281,8 @@ function build() {
         done
 
         cd ../../
+
+        echo "Build Finished!"
 		
 		# ------------ END OS X Recipe.
 
@@ -273,7 +303,7 @@ function build() {
 			mkdir ms/x64
 			cmd //c buildwin.cmd x64 "${WINPATH}"
 		fi
-	# elif [ "$TYPE" == "win_cb" ] ; then
+	# elif [ "$TYPE" == "msys2" ] ; then
 	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
 
 	# 	# # Locate the path of the openssl libs distributed with openFrameworks.
@@ -283,7 +313,7 @@ function build() {
 	# 	# local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
 
 	# 	# local OPENSSL_INCLUDE=$OF_LIBS_OPENSSL_ABS_PATH/include
-	# 	# local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/win_cb
+	# 	# local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/msys2
 
 	# 	# ./configure $BUILD_OPTS \
 	# 	# 			--include-path=$OPENSSL_INCLUDE \
@@ -295,11 +325,11 @@ function build() {
 	# 	# # Delete debug libs.
 	# 	# lib/MinGW/i686/*d.a
 
-	elif [ "$TYPE" == "ios" ] ; then
+	elif [[ "$TYPE" == "ios" || "${TYPE}" == "tvos" ]] ; then
 
 		# This was quite helpful as a reference: https://github.com/x2on/OpenSSL-for-iPhone
 		# Refer to the other script if anything drastic changes for future versions
-		SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`	
+		
 		set -e
 		CURRENTPATH=`pwd`
 		
@@ -307,9 +337,20 @@ function build() {
 		TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
 		VERSION=$VER
 
-        local IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
+        local IOS_ARCHS
+        if [ "${TYPE}" == "tvos" ]; then 
+            IOS_ARCHS="x86_64 arm64"
+        elif [ "$TYPE" == "ios" ]; then
+            IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
+        fi
 		local STDLIB="libc++"
 
+        SDKVERSION=""
+        if [ "${TYPE}" == "tvos" ]; then 
+            SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`
+        elif [ "$TYPE" == "ios" ]; then
+            SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
+        fi
 
 		# Validate environment
 		case $XCODE_DEV_ROOT in  
@@ -330,6 +371,7 @@ function build() {
 		do
 			# make sure backed up
 			cp "Configure" "Configure.orig" 
+            cp "apps/speed.c" "apps/speed.c.orig" 
 			cp "Makefile" "Makefile.orig"
 
 			if [ "${COMPILER_TYPE}" == "clang" ]; then
@@ -339,9 +381,28 @@ function build() {
 			fi
 			echo "The compiler: $THECOMPILER"
 
+            ## Fix for tvOS fork undef 9.0
+            if [ "${TYPE}" == "tvos" ]; then
+
+            # Patch apps/speed.c to not use fork() since it's not available on tvOS
+                LC_ALL=C sed -i -- 's/define HAVE_FORK 1/define HAVE_FORK 0/' "apps/speed.c"
+                # Patch Configure to build for tvOS, not iOS
+                LC_ALL=C sed -i -- 's/D\_REENTRANT\:iOS/D\_REENTRANT\:tvOS/' "Configure"
+                chmod u+x ./Configure 
+            #     export LC_CTYPE=C 
+            #     export LANG=C
+            #     sed -ie "s!\"defined(OPENSSL_SYS_NETWARE)\"!\"defined(OPENSSL_SYS_NETWARE) || defined(TARGET_IOS)\"!" "./apps/speed.c"
+                
+            #     sed -ie "s!\"-D_REENTRANT:iOS\"!\"-D_REENTRANT:tvOS\"!" "./Configure"
+            fi
+
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
-				PLATFORM="iPhoneSimulator"
+				if [ "${TYPE}" == "tvos" ]; then 
+                    PLATFORM="AppleTVSimulator"
+                elif [ "$TYPE" == "ios" ]; then
+                    PLATFORM="iPhoneSimulator"
+                fi
 
                 # unset LANG if defined
 				if test ${LANG+defined};
@@ -357,8 +418,8 @@ function build() {
                     LC_CTYPE=C
                 fi
 
-				sed -ie "s!\"debug-darwin-i386-cc\",\"cc:-arch i386 -g3!\"debug-darwin-i386-cc\",\"$THECOMPILER:-arch i386 -g3!" Configure
-				sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"$THECOMPILER:-arch x86_64 -O3!" Configure
+				LC_ALL=C sed -ie "s!\"debug-darwin-i386-cc\",\"cc:-arch i386 -g3!\"debug-darwin-i386-cc\",\"$THECOMPILER:-arch i386 -g3!" Configure
+				LC_ALL=C sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"$THECOMPILER:-arch x86_64 -O3!" Configure
 
                 # reset LANG if it was defined
 				if test ${OLD_LANG+defined};
@@ -374,8 +435,12 @@ function build() {
 
 			else
 				cp "crypto/ui/ui_openssl.c" "crypto/ui/ui_openssl.c.orig"
-				sed -ie "s!static volatile sig_atomic_t intr_signal;!static volatile intr_signal;!" "crypto/ui/ui_openssl.c"
-				PLATFORM="iPhoneOS"
+				LC_ALL=C sed -ie "s!static volatile sig_atomic_t intr_signal;!static volatile intr_signal;!" "crypto/ui/ui_openssl.c"
+				if [ "${TYPE}" == "tvos" ]; then 
+                    PLATFORM="AppleTVOS"
+                elif [ "$TYPE" == "ios" ]; then
+                    PLATFORM="iPhoneOS"
+                fi
 
                 # unset LANG if defined
 				if test ${LANG+defined};
@@ -391,7 +456,7 @@ function build() {
                     LC_CTYPE=C
                 fi
 
-				sed -ie "s!\"iphoneos-cross\",\"llvm-gcc:-O3!\"iphoneos-cross\",\"$THECOMPILER:-Os!" Configure
+				LC_ALL=C sed -ie "s!\"iphoneos-cross\",\"llvm-gcc:-O3!\"iphoneos-cross\",\"$THECOMPILER:-Os!" Configure
 
                 # reset LANG if it was defined
 				if test ${OLD_LANG+defined};
@@ -410,27 +475,32 @@ function build() {
 			export CROSS_SDK="${PLATFORM}${SDKVERSION}.sdk"
 			export BUILD_TOOLS="${DEVELOPER}"
 
-			export CC="${THECOMPILER} -arch ${IOS_ARCH} -std=${CSTANDARD}"
+            MIN_IOS_VERSION=$IOS_MIN_SDK_VER
+            # min iOS version for arm64 is iOS 7
+        
+            if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
+                MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
+            elif [ "${IOS_ARCH}" == "i386" ]; then
+                MIN_IOS_VERSION=5.1 # 6.0 to prevent start linking errors
+            fi
+
+            BITCODE=""
+            if [[ "$TYPE" == "tvos" ]]; then
+                BITCODE=-fembed-bitcode;
+                MIN_IOS_VERSION=9.0
+            fi
+
+			export CC="${THECOMPILER} -arch ${IOS_ARCH} -std=${CSTANDARD} $BITCODE"
 			mkdir -p "$CURRENTPATH/build/$TYPE/$IOS_ARCH"
 			LOG="$CURRENTPATH/build/$TYPE/$IOS_ARCH/build-openssl-${VER}.log"
 			
-			MIN_IOS_VERSION=$IOS_MIN_SDK_VER
-		    # min iOS version for arm64 is iOS 7
-		
-		    if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
-		    	MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
-		    elif [ "${IOS_ARCH}" == "i386" ]; then
-		    	MIN_IOS_VERSION=5.1 # 6.0 to prevent start linking errors
-		    fi
+			
 
 			echo "Compiler: $CC"
 			echo "Building openssl-${VER} for ${PLATFORM} ${SDKVERSION} ${IOS_ARCH} : iOS Minimum=$MIN_IOS_VERSION"
 
 			set +e
-			if [ [ "$VERSION" =~ 1.0.0. ] ]; then
-				echo "Building for OpenSSL Version before 1.0.0"
-	    		./Configure BSD-generic32 -no-asm --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH" > "${LOG}" 2>&1
-			elif [ "${IOS_ARCH}" == "i386" ]; then
+			if [ "${IOS_ARCH}" == "i386" ]; then
 				echo "Configuring i386"
 			    ./Configure darwin-i386-cc -no-asm --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH" > "${LOG}" 2>&1
 		    elif [ "${IOS_ARCH}" == "x86_64" ]; then
@@ -448,10 +518,17 @@ function build() {
 		    	exit 1
 		    fi
 
-		    MIN_TYPE=-miphoneos-version-min=
-		    if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
-		    	MIN_TYPE=-mios-simulator-version-min=
-		    fi
+		    if [ "${TYPE}" == "tvos" ]; then 
+                MIN_TYPE=-mtvos-version-min=
+                if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
+                    MIN_TYPE=-mtvos-simulator-version-min=
+                fi
+            elif [ "$TYPE" == "ios" ]; then
+                MIN_TYPE=-miphoneos-version-min=
+                if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
+                    MIN_TYPE=-mios-simulator-version-min=
+                fi
+            fi
 
             # unset LANG if defined
             if test ${LANG+defined};
@@ -467,7 +544,7 @@ function build() {
                 LC_CTYPE=C
             fi
 
-			sed -ie "s!^CFLAG=!CFLAG=-isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -arch $IOS_ARCH -Os -fPIC -stdlib=libc++ $MIN_TYPE$MIN_IOS_VERSION !" Makefile
+			LC_ALL=C sed -ie "s!^CFLAG=!CFLAG=-isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -arch $IOS_ARCH -Os -fPIC $BITCODE -stdlib=libc++ $MIN_TYPE$MIN_IOS_VERSION !" Makefile
 
             # reset LANG if it was defined
 			if test ${OLD_LANG+defined};
@@ -481,10 +558,21 @@ function build() {
                 export LC_CTYPE=$OLD_LC_CTYPE
             fi
 
+            export BUILD_OUTPUT=$LOG
+            export PING_SLEEP=30s
+            export PING_LOOP_PID
+            trap 'error_handler' ERR
+            bash -c "while true; do echo \$(date) - Building OpenSSL ...; sleep $PING_SLEEP; done" &
+PING_LOOP_PID=$!
+
 			echo "Running make for ${IOS_ARCH}"
 			echo "Please stand by..."
 			# Must run at -j 1 (single thread only else will fail)
-			make >> "${LOG}" 2>&1
+			make >> "${BUILD_OUTPUT}" 2>&1
+            dump_output
+            kill $PING_LOOP_PID
+            trap - ERR
+
 			if [ $? != 0 ];
 		    then 
                 tail -n 100 "${LOG}"
@@ -508,6 +596,9 @@ function build() {
 			cp "crypto/ui/ui_openssl.c.orig" "crypto/ui/ui_openssl.c"
 			cp "Makefile.orig" "Makefile"
 			cp "Configure.orig" "Configure"
+            cp "apps/speed.c.orig" "apps/speed.c"
+
+
 
 			unset CC CFLAG CFLAGS EXTRAFLAGS THECOMPILER
 
@@ -518,19 +609,30 @@ function build() {
 		unset IOS_DEVROOT IOS_SDKROOT 
 
 		cd lib/$TYPE/
-		# stripping the lib prefix to bypass any issues with existing sdk libraries
-		echo "Creating Fat Lib for crypto"
-		lipo -create armv7/crypto.a \
-					arm64/crypto.a \
-					i386/crypto.a \
-					x86_64/crypto.a \
-					-output crypto.a
-		echo "Creating Fat Lib for ssl"
-		lipo -create armv7/ssl.a \
-					arm64/ssl.a \
-					i386/ssl.a \
-					x86_64/ssl.a \
-					-output ssl.a
+
+        # stripping the lib prefix to bypass any issues with existing sdk libraries
+        echo "Creating Fat Lib for crypto"
+        if [ "${TYPE}" == "tvos" ]; then 
+            lipo -create arm64/crypto.a \
+                        x86_64/crypto.a \
+                        -output crypto.a
+            echo "Creating Fat Lib for ssl"
+            lipo -create arm64/ssl.a \
+                        x86_64/ssl.a \
+                        -output ssl.a
+        elif [ "$TYPE" == "ios" ]; then
+    		lipo -create armv7/crypto.a \
+    					arm64/crypto.a \
+    					i386/crypto.a \
+    					x86_64/crypto.a \
+    					-output crypto.a
+    		echo "Creating Fat Lib for ssl"
+    		lipo -create armv7/ssl.a \
+    					arm64/ssl.a \
+    					i386/ssl.a \
+    					x86_64/ssl.a \
+    					-output ssl.a
+        fi
 		cd ../../
 
 		# copy includes
@@ -551,7 +653,7 @@ function build() {
 		perl -pi -e 's/^_ANDROID_EABI=(.*)$/#_ANDROID_EABI=\1/g' Setenv-android.sh
 		perl -pi -e 's/^_ANDROID_ARCH=(.*)$/#_ANDROID_ARCH=\1/g' Setenv-android.sh
 		perl -pi -e 's/^_ANDROID_API=(.*)$/#_ANDROID_API=\1/g' Setenv-android.sh
-		export _ANDROID_API=android-21
+		export _ANDROID_API=$ANDROID_PLATFORM
 		
         # armv7
         echoInfo "Compiling armv7"
@@ -606,10 +708,18 @@ function copy() {
 	# opensslconf.h that detects the platform and includes the 
 	# correct one. Then every platform checkouts the rest of the config
 	# files that were deleted here
-	mv include/openssl/opensslconf.h include/openssl/opensslconf_${TYPE}.h
-    cp -RHv include/openssl/* $1/include/openssl/
-    cp -v $FORMULA_DIR/opensslconf.h $1/include/openssl/opensslconf.h
+     if [[ "$TYPE" == "osx" || "$TYPE" == "ios" || "$TYPE" == "tvos" ]] ; then
+        if [ -f lib/include/openssl/opensslconf.h ]; then
+            mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_${TYPE}.h
+        fi
+        cp -RHv lib/include/openssl/* $1/include/openssl/
+        cp -v $FORMULA_DIR/opensslconf.h $1/include/openssl/opensslconf.h
 
+    elif [ -f include/openssl/opensslconf.h ]; then
+        mv include/openssl/opensslconf.h include/openssl/opensslconf_${TYPE}.h
+        cp -RHv include/openssl/* $1/include/openssl/
+        cp -v $FORMULA_DIR/opensslconf.h $1/include/openssl/opensslconf.h
+    fi
 	# suppress file not found errors
 	#same here doesn't seem to be a solid reason to delete the files
 	#rm -rf $1/lib/$TYPE/* 2> /dev/null
@@ -618,17 +728,27 @@ function copy() {
 	if [ "$TYPE" == "osx" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/$TYPE/*.a $1/lib/$TYPE
-		git checkout $1/include/openssl/opensslconf_ios.h
-    	git checkout $1/include/openssl/opensslconf_android.h
-    	git checkout $1/include/openssl/opensslconf_vs.h
-    	git checkout $1/include/openssl/opensslconf_win32.h
-	elif [ "$TYPE" == "ios" ] ; then
+        if [[ "$CHECKOUT" == "NO" ]]; then 
+            echo "no git checkout"
+        else 
+    		git checkout $1/include/openssl/opensslconf_osx.h
+            git checkout $1/include/openssl/opensslconf_ios.h
+        	git checkout $1/include/openssl/opensslconf_android.h
+        	git checkout $1/include/openssl/opensslconf_vs.h
+        	git checkout $1/include/openssl/opensslconf_win32.h
+        fi
+	elif [[ "$TYPE" == "ios" || "${TYPE}" == "tvos" ]] ; then
 	 	mkdir -p $1/lib/$TYPE
 	 	cp -v lib/$TYPE/*.a $1/lib/$TYPE
-		git checkout $1/include/openssl/opensslconf_osx.h
-    	git checkout $1/include/openssl/opensslconf_android.h
-    	git checkout $1/include/openssl/opensslconf_vs.h
-    	git checkout $1/include/openssl/opensslconf_win32.h
+        if [[ "$CHECKOUT" == "NO" ]]; then 
+            echo "no git checkout"
+        else 
+    		git checkout $1/include/openssl/opensslconf_osx.h
+            git checkout $1/include/openssl/opensslconf_ios.h
+        	git checkout $1/include/openssl/opensslconf_android.h
+        	git checkout $1/include/openssl/opensslconf_vs.h
+        	git checkout $1/include/openssl/opensslconf_win32.h
+        fi
 	elif [ "$TYPE" == "vs" ] ; then	 
 		if [ $ARCH == 32 ] ; then
 			rm -rf $1/lib/$TYPE/Win32
@@ -652,7 +772,7 @@ function copy() {
 		git checkout $1/include/openssl/opensslconf_osx.h
     	git checkout $1/include/openssl/opensslconf_android.h
     	git checkout $1/include/openssl/opensslconf_win32.h
-	# elif [ "$TYPE" == "win_cb" ] ; then
+	# elif [ "$TYPE" == "msys2" ] ; then
 	# 	mkdir -p $1/lib/$TYPE
 	# 	cp -v lib/MinGW/i686/*.a $1/lib/$TYPE
 	
@@ -693,7 +813,7 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
 	echoWarning "TODO: clean $TYPE lib"
-	if [ "$TYPE" == "ios" ] ; then
+	if [[ "$TYPE" == "ios" || "${TYPE}" == "tvos" ]] ; then
 		make clean
 		# clean up old build folder
 		rm -rf /build
@@ -712,6 +832,13 @@ function clean() {
 	# 	make clean ANDROID_ABI=armeabi-v7a
 	# 	make clean ANDROID_ABI=x86
 	# 	unset PATH
+    elif [[ "$TYPE" == "osx" ]] ; then
+        make clean
+        # clean up old build folder
+        rm -rf /build
+        # clean up compiled libraries
+        rm -rf /lib
+        rm -rf *.a
 	else
 	 	make clean
 	fi

@@ -15,7 +15,7 @@ ofxGuiGroup::ofxGuiGroup(){
 
 ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
 	minimized = false;
-	parent = NULL;
+	parent = nullptr;
 	setup(parameters, filename, x, y);
 }
 
@@ -30,7 +30,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 	header = defaultHeight;
 	spacing = 1;
 	spacingNextElement = 3;
-	if(parent != NULL){
+	if(parent != nullptr){
 		b.width = parent->getWidth();
 	}else{
 		b.width = defaultWidth;
@@ -39,40 +39,64 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 	filename = _filename;
 	bGuiActive = false;
 
-	for(int i = 0; i < _parameters.size(); i++){
+	for(std::size_t i = 0; i < _parameters.size(); i++){
 		string type = _parameters.getType(i);
-		if(type == typeid(ofParameter <int> ).name()){
-			ofParameter <int> p = _parameters.getInt(i);
+		if(type == typeid(ofParameter <int32_t> ).name()){
+			auto p = _parameters.getInt(i);
+			add(p);
+		}else if(type == typeid(ofParameter <uint32_t> ).name()){
+			auto p = _parameters.get<uint32_t>(i);
+			add(p);
+		}else if(type == typeid(ofParameter <int64_t> ).name()){
+			auto p = _parameters.get<int64_t>(i);
+			add(p);
+		}else if(type == typeid(ofParameter <uint64_t> ).name()){
+			auto p = _parameters.get<uint64_t>(i);
+			add(p);
+		}else if(type == typeid(ofParameter <int8_t> ).name()){
+			auto p = _parameters.get<int8_t>(i);
+			add(p);
+		}else if(type == typeid(ofParameter <uint8_t> ).name()){
+			auto p = _parameters.get<uint8_t>(i);
+			add(p);
+		}else if(type == typeid(ofParameter <int16_t> ).name()){
+			auto p = _parameters.get<int16_t>(i);
+			add(p);
+		}else if(type == typeid(ofParameter <uint16_t> ).name()){
+			auto p = _parameters.get<uint16_t>(i);
 			add(p);
 		}else if(type == typeid(ofParameter <float> ).name()){
-			ofParameter <float> p = _parameters.getFloat(i);
+			auto p = _parameters.getFloat(i);
+			add(p);
+		}else if(type == typeid(ofParameter <double> ).name()){
+			auto p = _parameters.get<double>(i);
 			add(p);
 		}else if(type == typeid(ofParameter <bool> ).name()){
-			ofParameter <bool> p = _parameters.getBool(i);
+			auto p = _parameters.getBool(i);
 			add(p);
 		}else if(type == typeid(ofParameter <ofVec2f> ).name()){
-			ofParameter <ofVec2f> p = _parameters.getVec2f(i);
+			auto p = _parameters.getVec2f(i);
 			add(p);
 		}else if(type == typeid(ofParameter <ofVec3f> ).name()){
-			ofParameter <ofVec3f> p = _parameters.getVec3f(i);
+			auto p = _parameters.getVec3f(i);
 			add(p);
 		}else if(type == typeid(ofParameter <ofVec4f> ).name()){
-			ofParameter <ofVec4f> p = _parameters.getVec4f(i);
+			auto p = _parameters.getVec4f(i);
 			add(p);
 		}else if(type == typeid(ofParameter <ofColor> ).name()){
-			ofParameter <ofColor> p = _parameters.getColor(i);
+			auto p = _parameters.getColor(i);
 			add(p);
 		}else if(type == typeid(ofParameter <ofShortColor> ).name()){
-			ofParameter <ofShortColor> p = _parameters.getShortColor(i);
+			auto p = _parameters.getShortColor(i);
 			add(p);
 		}else if(type == typeid(ofParameter <ofFloatColor> ).name()){
-			ofParameter <ofFloatColor> p = _parameters.getFloatColor(i);
+			auto p = _parameters.getFloatColor(i);
 			add(p);
 		}else if(type == typeid(ofParameter <string> ).name()){
-			ofParameter <string> p = _parameters.getString(i);
+			auto p = _parameters.getString(i);
 			add(p);
 		}else if(type == typeid(ofParameterGroup).name()){
-			ofParameterGroup p = _parameters.getGroup(i);
+			auto p = _parameters.getGroup(i);
 			ofxGuiGroup * panel = new ofxGuiGroup(p);
 			add(panel);
 		}else{
@@ -102,11 +126,11 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 	element->setParent(this);
 
 	ofxGuiGroup * subgroup = dynamic_cast <ofxGuiGroup *>(element);
-	if(subgroup != NULL){
+	if(subgroup != nullptr){
 		subgroup->filename = filename;
 		subgroup->setWidthElements(b.width * .98);
 	}else{
-		if(parent != NULL){
+		if(parent != nullptr){
 			element->setSize(b.width * .98, element->getHeight());
 			element->setPosition(b.x + b.width - element->getWidth(), element->getPosition().y);
 		}
@@ -121,7 +145,7 @@ void ofxGuiGroup::setWidthElements(float w){
 		collection[i]->setSize(w, collection[i]->getHeight());
 		collection[i]->setPosition(b.x + b.width - w, collection[i]->getPosition().y);
 		ofxGuiGroup * subgroup = dynamic_cast <ofxGuiGroup *>(collection[i]);
-		if(subgroup != NULL){
+		if(subgroup != nullptr){
 			subgroup->setWidthElements(w * .98);
 		}
 	}
@@ -133,14 +157,6 @@ void ofxGuiGroup::add(const ofParameterGroup & parameters){
 	ofxGuiGroup * panel = new ofxGuiGroup(parameters);
 	panel->parent = this;
 	add(panel);
-}
-
-void ofxGuiGroup::add(ofParameter <float> & parameter){
-	add(new ofxFloatSlider(parameter, b.width));
-}
-
-void ofxGuiGroup::add(ofParameter <int> & parameter){
-	add(new ofxIntSlider(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <bool> & parameter){
@@ -336,7 +352,7 @@ ofxBaseGui * ofxGuiGroup::getControl(const std::string& name){
 			return collection[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
@@ -432,7 +448,7 @@ ofxBaseGui * ofxGuiGroup::getControl(std::size_t num){
 	if(num < collection.size()){
 		return collection[num];
 	}else{
-		return NULL;
+		return nullptr;
 	}
 }
 

@@ -230,9 +230,13 @@ static void get_supported_framerates (ofGstVideoFormat &video_format, GstStructu
 		ofLogVerbose("ofGstVideoGrabber") << "get_supported_framerates(): from "
 				<< numerator_min << "/" << denominator_max
 				<< " to " << numerator_max << "/" << denominator_min;
-
-		for (int i = numerator_min; i <= numerator_max; i++){
-			for (int j = denominator_min; j <= denominator_max; j++){
+        if(denominator_max==1 && numerator_max>1000000){
+            // workaround for #4647 where some camera seems to
+            // return a really high value for num_max crashing the app
+            numerator_max = 1000;
+        }
+        for (int i = numerator_min; i <= numerator_max; i++){
+            for (int j = denominator_min; j <= denominator_max; j++){
 				framerate.numerator = i;
 				framerate.denominator = j;
 				video_format.framerates.push_back(framerate);
@@ -739,7 +743,7 @@ bool ofGstVideoGrabber::setup(int w, int h){
 	string pipeline_string;
 	string format_str_pipeline;
 	string fix_v4l2_316;
-#if defined(TARGET_LINUX) && !defined(OF_USE_GST_GL) && GST_VERSION_MAJOR>0 && GST_VERSION_MINOR>2
+#if defined(TARGET_LINUX) && !defined(OF_USE_GST_GL) && GST_VERSION_MAJOR>0 && GST_VERSION_MINOR>2 && GST_VERSION_MINOR<5
 	videoUtils.setCopyPixels(true);
 #endif
 	if(internalPixelFormat!=OF_PIXELS_NATIVE){

@@ -5,7 +5,7 @@
 #if defined(TARGET_EMSCRIPTEN)
 	ofTessellator ofPath::tessellator;
 #elif HAS_TLS
-        thread_local ofTessellator ofPath::tessellator;
+    thread_local ofTessellator ofPath::tessellator;
 #endif
 
 ofPath::Command::Command(Type type)
@@ -454,6 +454,8 @@ ofPolyline & ofPath::lastPolyline(){
 vector<ofPath::Command> & ofPath::getCommands(){
 	if(mode==POLYLINES){
 		ofLogWarning("ofPath") << "getCommands(): trying to get path commands from shape with polylines only";
+	}else{
+		flagShapeChanged();
 	}
 	return commands;
 }
@@ -552,17 +554,6 @@ void ofPath::tessellate(){
 }
 
 //----------------------------------------------------------
-vector<ofPolyline> & ofPath::getOutline() {
-	if(windingMode!=OF_POLY_WINDING_ODD){
-		tessellate();
-		return tessellatedContour;
-	}else{
-		generatePolylinesFromCommands();
-		return polylines;
-	}
-}
-
-//----------------------------------------------------------
 const vector<ofPolyline> & ofPath::getOutline() const{
 	if(windingMode!=OF_POLY_WINDING_ODD){
 		const_cast<ofPath*>(this)->tessellate();
@@ -571,12 +562,6 @@ const vector<ofPolyline> & ofPath::getOutline() const{
 		const_cast<ofPath*>(this)->generatePolylinesFromCommands();
 		return polylines;
 	}
-}
-
-//----------------------------------------------------------
-ofMesh & ofPath::getTessellation(){
-	tessellate();
-	return cachedTessellation;
 }
 
 //----------------------------------------------------------
@@ -774,6 +759,19 @@ void ofPath::scale(float x, float y){
 				polylines[i][j].x*=x;
 				polylines[i][j].y*=y;
 			}
+		}
+	}
+	flagShapeChanged();
+}
+
+void ofPath::append(const ofPath & path){
+	if(mode==COMMANDS){
+		for(auto & command: path.getCommands()){
+			addCommand(command);
+		}
+	}else{
+		for(auto & poly: path.getOutline()){
+			polylines.push_back(poly);
 		}
 	}
 	flagShapeChanged();

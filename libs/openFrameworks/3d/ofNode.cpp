@@ -4,27 +4,130 @@
 #include "ofLog.h"
 #include "of3dGraphics.h"
 
+//----------------------------------------
 ofNode::ofNode()
 :parent(nullptr)
 ,legacyCustomDrawOverrided(true){
 	setPosition(ofVec3f(0, 0, 0));
 	setOrientation(ofVec3f(0, 0, 0));
 	setScale(1);
+	position.disableEvents();
+	scale.disableEvents();
+	orientation.disableEvents();
+}
+
+//----------------------------------------
+ofNode::~ofNode(){
+	if(parent){
+		parent->removeListener(*this);
+	}
+}
+
+//----------------------------------------
+ofNode::ofNode(const ofNode & node)
+:parent(node.parent)
+,axis(node.axis)
+,localTransformMatrix(node.localTransformMatrix)
+,legacyCustomDrawOverrided(true){
+	if(parent){
+		parent->addListener(*this);
+	}
+	position = node.position;
+	orientation = node.orientation;
+	scale = node.scale;
+	position.disableEvents();
+	scale.disableEvents();
+	orientation.disableEvents();
+}
+
+//----------------------------------------
+ofNode::ofNode(ofNode && node)
+:parent(node.parent)
+,position(std::move(node.position))
+,orientation(std::move(node.orientation))
+,scale(std::move(node.scale))
+,axis(std::move(node.axis))
+,localTransformMatrix(std::move(node.localTransformMatrix))
+,legacyCustomDrawOverrided(std::move(node.legacyCustomDrawOverrided)){
+	if(parent){
+		parent->addListener(*this);
+	}
+}
+
+//----------------------------------------
+ofNode & ofNode::operator=(const ofNode & node){
+	if(this == &node) return *this;
+	parent = node.parent;
+	position = node.position;
+	orientation = node.orientation;
+	scale = node.scale;
+	axis = node.axis;
+	position.disableEvents();
+	scale.disableEvents();
+	orientation.disableEvents();
+	localTransformMatrix = node.localTransformMatrix;
+	legacyCustomDrawOverrided = true;
+	if(parent){
+		parent->addListener(*this);
+	}
+	return *this;
+}
+
+//----------------------------------------
+ofNode & ofNode::operator=(ofNode && node){
+	if(this == &node) return *this;
+	parent = node.parent;
+	position = std::move(node.position);
+	orientation = std::move(node.orientation);
+	scale = std::move(node.scale);
+	axis = std::move(node.axis);
+	localTransformMatrix = std::move(node.localTransformMatrix);
+	legacyCustomDrawOverrided = std::move(legacyCustomDrawOverrided);
+	if(parent){
+		parent->addListener(*this);
+	}
+	return *this;
+}
+
+//----------------------------------------
+void ofNode::addListener(ofNode & node){
+	position.addListener(&node, &ofNode::onParentPositionChanged);
+	orientation.addListener(&node, &ofNode::onParentOrientationChanged);
+	scale.addListener(&node, &ofNode::onParentScaleChanged);
+	position.enableEvents();
+	orientation.enableEvents();
+	scale.enableEvents();
+}
+
+//----------------------------------------
+void ofNode::removeListener(ofNode & node){
+	position.removeListener(&node, &ofNode::onParentPositionChanged);
+	orientation.removeListener(&node, &ofNode::onParentOrientationChanged);
+	scale.removeListener(&node, &ofNode::onParentScaleChanged);
+	if(position.getNumListeners()==0){
+		position.disableEvents();
+		scale.disableEvents();
+		orientation.disableEvents();
+	}
 }
 
 //----------------------------------------
 void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
     if(bMaintainGlobalTransform) {
 		ofMatrix4x4 postParentGlobalTransform = getGlobalTransformMatrix() * parent.getGlobalTransformMatrix().getInverse();
-		this->parent = &parent;
+		parent.addListener(*this);
 		setTransformMatrix(postParentGlobalTransform);
 	} else {
-		this->parent = &parent;
+		parent.addListener(*this);
 	}
+	this->parent = &parent;
 }
 
 //----------------------------------------
 void ofNode::clearParent(bool bMaintainGlobalTransform) {
+	if(parent){
+		parent->removeListener(*this);
+	}
     if(bMaintainGlobalTransform) {
         ofMatrix4x4 globalTransform(getGlobalTransformMatrix());
         this->parent = nullptr;
@@ -43,8 +146,14 @@ ofNode* ofNode::getParent() const {
 void ofNode::setTransformMatrix(const ofMatrix4x4 &m44) {
 	localTransformMatrix = m44;
 
+	ofVec3f position;
+	ofQuaternion orientation;
+	ofVec3f scale;
 	ofQuaternion so;
 	localTransformMatrix.decompose(position, orientation, scale, so);
+	this->position = position;
+	this->orientation = orientation;
+	this->scale = scale;
 	updateAxis();
 	
 	onPositionChanged();
@@ -85,17 +194,17 @@ ofVec3f ofNode::getPosition() const {
 
 //----------------------------------------
 float ofNode::getX() const {
-	return position.x;
+	return position->x;
 }
 
 //----------------------------------------
 float ofNode::getY() const {
-	return position.y;
+	return position->y;
 }
 
 //----------------------------------------
 float ofNode::getZ() const {
-	return position.z;
+	return position->z;
 }
 
 //----------------------------------------
@@ -128,7 +237,7 @@ ofQuaternion ofNode::getOrientationQuat() const {
 
 //----------------------------------------
 ofVec3f ofNode::getOrientationEuler() const {
-    return orientation.getEuler();
+	return orientation->getEuler();
 }
 
 //----------------------------------------
@@ -231,6 +340,19 @@ void ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& poi
 }
 
 //----------------------------------------
+void ofNode::lookAt(const ofVec3f& lookAtPosition){
+    auto relPosition = (getGlobalPosition() - lookAtPosition);
+    auto radius = relPosition.length();
+    if(radius>0){
+        auto latitude = ofRadToDeg(acos(relPosition.y / radius)) - 90;
+        auto longitude = ofRadToDeg(atan2(relPosition.x , relPosition.z));
+        ofQuaternion q(latitude, ofVec3f(1,0,0), longitude, ofVec3f(0,1,0), 0, ofVec3f(0,0,1));
+        setGlobalOrientation(q);
+    }
+
+}
+
+//----------------------------------------
 void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
 	if(parent) upVector = upVector * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix());	
 	ofVec3f zaxis = (getGlobalPosition() - lookAtPosition).getNormalized();
@@ -248,15 +370,20 @@ void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
 }
 
 //----------------------------------------
+void ofNode::lookAt(const ofNode& lookAtNode){
+    lookAt(lookAtNode.getGlobalPosition());
+}
+
+//----------------------------------------
 void ofNode::lookAt(const ofNode& lookAtNode, const ofVec3f& upVector) {
 	lookAt(lookAtNode.getGlobalPosition(), upVector);
 }
 
 //----------------------------------------
 void ofNode::updateAxis() {
-	if(scale[0]>0) axis[0] = getLocalTransformMatrix().getRowAsVec3f(0)/scale[0];
-	if(scale[1]>0) axis[1] = getLocalTransformMatrix().getRowAsVec3f(1)/scale[1];
-	if(scale[2]>0) axis[2] = getLocalTransformMatrix().getRowAsVec3f(2)/scale[2];
+	if(scale->x>0) axis[0] = getLocalTransformMatrix().getRowAsVec3f(0)/scale->x;
+	if(scale->y>0) axis[1] = getLocalTransformMatrix().getRowAsVec3f(1)/scale->y;
+	if(scale->z>0) axis[2] = getLocalTransformMatrix().getRowAsVec3f(2)/scale->z;
 }
 
 //----------------------------------------
@@ -333,16 +460,12 @@ ofVec3f ofNode::getGlobalScale() const {
 
 //----------------------------------------
 void ofNode::orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint) {
-	ofMatrix4x4 m;
-
-	// find position
-	ofVec3f p(0, 0, radius);
-	p.rotate(ofClamp(latitude, -89, 89), ofVec3f(1, 0, 0));
-	p.rotate(longitude, ofVec3f(0, 1, 0));
-	p += centerPoint;
-	setPosition(p);
-	
-	lookAt(centerPoint);//, v - centerPoint);
+	ofQuaternion q(latitude, ofVec3f(1,0,0), longitude, ofVec3f(0,1,0), 0, ofVec3f(0,0,1));
+	setPosition((ofVec3f(0,0,radius)-centerPoint)*q +centerPoint);
+	setOrientation(q);
+	onOrientationChanged();
+	onPositionChanged();
+//	lookAt(centerPoint);//, v - centerPoint);
 }
 
 //----------------------------------------
@@ -354,6 +477,7 @@ void ofNode::orbit(float longitude, float latitude, float radius, ofNode& center
 void ofNode::resetTransform() {
 	setPosition(ofVec3f());
 	setOrientation(ofVec3f());
+    setScale({1.f,1.f,1.f});
 }
 
 //----------------------------------------

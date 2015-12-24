@@ -9,12 +9,10 @@
 
 #pragma once
 
-#include "ofMain.h"
-#include "ofEvents.h"
+#include "ofBaseApp.h"
 #include "ofxiOSAlerts.h"
-#include "ofxMultiTouch.h"
 
-class ofxiOSApp : public ofSimpleApp, public ofxiOSAlertsListener, public ofxMultiTouchListener {
+class ofxiOSApp : public ofBaseApp, public ofxiOSAlertsListener {
 	
 public:
 	virtual void setup() {};

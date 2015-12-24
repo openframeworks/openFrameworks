@@ -47,7 +47,7 @@ TYPE= # library build type ("osx", "ios", "vs", etc)
 ARCH=32 # library build arch, 32 or 64 bit (not used for some build types)
 
 # full path to this script's dir
-APOTHECARY_DIR=.
+APOTHECARY_DIR=$(pwd)
 
 # full path to the dir of the current formula
 FORMULA_DIR=
@@ -65,19 +65,19 @@ PARALLEL_MAKE=1
 ### Xcode/ios specific settings
 
 # xcode Developer root
-if [ "$(./ostype.sh)" == "osx" ]; then
+if [ "$(${APOTHECARY_DIR}/ostype.sh)" == "osx" ]; then
     XS="xcode-select -print-path" # stupid hack to keep my syntax highlighting from breaking :P
     XCODE_DEV_ROOT=
 
     # used when building some libs for osx
     OSX_LATEST_SDK="xcrun -sdk macosx --show-sdk-version"
-    OSX_SDK_VER=10.10
+    OSX_SDK_VER=10.11
     OSX_MIN_SDK_VER=10.7
 
     # used when building for ios, the sdks you have installed are found in:
     # $XCODE_DEV_ROOT/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator#.#.sdk
     IOS_LATEST_SDK="xcrun -sdk iphoneos --show-sdk-version" # stupid hack to keep my syntax highlighting from breaking :P
-    IOS_SDK_VER=8.1
+    IOS_SDK_VER=9.1
     IOS_MIN_SDK_VER=5.1
 fi
 
@@ -88,7 +88,7 @@ VS_64_BIT_ENV='VC\bin\x86_amd64\vcvarsx86_amd64.bat'
 # paths to android SDK, etc
 ANDROID_NDK_ROOT=
 ANDROID_SDK_ROOT=
-ANDROID_PLATFORM=android-21
+ANDROID_PLATFORM=android-19
 
 ################################################################################
 ### PRIVATE VARS, for internal use
@@ -108,6 +108,7 @@ REL_FORMULAS_DIR=formulas
 REL_BUILD_DIR=build
 REL_LIBS_DIR=../../libs
 REL_ADDONS_DIR=../../addons
+CHECKOUT=YES
 
 # ansi console escape codes
 CON_DEFAULT="\033[0m"
@@ -117,7 +118,7 @@ CON_YELLOW="\033[33m"
 CON_GREEN="\033[32m"
 
 # used to filter out bad build types
-VALID_TYPES=( "osx" "linux" "linux64" "linuxarmv6l" "linuxarmv7l" "vs" "win_cb" "ios" "android" "emscripten" )
+VALID_TYPES=( "osx" "linux" "linux64" "linuxarmv6l" "linuxarmv7l" "vs" "msys2" "ios" "tvos" "android" "emscripten" )
 
 # verbose mode bool
 A_VERBOSE=0
@@ -152,7 +153,7 @@ commands:
   
 options:
   -t	specify libary type when building, detects type from OS by default
-	valid types: osx, linux, linux64, linuxarmv6l, linuxarmv7l, vs, win_cb, ios, android
+	valid types: osx, linux, linux64, linuxarmv6l, linuxarmv7l, vs, msys2, ios, tvos, android
 
   -a	specify architecture, either 32 or 64 (default is 32 bit)
 	note: not currently needed, reserved for future use
@@ -898,9 +899,49 @@ function apothecaryDepend() {
 function apothecaryDependencies() {
 	if [ ${#FORMULA_DEPENDS[@]} -gt 0 ] ; then
 		for depend in "${FORMULA_DEPENDS[@]}" ; do
-			apothecaryDepend $1 $depend
+
+            #store where we are
+            CUR_DIR=$(pwd)
+
+            #change back to APOTHECARY_DIR to run new script
+            cd $APOTHECARY_DIR
+            apothecaryDepend $1 $depend
+
+            #restore dir to where we are
+            cd $CUR_DIR
 		done
+
+        #also have to cd back to the APOTHECARY_DIR for the next commands to work
+        cd $APOTHECARY_DIR
 	fi
+}
+
+function  dump_output() {
+	if [ -z "$BUILD_OUTPUT" ]; then
+		echo "BUILD_OUTPUT not set."
+	else 
+		echo Tailing the last 500 lines of output:
+		tail -500 "$BUILD_OUTPUT"  
+	fi
+}
+function  error_handler() {
+
+
+	echo ERROR: An error was encountered with the build.
+	dump_output
+	# nicely terminate the ping output loop
+	if [ -z "$PING_LOOP_PID" ]; then
+		echo "Loop PID not set."
+	else 
+		kill $PING_LOOP_PID || true
+	fi
+
+	JOB="$0"              # job name
+    LASTLINE="$1"         # line of error occurrence
+    LASTERR="$2"          # error code
+    echo "ERROR in ${JOB} : line ${LASTLINE} with exit code ${LASTERR}"
+
+	exit "${LASTERR}"
 }
 
 ################################################################################
