@@ -10,11 +10,11 @@
 
 //------------------------------------------------------------------------------
 ofRtAudioSoundStream::ofRtAudioSoundStream(){
-	outDeviceID		= -1;
-    inDeviceID		= -1;
-	soundOutputPtr	= nullptr;
-	soundInputPtr	= nullptr;
-	tickCount= 0;
+	outDeviceID = -1;
+	inDeviceID = -1;
+	soundOutputPtr = NULL;
+	soundInputPtr = NULL;
+	tickCount = 0;
 	nOutputChannels = 0;
 	nInputChannels = 0;
 	bufferSize = 0;
@@ -81,12 +81,12 @@ void ofRtAudioSoundStream::setOutDeviceID(int _deviceID){
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::setInput(ofBaseSoundInput * soundInput){
-	soundInputPtr		= soundInput;
+	soundInputPtr = soundInput;
 }
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
-	soundOutputPtr		= soundOutput;
+	soundOutputPtr = soundOutput;
 }
 
 //------------------------------------------------------------------------------
@@ -95,12 +95,12 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 		close();
 	}
 
-	nInputChannels		= inChannels;
-	nOutputChannels		= outChannels;
+	nInputChannels = inChannels;
+	nOutputChannels	= outChannels;
 
-	sampleRate			=  _sampleRate;
-	tickCount			=  0;
-	bufferSize			= ofNextPow2(_bufferSize);	// must be pow2
+	sampleRate =  _sampleRate;
+	tickCount = 0;
+	bufferSize = ofNextPow2(_bufferSize);	// must be pow2
 
 	try {
 		audio = shared_ptr<RtAudio>(new RtAudio());
