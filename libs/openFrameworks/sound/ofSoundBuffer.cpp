@@ -515,7 +515,7 @@ void ofSoundBuffer::setChannel(const ofSoundBuffer & inBuffer, std::size_t targe
 	resize(inBuffer.getNumFrames() * channels);
 	// copy from inBuffer to targetChannel
 	float * bufferPtr = &this->buffer[targetChannel];
-	const float * inBufferPtr = &(inBuffer[0]);
+	const float * inBufferPtr = &(inBuffer[targetChannel]);
 	for(std::size_t i = 0; i < getNumFrames(); i++){
 		*bufferPtr = *inBufferPtr;
 		bufferPtr += channels;
