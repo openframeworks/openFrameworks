@@ -1,5 +1,6 @@
 #include "ofPixels.h"
-#include "ofMath.h"
+#include <functional>  // for function
+#include "ofMath.h"    // for ofClamp
 
 
 static ofImageType getImageTypeFromChannels(int channels){
