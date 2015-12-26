@@ -1,5 +1,15 @@
 #include "ofPolyline.h"
-#include "ofAppRunner.h"
+#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
+#include <cmath>               // for cos, sin, floor, abs, atan2, acos, etc
+#include <memory>              // for allocator, __shared_ptr, shared_ptr
+#include <ostream>             // for size_t, operator<<, etc
+#include <string>              // for operator<<
+#include "ofAppRunner.h"       // for ofGetCurrentRenderer
+#include "ofBaseTypes.h"       // for ofPoint, ofBaseRenderer
+#include "ofConstants.h"       // for M_TWO_PI, MAX, MIN, TWO_PI
+#include "ofLog.h"             // for ofLog, ofLogWarning
+#include "ofMath.h"            // for ofClamp, ofDegToRad, ofLerp, ofMap, etc
+
 
 //----------------------------------------------------------
 ofPolyline::ofPolyline(){
