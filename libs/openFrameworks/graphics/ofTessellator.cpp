@@ -1,7 +1,13 @@
 #include "ofTessellator.h"
-
-
-
+#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
+#include <stdlib.h>            // for free, malloc, realloc
+#include <ostream>             // for basic_ostream::operator<<, operator<<
+#include <string>              // for operator<<, allocator
+#include "ofGLUtils.h"
+#include "ofLog.h"             // for ofLog, ofLogError
+#include "ofMesh.h"            // for ofMesh
+#include "ofPoint.h"           // for ofPoint
+class ofVec3f;
 
 
 //-------------- polygons ----------------------------------

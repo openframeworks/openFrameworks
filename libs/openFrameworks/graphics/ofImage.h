@@ -1,10 +1,15 @@
 #pragma once
 
-#include "ofFileUtils.h"
-#include "ofTexture.h"
-#include "ofPixels.h"
-#include "ofBaseTypes.h"
-#include "ofConstants.h"
+#include <ostream>        // for operator<<, basic_ostream::operator<<
+#include <string>         // for operator<<, string
+#include "ofBaseTypes.h"  // for ofFloatPixels, ofPixels, ofShortPixels, etc
+#include "ofColor.h"      // for ofColor_
+#include "ofConstants.h"  // for OF_DEPRECATED_MSG, ofImageType
+#include "ofFileUtils.h"  // for ofBuffer, ofFile (ptr only)
+#include "ofGLUtils.h"    // for ofGetGlInternalFormat
+#include "ofMath.h"       // for ofClamp
+#include "ofPixels.h"     // for ofPixels_
+#include "ofTexture.h"    // for ofTexture, ofTexCompression
 
 /// \file
 /// ofImage is used for loading, saving and drawing images in openFrameworks.
