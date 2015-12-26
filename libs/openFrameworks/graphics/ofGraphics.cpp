@@ -1,13 +1,30 @@
 #include "ofGraphics.h"
-#include "ofAppRunner.h"
-#include "ofUtils.h"
-#include "ofBaseTypes.h"
-#include "ofPath.h"
-#include "ofRendererCollection.h"
+#include <cmath>                   // for cos, sin
+#include <memory>                  // for shared_ptr, __shared_ptr
+#include <ostream>                 // for operator<<
+#include <string>                  // for string, operator==, allocator, etc
+#include <vector>                  // for vector
+#include "glew.h"                  // for glDepthMask, glGetBooleanv, etc
+#include "ofAppRunner.h"           // for ofGetCurrentRenderer, ofGetHeight, etc
+#include "ofBaseTypes.h"           // for ofBaseRenderer, ofPoint, ofColor, etc
+#include "ofColor.h"               // for ofColor_, etc
+#include "ofConstants.h"           // for TWO_PI, ofHandednessType, etc
+#include "ofGLUtils.h"
+#include "ofLog.h"                 // for ofLog, ofLogWarning
+#include "ofMath.h"                // for ofDist
+#include "ofMatrix4x4.h"           // for ofMatrix4x4
+#include "ofPath.h"                // for ofPath
+#include "ofRectangle.h"           // for ofRectangle
+#include "ofRendererCollection.h"  // for ofRendererCollection
+#include "ofTypes.h"               // for ofStyle
+#include "ofUtils.h"               // for ofSplitString
+#include "ofVboMesh.h"             // for ofVboMesh
+#include "ofVec2f.h"               // for ofVec2f
+#include "ofVec3f.h"               // for ofVec3f
+
 #if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
-#include "ofCairoRenderer.h"
+#include "ofCairoRenderer.h"       // for ofCairoRenderer, etc
 #endif
-#include "ofGLRenderer.h"
 
 
 #ifndef TARGET_WIN32

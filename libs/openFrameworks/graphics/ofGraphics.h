@@ -1,11 +1,16 @@
 #pragma once
 
-#include "ofConstants.h"
-#include "ofColor.h"
-#include "ofPoint.h"
-#include "ofMatrix4x4.h"
-#include "ofRectangle.h"
-#include "ofTypes.h"
+#include <string>         // for string
+#include <vector>         // for vector
+#include "ofBaseTypes.h"  // for ofPoint, ofColor
+#include "ofColor.h"      // for ofColor_
+#include "ofConstants.h"  // for OF_DEPRECATED_MSG, ofOrientation, etc
+#include "ofMatrix4x4.h"  // for ofMatrix4x4
+#include "ofRectangle.h"  // for ofRectangle
+#include "ofTypes.h"      // for ofStyle
+#include "ofUtils.h"      // for ofToString
+#include "ofVec3f.h"      // for ofVec3f
+
 
 /// \cond INTERNAL
 #define  	CIRC_RESOLUTION		    22
