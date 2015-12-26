@@ -1,5 +1,16 @@
-
 #include "ofBitmapFont.h"
+#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
+#include <cstddef>             // for size_t
+#include <limits>              // for numeric_limits
+#include <vector>              // for vector
+#include "glew.h"              // for GL_LINEAR, GL_NEAREST
+#include "ofGLUtils.h"
+#include "ofMesh.h"            // for ofMesh
+#include "ofPixels.h"          // for ofPixels_
+#include "ofTexture.h"         // for ofTexture
+#include "ofVec2f.h"           // for ofVec2f
+#include "ofVec3f.h"           // for ofVec3f
+
 
 #ifdef TARGET_ANDROID
 #include "ofxAndroidUtils.h"
