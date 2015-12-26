@@ -1,8 +1,10 @@
 #pragma once
-#include "ofPoint.h"
-#include "ofConstants.h"
-#include <deque>
-#include "ofRectangle.h"
+#include <cstddef>        // for size_t
+#include <deque>          // for deque
+#include <vector>         // for vector, vector<>::const_iterator, etc
+#include "ofPoint.h"      // for ofPoint
+#include "ofRectangle.h"  // for ofRectangle
+#include "ofVec3f.h"      // for ofVec3f
 
 /// \file 
 /// ofPolyLine allows you to combine multiple points into a single vector data
@@ -44,10 +46,6 @@
 /// 100, 100. The next line would be a line from 100,100 to wherever you go
 /// next. Storing this position means that you can easily create continuous
 /// drawings without difficulty.
-
-
-
-class ofRectangle;
 
 class ofPolyline {
 public:
