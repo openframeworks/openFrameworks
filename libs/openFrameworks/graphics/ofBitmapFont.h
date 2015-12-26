@@ -1,19 +1,17 @@
 #pragma once
 
+#include <string>         // for string
+#include "ofBaseTypes.h"  // for ofPixels
 #include "ofConstants.h"
-#include "ofRectangle.h"
-#include "ofPixels.h"
-#include "ofTexture.h"
+#include "ofRectangle.h"  // for ofRectangle
+#include "ofTexture.h"    // for ofTexture
 class ofMesh;
-class ofRectangle;
 
 /*
- 
  note, the data in this code is taken from freeglut, and included in OF for compatability 
  with non glut windowing toolkits.  see .cpp for license info
- 
+
  also, note that while this is used internally in ofGraphics, it's not really useful for end user usage.
- 
  */
 
 class ofBitmapFont{
