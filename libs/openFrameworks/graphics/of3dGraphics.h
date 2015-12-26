@@ -8,13 +8,12 @@
 
 #pragma once
 
-#include "ofConstants.h"
-#include "ofColor.h"
-#include "ofPoint.h"
-#include "ofMatrix4x4.h"
-#include "ofRectangle.h"
-#include "ofTypes.h"
-#include "of3dPrimitives.h"
+#include <cstddef>           // for size_t
+#include "of3dPrimitives.h"  // for of3dPrimitive, ofBoxPrimitive, etc
+#include "ofBaseTypes.h"     // for ofPoint, ofBaseRenderer (ptr only)
+#include "ofConstants.h"     // for OF_DEPRECATED_MSG
+#include "ofVec2f.h"         // for ofVec2f
+#include "ofVec3f.h"         // for ofVec3f
 
 
 // Grid Plane - drawn from the center //

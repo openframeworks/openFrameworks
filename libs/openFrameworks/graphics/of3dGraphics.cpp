@@ -7,10 +7,16 @@
 //
 
 #include "of3dGraphics.h"
-#include "ofAppRunner.h"
-#include "ofVboMesh.h"
-#include <map>
-
+#include <math.h>         // for cos, sin
+#include <memory>         // for __shared_ptr, shared_ptr
+#include <ostream>        // for size_t, basic_ostream::operator<<
+#include "ofAppRunner.h"  // for ofGetCurrentRenderer
+#include "ofColor.h"      // for ofFloatColor, ofColor_
+#include "ofGLUtils.h"
+#include "ofMatrix4x4.h"  // for ofMatrix4x4
+#include "ofMesh.h"       // for ofMesh
+#include "ofTypes.h"      // for ofStyle
+#include "ofUtils.h"      // for ofToString
 
 
 enum of3dPrimitiveType {
