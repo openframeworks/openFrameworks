@@ -1,5 +1,5 @@
 #include "ofBitmapFont.h"
-#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
+//#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
 #include <cstddef>             // for size_t
 #include <limits>              // for numeric_limits
 #include <vector>              // for vector

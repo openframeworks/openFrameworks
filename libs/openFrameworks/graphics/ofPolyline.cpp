@@ -1,5 +1,5 @@
 #include "ofPolyline.h"
-#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
+//#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
 #include <cmath>               // for cos, sin, floor, abs, atan2, acos, etc
 #include <memory>              // for allocator, __shared_ptr, shared_ptr
 #include <ostream>             // for size_t, operator<<, etc

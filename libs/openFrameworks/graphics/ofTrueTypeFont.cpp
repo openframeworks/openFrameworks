@@ -1,5 +1,5 @@
 #include "ofTrueTypeFont.h"
-#include <ext/alloc_traits.h>         // for __alloc_traits<>::value_type
+//#include <ext/alloc_traits.h>         // for __alloc_traits<>::value_type
 #include <ft2build.h>                 // for freetype.h
 #include <freetype.h>                 // for FT_FaceRec_, FT_GlyphSlotRec_, etc
 #include <algorithm>                  // for move, max, min, sort
