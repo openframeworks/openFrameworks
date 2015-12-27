@@ -1,6 +1,13 @@
 #include "ofPath.h"
-#include "ofAppRunner.h"
-#include "ofTessellator.h"
+#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
+#include <memory>              // for allocator, __shared_ptr, shared_ptr
+#include <ostream>             // for operator<<
+#include <string>              // for operator<<
+#include "ofAppRunner.h"       // for ofGetCurrentRenderer
+#include "ofLog.h"             // for ofLog, ofLogWarning
+#include "ofRectangle.h"       // for ofRectangle
+#include "ofTessellator.h"     // for ofTessellator
+class ofMesh;
 
 #if defined(TARGET_EMSCRIPTEN)
 	ofTessellator ofPath::tessellator;
