@@ -1,12 +1,16 @@
 #include "ofImage.h"
-#include "ofAppRunner.h"
-#include "ofTypes.h"
-#include "ofGraphics.h"
-#include "FreeImage.h"
+#include <stdint.h>           // for uint32_t
+#include <string.h>           // for memcpy
+#include <exception>          // for exception
+#include <memory>             // for shared_ptr, __shared_ptr
+#include "FreeImage.h"        // for FreeImage_Unload, etc
+#include "ofAppRunner.h"      // for ofGetCurrentRenderer
+#include "ofLog.h"            // for ofLog, ofLogError, ofLogWarning
+#include "ofUtils.h"          // for ofToDataPath
 
 #ifndef TARGET_EMSCRIPTEN
-	#include "ofURLFileLoader.h"
-	#include "Poco/URI.h"
+	#include "ofURLFileLoader.h"  // for ofLoadURL, ofHttpResponse
+	#include "Poco/URI.h"      // for URI
 #endif
 #if defined(TARGET_ANDROID)
 #include "ofxAndroidUtils.h"
