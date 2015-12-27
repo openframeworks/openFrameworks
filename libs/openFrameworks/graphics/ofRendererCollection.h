@@ -1,10 +1,28 @@
 #pragma once
 
-#include "ofBaseTypes.h"
-#include "ofGLRenderer.h"
-#include "ofGLProgrammableRenderer.h"
-#include "of3dGraphics.h"
-#include "ofPath.h"
+#include <ext/alloc_traits.h>  // for __alloc_traits<>::value_type
+#include <memory>              // for __shared_ptr, shared_ptr
+#include <ostream>             // for operator<<
+#include <string>              // for operator==, string, operator<<
+#include <vector>              // for vector
+#include "of3dGraphics.h"      // for of3dGraphics
+#include "of3dPrimitives.h"    // for of3dPrimitive
+#include "ofBaseTypes.h"       // for ofBaseRenderer, ofColor, etc
+#include "ofColor.h"           // for ofColor_
+#include "ofConstants.h"       // for ofFillFlag, ofFillFlag::OF_FILLED, etc
+#include "ofGLRenderer.h"      // for ofGLRenderer
+#include "ofGLUtils.h"         // for ofPolyRenderMode
+#include "ofLog.h"             // for ofLog, ofLogWarning
+#include "ofMatrix4x4.h"       // for ofMatrix4x4
+#include "ofPath.h"            // for ofPath, ofPath::Mode::COMMANDS
+#include "ofPolyline.h"        // for ofPolyline
+#include "ofRectangle.h"       // for ofRectangle
+#include "ofTypes.h"           // for ofStyle
+class ofCamera;
+class ofMesh;
+class ofNode;
+class ofTrueTypeFont;
+
 
 class ofRendererCollection: public ofBaseRenderer{
 public:
