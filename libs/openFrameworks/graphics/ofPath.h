@@ -5,11 +5,11 @@
 #include "ofColor.h"      // for ofColor_
 #include "ofConstants.h"  // for ofPolyWindingMode, OF_DEPRECATED_MSG, etc
 #include "ofPolyline.h"   // for ofPolyline
+#include "ofTessellator.h"  // to avoid forward declaration of ofTessellator
 #include "ofVboMesh.h"    // for ofVboMesh
 #include "ofVec3f.h"      // for ofVec3f
 class ofMesh;
 class ofRectangle;
-class ofTessellator;
 
 
 /// \class
