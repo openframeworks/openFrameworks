@@ -4,7 +4,6 @@
 #include <ostream>                 // for operator<<
 #include <string>                  // for string, operator==, allocator, etc
 #include <vector>                  // for vector
-#include "glew.h"                  // for glDepthMask, glGetBooleanv, etc
 #include "ofAppRunner.h"           // for ofGetCurrentRenderer, ofGetHeight, etc
 #include "ofBaseTypes.h"           // for ofBaseRenderer, ofPoint, ofColor, etc
 #include "ofColor.h"               // for ofColor_, etc
@@ -26,6 +25,9 @@
 #include "ofCairoRenderer.h"       // for ofCairoRenderer, etc
 #endif
 
+#ifdef TARGET_LINUX
+#include "glew.h"                  // for glDepthMask, glGetBooleanv, etc
+#endif
 
 #ifndef TARGET_WIN32
     #define CALLBACK

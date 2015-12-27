@@ -10,7 +10,6 @@
 #include "config/ftheader.h"          // for FT_FREETYPE_H, FT_GLYPH_H, etc
 #include "ftimage.h"                  // for FT_Vector, FT_Bitmap, etc
 #include "fttypes.h"                  // for FT_Error
-#include "glew.h"                     // for GLfloat, GL_LINEAR, GL_NEAREST
 #include "ofAppRunner.h"              // for ofGetCurrentRenderer
 #include "ofBaseTypes.h"              // for ofPoint, ofPixels, etc
 #include "ofFileUtils.h"              // for ofFile, etc
@@ -26,6 +25,7 @@
 
 #ifdef TARGET_LINUX
 #include <fontconfig/fontconfig.h>    // for FcPatternDestroy, FcBool, etc
+#include "glew.h"                     // for GLfloat, GL_LINEAR, GL_NEAREST
 #endif
 
 #include FT_FREETYPE_H

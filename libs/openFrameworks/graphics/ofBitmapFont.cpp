@@ -3,7 +3,6 @@
 #include <cstddef>             // for size_t
 #include <limits>              // for numeric_limits
 #include <vector>              // for vector
-#include "glew.h"              // for GL_LINEAR, GL_NEAREST
 #include "ofGLUtils.h"
 #include "ofMesh.h"            // for ofMesh
 #include "ofPixels.h"          // for ofPixels_
@@ -13,6 +12,10 @@
 
 #ifdef TARGET_ANDROID
 #include "ofxAndroidUtils.h"
+#endif
+
+#ifdef TARGET_LINUX
+#include "glew.h"              // for GL_LINEAR, GL_NEAREST
 #endif
 
 // ==============================================================
