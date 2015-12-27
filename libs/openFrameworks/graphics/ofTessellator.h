@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ofConstants.h"
-#include "ofMesh.h"
-#include "ofTypes.h"
-#include "ofPolyline.h"
-#include "tesselator.h"
+#include <vector>         // for vector
+#include "ofConstants.h"  // for ofPolyWindingMode
+#include "ofPolyline.h"   // for ofPolyline
+#include "tesselator.h"   // for TESSalloc, TESStesselator
+class ofMesh;
 
 /// \brief
 /// ofTessellator exists for one purpose: to turn ofPolylines into ofMeshes so
