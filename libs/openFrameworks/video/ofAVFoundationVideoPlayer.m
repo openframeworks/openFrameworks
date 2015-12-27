@@ -100,7 +100,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	NSDictionary *pixBuffAttributes = @{(id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32ARGB)};
 #endif
 	
-	self.videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
+	self.videoOutput = [[[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes] autorelease];
 	if (!self.videoOutput) {
 		NSLog(@"error creating video output");
 		return;
@@ -352,6 +352,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 							 context:&PlayerRateContext];
 			// add timeobserver?
 			[self addTimeObserverToPlayer];
+			
+			_player.volume = volume;
 			
 			// loaded
 			bLoaded = true;
@@ -870,6 +872,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		if (err) {
 			NSLog(@"Error at CMVideoFormatDescriptionCreateForImageBuffer %ld", (long)err);
 			bNewFrame = NO;
+			// release temp buffer
+			CVBufferRelease(buffer);
 			return;
 		}
 		
@@ -899,6 +903,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		if (err) {
 			NSLog(@"Error at CMSampleBufferCreateForImageBuffer %ld", (long)err);
 			bNewFrame = NO;
+			// release temp buffer
+			CVBufferRelease(buffer);
 			return;
 		}
 		
@@ -1330,19 +1336,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 	volume = value;
 	
-	NSArray * audioTracks = [self.playerItem.asset tracksWithMediaType:AVMediaTypeAudio];
-	NSMutableArray * allAudioParams = [NSMutableArray array];
-	for(AVAssetTrack * track in audioTracks) {
-		AVMutableAudioMixInputParameters * audioInputParams = [AVMutableAudioMixInputParameters audioMixInputParameters];
-		[audioInputParams setVolume:volume atTime:kCMTimeZero];
-		[audioInputParams setTrackID:[track trackID]];
-		[allAudioParams addObject:audioInputParams];
-	}
-	
-	AVMutableAudioMix * audioMix = [AVMutableAudioMix audioMix];
-	[audioMix setInputParameters:allAudioParams];
-	
-	[self.playerItem setAudioMix:audioMix];
+	_player.volume = volume;
 }
 
 - (float)getVolume {
