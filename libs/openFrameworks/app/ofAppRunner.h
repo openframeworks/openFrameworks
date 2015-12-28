@@ -10,9 +10,14 @@
 class ofAppBaseWindow;
 class ofAppBaseGLWindow;
 class ofAppBaseGLESWindow;
+class ofAppGLFWWindow;
 class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
+
+#if !defined(TARGET_EMSCRIPTEN) && !defined(TARGET_RASPBERRY_PI) && !defined(TARGET_NODISPLAY) && !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID)
+	#include "ofAppGLFWWindow.h"
+#endif
 
 void ofInit();
 void ofSetupOpenGL(int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
@@ -31,6 +36,8 @@ void ofSetupOpenGL(shared_ptr<Window> windowPtr, int w, int h, ofWindowMode scre
 	windowPtr->setup(settings);
 }
 
+//special case so we preserve supplied settngs
+void ofSetupOpenGL(shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode);
 
 template<typename Window>
 static void noopDeleter(Window*){}
