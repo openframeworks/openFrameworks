@@ -19,6 +19,9 @@
 #include "ofURLFileLoader.h"
 #include "ofMainLoop.h"
 
+#if !defined(TARGET_EMSCRIPTEN) && !defined(TARGET_RASPBERRY_PI) && !defined(TARGET_NODISPLAY) && !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID)
+	#include "ofAppGLFWWindow.h"
+#endif
 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
 #if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
