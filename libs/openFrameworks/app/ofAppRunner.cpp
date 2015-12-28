@@ -159,6 +159,18 @@ int ofRunMainLoop(){
 	return ret;
 }
 
+//special case so we preserve supplied settngs
+//--------------------------------------
+void ofSetupOpenGL(shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode){
+	ofInit();
+	auto settings = windowPtr->getSettings();
+	settings.width = w;
+	settings.height = h;
+	settings.windowMode = screenMode;
+	ofGetMainLoop()->addWindow(windowPtr);
+	windowPtr->setup(settings);
+}
+
 //--------------------------------------
 void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
 #ifdef TARGET_OPENGLES
