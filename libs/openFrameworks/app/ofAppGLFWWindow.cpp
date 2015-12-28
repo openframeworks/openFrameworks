@@ -691,7 +691,11 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
  
 		int currentMonitor = getCurrentMonitor();
 		ofVec3f screenSize = getScreenSize();
- 
+		
+		if( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ){
+			std::swap(screenSize.x, screenSize.y);
+		}
+		
 		ofRectangle allScreensSpace;
 		
 		// save window shape before going fullscreen
@@ -700,7 +704,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		windowRect.y = pos.y;
 		windowRect.width = windowW;
 		windowRect.height = windowH;
- 
+		
         if( settings.multiMonitorFullScreen && monitorCount > 1 ){
  
 			//calc the sum Rect of all the monitors
@@ -748,7 +752,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
         [cocoaWindow makeFirstResponder:cocoaWindow.contentView];
  
 	}else if( windowMode == OF_WINDOW ){
-	
+		
 		// set window shape if started in fullscreen
 		if(windowRect.width == 0 && windowRect.height == 0) {
 			windowRect.x = getWindowPosition().x;
@@ -790,6 +794,10 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
  
         float fullscreenW = getScreenSize().x;
         float fullscreenH = getScreenSize().y;
+		
+		if( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ){
+			std::swap(fullscreenW, fullscreenH);
+		}
  
         int xpos = 0;
         int ypos = 0;
@@ -1123,8 +1131,8 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
-	instance->windowW = w;
-	instance->windowH = h;
+	instance->windowW = w * instance->pixelScreenCoordScale;
+	instance->windowH = h * instance->pixelScreenCoordScale;
 	instance->events().notifyWindowResized(w*instance->pixelScreenCoordScale, h*instance->pixelScreenCoordScale);
 
 	instance->nFramesSinceWindowResized = 0;
