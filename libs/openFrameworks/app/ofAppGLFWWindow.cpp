@@ -206,7 +206,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 					auto mode = glfwGetVideoMode(monitors[settings.monitor]);
 					settings.width = mode->width;
 					settings.height = mode->height;
+					//for OS X we need to set this first as the window size affects the window positon
 					setWindowShape(settings.width, settings.height);
+					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 				}
 			}else{
 				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
