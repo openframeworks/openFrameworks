@@ -259,11 +259,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
     //this lets us detect if the window is running in a retina mode
     if( framebufferW != windowW ){
         pixelScreenCoordScale = framebufferW / windowW;
-        
-        //have to update the windowShape to account for retina coords
-        if( windowMode == OF_WINDOW ){
-            setWindowShape(windowW, windowH);
-        }
 	}
 
 #ifndef TARGET_OPENGLES
