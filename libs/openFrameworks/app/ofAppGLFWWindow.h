@@ -94,6 +94,7 @@ public:
     
     GLFWwindow* getGLFWWindow();
     void * getWindowContext(){return getGLFWWindow();}
+	ofGLFWWindowSettings getSettings(){ return settings; }
 
 	ofVec3f		getWindowSize();
 	ofVec3f		getScreenSize();
