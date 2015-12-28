@@ -34,6 +34,7 @@ void ofSetupOpenGL(shared_ptr<Window> windowPtr, int w, int h, ofWindowMode scre
 }
 
 //special case so we preserve supplied settngs
+//TODO: remove me when we remove the ofSetupOpenGL legacy approach.
 void ofSetupOpenGL(shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode);
 
 template<typename Window>

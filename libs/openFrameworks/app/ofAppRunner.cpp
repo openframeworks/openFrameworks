@@ -21,6 +21,7 @@
 
 #if !defined(TARGET_EMSCRIPTEN) && !defined(TARGET_RASPBERRY_PI) && !defined(TARGET_NODISPLAY) && !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID)
 	#include "ofAppGLFWWindow.h"
+	#define SPECIAL_CASE_FOR_GLFW
 #endif
 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
@@ -162,17 +163,20 @@ int ofRunMainLoop(){
 	return ret;
 }
 
-//special case so we preserve supplied settngs
-//--------------------------------------
-void ofSetupOpenGL(shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode){
-	ofInit();
-	auto settings = windowPtr->getSettings();
-	settings.width = w;
-	settings.height = h;
-	settings.windowMode = screenMode;
-	ofGetMainLoop()->addWindow(windowPtr);
-	windowPtr->setup(settings);
-}
+#ifdef SPECIAL_CASE_FOR_GLFW
+	//special case so we preserve supplied settngs
+	//TODO: remove me when we remove the ofSetupOpenGL legacy approach.
+	//--------------------------------------
+	void ofSetupOpenGL(shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode){
+		ofInit();
+		auto settings = windowPtr->getSettings();
+		settings.width = w;
+		settings.height = h;
+		settings.windowMode = screenMode;
+		ofGetMainLoop()->addWindow(windowPtr);
+		windowPtr->setup(settings);
+	}
+#endif
 
 //--------------------------------------
 void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
