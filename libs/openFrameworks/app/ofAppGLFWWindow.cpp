@@ -716,7 +716,8 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 				allScreensSpace = allScreensSpace.getUnion(screen);
 			}
 			//for OS X we need to set this first as the window size affects the window positon
-			setWindowShape(allScreensSpace.width, allScreensSpace.height);
+			//need to account for the pixel density factor when we're getting the values from glfw
+			setWindowShape(allScreensSpace.width*pixelScreenCoordScale, allScreensSpace.height*pixelScreenCoordScale);
 			setWindowPosition(allScreensSpace.x, allScreensSpace.y);
  
         }else if (monitorCount > 1 && currentMonitor < monitorCount){
