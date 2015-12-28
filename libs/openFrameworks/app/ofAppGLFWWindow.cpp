@@ -841,10 +841,13 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
         SetWindowPos(hwnd, HWND_TOPMOST, xpos, ypos, fullscreenW, fullscreenH, SWP_SHOWWINDOW);
  
 	}else if( windowMode == OF_WINDOW ){
-		int nonFullScreenX = getWindowPosition().x;
-		int nonFullScreenY = getWindowPosition().y;
-		int nonFullScreenW = getWindowSize().x;
-		int nonFullScreenH = getWindowSize().y;
+		// set window shape if started in fullscreen
+		if(windowRect.width == 0 && windowRect.height == 0) {
+			windowRect.x = getWindowPosition().x;
+			windowRect.y = getWindowPosition().y;
+			windowRect.width = getWindowSize().x;
+			windowRect.height = getWindowSize().y;
+		}
 
 		HWND hwnd = glfwGetWin32Window(windowP);
  
@@ -858,8 +861,8 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
  
 		//not sure why this is - but if we don't do this the window shrinks by 4 pixels in x and y
 		//should look for a better fix.
-		setWindowPosition(nonFullScreenX-2, nonFullScreenY-2);
-		setWindowShape(nonFullScreenW+4, nonFullScreenH+4);
+		setWindowPosition(windowRect.x-2, windowRect.y-2);
+		setWindowShape(windowRect.width+4, windowRect.height+4);
 	}
 #endif
 }
