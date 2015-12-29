@@ -206,7 +206,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 					auto mode = glfwGetVideoMode(monitors[settings.monitor]);
 					settings.width = mode->width;
 					settings.height = mode->height;
+					//for OS X we need to set this first as the window size affects the window positon
 					setWindowShape(settings.width, settings.height);
+					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 				}
 			}else{
 				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
@@ -257,11 +259,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
     //this lets us detect if the window is running in a retina mode
     if( framebufferW != windowW ){
         pixelScreenCoordScale = framebufferW / windowW;
-        
-        //have to update the windowShape to account for retina coords
-        if( windowMode == OF_WINDOW ){
-            setWindowShape(windowW, windowH);
-        }
 	}
 
 #ifndef TARGET_OPENGLES
@@ -712,7 +709,8 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 				allScreensSpace = allScreensSpace.getUnion(screen);
 			}
 			//for OS X we need to set this first as the window size affects the window positon
-			setWindowShape(allScreensSpace.width, allScreensSpace.height);
+			//need to account for the pixel density factor when we're getting the values from glfw
+			setWindowShape(allScreensSpace.width*pixelScreenCoordScale, allScreensSpace.height*pixelScreenCoordScale);
 			setWindowPosition(allScreensSpace.x, allScreensSpace.y);
  
         }else if (monitorCount > 1 && currentMonitor < monitorCount){
@@ -1123,8 +1121,8 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
-	instance->windowW = w;
-	instance->windowH = h;
+	instance->windowW = w * instance->pixelScreenCoordScale;
+	instance->windowH = h * instance->pixelScreenCoordScale;
 	instance->events().notifyWindowResized(w*instance->pixelScreenCoordScale, h*instance->pixelScreenCoordScale);
 
 	instance->nFramesSinceWindowResized = 0;
