@@ -142,17 +142,17 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwWindowHint(GLFW_DEPTH_BITS, settings.depthBits);
 	glfwWindowHint(GLFW_STENCIL_BITS, settings.stencilBits);
 	glfwWindowHint(GLFW_STEREO, settings.stereo);
-	glfwWindowHint(GLFW_VISIBLE,GL_FALSE);
+	glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 #ifndef TARGET_OSX
-	glfwWindowHint(GLFW_AUX_BUFFERS,settings.doubleBuffering?1:0);
+	glfwWindowHint(GLFW_AUX_BUFFERS, settings.doubleBuffering?1:0);
 #endif
-	glfwWindowHint(GLFW_SAMPLES,settings.numSamples);
+	glfwWindowHint(GLFW_SAMPLES, settings.numSamples);
 	glfwWindowHint(GLFW_RESIZABLE, settings.resizable);
 	glfwWindowHint(GLFW_DECORATED, settings.decorated);
 	#ifdef TARGET_OPENGLES
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.glesVersion);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-		glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_ES_API);
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
 		if(settings.glesVersion>=2){
 			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
 		}else{
@@ -182,13 +182,13 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		int count;
 		GLFWmonitor** monitors = glfwGetMonitors(&count);
 		if(count>settings.monitor){
-			windowP = glfwCreateWindow(settings.width, settings.height, "", monitors[settings.monitor], sharedContext);
+			windowP = glfwCreateWindow(settings.width, settings.height, settings.title.c_str(), monitors[settings.monitor], sharedContext);
 		}else{
 			ofLogError("ofAppGLFWWindow") << "couldn't find any monitors";
 			return;
 		}
 	}else{
-		windowP = glfwCreateWindow(settings.width, settings.height, "", nullptr, sharedContext);
+		windowP = glfwCreateWindow(settings.width, settings.height, settings.title.c_str(), nullptr, sharedContext);
 		if(!windowP){
 			ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
 			return;
