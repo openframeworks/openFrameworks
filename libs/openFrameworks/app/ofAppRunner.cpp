@@ -19,6 +19,10 @@
 #include "ofURLFileLoader.h"
 #include "ofMainLoop.h"
 
+#if !defined(TARGET_EMSCRIPTEN) && !defined(TARGET_RASPBERRY_PI) && !defined(TARGET_NODISPLAY) && !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID)
+	#include "ofAppGLFWWindow.h"
+	#define SPECIAL_CASE_FOR_GLFW
+#endif
 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
 #if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
@@ -158,6 +162,21 @@ int ofRunMainLoop(){
 	auto ret = mainLoop()->loop();
 	return ret;
 }
+
+#ifdef SPECIAL_CASE_FOR_GLFW
+	//special case so we preserve supplied settngs
+	//TODO: remove me when we remove the ofSetupOpenGL legacy approach.
+	//--------------------------------------
+	void ofSetupOpenGL(shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode){
+		ofInit();
+		auto settings = windowPtr->getSettings();
+		settings.width = w;
+		settings.height = h;
+		settings.windowMode = screenMode;
+		ofGetMainLoop()->addWindow(windowPtr);
+		windowPtr->setup(settings);
+	}
+#endif
 
 //--------------------------------------
 void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
