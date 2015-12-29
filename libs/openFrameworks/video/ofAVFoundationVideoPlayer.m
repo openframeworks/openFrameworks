@@ -1326,6 +1326,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 - (void)setVolume:(float)value {
 	
+	volume = value;
+	
 	if(![self isReady]) {
 		return;
 	}
@@ -1333,8 +1335,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	if (self.playerItem == nil) {
 		return;
 	}
-	
-	volume = value;
 	
 	_player.volume = volume;
 }
