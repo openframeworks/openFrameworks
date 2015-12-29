@@ -192,10 +192,7 @@ private:
 	bool			bEnableSetupScreen;
 	int				windowW, windowH;
 
-#ifdef TARGET_OSX
-	/// saved window shape before fullscreen
 	ofRectangle windowRect;
-#endif
 
 	int				buttonInUse;
 	bool			buttonPressed;
