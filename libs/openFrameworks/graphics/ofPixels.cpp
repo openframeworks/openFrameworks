@@ -1174,14 +1174,16 @@ void ofPixels_<PixelType>::mirrorTo(ofPixels_<PixelType> & dst, bool vertically,
 	}
 
 	int bytesPerPixel = getNumChannels();
+	dst.allocate(width, height, getPixelFormat());
 
 	if(vertically && !horizontal){
-		ofPixels_<PixelType>::Lines dstLines = dst.getLines();
-		ofPixels_<PixelType>::ConstLine lineSrc = getConstLines().begin();
-		ofPixels_<PixelType>::Line line = --dstLines.end();
+		auto dstLines = dst.getLines();
+		auto lineSrc = getConstLines().begin();
+		auto line = --dstLines.end();
+		auto stride = line.getStride();
 
 		for(; line>=dstLines.begin(); --line, ++lineSrc){
-			memcpy(line.begin(),lineSrc.begin(),line.getStride());
+			memcpy(line.begin(), lineSrc.begin(), stride);
 		}
 	}else if (!vertically && horizontal){
 		int wToDo = width/2;
@@ -1212,7 +1214,7 @@ bool ofPixels_<PixelType>::resize(int dstWidth, int dstHeight, ofInterpolationMe
 	if ((dstWidth<=0) || (dstHeight<=0) || !(isAllocated())) return false;
 
 	ofPixels_<PixelType> dstPixels;
-	dstPixels.allocate(dstWidth, dstHeight,getImageType());
+	dstPixels.allocate(dstWidth, dstHeight, getPixelFormat());
 
 	if(!resizeTo(dstPixels,interpMethod)) return false;
 
