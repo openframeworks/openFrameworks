@@ -41,7 +41,7 @@ ofxButton & ofxButton::setup(ofParameter<void> _val, float width, float height){
     return *this;
 }
 
-ofxButton & ofxButton::setup(ofParameter<bool> _val, float width, float height){
+ofxButton & ofxButton::setup(ofParameter<bool>& _val, float width, float height){
     ofxToggle::setup(_val, width, height);
     return *this;
 }

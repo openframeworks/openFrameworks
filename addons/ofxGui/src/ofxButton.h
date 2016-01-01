@@ -23,7 +23,7 @@ public:
     ofxButton & setup(ofParameter<bool> _bVal, const Config & config);
     ofxButton & setup(const std::string& buttonName, float width = defaultWidth, float height = defaultHeight);
     ofxButton & setup(ofParameter<void> _val, float width = defaultWidth, float height = defaultHeight);
-    ofxButton & setup(ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
+	ofxButton & setup(ofParameter<bool>& _bVal, float width = defaultWidth, float height = defaultHeight);
 
 	virtual bool mouseReleased(ofMouseEventArgs & args);
 	virtual bool mouseMoved(ofMouseEventArgs & args);
