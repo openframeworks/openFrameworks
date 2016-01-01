@@ -7,7 +7,7 @@ void ofApp::setup(){
 	
 	// we add this listener before setting up so the initial circle resolution is correct
 	circleResolution.addListener(this, &ofApp::circleResolutionChanged);
-	ringButton.addListener(this,&ofApp::ringButtonPressed);
+    ringButton.addListener(this,&ofApp::ringButtonPressed);
 
 	gui.setup("panel"); // most of the time you don't need a name but don't forget to call setup
 	gui.add(filled.set("bFill", true));
@@ -15,8 +15,8 @@ void ofApp::setup(){
 	gui.add(center.set("center",ofVec2f(ofGetWidth()*.5,ofGetHeight()*.5),ofVec2f(0,0),ofVec2f(ofGetWidth(),ofGetHeight())));
 	gui.add(color.set("color",ofColor(100,100,140),ofColor(0,0),ofColor(255,255)));
 	gui.add(circleResolution.set("circleRes", 5, 3, 90));
-	gui.add(twoCircles.setup("twoCircles"));
-	gui.add(ringButton.setup("ring"));
+    gui.add<ofxButton>(twoCircles.set("twoCircles", false));
+    gui.add(ringButton.set("ring"));
 	gui.add(screenSize.set("screenSize", ""));
 	
 	bHide = false;

@@ -99,7 +99,7 @@ void ofxToggle::generateDraw(){
 	}else{
 		fg.setFilled(false);
 		fg.setStrokeWidth(1);
-		fg.setStrokeColor(thisFillColor);
+        fg.setStrokeColor(thisBorderColor);
 	}
 	fg.rectangle(b.getPosition()+checkboxRect.getTopLeft(),checkboxRect.width,checkboxRect.height);
 

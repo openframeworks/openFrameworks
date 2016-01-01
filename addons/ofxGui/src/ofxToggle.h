@@ -49,8 +49,8 @@ protected:
 	ofParameter<bool> value;
 	bool bGuiActive;
 	
-	bool setValue(float mx, float my, bool bCheck);
-	void generateDraw();
+    virtual bool setValue(float mx, float my, bool bCheck);
+    virtual void generateDraw();
 	void valueChanged(bool & value);
 	ofPath bg,fg,cross;
 	ofVboMesh textMesh;

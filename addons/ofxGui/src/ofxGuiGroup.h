@@ -47,6 +47,7 @@ class ofxGuiGroup : public ofxBaseGui {
             add(new ofxSlider<T>(p, typename ofxSlider<T>::Config()));
         }
 
+        void add(ofParameter <void> & parameter);
         void add(ofParameter <bool> & parameter);
         void add(ofParameter <std::string> & parameter);
         void add(ofParameter <ofVec2f> & parameter);
@@ -66,6 +67,9 @@ class ofxGuiGroup : public ofxBaseGui {
         typename std::enable_if<std::is_arithmetic<T>::value, void>::type add(ofParameter<T> & p, const Config & config){
 			add(new ofxSlider<T>(p, config));
         }
+
+        template<class Config>
+        void add(ofParameter <void> & parameter, const Config & config);
 
 		template<class Config>
 		void add(ofParameter <bool> & parameter, const Config & config);
@@ -199,6 +203,11 @@ ControlType & ofxGuiGroup::getControlType(const std::string& name){
 		add(control);
 		return *control;
 	}
+}
+
+template<class C>
+void ofxGuiGroup::add(ofParameter <void> & parameter, const C & config){
+    add<ofxButton>(parameter, config);
 }
 
 template<class C>

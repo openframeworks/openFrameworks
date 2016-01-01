@@ -121,7 +121,9 @@ void ofxGuiGroup::addParametersFrom(const ofParameterGroup & parameters, const C
             add(p->cast<float>(), config);
         }else if(type == typeid(ofParameter <double> ).name()){
             add(p->cast<double>(), config);
-		}else if(type == typeid(ofParameter<bool>).name()){
+        }else if(type == typeid(ofParameter<void>).name()){
+            add(p->cast<void>(), config);
+        }else if(type == typeid(ofParameter<bool>).name()){
             add(p->cast<bool>(), config);
 		}else if(type == typeid(ofParameter<ofVec2f>).name()){
             add(p->cast<ofVec2f>(), config);
@@ -153,6 +155,10 @@ void ofxGuiGroup::add(ofxBaseGui & element){
 
 void ofxGuiGroup::add(ofxGuiGroup & element){
 	add(&element);
+}
+
+void ofxGuiGroup::add(ofParameter <void> & parameter){
+    add(parameter, ofxButton::Config());
 }
 
 void ofxGuiGroup::add(ofParameter <bool> & parameter){

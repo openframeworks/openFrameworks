@@ -34,8 +34,8 @@ public:
 	ofParameter<ofVec2f> center;
 	ofParameter<int> circleResolution;
 	ofParameter<bool> filled;
-	ofxButton twoCircles;
-	ofxButton ringButton;
+    ofParameter<bool> twoCircles;
+    ofParameter<void> ringButton;
 	ofParameter<string> screenSize;
 
 	ofxPanel gui;
