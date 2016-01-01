@@ -14,17 +14,17 @@ public:
 	ofxToggle();
 	ofxToggle(ofParameter<bool> _bVal, const Config & config = Config());
 	~ofxToggle();
-    ofxToggle & setup(ofParameter<bool> _bVal, const Config & config);
-    ofxToggle & setup(ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
+	ofxToggle & setup(ofParameter<bool> _bVal, const Config & config);
+	ofxToggle & setup(ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
 	ofxToggle & setup(const std::string& toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight);
-	
+
 
 	virtual bool mouseMoved(ofMouseEventArgs & args);
 	virtual bool mousePressed(ofMouseEventArgs & args);
 	virtual bool mouseDragged(ofMouseEventArgs & args);
 	virtual bool mouseReleased(ofMouseEventArgs & args);
 	virtual bool mouseScrolled(ofMouseEventArgs & args){return false;}
-	
+
 
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method){
@@ -48,9 +48,9 @@ protected:
 	ofRectangle checkboxRect;
 	ofParameter<bool> value;
 	bool bGuiActive;
-	
-    virtual bool setValue(float mx, float my, bool bCheck);
-    virtual void generateDraw();
+
+	virtual bool setValue(float mx, float my, bool bCheck);
+	virtual void generateDraw();
 	void valueChanged(bool & value);
 	ofPath bg,fg,cross;
 	ofVboMesh textMesh;

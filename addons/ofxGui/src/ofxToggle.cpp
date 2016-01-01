@@ -19,15 +19,15 @@ ofxToggle::~ofxToggle(){
 }
 
 ofxToggle & ofxToggle::setup(ofParameter<bool> _bVal, const Config & config){
-    ofxBaseGui::setup(config);
-    bGuiActive = false;
-    value.makeReferenceTo(_bVal);
-    checkboxRect.set(1, 1, b.height - 2, b.height - 2);
-    value.addListener(this,&ofxToggle::valueChanged);
-    registerMouseEvents();
-    setNeedsRedraw();
+	ofxBaseGui::setup(config);
+	bGuiActive = false;
+	value.makeReferenceTo(_bVal);
+	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
+	value.addListener(this,&ofxToggle::valueChanged);
+	registerMouseEvents();
+	setNeedsRedraw();
 
-    return *this;
+	return *this;
 }
 
 ofxToggle & ofxToggle::setup(ofParameter<bool> _bVal, float width, float height){
@@ -99,7 +99,7 @@ void ofxToggle::generateDraw(){
 	}else{
 		fg.setFilled(false);
 		fg.setStrokeWidth(1);
-        fg.setStrokeColor(thisBorderColor);
+		fg.setStrokeColor(thisBorderColor);
 	}
 	fg.rectangle(b.getPosition()+checkboxRect.getTopLeft(),checkboxRect.width,checkboxRect.height);
 
@@ -112,9 +112,9 @@ void ofxToggle::generateDraw(){
 	cross.moveTo(b.getPosition()+checkboxRect.getTopRight());
 	cross.lineTo(b.getPosition()+checkboxRect.getBottomLeft());
 
-    if(bShowName){
-        textMesh = getTextMesh(getName(), b.x+textPadding + checkboxRect.width, b.y+b.height / 2 + 4);
-    }
+	if(bShowName){
+		textMesh = getTextMesh(getName(), b.x+textPadding + checkboxRect.width, b.y+b.height / 2 + 4);
+	}
 }
 
 void ofxToggle::render(){
@@ -125,23 +125,23 @@ void ofxToggle::render(){
 		cross.draw();
 	}
 
-    if(bShowName){
-        ofColor c = ofGetStyle().color;
-        ofBlendMode blendMode = ofGetStyle().blendingMode;
-        if(blendMode!=OF_BLENDMODE_ALPHA){
-            ofEnableAlphaBlending();
-        }
-        ofSetColor(thisTextColor);
+	if(bShowName){
+		ofColor c = ofGetStyle().color;
+		ofBlendMode blendMode = ofGetStyle().blendingMode;
+		if(blendMode!=OF_BLENDMODE_ALPHA){
+			ofEnableAlphaBlending();
+		}
+		ofSetColor(thisTextColor);
 
-        bindFontTexture();
-        textMesh.draw();
-        unbindFontTexture();
+		bindFontTexture();
+		textMesh.draw();
+		unbindFontTexture();
 
-        ofSetColor(c);
-        if(blendMode!=OF_BLENDMODE_ALPHA){
-            ofEnableBlendMode(blendMode);
-        }
-    }
+		ofSetColor(c);
+		if(blendMode!=OF_BLENDMODE_ALPHA){
+			ofEnableBlendMode(blendMode);
+		}
+	}
 }
 
 bool ofxToggle::operator=(bool v){
@@ -183,5 +183,5 @@ ofAbstractParameter & ofxToggle::getParameter(){
 }
 
 void ofxToggle::valueChanged(bool & value){
-    setNeedsRedraw();
+	setNeedsRedraw();
 }

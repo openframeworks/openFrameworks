@@ -67,7 +67,7 @@ ofBitmapFont ofxBaseGui::bitmapFont;
 ofxBaseGui::ofxBaseGui()
 :b(Config().shape)
 #ifndef TARGET_EMSCRIPTEN
-    ,serializer(std::make_shared<ofXml>())
+	,serializer(std::make_shared<ofXml>())
 #endif
 ,thisHeaderBackgroundColor(Config().headerBackgroundColor)
 ,thisBackgroundColor(Config().backgroundColor)
@@ -87,7 +87,7 @@ ofxBaseGui::ofxBaseGui()
 ofxBaseGui::ofxBaseGui(const Config & config)
 :b(config.shape)
 #ifndef TARGET_EMSCRIPTEN
-    ,serializer(std::make_shared<ofXml>())
+	,serializer(std::make_shared<ofXml>())
 #endif
 ,thisHeaderBackgroundColor(config.headerBackgroundColor)
 ,thisBackgroundColor(config.backgroundColor)
@@ -138,14 +138,14 @@ void ofxBaseGui::registerMouseEvents(int priority){
 		return; // already registered.
 	}
 	bRegisteredForMouseEvents = true;
-    ofRegisterMouseEvents(this, priority);
+	ofRegisterMouseEvents(this, priority);
 }
 
 void ofxBaseGui::unregisterMouseEvents(int priority){
 	if(bRegisteredForMouseEvents == false){
 		return; // not registered.
 	}
-    ofUnregisterMouseEvents(this, priority);
+	ofUnregisterMouseEvents(this, priority);
 	bRegisteredForMouseEvents = false;
 }
 
@@ -252,20 +252,20 @@ void ofxBaseGui::setPosition(float x, float y){
 
 void ofxBaseGui::setSize(float w, float h){
 	b.width = w;
-    b.height = h;
-    sizeChangedE.notify(this);
+	b.height = h;
+	sizeChangedE.notify(this);
 	setNeedsRedraw();
 }
 
 void ofxBaseGui::setShape(ofRectangle r){
-    b = r;
-    sizeChangedE.notify(this);
+	b = r;
+	sizeChangedE.notify(this);
 	setNeedsRedraw();
 }
 
 void ofxBaseGui::setShape(float x, float y, float w, float h){
-    b.set(x, y, w, h);
-    sizeChangedE.notify(this);
+	b.set(x, y, w, h);
+	sizeChangedE.notify(this);
 	setNeedsRedraw();
 }
 
@@ -387,8 +387,8 @@ void ofxBaseGui::setNeedsRedraw(){
 }
 
 void ofxBaseGui::setShowName(bool show){
-    bShowName = show;
-    setNeedsRedraw();
+	bShowName = show;
+	setNeedsRedraw();
 }
 
 string ofxBaseGui::saveStencilToHex(const ofImage & img){
@@ -438,13 +438,13 @@ void ofxBaseGui::loadStencilFromHex(ofImage & img, unsigned char * data){
 }
 
 float ofxBaseGui::getTextWidth(const std::string & text, float _height){
-    float _width = 0;
-    ofVboMesh mesh = getTextMesh(text, 0, _height / 2 + 4);
-    for(unsigned int i = 0; i < mesh.getVertices().size(); i++){
-        if(mesh.getVertex(i).x > _width){
-            _width = mesh.getVertex(i).x;
-        }
-    }
-    _width += textPadding * 2;
-    return _width;
+	float _width = 0;
+	ofVboMesh mesh = getTextMesh(text, 0, _height / 2 + 4);
+	for(unsigned int i = 0; i < mesh.getVertices().size(); i++){
+		if(mesh.getVertex(i).x > _width){
+			_width = mesh.getVertex(i).x;
+		}
+	}
+	_width += textPadding * 2;
+	return _width;
 }

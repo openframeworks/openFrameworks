@@ -8,11 +8,11 @@ ofxValuePlotter::ofxValuePlotter(){
 ofxValuePlotter::ofxValuePlotter(ofParameter<float> value, const Config & config = Config()) :
 	ofxBaseGui(config){
 	setup(config);
-    setName(value.getName());
+	setName(value.getName());
 }
 
 ofxValuePlotter::~ofxValuePlotter(){
-    value.removeListener(this,&ofxValuePlotter::valueChanged);
+	value.removeListener(this,&ofxValuePlotter::valueChanged);
 }
 
 ofxValuePlotter & ofxValuePlotter::setup(const Config & config){
@@ -27,7 +27,7 @@ ofxValuePlotter & ofxValuePlotter::setup(string label, float minValue, float max
 	autoscale = minVal == maxVal;
 	buffer.clear();
 	this->plotSize = plotSize;
-    value.addListener(this,&ofxValuePlotter::valueChanged);
+	value.addListener(this,&ofxValuePlotter::valueChanged);
 	setName(label);
 	setNeedsRedraw();
 	return *this;
@@ -45,10 +45,10 @@ void ofxValuePlotter::generateDraw(){
 	bg.setFilled(true);
 	bg.rectangle(b);
 
-    label = ofToString(value.get(), decimalPlace);
+	label = ofToString(value.get(), decimalPlace);
 	if(bShowName){
-        label += " " + this->getName();
-    }
+		label += " " + this->getName();
+	}
 
 	textMesh = getTextMesh(label, b.x + textPadding, b.y + b.height / 2 + 4);
 
@@ -100,20 +100,20 @@ ofAbstractParameter & ofxValuePlotter::getParameter(){
 }
 
 void ofxValuePlotter::valueChanged(float & value){
-    if(plotSize > 0){
-        buffer.push_back(value);
+	if(plotSize > 0){
+		buffer.push_back(value);
 
-        if((int)buffer.size() > plotSize){
-            buffer.erase(buffer.begin(), buffer.begin() + 1);
-        }
-        if(autoscale){
-            if(value < minVal){
-                minVal = value;
-            }
-            if(value > maxVal){
-                maxVal = value;
-            }
-        }
-    }
-    setNeedsRedraw();
+		if((int)buffer.size() > plotSize){
+			buffer.erase(buffer.begin(), buffer.begin() + 1);
+		}
+		if(autoscale){
+			if(value < minVal){
+				minVal = value;
+			}
+			if(value > maxVal){
+				maxVal = value;
+			}
+		}
+	}
+	setNeedsRedraw();
 }

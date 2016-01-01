@@ -4,7 +4,7 @@
 using namespace std;
 
 ofxTabbedPages::ofxTabbedPages() :
-    ofxGuiPage(){
+	ofxGuiPage(){
 }
 
 ofxTabbedPages::~ofxTabbedPages(){
@@ -12,18 +12,18 @@ ofxTabbedPages::~ofxTabbedPages(){
 }
 
 ofxTabbedPages & ofxTabbedPages::setup(string collectionName, string filename, float x, float y){
-    ofxGuiPage::setup(collectionName, filename, x, y);
+	ofxGuiPage::setup(collectionName, filename, x, y);
 	tabs.setup("tabs");
 	tabs.setShowHeader(false);
 	tabs.setExclusiveToggles(true);
-    tabs.setLayout(ofxBaseGui::Horizontal);
+	tabs.setLayout(ofxBaseGui::Horizontal);
 	tabs.setBorderColor(ofColor(0, 0, 0, 0));
 	tabs.setDefaultBackgroundColor(thisBorderColor);
 	tabs.setDefaultBorderColor(thisBorderColor);
 	tabs.setDefaultFillColor(thisBackgroundColor);
 	tabHeight = 20;
-    tabWidth = 0;
-    sizeChangedCB();
+	tabWidth = 0;
+	sizeChangedCB();
 	collection.push_back(&tabs);
 	tabs.unregisterMouseEvents();
 	parameters.add(tabs.getParameter());
@@ -90,38 +90,38 @@ void ofxTabbedPages::generateDraw(){
 	border.setFilled(false);
 	border.rectangle(pagesShape.x, pagesShape.y + 1, pagesShape.width + 1, pagesShape.height);
 
-    if(bShowHeader){
-        generateDrawHeader();
-    }
+	if(bShowHeader){
+		generateDrawHeader();
+	}
 }
 
 void ofxTabbedPages::render(){
 
-    /*
-     * TODO: call the first part when a tab toggle is clicked
-     * in this case call needsRedraw
-     * move the second part to generateDraw
-     */
-    for(int i = 1; i < (int)collection.size(); i++){
-        if(parameters_tabs.at(i - 1).get()){
-            activePage = collection[i];
-            activeToggle = tabs.getControl(i - 1);
-        }
-    }
+	/*
+	 * TODO: call the first part when a tab toggle is clicked
+	 * in this case call needsRedraw
+	 * move the second part to generateDraw
+	 */
+	for(int i = 1; i < (int)collection.size(); i++){
+		if(parameters_tabs.at(i - 1).get()){
+			activePage = collection[i];
+			activeToggle = tabs.getControl(i - 1);
+		}
+	}
 
-    tabBorder.clear();
-    if(activePage){
+	tabBorder.clear();
+	if(activePage){
 		tabBorder.setStrokeWidth(3);
-        tabBorder.setFilled(false);
-        tabBorder.setStrokeColor(thisBackgroundColor);
-        tabBorder.moveTo(activeToggle->getShape().getBottomLeft() - ofPoint(-1, 1));
-        tabBorder.lineTo(activeToggle->getShape().getBottomRight() - ofPoint(1, 1));
+		tabBorder.setFilled(false);
+		tabBorder.setStrokeColor(thisBackgroundColor);
+		tabBorder.moveTo(activeToggle->getShape().getBottomLeft() - ofPoint(-1, 1));
+		tabBorder.lineTo(activeToggle->getShape().getBottomRight() - ofPoint(1, 1));
 
-        this->setBorderColor(activeToggle->getBorderColor());
-    }
-    /*
-     * end TODO
-     */
+		this->setBorderColor(activeToggle->getBorderColor());
+	}
+	/*
+	 * end TODO
+	 */
 
 	bg.draw();
 	tabs.draw();
@@ -138,12 +138,12 @@ void ofxTabbedPages::render(){
 	ofColor c = ofGetStyle().color;
 
 	if(bShowHeader){
-        renderHeader();
+		renderHeader();
 	}
 
-    if(activePage){
-        activePage->draw();
-    }
+	if(activePage){
+		activePage->draw();
+	}
 
 	ofSetColor(c);
 	if(blendMode != OF_BLENDMODE_ALPHA){
@@ -165,7 +165,7 @@ void ofxTabbedPages::updateContentShapes(){
 	newpos.y += tabHeight;
 	pagesShape.setPosition(newpos);
 	pagesShape.setWidth(b.width - 1 /*border*/);
-    pagesShape.setHeight(b.getBottom() - newpos.y - 1 /*border*/);
+	pagesShape.setHeight(b.getBottom() - newpos.y - 1 /*border*/);
 }
 
 void ofxTabbedPages::setSizeToElement(ofxBaseGui * element){
@@ -183,16 +183,16 @@ void ofxTabbedPages::setSizeToElement(ofxBaseGui * element){
 }
 
 void ofxTabbedPages::sizeChangedCB(){
-    updateContentShapes();
-    tabs.setShape(tabShape);
+	updateContentShapes();
+	tabs.setShape(tabShape);
 
-    for(int i = 1; i < (int)collection.size(); i++){
-        collection[i]->sizeChangedE.disable();
-        collection[i]->setShape(pagesShape);
-        collection[i]->sizeChangedE.enable();
-    }
-    ofNotifyEvent(sizeChangedE,this);
-    setNeedsRedraw();
+	for(int i = 1; i < (int)collection.size(); i++){
+		collection[i]->sizeChangedE.disable();
+		collection[i]->setShape(pagesShape);
+		collection[i]->sizeChangedE.enable();
+	}
+	ofNotifyEvent(sizeChangedE,this);
+	setNeedsRedraw();
 }
 
 void ofxTabbedPages::setActiveTab(int index){

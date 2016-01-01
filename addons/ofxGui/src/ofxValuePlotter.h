@@ -16,7 +16,7 @@ class ofxValuePlotter : public ofxBaseGui {
 		};
 
 		ofxValuePlotter();
-        ofxValuePlotter(ofParameter<float> value, const Config & config);
+		ofxValuePlotter(ofParameter<float> value, const Config & config);
 		virtual ~ofxValuePlotter();
 
 		ofxValuePlotter & setup(const Config & config);
@@ -54,13 +54,13 @@ class ofxValuePlotter : public ofxBaseGui {
 		ofVboMesh textMesh;
 		vector <float> buffer;
 		int plotSize;
-        ofPath plot;
+		ofPath plot;
 		float minVal, maxVal;
 		bool autoscale;
 		int decimalPlace;
 		ofParameter <string> label;
-        ofParameter<float> value;
+		ofParameter<float> value;
 
-        void valueChanged(float & value);
+		void valueChanged(float & value);
 
 };

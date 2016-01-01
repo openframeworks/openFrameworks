@@ -31,7 +31,7 @@ ofxPanel::~ofxPanel(){
 }
 
 ofxPanel & ofxPanel::setup(const Config & config){
-    return (ofxPanel&)ofxGuiGroup::setup(config);
+	return (ofxPanel&)ofxGuiGroup::setup(config);
 }
 
 ofxPanel & ofxPanel::setup(const ofParameterGroup & parameters, const Config & groupConfig, const Config &itemConfig){
@@ -39,7 +39,7 @@ ofxPanel & ofxPanel::setup(const ofParameterGroup & parameters, const Config & g
 		loadIcons();
 	}
 	registerMouseEvents();
-    return (ofxPanel&)ofxGuiGroup::setup(parameters, groupConfig, itemConfig);
+	return (ofxPanel&)ofxGuiGroup::setup(parameters, groupConfig, itemConfig);
 }
 
 ofxPanel & ofxPanel::setup(const std::string& collectionName, const std::string& filename, float x, float y){
@@ -72,42 +72,42 @@ void ofxPanel::loadIcons(){
 
 void ofxPanel::generateDraw(){
 	border.clear();
-    border.setFillColor(thisBorderColor);
-    border.setFilled(true);
-    border.rectangle(b.x,b.y,b.width+1,b.height);
+	border.setFillColor(thisBorderColor);
+	border.setFilled(true);
+	border.rectangle(b.x,b.y,b.width+1,b.height);
 
-    if(bShowHeader){
-        generateDrawHeader();
-    }
+	if(bShowHeader){
+		generateDrawHeader();
+	}
 }
 
 void ofxPanel::generateDrawHeader(){
-    headerBg.clear();
-    headerBg.setFillColor(thisHeaderBackgroundColor);
-    headerBg.setFilled(true);
-    headerBg.rectangle(b.x,b.y+1,b.width,header);
+	headerBg.clear();
+	headerBg.setFillColor(thisHeaderBackgroundColor);
+	headerBg.setFilled(true);
+	headerBg.rectangle(b.x,b.y+1,b.width,header);
 
-    float iconHeight = header*.5;
-    float iconWidth = loadIcon.getWidth()/loadIcon.getHeight()*iconHeight;
-    int iconSpacing = iconWidth*.5;
+	float iconHeight = header*.5;
+	float iconWidth = loadIcon.getWidth()/loadIcon.getHeight()*iconHeight;
+	int iconSpacing = iconWidth*.5;
 
-    loadBox.x = b.getMaxX() - (iconWidth * 2 + iconSpacing + textPadding);
-    loadBox.y = b.y + header / 2. - iconHeight / 2.;
-    loadBox.width = iconWidth;
-    loadBox.height = iconHeight;
-    saveBox.set(loadBox);
-    saveBox.x += iconWidth + iconSpacing;
+	loadBox.x = b.getMaxX() - (iconWidth * 2 + iconSpacing + textPadding);
+	loadBox.y = b.y + header / 2. - iconHeight / 2.;
+	loadBox.width = iconWidth;
+	loadBox.height = iconHeight;
+	saveBox.set(loadBox);
+	saveBox.x += iconWidth + iconSpacing;
 
-    if(bShowName){
-        textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
-    }
+	if(bShowName){
+		textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
+	}
 }
 
 void ofxPanel::render(){
 	border.draw();
-    if(bShowHeader){
-        headerBg.draw();
-    }
+	if(bShowHeader){
+		headerBg.draw();
+	}
 
 	ofBlendMode blendMode = ofGetStyle().blendingMode;
 	if(blendMode!=OF_BLENDMODE_ALPHA){
@@ -115,9 +115,9 @@ void ofxPanel::render(){
 	}
 	ofColor c = ofGetStyle().color;
 
-    if(bShowHeader){
-        renderHeader();
-    }
+	if(bShowHeader){
+		renderHeader();
+	}
 
 	for(std::size_t i = 0; i < collection.size(); i++){
 		collection[i]->draw();
@@ -130,31 +130,31 @@ void ofxPanel::render(){
 }
 
 void ofxPanel::renderHeader() {
-    ofSetColor(thisTextColor);
+	ofSetColor(thisTextColor);
 
-    if(bShowName){
-        bindFontTexture();
-        textMesh.draw();
-        unbindFontTexture();
-    }
+	if(bShowName){
+		bindFontTexture();
+		textMesh.draw();
+		unbindFontTexture();
+	}
 
-    bool texHackEnabled = ofIsTextureEdgeHackEnabled();
-    ofDisableTextureEdgeHack();
-    loadIcon.draw(loadBox);
-    saveIcon.draw(saveBox);
-    if(texHackEnabled){
-        ofEnableTextureEdgeHack();
-    }
+	bool texHackEnabled = ofIsTextureEdgeHackEnabled();
+	ofDisableTextureEdgeHack();
+	loadIcon.draw(loadBox);
+	saveIcon.draw(saveBox);
+	if(texHackEnabled){
+		ofEnableTextureEdgeHack();
+	}
 }
 
 bool ofxPanel::mouseReleased(ofMouseEventArgs & args){
-    this->bGrabbed = false;
-    if(ofxGuiGroup::mouseReleased(args)) return true;
-    if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
-    	return true;
-    }else{
-    	return false;
-    }
+	this->bGrabbed = false;
+	if(ofxGuiGroup::mouseReleased(args)) return true;
+	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
+		return true;
+	}else{
+		return false;
+	}
 }
 
 bool ofxPanel::setValue(float mx, float my, bool bCheck){
@@ -168,25 +168,25 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
 
-            if(bShowHeader){
-                if( my > b.y && my <= b.y + header ){
-                    bGrabbed = true;
-                    grabPt.set(mx-b.x, my-b.y);
-                } else{
-                    bGrabbed = false;
-                }
+			if(bShowHeader){
+				if( my > b.y && my <= b.y + header ){
+					bGrabbed = true;
+					grabPt.set(mx-b.x, my-b.y);
+				} else{
+					bGrabbed = false;
+				}
 
-                if(loadBox.inside(mx, my)) {
-                    loadFromFile(filename);
-                    ofNotifyEvent(loadPressedE,this);
-                    return true;
-                }
-                if(saveBox.inside(mx, my)) {
-                    saveToFile(filename);
-                    ofNotifyEvent(savePressedE,this);
-                    return true;
-                }
-            }
+				if(loadBox.inside(mx, my)) {
+					loadFromFile(filename);
+					ofNotifyEvent(loadPressedE,this);
+					return true;
+				}
+				if(saveBox.inside(mx, my)) {
+					saveToFile(filename);
+					ofNotifyEvent(savePressedE,this);
+					return true;
+				}
+			}
 		}
 	} else if( bGrabbed ){
 		setPosition(mx - grabPt.x,my - grabPt.y);
@@ -196,46 +196,46 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 }
 
 void ofxPanel::sizeChangedCB(){
-    float x = b.x;
-    float y = b.y + spacingFirstElement;
-    if(bShowHeader){
-        y += header;
-    }
+	float x = b.x;
+	float y = b.y + spacingFirstElement;
+	if(bShowHeader){
+		y += header;
+	}
 
-    if(layout == ofxBaseGui::Vertical){
-        for(auto & e: collection){
-            e->setPosition(e->getPosition().x,y + spacing);
-            e->sizeChangedE.disable();
-            e->setSize(b.width-1, e->getHeight());
-            e->sizeChangedE.enable();
-            y += e->getHeight()+spacing;
-        }
-        b.height = y - b.y;
-    }else{
-        float max_h = 0;
-        for(auto & e: collection){
-            e->setPosition(x,y + spacing);
-            x += e->getWidth() + spacing;
-            if(max_h < e->getHeight()){
-                max_h = e->getHeight();
-            }
-        }
-        y += max_h+spacing;
-        b.width = x - b.x;
-        b.height = y - b.y;
-    }
-    sizeChangedE.notify(this);
-    setNeedsRedraw();
+	if(layout == ofxBaseGui::Vertical){
+		for(auto & e: collection){
+			e->setPosition(e->getPosition().x,y + spacing);
+			e->sizeChangedE.disable();
+			e->setSize(b.width-1, e->getHeight());
+			e->sizeChangedE.enable();
+			y += e->getHeight()+spacing;
+		}
+		b.height = y - b.y;
+	}else{
+		float max_h = 0;
+		for(auto & e: collection){
+			e->setPosition(x,y + spacing);
+			x += e->getWidth() + spacing;
+			if(max_h < e->getHeight()){
+				max_h = e->getHeight();
+			}
+		}
+		y += max_h+spacing;
+		b.width = x - b.x;
+		b.height = y - b.y;
+	}
+	sizeChangedE.notify(this);
+	setNeedsRedraw();
 }
 
 void ofxPanel::setSize(float w, float h){
-    ofxBaseGui::setSize(w,h);
+	ofxBaseGui::setSize(w,h);
 }
 
 void ofxPanel::setShape(ofRectangle r){
-    ofxBaseGui::setShape(r);
+	ofxBaseGui::setShape(r);
 }
 
 void ofxPanel::setShape(float x, float y, float w, float h){
-    ofxBaseGui::setShape(x,y,w,h);
+	ofxBaseGui::setShape(x,y,w,h);
 }

@@ -11,8 +11,8 @@ ofxValueLabel<Type>::ofxValueLabel()
 template<typename Type>
 ofxValueLabel<Type>::ofxValueLabel(ofParameter<Type> _label, const Config & config)
 :ofxBaseGui(config){
-    label.makeReferenceTo(_label);
-    setNeedsRedraw();
+	label.makeReferenceTo(_label);
+	setNeedsRedraw();
 	label.addListener(this,&ofxValueLabel::valueChanged);
 }
 
@@ -29,12 +29,12 @@ ofxValueLabel<Type> & ofxValueLabel<Type>::setup(ofParameter<Type> _label, const
 
 template<typename Type>
 ofxValueLabel<Type> & ofxValueLabel<Type>::setup(ofParameter<Type> _label, float width, float height) {
-    label.makeReferenceTo(_label);
-    b.width  = width;
-    b.height = height;
-    setNeedsRedraw();
+	label.makeReferenceTo(_label);
+	b.width  = width;
+	b.height = height;
+	setNeedsRedraw();
 	label.addListener(this,&ofxValueLabel::valueChanged);
-    return *this;
+	return *this;
 }
 
 template<typename Type>
@@ -45,8 +45,8 @@ ofxValueLabel<Type> & ofxValueLabel<Type>::setup(const string& labelName, const 
 
 template<typename Type>
 ofxValueLabel<Type> & ofxValueLabel<Type>::setup(const string& labelName, const Type& _label, float width, float height) {
-    label.set(labelName,_label);
-    return setup(label,width,height);
+	label.set(labelName,_label);
+	return setup(label,width,height);
 }
 
 template<typename Type>
@@ -55,17 +55,17 @@ void ofxValueLabel<Type>::generateDraw(){
 
 	bg.setFillColor(thisBackgroundColor);
 	bg.setFilled(true);
-    bg.rectangle(b);
+	bg.rectangle(b);
 
-    if(bShowName){
-        string name;
-        if(!getName().empty()){
-            name = getName() + ": ";
-        }
+	if(bShowName){
+		string name;
+		if(!getName().empty()){
+			name = getName() + ": ";
+		}
 		textMesh = getTextMesh(name + label.toString(), b.x + textPadding, b.y + b.height / 2 + 4);
-    }else {
+	}else {
 		textMesh = getTextMesh(label.toString(), b.x + textPadding, b.y + b.height / 2 + 4);
-    }
+	}
 }
 
 template<typename Type>
@@ -80,11 +80,11 @@ void ofxValueLabel<Type>::render() {
 	}
 	ofSetColor(thisTextColor);
 
-    bindFontTexture();
-    textMesh.draw();
-    unbindFontTexture();
+	bindFontTexture();
+	textMesh.draw();
+	unbindFontTexture();
 
-    ofSetColor(c);
+	ofSetColor(c);
 	if(blendMode!=OF_BLENDMODE_ALPHA){
 		ofEnableBlendMode(blendMode);
 	}
@@ -97,7 +97,7 @@ ofAbstractParameter & ofxValueLabel<Type>::getParameter(){
 
 template<typename Type>
 void ofxValueLabel<Type>::valueChanged(Type & value){
-    setNeedsRedraw();
+	setNeedsRedraw();
 }
 
 template class ofxValueLabel<std::string>;

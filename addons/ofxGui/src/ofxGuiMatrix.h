@@ -16,15 +16,15 @@ class ofxGuiMatrix : public ofxGuiGroup {
 		};
 
 		ofxGuiMatrix();
-        ofxGuiMatrix(const ofParameterGroup & parameters, const Config & groupConfig = ofxGuiMatrix::Config(), const Config &itemConfig = ofxBaseGui::Config());
+		ofxGuiMatrix(const ofParameterGroup & parameters, const Config & groupConfig = ofxGuiMatrix::Config(), const Config &itemConfig = ofxBaseGui::Config());
 		virtual ~ofxGuiMatrix(){
 		}
-        virtual ofxGuiMatrix & setup(const ofParameterGroup & parameters, const Config & groupConfig = ofxGuiMatrix::Config(), const Config &itemConfig = ofxBaseGui::Config());
+		virtual ofxGuiMatrix & setup(const ofParameterGroup & parameters, const Config & groupConfig = ofxGuiMatrix::Config(), const Config &itemConfig = ofxBaseGui::Config());
 		virtual ofxGuiMatrix & setup(const std::string & collectionName, const Config & config = ofxGuiMatrix::Config());
 		virtual ofxGuiMatrix & setup(const std::string & collectionName = "", int cols = 0, const std::string & filename = "settings.xml", float x = 10, float y = 10);
 		virtual ofxGuiMatrix & setup(const ofParameterGroup & parameters, int cols = 0, const std::string & filename = "settings.xml", float x = 10, float y = 10);
 
-        using ofxGuiGroup::add;
+		using ofxGuiGroup::add;
 
 		void maximize();
 
@@ -41,7 +41,7 @@ class ofxGuiMatrix : public ofxGuiGroup {
 		void setElementHeight(float h);
 
 	protected:
-        virtual void add(ofxBaseGui * element);
+		virtual void add(ofxBaseGui * element);
 		void updateElementWidth();
 		virtual void sizeChangedCB();
 

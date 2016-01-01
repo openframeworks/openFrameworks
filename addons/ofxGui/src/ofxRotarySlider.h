@@ -8,11 +8,11 @@ class ofxRotarySlider : public ofxSlider <Type> {
 	public:
 		struct Config : public ofxSlider <Type>::Config {
 			Config(){
-                this->shape.height = 60;
+				this->shape.height = 60;
 			}
-            Config(const typename ofxSlider <Type>::Config & c) : ofxSlider <Type>::Config(c){
+			Config(const typename ofxSlider <Type>::Config & c) : ofxSlider <Type>::Config(c){
 			}
-            Config(const ofxBaseGui::Config & c) : ofxSlider <Type>::Config(c){
+			Config(const ofxBaseGui::Config & c) : ofxSlider <Type>::Config(c){
 			}
 		};
 

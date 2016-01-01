@@ -6,9 +6,9 @@ ofxGuiPage::ofxGuiPage() : ofxPanel(){
 }
 
 ofxGuiPage::~ofxGuiPage(){
-    for(auto e: collection){
-        ofRemoveListener(e->sizeChangedE,this,&ofxGuiPage::sizeChangedCB);
-    }
+	for(auto e: collection){
+		ofRemoveListener(e->sizeChangedE,this,&ofxGuiPage::sizeChangedCB);
+	}
 }
 
 void ofxGuiPage::add(ofxBaseGui * element){

@@ -6,19 +6,19 @@ class ofxGuiPage : public ofxPanel {
 	public:
 
 		ofxGuiPage();
-        virtual ~ofxGuiPage();
+		virtual ~ofxGuiPage();
 
-        using ofxPanel::add;
+		using ofxPanel::add;
 
 		void clear();
 
 		virtual bool mouseDragged(ofMouseEventArgs & args);
 
 		virtual void setWidthElements(float w);
-        virtual void scaleWidthElements(float factor);
+		virtual void scaleWidthElements(float factor);
 
 	protected:
-        virtual void add(ofxBaseGui * element);
+		virtual void add(ofxBaseGui * element);
 		virtual void sizeChangedCB();
 
 };

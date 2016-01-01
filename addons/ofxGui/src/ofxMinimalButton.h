@@ -16,13 +16,13 @@ class ofxMinimalButton : public ofxMinimalToggle {
 			std::string name;
 		};
 
-        ofxMinimalButton();
-        ofxMinimalButton(const Config & config);
+		ofxMinimalButton();
+		ofxMinimalButton(const Config & config);
 		~ofxMinimalButton();
 		ofxMinimalButton & setup(const std::string& buttonName, const Config & config);
 		ofxMinimalButton & setup(const std::string& buttonName, float width = defaultWidth, float height = defaultHeight);
 
-        virtual bool mouseReleased(ofMouseEventArgs & args);
+		virtual bool mouseReleased(ofMouseEventArgs & args);
 
 		template <class ListenerClass, typename ListenerMethod>
 		void addListener(ListenerClass * listener, ListenerMethod method){

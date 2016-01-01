@@ -4,14 +4,14 @@
 using namespace std;
 
 template <typename Type> ofxRotarySlider <Type>::ofxRotarySlider(){
-    this->setSize(this->getWidth(), Config().shape.height);
+	this->setSize(this->getWidth(), Config().shape.height);
 }
 
 template <typename Type> ofxRotarySlider <Type>::~ofxRotarySlider(){
 }
 
 template <typename Type> ofxRotarySlider <Type>::ofxRotarySlider(ofParameter <Type> _val, const Config & config) :
-    ofxSlider <Type>(_val, config){
+	ofxSlider <Type>(_val, config){
 }
 
 template <typename Type>
@@ -45,21 +45,21 @@ void ofxRotarySlider <Type>::generateDraw(){
 template <typename Type>
 void ofxRotarySlider <Type>::generateText(){
 	string valStr = ofToString(this->value.get(), this->precision);
-    this->textMesh.clear();
-    if(this->bShowName){
-        this->textMesh.append(this->getTextMesh(this->getName(), this->b.x + this->textPadding, this->b.y + this->b.height - this->textPadding));
-    }
+	this->textMesh.clear();
+	if(this->bShowName){
+		this->textMesh.append(this->getTextMesh(this->getName(), this->b.x + this->textPadding, this->b.y + this->b.height - this->textPadding));
+	}
 	this->textMesh.append(this->getTextMesh(valStr, this->b.x + this->b.width - this->textPadding - this->getTextBoundingBox(valStr, 0, 0).width, this->b.y + this->b.height - this->textPadding));
 }
 
 template <>
 void ofxRotarySlider <unsigned char>::generateText(){
 	string valStr = ofToString(this->value.get(), precision);
-    this->textMesh.clear();
-    if(this->bShowName){
-        this->textMesh.append(this->getTextMesh(this->getName(), this->b.x + this->textPadding, this->b.y + this->b.height - this->textPadding));
-    }
-    this->textMesh.append(this->getTextMesh(valStr, this->b.x + this->b.width - this->textPadding - this->getTextBoundingBox(valStr, 0, 0).width, this->b.y + this->b.height - this->textPadding));
+	this->textMesh.clear();
+	if(this->bShowName){
+		this->textMesh.append(this->getTextMesh(this->getName(), this->b.x + this->textPadding, this->b.y + this->b.height - this->textPadding));
+	}
+	this->textMesh.append(this->getTextMesh(valStr, this->b.x + this->b.width - this->textPadding - this->getTextBoundingBox(valStr, 0, 0).width, this->b.y + this->b.height - this->textPadding));
 }
 
 template <typename Type>
