@@ -871,10 +871,12 @@ template<>
 class ofParameter<void>: public ofAbstractParameter{
 public:
 	ofParameter();
-	ofParameter(const string& name);
+	ofParameter(const std::string& name);
 
-	void setName(const string & name);
-	string getName() const;
+	ofParameter<void>& set(const std::string & name);
+
+	void setName(const std::string & name);
+	std::string getName() const;
 
 	std::string toString() const;
     void fromString(const std::string & name);

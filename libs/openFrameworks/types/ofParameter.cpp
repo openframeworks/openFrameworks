@@ -83,6 +83,11 @@ void ofParameter<void>::fromString(const std::string & name){
 
 }
 
+ofParameter<void>& ofParameter<void>::set(const std::string & name){
+	setName(name);
+	return *this;
+}
+
 void ofParameter<void>::trigger(){
 	ofNotifyEvent(obj->changedE,this);
 }
