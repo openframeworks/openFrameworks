@@ -4,6 +4,8 @@
 #include "ofVectorMath.h"
 #include "of3dUtils.h"
 #include "ofAppRunner.h"
+#include "ofParameter.h"
+#include <array>
 
 
 /// \brief A generic 3d object in space with transformation (position, rotation, scale).
@@ -42,7 +44,11 @@ public:
 	/// \cond INTERNAL
 	
 	ofNode();
-	virtual ~ofNode() {}
+	virtual ~ofNode();
+	ofNode(const ofNode & node);
+	ofNode(ofNode && node);
+	ofNode & operator=(const ofNode & node);
+	ofNode & operator=(ofNode && node);
 
 	/// \endcond
 
@@ -241,9 +247,6 @@ public:
 	/// \}
 	
 protected:
-
-	ofNode *parent;
-	
 	void createMatrix();
 	void updateAxis();
 	
@@ -257,14 +260,22 @@ protected:
 	/// \brief classes extending ofNode can override this methods to get notified when the scale changed.
 	virtual void onScaleChanged() {}
 
+	ofNode * parent;
+
 private:
-	ofVec3f position;
-	ofQuaternion orientation;
-	ofVec3f scale;
+	void onParentPositionChanged(ofVec3f & position) {onPositionChanged();}
+	void onParentOrientationChanged(ofQuaternion & orientation) {onOrientationChanged();}
+	void onParentScaleChanged(ofVec3f & scale) {onScaleChanged();}
+	ofParameter<ofVec3f> position;
+	ofParameter<ofQuaternion> orientation;
+	ofParameter<ofVec3f> scale;
 	
-	ofVec3f axis[3];
+	std::array<ofVec3f,3> axis;
 	
 	ofMatrix4x4 localTransformMatrix;
 	bool legacyCustomDrawOverrided;
+
+	void addListener(ofNode & node);
+	void removeListener(ofNode & node);
 //	ofMatrix4x4 globalTransformMatrix;
 };
