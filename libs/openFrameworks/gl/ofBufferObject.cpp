@@ -63,11 +63,15 @@ void ofBufferObject::bind(GLenum target) const{
 	if(data){
 		glBindBuffer(target, data->id);
 		data->lastTarget = target;
+		data->isBound = true;
 	}
 }
 
 void ofBufferObject::unbind(GLenum target) const{
 	glBindBuffer(target, 0);
+	if(data){
+		data->isBound = false;
+	}
 }
 
 #ifndef TARGET_OPENGLES
@@ -90,6 +94,7 @@ void ofBufferObject::bindRange(GLenum target,GLuint index, GLintptr offset, GLsi
 	if(data){
 		glBindBufferRange(target,index,data->id,offset,size);
 		data->lastTarget = target;
+		data->isBound = true;
 	}
 }
 
@@ -166,7 +171,14 @@ void * ofBufferObject::map(GLenum access){
 		}
 		glBindBuffer(data->lastTarget, data->id);
 	}
-	return glMapBuffer(data->lastTarget,access);
+
+	auto ret = glMapBuffer(data->lastTarget,access);
+
+	if(!data->isBound){
+		unbind(data->lastTarget);
+	}
+
+	return ret;
 }
 
 void ofBufferObject::unmap(){
@@ -180,8 +192,12 @@ void ofBufferObject::unmap(){
 #endif
 
 	/// --------| invariant: direct state access is not available
+	if(!data->isBound){
+		glBindBuffer(data->lastTarget, data->id);
+	}
 
 	glUnmapBuffer(data->lastTarget);
+
 	if(!data->isBound){
 		unbind(data->lastTarget);
 	}
