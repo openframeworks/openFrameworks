@@ -44,19 +44,15 @@ endif
 HOST_OS=$(shell uname -s)
 $(info HOST_OS=${HOST_OS})
 
-# if not defined, determine this platform's architecture via uname -m
-ifndef PLATFORM_ARCH
-    # determine from the uname
-    PLATFORM_ARCH=$(shell uname -m)
-endif
-HOST_ARCH=$(shell uname -m)
-$(info HOST_ARCH=${HOST_ARCH})
-
-ifdef RPI
+ifdef IS_RASPBIAN
     PLATFORM_ARCH=armv6l
-    HOST_ARCH = armv6l
+    HOST_ARCH=armv6l
 else
-    $(info HOST_ARCH=${HOST_ARCH})
+    HOST_ARCH=$(shell uname -m)
+    ifndef PLATFORM_ARCH
+        # determine from the uname
+        PLATFORM_ARCH=$(shell uname -m)
+    endif
     ifndef CROSS_COMPILING
         ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
 	        CROSS_COMPILING=1
@@ -71,6 +67,8 @@ endif
 #$(info HOST_ARCH=$(HOST_ARCH))
 #$(info HOST_OS=$(HOST_OS))
 #$(info CROSS_COMPILING=$(CROSS_COMPILING))
+#$(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
+#$(info IS_RASPBIAN=$(IS_RASPBIAN))
 
 # if not defined, construct the default PLATFORM_LIB_SUBPATH
 ifndef PLATFORM_LIB_SUBPATH
