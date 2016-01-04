@@ -44,6 +44,11 @@ endif
 HOST_OS=$(shell uname -s)
 $(info HOST_OS=${HOST_OS})
 
+#check for Raspbian as armv7l needs to use armv6l architecture
+ifeq ($(shell grep ID=raspbian $(RPI_ROOT)/etc/*-release),ID=raspbian)
+    IS_RASPBIAN=1
+endif
+
 ifdef IS_RASPBIAN
     PLATFORM_ARCH=armv6l
     HOST_ARCH=armv6l
