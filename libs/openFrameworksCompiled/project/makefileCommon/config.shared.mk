@@ -52,10 +52,18 @@ endif
 HOST_ARCH=$(shell uname -m)
 $(info HOST_ARCH=${HOST_ARCH})
 
-ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
-	CROSS_COMPILING=1
+ifdef RPI
+    PLATFORM_ARCH=armv6l
+    HOST_ARCH = armv6l
 else
-	CROSS_COMPILING=0
+    $(info HOST_ARCH=${HOST_ARCH})
+    ifndef CROSS_COMPILING
+        ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
+	        CROSS_COMPILING=1
+        else
+	        CROSS_COMPILING=0
+        endif
+    endif
 endif
 
 #$(info PLATFORM_ARCH=$(PLATFORM_ARCH))
