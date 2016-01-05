@@ -122,7 +122,7 @@ public:
     
     ofImage_(const ofPixels_<PixelType> & pix);
     ofImage_(const ofFile & file, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-    ofImage_(const string & filename, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+    ofImage_(const string & fileName, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
     ofImage_(const ofImage_<PixelType>& mom);
     ofImage_(ofImage_<PixelType>&& mom);
     

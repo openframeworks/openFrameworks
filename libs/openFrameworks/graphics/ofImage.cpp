@@ -561,7 +561,7 @@ ofImage_<PixelType>::ofImage_(const ofFile & file, const ofImageLoadSettings &se
 }
 
 template<typename PixelType>
-ofImage_<PixelType>::ofImage_(const string & filename, const ofImageLoadSettings &settings){
+ofImage_<PixelType>::ofImage_(const string & fileName, const ofImageLoadSettings &settings){
 	width						= 0;
 	height						= 0;
 	bpp							= 0;
@@ -572,7 +572,7 @@ ofImage_<PixelType>::ofImage_(const string & filename, const ofImageLoadSettings
 	ofInitFreeImage();
 
 
-	load(filename, settings);
+	load(fileName, settings);
 }
 
 //----------------------------------------------------------
