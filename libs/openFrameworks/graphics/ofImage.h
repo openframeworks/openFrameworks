@@ -85,24 +85,24 @@ struct ofImageLoadSettings {
 
 /// \todo Needs documentation.
 template <typename PixelType>
-bool ofLoadImage(ofPixels_<PixelType> & pix, string path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofPixels_<PixelType> & pix, std::string path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
 template <typename PixelType>
 bool ofLoadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofTexture & tex, string path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofTexture & tex, std::string path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
 bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
 
 /// \todo Needs documentation.
-void ofSaveImage(ofPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(ofPixels & pix, std::string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 /// \todo Needs documentation.
-void ofSaveImage(ofFloatPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(ofFloatPixels & pix, std::string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(ofFloatPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 /// \todo Needs documentation.
-void ofSaveImage(ofShortPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(ofShortPixels & pix, std::string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 /// \brief Deallocates FreeImage resources.
@@ -122,7 +122,7 @@ public:
     
     ofImage_(const ofPixels_<PixelType> & pix);
     ofImage_(const ofFile & file, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-    ofImage_(const string & fileName, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+    ofImage_(const std::string & fileName, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
     ofImage_(const ofImage_<PixelType>& mom);
     ofImage_(ofImage_<PixelType>&& mom);
     
@@ -173,7 +173,7 @@ public:
     /// the data folder.
     /// \param settings Load options
     /// \returns true if image loaded correctly.
-    bool load(const string& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+    bool load(const std::string& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
     
     /// \brief Loads an image from an ofBuffer instance created by, for
     /// instance, ofFile::readToBuffer().
@@ -189,7 +189,7 @@ public:
     /// into the texture.
     bool load(const ofFile & file, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
     
-    OF_DEPRECATED_MSG("Use load instead",bool loadImage(string fileName));
+    OF_DEPRECATED_MSG("Use load instead",bool loadImage(std::string fileName));
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(const ofBuffer & buffer));
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(const ofFile & file));
     
@@ -554,7 +554,7 @@ public:
     ///
     /// \param fileName Saves image to this path, relative to the data folder.
     /// \param compressionLevel The ofImageQualityType.
-    void save(string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
+    void save(std::string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
     
     /// \brief This saves the image to the ofBuffer passed with the image
     /// quality specified by compressionLevel.
@@ -569,7 +569,7 @@ public:
     /// `OF_IMAGE_QUALITY_MEDIUM`, `OF_IMAGE_QUALITY_LOW`, `OF_IMAGE_QUALITY_WORST`
     void save(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
     
-    OF_DEPRECATED_MSG("Use save instead",void saveImage(string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST));
+    OF_DEPRECATED_MSG("Use save instead",void saveImage(std::string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST));
     OF_DEPRECATED_MSG("Use save instead",void saveImage(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST));
     OF_DEPRECATED_MSG("Use save instead",void saveImage(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST));
     
