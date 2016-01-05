@@ -76,26 +76,22 @@ struct ofImageLoadSettings {
     bool exifRotate;
     bool grayscale;
     bool separateCMYK;
+    static ofImageLoadSettings defaultSetting;
 };
 
 //----------------------------------------------------
 // FreeImage based stuff
 
-/// \todo Needs documentation.
-bool ofLoadImage(ofPixels & pix, string path, const ofImageLoadSettings &settings = ofImageLoadSettings());
-bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofFloatPixels & pix, string path, const ofImageLoadSettings &settings = ofImageLoadSettings());
-bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
+template <typename PixelType>
+bool ofLoadImage(ofPixels_<PixelType> & pix, string path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+template <typename PixelType>
+bool ofLoadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofShortPixels & pix, string path, const ofImageLoadSettings &settings = ofImageLoadSettings());
-bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
-
-/// \todo Needs documentation.
-bool ofLoadImage(ofTexture & tex, string path, const ofImageLoadSettings &settings = ofImageLoadSettings());
-bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofTexture & tex, string path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
 
 /// \todo Needs documentation.
 void ofSaveImage(ofPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
@@ -125,8 +121,8 @@ public:
     ofImage_();
     
     ofImage_(const ofPixels_<PixelType> & pix);
-    ofImage_(const ofFile & file, const ofImageLoadSettings &settings = ofImageLoadSettings());
-    ofImage_(const string & filename, const ofImageLoadSettings &settings = ofImageLoadSettings());
+    ofImage_(const ofFile & file, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+    ofImage_(const string & filename, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
     ofImage_(const ofImage_<PixelType>& mom);
     
     template<typename SrcType>
@@ -176,21 +172,21 @@ public:
     /// the data folder.
     /// \param settings Load options
     /// \returns true if image loaded correctly.
-    bool load(const string& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
+    bool load(const string& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
     
     /// \brief Loads an image from an ofBuffer instance created by, for
     /// instance, ofFile::readToBuffer().
     ///
     /// This actually loads the image data into an ofPixels object and then
     /// into the texture.
-    bool load(const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
+    bool load(const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
     
     /// \brief Loads an image from an ofFile instance created by, for
     /// instance, ofDirectory::getFiles().
     ///
     /// This actually loads the image data into an ofPixels object and then
     /// into the texture.
-    bool load(const ofFile & file, const ofImageLoadSettings &settings = ofImageLoadSettings());
+    bool load(const ofFile & file, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
     
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(string fileName));
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(const ofBuffer & buffer));
