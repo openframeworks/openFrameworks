@@ -71,7 +71,7 @@ ofxOscArgType ofxOscMessage::getArgType( int index ) const
         return args[index]->getType();
 }
 
-string ofxOscMessage::getArgTypeName( int index ) const
+std::string ofxOscMessage::getArgTypeName( int index ) const
 {
     if ( index >= (int)args.size() )
     {
@@ -82,19 +82,19 @@ string ofxOscMessage::getArgTypeName( int index ) const
         return args[index]->getTypeName();
 }
 
-int32_t ofxOscMessage::getArgAsInt( int index ) const
+std::int32_t ofxOscMessage::getArgAsInt( int index ) const
 {
 	return getArgAsInt32(index);
 }
 
-int32_t ofxOscMessage::getArgAsInt32( int index ) const
+std::int32_t ofxOscMessage::getArgAsInt32( int index ) const
 {
 	if ( getArgType(index) != OFXOSC_TYPE_INT32 )
 	{
 	    if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
         {
 	    	ofLogWarning("ofxOscMessage") << "getArgAsInt32(): converting float to int32 for argument " << index;
-            return (int32_t)((ofxOscArgFloat*)args[index])->get();
+            return (std::int32_t)((ofxOscArgFloat*)args[index])->get();
         }
         else
         {
@@ -106,14 +106,14 @@ int32_t ofxOscMessage::getArgAsInt32( int index ) const
         return ((ofxOscArgInt32*)args[index])->get();
 }
 
-int64_t ofxOscMessage::getArgAsInt64( int index ) const
+std::int64_t ofxOscMessage::getArgAsInt64( int index ) const
 {
 	if ( getArgType(index) != OFXOSC_TYPE_INT64 )
 	{
 	    if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
         {
 	    	ofLogWarning("ofxOscMessage") << "getArgAsInt64(): converting float to int64 for argument " << index;
-            return (int64_t)((ofxOscArgFloat*)args[index])->get();
+            return (std::int64_t)((ofxOscArgFloat*)args[index])->get();
         }
         else
         {
@@ -232,14 +232,14 @@ char ofxOscMessage::getArgAsChar(int index) const
 	}
 }
 
-int32_t ofxOscMessage::getArgAsMidiMessage(int index) const
+std::int32_t ofxOscMessage::getArgAsMidiMessage(int index) const
 {
 	if ( getArgType(index) != OFXOSC_TYPE_INT32 )
 	{
 	    if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
         {
 	    	ofLogWarning("ofxOscMessage") << "getArgAsInt32(): converting float to int32 for argument " << index;
-            return (int32_t)((ofxOscArgFloat*)args[index])->get();
+            return (std::int32_t)((ofxOscArgFloat*)args[index])->get();
         }
         else
         {
@@ -306,14 +306,14 @@ bool ofxOscMessage::getArgAsInfinitum(int index) const
 	return getArgAsTrigger(index);
 }
 
-int64_t ofxOscMessage::getArgAsTimetag(int index) const
+std::int64_t ofxOscMessage::getArgAsTimetag(int index) const
 {
 	if ( getArgType(index) != OFXOSC_TYPE_TIMETAG )
 	{
 	    if ( getArgType( index ) == OFXOSC_TYPE_DOUBLE )
         {
 	    	ofLogWarning("ofxOscMessage") << "getArgAsTimetag(): converting double to Timetag for argument " << index;
-            return (int32_t)((ofxOscArgFloat*)args[index])->get();
+            return (std::int32_t)((ofxOscArgFloat*)args[index])->get();
         }
         else
         {
@@ -336,7 +336,16 @@ ofBuffer ofxOscMessage::getArgAsBlob( int index ) const
         return ((ofxOscArgBlob*)args[index])->get();
 }
 
-
+std::int32_t ofxOscMessage::getArgAsRgbaColor( int index ) const
+{
+    if ( getArgType(index) != OFXOSC_TYPE_RGBA_COLOR )
+    {
+        ofLogError("ofxOscMessage") << "getArgAsRgbaColor(): argument " << index << " is not a rgba color";
+        return 0;
+    }
+    else
+        return ((ofxOscArgRgbaColor*)args[index])->get();
+}
 
 /*
 
@@ -344,17 +353,17 @@ set methods
 
 */
 
-void ofxOscMessage::addIntArg( int32_t argument )
+void ofxOscMessage::addIntArg( std::int32_t argument )
 {
 	args.push_back( new ofxOscArgInt32( argument ) );
 }
 
-void ofxOscMessage::addInt32Arg( int32_t argument )
+void ofxOscMessage::addInt32Arg( std::int32_t argument )
 {
 	args.push_back( new ofxOscArgInt32( argument ) );
 }
 
-void ofxOscMessage::addInt64Arg( int64_t argument )
+void ofxOscMessage::addInt64Arg( std::int64_t argument )
 {
 	args.push_back( new ofxOscArgInt64( argument ) );
 }
@@ -369,12 +378,12 @@ void ofxOscMessage::addDoubleArg( double argument )
 	args.push_back( new ofxOscArgDouble( argument ) );
 }
 
-void ofxOscMessage::addStringArg( string argument )
+void ofxOscMessage::addStringArg( const std::string &argument )
 {
 	args.push_back( new ofxOscArgString( argument ) );
 }
 
-void ofxOscMessage::addSymbolArg( string argument )
+void ofxOscMessage::addSymbolArg( const std::string &argument )
 {
 	args.push_back( new ofxOscArgSymbol( argument ) );
 }
@@ -384,7 +393,7 @@ void ofxOscMessage::addCharArg( char argument )
 	args.push_back( new ofxOscArgChar( argument ) );
 }
 
-void ofxOscMessage::addMidiMessageArg( int32_t argument )
+void ofxOscMessage::addMidiMessageArg( std::int32_t argument )
 {
 	args.push_back( new ofxOscArgMidiMessage( argument ) );
 }
@@ -409,17 +418,17 @@ void ofxOscMessage::addInfinitumArg()
 	args.push_back( new ofxOscArgTrigger() );
 }
 
-void ofxOscMessage::addTimetagArg( int64_t argument )
+void ofxOscMessage::addTimetagArg( std::int64_t argument )
 {
 	args.push_back( new ofxOscArgBool( argument ) );
 }
 
-void ofxOscMessage::addBlobArg( ofBuffer argument )
+void ofxOscMessage::addBlobArg( const ofBuffer &argument )
 {
 	args.push_back( new ofxOscArgBlob( argument ) );
 }
 
-void ofxOscMessage::addRgbaColorArg( int32_t argument )
+void ofxOscMessage::addRgbaColorArg( std::int32_t argument )
 {
 	args.push_back( new ofxOscArgRgbaColor( argument ) );
 }
@@ -467,8 +476,8 @@ ofxOscMessage& ofxOscMessage::copy( const ofxOscMessage& other )
 			args.push_back( new ofxOscArgTimetag( other.getArgAsTimetag( i ) ) );
 		else if ( argType == OFXOSC_TYPE_BLOB )
 			args.push_back( new ofxOscArgBlob( other.getArgAsBlob( i ) ) );
-		//else if ( argType == OFXOSC_TYPE_RGBA_COLOR )
-		//	args.push_back( new ofxOscArgRgbaColor( other.getArgAsRgbaColor( i ) ) );
+		else if ( argType == OFXOSC_TYPE_RGBA_COLOR )
+			args.push_back( new ofxOscArgRgbaColor( other.getArgAsRgbaColor( i ) ) );
 		else
 		{
 			assert( false && "bad argument type" );

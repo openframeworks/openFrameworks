@@ -17,15 +17,18 @@ SCRIPTPATH=`pwd`
 popd > /dev/null
 
 BUILD="install"
-while getopts t opt ; do
+JOBS=1
+while getopts tj: opt ; do
 	case "$opt" in
-		t) # testing, only build Debug
-		   BUILD="test" ;;
+		t)  # testing, only build Debug
+		    BUILD="test" ;;
+		j)  # make job count for parallel build
+		    JOBS="$OPTARG"
 	esac
 done
 
 cd ${SCRIPTPATH}/../../libs/openFrameworksCompiled/project
-make Debug
+make -j$JOBS Debug
 exit_code=$?
 if [ $exit_code != 0 ]; then
   echo "there has been a problem compiling Debug OF library"
@@ -35,7 +38,7 @@ if [ $exit_code != 0 ]; then
 fi
 
 if [ "$BUILD" == "install" ]; then
-    make Release
+    make -j$JOBS Release
     exit_code=$?
     if [ $exit_code != 0 ]; then
       echo "there has been a problem compiling Release OF library"

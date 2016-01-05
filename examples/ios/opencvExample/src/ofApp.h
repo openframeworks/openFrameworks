@@ -1,12 +1,7 @@
 #pragma once
 
 
-#include "ofMain.h"
 #include "ofxiOS.h"
-#include "ofxiOSExtras.h"
-
-
-//ON IPHONE NOTE INCLUDE THIS BEFORE ANYTHING ELSE
 #include "ofxOpenCv.h"
 
 //warning video player doesn't currently work - use live video only

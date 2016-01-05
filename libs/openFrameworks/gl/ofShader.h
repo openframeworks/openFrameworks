@@ -17,6 +17,7 @@ class ofParameterGroup;
 class ofVec2f;
 class ofVec3f;
 class ofVec4f;
+class ofBufferObject;
 
 class ofShader {
 public:
@@ -24,6 +25,8 @@ public:
 	~ofShader();
 	ofShader(const ofShader & shader);
 	ofShader & operator=(const ofShader & shader);
+    ofShader(ofShader && shader);
+    ofShader & operator=(ofShader && shader);
 	
 	bool load(string shaderName);
 	bool load(string vertName, string fragName, string geomName="");
@@ -68,6 +71,7 @@ public:
 	void setUniform2f(const string & name, const ofVec2f & v) const;
 	void setUniform3f(const string & name, const ofVec3f & v) const;
 	void setUniform4f(const string & name, const ofVec4f & v) const;
+	void setUniform4f(const string & name, const ofFloatColor & v) const;
 
 	// set an array of uniform values
 	void setUniform1iv(const string & name, const int* v, int count = 1) const;
@@ -161,9 +165,17 @@ private:
 	GLuint program;
 	bool bLoaded;
 
-	unordered_map<GLenum, GLuint> shaders;
-	unordered_map<GLenum, string> shaderSource;
-	mutable unordered_map<string, GLint> uniformLocations;
+	struct Shader{
+		GLenum type;
+		GLuint id;
+		std::string source;
+		std::string expandedSource;
+		std::string sourcePath;
+	};
+
+	unordered_map<GLenum, Shader> shaders;
+	unordered_map<string, GLint> uniformsCache;
+	mutable unordered_map<string, GLint> attributesBindingsCache;
 
 	void checkProgramInfoLog(GLuint program);
 	bool checkProgramLinkStatus(GLuint program);
@@ -181,7 +193,9 @@ private:
     static string parseForIncludes( const string& source, vector<string>& included, int level = 0, const string& sourceDirectoryPath = "");
 	
 	void checkAndCreateProgram();
-	
-
+#ifdef TARGET_ANDROID
+	void unloadGL();
+	void reloadGL();
+#endif
 };
 

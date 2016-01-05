@@ -22,12 +22,21 @@ ofxCvColorImage::ofxCvColorImage( const ofxCvColorImage& _mom ) {
     }
 }
 
+
+//--------------------------------------------------------------------------------
+void ofxCvColorImage::allocateTexture(){
+	tex.allocate(pixels);
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvColorImage::allocatePixels(int w, int h){
+	pixels.allocate(w,h,OF_PIXELS_RGB);
+}
+
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::init() {
     ipldepth = IPL_DEPTH_8U;
     iplchannels = 3;
-    gldepth = GL_UNSIGNED_BYTE;
-    glchannels = GL_RGB;
     cvGrayscaleImage = NULL;
 }
 
@@ -161,7 +170,7 @@ void ofxCvColorImage::setFromGrayscalePlanarImages( ofxCvGrayscaleImage& red, of
         greenRoi.width == roi.width && greenRoi.height == roi.height &&
         blueRoi.width == roi.width && blueRoi.height == roi.height )
     {
-         cvCvtPlaneToPix(red.getCvImage(), green.getCvImage(), blue.getCvImage(),NULL, cvImage);
+         cvMerge(red.getCvImage(), green.getCvImage(), blue.getCvImage(),NULL, cvImage);
          flagImageChanged();
 	} else {
         ofLogError("ofxCvColorImage") << "setFromGrayscalePlanarImages(): image size or region of interest mismatch";
@@ -322,7 +331,7 @@ void ofxCvColorImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red, o
         greenRoi.width == roi.width && greenRoi.height == roi.height &&
         blueRoi.width == roi.width && blueRoi.height == roi.height )
     {
-        cvCvtPixToPlane(cvImage, red.getCvImage(), green.getCvImage(), blue.getCvImage(), NULL);
+        cvSplit(cvImage, red.getCvImage(), green.getCvImage(), blue.getCvImage(), NULL);
         red.flagImageChanged();
         green.flagImageChanged();
         blue.flagImageChanged();
@@ -350,15 +359,15 @@ void ofxCvColorImage::convertToGrayscalePlanarImage (ofxCvGrayscaleImage& grayIm
 		switch (whichPlane){
 				
 			case 0:
-				cvCvtPixToPlane(cvImage, grayImage.getCvImage(), NULL, NULL, NULL);
+				cvSplit(cvImage, grayImage.getCvImage(), NULL, NULL, NULL);
 				grayImage.flagImageChanged();
 				break;
 			case 1:
-				cvCvtPixToPlane(cvImage, NULL, grayImage.getCvImage(), NULL, NULL);
+				cvSplit(cvImage, NULL, grayImage.getCvImage(), NULL, NULL);
 				grayImage.flagImageChanged();
 				break;
 			case 2:
-				cvCvtPixToPlane(cvImage, NULL, NULL, grayImage.getCvImage(), NULL);
+				cvSplit(cvImage, NULL, NULL, grayImage.getCvImage(), NULL);
 				grayImage.flagImageChanged();
 				break;
 		}

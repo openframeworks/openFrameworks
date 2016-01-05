@@ -99,10 +99,6 @@ public:
 
 	void setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNormal=false );
 
-	/// \cond INTERNAL
-	virtual ~ofMesh();
-	/// \endcond
-
 	/// \}
 	/// \name Mesh Mode
 	/// \{
