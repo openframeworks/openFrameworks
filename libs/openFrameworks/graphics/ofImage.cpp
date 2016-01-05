@@ -169,7 +169,7 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapOnLitt
 }
 
 /// internal
-static int getOptionFromJpegImageLoadSetting(const ofImageLoadSettings &settings) {
+static int getJpegOptionFromImageLoadSetting(const ofImageLoadSettings &settings) {
 	int option = 0;
 	if(settings.accurate)     option |= JPEG_ACCURATE;
 	if(settings.exifRotate)   option |= JPEG_EXIFROTATE;
@@ -207,7 +207,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName, const ofImage
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		if(fif == FIF_JPEG) {
-			int option = getOptionFromJpegImageLoadSetting(settings);
+			int option = getJpegOptionFromImageLoadSetting(settings);
 			bmp = FreeImage_Load(fif, fileName.c_str(), option);
 		} else {
 			bmp = FreeImage_Load(fif, fileName.c_str(), 0);
@@ -255,7 +255,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 
 	//make the image!!
 	if(fif == FIF_JPEG) {
-		int option = getOptionFromJpegImageLoadSetting(settings);
+		int option = getJpegOptionFromImageLoadSetting(settings);
 		bmp = FreeImage_LoadFromMemory(fif, hmem, option);
 	} else {
 		bmp = FreeImage_LoadFromMemory(fif, hmem, 0);
