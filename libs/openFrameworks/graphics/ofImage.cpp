@@ -12,6 +12,8 @@
 #include "ofxAndroidUtils.h"
 #endif
 
+ofImageLoadSettings ofImageLoadSettings::defaultSetting;
+
 
 //----------------------------------------------------------
 // static variable for freeImage initialization:
@@ -281,37 +283,17 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 	return bLoaded;
 }
 
-
-//----------------------------------------------------
-bool ofLoadImage(ofPixels & pix, string fileName, const ofImageLoadSettings &settings) {
-	return loadImage(pix, fileName, settings);
-}
-
-//----------------------------------------------------
-bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings) {
-	return loadImage(pix, buffer, settings);
-}
-
-//----------------------------------------------------
-bool ofLoadImage(ofFloatPixels & pix, string path, const ofImageLoadSettings &settings){
+//----------------------------------------------------------------
+template <typename PixelType>
+bool ofLoadImage(ofPixels_<PixelType> & pix, string path, const ofImageLoadSettings &settings) {
 	return loadImage(pix, path, settings);
 }
 
-//----------------------------------------------------
-bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings){
+//----------------------------------------------------------------
+template <typename PixelType>
+bool ofLoadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings) {
 	return loadImage(pix, buffer, settings);
 }
-
-//----------------------------------------------------
-bool ofLoadImage(ofShortPixels & pix, string path, const ofImageLoadSettings &settings){
-	return loadImage(pix, path, settings);
-}
-
-//----------------------------------------------------
-bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings){
-	return loadImage(pix, buffer, settings);
-}
-
 
 //----------------------------------------------------------------
 bool ofLoadImage(ofTexture & tex, string path, const ofImageLoadSettings &settings){
