@@ -911,14 +911,16 @@ void ofPixels_<PixelType>::setImageType(ofImageType imageType){
 	dst.allocate(width,height,imageType);
 	PixelType * dstPtr = &dst[0];
 	PixelType * srcPtr = &pixels[0];
+	int dstNumChannels = dst.getNumChannels();
+	int srcNumChannels = getNumChannels();
 	int diffNumChannels = 0;
-	if(dst.getNumChannels()<getNumChannels()){
-		diffNumChannels = getNumChannels()-dst.getNumChannels();
+	if(dstNumChannels<srcNumChannels){
+		diffNumChannels = srcNumChannels-dstNumChannels;
 	}
 	for(int i=0;i<width*height;i++){
 		const PixelType & gray = *srcPtr;
-		for(int j=0;j<dst.getNumChannels();j++){
-			if(j<getNumChannels()){
+		for(int j=0;j<dstNumChannels;j++){
+			if(j<srcNumChannels){
 				*dstPtr++ =  *srcPtr++;
 			}else if(j<3){
 				*dstPtr++ = gray;
