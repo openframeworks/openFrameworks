@@ -76,7 +76,6 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofEnableLighting();
     ofBackgroundGradient(ofColor(65,62,50),ofColor(25,22,10) );
     
     // disable normals if a key is pressed
@@ -89,6 +88,8 @@ void ofApp::draw(){
     cam.begin();
     mesh.enableColors();
     mesh.drawWireframe();
+
+
     mesh.disableColors();
     ofSetColor(137,137,140);
     ofFill();
@@ -98,7 +99,10 @@ void ofApp::draw(){
     glPolygonOffset(-1,-1);
     #endif
 
+    ofEnableLighting();
     mesh.drawFaces();
+    ofDisableLighting();
+
     ofSetColor(255,255,255);
     light.draw();
     
@@ -109,7 +113,6 @@ void ofApp::draw(){
     float normalLength = 50.;
     
     if(!ofGetKeyPressed()){
-        ofDisableLighting();
         ofSetColor(255,255,255,70);         
         for(unsigned int i=0; i < n.size() ;i++){
             ofDrawLine(v[i].x,v[i].y,v[i].z,
@@ -125,7 +128,7 @@ void ofApp::draw(){
 
     cam.end();
 
-    ofSetColor(255,255,255);
+    ofSetColor(255);
     ofDrawBitmapString("press any key or mouse button to disable mesh normals", 20,20);
     ofDrawBitmapString("light", cam.worldToScreen(light.getGlobalPosition()) + ofPoint(10,0));
 }

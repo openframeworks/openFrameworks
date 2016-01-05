@@ -5,13 +5,11 @@
 //  Created by lukasz karluk on 5/07/12.
 //
 
-#import "ofxiOSEAGLView.h"
-
-#import "ofMain.h"
-#import "ofAppiOSWindow.h"
-#import "ofGLProgrammableRenderer.h"
-#import "ofxiOSApp.h"
-#import "ofxiOSExtensions.h"
+#include "ofxiOSEAGLView.h"
+#include "ofxiOSApp.h"
+#include "ofAppiOSWindow.h"
+#include "ofGLRenderer.h"
+#include "ofGLProgrammableRenderer.h"
 
 static ofxiOSEAGLView * _instanceRef = nil;
 
@@ -62,6 +60,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
         screenSize = new ofVec3f();
         windowSize = new ofVec3f();
         windowPos = new ofVec3f();
+		ofSetOrientation(window->getOrientation());
         [self updateDimensions];
 		
         bInit = YES;

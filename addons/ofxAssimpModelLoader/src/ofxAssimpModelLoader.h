@@ -19,8 +19,8 @@
 #include "ofxAssimpAnimation.h"
 #include "ofxAssimpTexture.h"
 
-class aiScene;
-class aiNode;
+struct aiScene;
+struct aiNode;
 
 class ofxAssimpModelLoader{
 
@@ -113,8 +113,6 @@ class ofxAssimpModelLoader{
 		const aiScene * getAssimpScene();
          
     protected:
-    
-		void onAppExit(ofEventArgs & args);
         void updateAnimations();
         void updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix);
         void updateBones();
@@ -126,9 +124,6 @@ class ofxAssimpModelLoader{
 
         // Initial VBO creation, etc
         void loadGLResources();
-    
-        // Updates the internal animation transforms for the selected animation index
-        void updateAnimation(unsigned int animationIndex, float time);
     
         // updates the *actual GL resources* for the current animation
         void updateGLResources();

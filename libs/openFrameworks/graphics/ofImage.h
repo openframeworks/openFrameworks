@@ -124,12 +124,13 @@ public:
     ofImage_(const ofFile & file, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
     ofImage_(const string & filename, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
     ofImage_(const ofImage_<PixelType>& mom);
+    ofImage_(ofImage_<PixelType>&& mom);
     
     template<typename SrcType>
     ofImage_(const ofImage_<SrcType>& mom);
     
     
-    /// \brief This allocates space in the ofImage, both the ofPixels and the
+    /// This allocates space in the ofImage, both the ofPixels and the
     /// ofTexture that the ofImage contains.
     ///
     /// You don't need to call this before loading an image, but for when you
@@ -149,7 +150,7 @@ public:
     /// \brief Whether the image has been allocated either by a call to
     /// allocate or by loading pixel data into the image.
     /// \returns true if the image has been allocated.
-    bool isAllocated() const {return pixels.isAllocated();};
+    bool isAllocated() const {return pixels.isAllocated();}
     
     /// \brief Whether the image has been allocated either by a call to
     /// allocate or by loading pixel data into the image.
