@@ -179,7 +179,7 @@ static int getJpegOptionFromImageLoadSetting(const ofImageLoadSettings &settings
 }
 
 template<typename PixelType>
-static bool loadImage(ofPixels_<PixelType> & pix, string fileName, const ofImageLoadSettings &settings){
+static bool loadImage(ofPixels_<PixelType> & pix, std::string fileName, const ofImageLoadSettings &settings){
 	ofInitFreeImage();
 
 #ifndef TARGET_EMSCRIPTEN
@@ -284,7 +284,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 
 //----------------------------------------------------------------
 template <typename PixelType>
-bool ofLoadImage(ofPixels_<PixelType> & pix, string path, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofPixels_<PixelType> & pix, std::string path, const ofImageLoadSettings &settings) {
 	return loadImage(pix, path, settings);
 }
 
@@ -295,7 +295,7 @@ bool ofLoadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const ofIm
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofTexture & tex, string path, const ofImageLoadSettings &settings){
+bool ofLoadImage(ofTexture & tex, std::string path, const ofImageLoadSettings &settings){
 	ofPixels pixels;
 	bool loaded = ofLoadImage(pixels, path, settings);
 	if(loaded){
@@ -318,7 +318,7 @@ bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSett
 
 //----------------------------------------------------------------
 template<typename PixelType>
-static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualityType qualityLevel) {
+static void saveImage(ofPixels_<PixelType> & pix, std::string fileName, ofImageQualityType qualityLevel) {
 	ofInitFreeImage();
 	if (pix.isAllocated() == false){
 		ofLogError("ofImage") << "saveImage(): couldn't save \"" << fileName << "\", pixels are not allocated";
@@ -389,17 +389,17 @@ static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualit
 }
 
 //----------------------------------------------------------------
-void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLevel){
+void ofSaveImage(ofPixels & pix, std::string fileName, ofImageQualityType qualityLevel){
 	saveImage(pix,fileName,qualityLevel);
 }
 
 //----------------------------------------------------------------
-void ofSaveImage(ofFloatPixels & pix, string fileName, ofImageQualityType qualityLevel) {
+void ofSaveImage(ofFloatPixels & pix, std::string fileName, ofImageQualityType qualityLevel) {
 	saveImage(pix,fileName,qualityLevel);
 }
 
 //----------------------------------------------------------------
-void ofSaveImage(ofShortPixels & pix, string fileName, ofImageQualityType qualityLevel) {
+void ofSaveImage(ofShortPixels & pix, std::string fileName, ofImageQualityType qualityLevel) {
 	saveImage(pix,fileName,qualityLevel);
 }
 
@@ -468,7 +468,7 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 			#ifdef TARGET_WIN32
 		   	   DWORD size_in_bytes = 0;
 			#else
-		   	   uint32_t size_in_bytes = 0;
+		   	   std::uint32_t size_in_bytes = 0;
 			#endif
 		   // Save compressed data on mem_buffer
 		   // note: FreeImage_AquireMemory allocates space for aux_mem_buffer):
@@ -561,7 +561,7 @@ ofImage_<PixelType>::ofImage_(const ofFile & file, const ofImageLoadSettings &se
 }
 
 template<typename PixelType>
-ofImage_<PixelType>::ofImage_(const string & fileName, const ofImageLoadSettings &settings){
+ofImage_<PixelType>::ofImage_(const std::string & fileName, const ofImageLoadSettings &settings){
 	width						= 0;
 	height						= 0;
 	bpp							= 0;
@@ -632,7 +632,7 @@ bool ofImage_<PixelType>::loadImage(const ofFile & file){
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::load(const string& fileName, const ofImageLoadSettings &settings){
+bool ofImage_<PixelType>::load(const std::string& fileName, const ofImageLoadSettings &settings){
 	#if defined(TARGET_ANDROID)
 	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
@@ -649,7 +649,7 @@ bool ofImage_<PixelType>::load(const string& fileName, const ofImageLoadSettings
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::loadImage(string fileName){
+bool ofImage_<PixelType>::loadImage(std::string fileName){
 	return load(fileName);
 }
 
@@ -678,7 +678,7 @@ bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::save(string fileName, ofImageQualityType qualityLevel){
+void ofImage_<PixelType>::save(std::string fileName, ofImageQualityType qualityLevel){
 	ofSaveImage(pixels, fileName, qualityLevel);
 }
 
@@ -696,7 +696,7 @@ void ofImage_<PixelType>::save(const ofFile & file, ofImageQualityType compressi
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::saveImage(string fileName, ofImageQualityType qualityLevel){
+void ofImage_<PixelType>::saveImage(std::string fileName, ofImageQualityType qualityLevel){
 	save(fileName, qualityLevel);
 }
 
@@ -987,7 +987,7 @@ bool ofImage_<PixelType>::isUsingTexture() const{
 //------------------------------------
 template<>
 void ofImage_<unsigned char>::grabScreen(int x, int y, int w, int h){
-	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	std::shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
 	if(renderer){
 		renderer->saveScreen(x,y,w,h,pixels);
 		update();
@@ -998,7 +998,7 @@ void ofImage_<unsigned char>::grabScreen(int x, int y, int w, int h){
 template<typename PixelType>
 void ofGrabScreen(ofPixels_<PixelType> & pixels, int x, int y, int w, int h){
 	ofPixels p;
-	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	std::shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
 	if(renderer){
 		renderer->saveScreen(x,y,w,h,p);
 		pixels = p;
@@ -1008,7 +1008,7 @@ void ofGrabScreen(ofPixels_<PixelType> & pixels, int x, int y, int w, int h){
 //------------------------------------
 template<>
 void ofGrabScreen(ofPixels & p, int x, int y, int w, int h){
-	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	std::shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
 	if(renderer){
 		renderer->saveScreen(x,y,w,h,p);
 	}
