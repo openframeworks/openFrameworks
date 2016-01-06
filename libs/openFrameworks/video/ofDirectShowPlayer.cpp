@@ -999,9 +999,11 @@ class DirectShowVideo : public ISampleGrabberCB{
 			case OF_PIXELS_RGB:
 			case OF_PIXELS_BGR:
 				srcBuffer.setFromExternalPixels(ptrBuffer, width, height, OF_PIXELS_BGR);
+				break;
 			case OF_PIXELS_RGBA:
 			case OF_PIXELS_BGRA:
 				srcBuffer.setFromExternalPixels(ptrBuffer, width, height, OF_PIXELS_BGRA);
+				break;
 			}
 
             processPixels(srcBuffer, pixels);
