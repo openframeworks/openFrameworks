@@ -810,11 +810,11 @@ class DirectShowVideo : public ISampleGrabberCB{
 		auto format = src.getPixelFormat();
 
         if(needsRBSwap(src.getPixelFormat(), dst.getPixelFormat())){
-			auto dstLine = dst.getLines().begin();
-			auto srcLine = --src.getLines().end();
-			auto endLine = dst.getLines().end();
 			if (src.getPixelFormat() == OF_PIXELS_BGR) {
 				dst.allocate(src.getWidth(), src.getHeight(), OF_PIXELS_RGB);
+				auto dstLine = dst.getLines().begin();
+				auto srcLine = --src.getLines().end();
+				auto endLine = dst.getLines().end();
 				for (; dstLine != endLine; dstLine++, srcLine--) {
 					auto dstPixel = dstLine.getPixels().begin();
 					auto srcPixel = srcLine.getPixels().begin();
@@ -828,6 +828,9 @@ class DirectShowVideo : public ISampleGrabberCB{
 			}
 			else if (src.getPixelFormat() == OF_PIXELS_BGRA) {
 				dst.allocate(src.getWidth(), src.getHeight(), OF_PIXELS_RGBA);
+				auto dstLine = dst.getLines().begin();
+				auto srcLine = --src.getLines().end();
+				auto endLine = dst.getLines().end();
 				for (; dstLine != endLine; dstLine++, srcLine--) {
 					auto dstPixel = dstLine.getPixels().begin();
 					auto srcPixel = srcLine.getPixels().begin();
