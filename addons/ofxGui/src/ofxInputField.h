@@ -8,9 +8,9 @@ public:
 	ofxInputField();
 	~ofxInputField();
     ofxInputField(ofParameter<Type> _val, const Config & config = Config());
-    ofxInputField* setup(ofParameter<Type> _val, const Config & config);
-	ofxInputField* setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
-	ofxInputField* setup(const std::string& _name, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
+    ofxInputField & setup(ofParameter<Type> _val, const Config & config);
+    ofxInputField & setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
+    ofxInputField & setup(const std::string& _name, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
 	
 	void setMin(Type min);
 	Type getMin();
