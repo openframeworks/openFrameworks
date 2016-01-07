@@ -24,12 +24,39 @@ ofxInputField<Type>::~ofxInputField(){
 }
 
 template<typename Type>
-ofxInputField<Type>::ofxInputField(ofParameter<Type> _val, float width, float height){
-	setup(_val,width,height);
+ofxInputField<Type>::ofxInputField(ofParameter<Type> _val, const Config &config)
+:ofxBaseGui(config)
+,bGuiActive(false)
+,mouseInside(false){
+
+    value.makeReferenceTo(_val);
+    value.addListener(this,&ofxInputField::valueChanged);
+    input = ofToString(value);
+    inputWidth = getTextBoundingBox(input,0,0).width;
+    setNeedsRedraw();
+    registerMouseEvents();
+}
+
+
+template<typename Type>
+ofxInputField<Type>* ofxInputField<Type>::setup(ofParameter<Type> _val, const Config &config){
+    ofxBaseGui::setup(config);
+    value.makeReferenceTo(_val);
+
+    input = ofToString(value);
+    inputWidth = getTextBoundingBox(input,0,0).width;
+
+    bGuiActive = false;
+    setNeedsRedraw();
+
+    value.addListener(this,&ofxInputField::valueChanged);
+    registerMouseEvents();
+    registerKeyEvents();
+    pressCounter = 0;
+    return this;
 }
 
 template<typename Type>
-
 ofxInputField<Type>* ofxInputField<Type>::setup(ofParameter<Type> _val, float width, float height){
 	value.makeReferenceTo(_val);
 	input = ofToString(value);
@@ -52,12 +79,6 @@ template<typename Type>
 ofxInputField<Type>* ofxInputField<Type>::setup(const std::string& _name, Type _val, Type _min, Type _max, float width, float height){
 	value.set(_name,_val,_min,_max);
 	return setup(value,width,height);
-}
-
-template<typename Type>
-ofxInputField<Type>* ofxInputField<Type>::setup(const std::string& _name, Type _val){
-	value.set(_name,_val);
-	return setup(value);
 }
 
 template<typename Type>
