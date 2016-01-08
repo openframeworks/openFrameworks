@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
+#include "ofxInputField.h"
 
 class ofApp : public ofBaseApp {
 
@@ -29,10 +30,12 @@ class ofApp : public ofBaseApp {
         ofxGuiMatrix matrix;
         ofParameter<string> matrix_active_name;
         ofParameter<int> matrix_active_index;
+        ofParameter<float> floatfield_param;
+        ofParameter<string> textfield_param;
 
         ofxMinimalButton button;
 
-		ofParameter <string> label_param;
+        ofParameter <string> label_param;
 		ofParameter <bool> toggle_param;
 		ofParameter <float> slider_param;
 		ofParameter <bool> toggle1_param, toggle2_param, toggle3_param, toggle4_param;
