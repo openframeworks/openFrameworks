@@ -772,7 +772,6 @@ public:
     /// maximum of max units by scaling down if necessary.
 	ofVec2f  getLimited(float max) const;
 
-    ofVec2f& getLimited(float max);
 
    	/// \brief Restrict the length (magnitude) of this vector to a maximum of max units by scaling down if necessary.
 	/// 

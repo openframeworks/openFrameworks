@@ -52,10 +52,64 @@
 	#define MAXPATHLEN 1024
 #endif
 
-static bool enableDataPath = true;
-static uint64_t startTimeSeconds;   //  better at the first frame ?? (currently, there is some delay from static init, to running.
-static uint64_t startTimeNanos;
+namespace{
+    bool enableDataPath = true;
+    uint64_t startTimeSeconds;   //  better at the first frame ?? (currently, there is some delay from static init, to running.
+    uint64_t startTimeNanos;
+#ifdef TARGET_OSX
+    clock_serv_t cs;
+#endif
 
+    //--------------------------------------------------
+    string defaultDataPath(){
+    #if defined TARGET_OSX
+        try{
+            return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/")).string();
+        }catch(...){
+            return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
+        }
+    #elif defined TARGET_ANDROID
+            return string("sdcard/");
+    #else
+            try{
+                return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).string();
+            }catch(...){
+                return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
+            }
+    #endif
+    }
+
+    //--------------------------------------------------
+    std::filesystem::path & defaultWorkingDirectory(){
+            static auto * defaultWorkingDirectory = new std::filesystem::path();
+            return * defaultWorkingDirectory;
+    }
+
+    //--------------------------------------------------
+    std::filesystem::path & dataPathRoot(){
+            static auto * dataPathRoot = new std::filesystem::path(defaultDataPath());
+            return *dataPathRoot;
+    }
+}
+
+namespace of{
+namespace priv{
+    void initutils(){
+#ifdef TARGET_OSX
+        host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cs);
+#endif
+        defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
+        ofResetElapsedTimeCounter();
+        ofSeedRandom();
+    }
+
+    void endutils(){
+#ifdef TARGET_OSX
+        mach_port_deallocate(mach_task_self(), cs);
+#endif
+    }
+}
+}
 
 //--------------------------------------
 void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds){
@@ -65,11 +119,8 @@ void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds){
 	seconds = now.tv_sec;
 	nanoseconds = now.tv_nsec;
 #elif defined(TARGET_OSX)
-	clock_serv_t cs;
-	mach_timespec_t now;
-	host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cs);
-	clock_get_time(cs, &now);
-	mach_port_deallocate(mach_task_self(), cs);
+        mach_timespec_t now;
+        clock_get_time(cs, &now);
 	seconds = now.tv_sec;
 	nanoseconds = now.tv_nsec;
 #elif defined( TARGET_WIN32 )
@@ -266,46 +317,6 @@ void ofDisableDataPath(){
 }
 
 //--------------------------------------------------
-string defaultDataPath(){
-#if defined TARGET_OSX
-    try{
-        return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/")).string();
-    }catch(...){
-        return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
-    }
-#elif defined TARGET_ANDROID
-	return string("sdcard/");
-#else
-	try{
-	    return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).string();
-	}catch(...){
-	    return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
-	}
-#endif
-}
-
-//--------------------------------------------------
-static std::filesystem::path & defaultWorkingDirectory(){
-	static auto * defaultWorkingDirectory = new std::filesystem::path();
-	return * defaultWorkingDirectory;
-}
-
-//--------------------------------------------------
-static std::filesystem::path & dataPathRoot(){
-	static auto * dataPathRoot = new std::filesystem::path(defaultDataPath());
-	return *dataPathRoot;
-}
-
-namespace of{
-namespace priv{
-    //--------------------------------------------------
-    void setWorkingDirectoryToDefault(){
-        defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
-    }
-}
-}
-
-//--------------------------------------------------
 bool ofRestoreWorkingDirectoryToDefault(){
     try{
         std::filesystem::current_path(defaultWorkingDirectory());
@@ -325,6 +336,8 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	if (!enableDataPath)
 		return path;
 
+    bool hasTrailingSlash = !path.empty() && std::filesystem::path(path).generic_string().back()=='/';
+
 	// if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
 	if (defaultWorkingDirectory() != std::filesystem::current_path()) {
@@ -335,8 +348,8 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 		}
 	}
 #endif
-	// this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
 
+	// this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
 	const auto  & dataPath = dataPathRoot();
 	std::filesystem::path inputPath(path);
 	std::filesystem::path outputPath;
@@ -344,29 +357,34 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	// if path is already absolute, just return it
 	if (inputPath.is_absolute()) {
 		try {
-			return std::filesystem::canonical(inputPath).string();
+            auto outpath = std::filesystem::canonical(inputPath);
+            if(std::filesystem::is_directory(outpath) && hasTrailingSlash){
+                return ofFilePath::addTrailingSlash(outpath.string());
+            }else{
+                return outpath.string();
+            }
 		}
 		catch (...) {
-			return inputPath.string();
+            return inputPath.string();
 		}
 	}
 
 	// here we check whether path already refers to the data folder by looking for common elements
 	// if the path begins with the full contents of dataPathRoot then the data path has already been added
 	// we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
-	auto strippedDataPath = dataPath.string();
+    auto dirDataPath = dataPath.string();
 	// also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
-	strippedDataPath = ofFilePath::removeTrailingSlash(strippedDataPath);
+    dirDataPath = ofFilePath::addTrailingSlash(dirDataPath);
 
-	auto relativeStrippedDataPath = ofFilePath::makeRelative(std::filesystem::current_path().string(),dataPath.string());
-	relativeStrippedDataPath  = ofFilePath::removeTrailingSlash(relativeStrippedDataPath);
+    auto relativeDirDataPath = ofFilePath::makeRelative(std::filesystem::current_path().string(),dataPath.string());
+    relativeDirDataPath  = ofFilePath::addTrailingSlash(relativeDirDataPath);
 
-	if (inputPath.string().find(strippedDataPath) != 0 && inputPath.string().find(relativeStrippedDataPath)!=0) {
+    if (inputPath.string().find(dirDataPath) != 0 && inputPath.string().find(relativeDirDataPath)!=0) {
 		// inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
 	    if(makeAbsolute){
-	        outputPath = dataPath / inputPath;
+            outputPath = dirDataPath / inputPath;
 	    }else{
-	        outputPath = relativeStrippedDataPath / inputPath;
+            outputPath = relativeDirDataPath / inputPath;
 	    }
 	} else {
 		// inputPath already contains data path, so no need to change
@@ -377,14 +395,19 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	if(makeAbsolute){
 	    // then we return the absolute form of the path
 	    try {
-	        return std::filesystem::canonical(std::filesystem::absolute(outputPath)).string();
+            auto outpath = std::filesystem::canonical(std::filesystem::absolute(outputPath));
+            if(std::filesystem::is_directory(outpath) && hasTrailingSlash){
+                return ofFilePath::addTrailingSlash(outpath.string());
+            }else{
+                return outpath.string();
+            }
 	    }
 	    catch (std::exception &) {
-	        return std::filesystem::absolute(outputPath).string();
+            return std::filesystem::absolute(outputPath).string();
 	    }
 	}else{
 		// or output the relative path
-		return outputPath.string();
+        return outputPath.string();
 	}
 }
 
@@ -1001,7 +1024,7 @@ ofTargetPlatform ofGetTargetPlatform(){
     #if (_MSC_VER)
         return OF_TARGET_WINVS;
     #else
-        return OF_TARGET_WINGCC;
+        return OF_TARGET_MINGW;
     #endif
 #elif defined(TARGET_ANDROID)
     return OF_TARGET_ANDROID;
@@ -1009,5 +1032,25 @@ ofTargetPlatform ofGetTargetPlatform(){
     return OF_TARGET_IOS;
 #elif defined(TARGET_EMSCRIPTEN)
     return OF_TARGET_EMSCRIPTEN;
+#endif
+}
+
+std::string ofGetEnv(const std::string & var){
+#ifdef TARGET_WIN32
+	const size_t BUFSIZE = 4096;
+	std::vector<char> pszOldVal(BUFSIZE, 0);
+	auto size = GetEnvironmentVariableA(var.c_str(), pszOldVal.data(), BUFSIZE);
+	if(size>0){
+		return std::string(pszOldVal.begin(), pszOldVal.begin()+size);
+	}else{
+		return "";
+	}
+#else
+	auto value = getenv(var.c_str());
+	if(value){
+		return value;
+	}else{
+		return "";
+	}
 #endif
 }

@@ -183,7 +183,7 @@ public:
 	string toString() const;
 	void fromString(const string& name);
 
-	bool contains(const string& name);
+	bool contains(const string& name) const;
 
 	ofAbstractParameter & back();
 	ofAbstractParameter & front();
@@ -478,19 +478,22 @@ public:
 			return shared_ptr<ofParameterGroup::Value>(nullptr);
 		}
 	}
+
+	size_t getNumListeners() const;
+
 private:
 	class Value{
 	public:
 		Value()
 		:min(of::priv::TypeInfo<ParameterType>::min())
-		,max(of::priv::TypeInfo<ParameterType>::min())
+		,max(of::priv::TypeInfo<ParameterType>::max())
 		,bInNotify(false)
 		,serializable(true){};
 
 		Value(ParameterType v)
 		:value(v)
 		,min(of::priv::TypeInfo<ParameterType>::min())
-		,max(of::priv::TypeInfo<ParameterType>::min())
+		,max(of::priv::TypeInfo<ParameterType>::max())
 		,bInNotify(false)
 		,serializable(true){};
 
@@ -498,7 +501,7 @@ private:
 		:name(name)
 		,value(v)
 		,min(of::priv::TypeInfo<ParameterType>::min())
-		,max(of::priv::TypeInfo<ParameterType>::min())
+		,max(of::priv::TypeInfo<ParameterType>::max())
 		,bInNotify(false)
 		,serializable(true){};
 
@@ -865,6 +868,11 @@ shared_ptr<ofAbstractParameter> ofParameter<ParameterType>::newReference() const
 template<typename ParameterType>
 void ofParameter<ParameterType>::setParent(ofParameterGroup & parent){
 	obj->parents.emplace_back(parent.obj);
+}
+
+template<typename ParameterType>
+size_t ofParameter<ParameterType>::getNumListeners() const{
+	return obj->changedE.size();
 }
 
 
