@@ -82,6 +82,6 @@ protected:
     void leaveFocus();
 };
 
-typedef ofxInputField<float> ofxFloatField;
-typedef ofxInputField<int> ofxIntField;
+typedef ofxInputField<float> ofxFloatInputField;
+typedef ofxInputField<int> ofxIntInputField;
 typedef ofxInputField<string> ofxTextField;
