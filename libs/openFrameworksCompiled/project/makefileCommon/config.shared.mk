@@ -52,6 +52,9 @@ endif
 ifdef IS_RASPBIAN
     PLATFORM_ARCH=armv6l
     HOST_ARCH=armv6l
+    ifdef RPI_ROOT
+        CROSS_COMPILING=1
+    endif
 else
     HOST_ARCH=$(shell uname -m)
     ifndef PLATFORM_ARCH
