@@ -8,8 +8,8 @@
 #include "ofAppBaseWindow.h"
 #include "ofEvents.h"
 #include "ofPixels.h"
+#include "ofRectangle.h"
 
-//class ofVec3f;
 class ofBaseApp;
 
 #ifdef TARGET_OPENGLES
@@ -18,72 +18,31 @@ class ofGLFWWindowSettings: public ofGLESWindowSettings{
 class ofGLFWWindowSettings: public ofGLWindowSettings{
 #endif
 public:
-	ofGLFWWindowSettings()
-	:numSamples(4)
-	,doubleBuffering(true)
-	,redBits(8)
-	,greenBits(8)
-	,blueBits(8)
-	,alphaBits(8)
-	,depthBits(24)
-	,stencilBits(0)
-	,stereo(false)
-	,visible(true)
-	,iconified(false)
-	,decorated(true)
-	,resizable(true)
-	,monitor(0){}
+	ofGLFWWindowSettings(){}
 
 #ifdef TARGET_OPENGLES
 	ofGLFWWindowSettings(const ofGLESWindowSettings & settings)
-	:ofGLESWindowSettings(settings)
-	,numSamples(4)
-	,doubleBuffering(true)
-	,redBits(8)
-	,greenBits(8)
-	,blueBits(8)
-	,alphaBits(8)
-	,depthBits(24)
-	,stencilBits(0)
-	,stereo(false)
-	,visible(true)
-	,iconified(false)
-	,decorated(true)
-	,resizable(true)
-	,monitor(0){}
+	:ofGLESWindowSettings(settings){}
 #else
 	ofGLFWWindowSettings(const ofGLWindowSettings & settings)
-	:ofGLWindowSettings(settings)
-	,numSamples(4)
-	,doubleBuffering(true)
-	,redBits(8)
-	,greenBits(8)
-	,blueBits(8)
-	,alphaBits(8)
-	,depthBits(24)
-	,stencilBits(0)
-	,stereo(false)
-	,visible(true)
-	,iconified(false)
-	,decorated(true)
-	,resizable(true)
-	,monitor(0){}
+	:ofGLWindowSettings(settings){}
 #endif
 
-	int numSamples;
-	bool doubleBuffering;
-	int redBits;
-	int greenBits;
-	int blueBits;
-	int alphaBits;
-	int depthBits;
-	int stencilBits;
-	bool stereo;
-	bool visible;
-	bool iconified;
-	bool decorated;
-	bool resizable;
-	int monitor;
+	int numSamples = 4;
+	bool doubleBuffering = true;
+	int redBits = 8;
+	int greenBits = 8;
+	int blueBits = 8;
+	int alphaBits = 8;
+	int depthBits = 24;
+	int stencilBits = 0;
+	bool stereo = false;
+	bool visible = true;
+	bool iconified = false;
+	bool decorated = true;
+	bool resizable = true;
+	int monitor = 0;
+	bool multiMonitorFullScreen = false;
 	shared_ptr<ofAppBaseWindow> shareContextWith;
 };
 
@@ -98,25 +57,15 @@ public:
 	ofAppGLFWWindow();
 	~ofAppGLFWWindow();
 
+	// Can't be copied, use shared_ptr
+	ofAppGLFWWindow(ofAppGLFWWindow & w) = delete;
+	ofAppGLFWWindow & operator=(ofAppGLFWWindow & w) = delete;
+
 	static void loop(){};
 	static bool doesLoop(){ return false; }
 	static bool allowsMultiWindow(){ return true; }
 	static bool needsPolling(){ return true; }
 	static void pollEvents(){ glfwPollEvents(); }
-
-	// window settings, this functions can be called from main before calling ofSetupOpenGL
-	void 		setNumSamples(int samples);
-	void 		setDoubleBuffering(bool doubleBuff);
-	void 		setColorBits(int r, int g, int b);
-	void		setAlphaBits(int a);
-	void		setDepthBits(int depth);
-	void		setStencilBits(int stencil);
-	void		listVideoModes();
-	bool		isWindowIconified();
-	bool		isWindowActive();
-	bool		isWindowResizeable();
-	void		iconify(bool bIconify);
-    void        setMultiDisplayFullscreen(bool bMultiFullscreen); //note this just enables the mode, you have to toggle fullscreen to activate it.
 
 
     // this functions are only meant to be called from inside OF don't call them from your code
@@ -145,6 +94,7 @@ public:
     
     GLFWwindow* getGLFWWindow();
     void * getWindowContext(){return getGLFWWindow();}
+	ofGLFWWindowSettings getSettings(){ return settings; }
 
 	ofVec3f		getWindowSize();
 	ofVec3f		getScreenSize();
@@ -174,6 +124,23 @@ public:
 
     void 		makeCurrent();
 
+	static void listVideoModes();
+	static void listMonitors();
+	bool isWindowIconified();
+	bool isWindowActive();
+	bool isWindowResizeable();
+	void iconify(bool bIconify);
+
+	// window settings, this functions can only be called from main before calling ofSetupOpenGL
+	// TODO: remove specialized version of ofSetupOpenGL when these go away
+	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setNumSamples(int samples));
+	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setDoubleBuffering(bool doubleBuff));
+	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setColorBits(int r, int g, int b));
+	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setAlphaBits(int a));
+	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setDepthBits(int depth));
+	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setStencilBits(int stencil));
+	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setMultiDisplayFullscreen(bool bMultiFullscreen)); //note this just enables the mode, you have to toggle fullscreen to activate it.
+
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 	Display* 	getX11Display();
 	Window  	getX11Window();
@@ -200,10 +167,6 @@ public:
 #endif
 
 private:
-	// private copy construction
-	ofAppGLFWWindow(ofAppGLFWWindow & w){};
-	ofAppGLFWWindow & operator=(ofAppGLFWWindow & w){return w;};
-
 	static ofAppGLFWWindow * setCurrent(GLFWwindow* windowP);
 	static void 	mouse_cb(GLFWwindow* windowP_, int button, int state, int mods);
 	static void 	motion_cb(GLFWwindow* windowP_, double x, double y);
@@ -229,11 +192,13 @@ private:
 	bool			bEnableSetupScreen;
 	int				windowW, windowH;
 
+	ofRectangle windowRect;
+
 	int				buttonInUse;
 	bool			buttonPressed;
 
 	int 			nFramesSinceWindowResized;
-    bool            bMultiWindowFullscreen; 
+	bool			bWindowNeedsShowing;
 
 	GLFWwindow* 	windowP;
     

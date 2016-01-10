@@ -38,6 +38,7 @@
 #define INCLUDED_OSCPACK_PACKETLISTENER_H
 
 
+namespace osc{
 class IpEndpointName;
 
 class PacketListener{
@@ -46,5 +47,6 @@ public:
     virtual void ProcessPacket( const char *data, int size, 
 			const IpEndpointName& remoteEndpoint ) = 0;
 };
+}
 
 #endif /* INCLUDED_OSCPACK_PACKETLISTENER_H */

@@ -73,11 +73,8 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
 
 	currentFramebufferId = 0;
 	defaultFramebufferId = 0;
-
-}
-
-ofGLProgrammableRenderer::~ofGLProgrammableRenderer() {
-	
+	path.setMode(ofPath::POLYLINES);
+    path.setUseShapeColor(false);
 }
 
 //----------------------------------------------------------
@@ -429,14 +426,14 @@ void ofGLProgrammableRenderer::draw(const ofVbo & vbo, GLuint drawMode, int firs
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const{
+void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int offsetelements) const{
 	if(vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
 #ifdef TARGET_OPENGLES
-        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, nullptr);
+        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void*)(sizeof(ofIndexType) * offsetelements));
 #else
-        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, (void*)(sizeof(ofIndexType) * offsetelements));
 #endif
 		vbo.unbind();
 	}
@@ -664,8 +661,10 @@ void ofGLProgrammableRenderer::setCircleResolution(int res){
 		circleMesh.getVertices() = circlePolyline.getVertices();
 		path.setCircleResolution(res);
 	}
+	currentStyle.circleResolution = res; 
 }
 
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::setPolyMode(ofPolyWindingMode mode){
 	currentStyle.polyMode = mode;
 	path.setPolyWindingMode(mode);
@@ -806,6 +805,7 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 
 }
 
+//----------------------------------------------------------
 ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
 	switch (matrixMode_) {
 		case OF_MATRIX_MODELVIEW:
@@ -847,7 +847,7 @@ void ofGLProgrammableRenderer::setColor(int _r, int _g, int _b){
 void ofGLProgrammableRenderer::setColor(int _r, int _g, int _b, int _a){
 	ofColor newColor(_r,_g,_b,_a);
 	if(newColor!=currentStyle.color){
-		currentStyle.color = newColor;
+        currentStyle.color = newColor;
 		if(currentShader){
 			currentShader->setUniform4f(COLOR_UNIFORM,_r/255.,_g/255.,_b/255.,_a/255.);
 		}
@@ -1127,7 +1127,7 @@ void ofGLProgrammableRenderer::pushStyle(){
 
 void ofGLProgrammableRenderer::popStyle(){
 	if( styleHistory.size() ){
-		setStyle(styleHistory.front());
+		setStyle(styleHistory.back());
 		styleHistory.pop_back();
 	}
 }
@@ -1218,7 +1218,7 @@ void ofGLProgrammableRenderer::enableTextureTarget(const ofTexture & tex, int te
 	}
 
 	if((currentTextureTarget!=OF_NO_TEXTURE) && currentShader){
-		currentShader->setUniformTexture("src_tex_unit"+ofToString(textureLocation),tex.texData.textureTarget,tex.texData.textureID,textureLocation);
+		currentShader->setUniformTexture("src_tex_unit"+ofToString(textureLocation),tex,textureLocation);
 	}
 }
 
@@ -1268,9 +1268,9 @@ void ofGLProgrammableRenderer::disableAlphaMask(){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofShader & shader){
-	if(currentShader && *currentShader==shader){
+    if(currentShader && *currentShader==shader){
 		return;
-	}
+    }
 	glUseProgram(shader.getProgram());
 
 	currentShader = &shader;
@@ -1315,8 +1315,8 @@ void ofGLProgrammableRenderer::end(const ofFbo & fbo){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofFbo & fbo){
 	if (currentFramebufferId == fbo.getId()){
-		ofLogWarning() << "Framebuffer with id:" << " cannot be bound onto itself. \n" <<
-			"Most probably you forgot to end() the current framebuffer before calling begin() again.";
+		ofLogWarning() << "Framebuffer with id: " << fbo.getId() << " cannot be bound onto itself. \n" <<
+			"Most probably you forgot to end() the current framebuffer before calling begin() again or you forgot to allocate() before calling begin().";
 		return;
 	}
 	// this method could just as well have been placed in ofBaseGLRenderer
@@ -1333,7 +1333,7 @@ void ofGLProgrammableRenderer::bind(const ofFbo & fbo){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint){
 	if (currentFramebufferId == fboSrc.getId()){
-		ofLogWarning() << "Framebuffer with id:" << " cannot be bound onto itself. \n" <<
+		ofLogWarning() << "Framebuffer with id: " << fboSrc.getId() << " cannot be bound onto itself. \n" <<
 			"Most probably you forgot to end() the current framebuffer before calling getTexture().";
 		return;
 	}
@@ -1366,12 +1366,41 @@ void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofBaseMaterial & material){
-	currentMaterial = &material;
+    currentMaterial = &material;
+    // FIXME: this invalidates the previous shader to avoid that
+    // when binding 2 materials one after another, the second won't
+    // get the right parameters.
+    currentShader = nullptr;
+    beginDefaultShader();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::unbind(const ofBaseMaterial & material){
-	currentMaterial = nullptr;
+void ofGLProgrammableRenderer::unbind(const ofBaseMaterial &){
+    currentMaterial = nullptr;
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::enableLighting(){
+
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::disableLighting(){
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::enableLight(int){
+
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::disableLight(int){
+
+}
+
+//----------------------------------------------------------
+bool ofGLProgrammableRenderer::getLightingEnabled(){
+    return true;
 }
 
 //----------------------------------------------------------
@@ -1469,9 +1498,9 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 	const ofShader * nextShader = nullptr;
 
 	if(!uniqueShader || currentMaterial){
-		if(currentMaterial){
+        if(currentMaterial){
 			nextShader = &currentMaterial->getShader(currentTextureTarget,*this);
-			currentMaterial->updateMaterial(*nextShader,*this);
+
 		}else if(bitmapStringEnabled){
 			nextShader = &bitmapStringShader;
 
@@ -1517,7 +1546,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 	}
 
 	if(nextShader){
-		if(!currentShader || *currentShader!=*nextShader){
+        if(!currentShader || *currentShader!=*nextShader){
 			settingDefaultShader = true;
 			bind(*nextShader);
 			settingDefaultShader = false;
@@ -2058,7 +2087,7 @@ static const string uniqueVertexShader = vertex_shader_header + STRINGIFY(
 	void main(){
 		gl_Position = modelViewProjectionMatrix * position;
 		if(usingTexture>.5) texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
-		if(usingColors>.5) colorVarying = color*globalColor;
+		if(usingColors>.5) colorVarying = color;
 		else colorVarying = globalColor;
 	}
 );
@@ -2552,6 +2581,7 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 	pixels.allocate(w, h, OF_PIXELS_RGBA);
 
 	switch(matrixStack.getOrientation()){
+	case OF_ORIENTATION_UNKNOWN:
 	case OF_ORIENTATION_DEFAULT:
 
 		if(isVFlipped()){

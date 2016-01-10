@@ -5,7 +5,7 @@
 # 
 # uses cmake build system
 
-FORMULA_TYPES=( "osx" "win_cb" "ios" "android" "linux" "linux64" "linuxarmv6l" "linuxarmv7l" "emscripten" "vs" )
+FORMULA_TYPES=( "osx" "msys2" "ios" "android" "linux" "linux64" "linuxarmv6l" "linuxarmv7l" "emscripten" "vs" )
 FORMULA_DEPENDS=( "boost" )
 VER="master"
 

@@ -7,6 +7,7 @@
 #if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
 #include "ofCairoRenderer.h"
 #endif
+#include "ofGLRenderer.h"
 
 
 #ifndef TARGET_WIN32
@@ -26,13 +27,7 @@ void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer,bool setDefaults){
 	ofGetCurrentRenderer() = renderer;
 }
 
-#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
-
-//-----------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------
-#include "ofCairoRenderer.h"
-#include "ofGLRenderer.h"
-
+#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
 static shared_ptr<ofCairoRenderer> cairoScreenshot;
 static shared_ptr<ofBaseRenderer> storedRenderer;
 static shared_ptr<ofRendererCollection> rendererCollection;
@@ -57,13 +52,13 @@ static void ofEndSaveScreen(){
 
 }
 
-static void ofBeginSaveScreen(string filename, ofCairoRenderer::Type type, bool bMultipage, bool b3D, ofRectangle viewport){
+static void ofBeginSaveScreen(string filename, ofCairoRenderer::Type type, bool bMultipage, bool b3D, ofRectangle outputsize){
 	if( bScreenShotStarted ) ofEndSaveScreen();
 	
 	storedRenderer = ofGetCurrentRenderer();
 	
 	cairoScreenshot = shared_ptr<ofCairoRenderer>(new ofCairoRenderer);
-	cairoScreenshot->setup(filename, type, bMultipage, b3D, viewport);
+	cairoScreenshot->setup(filename, type, bMultipage, b3D, outputsize);
 
 	rendererCollection = shared_ptr<ofRendererCollection>(new ofRendererCollection);
 	rendererCollection->renderers.push_back(storedRenderer);
@@ -75,8 +70,8 @@ static void ofBeginSaveScreen(string filename, ofCairoRenderer::Type type, bool 
 }
 
 //-----------------------------------------------------------------------------------
-void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectangle viewport){
-	ofBeginSaveScreen(filename, ofCairoRenderer::PDF, bMultipage, b3D, viewport);
+void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectangle outputsize){
+	ofBeginSaveScreen(filename, ofCairoRenderer::PDF, bMultipage, b3D, outputsize);
 }
 
 //-----------------------------------------------------------------------------------
@@ -85,8 +80,8 @@ void ofEndSaveScreenAsPDF(){
 }
 
 //-----------------------------------------------------------------------------------
-void ofBeginSaveScreenAsSVG(string filename, bool bMultipage, bool b3D, ofRectangle viewport){
-	ofBeginSaveScreen(filename, ofCairoRenderer::SVG, bMultipage, b3D, viewport);
+void ofBeginSaveScreenAsSVG(string filename, bool bMultipage, bool b3D, ofRectangle outputsize){
+	ofBeginSaveScreen(filename, ofCairoRenderer::SVG, bMultipage, b3D, outputsize);
 }
 
 //-----------------------------------------------------------------------------------
@@ -249,6 +244,10 @@ void ofScale(float xAmnt, float yAmnt, float zAmnt){
 	ofGetCurrentRenderer()->scale(xAmnt, yAmnt, zAmnt);
 }
 
+
+void ofScale(const ofPoint & p) { 
+	ofScale(p.x, p.y, p.z); 
+}
 //----------------------------------------------------------
 void ofRotate(float degrees, float vecX, float vecY, float vecZ){
 	ofGetCurrentRenderer()->rotate(degrees, vecX, vecY, vecZ);

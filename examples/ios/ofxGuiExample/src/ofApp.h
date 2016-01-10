@@ -1,8 +1,6 @@
 #pragma once
 
-
 #include "ofxiOS.h"
-#include "ofxiOSExtras.h"
 #include "ofxGui.h"
 
 class ofApp : public ofxiOSApp{

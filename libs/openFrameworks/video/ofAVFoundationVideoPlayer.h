@@ -19,6 +19,9 @@
 #define TARGET_OSX
 #endif
 
+
+#define USE_VIDEO_OUTPUT (defined(MAC_OS_X_VERSION_10_8) || defined(iOS6))
+
 // so we are independend from oF in this class
 typedef enum _playerLoopType{
     LOOP_NONE=0x01,
@@ -33,6 +36,18 @@ typedef enum _playerLoopType{
     AVPlayer * _player;
 	AVAsset * _asset;
     AVPlayerItem * _playerItem;
+	
+	
+	AVAssetReader * _assetReader;
+	AVAssetReaderTrackOutput * _assetReaderVideoTrackOutput;
+	AVAssetReaderTrackOutput * _assetReaderAudioTrackOutput;
+	
+#if USE_VIDEO_OUTPUT
+	CMVideoFormatDescriptionRef _videoInfo;
+	dispatch_queue_t _myVideoOutputQueue;
+	AVPlayerItemVideoOutput * _videoOutput;
+#endif
+	
 	
     id timeObserver;
     
@@ -66,15 +81,30 @@ typedef enum _playerLoopType{
     BOOL bSeeking;
     BOOL bSampleVideo; // default to YES
     BOOL bSampleAudio; // default to NO
+	BOOL bIsUnloaded;
+	
+	NSLock* asyncLock;
+	NSCondition* deallocCond;
 }
 
 @property (nonatomic, retain) AVPlayer * player;
 @property (nonatomic, retain) AVAsset * asset;
 @property (nonatomic, retain) AVPlayerItem * playerItem;
 
+
+@property (nonatomic, retain) AVAssetReader * assetReader;
+@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderVideoTrackOutput;
+@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderAudioTrackOutput;
+
+#if USE_VIDEO_OUTPUT
+@property (nonatomic, retain) AVPlayerItemVideoOutput *videoOutput;
+#endif
+
+
 - (BOOL)loadWithFile:(NSString*)file async:(BOOL)bAsync;
 - (BOOL)loadWithPath:(NSString*)path async:(BOOL)bAsync;
 - (BOOL)loadWithURL:(NSURL*)url async:(BOOL)bAsync;
+- (void)unloadVideoAsync;
 - (void)unloadVideo;
 
 - (void)update;
@@ -99,6 +129,7 @@ typedef enum _playerLoopType{
 - (void)setEnableAudioSampling:(BOOL)value;
 - (void)setSynchSampleTime:(CMTime)time;
 - (void)setSynchSampleTimeInSec:(double)time;
+
 - (CMTime)getVideoSampleTime;
 - (double)getVideoSampleTimeInSec;
 - (CMTime)getAudioSampleTime;
@@ -116,6 +147,7 @@ typedef enum _playerLoopType{
 - (int)getDurationInFrames;
 - (int)getCurrentFrameNum;
 - (float)getFrameRate;
+
 - (void)setFrame:(int)frame;
 - (void)setPosition:(float)position;
 - (float)getPosition;
@@ -128,5 +160,6 @@ typedef enum _playerLoopType{
 - (void)setAutoplay:(BOOL)bAutoplay;
 - (BOOL)getAutoplay;
 - (void)setWillBeUpdatedExternally:(BOOL)value;
+- (void)close;
 
 @end

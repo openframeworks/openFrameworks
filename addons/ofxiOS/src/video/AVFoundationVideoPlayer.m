@@ -248,7 +248,7 @@ static const NSString * ItemStatusContext;
                 videoHeight = CVPixelBufferGetHeight(imageBuffer);
                 CVPixelBufferUnlockBaseAddress(imageBuffer,0);
                 
-                NSLog(@"video loaded at %i x %i", videoWidth, videoHeight);
+                NSLog(@"video loaded at %i x %i", (int)videoWidth, (int)videoHeight);
                 
                 CGRect playerViewFrame = self.playerView.frame;
                 playerViewFrame.size.width = videoWidth;
@@ -276,8 +276,10 @@ static const NSString * ItemStatusContext;
                                          object:self.playerItem];
                 
                 [_player replaceCurrentItemWithPlayerItem:self.playerItem];
-                
+				
                 [self addTimeObserverToPlayer];
+				
+                _player.volume = volume;
             }
             else {
                 NSLog(@"The asset's tracks were not loaded:\n%@", [error localizedDescription]);
@@ -845,19 +847,7 @@ static const NSString * ItemStatusContext;
         return;
     }
     
-    NSArray * audioTracks = [self.asset tracksWithMediaType:AVMediaTypeAudio];
-    NSMutableArray * allAudioParams = [NSMutableArray array];
-    for(AVAssetTrack * track in audioTracks) {
-        AVMutableAudioMixInputParameters * audioInputParams = [AVMutableAudioMixInputParameters audioMixInputParameters];
-        [audioInputParams setVolume:volume atTime:kCMTimeZero];
-        [audioInputParams setTrackID:[track trackID]];
-        [allAudioParams addObject:audioInputParams];
-    }
-    
-    AVMutableAudioMix * audioMix = [AVMutableAudioMix audioMix];
-    [audioMix setInputParameters:allAudioParams];
-        
-    [self.playerItem setAudioMix:audioMix];
+    _player.volume = volume;
 }
 
 - (float)getVolume {

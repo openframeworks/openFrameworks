@@ -19,9 +19,24 @@
 #include "ofURLFileLoader.h"
 #include "ofMainLoop.h"
 
+#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN)
+	#include "ofAppGLFWWindow.h"
+	//special case so we preserve supplied settngs
+	//TODO: remove me when we remove the ofAppGLFWWindow setters.
+	//--------------------------------------
+	void ofSetupOpenGL(shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode){
+		ofInit();
+		auto settings = windowPtr->getSettings();
+		settings.width = w;
+		settings.height = h;
+		settings.windowMode = screenMode;
+		ofGetMainLoop()->addWindow(windowPtr);
+		windowPtr->setup(settings);
+	}
+#endif
 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
-#if defined(TARGET_OSX)
+#if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
 	#include "ofQtUtils.h"
 #endif
 
@@ -31,45 +46,46 @@
 
 
 //--------------------------------------
-shared_ptr<ofMainLoop> & mainLoop(){
-	static shared_ptr<ofMainLoop> * mainLoop(new shared_ptr<ofMainLoop>(new ofMainLoop));
-	return *mainLoop;
+namespace{
+    shared_ptr<ofMainLoop> & mainLoop(){
+        static shared_ptr<ofMainLoop> * mainLoop(new shared_ptr<ofMainLoop>(new ofMainLoop));
+        return *mainLoop;
+    }
+
+    bool & initialized(){
+        static bool * initialized = new bool(false);
+        return *initialized;
+    }
+
+    #if defined(TARGET_LINUX) || defined(TARGET_OSX)
+        #include <signal.h>
+        #include <string.h>
+        void ofSignalHandler(int signum){
+            char* pSignalString = strsignal(signum);
+
+            if(pSignalString){
+                ofLogVerbose("ofSignalHandler") << pSignalString;
+            }else{
+                ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
+            }
+
+            signal(SIGTERM, nullptr);
+            signal(SIGQUIT, nullptr);
+            signal(SIGINT,  nullptr);
+            signal(SIGHUP,  nullptr);
+            signal(SIGABRT, nullptr);
+
+            if(mainLoop()){
+                mainLoop()->shouldClose(signum);
+            }
+        }
+    #endif
 }
 
 
-static bool & initialized(){
-	static bool * initialized = new bool(false);
-	return *initialized;
-}
 
 void ofExitCallback();
 void ofURLFileLoaderShutdown();
-
-#if defined(TARGET_LINUX) || defined(TARGET_OSX)
-	#include <signal.h>
-	#include <string.h>
-
-	static void ofSignalHandler(int signum){
-
-		char* pSignalString = strsignal(signum);
-
-		if(pSignalString){
-			ofLogVerbose("ofSignalHandler") << pSignalString;
-		}else{
-			ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
-		}
-
-		signal(SIGTERM, nullptr);
-		signal(SIGQUIT, nullptr);
-		signal(SIGINT,  nullptr);
-		signal(SIGHUP,  nullptr);
-		signal(SIGABRT, nullptr);
-
-		if(mainLoop()){
-			mainLoop()->shouldClose(signum);
-		}
-	}
-#endif
 
 void ofInit(){
 	if(initialized()) return;
@@ -93,6 +109,8 @@ void ofInit(){
 	signal(SIGABRT, &ofSignalHandler);  // abort signal
 #endif
 
+        of::priv::initutils();
+
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeBeginPeriod(1);		// ! experimental, sets high res time
 								// you need to call timeEndPeriod.
@@ -104,19 +122,17 @@ void ofInit(){
 								// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
 	#endif
 
-	ofSeedRandom();
-	ofResetElapsedTimeCounter();
-	ofSetWorkingDirectoryToDefault();
-
 #ifdef TARGET_LINUX
 	if(std::locale().name() == "C"){
 		try{
 			std::locale::global(std::locale("C.UTF-8"));
 		}catch(...){
-			ofLogWarning("ofInit") << "Couldn't set UTF-8 locale, string manipulation functions\n"
-					"won't work correctly for non ansi characters unless you specify a UTF-8 locale\n"
-					"manually using std::locale::global(std::locale(\"locale\"))\n"
-					"available locales can be queried with 'locale -a' in a terminal.";
+			if(ofToLower(std::locale("").name()).find("utf-8")==std::string::npos){
+				ofLogWarning("ofInit") << "Couldn't set UTF-8 locale, string manipulation functions\n"
+						"won't work correctly for non ansi characters unless you specify a UTF-8 locale\n"
+						"manually using std::locale::global(std::locale(\"locale\"))\n"
+						"available locales can be queried with 'locale -a' in a terminal.";
+			}
 		}
 	}
 #endif
@@ -229,6 +245,8 @@ void ofExitCallback(){
 	// static deinitialization happens after this finishes
 	// every object should have ended by now and won't receive any
 	// events
+
+        of::priv::endutils();
 
 	initialized() = false;
 }

@@ -8,7 +8,7 @@
 # use "make glew.lib" to build only the lib without demos/tests
 # the OPT flag is used for CFLAGS (& LDFLAGS I think?)
 
-FORMULA_TYPES=( "osx" "vs" "win_cb" )
+FORMULA_TYPES=( "osx" "vs" "msys2" )
 
 # define the version
 VER=1.11.0
@@ -58,7 +58,7 @@ function build() {
 		vs-build "glew_static.vcxproj" Build "Release|x64"
 		#mv lib/Release/x64/glew32s.lib glew64s.lib
 		cd ../../
-	elif [ "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "msys2" ] ; then
 		make clean
 		make
 	fi
@@ -85,7 +85,7 @@ function copy() {
 		cp -v lib/Release/x64/glew32s.lib $1/lib/$TYPE/x64
 		cp -v lib/Release/Win32/glew32s.lib $1/lib/$TYPE/Win32
 
-	elif [ "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "msys2" ] ; then
 		# TODO: add cb formula
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/libglew32.a $1/lib/$TYPE

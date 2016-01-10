@@ -35,7 +35,7 @@ void CircleApp::draw() {
     int p = 0;
     
 	ofSetColor(ofColor::red);
-    ofCircle(x, y, r);
+    ofDrawCircle(x, y, r);
     
     x = ofGetWidth()  * 0.2;
     y = ofGetHeight() * 0.11;

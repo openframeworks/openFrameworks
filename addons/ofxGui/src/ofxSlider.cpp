@@ -104,29 +104,27 @@ bool ofxSlider<Type>::mouseReleased(ofMouseEventArgs & args){
 }
 
 template<typename Type>
-bool ofxSlider<Type>::mouseScrolled(ofMouseEventArgs & args){
-	if(mouseInside){
-		if(args.y>0 || args.y<0){
-			double range = value.getMax() - value.getMin();
-			range /= b.width*4;
-			Type newValue = value + ofMap(args.y,-1,1,-range, range);
-			newValue = ofClamp(newValue,value.getMin(),value.getMax());
-			value = newValue;
-		}
-		return true;
-	}else{
-		return false;
-	}
+typename std::enable_if<std::is_integral<Type>::value, Type>::type
+getRange(Type min, Type max, float width){
+	double range = max - min;
+	range /= width*4;
+	return std::max(range,1.0);
 }
 
-template<>
-bool ofxSlider<int>::mouseScrolled(ofMouseEventArgs & args){
+template<typename Type>
+typename std::enable_if<std::is_floating_point<Type>::value, Type>::type
+getRange(Type min, Type max, float width){
+	double range = max - min;
+	range /= width*4;
+	return range;
+}
+
+template<typename Type>
+bool ofxSlider<Type>::mouseScrolled(ofMouseEventArgs & args){
 	if(mouseInside){
-		if(args.y>0 || args.y<0){
-			double range = value.getMax() - value.getMin();
-			range /= b.width*4;
-			range = max(range, 1.0);
-			int newValue = value + ofMap(args.y,-1,1,-range, range);
+		if(args.scrollY>0 || args.scrollY<0){
+			double range = getRange(value.getMin(),value.getMax(),b.width);
+			Type newValue = value + ofMap(args.scrollY,-1,1,-range, range);
 			newValue = ofClamp(newValue,value.getMin(),value.getMax());
 			value = newValue;
 		}
@@ -239,11 +237,13 @@ void ofxSlider<Type>::valueChanged(Type & value){
     setNeedsRedraw();
 }
 
-template class ofxSlider<int>;
-template class ofxSlider<unsigned int>;
+template class ofxSlider<int8_t>;
+template class ofxSlider<uint8_t>;
+template class ofxSlider<int16_t>;
+template class ofxSlider<uint16_t>;
+template class ofxSlider<int32_t>;
+template class ofxSlider<uint32_t>;
+template class ofxSlider<int64_t>;
+template class ofxSlider<uint64_t>;
 template class ofxSlider<float>;
 template class ofxSlider<double>;
-template class ofxSlider<signed char>;
-template class ofxSlider<unsigned char>;
-template class ofxSlider<unsigned short>;
-template class ofxSlider<short>;

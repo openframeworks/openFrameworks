@@ -65,9 +65,6 @@ bool ofVideoGrabber::setup(int w, int h, bool setUseTexture){
 				ofPixels plane = grabber->getPixels().getPlane(i);
 				tex.push_back(ofTexture());
 				tex[i].allocate(plane);
-				if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
-					tex[i].setRGToRGBASwizzles(true);
-				}
 			}
 		}
 	}
@@ -231,9 +228,6 @@ void ofVideoGrabber::update(){
 				bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glInternalFormat != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
 				if(bDiffPixFormat || !tex[i].isAllocated() ){
 					tex[i].allocate(plane);
-					if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
-						tex[i].setRGToRGBASwizzles(true);
-					}
 				}else{
 					tex[i].loadData(plane);
 				}
@@ -247,7 +241,7 @@ void ofVideoGrabber::close(){
 	if(grabber){
 		grabber->close();
 	}
-	if(!grabber->getTexturePtr()) tex.clear();
+	tex.clear();
 }
 
 //--------------------------------------------------------------------

@@ -61,6 +61,7 @@
 typedef int socklen_t;
 
 
+namespace osc{
 static void SockaddrFromIpEndpointName( struct sockaddr_in& sockAddr, const IpEndpointName& endpoint )
 {
     std::memset( (char *)&sockAddr, 0, sizeof(sockAddr ) );
@@ -447,12 +448,8 @@ public:
 			timerQueue_.push_back( std::make_pair( currentTimeMs + i->initialDelayMs, *i ) );
 		std::sort( timerQueue_.begin(), timerQueue_.end(), CompareScheduledTimerCalls );
 
-            unsigned long maxSize = UdpSocket::GetUdpBufferSize();
-            if( maxSize == 0 ) {
-                maxSize = 4098;
-            }
-            const unsigned long MAX_BUFFER_SIZE = maxSize;
-            char * data = new char[ MAX_BUFFER_SIZE ];
+		const int MAX_BUFFER_SIZE = 4098;
+		char *data = new char[ MAX_BUFFER_SIZE ];
 		IpEndpointName remoteEndpoint;
 
 		while( !break_ ){
@@ -591,3 +588,4 @@ void SocketReceiveMultiplexer::AsynchronousBreak()
 	impl_->AsynchronousBreak();
 }
 
+}
