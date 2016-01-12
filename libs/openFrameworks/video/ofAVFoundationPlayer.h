@@ -11,6 +11,11 @@
 #include "ofTexture.h"
 #include "ofThread.h"
 
+#ifdef TARGET_OSX
+#include "ofFbo.h"
+#include "ofGraphics.h"
+#endif
+
 #ifdef __OBJC__
 #import "ofAVFoundationVideoPlayer.h"
 #endif
@@ -118,6 +123,8 @@ protected:
 #ifdef TARGET_OSX
 	CVOpenGLTextureCacheRef _videoTextureCache = nullptr;
 	CVOpenGLTextureRef _videoTextureRef = nullptr;
+
+	ofFbo videoFboRectangle2D;
 #endif
 };
 
