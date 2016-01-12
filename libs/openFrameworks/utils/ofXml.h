@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "ofConstants.h"
@@ -25,7 +24,7 @@
 #include <Poco/DOM/Text.h>
 #include <Poco/DOM/NodeIterator.h>
 #include <Poco/DOM/NodeFilter.h>
-#include <Poco/DOM/NamedNodeMap.h>  
+#include <Poco/DOM/NamedNodeMap.h>
 #include <Poco/DOM/ChildNodesList.h>
 
 class ofXml: public ofBaseFileSerializer {
@@ -101,16 +100,13 @@ public:
     //////////////////////////////////////////////////////////////////
     
     // a pretty useful tokenization system:
-    static vector<string> tokenize(const string & str, const string & delim)
-    {
+    static vector<string> tokenize(const string & str, const string & delim){
         vector<string> tokens;
-        
+
         size_t p0 = 0, p1 = string::npos;
-        while(p0 != string::npos)
-        {
+        while(p0 != string::npos){
             p1 = str.find_first_of(delim, p0);
-            if(p1 != p0)
-            {
+            if(p1 != p0){
                 string token = str.substr(p0, p1 - p0);
                 tokens.push_back(token);
             }
@@ -120,109 +116,98 @@ public:
     }
     
     // templated to be anything
-    template <class T> bool addValue(const string& path, T data=T(), bool createEntirePath = false)
-    {
+    template <class T> bool addValue(const string& path, T data=T(), bool createEntirePath = false){
         string value = ofToString(data);
         vector<string> tokens;
         
-        if(path.find('/') != string::npos) {
+        if(path.find('/') != string::npos){
             tokens = tokenize(path, "/");
         }
-        
+
         // is this a tokenized tag?
-        if(tokens.size() > 1)
-        {
+        if(tokens.size() > 1){
             // don't 'push' down into the new nodes
             Poco::XML::Element* firstElement=nullptr, *lastElement=nullptr;
-            if(element) {
+            if(element){
                 lastElement = element;
             }
-            
-            if(!firstElement) {
+
+            if(!firstElement){
                 firstElement = lastElement;
             }
             
-			for(std::size_t i = 0; i < tokens.size(); i++)
-            {
+			for(std::size_t i = 0; i < tokens.size(); i++){
                 Poco::XML::Element* newElement = getPocoDocument()->createElement(tokens.at(i));
-                
+
                 //ofLogVerbose("ofxXml") << "addValue(): creating " << newElement->nodeName();
-                
-                if(lastElement) {
+
+                if(lastElement){
                     lastElement->appendChild(newElement);
                 }
-                
+
                 lastElement = newElement;
             }
             
-            if(value != "")
-            {
-                
+            if(value != ""){
                 Poco::XML::Text *text = getPocoDocument()->createTextNode(value);
                 try {
-                    
                     lastElement->appendChild( text );
-                    
-                } catch ( Poco::XML::DOMException &e ) {
+                } catch ( Poco::XML::DOMException &e ){
                     ofLogError("ofxXml") << "addValue(): couldn't set node value: " << DOMErrorMessage(e.code());
                     return false;
                 }
             }
-            
-            if(!element) {
+
+            if(!element){
                 element = firstElement;
                 document->appendChild(element);
             }
             
             return true;
             
-        } else {
-            
+        }else{
             Poco::XML::Element *newElement = getPocoDocument()->createElement(path);
-            
-            if(value != "") {
-                
+
+            if(value != ""){
                 Poco::XML::Text *text = getPocoDocument()->createTextNode(value);
                 try {
                     newElement->appendChild(text);
                     text->release();
                     
-                } catch ( Poco::XML::DOMException &e ) {
+                } catch ( Poco::XML::DOMException &e ){
                     ofLogError("ofxXml") << "addValue(): couldn't set node value: " << DOMErrorMessage(e.code());
                     return false;
                 }
             }
             
-            if(element) {
+            if(element){
                 element->appendChild(newElement);
-            } else {
+            }else{
                 element = newElement;
             }
-            
         }
         return true;
     }
 
     
     // templated to be anything
-    template <class T> T getValue(const string& path, T returnVal=T()) const
-    {
+    template <class T> T getValue(const string& path, T returnVal=T()) const{
     	if(element){
 			if(path == ""){
 				if(element->firstChild() && element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
 					return ofFromString<T>(element->innerText());
-				} else {
+				}else{
 					ofLogWarning("ofXml") << "getValue(): path \"" << path<< "\" not found when getting value";
 					return returnVal; // hmm. this could be a problem
 				}
-			} else {
+			}else{
 				Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
-				if(e) {
+				if(e){
 					return ofFromString<T>(e->innerText());
 				}
 			}
     	}
-        
+
         return T();
     }
     
@@ -232,16 +217,15 @@ public:
     Poco::XML::Element*        getPocoElement(const string& path);
     const Poco::XML::Element*  getPocoElement() const;
     const Poco::XML::Element*  getPocoElement(const string& path) const;
-    
+
     Poco::XML::Document*       getPocoDocument();
     const Poco::XML::Document* getPocoDocument() const;
 
-       
+
 protected:
     void releaseAll();
     string DOMErrorMessage(short msg);
 
     Poco::XML::Document *document;
     Poco::XML::Element *element;
-    
 };
