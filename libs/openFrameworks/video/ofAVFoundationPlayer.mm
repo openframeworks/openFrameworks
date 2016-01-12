@@ -30,6 +30,10 @@ ofAVFoundationPlayer& ofAVFoundationPlayer::operator=(ofAVFoundationPlayer other
 	// clear pixels
 	pixels.clear();
 	videoTexture.clear();
+
+#ifdef TARGET_OSX
+	videoFboRectangle2D.clear();
+#endif
 	
 	// get rid of the textures
 	killTextureCache();
@@ -140,6 +144,10 @@ void ofAVFoundationPlayer::disposePlayer() {
 		// clear pixels
 		pixels.clear();
 		videoTexture.clear();
+
+#ifdef TARGET_OSX
+		videoFboRectangle2D.clear();
+#endif
 		
 		// dispose videoplayer
 		__block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
@@ -362,18 +370,39 @@ ofPixels & ofAVFoundationPlayer::getPixels() {
 //--------------------------------------------------------------
 ofTexture * ofAVFoundationPlayer::getTexturePtr() {
     
-    if(isLoaded() == false) {		
+    if(isLoaded() == false) {
+
+#ifdef TARGET_OSX
+		// return FBO texture if we're not using ARB.
+		if(!ofGetUsingArbTex()) {
+			return &videoFboRectangle2D.getTexture();
+		}
+#endif
+
         return &videoTexture;
     }
     
     if(bUpdateTexture == false) {
+
+#ifdef TARGET_OSX
+		if(!ofGetUsingArbTex()) {
+			return &videoFboRectangle2D.getTexture();
+		}
+#endif
+
         return &videoTexture;
     }
     
     initTextureCache();
     
     bUpdateTexture = false;
-    
+
+#ifdef TARGET_OSX
+	if(!ofGetUsingArbTex()) {
+		return &videoFboRectangle2D.getTexture();
+	}
+#endif
+
     return &videoTexture;
 }
 
@@ -401,21 +430,42 @@ void ofAVFoundationPlayer::initTextureCache() {
      *  which is unecessary in this case because the texture already exists.
      *  so... we can use ofTexture::setUseExternalTextureID() to get around this.
      */
-    
+
     int videoTextureW = getWidth();
     int videoTextureH = getHeight();
+
+#ifdef TARGET_OF_IOS
+
     videoTexture.allocate(videoTextureW, videoTextureH, GL_RGBA);
-    
-    ofTextureData & texData = videoTexture.getTextureData();
-    texData.tex_t = 1.0f; // these values need to be reset to 1.0 to work properly.
-    texData.tex_u = 1.0f; // assuming this is something to do with the way ios creates the texture cache.
+
+#endif
+
+#ifdef TARGET_OSX
+
+	// always use ARB texture.
+	videoTexture.allocate(videoTextureW, videoTextureH, GL_RGBA, true);
+
+	if(!ofGetUsingArbTex()) {
+		ofFbo::Settings fboSettings;
+		fboSettings.width = videoTextureW;
+		fboSettings.height = videoTextureH;
+		fboSettings.internalformat = GL_RGBA;
+		fboSettings.textureTarget = GL_TEXTURE_2D;
+		videoFboRectangle2D.allocate(fboSettings);
+	}
+
+#endif
 
     CVReturn err;
     unsigned int textureCacheID;
     
 #ifdef TARGET_OF_IOS
     
-    /**
+	ofTextureData & texData = videoTexture.getTextureData();
+	texData.tex_t = 1.0f; // these values need to be reset to 1.0 to work properly.
+	texData.tex_u = 1.0f; // assuming this is something to do with the way ios creates the texture cache.
+
+	/**
      *  create video texture from video image.
      *  inside this function, ios is creating the texture for us.
      *  a video texture reference is returned.
@@ -445,8 +495,8 @@ void ofAVFoundationPlayer::initTextureCache() {
                                                      nullptr,
                                                      &_videoTextureRef);
 
-    textureCacheID = CVOpenGLTextureGetName(_videoTextureRef);
-    
+	textureCacheID = CVOpenGLTextureGetName(_videoTextureRef);
+
 #endif
     
     videoTexture.setUseExternalTextureID(textureCacheID);
@@ -481,7 +531,18 @@ void ofAVFoundationPlayer::initTextureCache() {
         CVOpenGLTextureRelease(_videoTextureRef);
         _videoTextureRef = nullptr;
     }
-    
+
+	// shared texture is always ARB, so draw into an FBO if we need RECTANGLE_2D
+	if(!ofGetUsingArbTex()) {
+		videoFboRectangle2D.begin();
+		ofPushStyle();
+		ofSetRectMode(OF_RECTMODE_CORNER);
+		ofSetColor(255, 255, 255);
+		videoTexture.draw(0, 0);
+		ofPopStyle();
+		videoFboRectangle2D.end();
+	}
+
 #endif
 }
 
