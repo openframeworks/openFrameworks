@@ -155,10 +155,7 @@ void ofSerial::buildDeviceList(){
 
 	#ifdef TARGET_LINUX
 
-		#ifdef TARGET_RASPBERRY_PI
-			prefixMatch.push_back("ttyACM");
-		#endif
-
+		prefixMatch.push_back("ttyACM");
 		prefixMatch.push_back("ttyS");
 		prefixMatch.push_back("ttyUSB");
 		prefixMatch.push_back("rfc");
