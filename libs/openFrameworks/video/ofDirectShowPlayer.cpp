@@ -729,7 +729,10 @@ class DirectShowVideo : public ISampleGrabberCB{
             if( volPct < 0 ) volPct = 0.0;
             if( volPct > 1 ) volPct = 1.0; 
 
-            long vol = log10(volPct) * 4000.0; 
+            long vol = log10(volPct) * 4000.0;
+            if(vol < -8000){
+                vol = -10000;
+            }
             m_pAudio->put_Volume(vol);
         }
     }
