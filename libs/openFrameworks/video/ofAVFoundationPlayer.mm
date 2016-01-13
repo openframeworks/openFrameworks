@@ -8,6 +8,10 @@
 #import "ofAVFoundationPlayer.h"
 #import "ofAVFoundationVideoPlayer.h"
 
+#ifdef TARGET_OSX
+	#include "ofTexture.h"
+#endif
+
 //--------------------------------------------------------------
 ofAVFoundationPlayer::ofAVFoundationPlayer() {
     videoPlayer = nullptr;
@@ -17,6 +21,7 @@ ofAVFoundationPlayer::ofAVFoundationPlayer() {
     bResetPixels = false;
     bUpdatePixels = false;
     bUpdateTexture = false;
+	bUseTextureCache = true;
 }
 
 //--------------------------------------------------------------
@@ -38,6 +43,7 @@ ofAVFoundationPlayer& ofAVFoundationPlayer::operator=(ofAVFoundationPlayer other
 	bResetPixels = false;
 	bUpdatePixels = false;
 	bUpdateTexture = false;
+	bUseTextureCache = true;
 	
 	std::swap(videoPlayer, other.videoPlayer);
 	return *this;
@@ -55,6 +61,10 @@ bool ofAVFoundationPlayer::load(string name) {
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
+	if( ofGetUsingArbTex() == false ){
+        killTextureCache();
+		bUseTextureCache = false;
+    }
 	
 	NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
 	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
@@ -92,9 +102,8 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 	pixels.clear();
 	videoTexture.clear();
 	
-    bool bCreateTextureCache = true;
-    bCreateTextureCache = bCreateTextureCache && (_videoTextureCache == nullptr);
-    
+    bool bCreateTextureCache = bUseTextureCache && (_videoTextureCache == nullptr);
+	
     if(bCreateTextureCache == true) {
 
         CVReturn err;
@@ -161,6 +170,7 @@ void ofAVFoundationPlayer::disposePlayer() {
 	bResetPixels = false;
 	bUpdatePixels = false;
 	bUpdateTexture = false;
+	bUseTextureCache = true;
 }
 
 //--------------------------------------------------------------
@@ -177,6 +187,7 @@ void ofAVFoundationPlayer::close() {
     bResetPixels = false;
     bUpdatePixels = false;
     bUpdateTexture = false;
+	bUseTextureCache = true;
 }
 
 //--------------------------------------------------------------
@@ -361,7 +372,11 @@ ofPixels & ofAVFoundationPlayer::getPixels() {
 
 //--------------------------------------------------------------
 ofTexture * ofAVFoundationPlayer::getTexturePtr() {
-    
+	
+	if( bUseTextureCache == false ){
+		return NULL;
+	}
+	
     if(isLoaded() == false) {		
         return &videoTexture;
     }
@@ -379,7 +394,11 @@ ofTexture * ofAVFoundationPlayer::getTexturePtr() {
 
 //-------------------------------------------------------------- texture cache
 void ofAVFoundationPlayer::initTextureCache() {
-
+	//just in case - we return here if we shouldn't be using a texture cache 
+	if( bUseTextureCache == false ){
+		return;
+	}
+	
     CVImageBufferRef imageBuffer = [videoPlayer getCurrentFrame];
     if(imageBuffer == nil) {
         return;
