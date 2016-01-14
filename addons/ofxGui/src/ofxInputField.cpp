@@ -206,7 +206,6 @@ void ofxInputField<Type>::unregisterKeyEvents(){
 template<typename Type>
 bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
     if(bGuiActive && !bMousePressed){
-        ofLogNotice("ofxInputField::keyPressed") << args.key;
 
         int newCursorIdx = -1;
         if(args.key >= '0' && args.key <= '9'){
@@ -278,8 +277,8 @@ int ofxInputField<Type>::insertKeystroke(const std::string & character){
 }
 
 template<typename Type>
-int ofxInputField<Type>::insertAlphabetic(const std::string & character){
-    return -1; //cursor or selection area stay the same
+int ofxInputField<Type>::insertAlphabetic(const std::string &){
+    return -1; //do nothing for numeric types, cursor/selection area stays the same
 }
 
 template<>

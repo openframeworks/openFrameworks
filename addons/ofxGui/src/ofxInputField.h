@@ -11,6 +11,7 @@ public:
     ofxInputField & setup(ofParameter<Type> _val, const Config & config);
     ofxInputField & setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
     ofxInputField & setup(const std::string& _name, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
+    //TODO the setup non-ofParameter setup is a pain for the Type string (because of the forced min and max)
 
     void setMin(Type min);
     Type getMin();
