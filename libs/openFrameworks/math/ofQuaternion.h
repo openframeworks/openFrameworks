@@ -184,8 +184,6 @@ public:
     /// \}
 };
 
-
-
 // ----------------------------------------------------------------
 // IMPLEMENTATION
 // ----------------------------------------------------------------
@@ -195,26 +193,6 @@ public:
 //----------------------------------------
 ofQuaternion::ofQuaternion() {
     _v.set(0, 0, 0, 1);
-}
-
-
-//----------------------------------------
-ostream& operator<<(ostream& os, const ofQuaternion &q) {
-    os << q._v.x << ", " << q._v.y << ", " << q._v.z << ", " << q._v.w;
-    return os;
-}
-
-
-//----------------------------------------
-istream& operator>>(istream& is, ofQuaternion &q) {
-    is >> q._v.x;
-    is.ignore(2);
-    is >> q._v.y;
-    is.ignore(2);
-    is >> q._v.z;
-    is.ignore(2);
-    is >> q._v.w;
-    return is;
 }
 
 
