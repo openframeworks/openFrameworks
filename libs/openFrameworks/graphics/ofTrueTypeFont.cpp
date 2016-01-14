@@ -1100,7 +1100,11 @@ float ofTrueTypeFont::stringWidth(const std::string& c) const{
 
 //-----------------------------------------------------------
 ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, float y, bool vflip) const{
-	ofMesh mesh = getStringMesh(c,x,y,vflip);
+    if(c.empty()){
+        return ofRectangle(x,y,0,0);
+    }
+
+    ofMesh mesh = getStringMesh(c,x,y,vflip);
 	ofRectangle bb(std::numeric_limits<float>::max(),std::numeric_limits<float>::max(),0,0);
 	float maxX = std::numeric_limits<float>::min();
 	float maxY = std::numeric_limits<float>::min();
