@@ -121,6 +121,7 @@ typedef enum _playerLoopType{
 - (void)seekToTime:(CMTime)time withTolerance:(CMTime)tolerance;
 
 - (BOOL)isReady;
+- (BOOL)isLoaded;
 - (BOOL)isPlaying;
 - (BOOL)isNewFrame;
 - (BOOL)isFinished;

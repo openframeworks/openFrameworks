@@ -1213,6 +1213,10 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	return bReady;
 }
 
+- (BOOL)isLoaded {
+	return bLoaded;
+}
+
 - (BOOL)isPlaying {
 	return bPlaying;
 }
