@@ -115,7 +115,9 @@ static const void *PlayerRateContext = &ItemStatusContext;
 //---------------------------------------------------------- cleanup / dispose.
 - (void)dealloc
 {
-	[self unloadVideo];
+	if (_player != nil){
+		[self unloadVideo];
+	}
 	
 	[asyncLock lock];
 	
