@@ -138,6 +138,10 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
         }
     }
 	
+	if( bAsync == false ){
+		pixels.allocate(getWidth(), getHeight(), getPixelFormat());
+	}
+	
     return bLoaded;
 }
 
@@ -298,7 +302,7 @@ const ofPixels & ofAVFoundationPlayer::getPixels() const {
 }
 
 ofPixels & ofAVFoundationPlayer::getPixels() {
-    if(isLoaded() == false || isReady() == false) {
+    if(isLoaded() == false || pixels.size() == 0) {
         ofLogError("ofAVFoundationPlayer") << "getPixels(): Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixels.";
         return pixels;
     }
