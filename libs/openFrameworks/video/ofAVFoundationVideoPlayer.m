@@ -44,9 +44,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		deallocCond = nil;
 		
 #if USE_VIDEO_OUTPUT
-		// create videooutput queue
-		_myVideoOutputQueue = dispatch_queue_create(NULL, NULL);
-		
 		// create videooutput
 		_videoOutput = nil;
 		_videoInfo = nil;
@@ -107,7 +104,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	}
 	
 	self.videoOutput.suppressesPlayerRendering = YES;
-	[self.videoOutput setDelegate:self queue:_myVideoOutputQueue];
 }
 #endif
 
@@ -120,10 +116,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	}
 	
 	[asyncLock lock];
-	
-#if USE_VIDEO_OUTPUT
-	dispatch_release(_myVideoOutputQueue);
-#endif
 	
 	[asyncLock unlock];
 	
@@ -501,7 +493,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				
 #if USE_VIDEO_OUTPUT
 				// remove output
-				[currentVideoOutput setDelegate:nil queue:nil];
 				[currentItem removeOutput:currentVideoOutput];
 				
 				// release videouOutput
@@ -581,14 +572,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	[asyncLock lock];
 	[self unloadVideoAsync];
 	[asyncLock unlock];
-}
-
-
-#pragma mark - AVPlayerItemOutputPullDelegate
-
-- (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender
-{
-	NSLog(@"outputMediaDataWillChange");
 }
 
 
