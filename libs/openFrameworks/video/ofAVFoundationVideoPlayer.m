@@ -501,6 +501,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				
 #if USE_VIDEO_OUTPUT
 				// remove output
+				[currentVideoOutput setDelegate:nil queue:nil];
 				[currentItem removeOutput:currentVideoOutput];
 				
 				// release videouOutput
