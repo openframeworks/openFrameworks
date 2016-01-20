@@ -527,7 +527,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 				if (currentTimeObserver != nil) {
 					[currentPlayer removeTimeObserver:currentTimeObserver];
-					[currentTimeObserver release];
+					[currentTimeObserver autorelease];
 					currentTimeObserver = nil;
 				}
 				
