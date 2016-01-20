@@ -460,6 +460,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			if (currentReader != nil) {
 				[currentReader cancelReading];
 				[currentReader autorelease];
+				currentReader = nil;
 				
 				if (currentVideoTrack != nil) {
 					[currentVideoTrack autorelease];
