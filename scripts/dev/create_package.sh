@@ -141,8 +141,10 @@ function createProjectFiles {
     elif [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
         for example_group in $pkg_ofroot/examples/*; do
             for example in $example_group/*; do
-                cp $pkg_ofroot/scripts/templates/linux/Makefile $example/
-                cp $pkg_ofroot/scripts/templates/linux/config.make $example/
+                if [ -d example ]; then
+                    cp $pkg_ofroot/scripts/templates/linux/Makefile $example/
+                    cp $pkg_ofroot/scripts/templates/linux/config.make $example/
+                fi
             done
         done
     fi
