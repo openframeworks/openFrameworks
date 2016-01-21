@@ -360,13 +360,9 @@ void ofGLRenderer::draw(const ofTexture & tex, float x, float y, float z, float 
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{
 	if(video.isInitialized() && video.isUsingTexture()){
-		if( video.getTexture().isAllocated() ){
-			const_cast<ofGLRenderer*>(this)->bind(video);
-			draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,video.getWidth(),video.getHeight(),isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
-			const_cast<ofGLRenderer*>(this)->unbind(video);
-		}else{
-			ofLogWarning("ofGLRenderer") << "draw(): texture is not allocated";
-		}
+		const_cast<ofGLRenderer*>(this)->bind(video);
+		draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,video.getWidth(),video.getHeight(),isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
+		const_cast<ofGLRenderer*>(this)->unbind(video);
 	}
 }
 
