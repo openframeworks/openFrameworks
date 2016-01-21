@@ -138,6 +138,10 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
         }
     }
 	
+	if( bAsync == false ){
+		pixels.allocate(getWidth(), getHeight(), getPixelFormat());
+	}
+	
     return bLoaded;
 }
 
@@ -221,7 +225,7 @@ void ofAVFoundationPlayer::update() {
     
     bFrameNew = false; // default.
     
-    if(!isLoaded()) {
+    if(!isLoaded() || !isReady()) {
         return;
     }
     
@@ -254,8 +258,14 @@ void ofAVFoundationPlayer::draw(const ofRectangle & rect) {
 }
 
 void ofAVFoundationPlayer::draw(float x, float y, float w, float h) {
-    if(isLoaded()) {
-        getTexturePtr()->draw(x, y, w, h);
+    if(isLoaded() && isReady()) {
+	
+		ofTexture * texturePtr = getTexturePtr();
+		if( texturePtr != NULL ){
+			if( texturePtr->isAllocated() ){
+				texturePtr->draw(x, y, w, h);
+			}
+		}
     }
 }
 
@@ -292,7 +302,7 @@ const ofPixels & ofAVFoundationPlayer::getPixels() const {
 }
 
 ofPixels & ofAVFoundationPlayer::getPixels() {
-    if(isLoaded() == false) {
+    if(isLoaded() == false || pixels.size() == 0) {
         ofLogError("ofAVFoundationPlayer") << "getPixels(): Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixels.";
         return pixels;
     }
@@ -377,7 +387,7 @@ ofTexture * ofAVFoundationPlayer::getTexturePtr() {
 		return NULL;
 	}
 	
-    if(isLoaded() == false) {		
+    if(isLoaded() == false || isReady() == false) {
         return &videoTexture;
     }
     
@@ -567,6 +577,15 @@ bool ofAVFoundationPlayer::isPaused() const {
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::isLoaded() const {
+    if(videoPlayer == nullptr) {
+        return false;
+    }
+    
+    return [videoPlayer isLoaded];
+}
+
+//--------------------------------------------------------------
+bool ofAVFoundationPlayer::isReady() const {
     if(videoPlayer == nullptr) {
         return false;
     }
