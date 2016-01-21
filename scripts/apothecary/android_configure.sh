@@ -1,7 +1,11 @@
 export ABI=$1
+if [ "$(uname)" == "Darwin" ]; then
+    export HOST_PLATFORM=darwin-x86_64
+else
+    export HOST_PLATFORM=linux-x86_64
+fi
 export LIBSPATH=android/$ABI
 export NDK_PLATFORM=$ANDROID_PLATFORM
-export HOST_PLATFORM=linux-x86_64
 export TOOLCHAIN_VERSION=4.9
 if [ $ABI = armeabi-v7a ] || [ $ABI = armeabi ]; then
     export SYSROOT=${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm

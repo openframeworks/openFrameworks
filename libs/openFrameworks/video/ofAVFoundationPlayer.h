@@ -105,6 +105,7 @@ protected:
     bool bResetPixels;
     bool bUpdatePixels;
     bool bUpdateTexture;
+	bool bUseTextureCache;
 	
     ofPixels pixels;
 	ofPixelFormat pixelFormat;
