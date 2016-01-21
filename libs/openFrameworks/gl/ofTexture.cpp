@@ -960,6 +960,11 @@ void ofTexture::disableMipmap(){
 }
 
 //------------------------------------
+bool ofTexture::hasMipmap() const{
+	return texData.hasMipmap;
+}
+
+//------------------------------------
 void ofTexture::draw(float x, float y) const{
 	draw(x,y,0,getWidth(),getHeight());
 }
