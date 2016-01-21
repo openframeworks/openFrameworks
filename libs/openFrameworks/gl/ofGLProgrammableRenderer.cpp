@@ -410,13 +410,9 @@ void ofGLProgrammableRenderer::draw(const ofBaseVideoDraws & video, float x, flo
 	if(!video.isInitialized() || !video.isUsingTexture() || video.getTexturePlanes().empty()){
 		return;
 	}
-	if( video.getTexture().isAllocated() ){
-		const_cast<ofGLProgrammableRenderer*>(this)->bind(video);
-		draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,video.getWidth(),video.getHeight(),isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
-		const_cast<ofGLProgrammableRenderer*>(this)->unbind(video);
-	}else{
-		ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
-	}
+	const_cast<ofGLProgrammableRenderer*>(this)->bind(video);
+	draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,video.getWidth(),video.getHeight(),isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
+	const_cast<ofGLProgrammableRenderer*>(this)->unbind(video);
 }
 
 //----------------------------------------------------------
