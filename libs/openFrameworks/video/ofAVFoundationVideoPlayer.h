@@ -31,7 +31,7 @@ typedef enum _playerLoopType{
 
 
 //---------------------------------------------------------- video player.
-@interface ofAVFoundationVideoPlayer : NSObject <AVPlayerItemOutputPullDelegate> {
+@interface ofAVFoundationVideoPlayer : NSObject {
 	
     AVPlayer * _player;
 	AVAsset * _asset;
@@ -44,7 +44,6 @@ typedef enum _playerLoopType{
 	
 #if USE_VIDEO_OUTPUT
 	CMVideoFormatDescriptionRef _videoInfo;
-	dispatch_queue_t _myVideoOutputQueue;
 	AVPlayerItemVideoOutput * _videoOutput;
 #endif
 	
