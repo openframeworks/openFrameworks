@@ -403,9 +403,7 @@ void ofVideoPlayer::resetAnchor(){
 
 //------------------------------------
 void ofVideoPlayer::draw(float _x, float _y, float _w, float _h) const{
-	if( isUsingTexture() && getTexture().isAllocated() ){
-		ofGetCurrentRenderer()->draw(*this,_x,_y,_w,_h);
-	}
+	ofGetCurrentRenderer()->draw(*this,_x,_y,_w,_h);
 }
 
 //------------------------------------
