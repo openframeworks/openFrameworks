@@ -536,7 +536,7 @@ function createPackage {
     fi
     
     if [ "$platform" = "msys2" ]; then
-        cp docs/codeblocks.md INSTALL.md
+        cp docs/msys2.md INSTALL.md
     fi
     
     if [ "$platform" = "osx" ] || [ "$platform" = "ios" ]; then
