@@ -1,15 +1,14 @@
-#include "ofMain.h"
+#include "ofAppRunner.h"
 #include "ofApp.h"
 
-//========================================================================
-int main( ){
+int main(){
 	ofGLWindowSettings settings;
 	settings.setGLVersion(4,2);
-	ofCreateWindow(settings);
 
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-	ofRunApp(new ofApp());
+	auto window = ofCreateWindow(settings);
+	auto app = std::make_shared<ofApp>();
 
+	ofRunApp(window, app);
+
+	return ofRunMainLoop();
 }
