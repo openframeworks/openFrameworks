@@ -78,7 +78,9 @@ enum ofTargetPlatform{
 	#define TARGET_OPENGLES
 #elif defined(__ARMEL__)
 	#define TARGET_LINUX
-	#define TARGET_OPENGLES
+	#ifndef TARGET_OPENGL
+    	#define TARGET_OPENGLES
+    #endif
 	#define TARGET_LINUX_ARM
 #elif defined(__EMSCRIPTEN__)
 	#define TARGET_EMSCRIPTEN
@@ -161,27 +163,27 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_LINUX
 
-		#define GL_GLEXT_PROTOTYPES
-        #include <unistd.h>
+    #include <unistd.h>
 
-    #ifdef TARGET_LINUX_ARM
-    	#ifdef TARGET_RASPBERRY_PI
-        	#include "bcm_host.h"
-        #endif
-       
-		#include "GLES/gl.h"
-		#include "GLES/glext.h" 
-		#include "GLES2/gl2.h"
-		#include "GLES2/gl2ext.h"
-		
-		#define EGL_EGLEXT_PROTOTYPES
-		#include "EGL/egl.h"
-		#include "EGL/eglext.h"
-    #else // normal linux
+	#ifdef TARGET_RASPBERRY_PI
+    	#include "bcm_host.h"
+    #endif
+    
+    #if defined(TARGET_OPENGLES)
+	    #include "GLES/gl.h"
+	    #include "GLES/glext.h" 
+	    #include "GLES2/gl2.h"
+	    #include "GLES2/gl2ext.h"
+	
+	    #define EGL_EGLEXT_PROTOTYPES
+	    #include "EGL/egl.h"
+	    #include "EGL/eglext.h"
+	#else
+	    #define GL_GLEXT_PROTOTYPES
         #include <GL/glew.h>
         #include <GL/gl.h>
         #include <GL/glx.h>
-    #endif
+	#endif
 
     // for some reason, this isn't defined at compile time,
     // so this hack let's us work
