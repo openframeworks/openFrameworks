@@ -1,14 +1,15 @@
-      _             _             _              
-    / /\          / /\           / /\            
-   / /  \        / /  \         / /  \           
-  / / /\ \      / / /\ \       /_/ /\ \          
- / / /\ \ \    /_/ /\ \ \      \_\/\ \ \         
-/_/ /  \ \ \   \ \ \_\ \ \          \ \ \        
-\ \ \   \ \ \   \ \/__\ \ \          \ \ \       
- \ \ \   \ \ \   \_____\ \ \          \ \ \      
-  \ \ \___\ \ \   _     \ \ \   _    __\ \ \___  
-   \ \/____\ \ \ /\_\    \ \ \ /\_\ /___\_\/__/\ 
-    \_________\/ \/_/     \_\/ \/_/ \_________\/
+
+          _              _             _              
+        / /\           / /\           / /\            
+       / /  \         / /  \         / /  \           
+      / / /\ \       / / /\ \       /_/ /\ \          
+     / / /\ \ \     /_/ /\ \ \      \_\/\ \ \         
+    /_/ /  \ \ \    \ \ \_\ \ \          \ \ \        
+    \ \ \   \ \ \    \ \/__\ \ \          \ \ \       
+     \ \ \   \ \ \    \_____\ \ \          \ \ \      
+      \ \ \___\ \ \   _      \ \ \   _    __\ \ \___  
+       \ \/____\ \ \ /\_\     \ \ \ /\_\ /___\_\/__/\ 
+        \_________\/ \/_/      \_\/ \/_/ \_________\/
 
 OF 0.9.1
 ========
@@ -22,13 +23,13 @@ OF 0.9.1
 
 GENERAL
 -------
-/ fix ofToDataPath on empty string (#4563)
+    / fix ofToDataPath on empty string (#4563)
 
 CORE
 ----
 
 ### app
-/ fix 90 degree orientation in fullscreen (#4697)
+    / fix 90 degree orientation in fullscreen (#4697)
 
 ### 3d
 
@@ -37,10 +38,10 @@ CORE
 ### events
 
 ### gl
-/ fix copying and moving ofFbo, ofShader, ofTexture, ofVboMesh (#4555)
+    / fix copying and moving ofFbo, ofShader, ofTexture, ofVboMesh (#4555)
 
 ### graphics
-/ fix copying and moving ofImage, ofTrueTypeFont (#4555)
+    / fix copying and moving ofImage, ofTrueTypeFont (#4555)
 
 ### math
 
@@ -51,11 +52,11 @@ CORE
 ### types
 
 ### utils
-/ ofUtil: fix ofGetElapsedTimef being called every frame, now just called when needed (#4595)
-/ ofFileUtils: fix relative path calculation in ofToDataPath(#4564)
+    / ofUtil: fix ofGetElapsedTimef being called every frame, now just called when needed (#4595)
+    / ofFileUtils: fix relative path calculation in ofToDataPath(#4564)
 
 ### video
-/ fix crash when closing unused ofVideoGrabber (#4554)
+    / fix crash when closing unused ofVideoGrabber (#4554)
 
 PLATFORM SPECIFIC
 -----------------
@@ -67,14 +68,14 @@ PLATFORM SPECIFIC
 ### Android
 
 ### Linux (incl. ARM)
-/ fix compiling on Ubuntu, Linux Mint (#4550, #4546, #4543, #3687, #1902)
+    / fix compiling on Ubuntu, Linux Mint (#4550, #4546, #4543, #3687, #1902)
 
 ### Microsoft Windows
-/ fix getPixels() for directshow (#4716)
+    / fix getPixels() for directshow (#4716)
 
 ### OSX and iOS
-/ fix for retina fullscreen pixel density calculations (#4699)
-/ fix ofAVFoundationPlayer close-open issue (#4547)
+    / fix for retina fullscreen pixel density calculations (#4699)
+    / fix ofAVFoundationPlayer close-open issue (#4547)
 
 CORE ADDONS
 -----------
