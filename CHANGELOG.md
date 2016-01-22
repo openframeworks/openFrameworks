@@ -1,3 +1,109 @@
+      _          _           _              
+    / /\       / /\         / /\            
+   / /  \     / /  \       / /  \           
+  / / /\ \   / / /\ \     /_/ /\ \          
+ / / /\ \ \ /_/ /\ \ \    \_\/\ \ \         
+/_/ /  \ \ \\ \ \_\ \ \        \ \ \        
+\ \ \   \ \ \\ \/__\ \ \        \ \ \       
+ \ \ \   \ \ \\_____\ \ \        \ \ \      
+  \ \ \___\ \ \  _   \ \ \  _   __\ \ \___  
+   \ \/____\ \ \/\_\  \ \ \/\_\/___\_\/__/\ 
+    \_________\/\/_/   \_\/\/_/\_________\/ 
+
+OF 0.9.1
+========
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+GENERAL
+-------
+/ fix ofToDataPath on empty string (#4563)
+
+CORE
+----
+
+### app
+/ fix 90 degree orientation in fullscreen (#4697)
+
+### 3d
+
+### communication
+
+### events
+
+### gl
+/ fix copying and moving ofFbo, ofShader, ofTexture, ofVboMesh (#4555)
+
+### graphics
+/ fix copying and moving ofImage, ofTrueTypeFont (#4555)
+
+### math
+
+### projectGenerator
+
+### sound
+
+### types
+
+### utils
+/ ofUtil: fix ofGetElapsedTimef being called every frame, now just called when needed (#4595)
+/ ofFileUtils: fix relative path calculation in ofToDataPath(#4564)
+
+### video
+/ fix crash when closing unused ofVideoGrabber (#4554)
+
+PLATFORM SPECIFIC
+-----------------
+
+### Emscripten
+
+### ofxiOS
+
+### Android
+
+### Linux (incl. ARM)
+/ fix compiling on Ubuntu, Linux Mint (#4550, #4546, #4543, #3687, #1902)
+
+### Microsoft Windows
+/ fix getPixels() for directshow (#4716)
+
+### OSX and iOS
+/ fix for retina fullscreen pixel density calculations (#4699)
+/ fix ofAVFoundationPlayer close-open issue (#4547)
+
+CORE ADDONS
+-----------
+### ofx3DModelLoader
+
+### ofxAssimpModelLoader
+
+### ofxGui
+
+### ofxiOSVideoPlayer
+
+### ofxKinect
+
+### ofxNetwork
+
+### ofxOpenCV
+
+### ofxSynth
+
+### ofxTCPManager
+
+### ofxUDPManager
+
+### ofxMultiTouch
+
+
+PROJECT GENERATOR
+-----------------
+
 OF 0.9.0
 ========
 
