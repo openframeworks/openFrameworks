@@ -277,6 +277,18 @@ namespace priv{
 		static T max() { return std::numeric_limits<T>::max(); }
 	};
 
+	template<>
+	struct TypeInfo_<float, true> {
+		static float min() { return 0; }
+		static float max() { return 1; }
+	};
+
+	template<>
+	struct TypeInfo_<double, true> {
+		static float min() { return 0; }
+		static float max() { return 1; }
+	};
+
 	// Types without numeric_limits resolve to this template specialization:
 	template<typename T>
 	struct TypeInfo_<T, false> {
@@ -291,20 +303,20 @@ namespace priv{
 	// Here we provide some of our own specializations:
 	template<>
 	struct TypeInfo <ofVec2f> {
-		static ofVec2f min() { return ofVec2f(std::numeric_limits<float>::lowest()); };
-		static ofVec2f max() { return ofVec3f(std::numeric_limits<float>::max()); };
+		static ofVec2f min() { return ofVec2f(0); };
+		static ofVec2f max() { return ofVec2f(1); };
 	};
 
 	template<>
 	struct TypeInfo <ofVec3f> {
-		static ofVec3f min() { return ofVec3f(std::numeric_limits<float>::lowest()); };
-		static ofVec3f max() { return ofVec3f(std::numeric_limits<float>::max()); };
+		static ofVec3f min() { return ofVec3f(0); };
+		static ofVec3f max() { return ofVec3f(1); };
 	};
 
 	template<>
 	struct TypeInfo <ofVec4f> {
-		static ofVec4f min() { return ofVec4f(std::numeric_limits<float>::lowest()); };
-		static ofVec4f max() { return ofVec4f(std::numeric_limits<float>::max()); };
+		static ofVec4f min() { return ofVec4f(0); };
+		static ofVec4f max() { return ofVec4f(1); };
 	};
 
 	template<typename T>

@@ -94,6 +94,7 @@ protected:
 	
     bool loadPlayer(string name, bool bAsync);
 	void disposePlayer();
+    bool isReady() const;
 
 #ifdef __OBJC__
     ofAVFoundationVideoPlayer * videoPlayer;
@@ -105,6 +106,7 @@ protected:
     bool bResetPixels;
     bool bUpdatePixels;
     bool bUpdateTexture;
+	bool bUseTextureCache;
 	
     ofPixels pixels;
 	ofPixelFormat pixelFormat;
