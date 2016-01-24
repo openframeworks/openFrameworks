@@ -714,8 +714,7 @@ public:
 	/// \param points The array of ofVec2f to avarage over
 	/// \param num specifies the number of ofVec2f in the array.
 	/// \returns Vector that is the avarage of the points in the array
-	/// \raises std::invalid_argument if num is negative
-    ofVec2f&  average( const ofVec2f* points, int num );
+    ofVec2f&  average( const ofVec2f* points, std::size_t num );
     
     /// \}
 
@@ -1355,10 +1354,7 @@ inline ofVec2f& ofVec2f::middle( const ofVec2f& pnt ) {
 
 
 
-inline ofVec2f& ofVec2f::average( const ofVec2f* points, int num ) {
-	if (0 > num) {
-		throw std::invalid_argument("given size of array is smaller than 0");
-	}
+inline ofVec2f& ofVec2f::average( const ofVec2f* points, std::size_t num ) {
 	if (0 == num) {
 		return *this;
 	}
