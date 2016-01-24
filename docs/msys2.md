@@ -42,6 +42,8 @@ You can speed-up compilation using parallel build `make -j${NUMBER_OF_PROCESSORS
 
 Setting the PATH variable
 -------------------------
+*This is only necessary for OF 0.9.0. Later versions copy required dlls to the executable directory.*
+
 On MSYS2, openFrameworks needs the dlls that are provided by MSYS2 package manager `pacman`. The PATH variable tells the system where to look for these dlls. On Windows, the system starts to look into the executable folder, then into the folders defined in system PATH and finally into the folders defined in user PATH.
 
 You can find how to set the PATH in windows here: http://www.computerhope.com/issues/ch000549.htm
