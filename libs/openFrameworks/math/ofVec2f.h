@@ -1357,7 +1357,7 @@ inline ofVec2f& ofVec2f::middle( const ofVec2f& pnt ) {
 
 inline ofVec2f& ofVec2f::average( const ofVec2f* points, int num ) {
 	if (0 > num) {
-		throw std::invalid_argument;
+		throw std::invalid_argument("given size of array is smaller than 0");
 	}
 	if (0 == num) {
 		return *this;
