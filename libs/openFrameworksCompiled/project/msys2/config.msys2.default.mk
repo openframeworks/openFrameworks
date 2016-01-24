@@ -289,6 +289,20 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 #PLATFORM_CC=
 	
 afterplatform: $(TARGET_NAME)
+	
+	@cp $(MSYS2_ROOT)/bin/libwinpthread-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libwinpthread-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libgcc_s_dw2-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libstdc++-6.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libboost_filesystem-mt.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libboost_system-mt.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libcairo-2.dll bin/
+	@cp $(MSYS2_ROOT)/bin/LIBEAY32.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libfreeimage-3.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libfreetype-6.dll bin/
+	@cp $(MSYS2_ROOT)/bin/glew32.dll bin/
+	@cp $(MSYS2_ROOT)/bin/SSLEAY32.dll bin/
+	@if [ -d $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH) ]; then cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/; fi
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"
