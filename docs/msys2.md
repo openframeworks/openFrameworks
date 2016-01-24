@@ -30,7 +30,7 @@ Download and unzip the msys2 version of oF.
 Open an MSYS shell and install OF dependencies:
 
     cd your_oF_directory/scripts/msys2
-    ./install_dependencies.sh`
+    ./install_dependencies.sh
 	
 Open an **MINGW32** shell and compile oF libraries:
 
@@ -40,27 +40,6 @@ Open an **MINGW32** shell and compile oF libraries:
 You can speed-up compilation using parallel build `make -j${NUMBER_OF_PROCESSORS}`
 
 
-Setting the PATH variable
--------------------------
-*This is only necessary for OF 0.9.0. Later versions copy required dlls to the executable directory.*
-
-On MSYS2, openFrameworks needs the dlls that are provided by MSYS2 package manager `pacman`. The PATH variable tells the system where to look for these dlls. On Windows, the system starts to look into the executable folder, then into the folders defined in system PATH and finally into the folders defined in user PATH.
-
-You can find how to set the PATH in windows here: http://www.computerhope.com/issues/ch000549.htm
-
-You'll need to add your_msys2_directory\mingw32\bin;your_msys2_directory\usr\bin to your PATH, which usually is:
-
-        c:\msys64\mingw32\bin;c:\msys64\usr\bin
-        
-You can also set the PATH from the command line: open a Windows cmd prompt and set you user PATH
-
-        setx PATH "%PATH%;your_msys2_directory\mingw32\bin;your_msys2_directory\usr\bin;"
-
-If you have administrative privileges, you can directly set the system PATH. All users will benefit of it...
-
-That's all, now go to the your_oF_directory/examples folder, where you will find 
-the examples, and have fun! 
-
 Running examples
 ----------------
 Compile the example (for example the 3DPrimitivesExample)
@@ -69,6 +48,11 @@ Compile the example (for example the 3DPrimitivesExample)
     make
 
 At this point, `make run` or  double-click on the exe file to launch. 
+
+You can also compile all the examples at once by running:
+
+	cd your_oF_directory/scripts/msys2
+    ./buildAllExamples.sh
 
 
 Makefile
@@ -92,10 +76,6 @@ http://openframeworks.cc/setup/qtcreator
 
 FAQ / Common problems
 --------------------- 
-- "I have a TLSv1_1_client_method missing error" when I double-click the exe ?"
-
-The executable looks for ssleay32.dll and libeay32.dll and it first finds a version that doesn't support TLS v1.1. Often it happens with Intel iCls software. The solution is to move the your_msys2_directory\mingw32\bin path before the conflicting path. If the conflicting path is in the system PATH and you do not have administrative privileges, copy/link ssleay32.dll and libeay32.dll from your_msys2_directory\mingw32\bin to the executable folder.
-
 - "I'm on a corporate network with a proxy. I cannot download packages with pacman."
 
 You may need to set HTTP_PROXY and HTTPS_PROXY environment variables.
