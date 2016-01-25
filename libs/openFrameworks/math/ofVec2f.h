@@ -714,7 +714,7 @@ public:
 	/// \param points The array of ofVec2f to avarage over
 	/// \param num specifies the number of ofVec2f in the array.
 	/// \returns Vector that is the avarage of the points in the array
-    ofVec2f&  average( const ofVec2f* points, int num );
+    ofVec2f&  average( const ofVec2f* points, std::size_t num );
     
     /// \}
 
@@ -1354,7 +1354,10 @@ inline ofVec2f& ofVec2f::middle( const ofVec2f& pnt ) {
 
 
 
-inline ofVec2f& ofVec2f::average( const ofVec2f* points, int num ) {
+inline ofVec2f& ofVec2f::average( const ofVec2f* points, std::size_t num ) {
+	if (0 == num) {
+		return *this;
+	}
 	x = 0.f;
 	y = 0.f;
 	for( int i=0; i<num; i++) {
