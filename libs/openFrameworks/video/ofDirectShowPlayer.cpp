@@ -399,8 +399,7 @@ class DirectShowVideo : public ISampleGrabberCB{
             if(latestBufferLength == pixels.getTotalBytes() ){
                 EnterCriticalSection(&critSection);
 				pSample->AddRef();
-				//backSample = std::unique_ptr<IMediaSample, std::function<void(IMediaSample*)>>(pSample, std::bind(&IMediaSample::Release, pSample));
-				backSample = std::unique_ptr<IMediaSample, std::function<void(IMediaSample*)>>(pSample);
+				backSample = std::unique_ptr<IMediaSample, std::function<void(IMediaSample*)>>(pSample, std::bind(&IMediaSample::Release, pSample));
                 bNewPixels = true;
 
                 //this is just so we know if there is a new frame
