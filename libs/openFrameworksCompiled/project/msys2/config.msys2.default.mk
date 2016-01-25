@@ -291,56 +291,17 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 afterplatform: $(TARGET_NAME)
 	
 	@cp $(MSYS2_ROOT)/bin/libwinpthread-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libwinpthread-1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libgcc_s_dw2-1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libstdc++-6.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libboost_filesystem-mt.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libboost_system-mt.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libbz2-1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libcairo-2.dll bin/
 	@cp $(MSYS2_ROOT)/bin/LIBEAY32.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libfreeimage-3.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libfreetype-6.dll bin/
 	@cp $(MSYS2_ROOT)/bin/glew32.dll bin/
 	@cp $(MSYS2_ROOT)/bin/SSLEAY32.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libfontconfig-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libpixman-1-0.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libpng16-16.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libHalf-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libharfbuzz-0.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libexpat-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libiconv-2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libIex-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libIlmImf-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libImath-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libglib-2.0-0.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libIlmThread-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/liblcms2-2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libintl-8.dll bin/
-	@cp $(MSYS2_ROOT)/bin/liblzma-5.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libminizip-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libjpeg-8.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopenjp2-7.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libraw-10.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libtiff-5.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libwebp-5.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libwebpdecoder-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libwebpmux-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libjasper-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_calib3d300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_core300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_features2d300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_flann300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_imgcodecs300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_imgproc300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_ml300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_objdetect300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_photo300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_video300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_videoio300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/tbb.dll bin/
-	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libassimp.dll bin/
 	@if [ -d $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH) ]; then cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/; fi
 	@echo
 	@echo "     compiling done"
