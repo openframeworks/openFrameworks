@@ -22,7 +22,7 @@ Product{
     Properties{
         condition: qbsBuild
         type: "staticlibrary"
-        destinationDirectory: Helpers.normalize(FileInfo.joinPaths(path, "../../lib", platform))
+        destinationDirectory: Helpers.normalize(FileInfo.joinPaths(path, "../../lib", project.platform))
     }
 
     Depends {
@@ -90,7 +90,7 @@ Product{
              fileTags: "staticlibrary"
         }
         prepare: {           
-            var qbsCmd = new Command(product.make, ['Debug','-j4']);
+            var qbsCmd = new Command(product.make, ['Debug']);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
@@ -107,7 +107,7 @@ Product{
              fileTags: "staticlibrary"
         }
         prepare: {
-            var qbsCmd = new Command(product.make, ['Release','-j4']);
+            var qbsCmd = new Command(product.make, ['Release']);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
