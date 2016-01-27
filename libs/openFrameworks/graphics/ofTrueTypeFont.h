@@ -102,7 +102,7 @@ public:
                   bool _bFullCharacterSet=true,
                   bool makeContours=false,
                   float simplifyAmt=0.3f,
-                  int dpi=0);
+				  int dpi=96);
 
 	OF_DEPRECATED_MSG("Use load instead",bool loadFont(string filename,
                   int fontsize,
@@ -110,7 +110,7 @@ public:
                   bool _bFullCharacterSet=false,
                   bool makeContours=false,
                   float simplifyAmt=0.3f,
-                  int dpi=0));
+				  int dpi=96));
 	
 	/// \brief Has the font been loaded successfully?
 	/// \returns true if the font was loaded.
