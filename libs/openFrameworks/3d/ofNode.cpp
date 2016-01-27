@@ -21,6 +21,9 @@ ofNode::~ofNode(){
 	if(parent){
 		parent->removeListener(*this);
 	}
+	for(auto child: children){
+		child->clearParent();
+	}
 }
 
 //----------------------------------------
@@ -48,7 +51,8 @@ ofNode::ofNode(ofNode && node)
 ,scale(std::move(node.scale))
 ,axis(std::move(node.axis))
 ,localTransformMatrix(std::move(node.localTransformMatrix))
-,legacyCustomDrawOverrided(std::move(node.legacyCustomDrawOverrided)){
+,legacyCustomDrawOverrided(std::move(node.legacyCustomDrawOverrided))
+,children(std::move(node.children)){
 	if(parent){
 		parent->addListener(*this);
 	}
@@ -82,7 +86,8 @@ ofNode & ofNode::operator=(ofNode && node){
 	scale = std::move(node.scale);
 	axis = std::move(node.axis);
 	localTransformMatrix = std::move(node.localTransformMatrix);
-	legacyCustomDrawOverrided = std::move(legacyCustomDrawOverrided);
+	legacyCustomDrawOverrided = std::move(node.legacyCustomDrawOverrided);
+	children = std::move(node.children);
 	if(parent){
 		parent->addListener(*this);
 	}
@@ -97,6 +102,7 @@ void ofNode::addListener(ofNode & node){
 	position.enableEvents();
 	orientation.enableEvents();
 	scale.enableEvents();
+	children.insert(&node);
 }
 
 //----------------------------------------
@@ -109,6 +115,7 @@ void ofNode::removeListener(ofNode & node){
 		scale.disableEvents();
 		orientation.disableEvents();
 	}
+	children.erase(&node);
 }
 
 //----------------------------------------
