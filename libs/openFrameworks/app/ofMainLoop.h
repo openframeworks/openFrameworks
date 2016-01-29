@@ -18,7 +18,7 @@ public:
 		    windowLoop = Window::loop;
 		}
 		if(Window::needsPolling()){
-		    pollEvents = Window::pollEvents;
+			windowPollEvents = Window::pollEvents;
 		}
 		if(!allowMultiWindow){
 		    windowsApps.clear();
@@ -32,6 +32,7 @@ public:
 	void run(shared_ptr<ofBaseApp> app);
 	int loop();
 	void loopOnce();
+	void pollEvents();
 	void exit();
 	ofCoreEvents & events();
 	void shouldClose(int status);
@@ -49,7 +50,7 @@ private:
 	shared_ptr<ofAppBaseWindow> currentWindow;
 	int status;
 	bool allowMultiWindow;
-	void (*windowLoop)(void);
-	void (*pollEvents)(void);
+	std::function<void()> windowLoop;
+	std::function<void()> windowPollEvents;
 	bool escapeQuits;
 };
