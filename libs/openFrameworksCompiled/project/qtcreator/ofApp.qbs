@@ -16,6 +16,8 @@ CppApplication{
         name: "of"
     }
 
+    cpp.includePaths: of.cpp.includePaths.concat(Helpers.listDirsRecursive(project.sourceDirectory + '/src'))
+
     Properties{
         condition: qbs.buildVariant.contains("debug")
         targetName: Helpers.parseConfig(project.sourceDirectory + "/config.make","APPNAME",name,"all") + "_debug"
