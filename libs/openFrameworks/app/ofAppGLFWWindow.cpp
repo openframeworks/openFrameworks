@@ -544,7 +544,15 @@ void ofAppGLFWWindow::setWindowPosition(int x, int y){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowShape(int w, int h){
-	glfwSetWindowSize(windowP,w/pixelScreenCoordScale,h/pixelScreenCoordScale);
+	#ifdef TARGET_OSX
+		ofPoint pos = getWindowPosition();
+		glfwSetWindowSize(windowP,w/pixelScreenCoordScale,h/pixelScreenCoordScale);
+		if( pos != getWindowPosition() ){
+			setWindowPosition(pos.x, pos.y);
+		}
+	#else
+		glfwSetWindowSize(windowP,w/pixelScreenCoordScale,h/pixelScreenCoordScale);
+	#endif
 }
 
 //------------------------------------------------------------
