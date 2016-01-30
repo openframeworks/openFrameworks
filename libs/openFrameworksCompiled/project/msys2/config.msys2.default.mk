@@ -288,8 +288,7 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 ################################################################################
 #PLATFORM_CC=
 
-ifdef COPY_DLL	
-copy_dll:
+copy_dlls:
 	@echo "     copying dlls to bin"
 	@cp $(MSYS2_ROOT)/bin/libwinpthread-1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libwinpthread-1.dll bin/
@@ -343,14 +342,9 @@ copy_dll:
 	@cp $(MSYS2_ROOT)/bin/tbb.dll bin/
 	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libassimp.dll bin/
-else
-copy_dll:
-	@echo "     Make sure your PATH contains mingw32/bin directory."
-endif
 	
 afterplatform: $(TARGET_NAME)
 	@if [ -d $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH) ]; then cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/; fi
-	$(MAKE) copy_dll
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"
