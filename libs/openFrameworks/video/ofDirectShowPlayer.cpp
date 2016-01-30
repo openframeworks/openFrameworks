@@ -398,8 +398,21 @@ class DirectShowVideo : public ISampleGrabberCB{
             long latestBufferLength = pSample->GetActualDataLength();
             if(latestBufferLength == pixels.getTotalBytes() ){
                 EnterCriticalSection(&critSection);
+#ifdef _MSC_VER
 				pSample->AddRef();
 				backSample = std::unique_ptr<IMediaSample, std::function<void(IMediaSample*)>>(pSample, std::bind(&IMediaSample::Release, pSample));
+#else
+				switch(pixelFormat){
+					case OF_PIXELS_RGB:
+					case OF_PIXELS_BGR:
+						backBuffer.setFromExternalPixels(ptrBuffer, width, height, OF_PIXELS_BGR);
+						break;
+					case OF_PIXELS_RGBA:
+					case OF_PIXELS_BGRA:
+						backBuffer.setFromExternalPixels(ptrBuffer, width, height, OF_PIXELS_BGRA);
+						break;
+				}
+#endif          
                 bNewPixels = true;
 
                 //this is just so we know if there is a new frame
@@ -994,6 +1007,7 @@ class DirectShowVideo : public ISampleGrabberCB{
 
     ofPixels & getPixels(){
         if(bVideoOpened && bNewPixels){
+#ifdef _MSC_VER
             EnterCriticalSection(&critSection);
 			std::swap(backSample, middleSample);
 			bNewPixels = false;
@@ -1013,6 +1027,12 @@ class DirectShowVideo : public ISampleGrabberCB{
 			}
 
             processPixels(srcBuffer, pixels);
+#else
+			EnterCriticalSection(&critSection);
+			bNewPixels = false;
+			LeaveCriticalSection(&critSection);
+			processPixels(backBuffer, pixels);
+#endif
         }
 		return pixels;
     }
@@ -1078,6 +1098,7 @@ class DirectShowVideo : public ISampleGrabberCB{
     CRITICAL_SECTION critSection;
 	std::unique_ptr<IMediaSample, std::function<void(IMediaSample*)>> backSample;
 	std::unique_ptr<IMediaSample, std::function<void(IMediaSample*)>> middleSample;
+	ofPixels backBuffer;
 	ofPixels pixels;
 	ofPixelFormat pixelFormat;
 };
