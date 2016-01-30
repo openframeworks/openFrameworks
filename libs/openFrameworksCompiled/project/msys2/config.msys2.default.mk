@@ -291,7 +291,6 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 copy_dlls:
 	@echo "     copying dlls to bin"
 	@cp $(MSYS2_ROOT)/bin/libwinpthread-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libwinpthread-1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libgcc_s_dw2-1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libstdc++-6.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libboost_filesystem-mt.dll bin/
