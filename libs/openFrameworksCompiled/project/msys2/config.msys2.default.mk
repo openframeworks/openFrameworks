@@ -322,9 +322,7 @@ copy_dlls:
 	@cp $(MSYS2_ROOT)/bin/libopenjp2-7.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libraw-10.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libtiff-5.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libwebp-5.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libwebpdecoder-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libwebpmux-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libwebp*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libjasper-1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libopencv_calib3d300.dll bin/
