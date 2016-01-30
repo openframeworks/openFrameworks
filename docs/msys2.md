@@ -30,7 +30,7 @@ Download and unzip the msys2 version of oF.
 Open an MSYS shell and install OF dependencies:
 
     cd your_oF_directory/scripts/msys2
-    ./install_dependencies.sh`
+    ./install_dependencies.sh
 	
 Open an **MINGW32** shell and compile oF libraries:
 
@@ -65,8 +65,15 @@ Compile the example (for example the 3DPrimitivesExample)
 
     cd your_oF_directory/examples/3d/3DPrimitivesExample
     make
+	-or- 
+	make COPY_DLL=True
+
+The COPY_DLL option will copy all the necessary Dll (about 50) from the mingw32/bin directory to your application bin directory. 
+Using this option makes the PATH modification optional and you can run your application by double-clicking on it.
+At this time, this is experimental and some Dlls may be missing. Please [report an issue](https://github.com/openframeworks/openFrameworks/issues).
 
 At this point, `make run` or  double-click on the exe file to launch. 
+
 
 
 Makefile
