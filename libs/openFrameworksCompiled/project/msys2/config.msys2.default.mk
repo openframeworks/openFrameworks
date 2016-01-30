@@ -291,7 +291,6 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 copy_dlls:
 	@echo "     copying dlls to bin"
 	@cp $(MSYS2_ROOT)/bin/libwinpthread-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libwinpthread-1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libgcc_s_dw2-1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libstdc++-6.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libboost_filesystem-mt.dll bin/
@@ -323,22 +322,20 @@ copy_dlls:
 	@cp $(MSYS2_ROOT)/bin/libopenjp2-7.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libraw-10.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libtiff-5.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libwebp-5.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libwebpdecoder-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libwebpmux-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libwebp*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libjasper-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_calib3d300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_core300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_features2d300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_flann300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_imgcodecs300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_imgproc300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_ml300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_objdetect300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_photo300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_video300.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_videoio300.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_calib3d*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_core*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_features2d*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_flann*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_imgcodecs*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_imgproc*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_ml*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_objdetect*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_photo*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_video*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_videoio*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/tbb.dll bin/
 	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libassimp.dll bin/
