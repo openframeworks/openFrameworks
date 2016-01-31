@@ -36,7 +36,7 @@ cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 ./create_package.sh ios $version master
 ./create_package.sh osx $version master
 ./create_package.sh android $version master
-mkdir /var/www/versions/v${version}
+mkdir -p /var/www/versions/v${version}
 mv *.tar.gz /var/www/versions/v${version}
 mv *.zip /var/www/versions/v${version}
 
