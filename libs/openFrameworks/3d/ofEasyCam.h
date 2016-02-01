@@ -80,13 +80,16 @@ public:
     void setEvents(ofCoreEvents & events);
 	
 	/// \brief Set the input sensitivity of the rotation.
-	/// X and Y axes - when the value is 1.0, moving the mouse from one side to the other of the arcball (min(viewport.width, viewport.height)) will rotate 180 degrees. When the value is 0.5, the rotation will be 90 degrees.
+	/// X and Y axes - when the value is 1.0, moving the mouse from one side to
+	/// the other of the arcball (min(viewport.width, viewport.height)) will
+	/// rotate 180 degrees. When the value is 0.5, the rotation will be 90
+	/// degrees.
 	/// \param value Scales the xyz axes rotation factor by these values.
 	void setRotationSensitivity(float x, float y, float z);
     
     /// \brief Set the input sensitivity of the translation.
     /// \param value Scales the xyz axes translation factor by these values.
-    void setTranslationSensitivity(float x, float r, float z);
+    void setTranslationSensitivity(float x, float y, float z);
 		
     /// \brief Set the key used to switch between camera rotation and translation.
     ///
