@@ -16,13 +16,13 @@ ofEasyCam::ofEasyCam(){
 	drag = 0.9f;
  
 	sensitivityRotX = 1.0f;
-    sensitivityRotY = 1.0f;
+	sensitivityRotY = 1.0f;
 	sensitivityRotZ = 1.0f;
 	
 	// these values now default to 1.0, but are scaled by previous
 	// defaults in updateMouse() for consistency
-    sensitivityX = 1.0f;
-    sensitivityY = 1.0f;
+	sensitivityX = 1.0f;
+	sensitivityY = 1.0f;
 	sensitivityZ = 1.0f;
 
 	bDistanceSet = false; 
