@@ -126,5 +126,5 @@ Desktop.ini
 #########################
 
 .mailmap
-/apps*
-!/docs/apps/*
+/apps*/
+
