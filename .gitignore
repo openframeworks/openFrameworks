@@ -127,4 +127,4 @@ Desktop.ini
 
 .mailmap
 /apps*
-!/docs/apps*
+!/docs/apps/*
