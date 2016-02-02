@@ -803,6 +803,16 @@ void ofMesh::load(string path){
 		Faces
 	};
 
+	
+	enum Attribute {
+		Position,
+		Color,
+		Normal,
+		TexCoord,
+	};
+	
+	vector<Attribute> meshDefinition;
+	
 	data.clear();
 	State state = Header;
 
@@ -844,12 +854,14 @@ void ofMesh::load(string path){
 		}
 
 		if(state==VertexDef && (lineStr.find("property float x")==0 || lineStr.find("property float y")==0 || lineStr.find("property float z")==0)){
+			meshDefinition.push_back(Position);
 			vertexCoordsFound++;
 			continue;
 		}
 
 		if(state==VertexDef && (lineStr.find("property float r")==0 || lineStr.find("property float g")==0 || lineStr.find("property float b")==0 || lineStr.find("property float a")==0)){
 			colorCompsFound++;
+			meshDefinition.push_back(Color);
 			data.getColors().resize(data.getVertices().size());
 			floatColor = true;
 			continue;
@@ -857,19 +869,22 @@ void ofMesh::load(string path){
 
 		if(state==VertexDef && (lineStr.find("property uchar red")==0 || lineStr.find("property uchar green")==0 || lineStr.find("property uchar blue")==0 || lineStr.find("property uchar alpha")==0)){
 			colorCompsFound++;
+			meshDefinition.push_back(Color);
 			data.getColors().resize(data.getVertices().size());
 			floatColor = false;
 			continue;
 		}
 
-		if(state==VertexDef && (lineStr.find("property float u")==0 || lineStr.find("property float v")==0)){
+		if(state==VertexDef && (lineStr.find("property float u")==0 || lineStr.find("property float v")==0|| lineStr.find("property float s")==0 || lineStr.find("property float t")==0)){
 			texCoordsFound++;
+			meshDefinition.push_back(TexCoord);
 			data.getTexCoords().resize(data.getVertices().size());
 			continue;
 		}
 
 		if(state==VertexDef && (lineStr.find("property float nx")==0 || lineStr.find("property float ny")==0 || lineStr.find("property float nz")==0)){
 			normalsCoordsFound++;
+			meshDefinition.push_back(Normal);
 			if (normalsCoordsFound==3) data.getNormals().resize(data.getVertices().size());
 			continue;
 		}
@@ -908,39 +923,35 @@ void ofMesh::load(string path){
 				goto clean;
 			}
 			stringstream sline(lineStr);
-			sline >> data.getVertices()[currentVertex].x;
-			sline >> data.getVertices()[currentVertex].y;
-			if(vertexCoordsFound>2) sline >> data.getVertices()[currentVertex].z;
-
-			if(colorCompsFound>0){
-				if (floatColor){
-					sline >> data.getColors()[currentVertex].r;
-					sline >> data.getColors()[currentVertex].g;
-					sline >> data.getColors()[currentVertex].b;
-					if(colorCompsFound>3) sline >> data.getColors()[currentVertex].a;
-				}else{
-					ofColor c;
-					sline >> c.r;
-					sline >> c.g;
-					sline >> c.b;
-					if(colorCompsFound>3) sline >> c.a;
-					data.getColors()[currentVertex] = c;
+			
+			// read in a line of vertex elements
+			// and split it into attributes,
+			// based attribute order specified in file header
+			int vAttr = 0;
+			int nAttr = 0;
+			int tAttr = 0;
+			int cAttr = 0;
+			for(auto s:meshDefinition){
+				switch (s) {
+					case Position:
+						sline >> *(&data.getVertices()[currentVertex].x + (vAttr++)%vertexCoordsFound);
+						break;
+					case Color:
+						sline >> *(&data.getColors()[currentVertex].r + (cAttr++)%colorCompsFound);
+						break;
+					case Normal:
+						sline >> *(&data.getNormals()[currentVertex].x + (nAttr++)%normalsCoordsFound);
+						break;
+					case TexCoord:
+						sline >> *(&data.getTexCoords()[currentVertex].x + (tAttr++)%texCoordsFound);
+						break;
+					default:
+						break;
 				}
 			}
-
-			if(texCoordsFound>0){
-				ofVec2f uv;
-				sline >> uv.x;
-				sline >> uv.y;
-				data.getTexCoords()[currentVertex] = uv;
-			}
-			
-			if (normalsCoordsFound>0){
-				ofVec3f n;
-				sline >> n.x;
-				sline >> n.y;
-				sline >> n.z;
-				data.getNormals()[currentVertex] = n;
+			if (vAttr != vertexCoordsFound || cAttr!= colorCompsFound || nAttr!=normalsCoordsFound || tAttr!=texCoordsFound){
+				error = "attribute data does not match definition in header";
+				goto clean;
 			}
 			
 			currentVertex++;

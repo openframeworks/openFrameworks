@@ -683,6 +683,7 @@ void ofSetPixelStoreiAlignment(GLenum pname, int stride){
 
 
 vector<string> ofGLSupportedExtensions(){
+#ifdef TARGET_OPENGLES
 	char* extensions = (char*)glGetString(GL_EXTENSIONS);
 	if(extensions){
 		string extensions_str = extensions;
@@ -690,10 +691,22 @@ vector<string> ofGLSupportedExtensions(){
 	}else{
 		return vector<string>();
 	}
+#else
+	int numExtensions=0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+	std::vector<std::string> extensions;
+	for(int i=0;i<numExtensions;i++){
+		char* extension = (char*)glGetStringi(GL_EXTENSIONS, i);
+		if(extension){
+			extensions.emplace_back(extension);
+		}
+	}
+	return extensions;
+#endif
 }
 
 bool ofGLCheckExtension(string searchName){
-#if defined( TARGET_OPENGLES ) || defined( TARGET_LINUX )
+#if defined( TARGET_OPENGLES )
 	vector<string> extensionsList = ofGLSupportedExtensions();
 	set<string> extensionsSet;
 	extensionsSet.insert(extensionsList.begin(),extensionsList.end());
