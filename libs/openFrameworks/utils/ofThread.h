@@ -97,7 +97,7 @@ public:
 	/// \note Subclasses can directly access the mutex and employ thier
 	///       own locking strategy.
 	OF_DEPRECATED_MSG("Use tryLock instead of setting the type of lock on startThread",
-				  void startThread(bool mutexBlocks = true));
+				  void startThread(bool mutexBlocks));
 
 	/// \brief Lock the mutex.
     ///
