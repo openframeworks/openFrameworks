@@ -8,8 +8,8 @@
 #include "ofAppBaseWindow.h"
 #include "ofEvents.h"
 #include "ofPixels.h"
+#include "ofRectangle.h"
 
-//class ofVec3f;
 class ofBaseApp;
 
 #ifdef TARGET_OPENGLES
@@ -94,6 +94,7 @@ public:
     
     GLFWwindow* getGLFWWindow();
     void * getWindowContext(){return getGLFWWindow();}
+	ofGLFWWindowSettings getSettings(){ return settings; }
 
 	ofVec3f		getWindowSize();
 	ofVec3f		getScreenSize();
@@ -131,6 +132,7 @@ public:
 	void iconify(bool bIconify);
 
 	// window settings, this functions can only be called from main before calling ofSetupOpenGL
+	// TODO: remove specialized version of ofSetupOpenGL when these go away
 	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setNumSamples(int samples));
 	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setDoubleBuffering(bool doubleBuff));
 	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setColorBits(int r, int g, int b));
@@ -189,6 +191,8 @@ private:
 
 	bool			bEnableSetupScreen;
 	int				windowW, windowH;
+
+	ofRectangle windowRect;
 
 	int				buttonInUse;
 	bool			buttonPressed;

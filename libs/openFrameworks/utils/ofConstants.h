@@ -4,7 +4,7 @@
 //-------------------------------
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 9
-#define OF_VERSION_PATCH 0
+#define OF_VERSION_PATCH 1
 #define OF_VERSION_PRE_RELEASE "master"
 
 //-------------------------------
@@ -17,7 +17,7 @@ enum ofLoopType{
 
 enum ofTargetPlatform{
 	OF_TARGET_OSX,
-	OF_TARGET_WINGCC,
+    OF_TARGET_MINGW,
 	OF_TARGET_WINVS,
 	OF_TARGET_IOS,
 	OF_TARGET_ANDROID,
@@ -161,39 +161,40 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_LINUX
 
-		#define GL_GLEXT_PROTOTYPES
-        #include <unistd.h>
+	#include <unistd.h>
 
-    #ifdef TARGET_LINUX_ARM
-    	#ifdef TARGET_RASPBERRY_PI
-        	#include "bcm_host.h"
-        #endif
-       
+	#ifdef TARGET_LINUX_ARM
+		#ifdef TARGET_RASPBERRY_PI
+			#include "bcm_host.h"
+		#endif
+
 		#include "GLES/gl.h"
-		#include "GLES/glext.h" 
+		#include "GLES/glext.h"
 		#include "GLES2/gl2.h"
 		#include "GLES2/gl2ext.h"
-		
+
 		#define EGL_EGLEXT_PROTOTYPES
 		#include "EGL/egl.h"
 		#include "EGL/eglext.h"
-    #else // normal linux
-        #include <GL/glew.h>
-        #include <GL/gl.h>
-        #include <GL/glx.h>
-    #endif
+	#else // normal linux
+		#define GL_GLEXT_PROTOTYPES
+		#include <GL/glew.h>
+		#include <GL/gl.h>
+		#include <GL/glext.h>
+		#include <GL/glx.h>
+	#endif
 
-    // for some reason, this isn't defined at compile time,
-    // so this hack let's us work
-    // for 99% of the linux folks that are on intel
-    // everyone one else will have RGB / BGR issues.
+	// for some reason, this isn't defined at compile time,
+	// so this hack let's us work
+	// for 99% of the linux folks that are on intel
+	// everyone one else will have RGB / BGR issues.
 	//#if defined(__LITTLE_ENDIAN__)
-		#define TARGET_LITTLE_ENDIAN		// intel cpu
+	#define TARGET_LITTLE_ENDIAN		// intel cpu
 	//#endif
 
-        // some things for serial compilation:
-        #define B14400	14400
-        #define B28800	28800
+	// some things for serial compilation:
+	#define B14400	14400
+	#define B28800	28800
 
 #endif
 

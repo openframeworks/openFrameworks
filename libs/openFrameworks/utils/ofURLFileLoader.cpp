@@ -139,7 +139,7 @@ void ofURLFileLoaderImpl::stop() {
 }
 
 void ofURLFileLoaderImpl::threadedFunction() {
-	thread.setName("ofURLFileLoader " + thread.name());
+	setThreadName("ofURLFileLoader " + ofToString(getThreadId()));
 	while( isThreadRunning() ){
 		int cancelled;
 		while(cancelRequestQueue.tryReceive(cancelled)){
@@ -171,41 +171,51 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 		URI uri(request.url);
 		std::string path(uri.getPathAndQuery());
 		if (path.empty()) path = "/";
-
-		HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
+		std::string pocoMethod;
+		if(request.method==ofHttpRequest::GET){
+			pocoMethod = HTTPRequest::HTTP_GET;
+		}else{
+			pocoMethod = HTTPRequest::HTTP_POST;
+		}
+		HTTPRequest req(pocoMethod, path, HTTPMessage::HTTP_1_1);
 		for(map<string,string>::iterator it = request.headers.begin(); it!=request.headers.end(); it++){
 			req.add(it->first,it->second);
 		}
 		HTTPResponse res;
-		shared_ptr<HTTPSession> session;
-		istream * rs;
+		std::unique_ptr<HTTPClientSession> session;
 		if(uri.getScheme()=="https"){
 			 //const Poco::Net::Context::Ptr context( new Poco::Net::Context( Poco::Net::Context::CLIENT_USE, "", "", "rootcert.pem" ) );
-			HTTPSClientSession * httpsSession = new HTTPSClientSession(uri.getHost(), uri.getPort());//,context);
-			httpsSession->setTimeout(Poco::Timespan(120,0));
-			httpsSession->sendRequest(req);
-			rs = &httpsSession->receiveResponse(res);
-			session = shared_ptr<HTTPSession>(httpsSession);
+			session.reset(new HTTPSClientSession(uri.getHost(), uri.getPort()));//,context);
 		}else{
-			HTTPClientSession * httpSession = new HTTPClientSession(uri.getHost(), uri.getPort());
-			httpSession->setTimeout(Poco::Timespan(120,0));
-			httpSession->sendRequest(req);
-			rs = &httpSession->receiveResponse(res);
-			session = shared_ptr<HTTPSession>(httpSession);
+			session.reset(new HTTPClientSession(uri.getHost(), uri.getPort()));
 		}
+		session->setTimeout(Poco::Timespan(120,0));
+		if(request.contentType!=""){
+			req.setContentType(request.contentType);
+		}
+		if(request.body!=""){
+			req.setContentLength( request.body.length() );
+			auto & send = session->sendRequest(req);
+			send.write(request.body.c_str(), request.body.size());
+			send << std::flush;
+		}else{
+			session->sendRequest(req);
+		}
+
+		auto & rs = session->receiveResponse(res);
 		if(!request.saveTo){
-			return ofHttpResponse(request,*rs,res.getStatus(),res.getReason());
+			return ofHttpResponse(request,rs,res.getStatus(),res.getReason());
 		}else{
 			ofFile saveTo(request.name,ofFile::WriteOnly,true);
 			char aux_buffer[1024];
-			rs->read(aux_buffer, 1024);
-			std::streamsize n = rs->gcount();
+			rs.read(aux_buffer, 1024);
+			std::streamsize n = rs.gcount();
 			while (n > 0){
 				// we resize to size+1 initialized to 0 to have a 0 at the end for strings
 				saveTo.write(aux_buffer,n);
-				if (rs->good()){
-					rs->read(aux_buffer, 1024);
-					n = rs->gcount();
+				if (rs.good()){
+					rs.read(aux_buffer, 1024);
+					n = rs.gcount();
 				}
 				else n = 0;
 			}
@@ -284,6 +294,7 @@ static ofURLFileLoader & getFileLoader(){
 
 ofHttpRequest::ofHttpRequest()
 :saveTo(false)
+,method(GET)
 ,id(nextID++)
 {
 }
@@ -292,6 +303,7 @@ ofHttpRequest::ofHttpRequest(const string& url, const string& name,bool saveTo)
 :url(url)
 ,name(name)
 ,saveTo(saveTo)
+,method(GET)
 ,id(nextID++)
 {
 }

@@ -7,10 +7,11 @@
 # FmodEX is downloaded as a binary from the fmod.org website and copied 
 # into the openFrameworks library directory.
 
-FORMULA_TYPES=( "osx" "vs" "win_cb" )
+
+FORMULA_TYPES=( "osx" "vs" "msys2" )
 
 # define the version
-VER=44221
+VER=44459
 
 # tools for git use
 GIT_URL=
@@ -21,20 +22,30 @@ function download() {
 
 	mkdir -p "fmodex"
 
-	case $TYPE in
-		"osx" )
+
+	set -e
+
+	if [ "$TYPE" == "osx" ]; then
 			# download drive image for fmodex from fmod.org
-			curl -O http://www.fmod.org/download/fmodex/api/Mac/fmodapi${VER}mac-installer.dmg
+
+			mkdir -p "fmodex/docs"
+
+			echo "Manually download the fmod dmg from the following link. It requires a login."
+			echo http://www.fmod.org/download/fmodex/api/Mac/fmodapi${VER}mac-installer.dmg
+			echo "Once you have downloaded it. Copy it and place the dmg in apothecary/build/"
+			#curl -O http://www.fmod.org/download/fmodex/api/Mac/fmodapi${VER}mac-installer.dmg
 			# mount dmg
 			hdiutil attach fmodapi${VER}mac-installer.dmg -quiet
 			# copy contents into staging folder
 			cp -R "/Volumes/FMOD Programmers API Mac/FMOD Programmers API/api/" "fmodex"
+			cp -R "/Volumes/FMOD Programmers API Mac/FMOD Programmers API/documentation/" "fmodex/docs/"
 			# remove installer dmg
 			rm fmodapi${VER}mac-installer.dmg
 			# unmount drive image
 			hdiutil detach "/Volumes/FMOD Programmers API Mac/" -quiet 
-			;;
-	esac
+
+			
+	fi
 
 	echo "downloaded fmodex"
 }
@@ -47,21 +58,39 @@ function prepare() {
 
 # executed inside the lib src dir
 function build() {
-	echo "build not needed for $TYPE"
+
+	if [ "$TYPE" == "osx" ]; then
+
+		cd lib
+		install_name_tool -id "@executable_name/libfmodex.dylib" libfmodex.dylib
+		cd ../
+
+	else 
+		echo "build not needed for $TYPE"
+
+	fi
+
+	
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
 	
-	if [ "$TYPE" == "osx" ] ; then
+	if [ "$TYPE" == "osx" ]; then
 		# headers
 		mkdir -p $1/include
 		cp -Rv inc/* $1/include
 		# library files
 		cp -Rv lib/libfmodex.dylib $1/lib/$TYPE/
+
+		cp -Rv lib/libfmodex.dylib $1/../../export/$TYPE/libs/
 	fi
 
-	echoWarning "TODO: Copy License"
+	# copy license files
+	rm -rf $1/license # remove any older files if exists
+	mkdir -p $1/license
+	cp -v docs/LICENSE.TXT $1/license/
+
 }
 
 # executed inside the lib src dir
