@@ -282,6 +282,9 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofThreadChannel.h">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundStreamSettings.h">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">

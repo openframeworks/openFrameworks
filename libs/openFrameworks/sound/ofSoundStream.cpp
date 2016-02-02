@@ -10,21 +10,25 @@ namespace{
 }
 
 //------------------------------------------------------------
-void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr){
-	if( appPtr == nullptr ){
-		appPtr = ofGetAppPtr();
-	}
-	ofSoundStreamSetup(nOutputChannels, nInputChannels, appPtr, 44100, 256, 4);
-}
+//void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr){
+//	if( appPtr == nullptr ){
+//		appPtr = ofGetAppPtr();
+//	}
+//	ofSoundStreamSetup(nOutputChannels, nInputChannels, appPtr, 44100, 256, 4);
+//}
+//
+////------------------------------------------------------------
+//void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers){
+//	ofSoundStreamSetup(nOutputChannels, nInputChannels, ofGetAppPtr(), sampleRate, bufferSize, nBuffers);
+//}
+//
+////------------------------------------------------------------
+//void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers){
+//    systemSoundStream.setup(appPtr, nOutputChannels, nInputChannels, sampleRate, bufferSize, nBuffers);
+//}
 
-//------------------------------------------------------------
-void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers){
-	ofSoundStreamSetup(nOutputChannels, nInputChannels, ofGetAppPtr(), sampleRate, bufferSize, nBuffers);
-}
-
-//------------------------------------------------------------
-void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers){
-    systemSoundStream.setup(appPtr, nOutputChannels, nInputChannels, sampleRate, bufferSize, nBuffers);
+void ofSoundStreamSetup(ofSoundStreamSettings & settings) {
+	systemSoundStream.setup(settings);
 }
 
 //------------------------------------------------------------
@@ -102,15 +106,22 @@ void ofSoundStream::setDevice(const ofSoundDevice &device) {
 }
 
 //------------------------------------------------------------
-bool ofSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
-	if( soundStream ){
+bool ofSoundStream::setup(const ofSoundStreamSettings & settings)
+{
+	if (soundStream) {
 #if defined(OF_SOUND_PLAYER_FMOD)
 		ofFmodSetBuffersize(bufferSize);
 #endif
-		return soundStream->setup(app, outChannels, inChannels, sampleRate, bufferSize, nBuffers);
+		return soundStream->setup(settings);
 	}
 	return false;
 }
+//bool ofSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
+//	if( soundStream ){
+//		return soundStream->setup(app, outChannels, inChannels, sampleRate, bufferSize, nBuffers);
+//	}
+//	return false;
+//}
 
 //------------------------------------------------------------
 void ofSoundStream::setInput(ofBaseSoundInput * soundInput){
@@ -137,15 +148,12 @@ void ofSoundStream::setOutput(ofBaseSoundOutput &soundOutput){
 }
 
 //------------------------------------------------------------
-bool ofSoundStream::setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
-	if( soundStream ){
-#if defined(OF_SOUND_PLAYER_FMOD)
-		ofFmodSetBuffersize(bufferSize);
-#endif
-		return soundStream->setup(outChannels, inChannels, sampleRate, bufferSize, nBuffers);
-	}
-	return false;
-}
+//bool ofSoundStream::setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
+//	if( soundStream ){
+//		return soundStream->setup(outChannels, inChannels, sampleRate, bufferSize, nBuffers);
+//	}
+//	return false;
+//}
 
 //------------------------------------------------------------
 void ofSoundStream::start(){
