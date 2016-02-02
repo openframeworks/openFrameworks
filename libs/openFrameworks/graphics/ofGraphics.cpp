@@ -233,7 +233,6 @@ void ofTranslate(const ofPoint& p){
 	ofGetCurrentRenderer()->translate(p);
 }
 
-
 //----------------------------------------------------------
 void ofTranslate(float x, float y, float z){
 	ofGetCurrentRenderer()->translate(x, y, z);
@@ -242,6 +241,14 @@ void ofTranslate(float x, float y, float z){
 //----------------------------------------------------------
 void ofScale(float xAmnt, float yAmnt, float zAmnt){
 	ofGetCurrentRenderer()->scale(xAmnt, yAmnt, zAmnt);
+}
+
+void ofScale(float amount){
+  ofScale(amount, amount, amount);
+}
+
+void ofScale(const ofPoint & p) { 
+	ofScale(p.x, p.y, p.z); 
 }
 
 //----------------------------------------------------------

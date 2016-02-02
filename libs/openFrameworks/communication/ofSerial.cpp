@@ -155,10 +155,7 @@ void ofSerial::buildDeviceList(){
 
 	#ifdef TARGET_LINUX
 
-		#ifdef TARGET_RASPBERRY_PI
-			prefixMatch.push_back("ttyACM");
-		#endif
-
+		prefixMatch.push_back("ttyACM");
 		prefixMatch.push_back("ttyS");
 		prefixMatch.push_back("ttyUSB");
 		prefixMatch.push_back("rfc");
@@ -578,6 +575,7 @@ int ofSerial::readByte(){
 			ofLogError("ofSerial") << "readByte(): couldn't read from port: " << errno << " " << strerror(errno);
 			return OF_SERIAL_ERROR;
 		}
+
 		if(nRead == 0){
 			return OF_SERIAL_NO_DATA;
 		}
@@ -588,6 +586,10 @@ int ofSerial::readByte(){
 		if(!ReadFile(hComm, &tmpByte, 1, &nRead, 0)){
 			ofLogError("ofSerial") << "readByte(): couldn't read from port";
 			return OF_SERIAL_ERROR;
+		}
+	
+		if(nRead == 0){
+			return OF_SERIAL_NO_DATA;
 		}
 
 	#else

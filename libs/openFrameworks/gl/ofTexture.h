@@ -257,6 +257,7 @@ class ofTexture : public ofBaseDraws {
 	/// \brief Construct an ofTexture from an existing ofTexture.
 	/// \param mom The ofTexture to copy. Reuses internal GL texture ID.
 	ofTexture(const ofTexture & mom);
+    ofTexture(ofTexture && mom);
 
 	/// \brief Allocate the texture using the given settings.
 	///
@@ -437,6 +438,7 @@ class ofTexture : public ofBaseDraws {
 	/// \brief Copy a given ofTexture into this texture.
 	/// \param mom The ofTexture to copy from. Reuses internal GL texture ID.
 	ofTexture& operator=(const ofTexture & mom);
+    ofTexture& operator=(ofTexture && mom);
 
 
 	/// \brief Clears the texture.
@@ -925,6 +927,12 @@ class ofTexture : public ofBaseDraws {
 	/// \sa ofEnableArbTex()
 	/// \sa ofDisableArbTex()
 	void generateMipmap();
+
+	/// \brief Find out if a mipmap has been generated for the current texture.
+	///
+	/// \sa generateMipmap()
+	/// \sa enableMipmap()
+	bool hasMipmap() const;
 	
 	/// \}
 

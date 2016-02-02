@@ -1,4 +1,6 @@
 #pragma once
+#include "ofConstants.h"
+#include "ofVec2f.h"
 
 #include "ofConstants.h"
 #include "ofVec2f.h"
@@ -17,6 +19,7 @@ public:
 
 	int width;
 	int height;
+	std::string title;
 	ofWindowMode windowMode;
 
 	void setPosition(const ofVec2f & position) {

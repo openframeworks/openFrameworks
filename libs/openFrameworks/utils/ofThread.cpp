@@ -36,6 +36,21 @@ void ofThread::setThreadName(const std::string & name){
 }
 
 //-------------------------------------------------
+void ofThread::startThread(){
+	std::unique_lock<std::mutex> lck(mutex);
+	if(threadRunning || !threadDone){
+		ofLogWarning("ofThread") << "- name: " << getThreadName() << " - Cannot start, thread already running.";
+		return;
+	}
+
+	threadDone = false;
+	threadRunning = true;
+	this->mutexBlocks = false;
+
+	thread = std::thread(std::bind(&ofThread::run,this));
+}
+
+//-------------------------------------------------
 void ofThread::startThread(bool mutexBlocks){
     std::unique_lock<std::mutex> lck(mutex);
 	if(threadRunning || !threadDone){
@@ -51,12 +66,6 @@ void ofThread::startThread(bool mutexBlocks){
 }
 
 //-------------------------------------------------
-void ofThread::startThread(bool mutexBlocks, bool verbose){
-    ofLogWarning("ofThread") << "- name: " << getThreadName() << " - Calling startThread with verbose is deprecated.";
-    startThread(mutexBlocks);
-}
-
-//-------------------------------------------------
 bool ofThread::lock(){
 	if(mutexBlocks){
 		mutex.lock();
@@ -66,6 +75,11 @@ bool ofThread::lock(){
 		}
 	}
 	return true;
+}
+
+//-------------------------------------------------
+bool ofThread::tryLock(){
+	return mutex.try_lock();
 }
 
 //-------------------------------------------------
