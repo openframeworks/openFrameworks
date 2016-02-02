@@ -933,6 +933,9 @@ void ofTranslate(const ofPoint & p);
 
 void ofScale(float xAmnt, float yAmnt, float zAmnt = 1);
 
+/// \brief Scale along the X, Y and Z axis with the same amount.
+void ofScale(float amount);
+
 void ofScale(const ofPoint & p);
 
 /// \brief Produces a rotation around the vector (vecX,vecY,vecZ).
