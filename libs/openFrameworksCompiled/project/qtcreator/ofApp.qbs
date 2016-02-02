@@ -16,6 +16,8 @@ CppApplication{
         name: "of"
     }
 
+    cpp.includePaths: of.cpp.includePaths.concat(Helpers.listDirsRecursive(project.sourceDirectory + '/src'))
+
     Properties{
         condition: qbs.buildVariant.contains("debug")
         targetName: Helpers.parseConfig(project.sourceDirectory + "/config.make","APPNAME",name,"all") + "_debug"
@@ -46,7 +48,6 @@ CppApplication{
             cpLibsCmd.sourceCode = function(){
                 var exportDir = FileInfo.joinPaths(project.path, project.of_root, "export", product.platform);
                 File.copy(FileInfo.joinPaths(exportDir,"fmodex.dll"), project.path+"/bin/fmodex.dll");
-                File.copy(FileInfo.joinPaths(exportDir,"qtmlClient.dll"), project.path+"/bin/qtmlClient.dll");
             }
 
             return [cpLibsCmd];

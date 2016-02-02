@@ -722,6 +722,10 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
     ofPushMatrix();
     ofMultMatrix(modelMatrix);
     
+#ifndef TARGET_OPENGLES
+        glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+#endif
+    
     for(unsigned int i=0; i<modelMeshes.size(); i++) {
         ofxAssimpMeshHelper & mesh = modelMeshes[i];
         
@@ -746,6 +750,7 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
         }
         
         ofEnableBlendMode(mesh.blendMode);
+        
 #ifndef TARGET_OPENGLES
         mesh.vbo.drawElements(GL_TRIANGLES,mesh.indices.size());
 #else
@@ -754,6 +759,8 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
 		    	mesh.vbo.drawElements(GL_TRIANGLES,mesh.indices.size());
 		    	break;
 		    case OF_MESH_WIREFRAME:
+                //note this won't look the same as on non ES renderers.
+                //there is no easy way to convert GL_TRIANGLES to outlines for each triangle
 		    	mesh.vbo.drawElements(GL_LINES,mesh.indices.size());
 		    	break;
 		    case OF_MESH_POINTS:
@@ -774,6 +781,13 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
         
         ofPopMatrix();
     }
+    
+    #ifndef TARGET_OPENGLES
+        //set the drawing mode back to FILL if its drawn the model with a different mode.
+        if( renderType != OF_MESH_FILL ){
+            glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(OF_MESH_FILL));
+        }
+    #endif
 
     ofPopMatrix();
     ofPopStyle();

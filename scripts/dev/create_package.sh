@@ -141,8 +141,10 @@ function createProjectFiles {
     elif [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
         for example_group in $pkg_ofroot/examples/*; do
             for example in $example_group/*; do
-                cp $pkg_ofroot/scripts/templates/linux/Makefile $example/
-                cp $pkg_ofroot/scripts/templates/linux/config.make $example/
+                if [ -d $example ]; then
+                    cp $pkg_ofroot/scripts/templates/linux/Makefile $example/
+                    cp $pkg_ofroot/scripts/templates/linux/config.make $example/
+                fi
             done
         done
     fi
@@ -308,7 +310,7 @@ function createPackage {
 	mkdir -p $HOME/.tmp
 	export TMPDIR=$HOME/.tmp
     if [ "$pkg_platform" = "vs" ]; then
-		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
+		cd ${pkg_ofroot}/apps/projectGenerator/frontend
 		npm install > /dev/null
 		npm run build:vs > /dev/null
 		mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-vs
@@ -322,7 +324,7 @@ function createPackage {
 		sed -i "s/osx/vs/g" projectGenerator-vs/resources/app/settings.json
 	fi
     if [ "$pkg_platform" = "osx" ]; then
-		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
+		cd ${pkg_ofroot}/apps/projectGenerator/frontend
 		npm install > /dev/null
 		npm run build:osx > /dev/null
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-osx
@@ -332,7 +334,7 @@ function createPackage {
 		sed -i "s/osx/osx/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
     if [ "$pkg_platform" = "ios" ]; then
-		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
+		cd ${pkg_ofroot}/apps/projectGenerator/frontend
 		npm install > /dev/null
 		npm run build:osx > /dev/null
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-ios
@@ -343,7 +345,7 @@ function createPackage {
 	fi
 	
 	if [ "$pkg_platform" = "linux" ]; then
-		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
+		cd ${pkg_ofroot}/apps/projectGenerator/frontend
 		npm install > /dev/null
 		npm run build:linux32 > /dev/null
 		mv dist/projectGenerator-linux-ia32 ${pkg_ofroot}/projectGenerator-linux
@@ -352,7 +354,7 @@ function createPackage {
 	fi
 	
 	if [ "$pkg_platform" = "linux64" ]; then
-		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
+		cd ${pkg_ofroot}/apps/projectGenerator/frontend
 		npm install > /dev/null
 		npm run build:linux64 > /dev/null
 		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
@@ -536,7 +538,7 @@ function createPackage {
     fi
     
     if [ "$platform" = "msys2" ]; then
-        cp docs/codeblocks.md INSTALL.md
+        cp docs/msys2.md INSTALL.md
     fi
     
     if [ "$platform" = "osx" ] || [ "$platform" = "ios" ]; then

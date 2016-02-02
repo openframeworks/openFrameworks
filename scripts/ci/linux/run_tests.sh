@@ -12,7 +12,13 @@ for group in *; do
 				cp ../../../scripts/templates/linux/Makefile .
 				cp ../../../scripts/templates/linux/config.make .
 				make Debug
-				make RunDebug
+				cd bin
+				binname=$(basename ${test})
+				./${binname}_debug
+				errorcode=$?
+				if [[ $errorcode -ne 0 ]]; then
+					exit $errorcode
+				fi
 				cd $ROOT/tests
 			fi
 		done

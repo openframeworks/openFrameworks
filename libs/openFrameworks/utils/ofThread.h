@@ -84,33 +84,40 @@ public:
     /// \returns the Thread ID string.
     std::string getThreadName() const;
 
-    void setThreadName(const std::string & name);
+	void setThreadName(const std::string & name);
 
-    /// \deprecated
-    /// \brief Start the thread with options.
-    ///
-    /// \param mutexesBlock Set blocking to true if you want the mutex to
-    ///        block when lock() is called.
-    /// \param verbose use verbose logging methods.
-    OF_DEPRECATED_MSG("Use startThread(bool blocking = true) instead.",
-                      void startThread(bool mutexesBlock, bool verbose) );
-
-    /// \brief Start the thread with options.
-    /// \param mutexBlocks Set blocking to true if you want the mutex to
-    ///        block when lock() is called.
+	/// \brief Start the thread.
     /// \note Subclasses can directly access the mutex and employ thier
     ///       own locking strategy.
-    void startThread(bool mutexBlocks = true);
+	void startThread();
 
-    /// \brief Try to lock the mutex.
+	/// \brief Start the thread with options.
+	/// \param mutexBlocks Set blocking to true if you want the mutex to
+	///        block when lock() is called.
+	/// \note Subclasses can directly access the mutex and employ thier
+	///       own locking strategy.
+	OF_DEPRECATED_MSG("Use tryLock instead of setting the type of lock on startThread",
+				  void startThread(bool mutexBlocks = true));
+
+	/// \brief Lock the mutex.
     ///
     /// If the thread was started startThread(true), then this call will wait
     /// until the mutex is available and return true.  If the thread was started
     /// startThread(false), this call will return true iff the mutex is
     /// was successfully acquired.
     ///
-    /// \returns true iff the lock was successfully acquired.
+	/// \returns true if the lock was successfully acquired.
     bool lock();
+
+	/// \brief Tries to lock the mutex.
+	///
+	/// If the thread was started startThread(true), then this call will wait
+	/// until the mutex is available and return true.  If the thread was started
+	/// startThread(false), this call will return true iff the mutex is
+	/// was successfully acquired.
+	///
+	/// \returns true if the lock was successfully acquired.
+	bool tryLock();
 
     /// \brief Unlock the mutex.
     ///
