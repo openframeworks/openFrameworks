@@ -790,7 +790,7 @@ string ofTrim(const string & src, const string& locale){
 }
 
 //--------------------------------------------------
-void ofAppendUTF8(string & str, int utf8){
+void ofAppendUTF8(string & str, uint32_t utf8){
 	try{
 		utf8::append(utf8, back_inserter(str));
 	}catch(...){}
