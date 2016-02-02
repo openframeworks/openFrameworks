@@ -446,26 +446,29 @@ string ofToHex(const char* value) {
 
 //----------------------------------------
 int ofToInt(const string& intString) {
-	int x = 0;
-	istringstream cur(intString);
-	cur >> x;
-	return x;
+	try {
+		return std::stoi(intString);;
+	} catch(...) {
+		return 0;
+	}
 }
 
 //----------------------------------------
 int ofHexToInt(const string& intHexString) {
-	int x = 0;
-	istringstream cur(intHexString);
-	cur >> hex >> x;
-	return x;
+	try {
+		return std::stoi(intHexString, nullptr, 16);
+	} catch(...) {
+		return 0;
+	}
 }
 
 //----------------------------------------
 char ofHexToChar(const string& charHexString) {
-	int x = 0;
-	istringstream cur(charHexString);
-	cur >> hex >> x;
-	return (char) x;
+	try {
+		return (char) std::stoi(charHexString, nullptr, 16);
+	} catch(...) {
+		return 0;
+	}
 }
 
 //----------------------------------------
@@ -503,18 +506,20 @@ string ofHexToString(const string& stringHexString) {
 
 //----------------------------------------
 float ofToFloat(const string& floatString) {
-	float x = 0;
-	istringstream cur(floatString);
-	cur >> x;
-	return x;
+	try {
+		return std::stof(floatString);
+	} catch(...) {
+		return 0.0f;
+	}
 }
 
 //----------------------------------------
 double ofToDouble(const string& doubleString) {
-	double x = 0;
-	istringstream cur(doubleString);
-	cur >> x;
-	return x;
+	try {
+		return std::stod(doubleString);
+	} catch(...) {
+		return 0.0;
+	}
 }
 
 //----------------------------------------
@@ -534,10 +539,11 @@ bool ofToBool(const string& boolString) {
 	if(lower == "false") {
 		return false;
 	}
-	bool x = false;
-	istringstream cur(lower);
-	cur >> x;
-	return x;
+	try {
+		return (bool)std::stoi(lower);
+	} catch(...) {
+		return false;
+	}
 }
 
 //----------------------------------------
