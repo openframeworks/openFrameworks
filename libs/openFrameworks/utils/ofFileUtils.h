@@ -19,16 +19,16 @@ class ofBuffer{
 public:
 	ofBuffer();
 	ofBuffer(const char * buffer, std::size_t size);
-	ofBuffer(const string & text);
-	ofBuffer(istream & stream, size_t ioBlockSize = 1024);
+	ofBuffer(const std::string & text);
+	ofBuffer(std::istream & stream, std::size_t ioBlockSize = 1024);
 
 	void set(const char * _buffer, std::size_t _size);
-	void set(const string & text);
-	bool set(istream & stream, size_t ioBlockSize = 1024);
-	void append(const string& _buffer);
+	void set(const std::string & text);
+	bool set(std::istream & stream, std::size_t ioBlockSize = 1024);
+	void append(const std::string& _buffer);
 	void append(const char * _buffer, std::size_t _size);
 
-	bool writeTo(ostream & stream) const;
+	bool writeTo(std::ostream & stream) const;
 
 	void clear();
 
@@ -39,34 +39,38 @@ public:
 	OF_DEPRECATED_MSG("Use getData instead",char * getBinaryBuffer());
 	OF_DEPRECATED_MSG("Use getData instead",const char * getBinaryBuffer() const);
 
-	string getText() const;
-	operator string() const;  // cast to string, to use a buffer as a string
-	ofBuffer & operator=(const string & text);
+	std::string getText() const;
+	operator std::string() const;  // cast to string, to use a buffer as a string
+	ofBuffer & operator=(const std::string & text);
 
 	long size() const;
 
-	OF_DEPRECATED_MSG("use a lines iterator instead",string getNextLine());
-	OF_DEPRECATED_MSG("use a lines iterator instead",string getFirstLine());
+	OF_DEPRECATED_MSG("use a lines iterator instead",std::string getNextLine());
+	OF_DEPRECATED_MSG("use a lines iterator instead",std::string getFirstLine());
 	OF_DEPRECATED_MSG("use a lines iterator instead",bool isLastLine());
 	OF_DEPRECATED_MSG("use a lines iterator instead",void resetLineReader());
     
-	friend ostream & operator<<(ostream & ostr, const ofBuffer & buf);
-	friend istream & operator>>(istream & istr, ofBuffer & buf);
+	friend std::ostream & operator<<(std::ostream & ostr, const ofBuffer & buf);
+	friend std::istream & operator>>(std::istream & istr, ofBuffer & buf);
 
-	vector<char>::iterator begin();
-	vector<char>::iterator end();
-	vector<char>::const_iterator begin() const;
-	vector<char>::const_iterator end() const;
-	vector<char>::reverse_iterator rbegin();
-	vector<char>::reverse_iterator rend();
-	vector<char>::const_reverse_iterator rbegin() const;
-	vector<char>::const_reverse_iterator rend() const;
+	std::vector<char>::iterator begin();
+	std::vector<char>::iterator end();
+	std::vector<char>::const_iterator begin() const;
+	std::vector<char>::const_iterator end() const;
+	std::vector<char>::const_iterator cbegin() const;
+	std::vector<char>::const_iterator cend() const;
+	std::vector<char>::reverse_iterator rbegin();
+	std::vector<char>::reverse_iterator rend();
+	std::vector<char>::const_reverse_iterator rbegin() const;
+	std::vector<char>::const_reverse_iterator rend() const;
+	std::vector<char>::const_reverse_iterator crbegin() const;
+	std::vector<char>::const_reverse_iterator crend() const;
 
 	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
-		Line(vector<char>::iterator _begin, vector<char>::iterator _end);
-        const string & operator*() const;
-        const string * operator->() const;
-        const string & asString() const;
+		Line(std::vector<char>::iterator _begin, std::vector<char>::iterator _end);
+		const std::string & operator*() const;
+        const std::string * operator->() const;
+        const std::string & asString() const;
         Line& operator++();
         Line operator++(int);
         bool operator!=(Line const& rhs) const;
@@ -74,64 +78,64 @@ public:
         bool empty() const;
 
 	private:
-        string line;
-        vector<char>::iterator _current, _begin, _end;
+        std::string line;
+        std::vector<char>::iterator _current, _begin, _end;
 	};
 
 	struct Lines{
-		Lines(vector<char> & buffer);
+		Lines(std::vector<char> & buffer);
         Line begin();
         Line end();
 
 	private:
-        vector<char>::iterator _begin, _end;
+        std::vector<char>::iterator _begin, _end;
 	};
 
 	Lines getLines();
 
 private:
-	vector<char> 	buffer;
+	std::vector<char> 	buffer;
 	Line			currentLine;
 };
 
 //--------------------------------------------------
-ofBuffer ofBufferFromFile(const string & path, bool binary=false);
+ofBuffer ofBufferFromFile(const std::string & path, bool binary=false);
 
 //--------------------------------------------------
-bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary=false);
+bool ofBufferToFile(const std::string & path, ofBuffer & buffer, bool binary=false);
 
 
 //--------------------------------------------------
 class ofFilePath{
 public:
 		
-	static string getFileExt(const std::string& filename);
-	static string removeExt(const std::string& filename);
-	static string addLeadingSlash(const std::string& path);
-	static string addTrailingSlash(const std::string& path);
-	static string removeTrailingSlash(const std::string& path);
-	static string getPathForDirectory(const std::string& path);
-	static string getAbsolutePath(const std::string& path, bool bRelativeToData = true);
+	static std::string getFileExt(const std::string& filename);
+	static std::string removeExt(const std::string& filename);
+	static std::string addLeadingSlash(const std::string& path);
+	static std::string addTrailingSlash(const std::string& path);
+	static std::string removeTrailingSlash(const std::string& path);
+	static std::string getPathForDirectory(const std::string& path);
+	static std::string getAbsolutePath(const std::string& path, bool bRelativeToData = true);
 
 	static bool isAbsolute(const std::string& path);
 	
-	static string getFileName(const std::string& filePath, bool bRelativeToData = true);
-	static string getBaseName(const std::string& filePath); // filename without extension
+	static std::string getFileName(const std::string& filePath, bool bRelativeToData = true);
+	static std::string getBaseName(const std::string& filePath); // filename without extension
 
-	static string getEnclosingDirectory(const std::string& filePath, bool bRelativeToData = true);
+	static std::string getEnclosingDirectory(const std::string& filePath, bool bRelativeToData = true);
 	static bool createEnclosingDirectory(const std::string& filePath, bool bRelativeToData = true, bool bRecursive = true);
-	static string getCurrentWorkingDirectory();
-	static string join(const std::string& path1, const std::string& path2);
+	static std::string getCurrentWorkingDirectory();
+	static std::string join(const std::string& path1, const std::string& path2);
 	
-	static string getCurrentExePath();
-	static string getCurrentExeDir();
+	static std::string getCurrentExePath();
+	static std::string getCurrentExeDir();
 
-	static string getUserHomeDir();
+	static std::string getUserHomeDir();
 
-	static string makeRelative(const std::string & from, const std::string & to);
+	static std::string makeRelative(const std::string & from, const std::string & to);
 };
 
-class ofFile: public fstream{
+class ofFile: public std::fstream{
 
 public:
 	
@@ -155,13 +159,13 @@ public:
 	bool create();
 	
 	bool exists() const;
-	string path() const;
+	std::string path() const;
 	
-	string getExtension() const;
-	string getFileName() const;
-	string getBaseName() const; // filename without extension
-	string getEnclosingDirectory() const;
-	string getAbsolutePath() const;
+	std::string getExtension() const;
+	std::string getFileName() const;
+	std::string getBaseName() const; // filename without extension
+	std::string getEnclosingDirectory() const;
+	std::string getAbsolutePath() const;
 
 	bool canRead() const;
 	bool canWrite() const;
@@ -186,7 +190,7 @@ public:
 	//be careful! this deletes a file or folder :) 
 	bool remove(bool recursive=false);
 
-	uint64_t getSize() const;
+	std::uint64_t getSize() const;
 
 	//this allows to compare files by their paths, also provides sorting and use as key in stl containers
 	bool operator==(const ofFile & file) const;
@@ -214,7 +218,7 @@ public:
 	// it's equivalent to rdbuf() just here to make it easier to use
 	// ofLogNotice() << file.getFileBuffer();
 	// write_file << file.getFileBuffer();
-	filebuf * getFileBuffer() const;
+	std::filebuf * getFileBuffer() const;
 	
 	operator std::filesystem::path(){
 		return myFile;
@@ -256,8 +260,8 @@ public:
 	bool create(bool recursive = false);
 
 	bool exists() const;
-	string path() const;
-	string getAbsolutePath() const;
+	std::string path() const;
+	std::string getAbsolutePath() const;
 
 	bool canRead() const;
 	bool canWrite() const;
@@ -271,9 +275,9 @@ public:
 	void setExecutable(bool executable=true);
 	void setShowHidden(bool showHidden);
 
-	bool copyTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
-	bool moveTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
-	bool renameTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool copyTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool moveTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool renameTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
 
 	//be careful! this deletes a file or folder :)
 	bool remove(bool recursive);
@@ -281,15 +285,15 @@ public:
 	//-------------------
 	// dirList operations
 	//-------------------
-	void allowExt(const string& extension);
-	std::size_t listDir(const string& path);
+	void allowExt(const std::string& extension);
+	std::size_t listDir(const std::string& path);
 	std::size_t listDir();
 
-	string getOriginalDirectory() const;
-	string getName(std::size_t position) const; // e.g., "image.png"
-	string getPath(std::size_t position) const;
+	const std::string &getOriginalDirectory() const;
+	std::string getName(std::size_t position) const; // e.g., "image.png"
+	std::string getPath(std::size_t position) const;
 	ofFile getFile(std::size_t position, ofFile::Mode mode=ofFile::Reference, bool binary=false) const;
-	const vector<ofFile> & getFiles() const;
+	const std::vector<ofFile> & getFiles() const;
 
 	ofFile operator[](std::size_t position) const;
 
@@ -328,16 +332,20 @@ public:
 	static bool doesDirectoryExist(const std::string& dirPath, bool bRelativeToData = true);
 	static bool removeDirectory(const std::string& path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
 
-	vector<ofFile>::const_iterator begin() const;
-	vector<ofFile>::const_iterator end() const;
-	vector<ofFile>::const_reverse_iterator rbegin() const;
-	vector<ofFile>::const_reverse_iterator rend() const;
+	std::vector<ofFile>::const_iterator begin() const;
+	std::vector<ofFile>::const_iterator end() const;
+	std::vector<ofFile>::const_iterator cbegin() const;
+	std::vector<ofFile>::const_iterator cend() const;
+	std::vector<ofFile>::const_reverse_iterator rbegin() const;
+	std::vector<ofFile>::const_reverse_iterator rend() const;
+	std::vector<ofFile>::const_reverse_iterator crbegin() const;
+	std::vector<ofFile>::const_reverse_iterator crend() const;
 
 private:
 	std::filesystem::path myDir;
-	string originalDirectory;
-	vector <string> extensions;
-	vector <ofFile> files;
+	std::string originalDirectory;
+	std::vector <std::string> extensions;
+	std::vector <ofFile> files;
 	bool showHidden;
 
 };
