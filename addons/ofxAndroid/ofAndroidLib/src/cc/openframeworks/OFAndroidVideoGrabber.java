@@ -44,6 +44,10 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 			Log.e("OF","Error initializing gl surface",e1);
 		}
 	}
+	
+	public void close(){
+		stopGrabber();
+	}
 
 	public int getNumCameras(){
 		if (Build.VERSION.SDK_INT < 9) {
@@ -75,7 +79,6 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 
 		if(initialized){
 			stopGrabber();
-
 			initGrabber(width, height, targetFps, texID);
 		}
 	}

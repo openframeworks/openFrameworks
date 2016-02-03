@@ -88,20 +88,31 @@ class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 
 	ofMouseEventArgs()
 	:type(Pressed)
-	,button(OF_MOUSE_BUTTON_LEFT){}
+	,button(OF_MOUSE_BUTTON_LEFT)
+	,scrollX(0.f)
+	,scrollY(0.f)
+	{}
 
 	ofMouseEventArgs(Type type, float x, float y, int button)
 	:ofVec2f(x,y)
 	,type(type)
-	,button(button){}
+	,button(button)
+	,scrollX(0.f)
+	,scrollY(0.f)
+	{}
 
 	ofMouseEventArgs(Type type, float x, float y)
 	:ofVec2f(x,y)
 	,type(type)
-	,button(0){}
+	,button(0)
+	,scrollX(0.f)
+	,scrollY(0.f)
+	{}
 
 	Type type;
 	int button;
+	float scrollX;
+	float scrollY;
 };
 
 class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
@@ -244,7 +255,7 @@ class ofCoreEvents {
 	void notifyMouseReleased(int x, int y, int button);
 	void notifyMouseDragged(int x, int y, int button);
 	void notifyMouseMoved(int x, int y);
-	void notifyMouseScrolled(float x, float y);
+	void notifyMouseScrolled(int x, int y, float scrollX, float scrollY);
 	void notifyMouseEntered(int x, int y);
 	void notifyMouseExited(int x, int y);
 	void notifyMouseEvent(const ofMouseEventArgs & mouseEvent);
