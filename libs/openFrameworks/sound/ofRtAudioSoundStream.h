@@ -10,58 +10,40 @@
 
 typedef unsigned int RtAudioStreamStatus;
 
+
 class ofRtAudioSoundStream : public ofBaseSoundStream {
 public:
 	ofRtAudioSoundStream();
 	~ofRtAudioSoundStream();
 
-	std::vector<ofSoundDevice> getDeviceList() const;
-	void setDeviceID(int deviceID);
-	void setInDeviceID(int deviceID);
-	void setOutDeviceID(int deviceID);
+	std::vector<ofSoundDevice> getDeviceList(ofSoundDevice::Api api) const;
 
 	void setInput(ofBaseSoundInput * soundInput);
 	void setOutput(ofBaseSoundOutput * soundOutput);
-	bool setup(const ofRtSoundStreamSettings & settings);
-	bool setup(const ofBaseStreamSettings & settings) {
-		const ofRtSoundStreamSettings * soundSettings = dynamic_cast<const ofRtSoundStreamSettings*>(&settings);
-		return setup(*soundSettings);
-	}
-	/*bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
-	bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
-	bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers, RtAudio::Api api);*/
+	bool setup(const ofSoundStreamSettings & settings);
 
 	void start();
 	void stop();
 	void close();
 
-	long unsigned long getTickCount() const;
+	uint64_t getTickCount() const;
 
 	int getNumInputChannels() const;
 	int getNumOutputChannels() const;
 	int getSampleRate() const;
 	int getBufferSize() const;
-	int getDeviceID() const;
+	ofSoundDevice getInDevice() const;
+	ofSoundDevice getOutDevice() const;
 
-	ofRtSoundStreamSettings _settings;
 
 private:
 	long unsigned long tickCount;
 	shared_ptr<RtAudio>	audio;
 
-	/*int sampleRate;
-	int outDeviceID;
-	int inDeviceID;
-	int bufferSize;
-	int nInputChannels;
-	int nOutputChannels;*/
-	ofBaseSoundInput * soundInputPtr;
-	ofBaseSoundOutput * soundOutputPtr;
 	ofSoundBuffer inputBuffer;
 	ofSoundBuffer outputBuffer;
+	ofSoundStreamSettings settings;
 
 	static int rtAudioCallback(void *outputBuffer, void *inputBuffer, unsigned int bufferSize, double streamTime, RtAudioStreamStatus status, void *data);
 
 };
-
-
