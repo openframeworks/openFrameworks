@@ -2,6 +2,7 @@
 #include "ofMath.h"
 #include "ofUtils.h"
 #include "ofAppRunner.h"
+#include "RtAudio.h"
 
 //------------------------------------------------------------------------------
 RtAudio::Api toRtAudio(ofSoundDevice::Api api){
