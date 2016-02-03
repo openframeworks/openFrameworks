@@ -175,7 +175,7 @@ bool ofSoundStream::setup(const ofSoundStreamSettings & settings)
 {
 	if (soundStream) {
 #if defined(OF_SOUND_PLAYER_FMOD)
-		ofFmodSetBuffersize(bufferSize);
+		ofFmodSetBuffersize(settings.bufferSize);
 #endif
 		return soundStream->setup(settings);
 	}
