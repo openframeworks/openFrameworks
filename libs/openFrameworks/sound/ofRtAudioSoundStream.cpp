@@ -14,6 +14,7 @@ RtAudio::Api toRtAudio(ofSoundDevice::Api api){
 		return RtAudio::Api::LINUX_OSS;
 	case ofSoundDevice::Api::JACK:
 		return RtAudio::Api::UNIX_JACK;
+#ifndef TARGET_LINUX
 	case ofSoundDevice::Api::OSX_CORE:
 		return RtAudio::Api::MACOSX_CORE;
 	case ofSoundDevice::Api::MS_WASAPI:
@@ -22,6 +23,7 @@ RtAudio::Api toRtAudio(ofSoundDevice::Api api){
 		return RtAudio::Api::WINDOWS_ASIO;
 	case ofSoundDevice::Api::MS_DS:
 		return RtAudio::Api::WINDOWS_DS;
+#endif
 	default:
 		return RtAudio::Api::UNSPECIFIED;
 	}
@@ -38,6 +40,7 @@ ofSoundDevice::Api toOf(RtAudio::Api api){
 		return ofSoundDevice::Api::OSS;
 	case RtAudio::Api::UNIX_JACK:
 		return ofSoundDevice::Api::JACK;
+#ifndef TARGET_LINUX
 	case RtAudio::Api::MACOSX_CORE:
 		return ofSoundDevice::Api::OSX_CORE;
 	case RtAudio::Api::WINDOWS_WASAPI:
@@ -46,6 +49,7 @@ ofSoundDevice::Api toOf(RtAudio::Api api){
 		return ofSoundDevice::Api::MS_ASIO;
 	case RtAudio::Api::WINDOWS_DS:
 		return ofSoundDevice::Api::MS_DS;
+#endif
 	default:
 		return ofSoundDevice::Api::UNSPECIFIED;
 	}
