@@ -225,7 +225,7 @@ namespace priv{
 				}
 
 			private:
-				std::weak_ptr<BaseEvent::Data> event;
+				std::weak_ptr<Data> event;
 				std::unique_ptr<BaseFunctionId> id;
 		};
 
