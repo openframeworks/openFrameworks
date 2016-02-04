@@ -152,7 +152,7 @@ protected:
 
     virtual void run() = 0;
 
-	bool test(bool test, const std::string & testName, const std::string & msg, const std::string & file, int line){
+	bool do_test(bool test, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(test){
 			ofLogNotice() << testName << " passed";
@@ -166,12 +166,12 @@ protected:
 		}
 	}
 
-	bool test(bool test, const std::string & testName, const std::string & file, int line){
-		return this->test(test,testName,"",file,line);
+	bool do_test(bool test, const std::string & testName, const std::string & file, int line){
+		return this->do_test(test,testName,"",file,line);
 	}
 
 	template<typename T1, typename T2>
-	bool test_eq(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
+	bool do_test_eq(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(t1==t2){
 			ofLogNotice() << testName << " passed";
@@ -189,12 +189,12 @@ protected:
 	}
 
 	template<typename T1, typename T2>
-	bool test_eq(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
-		return test_eq(t1,t2,v1,v2,testName,"",file,line);
+	bool do_test_eq(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
+		return do_test_eq(t1,t2,v1,v2,testName,"",file,line);
 	}
 
 	template<typename T1, typename T2>
-	bool test_gt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
+	bool do_test_gt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(t1>t2){
 			ofLogNotice() << testName << " passed";
@@ -212,12 +212,12 @@ protected:
 	}
 
 	template<typename T1, typename T2>
-	bool test_gt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
-		return test_gt(t1,t2,v1,v2,testName,"",file,line);
+	bool do_test_gt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
+		return do_test_gt(t1,t2,v1,v2,testName,"",file,line);
 	}
 
 	template<typename T1, typename T2>
-	bool test_lt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
+	bool do_test_lt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(t1<t2){
 			ofLogNotice() << testName << " passed";
@@ -235,8 +235,8 @@ protected:
 	}
 
 	template<typename T1, typename T2>
-	bool test_lt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
-		return test_lt(t1,t2,v1,v2,testName,"",file,line);
+	bool do_test_lt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
+		return do_test_lt(t1,t2,v1,v2,testName,"",file,line);
 	}
 
 private:
@@ -295,7 +295,7 @@ private:
     std::shared_ptr<ofColorsLoggerChannel> logger{new ofColorsLoggerChannel};
 };
 
-#define test(x, ...) this->test(x,__VA_ARGS__,__FILE__,__LINE__)
-#define test_eq(x,y, ...) this->test_eq(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
-#define test_gt(x,y, ...) this->test_gt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
-#define test_lt(x,y, ...) this->test_lt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define test(x, ...) this->do_test(x,__VA_ARGS__,__FILE__,__LINE__)
+#define test_eq(x,y, ...) this->do_test_eq(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define test_gt(x,y, ...) this->do_test_gt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define test_lt(x,y, ...) this->do_test_lt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
