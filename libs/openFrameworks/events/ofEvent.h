@@ -211,7 +211,7 @@ namespace priv{
 			public:
 				EventToken();
 				template<typename Id>
-				EventToken(std::shared_ptr<BaseEvent<Function,Mutex>::Data> & event, const Id & id)
+				EventToken(std::shared_ptr<Data> & event, const Id & id)
 				:event(event)
 				,id(id.clone()){
 
