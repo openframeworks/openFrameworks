@@ -26,6 +26,7 @@ ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 	triPoints.resize(3);
 	normalsEnabled = false;
 	lightingEnabled = false;
+    materialBound = false;
 	alphaMaskTextureTarget = GL_TEXTURE_2D;
 	window = _window;
 	currentFramebufferId = 0;
@@ -539,53 +540,59 @@ void ofGLRenderer::bind(const ofBaseMaterial & material){
 	ofFloatColor specular = material.getSpecularColor();
 	ofFloatColor ambient = material.getAmbientColor();
 	ofFloatColor emissive = material.getEmissiveColor();
-	float shininess = material.getShininess();
+    float shininess = material.getShininess();
+    glDisable(GL_COLOR_MATERIAL);
 #ifndef TARGET_OPENGLES
-	// Material colors and properties
+    // Material colors and properties
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, &diffuse.r);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, &specular.r);
 	glMaterialfv(GL_FRONT, GL_AMBIENT, &ambient.r);
 	glMaterialfv(GL_FRONT, GL_EMISSION, &emissive.r);
-	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
+    glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
 
 	glMaterialfv(GL_BACK, GL_DIFFUSE, &diffuse.r);
 	glMaterialfv(GL_BACK, GL_SPECULAR, &specular.r);
 	glMaterialfv(GL_BACK, GL_AMBIENT, &ambient.r);
 	glMaterialfv(GL_BACK, GL_EMISSION, &emissive.r);
-	glMaterialfv(GL_BACK, GL_SHININESS, &shininess);
-#elif !defined(TARGET_PROGRAMMABLE_GL)
-
+    glMaterialfv(GL_BACK, GL_SHININESS, &shininess);
+#else
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &diffuse.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &specular.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &ambient.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &emissive.r);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
 #endif
+    materialBound = true;
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::unbind(const ofBaseMaterial & material){
+void ofGLRenderer::unbind(const ofBaseMaterial &){
 	// Set default material colors and properties
 	ofMaterial::Data defaultData;
 #ifndef TARGET_OPENGLES
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, &defaultData.diffuse.r);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, &defaultData.diffuse.r);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, &defaultData.specular.r);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, &defaultData.ambient.r);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, &defaultData.ambient.r);
 	glMaterialfv(GL_FRONT, GL_EMISSION, &defaultData.emissive.r);
 	glMaterialfv(GL_FRONT, GL_SHININESS, &defaultData.shininess);
 
-	glMaterialfv(GL_BACK, GL_DIFFUSE, &defaultData.diffuse.r);
+    glMaterialfv(GL_BACK, GL_DIFFUSE, &defaultData.diffuse.r);
 	glMaterialfv(GL_BACK, GL_SPECULAR, &defaultData.specular.r);
-	glMaterialfv(GL_BACK, GL_AMBIENT, &defaultData.ambient.r);
+    glMaterialfv(GL_BACK, GL_AMBIENT, &defaultData.ambient.r);
 	glMaterialfv(GL_BACK, GL_EMISSION, &defaultData.emissive.r);
-	glMaterialfv(GL_BACK, GL_SHININESS, &defaultData.shininess);
+    glMaterialfv(GL_BACK, GL_SHININESS, &defaultData.shininess);
 #else
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &defaultData.diffuse.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &defaultData.specular.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &defaultData.ambient.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &defaultData.emissive.r);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &defaultData.shininess);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &defaultData.shininess);
 #endif
+    // Re-enable global color as material ambient and diffuse
+    materialBound = false;
+    if(lightingEnabled){
+        setColor(currentStyle.color);
+    }
 }
 
 //----------------------------------------------------------
@@ -1032,15 +1039,31 @@ void ofGLRenderer::setColor(const ofColor & color, int _a){
 
 //----------------------------------------------------------
 void ofGLRenderer::setColor(int r, int g, int b){
-	currentStyle.color.set(r,g,b);
-	glColor4f(r/255.f,g/255.f,b/255.f,1.f);
+    currentStyle.color.set(r,g,b);
+    glColor4f(r/255.f,g/255.f,b/255.f,1.f);
+    if(lightingEnabled && !materialBound){
+        glEnable(GL_COLOR_MATERIAL);
+        #ifndef TARGET_OPENGLES
+            glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+            glColorMaterial(GL_BACK, GL_AMBIENT_AND_DIFFUSE);
+        #endif
+        glEnable(GL_COLOR_MATERIAL);
+    }
 }
 
 
 //----------------------------------------------------------
 void ofGLRenderer::setColor(int r, int g, int b, int a){
-	currentStyle.color.set(r,g,b,a);
-	glColor4f(r/255.f,g/255.f,b/255.f,a/255.f);
+    currentStyle.color.set(r,g,b,a);
+    glColor4f(r/255.f,g/255.f,b/255.f,a/255.f);
+    if(lightingEnabled && !materialBound){
+        glEnable(GL_COLOR_MATERIAL);
+        #ifndef TARGET_OPENGLES
+            glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+            glColorMaterial(GL_BACK, GL_AMBIENT_AND_DIFFUSE);
+        #endif
+        glEnable(GL_COLOR_MATERIAL);
+    }
 }
 
 //----------------------------------------------------------
@@ -1267,14 +1290,17 @@ void ofGLRenderer::setBlendMode(ofBlendMode blendMode){
 	currentStyle.blendingMode = blendMode;
 }
 
+//----------------------------------------------------------
 void ofGLRenderer::setBitmapTextMode(ofDrawBitmapMode mode){
 	currentStyle.drawBitmapMode = mode;
 }
 
+//----------------------------------------------------------
 ofStyle ofGLRenderer::getStyle() const{
 	return currentStyle;
 }
 
+//----------------------------------------------------------
 void ofGLRenderer::pushStyle(){
 	styleHistory.push_back(currentStyle);
 	//if we are over the max number of styles we have set, then delete the oldest styles.
@@ -1285,6 +1311,7 @@ void ofGLRenderer::pushStyle(){
 	}
 }
 
+//----------------------------------------------------------
 void ofGLRenderer::popStyle(){
 	if( styleHistory.size() ){
 		setStyle(styleHistory.back());
@@ -1292,6 +1319,7 @@ void ofGLRenderer::popStyle(){
 	}
 }
 
+//----------------------------------------------------------
 void ofGLRenderer::setStyle(const ofStyle & style){
 	//color
 	setColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
@@ -1335,6 +1363,7 @@ void ofGLRenderer::setStyle(const ofStyle & style){
 	currentStyle = style;
 }
 
+//----------------------------------------------------------
 void ofGLRenderer::setCurveResolution(int resolution){
 	currentStyle.curveResolution = resolution;
 	path.setCurveResolution(resolution);
@@ -1679,6 +1708,11 @@ void ofGLRenderer::enableTextureTarget(const ofTexture & tex, int textureLocatio
 	glClientActiveTexture(GL_TEXTURE0+textureLocation);
 	glEnable( tex.getTextureData().textureTarget);
 	glBindTexture( tex.getTextureData().textureTarget, (GLuint)tex.getTextureData().textureID);
+#ifndef TARGET_OPENGLES
+	if(tex.getTextureData().bufferId!=0){
+		glTexBuffer(GL_TEXTURE_BUFFER, tex.getTextureData().glInternalFormat, tex.getTextureData().bufferId);
+	}
+#endif
 	textureLocationsEnabled.insert(textureLocation);
 }
 
@@ -1691,31 +1725,28 @@ void ofGLRenderer::disableTextureTarget(int textureTarget, int textureLocation){
 	textureLocationsEnabled.erase(textureLocation);
 }
 
+//----------------------------------------------------------
 void ofGLRenderer::setAlphaMaskTex(const ofTexture & tex){
 	enableTextureTarget(tex, 1);
 	alphaMaskTextureTarget = tex.getTextureData().textureTarget;
 }
 
+//----------------------------------------------------------
 void ofGLRenderer::disableAlphaMask(){
 	disableTextureTarget(alphaMaskTextureTarget,1);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::enableLighting(){
-	glEnable(GL_LIGHTING);
-#ifndef TARGET_OPENGLES  //TODO: fix this
-	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-	glColorMaterial(GL_BACK, GL_AMBIENT_AND_DIFFUSE);
-#endif
-	glEnable(GL_COLOR_MATERIAL);
-
+    glEnable(GL_LIGHTING);
+    lightingEnabled = true;
+    setColor(currentStyle.color);
 	// FIXME: we do this so the 3d ofDraw* functions work with lighting
 	// but if someone enables it between ofEnableLighting it'll be disabled
 	// on ofDisableLighting. by now it seems the best option to not loose
 	// performance when drawing lots of primitives
 	normalsEnabled = glIsEnabled( GL_NORMALIZE );
-	glEnable(GL_NORMALIZE);
-	lightingEnabled = true;
+    glEnable(GL_NORMALIZE);
 
 	int matrixMode;
 	glGetIntegerv(GL_MATRIX_MODE,&matrixMode);
@@ -1850,6 +1881,7 @@ void ofGLRenderer::setLightSpotDirection(int lightIndex, const ofVec4f & directi
 	glMatrixMode(matrixMode);
 }
 
+//----------------------------------------------------------
 int ofGLRenderer::getGLVersionMajor(){
 #ifdef TARGET_OPENGLES
 	return 1;
@@ -1858,6 +1890,7 @@ int ofGLRenderer::getGLVersionMajor(){
 #endif
 }
 
+//----------------------------------------------------------
 int ofGLRenderer::getGLVersionMinor(){
 #ifdef TARGET_OPENGLES
 	return 0;
@@ -1866,12 +1899,13 @@ int ofGLRenderer::getGLVersionMinor(){
 #endif
 }
 
-
+//----------------------------------------------------------
 void ofGLRenderer::saveFullViewport(ofPixels & pixels){
 	ofRectangle v = getCurrentViewport();
 	saveScreen(v.x,v.y,v.width,v.height,pixels);
 }
 
+//----------------------------------------------------------
 void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 
     int sh = getViewportHeight();
@@ -1964,10 +1998,12 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 	#endif
 }
 
+//----------------------------------------------------------
 const of3dGraphics & ofGLRenderer::get3dGraphics() const{
 	return graphics3d;
 }
 
+//----------------------------------------------------------
 of3dGraphics & ofGLRenderer::get3dGraphics(){
 	return graphics3d;
 }

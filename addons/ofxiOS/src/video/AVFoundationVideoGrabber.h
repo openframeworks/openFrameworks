@@ -9,12 +9,10 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreVideo/CoreVideo.h>
 #import <CoreMedia/CoreMedia.h>
-#include "ofxiOS.h"
-#include "ofxiOSExtras.h"
-
+#include "ofBaseTypes.h"
+#include "ofTexture.h"
 
 class AVFoundationVideoGrabber;
-
 
 @interface iOSVideoGrabber : UIViewController <AVCaptureVideoDataOutputSampleBufferDelegate> {
 

@@ -19,6 +19,21 @@
 #include "ofURLFileLoader.h"
 #include "ofMainLoop.h"
 
+#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI)
+	#include "ofAppGLFWWindow.h"
+	//special case so we preserve supplied settngs
+	//TODO: remove me when we remove the ofAppGLFWWindow setters.
+	//--------------------------------------
+	void ofSetupOpenGL(shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode){
+		ofInit();
+		auto settings = windowPtr->getSettings();
+		settings.width = w;
+		settings.height = h;
+		settings.windowMode = screenMode;
+		ofGetMainLoop()->addWindow(windowPtr);
+		windowPtr->setup(settings);
+	}
+#endif
 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
 #if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
@@ -94,6 +109,8 @@ void ofInit(){
 	signal(SIGABRT, &ofSignalHandler);  // abort signal
 #endif
 
+        of::priv::initutils();
+
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeBeginPeriod(1);		// ! experimental, sets high res time
 								// you need to call timeEndPeriod.
@@ -104,10 +121,6 @@ void ofInit(){
 								// up on your system.
 								// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
 	#endif
-
-	ofSeedRandom();
-	ofResetElapsedTimeCounter();
-	of::priv::setWorkingDirectoryToDefault();
 
 #ifdef TARGET_LINUX
 	if(std::locale().name() == "C"){
@@ -232,6 +245,8 @@ void ofExitCallback(){
 	// static deinitialization happens after this finishes
 	// every object should have ended by now and won't receive any
 	// events
+
+        of::priv::endutils();
 
 	initialized() = false;
 }

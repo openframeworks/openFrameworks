@@ -12,4 +12,4 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 # sudo service mysql stop
 # sudo service postgresql stop
 
-sudo $ROOT/scripts/linux/ubuntu/install_dependencies.sh;
+sudo $ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;

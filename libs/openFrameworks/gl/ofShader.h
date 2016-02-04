@@ -17,6 +17,7 @@ class ofParameterGroup;
 class ofVec2f;
 class ofVec3f;
 class ofVec4f;
+class ofBufferObject;
 
 class ofShader {
 public:
@@ -24,6 +25,8 @@ public:
 	~ofShader();
 	ofShader(const ofShader & shader);
 	ofShader & operator=(const ofShader & shader);
+    ofShader(ofShader && shader);
+    ofShader & operator=(ofShader && shader);
 	
 	bool load(string shaderName);
 	bool load(string vertName, string fragName, string geomName="");

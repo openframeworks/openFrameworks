@@ -29,13 +29,12 @@
  *
  * ***********************************************************************/ 
 
-#import "ofMain.h"
-#import "ofGLProgrammableRenderer.h"
-#import "ofAppiOSWindow.h"
-#import "ofxiOSEAGLView.h"
-#import "ofxiOSAppDelegate.h"
-#import "ofxiOSViewController.h"
-#import "ofxiOSExtras.h"
+#include "ofAppiOSWindow.h"
+#include "ofGLRenderer.h"
+#include "ofGLProgrammableRenderer.h"
+#include "ofxiOSAppDelegate.h"
+#include "ofxiOSViewController.h"
+#include "ofxiOSEAGLView.h"
 
 //----------------------------------------------------------------------------------- instance.
 static ofAppiOSWindow * _instance = NULL;
@@ -50,9 +49,6 @@ ofAppiOSWindow::ofAppiOSWindow() : hasExited(false) {
     } else {
         ofLog(OF_LOG_ERROR, "ofAppiOSWindow instantiated more than once");
     }
-    
-	orientation = OF_ORIENTATION_DEFAULT;
-	
     bRetinaSupportedOnDevice = false;
     bRetinaSupportedOnDeviceChecked = false;
 }
@@ -95,6 +91,11 @@ void ofAppiOSWindow::setup(const ofiOSWindowSettings & _settings) {
 
 void ofAppiOSWindow::setup() {
 	
+	
+	if(settings.setupOrientation == OF_ORIENTATION_UNKNOWN) {
+		settings.setupOrientation = OF_ORIENTATION_DEFAULT;
+	}
+	setOrientation(settings.setupOrientation);
 	if(settings.glesVersion >= ESRendererVersion_20) {
 		currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
 	} else {

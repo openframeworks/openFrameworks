@@ -1,2 +1,0 @@
-yum install codeblocks xterm
-
