@@ -414,6 +414,10 @@ protected:
 	FunctionPtr make_function(std::function<void(const void*, T&)> f, int priority) {
 		return std::make_shared<Function>(priority, [f](const void*s, T&t) {f(s, t); return false; }, of::priv::make_function_id());
 	}
+
+	using of::priv::BaseEvent<of::priv::Function<T,Mutex>,Mutex>::removeFunction;
+	using of::priv::BaseEvent<of::priv::Function<T,Mutex>,Mutex>::addFunction;
+	using of::priv::BaseEvent<of::priv::Function<T,Mutex>,Mutex>::addNoToken;
 #endif
 
 public:
@@ -593,7 +597,12 @@ protected:
 	FunctionPtr make_function(std::function<void(const void*)> f, int priority) {
 		return std::make_shared<Function>(priority, [f](const void*s) {f(s); return false; }, of::priv::make_function_id());
 	}
+
+	using of::priv::BaseEvent<of::priv::Function<void,Mutex>,Mutex>::removeFunction;
+	using of::priv::BaseEvent<of::priv::Function<void,Mutex>,Mutex>::addFunction;
+	using of::priv::BaseEvent<of::priv::Function<void,Mutex>,Mutex>::addNoToken;
 #endif
+
 public:
 	template<class TObj, typename TMethod>
 	void add(TObj * listener, TMethod method, int priority){
