@@ -2,6 +2,8 @@
 set -ev
 ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 
+trap 'for f in ~/Library/Logs/DiagnosticReports/*; do cat $f; done' 11
+
 echo "**** Running unit tests ****"
 cd $ROOT/tests
 for group in *; do
@@ -20,7 +22,7 @@ for group in *; do
                     while [ $counter -lt 5 ] && [ $errorcode -ne 0 ]
                     do
                         cd bin/${binname}_debug.app/Contents/MacOS/
-                        lldb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
+                        ./${binname}_debug
                         errorcode=$?
                         counter=$[$counter +1]
                     done
@@ -29,7 +31,7 @@ for group in *; do
                     fi
                 else
                     cd bin/${binname}_debug.app/Contents/MacOS/
-                    lldb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
+                    ./${binname}_debug
                     errorcode=$?
                     if [[ $errorcode -ne 0 ]]; then
                         exit $errorcode
