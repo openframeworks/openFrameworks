@@ -382,7 +382,7 @@ protected:
 		}, make_function_id((ofEvent<T>*)nullptr,function));
 	}
 
-#if _MSC_VER
+#ifdef _MSC_VER
 	FunctionPtr make_function(check_function<bool(T&)> f, int priority){
 		return std::make_shared<Function>(priority, [f](const void*,T&t){return f(t);}, of::priv::make_function_id());
 	}
@@ -565,7 +565,7 @@ protected:
 		}, make_function_id((ofEvent<void>*)nullptr,function));
 	}
 
-#if _MSC_VER
+#ifdef _MSC_VER
 	FunctionPtr make_function(check_function<bool()> f, int priority){
 		return std::make_shared<Function>(priority, [f](const void*){return f();}, of::priv::make_function_id());
 	}
