@@ -195,6 +195,11 @@ shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
 	ofInit();
 	return mainLoop()->createWindow(settings);
 }
+// special function for ofAppEGLWindowSetting
+shared_ptr<ofAppBaseWindow> ofCreateWindow2(const struct ofAppEGLWindow::Settings & settings){
+	ofInit();
+	return mainLoop()->createWindow2(settings);
+}
 
 //-----------------------	gets called when the app exits
 //							currently looking at who to turn off
