@@ -443,3 +443,16 @@ void ofSendMessage(string messageString){
 	ofMessage msg(messageString);
 	ofSendMessage(msg);
 }
+
+//------------------------------------------
+namespace of{
+	namespace priv{
+		std::atomic<uint_fast64_t> StdFunctionId::nextId;
+
+		AbstractEventToken::~AbstractEventToken(){}
+
+		BaseFunctionId::~BaseFunctionId(){}
+
+		StdFunctionId::~StdFunctionId(){}
+	}
+}

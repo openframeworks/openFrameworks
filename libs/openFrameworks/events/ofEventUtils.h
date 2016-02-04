@@ -6,14 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-
-enum ofEventOrder{
-	OF_EVENT_ORDER_BEFORE_APP=0,
-	OF_EVENT_ORDER_APP=100,
-	OF_EVENT_ORDER_AFTER_APP=200
-};
-
 //----------------------------------------------------
 // register any method of any class to an event.
 // the method must provide one of the following
@@ -219,7 +211,7 @@ inline void ofNotifyEvent(EventType & event, ArgumentsType & args, SenderType * 
 template <class EventType,typename ArgumentsType>
 inline void ofNotifyEvent(EventType & event, ArgumentsType & args){
 	try{
-		event.notify(nullptr,args);
+		event.notify(args);
 	}catch(ofEventAttendedException &){
 
 	}
@@ -237,7 +229,7 @@ inline void ofNotifyEvent(EventType & event, const ArgumentsType & args, SenderT
 template <class EventType,typename ArgumentsType>
 inline void ofNotifyEvent(EventType & event, const ArgumentsType & args){
 	try{
-		event.notify(nullptr,args);
+		event.notify(args);
 	}catch(ofEventAttendedException &){
 
 	}
@@ -254,7 +246,7 @@ inline void ofNotifyEvent(ofEvent<void> & event, SenderType * sender){
 
 inline void ofNotifyEvent(ofEvent<void> & event){
 	try{
-		event.notify(nullptr);
+		event.notify();
 	}catch(ofEventAttendedException &){
 
 	}
