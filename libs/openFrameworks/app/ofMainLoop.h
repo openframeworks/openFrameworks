@@ -11,6 +11,7 @@ public:
 	virtual ~ofMainLoop();
 
 	shared_ptr<ofAppBaseWindow> createWindow(const ofWindowSettings & settings);
+	shared_ptr<ofAppBaseWindow> createWindow2(const struct ofAppEGLWindow::Settings & settings);
 	template<typename Window>
 	void addWindow(shared_ptr<Window> window){
 		allowMultiWindow = Window::allowsMultiWindow();
