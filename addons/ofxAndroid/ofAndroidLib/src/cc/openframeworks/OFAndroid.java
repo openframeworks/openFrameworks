@@ -26,7 +26,6 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ScaleGestureDetector;
-import android.view.SurfaceView;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -152,7 +151,10 @@ public class OFAndroid {
 		OFAndroidObject.setActivity(ofActivity);
 	}
 	
+	static void fatalErrorDialog(final Activity activity, final String msg){
+		activity.runOnUiThread(new Runnable(){
 			public void run() {
+				new AlertDialog.Builder(activity)  
 					.setMessage(msg)  
 					.setTitle("")  
 					.setCancelable(false)  
