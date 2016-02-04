@@ -108,7 +108,7 @@ endif
 TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 
 DATA_FILES = $(shell find bin/data -type f 2>/dev/null)
-RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
+RESNAME=ofdataresources
 RESFILE=$(RESNAME).zip
 
 ifeq ($(ABI),armv7)
@@ -131,8 +131,8 @@ endif
 
 ifeq ($(ABI),x86)
 	ABI_PATH = x86
-	PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
-	PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
+    PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_x86.so
+    PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_x86.so
 endif
 
 PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/$(ABI)/libopenFrameworks.a
@@ -158,7 +158,7 @@ PLATFORM_CORELIB_DEBUG_TARGET = $(OF_CORE_LIB_PATH)/$(ABI)/libopenFrameworksDebu
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_REQUIRED_ADDONS = ofxAndroid
+PLATFORM_REQUIRED_ADDONS = ofxAndroid ofxAccelerometer
 
 ################################################################################
 # PLATFORM CFLAGS
@@ -230,7 +230,7 @@ PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os -DNDEBUG
 PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -s
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -O0 -g3 -DANDROID_NDK -D_DEBUG #-D_GLIBCXX_DEBUG
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -O0 -g3 -DANDROID_NDK -D_DEBUG -DDEBUG #-D_GLIBCXX_DEBUG
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -267,6 +267,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.c
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/graphics/ofCairoRenderer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofOpenALSoundPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofRtAudioSoundStream.cpp
 
 # third party
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%

@@ -22,21 +22,18 @@
 //--------------------------------------------------
 ofBuffer::ofBuffer()
 :currentLine(end(),end()){
-	buffer.resize(1);
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(const char * _buffer, std::size_t size)
 :buffer(_buffer,_buffer+size)
 ,currentLine(end(),end()){
-	buffer.resize(buffer.size()+1,0);
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(const string & text)
 :buffer(text.begin(),text.end())
 ,currentLine(end(),end()){
-	buffer.resize(buffer.size()+1,0);
 }
 
 //--------------------------------------------------
@@ -57,10 +54,14 @@ bool ofBuffer::set(istream & stream, size_t ioBlockSize){
 	vector<char> aux_buffer(ioBlockSize);
 	while(stream.good()){
 		stream.read(&aux_buffer[0], ioBlockSize);
-		buffer.insert(buffer.end(),aux_buffer.begin(),aux_buffer.begin()+stream.gcount());
+		append(aux_buffer.data(), stream.gcount());
 	}
-	buffer.push_back(0);
 	return true;
+}
+
+//--------------------------------------------------
+void ofBuffer::setall(char mem){
+	buffer.assign(buffer.size(), mem);
 }
 
 //--------------------------------------------------
@@ -68,19 +69,18 @@ bool ofBuffer::writeTo(ostream & stream) const {
 	if(stream.bad()){
 		return false;
 	}
-	stream.write(&(buffer[0]), buffer.size() - 1);
+	stream.write(buffer.data(), buffer.size());
 	return stream.good();
 }
 
 //--------------------------------------------------
 void ofBuffer::set(const char * _buffer, std::size_t _size){
-	buffer.assign(_buffer,_buffer+_size);
-	buffer.resize(buffer.size()+1,0);
+	buffer.assign(_buffer, _buffer+_size);
 }
 
 //--------------------------------------------------
 void ofBuffer::set(const string & text){
-	set(text.c_str(),text.size());
+	set(text.c_str(), text.size());
 }
 
 //--------------------------------------------------
@@ -90,45 +90,47 @@ void ofBuffer::append(const string& _buffer){
 
 //--------------------------------------------------
 void ofBuffer::append(const char * _buffer, std::size_t _size){
-	buffer.insert(buffer.end()-1,_buffer,_buffer+_size);
-	buffer.back() = 0;
+	buffer.insert(buffer.end(), _buffer, _buffer + _size);
+}
+
+//--------------------------------------------------
+void ofBuffer::reserve(size_t size){
+	buffer.reserve(size);
 }
 
 //--------------------------------------------------
 void ofBuffer::clear(){
-	buffer.resize(1,0);
+	buffer.clear();
 }
 
 //--------------------------------------------------
 void ofBuffer::allocate(std::size_t _size){
-	clear();
-	//we always add a 0 at the end to avoid problems with strings
-	buffer.resize(_size + 1, 0);
+	resize(_size);
 }
 
 //--------------------------------------------------
+void ofBuffer::resize(std::size_t _size){
+	buffer.resize(_size);
+}
+
+
+//--------------------------------------------------
 char * ofBuffer::getData(){
-	if(buffer.empty()){
-		return nullptr;
-	}
-	return &buffer[0];
+	return buffer.data();
 }
 
 //--------------------------------------------------
 const char * ofBuffer::getData() const{
-	if(buffer.empty()){
-		return nullptr;
-	}
-	return &buffer[0];
+	return buffer.data();
 }
 
 //--------------------------------------------------
-char *ofBuffer::getBinaryBuffer(){
+char * ofBuffer::getBinaryBuffer(){
 	return getData();
 }
 
 //--------------------------------------------------
-const char *ofBuffer::getBinaryBuffer() const {
+const char * ofBuffer::getBinaryBuffer() const {
 	return getData();
 }
 
@@ -137,7 +139,7 @@ string ofBuffer::getText() const {
 	if(buffer.empty()){
 		return "";
 	}
-	return &buffer[0];
+	return std::string(buffer.begin(), buffer.end());
 }
 
 //--------------------------------------------------
@@ -152,12 +154,8 @@ ofBuffer & ofBuffer::operator=(const string & text){
 }
 
 //--------------------------------------------------
-long ofBuffer::size() const {
-	if(buffer.empty()){
-		return 0;
-	}
-	//we always add a 0 at the end to avoid problems with strings
-	return buffer.size() - 1;
+std::size_t ofBuffer::size() const {
+	return buffer.size();
 }
 
 //--------------------------------------------------
@@ -300,9 +298,9 @@ bool ofBuffer::Line::empty() const{
 }
 
 //--------------------------------------------------
-ofBuffer::Lines::Lines(vector<char> & buffer)
-:_begin(buffer.begin())
-,_end(buffer.end()){}
+ofBuffer::Lines::Lines(vector<char>::iterator begin, vector<char>::iterator end)
+:_begin(begin)
+,_end(end){}
 
 //--------------------------------------------------
 ofBuffer::Line ofBuffer::Lines::begin(){
@@ -316,7 +314,7 @@ ofBuffer::Line ofBuffer::Lines::end(){
 
 //--------------------------------------------------
 ofBuffer::Lines ofBuffer::getLines(){
-	return ofBuffer::Lines(buffer);
+	return ofBuffer::Lines(begin(), end());
 }
 
 //--------------------------------------------------
@@ -368,7 +366,9 @@ ofFile::~ofFile(){
 
 //-------------------------------------------------------------------------------------------------------------
 ofFile::ofFile(const ofFile & mom)
-:mode(Reference)
+:basic_ios()
+,fstream()
+,mode(Reference)
 ,binary(true){
 	copyFrom(mom);
 }
@@ -472,7 +472,7 @@ bool ofFile::create(){
 	if(!myFile.string().empty()){
 		auto oldmode = this->mode;
 		auto oldpath = path();
-		success = open(path(),ofFile::WriteOnly);
+		success = open(path(),ofFile::WriteOnly,binary);
 		close();
 		open(oldpath,oldmode,binary);
 	}
@@ -639,9 +639,10 @@ bool ofFile::isDevice() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isHidden() const {
-#ifdef TARGET_WINDOWS
+#ifdef TARGET_WIN32
+	return false;
 #else
-	return myFile.filename().string()[0] == '.';
+	return myFile.filename() != "." && myFile.filename() != ".." && myFile.filename().string()[0] == '.';
 #endif
 }
 
@@ -694,7 +695,7 @@ bool ofFile::copyTo(const string& _path, bool bRelativeToData, bool overwrite) c
 		path = ofToDataPath(path);
 	}
 	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(isFile() && ofFile(path).isDirectory()){
+		if(isFile() && ofFile(path,ofFile::Reference).isDirectory()){
 			path = ofFilePath::join(path,getFileName());
 		}
 		if(ofFile::doesFileExist(path, bRelativeToData)){
@@ -736,7 +737,7 @@ bool ofFile::moveTo(const string& _path, bool bRelativeToData, bool overwrite){
 		path = ofToDataPath(path);
 	}
 	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(isFile() && ofFile(path).isDirectory()){
+		if(isFile() && ofFile(path,ofFile::Reference).isDirectory()){
 			path = ofFilePath::join(path,getFileName());
 		}
 		if(ofFile::doesFileExist(path, bRelativeToData)){
@@ -749,11 +750,18 @@ bool ofFile::moveTo(const string& _path, bool bRelativeToData, bool overwrite){
 	}
 
 	try{
+		auto mode = this->mode;
+		if(mode != ofFile::Reference){
+			changeMode(ofFile::Reference, binary);
+		}
 		if(!ofDirectory(ofFilePath::getEnclosingDirectory(path,bRelativeToData)).exists()){
 			ofFilePath::createEnclosingDirectory(path, bRelativeToData);
 		}
 		std::filesystem::rename(myFile,path);
 		myFile = path;
+		if(mode != ofFile::Reference){
+			changeMode(mode, binary);
+		}
 	}
 	catch(std::exception & except){
 		ofLogError("ofFile") << "moveTo(): unable to move \"" << path << "\":" << except.what();
@@ -841,13 +849,13 @@ bool ofFile::operator>=(const ofFile & file) const {
 //------------------------------------------------------------------------------------------------------------
 
 bool ofFile::copyFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData,  bool overwrite){
-	return ofFile(pathSrc).copyTo(pathDst,bRelativeToData,overwrite);
+	return ofFile(pathSrc,ofFile::Reference).copyTo(pathDst,bRelativeToData,overwrite);
 }
 
 //be careful with slashes here - appending a slash when moving a folder will causes mad headaches
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::moveFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData, bool overwrite){
-	return ofFile(pathSrc).moveTo(pathDst, bRelativeToData, overwrite);
+	return ofFile(pathSrc,ofFile::Reference).moveTo(pathDst, bRelativeToData, overwrite);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -856,7 +864,7 @@ bool ofFile::doesFileExist(const std::string& _fPath, bool bRelativeToData){
 	if(bRelativeToData){
 		fPath = ofToDataPath(fPath);
 	}
-	ofFile file(fPath);
+	ofFile file(fPath,ofFile::Reference);
 	return !fPath.empty() && file.exists();
 }
 
@@ -866,7 +874,7 @@ bool ofFile::removeFile(const std::string& _path, bool bRelativeToData){
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	return ofFile(path).remove();
+	return ofFile(path,ofFile::Reference).remove();
 }
 
 
@@ -891,7 +899,7 @@ ofDirectory::ofDirectory(const std::filesystem::path & path){
 void ofDirectory::open(const std::filesystem::path & path){
 	originalDirectory = ofFilePath::getPathForDirectory(path.string());
 	files.clear();
-	myDir = std::filesystem::path(ofToDataPath(originalDirectory));
+    myDir = std::filesystem::path(ofToDataPath(originalDirectory));
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -905,9 +913,9 @@ bool ofDirectory::create(bool recursive){
 	if(!myDir.string().empty()){
 		try{
 			if(recursive){
-				std::filesystem::create_directories(myDir);
+                std::filesystem::create_directories(myDir);
 			}else{
-				std::filesystem::create_directory(myDir);
+                std::filesystem::create_directory(myDir);
 			}
 		}
 		catch(std::exception & except){
@@ -1025,7 +1033,7 @@ bool ofDirectory::copyTo(const std::string& _path, bool bRelativeToData, bool ov
 				return false;
 			}
 		}else{
-			ofFile(file->path()).copyTo(dst.string(),false);
+			ofFile(file->path(),ofFile::Reference).copyTo(dst.string(),false);
 		}
 	}
 
@@ -1054,9 +1062,9 @@ bool ofDirectory::remove(bool recursive){
 
 	try{
 		if(recursive){
-			std::filesystem::remove_all(myDir);
+            std::filesystem::remove_all(std::filesystem::canonical(myDir));
 		}else{
-			std::filesystem::remove(myDir);
+            std::filesystem::remove(std::filesystem::canonical(myDir));
 		}
 	}catch(std::exception & except){
 		ofLogError("ofDirectory") << "remove(): unable to remove file/directory: " << except.what();
@@ -1092,10 +1100,6 @@ std::size_t ofDirectory::listDir(){
 		return 0;
 	}
 	
-	// File::list(vector<File>) is broken on windows as of march 23, 2011...
-	// so we need to use File::list(vector<string>) and build a vector<File>
-	// in the future the following can be replaced width: cur.list(files);
-	vector<string>fileStrings;
 	std::filesystem::directory_iterator end_iter;
 	if ( std::filesystem::exists(myDir) && std::filesystem::is_directory(myDir)){
 		for( std::filesystem::directory_iterator dir_iter(myDir) ; dir_iter != end_iter ; ++dir_iter){
@@ -1112,11 +1116,12 @@ std::size_t ofDirectory::listDir(){
 		});
 	}
 
+
 	if(!extensions.empty() && !ofContains(extensions, (string)"*")){
 		ofRemove(files, [&](ofFile & file){
 			return std::find(extensions.begin(), extensions.end(), ofToLower(file.getExtension())) == extensions.end();
 		});
-	}
+	}        
 
 	if(ofGetLogLevel() == OF_LOG_VERBOSE){
 		for(int i = 0; i < (int)size(); i++){
@@ -1220,7 +1225,7 @@ bool ofDirectory::removeDirectory(const std::string& _path, bool deleteIfNotEmpt
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	return ofFile(path).remove(deleteIfNotEmpty);
+	return ofFile(path,ofFile::Reference).remove(deleteIfNotEmpty);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1418,7 +1423,7 @@ string ofFilePath::getFileName(const std::string& _filePath, bool bRelativeToDat
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getBaseName(const std::string& filePath){
-	return ofFile(filePath).getBaseName();
+	return ofFile(filePath,ofFile::Reference).getBaseName();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1506,7 +1511,7 @@ string ofFilePath::getUserHomeDir(){
 		// getenv will return any Environent Variable on Windows
 		// USERPROFILE is the key on Windows 7 but it might be HOME
 		// in other flavours of windows...need to check XP and NT...
-		return string(getenv("USERPROFILE"));
+		return ofGetEnv("USERPROFILE");
 	#elif !defined(TARGET_EMSCRIPTEN)
 		struct passwd * pw = getpwuid(getuid());
 		return pw->pw_dir;
@@ -1523,14 +1528,17 @@ string ofFilePath::makeRelative(const std::string & from, const std::string & to
     // Find common base
     for( std::filesystem::path::const_iterator toEnd( pathTo.end() ), fromEnd( pathFrom.end() ) ; itrFrom != fromEnd && itrTo != toEnd && *itrFrom == *itrTo; ++itrFrom, ++itrTo );
     // Navigate backwards in directory to reach previously found base
-    for( std::filesystem::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom )
-    {
-        if( (*itrFrom) != "." )
+    for( std::filesystem::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom ){
+        if( (*itrFrom) != "." ){
             ret /= "..";
+        }
     }
     // Now navigate down the directory branch
-    for( ; itrTo != pathTo.end() ; ++itrTo )
-        ret /= *itrTo;
+    for( ; itrTo != pathTo.end() ; ++itrTo ){
+        if( itrTo->string() != "."){
+            ret /= *itrTo;
+        }
+    }
 
     return ret.string();
 }

@@ -6,18 +6,18 @@
 #
 # Visual Studio & Code Blocks projects are provided
 
-FORMULA_TYPES=( "vs" "win_cb" )
+FORMULA_TYPES=( "vs" "msys2" )
 
 # define the version
 VER=master
 
 # tools for git use
-GIT_URL=https://github.com/ofTheo/videoInput.git
+GIT_URL=https://github.com/arturoc/videoInput.git
 GIT_TAG=$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	git clone https://github.com/ofTheo/videoInput.git
+	git clone ${GIT_URL}
 }
 
 # prepare the build environment, executed inside the lib src dir
@@ -39,7 +39,7 @@ function build() {
 			vs-build "videoInput.sln" Build "Release|x64"
 			vs-build "videoInput.sln" Build "Debug|x64"
 		fi
-	elif [ "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "msys2" ] ; then
 		cd msys2
 		make 
 	fi
@@ -78,7 +78,7 @@ function clean() {
 	if [ "$TYPE" == "vs" ] ; then
 		cd videoInputSrcAndDemos/VS-videoInputcompileAsLib
 		vs-clean "videoInput.sln"
-	elif [ "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "msys2" ] ; then
 		cd videoInputSrcAndDemos/msys2
 		make clean
 	fi

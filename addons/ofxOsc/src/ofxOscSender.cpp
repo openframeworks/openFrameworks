@@ -63,7 +63,7 @@ ofxOscSender & ofxOscSender::operator=(const ofxOscSender & mom){
 	return *this;
 }
 
-void ofxOscSender::setup( std::string hostname, int port )
+void ofxOscSender::setup( const std::string &hostname, int port )
 {
     if( osc::UdpSocket::GetUdpBufferSize() == 0 ){
     	osc::UdpSocket::SetUdpBufferSize(65535);
@@ -134,8 +134,8 @@ void ofxOscSender::sendMessage( ofxOscMessage& message, bool wrapInBundle )
 void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
 	if(!parameter.isSerializable()) return;
 	if(parameter.type()==typeid(ofParameterGroup).name()){
-		string address = "/";
-		const vector<string> hierarchy = parameter.getGroupHierarchyNames();
+        std::string address = "/";
+        const std::vector<std::string> hierarchy = parameter.getGroupHierarchyNames();
 		for(int i=0;i<(int)hierarchy.size()-1;i++){
 			address+=hierarchy[i] + "/";
 		}
@@ -143,8 +143,8 @@ void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
 		appendParameter(bundle,parameter,address);
 		sendBundle(bundle);
 	}else{
-		string address = "";
-		const vector<string> hierarchy = parameter.getGroupHierarchyNames();
+        std::string address = "";
+        const std::vector<std::string> hierarchy = parameter.getGroupHierarchyNames();
 		for(int i=0;i<(int)hierarchy.size()-1;i++){
 			address+= "/" + hierarchy[i];
 		}
@@ -156,7 +156,7 @@ void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
 }
 
 
-void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractParameter & parameter, string address){
+void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractParameter & parameter, const std::string &address){
 	if(parameter.type()==typeid(ofParameterGroup).name()){
 		ofxOscBundle bundle;
 		const ofParameterGroup & group = static_cast<const ofParameterGroup &>(parameter);
@@ -176,7 +176,7 @@ void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractPara
 	}
 }
 
-void ofxOscSender::appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, string address){
+void ofxOscSender::appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, const std::string &address){
 	msg.setAddress(address+parameter.getEscapedName());
 	if(parameter.type()==typeid(ofParameter<int>).name()){
 		msg.addIntArg(parameter.cast<int>());

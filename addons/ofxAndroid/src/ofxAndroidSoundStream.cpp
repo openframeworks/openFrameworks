@@ -45,7 +45,7 @@ ofxAndroidSoundStream::~ofxAndroidSoundStream(){
 	ofRemoveListener(ofxAndroidEvents().resume,this,&ofxAndroidSoundStream::resume);
 }
 
-vector<ofSoundDevice> ofxAndroidSoundStream::getDeviceList() const{
+std::vector<ofSoundDevice> ofxAndroidSoundStream::getDeviceList(ofSoundDevice::Api api) const{
     ofLogWarning("ofxAndroidSoundStream") << "getDeviceList() isn't implemented on android";
     return vector<ofSoundDevice>();
 }
@@ -62,28 +62,28 @@ void ofxAndroidSoundStream::setOutput(ofBaseSoundOutput * _soundOutput){
 	soundOutputPtr = _soundOutput;
 }
 
-bool ofxAndroidSoundStream::setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
+bool ofxAndroidSoundStream::setup(const ofSoundStreamSettings & settings){
 	if(instance!=NULL && instance!=this){
 		ofLogError("ofxAndroidSoundStream") << "setup(): multiple instances detected, only one instance allowed";
 		return false;
 	}
 
 	// Find the minimum input buffer size allowed by the Android device
-	int input_buffer_size = inChannels*getMinInBufferSize(sampleRate,inChannels) * 2;
+	int input_buffer_size = settings.numInputChannels*getMinInBufferSize(settings.sampleRate,settings.numInputChannels) * 2;
 	// setup size of input circular-buffer
 	input_buffer.setup(input_buffer_size,0);
 	
 	// deallocate and reallocate if setup() is called more than once
-	in_float_buffer.allocate(bufferSize,inChannels);
-	in_float_buffer.setSampleRate(sampleRate);
-	out_float_buffer.allocate(bufferSize,outChannels);
-	out_float_buffer.setSampleRate(sampleRate);
+	in_float_buffer.allocate(settings.bufferSize,settings.numInputChannels);
+	in_float_buffer.setSampleRate(settings.sampleRate);
+	out_float_buffer.allocate(settings.bufferSize,settings.numOutputChannels);
+	out_float_buffer.setSampleRate(settings.sampleRate);
 
 	tickCount = 0;
 
-	requestedBufferSize = bufferSize;
-	totalOutRequestedBufferSize = bufferSize*outChannels;
-	totalInRequestedBufferSize = bufferSize*inChannels;
+	requestedBufferSize = settings.bufferSize;
+	totalOutRequestedBufferSize = settings.bufferSize*settings.numOutputChannels;
+	totalInRequestedBufferSize = settings.bufferSize*settings.numInputChannels;
 
 	// JNI: Try to find and call OFAndroidSoundStream.getInstance().setup(outChannels,inChannels,sampleRate,bufferSize,nBuffers)
 	if(!ofGetJavaVMPtr()){
@@ -110,11 +110,11 @@ bool ofxAndroidSoundStream::setup(int outChannels, int inChannels, int sampleRat
 	jobject javaObject = env->CallStaticObjectMethod(javaClass,soundStreamSingleton);
 	jmethodID javaSetup = env->GetMethodID(javaClass,"setup","(IIIII)V");
 	// call setup()
-	if(javaObject && javaSetup)
-		env->CallVoidMethod(javaObject,javaSetup,outChannels,inChannels,sampleRate,bufferSize,nBuffers);
-	else
+	if(javaObject && javaSetup){
+		env->CallVoidMethod(javaObject,javaSetup,settings.numOutputChannels,settings.numInputChannels,settings.sampleRate,settings.bufferSize,settings.numBuffers);
+	}else{
 		ofLogError("ofxAndroidSoundStream") << "setup(): couldn't get OFAndroidSoundStream instance or setup method";
-
+	}
 	// Store instance pointer to ofxAndroidSoundStream (singleton pattern)
 	instance = this;
 	isPaused = false;
@@ -122,19 +122,17 @@ bool ofxAndroidSoundStream::setup(int outChannels, int inChannels, int sampleRat
 	return true;
 }
 
-bool ofxAndroidSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
-	// Set audio I/O callback classes
-	if(inChannels > 0)  setInput(app);
-	if(outChannels > 0) setOutput(app);
-	// Setup audio I/O buffers
-	return setup(outChannels,inChannels,sampleRate,bufferSize,nBuffers);
-}
-
 void ofxAndroidSoundStream::start(){
 	if(isPaused){
 		resume();
 	}else{
-		setup(out_float_buffer.getNumChannels(),in_float_buffer.getNumChannels(),out_float_buffer.getSampleRate(),requestedBufferSize,1);
+		ofSoundStreamSettings settings;
+		settings.numOutputChannels = out_float_buffer.getNumChannels();
+		settings.numInputChannels = in_float_buffer.getNumChannels();
+		settings.sampleRate = out_float_buffer.getSampleRate();
+		settings.bufferSize = requestedBufferSize;
+		settings.numBuffers = 1;
+		setup(settings);
 	}
 }
 

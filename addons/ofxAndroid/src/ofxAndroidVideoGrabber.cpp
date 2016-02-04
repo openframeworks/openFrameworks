@@ -15,9 +15,12 @@
 struct ofxAndroidVideoGrabber::Data{
 	bool bIsFrameNew;
 	bool bGrabberInited;
+	bool bUsePixels;
+	int width;
+	int height;
 	ofPixelFormat internalPixelFormat;
-	ofPixels frontPixels;
-	ofPixels backPixels;
+	bool bNewBackFrame;
+	ofPixels frontBuffer, backBuffer;
 	ofTexture texture;
 	jfloatArray matrixJava;
 	int cameraId;
@@ -25,12 +28,12 @@ struct ofxAndroidVideoGrabber::Data{
 	bool newPixels;
 	int attemptFramerate;
 	jobject javaVideoGrabber;
+
 	Data();
 	~Data();
 	void onAppPause();
 	void onAppResume();
 	void loadTexture();
-	void reloadTexture();
 };
 
 map<int,weak_ptr<ofxAndroidVideoGrabber::Data>> & instances(){
@@ -51,6 +54,9 @@ static jclass getJavaClass(){
 }
 
 static void InitConvertTable();
+static void ConvertYUV2RGB(unsigned char *src0,unsigned char *src1,unsigned char *dst_ori,
+					int width,int height);
+static void ConvertYUV2toRGB565(unsigned char* yuvs, unsigned char* rgbs, int width, int height);
 
 ofxAndroidVideoGrabber::Data::Data()
 :bIsFrameNew(false)
@@ -59,6 +65,7 @@ ofxAndroidVideoGrabber::Data::Data()
 ,appPaused(false)
 ,newPixels(false)
 ,attemptFramerate(-1)
+,bUsePixels(true)
 ,javaVideoGrabber(nullptr){
 	JNIEnv *env = ofGetJNIEnv();
 
@@ -103,39 +110,37 @@ ofxAndroidVideoGrabber::Data::~Data(){
 }
 
 void ofxAndroidVideoGrabber::Data::loadTexture(){
+	ofTextureData td;
+	GLuint texId[1];
+	glGenTextures(1, texId);
 
-	if(!texture.texData.bAllocated) return;
+	glEnable(GL_TEXTURE_EXTERNAL_OES);
+	glBindTexture(GL_TEXTURE_EXTERNAL_OES, texId[0]);
 
-	glGenTextures(1, (GLuint *)&texture.texData.textureID);
+	glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	if (!ofIsGLProgrammableRenderer()) {
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	}
 
-	glEnable(texture.texData.textureTarget);
+	glDisable(GL_TEXTURE_EXTERNAL_OES);
 
-	glBindTexture(texture.texData.textureTarget, (GLuint)texture.texData.textureID);
+	// Set the externally created texture reference
+	texture.setUseExternalTextureID(texId[0]);
+	texture.texData.width = width;
+	texture.texData.height = height;
+	texture.texData.tex_w = width;
+	texture.texData.tex_h = height;
+	texture.texData.tex_t = 1; // Hack!
+	texture.texData.tex_u = 1;
+	texture.texData.textureTarget = GL_TEXTURE_EXTERNAL_OES;
+	texture.texData.glInternalFormat = GL_RGBA;
 
-	glTexParameterf(texture.texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(texture.texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(texture.texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterf(texture.texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-	glDisable(texture.texData.textureTarget);
 
 }
 
-void ofxAndroidVideoGrabber::Data::reloadTexture(){
-
-	JNIEnv *env = ofGetJNIEnv();
-	if (!env) {
-		ofLogError("ofxAndroidVideoGrabber") << "reloadTexture(): couldn't get environment using GetEnv()";
-		return;
-	}
-	jmethodID javasetTexture = env->GetMethodID(getJavaClass(),"setTexture","(I)V");
-	if(!javasetTexture){
-		ofLogError("ofxAndroidVideoPlayer") << "reloadTexture(): couldn't get java setTexture for VideoPlayer";
-		return;
-	}
-	env->CallVoidMethod(javaVideoGrabber,javasetTexture,texture.getTextureData().textureID);
-}
 
 ofxAndroidVideoGrabber::ofxAndroidVideoGrabber()
 :data(new Data){
@@ -172,7 +177,20 @@ void ofxAndroidVideoGrabber::Data::onAppResume(){
 	appPaused = false;
 }
 vector<ofVideoDevice> ofxAndroidVideoGrabber::listDevices() const{
-	return vector<ofVideoDevice>();
+
+	vector<ofVideoDevice> devices;
+
+	int numDevices = getNumCameras();
+	for(int i = 0; i < numDevices; i++){
+		int facing = getFacingOfCamera(i);
+		ofVideoDevice vd;
+		vd.deviceName = facing == 0? "Back" : "Front";
+		vd.id = i;
+		vd.bAvailable = true;
+		devices.push_back(vd);
+	}
+
+	return devices;
 }
 
 bool ofxAndroidVideoGrabber::isFrameNew() const{
@@ -190,33 +208,52 @@ void ofxAndroidVideoGrabber::update(){
 		data->newPixels = false;
 		data->bIsFrameNew = true;
 
-		if(supportsTextureRendering()){
-			jmethodID update = ofGetJNIEnv()->GetMethodID(getJavaClass(), "update", "()V");
-			ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber, update);
-
-			jmethodID javaGetTextureMatrix = ofGetJNIEnv()->GetMethodID(getJavaClass(),"getTextureMatrix","([F)V");
-			if(!javaGetTextureMatrix){
-				ofLogError("ofxAndroidVideoPlayer") << "update(): couldn't get java javaGetTextureMatrix for VideoPlayer";
-				return;
-			}
-			ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber,javaGetTextureMatrix,data->matrixJava);
-			jfloat * m = ofGetJNIEnv()->GetFloatArrayElements(data->matrixJava,0);
-
-			ofMatrix4x4 vFlipTextureMatrix;
-			vFlipTextureMatrix.scale(1,-1,1);
-			vFlipTextureMatrix.translate(0,1,0);
-			ofMatrix4x4 textureMatrix(m);
-			data->texture.setTextureMatrix( vFlipTextureMatrix * textureMatrix );
-
-			ofGetJNIEnv()->ReleaseFloatArrayElements(data->matrixJava,m,0);
+		if (data->bNewBackFrame && data->bUsePixels) {
+			//std::unique_lock <std::mutex> lck(data->mtx);
+			std::swap(data->backBuffer, data->frontBuffer);
+			data->bNewBackFrame = false;
 		}
-	}else{
+
+		// Call update in the java code
+		// This will tell the camera api that we are ready for a new frame
+		jmethodID update = ofGetJNIEnv()->GetMethodID(getJavaClass(), "update", "()V");
+		ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber, update);
+
+		// Get the texture matrix
+		jmethodID javaGetTextureMatrix = ofGetJNIEnv()->GetMethodID(getJavaClass(),"getTextureMatrix","([F)V");
+		if(!javaGetTextureMatrix){
+			ofLogError("ofxAndroidVideoPlayer") << "update(): couldn't get java javaGetTextureMatrix for VideoPlayer";
+			return;
+		}
+		ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber,javaGetTextureMatrix,data->matrixJava);
+		jfloat * m = ofGetJNIEnv()->GetFloatArrayElements(data->matrixJava,0);
+
+		ofMatrix4x4 vFlipTextureMatrix;
+		vFlipTextureMatrix.scale(-1,-1,1);
+		vFlipTextureMatrix.translate(1,1,0);
+		ofMatrix4x4 textureMatrix(m);
+		data->texture.setTextureMatrix(vFlipTextureMatrix * textureMatrix );
+
+		ofGetJNIEnv()->ReleaseFloatArrayElements(data->matrixJava,m,0);
+	} else {
 		data->bIsFrameNew = false;
 	}
 }
 
 void ofxAndroidVideoGrabber::close(){
+	// Release texture
+	glDeleteTextures(1, &data->texture.texData.textureID);
 
+    JNIEnv *env = ofGetJNIEnv();
+    jclass javaClass = getJavaClass();
+    jmethodID javaCloseGrabber = env->GetMethodID(javaClass,"close","()V");
+    if(data->javaVideoGrabber && javaCloseGrabber){
+        env->CallVoidMethod(data->javaVideoGrabber,javaCloseGrabber);
+    } else {
+        ofLogError("ofxAndroidVideoGrabber") << "close(): couldn't get OFAndroidVideoGrabber close grabber method";
+    }
+    
+    data->bGrabberInited = false;
 }
 
 
@@ -248,54 +285,40 @@ bool ofxAndroidVideoGrabber::setup(int w, int h){
 		return false;
 	}
 
-	JNIEnv *env = ofGetJNIEnv();
-	if(!env) return false;
+	ofLogNotice() << "initializing camera with external texture";
 
-	jclass javaClass = env->FindClass("cc/openframeworks/OFAndroidVideoGrabber");
+	// Load opengl texture
+	data->width = w;
+	data->height = h;
+	data->loadTexture();
 
-	if(supportsTextureRendering()){
-		ofLogNotice() << "initializing camera with external texture";
-		ofTextureData td;
-		td.width = w;
-		td.height = h;
-		td.tex_w = td.width;
-		td.tex_h = td.height;
-		td.tex_t = 1; // Hack!
-		td.tex_u = 1;
-		td.textureTarget = GL_TEXTURE_EXTERNAL_OES;
-		td.glInternalFormat = GL_RGBA;
-		td.bFlipTexture = false;
-
-		// hack to initialize gl resources from outside ofTexture
-		data->texture.texData = td;
-		data->texture.texData.bAllocated = true;
-		data->loadTexture();
-
-		jmethodID javaInitGrabber = env->GetMethodID(javaClass,"initGrabber","(IIII)V");
-		if(data->javaVideoGrabber && javaInitGrabber){
-			env->CallVoidMethod(data->javaVideoGrabber,javaInitGrabber,w,h,data->attemptFramerate,data->texture.texData.textureID);
-		}else{
-			ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): couldn't get OFAndroidVideoGrabber init grabber method";
-			return false;
-		}
-	}else{
-		jmethodID javaInitGrabber = env->GetMethodID(javaClass,"initGrabber","(III)V");
-		if(data->javaVideoGrabber && javaInitGrabber){
-			env->CallVoidMethod(data->javaVideoGrabber,javaInitGrabber,w,h,data->attemptFramerate);
-		}else{
-			ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): couldn't get OFAndroidVideoGrabber init grabber method";
-			return false;
-		}
-	}
-
-	//ofLogVerbose("ofxAndroidVideoGrabber") << "initGrabber(): new frame callback size: " << (int) width << "x" << (int) height;
-	data->frontPixels.allocate(w,h,getPixelFormat());
-	data->bGrabberInited = true;
+	bool bInit = initCamera();
+	if(!bInit) return false;
 
 	ofLogVerbose("ofxAndroidVideoGrabber") << "initGrabber(): camera initialized correctly";
 	data->appPaused = false;
 	return true;
 }
+
+bool ofxAndroidVideoGrabber::initCamera(){
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env) return false;
+
+	jclass javaClass = getJavaClass();
+
+	jmethodID javaInitGrabber = env->GetMethodID(javaClass,"initGrabber","(IIII)V");
+	if(data->javaVideoGrabber && javaInitGrabber){
+		env->CallVoidMethod(data->javaVideoGrabber,javaInitGrabber,data->width,data->height,data->attemptFramerate,data->texture.texData.textureID);
+	} else {
+		ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): couldn't get OFAndroidVideoGrabber init grabber method";
+		return false;
+	}
+
+	//ofLogVerbose("ofxAndroidVideoGrabber") << "initGrabber(): new frame callback size: " << (int) width << "x" << (int) height;
+	data->bGrabberInited = true;
+
+	return true;
+};
 
 bool ofxAndroidVideoGrabber::isInitialized() const{
 	return data->bGrabberInited;
@@ -304,16 +327,92 @@ bool ofxAndroidVideoGrabber::isInitialized() const{
 void ofxAndroidVideoGrabber::videoSettings(){
 }
 
-ofPixels&	ofxAndroidVideoGrabber::getPixels(){
-	return data->frontPixels;
+void ofxAndroidVideoGrabber::setUsePixels(bool usePixels){
+	data->bUsePixels = usePixels;
+}
+
+ofPixels& ofxAndroidVideoGrabber::getPixels(){
+	if(!data->bUsePixels){
+		ofLogNotice()<<"Calling getPixels will not return frame data when setUsePixels(false) has been set";
+	}
+
+	return data->frontBuffer;
 }
 
 const ofPixels& ofxAndroidVideoGrabber::getPixels() const {
-    return data->frontPixels;
+	return const_cast<ofxAndroidVideoGrabber*>(this)->getPixels();
 }
 
 void ofxAndroidVideoGrabber::setVerbose(bool bTalkToMe){
 
+}
+
+int ofxAndroidVideoGrabber::getCameraFacing(int facing)const{
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env) return -1;
+
+	jclass javaClass = getJavaClass();
+
+	jmethodID javagetCameraFacing = env->GetMethodID(javaClass,"getCameraFacing","(I)I");
+	if(data->javaVideoGrabber && javagetCameraFacing){
+		return env->CallIntMethod(data->javaVideoGrabber,javagetCameraFacing,facing);
+	} else {
+		ofLogError("ofxAndroidVideoGrabber") << "getCameraFacing(): couldn't get OFAndroidVideoGrabber getCameraFacing method";
+		return -1;
+	}
+}
+
+int ofxAndroidVideoGrabber::getBackCamera()const{
+	return getCameraFacing(0);
+}
+
+int ofxAndroidVideoGrabber::getFrontCamera()const{
+	return getCameraFacing(1);
+}
+
+int ofxAndroidVideoGrabber::getNumCameras() const{
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env) return 0;
+
+	jclass javaClass = getJavaClass();
+
+	jmethodID javagetNumCameras= env->GetMethodID(javaClass,"getNumCameras","()I");
+	if(data->javaVideoGrabber && javagetNumCameras){
+		return env->CallIntMethod(data->javaVideoGrabber,javagetNumCameras);
+	} else {
+		ofLogError("ofxAndroidVideoGrabber") << "getNumCameras(): couldn't get OFAndroidVideoGrabber getNumCameras method";
+		return 0;
+	}
+}
+
+int ofxAndroidVideoGrabber::getCameraOrientation(int device)const{
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env) return 0;
+
+	jclass javaClass = getJavaClass();
+
+	jmethodID javagetCameraOrientation= env->GetMethodID(javaClass,"getCameraOrientation","(I)I");
+	if(data->javaVideoGrabber && javagetCameraOrientation){
+		return env->CallIntMethod(data->javaVideoGrabber,javagetCameraOrientation, device);
+	} else {
+		ofLogError("ofxAndroidVideoGrabber") << "getCameraOrientation(): couldn't get OFAndroidVideoGrabber getCameraOrientation method";
+		return 0;
+	}
+}
+
+int ofxAndroidVideoGrabber::getFacingOfCamera(int device)const{
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env) return 0;
+
+	jclass javaClass = getJavaClass();
+
+	jmethodID javagetFacingOfCamera= env->GetMethodID(javaClass,"getFacingOfCamera","(I)I");
+	if(data->javaVideoGrabber && javagetFacingOfCamera){
+		return env->CallIntMethod(data->javaVideoGrabber,javagetFacingOfCamera, device);
+	} else {
+		ofLogError("ofxAndroidVideoGrabber") << "getFacingOfCamera(): couldn't get OFAndroidVideoGrabber getFacingOfCamera method";
+		return 0;
+	}
 }
 
 void ofxAndroidVideoGrabber::setDeviceID(int _deviceID){
@@ -326,7 +425,7 @@ void ofxAndroidVideoGrabber::setDeviceID(int _deviceID){
 	jmethodID javasetDeviceID = env->GetMethodID(javaClass,"setDeviceID","(I)V");
 	if(data->javaVideoGrabber && javasetDeviceID){
 		env->CallVoidMethod(data->javaVideoGrabber,javasetDeviceID,_deviceID);
-	}else{
+	} else {
 		ofLogError("ofxAndroidVideoGrabber") << "setDeviceID(): couldn't get OFAndroidVideoGrabber setDeviceID method";
 		return;
 	}
@@ -351,11 +450,11 @@ void ofxAndroidVideoGrabber::setDesiredFrameRate(int framerate){
 }
 
 float ofxAndroidVideoGrabber::getHeight() const{
-	return data->frontPixels.getHeight();
+	return data->height;
 }
 
 float ofxAndroidVideoGrabber::getWidth() const{
-	return data->frontPixels.getWidth();
+	return data->width;
 }
 
 bool ofxAndroidVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
@@ -383,85 +482,85 @@ ofPixelFormat ofxAndroidVideoGrabber::getPixelFormat() const{
  {
 	static bool inited = false;
 	if(inited) return;
-    long int crv,cbu,cgu,cgv;
-    int i,ind;
+	long int crv,cbu,cgu,cgv;
+	int i,ind;
 
-    crv = 104597; cbu = 132201;  /* fra matrise i global.h */
-    cgu = 25675;  cgv = 53279;
+	crv = 104597; cbu = 132201;  /* fra matrise i global.h */
+	cgu = 25675;  cgv = 53279;
 
-    for (i = 0; i < 256; i++) {
-       crv_tab[i] = (i-128) * crv;
-       cbu_tab[i] = (i-128) * cbu;
-       cgu_tab[i] = (i-128) * cgu;
-       cgv_tab[i] = (i-128) * cgv;
-       tab_76309[i] = 76309*(i-16);
-    }
+	for (i = 0; i < 256; i++) {
+	   crv_tab[i] = (i-128) * crv;
+	   cbu_tab[i] = (i-128) * cbu;
+	   cgu_tab[i] = (i-128) * cgu;
+	   cgv_tab[i] = (i-128) * cgv;
+	   tab_76309[i] = 76309*(i-16);
+	}
 
-    for (i=0; i<384; i++)
-       clp[i] =0;
-    ind=384;
-    for (i=0;i<256; i++)
-        clp[ind++]=i;
-    ind=640;
-    for (i=0;i<384;i++)
-        clp[ind++]=255;
+	for (i=0; i<384; i++)
+	   clp[i] =0;
+	ind=384;
+	for (i=0;i<256; i++)
+		clp[ind++]=i;
+	ind=640;
+	for (i=0;i<384;i++)
+		clp[ind++]=255;
 
-    inited = true;
+	inited = true;
  }
 
  void ConvertYUV2RGB(unsigned char *src0,unsigned char *src1,unsigned char *dst_ori,
-                                  int width,int height)
+								  int width,int height)
  {
-     register int y1,y2,u,v;
-     register unsigned char *py1,*py2;
-     register int i,j, c1, c2, c3, c4;
-     register unsigned char *d1, *d2;
+	 register int y1,y2,u,v;
+	 register unsigned char *py1,*py2;
+	 register int i,j, c1, c2, c3, c4;
+	 register unsigned char *d1, *d2;
 
-     int width3 = 3*width;
-     py1=src0;
-     py2=py1+width;
-     d1=dst_ori;
-     d2=d1+width3;
-     for (j = 0; j < height; j += 2) {
-         for (i = 0; i < width; i += 2) {
+	 int width3 = 3*width;
+	 py1=src0;
+	 py2=py1+width;
+	 d1=dst_ori;
+	 d2=d1+width3;
+	 for (j = 0; j < height; j += 2) {
+		 for (i = 0; i < width; i += 2) {
 
-             v = *src1++;
-             u = *src1++;
+			 v = *src1++;
+			 u = *src1++;
 
-             c1 = crv_tab[v];
-             c2 = cgu_tab[u];
-             c3 = cgv_tab[v];
-             c4 = cbu_tab[u];
+			 c1 = crv_tab[v];
+			 c2 = cgu_tab[u];
+			 c3 = cgv_tab[v];
+			 c4 = cbu_tab[u];
 
-             //up-left
-             y1 = tab_76309[*py1++];
-             *d1++ = clp[384+((y1 + c1)>>16)];
-             *d1++ = clp[384+((y1 - c2 - c3)>>16)];
-             *d1++ = clp[384+((y1 + c4)>>16)];
+			 //up-left
+			 y1 = tab_76309[*py1++];
+			 *d1++ = clp[384+((y1 + c1)>>16)];
+			 *d1++ = clp[384+((y1 - c2 - c3)>>16)];
+			 *d1++ = clp[384+((y1 + c4)>>16)];
 
-             //down-left
-             y2 = tab_76309[*py2++];
-             *d2++ = clp[384+((y2 + c1)>>16)];
-             *d2++ = clp[384+((y2 - c2 - c3)>>16)];
-             *d2++ = clp[384+((y2 + c4)>>16)];
+			 //down-left
+			 y2 = tab_76309[*py2++];
+			 *d2++ = clp[384+((y2 + c1)>>16)];
+			 *d2++ = clp[384+((y2 - c2 - c3)>>16)];
+			 *d2++ = clp[384+((y2 + c4)>>16)];
 
-             //up-right
-             y1 = tab_76309[*py1++];
-             *d1++ = clp[384+((y1 + c1)>>16)];
-             *d1++ = clp[384+((y1 - c2 - c3)>>16)];
-             *d1++ = clp[384+((y1 + c4)>>16)];
+			 //up-right
+			 y1 = tab_76309[*py1++];
+			 *d1++ = clp[384+((y1 + c1)>>16)];
+			 *d1++ = clp[384+((y1 - c2 - c3)>>16)];
+			 *d1++ = clp[384+((y1 + c4)>>16)];
 
-             //down-right
-             y2 = tab_76309[*py2++];
-             *d2++ = clp[384+((y2 + c1)>>16)];
-             *d2++ = clp[384+((y2 - c2 - c3)>>16)];
-             *d2++ = clp[384+((y2 + c4)>>16)];
-         }
-         d1 += width3;
-         d2 += width3;
-         py1+=   width;
-         py2+=   width;
-     }
+			 //down-right
+			 y2 = tab_76309[*py2++];
+			 *d2++ = clp[384+((y2 + c1)>>16)];
+			 *d2++ = clp[384+((y2 - c2 - c3)>>16)];
+			 *d2++ = clp[384+((y2 + c4)>>16)];
+		 }
+		 d1 += width3;
+		 d2 += width3;
+		 py1+=   width;
+		 py2+=   width;
+	 }
 
 
 }
@@ -478,130 +577,126 @@ ofPixelFormat ofxAndroidVideoGrabber::getPixelFormat() const{
 
 //we tackle the conversion two pixels at a time for greater speed
 void ConvertYUV2toRGB565(unsigned char* yuvs, unsigned char* rgbs, int width, int height) {
-    //the end of the luminance data
-    int lumEnd = width * height;
-    //points to the next luminance value pair
-    int lumPtr = 0;
-    //points to the next chromiance value pair
-    int chrPtr = lumEnd;
-    //points to the next byte output pair of RGB565 value
-    int outPtr = 0;
-    //the end of the current luminance scanline
-    int lineEnd = width;
-    register int R, G, B;
-    register int Y1;
-    register int Y2;
-    register int Cr;
-    register int Cb;
+	//the end of the luminance data
+	int lumEnd = width * height;
+	//points to the next luminance value pair
+	int lumPtr = 0;
+	//points to the next chromiance value pair
+	int chrPtr = lumEnd;
+	//points to the next byte output pair of RGB565 value
+	int outPtr = 0;
+	//the end of the current luminance scanline
+	int lineEnd = width;
+	register int R, G, B;
+	register int Y1;
+	register int Y2;
+	register int Cr;
+	register int Cb;
 
-    while (true) {
+	while (true) {
 
-        //skip back to the start of the chromiance values when necessary
-        if (lumPtr == lineEnd) {
-            if (lumPtr == lumEnd) break; //we've reached the end
-            //division here is a bit expensive, but's only done once per scanline
-            chrPtr = lumEnd + ((lumPtr  >> 1) / width) * width;
-            lineEnd += width;
-        }
+		//skip back to the start of the chromiance values when necessary
+		if (lumPtr == lineEnd) {
+			if (lumPtr == lumEnd) break; //we've reached the end
+			//division here is a bit expensive, but's only done once per scanline
+			chrPtr = lumEnd + ((lumPtr  >> 1) / width) * width;
+			lineEnd += width;
+		}
 
-        //read the luminance and chromiance values
-        Y1 = yuvs[lumPtr++] & 0xff;
-        Y2 = yuvs[lumPtr++] & 0xff;
-        Cr = (yuvs[chrPtr++] & 0xff) - 128;
-        Cb = (yuvs[chrPtr++] & 0xff) - 128;
+		//read the luminance and chromiance values
+		Y1 = yuvs[lumPtr++] & 0xff;
+		Y2 = yuvs[lumPtr++] & 0xff;
+		Cr = (yuvs[chrPtr++] & 0xff) - 128;
+		Cb = (yuvs[chrPtr++] & 0xff) - 128;
 
-        //generate first RGB components
-        B = Y1 + ((454 * Cb) >> 8);
-        if(B < 0) B = 0; else if(B > 255) B = 255;
-        G = Y1 - ((88 * Cb + 183 * Cr) >> 8);
-        if(G < 0) G = 0; else if(G > 255) G = 255;
-        R = Y1 + ((359 * Cr) >> 8);
-        if(R < 0) R = 0; else if(R > 255) R = 255;
-        //NOTE: this assume little-endian encoding
-        rgbs[outPtr++]  = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
-        rgbs[outPtr++]  = (unsigned char) ((R & 0xf8) | (G >> 5));
+		//generate first RGB components
+		B = Y1 + ((454 * Cb) >> 8);
+		if(B < 0) B = 0; else if(B > 255) B = 255;
+		G = Y1 - ((88 * Cb + 183 * Cr) >> 8);
+		if(G < 0) G = 0; else if(G > 255) G = 255;
+		R = Y1 + ((359 * Cr) >> 8);
+		if(R < 0) R = 0; else if(R > 255) R = 255;
+		//NOTE: this assume little-endian encoding
+		rgbs[outPtr++]  = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+		rgbs[outPtr++]  = (unsigned char) ((R & 0xf8) | (G >> 5));
 
-        //generate second RGB components
-        B = Y2 + ((454 * Cb) >> 8);
-        if(B < 0) B = 0; else if(B > 255) B = 255;
-        G = Y2 - ((88 * Cb + 183 * Cr) >> 8);
-        if(G < 0) G = 0; else if(G > 255) G = 255;
-        R = Y2 + ((359 * Cr) >> 8);
-        if(R < 0) R = 0; else if(R > 255) R = 255;
-        //NOTE: this assume little-endian encoding
-        rgbs[outPtr++]  = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
-        rgbs[outPtr++]  = (unsigned char) ((R & 0xf8) | (G >> 5));
-    }
+		//generate second RGB components
+		B = Y2 + ((454 * Cb) >> 8);
+		if(B < 0) B = 0; else if(B > 255) B = 255;
+		G = Y2 - ((88 * Cb + 183 * Cr) >> 8);
+		if(G < 0) G = 0; else if(G > 255) G = 255;
+		R = Y2 + ((359 * Cr) >> 8);
+		if(R < 0) R = 0; else if(R > 255) R = 255;
+		//NOTE: this assume little-endian encoding
+		rgbs[outPtr++]  = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+		rgbs[outPtr++]  = (unsigned char) ((R & 0xf8) | (G >> 5));
+	}
 }
 void ConvertYUV2toRGB565_2(unsigned char *src0,unsigned char *src1,unsigned char *dst_ori,
-                                 int width,int height)
+								 int width,int height)
 {
-    register int y1,y2,u,v;
-    register unsigned char *py1,*py2;
-    register int i,j, c1, c2, c3, c4;
-    register unsigned char *d1, *d2;
-    register int R,G,B;
-    int width2 = 2*width;
-    py1=src0;
-    py2=py1+width;
-    d1=dst_ori;
-    d2=d1+width2;
-    for (j = 0; j < height; j += 2) {
-        for (i = 0; i < width; i += 2) {
+	register int y1,y2,u,v;
+	register unsigned char *py1,*py2;
+	register int i,j, c1, c2, c3, c4;
+	register unsigned char *d1, *d2;
+	register int R,G,B;
+	int width2 = 2*width;
+	py1=src0;
+	py2=py1+width;
+	d1=dst_ori;
+	d2=d1+width2;
+	for (j = 0; j < height; j += 2) {
+		for (i = 0; i < width; i += 2) {
 
-            v = *src1++;
-            u = *src1++;
+			v = *src1++;
+			u = *src1++;
 
-            c1 = crv_tab[v];
-            c2 = cgu_tab[u];
-            c3 = cgv_tab[v];
-            c4 = cbu_tab[u];
+			c1 = crv_tab[v];
+			c2 = cgu_tab[u];
+			c3 = cgv_tab[v];
+			c4 = cbu_tab[u];
 
-            //up-left
-            y1 = tab_76309[*py1++];
-            R = clp[384+((y1 + c1)>>16)];
-            G = clp[384+((y1 - c2 - c3)>>16)];
-            B = clp[384+((y1 + c4)>>16)];
-            *d1++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
-            *d1++ = (unsigned char) ((R & 0xf8) | (G >> 5));
+			//up-left
+			y1 = tab_76309[*py1++];
+			R = clp[384+((y1 + c1)>>16)];
+			G = clp[384+((y1 - c2 - c3)>>16)];
+			B = clp[384+((y1 + c4)>>16)];
+			*d1++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+			*d1++ = (unsigned char) ((R & 0xf8) | (G >> 5));
 
-            //down-left
-            y2 = tab_76309[*py2++];
-            B = clp[384+((y2 + c1)>>16)];
-            G = clp[384+((y2 - c2 - c3)>>16)];
-            R = clp[384+((y2 + c4)>>16)];
-            *d2++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
-            *d2++ = (unsigned char) ((R & 0xf8) | (G >> 5));
+			//down-left
+			y2 = tab_76309[*py2++];
+			B = clp[384+((y2 + c1)>>16)];
+			G = clp[384+((y2 - c2 - c3)>>16)];
+			R = clp[384+((y2 + c4)>>16)];
+			*d2++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+			*d2++ = (unsigned char) ((R & 0xf8) | (G >> 5));
 
-            //up-right
-            y1 = tab_76309[*py1++];
-            R = clp[384+((y1 + c1)>>16)];
-            G = clp[384+((y1 - c2 - c3)>>16)];
-            B = clp[384+((y1 + c4)>>16)];
-            *d1++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
-            *d1++ = (unsigned char) ((R & 0xf8) | (G >> 5));
+			//up-right
+			y1 = tab_76309[*py1++];
+			R = clp[384+((y1 + c1)>>16)];
+			G = clp[384+((y1 - c2 - c3)>>16)];
+			B = clp[384+((y1 + c4)>>16)];
+			*d1++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+			*d1++ = (unsigned char) ((R & 0xf8) | (G >> 5));
 
-            //down-right
-            y2 = tab_76309[*py2++];
-            B = clp[384+((y2 + c1)>>16)];
-            G = clp[384+((y2 - c2 - c3)>>16)];
-            R = clp[384+((y2 + c4)>>16)];
-            *d2++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
-            *d2++ = (unsigned char) ((R & 0xf8) | (G >> 5));
-        }
-        d1 += width2;
-        d2 += width2;
-        py1+=   width;
-        py2+=   width;
-    }
+			//down-right
+			y2 = tab_76309[*py2++];
+			B = clp[384+((y2 + c1)>>16)];
+			G = clp[384+((y2 - c2 - c3)>>16)];
+			R = clp[384+((y2 + c4)>>16)];
+			*d2++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+			*d2++ = (unsigned char) ((R & 0xf8) | (G >> 5));
+		}
+		d1 += width2;
+		d2 += width2;
+		py1+=   width;
+		py2+=   width;
+	}
 
 
 }
 
- /*static int time_one_frame = 0;
- static int acc_time = 0;
- static int num_frames = 0;
- static int time_prev_out = 0;*/
 
 extern "C"{
 jint
@@ -609,41 +704,41 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 	auto data = instances()[cameraId].lock();
 	if(!data) return 1;
 
-	auto currentFrame = (unsigned char*)env->GetPrimitiveArrayCritical(array, NULL);
-	if(!currentFrame) return 1;
+	if(data->bUsePixels) {
+		jboolean isCopy;
+		auto currentFrame = (unsigned char *) env->GetByteArrayElements(array, &isCopy);
+		//ofLog()<<"Is copy: "<<(isCopy?true:false);
 
-	ofPixels & pixels = data->backPixels;
-	bool needsResize=false;
-	if(pixels.getWidth()!=width || pixels.getHeight()!=height){
-		needsResize = true;
-		pixels.allocate(width,height,data->internalPixelFormat);
+		if (!currentFrame) return 1;
+
+		ofPixels &pixels = data->backBuffer;
+		bool needsResize = false;
+		if (pixels.getWidth() != width || pixels.getHeight() != height) {
+			needsResize = true;
+			pixels.allocate(width, height, data->internalPixelFormat);
+		}
+
+		if (data->internalPixelFormat == OF_PIXELS_RGB) {
+			ConvertYUV2RGB(currentFrame,                    // y component
+						   currentFrame + (width * height),            // uv components
+						   pixels.getData(), width, height);
+		} else if (data->internalPixelFormat == OF_PIXELS_RGB565) {
+			ConvertYUV2toRGB565(currentFrame, pixels.getData(), width, height);
+		} else if (data->internalPixelFormat == OF_PIXELS_MONO) {
+			pixels.setFromPixels(currentFrame, width, height, OF_IMAGE_GRAYSCALE);
+		}
+
+		if (needsResize) {
+			pixels.resize(data->width, data->height, OF_INTERPOLATE_NEAREST_NEIGHBOR);
+		}
+
+		env->ReleaseByteArrayElements(array, (jbyte*)currentFrame, 0);
+
+		data->bNewBackFrame=true;
 	}
 
-
-
-	//time_one_frame = ofGetSystemTime();
-	if(data->internalPixelFormat==OF_PIXELS_RGB){
-		ConvertYUV2RGB(currentFrame, 					// y component
-				currentFrame+(width*height),			// uv components
-				pixels.getData(),width,height);
-	}else if(data->internalPixelFormat==OF_PIXELS_RGB565){
-		ConvertYUV2toRGB565(currentFrame,pixels.getData(),width,height);
-	}else if(data->internalPixelFormat==OF_PIXELS_MONO){
-		pixels.setFromPixels(currentFrame,width,height,OF_IMAGE_GRAYSCALE);
-	}
-
-	if(needsResize){
-		data->backPixels.resize(data->frontPixels.getWidth(), data->frontPixels.getHeight(), OF_INTERPOLATE_NEAREST_NEIGHBOR);
-	}
-	/*acc_time += ofGetSystemTime() - time_one_frame;
-	num_frames ++;
-	if(ofGetSystemTime() - time_prev_out > 5000){
-		time_prev_out = ofGetSystemTime();
-		ofLogNotice("ofxAndroidVideoGrabber") << "avg time: " << float(acc_time)/float(num_frames);
-	}*/
-
-	env->ReleasePrimitiveArrayCritical(array,currentFrame ,0);
 	data->newPixels = true;
+
 	return 0;
 }
 }

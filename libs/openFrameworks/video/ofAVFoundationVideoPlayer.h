@@ -31,7 +31,7 @@ typedef enum _playerLoopType{
 
 
 //---------------------------------------------------------- video player.
-@interface ofAVFoundationVideoPlayer : NSObject <AVPlayerItemOutputPullDelegate> {
+@interface ofAVFoundationVideoPlayer : NSObject {
 	
     AVPlayer * _player;
 	AVAsset * _asset;
@@ -44,7 +44,6 @@ typedef enum _playerLoopType{
 	
 #if USE_VIDEO_OUTPUT
 	CMVideoFormatDescriptionRef _videoInfo;
-	dispatch_queue_t _myVideoOutputQueue;
 	AVPlayerItemVideoOutput * _videoOutput;
 #endif
 	
@@ -81,6 +80,10 @@ typedef enum _playerLoopType{
     BOOL bSeeking;
     BOOL bSampleVideo; // default to YES
     BOOL bSampleAudio; // default to NO
+	BOOL bIsUnloaded;
+	
+	NSLock* asyncLock;
+	NSCondition* deallocCond;
 }
 
 @property (nonatomic, retain) AVPlayer * player;
@@ -100,6 +103,7 @@ typedef enum _playerLoopType{
 - (BOOL)loadWithFile:(NSString*)file async:(BOOL)bAsync;
 - (BOOL)loadWithPath:(NSString*)path async:(BOOL)bAsync;
 - (BOOL)loadWithURL:(NSURL*)url async:(BOOL)bAsync;
+- (void)unloadVideoAsync;
 - (void)unloadVideo;
 
 - (void)update;
@@ -116,6 +120,7 @@ typedef enum _playerLoopType{
 - (void)seekToTime:(CMTime)time withTolerance:(CMTime)tolerance;
 
 - (BOOL)isReady;
+- (BOOL)isLoaded;
 - (BOOL)isPlaying;
 - (BOOL)isNewFrame;
 - (BOOL)isFinished;
@@ -124,6 +129,7 @@ typedef enum _playerLoopType{
 - (void)setEnableAudioSampling:(BOOL)value;
 - (void)setSynchSampleTime:(CMTime)time;
 - (void)setSynchSampleTimeInSec:(double)time;
+
 - (CMTime)getVideoSampleTime;
 - (double)getVideoSampleTimeInSec;
 - (CMTime)getAudioSampleTime;
@@ -141,6 +147,7 @@ typedef enum _playerLoopType{
 - (int)getDurationInFrames;
 - (int)getCurrentFrameNum;
 - (float)getFrameRate;
+
 - (void)setFrame:(int)frame;
 - (void)setPosition:(float)position;
 - (float)getPosition;
@@ -153,5 +160,6 @@ typedef enum _playerLoopType{
 - (void)setAutoplay:(BOOL)bAutoplay;
 - (BOOL)getAutoplay;
 - (void)setWillBeUpdatedExternally:(BOOL)value;
+- (void)close;
 
 @end
