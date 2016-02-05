@@ -30,9 +30,9 @@ public:
 	void setIndexData(const ofIndexType * indices, int total, int usage);
 
 	void setVertexData(const float * vert0x, int numCoords, int total, int usage, int stride=0);
-	void setColorData(const float * color0r, int total, int usage, int stride=0);
+	void setColorData(const float * color0r, int numCoords, int total, int usage, int stride=0);
 	void setNormalData(const float * normal0x, int total, int usage, int stride=0);
-	void setTexCoordData(const float * texCoord0x, int total, int usage, int stride=0);
+	void setTexCoordData(const float * texCoord0x, int numCoords, int total, int usage, int stride=0);
 
 	void setAttributeData(int location, const float * vert0x, int numCoords, int total, int usage, int stride=0);
 

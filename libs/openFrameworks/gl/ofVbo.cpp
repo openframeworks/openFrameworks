@@ -329,12 +329,12 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 
 //--------------------------------------------------------------
 void ofVbo::setColorData(const ofFloatColor * colors, int total, int usage) {
-	setColorData(&colors[0].r,total,usage,sizeof(ofFloatColor));
+	setColorData(&colors[0].r, 4, total,usage,sizeof(ofFloatColor));
 }
 
 //--------------------------------------------------------------
-void ofVbo::setColorData(const float * color0r, int total, int usage, int stride) {
-	colorAttribute.setData(color0r, 4, total, usage, stride);
+void ofVbo::setColorData(const float * color0r, int numCoords, int total, int usage, int stride) {
+	colorAttribute.setData(color0r, numCoords, total, usage, stride);
 	enableColors();
 }
 
@@ -359,12 +359,12 @@ void ofVbo::setNormalData(const float * normal0x, int total, int usage, int stri
 
 //--------------------------------------------------------------
 void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
-	setTexCoordData(&texCoords[0].x,total, usage, sizeof(ofVec2f));
+	setTexCoordData(&texCoords[0].x, 2, total, usage, sizeof(ofVec2f));
 }
 
 //--------------------------------------------------------------
-void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int stride) {
-	texCoordAttribute.setData(texCoord0x, 2, total, usage, stride);
+void ofVbo::setTexCoordData(const float * texCoord0x, int numCoords, int total, int usage, int stride) {
+	texCoordAttribute.setData(texCoord0x, numCoords, total, usage, stride);
 	enableTexCoords();
 }
 
