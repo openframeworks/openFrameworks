@@ -23,16 +23,19 @@ public:
 	ofBuffer(istream & stream, size_t ioBlockSize = 1024);
 
 	void set(const char * _buffer, std::size_t _size);
-	void set(const string & text);
+    void set(const string & text);
 	bool set(istream & stream, size_t ioBlockSize = 1024);
+    void setall(char mem);
 	void append(const string& _buffer);
 	void append(const char * _buffer, std::size_t _size);
+	void reserve(size_t size);
 
 	bool writeTo(ostream & stream) const;
 
 	void clear();
 
 	void allocate(std::size_t _size);
+    void resize(std::size_t _size);
 
 	char * getData();
 	const char * getData() const;
@@ -43,7 +46,7 @@ public:
 	operator string() const;  // cast to string, to use a buffer as a string
 	ofBuffer & operator=(const string & text);
 
-	long size() const;
+	std::size_t size() const;
 
 	OF_DEPRECATED_MSG("use a lines iterator instead",string getNextLine());
 	OF_DEPRECATED_MSG("use a lines iterator instead",string getFirstLine());
@@ -79,7 +82,7 @@ public:
 	};
 
 	struct Lines{
-		Lines(vector<char> & buffer);
+		Lines(vector<char>::iterator begin, vector<char>::iterator end);
         Line begin();
         Line end();
 

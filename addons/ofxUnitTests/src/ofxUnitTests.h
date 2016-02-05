@@ -140,7 +140,11 @@ class ofxUnitTestsApp: public ofBaseApp{
 		}else{
 			ofLogError() <<  numTestsFailed << "/" << numTestsTotal << " tests failed";
 		}
+
         ofLogNotice() << "took " << ofToString(durationMs) << "ms";
+        if(!reportAppVeyor(passed, durationMs)){
+            ++numTestsFailed;
+        }
         ofExit(numTestsFailed);
     }
 
@@ -236,6 +240,55 @@ protected:
 	}
 
 private:
+    std::string json_var_value(const std::string & var, const std::string & value){
+        return "\"" + var + "\": \"" + value + "\"";
+    }
+
+    bool reportAppVeyor(bool passed, uint64_t durationMs){
+        const std::string APPVEYOR_API_URL = "APPVEYOR_API_URL";
+        if(ofGetEnv(APPVEYOR_API_URL)!=""){
+            //ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then));
+            auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
+            auto projectName = projectDir.stem();
+            auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
+            auto stdOut = logger->getStdOut();
+            ofStringReplace(stdOut, "\\", "\\\\");
+            ofStringReplace(stdOut, "\"", "\\\"");
+            auto stdErr = logger->getStdErr();
+            ofStringReplace(stdErr, "\\", "\\\\");
+            ofStringReplace(stdErr, "\"", "\\\"");
+            ofHttpRequest req;
+            req.headers["Accept"] = "application/json";
+            req.headers["Content-type"] = "application/json";
+            req.method = ofHttpRequest::POST;
+            req.url = ofGetEnv(APPVEYOR_API_URL) + "api/tests";
+            req.body =
+                    "{ " +
+                        json_var_value("testName", projectName.string()) + ", " +
+                        json_var_value("testFramework", "ofxUnitTests") + ", " +
+                        json_var_value("fileName", exeName.string()) + ", " +
+                        json_var_value("outcome", passed?"Passed":"Failed") + ", " +
+                        json_var_value("durationMilliseconds", ofToString(durationMs)) + ", " +
+                        json_var_value("StdOut", stdOut) + ", " +
+                        json_var_value("StdErr", stdErr) +
+                    "}";
+            ofURLFileLoader http;
+            auto res = http.handleRequest(req);
+            if(res.status<200 || res.status>=300){
+                ofLogError() << "sending to " << req.url;
+                ofLogError() << res.status << ", " << res.error;
+                cout << res.data.getText() << endl;
+                ofLogError() << "for body:";
+                cout << req.body << endl;
+                return false;
+            }else{
+                return true;
+            }
+        }else{
+            return true;
+        }
+    }
+
 	int numTestsTotal = 0;
 	int numTestsPassed = 0;
 	int numTestsFailed = 0;

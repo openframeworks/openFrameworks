@@ -2,6 +2,10 @@
 #include "ofConstants.h"
 #include "ofVec2f.h"
 
+#include "ofConstants.h"
+#include "ofVec2f.h"
+#include "ofVec3f.h"
+
 class ofWindowSettings{
 public:
 	ofWindowSettings()
