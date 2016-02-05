@@ -750,7 +750,7 @@ bool ofMesh::usingIndices() const{
 
 //--------------------------------------------------------------
 void ofMesh::append(const ofMesh & mesh){
-	ofIndexType prevNumVertices = vertices.size();
+	ofIndexType prevNumVertices = static_cast<ofIndexType>(vertices.size());
 	if(mesh.getNumVertices()){
 		vertices.insert(vertices.end(),mesh.getVertices().begin(),mesh.getVertices().end());
 	}
@@ -764,8 +764,8 @@ void ofMesh::append(const ofMesh & mesh){
 		normals.insert(normals.end(),mesh.getNormals().begin(),mesh.getNormals().end());
 	}
 	if(mesh.getNumIndices()){
-		for(ofIndexType i=0;i<mesh.getIndices().size();i++){
-			indices.push_back(mesh.getIndex(i)+prevNumVertices);
+		for(auto index: mesh.getIndices()){
+			indices.push_back(index+prevNumVertices);
 		}
 	}
 }
@@ -791,8 +791,6 @@ void ofMesh::load(string path){
 
 	ofIndexType currentVertex = 0;
 	ofIndexType currentFace = 0;
-	
-	bool floatColor = false;
 
 	enum State{
 		Header,
@@ -842,14 +840,14 @@ void ofMesh::load(string path){
 		if((state==Header || state==FaceDef) && lineStr.find("element vertex")==0){
 			state = VertexDef;
 			orderVertices = MAX(orderIndices, 0)+1;
-			data.getVertices().resize(ofToInt(lineStr.substr(15)));
+			data.getVertices().resize(ofTo<size_t>(lineStr.substr(15)));
 			continue;
 		}
 
 		if((state==Header || state==VertexDef) && lineStr.find("element face")==0){
 			state = FaceDef;
 			orderIndices = MAX(orderVertices, 0)+1;
-			data.getIndices().resize(ofToInt(lineStr.substr(13))*3);
+			data.getIndices().resize(ofTo<size_t>(lineStr.substr(13))*3);
 			continue;
 		}
 
@@ -863,7 +861,6 @@ void ofMesh::load(string path){
 			colorCompsFound++;
 			meshDefinition.push_back(Color);
 			data.getColors().resize(data.getVertices().size());
-			floatColor = true;
 			continue;
 		}
 
@@ -871,7 +868,6 @@ void ofMesh::load(string path){
 			colorCompsFound++;
 			meshDefinition.push_back(Color);
 			data.getColors().resize(data.getVertices().size());
-			floatColor = false;
 			continue;
 		}
 
@@ -927,10 +923,10 @@ void ofMesh::load(string path){
 			// read in a line of vertex elements
 			// and split it into attributes,
 			// based attribute order specified in file header
-			int vAttr = 0;
-			int nAttr = 0;
-			int tAttr = 0;
-			int cAttr = 0;
+			ofIndexType vAttr = 0;
+			ofIndexType nAttr = 0;
+			ofIndexType tAttr = 0;
+			ofIndexType cAttr = 0;
 			for(auto s:meshDefinition){
 				switch (s) {
 					case Position:
@@ -977,7 +973,7 @@ void ofMesh::load(string path){
 				error = "face not a triangle";
 				goto clean;
 			}
-			int i;
+			ofIndexType i;
 			sline >> i;
 			data.getIndices()[currentFace*3] = i;
 			sline >> i;
@@ -1641,7 +1637,7 @@ ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
 	int nr = doubleRes+1;
 	if(mode == OF_PRIMITIVE_TRIANGLES) {
 
-		int index1, index2, index3;
+		ofIndexType index1, index2, index3;
 
 		for(float iy = 0; iy < res; iy++) {
 			for(float ix = 0; ix < doubleRes; ix++) {
