@@ -584,6 +584,13 @@ const char * ofFromString(const string & value);
 
 /// \}
 
+template<typename T> T ofTo(const std::string & str){
+	T x;
+	istringstream cur(str);
+	cur >> x;
+	return x;
+}
+
 // --------------------------------------------
 /// \name Number conversion
 /// \{

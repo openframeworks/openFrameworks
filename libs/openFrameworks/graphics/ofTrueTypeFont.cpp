@@ -1261,7 +1261,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 				}else if(settings.direction == ofTtfSettings::RightToLeft){
 					x += glyphs.back().props.width;
 				}
-				glyphPositions.emplace_back(x,y);
+				glyphPositions.emplace_back(static_cast<float>(x), static_cast<float>(y));
 				x += glyphs.back().props.advance * letterSpacing;
 				height = max(height, glyphs.back().props.ymax + y + long(getLineHeight()));
 			}
