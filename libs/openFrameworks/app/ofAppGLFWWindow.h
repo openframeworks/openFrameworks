@@ -46,12 +46,7 @@ public:
 	shared_ptr<ofAppBaseWindow> shareContextWith;
 };
 
-#ifdef TARGET_OPENGLES
-class ofAppGLFWWindow : public ofAppBaseGLESWindow{
-#else
-class ofAppGLFWWindow : public ofAppBaseGLWindow {
-#endif
-
+class ofAppGLFWWindow : public ofAppBaseWindow {
 public:
 
 	ofAppGLFWWindow();
@@ -68,13 +63,7 @@ public:
 	static void pollEvents(){ glfwPollEvents(); }
 
 
-    // this functions are only meant to be called from inside OF don't call them from your code
-    using ofAppBaseWindow::setup;
-#ifdef TARGET_OPENGLES
-	void setup(const ofGLESWindowSettings & settings);
-#else
-	void setup(const ofGLWindowSettings & settings);
-#endif
+	// this functions are only meant to be called from inside OF don't call them from your code
 	void setup(const ofGLFWWindowSettings & settings);
 	void update();
 	void draw();

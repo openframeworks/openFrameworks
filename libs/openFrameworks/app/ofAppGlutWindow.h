@@ -10,7 +10,7 @@
 class ofBaseApp;
 class ofBaseRenderer;
 
-class ofAppGlutWindow : public ofAppBaseGLWindow {
+class ofAppGlutWindow : public ofAppBaseWindow {
 
 public:
 
@@ -23,7 +23,6 @@ public:
 	static bool needsPolling(){ return false; }
 	static void pollEvents(){  }
 
-	using ofAppBaseWindow::setup;
 	void setup(const ofGLWindowSettings & settings);
 	void update();
 	void draw();

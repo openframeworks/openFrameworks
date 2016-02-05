@@ -191,11 +191,6 @@ void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
 	ofCreateWindow(settings);
 }
 
-shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
-	ofInit();
-	return mainLoop()->createWindow(settings);
-}
-
 //-----------------------	gets called when the app exits
 //							currently looking at who to turn off
 //							at the end of the application

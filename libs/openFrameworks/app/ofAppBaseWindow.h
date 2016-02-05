@@ -18,7 +18,6 @@ public:
 	ofAppBaseWindow(){};
 	virtual ~ofAppBaseWindow(){};
 
-	virtual void setup(const ofWindowSettings & settings)=0;
 	virtual void update()=0;
 	virtual void draw()=0;
 	virtual bool getWindowShouldClose(){
@@ -94,32 +93,4 @@ public:
 	virtual HGLRC getWGLContext(){return 0;}
 	virtual HWND getWin32Window(){return 0;}
 #endif
-};
-
-class ofAppBaseGLWindow: public ofAppBaseWindow{
-public:
-	virtual ~ofAppBaseGLWindow(){}
-	virtual void setup(const ofGLWindowSettings & settings)=0;
-	void setup(const ofWindowSettings & settings){
-		const ofGLWindowSettings * glSettings = dynamic_cast<const ofGLWindowSettings*>(&settings);
-		if(glSettings){
-			setup(*glSettings);
-		}else{
-			setup(ofGLWindowSettings(settings));
-		}
-	}
-};
-
-class ofAppBaseGLESWindow: public ofAppBaseWindow{
-public:
-	virtual ~ofAppBaseGLESWindow(){}
-	virtual void setup(const ofGLESWindowSettings & settings)=0;
-	void setup(const ofWindowSettings & settings){
-		const ofGLESWindowSettings * glSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
-		if(glSettings){
-			setup(*glSettings);
-		}else{
-			setup(ofGLESWindowSettings(settings));
-		}
-	}
 };

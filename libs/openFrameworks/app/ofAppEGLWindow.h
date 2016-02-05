@@ -87,7 +87,6 @@ public:
 	static void pollEvents();
 
 	void setup(const Settings & settings);
-	void setup(const ofGLESWindowSettings & settings);
 	void update();
 	void draw();
 	void close();

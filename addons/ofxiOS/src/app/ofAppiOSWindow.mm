@@ -66,24 +66,6 @@ void ofAppiOSWindow::close() {
     }
 }
 
-void ofAppiOSWindow::setup(const ofWindowSettings & _settings) {
-    const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&_settings);
-    if(iosSettings){
-        setup(*iosSettings);
-    } else{
-        setup(ofiOSWindowSettings(_settings));
-    }
-}
-
-void ofAppiOSWindow::setup(const ofGLESWindowSettings & _settings) {
-    const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&_settings);
-    if(iosSettings){
-        setup(*iosSettings);
-    } else{
-        setup(ofiOSWindowSettings(_settings));
-    }
-}
-
 void ofAppiOSWindow::setup(const ofiOSWindowSettings & _settings) {
     settings = _settings;
 	setup();

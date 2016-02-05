@@ -105,19 +105,6 @@ void ofAppGLFWWindow::setStencilBits(int stencil){
 }
 
 //------------------------------------------------------------
-#ifdef TARGET_OPENGLES
-void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings){
-#else
-void ofAppGLFWWindow::setup(const ofGLWindowSettings & settings){
-#endif
-	const ofGLFWWindowSettings * glSettings = dynamic_cast<const ofGLFWWindowSettings*>(&settings);
-	if(glSettings){
-		setup(*glSettings);
-	}else{
-		setup(ofGLFWWindowSettings(settings));
-	}
-}
-
 void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	if(windowP){
 		ofLogError() << "window already setup, probably you are mixing old and new style setup";

@@ -9,24 +9,10 @@
 #include "ofWindowSettings.h"
 #include "ofConstants.h"
 
-//========================================================================
-// default windowing
-#ifdef TARGET_NODISPLAY
-	#include "ofAppNoWindow.h"
-#elif defined(TARGET_OF_IOS)
-	#include "ofAppiOSWindow.h"
-#elif defined(TARGET_ANDROID)
-	#include "ofAppAndroidWindow.h"
-	#include "ofxAndroidUtils.h"
-	#include "ofxAndroidApp.h"
-#elif defined(TARGET_RASPBERRY_PI)
-	#include "ofAppEGLWindow.h"
-#elif defined(TARGET_EMSCRIPTEN)
-	#include "ofxAppEmscriptenWindow.h"
-#else
-	#include "ofAppGLFWWindow.h"
+#if defined(TARGET_ANDROID)
+#include "ofxAndroidUtils.h"
+#include "ofxAndroidApp.h"
 #endif
-
 
 ofMainLoop::ofMainLoop()
 :bShouldClose(false)
@@ -38,29 +24,6 @@ ofMainLoop::ofMainLoop()
 
 ofMainLoop::~ofMainLoop() {
 	exit();
-}
-
-shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & settings){
-#ifdef TARGET_NODISPLAY
-	shared_ptr<ofAppNoWindow> window = shared_ptr<ofAppNoWindow>(new ofAppNoWindow());
-#else
-	#if defined(TARGET_OF_IOS)
-	shared_ptr<ofAppiOSWindow> window = shared_ptr<ofAppiOSWindow>(new ofAppiOSWindow());
-	#elif defined(TARGET_ANDROID)
-	shared_ptr<ofAppAndroidWindow> window = shared_ptr<ofAppAndroidWindow>(new ofAppAndroidWindow());
-	#elif defined(TARGET_RASPBERRY_PI)
-	shared_ptr<ofAppEGLWindow> window = shared_ptr<ofAppEGLWindow>(new ofAppEGLWindow());
-	#elif defined(TARGET_EMSCRIPTEN)
-	shared_ptr<ofxAppEmscriptenWindow> window = shared_ptr<ofxAppEmscriptenWindow>(new ofxAppEmscriptenWindow);
-	#elif defined(TARGET_OPENGLES)
-	shared_ptr<ofAppGLFWWindow> window = shared_ptr<ofAppGLFWWindow>(new ofAppGLFWWindow());
-	#else
-	shared_ptr<ofAppGLFWWindow> window = shared_ptr<ofAppGLFWWindow>(new ofAppGLFWWindow());
-	#endif
-#endif
-	addWindow(window);
-	window->setup(settings);
-	return window;
 }
 
 void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app){

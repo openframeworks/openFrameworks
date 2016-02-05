@@ -379,16 +379,6 @@ EGLNativeDisplayType ofAppEGLWindow::getNativeDisplay() {
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setup(const ofGLESWindowSettings & settings){
-	const Settings * glSettings = dynamic_cast<const Settings*>(&settings);
-	if(glSettings){
-		setup(*glSettings);
-	}else{
-		setup(Settings(settings));
-	}
-}
-
-//------------------------------------------------------------
 void ofAppEGLWindow::setup(const Settings & _settings) {
 	settings = _settings;
 	windowMode = OF_WINDOW;

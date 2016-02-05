@@ -142,9 +142,7 @@ public:
     static bool allowsMultiWindow(){ return false; }
     static bool needsPolling(){ return false; }
     static void pollEvents(){ }
-    
-    void setup(const ofWindowSettings & _settings);
-    void setup(const ofGLESWindowSettings & _settings);
+
     void setup(const ofiOSWindowSettings & _settings);
 	void setup();
     
