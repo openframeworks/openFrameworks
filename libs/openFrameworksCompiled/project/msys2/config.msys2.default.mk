@@ -65,6 +65,7 @@ PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 ##########################################################################################
 
 PLATFORM_DEFINES =
+PLATFORM_DEFINES += OF_USING_MPG123
 
 ##########################################################################################
 # PLATFORM REQUIRED ADDON
@@ -164,6 +165,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 
 # third party
 
@@ -181,6 +183,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
 
 
 ##########################################################################################
@@ -237,6 +240,7 @@ PLATFORM_PKG_CONFIG_LIBRARIES =
 PLATFORM_PKG_CONFIG_LIBRARIES += zlib
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += glew
+PLATFORM_PKG_CONFIG_LIBRARIES += openal sndfile libmpg123
 #PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-1.0
 
 # shared libraries 
