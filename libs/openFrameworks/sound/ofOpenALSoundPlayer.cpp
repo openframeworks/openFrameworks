@@ -125,6 +125,7 @@ ofOpenALSoundPlayer::ofOpenALSoundPlayer(){
 // ----------------------------------------------------------------------------
 ofOpenALSoundPlayer::~ofOpenALSoundPlayer(){
 	unload();
+	close();
 	kiss_fftr_free(fftCfg);
 	players().erase(this);
 }
