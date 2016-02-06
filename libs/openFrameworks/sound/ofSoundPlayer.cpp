@@ -28,7 +28,12 @@ void ofSoundUpdate(){
 	#ifdef OF_SOUND_PLAYER_FMOD
 		ofFmodSoundUpdate();
 	#else
-		ofLogWarning("ofSoundPlayer") << "ofSoundUpdate() not implemented on this platform";
+		// Only write the log message once !
+		static bool logOnce = true;
+		if(logOnce){
+			ofLogWarning("ofSoundPlayer") << "ofSoundUpdate() not implemented on this platform.";
+			logOnce = false;
+		}
 	#endif
 }
 
