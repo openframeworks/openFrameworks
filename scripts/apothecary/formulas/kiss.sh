@@ -29,6 +29,8 @@ function prepare() {
 		cp -Rv $FORMULA_DIR/Makefile.linux .
 	elif [ "$TYPE" == "linux64" ] ; then
 		cp -Rv $FORMULA_DIR/Makefile.linux64 .
+	elif [ "$TYPE" == "msys2" ] ; then
+		cp -Rv $FORMULA_DIR/kiss/Makefile.msys2 .
 	fi
 }
 
@@ -39,6 +41,8 @@ function build() {
 		make  -j${PARALLEL_MAKE} -f Makefile.linux	
 	elif [ "$TYPE" == "linux64" ] ; then
 		make  -j${PARALLEL_MAKE} -f Makefile.linux64	
+	elif [ "$TYPE" == "msys2" ] ; then
+		make  -j${PARALLEL_MAKE} -f Makefile.msys2	
 	else
 		echo "build not needed for $TYPE"
 	fi
@@ -66,6 +70,9 @@ function copy() {
 	elif [ "$TYPE" == "linux64" ] ; then
 		mkdir -p $1/lib/linux64
 		cp -v libkiss.a $1/lib/linux64/libkiss.a
+	elif [ "$TYPE" == "msys2" ] ; then
+		mkdir -p $1/lib/$TYPE
+		cp -v libkiss.a $1/lib/$TYPE/libkiss.a
 	fi
 
 	# copy license file
