@@ -291,10 +291,17 @@ private:
 	ofShader defaultTex2DNoColor;
 	ofShader defaultNoTexColor;
 	ofShader defaultNoTexNoColor;
+	ofShader defaultUniqueShader;
+#ifdef TARGET_ANDROID
+	ofShader defaultOESTexColor;
+	ofShader defaultOESTexNoColor;
+#endif
+	
 	ofShader alphaMaskRectShader;
 	ofShader alphaMask2DShader;
+	
 	ofShader bitmapStringShader;
-	ofShader defaultUniqueShader;
+	
 	ofShader shaderPlanarYUY2;
 	ofShader shaderNV12;
 	ofShader shaderNV21;

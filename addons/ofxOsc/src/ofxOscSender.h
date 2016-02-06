@@ -58,7 +58,7 @@ public:
 	ofxOscSender & operator=(const ofxOscSender & mom);
 
 	/// send messages to hostname and port
-	void setup( std::string hostname, int port );
+	void setup( const std::string &hostname, int port );
 
 	/// send the given message
 	void sendMessage( ofxOscMessage& message, bool wrapInBundle = true );
@@ -80,8 +80,8 @@ private:
 	// helper methods for constructing messages
 	void appendBundle( ofxOscBundle& bundle, osc::OutboundPacketStream& p );
 	void appendMessage( ofxOscMessage& message, osc::OutboundPacketStream& p );
-	void appendParameter( ofxOscBundle & bundle, const ofAbstractParameter & parameter, string address);
-	void appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, string address);
+    void appendParameter( ofxOscBundle & bundle, const ofAbstractParameter & parameter, const std::string &address);
+    void appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, const std::string &address);
 
  	std::unique_ptr<osc::UdpTransmitSocket> socket;
  	bool broadcast;

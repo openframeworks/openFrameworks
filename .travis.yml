@@ -16,6 +16,7 @@ matrix:
           packages:
           - gcc-4.9
           - g++-4.9
+          - gdb
     - os: osx
       compiler: clang
       env: TARGET="osx"
@@ -56,7 +57,7 @@ matrix:
   #    - TARGET="docs"
   #    - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
 install:
-    - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "docs" ]; then
+    - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "docs" ] || [ "$TARGET" == "osx" ]; then
         scripts/ci/$TARGET/install.sh;
       fi
 script:

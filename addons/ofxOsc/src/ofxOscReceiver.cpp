@@ -176,7 +176,7 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter)
 	ofxOscMessage msg;
 	while(messagesChannel.tryReceive(msg)){
 		ofAbstractParameter * p = &parameter;
-        vector<string> address = ofSplitString(msg.getAddress(),"/",true);
+        std::vector<std::string> address = ofSplitString(msg.getAddress(),"/",true);
         for(unsigned int i=0;i<address.size();i++){
             if(p) {
                 if(address[i]==p->getEscapedName()){

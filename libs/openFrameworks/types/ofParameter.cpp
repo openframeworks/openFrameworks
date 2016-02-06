@@ -132,3 +132,7 @@ shared_ptr<ofAbstractParameter> ofParameter<void>::newReference() const{
 void ofParameter<void>::setParent(ofParameterGroup & parent){
 	obj->parents.emplace_back(parent.obj);
 }
+
+size_t ofParameter<void>::getNumListeners() const{
+	return obj->changedE.size();
+}

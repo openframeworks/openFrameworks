@@ -308,7 +308,7 @@ void ofTexture::allocate(const ofPixels& pix){
 	if((pix.getPixelFormat()==OF_PIXELS_GRAY || pix.getPixelFormat()==OF_PIXELS_GRAY_ALPHA) && ofIsGLProgrammableRenderer()){
 		setRGToRGBASwizzles(true);
 	}
-	loadData(pix);
+	if(texData.bAllocated) loadData(pix);
 }
 
 //----------------------------------------------------------
@@ -317,7 +317,7 @@ void ofTexture::allocate(const ofPixels& pix, bool bUseARBExtention){
 	if((pix.getPixelFormat()==OF_PIXELS_GRAY || pix.getPixelFormat()==OF_PIXELS_GRAY_ALPHA) && ofIsGLProgrammableRenderer()){
 		setRGToRGBASwizzles(true);
 	}
-	loadData(pix);
+	if(texData.bAllocated) loadData(pix);
 }
 
 //----------------------------------------------------------
@@ -326,7 +326,7 @@ void ofTexture::allocate(const ofShortPixels& pix){
 	if((pix.getPixelFormat()==OF_PIXELS_GRAY || pix.getPixelFormat()==OF_PIXELS_GRAY_ALPHA) && ofIsGLProgrammableRenderer()){
 		setRGToRGBASwizzles(true);
 	}
-	loadData(pix);
+	if(texData.bAllocated) loadData(pix);
 }
 
 //----------------------------------------------------------
@@ -335,7 +335,7 @@ void ofTexture::allocate(const ofShortPixels& pix, bool bUseARBExtention){
 	if((pix.getPixelFormat()==OF_PIXELS_GRAY || pix.getPixelFormat()==OF_PIXELS_GRAY_ALPHA) && ofIsGLProgrammableRenderer()){
 		setRGToRGBASwizzles(true);
 	}
-	loadData(pix);
+	if(texData.bAllocated) loadData(pix);
 }
 
 
@@ -345,7 +345,7 @@ void ofTexture::allocate(const ofFloatPixels& pix){
 	if((pix.getPixelFormat()==OF_PIXELS_GRAY || pix.getPixelFormat()==OF_PIXELS_GRAY_ALPHA) && ofIsGLProgrammableRenderer()){
 		setRGToRGBASwizzles(true);
 	}
-	loadData(pix);
+	if(texData.bAllocated) loadData(pix);
 }
 
 //----------------------------------------------------------
@@ -354,7 +354,7 @@ void ofTexture::allocate(const ofFloatPixels& pix, bool bUseARBExtention){
 	if((pix.getPixelFormat()==OF_PIXELS_GRAY || pix.getPixelFormat()==OF_PIXELS_GRAY_ALPHA) && ofIsGLProgrammableRenderer()){
 		setRGToRGBASwizzles(true);
 	}
-	loadData(pix);
+	if(texData.bAllocated) loadData(pix);
 }
 
 #ifndef TARGET_OPENGLES
@@ -957,6 +957,11 @@ void ofTexture::enableMipmap(){
 void ofTexture::disableMipmap(){
 	bWantsMipmap = false;
 	texData.minFilter = GL_LINEAR;
+}
+
+//------------------------------------
+bool ofTexture::hasMipmap() const{
+	return texData.hasMipmap;
 }
 
 //------------------------------------

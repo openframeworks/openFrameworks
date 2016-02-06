@@ -14,9 +14,14 @@ ofEasyCam::ofEasyCam(){
 	lastTap	= 0;
 	lastDistance = 0;
 	drag = 0.9f;
-	sensitivityRot = 1.0f;//when 1 moving the mouse from one side to the other of the arcball (min(viewport.width, viewport.height)) will rotate 180degrees. when .5, 90 degrees.
-	sensitivityXY = .5f;
-	sensitivityZ= .7f;
+ 
+	sensitivityRotX = 1.0f;
+	sensitivityRotY = 1.0f;
+	sensitivityRotZ = 1.0f;
+	
+	sensitivityX = 1.0f;
+	sensitivityY = 1.0f;
+	sensitivityZ = 1.0f;
 
 	bDistanceSet = false; 
 	bMouseInputEnabled = true;
@@ -30,7 +35,6 @@ ofEasyCam::ofEasyCam(){
 	doTranslationKey = 'm';
 	bEventsSet = false;
 	events = nullptr;
-	rotationFactor = 0.0f;
 
 	reset();
 }
@@ -47,8 +51,6 @@ void ofEasyCam::update(ofEventArgs & args){
 		setDistance(getImagePlaneDistance(viewport), true);
 	}
 	if(bMouseInputEnabled){
-
-		rotationFactor = sensitivityRot * 180 / min(viewport.width, viewport.height);
 
 		if(events->getMousePressed()) prevMouse = ofVec2f(events->getMouseX(),events->getMouseY());
 
@@ -214,6 +216,20 @@ void ofEasyCam::setEvents(ofCoreEvents & _events){
 }
 
 //----------------------------------------
+void ofEasyCam::setRotationSensitivity(float x, float y, float z){
+    sensitivityRotX = x;
+    sensitivityRotY = y;
+    sensitivityRotZ = z;
+}
+
+//----------------------------------------
+void ofEasyCam::setTranslationSensitivity(float x, float y, float z){
+    sensitivityX = x;
+    sensitivityY = y;
+    sensitivityZ = z;
+}
+
+//----------------------------------------
 bool ofEasyCam::getMouseInputEnabled(){
 	return bMouseInputEnabled;
 }
@@ -346,21 +362,21 @@ void ofEasyCam::updateMouse(const ofMouseEventArgs & mouse){
 		moveY = 0;
 		moveZ = 0;
 		if(mouse.button == OF_MOUSE_BUTTON_RIGHT){
-			moveZ = mouseVel.y * sensitivityZ * (getDistance() + FLT_EPSILON)/ viewport.height;
+			moveZ = mouseVel.y * (sensitivityZ * 0.7f) * (getDistance() + FLT_EPSILON)/ viewport.height;
 		}else{
-			moveX = -mouseVel.x * sensitivityXY * (getDistance() + FLT_EPSILON)/viewport.width;
-			moveY = vFlip * mouseVel.y * sensitivityXY * (getDistance() + FLT_EPSILON)/viewport.height;
+			moveX = -mouseVel.x * (sensitivityX * 0.5f) * (getDistance() + FLT_EPSILON)/viewport.width;
+			moveY = vFlip * mouseVel.y * (sensitivityY* 0.5f) * (getDistance() + FLT_EPSILON)/viewport.height;
 		}
 	}else{
 		xRot = 0;
 		yRot = 0;
 		zRot = 0;
 		if(bInsideArcball){
-			xRot = vFlip * -mouseVel.y * rotationFactor;
-			yRot = -mouseVel.x * rotationFactor;
+			xRot = vFlip * -mouseVel.y * sensitivityRotX * 180 / min(viewport.width, viewport.height);
+			yRot = -mouseVel.x * sensitivityRotY * 180 / min(viewport.width, viewport.height);
 		}else{
 			ofVec2f center(viewport.width/2, viewport.height/2);
-			zRot = -vFlip * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(lastMouse - ofVec2f(viewport.x, viewport.y) - center);
+			zRot = -vFlip * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(lastMouse - ofVec2f(viewport.x, viewport.y) - center) * sensitivityRotZ;
 		}
 	}
 }
