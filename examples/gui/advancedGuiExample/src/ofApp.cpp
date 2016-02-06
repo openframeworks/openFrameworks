@@ -9,6 +9,7 @@ void ofApp::setup(){
 
 	panel1.setup("extended gui");
 
+
     /*
      *  label without showing the label name
      */
@@ -59,6 +60,12 @@ void ofApp::setup(){
     }
     panel1.add(matrix);
 
+    /*
+     *  input fields
+     */
+    panel1.add<ofxFloatInputField>(floatfield_param.set("float input",3.5,0,500));
+    panel1.add<ofxTextField>(textfield_param.set("text input","type in here"));
+
 	/*
      * horizontal panel
 	 */
@@ -72,7 +79,6 @@ void ofApp::setup(){
 	panel2.add <ofxMinimalToggle>(toggle2_param.set("toggle2", false), toggle_config);
     panel2.add <ofxMinimalToggle>(toggle3_param.set("toggle3", false), toggle_config);
 	panel2.add <ofxMinimalToggle>(toggle4_param.set("toggle4", false), toggle_config);
-
 
     /*
      * horizontal panel with vertical sliders and spacer
