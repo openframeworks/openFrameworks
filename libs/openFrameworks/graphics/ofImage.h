@@ -84,10 +84,12 @@ struct ofImageLoadSettings {
 
 
 /// \todo Needs documentation.
-template <typename PixelType>
-bool ofLoadImage(ofPixels_<PixelType> & pix, std::string path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-template <typename PixelType>
-bool ofLoadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofPixels & pix, std::string path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofFloatPixels & pix, std::string path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofShortPixels & pix, std::string path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
 
 /// \todo Needs documentation.
 bool ofLoadImage(ofTexture & tex, std::string path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);

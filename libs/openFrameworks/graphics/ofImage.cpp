@@ -283,14 +283,32 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 }
 
 //----------------------------------------------------------------
-template <typename PixelType>
-bool ofLoadImage(ofPixels_<PixelType> & pix, std::string path, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofPixels & pix, std::string path, const ofImageLoadSettings &settings) {
 	return loadImage(pix, path, settings);
 }
 
 //----------------------------------------------------------------
-template <typename PixelType>
-bool ofLoadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings) {
+	return loadImage(pix, buffer, settings);
+}
+
+//----------------------------------------------------------------
+bool ofLoadImage(ofShortPixels & pix, std::string path, const ofImageLoadSettings &settings) {
+	return loadImage(pix, path, settings);
+}
+
+//----------------------------------------------------------------
+bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings) {
+	return loadImage(pix, buffer, settings);
+}
+
+//----------------------------------------------------------------
+bool ofLoadImage(ofFloatPixels & pix, std::string path, const ofImageLoadSettings &settings) {
+	return loadImage(pix, path, settings);
+}
+
+//----------------------------------------------------------------
+bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings) {
 	return loadImage(pix, buffer, settings);
 }
 

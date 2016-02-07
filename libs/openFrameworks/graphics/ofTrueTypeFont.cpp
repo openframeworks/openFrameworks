@@ -69,67 +69,67 @@ const ofUnicode::range ofUnicode::Emoticons {0x1F600, 0x1F64F};
 const ofUnicode::range ofUnicode::TransportAndMap {0x1F680, 0x1F6FF};
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Emoji {
-    ofUnicode::Space,
-    ofUnicode::Hiragana,
-    ofUnicode::Katakana,
-    ofUnicode::KatakanaPhoneticExtensions,
-    ofUnicode::CJKLettersAndMonths,
-    ofUnicode::CJKUnified
+	ofUnicode::Space,
+	ofUnicode::Hiragana,
+	ofUnicode::Katakana,
+	ofUnicode::KatakanaPhoneticExtensions,
+	ofUnicode::CJKLettersAndMonths,
+	ofUnicode::CJKUnified
 };
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Japanese {
-    ofUnicode::Space,
-    ofUnicode::Hiragana,
-    ofUnicode::Katakana,
-    ofUnicode::KatakanaPhoneticExtensions,
-    ofUnicode::CJKLettersAndMonths,
-    ofUnicode::CJKUnified
+	ofUnicode::Space,
+	ofUnicode::Hiragana,
+	ofUnicode::Katakana,
+	ofUnicode::KatakanaPhoneticExtensions,
+	ofUnicode::CJKLettersAndMonths,
+	ofUnicode::CJKUnified
 };
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Chinese {
-    ofUnicode::Space,
-    ofUnicode::CJKLettersAndMonths,
-    ofUnicode::CJKUnified
+	ofUnicode::Space,
+	ofUnicode::CJKLettersAndMonths,
+	ofUnicode::CJKUnified
 };
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Korean {
-    ofUnicode::Space,
-    ofUnicode::HangulJamo,
-    ofUnicode::HangulCompatJamo,
-    ofUnicode::HangulExtendedA,
-    ofUnicode::HangulExtendedB,
-    ofUnicode::HangulSyllables
+	ofUnicode::Space,
+	ofUnicode::HangulJamo,
+	ofUnicode::HangulCompatJamo,
+	ofUnicode::HangulExtendedA,
+	ofUnicode::HangulExtendedB,
+	ofUnicode::HangulSyllables
 };
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Arabic {
-    ofUnicode::Space,
-    ofUnicode::Arabic,
-    ofUnicode::ArabicExtendedA,
-    ofUnicode::ArabicMath,
-    ofUnicode::ArabicPresFormsA,
-    ofUnicode::ArabicPresFormsB
+	ofUnicode::Space,
+	ofUnicode::Arabic,
+	ofUnicode::ArabicExtendedA,
+	ofUnicode::ArabicMath,
+	ofUnicode::ArabicPresFormsA,
+	ofUnicode::ArabicPresFormsB
 };
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Devanagari {
-    ofUnicode::Devanagari,
-    ofUnicode::DevanagariExtended,
-    ofUnicode::VedicExtensions
+	ofUnicode::Devanagari,
+	ofUnicode::DevanagariExtended,
+	ofUnicode::VedicExtensions
 };
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Latin {
-    ofUnicode::Latin1Supplement,
-    ofUnicode::LatinExtendedAdditional
+	ofUnicode::Latin1Supplement,
+	ofUnicode::LatinExtendedAdditional
 };
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Greek {
-    ofUnicode::Space,
-    ofUnicode::Greek,
-    ofUnicode::GreekExtended
+	ofUnicode::Space,
+	ofUnicode::Greek,
+	ofUnicode::GreekExtended
 };
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Cyrillic {
-    ofUnicode::Space,
-    ofUnicode::Cyrillic
+	ofUnicode::Space,
+	ofUnicode::Cyrillic
 };
 
 const ofTrueTypeFont::glyphProps ofTrueTypeFont::invalidProps{
@@ -328,8 +328,8 @@ void initWindows(){
 	HKEY key_ft;
 	l_ret = RegOpenKeyExW(HKEY_LOCAL_MACHINE, Fonts, 0, KEY_QUERY_VALUE, &key_ft);
 	if (l_ret != ERROR_SUCCESS){
-	    ofLogError("ofTrueTypeFont") << "initWindows(): couldn't find fonts registery key";
-        return;
+		ofLogError("ofTrueTypeFont") << "initWindows(): couldn't find fonts registery key";
+		return;
 	}
 
 	DWORD value_count;
@@ -342,14 +342,14 @@ void initWindows(){
 
 	l_ret = RegQueryInfoKeyW(key_ft, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &value_count, nullptr, &max_data_len, nullptr, nullptr);
 	if(l_ret != ERROR_SUCCESS){
-	    ofLogError("ofTrueTypeFont") << "initWindows(): couldn't query registery for fonts";
-        return;
+		ofLogError("ofTrueTypeFont") << "initWindows(): couldn't query registery for fonts";
+		return;
 	}
 
 	// no font installed
 	if (value_count == 0){
-	    ofLogError("ofTrueTypeFont") << "initWindows(): couldn't find any fonts in registery";
-        return;
+		ofLogError("ofTrueTypeFont") << "initWindows(): couldn't find any fonts in registery";
+		return;
 	}
 
 	// max_data_len is in BYTE
@@ -360,10 +360,10 @@ void initWindows(){
 	char value_data_char[2048];
 	/*char ppidl[2048];
 	char fontsPath[2048];
-    SHGetKnownFolderIDList(FOLDERID_Fonts, 0, nullptr, &ppidl);
-    SHGetPathFromIDList(ppidl,&fontsPath);*/
+	SHGetKnownFolderIDList(FOLDERID_Fonts, 0, nullptr, &ppidl);
+	SHGetPathFromIDList(ppidl,&fontsPath);*/
 	std::string fontsDir = getenv ("windir");
-    fontsDir += "\\Fonts\\";
+	fontsDir += "\\Fonts\\";
 	for (DWORD i = 0; i < value_count; ++i)
 	{
 			DWORD name_len = 2048;
@@ -371,11 +371,11 @@ void initWindows(){
 
 			l_ret = RegEnumValueW(key_ft, i, value_name, &name_len, nullptr, nullptr, value_data, &data_len);
 			if(l_ret != ERROR_SUCCESS){
-			     ofLogError("ofTrueTypeFont") << "initWindows(): couldn't read registry key for font type";
-			     continue;
+				 ofLogError("ofTrueTypeFont") << "initWindows(): couldn't read registry key for font type";
+				 continue;
 			}
 
-            wcstombs(value_name_char,value_name,2048);
+			wcstombs(value_name_char,value_name,2048);
 			wcstombs(value_data_char,reinterpret_cast<wchar_t *>(value_data),2048);
 			std::string curr_face = value_name_char;
 			std::string font_file = value_data_char;
@@ -391,13 +391,13 @@ void initWindows(){
 
 
 static std::string winFontPathByName(const std::string& fontname ){
-    if(fonts_table.find(fontname)!=fonts_table.end()){
-        return fonts_table[fontname];
-    }
-    for(map<std::string,std::string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
-        if(ofIsStringInString(ofToLower(it->first),ofToLower(fontname))) return it->second;
-    }
-    return "";
+	if(fonts_table.find(fontname)!=fonts_table.end()){
+		return fonts_table[fontname];
+	}
+	for(map<std::string,std::string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
+		if(ofIsStringInString(ofToLower(it->first),ofToLower(fontname))) return it->second;
+	}
+	return "";
 }
 #endif
 
@@ -463,7 +463,7 @@ static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string 
 		}else if(fontname==OF_TTF_MONO){
 			fontname = "Courier New";
 		}
-        filename = winFontPathByName(fontname);
+		filename = winFontPathByName(fontname);
 #endif
 		if(filename == "" ){
 			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font \"" << fontname << "\"";
@@ -497,10 +497,10 @@ void ofTrueTypeFont::setGlobalDpi(int newDpi){
 //------------------------------------------------------------------
 bool ofTrueTypeFont::initLibraries(){
 	if(!librariesInitialized){
-	    FT_Error err;
-	    err = FT_Init_FreeType( &library );
+		FT_Error err;
+		err = FT_Init_FreeType( &library );
 
-	    if (err){
+		if (err){
 			ofLogError("ofTrueTypeFont") << "loadFont(): couldn't initialize Freetype lib: FT_Error " << err;
 			return false;
 		}
@@ -515,7 +515,7 @@ bool ofTrueTypeFont::initLibraries(){
 #endif
 		librariesInitialized = true;
 	}
-    return true;
+	return true;
 }
 
 
@@ -677,7 +677,7 @@ bool ofTrueTypeFont::loadFont(string filename, int fontSize, bool bAntiAliased, 
 ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 	glyph aGlyph;
 	auto err = FT_Load_Glyph( face.get(), FT_Get_Char_Index( face.get(), utf8 ), settings.antialiased ?  FT_LOAD_FORCE_AUTOHINT : FT_LOAD_DEFAULT );
-    if(err){
+	if(err){
 		ofLogError("ofTrueTypeFont") << "loadFont(): FT_Load_Glyph failed for utf8 code " << utf8 << ": FT_Error " << err;
 		return aGlyph;
 	}
@@ -1005,29 +1005,29 @@ ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(uint32_t character, bool vfl
 		ofLogError("ofxTrueTypeFont") << "getCharacterAsPoints(): contours not created, call loadFont() with makeContours set to true";
 		return ofTTFCharacter();
 	}
-    if (!isValidGlyph(character)){
-        return ofTTFCharacter();
-    }
-    
-    if(vflip){
-    	if(filled){
-    		return charOutlines[indexForGlyph(character)];
-    	}else{
-    		return charOutlinesContour[indexForGlyph(character)];
-    	}
-    }else{
-    	if(filled){
-    		return charOutlinesNonVFlipped[indexForGlyph(character)];
-    	}else{
-    		return charOutlinesNonVFlippedContour[indexForGlyph(character)];
-    	}
-    }
+	if (!isValidGlyph(character)){
+		return ofTTFCharacter();
+	}
+
+	if(vflip){
+		if(filled){
+			return charOutlines[indexForGlyph(character)];
+		}else{
+			return charOutlinesContour[indexForGlyph(character)];
+		}
+	}else{
+		if(filled){
+			return charOutlinesNonVFlipped[indexForGlyph(character)];
+		}else{
+			return charOutlinesNonVFlippedContour[indexForGlyph(character)];
+		}
+	}
 }
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const{
 
-    if (!isValidGlyph(c)){
+	if (!isValidGlyph(c)){
 		//ofLogError("ofTrueTypeFont") << "drawChar(): char " << c + NUM_CHARACTER_TO_START << " not allocated: line " << __LINE__ << " in " << __FILE__;
 		return;
 	}
@@ -1047,12 +1047,12 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 	ymax		= props.ymax;
 
 	if(!vFlipped){
-       ymin *= -1;
-       ymax *= -1;
+	   ymin *= -1;
+	   ymax *= -1;
 	}
 
-    ymin += y;
-    ymax += y;
+	ymin += y;
+	ymax += y;
 
 	ofIndexType firstIndex = stringQuads.getVertices().size();
 
@@ -1076,13 +1076,13 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 
 //-----------------------------------------------------------
 int ofTrueTypeFont::getKerning(uint32_t c, uint32_t prevC) const{
-    if(FT_HAS_KERNING( face )){
-        FT_Vector kerning;
-        FT_Get_Kerning(face.get(), FT_Get_Char_Index(face.get(), c), FT_Get_Char_Index(face.get(), prevC), FT_KERNING_UNFITTED, &kerning);
-        return kerning.x * fontUnitScale;
-    }else{
-        return 0;
-    }
+	if(FT_HAS_KERNING( face )){
+		FT_Vector kerning;
+		FT_Get_Kerning(face.get(), FT_Get_Char_Index(face.get(), c), FT_Get_Char_Index(face.get(), prevC), FT_KERNING_UNFITTED, &kerning);
+		return kerning.x * fontUnitScale;
+	}else{
+		return 0;
+	}
 }
 
 void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vFlipped, std::function<void(uint32_t, ofVec2f)> f) const{
@@ -1102,7 +1102,7 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 	utf8::replace_invalid(str.begin(),str.end(),back_inserter(str_valid));
 	utf8::iterator<const char*> it(&str_valid.front(), &str_valid.front(), (&str_valid.back())+1);
 	utf8::iterator<const char*> end((&str_valid.back())+1, &str_valid.front(), (&str_valid.back())+1);
-    uint32_t prevC = 0;
+	uint32_t prevC = 0;
 	while(it != end){
 		try{
 			auto c = *it;
@@ -1172,25 +1172,25 @@ const ofTrueTypeFont::glyphProps & ofTrueTypeFont::getGlyphProperties(uint32_t g
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::drawCharAsShape(uint32_t c, float x, float y, bool vFlipped, bool filled) const{
-    if(vFlipped){
-    	if(filled){
-    		charOutlines[indexForGlyph(c)].draw(x,y);
-    	}else{
-    		charOutlinesContour[indexForGlyph(c)].draw(x,y);
-    	}
-    }else{
-    	if(filled){
-    		charOutlinesNonVFlipped[indexForGlyph(c)].draw(x,y);
-    	}else{
-    		charOutlinesNonVFlippedContour[indexForGlyph(c)].draw(x,y);
-    	}
-    }
+	if(vFlipped){
+		if(filled){
+			charOutlines[indexForGlyph(c)].draw(x,y);
+		}else{
+			charOutlinesContour[indexForGlyph(c)].draw(x,y);
+		}
+	}else{
+		if(filled){
+			charOutlinesNonVFlipped[indexForGlyph(c)].draw(x,y);
+		}else{
+			charOutlinesNonVFlippedContour[indexForGlyph(c)].draw(x,y);
+		}
+	}
 }
 
 //-----------------------------------------------------------
 float ofTrueTypeFont::stringWidth(const std::string& c) const{
-    ofRectangle rect = getStringBoundingBox(c, 0,0);
-    return rect.width;
+	ofRectangle rect = getStringBoundingBox(c, 0,0);
+	return rect.width;
 }
 
 //-----------------------------------------------------------
@@ -1212,8 +1212,8 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 
 //-----------------------------------------------------------
 float ofTrueTypeFont::stringHeight(const std::string& c) const{
-    ofRectangle rect = getStringBoundingBox(c, 0,0);
-    return rect.height;
+	ofRectangle rect = getStringBoundingBox(c, 0,0);
+	return rect.height;
 }
 
 //-----------------------------------------------------------
@@ -1237,7 +1237,7 @@ const ofTexture & ofTrueTypeFont::getFontTexture() const{
 
 //-----------------------------------------------------------
 ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) const{
-    string str_valid;
+	string str_valid;
 	utf8::replace_invalid(str.begin(),str.end(),back_inserter(str_valid));
 	vector<glyph> glyphs;
 	vector<ofVec2f> glyphPositions;
@@ -1261,7 +1261,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 				}else if(settings.direction == ofTtfSettings::RightToLeft){
 					x += glyphs.back().props.width;
 				}
-				glyphPositions.emplace_back(x,y);
+				glyphPositions.emplace_back(static_cast<float>(x), static_cast<float>(y));
 				x += glyphs.back().props.advance * letterSpacing;
 				height = max(height, glyphs.back().props.ymax + y + long(getLineHeight()));
 			}
@@ -1299,17 +1299,17 @@ void ofTrueTypeFont::drawString(const std::string &  c, float x, float y) const{
 		ofLogError("ofTrueTypeFont") << "drawString(): font not allocated";
 		return;
 	}
-	
+
 	ofGetCurrentRenderer()->drawString(*this,c,x,y);
 
 }
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::drawStringAsShapes(const std::string& str, float x, float y) const{
-    if (!bLoadedOk){
-    	ofLogError("ofTrueTypeFont") << "drawStringAsShapes(): font not allocated: line " << __LINE__ << " in " << __FILE__;
-    	return;
-    };
+	if (!bLoadedOk){
+		ofLogError("ofTrueTypeFont") << "drawStringAsShapes(): font not allocated: line " << __LINE__ << " in " << __FILE__;
+		return;
+	};
 
 	//----------------------- error checking
 	if (!settings.contours){
