@@ -2,14 +2,13 @@
 
 #include "ofConstants.h"
 
-//#include "ofBaseSoundStream.h"
+#include "ofBaseSoundStream.h"
 #include "ofSoundStream.h"
 #include "ofTypes.h"
 #include "ofSoundBuffer.h"
-#include "RtAudio.h"
 
 typedef unsigned int RtAudioStreamStatus;
-
+class RtAudio;
 
 class ofRtAudioSoundStream : public ofBaseSoundStream {
 public:
@@ -38,7 +37,7 @@ public:
 
 private:
 	long unsigned long tickCount;
-	shared_ptr<RtAudio>	audio;
+	std::shared_ptr<RtAudio>	audio;
 
 	ofSoundBuffer inputBuffer;
 	ofSoundBuffer outputBuffer;
