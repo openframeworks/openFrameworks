@@ -7,11 +7,12 @@
 //  copy or use the software.
 //
 //
-//                           License Agreement
+//                          License Agreement
 //                For Open Source Computer Vision Library
 //
 // Copyright (C) 2000-2008, Intel Corporation, all rights reserved.
 // Copyright (C) 2009, Willow Garage Inc., all rights reserved.
+// Copyright (C) 2013, OpenCV Foundation, all rights reserved.
 // Third party copyrights are property of their respective owners.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -43,220 +44,263 @@
 #ifndef __OPENCV_BACKGROUND_SEGM_HPP__
 #define __OPENCV_BACKGROUND_SEGM_HPP__
 
-#include "opencv2/core/core.hpp"
-#include <list>
+#include "opencv2/core.hpp"
+
 namespace cv
 {
 
-/*!
- The Base Class for Background/Foreground Segmentation
+//! @addtogroup video_motion
+//! @{
 
- The class is only used to define the common interface for
- the whole family of background/foreground segmentation algorithms.
-*/
+/** @brief Base class for background/foreground segmentation. :
+
+The class is only used to define the common interface for the whole family of background/foreground
+segmentation algorithms.
+ */
 class CV_EXPORTS_W BackgroundSubtractor : public Algorithm
 {
 public:
-    //! the virtual destructor
-    virtual ~BackgroundSubtractor();
-    //! the update operator that takes the next video frame and returns the current foreground mask as 8-bit binary image.
-    CV_WRAP_AS(apply) virtual void operator()(InputArray image, OutputArray fgmask,
-                                              double learningRate=0);
+    /** @brief Computes a foreground mask.
 
-    //! computes a background image
-    virtual void getBackgroundImage(OutputArray backgroundImage) const;
+    @param image Next video frame.
+    @param fgmask The output foreground mask as an 8-bit binary image.
+    @param learningRate The value between 0 and 1 that indicates how fast the background model is
+    learnt. Negative parameter value makes the algorithm to use some automatically chosen learning
+    rate. 0 means that the background model is not updated at all, 1 means that the background model
+    is completely reinitialized from the last frame.
+     */
+    CV_WRAP virtual void apply(InputArray image, OutputArray fgmask, double learningRate=-1) = 0;
+
+    /** @brief Computes a background image.
+
+    @param backgroundImage The output background image.
+
+    @note Sometimes the background image can be very blurry, as it contain the average background
+    statistics.
+     */
+    CV_WRAP virtual void getBackgroundImage(OutputArray backgroundImage) const = 0;
 };
 
 
-/*!
- Gaussian Mixture-based Backbround/Foreground Segmentation Algorithm
+/** @brief Gaussian Mixture-based Background/Foreground Segmentation Algorithm.
 
- The class implements the following algorithm:
- "An improved adaptive background mixture model for real-time tracking with shadow detection"
- P. KadewTraKuPong and R. Bowden,
- Proc. 2nd European Workshp on Advanced Video-Based Surveillance Systems, 2001."
- http://personal.ee.surrey.ac.uk/Personal/R.Bowden/publications/avbs01/avbs01.pdf
-
-*/
-class CV_EXPORTS_W BackgroundSubtractorMOG : public BackgroundSubtractor
-{
-public:
-    //! the default constructor
-    CV_WRAP BackgroundSubtractorMOG();
-    //! the full constructor that takes the length of the history, the number of gaussian mixtures, the background ratio parameter and the noise strength
-    CV_WRAP BackgroundSubtractorMOG(int history, int nmixtures, double backgroundRatio, double noiseSigma=0);
-    //! the destructor
-    virtual ~BackgroundSubtractorMOG();
-    //! the update operator
-    virtual void operator()(InputArray image, OutputArray fgmask, double learningRate=0);
-
-    //! re-initiaization method
-    virtual void initialize(Size frameSize, int frameType);
-
-    virtual AlgorithmInfo* info() const;
-
-protected:
-    Size frameSize;
-    int frameType;
-    Mat bgmodel;
-    int nframes;
-    int history;
-    int nmixtures;
-    double varThreshold;
-    double backgroundRatio;
-    double noiseSigma;
-};
-
-
-/*!
- The class implements the following algorithm:
- "Improved adaptive Gausian mixture model for background subtraction"
- Z.Zivkovic
- International Conference Pattern Recognition, UK, August, 2004.
- http://www.zoranz.net/Publications/zivkovic2004ICPR.pdf
-*/
+The class implements the Gaussian mixture model background subtraction described in @cite Zivkovic2004
+and @cite Zivkovic2006 .
+ */
 class CV_EXPORTS_W BackgroundSubtractorMOG2 : public BackgroundSubtractor
 {
 public:
-    //! the default constructor
-    CV_WRAP BackgroundSubtractorMOG2();
-    //! the full constructor that takes the length of the history, the number of gaussian mixtures, the background ratio parameter and the noise strength
-    CV_WRAP BackgroundSubtractorMOG2(int history,  float varThreshold, bool bShadowDetection=true);
-    //! the destructor
-    virtual ~BackgroundSubtractorMOG2();
-    //! the update operator
-    virtual void operator()(InputArray image, OutputArray fgmask, double learningRate=-1);
+    /** @brief Returns the number of last frames that affect the background model
+    */
+    CV_WRAP virtual int getHistory() const = 0;
+    /** @brief Sets the number of last frames that affect the background model
+    */
+    CV_WRAP virtual void setHistory(int history) = 0;
 
-    //! computes a background image which are the mean of all background gaussians
-    virtual void getBackgroundImage(OutputArray backgroundImage) const;
+    /** @brief Returns the number of gaussian components in the background model
+    */
+    CV_WRAP virtual int getNMixtures() const = 0;
+    /** @brief Sets the number of gaussian components in the background model.
 
-    //! re-initiaization method
-    virtual void initialize(Size frameSize, int frameType);
+    The model needs to be reinitalized to reserve memory.
+    */
+    CV_WRAP virtual void setNMixtures(int nmixtures) = 0;//needs reinitialization!
 
-    virtual AlgorithmInfo* info() const;
+    /** @brief Returns the "background ratio" parameter of the algorithm
 
-protected:
-    Size frameSize;
-    int frameType;
-    Mat bgmodel;
-    Mat bgmodelUsedModes;//keep track of number of modes per pixel
-    int nframes;
-    int history;
-    int nmixtures;
-    //! here it is the maximum allowed number of mixture components.
-    //! Actual number is determined dynamically per pixel
-    double varThreshold;
-    // threshold on the squared Mahalanobis distance to decide if it is well described
-    // by the background model or not. Related to Cthr from the paper.
-    // This does not influence the update of the background. A typical value could be 4 sigma
-    // and that is varThreshold=4*4=16; Corresponds to Tb in the paper.
+    If a foreground pixel keeps semi-constant value for about backgroundRatio\*history frames, it's
+    considered background and added to the model as a center of a new component. It corresponds to TB
+    parameter in the paper.
+     */
+    CV_WRAP virtual double getBackgroundRatio() const = 0;
+    /** @brief Sets the "background ratio" parameter of the algorithm
+    */
+    CV_WRAP virtual void setBackgroundRatio(double ratio) = 0;
 
-    /////////////////////////
-    // less important parameters - things you might change but be carefull
-    ////////////////////////
-    float backgroundRatio;
-    // corresponds to fTB=1-cf from the paper
-    // TB - threshold when the component becomes significant enough to be included into
-    // the background model. It is the TB=1-cf from the paper. So I use cf=0.1 => TB=0.
-    // For alpha=0.001 it means that the mode should exist for approximately 105 frames before
-    // it is considered foreground
-    // float noiseSigma;
-    float varThresholdGen;
-    //correspondts to Tg - threshold on the squared Mahalan. dist. to decide
-    //when a sample is close to the existing components. If it is not close
-    //to any a new component will be generated. I use 3 sigma => Tg=3*3=9.
-    //Smaller Tg leads to more generated components and higher Tg might make
-    //lead to small number of components but they can grow too large
-    float fVarInit;
-    float fVarMin;
-    float fVarMax;
-    //initial variance  for the newly generated components.
-    //It will will influence the speed of adaptation. A good guess should be made.
-    //A simple way is to estimate the typical standard deviation from the images.
-    //I used here 10 as a reasonable value
-    // min and max can be used to further control the variance
-    float fCT;//CT - complexity reduction prior
-    //this is related to the number of samples needed to accept that a component
-    //actually exists. We use CT=0.05 of all the samples. By setting CT=0 you get
-    //the standard Stauffer&Grimson algorithm (maybe not exact but very similar)
+    /** @brief Returns the variance threshold for the pixel-model match
 
-    //shadow detection parameters
-    bool bShadowDetection;//default 1 - do shadow detection
-    unsigned char nShadowDetection;//do shadow detection - insert this value as the detection result - 127 default value
-    float fTau;
-    // Tau - shadow threshold. The shadow is detected if the pixel is darker
-    //version of the background. Tau is a threshold on how much darker the shadow can be.
-    //Tau= 0.5 means that if pixel is more than 2 times darker then it is not shadow
-    //See: Prati,Mikic,Trivedi,Cucchiarra,"Detecting Moving Shadows...",IEEE PAMI,2003.
+    The main threshold on the squared Mahalanobis distance to decide if the sample is well described by
+    the background model or not. Related to Cthr from the paper.
+     */
+    CV_WRAP virtual double getVarThreshold() const = 0;
+    /** @brief Sets the variance threshold for the pixel-model match
+    */
+    CV_WRAP virtual void setVarThreshold(double varThreshold) = 0;
+
+    /** @brief Returns the variance threshold for the pixel-model match used for new mixture component generation
+
+    Threshold for the squared Mahalanobis distance that helps decide when a sample is close to the
+    existing components (corresponds to Tg in the paper). If a pixel is not close to any component, it
+    is considered foreground or added as a new component. 3 sigma =\> Tg=3\*3=9 is default. A smaller Tg
+    value generates more components. A higher Tg value may result in a small number of components but
+    they can grow too large.
+     */
+    CV_WRAP virtual double getVarThresholdGen() const = 0;
+    /** @brief Sets the variance threshold for the pixel-model match used for new mixture component generation
+    */
+    CV_WRAP virtual void setVarThresholdGen(double varThresholdGen) = 0;
+
+    /** @brief Returns the initial variance of each gaussian component
+    */
+    CV_WRAP virtual double getVarInit() const = 0;
+    /** @brief Sets the initial variance of each gaussian component
+    */
+    CV_WRAP virtual void setVarInit(double varInit) = 0;
+
+    CV_WRAP virtual double getVarMin() const = 0;
+    CV_WRAP virtual void setVarMin(double varMin) = 0;
+
+    CV_WRAP virtual double getVarMax() const = 0;
+    CV_WRAP virtual void setVarMax(double varMax) = 0;
+
+    /** @brief Returns the complexity reduction threshold
+
+    This parameter defines the number of samples needed to accept to prove the component exists. CT=0.05
+    is a default value for all the samples. By setting CT=0 you get an algorithm very similar to the
+    standard Stauffer&Grimson algorithm.
+     */
+    CV_WRAP virtual double getComplexityReductionThreshold() const = 0;
+    /** @brief Sets the complexity reduction threshold
+    */
+    CV_WRAP virtual void setComplexityReductionThreshold(double ct) = 0;
+
+    /** @brief Returns the shadow detection flag
+
+    If true, the algorithm detects shadows and marks them. See createBackgroundSubtractorMOG2 for
+    details.
+     */
+    CV_WRAP virtual bool getDetectShadows() const = 0;
+    /** @brief Enables or disables shadow detection
+    */
+    CV_WRAP virtual void setDetectShadows(bool detectShadows) = 0;
+
+    /** @brief Returns the shadow value
+
+    Shadow value is the value used to mark shadows in the foreground mask. Default value is 127. Value 0
+    in the mask always means background, 255 means foreground.
+     */
+    CV_WRAP virtual int getShadowValue() const = 0;
+    /** @brief Sets the shadow value
+    */
+    CV_WRAP virtual void setShadowValue(int value) = 0;
+
+    /** @brief Returns the shadow threshold
+
+    A shadow is detected if pixel is a darker version of the background. The shadow threshold (Tau in
+    the paper) is a threshold defining how much darker the shadow can be. Tau= 0.5 means that if a pixel
+    is more than twice darker then it is not shadow. See Prati, Mikic, Trivedi and Cucchiarra,
+    *Detecting Moving Shadows...*, IEEE PAMI,2003.
+     */
+    CV_WRAP virtual double getShadowThreshold() const = 0;
+    /** @brief Sets the shadow threshold
+    */
+    CV_WRAP virtual void setShadowThreshold(double threshold) = 0;
 };
 
-/**
- * Background Subtractor module. Takes a series of images and returns a sequence of mask (8UC1)
- * images of the same size, where 255 indicates Foreground and 0 represents Background.
- * This class implements an algorithm described in "Visual Tracking of Human Visitors under
- * Variable-Lighting Conditions for a Responsive Audio Art Installation," A. Godbehere,
- * A. Matsukawa, K. Goldberg, American Control Conference, Montreal, June 2012.
+/** @brief Creates MOG2 Background Subtractor
+
+@param history Length of the history.
+@param varThreshold Threshold on the squared Mahalanobis distance between the pixel and the model
+to decide whether a pixel is well described by the background model. This parameter does not
+affect the background update.
+@param detectShadows If true, the algorithm will detect shadows and mark them. It decreases the
+speed a bit, so if you do not need this feature, set the parameter to false.
  */
-class CV_EXPORTS BackgroundSubtractorGMG: public cv::BackgroundSubtractor
+CV_EXPORTS_W Ptr<BackgroundSubtractorMOG2>
+    createBackgroundSubtractorMOG2(int history=500, double varThreshold=16,
+                                   bool detectShadows=true);
+
+/** @brief K-nearest neigbours - based Background/Foreground Segmentation Algorithm.
+
+The class implements the K-nearest neigbours background subtraction described in @cite Zivkovic2006 .
+Very efficient if number of foreground pixels is low.
+ */
+class CV_EXPORTS_W BackgroundSubtractorKNN : public BackgroundSubtractor
 {
 public:
-    BackgroundSubtractorGMG();
-    virtual ~BackgroundSubtractorGMG();
-    virtual AlgorithmInfo* info() const;
+    /** @brief Returns the number of last frames that affect the background model
+    */
+    CV_WRAP virtual int getHistory() const = 0;
+    /** @brief Sets the number of last frames that affect the background model
+    */
+    CV_WRAP virtual void setHistory(int history) = 0;
 
-    /**
-     * Validate parameters and set up data structures for appropriate image size.
-     * Must call before running on data.
-     * @param frameSize input frame size
-     * @param min       minimum value taken on by pixels in image sequence. Usually 0
-     * @param max       maximum value taken on by pixels in image sequence. e.g. 1.0 or 255
+    /** @brief Returns the number of data samples in the background model
+    */
+    CV_WRAP virtual int getNSamples() const = 0;
+    /** @brief Sets the number of data samples in the background model.
+
+    The model needs to be reinitalized to reserve memory.
+    */
+    CV_WRAP virtual void setNSamples(int _nN) = 0;//needs reinitialization!
+
+    /** @brief Returns the threshold on the squared distance between the pixel and the sample
+
+    The threshold on the squared distance between the pixel and the sample to decide whether a pixel is
+    close to a data sample.
      */
-    void initialize(cv::Size frameSize, double min, double max);
+    CV_WRAP virtual double getDist2Threshold() const = 0;
+    /** @brief Sets the threshold on the squared distance
+    */
+    CV_WRAP virtual void setDist2Threshold(double _dist2Threshold) = 0;
 
-    /**
-     * Performs single-frame background subtraction and builds up a statistical background image
-     * model.
-     * @param image Input image
-     * @param fgmask Output mask image representing foreground and background pixels
+    /** @brief Returns the number of neighbours, the k in the kNN.
+
+    K is the number of samples that need to be within dist2Threshold in order to decide that that
+    pixel is matching the kNN background model.
      */
-    virtual void operator()(InputArray image, OutputArray fgmask, double learningRate=-1.0);
+    CV_WRAP virtual int getkNNSamples() const = 0;
+    /** @brief Sets the k in the kNN. How many nearest neigbours need to match.
+    */
+    CV_WRAP virtual void setkNNSamples(int _nkNN) = 0;
 
-    /**
-     * Releases all inner buffers.
+    /** @brief Returns the shadow detection flag
+
+    If true, the algorithm detects shadows and marks them. See createBackgroundSubtractorKNN for
+    details.
      */
-    void release();
+    CV_WRAP virtual bool getDetectShadows() const = 0;
+    /** @brief Enables or disables shadow detection
+    */
+    CV_WRAP virtual void setDetectShadows(bool detectShadows) = 0;
 
-    //! Total number of distinct colors to maintain in histogram.
-    int     maxFeatures;
-    //! Set between 0.0 and 1.0, determines how quickly features are "forgotten" from histograms.
-    double  learningRate;
-    //! Number of frames of video to use to initialize histograms.
-    int     numInitializationFrames;
-    //! Number of discrete levels in each channel to be used in histograms.
-    int     quantizationLevels;
-    //! Prior probability that any given pixel is a background pixel. A sensitivity parameter.
-    double  backgroundPrior;
-    //! Value above which pixel is determined to be FG.
-    double  decisionThreshold;
-    //! Smoothing radius, in pixels, for cleaning up FG image.
-    int     smoothingRadius;
-    //! Perform background model update
-    bool updateBackgroundModel;
+    /** @brief Returns the shadow value
 
-private:
-    double maxVal_;
-    double minVal_;
+    Shadow value is the value used to mark shadows in the foreground mask. Default value is 127. Value 0
+    in the mask always means background, 255 means foreground.
+     */
+    CV_WRAP virtual int getShadowValue() const = 0;
+    /** @brief Sets the shadow value
+    */
+    CV_WRAP virtual void setShadowValue(int value) = 0;
 
-    cv::Size frameSize_;
-    int frameNum_;
+    /** @brief Returns the shadow threshold
 
-    cv::Mat_<int> nfeatures_;
-    cv::Mat_<unsigned int> colors_;
-    cv::Mat_<float> weights_;
-
-    cv::Mat buf_;
+    A shadow is detected if pixel is a darker version of the background. The shadow threshold (Tau in
+    the paper) is a threshold defining how much darker the shadow can be. Tau= 0.5 means that if a pixel
+    is more than twice darker then it is not shadow. See Prati, Mikic, Trivedi and Cucchiarra,
+    *Detecting Moving Shadows...*, IEEE PAMI,2003.
+     */
+    CV_WRAP virtual double getShadowThreshold() const = 0;
+    /** @brief Sets the shadow threshold
+     */
+    CV_WRAP virtual void setShadowThreshold(double threshold) = 0;
 };
 
-}
+/** @brief Creates KNN Background Subtractor
+
+@param history Length of the history.
+@param dist2Threshold Threshold on the squared distance between the pixel and the sample to decide
+whether a pixel is close to that sample. This parameter does not affect the background update.
+@param detectShadows If true, the algorithm will detect shadows and mark them. It decreases the
+speed a bit, so if you do not need this feature, set the parameter to false.
+ */
+CV_EXPORTS_W Ptr<BackgroundSubtractorKNN>
+    createBackgroundSubtractorKNN(int history=500, double dist2Threshold=400.0,
+                                   bool detectShadows=true);
+
+//! @} video_motion
+
+} // cv
 
 #endif
