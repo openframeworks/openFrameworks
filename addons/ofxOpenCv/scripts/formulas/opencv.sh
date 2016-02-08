@@ -9,7 +9,7 @@
 FORMULA_TYPES=( "osx" "ios" "tvos" "vs" "android" "emscripten" )
  
 # define the version
-VER=2.4.9
+VER=3.1.0
  
 # tools for git use
 GIT_URL=https://github.com/Itseez/opencv.git
@@ -37,11 +37,11 @@ function prepare() {
 
   # Patch for Clang for 2.4
   # https://github.com/Itseez/opencv/commit/35f96d6da76099d80180439c857a4abe5cb17966
-  cd modules/legacy/src
-  if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/patch.calibfilter.cpp.patch 2>/dev/null ; then
-      patch -p0 -u < $FORMULA_DIR/patch.calibfilter.cpp.patch
-  fi
-  cd ../../../
+  #cd modules/legacy/src
+  #if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/patch.calibfilter.cpp.patch 2>/dev/null ; then
+  #    patch -p0 -u < $FORMULA_DIR/patch.calibfilter.cpp.patch
+  #fi
+  #cd ../../../
 }
 
 # executed inside the lib src dir
@@ -535,8 +535,11 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
-      -DWITH_EIGEN=OFF
+      -DWITH_EIGEN=OFF \
       -DBUILD_TESTS=OFF \
+      -DANDROID_STL=c++_static \
+      -DANDROID_TOOLCHAIN_NAME=arm-linux-androideabi-clang3.6 \
+      -DANDROID_NATIVE_API_LEVEL=android-19 \
       -DBUILD_PERF_TESTS=OFF
     cd build_android_arm
     make -j${PARALLEL_MAKE}
@@ -576,6 +579,9 @@ function build() {
       -DWITH_PVAPI=OFF \
       -DWITH_EIGEN=OFF \
       -DBUILD_TESTS=OFF \
+      -DANDROID_STL=c++_static \
+      -DANDROID_TOOLCHAIN_NAME=x86-clang3.6 \
+      -DANDROID_NATIVE_API_LEVEL=android-19 \
       -DBUILD_PERF_TESTS=OFF
     cd build_android_x86
     make -j${PARALLEL_MAKE}
