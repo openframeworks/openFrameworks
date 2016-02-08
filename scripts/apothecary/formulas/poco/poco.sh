@@ -123,9 +123,7 @@ function prepare() {
 		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/android.patch 2>/dev/null ; then
 			patch -p0 -u < $FORMULA_DIR/android.patch
 		fi
-		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/android.config.patch 2>/dev/null ; then
-			patch -p0 -u < $FORMULA_DIR/android.config.patch
-		fi
+		cp $FORMULA_DIR/Android build/config/Android
 
 	fi
 
