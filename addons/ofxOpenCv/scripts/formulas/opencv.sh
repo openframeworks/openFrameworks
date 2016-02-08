@@ -123,6 +123,9 @@ function build() {
     echo "Joining all libs in one Successful"
 
   elif [ "$TYPE" == "vs" ] ; then
+    unset TMP
+    unset TEMP
+
     rm -f CMakeCache.txt
 	#LIB_FOLDER="$BUILD_DIR/opencv/build/$TYPE"
 	mkdir -p $LIB_FOLDER
@@ -657,19 +660,19 @@ function copy() {
 		if [ $ARCH == 32 ] ; then
 			mkdir -p $1/lib/$TYPE/Win32
 			#copy the cv libs
-			cp -v build_vs_32/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
-			cp -v build_vs_32/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
+			cp -v build_vs_32/lib/Release/*.lib $1/lib/$TYPE/Win32/Release
+			cp -v build_vs_32/lib/Debug/*.lib $1/lib/$TYPE/Win32/Debug
 			#copy the zlib 
-			cp -v build_vs_32/3rdparty/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
-			cp -v build_vs_32/3rdparty/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
+			cp -v build_vs_32/3rdparty/lib/Release/*.lib $1/lib/$TYPE/Win32/Release
+			cp -v build_vs_32/3rdparty/lib/Debug/*.lib $1/lib/$TYPE/Win32/Debug
 		elif [ $ARCH == 64 ] ; then
 			mkdir -p $1/lib/$TYPE/x64
 			#copy the cv libs
-			cp -v build_vs_64/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
-			cp -v build_vs_64/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
+			cp -v build_vs_64/lib/Release/*.lib $1/lib/$TYPE/x64/Release
+			cp -v build_vs_64/lib/Debug/*.lib $1/lib/$TYPE/x64/Debug
 			#copy the zlib 
-			cp -v build_vs_64/3rdparty/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
-			cp -v build_vs_64/3rdparty/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
+			cp -v build_vs_64/3rdparty/lib/Release/*.lib $1/lib/$TYPE/x64/Release
+			cp -v build_vs_64/3rdparty/lib/Debug/*.lib $1/lib/$TYPE/x64/Debug
 		fi
   elif [[ "$TYPE" == "ios" || "$TYPE" == "tvos" ]] ; then
     # Standard *nix style copy.
