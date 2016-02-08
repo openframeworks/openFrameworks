@@ -1,4 +1,40 @@
 
+
+ _____     _____     _____ 
+|  _  |   |  _  |   / __  \
+| |/' |   | |_| |   `' / /'
+|  /| |   \____ |     / /  
+\ |_/ / _ .___/ / _ ./ /___
+ \___/ (_)\____/ (_)\_____/
+                           
+
+OF 0.9.2
+========                          
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+CORE
+---- 
+
+### graphics
+    / ttf font size had wrong dpi
+
+
+
+PLATFORM SPECIFIC
+-----------------
+
+### raspberry pi
+   / fix makefiles
+
+### msys2
+   / use poco from repositories to fix DNS error problem
+
           _              _             _              
         / /\           / /\           / /\            
        / /  \         / /  \         / /  \           
