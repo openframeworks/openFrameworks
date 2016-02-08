@@ -691,6 +691,13 @@ function copy() {
     rm -f platforms/build_android_x86/lib/x86/*pch_dephelp.a
     rm -f platforms/build_android_x86/lib/x86/*.so
     cp -r platforms/build_android_x86/lib/x86 $1/lib/$TYPE/
+  elif [ "$TYPE" == "emscripten" ]; then
+    cp -r include/opencv $1/include/
+    cp -r include/opencv2 $1/include/
+    
+    rm -f build_emscripten/lib/*pch_dephelp.a
+    rm -f build_emscripten/lib/*.so
+    cp -r build_emscripten/lib/*.a $1/lib/$TYPE/
   fi
 
   # copy license file
