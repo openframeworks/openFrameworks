@@ -31,15 +31,15 @@ void ofInitFreeImage(bool deinit=false){
 }
 
 template <typename T>
-FREE_IMAGE_TYPE getFreeImageType(ofPixels_<T>& pix);
+FREE_IMAGE_TYPE getFreeImageType(const ofPixels_<T>& pix);
 
 template <>
-FREE_IMAGE_TYPE getFreeImageType(ofPixels& pix) {
+FREE_IMAGE_TYPE getFreeImageType(const ofPixels& pix) {
 	return FIT_BITMAP;
 }
 
 template <>
-FREE_IMAGE_TYPE getFreeImageType(ofShortPixels& pix) {
+FREE_IMAGE_TYPE getFreeImageType(const ofShortPixels& pix) {
 	switch(pix.getNumChannels()) {
 		case 1: return FIT_UINT16;
 		case 3: return FIT_RGB16;
@@ -50,7 +50,7 @@ FREE_IMAGE_TYPE getFreeImageType(ofShortPixels& pix) {
 	}
 }
 template <>
-FREE_IMAGE_TYPE getFreeImageType(ofFloatPixels& pix) {
+FREE_IMAGE_TYPE getFreeImageType(const ofFloatPixels& pix) {
 	switch(pix.getNumChannels()) {
 		case 1: return FIT_FLOAT;
 		case 3: return FIT_RGBF;
@@ -98,7 +98,8 @@ FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
 
 //----------------------------------------------------
 template<typename PixelType>
-void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapOnLittleEndian = true) {
+void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType>& pix, bool swapOnLittleEndian = true) {
+
 	// convert to correct type depending on type of input bmp and PixelType
 	FIBITMAP* bmpConverted = nullptr;
 	FREE_IMAGE_TYPE imgType = FreeImage_GetImageType(bmp);
@@ -179,23 +180,23 @@ static int getJpegOptionFromImageLoadSetting(const ofImageLoadSettings &settings
 }
 
 template<typename PixelType>
-static bool loadImage(ofPixels_<PixelType> & pix, std::string fileName, const ofImageLoadSettings &settings){
+static bool loadImage(ofPixels_<PixelType> & pix, const std::string& _fileName, const ofImageLoadSettings& settings){
 	ofInitFreeImage();
 
 #ifndef TARGET_EMSCRIPTEN
 	Poco::URI uri;
 	try {
-		uri = Poco::URI(fileName);
+		uri = Poco::URI(_fileName);
 	} catch(const std::exception & exc){
-		ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri \"" << fileName << "\": " << exc.what();
+		ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri \"" << _fileName << "\": " << exc.what();
 		return false;
 	}
 	if(uri.getScheme() == "http" || uri.getScheme() == "https"){
-		return ofLoadImage(pix, ofLoadURL(fileName).data);
+		return ofLoadImage(pix, ofLoadURL(_fileName).data);
 	}
 #endif
 	
-	fileName = ofToDataPath(fileName);
+	std::string fileName = ofToDataPath(_fileName);
 	bool bLoaded = false;
 	FIBITMAP * bmp = nullptr;
 
@@ -283,7 +284,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofPixels & pix, std::string path, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofPixels & pix, const std::string& path, const ofImageLoadSettings &settings) {
 	return loadImage(pix, path, settings);
 }
 
@@ -293,7 +294,7 @@ bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSetti
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofShortPixels & pix, std::string path, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofShortPixels & pix, const std::string& path, const ofImageLoadSettings &settings) {
 	return loadImage(pix, path, settings);
 }
 
@@ -303,7 +304,7 @@ bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoad
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofFloatPixels & pix, std::string path, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofFloatPixels & pix, const std::string& path, const ofImageLoadSettings &settings) {
 	return loadImage(pix, path, settings);
 }
 
@@ -313,7 +314,7 @@ bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoad
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofTexture & tex, std::string path, const ofImageLoadSettings &settings){
+bool ofLoadImage(ofTexture & tex, const std::string& path, const ofImageLoadSettings &settings){
 	ofPixels pixels;
 	bool loaded = ofLoadImage(pixels, path, settings);
 	if(loaded){
@@ -336,10 +337,13 @@ bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSett
 
 //----------------------------------------------------------------
 template<typename PixelType>
-static void saveImage(ofPixels_<PixelType> & pix, std::string fileName, ofImageQualityType qualityLevel) {
+static void saveImage(const ofPixels_<PixelType> & _pix, const std::string& _fileName, ofImageQualityType qualityLevel) {
+	// Make a local copy.
+	ofPixels_<PixelType> pix = _pix;
+
 	ofInitFreeImage();
 	if (pix.isAllocated() == false){
-		ofLogError("ofImage") << "saveImage(): couldn't save \"" << fileName << "\", pixels are not allocated";
+		ofLogError("ofImage") << "saveImage(): couldn't save \"" << _fileName << "\", pixels are not allocated";
 		return;
 	}
 
@@ -357,8 +361,8 @@ static void saveImage(ofPixels_<PixelType> & pix, std::string fileName, ofImageQ
 	}
 	#endif
 	
-	ofFilePath::createEnclosingDirectory(fileName);
-	fileName = ofToDataPath(fileName);
+	ofFilePath::createEnclosingDirectory(_fileName);
+	std::string fileName = ofToDataPath(_fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 	if(fif == FIF_UNKNOWN) {
@@ -407,24 +411,27 @@ static void saveImage(ofPixels_<PixelType> & pix, std::string fileName, ofImageQ
 }
 
 //----------------------------------------------------------------
-void ofSaveImage(ofPixels & pix, std::string fileName, ofImageQualityType qualityLevel){
+void ofSaveImage(const ofPixels & pix, const std::string& fileName, ofImageQualityType qualityLevel){
 	saveImage(pix,fileName,qualityLevel);
 }
 
 //----------------------------------------------------------------
-void ofSaveImage(ofFloatPixels & pix, std::string fileName, ofImageQualityType qualityLevel) {
+void ofSaveImage(const ofFloatPixels & pix, const std::string& fileName, ofImageQualityType qualityLevel) {
 	saveImage(pix,fileName,qualityLevel);
 }
 
 //----------------------------------------------------------------
-void ofSaveImage(ofShortPixels & pix, std::string fileName, ofImageQualityType qualityLevel) {
+void ofSaveImage(const ofShortPixels & pix, const std::string& fileName, ofImageQualityType qualityLevel) {
 	saveImage(pix,fileName,qualityLevel);
 }
 
 //----------------------------------------------------------------
 template<typename PixelType>
-static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+static void saveImage(const ofPixels_<PixelType> & _pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
 	// thanks to alvaro casinelli for the implementation
+
+	// Make a local copy.
+	ofPixels_<PixelType> pix = _pix;
 
 	ofInitFreeImage();
 
@@ -511,15 +518,15 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 }
 
 //----------------------------------------------------------------
-void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+void ofSaveImage(const ofPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
 	saveImage(pix,buffer,format,qualityLevel);
 }
 
-void ofSaveImage(ofFloatPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+void ofSaveImage(const ofFloatPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
 	saveImage(pix,buffer,format,qualityLevel);
 }
 
-void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+void ofSaveImage(const ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
 	saveImage(pix,buffer,format,qualityLevel);
 }
 
@@ -667,7 +674,7 @@ bool ofImage_<PixelType>::load(const std::string& fileName, const ofImageLoadSet
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::loadImage(std::string fileName){
+bool ofImage_<PixelType>::loadImage(const std::string& fileName){
 	return load(fileName);
 }
 
@@ -696,37 +703,37 @@ bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::save(std::string fileName, ofImageQualityType qualityLevel){
+void ofImage_<PixelType>::save(const std::string& fileName, ofImageQualityType qualityLevel) const {
 	ofSaveImage(pixels, fileName, qualityLevel);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::save(ofBuffer & buffer, ofImageQualityType qualityLevel){
+void ofImage_<PixelType>::save(ofBuffer & buffer, ofImageQualityType qualityLevel) const {
 	ofSaveImage(pixels, buffer, qualityLevel);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::save(const ofFile & file, ofImageQualityType compressionLevel){
+void ofImage_<PixelType>::save(const ofFile & file, ofImageQualityType compressionLevel) const {
 	ofSaveImage(pixels,file.getAbsolutePath(),compressionLevel);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::saveImage(std::string fileName, ofImageQualityType qualityLevel){
+void ofImage_<PixelType>::saveImage(const std::string& fileName, ofImageQualityType qualityLevel) const {
 	save(fileName, qualityLevel);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::saveImage(ofBuffer & buffer, ofImageQualityType qualityLevel){
+void ofImage_<PixelType>::saveImage(ofBuffer & buffer, ofImageQualityType qualityLevel) const {
 	save(buffer, qualityLevel);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::saveImage(const ofFile & file, ofImageQualityType compressionLevel){
+void ofImage_<PixelType>::saveImage(const ofFile & file, ofImageQualityType compressionLevel) const {
 	save(file,compressionLevel);
 }
 
@@ -1074,7 +1081,7 @@ void ofImage_<PixelType>::crop(int x, int y, int w, int h){
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::cropFrom(ofImage_<PixelType> & otherImage, int x, int y, int w, int h){
+void ofImage_<PixelType>::cropFrom(const ofImage_<PixelType> & otherImage, int x, int y, int w, int h){
 	w = ofClamp(w,1,otherImage.getWidth());
 	h = ofClamp(h,1,otherImage.getHeight());
 
