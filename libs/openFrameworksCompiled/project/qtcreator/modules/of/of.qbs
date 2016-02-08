@@ -395,7 +395,10 @@ Module{
     }
 
     readonly property stringList DEFINES: {
-        var defines = ['GCC_HAS_REGEX', 'OF_USING_GTK', 'OF_USING_MPG123'];
+        var defines = ['GCC_HAS_REGEX'];
+        if(qbs.targetOS.contains("linux")){
+            defines.concat([ 'OF_USING_GTK', 'OF_USING_MPG123']);
+        }
 
         if(qbs.targetOS.indexOf("windows")>-1){
             defines.concat(['UNICODE','_UNICODE','POCO_STATIC']);
