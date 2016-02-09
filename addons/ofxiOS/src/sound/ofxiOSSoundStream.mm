@@ -8,6 +8,7 @@
 #include "ofxiOSSoundStreamDelegate.h"
 #include "ofSoundStream.h"
 #include "ofBaseApp.h"
+#include <functional>
 
 #import "SoundInputStream.h"
 #import "SoundOutputStream.h"
@@ -17,15 +18,6 @@
 ofxiOSSoundStream::ofxiOSSoundStream() {
     soundInputStream = NULL;
     soundOutputStream = NULL;
-
-	soundInputPtr = NULL;
-	soundOutputPtr = NULL;
-    
-    numOfInChannels = 0;
-    numOfOutChannels = 0;
-    sampleRate = 0;
-    bufferSize = 0;
-    numOfBuffers = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -34,7 +26,7 @@ ofxiOSSoundStream::~ofxiOSSoundStream() {
 }
 
 //------------------------------------------------------------------------------
-vector<ofSoundDevice> ofxiOSSoundStream::getDeviceList()  const{
+vector<ofSoundDevice> ofxiOSSoundStream::getDeviceList(ofSoundDevice::Api api)  const{
 	ofLogWarning("ofxiOSSoundStream") << "getDeviceList() isn't implemented on iOS";
 	return vector<ofSoundDevice>();
 }
@@ -51,63 +43,41 @@ int ofxiOSSoundStream::getDeviceID()  const{
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::setInput(ofBaseSoundInput * soundInput) {
-	soundInputPtr = soundInput;
-	[(ofxiOSSoundStreamDelegate *)[(id)soundInputStream delegate] setInput:soundInputPtr];
+	settings.setInListener(soundInput);
+	[(ofxiOSSoundStreamDelegate *)[(id)soundInputStream delegate] setInput: settings.inCallback];
 }
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::setOutput(ofBaseSoundOutput * soundOutput) {
-	soundOutputPtr = soundOutput;
-	[(ofxiOSSoundStreamDelegate *)[(id)soundOutputStream delegate] setOutput:soundOutputPtr];
+	settings.setOutListener(soundOutput);
+	[(ofxiOSSoundStreamDelegate *)[(id)soundOutputStream delegate] setOutput: settings.outCallback];
 }
 
 //------------------------------------------------------------------------------
-ofBaseSoundInput * ofxiOSSoundStream::getInput(){
-	return soundInputPtr;
-}
-
-//------------------------------------------------------------------------------
-ofBaseSoundOutput * ofxiOSSoundStream::getOutput(){
-	return soundOutputPtr;
-}
-
-//------------------------------------------------------------------------------
-bool ofxiOSSoundStream::setup(int numOfOutChannels, int numOfInChannels, int sampleRate, int bufferSize, int numOfBuffers) {
-    close();
-    
-    this->numOfOutChannels = numOfOutChannels;
-    this->numOfInChannels = numOfInChannels;
-    this->sampleRate = sampleRate;
-    this->bufferSize = bufferSize;
-    this->numOfBuffers = numOfBuffers;
-    
-    if(numOfInChannels > 0) {
-        soundInputStream = [[SoundInputStream alloc] initWithNumOfChannels:numOfInChannels
-                                                            withSampleRate:sampleRate
-                                                            withBufferSize:bufferSize];
-        ofxiOSSoundStreamDelegate * delegate = [[ofxiOSSoundStreamDelegate alloc] initWithSoundInputApp:soundInputPtr];
+bool ofxiOSSoundStream::setup(const ofSoundStreamSettings & settings) {
+	close();
+	
+	this->settings = settings;
+	
+    if(settings.numInputChannels > 0) {
+        soundInputStream = [[SoundInputStream alloc] initWithNumOfChannels:settings.numInputChannels
+                                                            withSampleRate:settings.sampleRate
+                                                            withBufferSize:settings.bufferSize];
+        ofxiOSSoundStreamDelegate * delegate = [[ofxiOSSoundStreamDelegate alloc] initWithSoundInputFn:settings.inCallback];
         ((SoundInputStream *)soundInputStream).delegate = delegate;
         [(SoundInputStream *)soundInputStream start];
     }
     
-    if(numOfOutChannels > 0) {
-        soundOutputStream = [[SoundOutputStream alloc] initWithNumOfChannels:numOfOutChannels
-                                                              withSampleRate:sampleRate
-                                                              withBufferSize:bufferSize];
-        ofxiOSSoundStreamDelegate * delegate = [[ofxiOSSoundStreamDelegate alloc] initWithSoundOutputApp:soundOutputPtr];
+    if(settings.numOutputChannels > 0) {
+        soundOutputStream = [[SoundOutputStream alloc] initWithNumOfChannels:settings.numOutputChannels
+                                                              withSampleRate:settings.sampleRate
+                                                              withBufferSize:settings.bufferSize];
+        ofxiOSSoundStreamDelegate * delegate = [[ofxiOSSoundStreamDelegate alloc] initWithSoundOutputFn:settings.outCallback];
         ((SoundInputStream *)soundOutputStream).delegate = delegate;
         [(SoundInputStream *)soundOutputStream start];
     }
     
     bool bOk = (soundInputStream != NULL) || (soundOutputStream != NULL);
-    return bOk;
-}
-
-//------------------------------------------------------------------------------
-bool ofxiOSSoundStream::setup(ofBaseApp * app, int numOfOutChannels, int numOfInChannels, int sampleRate, int bufferSize, int numOfBuffers){
-    setInput(app);
-	setOutput(app);
-	bool bOk = setup(numOfOutChannels, numOfInChannels, sampleRate, bufferSize, numOfBuffers);
     return bOk;
 }
 
@@ -150,12 +120,8 @@ void ofxiOSSoundStream::close(){
         [(SoundOutputStream *)soundOutputStream release];
         soundOutputStream = NULL;
     }
-        
-    numOfInChannels = 0;
-    numOfOutChannels = 0;
-    sampleRate = 0;
-    bufferSize = 0;
-    numOfBuffers = 0;
+	
+	settings = ofSoundStreamSettings();
 }
 
 //------------------------------------------------------------------------------
@@ -165,22 +131,22 @@ long unsigned long ofxiOSSoundStream::getTickCount() const{
 
 //------------------------------------------------------------------------------
 int ofxiOSSoundStream::getNumOutputChannels() const{
-	return numOfOutChannels;
+	return settings.numOutputChannels;
 }
 
 //------------------------------------------------------------------------------
 int ofxiOSSoundStream::getNumInputChannels() const{
-	return numOfInChannels;
+	return settings.numInputChannels;
 }
 
 //------------------------------------------------------------------------------
 int ofxiOSSoundStream::getSampleRate() const{
-    return sampleRate;
+    return settings.sampleRate;
 }
 
 //------------------------------------------------------------------------------
 int ofxiOSSoundStream::getBufferSize() const{
-    return bufferSize;
+    return settings.bufferSize;
 }
 
 //------------------------------------------------------------------------------
