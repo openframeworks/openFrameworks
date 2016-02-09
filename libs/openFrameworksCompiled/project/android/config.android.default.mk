@@ -180,7 +180,7 @@ PLATFORM_REQUIRED_ADDONS = ofxAndroid ofxAccelerometer
 PLATFORM_CFLAGS = -Wall -std=c++14
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS +=  --std=libc++ -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -ffunction-sections -fdata-sections  -gcc-toolchain $(GCC_TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)
+PLATFORM_CFLAGS +=  -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -ffunction-sections -fdata-sections  -gcc-toolchain $(GCC_TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)
 
 
 ifeq ($(ABI),armv7)
