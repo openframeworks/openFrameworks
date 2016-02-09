@@ -62,7 +62,7 @@ function prepare() {
 	    echo "Bootstrapping (with libs $BOOST_LIBS_COMMA)"
 	    ./bootstrap.sh --with-libraries=$BOOST_LIBS_COMMA
 	elif [ "$TYPE" == "android" ]; then
-		./bootstrap.sh --with-toolset=gcc --with-libraries=filesystemel
+		./bootstrap.sh --with-toolset=clang --with-libraries=filesystemel
 	elif [ "$TYPE" == "vs" ]; then
 		cmd.exe /c "bootstrap"
 	else
@@ -281,13 +281,13 @@ EOF
 	    ABI=armeabi-v7a
 	    source ../../android_configure.sh $ABI
 	    cp $FORMULA_DIR/project-config-android_arm.jam project-config.jam
-		./b2 -j${PARALLEL_MAKE} toolset=gcc cxxflags="-std=c++11 $CFLAGS" threading=multi threadapi=pthread target-os=android variant=release --build-dir=build_arm link=static stage
+		./b2 -j${PARALLEL_MAKE} toolset=clang cxxflags="-std=c++11 $CFLAGS" threading=multi threadapi=pthread target-os=android variant=release --build-dir=build_arm link=static stage
 		mv stage stage_arm
 		
 	    ABI=x86
 	    source ../../android_configure.sh $ABI
 	    cp $FORMULA_DIR/project-config-android_x86.jam project-config.jam
-		./b2 -j${PARALLEL_MAKE} toolset=gcc cxxflags="-std=c++11 $CFLAGS" threading=multi threadapi=pthread target-os=android variant=release --build-dir=build_x86 link=static stage
+		./b2 -j${PARALLEL_MAKE} toolset=clang cxxflags="-std=c++11 $CFLAGS" threading=multi threadapi=pthread target-os=android variant=release --build-dir=build_x86 link=static stage
 		mv stage stage_x86
 	fi
 }
