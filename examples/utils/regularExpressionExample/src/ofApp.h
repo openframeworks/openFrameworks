@@ -2,36 +2,22 @@
 
 #include "ofMain.h"
 
-class URLImage : public ofImage {
-public:
-    bool    bDoneLoading;
-    string  url;
-};
-
-
 class ofApp : public ofBaseApp{
-    
-public:
-    
-    void setup();
-    void update();
-    void draw();
-    
-    void keyPressed  (int key);
-    void keyReleased(int key);
-    void mouseMoved(int x, int y );
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void mouseEntered(int x, int y);
-    void mouseExited(int x, int y);
-    void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
-    
-    void              searchGoogleImages();
-    int               page;
-    string            rawData;
-    vector <string>   urls;
-    vector <URLImage> images;
+
+	public:
+		void setup();
+		void update();
+		void draw();
+		void keyPressed(int key);
+        string grepStringInRegex(string str, string reg);
+        int countOccurencesInRegex(string, string reg);
+        bool isKeyInRegex(int key, string reg);
+        vector<string> matchesInRegex(string str, string reg);
+
+        string text;
+        string greppedText;
+        vector<string> matches;
+        int countedOccurrences;
+        ofFile file;
+		
 };
