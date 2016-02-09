@@ -184,15 +184,15 @@ PLATFORM_CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -ffunction-se
 
 
 ifeq ($(ABI),armv7)
-	PLATFORM_CFLAGS += -target armv7-none-linux-androideabi -march=armv7-a #-mthumb -mtune=cortex-a8 
+	PLATFORM_CFLAGS += -target armv7-none-linux-androideabi -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
 endif
 
 ifeq ($(ABI),neon)
-	PLATFORM_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
+	PLATFORM_CFLAGS += -target armv7-none-linux-androideabi -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 endif
 
 ifeq ($(ABI),x86)
-	PLATFORM_CFLAGS += -march=i686 -msse3 -mstackrealign -mfpmath=sse -fno-stack-protector
+	PLATFORM_CFLAGS += -target i686-none-linux-android -march=i686 -msse3 -mstackrealign -mfpmath=sse -fno-stack-protector
 endif
 
 ################################################################################
