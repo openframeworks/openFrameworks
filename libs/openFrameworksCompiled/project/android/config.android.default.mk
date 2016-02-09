@@ -209,9 +209,9 @@ PLATFORM_LDFLAGS +=  -nostdlib -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--
 
 
 ifneq ($(ABI),x86)
-PLATFORM_LDFLAGS += -target i686-none-linux-android -march=armv7-a
+PLATFORM_LDFLAGS += -target armv7-none-linux-androideabi -march=armv7-a
 else
-PLATFORM_LDFLAGS += -target armv7-none-linux-androideabi -march=i686
+PLATFORM_LDFLAGS += -target i686-none-linux-android -march=i686
 endif
 
 ################################################################################
