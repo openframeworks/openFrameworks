@@ -115,6 +115,13 @@ class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 	float scrollY;
 };
 
+//extend this to be able to pass native device specific data such as iOS Pencil azimuth
+class ofNativeTouchData{
+	public:
+	ofNativeTouchData(){};
+	~ofNativeTouchData(){};
+};
+
 class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
   public:
 	enum Type{
@@ -140,6 +147,7 @@ class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
 	,yspeed(0)
 	,xaccel(0)
 	,yaccel(0)
+	,nativeTouchData(0)
 	{
 
 	}
@@ -159,7 +167,8 @@ class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
 	,xspeed(0)
 	,yspeed(0)
 	,xaccel(0)
-	,yaccel(0){}
+	,yaccel(0)
+	,nativeTouchData(0){}
 
 	Type type;
 	int id;
@@ -171,6 +180,7 @@ class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
 	float pressure;
 	float xspeed, yspeed;
 	float xaccel, yaccel;
+	ofNativeTouchData *nativeTouchData;
 };
 
 class ofResizeEventArgs : public ofEventArgs {
