@@ -8,6 +8,7 @@
 #include "ofxiOSSoundStreamDelegate.h"
 #include "ofSoundStream.h"
 #include "ofBaseApp.h"
+#include <functional>
 
 #import "SoundInputStream.h"
 #import "SoundOutputStream.h"
@@ -42,14 +43,14 @@ int ofxiOSSoundStream::getDeviceID()  const{
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::setInput(ofBaseSoundInput * soundInput) {
-	//soundInputPtr = soundInput;
-	//[(ofxiOSSoundStreamDelegate *)[(id)soundInputStream delegate] setInput:soundInputPtr];
+	settings.setInListener(soundInput);
+	[(ofxiOSSoundStreamDelegate *)[(id)soundInputStream delegate] setInput: settings.inCallback];
 }
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::setOutput(ofBaseSoundOutput * soundOutput) {
-	//soundOutputPtr = soundOutput;
-	//[(ofxiOSSoundStreamDelegate *)[(id)soundOutputStream delegate] setOutput:soundOutputPtr];
+	settings.setOutListener(soundOutput);
+	[(ofxiOSSoundStreamDelegate *)[(id)soundOutputStream delegate] setOutput: settings.outCallback];
 }
 
 //------------------------------------------------------------------------------
