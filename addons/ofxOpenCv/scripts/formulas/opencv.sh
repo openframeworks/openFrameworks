@@ -9,7 +9,7 @@
 FORMULA_TYPES=( "osx" "ios" "tvos" "vs" "android" "emscripten" )
  
 # define the version
-VER=2.4.9
+VER=3.1.0
  
 # tools for git use
 GIT_URL=https://github.com/Itseez/opencv.git
@@ -34,14 +34,6 @@ function download() {
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
   : # noop
-
-  # Patch for Clang for 2.4
-  # https://github.com/Itseez/opencv/commit/35f96d6da76099d80180439c857a4abe5cb17966
-  cd modules/legacy/src
-  if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/patch.calibfilter.cpp.patch 2>/dev/null ; then
-      patch -p0 -u < $FORMULA_DIR/patch.calibfilter.cpp.patch
-  fi
-  cd ../../../
 }
 
 # executed inside the lib src dir
@@ -123,6 +115,9 @@ function build() {
     echo "Joining all libs in one Successful"
 
   elif [ "$TYPE" == "vs" ] ; then
+    unset TMP
+    unset TEMP
+
     rm -f CMakeCache.txt
 	#LIB_FOLDER="$BUILD_DIR/opencv/build/$TYPE"
 	mkdir -p $LIB_FOLDER
@@ -535,8 +530,11 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
-      -DWITH_EIGEN=OFF
+      -DWITH_EIGEN=OFF \
       -DBUILD_TESTS=OFF \
+      -DANDROID_STL=c++_static \
+      -DANDROID_TOOLCHAIN_NAME=arm-linux-androideabi-clang3.6 \
+      -DANDROID_NATIVE_API_LEVEL=android-19 \
       -DBUILD_PERF_TESTS=OFF
     cd build_android_arm
     make -j${PARALLEL_MAKE}
@@ -576,6 +574,9 @@ function build() {
       -DWITH_PVAPI=OFF \
       -DWITH_EIGEN=OFF \
       -DBUILD_TESTS=OFF \
+      -DANDROID_STL=c++_static \
+      -DANDROID_TOOLCHAIN_NAME=x86-clang3.6 \
+      -DANDROID_NATIVE_API_LEVEL=android-19 \
       -DBUILD_PERF_TESTS=OFF
     cd build_android_x86
     make -j${PARALLEL_MAKE}
@@ -649,22 +650,22 @@ function copy() {
 	
   elif [ "$TYPE" == "vs" ] ; then 
 		if [ $ARCH == 32 ] ; then
-			mkdir -p $1/lib/$TYPE/Win32
-			#copy the cv libs
-			cp -v build_vs_32/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
-			cp -v build_vs_32/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
-			#copy the zlib 
-			cp -v build_vs_32/3rdparty/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
-			cp -v build_vs_32/3rdparty/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
+      DEPLOY_PATH="$1/lib/$TYPE/Win32"
 		elif [ $ARCH == 64 ] ; then
-			mkdir -p $1/lib/$TYPE/x64
-			#copy the cv libs
-			cp -v build_vs_64/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
-			cp -v build_vs_64/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
-			#copy the zlib 
-			cp -v build_vs_64/3rdparty/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
-			cp -v build_vs_64/3rdparty/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
+			DEPLOY_PATH="$1/lib/$TYPE/x64"
 		fi
+      mkdir -p "$DEPLOY_PATH/Release"
+      mkdir -p "$DEPLOY_PATH/Debug"
+      # now make sure the target directories are clean.
+      rm -Rf "${DEPLOY_PATH}/Release/*"
+      rm -Rf "${DEPLOY_PATH}/Debug/*"
+      #copy the cv libs
+      cp -v build_vs_${ARCH}/lib/Release/*.lib "${DEPLOY_PATH}/Release"
+      cp -v build_vs_${ARCH}/lib/Debug/*.lib "${DEPLOY_PATH}/Debug"
+      #copy the zlib 
+      cp -v build_vs_${ARCH}/3rdparty/lib/Release/*.lib "${DEPLOY_PATH}/Release"
+      cp -v build_vs_${ARCH}/3rdparty/lib/Debug/*.lib "${DEPLOY_PATH}/Debug"
+
   elif [[ "$TYPE" == "ios" || "$TYPE" == "tvos" ]] ; then
     # Standard *nix style copy.
     # copy headers
@@ -685,6 +686,13 @@ function copy() {
     rm -f platforms/build_android_x86/lib/x86/*pch_dephelp.a
     rm -f platforms/build_android_x86/lib/x86/*.so
     cp -r platforms/build_android_x86/lib/x86 $1/lib/$TYPE/
+  elif [ "$TYPE" == "emscripten" ]; then
+    cp -r include/opencv $1/include/
+    cp -r include/opencv2 $1/include/
+    
+    rm -f build_emscripten/lib/*pch_dephelp.a
+    rm -f build_emscripten/lib/*.so
+    cp -r build_emscripten/lib/*.a $1/lib/$TYPE/
   fi
 
   # copy license file

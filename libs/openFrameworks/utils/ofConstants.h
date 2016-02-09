@@ -3,8 +3,8 @@
 
 //-------------------------------
 #define OF_VERSION_MAJOR 0
-#define OF_VERSION_MINOR 9
-#define OF_VERSION_PATCH 1
+#define OF_VERSION_MINOR 10
+#define OF_VERSION_PATCH 0
 #define OF_VERSION_PRE_RELEASE "master"
 
 //-------------------------------
@@ -357,7 +357,7 @@ typedef TESSindex ofIndexType;
 // on c++11, this is a workaround that bug
 #ifndef HAS_TLS
 	#if __clang__
-		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__)
+		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__) && !defined(__ANDROID__)
 			#define HAS_TLS 1
 		#endif
     #elif !defined(TARGET_WIN32) || _MSC_VER
