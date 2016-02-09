@@ -180,19 +180,19 @@ PLATFORM_REQUIRED_ADDONS = ofxAndroid ofxAccelerometer
 PLATFORM_CFLAGS = -Wall -std=c++14
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -ffunction-sections -fdata-sections  -gcc-toolchain $(GCC_TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)
+PLATFORM_CFLAGS +=  -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -ffunction-sections -fdata-sections  -gcc-toolchain $(GCC_TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)
 
 
 ifeq ($(ABI),armv7)
-	PLATFORM_CFLAGS += -target armv7-none-linux-androideabi -march=armv7-a #-mthumb -mtune=cortex-a8 
+	PLATFORM_CFLAGS += -target armv7-none-linux-androideabi -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
 endif
 
 ifeq ($(ABI),neon)
-	PLATFORM_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
+	PLATFORM_CFLAGS += -target armv7-none-linux-androideabi -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 endif
 
 ifeq ($(ABI),x86)
-	PLATFORM_CFLAGS += -march=i686 -msse3 -mstackrealign -mfpmath=sse -fno-stack-protector
+	PLATFORM_CFLAGS += -target i686-none-linux-android -march=i686 -msse3 -mstackrealign -mfpmath=sse -fno-stack-protector
 endif
 
 ################################################################################
@@ -204,15 +204,15 @@ endif
 ################################################################################
 
 PLATFORM_LDFLAGS =
-PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -L"$(NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/$(ABI_PATH)" #-nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)"
-#ifeq ($(HOST_PLATFORM),linux-x86)
-#PLATFORM_LDFLAGS += -fuse-ld=gold
-#endif
+PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -L"$(NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/$(ABI_PATH)"
+PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections -Wl,--exclude-libs,ALL -gcc-toolchain $(GCC_TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)
+
 
 ifneq ($(ABI),x86)
-#PLATFORM_LDFLAGS += -Wl,--fix-cortex-a8 
+PLATFORM_LDFLAGS += -target armv7-none-linux-androideabi -march=armv7-a
+else
+PLATFORM_LDFLAGS += -target i686-none-linux-android -march=i686
 endif
-PLATFORM_LDFLAGS += --std=libc++ -target armv7-none-linux-androideabi  -gcc-toolchain $(GCC_TOOLCHAIN)/prebuilt/$(HOST_PLATFORM) -march=armv7-a -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections -Wl,--exclude-libs,ALL
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
