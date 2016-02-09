@@ -34,14 +34,6 @@ function download() {
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
   : # noop
-
-  # Patch for Clang for 2.4
-  # https://github.com/Itseez/opencv/commit/35f96d6da76099d80180439c857a4abe5cb17966
-  #cd modules/legacy/src
-  #if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/patch.calibfilter.cpp.patch 2>/dev/null ; then
-  #    patch -p0 -u < $FORMULA_DIR/patch.calibfilter.cpp.patch
-  #fi
-  #cd ../../../
 }
 
 # executed inside the lib src dir
@@ -123,6 +115,9 @@ function build() {
     echo "Joining all libs in one Successful"
 
   elif [ "$TYPE" == "vs" ] ; then
+    unset TMP
+    unset TEMP
+
     rm -f CMakeCache.txt
 	#LIB_FOLDER="$BUILD_DIR/opencv/build/$TYPE"
 	mkdir -p $LIB_FOLDER
@@ -655,22 +650,22 @@ function copy() {
 	
   elif [ "$TYPE" == "vs" ] ; then 
 		if [ $ARCH == 32 ] ; then
-			mkdir -p $1/lib/$TYPE/Win32
-			#copy the cv libs
-			cp -v build_vs_32/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
-			cp -v build_vs_32/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
-			#copy the zlib 
-			cp -v build_vs_32/3rdparty/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
-			cp -v build_vs_32/3rdparty/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
+      DEPLOY_PATH="$1/lib/$TYPE/Win32"
 		elif [ $ARCH == 64 ] ; then
-			mkdir -p $1/lib/$TYPE/x64
-			#copy the cv libs
-			cp -v build_vs_64/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
-			cp -v build_vs_64/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
-			#copy the zlib 
-			cp -v build_vs_64/3rdparty/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
-			cp -v build_vs_64/3rdparty/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
+			DEPLOY_PATH="$1/lib/$TYPE/x64"
 		fi
+      mkdir -p "$DEPLOY_PATH/Release"
+      mkdir -p "$DEPLOY_PATH/Debug"
+      # now make sure the target directories are clean.
+      rm -Rf "${DEPLOY_PATH}/Release/*"
+      rm -Rf "${DEPLOY_PATH}/Debug/*"
+      #copy the cv libs
+      cp -v build_vs_${ARCH}/lib/Release/*.lib "${DEPLOY_PATH}/Release"
+      cp -v build_vs_${ARCH}/lib/Debug/*.lib "${DEPLOY_PATH}/Debug"
+      #copy the zlib 
+      cp -v build_vs_${ARCH}/3rdparty/lib/Release/*.lib "${DEPLOY_PATH}/Release"
+      cp -v build_vs_${ARCH}/3rdparty/lib/Debug/*.lib "${DEPLOY_PATH}/Debug"
+
   elif [[ "$TYPE" == "ios" || "$TYPE" == "tvos" ]] ; then
     # Standard *nix style copy.
     # copy headers
