@@ -205,7 +205,7 @@ endif
 
 PLATFORM_LDFLAGS =
 PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -L"$(NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/$(ABI_PATH)"
-PLATFORM_LDFLAGS += -std=libc++ -nostdlib -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections -Wl,--exclude-libs,ALL -gcc-toolchain $(GCC_TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)
+PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections -Wl,--exclude-libs,ALL -gcc-toolchain $(GCC_TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)
 
 
 ifneq ($(ABI),x86)
