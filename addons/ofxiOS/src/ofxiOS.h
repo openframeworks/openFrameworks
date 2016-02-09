@@ -46,3 +46,4 @@
 #include "ofxiOSApp.h"
 #include "ofxiOSExtras.h"
 #include "ofxAccelerometer.h"
+#include "ofxiOS3dTouch.h"
