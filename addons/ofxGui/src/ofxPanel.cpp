@@ -31,31 +31,38 @@ ofxPanel::~ofxPanel(){
 }
 
 ofxPanel & ofxPanel::setup(const Config & config){
+	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
+		loadIcons();
+	}
 	return (ofxPanel&)ofxGuiGroup::setup(config);
+}
+
+ofxPanel & ofxPanel::setup(const std::string& collectionName, const Config & config){
+	setName(collectionName);
+	return setup(config);
 }
 
 ofxPanel & ofxPanel::setup(const ofParameterGroup & parameters, const Config & groupConfig, const Config &itemConfig){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
 		loadIcons();
 	}
-	registerMouseEvents();
 	return (ofxPanel&)ofxGuiGroup::setup(parameters, groupConfig, itemConfig);
 }
 
 ofxPanel & ofxPanel::setup(const std::string& collectionName, const std::string& filename, float x, float y){
-	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
-		loadIcons();
-	}
-	registerMouseEvents();
-	return (ofxPanel&)ofxGuiGroup::setup(collectionName,filename,x,y);
+	ofxPanel::Config config;
+	config.filename = filename;
+	config.shape.x = x;
+	config.shape.y = y;
+	return setup(collectionName, config);
 }
 
 ofxPanel & ofxPanel::setup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
-	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
-		loadIcons();
-	}
-	registerMouseEvents();
-	return (ofxPanel&)ofxGuiGroup::setup(parameters,filename,x,y);
+	ofxPanel::Config config;
+	config.filename = filename;
+	config.shape.x = x;
+	config.shape.y = y;
+	return setup(parameters, config);
 }
 
 void ofxPanel::loadIcons(){

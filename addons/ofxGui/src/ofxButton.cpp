@@ -4,7 +4,7 @@ using namespace std;
 ofxButton::ofxButton():ofxToggle(){}
 
 ofxButton::ofxButton(ofParameter<void> _val, const Config & config)
-:ofxToggle(ofParameter<bool>(false), config){
+:ofxToggle(value, config){
 	//value.setSerializable(false);
 	voidvalue.makeReferenceTo(_val);
 	useVoidValue = true;
@@ -17,14 +17,14 @@ ofxButton::ofxButton(ofParameter<bool> _val, const Config & config)
 ofxButton::~ofxButton(){
 }
 
-ofxButton & ofxButton::setup(ofParameter<void> _val, const Config & config){
-	ofxToggle::setup(ofParameter<bool>(false), config);
+ofxButton & ofxButton::setup(ofParameter<void>& _val, const Config & config){
+	ofxToggle::setup(value, config);
 	voidvalue.makeReferenceTo(_val);
 	useVoidValue = true;
 	return *this;
 }
 
-ofxButton & ofxButton::setup(ofParameter<bool> _val, const Config & config){
+ofxButton & ofxButton::setup(ofParameter<bool> &_val, const Config & config){
 	ofxToggle::setup(_val, config);
 	return *this;
 }
@@ -34,8 +34,8 @@ ofxButton & ofxButton::setup(const std::string& buttonName, const Config & confi
 	return setup(value, config);
 }
 
-ofxButton & ofxButton::setup(ofParameter<void> _val, float width, float height){
-	ofxToggle::setup(ofParameter<bool>(false), width, height);
+ofxButton & ofxButton::setup(ofParameter<void>& _val, float width, float height){
+	ofxToggle::setup(value, width, height);
 	voidvalue.makeReferenceTo(_val);
 	useVoidValue = true;
 	return *this;

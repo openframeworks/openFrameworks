@@ -4,7 +4,7 @@ using namespace std;
 
 ofxToggle::ofxToggle():ofxBaseGui(){}
 
-ofxToggle::ofxToggle(ofParameter<bool> _bVal, const Config & config)
+ofxToggle::ofxToggle(ofParameter<bool> &_bVal, const Config & config)
 :ofxBaseGui(config)
 ,bGuiActive(false){
 	value.makeReferenceTo(_bVal);
@@ -18,7 +18,7 @@ ofxToggle::~ofxToggle(){
 	value.removeListener(this,&ofxToggle::valueChanged);
 }
 
-ofxToggle & ofxToggle::setup(ofParameter<bool> _bVal, const Config & config){
+ofxToggle & ofxToggle::setup(ofParameter<bool> &_bVal, const Config & config){
 	ofxBaseGui::setup(config);
 	bGuiActive = false;
 	value.makeReferenceTo(_bVal);
@@ -30,7 +30,12 @@ ofxToggle & ofxToggle::setup(ofParameter<bool> _bVal, const Config & config){
 	return *this;
 }
 
-ofxToggle & ofxToggle::setup(ofParameter<bool> _bVal, float width, float height){
+ofxToggle & ofxToggle::setup(const std::string& toggleName, const Config & config){
+	value.setName(toggleName);
+	return setup(value, config);
+}
+
+ofxToggle & ofxToggle::setup(ofParameter<bool> &_bVal, float width, float height){
 	b.x = 0;
 	b.y = 0;
 	b.width = width;

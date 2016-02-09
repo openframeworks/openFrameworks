@@ -5,7 +5,9 @@ using namespace std;
 ofxMinimalButton::ofxMinimalButton(){}
 
 ofxMinimalButton::ofxMinimalButton(const Config & config) :
-	ofxMinimalToggle(ofParameter <bool>(config.name, false), config){
+	ofxMinimalToggle(value, config){
+	value.setName(config.name);
+	value.set(false);
 	value.setSerializable(false);
 	registerMouseEvents();
 	value.addListener(this, &ofxMinimalButton::valueChanged);

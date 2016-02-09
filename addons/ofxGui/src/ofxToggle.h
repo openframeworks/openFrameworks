@@ -12,12 +12,12 @@ public:
 	};
 
 	ofxToggle();
-	ofxToggle(ofParameter<bool> _bVal, const Config & config = Config());
+	ofxToggle(ofParameter<bool>& _bVal, const Config & config = Config());
 	~ofxToggle();
-	ofxToggle & setup(ofParameter<bool> _bVal, const Config & config);
-	ofxToggle & setup(ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
+	ofxToggle & setup(const std::string& toggleName, const Config & config);
+	ofxToggle & setup(ofParameter<bool>& _bVal, const Config & config);
+	ofxToggle & setup(ofParameter<bool>& _bVal, float width = defaultWidth, float height = defaultHeight);
 	ofxToggle & setup(const std::string& toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight);
-
 
 	virtual bool mouseMoved(ofMouseEventArgs & args);
 	virtual bool mousePressed(ofMouseEventArgs & args);

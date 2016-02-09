@@ -11,7 +11,6 @@ public:
 		:ofxToggle::Config(c){}
 		Config(const ofxBaseGui::Config & c)
 		:ofxToggle::Config(c){}
-		std::string name;
 	};
 
 	ofxButton();
@@ -19,10 +18,10 @@ public:
 	ofxButton(ofParameter<bool> _bVal, const Config & config);
 	~ofxButton();
 	ofxButton & setup(const std::string& buttonName, const Config & config);
-	ofxButton & setup(ofParameter<void> _val, const Config & config);
-	ofxButton & setup(ofParameter<bool> _bVal, const Config & config);
+	ofxButton & setup(ofParameter<void>& _val, const Config & config);
+	ofxButton & setup(ofParameter<bool>& _bVal, const Config & config);
 	ofxButton & setup(const std::string& buttonName, float width = defaultWidth, float height = defaultHeight);
-	ofxButton & setup(ofParameter<void> _val, float width = defaultWidth, float height = defaultHeight);
+	ofxButton & setup(ofParameter<void>& _val, float width = defaultWidth, float height = defaultHeight);
 	ofxButton & setup(ofParameter<bool>& _bVal, float width = defaultWidth, float height = defaultHeight);
 
 	virtual bool mouseReleased(ofMouseEventArgs & args);

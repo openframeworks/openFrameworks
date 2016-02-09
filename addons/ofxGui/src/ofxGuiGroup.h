@@ -13,6 +13,8 @@ class ofxGuiGroup : public ofxBaseGui {
 		struct Config: public ofxBaseGui::Config{
 			Config(){
 				this->layout = ofxBaseGui::Vertical;
+				this->shape.x = 10;
+				this->shape.y = 10;
 			}
 			Config(const ofxBaseGui::Config & c)
 			:ofxBaseGui::Config(c){}
@@ -34,10 +36,10 @@ class ofxGuiGroup : public ofxBaseGui {
 		virtual ~ofxGuiGroup();
 
 		virtual ofxGuiGroup & setup(const Config & config);
-		virtual ofxGuiGroup & setup(const std::string& collectionName, const Config & config);
-		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const Config & groupConfig, const Config &itemConfig);
-		virtual ofxGuiGroup & setup(const std::string& collectionName = "", const std::string& filename = "settings.xml", float x = 10, float y = 10);
-		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const std::string& filename = "settings.xml", float x = 10, float y = 10);
+		virtual ofxGuiGroup & setup(const std::string& collectionName = "", const Config & config = ofxGuiGroup::Config());
+		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const Config & groupConfig = ofxGuiGroup::Config(), const Config &itemConfig = ofxBaseGui::Config());
+		virtual ofxGuiGroup & setup(const std::string& collectionName, const std::string& filename, float x = 10, float y = 10);
+		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const std::string& filename, float x = 10, float y = 10);
 
 		void add(ofxBaseGui & element);
 		void add(ofxGuiGroup & element);
@@ -96,7 +98,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		void add(ofParameter <ofFloatColor> & parameter, const Config & config);
 
 		template<class GuiType, typename Type, class Config>
-		void add(ofParameter<Type> p, const Config & config);
+		void add(ofParameter<Type> &p, const Config & config);
 
 		template<class GuiType=ofxGuiGroup, class CGroup, class CItem=ofxBaseGui::Config>
 		void add(ofParameterGroup p, const CGroup & groupConfig, const CItem & itemConfig = ofxBaseGui::Config());
@@ -221,7 +223,7 @@ void ofxGuiGroup::add(ofParameter <std::string> & parameter, const C & config){
 }
 
 template<class GuiType, typename Type, class C>
-void ofxGuiGroup::add(ofParameter<Type> p, const C & config){
+void ofxGuiGroup::add(ofParameter<Type> &p, const C & config){
 	auto inContainerConfig = config;
 	inContainerConfig.inContainer = true;
 //	inContainerConfig.layout = this->layout;

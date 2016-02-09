@@ -19,10 +19,11 @@ public:
 	ofxPanel(const ofParameterGroup & parameters, const Config & groupConfig = ofxPanel::Config(), const Config &itemConfig = ofxBaseGui::Config());
 	~ofxPanel();
 
-	ofxPanel & setup(const Config & config);
+	ofxPanel & setup(const Config & config = ofxPanel::Config());
+	ofxPanel & setup(const std::string& collectionName, const Config & config = ofxPanel::Config());
 	ofxPanel & setup(const ofParameterGroup & parameters, const Config & groupConfig = ofxPanel::Config(), const Config &itemConfig = ofxBaseGui::Config());
-	ofxPanel & setup(const std::string& collectionName="", const std::string& filename="settings.xml", float x = 10, float y = 10);
-	ofxPanel & setup(const ofParameterGroup & parameters, const std::string& filename="settings.xml", float x = 10, float y = 10);
+	ofxPanel & setup(const std::string& collectionName, const std::string& filename, float x = 10, float y = 10);
+	ofxPanel & setup(const ofParameterGroup & parameters, const std::string& filename, float x = 10, float y = 10);
 
 	virtual void setSize(float w, float h);
 	virtual void setShape(ofRectangle r);

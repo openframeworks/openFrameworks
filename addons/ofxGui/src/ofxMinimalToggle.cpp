@@ -7,7 +7,7 @@ ofxMinimalToggle::ofxMinimalToggle() :
 	thisBorderColor = thisFillColor;
 }
 
-ofxMinimalToggle::ofxMinimalToggle(ofParameter <bool> val, const Config & config)
+ofxMinimalToggle::ofxMinimalToggle(ofParameter <bool> &val, const Config & config)
 :ofxToggle(val,config){
 	if(b.width == 0) {
 		b.width = ofxBaseGui::getTextWidth(val.getName(), config.shape.height);
@@ -17,7 +17,7 @@ ofxMinimalToggle::ofxMinimalToggle(ofParameter <bool> val, const Config & config
 ofxMinimalToggle::~ofxMinimalToggle(){
 }
 
-ofxMinimalToggle & ofxMinimalToggle::setup(ofParameter <bool> val, const Config & config){
+ofxMinimalToggle & ofxMinimalToggle::setup(ofParameter <bool> &val, const Config & config){
 	ofxToggle::setup(val, config);
 	thisBorderColor = thisFillColor;
 	if(b.width == 0) {
@@ -26,7 +26,7 @@ ofxMinimalToggle & ofxMinimalToggle::setup(ofParameter <bool> val, const Config 
 	return *this;
 }
 
-ofxMinimalToggle & ofxMinimalToggle::setup(ofParameter <bool> val, float width, float height){
+ofxMinimalToggle & ofxMinimalToggle::setup(ofParameter<bool> &val, float width, float height){
 	ofxToggle::setup(val,width,height);
 	if(b.width == 0){
 		b.width = ofxBaseGui::getTextWidth(val.getName(), height);
