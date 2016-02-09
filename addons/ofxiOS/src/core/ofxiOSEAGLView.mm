@@ -10,6 +10,7 @@
 #include "ofAppiOSWindow.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
+#include "ofxiOS3dTouch.h"
 
 static ofxiOSEAGLView * _instanceRef = nil;
 
@@ -267,6 +268,15 @@ static ofxiOSEAGLView * _instanceRef = nil;
 			ofNotifyEvent(window->events().touchDoubleTap,touchArgs);	// send doubletap
         }
 		touchArgs.type = ofTouchEventArgs::down;
+
+		//add stylus specific data if available
+		//can be extended as new types become available
+		if(touch.type == UITouchTypeStylus){
+			static ofxiOS3dTouch stylusTouch;
+			stylusTouch.data = touch;
+			touchArgs.nativeTouchData = &stylusTouch;
+		}
+        
 		ofNotifyEvent(window->events().touchDown,touchArgs);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
 	}	
 }
@@ -299,6 +309,15 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
 		touchArgs.type = ofTouchEventArgs::move;
+        
+		//add stylus specific data if available
+		//can be extended as new types become available
+		if(touch.type == UITouchTypeStylus){
+			static ofxiOS3dTouch stylusTouch;
+			stylusTouch.data = touch;
+			touchArgs.nativeTouchData = &stylusTouch;
+		}
+        
 		ofNotifyEvent(window->events().touchMoved, touchArgs);
 	}
 }
@@ -334,6 +353,15 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
 		touchArgs.type = ofTouchEventArgs::up;
+        
+        //add stylus specific data if available
+		//can be extended as new types become available
+		if(touch.type == UITouchTypeStylus){
+			static ofxiOS3dTouch stylusTouch;
+			stylusTouch.data = touch;
+			touchArgs.nativeTouchData = &stylusTouch;
+		}
+        
 		ofNotifyEvent(window->events().touchUp, touchArgs);
 	}
 }
