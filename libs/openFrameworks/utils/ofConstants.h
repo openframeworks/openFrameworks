@@ -394,6 +394,11 @@ typedef ofBaseApp ofSimpleApp;
 #include <unordered_map>
 #include <memory>
 
+#include "json.hpp"
+
+// for convenience
+using ofJson = nlohmann::json;
+
 using namespace std;
 
 #ifndef PI
