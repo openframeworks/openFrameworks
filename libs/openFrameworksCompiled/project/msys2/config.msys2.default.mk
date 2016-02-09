@@ -303,6 +303,7 @@ copy_dlls:
 	@cp $(MSYS2_ROOT)/bin/libbz2-1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libcairo-2.dll bin/
 	@cp $(MSYS2_ROOT)/bin/LIBEAY32.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libFLAC-*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libfreeimage-3.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libfreetype-6.dll bin/
 	@cp $(MSYS2_ROOT)/bin/glew32.dll bin/
@@ -324,12 +325,17 @@ copy_dlls:
 	@cp $(MSYS2_ROOT)/bin/liblzma-5.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libminizip-1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libjpeg-8.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libjpegxr.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libjxrglue.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libopenjp2-7.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libraw-10.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libtiff-5.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libwebp*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libjasper-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libmpg123-*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libogg-*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopenal-*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libopencv_calib3d*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libopencv_core*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libopencv_features2d*.dll bin/
@@ -341,6 +347,10 @@ copy_dlls:
 	@cp $(MSYS2_ROOT)/bin/libopencv_photo*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libopencv_video*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libopencv_videoio*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libsndfile-*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libspeex-*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libvorbis-*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libvorbisenc-*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/tbb.dll bin/
 	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libassimp.dll bin/
