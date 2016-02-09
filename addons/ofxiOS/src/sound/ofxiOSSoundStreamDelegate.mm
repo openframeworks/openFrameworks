@@ -9,11 +9,11 @@
 #include "ofSoundBuffer.h"
 
 @interface ofxiOSSoundStreamDelegate() {
-	ofBaseSoundInput * soundInputApp;
-	ofBaseSoundOutput * soundOutputApp;
+	std::function<void(ofSoundBuffer &)> inCallback;
+	std::function<void(ofSoundBuffer &)> outCallback;
 	std::shared_ptr<ofSoundBuffer> inputBuffer;
 	std::shared_ptr<ofSoundBuffer> outputBuffer;
-        unsigned long long tickCount;
+    unsigned long long tickCount;
 }
 
 @end
@@ -23,8 +23,6 @@
 - (id)init {
     self = [super init];
     if(self) {
-        soundInputApp = NULL;
-        soundOutputApp = NULL;
         inputBuffer = std::shared_ptr<ofSoundBuffer>(new ofSoundBuffer);
         outputBuffer = std::shared_ptr<ofSoundBuffer>(new ofSoundBuffer);
 	tickCount = 0;
@@ -33,43 +31,44 @@
 }
 
 - (void)dealloc {
-    soundInputApp = NULL;
-    soundOutputApp = NULL;
+    inCallback = nullptr;
+    outCallback = nullptr;
     [super dealloc];
 }
 
-- (id)initWithSoundInputApp:(ofBaseSoundInput *)app {
+- (id)initWithSoundInputFn:(std::function<void(ofSoundBuffer &)>)fn {
     self = [self init];
     if(self) {
-        soundInputApp = app;
+        inCallback = fn;
     }
     return self;
 }
 
-- (id)initWithSoundOutputApp:(ofBaseSoundOutput *)app {
+- (id)initWithSoundOutputFn:(std::function<void(ofSoundBuffer &)>)fn {
     self = [self init];
     if(self) {
-        soundOutputApp = app;
+        outCallback = fn;
     }
     return self;
 }
 
-- (void)setInput:(ofBaseSoundInput *)input{
-	soundInputApp = input;
+- (void)setInput:(std::function<void(ofSoundBuffer &)>)input{
+	inCallback = input;
 }
-- (void)setOutput:(ofBaseSoundOutput *)output{
-	soundOutputApp = output;
+
+- (void)setOutput:(std::function<void(ofSoundBuffer &)>)output{
+	outCallback = output;
 }
 
 - (void)soundStreamRequested:(id)sender
                       output:(float *)output
                   bufferSize:(NSInteger)bufferSize
                numOfChannels:(NSInteger)numOfChannels {
-    if(soundOutputApp) {
+    if(outCallback) {
 		outputBuffer->setNumChannels(numOfChannels);
 		outputBuffer->resize(bufferSize*numOfChannels);
 		outputBuffer->setTickCount(tickCount);
-		soundOutputApp->audioOut(*outputBuffer);
+		outCallback(*outputBuffer);
 		outputBuffer->copyTo(output, bufferSize, numOfChannels, 0);
 		tickCount++;
     }
@@ -79,10 +78,10 @@
                       input:(float *)input
                  bufferSize:(NSInteger)bufferSize
               numOfChannels:(NSInteger)numOfChannels {
-    if(soundInputApp) {
+    if(inCallback) {
 		inputBuffer->copyFrom(input, bufferSize, numOfChannels, inputBuffer->getSampleRate());
 		inputBuffer->setTickCount(tickCount);
-		soundInputApp->audioIn(*inputBuffer);
+		inCallback(*inputBuffer);
     }
 }
 
