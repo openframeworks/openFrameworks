@@ -322,7 +322,7 @@ protected:
     ///
     ///     std::unique_lock<std::mutex> lock(mutex);
     ///
-    std::mutex mutex;
+    mutable std::mutex mutex;
 
 private:
     ///< \brief Implements Poco::Runnable::run().
