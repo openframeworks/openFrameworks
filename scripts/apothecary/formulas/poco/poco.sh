@@ -8,11 +8,11 @@
 # specify specfic build configs in poco/config using ./configure --config=NAME
 
 # define the version
-VER=1.6.0-release
+VER=1.6.1-release
 
 # tools for git use
 GIT_URL=https://github.com/pocoproject/poco
-GIT_TAG=poco-1.6.0-release
+GIT_TAG=poco-1.6.1-release
 
 FORMULA_TYPES=( "osx" "ios" "tvos" "android" "emscripten" "vs" "linux" "linux64" "linuxarmv6l" "linuxarmv7l")
 
@@ -49,13 +49,13 @@ function prepare() {
 	if [ "$SHA" != "" ] ; then
 		git reset --hard $SHA
 	fi
-	
+
 	if [ "$TYPE" != "msys2" ] && [ "$TYPE" != "linux" ] && [ "$TYPE" != "ios" ] && [ "$TYPE" != "tvos" ]; then
 		# manually prepare dependencies
 		apothecaryDependencies download
 		apothecaryDependencies prepare
 		# Build and copy all dependencies in preparation
-	    apothecaryDepend build openssl
+		apothecaryDepend build openssl
 		apothecaryDepend copy openssl
 	fi
 
@@ -66,7 +66,7 @@ function prepare() {
 
 		cd build/config
 
-		if [[ "$TYPE" == "tvos" ]]; then 
+		if [[ "$TYPE" == "tvos" ]]; then
 			cp $FORMULA_DIR/AppleTV AppleTV
 			cp $FORMULA_DIR/AppleTVSimulator AppleTVSimulator
 		fi
@@ -76,10 +76,10 @@ function prepare() {
 
 		# fix using sed i636 reference and allow overloading variable
 		sed -i .tmp "s|POCO_TARGET_OSARCH.* = .*|POCO_TARGET_OSARCH ?= i386|" iPhoneSimulator-clang-libc++
-		sed -i .tmp "s|OSFLAGS            = -arch|OSFLAGS            ?= -arch|" iPhoneSimulator-clang-libc++
-		sed -i .tmp "s|STATICOPT_CC    =|STATICOPT_CC    ?= -DNDEBUG -DPOCO_ENABLE_CPP11 -Os -fPIC|" iPhone-clang-libc++
+		sed -i .tmp "s|OSFLAGS			= -arch|OSFLAGS			?= -arch|" iPhoneSimulator-clang-libc++
+		sed -i .tmp "s|STATICOPT_CC	=|STATICOPT_CC	?= -DNDEBUG -DPOCO_ENABLE_CPP11 -Os -fPIC|" iPhone-clang-libc++
 		sed -i .tmp "s|STATICOPT_CXX   =|STATICOPT_CXX   ?= -DNDEBUG -DPOCO_ENABLE_CPP11 -Os -fPIC|" iPhone-clang-libc++
-		sed -i .tmp "s|OSFLAGS                 = -arch|OSFLAGS                ?= -arch|" iPhone-clang-libc++
+		sed -i .tmp "s|OSFLAGS				 = -arch|OSFLAGS				?= -arch|" iPhone-clang-libc++
 		sed -i .tmp "s|RELEASEOPT_CC   = -DNDEBUG -O2|RELEASEOPT_CC   =  -DNDEBUG -DPOCO_ENABLE_CPP11 -Os -fPIC|" iPhone-clang-libc++
 		sed -i .tmp "s|RELEASEOPT_CXX  = -DNDEBUG -O |RELEASEOPT_CXX  =  -DNDEBUG -DPOCO_ENABLE_CPP11 -Os -fPIC|" iPhone-clang-libc++
 
@@ -94,8 +94,8 @@ function prepare() {
 		rm buildwin.cmd
 		CURRENTPATH=`pwd`
 		cp -v $FORMULA_DIR/buildwin.cmd $CURRENTPATH
-		
-		
+
+
 		# Patch the components to exclude those that we aren't using.
 		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/components.patch 2>/dev/null ; then
 			patch -p0 -u < $FORMULA_DIR/components.patch
@@ -133,7 +133,8 @@ function prepare() {
 function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
+
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen --include-path=$BUILD_DIR/openssl/lib/include --library-path=$BUILD_DIR/openssl/lib/osx"
 
 		CURRENTPATH=`pwd`
 		mkdir -p "$CURRENTPATH/build/$TYPE/LOG"
@@ -151,20 +152,20 @@ function build() {
 		if [ $? != 0 ];
 		then
 			tail -n 100 "${LOG}"
-	    	echo "Problem while configuring - Please check ${LOG}"
-	    	exit 1
-	    else
-	    	tail -n 100 "${LOG}"
-	    	echo "Configure Successful"
-	    fi
-	    echo "--------------------"
+			echo "Problem while configuring - Please check ${LOG}"
+			exit 1
+		else
+			tail -n 100 "${LOG}"
+			echo "Configure Successful"
+		fi
+		echo "--------------------"
 		echo "Running make"
 		LOG="$CURRENTPATH/build/$TYPE/poco-make-i386-${VER}.log"
 		export BUILD_OUTPUT=$LOG
-	    export PING_SLEEP=30s
-	    export PING_LOOP_PID
-	    trap 'error_handler' ERR
-	    bash -c "while true; do echo \$(date) - Building Poco ...; sleep $PING_SLEEP; done" &
+		export PING_SLEEP=30s
+		export PING_LOOP_PID
+		trap 'error_handler' ERR
+		bash -c "while true; do echo \$(date) - Building Poco ...; sleep $PING_SLEEP; done" &
 PING_LOOP_PID=$!
 		make -j${PARALLEL_MAKE} >> "${BUILD_OUTPUT}" 2>&1
 		dump_output
@@ -173,12 +174,12 @@ PING_LOOP_PID=$!
 		if [ $? != 0 ];
 		then
 			tail -n 100 "${LOG}"
-	    	echo "Problem while make - Please check ${LOG}"
-	    	exit 1
-	    else
-	    	tail -n 100 "${LOG}"
-	    	echo "Make Successful"
-	    fi
+			echo "Problem while make - Please check ${LOG}"
+			exit 1
+		else
+			tail -n 100 "${LOG}"
+			echo "Make Successful"
+		fi
 
 		# 64 bit
 		export POCO_ENABLE_CPP11=1
@@ -187,20 +188,20 @@ PING_LOOP_PID=$!
 		if [ $? != 0 ];
 		then
 			tail -n 100 "${LOG}"
-	    	echo "Problem while configuring - Please check ${LOG}"
-	    	exit 1
-	    else
-	    	tail -n 100 "${LOG}"
-	    	echo "Configure Successful"
-	    fi
-	    echo "--------------------"
+			echo "Problem while configuring - Please check ${LOG}"
+			exit 1
+		else
+			tail -n 100 "${LOG}"
+			echo "Configure Successful"
+		fi
+		echo "--------------------"
 		echo "Running make"
 		LOG="$CURRENTPATH/build/$TYPE/poco-make-x86_64-${VER}.log"
 		export BUILD_OUTPUT=$LOG
-	    export PING_SLEEP=30s
-	    export PING_LOOP_PID
-	    trap 'error_handler' ERR
-	    bash -c "while true; do echo \$(date) - Building Poco ...; sleep $PING_SLEEP; done" &
+		export PING_SLEEP=30s
+		export PING_LOOP_PID
+		trap 'error_handler' ERR
+		bash -c "while true; do echo \$(date) - Building Poco ...; sleep $PING_SLEEP; done" &
 PING_LOOP_PID=$!
 
 		make -j${PARALLEL_MAKE} >> "${BUILD_OUTPUT}" 2>&1
@@ -234,7 +235,7 @@ PING_LOOP_PID=$!
 			cmd //c buildwin.cmd ${VS_VER}0 build static_md both x64 nosamples notests
 		fi
 	elif [ "$TYPE" == "msys2" ] ; then
-	    cp $FORMULA_DIR/MinGWConfig64 build/config/MinGW
+		cp $FORMULA_DIR/MinGWConfig64 build/config/MinGW
 		local BUILD_OPTS="--no-tests --no-samples --static  --no-sharedlibs --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
 		./configure $BUILD_OPTS \
@@ -249,11 +250,11 @@ PING_LOOP_PID=$!
 	elif [[ "$TYPE" == "ios" || "$TYPE" == "tvos" ]] ; then
 		set -e
 		SDKVERSION=""
-        if [ "${TYPE}" == "tvos" ]; then 
-            SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`
-        elif [ "$TYPE" == "ios" ]; then
-            SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
-        fi
+		if [ "${TYPE}" == "tvos" ]; then
+			SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`
+		elif [ "$TYPE" == "ios" ]; then
+			SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
+		fi
 		CURRENTPATH=`pwd`
 
 		DEVELOPER=$XCODE_DEV_ROOT
@@ -261,27 +262,27 @@ PING_LOOP_PID=$!
 		VERSION=$VER
 
 		local IOS_ARCHS
-        if [ "${TYPE}" == "tvos" ]; then 
-            IOS_ARCHS="x86_64 arm64"
-        elif [ "$TYPE" == "ios" ]; then
-            IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
-        fi
+		if [ "${TYPE}" == "tvos" ]; then
+			IOS_ARCHS="x86_64 arm64"
+		elif [ "$TYPE" == "ios" ]; then
+			IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
+		fi
 
 		echo "--------------------"
 		echo $CURRENTPATH
 
 		# Validate environment
 		case $XCODE_DEV_ROOT in
-		     *\ * )
-		           echo "Your Xcode path contains whitespaces, which is not supported."
-		           exit 1
-		          ;;
+			 *\ * )
+				   echo "Your Xcode path contains whitespaces, which is not supported."
+				   exit 1
+				  ;;
 		esac
 		case $CURRENTPATH in
-		     *\ * )
-		           echo "Your path contains whitespaces, which is not supported by 'make install'."
-		           exit 1
-		          ;;
+			 *\ * )
+				   echo "Your path contains whitespaces, which is not supported by 'make install'."
+				   exit 1
+				  ;;
 		esac
 
 		echo "------------"
@@ -310,14 +311,14 @@ PING_LOOP_PID=$!
 		for IOS_ARCH in ${IOS_ARCHS}
 		do
 			MIN_IOS_VERSION=$IOS_MIN_SDK_VER
-		    # min iOS version for arm64 is iOS 7
-		
-		    if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
-		    	MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
-		    elif [ "${IOS_ARCH}" == "i386" ]; then
-		    	MIN_IOS_VERSION=7.0 # 6.0 to prevent start linking errors
-		    fi
-		    export IPHONE_SDK_VERSION_MIN=$IOS_MIN_SDK_VER
+			# min iOS version for arm64 is iOS 7
+
+			if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
+				MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
+			elif [ "${IOS_ARCH}" == "i386" ]; then
+				MIN_IOS_VERSION=7.0 # 6.0 to prevent start linking errors
+			fi
+			export IPHONE_SDK_VERSION_MIN=$IOS_MIN_SDK_VER
 
 			export POCO_TARGET_OSARCH=$IOS_ARCH
 
@@ -325,42 +326,42 @@ PING_LOOP_PID=$!
 
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
-                if [ "${TYPE}" == "tvos" ]; then 
-                    PLATFORM="AppleTVSimulator"
-                    BUILD_POCO_CONFIG="AppleTVSimulator"
-                elif [ "$TYPE" == "ios" ]; then
-                    PLATFORM="iPhoneSimulator"
-                    BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_SIMULATOR
-                fi
+				if [ "${TYPE}" == "tvos" ]; then
+					PLATFORM="AppleTVSimulator"
+					BUILD_POCO_CONFIG="AppleTVSimulator"
+				elif [ "$TYPE" == "ios" ]; then
+					PLATFORM="iPhoneSimulator"
+					BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_SIMULATOR
+				fi
 			else
-                if [ "${TYPE}" == "tvos" ]; then 
-                    PLATFORM="AppleTVOS"
-                    BUILD_POCO_CONFIG="AppleTV"
-                elif [ "$TYPE" == "ios" ]; then
-                    PLATFORM="iPhoneOS"
-                    BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_IPHONE
-                fi
+				if [ "${TYPE}" == "tvos" ]; then
+					PLATFORM="AppleTVOS"
+					BUILD_POCO_CONFIG="AppleTV"
+				elif [ "$TYPE" == "ios" ]; then
+					PLATFORM="iPhoneOS"
+					BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_IPHONE
+				fi
 			fi
 
-			if [ "${TYPE}" == "tvos" ]; then 
-    		    MIN_TYPE=-mtvos-version-min=
-    		    if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
-    		    	MIN_TYPE=-mtvos-simulator-version-min=
-    		    fi
-            elif [ "$TYPE" == "ios" ]; then
-                MIN_TYPE=-miphoneos-version-min=
-                if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
-                    MIN_TYPE=-mios-simulator-version-min=
-                fi
-            fi
+			if [ "${TYPE}" == "tvos" ]; then
+				MIN_TYPE=-mtvos-version-min=
+				if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
+					MIN_TYPE=-mtvos-simulator-version-min=
+				fi
+			elif [ "$TYPE" == "ios" ]; then
+				MIN_TYPE=-miphoneos-version-min=
+				if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
+					MIN_TYPE=-mios-simulator-version-min=
+				fi
+			fi
 
-            BITCODE=""
-            NOFORK=""
-            if [[ "$TYPE" == "tvos" ]]; then
-                BITCODE=-fembed-bitcode;
-                MIN_IOS_VERSION=9.0
-                NOFORK="-DPOCO_NO_FORK_EXEC"
-            fi
+			BITCODE=""
+			NOFORK=""
+			if [[ "$TYPE" == "tvos" ]]; then
+				BITCODE=-fembed-bitcode;
+				MIN_IOS_VERSION=9.0
+				NOFORK="-DPOCO_NO_FORK_EXEC"
+			fi
 
 			export CROSS_TOP="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer"
 			export CROSS_SDK="${PLATFORM}${SDKVERSION}.sdk"
@@ -384,20 +385,20 @@ PING_LOOP_PID=$!
 
 			if [ $? != 0 ]; then
 				tail -n 100 "${LOG}"
-		    	echo "Problem while configure - Please check ${LOG}"
-		    	exit 1
-		    else
-		    	echo "Configure successful"
-		    fi
-		    echo "--------------------"
-		    echo "Running make for ${IOS_ARCH}"
-		    echo "${LOG}"
+				echo "Problem while configure - Please check ${LOG}"
+				exit 1
+			else
+				echo "Configure successful"
+			fi
+			echo "--------------------"
+			echo "Running make for ${IOS_ARCH}"
+			echo "${LOG}"
 
-		    export BUILD_OUTPUT=$LOG
-		    export PING_SLEEP=30s
-		    export PING_LOOP_PID
-		    trap 'error_handler' ERR
-		    bash -c "while true; do echo \$(date) - Building Poco ...; sleep $PING_SLEEP; done" &
+			export BUILD_OUTPUT=$LOG
+			export PING_SLEEP=30s
+			export PING_LOOP_PID
+			trap 'error_handler' ERR
+			bash -c "while true; do echo \$(date) - Building Poco ...; sleep $PING_SLEEP; done" &
 PING_LOOP_PID=$!
 
 
@@ -405,16 +406,16 @@ PING_LOOP_PID=$!
 			dump_output
 			kill $PING_LOOP_PID
 			trap - ERR
-			
+
 			if [ $? != 0 ];
-		    then
-		    	tail -n 100 "${LOG}"
-		    	echo "Problem while make - Please check ${LOG}"
-		    	exit 1
-		    else
-		    	tail -n 10 "${LOG}"
-		    	echo "Make Successful for ${IOS_ARCH}"
-		    fi
+			then
+				tail -n 100 "${LOG}"
+				echo "Problem while make - Please check ${LOG}"
+				exit 1
+			else
+				tail -n 10 "${LOG}"
+				echo "Make Successful for ${IOS_ARCH}"
+			fi
 			unset POCO_TARGET_OSARCH IPHONE_SDK_VERSION_MIN OSFLAGS
 			unset CROSS_TOP CROSS_SDK BUILD_TOOLS
 
@@ -449,7 +450,7 @@ PING_LOOP_PID=$!
 				fi
 			done
 		fi
-		
+
 
 		cd ../../
 
@@ -463,17 +464,17 @@ PING_LOOP_PID=$!
 			for TOBESTRIPPED in $( ls -1) ; do
 				strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
 				if [ $? != 0 ];
-			    then
-			    	tail -n 100 "${SLOG}"
-			    	echo "Problem while stripping lib - Please check ${SLOG}"
-			    	exit 1
-			    else
-			    	echo "Strip Successful for ${SLOG}"
-			    fi
+				then
+					tail -n 100 "${SLOG}"
+					echo "Problem while stripping lib - Please check ${SLOG}"
+					exit 1
+				else
+					echo "Strip Successful for ${SLOG}"
+				fi
 			done
 			cd ../../
 		fi
-		
+
 
 		echo "--------------------"
 		echo "Reseting changed files back to originals"
@@ -504,21 +505,22 @@ PING_LOOP_PID=$!
 
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
-        export CXX=clang++
+		export CXX=clang++
 		./configure $BUILD_OPTS \
 					--include-path=$OPENSSL_INCLUDE \
 					--library-path=$OPENSSL_LIBS/armeabi-v7a \
 					--config=Android
-        make clean ANDROID_ABI=armeabi-v7a
+		make clean ANDROID_ABI=armeabi-v7a
 		make -j${PARALLEL_MAKE} ANDROID_ABI=armeabi-v7a
-		
-        export CXX=clang++
-        export PATH=$BUILD_DIR/Toolchains/Android/x86/bin:$OLD_PATH
+
+		export CXX=clang++
+		export PATH=$BUILD_DIR/Toolchains/Android/x86/bin:$OLD_PATH
+
 		./configure $BUILD_OPTS \
 					--include-path=$OPENSSL_INCLUDE \
 					--library-path=$OPENSSL_LIBS/x86 \
 					--config=Android
-        make clean ANDROID_ABI=x86
+		make clean ANDROID_ABI=x86
 		make -j${PARALLEL_MAKE} ANDROID_ABI=x86
 
 		echo `pwd`
@@ -573,7 +575,7 @@ function copy() {
 			mkdir -p $1/lib/$TYPE/x64
 			cp -v lib64/*.lib $1/lib/$TYPE/x64
 		fi
-		
+
 	elif [ "$TYPE" == "msys2" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -vf lib/MinGW/i686/*.a $1/lib/$TYPE
