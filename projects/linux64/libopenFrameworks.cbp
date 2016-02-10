@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="libopenFrameworks" />
+		<Option makefile_is_custom="1" />
+		<Option execution_dir="../../project" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="openFrameworks/sound/;openFrameworks/;openFrameworks/utils/;openFrameworks/video/;openFrameworks/graphics/;openFrameworks/events/;openFrameworks/communication/;openFrameworks/app/;openFrameworks/3d/;openFrameworks/gl/;openFrameworks/math/;openFrameworks/types/;" />
+		<Build>
+			<Target title="Debug">
+				<Option output="libopenFrameworks.a" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+			</Target>
+			<Target title="Release">
+				<Option output="libopenFrameworks.a" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+			</Target>
+		</Build>
+		<Unit filename="../../../openFrameworks/3d/of3dPrimitives.cpp">
+			<Option virtualFolder="openFrameworks/3d/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/3d/of3dPrimitives.h">
+			<Option virtualFolder="openFrameworks/3d/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/3d/of3dUtils.cpp">
+			<Option virtualFolder="openFrameworks/3d/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/3d/of3dUtils.h">
+			<Option virtualFolder="openFrameworks/3d/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/3d/ofCamera.cpp">
+			<Option virtualFolder="openFrameworks/3d/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/3d/ofCamera.h">
+			<Option virtualFolder="openFrameworks/3d/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/3d/ofEasyCam.cpp">
+			<Option virtualFolder="openFrameworks/3d/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/3d/ofEasyCam.h">
+			<Option virtualFolder="openFrameworks/3d/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/3d/ofMesh.cpp">
+			<Option virtualFolder="openFrameworks/3d/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/3d/ofMesh.h">
+			<Option virtualFolder="openFrameworks/3d/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/3d/ofNode.cpp">
+			<Option virtualFolder="openFrameworks/3d/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/3d/ofNode.h">
+			<Option virtualFolder="openFrameworks/3d/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppBaseWindow.h">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppEGLWindow.cpp">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppEGLWindow.h">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppGLFWWindow.cpp">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppGLFWWindow.h">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppGlutWindow.cpp">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppGlutWindow.h">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppNoWindow.cpp">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppNoWindow.h">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppRunner.cpp">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofAppRunner.h">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofBaseApp.h">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofIcon.h">
+			<Option virtualFolder="openFrameworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/communication/ofArduino.cpp">
+			<Option virtualFolder="openFrameworks/communication/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/communication/ofArduino.h">
+			<Option virtualFolder="openFrameworks/communication/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/communication/ofSerial.cpp">
+			<Option virtualFolder="openFrameworks/communication/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/communication/ofSerial.h">
+			<Option virtualFolder="openFrameworks/communication/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/events/ofDelegate.h">
+			<Option virtualFolder="openFrameworks/events/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/events/ofEventUtils.h">
+			<Option virtualFolder="openFrameworks/events/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/events/ofEvents.cpp">
+			<Option virtualFolder="openFrameworks/events/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/events/ofEvents.h">
+			<Option virtualFolder="openFrameworks/events/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofFbo.cpp">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofFbo.h">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofGLProgrammableRenderer.cpp">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofGLProgrammableRenderer.h">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofGLRenderer.cpp">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofGLRenderer.h">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofGLUtils.cpp">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofGLUtils.h">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofLight.cpp">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofLight.h">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofMaterial.cpp">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofMaterial.h">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofShader.cpp">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofShader.h">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofTexture.cpp">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofTexture.h">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofVbo.cpp">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofVbo.h">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofVboMesh.cpp">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofVboMesh.h">
+			<Option virtualFolder="openFrameworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/of3dGraphics.cpp">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/of3dGraphics.h">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofBitmapFont.cpp">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofBitmapFont.h">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofCairoRenderer.cpp">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofCairoRenderer.h">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofGraphics.cpp">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofGraphics.h">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofImage.cpp">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofImage.h">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofPath.cpp">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofPath.h">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofPixels.cpp">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofPixels.h">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofPolyline.cpp">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofPolyline.h">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofRendererCollection.cpp">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofRendererCollection.h">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofTessellator.cpp">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofTessellator.h">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofTrueTypeFont.cpp">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/graphics/ofTrueTypeFont.h">
+			<Option virtualFolder="openFrameworks/graphics/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/math/ofMath.cpp">
+			<Option virtualFolder="openFrameworks/math/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/math/ofMath.h">
+			<Option virtualFolder="openFrameworks/math/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/math/ofMatrix3x3.cpp">
+			<Option virtualFolder="openFrameworks/math/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/math/ofMatrix3x3.h">
+			<Option virtualFolder="openFrameworks/math/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/math/ofMatrix4x4.cpp">
+			<Option virtualFolder="openFrameworks/math/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/math/ofMatrix4x4.h">
+			<Option virtualFolder="openFrameworks/math/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/math/ofQuaternion.cpp">
+			<Option virtualFolder="openFrameworks/math/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/math/ofQuaternion.h">
+			<Option virtualFolder="openFrameworks/math/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/math/ofVec2f.cpp">
+			<Option virtualFolder="openFrameworks/math/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/math/ofVec2f.h">
+			<Option virtualFolder="openFrameworks/math/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/math/ofVec3f.h">
+			<Option virtualFolder="openFrameworks/math/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/math/ofVec4f.cpp">
+			<Option virtualFolder="openFrameworks/math/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/math/ofVec4f.h">
+			<Option virtualFolder="openFrameworks/math/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/math/ofVectorMath.h">
+			<Option virtualFolder="openFrameworks/math/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/ofMain.h">
+			<Option virtualFolder="openFrameworks/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofBaseSoundPlayer.h">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofBaseSoundStream.h">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofFmodSoundPlayer.cpp">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofFmodSoundPlayer.h">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofOpenALSoundPlayer.cpp">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofOpenALSoundPlayer.h">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofPASoundStream.cpp">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofPASoundStream.h">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofRtAudioSoundStream.cpp">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofRtAudioSoundStream.h">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofSoundPlayer.cpp">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofSoundPlayer.h">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofSoundStream.cpp">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofSoundStream.h">
+			<Option virtualFolder="openFrameworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofBaseTypes.cpp">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofBaseTypes.h">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofColor.cpp">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofColor.h">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofParameter.cpp">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofParameter.h">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofParameterGroup.cpp">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofParameterGroup.h">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofPoint.h">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofRectangle.cpp">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofRectangle.h">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/types/ofTypes.h">
+			<Option virtualFolder="openFrameworks/types/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofConstants.h">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofFileUtils.cpp">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofFileUtils.h">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofLog.cpp">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofLog.h">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofMatrixStack.cpp">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofMatrixStack.h">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofNoise.h">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofSystemUtils.cpp">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofSystemUtils.h">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofThread.cpp">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofThread.h">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofURLFileLoader.cpp">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofURLFileLoader.h">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofUtils.cpp">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofUtils.h">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofXml.cpp">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofXml.h">
+			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofDirectShowGrabber.cpp">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofDirectShowGrabber.h">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofGstUtils.cpp">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofGstUtils.h">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofGstVideoGrabber.cpp">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofGstVideoGrabber.h">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofGstVideoPlayer.cpp">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofGstVideoPlayer.h">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofQTKitGrabber.h">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofQTKitMovieRenderer.h">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofQTKitPlayer.h">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofQtUtils.cpp">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofQtUtils.h">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofQuickTimeGrabber.cpp">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofQuickTimeGrabber.h">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofQuickTimePlayer.cpp">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofQuickTimePlayer.h">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofVideoGrabber.cpp">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofVideoGrabber.h">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofVideoPlayer.cpp">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/video/ofVideoPlayer.h">
+			<Option virtualFolder="openFrameworks/video/" />
+		</Unit>
+		<Extensions>
+			<lib_finder />
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
