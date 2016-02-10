@@ -320,7 +320,7 @@ copy_dlls:
 	@cp $(MSYS2_ROOT)/bin/libminizip-1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libjpeg-8.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libopenjp2-7.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libraw-10.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libraw*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libtiff-5.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libwebp*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
