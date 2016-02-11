@@ -45,3 +45,5 @@ ln -s ../../../lib/arm-linux-gnueabihf/libusb-1.0.so.0.1.0  libusb-1.0.so
 ln -s ../../../lib/arm-linux-gnueabihf/libutil.so.1  libutil.so        
 ln -s ../../../lib/arm-linux-gnueabihf/libz.so.1.2.8  libz.so  
 ln -s ../../../lib/arm-linux-gnueabihf/libudev.so.1.5.0 libudev.so
+sed -i "s/ \/lib/..\/..\/..\//g" libc.so
+sed -i "s/ \/usr/..\/..\/..\//g" libc.so
