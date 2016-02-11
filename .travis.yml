@@ -18,13 +18,8 @@ matrix:
 #          - g++-4.9
 #          - gdb
     - os: linux
-      sudo: false
+      sudo: required
       env: TARGET="linux" OPT="armv6l"
-      addons:
-        apt:
-          packages:
-          - multistrap
-          - unzip
 #    - os: osx
 #      compiler: clang
 #      env: TARGET="osx"
