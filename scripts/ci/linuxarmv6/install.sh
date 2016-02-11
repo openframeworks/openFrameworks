@@ -6,9 +6,10 @@ sudo apt-get -y install multistrap unzip
 sudo sed -i s/\$forceyes//g /usr/sbin/multistrap
 cd $(dirname $0)
 multistrap -a armhf -d raspbian -f multistrap.conf
-wget https://github.com/raspberrypi/tools/archive/master.zip -O raspberrytools.zip
-unzip raspberrytools.zip
-rm raspberrytools.zip
+
+wget http://ci.openframeworks.cc/rpi_toolchain.tar.bz2
+tar xjf rpi_toolchain.tar.bz2
+rm rpi_toolchain.tar.bz2
 
 wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
 unzip firmware.zip
