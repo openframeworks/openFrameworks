@@ -19,6 +19,7 @@ matrix:
 #          - gdb
     - os: linux
       sudo: required
+      dist: trusty
       env: TARGET="linuxarmv6"
 #    - os: osx
 #      compiler: clang
