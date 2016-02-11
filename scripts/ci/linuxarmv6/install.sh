@@ -4,7 +4,7 @@ sudo apt-get -y update
 sudo apt-get -y install multistrap unzip
 #workaround for https://bugs.launchpad.net/ubuntu/+source/multistrap/+bug/1313787
 sudo sed -i s/\$forceyes//g /usr/sbin/multistrap
-ROOT=$(realpath $(dirname $0))
+ROOT=$( cd "$(dirname "$0")" ; pwd -P )
 cd $ROOT
 multistrap -a armhf -d raspbian -f multistrap.conf
 
