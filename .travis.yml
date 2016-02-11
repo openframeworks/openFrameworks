@@ -5,36 +5,18 @@ matrix:
   include:
     # fully specify builds, include can't dynamically expand matrix entries
     # relative order of sudo and env is important so that addons: is recognized
-    - os: linux
-      dist: trusty
-      sudo: required
-      env: TARGET="linux"
-      addons:
-        apt:
-          sources:
-          - ubuntu-toolchain-r-test
-          packages:
-          - gcc-4.9
-          - g++-4.9
-          - gdb
-    - os: osx
-      compiler: clang
-      env: TARGET="osx"
-    - os: osx
-      compiler: clang
-      env: TARGET="ios"
-    - os: linux
-      sudo: false
-      env: TARGET="android" OPT="armv7"
-      cache:
-        directories:
-        - ~/android-ndk-r10e
-    - os: linux
-      sudo: false
-      env: TARGET="android" OPT="x86"
-      cache:
-        directories:
-        - ~/android-ndk-r10e
+#    - os: linux
+#      dist: trusty
+#      sudo: required
+#      env: TARGET="linux"
+#      addons:
+#        apt:
+#          sources:
+#          - ubuntu-toolchain-r-test
+#          packages:
+#          - gcc-4.9
+#          - g++-4.9
+#          - gdb
     - os: linux
       sudo: false
       env: TARGET="linux" OPT="armv6l"
@@ -43,6 +25,28 @@ matrix:
           packages:
           - multistrap
           - unzip
+#    - os: osx
+#      compiler: clang
+#      env: TARGET="osx"
+#    - os: osx
+#      compiler: clang
+#      env: TARGET="ios"
+#    - os: linux
+#      sudo: false
+#      env: TARGET="android" OPT="armv7"
+#      cache:
+#        directories:
+#        - ~/android-ndk-r10e
+#    - os: linux
+#      sudo: false
+#      env: TARGET="android" OPT="x86"
+#      cache:
+#        directories:
+#        - ~/android-ndk-r10e
+
+
+
+
     # disable docs test for now
     #- os: linux
     #  sudo: false
@@ -55,6 +59,9 @@ matrix:
     #      - python-software-properties
     #      - doxygen
     #      - ncftp
+    
+    
+    
   # Exclude the default build that would otherwise be generated
   # see https://github.com/travis-ci/travis-ci/issues/1228
   exclude:
@@ -65,7 +72,7 @@ matrix:
   #    - TARGET="docs"
   #    - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
 install:
-    - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "docs" ] || [ "$TARGET" == "osx" ] then
+    - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "docs" ] || [ "$TARGET" == "osx" ]; then
         scripts/ci/$TARGET/install.sh;
       fi
 script:
