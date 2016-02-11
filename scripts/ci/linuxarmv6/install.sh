@@ -1,6 +1,5 @@
 #!/bin/bash
 set -ev
-ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 cd ~
 sudo apt-get update
 sudo apt-get install multistrap unzip
