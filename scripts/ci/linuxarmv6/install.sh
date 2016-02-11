@@ -10,3 +10,11 @@ wget https://github.com/raspberrypi/tools/archive/master.zip -O raspberrytools.z
 unzip raspberrytools.zip
 rm raspberrytools.zip
 
+wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+mkdir firmware
+cd firmware
+unzip ../firmware.zip
+cd ..
+cp -r firmware/opt raspbian/
+
+
