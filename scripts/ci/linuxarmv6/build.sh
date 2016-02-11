@@ -14,8 +14,8 @@ echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/li
 sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" libs/openFrameworksCompiled/project/makefileCommon/config.linux.common.mk
 cd libs/openFrameworksCompiled/project
 export GST_VERSION=1.0
-export RPI_ROOT=~/raspbian
-export TOOLCHAIN_ROOT=~/tools-master
+export RPI_ROOT=${TRAVIS_BUILD_DIR}/scripts/linuxarm/raspbian
+export TOOLCHAIN_ROOT=${TRAVIS_BUILD_DIR}/scripts/linuxarm/tools-master
 export PLATFORM_OS=Linux
 export PLATFORM_ARCH=armv6l
 export PKG_CONFIG_PATH=$RPI_ROOT/usr/lib/arm-linux-gnueabihf/pkgconfig:$RPI_ROOT/usr/share/pkgconfig:$RPI_ROOT/usr/lib/pkgconfig
