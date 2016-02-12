@@ -53,7 +53,6 @@ PLATFORM_DEFINES += PIC
 PLATFORM_DEFINES += _REENTRANT
 PLATFORM_DEFINES += _LARGEFILE64_SOURCE
 PLATFORM_DEFINES += _FILE_OFFSET_BITS=64
-PLATFORM_DEFINES += _FORTIFY_SOURCE
 PLATFORM_DEFINES += __STDC_CONSTANT_MACROS
 PLATFORM_DEFINES += __STDC_LIMIT_MACROS
 PLATFORM_DEFINES += TARGET_POSIX
@@ -214,9 +213,18 @@ ifeq ($(CROSS_COMPILING),1)
 	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/gcc/$(GCC_PREFIX)/4.9
 
 	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) 
-	PLATFORM_LDFLAGS += -Wl,-rpath=$(SYSROOT)/usr/lib/$(GCC_PREFIX) 
-	PLATFORM_LDFLAGS += -Wl,-rpath=$(SYSROOT)/lib/$(GCC_PREFIX) 
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/$(GCC_PREFIX) 
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/lib/$(GCC_PREFIX) 
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/opt/vc/lib
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pulseaudio
 	 
-	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
+	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/$(GCC_PREFIX)/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
 	
 endif
+PLATFORM_CFLAGS += -ftrack-macro-expansion=0
+PLATFORM_CFLAGS += -ftrack-macro-expansion=0
+PLATFORM_CFLAGS += -ftrack-macro-expansion=0
+PLATFORM_CFLAGS += -ftrack-macro-expansion=0
+PLATFORM_CFLAGS += -ftrack-macro-expansion=0
+PLATFORM_CFLAGS += -ftrack-macro-expansion=0
+PLATFORM_CFLAGS += -ftrack-macro-expansion=0
