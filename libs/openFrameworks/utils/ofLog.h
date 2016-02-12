@@ -184,6 +184,11 @@ void ofSetLogLevel(string module, ofLogLevel level);
 /// \returns The currently set global logging level.
 ofLogLevel ofGetLogLevel();
 
+/// \brief Get the logging level for a specific module.
+/// \param module specific module name.
+/// \returns The currently set specific module logging level.
+ofLogLevel ofGetLogLevel(string module);
+
 /// \brief Get log level name as a string.
 /// \param level The ofLogLevel you want as a string.
 /// \param pad True if you want all log level names to be the same length.
