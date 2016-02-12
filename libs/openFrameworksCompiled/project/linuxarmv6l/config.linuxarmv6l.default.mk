@@ -184,7 +184,7 @@ PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
 
 ifeq ($(CROSS_COMPILING),1)	
-	
+	$(info detected cross compiling)
 	ifdef TOOLCHAIN_ROOT
 		#You have specified TOOLCHAIN_ROOT with an environment variable
 	else
