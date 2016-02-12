@@ -59,6 +59,7 @@ echo $ROOT
 cd $ROOT
 installPackages
 createRaspbianImg
+downloadToolchain
 downloadFirmware
 
 cd $ROOT/raspbian/usr/lib
