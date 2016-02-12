@@ -198,9 +198,7 @@ endif
 
 ifndef PROJECT_OPTIMIZATION_CFLAGS_DEBUG
 	# DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0
-else
-	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0
+	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 endif
 
 ################################################################################

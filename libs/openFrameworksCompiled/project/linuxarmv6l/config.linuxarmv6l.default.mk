@@ -221,10 +221,3 @@ ifeq ($(CROSS_COMPILING),1)
 	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/$(GCC_PREFIX)/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
 	
 endif
-PLATFORM_CFLAGS += -ftrack-macro-expansion=0
-PLATFORM_CFLAGS += -ftrack-macro-expansion=0
-PLATFORM_CFLAGS += -ftrack-macro-expansion=0
-PLATFORM_CFLAGS += -ftrack-macro-expansion=0
-PLATFORM_CFLAGS += -ftrack-macro-expansion=0
-PLATFORM_CFLAGS += -ftrack-macro-expansion=0
-PLATFORM_CFLAGS += -ftrack-macro-expansion=0
