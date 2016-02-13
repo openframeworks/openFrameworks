@@ -20,13 +20,8 @@ float ofGetTargetFrameRate(){
 }
 
 //--------------------------------------
-double ofGetTimeSinceLastFrame(){
-	return ofEvents().getLastFrameTime();
-}
-
-//--------------------------------------
 double ofGetLastFrameTime(){
-	return ofGetTimeSinceLastFrame();
+	return ofEvents().getLastFrameTime();
 }
 
 //--------------------------------------
