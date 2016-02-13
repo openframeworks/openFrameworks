@@ -1,11 +1,11 @@
+#include "ofAppRunner.h"
 #include "ofApp.h"
 
-int main()
-{
+int main(){
+	// ofSetupOpenGL sets up a default OpenGL window for ofApp. The initial
+	// window width, height and fullscreen status (OF_WINDOW or OF_FULLSCREEN)
+	// can be set here. Window shape and fullscreen status can changed elsewhere
+	// with ofSetWindowShape(x, y) and ofSetFullscreen(fullscreen) respectively.
 	ofSetupOpenGL(750, 300, OF_WINDOW);
-
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-	ofRunApp(new ofApp());
+	return ofRunApp(std::make_shared<ofApp>());
 }
