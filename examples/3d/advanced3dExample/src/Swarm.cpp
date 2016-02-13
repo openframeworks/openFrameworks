@@ -91,7 +91,7 @@ void swarm::customDraw(){
 void swarm::update(){
 
 	// Calculate time past per frame
-	float dt = ofGetTimeSinceLastFrame();
+	float dt = ofGetLastFrameTime();
 
 	// Update positions, velocities
 	for(unsigned int i = 0; i < particles.size(); i++){
