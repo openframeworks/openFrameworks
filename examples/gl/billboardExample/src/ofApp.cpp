@@ -59,7 +59,7 @@ void ofApp::update() {
 								ofSignedNoise(billboards.getVertex(i).x/div, t, billboards.getVertex(i).z/div),
 								ofSignedNoise(billboards.getVertex(i).x/div, billboards.getVertex(i).y/div, t));
 		
-		vec *= 10 * ofGetTimeSinceLastFrame();
+		vec *= 10 * ofGetLastFrameTime();
 		billboardVels[i] += vec;
 		billboards.getVertices()[i] += billboardVels[i]; 
 		billboardVels[i] *= 0.94f; 
