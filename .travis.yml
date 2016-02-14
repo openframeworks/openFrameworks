@@ -23,7 +23,10 @@ matrix:
       env: TARGET="linuxarmv6"
     - os: osx
       compiler: clang
-      env: TARGET="osx"
+      env: TARGET="osx" OPT="xcode"
+    - os: osx
+      compiler: clang
+      env: TARGET="osx" OPT="makefiles"
     - os: osx
       compiler: clang
       env: TARGET="ios"
@@ -67,12 +70,12 @@ matrix:
   #    - TARGET="docs"
   #    - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
 install:
-    - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "linuxarmv6" ] || [ "$TARGET" == "docs" ] || [ "$TARGET" == "osx" ]; then
+    - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "linuxarmv6" ] || [ "$TARGET" == "docs" ] || [ "$TARGET" == "osx" -a "$OPT" == "makefiles" ]; then
         scripts/ci/$TARGET/install.sh;
       fi
 script:
     - scripts/ci/$TARGET/build.sh $OPT
-    - if [ "$TARGET" == "osx" ] || [ "$TARGET" == "linux" ]; then
+    - if [ "$TARGET" == "osx" -a "$OPT" == "makefiles" ] || [ "$TARGET" == "linux" ]; then
         scripts/ci/$TARGET/run_tests.sh;
       fi
 after_success:
