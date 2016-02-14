@@ -505,7 +505,7 @@ void of3dGraphics::drawArrow(const ofVec3f& start, const ofVec3f& end, float hea
 	//draw cone
 	ofMatrix4x4 mat;
 	mat.makeRotationMatrix( ofVec3f(0,1,0), start - end );
-	mat.translate(end + ofVec3f(0,headSize*0.5,0));
+	mat.translate(end);
 	renderer->pushMatrix();
 	renderer->multMatrix(mat.getPtr());
     drawCone(headSize, headSize*2.);

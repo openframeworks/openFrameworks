@@ -466,9 +466,6 @@ Module{
                 'QuartzCore',
         ].concat(frameworks)
         .concat(ADDON_FRAMEWORKS)
-
-        cpp.installNamePrefix: "@rpath"
-        cpp.rpath: "@executable_path/"
     }
 
     Properties{

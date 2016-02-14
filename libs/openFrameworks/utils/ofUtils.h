@@ -348,7 +348,7 @@ bool ofContains(const vector<T>& values, const T& target) {
 /// \name String Manipulation
 /// \{
 
-/// \brief Splits a string using a delimiter.
+/// \brief Splits a string using a delimiter.
 ///
 /// ofSplitString splits a string and returns the collection of string
 /// tokens inside of a std::vector<std::string>.
@@ -905,6 +905,8 @@ string ofSystem(const string& command);
 ofTargetPlatform ofGetTargetPlatform();
 
 
+std::string ofGetEnv(const std::string & var);
+
 /// Allows to iterate over a string's utf8 codepoints.
 /// The easiest way to use it is with a c++11 range style
 /// for loop like:
@@ -935,6 +937,8 @@ private:
 namespace of{
 namespace priv{
     void setWorkingDirectoryToDefault();
+    void initutils();
+    void endutils();
 }
 }
 /*! \endcond */

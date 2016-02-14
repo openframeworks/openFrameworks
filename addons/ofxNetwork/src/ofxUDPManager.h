@@ -159,6 +159,8 @@ protected:
 		int m_hSocket;
 	#endif
 
+	int WaitReceive(time_t timeoutSeconds, time_t timeoutMillis);
+	int WaitSend(time_t timeoutSeconds, time_t timeoutMillis);
 
 	unsigned long m_dwTimeoutReceive;
 	unsigned long m_dwTimeoutSend;

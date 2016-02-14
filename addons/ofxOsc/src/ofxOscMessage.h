@@ -32,7 +32,7 @@
 #include <vector>
 #include <string>
 
-using namespace std;
+using namespace std; // could we remove this?
 
 class ofxOscMessage
 {
@@ -48,10 +48,10 @@ public:
 	void clear();
 
 	/// return the address
-	string getAddress() const { return address; }
+    std::string getAddress() const { return address; }
 
 	/// return the remote ip
-	string getRemoteIp() const { return remote_host; }
+	std::string getRemoteIp() const { return remote_host; }
 	/// return the remote port
 	int getRemotePort() const { return remote_port; }
 
@@ -61,7 +61,7 @@ public:
 	ofxOscArgType getArgType( int index ) const;
 	/// return argument type name as string
 	/// - either "int", "float", or "string"
-	string getArgTypeName( int index ) const;
+	std::string getArgTypeName( int index ) const;
 
 	/// get the argument with the given index as an int, float, or string
 	/// ensure that the type matches what you're requesting
@@ -85,51 +85,51 @@ public:
 
 	See : http://cnmat.berkeley.edu/system/files/attachments/Nime09OSCfinal.pdf
 	*/
-	int32_t getArgAsInt( int index ) const;
-	int32_t getArgAsInt32( int index ) const;
-	int64_t getArgAsInt64( int index ) const;
+    std::int32_t getArgAsInt( int index ) const;
+	std::int32_t getArgAsInt32( int index ) const;
+	std::int64_t getArgAsInt64( int index ) const;
 	float getArgAsFloat( int index ) const;
 	double getArgAsDouble( int index ) const;
 	std::string getArgAsString( int index ) const;
 	std::string getArgAsSymbol( int index ) const;
 	char getArgAsChar( int index ) const;
-	int32_t getArgAsMidiMessage( int index ) const;
+	std::int32_t getArgAsMidiMessage( int index ) const;
 	bool getArgAsBool(int index) const;
 	bool getArgAsTrigger(int index) const;
 	bool getArgAsImpulse(int index) const;
 	bool getArgAsInfinitum(int index) const;
-	int64_t getArgAsTimetag( int index ) const;
+	std::int64_t getArgAsTimetag( int index ) const;
 	ofBuffer getArgAsBlob( int index ) const;
-	int32_t getArgAsRgbaColor( int index ) const;
+	std::int32_t getArgAsRgbaColor( int index ) const;
 
 	/// message construction
-	void setAddress( string _address ) { address = _address; };
+	void setAddress( const std::string &_address ) { address = _address; };
 	/// host and port of the remote endpoint
-	void setRemoteEndpoint( string host, int port ) { remote_host = host; remote_port = port; }
+    void setRemoteEndpoint( const std::string &host, int port ) { remote_host = host; remote_port = port; }
 
-	void addIntArg( int32_t argument );
-	void addInt32Arg( int32_t argument );
-	void addInt64Arg( int64_t argument );
+	void addIntArg( std::int32_t argument );
+	void addInt32Arg( std::int32_t argument );
+	void addInt64Arg( std::int64_t argument );
 	void addFloatArg( float argument );
 	void addDoubleArg( double argument );
-	void addStringArg( string argument );
-	void addSymbolArg( string argument );
+	void addStringArg( const std::string &argument );
+	void addSymbolArg( const std::string &argument );
 	void addCharArg( char argument );
-	void addMidiMessageArg( int32_t argument );
+	void addMidiMessageArg( std::int32_t argument );
 	void addBoolArg( bool argument );
 	void addTriggerArg();
 	void addImpulseArg();
 	void addInfinitumArg();
-	void addTimetagArg( int64_t argument );
-	void addBlobArg( ofBuffer argument );
-	void addRgbaColorArg( int32_t argument );
+	void addTimetagArg( std::int64_t argument );
+	void addBlobArg( const ofBuffer &argument );
+	void addRgbaColorArg( std::int32_t argument );
 
 private:
 
-	string address;
-	vector<ofxOscArg*> args;
+    std::string address;
+    std::vector<ofxOscArg*> args;
 
-	string remote_host;
+    std::string remote_host;
 	int remote_port;
 
 

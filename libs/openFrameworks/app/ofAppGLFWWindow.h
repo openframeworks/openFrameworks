@@ -8,8 +8,8 @@
 #include "ofAppBaseWindow.h"
 #include "ofEvents.h"
 #include "ofPixels.h"
+#include "ofRectangle.h"
 
-//class ofVec3f;
 class ofBaseApp;
 
 #ifdef TARGET_OPENGLES
@@ -189,6 +189,11 @@ private:
 
 	bool			bEnableSetupScreen;
 	int				windowW, windowH;
+
+#ifdef TARGET_OSX
+	/// saved window shape before fullscreen
+	ofRectangle windowRect;
+#endif
 
 	int				buttonInUse;
 	bool			buttonPressed;
