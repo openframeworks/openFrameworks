@@ -55,7 +55,7 @@ function prepare() {
 		apothecaryDependencies download
 		apothecaryDependencies prepare
 		# Build and copy all dependencies in preparation
-		apothecaryDepend build openssl
+	    apothecaryDepend build openssl
 		apothecaryDepend copy openssl
 	fi
 
@@ -123,9 +123,7 @@ function prepare() {
 		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/android.patch 2>/dev/null ; then
 			patch -p0 -u < $FORMULA_DIR/android.patch
 		fi
-		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/android.config.patch 2>/dev/null ; then
-			patch -p0 -u < $FORMULA_DIR/android.config.patch
-		fi
+		cp $FORMULA_DIR/Android build/config/Android
 
 	fi
 
@@ -494,7 +492,7 @@ PING_LOOP_PID=$!
 
 		local OLD_PATH=$PATH
 
-		export PATH=$PATH:$BUILD_DIR/Toolchains/Android/arm/bin:$BUILD_DIR/Toolchains/Android/x86/bin
+		export PATH=$BUILD_DIR/Toolchains/Android/arm/bin:$OLD_PATH
 
 		local OF_LIBS_OPENSSL="$LIBS_DIR/openssl/"
 
@@ -506,6 +504,7 @@ PING_LOOP_PID=$!
 
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
+        export CXX=clang++
 		./configure $BUILD_OPTS \
 					--include-path=$OPENSSL_INCLUDE \
 					--library-path=$OPENSSL_LIBS/armeabi-v7a \
@@ -513,6 +512,8 @@ PING_LOOP_PID=$!
         make clean ANDROID_ABI=armeabi-v7a
 		make -j${PARALLEL_MAKE} ANDROID_ABI=armeabi-v7a
 		
+        export CXX=clang++
+        export PATH=$BUILD_DIR/Toolchains/Android/x86/bin:$OLD_PATH
 		./configure $BUILD_OPTS \
 					--include-path=$OPENSSL_INCLUDE \
 					--library-path=$OPENSSL_LIBS/x86 \

@@ -139,6 +139,7 @@ private:
 		GLsizeiptr size;
 		GLenum lastTarget;
 		bool useDSA;
+		bool isBound;
 	};
 	shared_ptr<Data> data;
 };

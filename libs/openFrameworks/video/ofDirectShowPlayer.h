@@ -9,13 +9,14 @@ class DirectShowVideo;
 
 class ofDirectShowPlayer : public ofBaseVideoPlayer{
     public:
-
-        ofDirectShowPlayer();
-        ~ofDirectShowPlayer();
+		ofDirectShowPlayer();
+		ofDirectShowPlayer(const ofDirectShowPlayer&) = delete;
+		ofDirectShowPlayer & operator=(const ofDirectShowPlayer&) = delete;
+		ofDirectShowPlayer(ofDirectShowPlayer &&);
+		ofDirectShowPlayer & operator=(ofDirectShowPlayer&&);
 
         bool                load(string path);
         void                update();
-        void                draw(float x, float y);
 
         void                close();
     
@@ -58,6 +59,6 @@ class ofDirectShowPlayer : public ofBaseVideoPlayer{
         void                previousFrame();
 
     protected:
-        DirectShowVideo *   player; 
-        ofPixels            pix;
+        std::shared_ptr<DirectShowVideo>   player;
+		ofPixelFormat pixelFormat = OF_PIXELS_RGB;
 };

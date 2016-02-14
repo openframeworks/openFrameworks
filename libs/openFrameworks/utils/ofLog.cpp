@@ -37,6 +37,15 @@ ofLogLevel ofGetLogLevel(){
 }
 
 //--------------------------------------------------
+ofLogLevel ofGetLogLevel(string module){
+	if (getModules().find(module) == getModules().end()) {
+		return currentLogLevel;
+	} else {
+		return getModules()[module];
+	}
+}
+
+//--------------------------------------------------
 void ofLogToFile(const string & path, bool append){
 	ofLog::setChannel(shared_ptr<ofFileLoggerChannel>(new ofFileLoggerChannel(path,append)));
 }

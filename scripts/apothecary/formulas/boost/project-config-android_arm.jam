@@ -9,10 +9,10 @@ import feature ;
 # file.
 if ! gcc in [ feature.values <toolset> ]
 {
-    using gcc : arm : arm-linux-androideabi-g++ ;
+    using clang : arm : /home/arturo/Code/android-ndk-r10e/toolchains/llvm-3.6/prebuilt/linux-x86_64/bin/clang++ ;
 }
 
-project : default-build <toolset>gcc ;
+project : default-build <toolset>clang ;
 
 # List of --with-<library> and --without-<library>
 # options. If left empty, all libraries will be built.
