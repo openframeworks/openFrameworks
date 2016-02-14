@@ -100,7 +100,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	NSDictionary *pixBuffAttributes = @{(id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32ARGB)};
 #endif
 	
-	self.videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
+	self.videoOutput = [[[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes] autorelease];
 	if (!self.videoOutput) {
 		NSLog(@"error creating video output");
 		return;
@@ -870,6 +870,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		if (err) {
 			NSLog(@"Error at CMVideoFormatDescriptionCreateForImageBuffer %ld", (long)err);
 			bNewFrame = NO;
+			// release temp buffer
+			CVBufferRelease(buffer);
 			return;
 		}
 		
@@ -899,6 +901,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		if (err) {
 			NSLog(@"Error at CMSampleBufferCreateForImageBuffer %ld", (long)err);
 			bNewFrame = NO;
+			// release temp buffer
+			CVBufferRelease(buffer);
 			return;
 		}
 		

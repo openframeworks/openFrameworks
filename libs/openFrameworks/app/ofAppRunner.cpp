@@ -94,6 +94,8 @@ void ofInit(){
 	signal(SIGABRT, &ofSignalHandler);  // abort signal
 #endif
 
+        of::priv::initutils();
+
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeBeginPeriod(1);		// ! experimental, sets high res time
 								// you need to call timeEndPeriod.
@@ -119,11 +121,6 @@ void ofInit(){
 		}
 	}
 #endif
-
-	
-	ofSeedRandom();
-	ofResetElapsedTimeCounter();
-	of::priv::setWorkingDirectoryToDefault();
 }
 
 //--------------------------------------
@@ -233,6 +230,8 @@ void ofExitCallback(){
 	// static deinitialization happens after this finishes
 	// every object should have ended by now and won't receive any
 	// events
+
+        of::priv::endutils();
 
 	initialized() = false;
 }

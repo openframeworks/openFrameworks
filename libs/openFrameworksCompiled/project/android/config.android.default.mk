@@ -158,7 +158,7 @@ PLATFORM_CORELIB_DEBUG_TARGET = $(OF_CORE_LIB_PATH)/$(ABI)/libopenFrameworksDebu
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_REQUIRED_ADDONS = ofxAndroid
+PLATFORM_REQUIRED_ADDONS = ofxAndroid ofxAccelerometer
 
 ################################################################################
 # PLATFORM CFLAGS
