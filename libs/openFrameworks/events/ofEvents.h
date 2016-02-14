@@ -251,7 +251,6 @@ class ofCoreEvents {
 	void notifyKeyReleased(int key, int keycode=-1, int scancode=-1, int codepoint=-1);
 	void notifyKeyEvent(const ofKeyEventArgs & keyEvent);
 
-
 	void notifyMousePressed(float x, float y, int button);
 	void notifyMouseReleased(float x, float y, int button);
 	void notifyMouseDragged(float x, float y, int button);
