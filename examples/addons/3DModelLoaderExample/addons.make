@@ -1,1 +1,1 @@
-ofx3DModelLoader
+ofxAssimpModelLoader

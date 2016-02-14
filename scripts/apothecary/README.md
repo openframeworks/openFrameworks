@@ -78,7 +78,7 @@ See the built in help for more info:
 ### Options
 
 * **-t**: specify libary type when building, detects type from OS by default
-  * valid types: osx, osx-clang-libc++, linux, linux64, vs, win_cb, ios, android
+  * valid types: osx, osx-clang-libc++, linux, linux64, vs, msys2, ios, android
 
 * **-a**: specify architecture, either 32 or 64 (default is 32 bit)
   * note: not currently needed, reserved for future use
@@ -198,7 +198,7 @@ OpenFrameworks is cross platform and currently supports the following build type
 * linux: 32 bit linux
 * linux64: 64 bit linux
 * vs: Windows, Visual Studio
-* win_cb: Windows, CodeBlocks+MinGW
+* msys2: Windows, Msys2 (Mingw32 only)
 * ios: iOS (can only build on OSX), arm7, arm7s, & 32 bit simulator fat libs
 * android: (requires android sdk)
 
@@ -471,8 +471,8 @@ Bash provides an easy way to debug scripts by `set -x`. Put this command in your
 
 If you write a formula but can't finish/test it on all platforms, etc make a note of this using the `echoWarning` print command. This is a function provided by apothecary that prints text in <span style="color: #FF0">yellow (caution, right?)</span>. Start your info string with with "TODO: ":
 
-	if [ "$TYPE" == "win_cb" ] then ;
-		echoWarning "TODO: build win_cb"
+	if [ "$TYPE" == "msys2" ] then ;
+		echoWarning "TODO: build msys2"
 	else
 	...
 

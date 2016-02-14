@@ -4,17 +4,19 @@
 //  http://julapy.com/blog
 //
 
-#import "SoundStream.h"
+#pragma once
 
-class ofBaseSoundInput;
-class ofBaseSoundOutput;
+#import "SoundStream.h"
+#include <functional>
+
+class ofSoundBuffer;
 
 @interface ofxiOSSoundStreamDelegate : NSObject <SoundStreamDelegate>
 
-- (id)initWithSoundInputApp:(ofBaseSoundInput *)app;
-- (id)initWithSoundOutputApp:(ofBaseSoundOutput *)app;
-- (void)setInput:(ofBaseSoundInput *)input;
-- (void)setOutput:(ofBaseSoundOutput *)output;
+- (id)initWithSoundInputFn:(std::function<void(ofSoundBuffer &)>)input;
+- (id)initWithSoundOutputFn:(std::function<void(ofSoundBuffer &)>)output;
+- (void)setInput:(std::function<void(ofSoundBuffer &)>)input;
+- (void)setOutput:(std::function<void(ofSoundBuffer &)>)output;
 
 @end
 

@@ -4,6 +4,8 @@
 #include "ofVectorMath.h"
 #include "of3dUtils.h"
 #include "ofAppRunner.h"
+#include "ofParameter.h"
+#include <array>
 
 
 /// \brief A generic 3d object in space with transformation (position, rotation, scale).
@@ -42,7 +44,11 @@ public:
 	/// \cond INTERNAL
 	
 	ofNode();
-	virtual ~ofNode() {}
+	virtual ~ofNode();
+	ofNode(const ofNode & node);
+	ofNode(ofNode && node);
+	ofNode & operator=(const ofNode & node);
+	ofNode & operator=(ofNode && node);
 
 	/// \endcond
 
@@ -114,7 +120,7 @@ public:
 	ofQuaternion getGlobalOrientation() const;
 	ofVec3f getGlobalScale() const;
 
-	/// \}	
+	/// \}	
 	/// \name Setters
 	/// \{
 
@@ -142,7 +148,7 @@ public:
 	void setScale(const ofVec3f& s);
 	
 	/// \}
-	/// \name Modifiers
+	/// \name Modifiers
 	/// \{
 
 	/// \brief Move by arbitrary amount
@@ -182,13 +188,25 @@ public:
 	void rotateAround(const ofQuaternion& q, const ofVec3f& point);
 	
 	/// \brief Rotate around arbitrary axis by angle around point
-	void rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point);	
+    void rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point);
+
+    /// \brief Orient node to look at position (-z axis pointing to position)
+    ///
+    /// This version calculates the up vector by rotating {0,1,0} by the same
+    /// angle that will rotate {0,0,1} to the current position - lookAtPosition
+    void lookAt(const ofVec3f& lookAtPosition);
 
 	/// \brief Orient node to look at position (-z axis pointing to position)
-	void lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector = ofVec3f(0, 1, 0));
+    void lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector);
+
+    /// \brief Orient node to look at node (-z axis pointing to node)
+    ///
+    /// This version calculates the up vector by rotating {0,1,0} by the same
+    /// angle that will rotate {0,0,1} to the current position - lookAtPosition
+    void lookAt(const ofNode& lookAtNode);
 	
 	/// \brief Orient node to look at node (-z axis pointing to node)
-	void lookAt(const ofNode& lookAtNode, const ofVec3f& upVector = ofVec3f(0, 1, 0));
+    void lookAt(const ofNode& lookAtNode, const ofVec3f& upVector);
 	
 	/// \brief Orbit object around target at radius
 	void orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint = ofVec3f(0, 0, 0));
@@ -229,9 +247,6 @@ public:
 	/// \}
 	
 protected:
-
-	ofNode *parent;
-	
 	void createMatrix();
 	void updateAxis();
 	
@@ -245,14 +260,24 @@ protected:
 	/// \brief classes extending ofNode can override this methods to get notified when the scale changed.
 	virtual void onScaleChanged() {}
 
+	ofNode * parent;
+
 private:
-	ofVec3f position;
-	ofQuaternion orientation;
-	ofVec3f scale;
-	
-	ofVec3f axis[3];
-	
+	void onParentPositionChanged(ofVec3f & position) {onPositionChanged();}
+	void onParentOrientationChanged(ofQuaternion & orientation) {onOrientationChanged();}
+	void onParentScaleChanged(ofVec3f & scale) {onScaleChanged();}
+
+	ofParameter<ofVec3f> position;
+	ofParameter<ofQuaternion> orientation;
+	ofParameter<ofVec3f> scale;
+
+	std::array<ofVec3f,3> axis;
+
 	ofMatrix4x4 localTransformMatrix;
 	bool legacyCustomDrawOverrided;
+	std::set<ofNode*> children;
+
+	void addListener(ofNode & node);
+	void removeListener(ofNode & node);
 //	ofMatrix4x4 globalTransformMatrix;
 };

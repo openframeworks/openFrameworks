@@ -1,8 +1,7 @@
 #pragma once
 
-#include "ofMain.h"
 #include "ofxiOS.h"
-#include "ofxiOSExtras.h"
+#include "ofxiOSCoreLocation.h"
 
 class ofApp : public ofxiOSApp{
 	

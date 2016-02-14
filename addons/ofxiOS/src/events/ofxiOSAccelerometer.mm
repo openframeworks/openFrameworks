@@ -30,9 +30,10 @@
  * ***********************************************************************/ 
 
 
-#import "ofxAccelerometer.h"
-#import "ofMain.h"
 #import <UIKit/UIKit.h>
+
+#include "ofUtils.h"
+#include "ofxAccelerometer.h"
 
 /************ Interface for iPhone Accelerometer Delegate ************/
 @interface ofxiOSAccelerometerDelegate : NSObject <UIAccelerometerDelegate> {

@@ -6,6 +6,8 @@
 //  Copyright MSA Visuals Ltd. 2010. All rights reserved.
 //
 
+#pragma once
+
 #import <QuartzCore/QuartzCore.h>
 
 #import <OpenGLES/EAGL.h>

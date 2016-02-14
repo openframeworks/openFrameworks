@@ -1,0 +1,1 @@
+LOCAL_MODULE := OFAndroidApp

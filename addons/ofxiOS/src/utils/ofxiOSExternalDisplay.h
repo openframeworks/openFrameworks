@@ -7,7 +7,7 @@
 
 #pragma once
 
-#import "ofMain.h"
+#include "ofConstants.h"
 
 struct ofxiOSExternalDisplayMode{
     int width;

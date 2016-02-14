@@ -16,8 +16,8 @@ POCO_TARGET_OSARCH = i686
 #
 # Define Tools
 #
-CC      = /mingw32/bin/clang
-CXX     = /mingw32/bin/clang++
+CC      = /mingw32/bin/gcc
+CXX     = /mingw32/bin/g++
 LINK    = $(CXX)
 LIB     = /mingw32/bin/ar -cr
 RANLIB  = ranlib

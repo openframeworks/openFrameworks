@@ -7,7 +7,7 @@
  *
  */
 
-#import "ofxiOSImagePicker.h"
+#include "ofxiOSImagePicker.h"
 
 //C++ class implementations
 

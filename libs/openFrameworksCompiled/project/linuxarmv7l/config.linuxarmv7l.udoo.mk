@@ -72,27 +72,38 @@ PLATFORM_LIBRARIES += GLESv1_CM
 PLATFORM_LIBRARIES += GLESv2
 PLATFORM_LIBRARIES += EGL
 
-ifeq ($(CROSS_COMPILING),1)
-	GCC_PREFIX=arm-linux-gnueabihf
-    PLATFORM_CXX = $(GCC_PREFIX)-g++
-	PLATFORM_CC = $(GCC_PREFIX)-gcc
-	PLATFORM_AR = $(GCC_PREFIX)-ar
-	PLATFORM_LD = $(GCC_PREFIX)-ld
+ifeq ($(CROSS_COMPILING),1)	
 	
-	# Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
+	ifdef TOOLCHAIN_ROOT
+		#You have specified TOOLCHAIN_ROOT with an environment variable
+	else
+		TOOLCHAIN_ROOT = /opt/cross/bin
+	endif
+	
+	ifdef GCC_PREFIX
+		#You have specified GCC_PREFIX with an environment variable
+	else
+		GCC_PREFIX = arm-linux-gnueabihf
+	endif
+	
+    PLATFORM_CXX = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-g++
+	PLATFORM_CC = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-gcc
+	PLATFORM_AR = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-ar
+	PLATFORM_LD = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-ld
+	
+	SYSROOT=$(RPI_ROOT)
+	
 	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
 	
-	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++/4.6/
-	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++/4.6/arm-linux-gnueabihf
-	
-	
-	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT)
-	PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/usr/lib
-	PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/usr/lib/arm-linux-gnueabihf
-	PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/lib
-	PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/lib/arm-linux-gnueabihf
-	
+	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++/4.9
+
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/$(GCC_PREFIX)
+
+	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) 
+	PLATFORM_LDFLAGS += -Wl,-rpath=$(SYSROOT)/usr/lib/$(GCC_PREFIX) 
+	PLATFORM_LDFLAGS += -Wl,-rpath=$(SYSROOT)/lib/$(GCC_PREFIX) 
+	 
 	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
 	
-	PLATFORM_LIBRARIES += dl
 endif
+

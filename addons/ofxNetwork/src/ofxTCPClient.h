@@ -80,10 +80,6 @@ class ofxTCPClient{
 		int getPort();
 		string getIP();
 
-		//don't use this one
-		//for server to use internally only!
-		//--------------------------
-		bool setup(int _index, bool blocking);
 
 
 
@@ -92,6 +88,11 @@ private:
 		ofxTCPClient(const ofxTCPManager & mom){};
 		ofxTCPClient & operator=(const ofxTCPClient & mom){return *this;}
 
+        //don't use this one
+        //for server to use internally only!
+        //--------------------------
+		bool setupConnectionIdx(int _index, bool blocking);
+		bool isClosingCondition(int messageSize, int errorCode);
 		friend class ofxTCPServer;
 
 		ofxTCPManager	TCPClient;

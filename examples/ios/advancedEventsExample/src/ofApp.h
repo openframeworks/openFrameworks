@@ -1,9 +1,6 @@
 #pragma once
 
-#include "ofMain.h"
 #include "ofxiOS.h"
-#include "ofxiOSExtras.h"
-
 #include "eventsObject.h"
 
 class ofApp : public ofxiOSApp{

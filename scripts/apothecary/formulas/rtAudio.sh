@@ -6,7 +6,7 @@
 #
 # uses an autotools build system
 
-FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "win_cb" )
+FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "msys2" )
 
 #FORMULA_DEPENDS=( "pkg-config" )
 
@@ -92,11 +92,11 @@ function build() {
 			vs-build "rtaudio_static.vcxproj" Build "Debug|x64"
 		fi
 
-	elif [ "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "msys2" ] ; then
 		local API="--with-wasapi --with-ds" # asio as well?
 		mkdir -p build
 		cd build
-		cmake .. -G "Unix Makefiles"  -DAUDIO_WINDOWS_WASAPI=ON -DAUDIO_WINDOWS_DS=ON -DAUDIO_WINDOWS_ASIO=ON -DCMAKE_C_COMPILER=/mingw32/bin/clang.exe -DCMAKE_CXX_COMPILER=/mingw32/bin/clang++.exe -DBUILD_TESTING=OFF
+		cmake .. -G "Unix Makefiles"  -DAUDIO_WINDOWS_WASAPI=ON -DAUDIO_WINDOWS_DS=ON -DAUDIO_WINDOWS_ASIO=ON -DCMAKE_C_COMPILER=/mingw32/bin/gcc.exe -DCMAKE_CXX_COMPILER=/mingw32/bin/g++.exe -DBUILD_TESTING=OFF
 		make
 	fi
 
@@ -126,7 +126,7 @@ function copy() {
 		fi
 		
 
-	elif [ "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "msys2" ] ; then
 		cp -v build/librtaudio_static.a $1/lib/$TYPE/librtaudio.a
 	
 	else

@@ -12,7 +12,7 @@
 # prefix (install location) and use a custom copy of pkg-config which returns
 # the dependent lib cflags/ldflags for that prefix (cairo/apothecary-build)
 
-FORMULA_TYPES=( "osx" "vs" "win_cb" )
+FORMULA_TYPES=( "osx" "vs" "msys2" )
 
 FORMULA_DEPENDS=( "pkg-config" "zlib" "libpng" "pixman" "freetype" )
 
@@ -168,7 +168,7 @@ function copy() {
 		fi
 		cd cairo
 
-	elif [ "$TYPE" == "osx" -o "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "osx" -o "$TYPE" == "msys2" ] ; then
 		# make the path in the libs dir
 		mkdir -p $1/include/cairo
 

@@ -1,1 +1,0 @@
-yum erase codeblocks

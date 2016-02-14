@@ -21,7 +21,8 @@ ofxUDPManager::ofxUDPManager()
 	#endif
 
 	m_hSocket= INVALID_SOCKET;
-	m_dwTimeoutReceive=	OF_UDP_DEFAULT_TIMEOUT;
+	m_dwTimeoutReceive = OF_UDP_DEFAULT_TIMEOUT;
+    m_dwTimeoutSend = OF_UDP_DEFAULT_TIMEOUT;
 
 	canGetRemoteAddress	= false;
 	nonBlocking			= true;
@@ -69,8 +70,48 @@ bool ofxUDPManager::Create()
 	return ret;
 }
 
+
 //--------------------------------------------------------------------------------
-///Theo added - Choose to set nonBLocking - default mode is to block
+int ofxUDPManager::WaitReceive(time_t timeoutSeconds, time_t timeoutMicros){
+	if (m_hSocket == INVALID_SOCKET) return SOCKET_ERROR;
+
+	fd_set fd;
+	FD_ZERO(&fd);
+	FD_SET(m_hSocket, &fd);
+	timeval	tv;
+	tv.tv_sec = timeoutSeconds;
+	tv.tv_usec = timeoutMicros;
+	auto ret = select(m_hSocket+1,&fd,NULL,NULL,&tv);
+	if(ret == 0){
+		return SOCKET_TIMEOUT;
+	}else if(ret < 0){
+		return SOCKET_ERROR;
+	}else{
+		return 0;
+	}
+}
+
+//--------------------------------------------------------------------------------
+int ofxUDPManager::WaitSend(time_t timeoutSeconds, time_t timeoutMicros){
+	if (m_hSocket == INVALID_SOCKET) return SOCKET_ERROR;
+
+	fd_set fd;
+	FD_ZERO(&fd);
+	FD_SET(m_hSocket, &fd);
+	timeval	tv;
+	tv.tv_sec = timeoutSeconds;
+	tv.tv_usec = timeoutMicros;
+	auto ret = select(m_hSocket+1,NULL,&fd,NULL,&tv);
+	if(ret == 0){
+		return SOCKET_TIMEOUT;
+	}else if(ret < 0){
+		return SOCKET_ERROR;
+	}else{
+		return 0;
+	}
+}
+
+//--------------------------------------------------------------------------------
 bool ofxUDPManager::SetNonBlocking(bool useNonBlocking)
 {
 	nonBlocking		= useNonBlocking;
@@ -196,17 +237,12 @@ int	ofxUDPManager::Send(const char* pBuff,	const int iSize)
 {
 	if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
 
-	/*if (m_dwTimeoutSend	!= NO_TIMEOUT)
-	{
-		fd_set fd;
-		FD_ZERO(&fd);
-		FD_SET(m_hSocket, &fd);
-		timeval	tv=	{m_dwTimeoutSend, 0};
-		if(select(m_hSocket+1,NULL,&fd,NULL,&tv)== 0)
-		{
-			return(SOCKET_TIMEOUT);
+	if (m_dwTimeoutSend	!= NO_TIMEOUT){
+		auto ret = WaitSend(m_dwTimeoutSend,0);
+		if(ret!=0){
+			return ret;
 		}
-	}*/
+	}
 
 	int ret = sendto(m_hSocket, (char*)pBuff,	iSize, 0, (sockaddr *)&saClient, sizeof(sockaddr));
 	if(ret==-1) ofxNetworkCheckError();
@@ -222,37 +258,39 @@ int	ofxUDPManager::SendAll(const char*	pBuff, const int iSize)
 {
 	if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
 
-	if (m_dwTimeoutSend	!= NO_TIMEOUT)
-	{
-		fd_set fd;
-		FD_ZERO(&fd);
-		FD_SET(m_hSocket, &fd);
-		timeval	tv=	{(time_t)m_dwTimeoutSend, 0};
-		if(select(m_hSocket+1,NULL,&fd,NULL,&tv)== 0)
-		{
-			ofxNetworkCheckError();
-			return(SOCKET_TIMEOUT);
+	auto timestamp = ofGetElapsedTimeMicros();
+	auto timeleftSecs = m_dwTimeoutSend;
+	auto timeleftMicros = 0;
+	int total= 0;
+	int bytesleft = iSize;
+	int ret=-1;
+
+	while (total < iSize) {
+		if (m_dwTimeoutSend	!= NO_TIMEOUT){
+			auto ret = WaitSend(timeleftSecs,timeleftMicros);
+			if(ret!=0){
+				return ret;
+			}
+		}
+		ret = sendto(m_hSocket, (char*)pBuff,	iSize, 0, (sockaddr *)&saClient, sizeof(sockaddr));
+		if (ret == SOCKET_ERROR) {
+			return SOCKET_ERROR;
+		}
+		total += ret;
+		bytesleft -=ret;
+		if (m_dwTimeoutSend	!= NO_TIMEOUT){
+			auto now = ofGetElapsedTimeMicros();
+			auto diff = now - timestamp;
+			if (diff > m_dwTimeoutSend * 1000000){
+				return SOCKET_TIMEOUT;
+			}
+			float timeFloat = m_dwTimeoutSend - diff/1000000.;
+			timeleftSecs = timeFloat;
+			timeleftMicros = (timeFloat - timeleftSecs) * 1000000;
 		}
 	}
 
-
-	int	total= 0;
-	int	bytesleft =	iSize;
-	int	n=0;
-
-	while (total < iSize)
-	{
-		n =	sendto(m_hSocket, (char*)pBuff,	iSize, 0, (sockaddr *)&saClient, sizeof(sockaddr));
-		if (n == -1)
-			{
-				ofxNetworkCheckError();
-				break;
-			}
-		total += n;
-		bytesleft -=n;
-	}
-
-	return n==-1?SOCKET_ERROR:total;
+	return total;
 }
 
 
@@ -265,15 +303,22 @@ int	ofxUDPManager::PeekReceive()
 		return SOCKET_ERROR;
 	}
 
+	if (m_dwTimeoutReceive	!= NO_TIMEOUT){
+		auto ret = WaitReceive(m_dwTimeoutReceive,0);
+		if(ret!=0){
+			return ret;
+		}
+	}
+
 	//	we can use MSG_PEEK, but we still need a large buffer (udp protocol max is 64kb even if max for this socket is less)
 	//	don't want a 64kb stack item here, so instead read how much can be read (note: not queue size, there may be more data-more packets)
-        #ifdef TARGET_WIN32
-                unsigned long size = 0;
-                int retVal = ioctlsocket(m_hSocket,FIONREAD,&size);
-        #else
-                int size  = 0;
-                int retVal = ioctl(m_hSocket,FIONREAD,&size);
-        #endif
+	#ifdef TARGET_WIN32
+			unsigned long size = 0;
+			int retVal = ioctlsocket(m_hSocket,FIONREAD,&size);
+	#else
+			int size  = 0;
+			int retVal = ioctl(m_hSocket,FIONREAD,&size);
+	#endif
 	
 	//	error
 	if ( retVal != 0 )
@@ -300,17 +345,12 @@ int	ofxUDPManager::Receive(char* pBuff, const int iSize)
 
 	}
 
-	/*if (m_dwTimeoutSend	!= NO_TIMEOUT)
-	{
-		fd_set fd;
-		FD_ZERO(&fd);
-		FD_SET(m_hSocket, &fd);
-		timeval	tv=	{m_dwTimeoutSend, 0};
-		if(select(m_hSocket+1,&fd,NULL,NULL,&tv)== 0)
-		{
-			return(SOCKET_TIMEOUT);
+	if (m_dwTimeoutReceive	!= NO_TIMEOUT){
+		auto ret = WaitReceive(m_dwTimeoutReceive,0);
+		if(ret!=0){
+			return ret;
 		}
-	}*/
+	}
 
 	#ifndef TARGET_WIN32
 		socklen_t nLen= sizeof(sockaddr);

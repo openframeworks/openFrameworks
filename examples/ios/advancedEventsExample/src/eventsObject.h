@@ -1,4 +1,5 @@
-#include "ofMain.h"
+#pragma once
+
 #include "ofEvents.h"
 
 class eventsObject{

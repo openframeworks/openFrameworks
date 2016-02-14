@@ -4,6 +4,7 @@
 #include "ofThread.h"
 #include "ofxTCPManager.h"
 #include <map>
+#include <condition_variable>
 
 #define TCP_MAX_CLIENTS  32
 
@@ -27,6 +28,7 @@ class ofxTCPServer : public ofThread{
 	
 		bool close();
 		bool disconnectClient(int clientID);
+        bool disconnectAllClients();
 
 		int getNumClients(); //total number of clients - not sutible for iterating through clients with
 		int getLastID(); //this returns the last current id number if you want to loop through with a for loop 
@@ -83,7 +85,8 @@ class ofxTCPServer : public ofThread{
 		//amount of filled-bytes returned
 		int peekReceiveRawBytes(int clientID, char * receiveBytes,  int numBytes);
 
-
+		void waitConnectedClient();
+		void waitConnectedClient(int ms);
 
 	private:
 		ofxTCPClient & getClient(int clientID);
@@ -94,6 +97,7 @@ class ofxTCPServer : public ofThread{
 		ofxTCPManager			TCPServer;
 		std::map<int,std::shared_ptr<ofxTCPClient> >	TCPConnections;
 		std::mutex					mConnectionsLock;
+        std::condition_variable serverReady;
 
 		bool			connected;
 		std::string			str;

@@ -1,4 +1,5 @@
 
+#pragma once
 
 #import "ESRenderer.h"
 #import <OpenGLES/ES2/gl.h>

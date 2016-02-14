@@ -218,12 +218,9 @@ public class OFAndroid {
 	    		}
 	    		
 	    		
-	    		String app_name="";
 				try {
 					int app_name_id = Class.forName(packageName+".R$string").getField("app_name").getInt(null);
-					app_name = ofActivity.getResources().getText(app_name_id).toString().toLowerCase(Locale.US);
-					Log.i("OF","app name: " + app_name);
-					
+
 					if(copydata){
 						StatFs stat = new StatFs(dataPath);
 						double sdAvailSize = (double)stat.getAvailableBlocks()
@@ -238,8 +235,7 @@ public class OFAndroid {
 		    					fileId = files[i].getInt(null);
 		    					String resName = ofActivity.getResources().getText(fileId).toString();
 		    					fileName = resName.substring(resName.lastIndexOf("/"));
-		    					Log.i("OF","checking " + fileName);
-		    					if(fileName.equals("/" + app_name + "resources.zip")){
+		    					if(fileName.equals("/ofdataresources.zip")){
 		    						
 			    					from = ofActivity.getResources().openRawResource(fileId);
 									try{
@@ -1023,24 +1019,33 @@ public class OFAndroid {
     public static native boolean hasNeon();
 	 
     static {
-    	try{
-    		Log.i("OF","static init");
-    		System.loadLibrary("neondetection"); 
-	    	if(hasNeon()){
-	    		Log.i("OF","loading neon optimized library");
-	    		System.loadLibrary("OFAndroidApp_neon");
-	    	}else{
-	    		Log.i("OF","loading not-neon optimized library");
-	    		System.loadLibrary("OFAndroidApp");
-	    	}
-    	}catch(Throwable e){
-    		Log.i("OF","failed neon detection, loading not-neon library",e);
-    		System.loadLibrary("OFAndroidApp");
-    	}
-    	Log.i("OF","initializing app");
+        
+        Log.i("OF","static init");
+        
+        try {
+            Log.i("OF","loading x86 library");
+            System.loadLibrary("OFAndroidApp_x86");
+        }
+        catch(Throwable ex)	{
+            Log.i("OF","failed x86 loading, trying neon detection",ex);
+            
+            try{
+                System.loadLibrary("neondetection");
+                if(hasNeon()){
+                    Log.i("OF","loading neon optimized library");
+                    System.loadLibrary("OFAndroidApp_neon");
+                }
+                else{
+                    Log.i("OF","loading not-neon optimized library");
+                    System.loadLibrary("OFAndroidApp");
+                }
+            }catch(Throwable ex2){
+                Log.i("OF","failed neon detection, loading not-neon library",ex2);
+                System.loadLibrary("OFAndroidApp");
+            }
+        }
+        Log.i("OF","initializing app");
     }
-
-
 
 	public static SurfaceView getGLContentView() {
         return mGLView;

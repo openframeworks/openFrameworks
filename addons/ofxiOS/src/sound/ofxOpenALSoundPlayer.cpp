@@ -23,6 +23,7 @@
  ************************************************************************/ 
 
 #import "ofxOpenALSoundPlayer.h"
+#include "ofUtils.h"
 
 bool SoundEngineInitialized = false;
 

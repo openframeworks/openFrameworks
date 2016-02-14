@@ -65,6 +65,7 @@ public:
 	/// before GL 4.5 emulates glNamedBufferSubData by binding to last known target
 	/// for this buffer uploading data to that target and unbinding again
 	void updateData(GLintptr offset, GLsizeiptr bytes, const void * data);
+    void updateData(GLsizeiptr bytes, const void * data);
 
 	/// typed version of setData, same functionality but guesses the size from the size
 	/// of the passed vector and size of the type
@@ -84,6 +85,13 @@ public:
 	void updateData(GLintptr offset, const vector<T> & data){
 		updateData(offset,data.size()*sizeof(T),&data[0]);
 	}
+
+    /// typed version of updateData, same functionality but guesses the size from the size
+    /// of the passed vector and size of the type
+    template<typename T>
+    void updateData(const vector<T> & data){
+        updateData(0,data.size()*sizeof(T),&data[0]);
+    }
 
 #ifndef TARGET_OPENGLES
 	/// glMapNamedBuffer: https://www.opengl.org/sdk/docs/man4/html/glMapBuffer.xhtml
@@ -131,6 +139,7 @@ private:
 		GLsizeiptr size;
 		GLenum lastTarget;
 		bool useDSA;
+		bool isBound;
 	};
 	shared_ptr<Data> data;
 };

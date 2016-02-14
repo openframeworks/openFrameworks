@@ -65,6 +65,7 @@ public:
 	ofPixels_();
 	~ofPixels_();
 	ofPixels_(const ofPixels_<PixelType> & mom);
+	ofPixels_(ofPixels_<PixelType> && mom);
 
 	template<typename SrcType>
 	ofPixels_(const ofPixels_<SrcType> & mom);
@@ -115,6 +116,7 @@ public:
 	void clear();
 
 	ofPixels_<PixelType>& operator=(const ofPixels_<PixelType> & mom);
+	ofPixels_<PixelType>& operator=(ofPixels_<PixelType> && mom);
 
 	template<typename SrcType>
 	ofPixels_<PixelType>& operator=(const ofPixels_<SrcType> & mom);
@@ -132,6 +134,8 @@ public:
 	void setFromExternalPixels(PixelType * newPixels,int w, int h, ofPixelFormat pixelFormat);
 	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride);
 	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, ofPixelFormat pixelFormat, int stride);
+	/// \brief used to copy i420 pixels from gstreamer when (width % 4) != 0
+	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, ofPixelFormat pixelFormat, std::vector<int> strides);
 	
 	void swap(ofPixels_<PixelType> & pix);
 
@@ -985,16 +989,16 @@ inline int ofPixels_<PixelType>::Line::getLineNum() const{
 template<typename PixelType>
 inline ofPixels_<PixelType> ofPixels_<PixelType>::Line::asPixels(){
 	ofPixels_<PixelType> pixels;
-	pixels.setFromExternalPixels(_begin,stride,1,pixelFormat);
-	return pixels;
+	pixels.setFromExternalPixels(_begin,stride/componentsPerPixel,1,pixelFormat);
+	return std::move(pixels);
 }
 
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline const ofPixels_<PixelType> ofPixels_<PixelType>::Line::asPixels() const{
 	ofPixels_<PixelType> pixels;
-	pixels.setFromExternalPixels(_begin,stride,1,pixelFormat);
-	return pixels;
+	pixels.setFromExternalPixels(_begin,stride/componentsPerPixel,1,pixelFormat);
+	return std::move(pixels);
 }
 
 //----------------------------------------------------------------------

@@ -29,9 +29,20 @@ task ofNdkSetup {
     logger.lifecycle name
 
     /* Find NDK directory */
-    def localProperties = new File(rootDir, "local.properties")
+    def pathsmake = new File(project.projectDir, "paths.make")
+    if (!pathsmake.exists()) {
+        throw new GradleException("pathsmake is missing!")
+    }
+
+
+    def localProperties = new File(rootProject.projectDir, "local.properties")
     if (!localProperties.exists()) {
         throw new GradleException("local.properties is missing!")
+    }
+
+    Properties ndkProperties = new Properties()
+    pathsmake.withInputStream { instr ->
+        ndkProperties.load(instr)
     }
 
     Properties properties = new Properties()
@@ -39,9 +50,9 @@ task ofNdkSetup {
         properties.load(instr)
     }
     String sdkDirectory = properties.get("sdk.dir")
-    String ndkDirectory = properties.get("ndk.dir")
+    String ndkDirectory = ndkProperties.get("NDK_ROOT")
     if (ndkDirectory == null) {
-        throw new GradleException("NDK not configured. Add ndk.dir=/path/to/ndk to local.properties.")
+        throw new GradleException("NDK not configured. Add NDK_ROOT=/path/to/ndk to paths.make.")
     }
     if (ndkDirectory.contains(' ')) {
         // Make really hates spaces in filenames, so we have to avoid them.
@@ -49,7 +60,7 @@ task ofNdkSetup {
     }
     def ndkDir = new File(ndkDirectory)
     if (!ndkDir.directory) {
-        throw new GradleException("NDK directory is invalid. Check ndk.dir path in local.properties.")
+        throw new GradleException("NDK directory is invalid. Check NDK_ROOT path in paths.make.")
     }
 
     /* Find suitable make executable */
@@ -122,11 +133,11 @@ task ofNdkSetup {
  * Helper function to run make with a given set of options
  */
 def ofRunMake(List opts) {
-    def num_parallel = rootProject.ofNdkSetup.ext.num_parallel
+    def num_parallel = ofNdkSetup.ext.num_parallel
     if (num_parallel > 1) {
         opts.add(0, "-j$num_parallel")
     }
-    List cmd = [rootProject.ofNdkSetup.ext.make] + opts
+    List cmd = [ofNdkSetup.ext.make] + opts
     logger.info("Executing make command " + cmd)
     def proc = cmd.execute()
     proc.in.eachLine {line ->
@@ -145,4 +156,16 @@ def ofRunMake(List opts) {
     if(proc.exitValue() != 0) {
         throw new GradleException("make failed with exit status " + proc.exitValue())
     }
+}
+
+task compileDebugOF {
+    ofRunMake(["-C", rootProject.projectDir.absolutePath, "PLATFORM_OS=Android", "Debug"])
+}
+
+task compileReleaseOF {
+    ofRunMake(["-C", rootProject.projectDir.absolutePath, "PLATFORM_OS=Android", "Release"])
+}
+
+task clean(dependsOn: ofNdkSetup) << {
+    ofRunMake(["-C", rootProject.projectDir.absolutePath, "PLATFORM_OS=Android", "clean"])
 }

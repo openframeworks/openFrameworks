@@ -18,29 +18,29 @@ void ofApp::setup(){
 	if(!file.exists()){
 		ofLogError("The file " + filePath + " is missing");
 	}
-	
-	ofBuffer buffer(file);
+        ofBuffer buffer(file);
 
 	//Read file line by line
 	for (ofBuffer::Line it = buffer.getLines().begin(), end = buffer.getLines().end(); it != end; ++it) {
-		string line = *it;
-		
-		//Split line into strings
+                string line = *it;
+                //Split line into strings
 		vector<string> words = ofSplitString(line, ",");
-		
+
 		//Store strings into a custom container
-		MorseCodeSymbol symbol;
-		symbol.character = words[0];
-		symbol.code = words[1];
-		
-		//Save MorseCodeSymbols for later
-		morseCodeSymbols.push_back(symbol);
-		
-		//Debug output
-		ofLogVerbose("symbol.character: " + symbol.character);
-		ofLogVerbose("symbol.code: " + symbol.code);
+                if (words.size()>=2) {
+                    MorseCodeSymbol symbol;
+                    symbol.character = words[0];
+                    symbol.code = words[1];
+
+                    //Save MorseCodeSymbols for later
+                    morseCodeSymbols.push_back(symbol);
+
+                    //Debug output
+                    ofLogVerbose("symbol.character: " + symbol.character);
+                    ofLogVerbose("symbol.code: " + symbol.code);
+               }
 	}
-	
+
 	//Load our Morse code sounds
 	player.setup();
 }

@@ -49,7 +49,7 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 			return false;
 		}
 	} else {
-		ofLogError("ofQuickTimePlayer") << "createMovoeFromPath(): couldn't load movie, OpenMovieFile failed: OSErr " << result;
+		ofLogError("ofQuickTimePlayer") << "createMovieFromPath(): couldn't load movie, OpenMovieFile failed: OSErr " << result;
 		return false;
 	}
 

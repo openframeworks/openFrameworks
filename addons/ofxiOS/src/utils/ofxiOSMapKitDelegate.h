@@ -28,7 +28,7 @@
  *
  * ***********************************************************************/ 
 
-#include <Availability.h>
+#pragma once
 
 #import <MapKit/MapKit.h>
 

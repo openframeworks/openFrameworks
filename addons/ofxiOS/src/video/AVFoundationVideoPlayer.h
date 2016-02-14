@@ -5,8 +5,9 @@
 //  Created by lukasz karluk on 21/05/12.
 //
 
+#pragma once
+
 #import <UIKit/UIKit.h>
-#import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import <Accelerate/Accelerate.h>
 

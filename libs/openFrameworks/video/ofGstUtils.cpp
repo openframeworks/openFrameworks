@@ -1300,7 +1300,13 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 
 	if(pixels.isAllocated()){
 		if(stride > 0) {
-			backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
+			if(pixels.getPixelFormat() == OF_PIXELS_I420){
+				GstVideoInfo v_info = getVideoInfo(sample.get());
+				std::vector<int> strides{v_info.stride[0],v_info.stride[1],v_info.stride[2]};
+				backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),strides);
+			} else {
+				backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
+			}
 		} else if(!copyPixels){
 			backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
 			eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());

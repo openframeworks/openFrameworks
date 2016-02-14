@@ -311,7 +311,7 @@ void ofCoreEvents::notifyMouseEvent(const ofMouseEventArgs & mouseEvent){
 			notifyMouseReleased(mouseEvent.x,mouseEvent.y,mouseEvent.button);
 			break;
 		case ofMouseEventArgs::Scrolled:
-			notifyMouseScrolled(mouseEvent.x,mouseEvent.y);
+			notifyMouseScrolled(mouseEvent.x,mouseEvent.y,mouseEvent.scrollX,mouseEvent.scrollY);
 			break;
 		case ofMouseEventArgs::Entered:
 			notifyMouseEntered(mouseEvent.x,mouseEvent.y);
@@ -398,12 +398,10 @@ void ofCoreEvents::notifyMouseMoved(int x, int y){
 }
 
 //------------------------------------------
-void ofCoreEvents::notifyMouseScrolled(float x, float y){
+void ofCoreEvents::notifyMouseScrolled(int x, int y, float scrollX, float scrollY){
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Scrolled,x,y);
-
-	mouseEventArgs.x = x;
-	mouseEventArgs.y = y;
-	mouseEventArgs.type = ofMouseEventArgs::Scrolled;
+	mouseEventArgs.scrollX = scrollX;
+	mouseEventArgs.scrollY = scrollY;
 	ofNotifyEvent( mouseScrolled, mouseEventArgs );
 }
 
@@ -444,4 +442,17 @@ void ofSendMessage(ofMessage msg){
 void ofSendMessage(string messageString){
 	ofMessage msg(messageString);
 	ofSendMessage(msg);
+}
+
+//------------------------------------------
+namespace of{
+	namespace priv{
+		std::atomic<uint_fast64_t> StdFunctionId::nextId;
+
+		AbstractEventToken::~AbstractEventToken(){}
+
+		BaseFunctionId::~BaseFunctionId(){}
+
+		StdFunctionId::~StdFunctionId(){}
+	}
 }

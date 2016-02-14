@@ -20,7 +20,7 @@ class ofParameterGroup;
 /// Base class for ofParameter, ofReadOnlyParameter and ofParameterGroup
 class ofAbstractParameter{
 public:
-	virtual ~ofAbstractParameter(){};
+	virtual ~ofAbstractParameter(){}
 	virtual string getName() const = 0;
 	virtual void setName(const string & name) = 0;
 	virtual string toString() const = 0;
@@ -87,47 +87,87 @@ public:
 
 	void clear();
 
-	ofParameter<bool> getBool(const string& name) const;
-	ofParameter<int> getInt(const string& name) const;
-	ofParameter<float> getFloat(const string& name) const;
-	ofParameter<char> getChar(const string& name) const;
-	ofParameter<string> getString(const string& name) const;
-	ofParameter<ofPoint> getPoint(const string& name) const;
-	ofParameter<ofVec2f> getVec2f(const string& name) const;
-	ofParameter<ofVec3f> getVec3f(const string& name) const;
-	ofParameter<ofVec4f> getVec4f(const string& name) const;
-	ofParameter<ofColor> getColor(const string& name) const;
-	ofParameter<ofShortColor> getShortColor(const string& name) const;
-	ofParameter<ofFloatColor> getFloatColor(const string& name) const;
+	const ofParameter<bool> & getBool(const string& name) const;
+	const ofParameter<int> & getInt(const string& name) const;
+	const ofParameter<float> & getFloat(const string& name) const;
+	const ofParameter<char> & getChar(const string& name) const;
+	const ofParameter<string> & getString(const string& name) const;
+	const ofParameter<ofPoint> & getPoint(const string& name) const;
+	const ofParameter<ofVec2f> & getVec2f(const string& name) const;
+	const ofParameter<ofVec3f> & getVec3f(const string& name) const;
+	const ofParameter<ofVec4f> & getVec4f(const string& name) const;
+	const ofParameter<ofColor> & getColor(const string& name) const;
+	const ofParameter<ofShortColor> & getShortColor(const string& name) const;
+	const ofParameter<ofFloatColor> & getFloatColor(const string& name) const;
+	const ofParameterGroup & getGroup(const string& name) const;
 
-	ofParameterGroup getGroup(const string& name) const;
+
+	const ofParameter<bool> & getBool(std::size_t pos) const;
+	const ofParameter<int> & getInt(std::size_t pos) const;
+	const ofParameter<float> & getFloat(std::size_t pos) const;
+	const ofParameter<char> & getChar(std::size_t pos) const;
+	const ofParameter<string> & getString(std::size_t pos) const;
+	const ofParameter<ofPoint> & getPoint(std::size_t pos) const;
+	const ofParameter<ofVec2f> & getVec2f(std::size_t pos) const;
+	const ofParameter<ofVec3f> & getVec3f(std::size_t pos) const;
+	const ofParameter<ofVec4f> & getVec4f(std::size_t pos) const;
+	const ofParameter<ofColor> & getColor(std::size_t pose) const;
+	const ofParameter<ofShortColor> & getShortColor(std::size_t pos) const;
+	const ofParameter<ofFloatColor> & getFloatColor(std::size_t pos) const;
+	const ofParameterGroup & getGroup(std::size_t pos) const;
+
+	ofParameter<bool> & getBool(const string& name);
+	ofParameter<int> & getInt(const string& name);
+	ofParameter<float> & getFloat(const string& name);
+	ofParameter<char> & getChar(const string& name);
+	ofParameter<string> & getString(const string& name);
+	ofParameter<ofPoint> & getPoint(const string& name);
+	ofParameter<ofVec2f> & getVec2f(const string& name);
+	ofParameter<ofVec3f> & getVec3f(const string& name);
+	ofParameter<ofVec4f> & getVec4f(const string& name);
+	ofParameter<ofColor> & getColor(const string& name);
+	ofParameter<ofShortColor> & getShortColor(const string& name);
+	ofParameter<ofFloatColor> & getFloatColor(const string& name);
+	ofParameterGroup & getGroup(const string& name);
 
 
-	ofParameter<bool> getBool(std::size_t pos) const;
-	ofParameter<int> getInt(std::size_t pos) const;
-	ofParameter<float> getFloat(std::size_t pos) const;
-	ofParameter<char> getChar(std::size_t pos) const;
-	ofParameter<string> getString(std::size_t pos) const;
-	ofParameter<ofPoint> getPoint(std::size_t pos) const;
-	ofParameter<ofVec2f> getVec2f(std::size_t pos) const;
-	ofParameter<ofVec3f> getVec3f(std::size_t pos) const;
-	ofParameter<ofVec4f> getVec4f(std::size_t pos) const;
-	ofParameter<ofColor> getColor(std::size_t pose) const;
-	ofParameter<ofShortColor> getShortColor(std::size_t pos) const;
-	ofParameter<ofFloatColor> getFloatColor(std::size_t pos) const;
-	ofParameterGroup getGroup(std::size_t pos) const;
+	ofParameter<bool> & getBool(std::size_t pos);
+	ofParameter<int> & getInt(std::size_t pos);
+	ofParameter<float> & getFloat(std::size_t pos);
+	ofParameter<char> & getChar(std::size_t pos);
+	ofParameter<string> & getString(std::size_t pos);
+	ofParameter<ofPoint> & getPoint(std::size_t pos);
+	ofParameter<ofVec2f> & getVec2f(std::size_t pos);
+	ofParameter<ofVec3f> & getVec3f(std::size_t pos);
+	ofParameter<ofVec4f> & getVec4f(std::size_t pos);
+	ofParameter<ofColor> & getColor(std::size_t pose);
+	ofParameter<ofShortColor> & getShortColor(std::size_t pos);
+	ofParameter<ofFloatColor> & getFloatColor(std::size_t pos);
+	ofParameterGroup & getGroup(std::size_t pos);
 
-	ofAbstractParameter & get(const string& name) const;
-	ofAbstractParameter & get(std::size_t pos) const;
+	const ofAbstractParameter & get(const string& name) const;
+	const ofAbstractParameter & get(std::size_t pos) const;
 
-	ofAbstractParameter & operator[](const string& name) const;
-	ofAbstractParameter & operator[](std::size_t pos) const;
+	const ofAbstractParameter & operator[](const string& name) const;
+	const ofAbstractParameter & operator[](std::size_t pos) const;
+
+	ofAbstractParameter & get(const string& name);
+	ofAbstractParameter & get(std::size_t pos);
+
+	ofAbstractParameter & operator[](const string& name);
+	ofAbstractParameter & operator[](std::size_t pos);
 
 	template<typename ParameterType>
-	ofParameter<ParameterType> get(const string& name) const;
+	const ofParameter<ParameterType> & get(const string& name) const;
 
 	template<typename ParameterType>
-	ofParameter<ParameterType> get(std::size_t pos) const;
+	const ofParameter<ParameterType> & get(std::size_t pos) const;
+
+	template<typename ParameterType>
+	ofParameter<ParameterType> & get(const string& name);
+
+	template<typename ParameterType>
+	ofParameter<ParameterType> & get(std::size_t pos);
 
 	std::size_t size() const;
 	string getName(std::size_t position) const;
@@ -143,7 +183,7 @@ public:
 	string toString() const;
 	void fromString(const string& name);
 
-	bool contains(const string& name);
+	bool contains(const string& name) const;
 
 	ofAbstractParameter & back();
 	ofAbstractParameter & front();
@@ -199,12 +239,22 @@ private:
 };
 
 template<typename ParameterType>
-ofParameter<ParameterType> ofParameterGroup::get(const string& name) const{
+const ofParameter<ParameterType> & ofParameterGroup::get(const string& name) const{
+	return static_cast<const ofParameter<ParameterType>& >(get(name));
+}
+
+template<typename ParameterType>
+const ofParameter<ParameterType> & ofParameterGroup::get(std::size_t pos) const{
+	return static_cast<const ofParameter<ParameterType>& >(get(pos));
+}
+
+template<typename ParameterType>
+ofParameter<ParameterType> & ofParameterGroup::get(const string& name){
 	return static_cast<ofParameter<ParameterType>& >(get(name));
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> ofParameterGroup::get(std::size_t pos) const{
+ofParameter<ParameterType> & ofParameterGroup::get(std::size_t pos){
 	return static_cast<ofParameter<ParameterType>& >(get(pos));
 }
 
@@ -227,6 +277,18 @@ namespace priv{
 		static T max() { return std::numeric_limits<T>::max(); }
 	};
 
+	template<>
+	struct TypeInfo_<float, true> {
+		static float min() { return 0; }
+		static float max() { return 1; }
+	};
+
+	template<>
+	struct TypeInfo_<double, true> {
+		static float min() { return 0; }
+		static float max() { return 1; }
+	};
+
 	// Types without numeric_limits resolve to this template specialization:
 	template<typename T>
 	struct TypeInfo_<T, false> {
@@ -241,26 +303,26 @@ namespace priv{
 	// Here we provide some of our own specializations:
 	template<>
 	struct TypeInfo <ofVec2f> {
-		static ofVec2f min() { return ofVec2f(std::numeric_limits<float>::lowest()); };
-		static ofVec2f max() { return ofVec3f(std::numeric_limits<float>::max()); };
+		static ofVec2f min() { return ofVec2f(0); }
+		static ofVec2f max() { return ofVec2f(1); }
 	};
 
 	template<>
 	struct TypeInfo <ofVec3f> {
-		static ofVec3f min() { return ofVec3f(std::numeric_limits<float>::lowest()); };
-		static ofVec3f max() { return ofVec3f(std::numeric_limits<float>::max()); };
+		static ofVec3f min() { return ofVec3f(0); }
+		static ofVec3f max() { return ofVec3f(1); }
 	};
 
 	template<>
 	struct TypeInfo <ofVec4f> {
-		static ofVec4f min() { return ofVec4f(std::numeric_limits<float>::lowest()); };
-		static ofVec4f max() { return ofVec4f(std::numeric_limits<float>::max()); };
+		static ofVec4f min() { return ofVec4f(0); }
+		static ofVec4f max() { return ofVec4f(1); }
 	};
 
 	template<typename T>
 	struct TypeInfo <ofColor_<T>> {
-		static ofColor_<T> min() { return ofColor_<T>(0,0); };
-		static ofColor_<T> max() { return ofColor_<T>(ofColor_<T>::limit(),ofColor_<T>::limit()); };
+		static ofColor_<T> min() { return ofColor_<T>(0,0); }
+		static ofColor_<T> max() { return ofColor_<T>(ofColor_<T>::limit(),ofColor_<T>::limit()); }
 	};
 
 
@@ -304,7 +366,7 @@ namespace priv{
 	}
 
 	template<typename ParameterType>
-	typename std::enable_if<!of::priv::has_saving_support<ParameterType>::value, std::string>::type toStringImpl(const ParameterType & value){
+	typename std::enable_if<!of::priv::has_saving_support<ParameterType>::value, std::string>::type toStringImpl(const ParameterType &){
 	    throw std::exception();
 	}
 
@@ -314,7 +376,7 @@ namespace priv{
 	}
 
 	template<typename ParameterType>
-	typename std::enable_if<!of::priv::has_loading_support<ParameterType>::value, ParameterType>::type fromStringImpl(const std::string & str){
+	typename std::enable_if<!of::priv::has_loading_support<ParameterType>::value, ParameterType>::type fromStringImpl(const std::string &){
 	    throw std::exception();
 
 	}
@@ -338,6 +400,7 @@ template<typename ParameterType>
 class ofParameter: public ofAbstractParameter{
 public:
 	ofParameter();
+	ofParameter(const ofParameter<ParameterType> & v);
 	ofParameter(const ParameterType & v);
 	ofParameter(const string& name, const ParameterType & v);
 	ofParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
@@ -367,12 +430,17 @@ public:
 		ofRemoveListener(obj->changedE,listener,method,prio);
 	}
 
+	template<typename... Args>
+	ofEventListener newListener(Args...args) {
+		return obj->changedE.newListener(args...);
+	}
+
 	void enableEvents();
 	void disableEvents();
 	bool isSerializable() const;
 	bool isReadOnly() const;
 
-	void makeReferenceTo(ofParameter<ParameterType> mom);
+	void makeReferenceTo(ofParameter<ParameterType> & mom);
 
 	ofParameter<ParameterType> & operator=(const ofParameter<ParameterType> & v);
 	const ParameterType & operator=(const ParameterType & v);
@@ -427,29 +495,32 @@ public:
 			return shared_ptr<ofParameterGroup::Value>(nullptr);
 		}
 	}
+
+	size_t getNumListeners() const;
+
 private:
 	class Value{
 	public:
 		Value()
 		:min(of::priv::TypeInfo<ParameterType>::min())
-		,max(of::priv::TypeInfo<ParameterType>::min())
+		,max(of::priv::TypeInfo<ParameterType>::max())
 		,bInNotify(false)
-		,serializable(true){};
+		,serializable(true){}
 
 		Value(ParameterType v)
 		:value(v)
 		,min(of::priv::TypeInfo<ParameterType>::min())
-		,max(of::priv::TypeInfo<ParameterType>::min())
+		,max(of::priv::TypeInfo<ParameterType>::max())
 		,bInNotify(false)
-		,serializable(true){};
+		,serializable(true){}
 
 		Value(string name, ParameterType v)
 		:name(name)
 		,value(v)
 		,min(of::priv::TypeInfo<ParameterType>::min())
-		,max(of::priv::TypeInfo<ParameterType>::min())
+		,max(of::priv::TypeInfo<ParameterType>::max())
 		,bInNotify(false)
-		,serializable(true){};
+		,serializable(true){}
 
 		Value(string name, ParameterType v, ParameterType min, ParameterType max)
 		:name(name)
@@ -457,7 +528,7 @@ private:
 		,min(min)
 		,max(max)
 		,bInNotify(false)
-		,serializable(true){};
+		,serializable(true){}
 
 		string name;
 		ParameterType value;
@@ -479,6 +550,11 @@ template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter()
 :obj(std::make_shared<Value>())
 ,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)){}
+
+template<typename ParameterType>
+ofParameter<ParameterType>::ofParameter(const ofParameter<ParameterType> & v)
+:obj(v.obj)
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) {}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const ParameterType & v)
@@ -797,7 +873,7 @@ inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator>>=(cons
 }
 
 template<typename ParameterType>
-void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> mom){
+void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> & mom){
 	obj = mom.obj;
 }
 
@@ -810,6 +886,76 @@ template<typename ParameterType>
 void ofParameter<ParameterType>::setParent(ofParameterGroup & parent){
 	obj->parents.emplace_back(parent.obj);
 }
+
+template<typename ParameterType>
+size_t ofParameter<ParameterType>::getNumListeners() const{
+	return obj->changedE.size();
+}
+
+template<>
+class ofParameter<void>: public ofAbstractParameter{
+public:
+	ofParameter();
+	ofParameter(const std::string& name);
+
+	ofParameter<void>& set(const std::string & name);
+
+	void setName(const std::string & name);
+	std::string getName() const;
+
+	std::string toString() const;
+	void fromString(const std::string & name);
+
+	template<class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method, int prio=OF_EVENT_ORDER_AFTER_APP){
+		ofAddListener(obj->changedE,listener,method,prio);
+	}
+
+	template<class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method, int prio=OF_EVENT_ORDER_AFTER_APP){
+		ofRemoveListener(obj->changedE,listener,method,prio);
+	}
+
+	void trigger();
+
+	void enableEvents();
+	void disableEvents();
+	bool isSerializable() const;
+	bool isReadOnly() const;
+
+	void makeReferenceTo(ofParameter<void> & mom);
+
+	void setSerializable(bool serializable);
+	shared_ptr<ofAbstractParameter> newReference() const;
+
+	void setParent(ofParameterGroup & _parent);
+
+	const ofParameterGroup getFirstParent() const{
+		auto first = std::find_if(obj->parents.begin(),obj->parents.end(),[](weak_ptr<ofParameterGroup::Value> p){return p.lock()!=nullptr;});
+		if(first!=obj->parents.end()){
+			return first->lock();
+		}else{
+			return shared_ptr<ofParameterGroup::Value>(nullptr);
+		}
+	}
+	size_t getNumListeners() const;
+private:
+	class Value{
+	public:
+		Value()
+		:serializable(false){}
+
+		Value(string name)
+		:name(name)
+		,serializable(false){}
+
+		string name;
+		ofEvent<void> changedE;
+		bool serializable;
+		vector<weak_ptr<ofParameterGroup::Value>> parents;
+	};
+	shared_ptr<Value> obj;
+};
 
 
 

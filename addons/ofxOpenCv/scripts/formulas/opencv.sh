@@ -6,10 +6,10 @@
 #
 # uses a CMake build system
  
-FORMULA_TYPES=( "osx" "ios" "vs" "android" "emscripten" )
+FORMULA_TYPES=( "osx" "ios" "tvos" "vs" "android" "emscripten" )
  
 # define the version
-VER=2.4.9
+VER=3.1.0
  
 # tools for git use
 GIT_URL=https://github.com/Itseez/opencv.git
@@ -34,14 +34,6 @@ function download() {
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
   : # noop
-
-  # Patch for Clang for 2.4
-  # https://github.com/Itseez/opencv/commit/35f96d6da76099d80180439c857a4abe5cb17966
-  cd modules/legacy/src
-  if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/patch.calibfilter.cpp.patch 2>/dev/null ; then
-      patch -p0 -u < $FORMULA_DIR/patch.calibfilter.cpp.patch
-  fi
-  cd ../../../
 }
 
 # executed inside the lib src dir
@@ -51,19 +43,18 @@ function build() {
   LIB_FOLDER="$BUILD_DIR/opencv/build/$TYPE/"
 
   if [ "$TYPE" == "osx" ] ; then
-    rm -f CMakeCache.txt
     LOG="$LIB_FOLDER/opencv2-${VER}.log"
     echo "Logging to $LOG"
     mkdir -p $LIB_FOLDER
     cd build
+    rm -f CMakeCache.txt
     echo "Log:" >> "${LOG}" 2>&1
     set +e
     cmake .. -DCMAKE_INSTALL_PREFIX=$LIB_FOLDER \
-      -DGLFW_BUILD_UNIVERSAL=ON \
       -DCMAKE_OSX_DEPLOYMENT_TARGET=10.7 \
       -DENABLE_FAST_MATH=OFF \
-      -DCMAKE_CXX_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3" \
-      -DCMAKE_C_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3" \
+      -DCMAKE_CXX_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3 -fPIC -arch i386 -arch x86_64 -mmacosx-version-min=${OSX_MIN_SDK_VER}" \
+      -DCMAKE_C_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3 -fPIC -arch i386 -arch x86_64 -mmacosx-version-min=${OSX_MIN_SDK_VER}" \
       -DCMAKE_BUILD_TYPE="Release" \
       -DBUILD_SHARED_LIBS=OFF \
       -DBUILD_DOCS=OFF \
@@ -96,32 +87,37 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
+      -DWITH_OPENEXR=OFF \
+      -DWITH_EIGEN=OFF \
       -DBUILD_TESTS=OFF \
-      -DBUILD_PERF_TESTS=OFF | tee ${LOG}
+      -DBUILD_PERF_TESTS=OFF 2>&1 | tee -a ${LOG}
     echo "CMAKE Successful"
     echo "--------------------"
     echo "Running make clean"
 
-    make clean | tee ${LOG}
+    make clean 2>&1 | tee -a ${LOG}
     echo "Make Clean Successful"
 
     echo "--------------------"
     echo "Running make"
-    make -j${PARALLEL_MAKE} | tee ${LOG}
+    make -j${PARALLEL_MAKE} 2>&1 | tee -a ${LOG}
     echo "Make  Successful"
 
     echo "--------------------"
     echo "Running make install"
-    make install | tee ${LOG}
+    make install 2>&1 | tee -a ${LOG}
     echo "Make install Successful"
-    
+
     echo "--------------------"
     echo "Joining all libs in one"
     outputlist="lib/lib*.a"
-    libtool -static $outputlist -o "$LIB_FOLDER/lib/opencv.a" | tee ${LOG}
+    libtool -static $outputlist -o "$LIB_FOLDER/lib/opencv.a" 2>&1 | tee -a ${LOG}
     echo "Joining all libs in one Successful"
-	
+
   elif [ "$TYPE" == "vs" ] ; then
+    unset TMP
+    unset TEMP
+
     rm -f CMakeCache.txt
 	#LIB_FOLDER="$BUILD_DIR/opencv/build/$TYPE"
 	mkdir -p $LIB_FOLDER
@@ -209,7 +205,7 @@ function build() {
 		vs-build "OpenCV.sln" Build "Debug|x64"
 	fi
     
-  elif [ "$TYPE" == "ios" ] ; then
+  elif [[ "$TYPE" == "ios" || "${TYPE}" == "tvos" ]] ; then
 
     local LIB_FOLDER_IOS="$BUILD_ROOT_DIR/$TYPE/iOS/opencv"
     local LIB_FOLDER_IOS_SIM="$BUILD_ROOT_DIR/$TYPE/iOS_SIMULATOR/opencv"
@@ -217,7 +213,12 @@ function build() {
 
     # This was quite helpful as a reference: https://github.com/x2on/OpenSSL-for-iPhone
     # Refer to the other script if anything drastic changes for future versions
-    SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version` 
+    SDKVERSION=""
+    if [[ "${TYPE}" == "tvos" ]]; then 
+        SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`
+    elif [[ "$TYPE" == "ios" ]]; then
+        SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
+    fi
     set -e
     CURRENTPATH=`pwd`
     
@@ -225,7 +226,13 @@ function build() {
     TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
     VERSION=$VER
 
-    local IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
+    local IOS_ARCHS
+    if [[ "${TYPE}" == "tvos" ]]; then 
+        IOS_ARCHS="x86_64 arm64"
+    elif [[ "$TYPE" == "ios" ]]; then
+        IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
+    fi
+
     local STDLIB="libc++"
     echo "--------------------"
     echo $CURRENTPATH
@@ -258,26 +265,52 @@ function build() {
       # make sure backed up
        rm -f CMakeCache.txt
       MIN_IOS_VERSION=$IOS_MIN_SDK_VER
-        # min iOS version for arm64 is iOS 7
+      # min iOS version for arm64 is iOS 7
+  
+      if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
+        MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
+      elif [[ "${IOS_ARCH}" == "i386" ]]; then
+        MIN_IOS_VERSION=7.0 # 6.0 to prevent start linking errors
+      fi
 
-        if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
-          MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
-        elif [ "${IOS_ARCH}" == "i386" ]; then
-          MIN_IOS_VERSION=5.1 # 6.0 to prevent start linking errors
-        fi
-        export IPHONE_SDK_VERSION_MIN=$IOS_MIN_SDK_VER
+      if [[ "${TYPE}" == "tvos" ]]; then 
+      MIN_TYPE=-mtvos-version-min=
+      if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
+        MIN_TYPE=-mtvos-simulator-version-min=
+      fi
+      elif [[ "$TYPE" == "ios" ]]; then
+          MIN_TYPE=-miphoneos-version-min=
+          if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
+              MIN_TYPE=-mios-simulator-version-min=
+          fi
+      fi
 
       
       echo "The compiler: $THECOMPILER"
-      MIN_TYPE=-miphoneos-version-min=
+
       if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
       then
-        PLATFORM="iPhoneSimulator"
-        ISSIM="TRUE"
-        MIN_TYPE=-mios-simulator-version-min=
+        if [[ "${TYPE}" == "tvos" ]]; then 
+            PLATFORM="AppleTVSimulator"
+            ISSIM="TRUE"
+        elif [[ "$TYPE" == "ios" ]]; then
+            PLATFORM="iPhoneSimulator"
+            ISSIM="TRUE"
+        fi
       else
-        PLATFORM="iPhoneOS"
-        ISSIM="FALSE"
+        if [[ "${TYPE}" == "tvos" ]]; then 
+            PLATFORM="AppleTVOS"
+            ISSIM="FALSE"
+        elif [[ "$TYPE" == "ios" ]]; then
+            PLATFORM="iPhoneOS"
+            ISSIM="FALSE"
+        fi
+      fi
+
+      BITCODE=""
+      if [[ "$TYPE" == "tvos" ]]; then
+          BITCODE=-fembed-bitcode;
+          MIN_IOS_VERSION=9.0
       fi
 
       
@@ -292,7 +325,7 @@ function build() {
 
       isBuilding=true;
       echo "Log:" >> "${LOG}" 2>&1
-      while $isBuilding; do theTail="$(tail -n 1 ${LOG})"; echo $theTail | cut -c -70 ; echo "...";sleep 30; done & # fix for 10 min time out travis
+     # while $isBuilding; do theTail="$(tail -n 1 ${LOG})"; echo $theTail | cut -c -70 ; echo "...";sleep 30; done & # fix for 10 min time out travis
 
 
 
@@ -314,8 +347,8 @@ function build() {
       -DCMAKE_XCODE_EFFECTIVE_PLATFORMS="-$PLATFORM" \
       -DGLFW_BUILD_UNIVERSAL=ON \
       -DENABLE_FAST_MATH=OFF \
-      -DCMAKE_CXX_FLAGS="-stdlib=libc++ -fvisibility=hidden -fPIC -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -DNDEBUG -Os $MIN_TYPE$IPHONE_SDK_VERSION_MIN" \
-      -DCMAKE_C_FLAGS="-stdlib=libc++ -fvisibility=hidden -fPIC -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -DNDEBUG -Os $MIN_TYPE$IPHONE_SDK_VERSION_MIN"  \
+      -DCMAKE_CXX_FLAGS="-stdlib=libc++ -fvisibility=hidden $BITCODE -fPIC -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -DNDEBUG -Os $MIN_TYPE$MIN_IOS_VERSION" \
+      -DCMAKE_C_FLAGS="-stdlib=libc++ -fvisibility=hidden $BITCODE -fPIC -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -DNDEBUG -Os $MIN_TYPE$MIN_IOS_VERSION"  \
       -DCMAKE_BUILD_TYPE="Release" \
       -DBUILD_SHARED_LIBS=OFF \
       -DBUILD_DOCS=OFF \
@@ -348,6 +381,9 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
+      -DWITH_EIGEN=OFF \
+      -DWITH_OPENEXR=OFF \
+      -DBUILD_OPENEXR=OFF \
       -DBUILD_TESTS=OFF \
       -DBUILD_PERF_TESTS=OFF >> "${LOG}" 2>&1
 
@@ -410,15 +446,20 @@ function build() {
     mkdir -p lib/$TYPE
     echo "--------------------"
     echo "Creating Fat Libs"
-    cd build/iOS
+    cd "build/$TYPE"
     # link into universal lib, strip "lib" from filename
     local lib
-    rm -rf i386/lib/pkgconfig
+    rm -rf arm64/lib/pkgconfig
 
-    for lib in $( ls -1 i386/lib) ; do
+    for lib in $( ls -1 arm64/lib) ; do
       local renamedLib=$(echo $lib | sed 's|lib||')
       if [ ! -e $renamedLib ] ; then
-        lipo -c armv7/lib/$lib arm64/lib/$lib i386/lib/$lib x86_64/lib/$lib -o "$CURRENTPATH/lib/$TYPE/$renamedLib"
+        echo "renamed";
+        if [[ "${TYPE}" == "tvos" ]] ; then 
+          lipo -c arm64/lib/$lib x86_64/lib/$lib -o "$CURRENTPATH/lib/$TYPE/$renamedLib"
+        elif [[ "$TYPE" == "ios" ]]; then
+          lipo -c armv7/lib/$lib arm64/lib/$lib i386/lib/$lib x86_64/lib/$lib -o "$CURRENTPATH/lib/$TYPE/$renamedLib"
+        fi  
       fi
     done
 
@@ -489,7 +530,11 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
+      -DWITH_EIGEN=OFF \
       -DBUILD_TESTS=OFF \
+      -DANDROID_STL=c++_static \
+      -DANDROID_TOOLCHAIN_NAME=arm-linux-androideabi-clang3.6 \
+      -DANDROID_NATIVE_API_LEVEL=android-19 \
       -DBUILD_PERF_TESTS=OFF
     cd build_android_arm
     make -j${PARALLEL_MAKE}
@@ -527,7 +572,11 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
+      -DWITH_EIGEN=OFF \
       -DBUILD_TESTS=OFF \
+      -DANDROID_STL=c++_static \
+      -DANDROID_TOOLCHAIN_NAME=x86-clang3.6 \
+      -DANDROID_NATIVE_API_LEVEL=android-19 \
       -DBUILD_PERF_TESTS=OFF
     cd build_android_x86
     make -j${PARALLEL_MAKE}
@@ -569,6 +618,7 @@ function build() {
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
+      -DWITH_EIGEN=OFF \
       -DBUILD_TESTS=OFF \
       -DBUILD_PERF_TESTS=OFF
     make -j${PARALLEL_MAKE}
@@ -600,23 +650,23 @@ function copy() {
 	
   elif [ "$TYPE" == "vs" ] ; then 
 		if [ $ARCH == 32 ] ; then
-			mkdir -p $1/lib/$TYPE/Win32
-			#copy the cv libs
-			cp -v build_vs_32/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
-			cp -v build_vs_32/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
-			#copy the zlib 
-			cp -v build_vs_32/3rdparty/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
-			cp -v build_vs_32/3rdparty/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
+      DEPLOY_PATH="$1/lib/$TYPE/Win32"
 		elif [ $ARCH == 64 ] ; then
-			mkdir -p $1/lib/$TYPE/x64
-			#copy the cv libs
-			cp -v build_vs_64/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
-			cp -v build_vs_64/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
-			#copy the zlib 
-			cp -v build_vs_64/3rdparty/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
-			cp -v build_vs_64/3rdparty/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
+			DEPLOY_PATH="$1/lib/$TYPE/x64"
 		fi
-  elif [ "$TYPE" == "ios" ] ; then
+      mkdir -p "$DEPLOY_PATH/Release"
+      mkdir -p "$DEPLOY_PATH/Debug"
+      # now make sure the target directories are clean.
+      rm -Rf "${DEPLOY_PATH}/Release/*"
+      rm -Rf "${DEPLOY_PATH}/Debug/*"
+      #copy the cv libs
+      cp -v build_vs_${ARCH}/lib/Release/*.lib "${DEPLOY_PATH}/Release"
+      cp -v build_vs_${ARCH}/lib/Debug/*.lib "${DEPLOY_PATH}/Debug"
+      #copy the zlib 
+      cp -v build_vs_${ARCH}/3rdparty/lib/Release/*.lib "${DEPLOY_PATH}/Release"
+      cp -v build_vs_${ARCH}/3rdparty/lib/Debug/*.lib "${DEPLOY_PATH}/Debug"
+
+  elif [[ "$TYPE" == "ios" || "$TYPE" == "tvos" ]] ; then
     # Standard *nix style copy.
     # copy headers
 
@@ -636,6 +686,13 @@ function copy() {
     rm -f platforms/build_android_x86/lib/x86/*pch_dephelp.a
     rm -f platforms/build_android_x86/lib/x86/*.so
     cp -r platforms/build_android_x86/lib/x86 $1/lib/$TYPE/
+  elif [ "$TYPE" == "emscripten" ]; then
+    cp -r include/opencv $1/include/
+    cp -r include/opencv2 $1/include/
+    
+    rm -f build_emscripten/lib/*pch_dephelp.a
+    rm -f build_emscripten/lib/*.so
+    cp -r build_emscripten/lib/*.a $1/lib/$TYPE/
   fi
 
   # copy license file
@@ -648,6 +705,8 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
   if [ "$TYPE" == "osx" ] ; then
+    make clean;
+  elif [[ "$TYPE" == "ios" || "$TYPE" == "tvos" ]] ; then
     make clean;
   fi
 }
