@@ -3,13 +3,8 @@
  */
 
 #include "AVFoundationVideoGrabber.h"
-
-#import <UIKit/UIKit.h>
-#import <AVFoundation/AVFoundation.h>
-#import <CoreGraphics/CoreGraphics.h>
 #include "ofxiOSExtras.h"
-#import <CoreVideo/CoreVideo.h>
-#import <CoreMedia/CoreMedia.h>
+#include "ofAppRunner.h"
 
 #define IS_IOS_7_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
 #define IS_IOS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
@@ -247,7 +242,7 @@
 	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
 	int i=0;
 	for (AVCaptureDevice * captureDevice in devices){
-        deviceNames.push_back(ofxNSStringToString(captureDevice.localizedName));
+        deviceNames.push_back([captureDevice.localizedName UTF8String]);
 		 ofLogNotice() << "Device: " << i << ": " << deviceNames.back();
 		i++;
     }

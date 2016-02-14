@@ -1,10 +1,6 @@
 #pragma once
 
-#include "ofMain.h"
 #include "ofxiOS.h"
-#include "ofxiOSExtras.h"
-#include "ofMain.h"
-
 #include "ofxXmlSettings.h"
 
 #define NUM_PTS 800

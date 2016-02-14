@@ -231,7 +231,7 @@ all:
 	
 $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags: force
 	@mkdir -p $(OF_CORE_OBJ_OUTPUT_PATH)
-	@echo '$(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)' | cmp -s - $@ || echo '$(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)' > $@
+	@if [ "$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))" != "$(strip $$(cat $@))" ]; then echo $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))> $@; fi
 	
 
 #This rule does the compilation

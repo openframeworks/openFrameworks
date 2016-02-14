@@ -5,7 +5,7 @@
 # http://sourceforge.net/projects/kissfft/
 #
 # has a Makefile
-FORMULA_TYPES=( "osx" "linux" "linux64" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "linux" "linux64" "msys2" "ios" "android" )
 
 # define the version
 VER=130

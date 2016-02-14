@@ -1,6 +1,4 @@
 
-#import <AVFoundation/AVFoundation.h>
-
 #include "ofApp.h"
 
 //  IMPORTANT!!! if your sound doesn't work in the simulator

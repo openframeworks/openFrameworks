@@ -68,7 +68,7 @@ common:
 	# a specific platform
     # ADDON_INCLUDES_EXCLUDE = 
 	
-win_cb:
+msys2:
 	# when parsing the file system looking for sources exclude this for all or
 	# a specific platform
 	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/posix/%

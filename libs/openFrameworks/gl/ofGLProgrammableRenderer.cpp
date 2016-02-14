@@ -74,12 +74,7 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
 	currentFramebufferId = 0;
 	defaultFramebufferId = 0;
 	path.setMode(ofPath::POLYLINES);
-	path.setUseShapeColor(false);
-
-}
-
-ofGLProgrammableRenderer::~ofGLProgrammableRenderer() {
-	
+    path.setUseShapeColor(false);
 }
 
 //----------------------------------------------------------
@@ -669,6 +664,7 @@ void ofGLProgrammableRenderer::setCircleResolution(int res){
 	currentStyle.circleResolution = res; 
 }
 
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::setPolyMode(ofPolyWindingMode mode){
 	currentStyle.polyMode = mode;
 	path.setPolyWindingMode(mode);
@@ -809,6 +805,7 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 
 }
 
+//----------------------------------------------------------
 ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
 	switch (matrixMode_) {
 		case OF_MATRIX_MODELVIEW:
@@ -850,7 +847,7 @@ void ofGLProgrammableRenderer::setColor(int _r, int _g, int _b){
 void ofGLProgrammableRenderer::setColor(int _r, int _g, int _b, int _a){
 	ofColor newColor(_r,_g,_b,_a);
 	if(newColor!=currentStyle.color){
-		currentStyle.color = newColor;
+        currentStyle.color = newColor;
 		if(currentShader){
 			currentShader->setUniform4f(COLOR_UNIFORM,_r/255.,_g/255.,_b/255.,_a/255.);
 		}
@@ -1221,7 +1218,7 @@ void ofGLProgrammableRenderer::enableTextureTarget(const ofTexture & tex, int te
 	}
 
 	if((currentTextureTarget!=OF_NO_TEXTURE) && currentShader){
-		currentShader->setUniformTexture("src_tex_unit"+ofToString(textureLocation),tex.texData.textureTarget,tex.texData.textureID,textureLocation);
+		currentShader->setUniformTexture("src_tex_unit"+ofToString(textureLocation),tex,textureLocation);
 	}
 }
 
@@ -1271,9 +1268,9 @@ void ofGLProgrammableRenderer::disableAlphaMask(){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofShader & shader){
-	if(currentShader && *currentShader==shader){
+    if(currentShader && *currentShader==shader){
 		return;
-	}
+    }
 	glUseProgram(shader.getProgram());
 
 	currentShader = &shader;
@@ -1369,12 +1366,41 @@ void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofBaseMaterial & material){
-	currentMaterial = &material;
+    currentMaterial = &material;
+    // FIXME: this invalidates the previous shader to avoid that
+    // when binding 2 materials one after another, the second won't
+    // get the right parameters.
+    currentShader = nullptr;
+    beginDefaultShader();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::unbind(const ofBaseMaterial & material){
-	currentMaterial = nullptr;
+void ofGLProgrammableRenderer::unbind(const ofBaseMaterial &){
+    currentMaterial = nullptr;
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::enableLighting(){
+
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::disableLighting(){
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::enableLight(int){
+
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::disableLight(int){
+
+}
+
+//----------------------------------------------------------
+bool ofGLProgrammableRenderer::getLightingEnabled(){
+    return true;
 }
 
 //----------------------------------------------------------
@@ -1472,7 +1498,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 	const ofShader * nextShader = nullptr;
 
 	if(!uniqueShader || currentMaterial){
-		if(currentMaterial){
+        if(currentMaterial){
 			nextShader = &currentMaterial->getShader(currentTextureTarget,*this);
 
 		}else if(bitmapStringEnabled){
@@ -1491,6 +1517,11 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 			case OF_NO_TEXTURE:
 				nextShader = &defaultNoTexColor;
 				break;
+	#ifdef TARGET_ANDROID
+			case GL_TEXTURE_EXTERNAL_OES:
+				nextShader = &defaultOESTexColor;
+				break;
+	#endif
 			}
 
 		}else if(colorsEnabled){
@@ -1509,6 +1540,11 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 			case OF_NO_TEXTURE:
 				nextShader = &defaultNoTexNoColor;
 				break;
+	#ifdef TARGET_ANDROID
+			case GL_TEXTURE_EXTERNAL_OES:
+				nextShader = &defaultOESTexNoColor;
+				break;
+	#endif
 			}
 
 		}else{
@@ -1520,7 +1556,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 	}
 
 	if(nextShader){
-		if(!currentShader || *currentShader!=*nextShader){
+        if(!currentShader || *currentShader!=*nextShader){
 			settingDefaultShader = true;
 			bind(*nextShader);
 			settingDefaultShader = false;
@@ -1797,12 +1833,14 @@ void ofGLProgrammableRenderer::drawString(const ofTrueTypeFont & font, string te
 
 #ifdef TARGET_OPENGLES
 static const string vertex_shader_header =
+		"%extensions%\n"
 		"precision mediump float;\n"
 		"#define IN attribute\n"
 		"#define OUT varying\n"
 		"#define TEXTURE texture2D\n"
 		"#define TARGET_OPENGLES\n";
 static const string fragment_shader_header =
+		"%extensions%\n"
 		"precision mediump float;\n"
 		"#define IN varying\n"
 		"#define OUT\n"
@@ -1950,13 +1988,48 @@ static const string defaultFragmentShaderTex2DNoColor = fragment_shader_header +
 	uniform float usingTexture;
 	uniform float usingColors;
 	uniform vec4 globalColor;
+
+	IN float depth;
+	IN vec4 colorVarying;
+	IN vec2 texCoordVarying;
+	void main(){
+		FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
+	}
+);
+
+// ----------------------------------------------------------------------
+
+static const string defaultFragmentShaderOESTexNoColor = fragment_shader_header + STRINGIFY(
+    
+    uniform samplerExternalOES src_tex_unit0;
+    uniform float usingTexture;
+    uniform float usingColors;
+    uniform vec4 globalColor;
+    
+    IN float depth;
+    IN vec4 colorVarying;
+    IN vec2 texCoordVarying;
+    
+    void main(){
+        FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
+    }
+);
+
+// ----------------------------------------------------------------------
+
+static const string defaultFragmentShaderOESTexColor = fragment_shader_header + STRINGIFY(
+																							
+	uniform samplerExternalOES src_tex_unit0;
+	uniform float usingTexture;
+	uniform float usingColors;
+	uniform vec4 globalColor;
 	
 	IN float depth;
 	IN vec4 colorVarying;
 	IN vec2 texCoordVarying;
 	
 	void main(){
-		FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
+		FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * colorVarying;
 	}
 );
 
@@ -2195,6 +2268,8 @@ static string defaultShaderHeader(string header, GLenum textureTarget, int major
 	}else{
 		ofStringReplace(header,"%extensions%","");
 	}
+#else 
+	ofStringReplace(header,"%extensions%","");
 #endif
 	if(textureTarget==GL_TEXTURE_2D){
 		header += "#define SAMPLER sampler2D\n";
@@ -2214,9 +2289,20 @@ static string shaderSource(const string & src, int major, int minor){
 	}else{
 		ofStringReplace(shaderSrc,"%extensions%","");
 	}
+#else
+	ofStringReplace(shaderSrc,"%extensions%","");
 #endif
 	return shaderSrc;
 }
+
+#ifdef TARGET_ANDROID
+static string shaderOESSource(const string & src, int major, int minor){
+	string shaderSrc = src;
+	ofStringReplace(shaderSrc,"%glsl_version%",ofGLSLVersionFromGL(major,minor));
+	ofStringReplace(shaderSrc,"%extensions%","#extension GL_OES_EGL_image_external : require");
+	return shaderSrc;
+}
+#endif
 
 static string videoFragmentShaderSource(const ofBaseVideoDraws & video, int major, int minor){
 	string src;
@@ -2358,6 +2444,20 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor){
 
 		bitmapStringShader.bindDefaults();
 		bitmapStringShader.linkProgram();
+		
+		
+#ifdef TARGET_ANDROID
+		defaultOESTexNoColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderOESSource(defaultVertexShader,major, minor));
+		defaultOESTexColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderOESSource(defaultVertexShader,major, minor));
+		defaultOESTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderOESSource(defaultFragmentShaderOESTexColor,major, minor));
+		defaultOESTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderOESSource(defaultFragmentShaderOESTexNoColor,major, minor));
+		
+		defaultOESTexColor.bindDefaults();
+		defaultOESTexNoColor.bindDefaults();
+		
+		defaultOESTexColor.linkProgram();
+		defaultOESTexNoColor.linkProgram();
+#endif
 	}
 
 	setupGraphicDefaults();

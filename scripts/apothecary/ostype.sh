@@ -12,7 +12,7 @@ if [ "$OS" == "darwin" ]; then
 elif [ "$OS" == "windowsnt" ] ; then
 	OS="vs"
 elif [ "${OS:0:5}" == "mingw" -o "$OS" == "msys_nt-6.3" ]; then
-	OS="win_cb"
+	OS="msys2"
 elif [ "$OS" == "linux" ]; then
 	ARCH=`uname -m`
 	if [ "$ARCH" == "i386" -o "$ARCH" == "i686" ] ; then

@@ -26,8 +26,11 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
     ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): loading \"" << file.getFileName()
 		<< "\" from \"" << file.getEnclosingDirectory() << "\"";
     
-    if(scene != NULL){
+    if(scene.get() != nullptr){
         clear();
+		// we reset the shared_ptr explicitly here, to force the old 
+		// aiScene to be deleted **before** a new aiScene is created.
+		scene.reset();
     }
     
     // sets various properties & flags to a default preference
@@ -45,8 +48,11 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
     
     ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): loading from memory buffer \"." << extension << "\"";
     
-    if(scene != NULL){
+    if(scene.get() != nullptr){
         clear();
+		// we reset the shared_ptr explicitly here, to force the old 
+		// aiScene to be deleted **before** a new aiScene is created.
+		scene.reset();
     }
     
     // sets various properties & flags to a default preference
@@ -59,11 +65,8 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
     return bOk;
 }
 
-unsigned int ofxAssimpModelLoader::initImportProperties(bool optimize) {
-    store.reset();
-    
-    aiPropertyStore * storePtr = aiCreatePropertyStore();
-    store = ( shared_ptr <aiPropertyStore> )storePtr;
+unsigned int ofxAssimpModelLoader::initImportProperties(bool optimize) {    
+    store.reset(aiCreatePropertyStore(), aiReleasePropertyStore);
     
     // only ever give us triangles.
     aiSetImportPropertyInteger(store.get(), AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
@@ -91,10 +94,7 @@ bool ofxAssimpModelLoader::processScene() {
             ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): scene has " << getAnimationCount() << "animations";
         else {
             ofLogVerbose("ofxAssimpModelLoader") << "loadMode(): no animations";
-        }
-        
-        ofAddListener(ofEvents().exit,this,&ofxAssimpModelLoader::onAppExit);
-        
+        }       
         
         return true;
     }else{
@@ -106,14 +106,6 @@ bool ofxAssimpModelLoader::processScene() {
     return false;
 }
 
-// automatic destruction on app exit makes the app crash because of some bug in assimp
-// this is a hack to clear every object on the exit callback of the application
-// FIXME: review when there's an update of assimp
-//-------------------------------------------
-void ofxAssimpModelLoader::onAppExit(ofEventArgs & args){
-	clear();
-	scene.reset();
-}
 
 //-------------------------------------------
 void ofxAssimpModelLoader::createEmptyModel(){
@@ -143,8 +135,13 @@ void ofxAssimpModelLoader::calculateDimensions(){
 	normalizedScale = scene_max.x-scene_min.x;
 	normalizedScale = MAX(scene_max.y - scene_min.y,normalizedScale);
 	normalizedScale = MAX(scene_max.z - scene_min.z,normalizedScale);
-	normalizedScale = 1.f / normalizedScale;
-	normalizedScale *= normalizeFactor;
+    if (abs(normalizedScale) < std::numeric_limits<float>::epsilon()){
+        ofLogWarning("ofxAssimpModelLoader") << "Error calculating normalized scale of scene" << endl;
+        normalizedScale = 1.0;
+    } else {
+        normalizedScale = 1.f / normalizedScale;
+        normalizedScale *= normalizeFactor;
+    }
     
     updateModelMatrix();
 }
@@ -289,9 +286,17 @@ void ofxAssimpModelLoader::loadGLResources(){
         meshHelper.validCache = true;
         meshHelper.hasChanged = false;
 
-        meshHelper.animatedPos.resize(mesh->mNumVertices);
-        if(mesh->HasNormals()){
-        	meshHelper.animatedNorm.resize(mesh->mNumVertices);
+		int numOfAnimations = scene->mNumAnimations;
+		for (int i = 0; i<numOfAnimations; i++) {
+			aiAnimation * animation = scene->mAnimations[i];
+			animations.push_back(ofxAssimpAnimation(scene, animation));
+		}
+
+        if(hasAnimations()){
+			meshHelper.animatedPos.resize(mesh->mNumVertices);
+			if(mesh->HasNormals()){
+				meshHelper.animatedNorm.resize(mesh->mNumVertices);
+			}
         }
 
 
@@ -335,11 +340,7 @@ void ofxAssimpModelLoader::loadGLResources(){
         //modelMeshes.push_back(meshHelper);
     }
     
-    int numOfAnimations = scene->mNumAnimations;
-    for(int i=0; i<numOfAnimations; i++) {
-        aiAnimation * animation = scene->mAnimations[i];
-        animations.push_back(ofxAssimpAnimation(scene, animation));
-    }
+
 
     ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): finished";
 }
@@ -370,7 +371,6 @@ void ofxAssimpModelLoader::clear(){
     textures.clear();
 
     updateModelMatrix();
-    ofRemoveListener(ofEvents().exit,this,&ofxAssimpModelLoader::onAppExit);
 }
 
 //------------------------------------------- update.
@@ -413,6 +413,9 @@ void ofxAssimpModelLoader::updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix)
 }
 
 void ofxAssimpModelLoader::updateBones() {
+    if (!hasAnimations()){
+        return;
+    }
     // update mesh position for the animation
 	for(unsigned int i=0; i<modelMeshes.size(); ++i) {
 		// current mesh we are introspecting
@@ -477,9 +480,11 @@ void ofxAssimpModelLoader::updateGLResources(){
     for (unsigned int i = 0; i < modelMeshes.size(); ++i){
     	if(modelMeshes[i].hasChanged){
 			const aiMesh* mesh = modelMeshes[i].mesh;
-			modelMeshes[i].vbo.updateVertexData(&modelMeshes[i].animatedPos[0].x,mesh->mNumVertices);
-			if(mesh->HasNormals()){
-                modelMeshes[i].vbo.updateNormalData(&modelMeshes[i].animatedNorm[0].x,mesh->mNumVertices);
+			if(hasAnimations()){
+				modelMeshes[i].vbo.updateVertexData(&modelMeshes[i].animatedPos[0].x,mesh->mNumVertices);
+				if(mesh->HasNormals()){
+					modelMeshes[i].vbo.updateNormalData(&modelMeshes[i].animatedNorm[0].x,mesh->mNumVertices);
+				}
 			}
 			modelMeshes[i].hasChanged = false;
     	}
@@ -619,17 +624,32 @@ void ofxAssimpModelLoader::getBoundingBoxWithMinVector( aiVector3D* min, aiVecto
 
 //-------------------------------------------
 void ofxAssimpModelLoader::getBoundingBoxForNode(const ofxAssimpMeshHelper & mesh, aiVector3D* min, aiVector3D* max){
-	for (auto & animPos: mesh.animatedPos){
-		auto tmp = ofVec3f(animPos.x,animPos.y,animPos.z) * mesh.matrix;
-		
-		min->x = MIN(min->x,tmp.x);
-		min->y = MIN(min->y,tmp.y);
-		min->z = MIN(min->z,tmp.z);
+    if (!hasAnimations()){
+        for (size_t i=0; i<mesh.mesh->mNumVertices; i++){
+            auto vertex = mesh.mesh->mVertices[i];
+            auto tmp = ofVec3f(vertex.x,vertex.y,vertex.z) * mesh.matrix;
+            
+            min->x = MIN(min->x,tmp.x);
+            min->y = MIN(min->y,tmp.y);
+            min->z = MIN(min->z,tmp.z);
+            
+            max->x = MAX(max->x,tmp.x);
+            max->y = MAX(max->y,tmp.y);
+            max->z = MAX(max->z,tmp.z);
+        }
+    } else {
+        for (auto & animPos: mesh.animatedPos){
+            auto tmp = ofVec3f(animPos.x,animPos.y,animPos.z) * mesh.matrix;
+            
+            min->x = MIN(min->x,tmp.x);
+            min->y = MIN(min->y,tmp.y);
+            min->z = MIN(min->z,tmp.z);
 
-		max->x = MAX(max->x,tmp.x);
-		max->y = MAX(max->y,tmp.y);
-		max->z = MAX(max->z,tmp.z);
-	}
+            max->x = MAX(max->x,tmp.x);
+            max->y = MAX(max->y,tmp.y);
+            max->z = MAX(max->z,tmp.z);
+        }
+    }
 }
 
 //-------------------------------------------
@@ -702,6 +722,10 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
     ofPushMatrix();
     ofMultMatrix(modelMatrix);
     
+#ifndef TARGET_OPENGLES
+        glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+#endif
+    
     for(unsigned int i=0; i<modelMeshes.size(); i++) {
         ofxAssimpMeshHelper & mesh = modelMeshes[i];
         
@@ -726,6 +750,7 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
         }
         
         ofEnableBlendMode(mesh.blendMode);
+        
 #ifndef TARGET_OPENGLES
         mesh.vbo.drawElements(GL_TRIANGLES,mesh.indices.size());
 #else
@@ -734,6 +759,8 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
 		    	mesh.vbo.drawElements(GL_TRIANGLES,mesh.indices.size());
 		    	break;
 		    case OF_MESH_WIREFRAME:
+                //note this won't look the same as on non ES renderers.
+                //there is no easy way to convert GL_TRIANGLES to outlines for each triangle
 		    	mesh.vbo.drawElements(GL_LINES,mesh.indices.size());
 		    	break;
 		    case OF_MESH_POINTS:
@@ -754,6 +781,13 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
         
         ofPopMatrix();
     }
+    
+    #ifndef TARGET_OPENGLES
+        //set the drawing mode back to FILL if its drawn the model with a different mode.
+        if( renderType != OF_MESH_FILL ){
+            glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(OF_MESH_FILL));
+        }
+    #endif
 
     ofPopMatrix();
     ofPopStyle();
@@ -815,8 +849,10 @@ ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(string name){
 			if(!modelMeshes[i].validCache){
 				modelMeshes[i].cachedMesh.clearVertices();
 				modelMeshes[i].cachedMesh.clearNormals();
-				modelMeshes[i].cachedMesh.addVertices(aiVecVecToOfVecVec(modelMeshes[i].animatedPos));
-				modelMeshes[i].cachedMesh.addNormals(aiVecVecToOfVecVec(modelMeshes[i].animatedNorm));
+				if(hasAnimations()){
+					modelMeshes[i].cachedMesh.addVertices(aiVecVecToOfVecVec(modelMeshes[i].animatedPos));
+					modelMeshes[i].cachedMesh.addNormals(aiVecVecToOfVecVec(modelMeshes[i].animatedNorm));
+				}
 				modelMeshes[i].validCache = true;
 			}
 			return modelMeshes[i].cachedMesh;

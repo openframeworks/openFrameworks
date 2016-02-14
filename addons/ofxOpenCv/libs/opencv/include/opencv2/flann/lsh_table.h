@@ -153,8 +153,10 @@ public:
      * @param feature_size is the size of the feature (considered as a ElementType[])
      * @param key_size is the number of bits that are turned on in the feature
      */
-    LshTable(unsigned int /*feature_size*/, unsigned int /*key_size*/)
+    LshTable(unsigned int feature_size, unsigned int key_size)
     {
+        (void)feature_size;
+        (void)key_size;
         std::cerr << "LSH is not implemented for that type" << std::endl;
         assert(0);
     }
@@ -266,9 +268,7 @@ private:
         const size_t key_size_upper_bound = std::min(sizeof(BucketKey) * CHAR_BIT + 1, sizeof(size_t) * CHAR_BIT);
         if (key_size < key_size_lower_bound || key_size >= key_size_upper_bound)
         {
-            std::stringstream errorMessage;
-            errorMessage << "Invalid key_size (=" << key_size << "). Valid values for your system are " << key_size_lower_bound << " <= key_size < " << key_size_upper_bound << ".";
-            CV_Error(CV_StsBadArg, errorMessage.str());
+            CV_Error(cv::Error::StsBadArg, cv::format("Invalid key_size (=%d). Valid values for your system are %d <= key_size < %d.", (int)key_size, (int)key_size_lower_bound, (int)key_size_upper_bound));
         }
 
         speed_level_ = kHash;

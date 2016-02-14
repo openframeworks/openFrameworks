@@ -28,11 +28,8 @@
  *
  * ***********************************************************************/ 
 
-#include <Availability.h>
-
-
-#import "ofxiOSMapKitDelegate.h"
-#import "ofxiOSMapKit.h"
+#include "ofxiOSMapKitDelegate.h"
+#include "ofxiOSMapKit.h"
 
 @implementation ofxiOSMapKitDelegate
 

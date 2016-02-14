@@ -30,7 +30,14 @@
  * ***********************************************************************/ 
 
 
-#import "ofxiOSExtras.h"
+#include "ofxiOSExtras.h"
+#include "ofxiOSAppDelegate.h"
+#include "ofxiOSViewController.h"
+#include "ofxiOSEAGLView.h"
+#include "ofAppiOSWindow.h"
+#include "ofAppRunner.h"
+#include "ofImage.h"
+#include <sys/sysctl.h>
 
 //--------------------------------------------------------------
 ofxiOSDeviceType ofxiOSGetDeviceType() {
@@ -117,13 +124,13 @@ ofxiOSDeviceInfo ofxiOSGetDeviceInfo(){
 }
 
 //--------------------------------------------------------------
-UIWindow *ofxiOSGetUIWindow() {
+UIWindow * ofxiOSGetUIWindow() {
 	return [[UIApplication sharedApplication] keyWindow];
 }
 
 
 //--------------------------------------------------------------
-ofxiOSEAGLView *ofxiOSGetGLView() {
+ofxiOSEAGLView * ofxiOSGetGLView() {
 	return [ofxiOSEAGLView getInstance];
 }
 
@@ -133,18 +140,18 @@ UIView * ofxiOSGetGLParentView() {
 }
 
 //--------------------------------------------------------------
-ofAppiOSWindow* ofxiOSGetOFWindow() {
+ofAppiOSWindow * ofxiOSGetOFWindow() {
 	return ofAppiOSWindow::getInstance();
 }
 
 
 //--------------------------------------------------------------
-ofxiOSAppDelegate *ofxiOSGetAppDelegate() {
+ofxiOSAppDelegate * ofxiOSGetAppDelegate() {
 	return [[UIApplication sharedApplication] delegate];
 }
 
 //--------------------------------------------------------------
-ofxiOSViewController *ofxiOSGetViewController() {
+ofxiOSViewController * ofxiOSGetViewController() {
 	return [ofxiOSGetAppDelegate() glViewController];
 }
 
@@ -217,18 +224,18 @@ UIDeviceOrientation ofxiOSGetOrientation() {
 
 
 //--------------------------------------------------------------
-bool ofxiOSBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture) {
+bool ofxiOSBundleImageToGLTexture(NSString * filename, GLuint * spriteTexture) {
 	return ofxiOSUIImageToGLTexture([UIImage imageNamed:filename], spriteTexture);
 }
 
 
 //--------------------------------------------------------------
-bool ofxiOSUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
+bool ofxiOSUIImageToGLTexture(UIImage * uiImage, GLuint * spriteTexture) {
 	if(!uiImage) return false;
 	
 	CGImageRef cgImage;
 	CGContextRef spriteContext;
-	GLubyte *pixels;
+	GLubyte * pixels;
 	size_t	width, height;
 	
 	// Creates a Core Graphics image from an image file
@@ -264,7 +271,7 @@ bool ofxiOSUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
 
 
 //--------------------------------------------------------------
-bool ofxiOSUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth, int targetHeight) {
+bool ofxiOSUIImageToOFImage(UIImage * uiImage, ofImage & outImage, int targetWidth, int targetHeight) {
 	if(uiImage == nil) {
         return false;
     }
@@ -332,7 +339,7 @@ bool ofxiOSUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth
 }
 
 //--------------------------------------------------------------
-bool ofxiOSUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int targetWidth, int targetHeight) {
+bool ofxiOSUIImageToOFTexture(UIImage * uiImage, ofTexture & outTexture, int targetWidth, int targetHeight) {
 	if(!uiImage) return false;
 	
 	CGContextRef spriteContext;
@@ -345,7 +352,7 @@ bool ofxiOSUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int targe
 	int height			= targetHeight > 0 ? targetHeight : CGImageGetHeight(cgImage);
 	
 	// Allocated memory needed for the bitmap context
-	GLubyte *pixels		= (GLubyte *) malloc(width * height * bytesPerPixel);
+	GLubyte * pixels		= (GLubyte *) malloc(width * height * bytesPerPixel);
 	
 	// Uses the bitmap creation function provided by the Core Graphics framework. 
 	spriteContext = CGBitmapContextCreate(pixels, width, height, CGImageGetBitsPerComponent(cgImage), width * bytesPerPixel, CGImageGetColorSpace(cgImage), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
@@ -401,7 +408,7 @@ bool ofxiOSCGImageToPixels(CGImageRef & ref, unsigned char * pixels){
 	int h			= CGImageGetHeight(ref);
 	
 	// Allocated memory needed for the bitmap context
-	GLubyte *pixelsTmp	= (GLubyte *) malloc(w * h * bytesPerPixel);
+	GLubyte * pixelsTmp	= (GLubyte *) malloc(w * h * bytesPerPixel);
 	
 	// Uses the bitmap creation function provided by the Core Graphics framework. 
 	spriteContext = CGBitmapContextCreate(pixelsTmp, w, h, CGImageGetBitsPerComponent(ref), w * bytesPerPixel, CGImageGetColorSpace(ref), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);

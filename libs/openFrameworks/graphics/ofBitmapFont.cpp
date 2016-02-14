@@ -469,13 +469,16 @@ const ofTexture & ofBitmapFont::getTexture() const{
 		ofBitmapFont::init();
 		texture.allocate(pixels,false);
 		texture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
-		texture.setRGToRGBASwizzles(true);
 	}
 	return texture;
 }
 
 
 ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y) const{
+    if(text.empty()){
+        return ofRectangle(x,y,0,0);
+    }
+
 	const ofMesh & mesh = getMesh(text,x,y);
 	ofVec2f max(numeric_limits<float>::min(),numeric_limits<float>::min());
 	ofVec2f min(numeric_limits<float>::max(),numeric_limits<float>::max());

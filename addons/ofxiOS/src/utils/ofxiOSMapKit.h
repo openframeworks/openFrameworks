@@ -30,12 +30,9 @@
 
 #pragma once
 
-#include <Availability.h>
-
-#include "ofMain.h"
-#include <MapKit/MapKit.h>
+#import <MapKit/MapKit.h>
+#include "ofBaseTypes.h"
 #include "ofxiOSMapKitListener.h"
-#include <list>
 
 // these are the types you can set for the map
 enum ofxiOSMapKitType {

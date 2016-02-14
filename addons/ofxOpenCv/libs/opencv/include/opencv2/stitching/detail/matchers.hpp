@@ -43,41 +43,64 @@
 #ifndef __OPENCV_STITCHING_MATCHERS_HPP__
 #define __OPENCV_STITCHING_MATCHERS_HPP__
 
-#include "opencv2/core/core.hpp"
-#include "opencv2/core/gpumat.hpp"
-#include "opencv2/features2d/features2d.hpp"
+#include "opencv2/core.hpp"
+#include "opencv2/features2d.hpp"
 
 #include "opencv2/opencv_modules.hpp"
 
-#if defined(HAVE_OPENCV_NONFREE)
-    #include "opencv2/nonfree/gpu.hpp"
+#ifdef HAVE_OPENCV_XFEATURES2D
+#  include "opencv2/xfeatures2d/cuda.hpp"
 #endif
 
 namespace cv {
 namespace detail {
 
+//! @addtogroup stitching_match
+//! @{
+
+/** @brief Structure containing image keypoints and descriptors. */
 struct CV_EXPORTS ImageFeatures
 {
     int img_idx;
     Size img_size;
     std::vector<KeyPoint> keypoints;
-    Mat descriptors;
+    UMat descriptors;
 };
 
-
+/** @brief Feature finders base class */
 class CV_EXPORTS FeaturesFinder
 {
 public:
     virtual ~FeaturesFinder() {}
-    void operator ()(const Mat &image, ImageFeatures &features);
-    void operator ()(const Mat &image, ImageFeatures &features, const std::vector<cv::Rect> &rois);
+    /** @overload */
+    void operator ()(InputArray image, ImageFeatures &features);
+    /** @brief Finds features in the given image.
+
+    @param image Source image
+    @param features Found features
+    @param rois Regions of interest
+
+    @sa detail::ImageFeatures, Rect_
+    */
+    void operator ()(InputArray image, ImageFeatures &features, const std::vector<cv::Rect> &rois);
+    /** @brief Frees unused memory allocated before if there is any. */
     virtual void collectGarbage() {}
 
 protected:
-    virtual void find(const Mat &image, ImageFeatures &features) = 0;
+    /** @brief This method must implement features finding logic in order to make the wrappers
+    detail::FeaturesFinder::operator()_ work.
+
+    @param image Source image
+    @param features Found features
+
+    @sa detail::ImageFeatures */
+    virtual void find(InputArray image, ImageFeatures &features) = 0;
 };
 
+/** @brief SURF features finder.
 
+@sa detail::FeaturesFinder, SURF
+*/
 class CV_EXPORTS SurfFeaturesFinder : public FeaturesFinder
 {
 public:
@@ -85,27 +108,31 @@ public:
                        int num_octaves_descr = /*4*/3, int num_layers_descr = /*2*/4);
 
 private:
-    void find(const Mat &image, ImageFeatures &features);
+    void find(InputArray image, ImageFeatures &features);
 
     Ptr<FeatureDetector> detector_;
     Ptr<DescriptorExtractor> extractor_;
     Ptr<Feature2D> surf;
 };
 
+/** @brief ORB features finder. :
+
+@sa detail::FeaturesFinder, ORB
+*/
 class CV_EXPORTS OrbFeaturesFinder : public FeaturesFinder
 {
 public:
     OrbFeaturesFinder(Size _grid_size = Size(3,1), int nfeatures=1500, float scaleFactor=1.3f, int nlevels=5);
 
 private:
-    void find(const Mat &image, ImageFeatures &features);
+    void find(InputArray image, ImageFeatures &features);
 
     Ptr<ORB> orb;
     Size grid_size;
 };
 
 
-#if defined(HAVE_OPENCV_NONFREE)
+#ifdef HAVE_OPENCV_XFEATURES2D
 class CV_EXPORTS SurfFeaturesFinderGpu : public FeaturesFinder
 {
 public:
@@ -115,62 +142,104 @@ public:
     void collectGarbage();
 
 private:
-    void find(const Mat &image, ImageFeatures &features);
+    void find(InputArray image, ImageFeatures &features);
 
-    gpu::GpuMat image_;
-    gpu::GpuMat gray_image_;
-    gpu::SURF_GPU surf_;
-    gpu::GpuMat keypoints_;
-    gpu::GpuMat descriptors_;
+    cuda::GpuMat image_;
+    cuda::GpuMat gray_image_;
+    cuda::SURF_CUDA surf_;
+    cuda::GpuMat keypoints_;
+    cuda::GpuMat descriptors_;
     int num_octaves_, num_layers_;
     int num_octaves_descr_, num_layers_descr_;
 };
 #endif
 
+/** @brief Structure containing information about matches between two images.
 
+It's assumed that there is a homography between those images.
+*/
 struct CV_EXPORTS MatchesInfo
 {
     MatchesInfo();
     MatchesInfo(const MatchesInfo &other);
     const MatchesInfo& operator =(const MatchesInfo &other);
 
-    int src_img_idx, dst_img_idx;       // Images indices (optional)
+    int src_img_idx, dst_img_idx;       //!< Images indices (optional)
     std::vector<DMatch> matches;
-    std::vector<uchar> inliers_mask;    // Geometrically consistent matches mask
-    int num_inliers;                    // Number of geometrically consistent matches
-    Mat H;                              // Estimated homography
-    double confidence;                  // Confidence two images are from the same panorama
+    std::vector<uchar> inliers_mask;    //!< Geometrically consistent matches mask
+    int num_inliers;                    //!< Number of geometrically consistent matches
+    Mat H;                              //!< Estimated homography
+    double confidence;                  //!< Confidence two images are from the same panorama
 };
 
-
+/** @brief Feature matchers base class. */
 class CV_EXPORTS FeaturesMatcher
 {
 public:
     virtual ~FeaturesMatcher() {}
 
+    /** @overload
+    @param features1 First image features
+    @param features2 Second image features
+    @param matches_info Found matches
+    */
     void operator ()(const ImageFeatures &features1, const ImageFeatures &features2,
                      MatchesInfo& matches_info) { match(features1, features2, matches_info); }
 
-    void operator ()(const std::vector<ImageFeatures> &features, std::vector<MatchesInfo> &pairwise_matches,
-                     const cv::Mat &mask = cv::Mat());
+    /** @brief Performs images matching.
 
+    @param features Features of the source images
+    @param pairwise_matches Found pairwise matches
+    @param mask Mask indicating which image pairs must be matched
+
+    The function is parallelized with the TBB library.
+
+    @sa detail::MatchesInfo
+    */
+    void operator ()(const std::vector<ImageFeatures> &features, std::vector<MatchesInfo> &pairwise_matches,
+                     const cv::UMat &mask = cv::UMat());
+
+    /** @return True, if it's possible to use the same matcher instance in parallel, false otherwise
+    */
     bool isThreadSafe() const { return is_thread_safe_; }
 
+    /** @brief Frees unused memory allocated before if there is any.
+    */
     virtual void collectGarbage() {}
 
 protected:
     FeaturesMatcher(bool is_thread_safe = false) : is_thread_safe_(is_thread_safe) {}
 
+    /** @brief This method must implement matching logic in order to make the wrappers
+    detail::FeaturesMatcher::operator()_ work.
+
+    @param features1 first image features
+    @param features2 second image features
+    @param matches_info found matches
+     */
     virtual void match(const ImageFeatures &features1, const ImageFeatures &features2,
                        MatchesInfo& matches_info) = 0;
 
     bool is_thread_safe_;
 };
 
+/** @brief Features matcher which finds two best matches for each feature and leaves the best one only if the
+ratio between descriptor distances is greater than the threshold match_conf
 
+@sa detail::FeaturesMatcher
+ */
 class CV_EXPORTS BestOf2NearestMatcher : public FeaturesMatcher
 {
 public:
+    /** @brief Constructs a "best of 2 nearest" matcher.
+
+    @param try_use_gpu Should try to use GPU or not
+    @param match_conf Match distances ration threshold
+    @param num_matches_thresh1 Minimum number of matches required for the 2D projective transform
+    estimation used in the inliers classification step
+    @param num_matches_thresh2 Minimum number of matches required for the 2D projective transform
+    re-estimation on inliers
+     */
     BestOf2NearestMatcher(bool try_use_gpu = false, float match_conf = 0.3f, int num_matches_thresh1 = 6,
                           int num_matches_thresh2 = 6);
 
@@ -183,6 +252,22 @@ protected:
     int num_matches_thresh2_;
     Ptr<FeaturesMatcher> impl_;
 };
+
+class CV_EXPORTS BestOf2NearestRangeMatcher : public BestOf2NearestMatcher
+{
+public:
+    BestOf2NearestRangeMatcher(int range_width = 5, bool try_use_gpu = false, float match_conf = 0.3f,
+                            int num_matches_thresh1 = 6, int num_matches_thresh2 = 6);
+
+    void operator ()(const std::vector<ImageFeatures> &features, std::vector<MatchesInfo> &pairwise_matches,
+                     const cv::UMat &mask = cv::UMat());
+
+
+protected:
+    int range_width_;
+};
+
+//! @} stitching_match
 
 } // namespace detail
 } // namespace cv

@@ -7,6 +7,7 @@
 #if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
 #include "ofCairoRenderer.h"
 #endif
+#include "ofGLRenderer.h"
 
 
 #ifndef TARGET_WIN32
@@ -26,13 +27,7 @@ void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer,bool setDefaults){
 	ofGetCurrentRenderer() = renderer;
 }
 
-#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
-
-//-----------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------
-#include "ofCairoRenderer.h"
-#include "ofGLRenderer.h"
-
+#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
 static shared_ptr<ofCairoRenderer> cairoScreenshot;
 static shared_ptr<ofBaseRenderer> storedRenderer;
 static shared_ptr<ofRendererCollection> rendererCollection;
@@ -238,7 +233,6 @@ void ofTranslate(const ofPoint& p){
 	ofGetCurrentRenderer()->translate(p);
 }
 
-
 //----------------------------------------------------------
 void ofTranslate(float x, float y, float z){
 	ofGetCurrentRenderer()->translate(x, y, z);
@@ -247,6 +241,14 @@ void ofTranslate(float x, float y, float z){
 //----------------------------------------------------------
 void ofScale(float xAmnt, float yAmnt, float zAmnt){
 	ofGetCurrentRenderer()->scale(xAmnt, yAmnt, zAmnt);
+}
+
+void ofScale(float amount){
+  ofScale(amount, amount, amount);
+}
+
+void ofScale(const ofPoint & p) { 
+	ofScale(p.x, p.y, p.z); 
 }
 
 //----------------------------------------------------------

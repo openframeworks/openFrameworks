@@ -867,6 +867,7 @@
 				OBJROOT = "$(SRCROOT)/../../lib/osx/build/debug/";
 				PRODUCT_NAME = openFrameworksDebug;
 				SDKROOT = "";
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -895,6 +896,7 @@
 				OBJROOT = "$(SRCROOT)/../../lib/osx/build/release/";
 				PRODUCT_NAME = openFrameworks;
 				SDKROOT = "";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -905,7 +907,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/osx/build/debug/";
 				OBJROOT = "$(SRCROOT)/../../lib/osx/build/debug/";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = "";
 			};
 			name = Debug;
@@ -917,6 +919,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/osx/build/release/";
 				OBJROOT = "$(SRCROOT)/../../lib/osx/build/release";
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = "";
 			};
 			name = Release;

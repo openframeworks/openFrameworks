@@ -6,11 +6,10 @@
  *
  */
 
+#pragma once
+
 #import <UIKit/UIKit.h>
-#import <OpenGLES/ES1/gl.h>
-#import "ofMain.h"
-#include <iostream>
-#include <Availability.h>
+#include "ofBaseTypes.h"
 
 #define OFX_IMG_PICKER_UP 1
 #define OFX_IMG_PICKER_DOWN 2

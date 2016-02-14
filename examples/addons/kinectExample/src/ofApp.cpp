@@ -1,5 +1,9 @@
 #include "ofApp.h"
 
+/*
+    If you are struggling to get the device to connect ( especially Windows Users )
+    please look at the ReadMe: in addons/ofxKinect/README.md
+*/
 
 //--------------------------------------------------------------
 void ofApp::setup() {

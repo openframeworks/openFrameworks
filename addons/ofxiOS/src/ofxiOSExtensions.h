@@ -8,8 +8,6 @@
 #pragma once
 
 void ofReloadGLResources();
-
-void ofUpdateBitmapCharacterTexture();
 void ofReloadAllImageTextures();
 void ofReloadAllFontTextures();
 void ofUnloadAllFontTextures();

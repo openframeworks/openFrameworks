@@ -1,5 +1,6 @@
 
 #include "ofxAndroidUtils.h"
+#ifndef __clang__
 // fix for undefined symbols from ndk r8c
 extern "C" {
   extern void *__dso_handle __attribute__((__visibility__ ("hidden")));
@@ -10,6 +11,7 @@ extern int atexit (void (*func)(void)) noexcept;
 int atexit (void (*func)(void)){
 	return 0;
 }
+#endif
 #include "ofLog.h"
 
 bool ofxAndroidIsOnline(){

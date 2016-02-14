@@ -1,0 +1,7 @@
+//TODO: figure out how to do debug and release icons
+#ifdef _DEBUG
+  MAINICON ICON "../../../libs/openFrameworksCompiled/project/msys2/icon-debug.ico"
+#else
+  MAINICON ICON "../../../libs/openFrameworksCompiled/project/msys2/icon.ico"
+#endif
+

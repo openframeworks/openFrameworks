@@ -38,7 +38,6 @@ void ofxCvGrayscaleImage::init() {
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::allocateTexture(){
 	tex.allocate(pixels);
-	tex.setRGToRGBASwizzles(true);
 }
 
 //--------------------------------------------------------------------------------

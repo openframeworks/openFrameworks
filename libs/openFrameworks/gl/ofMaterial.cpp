@@ -197,9 +197,7 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 	}
 }
 
-#define STRINGIFY(x) #x
-
-static const string vertexShader = STRINGIFY(
+static const string vertexShader = R"(
 	OUT vec2 outtexcoord; // pass the texCoord if needed
 	OUT vec3 transformedNormal;
 	OUT vec3 eyePosition3;
@@ -226,10 +224,10 @@ static const string vertexShader = STRINGIFY(
 		outtexcoord = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
 		gl_Position = modelViewProjectionMatrix * position;
 	}
-);
+)";
 
 
-static const string fragmentShader = STRINGIFY(
+static const string fragmentShader = R"(
 	IN vec2 outtexcoord; // pass the texCoord if needed
 	IN vec3 transformedNormal;
 	// Eye-coordinate position of vertex
@@ -310,7 +308,9 @@ static const string fragmentShader = STRINGIFY(
 
 		ambient += light.ambient.rgb * attenuation;
 		diffuse += light.diffuse.rgb * nDotVP * attenuation;
+#ifndef TARGET_OPENGLES
 #define SPECULAR_REFLECTION
+#endif
 #ifndef SPECULAR_REFLECTION
 		// ha! no branching :)
 		pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
@@ -457,15 +457,15 @@ static const string fragmentShader = STRINGIFY(
 
 		////////////////////////////////////////////////////////////
 		// now add the material info
-		\n#ifdef HAS_TEXTURE\n
+		#ifdef HAS_TEXTURE
 			vec4 tex = TEXTURE(tex0, outtexcoord);
 			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * tex + vec4(specular,1.0) * mat_specular + mat_emissive;
-		\n#else\n
+		#else
 			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * mat_diffuse + vec4(specular,1.0) * mat_specular + mat_emissive;
-		\n#endif\n
+		#endif
 		FRAG_COLOR = clamp( localColor, 0.0, 1.0 );
 	}
-);
+)";
 
 
 static string shaderHeader(string header, int maxLights, bool hasTexture){

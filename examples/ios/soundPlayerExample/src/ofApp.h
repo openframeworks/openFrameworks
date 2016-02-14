@@ -1,8 +1,6 @@
 #pragma once
 
-#include "ofMain.h"
 #include "ofxiOS.h"
-#include "ofxiOSExtras.h"
 #import "AVSoundPlayer.h"
 
 class ofApp : public ofxiOSApp{

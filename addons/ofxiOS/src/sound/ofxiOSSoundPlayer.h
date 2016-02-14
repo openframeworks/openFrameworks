@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "ofMain.h"
+#include "ofBaseSoundPlayer.h"
 
 class ofxiOSSoundPlayer : public ofBaseSoundPlayer {
     

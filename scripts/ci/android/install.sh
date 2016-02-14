@@ -12,7 +12,7 @@ else
     echo "Downloading NDK"
     # curl -Lk http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin -o ndk.bin
     # get slimmed and recompressed NDK from our server instead
-    curl -Lk http://192.237.185.151/android-ndk-r10e.tar.bz2 -o ndk.bin
+    curl -Lk http://ci.openframeworks.cc/android-ndk-r10e.tar.bz2 -o ndk.bin
     chmod a+x ndk.bin
     # "Normal" way:
     # ./ndk.bin -y | grep -v Extracting

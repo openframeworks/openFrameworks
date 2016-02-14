@@ -1,0 +1,162 @@
+{
+    "version": 1,
+    "kind": "project",
+    "id": "R.OF ImportApplication",
+    "category": "I.openFrameworks",
+    "trDescription": "Updates an existing openFrameworks application using Qbs to build.\nAlso adds any addon from addons.make. Use this to open existing examples, old code...",
+    "trDisplayName": "Import an existing Application",
+    "trDisplayCategory": "openFrameworks",
+    "icon": "of.png",
+    "enabled": "%{JS: [ %{Plugins} ].indexOf('QbsProjectManager') >= 0 }",
+
+    "options":
+    [
+        { "key": "ProjectFile", "value": "%{QbsFile}" },
+        { "key": "QbsFile", "value": "%{JS: Util.fileName('%{ProjectDirectory}/%{ProjectName}', 'qbs')}" },
+        { "key": "IsTopLevelProject", "value": "%{JS: !'%{Exists:ProjectExplorer.Profile.Ids}'}" },
+        { "key": "InitialOFPath", "value": "%{JS: Util.absoluteFilePath('%{ProjectDirectory}/../../..')}" },
+        { "key": "CorrectInitialOFPath", "value": "%{JS: Util.isDirectory('%{InitialOFPath}') && Util.isDirectory('%{InitialOFPath}/libs/openFrameworks') && Util.isDirectory('%{InitialOFPath}/addons') && Util.isDirectory('%{InitialOFPath}/scripts')}" },
+        { "key": "CorrectOFPath", "value": "%{JS: Util.isDirectory('%{OFPath}') && Util.isDirectory('%{OFPath}/libs/openFrameworks') && Util.isDirectory('%{OFPath}/addons') && Util.isDirectory('%{OFPath}/scripts')}" },
+        { "key": "ProjectDirectory", "value": "%{ProjectPath}"},
+        { "key": "TargetPath", "value": "%{ProjectPath}"},
+        { "key": "ProjectName", "value": "%{JS: Util.baseName('%{ProjectPath}') }"}
+    ],
+    "pages":
+    [
+        {
+            "trDisplayName": "Path to the project to import",
+            "trShortTitle": "Project path",
+            "typeId": "Fields",
+            "data": [
+                {
+                    "name": "ProjectPath",
+                    "type": "PathChooser",
+                    "trDisplayName": "Project path:",
+                    "mandatory": "true",
+                    "visible": "true",
+                    "isComplete": "%{JS: Util.isDirectory('%{ProjectPath}') && Util.isDirectory('%{ProjectPath}/src') }",
+                    "data":
+                    {
+                        "kind": "existingDirectory",
+                        "basePath": "",
+                        "path": ""
+                    }
+                }
+            ]
+        },
+        {
+            "trDisplayName": "openFrameworks config",
+            "trShortTitle": "OF config",
+            "typeId": "Fields",
+            "data" :
+            [
+                {
+                    "name": "ErrorOFPath",
+                    "type": "Label",
+                    "span": true,
+                    "visible": "%{JS: !%{CorrectInitialOFPath} && !%{CorrectOFPath}}",
+                    "data":
+                    {
+                        "wordWrap": true,
+                        "trText": "Couldn't find openFrameworks, please check that the project path in the previous page is 2 levels below the OF root.\n\nEg: /home/myname/Code/openFrameworks/apps/myapps\n\nOr select a correct OF path in the following field"
+                    }
+                },
+                {
+                    "name": "NoErrorOFPath",
+                    "type": "Label",
+                    "span": true,
+                    "visible": "%{JS: !%{CorrectInitialOFPath} && %{CorrectOFPath}}",
+                    "data":
+                    {
+                        "wordWrap": true,
+                        "trText": "Correct openFrameworks install found."
+                    }
+                },
+                {
+                    "name": "Sp0",
+                    "type": "Spacer",
+                    "visible": "%{JS: !%{CorrectInitialOFPath}}",
+                    "data":
+                    {
+                        "factor": 1
+                    }
+                },
+                {
+                    "name": "OFPath",
+                    "type": "PathChooser",
+                    "trDisplayName": "OF path:",
+                    "mandatory": "%{JS: !%{CorrectInitialOFPath}}",
+                    "visible": "%{JS: !%{CorrectInitialOFPath}}",
+                    "isComplete": "%{JS: %{CorrectOFPath}}",
+                    "data":
+                    {
+                        "kind": "existingDirectory",
+                        "basePath": "%{InitialOFPath}",
+                        "path": "%{InitialOFPath}"
+                    }
+                },
+                {
+                    "name": "ErrorOFPath",
+                    "type": "Label",
+                    "span": true,
+                    "visible": "%{JS: %{CorrectInitialOFPath}}",
+                    "data":
+                    {
+                        "wordWrap": true,
+                        "trText": "Correct openFrameworks install detected in:"
+                    }
+                },
+                {
+                    "name": "OFPathLabel",
+                    "type": "LineEdit",
+                    "span": "true",
+                    "visible": "%{JS: %{CorrectInitialOFPath}}",
+                    "enabled": false,
+                    "data":
+                    {
+                        "trText": "%{InitialOFPath}",
+                        "trDisabledText": "%{InitialOFPath}"
+                    }
+                }
+            ]
+        },
+        {
+            "trDisplayName": "Project Management",
+            "trShortTitle": "Summary",
+            "typeId": "Summary"
+        }
+    ],
+    "generators":
+    [
+        {
+            "typeId": "File",
+            "data":
+            [
+                {
+                    "source": "qtcreator_update.qbs",
+                    "target": "%{QbsFile}",
+                    "openAsProject": true,
+                    "condition": "%{JS: Util.exists('%{ProjectDirectory}/addons.make') }"
+                },
+                {
+                    "source": "qtcreator_update_no_addons.qbs",
+                    "target": "%{QbsFile}",
+                    "openAsProject": true,
+                    "condition": "%{JS: !Util.exists('%{ProjectDirectory}/addons.make') }"
+                },
+                {
+                    "source": "Makefile",
+                    "target": "Makefile",
+                    "openInEditor": false,
+                    "condition": "%{JS: !Util.exists('%{ProjectDirectory}/Makefile') }"
+                },
+                {
+                    "source": "config.make",
+                    "target": "config.make",
+                    "openInEditor": false,
+                    "condition": "%{JS: !Util.exists('%{ProjectDirectory}/config.make') }"
+                }
+            ]
+        }
+    ]
+}

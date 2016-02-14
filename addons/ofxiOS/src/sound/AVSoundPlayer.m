@@ -25,6 +25,20 @@
     return self;
 }
 
+// setupSharedSession is to prevent other iOS Classes closing the audio feed, such as AVAssetReader, when reading from disk
+// It is set once on first launch of a AVAudioPlayer and remains as a set property from then on
+- (void) setupSharedSession {
+	static BOOL audioSessionSetup = NO;
+	if(audioSessionSetup) {
+		return;
+	}
+	[[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error: nil];
+	UInt32 doSetProperty = 1;
+	AudioSessionSetProperty (kAudioSessionProperty_OverrideCategoryMixWithOthers, sizeof(doSetProperty), &doSetProperty);
+	[[AVAudioSession sharedInstance] setActive: YES error: nil];
+	audioSessionSetup = YES;
+}
+
 - (void)dealloc {
     [self unloadSound];
     [super dealloc];
@@ -45,7 +59,7 @@
 
 - (BOOL)loadWithURL:(NSURL*)url {
     [self unloadSound];
-    
+	[self setupSharedSession];
     NSError * error = nil;
     self.player = [[[AVAudioPlayer alloc] initWithContentsOfURL:url
                                                           error:&error] autorelease];

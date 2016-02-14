@@ -3,21 +3,21 @@
 Android
 =======
 
-The Android distribution of openFrameworks is setup to work with either the Eclipse IDE or the newer Android Studio IDE. The projects are currently using a custom toolchain based on Makefiles to compile and install applications.
+The Android distribution of openFrameworks is setup to work with either the Eclipse IDE or experimentally Android Studio IDE. The projects are currently using a custom toolchain based on Makefiles to compile and install applications.
 
 # Android Studio
 
-Android studio support in openFrameworks is still experimental. The latest version of android studio still doesn't have support for c++ development so even if it's deprecated we still recomend to use eclipse and the ADT plugin. See android-eclipse.md in the docs folder or the corresponding guide in the download page.
+Android studio support in openFrameworks is still experimental. The latest version of android studio still doesn't have full support for c++ development so even if it's deprecated we still recomend to use eclipse and the ADT plugin if you want to have code completeion in c++. See android-eclipse.md in the docs folder or the corresponding guide in the download page.
 
 ## Summary
 
 Setting up openFrameworks with Android Studio is fairly straightforward. The basic steps are:
 
 - Install Android Studio and the Android SDK
-- Install the Android NDK (r10b or lower)
+- Install the Android NDK (actually tested version is r10e)
 - Download openFrameworks from the download page or from git
-- In Android Studio, use **File ➞ Import Project** and select the `settings.gradle` file in the root of the openFrameworks directory
 - Set the path to the NDK in local.properties (`ndk.dir`)
+- In Android Studio, use **File ➞ Import Project** and select an openFrameworks example from the examples/android folder
 - Build and run
 
 ## Installation
@@ -53,19 +53,23 @@ You may also check out the openFrameworks source from GitHub (under master branc
 Or download the latest nightly:
 http://openframeworks.cc/download (bottom of the page)
 
-### Import the project
-
-At the Android Studio welcome screen select **Import Project**, or use the **File ➞ Import Project** menu item. Browse to  the `settings.gradle` file in the `libs/openFrameworksCompiled/project/android` directory. Accept all the prompts and wait for Android Studio to set up the project.
-
-At this point you will get an error about the NDK not being configured. Onto the next step...
-
 ### Configure the NDK
 
-Edit the file `local.properties` and add a line like this:
+With a text editor, edit the file `libs/openFrameworksCompiled/project/android/paths.make` and set the NDK path to the correct folder:
 
-    ndk.dir=/path/to/the/ndk
+    NDK_ROOT=/path/to/the/ndk
 
-Save and resync the project (either press the "Try Again" link on the "Gradle project sync failed" banner, or use **Tools ➞ Android ➞ Sync Project with Gradle Files**).
+### Import the project
+
+At the Android Studio welcome screen select **Open an Existing Android Studio Project**.
+
+![](images/android/open-existing-project.png)
+
+Then browse to any of the android examples in `examples/android`.
+
+![Opening androidEmptyExample](images/android/androidEmptyExample.png)
+
+Accept all the prompts and wait for Android Studio to set up the project.
 
 You'll have to wait a bit: the first sync will automatically build openFrameworks. If it doesn't work (Gradle sync still fails), try looking at the Troubleshooting tips.  In some cases, clicking on the error in the console window will take you to a solution, such as installing various versions of the Android SDK.  In some cases, you may have to do this several times to solve several missing dependencies.
 
@@ -73,17 +77,22 @@ You'll have to wait a bit: the first sync will automatically build openFramework
 
 Press the Play button next to the `androidEmptyExample` shown in the toolbar. With any luck, it should build the app, and momentarily deploy it to your Android device (or prompt you to deploy it on a suitable emulator). If the app runs, congratulations! You have setup openFrameworks.
 
+### Editing the c++ source code
+
+Android studio in it's version 1.3 still has very limited support for c++ source code editing. In any case to work with openFrameworks, you'll want to switch from the Android view to the Project one where you can see all the files in the project including the C++ source code:
+
+![Project view](images/android/projectview.png)
+![Opening ofApp](images/android/ofApp.png)
+![Full view](images/android/full.png)
+
 ## Creating new projects
 
-1. Copy the provided example app (make sure to put it in a subdirectory of `apps`, at the same level as the sample)
-2. Double-click on `build.gradle` and press "Add Now..."
-3. If that doesn't work, add a line to `settings.gradle` including your project manually.
-4. Perform a project sync (it should prompt you to do this).
-
-## Creating projects from examples
-
-1. Copy the `build.gradle` file from `androidEmptyExample` into the directory of the example you want to use.
-2. Follow steps 2-4 above.
+1. Copy any of the provided example app (make sure to put it in a subdirectory of `apps`, at the same level as the sample)
+2. Edit the file AndroidManifest.xml and change every appearance to the original name to the new name of you application.
+3. In srcJava/cc/openFrameworks change the name of the folder to the new name of you application.
+4. Edit the file srcJava/cc/openFrameworks/newApplicationName/OFActivity.java and change the name of the package to the correct new name.
+5. Edit the file res/values/strings.xml and change the value of app_name to the new name of the application.
+6. Import the new project from android studio
 
 ## Troubleshooting
 
@@ -93,6 +102,12 @@ Press the Play button next to the `androidEmptyExample` shown in the toolbar. Wi
     - The `compileSdkVersion`, `buildToolsVersion`, `minSdkVersion`, `targetSdkVersion` values
         in `/addons/ofxAndroid/ofAndroidLib/build.gradle` and `/apps/myApps/androidEmptyExample/build.gradle`
 
-- If you get strange linker errors (e.g. errors about a missing `__srget`), try using the r9d version of the NDK. Newer NDKs (particularly r10c and up) don't work with some versions of OpenFrameworks.
-- If you get strange linker errors when running the Android Simulator (e.g. `java.lang.UnsatisfiedLinkError: dalvik.system.PathClassLoader[DexPathList`) make sure that your simulator is using the `armeabi-v7a`, not the `x86` or `x86_64` architecture.  You can check your setup by opening your Android Virtual Device Manager and editing the device (**Tools ➞ Android ➞ AVD Manager** or click the AVD Manager icon in the toolbar).  You may be prompted to download an appropriate system image for `armeabi-v7a`.
+- If you get strange linker errors, check that you are using the 10e version of the NDK. Newer NDKs might work but usually there's some always some fixes that need to be done when moving to a new NDK version.
 
+- If your connected device is not recognized by Android Studio, restart adb
+  with `adb kill-server && adb start-server`
+
+- If, when syncronizing a project for the first time, clicking on the console
+  messages does not solves the problem regarding a missing dependency of the
+  android API (like for example Android API 22), open the sdk from the console,
+   select the missing API and install it

@@ -100,6 +100,16 @@ static int string_ends_with(const char *str, const char *suffix) {
 	return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
 }
 
+static int string_begins_with(const char *str, const char *prefix) {
+	if (!str || !prefix)
+		return 0;
+	size_t lenstr = strlen(str);
+	size_t lenprefix = strlen(prefix);
+	if (lenprefix > lenstr)
+		return 0;
+	return strncmp(str, prefix, lenprefix) == 0;
+}
+
 static int dummy_sort(const struct dirent **a,const struct dirent **b) {
 	return 1; // dummy sort
 }
@@ -114,6 +124,14 @@ static int filter_kbd(const struct dirent *d) {
 
 static int filter_mouse(const struct dirent *d) {
 	if(d->d_type != DT_DIR && string_ends_with(d->d_name,"event-mouse")) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+static int filter_event(const struct dirent *d) {
+	if(d->d_type != DT_DIR && string_begins_with(d->d_name,"event")) {
 		return 1;
 	} else {
 		return 0;
@@ -962,11 +980,8 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
 					&dst_rect,
 					&src_rect,
 					0, // mask (we aren't changing it here)
-#ifdef USE_DISPMANX_TRANSFORM_T
 					(DISPMANX_TRANSFORM_T)0);
-#else
-			(VC_IMAGE_TRANSFORM_T)0);
-#endif
+
 
 			vc_dispmanx_update_submit_sync(dispman_update);
 
@@ -1187,11 +1202,8 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
 				&dst_rect,
 				NULL,
 				0,
-#ifdef USE_DISPMANX_TRANSFORM_T
-(DISPMANX_TRANSFORM_T)0);
-#else
-	(VC_IMAGE_TRANSFORM_T)0);
-#endif
+				(DISPMANX_TRANSFORM_T)0);
+
 
 vc_dispmanx_update_submit_sync(dispman_update);
 
@@ -1343,17 +1355,23 @@ void ofAppEGLWindow::destroyNativeUDev() {
 //------------------------------------------------------------
 void ofAppEGLWindow::setupNativeMouse() {
 	struct dirent **eps;
-	int n = scandir("/dev/input/by-path/", &eps, filter_mouse, dummy_sort);
+	// fallback to /dev/input/eventX since some vnc servers use uinput to handle mouse & keyboard
+	typedef int (*filter_ptr)(const struct dirent *d);
+	filter_ptr mouse_filters[2] = { filter_mouse, filter_event };
+	string devicePathBuffers[2] = { "/dev/input/by-path", "/dev/input/" };
 
-	// make sure that we found an appropriate entry
-	if(n >= 0 && eps != 0 && eps[0] != 0) {
-		string devicePathBuffer;
-		devicePathBuffer.append("/dev/input/by-path/");
-		devicePathBuffer.append(eps[0]->d_name);
-		mouse_fd = open(devicePathBuffer.c_str(), O_RDONLY | O_NONBLOCK);
-		ofLogNotice("ofAppEGLWindow") << "setupMouse(): mouse_fd= " <<  mouse_fd << " devicePath=" << devicePathBuffer;
-	} else {
-		ofLogNotice("ofAppEGLWindow") << "setupMouse(): unabled to find mouse";
+	for(int i=0; i<2; i++){
+		int n = scandir(devicePathBuffers[i].c_str(), &eps, mouse_filters[i], dummy_sort);
+
+		// make sure that we found an appropriate entry
+		if(n >= 0 && eps != 0 && eps[0] != 0) {
+			string devicePathBuffer;
+			devicePathBuffer.append(devicePathBuffers[i]);
+			devicePathBuffer.append(eps[0]->d_name);
+			mouse_fd = open(devicePathBuffer.c_str(), O_RDONLY | O_NONBLOCK);
+			ofLogNotice("ofAppEGLWindow") << "setupMouse(): mouse_fd=" <<  mouse_fd << " devicePath=" << devicePathBuffer;
+			break;
+		}
 	}
 
 	if (mouse_fd >= 0) {
@@ -1368,7 +1386,7 @@ void ofAppEGLWindow::setupNativeMouse() {
 
 	if(mouse_fd < 0) {
 		ofLogError("ofAppEGLWindow") << "setupMouse(): did not open mouse, mouse_fd < 0";
-	}else {
+	} else {
 		mouseDetected = true;
 	}
 
@@ -1378,18 +1396,22 @@ void ofAppEGLWindow::setupNativeMouse() {
 //------------------------------------------------------------
 void ofAppEGLWindow::setupNativeKeyboard() {
 	struct dirent **eps;
-	int n = scandir("/dev/input/by-path/", &eps, filter_kbd, dummy_sort);
+	typedef int (*filter_ptr)(const struct dirent *d);
+	filter_ptr kbd_filters[2] = { filter_kbd, filter_event };
+	string devicePathBuffers[2] = { "/dev/input/by-path", "/dev/input/" };
 
-	// make sure that we found an appropriate entry
-	if(n >= 0 && eps != 0 && eps[0] != 0) {
-		string devicePathBuffer;
-		devicePathBuffer.append("/dev/input/by-path/");
-		devicePathBuffer.append(eps[0]->d_name);
-		keyboard_fd = open(devicePathBuffer.c_str(), O_RDONLY | O_NONBLOCK);
-		ofLogNotice("ofAppEGLWindow") << "setupKeyboard(): keyboard_fd= " <<  keyboard_fd << " devicePath=" << devicePathBuffer;
+	for(int i=0; i<2; i++){
+		int n = scandir(devicePathBuffers[i].c_str(), &eps, kbd_filters[i], dummy_sort);
 
-	} else {
-		ofLogWarning("ofAppEGLWindow") << "setupKeyboard(): unabled to find keyboard";
+		// make sure that we found an appropriate entry
+		if(n >= 0 && eps != 0 && eps[0] != 0) {
+			string devicePathBuffer;
+			devicePathBuffer.append(devicePathBuffers[i]);
+			devicePathBuffer.append(eps[0]->d_name);
+			keyboard_fd = open(devicePathBuffer.c_str(), O_RDONLY | O_NONBLOCK);
+			ofLogNotice("ofAppEGLWindow") << "setupKeyboard(): keyboard_fd=" <<  keyboard_fd << " devicePath=" << devicePathBuffer;
+			break;
+		}
 	}
 
 	if (keyboard_fd >= 0) {
@@ -1415,7 +1437,7 @@ void ofAppEGLWindow::setupNativeKeyboard() {
 
 	if(keyboard_fd < 0) {
 		ofLogError("ofAppEGLWindow") << "setupKeyboard(): did not open keyboard, keyboard_fd < 0";
-	}else {
+	} else {
 		keyboardDetected = true;
 	}
 }

@@ -10,9 +10,11 @@
 class ofAppBaseWindow;
 class ofAppBaseGLWindow;
 class ofAppBaseGLESWindow;
+class ofAppGLFWWindow;
 class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
+
 
 void ofInit();
 void ofSetupOpenGL(int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
@@ -31,6 +33,9 @@ void ofSetupOpenGL(shared_ptr<Window> windowPtr, int w, int h, ofWindowMode scre
 	windowPtr->setup(settings);
 }
 
+//special case so we preserve supplied settngs
+//TODO: remove me when we remove the ofSetupOpenGL legacy approach.
+void ofSetupOpenGL(shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode);
 
 template<typename Window>
 static void noopDeleter(Window*){}

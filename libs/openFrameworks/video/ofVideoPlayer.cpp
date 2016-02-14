@@ -212,9 +212,6 @@ void ofVideoPlayer::update(){
 						bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glInternalFormat != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
 						if(bDiffPixFormat || !tex[i].isAllocated() || tex[i].getWidth() != plane.getWidth() || tex[i].getHeight() != plane.getHeight()){
 							tex[i].allocate(plane);
-							if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
-								tex[i].setRGToRGBASwizzles(true);
-							}
 						}
 						tex[i].loadData(plane);
 					}
@@ -380,9 +377,6 @@ void ofVideoPlayer::setUseTexture(bool bUse){
 			if(!tex[i].isAllocated() || bDiffPixFormat){
 				tex[i].allocate(plane);
 			}
-			if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
-				tex[i].setRGToRGBASwizzles(true);
-			}
 		}
 	}
 }
@@ -487,7 +481,7 @@ bool ofVideoPlayer::isPlaying() const{
 //----------------------------------------------------------
 bool ofVideoPlayer::isInitialized() const{
 	if( player ){
-		return player->isInitialized() && (!bUseTexture || tex[0].isAllocated() || player->getTexturePtr());
+		return player->isInitialized() && (!bUseTexture || tex[0].isAllocated() || (player->getTexturePtr() && player->getTexturePtr()->isAllocated()) );
 	}
 	return false;
 }

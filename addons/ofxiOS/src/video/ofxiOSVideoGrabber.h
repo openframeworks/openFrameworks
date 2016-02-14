@@ -2,9 +2,9 @@
 
 #pragma once
 
-class AVFoundationVideoGrabber;
+#include "ofBaseTypes.h"
 
-#include "ofVideoGrabber.h"
+class AVFoundationVideoGrabber;
 
 class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
 	

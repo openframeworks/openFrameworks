@@ -6,10 +6,9 @@
  *
  */
 
-#import <UIKit/UIKit.h>
-#import <CoreLocation/CoreLocation.h>
-#import "ofMain.h"
 #pragma once
+
+#import <CoreLocation/CoreLocation.h>
 
 @interface ofxiOSCoreLocationDelegate : NSObject <CLLocationManagerDelegate>
 {

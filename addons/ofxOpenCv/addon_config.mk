@@ -84,23 +84,11 @@ linuxarmv7l:
     ADDON_INCLUDES_EXCLUDE = libs/opencv
     ADDON_INCLUDES_EXCLUDE += libs/opencv/%
 	
-win_cb:
-	ADDON_LIBS =
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_legacy231.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_haartraining_engine.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_calib3d231.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_features2d231.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_objdetect231.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_video231.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_imgproc231.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_highgui231.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_ml231.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_core231.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_flann231.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_contrib231.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_gpu231.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_ts231.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libzlib.a
+msys2:
+	ADDON_PKG_CONFIG_LIBRARIES = opencv
+	ADDON_LIBS_EXCLUDE = libs/opencv/%
+    ADDON_INCLUDES_EXCLUDE = libs/opencv
+    ADDON_INCLUDES_EXCLUDE += libs/opencv/%
 
 android/armeabi:	
 	ADDON_LIBS =
@@ -128,3 +116,9 @@ android/armeabi-v7a:
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_core.a 
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_flann.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_contrib.a
+
+
+ios:
+	# osx/iOS only, any framework that should be included in the project
+	ADDON_FRAMEWORKS = AssetsLibrary
+

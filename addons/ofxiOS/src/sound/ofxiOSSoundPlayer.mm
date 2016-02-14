@@ -5,6 +5,7 @@
 //
 
 #include "ofxiOSSoundPlayer.h"
+#include "ofUtils.h"
 #import "AVSoundPlayer.h"
 
 ofxiOSSoundPlayer::ofxiOSSoundPlayer() {

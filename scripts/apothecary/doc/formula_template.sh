@@ -8,7 +8,7 @@
 
 # array of build types supported by this formula
 # you can delete this to implicitly support *all* types
-FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "msys2" "ios" "android" )
 
 # define the version
 VER=#.#.#
