@@ -649,7 +649,7 @@ PING_LOOP_PID=$!
 		perl -pi -e 's/install: all install_docs install_sw/install: install_docs install_sw/g' Makefile.org
 		export _ANDROID_NDK_ROOT=$NDK_ROOT
 		export FIPS_SIG=
-		curl -O http://wiki.openssl.org/images/7/70/Setenv-android.sh
+		wget http://wiki.openssl.org/images/7/70/Setenv-android.sh
 		perl -pi -e 's/^_ANDROID_EABI=(.*)$/#_ANDROID_EABI=\1/g' Setenv-android.sh
 		perl -pi -e 's/^_ANDROID_ARCH=(.*)$/#_ANDROID_ARCH=\1/g' Setenv-android.sh
 		perl -pi -e 's/^_ANDROID_API=(.*)$/#_ANDROID_API=\1/g' Setenv-android.sh

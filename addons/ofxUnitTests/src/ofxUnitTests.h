@@ -140,7 +140,11 @@ class ofxUnitTestsApp: public ofBaseApp{
 		}else{
 			ofLogError() <<  numTestsFailed << "/" << numTestsTotal << " tests failed";
 		}
+
         ofLogNotice() << "took " << ofToString(durationMs) << "ms";
+        if(!reportAppVeyor(passed, durationMs)){
+            ++numTestsFailed;
+        }
         ofExit(numTestsFailed);
     }
 
@@ -148,7 +152,7 @@ protected:
 
     virtual void run() = 0;
 
-	bool test(bool test, const std::string & testName, const std::string & msg, const std::string & file, int line){
+	bool do_test(bool test, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(test){
 			ofLogNotice() << testName << " passed";
@@ -162,12 +166,12 @@ protected:
 		}
 	}
 
-	bool test(bool test, const std::string & testName, const std::string & file, int line){
-		return this->test(test,testName,"",file,line);
+	bool do_test(bool test, const std::string & testName, const std::string & file, int line){
+		return this->do_test(test,testName,"",file,line);
 	}
 
 	template<typename T1, typename T2>
-	bool test_eq(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
+	bool do_test_eq(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(t1==t2){
 			ofLogNotice() << testName << " passed";
@@ -185,12 +189,12 @@ protected:
 	}
 
 	template<typename T1, typename T2>
-	bool test_eq(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
-		return test_eq(t1,t2,v1,v2,testName,"",file,line);
+	bool do_test_eq(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
+		return do_test_eq(t1,t2,v1,v2,testName,"",file,line);
 	}
 
 	template<typename T1, typename T2>
-	bool test_gt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
+	bool do_test_gt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(t1>t2){
 			ofLogNotice() << testName << " passed";
@@ -208,12 +212,12 @@ protected:
 	}
 
 	template<typename T1, typename T2>
-	bool test_gt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
-		return test_gt(t1,t2,v1,v2,testName,"",file,line);
+	bool do_test_gt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
+		return do_test_gt(t1,t2,v1,v2,testName,"",file,line);
 	}
 
 	template<typename T1, typename T2>
-	bool test_lt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
+	bool do_test_lt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(t1<t2){
 			ofLogNotice() << testName << " passed";
@@ -231,18 +235,67 @@ protected:
 	}
 
 	template<typename T1, typename T2>
-	bool test_lt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
-		return test_lt(t1,t2,v1,v2,testName,"",file,line);
+	bool do_test_lt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
+		return do_test_lt(t1,t2,v1,v2,testName,"",file,line);
 	}
 
 private:
+    std::string json_var_value(const std::string & var, const std::string & value){
+        return "\"" + var + "\": \"" + value + "\"";
+    }
+
+    bool reportAppVeyor(bool passed, uint64_t durationMs){
+        const std::string APPVEYOR_API_URL = "APPVEYOR_API_URL";
+        if(ofGetEnv(APPVEYOR_API_URL)!=""){
+            //ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then));
+            auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
+            auto projectName = projectDir.stem();
+            auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
+            auto stdOut = logger->getStdOut();
+            ofStringReplace(stdOut, "\\", "\\\\");
+            ofStringReplace(stdOut, "\"", "\\\"");
+            auto stdErr = logger->getStdErr();
+            ofStringReplace(stdErr, "\\", "\\\\");
+            ofStringReplace(stdErr, "\"", "\\\"");
+            ofHttpRequest req;
+            req.headers["Accept"] = "application/json";
+            req.headers["Content-type"] = "application/json";
+            req.method = ofHttpRequest::POST;
+            req.url = ofGetEnv(APPVEYOR_API_URL) + "api/tests";
+            req.body =
+                    "{ " +
+                        json_var_value("testName", projectName.string()) + ", " +
+                        json_var_value("testFramework", "ofxUnitTests") + ", " +
+                        json_var_value("fileName", exeName.string()) + ", " +
+                        json_var_value("outcome", passed?"Passed":"Failed") + ", " +
+                        json_var_value("durationMilliseconds", ofToString(durationMs)) + ", " +
+                        json_var_value("StdOut", stdOut) + ", " +
+                        json_var_value("StdErr", stdErr) +
+                    "}";
+            ofURLFileLoader http;
+            auto res = http.handleRequest(req);
+            if(res.status<200 || res.status>=300){
+                ofLogError() << "sending to " << req.url;
+                ofLogError() << res.status << ", " << res.error;
+                cout << res.data.getText() << endl;
+                ofLogError() << "for body:";
+                cout << req.body << endl;
+                return false;
+            }else{
+                return true;
+            }
+        }else{
+            return true;
+        }
+    }
+
 	int numTestsTotal = 0;
 	int numTestsPassed = 0;
 	int numTestsFailed = 0;
     std::shared_ptr<ofColorsLoggerChannel> logger{new ofColorsLoggerChannel};
 };
 
-#define test(x, ...) this->test(x,__VA_ARGS__,__FILE__,__LINE__)
-#define test_eq(x,y, ...) this->test_eq(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
-#define test_gt(x,y, ...) this->test_gt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
-#define test_lt(x,y, ...) this->test_lt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define test(x, ...) this->do_test(x,__VA_ARGS__,__FILE__,__LINE__)
+#define test_eq(x,y, ...) this->do_test_eq(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define test_gt(x,y, ...) this->do_test_gt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define test_lt(x,y, ...) this->do_test_lt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)

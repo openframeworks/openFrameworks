@@ -44,9 +44,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		deallocCond = nil;
 		
 #if USE_VIDEO_OUTPUT
-		// create videooutput queue
-		_myVideoOutputQueue = dispatch_queue_create(NULL, NULL);
-		
 		// create videooutput
 		_videoOutput = nil;
 		_videoInfo = nil;
@@ -107,7 +104,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	}
 	
 	self.videoOutput.suppressesPlayerRendering = YES;
-	[self.videoOutput setDelegate:self queue:_myVideoOutputQueue];
 }
 #endif
 
@@ -115,13 +111,11 @@ static const void *PlayerRateContext = &ItemStatusContext;
 //---------------------------------------------------------- cleanup / dispose.
 - (void)dealloc
 {
-	[self unloadVideo];
+	if (_player != nil){
+		[self unloadVideo];
+	}
 	
 	[asyncLock lock];
-	
-#if USE_VIDEO_OUTPUT
-	dispatch_release(_myVideoOutputQueue);
-#endif
 	
 	[asyncLock unlock];
 	
@@ -353,6 +347,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			// add timeobserver?
 			[self addTimeObserverToPlayer];
 			
+			_player.volume = volume;
+			
 			// loaded
 			bLoaded = true;
 			
@@ -456,6 +452,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			if (currentReader != nil) {
 				[currentReader cancelReading];
 				[currentReader autorelease];
+				currentReader = nil;
 				
 				if (currentVideoTrack != nil) {
 					[currentVideoTrack autorelease];
@@ -522,7 +519,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 				if (currentTimeObserver != nil) {
 					[currentPlayer removeTimeObserver:currentTimeObserver];
-					[currentTimeObserver release];
+					[currentTimeObserver autorelease];
 					currentTimeObserver = nil;
 				}
 				
@@ -575,14 +572,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	[asyncLock lock];
 	[self unloadVideoAsync];
 	[asyncLock unlock];
-}
-
-
-#pragma mark - AVPlayerItemOutputPullDelegate
-
-- (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender
-{
-	NSLog(@"outputMediaDataWillChange");
 }
 
 
@@ -1211,6 +1200,10 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	return bReady;
 }
 
+- (BOOL)isLoaded {
+	return bLoaded;
+}
+
 - (BOOL)isPlaying {
 	return bPlaying;
 }
@@ -1324,6 +1317,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 - (void)setVolume:(float)value {
 	
+	volume = value;
+	
 	if(![self isReady]) {
 		return;
 	}
@@ -1332,21 +1327,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		return;
 	}
 	
-	volume = value;
-	
-	NSArray * audioTracks = [self.playerItem.asset tracksWithMediaType:AVMediaTypeAudio];
-	NSMutableArray * allAudioParams = [NSMutableArray array];
-	for(AVAssetTrack * track in audioTracks) {
-		AVMutableAudioMixInputParameters * audioInputParams = [AVMutableAudioMixInputParameters audioMixInputParameters];
-		[audioInputParams setVolume:volume atTime:kCMTimeZero];
-		[audioInputParams setTrackID:[track trackID]];
-		[allAudioParams addObject:audioInputParams];
-	}
-	
-	AVMutableAudioMix * audioMix = [AVMutableAudioMix audioMix];
-	[audioMix setInputParameters:allAudioParams];
-	
-	[self.playerItem setAudioMix:audioMix];
+	_player.volume = volume;
 }
 
 - (float)getVolume {

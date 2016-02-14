@@ -2,9 +2,10 @@
 #include "ofConstants.h"
 #ifndef TARGET_NO_THREADS
 
-#include "Poco/AtomicCounter.h"
-#include "Poco/Thread.h"
-#include "Poco/Runnable.h"
+#include <atomic>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 #include "ofTypes.h"
 
 
@@ -66,20 +67,10 @@
 /// and only allows the user to receive more valuable debugging information
 /// about the uncaught exception.  Users should design ofThread subclasses to
 /// catch and respond to all anticipated exceptions.
-class ofThread: protected Poco::Runnable {
+class ofThread {
 public:
     /// \brief Create an ofThread.
     ofThread();
-
-    /// \brief Destroy the ofThread.
-    /// \warning The destructor WILL NOT stop the thread or wait for
-    ///     the underlying Poco::Thread to finish.  For threads that
-    ///     require the correct deallocation of resources, the user
-    ///     MUST call waitForThread(...); to ensure that the thread
-    ///     is stopped and the thread's resources are released.
-    ///     Improper release of resources or memory can lead to
-    ///     segementation faults and other errors.
-    virtual ~ofThread();
 
     /// \brief Check the running status of the thread.
     /// \returns true iff the thread is currently running.
@@ -87,37 +78,46 @@ public:
 
     /// \brief Get the unique thread id.
     /// \note This is NOT the the same as the operating thread id!
-    int getThreadId() const;
+    std::thread::id getThreadId() const;
 
     /// \brief Get the unique thread name, in the form of "Thread id#"
     /// \returns the Thread ID string.
     std::string getThreadName() const;
 
-    /// \deprecated
-    /// \brief Start the thread with options.
-    ///
-    /// \param mutexesBlock Set blocking to true if you want the mutex to
-    ///        block when lock() is called.
-    /// \param verbose use verbose logging methods.
-    OF_DEPRECATED_MSG("Use startThread(bool blocking = true) instead.",
-                      void startThread(bool mutexesBlock, bool verbose) );
+	void setThreadName(const std::string & name);
 
-    /// \brief Start the thread with options.
-    /// \param mutexBlocks Set blocking to true if you want the mutex to
-    ///        block when lock() is called.
+	/// \brief Start the thread.
     /// \note Subclasses can directly access the mutex and employ thier
     ///       own locking strategy.
-    void startThread(bool mutexBlocks = true);
+	void startThread();
 
-    /// \brief Try to lock the mutex.
+	/// \brief Start the thread with options.
+	/// \param mutexBlocks Set blocking to true if you want the mutex to
+	///        block when lock() is called.
+	/// \note Subclasses can directly access the mutex and employ thier
+	///       own locking strategy.
+	OF_DEPRECATED_MSG("Use tryLock instead of setting the type of lock on startThread",
+				  void startThread(bool mutexBlocks));
+
+	/// \brief Lock the mutex.
     ///
     /// If the thread was started startThread(true), then this call will wait
     /// until the mutex is available and return true.  If the thread was started
     /// startThread(false), this call will return true iff the mutex is
     /// was successfully acquired.
     ///
-    /// \returns true iff the lock was successfully acquired.
+	/// \returns true if the lock was successfully acquired.
     bool lock();
+
+	/// \brief Tries to lock the mutex.
+	///
+	/// If the thread was started startThread(true), then this call will wait
+	/// until the mutex is available and return true.  If the thread was started
+	/// startThread(false), this call will return true iff the mutex is
+	/// was successfully acquired.
+	///
+	/// \returns true if the lock was successfully acquired.
+	bool tryLock();
 
     /// \brief Unlock the mutex.
     ///
@@ -256,7 +256,7 @@ public:
     /// underlying Poco::Thread directly.
     ///
     /// \returns A reference to the backing Poco thread.
-    Poco::Thread& getPocoThread();
+    std::thread& getNativeThread();
 
     /// \brief Get a const reference to the underlying Poco thread.
     ///
@@ -265,42 +265,8 @@ public:
     /// underlying Poco::Thread directly.
     ///
     /// \returns A reference to the backing Poco thread.
-    const Poco::Thread& getPocoThread() const;
+    const std::thread & getNativeThread() const;
 
-    /// \brief A query to see if the current thread is the main thread.
-    ///
-    /// Some functions (e.g. OpenGL calls) can only be executed
-    /// the main thread.  This static function will tell the user
-    /// what thread is currently active at the moment the method
-    /// is called.
-    ///
-    ///     if (ofThread::isMainThread())
-    ///     {
-    ///         ofLogNotice() << "This is the main thread!";
-    ///     }
-    ///     else
-    ///     {
-    ///         ofLogNotice() << "This is NOT the main thread.";
-    ///     }
-    ///
-    /// \returns true iff the current thread is the main thread.
-    static bool isMainThread();
-
-    /// \deprecated
-    /// \warning This function is dangerous and should no longer be used.
-    OF_DEPRECATED_MSG("use ofThread::getCurrentPocoThread() == &yourThread.getPocoThread() to compare threads.",
-                      static ofThread* getCurrentThread());
-
-    /// \brief Get the current Poco thread.
-    ///
-    /// In most cases, it is more appropriate to query the current
-    /// thread by calling isCurrentThread() on an active thread or
-    /// by calling ofThread::isMainThread().  See the method
-    /// documentation for more information on those methods.
-    ///
-    /// \returns A pointer to the current active thread OR 0 iff the main
-    ///     application thread is active.
-    static Poco::Thread* getCurrentPocoThread();
 
     enum {
         INFINITE_JOIN_TIMEOUT = -1
@@ -347,28 +313,31 @@ protected:
     virtual void threadedFunction();
 
     /// \brief The Poco::Thread that runs the Poco::Runnable.
-    Poco::Thread thread;
+    std::thread thread;
 
     /// \brief The internal mutex called through lock() & unlock().
     ///
-    /// This mutext can also be used with ofScopedLock within the threaded
-    /// function by calling:
+    /// This mutext can also be used with std::unique_lock or lock_guard
+    /// within the threaded function by calling:
     ///
-    ///     ofScopedLock lock(mutex);
+    ///     std::unique_lock<std::mutex> lock(mutex);
     ///
     mutable std::mutex mutex;
 
 private:
+    ///< \brief Implements Poco::Runnable::run().
     void run();
-        ///< \brief Implements Poco::Runnable::run().
 
-    Poco::AtomicCounter _threadRunning;
-        ///< \brief Is the thread running?
+    ///< \brief Is the thread running?
+    std::atomic<bool> threadRunning;
+    std::atomic<bool> threadDone;
 
-    Poco::AtomicCounter _mutexBlocks;
-        ///< \brief Should the mutex block?
+    ///< \brief Should the mutex block?
+    std::atomic<bool> mutexBlocks;
 
-    bool threadBeingWaitedFor;
+    std::string name;
+    std::condition_variable condition;
+
 
 };
 

@@ -879,7 +879,7 @@ set( ANDROID_STL_FORCE_FEATURES ON CACHE BOOL "automatically configure rtti and 
 mark_as_advanced( ANDROID_STL ANDROID_STL_FORCE_FEATURES )
 
 if( BUILD_WITH_ANDROID_NDK )
- if( NOT "${ANDROID_STL}" MATCHES "^(none|system|system_re|gabi\\+\\+_static|gabi\\+\\+_shared|stlport_static|stlport_shared|gnustl_static|gnustl_shared)$")
+ if( NOT "${ANDROID_STL}" MATCHES "^(none|system|system_re|gabi\\+\\+_static|gabi\\+\\+_shared|stlport_static|stlport_shared|gnustl_static|gnustl_shared|c\\+\\+_static|c\\+\\+_shared)$")
   message( FATAL_ERROR "ANDROID_STL is set to invalid value \"${ANDROID_STL}\".
 The possible values are:
   none           -> Do not configure the runtime.
@@ -891,6 +891,8 @@ The possible values are:
   stlport_shared -> Use the STLport runtime as a shared library.
   gnustl_static  -> (default) Use the GNU STL as a static library.
   gnustl_shared  -> Use the GNU STL as a shared library.
+  c++_static -> libc++ static
+  c++_shared -> libc++ shared
 " )
  endif()
 elseif( BUILD_WITH_STANDALONE_TOOLCHAIN )
@@ -1072,6 +1074,20 @@ if( BUILD_WITH_ANDROID_NDK )
   else()
    set( __libstl                "${__libstl}/libs/${ANDROID_NDK_ABI_NAME}/libstdc++.a" )
   endif()
+ elseif( ANDROID_STL MATCHES "c\\+\\+_static" )
+  if( NOT ANDROID_NDK_RELEASE_NUM LESS 8004 ) # before r8d
+   set( ANDROID_EXCEPTIONS       ON )
+  else()
+   set( ANDROID_EXCEPTIONS       OFF )
+  endif()
+  if( ANDROID_NDK_RELEASE_NUM LESS 7000 ) # before r7
+   set( ANDROID_RTTI            OFF )
+  else()
+   set( ANDROID_RTTI            ON )
+  endif()
+  
+  set( ANDROID_STL_INCLUDE_DIRS "${ANDROID_SYSROOT}/usr/include" "${ANDROID_NDK}/sources/android/support/include" "${ANDROID_NDK}/sources/cxx-stl/llvm-libc++/libcxx/include")
+  set( __libstl                 "${ANDROID_NDK}/sources/cxx-stl/llvm-libc++/libs/${ANDROID_NDK_ABI_NAME}/libc++_static.a" )
  else()
   message( FATAL_ERROR "Unknown runtime: ${ANDROID_STL}" )
  endif()

@@ -266,14 +266,16 @@ private:
 	void onParentPositionChanged(ofVec3f & position) {onPositionChanged();}
 	void onParentOrientationChanged(ofQuaternion & orientation) {onOrientationChanged();}
 	void onParentScaleChanged(ofVec3f & scale) {onScaleChanged();}
+
 	ofParameter<ofVec3f> position;
 	ofParameter<ofQuaternion> orientation;
 	ofParameter<ofVec3f> scale;
-	
+
 	std::array<ofVec3f,3> axis;
-	
+
 	ofMatrix4x4 localTransformMatrix;
 	bool legacyCustomDrawOverrided;
+	std::set<ofNode*> children;
 
 	void addListener(ofNode & node);
 	void removeListener(ofNode & node);
