@@ -146,7 +146,7 @@ bool ofRtAudioSoundStream::setup(const ofSoundStreamSettings & settings_)
 	RtAudio::StreamParameters inputParameters;
 	if (settings.numInputChannels > 0) {
 		if (!settings.getInDevice()) {
-			ofSoundDevice device = *settings.getInDevice();
+			ofSoundDevice device;
 			device.deviceID = audio->getDefaultInputDevice();
 			settings.setInDevice(device);
 		}
@@ -156,7 +156,7 @@ bool ofRtAudioSoundStream::setup(const ofSoundStreamSettings & settings_)
 
 	if (settings.numOutputChannels > 0) {
 		if (!settings.getOutDevice()) {
-			ofSoundDevice device = *settings.getOutDevice();
+			ofSoundDevice device;
 			device.deviceID = audio->getDefaultOutputDevice();
 			settings.setOutDevice(device);
 		}
