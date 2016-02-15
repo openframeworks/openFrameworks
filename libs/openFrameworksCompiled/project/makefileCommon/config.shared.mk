@@ -44,18 +44,32 @@ endif
 HOST_OS=$(shell uname -s)
 $(info HOST_OS=${HOST_OS})
 
-# if not defined, determine this platform's architecture via uname -m
-ifndef PLATFORM_ARCH
-    # determine from the uname
-    PLATFORM_ARCH=$(shell uname -m)
+#check for Raspbian as armv7l needs to use armv6l architecture
+ifeq ($(wildcard $(RPI_ROOT)/etc/*-release), /etc/os-release)
+    ifeq ($(shell grep ID=raspbian $(RPI_ROOT)/etc/*-release),ID=raspbian)
+        IS_RASPBIAN=1
+    endif
 endif
-HOST_ARCH=$(shell uname -m)
-$(info HOST_ARCH=${HOST_ARCH})
 
-ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
-	CROSS_COMPILING=1
+ifdef IS_RASPBIAN
+    PLATFORM_ARCH=armv6l
+    HOST_ARCH=armv6l
+    ifdef RPI_ROOT
+        CROSS_COMPILING=1
+    endif
 else
-	CROSS_COMPILING=0
+    HOST_ARCH=$(shell uname -m)
+    ifndef PLATFORM_ARCH
+        # determine from the uname
+        PLATFORM_ARCH=$(shell uname -m)
+    endif
+    ifndef CROSS_COMPILING
+        ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
+	        CROSS_COMPILING=1
+        else
+	        CROSS_COMPILING=0
+        endif
+    endif
 endif
 
 #$(info PLATFORM_ARCH=$(PLATFORM_ARCH))
@@ -63,6 +77,8 @@ endif
 #$(info HOST_ARCH=$(HOST_ARCH))
 #$(info HOST_OS=$(HOST_OS))
 #$(info CROSS_COMPILING=$(CROSS_COMPILING))
+#$(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
+#$(info IS_RASPBIAN=$(IS_RASPBIAN))
 
 # if not defined, construct the default PLATFORM_LIB_SUBPATH
 ifndef PLATFORM_LIB_SUBPATH

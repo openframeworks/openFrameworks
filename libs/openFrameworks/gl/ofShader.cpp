@@ -130,7 +130,7 @@ ofShader & ofShader::operator=(const ofShader & mom){
 		retainProgram(program);
 		for(auto it: shaders){
 			auto shader = it.second;
-			retainShader(shader.type);
+			retainShader(shader.id);
 		}
 #ifdef TARGET_ANDROID
 		ofAddListener(ofxAndroidEvents().unloadGL,this,&ofShader::unloadGL);
