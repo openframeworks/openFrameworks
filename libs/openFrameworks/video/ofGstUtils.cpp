@@ -1260,7 +1260,7 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 				ofTextureData & texData = backTexture.getTextureData();
 				texData.bAllocated = true;
 				texData.bFlipTexture = false;
-				texData.glTypeInternal = GL_RGBA;
+				texData.glInternalFormat = GL_RGBA;
 				texData.height = getHeight();
 				texData.width = getWidth();
 				texData.magFilter = GL_LINEAR;
