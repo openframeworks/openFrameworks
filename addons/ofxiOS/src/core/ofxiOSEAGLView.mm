@@ -544,6 +544,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
         // -------------------------- Micro Game Pad (AppleTV)
         GCMicroGamepad *microPad = controller.microGamepad;
         microPad.reportsAbsoluteDpadValues = YES;
+        microPad.allowsRotation = YES;
         if(microPad != nil) {
             microPad.buttonA.valueChangedHandler =  ^(GCControllerButtonInput *button, float value, BOOL pressed){
                 [self controllerButtonEvent:controllerID
