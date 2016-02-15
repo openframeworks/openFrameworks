@@ -18,7 +18,9 @@
 #include <algorithm>
 #include "ofAppRunner.h"
 #ifdef OF_USE_GST_GL
+#ifndef TARGET_OPENGLES
 #include <gst/gl/x11/gstgldisplay_x11.h>
+#endif
 #include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
 #ifdef TARGET_WIN32
