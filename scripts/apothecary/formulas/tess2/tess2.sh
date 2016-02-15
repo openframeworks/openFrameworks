@@ -9,7 +9,7 @@
 # on ios, use some build scripts adapted from the Assimp project
 
 # define the version
-FORMULA_TYPES=( "osx" "vs" "emscripten" "ios" "tvos" "android" )
+FORMULA_TYPES=( "osx" "vs" "emscripten" "ios" "tvos" "android" "linux" "linux64" )
 
 # define the version
 VER=1.1
@@ -39,7 +39,6 @@ function prepare() {
 	
 	# check if the patch was applied, if not then patch
 	patch -p1 -u -N  < $FORMULA_DIR/tess2.patch
-
 	# copy in build script and CMake toolchains adapted from Assimp
 	if [ "$OS" == "osx" ] ; then
 		mkdir -p build
@@ -330,7 +329,14 @@ function build() {
     	cd build
     	emcmake cmake .. -DCMAKE_CXX_FLAGS=-DNDEBUG -DCMAKE_C_FLAGS=-DNDEBUG
     	emmake make -j${PARALLEL_MAKE}
-		
+	elif [ "$TYPE" == "linux64" ]; then
+	    premake4 gmake
+	    cd Build
+	    make config=release64 tess2
+	elif [ "$TYPE" == "linux" ]; then
+	    premake4 gmake
+	    cd Build
+	    make config=release32 tess2
 	else
 		mkdir -p build/$TYPE
 		cd build/$TYPE
@@ -365,6 +371,12 @@ function copy() {
 
 	elif [ "$TYPE" == "emscripten" ]; then
 		cp -v build/libtess2.a $1/lib/$TYPE/libtess2.a
+
+	elif [ "$TYPE" == "linux64" ]; then
+		cp -v Build/libtess2.a $1/lib/$TYPE/libtess2.a
+
+	elif [ "$TYPE" == "linux32" ]; then
+		cp -v Build/libtess2.a $1/lib/$TYPE/libtess2.a
 		
 	else
 		cp -v build/$TYPE/libtess2.a $1/lib/$TYPE/libtess2.a

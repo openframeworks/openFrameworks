@@ -63,6 +63,12 @@ public:
 	void readToPixels(ofShortPixels & pixels, int attachmentPoint = 0) const;
 	void readToPixels(ofFloatPixels & pixels, int attachmentPoint = 0) const;
 
+#ifndef TARGET_OPENGLES
+	/// \brief Copy the fbo to an ofBufferObject.
+	/// \param buffer the target buffer to copy to.
+	void copyTo(ofBufferObject & buffer) const;
+#endif
+	
 	float getWidth() const;
 	float getHeight() const;
 

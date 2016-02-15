@@ -259,6 +259,10 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
     //this lets us detect if the window is running in a retina mode
     if( framebufferW != windowW ){
         pixelScreenCoordScale = framebufferW / windowW;
+		
+		ofPoint position = getWindowPosition();
+		setWindowShape(windowW, windowH);
+		setWindowPosition(position.x, position.y);
 	}
 
 #ifndef TARGET_OPENGLES
@@ -540,7 +544,15 @@ void ofAppGLFWWindow::setWindowPosition(int x, int y){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowShape(int w, int h){
-	glfwSetWindowSize(windowP,w/pixelScreenCoordScale,h/pixelScreenCoordScale);
+	#ifdef TARGET_OSX
+		ofPoint pos = getWindowPosition();
+		glfwSetWindowSize(windowP,w/pixelScreenCoordScale,h/pixelScreenCoordScale);
+		if( pos != getWindowPosition() ){
+			setWindowPosition(pos.x, pos.y);
+		}
+	#else
+		glfwSetWindowSize(windowP,w/pixelScreenCoordScale,h/pixelScreenCoordScale);
+	#endif
 }
 
 //------------------------------------------------------------

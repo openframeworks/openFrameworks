@@ -1517,6 +1517,11 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 			case OF_NO_TEXTURE:
 				nextShader = &defaultNoTexColor;
 				break;
+	#ifdef TARGET_ANDROID
+			case GL_TEXTURE_EXTERNAL_OES:
+				nextShader = &defaultOESTexColor;
+				break;
+	#endif
 			}
 
 		}else if(colorsEnabled){
@@ -1535,6 +1540,11 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 			case OF_NO_TEXTURE:
 				nextShader = &defaultNoTexNoColor;
 				break;
+	#ifdef TARGET_ANDROID
+			case GL_TEXTURE_EXTERNAL_OES:
+				nextShader = &defaultOESTexNoColor;
+				break;
+	#endif
 			}
 
 		}else{
@@ -1823,12 +1833,14 @@ void ofGLProgrammableRenderer::drawString(const ofTrueTypeFont & font, string te
 
 #ifdef TARGET_OPENGLES
 static const string vertex_shader_header =
+		"%extensions%\n"
 		"precision mediump float;\n"
 		"#define IN attribute\n"
 		"#define OUT varying\n"
 		"#define TEXTURE texture2D\n"
 		"#define TARGET_OPENGLES\n";
 static const string fragment_shader_header =
+		"%extensions%\n"
 		"precision mediump float;\n"
 		"#define IN varying\n"
 		"#define OUT\n"
@@ -1976,13 +1988,48 @@ static const string defaultFragmentShaderTex2DNoColor = fragment_shader_header +
 	uniform float usingTexture;
 	uniform float usingColors;
 	uniform vec4 globalColor;
+
+	IN float depth;
+	IN vec4 colorVarying;
+	IN vec2 texCoordVarying;
+	void main(){
+		FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
+	}
+);
+
+// ----------------------------------------------------------------------
+
+static const string defaultFragmentShaderOESTexNoColor = fragment_shader_header + STRINGIFY(
+    
+    uniform samplerExternalOES src_tex_unit0;
+    uniform float usingTexture;
+    uniform float usingColors;
+    uniform vec4 globalColor;
+    
+    IN float depth;
+    IN vec4 colorVarying;
+    IN vec2 texCoordVarying;
+    
+    void main(){
+        FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
+    }
+);
+
+// ----------------------------------------------------------------------
+
+static const string defaultFragmentShaderOESTexColor = fragment_shader_header + STRINGIFY(
+																							
+	uniform samplerExternalOES src_tex_unit0;
+	uniform float usingTexture;
+	uniform float usingColors;
+	uniform vec4 globalColor;
 	
 	IN float depth;
 	IN vec4 colorVarying;
 	IN vec2 texCoordVarying;
 	
 	void main(){
-		FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
+		FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * colorVarying;
 	}
 );
 
@@ -2221,6 +2268,8 @@ static string defaultShaderHeader(string header, GLenum textureTarget, int major
 	}else{
 		ofStringReplace(header,"%extensions%","");
 	}
+#else 
+	ofStringReplace(header,"%extensions%","");
 #endif
 	if(textureTarget==GL_TEXTURE_2D){
 		header += "#define SAMPLER sampler2D\n";
@@ -2240,9 +2289,20 @@ static string shaderSource(const string & src, int major, int minor){
 	}else{
 		ofStringReplace(shaderSrc,"%extensions%","");
 	}
+#else
+	ofStringReplace(shaderSrc,"%extensions%","");
 #endif
 	return shaderSrc;
 }
+
+#ifdef TARGET_ANDROID
+static string shaderOESSource(const string & src, int major, int minor){
+	string shaderSrc = src;
+	ofStringReplace(shaderSrc,"%glsl_version%",ofGLSLVersionFromGL(major,minor));
+	ofStringReplace(shaderSrc,"%extensions%","#extension GL_OES_EGL_image_external : require");
+	return shaderSrc;
+}
+#endif
 
 static string videoFragmentShaderSource(const ofBaseVideoDraws & video, int major, int minor){
 	string src;
@@ -2384,6 +2444,20 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor){
 
 		bitmapStringShader.bindDefaults();
 		bitmapStringShader.linkProgram();
+		
+		
+#ifdef TARGET_ANDROID
+		defaultOESTexNoColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderOESSource(defaultVertexShader,major, minor));
+		defaultOESTexColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderOESSource(defaultVertexShader,major, minor));
+		defaultOESTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderOESSource(defaultFragmentShaderOESTexColor,major, minor));
+		defaultOESTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderOESSource(defaultFragmentShaderOESTexNoColor,major, minor));
+		
+		defaultOESTexColor.bindDefaults();
+		defaultOESTexNoColor.bindDefaults();
+		
+		defaultOESTexColor.linkProgram();
+		defaultOESTexNoColor.linkProgram();
+#endif
 	}
 
 	setupGraphicDefaults();

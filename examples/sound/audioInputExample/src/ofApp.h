@@ -22,7 +22,7 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 				
-		void audioIn(float * input, int bufferSize, int nChannels); 
+		void audioIn(ofSoundBuffer & input);
 	
 		vector <float> left;
 		vector <float> right;

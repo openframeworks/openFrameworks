@@ -32,8 +32,6 @@ ofMainLoop::ofMainLoop()
 :bShouldClose(false)
 ,status(0)
 ,allowMultiWindow(true)
-,windowLoop(nullptr)
-,pollEvents(nullptr)
 ,escapeQuits(true){
 
 }
@@ -123,6 +121,7 @@ int ofMainLoop::loop(){
 	if(!windowLoop){
 		while(!bShouldClose && !windowsApps.empty()){
 			loopOnce();
+			pollEvents();
 		}
 		exit();
 	}else{
@@ -144,8 +143,11 @@ void ofMainLoop::loopOnce(){
 			i++; ///< continue to next window
 		}
 	}
-	if(pollEvents){
-		pollEvents();
+}
+
+void ofMainLoop::pollEvents(){
+	if(windowPollEvents){
+		windowPollEvents();
 	}
 }
 
