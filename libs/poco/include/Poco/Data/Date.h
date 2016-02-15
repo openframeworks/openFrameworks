@@ -215,6 +215,21 @@ public:
 		return _val;
 	}
 
+	bool isDate() const
+	{
+		return true;
+	}
+
+	bool isTime() const
+	{
+		return false;
+	}
+
+	bool isDateTime() const
+	{
+		return false;
+	}
+
 private:
 	VarHolderImpl();
 	Poco::Data::Date _val;

@@ -25,6 +25,7 @@
 
 #include "Poco/Foundation.h"
 #include <vector>
+#include <map>
 
 
 //
@@ -49,7 +50,7 @@ class Foundation_API RegularExpression
 	/// (see http://www.pcre.org).
 {
 public:
-	enum Options // These must match the corresponsing options in pcre.h!
+	enum Options // These must match the corresponding options in pcre.h!
 		/// Some of the following options can only be passed to the constructor;
 		/// some can be passed only to matching functions, and some can be used
 		/// everywhere.
@@ -83,7 +84,7 @@ public:
 		RE_NEWLINE_CRLF    = 0x00300000, /// assume newline is CRLF ("\r\n") [ctor]
 		RE_NEWLINE_ANY     = 0x00400000, /// assume newline is any valid Unicode newline character [ctor]
 		RE_NEWLINE_ANYCRLF = 0x00500000, /// assume newline is any of CR, LF, CRLF [ctor]
-		RE_GLOBAL          = 0x10000000, /// replace all occurences (/g) [subst]
+		RE_GLOBAL          = 0x10000000, /// replace all occurrences (/g) [subst]
 		RE_NO_VARS         = 0x20000000  /// treat dollar in replacement string as ordinary character [subst]
 	};
 	
@@ -91,8 +92,10 @@ public:
 	{
 		std::string::size_type offset; /// zero based offset (std::string::npos if subexpr does not match)
 		std::string::size_type length; /// length of substring
+		std::string name;              /// name of group
 	};
 	typedef std::vector<Match> MatchVec;
+	typedef std::map<int, std::string> GroupMap;
 	
 	RegularExpression(const std::string& pattern, int options = 0, bool study = true);
 		/// Creates a regular expression and parses the given pattern.
@@ -187,19 +190,19 @@ public:
 		/// Substitute in subject all matches of the pattern with replacement.
 		/// If RE_GLOBAL is specified as option, all matches are replaced. Otherwise,
 		/// only the first match is replaced.
-		/// Occurences of $<n> (for example, $1, $2, ...) in replacement are replaced 
+		/// Occurrences of $<n> (for example, $1, $2, ...) in replacement are replaced 
 		/// with the corresponding captured string. $0 is the original subject string.
-		/// Returns the number of replaced occurences.
+		/// Returns the number of replaced occurrences.
 
 	int subst(std::string& subject, std::string::size_type offset, const std::string& replacement, int options = 0) const;
 		/// Substitute in subject all matches of the pattern with replacement,
 		/// starting at offset.
 		/// If RE_GLOBAL is specified as option, all matches are replaced. Otherwise,
 		/// only the first match is replaced.
-		/// Unless RE_NO_VARS is specified, occurences of $<n> (for example, $0, $1, $2, ... $9) 
+		/// Unless RE_NO_VARS is specified, occurrences of $<n> (for example, $0, $1, $2, ... $9) 
 		/// in replacement are replaced with the corresponding captured string. 
-		/// $0 is the captured substring. $1 ... $n are the substrings maching the subpatterns.
-		/// Returns the number of replaced occurences.
+		/// $0 is the captured substring. $1 ... $n are the substrings matching the subpatterns.
+		/// Returns the number of replaced occurrences.
 
 	static bool match(const std::string& subject, const std::string& pattern, int options = 0);
 		/// Matches the given subject string against the regular expression given in pattern,
@@ -212,6 +215,8 @@ private:
 	pcre*       _pcre;
 	pcre_extra* _extra;
 	
+	GroupMap _groups;
+
 	static const int OVEC_SIZE;
 	
 	RegularExpression();

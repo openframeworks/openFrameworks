@@ -46,7 +46,7 @@ class NetSSL_API HTTPSClientSession: public HTTPClientSession
 	/// specify the server's host name and port number.
 	///
 	/// Then create a HTTPRequest object, fill it accordingly,
-	/// and pass it as argument to the sendRequst() method.
+	/// and pass it as argument to the sendRequest() method.
 	///
 	/// sendRequest() will return an output stream that can
 	/// be used to send the request body, if there is any.

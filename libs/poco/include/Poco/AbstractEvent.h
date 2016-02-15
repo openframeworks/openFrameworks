@@ -253,7 +253,7 @@ public:
 	ActiveResult<TArgs> notifyAsync(const void* pSender, const TArgs& args)
 		/// Sends a notification to all registered delegates. The order is 
 		/// determined by the TStrategy. This method is not blocking and will
-		/// immediately return. The delegates are invoked in a seperate thread.
+		/// immediately return. The delegates are invoked in a separate thread.
 		/// Call activeResult.wait() to wait until the notification has ended.
 		/// While executing, other objects can change the delegate list. These changes don't
 		/// influence the current active notifications but are activated with
@@ -344,7 +344,7 @@ protected:
 	}
 
 	TStrategy _strategy; /// The strategy used to notify observers.
-	bool      _enabled;  /// Stores if an event is enabled. Notfies on disabled events have no effect
+	bool      _enabled;  /// Stores if an event is enabled. Notifies on disabled events have no effect
 	                     /// but it is possible to change the observers.
 	mutable TMutex _mutex;
 
@@ -455,7 +455,7 @@ public:
 	ActiveResult<void> notifyAsync(const void* pSender)
 		/// Sends a notification to all registered delegates. The order is 
 		/// determined by the TStrategy. This method is not blocking and will
-		/// immediately return. The delegates are invoked in a seperate thread.
+		/// immediately return. The delegates are invoked in a separate thread.
 		/// Call activeResult.wait() to wait until the notification has ended.
 		/// While executing, other objects can change the delegate list. These changes don't
 		/// influence the current active notifications but are activated with
@@ -544,7 +544,7 @@ protected:
 	}
 
 	TStrategy _strategy; /// The strategy used to notify observers.
-	bool      _enabled;  /// Stores if an event is enabled. Notfies on disabled events have no effect
+	bool      _enabled;  /// Stores if an event is enabled. Notifies on disabled events have no effect
 	                     /// but it is possible to change the observers.
 	mutable TMutex _mutex;
 

@@ -4,6 +4,8 @@
 #   include <openssl/opensslconf_win32.h>
 #elif TARGET_OS_IPHONE_SIMULATOR || TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE || TARGET_IPHONE
 #   include <openssl/opensslconf_ios.h>
+#elif TARGET_OS_TV
+#   include <openssl/opensslconf_tvos.h>
 #elif defined(__APPLE_CC__)
 #   include <openssl/opensslconf_osx.h>
 #elif defined (__ANDROID__)

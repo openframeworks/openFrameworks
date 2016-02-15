@@ -45,10 +45,10 @@ public:
 		/// Returns the name of the cipher.
 
 	CryptoTransform* createEncryptor();
-		/// Creates an encrytor object.
+		/// Creates an encryptor object.
 
 	CryptoTransform* createDecryptor();
-		/// Creates a decrytor object.
+		/// Creates a decryptor object.
 
 private:
 	CipherKey _key;

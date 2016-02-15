@@ -51,11 +51,11 @@ class NetSSL_API SSLManager
 	/// Proper initialization of SSLManager is critical.
 	///
 	/// SSLManager can be initialized manually, by calling initializeServer()
-	/// and/or initializeClient(), or intialization can be automatic. In the latter
+	/// and/or initializeClient(), or initialization can be automatic. In the latter
 	/// case, a Poco::Util::Application instance must be available and the required
 	/// configuration properties must be set (see below).
 	///
-	/// Note that manual intialization must happen very early in the application,
+	/// Note that manual initialization must happen very early in the application,
 	/// before defaultClientContext() or defaultServerContext() are called.
 	///
 	/// If defaultClientContext() and defaultServerContext() are never called
@@ -112,7 +112,7 @@ class NetSSL_API SSLManager
 	///      the Context class for details). Valid values are none, relaxed, strict, once.
 	///    - verificationDepth (integer, 1-9): Sets the upper limit for verification chain sizes. Verification
 	///      will fail if a certificate chain larger than this is encountered.
-	///    - loadDefaultCAFile (boolean): Specifies wheter the builtin CA certificates from OpenSSL are used.
+	///    - loadDefaultCAFile (boolean): Specifies whether the builtin CA certificates from OpenSSL are used.
 	///    - cipherList (string): Specifies the supported ciphers in OpenSSL notation
 	///      (e.g. "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH").
 	///    - privateKeyPassphraseHandler.name (string): The name of the class (subclass of PrivateKeyPassphraseHandler)

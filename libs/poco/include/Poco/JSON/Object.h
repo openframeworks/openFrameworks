@@ -191,7 +191,7 @@ public:
 		/// Sets a new value
 
 	void stringify(std::ostream& out, unsigned int indent = 0, int step = -1) const;
-		/// Prints the object to out. When indent is 0, the object
+		/// Prints the object to out stream. When indent is 0, the object
 		/// will be printed on a single line without indentation.
 
 	void remove(const std::string& key);
@@ -239,8 +239,8 @@ private:
 		out << '}';
 	}
 
-	typedef std::deque<Dynamic::Var*>                   KeyPtrList;
-	typedef Poco::DynamicStruct::Ptr                    StructPtr;
+	typedef std::deque<const std::string*> KeyPtrList;
+	typedef Poco::DynamicStruct::Ptr       StructPtr;
 
 	const std::string& getKey(ValueMap::const_iterator& it) const;
 	const Dynamic::Var& getValue(ValueMap::const_iterator& it) const;
@@ -320,7 +320,11 @@ inline const Dynamic::Var& Object::getValue(ValueMap::const_iterator& it) const
 
 inline const Dynamic::Var& Object::getValue(KeyPtrList::const_iterator& it) const
 {
-	return **it;
+	ValueMap::const_iterator itv = _values.find(**it);
+	if (itv != _values.end())
+		return itv->second;
+	else
+		throw Poco::NotFoundException();
 }
 
 

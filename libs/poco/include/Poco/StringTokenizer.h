@@ -69,7 +69,7 @@ public:
 		/// Returns true if token exists, false otherwise.
 
 	std::size_t find(const std::string& token, std::size_t pos = 0) const;
-		/// Returns the index of the first occurence of the token
+		/// Returns the index of the first occurrence of the token
 		/// starting at position pos.
 		/// Throws a NotFoundException if the token is not found.
 

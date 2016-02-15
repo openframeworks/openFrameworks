@@ -170,7 +170,7 @@ public:
 		/// Appends the given path.
 		
 	Path& resolve(const Path& path);
-		/// Resolves the given path agains the current one.
+		/// Resolves the given path against the current one.
 		///
 		/// If the given path is absolute, it replaces the current one.
 		/// Otherwise, the relative path is appended to the current path.
@@ -291,8 +291,36 @@ public:
 	static std::string home();
 		/// Returns the user's home directory.
 		
+	static std::string configHome();
+		/// Returns the user's config directory.
+		///
+		/// On Unix systems, this is the '~/.config/'. On Windows systems,
+		/// this is '%APPDATA%'.
+		
+	static std::string dataHome();
+		/// Returns the user's data directory.
+		///
+		/// On Unix systems, this is the '~/.local/share/'. On Windows systems,
+		/// this is '%APPDATA%'.
+		
+	static std::string tempHome();
+		/// Returns the user's temp directory.
+		///
+		/// On Unix systems, this is the '~/.local/temp/'.
+		
+	static std::string cacheHome();
+		/// Returns the user's cache directory.
+		///
+		/// On Unix systems, this is the '~/.cache/'. On Windows systems,
+		/// this is '%APPDATA%'.
+			
 	static std::string temp();
 		/// Returns the temporary directory.
+		
+	static std::string config();
+		/// Returns the systemwide config directory.
+		///
+		/// On Unix systems, this is the '/etc/'.
 		
 	static std::string null();
 		/// Returns the name of the null device.

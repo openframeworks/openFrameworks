@@ -23,6 +23,7 @@
 #include "Poco/Foundation.h"
 #include "Poco/Event.h"
 #include "Poco/Mutex.h"
+#include "Poco/Environment.h"
 
 
 #if defined(POCO_OS_FAMILY_WINDOWS)
@@ -54,7 +55,7 @@ class Foundation_API Thread: private ThreadImpl
 	/// Furthermore, a thread can be assigned a name.
 	/// The name of a thread can be changed at any time.
 {
-public:	
+public:
 	typedef ThreadImpl::TIDImpl TID;
 
 	using ThreadImpl::Callable;
@@ -68,7 +69,7 @@ public:
 		PRIO_HIGH    = PRIO_HIGH_IMPL,   /// A higher than normal thread priority.
 		PRIO_HIGHEST = PRIO_HIGHEST_IMPL /// The highest thread priority.
 	};
-	
+
 	enum Policy
 	{
 		POLICY_DEFAULT = POLICY_DEFAULT_IMPL
@@ -76,10 +77,10 @@ public:
 
 	Thread();
 		/// Creates a thread. Call start() to start it.
-		
+
 	Thread(const std::string& name);
 		/// Creates a named thread. Call start() to start it.
-		
+
 	~Thread();
 		/// Destroys the thread.
 
@@ -110,21 +111,21 @@ public:
 	void setOSPriority(int prio, int policy = POLICY_DEFAULT);
 		/// Sets the thread's priority, using an operating system specific
 		/// priority value. Use getMinOSPriority() and getMaxOSPriority() to
-		/// obtain mininum and maximum priority values. Additionally,
+		/// obtain minimum and maximum priority values. Additionally,
 		/// a scheduling policy can be specified. The policy is currently
 		/// only used on POSIX platforms where the values SCHED_OTHER (default),
 		/// SCHED_FIFO and SCHED_RR are supported.
-		
+
 	int getOSPriority() const;
 		/// Returns the thread's priority, expressed as an operating system
 		/// specific priority value.
 		///
 		/// May return 0 if the priority has not been explicitly set.
-		
+
 	static int getMinOSPriority(int policy = POLICY_DEFAULT);
 		/// Returns the minimum operating system-specific priority value,
 		/// which can be passed to setOSPriority() for the given policy.
-		
+
 	static int getMaxOSPriority(int policy = POLICY_DEFAULT);
 		/// Returns the maximum operating system-specific priority value,
 		/// which can be passed to setOSPriority() for the given policy.
@@ -134,6 +135,17 @@ public:
 		/// Setting the stack size to 0 will use the default stack size.
 		/// Typically, the real stack size is rounded up to the nearest
 		/// page size multiple.
+
+	void setAffinity(int cpu);
+		/// Binds the thread to run only on the CPU core with the 
+		/// given index.
+		/// 
+		/// Does nothing if the system does not support CPU affinity for
+		/// threads.
+
+	int getAffinity() const;
+		/// Returns the index of the CPU core this thread has been bound to,
+		/// or -1 if the thread has not been bound to a CPU.
 
 	int getStackSize() const;
 		/// Returns the thread's stack size in bytes.
@@ -157,15 +169,15 @@ public:
 	}
 
 	void join();
-		/// Waits until the thread completes execution.	
+		/// Waits until the thread completes execution.
 		/// If multiple threads try to join the same
 		/// thread, the result is undefined.
-		
+
 	void join(long milliseconds);
 		/// Waits for at most the given interval for the thread
 		/// to complete. Throws a TimeoutException if the thread
 		/// does not complete within the specified time interval.
-		
+
 	bool tryJoin(long milliseconds);
 		/// Waits for at most the given interval for the thread
 		/// to complete. Returns true if the thread has finished,
@@ -177,9 +189,9 @@ public:
 	static bool trySleep(long milliseconds);
 		/// Starts an interruptible sleep. When trySleep() is called,
 		/// the thread will remain suspended until:
-		///   - the timeout expires or 
+		///   - the timeout expires or
 		///   - wakeUp() is called
-		/// 
+		///
 		/// Function returns true if sleep attempt was completed, false
 		/// if sleep was interrupted by a wakeUp() call.
 		/// A frequent scenario where trySleep()/wakeUp() pair of functions
@@ -187,13 +199,13 @@ public:
 		/// with periodic activity between the idle times; trying to sleep
 		/// (as opposed to sleeping) allows immediate ending of idle thread
 		/// from the outside.
-		/// 
-		/// The trySleep() and wakeUp() calls should be used with 
-		/// understanding that the suspended state is not a true sleep, 
-		/// but rather a state of waiting for an event, with timeout 
-		/// expiration. This makes order of calls significant; calling 
-		/// wakeUp() before calling trySleep() will prevent the next  
-		/// trySleep() call to actually suspend the thread (which, in 
+		///
+		/// The trySleep() and wakeUp() calls should be used with
+		/// understanding that the suspended state is not a true sleep,
+		/// but rather a state of waiting for an event, with timeout
+		/// expiration. This makes order of calls significant; calling
+		/// wakeUp() before calling trySleep() will prevent the next
+		/// trySleep() call to actually suspend the thread (which, in
 		/// some scenarios, may be desirable behavior).
 
 	void wakeUp();
@@ -213,8 +225,8 @@ public:
 		/// Returns the Thread object for the currently active thread.
 		/// If the current thread is the main thread, 0 is returned.
 
- 	static TID currentTid();
- 		/// Returns the native thread ID for the current thread.    
+	static TID currentTid();
+		/// Returns the native thread ID for the current thread.
 
 protected:
 	ThreadLocalStorage& tls();
@@ -225,7 +237,7 @@ protected:
 
 	std::string makeName();
 		/// Creates a unique name for a thread.
-		
+
 	static int uniqueId();
 		/// Creates and returns a unique id for a thread.
 
@@ -246,7 +258,7 @@ protected:
 		{
 			_functor();
 		}
-	
+
 	private:
 		Functor _functor;
 	};
@@ -284,7 +296,7 @@ inline int Thread::id() const
 inline std::string Thread::name() const
 {
 	FastMutex::ScopedLock lock(_mutex);
-	
+
 	return _name;
 }
 
@@ -292,7 +304,7 @@ inline std::string Thread::name() const
 inline std::string Thread::getName() const
 {
 	FastMutex::ScopedLock lock(_mutex);
-	
+
 	return _name;
 }
 
@@ -323,22 +335,22 @@ inline Thread* Thread::current()
 
 inline void Thread::setOSPriority(int prio, int policy)
 {
-	setOSPriorityImpl(prio, policy);	
+	setOSPriorityImpl(prio, policy);
 }
 
-	
+
 inline int Thread::getOSPriority() const
 {
 	return getOSPriorityImpl();
 }
 
-	
+
 inline int Thread::getMinOSPriority(int policy)
 {
 	return ThreadImpl::getMinOSPriorityImpl(policy);
 }
 
-	
+
 inline int Thread::getMaxOSPriority(int policy)
 {
 	return ThreadImpl::getMaxOSPriorityImpl(policy);
@@ -348,6 +360,18 @@ inline int Thread::getMaxOSPriority(int policy)
 inline void Thread::setStackSize(int size)
 {
 	setStackSizeImpl(size);
+}
+
+
+inline void Thread::setAffinity(int cpu)
+{
+	setAffinityImpl(cpu);
+}
+
+
+inline int Thread::getAffinity() const
+{
+	return getAffinityImpl();
 }
 
 

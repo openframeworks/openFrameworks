@@ -103,7 +103,7 @@ public:
 	static int parseDayOfWeek(std::string::const_iterator& it, const std::string::const_iterator& end);
 		/// Tries to interpret the given range as a weekday name. The range must be at least
 		/// three characters long. 
-		/// Returns the weekday number (0 .. 6, where 0 = Synday, 1 = Monday, etc.) if the 
+		/// Returns the weekday number (0 .. 6, where 0 = Sunday, 1 = Monday, etc.) if the 
 		/// weekday name is valid. Otherwise throws a SyntaxException.
 		
 protected:

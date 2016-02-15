@@ -45,7 +45,7 @@ public:
 	virtual ~Database();
 		/// Destructor
 
-	double count(Connection& connection, const std::string& collectionName) const;
+	Int64 count(Connection& connection, const std::string& collectionName) const;
 		/// Sends a count request for the given collection to MongoDB. When
 		/// the command fails, -1 is returned.
 

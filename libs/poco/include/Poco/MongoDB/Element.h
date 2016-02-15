@@ -33,7 +33,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
-#include <set>
+#include <list>
 
 
 namespace Poco {
@@ -76,17 +76,7 @@ inline std::string Element::name() const
 }
 
 
-class ElementComparator
-{
-public:
-	bool operator()(const Element::Ptr& s1, const Element::Ptr& s2)
-	{
-		return s1->name() < s2->name();
-	}
-};
-
-
-typedef std::set<Element::Ptr, ElementComparator> ElementSet;
+typedef std::list<Element::Ptr> ElementSet;
 
 
 template<typename T> 

@@ -45,20 +45,24 @@ class Foundation_API Mutex: private MutexImpl
 	/// A Mutex (mutual exclusion) is a synchronization 
 	/// mechanism used to control access to a shared resource
 	/// in a concurrent (multithreaded) scenario.
-	/// Mutexes are recursive, that is, the same mutex can be 
-	/// locked multiple times by the same thread (but, of course,
-	/// not by other threads).
 	/// Using the ScopedLock class is the preferred way to automatically
 	/// lock and unlock a mutex.
 {
 public:
+	enum MutexType
+		/// The type of a mutex.
+	{
+		MUTEX_RECURSIVE = MUTEX_RECURSIVE_IMPL,      /// A recursive mutex
+		MUTEX_NONRECURSIVE = MUTEX_NONRECURSIVE_IMPL /// A non-recursive mutex
+	};
+
 	typedef Poco::ScopedLock<Mutex> ScopedLock;
 	
-	Mutex();
-		/// creates the Mutex.
+	explicit Mutex(MutexType type = MUTEX_RECURSIVE);
+		/// Creates the Mutex.
 		
 	~Mutex();
-		/// destroys the Mutex.
+		/// Destroys the Mutex.
 
 	void lock();
 		/// Locks the mutex. Blocks if the mutex
@@ -99,10 +103,11 @@ private:
 
 class Foundation_API FastMutex: private FastMutexImpl
 	/// A FastMutex (mutual exclusion) is similar to a Mutex.
-	/// Unlike a Mutex, however, a FastMutex is not recursive,
-	/// which means that a deadlock will occur if the same
-	/// thread tries to lock a mutex it has already locked again.
-	/// Locking a FastMutex is faster than locking a recursive Mutex.
+	/// Locking a FastMutex is guaranteed to be at least as
+	/// fast as locking a Mutex.  However, a FastMutex is not
+	/// guaranteed to be either recursive or non-recursive.
+	/// It is best suited to thread safe components like pools,
+	/// caches and queues where locking is internal to the component.
 	/// Using the ScopedLock class is the preferred way to automatically
 	/// lock and unlock a mutex.
 {

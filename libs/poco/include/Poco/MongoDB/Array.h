@@ -62,7 +62,7 @@ public:
 		/// An empty element will be returned when the element is not found.
 
 	template<typename T>
-	bool isType(int pos)
+	bool isType(int pos) const
 		/// Returns true when the type of the element equals the TypeId of ElementTrait
 	{
 		return Document::isType<T>(Poco::NumberFormatter::format(pos));

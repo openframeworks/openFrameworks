@@ -154,7 +154,7 @@ public:
 		/// An empty element will be returned when the element is not found.
 
 	template<typename T>
-	bool isType(const std::string& name)
+	bool isType(const std::string& name) const
 		/// Returns true when the type of the element equals the TypeId of ElementTrait
 	{
 		Element::Ptr element = get(name);
@@ -185,7 +185,7 @@ protected:
 
 inline Document& Document::addElement(Element::Ptr element)
 {
-	_elements.insert(element);
+	_elements.push_back(element);
 	return *this;
 }
 

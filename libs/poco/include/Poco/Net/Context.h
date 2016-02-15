@@ -119,7 +119,7 @@ public:
 			///   * verificationMode specifies whether and how peer certificates are validated.
 			///   * verificationDepth sets the upper limit for verification chain sizes. Verification
 			///     will fail if a certificate chain larger than this is encountered.
-			///   * loadDefaultCAs specifies wheter the builtin CA certificates from OpenSSL are used.
+			///   * loadDefaultCAs specifies whether the builtin CA certificates from OpenSSL are used.
 			///   * cipherList specifies the supported ciphers in OpenSSL notation.
 			///
 			/// Note: If the private key is protected by a passphrase, a PrivateKeyPassphraseHandler
@@ -142,7 +142,7 @@ public:
 			///   * verificationMode specifies whether and how peer certificates are validated.
 			///   * verificationDepth sets the upper limit for verification chain sizes. Verification
 			///     will fail if a certificate chain larger than this is encountered.
-			///   * loadDefaultCAs specifies wheter the builtin CA certificates from OpenSSL are used.
+			///   * loadDefaultCAs specifies whether the builtin CA certificates from OpenSSL are used.
 			///   * cipherList specifies the supported ciphers in OpenSSL notation.
 			///
 			/// Note that a private key and/or certificate must be specified with
@@ -226,29 +226,29 @@ public:
 		///
 		/// Specifying a size of 0 will set an unlimited cache size.
 		///
-		/// This method may only be called on SERVER_USE Context objets.
+		/// This method may only be called on SERVER_USE Context objects.
 		
 	std::size_t getSessionCacheSize() const;
 		/// Returns the current maximum size of the server session cache.
 		///
-		/// This method may only be called on SERVER_USE Context objets.
+		/// This method may only be called on SERVER_USE Context objects.
 		
 	void setSessionTimeout(long seconds);
 		/// Sets the timeout (in seconds) of cached sessions on the server.
 		/// A cached session will be removed from the cache if it has
 		/// not been used for the given number of seconds.
 		///
-		/// This method may only be called on SERVER_USE Context objets.
+		/// This method may only be called on SERVER_USE Context objects.
 
 	long getSessionTimeout() const;
 		/// Returns the timeout (in seconds) of cached sessions on the server.
 		///
-		/// This method may only be called on SERVER_USE Context objets.
+		/// This method may only be called on SERVER_USE Context objects.
 
 	void flushSessionCache();
 		/// Flushes the SSL session cache on the server.
 		///
-		/// This method may only be called on SERVER_USE Context objets.
+		/// This method may only be called on SERVER_USE Context objects.
 				
 	void enableExtendedCertificateVerification(bool flag = true);
 		/// Enable or disable the automatic post-connection

@@ -33,7 +33,7 @@ class Net_API ICMPSocket: public Socket
 	/// ICMP client socket.
 {
 public:
-	ICMPSocket(IPAddress::Family family, int dataSize = 48, int ttl = 128, int timeout = 500000);
+	ICMPSocket(SocketAddress::Family family, int dataSize = 48, int ttl = 128, int timeout = 500000);
 		/// Creates an unconnected ICMP socket.
 		///
 		/// The socket will be created for the
@@ -80,7 +80,7 @@ public:
 protected:
 	ICMPSocket(SocketImpl* pImpl);
 		/// Creates the Socket and attaches the given SocketImpl.
-		/// The socket takes owership of the SocketImpl.
+		/// The socket takes ownership of the SocketImpl.
 		///
 		/// The SocketImpl must be a ICMPSocketImpl, otherwise
 		/// an InvalidArgumentException will be thrown.

@@ -477,12 +477,6 @@ PING_LOOP_PID=$!
 
             MIN_IOS_VERSION=$IOS_MIN_SDK_VER
             # min iOS version for arm64 is iOS 7
-        
-            if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
-                MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
-            elif [ "${IOS_ARCH}" == "i386" ]; then
-                MIN_IOS_VERSION=5.1 # 6.0 to prevent start linking errors
-            fi
 
             BITCODE=""
             if [[ "$TYPE" == "tvos" ]]; then

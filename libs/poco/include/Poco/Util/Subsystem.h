@@ -44,7 +44,7 @@ class Util_API Subsystem: public Poco::RefCountedObject
 	/// life of a running application.
 	///
 	/// The degree to which dynamic reconfiguration is supported
-	/// is up to the actual subsystem implementation. It can 
+	/// is up to the actual subsystem implementation. It can
 	/// range from ignoring the reconfiguration request (not
 	/// recommended), to changing certain settings that affect
 	/// the performance, to a complete reinitialization.
@@ -52,15 +52,15 @@ class Util_API Subsystem: public Poco::RefCountedObject
 public:
 	Subsystem();
 		/// Creates the Subsystem.
-		
-protected:
+
 	virtual const char* name() const = 0;
 		/// Returns the name of the subsystem.
 		/// Must be implemented by subclasses.
 
+protected:
 	virtual void initialize(Application& app) = 0;
 		/// Initializes the subsystem.
-		
+
 	virtual void uninitialize() = 0;
 		/// Uninitializes the subsystem.
 
@@ -70,7 +70,7 @@ protected:
 		/// The default implementation just calls
 		/// uninitialize() followed by initialize().
 		/// Actual implementations might want to use a
-		/// less radical and possibly more performant 
+		/// less radical and possibly more performant
 		/// approach.
 
 	virtual void defineOptions(OptionSet& options);
@@ -85,9 +85,9 @@ protected:
 
 	virtual ~Subsystem();
 		/// Destroys the Subsystem.
-		
+
 	friend class Application;
-	
+
 private:
 	Subsystem(const Subsystem&);
 	Subsystem& operator = (const Subsystem&);

@@ -33,7 +33,7 @@ namespace Crypto {
 
 class RSACipherImpl: public Cipher
 	/// An implementation of the Cipher class for 
-	/// assymetric (public-private key) encryption
+	/// asymmetric (public-private key) encryption
 	/// based on the the RSA algorithm in OpenSSL's 
 	/// crypto library.
 	///
@@ -52,10 +52,10 @@ public:
 		/// Returns the name of the Cipher.
 	
 	CryptoTransform* createEncryptor();
-		/// Creates an encrytor object.
+		/// Creates an encryptor object.
 
 	CryptoTransform* createDecryptor();
-		/// Creates a decrytor object.
+		/// Creates a decryptor object.
 
 private:
 	RSAKey _key;

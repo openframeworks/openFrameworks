@@ -50,7 +50,7 @@ class Data_API Statement
 	/// It does not contain code of its own.
 	/// Its main purpose is to forward calls to the concrete StatementImpl stored inside.
 	/// Statement execution can be synchronous or asynchronous.
-	/// Synchronous ececution is achieved through execute() call, while asynchronous is
+	/// Synchronous execution is achieved through execute() call, while asynchronous is
 	/// achieved through executeAsync() method call.
 	/// An asynchronously executing statement should not be copied during the execution. 
 	///
@@ -68,7 +68,7 @@ class Data_API Statement
 	///
 	/// See individual functions documentation for more details.
 	///
-	/// Statement owns the RowFormatter, which can be provided externaly through setFormatter()
+	/// Statement owns the RowFormatter, which can be provided externally through setFormatter()
 	/// member function.
 	/// If no formatter is externally supplied to the statement, the SimpleRowFormatter is lazy
 	/// created and used.
@@ -803,7 +803,7 @@ namespace std
 	template<>
 	inline void swap<Poco::Data::Statement>(Poco::Data::Statement& s1, 
 		Poco::Data::Statement& s2)
-		/// Full template specalization of std:::swap for Statement
+		/// Full template specialization of std:::swap for Statement
 	{
 		s1.swap(s2);
 	}

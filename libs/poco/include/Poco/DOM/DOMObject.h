@@ -45,7 +45,7 @@ class XML_API DOMObject
 	/// For every call to duplicate() there must be a matching
 	/// call to release().
 	/// An object obtained via any other way must not be
-	/// released, except ownership of it has been explicitely
+	/// released, except ownership of it has been explicitly
 	/// taken with a call to duplicate().
 	///
 	/// While DOMObjects are safe for use in multithreaded programs,

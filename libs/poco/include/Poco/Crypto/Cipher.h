@@ -37,7 +37,7 @@ class CryptoTransform;
 
 class Crypto_API Cipher: public Poco::RefCountedObject
 	/// Represents the abstract base class from which all implementations of
-	/// symmetric/assymetric encryption algorithms must inherit.  Use the CipherFactory
+	/// symmetric/asymmetric encryption algorithms must inherit.  Use the CipherFactory
 	/// class to obtain an instance of this class:
 	///
 	///     CipherFactory& factory = CipherFactory::defaultFactory();
@@ -57,7 +57,7 @@ class Crypto_API Cipher: public Poco::RefCountedObject
 	/// decrypt strings or, in conjunction with a CryptoInputStream or a
 	/// CryptoOutputStream, to encrypt streams of data.
 	///
-	/// Since encrypted strings will contain arbitary binary data that will cause
+	/// Since encrypted strings will contain arbitrary binary data that will cause
 	/// problems in applications that are not binary-safe (eg., when sending
 	/// encrypted data in e-mails), the encryptString() and decryptString() can
 	/// encode (or decode, respectively) encrypted data using a "transport encoding".
@@ -96,7 +96,7 @@ public:
 		ENC_BASE64       = 0x01, /// Base64-encoded output
 		ENC_BINHEX       = 0x02, /// BinHex-encoded output
 		ENC_BASE64_NO_LF = 0x81, /// Base64-encoded output, no linefeeds
-		ENC_BINHEX_NO_LF = 0x82, /// BinHex-encoded output, no linefeeds
+		ENC_BINHEX_NO_LF = 0x82  /// BinHex-encoded output, no linefeeds
 		
 	};
 
@@ -107,7 +107,7 @@ public:
 		/// Returns the name of the Cipher.
 
 	virtual CryptoTransform* createEncryptor() = 0;
-		/// Creates an encrytor object to be used with a CryptoStream.
+		/// Creates an encryptor object to be used with a CryptoStream.
 
 	virtual CryptoTransform* createDecryptor() = 0;
 		/// Creates a decryptor object to be used with a CryptoStream.

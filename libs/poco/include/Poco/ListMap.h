@@ -37,7 +37,7 @@ class ListMap
 	/// ordering of elements is not desirable. Naturally, this container will
 	/// have inferior data retrieval performance and it is not recommended for
 	/// use with large datasets. The main purpose within POCO is for Internet
-	/// messages (email message, http headers etc), to prevent autmomatic 
+	/// messages (email message, http headers etc), to prevent automatic 
 	/// header entry reordering.
 {
 public:
@@ -103,7 +103,7 @@ public:
 	}
 	
 	ConstIterator find(const KeyType& key) const
-		/// Finds the first occurence of the key and
+		/// Finds the first occurrence of the key and
 		/// returns iterator pointing to the found entry
 		/// or iterator pointing to the end if entry is
 		/// not found.
@@ -118,7 +118,7 @@ public:
 	}
 
 	Iterator find(const KeyType& key)
-		/// Finds the first occurence of the key and
+		/// Finds the first occurrence of the key and
 		/// returns iterator pointing to the found entry
 		/// or iterator pointing to the end if entry is
 		/// not found.

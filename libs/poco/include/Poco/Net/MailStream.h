@@ -113,8 +113,8 @@ protected:
 
 class Net_API MailInputStream: public MailIOS, public std::istream
 	/// This class is used for reading E-Mail messages from a
-	/// POP3 server. All occurences of "\r\n..\r\n" are replaced with
-	/// "\r\n.\r\n". The first occurence of "\r\n.\r\n" denotes the end
+	/// POP3 server. All occurrences of "\r\n..\r\n" are replaced with
+	/// "\r\n.\r\n". The first occurrence of "\r\n.\r\n" denotes the end
 	/// of the stream.
 {
 public:
@@ -129,7 +129,7 @@ public:
 
 class Net_API MailOutputStream: public MailIOS, public std::ostream
 	/// This class is used for writing E-Mail messages to a
-	/// SMTP server. All occurences of "\r\n.\r\n" are replaced with
+	/// SMTP server. All occurrences of "\r\n.\r\n" are replaced with
 	/// "\r\n..\r\n".
 {
 public:

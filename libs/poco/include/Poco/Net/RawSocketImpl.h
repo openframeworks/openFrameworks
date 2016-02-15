@@ -35,7 +35,7 @@ public:
 	RawSocketImpl();
 		/// Creates an unconnected IPv4 raw socket with IPPROTO_RAW.
 		
-	RawSocketImpl(IPAddress::Family family, int proto = IPPROTO_RAW);
+	RawSocketImpl(SocketAddress::Family family, int proto = IPPROTO_RAW);
 		/// Creates an unconnected raw socket.
 		///
 		/// The socket will be created for the

@@ -71,7 +71,7 @@ public:
 		/// Returns true if the given name is one of the names of this encoding.
 		/// For example, the "ISO-8859-1" encoding is also known as "Latin-1".
 		///
-		/// Encoding name comparision are be case insensitive.
+		/// Encoding name comparisons are case insensitive.
 			
 	virtual const CharacterMap& characterMap() const = 0;
 		/// Returns the CharacterMap for the encoding.
@@ -97,22 +97,22 @@ public:
 		///
 		/// The queryConvert function must return the Unicode scalar value
 		/// represented by this byte sequence or -1 if the byte sequence is malformed
-		/// or -n where n is number of bytes requested for the sequence, if lenght is 
+		/// or -n where n is number of bytes requested for the sequence, if length is 
 		/// shorter than the sequence.
 		/// The length of the sequence might not be determined by the first byte, 
 		/// in which case the conversion becomes an iterative process:
 		/// First call with length == 1 might return -2,
-		/// Then a second call with lenght == 2 might return -4
+		/// Then a second call with length == 2 might return -4
 		/// Eventually, the third call with length == 4 should return either a 
 		/// Unicode scalar value, or -1 if the byte sequence is malformed.
 		/// The default implementation returns (int) bytes[0].
 
 	virtual int sequenceLength(const unsigned char* bytes, int length) const;
 		/// The sequenceLength function is used to get the lenth of the sequence pointed
-		/// by bytes. The length paramater should be greater or equal to the length of 
+		/// by bytes. The length parameter should be greater or equal to the length of 
 		/// the sequence.
 		///
-		/// The sequenceLength function must return the lenght of the sequence
+		/// The sequenceLength function must return the length of the sequence
 		/// represented by this byte sequence or a negative value -n if length is 
 		/// shorter than the sequence, where n is the number of byte requested 
 		/// to determine the length of the sequence.
@@ -120,7 +120,7 @@ public:
 		/// in which case the conversion becomes an iterative process as long as the 
 		/// result is negative:
 		/// First call with length == 1 might return -2,
-		/// Then a second call with lenght == 2 might return -4
+		/// Then a second call with length == 2 might return -4
 		/// Eventually, the third call with length == 4 should return 4.
 		/// The default implementation returns 1.
 

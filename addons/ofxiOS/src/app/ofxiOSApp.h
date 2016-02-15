@@ -45,6 +45,9 @@ public:
 	virtual void touchCancelled(ofTouchEventArgs & touch) {
 		touchCancelled(touch.x, touch.y, touch.id);
 	};
+    
+    virtual void controllerPressed(ofControllerEventArgs & event) {};
+    virtual void controllerReleased(ofControllerEventArgs & event) {};
 
 };
 

@@ -6,6 +6,7 @@
 
 class AVFoundationVideoGrabber;
 
+
 class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
 	
 public:
@@ -72,3 +73,4 @@ protected:
 };
 
 #define ofxiPhoneVideoGrabber ofxiOSVideoGrabber
+

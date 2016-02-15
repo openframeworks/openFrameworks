@@ -36,7 +36,7 @@ public:
 	RawSocket();
 		/// Creates an unconnected IPv4 raw socket.
 
-	RawSocket(IPAddress::Family family, int proto = IPPROTO_RAW);
+	RawSocket(SocketAddress::Family family, int proto = IPPROTO_RAW);
 		/// Creates an unconnected raw socket.
 		///
 		/// The socket will be created for the
@@ -121,7 +121,7 @@ public:
 protected:
 	RawSocket(SocketImpl* pImpl);
 		/// Creates the Socket and attaches the given SocketImpl.
-		/// The socket takes owership of the SocketImpl.
+		/// The socket takes ownership of the SocketImpl.
 		///
 		/// The SocketImpl must be a StreamSocketImpl, otherwise
 		/// an InvalidArgumentException will be thrown.

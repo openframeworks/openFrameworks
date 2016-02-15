@@ -142,7 +142,7 @@ namespace std
 	template<>
 	inline void swap<Poco::Data::RowIterator>(Poco::Data::RowIterator& s1, 
 		Poco::Data::RowIterator& s2)
-		/// Full template specalization of std:::swap for RowIterator
+		/// Full template specialization of std:::swap for RowIterator
 	{
 		s1.swap(s2);
 	}

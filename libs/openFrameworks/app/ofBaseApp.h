@@ -140,6 +140,10 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 		virtual void touchCancelled(ofTouchEventArgs & touch){
 			touchCancelled(touch.x, touch.y, touch.id);
 		}
+    
+        virtual void controllerPressed(ofControllerEventArgs & touch) { };
+        virtual void controllerReleased(ofControllerEventArgs & touch) { };
+    
 };
 
 

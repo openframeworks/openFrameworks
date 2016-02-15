@@ -61,6 +61,13 @@ public:
 
 	UUID createFromName(const UUID& nsid, const std::string& name, DigestEngine& de);
 		/// Creates a name-based UUID, using the given digest engine.
+		///
+		/// Note: in order to create a standard-compliant UUID, the given DigestEngine
+		/// must be either an instance of MD5Engine or SHA1Engine. The version field of
+		/// the UUID will be set accordingly.
+
+	UUID createFromName(const UUID& nsid, const std::string& name, DigestEngine& de, UUID::Version version);
+		/// Creates a name-based UUID, using the given digest engine and version.
 		
 	UUID createRandom();
 		/// Creates a random UUID.

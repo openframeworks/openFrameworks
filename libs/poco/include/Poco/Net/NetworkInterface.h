@@ -30,6 +30,7 @@
 #include "Poco/Mutex.h"
 #include "Poco/Tuple.h"
 #include <map>
+#include <ostream>
 
 
 namespace Poco {
@@ -122,7 +123,7 @@ public:
 		/// Assigns another NetworkInterface.
 	
 	bool operator < (const NetworkInterface& other) const;
-		/// Operatorr less-than.
+		/// Operator less-than.
 	
 	bool operator == (const NetworkInterface& other) const;
 		/// Operator equal. Compares interface indices.
@@ -149,7 +150,7 @@ public:
 		/// Returns the interface adapter name.
 		///
 		/// On Windows platforms, this is the network adapter LUID.
-		/// The adapter name is used by some Windows Net APIs like Dhcp. 
+		/// The adapter name is used by some Windows Net APIs like DHCP. 
 		///
 		/// On other platforms this is the same as name().
 
@@ -182,7 +183,7 @@ public:
 		/// Returns the broadcast address for this network interface.
 
 	const IPAddress& destAddress(unsigned index = 0) const;
-		/// Returns the IPv4 point-to-point destiation address for this network interface.
+		/// Returns the IPv4 point-to-point destination address for this network interface.
 
 	const MACAddress& macAddress() const;
 		/// Returns MAC (Media Access Control) address for the interface.
@@ -235,6 +236,9 @@ public:
 		/// The ipVersion argument can be used to specify whether
 		/// an IPv4 (IPv4_ONLY) or IPv6 (IPv6_ONLY) interface is required, 
 		/// or whether the caller does not care (IPv4_OR_IPv6).
+		///
+		/// Throws an InterfaceNotFoundException if an interface
+		/// with the give name does not exist.
 		
 	static NetworkInterface forAddress(const IPAddress& address);
 		/// Returns the NetworkInterface for the given IP address.
@@ -246,8 +250,7 @@ public:
 		/// Returns the NetworkInterface for the given interface index.
 		///
 		/// Throws an InterfaceNotFoundException if an interface
-		/// with the given index does not exist (or IPv6 is not
-		/// available).
+		/// with the given index does not exist.
 		
 	static List list(bool ipOnly = true, bool upOnly = true);
 		/// Returns a list with all network interfaces
@@ -342,7 +345,7 @@ inline bool NetworkInterface::operator == (const NetworkInterface& other) const
 } } // namespace Poco::Net
 
 
-Net_API std::ostream& operator<<(std::ostream& os, const Poco::Net::NetworkInterface::MACAddress& mac);
+Net_API std::ostream& operator << (std::ostream& ostr, const Poco::Net::NetworkInterface::MACAddress& addr);
 
 
 #endif // POCO_NET_HAS_INTERFACE

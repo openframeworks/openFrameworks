@@ -81,7 +81,7 @@ bool strToInt(const char* pStr, I& result, short base, char thSep = ',')
 	/// Converts zero-terminated character array to integer number;
 	/// Thousand separators are recognized for base10 and current locale;
 	/// it is silently skipped but not verified for correct positioning.
-	/// Function returns true if succesful. If parsing was unsuccesful,
+	/// Function returns true if successful. If parsing was unsuccessful,
 	/// the return value is false with the result value undetermined.
 {
 	if (!pStr) return false;
@@ -107,9 +107,6 @@ bool strToInt(const char* pStr, I& result, short base, char thSep = ',')
 	{
 		switch (*pStr)
 		{
-		case 'x': case 'X': 
-			if (base != 0x10) return false;
-
 		case '0': 
 			if (state < STATE_SIGNIFICANT_DIGITS) break;
 
@@ -142,18 +139,11 @@ bool strToInt(const char* pStr, I& result, short base, char thSep = ',')
 
 		case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
 			if (base != 0x10) return false;
-
 			if (state < STATE_SIGNIFICANT_DIGITS) state = STATE_SIGNIFICANT_DIGITS;
 			if (result > limitCheck) return false;
 			result = result * base + (10 + *pStr - 'A');
 
 			break;
-
-		case 'U':
-		case 'u':
-		case 'L':
-		case 'l':
-			goto done;
 
 		case '.':
 			if ((base == 10) && (thSep == '.')) break;
@@ -165,19 +155,13 @@ bool strToInt(const char* pStr, I& result, short base, char thSep = ',')
 
 		case ' ':
 			if ((base == 10) && (thSep == ' ')) break;
-		case '\t':
-		case '\n':
-		case '\v':
-		case '\f':
-		case '\r':
-			goto done;
+			// fallthrough
 
 		default:
 			return false;
 		}
 	}
 
-done:
 	if ((sign < 0) && (base == 10)) result *= sign;
 
 	return true;
@@ -514,7 +498,7 @@ Foundation_API bool strToFloat(const std::string&, float& result, char decSep = 
 	/// If decimal separator and/or thousand separator are different from defaults, they should be
 	/// supplied to ensure proper conversion.
 	/// 
-	/// Returns true if succesful, false otherwise.
+	/// Returns true if successful, false otherwise.
 
 
 Foundation_API double strToDouble(const char* str);
@@ -527,7 +511,7 @@ Foundation_API bool strToDouble(const std::string& str, double& result, char dec
 	/// If decimal separator and/or thousand separator are different from defaults, they should be
 	/// supplied to ensure proper conversion.
 	/// 
-	/// Returns true if succesful, false otherwise.
+	/// Returns true if successful, false otherwise.
 
 //
 // end double-conversion functions declarations

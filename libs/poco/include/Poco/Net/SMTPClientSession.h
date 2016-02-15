@@ -35,7 +35,7 @@ class MailMessage;
 
 class Net_API SMTPClientSession
 	/// This class implements an Simple Mail
-	/// Transfer Procotol (SMTP, RFC 2821)
+	/// Transfer Protocol (SMTP, RFC 2821)
 	/// client for sending e-mail messages.
 {
 public:

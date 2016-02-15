@@ -35,7 +35,7 @@ namespace Poco {
 
 class Foundation_API ThreadImpl
 {
-public:	
+public:
 	typedef int TIDImpl;
 	typedef void (*Callable)(void*);
 
@@ -65,7 +65,7 @@ public:
 		}
 
 		Callable  callback;
-		void*     pData; 
+		void*     pData;
 	};
 
 	ThreadImpl();
@@ -80,6 +80,9 @@ public:
 	static int getMaxOSPriorityImpl(int policy);
 	void setStackSizeImpl(int size);
 	int getStackSizeImpl() const;
+	void setAffinityImpl(int cpu);
+	int getAffinityImpl() const;
+
 	void startImpl(Runnable& target);
 	void startImpl(Callable target, void* pData = 0);
 
@@ -140,10 +143,22 @@ inline int ThreadImpl::getOSPriorityImpl() const
 }
 
 
+inline void ThreadImpl::setAffinityImpl(int)
+{
+	// not supported
+}
+
+
+inline int ThreadImpl::getAffinityImpl()
+{
+	return -1;
+}
+
+
 inline bool ThreadImpl::isRunningImpl() const
 {
 	return _pData->pRunnableTarget != 0 ||
-		(_pData->pCallbackTarget.get() != 0 && _pData->pCallbackTarget->callback != 0);
+	       (_pData->pCallbackTarget.get() != 0 && _pData->pCallbackTarget->callback != 0);
 }
 
 

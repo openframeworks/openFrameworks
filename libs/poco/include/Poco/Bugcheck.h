@@ -148,9 +148,6 @@ protected:
 //
 
 
-GCC_DIAG_OFF(unused-local-typedefs) // supress numerous gcc warnings
-
-
 template <bool x>
 struct POCO_STATIC_ASSERTION_FAILURE;
 
@@ -178,7 +175,7 @@ struct poco_static_assert_test
 #else
 #define poco_static_assert(B) \
 	typedef poco_static_assert_test<sizeof(POCO_STATIC_ASSERTION_FAILURE<(bool) (B)>)> \
-		POCO_JOIN(poco_static_assert_typedef_, __LINE__)
+		POCO_JOIN(poco_static_assert_typedef_, __LINE__) POCO_UNUSED
 #endif
 
 

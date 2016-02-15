@@ -31,8 +31,15 @@ namespace Poco {
 
 class Foundation_API EventImpl
 {
+public:
+	enum EventTypeImpl
+	{
+		EVENT_MANUALRESET_IMPL,
+		EVENT_AUTORESET_IMPL
+	};
+
 protected:
-	EventImpl(bool autoReset);		
+	EventImpl(EventTypeImpl type);
 	~EventImpl();
 	void setImpl();
 	void waitImpl();

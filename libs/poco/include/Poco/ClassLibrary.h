@@ -96,6 +96,10 @@ extern "C"	\
     pManifest->insert(new Poco::MetaObject<cls, _Base>(#cls));
 
 
+#define POCO_EXPORT_INTERFACE(cls, itf) \
+    pManifest->insert(new Poco::MetaObject<cls, _Base>(itf));
+
+
 #define POCO_EXPORT_SINGLETON(cls) \
 	pManifest->insert(new Poco::MetaSingleton<cls, _Base>(#cls));
 

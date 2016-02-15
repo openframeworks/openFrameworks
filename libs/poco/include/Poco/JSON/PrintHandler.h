@@ -53,14 +53,14 @@ public:
 
 	void startObject();
 		/// The parser has read a '{'; a new object is started.
-		/// If indent is greater than zero, a newline will be apended.
+		/// If indent is greater than zero, a newline will be appended.
 
 	void endObject();
 		/// The parser has read a '}'; the object is closed.
 
 	void startArray();
 		/// The parser has read a [; a new array will be started.
-		/// If indent is greater than zero, a newline will be apended.
+		/// If indent is greater than zero, a newline will be appended.
 
 	void endArray();
 		/// The parser has read a ]; the array is closed.
@@ -89,7 +89,7 @@ public:
 #endif
 
 	void value(const std::string& value);
-		/// A string value is read; it will be fromatted and written to the output.
+		/// A string value is read; it will be formatted and written to the output.
 
 	void value(double d);
 		/// A double value is read; it will be written to the output.
@@ -109,12 +109,13 @@ private:
 	unsigned indent();
 	bool printFlat() const;
 	void arrayValue();
+	bool array() const;
 
 	std::ostream& _out;
 	unsigned      _indent;
 	std::string   _tab;
-	bool          _array;
-	bool          _value;
+	int           _array;
+	bool          _objStart;
 };
 
 
@@ -122,6 +123,13 @@ inline void PrintHandler::setIndent(unsigned indent)
 {
 	_indent = indent;
 }
+
+
+inline bool PrintHandler::array() const
+{
+	return _array > 0;
+}
+
 
 
 }} // namespace Poco::JSON

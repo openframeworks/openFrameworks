@@ -70,13 +70,16 @@ class Util_API Application: public Subsystem
 	///   - a SystemConfiguration (priority 100)
 	///   - the configurations loaded with loadConfiguration().
 	///
-	/// The Application class sets a few default properties in 
+	/// The Application class sets a few default properties in
 	/// its configuration. These are:
 	///   - application.path: the absolute path to application executable
 	///   - application.name: the file name of the application executable
 	///   - application.baseName: the file name (excluding extension) of the application executable
 	///   - application.dir: the path to the directory where the application executable resides
-	///   - application.configDir: the path to the directory where the last configuration file loaded with loadConfiguration() was found.
+	///   - application.configDir: the path to the directory where user specific configuration files of the application should be stored.
+	///   - application.cacheDir: the path to the directory where user specific non-essential data files of the application should be stored.
+	///   - application.dataDir: the path to the directory where user specific data files of the application should be stored.
+	///   - application.tempDir: the path to the directory where user specific temporary files and other file objects of the application should be stored.
 	///
 	/// If loadConfiguration() has never been called, application.configDir will be equal to application.dir.
 	///
@@ -86,6 +89,8 @@ class Util_API Application: public Subsystem
 {
 public:
 	typedef std::vector<std::string> ArgVec;
+	typedef Poco::AutoPtr<Subsystem> SubsystemPtr;
+	typedef std::vector<SubsystemPtr> SubsystemVec;
 
 	enum ExitCode
 		/// Commonly used exit status codes.
@@ -108,14 +113,14 @@ public:
 		EXIT_NOPERM      = 77, /// permission denied
 		EXIT_CONFIG      = 78  /// configuration error
 	};
-	
+
 	enum ConfigPriority
 	{
 		PRIO_APPLICATION = -100,
 		PRIO_DEFAULT     = 0,
 		PRIO_SYSTEM      = 100
 	};
-	
+
 	Application();
 		/// Creates the Application.
 
@@ -131,7 +136,7 @@ public:
 
 	void init(int argc, char* argv[]);
 		/// Processes the application's command line arguments
-		/// and sets the application's properties (e.g., 
+		/// and sets the application's properties (e.g.,
 		/// "application.path", "application.name", etc.).
 		///
 		/// Note that as of release 1.3.7, init() no longer
@@ -140,7 +145,7 @@ public:
 #if defined(POCO_WIN32_UTF8) && !defined(POCO_NO_WSTRING)
 	void init(int argc, wchar_t* argv[]);
 		/// Processes the application's command line arguments
-		/// and sets the application's properties (e.g., 
+		/// and sets the application's properties (e.g.,
 		/// "application.path", "application.name", etc.).
 		///
 		/// Note that as of release 1.3.7, init() no longer
@@ -152,7 +157,7 @@ public:
 
 	void init(const ArgVec& args);
 		/// Processes the application's command line arguments
-		/// and sets the application's properties (e.g., 
+		/// and sets the application's properties (e.g.,
 		/// "application.path", "application.name", etc.).
 		///
 		/// Note that as of release 1.3.7, init() no longer
@@ -172,11 +177,11 @@ public:
 	int loadConfiguration(int priority = PRIO_DEFAULT);
 		/// Loads configuration information from a default location.
 		///
-		/// The configuration(s) will be added to the application's 
+		/// The configuration(s) will be added to the application's
 		/// LayeredConfiguration with the given priority.
 		///
 		/// The configuration file(s) must be located in the same directory
-		/// as the executable or a parent directory of it, and must have the 
+		/// as the executable or a parent directory of it, and must have the
 		/// same base name as the executable, with one of the following extensions:
 		/// .properties, .ini or .xml.
 		///
@@ -184,10 +189,10 @@ public:
 		/// by the .ini file and the .xml file.
 		///
 		/// If the application is built in debug mode (the _DEBUG preprocessor
-		/// macro is defined) and the base name of the appication executable
-		/// ends with a 'd', a config file without the 'd' ending its base name is 
+		/// macro is defined) and the base name of the application executable
+		/// ends with a 'd', a config file without the 'd' ending its base name is
 		/// also found.
-		/// 
+		///
 		/// Example: Given the application "SampleAppd.exe", built in debug mode.
 		/// Then loadConfiguration() will automatically find a configuration file
 		/// named "SampleApp.properties" if it exists and if "SampleAppd.properties"
@@ -208,7 +213,7 @@ public:
 		///
 		/// Extensions are not case sensitive.
 		///
-		/// The configuration will be added to the application's 
+		/// The configuration will be added to the application's
 		/// LayeredConfiguration with the given priority.
 
 	template <class C> C& getSubsystem() const;
@@ -217,6 +222,9 @@ public:
 		///
 		/// Throws a NotFoundException if such a subsystem has
 		/// not been registered.
+
+	SubsystemVec& subsystems();
+		/// Returns a reference to the subsystem list
 
 	virtual int run();
 		/// Runs the application by performing additional (un)initializations
@@ -237,7 +245,7 @@ public:
 
 	LayeredConfiguration& config() const;
 		/// Returns the application's configuration.
-		
+
 	Poco::Logger& logger() const;
 		/// Returns the application's logger.
 		///
@@ -245,21 +253,21 @@ public:
 		/// application's logger is "ApplicationStartup", which is
 		/// connected to a ConsoleChannel.
 		///
-		/// After the logging subsystem has been initialized, which 
+		/// After the logging subsystem has been initialized, which
 		/// usually happens as the first action in Application::initialize(),
 		/// the application's logger is the one specified by the
 		/// "application.logger" configuration property. If that property
 		/// is not specified, the logger is "Application".
-		
+
 	const ArgVec& argv() const;
-		/// Returns reference to vector of the application's arguments as 
-		/// specified on the command line. If user overrides the 
+		/// Returns reference to vector of the application's arguments as
+		/// specified on the command line. If user overrides the
 		/// Application::main(const ArgVec&) function, it will receive
 		/// only the command line parameters that were not processed in
-		/// Application::processOptons(). This function returns the 
+		/// Application::processOptons(). This function returns the
 		/// full set of command line parameters as received in
 		/// main(argc, argv*).
-		
+
 	const OptionSet& options() const;
 		/// Returns the application's option set.
 
@@ -273,7 +281,7 @@ public:
 
 	Poco::Timespan uptime() const;
 		/// Returns the application uptime.
-		
+
 	void stopOptionsProcessing();
 		/// If called from an option callback, stops all further
 		/// options processing.
@@ -295,11 +303,11 @@ protected:
 		/// in which they have been registered.
 		///
 		/// Overriding implementations must call the base class implementation.
-		
+
 	void uninitialize();
 		/// Uninitializes the application and all registered subsystems.
 		/// Subsystems are always uninitialized in reverse order in which
-		/// they have been initialized. 
+		/// they have been initialized.
 		///
 		/// Overriding implementations must call the base class implementation.
 
@@ -366,11 +374,10 @@ private:
 	void getApplicationPath(Poco::Path& path) const;
 	void processOptions();
 	bool findAppConfigFile(const std::string& appName, const std::string& extension, Poco::Path& path) const;
+	bool findAppConfigFile(const Path& basePath, const std::string& appName, const std::string& extension, Poco::Path& path) const;
 
-	typedef Poco::AutoPtr<Subsystem> SubsystemPtr;
-	typedef std::vector<SubsystemPtr> SubsystemVec;
 	typedef Poco::AutoPtr<LayeredConfiguration> ConfigPtr;
-	
+
 	ConfigPtr       _pConfig;
 	SubsystemVec    _subsystems;
 	bool            _initialized;
@@ -382,13 +389,14 @@ private:
 	Poco::Logger*   _pLogger;
 	Poco::Timestamp _startTime;
 	bool            _stopOptionsProcessing;
+	int             _loadedConfigs;
 
 #if defined(POCO_OS_FAMILY_UNIX) && !defined(POCO_VXWORKS)
 	std::string _workingDirAtLaunch;
 #endif
 
 	static Application* _pInstance;
-	
+
 	friend class LoggingSubsystem;
 
 	Application(const Application&);
@@ -408,6 +416,11 @@ template <class C> C& Application::getSubsystem() const
 		if (pC) return *const_cast<C*>(pC);
 	}
 	throw Poco::NotFoundException("The subsystem has not been registered", typeid(C).name());
+}
+
+inline Application::SubsystemVec& Application::subsystems()
+{
+	return _subsystems;
 }
 
 
@@ -459,7 +472,7 @@ inline Poco::Timespan Application::uptime() const
 {
 	Poco::Timestamp now;
 	Poco::Timespan uptime = now - _startTime;
-	
+
 	return uptime;
 }
 

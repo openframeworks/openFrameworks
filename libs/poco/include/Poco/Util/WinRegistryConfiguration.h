@@ -41,8 +41,8 @@ public:
 		/// Creates the WinRegistryConfiguration. 
 		/// The rootPath must start with one of the root key names
 		/// like HKEY_CLASSES_ROOT, e.g. HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services.
-		/// All further keys are relativ to the root path and can be
-		/// dot seperated, e.g. the path MyService.ServiceName will be converted to
+		/// All further keys are relative to the root path and can be
+		/// dot separated, e.g. the path MyService.ServiceName will be converted to
 		/// HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\MyService\ServiceName.
         /// The extraSam parameter will be passed along to WinRegistryKey, to control
         /// registry virtualization for example.

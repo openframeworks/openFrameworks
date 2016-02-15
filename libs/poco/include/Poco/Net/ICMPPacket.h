@@ -33,7 +33,7 @@ class Net_API ICMPPacket
 	/// This class is the ICMP packet abstraction. 
 {
 public:
-	ICMPPacket(IPAddress::Family family, int dataSize = 48);
+	ICMPPacket(SocketAddress::Family family, int dataSize = 48);
 		/// Creates an ICMPPacket of specified family.
 
 	~ICMPPacket();

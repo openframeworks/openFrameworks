@@ -60,10 +60,10 @@ public:
 		/// Returns native DB handle.
 
 	static std::string lastError(sqlite3* pDb);
-		/// Retreives the last error code from sqlite and converts it to a string.
+		/// Retrieves the last error code from sqlite and converts it to a string.
 
 	static std::string lastError(const Session& session);
-		/// Retreives the last error code from sqlite and converts it to a string.
+		/// Retrieves the last error code from sqlite and converts it to a string.
 
 	static void throwException(int rc, const std::string& addErrMsg = std::string());
 		/// Throws for an error code the appropriate exception
@@ -75,37 +75,37 @@ public:
 		/// Loads the contents of a database file on disk into an opened
 		/// database in memory.
 		/// 
-		/// Returns true if succesful.
+		/// Returns true if successful.
 
 	static bool fileToMemory(const Session& session, const std::string& fileName);
 		/// Loads the contents of a database file on disk into an opened
 		/// database in memory.
 		/// 
-		/// Returns true if succesful.
+		/// Returns true if successful.
 
 	static bool memoryToFile(const std::string& fileName, sqlite3* pInMemory);
 		/// Saves the contents of an opened database in memory to the
 		/// database on disk.
 		/// 
-		/// Returns true if succesful.
+		/// Returns true if successful.
 
 	static bool memoryToFile(const std::string& fileName, const Session& session);
 		/// Saves the contents of an opened database in memory to the
 		/// database on disk.
 		/// 
-		/// Returns true if succesful.
+		/// Returns true if successful.
 
 	static bool isThreadSafe();
 		/// Returns true if SQLite was compiled in multi-thread or serialized mode.
 		/// See http://www.sqlite.org/c3ref/threadsafe.html for details.
 		/// 
-		/// Returns true if succesful
+		/// Returns true if successful
 
 	static bool setThreadMode(int mode);
 		/// Sets the threading mode to single, multi or serialized.
 		/// See http://www.sqlite.org/threadsafe.html for details.
 		/// 
-		/// Returns true if succesful
+		/// Returns true if successful
 
 	static int getThreadMode();
 		/// Returns the thread mode.

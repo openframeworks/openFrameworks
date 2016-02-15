@@ -38,7 +38,7 @@ public:
 		/// Creates a server socket.
 		///
 		/// The server socket must be bound to
-		/// and address and put into listening state.
+		/// an address and put into listening state.
 
 	ServerSocket(const Socket& socket);
 		/// Creates the ServerSocket with the SocketImpl
@@ -73,7 +73,7 @@ public:
 		/// increments the reference count of the SocketImpl.	
 
 	virtual void bind(const SocketAddress& address, bool reuseAddress = false);
-		/// Bind a local address to the socket.
+		/// Binds a local address to the socket.
 		///
 		/// This is usually only done when establishing a server
 		/// socket. TCP clients should not bind a socket to a
@@ -83,7 +83,7 @@ public:
 		/// socket option.
 
 	virtual void bind(Poco::UInt16 port, bool reuseAddress = false);
-		/// Bind a local port to the socket.
+		/// Binds a local port to the socket.
 		///
 		/// This is usually only done when establishing a server
 		/// socket. 
@@ -92,7 +92,7 @@ public:
 		/// socket option.
 
 	virtual void bind6(const SocketAddress& address, bool reuseAddress = false, bool ipV6Only = false);
-		/// Bind a local IPv6 address to the socket.
+		/// Binds a local IPv6 address to the socket.
 		///
 		/// This is usually only done when establishing a server
 		/// socket. TCP clients should not bind a socket to a
@@ -109,7 +109,7 @@ public:
 		/// a Poco::NotImplementedException will be thrown.
 
 	virtual void bind6(Poco::UInt16 port, bool reuseAddress = false, bool ipV6Only = false);
-		/// Bind a local IPv6 port to the socket.
+		/// Binds a local IPv6 port to the socket.
 		///
 		/// This is usually only done when establishing a server
 		/// socket. 
@@ -135,7 +135,7 @@ public:
 		/// for this socket.
 
 	virtual StreamSocket acceptConnection(SocketAddress& clientAddr);
-		/// Get the next completed connection from the
+		/// Gets the next completed connection from the
 		/// socket's completed connection queue.
 		///
 		/// If the queue is empty, waits until a connection
@@ -147,7 +147,7 @@ public:
 		/// The client socket's address is returned in clientAddr.
 
 	virtual StreamSocket acceptConnection();
-		/// Get the next completed connection from the
+		/// Gets the next completed connection from the
 		/// socket's completed connection queue.
 		///
 		/// If the queue is empty, waits until a connection

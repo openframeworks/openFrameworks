@@ -5,14 +5,14 @@
 //
 // Library: Zip
 // Package: Zip
-// Module:  ZipStream
+// Module:	ZipStream
 //
 // Definition of the ZipStream class.
 //
 // Copyright (c) 2007, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
-// SPDX-License-Identifier:	BSL-1.0
+// SPDX-License-Identifier: BSL-1.0
 //
 
 
@@ -50,7 +50,7 @@ public:
 	virtual ~ZipStreamBuf();
 		/// Destroys the ZipStreamBuf.
 
-	void close();
+	void close(Poco::UInt64& extraDataSize);
 		/// Informs a writing outputstream that writing is done for this stream
 
 	bool crcValid() const;
@@ -71,15 +71,15 @@ private:
 	typedef Poco::SharedPtr<std::ostream> PtrOStream;
 	std::istream*  _pIstr;
 	std::ostream*  _pOstr;
-	PtrIStream     _ptrBuf;
-	PtrOStream     _ptrOBuf;
-	PtrIStream     _ptrHelper;
+	PtrIStream	   _ptrBuf;
+	PtrOStream	   _ptrOBuf;
+	PtrIStream	   _ptrHelper;
 	Poco::SharedPtr<PartialOutputStream> _ptrOHelper;
 	Poco::Checksum _crc32;
 	Poco::UInt32   _expectedCrc32;
-	bool           _checkCRC;
+	bool		   _checkCRC;
 		/// Note: we do not check crc if we decompress a streaming zip file and the crc is stored in the directory header
-	Poco::UInt32   _bytesWritten;
+	Poco::UInt64   _bytesWritten;
 	ZipLocalFileHeader* _pHeader;
 };
 
@@ -140,7 +140,7 @@ public:
 	~ZipOutputStream();
 		/// Destroys the ZipOutputStream.
 
-	void close();
+	void close(Poco::UInt64& extraDataSize);
 		/// Must be called for ZipOutputStreams!
 };
 
