@@ -182,15 +182,7 @@ static ofPixelFormat pixelFormatFromNumChannels(int channels){
 }
 
 template<typename PixelType>
-ofPixels_<PixelType>::ofPixels_(){
-	bAllocated = false;
-	pixelsOwner = false;
-	pixelFormat = OF_PIXELS_UNKNOWN;
-	pixels = nullptr;
-	pixelsSize = 0;
-	width = 0;
-	height = 0;
-}
+ofPixels_<PixelType>::ofPixels_(){}
 
 
 template<typename PixelType>
@@ -200,13 +192,6 @@ ofPixels_<PixelType>::~ofPixels_(){
 
 template<typename PixelType>
 ofPixels_<PixelType>::ofPixels_(const ofPixels_<PixelType> & mom){
-	bAllocated = false;
-	pixelsOwner = false;
-	pixelsSize = 0;
-	pixels = nullptr;
-	width = 0;
-	height = 0;
-	pixelFormat = OF_PIXELS_UNKNOWN;
 	copyFrom( mom );
 }
 
@@ -236,18 +221,15 @@ ofPixels_<PixelType>& ofPixels_<PixelType>::operator=(ofPixels_<PixelType> && mo
 	if(this==&mom) {
 		return * this;
 	}
-    if(pixelsOwner || !bAllocated || !mom.bAllocated || width!=mom.width || height!=mom.height || pixelFormat != mom.pixelFormat){
-        clear();
-        pixels = mom.pixels;
-        width = mom.width;
-        height = mom.height;
-        pixelsSize = mom.pixelsSize;
-        bAllocated = mom.bAllocated;
-        pixelsOwner = mom.pixelsOwner;
-        mom.pixelsOwner = false;
-    }else{
-        memcpy(pixels, mom.pixels, getTotalBytes());
-    }
+	clear();
+	pixels = mom.pixels;
+	width = mom.width;
+	height = mom.height;
+	pixelsSize = mom.pixelsSize;
+	bAllocated = mom.bAllocated;
+	pixelsOwner = mom.pixelsOwner;
+	pixelFormat = mom.pixelFormat;
+	mom.pixelsOwner = false;
 	return *this;
 }
 
