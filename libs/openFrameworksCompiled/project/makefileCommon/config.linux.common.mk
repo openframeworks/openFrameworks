@@ -88,6 +88,11 @@ ifeq ($(HAS_SYSTEM_MPG123),0)
     PLATFORM_DEFINES += OF_USING_MPG123
 endif
 
+# add OF_USE_GST_GL if requested
+ifdef USE_GST_GL
+    PLATFORM_DEFINES += OF_USE_GST_GL
+endif
+
 
 ################################################################################
 # PLATFORM REQUIRED ADDON
@@ -366,6 +371,11 @@ endif
 # conditionally add mpg123
 ifeq ($(HAS_SYSTEM_MPG123),0)
     PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
+endif
+
+# conditionally add gstreamer-gl
+ifdef USE_GST_GL
+    PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-gl-$(GST_VERSION)
 endif
 
 ################################################################################
