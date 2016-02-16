@@ -549,7 +549,7 @@ private:
 	//int 	channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
 	int 	pixelsSize = 0;
 	bool	bAllocated = false;
-	bool	pixelsOwner = false;			// if set from external data don't delete it
+	bool	pixelsOwner = true;			// if set from external data don't delete it
 	ofPixelFormat pixelFormat = OF_PIXELS_UNKNOWN;
 
 };
