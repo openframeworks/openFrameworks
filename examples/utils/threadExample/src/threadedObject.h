@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include "ofThread.h"
-
+#include "ofMain.h"
+#include <atomic>
 
 /// This is a simple example of a ThreadedObject created by extending ofThread.
 /// It contains data (count) that will be accessed from within and outside the
@@ -11,128 +11,112 @@
 class ThreadedObject: public ofThread
 {
 public:
-    /// Create a ThreadedObject and initialize the member
-    /// variable in an initialization list.
-    ThreadedObject(): count(0), shouldThrowTestException(false)
-    {
+    /// On destruction wait for the thread to finish
+    /// so we don't destroy the pixels while they are
+    /// being used. Otherwise we would crash
+    ~ThreadedObject(){
+        stop();
+        waitForThread(false);
+    }
+
+    void setup(){
+        pixels.allocate(640,480,OF_PIXELS_GRAY);
+        tex.allocate(pixels);
+        start();
     }
 
     /// Start the thread.
-    void start()
-    {
-        // Mutex blocking is set to true by default
-        // It is rare that one would want to use startThread(false).
+    void start(){
         startThread();
     }
 
     /// Signal the thread to stop.  After calling this method,
     /// isThreadRunning() will return false and the while loop will stop
     /// next time it has the chance to.
-    void stop()
-    {
+    /// In order for the thread to actually go out of the while loop
+    /// we need to notify the condition, otherwise the thread will
+    /// sleep there forever.
+    /// We also lock the mutex so the notify_all call only happens
+    /// once the thread is waiting. We lock the mutex during the
+    /// whole while loop but when we call condition.wait, that
+    /// unlocks the mutex which ensures that we'll only call
+    /// stop and notify here once the condition is waiting
+    void stop(){
+        std::unique_lock<std::mutex> lck(mutex);
         stopThread();
+        condition.notify_all();
     }
 
-    /// Our implementation of threadedFunction.
-    void threadedFunction()
-    {
-        while(isThreadRunning())
-        {
-            // Attempt to lock the mutex.  If blocking is turned on,
-            if(lock())
-            {
-                // The mutex is now locked and the "count"
-                // variable is protected.  Time to modify it.
-                count++;
+    /// Everything in this function will happen in a different
+    /// thread which leaves the main thread completelty free for
+    /// other tasks.
+    void threadedFunction(){
+        while(isThreadRunning()){
+			// since we are only writting to the frame number from one thread
+			// and there's no calculations that depend on it we can just write to
+			// it without locking
+			threadFrameNum++;
 
-                // Here, we simply cause it to reset to zero if it gets big.
-                if(count > 50000) count = 0;
+			// Lock the mutex until the end of the block, until the closing }
+			// in which this variable is contained or we unlock it explicitly
+            std::unique_lock<std::mutex> lock(mutex);
 
-                // Unlock the mutex.  This is only
-                // called if lock() returned true above.
-                unlock();
-
-                // Sleep for 1 second.
-                sleep(1000);
-
-                if(shouldThrowTestException > 0)
-                {
-                    shouldThrowTestException = 0;
-
-                    // Throw an exception to test the global ofBaseThreadErrorHandler.
-                    // Users that require more specialized exception handling,
-                    // should make sure that their threaded objects catch all
-                    // exceptions. ofBaseThreadErrorHandler is only used as a
-                    // way to provide better debugging / logging information in
-                    // the event of an uncaught exception.
-                    throw Poco::ApplicationException("We just threw a test exception!");
+            // The mutex is now locked so we can modify
+            // the shared memory without problem
+            auto t = ofGetElapsedTimef();
+            for(auto line: pixels.getLines()){
+                auto x = 0;
+                for(auto pixel: line.getPixels()){
+                    auto ux = x/float(pixels.getWidth());
+                    auto uy = line.getLineNum()/float(pixels.getHeight());
+                    pixel[0] = ofNoise(ux, uy, t);
+                    x++;
                 }
             }
-            else
-            {
-                // If we reach this else statement, it means that we could not
-                // lock our mutex, and so we do not need to call unlock().
-                // Calling unlock without locking will lead to problems.
-                ofLogWarning("threadedFunction()") << "Unable to lock mutex.";
-            }
+
+            // Now we wait for the main thread to finish
+            // with this frame until we can generate a new one
+            // This sleeps the thread until the condition is signaled
+            // and unlocks the mutex so the main thread can lock it
+            condition.wait(lock);
         }
     }
+
+    void update(){
+        // if we didn't lock here we would see
+        // tearing as the thread would be updating
+        // the pixels while we upload them to the texture
+		std::unique_lock<std::mutex> lock(mutex);
+        tex.loadData(pixels);
+        condition.notify_all();
+    }
+
+	void updateNoLock(){
+		// we don't lock here so we will see
+		// tearing as the thread will update
+		// the pixels while we upload them to the texture
+		tex.loadData(pixels);
+		condition.notify_all();
+	}
 
     /// This drawing function cannot be called from the thread itself because
-    /// it includes OpenGL calls (ofDrawBitmapString).
-    void draw()
-    {
-        stringstream ss;
-
-        ss << "I am a slowly increasing thread. " << endl;
-        ss << "My current count is: ";
-
-        if(lock())
-        {
-            // The mutex is now locked and the "count"
-            // variable is protected.  Time to read it.
-            ss << count;
-
-            // Unlock the mutex.  This is only
-            // called if lock() returned true above.
-            unlock();
-        }
-        else
-        {
-            // If we reach this else statement, it means that we could not
-            // lock our mutex, and so we do not need to call unlock().
-            // Calling unlock without locking will lead to problems.
-            ofLogWarning("threadedFunction()") << "Unable to lock mutex.";
-        }
-
-        ofDrawBitmapString(ss.str(), 50, 56);
+    /// it includes OpenGL calls
+    void draw(){
+        tex.draw(0,0);
     }
 
-    // Use unique_lock to protect a copy of count while getting a copy.
-    int getCount()
-    {
-        unique_lock<std::mutex> lock(mutex);
-        return count;
-    }
-
-    void throwTestException()
-    {
-        shouldThrowTestException = 1;
-    }
+	int getThreadFrameNum(){
+		return threadFrameNum;
+	}
 
 protected:
-    // A flag to check and see if we should throw a test exception.
-    Poco::AtomicCounter shouldThrowTestException;
+    // pixels represents shared data that we aim to always access from both the
+    // main thread AND this threaded object and at least from one of them for
+    // writing. Therefore, we need to protect it with the mutex.
+    // Otherwise it wouldn't make sense to lock.
+    ofFloatPixels pixels;
 
-    // This is a simple variable that we aim to always access from both the
-    // main thread AND this threaded object.  Therefore, we need to protect it
-    // with the mutex.  In the case of simple numerical variables, some
-    // garuntee thread safety for small integral types, but for the sake of
-    // illustration, we use an int.  This int could represent ANY complex data
-    // type that needs to be protected.
-    //
-    // Note, if we simply want to count in a thread-safe manner without worrying
-    // about mutexes, we might use Poco::AtomicCounter instead.
-    int count;
-
+    ofTexture tex;
+    std::condition_variable condition;
+	int threadFrameNum = 0;
 };
