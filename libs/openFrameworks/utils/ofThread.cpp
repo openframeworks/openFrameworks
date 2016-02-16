@@ -106,9 +106,11 @@ void ofThread::waitForThread(bool callStopThread, long milliseconds){
 		}
 
         if (INFINITE_JOIN_TIMEOUT == milliseconds){
-            try{
-                thread.join();
-            }catch(...){}
+			if(thread.joinable()){
+				try{
+					thread.join();
+				}catch(...){}
+			}
         }else{
             // Wait for "joinWaitMillis" milliseconds for thread to finish
             std::unique_lock<std::mutex> lck(mutex);
