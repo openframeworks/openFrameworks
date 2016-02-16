@@ -251,7 +251,7 @@ public:
 		if(closed){
 			return false;
 		}
-		queue.push(value);
+		queue.push(move(value));
 		condition.notify_all();
 		return true;
 	}
@@ -265,10 +265,10 @@ public:
 		None = 0,
 
 		/// If the queue size is >= maxSize argument, discard this message
-		DiscardLast,
+		DiscardNew,
 
 		/// If the queue size is >= maxSize argument, discard oldest message and add this message
-		DiscardFirst,
+		DiscardOld,
 
 		/// Wait until queue size is < maxSize and then push the message onto the queue
 		WaitForSpace
@@ -288,57 +288,9 @@ public:
 	/// data unchanged.
 	///
 	/// \returns TrySendResult
-	TrySendResult trySend(T & value, const DiscardStrategy & discardStrategy, size_t maxSize) {
-		std::unique_lock<std::mutex> lock(mutex);
-		if (closed) {
-			return TrySendResult({
-				false,
-				false,
-				false
-			});
-		}
-		if (queue.size() >= maxSize) {
-			switch (discardStrategy) {
-			case DiscardStrategy::DiscardLast:
-			{
-				return TrySendResult({
-					false,
-					false,
-					true
-				});
-			}
-			case DiscardStrategy::DiscardFirst:
-			{
-				do {
-					this->queue.pop();
-				} while (queue.size() >= maxSize)
-				queue.push(value);
-				condition.notify_all();
-				return TrySendResult({
-					true,
-					true,
-					true
-				});
-			}
-			case DiscardStrategy::WaitForSpace:
-			{
-				do {
-					lock.unlock();
-					lock.lock();
-				} while (queue.size() >= maxSize)
-			}
-			default:
-			{
-				queue.push(value);
-				condition.notify_all();
-				return TrySendResult({
-					false,
-					true,
-					true
-				});
-			}
-			}
-		}
+	TrySendResult trySend(const T & value, const TrySendStrategy & strategy, size_t maxSize) {
+		auto copyValue = T(value);
+		return trySend(move(copyValue), strategy, maxSize);
 	}
 
 	/// \brief Send a value to the receiver without making a copy.and apply the
@@ -350,7 +302,7 @@ public:
 	/// the send fails because the channel is already closed.
 	///
 	/// \returns TrySendResult
-	TrySendResult trySend(T && value, const DiscardStrategy & discardStrategy, size_t maxSize) {
+	TrySendResult trySend(T && value, const TrySendStrategy & strategy, size_t maxSize) {
 		std::unique_lock<std::mutex> lock(mutex);
 		if (closed) {
 			return TrySendResult({
@@ -360,8 +312,8 @@ public:
 			});
 		}
 		if (queue.size() >= maxSize) {
-			switch (discardStrategy) {
-			case DiscardStrategy::DiscardLast:
+			switch (strategy) {
+			case TrySendStrategy::DiscardNew:
 			{
 				return TrySendResult({
 					false,
@@ -369,12 +321,12 @@ public:
 					true
 				});
 			}
-			case DiscardStrategy::DiscardFirst:
+			case TrySendStrategy::DiscardOld:
 			{
 				do {
 					this->queue.pop();
-				} while (queue.size() >= maxSize)
-					queue.push(value);
+				} while (queue.size() >= maxSize);
+				queue.push(move(value));
 				condition.notify_all();
 				return TrySendResult({
 					true,
@@ -382,25 +334,27 @@ public:
 					true
 				});
 			}
-			case DiscardStrategy::WaitForSpace:
+			case TrySendStrategy::WaitForSpace:
 			{
 				do {
 					lock.unlock();
 					lock.lock();
-				} while (queue.size() >= maxSize)
+				} while (queue.size() >= maxSize);
+				//continue to outside if statement
 			}
 			default:
 			{
-				queue.push(value);
-				condition.notify_all();
-				return TrySendResult({
-					false,
-					true,
-					true
-				});
+				//continue to outside if statement
 			}
 			}
 		}
+		queue.push(move(value));
+		condition.notify_all();
+		return TrySendResult({
+			false,
+			true,
+			true
+		});
 	}
 
 	/// \brief Close the ofThreadChannel.
