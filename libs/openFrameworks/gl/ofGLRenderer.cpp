@@ -1014,7 +1014,9 @@ void ofGLRenderer::setColor(int r, int g, int b){
     currentStyle.color.set(r,g,b);
     glColor4f(r/255.f,g/255.f,b/255.f,1.f);
 	if(lightingEnabled && !materialBound){
+#ifndef TARGET_OPENGLES
 		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+#endif
 		glEnable(GL_COLOR_MATERIAL);
     }
 }
@@ -1025,7 +1027,9 @@ void ofGLRenderer::setColor(int r, int g, int b, int a){
     currentStyle.color.set(r,g,b,a);
     glColor4f(r/255.f,g/255.f,b/255.f,a/255.f);
 	if(lightingEnabled && !materialBound){
+#ifndef TARGET_OPENGLES
 		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+#endif
 		glEnable(GL_COLOR_MATERIAL);
     }
 }
