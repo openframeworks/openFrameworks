@@ -261,11 +261,8 @@ public:
 	/// This parameter determines what strategy to follow when queue size > maxSize
 	/// argument when we call trySend
 	enum TrySendStrategy {
-		/// Do not discard, i.e. same as send(...)
-		None = 0,
-
 		/// If the queue size is >= maxSize argument, discard this message
-		DiscardNew,
+		DiscardNew = 0,
 
 		/// If the queue size is >= maxSize argument, discard oldest message and add this message
 		DiscardOld,
