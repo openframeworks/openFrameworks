@@ -1128,7 +1128,7 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 	eglMakeCurrent (eglGetDisplay(EGL_DEFAULT_DISPLAY), 0,0, 0);
 	glDisplay = (GstGLDisplay *)gst_gl_display_egl_new_with_egl_display(eglGetDisplay(EGL_DEFAULT_DISPLAY));
 	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetEGLContext(),
-	    		  GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
+	    		  GST_GL_PLATFORM_EGL, GST_GL_API_GLES2);
 
 	g_object_set (G_OBJECT (glfilter), "other-context", glContext, NULL);
 	// FIXME: this seems to be the way to add the context in 1.4.5
