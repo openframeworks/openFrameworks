@@ -219,7 +219,7 @@ public:
 	///
 	/// This method moves the contents of the sent value using `std::move`
 	/// semantics. This avoids copying the data, but the original data data will
-	/// be invalidated. Note that the original data will be invalideated even if
+	/// be invalidated. Note that the original data will be invalidated even if
 	/// the send fails because the channel is already closed.
 	///
 	/// ~~~~{.cpp}
@@ -256,6 +256,153 @@ public:
 		return true;
 	}
 
+	/// \brief Parameter used in trySend method.
+	///
+	/// This parameter determines what strategy to follow when queue size > maxSize
+	/// argument when we call trySend
+	enum TrySendStrategy {
+		/// Do not discard, i.e. same as send(...)
+		None = 0,
+
+		/// If the queue size is >= maxSize argument, discard this message
+		DiscardLast,
+
+		/// If the queue size is >= maxSize argument, discard oldest message and add this message
+		DiscardFirst,
+
+		/// Wait until queue size is < maxSize and then push the message onto the queue
+		WaitForSpace
+	};
+
+	/// \brief Message returned from trySend method
+	struct TrySendResult {
+		bool queueTrimmed;
+		bool messageSent;
+		bool channelOpen;
+	};
+
+	/// \brief Send a value to the receiver by making a copy and apply the DiscardStrategy if
+	/// the queue size would become > maxSize.
+	///
+	/// This method copies the contents of the sent value, leaving the original
+	/// data unchanged.
+	///
+	/// \returns TrySendResult
+	TrySendResult trySend(T & value, const DiscardStrategy & discardStrategy, size_t maxSize) {
+		std::unique_lock<std::mutex> lock(mutex);
+		if (closed) {
+			return TrySendResult({
+				false,
+				false,
+				false
+			});
+		}
+		if (queue.size() >= maxSize) {
+			switch (discardStrategy) {
+			case DiscardStrategy::DiscardLast:
+			{
+				return TrySendResult({
+					false,
+					false,
+					true
+				});
+			}
+			case DiscardStrategy::DiscardFirst:
+			{
+				do {
+					this->queue.pop();
+				} while (queue.size() >= maxSize)
+				queue.push(value);
+				condition.notify_all();
+				return TrySendResult({
+					true,
+					true,
+					true
+				});
+			}
+			case DiscardStrategy::WaitForSpace:
+			{
+				do {
+					lock.unlock();
+					lock.lock();
+				} while (queue.size() >= maxSize)
+			}
+			default:
+			{
+				queue.push(value);
+				condition.notify_all();
+				return TrySendResult({
+					false,
+					true,
+					true
+				});
+			}
+			}
+		}
+	}
+
+	/// \brief Send a value to the receiver without making a copy.and apply the
+	/// DiscardStrategy if the queue size would become > maxSize.
+	///
+	/// This method moves the contents of the sent value using `std::move`
+	/// semantics. This avoids copying the data, but the original data data will
+	/// be invalidated. Note that the original data will be invalidated even if
+	/// the send fails because the channel is already closed.
+	///
+	/// \returns TrySendResult
+	TrySendResult trySend(T && value, const DiscardStrategy & discardStrategy, size_t maxSize) {
+		std::unique_lock<std::mutex> lock(mutex);
+		if (closed) {
+			return TrySendResult({
+				false,
+				false,
+				false
+			});
+		}
+		if (queue.size() >= maxSize) {
+			switch (discardStrategy) {
+			case DiscardStrategy::DiscardLast:
+			{
+				return TrySendResult({
+					false,
+					false,
+					true
+				});
+			}
+			case DiscardStrategy::DiscardFirst:
+			{
+				do {
+					this->queue.pop();
+				} while (queue.size() >= maxSize)
+					queue.push(value);
+				condition.notify_all();
+				return TrySendResult({
+					true,
+					true,
+					true
+				});
+			}
+			case DiscardStrategy::WaitForSpace:
+			{
+				do {
+					lock.unlock();
+					lock.lock();
+				} while (queue.size() >= maxSize)
+			}
+			default:
+			{
+				queue.push(value);
+				condition.notify_all();
+				return TrySendResult({
+					false,
+					true,
+					true
+				});
+			}
+			}
+		}
+	}
+
 	/// \brief Close the ofThreadChannel.
 	///
 	/// Closing the ofThreadChannel means that no new messages can be sent or
@@ -268,7 +415,6 @@ public:
 		condition.notify_all();
 	}
 
-
 	/// \brief Queries empty channel.
 	///
 	/// This call is only an approximation, since messages come from a different
@@ -278,7 +424,16 @@ public:
 		return queue.empty();
 	}
 
-private:
+
+	/// \brief Queries channel buffer size.
+	///
+	/// This call is only an approximation, since messages may arrive during or
+	/// directly after the function call.
+	size_t size() const {
+		return queue.size();
+	}
+
+protected:
 	/// \brief The FIFO data queue.
 	std::queue<T> queue;
 
