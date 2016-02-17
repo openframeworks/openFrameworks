@@ -64,11 +64,20 @@ enum ofTargetPlatform{
 #elif defined( __APPLE_CC__)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
-
-	#if TARGET_OS_IPHONE_SIMULATOR || TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE || TARGET_IPHONE
-		#define TARGET_OF_IPHONE
+	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_OS_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
+        #define TARGET_OF_IPHONE
         #define TARGET_OF_IOS
-		#define TARGET_OPENGLES
+        #define TARGET_OPENGLES
+        #include <unistd.h>
+    #elif TARGET_OS_TV
+        #define TARGET_OF_IOS
+        #define TARGET_OF_TVOS
+        #define TARGET_OPENGLES
+        #include <unistd.h>
+    #elif TARGET_OS_WATCH
+        #define TARGET_OF_IOS
+        #define TARGET_OF_WATCHOS
+        #define TARGET_OPENGLES
         #include <unistd.h>
 	#else
 		#define TARGET_OSX

@@ -87,6 +87,8 @@
 		678C3D2B176F04F800D1CC68 /* SoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 678C3D21176F04F800D1CC68 /* SoundStream.h */; };
 		678C3D2C176F04F800D1CC68 /* SoundStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 678C3D22176F04F800D1CC68 /* SoundStream.m */; };
 		860B024D17A96D840032B827 /* ofxiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 860B024C17A96D840032B827 /* ofxiOS.h */; };
+		9957D8701BDDCD440002D53C /* ofEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9957D86F1BDDCD440002D53C /* ofEvent.h */; };
+		99752D331BF21EEE0026316A /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99752D321BF21EEE0026316A /* GameController.framework */; };
 		9979E8181A1B9883007E55D1 /* ofWindowSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979E8171A1B9883007E55D1 /* ofWindowSettings.h */; };
 		9979E8281A1CDBD4007E55D1 /* ofMainLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9979E8261A1CDBD4007E55D1 /* ofMainLoop.cpp */; };
 		9979E8291A1CDBD4007E55D1 /* ofMainLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979E8271A1CDBD4007E55D1 /* ofMainLoop.h */; };
@@ -302,6 +304,8 @@
 		678C3D21176F04F800D1CC68 /* SoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundStream.h; sourceTree = "<group>"; };
 		678C3D22176F04F800D1CC68 /* SoundStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoundStream.m; sourceTree = "<group>"; };
 		860B024C17A96D840032B827 /* ofxiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOS.h; sourceTree = "<group>"; };
+		9957D86F1BDDCD440002D53C /* ofEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofEvent.h; sourceTree = "<group>"; };
+		99752D321BF21EEE0026316A /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		9979E8171A1B9883007E55D1 /* ofWindowSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowSettings.h; sourceTree = "<group>"; };
 		9979E8261A1CDBD4007E55D1 /* ofMainLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMainLoop.cpp; sourceTree = "<group>"; };
 		9979E8271A1CDBD4007E55D1 /* ofMainLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMainLoop.h; sourceTree = "<group>"; };
@@ -436,6 +440,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99752D331BF21EEE0026316A /* GameController.framework in Frameworks */,
 				BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */,
 				BB24DECB10DA7A3F00E9C588 /* OpenGLES.framework in Frameworks */,
 				BB24DECC10DA7A3F00E9C588 /* UIKit.framework in Frameworks */,
@@ -594,6 +599,7 @@
 		29B97323FDCFA39411CA2CEA /* core frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				99752D321BF21EEE0026316A /* GameController.framework */,
 				5E2E99DC10ED147800587639 /* MapKit.framework */,
 				BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */,
 				BB16EBD80F2B2AB500518274 /* QuartzCore.framework */,
@@ -724,13 +730,13 @@
 		E4F76D7B176CB27200798745 /* app */ = {
 			isa = PBXGroup;
 			children = (
-				9979E8261A1CDBD4007E55D1 /* ofMainLoop.cpp */,
-				9979E8271A1CDBD4007E55D1 /* ofMainLoop.h */,
-				9979E8171A1B9883007E55D1 /* ofWindowSettings.h */,
 				E4F76D7C176CB27200798745 /* ofAppBaseWindow.h */,
 				E4F76D85176CB27200798745 /* ofAppRunner.cpp */,
 				E4F76D86176CB27200798745 /* ofAppRunner.h */,
 				E4F76D87176CB27200798745 /* ofBaseApp.h */,
+				9979E8261A1CDBD4007E55D1 /* ofMainLoop.cpp */,
+				9979E8271A1CDBD4007E55D1 /* ofMainLoop.h */,
+				9979E8171A1B9883007E55D1 /* ofWindowSettings.h */,
 			);
 			path = app;
 			sourceTree = "<group>";
@@ -745,6 +751,7 @@
 		E4F76D8E176CB27200798745 /* events */ = {
 			isa = PBXGroup;
 			children = (
+				9957D86F1BDDCD440002D53C /* ofEvent.h */,
 				E4F76D8F176CB27200798745 /* ofEvents.cpp */,
 				E4F76D90176CB27200798745 /* ofEvents.h */,
 				E4F76D91176CB27200798745 /* ofEventUtils.h */,
@@ -961,6 +968,7 @@
 				E4F76E81176CB27200798745 /* ofSoundPlayer.h in Headers */,
 				E4F76E83176CB27200798745 /* ofSoundStream.h in Headers */,
 				E4F76E85176CB27200798745 /* ofBaseTypes.h in Headers */,
+				9957D8701BDDCD440002D53C /* ofEvent.h in Headers */,
 				E4F76E87176CB27200798745 /* ofColor.h in Headers */,
 				E4F76E89176CB27200798745 /* ofParameter.h in Headers */,
 				E4F76E8B176CB27200798745 /* ofParameterGroup.h in Headers */,
@@ -1228,7 +1236,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/debug/";
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OBJROOT = "$(SRCROOT)/../../lib/ios/build/debug";
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
@@ -1250,7 +1258,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/release/";
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OBJROOT = "$(SRCROOT)/../../lib/ios/build/release";
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
