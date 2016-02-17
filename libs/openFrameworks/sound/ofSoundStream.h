@@ -194,11 +194,11 @@ protected:
 class ofSoundStreamSettings {
 public:
 	virtual ~ofSoundStreamSettings() {}
-	int sampleRate = 44100;
-	int bufferSize = 256;
-	int numBuffers = 4;
-	int numInputChannels = 0;
-	int numOutputChannels = 0;
+	size_t sampleRate = 44100;
+	size_t bufferSize = 256;
+	size_t numBuffers = 4;
+	size_t numInputChannels = 0;
+	size_t numOutputChannels = 0;
 	virtual bool setInDevice(const ofSoundDevice & device);
 	virtual bool setOutDevice(const ofSoundDevice & device);
 	virtual bool setApi(ofSoundDevice::Api api);
