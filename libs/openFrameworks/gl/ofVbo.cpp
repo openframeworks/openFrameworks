@@ -382,42 +382,36 @@ void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 //--------------------------------------------------------------
 ofVbo::VertexAttribute & ofVbo::getOrCreateAttr(int location){
 	VertexAttribute * attr = nullptr;
-	if (ofIsGLProgrammableRenderer()) {
-		switch (location){
-			case ofShader::POSITION_ATTRIBUTE:
-				attr = &positionAttribute;
-				break;
-			case ofShader::COLOR_ATTRIBUTE:
-				attr = &colorAttribute;
-				break;
-			case ofShader::NORMAL_ATTRIBUTE:
-				attr = &normalAttribute;
-				break;
-			case ofShader::TEXCOORD_ATTRIBUTE:
-				attr = &texCoordAttribute;
-				break;
-			default:
-				customAttributes[location].location = location;
-				attr = &customAttributes[location];
-				vaoChanged = true;
-				break;
-		}
-	}else{
-		customAttributes[location].location = location;
-		attr = &customAttributes[location];
-		vaoChanged = true;
+	switch (location){
+		case ofShader::POSITION_ATTRIBUTE:
+			attr = &positionAttribute;
+			break;
+		case ofShader::COLOR_ATTRIBUTE:
+			attr = &colorAttribute;
+			break;
+		case ofShader::NORMAL_ATTRIBUTE:
+			attr = &normalAttribute;
+			break;
+		case ofShader::TEXCOORD_ATTRIBUTE:
+			attr = &texCoordAttribute;
+			break;
+		default:
+			customAttributes[location].location = location;
+			attr = &customAttributes[location];
+			vaoChanged = true;
+			break;
 	}
 	return *attr;
 }
 
 //--------------------------------------------------------------
 void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords, int total, int usage, int stride){
-	if(ofIsGLProgrammableRenderer() && location==ofShader::POSITION_ATTRIBUTE){
+	if(location==ofShader::POSITION_ATTRIBUTE){
 		totalVerts = total;
 	}
 
 	bool normalize = false;
-	if(ofIsGLProgrammableRenderer() && !hasAttribute(location)){
+	if(!hasAttribute(location)){
 		vaoChanged = true;
 		bUsingVerts |= (location == ofShader::POSITION_ATTRIBUTE);
 		bUsingColors |= (location == ofShader::COLOR_ATTRIBUTE);
