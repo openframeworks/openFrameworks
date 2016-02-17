@@ -21,106 +21,6 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>8466F1851C04CA0E00918B1C</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>12</string>
-			<key>files</key>
-			<array/>
-			<key>inputPaths</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXShellScriptBuildPhase</string>
-			<key>outputPaths</key>
-			<array/>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-			<key>shellPath</key>
-			<string>/bin/sh</string>
-			<key>shellScript</key>
-			<string># ---- Code Sign App Package ----
- 
-# WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!
-
-# Verify that $CODE_SIGN_IDENTITY is set
-if [ -z "${CODE_SIGN_IDENTITY}" ] ; then
-echo "CODE_SIGN_IDENTITY needs to be set for framework code-signing"
-exit 0
-fi
-
-if [ -z "${CODE_SIGN_ENTITLEMENTS}" ] ; then
-echo "CODE_SIGN_ENTITLEMENTS needs to be set for framework code-signing!"
-
-if [ "${CONFIGURATION}" = "Release" ] ; then
-exit 1
-else
-# Code-signing is optional for non-release builds.
-exit 0
-fi
-fi
-
-ITEMS=""
-
-FRAMEWORKS_DIR="${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
-echo "$FRAMEWORKS_DIR"
-if [ -d "$FRAMEWORKS_DIR" ] ; then
-FRAMEWORKS=$(find "${FRAMEWORKS_DIR}" -depth -type d -name "*.framework" -or -name "*.dylib" -or -name "*.bundle" | sed -e "s/\(.*framework\)/\1\/Versions\/A\//")
-RESULT=$?
-if [[ $RESULT != 0 ]] ; then
-exit 1
-fi
-
-ITEMS="${FRAMEWORKS}"
-fi
-
-LOGINITEMS_DIR="${TARGET_BUILD_DIR}/${CONTENTS_FOLDER_PATH}/Library/LoginItems/"
-if [ -d "$LOGINITEMS_DIR" ] ; then
-LOGINITEMS=$(find "${LOGINITEMS_DIR}" -depth -type d -name "*.app")
-RESULT=$?
-if [[ $RESULT != 0 ]] ; then
-exit 1
-fi
-
-ITEMS="${ITEMS}"$'\n'"${LOGINITEMS}"
-fi
-
-# Prefer the expanded name, if available.
-CODE_SIGN_IDENTITY_FOR_ITEMS="${EXPANDED_CODE_SIGN_IDENTITY_NAME}"
-if [ "${CODE_SIGN_IDENTITY_FOR_ITEMS}" = "" ] ; then
-# Fall back to old behavior.
-CODE_SIGN_IDENTITY_FOR_ITEMS="${CODE_SIGN_IDENTITY}"
-fi
-
-echo "Identity:"
-echo "${CODE_SIGN_IDENTITY_FOR_ITEMS}"
-
-echo "Entitlements:"
-echo "${CODE_SIGN_ENTITLEMENTS}"
-
-echo "Found:"
-echo "${ITEMS}"
-
-# Change the Internal Field Separator (IFS) so that spaces in paths will not cause problems below.
-SAVED_IFS=$IFS
-IFS=$(echo -en "\n\b")
-
-# Loop through all items.
-for ITEM in $ITEMS;
-do
-echo "Signing '${ITEM}'"
-codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" --entitlements "${CODE_SIGN_ENTITLEMENTS}" "${ITEM}"
-RESULT=$?
-if [[ $RESULT != 0 ]] ; then
-echo "Failed to sign '${ITEM}'."
-IFS=$SAVED_IFS
-exit 1
-fi
-done
-
-# Restore $IFS.
-IFS=$SAVED_IFS
-</string>
-		</dict>
 		<key>BB4B014C10F69532006C3DED</key>
 		<dict>
 			<key>children</key>
@@ -411,7 +311,6 @@ IFS=$SAVED_IFS
 				<string>E4B69B590A3A1756003C02F2</string>
 				<string>E4B6FFFD0C3F9AB9008CF71C</string>
 				<string>E4C2427710CC5ABF004149E2</string>
-				<string>8466F1851C04CA0E00918B1C</string>
 			</array>
 			<key>buildRules</key>
 			<array/>
@@ -650,8 +549,6 @@ IFS=$SAVED_IFS
 			<string>mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 # Copy default icon file into App/Resources
 rsync -aved "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
-# Copy bin/data into App/Resources
-rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/"
 # Copy libfmod and change install directory for fmod to run
 rsync -aved ../../../libs/fmodex/lib/osx/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 install_name_tool -change @executable_path/libfmodex.dylib @executable_path/../Frameworks/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";
