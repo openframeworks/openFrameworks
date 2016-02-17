@@ -6,6 +6,10 @@
 //
 
 #include "ofxiOSExternalDisplay.h"
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+
+
 #include "ofxiOSAppDelegate.h"
 
 //-----------------------------------------------------------------------------------------
@@ -180,3 +184,5 @@ ofxiOSExternalDisplay::~ofxiOSExternalDisplay(){
         }
     }
 }
+
+#endif

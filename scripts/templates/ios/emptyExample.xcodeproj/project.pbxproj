@@ -73,6 +73,7 @@
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
+				<string>99752D391BF2246D0026316A</string>
 				<string>E41D421413B3A95300A75A5D</string>
 				<string>1D60589F0D05DD5A006BFB54</string>
 				<string>1DF5F4E00D08C38300B7A737</string>
@@ -149,7 +150,7 @@
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>5.1.1</string>
+				<string>7.0</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
 				<key>VALID_ARCHS</key>
@@ -173,7 +174,7 @@
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>5.1.1</string>
+				<string>7.0</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
 				<key>VALID_ARCHS</key>
@@ -315,6 +316,7 @@
 		<dict>
 			<key>children</key>
 			<array>
+				<string>99752D381BF2246D0026316A</string>
 				<string>E41D400613B39D2100A75A5D</string>
 				<string>E41D400713B39D2100A75A5D</string>
 				<string>E41D400813B39D2100A75A5D</string>
@@ -510,6 +512,17 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
+		<key>6948EE371B920CB800B5AC1A</key>
+		<dict>
+			<key>children</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>local_addons</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>9255DD331112741900D6945E</key>
 		<dict>
 			<key>buildActionMask</key>
@@ -528,6 +541,26 @@
 			<string>/bin/sh</string>
 			<key>shellScript</key>
 			<string>rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"</string>
+		</dict>
+		<key>99752D381BF2246D0026316A</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>GameController.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/GameController.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>99752D391BF2246D0026316A</key>
+		<dict>
+			<key>fileRef</key>
+			<string>99752D381BF2246D0026316A</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
 		</dict>
 		<key>BB16E9930F2B1E5900518274</key>
 		<dict>
@@ -590,17 +623,6 @@
 			<string>PBXGroup</string>
 			<key>name</key>
 			<string>addons</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>6948EE371B920CB800B5AC1A</key>
-		<dict>
-			<key>children</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>local_addons</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -721,7 +743,7 @@
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>YES</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>5.1.1</string>
+				<string>7.0</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>NO</string>
 				<key>PROVISIONING_PROFILE[sdk=iphoneos*]</key>
@@ -777,7 +799,7 @@
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>YES</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>5.1.1</string>
+				<string>7.0</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>NO</string>
 				<key>SDKROOT</key>
