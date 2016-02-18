@@ -2,7 +2,7 @@
 #set -e
 #set -o pipefail
 # trap any script errors and exit
-trap "trapError" ERR
+#trap "trapError" ERR
 
 trapError() {
 	echo
