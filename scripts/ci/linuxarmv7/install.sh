@@ -2,7 +2,7 @@
 #set -e
 #set -o pipefail
 # trap any script errors and exit
-#trap "trapError" ERR
+trap "trapError" ERR
 
 trapError() {
 	echo
@@ -11,7 +11,6 @@ trapError() {
 }
 
 createArchImg(){
-    sudo apt-get install bsdtar
     wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
     mkdir archlinux
     tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C archlinux
@@ -23,7 +22,8 @@ downloadToolchain(){
     #wget http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
     #tar xf x-tools7h.tar.xz
     #rm x-tools7h.tar.xz
-    sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+    sudo apt-get -y update
+    sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
 }
 
 downloadFirmware(){
