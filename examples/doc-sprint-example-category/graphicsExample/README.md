@@ -1,32 +1,36 @@
-#Level1_ExampleName
---
+#About graphicsExample
+
 
 ###Learning Objectives
 
-This openFrameworks Example is designed to demonstrate ...
+This Example demonstrates a few of the most basic graphics capabilities of openFrameworks. 
 
-* How to ...
-* The ability of openFrameworks to ...
+After studying this example, you'll understand how to render some simple colored lines and elementary shapes, such as ellipses and rectangles.
 
-*{Guide the reader to what's important in the code of the App.}*
+In the code, pay attention to: 
 
+* Different commands for setting the active color, such as ```ofSetColor()``` and ```ofSetHexColor()```.
+* Toggling transparency, with ```ofEnableAlphaBlending()``` and ```ofDisableAlphaBlending()```.
+* Toggling of shape fills, with ```ofFill()``` and ```ofNoFill();```.
+* Toggling the anti-aliasing of lines, with ```ofEnableAntiAliasing()``` and ```ofDisableAntiAliasing()```.
+* Rendering bitmap text to the screen, with ```ofDrawBitmapString()```.
 
 ### Expected Behavior
 
-When launching this app, you should see a screen with...
+![Screenshot of graphicsExample](graphicsExample.png)
+
+When launching this app, you should see a screen with
+
+* A filled and unfilled (outline) circle
+* A group of 200 randomly colored rectangles
+* Some transparent and opaque rectangles
+* Some diagonal red lines
+* Some bitmap text. 
 
 Instructions for use:
 
-* Try moving your cursor left-right in order to....
-* Press <space> to clear...
-
-*{If there are a lot of key commands, it's not necessarily appropriate here to give detailed instructions about what every keypress does. The In-app Overlays should accomplish that. It may be enough to say something like, "Keypresses allow the user to select among various different effects."}*
-
-![Screenshot of Example, stored in the Level1_ExampleName/readme_assets/ folder](http://i.imgur.com/kGBXk69.jpg)
+* Press ```s``` to toggle whether or not the red lines are anti-aliased ("smooth"). 
 
 ###Other classes used in this file
 
-This Example uses the following classes: 
-
-* OtherClass1
-* OtherClass2
+This Example uses no other classes.
