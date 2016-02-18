@@ -1,5 +1,7 @@
 # videoPlayerExample
 
+![Screenshot of videoPlayerExample](videoPlayerExample.png)
+
 ### Learning Objectives
 
 This example is designed to demonstrate how to play video in openFrameworks.
@@ -23,8 +25,6 @@ Instructions for use:
 
 * Try moving your cursor in order to change the video playback speed
 * Try pressing the left and right arrow keys to go to the next/previous frame.
-
-![Screenshot of videoPlayerExample](videoPlayerExample.png)
 
 ### Classes used in this example
 
