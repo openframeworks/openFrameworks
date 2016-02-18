@@ -23,7 +23,7 @@ downloadToolchain(){
     #tar xf x-tools7h.tar.xz
     #rm x-tools7h.tar.xz
     sudo apt-get -y update
-    sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+    sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libasound2-dev
 }
 
 downloadFirmware(){
