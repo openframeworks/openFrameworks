@@ -24,7 +24,7 @@ cd $ROOT
 wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-4.1.1.tar.gz
 tar xzf rtaudio-4.1.1.tar.gz
 cd rtaudio-4.1.1
-./configure --host=${GCC_PREFIX} --without-alsa
+./configure --host=${GCC_PREFIX}
 sed -i "s|CFLAGS[ ]*=\(.*\)|CFLAGS = ${CFLAGS} \1|g" Makefile 
 perl -p -i -e 's|\$\(CC\) (?!\$\(CFLAGS\))|\$(CC) \$(CFLAGS) |g' Makefile
 #sed s/AR[ ]*=.*/AR ?= $AR/g
