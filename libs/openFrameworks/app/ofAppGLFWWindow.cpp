@@ -1146,10 +1146,9 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
-	instance->windowW = w * instance->pixelScreenCoordScale;
-	instance->windowH = h * instance->pixelScreenCoordScale;
+	instance->windowW = w;
+	instance->windowH = h;
 	instance->events().notifyWindowResized(w*instance->pixelScreenCoordScale, h*instance->pixelScreenCoordScale);
-
 	instance->nFramesSinceWindowResized = 0;
 }
 
