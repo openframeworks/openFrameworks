@@ -14,6 +14,6 @@ This section of examples aims to provide understanding about the built-in events
 
 ### At a Glance
 
-![Screenshot of GraphicsExample, stored in the specific example's folder](allEventsExample/)
+![Screenshot of GraphicsExample, stored in the specific example's folder]
 ([allEventsExample](allEventsExample/allEventsExample.png))
 
