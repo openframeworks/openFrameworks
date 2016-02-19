@@ -17,7 +17,7 @@ void ofApp::setup(){
     bDrawNormals= false;
     bDrawAxes   = false;
     bDrawLights = false;
-    bInfoText   = true;
+    bHelpText   = true;
     bMousePressed   = false;
     bSplitFaces = false;
     
@@ -427,18 +427,19 @@ void ofApp::draw() {
     ofDrawBitmapString("ofConePrimitive", cone.getPosition().x-150, cone.getPosition().y+136 );
     
     
-    stringstream ss;
-    if(bInfoText) {
+    
+    if(bHelpText) {
+        stringstream ss;
         ss << "Framerate: " << ofToString(ofGetFrameRate(),0) << "\n";
         ss << "(f): Toggle Fullscreen"<<endl<<"(s): Draw Solid Shapes"<<endl<<"(w): Draw Wireframes"<<endl;
         ss <<"(1/2/3/4): Set Resolutions" <<endl<<"(n): Draw Normals"<<"\n(LEFT/RIGHT): Set Mode "<<ofToString(mode,0)<<endl;
         ss <<"(z): Split Faces " <<bSplitFaces<<endl;
-        ss <<"(a): Draw Axes"<<endl<<"(l): Render lights"<<endl<<"(h): to toggle help."<<endl;
+        ss <<"(a): Draw Axes"<<endl<<"(l): Render lights" << endl <<"(h): Toggle help."<<endl;
+        ofDrawBitmapString(ss.str().c_str(), 20, 20);
     }
-    else{
-        ss <<"(h): to toggle help."<<endl;
-    }
-    ofDrawBitmapString(ss.str().c_str(), 20, 20);
+    
+    
+    
     
     
 }
@@ -519,7 +520,7 @@ void ofApp::keyPressed(int key) {
             bDrawLights = !bDrawLights;
             break;
         case 'h':
-            bInfoText=!bInfoText;
+            bHelpText=!bHelpText;
             break;
         case 'z':
             bSplitFaces = !bSplitFaces;
