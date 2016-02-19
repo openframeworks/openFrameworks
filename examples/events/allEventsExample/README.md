@@ -27,9 +27,9 @@ In the code, pay attention to:
 When launching this app, you should see a screen with
 
 * a text display of:
-* the current time
-* the elapsed time in milliseconds
-* the current event being triggered
+** the current time
+** the elapsed time in milliseconds
+** the current event being triggered
 
 
 Instructions for use:
