@@ -10,8 +10,7 @@ This example demonstrates how to read and write an xml file to the file system l
 In the code, pay attention to: 
 
 * Use ```ofXML``` to read an xml file from the file system with ```XML.load("mySettings.xml")```
-* Writing an xml file to the file system with
-```XML.save("mySettings.xml");```
+* Writing an xml file to the file system with ```XML.save("mySettings.xml")```
 
 * Adding childNodes to the xml with ```XML.addChild``` and appending with ```XML.addXML```
 * Parsing and traversing XML with ```XML.exists()```, ```XML.getValue()```, ```XML.setToSibling()```,```XML.setToParent()```, ```XML.setTo()```,```XML.getName()``` 
