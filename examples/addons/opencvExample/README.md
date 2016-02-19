@@ -23,10 +23,10 @@ When launching this app, you'll see a window that displays five different stages
 4. In the middle-right is an image that shows the *thresholded absolute difference* between the current frame and the background frame. This image has been *binarized*, meaning that pixel values are either black (0) or white (255). The white pixels represent regions that are significantly different from the background: the hand! 
 5. In the bottom right, an `ofxCvContourFinder` has been tasked to `findContours()` in the binarized image. It does this by identifying blobs of white pixels that meet certain area requirements -- and then tracing the contours of those blobs into an `ofxCvBlob` outline of (x,y) points. The app shows the contour of each blob in cyan, and also shows the bounding rectangle of those points in magenta. *Note:* The contour is a vector-based representation, and can be used for all sorts of further geometric play....
 
-There are a few user-modifiable settings: 
+There are a few user-modifiable settings in this app: 
 
-* Pressing the `space` bar will capture a new image of the background.
-* Pressing the `+` and `-` keys will adjust the threshold for the absolute differencing operation. The greater the threshold value, the more different a pixel needs to be from the background to be considered part of the "foreground". 
+* Pressing the `space` bar will capture a fresh image of the background.
+* Pressing the `+` and `-` keys will adjust the threshold used in the absolute differencing operation. The greater the threshold value, the more different a pixel needs to be from the background in order to be considered part of the "foreground". 
 
 **One more thing.** In line 7 of the `ofApp.h` file, you'll see the following line commented out:
 
@@ -40,12 +40,12 @@ There are a few user-modifiable settings:
 
 This example links against the `ofxOpenCv` core addon. It uses the following classes from that addon: 
 
-* ofxCvColorImage
-* ofxCvGrayscaleImage 	
-* ofxCvContourFinder
-* ofxCvBlob *(used implicitly)*
+* [ofxCvColorImage](http://openframeworks.cc/documentation/ofxOpenCv/ofxCvColorImage/)
+* [ofxCvGrayscaleImage](http://openframeworks.cc/documentation/ofxOpenCv/ofxCvGrayscaleImage/)
+* [ofxCvContourFinder](http://openframeworks.cc/documentation/ofxOpenCv/ofxCvContourFinder/)
+* [ofxCvBlob](http://openframeworks.cc/documentation/ofxOpenCv/ofxCvBlob/) *(used implicitly)*
 
 In addition, this example uses the following classes to access  video from a live camera and/or a pre-stored file: 
 
-* ofVideoPlayer
-* ofVideoGrabber
+* [ofVideoPlayer](http://openframeworks.cc/documentation/video/ofVideoPlayer/)
+* [ofVideoGrabber](http://openframeworks.cc/documentation/video/ofVideoGrabber/)
