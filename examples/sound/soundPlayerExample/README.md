@@ -4,7 +4,7 @@
 
 ### Learning Objectives
 
-This openFrameworks example demonstrates how to load audio files, play sounds interactively and how to manipulate their speed and pan in openFrameworks.
+This openFrameworks example demonstrates how to load audio files, play sounds interactively and how to manipulate their pan and playback speed.
 
 Studying this example will help you understand:
 
@@ -26,7 +26,7 @@ Instructions for use:
 
 * Click in the left area to play the synth sound file. The x-position of where you clicked should change the pan, the y-position changes the speed.
 * Click in the center area to play the beats. Click and drag up and down to change the playback speed.
-* Click on the right area to play the vocals. These are set to multiplay, so you can play them several times.
+* Click in the right area to play the vocals. These are set to multiplay, so you can play them at varying speeds several times at once.
 
 ### Classes used in this example
 
