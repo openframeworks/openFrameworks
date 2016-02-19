@@ -4,18 +4,17 @@
 void ofApp::setup(){
 	
     ofBackground(0,0,0);
-	
-	camWidth 		= 640;	// try to grab at this size. 
-	camHeight 		= 480;
+
+    // try to grab at this size
+	camWidth = 640;
+	camHeight = 480;
 	
 	vidGrabber.setVerbose(true);
 	vidGrabber.setup(camWidth,camHeight);
 
 	font.load("Courier New Bold.ttf", 9);
     
-    // this set of characters comes from processing: 
-    //http://processing.org/learning/library/asciivideo.html
-    
+    // this set of characters comes from the Ascii Video Processing example by Ben Fry,
 	// changed order slightly to work better for mapping
     asciiCharacters =  string("  ..,,,'''``--_:;^^**""=+<>iv%&xclrs)/){}I?!][1taeo7zjLunT#@JCwfy325Fp6mqSghVd4EgXPGZbYkOA8U$KHDBWNMR0Q");
 	
@@ -31,9 +30,8 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
-    
-    // change background video alpha value based on the mouse position
-    float videoAlphaValue = ofMap(mouseX, 0,ofGetWidth(),0,255);
+    // change background video alpha value based on the cursor's x-position
+    float videoAlphaValue = ofMap(mouseX, 0, ofGetWidth(), 0, 255);
     
     // set a white fill color with the alpha generated above
     ofSetColor(255,255,255,videoAlphaValue);
@@ -49,8 +47,10 @@ void ofApp::draw(){
         for (int j = 0; j < camHeight; j+= 9){
             // get the pixel and its lightness (lightness is the average of its RGB values)
             float lightness = pixelsRef.getColor(i,j).getLightness();
+            
             // calculate the index of the character from our asciiCharacters array
             int character = powf( ofMap(lightness, 0, 255, 0, 1), 2.5) * asciiCharacters.size();
+            
             // draw the character at the correct location
             font.drawString(ofToString(asciiCharacters[character]), i, j);
         }
