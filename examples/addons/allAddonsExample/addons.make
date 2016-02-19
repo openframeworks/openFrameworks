@@ -1,6 +1,7 @@
 ofxAssimpModelLoader
 ofxNetwork
 ofxOpenCv
+ofxCv
 ofxOsc
 ofxXmlSettings
 ofxAssimpModelLoader
