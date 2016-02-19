@@ -1,6 +1,6 @@
 #About emptyExample
 
-![Screenshot of graphicsExample](emptyExample.png)
+![Screenshot of emptyExample](emptyExample.png)
 
 ###Learning Objectives
 
