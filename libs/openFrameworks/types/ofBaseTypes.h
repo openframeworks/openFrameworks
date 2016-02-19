@@ -450,41 +450,134 @@ class ofBaseVideoPlayer: virtual public ofBaseVideo{
 public:
 	virtual ~ofBaseVideoPlayer();
 
-	//needs implementing
+	/// \brief Load a video at the file path specified by \p name.
+	/// \param name The file path of the video you would like to load.
+	/// \returns Returns true if the video was loaded successfully.
+	/// \sa loadAsync
 	virtual bool				load(string name) = 0;
+	/// \brief Asynchronously load the video at the file path specified by
+	/// \p name.
+	///
+	/// When this method is used to load a video you should check
+	/// that the video is loaded with isLoaded() before trying to use it.
+	///
+	/// \param name The file path of the video you would like to load.
+	/// \sa isLoaded()
 	virtual void				loadAsync(string name);
 	
+	/// \brief Play the video from the current playhead position.
+	/// \sa getPosition()
+	/// \sa setPostion()
 	virtual void				play() = 0;
+	/// \brief Pause and reset the playhead position to the first frame.
 	virtual void				stop() = 0;
-	virtual ofTexture *			getTexturePtr(){return nullptr;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
+	/// \brief Get a pointer to the texture used internally if it exists.
+	///
+	/// Returns nullptr if there is no video player texture.
+	///
+	/// \returns A pointer to the texture used internally by the video player.
+	virtual ofTexture *			getTexturePtr(){return nullptr;};
 
+	/// \brief Get the width in pixels of the video currently loaded.
 	virtual float 				getWidth() const = 0;
+	/// \brief Get the height in pixels of the video currently loaded.
 	virtual float 				getHeight() const = 0;
 
+	/// \brief Returns true if the video is paused.
+	/// \returns True if the video is paused.
 	virtual bool				isPaused() const = 0;
+	/// \brief Returns true if the video has been loaded.
+	///
+	/// This is helpful when loading a video with loadAsync(). This is also an
+	/// alias of isInitialized().
+	///
+	/// \sa loadAsync()
+	/// \returns True if the video is loaded.
 	virtual bool				isLoaded() const = 0;
+	/// \brief Returns true if the video is playing.
+	/// \returns True if the video is playing.
 	virtual bool				isPlaying() const = 0;
+	/// \brief Returns true if the video has been loaded.
+	///
+	/// This is helpful when loading a video with loadAsync(). This is also
+	/// an alias of isLoaded().
+	///
+	/// \sa loadAsync()
+	/// \returns True if the video is loaded.
 	virtual bool				isInitialized() const{ return isLoaded(); }
 
-	//should implement!
+	/// \brief Get the current position of the playhead.
+	///
+	/// This value is a normalized float value between 0.0 and 1.0 that
+	/// represents the percentage of how far into the video the playhead is
+	/// currently positioned.
+	///
+	/// \returns A normalized float between 0.0 and 1.0.
 	virtual float 				getPosition() const;
+	/// \brief Get the playback speed of the video player.
 	virtual float 				getSpeed() const;
+	/// \brief Get the duration of the video in milliseconds.
 	virtual float 				getDuration() const;
+	/// \brief returns true if the video has finished playing.
+	/// \returns True if the video has finished playing.
 	virtual bool				getIsMovieDone() const;
 
+	/// \brief Set the paused state of the video.
+	/// \param bPause True to pause the video, false to play.
 	virtual void 				setPaused(bool bPause);
+	/// \brief Set the position of the playhead.
+	///
+	/// The value used to set the playhead position should be a normalized float
+	/// between 0.0 and 1.0 that represents percentage of video completion.
+	///
+	/// \param pct A normalized percentage value between 0.0 and 1.0.
 	virtual void 				setPosition(float pct);
-	virtual void 				setVolume(float volume); // 0..1
+	/// \brief Set the volume of the video player.
+	///
+	/// The value used to set the video player volume should be a normalized
+	/// float between 0.0 and 1.0 that represents the desired volume/gain.
+	///
+	/// \param volume A normalized volume value between 0.0 and 1.0.
+	virtual void 				setVolume(float volume);
+	/// \brief Set the video loop state.
+	///
+	/// Loop states include OF_LOOP_NONE, OF_LOOP_PALINDROME, amd OF_LOOP_NORMAL
+	///
+	/// \param state The loop state of the video.
+	/// \sa ::ofLoopType
 	virtual void 				setLoopState(ofLoopType state);
+	/// \brief Set the video playback speed.
+	///
+	/// The speed parameter supplied to setSpeed() considers 1.0 to be regular
+	/// playback speed, 0.5 to be half speed, and 2.0 to be double speed, etc...
+	///
+	/// \param speed The desired playback speed of the video.
 	virtual void   				setSpeed(float speed);
-	virtual void				setFrame(int frame);  // frame 0 = first frame...
+	/// \brief Set the current frame by frame number.
+	///
+	/// Similar to setPosition(), but accepts a frame number instead of
+	/// percentage float value. Frame count begins with the first frame as
+	/// 0 and the last frame as getTotalNumFrames()-1.
+	/// \param frame The frame index to set the new playhead to.
+	virtual void				setFrame(int frame);
 
+	/// \brief Get the frame number of the current playhead.
+	/// \returns The frame number of the current playhead.
 	virtual int					getCurrentFrame() const;
+	/// \brief Get the total number of frames in the currently loaded video.
+	/// \returns The total number of frames in the currently loaded video.
 	virtual int					getTotalNumFrames() const;
+	/// \brief Get the current loop state of the video.
+	/// \sa ::ofLoopType
 	virtual ofLoopType			getLoopState() const;
 
+	/// \brief Set the playhead position to the first frame.
+	///
+	/// This is functionally equivalent to setFrame(0) or setPosition(0.0).
 	virtual void				firstFrame();
+	/// \brief Advance the playhead one frame.
 	virtual void				nextFrame();
+	/// \brief Move the playhead back one frame.
 	virtual void				previousFrame();
 };
 
