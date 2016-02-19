@@ -1,32 +1,29 @@
-#Level1_ExampleName
+#About <This Section>
+
 --
 
 ###Learning Objectives
 
-This openFrameworks Example is designed to demonstrate ...
-
-* How to ...
-* The ability of openFrameworks to ...
-
-*{Guide the reader to what's important in the code of the App.}*
+This section of examples aims to provide understanding around the topic of <insert topic> and some examples of use...
 
 
-### Expected Behavior
+### Table of Contents
 
-When launching this app, you should see a screen with...
+* [advancedEventsExample](advancedEventsExample/) - Custom Events in iOS
+* [advancedGraphics](advancedGraphics/) - Advanced Graphics (Lissa Jous, etc)
+* [assimpExample](assimpExample/) - Loading 3D Models that can animate in a 3D space
+* [audioInputExample](audioInputExample/) - Handling incoming audio signal
+* [audioOutputExample](audioOutputExample/) - Create sounds for an iOS application
 
-Instructions for use:
+...
 
-* Try moving your cursor left-right in order to....
-* Press <space> to clear...
+### At a Glance
 
-*{If there are a lot of key commands, it's not necessarily appropriate here to give detailed instructions about what every keypress does. The In-app Overlays should accomplish that. It may be enough to say something like, "Keypresses allow the user to select among various different effects."}*
+![Screenshot of advancedEventsExample](advancedEventsExample/advancedEventsExample.png))
+([advancedEventsExample](advancedEventsExample/))
 
-![Screenshot of Example, stored in the Level1_ExampleName/readme_assets/ folder](http://i.imgur.com/kGBXk69.jpg)
+![Screenshot of advancedGraphics](advancedGraphics/advancedGraphics.png)
+([advancedGraphics](advancedGraphics/))
 
-###Other classes used in this file
-
-This Example uses the following classes: 
-
-* OtherClass1
-* OtherClass2
+![Screenshot of assimpExample](assimpExample/assimpExample.png)
+([assimpExample](assimpExample/))
