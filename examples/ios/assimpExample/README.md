@@ -4,23 +4,23 @@
 
 ###Learning Objectives
 
-This Example demonstrates using the ofxAssimpModelLoader addon to import an animating 3D model in an iOS application.
+This Example demonstrates using the ofxAssimpModelLoader addon to import an animating 3D model in an iOS application, and will demonstrate how to load in 3D animated models and control their animation.
 
 After studying this example, you'll understand how to do simple imports, and control the rotation direction of your imported 3D asset.
 
 In the code, pay attention to:
 
-* A double-tap will load a different model.
-* A drag will rotate the model along the Y axis.
-* ```model.setLoopStateForAllAnimations(OF_LOOP_NORMAL)``` placed in ```setup()``` allows the model to play indefinitely.
-* ```model.playAllAnimations()``` in ```setup()``` will start that infinite looping.
-* ```model.drawFaces()``` in the ```draw()``` will draw the model and its textures at the current animation frame of the loop.
+* the usage of the addon ofxAssimpModelLoader, which is used to load in 3D file types including 3ds, .obj, .dae etc. and provide access to their vertices, textures, materials, and animation.
+* how most of the models being loaded in are collada files (.dae) and directX (.x), which can contain the model and animation.
+* the difference in appearence between the .3ds model and the .dae and .X models.
+* how to control the animation with ```model.playAllAnimations();```and ```model.setPausedForAllAnimations();``` and ```model.setPositionForAllAnimations();``` and
+* setting up the lighting with ```light.enable();``` and ```ofEnableSeparateSpecularLight();```
 
 ### Expected Behavior
 
-When launching this app, you should see a screen with
+When launching this app, you should see
 
-* A model walking through the space, centered on screen.
+* A lit 3D model of astroboy. 
 
 Instructions for use:
 
