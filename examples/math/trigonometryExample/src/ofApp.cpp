@@ -48,6 +48,7 @@ void ofApp::update(){
 	cosine=cos(angle);
 	sine=sin(angle);
 	tangent=tan(angle);
+    
 	
 	
 	point.set(cosine * radius, sine * radius, 0);//here we set the cyan circle position
