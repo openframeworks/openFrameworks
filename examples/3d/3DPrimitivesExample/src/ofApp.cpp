@@ -425,17 +425,20 @@ void ofApp::draw() {
     ofDrawRectangle(cone.getPosition().x-154, cone.getPosition().y + 120, 136, 24);
     ofSetColor(255);
     ofDrawBitmapString("ofConePrimitive", cone.getPosition().x-150, cone.getPosition().y+136 );
-        
+    
+    
+    stringstream ss;
     if(bInfoText) {
-        stringstream ss;
         ss << "Framerate: " << ofToString(ofGetFrameRate(),0) << "\n";
         ss << "(f): Toggle Fullscreen"<<endl<<"(s): Draw Solid Shapes"<<endl<<"(w): Draw Wireframes"<<endl;
         ss <<"(1/2/3/4): Set Resolutions" <<endl<<"(n): Draw Normals"<<"\n(LEFT/RIGHT): Set Mode "<<ofToString(mode,0)<<endl;
         ss <<"(z): Split Faces " <<bSplitFaces<<endl;
-        ss <<"(a): Draw Axes"<<endl<<"(l): Render lights"<<endl<<"(t): Info Text"<<endl;
-        
-        ofDrawBitmapString(ss.str().c_str(), 20, 20);
+        ss <<"(a): Draw Axes"<<endl<<"(l): Render lights"<<endl<<"(h): to toggle help."<<endl;
     }
+    else{
+        ss <<"(h): to toggle help."<<endl;
+    }
+    ofDrawBitmapString(ss.str().c_str(), 20, 20);
     
     
 }
@@ -515,7 +518,7 @@ void ofApp::keyPressed(int key) {
         case 'l':
             bDrawLights = !bDrawLights;
             break;
-        case 't':
+        case 'h':
             bInfoText=!bInfoText;
             break;
         case 'z':
