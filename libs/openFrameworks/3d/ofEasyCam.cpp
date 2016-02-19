@@ -64,11 +64,18 @@ void ofEasyCam::update(ofEventArgs & args){
 }
 
 //----------------------------------------
-void ofEasyCam::begin(ofRectangle _viewport){
-	if(!bEventsSet){
+void ofEasyCam::begin(ofRectangle _viewport) {
+	// By default, input area for mouse events is set same as camera's viewport
+	ofEasyCam::begin(_viewport, _viewport);
+}
+
+//----------------------------------------
+void ofEasyCam::begin(ofRectangle _viewport, ofRectangle _inputArea) {
+	if (!bEventsSet) {
 		setEvents(ofEvents());
 	}
 	viewport = getViewport(_viewport);
+	inputArea = getViewport(_inputArea);
 	ofCamera::begin(viewport);
 }
 
@@ -287,7 +294,7 @@ void ofEasyCam::updateRotation(){
 }
 
 void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
-	ofRectangle viewport = getViewport(this->viewport);
+	ofRectangle viewport = getViewport(this->inputArea);
 	if(viewport.inside(mouse.x, mouse.y)){
 		lastMouse = mouse;
 		prevMouse = mouse;
@@ -315,7 +322,7 @@ void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 
 void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
 	unsigned long curTap = ofGetElapsedTimeMillis();
-	ofRectangle viewport = getViewport(this->viewport);
+	ofRectangle viewport = getViewport(this->inputArea);
 	if(lastTap != 0 && curTap - lastTap < doubleclickTime){
 		reset();
 		return;
@@ -342,7 +349,7 @@ void ofEasyCam::mouseDragged(ofMouseEventArgs & mouse){
 }
 
 void ofEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
-	ofRectangle viewport = getViewport(this->viewport);
+	ofRectangle viewport = getViewport(this->inputArea);
 	prevPosition = ofCamera::getGlobalPosition();
 	prevAxisZ = getZAxis();
 	moveZ = mouse.scrollY * 30 * sensitivityZ * (getDistance() + FLT_EPSILON)/ viewport.height;
@@ -350,7 +357,7 @@ void ofEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
 }
 
 void ofEasyCam::updateMouse(const ofMouseEventArgs & mouse){
-	ofRectangle viewport = getViewport(this->viewport);
+	ofRectangle viewport = getViewport(this->inputArea);
 	int vFlip;
 	if(isVFlipped()){
 		vFlip = -1;
