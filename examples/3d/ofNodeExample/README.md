@@ -14,11 +14,11 @@
  
  We will never define an ofNode directly in this example, that's why you will 
  not find the word `ofNode` in the code but both ofLight and ofBoxPrimitive
- inherith from ofNode, allowing us to access all its powerful methods.
+ inherit from ofNode, allowing us to access all its powerful methods.
  
 In this example we want to create a car with 2 headlamps, and we want to move the lights together with the car, without re-calculating the position of the 2 lights.
 
-We define only how the car should move into the space, the light just need to stay on the front of the car, their movement it's just a consequence of the movement of the car. 
+We define only how the car should move into the space, the lights just need to stay on the front of the car, and their movement is just a consequence of the movement of the car. 
 
 Have a look at the Car.cpp file to see how we attach the lights on the front of the car and how to move the object using the handy rotate, move and tilt methods - without needing to use ofPushMatrix and ofPopMatrix.
 
@@ -38,7 +38,7 @@ When launching this app, you should see a screen with:
 Instructions for using the app:
 
 * Click and drag (or scroll) in the window to move the 3D Scene. Double click to reset the camera.
-* Use your arrow keys to move your "car" around the scene
+* Use your keyboard arrow keys to move your "car" around the scene
 
 
 ###Other classes used in this file
