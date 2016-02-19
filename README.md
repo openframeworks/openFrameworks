@@ -1,4 +1,4 @@
-[![Slack Status](https://ofslack.herokuapp.com/badge.svg)](https://yourdomain.com)
+[![Slack Status](https://ofslack.herokuapp.com/badge.svg)](https://ofslack.herokuapp.com)
 
 [openFrameworks](http://openframeworks.cc/)
 ================
