@@ -5,16 +5,16 @@
 
 ###Learning Objectives
 
-This example demonstrates how to read and write an xml file to the file system leveraging ````ofXML````. 
+This example demonstrates how to read and write an xml file to the file system leveraging ```ofXML```. 
 
 In the code, pay attention to: 
 
-* Use ````ofXML```` to read an xml file from the file system with ````XML.load("mySettings.xml")````
+* Use ```ofXML``` to read an xml file from the file system with ```XML.load("mySettings.xml")```
 * Writing an xml file to the file system with
-````XML.save("mySettings.xml");````
+```XML.save("mySettings.xml");```
 
-* Adding childNodes to the xml with ````XML.addChild```` and appending with ````XML.addXML````
-* Parsing and traversing XML with ````XML.exists()````, ````XML.getValue()````, ````XML.setToSibling()````,````XML.setToParent()````, ````XML.setTo()````,````XML.getName()```` 
+* Adding childNodes to the xml with ```XML.addChild``` and appending with ```XML.addXML```
+* Parsing and traversing XML with ```XML.exists()```, ```XML.getValue()```, ```XML.setToSibling()```,```XML.setToParent()```, ```XML.setTo()```,```XML.getName()``` 
 
 
 ### Expected Behavior
@@ -32,14 +32,14 @@ When the mouse is pressed, the application :
 * The background will changing color randomly with mouse movement
 *  Drag coordinates, along with the background color are captured in an xml structure while dragging
 
-When the key ````s```` is pressed:
+When the key ```s``` is pressed:
 
-* The application will save the stored xml data structure into the ````data\mySetttings.xml```` file. 
+* The application will save the stored xml data structure into the ```data\mySetttings.xml``` file. 
 
 Instructions for use:
 
 * Press down on the canvas with the mouse and start dragging the mouse while holding down. 
-* Press ````s```` to save the xml file of the current state to a local xml file
+* Press ```s``` to save the xml file of the current state to a local xml file
 * Restart the application to see the saved settings of the last drawn recording restored. 
 
 
