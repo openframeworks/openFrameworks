@@ -26,7 +26,7 @@ When launching this app, you should see a screen with:
 
 Instructions for using the app:
 
-* Press ```s``` ("smooth") to toggle whether or not the red lines are anti-aliased.
+* Touch the screen to toggle whether or not the red lines are anti-aliased.
 
 ###Other classes used in this file
 
