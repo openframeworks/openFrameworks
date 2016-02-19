@@ -407,19 +407,27 @@ bool ofRectangle::intersects(const ofRectangle& rect) const {
 //----------------------------------------------------------
 bool ofRectangle::intersects(const ofPoint& p0, const ofPoint& p1) const {
     // check for a line intersection
-    ofPoint p;
 
-    ofPoint topLeft     = getTopLeft();
-    ofPoint topRight    = getTopRight();
-    ofPoint bottomRight = getBottomRight();
-    ofPoint bottomLeft  = getBottomLeft();
+	ofRectangle standardized = getStandardized();
 
-    return inside(p0) || // check end inside
-           inside(p1) || // check end inside
+	ofPoint p;
+
+    ofPoint topLeft     = standardized.getTopLeft();
+    ofPoint topRight    = standardized.getTopRight();
+    ofPoint bottomRight = standardized.getBottomRight();
+    ofPoint bottomLeft  = standardized.getBottomLeft();
+
+	float top = standardized.getTop();
+	float left = standardized.getLeft();
+
+    return standardized.inside(p0) || // check end inside
+           standardized.inside(p1) || // check end inside
            ofLineSegmentIntersection(p0, p1, topLeft,     topRight,    p) || // cross top
            ofLineSegmentIntersection(p0, p1, topRight,    bottomRight, p) || // cross right
            ofLineSegmentIntersection(p0, p1, bottomRight, bottomLeft,  p) || // cross bottom
-           ofLineSegmentIntersection(p0, p1, bottomLeft,  topLeft,     p);   // cross left
+           ofLineSegmentIntersection(p0, p1, bottomLeft,  topLeft,     p) || // cross left
+		   (left == p0.x && top == p1.y) || // Special case 1.
+		   (left == p1.y && top == p0.x);   // Special case 2.
 }
 
 //----------------------------------------------------------
