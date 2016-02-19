@@ -34,7 +34,7 @@ When the mouse is pressed, the application :
 
 When the key ````s```` is pressed:
 
-* The application will save the stored xml data structure into the ````data\mySetttings.xml``` file. 
+* The application will save the stored xml data structure into the ````data\mySetttings.xml```` file. 
 
 Instructions for use:
 
