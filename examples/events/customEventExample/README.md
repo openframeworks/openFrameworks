@@ -38,6 +38,6 @@ Instructions for use:
 
 ###Other classes used in this file
 
-GameEvent
-Bullet
-Bug
+* ```GameEvent```
+* ```Bullet```
+* ```Bug```
