@@ -1,4 +1,4 @@
-#Level1_ExampleName
+#Level1_simpleColorKey
 --
 ![Screenshot of Example](simpleColorKey.png)
 
