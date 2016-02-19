@@ -57,14 +57,35 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void				loadAsync(string name);
 		OF_DEPRECATED_MSG("Use load instead",bool loadMovie(string name));
 
+
+		/// \brief Get the path to the loaded video file.
+		///
+		/// If no video file is loaded this returns an empty string.
+		/// \returns A path to the loaded video or an empty string if the video
+		/// is not loaded.
 		string				getMoviePath() const;
 
 		bool				setPixelFormat(ofPixelFormat pixelFormat);
 		ofPixelFormat		getPixelFormat() const;
 		
+		/// \brief Closes the movie file and de-allocates its resources.
+		///
+		/// This is an alias of close()
+		///
+		/// \sa close()
 		void 				closeMovie();
-		void 				close();		
+		/// \brief Closes the movie file and de-allocates its resources.
+		///
+		/// This is an alias of closeMovie()
+		///
+		/// \sa closeMovie()
+		void 				close();
 
+		/// \brief Update the video player's internal state to continue
+		/// playback.
+		///
+		/// If normal video playback is desired, this method is usually called
+		/// once per animation frame inside of ofApp::update().
 		void				update();
 		void 				play();
 		void 				stop();
@@ -97,8 +118,20 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void 				draw(float x, float y, float w, float h) const;
 		void 				draw(float x, float y) const;
 		using ofBaseDraws::draw;
-
+		/// \brief Binds the video texture to the current rendering context.
+		///
+		/// For advanced users who need to manually manage texture drawing
+		/// without calling draw(). Only binds the texture if one exists.
+		///
+		/// \sa ofTexture::bind()
+		/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
 		void 				bind() const;
+		/// \brief Unbinds the video texture from the current rendering context.
+		///
+		/// For advanced users who need to manually manage texture drawing
+		/// without calling draw(). Only binds the texture if one exists.
+		///
+		/// \sa ofTexture::unbind()
 		void 				unbind() const;
 
 		//the anchor is the point the image is drawn around.
@@ -124,15 +157,49 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		bool				isPlaying() const;
 		bool 				isInitialized() const;
 
+		/// \brief Explicitly set the video player to use for playback.
+		///
+		/// newPlayer must extend from ofBaseVideoPlayer.
+		///
+		/// \param newPlayer Shared pointer to the new video player that extends
+		/// from ofBaseVideoPlayer.
 		void				setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer);
+		/// \brief Get a shared pointer to the video player currently being used
+		/// for playback.
+		/// \returns A shared pointer to the video player currently being used
+		/// for playback.
 		shared_ptr<ofBaseVideoPlayer>	getPlayer();
+		/// \brief Get a const shared pointer to the video player currently
+		/// being used.
+		/// \returns A const shared pointer to the video player currently
+		/// being used for playback.
 		const shared_ptr<ofBaseVideoPlayer>	getPlayer() const;
 
+		/// \brief Get a shared pointer to the video player currently being used
+		/// for playback.
+		///
+		/// This is a templated version of ofVideoPlayer::getPlayer()
+		/// that dynamically casts the shared player pointer to the PlayerType
+		/// template type.
+		///
+		/// \returns A shared pointer to the video player currently being used
+		/// for playback that is dynamically casted to the PlayerType template
+		/// type.
 		template<typename PlayerType>
 		shared_ptr<PlayerType> getPlayer(){
 			return dynamic_pointer_cast<PlayerType>(getPlayer());
 		}
 
+		/// \brief Get a const shared pointer to the video player currently
+		/// being used for playback.
+		///
+		/// This is a templated version of ofVideoPlayer::getPlayer()
+		/// that dynamically casts the shared player pointer to the PlayerType
+		/// template type.
+		///
+		/// \returns A const shared pointer to the video player currently being
+		/// used for playback that is dynamically casted to the PlayerType
+		/// template type.
 		template<typename PlayerType>
 		const shared_ptr<PlayerType> getPlayer() const{
 			return dynamic_pointer_cast<PlayerType>(getPlayer());
