@@ -535,8 +535,8 @@ public:
 	///
 	/// \returns The playback speed of the video player.
 	virtual float 				getSpeed() const;
-	/// \brief Get the duration of the loaded video in milliseconds.
-	/// \returns The duration of the loaded video in milliseconds.
+	/// \brief Get the duration of the loaded video in seconds.
+	/// \returns The duration of the loaded video in seconds.
 	virtual float 				getDuration() const;
 	/// \brief Returns true if the loaded video has finished playing.
 	/// \returns True if the loaded video has finished playing.
