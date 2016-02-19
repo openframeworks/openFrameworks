@@ -14,24 +14,24 @@ This section of examples aims to provide understanding about the built-in events
 
 ### At a Glance
 
-![Screenshot of allEventsExample](allEventsExample/allEventsExample.png))
+![Screenshot of allEventsExample](allEventsExample/allEventsExample.png)
 ([allEventsExample](allEventsExample/))
 
-![Screenshot of advancedEventsExample](advancedEventsExample/advancedEventsExample.png))
+![Screenshot of advancedEventsExample](advancedEventsExample/advancedEventsExample.png)
 ([advancedEventsExample](advancedEventsExample/))
 
-![Screenshot of customEventExample](customEventExample/customEventExample.png))
+![Screenshot of customEventExample](customEventExample/customEventExample.png)
 ([customEventExample](customEventExample/))
 
-![Screenshot of multiWindowExample](multiWindowExample/multiWindowExample.png))
+![Screenshot of multiWindowExample](multiWindowExample/multiWindowExample.png)
 ([multiWindowExample](multiWindowExample/))
 
-![Screenshot of multiWindowOneAppExample](multiWindowOneAppExample/multiWindowOneAppExample.png))
+![Screenshot of multiWindowOneAppExample](multiWindowOneAppExample/multiWindowOneAppExample.png)
 ([multiWindowOneAppExample](multiWindowOneAppExample/))
 
-![Screenshot of simpleEventsExample](simpleEventsExample/simpleEventsExample.png))
+![Screenshot of simpleEventsExample](simpleEventsExample/simpleEventsExample.png)
 ([simpleEventsExample](simpleEventsExample/))
 
-![Screenshot of simpleTimer](simpleTimer/simpleTimer.png))
+![Screenshot of simpleTimer](simpleTimer/simpleTimer.png)
 ([simpleTimer](simpleTimer/))
 
