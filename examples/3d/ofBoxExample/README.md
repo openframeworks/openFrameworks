@@ -1,6 +1,6 @@
 #About ofBoxExample
 
-![Screenshot of graphicsExample](ofBoxExample.jpg)
+![Screenshot of ofBoxExample](ofBoxExample.jpg)
 
 ###Learning Objectives
 
