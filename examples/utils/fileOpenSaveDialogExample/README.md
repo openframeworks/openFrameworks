@@ -30,7 +30,7 @@ When the key ```s``` is pressed:
 
 Instructions for use:
 
-* Load an image file ( png or jpg)  by pressing ```spacebar``` and selecting an image to load
+* Load an image file ( png or jpg )  by pressing ```spacebar``` and selecting an image to load
 * Save the loaded image by pressing ```s``` and selecting the destination to write that file. 
 
 
