@@ -15,7 +15,8 @@ Studying this example will help you understand:
 * how ``ofPtr`` can help us manage a pointer for us so we don't need to delete it later
 * how to use ``ofAddListener`` to listen to the ``videoSavedEvent`` with a callback function, (see examples in the "events" section to learn more about event handling in OF).
 * how to list available video codecs on your system (``4a`` in the comment section), and how to set a custom codec (``4b``)
-* how to handle keyboard events in ``keyPressed()`` and ``keyReleased()``
+* how to handle keyboard ``events`` in ``keyPressed()`` and ``keyReleased()``
+* how to use ``ofPushStyle()`` and ``ofPopStyle()`` in the ``draw()`` function to change the color, fill, and line width temporarily
 
 ### Expected Behavior
 
@@ -31,6 +32,7 @@ Instructions for use:
 
 This example uses the following classes: 
 
-* ``ofVideoGrabber``
 * ``ofPtr`` 
 * ``ofQTKitGrabber``
+* ``ofVideoGrabber``
+* ``ofVideoPlayer``
