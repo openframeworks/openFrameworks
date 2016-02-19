@@ -28,6 +28,6 @@ Instructions for use:
 
 ###Other classes used in this file
 
-This Example uses the following classes for event-based interaction:
+This Example uses the following classes:
 
-* ofxiOS (for compiling openFrameworks to an Apple iOS device)
+* [ofxiOS](http://openframeworks.cc/documentation/ofxiOS/) (for compiling openFrameworks to an Apple iOS device)

@@ -20,7 +20,7 @@ In the code, pay attention to:
 
 When launching this app, you should see
 
-* A lit 3D model of astroboy. 
+* A lit 3D model of astroboy.
 
 Instructions for use:
 
@@ -29,7 +29,7 @@ Instructions for use:
 
 ###Other classes used in this file
 
-This Example uses the following classes for event-based interaction:
+This Example uses the following classes:
 
-* ofxiOS (for compiling openFrameworks to an Apple iOS device)
+* [ofxiOS](http://openframeworks.cc/documentation/ofxiOS/) (for compiling openFrameworks to an Apple iOS device)
 * ofxAssimpModelLoader (for importing and controlling the 3D model)
