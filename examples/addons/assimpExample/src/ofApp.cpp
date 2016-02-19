@@ -19,6 +19,7 @@ void ofApp::setup(){
         model.setPausedForAllAnimations(true);
     }
     
+    bHelpText = true;
     
 }
 
@@ -82,11 +83,18 @@ void ofApp::draw(){
     ofDisableLighting();
     ofDisableSeparateSpecularLight();
     
+    if(bHelpText){
     ofSetColor(255, 255, 255 );
-    ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
-    ofDrawBitmapString("keys 1-5 load models, spacebar to trigger animation", 10, 30);
-    ofDrawBitmapString("drag to control animation with mouseY", 10, 45);
-    ofDrawBitmapString("num animations for this model: " + ofToString(model.getAnimationCount()), 10, 60);
+    stringstream ss;
+    ss << "Framerate: " << ofToString(ofGetFrameRate(),0) <<endl<<endl;
+    ss <<"(keys 1-5): load models"<<endl;
+    ss << "num of animations in this model: " + ofToString(model.getAnimationCount());
+    ss <<endl <<"(Spacebar): toggle animation"<<endl;
+    ss <<"(LEFT MOUSE BUTTON DRAG in y-axis): control animation."<<endl;
+    ss <<"(h): toggle help."<<endl;
+    ofDrawBitmapString(ss.str().c_str(), 20, 20);
+
+    }
 }
 
 //--------------------------------------------------------------
@@ -123,6 +131,9 @@ void ofApp::keyPressed(int key){
 		case ' ':
 			bAnimate = !bAnimate;
 			break;
+        case 'h':
+            bHelpText = !bHelpText;
+            break;
         default:
             break;
     }
