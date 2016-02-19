@@ -4,7 +4,7 @@
 
 ### Learning Objectives
 
-This openFrameworks example demonstrates how to load audio files, play sounds interactively and how to manipulate their speed and pitch in openFrameworks.
+This openFrameworks example demonstrates how to load audio files, play sounds interactively and how to manipulate their speed and pan in openFrameworks.
 
 Studying this example will help you understand:
 

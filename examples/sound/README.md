@@ -6,7 +6,7 @@ In this section, you will find examples of working with sound in openFrameworks 
 
 ### Table of Contents
 
-* [soundPlayerExample](soundPlayerExample/) - Playing a sound file from your disk
+* [soundPlayerExample](soundPlayerExample/) - Loading and playing sound files from your disk and allowing the user to change the playback speed interactively.
 
 
 ### At a Glance
