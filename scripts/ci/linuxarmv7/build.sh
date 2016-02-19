@@ -69,4 +69,4 @@ echo "**** Building allAddonsExample ****"
 #make Debug PLATFORM_VARIANT=raspberry2
 
 git checkout $PROJECTS/makefileCommon/config.linux.common.mk
-git checkout $PROJECTS/linuxarmv6l/config.linuxarmv7l.default.mk
+git checkout $PROJECTS/linuxarmv7l/config.linuxarmv7l.default.mk

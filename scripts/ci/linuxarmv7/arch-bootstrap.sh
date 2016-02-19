@@ -22,12 +22,19 @@ set -e -u -o pipefail
 
 # Packages needed by pacman (see get-pacman-dependencies.sh)
 PACMAN_PACKAGES=(
-acl archlinux-keyring attr bzip2 curl expat glibc gpgme libarchive  libassuan libgpg-error libssh2 lzo openssl pacman pacman-mirrorlist xz zlib linux-raspberrypi linux-raspberrypi-headers libutil-linux linux-api-headers linux-firmware krb5 e2fsprogs keyutils libidn gcc-libs gcc glibc coreutils systemd  make pkg-config openal glew freeimage freetype2 libsndfile openssl mesa mesa-libgl fontconfig gstreamer gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-libav assimp boost cairo pixman libpng harfbuzz graphite libdrm libx11 xproto kbproto libxcb libxau libxdmcp libxext xextproto libxdamage damageproto libxfixes fixesproto libxxf86vm xf86vidmodeproto libxrender renderproto alsa-lib flex libxrandr libxi libxcursor libxshmfence wayland opencv 
+  acl archlinux-keyring attr bzip2 curl expat glibc gpgme libarchive
+  libassuan libgpg-error libssh2 lzo openssl pacman pacman-mirrorlist xz zlib
+  krb5 e2fsprogs keyutils libidn gcc-libs
 )
 BASIC_PACKAGES=(${PACMAN_PACKAGES[*]} filesystem)
-EXTRA_PACKAGES=()
+EXTRA_PACKAGES=(coreutils bash grep gawk file tar systemd sed)
 DEFAULT_REPO_URL="http://mirrors.kernel.org/archlinux"
 DEFAULT_ARM_REPO_URL="http://mirror.archlinuxarm.org"
+
+PACMAN_PACKAGES_ARM=(
+acl archlinux-keyring attr bzip2 curl expat glibc gpgme libarchive  libassuan libgpg-error libssh2 lzo openssl pacman pacman-mirrorlist xz zlib linux-raspberrypi linux-raspberrypi-headers libutil-linux linux-api-headers linux-firmware krb5 e2fsprogs keyutils libidn gcc-libs coreutils bash grep gawk file tar systemd sed gcc glibc coreutils systemd  make pkg-config openal glew freeimage freetype2 libsndfile openssl mesa mesa-libgl fontconfig gstreamer gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-libav assimp boost cairo pixman libpng harfbuzz graphite libdrm libx11 xproto kbproto libxcb libxau libxdmcp libxext xextproto libxdamage damageproto libxfixes fixesproto libxxf86vm xf86vidmodeproto libxrender renderproto alsa-lib flex libxrandr libxi libxcursor libxshmfence wayland opencv 
+)
+BASIC_PACKAGE_ARMS=(${PACMAN_PACKAGES_ARM[*]} filesystem)
 
 stderr() { 
   echo "$@" >&2 
@@ -66,15 +73,14 @@ get_default_repo() {
   fi
 }
 
-get_repo_url() {
-  local REPO_URL=$1 ARCH=$2 SUBREPO=$3
+get_core_repo_url() {
+  local REPO_URL=$1 ARCH=$2
   if [[ "$ARCH" == arm* ]]; then
-    echo "${REPO_URL%/}/$ARCH/$SUBREPO"
+    echo "${REPO_URL%/}/$ARCH/core"
   else
-    echo "${REPO_URL%/}/$SUBREPO/os/$ARCH"
+    echo "${REPO_URL%/}/core/os/$ARCH"
   fi
 }
-
 
 get_template_repo_url() {
   local REPO_URL=$1 ARCH=$2
@@ -106,9 +112,28 @@ configure_minimal_system() {
   #test -e "$DEST/dev/null" || mknod "$DEST/dev/null" c 1 3
   #test -e "$DEST/dev/random" || mknod -m 0644 "$DEST/dev/random" c 1 8
   #test -e "$DEST/dev/urandom" || mknod -m 0644 "$DEST/dev/urandom" c 1 9
+  mount -o bind /dev $DEST/dev
+  mount -o bind /proc $DEST/proc
   
   sed -i "s/^[[:space:]]*\(CheckSpace\)/# \1/" "$DEST/etc/pacman.conf"
   sed -i "s/^[[:space:]]*SigLevel[[:space:]]*=.*$/SigLevel = Never/" "$DEST/etc/pacman.conf"
+}
+
+install_rpi_image(){
+  mkdir -p $DEST/root/archlinux_arm
+  wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+  tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C $DEST/root/archlinux_arm
+  echo "Server = http://eu.mirror.archlinuxarm.org/\$arch/\$repo" > $DEST/etc/pacman.d/mirrorlist
+  sed -i "s/Architecture = auto/Architecture = armv7h/g" $DEST/etc/pacman.conf
+  rm $DEST/var/cache/pacman/pkg/*
+  install_packages_to "armv7h" "$DEST" "${PACMAN_PACKAGES_ARM[*]}" /root/archlinux_arm
+  umount $DEST/dev
+  umount $DEST/proc
+  printf "In $PWD\n"
+  printf "mv $DEST/root/archlinux_arm archlinux_arm\n"
+  mv $DEST/root/archlinux_arm archlinux_arm
+  rm -r $DEST
+  mv archlinux_arm $DEST
 }
 
 fetch_packages_list() {
@@ -120,32 +145,16 @@ fetch_packages_list() {
 }
 
 install_pacman_packages() {
-  local BASIC_PACKAGES=$1 DEST=$2 DOWNLOAD_DIR=$3
+  local BASIC_PACKAGES=$1 DEST=$2 LIST=$3 DOWNLOAD_DIR=$4
   debug "pacman package and dependencies: $BASIC_PACKAGES"
   
   for PACKAGE in $BASIC_PACKAGES; do
     local FILE=$(echo "$LIST" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
-    local FILE_EXTRA=$(echo "$LIST_EXTRA" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
-    local FILE_COMMUNITY=$(echo "$LIST_COMMUNITY" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
-    DOWNLOAD_REPO=$REPO
-    if [ ! "$FILE" ]; then
-        if [ ! "$FILE_EXTRA" ]; then
-            if [ ! "$FILE_COMMUNITY" ]; then
-                debug "Error: cannot find package: $PACKAGE"; return 1;
-            else
-                DOWNLOAD_REPO=$REPO_COMMUNITY
-                FILE=$FILE_COMMUNITY
-            fi
-        else
-            DOWNLOAD_REPO=$REPO_EXTRA
-            FILE=$FILE_EXTRA
-        fi
-    fi
-    
+    test "$FILE" || { debug "Error: cannot find package: $PACKAGE"; return 1; }
     local FILEPATH="$DOWNLOAD_DIR/$FILE"
     
-    debug "download package: $DOWNLOAD_REPO/$FILE"
-    fetch -o "$FILEPATH" "$DOWNLOAD_REPO/$FILE"
+    debug "download package: $REPO/$FILE"
+    fetch -o "$FILEPATH" "$REPO/$FILE"
     debug "uncompress package: $FILEPATH"
     uncompress "$FILEPATH" "$DEST"
   done
@@ -165,6 +174,13 @@ install_packages() {
   debug "install packages: $PACKAGES"
   LC_ALL=C chroot "$DEST" /usr/bin/pacman \
     --noconfirm --arch $ARCH -Sy --force $PACKAGES
+}
+
+install_packages_to() {
+  local ARCH=$1 DEST=$2 PACKAGES=$3 TO=$4
+  debug "install packages: $PACKAGES"
+  LC_ALL=C chroot "$DEST" /usr/bin/pacman \
+    --noconfirm --arch $ARCH -Sy --force $PACKAGES -r $TO
 }
 
 show_usage() {
@@ -195,9 +211,7 @@ main() {
   [[ -z "$REPO_URL" ]] &&REPO_URL=$(get_default_repo "$ARCH")
   
   local DEST=$1
-  local REPO=$(get_repo_url "$REPO_URL" "$ARCH" "core")
-  local REPO_EXTRA=$(get_repo_url "$REPO_URL" "$ARCH" "extra")
-  local REPO_COMMUNITY=$(get_repo_url "$REPO_URL" "$ARCH" "community")
+  local REPO=$(get_core_repo_url "$REPO_URL" "$ARCH")
   [[ -z "$DOWNLOAD_DIR" ]] && DOWNLOAD_DIR=$(mktemp -d)
   mkdir -p "$DOWNLOAD_DIR"
   [[ "$DOWNLOAD_DIR" ]] && trap "rm -rf '$DOWNLOAD_DIR'" KILL TERM EXIT
@@ -208,15 +222,14 @@ main() {
   # Fetch packages, install system and do a minimal configuration
   mkdir -p "$DEST"
   local LIST=$(fetch_packages_list $REPO)
-  local LIST_EXTRA=$(fetch_packages_list $REPO_EXTRA)
-  local LIST_COMMUNITY=$(fetch_packages_list $REPO_COMMUNITY)
-  install_pacman_packages "${BASIC_PACKAGES[*]}" "$DEST" "$DOWNLOAD_DIR"
-  #configure_pacman "$DEST" "$ARCH"
-  #configure_minimal_system "$DEST"
-  #[[ -n "$USE_QEMU" ]] && configure_static_qemu "$ARCH" "$DEST"
-  #install_packages "$ARCH" "$DEST" "${BASIC_PACKAGES[*]}"
-  #configure_pacman "$DEST" "$ARCH" # Pacman must be re-configured
-  #[[ "$DOWNLOAD_DIR" ]] && rm -rf "$DOWNLOAD_DIR"
+  install_pacman_packages "${BASIC_PACKAGES[*]}" "$DEST" "$LIST" "$DOWNLOAD_DIR"
+  configure_pacman "$DEST" "$ARCH"
+  configure_minimal_system "$DEST"
+  [[ -n "$USE_QEMU" ]] && configure_static_qemu "$ARCH" "$DEST"
+  install_packages "$ARCH" "$DEST" "${BASIC_PACKAGES[*]} ${EXTRA_PACKAGES[*]}"
+  configure_pacman "$DEST" "$ARCH" # Pacman must be re-configured
+  [[ "$DOWNLOAD_DIR" ]] && rm -rf "$DOWNLOAD_DIR"
+  install_rpi_image
   
   debug "done"
 }

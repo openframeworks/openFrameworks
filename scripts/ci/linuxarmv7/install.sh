@@ -11,11 +11,7 @@ trapError() {
 }
 
 createArchImg(){
-    wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
-    mkdir archlinux
-    tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C archlinux
-    ./arch-bootstrap.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" archlinux    
-    rm ArchLinuxARM-rpi-2-latest.tar.gz
+    ./arch-bootstrap.sh archlinux
 }
 
 downloadToolchain(){
