@@ -1,12 +1,15 @@
-#Level1_ExampleName
+#About exampleName
+
+![Screenshot of Example, stored as exampleName/exampleName.png (or .gif or .jpg)](http://i.imgur.com/kGBXk69.jpg)
+
 --
 
 ###Learning Objectives
 
-This openFrameworks Example is designed to demonstrate ...
+This openFrameworks Example is designed to demonstrate:
 
-* How to ...
-* The ability of openFrameworks to ...
+* how to ...
+* the ability of openFrameworks to ...
 
 *{Guide the reader to what's important in the code of the App.}*
 
@@ -15,14 +18,15 @@ This openFrameworks Example is designed to demonstrate ...
 
 When launching this app, you should see a screen with...
 
+* thing on the screen 1
+* thing on the screen 2
+
 Instructions for use:
 
 * Try moving your cursor left-right in order to....
-* Press <space> to clear...
+* Press `space` to clear...
 
 *{If there are a lot of key commands, it's not necessarily appropriate here to give detailed instructions about what every keypress does. The In-app Overlays should accomplish that. It may be enough to say something like, "Keypresses allow the user to select among various different effects."}*
-
-![Screenshot of Example, stored in the Level1_ExampleName/readme_assets/ folder](http://i.imgur.com/kGBXk69.jpg)
 
 ###Other classes used in this file
 
