@@ -1,3 +1,5 @@
+[![Slack Status](https://ofslack.herokuapp.com/badge.svg)](https://yourdomain.com)
+
 [openFrameworks](http://openframeworks.cc/)
 ================
 
