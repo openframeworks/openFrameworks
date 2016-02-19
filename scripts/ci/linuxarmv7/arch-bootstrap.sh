@@ -18,7 +18,7 @@
 #
 #   # chroot destination
 
-set -e -u -o pipefail
+#set -e -u -o pipefail
 
 # Packages needed by pacman (see get-pacman-dependencies.sh)
 PACMAN_PACKAGES=(
