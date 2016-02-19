@@ -17,13 +17,15 @@ This example covers the following functions:
 
 In the code, pay attention to: 
 
-* Different arguments for setting the poly winding type, such as ```ofSetPolyMode(OF_POLY_WINDING_NONZERO)``` and ```ofSetPolyMode(OF_POLY_WINDING_ODD)```.
-* Methods for making closed and open polygons, using ```ofEndShape()``` and ```ofEndShape(OF_CLOSE)```
-* Use of the struct ```draggableVertex``` in the ofApp.h
-* Changing colors with ```ofSetHexColor()```
-* Creating holes and constructive geometries with ```ofNextContour()```
-* Toggling of shape fills, with ```ofFill()``` and ```ofNoFill();```.
-* Rendering bitmap text to the screen, with ```ofDrawBitmapString()```.
+* Arguments for connecting to a board, specifying serial port and baud rate: ```ard.connect("/dev/tty.usbmodemfd121", 57600)```
+* ```ofAddListener()``` and ```ofRemoveListener()``` on the setupArduino() function to listen for connection
+* Console logs indicating connection status
+* Functions for addressing different Arduino elements, such as:
+* ```sendPwm()``` for pulse width modulation and fading
+* ```sendServo()``` for controlling servo motors
+* ```sendDigital()``` for sending digital pulses (HIGH / LOW)
+* ```sendAnalog()``` for sending analog data (in a 0-255 range)
+
 
 ### Expected Behavior
 
@@ -33,7 +35,8 @@ While the Arduino is not connected,
 
 ###Instructions for use:
 
-* Drag the vertex points of the ofCurveVertex polygon (f) to adjust its size.
+* Click the mouse to turn an LED on and off
+* Left and right keys control rotation of a servo motor
 
 ###Other classes used in this file
 
