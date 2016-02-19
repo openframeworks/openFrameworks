@@ -11,7 +11,7 @@ trapError() {
 }
 
 createArchImg(){
-    ./arch-bootstrap.sh archlinux
+    sudo ./arch-bootstrap.sh archlinux
 }
 
 downloadToolchain(){
