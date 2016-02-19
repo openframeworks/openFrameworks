@@ -1,6 +1,6 @@
-#About eventsExample
+#About allEventsExample
 
-![Screenshot of eventsExample](allEventsExample.png)
+![Screenshot of allEventsExample](allEventsExample.png)
 
 
 ###Learning Objectives
