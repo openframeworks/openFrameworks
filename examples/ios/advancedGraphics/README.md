@@ -1,6 +1,6 @@
-#About graphicsExample
+#About advancedGraphicsExample
 
-![Screenshot of advancedGraphics](advancedGraphics.png)
+![Screenshot of advancedGraphicsExample](advancedGraphics.png)
 
 ###Learning Objectives
 
