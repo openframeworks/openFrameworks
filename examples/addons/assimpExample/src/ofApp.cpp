@@ -86,7 +86,7 @@ void ofApp::draw(){
     if(bHelpText){
     ofSetColor(255, 255, 255 );
     stringstream ss;
-    ss << "Framerate: " << ofToString(ofGetFrameRate(),0) <<endl<<endl;
+    ss << "FPS: " << ofToString(ofGetFrameRate(),0) <<endl<<endl;
     ss <<"(keys 1-5): load models"<<endl;
     ss << "num of animations in this model: " + ofToString(model.getAnimationCount());
     ss <<endl <<"(Spacebar): toggle animation"<<endl;
