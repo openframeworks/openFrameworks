@@ -336,7 +336,7 @@ protected:
 
 	template<class TObj>
 	FunctionPtr make_function(TObj * listener, bool (TObj::*method)(T&), int priority){
-		return std::make_shared<Function>(priority, std::bind(std::ref(method),listener,std::placeholders::_2), make_function_id(listener,method));
+		return std::make_shared<Function>(priority, std::bind(method,listener,std::placeholders::_2), make_function_id(listener,method));
 	}
 
 	template<class TObj>
@@ -349,7 +349,7 @@ protected:
 
 	template<class TObj>
 	FunctionPtr make_function(TObj * listener, bool (TObj::*method)(const void*, T&), int priority){
-		return std::make_shared<Function>(priority, std::bind(std::ref(method),listener,std::placeholders::_1,std::placeholders::_2), make_function_id(listener,method));
+		return std::make_shared<Function>(priority, std::bind(method,listener,std::placeholders::_1,std::placeholders::_2), make_function_id(listener,method));
 	}
 
 	template<class TObj>
@@ -361,7 +361,7 @@ protected:
 	}
 
 	FunctionPtr make_function(bool (*function)(T&), int priority){
-		return std::make_shared<Function>(priority, std::bind(std::ref(function),std::placeholders::_2), make_function_id((ofEvent<T>*)nullptr,function));
+		return std::make_shared<Function>(priority, std::bind(function,std::placeholders::_2), make_function_id((ofEvent<T>*)nullptr,function));
 	}
 
 	FunctionPtr make_function(void (*function)(T&), int priority){
@@ -372,7 +372,7 @@ protected:
 	}
 
 	FunctionPtr make_function(bool (*function)(const void*, T&), int priority){
-		return std::make_shared<Function>(priority, std::ref(function), make_function_id((ofEvent<T>*)nullptr,function));
+		return std::make_shared<Function>(priority, function, make_function_id((ofEvent<T>*)nullptr,function));
 	}
 
 	FunctionPtr make_function(void (*function)(const void*, T&), int priority){
@@ -519,7 +519,7 @@ protected:
 
 	template<class TObj>
 	FunctionPtr make_function(TObj * listener, bool (TObj::*method)(), int priority){
-		return std::make_shared<Function>(priority, std::bind(std::ref(method),listener), make_function_id(listener,method));
+		return std::make_shared<Function>(priority, std::bind(method,listener), make_function_id(listener,method));
 	}
 
 	template<class TObj>
@@ -532,7 +532,7 @@ protected:
 
 	template<class TObj>
 	FunctionPtr make_function(TObj * listener, bool (TObj::*method)(const void*), int priority){
-		return std::make_shared<Function>(priority,std::bind(std::ref(method),listener,std::placeholders::_1), make_function_id(listener,method));
+		return std::make_shared<Function>(priority,std::bind(method,listener,std::placeholders::_1), make_function_id(listener,method));
 	}
 
 	template<class TObj>
@@ -544,7 +544,7 @@ protected:
 	}
 
 	FunctionPtr make_function(bool (*function)(), int priority){
-		return std::make_shared<Function>(priority, std::bind(std::ref(function)), make_function_id((ofEvent<void>*)nullptr,function));
+		return std::make_shared<Function>(priority, std::bind(function), make_function_id((ofEvent<void>*)nullptr,function));
 	}
 
 	FunctionPtr make_function(void (*function)(), int priority){
@@ -555,7 +555,7 @@ protected:
 	}
 
 	FunctionPtr make_function(bool (*function)(const void*), int priority){
-		return std::make_shared<Function>(priority, std::ref(function), make_function_id((ofEvent<void>*)nullptr,function));
+		return std::make_shared<Function>(priority, function, make_function_id((ofEvent<void>*)nullptr,function));
 	}
 
 	FunctionPtr make_function(void (*function)(const void*), int priority){
