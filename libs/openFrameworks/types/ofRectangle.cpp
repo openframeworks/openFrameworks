@@ -641,8 +641,13 @@ bool ofRectangle::operator != (const ofRectangle& rect) const {
 }
 
 //----------------------------------------------------------
-ofPoint ofRectangle::getPosition() const {
+const ofPoint& ofRectangle::getPosition() const {
     return position;
+}
+
+//----------------------------------------------------------
+ofPoint& ofRectangle::getPosition() {
+	return position;
 }
 
 //----------------------------------------------------------
