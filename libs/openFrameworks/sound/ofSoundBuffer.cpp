@@ -501,8 +501,8 @@ void ofSoundBuffer::getChannel(ofSoundBuffer & targetBuffer, std::size_t sourceC
 		copyTo(targetBuffer, getNumFrames(), 1, 0);
 	}else{
 		// fetch samples from only one channel
-		targetBuffer.resize(getNumFrames() / getNumChannels());
-		const float * bufferPtr = &this->buffer[0];
+		targetBuffer.resize(getNumFrames());
+		const float * bufferPtr = &this->buffer[sourceChannel];
 		for(std::size_t i = 0; i < targetBuffer.getNumFrames(); i++){
 			targetBuffer[i] = *bufferPtr;
 			bufferPtr += channels;
@@ -515,7 +515,7 @@ void ofSoundBuffer::setChannel(const ofSoundBuffer & inBuffer, std::size_t targe
 	resize(inBuffer.getNumFrames() * channels);
 	// copy from inBuffer to targetChannel
 	float * bufferPtr = &this->buffer[targetChannel];
-	const float * inBufferPtr = &(inBuffer[0]);
+	const float * inBufferPtr = &(inBuffer[targetChannel]);
 	for(std::size_t i = 0; i < getNumFrames(); i++){
 		*bufferPtr = *inBufferPtr;
 		bufferPtr += channels;

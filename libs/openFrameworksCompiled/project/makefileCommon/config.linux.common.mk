@@ -88,6 +88,11 @@ ifeq ($(HAS_SYSTEM_MPG123),0)
     PLATFORM_DEFINES += OF_USING_MPG123
 endif
 
+# add OF_USE_GST_GL if requested
+ifdef USE_GST_GL
+    PLATFORM_DEFINES += OF_USE_GST_GL
+endif
+
 
 ################################################################################
 # PLATFORM REQUIRED ADDON
@@ -198,9 +203,7 @@ endif
 
 ifndef PROJECT_OPTIMIZATION_CFLAGS_DEBUG
 	# DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 #-D_GLIBCXX_DEBUG
-else
-	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
+	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 endif
 
 ################################################################################
@@ -368,6 +371,11 @@ endif
 # conditionally add mpg123
 ifeq ($(HAS_SYSTEM_MPG123),0)
     PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
+endif
+
+# conditionally add gstreamer-gl
+ifdef USE_GST_GL
+    PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-gl-$(GST_VERSION)
 endif
 
 ################################################################################
