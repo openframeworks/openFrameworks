@@ -14,6 +14,8 @@ In the code, pay attention to:
 * Use of ```ofFileDialogResult.getPath()``` to retrieve the path to the file selected
 * Determing the file extension using ```file.getExtension()```
 * Saving the file using ```ofSystemSaveDialog()```
+* Getting the color of a pixel ```ofColor color = image.getColor(x, y); ```
+* Sorting function for color based on brightness ```sortColorFunction```
 
 
 ### Expected Behavior
