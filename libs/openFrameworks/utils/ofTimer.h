@@ -13,7 +13,7 @@ public:
 	/// 
 	/// The timer will begin calculating the events beginning the moment
 	/// the function is called.
-	/// \param nanoseconds The number of nanoseconds to wait.
+	/// \param nanoseconds The number of nanoseconds between events.
 	void setPeriodicEvent(uint64_t nanoseconds);
 	
 	/// \brief Sleep this thread until the next periodic event.
