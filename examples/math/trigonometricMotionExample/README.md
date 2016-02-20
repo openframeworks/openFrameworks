@@ -16,7 +16,7 @@ You will learn how to ..
 
 ### Expected Behavior
 
-When launching this app, you should see a screen divided into different areas. The top and the left bar are used to create new oscillators. The main area is used to display the line controlled my the oscillators. It will show a non moving point at the beginning since there are no oscillators created yet. Once you add oscillators, you will see a visualization of the added frequencies of the vertical oscillators on the border of the left bar. The added frequencies of the horizontal oscillators will be displayed on the border of the top bar. The resulting line visualizes the history of these two frequencies, the left frequency controlling the vertical position of the line points, the top frequency controlling the horizontal positions.
+When launching this app, you should see a screen divided into different areas. The top and the left bar are used to create new oscillators. The main area is used to display the line controlled my the oscillators. It will show a non moving point at the beginning since there are no oscillators created yet. Once you add oscillators, you will see a visualization of the added frequencies of the vertical oscillators on the border of the left bar. The added frequencies of the horizontal oscillators will be displayed as waves on the border of the top bar. The resulting line visualizes the history of these two waves, the left wave controlling the vertical position of the line points, the top wave controlling the horizontal positions.
 
 Instructions for use:
 
