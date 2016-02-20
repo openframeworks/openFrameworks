@@ -70,6 +70,7 @@
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
+				<string>9969E7561C782C4500DEF0F6</string>
 				<string>E41D421413B3A95300A75A5D</string>
 				<string>1D60589F0D05DD5A006BFB54</string>
 				<string>1DF5F4E00D08C38300B7A737</string>
@@ -320,20 +321,21 @@
 		<dict>
 			<key>children</key>
 			<array>
+				<string>67DFA53419F92A5E003B3434</string>
+				<string>BBE5EAB70F49AD8400F28951</string>
 				<string>E41D400613B39D2100A75A5D</string>
+				<string>E4A823A312561BE3002F86A2</string>
+				<string>5326AEA710A23A0500278DE6</string>
 				<string>E41D400713B39D2100A75A5D</string>
+				<string>9969E7551C782C4500DEF0F6</string>
 				<string>E41D400813B39D2100A75A5D</string>
+				<string>1D30AB110D05D00D00671497</string>
 				<string>E41D400913B39D2100A75A5D</string>
 				<string>53F323EA10A20EDB00E0DAE4</string>
-				<string>E4A823A312561BE3002F86A2</string>
-				<string>BBE5EAB70F49AD8400F28951</string>
-				<string>BB16EBD80F2B2AB500518274</string>
 				<string>BB16EBD10F2B2A9500518274</string>
+				<string>BB16EBD80F2B2AB500518274</string>
 				<string>1DF5F4DF0D08C38300B7A737</string>
-				<string>1D30AB110D05D00D00671497</string>
 				<string>288765FC0DF74451002DB57D</string>
-				<string>5326AEA710A23A0500278DE6</string>
-				<string>67DFA53419F92A5E003B3434</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -494,6 +496,26 @@
 		<dict>
 			<key>fileRef</key>
 			<string>9936F6111BFA65F100891288</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9969E7551C782C4500DEF0F6</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>CoreMotion.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/CoreMotion.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>9969E7561C782C4500DEF0F6</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9969E7551C782C4500DEF0F6</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
