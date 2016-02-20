@@ -26,7 +26,7 @@ public:
     bool bDrawNormals;
     bool bDrawAxes;
     bool bDrawLights;
-    bool bInfoText;
+    bool bHelpText;
     bool bMousePressed;
     bool bSplitFaces;
     
