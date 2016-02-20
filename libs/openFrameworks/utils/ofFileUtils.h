@@ -14,45 +14,84 @@ namespace std {
 // ofBuffer
 //----------------------------------------------------------
 
+/// a buffer of raw byte data which can be accessed as simple bytes or as text
 class ofBuffer{
 	
 public:
 	ofBuffer();
+	
+	/// create a buffer and set it's contents from a raw byte pointer,
+	/// _size is the number of bytes to read and *must* be <= the number
+	/// of bytes allocated in _buffer
 	ofBuffer(const char * buffer, std::size_t size);
+	
+	/// create a buffer and set it's contents from a string
 	ofBuffer(const string & text);
+	
+	/// create a buffer and set it's contents from an input stream,
+	/// ioBlockSize is the number of bytes to read from the stream in chunks
 	ofBuffer(istream & stream, size_t ioBlockSize = 1024);
 
+	/// set contents of the buffer from a raw byte pointer,
+	/// _size is the number of bytes to read and *must* be <= the number
+	/// of bytes allocated in _buffer
 	void set(const char * _buffer, std::size_t _size);
-    void set(const string & text);
+	
+	/// set contents of the buffer from a string
+	void set(const string & text);
+	
+	/// set contents of the buffer from an input stream,
+	/// ioBlockSize is the number of bytes to read from the stream in chunks
 	bool set(istream & stream, size_t ioBlockSize = 1024);
-    void setall(char mem);
+	
+	/// set all bytes in the buffer to a given value
+	void setall(char mem);
+	
+	/// append bytes to the end of buffer from a string
 	void append(const string& _buffer);
+	
+	/// append bytes to the end of the buffer from a raw byte pointer,
+	/// _size is the number of bytes to read and *must* be <= the number
+	/// of bytes allocated in _buffer
 	void append(const char * _buffer, std::size_t _size);
+	
+	/// request that the buffer capacity be at least enough to contain a specifed number of bytes
 	void reserve(size_t size);
 
+	/// write contents of the buffer to an output stream
 	bool writeTo(ostream & stream) const;
 
+	/// removes all bytes from the buffer leaving a size of 0
 	void clear();
 
+	/// request that the buffer capacity be at least enough to contain a specifed number of bytes
 	void allocate(std::size_t _size);
+	
+	/// resize the buffer so that it contains a specified number of bytes,
+	/// if _size is < the current buffer size, the contents are reduced to _size bytes & remaining bytes are removed
+	/// if _size is > the current buffer size, the buffer's size is increased to _size_ bytes
     void resize(std::size_t _size);
 
+	/// \returns pointer to internal raw bytes, do not access bytes at indices beyond size()!
 	char * getData();
+	
+	/// \returns const pointer to internal raw bytes, do not access bytes at indices beyond size()!
 	const char * getData() const;
 	OF_DEPRECATED_MSG("Use getData instead",char * getBinaryBuffer());
 	OF_DEPRECATED_MSG("Use getData instead",const char * getBinaryBuffer() const);
 
-	string getText() const;
-	operator string() const;  // cast to string, to use a buffer as a string
-	ofBuffer & operator=(const string & text);
+	string getText() const; //< get the contents of the buffer as a string
+	operator string() const; //< allows use a buffer as a string via cast
+	ofBuffer & operator=(const string & text); //< set contents of the buffer from a string
 
+	/// \returns the size of the buffer's content in bytes
 	std::size_t size() const;
 
 	OF_DEPRECATED_MSG("use a lines iterator instead",string getNextLine());
 	OF_DEPRECATED_MSG("use a lines iterator instead",string getFirstLine());
 	OF_DEPRECATED_MSG("use a lines iterator instead",bool isLastLine());
 	OF_DEPRECATED_MSG("use a lines iterator instead",void resetLineReader());
-    
+	
 	friend ostream & operator<<(ostream & ostr, const ofBuffer & buf);
 	friend istream & operator>>(istream & istr, ofBuffer & buf);
 
@@ -65,31 +104,36 @@ public:
 	vector<char>::const_reverse_iterator rbegin() const;
 	vector<char>::const_reverse_iterator rend() const;
 
+	/// a line of text in the buffer
 	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
 		Line(vector<char>::iterator _begin, vector<char>::iterator _end);
         const string & operator*() const;
         const string * operator->() const;
         const string & asString() const;
-        Line& operator++();
-        Line operator++(int);
+        Line& operator++(); //< increment to the next line
+        Line operator++(int); //< increment to a number of lines
         bool operator!=(Line const& rhs) const;
         bool operator==(Line const& rhs) const;
-        bool empty() const;
+        bool empty() const; //< is this line empty? (aka empty string "")
 
 	private:
         string line;
         vector<char>::iterator _current, _begin, _end;
 	};
 
+	/// a series of text lines in the buffer
 	struct Lines{
 		Lines(vector<char>::iterator begin, vector<char>::iterator end);
-        Line begin();
-        Line end();
+        Line begin(); //< get the first line in the buffer
+        Line end(); //< get the last line in the buffer
 
 	private:
         vector<char>::iterator _begin, _end;
 	};
 
+	/// \returns the contents of the buffer as a series of text lines
+	/// ie. if the buffer loads a text file with lines separated by an endline
+	/// char '\n', you can access each line individually using Line structs
 	Lines getLines();
 
 private:
@@ -98,39 +142,106 @@ private:
 };
 
 //--------------------------------------------------
+/// reads the contents of a file at path into a buffer,
+/// set binary to true if you are reading binary data aka an image, not text
 ofBuffer ofBufferFromFile(const string & path, bool binary=false);
 
 //--------------------------------------------------
+/// write the contents of a buffer to a file at path,
+/// set binary to true if you are writing binary data aka an image, not text
 bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary=false);
 
 
 //--------------------------------------------------
+/// static class for working with file path strings
 class ofFilePath{
 public:
-		
+	
+	/// \returns the extension of a filename, ie. "duck.jpg" -> "jpg"
 	static string getFileExt(const std::string& filename);
+	
+	/// \returns the filename without it's extension, ie. "duck.jpg" ->"duck"
 	static string removeExt(const std::string& filename);
+	
+	/// \returns a path prepended with a slash, ie. "images" -> "/images"
 	static string addLeadingSlash(const std::string& path);
+	
+	/// \returns a path appended with a slash, ie. "images" -> "images/"
 	static string addTrailingSlash(const std::string& path);
+	
+	/// \returns a path with the trailing slash removed (if found), ie. "images/" -> "images"
 	static string removeTrailingSlash(const std::string& path);
+	
+	/// \returns a cleaned up a directory path by adding a trailing slash if needed
+	///
+	/// if it's a windows-style path string using "\", it will add a "\"
+	/// if it's a unix-style path string using "/", it will add a "/"
 	static string getPathForDirectory(const std::string& path);
+	
+	/// \returns the absolute, full path for a given path,
+	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images"
+	///
+	/// set bRelativeToData to true if you are working with paths that are *not*
+	/// in the data folder and want the direct path without relative ../../
 	static string getAbsolutePath(const std::string& path, bool bRelativeToData = true);
 
+	/// \returns true if the path is an absolute path,
+	/// ie. "images" -> false, "/Users/mickey/of/apps/myApps/Donald/bin/data/images" -> true
 	static bool isAbsolute(const std::string& path);
 	
+	/// \returns the filename of a given path by stripping the parent directories,
+	/// ie. "images/duck.jpg"  -> "duck.jpg", assumes the path is in the data folder
+	/// set bRelativeToData to false if you are working with paths that are *not*
+	/// in the data folder
 	static string getFileName(const std::string& filePath, bool bRelativeToData = true);
-	static string getBaseName(const std::string& filePath); // filename without extension
+	
+	/// \returns the the path without it's last component
+	/// ie. "images/duck.jpg" -> "images" and "images/some/folder" -> "images/some"
+	static string getBaseName(const std::string& filePath);
 
+	/// \returns the enclosing parent directory of a file,
+	/// ie. "images/duck.jpg" -> "images", assumes the path is in the data folder
+	/// set bRelativeToData to false if you are working with paths that are *not*
+	/// in the data folder
 	static string getEnclosingDirectory(const std::string& filePath, bool bRelativeToData = true);
+	
+	/// creates the enclosing parent directory of a file,
+	/// ie. "images" is the enclosing dir of "duck.jpg" = "images/duck.jpg"
+	///
+	/// automatically creates nested dirs as require, set bRecursive = false to override
+	///
+	/// assumes the path is in the data folder, set bRelativeToData to false if
+	/// you are working with paths that are *not* in the data folder
 	static bool createEnclosingDirectory(const std::string& filePath, bool bRelativeToData = true, bool bRecursive = true);
+	
+	/// \returns the full path to the app's current working directory,
+	/// this may be the app's parent directory or the location the app was launched from (aka on the commandline)
+	/// note: this location may change after the cd() std C function
 	static string getCurrentWorkingDirectory();
+	
+	/// \returns a single path by joining path1 & path2 using a slash
 	static string join(const std::string& path1, const std::string& path2);
 	
+	/// \returns the full path to the application's executable file,
+	/// Mac: the binary within the application's .app bundle Contents/MacOS dir
+	/// Windows: the .exe
+	/// Linux: the binary file itself
 	static string getCurrentExePath();
+	
+	/// \returns the full path to the application's parent directory,
+	/// Windows & Linux: the application's parent directory
+	/// Mac: the Contents/MacOS folder within the application's .app bundle
 	static string getCurrentExeDir();
 
+	/// \returns absolute path to the user's home directory,
+	/// Mac OSX: /Users/<username>
+	/// Windows: <root>\Users\<username>
+	/// Linux: /home/<username>
 	static string getUserHomeDir();
 
+	/// \returns one path relative to another,
+	/// ie. the relative path of "images/felines/lions" to "images/felines/tigers"
+	/// is "../tigers"
 	static string makeRelative(const std::string & from, const std::string & to);
 };
 
