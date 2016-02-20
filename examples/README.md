@@ -28,7 +28,7 @@ You found the examples! This sample code provides you simple, bite-sized example
 
 ## Getting Started
 
-Each of these categories contains examples primarily built to showcase an element of openFrameworks around that topic. Examples are meant to be as simple as possible, helping you understand how to implement either a function/method within the openFrameworks code-base, or elaborate around an algorithm utilizing straight-forward code patterns. Useful categories to get started might include:
+Each of these categories contains examples primarily built to showcase an element of openFrameworks around that topic. Examples are meant to be as simple as possible, helping you understand how to implement either a function/method within the openFrameworks, or elaborate around an existing algorithm. Useful categories to get started might include:
 
 ### [Graphics](graphics/)
 
