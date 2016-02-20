@@ -81,7 +81,7 @@ void ofApp::draw(){
 	}
 
 	ofSetHexColor(0x000000);
-	ofDrawBitmapString("lines\npress 's' to toggle smoothness", 600,500);
+	ofDrawBitmapString("lines\ntouch to toggle smoothness", 600,500);
 
 }
 

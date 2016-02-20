@@ -110,6 +110,7 @@ void ofApp::draw(){
     // draw original target in lower right-hand corner
     ofFill(); ofSetColor(targetColor, 80);
     ofDrawRectangle(ofGetWidth() - targetRect.width - 10, ofGetHeight() - targetRect.height - 10, targetRect.width, targetRect.height);
+    
     // draw original target frame in lower right-hand corner
     ofNoFill(); ofSetColor(targetColor, 120);
     ofDrawRectangle(ofGetWidth() - targetRect.width - 10, ofGetHeight() - targetRect.height - 10, targetRect.width, targetRect.height);
