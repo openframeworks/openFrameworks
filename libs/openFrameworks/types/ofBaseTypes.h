@@ -981,7 +981,7 @@ public:
 
 };
 
-
+/// serializes parameters
 class ofBaseSerializer{
 public:
 	virtual ~ofBaseSerializer(){}
@@ -990,6 +990,7 @@ public:
 	virtual void deserialize(ofAbstractParameter & parameter)=0;
 };
 
+/// serializes parameters to and from files
 class ofBaseFileSerializer: public ofBaseSerializer{
 public:
 	virtual ~ofBaseFileSerializer(){}
@@ -998,31 +999,77 @@ public:
 	virtual bool save(const string & path)=0;
 };
 
+/// loads a file from a URL using an HTTP request
 class ofBaseURLFileLoader{
 public:
+
 	virtual ~ofBaseURLFileLoader(){};
+	
+	/// make a HTTP request for a url
 	virtual ofHttpResponse get(const string& url)=0;
+	
+	/// make an asynchronous HTTP request for a url
+	/// set optional name as a key when sorting requests later
+	/// \returns unique request id for the finished HTTP request
 	virtual int getAsync(const string& url, const string& name="")=0;
+	
+	/// make an HTTP request for a url and save the response to a file at path
 	virtual ofHttpResponse saveTo(const string& url, const string& path)=0;
+	
+	/// make an asynchronous HTTP request for a url and save the response to a file at path
+	/// \returns unique request id for the finished HTTP request
 	virtual int saveAsync(const string& url, const string& path)=0;
+	
+	/// remove an active HTTP request using it's unique id
 	virtual void remove(int id)=0;
+	
+	/// clear all active HTTP requests
 	virtual void clear()=0;
+	/// stops & removes all active and waiting HTTP requests
 	virtual void stop()=0;
+	
+	/// makes an HTTP request and returns an HTTP response
 	virtual ofHttpResponse handleRequest(ofHttpRequest request) = 0;
 };
 
+/// material parameter properties that can be applied to vertices in the OpenGL lighting model
 class ofBaseMaterial{
 public:
+
 	virtual ~ofBaseMaterial(){};
+	
+	/// \returns the diffuse reflectance
 	virtual ofFloatColor getDiffuseColor() const=0;
+	
+	/// \returns the ambient reflectance
 	virtual ofFloatColor getAmbientColor() const=0;
+	
+	/// \returns the specular reflectance
 	virtual ofFloatColor getSpecularColor() const=0;
+	
+	/// \returns the emitted light intensity
 	virtual ofFloatColor getEmissiveColor() const=0;
+	
+	/// \returns the specular exponent
 	virtual float getShininess() const=0;
+	
+	/// begin using this materials properties
 	virtual void begin() const=0;
+	
+	/// end using this materials properties
 	virtual void end() const=0;
+	
+	/// creates and returns a shader used to implement the materials effect for a given
+	/// renderer, textureTarget is an implementation-specific value to specify the type
+	// of shader to use
 	virtual const ofShader & getShader(int textureTarget, ofGLProgrammableRenderer & renderer) const=0;
+	
+	/// uploads the given renderer's normal matrix to the material shader
 	virtual void uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
+	
+	/// updates the material properties to the material shader
 	virtual void updateMaterial(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
+	
+	/// updates the given renderer's lights to the material shader
 	virtual void updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
 };
