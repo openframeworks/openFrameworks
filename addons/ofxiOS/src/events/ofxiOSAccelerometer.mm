@@ -32,8 +32,11 @@
 
 #import <UIKit/UIKit.h>
 
-#include "ofUtils.h"
 #include "ofxAccelerometer.h"
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+
+#include "ofUtils.h"
 
 /************ Interface for iPhone Accelerometer Delegate ************/
 @interface ofxiOSAccelerometerDelegate : NSObject <UIAccelerometerDelegate> {
@@ -87,3 +90,24 @@ void ofxAccelerometerHandler::exit() {
 }
 
 @end
+
+#else 
+
+@interface ofxiOSAccelerometerDelegate : NSObject {
+}
+
+@end
+
+// define instance of delegate
+static ofxiOSAccelerometerDelegate* iOSAccelerometerDelegate;
+
+/************ Impementation of standard C++ accel interface tailored for iPhone ************/
+// call this to setup the accelerometer
+void ofxAccelerometerHandler::setup() {
+
+}
+void ofxAccelerometerHandler::exit() {
+    
+}
+
+#endif
