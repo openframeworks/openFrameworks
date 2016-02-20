@@ -1,95 +1,129 @@
 #include "ofApp.h"
 
-GLfloat lightOnePosition[] = {40.0, 40, 100.0, 0.0};
-GLfloat lightOneColor[] = {0.99, 0.99, 0.99, 1.0};
-
-GLfloat lightTwoPosition[] = {-40.0, 40, 100.0, 0.0};
-GLfloat lightTwoColor[] = {0.99, 0.99, 0.99, 1.0};
-
+/*
+Loads in the same 3D penguin model in various file types. Demonstrates how to load in a model using both ofMesh and ofxAssimpModelLoader.
+*/
+ 
 //--------------------------------------------------------------
 void ofApp::setup(){	
 	ofBackground(255,255,255);
 		
 	ofSetVerticalSync(true);
-
-    //some model / light stuff
+    
+    // so the model isn't see through.
     ofEnableDepthTest();
-    glShadeModel (GL_SMOOTH);
-
-    /* initialize lighting */
-    glLightfv (GL_LIGHT0, GL_POSITION, lightOnePosition);
-    glLightfv (GL_LIGHT0, GL_DIFFUSE, lightOneColor);
-    glEnable (GL_LIGHT0);
-    glLightfv (GL_LIGHT1, GL_POSITION, lightTwoPosition);
-    glLightfv (GL_LIGHT1, GL_DIFFUSE, lightTwoColor);
-    glEnable (GL_LIGHT1);
-    glEnable (GL_LIGHTING);
-    glColorMaterial (GL_FRONT_AND_BACK, GL_DIFFUSE);
-    glEnable (GL_COLOR_MATERIAL);
-
-    //load the squirrel model - the 3ds and the texture file need to be in the same folder
-    squirrelModel.loadModel("squirrel/NewSquirrel.3ds", 20);
-
+    
+    // load the first model
+    model.loadModel("penguin.dae", 20);
+    // model info
+    curFileInfo = ".dae";
+    
+    // this loads in the model directly into a mesh
+    // ofMesh can only read in .plys that are in the ascii and not in the binary format.
+    bUsingMesh = false;
+    mesh.load("penguin.ply");
+    
     //you can create as many rotations as you want
     //choose which axis you want it to effect
     //you can update these rotations later on
-    squirrelModel.setRotation(0, 90, 1, 0, 0);
-    squirrelModel.setRotation(1, 270, 0, 0, 1);
-    squirrelModel.setScale(0.9, 0.9, 0.9);
-    squirrelModel.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
-
+    // these rotation set the model so it is oriented correctly
+    model.setRotation(0, 90, 1, 0, 0);
+    model.setRotation(0, 90, 0, 1, 0);
+    model.setScale(0.9, 0.9, 0.9);
+    model.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
+    light.setPosition(0, 0, 500);
+    
+    //set help text to display by default
+    bHelpText  = true;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    squirrelModel.setRotation(1, 270 + ofGetElapsedTimef() * 60, 0, 0, 1);
-
+    // rotates the model in a circle
+    model.setRotation(1, 270 + ofGetElapsedTimef() * 60, 0, 1, 0);    
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
-	 //fake back wall
-    ofSetColor(20, 20, 20);
-    glBegin(GL_QUADS);
-        glVertex3f(0.0, ofGetHeight(), -600);
-        glVertex3f(ofGetWidth(), ofGetHeight(), -600);
-        glVertex3f(ofGetWidth(), 0, -600);
-        glVertex3f(0, 0, -600);
-    glEnd();
-
-    //fake wall
-    ofSetColor(50, 50, 50);
-    glBegin(GL_QUADS);
-        glVertex3f(0.0, ofGetHeight(), 0);
-        glVertex3f(ofGetWidth(), ofGetHeight(), 0);
-        glVertex3f(ofGetWidth(), ofGetHeight(), -600);
-        glVertex3f(0, ofGetHeight(), -600);
-    glEnd();
-
-    //lets tumble the world with the mouse
-    glPushMatrix();
-
-        //draw in middle of the screen
-        glTranslatef(ofGetWidth()/2,ofGetHeight()/2,0);
-        //tumble according to mouse
-        glRotatef(-mouseY,1,0,0);
-        glRotatef(mouseX,0,1,0);
-        glTranslatef(-ofGetWidth()/2,-ofGetHeight()/2,0);
-
-        ofSetColor(255, 255, 255, 255);
-        squirrelModel.drawFaces();
-
-    glPopMatrix();
-
-    ofSetHexColor(0x000000);
-    ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
-
+    light.enable();
+    
+    // draws the ply file loaded into the mesh is you pressed 6
+    if (bUsingMesh){
+        cam.begin();
+        mesh.draw();
+        cam.end();
+    }
+    // draws all the other file types which are loaded into model.
+    else{
+        ofColor(255,255);
+        model.drawFaces();
+    }
+    
+    light.disable();
+    
+    // display help text if it is enable
+    if(bHelpText) {
+        stringstream ss;
+        ss << "FPS: " << ofToString(ofGetFrameRate(),0) << endl << endl;
+        ss << "(1/2/3/4/5/6): load different file types"<<endl;
+        ss << "Current file info: " + curFileInfo <<endl;
+        if(bUsingMesh){
+            ss << "Use ofEasyCam mouse and key controls to navigate."<< endl <<endl;
+        }
+        ss <<"(h): Toggle help."<<endl;
+        ofDrawBitmapString(ss.str().c_str(), 20, 20);
+    }
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){ 
-
+void ofApp::keyPressed(int key){
+    switch (key){
+            case '1':
+                bUsingMesh = false;
+                model.loadModel("penguin.dae");
+                model.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
+                curFileInfo = ".dae";
+                break;
+            case '2':
+                bUsingMesh = false;
+                model.loadModel("penguin.3ds");
+                model.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
+                curFileInfo = ".3ds";
+                glShadeModel(GL_SMOOTH);
+                break;
+            case '3':
+                bUsingMesh = false;
+                model.loadModel("penguin.ply");
+                model.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
+                curFileInfo = ".ply";
+                break;
+            case '4':
+                bUsingMesh = false;
+                model.loadModel("penguin.obj");
+                model.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
+                curFileInfo = ".obj";
+                break;
+            case '5':
+                bUsingMesh = false;
+            
+                model.loadModel("penguin.stl");
+                model.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
+                curFileInfo = ".stl";
+                break;
+            case '6':
+                bUsingMesh = true;
+                cam.setTarget(mesh.getCentroid());
+                cam.setPosition(mesh.getCentroid().x, mesh.getCentroid().y, 300);
+                curFileInfo = ".ply loaded directly into ofmesh";
+                break;
+            case 'h':
+                //toggle help text
+                bHelpText = !bHelpText;
+                break;
+            default:
+                break;
+    }
 }
 
 //--------------------------------------------------------------
