@@ -17,32 +17,48 @@ public:
 	ofMaterial();
 	virtual ~ofMaterial(){};
 	
-	// set colors
+	/// set all material colors: reflectance type & light intensity
 	void setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloatColor oSpecular, ofFloatColor emissive);
+	
+	/// set the diffuse reflectance
 	void setDiffuseColor(ofFloatColor oDiffuse);
+	
+	/// set the ambient reflectance
 	void setAmbientColor(ofFloatColor oAmbient);
+	
+	/// set the specular reflectance
 	void setSpecularColor(ofFloatColor oSpecular);
+	
+	/// set the emitted light intensity
 	void setEmissiveColor(ofFloatColor oEmmisive);
+	
+	/// set the specular exponent
 	void setShininess(float nShininess);
 
+	// documented in ofBaseMaterial
 	ofFloatColor getDiffuseColor() const;
 	ofFloatColor getAmbientColor() const;
 	ofFloatColor getSpecularColor() const;
 	ofFloatColor getEmissiveColor() const;
 	float getShininess() const;
-    
+	
+	/// data wrapper for material color properties
     struct Data{
 		Data();
-        ofFloatColor diffuse;
-        ofFloatColor ambient;
-        ofFloatColor specular;
-        ofFloatColor emissive;
-        float shininess;
+        ofFloatColor diffuse; ///< diffuse reflectance
+        ofFloatColor ambient; //< ambient reflectance
+        ofFloatColor specular; //< specular reflectance
+        ofFloatColor emissive; //< emitted light intensity
+        float shininess; //< specular exponent
     };
-    Data getData() const;
-    void setData(const ofMaterial::Data& data);
 	
-    // apply the material
+	/// \returns material color properties data struct
+    Data getData() const;
+	
+	/// sets the material color properties data struct
+	void setData(const ofMaterial::Data& data);
+	
+	// documented in ofBaseMaterial
 	void begin() const;
 	void end() const;
 
