@@ -646,11 +646,6 @@ const ofPoint& ofRectangle::getPosition() const {
 }
 
 //----------------------------------------------------------
-ofPoint& ofRectangle::getPosition() {
-	return position;
-}
-
-//----------------------------------------------------------
 ofPoint& ofRectangle::getPositionRef() {
     return position;
 }
