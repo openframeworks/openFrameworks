@@ -6,7 +6,7 @@
 //
 
 #pragma once
-
+#include <TargetConditionals.h>
 #import <UIKit/UIKit.h>
 #import "EAGLView.h"
 
