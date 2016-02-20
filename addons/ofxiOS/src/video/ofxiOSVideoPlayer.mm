@@ -14,7 +14,7 @@ ofxiOSVideoPlayer::ofxiOSVideoPlayer() {
     bResetPixels = false;
     bUpdatePixels = false;
     bUpdateTexture = false;
-    bTextureCacheSupported = (CVOpenGLESTextureCacheCreate != NULL);
+    bTextureCacheSupported = (&CVOpenGLESTextureCacheCreate != NULL);
     bTextureCacheEnabled = true;
 }
 
