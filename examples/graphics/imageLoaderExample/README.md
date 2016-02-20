@@ -1,13 +1,14 @@
-#level1_imageLoaderExample
+#About Image Loader Example
+
 --
 ![Screenshot of Example](imageLoaderExample.png)
 
 ###Learning Objectives
 
-This openFrameworks Example is designed to demonstrate 
+This openFrameworks Example is designed to demonstrate
 how to load image files.
 
-In this example, pay attention to the following code: 
+In this example, pay attention to the following code:
 
 * Creating an image object using the OF type ofImage, ```ofImage imageName```
 * Loading your image, ```imageName.load("INSERT FILE PATH HERE")```
@@ -21,7 +22,7 @@ In this example, pay attention to the following code:
 When launching this app, you should see:
 
 * a screen with a variety of different images,
-* pink transpart image will be oscillating back and forth on a small part of the screen 
+* pink transpart image will be oscillating back and forth on a small part of the screen
 
 Instructions for use:
 
@@ -30,7 +31,4 @@ Instructions for use:
 
 ###Other classes used in this file
 
-This Example uses no additional classes.
-
-
-
+This Example uses no other classes.

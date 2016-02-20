@@ -51,7 +51,7 @@ void ofApp::draw(){
 	
     if (bHelpText) {
         stringstream ss;
-        ss << "Framerate: " << ofToString(ofGetFrameRate(),0) <<endl<<endl;
+        ss << "FPS: " << ofToString(ofGetFrameRate(),0) <<endl<<endl;
         ss << "(c): Toggle mouse input"<<endl<<endl;
         ss <<"(LEFT MOUSE BUTTON DRAG inside yellow circle): camera x,y rotation"<<endl;
         ss <<"(LEFT MOUSE BUTTON DRAG outside yellow circle): camera z rotation or roll"<<endl<<endl;
