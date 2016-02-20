@@ -11,28 +11,39 @@
 
 /// \brief Used to represent the available video looping modes.
 /// 
-/// \sa ofVideoPlayer.setLoopState
-/// \sa ofVideoPlayer.getLoopState
+/// \sa ofVideoPlayer::setLoopState()
+/// \sa ofVideoPlayer::getLoopState()
 enum ofLoopType{
 	/// \brief Plays the video once without looping.
 	OF_LOOP_NONE=0x01,
-	/// \brief Plays the video forwards, then backwards, then forwards...
+	/// \brief Plays the video forwards then backwards repeatedly.
 	OF_LOOP_PALINDROME=0x02,
 	/// \brief Repeats the video over and over.
 	OF_LOOP_NORMAL=0x03
 };
 
-/// \brief This provides the targeted operating system or platform.
+/// \brief This enumerates provides the targeted operating systems or platforms.
 enum ofTargetPlatform{
+	/// \brief 32- and 64-bit x86 architecture on Mac OSX.
 	OF_TARGET_OSX,
+	/// \brief 32- and 64-bit x86 architecture using MinGW on Windows OS.
     OF_TARGET_MINGW,
+	/// \brief 32- and 64-bit x86 architecture using Visual Studio on Windows OS.
 	OF_TARGET_WINVS,
+	/// \brief 32- and 64-bit armv7, arm64, x86 (simulator) architecture Mac iOS.
 	OF_TARGET_IOS,
+	/// \brief 32- and 64-bit armeabi-v7a and x86 Android OS.
 	OF_TARGET_ANDROID,
+	/// \brief 32-bit x86 architecture on Linux OS.
 	OF_TARGET_LINUX,
+	/// \brief 64-bit x86 architecture on Linux OS.
 	OF_TARGET_LINUX64,
-	OF_TARGET_LINUXARMV6L, // arm v6 little endian
-	OF_TARGET_LINUXARMV7L, // arm v7 little endian
+	/// \brief 32-bit armv6 little endian architecture on Linux OS.
+	OF_TARGET_LINUXARMV6L,
+	/// \brief 32-bit armv7 little endian architecture on Linux OS.
+	OF_TARGET_LINUXARMV7L,
+	/// \brief Compiled to javascript using Emscripten.
+	/// \sa https://github.com/kripken/emscripten
 	OF_TARGET_EMSCRIPTEN
 };
 
@@ -455,7 +466,7 @@ using namespace std;
 
 /// \brief Used to represent the available fill modes.
 /// 
-/// \sa ofGraphics
+/// \sa ofBaseRenderer
 enum ofFillFlag{
 	/// \brief Draw shapes as outlines, unfilled.
 	OF_OUTLINE=	0,
@@ -465,11 +476,11 @@ enum ofFillFlag{
 
 /// \brief Used to represent the available windowing modes for the application.
 enum ofWindowMode{
-	/// \brief Represents a windowed application window.
+	/// \brief A floating application window.
 	OF_WINDOW 		= 0,
-	/// \brief Represents a fullscreened application window.
+	/// \brief A fullscreen application window.
 	OF_FULLSCREEN 	= 1,
-	/// \brief Represents a fullscreened app with a custom width and height.
+	/// \brief A fullscreen application window with a custom width and height.
  	OF_GAME_MODE	= 2
 };
 
@@ -515,7 +526,7 @@ enum ofAlignHorz {
 };
 
 /// \brief Used to represent the available rectangle drawing modes.
-/// 
+///
 /// \sa ofRectangle
 /// \sa ofTexture
 /// \sa ofImage
@@ -558,8 +569,9 @@ enum ofScaleMode{
 
 /// \brief Used to represent the available channel types in ofImage.
 /// 
-/// These represent an abstraction of both CPU pixels and GPU pixels.
-/// Developers should prefer ::ofPixelFormat over ::ofImageType.
+/// These represent an abstraction of both CPU pixels (ofPixels) and GPU pixels
+/// (ofTexture). In most cases, developers should prefer ::ofPixelFormat over
+/// ::ofImageType for a more precise description of channel types.
 /// 
 /// \sa ofImage
 enum ofImageType{
@@ -646,11 +658,11 @@ enum ofGradientMode {
 /// to give people flexibility over the polygonizer.
 /// 
 /// \sa ofPath::tessellate()
-/// \sa ofTessellator.performTessellation()
+/// \sa ofTessellator::performTessellation()
 /// \sa http://glprogramming.com/red/images/Image128.gif
 /// \sa http://glprogramming.com/red/chapter11.html
 enum ofPolyWindingMode{
-	/// \brief Fill odd winding numbers.  The OF default
+	/// \brief Fill odd winding numbers.
 	OF_POLY_WINDING_ODD 	        ,
 	/// \brief Fill all non-zero winding numbers.
 	OF_POLY_WINDING_NONZERO         ,
@@ -793,7 +805,7 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 
 /// \brief Used to represent the available pixel formats.
 ///
-/// \sa `ixels
+/// \sa ofPixels
 enum ofPixelFormat{
 	/// \brief A single-channel pixel, typically used for greyscale images.
 	///
@@ -804,55 +816,61 @@ enum ofPixelFormat{
 	/// This has 2 channels and a type-dependent number of bits per-pixel.
 	OF_PIXELS_GRAY_ALPHA = 1,
 
-	/// \brief A RGB pixel. This is the standard pixel used for color in OF.
+	/// \brief An RGB pixel with no alpha channel.
 	///
 	/// This has 3 channels and a type-dependent number of bits per-pixel.
+	///
+	/// \sa http://www.fourcc.org/rgb.php#BI_RGB
 	OF_PIXELS_RGB=2,
 	/// \brief A pixel used for color data with a blue/green/red channel order.
 	///
 	/// This has 3 channels and a type-dependent number of bits per-pixel.
 	OF_PIXELS_BGR=3,
-	/// \brief A RGBA pixel. This is typically used for color with transparency.
+	/// \brief An RGBA pixel. This is typically used for color with transparency.
 	///
 	/// This has 4 channels and a type-dependent number of bits per-pixel.
+	///
+	/// \sa http://www.fourcc.org/rgb.php#RGBA
 	OF_PIXELS_RGBA=4,
-	/// \brief A pixel used for color/transparency with a b/g/r/a channel order.
+	/// \brief A pixel used for color/transparency with a blue/green/red/alpha channel order.
 	///
 	/// This has 4 channels and a type-dependent number of bits per-pixel.
 	OF_PIXELS_BGRA=5,
 
-	// \brief A 16 bit color pixel with 5 bit red and blue channels and a 6 bit green channel.
+	// \brief A 16-bit color pixel with 5-bit red and blue channels and a 6-bit green channel.
 	OF_PIXELS_RGB565=6,
 
-	/// \brief A 12 bit YUV 4:2:0 pixel with an interleaved U/V plane.
+	/// \brief A 12-bit YUV 4:2:0 pixel with an interleaved U/V plane.
 	///
-	/// YUV 4:2:0 image with a plane of 8 bit Y samples followed by
-	/// an interleaved U/V plane containing 8 bit 2x2 subsampled colour
-	/// difference samples.
+	/// YUV 4:2:0 image with a plane of 8-bit Y samples followed by an
+	/// interleaved U/V plane containing 8-bit 2x2 subsampled color difference
+	/// samples.
+	///
 	/// \sa http://www.fourcc.org/yuv.php#NV12
 	OF_PIXELS_NV12=7,
-	/// \brief A 12 bit YUV 4:2:0 pixel with an interleaved V/U plane.
+	/// \brief A 12-bit YUV 4:2:0 pixel with an interleaved V/U plane.
 	/// 
-	/// YUV 4:2:0 image with a plane of 8 bit Y samples followed by
-	/// an interleaved V/U plane containing 8 bit 2x2 subsampled chroma
-	/// samples. The same as NV12 except the interleave order of 
-	/// U and V is reversed.
+	/// YUV 4:2:0 image with a plane of 8-bit Y samples followed by an
+	/// interleaved V/U plane containing 8-bit 2x2 subsampled chroma samples.
+	/// The same as NV12 except the interleave order of U and V is reversed.
+	///
 	/// \sa http://www.fourcc.org/yuv.php#NV21
 	OF_PIXELS_NV21=8,
-	/// \brief A 12 bit YUV NxM Y plane followed by (N/2)x(M/2) V and U planes.
+	/// \brief A 12-bit YUV NxM Y plane followed by (N/2)x(M/2) V and U planes.
 	///
 	/// \sa http://www.fourcc.org/yuv.php#YV12
 	OF_PIXELS_YV12=9,
-	/// \brief A 12 bit YUV format similar to ::OF_PIXELS_YV12, but with U & V reversed.
+	/// \brief A 12-bit YUV format similar to ::OF_PIXELS_YV12, but with U & V reversed.
 	/// 
 	/// Note that IYUV and I420 appear to be identical.
+	///
 	/// \sa http://www.fourcc.org/yuv.php#IYUV
 	OF_PIXELS_I420=10,
-	/// \brief A 16 bit YUV 4:2:2 format.
+	/// \brief A 16-bit YUV 4:2:2 format.
 	///
 	/// \sa http://www.fourcc.org/yuv.php#YUY2
 	OF_PIXELS_YUY2=11,
-	/// \brief A 16 bit YUV 4:2:2 format.
+	/// \brief A 16-bit YUV 4:2:2 format.
 	///
 	/// \sa http://www.fourcc.org/yuv.php#UYVY
 	OF_PIXELS_UYVY=12,
