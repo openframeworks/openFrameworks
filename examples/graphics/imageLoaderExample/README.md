@@ -1,32 +1,32 @@
 #About Image Loader Example
 
-![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](imageLoaderExample.png)
-
+--
+![Screenshot of Example](imageLoaderExample.png)
 
 ###Learning Objectives
 
-This example demonstrates the loading of image assets, resizing them, setting their image type.  
+This openFrameworks Example is designed to demonstrate
+how to load image files.
 
-In the code, pay attention to: 
+In this example, pay attention to the following code:
 
-* Use ```ofImage.load()``` to load in images
-* Use ```ofImage.resize()``` to resize images
-* The enumerators for the different image types including ```OF_IMAGE_GRAYSCALE```, ```OF_IMAGE_COLOR```, ```OF_IMAGE_COLOR_ALPHA```, ```OF_IMAGE_UNDEFINED```
-* The pointillism type of effect drawn based on the brightness of the pixels from an image using ```ofDrawCircle```
-* Animation of the transparent image utilizing ``` sin(ofGetElapsedTimef());```
+* Creating an image object using the OF type ofImage, ```ofImage imageName```
+* Loading your image, ```imageName.load("INSERT FILE PATH HERE")```
+* Drawing your image, ```imageName.draw(xPosition, yPosition)```
+* Returns a raw pointer to the pixel data, ```imageName.getPixels()```
+* Getting the color of your image at a specific pixel position, ```imageName.getColor(xPosition, yPosition)```
 
- 
+
 ### Expected Behavior
 
-When launching this application you will see: 
+When launching this app, you should see:
 
-* Several different images loaded in
-* An image with transparency animating in the top right
-* An image tinted red
-* An image that is created with a pointillism effect from a loaded image
+* a screen with a variety of different images,
+* pink transpart image will be oscillating back and forth on a small part of the screen
 
 Instructions for use:
 
+* There is no user interaction with this sketch.
 
 
 ###Other classes used in this file
