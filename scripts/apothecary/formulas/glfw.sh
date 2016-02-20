@@ -102,9 +102,13 @@ function copy() {
 	elif [ "$TYPE" == "osx" ]; then
 		# Standard *nix style copy.
 		# copy headers
-		cp -Rv $BUILD_ROOT_DIR/include/GLFW/* $1/include/GLFW/
+		if [ -d $BUILD_ROOT_DIR/include/GLFW/ ] ; then
+			cp -Rv $BUILD_ROOT_DIR/include/GLFW/* $1/include/GLFW/
+		fi
 		# copy lib
-		cp -Rv $BUILD_ROOT_DIR/lib/libglfw3.a $1/lib/$TYPE/glfw3.a
+		if [ -d $BUILD_ROOT_DIR/lib/ ] ; then
+			cp -Rv $BUILD_ROOT_DIR/lib/libglfw3.a $1/lib/$TYPE/glfw3.a
+		fi
 		
 	else
 		# Standard *nix style copy.

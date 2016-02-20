@@ -18,7 +18,7 @@ public:
 	~ofxOscParameterSync();
 
 	/// the remote and local ports must be different to avoid collisions
-	void setup(ofParameterGroup & group, int localPort, const string& remoteHost, int remotePort);
+    void setup(ofParameterGroup & group, int localPort, const std::string& remoteHost, int remotePort);
 	void update();
 
 private:

@@ -8,16 +8,25 @@
 class ofApp: public ofBaseApp
 {
 public:
+
     void setup();
     void update();
     void draw();
-    
-    void keyPressed(int key);
 
-    /// \brief Our threaded object.
+    void keyPressed  (int key);
+    void keyReleased(int key);
+    void mouseMoved(int x, int y );
+    void mouseDragged(int x, int y, int button);
+    void mousePressed(int x, int y, int button);
+    void mouseReleased(int x, int y, int button);
+    void mouseEntered(int x, int y);
+    void mouseExited(int x, int y);
+    void windowResized(int w, int h);
+    void dragEvent(ofDragInfo dragInfo);
+    void gotMessage(ofMessage msg);
+
+    // Our threaded object.
     ThreadedObject threadedObject;
-
-    /// \brief A local count that is only accessed in the main thread
-    int mainAppsCount;
+	bool doLock;
 
 };

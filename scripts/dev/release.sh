@@ -25,18 +25,23 @@ trap 'error ${LINENO}' ERR
 
 
 version=$1
+if [ $# -eq 2 ]; then
+branch=$2
+else
+branch=master
+fi
 cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 
-./create_package.sh linux $version master
-./create_package.sh linux64 $version master
-./create_package.sh linuxarmv6l $version master
-./create_package.sh linuxarmv7l $version master
-./create_package.sh msys2 $version master
-./create_package.sh vs $version master
-./create_package.sh ios $version master
-./create_package.sh osx $version master
-./create_package.sh android $version master
-mkdir /var/www/versions/v${version}
+./create_package.sh linux $version $branch
+./create_package.sh linux64 $version $branch
+./create_package.sh linuxarmv6l $version $branch
+./create_package.sh linuxarmv7l $version $branch
+./create_package.sh msys2 $version $branch
+./create_package.sh vs $version $branch
+./create_package.sh ios $version $branch
+./create_package.sh osx $version $branch
+./create_package.sh android $version $branch
+mkdir -p /var/www/versions/v${version}
 mv *.tar.gz /var/www/versions/v${version}
 mv *.zip /var/www/versions/v${version}
 

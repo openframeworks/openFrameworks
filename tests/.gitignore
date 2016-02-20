@@ -23,11 +23,11 @@
 /*/*/*.workspace
 
 # Visual Studio
-/*/*/*.sln
-/*/*/*.vcxproj
-/*/*/*.vcxproj.user
-/*/*/*.vcxproj.filters
-/*/*/icon.rc
+#/*/*/*.sln
+#/*/*/*.vcxproj
+#/*/*/*.vcxproj.user
+#/*/*/*.vcxproj.filters
+#/*/*/icon.rc
 
 # Eclipse
 /*/*/.cproject

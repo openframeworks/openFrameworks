@@ -1008,6 +1008,18 @@ void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint) const{
 #endif
 }
 
+#ifndef TARGET_OPENGLES
+//----------------------------------------------------------
+void ofFbo::copyTo(ofBufferObject & buffer) const{
+	if(!bIsAllocated) return;
+	bind();
+	buffer.bind(GL_PIXEL_PACK_BUFFER);
+	glReadPixels(0, 0, settings.width, settings.height, ofGetGLFormatFromInternal(settings.internalformat), ofGetGlTypeFromInternal(settings.internalformat), NULL);
+	buffer.unbind(GL_PIXEL_PACK_BUFFER);
+	unbind();
+}
+#endif
+
 //----------------------------------------------------------
 void ofFbo::updateTexture(int attachmentPoint) {
 	if(!bIsAllocated) return;

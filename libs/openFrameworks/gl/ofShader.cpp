@@ -130,7 +130,7 @@ ofShader & ofShader::operator=(const ofShader & mom){
 		retainProgram(program);
 		for(auto it: shaders){
 			auto shader = it.second;
-			retainShader(shader.type);
+			retainShader(shader.id);
 		}
 #ifdef TARGET_ANDROID
 		ofAddListener(ofxAndroidEvents().unloadGL,this,&ofShader::unloadGL);
@@ -545,7 +545,14 @@ bool ofShader::linkProgram() {
 		for(GLint i = 0; i < numUniforms; i++) {
 			glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName.data());
 			string name(uniformName.begin(), uniformName.begin()+length);
+			// some drivers return uniform_name[0] for array uniforms
+			// instead of the real uniform name
 			uniformsCache[name] = glGetUniformLocation(program, name.c_str());
+			auto arrayPos = name.find('[');
+			if(arrayPos!=std::string::npos){
+				name = name.substr(0, arrayPos);
+				uniformsCache[name] = glGetUniformLocation(program, name.c_str());
+			}
 		}
 
 #ifdef TARGET_ANDROID

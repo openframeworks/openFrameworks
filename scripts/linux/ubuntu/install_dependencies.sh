@@ -11,7 +11,47 @@ fi
 
 if [ "$1" == "-y" ]; then
     FORCE_YES=-y
-fi 
+fi
+
+function installPackages {
+    for pkg in $@; do
+        echo "Installing ${pkg}"
+        dpkg-query -W -f=' ' ${pkg} 2> /dev/null
+        if [ $? -eq 0 ]; then 
+            echo "Already installed"
+        else
+            error="$(apt-get install --dry-run ${pkg})"
+            exit_code=$?
+            echo "$error" | grep Remv > /dev/null
+            if [ $? -eq 0 ]; then
+                apt-get install ${pkg}
+                exit_code=$?
+                if [ $exit_code != 0 ]; then
+                    echo "error installing ${pkg}, there could be an error with your internet connection"
+                    echo "if the error persists, please report an issue in github: http://github.com/openframeworks/openFrameworks/issues"
+                    exit $exit_code
+                fi
+            elif [ $exit_code -eq 0 ]; then
+                apt-get -y install ${pkg} > /dev/null
+                exit_code=$?
+                if [ $exit_code != 0 ]; then
+                    echo "error installing ${pkg}, there could be an error with your internet connection"
+                    echo "if the error persists, please report an issue in github: http://github.com/openframeworks/openFrameworks/issues"
+                    exit $exit_code
+                fi
+            else
+                echo "error installing ${pkg}"
+                echo $error
+                echo "this seems an error with your distribution repositories but you can also"
+                echo "report an issue in the openFrameworks github: http://github.com/openframeworks/openFrameworks/issues"
+                exit $exit_code
+            fi
+        fi
+    done
+    echo
+    echo "All packages were installed correctly"
+    echo
+}
 
 MAJOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f1 -d. | sed "s/\t//g")
 MINOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f2 -d.)
@@ -65,8 +105,7 @@ XTAG=$(dpkg -l |grep xserver-xorg-core|grep ii|awk '{print $2}'|sed "s/xserver-x
 if [ ! -z $XTAG ]
 then
 	read -p " installing OF dependencies with "${XTAG}" packages, confirm Y/N ? " -n 1 -r
-	if [[ $REPLY =~ ^[Yy]$ ]]
-	then
+	if [[ $REPLY =~ ^[Yy]$ ]]; then
 		echo
 		echo "installation of OF dependencies with "${XTAG}" packages confirmed"
 	else
@@ -74,23 +113,23 @@ then
 	fi
 fi
 
+PACKAGES="curl libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem${BOOST_VER}-dev libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good gdb"
+
 echo "installing OF dependencies"
-apt-get ${FORCE_YES} install freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem${BOOST_VER}-dev
-exit_code=$?
-if [ $exit_code != 0 ]; then
-    echo "error installing dependencies, there could be an error with your internet connection"
-    echo "if the error persists, please report an issue in github: http://github.com/openframeworks/openFrameworks/issues"
-	exit $exit_code
-fi
-
-
-echo "installing gstreamer"
-apt-get ${FORCE_YES} install libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good
-exit_code=$?
-if [ $exit_code != 0 ]; then
-	echo "error installing gstreamer, there could be an error with your internet connection"
-    echo "if the error persists, please report an issue in github: http://github.com/openframeworks/openFrameworks/issues"
-	exit $exit_code
+echo "OF needs to install the following packages using apt-get:"
+echo ${PACKAGES}
+if [ "$1" != "-y" ]; then
+    read -p "Do you want to continue? [Y/n] "
+    if [[ $REPLY =~ ^[Nn]$ ]]; then
+        exit 0
+    fi
+    
+    echo
+    echo "Installing..."
+    echo
+    installPackages ${PACKAGES}
+else
+    installPackages ${PACKAGES}
 fi
 
 if [ $(expr $MAJOR_VERSION \< 13 ) -eq 1 ]; then
@@ -120,4 +159,8 @@ if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
     DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
     cd ${DIR}/../../apothecary
     ./apothecary -j${cores} update poco
+    WHO=`who am i`;ID=`echo ${WHO%% *}`
+    GROUP_ID=`id --group -n ${ID}`
+    chown -R $ID:$GROUP_ID build/poco
+    chown -R $ID:$GROUP_ID ../../libs/poco
 fi
