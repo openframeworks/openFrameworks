@@ -103,7 +103,7 @@ void ofApp::draw(){
 
 	ofSetHexColor(0xffffff);
 	stringstream reportStr;
-    reportStr << "bg subtraction and blob detection\npress ' ' to capture bg\n";
+    reportStr << "bg subtraction and blob detection\nptap to capture bg\n";
     reportStr << "threshold "<< threshold << "\nnum blobs found " << contourFinder.nBlobs << " fps: " << ofGetFrameRate();
 	ofDrawBitmapString(reportStr.str(), 4, 380);
 }
