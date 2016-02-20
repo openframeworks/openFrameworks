@@ -16,11 +16,6 @@ ofxEmscriptenSoundStream::ofxEmscriptenSoundStream()
 :context(ofxEmscriptenAudioContext())
 ,stream(-1)
 ,tickCount(0)
-,bufferSize(0)
-,inChannels(0)
-,outChannels(0)
-,soundInput(NULL)
-,soundOutput(NULL)
 {
 
 }
@@ -29,44 +24,34 @@ ofxEmscriptenSoundStream::~ofxEmscriptenSoundStream() {
 	close();
 }
 
-void ofxEmscriptenSoundStream::setDeviceID(int deviceID) {
-	ofLogWarning() << "ofSoundStream::setDeviceID() not supported in emscripten";
-}
-
-std::vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList() const{
+std::vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList(ofSoundDevice::Api api) const{
 	ofLogWarning() << "ofSoundStream::getDeviceList() not supported in emscripten";
 	return vector<ofSoundDevice>();
 }
 
-int ofxEmscriptenSoundStream::getDeviceID() const{
-	return 0;
-}
-
-bool ofxEmscriptenSoundStream::setup(int outChannels, int inChannels,
-		int sampleRate, int bufferSize, int nBuffers) {
-	inbuffer.resize(bufferSize*inChannels);
-	outbuffer.resize(bufferSize*outChannels);
-	this->bufferSize = bufferSize;
-	this->outChannels = outChannels;
-	this->inChannels = inChannels;
-	stream = html5audio_stream_create(context,bufferSize,inChannels,outChannels,inbuffer.data(),outbuffer.data(),&audio_cb,this);
-	return true;
-}
-
-bool ofxEmscriptenSoundStream::setup(ofBaseApp* app, int outChannels,
-		int inChannels, int sampleRate, int bufferSize, int nBuffers) {
-	setup(outChannels,inChannels,sampleRate,bufferSize,nBuffers);
-	setInput(app);
-	setOutput(app);
+bool ofxEmscriptenSoundStream::setup(const ofSoundStreamSettings & settings) {
+	inbuffer.allocate(settings.bufferSize, settings.numInputChannels);
+	outbuffer.allocate(settings.bufferSize, settings.numOutputChannels);
+	this->settings = settings;
+	stream = html5audio_stream_create(context,settings.bufferSize,settings.numInputChannels,settings.numOutputChannels,inbuffer.getBuffer().data(),outbuffer.getBuffer().data(),&audio_cb,this);
 	return true;
 }
 
 void ofxEmscriptenSoundStream::setInput(ofBaseSoundInput* soundInput) {
-	this->soundInput = soundInput;
+	this->settings.setInListener(soundInput);
 }
 
 void ofxEmscriptenSoundStream::setOutput(ofBaseSoundOutput* soundOutput) {
-	this->soundOutput = soundOutput;
+	this->settings.setOutListener(soundOutput);
+}
+
+
+ofSoundDevice ofxEmscriptenSoundStream::getInDevice() const{
+	return ofSoundDevice();
+}
+
+ofSoundDevice ofxEmscriptenSoundStream::getOutDevice() const{
+	return ofSoundDevice();
 }
 
 void ofxEmscriptenSoundStream::start() {
@@ -82,16 +67,16 @@ void ofxEmscriptenSoundStream::close() {
 	html5audio_stream_free(stream);
 }
 
-unsigned long long ofxEmscriptenSoundStream::getTickCount() const{
+uint64_t ofxEmscriptenSoundStream::getTickCount() const{
 	return tickCount;
 }
 
 int ofxEmscriptenSoundStream::getNumInputChannels() const{
-	return inChannels;
+	return settings.numInputChannels;
 }
 
 int ofxEmscriptenSoundStream::getNumOutputChannels() const{
-	return outChannels;
+	return settings.numOutputChannels;
 }
 
 int ofxEmscriptenSoundStream::getSampleRate() const{
@@ -99,7 +84,7 @@ int ofxEmscriptenSoundStream::getSampleRate() const{
 }
 
 int ofxEmscriptenSoundStream::getBufferSize() const{
-	return bufferSize;
+	return settings.bufferSize;
 }
 
 void ofxEmscriptenSoundStream::audio_cb( int bufferSize, int inputChannels, int outputChannels, void * userData){
@@ -108,7 +93,7 @@ void ofxEmscriptenSoundStream::audio_cb( int bufferSize, int inputChannels, int 
 }
 
 void ofxEmscriptenSoundStream::audioCB(int bufferSize, int inputChannels, int outputChannels){
-	if(inputChannels>0) soundInput->audioIn(inbuffer.data(),bufferSize,inputChannels,0,tickCount);
-	if(outputChannels>0) soundOutput->audioOut(outbuffer.data(),bufferSize,outputChannels,0,tickCount);
+	if(inputChannels>0 && settings.inCallback) settings.inCallback(inbuffer);
+	if(outputChannels>0 && settings.outCallback) settings.outCallback(outbuffer);
 	tickCount++;
 }
