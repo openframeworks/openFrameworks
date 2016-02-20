@@ -5,7 +5,7 @@
 
 ###Learning Objectives
 
-This example demonstrates how to use the file dialog to select and save files from and to directories of your choosing.  
+This example demonstrates how to use the file dialog to select and save files from and to directories of your choosing. It also illustrates how to manipulate the pixels of the loaded image. 
 
 In the code, pay attention to: 
 
@@ -18,7 +18,7 @@ In the code, pay attention to:
 
 ### Expected Behavior
 
-When launching this application you will be able to select an image to load by pressing the ```spacebar``` key which will bring up the system level file selection dialog.  That image can then be saved to another location using the ```s``` key, which will invoke the system level file save dialog. 
+When launching this application you will be able to select an image to load by pressing the ```spacebar``` key which will bring up the system level file selection dialog.  Once loaded, the pixels of that image are catalogued and then sorted based on color to create a new image. The manipulated image can then be saved to another location using the ```s``` key, which will invoke the system level file save dialog. 
 
 When the key ```spacebar``` is pressed:
 
@@ -26,12 +26,12 @@ When the key ```spacebar``` is pressed:
 
 When the key ```s``` is pressed:
 
-* The application will invoke a system level file save dialog, where you can select where to save the currently loaded image in the application. Once a destination has been selected, it will write the file to that location. 
+* The application will invoke a system level file save dialog, where you can select where to save the manipulated image in the application. Once a destination has been selected, it will write the file to that location. 
 
 Instructions for use:
 
 * Load an image file ( png or jpg )  by pressing ```spacebar``` and selecting an image to load
-* Save the loaded image by pressing ```s``` and selecting the destination to write that file. 
+* Save the loaded image by pressing ```s``` and selecting the destination to write that file, which will be a manipulated version of the original. 
 
 
 ###Other classes used in this file
