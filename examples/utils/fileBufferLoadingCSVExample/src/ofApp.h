@@ -1,3 +1,5 @@
+/* Refer to the README.md in the example's root folder for more information on usage */
+
 #pragma once
 
 #include "ofMain.h"
@@ -25,9 +27,9 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		vector<MorseCodeSymbol> morseCodeSymbols;
 		int currentIndex;
-		
+
 		MorseCodePlayer player;
 		MorseCodeSymbol currentSymbol;
-	
+
 		ofTrueTypeFont font;
 };
