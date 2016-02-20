@@ -22,7 +22,7 @@ enum ofLoopType{
 	OF_LOOP_NORMAL=0x03
 };
 
-/// \brief This enumerates provides the targeted operating systems or platforms.
+/// \brief This enumerates the targeted operating systems or platforms.
 enum ofTargetPlatform{
 	/// \brief 32- and 64-bit x86 architecture on Mac OSX.
 	OF_TARGET_OSX,
