@@ -4,6 +4,7 @@
 void ofApp::setup(){
 
 	dir.listDir("images/of_logos/");
+	dir.allowExt("jpg");
 	dir.sort(); // in linux the file system doesn't return file lists ordered in alphabetical order
 
 	//allocate the vector to have as many ofImages as files
