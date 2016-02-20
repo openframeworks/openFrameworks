@@ -981,15 +981,6 @@ public:
     /// \returns The rectangle's position.
     const ofPoint& getPosition() const;
 
-	/// \brief Get a reference to the ofRectangle's position.
-	///
-	/// \warning Changes to the z-component of the referenced ofPoint are not
-	/// guaranteed to be preserved and will be ignored during further
-	/// ofRectangle operations.
-	///
-	/// \returns A reference to the position of the rectangle.
-	ofPoint& getPosition();
-
 	OF_DEPRECATED_MSG("Use getPosition() instead.", ofPoint& getPositionRef() );
 
     /// \brief Get the coordiantes of the ofRectangle's center.
