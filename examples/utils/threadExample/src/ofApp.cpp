@@ -4,7 +4,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    threadedObject.setup();
+	threadedObject.setup();
 	doLock = false;
 }
 
@@ -25,7 +25,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	ofSetColor(255);
-    threadedObject.draw();
+	threadedObject.draw();
 	auto threadFrame = threadedObject.getThreadFrameNum();
 
 	ofSetColor(255,0,0);
@@ -34,15 +34,21 @@ void ofApp::draw(){
 	ofDrawBitmapString("diff: " + ofToString(int64_t(ofGetFrameNum()) - threadFrame), 20,50);
 	ofDrawBitmapString("a starts the thread", 20,65);
 	ofDrawBitmapString("s stops the thread", 20,80);
+	ofDrawBitmapString("l turns lock on", 20,95);
+	ofDrawBitmapString("n turns lock off", 20,110);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if (key == 'a'){
-        threadedObject.start();
-    }else if (key == 's'){
-        threadedObject.stop();
-    }
+	if (key == 'a'){
+		threadedObject.start();
+	}else if (key == 's'){
+		threadedObject.stop();
+	}else if (key == 'n'){
+		doLock = false;
+	}else if (key == 'l'){
+		doLock = true;
+	}
 }
 
 //--------------------------------------------------------------

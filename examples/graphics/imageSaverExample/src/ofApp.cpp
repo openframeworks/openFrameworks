@@ -51,6 +51,7 @@ void ofApp::draw(){
 	if (bSnapshot == true){
 		// grab a rectangle at 200,200, width and height of 300,180
 		img.grabScreen(200,200,300,180);
+        
 
 		string fileName = "snapshot_"+ofToString(10000+snapCounter)+".png";
 		img.save(fileName);
@@ -64,7 +65,8 @@ void ofApp::draw(){
 
 	ofSetHexColor(0xFFFFFF);
 	if(snapCounter > 0) {
-        img.draw(600,200,300,180);
+        //img.draw(600,200,300,180);
+        
 	}
 
 

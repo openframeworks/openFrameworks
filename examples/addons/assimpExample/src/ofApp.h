@@ -26,6 +26,7 @@ class ofApp : public ofBaseApp{
     
         ofxAssimpModelLoader model;
     
+        bool bHelpText;
 		bool bAnimate;
         bool bAnimateMouse;
         float animationPosition;
