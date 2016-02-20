@@ -1,3 +1,5 @@
+/* Refer to the README.md in the example's root folder for more information on usage */
+
 #pragma once
 
 #include "ofMain.h"
@@ -35,7 +37,7 @@ class ofApp : public ofBaseApp {
 		int elapsedTime;
 		int triggerOne;
 		int triggerTwo;
-		
+
 		bool verboseLevel;
 		bool logToFile;
 		bool currentVerboseLevel;

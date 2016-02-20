@@ -28,12 +28,19 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
  * ***********************************************************************/ 
-
+#include <TargetConditionals.h>
 #include "ofAppiOSWindow.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
-#include "ofxiOSAppDelegate.h"
-#include "ofxiOSViewController.h"
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+    #include "ofxiOSAppDelegate.h"
+    #include "ofxiOSViewController.h"
+    const string appDelegateName = "ofxiOSAppDelegate";
+#elif TARGET_OS_TV
+    #include "ofxtvOSAppDelegate.h"
+    #include "ofxtvOSViewController.h"
+    const string appDelegateName = "ofxtvOSAppDelegate";
+#endif
 #include "ofxiOSEAGLView.h"
 
 //----------------------------------------------------------------------------------- instance.
@@ -112,11 +119,11 @@ void ofAppiOSWindow::setupOpenGL(int w, int h, ofWindowMode screenMode) {
 }
 
 void ofAppiOSWindow::loop() {
-    startAppWithDelegate("ofxiOSAppDelegate");
+    startAppWithDelegate(appDelegateName);
 }
 
 void ofAppiOSWindow::run(ofBaseApp * appPtr){
-    startAppWithDelegate("ofxiOSAppDelegate");
+    startAppWithDelegate(appDelegateName);
 }
 
 void ofAppiOSWindow::startAppWithDelegate(string appDelegateClassName) {
@@ -191,6 +198,7 @@ ofWindowMode ofAppiOSWindow::getWindowMode() {
 	return settings.windowMode;
 }
 
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 //----------------------------------------------------------------------------------- orientation.
 void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
     if(orientation == toOrientation) {
@@ -201,7 +209,7 @@ void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
     bool bResized = bOrientationPortraitOne != bOrientationPortraitTwo;
 
     orientation = toOrientation;
-    
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
     UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationPortrait;
     switch (orientation) {
         case OF_ORIENTATION_DEFAULT:
@@ -218,6 +226,7 @@ void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
             break;
     }
 
+
     id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
     if([appDelegate respondsToSelector:@selector(glViewController)] == NO) {
         // check app delegate has glViewController,
@@ -226,7 +235,7 @@ void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
     }
     ofxiOSViewController * glViewController = ((ofxiOSAppDelegate *)appDelegate).glViewController;
     ofxiOSEAGLView * glView = glViewController.glView;
-    
+	
     if(settings.enableHardwareOrientation == true) {
         [glViewController rotateToInterfaceOrientation:interfaceOrientation animated:settings.enableHardwareOrientationAnimation];
     } else {
@@ -235,6 +244,7 @@ void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
             [glView layoutSubviews]; // calling layoutSubviews so window resize notification is fired.
         }
     }
+#endif
 }
 
 ofOrientation ofAppiOSWindow::getOrientation() {
@@ -243,28 +253,6 @@ ofOrientation ofAppiOSWindow::getOrientation() {
 
 bool ofAppiOSWindow::doesHWOrientation() {
     return settings.enableHardwareOrientation;
-}
-
-//-----------------------------------------------------------------------------------
-void ofAppiOSWindow::setWindowTitle(string title) {
-    // not supported on iOS.
-}
-
-void ofAppiOSWindow::setFullscreen(bool fullscreen) {
-    [[UIApplication sharedApplication] setStatusBarHidden:fullscreen withAnimation:UIStatusBarAnimationSlide];
-	if(fullscreen) {
-        settings.windowMode = OF_FULLSCREEN;
-    } else {
-        settings.windowMode = OF_WINDOW;
-    }
-}
-
-void ofAppiOSWindow::toggleFullscreen() {
-	if(settings.windowMode == OF_FULLSCREEN) {
-        setFullscreen(false);
-    } else {
-        setFullscreen(true);
-    }
 }
 
 //-----------------------------------------------------------------------------------
@@ -283,6 +271,34 @@ bool ofAppiOSWindow::enableOrientationAnimation() {
 bool ofAppiOSWindow::disableOrientationAnimation() {
     return (settings.enableHardwareOrientationAnimation = false);
 }
+
+#endif
+
+//-----------------------------------------------------------------------------------
+void ofAppiOSWindow::setWindowTitle(string title) {
+    // not supported on iOS.
+}
+
+void ofAppiOSWindow::setFullscreen(bool fullscreen) {
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+    [[UIApplication sharedApplication] setStatusBarHidden:fullscreen withAnimation:UIStatusBarAnimationSlide];
+#endif
+    if(fullscreen) {
+        settings.windowMode = OF_FULLSCREEN;
+    } else {
+        settings.windowMode = OF_WINDOW;
+    }
+}
+
+void ofAppiOSWindow::toggleFullscreen() {
+    if(settings.windowMode == OF_FULLSCREEN) {
+        setFullscreen(false);
+    } else {
+        setFullscreen(true);
+    }
+}
+
+
 
 //-----------------------------------------------------------------------------------
 bool ofAppiOSWindow::enableRendererES2() {
