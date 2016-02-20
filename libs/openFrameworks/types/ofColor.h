@@ -5,6 +5,7 @@
 #include "ofMath.h"
 
 /// \class ofColor_
+///
 /// \brief ofColor represents a color in openFrameworks. 
 /// 
 /// The default ofColor uses unsigned char values [0,255], but use 
@@ -18,6 +19,7 @@ class ofColor_{
 public:
     /// \name Create an ofColor
     /// \{
+
     /// \brief Construct a default white color.
     ofColor_():
         r(limit()),
@@ -78,6 +80,7 @@ public:
     /// \{
 
     /// \brief A union representing the internal data.
+	///
     /// \sa r, g, b and a
     union {
         struct {
@@ -130,6 +133,7 @@ public:
     void setHue(float hue);
 
     /// \brief Set the hue angle of this color.
+	///
     /// \param angle A hue angle value to set in the range of 0 - 360 degrees.
     void setHueAngle(float angle);
 
@@ -147,6 +151,7 @@ public:
     void setBrightness(float brightness);
 
     /// \brief Set the color using HSB components.
+	///
     /// \param hue A hue value to set in the range of 0 - limit().
     /// \param saturation A saturation value to set in the range of 0 - limit().
     /// \param brightness A brightness value to set in the range of 0 - limit().
@@ -165,7 +170,7 @@ public:
     ///
     /// Clamps the value of each component, R, G, B and A to a maximum of
     /// limit() and a minimum of zero.
-    ///#
+    ///
     /// \returns A reference to itself.
     ofColor_<PixelType>& clamp();
 
@@ -207,22 +212,26 @@ public:
     /// \{
 
     /// \brief A non-destructive version of clamp().
+	///
     /// \sa clamp()
     /// \returns A copy of this color, clamped.
     ofColor_<PixelType> getClamped() const;
 
     /// \brief A non-destructive version of invert().
+	///
     /// \sa invert()
     /// \returns A copy of this color, inverted.
     ofColor_<PixelType> getInverted() const;
 
     /// \brief A non-destructive version of normalize().
-    /// \sa normalize()
+	///
+	/// \sa normalize()
     /// \returns A copy of this color, normalized.
     ofColor_<PixelType> getNormalized() const;
 
 
     /// \brief A non-destructive version of lerp().
+	///
     /// \param target The target color corresponding to an amount of 1.0.
     /// \param amount The amount (between 0.0 and 1.0) to interpolate.
     ///     A value of 0.0 will yield an unchanged color.  A value of 1.0
@@ -324,6 +333,7 @@ public:
     ofColor_<PixelType>& operator = (const float& value);
 
     /// \brief Test two colors for equality.
+	///
     /// \returns true iff the R, G, B and A components are all equal.
     bool operator == (const ofColor_<PixelType>& color) const;
 
@@ -563,7 +573,8 @@ public:
     /// \}
 
     /// \name Predefined Colors
-    /// \brief A collection of static colors defined by name.
+	///
+	/// \brief A collection of static colors defined by name.
     ///
     /// These constants allow the user to access colors by name.  For example,
     /// if using ofColor, one might set a color in the following way:
