@@ -625,104 +625,490 @@ class ofBaseRenderer{
 public:
 	virtual ~ofBaseRenderer(){}
 
+	/// \brief Get the string representation of the renderer type.
+	///
+	/// For example, this method may return "GL" or "ProgrammableGL", or another
+	/// type depending on the renderer you are using.
+	///
+	/// \returns The string representation of the renderer type.
 	virtual const string & getType()=0;
 
+	/// \brief Starts using this renderer.
 	virtual void startRender() = 0;
+	/// \brief Finishes using this renderer.
 	virtual void finishRender() = 0;
 
+	/// \brief Draw the ofPolyline \p poly to this renderer.
+	/// \param poly The ofPolyline to draw to this renderer.
 	virtual void draw(const ofPolyline & poly) const=0;
+	/// \brief Draw the ofPath \p shape to this renderer.
+	/// \param shape The ofPath to draw to this renderer.
 	virtual void draw(const ofPath & shape) const=0;
+	/// \brief Draw the ofPath \p shape to this renderer.
+	/// \param shape The ofPath to draw to this renderer.
+	/// \param x The x coordinate to use when drawing \p shape.
+	/// \param y The y coordinate to use when drawing \p shape.
 	virtual void draw(const ofPath & shape, float x, float y) const{
 		const_cast<ofBaseRenderer*>(this)->pushMatrix();
 		const_cast<ofBaseRenderer*>(this)->translate(x,y);
 		draw(shape);
 		const_cast<ofBaseRenderer*>(this)->popMatrix();
 	}
+	/// \brief Draw the \p mesh to this renderer using the \p renderType.
+	///
+	/// \p renderType defines how the \p mesh will be rendered and may be:
+	/// 	OF_MESH_POINTS,
+	///		OF_MESH_WIREFRAME,
+	///		OF_MESH_FILL
+	///
+	/// \param mesh The mesh to draw to this renderer.
+	/// \param ofPolyRenderMode The render mode to use when drawing \p mesh to
+	/// this renderer.
+	/// \sa ofPolyRenderMode
 	virtual void draw(const ofMesh & mesh, ofPolyRenderMode renderType) const{
 		draw(mesh,renderType,mesh.usingColors(),mesh.usingTextures(),mesh.usingNormals());
 	}
+	/// \brief Draw the \p vertexData to this renderer.
+	/// \param vertexData The mesh to draw to this renderer.
+	/// \param useColors True to use per-vertex coloring when drawing the
+	/// \p vertexData.
+	/// \param useTextures True to use texture coordinates when drawing the \p
+	/// vertexData.
+	/// \param useNormals True to use normals when drawing the \p vertexData.
+	/// \sa ofPolyRenderMode
 	virtual void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const=0;
+	/// \brief Draw the \p model to this renderer using the \p renderType.
+	///
+	/// \p renderType defines how the \p model will be rendered and may be:
+	/// 	OF_MESH_POINTS,
+	///		OF_MESH_WIREFRAME,
+	///		OF_MESH_FILL
+	///
+	/// \param model The mesh to draw to this renderer.
+	/// \param ofPolyRenderMode The render mode to use when drawing the \p model
+	/// to this renderer.
+	/// \sa ofPolyRenderMode
 	virtual void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const=0;
+	/// \brief Draw the \model to this renderer.
 	virtual void draw(const ofNode& model) const=0;
+	/// \brief Draw the \p image to this renderer.
+	/// \param image The image to draw to this renderer.
+	/// \param x The x coordinate to use when drawing to this renderer.
+	/// \param y The y coordinate to use when drawing to this renderer.
+	/// \param z The z coordinate to use when drawing to this renderer.
+	/// \param w The width to use when drawing the image to this renderer.
+	/// \param h The height to use when drawing the image to this renderer.
+	/// \param sx The subsection x axis offset within the image texture.
+	/// \param sy The subsection y axis offset within the image texture.
+	/// \param sw The subsection width offset within the image texture.
+	/// \param sh The subsection height offset within the image texture.
 	virtual void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
+	/// \brief Draw the \p image to this renderer.
+	/// \param image The image to draw to this renderer.
+	/// \param x The x coordinate to use when drawing to this renderer.
+	/// \param y The y coordinate to use when drawing to this renderer.
+	/// \param z The z coordinate to use when drawing to this renderer.
+	/// \param w The width to use when drawing the image to this renderer.
+	/// \param h The height to use when drawing the image to this renderer.
+	/// \param sx The subsection x axis offset within the image texture.
+	/// \param sy The subsection y axis offset within the image texture.
+	/// \param sw The subsection width offset within the image texture.
+	/// \param sh The subsection height offset within the image texture.
 	virtual void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
+	/// \brief Draw the \p image to this renderer.
+	/// \param image The image to draw to this renderer.
+	/// \param x The x coordinate to use when drawing to this renderer.
+	/// \param y The y coordinate to use when drawing to this renderer.
+	/// \param z The z coordinate to use when drawing to this renderer.
+	/// \param w The width to use when drawing the image to this renderer.
+	/// \param h The height to use when drawing the image to this renderer.
+	/// \param sx The subsection x axis offset within the image texture.
+	/// \param sy The subsection y axis offset within the image texture.
+	/// \param sw The subsection width offset within the image texture.
+	/// \param sh The subsection height offset within the image texture.
 	virtual void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
+	/// \brief Draw the \p video to this renderer.
+	/// \param video The video to draw to this renderer.
+	/// \param x The x coordinate to use when drawing to this renderer.
+	/// \param y The y coordinate to use when drawing to this renderer.
+	/// \param w The width to use when drawing the video to this renderer.
+	/// \param h The height to use when drawing the video to this renderer.
 	virtual void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const=0;
 
 	//--------------------------------------------
 	// transformations
+	/// \brief Push the current viewport into the renderer's viewport stack.
+	/// \sa viewport()
 	virtual void pushView()=0;
+	/// \brief Pop the current viewport from the renderer's view stack.
+	/// \sa viewport()
 	virtual void popView()=0;
 
 	// setup matrices and viewport (upto you to push and pop view before and after)
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
+	/// \brief Set this renderer's viewport using a rectangle.
 	virtual void viewport(ofRectangle viewport)=0;
+	/// \brief Set this renderer's viewport using x, y, width, and height.
 	virtual void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=true)=0;
+	/// \brief Set the perspective matrix to use a perspective matrix.
+	/// distance.
+	/// \params width The width of the desired perspective matrix. Defaults to
+	/// -1 and is ignored.
+	/// \params height The height of the desired perspective matrix. Defaults to
+	/// -1 and is ignored.
+	/// \params fov The field of view to use with the perspective matrix.
+	/// Defaults to 60.
+	/// \params nearDist The near clipping distance to use with the perspective
+	/// matrix. Setting this value to 0 uses the defualt near distance. Defaults
+	/// to 0.
+	/// \params nearDist The far clipping distance to use with the perspective
+	/// matrix. Setting this value to 0 uses the defualt near distance. Defaults
+	/// to 0.
 	virtual void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0)=0;
+	/// \brief Set the renderer to use an orthographic matrix.
+	/// \params width The width of the desired perspective matrix. Defaults to
+	/// -1 and is ignored.
+	/// \params height The height of the desired perspective matrix. Defaults to
+	/// -1 and is ignored.
+	/// \params nearDist The near clipping distance to use with the perspective
+	/// matrix. Setting this value to 0 uses the defualt near distance. Defaults
+	/// to 0.
+	/// \params nearDist The far clipping distance to use with the perspective
+	/// matrix. Setting this value to 0 uses the defualt near distance. Defaults
+	/// to 0.
 	virtual void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1)=0;
+	/// \brief set this renderer's orientation.
+	///
+	/// Possible orientation values include:
+	/// 	OF_ORIENTATION_DEFAULT
+	///		OF_ORIENTATION_180
+    ///		OF_ORIENTATION_90_LEFT
+	///		OF_ORIENTATION_90_RIGHT
+    ///		OF_ORIENTATION_UNKNOWN
+	///
+	/// \params orientation The orientation to use with this renderer.
+	/// \params vFlip True if the orientation should be vertically flipped.
+	/// \sa ofOrientation
 	virtual void setOrientation(ofOrientation orientation, bool vFlip)=0;
+	/// \brief Get this renderer's current viewport.
+	///
+	/// Unlike getNativeViewport(), this method gets this renderer's current
+	/// viewport with orientation and vertical flipping applied.
+	///
+	/// \returns Returns this renderer's viewport as a rectangle.
+	/// \sa getNativeViewport()
 	virtual ofRectangle getCurrentViewport() const=0;
+	
+	/// \brief Get this renderer's current native viewport.
+	///
+	/// Unlike getViewport(), this method gets this renderer's current viewport
+	/// without orientation and vertical flipping applied.
+	///
+	/// \returns Returns this renderer's native viewport as a rectangle.
+	/// \sa getViewport()
 	virtual ofRectangle getNativeViewport() const=0;
+	/// \brief get the renderer's current viewport width.
+	/// \returns the renderer's current viewport width.
 	virtual int getViewportWidth() const=0;
+	/// \brief get the renderer's current viewport width.
+	/// \returns the renderer's current viewport width.
 	virtual int getViewportHeight() const=0;
+	/// \brief Returns true if the renderer's current viewport is vertically
+	/// flipped.
+	/// \returns True if the renderer's current viewport is vertically flipped.
 	virtual bool isVFlipped() const=0;
 
+	/// \brief Set the coordinate handidness of this renderer.
+	///
+	/// Possible handednesses include OF_LEFT_HANDED and OF_RIGHT_HANDED.
+	/// In a left handed coordinate system positive x, y and z axes point right,
+	/// up and forward, respectively and positive rotation is clockwise about
+	/// the axis of rotation. In a right handed coordinate system the positive x
+	/// and y axes point right and up, and the negative z axis points forward
+	/// and positive rotation is counterclockwise about the axis of rotation.
+	///
+	/// \param handedness The handedness to request this renderer to use.
+	/// \sa http://seanmiddleditch.com/matrices-handedness-pre-and-post-multiplication-row-vs-column-major-and-notations/
+	/// \sa https://www.evl.uic.edu/ralph/508S98/coordinates.html
 	virtual void setCoordHandedness(ofHandednessType handedness)=0;
+	
+	/// \brief Get the coordinate handidness of this renderer.
+	///
+	/// Possible handednesses include OF_LEFT_HANDED and OF_RIGHT_HANDED.
+	/// In a left handed coordinate system positive x, y and z axes point right,
+	/// up and forward, respectively and positive rotation is clockwise about
+	/// the axis of rotation. In a right handed coordinate system the positive x
+	/// and y axes point right and up, and the negative z axis points forward
+	/// and positive rotation is counterclockwise about the axis of rotation.
+	///
+	/// \returns The handedness this renderer is using.
+	/// \sa http://seanmiddleditch.com/matrices-handedness-pre-and-post-multiplication-row-vs-column-major-and-notations/
+	/// \sa https://www.evl.uic.edu/ralph/508S98/coordinates.html
 	virtual ofHandednessType getCoordHandedness() const=0;
 
 	//our openGL wrappers
+	
+	/// \brief Pushes this renderer's matrix into its matrix stack.
+	///
+	/// pushMatrix() saves the renderer's current coordinate system matrix
+	/// allowing new transformations and scales to effect only the new matrix
+	/// created by this method. Should be paired with a call to popMatrix().
 	virtual void pushMatrix()=0;
+	/// \brief Pops this renderer's matrix from its matrix stack.
+	///
+	/// popMatrix() restores the renderer's current coordinate system matrix
+	/// to its last saved state set with pushMatrix().
 	virtual void popMatrix()=0;
+	/// \brief Get this renderer's current matrix for particular a matrix mode.
+	///
+	/// Possible matrix modes include:
+	///		OF_MATRIX_MODELVIEW
+	///		OF_MATRIX_PROJECTION
+	///		OF_MATRIX_TEXTURE
+	///
+	/// \params matrixMode_ The matrix mode to get the current matrix of.
+	/// \returns The current matrix specified by \p matrixMode_
 	virtual ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const=0;
+	/// \brief Get this renderer's current orientation matrix.
+	/// \returns This renderer's current orientation matrix.
 	virtual ofMatrix4x4 getCurrentOrientationMatrix() const=0;
+	/// \brief Translate this renderer's current matrix by x, y, and z.
+	/// \params x The x coordinate to translate this renderer's current matrix
+	/// by.
+	/// \params y The y coordinate to translate this renderer's current matrix
+	/// by.
+	/// \params z The z coordinate to translate this renderer's current matrix
+	/// by.
 	virtual void translate(float x, float y, float z = 0)=0;
+	/// \brief Translate this renderer's current matrix by a point.
+	/// \params p The 3D point to translate this renderer's current matrix by.
 	virtual void translate(const ofPoint & p)=0;
+	/// \brief Scale this renderer's current matrix by xAmnt, yAmnt, and zAmnt.
+	/// \params xAmnt The amount to scale this renderer's current matrix's x
+	/// axis by.
+	/// \params yAmnt The amount to scale this renderer's current matrix's x
+	/// axis by.
+	/// \params zAmnt The amount to scale this renderer's current matrix's x
+	/// axis by. Defaults to 1.
 	virtual void scale(float xAmnt, float yAmnt, float zAmnt = 1)=0;
+	/// \brief Rotate this renderer's current matrix by \p degrees about a euler.
+	/// \params degrees Degrees to rotate about vecX, vecY, and vecZ.
+	/// \params vecX The x axis to rotate about.
+	/// \params vecY The y axis to rotate about.
+	/// \params vecZ The z axis to rotate about.
 	virtual void rotate(float degrees, float vecX, float vecY, float vecZ)=0;
+	/// \brief Rotate this renderer's current matrix by \p degrees about the x
+	/// axis.
+	/// \params degrees Degrees to rotate about the x axis.
 	virtual void rotateX(float degrees)=0;
+	/// \brief Rotate this renderer's current matrix by \p degrees about the y
+	/// axis.
+	/// \params degrees Degrees to rotate about the y axis.
 	virtual void rotateY(float degrees)=0;
+	/// \brief Rotate this renderer's current matrix by \p degrees about the z
+	/// axis.
+	/// \params degrees Degrees to rotate about the z axis.
 	virtual void rotateZ(float degrees)=0;
+	/// \brief Rotate this renderer's current matrix by \p degrees about the z
+	/// axis.
+	///
+	/// This method is an alias of rotateZ().
+	///
+	/// \params degrees Degrees to rotate about the z axis.
+	/// \sa rotateZ()
 	virtual void rotate(float degrees)=0;
+	/// \brief Sets this renderer's current matrix mode.
+	///
+	/// The possible matrix modes include:
+	///		OF_MATRIX_MODELVIEW
+	///		OF_MATRIX_PROJECTION
+	///		OF_MATRIX_TEXTURE
+	///
+	/// \param mode The matrix mode this renderer's matrix should use.
 	virtual void matrixMode(ofMatrixMode mode)=0;
+	
+	/// \param Load this renderer's identity matrix.
+	///
+	/// This identity matrix is an ofMatrix4x4 matrix with 1s on the main
+	/// diagonal and 0s elsewhere.
+	/// [
+	///		[1, 0, 0, 0],
+	///		[0, 1, 0, 0],
+	///		[0, 0, 1, 0],
+	///		[0, 0, 0, 1]
+	///	]
 	virtual void loadIdentityMatrix (void)=0;
+	/// \brief Load m as this renderer's current matrix.
+	/// \param m The matrix to load into this renderer.
 	virtual void loadMatrix (const ofMatrix4x4 & m)=0;
+	/// \brief Load m as this renderer's current matrix.
+	///
+	/// m can be passed to loadMatrix() in this way with ofMatrix4x4::getPtr().
+	///
+	/// \param m Float pointer to an ofMatrix4x4.
 	virtual void loadMatrix (const float *m)=0;
+	/// \brief Multiply this renderer's current matrix by \p m.
+	/// \param m The matrix to multiply this renderer's current matrix by.
 	virtual void multMatrix (const ofMatrix4x4 & m)=0;
+	/// \brief Multiply this renderer's current matrix by \p m.
+	///
+	/// m can be passed to loadMatrix() in this way with ofMatrix4x4::getPtr().
+	///
+	/// \param m Float pointer to an ofMatrix4x4 to multiply this renderer's
+	/// current matrix by.
 	virtual void multMatrix (const float *m)=0;
+	/// \brief Load \p m into this renderer's matrix stack as view matrix.
+	/// \param The view matrix to load into this renderer's matrix stack.
 	virtual void loadViewMatrix(const ofMatrix4x4 & m)=0;
+	/// \brief Multiply this renderer's view matrix by \p m.
+	/// \param The matrix to multiply this renderer's view matrix by.
 	virtual void multViewMatrix(const ofMatrix4x4 & m)=0;
+	/// \brief Get this renderer's current view matrix.
+	/// \returns This renderer's current view matrix.
 	virtual ofMatrix4x4 getCurrentViewMatrix() const=0;
+	/// \brief Get this renderer's current normal matrix.
+	/// \returns This renderer's current normal matrix.
 	virtual ofMatrix4x4 getCurrentNormalMatrix() const=0;
 	
 	// bind common objects that need perspective settings
+	/// \brief Bind \p camera's matrices to this renderer's matrix stack.
+	///
+	/// Bind's the \p camera's modelview and projection matrices to this
+	/// renderer's matrix stack using \p viewport. Should be followed with a
+	/// call to
+	///
+	/// \param camera The camera to bind to this renderer.
+	/// \param viewport The viewport to use when binding \p camera to this
+	/// renderer.
 	virtual void bind(const ofCamera & camera, const ofRectangle & viewport)=0;
+	/// \brief Unbind the camera from this renderer.
+	/// \params The camera to unbind from this renderer.
 	virtual void unbind(const ofCamera & camera)=0;
 
 	// screen coordinate things / default gl values
+	/// \brief setup the graphic defaults.
 	virtual void setupGraphicDefaults()=0;
+	/// \brief setup the screen.
 	virtual void setupScreen()=0;
 
 	// drawing modes
+	/// \brief Set this renderer's rect mode.
+	///
+	/// Possible rect modes include OF_RECTMODE_CORNER and OF_RECTMODE_CENTER.
+	///
+	/// \param mode The rect mode to request this renderer to use.
+	/// \sa ofRectMode
 	virtual void setRectMode(ofRectMode mode)=0;
+	/// \brief Get this renderer's current rect mode.
+	///
+	/// Possible rect modes include OF_RECTMODE_CORNER and OF_RECTMODE_CENTER.
+	///
+	/// \returns The renderer's current rect mode.
+	/// \sa ofRectMode
 	virtual ofRectMode getRectMode()=0;
+	/// \brief set this renderer's fill flag.
+	///
+	/// Possible fill flags include OF_OUTLINE and OF_FILLED.
+	///
+	/// \param fill The fill flag to request this renderer to use.
+	/// \sa ofFillFlag
 	virtual void setFillMode(ofFillFlag fill)=0;
+	/// \brief Get this renderer's current fill flag.
+	///
+	/// Possible fill flags include OF_OUTLINE and OF_FILLED.
+	///
+	/// \returns The fill flag this render is currently using.
+	/// \sa ofFillFlag
 	virtual ofFillFlag getFillMode()=0;
+	/// \brief Set the line width this renderer should use when drawing lines.
+	/// \param lineWidth The line width to request this renderer to use.
 	virtual void setLineWidth(float lineWidth)=0;
+	/// \brief Enable/disable depth testing with this renderer.
+	///
+	/// When depth testing is enabled the order shapes are drawn to the
+	/// renderer is dependent on their distance from the camera rather than the
+	/// order their drawing methods were called. This should be enabled when
+	/// expecting normal behavior when drawing 3D scenes.
+	///
+	/// \param depthTest True to enable depth testing.
 	virtual void setDepthTest(bool depthTest)=0;
+	/// \brief Set this renderer's current blend mode.
+	///
+	/// Possible blend modes include:
+	///		OF_BLENDMODE_DISABLED
+	///		OF_BLENDMODE_ALPHA
+	///		OF_BLENDMODE_ADD
+	///		OF_BLENDMODE_SUBTRACT
+	///		OF_BLENDMODE_MULTIPLY
+	///		OF_BLENDMODE_SCREEN
+	///
+	/// \params blendMode The blend mode to request this renderer to use.
+	/// \sa ofBlendMode
+	/// \sa https://helpx.adobe.com/photoshop/using/blending-modes.html
 	virtual void setBlendMode(ofBlendMode blendMode)=0;
+	/// \brief Enable/disable line smoothing for this renderer if its supported.
+	/// \param True to enable line smoothing for this renderer if its supported.
 	virtual void setLineSmoothing(bool smooth)=0;
+	/// \brief Set the resolution to use when drawing ellipses with this
+	/// renderer.
+	/// \param res The number of points to use when drawing circles and ellipses
+	/// with this renderer.
 	virtual void setCircleResolution(int res)=0;
+	/// \brief Enable this renderer to use anti aliasing if it is supported.
 	virtual void enableAntiAliasing()=0;
+	/// \brief Disable this renderer from using anti aliasing.
 	virtual void disableAntiAliasing()=0;
 
-	// color options
-	virtual void setColor(int r, int g, int b)=0; // 0-255
-	virtual void setColor(int r, int g, int b, int a)=0; // 0-255
+	/// \brief Set the global color this renderer will use when drawing.
+	///
+	/// The renderer will continue using a color set by setColor() until another
+	/// call to setColor() changes the drawing color.
+	///
+	/// \param r The red value between 0 and 255 to use when drawing.
+	/// \param g The green value between 0 and 255 to use when drawing.
+	/// \param b The blue value between 0 and 255 to use when drawing.
+	virtual void setColor(int r, int g, int b)=0;
+	/// \brief Set the global color this renderer will use when drawing.
+	///
+	/// The renderer will continue using a color set by setColor() until another
+	/// call to setColor() changes the drawing color.
+	///
+	/// \param r The red value between 0 and 255 to use when drawing.
+	/// \param g The green value between 0 and 255 to use when drawing.
+	/// \param b The blue value between 0 and 255 to use when drawing.
+	/// \param a The alpha value between 0 and 255 to use when drawing.
+	virtual void setColor(int r, int g, int b, int a)=0;
+	/// \brief Set the global color this renderer will use when drawing.
+	///
+	/// The renderer will continue using a color set by setColor() until another
+	/// call to setColor() changes the drawing color.
+	///
+	/// \param color The color to use when drawing.
 	virtual void setColor(const ofColor & color)=0;
+	/// \brief Set the global color this renderer will use when drawing.
+	///
+	/// The renderer will continue using a color set by setColor() until another
+	/// call to setColor() changes the drawing color.
+	///
+	/// \param color The color to use when drawing.
+	/// \param _a The alpha value between 0 and 255 to use when drawing.
 	virtual void setColor(const ofColor & color, int _a)=0;
-	virtual void setColor(int gray)=0; // new set a color as grayscale with one argument
-	virtual void setHexColor( int hexColor )=0; // hex, like web 0xFF0033;
+	/// \brief Set the global color this renderer will use when drawing.
+	///
+	/// The renderer will continue using a color set by setColor() until another
+	/// call to setColor() changes the drawing color.
+	///
+	/// \param gray The grayscale value to use when drawing.
+	virtual void setColor(int gray)=0;
+	/// \brief Set the global color this renderer will use when drawing.
+	///
+	/// The renderer will continue using a color set by setColor() until another
+	/// call to setColor() changes the drawing color.
+	///
+	/// \param hexColor The hexidecimal representation of the color to use when
+	/// drawing.
+	virtual void setHexColor( int hexColor )=0;
 
 	virtual void setBitmapTextMode(ofDrawBitmapMode mode)=0;
 
