@@ -430,7 +430,7 @@ void ofApp::draw() {
     
     if(bHelpText) {
         stringstream ss;
-        ss << "Framerate: " << ofToString(ofGetFrameRate(),0) << "\n";
+        ss << "FPS: " << ofToString(ofGetFrameRate(),0) << endl << endl;
         ss << "(f): Toggle Fullscreen"<<endl<<"(s): Draw Solid Shapes"<<endl<<"(w): Draw Wireframes"<<endl;
         ss <<"(1/2/3/4): Set Resolutions" <<endl<<"(n): Draw Normals"<<"\n(LEFT/RIGHT): Set Mode "<<ofToString(mode,0)<<endl;
         ss <<"(z): Split Faces " <<bSplitFaces<<endl;
