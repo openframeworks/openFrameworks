@@ -76,7 +76,7 @@ void ofApp::update(){
 	float * val = ofSoundGetSpectrum(nBandsToGet);		// request 128 values for fft
 	for (int i = 0;i < nBandsToGet; i++){
 		
-		// let the smoothed calue sink to zero:
+		// let the smoothed value sink to zero:
 		fftSmoothed[i] *= 0.96f;
 		
 		// take the max, either the smoothed or the incoming:

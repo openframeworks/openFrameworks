@@ -35,7 +35,7 @@ void ofApp::setup(){
 	light.setPosition(+500, 0, 0);
 	
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
-	int skip = 1;	
+	int skip = 1;
 	int width = img.getWidth();
 	int height = img.getHeight();
 	for(int y = 0; y < height - skip; y += skip) {
