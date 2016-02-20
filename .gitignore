@@ -33,7 +33,6 @@ examples/**/[Dd]ebug*/
 examples/**/[Rr]elease*/
 examples/**/gcc-debug/
 examples/**/gcc-release/
-examples/**/addons.make
 tests/**/[Dd]ebug*/
 tests/**/[Rr]elease*/
 tests/**/gcc-debug/
@@ -128,3 +127,4 @@ Desktop.ini
 
 .mailmap
 /apps*/
+
