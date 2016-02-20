@@ -3,7 +3,6 @@ ofxNetwork
 ofxOpenCv
 ofxOsc
 ofxXmlSettings
-ofxAssimpModelLoader
 ofxThreadedImageLoader
 ofxGui
 ofxKinect

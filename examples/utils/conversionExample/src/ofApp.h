@@ -1,3 +1,5 @@
+/* Refer to the README.md in the example's root folder for more information on usage */
+
 #pragma once
 
 #include "ofMain.h"
@@ -7,7 +9,7 @@ class ofApp : public ofBaseApp {
 		void setup();
 		void update();
 		void draw();
-		
+
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y);

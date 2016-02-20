@@ -2,7 +2,6 @@
 #include "ofPoint.h"
 #include "ofConstants.h"
 #include <deque>
-#include "ofRectangle.h"
 
 /// \file 
 /// ofPolyLine allows you to combine multiple points into a single vector data

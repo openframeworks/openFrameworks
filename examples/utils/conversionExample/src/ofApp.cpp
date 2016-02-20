@@ -1,28 +1,15 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void splitTest(string splitInput, string delimeter) {
-	cout << "splitting '" << splitInput << "' with '" << delimeter << "'" << endl;
-	cout << "ignoreEmpty:false trim:false " << ofToString(ofSplitString(splitInput, delimeter, false, false)) << endl;
-	cout << "ignoreEmpty:false trim:true " << ofToString(ofSplitString(splitInput, delimeter, false, true)) << endl;
-	cout << "ignoreEmpty:true trim:false " << ofToString(ofSplitString(splitInput, delimeter, true, false)) << endl;
-	cout << "ignoreEmpty:true trim:true " << ofToString(ofSplitString(splitInput, delimeter, true, true)) << endl;
-	cout << endl;
-}
-
-//--------------------------------------------------------------
 void ofApp::setup() {
-	string splitInput = " a,,b,c,";
-	splitTest(" a,,b, c , ", ",");
-	splitTest(" a<><>b<> c <> ", "<>");
-	 
+
 	 cout << "empty" << endl;
 	 cout << ofToInt("") << endl;
 	 cout << ofToFloat("") << endl;
 	 cout << ofToBool("") << endl;
 	 cout << ofToChar("") << endl;
 	 cout << endl;
-	 
+
 	 cout << "strings" << endl;
 	 cout << ofToString(123) << endl;
 	 cout << ofToString(123.4) << endl;
@@ -31,21 +18,21 @@ void ofApp::setup() {
 	 cout << ofToString(123.4, 5) << endl;
 	 cout << ofToString(123.4f, 5) << endl;
 	 cout << endl;
-	 
+
 	 cout << "ints" << endl;
 	 cout << ofToInt("123.") << endl;
 	 cout << ofToInt("123.4") << endl;
 	 cout << ofToInt("123.4f") << endl;
 	 cout << ofToInt("+123.4") << endl;
 	 cout << endl;
-	 
+
 	 cout << "float" << endl;
 	 cout << ofToFloat("123.") << endl;
 	 cout << ofToFloat("123.4") << endl;
 	 cout << ofToFloat("123.4f") << endl;
 	 cout << ofToFloat("+123.4") << endl;
 	 cout << endl;
-	 
+
 	 cout << "bool" << endl;
 	 cout << ofToBool("1") << endl;
 	 cout << ofToBool("0") << endl;
@@ -54,14 +41,14 @@ void ofApp::setup() {
 	 cout << ofToBool("True") << endl;
 	 cout << ofToBool("False") << endl;
 	 cout << endl;
-	 
+
 	 cout << "char" << endl;
 	 cout << ofToChar("a") << endl;
 	 cout << ofToChar("b") << endl;
 	 cout << ofToChar("1") << endl;
 	 cout << ofToChar("0") << endl;
-	 cout << endl;	
-	 
+	 cout << endl;
+
 	 cout << "to binary" << endl;
 	 cout << ofToBinary(8) << endl;
 	 cout << ofToBinary(64) << endl;
@@ -75,7 +62,7 @@ void ofApp::setup() {
 	 cout << ofToBinary(strVal) << endl;
 	 cout << ofToBinary("abc") << endl;
 	 cout << endl;
-	 
+
 	 cout << "to binary" << endl;
 	 cout << ofBinaryToInt(ofToBinary(8)) << endl;
 	 cout << ofBinaryToInt(ofToBinary(64)) << endl;
@@ -85,7 +72,7 @@ void ofApp::setup() {
 	 cout << ofBinaryToFloat(ofToBinary(64.5f)) << endl;
 	 cout << ofBinaryToString(ofToBinary("abc")) << endl;
 	 cout << endl;
-	 
+
 	 cout << "to hex" << endl;
 	 cout << ofToHex('a') << endl;
 	 cout << ofToHex(128) << endl;
@@ -96,7 +83,7 @@ void ofApp::setup() {
 	 string val = "abcdefg";
 	 cout << ofToHex(val) << endl;
 	 cout << endl;
-	 
+
 	 cout << "hex to int" << endl;
 	 cout << ofHexToInt("0xff") << endl;
 	 cout << ofHexToInt("ff") << endl;
@@ -169,6 +156,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }
