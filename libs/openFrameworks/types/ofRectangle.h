@@ -979,16 +979,9 @@ public:
     /// \warning The z-component of the returned ofPoint is undefined.
     ///
     /// \returns The rectangle's position.
-    ofPoint getPosition() const;
+    const ofPoint& getPosition() const;
 
-    /// \brief Get a reference to the ofRectangle's position.
-    ///
-    /// \warning Changes to the z-component of the referenced ofPoint are not
-    /// guaranteed to be preserved and will be ignored during further
-    /// ofRectangle operations.
-    ///
-    /// \returns A reference to the position of the rectangle.
-    ofPoint& getPositionRef();
+	OF_DEPRECATED_MSG("Use getPosition() instead.", ofPoint& getPositionRef() );
 
     /// \brief Get the coordiantes of the ofRectangle's center.
     ///
