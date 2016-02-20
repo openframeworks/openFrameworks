@@ -27,9 +27,9 @@ Instructions for use:
 
 ### Classes used in this example
 
-This example uses the following classes:
+This Example uses the following classes:
 
-* ``ofxiOS``
+* [ofxiOS](http://openframeworks.cc/documentation/ofxiOS/) (for compiling openFrameworks to an Apple iOS device)
 * ``ofSoundPlayer``
 * ``ofSoundStream``
 * ``ofSoundStreamSettings``
