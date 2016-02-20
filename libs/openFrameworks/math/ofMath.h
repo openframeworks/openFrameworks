@@ -526,9 +526,44 @@ int ofNextPow2(int a);
 /// \returns int -1 if n is negative, 1 if n is positive, and 0 is n == 0;
 int ofSign(float n);
 
+/// \brief Compare two integral types for for equality.
+///
+/// This simply returns the result of (a == b).
+///
+/// \param a The first integral type to compare.
+/// \param b The second integral type to compare.
+/// \returns True if a == b.
+template<typename Type>
+typename std::enable_if<std::is_integral<Type>::value, bool>::type ofIsEqual(const Type& a, const Type& b)
+{
+	return a == b;
+}
+
+/// \brief Compare two floating point types for equality.
+///
+/// From C++ FAQ:
+///
+/// Floating point arithmetic is different from real number arithmetic.
+/// Never use `==` to compare two floating point numbers.
+///
+/// This solution is not completely symmetric, meaning it
+/// is possible for ofIsEqual(x,y) != ofIsEqual(y,x). From a practical
+/// standpoint, does not usually occur when the magnitudes of x and y are
+/// significantly larger than epsilon, but your mileage may vary.
+///
+/// \sa https://isocpp.org/wiki/faq/newbie#floating-point-arith
+/// \sa https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
+/// \param a The first floating point type to compare.
+/// \param b The second floating point type to compare.
+/// \returns True if std::abs(x - y) <= std::numeric_limits<Type>::epsilon() * std::abs(x).
+template<typename Type>
+typename std::enable_if<std::is_floating_point<Type>::value, bool>::type ofIsEqual(const Type& a, const Type& b)
+{
+	return std::abs(a - b) <= std::numeric_limits<Type>::epsilon() * std::abs(a);
+}
+
+
 /// \}
-
-
 
 
 // from http://paulbourke.net/miscellaneous/interpolation/
