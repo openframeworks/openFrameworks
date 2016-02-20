@@ -54,10 +54,11 @@ void ofApp::draw(){
     // we want to draw a grid of 5 pixel x 5 pixel rectangles with a fixed hue, varying in 
     // saturation and brightness over X and Y
     
-    // we use one hue (value from 0..255) for the whole grid. it changes over time. we use fmodf to
+    // we use one hue (value from 0..255) for the whole grid. it changes over time. we use f to
     // keep the hue value between 0 and 255, it works just like integer modulo (the % operator) but 
     // for floats.
     float hue = fmodf(ofGetElapsedTimef()*10,255);
+    float test = fmodf
     
     int step = 5;
     // step through horizontally
