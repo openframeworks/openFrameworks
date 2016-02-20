@@ -30,17 +30,17 @@ You found the examples! This sample code provides you simple, bite-sized example
 
 Each of these categories contains examples primarily built to showcase an element of openFrameworks around that topic. Examples are meant to be as simple as possible, helping you understand how to implement either a function/method within the openFrameworks code-base, or elaborate around an algorithm utilizing straight-forward code patterns. Useful categories to get started might include:
 
-### [Input / Output](input-output/)
-
-Learn how to load files, data, and settings into your applications. Furthermore, learn how to take that fun interaction you made and export it in an interesting way.
-
 ### [Graphics](graphics/)
 
 A storehouse of interesting, whimsical, and utilitarian approaches to drawing things on screen in your openFrameworks application. Examples here range from drawing simple shapes, rendering text with fonts, and setting color and blending modes.
+
+### [Input / Output](input-output/)
+
+Learn how to load files, data, and settings into your applications. Furthermore, learn how to take that fun interaction you made and export it in an interesting way.
 
 
 ## Want to Contribute?
 
 Have an elegant example or straight-forward snippet of code that explains a functionality of openFrameworks that doesn't yet exist? Perhaps you want to elaborate on the documentation, inline comments, or README? Come join us in making these examples as useful as possible.
 
-### [Examples Documentation and Creation Flow](https://github.com/openframeworks/openFrameworks/wiki/Examples-Contribution-Process-Flow)
+* **[Examples Documentation and Creation Flow](https://github.com/openframeworks/openFrameworks/wiki/Examples-Contribution-Process-Flow)**
