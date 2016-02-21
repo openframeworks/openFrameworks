@@ -31,7 +31,7 @@ echo "**** Building allAddonsExample ****"
 cd $OF_ROOT
 cp scripts/templates/linuxarmv6l/Makefile examples/addons/allAddonsExample/
 cp scripts/templates/linuxarmv6l/config.make examples/addons/allAddonsExample/
-cd examples/addons/allAddonsExample/
+cd examples/templates/allAddonsExample/
 make Debug
 
 git checkout $PROJECTS/makefileCommon/config.linux.common.mk

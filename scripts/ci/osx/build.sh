@@ -8,5 +8,5 @@ echo "**** Building allAddonsExample ****"
 cd $ROOT
 cp scripts/templates/osx/Makefile examples/addons/allAddonsExample/
 cp scripts/templates/osx/config.make examples/addons/allAddonsExample/
-cd examples/addons/allAddonsExample/
+cd examples/templates/allAddonsExample/
 make Debug
