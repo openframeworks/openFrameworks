@@ -67,7 +67,7 @@ public:
 	/// \warning _size *must* be <= the number of bytes allocated in _buffer
 	void append(const char * _buffer, std::size_t _size);
 	
-	/// \brief request that the buffer capacity be at least enough to contain a specifed number of bytes
+	/// \brief request that the buffer capacity be at least enough to contain a specified number of bytes
 	/// \param size number of bytes to reserve space for
 	void reserve(size_t size);
 
@@ -77,7 +77,7 @@ public:
 	/// \brief removes all bytes from the buffer leaving a size of 0
 	void clear();
 
-	/// \brief request that the buffer capacity be at least enough to contain a specifed number of bytes
+	/// \brief request that the buffer capacity be at least enough to contain a specified number of bytes
 	/// \param _size number of bytes to reserve space for
 	void allocate(std::size_t _size);
 	
@@ -173,7 +173,6 @@ ofBuffer ofBufferFromFile(const string & path, bool binary=false);
 /// \param binary set to true if you are writing binary data aka an image, not text
 bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary=false);
 
-
 //--------------------------------------------------
 /// \class ofFilePath
 /// \brief static class for working with file path strings
@@ -240,7 +239,7 @@ public:
 	/// \brief create the enclosing parent directory of a path
 	/// ie. "images" is the enclosing dir of "duck.jpg" = "images/duck.jpg"
 	/// assumes the path is in the data folder & automatically creates nested dirs as required
-	/// \param bRecursive set = false to override automatica nest dir creation
+	/// \param bRecursive set = false to override automatically nest dir creation
 	/// \param bRelativeToData set to false if you are working with paths that are *not*
 	/// in the data folder and want the direct path without relative ../../
 	static bool createEnclosingDirectory(const std::string& filePath, bool bRelativeToData = true, bool bRecursive = true);
@@ -443,7 +442,6 @@ public:
 	bool operator>(const ofFile & file) const;
 	bool operator>=(const ofFile & file) const;
 
-
 	//------------------
 	// stream operations
 	//------------------
@@ -470,7 +468,6 @@ public:
     operator const std::filesystem::path() const{
         return myFile;
     }
-	
 
 	//-------
 	//static helpers
@@ -620,31 +617,83 @@ public:
 	//-------------------
 	// dirList operations
 	//-------------------
+	
+	/// \brief allow a file extension when listing the contents the current directory path
+	/// setting an allowed extension enables a whitelist mode which only lists extensions which have been
+	/// explicitly allowed
+	/// \param extension file type extension ie. "jpg", "png", "txt", etc
 	void allowExt(const string& extension);
+	
+	/// \brief open and read the contents of a directory
+	/// uses allowed extension whitelist to ignore unwanted file types if allowExt() has been called
+	/// \param path directory path
+	/// \return number of paths found
 	std::size_t listDir(const string& path);
+	
+	/// \brief open and read the contents of the current directory
+	/// uses allowed extension whitelist to ignore unwanted file types if allowExt() has been called
+	/// \return number of paths found
 	std::size_t listDir();
 
+	/// \return the current path
 	string getOriginalDirectory() const;
-	string getName(std::size_t position) const; // e.g., "image.png"
+	
+	/// \brief get the filename at a given position in the dir contents list ie. "duck.jpg"
+	/// \param position array index in the dir contents list
+	/// \warning call listDir() before using this function or the dir contents list will be empty
+	/// \throw throws an out of bounds exception if position >= the number of listed dir contents
+	/// \return file or directory name
+	string getName(std::size_t position) const;
+	
+	/// \brief get the full path of the file or directory at a given position in the dir contents list
+	/// \param position array index in the dir contents list
+	/// \warning call listDir() before using this function or the dir contents list will be empty
+	/// \throw throws an out of bounds exception if position >= the number of listed dir contents
+	/// \return file or directory name including the current path
 	string getPath(std::size_t position) const;
+	
+	/// \brief open an ofFile instance using the path a given position in the dir contents list
+	/// opens as a text file with read only access by default
+	/// \param position array index in the dir contents list
+	/// \param mode file access mode depending on how you plan to use the file (read only, read write, etc)
+	/// \param binary set to true if you are working with binary data (aka image, not text)
+	/// \warning call listDir() before using this function or the dir contents list will be empty
+	/// \throw throws an out of bounds exception if position >= the number of listed dir contents
+	/// \return ofFile instance
 	ofFile getFile(std::size_t position, ofFile::Mode mode=ofFile::Reference, bool binary=false) const;
+	
+	/// \return files and directories in the dir contents list
+	/// directory contents are automatically listed
 	const vector<ofFile> & getFiles() const;
 
+	/// \brief dir contents array operator access
+	/// \param position array index in the dir contents list
+	/// \warning call listDir() before using this function or the dir contents list will be empty
+	/// \throw throws an out of bounds exception if position >= the number of listed dir contents
+	/// \return opened ofFile instance
 	ofFile operator[](std::size_t position) const;
 
 	/// \return true when hidden files & directories are included when listing files
 	/// Mac & Linux denote hidden directories by prepending a period -> ".hello"
 	bool getShowHidden() const;
 
-	void reset(); //equivalent to close, just here for bw compatibility with ofxDirList
+	/// \brief closes the directory, backwards compatibility with ofxDirList
+	void reset();
+	
+	/// \brief sort the dir contents list alphabetically
+	/// \warning call listDir() before using this function or their will be nothing to sort
 	void sort();
+	
+	/// \return a sorted ofDirectory instance using the current path
     ofDirectory getSorted();
 
+	/// \return the number of paths in the current dir list
+	/// \warning call listDir() before using this function or it will return 0
 	std::size_t size() const;
 
 	OF_DEPRECATED_MSG("Use size() instead.", int numFiles());
 
-	//this allows to compare dirs by their paths, also provides sorting and use as key in stl containers
+	// this allows to compare dirs by their paths, also provides sorting and use as key in stl containers
 	bool operator==(const ofDirectory & dir) const;
 	bool operator!=(const ofDirectory & dir) const;
 	bool operator<(const ofDirectory & dir) const;
@@ -661,12 +710,36 @@ public:
     }
 
 	//-------
-	//static helpers
+	// static helpers
 	//-------
 
+	/// \brief create a directory at a given path
+	/// creates relative to the data path by default
+	/// \param dirPath directory path
+	/// \param bRelativeToData set to false if you are working with paths that are *not* in the data folder
+	/// \param bRecursive set to true to automatically create nested dirs as required
+	/// \return true if directory was created successfully
 	static bool createDirectory(const std::string& dirPath, bool bRelativeToData = true, bool recursive = false);
+	
+	/// \brief check if a directory at a given path is empty
+	/// assumes directory path is relative to the data path by default
+	/// \param dirPath directory path
+	/// \param bRelativeToData set to false if you are working with paths that are *not* in the data folder
+	/// \return true if the directory is empty aka contains no files or directories
 	static bool isDirectoryEmpty(const std::string& dirPath, bool bRelativeToData = true );
+	
+	/// \brief check if a directory exists at a given path
+	/// assumes directory path is relative to the data path by default
+	/// \param dirPath directory path
+	/// \param bRelativeToData set to false if you are working with paths that are *not* in the data folder
+	/// \return true if the directory exists
 	static bool doesDirectoryExist(const std::string& dirPath, bool bRelativeToData = true);
+	
+	
+	/// \brief remove a directory at a given path
+	/// \param deleteIfNotEmpty set to true if you want to recursively delete the directory *and* it's contents
+	/// \param bRelativeToData set to false if you are working with paths that are *not* in the data folder
+	/// \return true if the path was removed successfully
 	static bool removeDirectory(const std::string& path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
 
 	vector<ofFile>::const_iterator begin() const;
@@ -682,4 +755,3 @@ private:
 	bool showHidden;
 
 };
-
