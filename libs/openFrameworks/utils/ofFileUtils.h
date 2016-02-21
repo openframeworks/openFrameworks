@@ -195,17 +195,17 @@ public:
 	/// in the data folder
 	static string getFileName(const std::string& filePath, bool bRelativeToData = true);
 	
-	/// \returns the the path without it's last component
+	/// \returns the path without it's last component
 	/// ie. "images/duck.jpg" -> "images" and "images/some/folder" -> "images/some"
 	static string getBaseName(const std::string& filePath);
 
-	/// \returns the enclosing parent directory of a file,
+	/// \returns the enclosing parent directory of a path,
 	/// ie. "images/duck.jpg" -> "images", assumes the path is in the data folder
 	/// set bRelativeToData to false if you are working with paths that are *not*
 	/// in the data folder
 	static string getEnclosingDirectory(const std::string& filePath, bool bRelativeToData = true);
 	
-	/// creates the enclosing parent directory of a file,
+	/// creates the enclosing parent directory of a path,
 	/// ie. "images" is the enclosing dir of "duck.jpg" = "images/duck.jpg"
 	///
 	/// automatically creates nested dirs as require, set bRecursive = false to override
@@ -245,10 +245,14 @@ public:
 	static string makeRelative(const std::string & from, const std::string & to);
 };
 
+/// path to a file or directory,
+/// inherits from an fstream so you can read/write using the stream operators
+/// once a file path has been opened
 class ofFile: public fstream{
 
 public:
 	
+	/// file access mode
 	enum Mode{
 		Reference,
 		ReadOnly,
@@ -257,52 +261,156 @@ public:
 		Append
 	};
 
+	/// create an ofFile instance, does not refer to a specific file until you
+	/// either open a file or create a file or directory path
 	ofFile();
+	
+	/// create a new ofFile instance and attempts to open the path as a file
+	/// opens as a binary file with read only access by default
+	/// set the file access mode depending on how you plan to use the file (read only, read write, etc)
+	/// set binary to false if you are explicitly creating a text file
 	ofFile(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
+	
+	/// create a new file path using the same path & settings of another file
 	ofFile(const ofFile & mom);
+	
+	/// copy the path and settings of a file into this file
 	ofFile & operator= (const ofFile & mom);
+	
 	~ofFile();
 
+	/// open the path as a file,
+	/// opens as a text file with read only access by default
+	/// set the file access mode depending on how you plan to use the file (read only, read write, etc)
+	/// set binary to true if you are working with binary data (aka image, not text)
 	bool open(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=false);
-	bool changeMode(Mode mode, bool binary=false); // reopens a file to the same path with a different mode;
+	
+	/// reopens the current file path with a different access mode (read only, read write, etc)
+	/// set binary to true if you are working with binary data (aka image, not text)
+	bool changeMode(Mode mode, bool binary=false);
+	
+	/// close a currently open file
 	void close();
+	
+	/// creates a file at the current path
 	bool create();
 	
+	/// \returns true if a file exists at the current path
 	bool exists() const;
+	
+	/// \returns the current path
 	string path() const;
 	
+	/// \returns the current path without it's extension, ie. "duck.jpg" ->"duck"
 	string getExtension() const;
+	
+	/// \returns the filename of the current path by stripping the parent directories,
+	/// ie. "images/duck.jpg"  -> "duck.jpg", assumes the path is in the data folder
+	/// set bRelativeToData to false if you are working with paths that are *not* in the data folder
 	string getFileName() const;
-	string getBaseName() const; // filename without extension
+	
+	/// \returns the current path without it's last component
+	/// ie. "images/duck.jpg" -> "images" and "images/some/folder" -> "images/some"
+	string getBaseName() const;
+	
+	/// creates the enclosing parent directory of the file,
+	/// ie. "images" is the enclosing dir of "duck.jpg" = "images/duck.jpg"
+	///
+	/// automatically creates nested dirs as require, set bRecursive = false to override
+	///
+	/// assumes the path is in the data folder, set bRelativeToData to false if
+	/// you are working with paths that are *not* in the data folder
 	string getEnclosingDirectory() const;
+	
+	/// \returns the absolute, full path of the file,
+	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images"
+	///
+	/// set bRelativeToData to true if you are working with paths that are *not*
+	/// in the data folder and want the direct path without relative ../../
 	string getAbsolutePath() const;
 
+	/// \returns true if the current path is readable
 	bool canRead() const;
+	
+	/// \returns true if the current path is writable
 	bool canWrite() const;
+	
+	/// \returns true if the current path is executable
 	bool canExecute() const;
 
+	/// \returns true if the current path is a file and not a directory
 	bool isFile() const;
+	
+	/// \returns true if the current path is a system link to another file or directory
 	bool isLink() const;
+	
+	/// \returns true if the current path is a directory and not a file
 	bool isDirectory() const;
+	
+	/// \returns true if the current path is a device file,
+	/// works on Mac & Linux which can represent devices as files,
+	/// always returns false on Windows
 	bool isDevice() const;
+	
+	/// \returns true if the current path is hidden,
+	/// works on Mac & Linux which denote hidden files by prepending a period
+	/// to the filename -> ".hello", always returns false on Windows
 	bool isHidden() const;
 
+	/// set the writable flag of the current path
 	void setWriteable(bool writeable=true);
+	
+	/// set the readable flag of the current path
 	void setReadOnly(bool readable=true);
+	
+	/// set the executable flag of the current path
 	void setExecutable(bool executable=true);
 	
-	//these all work for files and directories
+	/// copy the current file or directory path to a new path,
+	/// copies relative to the data path & does *not* overwrite by default
+	/// does not change the current path
+	/// \returns true if the copy was successful
+	///
+	/// set overwrite = true if you want to overwrite the file or directory at the new path
+	///
+	/// assumes the new path is in the data folder, set bRelativeToData to false if
+	/// you are working with paths that are *not* in the data folder
 	bool copyTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false) const;
+	
+	/// move the current file or directory path to a new path,
+	/// moves relative to the data path & does *not* overwrite by default
+	/// does not change the current path
+	/// \returns true if the move was successful
+	///
+	/// set overwrite = true if you want to overwrite the file or directory at the new path
+	///
+	/// assumes the new path is in the data folder, set bRelativeToData to false if
+	/// you are working with paths that are *not* in the data folder
 	bool moveTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
+	
+	/// rename the current file or directory path to a new path,
+	/// renames relative to the data path & does *not* overwrite by default
+	/// does not change the current path
+	/// \returns true if the rename was successful
+	///
+	/// set overwrite = true if you want to overwrite the file or directory at the new path
+	///
+	/// assumes the new path is in the data folder, set bRelativeToData to false if
+	/// you are working with paths that are *not* in the data folder
 	bool renameTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	
-	//be careful! this deletes a file or folder :) 
+	/// removes the file or directory at the current path,
+	/// does not remove non-empty directories by default
+	/// \returns true if the path was removed successfully
+	///
+	/// set recursive to true to remove a non-empty directory and it's contents
 	bool remove(bool recursive=false);
 
+	/// \returns the size of the file at the current file path
 	uint64_t getSize() const;
 
-	//this allows to compare files by their paths, also provides sorting and use as key in stl containers
+	// this allows to compare files by their paths, also provides sorting and use as key in stl containers
 	bool operator==(const ofFile & file) const;
 	bool operator!=(const ofFile & file) const;
 	bool operator<(const ofFile & file) const;
@@ -317,17 +425,17 @@ public:
 
 	// since this class inherits from fstream it can be used as a r/w stream:
 	// http://www.cplusplus.com/reference/iostream/fstream/
-
-
-	//helper functions to read/write a whole file to/from an ofBuffer
-	ofBuffer readToBuffer();
-	bool writeFromBuffer(const ofBuffer & buffer);
-
 	
-	// this can be used to read the whole stream into an output stream. ie:
-	// it's equivalent to rdbuf() just here to make it easier to use
-	// ofLogNotice() << file.getFileBuffer();
-	// write_file << file.getFileBuffer();
+	/// read the contents of a file at the current path into a buffer
+	ofBuffer readToBuffer();
+	
+	/// write the contents of a buffer into a file at the current path
+	bool writeFromBuffer(const ofBuffer & buffer);
+	
+	/// read the entire contents of the currently opened file into an output stream,
+	/// basically an easy to use equivalent to rdbuf()
+	/// ie. ofLogNotice() << file.getFileBuffer();
+	///     write_file << file.getFileBuffer();
 	filebuf * getFileBuffer() const;
 	
 	operator std::filesystem::path(){
@@ -343,11 +451,39 @@ public:
 	//static helpers
 	//-------
 
+	/// copy source path to destination path,
+	/// copies relative to the data path & does *not* overwrite by default
+	/// \returns true if the copy was successful
+	///
+	/// set overwrite = true if you want to overwrite the file or directory at the destination path
+	///
+	/// assumes the destination path is in the data folder, set bRelativeToData to false if
+	/// you are working with paths that are *not* in the data folder
 	static bool copyFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData = true,  bool overwrite = false);
 
 	//be careful with slashes here - appending a slash when moving a folder will causes mad headaches in osx
+	
+	/// move source path to destination path,
+	/// moves relative to the data path & does *not* overwrite by default
+	/// \returns true if the move was successful
+	///
+	/// set overwrite = true if you want to overwrite the file or directory at the destination path
+	///
+	/// assumes the destination path is in the data folder, set bRelativeToData to false if
+	/// you are working with paths that are *not* in the data folder
 	static bool moveFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData = true, bool overwrite = false);
+	
+	/// \returns true if a file or directory exists at a given path
+	///
+	/// set bRelativeToData to true if you are working with paths that are *not*
+	/// in the data folder and want the direct path without relative ../../
 	static bool doesFileExist(const std::string& fPath,  bool bRelativeToData = true);
+	
+	/// remove a file or directory at a given path
+	/// \returns true if the path was removed successfully
+	///
+	/// set bRelativeToData to true if you are working with paths that are *not*
+	/// in the data folder and want the direct path without relative ../../
 	static bool removeFile(const std::string& path, bool bRelativeToData = true);
 
 private:
