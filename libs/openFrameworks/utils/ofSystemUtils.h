@@ -1,32 +1,41 @@
 #pragma once
 #include "ofConstants.h"
 
-/// file dialog box selection or save result
+/// \class ofFileDialogResult
+/// \brief file dialog box selection or save result
 class ofFileDialogResult{
 	public:
 		ofFileDialogResult();
 		
-		/// \returns the name of the selected file, or folder, if set
+		/// \return the name of the selected file or directory, if set
 		/// currently returns only 1 file, this may change in the future
 		string getName();
 	
-		/// \returns the full path of the selected file or folder, if set
+		/// \return the full path of the selected file or directory, if set
 		string getPath();
 	
-		string filePath; //< full path to selected file or folder
-		string fileName; //< selected file or folder name
+		string filePath; //< full path to selected file or directory
+		string fileName; //< selected file or directory name
 		bool bSuccess; //< true if the dialog action was successful, aka file select not cancel
 };
 
-/// show an error message in an alert dialog box
+/// \brief show an error message in an alert dialog box
 void ofSystemAlertDialog(string errorMessage);
 
-/// show a file load dialog box with optional window title, folder selection, and
-/// default folder path to open in
+/// \brief show a file load dialog box
+/// \param windowTitle optional window title string, ie. "Load background image"
+/// \param bFolderSelection set to true to allow folder selection
+/// \param defaultPath optional default directory path to start the dialog in, ie. ofFilePath::getUserHomeDir()
+/// \return dialog result with selection (if any)
 ofFileDialogResult ofSystemLoadDialog(string windowTitle="", bool bFolderSelection = false, string defaultPath="");
 
-/// show a file save dialog with default file name & message text
+/// \brief show a file save dialog box
+/// \param defaultName suggested filename to start dialog, ie "screenshot.png"
+/// \param messageName descriptive text for the save action, ie. "Saving screenshot as"
+/// \return dialog result with selection (if any)
 ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName);
 
-/// show a text entry dialog box with question text & optional default text
+/// \brief show a text entry dialog box
+/// \param question descriptive text for the text entry, ie. "What's your favorite color?"
+/// \param text optional default text entry string, ie. "blue"
 string ofSystemTextBoxDialog(string question, string text="");
