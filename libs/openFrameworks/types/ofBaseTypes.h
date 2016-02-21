@@ -1110,112 +1110,499 @@ public:
 	/// drawing.
 	virtual void setHexColor( int hexColor )=0;
 
+	/// \brief Set this renderer's bitmap text mode.
+	///
+	/// Possible bitmap texture modes include:
+	///		OF_BITMAPMODE_SIMPLE
+	///		OF_BITMAPMODE_SCREEN
+	///		OF_BITMAPMODE_VIEWPORT
+	///		OF_BITMAPMODE_MODEL
+	///		OF_BITMAPMODE_MODEL_BILLBOARD
+	///
+	/// \param mode The bitmap mode to request this renderer to use.
 	virtual void setBitmapTextMode(ofDrawBitmapMode mode)=0;
 
-	// bg color
+	/// \brief Get this renderer's current background color.
+	/// \returns This renderer's current background color.
 	virtual ofColor getBackgroundColor()=0;
+	/// \brief Set this renderer's background color.
+	/// \param c The color to request this renderer to use.
 	virtual void setBackgroundColor(const ofColor & c)=0;
+	
+	/// \brief Immediately apply background color and remember it for future
+	/// frames.
 	virtual void background(const ofColor & c)=0;
 	virtual void background(float brightness)=0;
 	virtual void background(int hexColor, float _a=255.0f)=0;
 	virtual void background(int r, int g, int b, int a=255)=0;
 
+	/// \brief Enable/disable automatic redrawing of the background each frame.
+	/// \param bManual False to disable automatic background redrawing.
 	virtual void setBackgroundAuto(bool bManual)=0;	// default is true
+	/// \brief Get the current auto redraw background setting for this renderer.
+	/// \returns True if this renderer is set to redraw the background each
+	/// frame.
 	virtual bool getBackgroundAuto()=0;
 
+	/// \brief Clear this renderer's current color and bit depths.
+	///
+	/// When drawing to the screen, ofClear() will clear the screen entirely.
+	///
 	virtual void clear()=0;
+	/// \brief Clear this renderer's color and bit depths replaces them.
+	/// When drawing to the screen, ofClear() will clear the screen entirely.
+	///
+	/// \param r The red value between 0 and 255 to replace the cleared screen.
+	/// \param g The green value between 0 and 255 to replace the cleared
+	/// screen.
+	/// \param b The blue value between 0 and 255 to replace the cleared screen.
+	/// \param a The alpha value between 0 and 255 to replace the cleared
+	/// screen.
 	virtual void clear(float r, float g, float b, float a=0)=0;
+	/// \brief Clear this renderer's color and bit depths replacing them.
+	///
+	/// When drawing to the screen, ofClear() will clear the screen entirely.
+	///
+	/// \param brightness The grayscale value between 0 and 255 to replace the
+	/// cleared screen.
+	/// \param a The alpha value between 0 and 255 to replace the cleared
+	/// screen.
 	virtual void clear(float brightness, float a=0)=0;
+	/// \brief Restore the alpha color to its full value.
 	virtual void clearAlpha()=0;
 
-	// drawing
+	/// \brief Draw a line between two 3D points.
+	/// \param x1 The x coordinate of the first point.
+	/// \param y1 The y coordinate of the first point.
+	/// \param z1 The z coordinate of the first point.
+	/// \param x2 The x coordinate of the second point.
+	/// \param y2 The y coordinate of the second point.
+	/// \param z2 The z coordinate of the second point.
 	virtual void drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const=0;
+	/// \brief Draw a rectangle using a 3D point and a width and height.
+	/// \param x The x coordinate of the rectangle.
+	/// \param y The y coordinate of the rectangle.
+	/// \param z The z coordinate of the rectangle.
+	/// \param w The width of the rectangle.
+	/// \param h The height of the rectangle.
+	/// \sa ofRectMode
 	virtual void drawRectangle(float x, float y, float z, float w, float h) const=0;
+	/// \brief Draw a triangle using three 3D points.
+	/// \param x1 The x coordinate of the first point.
+	/// \param y1 The y coordinate of the first point.
+	/// \param z1 The z coordinate of the first point.
+	/// \param x2 The x coordinate of the second point.
+	/// \param y2 The y coordinate of the second point.
+	/// \param z2 The z coordinate of the second point.
+	/// \param x3 The x coordinate of the third point.
+	/// \param y3 The y coordinate of the third point.
+	/// \param z3 The z coordinate of the third point.
 	virtual void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const=0;
+	/// \brief Draw a circle using a 3D point and a radius.
+	/// \param x The x coordinate of the center of the circle.
+	/// \param y The y coordinate of the center of the circle.
+	/// \param z The z coordinate of the center of the circle.
+	/// \param radius The length of the radius of the circle.
 	virtual void drawCircle(float x, float y, float z, float radius) const=0;
+	/// \brief Draw an ellipse using a 3D point, width, and height.
+	/// \param x The x coordinate of the center of the circle.
+	/// \param y The y coordinate of the center of the circle.
+	/// \param z The z coordinate of the center of the circle.
+	/// \param width The width of the circle.
+	/// \param height The height of the circle.
 	virtual void drawEllipse(float x, float y, float z, float width, float height) const=0;
+	/// \brief Draw text to this renderer using the current bitmap text mode.
+	///
+	/// When using the OF_BITMAPMODE_SIMPLE bitmap text strings are drawn with
+	/// their origin at the bottom left corner of the text. However,
+	/// setBitmapTextMode() can transform this default behavior with modes like:
+	///		OF_BITMAPMODE_SIMPLE
+	///		OF_BITMAPMODE_SCREEN
+	///		OF_BITMAPMODE_VIEWPORT
+	///		OF_BITMAPMODE_MODEL
+	///		OF_BITMAPMODE_MODEL_BILLBOARD
+	///
+	/// \param text The text to draw to the renderer.
+	/// \param x The x position for the bottom of \p text.
+	/// \param y The y position for the left alignment of \p text.
+	/// \param z The z position of the text.
 	virtual void drawString(string text, float x, float y, float z) const=0;
+	/// \brief Draw text to this renderer using an ofTrueType font.
+	/// \param font The font to use when drawing \p text.
+	/// \param text The text to draw to the renderer.
+	/// \param x The x position for the bottom of \p text.
+	/// \param y The y position for the left alignment of \p text.
 	virtual void drawString(const ofTrueTypeFont & font, string text, float x, float y) const=0;
 
 
 	// returns true an ofPath to draw with, this allows to keep
 	// immediate mode rendering working in multiwindow with multiple
 	// contexts without reimplementing the logic on every renderer
+	/// \brief Get a reference to the path used internally by this renderer.
+	/// \returns A reference to the path used internally by this renderer.
 	virtual ofPath & getPath()=0;
 
+	/// \brief Get this renderer's current style object.
+	/// \returns This renderer's current style object.
 	virtual ofStyle getStyle() const=0;
+	/// \brief Set this renderer's current style object.
+	/// \param style The style object to request this renderer to use.
 	virtual void setStyle(const ofStyle & style) = 0;
+	/// \brief Push this renderer's current style into its internal style stack.
+	///
+	/// This creates a new style object used by this renderer internally until
+	/// popStyle() is called.
+	///
 	virtual void pushStyle()=0;
+	/// \brief Pop this renderer's current style from its internal style stack.
+	///
+	/// This restores the style that was last saved with pushStyle().
+	///
 	virtual void popStyle()=0;
 
+	/// \brief Set the resolution used when drawing curves to this renderer.
+	/// \param resolution The resolution to request this renderer to use when
+	/// drawing curves.
 	virtual void setCurveResolution(int resolution)=0;
+	
+	/// \brief Set this renderer's poly winding mode.
+	///
+	/// Possible poly winding modes include:
+	///		OF_POLY_WINDING_ODD
+	///		OF_POLY_WINDING_NONZERO
+	///		OF_POLY_WINDING_POSITIVE
+	///		OF_POLY_WINDING_NEGATIVE
+	///		OF_POLY_WINDING_ABS_GEQ_TWO
+	///
+	/// \param The poly winding mode to request this renderer to use.
+	/// \sa ofPolyWindingMode
 	virtual void setPolyMode(ofPolyWindingMode mode)=0;
 
+	/// \brief Get a const reference to this renderer's 3D graphics object.
+	/// \returns The 3D graphics object currently being used by this renderer.
 	virtual const of3dGraphics & get3dGraphics() const=0;
+	/// \brief Get a reference to this renderer's 3D graphics object.
+	/// \returns the 3D graphics object currently being used by this renderer.
 	virtual of3dGraphics & get3dGraphics()=0;
 
 
+	/// \brief Set this renderer's plane resolution using \p column and \p rows.
+	/// \param The number of columns to use when drawing planes to this
+	/// renderer.
+	/// \param The number of rows to use when drawing planes to this
+	/// renderer.
 	virtual void setPlaneResolution( int columns, int rows );
+	/// \brief Get this renderer's current plane resolution as a 2D vector.
+	///
+	/// The resulting vector's x and y values corresponds to the current column
+	/// and row resolutions of this renderer's plane resolution respectively.
+	///
+	/// \returns A 2D vector representing this renderer's plane resolution in
+	/// columns and rows
 	virtual ofVec2f getPlaneResolution() const;
+	/// \brief Draw a plane to the renderer using x, y, width, and height.
+	///
+	/// The number of rows and columns this plane will have is dependent on this
+	/// renderer's current plane resolution set with setPlaneResolution().
+	///
+	/// \param x The x coordinate to use when drawing the plane with this
+	/// renderer.
+	/// \param y The y coordinate to use when drawing the plane with this
+	/// renderer.
+	/// \param width The width to use when drawing the plane with this renderer.
+	/// \param height The height to use when drawing the plane with this
+	/// renderer.
 	virtual void drawPlane(float x, float y, float width, float height) const;
+	/// \brief Draw a plane to the renderer using x, y, z, width, and height.
+	///
+	/// The number of rows and columns this plane will have is dependent on this
+	/// renderer's current plane resolution set with setPlaneResolution().
+	///
+	/// \param x The x coordinate to use when drawing the plane with this
+	/// renderer.
+	/// \param y The y coordinate to use when drawing the plane with this
+	/// renderer.
+	/// \param z The z coordinate to use when drawing the plane with this
+	/// renderer.
+	/// \param width The width to use when drawing the plane with this renderer.
+	/// \param height The height to use when drawing the plane with this
+	/// renderer.
 	virtual void drawPlane(float x, float y, float z, float width, float height) const;
+	/// \brief Draw a plane to the renderer using a 3D point, width, and height.
+	///
+	/// The number of rows and columns this plane will have is dependent on this
+	/// renderer's current plane resolution set with setPlaneResolution().
+	///
+	/// \param position A 3D point to use as the position to draw the plane with
+	/// this renderer.
+	/// \param width The width of the plane to use when drawing the plane with
+	/// this renderer.
+	/// \param height The height to use when drawing the plane with this
+	/// renderer.
 	virtual void drawPlane(ofPoint& position, float width, float height) const;
+	/// \brief Draw a plane to the renderer at the defualt origin.
+	///
+	/// The number of rows and columns this plane will have is dependent on this
+	/// renderer's current plane resolution set with setPlaneResolution().
+	///
+	/// \param width The width of the plane to use when drawing the plane with
+	/// this renderer.
+	/// \param height The height to use when drawing the plane with this
+	/// renderer.
 	virtual void drawPlane( float width, float height ) const;
 
-	// UV Sphere
+	/// UV Sphere
+	/// \brief Set the point resolution to use when drawing a sphere with this
+	/// renderer.
+	/// \param res The desired sphere resolution to use with this renderer.
 	virtual void setSphereResolution(int res);
+	/// \brief Get this renderer's current sphere resolution.
+	/// \returns This renderer's current sphere resolution.
 	virtual int getSphereResolution() const;
+	/// \brief Draw a sphere with this renderer using x, y, and radius.
+	///
+	/// Spheres are drawn with x, y, and z coordinates representing the center
+	/// of the sphere.
+	///
+	/// \param x The x coordinate to use when drawing this sphere.
+	/// \param y The y coordinate to use when drawing this sphere.
+	/// \param radius The radius to use when drawing this sphere.
 	virtual void drawSphere(float x, float y, float radius) const;
+	/// \brief Draw a sphere with this renderer using x, y, z, and radius.
+	///
+	/// Spheres are drawn with x, y, and z coordinates representing the center
+	/// of the sphere.
+	///
+	/// \param x The x coordinate to use when drawing this sphere.
+	/// \param y The y coordinate to use when drawing this sphere.
+	/// \param z The z coordinate to use when drawing this sphere.
+	/// \param radius The radius to use when drawing this sphere.
 	virtual void drawSphere(float x, float y, float z, float radius) const;
+	/// \brief Draw a sphere with this renderer using a position point and
+	/// radius.
+	///
+	/// Spheres are drawn with x, y, and z coordinates representing the center
+	/// of the sphere.
+	///
+	/// \param position The 3D position point to use when drawing the sphere.
+	/// \param radius The radius to use when drawing this sphere.
 	virtual void drawSphere(const ofPoint& position, float radius) const;
+	/// \brief Draw a sphere with the renderer at the defualt origin using
+	/// radius.
+	/// \param radius The radius to use when drawing the sphere with this
+	/// renderer.
 	virtual void drawSphere(float radius) const;
 
 	// Ico Sphere
+	/// \brief Set the point resolution to use when drawing an icosphere with
+	/// this renderer.
+	/// \param res The desired icosphere resolution to use with this renderer.
 	virtual void setIcoSphereResolution( int res );
+	/// \brief Get this renderer's current icosphere resolution.
+	/// \returns This renderer's current icosphere resolution.
 	virtual int getIcoSphereResolution() const;
+	/// \brief Draw an icosphere with this renderer using x, y, and radius.
+	///
+	/// Spheres are drawn with x, y, and z coordinates representing the center
+	/// of the icosphere.
+	///
+	/// \param x The x coordinate to use when drawing this icosphere.
+	/// \param y The y coordinate to use when drawing this icosphere.
+	/// \param z The z coordinate to use when drawing this icosphere.
+	/// \param radius The radius to use when drawing this icosphere.
 	virtual void drawIcoSphere(float x, float y, float z, float radius) const;
+	/// \brief Draw an icosphere with this renderer using x, y, and radius.
+	///
+	/// Spheres are drawn with x, y, and z coordinates representing the center
+	/// of the icosphere.
+	///
+	/// \param x The x coordinate to use when drawing this icosphere.
+	/// \param y The y coordinate to use when drawing this icosphere.
+	/// \param radius The radius to use when drawing this icosphere.
 	virtual void drawIcoSphere(float x, float y, float radius) const;
+	/// \brief Draw an icosphere with this renderer using x, y, and radius.
+	///
+	/// Icospheres are drawn with x, y, and z coordinates representing the
+	/// center of the icosphere.
+	///
+	/// \param position The 3D position point to use when drawing the icosphere.
+	/// \param radius The radius to use when drawing this icosphere.
 	virtual void drawIcoSphere(const ofPoint& position, float radius) const;
+	/// \brief Draw an icosphere with the renderer at the defualt origin using
+	/// radius.
+	/// \param radius The radius to use when drawing the icosphere with this
+	/// renderer.
 	virtual void drawIcoSphere(float radius) const;
 
-	// Cylinder //
+	/// \brief Set this renderer's cylinder resolution.
+	/// \param radiusSegments The number of facets (subdivisions) around the
+	/// icosphere's circular footprint. A larger number yields a higher
+	/// resolution.
+	/// \param heightSegments The number of subdivisions from the cylinder's top
+	/// to bottom.
+	/// \param capSegments The number of annular (ring-shaped) subdivisions of
+	/// the cone's endcap. Defaults to 2.
 	virtual void setCylinderResolution( int radiusSegments, int heightSegments, int capSegments=2 );
+	/// \brief Get this renderer's cylinder resolution as a 3D vector.
+	///
+	/// The resulting vector's x, y, and z properties correspond to the radius
+	/// segments, height segments, and cap segments of this renderer's cylinder
+	/// resolution respectively.
+	///
+	/// \returns A 3D vector representing this renderer's current cylinder
+	/// resolution.
 	virtual ofVec3f getCylinderResolution() const;
+	/// \brief Draw a cylinder with this renderer using x, y, radius, and
+	/// height.
+	///
+	/// Cyliners are drawn with x and y coordinates representing the center
+	/// of the cylinder. Radius is the radius of the cylinder's circular
+	/// footprint and height representing the height of the cylinder.
+	///
+	/// \param x The x coordinate to use when drawing this cylinder.
+	/// \param y The y coordinate to use when drawing this cylinder.
+	/// \param radius The radius to use when drawing this cylinder's circular
+	/// footprint.
+	/// \param height The height to use when drawing this cylinder.
 	virtual void drawCylinder(float x, float y, float radius, float height) const;
+	/// \brief Draw a cylinder with this renderer using x, y, z, radius, and
+	/// height.
+	///
+	/// Cyliners are drawn with x, y, and z coordinates representing the center
+	/// of the cylinder. Radius is the radius of the cylinder's circular
+	/// footprint and height representing the height of the cylinder.
+	///
+	/// \param x The x coordinate to use when drawing this cylinder.
+	/// \param y The y coordinate to use when drawing this cylinder.
+	/// \param z The z coordinate to use when drawing this cylinder.
+	/// \param radius The radius to use when drawing this cylinder's circular
+	/// footprint.
+	/// \param height The height to use when drawing this cylinder.
 	virtual void drawCylinder(float x, float y, float z, float radius, float height) const;
+	/// \brief Draw a cylinder with this renderer using position, radius, and
+	/// height.
+	///
+	/// Cyliners are drawn with x, y, and z coordinates representing the center
+	/// of the cylinder. Radius is the radius of the cylinder's circular
+	/// footprint and height representing the height of the cylinder.
+	///
+	/// \param position The 3D point to use as a position coordinate when
+	/// drawing this cylinder.
+	///
+	/// \param radius The radius to use when drawing this cylinder's circular
+	/// footprint.
+	/// \param height The height to use when drawing this cylinder.
 	virtual void drawCylinder(const ofPoint& position, float radius, float height) const;
+	/// \brief Draw a cylinder at the origin using radius and height.
+	///
+	/// A cylinder drawn in this way will be positioned at the origin. Radius is
+	/// the radius of the cylinder's circular footprint and height representing
+	/// the height of the cylinder.
+	///
+	/// \param radius The radius to use when drawing this cylinder's circular
+	/// footprint.
+	/// \param height The height to use when drawing this cylinder.
 	virtual void drawCylinder(float radius, float height) const;
-
-	// Cone
 
 	/// \brief Set the resolution of a polygonized cone.
 	///
-	/// Allows you to set the polygonization resolution of any cones you subsequently draw with ofDrawCone().
+	/// Allows you to set the polygonization resolution of any cones you
+	/// subsequently draw with ofDrawCone().
 	///
-	/// \param radiusSegments The number of facets (subdivisions) around the cone's circular footprint.
-	/// \param heightSegments The number of subdivisions from the cone's top to bottom.
-	/// \param capSegments The number of annular (ring-shaped) subdivisions of the cone's endcap.
+	/// \param radiusSegments The number of facets (subdivisions) around the
+	/// cone's circular footprint.
+	/// \param heightSegments The number of subdivisions from the cone's top to
+	/// bottom.
+	/// \param capSegments The number of annular (ring-shaped) subdivisions of
+	/// the cone's endcap.
 	virtual void setConeResolution( int radiusSegments, int heightSegments, int capSegments=2);
 
-	/// \brief Retrieve a data structure describing the resolution with which cones are polygonized.
+	/// \brief Retrieve a data structure describing the resolution with which
+	/// cones are polygonized.
 	///
 	/// Allows you to fetch the resolution with which cones are polygonized.
 	/// Returns an ofVec3f containing the following data:
-	/// Encoded as "x": radiusSegments, the number of facets (subdivisions) around the cone's circular footprint.
-	/// Encoded as "y": heightSegments, the number of subdivisions from the cone's top to bottom.
-	/// Encoded as "z": capSegments, the number of annular (ring-shaped) subdivisions of the cone's endcap.
+	/// Encoded as "x": radiusSegments, the number of facets (subdivisions)
+	/// around the cone's circular footprint.
+	/// Encoded as "y": heightSegments, the number of subdivisions from the
+	/// cone's top to bottom.
+	/// Encoded as "z": capSegments, the number of annular (ring-shaped)
+	/// subdivisions of the cone's endcap.
 	///
-	/// \returns An ofVec3f containing (radiusSegments, heightSegments, capSegments) for cone polygonization.
+	/// \returns An ofVec3f containing (radiusSegments, heightSegments,
+	/// capSegments) for cone polygonization.
 	virtual ofVec3f getConeResolution() const;
 
+	/// \brief Draw a cone with this renderer using x, y, z, radius, and
+	/// height.
+	///
+	/// Cones are drawn with x, y, and z coordinates representing the centroid
+	/// of the cone. Radius is the radius of the cone's circular
+	/// footprint and height representing the height of the cone.
+	///
+	/// \param x The x coordinate to use when drawing this cone.
+	/// \param y The y coordinate to use when drawing this cone.
+	/// \param z The z coordinate to use when drawing this cone.
+	/// \param radius The radius to use when drawing this cone's circular
+	/// footprint.
+	/// \param height The height to use when drawing this cone.
 	virtual void drawCone(float x, float y, float z, float radius, float height) const;
+	/// \brief Draw a cone with this renderer using x, y, z, radius, and
+	/// height.
+	///
+	/// Cones are drawn with x, y, and z coordinates representing the centroid
+	/// of the cylinder. Radius is the radius of the cone's circular
+	/// footprint and height representing the height of the cone's.
+	///
+	/// \param x The x coordinate to use when drawing this cone.
+	/// \param y The y coordinate to use when drawing this cone.
+	/// \param radius The radius to use when drawing this cone's circular
+	/// footprint.
+	/// \param height The height to use when drawing this cone.
 	virtual void drawCone(float x, float y, float radius, float height) const;
+	/// \brief Draw a cone with this renderer using x, y, z, radius, and
+	/// height.
+	///
+	/// Cones are drawn with x, y, and z coordinates representing the centroid
+	/// of the cone. Radius is the radius of the cone's circular
+	/// footprint and height representing the height of the cone's.
+	///
+	/// \param position The 3D point representing this cone's position.
+	/// \param radius The radius to use when drawing this cone's circular
+	/// footprint.
+	/// \param height The height to use when drawing this cone.
 	virtual void drawCone(const ofPoint& position, float radius, float height) const;
+	/// \brief Draw a cone at the origin using radius and height.
+	///
+	/// This cone will be drawn with it's position at the coordinate system's
+	/// origin. Radius is the radius of the cone's circular footprint and
+	/// height representing the height of the cone.
+	///
+	/// \param position The 3D point representing this cone's position.
+	/// \param radius The radius to use when drawing this cone's circular
+	/// footprint.
+	/// \param height The height to use when drawing this cone.
 	virtual void drawCone(float radius, float height) const;
 
 	// Box
+	/// \brief Set the resolution this renderer uses when drawing boxes.
+	/// \param res The resolution to use for box widths, heights, and depths.
 	virtual void setBoxResolution( int res );
+	/// \brief Set the resolution this renderer uses when drawing boxes.
+	/// \param resWidth The width resolution this renderer uses when drawing
+	/// boxes.
+	/// \param resHeight The height resolution this renderer uses when drawing
+	/// boxes.
+	/// \param resDepth The depth resolution this renderer uses when drawing
+	/// boxes.
 	virtual void setBoxResolution( int resWidth, int resHeight, int resDepth );
+	/// \brief Get this renderer's current box resolution as a 3D vector.
+	///
+	/// The returned vector's x, y, and z properties represent this renderer's
+	/// current resolution width, resolution height, and resolution depth
+	/// respectively.
+	///
+	/// \returns This renderer's current box resolution as a 3D vector.
 	virtual ofVec3f getBoxResolution() const;
 
 	/// \brief Draws a rectangular box with the specified dimensions, starting from the specified coordinates.
@@ -1274,7 +1661,7 @@ public:
 	/// \param size The size of the cube.
 	virtual void drawBox(const ofPoint& position, float size) const;
 
-	/// \brief Draws a cube with the specified size, starting from the origin.
+	/// \brief Draws a cube with the specified size at the origin.
 	///
 	/// The cube is drawn with the current color, e.g. set with ofSetColor().
 	/// The cube is drawn filled by default; change this with ofFill();
@@ -1294,11 +1681,42 @@ public:
 	/// \param height The height of the box.
 	/// \param depth The depth of the box.
 	virtual void drawBox( float width, float height, float depth ) const;
-
+	/// \brief Draw the coordinate system's axises with the renderer.
+	///
+	/// This draws a red, green, and blue lines for the x, y, and z axises
+	/// respectively. This can be helpful when trying to orient other objects
+	/// in respect to the coordinate system.
+	///
+	/// \param size The length to draw each axis line.
 	virtual void drawAxis(float size) const;
+	/// \brief Draw the coordinate system's axises as a grid with the renderer.
+	/// \param stepSize The size of each row/column in each axis grid.
+	/// \param numberOfSteps The number of rows/columns in each axis grid.
+	/// \bool labels True to draw the name and values of the axis as a bitmap
+	/// string.
+	/// \bool x True to draw the x axis.
+	/// \bool y True to draw the y axis.
+	/// \bool z True to draw the z axis.
 	virtual void drawGrid(float stepSize, size_t numberOfSteps, bool labels, bool x, bool y, bool z) const;
+	/// \brief Draw a coordinate system plane on the y and z axis.
+	/// \param stepSize The size of each row/column on the axis grid.
+	/// \param numberOfSteps The number of rows/columns on the axis grid.
+	/// \param True to draw the names and values of the axes.
 	virtual void drawGridPlane(float stepSize, size_t numberOfSteps, bool labels) const;
+	/// \brief Draw an arrow between two 3D points.
+	/// \brief start The 3D vector to use as the first point.
+	/// \brief end The 3D vector to use as the second point.
+	/// \float headSize The size of the arrowhead.
 	virtual void drawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) const;
+	/// \brief Draw the coordinate system's axises with the renderer.
+	///
+	/// This draws a red, green, and blue lines for the x, y, and z rotation
+	/// axes respectively. This can be helpful when trying to orient other
+	/// object's rotation in respect to the coordinate system.
+	///
+	/// \param radius The radius to draw the rotation axes with.
+	/// \param stripWidth The width of each axis line.
+	/// \param circleRes The circle resolution to use when drawing the axes.
 	virtual void drawRotationAxes(float radius, float stripWidth, int circleRes) const;
 };
 
