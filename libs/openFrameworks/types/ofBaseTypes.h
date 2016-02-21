@@ -1014,11 +1014,11 @@ public:
 	/// \return HTTP response on success or failure
 	virtual ofHttpResponse get(const string& url)=0;
 	
-	/// \brief make an asynchronous HTTP request for a url
+	/// \brief make an asynchronous HTTP request
 	/// will not block, placed in a queue and run using a background thread
 	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 	/// \param name optional key to use when sorting requests
-	/// \return unique id for the finished HTTP request
+	/// \return unique id for the active HTTP request
 	virtual int getAsync(const string& url, const string& name="")=0;
 	
 	/// \brief make an HTTP request and save the response data to a file
@@ -1032,14 +1032,14 @@ public:
 	/// will not block, placed in a queue and run using a background thread
 	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 	/// \param path file path to save to
-	/// \returns unique id for the finished HTTP request
+	/// \returns unique id for the active HTTP request
 	virtual int saveAsync(const string& url, const string& path)=0;
 	
-	/// \brief remove an active HTTP request
+	/// \brief remove an active HTTP request from the queue
 	/// \param unique HTTP request id
 	virtual void remove(int id)=0;
 	
-	/// \brief clear all active HTTP requests
+	/// \brief clear all active HTTP requests from the queue
 	virtual void clear()=0;
 	
 	/// \brief stop & remove all active and waiting HTTP requests
