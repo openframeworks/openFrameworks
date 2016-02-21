@@ -29,8 +29,8 @@ make Debug
 
 echo "**** Building allAddonsExample ****"
 cd $OF_ROOT
-cp scripts/templates/linuxarmv6l/Makefile examples/addons/allAddonsExample/
-cp scripts/templates/linuxarmv6l/config.make examples/addons/allAddonsExample/
+cp scripts/templates/linuxarmv6l/Makefile examples/templates/allAddonsExample/
+cp scripts/templates/linuxarmv6l/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
 make Debug
 
