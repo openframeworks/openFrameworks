@@ -23,7 +23,7 @@ You found the examples! This sample code provides you simple, bite-sized example
 * [tvOS](tvOS/)
 * [Templates](templates/)
 * [Threads](threads/)
-* [Windows](windows/)
+* [Windowing](windowing/)
 * [Video](video/)
 
 ## Getting Started
