@@ -981,7 +981,8 @@ public:
 
 };
 
-/// serializes parameters
+/// \class ofBaseSerializer
+/// \brief serializes & deserializes parameter data
 class ofBaseSerializer{
 public:
 	virtual ~ofBaseSerializer(){}
@@ -990,7 +991,8 @@ public:
 	virtual void deserialize(ofAbstractParameter & parameter)=0;
 };
 
-/// serializes parameters to and from files
+/// \class ofBaseFileSerializer
+/// \brief serializes & deswrializes parameter data to and from files
 class ofBaseFileSerializer: public ofBaseSerializer{
 public:
 	virtual ~ofBaseFileSerializer(){}
@@ -999,77 +1001,103 @@ public:
 	virtual bool save(const string & path)=0;
 };
 
-/// loads a file from a URL using an HTTP request
+/// \class ofBaseURLFileLoader
+/// \brief loads a file from a URL using an HTTP request
 class ofBaseURLFileLoader{
 public:
 
 	virtual ~ofBaseURLFileLoader(){};
 	
-	/// make a HTTP request for a url
+	/// \brief make an HTTP request
+	/// blocks until a response is returned or the request times out
+	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+	/// \return HTTP response on success or failure
 	virtual ofHttpResponse get(const string& url)=0;
 	
-	/// make an asynchronous HTTP request for a url
-	/// set optional name as a key when sorting requests later
-	/// \returns unique request id for the finished HTTP request
+	/// \brief make an asynchronous HTTP request for a url
+	/// will not block, placed in a queue and run using a background thread
+	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+	/// \param name optional key to use when sorting requests
+	/// \return unique id for the finished HTTP request
 	virtual int getAsync(const string& url, const string& name="")=0;
 	
-	/// make an HTTP request for a url and save the response to a file at path
+	/// \brief make an HTTP request and save the response data to a file
+	/// blocks until a response is returned or the request times out
+	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+	/// \param path file path to save to
+	/// \return HTTP response on success or failure
 	virtual ofHttpResponse saveTo(const string& url, const string& path)=0;
 	
-	/// make an asynchronous HTTP request for a url and save the response to a file at path
-	/// \returns unique request id for the finished HTTP request
+	/// \brief make an asynchronous HTTP request and save the response data to a file
+	/// will not block, placed in a queue and run using a background thread
+	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+	/// \param path file path to save to
+	/// \returns unique id for the finished HTTP request
 	virtual int saveAsync(const string& url, const string& path)=0;
 	
-	/// remove an active HTTP request using it's unique id
+	/// \brief remove an active HTTP request
+	/// \param unique HTTP request id
 	virtual void remove(int id)=0;
 	
-	/// clear all active HTTP requests
+	/// \brief clear all active HTTP requests
 	virtual void clear()=0;
-	/// stops & removes all active and waiting HTTP requests
+	
+	/// \brief stop & remove all active and waiting HTTP requests
 	virtual void stop()=0;
 	
-	/// makes an HTTP request and returns an HTTP response
+	/// \brief low level HTTP request implementation
+	/// blocks until a response is returned or the request times out
+	/// \return HTTP response on success or failure
 	virtual ofHttpResponse handleRequest(ofHttpRequest request) = 0;
 };
 
-/// material parameter properties that can be applied to vertices in the OpenGL lighting model
+/// \class ofBaseMaterial
+/// \brief material parameter properties that can be applied to vertices in the OpenGL lighting model
+/// used in determining both the intensity and color of reflected light based on the lighting model in use
+/// and if the vertices are on a front or back sided face
 class ofBaseMaterial{
 public:
 
 	virtual ~ofBaseMaterial(){};
 	
-	/// \returns the diffuse reflectance
+	/// \return the diffuse reflectance
 	virtual ofFloatColor getDiffuseColor() const=0;
 	
-	/// \returns the ambient reflectance
+	/// \return the ambient reflectance
 	virtual ofFloatColor getAmbientColor() const=0;
 	
-	/// \returns the specular reflectance
+	/// \return the specular reflectance
 	virtual ofFloatColor getSpecularColor() const=0;
 	
-	/// \returns the emitted light intensity
+	/// \return the emitted light intensity
 	virtual ofFloatColor getEmissiveColor() const=0;
 	
-	/// \returns the specular exponent
+	/// \return the specular exponent
 	virtual float getShininess() const=0;
 	
-	/// begin using this materials properties
+	/// \brief begin using this material's properties
 	virtual void begin() const=0;
 	
-	/// end using this materials properties
+	/// \brief end using this material's properties
 	virtual void end() const=0;
 	
-	/// creates and returns a shader used to implement the materials effect for a given
-	/// renderer, textureTarget is an implementation-specific value to specify the type
-	// of shader to use
+	/// \brief create and return a shader used to implement the materials effect for a given renderer
+	/// \param textureTarget an implementation-specific value to specify the type of shader to use
+	/// \param renderer programmable renderer instance to create the material shader for
 	virtual const ofShader & getShader(int textureTarget, ofGLProgrammableRenderer & renderer) const=0;
 	
-	/// uploads the given renderer's normal matrix to the material shader
+	/// \brief upload the given renderer's normal matrix to the material shader
+	/// \param shader the material shader, created by getShader()
+	/// \param renderer programmable renderer instance that uses the material shader
 	virtual void uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
 	
-	/// updates the material properties to the material shader
+	/// \brief update the material properties to the material shader
+	/// \param shader the material shader, created by getShader()
+	/// \param renderer programmable renderer instance that uses the material shader
 	virtual void updateMaterial(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
 	
-	/// updates the given renderer's lights to the material shader
+	/// \brief update the given renderer's lights to the material shader
+	/// \param shader the material shader, created by getShader()
+	/// \param renderer programmable renderer instance that uses the material shader
 	virtual void updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
 };
