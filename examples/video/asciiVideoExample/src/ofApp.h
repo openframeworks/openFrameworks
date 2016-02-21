@@ -2,15 +2,11 @@
 
 #include "ofMain.h"
 
-/*************************************************************************
-*
-* This example is  based on the Processing "ASCII Video" example by Ben Fry 
-* and it is designed to demonstrate how to re-interpret live video as text 
-* to make it look like some good old ASCII art!
-*
-* For more information regarding this example take a look at the README.md
-*
-*************************************************************************/
+// This example is  based on the Processing "ASCII Video" example by Ben Fry
+// and it is designed to demonstrate how to re-interpret live video as text
+// to make it look like some good old ASCII art!
+//
+// For more information regarding this example take a look at the README.md.
 
 class ofApp : public ofBaseApp{
 	
