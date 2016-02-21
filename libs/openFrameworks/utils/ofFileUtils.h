@@ -208,7 +208,7 @@ public:
 	/// creates the enclosing parent directory of a path,
 	/// ie. "images" is the enclosing dir of "duck.jpg" = "images/duck.jpg"
 	///
-	/// automatically creates nested dirs as require, set bRecursive = false to override
+	/// automatically creates nested dirs as required, set bRecursive = false to override
 	///
 	/// assumes the path is in the data folder, set bRelativeToData to false if
 	/// you are working with paths that are *not* in the data folder
@@ -265,7 +265,7 @@ public:
 	/// either open a file or create a file or directory path
 	ofFile();
 	
-	/// create a new ofFile instance and attempts to open the path as a file
+	/// create a new ofFile instance and attempt to open the path as a file
 	/// opens as a binary file with read only access by default
 	/// set the file access mode depending on how you plan to use the file (read only, read write, etc)
 	/// set binary to false if you are explicitly creating a text file
@@ -324,9 +324,6 @@ public:
 	
 	/// \returns the absolute, full path of the file,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images"
-	///
-	/// set bRelativeToData to true if you are working with paths that are *not*
-	/// in the data folder and want the direct path without relative ../../
 	string getAbsolutePath() const;
 
 	/// \returns true if the current path is readable
@@ -399,10 +396,11 @@ public:
 	/// you are working with paths that are *not* in the data folder
 	bool renameTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
 	
-	
 	/// removes the file or directory at the current path,
 	/// does not remove non-empty directories by default
 	/// \returns true if the path was removed successfully
+	///
+	/// be careful! this deletes a file or folder :)
 	///
 	/// set recursive to true to remove a non-empty directory and it's contents
 	bool remove(bool recursive=false);
@@ -495,37 +493,108 @@ private:
 	bool binary;
 };
 
+/// path to a directory, can be used to query file and directory contents
 class ofDirectory{
 
 public:
+
+	/// create an ofDirectory instance, does not refer to a specific directory until you
+	/// either open or create a directory path
 	ofDirectory();
+	
+	/// create a new ofDirectory instance and attempt to open the path
 	ofDirectory(const std::filesystem::path & path);
 
+	/// open a directory path, clears the current file list
 	void open(const std::filesystem::path & path);
+	
+	/// close the current path
 	void close();
+	
+	/// create a directory at the current path
+	/// set bRecursive to true to automatically creates nested dirs as required
 	bool create(bool recursive = false);
 
+	/// \returns true if a directory exists at the current path
 	bool exists() const;
+	
+	/// \returns the current path
 	string path() const;
+	
+	/// \returns the absolute, full path of the directory,
+	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images"
 	string getAbsolutePath() const;
 
+	/// \returns true if the current path is readable
 	bool canRead() const;
+	
+	/// \returns true if the current path is writeable
 	bool canWrite() const;
+	
+	/// \returns true if the current path is executable
 	bool canExecute() const;
 	
+	/// \returns true if the current path is indeed a directory and not a file
 	bool isDirectory() const;
+	
+	/// \returns true if the current path is hidden,
+	/// works on Mac & Linux which denote hidden directories by prepending
+	/// a period -> ".hello", always returns false on Windows
 	bool isHidden() const;
 
+	/// set the writable flag of the current path
 	void setWriteable(bool writeable=true);
+	
+	/// set the readable flag of the current path
 	void setReadOnly(bool readable=true);
+	
+	/// set the executable flag of the current path
 	void setExecutable(bool executable=true);
+	
+	/// show hidden files & directories when listing files?
+	/// Mac & Linux denote hidden directories by prepending a period -> ".hello"
 	void setShowHidden(bool showHidden);
 
+	/// copy the current file or directory path to a new path,
+	/// copies relative to the data path & does *not* overwrite by default
+	/// does not change the current path
+	/// \returns true if the copy was successful
+	///
+	/// set overwrite = true if you want to overwrite the file or directory at the new path
+	///
+	/// assumes the new path is in the data folder, set bRelativeToData to false if
+	/// you are working with paths that are *not* in the data folder
 	bool copyTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
+	
+	/// move the current file or directory path to a new path,
+	/// moves relative to the data path & does *not* overwrite by default
+	/// does not change the current path
+	/// \returns true if the move was successful
+	///
+	/// set overwrite = true if you want to overwrite the file or directory at the new path
+	///
+	/// assumes the new path is in the data folder, set bRelativeToData to false if
+	/// you are working with paths that are *not* in the data folder
 	bool moveTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
+	
+	/// rename the current file or directory path to a new path,
+	/// renames relative to the data path & does *not* overwrite by default
+	/// does not change the current path
+	/// \returns true if the rename was successful
+	///
+	/// set overwrite = true if you want to overwrite the file or directory at the new path
+	///
+	/// assumes the new path is in the data folder, set bRelativeToData to false if
+	/// you are working with paths that are *not* in the data folder
 	bool renameTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
 
-	//be careful! this deletes a file or folder :)
+	/// removes the file or directory at the current path,
+	/// does not remove non-empty directories by default
+	/// \returns true if the path was removed successfully
+	///
+	/// be careful! this deletes a file or folder :)
+	///
+	/// set recursive to true to remove a non-empty directory and it's contents
 	bool remove(bool recursive);
 
 	//-------------------
@@ -543,6 +612,8 @@ public:
 
 	ofFile operator[](std::size_t position) const;
 
+	/// \returns whether hidden files & directories are shown when listing files
+	/// Mac & Linux denote hidden directories by prepending a period -> ".hello"
 	bool getShowHidden() const;
 
 	void reset(); //equivalent to close, just here for bw compatibility with ofxDirList
