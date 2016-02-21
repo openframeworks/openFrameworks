@@ -2,13 +2,10 @@
 
 #include "ofMain.h"
 
-/*************************************************************************
-*
-* This openFrameworks example is designed to demonstrate how to access the webcam.
-*
-* For more information regarding this example take a look at the README.md
-*
-*************************************************************************/
+// This openFrameworks example is designed to demonstrate how to access the
+// webcam.
+//
+// For more information regarding this example take a look at the README.md.
 
 class ofApp : public ofBaseApp{
 
