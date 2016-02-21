@@ -1,3 +1,5 @@
+// Refer to the README.md in the example's root folder for more information on usage
+
 #include "ofMain.h"
 #include "ofApp.h"
 
