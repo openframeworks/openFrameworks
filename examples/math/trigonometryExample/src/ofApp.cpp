@@ -19,7 +19,7 @@ void ofApp::setup(){
 	cosine=0;
 	sine=0;
 	tangent=0;
-	rotationSpeed=0.01f;
+	rotationSpeed=0.01;
 	radius = 180;
 	center.set(ofGetWidth()*0.3f, ofGetHeight()*0.6f, 0);
 	
@@ -35,7 +35,9 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	if (!ofGetMousePressed()) {//press the mouse to stop the angle from incrementing.
+	cout << rotationSpeed << endl;
+    
+    if (!ofGetMousePressed()) {//press the mouse to stop the angle from incrementing.
 		angle+=rotationSpeed;//at each update the angle get's incremented 
 	}
 	if (angle>=TWO_PI) { //if the angle is more than or equal to two PI (a full rotation measured in Radians) then make it zero.
@@ -46,6 +48,7 @@ void ofApp::update(){
 	cosine=cos(angle);
 	sine=sin(angle);
 	tangent=tan(angle);
+    
 	
 	
 	point.set(cosine * radius, sine * radius, 0);//here we set the cyan circle position

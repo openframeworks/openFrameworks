@@ -7,7 +7,7 @@ void Car::setup(){
     material.setDiffuseColor(ofFloatColor::green);
     // This is how we append the 2 headlamps to the car.
     // Calling setParent, we are telling to the lights that they are
-    // a child of the object car, and that teir movement are relative to
+    // a child of the object car, and that their movements are relative to
     // the movement of the car
 
     lightL.setParent(geometry);
@@ -48,7 +48,7 @@ void Car::brake(){
     acceleration -= 0.1;
 }
 
-void Car::accellerate(){
+void Car::accelerate(){
     acceleration += 0.1;
 }
 
