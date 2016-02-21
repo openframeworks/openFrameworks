@@ -52,6 +52,11 @@ void ofApp::update(){
 	x = int(t*speed.getValue())%(ofGetWidth()-rightMargin);
 	y[1] = 60*3+ofNoise(t*freq.getValue())*yFactor.getValue();
 	y[2] = 60*4+ofSignedNoise(t*freq.getValue())*yFactor.getValue();
+    
+    float test = 60*4+ofSignedNoise(t*freq.getValue())*yFactor.getValue();
+    
+    cout<< test << endl;
+    
 	y[3] = 60*5+ofRandom(-1,1)*yFactor.getValue(); // random can't be dependent on time or frequency
 	y[4] = 60*6+sin(t*freq.getValue()*TWO_PI)*yFactor.getValue();
 	y[5] = 60*7+(sin(t*freq.getValue()*TWO_PI)+1)*.5*yFactor.getValue();

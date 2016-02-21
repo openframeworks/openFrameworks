@@ -42,11 +42,8 @@
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-				<string>678E130817951530005B6D19</string>
-				<string>678E130A17951536005B6D19</string>
-				<string>678E130C1795153C005B6D19</string>
-				<string>678E130E17951540005B6D19</string>
-				<string>678E131017951549005B6D19</string>
+				<string>9936F6101BFA4DEE00891288</string>
+				<string>9936F6121BFA65F100891288</string>
 			</array>
 			<key>isa</key>
 			<string>PBXResourcesBuildPhase</string>
@@ -73,6 +70,7 @@
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
+				<string>9969E7561C782C4500DEF0F6</string>
 				<string>E41D421413B3A95300A75A5D</string>
 				<string>1D60589F0D05DD5A006BFB54</string>
 				<string>1DF5F4E00D08C38300B7A737</string>
@@ -140,6 +138,10 @@
 			<dict>
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
 				<string>NO</string>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME</key>
+				<string>Brand Assets</string>
 				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
 				<string>YES</string>
 				<key>GCC_PREFIX_HEADER</key>
@@ -149,9 +151,11 @@
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>5.1.1</string>
+				<string>7.0</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
+				<key>TARGETED_DEVICE_FAMILY</key>
+				<string>1,2</string>
 				<key>VALID_ARCHS</key>
 				<string>$(ARCHS_STANDARD)</string>
 			</dict>
@@ -164,6 +168,10 @@
 		<dict>
 			<key>buildSettings</key>
 			<dict>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME</key>
+				<string>Brand Assets</string>
 				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
 				<string>YES</string>
 				<key>GCC_PREFIX_HEADER</key>
@@ -173,9 +181,11 @@
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>5.1.1</string>
+				<string>7.0</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
+				<key>TARGETED_DEVICE_FAMILY</key>
+				<string>1,2</string>
 				<key>VALID_ARCHS</key>
 				<string>$(ARCHS_STANDARD)</string>
 			</dict>
@@ -293,11 +303,7 @@
 		<dict>
 			<key>children</key>
 			<array>
-				<string>678E130917951536005B6D19</string>
-				<string>678E130717951530005B6D19</string>
-				<string>678E130B1795153C005B6D19</string>
-				<string>678E130D17951540005B6D19</string>
-				<string>678E130F17951549005B6D19</string>
+				<string>9936F60E1BFA4DEE00891288</string>
 				<string>E4D8936A11527B74007E1F53</string>
 				<string>BB24E1F710DAA51900E9C588</string>
 				<string>BB16F26B0F2B646B00518274</string>
@@ -315,20 +321,21 @@
 		<dict>
 			<key>children</key>
 			<array>
+				<string>67DFA53419F92A5E003B3434</string>
+				<string>BBE5EAB70F49AD8400F28951</string>
 				<string>E41D400613B39D2100A75A5D</string>
+				<string>E4A823A312561BE3002F86A2</string>
+				<string>5326AEA710A23A0500278DE6</string>
 				<string>E41D400713B39D2100A75A5D</string>
+				<string>9969E7551C782C4500DEF0F6</string>
 				<string>E41D400813B39D2100A75A5D</string>
+				<string>1D30AB110D05D00D00671497</string>
 				<string>E41D400913B39D2100A75A5D</string>
 				<string>53F323EA10A20EDB00E0DAE4</string>
-				<string>E4A823A312561BE3002F86A2</string>
-				<string>BBE5EAB70F49AD8400F28951</string>
-				<string>BB16EBD80F2B2AB500518274</string>
 				<string>BB16EBD10F2B2A9500518274</string>
+				<string>BB16EBD80F2B2AB500518274</string>
 				<string>1DF5F4DF0D08C38300B7A737</string>
-				<string>1D30AB110D05D00D00671497</string>
 				<string>288765FC0DF74451002DB57D</string>
-				<string>5326AEA710A23A0500278DE6</string>
-				<string>67DFA53419F92A5E003B3434</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -390,106 +397,6 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>678E130717951530005B6D19</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>image.png</string>
-			<key>name</key>
-			<string>Icon@2x.png</string>
-			<key>path</key>
-			<string>bin/data/Icon@2x.png</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>678E130817951530005B6D19</key>
-		<dict>
-			<key>fileRef</key>
-			<string>678E130717951530005B6D19</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>678E130917951536005B6D19</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>image.png</string>
-			<key>name</key>
-			<string>Icon.png</string>
-			<key>path</key>
-			<string>bin/data/Icon.png</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>678E130A17951536005B6D19</key>
-		<dict>
-			<key>fileRef</key>
-			<string>678E130917951536005B6D19</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>678E130B1795153C005B6D19</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>image.png</string>
-			<key>name</key>
-			<string>Default.png</string>
-			<key>path</key>
-			<string>bin/data/Default.png</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>678E130C1795153C005B6D19</key>
-		<dict>
-			<key>fileRef</key>
-			<string>678E130B1795153C005B6D19</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>678E130D17951540005B6D19</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>image.png</string>
-			<key>name</key>
-			<string>Default@2x.png</string>
-			<key>path</key>
-			<string>bin/data/Default@2x.png</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>678E130E17951540005B6D19</key>
-		<dict>
-			<key>fileRef</key>
-			<string>678E130D17951540005B6D19</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>678E130F17951549005B6D19</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>image.png</string>
-			<key>name</key>
-			<string>Default-568h@2x~iphone.png</string>
-			<key>path</key>
-			<string>bin/data/Default-568h@2x~iphone.png</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>678E131017951549005B6D19</key>
-		<dict>
-			<key>fileRef</key>
-			<string>678E130F17951549005B6D19</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
 		<key>67DFA53419F92A5E003B3434</key>
 		<dict>
 			<key>isa</key>
@@ -510,6 +417,17 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
+		<key>6948EE371B920CB800B5AC1A</key>
+		<dict>
+			<key>children</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>local_addons</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>9255DD331112741900D6945E</key>
 		<dict>
 			<key>buildActionMask</key>
@@ -528,6 +446,78 @@
 			<string>/bin/sh</string>
 			<key>shellScript</key>
 			<string>rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"</string>
+		</dict>
+		<key>9936F60E1BFA4DEE00891288</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9936F6111BFA65F100891288</string>
+				<string>9936F60F1BFA4DEE00891288</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>mediaAssets</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9936F60F1BFA4DEE00891288</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>folder.assetcatalog</string>
+			<key>path</key>
+			<string>Images.xcassets</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9936F6101BFA4DEE00891288</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9936F60F1BFA4DEE00891288</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9936F6111BFA65F100891288</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file.storyboard</string>
+			<key>path</key>
+			<string>LaunchScreen.storyboard</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9936F6121BFA65F100891288</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9936F6111BFA65F100891288</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9969E7551C782C4500DEF0F6</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>CoreMotion.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/CoreMotion.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>9969E7561C782C4500DEF0F6</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9969E7551C782C4500DEF0F6</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
 		</dict>
 		<key>BB16E9930F2B1E5900518274</key>
 		<dict>
@@ -590,17 +580,6 @@
 			<string>PBXGroup</string>
 			<key>name</key>
 			<string>addons</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>6948EE371B920CB800B5AC1A</key>
-		<dict>
-			<key>children</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>local_addons</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -721,7 +700,7 @@
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>YES</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>5.1.1</string>
+				<string>7.0</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>NO</string>
 				<key>PROVISIONING_PROFILE[sdk=iphoneos*]</key>
@@ -777,7 +756,7 @@
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>YES</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>5.1.1</string>
+				<string>7.0</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>NO</string>
 				<key>SDKROOT</key>
