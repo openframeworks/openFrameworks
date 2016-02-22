@@ -6,7 +6,7 @@ xcodebuild -configuration Release -target emptyExample -project "$ROOT/scripts/t
 
 echo "**** Building allAddonsExample ****"
 cd $ROOT
-cp scripts/templates/osx/Makefile examples/addons/allAddonsExample/
-cp scripts/templates/osx/config.make examples/addons/allAddonsExample/
-cd examples/addons/allAddonsExample/
+cp scripts/templates/osx/Makefile examples/templates/allAddonsExample/
+cp scripts/templates/osx/config.make examples/templates/allAddonsExample/
+cd examples/templates/allAddonsExample/
 make Debug
