@@ -32,12 +32,12 @@ public class FirstActivity extends Activity implements OFAndroidLifeCycle.ILifeC
 
 	@Override
 	public void callbackInit() {
-		Log.d("FirstActivity", "OFAndroidInit() (in main.cpp) finished running");
+		Log.d("FirstActivity", "ofAndroidApplicationInit() (in main.cpp) finished running");
 	}
 
 	@Override
 	public void callbackCreated() {
-		// TODO Auto-generated method stub
+		Log.d("FirstActivity", "ofAndroidActivityInit() (in main.cpp) finished running");
 		
 	}
 
