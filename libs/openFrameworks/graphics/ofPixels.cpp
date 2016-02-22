@@ -222,6 +222,19 @@ ofPixels_<PixelType>::ofPixels_(ofPixels_<PixelType> && mom)
 	mom.pixelsOwner = false;
 }
 
+
+template<typename PixelType>
+void ofPixels_<PixelType>::swap(ofPixels_<PixelType> & pix){
+	std::swap(pixels,pix.pixels);
+	std::swap(width, pix.width);
+	std::swap(height,pix.height);
+	std::swap(pixelsSize,pix.pixelsSize);
+	std::swap(bAllocated, pix.bAllocated);
+	std::swap(pixelsOwner, pix.pixelsOwner);
+	std::swap(pixelFormat,pix.pixelFormat);
+}
+
+
 template<typename PixelType>
 ofPixels_<PixelType>& ofPixels_<PixelType>::operator=(const ofPixels_<PixelType> & mom){
 	if(this==&mom) {
@@ -236,18 +249,18 @@ ofPixels_<PixelType>& ofPixels_<PixelType>::operator=(ofPixels_<PixelType> && mo
 	if(this==&mom) {
 		return * this;
 	}
-    if(pixelsOwner || !bAllocated || !mom.bAllocated || width!=mom.width || height!=mom.height || pixelFormat != mom.pixelFormat){
-        clear();
-        pixels = mom.pixels;
-        width = mom.width;
-        height = mom.height;
-        pixelsSize = mom.pixelsSize;
-        bAllocated = mom.bAllocated;
-        pixelsOwner = mom.pixelsOwner;
-        mom.pixelsOwner = false;
-    }else{
-        memcpy(pixels, mom.pixels, getTotalBytes());
-    }
+	if(pixelsOwner || !bAllocated || !mom.bAllocated || width!=mom.width || height!=mom.height || pixelFormat != mom.pixelFormat){
+		clear();
+		pixels = mom.pixels;
+		width = mom.width;
+		height = mom.height;
+		pixelsSize = mom.pixelsSize;
+		bAllocated = mom.bAllocated;
+		pixelsOwner = mom.pixelsOwner;
+		mom.pixelsOwner = false;
+	}else{
+		memcpy(pixels, mom.pixels, getTotalBytes());
+	}
 	return *this;
 }
 
@@ -415,17 +428,6 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int
 	    break;
 	}
 	return;
-}
-
-template<typename PixelType>
-void ofPixels_<PixelType>::swap(ofPixels_<PixelType> & pix){
-	std::swap(pixels,pix.pixels);
-	std::swap(width, pix.width);
-	std::swap(height,pix.height);
-	std::swap(pixelFormat,pix.pixelFormat);
-	std::swap(pixelsSize,pix.pixelsSize);
-	std::swap(pixelsOwner, pix.pixelsOwner);
-	std::swap(bAllocated, pix.bAllocated);
 }
 
 template<typename PixelType>
