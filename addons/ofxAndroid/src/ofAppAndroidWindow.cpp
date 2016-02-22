@@ -47,8 +47,8 @@ static bool accumulateTouchEvents = false;
 void ofExitCallback();
 
 //----- define in main.cpp---//
-void OFAndroidInit();
-void OFAndroidCreate();
+void ofAndroidApplicationInit();
+void ofAndroidActivityInit();
 
 //static ofAppAndroidWindow window;
 
@@ -259,12 +259,12 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
 
 void Java_cc_openframeworks_OFAndroid_init( JNIEnv*  env, jclass  clazz)
 {
-	OFAndroidInit();
+	ofAndroidApplicationInit();
 }
 
 void Java_cc_openframeworks_OFAndroid_onCreate( JNIEnv*  env, jclass  clazz)
 {
-	OFAndroidCreate();
+	ofAndroidActivityInit();
 }
 
 void
