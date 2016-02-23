@@ -5,9 +5,9 @@ void ofApp::setup(){
 	//we run at 60 fps!
 	ofSetVerticalSync(true);
 	ofSetFrameRate(60);
-    ofEnableAntiAliasing();
+    	ofEnableAntiAliasing();
 
-    //create the socket and bind to port 11999
+    	//create the socket and bind to port 11999
 	udpConnection.Create();
 	udpConnection.Bind(11999);
 	udpConnection.SetNonBlocking(true);
@@ -41,12 +41,12 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    ofSetColor(20);
-    for(unsigned int i=1;i<stroke.size();i++){
-        ofDrawLine(stroke[i-1].x,stroke[i-1].y,stroke[i].x,stroke[i].y);
-    }
+    	ofSetColor(20);
+    	for(unsigned int i=1;i<stroke.size();i++){
+        	ofDrawLine(stroke[i-1].x,stroke[i-1].y,stroke[i].x,stroke[i].y);
+    	}
     
-    ofDrawBitmapStringHighlight("UDP Receiver Example ", 10, 20);
+    	ofDrawBitmapStringHighlight("UDP Receiver Example ", 10, 20);
 }
 
 //--------------------------------------------------------------
