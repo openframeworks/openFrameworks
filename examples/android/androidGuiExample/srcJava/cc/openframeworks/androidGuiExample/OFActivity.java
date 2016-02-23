@@ -1,7 +1,6 @@
 package cc.openframeworks.androidGuiExample;
 
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import cc.openframeworks.OFAndroid;
@@ -13,49 +12,11 @@ public class OFActivity extends cc.openframeworks.OFActivity{
     public void onCreate(Bundle savedInstanceState)
     { 
         super.onCreate(savedInstanceState);
-        String packageName = getPackageName();
-
-        ofApp = new OFAndroid(packageName,this);
     }
 	
 	@Override
 	public void onDetachedFromWindow() {
 	}
-	
-    @Override
-    protected void onPause() {
-        super.onPause();
-        ofApp.pause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ofApp.resume();
-    }
-    
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-	if (OFAndroid.keyDown(keyCode, event)) {
-	    return true;
-	} else {
-	    return super.onKeyDown(keyCode, event);
-	}
-    }
-    
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-	if (OFAndroid.keyUp(keyCode, event)) {
-	    return true;
-	} else {
-	    return super.onKeyUp(keyCode, event);
-	}
-    }
-
-
-	OFAndroid ofApp;
-    
-	
 	
     // Menus
     // http://developer.android.com/guide/topics/ui/menus.html
@@ -86,6 +47,3 @@ public class OFActivity extends cc.openframeworks.OFActivity{
     }
 	
 }
-
-
-
