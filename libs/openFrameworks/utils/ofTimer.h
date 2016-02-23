@@ -17,8 +17,6 @@ public:
 	void setPeriodicEvent(uint64_t nanoseconds);
 	
 	/// \brief Sleep this thread until the next periodic event.
-	/// 
-	/// \warning This will crash your application if you haven't called setPeriodicEvent().
 	void waitNext();
 private:
 	void calculateNextPeriod();
