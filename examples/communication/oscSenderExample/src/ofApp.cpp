@@ -2,37 +2,38 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
-	ofBackground(40, 100, 40);
-
 	// open an outgoing connection to HOST:PORT
 	sender.setup(HOST, PORT);
-    
     imgAsBuffer = ofBufferFromFile("of-logo.png", true);
-
+    ofSetWindowTitle("osc sender");
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+    
+    ofxOscMessage m;
+    m.setAddress("/mouse/position");
+    m.addFloatArg(ofMap(ofGetMouseX(), 0, ofGetWidth(), 0.f, 1.f, true));
+    m.addFloatArg(ofMap(ofGetMouseY(), 0, ofGetHeight(), 0.f, 1.f, true));
+    sender.sendMessage(m, false);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    ofBackgroundGradient(255, 100);
     
     if(img.getWidth() > 0){
-        ofDrawBitmapString("Image:", 10, 160);
-        img.draw(10, 180);
+        ofSetColor(255);
+        img.draw(ofGetWidth()/2-img.getWidth()/2,
+                 ofGetHeight()/2-img.getHeight()/2);
     }
     
 	// display instructions
-	string buf;
-	buf = "sending osc messages to" + string(HOST) + ofToString(PORT);
-	ofDrawBitmapString(buf, 10, 20);
-	ofDrawBitmapString("move the mouse to send osc message [/mouse/position <x> <y>]", 10, 50);
-	ofDrawBitmapString("click to send osc message [/mouse/button <button> <\"up\"|\"down\">]", 10, 65);
-	ofDrawBitmapString("press A to send osc message [/test 1 3.5 hello <time>]", 10, 80);
-	ofDrawBitmapString("press I to send a (small) image as a osc blob to [/image]", 10, 95);
+    string buf = "sending osc messages to : " + string(HOST);
+    buf += " : " + ofToString(PORT);
+    buf += "\npress A to send osc message [/test 1 3.5 hello <time>]\n";
+    buf += "press I to send a (small) image as a osc blob to [/image]";
+	ofDrawBitmapStringHighlight(buf, 10, 20);
 
 }
 
@@ -48,8 +49,7 @@ void ofApp::keyPressed(int key){
 		sender.sendMessage(m, false);
 	}
     
-    //send an image. (Note: the size of the image depends greatly on your network buffer sizes - if an image is too big the message won't come through )
-
+    //send an image. (Note: the size of the image depends greatly on your network buffer sizes - if an image is too big the message won't come through)
     if( key == 'i' || key == 'I'){
         img.load(imgAsBuffer);
 
@@ -61,66 +61,62 @@ void ofApp::keyPressed(int key){
     }
 }
 
+
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-	ofxOscMessage m;
-	m.setAddress("/mouse/position");
-	m.addIntArg(x);
-	m.addIntArg(y);
-	sender.sendMessage(m, false);
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-	ofxOscMessage m;
-	m.setAddress("/mouse/button");
-	m.addIntArg(button);
-	m.addStringArg("down");
-	sender.sendMessage(m, false);
+    
+    ofxOscMessage m;
+    m.setAddress("/mouse/button");
+    m.addIntArg(1);
+    m.addStringArg("down");
+    sender.sendMessage(m, false);
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
 	ofxOscMessage m;
 	m.setAddress("/mouse/button");
-	m.addIntArg(button);
+    m.addIntArg(0);
 	m.addStringArg("up");
 	sender.sendMessage(m, false);
-
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){
     
 }
-
