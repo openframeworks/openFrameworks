@@ -4,7 +4,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     
-    ofSetBackgroundColor(20);
+    	ofSetBackgroundColor(20);
     
 	// setup the server to listen on 11999
 	TCP.setup(11999);
