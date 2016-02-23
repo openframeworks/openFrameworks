@@ -32,13 +32,13 @@ void ofApp::update(){
         
         // check for mouse moved message
         if(m.getAddress() == "/mouse/position"){
-            // both the arguments are int32's
+            // both the arguments are float's
             mouseXf = m.getArgAsFloat(0);
             mouseYf = m.getArgAsFloat(1);
         }
         // check for mouse button message
         else if(m.getAddress() == "/mouse/button"){
-            // the single argument is a string
+            // first argument is int32, second is a string
             mouseButtonInt = m.getArgAsInt32(0);
             mouseButtonState = m.getArgAsString(1);
         }
