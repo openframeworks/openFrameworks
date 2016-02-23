@@ -8,11 +8,12 @@ void ofApp::setup(){
 	// optionally set the delimiter to something else.  The delimiter in the client and the server have to be the same, default being [/TCP]
 	TCP.setMessageDelimiter("\n");
 	lastSent = 0;
+    
+    ofBackground(20);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	ofBackground(20, 20, 20);
 
 	// for each client lets send them a message letting them know what port they are connected on
 	// we throttle the message sending frequency to once every 100ms
@@ -31,13 +32,13 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	ofSetHexColor(0xDDDDDD);
+	ofSetColor(220);
 	ofDrawBitmapString("TCP SERVER Example \n\nconnect on port: "+ofToString(TCP.getPort()), 10, 20);
 
-	ofSetHexColor(0x000000);
+	ofSetColor(0);
 	ofDrawRectangle(10, 60, ofGetWidth()-24, ofGetHeight() - 65 - 15);
 
-	ofSetHexColor(0xDDDDDD);
+	ofSetColor(220);
 
 	// for each connected client lets get the data being sent and lets print it to the screen
 	for(unsigned int i = 0; i < (unsigned int)TCP.getLastID(); i++){
@@ -85,57 +86,59 @@ void ofApp::draw(){
 
 }
 
+
+
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
+    
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
+void ofApp::mouseMoved(int x, int y){
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-
+    
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
+void ofApp::dragEvent(ofDragInfo dragInfo){
+    
 }

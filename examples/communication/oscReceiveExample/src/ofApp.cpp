@@ -7,12 +7,12 @@ void ofApp::setup(){
 	receiver.setup(PORT);
 
 	current_msg_string = 0;
-	mouseX = 0;
-	mouseY = 0;
+	mouseXf = 0;
+	mouseYf = 0;
+    mouseButtonInt = 0;
 	mouseButtonState = "";
 
-	ofBackground(30, 30, 130);
-
+    ofSetWindowTitle("osc receiver");
 }
 
 //--------------------------------------------------------------
@@ -34,13 +34,14 @@ void ofApp::update(){
 		// check for mouse moved message
 		if(m.getAddress() == "/mouse/position"){
 			// both the arguments are int32's
-			mouseX = m.getArgAsInt32(0);
-			mouseY = m.getArgAsInt32(1);
+			mouseXf = m.getArgAsFloat(0);
+			mouseYf = m.getArgAsFloat(1);
 		}
 		// check for mouse button message
 		else if(m.getAddress() == "/mouse/button"){
-			// the single argument is a string
-			mouseButtonState = m.getArgAsString(0);
+            // the single argument is a string
+            mouseButtonInt = m.getArgAsInt32(0);
+            mouseButtonState = m.getArgAsString(1);
 		}
         // check for an image being sent (note: the size of the image depends greatly on your network buffer sizes - if an image is too big the message won't come through ) 
         else if(m.getAddress() == "/image" ){
@@ -51,9 +52,10 @@ void ofApp::update(){
 			// unrecognized message: display on the bottom of the screen
 			string msg_string;
 			msg_string = m.getAddress();
-			msg_string += ": ";
+			msg_string += ":";
 			for(int i = 0; i < m.getNumArgs(); i++){
 				// get the argument type
+                msg_string += " ";
 				msg_string += m.getArgTypeName(i);
 				msg_string += ":";
 				// display the argument - make sure we get the right type
@@ -84,79 +86,89 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
-	string buf;
-	buf = "listening for osc messages on port" + ofToString(PORT);
-	ofDrawBitmapString(buf, 10, 20);
+    ofBackgroundGradient(100, 0);
     
+    //if image exists, draw it
     if(receivedImage.getWidth() > 0){
-        ofDrawBitmapString("Image:", 10, 160);
-        receivedImage.draw(10, 180);
+        ofSetColor(255);
+        receivedImage.draw(ofGetWidth()/2-receivedImage.getWidth()/2,
+                           ofGetHeight()/2-receivedImage.getHeight()/2);
     }
+    
+    //draw recent unrecognized messages
+    for(int i = 0; i < NUM_MSG_STRINGS; i++){
+        ofDrawBitmapStringHighlight(msg_strings[i], 10, 40 + 15 * i);
+    }
+    
+	string buf = "listening for osc messages on port : " + ofToString(PORT);
+	ofDrawBitmapStringHighlight(buf, 10, 20);
+    
 
-	// draw mouse state
-	buf = "mouse: " + ofToString(mouseX, 4) +  " " + ofToString(mouseY, 4);
-	ofDrawBitmapString(buf, 430, 20);
-	ofDrawBitmapString(mouseButtonState, 580, 20);
-
-	for(int i = 0; i < NUM_MSG_STRINGS; i++){
-		ofDrawBitmapString(msg_strings[i], 10, 40 + 15 * i);
-	}
 
 
+    
+    // draw mouse state
+    ofPoint mouseIn(mouseXf*ofGetWidth(),mouseYf*ofGetHeight());
+    if (mouseButtonInt == 0) {
+        ofSetColor(255);
+    }else ofSetColor(ofColor::salmon);
+    ofDrawCircle(mouseIn, 20);
+    ofDrawBitmapStringHighlight(mouseButtonState, mouseIn);
 
 }
 
+
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){
-
+    
 }
