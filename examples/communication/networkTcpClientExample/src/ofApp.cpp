@@ -7,8 +7,8 @@ void ofApp::setup(){
     	ofSetBackgroundColor(230);
 
     	// our send and recieve strings
-		msgTx	= "";
-		msgRx	= "";
+	msgTx	= "";
+	msgRx	= "";
 
     	// connect to the server - if this fails or disconnects
     	// we'll check every few seconds to see if the server exists
@@ -24,11 +24,11 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 	if(tcpClient.isConnected()){
-        // we are connected - lets try to receive from the server
-        string str = tcpClient.receive();
-        if( str.length() > 0 ){
+        	// we are connected - lets try to receive from the server
+        	string str = tcpClient.receive();
+        	if( str.length() > 0 ){
 			msgRx = str;
-        }
+        	}
     	}else{
 		msgTx = "";
         	// if we are not connected lets try and reconnect every 5 seconds
@@ -70,13 +70,13 @@ void ofApp::keyPressed(int key){
 	if(tcpClient.isConnected()){
 		if(key == OF_KEY_RETURN) key = '\n';
 		if(key == OF_KEY_BACKSPACE || key == OF_KEY_DEL){
-            if( !msgTx.empty()){
-                msgTx = msgTx.substr(0, msgTx.size()-1);
-            }
+            		if( !msgTx.empty()){
+                		msgTx = msgTx.substr(0, msgTx.size()-1);
+            		}
 		}else{
-            msgTx += (char) key;
-        }
-        tcpClient.send(msgTx);
+            		msgTx += (char) key;
+        	}
+        	tcpClient.send(msgTx);
 		if (!msgTx.empty() && msgTx.back() == '\n') {
 			msgTx.clear();
 		}
