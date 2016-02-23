@@ -30,6 +30,6 @@ class ofApp : public ofBaseApp {
 		ofTrueTypeFont font;
 		ofxOscSender sender;
 		ofBuffer imgAsBuffer;
-        	ofImage img; 
+		ofImage img; 
 };
 

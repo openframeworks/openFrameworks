@@ -3,15 +3,15 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    
-    	ofSetBackgroundColor(20);
-    
+
+	ofSetBackgroundColor(20);
+
 	// setup the server to listen on 11999
 	TCP.setup(11999);
 	// optionally set the delimiter to something else.  The delimiter in the client and the server have to be the same, default being [/TCP]
 	TCP.setMessageDelimiter("\n");
 	lastSent = 0;
-    
+
 }
 
 //--------------------------------------------------------------
@@ -68,11 +68,11 @@ void ofApp::draw(){
 
 		// receive all the available messages, separated by \n
 		// and keep only the last one
-        string str;
-        string tmp;
-        do{
-            str = tmp;
-            tmp = TCP.receive(i);
+		string str;
+		string tmp;
+		do{
+			str = tmp;
+			tmp = TCP.receive(i);
 		}while(tmp!="");
 
 		// if there was a message set it to the corresponding client

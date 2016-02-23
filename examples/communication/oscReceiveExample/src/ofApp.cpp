@@ -2,34 +2,34 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	// listen on the given port
-	cout << "listening for osc messages on port " << PORT << "\n";
-	receiver.setup(PORT);
+    // listen on the given port
+    cout << "listening for osc messages on port " << PORT << "\n";
+    receiver.setup(PORT);
 
-	current_msg_string = 0;
-	mouseX = 0;
-	mouseY = 0;
-	mouseButtonState = "";
-    
-    	ofSetWindowTitle("osc receiver");
+    current_msg_string = 0;
+    mouseX = 0;
+    mouseY = 0;
+    mouseButtonState = "";
+
+    ofSetWindowTitle("osc receiver");
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    
+
     // hide old messages
     for(int i = 0; i < NUM_MSG_STRINGS; i++){
         if(timers[i] < ofGetElapsedTimef()){
             msg_strings[i] = "";
         }
     }
-    
+
     // check for waiting messages
     while(receiver.hasWaitingMessages()){
         // get the next message
         ofxOscMessage m;
         receiver.getNextMessage(m);
-        
+
         // check for mouse moved message
         if(m.getAddress() == "/mouse/position"){
             // both the arguments are float's
@@ -78,35 +78,35 @@ void ofApp::update(){
             // clear the next line
             msg_strings[current_msg_string] = "";
         }
-        
+
     }
 }
 
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
+
     ofBackgroundGradient(100, 0);
-    
+
     //if image exists, draw it
     if(receivedImage.getWidth() > 0){
         ofSetColor(255);
         receivedImage.draw(ofGetWidth()/2-receivedImage.getWidth()/2,
-                           ofGetHeight()/2-receivedImage.getHeight()/2);
+         ofGetHeight()/2-receivedImage.getHeight()/2);
     }
-    
+
     //draw recent unrecognized messages
     for(int i = 0; i < NUM_MSG_STRINGS; i++){
         ofDrawBitmapStringHighlight(msg_strings[i], 10, 40 + 15 * i);
     }
-    
+
     string buf = "listening for osc messages on port : " + ofToString(PORT);
     ofDrawBitmapStringHighlight(buf, 10, 20);
-    
-    
-    
-    
-    
+
+
+
+
+
     // draw mouse state
     ofPoint mouseIn(mouseXf*ofGetWidth(),mouseYf*ofGetHeight());
     if (mouseButtonInt == 0) {
