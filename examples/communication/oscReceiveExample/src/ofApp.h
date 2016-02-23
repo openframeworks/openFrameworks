@@ -33,8 +33,9 @@ class ofApp : public ofBaseApp {
 		string msg_strings[NUM_MSG_STRINGS];
 		float timers[NUM_MSG_STRINGS];
 
-		int mouseX, mouseY;
+		float mouseXf, mouseYf;
+		int mouseButtonInt;
 		string mouseButtonState;
-    
-        ofImage receivedImage;
+
+		ofImage receivedImage;
 };
