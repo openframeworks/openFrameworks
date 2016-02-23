@@ -5,7 +5,9 @@ void ofApp::setup(){
 	// open an outgoing connection to HOST:PORT
 	sender.setup(HOST, PORT);
     imgAsBuffer = ofBufferFromFile("of-logo.png", true);
+    
     ofSetWindowTitle("osc sender");
+
 }
 
 //--------------------------------------------------------------
@@ -28,13 +30,12 @@ void ofApp::draw(){
                  ofGetHeight()/2-img.getHeight()/2);
     }
     
-	// display instructions
+    // display instructions
     string buf = "sending osc messages to : " + string(HOST);
     buf += " : " + ofToString(PORT);
     buf += "\npress A to send osc message [/test 1 3.5 hello <time>]\n";
     buf += "press I to send a (small) image as a osc blob to [/image]";
-	ofDrawBitmapStringHighlight(buf, 10, 20);
-
+    ofDrawBitmapStringHighlight(buf, 10, 20);
 }
 
 //--------------------------------------------------------------
@@ -49,7 +50,8 @@ void ofApp::keyPressed(int key){
 		sender.sendMessage(m, false);
 	}
     
-    //send an image. (Note: the size of the image depends greatly on your network buffer sizes - if an image is too big the message won't come through)
+    //send an image. (Note: the size of the image depends greatly on your network buffer sizes - if an image is too big the message won't come through )
+
     if( key == 'i' || key == 'I'){
         img.load(imgAsBuffer);
 
@@ -61,10 +63,9 @@ void ofApp::keyPressed(int key){
     }
 }
 
-
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-    
+
 }
 
 //--------------------------------------------------------------
@@ -74,12 +75,11 @@ void ofApp::mouseMoved(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    
     ofxOscMessage m;
     m.setAddress("/mouse/button");
     m.addIntArg(1);
@@ -89,34 +89,35 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-	ofxOscMessage m;
-	m.setAddress("/mouse/button");
+    ofxOscMessage m;
+    m.setAddress("/mouse/button");
     m.addIntArg(0);
-	m.addStringArg("up");
-	sender.sendMessage(m, false);
+    m.addStringArg("up");
+    sender.sendMessage(m, false);
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){
     
 }
+

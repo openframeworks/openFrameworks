@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	//we run at 60 fps!
 	ofSetVerticalSync(true);
 	ofSetFrameRate(60);
     ofEnableAntiAliasing();
@@ -12,7 +13,7 @@ void ofApp::setup(){
 	udpConnection.SetNonBlocking(true);
 
 	ofSetBackgroundAuto(false);
-	ofBackground(255);
+	ofSetBackgroundColor(255);
 }
 
 //--------------------------------------------------------------
@@ -39,66 +40,65 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
+    
     ofSetColor(20);
-	for(unsigned int i=1;i<stroke.size();i++){
-		ofDrawLine(stroke[i-1].x,stroke[i-1].y,stroke[i].x,stroke[i].y);
-	}
-
+    for(unsigned int i=1;i<stroke.size();i++){
+        ofDrawLine(stroke[i-1].x,stroke[i-1].y,stroke[i].x,stroke[i].y);
+    }
+    
     ofDrawBitmapStringHighlight("UDP Receiver Example ", 10, 20);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-    
+
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y){
-    
+void ofApp::mouseMoved(int x, int y ){
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-    
+
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-    
+void ofApp::dragEvent(ofDragInfo dragInfo){ 
+
 }
