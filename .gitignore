@@ -107,6 +107,7 @@ gradlew.bat
 *~.nib
 # Thumbnails
 ._*
+examples/ios/**/mediaAssets
 
 # Windows
 # Windows image file caches
