@@ -11,7 +11,7 @@ void ofApp::setup(){
 	mouseY = 0;
 	mouseButtonState = "";
     
-    ofSetWindowTitle("osc receiver");
+    	ofSetWindowTitle("osc receiver");
 }
 
 //--------------------------------------------------------------
