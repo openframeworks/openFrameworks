@@ -526,20 +526,6 @@ int ofNextPow2(int a);
 /// \returns int -1 if n is negative, 1 if n is positive, and 0 is n == 0;
 int ofSign(float n);
 
-/// \brief Compare two integral types for for equality.
-///
-/// This simply returns the result of `a == b`.
-///
-/// \tparam The integral data type.
-/// \param a The first integral type variable to compare.
-/// \param b The second integral type variable to compare.
-/// \returns True if `a == b`.
-template<typename Type>
-typename std::enable_if<std::is_integral<Type>::value, bool>::type ofIsEqual(const Type& a, const Type& b)
-{
-	return a == b;
-}
-
 /// \brief Compare two floating point types for equality.
 ///
 /// From C++ FAQ:
@@ -559,7 +545,7 @@ typename std::enable_if<std::is_integral<Type>::value, bool>::type ofIsEqual(con
 /// \param b The second floating point type variable to compare.
 /// \returns True if `std::abs(x - y) <= std::numeric_limits<Type>::epsilon() * std::abs(x)`.
 template<typename Type>
-typename std::enable_if<std::is_floating_point<Type>::value, bool>::type ofIsEqual(const Type& a, const Type& b)
+typename std::enable_if<std::is_floating_point<Type>::value, bool>::type ofIsFloatEqual(const Type& a, const Type& b)
 {
 	return std::abs(a - b) <= std::numeric_limits<Type>::epsilon() * std::abs(a);
 }
