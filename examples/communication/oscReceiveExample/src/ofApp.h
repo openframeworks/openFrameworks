@@ -36,6 +36,6 @@ class ofApp : public ofBaseApp {
 		float mouseXf, mouseYf;
 		int mouseButtonInt;
 		string mouseButtonState;
-    
-        	ofImage receivedImage;
+
+		ofImage receivedImage;
 };
