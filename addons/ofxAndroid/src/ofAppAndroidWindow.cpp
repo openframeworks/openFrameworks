@@ -113,7 +113,7 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 	// TODO Auto-generated destructor stub
 }
 
-bool ofAppAndroidWindow::isSurfaceDestoryed() {
+bool ofAppAndroidWindow::isSurfaceDestroyed() {
 	return surfaceDestroyed;
 }
 
