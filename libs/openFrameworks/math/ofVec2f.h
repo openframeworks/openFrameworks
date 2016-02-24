@@ -124,7 +124,10 @@ public:
 	/// 
     ofVec2f( const ofVec4f& vec );
 	
-    /// \}
+	/// \}
+
+	ofVec2f(const glm::vec2 & v);
+	ofVec2f(const glm::vec3 & v);
 
 	operator glm::vec2() const;
 	operator glm::vec3() const;
@@ -994,6 +997,8 @@ ofVec2f operator/( float f, const ofVec2f& vec );
 inline ofVec2f::ofVec2f(): x(0), y(0) {}
 inline ofVec2f::ofVec2f( float _scalar ): x(_scalar), y(_scalar) {}
 inline ofVec2f::ofVec2f( float _x, float _y ):x(_x), y(_y) {}
+inline ofVec2f::ofVec2f(const glm::vec2 & v): x(v.x), y(v.y) {}
+inline ofVec2f::ofVec2f(const glm::vec3 & v): x(v.x), y(v.y) {}
 
 // Getters and Setters.
 //
@@ -1012,7 +1017,6 @@ inline void ofVec2f::set( const ofVec2f& vec ) {
 	x = vec.x;
 	y = vec.y;
 }
-
 
 inline ofVec2f::operator glm::vec2() const{
 	return glm::vec2(x,y);
