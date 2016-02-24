@@ -102,7 +102,7 @@ vector<ofIndexType> of3dPrimitive::getIndices( int startIndex, int endIndex ) co
 
 //----------------------------------------------------------
 bool of3dPrimitive::hasScaling()  const{
-    ofVec3f scale = getScale();
+	glm::vec3 scale = getScale();
     return (scale.x != 1.f || scale.y != 1.f || scale.z != 1.f);
 }
 //----------------------------------------------------------
@@ -215,16 +215,16 @@ void of3dPrimitive::drawNormals(float length, bool bFaceNormals) const{
     ofNode::transformGL(ofGetCurrentRenderer().get());
     
     if(getMesh().usingNormals()) {
-        const vector<ofVec3f>& normals    = getMesh().getNormals();
-        const vector<ofVec3f>& vertices   = getMesh().getVertices();
-        ofVec3f normal;
-        ofVec3f vert;
+		const vector<glm::vec3>& normals    = getMesh().getNormals();
+		const vector<glm::vec3>& vertices   = getMesh().getVertices();
+		glm::vec3 normal;
+		glm::vec3 vert;
         
         normalsMesh.setMode( OF_PRIMITIVE_LINES );
         normalsMesh.getVertices().resize( normals.size() * 2);
         
         if(bFaceNormals) {
-            for(int i = 0; i < (int)normals.size(); i++ ) {
+			for(size_t i = 0; i < normals.size(); i++ ) {
                 if(i % 3 == 0) {
                     vert = (vertices[i]+vertices[i+1]+vertices[i+2]) / 3;
                 } else if(i % 3 == 1) {
@@ -233,14 +233,14 @@ void of3dPrimitive::drawNormals(float length, bool bFaceNormals) const{
                     vert = (vertices[i-2]+vertices[i-1]+vertices[i]) / 3;
                 }
                 normalsMesh.setVertex(i*2, vert);
-                normal = normals[i].getNormalized();
+				normal = glm::normalize(normals[i]);
                 normal *= length;
                 normalsMesh.setVertex(i*2+1, normal+vert);
             }
         } else {
-            for(int i = 0; i < (int)normals.size(); i++) {
+			for(size_t i = 0; i < normals.size(); i++) {
                 vert = vertices[i];
-                normal = normals[i].getNormalized();
+				normal = glm::normalize(normals[i]);
                 normalsMesh.setVertex( i*2, vert);
                 normal *= length;
                 normalsMesh.setVertex(i*2+1, normal+vert);
@@ -531,7 +531,7 @@ void ofCylinderPrimitive::set(float _radius, float _height, int radiusSegments, 
     radius = _radius;
     height = _height;
     bCapped = _bCapped;
-    resolution.set( radiusSegments, heightSegments, capSegments );
+	resolution = {radiusSegments, heightSegments, capSegments};
     
     int resX = std::max(getResolution().x,0.0f);
     int resY = std::max(getResolution().y-1,0.0f);
@@ -717,7 +717,7 @@ int ofCylinderPrimitive::getResolutionCap() const {
 }
 
 //--------------------------------------------------------------
-ofVec3f ofCylinderPrimitive::getResolution() const {
+glm::vec3 ofCylinderPrimitive::getResolution() const {
     return resolution;
 }
 
@@ -760,7 +760,7 @@ ofConePrimitive::~ofConePrimitive() {}
 void ofConePrimitive::set( float _radius, float _height, int radiusSegments, int heightSegments, int capSegments, ofPrimitiveMode mode ) {
     radius = _radius;
     height = _height;
-    resolution.set(radiusSegments, heightSegments, capSegments);
+	resolution = {radiusSegments, heightSegments, capSegments};
     
     int resX = std::max(getResolution().x, 0.0f);
     int resY = std::max(getResolution().y-1, 0.0f);
@@ -911,7 +911,7 @@ int ofConePrimitive::getResolutionCap() const {
 }
 
 //--------------------------------------------------------------
-ofVec3f ofConePrimitive::getResolution() const {
+glm::vec3 ofConePrimitive::getResolution() const {
     return resolution;
 }
 
@@ -952,7 +952,7 @@ void ofBoxPrimitive::set( float width, float height, float depth, int resWidth, 
     size.y = height;
     size.z = depth;
     
-    resolution.set( resWidth, resHeight, resDepth );
+	resolution = {resWidth, resHeight, resDepth};
     
     int resX = getResolution().x;
     int resY = getResolution().y;
@@ -1082,7 +1082,7 @@ void ofBoxPrimitive::setResolutionDepth( int depthRes ) {
 
 //--------------------------------------------------------------
 void ofBoxPrimitive::setResolution( int resWidth, int resHeight, int resDepth ) {
-    resolution.set( resWidth, resHeight, resDepth );
+	resolution = {resWidth, resHeight, resDepth};
     set( getWidth(), getHeight(), getDepth() );
 }
 
@@ -1117,7 +1117,7 @@ int ofBoxPrimitive::getResolutionDepth() const {
 }
 
 //--------------------------------------------------------------
-ofVec3f ofBoxPrimitive::getResolution() const {
+glm::vec3 ofBoxPrimitive::getResolution() const {
     return resolution;
 }
 
@@ -1137,6 +1137,6 @@ float ofBoxPrimitive::getDepth() const {
 }
 
 //--------------------------------------------------------------
-ofVec3f ofBoxPrimitive::getSize() const {
+glm::vec3 ofBoxPrimitive::getSize() const {
     return size;
 }

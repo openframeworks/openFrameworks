@@ -3,14 +3,15 @@
 #include "ofMath.h"
 #include "ofLog.h"
 #include "of3dGraphics.h"
+#include "ofVec3f.h"
 
 //----------------------------------------
 ofNode::ofNode()
 :parent(nullptr)
 ,legacyCustomDrawOverrided(true){
-	setPosition(ofVec3f(0, 0, 0));
-	setOrientation(ofVec3f(0, 0, 0));
-	setScale(1);
+	setPosition({0.f, 0.f, 0.f});
+	setOrientation({0.f, 0.f, 0.f});
+	setScale(1.f);
 	position.disableEvents();
 	scale.disableEvents();
 	orientation.disableEvents();
@@ -154,13 +155,13 @@ void ofNode::setTransformMatrix(const ofMatrix4x4 &m44) {
 	localTransformMatrix = m44;
 
 	ofVec3f position;
-	ofQuaternion orientation;
 	ofVec3f scale;
+	ofQuaternion orientation;
 	ofQuaternion so;
 	localTransformMatrix.decompose(position, orientation, scale, so);
-	this->position = position;
+	this->position = toGlm(position);
+	this->scale = toGlm(scale);
 	this->orientation = orientation;
-	this->scale = scale;
 	updateAxis();
 	
 	onPositionChanged();
@@ -170,32 +171,32 @@ void ofNode::setTransformMatrix(const ofMatrix4x4 &m44) {
 
 //----------------------------------------
 void ofNode::setPosition(float px, float py, float pz) {
-	setPosition(ofVec3f(px, py, pz));
+	setPosition({px, py, pz});
 }
 
 //----------------------------------------
-void ofNode::setPosition(const ofVec3f& p) {
+void ofNode::setPosition(const glm::vec3& p) {
 	position = p;
-	localTransformMatrix.setTranslation(position);
+	localTransformMatrix.setTranslation(toOf(position));
 	onPositionChanged();
 }
 
 //----------------------------------------
 void ofNode::setGlobalPosition(float px, float py, float pz) {
-	setGlobalPosition(ofVec3f(px, py, pz));
+	setGlobalPosition({px, py, pz});
 }
 
 //----------------------------------------
-void ofNode::setGlobalPosition(const ofVec3f& p) {
+void ofNode::setGlobalPosition(const glm::vec3& p) {
 	if(parent == nullptr) {
 		setPosition(p);
 	} else {
-		setPosition(p * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix()));
+		setPosition(toGlm(toOf(p) * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix())));
 	}
 }
 
 //----------------------------------------
-ofVec3f ofNode::getPosition() const {
+glm::vec3 ofNode::getPosition() const {
 	return position;
 }
 
@@ -222,7 +223,7 @@ void ofNode::setOrientation(const ofQuaternion& q) {
 }
 
 //----------------------------------------
-void ofNode::setOrientation(const ofVec3f& eulerAngles) {
+void ofNode::setOrientation(const glm::vec3& eulerAngles) {
 	setOrientation(ofQuaternion(eulerAngles.x, ofVec3f(1, 0, 0), eulerAngles.z, ofVec3f(0, 0, 1), eulerAngles.y, ofVec3f(0, 1, 0)));
 }
 
@@ -243,8 +244,8 @@ ofQuaternion ofNode::getOrientationQuat() const {
 }
 
 //----------------------------------------
-ofVec3f ofNode::getOrientationEuler() const {
-	return orientation->getEuler();
+glm::vec3 ofNode::getOrientationEuler() const {
+	return toGlm(orientation->getEuler());
 }
 
 //----------------------------------------
@@ -254,30 +255,30 @@ void ofNode::setScale(float s) {
 
 //----------------------------------------
 void ofNode::setScale(float sx, float sy, float sz) {
-	setScale(ofVec3f(sx, sy, sz));
+	setScale({sx, sy, sz});
 }
 
 //----------------------------------------
-void ofNode::setScale(const ofVec3f& s) {
+void ofNode::setScale(const glm::vec3& s) {
 	this->scale = s;
 	createMatrix();
 	onScaleChanged();
 }
 
 //----------------------------------------
-ofVec3f ofNode::getScale() const {
+glm::vec3 ofNode::getScale() const {
 	return scale;
 }
 
 //----------------------------------------
 void ofNode::move(float x, float y, float z) {
-	move(ofVec3f(x, y, z));
+	move({x, y, z});
 }
 
 //----------------------------------------
-void ofNode::move(const ofVec3f& offset) {
+void ofNode::move(const glm::vec3& offset) {
 	position += offset;
-	localTransformMatrix.setTranslation(position);
+	localTransformMatrix.setTranslation(toOf(position));
 	onPositionChanged();
 }
 
@@ -319,8 +320,8 @@ void ofNode::rotate(const ofQuaternion& q) {
 }
 
 //----------------------------------------
-void ofNode::rotate(float degrees, const ofVec3f& v) {
-	rotate(ofQuaternion(degrees, v));
+void ofNode::rotate(float degrees, const glm::vec3& v) {
+	rotate(ofQuaternion(degrees, toOf(v)));
 }
 
 //----------------------------------------
@@ -329,25 +330,25 @@ void ofNode::rotate(float degrees, float vx, float vy, float vz) {
 }
 
 //----------------------------------------
-void ofNode::rotateAround(const ofQuaternion& q, const ofVec3f& point) {
+void ofNode::rotateAround(const ofQuaternion& q, const glm::vec3& point) {
 	//	ofLogVerbose("ofNode") << "rotateAround(const ofQuaternion& q, const ofVec3f& point) not implemented yet";
 	//	ofMatrix4x4 m = getLocalTransformMatrix();
 	//	m.setTranslation(point);
 	//	m.rotate(q);
 	
-	setGlobalPosition((getGlobalPosition() - point)* q + point); 
+	setGlobalPosition(toGlm(toOf(getGlobalPosition() - point) * q) + point);
 	
 	onOrientationChanged();
 	onPositionChanged();
 }
 
 //----------------------------------------
-void ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point) {
-	rotateAround(ofQuaternion(degrees, axis), point);
+void ofNode::rotateAround(float degrees, const glm::vec3& axis, const glm::vec3& point) {
+	rotateAround(ofQuaternion(degrees, toOf(axis)), point);
 }
 
 //----------------------------------------
-void ofNode::lookAt(const ofVec3f& lookAtPosition){
+void ofNode::lookAt(const glm::vec3& lookAtPosition){
     auto relPosition = (getGlobalPosition() - lookAtPosition);
     auto radius = relPosition.length();
     if(radius>0){
@@ -360,12 +361,12 @@ void ofNode::lookAt(const ofVec3f& lookAtPosition){
 }
 
 //----------------------------------------
-void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
-	if(parent) upVector = upVector * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix());	
-	ofVec3f zaxis = (getGlobalPosition() - lookAtPosition).getNormalized();
+void ofNode::lookAt(const glm::vec3& lookAtPosition, glm::vec3 upVector) {
+	if(parent) upVector = toGlm(toOf(upVector) * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix()));
+	auto zaxis = glm::normalize(getGlobalPosition() - lookAtPosition);
 	if (zaxis.length() > 0) {
-		ofVec3f xaxis = upVector.getCrossed(zaxis).getNormalized();
-		ofVec3f yaxis = zaxis.getCrossed(xaxis);
+		auto xaxis = glm::normalize(glm::cross(upVector, zaxis));
+		auto yaxis = glm::cross(zaxis, xaxis);
 		
 		ofMatrix4x4 m;
 		m._mat[0].set(xaxis.x, xaxis.y, xaxis.z, 0);
@@ -382,44 +383,44 @@ void ofNode::lookAt(const ofNode& lookAtNode){
 }
 
 //----------------------------------------
-void ofNode::lookAt(const ofNode& lookAtNode, const ofVec3f& upVector) {
+void ofNode::lookAt(const ofNode& lookAtNode, const glm::vec3& upVector) {
 	lookAt(lookAtNode.getGlobalPosition(), upVector);
 }
 
 //----------------------------------------
 void ofNode::updateAxis() {
-	if(scale->x>0) axis[0] = getLocalTransformMatrix().getRowAsVec3f(0)/scale->x;
-	if(scale->y>0) axis[1] = getLocalTransformMatrix().getRowAsVec3f(1)/scale->y;
-	if(scale->z>0) axis[2] = getLocalTransformMatrix().getRowAsVec3f(2)/scale->z;
+	if(scale->x>0) axis[0] = toGlm(getLocalTransformMatrix().getRowAsVec3f(0)/scale->x);
+	if(scale->y>0) axis[1] = toGlm(getLocalTransformMatrix().getRowAsVec3f(1)/scale->y);
+	if(scale->z>0) axis[2] = toGlm(getLocalTransformMatrix().getRowAsVec3f(2)/scale->z);
 }
 
 //----------------------------------------
-ofVec3f ofNode::getXAxis() const {
+glm::vec3 ofNode::getXAxis() const {
 	return axis[0];
 }
 
 //----------------------------------------
-ofVec3f ofNode::getYAxis() const {
+glm::vec3 ofNode::getYAxis() const {
 	return axis[1];
 }
 
 //----------------------------------------
-ofVec3f ofNode::getZAxis() const {
+glm::vec3 ofNode::getZAxis() const {
 	return axis[2];
 }
 
 //----------------------------------------
-ofVec3f ofNode::getSideDir() const {
+glm::vec3 ofNode::getSideDir() const {
 	return getXAxis();
 }
 
 //----------------------------------------
-ofVec3f ofNode::getLookAtDir() const {
+glm::vec3 ofNode::getLookAtDir() const {
 	return -getZAxis();
 }
 
 //----------------------------------------
-ofVec3f ofNode::getUpDir() const {
+glm::vec3 ofNode::getUpDir() const {
 	return getYAxis();
 }
 
@@ -450,8 +451,8 @@ ofMatrix4x4 ofNode::getGlobalTransformMatrix() const {
 }
 
 //----------------------------------------
-ofVec3f ofNode::getGlobalPosition() const {
-	return getGlobalTransformMatrix().getTranslation();
+glm::vec3 ofNode::getGlobalPosition() const {
+	return toGlm(getGlobalTransformMatrix().getTranslation());
 }
 
 //----------------------------------------
@@ -460,15 +461,15 @@ ofQuaternion ofNode::getGlobalOrientation() const {
 }
 
 //----------------------------------------
-ofVec3f ofNode::getGlobalScale() const {
+glm::vec3 ofNode::getGlobalScale() const {
 	if(parent) return getScale()*parent->getGlobalScale();
 	else return getScale();
 }
 
 //----------------------------------------
-void ofNode::orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint) {
+void ofNode::orbit(float longitude, float latitude, float radius, const glm::vec3& centerPoint) {
 	ofQuaternion q(latitude, ofVec3f(1,0,0), longitude, ofVec3f(0,1,0), 0, ofVec3f(0,0,1));
-	setPosition((ofVec3f(0,0,radius)-centerPoint)*q +centerPoint);
+	setPosition(toGlm(toOf(glm::vec3(0,0,radius)-centerPoint)*q) + centerPoint);
 	setOrientation(q);
 	onOrientationChanged();
 	onPositionChanged();
@@ -482,8 +483,8 @@ void ofNode::orbit(float longitude, float latitude, float radius, ofNode& center
 
 //----------------------------------------
 void ofNode::resetTransform() {
-	setPosition(ofVec3f());
-	setOrientation(ofVec3f());
+	setPosition({0.f,0.f,0.f});
+	setOrientation({0.f,0.f,0.f});
     setScale({1.f,1.f,1.f});
 }
 
@@ -527,9 +528,9 @@ void ofNode::restoreTransformGL(ofBaseRenderer * renderer) const {
 void ofNode::createMatrix() {
 	//if(isMatrixDirty) {
 	//	isMatrixDirty = false;
-	localTransformMatrix.makeScaleMatrix(scale);
+	localTransformMatrix.makeScaleMatrix(toOf(scale));
 	localTransformMatrix.rotate(orientation);
-	localTransformMatrix.setTranslation(position);
+	localTransformMatrix.setTranslation(toOf(position));
 	
 	updateAxis();
 }

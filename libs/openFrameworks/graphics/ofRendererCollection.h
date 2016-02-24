@@ -238,7 +238,7 @@ public:
 			 renderers[i]->translate(x,y,z);
 		 }
 	 }
-	 void translate(const ofPoint & p){
+	 void translate(const glm::vec3 & p){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->translate(p);
 		 }

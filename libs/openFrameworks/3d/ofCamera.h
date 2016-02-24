@@ -118,7 +118,7 @@ public:
 	
 	void setupPerspective(bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0, const glm::vec2 & lensOffset = glm::vec2(0.0f, 0.0f));
 
-    void setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & bottomLeft, const ofVec3f & bottomRight);
+	void setupOffAxisViewPortal(const glm::vec3 & topLeft, const glm::vec3 & bottomLeft, const glm::vec3 & bottomRight);
 	
 	void setVFlip(bool vflip);
 
@@ -185,7 +185,7 @@ public:
 	/// \param WorldXYZ A 3D point in the world, whose screen coordinates you wish to know. 
 	/// \param viewport (Optional) A viewport. The default is ofGetCurrentViewport(). 
 	/// \returns An ofVec3f containing the screen coordinates of your 3D point of interest. 
-	ofVec3f worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport = ofRectangle()) const;
+	glm::vec3 worldToScreen(glm::vec3 WorldXYZ, ofRectangle viewport = ofRectangle()) const;
 	
 	/// \brief Obtain the coordinates, in the 3D world, of a 2D point presumed to be on your screen.
 	///
@@ -195,13 +195,13 @@ public:
 	/// This Z value is interpreted as a distance into or away from the screen. 
 	///
 	/// \param ScreenXYZ A point on your screen, whose 3D world coordinates you wish to know.
-	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofRectangle()) const;
+	glm::vec3 screenToWorld(glm::vec3 ScreenXYZ, ofRectangle viewport = ofRectangle()) const;
 	
 	/// \todo worldToCamera()
-	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofRectangle()) const;
+	glm::vec3 worldToCamera(glm::vec3 WorldXYZ, ofRectangle viewport = ofRectangle()) const;
 
 	/// \todo cameraToWorld()
-	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofRectangle()) const;
+	glm::vec3 cameraToWorld(glm::vec3 CameraXYZ, ofRectangle viewport = ofRectangle()) const;
 
 	/// \}
 	/// \name Renderer

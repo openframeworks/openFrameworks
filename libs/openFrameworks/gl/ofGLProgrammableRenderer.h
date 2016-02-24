@@ -77,7 +77,7 @@ public:
 	void pushMatrix();
 	void popMatrix();
 	void translate(float x, float y, float z = 0);
-	void translate(const ofVec3f & p);
+	void translate(const glm::vec3 & p);
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1);
 	void rotate(float degrees, float vecX, float vecY, float vecZ);
 	void rotateX(float degrees);

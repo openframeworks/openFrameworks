@@ -39,3 +39,17 @@ inline const glm::vec4 & toGlm(const ofVec4f & v){
 inline const glm::mat4 & toGlm(const ofMatrix4x4 & v){
 	return *reinterpret_cast<const glm::mat4*>(&v);
 }
+
+inline ostream& operator<<(ostream& os, const glm::vec3& vec) {
+	os << vec.x << ", " << vec.y << ", " << vec.z;
+	return os;
+}
+
+inline istream& operator>>(istream& is, glm::vec3& vec) {
+	is >> vec.x;
+	is.ignore(2);
+	is >> vec.y;
+	is.ignore(2);
+	is >> vec.z;
+	return is;
+}

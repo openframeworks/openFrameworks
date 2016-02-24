@@ -247,7 +247,7 @@ void ofCairoRenderer::draw(const ofPolyline & poly) const{
 	cairo_stroke( cr );
 }
 
-void ofCairoRenderer::draw(const vector<ofPoint> & vertexData, ofPrimitiveMode drawMode) const{
+void ofCairoRenderer::draw(const vector<glm::vec3> & vertexData, ofPrimitiveMode drawMode) const{
 	if(vertexData.size()==0) return;
 	ofCairoRenderer * mut_this = const_cast<ofCairoRenderer*>(this);
 	mut_this->pushMatrix();
@@ -258,8 +258,8 @@ void ofCairoRenderer::draw(const vector<ofPoint> & vertexData, ofPrimitiveMode d
 	//if(indices.getNumIndices()){
 
 		int i = 1;
-		ofVec3f v = transform(vertexData[0]);
-		ofVec3f v2;
+		auto v = transform(vertexData[0]);
+		glm::vec3 v2;
 		cairo_move_to(cr,v.x,v.y);
 		if(drawMode==OF_PRIMITIVE_TRIANGLE_STRIP){
 			v = transform(vertexData[1]);
@@ -310,13 +310,13 @@ void ofCairoRenderer::draw(const vector<ofPoint> & vertexData, ofPrimitiveMode d
 }
 
 
-ofVec3f ofCairoRenderer::transform(ofVec3f vec) const{
+glm::vec3 ofCairoRenderer::transform(glm::vec3 vec) const{
 	if(!b3D) return vec;
-	vec = modelView.preMult(vec);
-	vec = projection.preMult(vec);
+	vec = toGlm(modelView.preMult(toOf(vec)));
+	vec = toGlm(projection.preMult(toOf(vec)));
 
 	//vec.set(vec.x/vec.z*viewportRect.width*0.5-ofGetWidth()*0.5-viewportRect.x,vec.y/vec.z*viewportRect.height*0.5-ofGetHeight()*0.5-viewportRect.y);
-	vec.set(vec.x/vec.z*viewportRect.width*0.5,vec.y/vec.z*viewportRect.height*0.5);
+	vec = {vec.x/vec.z*viewportRect.width*0.5, vec.y/vec.z*viewportRect.height*0.5, 0.f};
 	return vec;
 }
 
@@ -340,8 +340,8 @@ void ofCairoRenderer::draw(const ofMesh & primitive, ofPolyRenderMode mode, bool
 	cairo_new_path(cr);
 
 	std::size_t i = 1;
-	ofVec3f v = transform(primitive.getVertex(primitive.getIndex(0)));
-	ofVec3f v2;
+	auto v = transform(primitive.getVertex(primitive.getIndex(0)));
+	glm::vec3 v2;
 	cairo_move_to(cr,v.x,v.y);
 	if(primitive.getMode()==OF_PRIMITIVE_TRIANGLE_STRIP){
 		v = transform(primitive.getVertex(primitive.getIndex(1)));
@@ -434,14 +434,14 @@ void ofCairoRenderer::draw(const ofPath::Command & command) const{
 
 		//code adapted from ofxVectorGraphics to convert catmull rom to bezier
 		if(curvePoints.size()==4){
-			ofPoint p1=curvePoints[0];
-			ofPoint p2=curvePoints[1];
-			ofPoint p3=curvePoints[2];
-			ofPoint p4=curvePoints[3];
+			auto p1=curvePoints[0];
+			auto p2=curvePoints[1];
+			auto p3=curvePoints[2];
+			auto p4=curvePoints[3];
 
 			//SUPER WEIRD MAGIC CONSTANT = 1/6 (this works 100% can someone explain it?)
-			ofPoint cp1 = p2 + ( p3 - p1 ) * (1.0f/6.f);
-			ofPoint cp2 = p3 + ( p2 - p4 ) * (1.0f/6.f);
+			auto cp1 = p2 + ( p3 - p1 ) * (1.0f/6.f);
+			auto cp2 = p3 + ( p2 - p4 ) * (1.0f/6.f);
 
 			cairo_curve_to( cr, cp1.x, cp1.y, cp2.x, cp2.y, p3.x, p3.y );
 			curvePoints.pop_front();
@@ -773,12 +773,12 @@ void ofCairoRenderer::translate(float x, float y, float z ){
 	cairo_set_matrix(cr,&matrix);
 
 	if(!b3D) return;
-	modelView.glTranslate(ofVec3f(x,y,z));
+	modelView.glTranslate({x,y,z});
 
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::translate(const ofPoint & p){
+void ofCairoRenderer::translate(const glm::vec3 & p){
 	translate(p.x,p.y,p.z);
 }
 

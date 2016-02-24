@@ -8,6 +8,7 @@
 
 #include "ofNoise.h"
 #include "ofPolyline.h"
+#include "ofVec4f.h"
 
 //--------------------------------------------------
 int ofNextPow2(int a){
@@ -201,7 +202,7 @@ float ofNoise(float x, float y, float z){
 }
 
 //--------------------------------------------------
-float ofNoise(const ofVec3f& p){
+float ofNoise(const glm::vec3& p){
 	return ofNoise( p.x, p.y, p.z );
 }
 
@@ -236,7 +237,7 @@ float ofSignedNoise(float x, float y, float z){
 }
 
 //--------------------------------------------------
-float ofSignedNoise(const ofVec3f& p){
+float ofSignedNoise(const glm::vec3& p){
 	return ofSignedNoise( p.x, p.y, p.z );
 }
 
@@ -251,18 +252,18 @@ float ofSignedNoise(const ofVec4f& p){
 }
 
 //--------------------------------------------------
-bool ofInsidePoly(float x, float y, const vector<ofPoint>& polygon){
+bool ofInsidePoly(float x, float y, const vector<glm::vec3>& polygon){
     return ofPolyline::inside(x,y, ofPolyline(polygon));
 }
 
 //--------------------------------------------------
-bool ofInsidePoly(const ofPoint& p, const vector<ofPoint>& poly){
+bool ofInsidePoly(const glm::vec3& p, const vector<glm::vec3>& poly){
     return ofPolyline::inside(p.x,p.y, ofPolyline(poly));
 }
 
 //--------------------------------------------------
-bool ofLineSegmentIntersection(const ofPoint& line1Start, const ofPoint& line1End, const ofPoint& line2Start, const ofPoint& line2End, ofPoint& intersection){
-	ofPoint diffLA, diffLB;
+bool ofLineSegmentIntersection(const glm::vec3& line1Start, const glm::vec3& line1End, const glm::vec3& line2Start, const glm::vec3& line2End, glm::vec3& intersection){
+	glm::vec3 diffLA, diffLB;
 	float compareA, compareB;
 	diffLA = line1End - line1Start;
 	diffLB = line2End - line2Start;
@@ -291,14 +292,14 @@ bool ofLineSegmentIntersection(const ofPoint& line1Start, const ofPoint& line1En
 }
 
 //--------------------------------------------------
-ofPoint ofBezierPoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
+glm::vec3 ofBezierPoint(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d, float t){
     float tp = 1.0f - t;
     return a*tp*tp*tp + b*3*t*tp*tp + c*3*t*t*tp + d*t*t*t;
 }
 
 //--------------------------------------------------
-ofPoint ofCurvePoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
-    ofPoint pt;
+glm::vec3 ofCurvePoint(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d, float t){
+	glm::vec3 pt;
     float t2 = t * t;
     float t3 = t2 * t;
     pt.x = 0.5f * ( ( 2.0f * b.x ) +
@@ -313,14 +314,14 @@ ofPoint ofCurvePoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const
 }
 
 //--------------------------------------------------
-ofPoint ofBezierTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
+glm::vec3 ofBezierTangent(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d, float t){
     return (d-a-c*3+b*3)*(t*t)*3 + (a+c-b*2)*t*6 - a*3+b*3;
 }
 
 //--------------------------------------------------
-ofPoint ofCurveTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
-    ofPoint v0 = ( c - a )*0.5;
-    ofPoint v1 = ( d - b )*0.5;
+glm::vec3 ofCurveTangent(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d, float t){
+	glm::vec3 v0 = ( c - a )*0.5;
+	glm::vec3 v1 = ( d - b )*0.5;
     return ( b*2 -c*2 + v0 + v1)*(3*t*t) + ( c*3 - b*3 - v1 - v0*2 )*( 2*t) + v0;
 
 }

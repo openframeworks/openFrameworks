@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ofPoint.h"
 #include "ofEvents.h"
 #include "ofBaseTypes.h"
 

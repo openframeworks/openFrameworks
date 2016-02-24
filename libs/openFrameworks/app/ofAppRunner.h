@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofTypes.h"
 #include "ofWindowSettings.h"
@@ -88,7 +87,7 @@ float ofRandomWidth();
 /// \returns a random number between 0 and the height of the window.
 float ofRandomHeight();
 bool		ofDoesHWOrientation();
-ofPoint		ofGetWindowSize();
+glm::vec2	ofGetWindowSize();
 ofRectangle	ofGetWindowRect();
 ofAppBaseWindow * ofGetWindowPtr();
 

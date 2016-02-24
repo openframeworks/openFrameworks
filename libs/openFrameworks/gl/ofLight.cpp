@@ -319,8 +319,8 @@ void ofLight::onPositionChanged() {
 	if(data->glIndex==-1) return;
 	// if we are a positional light and not directional, update light position
 	if(getIsSpotlight() || getIsPointLight() || getIsAreaLight()) {
-		data->position = ofVec4f(getGlobalPosition().x,getGlobalPosition().y,getGlobalPosition().z,1);
-		ofGetGLRenderer()->setLightPosition(data->glIndex,data->position);
+		data->position = {getGlobalPosition().x, getGlobalPosition().y, getGlobalPosition().z, 1.f};
+		ofGetGLRenderer()->setLightPosition(data->glIndex, data->position);
 	}
 }
 
@@ -329,14 +329,14 @@ void ofLight::onOrientationChanged() {
 	if(data->glIndex==-1) return;
 	if(getIsDirectional()) {
 		// if we are a directional light and not positional, update light position (direction)
-		ofVec3f lookAtDir = ( ofVec4f(0,0,-1, 1) * getGlobalOrientation() ).getNormalized();
-		data->position = ofVec4f(lookAtDir.x,lookAtDir.y,lookAtDir.z,0);
+		auto lookAtDir = glm::normalize(toGlm( ofVec4f(0,0,-1, 1) * getGlobalOrientation() )).xyz();
+		data->position = {lookAtDir.x,lookAtDir.y,lookAtDir.z,0.f};
 		ofGetGLRenderer()->setLightPosition(data->glIndex,data->position);
 	}else if(getIsSpotlight() || getIsAreaLight()) {
 		// determines the axis of the cone light
-		ofVec3f lookAtDir = ( ofVec4f(0,0,-1, 1) * getGlobalOrientation() ).getNormalized();
+		auto lookAtDir = glm::normalize( toGlm(ofVec4f(0,0,-1, 1) * getGlobalOrientation()) ).xyz();
 		data->direction = lookAtDir;
-		ofGetGLRenderer()->setLightSpotDirection(data->glIndex,data->direction);
+		ofGetGLRenderer()->setLightSpotDirection(data->glIndex,toOf(data->direction));
 	}
 	if(getIsAreaLight()){
 		data->up = getUpDir();
