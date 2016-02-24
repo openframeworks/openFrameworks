@@ -534,7 +534,7 @@ int ofSign(float n);
 /// Never use `==` to compare two floating point numbers.
 ///
 /// This solution is not completely symmetric, meaning it
-/// is possible for `ofIsEqual(x,y) != ofIsEqual(y,x)`. From a practical
+/// is possible for `ofIsFloatEqual(x,y) != ofIsFloatEqual(y,x)`. From a practical
 /// standpoint, this does not usually occur when the magnitudes of x and y are
 /// significantly larger than epsilon, but your mileage may vary.
 ///
