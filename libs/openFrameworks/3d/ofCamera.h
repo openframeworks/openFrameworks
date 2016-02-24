@@ -51,7 +51,7 @@ public:
 	///
 	/// \param lensOffset The "lens offset" to apply to this camera, encoded in
     ///     an ofVec2f.
-	void setLensOffset(const ofVec2f & lensOffset);
+	void setLensOffset(const glm::vec2 & lensOffset);
 	
 	/// \brief Set the recommended aspect ratio for a perspective camera.
 	///
@@ -96,7 +96,7 @@ public:
     /// more information see http://www.orthostereo.com/geometryopengl.html.
 	///
 	/// \returns The "lens offset" applied to this camera, encoded in an ofVec2f.
-	ofVec2f getLensOffset() const { return lensOffset; };
+	glm::vec2 getLensOffset() const { return lensOffset; };
 	
 	/// \brief Get the boolean state which indicates whether the aspect ratio of this camera is forced to a non-default setting.
 	/// 
@@ -116,7 +116,7 @@ public:
 	/// \name OpenGL Setup
 	/// \{
 	
-	void setupPerspective(bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0, const ofVec2f & lensOffset = ofVec2f(0.0f, 0.0f));
+	void setupPerspective(bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0, const glm::vec2 & lensOffset = glm::vec2(0.0f, 0.0f));
 
     void setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & bottomLeft, const ofVec3f & bottomRight);
 	
@@ -132,8 +132,8 @@ public:
 	
 	float getImagePlaneDistance(ofRectangle viewport = ofRectangle()) const;
 
-	/// \}
-	/// \name Rendering
+	/// \}
+	/// \name Rendering
 	/// \{
 
 	/// \brief Begins rendering with the camera.
@@ -157,8 +157,8 @@ public:
 	virtual void end();
 	
 	/// \}
-	/// \name OpenGL Matrix
-	/// \{
+	/// \name OpenGL Matrix
+	/// \{
 
 	/// \brief Access the projection matrix.
     /// \returns the current 4x4 projection matrix.
@@ -205,11 +205,11 @@ public:
 
 	/// \}
 	/// \name Renderer
-	/// \{
+	/// \{
     
     void setRenderer(shared_ptr<ofBaseRenderer> renderer);
 	
-	/// \}
+	/// \}
 protected:
 	ofRectangle getViewport(const ofRectangle & _viewport) const;
 	shared_ptr<ofBaseRenderer> getRenderer() const;
@@ -220,7 +220,7 @@ private:
 	float fov;
 	float nearClip;
 	float farClip;
-	ofVec2f lensOffset;
+	glm::vec2 lensOffset;
 	bool forceAspectRatio;
 	float aspectRatio; // only used when forceAspect=true, = w / h
 	bool vFlip;

@@ -146,7 +146,7 @@ void of3dPrimitive::mapTexCoords( float u1, float v1, float u2, float v2 ) {
     ofVec4f prevTcoord = getTexCoords();
     
 	for(std::size_t j = 0; j < getMesh().getNumTexCoords(); j++ ) {
-        ofVec2f tcoord = getMesh().getTexCoord(j);
+		auto tcoord = getMesh().getTexCoord(j);
         tcoord.x = ofMap(tcoord.x, prevTcoord.x, prevTcoord.z, u1, u2);
         tcoord.y = ofMap(tcoord.y, prevTcoord.y, prevTcoord.w, v1, v2);
         
@@ -303,7 +303,7 @@ void ofPlanePrimitive::set(float _width, float _height, int columns, int rows, o
     
     width  = _width;
     height = _height;
-    resolution.set( columns, rows );
+	resolution = { columns, rows };
     
     getMesh() = ofMesh::plane( getWidth(), getHeight(), getResolution().x, getResolution().y, mode );
     
@@ -347,7 +347,7 @@ void ofPlanePrimitive::setRows( int rows ) {
 
 //--------------------------------------------------------------
 void ofPlanePrimitive::setResolution( int columns, int rows ) {
-    resolution.set( columns, rows );
+	resolution = { columns, rows };
     ofPrimitiveMode mode = getMesh().getMode();
     
     set( getWidth(), getHeight(), getResolution().x, getResolution().y, mode );
@@ -372,7 +372,7 @@ int ofPlanePrimitive::getNumRows() const {
 }
 
 //--------------------------------------------------------------
-ofVec2f ofPlanePrimitive::getResolution() const {
+glm::vec2 ofPlanePrimitive::getResolution() const {
     return resolution;
 }
 

@@ -90,7 +90,7 @@ void ofRectangle::setPosition(float px, float py) {
 
 //----------------------------------------------------------
 void ofRectangle::setPosition(const ofPoint& p) {
-    position = p;
+	position = p;
 }
 
 //----------------------------------------------------------
@@ -642,12 +642,12 @@ bool ofRectangle::operator != (const ofRectangle& rect) const {
 
 //----------------------------------------------------------
 const ofPoint& ofRectangle::getPosition() const {
-    return position;
+	return position;
 }
 
 //----------------------------------------------------------
 ofPoint& ofRectangle::getPositionRef() {
-    return position;
+	return position;
 }
 
 //----------------------------------------------------------

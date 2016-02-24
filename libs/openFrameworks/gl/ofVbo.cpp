@@ -316,8 +316,8 @@ void ofVbo::setVertexData(const ofVec3f * verts, int total, int usage) {
 }
 
 //--------------------------------------------------------------
-void ofVbo::setVertexData(const ofVec2f * verts, int total, int usage) {
-	setVertexData(&verts[0].x,2,total,usage,sizeof(ofVec2f));
+void ofVbo::setVertexData(const glm::vec2 * verts, int total, int usage) {
+	setVertexData(&verts[0].x,2,total,usage,sizeof(glm::vec2));
 }
 
 //--------------------------------------------------------------
@@ -358,8 +358,8 @@ void ofVbo::setNormalData(const float * normal0x, int total, int usage, int stri
 }
 
 //--------------------------------------------------------------
-void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
-	setTexCoordData(&texCoords[0].x,total, usage, sizeof(ofVec2f));
+void ofVbo::setTexCoordData(const glm::vec2 * texCoords, int total, int usage) {
+	setTexCoordData(&texCoords[0].x,total, usage, sizeof(glm::vec2));
 }
 
 //--------------------------------------------------------------
@@ -451,7 +451,7 @@ void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
 }
 
 //--------------------------------------------------------------
-void ofVbo::updateVertexData(const ofVec2f * verts, int total) {
+void ofVbo::updateVertexData(const glm::vec2 * verts, int total) {
 	updateVertexData(&verts[0].x,total);
 }
 
@@ -481,7 +481,7 @@ void ofVbo::updateNormalData(const float * normal0x, int total) {
 }
 
 //--------------------------------------------------------------
-void ofVbo::updateTexCoordData(const ofVec2f * texCoords, int total) {
+void ofVbo::updateTexCoordData(const glm::vec2 * texCoords, int total) {
 	updateTexCoordData(&texCoords[0].x,total);
 }
 

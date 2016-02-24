@@ -33,7 +33,7 @@ void ofCamera::setFarClip(float f) {
 }
 
 //----------------------------------------
-void ofCamera::setLensOffset(const ofVec2f & lensOffset){
+void ofCamera::setLensOffset(const glm::vec2 & lensOffset){
 	this->lensOffset = lensOffset;
 }
 
@@ -49,7 +49,7 @@ void ofCamera::setForceAspectRatio(bool forceAspectRatio){
 }
 
 //----------------------------------------
-void ofCamera::setupPerspective(bool _vFlip, float fov, float nearDist, float farDist, const ofVec2f & lensOffset){
+void ofCamera::setupPerspective(bool _vFlip, float fov, float nearDist, float farDist, const glm::vec2 & lensOffset){
 	ofRectangle orientedViewport = getRenderer()->getNativeViewport();
 	float eyeX = orientedViewport.width / 2;
 	float eyeY = orientedViewport.height / 2;
@@ -86,7 +86,7 @@ void ofCamera::setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & b
 	lookAt(cameraLookVector + this->getPosition(), cameraUpVector);
 
 	//lensoffset
-	ofVec2f lensOffset;
+	glm::vec2 lensOffset;
 	lensOffset.x = -bottomLeftToCam.dot(bottomEdgeNorm) * 2.0f / bottomEdge.length() + 1.0f;
 	lensOffset.y = -bottomLeftToCam.dot(leftEdgeNorm) * 2.0f / leftEdge.length() + 1.0f;
 	setLensOffset(lensOffset);

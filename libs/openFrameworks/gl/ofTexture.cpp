@@ -1085,10 +1085,10 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 	quad.getVertices()[2].set(px1,py1,z);
 	quad.getVertices()[3].set(px0,py1,z);
 
-	quad.getTexCoords()[0].set(tx0,ty0);
-	quad.getTexCoords()[1].set(tx1,ty0);
-	quad.getTexCoords()[2].set(tx1,ty1);
-	quad.getTexCoords()[3].set(tx0,ty1);
+	quad.getTexCoords()[0] = {tx0,ty0};
+	quad.getTexCoords()[1] = {tx1,ty0};
+	quad.getTexCoords()[2] = {tx1,ty1};
+	quad.getTexCoords()[3] = {tx0,ty1};
 
 	return quad;
 }
@@ -1141,10 +1141,10 @@ ofMesh ofTexture::getQuad(const ofPoint & p1, const ofPoint & p2, const ofPoint 
 	quad.getVertices()[2].set(p3.x, p3.y, p3.z);
 	quad.getVertices()[3].set(p4.x, p4.y, p4.z);
 	
-	quad.getTexCoords()[0].set(tx0,ty0);
-	quad.getTexCoords()[1].set(tx1,ty0);
-	quad.getTexCoords()[2].set(tx1,ty1);
-	quad.getTexCoords()[3].set(tx0,ty1);
+	quad.getTexCoords()[0] = {tx0,ty0};
+	quad.getTexCoords()[1] = {tx1,ty0};
+	quad.getTexCoords()[2] = {tx1,ty1};
+	quad.getTexCoords()[3] = {tx0,ty1};
 	return quad;
 }
 

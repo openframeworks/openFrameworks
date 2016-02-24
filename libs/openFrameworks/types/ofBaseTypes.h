@@ -1368,7 +1368,7 @@ public:
 	///
 	/// \returns A 2D vector representing this renderer's plane resolution in
 	/// columns and rows.
-	virtual ofVec2f getPlaneResolution() const;
+	virtual glm::vec2 getPlaneResolution() const;
 	/// \brief Draw a plane with the renderer using x, y, width, and height.
 	///
 	/// The number of rows and columns this plane will have is dependent on this

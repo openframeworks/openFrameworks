@@ -198,7 +198,7 @@ void ofMesh::addNormals(const ofVec3f* norms, std::size_t amt){
 }
 
 //--------------------------------------------------------------
-void ofMesh::addTexCoord(const ofVec2f& t){
+void ofMesh::addTexCoord(const glm::vec2& t){
 	//TODO: figure out if we add to all other arrays to match
 	texCoords.push_back(t);
 	bTexCoordsChanged = true;
@@ -206,14 +206,14 @@ void ofMesh::addTexCoord(const ofVec2f& t){
 }
 
 //--------------------------------------------------------------
-void ofMesh::addTexCoords(const vector<ofVec2f>& tCoords){
+void ofMesh::addTexCoords(const vector<glm::vec2>& tCoords){
 	texCoords.insert(texCoords.end(),tCoords.begin(),tCoords.end());
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::addTexCoords(const ofVec2f* tCoords, std::size_t amt){
+void ofMesh::addTexCoords(const glm::vec2* tCoords, std::size_t amt){
 	texCoords.insert(texCoords.end(),tCoords,tCoords+amt);
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
@@ -331,7 +331,7 @@ ofFloatColor ofMesh::getColor(ofIndexType i) const{
 }
 
 //--------------------------------------------------------------
-ofVec2f ofMesh::getTexCoord(ofIndexType i) const{
+glm::vec2 ofMesh::getTexCoord(ofIndexType i) const{
 	return texCoords[i];
 }
 
@@ -374,93 +374,53 @@ int ofPrimitive::getNumIndicesWire(){
 
 //--------------------------------------------------------------
 ofVec3f* ofMesh::getVerticesPointer(){
-#ifdef TARGET_OSX
-	return &vertices[0];
-#else
 	return vertices.data();
-#endif
 }
 
 //--------------------------------------------------------------
 ofFloatColor* ofMesh::getColorsPointer(){
-#ifdef TARGET_OSX
-	return &colors[0];
-#else
 	return colors.data();
-#endif
 }
 
 //--------------------------------------------------------------
 ofVec3f* ofMesh::getNormalsPointer(){
-#ifdef TARGET_OSX
-		return &normals[0];
-#else
 	return normals.data();
-#endif
 }
 
 //--------------------------------------------------------------
-ofVec2f* ofMesh::getTexCoordsPointer(){
-#ifdef TARGET_OSX
-		return &texCoords[0];
-#else
+glm::vec2* ofMesh::getTexCoordsPointer(){
 	return texCoords.data();
-#endif
 }
 
 //--------------------------------------------------------------
 ofIndexType* ofMesh::getIndexPointer(){
-#ifdef TARGET_OSX
-		return &indices[0];
-#else
 	return indices.data();
-#endif
 }
 
 
 //--------------------------------------------------------------
 const ofVec3f* ofMesh::getVerticesPointer() const{
-#ifdef TARGET_OSX
-	return &vertices[0];
-#else
 	return vertices.data();
-#endif
 }
 
 //--------------------------------------------------------------
 const ofFloatColor* ofMesh::getColorsPointer() const{
-#ifdef TARGET_OSX
-	return &colors[0];
-#else
 	return colors.data();
-#endif
 }
 
 //--------------------------------------------------------------
 const ofVec3f* ofMesh::getNormalsPointer() const{
-#ifdef TARGET_OSX
-	return &normals[0];
-#else
 	return normals.data();
-#endif
 }
 
 //--------------------------------------------------------------
-const ofVec2f* ofMesh::getTexCoordsPointer() const{
-#ifdef TARGET_OSX
-	return &texCoords[0];
-#else
+const glm::vec2* ofMesh::getTexCoordsPointer() const{
 	return texCoords.data();
-#endif
 }
 
 //--------------------------------------------------------------
 const ofIndexType * ofMesh::getIndexPointer() const{
-#ifdef TARGET_OSX
-	return &indices[0];
-#else
 	return indices.data();
-#endif
 }
 
 vector<ofVec3f> & ofMesh::getVertices(){
@@ -481,7 +441,7 @@ vector<ofVec3f> & ofMesh::getNormals(){
 	return normals;
 }
 
-vector<ofVec2f> & ofMesh::getTexCoords(){
+vector<glm::vec2> & ofMesh::getTexCoords(){
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
 	return texCoords;
@@ -505,7 +465,7 @@ const vector<ofVec3f> & ofMesh::getNormals() const{
 	return normals;
 }
 
-const vector<ofVec2f> & ofMesh::getTexCoords() const{
+const vector<glm::vec2> & ofMesh::getTexCoords() const{
 	return texCoords;
 }
 
@@ -602,7 +562,7 @@ void ofMesh::setColor(ofIndexType index, const ofFloatColor& c){
 }
 
 //--------------------------------------------------------------
-void ofMesh::setTexCoord(ofIndexType index, const ofVec2f& t){
+void ofMesh::setTexCoord(ofIndexType index, const glm::vec2& t){
 	texCoords[index] = t;
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
@@ -1220,8 +1180,8 @@ void ofMesh::mergeDuplicateVertices() {
 
 	vector<ofFloatColor> newColors;
 	vector<ofFloatColor>& colors = getColors();
-	vector<ofVec2f> newTCoords;
-	vector<ofVec2f>& tcoords = getTexCoords();
+	vector<glm::vec2> newTCoords;
+	vector<glm::vec2>& tcoords = getTexCoords();
 	vector<ofVec3f> newNormals;
 	vector<ofVec3f>& normals = getNormals();
 
@@ -1536,7 +1496,7 @@ ofMesh ofMesh::plane(float width, float height, int columns, int rows, ofPrimiti
 
 	ofVec3f vert;
 	ofVec3f normal(0, 0, 1); // always facing forward //
-	ofVec2f texcoord;
+	glm::vec2 texcoord;
 
 	// the origin of the plane is the center //
 	float halfW = width/2.f;
@@ -1610,7 +1570,7 @@ ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
 	mesh.setMode(mode);
 
 	ofVec3f vert;
-	ofVec2f tcoord;
+	glm::vec2 tcoord;
 
 	for(float i = 0; i < res+1; i++) {
 
@@ -1823,7 +1783,7 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 	}
 
 	/// Step 3 : generate texcoords
-	vector<ofVec2f> texCoords;
+	vector<glm::vec2> texCoords;
 	for (ofIndexType i=0;i<vertices.size();i++)
 	{
 		const ofVec3f& vec = vertices[i];
@@ -1835,7 +1795,7 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 		v = atan2f(vec.y, r0)/PI + .5f;
 		// reverse the u coord, so the default is texture mapped left to
 		// right on the outside of a sphere //
-		texCoords.push_back(ofVec2f(1.0-u,v));
+		texCoords.push_back(glm::vec2(1.0-u,v));
 	}
 
 	/// Step 4 : fix texcoords
@@ -1844,9 +1804,9 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 
 	for (ofIndexType i=0;i<faces.size()/3;i++)
 	{
-		ofVec2f& t0 = texCoords[faces[i*3+0]];
-		ofVec2f& t1 = texCoords[faces[i*3+1]];
-		ofVec2f& t2 = texCoords[faces[i*3+2]];
+		glm::vec2& t0 = texCoords[faces[i*3+0]];
+		glm::vec2& t1 = texCoords[faces[i*3+1]];
+		glm::vec2& t2 = texCoords[faces[i*3+2]];
 
 		if (abs(t2.x-t0.x)>0.5)
 		{
@@ -1877,7 +1837,7 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 		ofIndexType index = indexToSplit[i];
 		//duplicate vertex
 		ofVec3f v = vertices[index];
-		ofVec2f t = texCoords[index] + ofVec2f(1.f, 0.f);
+		glm::vec2 t = texCoords[index] + glm::vec2(1.f, 0.f);
 		vertices.push_back(v);
 		texCoords.push_back(t);
 		ofIndexType newIndex = vertices.size()-1;
@@ -1948,7 +1908,7 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
 
 	float newRad;
 	ofVec3f vert;
-	ofVec2f tcoord;
+	glm::vec2 tcoord;
 	ofVec3f normal;
 	ofVec3f up(0,1,0);
 
@@ -2141,7 +2101,7 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
 	float newRad;
 	ofVec3f vert;
 	ofVec3f normal;
-	ofVec2f tcoord;
+	glm::vec2 tcoord;
 	ofVec3f up(0,1,0);
 
 	std::size_t vertOffset = 0;
@@ -2288,7 +2248,7 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
 	float halfD = depth * .5f;
 
 	ofVec3f vert;
-	ofVec2f texcoord;
+	glm::vec2 texcoord;
 	ofVec3f normal;
 	std::size_t vertOffset = 0;
 
@@ -2606,12 +2566,12 @@ const ofFloatColor& ofMeshFace::getColor( ofIndexType index) const{
 	return colors[index];
 }
 
-void ofMeshFace::setTexCoord( ofIndexType index, const ofVec2f& tCoord ) {
+void ofMeshFace::setTexCoord( ofIndexType index, const glm::vec2& tCoord ) {
 	texCoords[index] = tCoord;
 	bHasTexcoords = true;
 }
 
-const ofVec2f& ofMeshFace::getTexCoord( ofIndexType index ) const{
+const glm::vec2& ofMeshFace::getTexCoord( ofIndexType index ) const{
 	return texCoords[index];
 }
 

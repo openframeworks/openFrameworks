@@ -201,7 +201,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 					int x = 0, y = 0;
 					settings.monitor = ofClamp(settings.monitor,0,count-1);
 					glfwGetMonitorPos(monitors[settings.monitor],&x,&y);
-					settings.setPosition(ofVec2f(x,y));
+					settings.setPosition(glm::vec2(x,y));
 					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 					#ifdef TARGET_OSX
 						//for OS X we need to set this first as the window size affects the window positon

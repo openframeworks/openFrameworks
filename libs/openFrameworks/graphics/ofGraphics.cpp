@@ -405,7 +405,8 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 	if(mode == OF_GRADIENT_CIRCULAR) {
 		// this could be optimized by building a single mesh once, then copying
 		// it and just adding the colors whenever the function is called.
-		ofVec2f center(w / 2, h / 2);
+		///TODO: revert to glm::vec2!!
+		ofVec3f center(w / 2, h / 2);
 		gradientMesh.addVertex(center);
 		gradientMesh.addColor(start);
 		int n = 32; // circular gradient resolution
@@ -414,27 +415,27 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 		float bigRadius = smallRadius / cos(angleBisector);
 		for(int i = 0; i <= n; i++) {
 			float theta = i * TWO_PI / n;
-			gradientMesh.addVertex(center + ofVec2f(sin(theta), cos(theta)) * bigRadius);
+			gradientMesh.addVertex(center + ofVec3f(sin(theta), cos(theta)) * bigRadius);
 			gradientMesh.addColor(end);
 		}
 	} else if(mode == OF_GRADIENT_LINEAR) {
-		gradientMesh.addVertex(ofVec2f(0, 0));
-		gradientMesh.addVertex(ofVec2f(w, 0));
-		gradientMesh.addVertex(ofVec2f(w, h));
-		gradientMesh.addVertex(ofVec2f(0, h));
+		gradientMesh.addVertex({0.f, 0.f});
+		gradientMesh.addVertex({w, 0.f});
+		gradientMesh.addVertex({w, h});
+		gradientMesh.addVertex({0.f, h});
 		gradientMesh.addColor(start);
 		gradientMesh.addColor(start);
 		gradientMesh.addColor(end);
 		gradientMesh.addColor(end);
 	} else if(mode == OF_GRADIENT_BAR) {
-		gradientMesh.addVertex(ofVec2f(w / 2, h / 2));
-		gradientMesh.addVertex(ofVec2f(0, h / 2));
-		gradientMesh.addVertex(ofVec2f(0, 0));
-		gradientMesh.addVertex(ofVec2f(w, 0));
-		gradientMesh.addVertex(ofVec2f(w, h / 2));
-		gradientMesh.addVertex(ofVec2f(w, h));
-		gradientMesh.addVertex(ofVec2f(0, h));
-		gradientMesh.addVertex(ofVec2f(0, h / 2));
+		gradientMesh.addVertex({w / 2.f, h / 2.f});
+		gradientMesh.addVertex({0.f, h / 2.f});
+		gradientMesh.addVertex({0.f, 0.f});
+		gradientMesh.addVertex({w, 0.f});
+		gradientMesh.addVertex({w, h / 2.f});
+		gradientMesh.addVertex({w, h});
+		gradientMesh.addVertex({0.f, h});
+		gradientMesh.addVertex({0.f, h / 2});
 		gradientMesh.addColor(start);
 		gradientMesh.addColor(start);
 		gradientMesh.addColor(end);

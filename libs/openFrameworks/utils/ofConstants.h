@@ -427,6 +427,11 @@ typedef ofBaseApp ofSimpleApp;
 // for convenience
 using ofJson = nlohmann::json;
 
+#define GLM_SWIZZLE
+#include "glm/glm.hpp"
+#include "glm/ext.hpp"
+
+
 using namespace std;
 
 #ifndef PI

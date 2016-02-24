@@ -108,7 +108,7 @@ void of3dGraphics::setPlaneResolution( int columns, int rows ) {
 
 // returns columns as x value of vector and rows as y value
 //----------------------------------------------------------
-ofVec2f of3dGraphics::getPlaneResolution() const{
+glm::vec2 of3dGraphics::getPlaneResolution() const{
     return plane.getResolution();
 }
 
@@ -556,7 +556,7 @@ void ofSetPlaneResolution( int columns, int rows ){
 }
 
 //----------------------------------------------------------
-ofVec2f ofGetPlaneResolution(){
+glm::vec2 ofGetPlaneResolution(){
 	return ofGetCurrentRenderer()->getPlaneResolution();
 }
 

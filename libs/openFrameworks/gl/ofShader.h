@@ -14,7 +14,6 @@ class ofTexture;
 class ofMatrix4x4;
 class ofMatrix3x3;
 class ofParameterGroup;
-class ofVec2f;
 class ofVec3f;
 class ofVec4f;
 class ofBufferObject;
@@ -68,7 +67,7 @@ public:
 	void setUniform3f(const string & name, float v1, float v2, float v3) const;
 	void setUniform4f(const string & name, float v1, float v2, float v3, float v4) const;
 	
-	void setUniform2f(const string & name, const ofVec2f & v) const;
+	void setUniform2f(const string & name, const glm::vec2 & v) const;
 	void setUniform3f(const string & name, const ofVec3f & v) const;
 	void setUniform4f(const string & name, const ofVec4f & v) const;
 	void setUniform4f(const string & name, const ofFloatColor & v) const;
