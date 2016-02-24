@@ -3,6 +3,8 @@
 
 openFrameworks is a C++ toolkit for creative coding.  If you are new to OF, welcome!
 
+[![Slack Status](https://ofslack.herokuapp.com/badge.svg)](https://ofslack.herokuapp.com)
+
 ##Build status
 
 Linux, OSX, iOS and Android     [![Build Status](https://travis-ci.org/openframeworks/openFrameworks.svg?branch=master)](https://travis-ci.org/openframeworks/openFrameworks)

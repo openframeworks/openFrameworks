@@ -21,7 +21,7 @@ make Debug
 
 echo "**** Building allAddonsExample ****"
 cd $ROOT
-cp scripts/templates/linux64/Makefile examples/addons/allAddonsExample/
-cp scripts/templates/linux64/config.make examples/addons/allAddonsExample/
-cd examples/addons/allAddonsExample/
+cp scripts/templates/linux64/Makefile examples/templates/allAddonsExample/
+cp scripts/templates/linux64/config.make examples/templates/allAddonsExample/
+cd examples/templates/allAddonsExample/
 make Debug

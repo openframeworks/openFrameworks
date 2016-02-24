@@ -1,6 +1,9 @@
 #include "ofxiOSVideoGrabber.h"
 #include "AVFoundationVideoGrabber.h"
 
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+
 ofxiOSVideoGrabber::ofxiOSVideoGrabber() {
 	grabber = shared_ptr<AVFoundationVideoGrabber>(new AVFoundationVideoGrabber());
 }
@@ -114,4 +117,6 @@ ofPixels& ofxiOSVideoGrabber::getPixelsRef(){
 const ofPixels& ofxiOSVideoGrabber::getPixelsRef() const{
 	return getPixels();
 }
+
+#endif
 
