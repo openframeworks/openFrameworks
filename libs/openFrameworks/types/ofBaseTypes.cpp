@@ -162,7 +162,7 @@ void ofBaseRenderer::drawPlane(float x, float y, float z, float width, float hei
 	get3dGraphics().drawPlane(x,y,z,width,height);
 }
 
-void ofBaseRenderer::drawPlane(ofPoint& position, float width, float height) const{
+void ofBaseRenderer::drawPlane(glm::vec3& position, float width, float height) const{
 	get3dGraphics().drawPlane(position,width,height);
 }
 
@@ -186,7 +186,7 @@ void ofBaseRenderer::drawSphere(float x, float y, float z, float radius) const{
 	get3dGraphics().drawSphere(x,y,z,radius);
 }
 
-void ofBaseRenderer::drawSphere(const ofPoint& position, float radius) const{
+void ofBaseRenderer::drawSphere(const glm::vec3& position, float radius) const{
 	get3dGraphics().drawSphere(position,radius);
 }
 
@@ -210,7 +210,7 @@ void ofBaseRenderer::drawIcoSphere(float x, float y, float radius) const{
 	get3dGraphics().drawIcoSphere(x,y,radius);
 }
 
-void ofBaseRenderer::drawIcoSphere(const ofPoint& position, float radius) const{
+void ofBaseRenderer::drawIcoSphere(const glm::vec3& position, float radius) const{
 	get3dGraphics().drawIcoSphere(position,radius);
 }
 
@@ -222,7 +222,7 @@ void ofBaseRenderer::setCylinderResolution( int radiusSegments, int heightSegmen
 	get3dGraphics().setCylinderResolution(radiusSegments,heightSegments,capSegments);
 }
 
-ofVec3f ofBaseRenderer::getCylinderResolution() const{
+glm::vec3 ofBaseRenderer::getCylinderResolution() const{
 	return get3dGraphics().getCylinderResolution();
 }
 
@@ -234,7 +234,7 @@ void ofBaseRenderer::drawCylinder(float x, float y, float z, float radius, float
 	get3dGraphics().drawCylinder(x,y,z,radius,height);
 }
 
-void ofBaseRenderer::drawCylinder(const ofPoint& position, float radius, float height) const{
+void ofBaseRenderer::drawCylinder(const glm::vec3& position, float radius, float height) const{
 	get3dGraphics().drawCylinder(position,radius,height);
 }
 
@@ -246,7 +246,7 @@ void ofBaseRenderer::setConeResolution( int radiusSegments, int heightSegments, 
 	get3dGraphics().setConeResolution(radiusSegments,heightSegments,capSegments);
 }
 
-ofVec3f ofBaseRenderer::getConeResolution() const{
+glm::vec3 ofBaseRenderer::getConeResolution() const{
 	return get3dGraphics().getConeResolution();
 }
 
@@ -258,7 +258,7 @@ void ofBaseRenderer::drawCone(float x, float y, float radius, float height) cons
 	get3dGraphics().drawCone(x,y,radius,height);
 }
 
-void ofBaseRenderer::drawCone(const ofPoint& position, float radius, float height) const{
+void ofBaseRenderer::drawCone(const glm::vec3& position, float radius, float height) const{
 	get3dGraphics().drawCone(position,radius,height);
 }
 
@@ -274,7 +274,7 @@ void ofBaseRenderer::setBoxResolution( int resWidth, int resHeight, int resDepth
 	get3dGraphics().setBoxResolution(resWidth,resHeight,resDepth);
 }
 
-ofVec3f ofBaseRenderer::getBoxResolution() const{
+glm::vec3 ofBaseRenderer::getBoxResolution() const{
 	return get3dGraphics().getBoxResolution();
 }
 
@@ -286,11 +286,11 @@ void ofBaseRenderer::drawBox(float x, float y, float z, float size) const{
 	get3dGraphics().drawBox(x,y,z,size);
 }
 
-void ofBaseRenderer::drawBox(const ofPoint& position, float width, float height, float depth) const{
+void ofBaseRenderer::drawBox(const glm::vec3& position, float width, float height, float depth) const{
 	get3dGraphics().drawBox(position,width,height,depth);
 }
 
-void ofBaseRenderer::drawBox(const ofPoint& position, float size) const{
+void ofBaseRenderer::drawBox(const glm::vec3& position, float size) const{
 	get3dGraphics().drawBox(position,size);
 }
 
@@ -314,7 +314,7 @@ void ofBaseRenderer::drawGridPlane(float stepSize, size_t numberOfSteps, bool la
 	get3dGraphics().drawGridPlane(stepSize,numberOfSteps,labels);
 }
 
-void ofBaseRenderer::drawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) const{
+void ofBaseRenderer::drawArrow(const glm::vec3& start, const glm::vec3& end, float headSize) const{
 	get3dGraphics().drawArrow(start,end,headSize);
 }
 

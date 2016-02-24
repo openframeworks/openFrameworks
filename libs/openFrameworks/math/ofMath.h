@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ofPoint.h"
 #include "ofConstants.h"
+class ofVec4f;
 
 // notes:
 // -----------------------------------------------------------
@@ -396,7 +396,7 @@ float ofNoise(const glm::vec2& p);
 float ofNoise(float x, float y, float z);
 
 /// \brief Calculates a three dimensional Perlin noise value between 0.0...1.0.
-float ofNoise(const ofVec3f& p);
+float ofNoise(const glm::vec3& p);
 
 /// \brief Calculates a four dimensional Perlin noise value between 0.0...1.0.
 float ofNoise(float x, float y, float z, float w);
@@ -417,7 +417,7 @@ float ofSignedNoise(const glm::vec2& p);
 float ofSignedNoise(float x, float y, float z);
 
 /// \brief Calculates a three dimensional Perlin noise value between -1.0...1.0.
-float ofSignedNoise(const ofVec3f& p);
+float ofSignedNoise(const glm::vec3& p);
 
 /// \brief Calculates a four dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x, float y, float z, float w);
@@ -431,27 +431,27 @@ float ofSignedNoise(const ofVec4f& p);
 /// \name Geometry
 /// \{
 
-/// \brief Determine if an (x,y) coordinate is within the polygon defined by a vector of ofPoints.
+/// \brief Determine if an (x,y) coordinate is within the polygon defined by a vector of glm::vec3s.
 /// \param x The x dimension of the coordinate.
 /// \param y The y dimension of the coordinate.
-/// \param poly a vector of ofPoints defining a polygon.
+/// \param poly a vector of glm::vec3s defining a polygon.
 /// \returns True if the point defined by the coordinates is enclosed, false otherwise.
-bool ofInsidePoly(float x, float y, const vector<ofPoint>& poly);
+bool ofInsidePoly(float x, float y, const vector<glm::vec3>& poly);
 
-/// \brief Determine if an ofPoint is within the polygon defined by a vector of ofPoints.
+/// \brief Determine if an glm::vec3 is within the polygon defined by a vector of glm::vec3s.
 /// \param p A point to check.
-/// \param poly A vector of ofPoints defining a polygon.
-/// \returns True if the ofPoint is enclosed, false otherwise.
-bool ofInsidePoly(const ofPoint & p, const vector<ofPoint>& poly);
+/// \param poly A vector of glm::vec3s defining a polygon.
+/// \returns True if the glm::vec3 is enclosed, false otherwise.
+bool ofInsidePoly(const glm::vec3 & p, const vector<glm::vec3>& poly);
 
 /// \brief Determine the intersection between two lines.
 /// \param line1Start Starting point for first line.
 /// \param line1End End point for first line.
 /// \param line2Start Starting point for second line.
 /// \param line2End End point for second line.
-/// \param intersection ofPoint reference in which to store the computed intersection point.
+/// \param intersection glm::vec3 reference in which to store the computed intersection point.
 /// \returns True if the lines intersect.
-bool ofLineSegmentIntersection(const ofPoint& line1Start, const ofPoint& line1End, const ofPoint& line2Start, const ofPoint& line2End, ofPoint& intersection);
+bool ofLineSegmentIntersection(const glm::vec3& line1Start, const glm::vec3& line1End, const glm::vec3& line2Start, const glm::vec3& line2End, glm::vec3& intersection);
 
 /// \brief Given the four points that determine a bezier curve, return an interpolated point on the curve.
 /// \param a The beginning point of the curve.
@@ -459,8 +459,8 @@ bool ofLineSegmentIntersection(const ofPoint& line1Start, const ofPoint& line1En
 /// \param c The second control point.
 /// \param d The end point of the curve.
 /// \param t an offset along the curve, normalized between 0 and 1.
-/// \returns A ofPoint on the curve.
-ofPoint ofBezierPoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t);
+/// \returns A glm::vec3 on the curve.
+glm::vec3 ofBezierPoint(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d, float t);
 
 /// \brief Given the four points that determine a Catmull Rom curve, return an interpolated point on the curve.
 /// \param a The first control point.
@@ -468,8 +468,8 @@ ofPoint ofBezierPoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, cons
 /// \param c The end point of the curve.
 /// \param d The second control point.
 /// \param t an offset along the curve, normalized between 0 and 1.
-/// \returns A ofPoint on the curve.
-ofPoint ofCurvePoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t);
+/// \returns A glm::vec3 on the curve.
+glm::vec3 ofCurvePoint(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d, float t);
 
 /// Given the four points that determine a bezier curve and an offset along the curve, return an tangent vector to a point on the curve.
 /// Currently this is not a normalized point, and will need to be normalized.
@@ -478,8 +478,8 @@ ofPoint ofCurvePoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const
 /// \param c The second control point.
 /// \param d The end point of the curve.
 /// \param t an offset along the curve, normalized between 0 and 1.
-/// \returns A ofPoint on the curve.
-ofPoint ofBezierTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t);
+/// \returns A glm::vec3 on the curve.
+glm::vec3 ofBezierTangent(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d, float t);
 
 /// \brief Return a tangent point for an offset along a Catmull Rom curve.
 /// \param a The first control point.
@@ -487,8 +487,8 @@ ofPoint ofBezierTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, co
 /// \param c The end point of the curve.
 /// \param d The second control point.
 /// \param t an offset along the curve, normalized between 0 and 1.
-/// \returns A ofPoint on the curve.
-ofPoint ofCurveTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t);
+/// \returns A glm::vec3 on the curve.
+glm::vec3 ofCurveTangent(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d, float t);
 
 template<typename Type>
 Type ofInterpolateCosine(const Type& y1, const Type& y2, float pct);

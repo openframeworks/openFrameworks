@@ -47,8 +47,8 @@ const ofParameter<glm::vec2> & ofParameterGroup::getVec2f(const string& name) co
 	return get<glm::vec2>(name);
 }
 
-const ofParameter<ofVec3f> & ofParameterGroup::getVec3f(const string& name) const{
-	return get<ofVec3f>(name);
+const ofParameter<glm::vec3> & ofParameterGroup::getVec3f(const string& name) const{
+	return get<glm::vec3>(name);
 }
 
 const ofParameter<ofVec4f> & ofParameterGroup::getVec4f(const string& name) const{
@@ -99,8 +99,8 @@ const ofParameter<glm::vec2> & ofParameterGroup::getVec2f(std::size_t pos) const
 	return get<glm::vec2>(pos);
 }
 
-const ofParameter<ofVec3f> & ofParameterGroup::getVec3f(std::size_t pos) const{
-	return get<ofVec3f>(pos);
+const ofParameter<glm::vec3> & ofParameterGroup::getVec3f(std::size_t pos) const{
+	return get<glm::vec3>(pos);
 }
 
 const ofParameter<ofVec4f> & ofParameterGroup::getVec4f(std::size_t pos) const{
@@ -160,8 +160,8 @@ ofParameter<glm::vec2> & ofParameterGroup::getVec2f(const string& name){
 	return get<glm::vec2>(name);
 }
 
-ofParameter<ofVec3f> & ofParameterGroup::getVec3f(const string& name){
-	return get<ofVec3f>(name);
+ofParameter<glm::vec3> & ofParameterGroup::getVec3f(const string& name){
+	return get<glm::vec3>(name);
 }
 
 ofParameter<ofVec4f> & ofParameterGroup::getVec4f(const string& name){
@@ -212,8 +212,8 @@ ofParameter<glm::vec2> & ofParameterGroup::getVec2f(std::size_t pos){
 	return get<glm::vec2>(pos);
 }
 
-ofParameter<ofVec3f> & ofParameterGroup::getVec3f(std::size_t pos){
-	return get<ofVec3f>(pos);
+ofParameter<glm::vec3> & ofParameterGroup::getVec3f(std::size_t pos){
+	return get<glm::vec3>(pos);
 }
 
 ofParameter<ofVec4f> & ofParameterGroup::getVec4f(std::size_t pos){

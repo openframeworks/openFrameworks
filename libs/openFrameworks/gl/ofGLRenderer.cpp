@@ -82,11 +82,11 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
 		if(vertexData.getNumVertices()){
 			glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData.getVerticesPointer()->x);
+			glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), &vertexData.getVerticesPointer()->x);
 		}
 		if(vertexData.getNumNormals() && useNormals){
 			glEnableClientState(GL_NORMAL_ARRAY);
-			glNormalPointer(GL_FLOAT, sizeof(ofVec3f), &vertexData.getNormalsPointer()->x);
+			glNormalPointer(GL_FLOAT, sizeof(glm::vec3), &vertexData.getNormalsPointer()->x);
 		}
 		if(vertexData.getNumColors() && useColors){
 			glEnableClientState(GL_COLOR_ARRAY);
@@ -267,7 +267,7 @@ void ofGLRenderer::draw(const ofPolyline & poly) const{
 		if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &poly.getVertices()[0].x);
+		glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), &poly.getVertices()[0].x);
 		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
 
 		// use smoothness, if requested:
@@ -836,7 +836,7 @@ void ofGLRenderer::popMatrix(){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::translate(const ofPoint& p){
+void ofGLRenderer::translate(const glm::vec3& p){
 	glTranslatef(p.x, p.y, p.z);
 }
 
@@ -1377,14 +1377,14 @@ void ofGLRenderer::disableAntiAliasing(){
 
 //----------------------------------------------------------
 void ofGLRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const{
-	linePoints[0].set(x1,y1,z1);
-	linePoints[1].set(x2,y2,z2);
+	linePoints[0] = {x1,y1,z1};
+	linePoints[1] = {x2,y2,z2};
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &linePoints[0].x);
+	glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), linePoints.data());
 	glDrawArrays(GL_LINES, 0, 2);
 
 	// use smoothness, if requested:
@@ -1396,22 +1396,22 @@ void ofGLRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, fl
 void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h) const{
 
 	if (currentStyle.rectMode == OF_RECTMODE_CORNER){
-		rectPoints[0].set(x,y,z);
-		rectPoints[1].set(x+w, y, z);
-		rectPoints[2].set(x+w, y+h, z);
-		rectPoints[3].set(x, y+h, z);
+		rectPoints[0] = {x,y,z};
+		rectPoints[1] = {x+w, y, z};
+		rectPoints[2] = {x+w, y+h, z};
+		rectPoints[3] = {x, y+h, z};
 	}else{
-		rectPoints[0].set(x-w/2.0f, y-h/2.0f, z);
-		rectPoints[1].set(x+w/2.0f, y-h/2.0f, z);
-		rectPoints[2].set(x+w/2.0f, y+h/2.0f, z);
-		rectPoints[3].set(x-w/2.0f, y+h/2.0f, z);
+		rectPoints[0] = {x-w/2.0f, y-h/2.0f, z};
+		rectPoints[1] = {x+w/2.0f, y-h/2.0f, z};
+		rectPoints[2] = {x+w/2.0f, y+h/2.0f, z};
+		rectPoints[3] = {x-w/2.0f, y+h/2.0f, z};
 	}
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &rectPoints[0].x);
+	glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), &rectPoints[0].x);
 	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
 
 	// use smoothness, if requested:
@@ -1421,15 +1421,15 @@ void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h) con
 
 //----------------------------------------------------------
 void ofGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const{
-	triPoints[0].set(x1,y1,z1);
-	triPoints[1].set(x2,y2,z2);
-	triPoints[2].set(x3,y3,z3);
+	triPoints[0] = {x1,y1,z1};
+	triPoints[1] = {x2,y2,z2};
+	triPoints[2] = {x3,y3,z3};
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &triPoints[0].x);
+	glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), &triPoints[0].x);
 	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
 
 	// use smoothness, if requested:
@@ -1439,16 +1439,16 @@ void ofGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2
 
 //----------------------------------------------------------
 void ofGLRenderer::drawCircle(float x, float y, float z,  float radius) const{
-	const vector<ofPoint> & circleCache = circlePolyline.getVertices();
-	for(int i=0;i<(int)circleCache.size();i++){
-		circlePoints[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
+	const vector<glm::vec3> & circleCache = circlePolyline.getVertices();
+	for(size_t i=0;i<circleCache.size();i++){
+		circlePoints[i] = {radius*circleCache[i].x+x,radius*circleCache[i].y+y,z};
 	}
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
+	glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), &circlePoints[0].x);
 	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
 
 	// use smoothness, if requested:
@@ -1460,16 +1460,16 @@ void ofGLRenderer::drawCircle(float x, float y, float z,  float radius) const{
 void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float height) const{
 	float radiusX = width*0.5;
 	float radiusY = height*0.5;
-	const vector<ofPoint> & circleCache = circlePolyline.getVertices();
-	for(int i=0;i<(int)circleCache.size();i++){
-		circlePoints[i].set(radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z);
+	const vector<glm::vec3> & circleCache = circlePolyline.getVertices();
+	for(size_t i=0;i<circleCache.size();i++){
+		circlePoints[i] = {radiusX*circlePolyline[i].x+x, radiusY*circlePolyline[i].y+y, z};
 	}
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
+	glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), &circlePoints[0].x);
 	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
 
 	// use smoothness, if requested:
@@ -1574,8 +1574,8 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 			glGetFloatv(GL_MODELVIEW_MATRIX, modelview.getPtr());
 			glGetFloatv(GL_PROJECTION_MATRIX, projection.getPtr());
 
-			ofVec3f dScreen = ofVec3f(x,y,z) * modelview * projection * matrixStack.getOrientationMatrixInverse();
-			dScreen += ofVec3f(1.0) ;
+			auto dScreen = toGlm(ofVec3f(x,y,z) * modelview * projection * matrixStack.getOrientationMatrixInverse());
+			dScreen += glm::vec3(1.0) ;
 			dScreen *= 0.5;
 
 			dScreen.x += rViewport.x;

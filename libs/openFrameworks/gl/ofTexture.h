@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofBaseTypes.h"
 #include "ofConstants.h"
@@ -593,7 +592,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param p2 Upper left position on the y axis.
 	/// \param p3 Lower right position on the x axis.
 	/// \param p4 Lower right position on the y axis.
-	void draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const;
+	void draw(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3, const glm::vec3 & p4) const;
 
 	/// \brief Draw a subsection of the texture.
 	///
@@ -651,7 +650,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param sh Subsection height within the texture.
 	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
-	ofMesh getQuad(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const;
+	ofMesh getQuad(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3, const glm::vec3 & p4) const;
 
 	/// \brief Get a mesh that has the texture coordinates set.
 	///
@@ -743,14 +742,14 @@ class ofTexture : public ofBaseDraws {
 	/// \brief Helper to convert display coordinate to texture coordinate.
 	/// \param xPos Horizontal position in pixels.
 	/// \param yPos Vertical position in pixels.
-	/// \returns Texture coordinate or ofPoint::zero() if texture is not allocated.
-	ofPoint getCoordFromPoint(float xPos, float yPos) const;
+	/// \returns Texture coordinate or zero if texture is not allocated.
+	glm::vec2 getCoordFromPoint(float xPos, float yPos) const;
 	
 	/// \brief Helper to convert display coordinate to texture coordinate.
 	/// \param xPts Horizontal position in a normalized percentage (0 - 1).
 	/// \param yPts Vertical position in a normalized percentage (0 - 1).
-	/// \returns Texture coordinate or ofPoint::zero() if texture is not allocated.
-	ofPoint getCoordFromPercent(float xPts, float yPts) const;
+	/// \returns Texture coordinate or zero if texture is not allocated.
+	glm::vec2 getCoordFromPercent(float xPts, float yPts) const;
 
 	/// \}
 
@@ -962,7 +961,7 @@ protected:
 	/// \param textureLocation the OpenGL texture ID to enable as a target.
 	void disableTextureTarget(int textureLocation) const;
 
-	ofPoint anchor; ///< The texture's anchor point.
+	glm::vec3 anchor; ///< The texture's anchor point.
 
 	bool bAnchorIsPct; ///< Is the anchor point represented as a normalized
 					   ///< (0 - 1) coordinate?

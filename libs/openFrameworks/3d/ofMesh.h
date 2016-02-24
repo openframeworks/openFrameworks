@@ -57,7 +57,7 @@ class ofMeshFace;
 /// ofMesh mesh;
 /// for (int y = 0; y < height; y++){
 /// 	for (int x = 0; x<width; x++){
-/// 		mesh.addVertex(ofPoint(x,y,0)); // make a new vertex
+/// 		mesh.addVertex(glm::vec3(x,y,0)); // make a new vertex
 /// 		mesh.addColor(ofFloatColor(0,0,0));  // add a color at that vertex
 /// 	}
 /// }
@@ -95,7 +95,7 @@ public:
 	/// OF_PRIMITIVE_TRIANGLE_FAN, OF_PRIMITIVE_LINES, OF_PRIMITIVE_LINE_STRIP, 
 	/// OF_PRIMITIVE_LINE_LOOP, OF_PRIMITIVE_POINTS. 
 	/// See [ofGLUtils](../gl/ofGLUtils.htm) for more information on these types.
-	ofMesh(ofPrimitiveMode mode, const vector<ofVec3f>& verts);
+	ofMesh(ofPrimitiveMode mode, const vector<glm::vec3>& verts);
 
 	void setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNormal=false );
 
@@ -179,23 +179,23 @@ public:
 	/// the list determines how they link they form the polygons and strips 
 	/// (assuming you do not change their indeces). See the ofMesh class 
 	/// description for details.
-	void addVertex(const ofVec3f& v);
+	void addVertex(const glm::vec3& v);
 
 	/// \brief Add a vector of vertices to a mesh, allowing you to push out 
 	/// many at once rather than adding one at a time. The vector of vertices 
 	/// is added after the end of the current vertices list.
-	void addVertices(const vector<ofVec3f>& verts);
+	void addVertices(const vector<glm::vec3>& verts);
 
 	/// \brief Add an array of vertices to the mesh. 
 	/// Because you are using a pointer to the array you also have to define 
 	/// the length of the array as an int (amt). The vertices are added at the 
 	/// end of the current vertices list.
-	void addVertices(const ofVec3f* verts, std::size_t amt);
+	void addVertices(const glm::vec3* verts, std::size_t amt);
 
 	/// \brief Removes the vertex at the index in the vector.
 	void removeVertex(ofIndexType index);
 	
-	void setVertex(ofIndexType index, const ofVec3f& v);
+	void setVertex(ofIndexType index, const glm::vec3& v);
 
 	/// \brief Removes all the vertices.
 	void clearVertices();
@@ -209,19 +209,19 @@ public:
 	std::size_t getNumVertices() const;
 
 	/// \returns a pointer to the vertices that the mesh contains.
-	ofVec3f* getVerticesPointer();
+	glm::vec3* getVerticesPointer();
 
 	/// \returns a pointer to the vertices that the mesh contains.
-	const ofVec3f* getVerticesPointer() const;
+	const glm::vec3* getVerticesPointer() const;
 
 	/// \returns the vertex at the index.
-	ofVec3f getVertex(ofIndexType i) const;
+	glm::vec3 getVertex(ofIndexType i) const;
 
 	/// \returns the vector that contains all of the vertices of the mesh.
-	vector<ofVec3f> & getVertices();
+	vector<glm::vec3> & getVertices();
 
 	/// \returns the vector that contains all of the vertices of the mesh.
-	const vector<ofVec3f> & getVertices() const;
+	const vector<glm::vec3> & getVertices() const;
 	
 	/// \returns If the vertices of the mesh have changed, been added or removed.
 	bool haveVertsChanged();
@@ -237,7 +237,7 @@ public:
 	void mergeDuplicateVertices();
 
 	/// \returns a ofVec3f defining the centroid of all the vetices in the mesh.
-	ofVec3f getCentroid() const;
+	glm::vec3 getCentroid() const;
 
 
 	/// \}
@@ -246,7 +246,7 @@ public:
 	/// \{
 
 	/// \\returns the normal at the index in the normals vector.
-	ofVec3f getNormal(ofIndexType i) const;
+	glm::vec3 getNormal(ofIndexType i) const;
 
 	/// \brief Add a normal to the mesh as a 3D vector, 
 	/// typically perpendicular to the plane of the face. A normal is a vector 
@@ -257,25 +257,25 @@ public:
 	/// computing the normals.
 	/// addNormal adds the 3D vector to the end of the list, so you need to 
 	/// make sure you add normals at the same index of the matching face.
-	void addNormal(const ofVec3f& n);
+	void addNormal(const glm::vec3& n);
 
 	/// \brief Add a vector of normals to a mesh, 
 	/// allowing you to push out many normals at once rather than 
 	/// adding one at a time. The vector of normals is added after the end of 
 	/// the current normals list.
-	void addNormals(const vector<ofVec3f>& norms);
+	void addNormals(const vector<glm::vec3>& norms);
 
 	/// \brief Add an array of normals to the mesh. 
 	/// Because you are using a pointer to the array you also have to define 
 	/// the length of the array as an std::size_t (amt). The normals are added at the
 	/// end of the current normals list.
-	void addNormals(const ofVec3f* norms, std::size_t amt);
+	void addNormals(const glm::vec3* norms, std::size_t amt);
 
 	/// \brief Remove a normal.
 	void removeNormal(ofIndexType index);
 
 	/// \todo Documentation.
-	void setNormal(ofIndexType index, const ofVec3f& n);
+	void setNormal(ofIndexType index, const glm::vec3& n);
 
 	/// \brief Remove all the normals.
 	void clearNormals();
@@ -285,20 +285,20 @@ public:
 	std::size_t getNumNormals() const;
 
 	/// \returns a pointer to the normals that the mesh contains.
-	ofVec3f* getNormalsPointer();
+	glm::vec3* getNormalsPointer();
 
 	/// \returns a pointer to the normals that the mesh contains.
-	const ofVec3f* getNormalsPointer() const;
+	const glm::vec3* getNormalsPointer() const;
 
 	/// Use this if you plan to change the normals as part of this call as it 
 	/// will force a reset of the cache.
 	/// \returns the vector that contains all of the normals of the mesh, 
 	/// if it has any.
-	vector<ofVec3f> & getNormals();
+	vector<glm::vec3> & getNormals();
 
 	/// \returns the vector that contains all of the normals of the mesh, if 
 	/// it has any. (read only)
-	const vector<ofVec3f> & getNormals() const;
+	const vector<glm::vec3> & getNormals() const;
 
 	/// \returns If the normals of the mesh have changed, been added or removed.
 	bool haveNormalsChanged();
@@ -329,7 +329,7 @@ public:
 	/// by setting (perVertex = true) it will return the same normal value for
 	/// each of the three vertices making up a face.
 	/// \returns a vector containing the calculated normals of each face in the mesh.
-	vector<ofVec3f> getFaceNormals( bool perVetex=false) const;
+	vector<glm::vec3> getFaceNormals( bool perVetex=false) const;
 
 	/// \returns the mesh as a vector of unique ofMeshFaces
 	/// a list of triangles that do not share vertices or indices
@@ -497,10 +497,10 @@ public:
 	/// ~~~~{.cpp}
 	/// ofMesh mesh;
 	/// mesh.setMode(OF_PRIMITIVE_TRIANGLES);
-	/// mesh.addVertex(ofPoint(0,-200,0));
-	/// mesh.addVertex(ofPoint(200, 0, 0 ));
-	/// mesh.addVertex(ofPoint(-200, 0, 0 ));
-	/// mesh.addVertex(ofPoint(0, 200, 0 ));
+	/// mesh.addVertex(glm::vec3(0,-200,0));
+	/// mesh.addVertex(glm::vec3(200, 0, 0 ));
+	/// mesh.addVertex(glm::vec3(-200, 0, 0 ));
+	/// mesh.addVertex(glm::vec3(0, 200, 0 ));
 	/// mesh.addIndex(0); //connect the first vertex we made, v0
 	/// mesh.addIndex(1); //to v1
 	/// mesh.addIndex(2); //to v2 to complete the face
@@ -619,9 +619,9 @@ public:
 
 private:
 
-	vector<ofVec3f> vertices;
+	vector<glm::vec3> vertices;
 	vector<ofFloatColor> colors;
-	vector<ofVec3f> normals;
+	vector<glm::vec3> normals;
 	vector<glm::vec2> texCoords;
 	vector<ofIndexType> indices;
 
@@ -662,13 +662,13 @@ class ofMeshFace {
 public:
 	ofMeshFace();
 
-	const ofVec3f & getFaceNormal() const;
+	const glm::vec3 & getFaceNormal() const;
 
-	void setVertex( ofIndexType index, const ofVec3f& v );
-	const ofVec3f& getVertex( ofIndexType index ) const;
+	void setVertex( ofIndexType index, const glm::vec3& v );
+	const glm::vec3& getVertex( ofIndexType index ) const;
 
-	void setNormal( ofIndexType index, const ofVec3f& n );
-	const ofVec3f& getNormal( ofIndexType  index ) const;
+	void setNormal( ofIndexType index, const glm::vec3& n );
+	const glm::vec3& getNormal( ofIndexType  index ) const;
 
 	void setColor( ofIndexType index, const ofFloatColor& color );
 	const ofFloatColor& getColor(ofIndexType  index) const;
@@ -691,9 +691,9 @@ private:
 	// this variables are only caches and returned always as const
 	// mutable allows to change them from const methods
 	mutable bool bFaceNormalDirty;
-	mutable ofVec3f faceNormal;
-	ofVec3f vertices[3];
-	ofVec3f normals[3];
+	mutable glm::vec3 faceNormal;
+	glm::vec3 vertices[3];
+	glm::vec3 normals[3];
 	ofFloatColor colors[3];
 	glm::vec2 texCoords[3];
 };

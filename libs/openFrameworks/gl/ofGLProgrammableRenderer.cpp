@@ -683,7 +683,7 @@ void ofGLProgrammableRenderer::popMatrix(){
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::translate(const ofVec3f& p){
+void ofGLProgrammableRenderer::translate(const glm::vec3& p){
 	translate(p.x, p.y, p.z);
 }
 
@@ -1567,8 +1567,8 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const{
 	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
-	lineMesh.getVertices()[0].set(x1,y1,z1);
-	lineMesh.getVertices()[1].set(x2,y2,z2);
+	lineMesh.getVertices()[0] = {x1,y1,z1};
+	lineMesh.getVertices()[1] = {x2,y2,z2};
     
 	// use smoothness, if requested:
 	if (currentStyle.smoothing) mutThis->startSmoothing();
@@ -1583,15 +1583,15 @@ void ofGLProgrammableRenderer::drawLine(float x1, float y1, float z1, float x2, 
 void ofGLProgrammableRenderer::drawRectangle(float x, float y, float z, float w, float h) const{
 	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
 	if (currentStyle.rectMode == OF_RECTMODE_CORNER){
-		rectMesh.getVertices()[0].set(x,y,z);
-		rectMesh.getVertices()[1].set(x+w, y, z);
-		rectMesh.getVertices()[2].set(x+w, y+h, z);
-		rectMesh.getVertices()[3].set(x, y+h, z);
+		rectMesh.getVertices()[0] = {x,y,z};
+		rectMesh.getVertices()[1] = {x+w, y, z};
+		rectMesh.getVertices()[2] = {x+w, y+h, z};
+		rectMesh.getVertices()[3] = {x, y+h, z};
 	}else{
-		rectMesh.getVertices()[0].set(x-w/2.0f, y-h/2.0f, z);
-		rectMesh.getVertices()[1].set(x+w/2.0f, y-h/2.0f, z);
-		rectMesh.getVertices()[2].set(x+w/2.0f, y+h/2.0f, z);
-		rectMesh.getVertices()[3].set(x-w/2.0f, y+h/2.0f, z);
+		rectMesh.getVertices()[0] = {x-w/2.0f, y-h/2.0f, z};
+		rectMesh.getVertices()[1] = {x+w/2.0f, y-h/2.0f, z};
+		rectMesh.getVertices()[2] = {x+w/2.0f, y+h/2.0f, z};
+		rectMesh.getVertices()[3] = {x-w/2.0f, y+h/2.0f, z};
 	}
     
 	// use smoothness, if requested:
@@ -1607,9 +1607,9 @@ void ofGLProgrammableRenderer::drawRectangle(float x, float y, float z, float w,
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const{
 	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
-	triangleMesh.getVertices()[0].set(x1,y1,z1);
-	triangleMesh.getVertices()[1].set(x2,y2,z2);
-	triangleMesh.getVertices()[2].set(x3,y3,z3);
+	triangleMesh.getVertices()[0] = {x1,y1,z1};
+	triangleMesh.getVertices()[1] = {x2,y2,z2};
+	triangleMesh.getVertices()[2] = {x3,y3,z3};
     
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
@@ -1624,9 +1624,9 @@ void ofGLProgrammableRenderer::drawTriangle(float x1, float y1, float z1, float 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawCircle(float x, float y, float z,  float radius) const{
 	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
-	const vector<ofPoint> & circleCache = circlePolyline.getVertices();
+	const vector<glm::vec3> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
-		circleMesh.getVertices()[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
+		circleMesh.getVertices()[i] = {radius*circleCache[i].x+x,radius*circleCache[i].y+y,z};
 	}
     
 	// use smoothness, if requested:
@@ -1644,9 +1644,9 @@ void ofGLProgrammableRenderer::drawEllipse(float x, float y, float z, float widt
 	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
 	float radiusX = width*0.5;
 	float radiusY = height*0.5;
-	const vector<ofPoint> & circleCache = circlePolyline.getVertices();
+	const vector<glm::vec3> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
-		circleMesh.getVertices()[i].set(radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z);
+		circleMesh.getVertices()[i] = {radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z};
 	}
     
 	// use smoothness, if requested:
@@ -1744,8 +1744,8 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 			
 			rViewport = getCurrentViewport();
 			
-			ofVec3f dScreen = ofVec3f(x,y,z) * matrixStack.getModelViewMatrix() * matrixStack.getProjectionMatrixNoOrientation();
-			dScreen += ofVec3f(1.0) ;
+			auto dScreen = toGlm(toOf(glm::vec3(x,y,z)) * matrixStack.getModelViewMatrix() * matrixStack.getProjectionMatrixNoOrientation());
+			dScreen += glm::vec3(1.0) ;
 			dScreen *= 0.5;
 			
 			dScreen.x += rViewport.x;

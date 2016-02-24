@@ -6,7 +6,6 @@
 #include "ofTypes.h"
 #include "ofPixels.h"
 
-//class ofPoint;
 class ofBaseApp;
 class ofBaseRenderer;
 
@@ -44,9 +43,9 @@ public:
 	void setWindowPosition(int x, int y);
 	void setWindowShape(int w, int h);
 
-	ofPoint		getWindowPosition();
-	ofPoint		getWindowSize();
-	ofPoint		getScreenSize();
+	glm::vec2	getWindowPosition();
+	glm::vec2	getWindowSize();
+	glm::vec2	getScreenSize();
 	
 	void			setOrientation(ofOrientation orientation);
 	ofOrientation	getOrientation();

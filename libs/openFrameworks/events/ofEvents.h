@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofPoint.h"
 #include "ofEventUtils.h"
 #include "ofTimer.h"
 #include "ofFpsCounter.h"
@@ -21,7 +20,7 @@ int	ofGetPreviousMouseY();
 class ofDragInfo{
 	public:
 		vector <string> files;
-		ofPoint position;
+		glm::vec2 position;
 };
 
 

@@ -96,7 +96,7 @@ void ofEasyCam::reset(){
 }
 
 //----------------------------------------
-void ofEasyCam::setTarget(const ofVec3f& targetPoint){
+void ofEasyCam::setTarget(const glm::vec3& targetPoint){
 	target.setPosition(targetPoint);
 	lookAt(target);
 }
@@ -130,7 +130,7 @@ void ofEasyCam::setDistance(float distance, bool save){//should this be the dist
 
 //----------------------------------------
 float ofEasyCam::getDistance() const{
-	return target.getPosition().distance(getPosition());
+	return glm::distance(target.getPosition(), getPosition());
 }
 
 //----------------------------------------
@@ -261,7 +261,7 @@ void ofEasyCam::updateTranslation(){
 		}
 		move((getXAxis() * moveX) + (getYAxis() * moveY) + (getZAxis() * moveZ));
 	}else{
-		setPosition(prevPosition + ofVec3f(prevAxisX * moveX) + (prevAxisY * moveY) + (prevAxisZ * moveZ));
+		setPosition(prevPosition + glm::vec3(prevAxisX * moveX) + (prevAxisY * moveY) + (prevAxisZ * moveZ));
 	}
 }	
 
@@ -276,12 +276,12 @@ void ofEasyCam::updateRotation(){
 			bApplyInertia = false;
 			bDoRotate = false;
 		}
-		curRot = ofQuaternion(xRot, getXAxis(), yRot, getYAxis(), zRot, getZAxis());
-		setPosition((getGlobalPosition()-target.getGlobalPosition())*curRot +target.getGlobalPosition());
+		curRot = ofQuaternion(xRot, toOf(getXAxis()), yRot, toOf(getYAxis()), zRot, toOf(getZAxis()));
+		setPosition(toGlm(toOf(getGlobalPosition()-target.getGlobalPosition())*curRot) + target.getGlobalPosition());
 		rotate(curRot);
 	}else{
-		curRot = ofQuaternion(xRot, prevAxisX, yRot, prevAxisY, zRot, prevAxisZ);
-		setPosition((prevPosition-target.getGlobalPosition())*curRot +target.getGlobalPosition());
+		curRot = ofQuaternion(xRot, toOf(prevAxisX), yRot, toOf(prevAxisY), zRot, toOf(prevAxisZ));
+		setPosition(toGlm(toOf(prevPosition-target.getGlobalPosition())*curRot) +target.getGlobalPosition());
 		setOrientation(prevOrientation * curRot);
 	}
 }

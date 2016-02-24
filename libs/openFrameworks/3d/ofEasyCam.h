@@ -31,7 +31,7 @@ public:
 
     /// \brief Set the camera's target.
     /// \param target The position of the target.
-	void setTarget(const ofVec3f& target);
+	void setTarget(const glm::vec3& target);
 
     /// \brief Set the camera's target.
     /// \param target The position of the target.
@@ -189,16 +189,16 @@ private:
 	ofQuaternion curRot;
 
     /// \brief The previous X axis.
-    ofVec3f prevAxisX;
+	glm::vec3 prevAxisX;
 
     /// \brief The previous Y axis.
-    ofVec3f prevAxisY;
+	glm::vec3 prevAxisY;
 
     /// \brief The previous Z axis.
-    ofVec3f prevAxisZ;
+	glm::vec3 prevAxisZ;
 
     /// \brief the previous camera position.
-	ofVec3f prevPosition;
+	glm::vec3 prevPosition;
 
     /// \brief The previous camera orientation.
 	ofQuaternion prevOrientation;

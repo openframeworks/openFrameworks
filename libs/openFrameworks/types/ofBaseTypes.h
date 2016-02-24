@@ -27,9 +27,7 @@ template<typename T>
 class ofColor_;
 
 typedef ofColor_<unsigned char> ofColor;
-
-class ofVec3f;
-typedef ofVec3f ofPoint;
+typedef glm::vec3 ofPoint;
 
 class ofPath;
 class ofPolyline;
@@ -81,7 +79,7 @@ public:
 	/// Native size is determined by getWidth() and getHeight().
 	///
 	/// \param point Draw position.
-	virtual void draw(const ofPoint & point) const {
+	virtual void draw(const glm::vec3 & point) const {
 		draw(point.x, point.y);
 	}
 
@@ -97,7 +95,7 @@ public:
 	/// \param point Draw position.
 	/// \param w Draw width.
 	/// \param h Draw height.
-	virtual void draw(const ofPoint & point, float w, float h) const {
+	virtual void draw(const glm::vec3 & point, float w, float h) const {
 		draw(point.x, point.y, w, h);
 	}
 
@@ -915,7 +913,7 @@ public:
 	virtual void translate(float x, float y, float z = 0)=0;
 	/// \brief Translate this renderer's current matrix by a point.
 	/// \param p The 3D point to translate this renderer's current matrix by.
-	virtual void translate(const ofPoint & p)=0;
+	virtual void translate(const glm::vec3 & p)=0;
 	/// \brief Scale this renderer's current matrix by xAmnt, yAmnt, and zAmnt.
 	/// \param xAmnt The amount to scale this renderer's current matrix's x
 	/// axis by.
@@ -1407,7 +1405,7 @@ public:
 	/// \param width The width to use when drawing the plane with this renderer.
 	/// \param height The height to use when drawing the plane with this
 	/// renderer.
-	virtual void drawPlane(ofPoint& position, float width, float height) const;
+	virtual void drawPlane(glm::vec3& position, float width, float height) const;
 	/// \brief Draw a plane with the renderer at the origin.
 	///
 	/// The number of rows and columns this plane will have is dependent on this
@@ -1454,7 +1452,7 @@ public:
 	///
 	/// \param position The 3D position point to use when drawing the sphere.
 	/// \param radius The radius to use when drawing this sphere.
-	virtual void drawSphere(const ofPoint& position, float radius) const;
+	virtual void drawSphere(const glm::vec3& position, float radius) const;
 	/// \brief Draw a sphere with the renderer at the defualt origin using
 	/// radius.
 	/// \param radius The radius to use when drawing the sphere with this
@@ -1495,7 +1493,7 @@ public:
 	///
 	/// \param position The 3D position point to use when drawing the icosphere.
 	/// \param radius The radius to use when drawing this icosphere.
-	virtual void drawIcoSphere(const ofPoint& position, float radius) const;
+	virtual void drawIcoSphere(const glm::vec3& position, float radius) const;
 	/// \brief Draw an icosphere with the renderer at the origin using radius.
 	/// \param radius The radius to use when drawing the icosphere with this
 	/// renderer.
@@ -1518,7 +1516,7 @@ public:
 	///
 	/// \returns A 3D vector representing this renderer's current cylinder
 	/// resolution.
-	virtual ofVec3f getCylinderResolution() const;
+	virtual glm::vec3 getCylinderResolution() const;
 	/// \brief Draw a cylinder with this renderer using x, y, radius, and
 	/// height.
 	///
@@ -1559,7 +1557,7 @@ public:
 	/// \param radius The radius to use when drawing this cylinder's circular
 	/// footprint.
 	/// \param height The height to use when drawing this cylinder.
-	virtual void drawCylinder(const ofPoint& position, float radius, float height) const;
+	virtual void drawCylinder(const glm::vec3& position, float radius, float height) const;
 	/// \brief Draw a cylinder at the origin using radius and height.
 	///
 	/// A cylinder drawn in this way will be positioned at the origin. Radius is
@@ -1592,7 +1590,7 @@ public:
 	///
 	/// \returns A 3D vector representing this renderer's current cone
 	/// resolution.
-	virtual ofVec3f getConeResolution() const;
+	virtual glm::vec3 getConeResolution() const;
 
 	/// \brief Draw a cone with this renderer using x, y, z, radius, and
 	/// height.
@@ -1632,7 +1630,7 @@ public:
 	/// \param radius The radius to use when drawing this cone's circular
 	/// footprint.
 	/// \param height The height to use when drawing this cone.
-	virtual void drawCone(const ofPoint& position, float radius, float height) const;
+	virtual void drawCone(const glm::vec3& position, float radius, float height) const;
 	/// \brief Draw a cone at the origin using radius and height.
 	///
 	/// This cone will be drawn with its position at the coordinate system's
@@ -1663,7 +1661,7 @@ public:
 	/// respectively.
 	///
 	/// \returns This renderer's current box resolution as a 3D vector.
-	virtual ofVec3f getBoxResolution() const;
+	virtual glm::vec3 getBoxResolution() const;
 
 	/// \brief Draws a rectangular box using x, y, z, width, height, and depth.
 	///
@@ -1708,11 +1706,11 @@ public:
 	/// The box is drawn with the current color, e.g. set with ofSetColor().
 	/// The box is drawn filled by default; change this with ofFill();
 	///
-	/// \param position an ofPoint which contains the (x,y,z) coordinates for the box's reference corner.
+	/// \param position an glm::vec3 which contains the (x,y,z) coordinates for the box's reference corner.
 	/// \param width The width of the box.
 	/// \param height The height of the box.
 	/// \param depth The depth of the box.
-	virtual void drawBox(const ofPoint& position, float width, float height, float depth) const;
+	virtual void drawBox(const glm::vec3& position, float width, float height, float depth) const;
 
 	/// \brief Draws a cube with the specified size, starting from the specified
 	/// position.
@@ -1722,10 +1720,10 @@ public:
 	/// ofSetColor(). The cube is drawn filled by default; change this with
 	/// ofFill().
 	///
-	/// \param position an ofPoint which contains the (x,y,z) coordinates for
+	/// \param position an glm::vec3 which contains the (x,y,z) coordinates for
 	/// the cube's reference corner.
 	/// \param size The size of the cube.
-	virtual void drawBox(const ofPoint& position, float size) const;
+	virtual void drawBox(const glm::vec3& position, float size) const;
 
 	/// \brief Draws a cube with the specified size at the origin.
 	///
@@ -1773,7 +1771,7 @@ public:
 	/// \brief start The 3D vector to use as the first point.
 	/// \brief end The 3D vector to use as the second point.
 	/// \float headSize The size of the arrowhead.
-	virtual void drawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) const;
+	virtual void drawArrow(const glm::vec3& start, const glm::vec3& end, float headSize) const;
 	/// \brief Draw the coordinate system's axes with the renderer.
 	///
 	/// This draws red, green, and blue lines for the x, y, and z rotation

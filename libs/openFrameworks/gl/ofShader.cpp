@@ -792,7 +792,7 @@ void ofShader::setUniform2f(const string & name, const glm::vec2 & v) const{
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3f(const string & name, const ofVec3f & v) const{
+void ofShader::setUniform3f(const string & name, const glm::vec3 & v) const{
 	setUniform3f(name,v.x,v.y,v.z);
 }
 
@@ -879,8 +879,8 @@ void ofShader::setUniforms(const ofParameterGroup & parameters) const{
 			setUniform1f(parameters[i].getEscapedName(),parameters[i].cast<float>());
 		}else if(parameters[i].type()==typeid(ofParameter<glm::vec2>).name()){
 			setUniform2f(parameters[i].getEscapedName(),parameters[i].cast<glm::vec2>());
-		}else if(parameters[i].type()==typeid(ofParameter<ofVec3f>).name()){
-			setUniform3f(parameters[i].getEscapedName(),parameters[i].cast<ofVec3f>());
+		}else if(parameters[i].type()==typeid(ofParameter<glm::vec3>).name()){
+			setUniform3f(parameters[i].getEscapedName(),parameters[i].cast<glm::vec3>());
 		}else if(parameters[i].type()==typeid(ofParameter<ofVec4f>).name()){
 			setUniform4f(parameters[i].getEscapedName(),parameters[i].cast<ofVec4f>());
 		}else if(parameters[i].type()==typeid(ofParameterGroup).name()){

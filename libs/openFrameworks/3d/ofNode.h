@@ -45,7 +45,7 @@ public:
 	
 	/// \brief Get node's local position as a 3D vector.
 	/// \returns A 3D vector with the local coordinates.
-	ofVec3f getPosition() const;
+	glm::vec3 getPosition() const;
 
 	/// \brief Get node's local x position. 
 	/// \returns Local x coordinate as a float.
@@ -61,27 +61,27 @@ public:
 	
 	/// \brief Get the node's local x axis as 3d vector.
 	/// \returns A normalized 3D vector of the node's local x axis direction.
-	ofVec3f getXAxis() const;
+	glm::vec3 getXAxis() const;
 
 	/// \brief Get the node's local y axis as 3d vector.
 	/// \returns A normalized 3D vector of the node's local y axis direction.
-	ofVec3f getYAxis() const;
+	glm::vec3 getYAxis() const;
 
 	/// \brief Get the node's local z axis as 3d vector.
 	/// \returns A normalized 3D vector of the node's local z axis direction.
-	ofVec3f getZAxis() const;
+	glm::vec3 getZAxis() const;
 	
 	/// \brief Get direction of node's side aka local x axis, as 3d vector.
 	/// \returns A normalized 3D vector of the node's local x axis direction.
-	ofVec3f getSideDir() const;
+	glm::vec3 getSideDir() const;
 	
 	/// \brief Get direction the node looks at aka local -z axis, as 3d vector.
 	/// \returns A normalized 3D vector of the node's local -z axis direction.
-	ofVec3f getLookAtDir()const;
+	glm::vec3 getLookAtDir()const;
 
 	/// \brief Get direction of node's top aka local y axis, as 3d vector.
 	/// \returns A normalized 3D vector of the node's local y axis direction.
-	ofVec3f getUpDir() const;
+	glm::vec3 getUpDir() const;
 	
 	/// \brief Get pitch of node, aka the rotation along local x axis.
 	/// \returns The rotation around the local x axis in degrees, as a float.
@@ -101,11 +101,11 @@ public:
 	
 	/// \brief Get local orientation of node in degrees around x, y, and z axes.
 	/// \returns The local x, y and z axes orientation in degrees, as a 3D vector.
-	ofVec3f getOrientationEuler() const;
+	glm::vec3 getOrientationEuler() const;
 	
 	/// \brief Get local scale of node in xyz axes where 1 is default.
 	/// \returns The local scale in the xyz axes where 1 = 100% of size.
-	ofVec3f getScale() const;
+	glm::vec3 getScale() const;
 
 	/// \brief Get node's local transformations (position, orientation, scale).
 	/// \returns A refrence to ofMatrix4x4 containing node's local transformations.
@@ -123,7 +123,7 @@ public:
 	
 	/// \brief Get node's global position as a 3D vector.
 	/// \returns A 3D vector with the global coordinates.
-	ofVec3f getGlobalPosition() const;
+	glm::vec3 getGlobalPosition() const;
 	
 	/// \brief Get the global orientation of the node as a quaternion.
 	/// \returns An ofQuaternion of the global orientations(useful for complex rotations)
@@ -131,7 +131,7 @@ public:
 	
 	/// \brief Get global scale of node in xyz axes where 1 is default.
 	/// \returns The global scale in the xyz axes where 1 = 100% of size.
-	ofVec3f getGlobalScale() const;
+	glm::vec3 getGlobalScale() const;
 
 	/// \}	
 	/// \name Setters
@@ -149,7 +149,7 @@ public:
 	
 	/// \brief Set the local position of the node using a 3D vector of coordinates.
 	/// \param param0 Desired local xyz coordinates as ref to 3D vector.	
-	void setPosition(const ofVec3f& p);
+	void setPosition(const glm::vec3& p);
 	
 	/// \brief Set the global position of the node using xyz coordinates.
 	/// \param param0 Desired global x coordinate as a float.
@@ -159,7 +159,7 @@ public:
 
 	/// \brief Set the global position of the node using a 3D vector of coordinates.
 	/// \param param0 Desired global xyz coordinates as ref to 3D vector.		
-	void setGlobalPosition(const ofVec3f& p);
+	void setGlobalPosition(const glm::vec3& p);
 
 	/// \brief Set local orientation with a quaternion.
 	/// \param param0 Desired local orientation as ref to an ofQuaternion.
@@ -169,7 +169,7 @@ public:
 	/// \param param0 Desired local xyz angles in degrees, as ref to 3D vector. 
 	/// \note Using euler angles can cause gimbal lock.
 	/// \sa https://en.wikipedia.org/wiki/Gimbal_lock
-	void setOrientation(const ofVec3f& eulerAngles);
+	void setOrientation(const glm::vec3& eulerAngles);
 	
 	/// \brief Set global orientation with a quaternion.
 	/// \param param0 Desired global orientation as ref to an ofQuaternion.	
@@ -187,7 +187,7 @@ public:
 	
 	/// \brief Set local scale for xyz axes individually with a 3D vector.
 	/// \param param0 Desired local scale for all axes as ref to 3D vector where 1 = 100%.
-	void setScale(const ofVec3f& s);
+	void setScale(const glm::vec3& s);
 	
 	/// \}
 	/// \name Modifiers
@@ -201,7 +201,7 @@ public:
 	
 	/// \brief Move node by relative amount with xyz as ref to 3D vector.
 	/// \param param0 Desired relative position change along all axes as ref to 3D vector.
-	void move(const ofVec3f& offset);	
+	void move(const glm::vec3& offset);
 
 	/// \brief Move node left+right relative to current position (in local x axis).
 	/// \param param0 Desired relative position change along local x axis as float.
@@ -234,7 +234,7 @@ public:
 	/// \brief Rotate relative to current orientation around arbitrary axis.
 	/// \param param0 Desired relative angle change in degrees as float.	
 	/// \param param1 Desired axis to rotate around as a ref to cartesian 3D Vector.	
-	void rotate(float degrees, const ofVec3f& v);
+	void rotate(float degrees, const glm::vec3& v);
 
 	/// \brief Rotate relative to current orientation around arbitrary axis.
 	/// \param param0 Desired relative angle change in degrees as float.	
@@ -246,24 +246,24 @@ public:
 	/// \brief Rotate relative to current orientation by quaternion around point.
 	/// \param param0 Desired relative rotation change as a ref to ofQuaternion.
 	/// \param param1 Point to rotate around in local xyz coordinates as ref to 3D vector.	
-	void rotateAround(const ofQuaternion& q, const ofVec3f& point);
+	void rotateAround(const ofQuaternion& q, const glm::vec3& point);
 	
 	/// \brief Rotate relative to current orientation around arbitrary axis around point.
 	/// \param param0 Desired relative angle change in degrees as float.    
 	/// \param param1 The arbitrary axis to rotate around as ref to cartesian 3D vector.
     /// \param param2 Point to rotate around in local xyz coordinates as ref to 3D vector.
-    void rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point);
+	void rotateAround(float degrees, const glm::vec3& axis, const glm::vec3& point);
 
     /// \brief Orient node to look at point (-z axis pointing to global position).
     /// \param param0 XYZ coordinates of point to look at as ref to 3D vector.
     /// \note This version calculates the up vector automatically to try to keep
     /// 	  it relatively consistant with the original angle.
-    void lookAt(const ofVec3f& lookAtPosition);
+	void lookAt(const glm::vec3& lookAtPosition);
 
     /// \brief Orient node to look at point (-z axis pointing to global position).
     /// \param param0 XYZ coordinates of point to look at as ref to 3D vector.
     /// \param param1 The desired up axis as a cartesian 3D vector.
-    void lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector);
+	void lookAt(const glm::vec3& lookAtPosition, glm::vec3 upVector);
 
     /// \brief Orient node to look at another node (-z axis pointing at other node).
     /// \param param0 A reference to the node to look at.
@@ -274,14 +274,14 @@ public:
     /// \brief Orient node to look at another node (-z axis pointing at other node).
     /// \param param0 A reference to the node to look at.
     /// \param param1 The desired up axis as a ref to cartesian 3D vector.
-    void lookAt(const ofNode& lookAtNode, const ofVec3f& upVector);
+	void lookAt(const ofNode& lookAtNode, const glm::vec3& upVector);
 	
 	/// \brief Orbit node around a global position at a specific radius.
 	/// \param param0 The longitudinal position of the node in degrees as float.
 	/// \param param1 The latitudinal position of the node in degrees as float.
 	/// \param param2 The desired radius from the position in degrees as float.
 	/// \param param3 The global position to orbit around as ref to 3D vector. Default = (0, 0, 0).	
-	void orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint = ofVec3f(0, 0, 0));
+	void orbit(float longitude, float latitude, float radius, const glm::vec3& centerPoint = glm::vec3(0, 0, 0));
 	/// \brief Orbit node around another node at a specific radius.
 	/// \param param0 The longitudinal position of the node in degrees as float.
 	/// \param param1 The latitudinal position of the node in degrees as float.
@@ -349,15 +349,15 @@ protected:
 	ofNode * parent;
 
 private:
-	void onParentPositionChanged(ofVec3f & position) {onPositionChanged();}
+	void onParentPositionChanged(glm::vec3 & position) {onPositionChanged();}
 	void onParentOrientationChanged(ofQuaternion & orientation) {onOrientationChanged();}
-	void onParentScaleChanged(ofVec3f & scale) {onScaleChanged();}
+	void onParentScaleChanged(glm::vec3 & scale) {onScaleChanged();}
 
-	ofParameter<ofVec3f> position;
+	ofParameter<glm::vec3> position;
 	ofParameter<ofQuaternion> orientation;
-	ofParameter<ofVec3f> scale;
+	ofParameter<glm::vec3> scale;
 
-	std::array<ofVec3f,3> axis;
+	std::array<glm::vec3,3> axis;
 
 	ofMatrix4x4 localTransformMatrix;
 	bool legacyCustomDrawOverrided;

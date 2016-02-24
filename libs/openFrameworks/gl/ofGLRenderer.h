@@ -76,7 +76,7 @@ public:
 	void pushMatrix();
 	void popMatrix();
 	void translate(float x, float y, float z = 0);
-	void translate(const ofPoint & p);
+	void translate(const glm::vec3 & p);
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1);
 	void rotate(float degrees, float vecX, float vecY, float vecZ);
 	void rotateX(float degrees);
@@ -223,10 +223,10 @@ private:
 
 	bool bBackgroundAuto;
 
-	mutable vector<ofPoint> linePoints;
-	mutable vector<ofPoint> rectPoints;
-	mutable vector<ofPoint> triPoints;
-	mutable vector<ofPoint> circlePoints;
+	mutable vector<glm::vec3> linePoints;
+	mutable vector<glm::vec3> rectPoints;
+	mutable vector<glm::vec3> triPoints;
+	mutable vector<glm::vec3> circlePoints;
 	ofPolyline circlePolyline;
 
 	ofMatrixStack matrixStack;

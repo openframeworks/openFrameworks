@@ -27,9 +27,9 @@ public:
 	void update();
 	void draw();
 
-	ofPoint		getWindowPosition();
-	ofPoint		getWindowSize();
-	ofPoint		getScreenSize();
+	glm::vec2	getWindowPosition();
+	glm::vec2	getWindowSize();
+	glm::vec2	getScreenSize();
 
 	int			getWidth();
 	int			getHeight();
@@ -90,7 +90,7 @@ private:
 	void pushMatrix(){};
 	void popMatrix(){};
 	void translate(float x, float y, float z = 0){};
-	void translate(const ofPoint & p){};
+	void translate(const glm::vec3 & p){};
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1){};
 	void rotate(float degrees, float vecX, float vecY, float vecZ){};
 	void rotateX(float degrees){};

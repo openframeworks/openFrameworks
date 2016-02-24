@@ -19,7 +19,7 @@ ofMesh::ofMesh(){
 }
 
 //--------------------------------------------------------------
-ofMesh::ofMesh(ofPrimitiveMode mode, const vector<ofVec3f>& verts){
+ofMesh::ofMesh(ofPrimitiveMode mode, const vector<glm::vec3>& verts){
 	bColorsChanged = false;
 	bNormalsChanged = false;
 	bTexCoordsChanged = false;
@@ -135,21 +135,21 @@ bool ofMesh::hasIndices() const{
 //ADDERS
 
 //--------------------------------------------------------------
-void ofMesh::addVertex(const ofVec3f& v){
+void ofMesh::addVertex(const glm::vec3& v){
 	vertices.push_back(v);
 	bVertsChanged = true;
 	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::addVertices(const vector<ofVec3f>& verts){
+void ofMesh::addVertices(const vector<glm::vec3>& verts){
 	vertices.insert(vertices.end(),verts.begin(),verts.end());
 	bVertsChanged = true;
 	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::addVertices(const ofVec3f* verts, std::size_t amt){
+void ofMesh::addVertices(const glm::vec3* verts, std::size_t amt){
 	vertices.insert(vertices.end(),verts,verts+amt);
 	bVertsChanged = true;
 	bFacesDirty = true;
@@ -177,21 +177,21 @@ void ofMesh::addColors(const ofFloatColor* cols, std::size_t amt){
 }
 
 //--------------------------------------------------------------
-void ofMesh::addNormal(const ofVec3f& n){
+void ofMesh::addNormal(const glm::vec3& n){
 	normals.push_back(n);
 	bNormalsChanged = true;
 	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::addNormals(const vector<ofVec3f>& norms){
+void ofMesh::addNormals(const vector<glm::vec3>& norms){
 	normals.insert(normals.end(),norms.begin(),norms.end());
 	bNormalsChanged = true;
 	bFacesDirty = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::addNormals(const ofVec3f* norms, std::size_t amt){
+void ofMesh::addNormals(const glm::vec3* norms, std::size_t amt){
 	normals.insert(normals.end(),norms,norms+amt);
 	bNormalsChanged = true;
 	bFacesDirty = true;
@@ -316,12 +316,12 @@ ofPrimitiveMode ofMesh::getMode() const{
 }
 
 //--------------------------------------------------------------
-ofVec3f ofMesh::getVertex(ofIndexType i) const{
+glm::vec3 ofMesh::getVertex(ofIndexType i) const{
 	return vertices[i];
 }
 
 //--------------------------------------------------------------
-ofVec3f ofMesh::getNormal(ofIndexType i) const{
+glm::vec3 ofMesh::getNormal(ofIndexType i) const{
 	return normals[i];
 }
 
@@ -373,7 +373,7 @@ int ofPrimitive::getNumIndicesWire(){
  */
 
 //--------------------------------------------------------------
-ofVec3f* ofMesh::getVerticesPointer(){
+glm::vec3* ofMesh::getVerticesPointer(){
 	return vertices.data();
 }
 
@@ -383,7 +383,7 @@ ofFloatColor* ofMesh::getColorsPointer(){
 }
 
 //--------------------------------------------------------------
-ofVec3f* ofMesh::getNormalsPointer(){
+glm::vec3* ofMesh::getNormalsPointer(){
 	return normals.data();
 }
 
@@ -399,7 +399,7 @@ ofIndexType* ofMesh::getIndexPointer(){
 
 
 //--------------------------------------------------------------
-const ofVec3f* ofMesh::getVerticesPointer() const{
+const glm::vec3* ofMesh::getVerticesPointer() const{
 	return vertices.data();
 }
 
@@ -409,7 +409,7 @@ const ofFloatColor* ofMesh::getColorsPointer() const{
 }
 
 //--------------------------------------------------------------
-const ofVec3f* ofMesh::getNormalsPointer() const{
+const glm::vec3* ofMesh::getNormalsPointer() const{
 	return normals.data();
 }
 
@@ -423,7 +423,7 @@ const ofIndexType * ofMesh::getIndexPointer() const{
 	return indices.data();
 }
 
-vector<ofVec3f> & ofMesh::getVertices(){
+vector<glm::vec3> & ofMesh::getVertices(){
 	bVertsChanged = true;
 	bFacesDirty = true;
 	return vertices;
@@ -435,7 +435,7 @@ vector<ofFloatColor> & ofMesh::getColors(){
 	return colors;
 }
 
-vector<ofVec3f> & ofMesh::getNormals(){
+vector<glm::vec3> & ofMesh::getNormals(){
 	bNormalsChanged = true;
 	bFacesDirty = true;
 	return normals;
@@ -453,7 +453,7 @@ vector<ofIndexType> & ofMesh::getIndices(){
 	return indices;
 }
 
-const vector<ofVec3f> & ofMesh::getVertices() const{
+const vector<glm::vec3> & ofMesh::getVertices() const{
 	return vertices;
 }
 
@@ -461,7 +461,7 @@ const vector<ofFloatColor> & ofMesh::getColors() const{
 	return colors;
 }
 
-const vector<ofVec3f> & ofMesh::getNormals() const{
+const vector<glm::vec3> & ofMesh::getNormals() const{
 	return normals;
 }
 
@@ -518,13 +518,13 @@ vector<int>& ofPrimitive::getFace(int faceNum){
 
 
 //--------------------------------------------------------------
-ofVec3f ofMesh::getCentroid() const {
+glm::vec3 ofMesh::getCentroid() const {
 	if(vertices.size() == 0) {
-		ofLogWarning("ofMesh") << "getCentroid(): mesh has no vertices, returning ofPoint(0, 0, 0)";
-		return ofPoint(0, 0, 0);
+		ofLogWarning("ofMesh") << "getCentroid(): mesh has no vertices, returning glm::vec3(0, 0, 0)";
+		return glm::vec3(0, 0, 0);
 	}
 
-	ofVec3f sum;
+	glm::vec3 sum;
 	for(ofIndexType i = 0; i < vertices.size(); i++) {
 		sum += vertices[i];
 	}
@@ -540,7 +540,7 @@ void ofMesh::setMode(ofPrimitiveMode m){
 }
 
 //--------------------------------------------------------------
-void ofMesh::setVertex(ofIndexType index, const ofVec3f& v){
+void ofMesh::setVertex(ofIndexType index, const glm::vec3& v){
 	vertices[index] = v;
 	bVertsChanged = true;
 	bIndicesChanged = true;
@@ -548,7 +548,7 @@ void ofMesh::setVertex(ofIndexType index, const ofVec3f& v){
 }
 
 //--------------------------------------------------------------
-void ofMesh::setNormal(ofIndexType index, const ofVec3f& n){
+void ofMesh::setNormal(ofIndexType index, const glm::vec3& n){
 	normals[index] = n;
 	bNormalsChanged = true;
 	bFacesDirty = true;
@@ -1007,7 +1007,7 @@ void ofMesh::save(string path, bool useBinary) const{
 
 	for(std::size_t i = 0; i < data.getNumVertices(); i++){
 		if(useBinary) {
-			os.write((char*) &data.getVertices()[i], sizeof(ofVec3f));
+			os.write((char*) &data.getVertices()[i], sizeof(glm::vec3));
 		} else {
 			os << data.getVertex(i).x << " " << data.getVertex(i).y << " " << data.getVertex(i).z;
 		}
@@ -1022,14 +1022,14 @@ void ofMesh::save(string path, bool useBinary) const{
 		}
 		if(data.getNumTexCoords()){
 			if(useBinary) {
-				os.write((char*) &data.getTexCoords()[i], sizeof(ofVec2f));
+				os.write((char*) &data.getTexCoords()[i], sizeof(glm::vec2));
 			} else {
 				os << " " << data.getTexCoord(i).x << " " << data.getTexCoord(i).y;
 			}
 		}
 		if(data.getNumNormals()){
 			if(useBinary) {
-				os.write((char*) &data.getNormals()[i], sizeof(ofVec3f));
+				os.write((char*) &data.getNormals()[i], sizeof(glm::vec3));
 			} else {
 				os << " " << data.getNormal(i).x << " " << data.getNormal(i).y << " " << data.getNormal(i).z;
 			}
@@ -1150,7 +1150,7 @@ ofMesh ofMesh::getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex, 
 //----------------------------------------------------------
 void ofMesh::mergeDuplicateVertices() {
 
-	vector<ofVec3f> verts = getVertices();
+	vector<glm::vec3> verts = getVertices();
 	vector<ofIndexType> indices = getIndices();
 
 	//get indexes to share single point - TODO: try j < i
@@ -1160,8 +1160,8 @@ void ofMesh::mergeDuplicateVertices() {
 
 			ofIndexType i1 = indices[i];
 			ofIndexType i2 = indices[j];
-			ofVec3f v1 = verts[ i1 ];
-			ofVec3f v2 = verts[ i2 ];
+			glm::vec3 v1 = verts[ i1 ];
+			glm::vec3 v2 = verts[ i2 ];
 
 			if( v1 == v2 && i1 != i2) {
 				indices[j] = i1;
@@ -1173,7 +1173,7 @@ void ofMesh::mergeDuplicateVertices() {
 	//indices array now has list of unique points we need
 	//but we need to delete the old points we're not using and that means the index values will change
 	//so we are going to create a new list of points and new indexes - we will use a map to map old index values to the new ones
-	vector <ofPoint> newPoints;
+	vector <glm::vec3> newPoints;
 	vector <ofIndexType> newIndexes;
 	map <ofIndexType, bool> ptCreated;
 	map <ofIndexType, ofIndexType> oldIndexNewIndex;
@@ -1182,8 +1182,8 @@ void ofMesh::mergeDuplicateVertices() {
 	vector<ofFloatColor>& colors = getColors();
 	vector<glm::vec2> newTCoords;
 	vector<glm::vec2>& tcoords = getTexCoords();
-	vector<ofVec3f> newNormals;
-	vector<ofVec3f>& normals = getNormals();
+	vector<glm::vec3> newNormals;
+	vector<glm::vec3>& normals = getNormals();
 
 	for(ofIndexType i = 0; i < indices.size(); i++){
 		ptCreated[i] = false;
@@ -1191,7 +1191,7 @@ void ofMesh::mergeDuplicateVertices() {
 
 	for(ofIndexType i = 0; i < indices.size(); i++){
 		ofIndexType index = indices[i];
-		ofPoint p = verts[ index ];
+		glm::vec3 p = verts[ index ];
 
 		if( ptCreated[index] == false ){
 			oldIndexNewIndex[index] = newPoints.size();
@@ -1294,9 +1294,9 @@ const vector<ofMeshFace> & ofMesh::getUniqueFaces() const{
 }
 
 //----------------------------------------------------------
-vector<ofVec3f> ofMesh::getFaceNormals( bool perVertex ) const{
+vector<glm::vec3> ofMesh::getFaceNormals( bool perVertex ) const{
 	// default for ofPrimitiveBase is vertex normals //
-	vector<ofVec3f> faceNormals;
+	vector<glm::vec3> faceNormals;
 
 	if( hasVertices() ) {
 		if(vertices.size() > 3 && indices.size() > 3) {
@@ -1306,7 +1306,7 @@ vector<ofVec3f> ofMesh::getFaceNormals( bool perVertex ) const{
 				faceNormals.resize(indices.size());
 			}
 			ofMeshFace face;
-			ofVec3f n;
+			glm::vec3 n;
 			for(ofIndexType i = 0; i < indices.size(); i+=3) {
 				face.setVertex( 0, vertices[indices[i+0]] );
 				face.setVertex( 1, vertices[indices[i+1]] );
@@ -1386,7 +1386,7 @@ void ofMesh::smoothNormals( float angle ) {
 
 	if( getMode() == OF_PRIMITIVE_TRIANGLES) {
 		vector<ofMeshFace> triangles = getUniqueFaces();
-		vector<ofVec3f> verts;
+		vector<glm::vec3> verts;
 		for(ofIndexType i = 0; i < triangles.size(); i++) {
 			for(ofIndexType j = 0; j < 3; j++) {
 				verts.push_back( triangles[i].getVertex(j) );
@@ -1399,9 +1399,9 @@ void ofMesh::smoothNormals( float angle ) {
 		for(ofIndexType i = 0; i < verts.size()-1; i++) {
 			for(ofIndexType j = i+1; j < verts.size(); j++) {
 				if(i != j) {
-					ofVec3f& v1 = verts[i];
-					ofVec3f& v2 = verts[j];
-					if( v1.distance(v2) <= epsilon ) {
+					glm::vec3& v1 = verts[i];
+					glm::vec3& v2 = verts[j];
+					if( glm::distance(v1, v2) <= epsilon ) {
 						// average the location //
 						verts[i] = (v1+v2)/2.f;
 						verts[j] = verts[i];
@@ -1443,11 +1443,11 @@ void ofMesh::smoothNormals( float angle ) {
 //			ofLogNotice("ofMesh") << "smoothNormals(): " << it->first << "  num = " << it->second.size();
 //		}
 
-		ofVec3f normal;
+		glm::vec3 normal;
 		float angleCos = cos(angle * DEG_TO_RAD );
 		float numNormals=0;
-		ofVec3f f1, f2;
-		ofVec3f vert;
+		glm::vec3 f1, f2;
+		glm::vec3 vert;
 
 		for(ofIndexType j = 0; j < triangles.size(); j++) {
 			for(ofIndexType k = 0; k < 3; k++) {
@@ -1458,12 +1458,12 @@ void ofMesh::smoothNormals( float angle ) {
 
 				string vstring = xStr+yStr+zStr;
 				numNormals=0;
-				normal.set(0,0,0);
+				normal = {0.f,0.f,0.f};
 				if(vertHash.find(vstring) != vertHash.end()) {
 					for(ofIndexType i = 0; i < vertHash[vstring].size(); i++) {
 						f1 = triangles[j].getFaceNormal();
 						f2 = triangles[vertHash[vstring][i]].getFaceNormal();
-						if(f1.dot(f2) >= angleCos ) {
+						if(glm::dot(f1, f2) >= angleCos ) {
 							normal += f2;
 							numNormals+=1.f;
 						}
@@ -1494,8 +1494,8 @@ ofMesh ofMesh::plane(float width, float height, int columns, int rows, ofPrimiti
 
 	mesh.setMode(mode);
 
-	ofVec3f vert;
-	ofVec3f normal(0, 0, 1); // always facing forward //
+	glm::vec3 vert;
+	glm::vec3 normal(0, 0, 1); // always facing forward //
 	glm::vec2 texcoord;
 
 	// the origin of the plane is the center //
@@ -1569,7 +1569,7 @@ ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
 	}
 	mesh.setMode(mode);
 
-	ofVec3f vert;
+	glm::vec3 vert;
 	glm::vec2 tcoord;
 
 	for(float i = 0; i < res+1; i++) {
@@ -1586,7 +1586,7 @@ ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
 
 			tcoord.x = j / (doubleRes);
 
-			vert.set(nx, ny, nz);
+			vert = {nx, ny, nz};
 			mesh.addNormal(vert);
 			vert *= radius;
 			mesh.addVertex(vert);
@@ -1681,18 +1681,18 @@ ofMesh ofMesh::icosahedron(float radius) {
 	/// Step 1 : Generate icosahedron
 	float invnorm = 1/sqrt(phi*phi+1);
 
-	mesh.addVertex(invnorm*ofVec3f(-1,  phi, 0));//0
-	mesh.addVertex(invnorm*ofVec3f( 1,  phi, 0));//1
-	mesh.addVertex(invnorm*ofVec3f(0,   1,  -phi));//2
-	mesh.addVertex(invnorm*ofVec3f(0,   1,   phi));//3
-	mesh.addVertex(invnorm*ofVec3f(-phi,0,  -1));//4
-	mesh.addVertex(invnorm*ofVec3f(-phi,0,   1));//5
-	mesh.addVertex(invnorm*ofVec3f( phi,0,  -1));//6
-	mesh.addVertex(invnorm*ofVec3f( phi,0,   1));//7
-	mesh.addVertex(invnorm*ofVec3f(0,   -1, -phi));//8
-	mesh.addVertex(invnorm*ofVec3f(0,   -1,  phi));//9
-	mesh.addVertex(invnorm*ofVec3f(-1,  -phi,0));//10
-	mesh.addVertex(invnorm*ofVec3f( 1,  -phi,0));//11
+	mesh.addVertex(invnorm*glm::vec3(-1,  phi, 0));//0
+	mesh.addVertex(invnorm*glm::vec3( 1,  phi, 0));//1
+	mesh.addVertex(invnorm*glm::vec3(0,   1,  -phi));//2
+	mesh.addVertex(invnorm*glm::vec3(0,   1,   phi));//3
+	mesh.addVertex(invnorm*glm::vec3(-phi,0,  -1));//4
+	mesh.addVertex(invnorm*glm::vec3(-phi,0,   1));//5
+	mesh.addVertex(invnorm*glm::vec3( phi,0,  -1));//6
+	mesh.addVertex(invnorm*glm::vec3( phi,0,   1));//7
+	mesh.addVertex(invnorm*glm::vec3(0,   -1, -phi));//8
+	mesh.addVertex(invnorm*glm::vec3(0,   -1,  phi));//9
+	mesh.addVertex(invnorm*glm::vec3(-1,  -phi,0));//10
+	mesh.addVertex(invnorm*glm::vec3( 1,  -phi,0));//11
 
 	ofIndexType firstFaces[] = {
 		0,1,2,
@@ -1738,7 +1738,7 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 
 	//ofMesh icosahedron = ofGetIcosahedronMesh( 1.f );
 	ofMesh icosahedron = ofMesh::icosahedron( 1.f );
-	vector<ofVec3f> vertices = icosahedron.getVertices();
+	vector<glm::vec3> vertices = icosahedron.getVertices();
 	vector<ofIndexType> faces = icosahedron.getIndices();
 
 	ofIndexType size = faces.size();
@@ -1758,13 +1758,13 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 			std::size_t i12 = vertices.size();
 			std::size_t i23 = i12+1;
 			std::size_t i13 = i12+2;
-			ofVec3f v1 = vertices[i1];
-			ofVec3f v2 = vertices[i2];
-			ofVec3f v3 = vertices[i3];
+			glm::vec3 v1 = vertices[i1];
+			glm::vec3 v2 = vertices[i2];
+			glm::vec3 v3 = vertices[i3];
 			//make 1 vertice at the center of each edge and project it onto the sphere
-			vertices.push_back((v1+v2).getNormalized());
-			vertices.push_back((v2+v3).getNormalized());
-			vertices.push_back((v1+v3).getNormalized());
+			vertices.push_back(glm::normalize(v1+v2));
+			vertices.push_back(glm::normalize(v2+v3));
+			vertices.push_back(glm::normalize(v1+v3));
 			//now recreate indices
 			newFaces.push_back(i1);
 			newFaces.push_back(i12);
@@ -1786,7 +1786,7 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 	vector<glm::vec2> texCoords;
 	for (ofIndexType i=0;i<vertices.size();i++)
 	{
-		const ofVec3f& vec = vertices[i];
+		const auto& vec = vertices[i];
 		float u, v;
 		float r0 = sqrtf(vec.x*vec.x+vec.z*vec.z);
 		float alpha;
@@ -1836,7 +1836,7 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 	{
 		ofIndexType index = indexToSplit[i];
 		//duplicate vertex
-		ofVec3f v = vertices[index];
+		glm::vec3 v = vertices[index];
 		glm::vec2 t = texCoords[index] + glm::vec2(1.f, 0.f);
 		vertices.push_back(v);
 		texCoords.push_back(t);
@@ -1907,10 +1907,10 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
 	float halfH = height*.5f;
 
 	float newRad;
-	ofVec3f vert;
+	glm::vec3 vert;
 	glm::vec2 tcoord;
-	ofVec3f normal;
-	ofVec3f up(0,1,0);
+	glm::vec3 normal;
+	glm::vec3 up(0,1,0);
 
 	std::size_t vertOffset = 0;
 
@@ -1922,7 +1922,7 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
 
 	// add the top cap //
 	if(bCapped && capSegs > 0) {
-		normal.set(0,-1,0);
+		normal = {0.f, -1.f, 0.f};
 		for(int iy = 0; iy < capSegs; iy++) {
 			for(int ix = 0; ix < radiusSegments; ix++) {
 				newRad = ofMap((float)iy, 0, capSegs-1, 0.0, radius);
@@ -1976,7 +1976,7 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
 
 	// cylinder vertices //
 	for(int iy = 0; iy < heightSegments; iy++) {
-		normal.set(1,0,0);
+		normal = {1.f, 0.f, 0.f};
 		for(int ix = 0; ix < radiusSegments; ix++) {
 
 			//newRad = ofMap((float)iy, 0, heightSegments-1, 0.0, radius);
@@ -1991,7 +1991,7 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
 			mesh.addVertex( vert );
 			mesh.addNormal( normal );
 
-			normal.rotateRad(-angleIncRadius, up);
+			glm::rotate(normal, -angleIncRadius, up);
 
 		}
 	}
@@ -2026,7 +2026,7 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
 		minTexYNormalized = maxTexYNormalized;
 		maxTexYNormalized   = 1.f;
 
-		normal.set(0, 1,0);
+		normal = {0.f, 1.f, 0.f};
 		for(int iy = 0; iy < capSegs; iy++) {
 			for(int ix = 0; ix < radiusSegments; ix++) {
 				newRad = ofMap((float)iy, 0, capSegs-1, radius, 0.0);
@@ -2099,10 +2099,10 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
 	float halfH = height*.5f;
 
 	float newRad;
-	ofVec3f vert;
-	ofVec3f normal;
+	glm::vec3 vert;
+	glm::vec3 normal;
 	glm::vec2 tcoord;
-	ofVec3f up(0,1,0);
+	glm::vec3 up(0,1,0);
 
 	std::size_t vertOffset = 0;
 
@@ -2111,11 +2111,11 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
 		maxTexY += capSegs-1.f;
 	}
 
-	ofVec3f startVec(0, -halfH-1.f, 0);
+	glm::vec3 startVec(0, -halfH-1.f, 0);
 
 	// cone vertices //
 	for(int iy = 0; iy < heightSegments; iy++) {
-		normal.set(1,0,0);
+		normal = {1.f,0.f,0.f};
 		for(int ix = 0; ix < radiusSegments; ix++) {
 
 			newRad = ofMap((float)iy, 0, heightSegments-1, 0.0, radius);
@@ -2136,14 +2136,12 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
 				vert.z = sin((float)ix*angleIncRadius) * newRad;
 			}
 
-			ofVec3f diff = vert-startVec;
-			ofVec3f crossed = up.getCrossed(vert);
-			normal = crossed.getNormalized();
-			normal = crossed.getPerpendicular(diff);
+			auto diff = vert-startVec;
+			auto crossed = glm::cross(up, vert);
+			normal = glm::normalize(crossed);
+			normal = glm::perp(crossed, diff);
 
-			normal.normalize();
-
-			mesh.addNormal( normal );
+			mesh.addNormal( glm::normalize(normal) );
 
 		}
 	}
@@ -2177,7 +2175,7 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
 	float maxTexYNormalized = (heightSegments-1.f) / maxTexY;
 
 	// add the cap //
-	normal.set(0,1,0);
+	normal= {0.f,1.f,0.f};
 	for(int iy = 0; iy < capSegs; iy++) {
 		for(int ix = 0; ix < radiusSegments; ix++) {
 			newRad = ofMap((float)iy, 0, capSegs-1, radius, 0.0);
@@ -2247,15 +2245,15 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
 	float halfH = height * .5f;
 	float halfD = depth * .5f;
 
-	ofVec3f vert;
+	glm::vec3 vert;
 	glm::vec2 texcoord;
-	ofVec3f normal;
+	glm::vec3 normal;
 	std::size_t vertOffset = 0;
 
 	// TRIANGLES //
 
 	// Front Face //
-	normal.set(0, 0, 1);
+	normal = {0.f, 0.f, 1.f};
 	// add the vertexes //
 	for(int iy = 0; iy < resY; iy++) {
 		for(int ix = 0; ix < resX; ix++) {
@@ -2292,7 +2290,7 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
 
 
 	// Right Side Face //
-	normal.set(1, 0, 0);
+	normal = {1.f, 0.f, 0.f};
 	// add the vertexes //
 	for(int iy = 0; iy < resY; iy++) {
 		for(int ix = 0; ix < resZ; ix++) {
@@ -2329,7 +2327,7 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
 	vertOffset = mesh.getNumVertices();
 
 	// Left Side Face //
-	normal.set(-1, 0, 0);
+	normal = {-1.f, 0.f, 0.f};
 	// add the vertexes //
 	for(int iy = 0; iy < resY; iy++) {
 		for(int ix = 0; ix < resZ; ix++) {
@@ -2367,7 +2365,7 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
 
 
 	// Back Face //
-	normal.set(0, 0, -1);
+	normal = {0.f, 0.f, -1.f};
 	// add the vertexes //
 	for(int iy = 0; iy < resY; iy++) {
 		for(int ix = 0; ix < resX; ix++) {
@@ -2404,7 +2402,7 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
 
 
 	// Top Face //
-	normal.set(0, -1, 0);
+	normal = {0.f, -1.f, 0.f};
 	// add the vertexes //
 	for(int iy = 0; iy < resZ; iy++) {
 		for(int ix = 0; ix < resX; ix++) {
@@ -2442,7 +2440,7 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
 
 
 	// Bottom Face //
-	normal.set(0, 1, 0);
+	normal = {0.f, 1.f, 0.f};
 	// add the vertexes //
 	for(int iy = 0; iy < resZ; iy++) {
 		for(int ix = 0; ix < resX; ix++) {
@@ -2489,21 +2487,21 @@ ofMesh ofMesh::axis( float size ) {
 	// mesh only available as wireframe //
 	mesh.setMode(OF_PRIMITIVE_LINES);
 
-	ofVec3f vertices[6] = {
-		ofVec3f(0,0,0),
-		ofVec3f(size,0,0),
-		ofVec3f(0,0,0),
-		ofVec3f(0,size,0),
-		ofVec3f(0,0,0),
-		ofVec3f(0,0,size),
+	glm::vec3 vertices[6] = {
+		glm::vec3(0,0,0),
+		glm::vec3(size,0,0),
+		glm::vec3(0,0,0),
+		glm::vec3(0,size,0),
+		glm::vec3(0,0,0),
+		glm::vec3(0,0,size),
 	};
 	ofFloatColor colors[6] = {
-		ofColor::red,
-		ofColor::red,
-		ofColor::green,
-		ofColor::green,
-		ofColor::blue,
-		ofColor::blue,
+		ofFloatColor::red,
+		ofFloatColor::red,
+		ofFloatColor::green,
+		ofFloatColor::green,
+		ofFloatColor::blue,
+		ofFloatColor::blue,
 	};
 
 	mesh.addVertices(vertices, 6);
@@ -2523,37 +2521,37 @@ ofMeshFace::ofMeshFace()
 {
 }
 
-const ofVec3f & ofMeshFace::getFaceNormal() const{
+const glm::vec3 & ofMeshFace::getFaceNormal() const{
 	if(bFaceNormalDirty) calculateFaceNormal();
 	return faceNormal;
 }
 
 void ofMeshFace::calculateFaceNormal() const{
-	ofVec3f U, V;
+	glm::vec3 U, V;
 
-	U = (vertices[1]-vertices[0]);
-	V = (vertices[2]-vertices[0]);
+	U = vertices[1]-vertices[0];
+	V = vertices[2]-vertices[0];
 
-	faceNormal = U.getCrossed(V);
-	faceNormal.normalize();
+	faceNormal = glm::cross(U, V);
+	faceNormal = glm::normalize(faceNormal);
 	bFaceNormalDirty = false;
 }
 
-void ofMeshFace::setVertex( ofIndexType index, const ofVec3f& v ) {
-	vertices[index].set( v );
+void ofMeshFace::setVertex( ofIndexType index, const glm::vec3& v ) {
+	vertices[index] = v;
 	bFaceNormalDirty = true;
 }
 
-const ofVec3f& ofMeshFace::getVertex( ofIndexType index ) const{
+const glm::vec3& ofMeshFace::getVertex( ofIndexType index ) const{
 	return vertices[index];
 }
 
-void ofMeshFace::setNormal( ofIndexType index, const ofVec3f& n ) {
+void ofMeshFace::setNormal( ofIndexType index, const glm::vec3& n ) {
 	normals[index] = n;
 	bHasNormals = true;
 }
 
-const ofVec3f& ofMeshFace::getNormal( ofIndexType index ) const{
+const glm::vec3& ofMeshFace::getNormal( ofIndexType index ) const{
 	return normals[ index ];
 }
 

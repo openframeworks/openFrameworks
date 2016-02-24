@@ -67,32 +67,31 @@ void ofCamera::setupPerspective(bool _vFlip, float fov, float nearDist, float fa
 	setForceAspectRatio(false);
 
 	setPosition(eyeX,eyeY,dist);
-	lookAt(ofVec3f(eyeX,eyeY,0),ofVec3f(0,1,0));
+	lookAt({eyeX,eyeY,0.f}, {0.f,1.f,0.f});
 	vFlip = _vFlip;
 }
 
 //----------------------------------------
-void ofCamera::setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & bottomLeft, const ofVec3f & bottomRight){
-	ofVec3f bottomEdge = bottomRight - bottomLeft; // plane x axis
-	ofVec3f leftEdge = topLeft - bottomLeft; // plane y axis
-	ofVec3f bottomEdgeNorm = bottomEdge.getNormalized();
-	ofVec3f leftEdgeNorm = leftEdge.getNormalized();
-	ofVec3f bottomLeftToCam = this->getPosition() - bottomLeft;
+void ofCamera::setupOffAxisViewPortal(const glm::vec3 & topLeft, const glm::vec3 & bottomLeft, const glm::vec3 & bottomRight){
+	auto bottomEdge = bottomRight - bottomLeft; // plane x axis
+	auto leftEdge = topLeft - bottomLeft; // plane y axis
+	auto bottomEdgeNorm = glm::normalize(bottomEdge);
+	auto leftEdgeNorm = glm::normalize(leftEdge);
+	auto bottomLeftToCam = this->getPosition() - bottomLeft;
 	
-	ofVec3f cameraLookVector = leftEdgeNorm.getCrossed(bottomEdgeNorm);
-	
-	ofVec3f cameraUpVector = bottomEdgeNorm.getCrossed(cameraLookVector);
+	auto cameraLookVector = glm::cross(leftEdgeNorm, bottomEdgeNorm);
+	auto cameraUpVector = glm::cross(bottomEdgeNorm, cameraLookVector);
 	
 	lookAt(cameraLookVector + this->getPosition(), cameraUpVector);
 
 	//lensoffset
 	glm::vec2 lensOffset;
-	lensOffset.x = -bottomLeftToCam.dot(bottomEdgeNorm) * 2.0f / bottomEdge.length() + 1.0f;
-	lensOffset.y = -bottomLeftToCam.dot(leftEdgeNorm) * 2.0f / leftEdge.length() + 1.0f;
+	lensOffset.x = glm::dot(-bottomLeftToCam, bottomEdgeNorm) * 2.0f / glm::length(bottomEdge) + 1.0f;
+	lensOffset.y = glm::dot(-bottomLeftToCam, leftEdgeNorm) * 2.0f / glm::length(leftEdge) + 1.0f;
 	setLensOffset(lensOffset);
-	setAspectRatio( bottomEdge.length() / leftEdge.length() );
-	float distanceAlongOpticalAxis = abs(bottomLeftToCam.dot(cameraLookVector));
-	setFov(2.0f * RAD_TO_DEG * atan( (leftEdge.length() / 2.0f) / distanceAlongOpticalAxis));
+	setAspectRatio( glm::length(bottomEdge) / glm::length(leftEdge) );
+	auto distanceAlongOpticalAxis = fabs(glm::dot(bottomLeftToCam, cameraLookVector));
+	setFov(2.0f * RAD_TO_DEG * atan( (glm::length(leftEdge) / 2.0f) / distanceAlongOpticalAxis));
 }
 
 
@@ -173,11 +172,11 @@ ofMatrix4x4 ofCamera::getModelViewProjectionMatrix(ofRectangle viewport) const {
 }
 
 //----------------------------------------
-ofVec3f ofCamera::worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport) const {
+glm::vec3 ofCamera::worldToScreen(glm::vec3 WorldXYZ, ofRectangle viewport) const {
 	viewport = getViewport(viewport);
 
-	ofVec3f CameraXYZ = WorldXYZ * getModelViewProjectionMatrix(viewport);
-	ofVec3f ScreenXYZ;
+	glm::vec3 CameraXYZ = toGlm(toOf(WorldXYZ) * getModelViewProjectionMatrix(viewport));
+	glm::vec3 ScreenXYZ;
 
 	ScreenXYZ.x = (CameraXYZ.x + 1.0f) / 2.0f * viewport.width + viewport.x;
 	ScreenXYZ.y = (1.0f - CameraXYZ.y) / 2.0f * viewport.height + viewport.y;
@@ -189,11 +188,11 @@ ofVec3f ofCamera::worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport) const {
 }
 
 //----------------------------------------
-ofVec3f ofCamera::screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport) const {
+glm::vec3 ofCamera::screenToWorld(glm::vec3 ScreenXYZ, ofRectangle viewport) const {
 	viewport = getViewport(viewport);
 
 	//convert from screen to camera
-	ofVec3f CameraXYZ;
+	glm::vec3 CameraXYZ;
 	CameraXYZ.x = 2.0f * (ScreenXYZ.x - viewport.x) / viewport.width - 1.0f;
 	CameraXYZ.y = 1.0f - 2.0f *(ScreenXYZ.y - viewport.y) / viewport.height;
 	CameraXYZ.z = ScreenXYZ.z;
@@ -203,21 +202,21 @@ ofVec3f ofCamera::screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport) const {
 	inverseCamera.makeInvertOf(getModelViewProjectionMatrix(viewport));
 
 	//convert camera to world
-	return CameraXYZ * inverseCamera;
+	return toGlm(toOf(CameraXYZ) * inverseCamera);
 
 }
 
 //----------------------------------------
-ofVec3f ofCamera::worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport) const {
-	return WorldXYZ * getModelViewProjectionMatrix(getViewport(viewport));
+glm::vec3 ofCamera::worldToCamera(glm::vec3 WorldXYZ, ofRectangle viewport) const {
+	return toGlm(toOf(WorldXYZ) * getModelViewProjectionMatrix(getViewport(viewport)));
 }
 
 //----------------------------------------
-ofVec3f ofCamera::cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport) const {
+glm::vec3 ofCamera::cameraToWorld(glm::vec3 CameraXYZ, ofRectangle viewport) const {
 	ofMatrix4x4 inverseCamera;
 	inverseCamera.makeInvertOf(getModelViewProjectionMatrix(getViewport(viewport)));
 
-	return CameraXYZ * inverseCamera;
+	return toGlm(toOf(CameraXYZ) * inverseCamera);
 }
 
 //----------------------------------------

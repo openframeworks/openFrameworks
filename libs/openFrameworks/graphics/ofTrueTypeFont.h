@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofConstants.h"
 #include "ofPath.h"

@@ -41,7 +41,7 @@ public:
 	void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType ) const;
     void draw(const ofNode& node) const;
-	void draw(const vector<ofPoint> & vertexData, ofPrimitiveMode drawMode) const;
+	void draw(const vector<glm::vec3> & vertexData, ofPrimitiveMode drawMode) const;
 	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
@@ -95,7 +95,7 @@ public:
 	void popMatrix();
 	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
 	void translate(float x, float y, float z = 0);
-	void translate(const ofPoint & p);
+	void translate(const glm::vec3 & p);
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1);
 	void rotate(float degrees, float vecX, float vecY, float vecZ);
 	void rotateX(float degrees);
@@ -169,11 +169,11 @@ public:
 	of3dGraphics & get3dGraphics();
 
 private:
-	ofVec3f transform(ofVec3f vec) const;
+	glm::vec3 transform(glm::vec3 vec) const;
 	static _cairo_status stream_function(void *closure,const unsigned char *data, unsigned int length);
 	void draw(const ofPixels & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
-	mutable deque<ofPoint> curvePoints;
+	mutable deque<glm::vec3> curvePoints;
 	cairo_t * cr;
 	cairo_surface_t * surface;
 	bool bBackgroundAuto;
@@ -196,8 +196,8 @@ private:
 	
 	ofMatrixMode currentMatrixMode;
 
-	vector<ofPoint> sphereVerts;
-	vector<ofPoint> spherePoints;
+	vector<glm::vec3> sphereVerts;
+	vector<glm::vec3> spherePoints;
 
 	string filename;
 	ofBuffer streamBuffer;

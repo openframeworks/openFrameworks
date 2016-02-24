@@ -1,5 +1,4 @@
 #pragma once
-#include "ofPoint.h"
 #include "ofConstants.h"
 #include <deque>
 
@@ -51,13 +50,13 @@ class ofRectangle;
 class ofPolyline {
 public:
 	/// \name Constructors
-	/// \{
+	/// \{
 
 	/// \brief Creates an ofPolyline.
 	ofPolyline();
 
-	/// \brief Creates an ofPolyline from a vector of ofVec2f or ofPoint objects.
-	ofPolyline(const vector<ofPoint>& verts);
+	/// \brief Creates an ofPolyline from a vector of ofVec2f or glm::vec3 objects.
+	ofPolyline(const vector<glm::vec3>& verts);
 
     static ofPolyline fromRectangle(const ofRectangle& rect);
 
@@ -68,38 +67,39 @@ public:
 	/// \brief Removes all the points from the ofPolyline.
 	void clear();
 
-	/// \brief Adds a point using an ofPoint at the end of the ofPolyline.	
-	void addVertex( const ofPoint& p );
+	/// \brief Adds a point using an glm::vec3 at the end of the ofPolyline.
+	void addVertex( const glm::vec3& p );
 
     /// \brief Adds a point using floats at the end of the ofPolyline.
 	void addVertex( float x, float y, float z=0 );
 
 	/// \brief Add multiple points at the end of the ofPolyline using a vector of
-	/// ofPoint objects
+	/// glm::vec3 objects
 	/// 
 	/// ~~~~{.cpp}
-	/// 	vector<ofPoint> verts;
 	/// 	// make a pentagon
 	/// 	float size = 80.f;
 	/// 	float X1 = 0.125*sqrt(10 + 2*sqrt(5)) * size;
 	/// 	float X2 = 0.125*sqrt(10 - 2*sqrt(5)) * size;
 	/// 	float Y1 = 0.125*(sqrt(5) - 1) * size;
 	/// 	float Y2 = 0.125*(sqrt(5) + 1) * size;
-	/// 	verts.push_back(ofPoint(0, -0.5 * size));
-	/// 	verts.push_back(ofPoint(-X1, -Y1));
-	/// 	verts.push_back(ofPoint(-X2, Y2));
-	/// 	verts.push_back(ofPoint(X2, Y2));
-	/// 	verts.push_back(ofPoint(X1, -Y1));
+	/// 	vector<glm::vec3> verts = {
+	///			{0, -0.5 * size, 0.f),
+	///			{-X1, -Y1, 0.f},
+	///			{-X2, Y2, 0.f},
+	///			{X2, Y2, 0.f},
+	///			{X1, -Y1, 0.f},
+	///		};
 	/// 	ofPolyline p;
 	/// 	p.addVertices(verts);
 	/// ~~~~
-	void addVertices( const vector<ofPoint>& verts );
+	void addVertices( const vector<glm::vec3>& verts );
 
 	/// \brief Adds multiple points at the end of the ofPolyline using a pointer to
-	/// an array of ofPoint objects.
-	void addVertices(const ofPoint* verts, int numverts);
+	/// an array of glm::vec3 objects.
+	void addVertices(const glm::vec3* verts, int numverts);
 
-    void insertVertex(const ofPoint &p, int index);
+	void insertVertex(const glm::vec3 &p, int index);
     void insertVertex(float x, float y, float z, int index);
 
 	/// \brief Resize the number of points in the ofPolyline to the value 
@@ -126,29 +126,29 @@ public:
 	/// 	i++;
 	/// }
 	/// ~~~~
-	const ofPoint& operator[] (int index) const;
-	ofPoint& operator[] (int index);
+	const glm::vec3& operator[] (int index) const;
+	glm::vec3& operator[] (int index);
     
 	/// \brief Gets a vector of vertices that the line contains
-	vector<ofPoint> & getVertices();
-	const vector<ofPoint> & getVertices() const;
+	vector<glm::vec3> & getVertices();
+	const vector<glm::vec3> & getVertices() const;
 
-	vector<ofPoint>::iterator begin();
-	vector<ofPoint>::const_iterator begin() const;
-	vector<ofPoint>::reverse_iterator rbegin();
-	vector<ofPoint>::const_reverse_iterator rbegin() const;
-	vector<ofPoint>::iterator end();
-	vector<ofPoint>::const_iterator end() const;
-	vector<ofPoint>::reverse_iterator rend();
-	vector<ofPoint>::const_reverse_iterator rend() const;
+	vector<glm::vec3>::iterator begin();
+	vector<glm::vec3>::const_iterator begin() const;
+	vector<glm::vec3>::reverse_iterator rbegin();
+	vector<glm::vec3>::const_reverse_iterator rbegin() const;
+	vector<glm::vec3>::iterator end();
+	vector<glm::vec3>::const_iterator end() const;
+	vector<glm::vec3>::reverse_iterator rend();
+	vector<glm::vec3>::const_reverse_iterator rend() const;
 
 	/// \}
     /// \name Lines and Curves
     /// \{
 
 	/// \brief Add a straight line from the last point added, or from 0,0 if no point
-	/// is set, to the point indicated by the ofPoint passesd in.
-	void lineTo(const ofPoint & to ){ addVertex(to); }
+	/// is set, to the point indicated by the glm::vec3 passesd in.
+	void lineTo(const glm::vec3 & to ){ addVertex(to); }
 	
 	/// \brief Add a straight line from the last point added, or from 0,0 if no point
 	/// is set, to the point indicated by the floats x,y,z passesd in.
@@ -156,7 +156,7 @@ public:
 		addVertex(x,y,z);
 	}
     
-    /// \brief Adds an arc around the ofPoint `center` with the width of `radiusX`
+	/// \brief Adds an arc around the glm::vec3 `center` with the width of `radiusX`
     /// and the height of `radiusY` to the polyline.
 	/// 
 	/// The `angleBegin` and `angleEnd` indicate the start and end angles of
@@ -170,9 +170,9 @@ public:
 	///
 	/// If the arc doesn't start at the same point the last vertex finished a
 	/// straight line will be created to join both
-    void arc(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int circleResolution = 20);
+	void arc(const glm::vec3 & center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int circleResolution = 20);
     
-	/// \brief Adds an arc around the ofPoint `center` with the width of
+	/// \brief Adds an arc around the glm::vec3 `center` with the width of
 	/// `radiusX` and the height of `radiusY`.
 	///
 	/// The `angleBegin` and `angleEnd` indicate the start and end angles
@@ -192,14 +192,14 @@ public:
 	/// 
 	/// // draw an line, then an semi-circle in red
 	/// polyline2.lineTo(300, 50);
-	/// ofPoint point2(450,120);
+	/// glm::vec3 point2(450,120);
 	/// polyline2.arc(point2,100,100,0,180);
 	/// ofSetColor(ofColor::red);
 	/// polyline2.draw();
 	/// ~~~~
 	/// 
 	/// ![Arc Example](graphics/ofpolyline_arc.jpg)
-	void arc(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
+	void arc(const glm::vec3 & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
         arc(center, radiusX,  radiusY,  angleBegin,  angleEnd, true,  circleResolution);
     }
 
@@ -212,7 +212,7 @@ public:
 	/// Optionally, you can specify `circleResolution`, which is the number
 	/// of line segments a circle would be drawn with.
 	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
-		arc(ofPoint(x, y), radiusX, radiusY, angleBegin, angleEnd, true, circleResolution);
+		arc(glm::vec3(x, y, 0.f), radiusX, radiusY, angleBegin, angleEnd, true, circleResolution);
 	}
 
 	/// \brief Adds an arc around the coordinates (`x`,`y`,`z`) with the width of
@@ -224,65 +224,65 @@ public:
 	/// Optionally, you can specify `circleResolution`, which is the number of
 	/// line segments a circle would be drawn with.
 	void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
-		arc(ofPoint(x, y, z), radiusX, radiusY, angleBegin, angleEnd, true, circleResolution);
+		arc(glm::vec3(x, y, z), radiusX, radiusY, angleBegin, angleEnd, true, circleResolution);
 	}
-    void arcNegative(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
+	void arcNegative(const glm::vec3 & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
         arc(center, radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
     }
 	void arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
-        arc(ofPoint(x,y), radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
+		arc(glm::vec3(x,y,0.f), radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
     }
 	void arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
-		arc(ofPoint(x, y, z), radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
+		arc(glm::vec3(x, y, z), radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
     }
     
     
 	
-	/// \brief Adds a curve to an ofPoint object passed in
+	/// \brief Adds a curve to an glm::vec3 object passed in
 	/// 
 	/// ~~~~{.cpp}
 	/// float angle = 0;
 	/// while (angle < TWO_PI ) {
-	/// 	b.curveTo( ofPoint(100*cos(angle), 100*sin(angle)));
-	/// 	b.curveTo( ofPoint(300*cos(angle), 300*sin(angle)));
+	/// 	b.curveTo( glm::vec3(100*cos(angle), 100*sin(angle)));
+	/// 	b.curveTo( glm::vec3(300*cos(angle), 300*sin(angle)));
 	/// 	angle += TWO_PI / 30;
 	/// }
 	/// ~~~~
 	/// 
 	/// \note You need at least 4 points to be able to use curveTo()
 	/// \sa [Catmull-Rom splines wiki](http://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline)
-	void curveTo( const ofPoint & to, int curveResolution = 20 );
+	void curveTo( const glm::vec3 & to, int curveResolution = 20 );
 
 	/// \brief Adds a curve to the x,y,z points passed in with the optional
 	/// resolution.	
 	void curveTo(float x, float y, float z = 0,  int curveResolution = 20 ){
-		curveTo(ofPoint(x,y,z),curveResolution);
+		curveTo({x,y,z},curveResolution);
 	}
 
 	/// \brief Adds a cubic bezier line from the current drawing point with the 2
-	/// control points indicated by ofPoint cp1 and cp2, that ends at ofPoint
+	/// control points indicated by glm::vec3 cp1 and cp2, that ends at glm::vec3
 	/// to. 
 	///
 	/// ~~~~{.cpp}
-	/// line.addVertex(ofPoint(200, 400));
+	/// line.addVertex(glm::vec3(200, 400));
 	/// line.bezierTo(100, 100, 800, 100, 700, 400);
 	/// ~~~~
 	/// ![polyline bezier](bezier.jpg)
 	/// The control points are shown in red.
-	void bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoint & to, int curveResolution = 20);
+	void bezierTo( const glm::vec3 & cp1, const glm::vec3 & cp2, const glm::vec3 & to, int curveResolution = 20);
 
 	/// \brief Adds a cubic bezier line from the current drawing point with the 2
 	/// control points indicated by the coordinates cx1, cy1 and cx2, cy2,
 	/// that ends at the coordinates x, y.
 	void bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution = 20){
-		bezierTo(ofPoint(cx1,cy1),ofPoint(cx2,cy2),ofPoint(x,y),curveResolution);
+		bezierTo({cx1,cy1,0.f}, {cx2,cy2,0.f}, {x,y,0.f}, curveResolution);
 	}
 
 	/// \brief Adds a cubic bezier line in 3D space from the current drawing point
 	/// with the 2 control points indicated by the coordinates cx1, cy1, cz1
 	/// and cx2, cy2, cz2, that ends at the coordinates x, y, z.
 	void bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution = 20){
-		bezierTo(ofPoint(cx1,cy1,cz1),ofPoint(cx2,cy2,cz2),ofPoint(x,y,z),curveResolution);
+		bezierTo({cx1,cy1,cz1}, {cx2,cy2,cz2}, {x,y,z}, curveResolution);
 	}
 
 	/// \brief Adds a quadratic bezier line in 3D space from the current drawing
@@ -296,7 +296,7 @@ public:
 	/// \brief Adds a quadratic bezier line in 2D space from the current drawing
 	/// point with the beginning indicated by the point p1, the control point
 	/// at p2, and that ends at the point p3.
-	void quadBezierTo(  const ofPoint & p1, const ofPoint & p2,const ofPoint & p3,  int curveResolution = 20 ){
+	void quadBezierTo(  const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3,  int curveResolution = 20 ){
 		quadBezierTo(p1.x,p1.y,p1.z,p2.x,p2.y,p2.z,p3.x,p3.y,p3.z,curveResolution);
 	}
 
@@ -371,10 +371,10 @@ public:
     /// \brief Tests whether the x,y coordinates are within a closed ofPolyline.
 	bool inside(float x, float y) const;
 
-	/// \brief Tests whether the ofPoint is within a closed ofPolyline.
-	static bool inside(const ofPoint & p, const ofPolyline & polyline);
-    /// \brief Tests whether the ofPoint is within a closed ofPolyline.
-	bool inside(const ofPoint & p) const;
+	/// \brief Tests whether the glm::vec3 is within a closed ofPolyline.
+	static bool inside(const glm::vec3 & p, const ofPolyline & polyline);
+	/// \brief Tests whether the glm::vec3 is within a closed ofPolyline.
+	bool inside(const glm::vec3 & p) const;
     
 	/// \brief Get the bounding box of the polyline , taking into account 
 	/// all the points to determine the extents of the polyline.
@@ -389,15 +389,15 @@ public:
 	float getArea() const;
 
 	/// \brief Get the center of the area bounded by the line
-	ofPoint getCentroid2D() const;
+	glm::vec3 getCentroid2D() const;
 
 	/// \brief Gets the point on the line closest to the target. You can also
 	/// optionally pass a pointer to/address of an unsigned int to get the
 	/// index of the closest vertex	
-	ofPoint getClosestPoint(const ofPoint& target, unsigned int* nearestIndex = nullptr) const;
+	glm::vec3 getClosestPoint(const glm::vec3& target, unsigned int* nearestIndex = nullptr) const;
 	
 
-	/// \}
+	/// \}
     /// \name Other Functions
     /// \{
 
@@ -422,15 +422,15 @@ public:
     
     /// \brief Get point long the path at a given length (e.g. `f=150` => 150
     /// units along the path)    
-    ofPoint getPointAtLength(float f) const;
+	glm::vec3 getPointAtLength(float f) const;
     
     /// \brief Get point along the path at a given percentage (e.g. `f=0.25`
     /// => 25% along the path)
-    ofPoint getPointAtPercent(float f) const;
+	glm::vec3 getPointAtPercent(float f) const;
     
     /// \brief Get point along the path at interpolated index (e.g. `f=5.75` =>
     /// 75% along the path between 5th and 6th points)
-    ofPoint getPointAtIndexInterpolated(float findex) const;
+	glm::vec3 getPointAtIndexInterpolated(float findex) const;
 
     /// \brief Get angle (degrees) of the path at index
     float getAngleAtIndex(int index) const;
@@ -440,35 +440,35 @@ public:
     float getAngleAtIndexInterpolated(float findex) const;
     
     /// \brief Get rotation vector at index (magnitude is sin of angle)
-    ofVec3f getRotationAtIndex(int index) const;
+	glm::vec3 getRotationAtIndex(int index) const;
     
     /// \brief Get rotation vector at interpolated index 
     /// (interpolated between neighboring indices) (magnitude is sin of angle)
-    ofVec3f getRotationAtIndexInterpolated(float findex) const;
+	glm::vec3 getRotationAtIndexInterpolated(float findex) const;
     
     /// \brief Get tangent vector at index
-    ofVec3f getTangentAtIndex(int index) const;
+	glm::vec3 getTangentAtIndex(int index) const;
     
     /// \brief Get tangent vector at interpolated index 
    	/// (interpolated between neighboring indices)
-    ofVec3f getTangentAtIndexInterpolated(float findex) const;
+	glm::vec3 getTangentAtIndexInterpolated(float findex) const;
 
     /// \brief Get normal vector at index
-    ofVec3f getNormalAtIndex(int index) const;
+	glm::vec3 getNormalAtIndex(int index) const;
     
     /// \brief Get normal vector at interpolated index 
     /// (interpolated between neighboring indices)
-    ofVec3f getNormalAtIndexInterpolated(float findex) const;
+	glm::vec3 getNormalAtIndexInterpolated(float findex) const;
     
     /// \brief Get wrapped index depending on whether poly is closed or not
     int getWrappedIndex(int index) const;
 
     // used for calculating the normals
-    void setRightVector(ofVec3f v = ofVec3f(0, 0, -1));
-    ofVec3f getRightVector() const;
+	void setRightVector(glm::vec3 v = glm::vec3(0, 0, -1));
+	glm::vec3 getRightVector() const;
 
     /// \}
-    /// \name Drawing
+    /// \name Drawing
     /// \{
 	
 	/// \brief Draw the line using the current renderer
@@ -481,21 +481,21 @@ private:
 	void setCircleResolution(int res);
     float wrapAngle(float angleRad);
 
-	vector<ofPoint> points;
-    ofVec3f rightVector;
+	vector<glm::vec3> points;
+	glm::vec3 rightVector;
     
     // cache
     mutable vector<float> lengths;    // cumulative lengths, stored per point (lengths[n] is the distance to the n'th point, zero based)
-    mutable vector<ofVec3f> tangents;   // tangent at vertex, stored per point
-    mutable vector<ofVec3f> normals;    //
-    mutable vector<ofVec3f> rotations;   // rotation between adjacent segments, stored per point (cross product)
+	mutable vector<glm::vec3> tangents;   // tangent at vertex, stored per point
+	mutable vector<glm::vec3> normals;    //
+	mutable vector<glm::vec3> rotations;   // rotation between adjacent segments, stored per point (cross product)
     mutable vector<float> angles;    // angle (degrees) between adjacent segments, stored per point (asin(cross product))
-    mutable ofPoint centroid2D;
+	mutable glm::vec3 centroid2D;
     mutable float area;
     
     
-	deque<ofPoint> curveVertices;
-	vector<ofPoint> circlePoints;
+	deque<glm::vec3> curveVertices;
+	vector<glm::vec3> circlePoints;
 
 	bool bClosed;
 	bool bHasChanged;   // public API has access to this
@@ -506,6 +506,6 @@ private:
     // given an interpolated index (e.g. 5.75) return neighboring indices and interolation factor (e.g. 5, 6, 0.75)
     void getInterpolationParams(float findex, int &i1, int &i2, float &t) const;
     
-    void calcData(int index, ofVec3f &tangent, float &angle, ofVec3f &rotation, ofVec3f &normal) const;
+	void calcData(int index, glm::vec3 &tangent, float &angle, glm::vec3 &rotation, glm::vec3 &normal) const;
 };
 

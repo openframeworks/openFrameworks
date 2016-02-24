@@ -311,8 +311,8 @@ void ofVbo::setMesh(const ofMesh & mesh, int usage, bool useColors, bool useText
 }
 
 //--------------------------------------------------------------
-void ofVbo::setVertexData(const ofVec3f * verts, int total, int usage) {
-	setVertexData(&verts[0].x,3,total,usage,sizeof(ofVec3f));
+void ofVbo::setVertexData(const glm::vec3 * verts, int total, int usage) {
+	setVertexData(&verts[0].x,3,total,usage,sizeof(glm::vec3));
 }
 
 //--------------------------------------------------------------
@@ -339,8 +339,8 @@ void ofVbo::setColorData(const float * color0r, int total, int usage, int stride
 }
 
 //--------------------------------------------------------------
-void ofVbo::setNormalData(const ofVec3f * normals, int total, int usage) {
-	setNormalData(&normals[0].x,total,usage,sizeof(ofVec3f));
+void ofVbo::setNormalData(const glm::vec3 * normals, int total, int usage) {
+	setNormalData(&normals[0].x,total,usage,sizeof(glm::vec3));
 }
 
 //--------------------------------------------------------------
@@ -446,7 +446,7 @@ void ofVbo::updateMesh(const ofMesh & mesh){
 }
 
 //--------------------------------------------------------------
-void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
+void ofVbo::updateVertexData(const glm::vec3 * verts, int total) {
 	updateVertexData(&verts[0].x,total);
 }
 
@@ -471,7 +471,7 @@ void ofVbo::updateColorData(const float * color0r, int total) {
 }
 
 //--------------------------------------------------------------
-void ofVbo::updateNormalData(const ofVec3f * normals, int total) {
+void ofVbo::updateNormalData(const glm::vec3 * normals, int total) {
 	updateNormalData(&normals[0].x,total);
 }
 
