@@ -143,7 +143,7 @@ static void release(GLuint id){
 			if(getTexturesIndex()[id]==0){
 
 #ifdef TARGET_ANDROID
-				if (!ofAppAndroidWindow::isSurfaceDestoryed())
+				if (!ofAppAndroidWindow::isSurfaceDestroyed())
 #endif
 					glDeleteTextures(1, (GLuint *)&id);
 
@@ -153,7 +153,7 @@ static void release(GLuint id){
 			ofLogError("ofTexture") << "release(): something's wrong here, releasing unknown texture id " << id;
 
 #ifdef TARGET_ANDROID
-			if (!ofAppAndroidWindow::isSurfaceDestoryed())
+			if (!ofAppAndroidWindow::isSurfaceDestroyed())
 #endif
 				glDeleteTextures(1, (GLuint *)&id);
 		}

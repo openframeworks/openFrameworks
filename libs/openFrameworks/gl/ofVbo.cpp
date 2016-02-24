@@ -57,7 +57,7 @@ static void releaseVAO(GLuint id){
 		getVAOIds()[id]--;
 		if(getVAOIds()[id]==0){
 #ifdef TARGET_ANDROID
-			if (!ofAppAndroidWindow::isSurfaceDestoryed())
+			if (!ofAppAndroidWindow::isSurfaceDestroyed())
 #endif
 				glDeleteVertexArrays(1, &id);
 			getVAOIds().erase(id);
@@ -66,7 +66,7 @@ static void releaseVAO(GLuint id){
 		ofLogWarning("ofVbo") << "releaseVAO(): something's wrong here, releasing unknown vertex array object id " << id;
 
 #ifdef TARGET_ANDROID
-		if (!ofAppAndroidWindow::isSurfaceDestoryed())
+		if (!ofAppAndroidWindow::isSurfaceDestroyed())
 #endif
 			glDeleteVertexArrays(1, &id);
 	}
