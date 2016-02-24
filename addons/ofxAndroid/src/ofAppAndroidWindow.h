@@ -23,7 +23,7 @@ public:
 	static bool needsPolling(){ return false; }
 	static void pollEvents(){}
 	static bool allowsMultiWindow(){ return false; }
-	static bool isSurfaceDestoryed();
+	static bool isSurfaceDestroyed();
 
     using ofAppBaseWindow::setup;
 	void setup(const ofGLESWindowSettings & settings);
