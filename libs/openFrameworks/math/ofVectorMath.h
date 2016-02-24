@@ -53,3 +53,76 @@ inline istream& operator>>(istream& is, glm::vec3& vec) {
 	is >> vec.z;
 	return is;
 }
+
+inline glm::vec3 operator+(const glm::vec3 & v1, const ofVec3f & v2){
+	return v1 + glm::vec3(v2);
+}
+
+inline glm::vec3 operator-(const glm::vec3 & v1, const ofVec3f & v2){
+	return v1 - glm::vec3(v2);
+}
+
+inline glm::vec3 operator*(const glm::vec3 & v1, const ofVec3f & v2){
+	return v1 * glm::vec3(v2);
+}
+
+inline glm::vec3 operator/(const glm::vec3 & v1, const ofVec3f & v2){
+	return v1 / glm::vec3(v2);
+}
+
+inline glm::vec3 & operator+=(glm::vec3 & v1, const ofVec3f & v2){
+	v1 += glm::vec3(v2);
+	return v1;
+}
+
+inline glm::vec3 & operator-=(glm::vec3 & v1, const ofVec3f & v2){
+	v1 -= glm::vec3(v2);
+	return v1;
+}
+
+inline glm::vec3 & operator*=(glm::vec3 & v1, const ofVec3f & v2){
+	v1 *= glm::vec3(v2);
+	return v1;
+}
+
+inline glm::vec3 & operator/=(glm::vec3 & v1, const ofVec3f & v2){
+	v1 /= glm::vec3(v2);
+	return v1;
+}
+
+
+inline glm::vec2 operator+(const glm::vec2 & v1, const ofVec2f & v2){
+	return v1 + glm::vec2(v2);
+}
+
+inline glm::vec2 operator-(const glm::vec2 & v1, const ofVec2f & v2){
+	return v1 - glm::vec2(v2);
+}
+
+inline glm::vec2 operator*(const glm::vec2 & v1, const ofVec2f & v2){
+	return v1 * glm::vec2(v2);
+}
+
+inline glm::vec2 operator/(const glm::vec2 & v1, const ofVec2f & v2){
+	return v1 / glm::vec2(v2);
+}
+
+inline glm::vec2 & operator+=(glm::vec2 & v1, const ofVec2f & v2){
+	v1 += glm::vec2(v2);
+	return v1;
+}
+
+inline glm::vec2 & operator-=(glm::vec2 & v1, const ofVec2f & v2){
+	v1 -= glm::vec2(v2);
+	return v1;
+}
+
+inline glm::vec2 & operator*=(glm::vec2 & v1, const ofVec2f & v2){
+	v1 *= glm::vec2(v2);
+	return v1;
+}
+
+inline glm::vec2 & operator/=(glm::vec2 & v1, const ofVec2f & v2){
+	v1 /= glm::vec2(v2);
+	return v1;
+}
