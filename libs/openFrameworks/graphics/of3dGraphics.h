@@ -19,7 +19,7 @@
 
 // Grid Plane - drawn from the center //
 void ofSetPlaneResolution( int columns, int rows );
-ofVec2f ofGetPlaneResolution();
+glm::vec2 ofGetPlaneResolution();
 void ofDrawPlane(float x, float y, float width, float height);
 void ofDrawPlane(float x, float y, float z, float width, float height);
 void ofDrawPlane(ofPoint& position, float width, float height);
@@ -183,7 +183,7 @@ class of3dGraphics{
 public:
 	of3dGraphics(ofBaseRenderer * renderer);
 	void setPlaneResolution( int columns, int rows );
-	ofVec2f getPlaneResolution() const;
+	glm::vec2 getPlaneResolution() const;
 	void drawPlane(float x, float y, float width, float height) const;
 	void drawPlane(float x, float y, float z, float width, float height) const;
 	void drawPlane(ofPoint& position, float width, float height) const;

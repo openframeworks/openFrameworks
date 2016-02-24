@@ -74,7 +74,7 @@ public:
 	unsigned int codepoint;
 };
 
-class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
+class ofMouseEventArgs : public ofEventArgs, public glm::vec2 {
   public:
 	enum Type{
 		Pressed,
@@ -94,7 +94,7 @@ class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 	{}
 
 	ofMouseEventArgs(Type type, float x, float y, int button)
-	:ofVec2f(x,y)
+	:glm::vec2(x,y)
 	,type(type)
 	,button(button)
 	,scrollX(0.f)
@@ -102,7 +102,7 @@ class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 	{}
 
 	ofMouseEventArgs(Type type, float x, float y)
-	:ofVec2f(x,y)
+	:glm::vec2(x,y)
 	,type(type)
 	,button(0)
 	,scrollX(0.f)
@@ -115,7 +115,7 @@ class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 	float scrollY;
 };
 
-class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
+class ofTouchEventArgs : public ofEventArgs, public glm::vec2 {
   public:
 	enum Type{
 		down,
@@ -145,7 +145,7 @@ class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
 	}
 
 	ofTouchEventArgs(Type type, float x, float y, int id)
-	:ofVec2f(x,y)
+	:glm::vec2(x,y)
 	,type(type)
 	,id(id)
 	,time(0)

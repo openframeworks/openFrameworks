@@ -93,7 +93,7 @@ public:
 	const ofParameter<char> & getChar(const string& name) const;
 	const ofParameter<string> & getString(const string& name) const;
 	const ofParameter<ofPoint> & getPoint(const string& name) const;
-	const ofParameter<ofVec2f> & getVec2f(const string& name) const;
+	const ofParameter<glm::vec2> & getVec2f(const string& name) const;
 	const ofParameter<ofVec3f> & getVec3f(const string& name) const;
 	const ofParameter<ofVec4f> & getVec4f(const string& name) const;
 	const ofParameter<ofColor> & getColor(const string& name) const;
@@ -108,7 +108,7 @@ public:
 	const ofParameter<char> & getChar(std::size_t pos) const;
 	const ofParameter<string> & getString(std::size_t pos) const;
 	const ofParameter<ofPoint> & getPoint(std::size_t pos) const;
-	const ofParameter<ofVec2f> & getVec2f(std::size_t pos) const;
+	const ofParameter<glm::vec2> & getVec2f(std::size_t pos) const;
 	const ofParameter<ofVec3f> & getVec3f(std::size_t pos) const;
 	const ofParameter<ofVec4f> & getVec4f(std::size_t pos) const;
 	const ofParameter<ofColor> & getColor(std::size_t pose) const;
@@ -122,7 +122,7 @@ public:
 	ofParameter<char> & getChar(const string& name);
 	ofParameter<string> & getString(const string& name);
 	ofParameter<ofPoint> & getPoint(const string& name);
-	ofParameter<ofVec2f> & getVec2f(const string& name);
+	ofParameter<glm::vec2> & getVec2f(const string& name);
 	ofParameter<ofVec3f> & getVec3f(const string& name);
 	ofParameter<ofVec4f> & getVec4f(const string& name);
 	ofParameter<ofColor> & getColor(const string& name);
@@ -137,7 +137,7 @@ public:
 	ofParameter<char> & getChar(std::size_t pos);
 	ofParameter<string> & getString(std::size_t pos);
 	ofParameter<ofPoint> & getPoint(std::size_t pos);
-	ofParameter<ofVec2f> & getVec2f(std::size_t pos);
+	ofParameter<glm::vec2> & getVec2f(std::size_t pos);
 	ofParameter<ofVec3f> & getVec3f(std::size_t pos);
 	ofParameter<ofVec4f> & getVec4f(std::size_t pos);
 	ofParameter<ofColor> & getColor(std::size_t pose);
@@ -305,6 +305,12 @@ namespace priv{
 	struct TypeInfo <ofVec2f> {
 		static ofVec2f min() { return ofVec2f(0); }
 		static ofVec2f max() { return ofVec2f(1); }
+	};
+
+	template<>
+	struct TypeInfo <glm::vec2> {
+		static glm::vec2 min() { return glm::vec2(0); }
+		static glm::vec2 max() { return glm::vec2(1); }
 	};
 
 	template<>

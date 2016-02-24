@@ -19,6 +19,7 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "utf8.h"
+#include "ofVectorMath.h"
 
 
 const ofUnicode::range ofUnicode::Space {32, 32};
@@ -1061,10 +1062,10 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 	stringQuads.addVertex(ofVec3f(xmax,ymax));
 	stringQuads.addVertex(ofVec3f(xmin,ymax));
 
-	stringQuads.addTexCoord(ofVec2f(t1,v1));
-	stringQuads.addTexCoord(ofVec2f(t2,v1));
-	stringQuads.addTexCoord(ofVec2f(t2,v2));
-	stringQuads.addTexCoord(ofVec2f(t1,v2));
+	stringQuads.addTexCoord(glm::vec2(t1,v1));
+	stringQuads.addTexCoord(glm::vec2(t2,v1));
+	stringQuads.addTexCoord(glm::vec2(t2,v2));
+	stringQuads.addTexCoord(glm::vec2(t1,v2));
 
 	stringQuads.addIndex(firstIndex);
 	stringQuads.addIndex(firstIndex+1);
@@ -1085,8 +1086,8 @@ int ofTrueTypeFont::getKerning(uint32_t c, uint32_t prevC) const{
 	}
 }
 
-void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vFlipped, std::function<void(uint32_t, ofVec2f)> f) const{
-	ofVec2f pos(x,y);
+void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vFlipped, std::function<void(uint32_t, glm::vec2)> f) const{
+	glm::vec2 pos(x,y);
 
 	int newLineDirection		= 1;
 	if(!vFlipped){
@@ -1142,9 +1143,9 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(const string &  str, bo
 		ofLogError("ofxTrueTypeFont") << "getStringAsPoints(): font not allocated: line " << __LINE__ << " in " << __FILE__;
 		return shapes;
 	};
-	iterateString(str,0,0,vflip,[&](uint32_t c, ofVec2f pos){
+	iterateString(str,0,0,vflip,[&](uint32_t c, glm::vec2 pos){
 		shapes.push_back(getCharacterAsPoints(c,vflip,filled));
-		shapes.back().translate(pos);
+		shapes.back().translate(toOf(pos));
 	});
 	return shapes;
 
@@ -1200,10 +1201,10 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 	float maxX = std::numeric_limits<float>::min();
 	float maxY = std::numeric_limits<float>::min();
 	for(const auto & v: mesh.getVertices()){
-		bb.x = min(v.x,bb.x);
-		bb.y = min(v.y,bb.y);
-		maxX = max(v.x,maxX);
-		maxY = max(v.y,maxY);
+		bb.x = std::min(v.x,bb.x);
+		bb.y = std::min(v.y,bb.y);
+		maxX = std::max(v.x,maxX);
+		maxY = std::max(v.y,maxY);
 	}
 	bb.width = maxX - bb.x;
 	bb.height = maxY - bb.y;
@@ -1218,7 +1219,7 @@ float ofTrueTypeFont::stringHeight(const std::string& c) const{
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::createStringMesh(const std::string& str, float x, float y, bool vflip) const{
-	iterateString(str,x,y,vflip,[&](uint32_t c, ofVec2f pos){
+	iterateString(str,x,y,vflip,[&](uint32_t c, glm::vec2 pos){
 		drawChar(c, pos.x, pos.y, vflip);
 	});
 }
@@ -1240,7 +1241,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 	string str_valid;
 	utf8::replace_invalid(str.begin(),str.end(),back_inserter(str_valid));
 	vector<glyph> glyphs;
-	vector<ofVec2f> glyphPositions;
+	vector<glm::vec2> glyphPositions;
 	utf8::iterator<const char*> it(&str_valid.front(), &str_valid.front(), (&str_valid.back())+1);
 	utf8::iterator<const char*> end((&str_valid.back())+1, &str_valid.front(), (&str_valid.back())+1);
 	int	x = 0;
@@ -1263,7 +1264,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 				}
 				glyphPositions.emplace_back(static_cast<float>(x), static_cast<float>(y));
 				x += glyphs.back().props.advance * letterSpacing;
-				height = max(height, glyphs.back().props.ymax + y + long(getLineHeight()));
+				height = std::max(height, glyphs.back().props.ymax + y + long(getLineHeight()));
 			}
 			++it;
 			prevC = c;
@@ -1317,7 +1318,7 @@ void ofTrueTypeFont::drawStringAsShapes(const std::string& str, float x, float y
 		return;
 	}
 
-	iterateString(str,x,y,true,[&](uint32_t c, ofVec2f pos){
+	iterateString(str,x,y,true,[&](uint32_t c, glm::vec2 pos){
 		drawCharAsShape(c, pos.x, pos.y, ofIsVFlipped(), ofGetStyle().bFill);
 	});
 }

@@ -150,7 +150,7 @@ void ofBaseRenderer::setPlaneResolution( int columns, int rows ){
 	get3dGraphics().setPlaneResolution(columns,rows);
 }
 
-ofVec2f ofBaseRenderer::getPlaneResolution() const{
+glm::vec2 ofBaseRenderer::getPlaneResolution() const{
 	return get3dGraphics().getPlaneResolution();
 }
 

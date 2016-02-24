@@ -137,7 +137,7 @@ public:
     int getNumColumns() const;
     int getNumRows() const;
     // x = columns, y = rows //
-    ofVec2f getResolution() const;
+	glm::vec2 getResolution() const;
 
     float getWidth() const;
     float getHeight() const;
@@ -145,7 +145,7 @@ public:
 protected:
     float width;
     float height;
-    ofVec2f resolution;
+	glm::vec2 resolution;
 };
 
 

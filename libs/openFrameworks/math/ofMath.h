@@ -390,7 +390,7 @@ float ofNoise(float x);
 float ofNoise(float x, float y);
 
 /// \brief Calculates a two dimensional Perlin noise value between 0.0...1.0.
-float ofNoise(const ofVec2f& p);
+float ofNoise(const glm::vec2& p);
 
 /// \brief Calculates a three dimensional Perlin noise value between 0.0...1.0.
 float ofNoise(float x, float y, float z);
@@ -411,7 +411,7 @@ float ofSignedNoise(float x);
 float ofSignedNoise(float x, float y);
 
 /// \brief Calculates a two dimensional Perlin noise value between -1.0...1.0.
-float ofSignedNoise(const ofVec2f& p);
+float ofSignedNoise(const glm::vec2& p);
 
 /// \brief Calculates a three dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x, float y, float z);

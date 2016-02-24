@@ -16,7 +16,7 @@ public:
     /// \brief Destroy the camera.
 	~ofEasyCam();
 
-	/// \}
+	/// \}
 	/// \name Rendering
 	/// \{
 
@@ -26,8 +26,8 @@ public:
 	void reset();
 
 	/// \}
-	/// \name Camera Target
-	/// \{
+	/// \name Camera Target
+	/// \{
 
     /// \brief Set the camera's target.
     /// \param target The position of the target.
@@ -167,8 +167,8 @@ private:
 	float sensitivityRotY;
 	float sensitivityRotZ;
 
-	ofVec2f lastMouse, prevMouse;
-	ofVec2f mouseVel;
+	glm::vec2 lastMouse, prevMouse;
+	glm::vec2 mouseVel;
 	
 	void updateRotation();
 	void updateTranslation();

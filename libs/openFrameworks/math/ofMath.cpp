@@ -191,7 +191,7 @@ float ofNoise(float x, float y){
 }
 
 //--------------------------------------------------
-float ofNoise(const ofVec2f& p){
+float ofNoise(const glm::vec2& p){
 	return ofNoise( p.x, p.y );
 }
 
@@ -226,7 +226,7 @@ float ofSignedNoise(float x, float y){
 }
 
 //--------------------------------------------------
-float ofSignedNoise(const ofVec2f& p){
+float ofSignedNoise(const glm::vec2& p){
 	return ofSignedNoise( p.x, p.y );
 }
 

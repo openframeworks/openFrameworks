@@ -404,7 +404,7 @@ protected:
 	void createStringMesh(const string & s, float x, float y, bool vFlipped) const;
 	glyph loadGlyph(uint32_t utf8) const;
 	const glyphProps & getGlyphProperties(uint32_t glyph) const;
-	void iterateString(const string & str, float x, float y, bool vFlipped, std::function<void(uint32_t, ofVec2f)> f) const;
+	void iterateString(const string & str, float x, float y, bool vFlipped, std::function<void(uint32_t, glm::vec2)> f) const;
 	size_t indexForGlyph(uint32_t glyph) const;
 
 	ofTexture texAtlas;

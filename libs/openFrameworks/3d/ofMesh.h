@@ -318,7 +318,7 @@ public:
 	void smoothNormals( float angle );
 
 	/// \}
-	/// \name Faces
+	/// \name Faces
 	/// \{
 
 	/// \returns the vector that contains all of the faces of the mesh. This isn't currently implemented.
@@ -406,29 +406,29 @@ public:
 	/// \returns the Vec2f representing the texture coordinate. 
 	/// Because OF uses ARB textures these are in pixels rather than 
 	/// 0-1 normalized coordinates.
-	ofVec2f getTexCoord(ofIndexType i) const;
+	glm::vec2 getTexCoord(ofIndexType i) const;
 
 	/// \brief Add a Vec2f representing the texture coordinate. 
 	/// Because OF uses ARB textures these are in pixels rather than 
 	/// 0-1 normalized coordinates.
-	void addTexCoord(const ofVec2f& t);
+	void addTexCoord(const glm::vec2& t);
 
 	/// \brief Add a vector of texture coordinates to a mesh, 
 	/// allowing you to push out many at once rather than adding one at a time. 
 	/// The vector of texture coordinates is added after the end of the current 
 	/// texture coordinates list.
-	void addTexCoords(const vector<ofVec2f>& tCoords);
+	void addTexCoords(const vector<glm::vec2>& tCoords);
 
 	/// \brief  Add an array of texture coordinates to the mesh. 
 	/// Because you are using a pointer to the array you also have to define 
 	/// the length of the array as an std::size_t (amt).
 	/// The texture coordinates are added at the end of the current texture 
 	/// coordinates list.
-	void addTexCoords(const ofVec2f* tCoords, std::size_t amt);
+	void addTexCoords(const glm::vec2* tCoords, std::size_t amt);
 
 	/// \brief  Remove a Vec2f representing the texture coordinate.
 	void removeTexCoord(ofIndexType index);
-	void setTexCoord(ofIndexType index, const ofVec2f& t);
+	void setTexCoord(ofIndexType index, const glm::vec2& t);
 
 	/// \brief  Clear all the texture coordinates.
 	void clearTexCoords();
@@ -438,21 +438,21 @@ public:
 	std::size_t getNumTexCoords() const;
 
 	/// \returns a pointer to the texture coords that the mesh contains.
-	ofVec2f* getTexCoordsPointer();
+	glm::vec2* getTexCoordsPointer();
 
 	/// \brief Get a pointer to the ofVec2f texture coordinates that the mesh contains.
-	const ofVec2f* getTexCoordsPointer() const;
+	const glm::vec2* getTexCoordsPointer() const;
 
 	/// \brief Get a vector representing the texture coordinates of the mesh
 	/// Because OF uses ARB textures these are in pixels rather than 0-1 normalized coordinates. 
 	/// Use this if you plan to change the texture coordinates as part of this 
 	/// call as it will force a reset of the cache.
 	/// \returns a vector of Vec2f representing the texture coordinates for the whole mesh. 
-	vector<ofVec2f> & getTexCoords();
+	vector<glm::vec2> & getTexCoords();
 	
 	/// Because OF uses ARB textures these are in pixels rather than 0-1 normalized coordinates. 
 	/// \returns a vector of Vec2f representing the texture coordinates for the whole mesh. (read only)
-	const vector<ofVec2f> & getTexCoords() const;
+	const vector<glm::vec2> & getTexCoords() const;
 
 	/// \returns If the texture coords of the mesh have changed, been added or removed.
 	bool haveTexCoordsChanged();
@@ -622,7 +622,7 @@ private:
 	vector<ofVec3f> vertices;
 	vector<ofFloatColor> colors;
 	vector<ofVec3f> normals;
-	vector<ofVec2f> texCoords;
+	vector<glm::vec2> texCoords;
 	vector<ofIndexType> indices;
 
 	// this variables are only caches and returned always as const
@@ -673,8 +673,8 @@ public:
 	void setColor( ofIndexType index, const ofFloatColor& color );
 	const ofFloatColor& getColor(ofIndexType  index) const;
 
-	void setTexCoord( ofIndexType index, const ofVec2f& tCoord );
-	const ofVec2f& getTexCoord( ofIndexType index ) const;
+	void setTexCoord( ofIndexType index, const glm::vec2& tCoord );
+	const glm::vec2& getTexCoord( ofIndexType index ) const;
 
 	void setHasColors( bool bColors );
 	void setHasNormals( bool bNormals );
@@ -695,5 +695,5 @@ private:
 	ofVec3f vertices[3];
 	ofVec3f normals[3];
 	ofFloatColor colors[3];
-	ofVec2f texCoords[3];
+	glm::vec2 texCoords[3];
 };
