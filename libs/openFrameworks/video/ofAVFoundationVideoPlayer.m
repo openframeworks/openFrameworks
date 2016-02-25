@@ -51,8 +51,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		speed = 1;
 		frameRate = 0;
 		
-		videoWidth = 0;
-		videoHeight = 0;
+		displayWidth = videoWidth = 0;
+		displayHeight = videoHeight = 0;
 		
 		bWillBeUpdatedExternally = NO;
 		bReady = NO;
@@ -276,10 +276,34 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				self->frameRate = videoTrack.nominalFrameRate;
 				self->videoWidth = [videoTrack naturalSize].width;
 				self->videoHeight = [videoTrack naturalSize].height;
+				self->displayWidth = self->videoWidth;
+				self->displayHeight = self->videoHeight;
 				
-				NSLog(@"video file loaded at %li x %li @ %f fps", (long)self->videoWidth, (long)self->videoHeight, self->frameRate);
+				// naturalSize is the display size. Anamorphic video (HDV 1440x1080 shown as 1920x1080)
+				// stores fewer pixels, so use the pixel aspect ratio to get the real pixel size.
+				// https://developer.apple.com/library/ios/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/05_Export.html
+				NSArray * formatDesc = videoTrack.formatDescriptions;
+				if ([formatDesc count] > 0) {
+					CMFormatDescriptionRef formatDescription = (__bridge CMFormatDescriptionRef)[formatDesc objectAtIndex:0];
+					CFDictionaryRef pixelAspectRatio = (CFDictionaryRef)CMFormatDescriptionGetExtension(formatDescription, kCMFormatDescriptionExtension_PixelAspectRatio);
+					if (pixelAspectRatio) {
+						NSNumber * spacingXNum = (__bridge NSNumber *)CFDictionaryGetValue(pixelAspectRatio, kCMFormatDescriptionKey_PixelAspectRatioHorizontalSpacing);
+						NSNumber * spacingYNum = (__bridge NSNumber *)CFDictionaryGetValue(pixelAspectRatio, kCMFormatDescriptionKey_PixelAspectRatioVerticalSpacing);
+						NSInteger spacingX = [spacingXNum integerValue];
+						NSInteger spacingY = [spacingYNum integerValue];
+						
+						if (spacingX > 0 && spacingY > 0 && spacingX != spacingY) {
+							self->videoWidth = lround((double)self->videoWidth * (double)spacingY / (double)spacingX);
+						}
+					}
+				}
+				
+				if ([self isAnamorphic]) {
+					NSLog(@"anamorphic video file loaded at %li x %li, display size %li x %li @ %f fps", (long)self->videoWidth, (long)self->videoHeight, (long)self->displayWidth, (long)self->displayHeight, self->frameRate);
+				} else {
+					NSLog(@"video file loaded at %li x %li @ %f fps", (long)self->videoWidth, (long)self->videoHeight, self->frameRate);
+				}
 			}
-			
 			
 //			currentTime = CMTimeMakeWithSeconds((1.0/frameRate), NSEC_PER_SEC);//kCMTimeZero;
 			self->currentTime = CMTimeMakeWithSeconds(0.0, NSEC_PER_SEC);//kCMTimeZero;
@@ -389,8 +413,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	duration = kCMTimeZero;
 	currentTime = kCMTimeZero;
 	
-	videoWidth = 0;
-	videoHeight = 0;
+	displayWidth = videoWidth = 0;
+	displayHeight = videoHeight = 0;
 	
 
 	// a reference to all the variables for the block
@@ -861,8 +885,11 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		// set videosize in case it is not set yet
 		if (videoWidth == 0 || videoHeight == 0) {
 			CGSize presentationSize = _playerItem.presentationSize;
-			videoWidth = presentationSize.width;
-			videoHeight = presentationSize.height;
+			displayWidth = presentationSize.width;
+			displayHeight = presentationSize.height;
+			// the pixel buffer has the real pixel size, which differs from the presentation size for anamorphic video
+			videoWidth = buffer ? CVPixelBufferGetWidth(buffer) : displayWidth;
+			videoHeight = buffer ? CVPixelBufferGetHeight(buffer) : displayHeight;
 		}		
 		
 		// create or update video format description
