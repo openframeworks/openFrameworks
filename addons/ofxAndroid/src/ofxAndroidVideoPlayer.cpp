@@ -153,7 +153,24 @@ bool ofxAndroidVideoPlayer::load(string fileName){
 
 //---------------------------------------------------------------------------
 void ofxAndroidVideoPlayer::close(){
+	if(!javaVideoPlayer){
+		ofLogError("ofxAndroidVideoPlayer") << "unloadMovie(): java VideoPlayer not loaded";
+		return;
+	}
+	JNIEnv *env = ofGetJNIEnv();
+	if (!env) {
+		ofLogError("ofxAndroidVideoPlayer") << "unloadMovie(): couldn't get environment using GetEnv()";
+		return;
+	}
 
+	jmethodID javaUnloadMethod = env->GetMethodID(javaClass,"unloadMovie","()V");
+	if(!javaUnloadMethod){
+		ofLogError("ofxAndroidVideoPlayer") << "unloadMovie(): couldn't get java unloadMovie for VideoPlayer";
+		return;
+	}
+
+	unloadTexture();
+	env->CallVoidMethod(javaVideoPlayer,javaUnloadMethod);
 }
 
 //---------------------------------------------------------------------------
