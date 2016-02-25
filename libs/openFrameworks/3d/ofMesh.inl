@@ -1043,6 +1043,8 @@ void ofMesh_<V,N,C,T>::load(string path){
 	ofIndexType currentVertex = 0;
 	ofIndexType currentFace = 0;
 
+	bool colorTypeIsUChar = false; /// flag to distinguish between uchar (more common) and float (less common) color format in ply file
+	
 	enum State{
 		Header,
 		VertexDef,
@@ -1116,6 +1118,7 @@ void ofMesh_<V,N,C,T>::load(string path){
 		}
 
 		if(state==VertexDef && (lineStr.find("property uchar red")==0 || lineStr.find("property uchar green")==0 || lineStr.find("property uchar blue")==0 || lineStr.find("property uchar alpha")==0)){
+			colorTypeIsUChar = true;
 			colorCompsFound++;
 			meshDefinition.push_back(Color);
 			data.getColors().resize(data.getVertices().size());
@@ -1184,7 +1187,13 @@ void ofMesh_<V,N,C,T>::load(string path){
 						sline >> *(&data.getVertices()[currentVertex].x + (vAttr++)%vertexCoordsFound);
 						break;
 					case Color:
-						sline >> *(&data.getColors()[currentVertex].r + (cAttr++)%colorCompsFound);
+						if (colorTypeIsUChar){
+							int c = 0;
+							sline >> c;
+							*(&data.getColors()[currentVertex].r + (cAttr++)%colorCompsFound) = c/255.f;
+						} else {
+							sline >> *(&data.getColors()[currentVertex].r + (cAttr++)%colorCompsFound);
+						}
 						break;
 					case Normal:
 						sline >> *(&data.getNormals()[currentVertex].x + (nAttr++)%normalsCoordsFound);
