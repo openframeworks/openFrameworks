@@ -32,6 +32,10 @@ template<class T>
 class ofPolyline_;
 using ofPolyline = ofPolyline_<ofDefaultVertexType>;
 
+template<class V, class N, class C, class T>
+class ofMesh_;
+using ofMesh = ofMesh_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorType, ofDefaultTexCoordType>;
+
 class ofPath;
 class ofFbo;
 class of3dPrimitive;
