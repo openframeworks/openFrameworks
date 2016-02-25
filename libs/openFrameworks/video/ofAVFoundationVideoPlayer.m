@@ -1274,6 +1274,10 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	return bFinished;
 }
 
+- (BOOL)isAnamorphic {
+	return ( displayWidth != videoWidth || displayHeight != videoHeight );
+}
+
 //---------------------------------------------------------- sampling getters / setters.
 - (void)setEnableVideoSampling:(BOOL)value {
 	bSampleVideo = value;
@@ -1325,6 +1329,14 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 - (NSInteger)getHeight {
 	return videoHeight;
+}
+
+- (NSInteger)getDisplayWidth {
+	return displayWidth;
+}
+
+- (NSInteger)getDisplayHeight {
+	return displayHeight;
 }
 
 - (CMTime)getCurrentTime {
