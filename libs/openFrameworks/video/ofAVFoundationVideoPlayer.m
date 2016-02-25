@@ -287,7 +287,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				CMFormatDescriptionRef formatDescription = (__bridge CMFormatDescriptionRef)[formatDesc objectAtIndex:0];
 				NSDictionary *pixelAspectRatio = nil;
 				
-				CFDictionaryRef pixelAspectRatioFromCMFormatDescription = CMFormatDescriptionGetExtension(formatDescription, kCMFormatDescriptionExtension_PixelAspectRatio);
+				CFDictionaryRef pixelAspectRatioFromCMFormatDescription = (CFDictionaryRef)CMFormatDescriptionGetExtension(formatDescription, kCMFormatDescriptionExtension_PixelAspectRatio);
 				if(pixelAspectRatioFromCMFormatDescription){
 					NSString * spacingXStr = CFDictionaryGetValue(pixelAspectRatioFromCMFormatDescription, kCMFormatDescriptionKey_PixelAspectRatioHorizontalSpacing);
 					NSString * spacingYStr = CFDictionaryGetValue(pixelAspectRatioFromCMFormatDescription, kCMFormatDescriptionKey_PixelAspectRatioVerticalSpacing);
