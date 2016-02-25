@@ -64,6 +64,9 @@ typedef enum _playerLoopType{
     
     NSInteger videoWidth;
     NSInteger videoHeight;
+
+    NSInteger displayWidth;
+    NSInteger displayHeight;
 	
     playerLoopType loop;
 	
