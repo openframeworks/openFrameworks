@@ -6,6 +6,10 @@
 #include "ofGLUtils.h"
 #include <map>
 
+#ifdef TARGET_ANDROID
+#include "ofAppAndroidWindow.h"
+#endif
+
 //----------------------------------------------------------
 // static
 static bool bTexHackEnabled = true;
@@ -137,12 +141,21 @@ static void release(GLuint id){
 		if(getTexturesIndex().find(id)!=getTexturesIndex().end()){
 			getTexturesIndex()[id]--;
 			if(getTexturesIndex()[id]==0){
-				glDeleteTextures(1, (GLuint *)&id);
+
+#ifdef TARGET_ANDROID
+				if (!ofAppAndroidWindow::isSurfaceDestroyed())
+#endif
+					glDeleteTextures(1, (GLuint *)&id);
+
 				getTexturesIndex().erase(id);
 			}
 		}else{
 			ofLogError("ofTexture") << "release(): something's wrong here, releasing unknown texture id " << id;
-			glDeleteTextures(1, (GLuint *)&id);
+
+#ifdef TARGET_ANDROID
+			if (!ofAppAndroidWindow::isSurfaceDestroyed())
+#endif
+				glDeleteTextures(1, (GLuint *)&id);
 		}
 	}
 }

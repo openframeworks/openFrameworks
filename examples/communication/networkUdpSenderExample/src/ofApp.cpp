@@ -7,8 +7,9 @@ void ofApp::setup(){
 	// we don't want to be running to fast
 	ofSetVerticalSync(true);
 	ofSetFrameRate(60);
+	ofEnableAntiAliasing();
 
-    //create the socket and set to send to 127.0.0.1:11999
+	//create the socket and set to send to 127.0.0.1:11999
 	udpConnection.Create();
 	udpConnection.Connect("127.0.0.1",11999);
 	udpConnection.SetNonBlocking(true);
@@ -24,12 +25,13 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	ofSetColor(20, 20, 20);
-	ofDrawBitmapString("openFrameworks UDP Send Example ", 15, 30);
-    ofDrawBitmapString("drag to draw", 15, 50);
 	for(unsigned int i=1;i<stroke.size();i++){
 		ofDrawLine(stroke[i-1].x,stroke[i-1].y,stroke[i].x,stroke[i].y);
 	}
+
+	string buf = "openFrameworks UDP Send Example\n";
+	buf += "drag to draw";
+	ofDrawBitmapStringHighlight(buf, 15, 30);
 
 }
 
