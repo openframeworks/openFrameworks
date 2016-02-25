@@ -305,7 +305,11 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				}
 			}
 			
-			NSLog(@"video loaded at %li x %li @ %f fps", (long)videoWidth, (long)videoHeight, frameRate);
+			if( [self isAnamorphic] ){
+				NSLog(@"anamorphic video loaded at %li x %li - display width is %li x %li @ %f fps", (long)videoWidth, (long)videoHeight, (long)displayWidth, (long)displayHeight, frameRate);
+			}else{
+				NSLog(@"video loaded at %li x %li @ %f fps", (long)videoWidth, (long)videoHeight, frameRate);
+			}
 			
 //			currentTime = CMTimeMakeWithSeconds((1.0/frameRate), NSEC_PER_SEC);//kCMTimeZero;
 			currentTime = CMTimeMakeWithSeconds(0.0, NSEC_PER_SEC);//kCMTimeZero;
@@ -1242,6 +1246,10 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	return bFinished;
 }
 
+- (BOOL)isAnamorphic {
+	return ( displayWidth != videoWidth || displayHeight != videoHeight );
+}
+
 //---------------------------------------------------------- sampling getters / setters.
 - (void)setEnableVideoSampling:(BOOL)value {
 	bSampleVideo = value;
@@ -1293,6 +1301,14 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 - (NSInteger)getHeight {
 	return videoHeight;
+}
+
+- (NSInteger)getDisplayWidth {
+	return displayWidth;
+}
+
+- (NSInteger)getDisplayHeight {
+	return displayHeight;
 }
 
 - (CMTime)getCurrentTime {
