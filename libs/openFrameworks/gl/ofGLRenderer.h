@@ -10,7 +10,6 @@
 #include <set>
 
 class ofShapeTessellation;
-class ofMesh;
 class ofFbo;
 class of3dPrimitive;
 

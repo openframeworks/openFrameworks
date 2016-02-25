@@ -431,18 +431,6 @@ float ofSignedNoise(const ofVec4f& p);
 /// \name Geometry
 /// \{
 
-/// \brief Determine if an (x,y) coordinate is within the polygon defined by a vector of glm::vec3s.
-/// \param x The x dimension of the coordinate.
-/// \param y The y dimension of the coordinate.
-/// \param poly a vector of glm::vec3s defining a polygon.
-/// \returns True if the point defined by the coordinates is enclosed, false otherwise.
-bool ofInsidePoly(float x, float y, const vector<glm::vec3>& poly);
-
-/// \brief Determine if an glm::vec3 is within the polygon defined by a vector of glm::vec3s.
-/// \param p A point to check.
-/// \param poly A vector of glm::vec3s defining a polygon.
-/// \returns True if the glm::vec3 is enclosed, false otherwise.
-bool ofInsidePoly(const glm::vec3 & p, const vector<glm::vec3>& poly);
 
 /// \brief Determine the intersection between two lines.
 /// \param line1Start Starting point for first line.

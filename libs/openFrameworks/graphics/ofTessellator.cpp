@@ -160,7 +160,7 @@ void ofTessellator::performTessellation(ofPolyWindingMode polyWindingMode, ofMes
 	int numIndices = tessGetElementCount( cacheTess )*3;
 
 	dstmesh.clear();
-	dstmesh.addVertices((glm::vec3*)tessGetVertices(cacheTess),numVertices);
+	dstmesh.addVertices((ofDefaultVertexType*)tessGetVertices(cacheTess),numVertices);
 	dstmesh.addIndices((ofIndexType*)tessGetElements(cacheTess),numIndices);
 	/*ofIndexType * tessElements = (ofIndexType *)tessGetElements(cacheTess);
 	for(int i=0;i<numIndices;i++){
@@ -179,7 +179,7 @@ void ofTessellator::performTessellation(ofPolyWindingMode polyWindingMode, vecto
 		return;
 	}
 
-	const glm::vec3* verts = (glm::vec3*)tessGetVertices(cacheTess);
+	const ofDefaultVertexType* verts = (ofDefaultVertexType*)tessGetVertices(cacheTess);
 	const TESSindex* elems = tessGetElements(cacheTess);
 	const int nelems = tessGetElementCount(cacheTess);
 	dstpoly.resize(nelems);

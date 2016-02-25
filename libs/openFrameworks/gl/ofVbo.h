@@ -23,10 +23,14 @@ public:
 	
 	void setVertexData(const glm::vec3 * verts, int total, int usage);
 	void setVertexData(const glm::vec2 * verts, int total, int usage);
+	void setVertexData(const ofVec3f * verts, int total, int usage);
+	void setVertexData(const ofVec2f * verts, int total, int usage);
 
 	void setColorData(const ofFloatColor * colors, int total, int usage);
 	void setNormalData(const glm::vec3 * normals, int total, int usage);
+	void setNormalData(const ofVec3f * normals, int total, int usage);
 	void setTexCoordData(const glm::vec2 * texCoords, int total, int usage);
+	void setTexCoordData(const ofVec2f * texCoords, int total, int usage);
 	void setIndexData(const ofIndexType * indices, int total, int usage);
 
 	void setVertexData(const float * vert0x, int numCoords, int total, int usage, int stride=0);
@@ -72,9 +76,13 @@ public:
 
 	void updateVertexData(const glm::vec3 * verts, int total);
 	void updateVertexData(const glm::vec2 * verts, int total);
+	void updateVertexData(const ofVec3f * verts, int total);
+	void updateVertexData(const ofVec2f * verts, int total);
 	void updateColorData(const ofFloatColor * colors, int total);
 	void updateNormalData(const glm::vec3 * normals, int total);
+	void updateNormalData(const ofVec3f * normals, int total);
 	void updateTexCoordData(const glm::vec2 * texCoords, int total);
+	void updateTexCoordData(const ofVec2f * texCoords, int total);
 	void updateIndexData(const ofIndexType * indices, int total);
 	
 	void updateVertexData(const float * ver0x, int total);

@@ -1,9 +1,11 @@
-#include "ofMesh.h"
 #include "ofAppRunner.h"
+#include "ofBaseTypes.h"
+#include "ofMesh.h"
 #include <map>
 
 //--------------------------------------------------------------
-ofMesh::ofMesh(){
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T>::ofMesh_(){
 	mode = OF_PRIMITIVE_TRIANGLES;
 	bVertsChanged = false;
 	bColorsChanged = false;
@@ -15,11 +17,12 @@ ofMesh::ofMesh(){
 	useTextures = true;
 	useNormals = true;
 	useIndices = true;
-
 }
 
+
 //--------------------------------------------------------------
-ofMesh::ofMesh(ofPrimitiveMode mode, const vector<glm::vec3>& verts){
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T>::ofMesh_(ofPrimitiveMode mode, const vector<V>& verts){
 	bColorsChanged = false;
 	bNormalsChanged = false;
 	bTexCoordsChanged = false;
@@ -31,8 +34,10 @@ ofMesh::ofMesh(ofPrimitiveMode mode, const vector<glm::vec3>& verts){
 	addVertices(verts);
 }
 
+
 //--------------------------------------------------------------
-void ofMesh::clear(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::clear(){
 	if(!vertices.empty()){
 		bVertsChanged = true;
 		vertices.clear();
@@ -56,8 +61,10 @@ void ofMesh::clear(){
 	bFacesDirty = true;
 }
 
+
 //--------------------------------------------------------------
-bool ofMesh::haveVertsChanged(){
+template<class V, class N, class C, class T>
+bool ofMesh_<V,N,C,T>::haveVertsChanged(){
 	if(bVertsChanged){
 		bVertsChanged = false;
 		return true;
@@ -66,8 +73,11 @@ bool ofMesh::haveVertsChanged(){
 	}
 }
 
+
+
 //--------------------------------------------------------------
-bool ofMesh::haveColorsChanged(){
+template<class V, class N, class C, class T>
+bool ofMesh_<V,N,C,T>::haveColorsChanged(){
 	if(bColorsChanged){
 		bColorsChanged = false;
 		return true;
@@ -76,8 +86,11 @@ bool ofMesh::haveColorsChanged(){
 	}
 }
 
+
+
 //--------------------------------------------------------------
-bool ofMesh::haveNormalsChanged(){
+template<class V, class N, class C, class T>
+bool ofMesh_<V,N,C,T>::haveNormalsChanged(){
 	if(bNormalsChanged){
 		bNormalsChanged = false;
 		return true;
@@ -86,8 +99,11 @@ bool ofMesh::haveNormalsChanged(){
 	}
 }
 
+
+
 //--------------------------------------------------------------
-bool ofMesh::haveTexCoordsChanged(){
+template<class V, class N, class C, class T>
+bool ofMesh_<V,N,C,T>::haveTexCoordsChanged(){
 	if(bTexCoordsChanged){
 		bTexCoordsChanged = false;
 		return true;
@@ -96,8 +112,11 @@ bool ofMesh::haveTexCoordsChanged(){
 	}
 }
 
+
+
 //--------------------------------------------------------------
-bool ofMesh::haveIndicesChanged(){
+template<class V, class N, class C, class T>
+bool ofMesh_<V,N,C,T>::haveIndicesChanged(){
 	if(bIndicesChanged){
 		bIndicesChanged = false;
 		return true;
@@ -107,154 +126,223 @@ bool ofMesh::haveIndicesChanged(){
 }
 
 
+
+
 //--------------------------------------------------------------
-bool ofMesh::hasVertices() const{
+template<class V, class N, class C, class T>
+bool ofMesh_<V,N,C,T>::hasVertices() const{
 	return !vertices.empty();
 }
 
+
+
 //--------------------------------------------------------------
-bool ofMesh::hasColors() const{
+template<class V, class N, class C, class T>
+bool ofMesh_<V,N,C,T>::hasColors() const{
 	return !colors.empty();
 }
 
+
+
 //--------------------------------------------------------------
-bool ofMesh::hasNormals() const{
+template<class V, class N, class C, class T>
+bool ofMesh_<V,N,C,T>::hasNormals() const{
 	return !normals.empty();
 }
 
+
+
 //--------------------------------------------------------------
-bool ofMesh::hasTexCoords() const{
+template<class V, class N, class C, class T>
+bool ofMesh_<V,N,C,T>::hasTexCoords() const{
 	return !texCoords.empty();
 }
 
+
+
 //--------------------------------------------------------------
-bool ofMesh::hasIndices() const{
+template<class V, class N, class C, class T>
+bool ofMesh_<V,N,C,T>::hasIndices() const{
 	return !indices.empty();
 }
 
 //ADDERS
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addVertex(const glm::vec3& v){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addVertex(const V& v){
 	vertices.push_back(v);
 	bVertsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addVertices(const vector<glm::vec3>& verts){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addVertices(const vector<V>& verts){
 	vertices.insert(vertices.end(),verts.begin(),verts.end());
 	bVertsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addVertices(const glm::vec3* verts, std::size_t amt){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addVertices(const V* verts, std::size_t amt){
 	vertices.insert(vertices.end(),verts,verts+amt);
 	bVertsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addColor(const ofFloatColor& c){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addColor(const C& c){
 	colors.push_back(c);
 	bColorsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addColors(const vector<ofFloatColor>& cols){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addColors(const vector<C>& cols){
 	colors.insert(colors.end(),cols.begin(),cols.end());
 	bColorsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addColors(const ofFloatColor* cols, std::size_t amt){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addColors(const C* cols, std::size_t amt){
 	colors.insert(colors.end(),cols,cols+amt);
 	bColorsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addNormal(const glm::vec3& n){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addNormal(const N& n){
 	normals.push_back(n);
 	bNormalsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addNormals(const vector<glm::vec3>& norms){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addNormals(const vector<N>& norms){
 	normals.insert(normals.end(),norms.begin(),norms.end());
 	bNormalsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addNormals(const glm::vec3* norms, std::size_t amt){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addNormals(const N* norms, std::size_t amt){
 	normals.insert(normals.end(),norms,norms+amt);
 	bNormalsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addTexCoord(const glm::vec2& t){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addTexCoord(const T& t){
 	//TODO: figure out if we add to all other arrays to match
 	texCoords.push_back(t);
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addTexCoords(const vector<glm::vec2>& tCoords){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addTexCoords(const vector<T>& tCoords){
 	texCoords.insert(texCoords.end(),tCoords.begin(),tCoords.end());
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addTexCoords(const glm::vec2* tCoords, std::size_t amt){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addTexCoords(const T* tCoords, std::size_t amt){
 	texCoords.insert(texCoords.end(),tCoords,tCoords+amt);
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-ofIndexType ofMesh::getIndex(ofIndexType i) const{
+template<class V, class N, class C, class T>
+ofIndexType ofMesh_<V,N,C,T>::getIndex(ofIndexType i) const{
 	return indices[i];
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addIndex(ofIndexType i){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addIndex(ofIndexType i){
 	indices.push_back(i);
 	bIndicesChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addIndices(const vector<ofIndexType>& inds){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addIndices(const vector<ofIndexType>& inds){
 	indices.insert(indices.end(),inds.begin(),inds.end());
 	bIndicesChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addIndices(const ofIndexType* inds, std::size_t amt){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addIndices(const ofIndexType* inds, std::size_t amt){
 	indices.insert(indices.end(),inds,inds+amt);
 	bIndicesChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::addTriangle(ofIndexType index1, ofIndexType index2, ofIndexType index3) {
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addTriangle(ofIndexType index1, ofIndexType index2, ofIndexType index3) {
 	addIndex(index1);
 	addIndex(index2);
 	addIndex(index3);
 }
 
 //REMOVERS
+
+
 //--------------------------------------------------------------
-void ofMesh::removeVertex(ofIndexType index){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeVertex(ofIndexType index){
   if(index >= vertices.size()){
 	ofLogError("ofMesh") << "removeVertex(): ignoring out of range index " << index << ", number of vertices is" << vertices.size();
   }else{
@@ -264,8 +352,11 @@ void ofMesh::removeVertex(ofIndexType index){
   }
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::removeNormal(ofIndexType index){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeNormal(ofIndexType index){
   if(index >= normals.size()){
 	ofLogError("ofMesh") << "removeNormal(): ignoring out of range index " << index << ", number of normals is" << normals.size();
   }else{
@@ -275,8 +366,11 @@ void ofMesh::removeNormal(ofIndexType index){
   }
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::removeColor(ofIndexType index){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeColor(ofIndexType index){
   if(index >= colors.size()){
 	ofLogError("ofMesh") << "removeColor(): ignoring out of range index " << index << ", number of colors is" << colors.size();
   }else{
@@ -286,8 +380,11 @@ void ofMesh::removeColor(ofIndexType index){
   }
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::removeTexCoord(ofIndexType index){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeTexCoord(ofIndexType index){
   if(index >= texCoords.size()){
 	ofLogError("ofMesh") << "removeTexCoord(): ignoring out of range index " << index << ", number of tex coords is" << texCoords.size();
   }else{
@@ -297,8 +394,11 @@ void ofMesh::removeTexCoord(ofIndexType index){
   }
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::removeIndex(ofIndexType index){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeIndex(ofIndexType index){
   if(index >= indices.size()){
 	ofLogError("ofMesh") << "removeIndex(): ignoring out of range index " << index << ", number of indices is" << indices.size();
   }else{
@@ -310,183 +410,278 @@ void ofMesh::removeIndex(ofIndexType index){
 
 
 //GETTERS
+
+
 //--------------------------------------------------------------
-ofPrimitiveMode ofMesh::getMode() const{
+template<class V, class N, class C, class T>
+ofPrimitiveMode ofMesh_<V,N,C,T>::getMode() const{
 	return mode;
 }
 
+
+
 //--------------------------------------------------------------
-glm::vec3 ofMesh::getVertex(ofIndexType i) const{
+template<class V, class N, class C, class T>
+V ofMesh_<V,N,C,T>::getVertex(ofIndexType i) const{
 	return vertices[i];
 }
 
+
+
 //--------------------------------------------------------------
-glm::vec3 ofMesh::getNormal(ofIndexType i) const{
+template<class V, class N, class C, class T>
+N ofMesh_<V,N,C,T>::getNormal(ofIndexType i) const{
 	return normals[i];
 }
 
+
+
 //--------------------------------------------------------------
-ofFloatColor ofMesh::getColor(ofIndexType i) const{
+template<class V, class N, class C, class T>
+C ofMesh_<V,N,C,T>::getColor(ofIndexType i) const{
 	return colors[i];
 }
 
+
+
 //--------------------------------------------------------------
-glm::vec2 ofMesh::getTexCoord(ofIndexType i) const{
+template<class V, class N, class C, class T>
+T ofMesh_<V,N,C,T>::getTexCoord(ofIndexType i) const{
 	return texCoords[i];
 }
 
+
+
 //--------------------------------------------------------------
-std::size_t ofMesh::getNumVertices() const{
+template<class V, class N, class C, class T>
+std::size_t ofMesh_<V,N,C,T>::getNumVertices() const{
 	return vertices.size();
 }
 
+
+
 //--------------------------------------------------------------
-std::size_t ofMesh::getNumColors() const{
+template<class V, class N, class C, class T>
+std::size_t ofMesh_<V,N,C,T>::getNumColors() const{
 	return colors.size();
 }
 
+
+
 //--------------------------------------------------------------
-std::size_t ofMesh::getNumNormals() const{
+template<class V, class N, class C, class T>
+std::size_t ofMesh_<V,N,C,T>::getNumNormals() const{
 	return normals.size();
 }
 
+
+
 //--------------------------------------------------------------
-std::size_t ofMesh::getNumTexCoords() const{
+template<class V, class N, class C, class T>
+std::size_t ofMesh_<V,N,C,T>::getNumTexCoords() const{
 	return texCoords.size();
 }
 
+
+
 //--------------------------------------------------------------
-std::size_t ofMesh::getNumIndices() const{
+template<class V, class N, class C, class T>
+std::size_t ofMesh_<V,N,C,T>::getNumIndices() const{
 	return indices.size();
 }
 
 /*
+
+
 //--------------------------------------------------------------
+template<class V, class N, class C, class T>
 int ofPrimitive::getNumIndicesSolid(){
 	return indicesSolid.size();
 }
 
+
+
 //--------------------------------------------------------------
+template<class V, class N, class C, class T>
 int ofPrimitive::getNumIndicesWire(){
 	return indicesWire.size();
 }
  */
 
+
+
 //--------------------------------------------------------------
-glm::vec3* ofMesh::getVerticesPointer(){
+template<class V, class N, class C, class T>
+V* ofMesh_<V,N,C,T>::getVerticesPointer(){
 	return vertices.data();
 }
 
+
+
 //--------------------------------------------------------------
-ofFloatColor* ofMesh::getColorsPointer(){
+template<class V, class N, class C, class T>
+C* ofMesh_<V,N,C,T>::getColorsPointer(){
 	return colors.data();
 }
 
+
+
 //--------------------------------------------------------------
-glm::vec3* ofMesh::getNormalsPointer(){
+template<class V, class N, class C, class T>
+N* ofMesh_<V,N,C,T>::getNormalsPointer(){
 	return normals.data();
 }
 
+
+
 //--------------------------------------------------------------
-glm::vec2* ofMesh::getTexCoordsPointer(){
+template<class V, class N, class C, class T>
+T* ofMesh_<V,N,C,T>::getTexCoordsPointer(){
 	return texCoords.data();
 }
 
+
+
 //--------------------------------------------------------------
-ofIndexType* ofMesh::getIndexPointer(){
+template<class V, class N, class C, class T>
+ofIndexType* ofMesh_<V,N,C,T>::getIndexPointer(){
 	return indices.data();
 }
 
 
+
+
 //--------------------------------------------------------------
-const glm::vec3* ofMesh::getVerticesPointer() const{
+template<class V, class N, class C, class T>
+const V* ofMesh_<V,N,C,T>::getVerticesPointer() const{
 	return vertices.data();
 }
 
+
+
 //--------------------------------------------------------------
-const ofFloatColor* ofMesh::getColorsPointer() const{
+template<class V, class N, class C, class T>
+const C* ofMesh_<V,N,C,T>::getColorsPointer() const{
 	return colors.data();
 }
 
+
+
 //--------------------------------------------------------------
-const glm::vec3* ofMesh::getNormalsPointer() const{
+template<class V, class N, class C, class T>
+const N* ofMesh_<V,N,C,T>::getNormalsPointer() const{
 	return normals.data();
 }
 
+
+
 //--------------------------------------------------------------
-const glm::vec2* ofMesh::getTexCoordsPointer() const{
+template<class V, class N, class C, class T>
+const T* ofMesh_<V,N,C,T>::getTexCoordsPointer() const{
 	return texCoords.data();
 }
 
+
+
 //--------------------------------------------------------------
-const ofIndexType * ofMesh::getIndexPointer() const{
+template<class V, class N, class C, class T>
+const ofIndexType * ofMesh_<V,N,C,T>::getIndexPointer() const{
 	return indices.data();
 }
 
-vector<glm::vec3> & ofMesh::getVertices(){
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+vector<V> & ofMesh_<V,N,C,T>::getVertices(){
 	bVertsChanged = true;
 	bFacesDirty = true;
 	return vertices;
 }
 
-vector<ofFloatColor> & ofMesh::getColors(){
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+vector<C> & ofMesh_<V,N,C,T>::getColors(){
 	bColorsChanged = true;
 	bFacesDirty = true;
 	return colors;
 }
 
-vector<glm::vec3> & ofMesh::getNormals(){
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+vector<N> & ofMesh_<V,N,C,T>::getNormals(){
 	bNormalsChanged = true;
 	bFacesDirty = true;
 	return normals;
 }
 
-vector<glm::vec2> & ofMesh::getTexCoords(){
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+vector<T> & ofMesh_<V,N,C,T>::getTexCoords(){
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
 	return texCoords;
 }
 
-vector<ofIndexType> & ofMesh::getIndices(){
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+vector<ofIndexType> & ofMesh_<V,N,C,T>::getIndices(){
 	bIndicesChanged = true;
 	bFacesDirty = true;
 	return indices;
 }
 
-const vector<glm::vec3> & ofMesh::getVertices() const{
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+const vector<V> & ofMesh_<V,N,C,T>::getVertices() const{
 	return vertices;
 }
 
-const vector<ofFloatColor> & ofMesh::getColors() const{
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+const vector<C> & ofMesh_<V,N,C,T>::getColors() const{
 	return colors;
 }
 
-const vector<glm::vec3> & ofMesh::getNormals() const{
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+const vector<N> & ofMesh_<V,N,C,T>::getNormals() const{
 	return normals;
 }
 
-const vector<glm::vec2> & ofMesh::getTexCoords() const{
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+const vector<T> & ofMesh_<V,N,C,T>::getTexCoords() const{
 	return texCoords;
 }
 
-const vector<ofIndexType> & ofMesh::getIndices() const{
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+const vector<ofIndexType> & ofMesh_<V,N,C,T>::getIndices() const{
 	return indices;
 }
 
 /*
+
+
 //--------------------------------------------------------------
+template<class V, class N, class C, class T>
 GLuint* ofPrimitive::getSolidIndexPointer(){
 	return &indicesSolid[0];
 }
 
+
+
 //--------------------------------------------------------------
+template<class V, class N, class C, class T>
 GLuint* ofPrimitive::getWireIndexPointer(){
 	return &indicesWire[0];
 }
  */
 
 /*
+
+
 //--------------------------------------------------------------
+template<class V, class N, class C, class T>
 vector<int>& ofPrimitive::getFace(int faceNum){
 	switch(mode){
 		//GL_QUADS
@@ -517,8 +712,11 @@ vector<int>& ofPrimitive::getFace(int faceNum){
  */
 
 
+
+
 //--------------------------------------------------------------
-glm::vec3 ofMesh::getCentroid() const {
+template<class V, class N, class C, class T>
+V ofMesh_<V,N,C,T>::getCentroid() const {
 	if(vertices.size() == 0) {
 		ofLogWarning("ofMesh") << "getCentroid(): mesh has no vertices, returning glm::vec3(0, 0, 0)";
 		return glm::vec3(0, 0, 0);
@@ -533,50 +731,71 @@ glm::vec3 ofMesh::getCentroid() const {
 }
 
 //SETTERS
+
+
 //--------------------------------------------------------------
-void ofMesh::setMode(ofPrimitiveMode m){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::setMode(ofPrimitiveMode m){
 	bIndicesChanged = true;
 	mode = m;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::setVertex(ofIndexType index, const glm::vec3& v){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::setVertex(ofIndexType index, const V& v){
 	vertices[index] = v;
 	bVertsChanged = true;
 	bIndicesChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::setNormal(ofIndexType index, const glm::vec3& n){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::setNormal(ofIndexType index, const N& n){
 	normals[index] = n;
 	bNormalsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::setColor(ofIndexType index, const ofFloatColor& c){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::setColor(ofIndexType index, const C& c){
 	colors[index] = c;
 	bColorsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::setTexCoord(ofIndexType index, const glm::vec2& t){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::setTexCoord(ofIndexType index, const T& t){
 	texCoords[index] = t;
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::setIndex(ofIndexType index, ofIndexType  val){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::setIndex(ofIndexType index, ofIndexType  val){
 	indices[index] = val;
 	bIndicesChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::setupIndicesAuto(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::setupIndicesAuto(){
 	bIndicesChanged = true;
 	bFacesDirty = true;
 	indices.resize(vertices.size());
@@ -587,129 +806,198 @@ void ofMesh::setupIndicesAuto(){
 
 
 
+
+
 //--------------------------------------------------------------
-void ofMesh::clearVertices(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::clearVertices(){
 	vertices.clear();
 	bVertsChanged=true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::clearNormals(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::clearNormals(){
 	normals.clear();
 	bNormalsChanged=true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::clearColors(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::clearColors(){
 	colors.clear();
 	bColorsChanged=true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::clearTexCoords(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::clearTexCoords(){
 	texCoords.clear();
 	bTexCoordsChanged=true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::clearIndices(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::clearIndices(){
 	indices.clear();
 	bIndicesChanged = true;
 	bFacesDirty = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::drawVertices() const{
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::drawVertices() const{
 	draw(OF_MESH_POINTS);
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::drawWireframe() const{
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::drawWireframe() const{
 	draw(OF_MESH_WIREFRAME);
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::drawFaces() const{
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::drawFaces() const{
 	draw(OF_MESH_FILL);
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::draw() const{
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::draw() const{
 	draw(OF_MESH_FILL);
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::draw(ofPolyRenderMode renderType) const{
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::draw(ofPolyRenderMode renderType) const{
 	if(getNumVertices()==0) return;
 	ofGetCurrentRenderer()->draw(*this,renderType,useColors,useTextures,useNormals);
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::enableColors(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::enableColors(){
 	useColors = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::enableTextures(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::enableTextures(){
 	useTextures = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::enableNormals(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::enableNormals(){
 	useNormals = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::enableIndices(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::enableIndices(){
 	useIndices = true;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::disableColors(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::disableColors(){
 	useColors = false;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::disableTextures(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::disableTextures(){
 	useTextures = false;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::disableNormals(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::disableNormals(){
 	useNormals = false;
 }
 
+
+
 //--------------------------------------------------------------
-void ofMesh::disableIndices(){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::disableIndices(){
 	useIndices = false;
 }
 
+
+
 //--------------------------------------------------------------
-bool ofMesh::usingColors() const{
+template<class V, class N, class C, class T>
+bool ofMesh_<V,N,C,T>::usingColors() const{
 	return useColors;
 }
 
+
+
 //--------------------------------------------------------------
-bool ofMesh::usingTextures() const{
+template<class V, class N, class C, class T>
+bool ofMesh_<V,N,C,T>::usingTextures() const{
 	return useTextures;
 }
 
+
+
 //--------------------------------------------------------------
-bool ofMesh::usingNormals() const{
+template<class V, class N, class C, class T>
+bool ofMesh_<V,N,C,T>::usingNormals() const{
 	return useNormals;
 }
 
+
+
 //--------------------------------------------------------------
-bool ofMesh::usingIndices() const{
+template<class V, class N, class C, class T>
+bool ofMesh_<V,N,C,T>::usingIndices() const{
 	return useIndices;
 }
 
 
+
+
 //--------------------------------------------------------------
-void ofMesh::append(const ofMesh & mesh){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::append(const ofMesh_<V,N,C,T> & mesh){
 	ofIndexType prevNumVertices = static_cast<ofIndexType>(vertices.size());
 	if(mesh.getNumVertices()){
 		vertices.insert(vertices.end(),mesh.getVertices().begin(),mesh.getVertices().end());
@@ -731,15 +1019,18 @@ void ofMesh::append(const ofMesh & mesh){
 }
 
 
+
+
 //--------------------------------------------------------------
-void ofMesh::load(string path){
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::load(string path){
 	ofFile is(path, ofFile::ReadOnly);
-	ofMesh& data = *this;
+	auto & data = *this;
 
 
 	string error;
 	ofBuffer buffer(is);
-	ofMesh backup = data;
+	auto backup = data;
 
 	int orderVertices=-1;
 	int orderIndices=-1;
@@ -961,9 +1252,11 @@ void ofMesh::load(string path){
 	data = backup;
 }
 
-void ofMesh::save(string path, bool useBinary) const{
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::save(string path, bool useBinary) const{
 	ofFile os(path, ofFile::WriteOnly);
-	const ofMesh& data = *this;
+	const auto & data = *this;
 
 	os << "ply" << endl;
 	if(useBinary) {
@@ -1068,8 +1361,10 @@ void ofMesh::save(string path, bool useBinary) const{
 	//TODO: add index generation for other OF_PRIMITIVE cases
 }
 
-//----------------------------------------------------------
-void ofMesh::setColorForIndices( ofIndexType startIndex, ofIndexType endIndex, ofColor color ) {
+
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::setColorForIndices( ofIndexType startIndex, ofIndexType endIndex, C color ) {
 	if(!hasColors()) {
 		// no colors for vertices, so we must set them here //
 		getColors().resize( getNumVertices() );
@@ -1080,8 +1375,10 @@ void ofMesh::setColorForIndices( ofIndexType startIndex, ofIndexType endIndex, o
 	}
 }
 
-//----------------------------------------------------------
-ofMesh ofMesh::getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex ) const {
+
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex ) const {
 	ofIndexType startVertIndex = 0;
 	ofIndexType endVertIndex = 0;
 
@@ -1100,10 +1397,12 @@ ofMesh ofMesh::getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex )
 	return getMeshForIndices(startIndex, endIndex, startVertIndex, endVertIndex );
 }
 
-//----------------------------------------------------------
-ofMesh ofMesh::getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex, ofIndexType startVertIndex, ofIndexType endVertIndex ) const{
 
-	ofMesh mesh;
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex, ofIndexType startVertIndex, ofIndexType endVertIndex ) const{
+
+	ofMesh_<V,N,C,T> mesh;
 	mesh.setMode( getMode() );
 
 	mesh.getVertices().assign( getVertices().begin()+startVertIndex, getVertices().begin()+endVertIndex );
@@ -1147,8 +1446,10 @@ ofMesh ofMesh::getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex, 
 	return mesh;
 }
 
-//----------------------------------------------------------
-void ofMesh::mergeDuplicateVertices() {
+
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::mergeDuplicateVertices() {
 
 	vector<glm::vec3> verts = getVertices();
 	vector<ofIndexType> indices = getIndices();
@@ -1241,19 +1542,23 @@ void ofMesh::mergeDuplicateVertices() {
 
 }
 
-//----------------------------------------------------------
-ofMeshFace ofMesh::getFace(ofIndexType faceId) const{
-	const vector<ofMeshFace> & faces = getUniqueFaces();
+
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+ofMeshFace_<V,N,C,T> ofMesh_<V,N,C,T>::getFace(ofIndexType faceId) const{
+	const vector<ofMeshFace_<V,N,C,T>> & faces = getUniqueFaces();
 	if(faces.size()>faceId){
 		return faces[faceId];
 	}else{
 		ofLogError() << "couldn't find face " << faceId;
-		return ofMeshFace();
+		return ofMeshFace_<V,N,C,T>();
 	}
 }
 
-//----------------------------------------------------------
-const vector<ofMeshFace> & ofMesh::getUniqueFaces() const{
+
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+const vector<ofMeshFace_<V,N,C,T>> & ofMesh_<V,N,C,T>::getUniqueFaces() const{
 	if(bFacesDirty){
 		// if we are doing triangles, we have to use a vert and normal for each triangle
 		// that way we can calculate face normals and use getFaceNormal();
@@ -1268,7 +1573,7 @@ const vector<ofMeshFace> & ofMesh::getUniqueFaces() const{
 
 		if( getMode() == OF_PRIMITIVE_TRIANGLES) {
 			for(std::size_t j = 0; j < indices.size(); j += 3) {
-				ofMeshFace & tri = faces[triindex];
+				ofMeshFace_<V,N,C,T> & tri = faces[triindex];
 				for(std::size_t k = 0; k < 3; k++) {
 					index = indices[j+k];
 					tri.setVertex( k, vertices[index] );
@@ -1293,8 +1598,10 @@ const vector<ofMeshFace> & ofMesh::getUniqueFaces() const{
 
 }
 
-//----------------------------------------------------------
-vector<glm::vec3> ofMesh::getFaceNormals( bool perVertex ) const{
+
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+vector<N> ofMesh_<V,N,C,T>::getFaceNormals( bool perVertex ) const{
 	// default for ofPrimitiveBase is vertex normals //
 	vector<glm::vec3> faceNormals;
 
@@ -1305,7 +1612,7 @@ vector<glm::vec3> ofMesh::getFaceNormals( bool perVertex ) const{
 			}else{
 				faceNormals.resize(indices.size());
 			}
-			ofMeshFace face;
+			ofMeshFace_<V,N,C,T> face;
 			glm::vec3 n;
 			for(ofIndexType i = 0; i < indices.size(); i+=3) {
 				face.setVertex( 0, vertices[indices[i+0]] );
@@ -1326,14 +1633,16 @@ vector<glm::vec3> ofMesh::getFaceNormals( bool perVertex ) const{
 	return faceNormals;
 }
 
-//----------------------------------------------------------
-void ofMesh::setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNormal ) {
+
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::setFromTriangles( const vector<ofMeshFace_<V,N,C,T>>& tris, bool bUseFaceNormal ) {
 	if(tris.empty()) {
 		ofLogWarning("ofMesh") << "setFromTriangles(): ignoring empty tris vector";
 		return;
 	}
 
-	vector<ofMeshFace>::const_iterator it;
+	typename std::vector<ofMeshFace_<V,N,C,T>>::const_iterator it;
 
 	vertices.resize(tris.size()*3 );
 	it = tris.begin();
@@ -1381,12 +1690,14 @@ void ofMesh::setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNorm
 	faces = tris;
 }
 
-//----------------------------------------------------------
-void ofMesh::smoothNormals( float angle ) {
+
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 
 	if( getMode() == OF_PRIMITIVE_TRIANGLES) {
-		vector<ofMeshFace> triangles = getUniqueFaces();
-		vector<glm::vec3> verts;
+		vector<ofMeshFace_<V,N,C,T>> triangles = getUniqueFaces();
+		vector<V> verts;
 		for(ofIndexType i = 0; i < triangles.size(); i++) {
 			for(ofIndexType j = 0; j < 3; j++) {
 				verts.push_back( triangles[i].getVertex(j) );
@@ -1399,8 +1710,8 @@ void ofMesh::smoothNormals( float angle ) {
 		for(ofIndexType i = 0; i < verts.size()-1; i++) {
 			for(ofIndexType j = i+1; j < verts.size(); j++) {
 				if(i != j) {
-					glm::vec3& v1 = verts[i];
-					glm::vec3& v2 = verts[j];
+					V& v1 = verts[i];
+					V& v2 = verts[j];
 					if( glm::distance(v1, v2) <= epsilon ) {
 						// average the location //
 						verts[i] = (v1+v2)/2.f;
@@ -1483,9 +1794,12 @@ void ofMesh::smoothNormals( float angle ) {
 }
 
 // PLANE MESH //
+
+
 //--------------------------------------------------------------
-ofMesh ofMesh::plane(float width, float height, int columns, int rows, ofPrimitiveMode mode ) {
-	ofMesh mesh;
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::plane(float width, float height, int columns, int rows, ofPrimitiveMode mode ) {
+	ofMesh_<V,N,C,T> mesh;
 
 	if(mode != OF_PRIMITIVE_TRIANGLE_STRIP && mode != OF_PRIMITIVE_TRIANGLES) {
 		ofLogWarning("ofMesh") << "ofGetPlaneMesh(): primtive mode " << mode << " not supported, setting to OF_PRIMITIVE_TRIANGLES";
@@ -1494,9 +1808,9 @@ ofMesh ofMesh::plane(float width, float height, int columns, int rows, ofPrimiti
 
 	mesh.setMode(mode);
 
-	glm::vec3 vert;
-	glm::vec3 normal(0, 0, 1); // always facing forward //
-	glm::vec2 texcoord;
+	V vert;
+	N normal(0, 0, 1); // always facing forward //
+	T texcoord;
 
 	// the origin of the plane is the center //
 	float halfW = width/2.f;
@@ -1555,10 +1869,12 @@ ofMesh ofMesh::plane(float width, float height, int columns, int rows, ofPrimiti
 }
 
 
-//----------------------------------------------------------
-ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
 
-	ofMesh mesh;
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::sphere( float radius, int res, ofPrimitiveMode mode ) {
+
+	ofMesh_<V,N,C,T> mesh;
 
 	float doubleRes = res*2.f;
 	float polarInc = PI/(res); // ringAngle
@@ -1569,8 +1885,8 @@ ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
 	}
 	mesh.setMode(mode);
 
-	glm::vec3 vert;
-	glm::vec2 tcoord;
+	V vert;
+	T tcoord;
 
 	for(float i = 0; i < res+1; i++) {
 
@@ -1671,9 +1987,11 @@ ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
 
 // NO texture coords or normals
 // use ofGetIcoSphere(radius, 0) // 0 iterations will return Icosahedron //
-//----------------------------------------------------------
-ofMesh ofMesh::icosahedron(float radius) {
-	ofMesh mesh;
+
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosahedron(float radius) {
+	ofMesh_<V,N,C,T> mesh;
 
 	const float sqrt5 = sqrt(5.0f);
 	const float phi = (1.0f + sqrt5) * 0.5f;
@@ -1733,13 +2051,15 @@ ofMesh ofMesh::icosahedron(float radius) {
 // based on code by Michael Broutin for the ogre-procedural library //
 // http://code.google.com/p/ogre-procedural/source/browse/library/src/ProceduralIcoSphereGenerator.cpp
 // For the latest info, see http://code.google.com/p/ogre-procedural/ //
-//----------------------------------------------------------
-ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
+
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iterations) {
 
 	//ofMesh icosahedron = ofGetIcosahedronMesh( 1.f );
-	ofMesh icosahedron = ofMesh::icosahedron( 1.f );
-	vector<glm::vec3> vertices = icosahedron.getVertices();
-	vector<ofIndexType> faces = icosahedron.getIndices();
+	auto icosahedron = ofMesh_<V,N,C,T>::icosahedron( 1.f );
+	auto vertices = icosahedron.getVertices();
+	auto faces = icosahedron.getIndices();
 
 	ofIndexType size = faces.size();
 
@@ -1748,23 +2068,21 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 	{
 		size*=4;
 		vector<ofIndexType> newFaces;
-		newFaces.clear();
-		//newFaces.resize(size);
 		for (ofIndexType i=0; i<size/12; i++)
 		{
-			std::size_t i1 = faces[i*3];
-			std::size_t i2 = faces[i*3+1];
-			std::size_t i3 = faces[i*3+2];
-			std::size_t i12 = vertices.size();
-			std::size_t i23 = i12+1;
-			std::size_t i13 = i12+2;
-			glm::vec3 v1 = vertices[i1];
-			glm::vec3 v2 = vertices[i2];
-			glm::vec3 v3 = vertices[i3];
+			auto i1 = faces[i*3];
+			auto i2 = faces[i*3+1];
+			auto i3 = faces[i*3+2];
+			auto i12 = vertices.size();
+			auto i23 = i12+1;
+			auto i13 = i12+2;
+			auto v1 = vertices[i1];
+			auto v2 = vertices[i2];
+			auto v3 = vertices[i3];
 			//make 1 vertice at the center of each edge and project it onto the sphere
-			vertices.push_back(glm::normalize(v1+v2));
-			vertices.push_back(glm::normalize(v2+v3));
-			vertices.push_back(glm::normalize(v1+v3));
+			vertices.push_back(glm::normalize((const glm::vec3&)v1+v2));
+			vertices.push_back(glm::normalize((const glm::vec3&)v2+v3));
+			vertices.push_back(glm::normalize((const glm::vec3&)v1+v3));
 			//now recreate indices
 			newFaces.push_back(i1);
 			newFaces.push_back(i12);
@@ -1783,7 +2101,7 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 	}
 
 	/// Step 3 : generate texcoords
-	vector<glm::vec2> texCoords;
+	vector<T> texCoords;
 	for (ofIndexType i=0;i<vertices.size();i++)
 	{
 		const auto& vec = vertices[i];
@@ -1804,9 +2122,9 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 
 	for (ofIndexType i=0;i<faces.size()/3;i++)
 	{
-		glm::vec2& t0 = texCoords[faces[i*3+0]];
-		glm::vec2& t1 = texCoords[faces[i*3+1]];
-		glm::vec2& t2 = texCoords[faces[i*3+2]];
+		T& t0 = texCoords[faces[i*3+0]];
+		T& t1 = texCoords[faces[i*3+1]];
+		T& t2 = texCoords[faces[i*3+2]];
 
 		if (abs(t2.x-t0.x)>0.5)
 		{
@@ -1836,8 +2154,8 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 	{
 		ofIndexType index = indexToSplit[i];
 		//duplicate vertex
-		glm::vec3 v = vertices[index];
-		glm::vec2 t = texCoords[index] + glm::vec2(1.f, 0.f);
+		V v = vertices[index];
+		T t = texCoords[index] + glm::vec2(1.f, 0.f);
 		vertices.push_back(v);
 		texCoords.push_back(t);
 		ofIndexType newIndex = vertices.size()-1;
@@ -1864,7 +2182,7 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 		std::swap(faces[i+1], faces[i+2]);
 	}
 
-	ofMesh sphere;
+	ofMesh_<V,N,C,T> sphere;
 
 	sphere.addIndices( faces );
 	sphere.addNormals( vertices );
@@ -1886,9 +2204,11 @@ ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
 
 
 // Cylinder Mesh
-//----------------------------------------------------------
-ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments, bool bCapped, ofPrimitiveMode mode ) {
-	ofMesh mesh;
+
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cylinder( float radius, float height, int radiusSegments, int heightSegments, int numCapSegments, bool bCapped, ofPrimitiveMode mode ) {
+	ofMesh_<V,N,C,T> mesh;
 	if(mode != OF_PRIMITIVE_TRIANGLE_STRIP && mode != OF_PRIMITIVE_TRIANGLES) {
 		mode = OF_PRIMITIVE_TRIANGLE_STRIP;
 	}
@@ -2076,9 +2396,12 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
 }
 
 // Cone Mesh //
+
+
 //--------------------------------------------------------------
-ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightSegments, int capSegments, ofPrimitiveMode mode ) {
-	ofMesh mesh;
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cone( float radius, float height, int radiusSegments, int heightSegments, int capSegments, ofPrimitiveMode mode ) {
+	ofMesh_<V,N,C,T> mesh;
 	if(mode != OF_PRIMITIVE_TRIANGLE_STRIP && mode != OF_PRIMITIVE_TRIANGLES) {
 		mode = OF_PRIMITIVE_TRIANGLE_STRIP;
 	}
@@ -2226,10 +2549,13 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
 
 
 // Box Mesh //
+
+
 //--------------------------------------------------------------
-ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, int resZ ) {
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, int resX, int resY, int resZ ) {
 	// mesh only available as triangles //
-	ofMesh mesh;
+	ofMesh_<V,N,C,T> mesh;
 	mesh.setMode( OF_PRIMITIVE_TRIANGLES );
 
 	resX = resX + 1;
@@ -2245,9 +2571,9 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
 	float halfH = height * .5f;
 	float halfD = depth * .5f;
 
-	glm::vec3 vert;
-	glm::vec2 texcoord;
-	glm::vec3 normal;
+	V vert;
+	T texcoord;
+	N normal;
 	std::size_t vertOffset = 0;
 
 	// TRIANGLES //
@@ -2478,30 +2804,32 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
 }
 
 
-//--------------------------------------------------------------
 
+
+//--------------------------------------------------------------
 /// Returns an ofMesh representing an XYZ coordinate system.
-ofMesh ofMesh::axis( float size ) {
-	ofMesh mesh;
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::axis( float size ) {
+	ofMesh_<V,N,C,T> mesh;
 
 	// mesh only available as wireframe //
 	mesh.setMode(OF_PRIMITIVE_LINES);
 
-	glm::vec3 vertices[6] = {
-		glm::vec3(0,0,0),
-		glm::vec3(size,0,0),
-		glm::vec3(0,0,0),
-		glm::vec3(0,size,0),
-		glm::vec3(0,0,0),
-		glm::vec3(0,0,size),
+	V vertices[6] = {
+		V(0,0,0),
+		V(size,0,0),
+		V(0,0,0),
+		V(0,size,0),
+		V(0,0,0),
+		V(0,0,size),
 	};
-	ofFloatColor colors[6] = {
-		ofFloatColor::red,
-		ofFloatColor::red,
-		ofFloatColor::green,
-		ofFloatColor::green,
-		ofFloatColor::blue,
-		ofFloatColor::blue,
+	C colors[6] = {
+		C::red,
+		C::red,
+		C::green,
+		C::green,
+		C::blue,
+		C::blue,
 	};
 
 	mesh.addVertices(vertices, 6);
@@ -2510,10 +2838,11 @@ ofMesh ofMesh::axis( float size ) {
 	return mesh;
 }
 
+
+
 //--------------------------------------------------------------
-
-
-ofMeshFace::ofMeshFace()
+template<class V, class N, class C, class T>
+ofMeshFace_<V,N,C,T>::ofMeshFace_()
 :bHasNormals(false)
 ,bHasColors(false)
 ,bHasTexcoords(false)
@@ -2521,78 +2850,110 @@ ofMeshFace::ofMeshFace()
 {
 }
 
-const glm::vec3 & ofMeshFace::getFaceNormal() const{
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+const N & ofMeshFace_<V,N,C,T>::getFaceNormal() const{
 	if(bFaceNormalDirty) calculateFaceNormal();
 	return faceNormal;
 }
 
-void ofMeshFace::calculateFaceNormal() const{
-	glm::vec3 U, V;
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMeshFace_<V,N,C,T>::calculateFaceNormal() const{
+	glm::vec3 u, v;
 
-	U = vertices[1]-vertices[0];
-	V = vertices[2]-vertices[0];
+	u = vertices[1]-vertices[0];
+	v = vertices[2]-vertices[0];
 
-	faceNormal = glm::cross(U, V);
-	faceNormal = glm::normalize(faceNormal);
+	faceNormal = glm::cross(u, v);
+	faceNormal = glm::normalize(toGlm(faceNormal));
 	bFaceNormalDirty = false;
 }
 
-void ofMeshFace::setVertex( ofIndexType index, const glm::vec3& v ) {
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMeshFace_<V,N,C,T>::setVertex( ofIndexType index, const V& v ) {
 	vertices[index] = v;
 	bFaceNormalDirty = true;
 }
 
-const glm::vec3& ofMeshFace::getVertex( ofIndexType index ) const{
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+const V& ofMeshFace_<V,N,C,T>::getVertex( ofIndexType index ) const{
 	return vertices[index];
 }
 
-void ofMeshFace::setNormal( ofIndexType index, const glm::vec3& n ) {
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMeshFace_<V,N,C,T>::setNormal( ofIndexType index, const N& n ) {
 	normals[index] = n;
 	bHasNormals = true;
 }
 
-const glm::vec3& ofMeshFace::getNormal( ofIndexType index ) const{
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+const N& ofMeshFace_<V,N,C,T>::getNormal( ofIndexType index ) const{
 	return normals[ index ];
 }
 
-void ofMeshFace::setColor( ofIndexType index, const ofFloatColor& color ) {
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMeshFace_<V,N,C,T>::setColor( ofIndexType index, const C& color ) {
 	colors[index] = color;
 	bHasColors = true;
 }
 
-const ofFloatColor& ofMeshFace::getColor( ofIndexType index) const{
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+const C& ofMeshFace_<V,N,C,T>::getColor( ofIndexType index) const{
 	return colors[index];
 }
 
-void ofMeshFace::setTexCoord( ofIndexType index, const glm::vec2& tCoord ) {
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMeshFace_<V,N,C,T>::setTexCoord( ofIndexType index, const T& tCoord ) {
 	texCoords[index] = tCoord;
 	bHasTexcoords = true;
 }
 
-const glm::vec2& ofMeshFace::getTexCoord( ofIndexType index ) const{
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+const T& ofMeshFace_<V,N,C,T>::getTexCoord( ofIndexType index ) const{
 	return texCoords[index];
 }
 
-void ofMeshFace::setHasColors( bool bColors ) {
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMeshFace_<V,N,C,T>::setHasColors( bool bColors ) {
 	bHasColors = bColors;
 }
 
-void ofMeshFace::setHasNormals( bool bNormals ) {
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMeshFace_<V,N,C,T>::setHasNormals( bool bNormals ) {
 	bHasNormals = bNormals;
 }
 
-void ofMeshFace::setHasTexcoords( bool bTexcoords ) {
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMeshFace_<V,N,C,T>::setHasTexcoords( bool bTexcoords ) {
 	bHasTexcoords = bTexcoords;
 }
 
-bool ofMeshFace::hasColors() const{
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+bool ofMeshFace_<V,N,C,T>::hasColors() const{
 	return bHasColors;
 }
 
-bool ofMeshFace::hasNormals() const{
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+bool ofMeshFace_<V,N,C,T>::hasNormals() const{
 	return bHasNormals;
 }
 
-bool ofMeshFace::hasTexcoords() const{
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+bool ofMeshFace_<V,N,C,T>::hasTexcoords() const{
 	return bHasTexcoords;
 }

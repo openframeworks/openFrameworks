@@ -316,7 +316,17 @@ void ofVbo::setVertexData(const glm::vec3 * verts, int total, int usage) {
 }
 
 //--------------------------------------------------------------
+void ofVbo::setVertexData(const ofVec3f * verts, int total, int usage) {
+	setVertexData(&verts[0].x,3,total,usage,sizeof(glm::vec3));
+}
+
+//--------------------------------------------------------------
 void ofVbo::setVertexData(const glm::vec2 * verts, int total, int usage) {
+	setVertexData(&verts[0].x,2,total,usage,sizeof(glm::vec2));
+}
+
+//--------------------------------------------------------------
+void ofVbo::setVertexData(const ofVec2f * verts, int total, int usage) {
 	setVertexData(&verts[0].x,2,total,usage,sizeof(glm::vec2));
 }
 
@@ -344,6 +354,11 @@ void ofVbo::setNormalData(const glm::vec3 * normals, int total, int usage) {
 }
 
 //--------------------------------------------------------------
+void ofVbo::setNormalData(const ofVec3f * normals, int total, int usage) {
+	setNormalData(&normals[0].x,total,usage,sizeof(glm::vec3));
+}
+
+//--------------------------------------------------------------
 void ofVbo::setNormalData(const float * normal0x, int total, int usage, int stride) {
 	// tig: note that we set the 'Normalize' flag to true here, assuming that mesh normals need to be
 	// normalized while being uploaded to GPU memory.
@@ -359,6 +374,11 @@ void ofVbo::setNormalData(const float * normal0x, int total, int usage, int stri
 
 //--------------------------------------------------------------
 void ofVbo::setTexCoordData(const glm::vec2 * texCoords, int total, int usage) {
+	setTexCoordData(&texCoords[0].x,total, usage, sizeof(glm::vec2));
+}
+
+//--------------------------------------------------------------
+void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
 	setTexCoordData(&texCoords[0].x,total, usage, sizeof(glm::vec2));
 }
 
@@ -451,7 +471,17 @@ void ofVbo::updateVertexData(const glm::vec3 * verts, int total) {
 }
 
 //--------------------------------------------------------------
+void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
+	updateVertexData(&verts[0].x,total);
+}
+
+//--------------------------------------------------------------
 void ofVbo::updateVertexData(const glm::vec2 * verts, int total) {
+	updateVertexData(&verts[0].x,total);
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateVertexData(const ofVec2f * verts, int total) {
 	updateVertexData(&verts[0].x,total);
 }
 
@@ -476,12 +506,22 @@ void ofVbo::updateNormalData(const glm::vec3 * normals, int total) {
 }
 
 //--------------------------------------------------------------
+void ofVbo::updateNormalData(const ofVec3f * normals, int total) {
+	updateNormalData(&normals[0].x,total);
+}
+
+//--------------------------------------------------------------
 void ofVbo::updateNormalData(const float * normal0x, int total) {
 	normalAttribute.updateData(0, total * normalAttribute.stride, normal0x);
 }
 
 //--------------------------------------------------------------
 void ofVbo::updateTexCoordData(const glm::vec2 * texCoords, int total) {
+	updateTexCoordData(&texCoords[0].x,total);
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateTexCoordData(const ofVec2f * texCoords, int total) {
 	updateTexCoordData(&texCoords[0].x,total);
 }
 

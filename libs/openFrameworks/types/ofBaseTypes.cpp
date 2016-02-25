@@ -4,6 +4,7 @@
 #include "ofGLProgrammableRenderer.h"
 #include "of3dGraphics.h"
 #include "ofSoundBuffer.h"
+#include "ofMesh.h"
 
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){
@@ -144,6 +145,10 @@ void ofBaseVideoPlayer::previousFrame(){
 ofMatrix4x4 ofBaseRenderer::getCurrentOrientationMatrix() const {
 	ofLogWarning() << "getCurrentOrientationMatrix() Not implemented for this renderer. Returning Identity matrix.";
 	return ofMatrix4x4();
+}
+
+void ofBaseRenderer::draw(const ofMesh & mesh, ofPolyRenderMode renderType) const{
+	draw(mesh,renderType,mesh.usingColors(),mesh.usingTextures(),mesh.usingNormals());
 }
 
 void ofBaseRenderer::setPlaneResolution( int columns, int rows ){

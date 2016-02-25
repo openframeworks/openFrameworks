@@ -933,3 +933,25 @@ enum ofTextEncoding{
 	OF_ENCODING_UTF8,
 	OF_ENCODING_ISO_8859_15
 };
+
+#define OF_USE_LEGACY_MESH
+template<class V, class N, class C, class T>
+class ofMesh_;
+class ofVec3f;
+class ofVec2f;
+
+template<typename T>
+class ofColor_;
+typedef ofColor_<float> ofFloatColor;
+
+#ifdef OF_USE_LEGACY_MESH
+using ofDefaultVertexType = ofVec3f;
+using ofDefaultNormalType = ofVec3f;
+using ofDefaultColorType = ofFloatColor;
+using ofDefaultTexCoordType = ofVec2f;
+#else
+using ofDefaultVertexType = glm::vec3;
+using ofDefaultNormalType = glm::vec3;
+using ofDefaultColorType = ofFloatColor;
+using ofDefaultTexCoordType = glm::vec2;
+#endif

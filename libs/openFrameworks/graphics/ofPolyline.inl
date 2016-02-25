@@ -1,23 +1,27 @@
-#include "ofPolyline.h"
 #include "ofRectangle.h"
 #include "ofAppRunner.h"
+#include "ofPolyline.h"
+#include "ofVectorMath.h"
 
 //----------------------------------------------------------
-ofPolyline::ofPolyline(){
+template<class T>
+ofPolyline_<T>::ofPolyline_(){
     setRightVector();
 	clear();
 }
 
 //----------------------------------------------------------
-ofPolyline::ofPolyline(const vector<glm::vec3>& verts){
+template<class T>
+ofPolyline_<T>::ofPolyline_(const vector<T>& verts){
     setRightVector();
 	clear();
 	addVertices(verts);
 }
 
 //----------------------------------------------------------
-ofPolyline ofPolyline::fromRectangle(const ofRectangle& rect) {
-    ofPolyline polyline;
+template<class T>
+ofPolyline_<T> ofPolyline_<T>::fromRectangle(const ofRectangle& rect) {
+	ofPolyline_ polyline;
     polyline.addVertex(rect.getMin());
     polyline.addVertex(rect.getMaxX(),rect.getMinY());
     polyline.addVertex(rect.getMax());
@@ -27,7 +31,8 @@ ofPolyline ofPolyline::fromRectangle(const ofRectangle& rect) {
 }
 
 //----------------------------------------------------------
-void ofPolyline::clear() {
+template<class T>
+void ofPolyline_<T>::clear() {
 	setClosed(false);
 	points.clear();
 	curveVertices.clear();
@@ -35,86 +40,100 @@ void ofPolyline::clear() {
 }
 
 //----------------------------------------------------------
-void ofPolyline::addVertex(const glm::vec3& p) {
+template<class T>
+void ofPolyline_<T>::addVertex(const T& p) {
 	curveVertices.clear();
 	points.push_back(p);
     flagHasChanged();
 }
 
 //----------------------------------------------------------
-void ofPolyline::addVertex(float x, float y, float z) {
+template<class T>
+void ofPolyline_<T>::addVertex(float x, float y, float z) {
 	curveVertices.clear();
-	addVertex(glm::vec3(x,y,z));
+	addVertex(T(x,y,z));
     flagHasChanged();
 }
 
 //----------------------------------------------------------
-void ofPolyline::addVertices(const vector<glm::vec3>& verts) {
+template<class T>
+void ofPolyline_<T>::addVertices(const vector<T>& verts) {
 	curveVertices.clear();
 	points.insert( points.end(), verts.begin(), verts.end() );
     flagHasChanged();
 }
 
 //----------------------------------------------------------
-void ofPolyline::addVertices(const glm::vec3* verts, int numverts) {
+template<class T>
+void ofPolyline_<T>::addVertices(const T* verts, int numverts) {
 	curveVertices.clear();
 	points.insert( points.end(), verts, verts + numverts );
     flagHasChanged();
 }
 
 //----------------------------------------------------------
-void ofPolyline::insertVertex(const glm::vec3 &p, int index) {
+template<class T>
+void ofPolyline_<T>::insertVertex(const T &p, int index) {
     curveVertices.clear();
     points.insert(points.begin()+index, p);
     flagHasChanged();
 }
 
 //----------------------------------------------------------
-void ofPolyline::insertVertex(float x, float y, float z, int index) {
-	insertVertex(glm::vec3(x, y, z), index);
+template<class T>
+void ofPolyline_<T>::insertVertex(float x, float y, float z, int index) {
+	insertVertex(T(x, y, z), index);
 }
 
 
 //----------------------------------------------------------
-size_t ofPolyline::size() const {
+template<class T>
+size_t ofPolyline_<T>::size() const {
 	return points.size();
 }
 
 //----------------------------------------------------------
-const glm::vec3& ofPolyline::operator[] (int index) const {
+template<class T>
+const T& ofPolyline_<T>::operator[] (int index) const {
 	return points[index];
 }
 
 //----------------------------------------------------------
-glm::vec3& ofPolyline::operator[] (int index) {
+template<class T>
+T& ofPolyline_<T>::operator[] (int index) {
     flagHasChanged();
 	return points[index];
 }
 
 //----------------------------------------------------------
-void ofPolyline::resize(size_t size){
+template<class T>
+void ofPolyline_<T>::resize(size_t size){
 	points.resize(size);
     flagHasChanged();
 }
 
 //----------------------------------------------------------
-void ofPolyline::setClosed( bool tf ) {
+template<class T>
+void ofPolyline_<T>::setClosed( bool tf ) {
 	bClosed = tf;
     flagHasChanged();
 }
 
 //----------------------------------------------------------
-bool ofPolyline::isClosed() const {
+template<class T>
+bool ofPolyline_<T>::isClosed() const {
 	return bClosed;
 }
 
 //----------------------------------------------------------
-void ofPolyline::close(){
+template<class T>
+void ofPolyline_<T>::close(){
     setClosed(true);
 }
 
 //----------------------------------------------------------
-bool ofPolyline::hasChanged(){
+template<class T>
+bool ofPolyline_<T>::hasChanged(){
     if(bHasChanged){
         bHasChanged=false;
         return true;
@@ -124,25 +143,29 @@ bool ofPolyline::hasChanged(){
 }
 
 //----------------------------------------------------------
-void ofPolyline::flagHasChanged() {
+template<class T>
+void ofPolyline_<T>::flagHasChanged() {
     bHasChanged = true;
     bCacheIsDirty = true;
 }
 
 //----------------------------------------------------------
-vector<glm::vec3> & ofPolyline::getVertices(){
+template<class T>
+vector<T> & ofPolyline_<T>::getVertices(){
     flagHasChanged();
 	return points;
 }
 
 //----------------------------------------------------------
-const vector<glm::vec3> & ofPolyline::getVertices() const {
+template<class T>
+const vector<T> & ofPolyline_<T>::getVertices() const {
 	return points;
 }
 
 
 //----------------------------------------------------------
-void ofPolyline::setCircleResolution(int res){
+template<class T>
+void ofPolyline_<T>::setCircleResolution(int res){
 	if (res > 1 && res != (int)circlePoints.size()){
 		circlePoints.resize(res);
         
@@ -158,16 +181,18 @@ void ofPolyline::setCircleResolution(int res){
 }
 
 //----------------------------------------------------------
+template<class T>
 // wraps any radian angle -FLT_MAX to +FLT_MAX into 0->2PI range.
 // TODO, make angle treatment consistent across all functions
 // should always be radians?  or should this take degrees?
 // used internally, so perhaps not as important
-float ofPolyline::wrapAngle(float angleRadians) {
+float ofPolyline_<T>::wrapAngle(float angleRadians) {
 	return ofWrap(angleRadians, 0.0f, TWO_PI);
 }
 
 //----------------------------------------------------------
-void ofPolyline::bezierTo( const glm::vec3 & cp1, const glm::vec3 & cp2, const glm::vec3 & to, int curveResolution ){
+template<class T>
+void ofPolyline_<T>::bezierTo( const T & cp1, const T & cp2, const T & to, int curveResolution ){
 	// if, and only if poly vertices has points, we can make a bezier
 	// from the last point
 	curveVertices.clear();
@@ -213,7 +238,8 @@ void ofPolyline::bezierTo( const glm::vec3 & cp1, const glm::vec3 & cp2, const g
 }
 
 //----------------------------------------------------------
-void ofPolyline::quadBezierTo(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, int curveResolution){
+template<class T>
+void ofPolyline_<T>::quadBezierTo(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, int curveResolution){
 	curveVertices.clear();
 	for(int i=0; i <= curveResolution; i++){
 		double t = (double)i / (double)(curveResolution);
@@ -229,7 +255,8 @@ void ofPolyline::quadBezierTo(float x1, float y1, float z1, float x2, float y2, 
 }
 
 //----------------------------------------------------------
-void ofPolyline::curveTo( const glm::vec3 & to, int curveResolution ){
+template<class T>
+void ofPolyline_<T>::curveTo( const T & to, int curveResolution ){
     
 	curveVertices.push_back(to);
     
@@ -280,7 +307,8 @@ void ofPolyline::curveTo( const glm::vec3 & to, int curveResolution ){
 }
 
 //----------------------------------------------------------
-void ofPolyline::arc(const glm::vec3 & center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int circleResolution){
+template<class T>
+void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int circleResolution){
     
     if(circleResolution<=1) circleResolution=2;
     setCircleResolution(circleResolution);
@@ -309,8 +337,8 @@ void ofPolyline::arc(const glm::vec3 & center, float radiusX, float radiusY, flo
     // effectively the same adjust the remaining angle to be a be a full rotation
     if(deltaAngle < 0 || abs(deltaAngle) < epsilon) remainingAngle += M_TWO_PI;
     
-	glm::vec3 radii(radiusX, radiusY, 0.f);
-	glm::vec3 point;
+	T radii(radiusX, radiusY, 0.f);
+	T point;
     
     int currentLUTIndex = 0;
     bool isFirstPoint = true; // special case for the first point
@@ -323,7 +351,7 @@ void ofPolyline::arc(const glm::vec3 & center, float radiusX, float radiusY, flo
             //
             // get the EXACT first point requested (for points that
             // don't fall precisely on a LUT entry)
-			point = glm::vec3(cos(angleBeginRad), sin(angleBeginRad), 0.f);
+			point = T(cos(angleBeginRad), sin(angleBeginRad), 0.f);
             // set up the get any in between points from the LUT
             float ratio = angleBeginRad / M_TWO_PI * (float)nCirclePoints;
             currentLUTIndex = clockwise ? (int)ceil(ratio) : (int)floor(ratio);
@@ -342,7 +370,7 @@ void ofPolyline::arc(const glm::vec3 & center, float radiusX, float radiusY, flo
             remainingAngle -= firstPointDelta;
             isFirstPoint = false;
         } else {
-			point = glm::vec3(circlePoints[currentLUTIndex].x, circlePoints[currentLUTIndex].y, 0.f);
+			point = T(circlePoints[currentLUTIndex].x, circlePoints[currentLUTIndex].y, 0.f);
             if(clockwise) {
                 currentLUTIndex++; // go to the next LUT point
                 remainingAngle -= segmentArcSize; // account for next point
@@ -368,7 +396,7 @@ void ofPolyline::arc(const glm::vec3 & center, float radiusX, float radiusY, flo
         // if the next LUT point moves us past the end angle then
         // add a a point a the exact end angle and call it finished
         if(remainingAngle < epsilon) {
-			point = glm::vec3(cos(angleEndRad), sin(angleEndRad), 0.f);
+			point = T(cos(angleEndRad), sin(angleEndRad), 0.f);
             point = point * radii + center;
             points.push_back(point);
             remainingAngle = 0; // call it finished, the next while loop test will fail
@@ -378,7 +406,8 @@ void ofPolyline::arc(const glm::vec3 & center, float radiusX, float radiusY, flo
 }
 
 //----------------------------------------------------------
-float ofPolyline::getPerimeter() const {
+template<class T>
+float ofPolyline_<T>::getPerimeter() const {
     if(points.size() < 2) {
         return 0;
     } else {
@@ -388,19 +417,22 @@ float ofPolyline::getPerimeter() const {
 }
 
 //----------------------------------------------------------
-float ofPolyline::getArea() const{
+template<class T>
+float ofPolyline_<T>::getArea() const{
     updateCache();
     return area;
 }
 
 //----------------------------------------------------------
-glm::vec3 ofPolyline::getCentroid2D() const{
+template<class T>
+T ofPolyline_<T>::getCentroid2D() const{
     updateCache();
     return centroid2D;
 }
 
 //----------------------------------------------------------
-ofRectangle ofPolyline::getBoundingBox() const {
+template<class T>
+ofRectangle ofPolyline_<T>::getBoundingBox() const {
     
 	ofRectangle box;
     for(size_t i = 0; i < size(); i++) {
@@ -414,7 +446,8 @@ ofRectangle ofPolyline::getBoundingBox() const {
 }
 
 //----------------------------------------------------------
-ofPolyline ofPolyline::getSmoothed(int smoothingSize, float smoothingShape) const {
+template<class T>
+ofPolyline_<T> ofPolyline_<T>::getSmoothed(int smoothingSize, float smoothingShape) const {
 	int n = size();
 	smoothingSize = ofClamp(smoothingSize, 0, n);
 	smoothingShape = ofClamp(smoothingShape, 0, 1);
@@ -429,12 +462,12 @@ ofPolyline ofPolyline::getSmoothed(int smoothingSize, float smoothingShape) cons
 	}
 	
 	// make a copy of this polyline
-	ofPolyline result = *this;
+	ofPolyline_ result = *this;
 	
 	for(int i = 0; i < n; i++) {
 		float sum = 1; // center weight
 		for(int j = 1; j < smoothingSize; j++) {
-			glm::vec3 cur;
+			T cur;
 			int leftPosition = i - j;
 			int rightPosition = i + j;
 			if(leftPosition < 0 && bClosed) {
@@ -460,9 +493,10 @@ ofPolyline ofPolyline::getSmoothed(int smoothingSize, float smoothingShape) cons
 }
 
 //----------------------------------------------------------
-ofPolyline ofPolyline::getResampledBySpacing(float spacing) const {
+template<class T>
+ofPolyline_<T> ofPolyline_<T>::getResampledBySpacing(float spacing) const {
     if(spacing==0 || size() == 0) return *this;
-    ofPolyline poly;
+	ofPolyline_ poly;
     float totalLength = getPerimeter();
     for(float f=0; f<totalLength; f += spacing) {
         poly.lineTo(getPointAtLength(f));
@@ -479,18 +513,20 @@ ofPolyline ofPolyline::getResampledBySpacing(float spacing) const {
 }
 
 //----------------------------------------------------------
-ofPolyline ofPolyline::getResampledByCount(int count) const {
+template<class T>
+ofPolyline_<T> ofPolyline_<T>::getResampledByCount(int count) const {
 	float perimeter = getPerimeter();
 	if(count < 2) {
-		ofLogWarning("ofPolyline") << "getResampledByCount(): requested " << count <<" points, using minimum count of 2 ";
+		ofLogWarning("ofPolyline_") << "getResampledByCount(): requested " << count <<" points, using minimum count of 2 ";
 		count = 2;
     }
-	return ofPolyline::getResampledBySpacing(perimeter / (count-1));
+	return ofPolyline_<T>::getResampledBySpacing(perimeter / (count-1));
 }
 
 //----------------------------------------------------------
 // http://local.wasp.uwa.edu.au/~pbourke/geometry/pointline/
-static glm::vec3 getClosestPointUtil(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, float* normalizedPosition) {
+template<class T>
+static T getClosestPointUtil(const T& p1, const T& p2, const T& p3, float* normalizedPosition) {
 	// if p1 is coincident with p2, there is no line
 	if(p1 == p2) {
 		if(normalizedPosition != nullptr) {
@@ -518,10 +554,11 @@ static glm::vec3 getClosestPointUtil(const glm::vec3& p1, const glm::vec3& p2, c
 }
 
 //----------------------------------------------------------
+template<class T>
 // a much faster but less accurate version would check distances to vertices first,
 // which assumes vertices are evenly spaced
-glm::vec3 ofPolyline::getClosestPoint(const glm::vec3& target, unsigned int* nearestIndex) const {
-	const ofPolyline & polyline = *this;
+T ofPolyline_<T>::getClosestPoint(const T& target, unsigned int* nearestIndex) const {
+	const ofPolyline_ & polyline = *this;
     
 	if(polyline.size() < 2) {
 		if(nearestIndex != nullptr) {
@@ -531,7 +568,7 @@ glm::vec3 ofPolyline::getClosestPoint(const glm::vec3& target, unsigned int* nea
 	}
 	
 	float distance = 0;
-	glm::vec3 nearestPoint;
+	T nearestPoint;
 	unsigned int nearest = 0;
 	float normalizedPosition = 0;
 	unsigned int lastPosition = polyline.size() - 1;
@@ -569,16 +606,18 @@ glm::vec3 ofPolyline::getClosestPoint(const glm::vec3& target, unsigned int* nea
 }
 
 //--------------------------------------------------
-bool ofPolyline::inside(const glm::vec3 & p, const ofPolyline & polyline){
-	return ofPolyline::inside(p.x,p.y,polyline);
+template<class T>
+bool ofPolyline_<T>::inside(const T & p, const ofPolyline_ & polyline){
+	return ofPolyline_<T>::inside(p.x,p.y,polyline);
 }
 
 //--------------------------------------------------
-bool ofPolyline::inside(float x, float y, const ofPolyline & polyline){
+template<class T>
+bool ofPolyline_<T>::inside(float x, float y, const ofPolyline_ & polyline){
 	int counter = 0;
 	int i;
 	double xinters;
-	glm::vec3 p1,p2;
+	T p1,p2;
     
 	int N = polyline.size();
     
@@ -604,88 +643,94 @@ bool ofPolyline::inside(float x, float y, const ofPolyline & polyline){
 }
 
 //--------------------------------------------------
-bool ofPolyline::inside(float x, float y) const {
-    return ofPolyline::inside(x, y, *this);
+template<class T>
+bool ofPolyline_<T>::inside(float x, float y) const {
+	return ofPolyline_<T>::inside(x, y, *this);
     
 }
 
 //--------------------------------------------------
-bool ofPolyline::inside(const glm::vec3 & p) const {
-    return ofPolyline::inside(p, *this);
+template<class T>
+bool ofPolyline_<T>::inside(const T & p) const {
+	return ofPolyline_<T>::inside(p, *this);
 }
 
-//This is for polygon/contour simplification - we use it to reduce the number of points needed in
-//representing the letters as openGL shapes - will soon be moved to ofGraphics.cpp
 
-// From: http://softsurfer.com/Archive/algorithm_0205/algorithm_0205.htm
-// Copyright 2002, softSurfer (www.softsurfer.com)
-// This code may be freely used and modified for any purpose
-// providing that this copyright notice is included with it.
-// SoftSurfer makes no warranty for this code, and cannot be held
-// liable for any real or imagined damage resulting from its use.
-// Users of this code must verify correctness for their application.
-
-typedef struct{
-	glm::vec3 P0;
-	glm::vec3 P1;
-}Segment;
-
-// dot product (3D) which allows vector operations in arguments
-#define d2(u,v)    glm::length2(u-v)      // distance squared = norm2 of difference
-#define d(u,v)     glm::length(u-v)       // distance = norm of difference
 
 //--------------------------------------------------
-static void simplifyDP(float tol, glm::vec3* v, int j, int k, int* mk ){
-    if (k <= j+1) // there is nothing to simplify
-        return;
-    
-    // check for adequate approximation by segment S from v[j] to v[k]
-    int     maxi	= j;          // index of vertex farthest from S
-    float   maxd2	= 0;         // distance squared of farthest vertex
-    float   tol2	= tol * tol;  // tolerance squared
-	Segment S		= {v[j], v[k]};  // segment from v[j] to v[k]
-	auto u			= S.P1 - S.P0;   // segment direction vector
-	double  cu		= glm::dot(u,u);     // segment length squared
-    
-    // test each vertex v[i] for max distance from S
-    // compute using the Feb 2001 Algorithm's dist_ofPoint_to_Segment()
-    // Note: this works in any dimension (2D, 3D, ...)
-	glm::vec3  w;
-	glm::vec3  Pb;                // base of perpendicular from v[i] to S
-    float  b, cw, dv2;        // dv2 = distance v[i] to S squared
-    
-    for (int i=j+1; i<k; i++){
-        // compute distance squared
-        w = v[i] - S.P0;
-		cw = dot(w,u);
-        if ( cw <= 0 ) dv2 = d2(v[i], S.P0);
-        else if ( cu <= cw ) dv2 = d2(v[i], S.P1);
-        else {
-            b = (float)(cw / cu);
-            Pb = S.P0 + u*b;
-            dv2 = d2(v[i], Pb);
-        }
-        // test with current max distance squared
-        if (dv2 <= maxd2) continue;
-        
-        // v[i] is a new max vertex
-        maxi = i;
-        maxd2 = dv2;
-    }
-    if (maxd2 > tol2)        // error is worse than the tolerance
-    {
-        // split the polyline at the farthest vertex from S
-        mk[maxi] = 1;      // mark v[maxi] for the simplified polyline
-        // recursively simplify the two subpolylines at v[maxi]
-        simplifyDP( tol, v, j, maxi, mk );  // polyline v[j] to v[maxi]
-        simplifyDP( tol, v, maxi, k, mk );  // polyline v[maxi] to v[k]
-    }
-    // else the approximation is OK, so ignore intermediate vertices
-    return;
+namespace of{
+	namespace priv{
+
+		//This is for polygon/contour simplification - we use it to reduce the number of points needed in
+		//representing the letters as openGL shapes - will soon be moved to ofGraphics.cpp
+
+		// From: http://softsurfer.com/Archive/algorithm_0205/algorithm_0205.htm
+		// Copyright 2002, softSurfer (www.softsurfer.com)
+		// This code may be freely used and modified for any purpose
+		// providing that this copyright notice is included with it.
+		// SoftSurfer makes no warranty for this code, and cannot be held
+		// liable for any real or imagined damage resulting from its use.
+		// Users of this code must verify correctness for their application.
+		template<class T>
+		struct Segment{
+			T P0;
+			T P1;
+		};
+
+		template<class T>
+		static void simplifyDP(float tol, T* v, int j, int k, int* mk ){
+			if (k <= j+1) // there is nothing to simplify
+				return;
+
+			// check for adequate approximation by segment S from v[j] to v[k]
+			int     maxi	= j;          // index of vertex farthest from S
+			float   maxd2	= 0;         // distance squared of farthest vertex
+			float   tol2	= tol * tol;  // tolerance squared
+			Segment<T> S	= {v[j], v[k]};  // segment from v[j] to v[k]
+			auto u			= S.P1 - S.P0;   // segment direction vector
+			double  cu		= glm::dot(toGlm(u), toGlm(u));     // segment length squared
+
+			// test each vertex v[i] for max distance from S
+			// compute using the Feb 2001 Algorithm's dist_ofPoint_to_Segment()
+			// Note: this works in any dimension (2D, 3D, ...)
+			T  w;
+			T  Pb;                // base of perpendicular from v[i] to S
+			float  b, cw, dv2;        // dv2 = distance v[i] to S squared
+
+			for (int i=j+1; i<k; i++){
+				// compute distance squared
+				w = v[i] - S.P0;
+				cw = glm::dot(toGlm(w), toGlm(u));
+				if ( cw <= 0 ) dv2 = glm::length2(toGlm(v[i]) - toGlm(S.P0));
+				else if ( cu <= cw ) dv2 = glm::length2(toGlm(v[i]) - toGlm(S.P1));
+				else {
+					b = (float)(cw / cu);
+					Pb = S.P0 + u*b;
+					dv2 = glm::length2(toGlm(v[i]) - toGlm(Pb));
+				}
+				// test with current max distance squared
+				if (dv2 <= maxd2) continue;
+
+				// v[i] is a new max vertex
+				maxi = i;
+				maxd2 = dv2;
+			}
+			if (maxd2 > tol2)        // error is worse than the tolerance
+			{
+				// split the polyline at the farthest vertex from S
+				mk[maxi] = 1;      // mark v[maxi] for the simplified polyline
+				// recursively simplify the two subpolylines at v[maxi]
+				simplifyDP( tol, v, j, maxi, mk );  // polyline v[j] to v[maxi]
+				simplifyDP( tol, v, maxi, k, mk );  // polyline v[maxi] to v[k]
+			}
+			// else the approximation is OK, so ignore intermediate vertices
+		}
+	}
 }
 
 //--------------------------------------------------
-void ofPolyline::simplify(float tol){
+template<class T>
+void ofPolyline_<T>::simplify(float tol){
     if(points.size() < 2) return;
     
 	int n = size();
@@ -694,12 +739,12 @@ void ofPolyline::simplify(float tol){
 		return;
 	}
 
-	vector <glm::vec3> sV;
+	vector <T> sV;
 	sV.resize(n);
     
     int    i, k, m, pv;            // misc counters
     float  tol2 = tol * tol;       // tolerance squared
-	vector<glm::vec3> vt;
+	vector<T> vt;
     vector<int> mk;
     vt.resize(n);
 	mk.resize(n,0);
@@ -708,7 +753,7 @@ void ofPolyline::simplify(float tol){
     // STAGE 1.  Vertex Reduction within tolerance of prior vertex cluster
     vt[0] = points[0];              // start at the beginning
     for (i=k=1, pv=0; i<n; i++) {
-        if (d2(points[i], points[pv]) < tol2) continue;
+		if (glm::length2((const glm::vec3&)points[i] - (const glm::vec3&)points[pv]) < tol2) continue;
         
         vt[k++] = points[i];
         pv = i;
@@ -717,7 +762,7 @@ void ofPolyline::simplify(float tol){
     
     // STAGE 2.  Douglas-Peucker polyline simplification
     mk[0] = mk[k-1] = 1;       // mark the first and last vertices
-    simplifyDP( tol, &vt[0], 0, k-1, &mk[0] );
+	of::priv::simplifyDP( tol, &vt[0], 0, k-1, &mk[0] );
     
     // copy marked vertices to the output simplified polyline
     for (i=m=0; i<k; i++) {
@@ -734,24 +779,28 @@ void ofPolyline::simplify(float tol){
 }
 
 //--------------------------------------------------
-void ofPolyline::draw() const{
+template<class T>
+void ofPolyline_<T>::draw() const{
 	ofGetCurrentRenderer()->draw(*this);
 }
 
 //--------------------------------------------------
-void ofPolyline::setRightVector(glm::vec3 v) {
+template<class T>
+void ofPolyline_<T>::setRightVector(T v) {
     rightVector = v;
     flagHasChanged();
 }
 
 //--------------------------------------------------
-glm::vec3 ofPolyline::getRightVector() const {
+template<class T>
+T ofPolyline_<T>::getRightVector() const {
     return rightVector;
 }
 
 
 //--------------------------------------------------
-float ofPolyline::getIndexAtLength(float length) const {
+template<class T>
+float ofPolyline_<T>::getIndexAtLength(float length) const {
     if(points.size() < 2) return 0;
     updateCache();
     
@@ -786,19 +835,22 @@ float ofPolyline::getIndexAtLength(float length) const {
 
 
 //--------------------------------------------------
-float ofPolyline::getIndexAtPercent(float f) const {
+template<class T>
+float ofPolyline_<T>::getIndexAtPercent(float f) const {
     return getIndexAtLength(f * getPerimeter());
 }
 
 //--------------------------------------------------
-float ofPolyline::getLengthAtIndex(int index) const {
+template<class T>
+float ofPolyline_<T>::getLengthAtIndex(int index) const {
     if(points.size() < 2) return 0;
     updateCache();
     return lengths[getWrappedIndex(index)];
 }
 
 //--------------------------------------------------
-float ofPolyline::getLengthAtIndexInterpolated(float findex) const {
+template<class T>
+float ofPolyline_<T>::getLengthAtIndexInterpolated(float findex) const {
     if(points.size() < 2) return 0;
     updateCache();
     int i1, i2;
@@ -809,40 +861,45 @@ float ofPolyline::getLengthAtIndexInterpolated(float findex) const {
 
 
 //--------------------------------------------------
-glm::vec3 ofPolyline::getPointAtLength(float f) const {
-	if(points.size() < 2) return glm::vec3();
+template<class T>
+T ofPolyline_<T>::getPointAtLength(float f) const {
+	if(points.size() < 2) return T();
     updateCache();
     return getPointAtIndexInterpolated(getIndexAtLength(f));
 }
 
 //--------------------------------------------------
-glm::vec3 ofPolyline::getPointAtPercent(float f) const {
+template<class T>
+T ofPolyline_<T>::getPointAtPercent(float f) const {
     float length = getPerimeter();
     return getPointAtLength(f * length);
 }
 
 
 //--------------------------------------------------
-glm::vec3 ofPolyline::getPointAtIndexInterpolated(float findex) const {
-	if(points.size() < 2) return glm::vec3();
+template<class T>
+T ofPolyline_<T>::getPointAtIndexInterpolated(float findex) const {
+	if(points.size() < 2) return T();
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	glm::vec3 leftPoint(points[i1]);
-	glm::vec3 rightPoint(points[i2]);
+	T leftPoint(points[i1]);
+	T rightPoint(points[i2]);
 	return glm::lerp(leftPoint, rightPoint, t);
 }
 
 
 //--------------------------------------------------
-float ofPolyline::getAngleAtIndex(int index) const {
+template<class T>
+float ofPolyline_<T>::getAngleAtIndex(int index) const {
     if(points.size() < 2) return 0;
     updateCache();
     return angles[getWrappedIndex(index)];
 }
 
 //--------------------------------------------------
-float ofPolyline::getAngleAtIndexInterpolated(float findex) const {
+template<class T>
+float ofPolyline_<T>::getAngleAtIndexInterpolated(float findex) const {
     if(points.size() < 2) return 0;
     int i1, i2;
     float t;
@@ -851,15 +908,17 @@ float ofPolyline::getAngleAtIndexInterpolated(float findex) const {
 }
 
 //--------------------------------------------------
-glm::vec3 ofPolyline::getRotationAtIndex(int index) const {
-	if(points.size() < 2) return glm::vec3();
+template<class T>
+T ofPolyline_<T>::getRotationAtIndex(int index) const {
+	if(points.size() < 2) return T();
     updateCache();
     return rotations[getWrappedIndex(index)];
 }
 
 //--------------------------------------------------
-glm::vec3 ofPolyline::getRotationAtIndexInterpolated(float findex) const {
-	if(points.size() < 2) return glm::vec3();
+template<class T>
+T ofPolyline_<T>::getRotationAtIndexInterpolated(float findex) const {
+	if(points.size() < 2) return T();
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
@@ -867,15 +926,17 @@ glm::vec3 ofPolyline::getRotationAtIndexInterpolated(float findex) const {
 }
 
 //--------------------------------------------------
-glm::vec3 ofPolyline::getTangentAtIndex(int index) const {
-	if(points.size() < 2) return glm::vec3();
+template<class T>
+T ofPolyline_<T>::getTangentAtIndex(int index) const {
+	if(points.size() < 2) return T();
     updateCache();
     return tangents[getWrappedIndex(index)];
 }
 
 //--------------------------------------------------
-glm::vec3 ofPolyline::getTangentAtIndexInterpolated(float findex) const {
-	if(points.size() < 2) return glm::vec3();
+template<class T>
+T ofPolyline_<T>::getTangentAtIndexInterpolated(float findex) const {
+	if(points.size() < 2) return T();
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
@@ -883,15 +944,17 @@ glm::vec3 ofPolyline::getTangentAtIndexInterpolated(float findex) const {
 }
 
 //--------------------------------------------------
-glm::vec3 ofPolyline::getNormalAtIndex(int index) const {
-	if(points.size() < 2) return glm::vec3();
+template<class T>
+T ofPolyline_<T>::getNormalAtIndex(int index) const {
+	if(points.size() < 2) return T();
     updateCache();
     return normals[getWrappedIndex(index)];
 }
 
 //--------------------------------------------------
-glm::vec3 ofPolyline::getNormalAtIndexInterpolated(float findex) const {
-	if(points.size() < 2) return glm::vec3();
+template<class T>
+T ofPolyline_<T>::getNormalAtIndexInterpolated(float findex) const {
+	if(points.size() < 2) return T();
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
@@ -900,17 +963,18 @@ glm::vec3 ofPolyline::getNormalAtIndexInterpolated(float findex) const {
 
 
 //--------------------------------------------------
-void ofPolyline::calcData(int index, glm::vec3 &tangent, float &angle, glm::vec3 &rotation, glm::vec3 &normal) const {
+template<class T>
+void ofPolyline_<T>::calcData(int index, T &tangent, float &angle, T &rotation, T &normal) const {
     int i1 = getWrappedIndex(index - 1);
     int i2 = getWrappedIndex(index);
     int i3 = getWrappedIndex(index + 1);
     
-	glm::vec3 p1(points[i1]);
-	glm::vec3 p2(points[i2]);
-	glm::vec3 p3(points[i3]);
+	T p1(points[i1]);
+	T p2(points[i2]);
+	T p3(points[i3]);
     
-	glm::vec3 v1(p1 - p2); // vector to previous point
-	glm::vec3 v2(p3 - p2); // vector to next point
+	T v1(p1 - p2); // vector to previous point
+	T v2(p3 - p2); // vector to next point
 	glm::normalize(v1);
 	glm::normalize(v2);
     
@@ -926,7 +990,8 @@ void ofPolyline::calcData(int index, glm::vec3 &tangent, float &angle, glm::vec3
 
 
 //--------------------------------------------------
-int ofPolyline::getWrappedIndex(int index) const {
+template<class T>
+int ofPolyline_<T>::getWrappedIndex(int index) const {
     if(points.empty()) return 0;
     
     if(index < 0) return isClosed() ? (index + points.size()) % points.size() : 0;
@@ -935,7 +1000,8 @@ int ofPolyline::getWrappedIndex(int index) const {
 }
 
 //--------------------------------------------------
-void ofPolyline::getInterpolationParams(float findex, int &i1, int &i2, float &t) const {
+template<class T>
+void ofPolyline_<T>::getInterpolationParams(float findex, int &i1, int &i2, float &t) const {
     i1 = floor(findex);
     t = findex - i1;
     i1 = getWrappedIndex(i1);
@@ -943,7 +1009,8 @@ void ofPolyline::getInterpolationParams(float findex, int &i1, int &i2, float &t
 }
 
 //--------------------------------------------------
-void ofPolyline::updateCache(bool bForceUpdate) const {
+template<class T>
+void ofPolyline_<T>::updateCache(bool bForceUpdate) const {
     if(bCacheIsDirty || bForceUpdate) {
         lengths.clear();
         angles.clear();
@@ -988,9 +1055,9 @@ void ofPolyline::updateCache(bool bForceUpdate) const {
         rotations.resize(points.size());
         
         float angle;
-		glm::vec3 rotation;
-		glm::vec3 normal;
-		glm::vec3 tangent;
+		T rotation;
+		T normal;
+		T tangent;
 
         float length = 0;
         for(int i=0; i<(int)points.size(); i++) {
@@ -1011,42 +1078,50 @@ void ofPolyline::updateCache(bool bForceUpdate) const {
 
 
 //--------------------------------------------------
-vector<glm::vec3>::iterator ofPolyline::begin(){
+template<class T>
+typename vector<T>::iterator ofPolyline_<T>::begin(){
 	return points.begin();
 }
 
 //--------------------------------------------------
-vector<glm::vec3>::iterator ofPolyline::end(){
+template<class T>
+typename vector<T>::iterator ofPolyline_<T>::end(){
 	return points.end();
 }
 
 //--------------------------------------------------
-vector<glm::vec3>::const_iterator ofPolyline::begin() const{
+template<class T>
+typename vector<T>::const_iterator ofPolyline_<T>::begin() const{
 	return points.begin();
 }
 
 //--------------------------------------------------
-vector<glm::vec3>::const_iterator ofPolyline::end() const{
+template<class T>
+typename vector<T>::const_iterator ofPolyline_<T>::end() const{
 	return points.end();
 }
 
 //--------------------------------------------------
-vector<glm::vec3>::reverse_iterator ofPolyline::rbegin(){
+template<class T>
+typename vector<T>::reverse_iterator ofPolyline_<T>::rbegin(){
 	return points.rbegin();
 }
 
 //--------------------------------------------------
-vector<glm::vec3>::reverse_iterator ofPolyline::rend(){
+template<class T>
+typename vector<T>::reverse_iterator ofPolyline_<T>::rend(){
 	return points.rend();
 }
 
 //--------------------------------------------------
-vector<glm::vec3>::const_reverse_iterator ofPolyline::rbegin() const{
+template<class T>
+typename vector<T>::const_reverse_iterator ofPolyline_<T>::rbegin() const{
 	return points.rbegin();
 }
 
 //--------------------------------------------------
-vector<glm::vec3>::const_reverse_iterator ofPolyline::rend() const{
+template<class T>
+typename vector<T>::const_reverse_iterator ofPolyline_<T>::rend() const{
 	return points.rend();
 }
 

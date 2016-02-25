@@ -252,16 +252,6 @@ float ofSignedNoise(const ofVec4f& p){
 }
 
 //--------------------------------------------------
-bool ofInsidePoly(float x, float y, const vector<glm::vec3>& polygon){
-    return ofPolyline::inside(x,y, ofPolyline(polygon));
-}
-
-//--------------------------------------------------
-bool ofInsidePoly(const glm::vec3& p, const vector<glm::vec3>& poly){
-    return ofPolyline::inside(p.x,p.y, ofPolyline(poly));
-}
-
-//--------------------------------------------------
 bool ofLineSegmentIntersection(const glm::vec3& line1Start, const glm::vec3& line1End, const glm::vec3& line2Start, const glm::vec3& line2End, glm::vec3& intersection){
 	glm::vec3 diffLA, diffLB;
 	float compareA, compareB;
