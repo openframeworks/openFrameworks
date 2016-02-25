@@ -215,8 +215,8 @@ void of3dPrimitive::drawNormals(float length, bool bFaceNormals) const{
     ofNode::transformGL(ofGetCurrentRenderer().get());
     
     if(getMesh().usingNormals()) {
-		const vector<glm::vec3>& normals    = getMesh().getNormals();
-		const vector<glm::vec3>& vertices   = getMesh().getVertices();
+		const auto& normals    = getMesh().getNormals();
+		const auto& vertices   = getMesh().getVertices();
 		glm::vec3 normal;
 		glm::vec3 vert;
         
@@ -233,14 +233,14 @@ void of3dPrimitive::drawNormals(float length, bool bFaceNormals) const{
                     vert = (vertices[i-2]+vertices[i-1]+vertices[i]) / 3;
                 }
                 normalsMesh.setVertex(i*2, vert);
-				normal = glm::normalize(normals[i]);
+				normal = glm::normalize((const glm::vec3&)normals[i]);
                 normal *= length;
                 normalsMesh.setVertex(i*2+1, normal+vert);
             }
         } else {
 			for(size_t i = 0; i < normals.size(); i++) {
                 vert = vertices[i];
-				normal = glm::normalize(normals[i]);
+				normal = glm::normalize((const glm::vec3&)normals[i]);
                 normalsMesh.setVertex( i*2, vert);
                 normal *= length;
                 normalsMesh.setVertex(i*2+1, normal+vert);

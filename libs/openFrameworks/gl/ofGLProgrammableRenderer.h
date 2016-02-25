@@ -12,7 +12,6 @@
 
 
 class ofShapeTessellation;
-class ofMesh;
 class ofFbo;
 class ofVbo;
 static const int OF_NO_TEXTURE=-1;

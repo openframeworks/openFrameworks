@@ -378,13 +378,13 @@ static void addBitmapCharacter(ofMesh & charMesh, int & vertexCount, int charact
 		charMesh.getTexCoords()[vC+4] = {posTexW,texY2};
 		charMesh.getTexCoords()[vC+5] = {posTexW,texY1};
 
-		charMesh.getVertices()[vC] = {x,y,0.f};
-		charMesh.getVertices()[vC+1] = {x+8,y,0.f};
-		charMesh.getVertices()[vC+2] = {x+8,y+yOffset,0.f};
+		charMesh.getVertices()[vC] = glm::vec3(x,y,0.f);
+		charMesh.getVertices()[vC+1] = glm::vec3(x+8,y,0.f);
+		charMesh.getVertices()[vC+2] = glm::vec3(x+8,y+yOffset,0.f);
 
-		charMesh.getVertices()[vC+3] = {x+8,y+yOffset,0.f};
-		charMesh.getVertices()[vC+4] = {x,y+yOffset,0.f};
-		charMesh.getVertices()[vC+5] = {x,y,0.f};
+		charMesh.getVertices()[vC+3] = glm::vec3(x+8,y+yOffset,0.f);
+		charMesh.getVertices()[vC+4] = glm::vec3(x,y+yOffset,0.f);
+		charMesh.getVertices()[vC+5] = glm::vec3(x,y,0.f);
 
 		vertexCount += 6;
 	}	

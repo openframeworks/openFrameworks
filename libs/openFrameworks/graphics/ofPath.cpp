@@ -1,6 +1,7 @@
 #include "ofPath.h"
 #include "ofAppRunner.h"
 #include "ofTessellator.h"
+#include "ofVectorMath.h"
 
 #if defined(TARGET_EMSCRIPTEN)
 	ofTessellator ofPath::tessellator;
@@ -728,7 +729,7 @@ void ofPath::rotate(float az, const glm::vec3& axis ){
 	}else{
 		for(int i=0;i<(int)polylines.size();i++){
 			for(int j=0;j<(int)polylines[i].size();j++){
-				glm::rotate(polylines[i][j], ofDegToRad(az), axis);
+				glm::rotate(toGlm(polylines[i][j]), ofDegToRad(az), axis);
 			}
 		}
 	}

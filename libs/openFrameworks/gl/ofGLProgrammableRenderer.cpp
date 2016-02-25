@@ -1624,7 +1624,7 @@ void ofGLProgrammableRenderer::drawTriangle(float x1, float y1, float z1, float 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawCircle(float x, float y, float z,  float radius) const{
 	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
-	const vector<glm::vec3> & circleCache = circlePolyline.getVertices();
+	const auto & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
 		circleMesh.getVertices()[i] = {radius*circleCache[i].x+x,radius*circleCache[i].y+y,z};
 	}
@@ -1644,7 +1644,7 @@ void ofGLProgrammableRenderer::drawEllipse(float x, float y, float z, float widt
 	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
 	float radiusX = width*0.5;
 	float radiusY = height*0.5;
-	const vector<glm::vec3> & circleCache = circlePolyline.getVertices();
+	const auto & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
 		circleMesh.getVertices()[i] = {radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z};
 	}

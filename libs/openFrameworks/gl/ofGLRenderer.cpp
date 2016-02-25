@@ -1439,7 +1439,7 @@ void ofGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2
 
 //----------------------------------------------------------
 void ofGLRenderer::drawCircle(float x, float y, float z,  float radius) const{
-	const vector<glm::vec3> & circleCache = circlePolyline.getVertices();
+	const auto & circleCache = circlePolyline.getVertices();
 	for(size_t i=0;i<circleCache.size();i++){
 		circlePoints[i] = {radius*circleCache[i].x+x,radius*circleCache[i].y+y,z};
 	}
@@ -1460,7 +1460,7 @@ void ofGLRenderer::drawCircle(float x, float y, float z,  float radius) const{
 void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float height) const{
 	float radiusX = width*0.5;
 	float radiusY = height*0.5;
-	const vector<glm::vec3> & circleCache = circlePolyline.getVertices();
+	const auto & circleCache = circlePolyline.getVertices();
 	for(size_t i=0;i<circleCache.size();i++){
 		circlePoints[i] = {radiusX*circlePolyline[i].x+x, radiusY*circlePolyline[i].y+y, z};
 	}

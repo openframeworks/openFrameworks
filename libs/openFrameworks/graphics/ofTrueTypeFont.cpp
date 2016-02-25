@@ -1057,10 +1057,10 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 
 	ofIndexType firstIndex = stringQuads.getVertices().size();
 
-	stringQuads.addVertex({xmin,ymin,0.f});
-	stringQuads.addVertex({xmax,ymin,0.f});
-	stringQuads.addVertex({xmax,ymax,0.f});
-	stringQuads.addVertex({xmin,ymax,0.f});
+	stringQuads.addVertex(ofDefaultVertexType(xmin,ymin,0.f));
+	stringQuads.addVertex(ofDefaultVertexType(xmax,ymin,0.f));
+	stringQuads.addVertex(ofDefaultVertexType(xmax,ymax,0.f));
+	stringQuads.addVertex(ofDefaultVertexType(xmin,ymax,0.f));
 
 	stringQuads.addTexCoord(glm::vec2(t1,v1));
 	stringQuads.addTexCoord(glm::vec2(t2,v1));

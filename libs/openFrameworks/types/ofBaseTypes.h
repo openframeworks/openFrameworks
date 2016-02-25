@@ -4,7 +4,7 @@
 #include "ofRectangle.h"
 #include "ofMatrix4x4.h"
 #include "ofURLFileLoader.h"
-#include "ofMesh.h"
+#include "ofGLUtils.h"
 
 class ofAbstractParameter;
 
@@ -27,10 +27,12 @@ template<typename T>
 class ofColor_;
 
 typedef ofColor_<unsigned char> ofColor;
-typedef glm::vec3 ofPoint;
+
+template<class T>
+class ofPolyline_;
+using ofPolyline = ofPolyline_<ofDefaultVertexType>;
 
 class ofPath;
-class ofPolyline;
 class ofFbo;
 class of3dPrimitive;
 class ofLight;
@@ -43,6 +45,7 @@ class of3dGraphics;
 class ofVbo;
 class ofVboMesh;
 class ofSoundBuffer;
+
 
 bool ofIsVFlipped();
 
@@ -664,9 +667,8 @@ public:
 	/// \param renderType The render mode to use to draw \p mesh with this
 	/// renderer.
 	/// \sa ofPolyRenderMode
-	virtual void draw(const ofMesh & mesh, ofPolyRenderMode renderType) const{
-		draw(mesh,renderType,mesh.usingColors(),mesh.usingTextures(),mesh.usingNormals());
-	}
+	virtual void draw(const ofMesh & mesh, ofPolyRenderMode renderType) const;
+
 	/// \brief Draw a mesh with this renderer.
 	///
 	/// \p renderType defines how the \p mesh will be rendered and may be:
@@ -684,6 +686,7 @@ public:
 	/// \param useNormals True to use normals to draw the \p vertexData.
 	/// \sa ofPolyRenderMode
 	virtual void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const=0;
+
 	/// \brief Draw a \p model with this renderer using the \p renderType.
 	///
 	/// \p renderType defines how the \p model will be rendered and may be:
@@ -696,10 +699,12 @@ public:
 	/// with this renderer.
 	/// \sa ofPolyRenderMode
 	virtual void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const=0;
+
 	/// \brief Draw a node with this renderer using ofNode::customDraw().
 	/// \param model The node to draw with this renderer.
 	/// \sa ofNode::customDraw()
 	virtual void draw(const ofNode& model) const=0;
+
 	/// \brief Draw an \p image with this renderer.
 	/// \param image The image to draw with this renderer.
 	/// \param x The x coordinate to use when drawing \p image with this
@@ -713,6 +718,7 @@ public:
 	/// \param sw The subsection width offset within the image texture.
 	/// \param sh The subsection height offset within the image texture.
 	virtual void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
+
 	/// \brief Draw an \p image with this renderer.
 	/// \param image The image to draw with this renderer.
 	/// \param x The x coordinate to use to draw \p image with this renderer.
@@ -725,6 +731,7 @@ public:
 	/// \param sw The subsection width offset within the image texture.
 	/// \param sh The subsection height offset within the image texture.
 	virtual void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
+
 	/// \brief Draw an \p image with this renderer.
 	/// \param image The image to draw with this renderer.
 	/// \param x The x coordinate to use to draw \p image with this renderer.
@@ -737,6 +744,7 @@ public:
 	/// \param sw The subsection width offset within the image texture.
 	/// \param sh The subsection height offset within the image texture.
 	virtual void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
+
 	/// \brief Draw a \p video with this renderer.
 	/// \param video The video with draw with this renderer.
 	/// \param x The x coordinate to use to draw \p video with this renderer.
@@ -755,6 +763,7 @@ public:
 	///
 	/// \sa viewport()
 	virtual void pushView()=0;
+
 	/// \brief Pop the current viewport from the renderer's view stack.
 	///
 	/// popView() restores the renderer's viewport to the state it was last
@@ -769,6 +778,7 @@ public:
 	/// height of the viewport. It also automatically creates near and far
 	/// clipping planes based on this width and height.
 	virtual void viewport(ofRectangle viewport)=0;
+
 	/// \brief Set this renderer's viewport manually using x, y, width, and
 	/// height.
 	/// \param x The x coordinate of the viewport. Defaults to 0.
@@ -778,6 +788,7 @@ public:
 	/// \param h The height of the viewport. Defaults to -1 setting its height
 	/// according to the rendering surface's height.
 	virtual void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=true)=0;
+
 	/// \brief Setup the renderer to use a perspective matrix.
 	/// \param width The width of the desired perspective matrix. Defaults to -1
 	/// setting its width according to the rendering surface's width.
@@ -793,6 +804,7 @@ public:
 	/// matrix. Setting this value to 0 uses the default near distance. Defaults
 	/// to 0.
 	virtual void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0)=0;
+
 	/// \brief Setup the renderer to use an orthographic matrix.
 	/// \param width The width of the desired orthographic matrix. Defaults to
 	/// -1 setting its width according to the rendering surface's width.
@@ -805,6 +817,7 @@ public:
 	/// matrix. Setting this value to 0 uses the defualt near distance. Defaults
 	/// to 0.
 	virtual void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1)=0;
+
 	/// \brief set this renderer's orientation.
 	///
 	/// Possible orientation values include:
@@ -818,6 +831,7 @@ public:
 	/// \param vFlip True if the orientation should be vertically flipped.
 	/// \sa ofOrientation
 	virtual void setOrientation(ofOrientation orientation, bool vFlip)=0;
+
 	/// \brief Get this renderer's current viewport.
 	///
 	/// Unlike getNativeViewport(), this method gets this renderer's current
@@ -835,12 +849,15 @@ public:
 	/// \returns This renderer's native viewport as a rectangle.
 	/// \sa getViewport()
 	virtual ofRectangle getNativeViewport() const=0;
+
 	/// \brief Get the renderer's current viewport width.
 	/// \returns The renderer's current viewport width.
 	virtual int getViewportWidth() const=0;
+
 	/// \brief Get the renderer's current viewport width.
 	/// \returns The renderer's current viewport width.
 	virtual int getViewportHeight() const=0;
+
 	/// \brief Returns true if the renderer's current viewport is vertically
 	/// flipped.
 	/// \returns True if the renderer's current viewport is vertically flipped.
@@ -889,6 +906,7 @@ public:
 	/// saved with with a call to pushMatrix().
 	///
 	virtual void popMatrix()=0;
+
 	/// \brief Get this renderer's current matrix for particular a matrix mode.
 	///
 	/// Possible matrix modes include:
@@ -900,9 +918,11 @@ public:
 	/// \returns The current matrix specified by \p matrixMode_
 	/// \sa ofMatrixMode
 	virtual ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const=0;
+
 	/// \brief Get this renderer's current orientation matrix.
 	/// \returns This renderer's current orientation matrix.
 	virtual ofMatrix4x4 getCurrentOrientationMatrix() const=0;
+
 	/// \brief Translate this renderer's current matrix by x, y, and z.
 	/// \param x The x coordinate to translate this renderer's current matrix
 	/// by.
@@ -911,9 +931,11 @@ public:
 	/// \param z The z coordinate to translate this renderer's current matrix
 	/// by. Defaults to 0.
 	virtual void translate(float x, float y, float z = 0)=0;
+
 	/// \brief Translate this renderer's current matrix by a point.
 	/// \param p The 3D point to translate this renderer's current matrix by.
 	virtual void translate(const glm::vec3 & p)=0;
+
 	/// \brief Scale this renderer's current matrix by xAmnt, yAmnt, and zAmnt.
 	/// \param xAmnt The amount to scale this renderer's current matrix's x
 	/// axis by.
@@ -922,24 +944,29 @@ public:
 	/// \param zAmnt The amount to scale this renderer's current matrix's z
 	/// axis by. Defaults to 1.
 	virtual void scale(float xAmnt, float yAmnt, float zAmnt = 1)=0;
+
 	/// \brief Rotate this renderer's current matrix by \p degrees about a euler.
 	/// \param degrees Degrees to rotate about vecX, vecY, and vecZ.
 	/// \param vecX The x axis to rotate about.
 	/// \param vecY The y axis to rotate about.
 	/// \param vecZ The z axis to rotate about.
 	virtual void rotate(float degrees, float vecX, float vecY, float vecZ)=0;
+
 	/// \brief Rotate this renderer's current matrix by \p degrees about the x
 	/// axis.
 	/// \param degrees Degrees to rotate about the x axis.
 	virtual void rotateX(float degrees)=0;
+
 	/// \brief Rotate this renderer's current matrix by \p degrees about the y
 	/// axis.
 	/// \param degrees Degrees to rotate about the y axis.
 	virtual void rotateY(float degrees)=0;
+
 	/// \brief Rotate this renderer's current matrix by \p degrees about the z
 	/// axis.
 	/// \param degrees Degrees to rotate about the z axis.
 	virtual void rotateZ(float degrees)=0;
+
 	/// \brief Rotate this renderer's current matrix by \p degrees about the z
 	/// axis.
 	///
@@ -948,6 +975,7 @@ public:
 	/// \param degrees Degrees to rotate about the z axis.
 	/// \sa rotateZ()
 	virtual void rotate(float degrees)=0;
+
 	/// \brief Sets this renderer's current matrix mode.
 	///
 	/// The possible matrix modes include:
@@ -972,9 +1000,11 @@ public:
 	/// Matrix multiplications using this matrix as the multiplier will yield no
 	/// change in the multiplicand matrix.
 	virtual void loadIdentityMatrix (void)=0;
+
 	/// \brief Load a matrix as this renderer's current matrix.
 	/// \param m The matrix to load into this renderer.
 	virtual void loadMatrix (const ofMatrix4x4 & m)=0;
+
 	/// \brief Load m as this renderer's current matrix.
 	///
 	/// \p m can be passed to loadMatrix() in this way with
@@ -982,9 +1012,11 @@ public:
 	///
 	/// \param m Float pointer to an ofMatrix4x4.
 	virtual void loadMatrix (const float *m)=0;
+
 	/// \brief Multiply this renderer's current matrix by \p m.
 	/// \param m The matrix to multiply this renderer's current matrix by.
 	virtual void multMatrix (const ofMatrix4x4 & m)=0;
+
 	/// \brief Multiply this renderer's current matrix by \p m.
 	///
 	/// \p m can be passed to loadMatrix() in this way with ofMatrix4x4::getPtr().
@@ -992,15 +1024,19 @@ public:
 	/// \param m Float pointer to an ofMatrix4x4 to multiply this renderer's
 	/// current matrix by.
 	virtual void multMatrix (const float *m)=0;
+
 	/// \brief Load \p m into this renderer's matrix stack as a view matrix.
 	/// \param m The view matrix to load into this renderer's matrix stack.
 	virtual void loadViewMatrix(const ofMatrix4x4 & m)=0;
+
 	/// \brief Multiply this renderer's view matrix by \p m.
 	/// \param m The matrix to multiply this renderer's view matrix by.
 	virtual void multViewMatrix(const ofMatrix4x4 & m)=0;
+
 	/// \brief Get this renderer's current view matrix.
 	/// \returns This renderer's current view matrix.
 	virtual ofMatrix4x4 getCurrentViewMatrix() const=0;
+
 	/// \brief Get this renderer's current normal matrix.
 	/// \returns This renderer's current normal matrix.
 	virtual ofMatrix4x4 getCurrentNormalMatrix() const=0;
