@@ -428,6 +428,7 @@ typedef ofBaseApp ofSimpleApp;
 using ofJson = nlohmann::json;
 
 #define GLM_SWIZZLE
+#define GLM_FORCE_SIZE_FUNC
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
 
