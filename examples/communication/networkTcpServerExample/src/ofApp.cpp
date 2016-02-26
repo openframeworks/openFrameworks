@@ -3,16 +3,19 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+
+	ofSetBackgroundColor(20);
+
 	// setup the server to listen on 11999
 	TCP.setup(11999);
 	// optionally set the delimiter to something else.  The delimiter in the client and the server have to be the same, default being [/TCP]
 	TCP.setMessageDelimiter("\n");
 	lastSent = 0;
+
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	ofBackground(20, 20, 20);
 
 	// for each client lets send them a message letting them know what port they are connected on
 	// we throttle the message sending frequency to once every 100ms
@@ -31,13 +34,13 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	ofSetHexColor(0xDDDDDD);
+	ofSetColor(220);
 	ofDrawBitmapString("TCP SERVER Example \n\nconnect on port: "+ofToString(TCP.getPort()), 10, 20);
 
-	ofSetHexColor(0x000000);
+	ofSetColor(0);
 	ofDrawRectangle(10, 60, ofGetWidth()-24, ofGetHeight() - 65 - 15);
 
-	ofSetHexColor(0xDDDDDD);
+	ofSetColor(220);
 
 	// for each connected client lets get the data being sent and lets print it to the screen
 	for(unsigned int i = 0; i < (unsigned int)TCP.getLastID(); i++){
@@ -65,11 +68,11 @@ void ofApp::draw(){
 
 		// receive all the available messages, separated by \n
 		// and keep only the last one
-        string str;
-        string tmp;
-        do{
-            str = tmp;
-            tmp = TCP.receive(i);
+		string str;
+		string tmp;
+		do{
+			str = tmp;
+			tmp = TCP.receive(i);
 		}while(tmp!="");
 
 		// if there was a message set it to the corresponding client
