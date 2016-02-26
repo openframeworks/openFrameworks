@@ -162,14 +162,14 @@ public:
 
 	/// \brief Access the projection matrix.
     /// \returns the current 4x4 projection matrix.
-	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofRectangle()) const;
+	glm::mat4 getProjectionMatrix(ofRectangle viewport = ofRectangle()) const;
 
     /// \brief Access the model view matrix.
     /// \returns the current 4x4 model view matrix.
-    ofMatrix4x4 getModelViewMatrix() const;
+	glm::mat4 getModelViewMatrix() const;
 
     /// \todo getModelViewProjectionMatrix()
-    ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofRectangle()) const;
+	glm::mat4 getModelViewProjectionMatrix(ofRectangle viewport = ofRectangle()) const;
 
     /// \}
     /// \name Coordinate Conversion

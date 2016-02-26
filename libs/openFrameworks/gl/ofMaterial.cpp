@@ -155,7 +155,7 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			shader.setUniform1f("lights["+idx+"].enabled",0);
 			continue;
 		}
-		ofVec4f lightEyePosition = light->position * renderer.getCurrentViewMatrix();
+		ofVec4f lightEyePosition = toOf(renderer.getCurrentViewMatrix() * toGlm(light->position));
 		shader.setUniform1f("lights["+idx+"].enabled",1);
 		shader.setUniform1f("lights["+idx+"].type", light->lightType);
 		shader.setUniform4f("lights["+idx+"].position", lightEyePosition);
@@ -171,7 +171,8 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 
 		if(light->lightType==OF_LIGHT_SPOT){
 			auto direction = toGlm(light->position).xyz() + light->direction;
-			direction = toGlm(toOf(direction) * renderer.getCurrentViewMatrix());
+			auto direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction,1.0);
+			direction = direction4.xyz() / direction4.w;
 			direction = toGlm(toOf(direction) - lightEyePosition);
 			shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			shader.setUniform1f("lights["+idx+"].spotExponent", light->exponent);
@@ -184,11 +185,13 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			shader.setUniform1f("lights["+idx+"].width", light->width);
 			shader.setUniform1f("lights["+idx+"].height", light->height);
 			auto direction = toGlm(light->position + toOf(light->direction)).xyz();
-			direction = toGlm(toOf(direction) * renderer.getCurrentViewMatrix());
+			auto direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction, 1.0);
+			direction = direction4.xyz() / direction4.w;
 			direction = toGlm(toOf(direction) - lightEyePosition);
 			shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
-			ofVec3f right = light->position + toOf(light->right);
-			right = right * renderer.getCurrentViewMatrix();
+			auto right = toGlm(light->position).xyz() + light->right;
+			auto right4 = renderer.getCurrentViewMatrix() * glm::vec4(right, 1.0);
+			right = right4.xyz() / right4.w;
 			right = right - lightEyePosition;
 			auto up = glm::cross(toGlm(right), direction);
 			shader.setUniform3f("lights["+idx+"].right", glm::normalize(toGlm(right)));

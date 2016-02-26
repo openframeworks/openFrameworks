@@ -2,7 +2,6 @@
 #include "ofConstants.h"
 #include "ofTypes.h"
 #include "ofRectangle.h"
-#include "ofMatrix4x4.h"
 #include "ofURLFileLoader.h"
 #include "ofGLUtils.h"
 
@@ -921,11 +920,11 @@ public:
 	/// \param matrixMode_ The matrix mode to get the current matrix of.
 	/// \returns The current matrix specified by \p matrixMode_
 	/// \sa ofMatrixMode
-	virtual ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const=0;
+	virtual glm::mat4 getCurrentMatrix(ofMatrixMode matrixMode_) const=0;
 
 	/// \brief Get this renderer's current orientation matrix.
 	/// \returns This renderer's current orientation matrix.
-	virtual ofMatrix4x4 getCurrentOrientationMatrix() const=0;
+	virtual glm::mat4 getCurrentOrientationMatrix() const=0;
 
 	/// \brief Translate this renderer's current matrix by x, y, and z.
 	/// \param x The x coordinate to translate this renderer's current matrix
@@ -992,7 +991,7 @@ public:
 	
 	/// \brief Load this renderer's identity matrix.
 	///
-	/// This identity matrix is an ofMatrix4x4 matrix with 1s on the main
+	/// This identity matrix is an mat4 matrix with 1s on the main
 	/// diagonal and 0s elsewhere.
 	/// [
 	///		[1, 0, 0, 0],
@@ -1007,43 +1006,42 @@ public:
 
 	/// \brief Load a matrix as this renderer's current matrix.
 	/// \param m The matrix to load into this renderer.
-	virtual void loadMatrix (const ofMatrix4x4 & m)=0;
+	virtual void loadMatrix (const glm::mat4 & m)=0;
 
 	/// \brief Load m as this renderer's current matrix.
 	///
-	/// \p m can be passed to loadMatrix() in this way with
-	/// ofMatrix4x4::getPtr().
+	/// \p m can be passed to loadMatrix() in this way from raw data
 	///
-	/// \param m Float pointer to an ofMatrix4x4.
+	/// \param m Float pointer to an 4x4 matrix.
 	virtual void loadMatrix (const float *m)=0;
 
 	/// \brief Multiply this renderer's current matrix by \p m.
 	/// \param m The matrix to multiply this renderer's current matrix by.
-	virtual void multMatrix (const ofMatrix4x4 & m)=0;
+	virtual void multMatrix (const glm::mat4 & m)=0;
 
 	/// \brief Multiply this renderer's current matrix by \p m.
 	///
-	/// \p m can be passed to loadMatrix() in this way with ofMatrix4x4::getPtr().
+	/// \p m can be passed to loadMatrix() in this way with raw data
 	///
-	/// \param m Float pointer to an ofMatrix4x4 to multiply this renderer's
+	/// \param m Float pointer to an mat4 to multiply this renderer's
 	/// current matrix by.
 	virtual void multMatrix (const float *m)=0;
 
 	/// \brief Load \p m into this renderer's matrix stack as a view matrix.
 	/// \param m The view matrix to load into this renderer's matrix stack.
-	virtual void loadViewMatrix(const ofMatrix4x4 & m)=0;
+	virtual void loadViewMatrix(const glm::mat4 & m)=0;
 
 	/// \brief Multiply this renderer's view matrix by \p m.
 	/// \param m The matrix to multiply this renderer's view matrix by.
-	virtual void multViewMatrix(const ofMatrix4x4 & m)=0;
+	virtual void multViewMatrix(const glm::mat4 & m)=0;
 
 	/// \brief Get this renderer's current view matrix.
 	/// \returns This renderer's current view matrix.
-	virtual ofMatrix4x4 getCurrentViewMatrix() const=0;
+	virtual glm::mat4 getCurrentViewMatrix() const=0;
 
 	/// \brief Get this renderer's current normal matrix.
 	/// \returns This renderer's current normal matrix.
-	virtual ofMatrix4x4 getCurrentNormalMatrix() const=0;
+	virtual glm::mat4 getCurrentNormalMatrix() const=0;
 	
 
 	/// \brief Bind \p camera's matrices to this renderer's matrix stack.

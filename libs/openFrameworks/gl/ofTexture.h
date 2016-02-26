@@ -214,7 +214,7 @@ public:
 private:
 	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
-	ofMatrix4x4 textureMatrix; ///< For required transformations.
+	glm::mat4 textureMatrix; ///< For required transformations.
 	bool useTextureMatrix; ///< Apply the transformation matrix?
 	bool hasMipmap; ///< True if mipmap has been generated for this texture, false by default.
 
@@ -806,9 +806,9 @@ class ofTexture : public ofBaseDraws {
 
 	/// \brief Sets a texture matrix to be uploaded whenever the texture is bound.
 	/// \param m The 4x4 texture matrix.
-	void setTextureMatrix(const ofMatrix4x4 & m);
+	void setTextureMatrix(const glm::mat4 & m);
 
-	const ofMatrix4x4 & getTextureMatrix() const;
+	const glm::mat4 & getTextureMatrix() const;
 
 	bool isUsingTextureMatrix() const;
 

@@ -905,6 +905,14 @@ void ofShader::setUniformMatrix4f(const string & name, const ofMatrix4x4 & m, in
 	}
 }
 
+//--------------------------------------------------------------
+void ofShader::setUniformMatrix4f(const string & name, const glm::mat4 & m, int count) const{
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniformMatrix4fv(loc, count, GL_FALSE, glm::value_ptr(m));
+	}
+}
+
 #ifndef TARGET_OPENGLES
 //--------------------------------------------------------------
 void ofShader::setAttribute1s(GLint location, short v1)  const{

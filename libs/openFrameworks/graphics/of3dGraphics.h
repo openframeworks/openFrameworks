@@ -10,7 +10,6 @@
 
 #include "ofConstants.h"
 #include "ofColor.h"
-#include "ofMatrix4x4.h"
 #include "ofRectangle.h"
 #include "ofTypes.h"
 #include "of3dPrimitives.h"

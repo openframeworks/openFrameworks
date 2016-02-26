@@ -863,7 +863,7 @@ glm::vec2 ofTexture::getCoordFromPoint(float xPos, float yPos) const{
 //----------------------------------------------------------
 /// Sets a texture matrix that will be uploaded whenever the texture is
 /// binded.
-void ofTexture::setTextureMatrix(const ofMatrix4x4 & m){
+void ofTexture::setTextureMatrix(const glm::mat4 & m){
 	texData.textureMatrix = m;
 	texData.useTextureMatrix = true;
 }
@@ -872,12 +872,12 @@ void ofTexture::setTextureMatrix(const ofMatrix4x4 & m){
 /// Disable the texture matrix.
 void ofTexture::disableTextureMatrix(){
 	texData.useTextureMatrix = false;
-	texData.textureMatrix.makeIdentityMatrix();
+	texData.textureMatrix = glm::mat4(1.0);
 }
 
 
 //----------------------------------------------------------
-const ofMatrix4x4 & ofTexture::getTextureMatrix() const{
+const glm::mat4 & ofTexture::getTextureMatrix() const{
 	return texData.textureMatrix;
 }
 

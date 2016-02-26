@@ -104,18 +104,18 @@ private:
 
 	void setOrientation(ofOrientation, bool){}
 	bool isVFlipped() const{return true;}
-	ofMatrix4x4 getCurrentMatrix(ofMatrixMode) const{return ofMatrix4x4::newIdentityMatrix();};
-	ofMatrix4x4 getCurrentOrientationMatrix() const{return ofMatrix4x4::newIdentityMatrix();}
+	glm::mat4 getCurrentMatrix(ofMatrixMode) const{return glm::mat4(1.0);};
+	glm::mat4 getCurrentOrientationMatrix() const{return glm::mat4(1.0);}
 	void matrixMode(ofMatrixMode){}
 	void loadIdentityMatrix(){}
-	void loadMatrix(const ofMatrix4x4&){}
+	void loadMatrix(const glm::mat4&){}
 	void loadMatrix(const float*){}
-	void multMatrix(const ofMatrix4x4&){}
+	void multMatrix(const glm::mat4&){}
 	void multMatrix(const float*){}
-	void loadViewMatrix(const ofMatrix4x4&){}
-	void multViewMatrix(const ofMatrix4x4&){}
-	ofMatrix4x4 getCurrentViewMatrix() const{return ofMatrix4x4::newIdentityMatrix();}
-	ofMatrix4x4 getCurrentNormalMatrix() const{return ofMatrix4x4::newIdentityMatrix();}
+	void loadViewMatrix(const glm::mat4&){}
+	void multViewMatrix(const glm::mat4&){}
+	glm::mat4 getCurrentViewMatrix() const{return glm::mat4(1.0);}
+	glm::mat4 getCurrentNormalMatrix() const{return glm::mat4(1.0);}
 	void enableAntiAliasing(){}
 	void disableAntiAliasing(){}
 
