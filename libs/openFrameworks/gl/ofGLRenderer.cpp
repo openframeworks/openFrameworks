@@ -1822,27 +1822,27 @@ void ofGLRenderer::setLightSpecularColor(int lightIndex, const ofFloatColor& c){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setLightPosition(int lightIndex, const ofVec4f & position){
+void ofGLRenderer::setLightPosition(int lightIndex, const glm::vec4 & position){
 	if(lightIndex==-1) return;
 	int matrixMode;
 	glGetIntegerv(GL_MATRIX_MODE,&matrixMode);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadMatrixf(glm::value_ptr(matrixStack.getViewMatrix()));
-	glLightfv(GL_LIGHT0 + lightIndex, GL_POSITION, &position.x);
+	glLightfv(GL_LIGHT0 + lightIndex, GL_POSITION, glm::value_ptr(position));
 	glPopMatrix();
 	glMatrixMode(matrixMode);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setLightSpotDirection(int lightIndex, const ofVec4f & direction){
+void ofGLRenderer::setLightSpotDirection(int lightIndex, const glm::vec4 & direction){
 	if(lightIndex==-1) return;
 	int matrixMode;
 	glGetIntegerv(GL_MATRIX_MODE,&matrixMode);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadMatrixf(glm::value_ptr(matrixStack.getViewMatrix()));
-	glLightfv(GL_LIGHT0 + lightIndex, GL_SPOT_DIRECTION, &direction.x);
+	glLightfv(GL_LIGHT0 + lightIndex, GL_SPOT_DIRECTION, glm::value_ptr(direction));
 	glPopMatrix();
 	glMatrixMode(matrixMode);
 }

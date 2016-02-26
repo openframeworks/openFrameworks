@@ -95,9 +95,9 @@ public:
 	const ofParameter<char> & getChar(const string& name) const;
 	const ofParameter<string> & getString(const string& name) const;
 	const ofParameter<ofPoint> & getPoint(const string& name) const;
-	const ofParameter<glm::vec2> & getVec2f(const string& name) const;
-	const ofParameter<glm::vec3> & getVec3f(const string& name) const;
-	const ofParameter<ofVec4f> & getVec4f(const string& name) const;
+	const ofParameter<ofDefaultVec2> & getVec2f(const string& name) const;
+	const ofParameter<ofDefaultVec3> & getVec3f(const string& name) const;
+	const ofParameter<ofDefaultVec4> & getVec4f(const string& name) const;
 	const ofParameter<ofColor> & getColor(const string& name) const;
 	const ofParameter<ofShortColor> & getShortColor(const string& name) const;
 	const ofParameter<ofFloatColor> & getFloatColor(const string& name) const;
@@ -110,9 +110,9 @@ public:
 	const ofParameter<char> & getChar(std::size_t pos) const;
 	const ofParameter<string> & getString(std::size_t pos) const;
 	const ofParameter<ofPoint> & getPoint(std::size_t pos) const;
-	const ofParameter<glm::vec2> & getVec2f(std::size_t pos) const;
-	const ofParameter<glm::vec3> & getVec3f(std::size_t pos) const;
-	const ofParameter<ofVec4f> & getVec4f(std::size_t pos) const;
+	const ofParameter<ofDefaultVec2> & getVec2f(std::size_t pos) const;
+	const ofParameter<ofDefaultVec3> & getVec3f(std::size_t pos) const;
+	const ofParameter<ofDefaultVec4> & getVec4f(std::size_t pos) const;
 	const ofParameter<ofColor> & getColor(std::size_t pose) const;
 	const ofParameter<ofShortColor> & getShortColor(std::size_t pos) const;
 	const ofParameter<ofFloatColor> & getFloatColor(std::size_t pos) const;
@@ -124,9 +124,9 @@ public:
 	ofParameter<char> & getChar(const string& name);
 	ofParameter<string> & getString(const string& name);
 	ofParameter<ofPoint> & getPoint(const string& name);
-	ofParameter<glm::vec2> & getVec2f(const string& name);
-	ofParameter<glm::vec3> & getVec3f(const string& name);
-	ofParameter<ofVec4f> & getVec4f(const string& name);
+	ofParameter<ofDefaultVec2> & getVec2f(const string& name);
+	ofParameter<ofDefaultVec3> & getVec3f(const string& name);
+	ofParameter<ofDefaultVec4> & getVec4f(const string& name);
 	ofParameter<ofColor> & getColor(const string& name);
 	ofParameter<ofShortColor> & getShortColor(const string& name);
 	ofParameter<ofFloatColor> & getFloatColor(const string& name);
@@ -139,9 +139,9 @@ public:
 	ofParameter<char> & getChar(std::size_t pos);
 	ofParameter<string> & getString(std::size_t pos);
 	ofParameter<ofPoint> & getPoint(std::size_t pos);
-	ofParameter<glm::vec2> & getVec2f(std::size_t pos);
-	ofParameter<glm::vec3> & getVec3f(std::size_t pos);
-	ofParameter<ofVec4f> & getVec4f(std::size_t pos);
+	ofParameter<ofDefaultVec2> & getVec2f(std::size_t pos);
+	ofParameter<ofDefaultVec3> & getVec3f(std::size_t pos);
+	ofParameter<ofDefaultVec4> & getVec4f(std::size_t pos);
 	ofParameter<ofColor> & getColor(std::size_t pose);
 	ofParameter<ofShortColor> & getShortColor(std::size_t pos);
 	ofParameter<ofFloatColor> & getFloatColor(std::size_t pos);
@@ -331,6 +331,12 @@ namespace priv{
 	struct TypeInfo <ofVec4f> {
 		static ofVec4f min() { return ofVec4f(0); }
 		static ofVec4f max() { return ofVec4f(1); }
+	};
+
+	template<>
+	struct TypeInfo <glm::vec4> {
+		static glm::vec4 min() { return glm::vec4(0); }
+		static glm::vec4 max() { return glm::vec4(1); }
 	};
 
 	template<typename T>

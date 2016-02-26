@@ -937,21 +937,24 @@ enum ofTextEncoding{
 #define OF_USE_LEGACY_MESH
 template<class V, class N, class C, class T>
 class ofMesh_;
-class ofVec3f;
 class ofVec2f;
+class ofVec3f;
+class ofVec4f;
 
 template<typename T>
 class ofColor_;
 typedef ofColor_<float> ofFloatColor;
 
 #ifdef OF_USE_LEGACY_MESH
-using ofDefaultVertexType = ofVec3f;
-using ofDefaultNormalType = ofVec3f;
-using ofDefaultColorType = ofFloatColor;
-using ofDefaultTexCoordType = ofVec2f;
+using ofDefaultVec2 = ofVec2f;
+using ofDefaultVec3 = ofVec3f;
+using ofDefaultVec4 = ofVec4f;
 #else
-using ofDefaultVertexType = glm::vec3;
-using ofDefaultNormalType = glm::vec3;
-using ofDefaultColorType = ofFloatColor;
-using ofDefaultTexCoordType = glm::vec2;
+using ofDefaultVec2 = glm::vec2;
+using ofDefaultVec3 = glm::vec3;
+using ofDefaultVec4 = glm::vec4;
 #endif
+using ofDefaultVertexType = ofDefaultVec3;
+using ofDefaultNormalType = ofDefaultVec3;
+using ofDefaultColorType = ofFloatColor;
+using ofDefaultTexCoordType = ofDefaultVec2;

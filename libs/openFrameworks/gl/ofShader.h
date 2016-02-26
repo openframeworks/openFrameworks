@@ -11,10 +11,8 @@
 #include "ofBaseTypes.h"
 #include "ofLog.h"
 class ofTexture;
-class ofMatrix4x4;
 class ofMatrix3x3;
 class ofParameterGroup;
-class ofVec4f;
 class ofBufferObject;
 
 class ofShader {
@@ -68,7 +66,7 @@ public:
 	
 	void setUniform2f(const string & name, const glm::vec2 & v) const;
 	void setUniform3f(const string & name, const glm::vec3 & v) const;
-	void setUniform4f(const string & name, const ofVec4f & v) const;
+	void setUniform4f(const string & name, const glm::vec4 & v) const;
 	void setUniform4f(const string & name, const ofFloatColor & v) const;
 
 	// set an array of uniform values
@@ -86,7 +84,6 @@ public:
 
 	// note: it may be more optimal to use a 4x4 matrix than a 3x3 matrix, if possible
 	void setUniformMatrix3f(const string & name, const ofMatrix3x3 & m, int count = 1) const;
-	void setUniformMatrix4f(const string & name, const ofMatrix4x4 & m, int count = 1) const;
 	void setUniformMatrix4f(const string & name, const glm::mat4 & m, int count = 1) const;
 
 	GLint getUniformLocation(const string & name) const;

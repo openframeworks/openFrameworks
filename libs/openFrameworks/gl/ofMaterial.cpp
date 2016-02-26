@@ -155,7 +155,7 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			shader.setUniform1f("lights["+idx+"].enabled",0);
 			continue;
 		}
-		ofVec4f lightEyePosition = toOf(renderer.getCurrentViewMatrix() * toGlm(light->position));
+		auto lightEyePosition = renderer.getCurrentViewMatrix() * light->position;
 		shader.setUniform1f("lights["+idx+"].enabled",1);
 		shader.setUniform1f("lights["+idx+"].type", light->lightType);
 		shader.setUniform4f("lights["+idx+"].position", lightEyePosition);
@@ -173,26 +173,26 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			auto direction = toGlm(light->position).xyz() + light->direction;
 			auto direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction,1.0);
 			direction = direction4.xyz() / direction4.w;
-			direction = toGlm(toOf(direction) - lightEyePosition);
+			direction = direction - lightEyePosition.xyz();
 			shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			shader.setUniform1f("lights["+idx+"].spotExponent", light->exponent);
 			shader.setUniform1f("lights["+idx+"].spotCutoff", light->spotCutOff);
 			shader.setUniform1f("lights["+idx+"].spotCosCutoff", cos(ofDegToRad(light->spotCutOff)));
 		}else if(light->lightType==OF_LIGHT_DIRECTIONAL){
-			auto halfVector = glm::normalize(toGlm(ofVec3f{0.f, 0.f, 1.f} + lightEyePosition));
+			auto halfVector = glm::normalize(glm::vec4(0.f, 0.f, 1.f, 0.f) + lightEyePosition);
 			shader.setUniform3f("lights["+idx+"].halfVector", halfVector.xyz());
 		}else if(light->lightType==OF_LIGHT_AREA){
 			shader.setUniform1f("lights["+idx+"].width", light->width);
 			shader.setUniform1f("lights["+idx+"].height", light->height);
-			auto direction = toGlm(light->position + toOf(light->direction)).xyz();
+			auto direction = light->position.xyz() + light->direction;
 			auto direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction, 1.0);
 			direction = direction4.xyz() / direction4.w;
-			direction = toGlm(toOf(direction) - lightEyePosition);
+			direction = direction - lightEyePosition.xyz();
 			shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			auto right = toGlm(light->position).xyz() + light->right;
 			auto right4 = renderer.getCurrentViewMatrix() * glm::vec4(right, 1.0);
 			right = right4.xyz() / right4.w;
-			right = right - lightEyePosition;
+			right = right - lightEyePosition.xyz();
 			auto up = glm::cross(toGlm(right), direction);
 			shader.setUniform3f("lights["+idx+"].right", glm::normalize(toGlm(right)));
 			shader.setUniform3f("lights["+idx+"].up", glm::normalize(up));
@@ -290,7 +290,7 @@ static const string fragmentShader = R"(
 		float d;            // distance from surface to light source
 		vec3  VP;           // direction from surface to light position
 		vec3  halfVector;   // direction of maximum highlights
-		vec3 eye = vec3 (0.0, 0.0, 1.0);
+		vec3 eye = -eyePosition3;
 
 		// Compute vector from surface to light position
 		VP = vec3 (light.position.xyz) - ecPosition3;
@@ -350,7 +350,7 @@ static const string fragmentShader = R"(
 		float pf;
 		float d;            // distance from surface to light source
 		vec3  VP;           // direction from surface to light position
-		vec3 eye = vec3 (0.0, 0.0, 1.0);
+		vec3 eye = -eyePosition3;
 		float spotEffect;
 		float attenuation=1.0;
 		vec3  halfVector;   // direction of maximum highlights

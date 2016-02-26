@@ -8,7 +8,6 @@
 
 #include "ofNoise.h"
 #include "ofPolyline.h"
-#include "ofVec4f.h"
 
 //--------------------------------------------------
 int ofNextPow2(int a){
@@ -212,7 +211,7 @@ float ofNoise(float x, float y, float z, float w){
 }
 
 //--------------------------------------------------
-float ofNoise(const ofVec4f& p){
+float ofNoise(const glm::vec4& p){
 	return ofNoise( p.x, p.y, p.z, p.w );
 }
 
@@ -247,7 +246,7 @@ float ofSignedNoise(float x, float y, float z, float w){
 }
 
 //--------------------------------------------------
-float ofSignedNoise(const ofVec4f& p){
+float ofSignedNoise(const glm::vec4& p){
 	return ofSignedNoise( p.x, p.y, p.z, p.w );
 }
 

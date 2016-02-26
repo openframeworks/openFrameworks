@@ -220,8 +220,8 @@ public:
 	void setLightAmbientColor(int lightIndex, const ofFloatColor& c){}
 	void setLightDiffuseColor(int lightIndex, const ofFloatColor& c){}
 	void setLightSpecularColor(int lightIndex, const ofFloatColor& c){}
-	void setLightPosition(int lightIndex, const ofVec4f & position){}
-	void setLightSpotDirection(int lightIndex, const ofVec4f & direction){}
+	void setLightPosition(int lightIndex, const glm::vec4 & position){}
+	void setLightSpotDirection(int lightIndex, const glm::vec4 & direction){}
 
 	string defaultVertexShaderHeader(GLenum textureTarget);
 	string defaultFragmentShaderHeader(GLenum textureTarget);

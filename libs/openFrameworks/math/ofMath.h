@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofConstants.h"
-class ofVec4f;
 
 // notes:
 // -----------------------------------------------------------
@@ -402,7 +401,7 @@ float ofNoise(const glm::vec3& p);
 float ofNoise(float x, float y, float z, float w);
 
 /// \brief Calculates a four dimensional Perlin noise value between 0.0...1.0.
-float ofNoise(const ofVec4f& p);
+float ofNoise(const glm::vec4& p);
 
 /// \brief Calculates a one dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x);
@@ -423,7 +422,7 @@ float ofSignedNoise(const glm::vec3& p);
 float ofSignedNoise(float x, float y, float z, float w);
 
 /// \brief Calculates a four dimensional Perlin noise value between -1.0...1.0.
-float ofSignedNoise(const ofVec4f& p);
+float ofSignedNoise(const glm::vec4 & p);
 
 /// \}
 
