@@ -352,7 +352,7 @@ void ofNode::rotateAround(float degrees, const glm::vec3& axis, const glm::vec3&
 //----------------------------------------
 void ofNode::lookAt(const glm::vec3& lookAtPosition){
     auto relPosition = (getGlobalPosition() - lookAtPosition);
-    auto radius = relPosition.length();
+	auto radius = glm::length(relPosition);
     if(radius>0){
         auto latitude = ofRadToDeg(acos(relPosition.y / radius)) - 90;
         auto longitude = ofRadToDeg(atan2(relPosition.x , relPosition.z));
@@ -369,7 +369,7 @@ void ofNode::lookAt(const glm::vec3& lookAtPosition, glm::vec3 upVector) {
 		upVector = upVector4.xyz() / upVector4.w;
 	}
 	auto zaxis = glm::normalize(getGlobalPosition() - lookAtPosition);
-	if (zaxis.length() > 0) {
+	if (glm::length(zaxis) > 0) {
 		auto xaxis = glm::normalize(glm::cross(upVector, zaxis));
 		auto yaxis = glm::cross(zaxis, xaxis);
 		glm::mat4 m;
