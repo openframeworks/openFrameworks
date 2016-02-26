@@ -122,7 +122,7 @@ void ofNode::removeListener(ofNode & node){
 //----------------------------------------
 void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
     if(bMaintainGlobalTransform) {
-		ofMatrix4x4 postParentGlobalTransform = getGlobalTransformMatrix() * parent.getGlobalTransformMatrix().getInverse();
+		auto postParentGlobalTransform = glm::inverse(parent.getGlobalTransformMatrix()) * getGlobalTransformMatrix();
 		parent.addListener(*this);
 		setTransformMatrix(postParentGlobalTransform);
 	} else {
@@ -137,7 +137,7 @@ void ofNode::clearParent(bool bMaintainGlobalTransform) {
 		parent->removeListener(*this);
 	}
     if(bMaintainGlobalTransform) {
-        ofMatrix4x4 globalTransform(getGlobalTransformMatrix());
+		auto globalTransform = getGlobalTransformMatrix();
         this->parent = nullptr;
         setTransformMatrix(globalTransform);
     } else {
@@ -151,14 +151,15 @@ ofNode* ofNode::getParent() const {
 }
 
 //----------------------------------------
-void ofNode::setTransformMatrix(const ofMatrix4x4 &m44) {
+void ofNode::setTransformMatrix(const glm::mat4 &m44) {
 	localTransformMatrix = m44;
 
 	ofVec3f position;
 	ofVec3f scale;
 	ofQuaternion orientation;
 	ofQuaternion so;
-	localTransformMatrix.decompose(position, orientation, scale, so);
+	auto ofLocal = toOf(m44);
+	ofLocal.decompose(position, orientation, scale, so);
 	this->position = toGlm(position);
 	this->scale = toGlm(scale);
 	this->orientation = orientation;
@@ -177,7 +178,7 @@ void ofNode::setPosition(float px, float py, float pz) {
 //----------------------------------------
 void ofNode::setPosition(const glm::vec3& p) {
 	position = p;
-	localTransformMatrix.setTranslation(toOf(position));
+	createMatrix();
 	onPositionChanged();
 }
 
@@ -191,7 +192,8 @@ void ofNode::setGlobalPosition(const glm::vec3& p) {
 	if(parent == nullptr) {
 		setPosition(p);
 	} else {
-		setPosition(toGlm(toOf(p) * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix())));
+		auto newP = glm::inverse(parent->getGlobalTransformMatrix()) * glm::vec4(p, 1.0);
+		setPosition(newP.xyz() / newP.w);
 	}
 }
 
@@ -232,9 +234,9 @@ void ofNode::setGlobalOrientation(const ofQuaternion& q) {
 	if(parent == nullptr) {
 		setOrientation(q);
 	} else {
-		ofMatrix4x4 invParent(ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix()));
-		ofMatrix4x4 m44(ofMatrix4x4(q) * invParent);
-		setOrientation(m44.getRotate());
+		auto invParent = glm::inverse(parent->getGlobalTransformMatrix());
+		auto m44 = invParent * toGlm(ofMatrix4x4(q));
+		setOrientation(toOf(m44).getRotate());
 	}
 }
 
@@ -278,7 +280,7 @@ void ofNode::move(float x, float y, float z) {
 //----------------------------------------
 void ofNode::move(const glm::vec3& offset) {
 	position += offset;
-	localTransformMatrix.setTranslation(toOf(position));
+	createMatrix();
 	onPositionChanged();
 }
 
@@ -362,18 +364,25 @@ void ofNode::lookAt(const glm::vec3& lookAtPosition){
 
 //----------------------------------------
 void ofNode::lookAt(const glm::vec3& lookAtPosition, glm::vec3 upVector) {
-	if(parent) upVector = toGlm(toOf(upVector) * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix()));
+	if(parent){
+		auto upVector4 = glm::inverse(parent->getGlobalTransformMatrix()) * glm::vec4(upVector, 1.0);
+		upVector = upVector4.xyz() / upVector4.w;
+	}
 	auto zaxis = glm::normalize(getGlobalPosition() - lookAtPosition);
 	if (zaxis.length() > 0) {
 		auto xaxis = glm::normalize(glm::cross(upVector, zaxis));
 		auto yaxis = glm::cross(zaxis, xaxis);
-		
-		ofMatrix4x4 m;
+		glm::mat4 m;
+		m[0] = glm::vec4(xaxis, 0.f);
+		m[1] = glm::vec4(yaxis, 0.f);
+		m[2] = glm::vec4(zaxis, 0.f);
+
+		/*ofMatrix4x4 m;
 		m._mat[0].set(xaxis.x, xaxis.y, xaxis.z, 0);
 		m._mat[1].set(yaxis.x, yaxis.y, yaxis.z, 0);
-		m._mat[2].set(zaxis.x, zaxis.y, zaxis.z, 0);
+		m._mat[2].set(zaxis.x, zaxis.y, zaxis.z, 0);*/
 		
-		setGlobalOrientation(m.getRotate());
+		setGlobalOrientation(toOf(m).getRotate());
 	}
 }
 
@@ -389,9 +398,9 @@ void ofNode::lookAt(const ofNode& lookAtNode, const glm::vec3& upVector) {
 
 //----------------------------------------
 void ofNode::updateAxis() {
-	if(scale->x>0) axis[0] = toGlm(getLocalTransformMatrix().getRowAsVec3f(0)/scale->x);
-	if(scale->y>0) axis[1] = toGlm(getLocalTransformMatrix().getRowAsVec3f(1)/scale->y);
-	if(scale->z>0) axis[2] = toGlm(getLocalTransformMatrix().getRowAsVec3f(2)/scale->z);
+	if(scale->x>0) axis[0] = (getLocalTransformMatrix()[0]/scale->x).xyz();
+	if(scale->y>0) axis[1] = (getLocalTransformMatrix()[1]/scale->y).xyz();
+	if(scale->z>0) axis[2] = (getLocalTransformMatrix()[2]/scale->z).xyz();
 }
 
 //----------------------------------------
@@ -440,24 +449,24 @@ float ofNode::getRoll() const {
 }
 
 //----------------------------------------
-const ofMatrix4x4& ofNode::getLocalTransformMatrix() const {
+const glm::mat4& ofNode::getLocalTransformMatrix() const {
 	return localTransformMatrix;
 }
 
 //----------------------------------------
-ofMatrix4x4 ofNode::getGlobalTransformMatrix() const {
-	if(parent) return getLocalTransformMatrix() * parent->getGlobalTransformMatrix();
+glm::mat4 ofNode::getGlobalTransformMatrix() const {
+	if(parent) return parent->getGlobalTransformMatrix() * getLocalTransformMatrix();
 	else return getLocalTransformMatrix();
 }
 
 //----------------------------------------
 glm::vec3 ofNode::getGlobalPosition() const {
-	return toGlm(getGlobalTransformMatrix().getTranslation());
+	return getGlobalTransformMatrix()[3].xyz();
 }
 
 //----------------------------------------
 ofQuaternion ofNode::getGlobalOrientation() const {
-	return getGlobalTransformMatrix().getRotate();
+	return toOf(getGlobalTransformMatrix()).getRotate();
 }
 
 //----------------------------------------
@@ -528,9 +537,9 @@ void ofNode::restoreTransformGL(ofBaseRenderer * renderer) const {
 void ofNode::createMatrix() {
 	//if(isMatrixDirty) {
 	//	isMatrixDirty = false;
-	localTransformMatrix.makeScaleMatrix(toOf(scale));
-	localTransformMatrix.rotate(orientation);
-	localTransformMatrix.setTranslation(toOf(position));
+	localTransformMatrix = glm::translate(glm::mat4(1.0), toGlm(position));
+	localTransformMatrix = localTransformMatrix * toGlm(ofMatrix4x4(orientation));
+	localTransformMatrix = glm::scale(localTransformMatrix, toGlm(scale));
 	
 	updateAxis();
 }

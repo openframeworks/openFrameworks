@@ -7,7 +7,6 @@
 #include "cairo.h"
 #include <deque>
 #include <stack>
-#include "ofMatrix4x4.h"
 #include "ofBaseTypes.h"
 #include "ofPath.h"
 #include "of3dGraphics.h"
@@ -67,11 +66,11 @@ public:
 
 	void setOrientation(ofOrientation orientation, bool vFlip);
 	bool isVFlipped() const;
-	void loadViewMatrix(const ofMatrix4x4 & m);
-	void multViewMatrix(const ofMatrix4x4 & m);
-	ofMatrix4x4 getCurrentViewMatrix() const;
-	ofMatrix4x4 getCurrentNormalMatrix() const;
-	ofMatrix4x4 getCurrentOrientationMatrix() const;
+	void loadViewMatrix(const glm::mat4 & m);
+	void multViewMatrix(const glm::mat4 & m);
+	glm::mat4 getCurrentViewMatrix() const;
+	glm::mat4 getCurrentNormalMatrix() const;
+	glm::mat4 getCurrentOrientationMatrix() const;
 	void setCircleResolution(int);
 
 
@@ -93,7 +92,7 @@ public:
 	//our openGL wrappers
 	void pushMatrix();
 	void popMatrix();
-	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
+	glm::mat4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
 	void translate(float x, float y, float z = 0);
 	void translate(const glm::vec3 & p);
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1);
@@ -104,9 +103,9 @@ public:
 	void rotate(float degrees);
 	void matrixMode(ofMatrixMode mode);
 	void loadIdentityMatrix (void);
-	void loadMatrix (const ofMatrix4x4 & m);
+	void loadMatrix (const glm::mat4 & m);
 	void loadMatrix (const float * m);
-	void multMatrix (const ofMatrix4x4 & m);
+	void multMatrix (const glm::mat4 & m);
 	void multMatrix (const float * m);
 
 	// screen coordinate things / default gl values
@@ -186,12 +185,12 @@ private:
 
 	// 3d transformation
 	bool b3D;
-	ofMatrix4x4 projection;
-	ofMatrix4x4 modelView;
+	glm::mat4 projection;
+	glm::mat4 modelView;
 	ofRectangle viewportRect, originalViewport;
 
-	stack<ofMatrix4x4> projectionStack;
-	stack<ofMatrix4x4> modelViewStack;
+	stack<glm::mat4> projectionStack;
+	stack<glm::mat4> modelViewStack;
 	stack<ofRectangle> viewportStack;
 	
 	ofMatrixMode currentMatrixMode;

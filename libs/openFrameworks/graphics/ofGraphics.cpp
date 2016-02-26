@@ -60,7 +60,7 @@ static void ofBeginSaveScreen(string filename, ofCairoRenderer::Type type, bool 
 	cairoScreenshot = shared_ptr<ofCairoRenderer>(new ofCairoRenderer);
 	cairoScreenshot->setup(filename, type, bMultipage, b3D, outputsize);
 
-	rendererCollection = shared_ptr<ofRendererCollection>(new ofRendererCollection);
+	rendererCollection = make_shared<ofRendererCollection>();
 	rendererCollection->renderers.push_back(storedRenderer);
 	rendererCollection->renderers.push_back(cairoScreenshot);
 	
@@ -214,17 +214,17 @@ void ofPopMatrix(){
  *
  *	@param	matrixMode_  Which matrix mode to query
  */
-ofMatrix4x4 ofGetCurrentMatrix(ofMatrixMode matrixMode_){
+glm::mat4 ofGetCurrentMatrix(ofMatrixMode matrixMode_){
 	return ofGetCurrentRenderer()->getCurrentMatrix(matrixMode_);
 }
 
 //----------------------------------------------------------
-ofMatrix4x4 ofGetCurrentOrientationMatrix(){
+glm::mat4 ofGetCurrentOrientationMatrix(){
 	return ofGetCurrentRenderer()->getCurrentOrientationMatrix();
 }
 
 //----------------------------------------------------------
-ofMatrix4x4 ofGetCurrentNormalMatrix(){
+glm::mat4 ofGetCurrentNormalMatrix(){
 	return ofGetCurrentRenderer()->getCurrentNormalMatrix();
 }
 
@@ -283,7 +283,7 @@ void ofLoadIdentityMatrix (void){
 }
 
 //----------------------------------------------------------
-void ofLoadMatrix (const ofMatrix4x4 & m){
+void ofLoadMatrix (const glm::mat4 & m){
 	ofGetCurrentRenderer()->loadMatrix(m);
 }
 
@@ -293,7 +293,7 @@ void ofLoadMatrix (const float *m){
 }
 
 //----------------------------------------------------------
-void ofMultMatrix (const ofMatrix4x4 & m){
+void ofMultMatrix (const glm::mat4 & m){
 	ofGetCurrentRenderer()->multMatrix(m);
 }
 
@@ -307,15 +307,15 @@ void ofSetMatrixMode(ofMatrixMode matrixMode){
 	ofGetCurrentRenderer()->matrixMode(matrixMode);
 }
 
-void ofLoadViewMatrix(const ofMatrix4x4 & m){
+void ofLoadViewMatrix(const glm::mat4 & m){
 	ofGetCurrentRenderer()->loadViewMatrix(m);
 }
 
-void ofMultViewMatrix(const ofMatrix4x4 & m){
+void ofMultViewMatrix(const glm::mat4 & m){
 	ofGetCurrentRenderer()->multViewMatrix(m);
 }
 
-ofMatrix4x4 ofGetCurrentViewMatrix(){
+glm::mat4 ofGetCurrentViewMatrix(){
 	return ofGetCurrentRenderer()->getCurrentViewMatrix();
 }
 

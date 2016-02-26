@@ -1,7 +1,6 @@
 #pragma once
 #include "ofBaseTypes.h"
 #include "ofPolyline.h"
-#include "ofMatrix4x4.h"
 #include <stack>
 #include "of3dGraphics.h"
 #include "ofBitmapFont.h"
@@ -84,17 +83,17 @@ public:
 	void rotate(float degrees);
 	void matrixMode(ofMatrixMode mode);
 	void loadIdentityMatrix (void);
-	void loadMatrix (const ofMatrix4x4 & m);
+	void loadMatrix (const glm::mat4 & m);
 	void loadMatrix (const float * m);
-	void multMatrix (const ofMatrix4x4 & m);
+	void multMatrix (const glm::mat4 & m);
 	void multMatrix (const float * m);
-	void loadViewMatrix(const ofMatrix4x4 & m);
-	void multViewMatrix(const ofMatrix4x4 & m);
+	void loadViewMatrix(const glm::mat4 & m);
+	void multViewMatrix(const glm::mat4 & m);
 
-	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
-	ofMatrix4x4 getCurrentOrientationMatrix() const;
-	ofMatrix4x4 getCurrentViewMatrix() const;
-	ofMatrix4x4 getCurrentNormalMatrix() const;
+	glm::mat4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
+	glm::mat4 getCurrentOrientationMatrix() const;
+	glm::mat4 getCurrentViewMatrix() const;
+	glm::mat4 getCurrentNormalMatrix() const;
 	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();

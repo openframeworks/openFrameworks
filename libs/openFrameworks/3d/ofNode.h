@@ -108,18 +108,18 @@ public:
 	glm::vec3 getScale() const;
 
 	/// \brief Get node's local transformations (position, orientation, scale).
-	/// \returns A refrence to ofMatrix4x4 containing node's local transformations.
+	/// \returns A refrence to mat4 containing node's local transformations.
 	/// \sa https://open.gl/transformations
-	const ofMatrix4x4& getLocalTransformMatrix() const;
+	const glm::mat4& getLocalTransformMatrix() const;
 	
 	// TODO: optimize and cache these
 	// (parent would need to know about its children so it can inform them 
 	// to update their global matrices if it itself transforms)
 	
 	/// \brief Get node's global transformations (position, orientation, scale).
-	/// \returns A refrence to ofMatrix4x4 containing node's global transformations.
+	/// \returns A refrence to mat4 containing node's global transformations.
 	/// \sa https://open.gl/transformations
-	ofMatrix4x4 getGlobalTransformMatrix() const;
+	glm::mat4 getGlobalTransformMatrix() const;
 	
 	/// \brief Get node's global position as a 3D vector.
 	/// \returns A 3D vector with the global coordinates.
@@ -138,8 +138,8 @@ public:
 	/// \{
 
 	/// \brief Directly set the local transformation matrix.
-	/// \param param0 Desired transform matrix as ref to ofMatrix4x4. 
-	void setTransformMatrix(const ofMatrix4x4 &m44);
+	/// \param param0 Desired transform matrix as ref to mat4.
+	void setTransformMatrix(const glm::mat4 &m44);
 	
 	/// \brief Set the local position of the node using xyz coordinates.
 	/// \param param0 Desired local x coordinate as a float.
@@ -359,11 +359,11 @@ private:
 
 	std::array<glm::vec3,3> axis;
 
-	ofMatrix4x4 localTransformMatrix;
+	glm::mat4 localTransformMatrix;
 	bool legacyCustomDrawOverrided;
 	std::set<ofNode*> children;
 
 	void addListener(ofNode & node);
 	void removeListener(ofNode & node);
-//	ofMatrix4x4 globalTransformMatrix;
+//	glm::mat4 globalTransformMatrix;
 };

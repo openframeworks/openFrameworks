@@ -604,13 +604,11 @@ void ofGLProgrammableRenderer::setupScreenPerspective(float width, float height,
 
 
 	matrixMode(OF_MATRIX_PROJECTION);
-	ofMatrix4x4 persp;
-	persp.makePerspectiveMatrix(fov, aspect, nearDist, farDist);
+	auto persp = glm::perspective(ofDegToRad(fov), aspect, nearDist, farDist);
 	loadMatrix( persp );
 
 	matrixMode(OF_MATRIX_MODELVIEW);
-	ofMatrix4x4 lookAt;
-	lookAt.makeLookAtViewMatrix( ofVec3f(eyeX, eyeY, dist),  ofVec3f(eyeX, eyeY, 0),  ofVec3f(0, 1, 0) );
+	auto lookAt = glm::lookAt( glm::vec3{eyeX, eyeY, dist},  glm::vec3{eyeX, eyeY, 0.f},  glm::vec3{0.f, 1.f, 0.f} );
 	loadViewMatrix(lookAt);
 	
 }
@@ -628,15 +626,13 @@ void ofGLProgrammableRenderer::setupScreenOrtho(float width, float height, float
 		viewH = height;
 	}
 
-	ofMatrix4x4 ortho;
-
-	ortho = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
+	auto ortho = glm::ortho(0.f, viewW, 0.f, viewH, nearDist, farDist);
 
 	matrixMode(OF_MATRIX_PROJECTION);
 	loadMatrix(ortho); // make ortho our new projection matrix.
 
 	matrixMode(OF_MATRIX_MODELVIEW);
-	loadViewMatrix(ofMatrix4x4::newIdentityMatrix());
+	loadViewMatrix(glm::mat4(1.0));
 }
 
 //----------------------------------------------------------
@@ -738,47 +734,47 @@ void ofGLProgrammableRenderer::loadIdentityMatrix (void){
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::loadMatrix (const ofMatrix4x4 & m){
-	loadMatrix(m.getPtr());
-}
-
-//----------------------------------------------------------
-void ofGLProgrammableRenderer::loadMatrix (const float *m){
+void ofGLProgrammableRenderer::loadMatrix (const glm::mat4 & m){
 	matrixStack.loadMatrix(m);
 	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::multMatrix (const ofMatrix4x4 & m){
-	multMatrix(m.getPtr());
+void ofGLProgrammableRenderer::loadMatrix (const float *m){
+	loadMatrix(glm::make_mat4(m));
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::multMatrix (const float *m){
+void ofGLProgrammableRenderer::multMatrix (const glm::mat4 & m){
 	matrixStack.multMatrix(m);
 	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::loadViewMatrix(const ofMatrix4x4 & m){
+void ofGLProgrammableRenderer::multMatrix (const float *m){
+	multMatrix(glm::make_mat4(m));
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::loadViewMatrix(const glm::mat4 & m){
 	matrixStack.loadViewMatrix(m);
 	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::multViewMatrix(const ofMatrix4x4 & m){
+void ofGLProgrammableRenderer::multViewMatrix(const glm::mat4 & m){
 	matrixStack.multViewMatrix(m);
 	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
-ofMatrix4x4 ofGLProgrammableRenderer::getCurrentViewMatrix() const{
+glm::mat4 ofGLProgrammableRenderer::getCurrentViewMatrix() const{
 	return matrixStack.getViewMatrix();
 }
 
 //----------------------------------------------------------
-ofMatrix4x4 ofGLProgrammableRenderer::getCurrentNormalMatrix() const{
-	return ofMatrix4x4::getTransposedOf(getCurrentMatrix(OF_MATRIX_MODELVIEW).getInverse());
+glm::mat4 ofGLProgrammableRenderer::getCurrentNormalMatrix() const{
+	return glm::transpose(glm::inverse(getCurrentMatrix(OF_MATRIX_MODELVIEW)));
 }
 
 //----------------------------------------------------------
@@ -806,7 +802,7 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 }
 
 //----------------------------------------------------------
-ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
+glm::mat4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
 	switch (matrixMode_) {
 		case OF_MATRIX_MODELVIEW:
 			return matrixStack.getModelViewMatrix();
@@ -819,13 +815,13 @@ ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_)
 			break;
 		default:
 			ofLogWarning() << "Invalid getCurrentMatrix query";
-			return ofMatrix4x4();
+			return glm::mat4(1.0);
 			break;
 	}
 }
 
 //----------------------------------------------------------
-ofMatrix4x4 ofGLProgrammableRenderer::getCurrentOrientationMatrix() const {
+glm::mat4 ofGLProgrammableRenderer::getCurrentOrientationMatrix() const {
 	return matrixStack.getOrientationMatrix();
 }
 //----------------------------------------------------------
@@ -1415,14 +1411,14 @@ void ofGLProgrammableRenderer::bind(const ofTexture & texture, int location){
 	if(ofGetUsingNormalizedTexCoords()) {
 		matrixMode(OF_MATRIX_TEXTURE);
 		pushMatrix();
-		ofMatrix4x4 m;
+		glm::mat4 m = glm::mat4(1.0);
 
 #ifndef TARGET_OPENGLES
 		if(texture.texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB)
-			m.makeScaleMatrix(texture.texData.width, texture.texData.height, 1.0f);
+			m = glm::scale(m, glm::vec3(texture.texData.width, texture.texData.height, 1.0f));
 		else
 #endif
-			m.makeScaleMatrix(texture.texData.width / texture.texData.tex_w, texture.texData.height / texture.texData.tex_h, 1.0f);
+			m = glm::scale(m, glm::vec3(texture.texData.width / texture.texData.tex_w, texture.texData.height / texture.texData.tex_h, 1.0f));
 
 		loadMatrix(m);
 		matrixMode(OF_MATRIX_MODELVIEW);
@@ -1455,7 +1451,7 @@ void ofGLProgrammableRenderer::bind(const ofCamera & camera, const ofRectangle &
 	viewport(_viewport);
 	setOrientation(matrixStack.getOrientation(),camera.isVFlipped());
 	matrixMode(OF_MATRIX_PROJECTION);
-	loadMatrix(camera.getProjectionMatrix(_viewport).getPtr());
+	loadMatrix(camera.getProjectionMatrix(_viewport));
 	matrixMode(OF_MATRIX_MODELVIEW);
 	loadViewMatrix(camera.getModelViewMatrix());
 }
@@ -1675,7 +1671,7 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 	bool hasViewport = false;
 
 	ofRectangle rViewport;
-	ofMatrix4x4 modelView;
+	glm::mat4 modelView;
 
 	switch (currentStyle.drawBitmapMode) {
 
@@ -1697,9 +1693,9 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 			mutThis->loadIdentityMatrix();
 			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
 
-			modelView.makeTranslationMatrix(-1,-1,0);
-			modelView.glScale(2/rViewport.width, 2/rViewport.height, 1);
-			modelView.glTranslate(x,y, 0);
+			modelView = glm::translate(modelView, glm::vec3(-1,-1,0));
+			modelView = glm::scale(modelView, glm::vec3(2/rViewport.width, 2/rViewport.height, 1));
+			modelView = glm::translate(modelView, glm::vec3(x,y, 0));
 			mutThis->loadMatrix(modelView);
 			break;
 
@@ -1716,9 +1712,9 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
 			mutThis->pushMatrix();
 
-			modelView.makeTranslationMatrix(-1,-1,0);
-			modelView.glScale(2/rViewport.width, 2/rViewport.height, 1);
-			modelView.glTranslate(x,y, 0);
+			modelView = glm::translate(modelView, glm::vec3(-1,-1,0));
+			modelView = glm::scale(modelView, glm::vec3(2/rViewport.width, 2/rViewport.height, 1));
+			modelView = glm::translate(modelView, glm::vec3(x,y, 0));
 			mutThis->loadMatrix(modelView);
 			break;
 
@@ -1744,7 +1740,9 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 			
 			rViewport = getCurrentViewport();
 			
-			auto dScreen = toGlm(toOf(glm::vec3(x,y,z)) * matrixStack.getModelViewMatrix() * matrixStack.getProjectionMatrixNoOrientation());
+			auto mat = matrixStack.getProjectionMatrixNoOrientation()  * matrixStack.getModelViewMatrix();
+			auto dScreen4 = mat * glm::vec4(x,y,z,1.0);
+			auto dScreen = dScreen4.xyz() / dScreen4.w;
 			dScreen += glm::vec3(1.0) ;
 			dScreen *= 0.5;
 			
@@ -1766,9 +1764,9 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
 			mutThis->pushMatrix();
 
-			modelView.makeTranslationMatrix(-1,-1,0);
-			modelView.glScale(2/rViewport.width, 2/rViewport.height, 1);
-			modelView.glTranslate(dScreen.x, dScreen.y, 0);
+			modelView = glm::translate(modelView, glm::vec3(-1,-1,0));
+			modelView = glm::scale(modelView, glm::vec3(2/rViewport.width, 2/rViewport.height, 1));
+			modelView = glm::translate(modelView, glm::vec3(dScreen.x, dScreen.y, 0));
 			mutThis->loadMatrix(modelView);
 		}
 			break;

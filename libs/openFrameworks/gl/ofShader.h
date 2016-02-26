@@ -87,6 +87,7 @@ public:
 	// note: it may be more optimal to use a 4x4 matrix than a 3x3 matrix, if possible
 	void setUniformMatrix3f(const string & name, const ofMatrix3x3 & m, int count = 1) const;
 	void setUniformMatrix4f(const string & name, const ofMatrix4x4 & m, int count = 1) const;
+	void setUniformMatrix4f(const string & name, const glm::mat4 & m, int count = 1) const;
 
 	GLint getUniformLocation(const string & name) const;
 	

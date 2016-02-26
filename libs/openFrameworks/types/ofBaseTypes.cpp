@@ -142,9 +142,9 @@ void ofBaseVideoPlayer::previousFrame(){
 }
 
 //---------------------------------------------------------------------------
-ofMatrix4x4 ofBaseRenderer::getCurrentOrientationMatrix() const {
+glm::mat4 ofBaseRenderer::getCurrentOrientationMatrix() const {
 	ofLogWarning() << "getCurrentOrientationMatrix() Not implemented for this renderer. Returning Identity matrix.";
-	return ofMatrix4x4();
+	return glm::mat4(1.0);
 }
 
 void ofBaseRenderer::draw(const ofMesh & mesh, ofPolyRenderMode renderType) const{
@@ -328,8 +328,7 @@ void ofBaseRenderer::drawRotationAxes(float radius, float stripWidth, int circle
 }
 
 void ofBaseMaterial::uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
-	const ofMatrix4x4 & normalMatrix = renderer.getCurrentNormalMatrix();
-	shader.setUniformMatrix4f("normalMatrix",normalMatrix);
+	shader.setUniformMatrix4f("normalMatrix", renderer.getCurrentNormalMatrix());
 }
 
 

@@ -2,7 +2,6 @@
 
 #include "ofConstants.h"
 #include "ofColor.h"
-#include "ofMatrix4x4.h"
 #include "ofRectangle.h"
 #include "ofTypes.h"
 
@@ -896,7 +895,7 @@ void ofPushMatrix();
 void ofPopMatrix();
 
 /// \brief Query the current (oF internal) Transformation Matrix state.
-ofMatrix4x4 ofGetCurrentMatrix(ofMatrixMode matrixMode);
+glm::mat4 ofGetCurrentMatrix(ofMatrixMode matrixMode);
 
 /// \brief Query the current (oF internal) Orientation Matrix state.
 /// \note  The matrix returned is the matrix openFrameworks uses internally
@@ -905,7 +904,7 @@ ofMatrix4x4 ofGetCurrentMatrix(ofMatrixMode matrixMode);
 ///
 ///        Currently, only GL Programmable Renderer and GL Renderer
 ///        implement ofGetCurrentOrientationMatrix.
-ofMatrix4x4 ofGetCurrentOrientationMatrix();
+glm::mat4 ofGetCurrentOrientationMatrix();
 
 /// \brief Query the current (oF internal) Normal Matrix state.
 /// \note  The matrix returned is the transposed of the inverse of the
@@ -913,7 +912,7 @@ ofMatrix4x4 ofGetCurrentOrientationMatrix();
 ///
 ///        Currently, only GL Programmable Renderer and GL Renderer
 ///        implement ofGetCurrentNormalMatrix.
-ofMatrix4x4 ofGetCurrentNormalMatrix();
+glm::mat4 ofGetCurrentNormalMatrix();
 
 /// \brief Translate by (x,y,z) vector of our coordinate system.
 /// The call of ofTranslate() modifies graphics positions.
@@ -996,14 +995,14 @@ void ofRotateZ(float degrees);
 /// \{
 
 void ofLoadIdentityMatrix (void);
-void ofLoadMatrix (const ofMatrix4x4 & m);   // Andreas: I've included both a ofMatrix4x4* and a float* version here,
-void ofLoadMatrix (const float *m);     // ideally we would always use ofMatrix4x4, but in a lot of temporary
-void ofMultMatrix (const ofMatrix4x4 & m);  // ofMatrix4x4 objects when interacting with non-OF code
+void ofLoadMatrix (const glm::mat4 & m);   // Andreas: I've included both a mat and a float* version here,
+void ofLoadMatrix (const float *m);     // ideally we would always use mat4, but in a lot of temporary
+void ofMultMatrix (const glm::mat4 & m);  // mat objects when interacting with non-OF code
 void ofMultMatrix (const float *m);
 void ofSetMatrixMode(ofMatrixMode matrixMode);
-void ofLoadViewMatrix(const ofMatrix4x4 & m);
-void ofMultViewMatrix(const ofMatrix4x4 & m);
-ofMatrix4x4 ofGetCurrentViewMatrix();
+void ofLoadViewMatrix(const glm::mat4 & m);
+void ofMultViewMatrix(const glm::mat4 & m);
+glm::mat4 ofGetCurrentViewMatrix();
 
 
 /// \}
