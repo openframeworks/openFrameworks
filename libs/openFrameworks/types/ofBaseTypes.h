@@ -1857,8 +1857,8 @@ public:
 	virtual void setLightAmbientColor(int lightIndex, const ofFloatColor& c)=0;
 	virtual void setLightDiffuseColor(int lightIndex, const ofFloatColor& c)=0;
 	virtual void setLightSpecularColor(int lightIndex, const ofFloatColor& c)=0;
-	virtual void setLightPosition(int lightIndex, const ofVec4f & position)=0;
-	virtual void setLightSpotDirection(int lightIndex, const ofVec4f & direction)=0;
+	virtual void setLightPosition(int lightIndex, const glm::vec4 & position)=0;
+	virtual void setLightSpotDirection(int lightIndex, const glm::vec4 & direction)=0;
 
 	virtual int getGLVersionMajor()=0;
 	virtual int getGLVersionMinor()=0;

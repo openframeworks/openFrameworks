@@ -30,11 +30,11 @@ public:
     const ofMesh* getMeshPtr() const;
     const ofMesh& getMesh() const;
 
-    ofVec4f* getTexCoordsPtr();
-    ofVec4f& getTexCoords();
+	glm::vec4* getTexCoordsPtr();
+	glm::vec4& getTexCoords();
 
-    const ofVec4f* getTexCoordsPtr() const;
-    const ofVec4f& getTexCoords() const;
+	const glm::vec4* getTexCoordsPtr() const;
+	const glm::vec4& getTexCoords() const;
 
     bool hasScaling() const;
     bool hasNormalsEnabled() const;
@@ -63,7 +63,7 @@ protected:
     // useful when creating a new model, since it uses normalized tex coords //
     void normalizeAndApplySavedTexCoords();
 
-    ofVec4f texCoords;
+	glm::vec4 texCoords;
     bool usingVbo;
     shared_ptr<ofMesh>  mesh;
     mutable ofMesh normalsMesh;

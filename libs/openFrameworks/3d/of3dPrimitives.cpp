@@ -73,22 +73,22 @@ const ofMesh& of3dPrimitive::getMesh() const{
 }
 
 //----------------------------------------------------------
-ofVec4f* of3dPrimitive::getTexCoordsPtr() {
+glm::vec4* of3dPrimitive::getTexCoordsPtr() {
     return& texCoords;
 }
 
 //----------------------------------------------------------
-ofVec4f& of3dPrimitive::getTexCoords() {
+glm::vec4& of3dPrimitive::getTexCoords() {
     return texCoords;
 }
 
 //----------------------------------------------------------
-const ofVec4f* of3dPrimitive::getTexCoordsPtr() const{
+const glm::vec4* of3dPrimitive::getTexCoordsPtr() const{
     return& texCoords;
 }
 
 //----------------------------------------------------------
-const ofVec4f& of3dPrimitive::getTexCoords() const{
+const glm::vec4& of3dPrimitive::getTexCoords() const{
     return texCoords;
 }
 
@@ -143,7 +143,7 @@ void of3dPrimitive::disableColors() {
 //----------------------------------------------------------
 void of3dPrimitive::mapTexCoords( float u1, float v1, float u2, float v2 ) {
     //setTexCoords( u1, v1, u2, v2 );
-    ofVec4f prevTcoord = getTexCoords();
+	auto prevTcoord = getTexCoords();
     
 	for(std::size_t j = 0; j < getMesh().getNumTexCoords(); j++ ) {
 		auto tcoord = getMesh().getTexCoord(j);
@@ -153,7 +153,7 @@ void of3dPrimitive::mapTexCoords( float u1, float v1, float u2, float v2 ) {
         getMesh().setTexCoord(j, tcoord);
     }
     
-    texCoords.set(u1, v1, u2, v2);
+	texCoords = {u1, v1, u2, v2};
 }
 
 //----------------------------------------------------------
@@ -169,16 +169,16 @@ void of3dPrimitive::mapTexCoordsFromTexture( ofTexture& inTexture ) {
     else
         mapTexCoords(0, 0, inTexture.getWidth(), inTexture.getHeight());
     
-    ofVec4f tcoords = getTexCoords();
+	auto tcoords = getTexCoords();
     mapTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
 }
 
 //----------------------------------------------------------
 void of3dPrimitive::normalizeAndApplySavedTexCoords() {
-    ofVec4f tcoords = getTexCoords();
+	auto tcoords = getTexCoords();
     // when a new mesh is created, it uses normalized tex coords, we need to reset them
     // but save the ones used previously //
-    texCoords.set(0,0,1,1);
+	texCoords = {0.f, 0.f, 1.f, 1.f};
     mapTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
 }
 
@@ -285,13 +285,13 @@ bool of3dPrimitive::isUsingVbo() const{
 // PLANE PRIMITIVE //
 //--------------------------------------------------------------
 ofPlanePrimitive::ofPlanePrimitive() {
-    texCoords = ofVec4f(0,0,1,1);
+	texCoords = {0.f, 0.f, 1.f, 1.f};
     set( 200, 100, 6, 3);
 }
 
 //--------------------------------------------------------------
 ofPlanePrimitive::ofPlanePrimitive(float width, float height, int columns, int rows, ofPrimitiveMode mode) {
-    texCoords = ofVec4f(0,0,1,1);
+	texCoords = {0.f, 0.f, 1.f, 1.f};
     set(width, height, columns, rows, mode);
 }
 
@@ -393,15 +393,15 @@ float ofPlanePrimitive::getHeight() const {
 // SPHERE PRIMITIVE //
 //----------------------------------------------------------
 ofSpherePrimitive::ofSpherePrimitive() {
-    texCoords = ofVec4f(0,0,1,1);
+	texCoords = {0.f, 0.f, 1.f, 1.f};
     radius = 20;
     setResolution( 16 );
 }
 
 //----------------------------------------------------------
 ofSpherePrimitive::ofSpherePrimitive( float _radius, int res, ofPrimitiveMode mode ) {
-    radius = _radius;
-    texCoords = ofVec4f(0,0,1,1);
+	radius = _radius;
+	texCoords = {0.f, 0.f, 1.f, 1.f};
     setResolution( res );
 }
 
@@ -455,14 +455,14 @@ int ofSpherePrimitive::getResolution() const {
 // ICO SPHERE //
 //----------------------------------------------------------
 ofIcoSpherePrimitive::ofIcoSpherePrimitive() {
-    texCoords  = ofVec4f(0,0,1,1);
+	texCoords = {0.f, 0.f, 1.f, 1.f};
     radius     = 20;
     setResolution( 2 );
 }
 
 //----------------------------------------------------------
 ofIcoSpherePrimitive::ofIcoSpherePrimitive( float _radius, int iterations ) {
-    texCoords  = ofVec4f(0,0,1,1);
+	texCoords = {0.f, 0.f, 1.f, 1.f};
     radius     = _radius;
     setResolution( iterations );
 }
@@ -513,13 +513,13 @@ int ofIcoSpherePrimitive::getResolution() const {
 
 //--------------------------------------------------------------
 ofCylinderPrimitive::ofCylinderPrimitive() {
-    texCoords = ofVec4f(0,0,1,1);
+	texCoords = {0.f, 0.f, 1.f, 1.f};
     set( 60, 80, 6, 3, 2, true );
 }
 
 //--------------------------------------------------------------
 ofCylinderPrimitive::ofCylinderPrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments, bool bCapped, ofPrimitiveMode mode ) {
-    texCoords = ofVec4f(0,0,1,1);
+	texCoords = {0.f, 0.f, 1.f, 1.f};
     set( radius, height, radiusSegments, heightSegments, capSegments, bCapped, mode );
 }
 
@@ -743,13 +743,13 @@ bool ofCylinderPrimitive::getCapped() const {
 // Cone Primitive //
 //--------------------------------------------------------------
 ofConePrimitive::ofConePrimitive() {
-    texCoords = ofVec4f(0,0,1,1);
+	texCoords = {0.f, 0.f, 1.f, 1.f};
     set( 20, 70, 8, 3, 2 );
 }
 
 //--------------------------------------------------------------
 ofConePrimitive::ofConePrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments, ofPrimitiveMode mode ) {
-    texCoords = ofVec4f(0,0,1,1);
+	texCoords = {0.f, 0.f, 1.f, 1.f};
     set( radius, height, radiusSegments, heightSegments, capSegments, mode );
 }
 
@@ -932,13 +932,13 @@ float ofConePrimitive::getHeight() const {
 // BOX PRIMITIVE //
 //--------------------------------------------------------------
 ofBoxPrimitive::ofBoxPrimitive() {
-    texCoords = ofVec4f(0,0,1,1);
+	texCoords = {0.f, 0.f, 1.f, 1.f};
     set(100, 100, 100, 2, 2, 2);
 }
 
 //--------------------------------------------------------------
 ofBoxPrimitive::ofBoxPrimitive( float width, float height, float depth, int resWidth, int resHeight, int resDepth ) {
-    texCoords = ofVec4f(0,0,1,1);
+	texCoords = {0.f, 0.f, 1.f, 1.f};
     set(width, height, depth, resWidth, resHeight, resDepth );
 }
 

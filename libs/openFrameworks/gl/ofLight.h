@@ -95,7 +95,7 @@ public:
 		int isEnabled;
 	    float spotCutOff;
 	    float exponent;
-		ofVec4f position;
+		glm::vec4 position;
 		glm::vec3 direction;
 
 	    float width;

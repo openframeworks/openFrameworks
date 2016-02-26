@@ -797,7 +797,7 @@ void ofShader::setUniform3f(const string & name, const glm::vec3 & v) const{
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4f(const string & name, const ofVec4f & v) const{
+void ofShader::setUniform4f(const string & name, const glm::vec4 & v) const{
 	setUniform4f(name,v.x,v.y,v.z,v.w);
 }
 
@@ -881,8 +881,14 @@ void ofShader::setUniforms(const ofParameterGroup & parameters) const{
 			setUniform2f(parameters[i].getEscapedName(),parameters[i].cast<glm::vec2>());
 		}else if(parameters[i].type()==typeid(ofParameter<glm::vec3>).name()){
 			setUniform3f(parameters[i].getEscapedName(),parameters[i].cast<glm::vec3>());
+		}else if(parameters[i].type()==typeid(ofParameter<glm::vec4>).name()){
+			setUniform4f(parameters[i].getEscapedName(),parameters[i].cast<glm::vec4>());
+		}else if(parameters[i].type()==typeid(ofParameter<ofVec2f>).name()){
+			setUniform2f(parameters[i].getEscapedName(),parameters[i].cast<glm::vec2>());
+		}else if(parameters[i].type()==typeid(ofParameter<ofVec3f>).name()){
+			setUniform3f(parameters[i].getEscapedName(),parameters[i].cast<glm::vec3>());
 		}else if(parameters[i].type()==typeid(ofParameter<ofVec4f>).name()){
-			setUniform4f(parameters[i].getEscapedName(),parameters[i].cast<ofVec4f>());
+			setUniform4f(parameters[i].getEscapedName(),parameters[i].cast<glm::vec4>());
 		}else if(parameters[i].type()==typeid(ofParameterGroup).name()){
 			setUniforms((ofParameterGroup&)parameters[i]);
 		}
@@ -894,14 +900,6 @@ void ofShader::setUniformMatrix3f(const string & name, const ofMatrix3x3 & m, in
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniformMatrix3fv(loc, count, GL_FALSE, &m.a);
-	}
-}
-
-//--------------------------------------------------------------
-void ofShader::setUniformMatrix4f(const string & name, const ofMatrix4x4 & m, int count)  const{
-	if(bLoaded) {
-		int loc = getUniformLocation(name);
-		if (loc != -1) glUniformMatrix4fv(loc, count, GL_FALSE, m.getPtr());
 	}
 }
 
