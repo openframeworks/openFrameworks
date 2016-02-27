@@ -125,10 +125,10 @@ public:
 	/// ~~~~
     ofVec3f( const ofVec4f& vec );
 
-	ofVec3f( const glm::vec3 & vec );
 	ofVec3f( const glm::vec2 & vec );
+	ofVec3f( const glm::vec3 & vec );
+	ofVec3f( const glm::vec4 & vec );
 	operator glm::vec3() const;
-	operator glm::vec2() const;
 
 	/// \}
 
@@ -1072,23 +1072,12 @@ inline ofVec3f::ofVec3f(): x(0), y(0), z(0) {}
 inline ofVec3f::ofVec3f( float _all ): x(_all), y(_all), z(_all) {}
 inline ofVec3f::ofVec3f( float _x, float _y, float _z ):x(_x), y(_y), z(_z) {}
 
-
-inline ofVec3f::ofVec3f( const glm::vec3 & vec )
-	:x(vec.x), y(vec.y), z(vec.z){
-
-}
+inline ofVec3f::ofVec3f( const glm::vec2 & vec ):x(vec.x), y(vec.y), z(0.f){}
+inline ofVec3f::ofVec3f( const glm::vec3 & vec ):x(vec.x), y(vec.y), z(vec.z){}
+inline ofVec3f::ofVec3f( const glm::vec4 & vec ):x(vec.x), y(vec.y), z(vec.z){}
 
 inline ofVec3f::operator glm::vec3() const{
 	return glm::vec3(x,y,z);
-}
-
-inline ofVec3f::operator glm::vec2() const{
-	return glm::vec2(x,y);
-}
-
-inline ofVec3f::ofVec3f( const glm::vec2 & vec )
-	:x(vec.x), y(vec.y), z(0.f){
-
 }
 
 

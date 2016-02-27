@@ -87,6 +87,11 @@ void ofPath::lineTo(const glm::vec3 & p){
 }
 
 //----------------------------------------------------------
+void ofPath::lineTo(const glm::vec2 & p){
+	lineTo(glm::vec3(p,0.0));
+}
+
+//----------------------------------------------------------
 void ofPath::lineTo(float x, float y, float z){
 	lineTo(glm::vec3(x,y,z));
 }
@@ -108,6 +113,11 @@ void ofPath::moveTo(const glm::vec3 & p){
 }
 
 //----------------------------------------------------------
+void ofPath::moveTo(const glm::vec2 & p){
+	moveTo(glm::vec3(p, 0.0));
+}
+
+//----------------------------------------------------------
 void ofPath::moveTo(float x, float y, float z){
 	moveTo(glm::vec3(x,y,z));
 }
@@ -120,6 +130,11 @@ void ofPath::curveTo(const glm::vec3 & p){
 		lastPolyline().curveTo(p,curveResolution);
 	}
 	flagShapeChanged();
+}
+
+//----------------------------------------------------------
+void ofPath::curveTo(const glm::vec2 & p){
+	curveTo(glm::vec3(p, 0.0));
 }
 
 //----------------------------------------------------------
@@ -143,6 +158,11 @@ void ofPath::bezierTo(const glm::vec3 & cp1, const glm::vec3 & cp2, const glm::v
 }
 
 //----------------------------------------------------------
+void ofPath::bezierTo(const glm::vec2 & cp1, const glm::vec2 & cp2, const glm::vec2 & p){
+	bezierTo(glm::vec3(cp1,0.0), glm::vec3(cp2,0.0), glm::vec3(p,0.0));
+}
+
+//----------------------------------------------------------
 void ofPath::bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y){
 	bezierTo(glm::vec3(cx1,cy1,0),glm::vec3(cx2,cy2,0),glm::vec3(x,y,0));
 }
@@ -160,6 +180,11 @@ void ofPath::quadBezierTo(const glm::vec3 & cp1, const glm::vec3 & cp2, const gl
 		lastPolyline().quadBezierTo(cp1,cp2,p,curveResolution);
 	}
 	flagShapeChanged();
+}
+
+//----------------------------------------------------------
+void ofPath::quadBezierTo(const glm::vec2 & cp1, const glm::vec2 & cp2, const glm::vec2 & p){
+	quadBezierTo(glm::vec3(cp1, 0.0), glm::vec3(cp2, 0.0), glm::vec3(p, 0.0));
 }
 
 //----------------------------------------------------------
@@ -182,6 +207,11 @@ void ofPath::arc(const glm::vec3 & centre, float radiusX, float radiusY, float a
 }
 
 //----------------------------------------------------------
+void ofPath::arc(const glm::vec2 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise){
+	arc(glm::vec3(centre, 0.0), radiusX, radiusY, angleBegin, angleEnd, clockwise);
+}
+
+//----------------------------------------------------------
 void ofPath::arc(const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	if(mode==COMMANDS){
 		addCommand(Command(Command::arc,centre,radiusX,radiusY,angleBegin,angleEnd));
@@ -189,6 +219,11 @@ void ofPath::arc(const glm::vec3 & centre, float radiusX, float radiusY, float a
 		lastPolyline().arc(centre,radiusX,radiusY,angleBegin,angleEnd,circleResolution);
 	}
 	flagShapeChanged();
+}
+
+//----------------------------------------------------------
+void ofPath::arc(const glm::vec2 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
+	arc(glm::vec3(centre, 0.0), radiusX, radiusY, angleBegin, angleEnd);
 }
 
 //----------------------------------------------------------
@@ -212,6 +247,11 @@ void ofPath::arcNegative(const glm::vec3 & centre, float radiusX, float radiusY,
 }
 
 //----------------------------------------------------------
+void ofPath::arcNegative(const glm::vec2 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
+	arcNegative(glm::vec3(centre,0),radiusX,radiusY,angleBegin,angleEnd);
+}
+
+//----------------------------------------------------------
 void ofPath::arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	arcNegative(glm::vec3(x,y,0),radiusX,radiusY,angleBegin,angleEnd);
 }
@@ -220,8 +260,6 @@ void ofPath::arcNegative(float x, float y, float radiusX, float radiusY, float a
 void ofPath::arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	arcNegative(glm::vec3(x,y,z),radiusX,radiusY,angleBegin,angleEnd);
 }
-
-
 
 //----------------------------------------------------------
 void ofPath::triangle(float x1,float y1,float x2,float y2,float x3, float y3){
@@ -241,6 +279,11 @@ void ofPath::triangle(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec
 	triangle(p1.x,p1.y,p1.z,p2.x,p2.y,p2.z,p3.x,p3.y,p3.z);
 }
 
+//----------------------------------------------------------
+void ofPath::triangle(const glm::vec2 & p1, const glm::vec2 & p2, const glm::vec2 & p3){
+	triangle(p1.x,p1.y,0.0,p2.x,p2.y,0.0,p3.x,p3.y,0.0);
+}
+
 
 //----------------------------------------------------------
 void ofPath::circle(float x, float y, float radius){
@@ -257,6 +300,11 @@ void ofPath::circle(const glm::vec3 & p, float radius){
 	circle(p.x,p.y,p.z,radius);
 }
 
+//----------------------------------------------------------
+void ofPath::circle(const glm::vec2 & p, float radius){
+	circle(p.x,p.y,0.0,radius);
+}
+
 
 //----------------------------------------------------------
 void ofPath::ellipse(float x, float y, float width, float height){
@@ -265,12 +313,17 @@ void ofPath::ellipse(float x, float y, float width, float height){
 
 //----------------------------------------------------------
 void ofPath::ellipse(float x, float y, float z, float width, float height){
-	arc(x,y,z,width*.5,height*.5,0,360);
+	arc(x,y,z,width*.5f,height*.5f,0,360);
 }
 
 //----------------------------------------------------------
 void ofPath::ellipse(const glm::vec3 & p, float width, float height){
 	ellipse(p.x,p.y,p.z,width,height);
+}
+
+//----------------------------------------------------------
+void ofPath::ellipse(const glm::vec2 & p, float width, float height){
+	ellipse(p.x,p.y,0.0,width,height);
 }
 
 //----------------------------------------------------------
@@ -289,6 +342,11 @@ void ofPath::rectangle(const glm::vec3 & p,float w,float h){
 	lineTo(p.x+w,p.y+h,p.z);
 	lineTo(p.x,p.y+h,p.z);
 	close();
+}
+
+//----------------------------------------------------------
+void ofPath::rectangle(const glm::vec2 & p,float w,float h){
+	rectangle(glm::vec3(p,0.0), w, h);
 }
 
 //----------------------------------------------------------
@@ -320,6 +378,11 @@ void ofPath::rectRounded(const glm::vec3 & p, float w, float h, float r){
 }
 
 //----------------------------------------------------------
+void ofPath::rectRounded(const glm::vec2 & p, float w, float h, float r){
+	rectRounded(p.x,p.y,0.0,w,h,r,r,r,r);
+}
+
+//----------------------------------------------------------
 void ofPath::rectRounded(float x, float y, float w, float h, float r){
 	rectRounded(x,y,0.0f,w,h,r,r,r,r);
 }
@@ -331,6 +394,15 @@ void ofPath::rectRounded(const glm::vec3 & p, float w, float h, float topLeftRad
 														float bottomLeftRadius){
 
 	rectRounded(p.x,p.y,p.z,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
+}
+
+//----------------------------------------------------------
+void ofPath::rectRounded(const glm::vec2 & p, float w, float h, float topLeftRadius,
+														float topRightRadius,
+														float bottomRightRadius,
+														float bottomLeftRadius){
+
+	rectRounded(p.x,p.y,0.0,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
 }
 
 //----------------------------------------------------------
@@ -713,6 +785,11 @@ void ofPath::translate(const glm::vec3 & p){
 }
 
 //----------------------------------------------------------
+void ofPath::translate(const glm::vec2 & p){
+	translate(glm::vec3(p, 0.0));
+}
+
+//----------------------------------------------------------
 void ofPath::rotate(float az, const glm::vec3& axis ){
 	if(mode==COMMANDS){
 		for(int j=0;j<(int)commands.size();j++){
@@ -734,6 +811,11 @@ void ofPath::rotate(float az, const glm::vec3& axis ){
 		}
 	}
 	flagShapeChanged();
+}
+
+//----------------------------------------------------------
+void ofPath::rotate(float az, const glm::vec2& axis ){
+	rotate(az, glm::vec3(axis, 0.0));
 }
 
 
