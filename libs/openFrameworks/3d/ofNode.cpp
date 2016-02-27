@@ -150,18 +150,20 @@ ofNode* ofNode::getParent() const {
 	return parent;
 }
 
+#include "glm/gtx/matrix_decompose.hpp"
+
 //----------------------------------------
 void ofNode::setTransformMatrix(const glm::mat4 &m44) {
 	localTransformMatrix = m44;
 
-	ofVec3f position;
-	ofVec3f scale;
-	ofQuaternion orientation;
-	ofQuaternion so;
-	auto ofLocal = toOf(m44);
-	ofLocal.decompose(position, orientation, scale, so);
-	this->position = toGlm(position);
-	this->scale = toGlm(scale);
+	glm::vec3 scale;
+	glm::quat orientation;
+	glm::vec3 translation;
+	glm::vec3 skew;
+	glm::vec4 perspective;
+	glm::decompose(m44, scale, orientation, translation, skew, perspective);
+	this->position = translation;
+	this->scale = scale;
 	this->orientation = orientation;
 	updateAxis();
 	
@@ -218,7 +220,7 @@ float ofNode::getZ() const {
 }
 
 //----------------------------------------
-void ofNode::setOrientation(const ofQuaternion& q) {
+void ofNode::setOrientation(const glm::quat& q) {
 	orientation = q;
 	createMatrix();
 	onOrientationChanged();
@@ -226,28 +228,28 @@ void ofNode::setOrientation(const ofQuaternion& q) {
 
 //----------------------------------------
 void ofNode::setOrientation(const glm::vec3& eulerAngles) {
-	setOrientation(ofQuaternion(eulerAngles.x, ofVec3f(1, 0, 0), eulerAngles.z, ofVec3f(0, 0, 1), eulerAngles.y, ofVec3f(0, 1, 0)));
+	setOrientation(glm::angleAxis(ofDegToRad(eulerAngles.x), glm::vec3(1, 0, 0)) * glm::angleAxis(ofDegToRad(eulerAngles.z), glm::vec3(0, 0, 1)) * glm::angleAxis(ofDegToRad(eulerAngles.y), glm::vec3(0, 1, 0)));
 }
 
 //----------------------------------------
-void ofNode::setGlobalOrientation(const ofQuaternion& q) {
+void ofNode::setGlobalOrientation(const glm::quat& q) {
 	if(parent == nullptr) {
 		setOrientation(q);
 	} else {
 		auto invParent = glm::inverse(parent->getGlobalTransformMatrix());
-		auto m44 = invParent * toGlm(ofMatrix4x4(q));
-		setOrientation(toOf(m44).getRotate());
+		auto m44 = q * glm::toQuat(invParent);
+		setOrientation(m44);
 	}
 }
 
 //----------------------------------------
-ofQuaternion ofNode::getOrientationQuat() const {
+glm::quat ofNode::getOrientationQuat() const {
 	return orientation;
 }
 
 //----------------------------------------
 glm::vec3 ofNode::getOrientationEuler() const {
-	return toGlm(orientation->getEuler());
+	return glm::eulerAngles((const glm::quat&)orientation);
 }
 
 //----------------------------------------
@@ -315,30 +317,30 @@ void ofNode::roll(float degrees) {
 }
 
 //----------------------------------------
-void ofNode::rotate(const ofQuaternion& q) {
-	orientation *= q;
+void ofNode::rotate(const glm::quat& q) {
+	orientation = q * (const glm::quat&)orientation;
 	createMatrix();
 	onOrientationChanged();
 }
 
 //----------------------------------------
 void ofNode::rotate(float degrees, const glm::vec3& v) {
-	rotate(ofQuaternion(degrees, toOf(v)));
+	rotate(glm::angleAxis(ofDegToRad(degrees), v));
 }
 
 //----------------------------------------
 void ofNode::rotate(float degrees, float vx, float vy, float vz) {
-	rotate(ofQuaternion(degrees, ofVec3f(vx, vy, vz)));
+	rotate(glm::angleAxis(ofDegToRad(degrees), glm::vec3(vx, vy, vz)));
 }
 
 //----------------------------------------
-void ofNode::rotateAround(const ofQuaternion& q, const glm::vec3& point) {
-	//	ofLogVerbose("ofNode") << "rotateAround(const ofQuaternion& q, const ofVec3f& point) not implemented yet";
+void ofNode::rotateAround(const glm::quat& q, const glm::vec3& point) {
+	//	ofLogVerbose("ofNode") << "rotateAround(const glm::quat& q, const ofVec3f& point) not implemented yet";
 	//	ofMatrix4x4 m = getLocalTransformMatrix();
 	//	m.setTranslation(point);
 	//	m.rotate(q);
 	
-	setGlobalPosition(toGlm(toOf(getGlobalPosition() - point) * q) + point);
+	setGlobalPosition(q * (getGlobalPosition() - point) + point);
 	
 	onOrientationChanged();
 	onPositionChanged();
@@ -346,7 +348,7 @@ void ofNode::rotateAround(const ofQuaternion& q, const glm::vec3& point) {
 
 //----------------------------------------
 void ofNode::rotateAround(float degrees, const glm::vec3& axis, const glm::vec3& point) {
-	rotateAround(ofQuaternion(degrees, toOf(axis)), point);
+	rotateAround(glm::angleAxis(ofDegToRad(degrees), axis), point);
 }
 
 //----------------------------------------
@@ -354,9 +356,9 @@ void ofNode::lookAt(const glm::vec3& lookAtPosition){
     auto relPosition = (getGlobalPosition() - lookAtPosition);
 	auto radius = glm::length(relPosition);
     if(radius>0){
-        auto latitude = ofRadToDeg(acos(relPosition.y / radius)) - 90;
-        auto longitude = ofRadToDeg(atan2(relPosition.x , relPosition.z));
-        ofQuaternion q(latitude, ofVec3f(1,0,0), longitude, ofVec3f(0,1,0), 0, ofVec3f(0,0,1));
+		auto latitude = acos(relPosition.y / radius) - glm::half_pi<float>();
+		auto longitude = atan2(relPosition.x , relPosition.z);
+		glm::quat q = glm::angleAxis(latitude, glm::vec3(1,0,0)) * glm::angleAxis(longitude, glm::vec3(0,1,0)) * glm::angleAxis(0.f, glm::vec3(0,0,1));
         setGlobalOrientation(q);
     }
 
@@ -377,12 +379,7 @@ void ofNode::lookAt(const glm::vec3& lookAtPosition, glm::vec3 upVector) {
 		m[1] = glm::vec4(yaxis, 0.f);
 		m[2] = glm::vec4(zaxis, 0.f);
 
-		/*ofMatrix4x4 m;
-		m._mat[0].set(xaxis.x, xaxis.y, xaxis.z, 0);
-		m._mat[1].set(yaxis.x, yaxis.y, yaxis.z, 0);
-		m._mat[2].set(zaxis.x, zaxis.y, zaxis.z, 0);*/
-		
-		setGlobalOrientation(toOf(m).getRotate());
+		setGlobalOrientation(glm::toQuat(m));
 	}
 }
 
@@ -465,8 +462,8 @@ glm::vec3 ofNode::getGlobalPosition() const {
 }
 
 //----------------------------------------
-ofQuaternion ofNode::getGlobalOrientation() const {
-	return toOf(getGlobalTransformMatrix()).getRotate();
+glm::quat ofNode::getGlobalOrientation() const {
+	return glm::toQuat(getGlobalTransformMatrix());
 }
 
 //----------------------------------------
@@ -477,8 +474,8 @@ glm::vec3 ofNode::getGlobalScale() const {
 
 //----------------------------------------
 void ofNode::orbit(float longitude, float latitude, float radius, const glm::vec3& centerPoint) {
-	ofQuaternion q(latitude, ofVec3f(1,0,0), longitude, ofVec3f(0,1,0), 0, ofVec3f(0,0,1));
-	setPosition(toGlm(toOf(glm::vec3(0,0,radius)-centerPoint)*q) + centerPoint);
+	glm::quat q = glm::angleAxis(ofDegToRad(latitude), glm::vec3(1,0,0)) * glm::angleAxis(ofDegToRad(longitude), glm::vec3(0,1,0)) * glm::angleAxis(0.f, glm::vec3(0,0,1));
+	setPosition(q * (glm::vec3(0,0,radius)-centerPoint) + centerPoint);
 	setOrientation(q);
 	onOrientationChanged();
 	onPositionChanged();
@@ -535,10 +532,8 @@ void ofNode::restoreTransformGL(ofBaseRenderer * renderer) const {
 
 //----------------------------------------
 void ofNode::createMatrix() {
-	//if(isMatrixDirty) {
-	//	isMatrixDirty = false;
 	localTransformMatrix = glm::translate(glm::mat4(1.0), toGlm(position));
-	localTransformMatrix = localTransformMatrix * toGlm(ofMatrix4x4(orientation));
+	localTransformMatrix = localTransformMatrix * glm::toMat4((const glm::quat&)orientation);
 	localTransformMatrix = glm::scale(localTransformMatrix, toGlm(scale));
 	
 	updateAxis();

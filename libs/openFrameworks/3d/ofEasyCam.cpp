@@ -276,13 +276,13 @@ void ofEasyCam::updateRotation(){
 			bApplyInertia = false;
 			bDoRotate = false;
 		}
-		curRot = ofQuaternion(xRot, toOf(getXAxis()), yRot, toOf(getYAxis()), zRot, toOf(getZAxis()));
-		setPosition(toGlm(toOf(getGlobalPosition()-target.getGlobalPosition())*curRot) + target.getGlobalPosition());
+		curRot = glm::angleAxis(xRot, getXAxis()) * glm::angleAxis(yRot, getYAxis()) * glm::angleAxis(zRot, getZAxis());
+		setPosition(curRot * (getGlobalPosition()-target.getGlobalPosition()) + target.getGlobalPosition());
 		rotate(curRot);
 	}else{
-		curRot = ofQuaternion(xRot, toOf(prevAxisX), yRot, toOf(prevAxisY), zRot, toOf(prevAxisZ));
-		setPosition(toGlm(toOf(prevPosition-target.getGlobalPosition())*curRot) +target.getGlobalPosition());
-		setOrientation(prevOrientation * curRot);
+		curRot = glm::angleAxis(xRot, prevAxisX) * glm::angleAxis(yRot, prevAxisY) * glm::angleAxis(zRot, prevAxisZ);
+		setPosition(curRot * (prevPosition-target.getGlobalPosition()) + target.getGlobalPosition());
+		setOrientation(curRot * prevOrientation);
 	}
 }
 
@@ -332,8 +332,8 @@ void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
 	}else{
 		vFlip =  1;
 	}
-	zRot = -vFlip * ofRadToDeg(glm::orientedAngle(glm::normalize(glm::vec2(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y)),
-													glm::normalize(prevMouse - glm::vec2(viewport.x, viewport.y) - center)));
+	zRot = -vFlip * glm::orientedAngle(glm::normalize(glm::vec2(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y)),
+													glm::normalize(prevMouse - glm::vec2(viewport.x, viewport.y) - center));
 }
 
 void ofEasyCam::mouseDragged(ofMouseEventArgs & mouse){
@@ -373,12 +373,12 @@ void ofEasyCam::updateMouse(const ofMouseEventArgs & mouse){
 		yRot = 0;
 		zRot = 0;
 		if(bInsideArcball){
-			xRot = vFlip * -mouseVel.y * sensitivityRotX * 180 / std::min(viewport.width, viewport.height);
-			yRot = -mouseVel.x * sensitivityRotY * 180 / std::min(viewport.width, viewport.height);
+			xRot = vFlip * -mouseVel.y * sensitivityRotX * glm::pi<float>() / std::min(viewport.width, viewport.height);
+			yRot = -mouseVel.x * sensitivityRotY * glm::pi<float>() / std::min(viewport.width, viewport.height);
 		}else{
 			glm::vec2 center(viewport.width/2, viewport.height/2);
-			zRot = -vFlip * ofRadToDeg(glm::orientedAngle(glm::normalize(glm::vec2(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y)),
-														 glm::normalize(lastMouse - glm::vec2(viewport.x, viewport.y) - center)));
+			zRot = -vFlip * glm::orientedAngle(glm::normalize(glm::vec2(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y)),
+														 glm::normalize(lastMouse - glm::vec2(viewport.x, viewport.y) - center));
 			zRot *=  sensitivityRotZ;
 		}
 	}

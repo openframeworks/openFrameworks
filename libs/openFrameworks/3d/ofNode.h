@@ -96,8 +96,8 @@ public:
 	float getRoll() const;
 	
 	/// \brief Get the local orientation of the node as a quaternion.
-	/// \returns An ofQuaternion of local orientation (useful for complex rotations)
-	ofQuaternion getOrientationQuat() const;
+	/// \returns A quaternion of local orientation (useful for complex rotations)
+	glm::quat getOrientationQuat() const;
 	
 	/// \brief Get local orientation of node in degrees around x, y, and z axes.
 	/// \returns The local x, y and z axes orientation in degrees, as a 3D vector.
@@ -126,8 +126,8 @@ public:
 	glm::vec3 getGlobalPosition() const;
 	
 	/// \brief Get the global orientation of the node as a quaternion.
-	/// \returns An ofQuaternion of the global orientations(useful for complex rotations)
-	ofQuaternion getGlobalOrientation() const;
+	/// \returns An quaternion of the global orientations(useful for complex rotations)
+	glm::quat getGlobalOrientation() const;
 	
 	/// \brief Get global scale of node in xyz axes where 1 is default.
 	/// \returns The global scale in the xyz axes where 1 = 100% of size.
@@ -162,8 +162,8 @@ public:
 	void setGlobalPosition(const glm::vec3& p);
 
 	/// \brief Set local orientation with a quaternion.
-	/// \param param0 Desired local orientation as ref to an ofQuaternion.
-	void setOrientation(const ofQuaternion& q);
+	/// \param param0 Desired local orientation as ref to an glm::quat.
+	void setOrientation(const glm::quat& q);
 	
 	/// \brief Set local orientation with xyz euler angles.
 	/// \param param0 Desired local xyz angles in degrees, as ref to 3D vector. 
@@ -172,8 +172,8 @@ public:
 	void setOrientation(const glm::vec3& eulerAngles);
 	
 	/// \brief Set global orientation with a quaternion.
-	/// \param param0 Desired global orientation as ref to an ofQuaternion.	
-	void setGlobalOrientation(const ofQuaternion& q);
+	/// \param param0 Desired global orientation as ref to an glm::quat.
+	void setGlobalOrientation(const glm::quat& q);
 
 	/// \brief Set local uniform scale (x, y, and z are equally scaled).
 	/// \param param0 Desired scale for all axes as a float where 1 = 100%.
@@ -228,8 +228,8 @@ public:
 	void roll(float degrees);					
 	
 	/// \brief Rotate relative to current orientation by quaternion.
-	/// \param param0 Desired relative rotation change as a ref to ofQuaternion.	
-	void rotate(const ofQuaternion& q);	
+	/// \param param0 Desired relative rotation change as a ref to quaternion.
+	void rotate(const glm::quat& q);
 	
 	/// \brief Rotate relative to current orientation around arbitrary axis.
 	/// \param param0 Desired relative angle change in degrees as float.	
@@ -244,9 +244,9 @@ public:
 	void rotate(float degrees, float vx, float vy, float vz);
 	
 	/// \brief Rotate relative to current orientation by quaternion around point.
-	/// \param param0 Desired relative rotation change as a ref to ofQuaternion.
+	/// \param param0 Desired relative rotation change as a ref to quaternion.
 	/// \param param1 Point to rotate around in local xyz coordinates as ref to 3D vector.	
-	void rotateAround(const ofQuaternion& q, const glm::vec3& point);
+	void rotateAround(const glm::quat& q, const glm::vec3& point);
 	
 	/// \brief Rotate relative to current orientation around arbitrary axis around point.
 	/// \param param0 Desired relative angle change in degrees as float.    
@@ -350,11 +350,11 @@ protected:
 
 private:
 	void onParentPositionChanged(glm::vec3 & position) {onPositionChanged();}
-	void onParentOrientationChanged(ofQuaternion & orientation) {onOrientationChanged();}
+	void onParentOrientationChanged(glm::quat & orientation) {onOrientationChanged();}
 	void onParentScaleChanged(glm::vec3 & scale) {onScaleChanged();}
 
 	ofParameter<glm::vec3> position;
-	ofParameter<ofQuaternion> orientation;
+	ofParameter<glm::quat> orientation;
 	ofParameter<glm::vec3> scale;
 
 	std::array<glm::vec3,3> axis;

@@ -52,15 +52,15 @@ void ofMatrixStack::setOrientation(ofOrientation _orientation, bool vFlip){
 	if(!doesHWOrientation()){
 		switch(orientation) {
 			case OF_ORIENTATION_180:
-				orientationMatrix = glm::rotate(orientationMatrix, 180.f, glm::vec3{0.f, 0.f, 1.f});
+				orientationMatrix = glm::rotate(orientationMatrix, glm::pi<float>(), glm::vec3{0.f, 0.f, 1.f});
 				break;
 
 			case OF_ORIENTATION_90_RIGHT:
-				orientationMatrix = glm::rotate(orientationMatrix, 90.f, glm::vec3{0.f, 0.f, 1.f});
+				orientationMatrix = glm::rotate(orientationMatrix, glm::half_pi<float>(), glm::vec3{0.f, 0.f, 1.f});
 				break;
 
 			case OF_ORIENTATION_90_LEFT:
-				orientationMatrix = glm::rotate(orientationMatrix, -90.f, glm::vec3{0.f, 0.f, 1.f});
+				orientationMatrix = glm::rotate(orientationMatrix, -glm::half_pi<float>(), glm::vec3{0.f, 0.f, 1.f});
 				break;
 
 			case OF_ORIENTATION_DEFAULT:
@@ -348,7 +348,7 @@ void ofMatrixStack::scale(float xAmnt, float yAmnt, float zAmnt){
 }
 
 void ofMatrixStack::rotate(float degrees, float vecX, float vecY, float vecZ){
-	*currentMatrix = glm::rotate(*currentMatrix, degrees, glm::vec3(vecX, vecY, vecZ));
+	*currentMatrix = glm::rotate(*currentMatrix, ofDegToRad(degrees), glm::vec3(vecX, vecY, vecZ));
 	updatedRelatedMatrices();
 }
 
