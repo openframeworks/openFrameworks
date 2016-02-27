@@ -128,9 +128,9 @@ public:
 
 	ofVec2f(const glm::vec2 & v);
 	ofVec2f(const glm::vec3 & v);
+	ofVec2f(const glm::vec4 & v);
 
 	operator glm::vec2() const;
-	operator glm::vec3() const;
 
 	//---------------------
 	/// \name Access components
@@ -999,6 +999,7 @@ inline ofVec2f::ofVec2f( float _scalar ): x(_scalar), y(_scalar) {}
 inline ofVec2f::ofVec2f( float _x, float _y ):x(_x), y(_y) {}
 inline ofVec2f::ofVec2f(const glm::vec2 & v): x(v.x), y(v.y) {}
 inline ofVec2f::ofVec2f(const glm::vec3 & v): x(v.x), y(v.y) {}
+inline ofVec2f::ofVec2f(const glm::vec4 & v): x(v.x), y(v.y) {}
 
 // Getters and Setters.
 //
@@ -1020,10 +1021,6 @@ inline void ofVec2f::set( const ofVec2f& vec ) {
 
 inline ofVec2f::operator glm::vec2() const{
 	return glm::vec2(x,y);
-}
-
-inline ofVec2f::operator glm::vec3() const{
-	return glm::vec3(x,y,0);
 }
 
 // Check similarity/equality.

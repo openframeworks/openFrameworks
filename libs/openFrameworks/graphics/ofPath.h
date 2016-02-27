@@ -61,6 +61,7 @@ public:
 	/// \brief Draw a straight line from the current drawing position to the
 	/// location indicated by p.	
 	void lineTo(const glm::vec3 & p);
+	void lineTo(const glm::vec2 & p);
 	
 	/// \brief Draw a straight line from the current drawing position to the
 	/// location indicated by x,y.
@@ -75,6 +76,7 @@ public:
 	/// for instance, lineTo() or curveTo() will connect the location p to the new
 	/// location.
 	void moveTo(const glm::vec3 & p);
+	void moveTo(const glm::vec2 & p);
 
 	/// \brief Move the drawing position to x,y.z. This means that a subsequent
 	/// calls to, for instance, lineTo() or curveTo() will connect the
@@ -83,6 +85,7 @@ public:
 
 	/// \brief Draws a curve to p from the current drawing position
 	void curveTo(const glm::vec3 & p);
+	void curveTo(const glm::vec2 & p);
 
 	/// \brief Draws a curve to x,y from the current drawing position
 	void curveTo(float x, float y);
@@ -101,6 +104,7 @@ public:
 	/// ![polyline bezier](graphics/bezier.jpg)
 	/// The control points are shown in red.
 	void bezierTo(const glm::vec3 & cp1, const glm::vec3 & cp2, const glm::vec3 & p);
+	void bezierTo(const glm::vec2 & cp1, const glm::vec2 & cp2, const glm::vec2 & p);
 	
 	/// \brief Create a cubic bezier line from the current drawing point with the 2
 	/// control points indicated by the coordinates cx1, cy1 and cx2, cy2,
@@ -118,6 +122,7 @@ public:
 	/// x, y, z.	
 	/// ![Curves](graphics/curves.jpg)
 	void quadBezierTo(const glm::vec3 & cp1, const glm::vec3 & cp2, const glm::vec3 & p);
+	void quadBezierTo(const glm::vec2 & cp1, const glm::vec2 & cp2, const glm::vec2 & p);
 	
 	/// \brief Creates a quadratic bezier line in 2D space from the current drawing
 	/// point with the beginning indicated by the point p1, the control point
@@ -137,6 +142,8 @@ public:
 	/// while 180,0 is not.
 	void arc(const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
 	void arc(const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise);
+	void arc(const glm::vec2 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
+	void arc(const glm::vec2 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise);
 	
 	/// \brief Create an arc at x,y, which has the radiusX, radiusY, and begins at
 	/// angleBegin and ends at angleEnd. To draws a shape with a radius of 200 pixels
@@ -158,33 +165,43 @@ public:
 	void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd);
 
 	void arcNegative(const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
+	void arcNegative(const glm::vec2 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
 	void arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd);
 	void arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd);
 
 	void triangle(float x1,float y1,float x2,float y2,float x3, float y3);
 	void triangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3);
 	void triangle(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3);
+	void triangle(const glm::vec2 & p1, const glm::vec2 & p2, const glm::vec2 & p3);
 
 	void circle(float x, float y, float radius);
 	void circle(float x, float y, float z, float radius);
 	void circle(const glm::vec3 & p, float radius);
+	void circle(const glm::vec2 & p, float radius);
 
 	void ellipse(float x, float y, float width, float height);
 	void ellipse(float x, float y, float z, float width, float height);
 	void ellipse(const glm::vec3 & p, float width, float height);
+	void ellipse(const glm::vec2 & p, float width, float height);
 
 	void rectangle(const ofRectangle & r);
 	void rectangle(const glm::vec3 & p,float w,float h);
+	void rectangle(const glm::vec2 & p,float w,float h);
 	void rectangle(float x,float y,float w,float h);
 	void rectangle(float x,float y,float z,float w,float h);
 
 	void rectRounded(const ofRectangle & b, float r);
 	void rectRounded(const glm::vec3 & p, float w, float h, float r);
+	void rectRounded(const glm::vec2 & p, float w, float h, float r);
 	void rectRounded(float x, float y, float w, float h, float r);
 	void rectRounded(const glm::vec3 & p, float w, float h, float topLeftRadius,
 	                                                        float topRightRadius,
 	                                                        float bottomRightRadius,
 	                                                        float bottomLeftRadius);
+	void rectRounded(const glm::vec2 & p, float w, float h, float topLeftRadius,
+															float topRightRadius,
+															float bottomRightRadius,
+															float bottomLeftRadius);
 	void rectRounded(const ofRectangle & b, float topLeftRadius,
 	                                          float topRightRadius,
 	                                          float bottomRightRadius,
@@ -309,6 +326,8 @@ public:
 
 	void translate(const glm::vec3 & p);
 	void rotate(float az, const glm::vec3& axis );
+	void translate(const glm::vec2 & p);
+	void rotate(float az, const glm::vec2& axis );
 	
 	/// \brief Change the size of either the ofPolyline or ofSubPath instances that
 	/// the ofPath contains. These changes are non-reversible, so for instance

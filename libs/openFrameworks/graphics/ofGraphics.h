@@ -281,6 +281,7 @@ OF_DEPRECATED_MSG("Use ofGetBackgroundAuto instead",bool ofbClearBg());
 void ofDrawTriangle(float x1,float y1,float x2,float y2,float x3, float y3);
 void ofDrawTriangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3);
 void ofDrawTriangle(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3);
+void ofDrawTriangle(const glm::vec2 & p1, const glm::vec2 & p2, const glm::vec2 & p3);
 
 /// \brief Draws a circle, centered at x,y, with a given radius.
 ///
@@ -296,6 +297,7 @@ void ofDrawTriangle(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 
 void ofDrawCircle(float x, float y, float radius);
 void ofDrawCircle(float x, float y, float z, float radius);
 void ofDrawCircle(const glm::vec3 & p, float radius);
+void ofDrawCircle(const glm::vec2 & p, float radius);
 
 /// \brief Draws an ellipse from point (x,y) with a given width (w) and height (h).
 /// ~~~~{.cpp}
@@ -306,6 +308,7 @@ void ofDrawCircle(const glm::vec3 & p, float radius);
 void ofDrawEllipse(float x, float y, float width, float height);
 void ofDrawEllipse(float x, float y, float z, float width, float height);
 void ofDrawEllipse(const glm::vec3 & p, float width, float height);
+void ofDrawEllipse(const glm::vec2 & p, float width, float height);
 
 /// Draws a line between two points: (x1,y1),(x2,y2).
 /// ~~~~{.cpp}
@@ -316,6 +319,7 @@ void ofDrawEllipse(const glm::vec3 & p, float width, float height);
 void ofDrawLine(float x1,float y1,float x2,float y2);
 void ofDrawLine(float x1,float y1,float z1,float x2,float y2,float z2);
 void ofDrawLine(const glm::vec3 & p1, const glm::vec3 & p2);
+void ofDrawLine(const glm::vec2 & p1, const glm::vec2 & p2);
 
 /// \brief Draws a rectangle from point x,y with a given width and height.
 /// ~~~~{.cpp}
@@ -352,6 +356,7 @@ void ofDrawRectangle(const ofRectangle & r);
 /// }
 /// ~~~~
 void ofDrawRectangle(const glm::vec3 & p,float w,float h);
+void ofDrawRectangle(const glm::vec2 & p,float w,float h);
 
 
 /// Draws an rectangle from point X, Y at depth Z with a given width and height.
@@ -389,6 +394,7 @@ void ofDrawRectRounded(const ofRectangle & b, float r);
 /// }
 /// ~~~~
 void ofDrawRectRounded(const glm::vec3 & p, float w, float h, float r);
+void ofDrawRectRounded(const glm::vec2 & p, float w, float h, float r);
 
 
 /// \brief Draws a rectangle from point X, Y with a given width, height and radius of
@@ -422,6 +428,10 @@ void ofDrawRectRounded(float x, float y, float z, float w, float h, float r);
 /// }
 /// ~~~~
 void ofDrawRectRounded(const glm::vec3 & p, float w, float h, float topLeftRadius,
+					   float topRightRadius,
+					   float bottomRightRadius,
+					   float bottomLeftRadius);
+void ofDrawRectRounded(const glm::vec2 & p, float w, float h, float topLeftRadius,
 					   float topRightRadius,
 					   float bottomRightRadius,
 					   float bottomLeftRadius);
@@ -544,7 +554,11 @@ void ofBeginShape();
 void ofVertex(float x, float y);
 void ofVertex(float x, float y, float z);
 void ofVertex(glm::vec3 & p);
+void ofVertex(glm::vec2 & p);
 void ofVertices(const vector <glm::vec3> & polyPoints);
+void ofVertices(const vector <glm::vec2> & polyPoints);
+void ofVertices(const vector <ofVec3f> & polyPoints);
+void ofVertices(const vector <ofVec2f> & polyPoints);
 
 /// \brief Specifies a single point of a shape. The difference from ofVertex is that
 /// the line describing the edge of the shape between two points will be a
@@ -555,15 +569,20 @@ void ofVertices(const vector <glm::vec3> & polyPoints);
 void ofCurveVertex(float x, float y);
 void ofCurveVertex(float x, float y, float z);
 void ofCurveVertex(glm::vec3 & p);
+void ofCurveVertex(glm::vec2 & p);
 
 /// \brief Draws a curve through a series of vertices stored as a vector of
 /// ofPoints. Should be called between ofBeginShape() and ofEndShape().
 void ofCurveVertices(const vector <glm::vec3> & curvePoints);
+void ofCurveVertices(const vector <glm::vec2> & curvePoints);
+void ofCurveVertices(const vector <ofVec3f> & curvePoints);
+void ofCurveVertices(const vector <ofVec2f> & curvePoints);
 
 /// \brief Describes a bezier curve through three points of a shape. To be called
 /// between ofBeginShape() and ofEndShape().
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
 void ofBezierVertex(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3);
+void ofBezierVertex(const glm::vec2 & p1, const glm::vec2 & p2, const glm::vec2 & p3);
 void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 
 
@@ -639,6 +658,7 @@ void ofDrawBitmapString(const T & textString, float x, float y, float z);
 template<>
 void ofDrawBitmapString(const string & textString, float x, float y, float z);
 void ofDrawBitmapStringHighlight(string text, const glm::vec3& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
+void ofDrawBitmapStringHighlight(string text, const glm::vec2& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
 void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
 
 
@@ -928,6 +948,7 @@ glm::mat4 ofGetCurrentNormalMatrix();
 void ofTranslate(float x, float y, float z = 0);
 
 void ofTranslate(const glm::vec3 & p);
+void ofTranslate(const glm::vec2 & p);
 
 void ofScale(float xAmnt, float yAmnt, float zAmnt = 1);
 
@@ -1104,6 +1125,12 @@ void ofEndSaveScreenAsSVG();
 template<typename T>
 void ofDrawBitmapString(const T & textString, const glm::vec3 & p){
 	ofDrawBitmapString(textString, p.x, p.y, p.z);
+}
+
+//--------------------------------------------------
+template<typename T>
+void ofDrawBitmapString(const T & textString, const glm::vec2 & p){
+	ofDrawBitmapString(textString, p.x, p.y);
 }
 
 //--------------------------------------------------

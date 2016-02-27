@@ -680,6 +680,11 @@ void ofDrawTriangle(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 
 }
 
 //----------------------------------------------------------
+void ofDrawTriangle(const glm::vec2 & p1, const glm::vec2 & p2, const glm::vec2 & p3){
+	ofDrawTriangle(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+}
+
+//----------------------------------------------------------
 void ofDrawTriangle(float x1,float y1,float x2,float y2,float x3, float y3){
 	ofDrawTriangle(x1, y1, 0.0f, x2, y2, 0.0f, x3, y3, 0.0f);
 }
@@ -692,6 +697,11 @@ void ofDrawTriangle(float x1,float y1,float z1,float x2,float y2,float z2,float 
 //----------------------------------------------------------
 void ofDrawCircle(const glm::vec3 & p, float radius){
 	ofDrawCircle(p.x, p.y, p.z, radius);
+}
+
+//----------------------------------------------------------
+void ofDrawCircle(const glm::vec2 & p, float radius){
+	ofDrawCircle(p.x, p.y, 0.0, radius);
 }
 
 //----------------------------------------------------------
@@ -710,6 +720,11 @@ void ofDrawEllipse(const glm::vec3 & p, float width, float height){
 }
 
 //----------------------------------------------------------
+void ofDrawEllipse(const glm::vec2 & p, float width, float height){
+	ofDrawEllipse(p.x, p.y, width, height);
+}
+
+//----------------------------------------------------------
 void ofDrawEllipse(float x, float y, float width, float height){
 	ofDrawEllipse(x,y,0,width,height);
 }
@@ -722,6 +737,11 @@ void ofDrawEllipse(float x, float y, float z, float width, float height){
 //----------------------------------------------------------
 void ofDrawLine(const glm::vec3 & p1, const glm::vec3 & p2){
 	ofDrawLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+}
+
+//----------------------------------------------------------
+void ofDrawLine(const glm::vec2 & p1, const glm::vec2 & p2){
+	ofDrawLine(p1.x, p1.y, p2.x, p2.y);
 }
 
 //----------------------------------------------------------
@@ -745,6 +765,11 @@ void ofDrawRectangle(const glm::vec3 & p,float w,float h){
 }
 
 //----------------------------------------------------------
+void ofDrawRectangle(const glm::vec2 & p,float w,float h){
+	ofDrawRectangle(p.x, p.y, w, h);
+}
+
+//----------------------------------------------------------
 void ofDrawRectangle(float x,float y,float w,float h){
 	ofDrawRectangle(x, y, 0.0f, w, h);
 }
@@ -765,6 +790,11 @@ void ofDrawRectRounded(const glm::vec3 & p, float w, float h, float r){
 }
 
 //----------------------------------------------------------
+void ofDrawRectRounded(const glm::vec2 & p, float w, float h, float r){
+	ofDrawRectRounded(p.x, p.y, 0.0, w, h, r,r,r,r);
+}
+
+//----------------------------------------------------------
 void ofDrawRectRounded(float x, float y, float w, float h, float r){
 	ofDrawRectRounded(x,y,0.0f,w,h,r,r,r,r);
 }
@@ -780,6 +810,14 @@ void ofDrawRectRounded(const glm::vec3 & p, float w, float h, float topLeftRadiu
                                                         float bottomRightRadius,
                                                         float bottomLeftRadius){
 	ofDrawRectRounded(p.x,p.y,p.z,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
+}
+
+//----------------------------------------------------------
+void ofDrawRectRounded(const glm::vec2 & p, float w, float h, float topLeftRadius,
+														float topRightRadius,
+														float bottomRightRadius,
+														float bottomLeftRadius){
+	ofDrawRectRounded(p.x,p.y,0.0,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
 }
 
 //----------------------------------------------------------
@@ -1020,10 +1058,36 @@ void ofVertex(glm::vec3 & p){
 	ofGetCurrentRenderer()->getPath().lineTo(p);
 }
 
+//---------------------------------------------------
+void ofVertex(glm::vec2 & p){
+	ofGetCurrentRenderer()->getPath().lineTo(glm::vec3(p, 0.0));
+}
+
 //----------------------------------------------------------
 void ofVertices( const vector <glm::vec3> & polyPoints ){
-	for( int k = 0; k < (int)polyPoints.size(); k++){
-		ofGetCurrentRenderer()->getPath().lineTo(polyPoints[k]);
+	for( const auto & p: polyPoints ){
+		ofGetCurrentRenderer()->getPath().lineTo(p);
+	}
+}
+
+//----------------------------------------------------------
+void ofVertices( const vector <glm::vec2> & polyPoints ){
+	for( const auto & p: polyPoints ){
+		ofGetCurrentRenderer()->getPath().lineTo(glm::vec3(p, 0.0));
+	}
+}
+
+//----------------------------------------------------------
+void ofVertices( const vector <ofVec3f> & polyPoints ){
+	for( const auto & p: polyPoints ){
+		ofGetCurrentRenderer()->getPath().lineTo(p);
+	}
+}
+
+//----------------------------------------------------------
+void ofVertices( const vector <ofVec2f> & polyPoints ){
+	for( const auto & p: polyPoints ){
+		ofGetCurrentRenderer()->getPath().lineTo(p);
 	}
 }
 
@@ -1039,8 +1103,29 @@ void ofCurveVertex(float x, float y, float z){
 
 //----------------------------------------------------------
 void ofCurveVertices( const vector <glm::vec3> & curvePoints){
-	for( int k = 0; k < (int)curvePoints.size(); k++){
-		ofGetCurrentRenderer()->getPath().curveTo(curvePoints[k]);
+	for( const auto & p: curvePoints ){
+		ofGetCurrentRenderer()->getPath().curveTo(p);
+	}
+}
+
+//----------------------------------------------------------
+void ofCurveVertices( const vector <glm::vec2> & curvePoints){
+	for( const auto & p: curvePoints ){
+		ofGetCurrentRenderer()->getPath().curveTo(glm::vec3(p, 0.0));
+	}
+}
+
+//----------------------------------------------------------
+void ofCurveVertices( const vector <ofVec3f> & curvePoints){
+	for( const auto & p: curvePoints ){
+		ofGetCurrentRenderer()->getPath().curveTo(p);
+	}
+}
+
+//----------------------------------------------------------
+void ofCurveVertices( const vector <ofVec2f> & curvePoints){
+	for( const auto & p: curvePoints ){
+		ofGetCurrentRenderer()->getPath().curveTo(p);
 	}
 }
 
@@ -1050,12 +1135,23 @@ void ofCurveVertex(glm::vec3 & p){
 }
 
 //---------------------------------------------------
+void ofCurveVertex(glm::vec2 & p){
+	ofGetCurrentRenderer()->getPath().curveTo(glm::vec3(p, 0.0));
+}
+
+//---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3){
 	ofGetCurrentRenderer()->getPath().bezierTo(x1,y1,x2,y2,x3,y3);
 }
 
+//---------------------------------------------------
 void ofBezierVertex(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3){
 	ofGetCurrentRenderer()->getPath().bezierTo(p1, p2, p3);
+}
+
+//---------------------------------------------------
+void ofBezierVertex(const glm::vec2 & p1, const glm::vec2 & p2, const glm::vec2 & p3){
+	ofGetCurrentRenderer()->getPath().bezierTo(glm::vec3(p1, 0.0), glm::vec3(p2,0.0), glm::vec3(p3,0.0));
 }
 
 //---------------------------------------------------
@@ -1096,6 +1192,11 @@ void ofDrawBitmapString(const string & textString, float x, float y, float z){
 
 //--------------------------------------------------
 void ofDrawBitmapStringHighlight(string text, const glm::vec3& position, const ofColor& background, const ofColor& foreground) {
+	ofDrawBitmapStringHighlight(text, position.x, position.y, background, foreground);
+}
+
+//--------------------------------------------------
+void ofDrawBitmapStringHighlight(string text, const glm::vec2& position, const ofColor& background, const ofColor& foreground) {
 	ofDrawBitmapStringHighlight(text, position.x, position.y, background, foreground);
 }
 
