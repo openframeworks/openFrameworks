@@ -2089,9 +2089,9 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 			auto v2 = vertices[i2];
 			auto v3 = vertices[i3];
 			//make 1 vertice at the center of each edge and project it onto the sphere
-			vertices.push_back(glm::normalize((const glm::vec3&)v1+v2));
-			vertices.push_back(glm::normalize((const glm::vec3&)v2+v3));
-			vertices.push_back(glm::normalize((const glm::vec3&)v1+v3));
+			vertices.push_back(glm::normalize(toGlm(v1+v2)));
+			vertices.push_back(glm::normalize(toGlm(v2+v3)));
+			vertices.push_back(glm::normalize(toGlm(v1+v3)));
 			//now recreate indices
 			newFaces.push_back(i1);
 			newFaces.push_back(i12);
