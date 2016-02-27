@@ -186,7 +186,7 @@ private:
 	unsigned long lastTap;
 
     /// \brief The current rotation quaternion.
-	ofQuaternion curRot;
+	glm::quat curRot;
 
     /// \brief The previous X axis.
 	glm::vec3 prevAxisX;
@@ -201,7 +201,7 @@ private:
 	glm::vec3 prevPosition;
 
     /// \brief The previous camera orientation.
-	ofQuaternion prevOrientation;
+	glm::quat prevOrientation;
 
 	ofRectangle viewport;
 

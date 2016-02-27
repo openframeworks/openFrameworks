@@ -862,16 +862,17 @@ void ofCairoRenderer::multMatrix (const float * m){
 void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
     if(!surface || !cr) return;
 
+	auto radians = ofDegToRad(degrees);
     // we can only do Z-axis rotations via cairo_matrix_rotate.
     if(vecZ == 1.0f) {
     	cairo_matrix_t matrix;
     	cairo_get_matrix(cr,&matrix);
-        cairo_matrix_rotate(&matrix,degrees*DEG_TO_RAD);
+		cairo_matrix_rotate(&matrix,radians);
         cairo_set_matrix(cr,&matrix);
     }
 
     if(!b3D) return;
-	modelView = glm::rotate(modelView, degrees, glm::vec3(vecX,vecY,vecZ));
+	modelView = glm::rotate(modelView, radians, glm::vec3(vecX,vecY,vecZ));
 }
 
 //----------------------------------------------------------
@@ -958,7 +959,7 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, float fo
 
 	switch(orientation) {
 		case OF_ORIENTATION_180:
-			modelView = glm::rotate(modelView,-180.f,glm::vec3(0,0,1));
+			modelView = glm::rotate(modelView,-glm::pi<float>(),glm::vec3(0,0,1));
 			if(isVFlipped()){
 				modelView = glm::scale(modelView, glm::vec3(-1,1,1));
 				modelView = glm::translate(modelView, glm::vec3(width,0,0));
@@ -969,7 +970,7 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, float fo
 			break;
 
 		case OF_ORIENTATION_90_RIGHT:
-			modelView = glm::rotate(modelView,-90.f,glm::vec3(0,0,1));
+			modelView = glm::rotate(modelView,-glm::half_pi<float>(),glm::vec3(0,0,1));
 			if(!isVFlipped()){
 				modelView = glm::scale(modelView, glm::vec3(1,-1,1));
 				modelView = glm::translate(modelView, glm::vec3(-width,-height,0));
@@ -977,7 +978,7 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, float fo
 			break;
 
 		case OF_ORIENTATION_90_LEFT:
-			modelView = glm::rotate(modelView,90.f,glm::vec3(0,0,1));
+			modelView = glm::rotate(modelView,glm::half_pi<float>(),glm::vec3(0,0,1));
 			if(isVFlipped()){
 				modelView = glm::translate(modelView, glm::vec3(0,-height,0));
 			}else{
@@ -1016,7 +1017,7 @@ void ofCairoRenderer::setupScreenOrtho(float width, float height, float nearDist
 
 	switch(orientation) {
 		case OF_ORIENTATION_180:
-			modelView = glm::rotate(modelView,-180.f,glm::vec3(0,0,1));
+			modelView = glm::rotate(modelView,-glm::pi<float>(),glm::vec3(0,0,1));
 			if(isVFlipped()){
 				modelView = glm::scale(modelView, glm::vec3(-1,1,1));
 				modelView = glm::translate(modelView, glm::vec3(width,0,0));
@@ -1027,7 +1028,7 @@ void ofCairoRenderer::setupScreenOrtho(float width, float height, float nearDist
 			break;
 
 		case OF_ORIENTATION_90_RIGHT:
-			modelView = glm::rotate(modelView,-90.f,glm::vec3(0,0,1));
+			modelView = glm::rotate(modelView,-glm::half_pi<float>(),glm::vec3(0,0,1));
 			if(!isVFlipped()){
 				modelView = glm::scale(modelView, glm::vec3(1,-1,1));
 				modelView = glm::translate(modelView, glm::vec3(-width,-height,0));
@@ -1035,7 +1036,7 @@ void ofCairoRenderer::setupScreenOrtho(float width, float height, float nearDist
 			break;
 
 		case OF_ORIENTATION_90_LEFT:
-			modelView = glm::rotate(modelView,90.f,glm::vec3(0,0,1));
+			modelView = glm::rotate(modelView,glm::half_pi<float>(),glm::vec3(0,0,1));
 			if(isVFlipped()){
 				modelView = glm::translate(modelView, glm::vec3(0,-height,0));
 			}else{

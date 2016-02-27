@@ -410,7 +410,7 @@ void of3dGraphics::drawGrid(float stepSize, size_t numberOfSteps, bool labels, b
 		c.setHsb(255.0f / 3.0f, 200.0f, 255.0f);
 		renderer->setColor(c);
 		glm::mat4 m;
-		m = glm::rotate(m, 90.f, glm::vec3(0,0,-1));
+		m = glm::rotate(m, glm::half_pi<float>(), glm::vec3(0,0,-1));
 		renderer->pushMatrix();
 		renderer->multMatrix(m);
 		drawGridPlane(stepSize, numberOfSteps, labels);
@@ -420,7 +420,7 @@ void of3dGraphics::drawGrid(float stepSize, size_t numberOfSteps, bool labels, b
 		c.setHsb(255.0f * 2.0f / 3.0f, 200.0f, 255.0f);
 		renderer->setColor(c);
 		glm::mat4 m;
-		m = glm::rotate(m, 90.f, glm::vec3(0,1,0));
+		m = glm::rotate(m, glm::half_pi<float>(), glm::vec3(0,1,0));
 		renderer->pushMatrix();
 		renderer->multMatrix(m);
 		drawGridPlane(stepSize, numberOfSteps, labels);

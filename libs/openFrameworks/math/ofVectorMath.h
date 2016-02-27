@@ -64,6 +64,16 @@ inline const glm::vec4 & toGlm(const glm::vec4 & v){
 }
 
 //--------------------------------------------------------------
+inline const glm::quat toGlm(const ofQuaternion & q){
+	return glm::quat(q.w(), glm::vec3(q.x(), q.y(), q.z()));
+}
+
+//--------------------------------------------------------------
+inline const glm::quat & toGlm(const glm::quat & q){
+	return q;
+}
+
+//--------------------------------------------------------------
 inline ostream& operator<<(ostream& os, const glm::vec3& vec) {
 	os << vec.x << ", " << vec.y << ", " << vec.z;
 	return os;
