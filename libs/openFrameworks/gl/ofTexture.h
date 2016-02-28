@@ -533,6 +533,19 @@ class ofTexture : public ofBaseDraws {
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
 	void loadData(const ofFloatPixels & pix, int glFormat);
 
+	/// \brief Load byte pixel data.
+	///
+	/// glFormat can be different to the internal format of the texture on each
+	/// load, i.e. we can upload GL_BGRA pixels into a GL_RGBA texture but the
+	/// number of channels need to match according to the OpenGL standard.
+	///
+	/// \param data Pointer to byte pixel data. Must not be nullptr.
+	/// \param w Pixel data width.
+	/// \param h Pixel data height.
+	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
+	/// \param glType the OpenGL type of the data.
+    void loadData(const void * data, int w, int h, int glFormat, int glType);
+	
 #ifndef TARGET_OPENGLES
 	/// \brief Load pixels from an ofBufferObject
 	///
@@ -941,18 +954,6 @@ class ofTexture : public ofBaseDraws {
 	                       ///< For backwards compatibility.
 
 protected:
-	/// \brief Load byte pixel data.
-	///
-	/// glFormat can be different to the internal format of the texture on each
-	/// load, i.e. we can upload GL_BGRA pixels into a GL_RGBA texture but the
-	/// number of channels need to match according to the OpenGL standard.
-	///
-	/// \param data Pointer to byte pixel data. Must not be nullptr.
-	/// \param w Pixel data width.
-	/// \param h Pixel data height.
-	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
-	/// \param glType the OpenGL type of the data.
-    void loadData(const void * data, int w, int h, int glFormat, int glType);
 
 	/// \brief Enable a texture target.
 	/// \param textureLocation the OpenGL texture ID to enable as a target.
