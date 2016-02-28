@@ -233,17 +233,17 @@ void of3dPrimitive::drawNormals(float length, bool bFaceNormals) const{
                     vert = (vertices[i-2]+vertices[i-1]+vertices[i]) / 3;
                 }
                 normalsMesh.setVertex(i*2, vert);
-				normal = glm::normalize((const glm::vec3&)normals[i]);
+				normal = glm::normalize(toGlm(normals[i]));
                 normal *= length;
-                normalsMesh.setVertex(i*2+1, normal+vert);
+				normalsMesh.setVertex(i*2+1, vert+normal);
             }
         } else {
 			for(size_t i = 0; i < normals.size(); i++) {
                 vert = vertices[i];
-				normal = glm::normalize((const glm::vec3&)normals[i]);
+				normal = glm::normalize(toGlm(normals[i]));
                 normalsMesh.setVertex( i*2, vert);
                 normal *= length;
-                normalsMesh.setVertex(i*2+1, normal+vert);
+				normalsMesh.setVertex(i*2+1, vert+normal);
             }
         }
         normalsMesh.draw();

@@ -1,6 +1,7 @@
 #include "ofAppRunner.h"
 #include "ofBaseTypes.h"
 #include "ofMesh.h"
+#include "ofVectorMath.h"
 #include <map>
 
 //--------------------------------------------------------------
@@ -1719,8 +1720,8 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 		for(ofIndexType i = 0; i < verts.size()-1; i++) {
 			for(ofIndexType j = i+1; j < verts.size(); j++) {
 				if(i != j) {
-					V& v1 = verts[i];
-					V& v2 = verts[j];
+					const auto& v1 = toGlm(verts[i]);
+					const auto& v2 = toGlm(verts[j]);
 					if( glm::distance(v1, v2) <= epsilon ) {
 						// average the location //
 						verts[i] = (v1+v2)/2.f;
@@ -2308,18 +2309,18 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cylinder( float radius, float height, int rad
 		for(int ix = 0; ix < radiusSegments; ix++) {
 
 			//newRad = ofMap((float)iy, 0, heightSegments-1, 0.0, radius);
-			vert.x = cos((float)ix*angleIncRadius) * radius;
-			vert.y = heightInc*((float)iy) - halfH;
-			vert.z = sin((float)ix*angleIncRadius) * radius;
+			vert.x = cos(ix*angleIncRadius) * radius;
+			vert.y = heightInc*float(iy) - halfH;
+			vert.z = sin(ix*angleIncRadius) * radius;
 
-			tcoord.x = (float)ix/((float)radiusSegments-1.f);
+			tcoord.x = float(ix)/(float(radiusSegments)-1.f);
 			tcoord.y = ofMap(iy, 0, heightSegments-1, minTexYNormalized, maxTexYNormalized );
 
 			mesh.addTexCoord( tcoord );
 			mesh.addVertex( vert );
 			mesh.addNormal( normal );
 
-			glm::rotate(toGlm(normal), -angleIncRadius, up);
+			normal = glm::rotate(toGlm(normal), -angleIncRadius, up);
 
 		}
 	}
@@ -2466,11 +2467,9 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cone( float radius, float height, int radiusS
 				vert.z = sin((float)ix*angleIncRadius) * newRad;
 			}
 
-			auto diff = toGlm(vert-startVec);
+			auto diff = toGlm(vert - startVec);
 			auto crossed = glm::cross(up, toGlm(vert));
-			crossed = glm::normalize(crossed);
-			normal = glm::perp(crossed, diff);
-
+			normal = glm::cross(crossed, diff);
 			mesh.addNormal( glm::normalize(toGlm(normal)) );
 
 		}
