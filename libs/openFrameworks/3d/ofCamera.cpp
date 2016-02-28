@@ -86,8 +86,8 @@ void ofCamera::setupOffAxisViewPortal(const glm::vec3 & topLeft, const glm::vec3
 
 	//lensoffset
 	glm::vec2 lensOffset;
-	lensOffset.x = glm::dot(-bottomLeftToCam, bottomEdgeNorm) * 2.0f / glm::length(bottomEdge) + 1.0f;
-	lensOffset.y = glm::dot(-bottomLeftToCam, leftEdgeNorm) * 2.0f / glm::length(leftEdge) + 1.0f;
+	lensOffset.x = -glm::dot(bottomLeftToCam, bottomEdgeNorm) * 2.0f / glm::length(bottomEdge) + 1.0f;
+	lensOffset.y = -glm::dot(bottomLeftToCam, leftEdgeNorm) * 2.0f / glm::length(leftEdge) + 1.0f;
 	setLensOffset(lensOffset);
 	setAspectRatio( glm::length(bottomEdge) / glm::length(leftEdge) );
 	auto distanceAlongOpticalAxis = fabs(glm::dot(bottomLeftToCam, cameraLookVector));
