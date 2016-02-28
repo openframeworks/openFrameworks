@@ -553,8 +553,8 @@ void ofBeginShape();
 /// ofEndShape().
 void ofVertex(float x, float y);
 void ofVertex(float x, float y, float z);
-void ofVertex(glm::vec3 & p);
-void ofVertex(glm::vec2 & p);
+void ofVertex(const glm::vec3 & p);
+void ofVertex(const glm::vec2 & p);
 void ofVertices(const vector <glm::vec3> & polyPoints);
 void ofVertices(const vector <glm::vec2> & polyPoints);
 void ofVertices(const vector <ofVec3f> & polyPoints);
@@ -568,8 +568,8 @@ void ofVertices(const vector <ofVec2f> & polyPoints);
 /// This function has to be called between ofBeginShape() and ofEndShape().
 void ofCurveVertex(float x, float y);
 void ofCurveVertex(float x, float y, float z);
-void ofCurveVertex(glm::vec3 & p);
-void ofCurveVertex(glm::vec2 & p);
+void ofCurveVertex(const glm::vec3 & p);
+void ofCurveVertex(const glm::vec2 & p);
 
 /// \brief Draws a curve through a series of vertices stored as a vector of
 /// ofPoints. Should be called between ofBeginShape() and ofEndShape().
