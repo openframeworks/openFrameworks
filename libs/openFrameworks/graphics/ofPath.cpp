@@ -791,12 +791,13 @@ void ofPath::translate(const glm::vec2 & p){
 
 //----------------------------------------------------------
 void ofPath::rotate(float az, const glm::vec3& axis ){
+	auto radians = ofDegToRad(az);
 	if(mode==COMMANDS){
 		for(int j=0;j<(int)commands.size();j++){
-			glm::rotate(commands[j].to, ofDegToRad(az), axis);
+			commands[j].to = glm::rotate(commands[j].to, radians, axis);
 			if(commands[j].type==Command::bezierTo || commands[j].type==Command::quadBezierTo){
-				glm::rotate(commands[j].cp1, ofDegToRad(az), axis);
-				glm::rotate(commands[j].cp2, ofDegToRad(az), axis);
+				commands[j].cp1 = glm::rotate(commands[j].cp1, radians, axis);
+				commands[j].cp2 = glm::rotate(commands[j].cp2, radians, axis);
 			}
 			if(commands[j].type==Command::arc || commands[j].type==Command::arcNegative){
 				commands[j].angleBegin += az;
@@ -806,7 +807,7 @@ void ofPath::rotate(float az, const glm::vec3& axis ){
 	}else{
 		for(int i=0;i<(int)polylines.size();i++){
 			for(int j=0;j<(int)polylines[i].size();j++){
-				glm::rotate(toGlm(polylines[i][j]), ofDegToRad(az), axis);
+				polylines[i][j] = glm::rotate(toGlm(polylines[i][j]), radians, axis);
 			}
 		}
 	}
