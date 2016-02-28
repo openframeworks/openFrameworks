@@ -1054,12 +1054,12 @@ void ofVertex(float x, float y, float z){
 }
 
 //---------------------------------------------------
-void ofVertex(glm::vec3 & p){
+void ofVertex(const glm::vec3 & p){
 	ofGetCurrentRenderer()->getPath().lineTo(p);
 }
 
 //---------------------------------------------------
-void ofVertex(glm::vec2 & p){
+void ofVertex(const glm::vec2 & p){
 	ofGetCurrentRenderer()->getPath().lineTo(glm::vec3(p, 0.0));
 }
 
@@ -1130,12 +1130,12 @@ void ofCurveVertices( const vector <ofVec2f> & curvePoints){
 }
 
 //---------------------------------------------------
-void ofCurveVertex(glm::vec3 & p){
+void ofCurveVertex(const glm::vec3 & p){
 	ofGetCurrentRenderer()->getPath().curveTo(p);
 }
 
 //---------------------------------------------------
-void ofCurveVertex(glm::vec2 & p){
+void ofCurveVertex(const glm::vec2 & p){
 	ofGetCurrentRenderer()->getPath().curveTo(glm::vec3(p, 0.0));
 }
 
