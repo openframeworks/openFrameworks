@@ -27,6 +27,7 @@ void ofInitFreeImage(bool deinit=false){
 	}
 	if(*bFreeImageInited && deinit){
 		FreeImage_DeInitialise();
+		*bFreeImageInited = false;
 	}
 }
 
