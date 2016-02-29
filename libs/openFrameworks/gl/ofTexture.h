@@ -21,7 +21,7 @@
 
 
 
-/// \section Global texture settings
+/// \section Global Texture Settings
 /// \brief Check whether OF is using GL_TEXTURE_RECTANGLE rectangular or GL_TEXTURE_2D textures.
 /// \sa ofEnableArbTex()
 /// \returns true if using GL_TEXTURE_RECTANGLE textures, false if using GL_TEXTURE_2D textures.
@@ -243,7 +243,7 @@ bool ofIsTextureEdgeHackEnabled();
 class ofTexture : public ofBaseDraws {
 	public :
 
-	/// \section Construction and allocation
+	/// \section Construction and Allocation
 	/// \brief Construct an ofTexture instance.
 	ofTexture();
 
@@ -422,7 +422,7 @@ class ofTexture : public ofBaseDraws {
 	/// references to the internal texture ID.
 	virtual ~ofTexture();
 
-	/// \section Update texture
+	/// \section Update Texture
 	/// \brief Copy a given ofTexture into this texture.
 	/// \param mom The ofTexture to copy from. Reuses internal GL texture ID.
 	ofTexture& operator=(const ofTexture & mom);
@@ -693,7 +693,7 @@ class ofTexture : public ofBaseDraws {
 
 	const ofTexture * getAlphaMask() const;
 
-	/// \section Size and coordinates
+	/// \section Size and Coordinates
 	/// \brief Display height of texture.
 	///
 	/// Return value is pixel size (default) or normalized (0 - 1) if ofEnableNormalizedTextures() is set to true.
@@ -745,7 +745,7 @@ class ofTexture : public ofBaseDraws {
 	/// \returns Texture coordinate or ofPoint::zero() if texture is not allocated.
 	ofPoint getCoordFromPercent(float xPts, float yPts) const;
 
-	/// \section Texture settings
+	/// \section Texture Settings
 	/// \brief Set another ofTexture to use as an alpha mask.
 	/// \param mask The texture to use as alpha mask.
 	void setAlphaMask(ofTexture & mask);
@@ -823,7 +823,7 @@ class ofTexture : public ofBaseDraws {
 	/// \sa https://en.wikipedia.org/wiki/Swizzling_(computer_graphics)
 	void setSwizzle(GLenum srcSwizzle, GLenum dstChannel);
 
-	/// \section Read pixel data
+	/// \section Read Pixel Data
 	/// \brief Read current texture data from the GPU into pixels.
 	///
 	/// \warning This is not supported in OpenGL ES and does nothing.
@@ -851,7 +851,7 @@ class ofTexture : public ofBaseDraws {
 	void copyTo(ofBufferObject & buffer) const;
 #endif
 
-	/// \section Texture data
+	/// \section Texture Data
 	/// \brief Internal texture data access.
 	///
 	/// This returns the internal texture data for this texture, for instance,
