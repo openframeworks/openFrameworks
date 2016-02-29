@@ -195,7 +195,6 @@ function createPackage {
 		rm -Rf graphics
 		rm -Rf gui
 		rm -Rf input_output
-		rm -Rf ios
 		rm -Rf math
 		rm -Rf shader
 		rm -Rf sound
