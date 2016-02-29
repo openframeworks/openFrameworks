@@ -556,8 +556,8 @@ public:
     /// \section Standardization
     /// \brief Standardize the rectangle
     ///
-    /// "Standardized" rectangles are rectangles whose width and height are positive: width >= 0 and height
-    /// >= 0. This method can be used to ensure that the rectangle is
+    /// "Standardized" rectangles are rectangles whose width and height are positive: width >= 0
+	/// and height >= 0. This method can be used to ensure that the rectangle is
     /// "standardized". If the rectangle is non-standard, it will modify the x /
     /// width and y / height values into their respective standardized versions.
     void standardize();
