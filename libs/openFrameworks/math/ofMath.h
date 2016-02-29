@@ -543,7 +543,7 @@ int ofSign(float n);
 /// \param a The first floating point type variable to compare.
 /// \param b The second floating point type variable to compare.
 /// \returns True if `std::abs(x - y) <= std::numeric_limits<Type>::epsilon() * std::abs(x)`.
-double ofIsFloatEqual(double a, double b)
+bool ofIsFloatEqual(double a, double b)
 {
 	return std::abs(a - b) <= std::numeric_limits<double>::epsilon() * std::abs(a);
 }
@@ -565,7 +565,7 @@ double ofIsFloatEqual(double a, double b)
 /// \param a The first floating point type variable to compare.
 /// \param b The second floating point type variable to compare.
 /// \returns True if `std::abs(x - y) <= std::numeric_limits<Type>::epsilon() * std::abs(x)`.
-double ofIsFloatEqual(float a, float b)
+bool ofIsFloatEqual(float a, float b)
 {
 	return std::abs(a - b) <= std::numeric_limits<float>::epsilon() * std::abs(a);
 }
