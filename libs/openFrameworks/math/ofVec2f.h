@@ -593,7 +593,7 @@ public:
 	/// squareDistance() instead.
 	/// 
 	/// \param pnt The point to calculate the distance to
-	/// \returns The distance as float
+	/// \returns The distance as float
 	/// \sa squareDistance()
     float distance( const ofVec2f& pnt) const;
 
@@ -766,7 +766,7 @@ public:
 	/// // v2Limited is (2, 1) (same as v2)
 	/// ~~~~
 	/// 
-	/// \sa limit()
+	/// \sa limit()
 	/// \param max The maximum length of the vector to return
 	/// \returns A copy of this vector with its length (magnitude) restricted to a
     /// maximum of max units by scaling down if necessary.
@@ -784,7 +784,7 @@ public:
 	/// // v2 is unchanged
 	/// ~~~~
 	///
-	/// \sa limit()
+	/// \sa limit()
     ofVec2f& limit(float max);
 
 	

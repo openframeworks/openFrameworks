@@ -12,7 +12,7 @@ void ofApp::setup(){
 	cam.setDistance(100);
 	
 	ofSetCircleResolution(64);
-	bShowHelp = true;
+	bHelpText = true;
 }
 
 //--------------------------------------------------------------
@@ -48,18 +48,21 @@ void ofApp::draw(){
 	cam.end();
 	drawInteractionArea();
 	ofSetColor(255);
-	string msg = string("Using mouse inputs to navigate (press 'c' to toggle): ") + (cam.getMouseInputEnabled() ? "YES" : "NO");
-	msg += string("\nShowing help (press 'h' to toggle): ")+ (bShowHelp ? "YES" : "NO");
-	if (bShowHelp) {
-		msg += "\n\nLEFT MOUSE BUTTON DRAG:\nStart dragging INSIDE the yellow circle -> camera XY rotation .\nStart dragging OUTSIDE the yellow circle -> camera Z rotation (roll).\n\n";
-		msg += "LEFT MOUSE BUTTON DRAG + TRANSLATION KEY (" + ofToString(cam.getTranslationKey()) + ") PRESSED\n";
-		msg += "OR MIDDLE MOUSE BUTTON (if available):\n";
-		msg += "move over XY axes (truck and boom).\n\n";
-		msg += "RIGHT MOUSE BUTTON:\n";
-		msg += "move over Z axis (dolly)";
-	}
-	msg += "\n\nfps: " + ofToString(ofGetFrameRate(), 2);
-	ofDrawBitmapStringHighlight(msg, 10, 20);
+	
+    if (bHelpText) {
+        stringstream ss;
+        ss << "FPS: " << ofToString(ofGetFrameRate(),0) <<endl<<endl;
+        ss << "(c): Toggle mouse input"<<endl<<endl;
+        ss <<"(LEFT MOUSE BUTTON DRAG inside yellow circle): camera x,y rotation"<<endl;
+        ss <<"(LEFT MOUSE BUTTON DRAG outside yellow circle): camera z rotation or roll"<<endl<<endl;
+        ss <<"(LEFT MOUSE BUTTON DRAG + alt key): move over x,y axis / truck and boom"<<endl;
+        ss <<"(LEFT MOUSE BUTTON DRAG + m): move over x,y axis / truck and boom"<<endl;
+        ss <<"(LEFT MOUSE BUTTON DRAG + MIDDLE MOUSE BUTTON PRESS): move over x,y axis / truck and boom"<<endl<<endl;
+        ss <<"(RIGHT MOUSE BUTTON DRAG): move over z axis / dolly"<<endl<<endl;
+        ss <<"(h): Toggle help."<<endl;
+        ofDrawBitmapString(ss.str().c_str(), 20, 20);
+    }
+    
 }
 //--------------------------------------------------------------
 void ofApp::drawInteractionArea(){
@@ -92,7 +95,7 @@ void ofApp::keyPressed(int key){
 			break;
 		case 'H':
 		case 'h':
-			bShowHelp ^=true;
+			bHelpText ^=true;
 			break;
 	}
 }
