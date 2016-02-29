@@ -234,6 +234,11 @@ void ofTranslate(const glm::vec3& p){
 }
 
 //----------------------------------------------------------
+void ofTranslate(const glm::vec2& p){
+	ofGetCurrentRenderer()->translate(glm::vec3(p, 0.0));
+}
+
+//----------------------------------------------------------
 void ofTranslate(float x, float y, float z){
 	ofGetCurrentRenderer()->translate(x, y, z);
 }
