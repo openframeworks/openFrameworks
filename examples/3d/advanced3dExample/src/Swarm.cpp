@@ -64,13 +64,16 @@ void swarm::customDraw(){
 	light.setPosition(particles[0].position);
 
 	for(unsigned int i = 0; i < particles.size(); i++){
-		ofPushStyle();
-		ofSetColor(particles[i].color);
+		//ofPushStyle();
+		//ofSetColor(particles[i].color);
+		material.setDiffuseColor(particles[i].color);
 
+		material.begin();
 		ofDrawSphere(particles[i].position, 1.0);
 
-		ofPopStyle();
+		//ofPopStyle();
 	}
+	material.end();
 
 	light.disable();
 	ofDisableLighting();
