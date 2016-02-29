@@ -44,6 +44,7 @@ public:
     /// \param w The width of the rectangle.
     /// \param h The height of the rectangle.
 	ofRectangle(const glm::vec3& p, float w, float h);
+	ofRectangle(const glm::vec2& p, float w, float h);
 
     /// \brief Construct a rectangle by copying another rectangle.
     /// \param rect The rectangle to copy.
@@ -56,6 +57,7 @@ public:
 	/// \param p0 An glm::vec3 representing the upper left hand corner.
 	/// \param p1 An glm::vec3 representing the lower right hand corner.
 	ofRectangle(const glm::vec3& p0, const glm::vec3& p1);
+	ofRectangle(const glm::vec2& p0, const glm::vec2& p1);
 
     /// \brief Destroy the rectangle.
     virtual ~ofRectangle();
@@ -87,6 +89,7 @@ public:
     /// \param w The new width.
     /// \param h The new height.
 	void set(const glm::vec3& p, float w, float h);
+	void set(const glm::vec2& p, float w, float h);
 
     /// \brief Set the position and size by copying them from anohter rectangle.
     /// \param rect The rectangle to copy.
@@ -99,6 +102,7 @@ public:
 	/// \param p0 The glm::vec3 representing the upper left hand corner.
 	/// \param p1 The glm::vec3 representing the lower right hand corner.
 	void set(const glm::vec3& p0, const glm::vec3& p1);
+	void set(const glm::vec2& p0, const glm::vec2& p1);
 
     /// \brief Set the x-position of the rectangle.
     /// \param px The new x-position.
@@ -153,6 +157,7 @@ public:
     /// \param w The width of the rectangle.
     /// \param h The height of the rectangle.
 	void setFromCenter(const glm::vec3& p, float w, float h);
+	void setFromCenter(const glm::vec2& p, float w, float h);
 
     /// \}
 
@@ -170,6 +175,7 @@ public:
     ///
 	/// \param dp The amount to translate as an glm::vec3.
 	void translate(const glm::vec3& dp);
+	void translate(const glm::vec2& dp);
 
     /// \brief Translate the x-position of the rectangle.
     /// \param dx The amount to translate on the x-axis.
@@ -205,6 +211,7 @@ public:
     ///
     /// \param s The scaling factor.
 	void scale(const glm::vec3& s);
+	void scale(const glm::vec2& s);
 
     /// \brief Scale the width of the rectangle.
     ///
@@ -246,6 +253,7 @@ public:
     ///
     /// \param s The scaling factor.
 	void scaleFromCenter(const glm::vec3& s);
+	void scaleFromCenter(const glm::vec2& s);
 
     /// \brief Scale the rectanle using a target ofRectangle and ofScaleMode.
     ///
@@ -393,6 +401,9 @@ public:
 	void alignTo(const glm::vec3& targetPoint,
                 ofAlignHorz thisHorzAnchor = OF_ALIGN_HORZ_CENTER,
                 ofAlignVert thisVertAnchor = OF_ALIGN_VERT_CENTER);
+	void alignTo(const glm::vec2& targetPoint,
+				ofAlignHorz thisHorzAnchor = OF_ALIGN_HORZ_CENTER,
+				ofAlignVert thisVertAnchor = OF_ALIGN_VERT_CENTER);
 
 	/// \brief Align this ofRectangle to an glm::vec3 in both x- and y dimentions using a shared anchor.
     ///
@@ -459,6 +470,7 @@ public:
     /// \param p The point to test.
     /// \returns true if the point p is inside this ofRectangle.
 	bool inside(const glm::vec3& p) const;
+	bool inside(const glm::vec2& p) const;
 
     /// \brief Determines if another ofRectangle is completely within the ofRectangle.
     ///
@@ -480,6 +492,7 @@ public:
     /// \param p1 The second point to test.
     /// \returns true if both points are inside the rectangle.
 	bool inside(const glm::vec3& p0, const glm::vec3& p1) const;
+	bool inside(const glm::vec2& p0, const glm::vec2& p1) const;
 
     /// \brief Determines if another rectangle intersects with this rectangle.
     ///
@@ -501,6 +514,7 @@ public:
     ///     either crosses the perimeter of the ofRectangle or is completely
     ///     contained within.
 	bool intersects(const glm::vec3& p0, const glm::vec3& p1) const;
+	bool intersects(const glm::vec2& p0, const glm::vec2& p1) const;
 
     /// \brief Grow the ofRectangle to include the given (x, y) coordinates.
     ///
@@ -522,6 +536,7 @@ public:
     ///
     /// \param p The position to include.
 	void growToInclude(const glm::vec3& p);
+	void growToInclude(const glm::vec2& p);
 
     /// \brief Grow the ofRectangle to include the given ofRectangle.
     ///
@@ -543,6 +558,7 @@ public:
     /// \param p0 The first point to include.
     /// \param p1 The second point to include.
 	void growToInclude(const glm::vec3& p0, const glm::vec3& p1);
+	void growToInclude(const glm::vec2& p0, const glm::vec2& p1);
 
     /// \brief Get the intersecting area between this rectangle and another.
     ///
@@ -753,12 +769,14 @@ public:
     /// \param p The point to translate.
     /// \returns The translated ofRectangle.
 	ofRectangle operator + (const glm::vec3& p);
+	ofRectangle operator + (const glm::vec2& p);
 
 	/// \brief Returns a new ofRectangle where the x and y-positions of the
 	/// rectangle are offset by the (x, y) coordinates of the glm::vec3.
 	/// \param p The point to translate.
 	/// \returns The translated ofRectangle.
 	ofRectangle operator - (const glm::vec3& p);
+	ofRectangle operator - (const glm::vec2& p);
 
     /// \brief If both ofRectangles have the same x, y, width, and height,
     /// they are considered equal.
