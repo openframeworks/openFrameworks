@@ -17,9 +17,7 @@
 class ofRectangle{
 public:
 
-    /// \name Constructor
-    /// \{
-
+    /// \section Constructor
     /// \brief Construct a rectangle with zero width and zero height at 0, 0.
     ofRectangle();
 
@@ -61,11 +59,7 @@ public:
     /// \brief Destroy the rectangle.
     virtual ~ofRectangle();
 
-    /// \}
-
-    /// \name Setters
-    /// \{
-
+    /// \section Setters
     /// \brief Set the position and size of the rectangle.
     ///
     /// To produce consistent results, users are encouraged to initialize
@@ -155,11 +149,7 @@ public:
     /// \param h The height of the rectangle.
     void setFromCenter(const ofPoint& p, float w, float h);
 
-    /// \}
-
-    /// \name Transformation
-    /// \{
-
+    /// \section Transformation
     /// \brief Translate the rectangle's position by an x and y amount.
     /// \param dx The amount to translate in the x direction.
     /// \param dy The amount to translate in the y direction.
@@ -293,12 +283,7 @@ public:
                  ofAlignHorz subjectHorzAnchor,
                  ofAlignVert subjectVertAnchor);
 
-    /// \}
-
-    /// \name Alignment
-    /// \{
-
-
+    /// \section Alignment
     /// \brief Horizontally align a rectangle using a position and anchor edge.
     ///
     /// Aligns the horizontal position of the ofRectangle to the given x-
@@ -435,11 +420,7 @@ public:
                  ofAlignHorz thisHorzAnchor,
                  ofAlignVert thisVertAnchor);
 
-    /// \}
-
-    /// \name Intersection
-    /// \{
-
+    /// \section Intersection
     /// \brief Determines if the coordinates (x, y) are within the ofRectangle.
     ///
     /// Note that coordinates on the edge of the ofRectangle are not
@@ -572,11 +553,7 @@ public:
     ///          this rectangle and the passed rectangle..
     ofRectangle getUnion(const ofRectangle& rect) const;
 
-    /// \}
-
-    /// \name Standardization
-    /// \{
-
+    /// \section Standardization
     /// \brief Standardize the rectangle
     ///
     /// "Standardized" rectangles are rectangles whose width and height are positive: width >= 0 and height
@@ -601,11 +578,7 @@ public:
     /// \returns true if both width >= 0 and height >= 0.
     bool isStandardized() const;
 
-    /// \}
-
-    /// \name Getters
-    /// \{
-
+    /// \section Getters
     /// \brief Get the area of the ofRectangle.
     ///
     /// This is the product of the width and height of the recatngle.
@@ -739,11 +712,7 @@ public:
     /// \returns The height of the rectangle.
     float getHeight() const;
 
-    /// \}
-
-    /// \name Operators
-    /// \{
-
+    /// \section Operators
     /// \brief Assignment operator.
     /// \param rect The rectangle to assign.
     /// \returns A reference to this rectangle.
@@ -775,13 +744,7 @@ public:
     
     bool isZero() const;
 
-
-    /// \}
-
-    /// \name Properties
-    /// \{
-
-
+    /// \section Properties
     /// \brief The (x,y) position of the ofRectangle as an ofPoint.
     ///
     /// \warning The z-component of this position is preserved and can be used
@@ -799,15 +762,15 @@ public:
 
     /// \brief The height of the ofRectangle.
     float height;
-
-    /// \}
 };
 
-/// \cond INTERNAL
+/// \internal
 /// \warning The internal z component of the ofPoint is preserved even though it
 /// is not used.
 ostream& operator<<(ostream& os, const ofRectangle& rect);
+
+/// \internal
 /// \warning The internal z component of the ofPoint is preserved even though it
 /// is not used.
 istream& operator>>(istream& is, ofRectangle& rect);
-/// \endcond
+
