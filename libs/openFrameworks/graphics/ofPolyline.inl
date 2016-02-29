@@ -526,7 +526,7 @@ ofPolyline_<T> ofPolyline_<T>::getResampledByCount(int count) const {
 //----------------------------------------------------------
 // http://local.wasp.uwa.edu.au/~pbourke/geometry/pointline/
 template<class T>
-static T getClosestPointUtil(const T& p1, const T& p2, const T& p3, float* normalizedPosition) {
+inline T getClosestPointUtil(const T& p1, const T& p2, const T& p3, float* normalizedPosition) {
 	// if p1 is coincident with p2, there is no line
 	if(p1 == p2) {
 		if(normalizedPosition != nullptr) {
@@ -538,7 +538,7 @@ static T getClosestPointUtil(const T& p1, const T& p2, const T& p3, float* norma
 	float u = (p3.x - p1.x) * (p2.x - p1.x);
 	u += (p3.y - p1.y) * (p2.y - p1.y);
 	// perfect place for fast inverse sqrt...
-	float len = glm::length(p2 - p1);
+	float len = glm::length(toGlm(p2 - p1));
 	u /= (len * len);
 	
 	// clamp u
@@ -550,7 +550,7 @@ static T getClosestPointUtil(const T& p1, const T& p2, const T& p3, float* norma
 	if(normalizedPosition != nullptr) {
 		*normalizedPosition = u;
 	}
-	return glm::lerp(p1, p2, u);
+	return glm::lerp(toGlm(p1), toGlm(p2), u);
 }
 
 //----------------------------------------------------------
@@ -583,7 +583,7 @@ T ofPolyline_<T>::getClosestPoint(const T& target, unsigned int* nearestIndex) c
 		
 		float curNormalizedPosition = 0;
 		auto curNearestPoint = getClosestPointUtil(cur, next, target, &curNormalizedPosition);
-		float curDistance = glm::distance(curNearestPoint, target);
+		float curDistance = glm::distance(toGlm(curNearestPoint), toGlm(target));
 		if(i == 0 || curDistance < distance) {
 			distance = curDistance;
 			nearest = i;
@@ -885,7 +885,7 @@ T ofPolyline_<T>::getPointAtIndexInterpolated(float findex) const {
     getInterpolationParams(findex, i1, i2, t);
 	T leftPoint(points[i1]);
 	T rightPoint(points[i2]);
-	return glm::lerp(leftPoint, rightPoint, t);
+	return glm::lerp(toGlm(leftPoint), toGlm(rightPoint), t);
 }
 
 
@@ -922,7 +922,7 @@ T ofPolyline_<T>::getRotationAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(getRotationAtIndex(i1), getRotationAtIndex(i2), t);
+	return glm::lerp(toGlm(getRotationAtIndex(i1)), toGlm(getRotationAtIndex(i2)), t);
 }
 
 //--------------------------------------------------
@@ -940,7 +940,7 @@ T ofPolyline_<T>::getTangentAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(getTangentAtIndex(i1), getTangentAtIndex(i2), t);
+	return glm::lerp(toGlm(getTangentAtIndex(i1)), toGlm(getTangentAtIndex(i2)), t);
 }
 
 //--------------------------------------------------
@@ -958,7 +958,7 @@ T ofPolyline_<T>::getNormalAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(getNormalAtIndex(i1), getNormalAtIndex(i2), t);
+	return glm::lerp(toGlm(getNormalAtIndex(i1)), toGlm(getNormalAtIndex(i2)), t);
 }
 
 
@@ -975,17 +975,17 @@ void ofPolyline_<T>::calcData(int index, T &tangent, float &angle, T &rotation, 
     
 	T v1(p1 - p2); // vector to previous point
 	T v2(p3 - p2); // vector to next point
-	glm::normalize(v1);
-	glm::normalize(v2);
+	glm::normalize(toGlm(v1));
+	glm::normalize(toGlm(v2));
     
     tangent = (v2 - v1);
-	glm::normalize(tangent);
+	glm::normalize(toGlm(tangent));
     
-	rotation = glm::cross(v1, v2);
+	rotation = glm::cross(toGlm(v1), toGlm(v2));
     angle = 180 - ofRadToDeg(acos(ofClamp(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z, -1, 1)));
 
-	normal = glm::cross(rightVector, tangent);
-	glm::normalize(normal);
+	normal = glm::cross(toGlm(rightVector), toGlm(tangent));
+	glm::normalize(toGlm(normal));
 }
 
 
@@ -1069,7 +1069,7 @@ void ofPolyline_<T>::updateCache(bool bForceUpdate) const {
             rotations[i] = rotation;
             normals[i] = normal;
             
-			length += glm::distance(points[i], points[getWrappedIndex(i + 1)]);
+			length += glm::distance(toGlm(points[i]), toGlm(points[getWrappedIndex(i + 1)]));
         }
         
         if(isClosed()) lengths.push_back(length);
