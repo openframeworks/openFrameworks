@@ -51,7 +51,7 @@ uint64_t ofGetElapsedTimeMicros();
 /// \returns the number of frames rendered since the program started.
 uint64_t ofGetFrameNum();
 
-/// \section System time
+/// \section System Time
 /// \brief Get the seconds after the minute.
 /// \returns the seconds after the minute [0-59].
 int ofGetSeconds();
@@ -433,7 +433,7 @@ string ofVAArgsToString(const char * format, ...);
 /// \returns A string representation of the argument list.
 string ofVAArgsToString(const char * format, va_list args);
 
-/// \section String conversion
+/// \section String Conversion
 /// \brief Convert a value to a string.
 ///
 /// ofToString does its best to convert any value to a string. If the data type
@@ -565,7 +565,7 @@ template<typename T> T ofTo(const std::string & str){
 	return x;
 }
 
-/// \section Number conversion
+/// \section Number Conversion
 /// \brief Convert a string to an integer.
 ///
 /// Converts a `std::string` representation of an int (e.g., `"3"`) to an actual
@@ -769,7 +769,7 @@ float ofBinaryToFloat(const string& value);
 /// \returns the ASCII string represented by the string.
 string ofBinaryToString(const string& value);
 
-/// \section openFrameworks version
+/// \section openFrameworks Version
 /// \brief Get the current version of openFrameworks as a string.
 ///
 /// openFrameworks uses the semantic versioning system.
@@ -816,7 +816,7 @@ unsigned int ofGetVersionPatch();
 std::string ofGetVersionPreRelease();
 
 
-/// \section Frame saving
+/// \section Frame Saving
 /// \brief Saves the current screen image to a file on disk.
 ///
 /// Example:
