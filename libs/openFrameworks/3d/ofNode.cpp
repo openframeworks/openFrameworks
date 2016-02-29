@@ -474,12 +474,20 @@ glm::vec3 ofNode::getGlobalScale() const {
 
 //----------------------------------------
 void ofNode::orbit(float longitude, float latitude, float radius, const glm::vec3& centerPoint) {
-	glm::quat q = glm::angleAxis(ofDegToRad(latitude), glm::vec3(1,0,0)) * glm::angleAxis(ofDegToRad(longitude), glm::vec3(0,1,0)) * glm::angleAxis(0.f, glm::vec3(0,0,1));
-	setPosition(q * (glm::vec3(0,0,radius)-centerPoint) + centerPoint);
+	glm::quat q = 
+	          glm::angleAxis(ofDegToRad(longitude), glm::vec3(0, 1, 0)) 
+	        * glm::angleAxis(ofDegToRad(latitude),  glm::vec3(1, 0, 0));
+
+	glm::vec4 p { 0.f, 0.f, 1.f, 0.f };	   // p is a direction, not a position, so .w == 0
+	
+	p = q * p;							   // rotate p on unit sphere based on quaternion
+	p = p * radius;						   // scale p by radius from its position on unit sphere
+
+	setPosition(centerPoint + p);
 	setOrientation(q);
+
 	onOrientationChanged();
 	onPositionChanged();
-//	lookAt(centerPoint);//, v - centerPoint);
 }
 
 //----------------------------------------
