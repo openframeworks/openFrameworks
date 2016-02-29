@@ -540,9 +540,9 @@ int ofSign(float n);
 ///
 /// \sa https://isocpp.org/wiki/faq/newbie#floating-point-arith
 /// \sa https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
-/// \param a The first floating point type variable to compare.
-/// \param b The second floating point type variable to compare.
-/// \returns True if `std::abs(x - y) <= std::numeric_limits<Type>::epsilon() * std::abs(x)`.
+/// \param a The first double variable to compare.
+/// \param b The second double variable to compare.
+/// \returns True if `std::abs(x - y) <= std::numeric_limits<double>::epsilon() * std::abs(x)`.
 bool ofIsFloatEqual(double a, double b)
 {
 	return std::abs(a - b) <= std::numeric_limits<double>::epsilon() * std::abs(a);
@@ -562,9 +562,9 @@ bool ofIsFloatEqual(double a, double b)
 ///
 /// \sa https://isocpp.org/wiki/faq/newbie#floating-point-arith
 /// \sa https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
-/// \param a The first floating point type variable to compare.
-/// \param b The second floating point type variable to compare.
-/// \returns True if `std::abs(x - y) <= std::numeric_limits<Type>::epsilon() * std::abs(x)`.
+/// \param a The first float variable to compare.
+/// \param b The second float variable to compare.
+/// \returns True if `std::abs(x - y) <= std::numeric_limits<float>::epsilon() * std::abs(x)`.
 bool ofIsFloatEqual(float a, float b)
 {
 	return std::abs(a - b) <= std::numeric_limits<float>::epsilon() * std::abs(a);
