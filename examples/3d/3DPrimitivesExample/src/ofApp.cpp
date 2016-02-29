@@ -73,6 +73,7 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
+	ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
     
     float spinX = sin(ofGetElapsedTimef()*.35f);
     float spinY = cos(ofGetElapsedTimef()*.075f);
@@ -146,9 +147,9 @@ void ofApp::draw() {
     if(bWireframe) {
         ofNoFill();
         ofSetColor(0, 0, 0);
-        plane.setPosition(plane.getPosition().x, plane.getPosition().y, plane.getPosition().z+1);
+		plane.setPosition(plane.getPosition().x, plane.getPosition().y, plane.getPosition().z+1);
         plane.drawWireframe();
-        plane.setPosition(plane.getPosition().x, plane.getPosition().y, plane.getPosition().z-2);
+		plane.setPosition(plane.getPosition().x, plane.getPosition().y, plane.getPosition().z-1);
         
     }
 
