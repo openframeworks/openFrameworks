@@ -65,9 +65,8 @@ class ofVec4f;
 /// \sa ofVec4f for 4D vectors
 class ofVec2f {
 public:
-	/// \cond INTERNAL
+	/// \internal
 	static const int DIM = 2;
-	//// \endcond
 	
 	/// \brief Stores the `x` component of the vector.
 	float x;
@@ -75,10 +74,7 @@ public:
 	/// \brief Stores the `y` component of the vector.
 	float y;
     
-    //---------------------
-	/// \name Construct a 2D vector
-	/// \{
-    
+	/// \section Construct a 2D vector
 	/// \brief Construct a 2D vector.
 	/// 
 	/// ~~~~{.cpp}
@@ -124,13 +120,7 @@ public:
 	/// 
     ofVec2f( const ofVec4f& vec );
 	
-    /// \}
-
-	//---------------------
-	/// \name Access components
-	/// \{
-
-
+	/// \section Access components
 	/// \brief Returns a pointer to the memory position of the first element of the vector (x);
 	/// the second element (y) immediately follows it in memory.
 	/// 
@@ -193,13 +183,7 @@ public:
 	
 	void set( float scalar );
 
-    /// \}
-
-    //---------------------
-	/// \name Comparison 
-	/// \{
-
-	
+	/// \section Comparison
 	/// \brief Check for equality between two ofVec2f
 	/// 
 	/// ~~~~{.cpp}
@@ -282,13 +266,7 @@ public:
     /// \sa align()
     bool alignRad( const ofVec2f& vec, float tolerance = 0.0001f ) const;
 	
-	/// \}
-
-	//---------------------
-	/// \name Operators
-	/// \{
-
-    
+	/// \section Operators
 	/// \brief Super easy vector addition. Returns a new vector (x+vec.x,y+vec.y).
 	/// 
 	/// ~~~~{.cpp}
@@ -445,17 +423,12 @@ public:
     ofVec2f& operator/=( const float f );
 
 	
-	/// \cond INTERNAL
+	/// \internal
 	friend ostream& operator<<(ostream& os, const ofVec2f& vec);
+	/// \internal
 	friend istream& operator>>(istream& is, const ofVec2f& vec);
-	/// \endcond
 	
-	/// \}
-	
-	//---------------------
-	/// \name Simple manipulations
-	/// \{
-
+	/// \section Simple manipulations
 	/// Return a new ofVec2f that is the result of scaling this vector up or down so
 	/// that it has the requested length.
 	/// 
@@ -567,14 +540,8 @@ public:
 				 const ofVec2f& vx, const ofVec2f& vy );
 
 
-    /// \}
-	
-	
-	//---------------------
-	/// \name Distance
-	/// \{
-
-    /// \brief Distance between two points.
+    /// \section Distance
+	/// \brief Distance between two points.
     ///
     /// Treats both this vector and pnt as points in 2D space, and calculates and
     /// returns the distance between them.
@@ -619,12 +586,7 @@ public:
 	/// \sa distance()
     float squareDistance( const ofVec2f& pnt ) const;
 	
-	/// \}
-
-	//---------------------
-	/// \name Interpolation
-	/// \{
-
+	/// \section Interpolation
     /// \brief Linear interpolation
     /// 
 	/// Perform a linear interpolation of this vector's position towards pnt
@@ -716,13 +678,8 @@ public:
 	/// \returns Vector that is the avarage of the points in the array
     ofVec2f&  average( const ofVec2f* points, std::size_t num );
     
-    /// \}
-
-    //---------------------
-	/// \name Limit
-	/// \{
-
-	/// \brief Returns a normalized copy of this vector. 
+	/// \section Limit
+	/// \brief Returns a normalized copy of this vector.
 	/// 	
 	/// *Normalization* means to scale the vector so that its length
 	/// (magnitude) is exactly 1, at which stage all that is left is the
@@ -788,13 +745,7 @@ public:
     ofVec2f& limit(float max);
 
 	
-	/// \}
-
-	//---------------------
-	/// \name Measurement
-	/// \{
-
-	
+	/// \section Measurement
 	/// \brief Return the length (magnitude) of this vector.
 	/// 
 	/// ~~~~{.cpp}
@@ -851,12 +802,7 @@ public:
 	/// \returns The angle in radians (-PI...PI)
     float angleRad( const ofVec2f& vec ) const;
 	
-	/// \}
-
-	//---------------------
-	/// \name Perpendicular
-	/// \{
-
+	/// \section Perpendicular
 	/// \brief Return the *normalized* ofVec2f that is perpendicular to this vector
 	/// (ie rotated 90 degrees and normalized).
 	/// 
@@ -915,13 +861,9 @@ public:
     float dot( const ofVec2f& vec ) const;
 	
 	
-	/// \}
-
-
 
     //---------------------------------------------------
     // this methods are deprecated in 006 please dont use:
-	/// \cond INTERNAL
 
     // getScaled
     OF_DEPRECATED_MSG("Use member method getScaled() instead.", ofVec2f rescaled( const float length ) const);
@@ -961,13 +903,8 @@ public:
 
     // return all one vector
     static ofVec2f one() { return ofVec2f(1, 1); }
-
-    /// \endcond
 };
 
-
-
-/// \cond INTERNAL
 
 // Non-Member operators
 //
@@ -977,15 +914,12 @@ ofVec2f operator*( float f, const ofVec2f& vec );
 ofVec2f operator/( float f, const ofVec2f& vec );
 
 
-/// \endcond
-
 
 
 
 /////////////////
 // Implementation
 /////////////////
-/// \cond INTERNAL
 
 
 inline ofVec2f::ofVec2f(): x(0), y(0) {}
@@ -1504,6 +1438,3 @@ inline ofVec2f operator*( float f, const ofVec2f& vec ) {
 inline ofVec2f operator/( float f, const ofVec2f& vec ) {
     return ofVec2f( f/vec.x, f/vec.y);
 }
-
-
-/// \endcond
