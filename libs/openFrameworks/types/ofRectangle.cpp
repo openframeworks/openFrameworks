@@ -3,7 +3,7 @@
 
 //----------------------------------------------------------
 ofRectangle::ofRectangle() : x(position.x), y(position.y) {
-    set(0,0,0,0);
+    set(0, 0, 0, 0);
 }
 
 //----------------------------------------------------------
@@ -11,12 +11,12 @@ ofRectangle::~ ofRectangle(){}
 
 //----------------------------------------------------------
 ofRectangle::ofRectangle(float px, float py, float w, float h) : x(position.x), y(position.y) {
-	set(px,py,w,h);
+	set(px, py, w, h);
 }
 
 //----------------------------------------------------------
 ofRectangle::ofRectangle(const ofPoint& p, float w, float h) : x(position.x), y(position.y) {
-    set(p,w,h);
+    set(p, w, h);
 }
 
 //----------------------------------------------------------
@@ -49,17 +49,16 @@ void ofRectangle::set(const ofRectangle& rect){
 
 //----------------------------------------------------------
 void ofRectangle::set(const ofPoint& p0, const ofPoint& p1) {
-    float x0,y0,x1,y1;
 
-    x0 = MIN(p0.x, p1.x);
-    x1 = MAX(p0.x, p1.x);
-    y0 = MIN(p0.y, p1.y);
-    y1 = MAX(p0.y, p1.y);
+    float x0 = std::min(p0.x, p1.x);
+    float x1 = std::max(p0.x, p1.x);
+    float y0 = std::min(p0.y, p1.y);
+    float y1 = std::max(p0.y, p1.y);
 
     float w = x1 - x0;
     float h = y1 - y0;
 
-    set(x0,y0,w,h);
+    set(x0, y0, w, h);
 }
 
 //----------------------------------------------------------
@@ -152,7 +151,7 @@ void ofRectangle::scale(const ofPoint& s) {
 
 //----------------------------------------------------------
 void ofRectangle::scaleWidth(float  sX) {
-    width  *= sX;
+    width *= sX;
 }
 //----------------------------------------------------------
 void ofRectangle::scaleHeight(float sY) {
@@ -171,7 +170,7 @@ void ofRectangle::scaleFromCenter(float sX, float sY) {
 
 //----------------------------------------------------------
 void ofRectangle::scaleFromCenter(const ofPoint& s) {
-    if(s.x == 1.0f && s.y == 1.0f) return; // nothing to do
+    if(ofIsFloatEqual(s.x, 1.0f) && ofIsFloatEqual(s.y, 1.0f)) return; // nothing to do
 
     float newWidth  = width  * s.x;
     float newHeight = height * s.y;
@@ -242,13 +241,15 @@ void ofRectangle::scaleTo(const ofRectangle& targetRect,
 
     if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING ||
        aspectRatioMode == OF_ASPECT_RATIO_KEEP) {
-        if(fabs(sw) >= FLT_EPSILON || fabs(sh) >= FLT_EPSILON) {
-            float wRatio = fabs(tw) / fabs(sw);
-            float hRatio = fabs(th) / fabs(sh);
+
+		if(std::abs(sw) >= std::numeric_limits<float>::epsilon() ||
+		   std::abs(sh) >= std::numeric_limits<float>::epsilon()) {
+            float wRatio = std::abs(tw) / std::abs(sw);
+            float hRatio = std::abs(th) / std::abs(sh);
             if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING) {
-                scale(MAX(wRatio,hRatio));
+				scale(std::max(wRatio,hRatio));
             } else if(aspectRatioMode == OF_ASPECT_RATIO_KEEP) {
-                scale(MIN(wRatio,hRatio));
+                scale(std::min(wRatio,hRatio));
             }
         } else {
             ofLogWarning("ofRectangle") << "scaleTo(): no scaling applied to avoid divide by zero, rectangle has 0 width and/or height: " << sw << "x" << sh;
@@ -366,10 +367,10 @@ void ofRectangle::alignTo(const ofRectangle& targetRect,
 
 //----------------------------------------------------------
 void ofRectangle::alignTo(const ofRectangle& targetRect,
-                                 ofAlignHorz targetHorzAnchor,
-                                 ofAlignVert targetVertAnchor,
-                                 ofAlignHorz thisHorzAnchor,
-                                 ofAlignVert thisVertAnchor) {
+						  ofAlignHorz targetHorzAnchor,
+						  ofAlignVert targetVertAnchor,
+						  ofAlignHorz thisHorzAnchor,
+						  ofAlignVert thisVertAnchor) {
 
     alignToHorz(targetRect,targetHorzAnchor,thisHorzAnchor);
     alignToVert(targetRect,targetVertAnchor,thisVertAnchor);
@@ -426,8 +427,8 @@ bool ofRectangle::intersects(const ofPoint& p0, const ofPoint& p1) const {
            ofLineSegmentIntersection(p0, p1, topRight,    bottomRight, p) || // cross right
            ofLineSegmentIntersection(p0, p1, bottomRight, bottomLeft,  p) || // cross bottom
            ofLineSegmentIntersection(p0, p1, bottomLeft,  topLeft,     p) || // cross left
-		   (left == p0.x && top == p1.y) || // Special case 1.
-		   (left == p1.y && top == p0.x);   // Special case 2.
+		   (ofIsFloatEqual(left, p0.x) && ofIsFloatEqual(top, p1.y)) || // Special case 1.
+		   (ofIsFloatEqual(left, p1.y) && ofIsFloatEqual(top, p0.x));   // Special case 2.
 }
 
 //----------------------------------------------------------
@@ -437,10 +438,10 @@ void ofRectangle::growToInclude(float px, float py) {
 
 //----------------------------------------------------------
 void ofRectangle::growToInclude(const ofPoint& p) {
-    float x0 = MIN(getMinX(),p.x);
-    float x1 = MAX(getMaxX(),p.x);
-    float y0 = MIN(getMinY(),p.y);
-    float y1 = MAX(getMaxY(),p.y);
+    float x0 = std::min(getMinX(),p.x);
+    float x1 = std::max(getMaxX(),p.x);
+    float y0 = std::min(getMinY(),p.y);
+    float y1 = std::max(getMaxY(),p.y);
     float w = x1 - x0;
     float h = y1 - y0;
     set(x0,y0,w,h);
@@ -448,10 +449,10 @@ void ofRectangle::growToInclude(const ofPoint& p) {
 
 //----------------------------------------------------------
 void ofRectangle::growToInclude(const ofRectangle& rect) {
-    float x0 = MIN(getMinX(),rect.getMinX());
-    float x1 = MAX(getMaxX(),rect.getMaxX());
-    float y0 = MIN(getMinY(),rect.getMinY());
-    float y1 = MAX(getMaxY(),rect.getMaxY());
+    float x0 = std::min(getMinX(),rect.getMinX());
+    float x1 = std::max(getMaxX(),rect.getMaxX());
+    float y0 = std::min(getMinY(),rect.getMinY());
+    float y1 = std::max(getMaxY(),rect.getMaxY());
     float w = x1 - x0;
     float h = y1 - y0;
     set(x0,y0,w,h);
@@ -466,14 +467,14 @@ void ofRectangle::growToInclude(const ofPoint& p0, const ofPoint& p1) {
 //----------------------------------------------------------
 ofRectangle ofRectangle::getIntersection(const ofRectangle& rect) const {
 
-    float x0 = MAX(getMinX(),rect.getMinX());
-    float x1 = MIN(getMaxX(),rect.getMaxX());
+    float x0 = std::max(getMinX(),rect.getMinX());
+    float x1 = std::min(getMaxX(),rect.getMaxX());
 
     float w = x1 - x0;
     if(w < 0.0f) return ofRectangle(0,0,0,0); // short circuit if needed
 
-    float y0 = MAX(getMinY(),rect.getMinY());
-    float y1 = MIN(getMaxY(),rect.getMaxY());
+	float y0 = std::max(getMinY(),rect.getMinY());
+    float y1 = std::min(getMaxY(),rect.getMaxY());
 
     float h = y1 - y0;
     if(h < 0.0f) return ofRectangle(0,0,0,0);  // short circuit if needed
@@ -534,7 +535,8 @@ float ofRectangle::getAspectRatio() const {
 
 //----------------------------------------------------------
 bool ofRectangle::isEmpty() const {
-    return width == 0.0f && height == 0.0f;
+    return ofIsFloatEqual(width, 0.0f)
+	    && ofIsFloatEqual(height, 0.0f);
 }
 
 //----------------------------------------------------------
@@ -549,22 +551,22 @@ ofPoint ofRectangle::getMax() const {
 
 //----------------------------------------------------------
 float ofRectangle::getMinX() const {
-    return MIN(x, x + width);  // - width
+    return std::min(x, x + width);  // - width
 }
 
 //----------------------------------------------------------
 float ofRectangle::getMaxX() const {
-    return MAX(x, x + width);  // - width
+	return std::max(x, x + width);  // - width
 }
 
 //----------------------------------------------------------
 float ofRectangle::getMinY() const{
-    return MIN(y, y + height);  // - height
+    return std::min(y, y + height);  // - height
 }
 
 //----------------------------------------------------------
 float ofRectangle::getMaxY() const {
-    return MAX(y, y + height);  // - height
+    return std::max(y, y + height);  // - height
 }
 
 //----------------------------------------------------------
@@ -645,7 +647,10 @@ float ofRectangle::getVertAnchor(ofAlignVert anchor) const {
 
 //----------------------------------------------------------
 bool ofRectangle::operator != (const ofRectangle& rect) const {
-	return (x != rect.x) || (y != rect.y) || (width != rect.width) || (height != rect.height);
+	return !ofIsFloatEqual(x, rect.x)
+		|| !ofIsFloatEqual(y, rect.y)
+		|| !ofIsFloatEqual(width, rect.width)
+		|| !ofIsFloatEqual(height, rect.height);
 }
 
 //----------------------------------------------------------
@@ -707,12 +712,17 @@ ofRectangle ofRectangle::operator - (const ofPoint & point){
 
 //----------------------------------------------------------
 bool ofRectangle::operator == (const ofRectangle& rect) const {
-	return (x == rect.x) && (y == rect.y) && (width == rect.width) && (height == rect.height);
+	return ofIsFloatEqual(x, rect.x)
+		&& ofIsFloatEqual(y, rect.y)
+	    && ofIsFloatEqual(width, rect.width)
+	    && ofIsFloatEqual(height, rect.height);
 }
 
 //----------------------------------------------------------
 bool ofRectangle::isZero() const{
-	return (x == 0) && (y == 0) && (width == 0) && (height == 0);
+	return ofIsFloatEqual(x, 0.0f)
+		&& ofIsFloatEqual(y, 0.0f)
+		&& isEmpty();
 }
 
 //----------------------------------------------------------
