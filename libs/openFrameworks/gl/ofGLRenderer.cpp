@@ -111,6 +111,7 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 		}
 
 		if(vertexData.getNumIndices()){
+	// This is never executed right now but this branch of the ifdef should be used for GLES 3 so let's keep it for future uses
 	#ifdef TARGET_OPENGLES
 			glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_SHORT,vertexData.getIndexPointer());
 	#else
@@ -541,27 +542,12 @@ void ofGLRenderer::bind(const ofBaseMaterial & material){
 	ofFloatColor ambient = material.getAmbientColor();
 	ofFloatColor emissive = material.getEmissiveColor();
     float shininess = material.getShininess();
-    glDisable(GL_COLOR_MATERIAL);
-#ifndef TARGET_OPENGLES
-    // Material colors and properties
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, &diffuse.r);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, &specular.r);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, &ambient.r);
-	glMaterialfv(GL_FRONT, GL_EMISSION, &emissive.r);
-    glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
-
-	glMaterialfv(GL_BACK, GL_DIFFUSE, &diffuse.r);
-	glMaterialfv(GL_BACK, GL_SPECULAR, &specular.r);
-	glMaterialfv(GL_BACK, GL_AMBIENT, &ambient.r);
-	glMaterialfv(GL_BACK, GL_EMISSION, &emissive.r);
-    glMaterialfv(GL_BACK, GL_SHININESS, &shininess);
-#else
+	glDisable(GL_COLOR_MATERIAL);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &diffuse.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &specular.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &ambient.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &emissive.r);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
-#endif
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
     materialBound = true;
 }
 
@@ -569,25 +555,11 @@ void ofGLRenderer::bind(const ofBaseMaterial & material){
 void ofGLRenderer::unbind(const ofBaseMaterial &){
 	// Set default material colors and properties
 	ofMaterial::Data defaultData;
-#ifndef TARGET_OPENGLES
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, &defaultData.diffuse.r);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, &defaultData.specular.r);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, &defaultData.ambient.r);
-	glMaterialfv(GL_FRONT, GL_EMISSION, &defaultData.emissive.r);
-	glMaterialfv(GL_FRONT, GL_SHININESS, &defaultData.shininess);
-
-    glMaterialfv(GL_BACK, GL_DIFFUSE, &defaultData.diffuse.r);
-	glMaterialfv(GL_BACK, GL_SPECULAR, &defaultData.specular.r);
-    glMaterialfv(GL_BACK, GL_AMBIENT, &defaultData.ambient.r);
-	glMaterialfv(GL_BACK, GL_EMISSION, &defaultData.emissive.r);
-    glMaterialfv(GL_BACK, GL_SHININESS, &defaultData.shininess);
-#else
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &defaultData.diffuse.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &defaultData.specular.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &defaultData.ambient.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &defaultData.emissive.r);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &defaultData.shininess);
-#endif
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &defaultData.shininess);
     // Re-enable global color as material ambient and diffuse
     materialBound = false;
     if(lightingEnabled){
@@ -1041,13 +1013,11 @@ void ofGLRenderer::setColor(const ofColor & color, int _a){
 void ofGLRenderer::setColor(int r, int g, int b){
     currentStyle.color.set(r,g,b);
     glColor4f(r/255.f,g/255.f,b/255.f,1.f);
-    if(lightingEnabled && !materialBound){
-        glEnable(GL_COLOR_MATERIAL);
-        #ifndef TARGET_OPENGLES
-            glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-            glColorMaterial(GL_BACK, GL_AMBIENT_AND_DIFFUSE);
-        #endif
-        glEnable(GL_COLOR_MATERIAL);
+	if(lightingEnabled && !materialBound){
+#ifndef TARGET_OPENGLES
+		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+#endif
+		glEnable(GL_COLOR_MATERIAL);
     }
 }
 
@@ -1056,13 +1026,11 @@ void ofGLRenderer::setColor(int r, int g, int b){
 void ofGLRenderer::setColor(int r, int g, int b, int a){
     currentStyle.color.set(r,g,b,a);
     glColor4f(r/255.f,g/255.f,b/255.f,a/255.f);
-    if(lightingEnabled && !materialBound){
-        glEnable(GL_COLOR_MATERIAL);
-        #ifndef TARGET_OPENGLES
-            glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-            glColorMaterial(GL_BACK, GL_AMBIENT_AND_DIFFUSE);
-        #endif
-        glEnable(GL_COLOR_MATERIAL);
+	if(lightingEnabled && !materialBound){
+#ifndef TARGET_OPENGLES
+		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+#endif
+		glEnable(GL_COLOR_MATERIAL);
     }
 }
 

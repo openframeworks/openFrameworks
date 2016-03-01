@@ -25,6 +25,7 @@ matrix:
       compiler: clang
       env: TARGET="osx"
     - os: osx
+      osx_image: xcode7.1
       compiler: clang
       env: TARGET="ios"
     - os: linux

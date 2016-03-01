@@ -37,13 +37,19 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#include <TargetConditionals.h>
 
 #include "ofBaseTypes.h"
 #include "ofxiOSConstants.h"
 
 class ofAppiOSWindow;
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 @class ofxiOSAppDelegate;
 @class ofxiOSViewController;
+#elif TARGET_OS_TV
+@class ofxtvOSAppDelegate;
+@class ofxtvOSViewController;
+#endif
 @class ofxiOSEAGLView;
 
 // this is the new way for getting device info.
@@ -86,11 +92,20 @@ UIView * ofxiOSGetGLParentView();
 // return OpenFrameworks iPhone Window
 ofAppiOSWindow * ofxiOSGetOFWindow();
 
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 // return application delegate
 ofxiOSAppDelegate * ofxiOSGetAppDelegate();
 
 // return iphone view controller.
 ofxiOSViewController * ofxiOSGetViewController();
+#elif TARGET_OS_TV
+// return application delegate
+ofxtvOSAppDelegate * ofxiOSGetAppDelegate();
+
+// return iphone view controller.
+ofxtvOSViewController * ofxiOSGetViewController();
+#endif
+
 
 // brings the OpenGL view to the front of any other UIViews
 // the OpenGL view will receive touchXXXXX events, but other UIViews will not
@@ -133,10 +148,10 @@ void ofxiOSUnlockGLContext();
 // disabled by default
 void ofxiOSEnableLoopInThread();
 
-
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 OF_DEPRECATED_MSG("ofxiOSSetOrientation is deprecated, use ofSetOrientation instead.", void ofxiOSSetOrientation(ofOrientation orientation));
 OF_DEPRECATED_MSG("ofxiOSGetOrientation is deprecated, use ofGetOrientation instead.", UIDeviceOrientation ofxiOSGetOrientation());
-
+#endif
 
 // load an image from the app bundle into a texture
 // NOTE: renamed this function to something more clearer
@@ -160,9 +175,11 @@ bool ofxiOSUIImageToOFTexture(UIImage * uiImage, ofTexture & outTexture, int tar
 
 bool ofxiOSCGImageToPixels(CGImageRef & ref, unsigned char * pixels);
 
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 // save current opengl screen to photos app
 // based on code from http://www.bit-101.com/blog/?p=1861
 void ofxiOSScreenGrab(id delegate);
+#endif
 
 
 // utility fuctions for converting strings and NSStrings back and forth

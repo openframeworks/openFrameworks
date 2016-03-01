@@ -308,7 +308,7 @@ copy_dlls:
 	@cp $(MSYS2_ROOT)/bin/libjpegxr.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libjxrglue.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libopenjp2-7.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libraw-10.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libraw*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libtiff-5.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libwebp*.dll bin/
 	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/

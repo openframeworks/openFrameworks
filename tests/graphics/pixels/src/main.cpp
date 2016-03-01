@@ -307,21 +307,6 @@ class ofApp: public ofxUnitTestsApp{
                 test_eq((uint64_t)pixels.getLine(h-1).begin(), (uint64_t)pixels.getData()+(w*bpp/8*(h-1)),"getLine(h-1).begin()==getData()+(w*bpp/8*(h-1)) " + format);
                 test_eq((uint64_t)pixels.getLine(h-1).end(), (uint64_t)pixels.end(),"getLine(h-1).end()==end() " + format);
                 test_eq((uint64_t)&pixels.getLine(0).getPixel(10)[0], (uint64_t)pixels.getData()+(10*bpp/8),"getLine(0).getPixel(10)[0]==pixels.getData()+(10*bpp/8)");
-
-                // Test that move assignment works properly for ofPixels wrapping external memory
-                for(auto & p: pixels.getLine(1)){
-                    p = ofRandom(255);
-                }
-                auto stride = pixels.getWidth() * pixels.getNumChannels();
-                pixels.getLine(0).asPixels() = pixels.getLine(1).asPixels();
-                const unsigned char * ptrLine0 = pixels.getLine(0).begin();
-                const unsigned char * ptrLine1 = pixels.getLine(1).begin();
-                bool equal = true;
-                for(int i=0;i<stride;i++){
-                    equal &= *ptrLine0++ == *ptrLine1++;
-                    //test_eq((int)*ptrLine0++, (int)*ptrLine1++, "testing move assignment operator over external pixels for " + formatName(pixels.getPixelFormat()));
-                }
-                test(equal,"testing move assignment operator over external pixels for " + formatName(pixels.getPixelFormat()));
 			}
 		}
 	}
