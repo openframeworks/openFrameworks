@@ -5,7 +5,7 @@
 # define the version
 FORMULA_TYPES=( "osx" "vs" "msys2" "ios" "tvos" "android" )
 
-VER=1.0.2d
+VER=1.0.2f
 VERDIR=1.0.2
 CSTANDARD=gnu11 # c89 | c99 | c11 | gnu11
 COMPILER_TYPE=clang # clang, gcc
@@ -713,6 +713,9 @@ function copy() {
             mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_${TYPE}.h
         fi
         cp -RHv lib/include/openssl/* $1/include/openssl/
+        cp -v $FORMULA_DIR/opensslconf.h lib/include/openssl/opensslconf.h
+
+        # We also copy this file so that POCO and others can access it.
         cp -v $FORMULA_DIR/opensslconf.h $1/include/openssl/opensslconf.h
 
     elif [ -f include/openssl/opensslconf.h ]; then
