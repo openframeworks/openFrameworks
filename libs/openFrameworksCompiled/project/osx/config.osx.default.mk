@@ -223,6 +223,10 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 # third party static libs (this may not matter due to exclusions in poco's libsorder.make)
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/lib/$(PLATFORM_LIB_SUBPATH)/%
 
+ifeq ($(USE_FMOD),0)
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
+endif
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -383,8 +387,10 @@ afterplatform: $(TARGET_NAME)
 
 
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
-	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/libs/* bin/$(BIN_NAME).app/Contents/MacOS
 	
+ifeq ($(USE_FMOD),0)
+	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/libs/* bin/$(BIN_NAME).app/Contents/MacOS
+endif
 	
 ifdef PROJECT_AFTER_OSX
 	${PROJECT_AFTER_OSX}
