@@ -111,12 +111,6 @@ else
 	MAC_OS_SDK_ROOT=
 endif
 
-# Architecture / Machine Flags (http://gcc.gnu.org/onlinedocs/gcc/Submodel-Options.html)
-ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo $$?),0)
-	PLATFORM_CFLAGS += -march=native
-	PLATFORM_CFLAGS += -mtune=native
-endif
-
 # Optimization options (http://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
 #PLATFORM_CFLAGS += -finline-functions
 #PLATFORM_CFLAGS += -funroll-all-loops
@@ -133,11 +127,6 @@ ifdef MAC_OS_SDK_ROOT
 endif
 
 PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
-
-PLATFORM_CFLAGS += -fasm-blocks
-PLATFORM_CFLAGS += -funroll-loops
-PLATFORM_CFLAGS += -mssse3
-PLATFORM_CFLAGS += -fmessage-length=0
 
 PLATFORM_CXXFLAGS += -x objective-c++
 PLATFORM_CXXFLAGS += -std=c++11
@@ -180,6 +169,12 @@ PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os -DNDEBUG
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+
+# Architecture / Machine Flags (http://gcc.gnu.org/onlinedocs/gcc/Submodel-Options.html)
+ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo $$?),0)
+	#PLATFORM_OPTIMIZATION_CFLAGS_RELEASE += -march=native
+	PLATFORM_OPTIMIZATION_CFLAGS_RELEASE += -mtune=native
+endif
 
 ##########################################################################################
 # PLATFORM CORE EXCLUSIONS
