@@ -226,7 +226,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/lib/$(PLATFORM_LIB_SUBPATH)/%
 ifeq ($(USE_FMOD),0)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
-	PLATFORM_CFLAGS += -DTARGET_NO_SOUND
+	PLATFORM_CFLAGS += -DUSE_FMOD=0
 endif
 
 ##########################################################################################
@@ -389,7 +389,7 @@ afterplatform: $(TARGET_NAME)
 
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 	
-ifeq ($(USE_FMOD),0)
+ifneq ($(USE_FMOD),0)
 	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/libs/* bin/$(BIN_NAME).app/Contents/MacOS
 endif
 	
