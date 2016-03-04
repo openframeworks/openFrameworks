@@ -351,7 +351,6 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 ################################################################################
 #PLATFORM_CC=
 
-
 afterplatform: $(TARGET_NAME)
 	@rm -rf bin/$(BIN_NAME).app
 	@mkdir -p bin/$(BIN_NAME).app
@@ -393,10 +392,6 @@ ifneq ($(USE_FMOD),0)
 	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/libs/* bin/$(BIN_NAME).app/Contents/MacOS
 endif
 	
-ifdef PROJECT_AFTER_OSX
-	${PROJECT_AFTER_OSX}
-endif	
-
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"

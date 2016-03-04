@@ -207,7 +207,7 @@ ifdef B_PROCESS_ADDONS
     ifneq ($(PROJECT_ADDONS),)
 		include $(OF_SHARED_MAKEFILES_PATH)/config.addons.mk
     endif
-    
+        
     ifdef ADDON_PATHS
     	PROJECT_ADDON_PATHS = $(addsuffix /,$(call remove-dupes-func,$(ADDON_PATHS:%/=%)))
     endif
