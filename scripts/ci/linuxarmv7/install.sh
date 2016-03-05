@@ -25,7 +25,7 @@ downloadToolchain(){
 downloadFirmware(){
     wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
     unzip firmware.zip
-    cp -r firmware-master/opt archlinux/
+    sudo cp -r firmware-master/opt archlinux/
     rm -r firmware-master
     rm firmware.zip
 }
@@ -37,16 +37,16 @@ relativeSoftLinks(){
     for link in $(ls -la | grep "\-> /" | sed "s/.* \([^ ]*\) \-> \/\(.*\)/\1->\/\2/g"); do 
         lib=$(echo $link | sed "s/\(.*\)\->\(.*\)/\1/g"); 
         link=$(echo $link | sed "s/\(.*\)\->\(.*\)/\2/g"); 
-        rm $lib
-        ln -s ${rel_link}/${link} $lib 
+        sudo rm $lib
+        sudo ln -s ${rel_link}/${link} $lib 
     done
 
     for f in *; do 
         error_lib=$(grep " \/lib/" $f > /dev/null 2>&1; echo $?) 
         error_usr=$(grep " \/usr/" $f > /dev/null 2>&1; echo $?) 
         if [ $error_lib -eq 0 ] || [ $error_usr -eq 0 ]; then 
-            sed -i "s/ \/lib/ $escaped_rel_link\/lib/g" $f
-            sed -i "s/ \/usr/ $escaped_rel_link\/usr/g" $f
+            sudo sed -i "s/ \/lib/ $escaped_rel_link\/lib/g" $f
+            sudo sed -i "s/ \/usr/ $escaped_rel_link\/usr/g" $f
         fi
     done
 }

@@ -36,9 +36,9 @@ export CXXFLAGS="$CXXFLAGS --sysroot=${RPI_ROOT}"
 #rm rtaudio-4.1.1.tar.gz
 #rm -r rtaudio-4.1.1
 cd $ROOT/archlinux
-wget http://ci.openframeworks.cc/rtaudio-armv7hf.tar.bz2
-tar xjf rtaudio-armv7hf.tar.bz2
-rm rtaudio-armv7hf.tar.bz2
+sudo wget http://ci.openframeworks.cc/rtaudio-armv7hf.tar.bz2
+sudo tar xjf rtaudio-armv7hf.tar.bz2
+sudo rm rtaudio-armv7hf.tar.bz2
 cd $ROOT
 
 # Add compiler flag to reduce memory usage to enable builds to complete
