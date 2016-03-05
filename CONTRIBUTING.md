@@ -64,7 +64,7 @@ As with most open source projects, the fastest way to get a feature made is to m
 We are more likely to accept your code if we feel like it has been discussed already. 
 If you are submitting a new feature, it's best if the feature has been discussed beforehand, either as a [feature request](#feature-requests) or on the [forums](http://openframeworks.cc/forums) or the [of-dev mailing list](http://dev.openframeworks.cc/listinfo.cgi/of-dev-openframeworks.cc).
 
-- Please read the [code style guidelines](https://github.com/openframeworks/openFrameworks/wiki/oF-code-style) and make sure your code confirms to them.
+- Please read the [code style guidelines](https://github.com/openframeworks/openFrameworks/wiki/oF-code-style) and make sure your code conforms to them.
 If in doubt, try and match the style and practices you find in the code you are working with.
 - Please write _descriptive commit messages_ for each of the commits that you make.
 They don't have to be in-depth, just a brief summary of what the commit contains. A page describing how well-written commit messages look like can be found [here](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).

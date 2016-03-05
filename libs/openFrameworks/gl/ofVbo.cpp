@@ -10,6 +10,10 @@
 #include "ofShader.h"
 #include "ofGLProgrammableRenderer.h"
 
+#ifdef TARGET_ANDROID
+#include "ofAppAndroidWindow.h"
+#endif
+
 #include <map>
 #include <set>
 
@@ -52,12 +56,19 @@ static void releaseVAO(GLuint id){
 	if(getVAOIds().find(id)!=getVAOIds().end()){
 		getVAOIds()[id]--;
 		if(getVAOIds()[id]==0){
-			glDeleteVertexArrays(1, &id);
+#ifdef TARGET_ANDROID
+			if (!ofAppAndroidWindow::isSurfaceDestroyed())
+#endif
+				glDeleteVertexArrays(1, &id);
 			getVAOIds().erase(id);
 		}
 	}else{
 		ofLogWarning("ofVbo") << "releaseVAO(): something's wrong here, releasing unknown vertex array object id " << id;
-		glDeleteVertexArrays(1, &id);
+
+#ifdef TARGET_ANDROID
+		if (!ofAppAndroidWindow::isSurfaceDestroyed())
+#endif
+			glDeleteVertexArrays(1, &id);
 	}
 }
 

@@ -1098,14 +1098,9 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 
 	int directionX = settings.direction == ofTtfSettings::LeftToRight?1:-1;
 
-	string str_valid;
-	utf8::replace_invalid(str.begin(),str.end(),back_inserter(str_valid));
-	utf8::iterator<const char*> it(&str_valid.front(), &str_valid.front(), (&str_valid.back())+1);
-	utf8::iterator<const char*> end((&str_valid.back())+1, &str_valid.front(), (&str_valid.back())+1);
 	uint32_t prevC = 0;
-	while(it != end){
+	for(auto c: ofUTF8Iterator(str)){
 		try{
-			auto c = *it;
 			if (c == '\n') {
 				pos.y += lineHeight*newLineDirection;
 				pos.x = x ; //reset X Pos back to zero
@@ -1122,7 +1117,6 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 				pos.x += props.advance * letterSpacing * directionX;
 				prevC = c;
 			}
-			++it;
 		}catch(...){
 			break;
 		}
@@ -1237,19 +1231,14 @@ const ofTexture & ofTrueTypeFont::getFontTexture() const{
 
 //-----------------------------------------------------------
 ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) const{
-	string str_valid;
-	utf8::replace_invalid(str.begin(),str.end(),back_inserter(str_valid));
 	vector<glyph> glyphs;
 	vector<ofVec2f> glyphPositions;
-	utf8::iterator<const char*> it(&str_valid.front(), &str_valid.front(), (&str_valid.back())+1);
-	utf8::iterator<const char*> end((&str_valid.back())+1, &str_valid.front(), (&str_valid.back())+1);
 	int	x = 0;
 	int	y = 0;
 	long height = 0;
 	uint32_t prevC = 0;
-	while(it != end){
+	for(auto c: ofUTF8Iterator(str)){
 		try{
-			auto c = *it;
 			if (c == '\n') {
 				y += lineHeight;
 				x = 0 ; //reset X Pos back to zero
@@ -1265,7 +1254,6 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 				x += glyphs.back().props.advance * letterSpacing;
 				height = max(height, glyphs.back().props.ymax + y + long(getLineHeight()));
 			}
-			++it;
 			prevC = c;
 		}catch(...){
 			break;
