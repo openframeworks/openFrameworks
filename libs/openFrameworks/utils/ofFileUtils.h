@@ -217,8 +217,9 @@ private:
 /// Opens as a text file by default.
 ///
 /// \param path file to open
-/// \param binary set to true if you are reading binary data
-ofBuffer ofBufferFromFile(const string & path, bool binary=false);
+/// \param binary set to false if you are reading a text file & want lines
+/// split at endline characters
+ofBuffer ofBufferFromFile(const string & path, bool binary=true);
 
 //--------------------------------------------------
 /// \brief Write the contents of a buffer to a file at path.
@@ -227,8 +228,8 @@ ofBuffer ofBufferFromFile(const string & path, bool binary=false);
 ///
 /// \param path file to open
 /// \param buffer data source to write from
-/// \param binary set to true if you are writing binary data
-bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary=false);
+/// \param binary set to false if you are writing a text file
+bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary=true);
 
 //--------------------------------------------------
 /// \class ofFilePath
@@ -450,19 +451,19 @@ public:
 	/// \param path file path
 	/// \param mode file access mode depending on how you plan to use the file
 	/// (read only, read write, etc)
-	/// \param binary set to true if you are working with binary data
-	/// (aka image, not text)
+	/// \param binary set to false if you are reading a text file & want lines
+	/// split at endline characters
 	/// \returns true if the path was opened
-	bool open(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=false);
+	bool open(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 	
 	/// \brief Reopen the current file path with a different access mode.
 	///
 	/// \param mode file access mode depending on how you plan to use the file
 	/// (read only, read write, etc)
-	/// \param binary set to true if you are working with binary data
-	/// (aka image, not text)
+	/// \param binary set to false if you are reading a text file & want lines
+	/// split at endline characters
 	/// \returns true if the file was reopened with the new access mode(s).
-	bool changeMode(Mode mode, bool binary=false);
+	bool changeMode(Mode mode, bool binary=true);
 	
 	/// \brief Close a currently open file.
 	void close();
