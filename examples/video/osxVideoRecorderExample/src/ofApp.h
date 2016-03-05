@@ -2,6 +2,13 @@
 
 #include "ofMain.h"
 
+
+// This openFrameworks example demonstrates how to use the OS X specific
+// video grabber to record synced video and audio to disk.
+//
+// For more information regarding this example take a look at the README.md.
+
+
 class ofApp : public ofBaseApp{
 	
 	public:
