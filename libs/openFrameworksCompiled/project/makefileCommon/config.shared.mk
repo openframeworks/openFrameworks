@@ -290,7 +290,7 @@ CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_PKG_CONFIG_LIBRARIES)
 
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
 $(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
-FAILED_PKG=$(shell for pkg in $(CORE_PKG_CONFIG_LIBRARIES); do $(PLATFORM_PKG_CONFIG) $$pkg --cflags > /dev/null; if [ $$? -ne 0 ]; then echo $$pkg; return; fi; done; echo 0)
+FAILED_PKG=$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); for pkg in $(CORE_PKG_CONFIG_LIBRARIES); do $(PLATFORM_PKG_CONFIG) $$pkg --cflags > /dev/null; if [ $$? -ne 0 ]; then echo $$pkg; return; fi; done; echo 0)
 	ifneq ($(FAILED_PKG),0)
 $(error couldn't find $(FAILED_PKG) pkg-config package or it's dependencies, did you run the latest install_dependencies.sh?)
 	endif
