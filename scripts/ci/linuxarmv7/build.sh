@@ -7,12 +7,13 @@ export GCC_PREFIX=armv7l-unknown-linux-gnueabihf
 export TOOLCHAIN_PREFIX=arm-linux-gnueabihf
 export GST_VERSION=1.0
 export RPI_ROOT=${OF_ROOT}/scripts/ci/linuxarmv7/archlinux
-export TOOLCHAIN_ROOT=/usr
+#export TOOLCHAIN_ROOT=/usr
+export TOOLCHAIN_ROOT=${OF_ROOT}/scripts/ci/linuxarmv7/rpi2_toolchain
 #${OF_ROOT}/scripts/ci/linuxarmv7/x-tools7h/${GCC_PREFIX}
 export PLATFORM_OS=Linux
 export PLATFORM_ARCH=armv7l
 export PKG_CONFIG_DIR=
-export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
+export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
 export PKG_CONFIG_SYSROOT_DIR=${RPI_ROOT}
 export CXX=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++
 export CC=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc
