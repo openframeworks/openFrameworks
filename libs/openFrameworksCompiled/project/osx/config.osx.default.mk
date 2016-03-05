@@ -223,6 +223,11 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 # third party static libs (this may not matter due to exclusions in poco's libsorder.make)
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/lib/$(PLATFORM_LIB_SUBPATH)/%
 
+ifeq ($(USE_FMOD),0)
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
+	PLATFORM_CFLAGS += -DUSE_FMOD=0
+endif
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -346,7 +351,6 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 ################################################################################
 #PLATFORM_CC=
 
-
 afterplatform: $(TARGET_NAME)
 	@rm -rf bin/$(BIN_NAME).app
 	@mkdir -p bin/$(BIN_NAME).app
@@ -383,13 +387,11 @@ afterplatform: $(TARGET_NAME)
 
 
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
+	
+ifneq ($(USE_FMOD),0)
 	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/libs/* bin/$(BIN_NAME).app/Contents/MacOS
+endif
 	
-	
-ifdef PROJECT_AFTER_OSX
-	${PROJECT_AFTER_OSX}
-endif	
-
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"
