@@ -18,8 +18,13 @@ downloadToolchain(){
     #wget http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
     #tar xf x-tools7h.tar.xz
     #rm x-tools7h.tar.xz
-    sudo apt-get -y update
-    sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libasound2-dev
+    
+    #sudo apt-get -y update
+    #sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libasound2-dev
+    
+    wget http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
+    tar xjf rpi2_toolchain.tar.bz2
+    rm rpi2_toolchain.tar.bz2
 }
 
 downloadFirmware(){
