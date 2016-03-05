@@ -1,3 +1,20 @@
+                           
+
+OF 0.9.3
+========                          
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+PLATFORM SPECIFIC
+-----------------
+
+### msys2
+   / FreeImage to freeimage dependencies fix
 
 
  _____     _____     _____ 
