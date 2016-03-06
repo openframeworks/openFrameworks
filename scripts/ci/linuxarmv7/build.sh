@@ -8,7 +8,7 @@ export TOOLCHAIN_PREFIX=arm-linux-gnueabihf
 export GST_VERSION=1.0
 export RPI_ROOT=${OF_ROOT}/scripts/ci/linuxarmv7/archlinux
 #export TOOLCHAIN_ROOT=/usr
-export TOOLCHAIN_ROOT=${OF_ROOT}/scripts/ci/linuxarmv7/rpi2_toolchain
+export TOOLCHAIN_ROOT=$HOME/rpi2_toolchain
 #${OF_ROOT}/scripts/ci/linuxarmv7/x-tools7h/${GCC_PREFIX}
 export PLATFORM_OS=Linux
 export PLATFORM_ARCH=armv7l
