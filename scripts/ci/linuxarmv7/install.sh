@@ -13,7 +13,7 @@ trapError() {
 createArchImg(){
     sudo apt-get -y update
     #sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libasound2-dev
-    sudo apt-get install libgssapi-krb5-2 libkrb5-3
+    sudo apt-get install -y libgssapi-krb5-2 libkrb5-3
     sudo ./arch-bootstrap.sh archlinux
 }
 
