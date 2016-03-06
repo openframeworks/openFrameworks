@@ -53,7 +53,6 @@ PLATFORM_DEFINES += PIC
 PLATFORM_DEFINES += _REENTRANT
 PLATFORM_DEFINES += _LARGEFILE64_SOURCE
 PLATFORM_DEFINES += _FILE_OFFSET_BITS=64
-PLATFORM_DEFINES += _FORTIFY_SOURCE
 PLATFORM_DEFINES += __STDC_CONSTANT_MACROS
 PLATFORM_DEFINES += __STDC_LIMIT_MACROS
 PLATFORM_DEFINES += TARGET_POSIX
@@ -187,7 +186,6 @@ PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
 
 ifeq ($(CROSS_COMPILING),1)	
-	
 	ifdef TOOLCHAIN_ROOT
 		#You have specified TOOLCHAIN_ROOT with an environment variable
 	else
@@ -197,26 +195,35 @@ ifeq ($(CROSS_COMPILING),1)
 	ifdef GCC_PREFIX
 		#You have specified GCC_PREFIX with an environment variable
 	else
-		GCC_PREFIX = arm-linux-gnueabihf
+		GCC_PREFIX = armv7l-unknown-linux-gnueabihf
 	endif
 	
-    PLATFORM_CXX = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-g++
-	PLATFORM_CC = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-gcc
-	PLATFORM_AR = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-ar
-	PLATFORM_LD = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-ld
+    PLATFORM_CXX = $(TOOLCHAIN_ROOT)/bin/$(TOOLCHAIN_PREFIX)-g++
+	PLATFORM_CC = $(TOOLCHAIN_ROOT)/bin/$(TOOLCHAIN_PREFIX)-gcc
+	PLATFORM_AR = $(TOOLCHAIN_ROOT)/bin/$(TOOLCHAIN_PREFIX)-ar
+	PLATFORM_LD = $(TOOLCHAIN_ROOT)/bin/$(TOOLCHAIN_PREFIX)-ld
 	
 	SYSROOT=$(RPI_ROOT)
 	
 	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
 	
-	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++/4.9
+	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/local/include
+	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++/5.3.0
+	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/$(GCC_PREFIX)/c++/5.3.0
+	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++/5.3.0/$(GCC_PREFIX)
 
 	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/$(GCC_PREFIX)
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/local/lib
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/gcc/$(GCC_PREFIX)/5.3.0
 
 	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) 
-	PLATFORM_LDFLAGS += -Wl,-rpath=$(SYSROOT)/usr/lib/$(GCC_PREFIX) 
-	PLATFORM_LDFLAGS += -Wl,-rpath=$(SYSROOT)/lib/$(GCC_PREFIX) 
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib 
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/local/lib 
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/$(GCC_PREFIX) 
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/lib/$(GCC_PREFIX) 
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/opt/vc/lib
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pulseaudio
 	 
-	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
+	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
 	
 endif
