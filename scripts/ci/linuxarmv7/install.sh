@@ -4,6 +4,8 @@
 # trap any script errors and exit
 trap "trapError" ERR
 
+SUDO=sudo
+
 trapError() {
 	echo
 	echo " ^ Received error ^"
@@ -11,11 +13,14 @@ trapError() {
 }
 
 createArchImg(){
-    sudo apt-get -y update
     #sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libasound2-dev
-    sudo apt-get -y dist-upgrade
+    
+    sudo apt-get -y update
+    sudo apt-get -f -y --force-yes dist-upgrade
     sudo apt-get install -y libgssapi-krb5-2 libkrb5-3 libidn11
     sudo ./arch-bootstrap.sh archlinux
+    
+    #./arch-bootstrap_downloadonly.sh
 }
 
 downloadToolchain(){
@@ -32,7 +37,7 @@ downloadToolchain(){
 downloadFirmware(){
     wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
     unzip firmware.zip
-    sudo cp -r firmware-master/opt archlinux/
+    ${SUDO} cp -r firmware-master/opt archlinux/
     rm -r firmware-master
     rm firmware.zip
 }
@@ -44,16 +49,16 @@ relativeSoftLinks(){
     for link in $(ls -la | grep "\-> /" | sed "s/.* \([^ ]*\) \-> \/\(.*\)/\1->\/\2/g"); do 
         lib=$(echo $link | sed "s/\(.*\)\->\(.*\)/\1/g"); 
         link=$(echo $link | sed "s/\(.*\)\->\(.*\)/\2/g"); 
-        sudo rm $lib
-        sudo ln -s ${rel_link}/${link} $lib 
+        ${SUDO} rm $lib
+        ${SUDO} ln -s ${rel_link}/${link} $lib 
     done
 
     for f in *; do 
         error_lib=$(grep " \/lib/" $f > /dev/null 2>&1; echo $?) 
         error_usr=$(grep " \/usr/" $f > /dev/null 2>&1; echo $?) 
         if [ $error_lib -eq 0 ] || [ $error_usr -eq 0 ]; then 
-            sudo sed -i "s/ \/lib/ $escaped_rel_link\/lib/g" $f
-            sudo sed -i "s/ \/usr/ $escaped_rel_link\/usr/g" $f
+            ${SUDO} sed -i "s/ \/lib/ $escaped_rel_link\/lib/g" $f
+            ${SUDO} sed -i "s/ \/usr/ $escaped_rel_link\/usr/g" $f
         fi
     done
 }
