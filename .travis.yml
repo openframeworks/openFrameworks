@@ -27,7 +27,7 @@ matrix:
       env: TARGET="linuxarmv7"
       cache:
         directories:
-        - ~/rpi2-toolchain
+        - ~/rpi2_toolchain
     - os: osx
       compiler: clang
       env: TARGET="osx"
