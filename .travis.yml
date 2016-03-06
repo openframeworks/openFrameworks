@@ -22,7 +22,7 @@ matrix:
       dist: trusty
       env: TARGET="linuxarmv6"
     - os: linux
-      sudo: required
+      sudo: false
       dist: trusty
       env: TARGET="linuxarmv7"
     - os: osx
