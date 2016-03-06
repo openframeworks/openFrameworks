@@ -11,6 +11,9 @@ trapError() {
 }
 
 createArchImg(){
+    sudo apt-get -y update
+    #sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libasound2-dev
+    sudo apt-get install libgssapi-krb5-2 libkrb5-3
     sudo ./arch-bootstrap.sh archlinux
 }
 
@@ -19,9 +22,6 @@ downloadToolchain(){
     #tar xf x-tools7h.tar.xz
     #rm x-tools7h.tar.xz
     
-    sudo apt-get -y update
-    #sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libasound2-dev
-    sudo apt-get install libgssapi-krb5-2 libkrb5-3
     
     wget http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
     tar xjf rpi2_toolchain.tar.bz2
