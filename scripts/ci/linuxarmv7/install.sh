@@ -28,7 +28,7 @@ downloadToolchain(){
     #tar xf x-tools7h.tar.xz
     #rm x-tools7h.tar.xz
     
-    if [ ! -d ~/rpi2-toolchain ]; then
+    if [ ! -d ~/rpi2_toolchain ]; then
         wget http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
         tar xjf rpi2_toolchain.tar.bz2 -C ~/
         rm rpi2_toolchain.tar.bz2
