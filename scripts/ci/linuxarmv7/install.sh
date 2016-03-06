@@ -4,7 +4,7 @@
 # trap any script errors and exit
 trap "trapError" ERR
 
-SUDO=sudo
+SUDO=
 
 trapError() {
 	echo
@@ -15,12 +15,12 @@ trapError() {
 createArchImg(){
     #sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libasound2-dev
     
-    sudo apt-get -y update
-    sudo apt-get -f -y --force-yes dist-upgrade
-    sudo apt-get install -y libgssapi-krb5-2 libkrb5-3 libidn11
-    sudo ./arch-bootstrap.sh archlinux
+    #sudo apt-get -y update
+    #sudo apt-get -f -y --force-yes dist-upgrade
+    #sudo apt-get install -y libgssapi-krb5-2 libkrb5-3 libidn11
+    #sudo ./arch-bootstrap.sh archlinux
     
-    #./arch-bootstrap_downloadonly.sh
+    ./arch-bootstrap_downloadonly.sh
 }
 
 downloadToolchain(){
