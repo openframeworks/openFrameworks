@@ -87,58 +87,57 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 	bUpdatePixels = true;
 	bUpdateTexture = true;
 	
-    // reuse videoplayer
-    if(videoPlayer != nullptr) {
-		// use existing player
-		return [videoPlayer loadWithURL:url async:bAsync];
-    }
+	bool bLoaded = false;
 	
-    // create a new player
-    videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
-    [videoPlayer setWillBeUpdatedExternally:YES];
+    if(videoPlayer == nullptr) {
+		// create a new player if its not allocated
+		videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
+		[videoPlayer setWillBeUpdatedExternally:YES];
+	}
+	
+	bLoaded = [videoPlayer loadWithURL:url async:bAsync];
 
-    bool bLoaded = [videoPlayer loadWithURL:url async:bAsync];
-	
 	pixels.clear();
 	videoTexture.clear();
 	
-    bool bCreateTextureCache = bUseTextureCache && (_videoTextureCache == nullptr);
+	bool bCreateTextureCache = bLoaded && bUseTextureCache && (_videoTextureCache == nullptr);
 	
-    if(bCreateTextureCache == true) {
+	if(bCreateTextureCache == true) {
 
-        CVReturn err;
-        
+		CVReturn err;
+		
 #if defined(TARGET_OF_IOS) && defined(__IPHONE_6_0)
-        err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
-                                           nullptr,
-                                           [EAGLContext currentContext],
-                                           nullptr,
-                                           &_videoTextureCache);
+		err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
+										   nullptr,
+										   [EAGLContext currentContext],
+										   nullptr,
+										   &_videoTextureCache);
 #endif
-        
+		
 #if defined(TARGET_OF_IOS) && !defined(__IPHONE_6_0)
-        err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
-                                           nullptr,
-                                           (__bridge void *)[EAGLContext currentContext],
-                                           nullptr,
-                                           &_videoTextureCache);
+		err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
+										   nullptr,
+										   (__bridge void *)[EAGLContext currentContext],
+										   nullptr,
+										   &_videoTextureCache);
 #endif
-        
+		
 #ifdef TARGET_OSX
-        err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault,
-                                         nullptr,
-                                         CGLGetCurrentContext(),
-                                         CGLGetPixelFormat(CGLGetCurrentContext()),
-                                         nullptr,
-                                         &_videoTextureCache);
+		err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault,
+										 nullptr,
+										 CGLGetCurrentContext(),
+										 CGLGetPixelFormat(CGLGetCurrentContext()),
+										 nullptr,
+										 &_videoTextureCache);
 #endif
-        
-        if(err) {
-            ofLogWarning("ofAVFoundationPlayer") << "load(): error when creating texture cache, " << err << ".";
-        }
-    }
+		
+		if(err) {
+			ofLogWarning("ofAVFoundationPlayer") << "load(): error when creating texture cache, " << err << ".";
+		}
+	}
+
 	
-	if( bAsync == false ){
+	if( bAsync == false && bLoaded ){
 		pixels.allocate(getWidth(), getHeight(), getPixelFormat());
 	}
 	
