@@ -115,7 +115,8 @@ function findSourceRecursive(dir){
                   ,'-or', '-name', '*.c++'
                   ,'-or', '-name', '*.s'
                   ,'-or', '-name', '*.S'
-                  ,'-or', '-name', '*.c'];
+                  ,'-or', '-name', '*.c'
+                  ,'-or', '-name', '*.inl'];
     find.exec("find", params);
     if(find.exitCode()!==0){
         find.exec("C:\\msys64\\usr\\bin\\find", params);
