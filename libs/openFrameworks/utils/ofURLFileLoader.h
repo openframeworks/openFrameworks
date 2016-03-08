@@ -121,7 +121,7 @@ class ofURLFileLoader  {
 		/// \param name optional key to use when sorting requests
 		/// \return unique id for the active HTTP request
         int getAsync(const string& url, const string& name="");
-		int getAsyncWithRequest(const ofHttpRequest& request);
+        int getAsyncWithRequest(const ofHttpRequest& request);
 	
 		/// \brief make an HTTP request and save the response data to a file
 		/// blocks until a response is returned or the request times out
