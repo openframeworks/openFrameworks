@@ -29,8 +29,8 @@ matrix:
         directories:
         - ~/rpi2_toolchain
     - os: linux
-      sudo: required
-      dist: trusty
+      sudo: false
+# dist: trusty
       env: TARGET="emscripten"
     - os: osx
       compiler: clang
