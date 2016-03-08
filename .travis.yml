@@ -17,10 +17,14 @@ matrix:
           - gcc-4.9
           - g++-4.9
           - gdb
+          
+          
     - os: linux
       sudo: required
       dist: trusty
       env: TARGET="linuxarmv6"
+      
+      
     - os: linux
       sudo: false
       dist: trusty
@@ -28,23 +32,37 @@ matrix:
       cache:
         directories:
         - ~/rpi2_toolchain
+        
+        
     - os: linux
       sudo: false
-# dist: trusty
       env: TARGET="emscripten"
+      addons:
+        apt:
+          sources:
+          - ubuntu-toolchain-r-test
+          packages:
+          - libstdc++6
+          
     - os: osx
       compiler: clang
       env: TARGET="osx"
+      
+      
     - os: osx
       osx_image: xcode7.1
       compiler: clang
       env: TARGET="ios"
+      
+      
     - os: linux
       sudo: false
       env: TARGET="android" OPT="armv7"
       cache:
         directories:
         - ~/android-ndk-r10e
+        
+        
     - os: linux
       sudo: false
       env: TARGET="android" OPT="x86"
