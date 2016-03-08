@@ -502,7 +502,7 @@ ofPoint ofAppGLFWWindow::getScreenSize(){
 
 //------------------------------------------------------------
 int ofAppGLFWWindow::getWidth(){
-	if(windowMode == OF_GAME_MODE)
+	if(windowMode == OF_GAME_MODE || windowMode == OF_FULLSCREEN || (bWindowNeedsShowing && (settings.windowMode==OF_GAME_MODE || settings.windowMode==OF_FULLSCREEN)))
 	{
 		return getScreenSize().x;
 	}
@@ -519,7 +519,7 @@ int ofAppGLFWWindow::getWidth(){
 //------------------------------------------------------------
 int ofAppGLFWWindow::getHeight()
 {
-	if(windowMode == OF_GAME_MODE)
+	if(windowMode == OF_GAME_MODE || windowMode == OF_FULLSCREEN || (bWindowNeedsShowing && (settings.windowMode==OF_GAME_MODE || settings.windowMode==OF_FULLSCREEN)))
 	{
 		return getScreenSize().y;
 	}
@@ -585,7 +585,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
  
 	ofWindowMode curWindowMode = windowMode;
  
-  if (fullscreen){
+	if (fullscreen){
 		windowMode = OF_FULLSCREEN;
 	}else{
 		windowMode = OF_WINDOW;
