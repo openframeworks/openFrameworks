@@ -1890,6 +1890,7 @@ public:
 	/// \param name optional key to use when sorting requests
 	/// \return unique id for the active HTTP request
 	virtual int getAsync(const string& url, const string& name="")=0;
+	virtual int getAsyncWithRequest(const ofHttpRequest& request)=0;
 	
 	/// \brief make an HTTP request and save the response data to a file
 	/// blocks until a response is returned or the request times out
