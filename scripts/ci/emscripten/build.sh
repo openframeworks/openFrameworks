@@ -28,4 +28,7 @@ cd examples/templates/allAddonsExample/
 sed -i s/ofxOsc// addons.make
 sed -i s/ofxNetwork// addons.make
 sed -i s/ofxSvg// addons.make
+sed -i "s/#include \"ofxOsc.h\"//" src/ofApp.h
+sed -i "s/#include \"ofxNetwork.h\"//" src/ofApp.h
+sed -i "s/#include \"ofxSvg.h\"//" src/ofApp.h
 emmake make Debug
