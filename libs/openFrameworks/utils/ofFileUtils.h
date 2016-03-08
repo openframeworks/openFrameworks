@@ -218,7 +218,7 @@ private:
 ///
 /// \param path file to open
 /// \param binary set to false if you are reading a text file & want lines
-/// split at endline characters
+/// split at endline characters automatically
 ofBuffer ofBufferFromFile(const string & path, bool binary=true);
 
 //--------------------------------------------------
@@ -228,7 +228,8 @@ ofBuffer ofBufferFromFile(const string & path, bool binary=true);
 ///
 /// \param path file to open
 /// \param buffer data source to write from
-/// \param binary set to false if you are writing a text file
+/// \param binary set to false if you are writing a text file & want lines
+/// split at endline characters automatically
 bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary=true);
 
 //--------------------------------------------------
@@ -428,7 +429,8 @@ public:
 	/// \param path file path
 	/// \param mode file access mode depending on how you plan to use the file
 	/// (read only, read write, etc)
-	/// \param binary set to false if you are explicitly creating a text file
+	/// \param binary set to false if you are working with a text file & want
+	/// lines split at endline characters automatically
 	ofFile(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 	
 	/// \brief Create a new file path using the same path & settings of another
@@ -452,7 +454,7 @@ public:
 	/// \param mode file access mode depending on how you plan to use the file
 	/// (read only, read write, etc)
 	/// \param binary set to false if you are reading a text file & want lines
-	/// split at endline characters
+	/// split at endline characters automatically
 	/// \returns true if the path was opened
 	bool open(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 	
@@ -461,7 +463,7 @@ public:
 	/// \param mode file access mode depending on how you plan to use the file
 	/// (read only, read write, etc)
 	/// \param binary set to false if you are reading a text file & want lines
-	/// split at endline characters
+	/// split at endline characters automatically
 	/// \returns true if the file was reopened with the new access mode(s).
 	bool changeMode(Mode mode, bool binary=true);
 	
@@ -942,7 +944,7 @@ public:
 	/// \brief Open an ofFile instance using the path a given position in the
 	/// directory contents list.
 	///
-	/// Opens as a text file with read only access by default.
+	/// Opens as a binary file with readonly access by default.
 	///
 	/// \warning Call listDir() before using this function or the directory
 	/// contents list will be empty.
@@ -951,10 +953,10 @@ public:
 	/// \param position array index in the directory contents list
 	/// \param mode file access mode depending on how you plan to use the file
 	/// (read only, read write, etc)
-	/// \param binary set to true if you are working with binary data
-	/// (aka image, not text)
+	/// \param binary set to false if you are working with a text file & want
+	/// lines split at endline characters automatically
 	/// \returns ofFile instance
-	ofFile getFile(std::size_t position, ofFile::Mode mode=ofFile::Reference, bool binary=false) const;
+	ofFile getFile(std::size_t position, ofFile::Mode mode=ofFile::Reference, bool binary=true) const;
 	
 	/// \brief Get files and directories in the directory contents list.
 	///
