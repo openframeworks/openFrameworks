@@ -25,4 +25,7 @@ cd $ROOT
 cp scripts/templates/linux64/Makefile examples/templates/allAddonsExample/
 cp scripts/templates/linux64/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
+sed -i s/ofxOsc// addons.make
+sed -i s/ofxNetwork// addons.make
+sed -i s/ofxSvg// addons.make
 emmake make Debug
