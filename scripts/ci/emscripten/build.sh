@@ -31,4 +31,8 @@ sed -i s/ofxSvg// addons.make
 sed -i "s/#include \"ofxOsc.h\"//" src/ofApp.h
 sed -i "s/#include \"ofxNetwork.h\"//" src/ofApp.h
 sed -i "s/#include \"ofxSvg.h\"//" src/ofApp.h
+sed -i "s/ofxTCPClient client;//" src/ofApp.h
+sed -i "s/ofxTCPServer server;//" src/ofApp.h
+sed -i "s/ofxOscSender osc_sender;//" src/ofApp.h
+sed -i "s/ofxSVG svg;//" src/ofApp.h
 emmake make Debug
