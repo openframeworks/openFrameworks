@@ -564,7 +564,7 @@ public:
 	void setWriteable(bool writeable=true);
 	
 	/// \brief Set the readable flag of the current path.
-	void setReadOnly(bool readable=true);
+	void setReadable(bool readable=true);
 	
 	/// \brief Set the executable flag of the current path.
 	void setExecutable(bool executable=true);
@@ -817,7 +817,7 @@ public:
 	/// \brief Set the readable flag of the current path.
 	///
 	/// \param readable set to true to make path readable
-	void setReadOnly(bool readable=true);
+	void setReadable(bool readable=true);
 	
 	/// \brief Set the executable flag of the current path.
 	///

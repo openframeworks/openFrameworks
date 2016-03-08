@@ -648,18 +648,11 @@ bool ofFile::isHidden() const {
 
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setWriteable(bool flag){
-	setReadOnly(!flag);
-}
-
-//------------------------------------------------------------------------------------------------------------
-void ofFile::setReadOnly(bool flag){
 	try{
 		if(flag){
-			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
-			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
-			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
-		}else{
 			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::add_perms);
+		}else{
+			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
 		}
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set write permission on " << myFile << ": " << e.what();
@@ -667,11 +660,28 @@ void ofFile::setReadOnly(bool flag){
 }
 
 //------------------------------------------------------------------------------------------------------------
+void ofFile::setReadable(bool flag){
+	try{
+		if(flag){
+			std::filesystem::permissions(myFile,std::filesystem::perms::owner_read | std::filesystem::perms::add_perms);
+		}else{
+			std::filesystem::permissions(myFile,std::filesystem::perms::owner_read | std::filesystem::perms::remove_perms);
+		}
+	}catch(std::exception & e){
+		ofLogError() << "Couldn't set read permission on " << myFile << ": " << e.what();
+	}
+}
+
+//------------------------------------------------------------------------------------------------------------
 void ofFile::setExecutable(bool flag){
 	try{
-		std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::add_perms);
+		if(flag){
+			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::add_perms);
+		} else{
+			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::remove_perms);
+		}
 	}catch(std::exception & e){
-		ofLogError() << "Couldn't set write permission on " << myFile << ": " << e.what();
+		ofLogError() << "Couldn't set executable permission on " << myFile << ": " << e.what();
 	}
 }
 
@@ -972,8 +982,8 @@ void ofDirectory::setWriteable(bool flag){
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofDirectory::setReadOnly(bool flag){
-	return ofFile(myDir,ofFile::Reference).setReadOnly(flag);
+void ofDirectory::setReadable(bool flag){
+	return ofFile(myDir,ofFile::Reference).setReadable(flag);
 }
 
 //------------------------------------------------------------------------------------------------------------
