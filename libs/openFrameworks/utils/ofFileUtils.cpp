@@ -914,7 +914,7 @@ ofDirectory::ofDirectory(const std::filesystem::path & path){
 void ofDirectory::open(const std::filesystem::path & path){
 	originalDirectory = ofFilePath::getPathForDirectory(path.string());
 	files.clear();
-    myDir = std::filesystem::path(ofToDataPath(originalDirectory));
+	myDir = std::filesystem::path(ofToDataPath(originalDirectory));
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -928,9 +928,9 @@ bool ofDirectory::create(bool recursive){
 	if(!myDir.string().empty()){
 		try{
 			if(recursive){
-                std::filesystem::create_directories(myDir);
+				std::filesystem::create_directories(myDir);
 			}else{
-                std::filesystem::create_directory(myDir);
+				std::filesystem::create_directory(myDir);
 			}
 		}
 		catch(std::exception & except){
@@ -1077,9 +1077,9 @@ bool ofDirectory::remove(bool recursive){
 
 	try{
 		if(recursive){
-            std::filesystem::remove_all(std::filesystem::canonical(myDir));
+			std::filesystem::remove_all(std::filesystem::canonical(myDir));
 		}else{
-            std::filesystem::remove(std::filesystem::canonical(myDir));
+			std::filesystem::remove(std::filesystem::canonical(myDir));
 		}
 	}catch(std::exception & except){
 		ofLogError("ofDirectory") << "remove(): unable to remove file/directory: " << except.what();
@@ -1205,18 +1205,18 @@ static bool natural(const ofFile& a, const ofFile& b) {
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::sort(){
-    if(files.empty() && !myDir.empty()){
-        listDir();
-    }
+	if(files.empty() && !myDir.empty()){
+		listDir();
+	}
 	ofSort(files, natural);
 }
 
 //------------------------------------------------------------------------------------------------------------
 ofDirectory ofDirectory::getSorted(){
-    ofDirectory sorted(*this);
-    sorted.listDir();
-    sorted.sort();
-    return sorted;
+	ofDirectory sorted(*this);
+	sorted.listDir();
+	sorted.sort();
+	return sorted;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1536,24 +1536,24 @@ string ofFilePath::getUserHomeDir(){
 }
 
 string ofFilePath::makeRelative(const std::string & from, const std::string & to){
-    auto pathFrom = std::filesystem::absolute( from );
-    auto pathTo = std::filesystem::absolute( to );
-    std::filesystem::path ret;
-    std::filesystem::path::const_iterator itrFrom( pathFrom.begin() ), itrTo( pathTo.begin() );
-    // Find common base
-    for( std::filesystem::path::const_iterator toEnd( pathTo.end() ), fromEnd( pathFrom.end() ) ; itrFrom != fromEnd && itrTo != toEnd && *itrFrom == *itrTo; ++itrFrom, ++itrTo );
-    // Navigate backwards in directory to reach previously found base
-    for( std::filesystem::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom ){
-        if( (*itrFrom) != "." ){
-            ret /= "..";
-        }
-    }
-    // Now navigate down the directory branch
-    for( ; itrTo != pathTo.end() ; ++itrTo ){
-        if( itrTo->string() != "."){
-            ret /= *itrTo;
-        }
-    }
+	auto pathFrom = std::filesystem::absolute( from );
+	auto pathTo = std::filesystem::absolute( to );
+	std::filesystem::path ret;
+	std::filesystem::path::const_iterator itrFrom( pathFrom.begin() ), itrTo( pathTo.begin() );
+	// Find common base
+	for( std::filesystem::path::const_iterator toEnd( pathTo.end() ), fromEnd( pathFrom.end() ) ; itrFrom != fromEnd && itrTo != toEnd && *itrFrom == *itrTo; ++itrFrom, ++itrTo );
+	// Navigate backwards in directory to reach previously found base
+	for( std::filesystem::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom ){
+		if( (*itrFrom) != "." ){
+			ret /= "..";
+		}
+	}
+	// Now navigate down the directory branch
+	for( ; itrTo != pathTo.end() ; ++itrTo ){
+		if( itrTo->string() != "."){
+			ret /= *itrTo;
+		}
+	}
 
-    return ret.string();
+	return ret.string();
 }
