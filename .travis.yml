@@ -3,8 +3,18 @@ compiler: gcc
 sudo: true
 matrix:
   include:
-# fully specify builds, include can't dynamically expand matrix entries
-# relative order of sudo and env is important so that addons: is recognized
+    # fully specify builds, include can't dynamically expand matrix entries
+    # relative order of sudo and env is important so that addons: is recognized
+    - os: linux
+      sudo: false
+      env: TARGET="emscripten"
+      addons:
+        apt:
+          sources:
+          - ubuntu-toolchain-r-test
+          packages:
+          - libstdc++6
+          
 	#- os: linux
 	  #dist: trusty
 	  #sudo: required
@@ -32,17 +42,6 @@ matrix:
 	  #cache:
 		#directories:
 		#- ~/rpi2_toolchain
-        
-        
-    - os: linux
-      sudo: false
-      env: TARGET="emscripten"
-      addons:
-        apt:
-          sources:
-          - ubuntu-toolchain-r-test
-          packages:
-          - libstdc++6
           
 	#- os: osx
 	  #compiler: clang
