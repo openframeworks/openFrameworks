@@ -471,7 +471,19 @@ public:
 	void close();
 	
 	/// \brief Create a file at the current path.
+	///
+	/// Creates as a write only binary file by default.
+	///
+	/// \returns true if the file was created
 	bool create();
+	
+	/// \brief Create a file at a given path.
+	///
+	/// Creates as a write only binary file by default.
+	///
+	/// \param path file path
+	/// \returns true if the file was created
+	bool create(const std::filesystem::path & path);
 	
 	/// \brief Check if a file exists at the current path.
 	///

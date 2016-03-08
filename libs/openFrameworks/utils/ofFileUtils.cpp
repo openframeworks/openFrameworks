@@ -467,12 +467,17 @@ void ofFile::close(){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::create(){
+	return create(path());
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFile::create(const std::filesystem::path & path){
 	bool success = false;
 
 	if(!myFile.string().empty()){
 		auto oldmode = this->mode;
-		auto oldpath = path();
-		success = open(path(),ofFile::WriteOnly,binary);
+		auto oldpath = this->path();
+		success = open(path,ofFile::WriteOnly,binary);
 		close();
 		open(oldpath,oldmode,binary);
 	}
