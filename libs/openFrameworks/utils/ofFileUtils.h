@@ -103,7 +103,7 @@ public:
 	/// size, the buffer's size is increased to _size_ bytes.
 	///
 	/// \param _size number of bytes to resize the buffer to
-    void resize(std::size_t _size);
+	void resize(std::size_t _size);
 
 	/// \brief Access the buffer's contents using a raw byte pointer.
 	///
@@ -160,9 +160,9 @@ public:
 	///
 	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
 		Line(vector<char>::iterator _begin, vector<char>::iterator _end);
-        const string & operator*() const;
-        const string * operator->() const;
-        const string & asString() const;
+		const string & operator*() const;
+		const string * operator->() const;
+		const string & asString() const;
 		
 		/// \brief Increment to the next line.
 		Line& operator++();
@@ -170,15 +170,15 @@ public:
 		/// \brief Increment to a number of lines.
 		Line operator++(int);
 		
-        bool operator!=(Line const& rhs) const;
-        bool operator==(Line const& rhs) const;
+		bool operator!=(Line const& rhs) const;
+		bool operator==(Line const& rhs) const;
 		
 		 /// \brief Is this line empty? (aka an empty string "")
 		bool empty() const;
 
 	private:
-        string line;
-        vector<char>::iterator _current, _begin, _end;
+		string line;
+		vector<char>::iterator _current, _begin, _end;
 	};
 
 	/// \class Lines
@@ -189,13 +189,13 @@ public:
 		Lines(vector<char>::iterator begin, vector<char>::iterator end);
 		
 		/// \brief Get the first line in the buffer.
-        Line begin();
+		Line begin();
 		
 		/// \brief Get the last line in the buffer.
 		Line end();
 
 	private:
-        vector<char>::iterator _begin, _end;
+		vector<char>::iterator _begin, _end;
 	};
 
 	/// \brief Access the contents of the buffer as a series of text lines.
@@ -681,9 +681,9 @@ public:
 		return myFile;
 	}
 
-    operator const std::filesystem::path() const{
-        return myFile;
-    }
+	operator const std::filesystem::path() const{
+		return myFile;
+	}
 
 	//-------
 	//static helpers
@@ -1034,9 +1034,9 @@ public:
 		return myDir;
 	}
 
-    operator const std::filesystem::path() const{
-        return myDir;
-    }
+	operator const std::filesystem::path() const{
+		return myDir;
+	}
 
 	//-------
 	// static helpers
