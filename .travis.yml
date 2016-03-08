@@ -65,11 +65,11 @@ matrix:
 
 
   - os: linux
-      sudo: false
-      env: TARGET="android" OPT="x86"
-      cache:
-      directories:
-          - ~/android-ndk-r10e
+    sudo: false
+    env: TARGET="android" OPT="x86"
+    cache:
+    directories:
+      - ~/android-ndk-r10e
 
 
 
