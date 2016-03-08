@@ -121,7 +121,6 @@ class ofURLFileLoader  {
 		/// \param name optional key to use when sorting requests
 		/// \return unique id for the active HTTP request
         int getAsync(const string& url, const string& name="");
-        int getAsyncWithRequest(const ofHttpRequest& request);
 	
 		/// \brief make an HTTP request and save the response data to a file
 		/// blocks until a response is returned or the request times out
@@ -151,6 +150,11 @@ class ofURLFileLoader  {
 		/// blocks until a response is returned or the request times out
 		/// \return HTTP response on success or failure
         ofHttpResponse handleRequest(ofHttpRequest & request);
+	
+		// \brief low level HTTP request implementation
+		/// this is a non-blocking version of handleRequest that will return a response in the urlResponse callback
+		/// \return unique id of the active HTTP request
+        int handleRequestAsync(const ofHttpRequest& request);
 
     private:
         shared_ptr<ofBaseURLFileLoader> impl;

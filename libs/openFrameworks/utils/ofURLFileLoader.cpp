@@ -45,13 +45,13 @@ public:
 	ofURLFileLoaderImpl();
     ofHttpResponse get(const string& url);
     int getAsync(const string& url, const string& name=""); // returns id
-    int getAsyncWithRequest(const ofHttpRequest& request); // returns id
     ofHttpResponse saveTo(const string& url, const string& path);
     int saveAsync(const string& url, const string& path);
 	void remove(int id);
 	void clear();
     void stop();
 	ofHttpResponse handleRequest(ofHttpRequest request);
+    int handleRequestAsync(const ofHttpRequest& request); // returns id
 
 protected:
 	// threading -----------------------------------------------
@@ -96,11 +96,6 @@ ofHttpResponse ofURLFileLoaderImpl::get(const string& url) {
 
 int ofURLFileLoaderImpl::getAsync(const string& url, const string& name){
     ofHttpRequest request(url, name.empty() ? url : name);
-    getAsyncWithRequest(request);
-    return request.getId();
-}
-
-int ofURLFileLoaderImpl::getAsyncWithRequest(const ofHttpRequest& request){
     requests.send(request);
     start();
     return request.getId();
@@ -239,7 +234,14 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 
 	return ofHttpResponse(request,-1,"ofURLFileLoader: fatal error, couldn't catch Exception");
 	
-}	
+}
+
+
+int ofURLFileLoaderImpl::handleRequestAsync(const ofHttpRequest& request){
+	requests.send(request);
+	start();
+	return request.getId();
+}
 
 void ofURLFileLoaderImpl::update(ofEventArgs & args){
 	ofHttpResponse response;
@@ -266,10 +268,6 @@ int ofURLFileLoader::getAsync(const string& url, const string& name){
 	return impl->getAsync(url,name);
 }
 
-int ofURLFileLoader::getAsyncWithRequest(const ofHttpRequest& request){
-	return impl->getAsyncWithRequest(request);
-}
-
 ofHttpResponse ofURLFileLoader::saveTo(const string& url, const string& path){
 	return impl->saveTo(url,path);
 }
@@ -292,6 +290,10 @@ void ofURLFileLoader::stop(){
 
 ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest & request){
 	return impl->handleRequest(request);
+}
+
+int ofURLFileLoader::handleRequestAsync(const ofHttpRequest& request){
+	return impl->handleRequestAsync(request);
 }
 
 static bool initialized = false;
