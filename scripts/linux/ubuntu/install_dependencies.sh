@@ -11,6 +11,8 @@ fi
 
 if [ "$1" == "-y" ]; then
     FORCE_YES=-y
+else 
+    FORCE_YES=""
 fi
 
 function installPackages {
@@ -20,11 +22,11 @@ function installPackages {
         if [ $? -eq 0 ]; then 
             echo "Already installed"
         else
-            error="$(apt-get install --dry-run ${pkg})"
+            error="$(apt-get install -y --dry-run ${pkg})"
             exit_code=$?
             echo "$error" | grep Remv > /dev/null
             if [ $? -eq 0 ]; then
-                apt-get install ${pkg}
+                apt-get install ${FORCE_YES} ${pkg}
                 exit_code=$?
                 if [ $exit_code != 0 ]; then
                     echo "error installing ${pkg}, there could be an error with your internet connection"
@@ -32,7 +34,7 @@ function installPackages {
                     exit $exit_code
                 fi
             elif [ $exit_code -eq 0 ]; then
-                apt-get -y install ${pkg} > /dev/null
+                apt-get -y -qq install ${pkg}
                 exit_code=$?
                 if [ $exit_code != 0 ]; then
                     echo "error installing ${pkg}, there could be an error with your internet connection"
