@@ -1150,12 +1150,4 @@ DLL_API FIBITMAP *DLL_CALLCONV FreeImage_MultigridPoissonSolver(FIBITMAP *Laplac
 }
 #endif
 
-#undef BOOL
-#undef BYTE
-#undef WORD
-#undef DWORD
-#undef LONG
-#undef INT64
-#undef UINT64
-
 #endif // FREEIMAGE_H
