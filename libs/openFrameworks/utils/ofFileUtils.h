@@ -576,6 +576,8 @@ public:
 
 	/// \brief Set the writable flag of the current path.
 	void setWriteable(bool writeable=true);
+
+	OF_DEPRECATED_MSG("Use ofFile::setWriteable(!flag).", void setReadOnly(bool flag));
 	
 	/// \brief Set the readable flag of the current path.
 	void setReadable(bool readable=true);
@@ -827,6 +829,8 @@ public:
 	///
 	/// \param writable set to true to make path writable
 	void setWriteable(bool writeable=true);
+
+	OF_DEPRECATED_MSG("Use ofDirectory::setWriteable(!flag).", void setReadOnly(bool flag));
 	
 	/// \brief Set the readable flag of the current path.
 	///
