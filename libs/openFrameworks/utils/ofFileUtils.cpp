@@ -665,6 +665,12 @@ void ofFile::setWriteable(bool flag){
 }
 
 //------------------------------------------------------------------------------------------------------------
+// deprecated
+void ofFile::setReadOnly(bool flag){
+	setWriteable(!flag);
+}
+
+//------------------------------------------------------------------------------------------------------------
 void ofFile::setReadable(bool flag){
 	try{
 		if(flag){
@@ -984,6 +990,12 @@ bool ofDirectory::isHidden() const {
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::setWriteable(bool flag){
 	return ofFile(myDir,ofFile::Reference).setWriteable(flag);
+}
+
+//------------------------------------------------------------------------------------------------------------
+// deprecated
+void ofDirectory::setReadOnly(bool flag){
+	setWriteable(!flag);
 }
 
 //------------------------------------------------------------------------------------------------------------
