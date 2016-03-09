@@ -36,20 +36,21 @@ PLATFORM SPECIFIC
     / remove data copy to bundle in osx default target 
     / AVFoundation player fix for getPixels after unsuccessful movie load
     / fixes for window size on osx retina
-    / fixes for freeimage on osx 10.8
+    / FreeImage static libs recompiled to fix SSL errors #4812
+
     
 ### linux
     / fixes for linux fullscreen in gnome shell, openbox and others
     
     
 
- _____     _____     _____ 
+ _____     _____     _____
 |  _  |   |  _  |   / __  \
 | |/' |   | |_| |   `' / /'
 |  /| |   \____ |     / /  
 \ |_/ / _ .___/ / _ ./ /___
  \___/ (_)\____/ (_)\_____/
-                           
+
 
 OF 0.9.2
 ========                          
@@ -62,7 +63,7 @@ OF 0.9.2
 ------------------------------------------------------------------------------
 
 CORE
----- 
+----
 
 ### graphics
     / ttf font size had wrong dpi
@@ -87,7 +88,7 @@ PLATFORM SPECIFIC
     \ \ \   \ \ \    \ \/__\ \ \          \ \ \       
      \ \ \   \ \ \    \_____\ \ \          \ \ \      
       \ \ \___\ \ \   _      \ \ \   _    __\ \ \___  
-       \ \/____\ \ \ /\_\     \ \ \ /\_\ /___\_\/__/\ 
+       \ \/____\ \ \ /\_\     \ \ \ /\_\ /___\_\/__/\
         \_________\/ \/_/      \_\/ \/_/ \_________\/
 
 OF 0.9.1
