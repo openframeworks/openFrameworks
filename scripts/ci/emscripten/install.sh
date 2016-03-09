@@ -1,5 +1,16 @@
 #!/bin/bash
-set -ev
+#set -e
+#set -o pipefail
+# trap any script errors and exit
+trap "trapError" ERR
+
+SUDO=
+
+trapError() {
+	echo
+	echo " ^ Received error ^"
+	exit 1
+}
 
 cp scripts/ci/emscripten/.emscripten ~/
 sed -i "s|%HOME%|${HOME}|g" ~/.emscripten
