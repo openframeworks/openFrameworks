@@ -1,5 +1,11 @@
-                           
-
+   ___         ___        ____  
+  / _ \       / _ \      |___ \ 
+ | | | |     | (_) |       __) |
+ | | | |      \__, |      |__ < 
+ | |_| |  _     / /   _   ___) |
+  \___/  (_)   /_/   (_) |____/ 
+                                
+                                
 OF 0.9.3
 ========                          
 
@@ -10,12 +16,32 @@ OF 0.9.3
 
 ------------------------------------------------------------------------------
 
+CORE
+---- 
+
+### graphics
+    / fixes for ofPixels move constructor and operator
+    
+### gl
+    / fix for ofSetColor as default material in fixed pipeline
+    
+    
 PLATFORM SPECIFIC
 -----------------
 
 ### msys2
-   / FreeImage to freeimage dependencies fix
+    / FreeImage to freeimage dependencies fix
 
+### osx
+    / remove data copy to bundle in osx default target 
+    / AVFoundation player fix for getPixels after unsuccessful movie load
+    / fixes for window size on osx retina
+    / fixes for freeimage on osx 10.8
+    
+### linux
+    / fixes for linux fullscreen in gnome shell, openbox and others
+    
+    
 
  _____     _____     _____ 
 |  _  |   |  _  |   / __  \
