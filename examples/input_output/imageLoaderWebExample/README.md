@@ -5,7 +5,7 @@
 
 ###Learning Objectives
 
-This openFrameworks example demonstrates how to make a load an image from the web and then apply a pointillism effect to the image.  
+This openFrameworks example demonstrates how to load an image from the web and then apply a pointillism effect to the image.  
 
 In this example, pay attention to the following code:
 
