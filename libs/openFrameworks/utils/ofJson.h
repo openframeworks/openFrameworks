@@ -10,13 +10,32 @@ using ofJson = nlohmann::json;
 inline ofJson ofLoadJson(const std::string & filename){
 	ofJson json;
 	ofFile jsonFile(filename);
-	jsonFile >> json;
+	if(jsonFile.exists()){
+		try{
+			jsonFile >> json;
+		}catch(std::exception & e){
+			ofLogError("ofLoadJson") << "error loading json from " + filename + ": " + e.what();
+		}catch(...){
+			ofLogError("ofLoadJson") << "error loading json from " + filename;
+		}
+	}else{
+		ofLogError("ofLoadJson") << "error loading json from " + filename + ": file doesn't exist";
+	}
 	return json;
 }
 
-inline void ofSaveJson(const std::string & filename, ofJson & json){
+inline bool ofSaveJson(const std::string & filename, ofJson & json){
 	ofFile jsonFile(filename, ofFile::WriteOnly);
-	jsonFile << json;
+	try{
+		jsonFile << json;
+	}catch(std::exception & e){
+		ofLogError("ofLoadJson") << "error saving json to " + filename + ": " + e.what();
+		return false;
+	}catch(...){
+		ofLogError("ofLoadJson") << "error saving json to " + filename;
+		return false;
+	}
+	return true;
 }
 
 inline void ofSerialize(ofJson & js, ofAbstractParameter & parameter){
