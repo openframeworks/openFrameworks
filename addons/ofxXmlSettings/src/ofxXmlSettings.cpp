@@ -153,7 +153,7 @@ void ofxXmlSettings::removeTag(const string& tag, int which){
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::getValue(const string& tag, int defaultValue, int which){
+int ofxXmlSettings::getValue(const string& tag, int defaultValue, int which) const{
     TiXmlHandle valHandle(NULL);
 	if (readTag(tag, valHandle, which)){
 		return ofToInt(valHandle.ToText()->Value());
@@ -162,7 +162,7 @@ int ofxXmlSettings::getValue(const string& tag, int defaultValue, int which){
 }
 
 //---------------------------------------------------------
-double ofxXmlSettings::getValue(const string& tag, double defaultValue, int which){
+double ofxXmlSettings::getValue(const string& tag, double defaultValue, int which) const{
     TiXmlHandle valHandle(NULL);
 	if (readTag(tag, valHandle, which)){
 		return ofToFloat(valHandle.ToText()->Value());
@@ -171,7 +171,7 @@ double ofxXmlSettings::getValue(const string& tag, double defaultValue, int whic
 }
 
 //---------------------------------------------------------
-string ofxXmlSettings::getValue(const string& tag, const string& defaultValue, int which){
+string ofxXmlSettings::getValue(const string& tag, const string& defaultValue, int which) const{
     TiXmlHandle valHandle(NULL);
 	if (readTag(tag, valHandle, which)){
 		return valHandle.ToText()->ValueStr();
@@ -180,7 +180,7 @@ string ofxXmlSettings::getValue(const string& tag, const string& defaultValue, i
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::readTag(const string&  tag, TiXmlHandle& valHandle, int which){
+bool ofxXmlSettings::readTag(const string&  tag, TiXmlHandle& valHandle, int which) const{
 
 	vector<string> tokens = tokenize(tag,":");
 
@@ -239,7 +239,7 @@ int ofxXmlSettings::getPushLevel(){
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::tagExists(const string& tag, int which){
+bool ofxXmlSettings::tagExists(const string& tag, int which) const{
 
 	vector<string> tokens = tokenize(tag,":");
 
@@ -276,7 +276,7 @@ bool ofxXmlSettings::tagExists(const string& tag, int which){
 
 
 //---------------------------------------------------------
-int ofxXmlSettings::getNumTags(const string&  tag){
+int ofxXmlSettings::getNumTags(const string&  tag) const{
 	//this only works for tags at the current root level
 
 	int pos = tag.find(":");
@@ -415,56 +415,6 @@ int ofxXmlSettings::addTag(const string& tag){
 	return tagID;
 }
 
-void ofxXmlSettings::serialize(const ofAbstractParameter & parameter){
-	if(!parameter.isSerializable()) return;
-	string name = parameter.getEscapedName();
-	if(name=="") name="UnknownName";
-	if(parameter.type()==typeid(ofParameterGroup).name()){
-		const ofParameterGroup & group = static_cast<const ofParameterGroup&>(parameter);
-		if(!tagExists(name)) addTag(name);
-		pushTag(name);
-		for(int i=0;i<group.size();i++){
-			serialize(group.get(i));
-		}
-		popTag();
-	}else{
-		string value = parameter.toString();
-		if(!tagExists(name))
-			addValue(name,value);
-		else
-			setValue(name,value);
-	}
-}
-
-void ofxXmlSettings::deserialize(ofAbstractParameter & parameter){
-	if(!parameter.isSerializable()) return;
-	string name = parameter.getEscapedName();
-	if(parameter.type()==typeid(ofParameterGroup).name()){
-		ofParameterGroup & group = static_cast<ofParameterGroup&>(parameter);
-		if(tagExists(name)){
-			pushTag(name);
-			for(int i=0;i<group.size();i++){
-				deserialize(group.get(i));
-			}
-			popTag();
-		}
-	}else{
-		if(tagExists(name)){
-			if(parameter.type()==typeid(ofParameter<int>).name()){
-				parameter.cast<int>() = getValue(name,0);
-			}else if(parameter.type()==typeid(ofParameter<float>).name()){
-				parameter.cast<float>() = getValue(name,0.0f);
-			}else if(parameter.type()==typeid(ofParameter<bool>).name()){
-				parameter.cast<bool>() = getValue(name,false);
-			}else if(parameter.type()==typeid(ofParameter<string>).name()){
-				parameter.cast<string>() = getValue(name,"");
-			}else{
-				parameter.fromString(getValue(name,""));
-			}
-		}
-	}
-
-}
 
 /*******************
 * Attribute addons *
@@ -529,7 +479,7 @@ void ofxXmlSettings::clearTagAttributes(const string& tag, int which){
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::getNumAttributes(const string& tag, int which){
+int ofxXmlSettings::getNumAttributes(const string& tag, int which) const{
 	vector<string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
 	for (int x = 0; x < (int)tokens.size(); x++) {
@@ -555,7 +505,7 @@ int ofxXmlSettings::getNumAttributes(const string& tag, int which){
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::attributeExists(const string& tag, const string& attribute, int which){
+bool ofxXmlSettings::attributeExists(const string& tag, const string& attribute, int which) const{
 	vector<string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
 	for (int x = 0; x < (int)tokens.size(); x++) {
@@ -578,7 +528,7 @@ bool ofxXmlSettings::attributeExists(const string& tag, const string& attribute,
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::getAttributeNames(const string& tag, vector<string>& outNames, int which){
+bool ofxXmlSettings::getAttributeNames(const string& tag, vector<string>& outNames, int which) const{
 	vector<string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
 	for (int x = 0; x < (int)tokens.size(); x++) {
@@ -599,21 +549,21 @@ bool ofxXmlSettings::getAttributeNames(const string& tag, vector<string>& outNam
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::getAttribute(const string& tag, const string& attribute, int defaultValue, int which){
+int ofxXmlSettings::getAttribute(const string& tag, const string& attribute, int defaultValue, int which) const{
     int value = defaultValue;
 	readIntAttribute(tag, attribute, value, which);
 	return value;
 }
 
 //---------------------------------------------------------
-double ofxXmlSettings::getAttribute(const string& tag, const string& attribute, double defaultValue, int which){
+double ofxXmlSettings::getAttribute(const string& tag, const string& attribute, double defaultValue, int which) const{
     double value = defaultValue;
 	readDoubleAttribute(tag, attribute, value, which);
 	return value;
 }
 
 //---------------------------------------------------------
-string ofxXmlSettings::getAttribute(const string& tag, const string& attribute, const string& defaultValue, int which){
+string ofxXmlSettings::getAttribute(const string& tag, const string& attribute, const string& defaultValue, int which) const{
     string value = defaultValue;
 	readStringAttribute(tag, attribute, value, which);
 	return value;
@@ -642,7 +592,7 @@ int ofxXmlSettings::setAttribute(const string& tag, const string& attribute, con
 }
 
 //---------------------------------------------------------
-TiXmlElement* ofxXmlSettings::getElementForAttribute(const string& tag, int which){
+TiXmlElement* ofxXmlSettings::getElementForAttribute(const string& tag, int which) const{
 	vector<string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
 	for (int x = 0; x < (int)tokens.size(); x++) {
@@ -655,7 +605,7 @@ TiXmlElement* ofxXmlSettings::getElementForAttribute(const string& tag, int whic
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::readIntAttribute(const string& tag, const string& attribute, int& outValue, int which){
+bool ofxXmlSettings::readIntAttribute(const string& tag, const string& attribute, int& outValue, int which) const{
 
     TiXmlElement* elem = getElementForAttribute(tag, which);
     if (elem)
@@ -664,7 +614,7 @@ bool ofxXmlSettings::readIntAttribute(const string& tag, const string& attribute
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::readDoubleAttribute(const string& tag, const string& attribute, double& outValue, int which){
+bool ofxXmlSettings::readDoubleAttribute(const string& tag, const string& attribute, double& outValue, int which) const{
 
     TiXmlElement* elem = getElementForAttribute(tag, which);
     if (elem)
@@ -673,7 +623,7 @@ bool ofxXmlSettings::readDoubleAttribute(const string& tag, const string& attrib
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::readStringAttribute(const string& tag, const string& attribute, string& outValue, int which){
+bool ofxXmlSettings::readStringAttribute(const string& tag, const string& attribute, string& outValue, int which) const{
 
     TiXmlElement* elem = getElementForAttribute(tag, which);
     if (elem)
@@ -727,7 +677,7 @@ bool ofxXmlSettings::loadFromBuffer( string buffer )
 }
 
 //---------------------------------------------------------
-void ofxXmlSettings::copyXmlToString(string & str)
+void ofxXmlSettings::copyXmlToString(string & str) const
 {
 	TiXmlPrinter printer;
 	doc.Accept(&printer);
@@ -735,3 +685,55 @@ void ofxXmlSettings::copyXmlToString(string & str)
 	str = printer.CStr();
 }
 
+//---------------------------------------------------------
+void ofSerialize(ofxXmlSettings & xml, const ofAbstractParameter & parameter){
+	if(!parameter.isSerializable()) return;
+	string name = parameter.getEscapedName();
+	if(name=="") name="UnknownName";
+	if(parameter.type()==typeid(ofParameterGroup).name()){
+		const ofParameterGroup & group = static_cast<const ofParameterGroup&>(parameter);
+		if(!xml.tagExists(name)) xml.addTag(name);
+		xml.pushTag(name);
+		for(int i=0;i<group.size();i++){
+			ofSerialize(xml, group.get(i));
+		}
+		xml.popTag();
+	}else{
+		string value = parameter.toString();
+		if(!xml.tagExists(name))
+			xml.addValue(name,value);
+		else
+			xml.setValue(name,value);
+	}
+}
+
+//---------------------------------------------------------
+void ofDeserialize(const ofxXmlSettings & xml, ofAbstractParameter & parameter){
+	if(!parameter.isSerializable()) return;
+	string name = parameter.getEscapedName();
+	if(parameter.type()==typeid(ofParameterGroup).name()){
+		ofParameterGroup & group = static_cast<ofParameterGroup&>(parameter);
+		if(xml.tagExists(name)){
+			const_cast<ofxXmlSettings&>(xml).pushTag(name);
+			for(int i=0;i<group.size();i++){
+				ofDeserialize(xml, group.get(i));
+			}
+			const_cast<ofxXmlSettings&>(xml).popTag();
+		}
+	}else{
+		if(xml.tagExists(name)){
+			if(parameter.type()==typeid(ofParameter<int>).name()){
+				parameter.cast<int>() = xml.getValue(name,0);
+			}else if(parameter.type()==typeid(ofParameter<float>).name()){
+				parameter.cast<float>() = xml.getValue(name,0.0f);
+			}else if(parameter.type()==typeid(ofParameter<bool>).name()){
+				parameter.cast<bool>() = xml.getValue(name,false);
+			}else if(parameter.type()==typeid(ofParameter<string>).name()){
+				parameter.cast<string>() = xml.getValue(name,"");
+			}else{
+				parameter.fromString(xml.getValue(name,""));
+			}
+		}
+	}
+
+}

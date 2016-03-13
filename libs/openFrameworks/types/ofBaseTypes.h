@@ -1851,26 +1851,6 @@ public:
 
 };
 
-/// \class ofBaseSerializer
-/// \brief serializes & deserializes parameter data
-class ofBaseSerializer{
-public:
-	virtual ~ofBaseSerializer(){}
-
-	virtual void serialize(const ofAbstractParameter & parameter)=0;
-	virtual void deserialize(ofAbstractParameter & parameter)=0;
-};
-
-/// \class ofBaseFileSerializer
-/// \brief serializes & deswrializes parameter data to and from files
-class ofBaseFileSerializer: public ofBaseSerializer{
-public:
-	virtual ~ofBaseFileSerializer(){}
-
-	virtual bool load(const string & path)=0;
-	virtual bool save(const string & path)=0;
-};
-
 /// \class ofBaseURLFileLoader
 /// \brief loads a file from a URL using an HTTP request
 class ofBaseURLFileLoader{
