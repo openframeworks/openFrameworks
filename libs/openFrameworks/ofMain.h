@@ -13,6 +13,7 @@
 #include "ofThreadChannel.h"
 #endif
 #include "ofFpsCounter.h"
+#include "ofJson.h"
 
 //--------------------------
 // types

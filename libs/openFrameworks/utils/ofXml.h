@@ -27,7 +27,7 @@
 #include <Poco/DOM/NamedNodeMap.h>
 #include <Poco/DOM/ChildNodesList.h>
 
-class ofXml: public ofBaseFileSerializer {
+class ofXml{
     
 public:
     
@@ -90,10 +90,7 @@ public:
     bool            loadFromBuffer( const string& buffer );
     
     string          toString() const;
-    
-    // serializer
-	void serialize(const ofAbstractParameter & parameter);
-	void deserialize(ofAbstractParameter & parameter);
+
 
     //////////////////////////////////////////////////////////////////
     // please excuse our mess: templated get/set
@@ -229,3 +226,7 @@ protected:
     Poco::XML::Document *document;
     Poco::XML::Element *element;
 };
+
+// serializer
+void ofSerialize(ofXml & xml, const ofAbstractParameter & parameter);
+void ofDeserialize(const ofXml & xml, ofAbstractParameter & parameter);
