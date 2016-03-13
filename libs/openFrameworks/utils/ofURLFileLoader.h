@@ -56,7 +56,8 @@ public:
 ///
 /// Blocks until a response is returned or the request times out.
 ///
-/// \param url requested url, ie. "http://somewebsite.com/someapi/someimage.jpg"
+/// \param url HTTP url to request,
+/// ie. "http://somewebsite.com/someapi/someimage.jpg"
 /// \returns HTTP response
 ofHttpResponse ofLoadURL(const string& url);
 
@@ -66,7 +67,8 @@ ofHttpResponse ofLoadURL(const string& url);
 /// using a background thread. This also means, however, that the response may
 /// not be available after the this function returns.
 ///
-/// \param url requested url, ie. "http://somewebsite.com/someapi/someimage.jpg"
+/// \param url HTTP url to request,
+/// ie. "http://somewebsite.com/someapi/someimage.jpg"
 /// \param name optional key to use when sorting requests
 /// \return unique id for the active HTTP request
 int ofLoadURLAsync(const string& url, const string& name=""); // returns id
@@ -75,7 +77,8 @@ int ofLoadURLAsync(const string& url, const string& name=""); // returns id
 ///
 /// Blocks until a response is returned or the request times out.
 ///
-/// \param url request url, ie. "http://somewebsite.com/someapi/someimage.jpg"
+/// \param url HTTP url to request,
+/// ie. "http://somewebsite.com/someapi/someimage.jpg"
 /// \param path file path to save to
 /// \return HTTP response on success or failure
 ofHttpResponse ofSaveURLTo(const string& url, const string& path);
@@ -87,20 +90,21 @@ ofHttpResponse ofSaveURLTo(const string& url, const string& path);
 /// using a background thread. This also means, however, that the response may
 /// not be available after the this function returns.
 ///
-/// \param url requested url, ie. "http://somewebsite.com/someapi/someimage.jpg"
+/// \param url HTTP url to request,
+/// ie. "http://somewebsite.com/someapi/someimage.jpg"
 /// \param path file path to save to
 /// \returns unique id for the active HTTP request
 int ofSaveURLAsync(const string& url, const string& path);
 
-/// \brief remove an active HTTP request from the queue
+/// \brief Remove an active HTTP request from the queue.
 ///
 /// \param unique HTTP request id
 void ofRemoveURLRequest(int id);
 
-/// \brief remove all active HTTP requests from the queue
+/// \brief Remove all active HTTP requests from the queue.
 void ofRemoveAllURLRequests();
 
-/// \brief stop & remove all active and waiting HTTP requests
+/// \brief Stop & remove all active and waiting HTTP requests.
 void ofStopURLLoader();
 
 ofEvent<ofHttpResponse> & ofURLResponseEvent();
@@ -119,60 +123,65 @@ class ofBaseURLFileLoader;
 
 /// \class ofURLFileLoader
 ///
-/// \brief loads a file from a URL using an HTTP request
+/// \brief Loads a file from a URL using an HTTP request.
 ///
 class ofURLFileLoader  {
     public:
 	
         ofURLFileLoader();	
 	
-		/// \brief make an HTTP request
+		/// \brief Make an HTTP request.
 		///
 		/// Blocks until a response is returned or the request times out.
 		///
-		/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+		/// \param url HTTP url to request,
+		/// ie. "http://somewebsite.com/someapi/someimage.jpg"
 		/// \return HTTP response on success or failure
 		ofHttpResponse get(const string& url);
 	
-		/// \brief make an asynchronous HTTP request
+		/// \brief Make an asynchronous HTTP request.
 		///
 		/// Will not block, placed in a queue and run using a background thread.
 		///
-		/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+		/// \param url HTTP url to request,
+		/// ie. "http://somewebsite.com/someapi/someimage.jpg"
 		/// \param name optional key to use when sorting requests
 		/// \return unique id for the active HTTP request
         int getAsync(const string& url, const string& name="");
 	
-		/// \brief make an HTTP request and save the response data to a file
+		/// \brief Make an HTTP request and save the response data to a file.
 		///
 		/// Blocks until a response is returned or the request times out.
 		///
-		/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+		/// \param url HTTP url to request,
+		/// ie. "http://somewebsite.com/someapi/someimage.jpg"
 		/// \param path file path to save to
 		/// \return HTTP response on success or failure
 		ofHttpResponse saveTo(const string& url, const string& path);
 	
-		/// \brief make an asynchronous HTTP request and save the response data to a file
+		/// \brief Make an asynchronous HTTP request and save the response data
+		/// to a file.
 		///
 		/// Will not block, placed in a queue and run using a background thread.
 		///
-		/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+		/// \param url HTTP url to request,
+		/// ie. "http://somewebsite.com/someapi/someimage.jpg"
 		/// \param path file path to save to
 		/// \returns unique id for the active HTTP request
 		int saveAsync(const string& url, const string& path);
 	
-		/// \brief remove an active HTTP request from the queue
+		/// \brief Remove an active HTTP request from the queue.
 		///
 		/// \param unique HTTP request id
 		void remove(int id);
 	
-		/// \brief clear all active HTTP requests from the queue
+		/// \brief Clear all active HTTP requests from the queue.
 		void clear();
 	
-		/// \brief stop & remove all active and waiting HTTP requests
+		/// \brief Stop & remove all active and waiting HTTP requests.
 		void stop();
 	
-		// \brief low level HTTP request implementation
+		/// \brief Low level HTTP request implementation.
 		///
 		/// Blocks until a response is returned or the request times out.
 		///

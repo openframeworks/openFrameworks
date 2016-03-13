@@ -1852,7 +1852,9 @@ public:
 };
 
 /// \class ofBaseSerializer
-/// \brief serializes & deserializes parameter data
+///
+/// \brief Serializes & deserializes parameter data.
+///
 class ofBaseSerializer{
 public:
 	virtual ~ofBaseSerializer(){}
@@ -1862,7 +1864,9 @@ public:
 };
 
 /// \class ofBaseFileSerializer
-/// \brief serializes & deswrializes parameter data to and from files
+///
+/// \brief Serializes & deswrializes parameter data to and from files.
+///
 class ofBaseFileSerializer: public ofBaseSerializer{
 public:
 	virtual ~ofBaseFileSerializer(){}
@@ -1871,103 +1875,142 @@ public:
 	virtual bool save(const string & path)=0;
 };
 
-/// \class ofBaseURLFileLoader
-/// \brief loads a file from a URL using an HTTP request
+/// \class ofURLFileLoader
+///
+/// \brief Loads a file from a URL using an HTTP request.
+///
 class ofBaseURLFileLoader{
 public:
 
 	virtual ~ofBaseURLFileLoader(){};
 	
-	/// \brief make an HTTP request
-	/// blocks until a response is returned or the request times out
-	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+	/// \brief Make an HTTP request.
+	///
+	/// Blocks until a response is returned or the request times out.
+	///
+	/// \param url HTTP url to request,
+	/// ie. "http://somewebsite.com/someapi/someimage.jpg"
 	/// \return HTTP response on success or failure
 	virtual ofHttpResponse get(const string& url)=0;
 	
-	/// \brief make an asynchronous HTTP request
-	/// will not block, placed in a queue and run using a background thread
-	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+	/// \brief Make an asynchronous HTTP request.
+	///
+	/// Will not block, placed in a queue and run using a background thread.
+	///
+	/// \param url HTTP url to request,
+	/// ie. "http://somewebsite.com/someapi/someimage.jpg"
 	/// \param name optional key to use when sorting requests
 	/// \return unique id for the active HTTP request
 	virtual int getAsync(const string& url, const string& name="")=0;
 	
-	/// \brief make an HTTP request and save the response data to a file
-	/// blocks until a response is returned or the request times out
-	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+	/// \brief Make an HTTP request and save the response data to a file.
+	///
+	/// Blocks until a response is returned or the request times out.
+	///
+	/// \param url HTTP url to request,
+	/// ie. "http://somewebsite.com/someapi/someimage.jpg"
 	/// \param path file path to save to
 	/// \return HTTP response on success or failure
 	virtual ofHttpResponse saveTo(const string& url, const string& path)=0;
 	
-	/// \brief make an asynchronous HTTP request and save the response data to a file
-	/// will not block, placed in a queue and run using a background thread
-	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+	/// \brief Make an asynchronous HTTP request and save the response data
+	/// to a file.
+	///
+	/// Will not block, placed in a queue and run using a background thread.
+	///
+	/// \param url HTTP url to request,
+	/// ie. "http://somewebsite.com/someapi/someimage.jpg"
 	/// \param path file path to save to
 	/// \returns unique id for the active HTTP request
 	virtual int saveAsync(const string& url, const string& path)=0;
 	
-	/// \brief remove an active HTTP request from the queue
+	/// \brief Remove an active HTTP request from the queue.
+	///
 	/// \param unique HTTP request id
 	virtual void remove(int id)=0;
 	
-	/// \brief clear all active HTTP requests from the queue
+	/// \brief Clear all active HTTP requests from the queue.
 	virtual void clear()=0;
 	
-	/// \brief stop & remove all active and waiting HTTP requests
+	/// \brief Stop & remove all active and waiting HTTP requests.
 	virtual void stop()=0;
 	
-	/// \brief low level HTTP request implementation
-	/// blocks until a response is returned or the request times out
+	/// \brief Low level HTTP request implementation.
+	///
+	/// Blocks until a response is returned or the request times out.
+	///
 	/// \return HTTP response on success or failure
 	virtual ofHttpResponse handleRequest(ofHttpRequest request) = 0;
 };
 
-/// \class ofBaseMaterial
-/// \brief material parameter properties that can be applied to vertices in the OpenGL lighting model
-/// used in determining both the intensity and color of reflected light based on the lighting model in use
-/// and if the vertices are on a front or back sided face
+/// \class ofMaterial
+///
+/// \brief Material parameter properties that can be applied to vertices in the
+/// OpenGL lighting model.
+///
+/// Used in determining both the intensity and color of reflected light based on
+/// the lighting model in use and if the vertices are on a front or back sided
+/// face.
 class ofBaseMaterial{
 public:
 
 	virtual ~ofBaseMaterial(){};
 	
-	/// \return the diffuse reflectance
+	/// \brief Set the diffuse reflectance.
+	///
+	/// \param oDiffuse the diffuse reflectance
 	virtual ofFloatColor getDiffuseColor() const=0;
 	
-	/// \return the ambient reflectance
+	/// \brief Set the ambient reflectance.
+	///
+	/// \param oAmbient the ambient reflectance
 	virtual ofFloatColor getAmbientColor() const=0;
 	
-	/// \return the specular reflectance
+	/// \brief Set the specular reflectance.
+	///
+	/// \param oSpecular the specular reflectance
 	virtual ofFloatColor getSpecularColor() const=0;
 	
-	/// \return the emitted light intensity
+	/// \brief Set the emitted light intensity.
+	///
+	/// \param oEmmissive the emitted light intensity
 	virtual ofFloatColor getEmissiveColor() const=0;
 	
-	/// \return the specular exponent
+	/// \brief Set the specular exponent.
 	virtual float getShininess() const=0;
 	
-	/// \brief begin using this material's properties
+	/// \brief Begin using this material's properties.
 	virtual void begin() const=0;
 	
-	/// \brief end using this material's properties
+	/// \brief End using this material's properties.
 	virtual void end() const=0;
 	
-	/// \brief create and return a shader used to implement the materials effect for a given renderer
-	/// \param textureTarget an implementation-specific value to specify the type of shader to use
-	/// \param renderer programmable renderer instance to create the material shader for
+	/// \brief Create and return a shader used to implement the materials effect
+	/// for a given renderer.
+	///
+	/// \param textureTarget an implementation-specific value to specify the
+	/// type of shader to use
+	/// \param renderer programmable renderer instance to create the material
+	/// shader for
 	virtual const ofShader & getShader(int textureTarget, ofGLProgrammableRenderer & renderer) const=0;
 	
-	/// \brief upload the given renderer's normal matrix to the material shader
+	/// \brief Upload the given renderer's normal matrix to the material shader.
+	///
 	/// \param shader the material shader, created by getShader()
-	/// \param renderer programmable renderer instance that uses the material shader
+	/// \param renderer programmable renderer instance that uses the material
+	/// shader
 	virtual void uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
 	
-	/// \brief update the material properties to the material shader
+	/// \brief Update the material properties to the material shader.
+	///
 	/// \param shader the material shader, created by getShader()
-	/// \param renderer programmable renderer instance that uses the material shader
+	/// \param renderer programmable renderer instance that uses the material
+	/// shader
 	virtual void updateMaterial(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
 	
-	/// \brief update the given renderer's lights to the material shader
+	/// \brief Update the given renderer's lights to the material shader.
 	/// \param shader the material shader, created by getShader()
-	/// \param renderer programmable renderer instance that uses the material shader
+	/// \param renderer programmable renderer instance that uses the material
+	/// shader
 	virtual void updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
 };
