@@ -264,23 +264,30 @@ HRESULT SaveGraphFile(IGraphBuilder *pGraph, WCHAR *wszPath)
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-static int comRefCount = 0; 
+namespace{
+    int comRefCount = 0;
 
-static void retainCom(){
-    if( comRefCount == 0 ){
-        //printf("com is initialized!\n"); 
-        CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);     
+    void retainCom(){
+        if( comRefCount == 0 ){
+            //printf("com is initialized!\n");
+            CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+        }
+        comRefCount++;
     }
-    comRefCount++;
+
+    void releaseCom(){
+        comRefCount--;
+        if( comRefCount == 0 ){
+            //printf("com is uninitialized!\n");
+            CoUninitialize();
+        }
+    }
+
+    void releaseSample(IMediaSample * sample){
+        sample->Release();
+    }
 }
 
-static void releaseCom(){
-    comRefCount--; 
-    if( comRefCount == 0 ){
-        //printf("com is uninitialized!\n"); 
-        CoUninitialize();
-    }
-}
 
 class DirectShowVideo : public ISampleGrabberCB{
     public:
@@ -399,7 +406,7 @@ class DirectShowVideo : public ISampleGrabberCB{
             if(latestBufferLength == pixels.getTotalBytes() ){
                 EnterCriticalSection(&critSection);
 				pSample->AddRef();
-				backSample = std::unique_ptr<IMediaSample, std::function<void(IMediaSample*)>>(pSample, std::bind(&IMediaSample::Release, pSample));
+                backSample = std::unique_ptr<IMediaSample, std::function<void(IMediaSample*)>>(pSample, releaseSample);
                 bNewPixels = true;
 
                 //this is just so we know if there is a new frame
@@ -729,7 +736,10 @@ class DirectShowVideo : public ISampleGrabberCB{
             if( volPct < 0 ) volPct = 0.0;
             if( volPct > 1 ) volPct = 1.0; 
 
-            long vol = log10(volPct) * 4000.0; 
+            long vol = log10(volPct) * 4000.0;
+            if(vol < -8000){
+                vol = -10000;
+            }
             m_pAudio->put_Volume(vol);
         }
     }

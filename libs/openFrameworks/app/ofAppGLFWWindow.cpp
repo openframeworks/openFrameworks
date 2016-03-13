@@ -203,21 +203,24 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 					glfwGetMonitorPos(monitors[settings.monitor],&x,&y);
 					settings.setPosition(ofVec2f(x,y));
 					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
-					auto mode = glfwGetVideoMode(monitors[settings.monitor]);
-					settings.width = mode->width;
-					settings.height = mode->height;
-					//for OS X we need to set this first as the window size affects the window positon
-					setWindowShape(settings.width, settings.height);
+					#ifdef TARGET_OSX
+						//for OS X we need to set this first as the window size affects the window positon
+						auto mode = glfwGetVideoMode(monitors[settings.monitor]);
+						settings.width = mode->width;
+						settings.height = mode->height;
+						setWindowShape(settings.width, settings.height);
+					#endif
 					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 				}
 			}else{
 				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
-				auto size = getScreenSize();
-				settings.width = size.x;
-				settings.height = size.y;
-				setWindowShape(settings.width, settings.height);
+				#ifdef TARGET_OSX
+					auto size = getScreenSize();
+					settings.width = size.x;
+					settings.height = size.y;
+					setWindowShape(settings.width, settings.height);
+				#endif
 			}
-			setFullscreen(true);
 		}else{
 			if (settings.isPositionSet()) {
 				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
@@ -244,8 +247,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	//don't try and show a window if its been requsted to be hidden
 	bWindowNeedsShowing = settings.visible;
 
-    glfwSetWindowUserPointer(windowP,this);
-	windowMode = settings.windowMode;
+	glfwSetWindowUserPointer(windowP,this);
 
 	glfwGetWindowSize( windowP, &settings.width, &settings.height );
 
@@ -259,6 +261,10 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
     //this lets us detect if the window is running in a retina mode
     if( framebufferW != windowW ){
         pixelScreenCoordScale = framebufferW / windowW;
+		
+		ofPoint position = getWindowPosition();
+		setWindowShape(windowW, windowH);
+		setWindowPosition(position.x, position.y);
 	}
 
 #ifndef TARGET_OPENGLES
@@ -345,6 +351,9 @@ void ofAppGLFWWindow::update(){
 	if( bWindowNeedsShowing && windowP ){
 		glfwShowWindow(windowP);
 		bWindowNeedsShowing = false;
+		if(settings.windowMode==OF_FULLSCREEN){
+			setFullscreen(true);
+		}
 	}
 }
 
@@ -493,7 +502,7 @@ ofPoint ofAppGLFWWindow::getScreenSize(){
 
 //------------------------------------------------------------
 int ofAppGLFWWindow::getWidth(){
-	if(windowMode == OF_GAME_MODE)
+	if(windowMode == OF_GAME_MODE || windowMode == OF_FULLSCREEN || (bWindowNeedsShowing && (settings.windowMode==OF_GAME_MODE || settings.windowMode==OF_FULLSCREEN)))
 	{
 		return getScreenSize().x;
 	}
@@ -510,7 +519,7 @@ int ofAppGLFWWindow::getWidth(){
 //------------------------------------------------------------
 int ofAppGLFWWindow::getHeight()
 {
-	if(windowMode == OF_GAME_MODE)
+	if(windowMode == OF_GAME_MODE || windowMode == OF_FULLSCREEN || (bWindowNeedsShowing && (settings.windowMode==OF_GAME_MODE || settings.windowMode==OF_FULLSCREEN)))
 	{
 		return getScreenSize().y;
 	}
@@ -540,7 +549,15 @@ void ofAppGLFWWindow::setWindowPosition(int x, int y){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowShape(int w, int h){
-	glfwSetWindowSize(windowP,w/pixelScreenCoordScale,h/pixelScreenCoordScale);
+	#ifdef TARGET_OSX
+		ofPoint pos = getWindowPosition();
+		glfwSetWindowSize(windowP,w/pixelScreenCoordScale,h/pixelScreenCoordScale);
+		if( pos != getWindowPosition() ){
+			setWindowPosition(pos.x, pos.y);
+		}
+	#else
+		glfwSetWindowSize(windowP,w/pixelScreenCoordScale,h/pixelScreenCoordScale);
+	#endif
 }
 
 //------------------------------------------------------------
@@ -568,17 +585,17 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
  
 	ofWindowMode curWindowMode = windowMode;
  
-  if (fullscreen){
+	if (fullscreen){
 		windowMode = OF_FULLSCREEN;
 	}else{
 		windowMode = OF_WINDOW;
     }
- 
+
     //we only want to change window mode if the requested window is different to the current one.
     bool bChanged = windowMode != curWindowMode;
     if( !bChanged ){
         return;
-    }
+	}
  
 #ifdef TARGET_LINUX
 #include <X11/Xatom.h>
@@ -587,7 +604,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	Display* display = glfwGetX11Display();
 	int monitorCount;
 	GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
- 
+
 	if( settings.multiMonitorFullScreen && monitorCount > 1 ){
 		// find the monitors at the edges of the virtual desktop
 		int minx=numeric_limits<int>::max();
@@ -1134,10 +1151,9 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
-	instance->windowW = w * instance->pixelScreenCoordScale;
-	instance->windowH = h * instance->pixelScreenCoordScale;
+	instance->windowW = w;
+	instance->windowH = h;
 	instance->events().notifyWindowResized(w*instance->pixelScreenCoordScale, h*instance->pixelScreenCoordScale);
-
 	instance->nFramesSinceWindowResized = 0;
 }
 

@@ -44,18 +44,32 @@ endif
 HOST_OS=$(shell uname -s)
 $(info HOST_OS=${HOST_OS})
 
-# if not defined, determine this platform's architecture via uname -m
-ifndef PLATFORM_ARCH
-    # determine from the uname
-    PLATFORM_ARCH=$(shell uname -m)
+#check for Raspbian as armv7l needs to use armv6l architecture
+ifeq ($(wildcard $(RPI_ROOT)/etc/*-release), /etc/os-release)
+    ifeq ($(shell grep ID=raspbian $(RPI_ROOT)/etc/*-release),ID=raspbian)
+        IS_RASPBIAN=1
+    endif
 endif
-HOST_ARCH=$(shell uname -m)
-$(info HOST_ARCH=${HOST_ARCH})
 
-ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
-	CROSS_COMPILING=1
+ifdef IS_RASPBIAN
+    PLATFORM_ARCH=armv6l
+    HOST_ARCH=armv6l
+    ifdef RPI_ROOT
+        CROSS_COMPILING=1
+    endif
 else
-	CROSS_COMPILING=0
+    HOST_ARCH=$(shell uname -m)
+    ifndef PLATFORM_ARCH
+        # determine from the uname
+        PLATFORM_ARCH=$(shell uname -m)
+    endif
+    ifndef CROSS_COMPILING
+        ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
+	        CROSS_COMPILING=1
+        else
+	        CROSS_COMPILING=0
+        endif
+    endif
 endif
 
 #$(info PLATFORM_ARCH=$(PLATFORM_ARCH))
@@ -63,6 +77,8 @@ endif
 #$(info HOST_ARCH=$(HOST_ARCH))
 #$(info HOST_OS=$(HOST_OS))
 #$(info CROSS_COMPILING=$(CROSS_COMPILING))
+#$(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
+#$(info IS_RASPBIAN=$(IS_RASPBIAN))
 
 # if not defined, construct the default PLATFORM_LIB_SUBPATH
 ifndef PLATFORM_LIB_SUBPATH
@@ -273,12 +289,20 @@ CORE_PKG_CONFIG_LIBRARIES += $(PLATFORM_PKG_CONFIG_LIBRARIES)
 CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_PKG_CONFIG_LIBRARIES)
 
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
+ifneq ($(strip $(PKG_CONFIG_LIBDIR)),)
 $(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
-	ifneq ($(shell $(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --exists; echo $$?),0)
-$(error couldn't find some pkg-config packages, did you run the latest install_dependencies.sh?)
+$(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
+FAILED_PKG=$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); for pkg in $(CORE_PKG_CONFIG_LIBRARIES); do $(PLATFORM_PKG_CONFIG) $$pkg --cflags > /dev/null; if [ $$? -ne 0 ]; then echo $$pkg; return; fi; done; echo 0)
+else
+$(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
+$(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
+FAILED_PKG=$(shell for pkg in $(CORE_PKG_CONFIG_LIBRARIES); do $(PLATFORM_PKG_CONFIG) $$pkg --cflags > /dev/null; if [ $$? -ne 0 ]; then echo $$pkg; return; fi; done; echo 0)
+endif
+	ifneq ($(FAILED_PKG),0)
+$(error couldn't find $(FAILED_PKG) pkg-config package or it's dependencies, did you run the latest install_dependencies.sh?)
 	endif
 	ifeq ($(CROSS_COMPILING),1)
-		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);$(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
+		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I$(SYSROOT)$(SYSROOT)%,-I$(SYSROOT)% ,$(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);$(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)))
 	else
 		OF_CORE_INCLUDES_CFLAGS += $(shell $(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
 	endif

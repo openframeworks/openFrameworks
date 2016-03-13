@@ -71,16 +71,22 @@ ifndef $(GCC_VERSION)
 	GCC_VERSION = 4.9
 endif
 
+ifndef $(CLANG_VERSION)
+	CLANG_VERSION = 3.6
+endif
+
 PROJECT_PATH=$(PWD)
 
 
 ifeq ($(ABI),x86)
 ANDROID_PREFIX=i686-linux-android-
-TOOLCHAIN=x86-$(GCC_VERSION)
+TOOLCHAIN=llvm-$(CLANG_VERSION)
+GCC_TOOLCHAIN=$(NDK_ROOT)/toolchains/x86-4.9
 SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-x86/
 else
 ANDROID_PREFIX=arm-linux-androideabi-
-TOOLCHAIN=$(ANDROID_PREFIX)$(GCC_VERSION)
+TOOLCHAIN=llvm-$(CLANG_VERSION)
+GCC_TOOLCHAIN=$(NDK_ROOT)/toolchains/arm-linux-androideabi-4.9
 SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
 endif
 
@@ -174,19 +180,19 @@ PLATFORM_REQUIRED_ADDONS = ofxAndroid ofxAccelerometer
 PLATFORM_CFLAGS = -Wall -std=c++14
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -ffunction-sections -fdata-sections
+PLATFORM_CFLAGS +=  -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -ffunction-sections -fdata-sections  -gcc-toolchain $(GCC_TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)
 
 
 ifeq ($(ABI),armv7)
-	PLATFORM_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
+	PLATFORM_CFLAGS += -target armv7-none-linux-androideabi -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
 endif
 
 ifeq ($(ABI),neon)
-	PLATFORM_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
+	PLATFORM_CFLAGS += -target armv7-none-linux-androideabi -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 endif
 
 ifeq ($(ABI),x86)
-	PLATFORM_CFLAGS += -march=i686 -msse3 -mstackrealign -mfpmath=sse -fno-stack-protector
+	PLATFORM_CFLAGS += -target i686-none-linux-android -march=i686 -msse3 -mstackrealign -mfpmath=sse -fno-stack-protector
 endif
 
 ################################################################################
@@ -198,15 +204,15 @@ endif
 ################################################################################
 
 PLATFORM_LDFLAGS =
-PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)"
-#ifeq ($(HOST_PLATFORM),linux-x86)
-#	PLATFORM_LDFLAGS += -fuse-ld=gold
-#endif
+PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -L"$(NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/$(ABI_PATH)"
+PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections -Wl,--exclude-libs,ALL -gcc-toolchain $(GCC_TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)
+
 
 ifneq ($(ABI),x86)
-PLATFORM_LDFLAGS += -Wl,--fix-cortex-a8 
+PLATFORM_LDFLAGS += -target armv7-none-linux-androideabi -march=armv7-a
+else
+PLATFORM_LDFLAGS += -target i686-none-linux-android -march=i686
 endif
-PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections -Wl,--exclude-libs,ALL
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -267,6 +273,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.c
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/graphics/ofCairoRenderer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofOpenALSoundPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofRtAudioSoundStream.cpp
 
 # third party
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
@@ -314,11 +321,13 @@ PROJECT_EXCLUSIONS += ./libs
 
 PLATFORM_HEADER_SEARCH_PATHS =
 PLATFORM_HEADER_SEARCH_PATHS += "$(SYSROOT)/usr/include/" 
-PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" 
-PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/include" 
-PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI_PATH)/include" 
-PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)/include"
-PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/crystax/include/" 
+PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/android/support/include"
+PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/llvm-libc++/libcxx/include"
+#PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" 
+#PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/include" 
+#PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI_PATH)/include" 
+#PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)/include"
+#PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/crystax/include/" 
 PLATFORM_HEADER_SEARCH_PATHS += "$(OF_ROOT)/libs/glu/include_android"
 PLATFORM_HEADER_SEARCH_PATHS += "$(OF_ROOT)/addons/ofxAndroid/src"
 
@@ -343,16 +352,17 @@ PLATFORM_HEADER_SEARCH_PATHS += "$(OF_ROOT)/addons/ofxAndroid/src"
 
 PLATFORM_LIBRARIES = 
 PLATFORM_LIBRARIES += OpenSLES
-PLATFORM_LIBRARIES += supc++ 
+#PLATFORM_LIBRARIES += supc++ 
 PLATFORM_LIBRARIES += z 
 PLATFORM_LIBRARIES += GLESv1_CM 
 PLATFORM_LIBRARIES += GLESv2 
 PLATFORM_LIBRARIES += log 
-PLATFORM_LIBRARIES += dl 
-PLATFORM_LIBRARIES += m 
-PLATFORM_LIBRARIES += c 
-PLATFORM_LIBRARIES += gnustl_static
-PLATFORM_LIBRARIES += gcc
+#PLATFORM_LIBRARIES += dl 
+#PLATFORM_LIBRARIES += m 
+#PLATFORM_LIBRARIES += c 
+#PLATFORM_LIBRARIES += gnustl_static
+#PLATFORM_LIBRARIES += gcc
+PLATFORM_LIBRARIES += c++_static
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
@@ -434,9 +444,10 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 ################################################################################
 #PLATFORM_CXX=
 
-PLATFORM_CC=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)gcc
-PLATFORM_CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)g++
-PLATFORM_AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
+PLATFORM_CC=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/clang
+PLATFORM_CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/clang++
+PLATFORM_AR=ar
+PLATFORM_LD=$(NDK_ROOT)/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/arm-linux-androideabi/bin/ld
 
 #ifeq (,$(findstring MINGW32_NT,$(shell uname)))
 ZIPWINDOWS=..\\..\\..\\..\\..\\libs\\openFrameworksCompiled\\project\\android\\windows\\zip -r ../../res/raw/$(RESFILE)

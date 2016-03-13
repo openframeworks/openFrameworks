@@ -8,6 +8,10 @@
 #import "ofAVFoundationPlayer.h"
 #import "ofAVFoundationVideoPlayer.h"
 
+#ifdef TARGET_OSX
+	#include "ofTexture.h"
+#endif
+
 //--------------------------------------------------------------
 ofAVFoundationPlayer::ofAVFoundationPlayer() {
     videoPlayer = nullptr;
@@ -17,6 +21,7 @@ ofAVFoundationPlayer::ofAVFoundationPlayer() {
     bResetPixels = false;
     bUpdatePixels = false;
     bUpdateTexture = false;
+	bUseTextureCache = true;
 }
 
 //--------------------------------------------------------------
@@ -38,6 +43,7 @@ ofAVFoundationPlayer& ofAVFoundationPlayer::operator=(ofAVFoundationPlayer other
 	bResetPixels = false;
 	bUpdatePixels = false;
 	bUpdateTexture = false;
+	bUseTextureCache = true;
 	
 	std::swap(videoPlayer, other.videoPlayer);
 	return *this;
@@ -55,6 +61,10 @@ bool ofAVFoundationPlayer::load(string name) {
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
+	if( ofGetUsingArbTex() == false ){
+        killTextureCache();
+		bUseTextureCache = false;
+    }
 	
 	NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
 	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
@@ -77,57 +87,59 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 	bUpdatePixels = true;
 	bUpdateTexture = true;
 	
-    // reuse videoplayer
-    if(videoPlayer != nullptr) {
-		// use existing player
-		return [videoPlayer loadWithURL:url async:bAsync];
-    }
+	bool bLoaded = false;
 	
-    // create a new player
-    videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
-    [videoPlayer setWillBeUpdatedExternally:YES];
+    if(videoPlayer == nullptr) {
+		// create a new player if its not allocated
+		videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
+		[videoPlayer setWillBeUpdatedExternally:YES];
+	}
+	
+	bLoaded = [videoPlayer loadWithURL:url async:bAsync];
 
-    bool bLoaded = [videoPlayer loadWithURL:url async:bAsync];
-	
 	pixels.clear();
 	videoTexture.clear();
 	
-    bool bCreateTextureCache = true;
-    bCreateTextureCache = bCreateTextureCache && (_videoTextureCache == nullptr);
-    
-    if(bCreateTextureCache == true) {
+	bool bCreateTextureCache = bLoaded && bUseTextureCache && (_videoTextureCache == nullptr);
+	
+	if(bCreateTextureCache == true) {
 
-        CVReturn err;
-        
+		CVReturn err;
+		
 #if defined(TARGET_OF_IOS) && defined(__IPHONE_6_0)
-        err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
-                                           nullptr,
-                                           [EAGLContext currentContext],
-                                           nullptr,
-                                           &_videoTextureCache);
+		err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
+										   nullptr,
+										   [EAGLContext currentContext],
+										   nullptr,
+										   &_videoTextureCache);
 #endif
-        
+		
 #if defined(TARGET_OF_IOS) && !defined(__IPHONE_6_0)
-        err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
-                                           nullptr,
-                                           (__bridge void *)[EAGLContext currentContext],
-                                           nullptr,
-                                           &_videoTextureCache);
+		err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
+										   nullptr,
+										   (__bridge void *)[EAGLContext currentContext],
+										   nullptr,
+										   &_videoTextureCache);
 #endif
-        
+		
 #ifdef TARGET_OSX
-        err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault,
-                                         nullptr,
-                                         CGLGetCurrentContext(),
-                                         CGLGetPixelFormat(CGLGetCurrentContext()),
-                                         nullptr,
-                                         &_videoTextureCache);
+		err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault,
+										 nullptr,
+										 CGLGetCurrentContext(),
+										 CGLGetPixelFormat(CGLGetCurrentContext()),
+										 nullptr,
+										 &_videoTextureCache);
 #endif
-        
-        if(err) {
-            ofLogWarning("ofAVFoundationPlayer") << "load(): error when creating texture cache, " << err << ".";
-        }
-    }
+		
+		if(err) {
+			ofLogWarning("ofAVFoundationPlayer") << "load(): error when creating texture cache, " << err << ".";
+		}
+	}
+
+	
+	if( bAsync == false && bLoaded ){
+		pixels.allocate(getWidth(), getHeight(), getPixelFormat());
+	}
 	
     return bLoaded;
 }
@@ -161,6 +173,7 @@ void ofAVFoundationPlayer::disposePlayer() {
 	bResetPixels = false;
 	bUpdatePixels = false;
 	bUpdateTexture = false;
+	bUseTextureCache = true;
 }
 
 //--------------------------------------------------------------
@@ -177,6 +190,7 @@ void ofAVFoundationPlayer::close() {
     bResetPixels = false;
     bUpdatePixels = false;
     bUpdateTexture = false;
+	bUseTextureCache = true;
 }
 
 //--------------------------------------------------------------
@@ -210,7 +224,7 @@ void ofAVFoundationPlayer::update() {
     
     bFrameNew = false; // default.
     
-    if(!isLoaded()) {
+    if(!isLoaded() || !isReady()) {
         return;
     }
     
@@ -243,8 +257,14 @@ void ofAVFoundationPlayer::draw(const ofRectangle & rect) {
 }
 
 void ofAVFoundationPlayer::draw(float x, float y, float w, float h) {
-    if(isLoaded()) {
-        getTexturePtr()->draw(x, y, w, h);
+    if(isLoaded() && isReady()) {
+	
+		ofTexture * texturePtr = getTexturePtr();
+		if( texturePtr != NULL ){
+			if( texturePtr->isAllocated() ){
+				texturePtr->draw(x, y, w, h);
+			}
+		}
     }
 }
 
@@ -281,7 +301,7 @@ const ofPixels & ofAVFoundationPlayer::getPixels() const {
 }
 
 ofPixels & ofAVFoundationPlayer::getPixels() {
-    if(isLoaded() == false) {
+    if(isLoaded() == false || pixels.size() == 0) {
         ofLogError("ofAVFoundationPlayer") << "getPixels(): Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixels.";
         return pixels;
     }
@@ -361,8 +381,12 @@ ofPixels & ofAVFoundationPlayer::getPixels() {
 
 //--------------------------------------------------------------
 ofTexture * ofAVFoundationPlayer::getTexturePtr() {
-    
-    if(isLoaded() == false) {		
+	
+	if( bUseTextureCache == false ){
+		return NULL;
+	}
+	
+    if(isLoaded() == false || isReady() == false) {
         return &videoTexture;
     }
     
@@ -379,7 +403,11 @@ ofTexture * ofAVFoundationPlayer::getTexturePtr() {
 
 //-------------------------------------------------------------- texture cache
 void ofAVFoundationPlayer::initTextureCache() {
-
+	//just in case - we return here if we shouldn't be using a texture cache 
+	if( bUseTextureCache == false ){
+		return;
+	}
+	
     CVImageBufferRef imageBuffer = [videoPlayer getCurrentFrame];
     if(imageBuffer == nil) {
         return;
@@ -548,6 +576,15 @@ bool ofAVFoundationPlayer::isPaused() const {
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::isLoaded() const {
+    if(videoPlayer == nullptr) {
+        return false;
+    }
+    
+    return [videoPlayer isLoaded];
+}
+
+//--------------------------------------------------------------
+bool ofAVFoundationPlayer::isReady() const {
     if(videoPlayer == nullptr) {
         return false;
     }

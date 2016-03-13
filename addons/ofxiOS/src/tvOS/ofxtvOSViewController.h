@@ -1,0 +1,25 @@
+//
+//  ofxtvOSViewController.h
+//  tvOS+OFLib
+//
+//  Created by Daniel Rosser on 26/10/2015.
+
+#pragma once
+
+#ifndef ofxtvOSViewController_h
+#define ofxtvOSViewController_h
+
+#import <UIKit/UIKit.h>
+
+class ofxiOSApp;
+@class ofxiOSEAGLView;
+
+@interface ofxtvOSViewController : UIViewController
+
+@property (nonatomic, retain) ofxiOSEAGLView * glView;
+
+- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app;
+
+@end
+
+#endif /* ofxtvOSViewController_h */

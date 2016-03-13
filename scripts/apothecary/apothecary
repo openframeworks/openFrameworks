@@ -333,12 +333,15 @@ function installAndroidToolchain() {
 	fi
 
 	if [ ! -d "$BUILD_DIR/Toolchains/Android/arm" ]; then
+	    echo "preparing toolchain arm"
 		./make-standalone-toolchain.sh \
 			--ndk-dir=$ANDROID_NDK_ROOT \
 			--platform=$ANDROID_PLATFORM \
 			--install-dir=$BUILD_DIR/Toolchains/Android/arm \
 			--arch=arm \
-			--system=${ANDROID_HOST}
+			--system=${ANDROID_HOST} \
+			--toolchain=arm-linux-androideabi-clang3.6 \
+			--stl=libc++
 	fi
 
 
@@ -348,7 +351,9 @@ function installAndroidToolchain() {
 			--platform=$ANDROID_PLATFORM \
 			--install-dir=$BUILD_DIR/Toolchains/Android/x86 \
 			--arch=x86  \
-			--system=${ANDROID_HOST}
+			--system=${ANDROID_HOST} \
+			--toolchain=x86-clang3.6 \
+			--stl=libc++
 	fi
 
 	cd $WD

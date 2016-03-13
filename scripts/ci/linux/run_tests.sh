@@ -14,7 +14,7 @@ for group in *; do
 				make Debug
 				cd bin
 				binname=$(basename ${test})
-				./${binname}_debug
+                gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
 				errorcode=$?
 				if [[ $errorcode -ne 0 ]]; then
 					exit $errorcode

@@ -1,3 +1,226 @@
+   ___         ___        ____  
+  / _ \       / _ \      |___ \ 
+ | | | |     | (_) |       __) |
+ | | | |      \__, |      |__ < 
+ | |_| |  _     / /   _   ___) |
+  \___/  (_)   /_/   (_) |____/ 
+                                
+                                
+OF 0.9.3
+========                          
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+CORE
+---- 
+
+### graphics
+    / fixes for ofPixels move constructor and operator
+    
+### gl
+    / fix for ofSetColor as default material in fixed pipeline
+    
+    
+PLATFORM SPECIFIC
+-----------------
+
+### msys2
+    / FreeImage to freeimage dependencies fix
+
+### osx
+    / remove data copy to bundle in osx default target 
+    / AVFoundation player fix for getPixels after unsuccessful movie load
+    / fixes for window size on osx retina
+    / FreeImage static libs recompiled to fix SSL errors #4812
+
+    
+### linux
+    / fixes for linux fullscreen in gnome shell, openbox and others
+    
+    
+
+ _____     _____     _____
+|  _  |   |  _  |   / __  \
+| |/' |   | |_| |   `' / /'
+|  /| |   \____ |     / /  
+\ |_/ / _ .___/ / _ ./ /___
+ \___/ (_)\____/ (_)\_____/
+
+
+OF 0.9.2
+========                          
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+CORE
+----
+
+### graphics
+    / ttf font size had wrong dpi
+
+
+
+PLATFORM SPECIFIC
+-----------------
+
+### raspberry pi
+   / fix makefiles
+
+### msys2
+   / use poco from repositories to fix DNS error problem
+
+          _              _             _              
+        / /\           / /\           / /\            
+       / /  \         / /  \         / /  \           
+      / / /\ \       / / /\ \       /_/ /\ \          
+     / / /\ \ \     /_/ /\ \ \      \_\/\ \ \         
+    /_/ /  \ \ \    \ \ \_\ \ \          \ \ \        
+    \ \ \   \ \ \    \ \/__\ \ \          \ \ \       
+     \ \ \   \ \ \    \_____\ \ \          \ \ \      
+      \ \ \___\ \ \   _      \ \ \   _    __\ \ \___  
+       \ \/____\ \ \ /\_\     \ \ \ /\_\ /___\_\/__/\
+        \_________\/ \/_/      \_\/ \/_/ \_________\/
+
+OF 0.9.1
+========
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+GENERAL
+-------
+    / fix ofToDataPath on empty string (#4563)
+    + Get allAddonExample to build in Travis CI (#4162)
+
+CORE
+----
+
+### app
+    / fix 90 degree orientation in fullscreen (#4697)
+    / save window position on OS X before going fullscreen (#4655)
+    / fix retina window size (#4746)
+
+### 3d
+    / fix getMeshForIndices() (#4083)
+    / better default lookup for ofNode (#4594, #4625)
+    / Correct strides for vertices and indices in the 3d primitives since the updated resolution changes (#4218)
+    + add ofNode example (#4667)
+
+### communication
+
+### events
+
+### gl
+    / fix copying and moving ofFbo, ofShader, ofTexture, ofVboMesh (#4555)
+    / fix fbo error messages on allocate (#2834)
+    / fix state leak when recursively drawing MSAA fbos (#4102)
+    / fix AVF video player on draw, by checking that textures are allocated before binding (#4743)
+
+### graphics
+    / fix copying and moving ofImage, ofTrueTypeFont (#4555)
+    / make width and height protected, access using getWidth() and getHeight() (#3831, #3973)
+    / fix swapRG for float and short images (#4609)
+
+### math
+
+### projectGenerator
+
+### sound
+
+### types
+    + Implement draw(x, y) with default width and height (#772)
+
+### utils
+    / ofUtil: fix ofGetElapsedTimef being called every frame, now just called when needed (#4595)
+    / ofFileUtils: fix relative path calculation in ofToDataPath (#4564, #4563, #4598)
+    / ofThread: fix thread join (#4637)
+
+### video
+    / fix crash when closing unused ofVideoGrabber (#4554)
+    / now correctly shows when a video is loaded for AVF based players (#4737)
+    / gst grabber: workaround for bad functioning drivers returning wrong fps (#4647)
+    / ofAVFoundationVideoPlayer: simplified setVolume (#4669)
+    / ofDirectShowPlayer: add support for all different RGB formats (#4679, #4679, #4707)
+
+PLATFORM SPECIFIC
+-----------------
+
+### Emscripten
+
+### ofxiOS
+
+### Android
+    / fix android swipe example (#4539)
+
+### Linux (incl. ARM)
+    / fix compiling on Ubuntu, Linux Mint (#4550, #4546, #4543, #4342, #3687, #1902, #4550)
+    / fix compiling on arm7 raspberry pi 2 (#4409, #4704, #4710, #4711)
+    / fix GLES compilation (#4634)
+
+### Microsoft Windows
+    / fix getPixels() for ofDirectShowPlayer (#4716)
+    / fix setVolume for ofDirectShowPlayer (#3818)
+
+### OSX and iOS
+    / fix for retina fullscreen pixel density calculations (#4699, #3733)
+    / fix ofAVFoundationPlayer close-open issue (#4547)
+    / update osx opencv (#4406, #4587, #4671, #4672)
+    / apothecary: audit build scripts for osx/iOS (#4451)
+    / fix install_name_tool and apple store compatability (#4479, #4615, #4622)
+    / fix backgrounded app not being able to execute commands on the graphics hardware (#4544)
+    / fix iOSNativeARCExample (#4606)
+    / fix for Cannot find protocol declaration iOS UIViewControllerTransitionCoordinator (#4670)
+
+CORE ADDONS
+-----------
+### ofx3DModelLoader
+
+### ofxAssimpModelLoader
+    / fix drawing wireframe and verts on assimp model (#4553)
+
+### ofxGui
+    / ofxGui crashes ofTessellator::performTessellation with ofParameter<float> (#4717)
+
+### ofxiOSVideoPlayer
+
+### ofxKinect
+
+### ofxNetwork
+    / fix TcpClient error handling (#3478, #4339, #4556)
+    / implement tests for ofxUdpManager (#3656)
+
+### ofxOpenCV
+    / fix apothecary build (#4576)
+
+### ofxSynth
+
+### ofxTCPManager
+
+### ofxUDPManager
+    / fix timeouts in blocking mode (#4597)
+
+### ofxMultiTouch
+
+
+PROJECT GENERATOR
+-----------------
+  / fix overwriting iOS icons/images on project update (#4102)
+  / apothecary: update formulas (#4588, #4620)
+
 OF 0.9.0
 ========
 

@@ -1,3 +1,5 @@
+/* Please refer to the README.md in the example's root folder for more information on usage */
+
 #include "ofApp.h"
 
 int main() {

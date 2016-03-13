@@ -22,21 +22,18 @@
 //--------------------------------------------------
 ofBuffer::ofBuffer()
 :currentLine(end(),end()){
-	buffer.resize(1);
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(const char * _buffer, std::size_t size)
 :buffer(_buffer,_buffer+size)
 ,currentLine(end(),end()){
-	buffer.resize(buffer.size()+1,0);
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(const string & text)
 :buffer(text.begin(),text.end())
 ,currentLine(end(),end()){
-	buffer.resize(buffer.size()+1,0);
 }
 
 //--------------------------------------------------
@@ -57,10 +54,14 @@ bool ofBuffer::set(istream & stream, size_t ioBlockSize){
 	vector<char> aux_buffer(ioBlockSize);
 	while(stream.good()){
 		stream.read(&aux_buffer[0], ioBlockSize);
-		buffer.insert(buffer.end(),aux_buffer.begin(),aux_buffer.begin()+stream.gcount());
+		append(aux_buffer.data(), stream.gcount());
 	}
-	buffer.push_back(0);
 	return true;
+}
+
+//--------------------------------------------------
+void ofBuffer::setall(char mem){
+	buffer.assign(buffer.size(), mem);
 }
 
 //--------------------------------------------------
@@ -68,19 +69,18 @@ bool ofBuffer::writeTo(ostream & stream) const {
 	if(stream.bad()){
 		return false;
 	}
-	stream.write(&(buffer[0]), buffer.size() - 1);
+	stream.write(buffer.data(), buffer.size());
 	return stream.good();
 }
 
 //--------------------------------------------------
 void ofBuffer::set(const char * _buffer, std::size_t _size){
-	buffer.assign(_buffer,_buffer+_size);
-	buffer.resize(buffer.size()+1,0);
+	buffer.assign(_buffer, _buffer+_size);
 }
 
 //--------------------------------------------------
 void ofBuffer::set(const string & text){
-	set(text.c_str(),text.size());
+	set(text.c_str(), text.size());
 }
 
 //--------------------------------------------------
@@ -90,45 +90,47 @@ void ofBuffer::append(const string& _buffer){
 
 //--------------------------------------------------
 void ofBuffer::append(const char * _buffer, std::size_t _size){
-	buffer.insert(buffer.end()-1,_buffer,_buffer+_size);
-	buffer.back() = 0;
+	buffer.insert(buffer.end(), _buffer, _buffer + _size);
+}
+
+//--------------------------------------------------
+void ofBuffer::reserve(size_t size){
+	buffer.reserve(size);
 }
 
 //--------------------------------------------------
 void ofBuffer::clear(){
-	buffer.resize(1,0);
+	buffer.clear();
 }
 
 //--------------------------------------------------
 void ofBuffer::allocate(std::size_t _size){
-	clear();
-	//we always add a 0 at the end to avoid problems with strings
-	buffer.resize(_size + 1, 0);
+	resize(_size);
 }
 
 //--------------------------------------------------
+void ofBuffer::resize(std::size_t _size){
+	buffer.resize(_size);
+}
+
+
+//--------------------------------------------------
 char * ofBuffer::getData(){
-	if(buffer.empty()){
-		return nullptr;
-	}
-	return &buffer[0];
+	return buffer.data();
 }
 
 //--------------------------------------------------
 const char * ofBuffer::getData() const{
-	if(buffer.empty()){
-		return nullptr;
-	}
-	return &buffer[0];
+	return buffer.data();
 }
 
 //--------------------------------------------------
-char *ofBuffer::getBinaryBuffer(){
+char * ofBuffer::getBinaryBuffer(){
 	return getData();
 }
 
 //--------------------------------------------------
-const char *ofBuffer::getBinaryBuffer() const {
+const char * ofBuffer::getBinaryBuffer() const {
 	return getData();
 }
 
@@ -137,7 +139,7 @@ string ofBuffer::getText() const {
 	if(buffer.empty()){
 		return "";
 	}
-	return &buffer[0];
+	return std::string(buffer.begin(), buffer.end());
 }
 
 //--------------------------------------------------
@@ -152,12 +154,8 @@ ofBuffer & ofBuffer::operator=(const string & text){
 }
 
 //--------------------------------------------------
-long ofBuffer::size() const {
-	if(buffer.empty()){
-		return 0;
-	}
-	//we always add a 0 at the end to avoid problems with strings
-	return buffer.size() - 1;
+std::size_t ofBuffer::size() const {
+	return buffer.size();
 }
 
 //--------------------------------------------------
@@ -300,9 +298,9 @@ bool ofBuffer::Line::empty() const{
 }
 
 //--------------------------------------------------
-ofBuffer::Lines::Lines(vector<char> & buffer)
-:_begin(buffer.begin())
-,_end(buffer.end()){}
+ofBuffer::Lines::Lines(vector<char>::iterator begin, vector<char>::iterator end)
+:_begin(begin)
+,_end(end){}
 
 //--------------------------------------------------
 ofBuffer::Line ofBuffer::Lines::begin(){
@@ -316,7 +314,7 @@ ofBuffer::Line ofBuffer::Lines::end(){
 
 //--------------------------------------------------
 ofBuffer::Lines ofBuffer::getLines(){
-	return ofBuffer::Lines(buffer);
+	return ofBuffer::Lines(begin(), end());
 }
 
 //--------------------------------------------------
@@ -469,12 +467,17 @@ void ofFile::close(){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::create(){
+	return create(path());
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFile::create(const std::filesystem::path & path){
 	bool success = false;
 
 	if(!myFile.string().empty()){
 		auto oldmode = this->mode;
-		auto oldpath = path();
-		success = open(path(),ofFile::WriteOnly,binary);
+		auto oldpath = this->path();
+		success = open(path,ofFile::WriteOnly,binary);
 		close();
 		open(oldpath,oldmode,binary);
 	}
@@ -650,18 +653,11 @@ bool ofFile::isHidden() const {
 
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setWriteable(bool flag){
-	setReadOnly(!flag);
-}
-
-//------------------------------------------------------------------------------------------------------------
-void ofFile::setReadOnly(bool flag){
 	try{
 		if(flag){
-			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
-			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
-			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
-		}else{
 			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::add_perms);
+		}else{
+			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
 		}
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set write permission on " << myFile << ": " << e.what();
@@ -669,11 +665,34 @@ void ofFile::setReadOnly(bool flag){
 }
 
 //------------------------------------------------------------------------------------------------------------
+// deprecated
+void ofFile::setReadOnly(bool flag){
+	setWriteable(!flag);
+}
+
+//------------------------------------------------------------------------------------------------------------
+void ofFile::setReadable(bool flag){
+	try{
+		if(flag){
+			std::filesystem::permissions(myFile,std::filesystem::perms::owner_read | std::filesystem::perms::add_perms);
+		}else{
+			std::filesystem::permissions(myFile,std::filesystem::perms::owner_read | std::filesystem::perms::remove_perms);
+		}
+	}catch(std::exception & e){
+		ofLogError() << "Couldn't set read permission on " << myFile << ": " << e.what();
+	}
+}
+
+//------------------------------------------------------------------------------------------------------------
 void ofFile::setExecutable(bool flag){
 	try{
-		std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::add_perms);
+		if(flag){
+			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::add_perms);
+		} else{
+			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::remove_perms);
+		}
 	}catch(std::exception & e){
-		ofLogError() << "Couldn't set write permission on " << myFile << ": " << e.what();
+		ofLogError() << "Couldn't set executable permission on " << myFile << ": " << e.what();
 	}
 }
 
@@ -901,7 +920,7 @@ ofDirectory::ofDirectory(const std::filesystem::path & path){
 void ofDirectory::open(const std::filesystem::path & path){
 	originalDirectory = ofFilePath::getPathForDirectory(path.string());
 	files.clear();
-    myDir = std::filesystem::path(ofToDataPath(originalDirectory));
+	myDir = std::filesystem::path(ofToDataPath(originalDirectory));
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -915,9 +934,9 @@ bool ofDirectory::create(bool recursive){
 	if(!myDir.string().empty()){
 		try{
 			if(recursive){
-                std::filesystem::create_directories(myDir);
+				std::filesystem::create_directories(myDir);
 			}else{
-                std::filesystem::create_directory(myDir);
+				std::filesystem::create_directory(myDir);
 			}
 		}
 		catch(std::exception & except){
@@ -974,8 +993,14 @@ void ofDirectory::setWriteable(bool flag){
 }
 
 //------------------------------------------------------------------------------------------------------------
+// deprecated
 void ofDirectory::setReadOnly(bool flag){
-	return ofFile(myDir,ofFile::Reference).setReadOnly(flag);
+	setWriteable(!flag);
+}
+
+//------------------------------------------------------------------------------------------------------------
+void ofDirectory::setReadable(bool flag){
+	return ofFile(myDir,ofFile::Reference).setReadable(flag);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1064,9 +1089,9 @@ bool ofDirectory::remove(bool recursive){
 
 	try{
 		if(recursive){
-            std::filesystem::remove_all(std::filesystem::canonical(myDir));
+			std::filesystem::remove_all(std::filesystem::canonical(myDir));
 		}else{
-            std::filesystem::remove(std::filesystem::canonical(myDir));
+			std::filesystem::remove(std::filesystem::canonical(myDir));
 		}
 	}catch(std::exception & except){
 		ofLogError("ofDirectory") << "remove(): unable to remove file/directory: " << except.what();
@@ -1192,18 +1217,18 @@ static bool natural(const ofFile& a, const ofFile& b) {
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::sort(){
-    if(files.empty() && !myDir.empty()){
-        listDir();
-    }
+	if(files.empty() && !myDir.empty()){
+		listDir();
+	}
 	ofSort(files, natural);
 }
 
 //------------------------------------------------------------------------------------------------------------
 ofDirectory ofDirectory::getSorted(){
-    ofDirectory sorted(*this);
-    sorted.listDir();
-    sorted.sort();
-    return sorted;
+	ofDirectory sorted(*this);
+	sorted.listDir();
+	sorted.sort();
+	return sorted;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1523,24 +1548,24 @@ string ofFilePath::getUserHomeDir(){
 }
 
 string ofFilePath::makeRelative(const std::string & from, const std::string & to){
-    auto pathFrom = std::filesystem::absolute( from );
-    auto pathTo = std::filesystem::absolute( to );
-    std::filesystem::path ret;
-    std::filesystem::path::const_iterator itrFrom( pathFrom.begin() ), itrTo( pathTo.begin() );
-    // Find common base
-    for( std::filesystem::path::const_iterator toEnd( pathTo.end() ), fromEnd( pathFrom.end() ) ; itrFrom != fromEnd && itrTo != toEnd && *itrFrom == *itrTo; ++itrFrom, ++itrTo );
-    // Navigate backwards in directory to reach previously found base
-    for( std::filesystem::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom ){
-        if( (*itrFrom) != "." ){
-            ret /= "..";
-        }
-    }
-    // Now navigate down the directory branch
-    for( ; itrTo != pathTo.end() ; ++itrTo ){
-        if( itrTo->string() != "."){
-            ret /= *itrTo;
-        }
-    }
+	auto pathFrom = std::filesystem::absolute( from );
+	auto pathTo = std::filesystem::absolute( to );
+	std::filesystem::path ret;
+	std::filesystem::path::const_iterator itrFrom( pathFrom.begin() ), itrTo( pathTo.begin() );
+	// Find common base
+	for( std::filesystem::path::const_iterator toEnd( pathTo.end() ), fromEnd( pathFrom.end() ) ; itrFrom != fromEnd && itrTo != toEnd && *itrFrom == *itrTo; ++itrFrom, ++itrTo );
+	// Navigate backwards in directory to reach previously found base
+	for( std::filesystem::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom ){
+		if( (*itrFrom) != "." ){
+			ret /= "..";
+		}
+	}
+	// Now navigate down the directory branch
+	for( ; itrTo != pathTo.end() ; ++itrTo ){
+		if( itrTo->string() != "."){
+			ret /= *itrTo;
+		}
+	}
 
-    return ret.string();
+	return ret.string();
 }

@@ -1,5 +1,6 @@
 #include "ofMain.h"
 #include "ofApp.h"
+
 int main(){
 	ofSetupOpenGL(1024,768, OF_WINDOW);			// <-------- setup the GL context
 
@@ -12,12 +13,16 @@ int main(){
 
 
 #ifdef TARGET_ANDROID
-#include <jni.h>
+void ofAndroidApplicationInit()
+{
+    //application scope init
+}
 
-//========================================================================
-extern "C"{
-	void Java_cc_openframeworks_OFAndroid_init( JNIEnv*  env, jobject  thiz ){
-		main();
-	}
+void ofAndroidActivityInit()
+{
+	//activity scope init
+	main();
 }
 #endif
+
+

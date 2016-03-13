@@ -446,10 +446,7 @@ string ofToHex(const char* value) {
 
 //----------------------------------------
 int ofToInt(const string& intString) {
-	int x = 0;
-	istringstream cur(intString);
-	cur >> x;
-	return x;
+	return ofTo<int>(intString);
 }
 
 //----------------------------------------
@@ -503,26 +500,17 @@ string ofHexToString(const string& stringHexString) {
 
 //----------------------------------------
 float ofToFloat(const string& floatString) {
-	float x = 0;
-	istringstream cur(floatString);
-	cur >> x;
-	return x;
+	return ofTo<float>(floatString);
 }
 
 //----------------------------------------
 double ofToDouble(const string& doubleString) {
-	double x = 0;
-	istringstream cur(doubleString);
-	cur >> x;
-	return x;
+	return ofTo<double>(doubleString);
 }
 
 //----------------------------------------
 int64_t ofToInt64(const string& intString) {
-	int64_t x = 0;
-	istringstream cur(intString);
-	cur >> x;
-	return x;
+	return ofTo<int64_t>(intString);
 }
 
 //----------------------------------------
@@ -542,10 +530,7 @@ bool ofToBool(const string& boolString) {
 
 //----------------------------------------
 char ofToChar(const string& charString) {
-	char x = '\0';
-	istringstream cur(charString);
-	cur >> x;
-	return x;
+	return ofTo<char>(charString);
 }
 
 //----------------------------------------
@@ -790,7 +775,7 @@ string ofTrim(const string & src, const string& locale){
 }
 
 //--------------------------------------------------
-void ofAppendUTF8(string & str, int utf8){
+void ofAppendUTF8(string & str, uint32_t utf8){
 	try{
 		utf8::append(utf8, back_inserter(str));
 	}catch(...){}

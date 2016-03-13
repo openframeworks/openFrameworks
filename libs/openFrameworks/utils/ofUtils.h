@@ -439,7 +439,7 @@ string ofTrimFront(const string & src, const string & locale = "");
 string ofTrimBack(const string & src, const string & locale = "");
 string ofTrim(const string & src, const string & locale = "");
 
-void ofAppendUTF8(string & str, int utf8);
+void ofAppendUTF8(string & str, uint32_t utf8);
 
 /// \brief Convert a variable length argument to a string.
 /// \param format a printf-style format string.
@@ -583,6 +583,13 @@ template<>
 const char * ofFromString(const string & value);
 
 /// \}
+
+template<typename T> T ofTo(const std::string & str){
+	T x;
+	istringstream cur(str);
+	cur >> x;
+	return x;
+}
 
 // --------------------------------------------
 /// \name Number conversion
