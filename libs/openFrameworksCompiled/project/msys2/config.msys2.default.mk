@@ -30,9 +30,9 @@ PLATFORM_PROJECT_RELEASE_BIN_NAME=$(APPNAME)
 PLATFORM_RUN_COMMAND = 
 #ifneq (,$(findstring MINMGW64_NT,$(PLATFORM_OS)))
 MSYS2_ROOT = /mingw32
-PLATFORM_CFLAGS += -std=gnu++14 -I$(MSYS2_ROOT)/include/cairo -I$(MSYS2_ROOT)/include/glib-2.0 -I$(MSYS2_ROOT)/lib/glib-2.0/include -I$(MSYS2_ROOT)/include/pixman-1 -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include/freetype2 -I$(MSYS2_ROOT)/include/harfbuzz -I$(MSYS2_ROOT)/include/libpng16 -DUNICODE -D_UNICODE -DPOCO_STATIC 
+PLATFORM_CFLAGS += -std=gnu++14 -DUNICODE -D_UNICODE 
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER 
-PLATFORM_LDFLAGS += -L$(MSYS_ROOT)/lib -L$(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH) -lpthread
+PLATFORM_LDFLAGS += -lpthread
 #ifeq ($(PLATFORM_ARCH),x86_64)
 CC = $(MSYS2_ROOT)/bin/gcc
 CXX = $(MSYS2_ROOT)/bin/g++
@@ -64,7 +64,7 @@ PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_DEFINES =
+PLATFORM_DEFINES = POCO_STATIC
 
 ##########################################################################################
 # PLATFORM REQUIRED ADDON
@@ -167,14 +167,10 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cp
 
 # third party
 
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/cairo/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
@@ -213,27 +209,17 @@ PLATFORM_HEADER_SEARCH_PATHS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
+PLATFORM_LIBRARIES += PocoNetSSL PocoNet PocoCrypto PocoUtil PocoXML PocoFoundation PocoZip PocoJSON PocoData PocoDataSQLite
 PLATFORM_LIBRARIES += ksuser opengl32 gdi32 msimg32 glu32 dsound winmm strmiids #dxguid  
 PLATFORM_LIBRARIES += uuid ole32 oleaut32 setupapi wsock32 ws2_32 Iphlpapi Comdlg32
 PLATFORM_LIBRARIES += freeimage boost_filesystem-mt boost_system-mt freetype cairo
-#PLATFORM_LIBRARIES += PocoNetSSL PocoNet PocoCrypto PocoUtil PocoXML PocoFoundation PocoZip PocoJSON PocoData PocoDataSQLite
 #PLATFORM_LIBRARIES += gstapp-1.0 gstvideo-1.0 gstbase-1.0 gstreamer-1.0 gobject-2.0 glib-2.0 intl
 
 #static libraries (fully qualified paths)
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoZip.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoJSON.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoMongoDB.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoData.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoDataSQLite.a
 #PLATFORM_STATIC_LIBRARIES += somestaticlib
 
 PLATFORM_PKG_CONFIG_LIBRARIES =
+PLATFORM_PKG_CONFIG_LIBRARIES += cairo
 PLATFORM_PKG_CONFIG_LIBRARIES += zlib
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += glew
@@ -287,8 +273,65 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 #    Don't want to use a default compiler?
 ################################################################################
 #PLATFORM_CC=
+
+copy_dlls:
+	@echo "     copying dlls to bin"
+	@cp $(MSYS2_ROOT)/bin/libwinpthread-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libgcc_s_dw2-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libstdc++-6.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libboost_filesystem-mt.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libboost_system-mt.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libbz2-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libcairo-2.dll bin/
+	@cp $(MSYS2_ROOT)/bin/LIBEAY32.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libfreeimage-3.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libfreetype-6.dll bin/
+	@cp $(MSYS2_ROOT)/bin/glew32.dll bin/
+	@cp $(MSYS2_ROOT)/bin/SSLEAY32.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libfontconfig-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libpixman-1-0.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libpng16-16.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libHalf-2_2.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libharfbuzz-0.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libexpat-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libiconv-2.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libIex-2_2.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libIlmImf-2_2.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libImath-2_2.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libglib-2.0-0.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libIlmThread-2_2.dll bin/
+	@cp $(MSYS2_ROOT)/bin/liblcms2-2.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libintl-8.dll bin/
+	@cp $(MSYS2_ROOT)/bin/liblzma-5.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libminizip-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libjpeg-8.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libjpegxr.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libjxrglue.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopenjp2-7.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libraw*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libtiff-5.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libwebp*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libjasper-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_calib3d*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_core*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_features2d*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_flann*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_imgcodecs*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_imgproc*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_ml*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_objdetect*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_photo*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_video*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libopencv_videoio*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libpcre-1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libPoco*.dll bin/
+	@cp $(MSYS2_ROOT)/bin/tbb.dll bin/
+	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libassimp.dll bin/
 	
 afterplatform: $(TARGET_NAME)
+	@if [ -d $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH) ]; then cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/; fi
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"

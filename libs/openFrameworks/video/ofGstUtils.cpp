@@ -18,7 +18,9 @@
 #include <algorithm>
 #include "ofAppRunner.h"
 #ifdef OF_USE_GST_GL
+#ifndef TARGET_OPENGLES
 #include <gst/gl/x11/gstgldisplay_x11.h>
+#endif
 #include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
 #ifdef TARGET_WIN32
@@ -1126,7 +1128,7 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 	eglMakeCurrent (eglGetDisplay(EGL_DEFAULT_DISPLAY), 0,0, 0);
 	glDisplay = (GstGLDisplay *)gst_gl_display_egl_new_with_egl_display(eglGetDisplay(EGL_DEFAULT_DISPLAY));
 	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetEGLContext(),
-	    		  GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
+	    		  GST_GL_PLATFORM_EGL, GST_GL_API_GLES2);
 
 	g_object_set (G_OBJECT (glfilter), "other-context", glContext, NULL);
 	// FIXME: this seems to be the way to add the context in 1.4.5
@@ -1258,7 +1260,7 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 				ofTextureData & texData = backTexture.getTextureData();
 				texData.bAllocated = true;
 				texData.bFlipTexture = false;
-				texData.glTypeInternal = GL_RGBA;
+				texData.glInternalFormat = GL_RGBA;
 				texData.height = getHeight();
 				texData.width = getWidth();
 				texData.magFilter = GL_LINEAR;

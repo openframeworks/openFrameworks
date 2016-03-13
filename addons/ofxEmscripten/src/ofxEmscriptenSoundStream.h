@@ -8,29 +8,31 @@
 #pragma once
 
 #include "ofBaseSoundStream.h"
+#include "ofSoundStream.h"
+#include "ofSoundBuffer.h"
 
 class ofxEmscriptenSoundStream: public ofBaseSoundStream {
 public:
 	ofxEmscriptenSoundStream();
 	~ofxEmscriptenSoundStream();
 
-	std::vector<ofSoundDevice> getDeviceList() const;
-	void setDeviceID(int deviceID);
-	bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
-	bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
+	std::vector<ofSoundDevice> getDeviceList(ofSoundDevice::Api api) const;
+	bool setup(const ofSoundStreamSettings & settings);
 	void setInput(ofBaseSoundInput * soundInput);
 	void setOutput(ofBaseSoundOutput * soundOutput);
+
+	ofSoundDevice getInDevice() const;
+	ofSoundDevice getOutDevice() const;
 
 	void start();
 	void stop();
 	void close();
 
-	long unsigned long getTickCount() const;
+	uint64_t getTickCount() const;
 	int getNumInputChannels() const;
 	int getNumOutputChannels() const;
 	int getSampleRate() const;
 	int getBufferSize() const;
-	int getDeviceID() const;
 
 private:
 	static void audio_cb(int bufferSize, int inputChannels, int outputChannels, void * userData);
@@ -38,11 +40,7 @@ private:
 	int context;
 	int stream;
 	unsigned long long tickCount;
-	int bufferSize;
-	int inChannels;
-	int outChannels;
-	vector<float> inbuffer;
-	vector<float> outbuffer;
-	ofBaseSoundInput* soundInput;
-	ofBaseSoundOutput* soundOutput;
+	ofSoundStreamSettings settings;
+	ofSoundBuffer inbuffer;
+	ofSoundBuffer outbuffer;
 };

@@ -18,6 +18,7 @@ class swarm : public ofNode {
 		void init(int nParticles, float positionDispersion, float velocityDispersion);
 		void customDraw();
 		ofLight light;
+		ofMaterial material;
 
 	protected:
 		// we call this update function ourselves

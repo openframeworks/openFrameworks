@@ -1,4 +1,5 @@
 #include "ofPolyline.h"
+#include "ofRectangle.h"
 #include "ofAppRunner.h"
 
 //----------------------------------------------------------

@@ -30,7 +30,7 @@ Download and unzip the msys2 version of oF.
 Open an MSYS shell and install OF dependencies:
 
     cd your_oF_directory/scripts/msys2
-    ./install_dependencies.sh`
+    ./install_dependencies.sh
 	
 Open an **MINGW32** shell and compile oF libraries:
 
@@ -39,25 +39,6 @@ Open an **MINGW32** shell and compile oF libraries:
 
 You can speed-up compilation using parallel build `make -j${NUMBER_OF_PROCESSORS}`
 
-
-Setting the PATH variable
--------------------------
-On MSYS2, openFrameworks needs the dlls that are provided by MSYS2 package manager `pacman`. The PATH variable tells the system where to look for these dlls. On Windows, the system starts to look into the executable folder, then into the folders defined in system PATH and finally into the folders defined in user PATH.
-
-You can find how to set the PATH in windows here: http://www.computerhope.com/issues/ch000549.htm
-
-You'll need to add your_msys2_directory\mingw32\bin;your_msys2_directory\usr\bin to your PATH, which usually is:
-
-        c:\msys64\mingw32\bin;c:\msys64\usr\bin
-        
-You can also set the PATH from the command line: open a Windows cmd prompt and set you user PATH
-
-        setx PATH "%PATH%;your_msys2_directory\mingw32\bin;your_msys2_directory\usr\bin;"
-
-If you have administrative privileges, you can directly set the system PATH. All users will benefit of it...
-
-That's all, now go to the your_oF_directory/examples folder, where you will find 
-the examples, and have fun! 
 
 Running examples
 ----------------
@@ -80,6 +61,17 @@ syntax is the usual syntax in makefiles, there's help comments inside the file.
 
 addons.make: if you want to use an addon which is inside the addons folder, just 
 add its name in a new line in this file.
+
+Dlls
+----
+
+Windows applications compiled with msys2 need some system dlls to run. If you are going to run the application in a different machine where you don't wont to install msys2 you can run:
+
+    make copy_dlls
+	
+from the msys2 terminal and it'll copy the necesary dlls to the project bin folder. Now you can copy that bin folder to any computer and it will run right away without having to install msys2.
+
+This is still experimental so if you find any problem please [report it on github](https://github.com/openframeworks/openFrameworks/new?title=Problem%20with%20msys2%20dlls)
 
 QtCreator
 ---------

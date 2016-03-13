@@ -1,26 +1,29 @@
-cd ../../examples
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PARENT_DIR="$(dirname "$DIR")"
+MAKEFILE_PATH=$PARENT_DIR/templates/linuxarmv6l/Makefile
+cd ${DIR}/../../examples
+
 for category in $(ls -1d *)
 do
-	if [ $category != "addons" ] && [ $category != "ios" ] && [ $category != "android" ]; then
+        if [ $category != "addons" ] && [ $category != "ios" ] && [ $category != "android" ]; then
  
-		echo "CHANGED TO CATEGORY >"+$category
-		cd $category
-		for j in $(ls -1d *)
-		do
-			echo ">>$j"
-			cd $j
-			cp ../../../scripts/linux/template/linuxarmv6l/Makefile .
-			make clean
-			make
-			ret=$?
-			if [ $ret -ne 0 ];
-			then
-				echo "error compiling: " + $j
-			else
-				echo "successfully compiled :" + $j
-			fi
-			cd ../
-		done
-		cd ../
-	fi
+                echo "CHANGED TO CATEGORY >"+$category
+                cd $category
+                for j in $(ls -1d *)
+                do
+                        echo ">>$j"
+                        cd $j
+#                       make clean -f $MAKEFILE_PATH
+                        make -f $MAKEFILE_PATH
+                        ret=$?
+                        if [ $ret -ne 0 ];
+                        then
+                                echo "error compiling: " + $j
+                        else
+                                echo "successfully compiled :" + $j
+                        fi
+                        cd ../
+                done
+                cd ../
+        fi
 done

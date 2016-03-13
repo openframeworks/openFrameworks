@@ -750,7 +750,7 @@ bool ofMesh::usingIndices() const{
 
 //--------------------------------------------------------------
 void ofMesh::append(const ofMesh & mesh){
-	ofIndexType prevNumVertices = vertices.size();
+	ofIndexType prevNumVertices = static_cast<ofIndexType>(vertices.size());
 	if(mesh.getNumVertices()){
 		vertices.insert(vertices.end(),mesh.getVertices().begin(),mesh.getVertices().end());
 	}
@@ -764,8 +764,8 @@ void ofMesh::append(const ofMesh & mesh){
 		normals.insert(normals.end(),mesh.getNormals().begin(),mesh.getNormals().end());
 	}
 	if(mesh.getNumIndices()){
-		for(ofIndexType i=0;i<mesh.getIndices().size();i++){
-			indices.push_back(mesh.getIndex(i)+prevNumVertices);
+		for(auto index: mesh.getIndices()){
+			indices.push_back(index+prevNumVertices);
 		}
 	}
 }
@@ -791,9 +791,9 @@ void ofMesh::load(string path){
 
 	ofIndexType currentVertex = 0;
 	ofIndexType currentFace = 0;
-	
-	bool floatColor = false;
 
+	bool colorTypeIsUChar = false; /// flag to distinguish between uchar (more common) and float (less common) color format in ply file
+	
 	enum State{
 		Header,
 		VertexDef,
@@ -803,6 +803,16 @@ void ofMesh::load(string path){
 		Faces
 	};
 
+	
+	enum Attribute {
+		Position,
+		Color,
+		Normal,
+		TexCoord,
+	};
+	
+	vector<Attribute> meshDefinition;
+	
 	data.clear();
 	State state = Header;
 
@@ -832,44 +842,48 @@ void ofMesh::load(string path){
 		if((state==Header || state==FaceDef) && lineStr.find("element vertex")==0){
 			state = VertexDef;
 			orderVertices = MAX(orderIndices, 0)+1;
-			data.getVertices().resize(ofToInt(lineStr.substr(15)));
+			data.getVertices().resize(ofTo<size_t>(lineStr.substr(15)));
 			continue;
 		}
 
 		if((state==Header || state==VertexDef) && lineStr.find("element face")==0){
 			state = FaceDef;
 			orderIndices = MAX(orderVertices, 0)+1;
-			data.getIndices().resize(ofToInt(lineStr.substr(13))*3);
+			data.getIndices().resize(ofTo<size_t>(lineStr.substr(13))*3);
 			continue;
 		}
 
 		if(state==VertexDef && (lineStr.find("property float x")==0 || lineStr.find("property float y")==0 || lineStr.find("property float z")==0)){
+			meshDefinition.push_back(Position);
 			vertexCoordsFound++;
 			continue;
 		}
 
 		if(state==VertexDef && (lineStr.find("property float r")==0 || lineStr.find("property float g")==0 || lineStr.find("property float b")==0 || lineStr.find("property float a")==0)){
 			colorCompsFound++;
+			meshDefinition.push_back(Color);
 			data.getColors().resize(data.getVertices().size());
-			floatColor = true;
 			continue;
 		}
 
 		if(state==VertexDef && (lineStr.find("property uchar red")==0 || lineStr.find("property uchar green")==0 || lineStr.find("property uchar blue")==0 || lineStr.find("property uchar alpha")==0)){
+			colorTypeIsUChar = true;
 			colorCompsFound++;
+			meshDefinition.push_back(Color);
 			data.getColors().resize(data.getVertices().size());
-			floatColor = false;
 			continue;
 		}
 
-		if(state==VertexDef && (lineStr.find("property float u")==0 || lineStr.find("property float v")==0)){
+		if(state==VertexDef && (lineStr.find("property float u")==0 || lineStr.find("property float v")==0|| lineStr.find("property float s")==0 || lineStr.find("property float t")==0)){
 			texCoordsFound++;
+			meshDefinition.push_back(TexCoord);
 			data.getTexCoords().resize(data.getVertices().size());
 			continue;
 		}
 
 		if(state==VertexDef && (lineStr.find("property float nx")==0 || lineStr.find("property float ny")==0 || lineStr.find("property float nz")==0)){
 			normalsCoordsFound++;
+			meshDefinition.push_back(Normal);
 			if (normalsCoordsFound==3) data.getNormals().resize(data.getVertices().size());
 			continue;
 		}
@@ -908,39 +922,41 @@ void ofMesh::load(string path){
 				goto clean;
 			}
 			stringstream sline(lineStr);
-			sline >> data.getVertices()[currentVertex].x;
-			sline >> data.getVertices()[currentVertex].y;
-			if(vertexCoordsFound>2) sline >> data.getVertices()[currentVertex].z;
-
-			if(colorCompsFound>0){
-				if (floatColor){
-					sline >> data.getColors()[currentVertex].r;
-					sline >> data.getColors()[currentVertex].g;
-					sline >> data.getColors()[currentVertex].b;
-					if(colorCompsFound>3) sline >> data.getColors()[currentVertex].a;
-				}else{
-					ofColor c;
-					sline >> c.r;
-					sline >> c.g;
-					sline >> c.b;
-					if(colorCompsFound>3) sline >> c.a;
-					data.getColors()[currentVertex] = c;
+			
+			// read in a line of vertex elements
+			// and split it into attributes,
+			// based attribute order specified in file header
+			ofIndexType vAttr = 0;
+			ofIndexType nAttr = 0;
+			ofIndexType tAttr = 0;
+			ofIndexType cAttr = 0;
+			for(auto s:meshDefinition){
+				switch (s) {
+					case Position:
+						sline >> *(&data.getVertices()[currentVertex].x + (vAttr++)%vertexCoordsFound);
+						break;
+					case Color:
+						if (colorTypeIsUChar){
+							int c = 0;
+							sline >> c;
+							*(&data.getColors()[currentVertex].r + (cAttr++)%colorCompsFound) = c/255.f;
+						} else {
+							sline >> *(&data.getColors()[currentVertex].r + (cAttr++)%colorCompsFound);
+						}
+						break;
+					case Normal:
+						sline >> *(&data.getNormals()[currentVertex].x + (nAttr++)%normalsCoordsFound);
+						break;
+					case TexCoord:
+						sline >> *(&data.getTexCoords()[currentVertex].x + (tAttr++)%texCoordsFound);
+						break;
+					default:
+						break;
 				}
 			}
-
-			if(texCoordsFound>0){
-				ofVec2f uv;
-				sline >> uv.x;
-				sline >> uv.y;
-				data.getTexCoords()[currentVertex] = uv;
-			}
-			
-			if (normalsCoordsFound>0){
-				ofVec3f n;
-				sline >> n.x;
-				sline >> n.y;
-				sline >> n.z;
-				data.getNormals()[currentVertex] = n;
+			if (vAttr != vertexCoordsFound || cAttr!= colorCompsFound || nAttr!=normalsCoordsFound || tAttr!=texCoordsFound){
+				error = "attribute data does not match definition in header";
+				goto clean;
 			}
 			
 			currentVertex++;
@@ -966,7 +982,7 @@ void ofMesh::load(string path){
 				error = "face not a triangle";
 				goto clean;
 			}
-			int i;
+			ofIndexType i;
 			sline >> i;
 			data.getIndices()[currentFace*3] = i;
 			sline >> i;
@@ -1630,7 +1646,7 @@ ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
 	int nr = doubleRes+1;
 	if(mode == OF_PRIMITIVE_TRIANGLES) {
 
-		int index1, index2, index3;
+		ofIndexType index1, index2, index3;
 
 		for(float iy = 0; iy < res; iy++) {
 			for(float ix = 0; ix < doubleRes; ix++) {

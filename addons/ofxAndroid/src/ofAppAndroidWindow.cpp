@@ -46,6 +46,10 @@ static bool accumulateTouchEvents = false;
 
 void ofExitCallback();
 
+//----- define in main.cpp---//
+void ofAndroidApplicationInit();
+void ofAndroidActivityInit();
+
 //static ofAppAndroidWindow window;
 
 JavaVM * ofGetJavaVMPtr(){
@@ -103,11 +107,14 @@ ofAppAndroidWindow::ofAppAndroidWindow()
 :currentRenderer(new ofGLRenderer(this))
 ,glesVersion(1){
 	window = this;
-
 }
 
 ofAppAndroidWindow::~ofAppAndroidWindow() {
 	// TODO Auto-generated destructor stub
+}
+
+bool ofAppAndroidWindow::isSurfaceDestroyed() {
+	return surfaceDestroyed;
 }
 
 void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings){
@@ -247,6 +254,17 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
 	const char *mfile = env->GetStringUTFChars(data_dir, &iscopy);
 	__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("setting app dir name to: \"" + string(mfile) + "\"").c_str());
     ofSetDataPathRoot(string(mfile)+"/");
+    env->ReleaseStringUTFChars(data_dir, mfile);
+}
+
+void Java_cc_openframeworks_OFAndroid_init( JNIEnv*  env, jclass  clazz)
+{
+	ofAndroidApplicationInit();
+}
+
+void Java_cc_openframeworks_OFAndroid_onCreate( JNIEnv*  env, jclass  clazz)
+{
+	ofAndroidActivityInit();
 }
 
 void
@@ -277,6 +295,8 @@ Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jobject  thiz ){
 
 void
 Java_cc_openframeworks_OFAndroid_onDestroy( JNIEnv*  env, jclass  thiz ){
+	appSetup = false;
+	ofEvents().notifyExit();
 	ofExitCallback();
 }
 
@@ -298,14 +318,20 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		window->renderer()->pushStyle();
 		window->renderer()->setupGraphicDefaults();
 		window->renderer()->popStyle();
-		surfaceDestroyed = false;
+
 	}else{
-	    if(window->renderer()->getType()==ofGLProgrammableRenderer::TYPE){
+
+	    if(window->renderer()->getType()==ofGLProgrammableRenderer::TYPE)
+	    {
 	    	static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(2,0);
-	    }else{
+	    }
+	    else
+	    {
 	    	static_cast<ofGLRenderer*>(window->renderer().get())->setup();
 	    }
 	}
+
+	surfaceDestroyed = false;
 }
 
 void
@@ -335,7 +361,8 @@ Java_cc_openframeworks_OFAndroid_resize( JNIEnv*  env, jclass  thiz, jint w, jin
 void
 Java_cc_openframeworks_OFAndroid_exit( JNIEnv*  env, jclass  thiz )
 {
-	window->events().notifyExit();
+	exit(0);
+	//window->events().notifyExit();
 }
 
 /* Call to render the next GL frame */

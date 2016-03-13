@@ -46,7 +46,7 @@ void ofxThreadedImageLoader::loadFromURL(ofImage& image, string url) {
 // Reads from the queue and loads new images.
 //--------------------------------------------------------------
 void ofxThreadedImageLoader::threadedFunction() {
-	thread.setName("ofxThreadedImageLoader " + thread.name());
+	setThreadName("ofxThreadedImageLoader " + ofToString(thread.get_id()));
 	ofImageLoaderEntry entry;
 	while( images_to_load_from_disk.receive(entry) ) {
 		if(entry.image->load(entry.filename) )  {

@@ -14,6 +14,10 @@
 #include <ctype.h>
 #include <algorithm>
 
+#ifdef TARGET_LINUX
+	#include <linux/serial.h>
+#endif
+
 
 #ifdef TARGET_WIN32
 
@@ -155,10 +159,7 @@ void ofSerial::buildDeviceList(){
 
 	#ifdef TARGET_LINUX
 
-		#ifdef TARGET_RASPBERRY_PI
-			prefixMatch.push_back("ttyACM");
-		#endif
-
+		prefixMatch.push_back("ttyACM");
 		prefixMatch.push_back("ttyS");
 		prefixMatch.push_back("ttyUSB");
 		prefixMatch.push_back("rfc");
@@ -166,34 +167,23 @@ void ofSerial::buildDeviceList(){
 	#endif
 
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
-		DIR *dir;
-		dir = opendir("/dev");
+		ofDirectory dir("/dev");
+		int deviceCount = 0;
+		for(auto & entry: dir){
+			std::string deviceName = entry.path();
 
-		string deviceName = "";
-
-		if(dir == nullptr){
-			ofLogError("ofSerial") << "buildDeviceList(): error listing devices in /dev";
-		} else {
-			int deviceCount = 0;
-			//for each device
-			struct dirent *entry;
-			while((entry = readdir(dir)) != nullptr){
-				deviceName = (char *)entry->d_name;
-
-				//we go through the prefixes
-				for(int k = 0; k < (int)prefixMatch.size(); k++){
-					//if the device name is longer than the prefix
-					if(deviceName.size() > prefixMatch[k].size()){
-						//do they match ?
-						if(deviceName.substr(0, prefixMatch[k].size()) == prefixMatch[k].c_str()){
-							devices.push_back(ofSerialDeviceInfo("/dev/"+deviceName, deviceName, deviceCount));
-							deviceCount++;
-							break;
-						}
+			//we go through the prefixes
+			for(auto & prefix: prefixMatch){
+				//if the device name is longer than the prefix
+				if(deviceName.size() > prefix.size()){
+					//do they match ?
+					if(deviceName.substr(0, prefix.size()) == prefix.c_str()){
+						devices.push_back(ofSerialDeviceInfo("/dev/"+deviceName, deviceName, deviceCount));
+						deviceCount++;
+						break;
 					}
 				}
 			}
-			closedir(dir);
 		}
 
 	#endif
@@ -209,12 +199,15 @@ void ofSerial::buildDeviceList(){
 
 	#endif
 
-	//here we sort the device to have the aruino ones first.
-	partition(devices.begin(), devices.end(), isDeviceArduino);
-	//we are reordering the device ids. too!
-	for(int k = 0; k < (int)devices.size(); k++){
-		devices[k].deviceID = k;
-	}
+	#if defined( TARGET_OSX )
+		//here we sort the device to have the aruino ones first.
+		partition(devices.begin(), devices.end(), isDeviceArduino);
+		//we are reordering the device ids. too!
+		int k = 0;
+		for(auto & device: devices){
+			device.deviceID = k++;
+		}
+	#endif
 
 	bHaveEnumeratedDevices = true;
 }
@@ -223,8 +216,8 @@ void ofSerial::buildDeviceList(){
 //----------------------------------------------------------------
 void ofSerial::listDevices(){
 	buildDeviceList();
-	for(int k = 0; k < (int)devices.size(); k++){
-		ofLogNotice("ofSerial") << "[" << devices[k].getDeviceID() << "] = "<< devices[k].getDeviceName().c_str();
+	for(auto & device: devices){
+		ofLogNotice("ofSerial") << "[" << device.getDeviceID() << "] = "<< device.getDeviceName().c_str();
 	}
 }
 
@@ -365,7 +358,13 @@ bool ofSerial::setup(string portName, int baud){
 		options.c_oflag &= (tcflag_t) ~(OPOST);
 		options.c_cflag |= CS8;
 		tcsetattr(fd, TCSANOW, &options);
-
+		#ifdef TARGET_LINUX
+			struct serial_struct kernel_serial_settings;
+			if (ioctl(fd, TIOCGSERIAL, &kernel_serial_settings) == 0) {
+				kernel_serial_settings.flags |= ASYNC_LOW_LATENCY;
+				ioctl(fd, TIOCSSERIAL, &kernel_serial_settings);
+			}
+		#endif
 		bInited = true;
 		ofLogNotice("ofSerial") << "opened " << portName << " sucessfully @ " << baud << " bps";
 
@@ -441,28 +440,35 @@ bool ofSerial::setup(string portName, int baud){
 
 
 //----------------------------------------------------------------
-int ofSerial::writeBytes(unsigned char * buffer, int length){
+long ofSerial::writeBytes(const char * buffer, size_t length){
 	if(!bInited){
 		ofLogError("ofSerial") << "writeBytes(): serial not inited";
 		return OF_SERIAL_ERROR;
 	}
 
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
-		int numWritten = write(fd, buffer, length);
-		if(numWritten <= 0){
-		if(errno == EAGAIN){
-				return 0;
+		size_t written=0;
+		fd_set wfds;
+		struct timeval tv;
+		while (written < length) {
+			auto n = write(fd, buffer + written, length - written);
+			if (n < 0 && (errno == EAGAIN || errno == EINTR)) n = 0;
+			//printf("Write, n = %d\n", n);
+			if (n < 0) return OF_SERIAL_ERROR;
+			if (n > 0) {
+				written += n;
+			} else {
+				tv.tv_sec = 10;
+				tv.tv_usec = 0;
+				FD_ZERO(&wfds);
+				FD_SET(fd, &wfds);
+				n = select(fd+1, NULL, &wfds, NULL, &tv);
+				if (n < 0 && errno == EINTR) n = 1;
+				if (n <= 0) return OF_SERIAL_ERROR;
+			}
 		}
-			ofLogError("ofSerial") << "writeBytes(): couldn't write to port: " << errno << " " << strerror(errno);
-			return OF_SERIAL_ERROR;
-		}
-
-		ofLogVerbose("ofSerial") << "wrote " << (int) numWritten << " bytes";
-		return numWritten;
-
-	#endif
-
-	#ifdef TARGET_WIN32
+		return written;
+	#elif defined(TARGET_WIN32)
 
 		DWORD written;
 		if(!WriteFile(hComm, buffer, length, &written,0)){
@@ -480,7 +486,22 @@ int ofSerial::writeBytes(unsigned char * buffer, int length){
 }
 
 //----------------------------------------------------------------
-int ofSerial::readBytes(unsigned char * buffer, int length){
+long ofSerial::writeBytes(const unsigned char * buffer, size_t length){
+	return writeBytes(reinterpret_cast<const char*>(buffer), length);
+}
+
+//----------------------------------------------------------------
+bool ofSerial::writeByte(char singleByte){
+	return writeByte(static_cast<unsigned char>(singleByte));
+}
+
+//----------------------------------------------------------------
+long ofSerial::writeBytes(const ofBuffer & buffer){
+	return writeBytes(buffer.getData(),buffer.size());
+}
+
+//----------------------------------------------------------------
+long ofSerial::readBytes(char * buffer, size_t length){
 	if (!bInited){
 		ofLogError("ofSerial") << "readBytes(): serial not inited";
 		return OF_SERIAL_ERROR;
@@ -488,7 +509,7 @@ int ofSerial::readBytes(unsigned char * buffer, int length){
 
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 
-		int nRead = read(fd, buffer, length);
+		auto nRead = read(fd, buffer, length);
 		if(nRead < 0){
 			if ( errno == EAGAIN )
 				return OF_SERIAL_NO_DATA;
@@ -515,48 +536,23 @@ int ofSerial::readBytes(unsigned char * buffer, int length){
 }
 
 //----------------------------------------------------------------
+long ofSerial::readBytes(unsigned char * buffer, size_t length){
+	return readBytes(reinterpret_cast<char*>(buffer), length);
+}
+
+//----------------------------------------------------------------
+long ofSerial::readBytes(ofBuffer & buffer, size_t length){
+	buffer.allocate(length);
+	return readBytes(buffer.getData(),length);
+}
+
+//----------------------------------------------------------------
 bool ofSerial::writeByte(unsigned char singleByte){
 	if (!bInited){
 		ofLogError("ofSerial") << "writeByte(): serial not inited";
-		//return OF_SERIAL_ERROR; // this looks wrong.
 		return false;
 	}
-
-	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
-
-		int numWritten = 0;
-		numWritten = write(fd, &singleByte, 1);
-		if(numWritten <= 0 ){
-		if(errno == EAGAIN){
-				return 0;
-		}
-			ofLogError("ofSerial") << "writeByte(): couldn't write to port: " << errno << " " << strerror(errno);
-			//return OF_SERIAL_ERROR; // this looks wrong.
-			return false;
-		}
-		ofLogVerbose("ofSerial") << "wrote byte";
-
-		return (numWritten > 0 ? true : false);
-
-	#elif defined( TARGET_WIN32 )
-
-		DWORD written = 0;
-		if(!WriteFile(hComm, &singleByte, 1, &written,0)){
-			 ofLogError("ofSerial") << "writeByte(): couldn't write to port";
-			 //return OF_SERIAL_ERROR; // this looks wrong.
-			 return false;
-		}
-
-		ofLogVerbose("ofSerial") << "wrote byte";
-
-		return ((int)written > 0 ? true : false);
-
-	#else
-
-		ofLogError("ofSerial") << "not defined in this platform";
-		return false;
-
-	#endif
+	return writeBytes(&singleByte,1) > 0;
 }
 
 //----------------------------------------------------------------

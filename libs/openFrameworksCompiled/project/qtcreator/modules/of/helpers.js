@@ -42,6 +42,11 @@ function listDirsRecursive(dir){
     return(ret)
 }
 
+function hasExtension(str, extension){
+    var suffix = "." + extension;
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
 function findLibsRecursive(dir, platform, exclude){
     var ret = []
     if(!File.exists(dir)){
@@ -52,15 +57,46 @@ function findLibsRecursive(dir, platform, exclude){
         if(exclude.indexOf(libs[libdir])!==-1){
             continue;
         }
-        var fullPath = dir + '/' + libs[libdir] + '/lib/' + platform + '/';
+
+        var libpath = dir + '/' + libs[libdir] + '/lib/' + platform + "/"
         var find = new Process();
-        find.exec('ls', [fullPath])
+        find.exec('ls', [libpath])
         var line = find.readLine().trim();
+        var libFiles = [];
         while(line!==""){
-            ret = ret.concat([fullPath + line]);
+            libFiles.push(line);
             line = find.readLine().trim();
         }
         find.close();
+
+        var staticLibs = libFiles.filter(function(lib){
+            return hasExtension(lib, "a");
+        });
+
+        var sharedLibs = libFiles.filter(function(lib){
+            return hasExtension(lib, "so") || hasExtension(lib, "dylib") || hasExtension(lib, "dll");
+        });
+
+        for(var idx in staticLibs){
+            ret.push(libpath + staticLibs[idx])
+        }
+
+        for(var idx in sharedLibs){
+            ret.push(libpath + sharedLibs[idx])
+        }
+
+        /*if(sharedLibs.length>0){
+            ret.push("-L"+libpath);
+        }
+
+        for(var idx in sharedLibs){
+            var lib = sharedLibs[idx];
+            if(lib.indexOf("lib")===0){
+                lib = lib.substr(3);
+            }
+            lib = lib.split(".")[0];
+            ret.push("-l" + lib)
+        }*/
     }
     return(ret)
 }
@@ -79,7 +115,8 @@ function findSourceRecursive(dir){
                   ,'-or', '-name', '*.c++'
                   ,'-or', '-name', '*.s'
                   ,'-or', '-name', '*.S'
-                  ,'-or', '-name', '*.c'];
+                  ,'-or', '-name', '*.c'
+                  ,'-or', '-name', '*.inl'];
     find.exec("find", params);
     if(find.exitCode()!==0){
         find.exec("C:\\msys64\\usr\\bin\\find", params);

@@ -62,6 +62,7 @@ libneondetection.so
 Application.mk
 Android.mk
 
-!/android/*/.cproject
-!/android/*/.project
-!/android/*/.settings
+!android/*/.cproject
+!android/*/.project
+!android/*/.settings
+!android/*/.settings/*

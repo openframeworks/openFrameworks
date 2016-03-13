@@ -31,8 +31,14 @@
 
 
 #include "ofxiOSExtras.h"
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 #include "ofxiOSAppDelegate.h"
 #include "ofxiOSViewController.h"
+#elif TARGET_OS_TV
+#include "ofxtvOSAppDelegate.h"
+#include "ofxtvOSViewController.h"
+#endif
 #include "ofxiOSEAGLView.h"
 #include "ofAppiOSWindow.h"
 #include "ofAppRunner.h"
@@ -48,7 +54,9 @@ ofxiOSDeviceType ofxiOSGetDeviceType() {
         return OFXIOS_DEVICE_IPAD;
     } else if( [dev hasPrefix:@"ipod"] ) {
         return OFXIOS_DEVICE_IPODTOUCH;
-    } else {
+	} else if( [dev hasPrefix:@"apple tv"] ) {
+		return OFXIOS_DEVICE_APPLETV;
+	} else {
         return OFXIOS_DEVICE_UNKNOWN;   // this would need to be declared
     }
 }
@@ -144,7 +152,7 @@ ofAppiOSWindow * ofxiOSGetOFWindow() {
 	return ofAppiOSWindow::getInstance();
 }
 
-
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 //--------------------------------------------------------------
 ofxiOSAppDelegate * ofxiOSGetAppDelegate() {
 	return [[UIApplication sharedApplication] delegate];
@@ -154,6 +162,18 @@ ofxiOSAppDelegate * ofxiOSGetAppDelegate() {
 ofxiOSViewController * ofxiOSGetViewController() {
 	return [ofxiOSGetAppDelegate() glViewController];
 }
+#elif TARGET_OS_TV
+//--------------------------------------------------------------
+ofxtvOSAppDelegate * ofxiOSGetAppDelegate() {
+    return [[UIApplication sharedApplication] delegate];
+}
+
+//--------------------------------------------------------------
+ofxtvOSViewController * ofxiOSGetViewController() {
+    return [ofxiOSGetAppDelegate() glViewController];
+}
+
+#endif
 
 //--------------------------------------------------------------
 void ofxiOSSendGLViewToFront() {
@@ -216,12 +236,12 @@ void ofxiOSSetOrientation(ofOrientation orientation) {
     ofSetOrientation(orientation);
 }
 
-
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 //--------------------------------------------------------------
 UIDeviceOrientation ofxiOSGetOrientation() {
     return (UIDeviceOrientation)ofGetOrientation();
 }
-
+#endif
 
 //--------------------------------------------------------------
 bool ofxiOSBundleImageToGLTexture(NSString * filename, GLuint * spriteTexture) {
@@ -484,6 +504,7 @@ void ofxiOSLaunchBrowser(string url) {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:ofxStringToNSString(url)]];
 }
 
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 //--------------------------------------------------------------
 void ofxiOSSetClipboardString(string clipboardString) {
     [UIPasteboard generalPasteboard].string = [NSString stringWithUTF8String:clipboardString.c_str()];
@@ -492,6 +513,7 @@ void ofxiOSSetClipboardString(string clipboardString) {
 string ofxiOSGetClipboardString() {
     return [[UIPasteboard generalPasteboard].string UTF8String];
 }
+#endif
 
 /******************** ofxiOSScreenGrab *********************/
 
@@ -531,7 +553,7 @@ void releaseData(void *info, const void *data, size_t dataSize) {
 	free((void*)data);		// free the 
 }
 
-
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 void ofxiOSScreenGrab(id delegate) {
 	CGRect rect = [[UIScreen mainScreen] bounds];
 	
@@ -574,5 +596,6 @@ void ofxiOSScreenGrab(id delegate) {
 	saveDelegate.delegate = delegate;
 	UIImageWriteToSavedPhotosAlbum(imageLossless, saveDelegate, @selector(image:didFinishSavingWithError:contextInfo:), nil);
 }
+#endif
 
 
