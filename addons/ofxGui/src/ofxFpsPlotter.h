@@ -4,12 +4,12 @@
 
 class ofxFpsPlotter : public ofxValuePlotter {
 	public:
-		ofxFpsPlotter();
-		ofxFpsPlotter(const ofxValuePlotter::Config & config);
+		ofxFpsPlotter(const ofJson & config = ofJson());
+		ofxFpsPlotter(std::string label, float minValue, float maxValue, int plotSize = 100, float width = defaultWidth, float height = defaultHeight);
+
 		virtual ~ofxFpsPlotter();
 
-		ofxFpsPlotter & setup(string label = "", float minValue = Config().minValue, float maxValue = Config().maxValue, int plotSize = Config().plotSize, float width = defaultWidth, float height = defaultHeight);
-
+		void setup(const ofJson &config = ofJson());
 		void update(ofEventArgs &);
 
 	protected:

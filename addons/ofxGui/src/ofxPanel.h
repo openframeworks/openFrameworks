@@ -4,47 +4,54 @@
 
 class ofxGuiGroup;
 
-class ofxPanel : public ofxGuiGroup {
-public:
-	struct Config: public ofxGuiGroup::Config{
-		Config():ofxGuiGroup::Config(){
-			shape.x = 10;
-			shape.y = 10;
+class ofxPanelHeader : public ofxGuiGroupHeader {
+
+	public:
+
+		ofxPanelHeader(const ofJson &config = ofJson());
+
+		~ofxPanelHeader(){
+			unregisterPointerEvents();
 		}
-		Config(const ofxGuiGroup::Config & config):ofxGuiGroup::Config(config){}
-		Config(const ofxBaseGui::Config & config):ofxGuiGroup::Config(config){}
-	};
 
-	ofxPanel();
-	ofxPanel(const ofParameterGroup & parameters, const Config & groupConfig = ofxPanel::Config(), const Config &itemConfig = ofxBaseGui::Config());
-	~ofxPanel();
+		virtual void pointerPressed(PointerUIEventArgs & e);
 
-	ofxPanel & setup(const Config & config = ofxPanel::Config());
-	ofxPanel & setup(const std::string& collectionName, const Config & config = ofxPanel::Config());
-	ofxPanel & setup(const ofParameterGroup & parameters, const Config & groupConfig = ofxPanel::Config(), const Config &itemConfig = ofxBaseGui::Config());
-	ofxPanel & setup(const std::string& collectionName, const std::string& filename, float x = 10, float y = 10);
-	ofxPanel & setup(const ofParameterGroup & parameters, const std::string& filename, float x = 10, float y = 10);
+		ofEvent<void> loadPressedE;
+		ofEvent<void> savePressedE;
 
-	virtual void setSize(float w, float h);
-	virtual void setShape(ofRectangle r);
-	virtual void setShape(float x, float y, float w, float h);
+	protected:
 
-	bool mouseReleased(ofMouseEventArgs & args);
+		virtual void generateDraw() override;
+		virtual void render() override;
+		virtual void loadIcons();
+		virtual bool setValue(float mx, float my) override;
 
-	ofEvent<void> loadPressedE;
-	ofEvent<void> savePressedE;
-protected:
-	virtual void sizeChangedCB();
-	virtual void render();
-	virtual void renderHeader();
-	virtual bool setValue(float mx, float my, bool bCheck);
-	virtual void generateDraw();
-	virtual void generateDrawHeader();
-	virtual void loadIcons();
-private:
-	ofRectangle loadBox, saveBox;
-	static ofImage loadIcon, saveIcon;
+		ofRectangle loadBox, saveBox;
+		static ofImage loadIcon, saveIcon;
 
-	ofPoint grabPt;
-	bool bGrabbed;
+};
+
+class ofxPanel : public ofxGuiGroup {
+
+	public:
+
+		ofxPanel(const std::string& collectionName="", const ofJson & config = ofJson());
+		ofxPanel(const ofParameterGroup & parameters, const ofJson & config = ofJson());
+		ofxPanel(const std::string& collectionName, const std::string& filename, float x = 10, float y = 10);
+		ofxPanel(const ofParameterGroup & parameters, const std::string& filename, float x = 10, float y = 10);
+
+		~ofxPanel();
+
+		void setup(const ofJson &config = ofJson());
+
+		virtual void clear() override;
+
+		void onHeaderMove(MoveEventArgs& args);
+		void onLoadPressed();
+		void onSavePressed();
+
+	private:
+
+		bool headerListenersLoaded;
+
 };

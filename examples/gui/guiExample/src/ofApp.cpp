@@ -2,86 +2,81 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    ofSetVerticalSync(true);
 
-    // we add this listener before setting up so the initial circle resolution is correct
-    circleResolution.addListener(this, &ofApp::circleResolutionChanged);
-    ringButton.addListener(this, &ofApp::ringButtonPressed);
+	ofSetFrameRate(60);
 
-    gui.setup(); // most of the time you don't need a name
-    gui.add(filled.setup("fill", true));
-    gui.add(radius.setup("radius", 140, 10, 300));
-    gui.add(center.setup("center", ofVec2f(ofGetWidth()*.5, ofGetHeight()*.5), ofVec2f(0, 0), ofVec2f(ofGetWidth(), ofGetHeight())));
-    gui.add(color.setup("color", ofColor(100, 100, 140), ofColor(0, 0), ofColor(255, 255)));
-    gui.add(circleResolution.setup("circle res", 5, 3, 90));
-    gui.add(twoCircles.setup("two circles"));
-    gui.add(ringButton.setup("ring"));
-    gui.add(screenSize.setup("screen size", ofToString(ofGetWidth())+"x"+ofToString(ofGetHeight())));
+	ofSetVerticalSync(true);
 
-    bHide = false;
+	gui_doc =  std::make_unique<ofx::DOM::Document>();
+	gui = gui_doc->add<ofxPanel>();
 
-    ring.load("ring.wav");
+	filled = gui->add<ofxToggle>("fill");
+	radius = gui->add<ofxFloatSlider>("radius", 140, 10, 300);
+	center = gui->add<ofxVec2Slider>("center", ofVec2f(ofGetWidth()*.5, ofGetHeight()*.5), ofVec2f(0, 0), ofVec2f(ofGetWidth(), ofGetHeight()));
+	color = gui->add<ofxColorSlider>("color", ofColor(100, 100, 140), ofColor(0, 0), ofColor(255, 255));
+	circleResolution = gui->add<ofxIntSlider>("circle res", 5, 3, 90);
+	twoCircles = gui->add<ofxButton>("two circles");
+	ringButton = gui->add<ofxButton>("ring");
+	screenSize = gui->add<ofxLabel>("screen size", ofToString(ofGetWidth())+"x"+ofToString(ofGetHeight()));
+
+	ringButton->addListener(this, &ofApp::ringButtonPressed);
+	//ugly fix to trigger initial value
+	ringButton->getParameter().cast<bool>().set(*ringButton);
+
+	bHide = false;
+
+	ring.load("ring.wav");
 }
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    ringButton.removeListener(this, &ofApp::ringButtonPressed);
-}
-
-//--------------------------------------------------------------
-void ofApp::circleResolutionChanged(int &circleResolution){
-    ofSetCircleResolution(circleResolution);
+	ringButton->removeListener(this, &ofApp::ringButtonPressed);
 }
 
 //--------------------------------------------------------------
 void ofApp::ringButtonPressed(){
-    ring.play();
+	ring.play();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    ofSetCircleResolution(circleResolution);
+	ofSetCircleResolution(*circleResolution);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackgroundGradient(ofColor::white, ofColor::gray);
+	ofBackgroundGradient(ofColor::white, ofColor::gray);
 
-    if(filled){
-        ofFill();
-    }else{
-        ofNoFill();
-    }
+	if(*filled){
+		ofFill();
+	}else{
+		ofNoFill();
+	}
 
-    ofSetColor(color);
-    if(twoCircles){
-        ofDrawCircle(center->x-radius*.5, center->y, radius );
-        ofDrawCircle(center->x+radius*.5, center->y, radius );
-    }else{
-        ofDrawCircle((ofVec2f)center, radius );
-    }
+	ofSetColor(*color);
+	if(*twoCircles){
+		ofDrawCircle((*center)->x-*radius*.5, (*center)->y, *radius );
+		ofDrawCircle((*center)->x+*radius*.5, (*center)->y, *radius );
+	}else{
+		ofDrawCircle((ofVec2f)*center, *radius );
+	}
 
-    // auto draw?
-    // should the gui control hiding?
-    if(!bHide){
-        gui.draw();
-    }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if(key == 'h'){
-        bHide = !bHide;
-    }
-    else if(key == 's'){
-        gui.saveToFile("settings.xml");
-    }
-    else if(key == 'l'){
-        gui.loadFromFile("settings.xml");
-    }
-    else if(key == ' '){
-        color = ofColor(255);
-    }
+	if(key == 'h'){
+		bHide = !bHide;
+	}
+	else if(key == 's'){
+		gui->saveToFile("settings.xml");
+	}
+	else if(key == 'l'){
+		gui->loadFromFile("settings.xml");
+	}
+	else if(key == ' '){
+		*color = ofColor(255);
+	}
 }
 
 //--------------------------------------------------------------
@@ -121,7 +116,7 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-    screenSize = ofToString(w) + "x" + ofToString(h);
+	*screenSize = ofToString(w) + "x" + ofToString(h);
 }
 
 //--------------------------------------------------------------

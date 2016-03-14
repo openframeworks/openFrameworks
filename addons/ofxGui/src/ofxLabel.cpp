@@ -3,68 +3,83 @@
 using namespace std;
 
 template<typename Type>
-ofxValueLabel<Type>::ofxValueLabel()
-:ofxBaseGui(Config()){
+ofxValueLabel<Type>::ofxValueLabel(const ofJson & config)
+:ofxBaseGui(config){
+
+	setup(config);
 
 }
 
 template<typename Type>
-ofxValueLabel<Type>::ofxValueLabel(ofParameter<Type> _label, const Config & config)
+ofxValueLabel<Type>::ofxValueLabel(ofParameter<Type> _label, const ofJson & config)
 :ofxBaseGui(config){
+
 	label.makeReferenceTo(_label);
-	setNeedsRedraw();
-	label.addListener(this,&ofxValueLabel::valueChanged);
+	setup(config);
+
+}
+
+template<>
+ofxValueLabel<std::string>::ofxValueLabel(const string& labelName, const ofJson & config)
+:ofxValueLabel<std::string>(config){
+
+	label.set(labelName);
+
+}
+
+
+template<typename Type>
+ofxValueLabel<Type>::ofxValueLabel(ofParameter<Type> _label, float width, float height)
+	:ofxValueLabel<Type>(_label){
+
+	setSize(width, height);
+
+}
+
+template<typename Type>
+ofxValueLabel<Type>::ofxValueLabel(const string& labelName, const Type& _label, const ofJson & config)
+	:ofxValueLabel<Type>(config){
+
+	label.set(labelName,_label);
+
+}
+
+template<typename Type>
+ofxValueLabel<Type>::ofxValueLabel(const string& labelName, const Type& _label, float width, float height)
+	:ofxValueLabel<Type>(){
+
+	label.set(labelName,_label);
+	setSize(width, height);
+
 }
 
 template<typename Type>
 ofxValueLabel<Type>::~ofxValueLabel(){
+
 	label.removeListener(this,&ofxValueLabel::valueChanged);
+
 }
 
 template<typename Type>
-ofxValueLabel<Type> & ofxValueLabel<Type>::setup(ofParameter<Type> _label, const Config & config){
-	ofxBaseGui::setup(config);
-	return setup(_label, config.shape.width, config.shape.height);
-}
+void ofxValueLabel<Type>::setup(const ofJson&){
 
-template<typename Type>
-ofxValueLabel<Type> & ofxValueLabel<Type>::setup(ofParameter<Type> _label, float width, float height) {
-	label.makeReferenceTo(_label);
-	b.width  = width;
-	b.height = height;
-	setNeedsRedraw();
 	label.addListener(this,&ofxValueLabel::valueChanged);
-	return *this;
-}
 
-template<typename Type>
-ofxValueLabel<Type> & ofxValueLabel<Type>::setup(const string& labelName, const Type& _label, const Config & config) {
-	label.set(labelName,_label);
-	return setup(label,config);
-}
-
-template<typename Type>
-ofxValueLabel<Type> & ofxValueLabel<Type>::setup(const string& labelName, const Type& _label, float width, float height) {
-	label.set(labelName,_label);
-	return setup(label,width,height);
 }
 
 template<typename Type>
 void ofxValueLabel<Type>::generateDraw(){
-	bg.clear();
 
-	bg.setFillColor(thisBackgroundColor);
-	bg.setFilled(true);
-	bg.rectangle(b);
+	ofxBaseGui::generateDraw();
 
-	if(bShowName){
+	if(showName){
 		string name;
 		if(!getName().empty()){
 			name = getName() + ": ";
 		}
-		textMesh = getTextMesh(name + label.toString(), b.x + textPadding, b.y + b.height / 2 + 4);
+		textMesh = getTextMesh(name + label.toString(), textPadding, getShape().height / 2 + 4);
 	}else {
-		textMesh = getTextMesh(label.toString(), b.x + textPadding, b.y + b.height / 2 + 4);
+		textMesh = getTextMesh(label.toString(), textPadding, getShape().height / 2 + 4);
 	}
 }
 
@@ -72,13 +87,13 @@ template<typename Type>
 void ofxValueLabel<Type>::render() {
 	ofColor c = ofGetStyle().color;
 
-	bg.draw();
+	ofxBaseGui::render();
 
 	ofBlendMode blendMode = ofGetStyle().blendingMode;
 	if(blendMode!=OF_BLENDMODE_ALPHA){
 		ofEnableAlphaBlending();
 	}
-	ofSetColor(thisTextColor);
+	ofSetColor(textColor);
 
 	bindFontTexture();
 	textMesh.draw();

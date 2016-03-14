@@ -1,124 +1,85 @@
 #include "ofxToggle.h"
+#include "ofxGuiGroup.h"
 #include "ofGraphics.h"
 using namespace std;
 
-ofxToggle::ofxToggle():ofxBaseGui(){}
+ofxToggle::ofxToggle(const string &toggleName, const ofJson & config):ofxBaseGui(config){
 
-ofxToggle::ofxToggle(ofParameter<bool> &_bVal, const Config & config)
-:ofxBaseGui(config)
-,bGuiActive(false){
+	setup(config);
+	value.setName(toggleName);
+	value.set(false);
+
+}
+
+ofxToggle::ofxToggle(ofParameter<bool> &_bVal, const ofJson & config)
+	:ofxBaseGui(config){
+
 	value.makeReferenceTo(_bVal);
-	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
-	value.addListener(this,&ofxToggle::valueChanged);
-	registerMouseEvents();
-	setNeedsRedraw();
+	setup(config);
+
+}
+
+ofxToggle::ofxToggle(ofParameter<bool> &_bVal, float width, float height)
+	:ofxToggle(_bVal){
+
+	setSize(width, height);
+
+}
+
+ofxToggle::ofxToggle(const std::string& toggleName, bool _bVal, float width, float height)
+	:ofxToggle(toggleName){
+
+	value.set(_bVal);
+	setSize(width, height);
+
 }
 
 ofxToggle::~ofxToggle(){
+
 	value.removeListener(this,&ofxToggle::valueChanged);
+	unregisterPointerEvents();
+
 }
 
-ofxToggle & ofxToggle::setup(ofParameter<bool> &_bVal, const Config & config){
-	ofxBaseGui::setup(config);
-	bGuiActive = false;
-	value.makeReferenceTo(_bVal);
-	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
+void ofxToggle::setup(const ofJson &config){
+
+	checkboxRect.set(1, 1, getHeight() - 2, getHeight() - 2);
 	value.addListener(this,&ofxToggle::valueChanged);
-	registerMouseEvents();
-	setNeedsRedraw();
-
-	return *this;
-}
-
-ofxToggle & ofxToggle::setup(const std::string& toggleName, const Config & config){
-	value.setName(toggleName);
-	return setup(value, config);
-}
-
-ofxToggle & ofxToggle::setup(ofParameter<bool> &_bVal, float width, float height){
-	b.x = 0;
-	b.y = 0;
-	b.width = width;
-	b.height = height;
-	bGuiActive = false;
-	value.makeReferenceTo(_bVal);
-	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
-
-	value.addListener(this,&ofxToggle::valueChanged);
-	registerMouseEvents();
-	setNeedsRedraw();
-
-	return *this;
+	registerPointerEvents();
 
 }
 
-ofxToggle & ofxToggle::setup(const std::string& toggleName, bool _bVal, float width, float height){
-	value.set(toggleName,_bVal);
-	return setup(value,width,height);
-}
-
-
-bool ofxToggle::mouseMoved(ofMouseEventArgs & args){
-	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
-		return true;
-	}else{
-		return false;
-	}
-}
-
-bool ofxToggle::mousePressed(ofMouseEventArgs & args){
-	if(setValue(args.x, args.y, true)){
-		return true;
-	}else{
-		return false;
-	}
-}
-
-bool ofxToggle::mouseDragged(ofMouseEventArgs & args){
-	if(bGuiActive && b.inside(ofPoint(args.x,args.y))){
-		return true;
-	}else{
-		return false;
-	}
-}
-
-bool ofxToggle::mouseReleased(ofMouseEventArgs & args){
-	bool wasGuiActive = bGuiActive;
-	bGuiActive = false;
-	if(wasGuiActive && b.inside(ofPoint(args.x,args.y))){
-		return true;
-	}else{
-		return false;
-	}
+void ofxToggle::pointerPressed(PointerUIEventArgs& e){
+	setValue(e.screenPosition().x, e.screenPosition().y);
 }
 
 void ofxToggle::generateDraw(){
 	bg.clear();
-	bg.setFillColor(thisBackgroundColor);
-	bg.rectangle(b);
+	bg.setFillColor(backgroundColor);
+	bg.rectangle(0,0,getWidth(),getHeight());
 
 	fg.clear();
 	if(value){
 		fg.setFilled(true);
-		fg.setFillColor(thisFillColor);
+		fg.setFillColor(fillColor);
 	}else{
 		fg.setFilled(false);
 		fg.setStrokeWidth(1);
-		fg.setStrokeColor(thisBorderColor);
+		fg.setStrokeColor(borderColor);
 	}
-	fg.rectangle(b.getPosition()+checkboxRect.getTopLeft(),checkboxRect.width,checkboxRect.height);
+	fg.rectangle(checkboxRect.getTopLeft(),checkboxRect.width,checkboxRect.height);
 
 	cross.clear();
-	cross.setStrokeColor(thisTextColor);
+	cross.setStrokeColor(textColor);
 	cross.setStrokeWidth(1);
 	cross.setFilled(false);
-	cross.moveTo(b.getPosition()+checkboxRect.getTopLeft());
-	cross.lineTo(b.getPosition()+checkboxRect.getBottomRight());
-	cross.moveTo(b.getPosition()+checkboxRect.getTopRight());
-	cross.lineTo(b.getPosition()+checkboxRect.getBottomLeft());
+	cross.moveTo(checkboxRect.getTopLeft());
+	cross.lineTo(checkboxRect.getBottomRight());
+	cross.moveTo(checkboxRect.getTopRight());
+	cross.lineTo(checkboxRect.getBottomLeft());
 
-	if(bShowName){
-		textMesh = getTextMesh(getName(), b.x+textPadding + checkboxRect.width, b.y+b.height / 2 + 4);
+	if(showName){
+		textMesh = getTextMesh(getName(), textPadding + checkboxRect.width, getShape().getHeight() / 2 + 4);
 	}
 }
 
@@ -130,13 +91,13 @@ void ofxToggle::render(){
 		cross.draw();
 	}
 
-	if(bShowName){
+	if(showName){
 		ofColor c = ofGetStyle().color;
 		ofBlendMode blendMode = ofGetStyle().blendingMode;
 		if(blendMode!=OF_BLENDMODE_ALPHA){
 			ofEnableAlphaBlending();
 		}
-		ofSetColor(thisTextColor);
+		ofSetColor(textColor);
 
 		bindFontTexture();
 		textMesh.draw();
@@ -158,28 +119,24 @@ ofxToggle::operator const bool & (){
 	return value;
 }
 
-bool ofxToggle::setValue(float mx, float my, bool bCheck){
+bool ofxToggle::setValue(float mx, float my){
 
-	if( !isGuiDrawing() ){
-		bGuiActive = false;
-		return false;
-	}
-	if( bCheck ){
-		ofRectangle checkRect = checkboxRect;
-		checkRect.x += b.x;
-		checkRect.y += b.y;
+	ofRectangle checkRect = checkboxRect;
+	checkRect.x += getScreenPosition().x;
+	checkRect.y += getScreenPosition().y;
 
-		if( checkRect.inside(mx, my) ){
-			bGuiActive = true;
-		}else{
-			bGuiActive = false;
-
-		}
-	}
-	if( bGuiActive ){
+	if( checkRect.inside(mx, my) ){
 		value = !value;
+		if(value.get()){
+			ofxGuiGroup* parent = dynamic_cast<ofxGuiGroup*>(this->parent());
+			if(parent){
+				parent->deactivateAllOtherToggles(this);
+			}
+		}
+		setNeedsRedraw();
 		return true;
 	}
+
 	return false;
 }
 

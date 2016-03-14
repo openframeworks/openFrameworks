@@ -2,7 +2,6 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
-#include "ofxInputField.h"
 
 class ofApp : public ofBaseApp {
 
@@ -25,17 +24,19 @@ class ofApp : public ofBaseApp {
 
 	private:
 
-        ofxPanel panel1, panel2, panel3, panel4, panel5;
-		ofxGuiGroup rotary;
-        ofxGuiMatrix matrix;
-        ofParameter<string> matrix_active_name;
-        ofParameter<int> matrix_active_index;
-        ofParameter<float> floatfield_param;
-        ofParameter<string> textfield_param;
+		std::unique_ptr<ofx::DOM::Document> gui_doc;
 
-        ofxMinimalButton button;
+		ofxPanel *panel1, *panel2, *panel3, *panel4, *panel5;
+		ofxGuiGroup *rotary;
+		ofxGuiGroup* matrix;
+		ofParameter<string> matrix_active_name;
+		ofParameter<int> matrix_active_index;
+		ofParameter<float> floatfield_param;
+		ofParameter<string> textfield_param;
 
-        ofParameter <string> label_param;
+		ofxMinimalButton *button;
+
+		ofParameter <string> label_param;
 		ofParameter <bool> toggle_param;
 		ofParameter <float> slider_param;
 		ofParameter <bool> toggle1_param, toggle2_param, toggle3_param, toggle4_param;
@@ -43,15 +44,15 @@ class ofApp : public ofBaseApp {
 		vector <ofParameter <bool> > matrix_params;
 		ofParameterGroup g;
 
-        ofParameterGroup cameraMatrixParameters;
-        ofParameter<bool> cam0;
-        ofParameter<bool> cam2;
-        ofParameter<bool> cam3;
-        ofParameter<bool> cam1;
-        ofxGuiMatrix matrixCam;
+		ofParameterGroup cameraMatrixParameters;
+		ofParameter<bool> cam0;
+		ofParameter<bool> cam2;
+		ofParameter<bool> cam3;
+		ofParameter<bool> cam1;
+		ofxGuiGroup *matrixCam;
 
 		void toggleGroupHeader(bool & val);
-        void updateMatrixIndex(int& index);
+		void updateMatrixIndex(int& index);
 
 };
 

@@ -2,37 +2,20 @@
 using namespace std;
 
 template<class VecType>
-ofxVecSlider_<VecType>::ofxVecSlider_()
-:sliderChanging(false){
+ofxVecSlider_<VecType>::ofxVecSlider_(const ofJson &config)
+// TODO the following line doesn't work (segfault) no clue why
+//	:ofxGuiGroup(getName(), config){
+	:ofxGuiGroup("", config){
+
+	setup(config);
+
 }
 
 template<class VecType>
-ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> value, const Config & config)
-:ofxGuiGroup(ofParameterGroup(), config)
-,sliderChanging(false){
-	setup(value, config);
-}
+ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> &value, const ofJson & config)
+:ofxVecSlider_(config){
 
-template<class VecType>
-ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> value, float width, float height){
-	sliderChanging = false;
-	setup(value, width, height);
-}
-
-template<class VecType>
-ofxVecSlider_<VecType> & ofxVecSlider_<VecType>::setup(ofParameter<VecType> value, float width, float height){
-	ofxGuiGroup::Config config;
-	config.shape.width = width;
-	config.shape.height= height;
-	return setup(value, config);
-}
-
-template<class VecType>
-ofxVecSlider_<VecType> & ofxVecSlider_<VecType>::setup(ofParameter<VecType> value, const Config & config){
-	ofxGuiGroup::setup(config);
 	setName(value.getName());
-
-	parameters.clear();
 
 	const string names[4] = {"x", "y", "z", "w"};
 
@@ -42,29 +25,55 @@ ofxVecSlider_<VecType> & ofxVecSlider_<VecType>::setup(ofParameter<VecType> valu
 	VecType val = value;
 	VecType min = value.getMin();
 	VecType max = value.getMax();
-	ofxFloatSlider::Config sliderconfig = ofxFloatSlider::Config();
 	for (int i=0; i<VecType::DIM; i++) {
 		ofParameter<float> p(names[i], val[i], min[i], max[i]);
-		add(p,sliderconfig);
+		add(p);
 		p.addListener(this, & ofxVecSlider_::changeSlider);
 	}
-
-	sliderChanging = false;
-	return *this;
 
 }
 
 template<class VecType>
-ofxVecSlider_<VecType> & ofxVecSlider_<VecType>::setup(const std::string& controlName, const VecType & v, const VecType & min, const VecType & max, float width, float height){
+ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> &value, float width, float height)
+	:ofxVecSlider_(value){
+
+	setSize(width, height);
+
+}
+
+template<class VecType>
+ofxVecSlider_<VecType>::ofxVecSlider_(const std::string& controlName, const VecType & v, const VecType & min, const VecType & max, float width, float height)
+	:ofxVecSlider_(){
+
 	value.set(controlName,v,min,max);
-	return setup(value,width,height);
+
+	const string names[4] = {"x", "y", "z", "w"};
+
+	this->value.addListener(this, & ofxVecSlider_::changeValue);
+
+	VecType val = value;
+	for (int i=0; i<VecType::DIM; i++) {
+		ofParameter<float> p(names[i], val[i], min[i], max[i]);
+		add(p);
+		p.addListener(this, & ofxVecSlider_::changeSlider);
+	}
+
+	setSize(width, height);
+
+}
+
+template<class VecType>
+void ofxVecSlider_<VecType>::setup(const ofJson &config){
+
+	sliderChanging = false;
+
 }
 
 template<class VecType>
 void ofxVecSlider_<VecType>::changeSlider(const void * parameter, float & _value){
 	sliderChanging = true;
 	ofParameter<float> & param = *(ofParameter<float>*)parameter;
-	int i = parameters.getPosition(param.getName());
+	int i = getControlIndex(param.getName());
 	VecType data = value;
 	data[i] = _value;
 	value = data;
@@ -77,7 +86,7 @@ void ofxVecSlider_<VecType>::changeValue(VecType & value){
 		return;
 	}
 	for (int i=0; i<VecType::DIM; i++){
-		parameters[i].template cast<float>() = value[i];
+		getControl(i)->getParameter().template cast<float>() = value[i];
 	}
 }
 
@@ -108,37 +117,20 @@ template class ofxVecSlider_<ofVec4f>;
 
 
 template<class ColorType>
-ofxColorSlider_<ColorType>::ofxColorSlider_()
-:sliderChanging(false){
+ofxColorSlider_<ColorType>::ofxColorSlider_(const ofJson &config)
+// TODO why is this not working?
+//	:ofxGuiGroup(getName(), config){
+	:ofxGuiGroup("", config){
+
+	setup(config);
 
 }
 
 template<class ColorType>
-ofxColorSlider_<ColorType>::ofxColorSlider_(ofParameter<ofColor_<ColorType>> value, const Config & config)
-:ofxGuiGroup(ofParameterGroup(), config)
-,sliderChanging(false){
-	setup(value, config);
-}
+ofxColorSlider_<ColorType>::ofxColorSlider_(ofParameter<ofColor_<ColorType> > &value, const ofJson & config)
+	:ofxColorSlider_(config){
 
-template<class ColorType>
-ofxColorSlider_<ColorType>::ofxColorSlider_(ofParameter<ofColor_<ColorType> > value, float width, float height){
-	sliderChanging = false;
-	setup(value, width, height);
-}
-
-template<class ColorType>
-ofxColorSlider_<ColorType> & ofxColorSlider_<ColorType>::setup(ofParameter<ofColor_<ColorType> > value, float width, float height){
-	ofxGuiGroup::Config config;
-	config.shape.width = width;
-	config.shape.height= height;
-	return setup(value, config);
-}
-
-template<class ColorType>
-ofxColorSlider_<ColorType> & ofxColorSlider_<ColorType>::setup(ofParameter<ofColor_<ColorType> > value, const Config & config){
-	ofxGuiGroup::setup(config);
 	setName(value.getName());
-	parameters.clear();
 
 	const string names[4] = {"r", "g", "b", "a"};
 
@@ -148,42 +140,70 @@ ofxColorSlider_<ColorType> & ofxColorSlider_<ColorType>::setup(ofParameter<ofCol
 	ofColor_<ColorType> val = value;
 	ofColor_<ColorType> min = value.getMin();
 	ofColor_<ColorType> max = value.getMax();
-	typename ofxSlider<ColorType>::Config sliderconfig = typename ofxSlider<ColorType>::Config();
-	if(config.layout == ofxBaseGui::Vertical){
-		sliderconfig.layout = ofxBaseGui::Horizontal;
-	}else{
-		sliderconfig.layout = ofxBaseGui::Vertical;
-	}
+
 	for (int i=0; i<4; i++) {
 		ofParameter<ColorType> p(names[i], val[i], min[i], max[i]);
-		add<ofxSlider<ColorType>>(p,sliderconfig);
+		add<ofxSlider<ColorType>>(p);
 		p.addListener(this, & ofxColorSlider_::changeSlider);
-		collection[i]->setFillColor(value.get());
+		getControl(i)->setFillColor(value.get());
 	}
 
 	sliderChanging = false;
-	return *this;
+
 }
 
+template<class ColorType>
+ofxColorSlider_<ColorType>::ofxColorSlider_(ofParameter<ofColor_<ColorType> > &value, float width, float height)
+	:ofxColorSlider_(value){
+
+	setSize(width, height);
+
+}
 
 template<class ColorType>
-ofxColorSlider_<ColorType> & ofxColorSlider_<ColorType>::setup(const std::string& controlName, const ofColor_<ColorType> & v, const ofColor_<ColorType> & min, const ofColor_<ColorType> & max, float width, float height){
-	value.set(controlName, v, min, max);
-	return setup(value,width,height);
+ofxColorSlider_<ColorType>::ofxColorSlider_(const std::string& controlName, const ofColor_<ColorType> & v, const ofColor_<ColorType> & min, const ofColor_<ColorType> & max, float width, float height)
+	:ofxColorSlider_(){
+
+	value.set(controlName,v,min,max);
+
+	const string names[4] = {"r", "g", "b", "a"};
+
+	this->value.addListener(this, & ofxColorSlider_::changeValue);
+
+	ofColor_<ColorType> val = value;
+
+	for (int i=0; i<4; i++) {
+		ofParameter<ColorType> p(names[i], val[i], min[i], max[i]);
+		add<ofxSlider<ColorType>>(p);
+		p.addListener(this, & ofxColorSlider_::changeSlider);
+		getControl(i)->setFillColor(value.get());
+	}
+
+	sliderChanging = false;
+
+	setSize(width, height);
+
+}
+
+template<class ColorType>
+void ofxColorSlider_<ColorType>::setup(const ofJson &config){
+
+	sliderChanging = false;
+
 }
 
 template<class ColorType>
 void ofxColorSlider_<ColorType>::changeSlider(const void * parameter, ColorType & _value){
 	sliderChanging = true;
 	ofParameter<float> & param = *(ofParameter<float>*)parameter;
-	int i = parameters.getPosition(param.getName());
+	int i = getControlIndex(param.getName());
 	ofColor_<ColorType> data = value;
 	data[i] = _value;
 	value = data;
 
 
 	for (int i=0; i<4; i++){
-		collection[i]->setFillColor(value.get());
+		getControl(i)->setFillColor(value.get());
 	}
 	sliderChanging = false;
 }
@@ -194,8 +214,8 @@ void ofxColorSlider_<ColorType>::changeValue(ofColor_<ColorType> & value){
 		return;
 	}
 	for (int i=0; i<4; i++){
-		parameters[i].template cast<ColorType>() = value[i];
-		collection[i]->setFillColor(value);
+		getControl(i)->getParameter().template cast<ColorType>() = value[i];
+		getControl(i)->setFillColor(value);
 	}
 }
 

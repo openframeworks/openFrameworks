@@ -5,20 +5,30 @@ class ofxGuiPage : public ofxPanel {
 
 	public:
 
-		ofxGuiPage();
+		ofxGuiPage(const ofJson& config = ofJson());
 		virtual ~ofxGuiPage();
 
-		using ofxPanel::add;
+//		using ofxPanel::add;
+
+//		template <typename GuiType>
+//		GuiType* add(std::unique_ptr<GuiType> element);
 
 		void clear();
 
-		virtual bool mouseDragged(ofMouseEventArgs & args);
-
-		virtual void setWidthElements(float w);
-		virtual void scaleWidthElements(float factor);
+		// TODO
+//		virtual bool mouseDragged(ofMouseEventArgs & args);
 
 	protected:
-		virtual void add(ofxBaseGui * element);
-		virtual void sizeChangedCB();
 
 };
+
+// TODO (what was this good for?)
+//template <typename GuiType>
+//GuiType* ofxGuiPage::add(std::unique_ptr<GuiType> element){
+
+//	Element::add(element);
+
+//	if(exclusiveToggles) {
+//		setOneToggleActive();
+//	}
+//}

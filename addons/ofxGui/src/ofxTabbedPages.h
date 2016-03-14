@@ -2,30 +2,19 @@
 
 #include "ofxGuiPage.h"
 
-class ofxTabbedPages : public ofxGuiPage {
+class ofxTabbedPages : public ofxGuiGroup {
 
 	public:
 
-		struct Config: public ofxGuiPage::Config{
-			Config(){}
-			Config(const ofxGuiPage::Config & c)
-			:ofxGuiPage::Config(c){}
-			Config(const ofxGuiGroup::Config & c)
-			:ofxGuiPage::Config(c){}
-			Config(const ofxBaseGui::Config & c)
-			:ofxGuiPage::Config(c){}
-
-			float tabWidth = 100;
-			float tabHeight = defaultHeight;
-		};
-
-		ofxTabbedPages();
-		ofxTabbedPages(const Config & config);
+		ofxTabbedPages(const std::string &collectionName, const ofJson & config = ofJson());
+		ofxTabbedPages(std::string collectionName, std::string filename, float x = 10, float y = 10);
 		~ofxTabbedPages();
 
-		ofxTabbedPages & setup(std::string collectionName = "", std::string filename = "settings.xml", float x = 10, float y = 10);
+		void setup(const ofJson &config = ofJson());
 
 		using ofxGuiGroup::add;
+		template <typename GuiType>
+		GuiType* add(std::unique_ptr<GuiType> element);
 
 		void clear();
 
@@ -40,21 +29,61 @@ class ofxTabbedPages : public ofxGuiPage {
 		void setBackgroundColor(const ofColor &color);
 
 	protected:
-		void render();
-		void generateDraw();
+//		void render();
+//		void generateDraw();
 		void updateContentShapes();
-		void setSizeToElement(ofxBaseGui * element);
-		virtual void sizeChangedCB();
-		virtual void add(ofxGuiGroup * element);
 
-	private:
+		ofParameter<float> tabWidth;
+		ofParameter<float> tabHeight;
 
-		ofxGuiGroup tabs;
-		std::vector <ofParameter <bool> > parameters_tabs;
-		float tabHeight, tabWidth;
-		ofRectangle pagesShape, tabShape;
-		ofPath bg;
+		ofxGuiGroup * tabs;
+		ofxGuiGroup * pages;
 		ofPath tabBorder;
 		ofxBaseGui * activePage;
 		ofxBaseGui * activeToggle;
+
+	private:
 };
+
+// TODO (what was this good for?)
+template <typename GuiType>
+GuiType* ofxTabbedPages::add(std::unique_ptr<GuiType> element){
+
+	Element::add(element);
+
+	if(exclusiveToggles) {
+		setOneToggleActive();
+	}
+
+	// TODO
+
+//	collection.push_back(element);
+
+//	parameters_tabs.push_back(ofParameter <bool>(element->getName(), false));
+//	ofxMinimalToggle::Config config;
+//	config.shape.setSize(tabWidth, tabHeight);
+//	config.textAlignment = ofxBaseGui::Centered;
+//	if(element->getBackgroundColor() != thisBackgroundColor){
+//		config.backgroundColor = element->getBackgroundColor();
+//		config.borderColor = element->getBackgroundColor();
+//	}
+//	tabs.add <ofxMinimalToggle>(parameters_tabs.at(parameters_tabs.size() - 1), config);
+
+//	element->setPosition(pagesShape.getPosition());
+//	element->setShowHeader(false);
+//	element->setBorderColor(ofColor(0, 0, 0, 0));
+//	setSizeToElement(element);
+
+//	element->setSize(pagesShape.width, pagesShape.height);
+
+//	element->unregisterMouseEvents();
+//	ofAddListener(element->sizeChangedE, this, &ofxTabbedPages::sizeChangedCB);
+
+//	parameters.add(element->getParameter());
+
+//	if(collection.size() == 2){
+//		setActiveTab(0);
+//	}
+
+//	setNeedsRedraw();
+}

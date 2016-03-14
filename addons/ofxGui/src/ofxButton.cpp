@@ -1,80 +1,61 @@
 #include "ofxButton.h"
 using namespace std;
 
-ofxButton::ofxButton():ofxToggle(){}
+ofxButton::ofxButton(const string &buttonName, const ofJson & config)
+	:ofxToggle(buttonName, config){
+	setup(config);
+}
 
-ofxButton::ofxButton(ofParameter<void> _val, const Config & config)
-:ofxToggle(value, config){
+ofxButton::ofxButton(ofParameter<void> &_val, const ofJson & config)
+	:ofxToggle(value, config){
 	//value.setSerializable(false);
 	voidvalue.makeReferenceTo(_val);
 	useVoidValue = true;
+	setup(config);
 }
 
-ofxButton::ofxButton(ofParameter<bool> _val, const Config & config)
-:ofxToggle(_val, config){
+ofxButton::ofxButton(ofParameter<bool> &_val, const ofJson & config)
+	:ofxToggle(_val, config){
+	value.makeReferenceTo(_val);
+	setup(config);
+}
+
+ofxButton::ofxButton(ofParameter<void>& _val, float width, float height)
+	:ofxButton(_val){
+	setSize(width, height);
+}
+
+ofxButton::ofxButton(ofParameter<bool>& _val, float width, float height)
+	:ofxButton(_val){
+	setSize(width, height);
+}
+
+ofxButton::ofxButton(const std::string& buttonName, float width, float height):
+	ofxButton(buttonName){
+	setSize(width, height);
 }
 
 ofxButton::~ofxButton(){
 }
 
-ofxButton & ofxButton::setup(ofParameter<void>& _val, const Config & config){
-	ofxToggle::setup(value, config);
-	voidvalue.makeReferenceTo(_val);
-	useVoidValue = true;
-	return *this;
+void ofxButton::setup(const ofJson &config){
+	processConfig(config);
 }
 
-ofxButton & ofxButton::setup(ofParameter<bool> &_val, const Config & config){
-	ofxToggle::setup(_val, config);
-	return *this;
-}
+bool ofxButton::setValue(float mx, float my){
 
-ofxButton & ofxButton::setup(const std::string& buttonName, const Config & config){
-	value.setName(buttonName);
-	return setup(value, config);
-}
+	ofRectangle checkRect = checkboxRect;
+	checkRect.x += getScreenPosition().x;
+	checkRect.y += getScreenPosition().y;
 
-ofxButton & ofxButton::setup(ofParameter<void>& _val, float width, float height){
-	ofxToggle::setup(value, width, height);
-	voidvalue.makeReferenceTo(_val);
-	useVoidValue = true;
-	return *this;
-}
-
-ofxButton & ofxButton::setup(ofParameter<bool>& _val, float width, float height){
-	ofxToggle::setup(_val, width, height);
-	return *this;
-}
-
-bool ofxButton::setValue(float mx, float my, bool bCheck){
-
-	if( !isGuiDrawing() ){
-		bGuiActive = false;
-		return false;
-	}
-	if( bCheck ){
-		ofRectangle checkRect = checkboxRect;
-		checkRect.x += b.x;
-		checkRect.y += b.y;
-
-		if( checkRect.inside(mx, my) ){
-			bGuiActive = true;
-		}else{
-			bGuiActive = false;
-
-		}
-	}
-	if( bGuiActive ){
+	if( checkRect.inside(mx, my) ){
 		value = !value;
 		voidvalue.trigger();
+		setNeedsRedraw();
 		return true;
 	}
-	return false;
-}
 
-ofxButton & ofxButton::setup(const std::string& buttonName, float width, float height){
-	value.setName(buttonName);
-	return setup(value, width, height);
+	return false;
 }
 
 void ofxButton::generateDraw(){
@@ -84,25 +65,8 @@ void ofxButton::generateDraw(){
 	ofxToggle::generateDraw();
 }
 
-bool ofxButton::mouseReleased(ofMouseEventArgs & args){
-	bool attended = setValue(args.x, args.y, false);
-	bGuiActive = false;
-	if(attended){
-		return true;
-	}else{
-		return false;
-	}
+void ofxButton::pointerReleased(PointerUIEventArgs& e){
+	setValue(e.screenPosition().x, e.screenPosition().y);
 }
 
-bool ofxButton::mouseMoved(ofMouseEventArgs & args){
-	return ofxToggle::mouseMoved(args);
-}
-
-bool ofxButton::mousePressed(ofMouseEventArgs & args){
-	return ofxToggle::mousePressed(args);
-}
-
-bool ofxButton::mouseDragged(ofMouseEventArgs & args){
-	return ofxToggle::mouseDragged(args);
-}
 

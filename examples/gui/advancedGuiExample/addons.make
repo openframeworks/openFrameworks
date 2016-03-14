@@ -1,1 +1,3 @@
 ofxGui
+ofxDOM
+ofxPointer

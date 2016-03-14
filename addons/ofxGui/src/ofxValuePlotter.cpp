@@ -2,35 +2,52 @@
 #include "ofGraphics.h"
 using namespace std;
 
-ofxValuePlotter::ofxValuePlotter(){
+ofxValuePlotter::ofxValuePlotter(const ofJson & config)
+	:ofxBaseGui(config){
+
+	setup(config);
+
 }
 
-ofxValuePlotter::ofxValuePlotter(ofParameter<float> value, const Config & config = Config()) :
-	ofxBaseGui(config){
-	setup(config);
+ofxValuePlotter::ofxValuePlotter(ofParameter<float> value, const ofJson & config) :
+	ofxValuePlotter(config){
+
 	setName(value.getName());
+
+}
+
+ofxValuePlotter::ofxValuePlotter(string label, float minValue, float maxValue, int plotSize, float width, float height)
+	:ofxValuePlotter(){
+
+	setSize(width, height);
+	minVal = minValue;
+	maxVal = maxValue;
+	this->plotSize = plotSize;
+	setName(label);
+
 }
 
 ofxValuePlotter::~ofxValuePlotter(){
 	value.removeListener(this,&ofxValuePlotter::valueChanged);
 }
 
-ofxValuePlotter & ofxValuePlotter::setup(const Config & config){
-	return setup("", config.minValue, config.maxValue, config.plotSize, config.shape.width, config.shape.height);
-}
+void ofxValuePlotter::setup(const ofJson &config){
 
-ofxValuePlotter & ofxValuePlotter::setup(string label, float minValue, float maxValue, int plotSize, float width, float height){
-	b.width = width;
-	b.height = height;
-	minVal = minValue;
-	maxVal = maxValue;
+	decimalPlace.set("precision", 3);
+	minVal.set("min", 0);
+	maxVal.set("max", 0);
+	plotSize.set("plotsize", 100);
+
 	autoscale = minVal == maxVal;
 	buffer.clear();
-	this->plotSize = plotSize;
 	value.addListener(this,&ofxValuePlotter::valueChanged);
-	setName(label);
-	setNeedsRedraw();
-	return *this;
+
+	processConfig(config);
+
+}
+
+void ofxValuePlotter::processConfig(const ofJson & config){
+	// TODO
 }
 
 void ofxValuePlotter::setDecimalPlace(int place){
@@ -39,34 +56,30 @@ void ofxValuePlotter::setDecimalPlace(int place){
 
 void ofxValuePlotter::generateDraw(){
 
-	bg.clear();
-
-	bg.setFillColor(thisBackgroundColor);
-	bg.setFilled(true);
-	bg.rectangle(b);
+	ofxBaseGui::generateDraw();
 
 	label = ofToString(value.get(), decimalPlace);
-	if(bShowName){
+	if(showName){
 		label += " " + this->getName();
 	}
 
-	textMesh = getTextMesh(label, b.x + textPadding, b.y + b.height / 2 + 4);
+	textMesh = getTextMesh(label, textPadding, getShape().getHeight() / 2 + 4);
 
 	if(plotSize > 0){
 
 		plot.clear();
 		if(minVal != maxVal && buffer.size() > 1){
-			plot.moveTo(b.x, b.y + b.height);
+			plot.moveTo(0, getShape().getHeight());
 			unsigned int i;
 			for(i = 0; i < buffer.size(); i++){
-				float x = ofMap(i, 0, buffer.size() - 1, b.x, b.x + b.width);
-				float y = ofMap(buffer[i], minVal, maxVal, b.y + b.height, b.y);
+				float x = ofMap(i, 0, buffer.size() - 1, 0, getShape().getWidth());
+				float y = ofMap(buffer[i], minVal, maxVal, getShape().getHeight(), 0);
 				plot.lineTo(x, y);
 			}
-			plot.lineTo(b.x + b.width, b.y + b.height);
+			plot.lineTo(getShape().getWidth(), getShape().getHeight());
 			plot.close();
 			plot.setFilled(true);
-			plot.setFillColor(thisFillColor);
+			plot.setFillColor(fillColor);
 		}
 	}
 }
@@ -74,7 +87,8 @@ void ofxValuePlotter::generateDraw(){
 void ofxValuePlotter::render(){
 	ofColor c = ofGetStyle().color;
 
-	bg.draw();
+	ofxBaseGui::render();
+
 	if(plotSize > 0){
 		plot.draw();
 	}
@@ -83,7 +97,7 @@ void ofxValuePlotter::render(){
 	if(blendMode != OF_BLENDMODE_ALPHA){
 		ofEnableAlphaBlending();
 	}
-	ofSetColor(textColor);
+	ofSetColor(defaultTextColor);
 
 	bindFontTexture();
 	textMesh.draw();

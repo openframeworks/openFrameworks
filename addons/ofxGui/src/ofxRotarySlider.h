@@ -6,25 +6,17 @@
 template <typename Type>
 class ofxRotarySlider : public ofxSlider <Type> {
 	public:
-		struct Config : public ofxSlider <Type>::Config {
-			Config(){
-				this->shape.height = 60;
-			}
-			Config(const typename ofxSlider <Type>::Config & c) : ofxSlider <Type>::Config(c){
-			}
-			Config(const ofxBaseGui::Config & c) : ofxSlider <Type>::Config(c){
-			}
-		};
 
-		ofxRotarySlider();
+		ofxRotarySlider(const ofJson & config = ofJson());
+		ofxRotarySlider(ofParameter <Type> _val, const ofJson & config = ofJson());
+
 		~ofxRotarySlider();
-		ofxRotarySlider(ofParameter <Type> _val, const Config & config = Config());
 
-		virtual bool mousePressed(ofMouseEventArgs & args);
+		virtual void pointerPressed(PointerUIEventArgs & args);
 
 	protected:
 		virtual void render();
-		bool setValue(float mx, float my, bool bCheck);
+		virtual bool setValue(float mx, float my) override;
 		void generateDraw();
 		void generateText();
 		void valueChanged(Type & value);

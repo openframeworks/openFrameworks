@@ -4,6 +4,9 @@
 #ifndef TARGET_EMSCRIPTEN
 #include "ofXml.h"
 #endif
+
+#include "JsonConfigParser.h"
+
 using namespace std;
 
 
@@ -49,12 +52,13 @@ void ofxGuiSetDefaultHeight(int height){
 }
 
 ofColor
-ofxBaseGui::headerBackgroundColor(64),
-ofxBaseGui::backgroundColor(0),
-ofxBaseGui::borderColor(120, 100),
-ofxBaseGui::textColor(255),
-ofxBaseGui::fillColor(128);
+ofxBaseGui::defaultHeaderBackgroundColor(64),
+ofxBaseGui::defaultBackgroundColor(0),
+ofxBaseGui::defaultBorderColor(120, 100),
+ofxBaseGui::defaultTextColor(255),
+ofxBaseGui::defaultFillColor(128);
 
+float ofxBaseGui::defaultBorderWidth = 1;
 int ofxBaseGui::textPadding = 4;
 int ofxBaseGui::defaultWidth = 200;
 int ofxBaseGui::defaultHeight = 18;
@@ -64,56 +68,69 @@ bool ofxBaseGui::fontLoaded = false;
 bool ofxBaseGui::useTTF = false;
 ofBitmapFont ofxBaseGui::bitmapFont;
 
-ofxBaseGui::ofxBaseGui()
-:b(Config().shape)
-#ifndef TARGET_EMSCRIPTEN
-	,serializer(std::make_shared<ofXml>())
-#endif
-,thisHeaderBackgroundColor(Config().headerBackgroundColor)
-,thisBackgroundColor(Config().backgroundColor)
-,thisBorderColor(Config().borderColor)
-,thisTextColor(Config().textColor)
-,thisFillColor(Config().fillColor)
-,inContainer(Config().inContainer)
-,layout(Config().layout)
-,textLayout(Config().textLayout)
-,bShowName(Config().showName)
-,needsRedraw(true)
-,currentFrame(ofGetFrameNum())
-,bRegisteredForMouseEvents(false){
+ofxBaseGui::ofxBaseGui(const ofJson &config)
+	:Element("",0,0,defaultWidth, defaultHeight){
+
+	setup(config);
 
 }
 
-ofxBaseGui::ofxBaseGui(const Config & config)
-:b(config.shape)
+void ofxBaseGui::setup(const ofJson &config){
+
 #ifndef TARGET_EMSCRIPTEN
-	,serializer(std::make_shared<ofXml>())
+	serializer = std::make_shared<ofXml>();
 #endif
-,thisHeaderBackgroundColor(config.headerBackgroundColor)
-,thisBackgroundColor(config.backgroundColor)
-,thisBorderColor(config.borderColor)
-,thisTextColor(config.textColor)
-,thisFillColor(config.fillColor)
-,inContainer(config.inContainer)
-,layout(config.layout)
-,textLayout(config.textLayout)
-,bShowName(config.showName)
-,needsRedraw(true)
-,currentFrame(ofGetFrameNum())
-,bRegisteredForMouseEvents(false){
+
+	registeredForPointerEvents = false;
+
+	headerBackgroundColor.set("header-background-color", defaultHeaderBackgroundColor);
+	backgroundColor.set("background-color", defaultBackgroundColor);
+	borderColor.set("border-color", defaultBorderColor);
+	textColor.set("text-color", defaultTextColor);
+	fillColor.set("fill-color", defaultFillColor);
+	borderWidth.set("border-width", defaultBorderWidth);
+	textAlignment.set("text-alignment", TextAlignment::Left);
+	showName.set("show-name", true);
+
+	setAttribute("float", LayoutFloat::NONE);
+
+	// TODO is this needed?
+	setImplicitPointerCapture(true);
+
+	setSize(defaultWidth, defaultHeight);
+
+	processConfig(config);
 
 }
 
-void ofxBaseGui::setup(const Config & config){
-	b = config.shape;
-	thisHeaderBackgroundColor = config.headerBackgroundColor;
-	thisBackgroundColor = config.backgroundColor;
-	thisBorderColor = config.borderColor;
-	thisTextColor = config.textColor;
-	thisFillColor = config.fillColor;
-	inContainer = config.inContainer;
-	layout = config.layout;
-	textLayout = config.textLayout;
+void ofxBaseGui::processConfig(const ofJson &config){
+
+	//parse colors
+	JsonConfigParser::parse(config, backgroundColor);
+	JsonConfigParser::parse(config, borderColor);
+	JsonConfigParser::parse(config, textColor);
+	JsonConfigParser::parse(config, fillColor);
+	JsonConfigParser::parse(config, headerBackgroundColor);
+	JsonConfigParser::parse(config, showName);
+
+	//parse size
+	ofRectangle newshape = getShape();
+	JsonConfigParser::parse(config, "shape", newshape);
+	if(newshape != (ofRectangle)getShape()){
+		setShape(newshape);
+		invalidateChildShape();
+	}
+
+	//parse floating
+	LayoutFloat _floating = getAttribute<LayoutFloat>("float");
+	JsonConfigParser::parse(config, "float", _floating);
+	if(_floating != getAttribute<LayoutFloat>("float")){
+		setAttribute("float", _floating);
+		invalidateChildShape();
+	}
+
+	setNeedsRedraw();
+
 }
 
 void ofxBaseGui::loadFont(const std::string& filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
@@ -130,40 +147,6 @@ void ofxBaseGui::setUseTTF(bool bUseTTF){
 }
 
 ofxBaseGui::~ofxBaseGui(){
-	unregisterMouseEvents();
-}
-
-void ofxBaseGui::registerMouseEvents(int priority){
-	if(bRegisteredForMouseEvents == true){
-		return; // already registered.
-	}
-	bRegisteredForMouseEvents = true;
-	ofRegisterMouseEvents(this, priority);
-}
-
-void ofxBaseGui::unregisterMouseEvents(int priority){
-	if(bRegisteredForMouseEvents == false){
-		return; // not registered.
-	}
-	ofUnregisterMouseEvents(this, priority);
-	bRegisteredForMouseEvents = false;
-}
-
-void ofxBaseGui::draw(){
-	if(needsRedraw){
-		generateDraw();
-		needsRedraw = false;
-	}
-	currentFrame = ofGetFrameNum();
-	render();
-}
-
-bool ofxBaseGui::isGuiDrawing(){
-	if(ofGetFrameNum() - currentFrame > 1){
-		return false;
-	}else{
-		return true;
-	}
 }
 
 void ofxBaseGui::bindFontTexture(){
@@ -182,6 +165,9 @@ void ofxBaseGui::unbindFontTexture(){
 	}
 }
 
+ofMesh ofxBaseGui::getTextMesh(const string & text, ofPoint p){
+	return getTextMesh(text, p.x, p.y);
+}
 
 ofMesh ofxBaseGui::getTextMesh(const string & text, float x, float y){
 	if(useTTF){
@@ -239,135 +225,86 @@ string ofxBaseGui::getName(){
 void ofxBaseGui::setName(const std::string& _name){
 	getParameter().setName(_name);
 }
-
-void ofxBaseGui::setPosition(const ofPoint & p){
-	setPosition(p.x, p.y);
+void ofxBaseGui::setTextAlignment(TextAlignment textLayout){
+	this->textAlignment = textLayout;
 }
 
-void ofxBaseGui::setPosition(float x, float y){
-	b.x = x;
-	b.y = y;
-	setNeedsRedraw();
-}
-
-void ofxBaseGui::setSize(float w, float h){
-	b.width = w;
-	b.height = h;
-	sizeChangedE.notify(this);
-	setNeedsRedraw();
-}
-
-void ofxBaseGui::setShape(ofRectangle r){
-	b = r;
-	sizeChangedE.notify(this);
-	setNeedsRedraw();
-}
-
-void ofxBaseGui::setShape(float x, float y, float w, float h){
-	b.set(x, y, w, h);
-	sizeChangedE.notify(this);
-	setNeedsRedraw();
-}
-
-void ofxBaseGui::setInContainer(bool inContainer){
-	this->inContainer = inContainer;
-}
-
-void ofxBaseGui::setLayout(Layout layout){
-	this->layout = layout;
-}
-
-void ofxBaseGui::setTextLayout(TextLayout textLayout){
-	this->textLayout = textLayout;
-}
-
-ofPoint ofxBaseGui::getPosition() const {
-	return ofPoint(b.x, b.y);
-}
-
-ofRectangle ofxBaseGui::getShape() const {
-	return b;
-}
-
-float ofxBaseGui::getWidth() const {
-	return b.width;
-}
-
-float ofxBaseGui::getHeight() const {
-	return b.height;
-}
-
-ofxBaseGui::Layout ofxBaseGui::getLayout() const {
-	return layout;
-}
-
-ofxBaseGui::TextLayout ofxBaseGui::getTextLayout() const {
-	return textLayout;
+TextAlignment ofxBaseGui::getTextAlignment() const {
+	return textAlignment;
 }
 
 ofColor ofxBaseGui::getHeaderBackgroundColor() const {
-	return thisHeaderBackgroundColor;
+	return headerBackgroundColor;
 }
 
 ofColor ofxBaseGui::getBackgroundColor() const {
-	return thisBackgroundColor;
+	return backgroundColor;
 }
 
 ofColor ofxBaseGui::getBorderColor() const {
-	return thisBorderColor;
+	return borderColor;
 }
 
 ofColor ofxBaseGui::getTextColor() const {
-	return thisTextColor;
+	return textColor;
 }
 
 ofColor ofxBaseGui::getFillColor() const {
-	return thisFillColor;
+	return fillColor;
+}
+
+bool ofxBaseGui::getShowName() const {
+	return showName;
 }
 
 void ofxBaseGui::setHeaderBackgroundColor(const ofColor & color){
 	setNeedsRedraw();
-	thisHeaderBackgroundColor = color;
+	headerBackgroundColor = color;
 }
 
 void ofxBaseGui::setBackgroundColor(const ofColor & color){
 	setNeedsRedraw();
-	thisBackgroundColor = color;
+	backgroundColor = color;
 }
 
 void ofxBaseGui::setBorderColor(const ofColor & color){
 	setNeedsRedraw();
-	thisBorderColor = color;
+	borderColor = color;
 }
 
 void ofxBaseGui::setTextColor(const ofColor & color){
 	setNeedsRedraw();
-	thisTextColor = color;
+	textColor = color;
 }
 
 void ofxBaseGui::setFillColor(const ofColor & color){
 	setNeedsRedraw();
-	thisFillColor = color;
+	fillColor = color;
+}
+
+void ofxBaseGui::setBorderWidth(const float &width){
+	setNeedsRedraw();
+	borderWidth = width;
 }
 
 void ofxBaseGui::setDefaultHeaderBackgroundColor(const ofColor & color){
-	headerBackgroundColor = color;
+	defaultHeaderBackgroundColor = color;
 }
 
 void ofxBaseGui::setDefaultBackgroundColor(const ofColor & color){
-	backgroundColor = color;
+	defaultBackgroundColor = color;
 }
 
 void ofxBaseGui::setDefaultBorderColor(const ofColor & color){
-	borderColor = color;
+	defaultBorderColor = color;
 }
 
 void ofxBaseGui::setDefaultTextColor(const ofColor & color){
-	textColor = color;
+	defaultTextColor = color;
 }
 
 void ofxBaseGui::setDefaultFillColor(const ofColor & color){
-	fillColor = color;
+	defaultFillColor = color;
 }
 
 void ofxBaseGui::setDefaultTextPadding(int padding){
@@ -382,13 +319,32 @@ void ofxBaseGui::setDefaultHeight(int height){
 	defaultHeight = height;
 }
 
-void ofxBaseGui::setNeedsRedraw(){
-	needsRedraw = true;
+void ofxBaseGui::setShowName(bool show){
+	showName = show;
+	setNeedsRedraw();
 }
 
-void ofxBaseGui::setShowName(bool show){
-	bShowName = show;
-	setNeedsRedraw();
+void ofxBaseGui::generateDraw(){
+
+	bg.clear();
+	border.clear();
+
+	bg.setFillColor(backgroundColor);
+	bg.setFilled(true);
+	bg.rectangle(borderWidth,borderWidth,getWidth()-2*borderWidth,getHeight()-2*borderWidth);
+
+	border.setStrokeColor(borderColor);
+	border.setFilled(false);
+	border.setStrokeWidth(borderWidth);
+	border.rectangle(0,0,getWidth(),getHeight());
+
+}
+
+void ofxBaseGui::render(){
+
+	bg.draw();
+	border.draw();
+
 }
 
 string ofxBaseGui::saveStencilToHex(const ofImage & img){
@@ -447,4 +403,110 @@ float ofxBaseGui::getTextWidth(const std::string & text, float _height){
 	}
 	_width += textPadding * 2;
 	return _width;
+}
+
+bool ofxBaseGui::isPointerOver() const{
+	return _isPointerOver;
+}
+
+
+bool ofxBaseGui::isPointerDown() const{
+	return !capturedPointers().empty();
+}
+
+
+void ofxBaseGui::setDropTarget(bool dropTarget){
+	_isDropTarget = dropTarget;
+}
+
+
+bool ofxBaseGui::isDropTarget() const{
+	return _isDropTarget;
+}
+
+
+void ofxBaseGui::setDraggable(bool draggable){
+	_isDraggable = draggable;
+}
+
+
+bool ofxBaseGui::isDraggable() const{
+	return _isDraggable;
+}
+
+
+bool ofxBaseGui::isDragging() const{
+	return _isDragging;
+}
+
+void ofxBaseGui::onPointerEvent(PointerUIEventArgs &e)
+{
+	if (e.type() == PointerEventArgs::POINTER_DOWN)
+	{
+	}
+	else if (e.type() == PointerEventArgs::POINTER_MOVE)
+	{
+		if (_isDragging)
+		{
+			if (!capturedPointers().empty())
+			{
+				const DOM::CapturedPointer& pointer = *capturedPointers().begin();
+				setPosition(screenToParent(pointer.position() - pointer.offset()));
+			}
+			else
+			{
+				ofLogError("Widget::_onPointerEvent") << "No captured pointers to drag with.";
+			}
+
+		}
+	}
+	else if (e.type() == PointerEventArgs::POINTER_OVER)
+	{
+		_isPointerOver = true;
+	}
+	else if (e.type() == PointerEventArgs::POINTER_OUT)
+	{
+		_isPointerOver = false;
+	}
+	else
+	{
+		// unhandled.
+	}
+}
+
+
+void ofxBaseGui::onPointerCaptureEvent(PointerCaptureUIEventArgs& e)
+{
+	if (e.type() == PointerEventArgs::GOT_POINTER_CAPTURE)
+	{
+		// TODO needed?
+//		if (_moveToFrontOnCapture)
+//		{
+//			moveToFront();
+//		}
+
+		_isDragging = _isDraggable;
+
+	}
+	else if (e.type() == PointerEventArgs::LOST_POINTER_CAPTURE)
+	{
+		_isDragging = false;
+	}
+}
+
+
+void ofxBaseGui::registerPointerEvents(){
+	if(registeredForPointerEvents == true){
+		return; // already registered.
+	}
+	registeredForPointerEvents = true;
+	_registerPointerEvents(this);
+}
+
+void ofxBaseGui::unregisterPointerEvents(){
+	if(registeredForPointerEvents == false){
+		return; // not registered.
+	}
+	_registerPointerEvents(this);
+	registeredForPointerEvents = false;
 }

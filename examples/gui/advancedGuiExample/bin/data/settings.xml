@@ -1,0 +1,15 @@
+<ofParameterGroup>
+	<cameras>
+		<cam0>0</cam0>
+		<cam1>0</cam1>
+		<cam2>1</cam2>
+		<cam3>0</cam3>
+	</cameras>
+<vertical_sliders__spacer>
+		<slider1>0.142857</slider1>
+		<UnknownName>0</UnknownName>
+		<slider2>0.714286</slider2>
+		<slider3>0.05</slider3>
+		<slider4>0.05</slider4>
+	</vertical_sliders__spacer>
+</ofParameterGroup>

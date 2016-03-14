@@ -4,12 +4,12 @@
 #include "ofxGui.h"
 
 class ofApp : public ofBaseApp{
-	
+
 public:
 	void setup();
 	void update();
 	void draw();
-	
+
 	void exit();
 
 	void keyPressed(int key);
@@ -22,7 +22,7 @@ public:
 	void mouseExited(int x, int y);
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo dragInfo);
-	void gotMessage(ofMessage msg);		
+	void gotMessage(ofMessage msg);
 
 	void circleResolutionChanged(int & circleResolution);
 	void ringButtonPressed();
@@ -34,11 +34,12 @@ public:
 	ofParameter<ofVec2f> center;
 	ofParameter<int> circleResolution;
 	ofParameter<bool> filled;
-    ofParameter<bool> twoCircles;
-    ofParameter<void> ringButton;
+	ofParameter<bool> twoCircles;
+	ofParameter<void> ringButton;
 	ofParameter<string> screenSize;
 
-	ofxPanel gui;
+	ofxPanel* gui;
+	std::unique_ptr<ofx::DOM::Document> gui_doc;
 
 	ofSoundPlayer ring;
 };

@@ -6,20 +6,20 @@
 class ofxMinimalToggle : public ofxToggle {
 
 	public:
-		ofxMinimalToggle();
-		virtual ~ofxMinimalToggle();
-		ofxMinimalToggle(ofParameter<bool> &val, const Config & config = Config());
+		ofxMinimalToggle(const std::string & toggleName="", const ofJson & config = ofJson());
+		ofxMinimalToggle(ofParameter<bool> &val, const ofJson & config = ofJson());
+		ofxMinimalToggle(ofParameter <bool> &val, float width, float height = defaultHeight);
+		ofxMinimalToggle(const std::string & toggleName, bool val, float width = defaultWidth, float height = defaultHeight);
 
-		ofxMinimalToggle & setup(ofParameter <bool> &val, const Config & config = Config());
-		ofxMinimalToggle & setup(ofParameter <bool> &val, float width = defaultWidth, float height = defaultHeight);
-		ofxMinimalToggle & setup(const std::string & toggleName, bool val, float width = defaultWidth, float height = defaultHeight);
+		virtual ~ofxMinimalToggle();
+
+		void setup(const ofJson &config = ofJson());
 
 	protected:
-		virtual void render();
-		void generateDraw();
+		virtual void render() override;
+		void generateDraw() override;
 
 		float getTextWidth(std::string text, float height);
 
-		ofPath border;
 };
 
