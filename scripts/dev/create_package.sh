@@ -176,6 +176,7 @@ function createPackage {
 	#delete ios examples in other platforms
 	if [ "$pkg_platform" != "ios" ]; then 
 		rm -Rf ios
+		rm -Rf tvOS
 	fi
 
 	#delete android examples in other platforms
@@ -186,18 +187,21 @@ function createPackage {
 	#delete desktop examples in mobile packages
 	if [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "ios" ]; then 
 		rm -Rf 3d
-		rm -Rf addons
 		rm -Rf communication
-		rm -Rf empty
+		rm -Rf computer_vision
 		rm -Rf events
 		rm -Rf gl
-		rm -Rf graphics
-		rm -Rf math
-		rm -Rf sound
-		rm -Rf utils
-		rm -Rf video
 		rm -Rf gles
+		rm -Rf graphics
 		rm -Rf gui
+		rm -Rf input_output
+		rm -Rf math
+		rm -Rf shader
+		rm -Rf sound
+		rm -Rf strings
+		rm -Rf templates
+		rm -Rf threads
+		rm -Rf video
 	fi 
 	
 	#delete osx examples in linux
@@ -317,7 +321,7 @@ function createPackage {
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
 		cd ${pkg_ofroot}/projectGenerator-vs/resources/app/app/
-		wget http://198.61.170.130/projectGenerator/projectGenerator-vs.zip 2> /dev/null
+		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip 2> /dev/null
 		unzip projectGenerator-vs.zip 2> /dev/null
 		rm projectGenerator-vs.zip
 		cd ${pkg_ofroot}
@@ -330,7 +334,7 @@ function createPackage {
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-osx
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
-		wget http://198.61.170.130/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
+		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
 		sed -i "s/osx/osx/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
     if [ "$pkg_platform" = "ios" ]; then
@@ -340,7 +344,7 @@ function createPackage {
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-ios
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
-		wget http://198.61.170.130/projectGenerator/projectGenerator_osx -O projectGenerator-ios/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
+		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator_osx -O projectGenerator-ios/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
 		sed -i "s/osx/ios/g" projectGenerator-ios/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
 	
@@ -560,7 +564,7 @@ function createPackage {
     elif [ "$pkg_platform" = "ios" ]; then
         cp -r examples/ios/emptyExample apps/myApps/
     else
-        cp -r examples/empty/emptyExample apps/myApps/
+        cp -r examples/templates/emptyExample apps/myApps/
     fi
     
     #create compressed package

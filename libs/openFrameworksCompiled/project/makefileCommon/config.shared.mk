@@ -289,12 +289,20 @@ CORE_PKG_CONFIG_LIBRARIES += $(PLATFORM_PKG_CONFIG_LIBRARIES)
 CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_PKG_CONFIG_LIBRARIES)
 
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
+ifneq ($(strip $(PKG_CONFIG_LIBDIR)),)
 $(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
-	ifneq ($(shell $(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --exists; echo $$?),0)
-$(error couldn't find some pkg-config packages, did you run the latest install_dependencies.sh?)
+$(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
+FAILED_PKG=$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); for pkg in $(CORE_PKG_CONFIG_LIBRARIES); do $(PLATFORM_PKG_CONFIG) $$pkg --cflags > /dev/null; if [ $$? -ne 0 ]; then echo $$pkg; return; fi; done; echo 0)
+else
+$(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
+$(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
+FAILED_PKG=$(shell for pkg in $(CORE_PKG_CONFIG_LIBRARIES); do $(PLATFORM_PKG_CONFIG) $$pkg --cflags > /dev/null; if [ $$? -ne 0 ]; then echo $$pkg; return; fi; done; echo 0)
+endif
+	ifneq ($(FAILED_PKG),0)
+$(error couldn't find $(FAILED_PKG) pkg-config package or it's dependencies, did you run the latest install_dependencies.sh?)
 	endif
 	ifeq ($(CROSS_COMPILING),1)
-		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);$(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
+		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I$(SYSROOT)$(SYSROOT)%,-I$(SYSROOT)% ,$(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);$(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)))
 	else
 		OF_CORE_INCLUDES_CFLAGS += $(shell $(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
 	endif
