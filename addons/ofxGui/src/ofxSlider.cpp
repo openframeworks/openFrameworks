@@ -6,29 +6,40 @@ using namespace ofx;
 using namespace ofx::DOM;
 
 template<typename Type>
-ofxSlider<Type>::ofxSlider(const ofJson &config)
-	:ofxBaseGui(config){
+ofxSlider<Type>::ofxSlider()
+	:ofxBaseGui(){
 
-	setup(config);
+	setup();
+
+}
+
+template<typename Type>
+ofxSlider<Type>::ofxSlider(const ofJson &config)
+	:ofxSlider(){
+
+	_setConfig(config);
 
 }
 
 template<typename Type>
 ofxSlider<Type>::ofxSlider(ofParameter<Type> _val, const ofJson &config)
-:ofxSlider(config){
+:ofxBaseGui(){
 
 	value.makeReferenceTo(_val);
 	value.addListener(this,&ofxSlider::valueChanged);
+	setup();
+	_setConfig(config);
 
 }
 
 template<typename Type>
 ofxSlider<Type>::ofxSlider(ofParameter<Type> _val, float width, float height)
-	:ofxSlider(){
+	:ofxBaseGui(){
 
 	value.makeReferenceTo(_val);
 	setSize(width, height);
 	value.addListener(this,&ofxSlider::valueChanged);
+	setup();
 
 }
 
@@ -51,19 +62,21 @@ ofxSlider<Type>::~ofxSlider(){
 }
 
 template<typename Type>
-void ofxSlider<Type>::setup(const ofJson &config){
+void ofxSlider<Type>::setup(){
 
+	hasFocus = false;
 	updateOnReleaseOnly.set("update-on-release-only", false);
 	precision.set("precision", 6);
 	horizontal = getWidth() > getHeight();
 	ofAddListener(resize, this, &ofxSlider<Type>::resized);
-	registerPointerEvents();
-	processConfig(config);
+	registerMouseEvents();
 
 }
 
 template<typename Type>
-void ofxSlider<Type>::processConfig(const ofJson &config){
+void ofxSlider<Type>::_setConfig(const ofJson &config){
+
+	ofxBaseGui::_setConfig(config);
 
 	JsonConfigParser::parse(config, updateOnReleaseOnly);
 	JsonConfigParser::parse(config, precision);
@@ -101,37 +114,58 @@ void ofxSlider<Type>::setPrecision(int precision){
 }
 
 template<typename Type>
-void ofxSlider<Type>::pointerPressed(PointerUIEventArgs& e){
+bool ofxSlider<Type>::mousePressed(ofMouseEventArgs & args){
+
+	ofxBaseGui::mousePressed(args);
+
 	if(updateOnReleaseOnly){
 		value.disableEvents();
 	}
-	this->setValue(e.screenPosition().x, e.screenPosition().y);
+	return setValue(args.x, args.y, true);
+
 }
 
 template<typename Type>
-void ofxSlider<Type>::pointerReleased(PointerUIEventArgs& e){
+bool ofxSlider<Type>::mouseDragged(ofMouseEventArgs & args){
+
+	ofxBaseGui::mouseDragged(args);
+
+	return setValue(args.x, args.y, false);
+
+}
+
+template<typename Type>
+bool ofxSlider<Type>::mouseReleased(ofMouseEventArgs & args){
+
+	ofxBaseGui::mouseReleased(args);
+
 	if(updateOnReleaseOnly){
 		value.enableEvents();
 	}
-	this->setValue(e.screenPosition().x, e.screenPosition().y);
+	bool attended = setValue(args.x, args.y, false);
+	hasFocus = false;
+	return attended;
+
 }
 
 template<typename Type>
-void ofxSlider<Type>::pointerDragged(PointerUIEventArgs& e){
-	this->setValue(e.screenPosition().x, e.screenPosition().y);
-}
+bool ofxSlider<Type>::mouseScrolled(ofMouseEventArgs & args){
 
-template<typename Type>
-void ofxSlider<Type>::pointerScrolled(PointerUIEventArgs& e){
-	// TODO set value based on scrolling
-//	if(args.scrollY>0 || args.scrollY<0){
-//		double range = getRange(value.getMin(),value.getMax(),b.width);
-//		Type newValue = value + ofMap(args.scrollY,-1,1,-range, range);
-//		newValue = ofClamp(newValue,value.getMin(),value.getMax());
-//		value = newValue;
-//	}
-}
+	ofxBaseGui::mouseScrolled(args);
 
+	if(isMouseOver()){
+		if(args.scrollY>0 || args.scrollY<0){
+			// TODO
+//			double range = getRange(value.getMin(),value.getMax(), getWidth());
+//			Type newValue = value + ofMap(args.scrollY,-1,1,-range, range);
+//			newValue = ofClamp(newValue,value.getMin(),value.getMax());
+//			value = newValue;
+		}
+		return true;
+	}else{
+		return false;
+	}
+}
 
 template<typename Type>
 typename std::enable_if<std::is_integral<Type>::value, Type>::type
@@ -250,15 +284,31 @@ void ofxSlider<Type>::render(){
 
 
 template<typename Type>
-bool ofxSlider<Type>::setValue(float mx, float my){
-	ofPoint topleft = localToScreen(ofPoint(0, 0));
-	ofPoint bottomright = localToScreen(ofPoint(getWidth(), getHeight()));
-	if(horizontal){
-		value = ofMap(mx, topleft.x, bottomright.x, value.getMin(), value.getMax(), true);
-	}else{
-		value = ofMap(my, bottomright.y, topleft.y, value.getMin(), value.getMax(), true);
+bool ofxSlider<Type>::setValue(float mx, float my, bool bCheck){
+
+	if(isHidden()){
+		hasFocus = false;
+		return false;
 	}
-	return true;
+
+	if(bCheck){
+		hasFocus = isMouseOver();
+	}
+
+	if(hasFocus){
+
+		ofPoint topleft = localToScreen(ofPoint(0, 0));
+		ofPoint bottomright = localToScreen(ofPoint(getWidth(), getHeight()));
+		if(horizontal){
+			value = ofMap(mx, topleft.x, bottomright.x, value.getMin(), value.getMax(), true);
+		}else{
+			value = ofMap(my, bottomright.y, topleft.y, value.getMin(), value.getMax(), true);
+		}
+		return true;
+
+	}
+
+	return false;
 }
 
 template<typename Type>

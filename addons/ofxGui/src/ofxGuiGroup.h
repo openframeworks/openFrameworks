@@ -30,7 +30,7 @@ class ofxGuiGroupHeader : public ofxBaseGui {
 
 		~ofxGuiGroupHeader();
 
-		virtual void pointerPressed(PointerUIEventArgs & e);
+		virtual bool mousePressed(ofMouseEventArgs & args) override;
 
 	protected:
 		virtual void generateDraw();
@@ -43,14 +43,17 @@ class ofxGuiGroupHeader : public ofxBaseGui {
 class ofxGuiGroup : public ofxBaseGui {
 	public:
 
-		ofxGuiGroup(const std::string& collectionName="", const ofJson & config = ofJson());
+		ofxGuiGroup(const std::string& collectionName="");
+		ofxGuiGroup(const std::string& collectionName, const ofJson & config);
 		ofxGuiGroup(const ofParameterGroup & parameters, const ofJson &config = ofJson());
 		ofxGuiGroup(const ofParameterGroup & parameters, const std::string& _filename, float x = 10, float y = 10);
 		ofxGuiGroup(const std::string& collectionName, const std::string& _filename, float x = 10, float y = 10);
 
 		virtual ~ofxGuiGroup();
 
-		void setup(const ofJson &config);
+		void setup();
+
+		using Element::add;
 
 		template <typename GuiType, typename... Args>
 		GuiType* add(Args&&... args);
@@ -80,21 +83,28 @@ class ofxGuiGroup : public ofxBaseGui {
 //		std::vector <std::string> getControlNames() const;
 		std::size_t getNumControls();
 
-		ofxIntSlider & getIntSlider(const std::string& name);
-		ofxFloatSlider & getFloatSlider(const std::string& name);
-		ofxToggle & getToggle(const std::string& name);
-		ofxButton & getButton(const std::string& name);
-		ofxGuiGroup & getGroup(const std::string& name);
+		ofxIntSlider* getIntSlider(const std::string& name);
+		ofxFloatSlider* getFloatSlider(const std::string& name);
+		ofxToggle* getToggle(const std::string& name);
+		ofxButton* getButton(const std::string& name);
+		ofxGuiGroup* getGroup(const std::string& name);
 
-		ofxBaseGui * getControl(const std::string& name);
-		ofxBaseGui * getControl(std::size_t num);
+		ofxBaseGui* getControl(const std::string& name);
+		ofxBaseGui* getControl(std::size_t num);
 		int getControlIndex(const std::string& name);
+
+		template <class ControlType>
+		ControlType* getControlType(const std::string& name);
+
+		template <class ControlType>
+		ControlType* getControlType(const int& index);
 
 		virtual ofAbstractParameter & getParameter();
 
 		void setShowHeader(bool show);
 		void setDistributeEvenly(bool distribute);
 
+		bool getTogglesExclusive() const;
 		void setExclusiveToggles(bool exclusive);
 		bool setActiveToggle(int index);
 		bool setActiveToggle(ofxToggle* toggle);
@@ -105,10 +115,7 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		ofParameterGroup parameters;
 
-		virtual void processConfig(const ofJson & config);
-
-		template <class ControlType>
-		ControlType & getControlType(const std::string& name);
+		virtual void _setConfig(const ofJson & config);
 
 		void addParametersFrom(const ofParameterGroup & parameters);
 
@@ -124,28 +131,40 @@ class ofxGuiGroup : public ofxBaseGui {
 		ofParameter<bool> showHeader;
 		ofxBaseGui* header;
 
-
-	private:
-		void onHeaderVisibility(bool& showing);
-		void onHeaderHeight(float& height);
-		void onResize(ResizeEventArgs&);
+		virtual void onHeaderVisibility(bool& showing);
+		virtual void onHeaderHeight(float& height);
+		virtual void onResize(ResizeEventArgs&);
 
 };
 
 template <class ControlType>
-ControlType & ofxGuiGroup::getControlType(const std::string& name){
-	// TODO why reference not pointer?
-//	ControlType * control = dynamic_cast <ControlType *>(getControl(name));
-//	if(control){
-//		return *control;
-//	}else{
-//		ofLogWarning() << "getControlType " << name << " not found, creating new";
-//		control = new ControlType;
-//		control->setName(name);
-//		add(control);
-//		return *control;
-//	}
-	ofLogError("ofxGuiGroup::getControlType") << "function not implemented! Do not use it!";
+ControlType* ofxGuiGroup::getControlType(const std::string& name){
+	ControlType* control = dynamic_cast <ControlType *>(getControl(name));
+	if(control){
+		return control;
+	}else{
+		ofLogWarning() << "getControlType " << name << " not found, creating new";
+		control = this->add<ControlType>();
+		control->setName(name);
+		return control;
+	}
+}
+
+template <class ControlType>
+ControlType* ofxGuiGroup::getControlType(const int& index){
+
+	int counter = -1;
+	for(auto &child : children()){
+		if(ControlType* e = dynamic_cast<ControlType*>(child)){
+			counter++;
+			if(counter == index){
+				return e;
+			}
+		}
+	}
+
+	return nullptr;
+
 }
 
 template<typename T>

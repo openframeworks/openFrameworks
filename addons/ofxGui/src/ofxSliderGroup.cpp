@@ -2,22 +2,32 @@
 using namespace std;
 
 template<class VecType>
-ofxVecSlider_<VecType>::ofxVecSlider_(const ofJson &config)
-// TODO the following line doesn't work (segfault) no clue why
-//	:ofxGuiGroup(getName(), config){
-	:ofxGuiGroup("", config){
+ofxVecSlider_<VecType>::ofxVecSlider_()
+	:ofxGuiGroup(){
 
-	setup(config);
+	setup();
+
+}
+
+template<class VecType>
+ofxVecSlider_<VecType>::ofxVecSlider_(const ofJson &config)
+	:ofxVecSlider_(){
+
+	_setConfig(config);
 
 }
 
 template<class VecType>
 ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> &value, const ofJson & config)
-:ofxVecSlider_(config){
+:ofxVecSlider_(){
 
 	setName(value.getName());
 
-	const string names[4] = {"x", "y", "z", "w"};
+	names.clear();
+	names.push_back("x");
+	names.push_back("y");
+	names.push_back("z");
+	names.push_back("w");
 
 	this->value.makeReferenceTo(value);
 	this->value.addListener(this, & ofxVecSlider_::changeValue);
@@ -30,6 +40,8 @@ ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> &value, const ofJson 
 		add(p);
 		p.addListener(this, & ofxVecSlider_::changeSlider);
 	}
+
+	_setConfig(config);
 
 }
 
@@ -47,7 +59,11 @@ ofxVecSlider_<VecType>::ofxVecSlider_(const std::string& controlName, const VecT
 
 	value.set(controlName,v,min,max);
 
-	const string names[4] = {"x", "y", "z", "w"};
+	names.clear();
+	names.push_back("x");
+	names.push_back("y");
+	names.push_back("z");
+	names.push_back("w");
 
 	this->value.addListener(this, & ofxVecSlider_::changeValue);
 
@@ -63,7 +79,7 @@ ofxVecSlider_<VecType>::ofxVecSlider_(const std::string& controlName, const VecT
 }
 
 template<class VecType>
-void ofxVecSlider_<VecType>::setup(const ofJson &config){
+void ofxVecSlider_<VecType>::setup(){
 
 	sliderChanging = false;
 
@@ -73,7 +89,7 @@ template<class VecType>
 void ofxVecSlider_<VecType>::changeSlider(const void * parameter, float & _value){
 	sliderChanging = true;
 	ofParameter<float> & param = *(ofParameter<float>*)parameter;
-	int i = getControlIndex(param.getName());
+	int i = getControlIndex(param.getName()) - getControlIndex(names[0]);
 	VecType data = value;
 	data[i] = _value;
 	value = data;
@@ -86,7 +102,7 @@ void ofxVecSlider_<VecType>::changeValue(VecType & value){
 		return;
 	}
 	for (int i=0; i<VecType::DIM; i++){
-		getControl(i)->getParameter().template cast<float>() = value[i];
+		getControl(names[i])->getParameter().template cast<float>() = value[i];
 	}
 }
 
@@ -117,22 +133,32 @@ template class ofxVecSlider_<ofVec4f>;
 
 
 template<class ColorType>
-ofxColorSlider_<ColorType>::ofxColorSlider_(const ofJson &config)
-// TODO why is this not working?
-//	:ofxGuiGroup(getName(), config){
-	:ofxGuiGroup("", config){
+ofxColorSlider_<ColorType>::ofxColorSlider_()
+	:ofxGuiGroup(){
 
-	setup(config);
+	setup();
+
+}
+
+template<class ColorType>
+ofxColorSlider_<ColorType>::ofxColorSlider_(const ofJson &config)
+	:ofxGuiGroup(){
+
+	_setConfig(config);
 
 }
 
 template<class ColorType>
 ofxColorSlider_<ColorType>::ofxColorSlider_(ofParameter<ofColor_<ColorType> > &value, const ofJson & config)
-	:ofxColorSlider_(config){
+	:ofxColorSlider_(){
 
 	setName(value.getName());
 
-	const string names[4] = {"r", "g", "b", "a"};
+	names.clear();
+	names.push_back("r");
+	names.push_back("g");
+	names.push_back("b");
+	names.push_back("a");
 
 	this->value.makeReferenceTo(value);
 	this->value.addListener(this, & ofxColorSlider_::changeValue);
@@ -145,10 +171,12 @@ ofxColorSlider_<ColorType>::ofxColorSlider_(ofParameter<ofColor_<ColorType> > &v
 		ofParameter<ColorType> p(names[i], val[i], min[i], max[i]);
 		add<ofxSlider<ColorType>>(p);
 		p.addListener(this, & ofxColorSlider_::changeSlider);
-		getControl(i)->setFillColor(value.get());
+		getControl(names[i])->setFillColor(value.get());
 	}
 
 	sliderChanging = false;
+
+	_setConfig(config);
 
 }
 
@@ -166,7 +194,11 @@ ofxColorSlider_<ColorType>::ofxColorSlider_(const std::string& controlName, cons
 
 	value.set(controlName,v,min,max);
 
-	const string names[4] = {"r", "g", "b", "a"};
+	names.clear();
+	names.push_back("r");
+	names.push_back("g");
+	names.push_back("b");
+	names.push_back("a");
 
 	this->value.addListener(this, & ofxColorSlider_::changeValue);
 
@@ -176,7 +208,7 @@ ofxColorSlider_<ColorType>::ofxColorSlider_(const std::string& controlName, cons
 		ofParameter<ColorType> p(names[i], val[i], min[i], max[i]);
 		add<ofxSlider<ColorType>>(p);
 		p.addListener(this, & ofxColorSlider_::changeSlider);
-		getControl(i)->setFillColor(value.get());
+		getControl(names[i])->setFillColor(value.get());
 	}
 
 	sliderChanging = false;
@@ -186,7 +218,7 @@ ofxColorSlider_<ColorType>::ofxColorSlider_(const std::string& controlName, cons
 }
 
 template<class ColorType>
-void ofxColorSlider_<ColorType>::setup(const ofJson &config){
+void ofxColorSlider_<ColorType>::setup(){
 
 	sliderChanging = false;
 
@@ -196,14 +228,14 @@ template<class ColorType>
 void ofxColorSlider_<ColorType>::changeSlider(const void * parameter, ColorType & _value){
 	sliderChanging = true;
 	ofParameter<float> & param = *(ofParameter<float>*)parameter;
-	int i = getControlIndex(param.getName());
+	int i = getControlIndex(param.getName()) - getControlIndex(names[0]);
 	ofColor_<ColorType> data = value;
 	data[i] = _value;
+
 	value = data;
 
-
 	for (int i=0; i<4; i++){
-		getControl(i)->setFillColor(value.get());
+		getControl(names[i])->setFillColor(value.get());
 	}
 	sliderChanging = false;
 }
@@ -214,8 +246,8 @@ void ofxColorSlider_<ColorType>::changeValue(ofColor_<ColorType> & value){
 		return;
 	}
 	for (int i=0; i<4; i++){
-		getControl(i)->getParameter().template cast<ColorType>() = value[i];
-		getControl(i)->setFillColor(value);
+		getControl(names[i])->getParameter().template cast<ColorType>() = value[i];
+		getControl(names[i])->setFillColor(value);
 	}
 }
 

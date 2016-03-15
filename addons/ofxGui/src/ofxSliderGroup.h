@@ -7,12 +7,13 @@ template<class VecType>
 class ofxVecSlider_ : public ofxGuiGroup {
 public:
 
-	ofxVecSlider_(const ofJson & config = ofJson());
+	ofxVecSlider_();
+	ofxVecSlider_(const ofJson & config);
 	ofxVecSlider_(ofParameter<VecType> &value, const ofJson & config = ofJson());
 	ofxVecSlider_(ofParameter<VecType> &value, float width, float height = defaultHeight);
 	ofxVecSlider_(const std::string& controlName, const VecType & value, const VecType & min, const VecType & max, float width = defaultWidth, float height = defaultHeight);
 
-	void setup(const ofJson &config);
+	void setup();
 
 	ofAbstractParameter & getParameter();
 
@@ -24,6 +25,7 @@ protected:
 	void changeValue(VecType & value);
 	ofParameter<VecType> value;
 	bool sliderChanging;
+	vector<std::string> names;
 };
 
 template<typename ColorType>
@@ -31,12 +33,13 @@ class ofxColorSlider_: public ofxGuiGroup{
 
 public:
 
-	ofxColorSlider_(const ofJson & config = ofJson());
+	ofxColorSlider_();
+	ofxColorSlider_(const ofJson & config);
 	ofxColorSlider_(ofParameter<ofColor_<ColorType>> &value, const ofJson & config = ofJson());
 	ofxColorSlider_(ofParameter<ofColor_<ColorType>> &value, float width, float height = defaultHeight);
 	ofxColorSlider_(const std::string& controlName, const ofColor_<ColorType> & value, const ofColor_<ColorType> & min, const ofColor_<ColorType> & max, float width = defaultWidth, float height = defaultHeight);
 
-	void setup(const ofJson &config);
+	void setup();
 
 	ofAbstractParameter & getParameter();
 
@@ -47,5 +50,6 @@ protected:
 	void changeValue(ofColor_<ColorType> & value);
 	ofParameter<ofColor_<ColorType> > value;
 	bool sliderChanging;
+	vector<std::string> names;
 };
 

@@ -3,21 +3,29 @@
 #include "ofGraphics.h"
 
 template<typename Type>
+ofxInputField<Type>::ofxInputField(){
+
+	setup();
+
+}
+
+template<typename Type>
 ofxInputField<Type>::ofxInputField(const ofJson &config){
 
-	setup(config);
+	_setConfig(config);
 
 }
 
 template<typename Type>
 ofxInputField<Type>::ofxInputField(ofParameter<Type> _val, const ofJson &config)
-	:ofxInputField(config){
+	:ofxInputField(){
 
 	value.makeReferenceTo(_val);
 	input = ofToString(value);
 	inputWidth = getTextBoundingBox(input,0,0).width;
 	value.addListener(this,&ofxInputField::valueChanged);
 	pressCounter = 0;
+	_setConfig(config);
 
 }
 
@@ -38,17 +46,16 @@ template<typename Type>
 ofxInputField<Type>::~ofxInputField(){
 	value.removeListener(this,&ofxInputField::valueChanged);
 	unregisterKeyEvents();
-	unregisterPointerEvents();
 }
 
 template<typename Type>
-void ofxInputField<Type>::setup(const ofJson &config){
+void ofxInputField<Type>::setup(){
 
 	bChangedInternally = false;
-	bGuiActive = false;
 	bMousePressed = false;
 	mouseInside = false;
 	bRegisteredForKeyEvents = false;
+	hasFocus = false;
 	mousePressedPos = -1;
 	selectStartX = -1;
 	selectStartPos = -1;
@@ -56,7 +63,7 @@ void ofxInputField<Type>::setup(const ofJson &config){
 	pressCounter = 0;
 	inputWidth = 0;
 	selectionWidth = 0;
-	registerPointerEvents();
+	registerMouseEvents();
 	registerKeyEvents();
 
 }
@@ -106,22 +113,26 @@ void ofxInputField<Type>::calculateSelectionArea(int selectIdx1, int selectIdx2)
 	}
 }
 
-// TODO not working yet
+
 template<typename Type>
-void ofxInputField<Type>::pointerMoved(PointerUIEventArgs & args){
-	args.setCurrentTarget(this);
-	ofRectangle thisshape = ofRectangle(0,0,getWidth(), getHeight());
-	mouseInside = thisshape.inside(args.localPosition());
+bool ofxInputField<Type>::mouseMoved(ofMouseEventArgs & args){
+
+	ofxBaseGui::mouseMoved(args);
+
+	mouseInside = !isHidden() && isMouseOver();
+	return mouseInside;
 }
 
 template<typename Type>
-void ofxInputField<Type>::pointerPressed(PointerUIEventArgs & args){
-	args.setCurrentTarget(this);
-	ofRectangle thisshape = ofRectangle(0,0,getWidth(), getHeight());
-	if(thisshape.inside(args.localPosition())){
+bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & args){
+
+	ofxBaseGui::mousePressed(args);
+
+	if(isMouseOver()){
 		bMousePressed = true;
-		ofPoint thisscreen = this->localToScreen(ofPoint(0,0));
-		float cursorX = args.screenPosition().x - (thisscreen.x + getShape().width - textPadding - inputWidth);
+		hasFocus = true;
+
+		float cursorX = args.x - (localToScreen(getShape()).getRight() - textPadding - inputWidth);
 		int cursorPos = ofMap(cursorX,0,inputWidth,0,input.size(),true);
 		mousePressedPos = cursorPos;
 
@@ -130,35 +141,89 @@ void ofxInputField<Type>::pointerPressed(PointerUIEventArgs & args){
 		pressCounter++;
 
 	}else{
-		if(bGuiActive){
+		if(hasFocus){
 			leaveFocus();
 		}
 	}
+	return false;
 }
 
 template<typename Type>
-void ofxInputField<Type>::pointerDragged(PointerUIEventArgs & args){
-	if(!bMousePressed)
-		return;
+bool ofxInputField<Type>::mouseDragged(ofMouseEventArgs & args){
 
-	ofPoint thisscreen = this->localToScreen(ofPoint(0,0));
-	float cursorX = args.screenPosition().x - (thisscreen.x + getShape().width - textPadding - inputWidth);
+	ofxBaseGui::mouseDragged(args);
+
+	if(!hasFocus || !bMousePressed)
+		return false;
+
+	float cursorX = args.x - (localToScreen(getShape()).getRight() - textPadding - inputWidth);
 	int cursorPos = ofMap(cursorX,0,inputWidth,0,input.size(),true);
 	calculateSelectionArea(mousePressedPos,cursorPos);
+	return false;
 }
 
 template<typename Type>
-void ofxInputField<Type>::pointerReleased(PointerUIEventArgs & args){
+bool ofxInputField<Type>::mouseReleased(ofMouseEventArgs & args){
+
+	ofxBaseGui::mouseReleased(args);
+
 	//	if(bUpdateOnEnterOnly){ //TODO not implemented yet
 	//		value.enableEvents();
 	//	}
 
-	if(pressCounter == 1 && !hasSelectedText()){
-		//activated panel without selecting an area => select all
-		calculateSelectionArea(0, input.size());
+	if(hasFocus){
+		if(pressCounter == 1 && !hasSelectedText()){
+			//activated panel without selecting an area => select all
+			calculateSelectionArea(0, input.size());
+		}
 	}
 
 	bMousePressed = false;
+	return false;
+}
+
+
+template<typename Type>
+typename std::enable_if<std::is_integral<Type>::value, Type>::type
+getRange(Type min, Type max, float width){
+	double range = max - min;
+	range /= width*4;
+	return std::max(range,1.0);
+}
+
+template<typename Type>
+typename std::enable_if<std::is_floating_point<Type>::value, Type>::type
+getRange(Type min, Type max, float width){
+	double range = max - min;
+	range /= width*4;
+	return range;
+}
+
+template<typename Type>
+bool ofxInputField<Type>::mouseScrolled(ofMouseEventArgs & args){
+
+	ofxBaseGui::mouseScrolled(args);
+
+	if(mouseInside || hasFocus){
+		if(args.y>0 || args.y<0){
+			double range = getRange(value.getMin(),value.getMax(),getWidth());
+			Type newValue = value + ofMap(args.y,-1,1,-range, range);
+			newValue = ofClamp(newValue,value.getMin(),value.getMax());
+			value = newValue;
+		}
+		return true;
+	}else{
+		return false;
+	}
+}
+
+template<>
+bool ofxInputField<string>::mouseScrolled(ofMouseEventArgs & args){
+	if(mouseInside || hasFocus){
+		return true;
+	}else{
+		return false;
+	}
 }
 
 template<typename Type>
@@ -181,7 +246,7 @@ void ofxInputField<Type>::unregisterKeyEvents(){
 
 template<typename Type>
 bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
-	if(bGuiActive && !bMousePressed){
+	if(hasFocus && !bMousePressed){
 
 		int newCursorIdx = -1;
 		if(args.key >= '0' && args.key <= '9'){
@@ -223,7 +288,8 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 			}
 		}else if(args.key == OF_KEY_RETURN){
 			leaveFocus();
-		}else if(args.key >= '!' && args.key <= '~'){
+		}else if((args.key >= '!' && args.key <= '~')
+				 || (args.key <= 'a' && args.key >= 'Z')){
 			newCursorIdx = insertAlphabetic(ofToString((char)args.key));
 		}
 
@@ -238,7 +304,7 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 
 template<typename Type>
 bool ofxInputField<Type>::keyReleased(ofKeyEventArgs & args){
-	return bGuiActive && !bMousePressed;
+	return hasFocus && !bMousePressed;
 }
 
 
@@ -260,34 +326,6 @@ int ofxInputField<Type>::insertAlphabetic(const std::string &){
 template<>
 int ofxInputField<string>::insertAlphabetic(const std::string & character){
 	return insertKeystroke(character);
-}
-
-
-template<typename Type>
-typename std::enable_if<std::is_integral<Type>::value, Type>::type
-getRange(Type min, Type max, float width){
-	double range = max - min;
-	range /= width*4;
-	return std::max(range,1.0);
-}
-
-template<typename Type>
-typename std::enable_if<std::is_floating_point<Type>::value, Type>::type
-getRange(Type min, Type max, float width){
-	double range = max - min;
-	range /= width*4;
-	return range;
-}
-
-template<typename Type>
-void ofxInputField<Type>::pointerScrolled(PointerUIEventArgs& e){
-	// TODO
-//	if(args.y>0 || args.y<0){
-//		double range = getRange(value.getMin(),value.getMax(),getWidth());
-//		Type newValue = value + ofMap(args.y,-1,1,-range, range);
-//		newValue = ofClamp(newValue,value.getMin(),value.getMax());
-//		value = newValue;
-//	}
 }
 
 template<typename Type>
@@ -321,7 +359,7 @@ template<typename Type>
 void ofxInputField<Type>::render(){
 	ofxBaseGui::render();
 
-	if(bGuiActive){
+	if(hasFocus){
 		drawFocusedBB();
 
 		if(hasSelectedText()){
@@ -384,7 +422,7 @@ void ofxInputField<Type>::drawFocusedBB(){
 }
 
 template<typename Type>
-bool ofxInputField<Type>::setValue(float mx, float my){
+bool ofxInputField<Type>::setValue(float mx, float my, bool bCheck){
 	return false;
 }
 
@@ -419,7 +457,7 @@ void ofxInputField<Type>::valueChanged(Type & value){
 	}else{
 		input = ofToString(value);
 		inputWidth = getTextBoundingBox(input,0,0).width;
-		if(bGuiActive){
+		if(hasFocus){
 			int cursorPos = input.size();
 			calculateSelectionArea(cursorPos,cursorPos);
 		}
@@ -429,10 +467,10 @@ void ofxInputField<Type>::valueChanged(Type & value){
 
 template<typename Type>
 void ofxInputField<Type>::leaveFocus(){
-	bGuiActive = false;
 	pressCounter = 0;
 	input = ofToString(value);
 	inputWidth = getTextBoundingBox(input,0,0).width;
+	hasFocus = false;
 	setNeedsRedraw();
 }
 

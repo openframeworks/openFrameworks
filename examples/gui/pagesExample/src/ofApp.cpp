@@ -3,26 +3,56 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
+	ofSetFrameRate(120);
+
 	ofSetLogLevel(OF_LOG_VERBOSE);
 
-	setupPage1();
-	setupPage2();
-	setupPage3();
+	parameter.set("parameter", 0, 0,1);
 
-	page.setup("single page");
-	page.setSize(300, 300);
-    page.add(panel3);
+	group.setName("group");
+	group.add(parameter);
 
-	page1.setup("page 1");
-    page1.add(panel1);
+	for(int i = 0; i < 20; i++){
+		group.clear();
+		group.add(parameter);
+		cout << parameter.getNumListeners() << endl;
+	}
 
-	page2.setup("page 2");
-    page2.add(panel2);
 
-	tabbed_pages.setup("tabbed pages", "", page.getShape().getRight() + 10);
-	tabbed_pages.setSize(500, 300);
-    tabbed_pages.add(page1);
-    tabbed_pages.add(page2);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//	gui_doc =  std::make_unique<ofx::DOM::Document>();
+
+//	tabbed_pages = gui_doc->add<ofxGuiTabs>("tabbed pages", "", 10,10);
+//	tabbed_pages->setSize(500, 300);
+
+//	page1 = tabbed_pages->add<ofxPanel>("page 1");
+
+//	panel1 = page1->add<ofxPanel>("panel1");
+//	panel1->add(slider_param.set("slider", 0.5, 0, 1));
+
+//	page2= tabbed_pages->add<ofxPanel>("page 2");
+
+//	panel2 = page2->add<ofxPanel>("horizontal", "", 60, 10);
+//	panel2->setShowHeader(false);
+//	panel2->setExclusiveToggles(true);
+//	panel2->add(toggle2_param.set("toggle2", false));
+//	panel2->add(toggle3_param.set("toggle3", false));
+//	panel2->add(toggle4_param.set("toggle4", false));
+
+
 
 }
 
@@ -37,34 +67,6 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	ofSetColor(255);
-
-	page.draw();
-
-	tabbed_pages.draw();
-
-}
-
-void ofApp::setupPage1(){
-	panel1.setup("panel1");
-    panel1.add(slider_param.set("slider", 0.5, 0, 1));
-}
-
-void ofApp::setupPage2(){
-    panel2.setup("horizontal", "", 60, 10);
-	panel2.setShowHeader(false);
-    panel2.setExclusiveToggles(true);
-    panel2.add(toggle2_param.set("toggle2", false));
-    panel2.add(toggle3_param.set("toggle3", false));
-    panel2.add(toggle4_param.set("toggle4", false));
-}
-
-void ofApp::setupPage3(){
-    panel3.setup("just some toggles", "", 60, 66);
-    panel3.setExclusiveToggles(true);
-    panel3.add(toggle2_param);
-    panel3.add(toggle3_param);
-    panel3.add(toggle4_param);
 }
 
 //--------------------------------------------------------------

@@ -2,12 +2,20 @@
 #include "ofGraphics.h"
 using namespace std;
 
+ofxValuePlotter::ofxValuePlotter()
+	:ofxBaseGui(){
+
+	setup();
+
+}
+
 ofxValuePlotter::ofxValuePlotter(const ofJson & config)
 	:ofxBaseGui(config){
 
-	setup(config);
+	_setConfig(config);
 
 }
+
 
 ofxValuePlotter::ofxValuePlotter(ofParameter<float> value, const ofJson & config) :
 	ofxValuePlotter(config){
@@ -31,7 +39,7 @@ ofxValuePlotter::~ofxValuePlotter(){
 	value.removeListener(this,&ofxValuePlotter::valueChanged);
 }
 
-void ofxValuePlotter::setup(const ofJson &config){
+void ofxValuePlotter::setup(){
 
 	decimalPlace.set("precision", 3);
 	minVal.set("min", 0);
@@ -42,11 +50,10 @@ void ofxValuePlotter::setup(const ofJson &config){
 	buffer.clear();
 	value.addListener(this,&ofxValuePlotter::valueChanged);
 
-	processConfig(config);
-
 }
 
-void ofxValuePlotter::processConfig(const ofJson & config){
+void ofxValuePlotter::_setConfig(const ofJson & config){
+	ofxBaseGui::_setConfig(config);
 	// TODO
 }
 

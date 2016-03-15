@@ -12,11 +12,11 @@ class ofxRotarySlider : public ofxSlider <Type> {
 
 		~ofxRotarySlider();
 
-		virtual void pointerPressed(PointerUIEventArgs & args);
+		virtual bool mousePressed(ofMouseEventArgs & args) override;
 
 	protected:
 		virtual void render();
-		virtual bool setValue(float mx, float my) override;
+		virtual bool setValue(float mx, float my, bool bCheck) override;
 		void generateDraw();
 		void generateText();
 		void valueChanged(Type & value);

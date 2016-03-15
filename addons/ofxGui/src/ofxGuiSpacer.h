@@ -5,14 +5,26 @@
 class ofxGuiSpacer : public ofxBaseGui {
 	public:
 
-		ofxGuiSpacer(const ofJson & config = ofJson());
+		ofxGuiSpacer():ofxBaseGui(){
+			setup();
+		}
+
+		ofxGuiSpacer(const ofJson & config):ofxGuiSpacer(){
+			_setConfig(config);
+		}
 
 		virtual ~ofxGuiSpacer(){
 		}
 
-		void setup(const ofJson & config = ofJson());
+		void setup(){
+			backgroundColor = ofColor(0, 0, 0, 0);
+			borderWidth = 0;
 
-		virtual ofAbstractParameter & getParameter();
+		}
+
+		virtual ofAbstractParameter & getParameter(){
+			return parameter;
+		}
 
 	protected:
 		virtual bool setValue(float mx, float my){

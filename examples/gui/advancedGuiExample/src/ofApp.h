@@ -34,7 +34,7 @@ class ofApp : public ofBaseApp {
 		ofParameter<float> floatfield_param;
 		ofParameter<string> textfield_param;
 
-		ofxMinimalButton *button;
+		ofxButton *button;
 
 		ofParameter <string> label_param;
 		ofParameter <bool> toggle_param;

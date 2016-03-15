@@ -58,30 +58,37 @@ ofxBaseGui::defaultBorderColor(120, 100),
 ofxBaseGui::defaultTextColor(255),
 ofxBaseGui::defaultFillColor(128);
 
-float ofxBaseGui::defaultBorderWidth = 1;
+float ofxBaseGui::defaultBorderWidth = 3;
 int ofxBaseGui::textPadding = 4;
 int ofxBaseGui::defaultWidth = 200;
-int ofxBaseGui::defaultHeight = 18;
+int ofxBaseGui::defaultHeight = 25;
 
 ofTrueTypeFont ofxBaseGui::font;
 bool ofxBaseGui::fontLoaded = false;
 bool ofxBaseGui::useTTF = false;
 ofBitmapFont ofxBaseGui::bitmapFont;
 
-ofxBaseGui::ofxBaseGui(const ofJson &config)
+ofxBaseGui::ofxBaseGui()
 	:Element("",0,0,defaultWidth, defaultHeight){
 
-	setup(config);
+	setup();
 
 }
 
-void ofxBaseGui::setup(const ofJson &config){
+ofxBaseGui::ofxBaseGui(const ofJson &config)
+	:ofxBaseGui(){
+
+	_setConfig(config);
+
+}
+
+void ofxBaseGui::setup(){
 
 #ifndef TARGET_EMSCRIPTEN
 	serializer = std::make_shared<ofXml>();
 #endif
 
-	registeredForPointerEvents = false;
+	bRegisteredForMouseEvents = false;
 
 	headerBackgroundColor.set("header-background-color", defaultHeaderBackgroundColor);
 	backgroundColor.set("background-color", defaultBackgroundColor);
@@ -92,18 +99,46 @@ void ofxBaseGui::setup(const ofJson &config){
 	textAlignment.set("text-alignment", TextAlignment::Left);
 	showName.set("show-name", true);
 
+	// parameter won't be saved to file
+	parameter.setSerializable(false);
+
 	setAttribute("float", LayoutFloat::NONE);
 
-	// TODO is this needed?
-	setImplicitPointerCapture(true);
+	registerMouseEvents();
 
 	setSize(defaultWidth, defaultHeight);
 
-	processConfig(config);
-
 }
 
-void ofxBaseGui::processConfig(const ofJson &config){
+void ofxBaseGui::registerMouseEvents(int priority){
+	if(bRegisteredForMouseEvents == true){
+		return; // already registered.
+	}
+	bRegisteredForMouseEvents = true;
+	ofRegisterMouseEvents(this, priority);
+}
+
+void ofxBaseGui::unregisterMouseEvents(int priority){
+	if(bRegisteredForMouseEvents == false){
+		return; // not registered.
+	}
+	ofUnregisterMouseEvents(this, priority);
+	bRegisteredForMouseEvents = false;
+}
+
+void ofxBaseGui::setConfig(const ofJson &config, bool recursive){
+	_setConfig(config);
+	if(recursive){
+		for(auto& e: children()){
+			ofxBaseGui* _e = dynamic_cast<ofxBaseGui*>(e);
+			if(_e){
+				_e->setConfig(config, recursive);
+			}
+		}
+	}
+}
+
+void ofxBaseGui::_setConfig(const ofJson &config){
 
 	//parse colors
 	JsonConfigParser::parse(config, backgroundColor);
@@ -133,6 +168,10 @@ void ofxBaseGui::processConfig(const ofJson &config){
 
 }
 
+ofAbstractParameter& ofxBaseGui::getParameter(){
+	return parameter;
+}
+
 void ofxBaseGui::loadFont(const std::string& filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
 	font.load(filename, fontsize, _bAntiAliased, _bFullCharacterSet, false, 0, dpi);
 	fontLoaded = true;
@@ -147,6 +186,7 @@ void ofxBaseGui::setUseTTF(bool bUseTTF){
 }
 
 ofxBaseGui::~ofxBaseGui(){
+	unregisterMouseEvents();
 }
 
 void ofxBaseGui::bindFontTexture(){
@@ -327,23 +367,18 @@ void ofxBaseGui::setShowName(bool show){
 void ofxBaseGui::generateDraw(){
 
 	bg.clear();
-	border.clear();
 
 	bg.setFillColor(backgroundColor);
 	bg.setFilled(true);
-	bg.rectangle(borderWidth,borderWidth,getWidth()-2*borderWidth,getHeight()-2*borderWidth);
-
-	border.setStrokeColor(borderColor);
-	border.setFilled(false);
-	border.setStrokeWidth(borderWidth);
-	border.rectangle(0,0,getWidth(),getHeight());
+	bg.setStrokeColor(borderColor);
+	bg.setStrokeWidth(borderWidth);
+	bg.rectangle(0,0,getWidth(),getHeight());
 
 }
 
 void ofxBaseGui::render(){
 
 	bg.draw();
-	border.draw();
 
 }
 
@@ -405,108 +440,74 @@ float ofxBaseGui::getTextWidth(const std::string & text, float _height){
 	return _width;
 }
 
-bool ofxBaseGui::isPointerOver() const{
-	return _isPointerOver;
+bool ofxBaseGui::isMouseOver() const{
+	return _isMouseOver;
 }
 
-
-bool ofxBaseGui::isPointerDown() const{
+bool ofxBaseGui::isMousePressed() const{
 	return !capturedPointers().empty();
 }
-
-
-void ofxBaseGui::setDropTarget(bool dropTarget){
-	_isDropTarget = dropTarget;
-}
-
-
-bool ofxBaseGui::isDropTarget() const{
-	return _isDropTarget;
-}
-
 
 void ofxBaseGui::setDraggable(bool draggable){
 	_isDraggable = draggable;
 }
 
-
 bool ofxBaseGui::isDraggable() const{
 	return _isDraggable;
 }
-
 
 bool ofxBaseGui::isDragging() const{
 	return _isDragging;
 }
 
-void ofxBaseGui::onPointerEvent(PointerUIEventArgs &e)
-{
-	if (e.type() == PointerEventArgs::POINTER_DOWN)
-	{
-	}
-	else if (e.type() == PointerEventArgs::POINTER_MOVE)
-	{
-		if (_isDragging)
-		{
-			if (!capturedPointers().empty())
-			{
-				const DOM::CapturedPointer& pointer = *capturedPointers().begin();
-				setPosition(screenToParent(pointer.position() - pointer.offset()));
-			}
-			else
-			{
-				ofLogError("Widget::_onPointerEvent") << "No captured pointers to drag with.";
-			}
-
+bool ofxBaseGui::mouseDragged(ofMouseEventArgs & args){
+	if(!isHidden()){
+		if(_isDragging){
+			ofPoint newpos = ofPoint(args.x - grabPoint.x,args.y - grabPoint.y);
+			setPosition(getPosition() + newpos);
+			grabPoint = ofPoint(args.x, args.y);
+			return true;
 		}
-	}
-	else if (e.type() == PointerEventArgs::POINTER_OVER)
-	{
-		_isPointerOver = true;
-	}
-	else if (e.type() == PointerEventArgs::POINTER_OUT)
-	{
-		_isPointerOver = false;
-	}
-	else
-	{
-		// unhandled.
-	}
-}
-
-
-void ofxBaseGui::onPointerCaptureEvent(PointerCaptureUIEventArgs& e)
-{
-	if (e.type() == PointerEventArgs::GOT_POINTER_CAPTURE)
-	{
-		// TODO needed?
-//		if (_moveToFrontOnCapture)
-//		{
-//			moveToFront();
-//		}
-
-		_isDragging = _isDraggable;
-
-	}
-	else if (e.type() == PointerEventArgs::LOST_POINTER_CAPTURE)
-	{
+	}else {
 		_isDragging = false;
+		_isMouseOver= false;
 	}
+	return false;
 }
 
-
-void ofxBaseGui::registerPointerEvents(){
-	if(registeredForPointerEvents == true){
-		return; // already registered.
+bool ofxBaseGui::mousePressed(ofMouseEventArgs & args){
+	if(!isHidden()){
+		if(localToScreen(ofRectangle(0,0,getWidth(),getHeight())).inside(args.x, args.y)){
+			if(_isDraggable){
+				_isDragging = true;
+				grabPoint = ofPoint(args.x, args.y);
+				return true;
+			}
+		}else {
+			_isDragging = false;
+		}
+	}else {
+		_isDragging = false;
+		_isMouseOver= false;
 	}
-	registeredForPointerEvents = true;
-	_registerPointerEvents(this);
+	return false;
 }
 
-void ofxBaseGui::unregisterPointerEvents(){
-	if(registeredForPointerEvents == false){
-		return; // not registered.
+bool ofxBaseGui::mouseMoved(ofMouseEventArgs & args){
+	if(!isHidden()){
+		if(localToScreen(ofRectangle(0,0,getWidth(),getHeight())).inside(args.x, args.y)){
+			_isMouseOver = true;
+		}else {
+			_isMouseOver = false;
+		}
+	}else{
+		_isDragging = false;
+		_isMouseOver= false;
 	}
-	_registerPointerEvents(this);
-	registeredForPointerEvents = false;
+	return false;
+}
+
+bool ofxBaseGui::mouseReleased(ofMouseEventArgs & args){
+	_isDragging = false;
+	return false;
 }

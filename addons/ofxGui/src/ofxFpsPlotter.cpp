@@ -1,10 +1,16 @@
 #include "ofxFpsPlotter.h"
 #include "ofAppRunner.h"
 
-ofxFpsPlotter::ofxFpsPlotter(const ofJson & config)
-:ofxValuePlotter(ofParameter<float>("fps",0),config){
+ofxFpsPlotter::ofxFpsPlotter()
+:ofxValuePlotter(ofParameter<float>("fps",0)){
 
-	setup(config);
+	setup();
+}
+
+ofxFpsPlotter::ofxFpsPlotter(const ofJson & config)
+:ofxFpsPlotter(){
+
+	_setConfig(config);
 }
 
 ofxFpsPlotter::ofxFpsPlotter(string label, float minValue, float maxValue, int plotSize, float width, float height)
@@ -18,7 +24,7 @@ ofxFpsPlotter::~ofxFpsPlotter(){
 	ofRemoveListener(ofEvents().update,this,&ofxFpsPlotter::update);
 }
 
-void ofxFpsPlotter::setup(const ofJson&){
+void ofxFpsPlotter::setup(){
 	if(minVal.get() == maxVal.get()) {
 		if(ofGetTargetFrameRate() > 0) {
 			minVal = 0;

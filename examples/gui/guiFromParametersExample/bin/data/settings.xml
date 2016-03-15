@@ -1,8 +1,9 @@
 <panel>
-    <bFill>1</bFill>
-    <radius>140</radius>
+    <bFill>0</bFill>
+    <radius>247.8</radius>
     <center>512, 384</center>
     <color>100, 100, 140, 255</color>
     <circleRes>5</circleRes>
     <screenSize>1024x768</screenSize>
+<panel/>
 </panel>

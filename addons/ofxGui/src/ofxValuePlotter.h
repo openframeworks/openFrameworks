@@ -5,27 +5,25 @@
 class ofxValuePlotter : public ofxBaseGui {
 	public:
 
-		ofxValuePlotter(const ofJson & config = ofJson());
+		ofxValuePlotter();
+		ofxValuePlotter(const ofJson & config);
 		ofxValuePlotter(ofParameter<float> value, const ofJson & config = ofJson());
 		ofxValuePlotter(string label, float minValue, float maxValue, int plotSize = 100, float width = defaultWidth, float height = defaultHeight);
 
 		virtual ~ofxValuePlotter();
 
-		void setup(const ofJson &config = ofJson());
+		void setup();
 
 		void setDecimalPlace(int place);
 
-		virtual ofAbstractParameter & getParameter();
+		virtual ofAbstractParameter & getParameter() override;
 
 	protected:
 
-		virtual void processConfig(const ofJson & config);
+		virtual void _setConfig(const ofJson & config) override;
+		virtual void render() override;
+		virtual void generateDraw() override;
 
-		bool setValue(float mx, float my){
-			return false;
-		}
-		void render();
-		void generateDraw();
 		ofVboMesh textMesh;
 		vector <float> buffer;
 		ofPath plot;

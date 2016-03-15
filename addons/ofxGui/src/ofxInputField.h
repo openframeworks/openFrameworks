@@ -5,7 +5,8 @@
 template<typename Type>
 class ofxInputField : public ofxBaseGui{
 public:
-	ofxInputField(const ofJson &config = ofJson());
+	ofxInputField();
+	ofxInputField(const ofJson &config);
 	ofxInputField(ofParameter<Type> _val, const ofJson &config = ofJson());
 	ofxInputField(ofParameter<Type> _val, float width, float height = defaultHeight);
 	ofxInputField(const std::string& _name, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
@@ -13,18 +14,18 @@ public:
 
 	~ofxInputField();
 
-	void setup(const ofJson &config);
+	void setup();
 
 	void setMin(Type min);
 	Type getMin();
 	void setMax(Type max);
 	Type getMax();
 
-	virtual void pointerMoved(PointerUIEventArgs& e);
-	virtual void pointerDragged(PointerUIEventArgs& e);
-	virtual void pointerPressed(PointerUIEventArgs& e);
-	virtual void pointerReleased(PointerUIEventArgs& e);
-	virtual void pointerScrolled(PointerUIEventArgs& e);
+	virtual bool mouseMoved(ofMouseEventArgs & args) override;
+	virtual bool mousePressed(ofMouseEventArgs & args) override;
+	virtual bool mouseDragged(ofMouseEventArgs & args) override;
+	virtual bool mouseReleased(ofMouseEventArgs & args) override;
+	virtual bool mouseScrolled(ofMouseEventArgs & args) override;
 
 	void registerKeyEvents();
 	void unregisterKeyEvents();
@@ -50,9 +51,10 @@ public:
 protected:
 	virtual void render();
 	ofParameter<Type> value;
-	bool bGuiActive, bMousePressed;
+	bool bMousePressed;
 	bool mouseInside;
-	bool setValue(float mx, float my);
+	bool hasFocus;
+	bool setValue(float mx, float my, bool bCheck);
 	virtual void generateDraw();
 	virtual void generateText();
 	void valueChanged(Type & value);

@@ -1,23 +1,37 @@
 #include "ofxButton.h"
 using namespace std;
 
+ofxButton::ofxButton()
+	:ofxToggle(){
+	setup();
+}
+
+ofxButton::ofxButton(const string &buttonName)
+	:ofxButton(){
+	setName(buttonName);
+}
+
 ofxButton::ofxButton(const string &buttonName, const ofJson & config)
-	:ofxToggle(buttonName, config){
-	setup(config);
+	:ofxButton(buttonName){
+	_setConfig(config);
 }
 
 ofxButton::ofxButton(ofParameter<void> &_val, const ofJson & config)
-	:ofxToggle(value, config){
+	:ofxToggle(){
 	//value.setSerializable(false);
 	voidvalue.makeReferenceTo(_val);
 	useVoidValue = true;
-	setup(config);
+	ofxButton::setup();
+	setup();
+	_setConfig(config);
 }
 
 ofxButton::ofxButton(ofParameter<bool> &_val, const ofJson & config)
-	:ofxToggle(_val, config){
+	:ofxToggle(){
 	value.makeReferenceTo(_val);
-	setup(config);
+	ofxButton::setup();
+	setup();
+	_setConfig(config);
 }
 
 ofxButton::ofxButton(ofParameter<void>& _val, float width, float height)
@@ -38,23 +52,32 @@ ofxButton::ofxButton(const std::string& buttonName, float width, float height):
 ofxButton::~ofxButton(){
 }
 
-void ofxButton::setup(const ofJson &config){
-	processConfig(config);
+void ofxButton::setup(){
+
+	value.setSerializable(false);
+	registerMouseEvents();
+
 }
 
-bool ofxButton::setValue(float mx, float my){
+bool ofxButton::setValue(float mx, float my, bool bCheck){
 
-	ofRectangle checkRect = checkboxRect;
-	checkRect.x += getScreenPosition().x;
-	checkRect.y += getScreenPosition().y;
+	if(isHidden()){
+		hasFocus = false;
+		return false;
+	}
+	if(bCheck){
 
-	if( checkRect.inside(mx, my) ){
+		ofRectangle checkRect = checkboxRect;
+		checkRect.x += getScreenPosition().x;
+		checkRect.y += getScreenPosition().y;
+
+		hasFocus = checkRect.inside(mx, my);
+	}
+	if(hasFocus){
 		value = !value;
 		voidvalue.trigger();
-		setNeedsRedraw();
 		return true;
 	}
-
 	return false;
 }
 
@@ -65,8 +88,12 @@ void ofxButton::generateDraw(){
 	ofxToggle::generateDraw();
 }
 
-void ofxButton::pointerReleased(PointerUIEventArgs& e){
-	setValue(e.screenPosition().x, e.screenPosition().y);
+bool ofxButton::mouseReleased(ofMouseEventArgs & args){
+
+	ofxBaseGui::mouseReleased(args);
+
+	bool attended = setValue(args.x, args.y, false);
+	hasFocus = false;
+	return attended;
+
 }
-
-

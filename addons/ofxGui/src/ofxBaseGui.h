@@ -20,13 +20,16 @@ enum TextAlignment{
 class ofxBaseGui : public ofx::DOM::Element {
 	public:
 
-		ofxBaseGui(const ofJson & config = ofJson());
+		ofxBaseGui();
+		ofxBaseGui(const ofJson & config);
 
-		void setup(const ofJson & config = ofJson());
+		void setup();
 
 		virtual ~ofxBaseGui();
 		ofxBaseGui(const ofxBaseGui &) = delete;
 		ofxBaseGui & operator=(const ofxBaseGui &) = delete;
+
+		void setConfig(const ofJson &config, bool recursive=true);
 
 		void saveToFile(const std::string& filename);
 		void loadFromFile(const std::string& filename);
@@ -68,63 +71,51 @@ class ofxBaseGui : public ofx::DOM::Element {
 
 		void setShowName(bool show);
 
-		virtual ofAbstractParameter & getParameter(){return parameter;}
+		virtual ofAbstractParameter & getParameter();
 		static void loadFont(const std::string& filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, int dpi = 0);
 		static void setUseTTF(bool bUseTTF);
 
-		/// \returns true if the pointer is over this Widget.
-		bool isPointerOver() const;
+		/// \returns true if the mouse is over this element.
+		bool isMouseOver() const;
 
-		/// \returns true if the pointer is down on this Widget.
-		bool isPointerDown() const;
+		/// \returns true if the mouse is pressed on this element.
+		bool isMousePressed() const;
 
-		/// \brief Enable or disable the Widget as a drop target.
-		/// \param dropTarget True iff this Widget is a drop target.
-		void setDropTarget(bool dropTarget);
-
-		/// \brief Determine if this Widget is a drop target.
-		/// \returns true iff this Widget is a drop target.
-		bool isDropTarget() const;
-
-		/// \brief Set draggability for this Widget.
-		/// \param draggable True iff draggability is enabled.
+		/// \brief Set draggability for this element.
+		/// \param draggable True if draggability is enabled.
 		void setDraggable(bool draggable);
 
-		/// \brief Determine if draggability is enabled for this Widget.
-		/// \returns true iff the draggability is enabled.
+		/// \brief Determine if draggability is enabled for this element.
+		/// \returns true if the draggability is enabled.
 		bool isDraggable() const;
 
-		/// \brief Determine if this Widget is being dragged.
-		/// \returns true if this Widget is being dragged.
+		/// \brief Determine if this element is being dragged.
+		/// \returns true if this element is being dragged.
 		bool isDragging() const;
+
+		void registerMouseEvents(int priority = OF_EVENT_ORDER_BEFORE_APP);
+		void unregisterMouseEvents(int priority = OF_EVENT_ORDER_BEFORE_APP);
+
+		virtual bool mouseMoved(ofMouseEventArgs & args);
+		virtual bool mousePressed(ofMouseEventArgs & args);
+		virtual bool mouseDragged(ofMouseEventArgs & args);
+		virtual bool mouseReleased(ofMouseEventArgs & args);
+		virtual bool mouseScrolled(ofMouseEventArgs & args){return false;}
+		virtual void mouseEntered(ofMouseEventArgs & args){}
+		virtual void mouseExited(ofMouseEventArgs & args){}
 
 	protected:
 
 		virtual void generateDraw();
 		virtual void render();
 
-		void registerPointerEvents();
-		void unregisterPointerEvents();
+		virtual void _setConfig(const ofJson & config);
 
-		template <class ListenerClass>
-		void _registerPointerEvents(ListenerClass* obj, bool useCapture = false, int priority = OF_EVENT_ORDER_AFTER_APP);
-		template <class ListenerClass>
-		void _unregisterPointerEvents(ListenerClass* obj, bool useCapture = false, int priority = OF_EVENT_ORDER_AFTER_APP);
-
-		virtual void pointerMoved(PointerUIEventArgs& e){}
-		virtual void pointerDragged(PointerUIEventArgs& e){}
-		virtual void pointerPressed(PointerUIEventArgs& e){}
-		virtual void pointerReleased(PointerUIEventArgs& e){}
-		virtual void pointerEntered(PointerUIEventArgs& e){}
-		virtual void pointerExited(PointerUIEventArgs& e){}
-		virtual void pointerScrolled(PointerUIEventArgs& e){}
-
-		virtual void onPointerEvent(PointerUIEventArgs &e);
-		/// \brief Default callback for built-in events, including dragging.
-		virtual void onPointerCaptureEvent(PointerCaptureUIEventArgs& e);
-
-		virtual void processConfig(const ofJson & config);
-		virtual bool setValue(float mx, float my){return false;}
+		/// \brief Sets the value of the element based on a position
+		/// \param mx The horizontal position
+		/// \param my The vertical position
+		/// \param boundaryCheck If true, it checks whether the position is inside of the element. If not, the value won't be changed.
+		virtual bool setValue(float mx, float my, bool boundaryCheck){return false;}
 		void bindFontTexture();
 		void unbindFontTexture();
 		ofMesh getTextMesh(const std::string & text, ofPoint p);
@@ -156,10 +147,6 @@ class ofxBaseGui : public ofx::DOM::Element {
 		static std::string saveStencilToHex(const ofImage & img);
 		static void loadStencilFromHex(ofImage & img, unsigned char * data);
 
-
-		/// \brief True if the Widget is a target for dragged Widgets.
-		bool _isDropTarget = false;
-
 		/// \brief True if the Widget is configured to be dragged.
 		bool _isDraggable = false;
 
@@ -167,9 +154,12 @@ class ofxBaseGui : public ofx::DOM::Element {
 		bool _isDragging = false;
 
 		/// \brief True if the pointer is over the widget.
-		bool _isPointerOver = false;
+		bool _isMouseOver = false;
 
-		ofPath bg, border;
+		/// \brief Point where element is grabbed for dragging in screen coordinates
+		ofPoint grabPoint;
+
+		ofPath bg;
 
 		ofParameter<ofColor> headerBackgroundColor;
 		ofParameter<ofColor> backgroundColor;
@@ -180,58 +170,8 @@ class ofxBaseGui : public ofx::DOM::Element {
 		ofParameter<TextAlignment> textAlignment;
 		ofParameter<bool> showName;
 
-		bool registeredForPointerEvents;
+		bool bRegisteredForMouseEvents;
 
 		ofParameter<void> parameter;
 
 };
-
-template <class ListenerClass>
-void ofxBaseGui::_registerPointerEvents(ListenerClass* obj, bool useCapture, int priority){
-	ofAddListener(pointerOver.event(useCapture), obj, &ListenerClass::pointerMoved, priority);
-	ofAddListener(pointerMove.event(useCapture), obj, &ListenerClass::pointerDragged, priority);
-	ofAddListener(pointerScroll.event(useCapture), obj, &ListenerClass::pointerScrolled, priority);
-	ofAddListener(pointerEnter.event(useCapture), obj, &ListenerClass::pointerEntered, priority);
-	ofAddListener(pointerOut.event(useCapture), obj, &ListenerClass::pointerExited, priority);
-	ofAddListener(pointerLeave.event(useCapture), obj, &ListenerClass::pointerExited, priority);
-	ofAddListener(pointerDown.event(useCapture), obj, &ListenerClass::pointerPressed, priority);
-	ofAddListener(pointerUp.event(useCapture), obj, &ListenerClass::pointerReleased, priority);
-
-	ofAddListener(pointerOver.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-	ofAddListener(pointerMove.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-	ofAddListener(pointerScroll.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-	ofAddListener(pointerEnter.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-	ofAddListener(pointerOut.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-	ofAddListener(pointerLeave.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-	ofAddListener(pointerDown.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-	ofAddListener(pointerUp.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-
-	ofAddListener(gotPointerCapture.event(useCapture), obj, &ListenerClass::onPointerCaptureEvent, priority);
-	ofAddListener(lostPointerCapture.event(useCapture), obj, &ListenerClass::onPointerCaptureEvent, priority);
-
-}
-
-template <class ListenerClass>
-void ofxBaseGui::_unregisterPointerEvents(ListenerClass* obj, bool useCapture, int priority){
-	 ofRemoveListener(pointerOver.event(useCapture), obj, &ListenerClass::pointerMoved, priority);
-	 ofRemoveListener(pointerMove.event(useCapture), obj, &ListenerClass::pointerDragged, priority);
-	 ofRemoveListener(pointerScroll.event(useCapture), obj, &ListenerClass::pointerScrolled, priority);
-	 ofRemoveListener(pointerEnter.event(useCapture), obj, &ListenerClass::pointerEntered, priority);
-	 ofRemoveListener(pointerOut.event(useCapture), obj, &ListenerClass::pointerExited, priority);
-	 ofRemoveListener(pointerLeave.event(useCapture), obj, &ListenerClass::pointerExited, priority);
-	 ofRemoveListener(pointerDown.event(useCapture), obj, &ListenerClass::pointerPressed, priority);
-	 ofRemoveListener(pointerUp.event(useCapture), obj, &ListenerClass::pointerReleased, priority);
-
-	 ofRemoveListener(pointerOver.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-	 ofRemoveListener(pointerMove.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-	 ofRemoveListener(pointerScroll.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-	 ofRemoveListener(pointerEnter.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-	 ofRemoveListener(pointerOut.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-	 ofRemoveListener(pointerLeave.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-	 ofRemoveListener(pointerDown.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-	 ofRemoveListener(pointerUp.event(useCapture), obj, &ListenerClass::onPointerEvent, priority);
-
-	 ofRemoveListener(gotPointerCapture.event(useCapture), obj, &ListenerClass::onPointerCaptureEvent, priority);
-	 ofRemoveListener(lostPointerCapture.event(useCapture), obj, &ListenerClass::onPointerCaptureEvent, priority);
-
-}

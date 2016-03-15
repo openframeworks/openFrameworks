@@ -10,7 +10,7 @@ FloatingBoxLayout::FloatingBoxLayout(Element* parent, Orientation orientation):
 FloatingBoxLayout::~FloatingBoxLayout(){
 }
 
-void FloatingBoxLayout::processConfig(const ofJson & config){
+void FloatingBoxLayout::setConfig(const ofJson & config){
 }
 
 void FloatingBoxLayout::doLayout(){
@@ -129,7 +129,7 @@ void FloatingBoxLayout::nextLeftFloatPositionLoop(Element* e, ofPoint& res){
 								alignright.x = s_right;
 
 								if(s_right + e->getWidth() < _parent->getWidth()
-										&& worksWithFloats(alignright, e, LayoutFloat::RIGHT)){
+										&& checkForIntersections(alignright, e, LayoutFloat::RIGHT)){
 									res.x = s_right;
 									nextLeftFloatPositionLoop(e, res);
 								}
@@ -213,8 +213,8 @@ void FloatingBoxLayout::nextRightFloatPositionLoop(Element* e, ofPoint& res){
 								alignright.x = s_left-e_width;
 
 								if(alignright.x >= 0
-										&& worksWithFloats(alignright, e, LayoutFloat::LEFT)
-										&& worksWithFloats(alignright, e, LayoutFloat::NONE)){
+										&& checkForIntersections(alignright, e, LayoutFloat::LEFT)
+										&& checkForIntersections(alignright, e, LayoutFloat::NONE)){
 									res.x = alignright.x;
 									nextRightFloatPositionLoop(e, res);
 								}
@@ -257,7 +257,7 @@ void FloatingBoxLayout::nextRightFloatPositionLoop(Element* e, ofPoint& res){
 	}
 }
 
-bool FloatingBoxLayout::worksWithFloats(ofPoint pos, Element* e, LayoutFloat floatType){
+bool FloatingBoxLayout::checkForIntersections(ofPoint pos, Element* e, LayoutFloat floatType){
 
 	for (Element* sibling : children()){
 

@@ -3,27 +3,37 @@
 using namespace std;
 
 template<typename Type>
-ofxValueLabel<Type>::ofxValueLabel(const ofJson & config)
-:ofxBaseGui(config){
+ofxValueLabel<Type>::ofxValueLabel()
+:ofxBaseGui(){
 
-	setup(config);
+	setup();
+
+}
+
+template<typename Type>
+ofxValueLabel<Type>::ofxValueLabel(const ofJson & config)
+:ofxValueLabel(){
+
+	_setConfig(config);
 
 }
 
 template<typename Type>
 ofxValueLabel<Type>::ofxValueLabel(ofParameter<Type> _label, const ofJson & config)
-:ofxBaseGui(config){
+:ofxBaseGui(){
 
 	label.makeReferenceTo(_label);
-	setup(config);
+	setup();
+	_setConfig(config);
 
 }
 
 template<>
 ofxValueLabel<std::string>::ofxValueLabel(const string& labelName, const ofJson & config)
-:ofxValueLabel<std::string>(config){
+:ofxValueLabel<std::string>(){
 
 	label.set(labelName);
+	_setConfig(config);
 
 }
 
@@ -38,9 +48,10 @@ ofxValueLabel<Type>::ofxValueLabel(ofParameter<Type> _label, float width, float 
 
 template<typename Type>
 ofxValueLabel<Type>::ofxValueLabel(const string& labelName, const Type& _label, const ofJson & config)
-	:ofxValueLabel<Type>(config){
+	:ofxValueLabel<Type>(){
 
 	label.set(labelName,_label);
+	_setConfig(config);
 
 }
 
@@ -61,7 +72,7 @@ ofxValueLabel<Type>::~ofxValueLabel(){
 }
 
 template<typename Type>
-void ofxValueLabel<Type>::setup(const ofJson&){
+void ofxValueLabel<Type>::setup(){
 
 	label.addListener(this,&ofxValueLabel::valueChanged);
 

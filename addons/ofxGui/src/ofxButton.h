@@ -6,19 +6,20 @@
 class ofxButton : public ofxToggle{
 public:
 
-	ofxButton(const std::string& buttonName="", const ofJson & config = ofJson());
+	ofxButton();
+	ofxButton(const std::string& buttonName);
+	ofxButton(const std::string& buttonName, const ofJson & config);
 	ofxButton(ofParameter<void>& _val, const ofJson & config = ofJson());
 	ofxButton(ofParameter<bool>& _bVal, const ofJson & config = ofJson());
-//	ofxButton(const std::string& buttonName, const ofJson & config = ofJson());
 	ofxButton(ofParameter<void>& _val, float width, float height = defaultHeight);
 	ofxButton(ofParameter<bool>& _bVal, float width, float height = defaultHeight);
 	ofxButton(const std::string& buttonName, float width, float height = defaultHeight);
 
-	void setup(const ofJson & config = ofJson());
+	void setup();
 
 	~ofxButton();
 
-	virtual void pointerReleased(PointerUIEventArgs& e);
+	virtual bool mouseReleased(ofMouseEventArgs & args) override;
 
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method){
@@ -32,7 +33,7 @@ public:
 
 protected:
 	virtual void generateDraw();
-	bool setValue(float mx, float my);
+	bool setValue(float mx, float my, bool bCheck);
 	ofParameter<void> voidvalue;
 	bool useVoidValue {false};
 

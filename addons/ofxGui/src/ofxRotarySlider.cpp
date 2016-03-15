@@ -5,11 +5,10 @@ using namespace std;
 
 template <typename Type> ofxRotarySlider <Type>::ofxRotarySlider(const ofJson & config)
 	:ofxSlider<Type>(config){
-	this->registerPointerEvents();
+	this->registerMouseEvents();
 }
 
 template <typename Type> ofxRotarySlider <Type>::~ofxRotarySlider(){
-	this->unregisterPointerEvents();
 }
 
 template <typename Type> ofxRotarySlider <Type>::ofxRotarySlider(ofParameter <Type> _val, const ofJson & config) :
@@ -25,13 +24,9 @@ void ofxRotarySlider <Type>::generateDraw(){
 
 	this->bg.clear();
 	this->bar.clear();
-	this->border.clear();
 
-	this->border.setStrokeColor(this->borderColor);
-	this->border.setStrokeWidth(1);
-	this->border.setFilled(false);
-	arcStrip(this->border, ofPoint(this->getWidth()/2, this->getHeight()/2), outer_r, inner_r, 1);
-
+	this->bg.setStrokeColor(this->borderColor);
+	this->bg.setStrokeWidth(1);
 	this->bg.setFillColor(this->backgroundColor);
 	this->bg.setFilled(true);
 	arcStrip(this->bg, ofPoint(this->getWidth()/2, this->getHeight()/2), outer_r-1, inner_r+1, 1);
@@ -71,7 +66,6 @@ void ofxRotarySlider <Type>::render(){
 
 	this->bg.draw();
 	this->bar.draw();
-	this->border.draw();
 
 	ofBlendMode blendMode = ofGetStyle().blendingMode;
 	if(blendMode != OF_BLENDMODE_ALPHA){
@@ -134,30 +128,54 @@ void ofxRotarySlider <Type>::arcStrip(ofPath & path, ofPoint center, float outer
 }
 
 template <typename Type>
-void ofxRotarySlider <Type>::pointerPressed(PointerUIEventArgs & args){
+bool ofxRotarySlider <Type>::mousePressed(ofMouseEventArgs & args){
 
-	args.setCurrentTarget(this);
-	Type firstClickVal = ofMap(args.localPosition().y, this->getShape().getHeight(), 0, 0, 1, true);
-	Type lastVal = ofMap(this->value, this->value.getMin(), this->value.getMax(), 0, 1, true);
-	_mouseOffset = (firstClickVal - lastVal) * this->getShape().height;
-	ofxSlider<Type>::pointerPressed(args);
+	ofxBaseGui::mousePressed(args);
 
+	if(this->isMouseOver()){
+
+		ofPoint pos = this->screenToLocal(ofPoint(args.x, args.y));
+
+		Type firstClickVal = ofMap(pos.y, this->getShape().getHeight(), 0, 0, 1, true);
+		Type lastVal = ofMap(this->value, this->value.getMin(), this->value.getMax(), 0, 1, true);
+		_mouseOffset = (firstClickVal - lastVal) * this->getShape().height;
+
+		if(this->updateOnReleaseOnly){
+			this->value.disableEvents();
+		}
+		return this->setValue(args.x, args.y, true);
+	}
+	return false;
 }
 
 template <typename Type>
-bool ofxRotarySlider <Type>::setValue(float mx, float my){
+bool ofxRotarySlider <Type>::setValue(float mx, float my, bool bCheck){
 
-	ofPoint pos = this->screenToLocal(ofPoint(mx,my));
+	if(this->isHidden()){
+		this->hasFocus = false;
+		return false;
+	}
 
-	Type res = ofMap(pos.y,
-					 this->getHeight() - _mouseOffset,
-					 - _mouseOffset,
-					 this->value.getMin(),
-					 this->value.getMax(),
-					 true);
-	this->value.set(res);
-	this->setNeedsRedraw();
-	return true;
+	if(bCheck){
+		this->hasFocus = this->isMouseOver();
+	}
+
+	if(this->hasFocus){
+
+		ofPoint pos = this->screenToLocal(ofPoint(mx,my));
+
+		Type res = ofMap(pos.y,
+						 this->getHeight() - _mouseOffset,
+						 - _mouseOffset,
+						 this->value.getMin(),
+						 this->value.getMax(),
+						 true);
+		this->value.set(res);
+		this->setNeedsRedraw();
+		return true;
+	}
+
+	return false;
 }
 
 template class ofxRotarySlider <int>;

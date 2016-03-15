@@ -13,12 +13,16 @@ using namespace std;
 ofImage ofxPanelHeader::loadIcon;
 ofImage ofxPanelHeader::saveIcon;
 
-ofxPanelHeader::ofxPanelHeader(const ofJson& config):ofxGuiGroupHeader(config){
+ofxPanelHeader::ofxPanelHeader():ofxGuiGroupHeader(){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
 		loadIcons();
 	}
-	registerPointerEvents();
+	registerMouseEvents();
 	this->setDraggable(true);
+}
+
+ofxPanelHeader::ofxPanelHeader(const ofJson& config):ofxPanelHeader(){
+	_setConfig(config);
 }
 
 void ofxPanelHeader::loadIcons(){
@@ -76,39 +80,50 @@ void ofxPanelHeader::render() {
 	}
 }
 
-void ofxPanelHeader::pointerPressed(PointerUIEventArgs & e){
-	e.setCurrentTarget(this);
-	ofPoint pos = e.localPosition();
-	if(loadBox.inside(pos)){
-		ofNotifyEvent(loadPressedE,this);
-		return;
+bool ofxPanelHeader::mousePressed(ofMouseEventArgs & args){
+
+	if(!isHidden()){
+		ofPoint pos = screenToLocal(ofPoint(args.x, args.y));
+		if(loadBox.inside(pos)){
+			ofNotifyEvent(loadPressedE,this);
+			return true;
+		}
+		if(saveBox.inside(pos)) {
+			ofNotifyEvent(savePressedE,this);
+			return true;
+		}
+
 	}
-	if(saveBox.inside(pos)) {
-		ofNotifyEvent(savePressedE,this);
-		return;
-	}
+
+	return ofxBaseGui::mousePressed(args);
 
 }
 
-bool ofxPanelHeader::setValue(float mx, float my){
-	return false;
-}
 
+/*
+ * Panel
+ */
 
+ofxPanel::ofxPanel(const string &collectionName)
+	:ofxGuiGroup(collectionName){
 
-ofxPanel::ofxPanel(const string &collectionName, const ofJson & config)
-	:ofxGuiGroup(collectionName, config){
-
-	setup(config);
+	setup();
 	clear();
 
 }
 
+ofxPanel::ofxPanel(const string &collectionName, const ofJson & config)
+	:ofxPanel(collectionName){
+
+	_setConfig(config);
+
+}
+
 ofxPanel::ofxPanel(const ofParameterGroup & parameters, const ofJson & config)
-:ofxPanel(parameters.getName(), config){
+:ofxPanel(parameters.getName()){
 
 	addParametersFrom(parameters);
-
+	_setConfig(config);
 
 }
 
@@ -154,12 +169,19 @@ void ofxPanel::clear(){
 	headerListenersLoaded = true;
 }
 
-void ofxPanel::setup(const ofJson &config){
+void ofxPanel::setup(){
 	headerListenersLoaded = false;
 }
 
 void ofxPanel::onHeaderMove(MoveEventArgs &args){
-	setPosition(localToScreen(args.position()));
+	ofPoint screenHeaderPos = localToScreen(args.position());
+	ofPoint screenThisPos = getScreenPosition();
+	ofPoint diff = screenHeaderPos-screenThisPos;
+	ofRectangle newshape = getShape();
+	newshape.setPosition(getPosition()+diff);
+	if(parent()->getShape().inside(newshape)){
+		setPosition(localToScreen(args.position()));
+	}
 }
 
 void ofxPanel::onLoadPressed(){

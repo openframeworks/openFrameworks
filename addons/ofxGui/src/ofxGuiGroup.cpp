@@ -6,7 +6,7 @@
 #include "JsonConfigParser.h"
 
 ofxGuiGroupHeader::ofxGuiGroupHeader(const ofJson &config):ofxBaseGui(config){
-	registerPointerEvents();
+	registerMouseEvents();
 }
 
 void ofxGuiGroupHeader::generateDraw(){
@@ -27,7 +27,6 @@ void ofxGuiGroupHeader::generateDraw(){
 }
 
 ofxGuiGroupHeader::~ofxGuiGroupHeader(){
-	unregisterPointerEvents();
 }
 
 void ofxGuiGroupHeader::render() {
@@ -47,31 +46,44 @@ void ofxGuiGroupHeader::render() {
 
 }
 
-void ofxGuiGroupHeader::pointerPressed(PointerUIEventArgs & e){
+bool ofxGuiGroupHeader::mousePressed(ofMouseEventArgs & args){
 
-	ofRectangle minButton(getWidth() - textPadding * 3, 0, textPadding * 3, getHeight());
-	minButton.setPosition(localToScreen(minButton.getPosition()));
-	if(minButton.inside(e.screenPosition())){
-		ofxGuiGroup* _parent = dynamic_cast<ofxGuiGroup*>(parent());
-		if(_parent){
-			_parent->toggleMinimize();
+	if(!isHidden()){
+		ofRectangle minButton(getWidth() - textPadding * 3, 0, textPadding * 3, getHeight());
+		minButton.setPosition(localToScreen(minButton.getPosition()));
+		if(minButton.inside(args.x, args.y)){
+			ofxGuiGroup* _parent = dynamic_cast<ofxGuiGroup*>(parent());
+			if(_parent){
+				_parent->toggleMinimize();
+				return true;
+			}
 		}
 	}
 
+	return ofxBaseGui::mousePressed(args);
+
 }
 
-ofxGuiGroup::ofxGuiGroup(const std::string& collectionName, const ofJson & config)
-	:ofxBaseGui(config){
+ofxGuiGroup::ofxGuiGroup(const std::string& collectionName)
+	:ofxBaseGui(){
 
-	setup(config);
+	setup();
 	setName(collectionName);
 
 }
 
+ofxGuiGroup::ofxGuiGroup(const std::string& collectionName, const ofJson & config)
+	:ofxGuiGroup(collectionName){
+
+	_setConfig(config);
+
+}
+
 ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const ofJson & config)
-	:ofxGuiGroup(_parameters.getName(), config){
+	:ofxGuiGroup(_parameters.getName()){
 
 	addParametersFrom(_parameters);
+	_setConfig(config);
 
 }
 
@@ -95,14 +107,13 @@ ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const std::string
 
 ofxGuiGroup::~ofxGuiGroup(){
 
-	unregisterPointerEvents();
 	showHeader.removeListener(this, &ofxGuiGroup::onHeaderVisibility);
 	headerHeight.removeListener(this, &ofxGuiGroup::onHeaderHeight);
 	ofRemoveListener(resize, this, &ofxGuiGroup::onResize);
 
 }
 
-void ofxGuiGroup::setup(const ofJson &config){
+void ofxGuiGroup::setup(){
 
 	header = nullptr;
 
@@ -112,7 +123,7 @@ void ofxGuiGroup::setup(const ofJson &config){
 	minimized.set("minimized", false);
 
 	createLayout<FloatingBoxLayout>(this, Orientation::VERTICAL);
-	headerHeight.set("header-height", 18);
+	headerHeight.set("header-height", defaultHeight);
 	showHeader.set("show-header", true);
 
 	clear();
@@ -121,15 +132,13 @@ void ofxGuiGroup::setup(const ofJson &config){
 	headerHeight.addListener(this, &ofxGuiGroup::onHeaderHeight);
 	ofAddListener(resize, this, &ofxGuiGroup::onResize);
 
-	registerPointerEvents();
-
-	processConfig(config);
+	registerMouseEvents();
 
 }
 
-void ofxGuiGroup::processConfig(const ofJson &config){
+void ofxGuiGroup::_setConfig(const ofJson &config){
 
-	//TODO set attributes
+	ofxBaseGui::_setConfig(config);
 
 	JsonConfigParser::parse(config, headerHeight);
 	JsonConfigParser::parse(config, showHeader);
@@ -246,27 +255,27 @@ void ofxGuiGroup::clear(){
 //	return names;
 //}
 
-ofxIntSlider & ofxGuiGroup::getIntSlider(const std::string& name){
+ofxIntSlider* ofxGuiGroup::getIntSlider(const std::string& name){
 	return getControlType <ofxIntSlider>(name);
 }
 
-ofxFloatSlider & ofxGuiGroup::getFloatSlider(const std::string& name){
+ofxFloatSlider* ofxGuiGroup::getFloatSlider(const std::string& name){
 	return getControlType <ofxFloatSlider>(name);
 }
 
-ofxToggle & ofxGuiGroup::getToggle(const std::string& name){
+ofxToggle* ofxGuiGroup::getToggle(const std::string& name){
 	return getControlType <ofxToggle>(name);
 }
 
-ofxButton & ofxGuiGroup::getButton(const std::string& name){
+ofxButton* ofxGuiGroup::getButton(const std::string& name){
 	return getControlType <ofxButton>(name);
 }
 
-ofxGuiGroup & ofxGuiGroup::getGroup(const std::string& name){
+ofxGuiGroup* ofxGuiGroup::getGroup(const std::string& name){
 	return getControlType <ofxGuiGroup>(name);
 }
 
-ofxBaseGui * ofxGuiGroup::getControl(const std::string& name){
+ofxBaseGui* ofxGuiGroup::getControl(const std::string& name){
 	for(auto & e: children()){
 		ofxBaseGui *f = dynamic_cast<ofxBaseGui*>(e);
 		if(f){
@@ -280,7 +289,7 @@ ofxBaseGui * ofxGuiGroup::getControl(const std::string& name){
 
 int ofxGuiGroup::getControlIndex(const std::string& name){
 
-	for(int i = 0; i < children().size(); i++){
+	for(int i = 0; i < (int)children().size(); i++){
 		Element* e = children().at(i);
 		ofxBaseGui *f = dynamic_cast<ofxBaseGui*>(e);
 		if(f){
@@ -320,18 +329,22 @@ void ofxGuiGroup::maximize(){
 
 void ofxGuiGroup::minimizeAll(){
 	for(auto & e: children()){
-		ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(e);
-		if(group){
-			group->minimize();
+		if(e != header){
+			ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(e);
+			if(group){
+				group->minimize();
+			}
 		}
 	}
 }
 
 void ofxGuiGroup::maximizeAll(){
 	for(auto & e: children()){
-		ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(e);
-		if(group){
-			group->maximize();
+		if(e != header){
+			ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(e);
+			if(group){
+				group->maximize();
+			}
 		}
 	}
 }
@@ -355,7 +368,6 @@ void ofxGuiGroup::setShowHeader(bool show) {
 	}
 	showHeader = show;
 	invalidateChildShape();
-	setNeedsRedraw();
  }
 
 std::size_t ofxGuiGroup::getNumControls() {
@@ -368,6 +380,10 @@ ofxBaseGui * ofxGuiGroup::getControl(std::size_t num){
 	}else{
 		return nullptr;
 	}
+}
+
+bool ofxGuiGroup::getTogglesExclusive() const {
+	return exclusiveToggles;
 }
 
 void ofxGuiGroup::setExclusiveToggles(bool exclusive) {
@@ -401,13 +417,15 @@ bool ofxGuiGroup::setActiveToggle(int index) {
 
 void ofxGuiGroup::deactivateAllOtherToggles(ofxToggle *toggle) {
 	if(exclusiveToggles) {
+		int active_index = -1;
 		for(int i = 0; i < (int)children().size(); i++){
 			if(ofxToggle* t = dynamic_cast<ofxToggle*>(children()[i])) {
+				active_index++;
 				if(t != toggle) {
 				   *t = false;
 				}
 				else {
-					active_toggle_index.set(i);
+					active_toggle_index.set(active_index);
 				}
 			}
 		}
@@ -432,12 +450,12 @@ ofParameter<int>& ofxGuiGroup::getActiveToggleIndex() {
 
 ofAbstractParameter & ofxGuiGroup::getParameter(){
 	parameters.clear();
-	for(auto child : children()){
-		ofxBaseGui* e = dynamic_cast<ofxBaseGui*>(child);
-		if(e){
-			parameters.add(e->getParameter());
-		}
-	}
+//	for(auto child : children()){
+//		ofxBaseGui* e = dynamic_cast<ofxBaseGui*>(child);
+//		if(e){
+//			parameters.add(e->getParameter());
+//		}
+//	}
 	return parameters;
 }
 
@@ -455,6 +473,6 @@ void ofxGuiGroup::onHeaderHeight(float &height){
 
 void ofxGuiGroup::onResize(ResizeEventArgs & re){
 	if(header){
-		header->setWidth(re.geometry().getWidth());
+		header->setWidth(re.shape().getWidth());
 	}
 }

@@ -6,16 +6,34 @@
 class ofxToggle : public ofxBaseGui{
 public:
 
-	ofxToggle(const std::string& toggleName="", const ofJson & config = ofJson());
+	enum class Type
+	{
+		/// \brief Shows toggle as checkbox (default).
+		CHECKBOX,
+		/// \brief Shows toggle as radio toggle.
+		RADIO,
+		/// \brief Uses the whole element as toggle.
+		FULLSIZE
+
+	};
+
+	ofxToggle();
+	ofxToggle(const std::string& toggleName);
+	ofxToggle(const std::string& toggleName, const ofJson & config);
 	ofxToggle(ofParameter<bool>& _bVal, const ofJson & config = ofJson());
 	ofxToggle(ofParameter<bool>& _bVal, float width, float height = defaultHeight);
 	ofxToggle(const std::string& toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight);
 
 	~ofxToggle();
 
-	void setup(const ofJson &config = ofJson());
+	void setup();
 
-	virtual void pointerPressed(PointerUIEventArgs& e);
+	void setType(const std::string &type);
+	void setType(const Type &type);
+	ofxToggle::Type getType();
+
+	virtual bool mousePressed(ofMouseEventArgs & args) override;
+	virtual bool mouseReleased(ofMouseEventArgs & args) override;
 
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method){
@@ -33,11 +51,15 @@ public:
 	virtual ofAbstractParameter & getParameter();
 
 protected:
-	virtual void render();
+	virtual void _setConfig(const ofJson & config) override;
+	virtual void render() override;
 	ofRectangle checkboxRect;
 	ofParameter<bool> value;
 
-	virtual bool setValue(float mx, float my);
+	ofParameter<ofxToggle::Type> type;
+	bool hasFocus;
+
+	virtual bool setValue(float mx, float my, bool bCheck);
 	virtual void generateDraw();
 	void valueChanged(bool & value);
 	ofPath fg,cross;

@@ -13,7 +13,7 @@ void ofApp::setup(){
 	ringButton.addListener(this,&ofApp::ringButtonPressed);
 
 	gui_doc =  std::make_unique<ofx::DOM::Document>();
-	gui = gui_doc->add<ofxPanel>("panel");
+	gui = gui_doc->add<ofxPanel>("panel", "", 10,10);
 
 	gui->add(filled.set("bFill", true));
 	gui->add(radius.set( "radius", 140, 10, 300 ));
@@ -22,7 +22,7 @@ void ofApp::setup(){
 	gui->add(circleResolution.set("circleRes", 5, 3, 90));
 	gui->add<ofxButton>(twoCircles.set("twoCircles", false));
 	gui->add(ringButton.set("ring"));
-	gui->add(screenSize.set("screenSize", ""));
+	gui->add(screenSize.set("screenSize", ofToString(ofGetWindowWidth()) + "x" + ofToString(ofGetWindowHeight())));
 
 	bHide = false;
 

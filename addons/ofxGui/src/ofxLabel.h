@@ -7,7 +7,8 @@ template<typename Type>
 class ofxValueLabel: public ofxBaseGui {
 public:
 
-	ofxValueLabel(const ofJson & config = ofJson());
+	ofxValueLabel();
+	ofxValueLabel(const ofJson & config);
 
 	ofxValueLabel(ofParameter<Type> _label, const ofJson & config = ofJson());
 	ofxValueLabel(const std::string& labelName, const ofJson & config = ofJson());
@@ -17,7 +18,7 @@ public:
 
 	virtual ~ofxValueLabel();
 
-	void setup(const ofJson& config = ofJson());
+	void setup();
 
 	virtual void saveTo(ofBaseSerializer& serializer){}
 	virtual void loadFrom(ofBaseSerializer& serializer){}
@@ -40,9 +41,9 @@ public:
 	ofAbstractParameter & getParameter();
 
 protected:
-	void render();
+	virtual void render() override;
 	ofParameter<Type> label;
-	void generateDraw();
+	virtual void generateDraw() override;
 	void valueChanged(Type & value);
 	bool setValue(float mx, float my){return false;}
 	ofVboMesh textMesh;

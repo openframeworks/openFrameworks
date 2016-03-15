@@ -8,7 +8,7 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 
 	gui_doc =  std::make_unique<ofx::DOM::Document>();
-	gui = gui_doc->add<ofxPanel>();
+	gui = gui_doc->add<ofxPanel>("panel","",10,10);
 
 	filled = gui->add<ofxToggle>("fill");
 	radius = gui->add<ofxFloatSlider>("radius", 140, 10, 300);

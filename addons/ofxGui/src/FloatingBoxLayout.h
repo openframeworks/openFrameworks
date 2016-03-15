@@ -16,7 +16,7 @@ public:
 
 	virtual ~FloatingBoxLayout();
 
-	virtual void processConfig(const ofJson & config);
+	virtual void setConfig(const ofJson & config);
 
 	virtual void doLayout() override;
 
@@ -26,7 +26,7 @@ protected:
 	void setNextRightFloatPosition(ofPoint p, Element* e);
 	void nextLeftFloatPositionLoop(Element* e, ofPoint& res);
 	void nextRightFloatPositionLoop(Element* e, ofPoint& res);
-	bool worksWithFloats(ofPoint pos, Element* e, LayoutFloat floatType);
+	bool checkForIntersections(ofPoint pos, Element* e, LayoutFloat floatType);
 
 };
 

@@ -25,9 +25,9 @@ void ofApp::setup(){
 	/*
 	 * minimal button and toggle
 	 */
-	panel1->add<ofxMinimalToggle>(toggle_param.set("show header", true));
+	panel1->add<ofxToggle>(toggle_param.set("show header", true), ofJson({{"type", "fullsize"}}));
 	toggle_param.addListener(this, &ofApp::toggleGroupHeader);
-	button = panel1->add<ofxMinimalButton>("simple button");
+	button = panel1->add<ofxButton>("simple button", ofJson({{"type", "fullsize"}}));
 
 	/*
 	 * rotary slider
@@ -55,7 +55,10 @@ void ofApp::setup(){
 	matrix->setExclusiveToggles(true);
 	matrix->getActiveToggleIndex().addListener(this, &ofApp::updateMatrixIndex);
 	for(unsigned int i = 0; i < matrix_params.size(); i++){
-		matrix->add<ofxMinimalToggle>(matrix_params.at(i), ofJson({{"float", "left"},{"width", (matrix->getWidth()-1)/3}}));
+		matrix->add<ofxToggle>(matrix_params.at(i), ofJson({
+															{"float", "left"},
+															{"width", (matrix->getWidth()-1)/3},
+															{"type", "fullsize"}}));
 	}
 
 	/*
@@ -73,9 +76,9 @@ void ofApp::setup(){
 
 	ofJson toggle_config = {{"width", 90}, {"float", "left"}};
 	panel2->add <ofxToggle>(toggle1_param.set("toggle1", false), toggle_config);
-	panel2->add <ofxMinimalToggle>(toggle2_param.set("toggle2", false), toggle_config);
-	panel2->add <ofxMinimalToggle>(toggle3_param.set("toggle3", false), toggle_config);
-	panel2->add <ofxMinimalToggle>(toggle4_param.set("toggle4", false), toggle_config);
+	panel2->add <ofxToggle>(toggle2_param.set("toggle2", false), toggle_config);
+	panel2->add <ofxToggle>(toggle3_param.set("toggle3", false), toggle_config);
+	panel2->add <ofxToggle>(toggle4_param.set("toggle4", false), toggle_config);
 
 	/*
 	 * horizontal panel with vertical sliders and spacer
@@ -109,6 +112,7 @@ void ofApp::setup(){
 	panel5 = gui_doc->add<ofxPanel>("ofParameterGroup", "", 260, 440);
 	matrixCam = panel5->add<ofxGuiGroup>(cameraMatrixParameters);
 	matrixCam->setExclusiveToggles(true);
+	matrixCam->setConfig(ofJson({{"type", "radio"}}));
 
 }
 
@@ -155,7 +159,7 @@ void ofApp::toggleGroupHeader(bool & val){
 
 void ofApp::updateMatrixIndex(int &index){
 	matrix_active_index = index;
-	matrix_active_name = matrix->getControl(index)->getName();
+	matrix_active_name = matrix_params.at(index).getName();
 }
 
 //--------------------------------------------------------------
