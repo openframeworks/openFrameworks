@@ -66,6 +66,7 @@ public:
 	void draw();
 	void close();
 	void makeCurrent();
+	void swapBuffers();
 
 	ofCoreEvents & events();
 	shared_ptr<ofBaseRenderer> & renderer();

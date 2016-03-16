@@ -123,6 +123,7 @@ public:
     int         getPixelScreenCoordScale();
 
     void 		makeCurrent();
+	void swapBuffers();
 
 	static void listVideoModes();
 	static void listMonitors();

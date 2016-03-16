@@ -680,6 +680,11 @@ void ofAppGlutWindow::display(void){
 }
 
 //------------------------------------------------------------
+void ofAppGlutWindow::swapBuffers() {
+	glutSwapBuffers();
+}
+
+//------------------------------------------------------------
 static void rotateMouseXY(ofOrientation orientation, int w, int h, int &x, int &y) {
 	int savedY;
 	switch(orientation) {
