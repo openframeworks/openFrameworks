@@ -81,7 +81,13 @@ void ofxOscReceiver::setup( int listen_port )
 	listen_socket = std::move(new_ptr);
 
 	listen_thread = std::thread([this]{
-		listen_socket->Run();
+        while(listen_socket) {
+            try {
+                listen_socket->Run();
+            } catch(std::exception &e) {
+                ofLogWarning() << e.what();
+            }
+        }
 	});
 
 	// detach thread so we don't have to wait on it before creating a new socket
