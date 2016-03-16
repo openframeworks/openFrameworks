@@ -24,17 +24,16 @@ class ofApp : public ofBaseApp {
 
 	private:
 
-//		std::unique_ptr<ofx::DOM::Document> gui_doc;
+		std::unique_ptr<ofx::DOM::Document> gui_doc;
 
-//		ofxGuiTabs *tabbed_pages;
+		ofxGuiTabs *tabbed_pages;
 
-//		ofxPanel *page1, *page2;
+		ofxPanel *page1, *page2;
 
-//		ofxPanel *panel1, *panel2;
+		ofxGuiGroup *panel1, *panel2;
 
-		ofParameterGroup group;
-		ofParameter <float> parameter;
-//		ofParameter <bool> toggle2_param, toggle3_param, toggle4_param;
+		ofParameter <float> slider_param;
+		ofParameter <bool> toggle2_param, toggle3_param, toggle4_param;
 
 };
 

@@ -9,7 +9,7 @@ void ofApp::setup(){
 
 	gui_doc =  std::make_unique<ofx::DOM::Document>();
 
-	panel1 = gui_doc->add<ofxPanel>("extended gui");
+	panel1 = gui_doc->add<ofxPanel>("extended gui", "", 10, 10);
 
 
 	/*
@@ -27,7 +27,9 @@ void ofApp::setup(){
 	 */
 	panel1->add<ofxToggle>(toggle_param.set("show header", true), ofJson({{"type", "fullsize"}}));
 	toggle_param.addListener(this, &ofApp::toggleGroupHeader);
-	button = panel1->add<ofxButton>("simple button", ofJson({{"type", "fullsize"}}));
+	button = panel1->add<ofxButton>("fullsize button", ofJson({{"type", "fullsize"}}));
+	panel1->add<ofxButton>("checkbox button", ofJson({{"type", "checkbox"}}));
+	panel1->add<ofxButton>("radio button", ofJson({{"type", "radio"}}));
 
 	/*
 	 * rotary slider
@@ -51,7 +53,7 @@ void ofApp::setup(){
 	matrix_params.push_back(ofParameter <bool>("be", false));
 	matrix_params.push_back(ofParameter <bool>("active", false));
 
-	matrix = panel1->add<ofxGuiGroup>("matrix");
+	matrix = panel1->add<ofxGuiGroup>("float");
 	matrix->setExclusiveToggles(true);
 	matrix->getActiveToggleIndex().addListener(this, &ofApp::updateMatrixIndex);
 	for(unsigned int i = 0; i < matrix_params.size(); i++){
@@ -70,7 +72,7 @@ void ofApp::setup(){
 	/*
 	 * horizontal panel
 	 */
-	panel2 = gui_doc->add<ofxPanel>("horizontal", "", 260, 10);
+	panel2 = gui_doc->add<ofxGuiGroup>("horizontal", "", 260, 10);
 	panel2->setWidth(400);
 	panel2->setBackgroundColor(ofColor::black);
 
@@ -83,7 +85,7 @@ void ofApp::setup(){
 	/*
 	 * horizontal panel with vertical sliders and spacer
 	 */
-	panel3 = gui_doc->add<ofxPanel>("vertical sliders, spacer", "", 260, 80);
+	panel3 = panel2->add<ofxGuiGroup>("vertical sliders, spacer", "", 260, 80);
 	panel3->setSize(260, panel3->getHeight());
 
 	panel3->add <ofxFloatSlider>(slider1_param.set("slider1", 1. / 7., 0, 1), ofJson({{"float", "left"}, {"width", 40}, {"height", 130}}));

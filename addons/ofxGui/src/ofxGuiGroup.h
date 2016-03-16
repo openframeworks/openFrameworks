@@ -71,10 +71,10 @@ class ofxGuiGroup : public ofxBaseGui {
 		ofxShortColorSlider* add(ofParameter <ofShortColor> & parameter, const ofJson & config = ofJson());
 		ofxFloatColorSlider* add(ofParameter <ofFloatColor> & parameter, const ofJson & config = ofJson());
 
-		void minimize();
-		void maximize();
-		void minimizeAll();
-		void maximizeAll();
+		virtual void minimize();
+		virtual void maximize();
+		virtual void minimizeAll();
+		virtual void maximizeAll();
 		bool getMinimized();
 		void toggleMinimize();
 

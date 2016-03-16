@@ -7,52 +7,24 @@ void ofApp::setup(){
 
 	ofSetLogLevel(OF_LOG_VERBOSE);
 
-	parameter.set("parameter", 0, 0,1);
+	gui_doc =  std::make_unique<ofx::DOM::Document>();
 
-	group.setName("group");
-	group.add(parameter);
+	tabbed_pages = gui_doc->add<ofxGuiTabs>("tabbed pages", "", 10,10);
+	tabbed_pages->setSize(500, 300);
 
-	for(int i = 0; i < 20; i++){
-		group.clear();
-		group.add(parameter);
-		cout << parameter.getNumListeners() << endl;
-	}
+	page1 = tabbed_pages->add<ofxPanel>("page 1");
 
+	panel1 = page1->add<ofxGuiGroup>("panel1");
+	panel1->add(slider_param.set("slider", 0.5, 0, 1));
 
+	page2= tabbed_pages->add<ofxPanel>("page 2");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-//	gui_doc =  std::make_unique<ofx::DOM::Document>();
-
-//	tabbed_pages = gui_doc->add<ofxGuiTabs>("tabbed pages", "", 10,10);
-//	tabbed_pages->setSize(500, 300);
-
-//	page1 = tabbed_pages->add<ofxPanel>("page 1");
-
-//	panel1 = page1->add<ofxPanel>("panel1");
-//	panel1->add(slider_param.set("slider", 0.5, 0, 1));
-
-//	page2= tabbed_pages->add<ofxPanel>("page 2");
-
-//	panel2 = page2->add<ofxPanel>("horizontal", "", 60, 10);
-//	panel2->setShowHeader(false);
-//	panel2->setExclusiveToggles(true);
-//	panel2->add(toggle2_param.set("toggle2", false));
-//	panel2->add(toggle3_param.set("toggle3", false));
-//	panel2->add(toggle4_param.set("toggle4", false));
-
-
+	panel2 = page2->add<ofxGuiGroup>("horizontal", "", 60, 10);
+	panel2->setShowHeader(false);
+	panel2->setExclusiveToggles(true);
+	panel2->add(toggle2_param.set("toggle2", false));
+	panel2->add(toggle3_param.set("toggle3", false));
+	panel2->add(toggle4_param.set("toggle4", false));
 
 }
 

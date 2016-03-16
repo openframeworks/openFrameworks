@@ -51,6 +51,7 @@ class ofxBaseGui : public ofx::DOM::Element {
 		ofColor getTextColor() const;
 		ofColor getFillColor() const;
 		bool getShowName() const;
+		float getBorderWidth() const;
 
 		void setHeaderBackgroundColor(const ofColor & color);
 		void setBackgroundColor(const ofColor & color);

@@ -18,18 +18,14 @@ ofxButton::ofxButton(const string &buttonName, const ofJson & config)
 
 ofxButton::ofxButton(ofParameter<void> &_val, const ofJson & config)
 	:ofxToggle(){
-	//value.setSerializable(false);
 	voidvalue.makeReferenceTo(_val);
 	useVoidValue = true;
-	ofxButton::setup();
 	setup();
 	_setConfig(config);
 }
 
 ofxButton::ofxButton(ofParameter<bool> &_val, const ofJson & config)
-	:ofxToggle(){
-	value.makeReferenceTo(_val);
-	ofxButton::setup();
+	:ofxToggle(_val){
 	setup();
 	_setConfig(config);
 }
@@ -55,6 +51,7 @@ ofxButton::~ofxButton(){
 void ofxButton::setup(){
 
 	value.setSerializable(false);
+	voidvalue.setSerializable(false);
 	registerMouseEvents();
 
 }

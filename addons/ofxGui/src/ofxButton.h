@@ -23,7 +23,7 @@ public:
 
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method){
-		voidvalue.addListener(listener,method);
+	voidvalue.addListener(listener,method);
 	}
 
 	template<class ListenerClass, typename ListenerMethod>
@@ -32,6 +32,7 @@ public:
 	}
 
 protected:
+
 	virtual void generateDraw();
 	bool setValue(float mx, float my, bool bCheck);
 	ofParameter<void> voidvalue;

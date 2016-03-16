@@ -58,7 +58,7 @@ ofxBaseGui::defaultBorderColor(120, 100),
 ofxBaseGui::defaultTextColor(255),
 ofxBaseGui::defaultFillColor(128);
 
-float ofxBaseGui::defaultBorderWidth = 3;
+float ofxBaseGui::defaultBorderWidth = 0;
 int ofxBaseGui::textPadding = 4;
 int ofxBaseGui::defaultWidth = 200;
 int ofxBaseGui::defaultHeight = 25;
@@ -246,11 +246,13 @@ void ofxBaseGui::loadFromFile(const std::string& filename){
 
 
 void ofxBaseGui::saveTo(ofBaseSerializer & serializer){
-	serializer.serialize(getParameter());
+	ofLogError("ofxBaseGui::serialize") << "This is currently not working. Sorry.";
+	//serializer.serialize(getParameter());
 }
 
 void ofxBaseGui::loadFrom(ofBaseSerializer & serializer){
-	serializer.deserialize(getParameter());
+	ofLogError("ofxBaseGui::serialize") << "This is currently not working. Sorry.";
+	//serializer.deserialize(getParameter());
 }
 
 
@@ -295,6 +297,10 @@ ofColor ofxBaseGui::getFillColor() const {
 
 bool ofxBaseGui::getShowName() const {
 	return showName;
+}
+
+float ofxBaseGui::getBorderWidth() const {
+	return borderWidth;
 }
 
 void ofxBaseGui::setHeaderBackgroundColor(const ofColor & color){
@@ -463,9 +469,7 @@ bool ofxBaseGui::isDragging() const{
 bool ofxBaseGui::mouseDragged(ofMouseEventArgs & args){
 	if(!isHidden()){
 		if(_isDragging){
-			ofPoint newpos = ofPoint(args.x - grabPoint.x,args.y - grabPoint.y);
-			setPosition(getPosition() + newpos);
-			grabPoint = ofPoint(args.x, args.y);
+			setPosition(args - grabPoint - getScreenPosition());
 			return true;
 		}
 	}else {
@@ -480,7 +484,7 @@ bool ofxBaseGui::mousePressed(ofMouseEventArgs & args){
 		if(localToScreen(ofRectangle(0,0,getWidth(),getHeight())).inside(args.x, args.y)){
 			if(_isDraggable){
 				_isDragging = true;
-				grabPoint = ofPoint(args.x, args.y);
+				grabPoint = ofPoint(args.x, args.y) - getScreenPosition();
 				return true;
 			}
 		}else {

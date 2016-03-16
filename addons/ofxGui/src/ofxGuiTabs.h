@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ofxPanel.h"
+#include "ofxGuiGroup.h"
 
-class ofxGuiTabs : public ofxPanel {
+class ofxGuiTabs : public ofxGuiGroup {
 
 	public:
 
@@ -18,14 +18,19 @@ class ofxGuiTabs : public ofxPanel {
 		template <typename GuiType>
 		GuiType* add(std::unique_ptr<GuiType> element);
 
-		void clear();
+		virtual void clear() override;
 
 		void setActiveTab(int &index);
 		ofParameter<int> &getActiveTabIndex();
-		ofxBaseGui * getActiveTab();
+		Element * getActiveTab();
 
 		void setTabHeight(int h);
 		void setTabWidth(int w);
+
+		virtual void minimize() override;
+		virtual void maximize() override;
+		virtual void minimizeAll() override;
+		virtual void maximizeAll() override;
 
 	protected:
 
@@ -37,9 +42,9 @@ class ofxGuiTabs : public ofxPanel {
 
 		ofxGuiGroup * tabs;
 		vector<Element*> pages;
-		ofPath tabBorder;
-		ofxBaseGui * activePage;
+		Element * activePage;
 		ofxBaseGui * activeToggle;
+
 
 	private:
 };

@@ -26,9 +26,9 @@ class ofApp : public ofBaseApp {
 
 		std::unique_ptr<ofx::DOM::Document> gui_doc;
 
-		ofxPanel *panel1, *panel2, *panel3, *panel4, *panel5;
+		ofxPanel *panel1, *panel4, *panel5;
 		ofxGuiGroup *rotary;
-		ofxGuiGroup* matrix;
+		ofxGuiGroup* matrix, *panel3, *panel2;
 		ofParameter<string> matrix_active_name;
 		ofParameter<int> matrix_active_index;
 		ofParameter<float> floatfield_param;

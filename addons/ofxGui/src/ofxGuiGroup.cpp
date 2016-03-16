@@ -55,6 +55,7 @@ bool ofxGuiGroupHeader::mousePressed(ofMouseEventArgs & args){
 			ofxGuiGroup* _parent = dynamic_cast<ofxGuiGroup*>(parent());
 			if(_parent){
 				_parent->toggleMinimize();
+				this->setNeedsRedraw();
 				return true;
 			}
 		}
@@ -126,11 +127,11 @@ void ofxGuiGroup::setup(){
 	headerHeight.set("header-height", defaultHeight);
 	showHeader.set("show-header", true);
 
-	clear();
-
 	showHeader.addListener(this, &ofxGuiGroup::onHeaderVisibility);
 	headerHeight.addListener(this, &ofxGuiGroup::onHeaderHeight);
 	ofAddListener(resize, this, &ofxGuiGroup::onResize);
+
+	clear();
 
 	registerMouseEvents();
 

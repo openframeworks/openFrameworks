@@ -92,18 +92,31 @@ bool ofxToggle::mouseReleased(ofMouseEventArgs & args){
 
 void ofxToggle::generateDraw(){
 
+	switch(type){
+		default:
+		case ofxToggle::Type::RADIO:
+		case ofxToggle::Type::CHECKBOX: {
+			checkboxRect.set(1, 1, getHeight() - 2, getHeight() - 2);
+			break;
+		}
+		case ofxToggle::Type::FULLSIZE: {
+			checkboxRect.set(1, 1, getWidth() - 2, getHeight() - 2);
+			break;
+		}
+	}
+
 	bg.clear();
 	bg.setFillColor(backgroundColor);
+	bg.setStrokeWidth(borderWidth);
+	bg.setStrokeColor(borderColor);
 	bg.rectangle(0,0,getWidth(),getHeight());
 
 	fg.clear();
-	fg.setStrokeWidth(borderWidth);
-	fg.setStrokeColor(borderColor);
+	fg.setFilled(true);
 	if(value){
-		fg.setFilled(true);
 		fg.setFillColor(fillColor);
 	}else{
-		fg.setFilled(false);
+		fg.setFillColor(ofColor(fillColor, 0.33*fillColor.get().a));
 	}
 	switch(type){
 		default:
@@ -111,7 +124,11 @@ void ofxToggle::generateDraw(){
 			fg.arc(checkboxRect.getCenter(), checkboxRect.getHeight()/3, checkboxRect.getHeight()/3, 0, 360);
 			break;
 		}
-		case ofxToggle::Type::CHECKBOX:
+		case ofxToggle::Type::CHECKBOX: {
+			fg.rectangle(checkboxRect.getTopLeft()+ofPoint(checkboxRect.width/6,checkboxRect.height/6),
+						 checkboxRect.width/3*2,checkboxRect.height/3*2);
+			break;
+		}
 		case ofxToggle::Type::FULLSIZE: {
 			fg.rectangle(checkboxRect.getTopLeft(),checkboxRect.width,checkboxRect.height);
 			break;
@@ -267,18 +284,6 @@ void ofxToggle::setType(const std::string& type){
 
 void ofxToggle::setType(const ofxToggle::Type& type){
 	this->type.set(type);
-	switch(type){
-		default:
-		case ofxToggle::Type::RADIO:
-		case ofxToggle::Type::CHECKBOX: {
-			checkboxRect.set(1, 1, getHeight() - 2, getHeight() - 2);
-			break;
-		}
-		case ofxToggle::Type::FULLSIZE: {
-			checkboxRect.set(1, 1, getWidth() - 2, getHeight() - 2);
-			break;
-		}
-	}
 	setNeedsRedraw();
 }
 
