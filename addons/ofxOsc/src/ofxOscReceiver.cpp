@@ -59,7 +59,7 @@ ofxOscReceiver & ofxOscReceiver::operator=(const ofxOscReceiver & mom){
 	return *this;
 }
 
-void ofxOscReceiver::setup( int listen_port )
+bool ofxOscReceiver::setup( int listen_port )
 {
     if( osc::UdpSocket::GetUdpBufferSize() == 0 ){
     	osc::UdpSocket::SetUdpBufferSize(65535);
@@ -71,17 +71,33 @@ void ofxOscReceiver::setup( int listen_port )
 	}
 	
 	// create socket
-	auto socket = new osc::UdpListeningReceiveSocket( osc::IpEndpointName( osc::IpEndpointName::ANY_ADDRESS, listen_port ), this, allowReuse );
-	auto deleter = [](osc::UdpListeningReceiveSocket*socket){
-		// tell the socket to shutdown
-		socket->Break();
-		delete socket;
-	};
-	auto new_ptr = std::unique_ptr<osc::UdpListeningReceiveSocket, decltype(deleter)>(socket, deleter);
-	listen_socket = std::move(new_ptr);
+    osc::UdpListeningReceiveSocket *socket = nullptr;
+    try {
+        socket = new osc::UdpListeningReceiveSocket( osc::IpEndpointName( osc::IpEndpointName::ANY_ADDRESS, listen_port ), this, allowReuse );
+        auto deleter = [](osc::UdpListeningReceiveSocket*socket){
+            // tell the socket to shutdown
+            socket->Break();
+            delete socket;
+        };
+        auto new_ptr = std::unique_ptr<osc::UdpListeningReceiveSocket, decltype(deleter)>(socket, deleter);
+        listen_socket = std::move(new_ptr);
+    } catch (std::exception &e) {
+        ofLogError("ofxOscReceiver") << "listen_port: " << listen_port << " " << e.what();
+        if(socket != nullptr) {
+            delete socket;
+            socket = nullptr;
+        }
+        return false;
+    }
 
 	listen_thread = std::thread([this]{
-		listen_socket->Run();
+        while(listen_socket) {
+            try {
+                listen_socket->Run();
+            } catch(std::exception &e) {
+                ofLogWarning() << e.what();
+            }
+        }
 	});
 
 	// detach thread so we don't have to wait on it before creating a new socket
@@ -90,6 +106,8 @@ void ofxOscReceiver::setup( int listen_port )
 	listen_thread.detach();
 
 	this->listen_port = listen_port;
+    
+    return true;
 }
 
 void ofxOscReceiver::shutdown()
