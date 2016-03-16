@@ -61,6 +61,8 @@ public:
 
 	void		setVerticalSync(bool enabled);
 	void swapBuffers();
+	void startRender();
+	void finishRender();
 
 	ofCoreEvents & events();
 	shared_ptr<ofBaseRenderer> & renderer();
