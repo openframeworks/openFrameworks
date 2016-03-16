@@ -813,6 +813,15 @@ void ofAppEGLWindow::makeCurrent(){
 }
 
 //------------------------------------------------------------
+void ofAppEGLWindow::swapBuffers(){
+	EGLBoolean success = eglSwapBuffers(eglDisplay, eglSurface);
+	if(!success) {
+		GLint error = eglGetError();
+		ofLogNotice("ofAppEGLWindow") << "display(): eglSwapBuffers failed: " << eglErrorString(error);
+	}
+}
+
+//------------------------------------------------------------
 void ofAppEGLWindow::update() {
 	coreEvents.notifyUpdate();
 }

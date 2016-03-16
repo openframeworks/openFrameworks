@@ -60,6 +60,7 @@ public:
 	void		disableSetupScreen();
 
 	void		setVerticalSync(bool enabled);
+	void swapBuffers();
 
 	ofCoreEvents & events();
 	shared_ptr<ofBaseRenderer> & renderer();
