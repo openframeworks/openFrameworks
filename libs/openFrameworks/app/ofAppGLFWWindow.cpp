@@ -410,6 +410,16 @@ void ofAppGLFWWindow::swapBuffers() {
 }
 
 //--------------------------------------------
+void ofAppGLFWWindow::startRender() {
+	renderer()->startRender();
+}
+
+//--------------------------------------------
+void ofAppGLFWWindow::finishRender() {
+	renderer()->finishRender();
+}
+
+//--------------------------------------------
 bool ofAppGLFWWindow::getWindowShouldClose(){
 	return glfwWindowShouldClose(windowP);
 }
