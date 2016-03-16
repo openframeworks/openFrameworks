@@ -403,6 +403,22 @@ void ofAppGLFWWindow::draw(){
 	nFramesSinceWindowResized++;
 }
 
+
+//--------------------------------------------
+void ofAppGLFWWindow::swapBuffers() {
+	glfwSwapBuffers(windowP);
+}
+
+//--------------------------------------------
+void ofAppGLFWWindow::startRender() {
+	renderer()->startRender();
+}
+
+//--------------------------------------------
+void ofAppGLFWWindow::finishRender() {
+	renderer()->finishRender();
+}
+
 //--------------------------------------------
 bool ofAppGLFWWindow::getWindowShouldClose(){
 	return glfwWindowShouldClose(windowP);
