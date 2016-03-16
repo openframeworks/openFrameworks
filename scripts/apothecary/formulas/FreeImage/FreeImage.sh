@@ -14,7 +14,7 @@ VER=3170 # 3.16.0
 
 # tools for git use
 GIT_URL=https://github.com/danoli3/FreeImage
-GIT_TAG=3.17.0
+GIT_TAG=3.17.0-header-changes
 
 # download the source code and unpack it into LIB_NAME
 function download() {
