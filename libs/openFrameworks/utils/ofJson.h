@@ -74,13 +74,13 @@ inline void ofDeserialize(const ofJson & json, ofAbstractParameter & parameter){
 	}else{
 		if(json.find(name) != json.end()){
 			if(parameter.type() == typeid(ofParameter <int> ).name() && json[name].is_number_integer()){
-				parameter.cast <int>() = (int)json[name];
+				parameter.cast <int>() = json[name].get<int>();
 			}else if(parameter.type() == typeid(ofParameter <float> ).name() && json[name].is_number_float()){
-				parameter.cast <float>() = (float)json[name];
+				parameter.cast <float>() = json[name].get<float>();
 			}else if(parameter.type() == typeid(ofParameter <bool> ).name() && json[name].is_boolean()){
-				parameter.cast <bool>() = (bool)json[name];
+				parameter.cast <bool>() = json[name].get<bool>();
 			}else if(parameter.type() == typeid(ofParameter <int64_t> ).name() && json[name].is_number_integer()){
-				parameter.cast <int64_t>() = (int64_t)json[name];
+				parameter.cast <int64_t>() = json[name].get<int64_t>();
 			}else if(parameter.type() == typeid(ofParameter <string> ).name()){
 				parameter.cast <std::string>() = json[name].get<std::string>();
 			}else{
