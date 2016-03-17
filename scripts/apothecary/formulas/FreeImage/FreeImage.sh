@@ -14,7 +14,7 @@ VER=3170 # 3.16.0
 
 # tools for git use
 GIT_URL=https://github.com/danoli3/FreeImage
-GIT_TAG=3.17.0
+GIT_TAG=3.17.0-header-changes
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -26,7 +26,7 @@ function download() {
 		rm FreeImage"$VER"Win32Win64.zip
 	elif [[ "${TYPE}" == "osx" || "${TYPE}" == "ios" || "${TYPE}" == "tvos" ]]; then
         # Fixed issues for OSX / iOS for FreeImage compiling in git repo.
-        echo "Downloading from $GIT_URL for OSX/iOS"
+        echo "Downloading from $GIT_URL $GIT_TAG for OSX/iOS"
 		echo $GIT_URL
 		curl -Lk $GIT_URL/archive/$GIT_TAG.tar.gz -o FreeImage-$GIT_TAG.tar.gz
 		tar -xf FreeImage-$GIT_TAG.tar.gz
@@ -58,9 +58,9 @@ function prepare() {
 		# copy across new Makefile for iOS.
 		cp -v $FORMULA_DIR/Makefile.ios Makefile.ios
 	elif [ "$TYPE" == "android" ]; then
-	    local BUILD_TO_DIR=$BUILD_DIR/FreeImage_patched
-	    cp -r $BUILD_DIR/FreeImage $BUILD_DIR/FreeImage_patched
-	    cd $BUILD_DIR/FreeImage_patched
+	local BUILD_TO_DIR=$BUILD_DIR/FreeImage_patched
+	cp -r $BUILD_DIR/FreeImage $BUILD_DIR/FreeImage_patched
+	cd $BUILD_DIR/FreeImage_patched
 	    sed -i "s/#define HAVE_SEARCH_H/\/\/#define HAVE_SEARCH_H/g" Source/LibTIFF4/tif_config.h
 	    cat > Source/LibRawLite/src/swab.h << ENDDELIM
 	    #include <stdint.h>
@@ -326,11 +326,13 @@ function build() {
 	elif [ "$TYPE" == "android" ] ; then
         source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
         local BUILD_TO_DIR=$BUILD_DIR/FreeImage/build/$TYPE
-        cd $BUILD_DIR/FreeImage_patched
+        rm -rf $BUILD_DIR/FreeImagePatched
+        cp -r $BUILD_DIR/FreeImage $BUILD_DIR/FreeImagePatched
+        cd $BUILD_DIR/FreeImagePatched
         
         # armv7
         ABI=armeabi-v7a
-        local BUILD_TO_DIR=$BUILD_DIR/FreeImage_patched/build/$TYPE/$ABI
+        local BUILD_TO_DIR=$BUILD_DIR/FreeImagePatched/build/$TYPE/$ABI
         source ../../android_configure.sh $ABI
         export CC="$CC $CFLAGS $LDFLAGS"
         export CXX="$CXX $CFLAGS $LDFLAGS"
@@ -341,7 +343,7 @@ function build() {
         
         # x86
         ABI=x86
-        local BUILD_TO_DIR=$BUILD_DIR/FreeImage_patched/build/$TYPE/$ABI
+        local BUILD_TO_DIR=$BUILD_DIR/FreeImagePatched/build/$TYPE/$ABI
         source ../../android_configure.sh $ABI
         export CC="$CC $CFLAGS $LDFLAGS"
         export CXX="$CXX $CFLAGS $LDFLAGS"
