@@ -12,9 +12,9 @@ using namespace ofx;
 using namespace ofx::DOM;
 
 enum TextAlignment{
-	Left,
-	Right,
-	Centered
+	LEFT,
+	RIGHT,
+	CENTERED
 };
 
 class ofxBaseGui : public ofx::DOM::Element {
@@ -39,10 +39,11 @@ class ofxBaseGui : public ofx::DOM::Element {
 		virtual void saveTo(ofBaseSerializer & serializer);
 		virtual void loadFrom(ofBaseSerializer & serializer);
 
-		std::string getName();
-		void setName(const std::string& name);
+		virtual std::string getName();
+		virtual void setName(const std::string& name);
 
-		virtual void setTextAlignment(TextAlignment textLayout=TextAlignment::Left);
+		virtual void setTextAlignment(const TextAlignment& textLayout=TextAlignment::LEFT);
+		virtual void setTextAlignment(const std::string& textLayout);
 		TextAlignment getTextAlignment() const;
 
 		ofColor getHeaderBackgroundColor() const;
@@ -53,12 +54,12 @@ class ofxBaseGui : public ofx::DOM::Element {
 		bool getShowName() const;
 		float getBorderWidth() const;
 
-		void setHeaderBackgroundColor(const ofColor & color);
-		void setBackgroundColor(const ofColor & color);
-		void setBorderColor(const ofColor & color);
-		void setTextColor(const ofColor & color);
-		void setFillColor(const ofColor & color);
-		void setBorderWidth(const float &width);
+		virtual void setHeaderBackgroundColor(const ofColor & color);
+		virtual void setBackgroundColor(const ofColor & color);
+		virtual void setBorderColor(const ofColor & color);
+		virtual void setTextColor(const ofColor & color);
+		virtual void setFillColor(const ofColor & color);
+		virtual void setBorderWidth(const float &width);
 
 		static void setDefaultHeaderBackgroundColor(const ofColor & color);
 		static void setDefaultBackgroundColor(const ofColor & color);
@@ -111,6 +112,8 @@ class ofxBaseGui : public ofx::DOM::Element {
 		virtual void render();
 
 		virtual void _setConfig(const ofJson & config);
+
+		void onResize(ResizeEventArgs& args);
 
 		/// \brief Sets the value of the element based on a position
 		/// \param mx The horizontal position

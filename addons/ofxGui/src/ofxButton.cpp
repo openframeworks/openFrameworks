@@ -8,7 +8,7 @@ ofxButton::ofxButton()
 
 ofxButton::ofxButton(const string &buttonName)
 	:ofxButton(){
-	setName(buttonName);
+	value.setName(buttonName);
 }
 
 ofxButton::ofxButton(const string &buttonName, const ofJson & config)

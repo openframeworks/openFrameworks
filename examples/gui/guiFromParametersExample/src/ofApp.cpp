@@ -12,17 +12,17 @@ void ofApp::setup(){
 	circleResolution.addListener(this, &ofApp::circleResolutionChanged);
 	ringButton.addListener(this,&ofApp::ringButtonPressed);
 
-	gui_doc =  std::make_unique<ofx::DOM::Document>();
-	gui = gui_doc->add<ofxPanel>("panel", "", 10,10);
+	panel = gui.addPanel("panel");
+	panel->setPosition(10,10);
 
-	gui->add(filled.set("bFill", true));
-	gui->add(radius.set( "radius", 140, 10, 300 ));
-	gui->add(center.set("center",ofVec2f(ofGetWidth()*.5,ofGetHeight()*.5),ofVec2f(0,0),ofVec2f(ofGetWidth(),ofGetHeight())));
-	gui->add(color.set("color",ofColor(100,100,140),ofColor(0,0),ofColor(255,255)));
-	gui->add(circleResolution.set("circleRes", 5, 3, 90));
-	gui->add<ofxButton>(twoCircles.set("twoCircles", false));
-	gui->add(ringButton.set("ring"));
-	gui->add(screenSize.set("screenSize", ofToString(ofGetWindowWidth()) + "x" + ofToString(ofGetWindowHeight())));
+	panel->add(filled.set("bFill", true));
+	panel->add(radius.set( "radius", 140, 10, 300 ));
+	panel->add(center.set("center",ofVec2f(ofGetWidth()*.5,ofGetHeight()*.5),ofVec2f(0,0),ofVec2f(ofGetWidth(),ofGetHeight())));
+	panel->add(color.set("color",ofColor(100,100,140),ofColor(0,0),ofColor(255,255)));
+	panel->add(circleResolution.set("circleRes", 5, 3, 90));
+	panel->add<ofxButton>(twoCircles.set("twoCircles", false));
+	panel->add(ringButton.set("ring"));
+	panel->add(screenSize.set("screenSize", ofToString(ofGetWindowWidth()) + "x" + ofToString(ofGetWindowHeight())));
 
 	bHide = false;
 
@@ -72,13 +72,13 @@ void ofApp::draw(){
 void ofApp::keyPressed(int key){
 	if( key == 'h' ){
 		bHide = !bHide;
-		gui->setHidden(bHide);
+		panel->setHidden(bHide);
 	}
 	if(key == 's') {
-		gui->saveToFile("settings.xml");
+		panel->saveToFile("settings.xml");
 	}
 	if(key == 'l') {
-		gui->loadFromFile("settings.xml");
+		panel->loadFromFile("settings.xml");
 	}
 	if(key == ' '){
 		color = ofColor(255);

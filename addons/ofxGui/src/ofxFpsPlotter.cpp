@@ -2,15 +2,18 @@
 #include "ofAppRunner.h"
 
 ofxFpsPlotter::ofxFpsPlotter()
-:ofxValuePlotter(ofParameter<float>("fps",0)){
+:ofxValuePlotter(){
 
+	setName("FPS");
 	setup();
+
 }
 
 ofxFpsPlotter::ofxFpsPlotter(const ofJson & config)
 :ofxFpsPlotter(){
 
 	_setConfig(config);
+
 }
 
 ofxFpsPlotter::ofxFpsPlotter(string label, float minValue, float maxValue, int plotSize, float width, float height)

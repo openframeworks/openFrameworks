@@ -3,24 +3,38 @@
 #include "ofxBaseGui.h"
 #include "ofParameter.h"
 
-template<typename Type>
-class ofxSlider : public ofxBaseGui{
+class ofxSliderType{
+	public:
+	enum Type{
+		/// \brief Default. Shows slider as a vertical or horizontal bar.
+		STRAIGHT,
+		/// \brief Displays circular slider.
+		CIRCULAR
+	};
+};
+
+template<typename DataType>
+class ofxSlider : public ofxBaseGui, public ofxSliderType{
 public:
 
 	ofxSlider();
 	ofxSlider(const ofJson & config);
-	ofxSlider(ofParameter<Type> _val, const ofJson & config = ofJson());
-	ofxSlider(ofParameter<Type> _val, float width, float height = defaultHeight);
-	ofxSlider(const std::string& sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
+	ofxSlider(ofParameter<DataType> _val, const ofJson & config = ofJson());
+	ofxSlider(ofParameter<DataType> _val, float width, float height = defaultHeight);
+	ofxSlider(const std::string& sliderName, DataType _val, DataType _min, DataType _max, float width = defaultWidth, float height = defaultHeight);
 
 	~ofxSlider();
 
 	void setup();
 
-	void setMin(Type min);
-	Type getMin();
-	void setMax(Type max);
-	Type getMax();
+	void setMin(DataType min);
+	DataType getMin();
+	void setMax(DataType max);
+	DataType getMax();
+
+	void setType(const std::string &type);
+	void setType(const Type &type);
+	Type getType();
 
 	void setPrecision(int precision);
 
@@ -41,8 +55,8 @@ public:
 		value.removeListener(listener,method);
 	}
 
-	double operator=(Type v);
-	operator const Type & ();
+	double operator=(DataType v);
+	operator const DataType & ();
 
 	ofAbstractParameter & getParameter();
 
@@ -52,12 +66,13 @@ protected:
 
 	virtual void resized(ResizeEventArgs&);
 
-	ofParameter<Type> value;
+	ofParameter<DataType> value;
+	ofParameter<ofxSliderType::Type> type;
 	virtual bool setValue(float mx, float my, bool bCheck) override;
 	virtual void generateDraw() override;
 	virtual void generateText();
 	virtual void _generateText(std::string valStr);
-	void valueChanged(Type & value);
+	void valueChanged(DataType & value);
 	ofPath bar;
 	ofVboMesh textMesh;
 
@@ -67,6 +82,11 @@ protected:
 	bool horizontal;
 
 	bool hasFocus;
+
+	//circular type
+	void arcStrip(ofPath & path, ofPoint center, float outer_radius, float inner_radius, float percent);
+	float _mouseOffset;
+
 
 };
 

@@ -10,18 +10,20 @@ ofxValuePlotter::ofxValuePlotter()
 }
 
 ofxValuePlotter::ofxValuePlotter(const ofJson & config)
-	:ofxBaseGui(config){
+	:ofxBaseGui(){
 
+	setup();
 	_setConfig(config);
 
 }
 
 
 ofxValuePlotter::ofxValuePlotter(ofParameter<float> value, const ofJson & config) :
-	ofxValuePlotter(config){
+	ofxBaseGui(){
 
-	setName(value.getName());
-
+	value.makeReferenceTo(value);
+	setup();
+	_setConfig(config);
 }
 
 ofxValuePlotter::ofxValuePlotter(string label, float minValue, float maxValue, int plotSize, float width, float height)
@@ -117,7 +119,7 @@ void ofxValuePlotter::render(){
 }
 
 ofAbstractParameter & ofxValuePlotter::getParameter(){
-	return label;
+	return value;
 }
 
 void ofxValuePlotter::valueChanged(float & value){

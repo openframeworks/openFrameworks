@@ -6,8 +6,6 @@
 #include "ofxPanel.h"
 #include "ofxButton.h"
 #include "ofxLabel.h"
-#include "ofxRotarySlider.h"
-#include "ofxGuiSpacer.h"
 #include "ofxGuiTabs.h"
 #include "ofxValuePlotter.h"
 #include "ofxFpsPlotter.h"
@@ -27,3 +25,21 @@ void ofxGuiSetFillColor(const ofColor & color);
 void ofxGuiSetTextPadding(int padding);
 void ofxGuiSetDefaultWidth(int width);
 void ofxGuiSetDefaultHeight(int height);
+
+class ofxGui {
+	public:
+		ofxGui();
+		~ofxGui();
+		Document* getRoot();
+
+		ofxGuiGroup* addGroup(const std::string& name="", const ofJson& config = ofJson());
+		ofxGuiGroup* addGroup(const ofParameterGroup & parameters, const ofJson& config = ofJson());
+
+		ofxPanel* addPanel(const std::string& name="", const ofJson& config = ofJson());
+		ofxPanel* addPanel(const ofParameterGroup & parameters, const ofJson& config = ofJson());
+
+		ofxGuiTabs* addTabs(const std::string& name="", const ofJson& config = ofJson());
+
+	private:
+		std::unique_ptr<ofx::DOM::Document> document;
+};

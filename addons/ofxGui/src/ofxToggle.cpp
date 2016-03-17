@@ -56,7 +56,7 @@ void ofxToggle::setup(){
 
 	hasFocus = false;
 
-	type.set("type", ofxToggle::Type::CHECKBOX);
+	type.set("type", ofxToggleType::CHECKBOX);
 	setType(type.get());
 	value.addListener(this,&ofxToggle::valueChanged);
 
@@ -68,14 +68,16 @@ void ofxToggle::_setConfig(const ofJson &config){
 
 	ofxBaseGui::_setConfig(config);
 
-	/// Since there is no parse method for ofxToggle::Type in JsonConfigParser,
-	/// we call a function that sets the type according to the string provided by the config
-
 	if (config.find(type.getName()) != config.end()) {
 		std::string val = config[type.getName()];
 		setType(val);
 	}
 
+}
+
+void ofxToggle::setWidth(float width){
+	float _width = ofxBaseGui::getTextWidth(getName(), getHeight())+2*textAlignment;
+	Element::setWidth(max(_width,width));
 }
 
 bool ofxToggle::mousePressed(ofMouseEventArgs & args){
@@ -94,12 +96,12 @@ void ofxToggle::generateDraw(){
 
 	switch(type){
 		default:
-		case ofxToggle::Type::RADIO:
-		case ofxToggle::Type::CHECKBOX: {
+		case ofxToggleType::RADIO:
+		case ofxToggleType::CHECKBOX: {
 			checkboxRect.set(1, 1, getHeight() - 2, getHeight() - 2);
 			break;
 		}
-		case ofxToggle::Type::FULLSIZE: {
+		case ofxToggleType::FULLSIZE: {
 			checkboxRect.set(1, 1, getWidth() - 2, getHeight() - 2);
 			break;
 		}
@@ -120,16 +122,16 @@ void ofxToggle::generateDraw(){
 	}
 	switch(type){
 		default:
-		case ofxToggle::Type::RADIO:{
+		case ofxToggleType::RADIO:{
 			fg.arc(checkboxRect.getCenter(), checkboxRect.getHeight()/3, checkboxRect.getHeight()/3, 0, 360);
 			break;
 		}
-		case ofxToggle::Type::CHECKBOX: {
+		case ofxToggleType::CHECKBOX: {
 			fg.rectangle(checkboxRect.getTopLeft()+ofPoint(checkboxRect.width/6,checkboxRect.height/6),
 						 checkboxRect.width/3*2,checkboxRect.height/3*2);
 			break;
 		}
-		case ofxToggle::Type::FULLSIZE: {
+		case ofxToggleType::FULLSIZE: {
 			fg.rectangle(checkboxRect.getTopLeft(),checkboxRect.width,checkboxRect.height);
 			break;
 		}
@@ -137,8 +139,8 @@ void ofxToggle::generateDraw(){
 
 	switch(type){
 		default:
-		case ofxToggle::Type::RADIO:
-		case ofxToggle::Type::CHECKBOX: {
+		case ofxToggleType::RADIO:
+		case ofxToggleType::CHECKBOX: {
 
 //			//create cross
 //			cross.clear();
@@ -156,22 +158,22 @@ void ofxToggle::generateDraw(){
 			}
 			break;
 		}
-		case ofxToggle::Type::FULLSIZE: {
+		case ofxToggleType::FULLSIZE: {
 
 			// create label
 			if(showName){
 				float textWidth = ofxBaseGui::getTextWidth(getName(), getShape().height);
 				switch(textAlignment){
 					default:
-					case TextAlignment::Centered:
+					case TextAlignment::CENTERED:
 						if(getShape().getCenter().x - textWidth/2 > getShape().x+textPadding){
 							textMesh = getTextMesh(getName(), getWidth()/2 - textWidth/2, getHeight()/ 2 + 4);
 							break;
 						}
-					case TextAlignment::Left:
+					case TextAlignment::LEFT:
 						textMesh = getTextMesh(getName(), textPadding, getShape().height / 2 + 4);
 						break;
-					case TextAlignment::Right:
+					case TextAlignment::RIGHT:
 						textMesh = getTextMesh(getName(), getShape().getWidth() - textWidth - textPadding, getShape().height / 2 + 4);
 						break;
 
@@ -272,21 +274,21 @@ void ofxToggle::valueChanged(bool & value){
 
 void ofxToggle::setType(const std::string& type){
 	if(type == "checkbox"){
-		setType(ofxToggle::Type::CHECKBOX);
+		setType(ofxToggleType::CHECKBOX);
 	}
 	else if(type == "radio"){
-		setType(ofxToggle::Type::RADIO);
+		setType(ofxToggleType::RADIO);
 	}
 	else if(type == "fullsize"){
-		setType(ofxToggle::Type::FULLSIZE);
+		setType(ofxToggleType::FULLSIZE);
 	}
 }
 
-void ofxToggle::setType(const ofxToggle::Type& type){
+void ofxToggle::setType(const ofxToggleType::Type &type){
 	this->type.set(type);
 	setNeedsRedraw();
 }
 
-ofxToggle::Type ofxToggle::getType(){
+ofxToggleType::Type ofxToggle::getType(){
 	return type;
 }

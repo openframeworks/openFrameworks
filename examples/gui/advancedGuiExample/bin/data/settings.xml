@@ -12,4 +12,11 @@
 		<slider3>0.05</slider3>
 		<slider4>0.05</slider4>
 	</vertical_sliders__spacer>
+<group>
+		<slider1>0.723077</slider1>
+		<slider2>0.346154</slider2>
+		<slider3>0.238462</slider3>
+		<slider4>0.0615385</slider4>
+		<slider>0.5</slider>
+	</group>
 </ofParameterGroup>

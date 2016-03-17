@@ -7,24 +7,68 @@ void ofApp::setup(){
 
 	ofSetLogLevel(OF_LOG_VERBOSE);
 
-	gui_doc =  std::make_unique<ofx::DOM::Document>();
 
-	tabbed_pages = gui_doc->add<ofxGuiTabs>("tabbed pages", "", 10,10);
-	tabbed_pages->setSize(500, 300);
+	/*
+	 *  create tab container
+	 */
+	tabbed_pages = gui.addTabs("", ofJson({{"width", "70%"}}));
+	tabbed_pages->setPosition(40, 70);
 
-	page1 = tabbed_pages->add<ofxPanel>("page 1");
+	/*
+	 *  create pages and add them to tab layout
+	 */
+	page1 = tabbed_pages->addPanel("page1", ofJson({{"show-header", false}}));
+	page2 = tabbed_pages->addPanel("page2", ofJson({{"show-header", false}}));
+	page3 = tabbed_pages->addPanel("page3", ofJson({{"show-header", false}}));
 
-	panel1 = page1->add<ofxGuiGroup>("panel1");
-	panel1->add(slider_param.set("slider", 0.5, 0, 1));
 
-	page2= tabbed_pages->add<ofxPanel>("page 2");
+	/*
+	 *  fill page 1
+	 */
+	vector<ofJson> choices;
+	choices.push_back({{"float", "left"}, {"background-color", "#2da1e3"}});
+	choices.push_back({{"float", "right"}, {"background-color", "#0ff"}});
+	choices.push_back({{"float", "none"}, {"background-color", "rgba(255,0,0,0.7)"}});
 
-	panel2 = page2->add<ofxGuiGroup>("horizontal", "", 60, 10);
-	panel2->setShowHeader(false);
-	panel2->setExclusiveToggles(true);
-	panel2->add(toggle2_param.set("toggle2", false));
-	panel2->add(toggle3_param.set("toggle3", false));
-	panel2->add(toggle4_param.set("toggle4", false));
+	for(int i = 0; i < 10; i++){
+
+		ofRandomize(choices);
+
+		ofxLabel* label = page1->add<ofxLabel>(ofToString(i,2), choices[0]);
+		label->setSize((int)ofRandom(100,200), (int)ofRandom(60, 80));
+		label->setBorderWidth(1);
+	}
+
+	/*
+	 *  raise the chance to create left or right floating elements
+	 */
+	choices.push_back({{"float", "left"}, {"background-color", "#2da1e3"}});
+	choices.push_back({{"float", "right"}, {"background-color", "#0ff"}});
+
+	/*
+	 *  fill page 2
+	 */
+	for(int i = 0; i < 20; i++){
+
+		ofRandomize(choices);
+
+		ofxLabel* label = page2->add<ofxLabel>(ofToString(i,2), choices[0]);
+		label->setSize((int)ofRandom(70,50), (int)ofRandom(30, 50));
+		label->setBorderWidth(1);
+	}
+
+	/*
+	 *  fill page 3
+	 */
+	for(int i = 0; i < 30; i++){
+
+		ofRandomize(choices);
+
+		ofxLabel* label = page3->add<ofxLabel>(ofToString(i,2), choices[0]);
+		label->setSize((int)ofRandom(130,150), (int)ofRandom(30, 50));
+		label->setBorderWidth(1);
+	}
+
 
 }
 
@@ -38,6 +82,8 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+
+	ofBackgroundGradient(ofColor::white, ofColor::gray);
 
 }
 

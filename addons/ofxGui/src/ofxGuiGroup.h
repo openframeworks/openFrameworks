@@ -22,7 +22,9 @@ typedef ofxColorSlider_<unsigned char> ofxColorSlider;
 typedef ofxColorSlider_<unsigned short> ofxShortColorSlider;
 typedef ofxColorSlider_<float> ofxFloatColorSlider;
 
-class ofxGuiSpacer;
+class ofxPanel;
+class ofxGuiTabs;
+class ofxFpsPlotter;
 
 class ofxGuiGroupHeader : public ofxBaseGui {
 	public:
@@ -43,7 +45,8 @@ class ofxGuiGroupHeader : public ofxBaseGui {
 class ofxGuiGroup : public ofxBaseGui {
 	public:
 
-		ofxGuiGroup(const std::string& collectionName="");
+		ofxGuiGroup();
+		ofxGuiGroup(const std::string& collectionName);
 		ofxGuiGroup(const std::string& collectionName, const ofJson & config);
 		ofxGuiGroup(const ofParameterGroup & parameters, const ofJson &config = ofJson());
 		ofxGuiGroup(const ofParameterGroup & parameters, const std::string& _filename, float x = 10, float y = 10);
@@ -70,6 +73,18 @@ class ofxGuiGroup : public ofxBaseGui {
 		ofxColorSlider* add(ofParameter <ofColor> & parameter, const ofJson & config = ofJson());
 		ofxShortColorSlider* add(ofParameter <ofShortColor> & parameter, const ofJson & config = ofJson());
 		ofxFloatColorSlider* add(ofParameter <ofFloatColor> & parameter, const ofJson & config = ofJson());
+
+		ofxBaseGui* addSpacer(float width, float height);
+		ofxBaseGui* addSpacer(const ofJson & config);
+		ofxFpsPlotter* addFpsPlotter(const ofJson & config="");
+
+		ofxGuiGroup* addGroup(const std::string& name="", const ofJson& config = ofJson());
+		ofxGuiGroup* addGroup(const ofParameterGroup & parameters, const ofJson& config = ofJson());
+		ofxPanel* addPanel(const std::string& name="", const ofJson& config = ofJson());
+		ofxPanel* addPanel(const ofParameterGroup & parameters, const ofJson& config = ofJson());
+		ofxGuiTabs* addTabs(const std::string& name="", const ofJson& config = ofJson());
+
+		virtual void setHeaderBackgroundColor(const ofColor & color) override;
 
 		virtual void minimize();
 		virtual void maximize();
@@ -99,10 +114,12 @@ class ofxGuiGroup : public ofxBaseGui {
 		template <class ControlType>
 		ControlType* getControlType(const int& index);
 
-		virtual ofAbstractParameter & getParameter();
+		virtual ofAbstractParameter & getParameter() override;
+		virtual std::string getName() override;
+		virtual void setName(const std::string& name) override;
 
 		void setShowHeader(bool show);
-		void setDistributeEvenly(bool distribute);
+		ofxBaseGui* getHeader();
 
 		bool getTogglesExclusive() const;
 		void setExclusiveToggles(bool exclusive);

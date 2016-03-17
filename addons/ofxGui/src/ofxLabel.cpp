@@ -11,14 +11,6 @@ ofxValueLabel<Type>::ofxValueLabel()
 }
 
 template<typename Type>
-ofxValueLabel<Type>::ofxValueLabel(const ofJson & config)
-:ofxValueLabel(){
-
-	_setConfig(config);
-
-}
-
-template<typename Type>
 ofxValueLabel<Type>::ofxValueLabel(ofParameter<Type> _label, const ofJson & config)
 :ofxBaseGui(){
 

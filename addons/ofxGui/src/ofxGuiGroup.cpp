@@ -2,7 +2,8 @@
 #include "ofxPanel.h"
 #include "ofGraphics.h"
 #include "ofxSliderGroup.h"
-#include "ofxGuiSpacer.h"
+#include "ofxGuiTabs.h"
+#include "ofxFpsPlotter.h"
 #include "JsonConfigParser.h"
 
 ofxGuiGroupHeader::ofxGuiGroupHeader(const ofJson &config):ofxBaseGui(config){
@@ -65,11 +66,18 @@ bool ofxGuiGroupHeader::mousePressed(ofMouseEventArgs & args){
 
 }
 
+ofxGuiGroup::ofxGuiGroup()
+	:ofxBaseGui(){
+
+	setup();
+
+}
+
 ofxGuiGroup::ofxGuiGroup(const std::string& collectionName)
 	:ofxBaseGui(){
 
 	setup();
-	setName(collectionName);
+	parameters.setName(collectionName);
 
 }
 
@@ -237,11 +245,52 @@ ofxFloatColorSlider* ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter, co
 	return add<ofxFloatColorSlider>(parameter, config);
 }
 
+ofxBaseGui* ofxGuiGroup::addSpacer(float width, float height){
+	ofxBaseGui* e = add<ofxBaseGui>();
+	e->setSize(width, height);
+	e->setBorderWidth(0);
+	e->setBackgroundColor(ofColor(0,0,0,0));
+	return e;
+}
+
+ofxBaseGui *ofxGuiGroup::addSpacer(const ofJson& config){
+	ofxBaseGui* e = add<ofxBaseGui>();
+	e->setBorderWidth(0);
+	e->setBackgroundColor(ofColor(0,0,0,0));
+	e->setConfig(config);
+	return e;
+}
+
+ofxFpsPlotter* ofxGuiGroup::addFpsPlotter(const ofJson &config){
+	return add<ofxFpsPlotter>(config);
+}
+
+ofxGuiGroup* ofxGuiGroup::addGroup(const string &name, const ofJson &config){
+	return add<ofxGuiGroup>(name, config);
+}
+
+ofxGuiGroup* ofxGuiGroup::addGroup(const ofParameterGroup & parameters, const ofJson &config){
+	return add<ofxGuiGroup>(parameters, config);
+}
+
+ofxPanel* ofxGuiGroup::addPanel(const string &name, const ofJson &config){
+	return add<ofxPanel>(name, config);
+}
+
+ofxPanel* ofxGuiGroup::addPanel(const ofParameterGroup & parameters, const ofJson &config){
+	return add<ofxPanel>(parameters, config);
+}
+
+ofxGuiTabs* ofxGuiGroup::addTabs(const string &name, const ofJson &config){
+	return add<ofxGuiTabs>(name, config);
+}
+
 void ofxGuiGroup::clear(){
 	Element::clear();
 	header = nullptr;
 	active_toggle_index = -1;
-	header = add<ofxGuiGroupHeader>(ofJson({{"float", "none"}}));
+	header = add<ofxGuiGroupHeader>();
+	header->setPercentalWidth(true, 1);
 	header->setSize(getWidth(), headerHeight);
 	header->setBackgroundColor(headerBackgroundColor);
 	header->setBorderWidth(0);
@@ -404,6 +453,8 @@ bool ofxGuiGroup::setActiveToggle(ofxToggle* toggle) {
 }
 
 bool ofxGuiGroup::setActiveToggle(int index) {
+	//+1 because of header element TODO there should be a better solution
+	index ++;
 	if(index >= 0 && index < (int)children().size()){
 		if(ofxToggle* toggle = dynamic_cast<ofxToggle*>(children().at(index))) {
 			return setActiveToggle(toggle);
@@ -451,13 +502,25 @@ ofParameter<int>& ofxGuiGroup::getActiveToggleIndex() {
 
 ofAbstractParameter & ofxGuiGroup::getParameter(){
 	parameters.clear();
-//	for(auto child : children()){
-//		ofxBaseGui* e = dynamic_cast<ofxBaseGui*>(child);
-//		if(e){
-//			parameters.add(e->getParameter());
-//		}
-//	}
+	for(auto child : children()){
+		ofxBaseGui* e = dynamic_cast<ofxBaseGui*>(child);
+		if(e){
+			parameters.add(e->getParameter());
+		}
+	}
 	return parameters;
+}
+
+string ofxGuiGroup::getName(){
+	return parameters.getName();
+}
+
+void ofxGuiGroup::setName(const std::string& _name){
+	parameters.setName(_name);
+}
+
+ofxBaseGui* ofxGuiGroup::getHeader(){
+	return header;
 }
 
 void ofxGuiGroup::onHeaderVisibility(bool &showing){
@@ -473,7 +536,12 @@ void ofxGuiGroup::onHeaderHeight(float &height){
 }
 
 void ofxGuiGroup::onResize(ResizeEventArgs & re){
+
+}
+
+void ofxGuiGroup::setHeaderBackgroundColor(const ofColor & color){
+	ofxBaseGui::setHeaderBackgroundColor(color);
 	if(header){
-		header->setWidth(re.shape().getWidth());
+		header->setBackgroundColor(color);
 	}
 }

@@ -60,6 +60,9 @@ void ofxPanelHeader::generateDraw(){
 }
 
 void ofxPanelHeader::render() {
+
+	ofxBaseGui::render();
+
 	ofSetColor(textColor);
 
 	ofxGuiGroup* _parent = dynamic_cast<ofxGuiGroup*>(parent());
@@ -105,8 +108,9 @@ bool ofxPanelHeader::mousePressed(ofMouseEventArgs & args){
  */
 
 ofxPanel::ofxPanel(const string &collectionName)
-	:ofxGuiGroup(collectionName){
+	:ofxGuiGroup(){
 
+	parameters.setName(collectionName);
 	setup();
 	clear();
 
@@ -151,6 +155,7 @@ ofxPanel::~ofxPanel(){
 void ofxPanel::clear(){
 
 	if(header && headerListenersLoaded){
+		headerListenersLoaded = false;
 		ofRemoveListener(header->move, this, &ofxPanel::onHeaderMove);
 		ofRemoveListener(((ofxPanelHeader*)header)->loadPressedE, this, &ofxPanel::onLoadPressed);
 		ofRemoveListener(((ofxPanelHeader*)header)->savePressedE, this, &ofxPanel::onSavePressed);
@@ -161,6 +166,7 @@ void ofxPanel::clear(){
 	active_toggle_index = -1;
 	header = add<ofxPanelHeader>(ofJson({{"float", "none"}}));
 	header->setSize(getWidth(), headerHeight);
+	header->setPercentalWidth(true, 1);
 	header->setBackgroundColor(headerBackgroundColor);
 	header->setBorderWidth(0);
 	ofAddListener(header->move, this, &ofxPanel::onHeaderMove);

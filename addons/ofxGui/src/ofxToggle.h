@@ -3,19 +3,20 @@
 #include "ofParameter.h"
 #include "ofxBaseGui.h"
 
-class ofxToggle : public ofxBaseGui{
-public:
-
-	enum class Type
-	{
+class ofxToggleType{
+	public:
+	enum Type {
 		/// \brief Shows toggle as checkbox (default).
 		CHECKBOX,
 		/// \brief Shows toggle as radio toggle.
 		RADIO,
 		/// \brief Uses the whole element as toggle.
 		FULLSIZE
-
 	};
+};
+
+class ofxToggle : public ofxBaseGui{
+public:
 
 	ofxToggle();
 	ofxToggle(const std::string& toggleName);
@@ -29,8 +30,10 @@ public:
 	void setup();
 
 	void setType(const std::string &type);
-	void setType(const Type &type);
-	ofxToggle::Type getType();
+	void setType(const ofxToggleType::Type &type);
+	ofxToggleType::Type getType();
+
+	virtual void setWidth(float width) override;
 
 	virtual bool mousePressed(ofMouseEventArgs & args) override;
 	virtual bool mouseReleased(ofMouseEventArgs & args) override;
@@ -56,7 +59,7 @@ protected:
 	ofRectangle checkboxRect;
 	ofParameter<bool> value;
 
-	ofParameter<ofxToggle::Type> type;
+	ofParameter<ofxToggleType::Type> type;
 	bool hasFocus;
 
 	virtual bool setValue(float mx, float my, bool bCheck);

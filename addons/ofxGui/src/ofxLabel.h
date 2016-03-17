@@ -8,8 +8,6 @@ class ofxValueLabel: public ofxBaseGui {
 public:
 
 	ofxValueLabel();
-	ofxValueLabel(const ofJson & config);
-
 	ofxValueLabel(ofParameter<Type> _label, const ofJson & config = ofJson());
 	ofxValueLabel(const std::string& labelName, const ofJson & config = ofJson());
 	ofxValueLabel(ofParameter<Type> _label, float width, float height);

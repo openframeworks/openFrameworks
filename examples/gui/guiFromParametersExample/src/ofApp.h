@@ -38,8 +38,8 @@ public:
 	ofParameter<void> ringButton;
 	ofParameter<string> screenSize;
 
-	ofxPanel* gui;
-	std::unique_ptr<ofx::DOM::Document> gui_doc;
+	ofxPanel* panel;
+	ofxGui gui;
 
 	ofSoundPlayer ring;
 };

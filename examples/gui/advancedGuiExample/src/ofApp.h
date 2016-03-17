@@ -24,17 +24,15 @@ class ofApp : public ofBaseApp {
 
 	private:
 
-		std::unique_ptr<ofx::DOM::Document> gui_doc;
+		ofxGui gui;
 
-		ofxPanel *panel1, *panel4, *panel5;
-		ofxGuiGroup *rotary;
-		ofxGuiGroup* matrix, *panel3, *panel2;
-		ofParameter<string> matrix_active_name;
-		ofParameter<int> matrix_active_index;
+		ofxPanel *panel1, *panel3, *sliders;
+		ofxGuiGroup *rotary, *labels, *buttons, *toggles;
+		ofxGuiGroup* group3, *group1;
+		ofParameter<string> active_name;
+		ofParameter<int> active_index;
 		ofParameter<float> floatfield_param;
 		ofParameter<string> textfield_param;
-
-		ofxButton *button;
 
 		ofParameter <string> label_param;
 		ofParameter <bool> toggle_param;
@@ -44,14 +42,17 @@ class ofApp : public ofBaseApp {
 		vector <ofParameter <bool> > matrix_params;
 		ofParameterGroup g;
 
-		ofParameterGroup cameraMatrixParameters;
-		ofParameter<bool> cam0;
-		ofParameter<bool> cam2;
-		ofParameter<bool> cam3;
-		ofParameter<bool> cam1;
-		ofxGuiGroup *matrixCam;
+		ofParameterGroup colorParameters;
+		ofParameter<bool> color0;
+		ofParameter<bool> color2;
+		ofParameter<bool> color3;
+		ofParameter<bool> color1;
+		ofxGuiGroup *color_toggles;
+
+		ofColor color;
 
 		void toggleGroupHeader(bool & val);
+		void setHeaderColors(int& index);
 		void updateMatrixIndex(int& index);
 
 };

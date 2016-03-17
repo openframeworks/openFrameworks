@@ -96,13 +96,15 @@ void ofxBaseGui::setup(){
 	textColor.set("text-color", defaultTextColor);
 	fillColor.set("fill-color", defaultFillColor);
 	borderWidth.set("border-width", defaultBorderWidth);
-	textAlignment.set("text-alignment", TextAlignment::Left);
+	textAlignment.set("text-align", TextAlignment::LEFT);
 	showName.set("show-name", true);
 
 	// parameter won't be saved to file
 	parameter.setSerializable(false);
 
 	setAttribute("float", LayoutFloat::NONE);
+
+	ofAddListener(resize, this, &ofxBaseGui::onResize);
 
 	registerMouseEvents();
 
@@ -149,12 +151,13 @@ void ofxBaseGui::_setConfig(const ofJson &config){
 	JsonConfigParser::parse(config, showName);
 
 	//parse size
-	ofRectangle newshape = getShape();
-	JsonConfigParser::parse(config, "shape", newshape);
-	if(newshape != (ofRectangle)getShape()){
-		setShape(newshape);
-		invalidateChildShape();
-	}
+	JsonConfigParser::parse(config, this);
+//	ofRectangle newshape = getShape();
+//	JsonConfigParser::parse(config, "shape", newshape);
+//	if(newshape != (ofRectangle)getShape()){
+//		setShape(newshape);
+//		invalidateChildShape();
+//	}
 
 	//parse floating
 	LayoutFloat _floating = getAttribute<LayoutFloat>("float");
@@ -162,6 +165,12 @@ void ofxBaseGui::_setConfig(const ofJson &config){
 	if(_floating != getAttribute<LayoutFloat>("float")){
 		setAttribute("float", _floating);
 		invalidateChildShape();
+	}
+
+	//parse text alignment
+	if (config.find(textAlignment.getName()) != config.end()) {
+		std::string val = config[textAlignment.getName()];
+		setTextAlignment(val);
 	}
 
 	setNeedsRedraw();
@@ -187,6 +196,7 @@ void ofxBaseGui::setUseTTF(bool bUseTTF){
 
 ofxBaseGui::~ofxBaseGui(){
 	unregisterMouseEvents();
+	ofRemoveListener(resize, this, &ofxBaseGui::onResize);
 }
 
 void ofxBaseGui::bindFontTexture(){
@@ -246,13 +256,11 @@ void ofxBaseGui::loadFromFile(const std::string& filename){
 
 
 void ofxBaseGui::saveTo(ofBaseSerializer & serializer){
-	ofLogError("ofxBaseGui::serialize") << "This is currently not working. Sorry.";
-	//serializer.serialize(getParameter());
+	serializer.serialize(getParameter());
 }
 
 void ofxBaseGui::loadFrom(ofBaseSerializer & serializer){
-	ofLogError("ofxBaseGui::serialize") << "This is currently not working. Sorry.";
-	//serializer.deserialize(getParameter());
+	serializer.deserialize(getParameter());
 }
 
 
@@ -267,8 +275,21 @@ string ofxBaseGui::getName(){
 void ofxBaseGui::setName(const std::string& _name){
 	getParameter().setName(_name);
 }
-void ofxBaseGui::setTextAlignment(TextAlignment textLayout){
+
+void ofxBaseGui::setTextAlignment(const TextAlignment &textLayout){
 	this->textAlignment = textLayout;
+}
+
+void ofxBaseGui::setTextAlignment(const std::string &textLayout){
+	if(textLayout == "left"){
+		setTextAlignment(TextAlignment::LEFT);
+	}
+	else if(textLayout == "right"){
+		setTextAlignment(TextAlignment::RIGHT);
+	}
+	else if(textLayout == "center"){
+		setTextAlignment(TextAlignment::CENTERED);
+	}
 }
 
 TextAlignment ofxBaseGui::getTextAlignment() const {
@@ -450,10 +471,6 @@ bool ofxBaseGui::isMouseOver() const{
 	return _isMouseOver;
 }
 
-bool ofxBaseGui::isMousePressed() const{
-	return !capturedPointers().empty();
-}
-
 void ofxBaseGui::setDraggable(bool draggable){
 	_isDraggable = draggable;
 }
@@ -514,4 +531,8 @@ bool ofxBaseGui::mouseMoved(ofMouseEventArgs & args){
 bool ofxBaseGui::mouseReleased(ofMouseEventArgs & args){
 	_isDragging = false;
 	return false;
+}
+
+void ofxBaseGui::onResize(ResizeEventArgs &args){
+
 }

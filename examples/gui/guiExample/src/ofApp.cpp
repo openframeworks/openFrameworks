@@ -7,17 +7,16 @@ void ofApp::setup(){
 
 	ofSetVerticalSync(true);
 
-	gui_doc =  std::make_unique<ofx::DOM::Document>();
-	gui = gui_doc->add<ofxPanel>("panel","",10,10);
+	panel = gui.getRoot()->add<ofxPanel>("panel","",10,10);
 
-	filled = gui->add<ofxToggle>("fill");
-	radius = gui->add<ofxFloatSlider>("radius", 140, 10, 300);
-	center = gui->add<ofxVec2Slider>("center", ofVec2f(ofGetWidth()*.5, ofGetHeight()*.5), ofVec2f(0, 0), ofVec2f(ofGetWidth(), ofGetHeight()));
-	color = gui->add<ofxColorSlider>("color", ofColor(100, 100, 140), ofColor(0, 0), ofColor(255, 255));
-	circleResolution = gui->add<ofxIntSlider>("circle res", 5, 3, 90);
-	twoCircles = gui->add<ofxButton>("two circles");
-	ringButton = gui->add<ofxButton>("ring");
-	screenSize = gui->add<ofxLabel>("screen size", ofToString(ofGetWidth())+"x"+ofToString(ofGetHeight()));
+	filled = panel->add<ofxToggle>("fill");
+	radius = panel->add<ofxFloatSlider>("radius", 140, 10, 300);
+	center = panel->add<ofxVec2Slider>("center", ofVec2f(ofGetWidth()*.5, ofGetHeight()*.5), ofVec2f(0, 0), ofVec2f(ofGetWidth(), ofGetHeight()));
+	color = panel->add<ofxColorSlider>("color", ofColor(100, 100, 140), ofColor(0, 0), ofColor(255, 255));
+	circleResolution = panel->add<ofxIntSlider>("circle res", 5, 3, 90);
+	twoCircles = panel->add<ofxButton>("two circles");
+	ringButton = panel->add<ofxButton>("ring");
+	screenSize = panel->add<ofxLabel>("screen size", ofToString(ofGetWidth())+"x"+ofToString(ofGetHeight()));
 
 	ringButton->addListener(this, &ofApp::ringButtonPressed);
 	//ugly fix to trigger initial value
@@ -69,10 +68,10 @@ void ofApp::keyPressed(int key){
 		bHide = !bHide;
 	}
 	else if(key == 's'){
-		gui->saveToFile("settings.xml");
+		panel->saveToFile("settings.xml");
 	}
 	else if(key == 'l'){
-		gui->loadFromFile("settings.xml");
+		panel->loadFromFile("settings.xml");
 	}
 	else if(key == ' '){
 		*color = ofColor(255);

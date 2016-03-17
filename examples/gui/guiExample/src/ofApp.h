@@ -37,8 +37,8 @@ public:
 	ofxButton* ringButton;
 	ofxLabel* screenSize;
 
-	ofxPanel* gui;
-	std::unique_ptr<ofx::DOM::Document> gui_doc;
+	ofxPanel* panel;
+	ofxGui gui;
 
 	ofSoundPlayer ring;
 };
