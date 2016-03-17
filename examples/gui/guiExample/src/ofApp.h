@@ -24,18 +24,19 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
+	void circleResolutionChanged(int & circleResolution);
 	void ringButtonPressed();
 
 	bool bHide;
 
-	ofxFloatSlider* radius;
-	ofxColorSlider* color;
-	ofxVec2Slider* center;
-	ofxIntSlider* circleResolution;
-	ofxToggle* filled;
-	ofxButton* twoCircles;
-	ofxButton* ringButton;
-	ofxLabel* screenSize;
+	ofParameter<float> radius;
+	ofParameter<ofColor> color;
+	ofParameter<ofVec2f> center;
+	ofParameter<int> circleResolution;
+	ofParameter<bool> filled;
+	ofParameter<bool> twoCircles;
+	ofParameter<void> ringButton;
+	ofParameter<string> screenSize;
 
 	ofxPanel* panel;
 	ofxGui gui;
