@@ -10,9 +10,9 @@ void ofApp::setup(){
 	parameters.add(renderer1.parameters);
 	parameters.add(renderer2.parameters);
 
-	gui.setup(parameters);
+	panel = gui.addPanel(parameters);
 
-	gui.loadFromFile("settings.xml");
+	panel->loadFromFile("settings.xml");
 
 	font.load( OF_TTF_SANS,9,true,true);
 	ofEnableAlphaBlending();
@@ -32,11 +32,10 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackgroundGradient(ofColor::white, ofColor::gray);
+	ofBackgroundGradient(ofColor::white, ofColor::gray);
 	renderer1.draw();
 	renderer2.draw();
 	ofSetColor(255);
-	gui.draw();
 	font.drawString("frame: " + ofToString(renderer1.frameNum),ofGetWidth()-150,20);
 	font.drawString("fps: " + ofToString((int)ofGetFrameRate()),ofGetWidth()-150,40);
 }
@@ -107,6 +106,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

@@ -30,6 +30,7 @@ class ofApp : public ofBaseApp{
 		ofParameter<bool> check;
 		ofParameterGroup parameters;
 		ofParameter<ofColor> color;
-		ofxPanel gui;
+		ofxPanel* panel;
+		ofxGui gui;
 
 };
