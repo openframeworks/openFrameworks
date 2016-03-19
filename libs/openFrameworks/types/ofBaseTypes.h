@@ -64,7 +64,9 @@ public:
 	///
 	/// \param x Draw position on the x axis.
 	/// \param y Draw position on the y axis.
-	virtual void draw(float x, float y) const=0;
+	virtual void draw(float x, float y) const {
+		draw(x, y, getWidth(), getHeight());
+	}
 
 	/// \brief Draw at a position with the specified size.
 	///
@@ -72,9 +74,7 @@ public:
 	/// \param y Draw position on the y axis.
 	/// \param w Draw width.
 	/// \param h Draw height.
-    virtual void draw(float x, float y, float w, float h) const{
-        draw(x, y, getWidth(), getHeight());
-    }
+	virtual void draw(float x, float y, float w, float h) const = 0;
 
 	/// \brief Draw at a position at the native size.
 	///

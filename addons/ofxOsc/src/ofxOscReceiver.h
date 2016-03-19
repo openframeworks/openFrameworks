@@ -55,7 +55,7 @@ public:
 	ofxOscReceiver & operator=(const ofxOscReceiver & mom);
 
 	/// listen_port is the port to listen for messages on
-	void setup( int listen_port );
+	bool setup( int listen_port );
 
 	/// returns true if there are any messages waiting for collection
 	bool hasWaitingMessages();

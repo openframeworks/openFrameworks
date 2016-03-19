@@ -1,7 +1,5 @@
 #include "ofApp.h"
 
-#define LOCK 1
-
 //--------------------------------------------------------------
 void ofApp::setup(){
 	threadedObject.setup();

@@ -132,6 +132,7 @@ define parse_addon
 	$(eval PROJECT_ADDONS_LDFLAGS += $(ADDON_LDFLAGS)) \
 	$(eval PROJECT_ADDONS_PKG_CONFIG_LIBRARIES += $(ADDON_PKG_CONFIG_LIBRARIES)) \
 	$(eval PROJECT_ADDONS_FRAMEWORKS += $(ADDON_FRAMEWORKS)) \
+	$(eval PROJECT_AFTER += $(ADDON_AFTER)) \
 	$(if $(strip $(ADDON_SOURCES)), \
 		$(eval ADDON_SOURCES_FILTERED = $(filter-out $(addprefix $(addon)/,$(ADDON_SOURCES_EXCLUDE)),$(ADDON_SOURCES))) \
 		$(foreach addon_src, $(strip $(ADDON_SOURCES_FILTERED)), \
