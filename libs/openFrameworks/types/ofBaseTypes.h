@@ -1770,9 +1770,9 @@ public:
 	/// \param labels True to draw the names and values of the axes.
 	virtual void drawGridPlane(float stepSize, size_t numberOfSteps, bool labels) const;
 	/// \brief Draw an arrow between two 3D points.
-	/// \brief start The 3D vector to use as the first point.
-	/// \brief end The 3D vector to use as the second point.
-	/// \float headSize The size of the arrowhead.
+	/// \param start The 3D vector to use as the first point.
+	/// \param end The 3D vector to use as the second point.
+	/// \param headSize The size of the arrowhead.
 	virtual void drawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) const;
 	/// \brief Draw the coordinate system's axes with the renderer.
 	///
