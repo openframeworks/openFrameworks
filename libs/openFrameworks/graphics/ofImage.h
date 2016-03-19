@@ -16,12 +16,20 @@
 /// the pixels.
 ///
 
-/// \todo Needs documentation.
+/// \brief Used for controlling the save quality of JPEGs.
+///
+/// These values are directly mapped to FreeImage's JPEG quality flags.
+/// \sa http://freeimage.sourceforge.net/fnet/html/E77CD483.htm
 enum ofImageQualityType {
+    /// \brief Equivalent to FreeImage's JPEG_QUALITYSUPERB (100:1 ratio) 
     OF_IMAGE_QUALITY_BEST,
+    /// \brief Equivalent to FreeImage's JPEG_QUALITYGOOD (75:1 ratio) 
     OF_IMAGE_QUALITY_HIGH,
+    /// \brief Equivalent to FreeImage's JPEG_QUALITYNORMAL (50:1 ratio)
     OF_IMAGE_QUALITY_MEDIUM,
+    /// \brief Equivalent to FreeImage's JPEG_QUALITYAVERAGE (25:1 ratio)
     OF_IMAGE_QUALITY_LOW,
+    /// \brief Equivalent to FreeImage's JPEG_QUALITYBAD (10:1 ratio)
     OF_IMAGE_QUALITY_WORST
 };
 
