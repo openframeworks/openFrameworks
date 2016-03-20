@@ -1,0 +1,10 @@
+import os
+SPIDERMONKEY_ENGINE = ''
+NODE_JS = 'node'
+LLVM_ROOT='%HOME%/emscripten-sdk/clang/fastcomp/build_master_64/bin'
+EMSCRIPTEN_ROOT='%HOME%/emscripten-sdk/emscripten/master'
+EMSCRIPTEN_NATIVE_OPTIMIZER='%HOME%/emscripten-sdk/emscripten/master_64bit_optimizer/optimizer'
+V8_ENGINE = ''
+TEMP_DIR = '/tmp'
+COMPILER_ENGINE = NODE_JS
+JS_ENGINES = [NODE_JS]

@@ -16,7 +16,7 @@ int main( ){
 
 	settings.width = 300;
 	settings.height = 300;
-	settings.setPosition.(ofVec2f(0,0));
+	settings.setPosition(ofVec2f(0,0));
 	settings.resizable = false;
 	settings.numSamples = 4;
 	settings.shareContextWith = mainWindow;

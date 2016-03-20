@@ -251,7 +251,7 @@ public:
 		if(closed){
 			return false;
 		}
-		queue.push(value);
+		queue.push(std::move(value));
 		condition.notify_all();
 		return true;
 	}
