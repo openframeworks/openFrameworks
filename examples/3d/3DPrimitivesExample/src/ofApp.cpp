@@ -17,7 +17,7 @@ void ofApp::setup(){
     bDrawNormals= false;
     bDrawAxes   = false;
     bDrawLights = false;
-    bInfoText   = true;
+    bHelpText   = true;
     bMousePressed   = false;
     bSplitFaces = false;
     
@@ -73,6 +73,7 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
+	ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
     
     float spinX = sin(ofGetElapsedTimef()*.35f);
     float spinY = cos(ofGetElapsedTimef()*.075f);
@@ -146,9 +147,9 @@ void ofApp::draw() {
     if(bWireframe) {
         ofNoFill();
         ofSetColor(0, 0, 0);
-        plane.setPosition(plane.getPosition().x, plane.getPosition().y, plane.getPosition().z+1);
+		plane.setPosition(plane.getPosition().x, plane.getPosition().y, plane.getPosition().z+1);
         plane.drawWireframe();
-        plane.setPosition(plane.getPosition().x, plane.getPosition().y, plane.getPosition().z-2);
+		plane.setPosition(plane.getPosition().x, plane.getPosition().y, plane.getPosition().z-1);
         
     }
 
@@ -425,17 +426,21 @@ void ofApp::draw() {
     ofDrawRectangle(cone.getPosition().x-154, cone.getPosition().y + 120, 136, 24);
     ofSetColor(255);
     ofDrawBitmapString("ofConePrimitive", cone.getPosition().x-150, cone.getPosition().y+136 );
-        
-    if(bInfoText) {
+    
+    
+    
+    if(bHelpText) {
         stringstream ss;
-        ss << "Framerate: " << ofToString(ofGetFrameRate(),0) << "\n";
+        ss << "FPS: " << ofToString(ofGetFrameRate(),0) << endl << endl;
         ss << "(f): Toggle Fullscreen"<<endl<<"(s): Draw Solid Shapes"<<endl<<"(w): Draw Wireframes"<<endl;
         ss <<"(1/2/3/4): Set Resolutions" <<endl<<"(n): Draw Normals"<<"\n(LEFT/RIGHT): Set Mode "<<ofToString(mode,0)<<endl;
         ss <<"(z): Split Faces " <<bSplitFaces<<endl;
-        ss <<"(a): Draw Axes"<<endl<<"(l): Render lights"<<endl<<"(t): Info Text"<<endl;
-        
+        ss <<"(a): Draw Axes"<<endl<<"(l): Render lights" << endl <<"(h): Toggle help."<<endl;
         ofDrawBitmapString(ss.str().c_str(), 20, 20);
     }
+    
+    
+    
     
     
 }
@@ -515,8 +520,8 @@ void ofApp::keyPressed(int key) {
         case 'l':
             bDrawLights = !bDrawLights;
             break;
-        case 't':
-            bInfoText=!bInfoText;
+        case 'h':
+            bHelpText=!bHelpText;
             break;
         case 'z':
             bSplitFaces = !bSplitFaces;

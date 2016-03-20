@@ -38,7 +38,15 @@
 			<key>shellPath</key>
 			<string>/bin/sh</string>
 			<key>shellScript</key>
-			<string># ---- Code Sign App Package ----
+			<string>echo "$GCC_PREPROCESSOR_DEFINITIONS";
+APPSTORE=`expr "$GCC_PREPROCESSOR_DEFINITIONS" : ".*APPSTORE=\([0-9]*\)"`
+if [ -z "$APPSTORE" ] ; then
+echo "Note: Not copying bin/data to App Package or doing App Code signing. Use AppStore target for AppStore distribution";
+else
+# Copy bin/data into App/Resources
+rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/"
+
+# ---- Code Sign App Package ----
  
 # WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!
 
@@ -119,7 +127,109 @@ done
 
 # Restore $IFS.
 IFS=$SAVED_IFS
+
+fi
 </string>
+		</dict>
+		<key>99FA3DBB1C7456C400CFA0EE</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>E4EB6923138AFD0F00A09F29</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>CONFIGURATION_BUILD_DIR</key>
+				<string>$(SRCROOT)/bin/</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>YES</string>
+				<key>DEAD_CODE_STRIPPING</key>
+				<string>YES</string>
+				<key>GCC_AUTO_VECTORIZATION</key>
+				<string>YES</string>
+				<key>GCC_ENABLE_SSE3_EXTENSIONS</key>
+				<string>YES</string>
+				<key>GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS</key>
+				<string>YES</string>
+				<key>GCC_INLINES_ARE_PRIVATE_EXTERN</key>
+				<string>NO</string>
+				<key>GCC_OPTIMIZATION_LEVEL</key>
+				<string>3</string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS[arch=*]</key>
+				<string>DISTRIBUTION=1</string>
+				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
+				<string>NO</string>
+				<key>GCC_UNROLL_LOOPS</key>
+				<string>YES</string>
+				<key>GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS</key>
+				<string>YES</string>
+				<key>GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO</key>
+				<string>NO</string>
+				<key>GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL</key>
+				<string>NO</string>
+				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
+				<string>NO</string>
+				<key>GCC_WARN_UNUSED_VALUE</key>
+				<string>NO</string>
+				<key>GCC_WARN_UNUSED_VARIABLE</key>
+				<string>NO</string>
+				<key>MACOSX_DEPLOYMENT_TARGET</key>
+				<string>10.8</string>
+				<key>OTHER_CPLUSPLUSFLAGS</key>
+				<array>
+					<string>-D__MACOSX_CORE__</string>
+					<string>-mtune=native</string>
+				</array>
+				<key>SDKROOT</key>
+				<string>macosx</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>AppStore</string>
+		</dict>
+		<key>99FA3DBC1C7456C400CFA0EE</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>E4EB6923138AFD0F00A09F29</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>COMBINE_HIDPI_IMAGES</key>
+				<string>YES</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>YES</string>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)</string>
+				</array>
+				<key>FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1</key>
+				<string>"$(SRCROOT)/../../../libs/glut/lib/osx"</string>
+				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
+				<string>YES</string>
+				<key>GCC_MODEL_TUNING</key>
+				<string>NONE</string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS[arch=*]</key>
+				<string>APPSTORE=1</string>
+				<key>ICON</key>
+				<string>$(ICON_NAME_RELEASE)</string>
+				<key>ICON_FILE</key>
+				<string>$(ICON_FILE_PATH)$(ICON)</string>
+				<key>INFOPLIST_FILE</key>
+				<string>openFrameworks-Info.plist</string>
+				<key>INSTALL_PATH</key>
+				<string>/Applications</string>
+				<key>LIBRARY_SEARCH_PATHS</key>
+				<string>$(inherited)</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>WRAPPER_EXTENSION</key>
+				<string>app</string>
+				<key>baseConfigurationReference</key>
+				<string>E4EB6923138AFD0F00A09F29</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>AppStore</string>
 		</dict>
 		<key>BB4B014C10F69532006C3DED</key>
 		<dict>
@@ -260,6 +370,7 @@ IFS=$SAVED_IFS
 			<array>
 				<string>E4B69B4E0A3A1720003C02F2</string>
 				<string>E4B69B4F0A3A1720003C02F2</string>
+				<string>99FA3DBB1C7456C400CFA0EE</string>
 			</array>
 			<key>defaultConfigurationIsVisible</key>
 			<string>0</string>
@@ -449,6 +560,7 @@ IFS=$SAVED_IFS
 			<array>
 				<string>E4B69B600A3A1757003C02F2</string>
 				<string>E4B69B610A3A1757003C02F2</string>
+				<string>99FA3DBC1C7456C400CFA0EE</string>
 			</array>
 			<key>defaultConfigurationIsVisible</key>
 			<string>0</string>
@@ -650,13 +762,19 @@ IFS=$SAVED_IFS
 			<string>mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 # Copy default icon file into App/Resources
 rsync -aved "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
-# Copy bin/data into App/Resources
-rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/"
 # Copy libfmod and change install directory for fmod to run
 rsync -aved ../../../libs/fmodex/lib/osx/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 install_name_tool -change @executable_path/libfmodex.dylib @executable_path/../Frameworks/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";
+
+echo "$GCC_PREPROCESSOR_DEFINITIONS";
+APPSTORE=`expr "$GCC_PREPROCESSOR_DEFINITIONS" : ".*APPSTORE=\([0-9]*\)"`
+if [ -z "${APPSTORE}" ] ; then
+echo "Copying GLUT framework";
 # Copy GLUT framework (must remove for AppStore submissions)
 rsync -aved ../../../libs/glut/lib/osx/GLUT.framework "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/"
+else
+echo "Not including GLUT";
+fi
 </string>
 		</dict>
 		<key>E4C2427710CC5ABF004149E2</key>

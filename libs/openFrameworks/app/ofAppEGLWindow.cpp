@@ -1,28 +1,3 @@
-/*==============================================================================
-
- Copyright (c) 2011, 2012 Christopher Baker <http://christopherbaker.net>
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
-
-	Modified by Philip Whitfield (undef.ch)
-
- ==============================================================================*/
 #include "ofAppEGLWindow.h"
 
 #include "ofGraphics.h" // used in runAppViaInfiniteLoop()
@@ -838,6 +813,25 @@ void ofAppEGLWindow::makeCurrent(){
 }
 
 //------------------------------------------------------------
+void ofAppEGLWindow::swapBuffers(){
+	EGLBoolean success = eglSwapBuffers(eglDisplay, eglSurface);
+	if(!success) {
+		GLint error = eglGetError();
+		ofLogNotice("ofAppEGLWindow") << "display(): eglSwapBuffers failed: " << eglErrorString(error);
+	}
+}
+
+//--------------------------------------------
+void ofAppEGLWindow::startRender() {
+	renderer()->startRender();
+}
+
+//--------------------------------------------
+void ofAppEGLWindow::finishRender() {
+	renderer()->finishRender();
+}
+
+//------------------------------------------------------------
 void ofAppEGLWindow::update() {
 	coreEvents.notifyUpdate();
 }
@@ -1302,9 +1296,6 @@ void ofAppEGLWindow::setVerticalSync(bool enabled){
 
 //------------------------------------------------------------
 void ofAppEGLWindow::threadedFunction(){
-	// set the thread to low priority
-	getPocoThread().setOSPriority(Poco::Thread::getMinOSPriority());
-
 	// TODO: a way to setup mouse and keyboard if
 	// they are not plugged in upon start
 	// This can be done with our udev device callbacks

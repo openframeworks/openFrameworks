@@ -53,7 +53,7 @@ class ofApp: public ofxUnitTestsApp{
 		}
 
 		ofFile("nowrite").create();
-		ofFile("nowrite").setReadOnly();
+		ofFile("nowrite").setWriteable(false);
 		test(ofFile("nowrite").canRead(),"ofFile::canRead");
 		test(!ofFile("nowrite").canWrite(),"!ofFile::canWrite");
 
@@ -120,7 +120,7 @@ class ofApp: public ofxUnitTestsApp{
 		}
 
 		ofDirectory("noreaddir").create();
-		ofDirectory("noreaddir").setReadOnly();
+		ofDirectory("noreaddir").setWriteable(false);
 		test(ofDirectory("noreaddir").canRead(),"ofDirectory::canRead readonly");
 		test(!ofDirectory("noreaddir").canWrite(),"!ofDirectory::canWrite readonly");
 

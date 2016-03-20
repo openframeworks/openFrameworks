@@ -1,20 +1,41 @@
 #pragma once
 #include "ofConstants.h"
 
+/// \class ofFileDialogResult
+/// \brief file dialog box selection or save result
 class ofFileDialogResult{
 	public:
 		ofFileDialogResult();
 		
-		//TODO: only 1 file for now
+		/// \return the name of the selected file or directory, if set
+		/// currently returns only 1 file, this may change in the future
 		string getName();
+	
+		/// \return the full path of the selected file or directory, if set
 		string getPath();
-		
-		string filePath;
-		string fileName;
-		bool bSuccess;
+	
+		string filePath; //< full path to selected file or directory
+		string fileName; //< selected file or directory name
+		bool bSuccess; //< true if the dialog action was successful, aka file select not cancel
 };
 
+/// \brief show an error message in an alert dialog box
 void ofSystemAlertDialog(string errorMessage);
+
+/// \brief show a file load dialog box
+/// \param windowTitle optional window title string, ie. "Load background image"
+/// \param bFolderSelection set to true to allow folder selection
+/// \param defaultPath optional default directory path to start the dialog in, ie. ofFilePath::getUserHomeDir()
+/// \return dialog result with selection (if any)
 ofFileDialogResult ofSystemLoadDialog(string windowTitle="", bool bFolderSelection = false, string defaultPath="");
+
+/// \brief show a file save dialog box
+/// \param defaultName suggested filename to start dialog, ie "screenshot.png"
+/// \param messageName descriptive text for the save action, ie. "Saving screenshot as"
+/// \return dialog result with selection (if any)
 ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName);
+
+/// \brief show a text entry dialog box
+/// \param question descriptive text for the text entry, ie. "What's your favorite color?"
+/// \param text optional default text entry string, ie. "blue"
 string ofSystemTextBoxDialog(string question, string text="");
