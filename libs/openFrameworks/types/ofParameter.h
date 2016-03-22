@@ -488,9 +488,11 @@ public:
 	void setParent(ofParameterGroup & _parent);
 
 	const ofParameterGroup getFirstParent() const{
-		auto first = std::find_if(obj->parents.begin(),obj->parents.end(),[](weak_ptr<ofParameterGroup::Value> p){return p.lock()!=nullptr;});
-		if(first!=obj->parents.end()){
-			return first->lock();
+		obj->parents.erase(std::remove_if(obj->parents.begin(),obj->parents.end(),
+						   [](weak_ptr<ofParameterGroup::Value> p){return p.lock()==nullptr;}),
+						obj->parents.end());
+		if(!obj->parents.empty()){
+			return obj->parents.front().lock();
 		}else{
 			return shared_ptr<ofParameterGroup::Value>(nullptr);
 		}
