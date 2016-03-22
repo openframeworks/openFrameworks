@@ -23,7 +23,7 @@ class ofxTCPServer : public ofThread{
 		ofxTCPServer & operator=(const ofxTCPServer & mom) = delete;
 
 		void setVerbose(bool _verbose);
-		bool setup(int _port, bool blocking = false);
+		bool setup(int _port, bool blocking = false, bool reuse = false);
 		void setMessageDelimiter(std::string delim);
 	
 		bool close();
