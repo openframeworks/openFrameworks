@@ -14,7 +14,7 @@ VER=3170 # 3.16.0
 
 # tools for git use
 GIT_URL=https://github.com/danoli3/FreeImage
-GIT_TAG=3.17.0
+GIT_TAG=3.17.0-header-changes
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -26,7 +26,7 @@ function download() {
 		rm FreeImage"$VER"Win32Win64.zip
 	elif [[ "${TYPE}" == "osx" || "${TYPE}" == "ios" || "${TYPE}" == "tvos" ]]; then
         # Fixed issues for OSX / iOS for FreeImage compiling in git repo.
-        echo "Downloading from $GIT_URL for OSX/iOS"
+        echo "Downloading from $GIT_URL $GIT_TAG for OSX/iOS"
 		echo $GIT_URL
 		curl -Lk $GIT_URL/archive/$GIT_TAG.tar.gz -o FreeImage-$GIT_TAG.tar.gz
 		tar -xf FreeImage-$GIT_TAG.tar.gz
