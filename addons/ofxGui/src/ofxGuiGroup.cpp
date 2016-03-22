@@ -139,6 +139,12 @@ void ofxGuiGroup::setup(){
 	headerHeight.addListener(this, &ofxGuiGroup::onHeaderHeight);
 	ofAddListener(resize, this, &ofxGuiGroup::onResize);
 
+	header = add<ofxGuiGroupHeader>();
+	header->setPercentalWidth(true, 1);
+	header->setSize(getWidth(), headerHeight);
+	header->setBackgroundColor(headerBackgroundColor);
+	header->setBorderWidth(0);
+
 	clear();
 
 	registerMouseEvents();
@@ -286,14 +292,13 @@ ofxGuiTabs* ofxGuiGroup::addTabs(const string &name, const ofJson &config){
 }
 
 void ofxGuiGroup::clear(){
-	Element::clear();
-	header = nullptr;
+	while(getControls().size() > 0) {
+		if(!removeChild(getControls().at(0))){
+			ofLogError("Element::clear") << "Could not remove child";
+			return;
+		}
+	}
 	active_toggle_index = -1;
-	header = add<ofxGuiGroupHeader>();
-	header->setPercentalWidth(true, 1);
-	header->setSize(getWidth(), headerHeight);
-	header->setBackgroundColor(headerBackgroundColor);
-	header->setBorderWidth(0);
 }
 
 //vector <string> ofxGuiGroup::getControlNames() const{
@@ -326,7 +331,7 @@ ofxGuiGroup* ofxGuiGroup::getGroup(const std::string& name){
 }
 
 ofxBaseGui* ofxGuiGroup::getControl(const std::string& name){
-	for(auto & e: children()){
+	for(auto & e: getControls()){
 		ofxBaseGui *f = dynamic_cast<ofxBaseGui*>(e);
 		if(f){
 			if(f->getName() == name){
@@ -339,8 +344,8 @@ ofxBaseGui* ofxGuiGroup::getControl(const std::string& name){
 
 int ofxGuiGroup::getControlIndex(const std::string& name){
 
-	for(int i = 0; i < (int)children().size(); i++){
-		Element* e = children().at(i);
+	for(int i = 0; i < (int)getControls().size(); i++){
+		Element* e = getControls().at(i);
 		ofxBaseGui *f = dynamic_cast<ofxBaseGui*>(e);
 		if(f){
 			if(f->getName() == name){
@@ -354,10 +359,8 @@ int ofxGuiGroup::getControlIndex(const std::string& name){
 void ofxGuiGroup::minimize(){
 	minimized = true;
 
-	for(auto& child : children()){
-		if(child != header){
-			child->setHidden(true);
-		}
+	for(auto& child : getControls()){
+		child->setHidden(true);
 	}
 
 	invalidateChildShape();
@@ -367,10 +370,8 @@ void ofxGuiGroup::minimize(){
 void ofxGuiGroup::maximize(){
 	minimized = false;
 
-	for(auto& child : children()){
-		if(child != header){
-			child->setHidden(false);
-		}
+	for(auto& child : getControls()){
+		child->setHidden(false);
 	}
 
 	invalidateChildShape();
@@ -378,23 +379,19 @@ void ofxGuiGroup::maximize(){
 }
 
 void ofxGuiGroup::minimizeAll(){
-	for(auto & e: children()){
-		if(e != header){
-			ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(e);
-			if(group){
-				group->minimize();
-			}
+	for(auto & e: getControls()){
+		ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(e);
+		if(group){
+			group->minimize();
 		}
 	}
 }
 
 void ofxGuiGroup::maximizeAll(){
-	for(auto & e: children()){
-		if(e != header){
-			ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(e);
-			if(group){
-				group->maximize();
-			}
+	for(auto & e: getControls()){
+		ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(e);
+		if(group){
+			group->maximize();
 		}
 	}
 }
@@ -420,13 +417,30 @@ void ofxGuiGroup::setShowHeader(bool show) {
 	invalidateChildShape();
  }
 
+std::vector<ofxBaseGui*> ofxGuiGroup::getControls(){
+	static_assert(std::is_base_of<Element, ofxBaseGui>(), "ElementType must be an Element or derived from Element.");
+
+	std::vector<ofxBaseGui*> results;
+
+	for (auto& child : _children){
+		ofxBaseGui* pChild = dynamic_cast<ofxBaseGui*>(child.get());
+
+		if (pChild && pChild != header){
+			results.push_back(pChild);
+		}
+	}
+
+	return results;
+}
+
+
 std::size_t ofxGuiGroup::getNumControls() {
-	return children().size();
+	return getControls().size();
 }
 
 ofxBaseGui * ofxGuiGroup::getControl(std::size_t num){
-	if(num < children().size()){
-		return dynamic_cast <ofxBaseGui *>(children().at(num));
+	if(num < getControls().size()){
+		return dynamic_cast <ofxBaseGui *>(getControls().at(num));
 	}else{
 		return nullptr;
 	}
@@ -453,10 +467,8 @@ bool ofxGuiGroup::setActiveToggle(ofxToggle* toggle) {
 }
 
 bool ofxGuiGroup::setActiveToggle(int index) {
-	//+1 because of header element TODO there should be a better solution
-	index ++;
-	if(index >= 0 && index < (int)children().size()){
-		if(ofxToggle* toggle = dynamic_cast<ofxToggle*>(children().at(index))) {
+	if(index >= 0 && index < (int)getControls().size()){
+		if(ofxToggle* toggle = dynamic_cast<ofxToggle*>(getControls().at(index))) {
 			return setActiveToggle(toggle);
 		}
 		else {
@@ -470,8 +482,8 @@ bool ofxGuiGroup::setActiveToggle(int index) {
 void ofxGuiGroup::deactivateAllOtherToggles(ofxToggle *toggle) {
 	if(exclusiveToggles) {
 		int active_index = -1;
-		for(int i = 0; i < (int)children().size(); i++){
-			if(ofxToggle* t = dynamic_cast<ofxToggle*>(children()[i])) {
+		for(int i = 0; i < (int)getControls().size(); i++){
+			if(ofxToggle* t = dynamic_cast<ofxToggle*>(getControls()[i])) {
 				active_index++;
 				if(t != toggle) {
 				   *t = false;
@@ -486,7 +498,7 @@ void ofxGuiGroup::deactivateAllOtherToggles(ofxToggle *toggle) {
 
 void ofxGuiGroup::setOneToggleActive() {
 	if(active_toggle_index == -1){
-		for(auto &e : children()){
+		for(auto &e : getControls()){
 			if(ofxToggle* t = dynamic_cast<ofxToggle*>(e)) {
 				setActiveToggle(t);
 				return;
@@ -502,7 +514,7 @@ ofParameter<int>& ofxGuiGroup::getActiveToggleIndex() {
 
 ofAbstractParameter & ofxGuiGroup::getParameter(){
 	parameters.clear();
-	for(auto child : children()){
+	for(auto child : getControls()){
 		ofxBaseGui* e = dynamic_cast<ofxBaseGui*>(child);
 		if(e){
 			parameters.add(e->getParameter());

@@ -50,6 +50,7 @@ ofxButton::~ofxButton(){
 
 void ofxButton::setup(){
 
+	value = false;
 	value.setSerializable(false);
 	voidvalue.setSerializable(false);
 	registerMouseEvents();

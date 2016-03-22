@@ -95,6 +95,13 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		virtual void clear() override;
 
+		/// \brief Get a list of pointers to the child elements.
+		///
+		/// The parent Element retains ownership.
+		///
+		/// \returns a list of pointers to child elements.
+		std::vector<ofxBaseGui*> getControls();
+
 //		std::vector <std::string> getControlNames() const;
 		std::size_t getNumControls();
 

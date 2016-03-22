@@ -7,6 +7,9 @@ void ofApp::setup(){
 
 	ofSetFrameRate(120);
 
+	active_name.set("element name", "");
+	active_index.set("element index", -1);
+
 
 	/*
 	 *  panel without header and a button that toggles the visibility of all the other headers
@@ -48,6 +51,7 @@ void ofApp::setup(){
 	matrix_params.push_back(ofParameter<bool>("active", false));
 
 	group3 = toggles->addGroup();
+	group3->getActiveToggleIndex().addListener(this, &ofApp::updateMatrixIndex);
 	group3->setShowHeader(false);
 	group3->setExclusiveToggles(true);
 	for(unsigned int i = 0; i < matrix_params.size(); i++){
@@ -61,8 +65,8 @@ void ofApp::setup(){
 	 */
 	labels = panel1->addGroup("labels");
 	labels->add<ofxLabel>("blabla");
-	labels->add(active_name.set("element name", ""));
-	labels->add<ofxIntLabel>(active_index.set("element index", -1));
+	labels->add(active_name);
+	labels->add<ofxIntLabel>(active_index);
 
 	panel1->addSpacer(panel1->getWidth(), 20);
 
@@ -128,7 +132,6 @@ void ofApp::setup(){
 	 */
 
 	toggle_param.addListener(this, &ofApp::toggleGroupHeader);
-	group3->getActiveToggleIndex().addListener(this, &ofApp::updateMatrixIndex);
 	color_toggles->getActiveToggleIndex().addListener(this, &ofApp::setHeaderColors);
 	color_toggles->setActiveToggle(3);
 

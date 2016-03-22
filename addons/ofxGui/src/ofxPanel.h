@@ -44,8 +44,6 @@ class ofxPanel : public ofxGuiGroup {
 
 		void setup();
 
-		virtual void clear() override;
-
 		void onHeaderMove(MoveEventArgs& args);
 		void onLoadPressed();
 		void onSavePressed();

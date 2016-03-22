@@ -150,20 +150,15 @@ ofxPanel::ofxPanel(const ofParameterGroup & parameters, const std::string& filen
 }
 
 ofxPanel::~ofxPanel(){
+	ofRemoveListener(header->move, this, &ofxPanel::onHeaderMove);
+	ofRemoveListener(((ofxPanelHeader*)header)->loadPressedE, this, &ofxPanel::onLoadPressed);
+	ofRemoveListener(((ofxPanelHeader*)header)->savePressedE, this, &ofxPanel::onSavePressed);
 }
 
-void ofxPanel::clear(){
-
-	if(header && headerListenersLoaded){
-		headerListenersLoaded = false;
-		ofRemoveListener(header->move, this, &ofxPanel::onHeaderMove);
-		ofRemoveListener(((ofxPanelHeader*)header)->loadPressedE, this, &ofxPanel::onLoadPressed);
-		ofRemoveListener(((ofxPanelHeader*)header)->savePressedE, this, &ofxPanel::onSavePressed);
+void ofxPanel::setup(){
+	if(header){
+		removeChild(header);
 	}
-
-	Element::clear();
-	header = nullptr;
-	active_toggle_index = -1;
 	header = add<ofxPanelHeader>(ofJson({{"float", "none"}}));
 	header->setSize(getWidth(), headerHeight);
 	header->setPercentalWidth(true, 1);
@@ -172,11 +167,6 @@ void ofxPanel::clear(){
 	ofAddListener(header->move, this, &ofxPanel::onHeaderMove);
 	ofAddListener(((ofxPanelHeader*)header)->loadPressedE, this, &ofxPanel::onLoadPressed);
 	ofAddListener(((ofxPanelHeader*)header)->savePressedE, this, &ofxPanel::onSavePressed);
-	headerListenersLoaded = true;
-}
-
-void ofxPanel::setup(){
-	headerListenersLoaded = false;
 }
 
 void ofxPanel::onHeaderMove(MoveEventArgs &args){

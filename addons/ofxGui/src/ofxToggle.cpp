@@ -258,6 +258,8 @@ bool ofxToggle::setValue(float mx, float my, bool bCheck){
 			}
 		}
 
+		setNeedsRedraw();
+
 		return true;
 	}
 
