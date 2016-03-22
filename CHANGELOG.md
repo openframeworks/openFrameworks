@@ -14,6 +14,16 @@ OF 0.9.3
           - removed
           / modified
 
+------------------------------------------------------------------------------
+
+CORE
+---- 
+
+### types
+   / ofParameterGroup: fix for clear not freeing the children weak_ptrs
+   / ofParameter: clean invalid weak_ptr
+
+
 PLATFORM SPECIFIC
 -----------------
 
