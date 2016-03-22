@@ -67,6 +67,9 @@ public:
     virtual string  getClipboardString() { return ""; }
 
     virtual void makeCurrent(){};
+	virtual void swapBuffers() {}
+	virtual void startRender() {}
+	virtual void finishRender() {}
 
     virtual void * getWindowContext(){return nullptr;};
 
