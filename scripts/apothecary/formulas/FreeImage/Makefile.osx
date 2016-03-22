@@ -12,26 +12,15 @@ MACOSX_MIN_SDK = 10.7
 MACOSX_SYSROOT = $(shell xcode-select -print-path)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOSX_SDK).sdk
 
 # General configuration variables:
-CC_I386 = $(shell xcrun -find clang)
 CC_X86_64 = $(shell xcrun -find clang)
-CPP_I386 = $(shell xcrun -find clang++)
 CPP_X86_64 = $(shell xcrun -find clang++)
 
-COMPILERFLAGS = -Os -fexceptions -fvisibility=hidden -DNO_LCMS -fPIC -DNDEBUG -D__ANSI__ -DDISABLE_PERF_MEASUREMENT -mmacosx-version-min=$(MACOSX_MIN_SDK)
+COMPILERFLAGS = -arch x86_64 -arch i386 -Wno-ctor-dtor-privacy -stdlib=libc++ -Wc++11-narrowing -Os -fexceptions -fvisibility=hidden -DNO_LCMS -fPIC -DNDEBUG -D__ANSI__ -DDISABLE_PERF_MEASUREMENT -mmacosx-version-min=$(MACOSX_MIN_SDK)
 
-COMPILERPPFLAGS_I386 = -arch i386 -Wno-ctor-dtor-privacy -stdlib=libc++ -Wc++11-narrowing
-COMPILERPPFLAGS_X86_64 = -arch x86_64 -Wno-ctor-dtor-privacy -stdlib=libc++ -Wc++11-narrowing
-
-INCLUDE_I386 = -isysroot $(MACOSX_SYSROOT)
 INCLUDE_X86_64 = -isysroot $(MACOSX_SYSROOT)
+CFLAGS_X86_64 = $(COMPILERFLAGS) $(INCLUDE) $(INCLUDE_X86_64)
 
-CFLAGS_I386 = $(COMPILERFLAGS) $(COMPILERFLAGS_I386) $(INCLUDE) $(INCLUDE_I386)
-CFLAGS_X86_64 = $(COMPILERFLAGS) $(COMPILERFLAGS_X86_64) $(INCLUDE) $(INCLUDE_X86_64)
-
-CPPFLAGS_I386 = $(COMPILERPPFLAGS_I386) $(CFLAGS_I386)
-CPPFLAGS_X86_64 = $(COMPILERPPFLAGS_X86_64) $(CFLAGS_X86_64)
-
-LIBRARIES_I386 = -Wl,-syslibroot $(MACOSX_SYSROOT) -mmacosx-version-min=$(MACOSX_MIN_SDK)
+CPPFLAGS_X86_64 = $(CFLAGS_X86_64)
 LIBRARIES_X86_64 = -Wl,-syslibroot $(MACOSX_SYSROOT) -mmacosx-version-min=$(MACOSX_MIN_SDK)
 
 LIBTOOL = libtool
@@ -42,11 +31,8 @@ STATICLIB = lib$(TARGET).a
 
 HEADER = Source/FreeImage.h
 
-.SUFFIXES: .o-i386 .o-x86_64
-MODULES_PPC = $(SRCS:.c=.o-ppc)
-MODULES_I386 = $(SRCS:.c=.o-i386)
+.SUFFIXES: .o-x86_64
 MODULES_X86_64 = $(SRCS:.c=.o-x86_64)
-MODULES_I386 := $(MODULES_I386:.cpp=.o-i386)
 MODULES_X86_64 := $(MODULES_X86_64:.cpp=.o-x86_64)
 
 PREFIX = /usr/local
@@ -64,25 +50,11 @@ dist: FreeImage
 
 FreeImage: $(STATICLIB) 
 
-
-
-$(STATICLIB): $(STATICLIB)-i386 $(STATICLIB)-x86_64
-	$(LIPO) -create $(STATICLIB)-i386 $(STATICLIB)-x86_64 -output $(STATICLIB)
-
-$(STATICLIB)-i386: $(MODULES_I386)
-	$(LIBTOOL) -arch_only i386 -o $@ $(MODULES_I386)
-
-$(STATICLIB)-x86_64: $(MODULES_X86_64)
-	$(LIBTOOL) -arch_only x86_64 -o $@ $(MODULES_X86_64)
-
-.c.o-i386:
-	$(CC_I386) $(CFLAGS_I386) -c $< -o $@
+$(STATICLIB): $(MODULES_X86_64)
+	$(LIBTOOL) -o $@ $(MODULES_X86_64)
 
 .c.o-x86_64:
 	$(CC_X86_64) $(CFLAGS_X86_64) -c $< -o $@
-
-.cpp.o-i386:
-	$(CPP_I386) $(CPPFLAGS_I386) -c $< -o $@
 
 .cpp.o-x86_64:
 	$(CPP_X86_64) $(CPPFLAGS_X86_64) -c $< -o $@
@@ -94,5 +66,5 @@ install:
 	ranlib -sf $(INSTALLDIR)/$(STATICLIB)
 
 clean:
-	rm -f core Dist/*.* u2dtmp* $(MODULES_I386) $(MODULES_X86_64) $(STATICLIB) $(STATICLIB)-i386
+	rm -f core Dist/*.* u2dtmp* $(MODULES_X86_64) $(STATICLIB)
 
