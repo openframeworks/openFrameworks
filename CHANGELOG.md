@@ -1,3 +1,30 @@
+   ___   ___  _  _   
+  / _ \ / _ \| || |  
+ | | | | (_) | || |_ 
+ | | | |\__, |__   _|
+ | |_| |  / /   | |  
+  \___(_)/_(_)  |_|  
+                     
+                     
+OF 0.9.3
+========                          
+
+#### change key
+          + added
+          - removed
+          / modified
+
+PLATFORM SPECIFIC
+-----------------
+
+### osx
+    / recompiled freeimage to fix support for 32bits
+
+### linux
+    / install_dependencies: add check to see if all packages are up to date
+
+
+
    ___         ___        ____  
   / _ \       / _ \      |___ \ 
  | | | |     | (_) |       __) |
