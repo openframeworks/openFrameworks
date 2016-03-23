@@ -5,7 +5,7 @@ public:
 
 	std::string address;
 	int port;
-	bool blocking;
+	bool blocking = false;
 
 	std::string messageDelimiter = "[/TCP]";
 
