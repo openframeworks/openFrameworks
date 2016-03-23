@@ -31,19 +31,33 @@ void ofxTCPClient::setVerbose(bool _verbose){
 //--------------------------
 bool ofxTCPClient::setup(string ip, int _port, bool blocking){
 
+	ofxTCPSettings settings;
+
+	settings.address = ip;
+	settings.port = _port;
+	settings.blocking = blocking;
+
+	setMessageDelimiter(settings.messageDelimiter);
+
+	return setup(settings);
+}
+
+//--------------------------
+bool ofxTCPClient::setup(const ofxTCPSettings & settings){
+
 	if( !TCPClient.Create() ){
 		ofLogError("ofxTCPClient") << "setup(): couldn't create client";
 		return false;
-	}else if( !TCPClient.Connect((char *)ip.c_str(), _port) ){
-		ofLogError("ofxTCPClient") << "setup(): couldn't connect to " << ip << " " << _port;
+	}else if( !TCPClient.Connect((char *)settings.address.c_str(), settings.port) ){
+		ofLogError("ofxTCPClient") << "setup(): couldn't connect to " << settings.address << " " << settings.port;
 		TCPClient.Close(); //we free the connection
 		return false;
 	}
 
-	TCPClient.SetNonBlocking(!blocking);
+	TCPClient.SetNonBlocking(!settings.blocking);
 
-	port		= _port;
-	ipAddr		= ip;
+	port		= settings.port;
+	ipAddr		= settings.address;
 	connected	= true;
 	return true;
 }

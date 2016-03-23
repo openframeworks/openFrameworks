@@ -6,8 +6,17 @@ void ofApp::setup(){
 
 	ofSetBackgroundColor(20);
 
+	ofxTCPSettings settings;
+
 	// setup the server to listen on 11999
-	TCP.setup(11999);
+	settings.port = 11999;
+
+	// set other options
+	//settings.blocking = false;
+	//settings.messageDelimiter = "\n";
+
+	TCP.setup(settings);
+
 	// optionally set the delimiter to something else.  The delimiter in the client and the server have to be the same, default being [/TCP]
 	TCP.setMessageDelimiter("\n");
 	lastSent = 0;
