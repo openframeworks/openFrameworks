@@ -21,7 +21,7 @@ ofxValuePlotter::ofxValuePlotter(const ofJson & config)
 ofxValuePlotter::ofxValuePlotter(ofParameter<float> value, const ofJson & config) :
 	ofxBaseGui(){
 
-	value.makeReferenceTo(value);
+	this->value.makeReferenceTo(value);
 	setup();
 	_setConfig(config);
 }

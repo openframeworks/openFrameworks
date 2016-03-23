@@ -74,6 +74,8 @@ class ofxGuiGroup : public ofxBaseGui {
 		ofxShortColorSlider* add(ofParameter <ofShortColor> & parameter, const ofJson & config = ofJson());
 		ofxFloatColorSlider* add(ofParameter <ofFloatColor> & parameter, const ofJson & config = ofJson());
 
+		void add(const ofParameterGroup& parameters);
+
 		ofxBaseGui* addSpacer(float width, float height);
 		ofxBaseGui* addSpacer(const ofJson & config);
 		ofxFpsPlotter* addFpsPlotter(const ofJson & config="");

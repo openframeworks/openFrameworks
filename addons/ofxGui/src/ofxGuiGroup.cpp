@@ -251,6 +251,10 @@ ofxFloatColorSlider* ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter, co
 	return add<ofxFloatColorSlider>(parameter, config);
 }
 
+void ofxGuiGroup::add(const ofParameterGroup &parameters){
+	addParametersFrom(parameters);
+}
+
 ofxBaseGui* ofxGuiGroup::addSpacer(float width, float height){
 	ofxBaseGui* e = add<ofxBaseGui>();
 	e->setSize(width, height);
