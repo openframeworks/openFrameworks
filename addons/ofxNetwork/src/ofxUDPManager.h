@@ -63,6 +63,7 @@ x) Close()
 
 --------------------------------------------------------------------------------*/
 #include "ofConstants.h"
+#include "ofxUDPSettings.h"
 #include <string.h>
 #include <wchar.h>
 #include <stdio.h>
@@ -124,6 +125,7 @@ public:
 
 	bool	HasSocket() const	{	return (m_hSocket)&&(m_hSocket != INVALID_SOCKET);	}
 	bool Close();
+	bool Setup(const ofxUDPSettings & settings);
 	bool Create();
 	bool Connect(const char *pHost, unsigned short usPort);
 	bool ConnectMcast(char *pMcast, unsigned short usPort);
