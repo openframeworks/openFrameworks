@@ -66,8 +66,8 @@ bool ofxUDPManager::Setup(const ofxUDPSettings & settings)
 	SetTimeoutSend(settings.sendTimeout);
 	SetTimeoutReceive(settings.receiveTimeout);
 
-	SetReceiveBufferSize(settings.receiveBufferSize);
-	SetSendBufferSize(settings.sendBufferSize);
+	if (settings.receiveBufferSize) SetReceiveBufferSize(settings.receiveBufferSize);
+	if (settings.sendBufferSize) SetSendBufferSize(settings.sendBufferSize);
 	SetTTL(settings.ttl);
 
 	if (!settings.receive && !settings.send) {

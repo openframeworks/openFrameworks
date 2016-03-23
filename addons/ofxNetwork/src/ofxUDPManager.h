@@ -101,11 +101,6 @@ x) Close()
 	#include <ws2tcpip.h>		// TCP/IP annex needed for multicasting
 #endif
 
-/// Socket constants.
-#define SOCKET_TIMEOUT			SOCKET_ERROR - 1
-#define NO_TIMEOUT				0xFFFF
-#define OF_UDP_DEFAULT_TIMEOUT   NO_TIMEOUT
-
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 
