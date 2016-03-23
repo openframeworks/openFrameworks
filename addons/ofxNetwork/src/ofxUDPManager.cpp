@@ -52,6 +52,48 @@ bool ofxUDPManager::Close()
 }
 
 //--------------------------------------------------------------------------------
+bool ofxUDPManager::Setup(const ofxUDPSettings & settings)
+{
+	if (!Create()) {
+		return false;
+	}
+
+	// TODO: check each return value and return false ?
+	SetReuseAddress(settings.reuse);
+	SetEnableBroadcast(settings.broadcast);
+	SetNonBlocking(!settings.blocking);
+
+	SetTimeoutSend(settings.sendTimeout);
+	SetTimeoutReceive(settings.receiveTimeout);
+
+	SetReceiveBufferSize(settings.receiveBufferSize);
+	SetSendBufferSize(settings.sendBufferSize);
+	SetTTL(settings.ttl);
+
+	if (!settings.receive && !settings.send) {
+		ofLog(OF_LOG_NOTICE, "Created UDP socket is not sending nor receiving");
+		//we still return true, people might prefer long/old-school initialization
+		return true;
+	}
+
+	if (settings.receive) {
+		if (settings.multicast) {
+			return BindMcast((char*)settings.address.c_str(), settings.port);
+		} else {
+			return Bind(settings.port);
+		}
+	}
+	if (settings.send) {
+		if (settings.multicast) {
+			return ConnectMcast((char*)settings.address.c_str(), settings.port);
+		} else {
+			return Connect((char*)settings.address.c_str(), settings.port);
+		}
+	}
+	return true;
+}
+
+//--------------------------------------------------------------------------------
 bool ofxUDPManager::Create()
 {
 	if (m_hSocket != INVALID_SOCKET)
