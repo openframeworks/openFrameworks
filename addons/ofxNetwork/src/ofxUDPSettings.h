@@ -1,9 +1,8 @@
 #pragma once
 
 /// Socket constants.
-#define SOCKET_TIMEOUT			SOCKET_ERROR - 1
-#define NO_TIMEOUT				0xFFFF
-#define OF_UDP_DEFAULT_TIMEOUT   NO_TIMEOUT
+#define NO_TIMEOUT            	0xFFFF
+#define OF_UDP_DEFAULT_TIMEOUT	NO_TIMEOUT
 
 class ofxUDPSettings {
 public:
