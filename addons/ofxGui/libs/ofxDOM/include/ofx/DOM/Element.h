@@ -649,9 +649,8 @@ ElementType* Element::add(std::unique_ptr<ElementType> element)
 		// Take ownership of the node.
 		_children.push_back(std::move(element));
 
-		if(pNode->usesPercentalWidth() && pNode->getPercentalWidth() <= 1){
-			pNode->setWidth(getWidth()*pNode->getPercentalWidth());
-		}
+		// Update the with of a child with percental width as soon as it has a parent
+		pNode->setPercentalWidth(pNode->usesPercentalWidth(), pNode->getPercentalWidth());
 
 		// Invalidate all cached child shape.
 		invalidateChildShape();

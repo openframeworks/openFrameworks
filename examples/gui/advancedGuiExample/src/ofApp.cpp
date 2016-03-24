@@ -36,7 +36,7 @@ void ofApp::setup(){
 
 	group1 = toggles->addGroup();
 	group1->setShowHeader(false);
-	ofJson toggle_config = {{"width", 89}, {"float", "left"}};
+	ofJson toggle_config = {{"width", "50%"}, {"float", "left"}};
 	group1->add(toggle1_param.set("multiple", false), toggle_config);
 	group1->add(toggle2_param.set("choice", false), toggle_config);
 
@@ -55,7 +55,7 @@ void ofApp::setup(){
 	group3->setShowHeader(false);
 	group3->setExclusiveToggles(true);
 	for(unsigned int i = 0; i < matrix_params.size(); i++){
-		group3->add(matrix_params.at(i), ofJson({{"float", "left"},	{"width", (group3->getWidth()-1)/3}, {"type", "fullsize"}}));
+		group3->add(matrix_params.at(i), ofJson({{"float", "left"},	{"width", "50%"}, {"type", "fullsize"}}));
 	}
 
 	panel1->addSpacer(panel1->getWidth(), 20);
@@ -92,7 +92,7 @@ void ofApp::setup(){
 	 */
 	sliders = gui.addPanel("vertical sliders");
 	sliders->setPosition(260,20);
-	sliders->setWidth(221);
+	sliders->setWidth(260);
 
 	sliders->add(slider1_param.set("slider1", 1. / 7., 0, 1), ofJson({{"float", "left"}, {"width", 40}, {"height", 130}}));
 	sliders->add(slider2_param.set("slider2", 5. / 7., 0, 1), ofJson({{"float", "left"}, {"width", 50}, {"height", 130}}));
@@ -101,7 +101,7 @@ void ofApp::setup(){
 
 	sliders->addSpacer(sliders->getWidth(), 20);
 
-	ofJson slider_config2 = {{"precision", 1}, {"width", sliders->getWidth()}};
+	ofJson slider_config2 = {{"precision", 1}};
 	sliders->add(slider1_param, slider_config2);
 	sliders->add(slider2_param, slider_config2);
 	sliders->add(slider3_param, slider_config2);
@@ -109,7 +109,7 @@ void ofApp::setup(){
 
 	sliders->addSpacer(sliders->getWidth(), 20);
 
-	sliders->add(slider_param.set("slider", 0.5, 0, 1), ofJson({{"type", "circular"}, {"height", 60}, {"width", sliders->getWidth()}}));
+	sliders->add(slider_param.set("slider", 0.5, 0, 1), ofJson({{"type", "circular"}, {"height", 60}}));
 
 
 	/*
@@ -122,7 +122,8 @@ void ofApp::setup(){
 	colorParameters.add(color2.set("mediumAquaMarine",false));
 	colorParameters.add(color3.set("steelBlue",false));
 
-	panel3 = gui.getRoot()->add<ofxPanel>("ofParameterGroup", "", 260, 440);
+	panel3 = gui.addPanel("ofParameterGroup");
+	panel3->setPosition(260, 460);
 	color_toggles = panel3->addGroup(colorParameters);
 	color_toggles->setExclusiveToggles(true);
 	color_toggles->setConfig(ofJson({{"type", "radio"}}));

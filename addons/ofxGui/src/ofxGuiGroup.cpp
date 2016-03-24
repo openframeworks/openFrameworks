@@ -124,6 +124,9 @@ ofxGuiGroup::~ofxGuiGroup(){
 
 void ofxGuiGroup::setup(){
 
+//	setPercentalWidth(false);
+//	setSize(defaultWidth, defaultHeight);
+
 	header = nullptr;
 
 	filename.set("filename","settings.xml");
@@ -140,8 +143,8 @@ void ofxGuiGroup::setup(){
 	ofAddListener(resize, this, &ofxGuiGroup::onResize);
 
 	header = add<ofxGuiGroupHeader>();
-	header->setPercentalWidth(true, 1);
-	header->setSize(getWidth(), headerHeight);
+	header->setMargin(0);
+	header->setHeight(headerHeight);
 	header->setBackgroundColor(headerBackgroundColor);
 	header->setBorderWidth(0);
 

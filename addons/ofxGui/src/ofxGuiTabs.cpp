@@ -61,6 +61,7 @@ void ofxGuiTabs::clear(){
 	tabs->setExclusiveToggles(true);
 	tabs->setBorderWidth(0);
 	tabs->setPercentalWidth(true, 1);
+	tabs->setMargin(0, 0, -2, 0);
 	tabs->setBackgroundColor(ofColor(0,0,0,0));
 	tabs->getActiveToggleIndex().addListener(this, &ofxGuiTabs::setActiveTab);
 
@@ -96,6 +97,7 @@ void ofxGuiTabs::onChildAdd(ElementEventArgs &args){
 			name = page->getName();
 			page->setHidden(true);
 			page->setPercentalWidth(true, 1);
+			page->setMargin(0);
 		}
 
 		ofJson toggleconfig = {
@@ -107,6 +109,7 @@ void ofxGuiTabs::onChildAdd(ElementEventArgs &args){
 		ofxBaseGui* tab = tabs->add<ofxToggle>(name, toggleconfig);
 		tab->setTextAlignment(TextAlignment::CENTERED);
 		tab->setFillColor(page->getBackgroundColor());
+		tab->setMargin(0);
 		tab->setBackgroundColor(ofColor(page->getBackgroundColor(), 50));
 
 		if(pages.size() == 2){

@@ -59,7 +59,10 @@ class ofxBaseGui : public ofx::DOM::Element {
 		virtual void setBorderColor(const ofColor & color);
 		virtual void setTextColor(const ofColor & color);
 		virtual void setFillColor(const ofColor & color);
-		virtual void setBorderWidth(const float &width);
+		virtual void setBorderWidth(float width);
+		virtual void setMargin(float margin);
+		virtual void setMargin(float margin_topbottom, float margin_leftright);
+		virtual void setMargin(float margin_top, float margin_right, float margin_bottom, float margin_left);
 
 		static void setDefaultHeaderBackgroundColor(const ofColor & color);
 		static void setDefaultBackgroundColor(const ofColor & color);
@@ -70,6 +73,7 @@ class ofxBaseGui : public ofx::DOM::Element {
 		static void setDefaultTextPadding(int padding);
 		static void setDefaultWidth(int width);
 		static void setDefaultHeight(int height);
+		static void setDefaultMargin(float margin);
 
 		void setShowName(bool show);
 
@@ -140,6 +144,10 @@ class ofxBaseGui : public ofx::DOM::Element {
 		static ofColor defaultTextColor;
 		static ofColor defaultFillColor;
 		static float defaultBorderWidth;
+		static float defaultMarginLeft;
+		static float defaultMarginRight;
+		static float defaultMarginTop;
+		static float defaultMarginBottom;
 
 		// TODO make textPadding ofxGuiAttribute
 		static int textPadding;

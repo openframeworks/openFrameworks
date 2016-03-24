@@ -46,7 +46,7 @@ void FloatingBoxLayout::doLayout(){
 
 							case LayoutFloat::RIGHT: {
 
-								setNextRightFloatPosition(ofPoint(_parent->getWidth()-element->getWidth(),0), element);
+								setNextRightFloatPosition(ofPoint(_parent->getWidth()-getWidth(element),0), element);
 
 								break;
 							}
@@ -54,7 +54,7 @@ void FloatingBoxLayout::doLayout(){
 							case LayoutFloat::NONE:
 							default:{
 
-								element->setPosition(currentX, currentY);
+								setPosition(element, ofPoint(currentX, currentY));
 
 								break;
 							}
@@ -63,19 +63,19 @@ void FloatingBoxLayout::doLayout(){
 
 					}
 
-					totalWidth = std::max(totalWidth, element->getShape().getRight());
-					currentY = std::max(currentY, element->getShape().getBottom());
-					totalHeight = std::max(totalHeight, element->getShape().getBottom());
+					totalWidth = std::max(totalWidth, getRight(element));
+					currentY = std::max(currentY, getBottom(element));
+					totalHeight = std::max(totalHeight, getBottom(element));
 
 
 				}
 			}
 		}
 
-		if(!_parent->usesPercentalWidth()){
-			totalWidth = std::max(totalWidth, _parent->getShape().getWidth());
-			_parent->setWidth(totalWidth);
-		}
+//		if(!_parent->usesPercentalWidth()){
+//			totalWidth = std::max(totalWidth, _parent->getShape().getWidth());
+//			_parent->setWidth(totalWidth);
+//		}
 		_parent->setHeight(totalHeight);
 
 		_isDoingLayout = false;
@@ -87,7 +87,7 @@ void FloatingBoxLayout::doLayout(){
 void FloatingBoxLayout::setNextLeftFloatPosition(ofPoint p, Element* e){
 
 	p = nextLeftFloatPositionLoop(e, e, p);
-	e->setPosition(p);
+	setPosition(e, p);
 
 }
 
@@ -105,10 +105,10 @@ ofPoint FloatingBoxLayout::nextLeftFloatPositionLoop(Element* e, Element* s, con
 
 			if(!sibling->isHidden()){
 
-				float s_top = sibling->getShape().getTop();
-				float s_bottom = sibling->getShape().getBottom();
-				float s_right = sibling->getShape().getRight();
-				float s_left = sibling->getShape().getLeft();
+				float s_top = getTop(sibling);
+				float s_bottom = getBottom(sibling);
+				float s_right = getRight(sibling);
+				float s_left = getLeft(sibling);
 
 				//rule 5, rule 6
 				if(res.y < s_top){
@@ -135,7 +135,7 @@ ofPoint FloatingBoxLayout::nextLeftFloatPositionLoop(Element* e, Element* s, con
 								ofPoint moveRight(s_right, res.y);
 								ofPoint moveDown(0, s_bottom);
 
-								if(s_right + e->getWidth() < _parent->getWidth()){
+								if(s_right + getWidth(e) <= _parent->getWidth()){
 									moveRight = nextLeftFloatPositionLoop(e, sibling, moveRight);
 									moveDown = nextLeftFloatPositionLoop(e, sibling, moveDown);
 									if(moveRight.y > moveDown.y){
@@ -164,7 +164,7 @@ ofPoint FloatingBoxLayout::nextLeftFloatPositionLoop(Element* e, Element* s, con
 						case LayoutFloat::RIGHT: {
 
 							//rule 3
-							if(s_left < res.x + e->getWidth() && res.y < s_bottom){
+							if(s_left < res.x + getWidth(e) && res.y < s_bottom){
 								//does not fit next to right floating sibling, move to the bottom of sibling
 								res.y = s_bottom;
 								res.x = 0;
@@ -186,7 +186,7 @@ ofPoint FloatingBoxLayout::nextLeftFloatPositionLoop(Element* e, Element* s, con
 void FloatingBoxLayout::setNextRightFloatPosition(ofPoint p, Element* e){
 
 	p = nextRightFloatPositionLoop(e, e, p);
-	e->setPosition(p);
+	setPosition(e, p);
 
 }
 
@@ -204,12 +204,12 @@ ofPoint FloatingBoxLayout::nextRightFloatPositionLoop(Element* e, Element* s, co
 
 			if(!sibling->isHidden()){
 
-				float e_width = e->getWidth();
+				float e_width = getWidth(e);
 				float start_x = _parent->getWidth()-e_width;
-				float s_top = sibling->getShape().getTop();
-				float s_bottom = sibling->getShape().getBottom();
-				float s_right = sibling->getShape().getRight();
-				float s_left = sibling->getShape().getLeft();
+				float s_top = getTop(sibling);
+				float s_bottom = getBottom(sibling);
+				float s_right = getRight(sibling);
+				float s_left = getLeft(sibling);
 
 				//rule 5, rule 6
 				if(res.y < s_top){
@@ -286,6 +286,70 @@ ofPoint FloatingBoxLayout::nextRightFloatPositionLoop(Element* e, Element* s, co
 
 	return res;
 
+}
+
+float FloatingBoxLayout::getRight(Element* e){
+	if(e->hasAttribute("margin-right")){
+		return e->getShape().getRight() + e->getAttribute<float>("margin-right");
+	}else {
+		return e->getShape().getRight();
+	}
+}
+
+float FloatingBoxLayout::getLeft(Element* e){
+	if(e->hasAttribute("margin-left")){
+		return e->getShape().getLeft() - e->getAttribute<float>("margin-left");
+	}else {
+		return e->getShape().getLeft();
+	}
+}
+
+float FloatingBoxLayout::getTop(Element* e){
+	if(e->hasAttribute("margin-top")){
+		return e->getShape().getTop() - e->getAttribute<float>("margin-top");
+	}else {
+		return e->getShape().getTop();
+	}
+}
+
+float FloatingBoxLayout::getBottom(Element* e){
+	if(e->hasAttribute("margin-bottom")){
+		return e->getShape().getBottom() + e->getAttribute<float>("margin-bottom");
+	}else {
+		return e->getShape().getBottom();
+	}
+}
+
+float FloatingBoxLayout::getWidth(Element* e){
+	float res = e->getWidth();
+	if(e->hasAttribute("margin-left")){
+		res += e->getAttribute<float>("margin-left");
+	}
+	if(e->hasAttribute("margin-right")){
+		res += e->getAttribute<float>("margin-right");
+	}
+	return res;
+}
+
+float FloatingBoxLayout::getHeight(Element* e){
+	float res = e->getHeight();
+	if(e->hasAttribute("margin-top")){
+		res += e->getAttribute<float>("margin-top");
+	}
+	if(e->hasAttribute("margin-bottom")){
+		res += e->getAttribute<float>("margin-bottom");
+	}
+	return res;
+}
+
+void FloatingBoxLayout::setPosition(Element* e, ofPoint p){
+	if(e->hasAttribute("margin-left")){
+		p.x += e->getAttribute<float>("margin-left");
+	}
+	if(e->hasAttribute("margin-top")){
+		p.y += e->getAttribute<float>("margin-top");
+	}
+	e->setPosition(p);
 }
 
 }} // namespace ofx::DOM

@@ -25,6 +25,15 @@ protected:
 	ofPoint nextLeftFloatPositionLoop(Element* e, Element *s, const ofPoint& res);
 	ofPoint nextRightFloatPositionLoop(Element* e, Element *s, const ofPoint& res);
 
+	float getRight(Element* e);
+	float getLeft(Element* e);
+	float getTop(Element* e);
+	float getBottom(Element* e);
+	float getWidth(Element* e);
+	float getHeight(Element* e);
+
+	void setPosition(Element* e, ofPoint p);
+
 };
 
 }}

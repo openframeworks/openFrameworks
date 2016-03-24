@@ -159,9 +159,9 @@ void ofxPanel::setup(){
 	if(header){
 		removeChild(header);
 	}
-	header = add<ofxPanelHeader>(ofJson({{"float", "none"}}));
-	header->setSize(getWidth(), headerHeight);
-	header->setPercentalWidth(true, 1);
+	header = add<ofxPanelHeader>();
+	header->setMargin(0);
+	header->setHeight(headerHeight);
 	header->setBackgroundColor(headerBackgroundColor);
 	header->setBorderWidth(0);
 	ofAddListener(header->move, this, &ofxPanel::onHeaderMove);
@@ -176,17 +176,19 @@ void ofxPanel::onHeaderMove(MoveEventArgs &args){
 
 	ofRectangle newshape = getShape();
 	newshape.setPosition(getPosition()+diff);
-	if(newshape.x < parent()->getShape().getLeft()){
-		newshape.x = parent()->getShape().getLeft();
-	}
-	if(newshape.x + newshape.width > parent()->getShape().getRight()){
-		newshape.x = parent()->getShape().getRight() - newshape.width;
-	}
-	if(newshape.y < parent()->getShape().getTop()){
-		newshape.y = parent()->getShape().getTop();
-	}
-	if(newshape.y + newshape.height > parent()->getShape().getBottom()){
-		newshape.y = parent()->getShape().getBottom() - newshape.height;
+	if(parent()){
+		if(newshape.x < parent()->getShape().getLeft()){
+			newshape.x = parent()->getShape().getLeft();
+		}
+		if(newshape.x + newshape.width > parent()->getShape().getRight()){
+			newshape.x = parent()->getShape().getRight() - newshape.width;
+		}
+		if(newshape.y < parent()->getShape().getTop()){
+			newshape.y = parent()->getShape().getTop();
+		}
+		if(newshape.y + newshape.height > parent()->getShape().getBottom()){
+			newshape.y = parent()->getShape().getBottom() - newshape.height;
+		}
 	}
 
 	setPosition(newshape.getPosition());

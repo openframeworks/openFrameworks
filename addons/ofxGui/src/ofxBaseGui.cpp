@@ -51,6 +51,10 @@ void ofxGuiSetDefaultHeight(int height){
 	ofxBaseGui::setDefaultHeight(height);
 }
 
+void ofxGuiSetDefaultMargin(float margin){
+	ofxBaseGui::setDefaultMargin(margin);
+}
+
 ofColor
 ofxBaseGui::defaultHeaderBackgroundColor(64),
 ofxBaseGui::defaultBackgroundColor(0),
@@ -62,6 +66,11 @@ float ofxBaseGui::defaultBorderWidth = 0;
 int ofxBaseGui::textPadding = 4;
 int ofxBaseGui::defaultWidth = 200;
 int ofxBaseGui::defaultHeight = 25;
+
+float ofxBaseGui::defaultMarginLeft = 2;
+float ofxBaseGui::defaultMarginRight = 2;
+float ofxBaseGui::defaultMarginBottom = 2;
+float ofxBaseGui::defaultMarginTop = 2;
 
 ofTrueTypeFont ofxBaseGui::font;
 bool ofxBaseGui::fontLoaded = false;
@@ -104,11 +113,14 @@ void ofxBaseGui::setup(){
 
 	setAttribute("float", LayoutFloat::NONE);
 
+	setMargin(defaultMarginTop, defaultMarginRight, defaultMarginBottom, defaultMarginLeft);
+
 	ofAddListener(resize, this, &ofxBaseGui::onResize);
 
 	registerMouseEvents();
 
-	setSize(defaultWidth, defaultHeight);
+	setHeight(defaultHeight);
+	setPercentalWidth(true, 1);
 
 }
 
@@ -164,6 +176,32 @@ void ofxBaseGui::_setConfig(const ofJson &config){
 	JsonConfigParser::parse(config, "float", _floating);
 	if(_floating != getAttribute<LayoutFloat>("float")){
 		setAttribute("float", _floating);
+		invalidateChildShape();
+	}
+
+	//parse margin
+	float _marginLeft = getAttribute<float>("margin-left");
+	JsonConfigParser::parse(config, "margin-left", _marginLeft);
+	if(_marginLeft != getAttribute<float>("margin-left")){
+		setAttribute("margin-left", _marginLeft);
+		invalidateChildShape();
+	}
+	float _marginRight = getAttribute<float>("margin-right");
+	JsonConfigParser::parse(config, "margin-right", _marginRight);
+	if(_marginRight != getAttribute<float>("margin-right")){
+		setAttribute("margin-right", _marginRight);
+		invalidateChildShape();
+	}
+	float _marginBottom = getAttribute<float>("margin-bottom");
+	JsonConfigParser::parse(config, "margin-bottom", _marginBottom);
+	if(_marginBottom != getAttribute<float>("margin-bottom")){
+		setAttribute("margin-bottom", _marginBottom);
+		invalidateChildShape();
+	}
+	float _marginTop = getAttribute<float>("margin-top");
+	JsonConfigParser::parse(config, "margin-top", _marginTop);
+	if(_marginTop != getAttribute<float>("margin-top")){
+		setAttribute("margin-top", _marginTop);
 		invalidateChildShape();
 	}
 
@@ -349,9 +387,25 @@ void ofxBaseGui::setFillColor(const ofColor & color){
 	fillColor = color;
 }
 
-void ofxBaseGui::setBorderWidth(const float &width){
+void ofxBaseGui::setBorderWidth(float width){
 	setNeedsRedraw();
 	borderWidth = width;
+}
+
+void ofxBaseGui::setMargin(float margin){
+	setMargin(margin, margin, margin, margin);
+}
+
+void ofxBaseGui::setMargin(float margin_topbottom, float margin_leftright){
+	setMargin(margin_topbottom, margin_leftright, margin_topbottom, margin_leftright);
+}
+
+void ofxBaseGui::setMargin(float margin_top, float margin_right, float margin_bottom, float margin_left){
+	setAttribute("margin-top", margin_top);
+	setAttribute("margin-right", margin_right);
+	setAttribute("margin-bottom", margin_bottom);
+	setAttribute("margin-left", margin_left);
+	invalidateChildShape();
 }
 
 void ofxBaseGui::setDefaultHeaderBackgroundColor(const ofColor & color){
@@ -384,6 +438,13 @@ void ofxBaseGui::setDefaultWidth(int width){
 
 void ofxBaseGui::setDefaultHeight(int height){
 	defaultHeight = height;
+}
+
+void ofxBaseGui::setDefaultMargin(float margin){
+	defaultMarginBottom = margin;
+	defaultMarginLeft = margin;
+	defaultMarginRight = margin;
+	defaultMarginTop = margin;
 }
 
 void ofxBaseGui::setShowName(bool show){

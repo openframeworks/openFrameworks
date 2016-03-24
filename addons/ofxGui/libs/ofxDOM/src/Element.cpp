@@ -643,7 +643,14 @@ void Element::setPercentalWidth(bool usePercentalWidth, float percentalWidthAmou
 	_usePercentalWidth = usePercentalWidth;
 	_percentalWidthAmount = percentalWidthAmount;
 	if(_usePercentalWidth && _percentalWidthAmount <= 1 && parent()){
-		setWidth(parent()->getWidth()*_percentalWidthAmount);
+		float newwidth = parent()->getWidth()*_percentalWidthAmount;
+		if(hasAttribute("margin-left")){
+			newwidth -= getAttribute<float>("margin-left");
+		}
+		if(hasAttribute("margin-right")){
+			newwidth -= getAttribute<float>("margin-right");
+		}
+		setWidth(newwidth);
 	}
 }
 
@@ -949,9 +956,7 @@ void Element::_onResized(ResizeEventArgs&)
 {
 	// TODO performance optimization: check if mouse is dragged and update only on release
 	for(auto& e : children()){
-		if(e->usesPercentalWidth() && e->getPercentalWidth() <= 1){
-			e->setWidth(getWidth()*e->getPercentalWidth());
-		}
+		e->setPercentalWidth(e->usesPercentalWidth(),e->getPercentalWidth());
 	}
 
 	invalidateChildShape();
