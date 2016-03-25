@@ -24,9 +24,8 @@ void ofxTCPServer::setVerbose(bool _verbose){
 
 //--------------------------
 bool ofxTCPServer::setup(int _port, bool blocking){
-	ofxTCPSettings settings;
+	ofxTCPSettings settings(_port);
 
-	settings.port = _port;
 	settings.blocking = blocking;
 
 	return setup(settings);

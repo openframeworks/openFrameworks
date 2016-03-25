@@ -6,10 +6,8 @@ void ofApp::setup(){
 
 	ofSetBackgroundColor(20);
 
-	ofxTCPSettings settings;
-
 	// setup the server to listen on 11999
-	settings.port = 11999;
+	ofxTCPSettings settings(11999);
 
 	// set other options
 	//settings.blocking = false;
