@@ -11,9 +11,7 @@ void ofApp::setup(){
 
 	//create the socket and set to send to 127.0.0.1:11999
 	ofxUDPSettings settings;
-	settings.send = true;
-	settings.address = "127.0.0.1";
-	settings.port = 11999;
+	settings.sendTo("127.0.0.1", 11999);
 	settings.blocking = false;
 
 	udpConnection.Setup(settings);
