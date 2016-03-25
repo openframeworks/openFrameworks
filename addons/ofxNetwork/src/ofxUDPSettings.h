@@ -6,9 +6,23 @@
 
 class ofxUDPSettings {
 public:
+	void sendTo(std::string address, unsigned short port) {
+		sendAddress = address;
+		sendPort = port;
+	}
+	void receiveOn(std::string address, unsigned short port) {
+		bindAddress = address;
+		bindPort = port;
+	}
+	void receiveOn(unsigned short port) {
+		bindPort = port;
+	}
 
-	std::string address;
-	unsigned short port;
+	std::string sendAddress;
+	unsigned short sendPort = 0;
+	std::string bindAddress;
+	unsigned short bindPort = 0;
+
 	bool blocking = false;
 
 	bool reuse = false;
@@ -19,8 +33,6 @@ public:
 	int receiveBufferSize = 0;
 	int ttl = 1;
 
-	bool receive = false;
-	bool send = false;
 	bool broadcast = false;
 	bool multicast = false;
 

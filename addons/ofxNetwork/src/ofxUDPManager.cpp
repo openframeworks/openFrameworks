@@ -70,24 +70,24 @@ bool ofxUDPManager::Setup(const ofxUDPSettings & settings)
 	if (settings.sendBufferSize) SetSendBufferSize(settings.sendBufferSize);
 	SetTTL(settings.ttl);
 
-	if (!settings.receive && !settings.send) {
+	if (!settings.bindPort && !settings.sendPort) {
 		ofLog(OF_LOG_NOTICE, "Created UDP socket is not sending nor receiving");
 		//we still return true, people might prefer long/old-school initialization
 		return true;
 	}
 
-	if (settings.receive) {
+	if (settings.bindPort) {
 		if (settings.multicast) {
-			return BindMcast((char*)settings.address.c_str(), settings.port);
+			return BindMcast((char*)settings.bindAddress.c_str(), settings.bindPort);
 		} else {
-			return Bind(settings.port);
+			return Bind(settings.bindPort);
 		}
 	}
-	if (settings.send) {
+	if (settings.sendPort) {
 		if (settings.multicast) {
-			return ConnectMcast((char*)settings.address.c_str(), settings.port);
+			return ConnectMcast((char*)settings.sendAddress.c_str(), settings.sendPort);
 		} else {
-			return Connect((char*)settings.address.c_str(), settings.port);
+			return Connect((char*)settings.sendAddress.c_str(), settings.sendPort);
 		}
 	}
 	return true;

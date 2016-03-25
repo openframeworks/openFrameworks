@@ -9,8 +9,7 @@ void ofApp::setup(){
 
 	//create the socket and bind to port 11999
 	ofxUDPSettings settings;
-	settings.receive = true;
-	settings.port = 11999;
+	settings.receiveOn(11999);
 	settings.blocking = false;
 
 	udpConnection.Setup(settings);
