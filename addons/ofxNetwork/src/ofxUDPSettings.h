@@ -24,7 +24,6 @@ public:
 	unsigned short bindPort = 0;
 
 	bool blocking = false;
-
 	bool reuse = false;
 
 	int sendTimeout = OF_UDP_DEFAULT_TIMEOUT;
