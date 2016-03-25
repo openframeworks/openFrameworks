@@ -31,13 +31,9 @@ void ofxTCPClient::setVerbose(bool _verbose){
 //--------------------------
 bool ofxTCPClient::setup(string ip, int _port, bool blocking){
 
-	ofxTCPSettings settings;
+	ofxTCPSettings settings(ip, _port);
 
-	settings.address = ip;
-	settings.port = _port;
 	settings.blocking = blocking;
-
-	setMessageDelimiter(settings.messageDelimiter);
 
 	return setup(settings);
 }
@@ -55,6 +51,8 @@ bool ofxTCPClient::setup(const ofxTCPSettings & settings){
 	}
 
 	TCPClient.SetNonBlocking(!settings.blocking);
+
+	setMessageDelimiter(settings.messageDelimiter);
 
 	port		= settings.port;
 	ipAddr		= settings.address;

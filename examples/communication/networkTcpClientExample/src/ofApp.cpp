@@ -10,9 +10,7 @@ void ofApp::setup(){
 	msgTx	= "";
 	msgRx	= "";
 
-	ofxTCPSettings settings;
-	settings.address = "127.0.0.1";
-	settings.port = 11999;
+	ofxTCPSettings settings("127.0.0.1", 11999);
 
 	// set other options:
 	//settings.blocking = false;
