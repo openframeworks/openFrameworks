@@ -100,7 +100,8 @@ program(mom.program),
 bLoaded(mom.bLoaded),
 shaders(mom.shaders),
 uniformsCache(mom.uniformsCache),
-attributesBindingsCache(mom.attributesBindingsCache){
+attributesBindingsCache(mom.attributesBindingsCache),
+uniformBlocksCache(mom.uniformBlocksCache){
 	if(mom.bLoaded){
 		retainProgram(program);
 		for(auto it: shaders){
@@ -541,19 +542,41 @@ bool ofShader::linkProgram() {
 		GLint count = -1;
 		GLenum type = 0;
 		GLsizei length;
+        GLint location;
 		vector<GLchar> uniformName(uniformMaxLength);
 		for(GLint i = 0; i < numUniforms; i++) {
 			glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName.data());
 			string name(uniformName.begin(), uniformName.begin()+length);
 			// some drivers return uniform_name[0] for array uniforms
 			// instead of the real uniform name
-			uniformsCache[name] = glGetUniformLocation(program, name.c_str());
+            location = glGetUniformLocation(program, name.c_str());		
+            if (location == -1) continue; // ignore uniform blocks
+
+            uniformsCache[name] = location;
 			auto arrayPos = name.find('[');
 			if(arrayPos!=std::string::npos){
 				name = name.substr(0, arrayPos);
-				uniformsCache[name] = glGetUniformLocation(program, name.c_str());
+                uniformsCache[name] = location;
 			}
 		}
+
+#ifndef TARGET_OPENGLES
+#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
+		// Pre-cache all active uniforms blocks
+		GLint numUniformBlocks = 0;
+		glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
+
+		count = -1;
+		type = 0;
+		vector<GLchar> uniformBlockName(uniformMaxLength);
+		for(GLint i = 0; i < numUniformBlocks; i++) {
+            glGetActiveUniformBlockName(program, i, uniformMaxLength, &length, uniformBlockName.data() );
+			string name(uniformBlockName.begin(), uniformBlockName.begin()+length);
+            uniformBlocksCache[name] = glGetUniformBlockIndex(program, name.c_str());
+		}
+#endif
+#endif
+
 
 #ifdef TARGET_ANDROID
 		ofAddListener(ofxAndroidEvents().unloadGL,this,&ofShader::unloadGL);
@@ -591,6 +614,7 @@ void ofShader::reloadGL(){
 	shaders.clear();
 	uniformsCache.clear();
 	attributesBindingsCache.clear();
+    uniformBlocksCache.clear();
 	for(auto & shader: source){
 		auto type = shader.second.type;
 		auto source = shader.second.expandedSource;
@@ -624,6 +648,15 @@ bool ofShader::bindDefaults() const{
 
 }
 
+void ofShader::bindUniformBlock(GLuint binding, const string & name) const {
+	if(bLoaded){
+		GLint index = getUniformBlockIndex(name);
+		if (index != -1) {
+            glUniformBlockBinding( program, index, binding );
+		}
+	}
+}
+
 //--------------------------------------------------------------
 void ofShader::unload() {
 	if(bLoaded) {
@@ -643,6 +676,7 @@ void ofShader::unload() {
 		shaders.clear();
 		uniformsCache.clear();
 		attributesBindingsCache.clear();
+		uniformBlocksCache.clear();
 #ifdef TARGET_ANDROID
 		ofRemoveListener(ofxAndroidEvents().reloadGL,this,&ofShader::reloadGL);
 		ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofShader::unloadGL);
@@ -1038,6 +1072,66 @@ GLint ofShader::getUniformLocation(const string & name)  const{
 	}
 }
 
+#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
+
+//--------------------------------------------------------------
+GLint ofShader::getUniformBlockIndex(const string & name)  const{
+	if(!bLoaded) return -1;
+	auto it = uniformBlocksCache.find(name);
+	if (it == uniformBlocksCache.end()){
+		return -1;
+	} else {
+		return it->second;
+	}
+}
+
+//--------------------------------------------------------------
+GLint ofShader::getUniformBlockBinding( const string & name ) const
+{
+	if(!bLoaded) return -1;
+
+    GLint index = getUniformBlockIndex(name);
+    if (index == -1) return -1;
+
+    GLint blockBinding;
+    glGetActiveUniformBlockiv(program, index, GL_UNIFORM_BLOCK_BINDING, &blockBinding);
+    return blockBinding;    
+}
+
+//--------------------------------------------------------------
+void ofShader::printActiveUniformBlocks()  const{
+	GLint numUniformBlocks = 0;
+	glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
+	ofLogNotice("ofShader") << numUniformBlocks << " uniform blocks";
+	
+	GLint uniformBlockMaxLength = 0;
+	glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniformBlockMaxLength);
+	
+	GLint count = -1;
+	GLenum type = 0;
+	GLchar* uniformBlockName = new GLchar[uniformBlockMaxLength];
+	stringstream line;
+	for(GLint i = 0; i < numUniformBlocks; i++) {
+		GLsizei length;
+        GLint blockBinding;
+        GLsizei blockDataSize;
+        glGetActiveUniformBlockName(program, i, uniformBlockMaxLength, &length, uniformBlockName );
+        glGetActiveUniformBlockiv(program, i, GL_UNIFORM_BLOCK_BINDING, &blockBinding );
+        glGetActiveUniformBlockiv(program, i, GL_UNIFORM_BLOCK_DATA_SIZE, &blockDataSize );
+        
+		line << " [" << i << "] ";
+		for(int j = 0; j < length; j++) {
+			line << uniformBlockName[j];
+		}
+		line << " @ index " << getUniformBlockIndex( uniformBlockName ) << ", binding point " << blockBinding << ", size " << blockDataSize << " bytes";
+		ofLogNotice("ofShader") << line.str();
+		line.str("");
+	}
+	delete [] uniformBlockName;
+}
+
+#endif
+
 //--------------------------------------------------------------
 void ofShader::printActiveUniforms()  const{
 	GLint numUniforms = 0;
@@ -1053,12 +1147,16 @@ void ofShader::printActiveUniforms()  const{
 	for(GLint i = 0; i < numUniforms; i++) {
 		stringstream line;
 		GLsizei length;
-		glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName);
-		line << "[" << i << "] ";
+        GLint location;
+        glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName);
+        location = glGetUniformLocation(program, uniformName);		
+        if (location == -1) continue; // ignore uniform blocks
+
+        line << "[" << location << "] ";
 		for(int j = 0; j < length; j++) {
 			line << uniformName[j];
 		}
-		line << " @ index " << glGetUniformLocation(program, uniformName);
+        line << " @ index " << location;
 		ofLogNotice("ofShader") << line.str();
 	}
 }
