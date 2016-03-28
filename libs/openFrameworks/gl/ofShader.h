@@ -104,7 +104,6 @@ public:
 #endif
 #endif
 
-
 #ifndef TARGET_OPENGLES
 	void setAttribute1s(GLint location, short v1) const;
 	void setAttribute2s(GLint location, short v1, short v2) const;
