@@ -100,8 +100,12 @@ program(mom.program),
 bLoaded(mom.bLoaded),
 shaders(mom.shaders),
 uniformsCache(mom.uniformsCache),
-attributesBindingsCache(mom.attributesBindingsCache),
-uniformBlocksCache(mom.uniformBlocksCache){
+#ifndef TARGET_OPENGLES
+#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
+uniformBlocksCache(mom.uniformBlocksCache),
+#endif
+#endif
+attributesBindingsCache(mom.attributesBindingsCache){
 	if(mom.bLoaded){
 		retainProgram(program);
 		for(auto it: shaders){
@@ -577,7 +581,6 @@ bool ofShader::linkProgram() {
 #endif
 #endif
 
-
 #ifdef TARGET_ANDROID
 		ofAddListener(ofxAndroidEvents().unloadGL,this,&ofShader::unloadGL);
 #endif
@@ -613,8 +616,12 @@ void ofShader::reloadGL(){
 	auto bindings = attributesBindingsCache;
 	shaders.clear();
 	uniformsCache.clear();
+#ifndef TARGET_OPENGLES
+#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
+	uniformBlocksCache.clear();
+#endif
+#endif
 	attributesBindingsCache.clear();
-    uniformBlocksCache.clear();
 	for(auto & shader: source){
 		auto type = shader.second.type;
 		auto source = shader.second.expandedSource;
@@ -648,7 +655,9 @@ bool ofShader::bindDefaults() const{
 
 }
 
-void ofShader::bindUniformBlock(GLuint binding, const string & name) const {
+#ifndef TARGET_OPENGLES
+#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
+void ofShader::bindUniformBlock(GLuint binding, const string & name) const{
 	if(bLoaded){
 		GLint index = getUniformBlockIndex(name);
 		if (index != -1) {
@@ -656,6 +665,8 @@ void ofShader::bindUniformBlock(GLuint binding, const string & name) const {
 		}
 	}
 }
+#endif
+#endif
 
 //--------------------------------------------------------------
 void ofShader::unload() {
@@ -675,8 +686,12 @@ void ofShader::unload() {
 
 		shaders.clear();
 		uniformsCache.clear();
-		attributesBindingsCache.clear();
+#ifndef TARGET_OPENGLES
+#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
 		uniformBlocksCache.clear();
+#endif
+#endif
+		attributesBindingsCache.clear();
 #ifdef TARGET_ANDROID
 		ofRemoveListener(ofxAndroidEvents().reloadGL,this,&ofShader::reloadGL);
 		ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofShader::unloadGL);
