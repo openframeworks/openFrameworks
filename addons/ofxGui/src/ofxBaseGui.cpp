@@ -408,6 +408,58 @@ void ofxBaseGui::setMargin(float margin_top, float margin_right, float margin_bo
 	invalidateChildShape();
 }
 
+void ofxBaseGui::setMarginTop(float margin){
+	setAttribute("margin-top", margin);
+	invalidateChildShape();
+}
+
+void ofxBaseGui::setMarginBottom(float margin){
+	setAttribute("margin-bottom", margin);
+	invalidateChildShape();
+}
+
+void ofxBaseGui::setMarginLeft(float margin){
+	setAttribute("margin-left", margin);
+	invalidateChildShape();
+}
+
+void ofxBaseGui::setMarginRight(float margin){
+	setAttribute("margin-right", margin);
+	invalidateChildShape();
+}
+
+float ofxBaseGui::getMarginBottom(){
+	if(hasAttribute("margin-bottom")){
+		return getAttribute<float>("margin-bottom");
+	}else {
+		return 0;
+	}
+}
+
+float ofxBaseGui::getMarginTop(){
+	if(hasAttribute("margin-top")){
+		return getAttribute<float>("margin-top");
+	}else {
+		return 0;
+	}
+}
+
+float ofxBaseGui::getMarginLeft(){
+	if(hasAttribute("margin-left")){
+		return getAttribute<float>("margin-left");
+	}else {
+		return 0;
+	}
+}
+
+float ofxBaseGui::getMarginRight(){
+	if(hasAttribute("margin-right")){
+		return getAttribute<float>("margin-right");
+	}else {
+		return 0;
+	}
+}
+
 void ofxBaseGui::setDefaultHeaderBackgroundColor(const ofColor & color){
 	defaultHeaderBackgroundColor = color;
 }

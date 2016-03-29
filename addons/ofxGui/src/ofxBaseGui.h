@@ -63,6 +63,15 @@ class ofxBaseGui : public ofx::DOM::Element {
 		virtual void setMargin(float margin);
 		virtual void setMargin(float margin_topbottom, float margin_leftright);
 		virtual void setMargin(float margin_top, float margin_right, float margin_bottom, float margin_left);
+		virtual void setMarginTop(float margin);
+		virtual void setMarginBottom(float margin);
+		virtual void setMarginLeft(float margin);
+		virtual void setMarginRight(float margin);
+
+		virtual float getMarginTop();
+		virtual float getMarginBottom();
+		virtual float getMarginLeft();
+		virtual float getMarginRight();
 
 		static void setDefaultHeaderBackgroundColor(const ofColor & color);
 		static void setDefaultBackgroundColor(const ofColor & color);

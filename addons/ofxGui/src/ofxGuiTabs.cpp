@@ -36,6 +36,8 @@ void ofxGuiTabs::setup(){
 
 	tabs = nullptr;
 	pages.clear();
+	activeToggle = nullptr;
+	activePage = nullptr;
 	clear();
 
 	setBackgroundColor(ofColor(0,0,0,0));
