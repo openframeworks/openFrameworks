@@ -113,6 +113,12 @@ public:
     /// \brief Disable mouse camera control.
 	void disableMouseInput();
 
+    /// \brief Enable inertia on releasing the mouse.
+	void enableMouseReleaseInertia();
+  
+    /// \brief Disable inertia on releasing the mouse
+	void disableMouseReleaseInertia();
+
     /// \brief Determine if mouse camera control is enabled.
     /// \todo Rename to isMouseInputEnabled().
     /// \returns true iff mouse camera control is enabled.
@@ -145,6 +151,7 @@ private:
 	bool bDoScrollZoom;
 	bool bInsideArcball;
 	bool bMouseInputEnabled;
+	bool bMouseReleaseInertiaEnabled;
 	bool bDistanceSet;
     bool bAutoDistance;
     bool bEventsSet;
