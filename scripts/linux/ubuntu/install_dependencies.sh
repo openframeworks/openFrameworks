@@ -80,6 +80,22 @@ else
 fi
 
 apt-get update
+REGULAR_UPDATES=$(/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 1)
+SECURITY_UPDATES=$(/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 2)
+
+if [ "$1" != "-y" ]; then
+    if [ $REGULAR_UPDATES -ne 0 ] || [ $SECURITY_UPDATES -ne 0 ]; then
+        read -p "Your system is not updated, that can create problems when installing the OF dependencies. Do you want to update all the packages now? [Y/n]"
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            read -p "Do you want to try installing the OF dependencies anyway?"
+            if [[ $REPLY =~ ^[Nn]$ ]]; then
+                exit 0
+            fi
+        else
+            apt-get dist-upgrade
+        fi
+    fi
+fi
 
 GSTREAMER_VERSION=0.10
 GSTREAMER_FFMPEG=gstreamer${GSTREAMER_VERSION}-ffmpeg
