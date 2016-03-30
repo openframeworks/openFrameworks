@@ -144,7 +144,7 @@ bool ofxTCPManager::Listen(int iMaxConnections)
 	return ret;
 }
 
-bool ofxTCPManager::Bind(unsigned short usPort, bool bReuse = false)
+bool ofxTCPManager::Bind(unsigned short usPort, bool bReuse)
 {
 	struct sockaddr_in local;
 	memset(&local, 0, sizeof(sockaddr_in));
