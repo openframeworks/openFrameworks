@@ -23,12 +23,12 @@ void ofxTCPServer::setVerbose(bool _verbose){
 }
 
 //--------------------------
-bool ofxTCPServer::setup(int _port, bool blocking, bool reuse){
+bool ofxTCPServer::setup(int _port, bool blocking){
 	if( !TCPServer.Create() ){
 		ofLogError("ofxTCPServer") << "setup(): couldn't create server";
 		return false;
 	}
-	if( !TCPServer.Bind(_port, reuse) ){
+	if( !TCPServer.Bind(_port) ){
 		ofLogError("ofxTCPServer") << "setup(): couldn't bind to port " << _port;
 		return false;
 	}
