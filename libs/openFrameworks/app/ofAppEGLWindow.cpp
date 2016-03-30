@@ -14,7 +14,10 @@ struct udev_device* dev;
 struct udev_monitor* mon;
 static int udev_fd = -1;
 
-static int keyboard_fd = -1; // defaults to 0 ie console
+#define MAX_KBD_SUPPORT 4
+static int keyboard_fd_array[MAX_KBD_SUPPORT] = {-1}; // defaults to 0 ie console
+static string keyboard_fd_paths[MAX_KBD_SUPPORT];
+static int keyboard_fd_length = 0;
 static int mouse_fd	= -1; // defaults to 0
 
 // minimal map
@@ -1303,7 +1306,9 @@ void ofAppEGLWindow::threadedFunction(){
 	while(isThreadRunning()) {
 		readNativeUDevEvents();
 		readNativeMouseEvents();
-		readNativeKeyboardEvents();
+		for (int i=0;i<keyboard_fd_length;i++){
+			readNativeKeyboardEvents(keyboard_fd_array[i]);
+		}
 
 		// sleep briefly
 		ofSleepMillis(20);
@@ -1386,31 +1391,72 @@ void ofAppEGLWindow::setupNativeMouse() {
 
 //------------------------------------------------------------
 void ofAppEGLWindow::setupNativeKeyboard() {
+	int previouse_keyboard_fd_length=keyboard_fd_length;
 	struct dirent **eps;
-	typedef int (*filter_ptr)(const struct dirent *d);
-	filter_ptr kbd_filters[2] = { filter_kbd, filter_event };
-	string devicePathBuffers[2] = { "/dev/input/by-path", "/dev/input/" };
+	int n = scandir("/dev/input/by-path/", &eps, filter_kbd, dummy_sort);
 
-	for(int i=0; i<2; i++){
-		int n = scandir(devicePathBuffers[i].c_str(), &eps, kbd_filters[i], dummy_sort);
-
-		// make sure that we found an appropriate entry
-		if(n >= 0 && eps != 0 && eps[0] != 0) {
-			string devicePathBuffer;
-			devicePathBuffer.append(devicePathBuffers[i]);
-			devicePathBuffer.append(eps[0]->d_name);
-			keyboard_fd = open(devicePathBuffer.c_str(), O_RDONLY | O_NONBLOCK);
-			ofLogNotice("ofAppEGLWindow") << "setupKeyboard(): keyboard_fd=" <<  keyboard_fd << " devicePath=" << devicePathBuffer;
-			break;
+	// make sure that we found an appropriate entry
+	if(n >= 0 && eps != 0) {
+		// if any keyboard is unplugged, remove them!
+		for (int i=0;i<keyboard_fd_length;i++){
+			bool entry_found=false;
+			for (int j=0;j<n;j++){
+				if (eps[j] != 0){
+					string devicePathBuffer;
+					devicePathBuffer.append("/dev/input/by-path/");
+					devicePathBuffer.append(eps[j]->d_name);
+					if (keyboard_fd_paths[i].compare(devicePathBuffer) == 0) entry_found=true;
+				}
+			}
+			if (entry_found==false){
+				//remove this element!
+				ofLogNotice("ofAppEGLWindow") << "keyboard removed on: " << keyboard_fd_paths[i];
+				::close(keyboard_fd_array[i]);
+				for ( int j = i ; j < keyboard_fd_length - 1 ; j++ ){
+					keyboard_fd_paths[j] = keyboard_fd_paths[j+1];
+					keyboard_fd_array[j] = keyboard_fd_array[j+1];
+				}
+				keyboard_fd_length--;
+				i--;	//try new element in this position
+			}	
 		}
+		
+		for (int i=0;i<n;i++){
+			if (eps[i] != 0){
+				string devicePathBuffer;
+				devicePathBuffer.append("/dev/input/by-path/");
+				devicePathBuffer.append(eps[i]->d_name);
+				bool alread_opend = false;
+				for (int j=0;j<keyboard_fd_length;j++){
+					if (keyboard_fd_paths[j].compare(devicePathBuffer) == 0) alread_opend=true;
+				}
+				if (alread_opend == false){
+					if (((keyboard_fd_length+1)<MAX_KBD_SUPPORT)){
+						int keyboard_fd_one = open(devicePathBuffer.c_str(), O_RDONLY | O_NONBLOCK);
+						ofLogNotice("ofAppEGLWindow") << "setupKeyboard(): keyboard_fd_one= " <<  keyboard_fd_one << " devicePath=" << devicePathBuffer;
+						if (keyboard_fd_one>=0){
+							char deviceNameBuffer[256] = "Unknown Device";
+							ioctl(keyboard_fd_array[i], EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
+							ofLogNotice("ofAppEGLWindow") << "setupKeyboard(): keyboard device name = " << deviceNameBuffer;
+							keyboard_fd_array[keyboard_fd_length]=keyboard_fd_one;
+							keyboard_fd_paths[keyboard_fd_length]=devicePathBuffer;
+							keyboard_fd_length++;
+						}
+					}
+				}
+			}
+		}
+		
+		//free eps
+		for (int i=0;i<n;i++){
+			free(eps[i]);	
+		}
+		free(eps);
+	} else {
+		ofLogWarning("ofAppEGLWindow") << "setupKeyboard(): unabled to find keyboard";
 	}
 
-	if (keyboard_fd >= 0) {
-		char deviceNameBuffer[256] = "Unknown Device";
-		ioctl(keyboard_fd, EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
-		ofLogNotice("ofAppEGLWindow") << "setupKeyboard(): keyboard device name = " << deviceNameBuffer;
-
-
+	if (keyboard_fd_length > 0 && previouse_keyboard_fd_length==0) {
 		// save current terminal settings
 		tcgetattr (STDIN_FILENO, &tc);
 		ots = tc;
@@ -1418,17 +1464,16 @@ void ofAppEGLWindow::setupNativeKeyboard() {
 		tc.c_lflag &= ~ECHO;
 		tc.c_lflag |= ECHONL;
 		tcsetattr(STDIN_FILENO, TCSAFLUSH, &tc);
-
-	} else {
-		ofLogError("ofAppEGLWindow") << "setupKeyboard(): did not open keyboard";
+		
+		kb.shiftPressed = false;
+		kb.capsLocked = false;
 	}
 
-	kb.shiftPressed = false;
-	kb.capsLocked = false;
-
-	if(keyboard_fd < 0) {
-		ofLogError("ofAppEGLWindow") << "setupKeyboard(): did not open keyboard, keyboard_fd < 0";
-	} else {
+	if(keyboard_fd_length == 0) {
+		ofLogError("ofAppEGLWindow") << "setupKeyboard(): did not open keyboard, keyboard_fd_length = 0";
+		keyboardDetected = false;
+		if (previouse_keyboard_fd_length>0) destroyNativeKeyboard();
+	}else {
 		keyboardDetected = true;
 	}
 }
@@ -1444,7 +1489,7 @@ void ofAppEGLWindow::destroyNativeMouse() {
 void ofAppEGLWindow::destroyNativeKeyboard() {
 	ofLogNotice("ofAppEGLWindow") << "destroyNativeKeyboard()";
 
-	if (keyboard_fd >= 0) {
+	if (keyboard_fd_length > 0) {
 		tcsetattr (STDIN_FILENO, TCSAFLUSH, &ots);
 	} else {
 		ofLogNotice("ofAppEGLWindow") << "destroyNativeKeyboard(): unable to reset terminal";
@@ -1475,11 +1520,13 @@ void ofAppEGLWindow::readNativeUDevEvents() {
 		if (dev) {
 			// TODO: finish auto connect
 			ofLogNotice() << "Got device";
-			ofLogNotice() << "   node: %s\n", udev_device_get_devnode(dev);
-			ofLogNotice() << "   subsystem: %s\n", udev_device_get_subsystem(dev);
-			ofLogNotice() << "   devtype: %s\n", udev_device_get_devtype(dev);
-			ofLogNotice() << "   action: %s\n", udev_device_get_action(dev);
+			ofLogNotice() << "   node: "<< udev_device_get_devnode(dev);
+			ofLogNotice() << "   subsystem: "<< udev_device_get_subsystem(dev);
+			ofLogNotice() << "   devtype: "<< udev_device_get_devtype(dev);
+			ofLogNotice() << "   action: "<< udev_device_get_action(dev);
 			udev_device_unref(dev);
+			// Try to scan keyboard again. Maybe add some condition before calling it?
+			setupNativeKeyboard();
 		}
 		else {
 			ofLogNotice("ofAppEGLWindow") << "readNativeUDevEvents(): device returned by receive_device() is NULL";
@@ -1488,14 +1535,14 @@ void ofAppEGLWindow::readNativeUDevEvents() {
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::readNativeKeyboardEvents() {
+void ofAppEGLWindow::readNativeKeyboardEvents(int kb_fd) {
 	// http://www.diegm.uniud.it/loghi/CE2/kbd.pdf
 	// http://cgit.freedesktop.org/~whot/evtest/plain/evtest.c
 	// https://strcpy.net/b/archives/2010/11/17/abusing_the_linux_input_subsystem/index.html
 	struct input_event ev;
 	char key = 0;
 
-	int nBytesRead = read(keyboard_fd, &ev,sizeof(struct input_event));
+	int nBytesRead = read(kb_fd, &ev,sizeof(struct input_event));
 
 	static ofKeyEventArgs keyEvent;
 	bool pushKeyEvent = false;
@@ -1669,7 +1716,7 @@ void ofAppEGLWindow::readNativeKeyboardEvents() {
 			pushKeyEvent = false;
 		}
 
-		nBytesRead = read(keyboard_fd, &ev,sizeof(struct input_event));
+		nBytesRead = read(kb_fd, &ev,sizeof(struct input_event));
 	}
 }
 

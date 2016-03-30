@@ -269,7 +269,7 @@ protected:
 	void destroyNativeKeyboard();
 
 	void readNativeMouseEvents();
-	void readNativeKeyboardEvents();
+	void readNativeKeyboardEvents(int kb_fd);
 	void readNativeUDevEvents();
 
 	static void handleX11Event(const XEvent& event);
