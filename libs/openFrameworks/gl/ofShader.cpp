@@ -546,21 +546,21 @@ bool ofShader::linkProgram() {
 		GLint count = -1;
 		GLenum type = 0;
 		GLsizei length;
-        GLint location;
+		GLint location;
 		vector<GLchar> uniformName(uniformMaxLength);
 		for(GLint i = 0; i < numUniforms; i++) {
 			glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName.data());
 			string name(uniformName.begin(), uniformName.begin()+length);
 			// some drivers return uniform_name[0] for array uniforms
 			// instead of the real uniform name
-            location = glGetUniformLocation(program, name.c_str());		
-            if (location == -1) continue; // ignore uniform blocks
+			location = glGetUniformLocation(program, name.c_str());
+			if (location == -1) continue; // ignore uniform blocks
 
-            uniformsCache[name] = location;
+			uniformsCache[name] = location;
 			auto arrayPos = name.find('[');
 			if(arrayPos!=std::string::npos){
 				name = name.substr(0, arrayPos);
-                uniformsCache[name] = location;
+				uniformsCache[name] = location;
 			}
 		}
 
@@ -574,9 +574,9 @@ bool ofShader::linkProgram() {
 		type = 0;
 		vector<GLchar> uniformBlockName(uniformMaxLength);
 		for(GLint i = 0; i < numUniformBlocks; i++) {
-            glGetActiveUniformBlockName(program, i, uniformMaxLength, &length, uniformBlockName.data() );
+			glGetActiveUniformBlockName(program, i, uniformMaxLength, &length, uniformBlockName.data() );
 			string name(uniformBlockName.begin(), uniformBlockName.begin()+length);
-            uniformBlocksCache[name] = glGetUniformBlockIndex(program, name.c_str());
+			uniformBlocksCache[name] = glGetUniformBlockIndex(program, name.c_str());
 		}
 #endif
 #endif
@@ -661,7 +661,7 @@ void ofShader::bindUniformBlock(GLuint binding, const string & name) const{
 	if(bLoaded){
 		GLint index = getUniformBlockIndex(name);
 		if (index != -1) {
-            glUniformBlockBinding( program, index, binding );
+			glUniformBlockBinding( program, index, binding );
 		}
 	}
 }
@@ -1128,11 +1128,11 @@ void ofShader::printActiveUniformBlocks()  const{
 	stringstream line;
 	for(GLint i = 0; i < numUniformBlocks; i++) {
 		GLsizei length;
-        GLint blockBinding;
-        GLsizei blockDataSize;
-        glGetActiveUniformBlockName(program, i, uniformBlockMaxLength, &length, uniformBlockName );
-        glGetActiveUniformBlockiv(program, i, GL_UNIFORM_BLOCK_BINDING, &blockBinding );
-        glGetActiveUniformBlockiv(program, i, GL_UNIFORM_BLOCK_DATA_SIZE, &blockDataSize );
+		GLint blockBinding;
+		GLsizei blockDataSize;
+		glGetActiveUniformBlockName(program, i, uniformBlockMaxLength, &length, uniformBlockName );
+		glGetActiveUniformBlockiv(program, i, GL_UNIFORM_BLOCK_BINDING, &blockBinding );
+		glGetActiveUniformBlockiv(program, i, GL_UNIFORM_BLOCK_DATA_SIZE, &blockDataSize );
         
 		line << " [" << i << "] ";
 		for(int j = 0; j < length; j++) {
@@ -1162,16 +1162,16 @@ void ofShader::printActiveUniforms()  const{
 	for(GLint i = 0; i < numUniforms; i++) {
 		stringstream line;
 		GLsizei length;
-        GLint location;
-        glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName);
-        location = glGetUniformLocation(program, uniformName);		
-        if (location == -1) continue; // ignore uniform blocks
+		GLint location;
+		glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName);
+		location = glGetUniformLocation(program, uniformName);
+		if (location == -1) continue; // ignore uniform blocks
 
-        line << "[" << location << "] ";
+		line << "[" << location << "] ";
 		for(int j = 0; j < length; j++) {
 			line << uniformName[j];
 		}
-        line << " @ index " << location;
+		line << " @ index " << location;
 		ofLogNotice("ofShader") << line.str();
 	}
 }
