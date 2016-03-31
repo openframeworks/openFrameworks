@@ -98,9 +98,9 @@ public:
 #ifndef TARGET_OPENGLES
 #ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
 	GLint getUniformBlockIndex(const string & name) const;
-    GLint getUniformBlockBinding(const string & name) const;
-    void bindUniformBlock(GLuint bindind, const string & name) const;
-    void printActiveUniformBlocks() const;
+	GLint getUniformBlockBinding(const string & name) const;
+	void bindUniformBlock(GLuint bindind, const string & name) const;
+	void printActiveUniformBlocks() const;
 #endif
 #endif
 
