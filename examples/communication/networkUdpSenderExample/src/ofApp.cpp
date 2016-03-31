@@ -10,10 +10,11 @@ void ofApp::setup(){
 	ofEnableAntiAliasing();
 
 	//create the socket and set to send to 127.0.0.1:11999
-	udpConnection.Create();
-	udpConnection.Connect("127.0.0.1",11999);
-	udpConnection.SetNonBlocking(true);
+	ofxUDPSettings settings;
+	settings.sendTo("127.0.0.1", 11999);
+	settings.blocking = false;
 
+	udpConnection.Setup(settings);
 
 }
 

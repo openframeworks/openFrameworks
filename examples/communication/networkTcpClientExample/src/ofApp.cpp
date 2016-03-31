@@ -10,9 +10,15 @@ void ofApp::setup(){
 	msgTx	= "";
 	msgRx	= "";
 
+	ofxTCPSettings settings("127.0.0.1", 11999);
+
+	// set other options:
+	//settings.blocking = false;
+	//settings.messageDelimiter = "\n";
+
 	// connect to the server - if this fails or disconnects
 	// we'll check every few seconds to see if the server exists
-	tcpClient.setup("127.0.0.1", 11999);
+	tcpClient.setup(settings);
 
 	// optionally set the delimiter to something else.  The delimiter in the client and the server have to be the same
 	tcpClient.setMessageDelimiter("\n");
