@@ -66,6 +66,7 @@ class JsonConfigParser {
 		static bool _parse(const ofJson &config, const string& name, ofPoint& val);
 		static bool _parse(const ofJson &config, const string& name, ofRectangle& val);
 		static bool _parse(const ofJson &config, const string& name, LayoutFloat& val);
+		static bool _parse(const ofJson &config, const string& name, LayoutPosition& val);
 
 		///\brief Default parse method for non implemented attribute types
 		template <typename AttributeType>

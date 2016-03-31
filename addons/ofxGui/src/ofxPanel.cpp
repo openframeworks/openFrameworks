@@ -174,24 +174,24 @@ void ofxPanel::onHeaderMove(MoveEventArgs &args){
 	ofPoint screenThisPos = getScreenPosition();
 	ofPoint diff = screenHeaderPos-screenThisPos;
 
-	ofRectangle newshape = getShape();
-	newshape.setPosition(getPosition()+diff);
-	if(parent()){
-		if(newshape.x < parent()->getShape().getLeft()){
-			newshape.x = parent()->getShape().getLeft();
-		}
-		if(newshape.x + newshape.width > parent()->getShape().getRight()){
-			newshape.x = parent()->getShape().getRight() - newshape.width;
-		}
-		if(newshape.y < parent()->getShape().getTop()){
-			newshape.y = parent()->getShape().getTop();
-		}
-		if(newshape.y + newshape.height > parent()->getShape().getBottom()){
-			newshape.y = parent()->getShape().getBottom() - newshape.height;
-		}
-	}
+//	ofRectangle newshape = getShape();
+//	newshape.setPosition(getPosition()+diff);
+//	if(parent()){
+//		if(newshape.x < parent()->getShape().getLeft()){
+//			newshape.x = parent()->getShape().getLeft();
+//		}
+//		if(newshape.x + newshape.width > parent()->getShape().getRight()){
+//			newshape.x = parent()->getShape().getRight() - newshape.width;
+//		}
+//		if(newshape.y < parent()->getShape().getTop()){
+//			newshape.y = parent()->getShape().getTop();
+//		}
+//		if(newshape.y + newshape.height > parent()->getShape().getBottom()){
+//			newshape.y = parent()->getShape().getBottom() - newshape.height;
+//		}
+//	}
 
-	setPosition(newshape.getPosition());
+	setPosition(getPosition()+diff);
 }
 
 void ofxPanel::onLoadPressed(){

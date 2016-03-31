@@ -46,6 +46,12 @@ class ofxBaseGui : public ofx::DOM::Element {
 		virtual void setTextAlignment(const std::string& textLayout);
 		TextAlignment getTextAlignment() const;
 
+		virtual void setFloat(LayoutFloat type);
+		virtual LayoutFloat getFloat();
+
+		virtual void setLayoutPosition(LayoutPosition type);
+		virtual LayoutPosition getLayoutPosition();
+
 		ofColor getHeaderBackgroundColor() const;
 		ofColor getBackgroundColor() const;
 		ofColor getBorderColor() const;
@@ -60,6 +66,7 @@ class ofxBaseGui : public ofx::DOM::Element {
 		virtual void setTextColor(const ofColor & color);
 		virtual void setFillColor(const ofColor & color);
 		virtual void setBorderWidth(float width);
+
 		virtual void setMargin(float margin);
 		virtual void setMargin(float margin_topbottom, float margin_leftright);
 		virtual void setMargin(float margin_top, float margin_right, float margin_bottom, float margin_left);

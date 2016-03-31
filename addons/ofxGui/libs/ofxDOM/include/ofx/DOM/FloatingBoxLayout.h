@@ -20,6 +20,8 @@ public:
 
 protected:
 
+	bool elementFloating(Element* e);
+
 	void setNextLeftFloatPosition(ofPoint p, Element* e);
 	void setNextRightFloatPosition(ofPoint p, Element* e);
 	ofPoint nextLeftFloatPositionLoop(Element* e, Element *s, const ofPoint& res);

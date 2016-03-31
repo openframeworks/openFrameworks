@@ -76,6 +76,14 @@ enum class LayoutFloat {
 	NONE
 };
 
+/// \brief The position type of a gui element in a layout.
+enum class LayoutPosition {
+	/// \brief Element is positioned by the floating attribute depending of the positions of its siblings.
+	STATIC,
+	/// \brief Element is positioned by its position independent of siblings.
+	ABSOLUTE
+};
+
 template <class T>
 using StorageType = typename decay<T>::type;
 

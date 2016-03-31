@@ -148,6 +148,22 @@ bool JsonConfigParser::_parse(const ofJson &config, const string &name, LayoutFl
 	return false;
 }
 
+bool JsonConfigParser::_parse(const ofJson &config, const string &name, LayoutPosition& val){
+
+	if (config.find(name) != config.end()) {
+		ofJson content = config[name];
+		if(content == "static"){
+			val = LayoutPosition::STATIC;
+			return true;
+		}
+		if(content == "absolute"){
+			val = LayoutPosition::ABSOLUTE;
+			return true;
+		}
+	}
+	return false;
+}
+
 bool JsonConfigParser::parse(const ofJson &config, Element* val){
 
 	if(!config.is_null()){

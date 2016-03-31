@@ -2,6 +2,7 @@
 
 ofxGui::ofxGui(){
 	document = std::make_unique<ofx::DOM::Document>();
+	document->createLayout<ofx::DOM::FloatingBoxLayout>(document.get(), ofx::DOM::Orientation::VERTICAL);
 }
 
 ofxGui::~ofxGui(){
@@ -12,41 +13,32 @@ Document* ofxGui::getRoot(){
 }
 
 ofxGuiGroup* ofxGui::addGroup(const std::string& name, const ofJson& config){
-	ofJson c = config;
-	if(config.find("width") == config.end()){
-		c["width"] = 200;
-	}
-	return getRoot()->add<ofxGuiGroup>(name, c);
+	return getRoot()->add<ofxGuiGroup>(name, rootGroupConfig(config));
 }
 
 ofxGuiGroup* ofxGui::addGroup(const ofParameterGroup & parameters, const ofJson& config){
-	ofJson c = config;
-	if(config.find("width") == config.end()){
-		c["width"] = 200;
-	}
-	return getRoot()->add<ofxGuiGroup>(parameters, c);
+	return getRoot()->add<ofxGuiGroup>(parameters, rootGroupConfig(config));
 }
 
 ofxPanel* ofxGui::addPanel(const std::string& name, const ofJson& config){
-	ofJson c = config;
-	if(config.find("width") == config.end()){
-		c["width"] = 200;
-	}
-	return getRoot()->add<ofxPanel>(name, c);
+	return getRoot()->add<ofxPanel>(name, rootGroupConfig(config));
 }
 
 ofxPanel* ofxGui::addPanel(const ofParameterGroup & parameters, const ofJson& config){
-	ofJson c = config;
-	if(config.find("width") == config.end()){
-		c["width"] = 200;
-	}
-	return getRoot()->add<ofxPanel>(parameters, c);
+	return getRoot()->add<ofxPanel>(parameters, rootGroupConfig(config));
 }
 
 ofxGuiTabs* ofxGui::addTabs(const std::string& name, const ofJson& config){
-	ofJson c = config;
+	return getRoot()->add<ofxGuiTabs>(name, rootGroupConfig(config));
+}
+
+ofJson ofxGui::rootGroupConfig(const ofJson& config){
+	ofJson res = config;
 	if(config.find("width") == config.end()){
-		c["width"] = 200;
+		res["width"] = 200;
 	}
-	return getRoot()->add<ofxGuiTabs>(name, c);
+	if(config.find("position") == config.end()){
+		res["position"] = "absolute";
+	}
+	return res;
 }
