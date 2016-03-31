@@ -32,7 +32,6 @@
 #include <assert.h>
 
 ofxOscMessage::ofxOscMessage()
-
 {
 }
 
