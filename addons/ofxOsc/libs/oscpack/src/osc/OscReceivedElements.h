@@ -50,37 +50,37 @@ namespace osc{
 
 class MalformedPacketException : public Exception{
 public:
-    MalformedPacketException( const char *w="malformed packet" )
+    explicit MalformedPacketException( const char *w="malformed packet" )
         : Exception( w ) {}
 };
 
 class MalformedMessageException : public Exception{
 public:
-    MalformedMessageException( const char *w="malformed message" )
+    explicit MalformedMessageException( const char *w="malformed message" )
         : Exception( w ) {}
 };
 
 class MalformedBundleException : public Exception{
 public:
-    MalformedBundleException( const char *w="malformed bundle" )
+    explicit MalformedBundleException( const char *w="malformed bundle" )
         : Exception( w ) {}
 };
 
 class WrongArgumentTypeException : public Exception{
 public:
-    WrongArgumentTypeException( const char *w="wrong argument type" )
+    explicit WrongArgumentTypeException( const char *w="wrong argument type" )
         : Exception( w ) {}
 };
 
 class MissingArgumentException : public Exception{
 public:
-    MissingArgumentException( const char *w="missing argument" )
+    explicit MissingArgumentException( const char *w="missing argument" )
         : Exception( w ) {}
 };
 
 class ExcessArgumentException : public Exception{
 public:
-    ExcessArgumentException( const char *w="too many arguments" )
+    explicit ExcessArgumentException( const char *w="too many arguments" )
         : Exception( w ) {}
 };
 
@@ -141,7 +141,7 @@ private:
 
 class ReceivedBundleElement{
 public:
-    ReceivedBundleElement( const char *sizePtr )
+    explicit ReceivedBundleElement( const char *sizePtr )
         : sizePtr_( sizePtr ) {}
 
     friend class ReceivedBundleElementIterator;
@@ -159,7 +159,7 @@ private:
 
 class ReceivedBundleElementIterator{
 public:
-	ReceivedBundleElementIterator( const char *sizePtr )
+	explicit ReceivedBundleElementIterator( const char *sizePtr )
         : value_( sizePtr ) {}
 
 	ReceivedBundleElementIterator operator++()

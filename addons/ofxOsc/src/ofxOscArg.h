@@ -101,7 +101,7 @@ subclasses for each possible argument type
 class ofxOscArgInt32 : public ofxOscArg
 {
 public:
-	ofxOscArgInt32( std::int32_t _value ) { value = _value; };
+	explicit ofxOscArgInt32( std::int32_t _value ) { value = _value; };
 	~ofxOscArgInt32() {};
 
 	/// return the type of this argument
@@ -120,14 +120,14 @@ private:
 class ofxOscArgInt : public ofxOscArgInt32
 {
 public:
-	ofxOscArgInt( std::int32_t _value ) : ofxOscArgInt32(_value) {};
+	explicit ofxOscArgInt( std::int32_t _value ) : ofxOscArgInt32(_value) {};
 	~ofxOscArgInt(){};
 };
 
 class ofxOscArgInt64 : public ofxOscArg
 {
 public:
-	ofxOscArgInt64( std::int64_t _value ) { value = _value; };
+	explicit ofxOscArgInt64( std::int64_t _value ) { value = _value; };
 	~ofxOscArgInt64() {};
 
 	/// return the type of this argument
@@ -146,7 +146,7 @@ private:
 class ofxOscArgFloat : public ofxOscArg
 {
 public:
-	ofxOscArgFloat( float _value ) { value = _value; };
+	explicit ofxOscArgFloat( float _value ) { value = _value; };
 	~ofxOscArgFloat() {};
 
 	/// return the type of this argument
@@ -165,7 +165,7 @@ private:
 class ofxOscArgDouble : public ofxOscArg
 {
 public:
-	ofxOscArgDouble( double _value ) { value = _value; };
+	explicit ofxOscArgDouble( double _value ) { value = _value; };
 	~ofxOscArgDouble() {};
 
 	/// return the type of this argument
@@ -184,7 +184,7 @@ private:
 class ofxOscArgString : public ofxOscArg
 {
 public:
-	ofxOscArgString( const std::string &_value ) { value = _value; };
+	explicit ofxOscArgString( const std::string &_value ) { value = _value; };
 	~ofxOscArgString() {};
 
 	/// return the type of this argument
@@ -204,7 +204,7 @@ private:
 class ofxOscArgSymbol : public ofxOscArgString
 {
 public:
-	ofxOscArgSymbol( const std::string &_value ) : ofxOscArgString(_value){};
+	explicit ofxOscArgSymbol( const std::string &_value ) : ofxOscArgString(_value){};
 	~ofxOscArgSymbol() {};
 
 	/// return the type of this argument
@@ -215,7 +215,7 @@ public:
 class ofxOscArgChar : public ofxOscArg
 {
 public:
-	ofxOscArgChar( char _value ) { value = _value; };
+	explicit ofxOscArgChar( char _value ) { value = _value; };
 	~ofxOscArgChar() {};
 
 	/// return the type of this argument
@@ -234,7 +234,7 @@ private:
 class ofxOscArgMidiMessage : public ofxOscArgInt32
 {
 public:
-    ofxOscArgMidiMessage( std::int32_t _value ) : ofxOscArgInt32(_value) {};
+	explicit ofxOscArgMidiMessage( std::int32_t _value ) : ofxOscArgInt32(_value) {};
 	~ofxOscArgMidiMessage() {};
 
 	/// return the type of this argument
@@ -245,7 +245,7 @@ public:
 class ofxOscArgBool : public ofxOscArg
 {
 public:
-	ofxOscArgBool( bool _value ) { value = _value; };
+	explicit ofxOscArgBool( bool _value ) { value = _value; };
 	~ofxOscArgBool() {};
 
 	/// return the type of this argument
@@ -285,7 +285,7 @@ public:
 class ofxOscArgTimetag : public ofxOscArgInt64
 {
 public:
-    ofxOscArgTimetag( std::int64_t _value ) : ofxOscArgInt64(_value) {};
+	explicit ofxOscArgTimetag( std::int64_t _value ) : ofxOscArgInt64(_value) {};
 	~ofxOscArgTimetag() {};
 
 	/// return the type of this argument
@@ -296,10 +296,10 @@ public:
 class ofxOscArgBlob : public ofxOscArg
 {
 public:
-	ofxOscArgBlob( const ofBuffer &_value ){
-        value = _value;
-    }
-    ~ofxOscArgBlob(){};
+	explicit ofxOscArgBlob( const ofBuffer &_value ){
+		value = _value;
+	}
+	~ofxOscArgBlob(){};
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_BLOB; };
@@ -317,7 +317,7 @@ private:
 class ofxOscArgRgbaColor : public ofxOscArg
 {
 public:
-    ofxOscArgRgbaColor( std::int32_t _value ) { value = _value; };
+	explicit ofxOscArgRgbaColor( std::int32_t _value ) { value = _value; };
 	~ofxOscArgRgbaColor() {};
 
 	/// return the type of this argument

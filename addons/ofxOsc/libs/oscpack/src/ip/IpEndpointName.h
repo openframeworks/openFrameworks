@@ -47,7 +47,7 @@ public:
 
     IpEndpointName()
 		: address( ANY_ADDRESS ), port( ANY_PORT ) {}
-    IpEndpointName( int port_ ) 
+    explicit IpEndpointName( int port_ )
 		: address( ANY_ADDRESS ), port( port_ ) {}
     IpEndpointName( unsigned long ipAddress_, int port_ ) 
 		: address( ipAddress_ ), port( port_ ) {}
