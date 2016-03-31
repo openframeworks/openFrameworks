@@ -371,6 +371,7 @@ class SocketReceiveMultiplexer::Implementation{
 public:
     Implementation()
 	{
+		break_ = false;
 		if( pipe(breakPipe_) != 0 )
 			throw std::runtime_error( "creation of asynchronous break pipes failed\n" );
 	}
