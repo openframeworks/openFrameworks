@@ -93,7 +93,7 @@ std::int32_t ofxOscMessage::getArgAsInt32( int index ) const
 	    if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
         {
 	    	ofLogWarning("ofxOscMessage") << "getArgAsInt32(): converting float to int32 for argument " << index;
-            return reinterpret_cast<std::int32_t> (dynamic_cast<ofxOscArgFloat*> args[index])->get();
+            return reinterpret_cast<std::int32_t> (dynamic_cast<ofxOscArgFloat*> (args[index]))->get();
         }
         else
         {
@@ -112,7 +112,7 @@ std::int64_t ofxOscMessage::getArgAsInt64( int index ) const
 		if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
         {
 		ofLogWarning("ofxOscMessage") << "getArgAsInt64(): converting float to int64 for argument " << index;
-		return reinterpret_cast<std::int64_t> (dynamic_cast<ofxOscArgFloat*> args[index])->get();
+		return reinterpret_cast<std::int64_t> (dynamic_cast<ofxOscArgFloat*> (args[index]))->get();
         }
         else
         {
