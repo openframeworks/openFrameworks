@@ -194,6 +194,7 @@ private:
 
 	bool			bEnableSetupScreen;
 	int				windowW, windowH;
+	int				currentW, currentH;
 
 	ofRectangle windowRect;
 
@@ -204,7 +205,7 @@ private:
 	bool			bWindowNeedsShowing;
 
 	GLFWwindow* 	windowP;
-    
+
 	int				getCurrentMonitor();
 
 	ofBaseApp *	ofAppPtr;
