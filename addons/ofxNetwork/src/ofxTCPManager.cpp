@@ -130,6 +130,8 @@ bool ofxTCPManager::Create()
 
 	if(!ret) ofxNetworkCheckError();
 
+	nonBlocking = false;
+
 	return ret;
 }
 
