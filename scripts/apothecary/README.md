@@ -1,7 +1,7 @@
 Apothecary
 ==========
 
-This is the [OpenFrameworks](http://openframeworks.cc) library apothecary. It mixes formulas and potions to build and update the C/C++ lib dependencies.
+This is the [openFrameworks](http://openframeworks.cc) library apothecary. It mixes formulas and potions to build and update the C/C++ lib dependencies.
 
 It's basically a simple build system using Bash scripting inspired by [Homebrew](http://mxcl.github.io/homebrew/). Individual libraries are separated into formula scripts which abstract the download, build, copy, and clean actions to increase flexibility and maintainability. The main apothecary script processes these formulas, runs the appropriate actions, and puts things "in the right place".
 
