@@ -24,18 +24,30 @@ void ofxTCPServer::setVerbose(bool _verbose){
 
 //--------------------------
 bool ofxTCPServer::setup(int _port, bool blocking){
+	ofxTCPSettings settings(_port);
+
+	settings.blocking = blocking;
+
+	return setup(settings);
+}
+
+
+//--------------------------
+bool ofxTCPServer::setup(const ofxTCPSettings &settings){
 	if( !TCPServer.Create() ){
 		ofLogError("ofxTCPServer") << "setup(): couldn't create server";
 		return false;
 	}
-	if( !TCPServer.Bind(_port) ){
-		ofLogError("ofxTCPServer") << "setup(): couldn't bind to port " << _port;
+	if( !TCPServer.Bind(settings.port) ){
+		ofLogError("ofxTCPServer") << "setup(): couldn't bind to port " << settings.port;
 		return false;
 	}
 
 	connected		= true;
-	port			= _port;
-	bClientBlocking = blocking;
+	port           	= settings.port;
+	bClientBlocking	= settings.blocking;
+
+	setMessageDelimiter(settings.messageDelimiter);
 
 	std::unique_lock<std::mutex> lck(mConnectionsLock);
 	startThread();

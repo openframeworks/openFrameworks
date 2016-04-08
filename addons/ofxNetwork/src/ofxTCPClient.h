@@ -2,6 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofxTCPManager.h"
+#include "ofxTCPSettings.h"
 #include "ofFileUtils.h"
 #include "ofTypes.h"
 
@@ -22,6 +23,7 @@ class ofxTCPClient{
 
 		void setVerbose(bool _verbose);
 		bool setup(string ip, int _port, bool blocking = false);
+		bool setup(const ofxTCPSettings & settings);
 		void setMessageDelimiter(string delim);
 		bool close();
 
