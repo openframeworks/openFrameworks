@@ -566,17 +566,23 @@ bool ofShader::linkProgram() {
 
 #ifndef TARGET_OPENGLES
 #ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
-		// Pre-cache all active uniforms blocks
-		GLint numUniformBlocks = 0;
-		glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
+		if(ofGLCheckExtension("GL_ARB_uniform_buffer_object")) {
+			uboAvailable = true;
 
-		count = -1;
-		type = 0;
-		vector<GLchar> uniformBlockName(uniformMaxLength);
-		for(GLint i = 0; i < numUniformBlocks; i++) {
-			glGetActiveUniformBlockName(program, i, uniformMaxLength, &length, uniformBlockName.data() );
-			string name(uniformBlockName.begin(), uniformBlockName.begin()+length);
-			uniformBlocksCache[name] = glGetUniformBlockIndex(program, name.c_str());
+			// Pre-cache all active uniforms blocks
+			GLint numUniformBlocks = 0;
+			glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
+
+			count = -1;
+			type = 0;
+			vector<GLchar> uniformBlockName(uniformMaxLength);
+			for(GLint i = 0; i < numUniformBlocks; i++) {
+				glGetActiveUniformBlockName(program, i, uniformMaxLength, &length, uniformBlockName.data() );
+				string name(uniformBlockName.begin(), uniformBlockName.begin()+length);
+				uniformBlocksCache[name] = glGetUniformBlockIndex(program, name.c_str());
+			}
+		} else {
+			uboAvailable = false;
 		}
 #endif
 #endif
@@ -659,9 +665,13 @@ bool ofShader::bindDefaults() const{
 #ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
 void ofShader::bindUniformBlock(GLuint binding, const string & name) const{
 	if(bLoaded){
-		GLint index = getUniformBlockIndex(name);
-		if (index != -1) {
-			glUniformBlockBinding( program, index, binding );
+		if(uboAvailable) {
+			GLint index = getUniformBlockIndex(name);
+			if (index != -1) {
+				glUniformBlockBinding( program, index, binding );
+			}
+		} else {
+			ofLogError("ofShader::bindUniformBlock") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
 		}
 	}
 }
@@ -1092,57 +1102,71 @@ GLint ofShader::getUniformLocation(const string & name)  const{
 //--------------------------------------------------------------
 GLint ofShader::getUniformBlockIndex(const string & name)  const{
 	if(!bLoaded) return -1;
-	auto it = uniformBlocksCache.find(name);
-	if (it == uniformBlocksCache.end()){
-		return -1;
+
+	if(uboAvailable) {
+		auto it = uniformBlocksCache.find(name);
+		if (it == uniformBlocksCache.end()){
+			return -1;
+		} else {
+			return it->second;
+		}
 	} else {
-		return it->second;
+		ofLogError("ofShader::getUniformBlockIndex") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
+		return -1;
 	}
 }
 
 //--------------------------------------------------------------
-GLint ofShader::getUniformBlockBinding( const string & name ) const
-{
+GLint ofShader::getUniformBlockBinding( const string & name ) const{
 	if(!bLoaded) return -1;
 
-    GLint index = getUniformBlockIndex(name);
-    if (index == -1) return -1;
+	if(uboAvailable) {
+		GLint index = getUniformBlockIndex(name);
+		if (index == -1) return -1;
 
-    GLint blockBinding;
-    glGetActiveUniformBlockiv(program, index, GL_UNIFORM_BLOCK_BINDING, &blockBinding);
-    return blockBinding;    
+		GLint blockBinding;
+		glGetActiveUniformBlockiv(program, index, GL_UNIFORM_BLOCK_BINDING, &blockBinding);
+		return blockBinding;
+	} else {
+		ofLogError("ofShader::getUniformBlockBinding") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
+		return -1;
+	}
 }
 
 //--------------------------------------------------------------
 void ofShader::printActiveUniformBlocks()  const{
-	GLint numUniformBlocks = 0;
-	glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
-	ofLogNotice("ofShader") << numUniformBlocks << " uniform blocks";
-	
-	GLint uniformBlockMaxLength = 0;
-	glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniformBlockMaxLength);
-	
-	GLint count = -1;
-	GLenum type = 0;
-	GLchar* uniformBlockName = new GLchar[uniformBlockMaxLength];
-	stringstream line;
-	for(GLint i = 0; i < numUniformBlocks; i++) {
-		GLsizei length;
-		GLint blockBinding;
-		GLsizei blockDataSize;
-		glGetActiveUniformBlockName(program, i, uniformBlockMaxLength, &length, uniformBlockName );
-		glGetActiveUniformBlockiv(program, i, GL_UNIFORM_BLOCK_BINDING, &blockBinding );
-		glGetActiveUniformBlockiv(program, i, GL_UNIFORM_BLOCK_DATA_SIZE, &blockDataSize );
-        
-		line << " [" << i << "] ";
-		for(int j = 0; j < length; j++) {
-			line << uniformBlockName[j];
+	if(uboAvailable) {
+		GLint numUniformBlocks = 0;
+		glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
+		ofLogNotice("ofShader") << numUniformBlocks << " uniform blocks";
+
+		GLint uniformBlockMaxLength = 0;
+		glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniformBlockMaxLength);
+
+		GLint count = -1;
+		GLenum type = 0;
+		GLchar* uniformBlockName = new GLchar[uniformBlockMaxLength];
+		stringstream line;
+		for(GLint i = 0; i < numUniformBlocks; i++) {
+			GLsizei length;
+			GLint blockBinding;
+			GLsizei blockDataSize;
+			glGetActiveUniformBlockName(program, i, uniformBlockMaxLength, &length, uniformBlockName );
+			glGetActiveUniformBlockiv(program, i, GL_UNIFORM_BLOCK_BINDING, &blockBinding );
+			glGetActiveUniformBlockiv(program, i, GL_UNIFORM_BLOCK_DATA_SIZE, &blockDataSize );
+
+			line << " [" << i << "] ";
+			for(int j = 0; j < length; j++) {
+				line << uniformBlockName[j];
+			}
+			line << " @ index " << getUniformBlockIndex( uniformBlockName ) << ", binding point " << blockBinding << ", size " << blockDataSize << " bytes";
+			ofLogNotice("ofShader") << line.str();
+			line.str("");
 		}
-		line << " @ index " << getUniformBlockIndex( uniformBlockName ) << ", binding point " << blockBinding << ", size " << blockDataSize << " bytes";
-		ofLogNotice("ofShader") << line.str();
-		line.str("");
+		delete [] uniformBlockName;
+	} else {
+		ofLogError("ofShader::printActiveUniformBlocks") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
 	}
-	delete [] uniformBlockName;
 }
 
 #endif

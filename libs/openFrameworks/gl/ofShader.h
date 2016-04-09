@@ -188,6 +188,7 @@ private:
 
 #ifndef TARGET_OPENGLES
 #ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
+	bool uboAvailable;
 	unordered_map<string, GLint> uniformBlocksCache;
 #endif
 #endif
