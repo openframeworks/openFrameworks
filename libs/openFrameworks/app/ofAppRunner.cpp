@@ -245,8 +245,7 @@ void ofExitCallback(){
 	// static deinitialization happens after this finishes
 	// every object should have ended by now and won't receive any
 	// events
-
-        of::priv::endutils();
+	of::priv::endutils();
 
 	initialized() = false;
 }
