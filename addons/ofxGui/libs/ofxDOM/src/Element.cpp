@@ -57,6 +57,8 @@ Element::Element(const std::string& id,
 
 Element::~Element()
 {
+	ofRemoveListener(this->move, this, &Element::_onMoved);
+	ofRemoveListener(this->resize, this, &Element::_onResized);
 }
 
 

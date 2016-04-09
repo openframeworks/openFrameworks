@@ -43,5 +43,8 @@ class ofxGui {
 	private:
 		std::unique_ptr<ofx::DOM::Document> document;
 
+		void setup();
+		bool setup_done ;
+
 		ofJson rootGroupConfig(const ofJson& config);
 };

@@ -119,6 +119,7 @@ ofxGuiGroup::~ofxGuiGroup(){
 	showHeader.removeListener(this, &ofxGuiGroup::onHeaderVisibility);
 	headerHeight.removeListener(this, &ofxGuiGroup::onHeaderHeight);
 	ofRemoveListener(resize, this, &ofxGuiGroup::onResize);
+	unregisterMouseEvents();
 
 }
 

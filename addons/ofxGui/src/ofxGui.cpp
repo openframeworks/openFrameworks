@@ -1,14 +1,22 @@
 #include "ofxGui.h"
 
 ofxGui::ofxGui(){
-	document = std::make_unique<ofx::DOM::Document>();
-	document->createLayout<ofx::DOM::FloatingBoxLayout>(document.get(), ofx::DOM::Orientation::VERTICAL);
+	setup_done = false;
 }
 
 ofxGui::~ofxGui(){
 }
 
+void ofxGui::setup(){
+	setup_done = true;
+	document = std::make_unique<ofx::DOM::Document>();
+	document->createLayout<ofx::DOM::FloatingBoxLayout>(document.get(), ofx::DOM::Orientation::VERTICAL);
+}
+
 Document* ofxGui::getRoot(){
+	if(!setup_done){
+		setup();
+	}
 	return document.get();
 }
 
