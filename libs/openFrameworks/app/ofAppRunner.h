@@ -54,7 +54,6 @@ int ofRunMainLoop();
 
 
 ofBaseApp * ofGetAppPtr();
-void ofSetAppPtr(shared_ptr<ofBaseApp> appPtr);
 
 void		ofExit(int status=0);
 
