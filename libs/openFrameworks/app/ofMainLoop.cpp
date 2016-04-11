@@ -226,10 +226,6 @@ shared_ptr<ofBaseApp> ofMainLoop::getCurrentApp(){
 	return windowsApps[currentWindow.lock()];
 }
 
-ofCoreEvents & ofMainLoop::events(){
-	return currentWindow.lock()->events();
-}
-
 void ofMainLoop::shouldClose(int _status){
 	for(auto i: windowsApps){
 		i.first->setWindowShouldClose();
