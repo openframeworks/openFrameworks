@@ -230,7 +230,7 @@ ofBuffer ofBufferFromFile(const string & path, bool binary=true);
 /// \param buffer data source to write from
 /// \param binary set to false if you are writing a text file & want lines
 /// split at endline characters automatically
-bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary=true);
+bool ofBufferToFile(const string & path, const ofBuffer& buffer, bool binary=true);
 
 //--------------------------------------------------
 /// \class ofFilePath
