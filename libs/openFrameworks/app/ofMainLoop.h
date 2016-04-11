@@ -34,7 +34,6 @@ public:
 	void loopOnce();
 	void pollEvents();
 	void exit();
-	ofCoreEvents & events();
 	void shouldClose(int status);
 	std::shared_ptr<ofAppBaseWindow> getCurrentWindow();
 	void setCurrentWindow(std::shared_ptr<ofAppBaseWindow> window);
