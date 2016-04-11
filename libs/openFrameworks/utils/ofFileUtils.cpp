@@ -336,7 +336,7 @@ ofBuffer ofBufferFromFile(const string & path, bool binary){
 }
 
 //--------------------------------------------------
-bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary){
+bool ofBufferToFile(const string & path, const ofBuffer& buffer, bool binary){
 	ofFile f(path, ofFile::WriteOnly, binary);
 	return buffer.writeTo(f);
 }
