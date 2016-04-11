@@ -19,7 +19,7 @@ void ofSetFrameRate(int targetRate){
 float ofGetFrameRate(){
 	auto window = ofGetMainLoop()->getCurrentWindow();
 	if(window){
-		window->events().getFrameRate();
+		return window->events().getFrameRate();
 	}else{
 		return 0.f;
 	}
@@ -29,7 +29,7 @@ float ofGetFrameRate(){
 float ofGetTargetFrameRate(){
 	auto window = ofGetMainLoop()->getCurrentWindow();
 	if(window){
-		window->events().getTargetFrameRate();
+		return window->events().getTargetFrameRate();
 	}else{
 		return 0.f;
 	}
@@ -39,7 +39,7 @@ float ofGetTargetFrameRate(){
 double ofGetLastFrameTime(){
 	auto window = ofGetMainLoop()->getCurrentWindow();
 	if(window){
-		window->events().getLastFrameTime();
+		return window->events().getLastFrameTime();
 	}else{
 		return 0.f;
 	}
@@ -49,7 +49,7 @@ double ofGetLastFrameTime(){
 uint64_t ofGetFrameNum(){
 	auto window = ofGetMainLoop()->getCurrentWindow();
 	if(window){
-		window->events().getFrameNum();
+		return window->events().getFrameNum();
 	}else{
 		return 0;
 	}
@@ -59,7 +59,7 @@ uint64_t ofGetFrameNum(){
 bool ofGetMousePressed(int button){ //by default any button
 	auto window = ofGetMainLoop()->getCurrentWindow();
 	if(window){
-		window->events().getMousePressed(button);
+		return window->events().getMousePressed(button);
 	}else{
 		return false;
 	}
@@ -69,7 +69,7 @@ bool ofGetMousePressed(int button){ //by default any button
 bool ofGetKeyPressed(int key){
 	auto window = ofGetMainLoop()->getCurrentWindow();
 	if(window){
-		window->events().getKeyPressed(key);
+		return window->events().getKeyPressed(key);
 	}else{
 		return false;
 	}
@@ -79,7 +79,7 @@ bool ofGetKeyPressed(int key){
 int ofGetMouseX(){
 	auto window = ofGetMainLoop()->getCurrentWindow();
 	if(window){
-		window->events().getMouseX();
+		return window->events().getMouseX();
 	}else{
 		return 0;
 	}
@@ -89,7 +89,7 @@ int ofGetMouseX(){
 int ofGetMouseY(){
 	auto window = ofGetMainLoop()->getCurrentWindow();
 	if(window){
-		window->events().getMouseY();
+		return window->events().getMouseY();
 	}else{
 		return 0;
 	}
@@ -99,7 +99,7 @@ int ofGetMouseY(){
 int ofGetPreviousMouseX(){
 	auto window = ofGetMainLoop()->getCurrentWindow();
 	if(window){
-		window->events().getPreviousMouseX();
+		return window->events().getPreviousMouseX();
 	}else{
 		return 0;
 	}
@@ -109,7 +109,7 @@ int ofGetPreviousMouseX(){
 int ofGetPreviousMouseY(){
 	auto window = ofGetMainLoop()->getCurrentWindow();
 	if(window){
-		window->events().getPreviousMouseY();
+		return window->events().getPreviousMouseY();
 	}else{
 		return 0;
 	}
