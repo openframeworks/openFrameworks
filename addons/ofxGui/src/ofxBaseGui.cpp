@@ -66,7 +66,7 @@ ofBitmapFont ofxBaseGui::bitmapFont;
 
 ofxBaseGui::ofxBaseGui(){
 	parent = nullptr;
-	currentFrame = ofGetFrameNum();
+	currentFrame = 0;
 #ifndef TARGET_EMSCRIPTEN
     serializer = std::make_shared<ofXml>();
 #endif
