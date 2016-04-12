@@ -180,7 +180,7 @@ void Element::moveChildToIndex(Element* element, std::size_t index)
 	}
 	else
 	{
-		throw DOMException(DOMException::INVALID_STATE_ERROR + ": " + "Element::moveChildToFront: Element does not exist.");
+		throw DOMException(DOMException::INVALID_STATE_ERROR + ": " + "Element::moveChildToIndex: Element does not exist.");
 	}
 }
 
