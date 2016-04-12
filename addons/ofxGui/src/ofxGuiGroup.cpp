@@ -340,23 +340,35 @@ ofxGuiGroup* ofxGuiGroup::getGroup(const std::string& name){
 
 ofxBaseGui* ofxGuiGroup::getControl(const std::string& name){
 	for(auto & e: getControls()){
-		ofxBaseGui *f = dynamic_cast<ofxBaseGui*>(e);
-		if(f){
-			if(f->getName() == name){
-				return f;
+		if(e){
+			if(e->getName() == name){
+				return e;
 			}
 		}
 	}
 	return nullptr;
 }
 
+int ofxGuiGroup::getControlIndex(ofxBaseGui* element){
+
+	for(int i = 0; i < (int)getControls().size(); i++){
+		ofxBaseGui *e = getControl(i);
+		if(e){
+			if(e == element){
+				return i;
+			}
+		}
+	}
+	return -1;
+
+}
+
 int ofxGuiGroup::getControlIndex(const std::string& name){
 
 	for(int i = 0; i < (int)getControls().size(); i++){
-		Element* e = getControls().at(i);
-		ofxBaseGui *f = dynamic_cast<ofxBaseGui*>(e);
-		if(f){
-			if(f->getName() == name){
+		ofxBaseGui *e = getControl(i);
+		if(e){
+			if(e->getName() == name){
 				return i;
 			}
 		}

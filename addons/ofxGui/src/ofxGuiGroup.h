@@ -116,6 +116,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		ofxBaseGui* getControl(const std::string& name);
 		ofxBaseGui* getControl(std::size_t num);
 		int getControlIndex(const std::string& name);
+		int getControlIndex(ofxBaseGui* element);
 
 		template <class ControlType>
 		ControlType* getControlType(const std::string& name);
