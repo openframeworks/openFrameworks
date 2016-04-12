@@ -455,11 +455,6 @@ ofPoint ofAppGLFWWindow::getWindowSize(){
 			return ofPoint(currentW*pixelScreenCoordScale,currentH*pixelScreenCoordScale);
 		}
 	}else{
-		/*glfwGetWindowSize(windowP, &currentW, &currentH);
-		if(windowMode != OF_FULLSCREEN){
-			windowW = currentW;
-			windowH = currentH;
-		}*/
 		return ofPoint(currentW*pixelScreenCoordScale,currentH*pixelScreenCoordScale);
 	}
 }
@@ -561,16 +556,17 @@ void ofAppGLFWWindow::setWindowShape(int w, int h){
 		windowW = w;
 		windowH = h;
 	}
-	currentW = w;
-	currentH = h;
+	currentW = w/pixelScreenCoordScale;
+	currentH = h/pixelScreenCoordScale;
+	
 	#ifdef TARGET_OSX
 		ofPoint pos = getWindowPosition();
-		glfwSetWindowSize(windowP,w/pixelScreenCoordScale,h/pixelScreenCoordScale);
+		glfwSetWindowSize(windowP,currentW,currentH);
 		if( pos != getWindowPosition() ){
 			setWindowPosition(pos.x, pos.y);
 		}
 	#else
-		glfwSetWindowSize(windowP,w/pixelScreenCoordScale,h/pixelScreenCoordScale);
+		glfwSetWindowSize(windowP,currentW,currentH);
 	#endif
 }
 
@@ -1178,8 +1174,8 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	if(instance->windowMode == OF_WINDOW){
-		instance->windowW = w;
-		instance->windowH = h;
+		instance->windowW = w * instance->pixelScreenCoordScale;
+		instance->windowH = h * instance->pixelScreenCoordScale;
 	}
 	instance->currentW = w;
 	instance->currentH = h;
