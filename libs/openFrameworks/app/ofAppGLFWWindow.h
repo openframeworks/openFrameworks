@@ -193,8 +193,8 @@ private:
 	ofWindowMode	windowMode;
 
 	bool			bEnableSetupScreen;
-	int				windowW, windowH;
-	int				currentW, currentH;
+	int				windowW, windowH;		// physical pixels width
+	int				currentW, currentH;		// scaled pixels width
 
 	ofRectangle windowRect;
 
