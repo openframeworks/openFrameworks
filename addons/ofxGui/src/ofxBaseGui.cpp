@@ -623,10 +623,18 @@ bool ofxBaseGui::isDragging() const{
 
 bool ofxBaseGui::mouseDragged(ofMouseEventArgs & args){
 	if(!isHidden()){
+
+		if(localToScreen(ofRectangle(0,0,getWidth(),getHeight())).inside(args.x, args.y)){
+			_isMouseOver = true;
+		}else {
+			_isMouseOver = false;
+		}
+
 		if(_isDragging){
 			setPosition(args - grabPoint - getScreenPosition());
 			return true;
 		}
+
 	}else {
 		_isDragging = false;
 		_isMouseOver= false;
@@ -667,6 +675,13 @@ bool ofxBaseGui::mouseMoved(ofMouseEventArgs & args){
 }
 
 bool ofxBaseGui::mouseReleased(ofMouseEventArgs & args){
+	if(!isHidden()){
+		if(localToScreen(ofRectangle(0,0,getWidth(),getHeight())).inside(args.x, args.y)){
+			_isMouseOver = true;
+		}else {
+			_isMouseOver = false;
+		}
+	}
 	_isDragging = false;
 	return false;
 }
