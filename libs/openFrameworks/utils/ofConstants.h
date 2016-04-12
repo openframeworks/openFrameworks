@@ -209,7 +209,6 @@ enum ofTargetPlatform{
 		#include <GL/glew.h>
 		#include <GL/gl.h>
 		#include <GL/glext.h>
-		#include <GL/glx.h>
 	#endif
 
 	// for some reason, this isn't defined at compile time,
@@ -384,7 +383,7 @@ typedef TESSindex ofIndexType;
 // clang has a bug where it won't support tls on some versions even
 // on c++11, this is a workaround that bug
 #ifndef HAS_TLS
-	#if __clang__
+	#if defined(__clang__) && __clang__
 		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__) && !defined(__ANDROID__)
 			#define HAS_TLS 1
 		#endif
