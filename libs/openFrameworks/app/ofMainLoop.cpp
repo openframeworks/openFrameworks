@@ -121,7 +121,6 @@ int ofMainLoop::loop(){
 			loopOnce();
 			pollEvents();
 		}
-		exit();
 	}else{
 		windowLoop();
 	}

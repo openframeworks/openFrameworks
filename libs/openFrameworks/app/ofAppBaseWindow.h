@@ -4,12 +4,17 @@
 #include "ofTypes.h"
 #include "ofEvents.h"
 #include "ofWindowSettings.h"
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
-#include <X11/Xlib.h>
-#endif
 
 class ofBaseApp;
 class ofBaseRenderer;
+
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+struct __GLXcontextRec;
+typedef __GLXcontextRec * GLXContext;
+typedef unsigned long Window;
+struct _XDisplay;
+typedef struct _XDisplay Display;
+#endif
 
 class ofAppBaseWindow{
 
