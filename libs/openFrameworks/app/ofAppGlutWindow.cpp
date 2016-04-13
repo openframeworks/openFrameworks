@@ -24,6 +24,7 @@
 	#include "ofImage.h"
 	#include <X11/Xatom.h>
 	#include <GL/freeglut_ext.h>
+	#include <GL/glx.h>
 #endif
 
 

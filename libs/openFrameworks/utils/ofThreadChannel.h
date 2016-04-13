@@ -15,7 +15,7 @@
 /// signalling system that allows receiving threads to sleep until new data
 /// arrives or the ofThreadChannel is closed.
 ///
-/// A single ofThreadChannel class is desgined for one-way communication. In
+/// A single ofThreadChannel class is designed for one-way communication. In
 /// most cases an additional ofThreadChannel can be used for two-way
 /// communication.
 ///
