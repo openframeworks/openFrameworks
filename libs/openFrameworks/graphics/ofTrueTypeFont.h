@@ -352,6 +352,7 @@ public:
 	const ofMesh & getStringMesh(const std::string &  s, float x, float y, bool vflip=true) const;
 	const ofTexture & getFontTexture() const;
 	ofTexture getStringTexture(const std::string &  s, bool vflip=true) const;
+	ofVec2f getFirstGlyphPosForTexture(const std::string & str, bool vflip) const;
 	bool isValidGlyph(uint32_t) const;
 	/// \}
 
