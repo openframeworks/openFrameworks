@@ -726,7 +726,9 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 			ConvertYUV2toRGB565(currentFrame, pixels.getData(), width, height);
 		} else if (data->internalPixelFormat == OF_PIXELS_MONO) {
 			pixels.setFromPixels(currentFrame, width, height, OF_IMAGE_GRAYSCALE);
-		}
+		} else if (data->internalPixelFormat == OF_PIXELS_NV21) {
+            		pixels.setFromPixels(currentFrame, width, height, OF_PIXELS_NV21);
+        	}
 
 		if (needsResize) {
 			pixels.resize(data->width, data->height, OF_INTERPOLATE_NEAREST_NEIGHBOR);
