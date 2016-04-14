@@ -1,4 +1,5 @@
 #include "ofEvents.h"
+#include "ofAppRunner.h"
 
 
 static ofEventArgs voidEventArgs;
@@ -6,57 +7,112 @@ static ofEventArgs voidEventArgs;
 
 //--------------------------------------
 void ofSetFrameRate(int targetRate){
-	ofEvents().setFrameRate(targetRate);
+	auto window = ofGetMainLoop()->getCurrentWindow();
+	if(window){
+		window->events().setFrameRate(targetRate);
+	}else{
+		ofLogWarning("ofEvents") << "Trying to set framerate before mainloop is ready";
+	}
 }
 
 //--------------------------------------
 float ofGetFrameRate(){
-	return ofEvents().getFrameRate();
+	auto window = ofGetMainLoop()->getCurrentWindow();
+	if(window){
+		return window->events().getFrameRate();
+	}else{
+		return 0.f;
+	}
 }
 
 //--------------------------------------
 float ofGetTargetFrameRate(){
-	return ofEvents().getTargetFrameRate();
+	auto window = ofGetMainLoop()->getCurrentWindow();
+	if(window){
+		return window->events().getTargetFrameRate();
+	}else{
+		return 0.f;
+	}
 }
 
 //--------------------------------------
 double ofGetLastFrameTime(){
-	return ofEvents().getLastFrameTime();
+	auto window = ofGetMainLoop()->getCurrentWindow();
+	if(window){
+		return window->events().getLastFrameTime();
+	}else{
+		return 0.f;
+	}
 }
 
 //--------------------------------------
 uint64_t ofGetFrameNum(){
-	return ofEvents().getFrameNum();
+	auto window = ofGetMainLoop()->getCurrentWindow();
+	if(window){
+		return window->events().getFrameNum();
+	}else{
+		return 0;
+	}
 }
 
 //--------------------------------------
 bool ofGetMousePressed(int button){ //by default any button
-	return ofEvents().getMousePressed(button);
+	auto window = ofGetMainLoop()->getCurrentWindow();
+	if(window){
+		return window->events().getMousePressed(button);
+	}else{
+		return false;
+	}
 }
 
 //--------------------------------------
 bool ofGetKeyPressed(int key){
-	return ofEvents().getKeyPressed(key);
+	auto window = ofGetMainLoop()->getCurrentWindow();
+	if(window){
+		return window->events().getKeyPressed(key);
+	}else{
+		return false;
+	}
 }
 
 //--------------------------------------
 int ofGetMouseX(){
-	return ofEvents().getMouseX();
+	auto window = ofGetMainLoop()->getCurrentWindow();
+	if(window){
+		return window->events().getMouseX();
+	}else{
+		return 0;
+	}
 }
 
 //--------------------------------------
 int ofGetMouseY(){
-	return ofEvents().getMouseY();
+	auto window = ofGetMainLoop()->getCurrentWindow();
+	if(window){
+		return window->events().getMouseY();
+	}else{
+		return 0;
+	}
 }
 
 //--------------------------------------
 int ofGetPreviousMouseX(){
-	return ofEvents().getPreviousMouseX();
+	auto window = ofGetMainLoop()->getCurrentWindow();
+	if(window){
+		return window->events().getPreviousMouseX();
+	}else{
+		return 0;
+	}
 }
 
 //--------------------------------------
 int ofGetPreviousMouseY(){
-	return ofEvents().getPreviousMouseY();
+	auto window = ofGetMainLoop()->getCurrentWindow();
+	if(window){
+		return window->events().getPreviousMouseY();
+	}else{
+		return 0;
+	}
 }
 
 ofCoreEvents::ofCoreEvents()

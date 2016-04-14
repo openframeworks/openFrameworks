@@ -15,13 +15,13 @@ public:
 	void addWindow(std::shared_ptr<Window> window){
 		allowMultiWindow = Window::allowsMultiWindow();
 		if(Window::doesLoop()){
-			windowLoop = Window::loop;
+		    windowLoop = Window::loop;
 		}
 		if(Window::needsPolling()){
 			windowPollEvents = Window::pollEvents;
 		}
 		if(!allowMultiWindow){
-			windowsApps.clear();
+		    windowsApps.clear();
 		}
 		windowsApps[window] = std::shared_ptr<ofBaseApp>();
 		currentWindow = window;
@@ -34,7 +34,6 @@ public:
 	void loopOnce();
 	void pollEvents();
 	void exit();
-	ofCoreEvents & events();
 	void shouldClose(int status);
 	std::shared_ptr<ofAppBaseWindow> getCurrentWindow();
 	void setCurrentWindow(std::shared_ptr<ofAppBaseWindow> window);
@@ -47,7 +46,7 @@ private:
 	void keyPressed(ofKeyEventArgs & key);
 	map<std::shared_ptr<ofAppBaseWindow>,std::shared_ptr<ofBaseApp> > windowsApps;
 	bool bShouldClose;
-	std::shared_ptr<ofAppBaseWindow> currentWindow;
+	std::weak_ptr<ofAppBaseWindow> currentWindow;
 	int status;
 	bool allowMultiWindow;
 	std::function<void()> windowLoop;

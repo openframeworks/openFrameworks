@@ -5,7 +5,7 @@ Linux install
 
 Before you can use OF in linux you'll need to run a couple of scripts to install some dependencies and compile the OF library itself and the project generator.
 
-First of all you'll need to execute the install_dependencies.sh script for your distribution which is located in `scripts/linux/dsitro_name/install_dependencies.sh`
+First of all you'll need to execute the install_dependencies.sh script for your distribution which is located in `scripts/linux/distro_name/install_dependencies.sh`
 
 For example if you are using ubuntu, from a console:
 
@@ -19,7 +19,7 @@ Next if you want to use some formats like mp3 you'll need to run the install_cod
 The OF source code comes uncompiled so the first time you compile an example it would need to compile it to, if you go and compile any example it would compile OF as a dependency but to make that easier and catch any potential problems let's do that as a separate step:
 
 ```
-cd OF/scritps/linux
+cd OF/scripts/linux
 ./compileOF.sh -j3
 ```
 
@@ -38,7 +38,7 @@ Or use any of the officially supported IDEs: [qtcreator](../qtcreator/) or [ecli
 If you want to install the project generator, a tool that allows to create and update an OF project you'll need to run a last script:
 
 ```
-cd OF/scritps/linux
+cd OF/scripts/linux
 ./compilePG.sh
 ```
 

@@ -211,7 +211,7 @@ void ofxGuiGroup::addParametersFrom(const ofParameterGroup & parameters){
 		}else if(type == typeid(ofParameter<string>).name()){
 			add(p->cast<string>());
 		}else if(type == typeid(ofParameterGroup).name()){
-			add<ofxGuiGroup>(p->castGroup());
+			add<ofxGuiGroup>(static_cast<ofParameterGroup& >(*p));
 		}else{
 			ofLogWarning("ofxGui") << "Trying to add " << p->getName() << ": ofxBaseGroup; no control for parameter of type " << type;
 

@@ -121,7 +121,6 @@ int ofMainLoop::loop(){
 			loopOnce();
 			pollEvents();
 		}
-		exit();
 	}else{
 		windowLoop();
 	}
@@ -153,14 +152,14 @@ void ofMainLoop::exit(){
 	for(auto i: windowsApps){
 		shared_ptr<ofAppBaseWindow> window = i.first;
 		shared_ptr<ofBaseApp> app = i.second;
-
+		
 		if(window == nullptr) {
 			continue;
 		}
 		if(app == nullptr) {
 			continue;
 		}
-
+		
 		ofRemoveListener(window->events().setup,app.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
 		ofRemoveListener(window->events().update,app.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
 		ofRemoveListener(window->events().draw,app.get(),&ofBaseApp::draw,OF_EVENT_ORDER_APP);
@@ -197,13 +196,13 @@ void ofMainLoop::exit(){
 		}
 #endif
 	}
-
+	
 	exitEvent.notify(this);
 	windowsApps.clear();
 }
 
 shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
-	return currentWindow;
+	return currentWindow.lock();
 }
 
 void ofMainLoop::setCurrentWindow(shared_ptr<ofAppBaseWindow> window){
@@ -211,7 +210,7 @@ void ofMainLoop::setCurrentWindow(shared_ptr<ofAppBaseWindow> window){
 }
 
 void ofMainLoop::setCurrentWindow(ofAppBaseWindow * window){
-	if(currentWindow.get() == window){
+	if(currentWindow.lock().get() == window){
 		return;
 	}
 	for(auto i: windowsApps){
@@ -223,11 +222,7 @@ void ofMainLoop::setCurrentWindow(ofAppBaseWindow * window){
 }
 
 shared_ptr<ofBaseApp> ofMainLoop::getCurrentApp(){
-	return windowsApps[currentWindow];
-}
-
-ofCoreEvents & ofMainLoop::events(){
-	return currentWindow->events();
+	return windowsApps[currentWindow.lock()];
 }
 
 void ofMainLoop::shouldClose(int _status){
@@ -245,5 +240,5 @@ void ofMainLoop::setEscapeQuitsLoop(bool quits){
 void ofMainLoop::keyPressed(ofKeyEventArgs & key){
 	if (key.key == OF_KEY_ESC && escapeQuits == true){				// "escape"
 		shouldClose(0);
-	}
+    }
 }
