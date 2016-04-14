@@ -1,6 +1,5 @@
 #include "JsonConfigParser.h"
-
-#include <regex>
+#include "Poco/RegularExpression.h"
 
 namespace ofx {
 namespace DOM {
@@ -211,16 +210,20 @@ bool JsonConfigParser::parse(const ofJson &config, Element* val){
 vector < string > JsonConfigParser::getMatchedStrings (string contents, string regex ){
 
 	vector < string > results;
-	std::regex regEx(regex);
+	Poco::RegularExpression regEx(regex);
+	Poco::RegularExpression::Match match;
 
-	std::regex_iterator<std::string::iterator> rit (contents.begin(), contents.end(), regEx);
-	std::regex_iterator<std::string::iterator> rend;
+	while(regEx.match(contents, match) != 0) {
 
-	while (rit!=rend) {
-		results.push_back(rit->str());
-		++rit;
+		// we get the sub string from the content
+		// and then trim the content so that we
+		// can continue to search
+		string foundStr = contents.substr(match.offset, match.length);
+		contents = contents.substr(match.offset + match.length);
+
+		results.push_back(foundStr);
+
 	}
-
 	return results;
 }
 
