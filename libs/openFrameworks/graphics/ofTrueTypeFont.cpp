@@ -1248,6 +1248,10 @@ ofVec2f ofTrueTypeFont::getFirstGlyphPosForTexture(const std::string & str, bool
 			return {0.f, 0.f};
 		}
 	}
+	else
+	{
+		return {0.f, 0.f};
+	}
 }
 
 //-----------------------------------------------------------
