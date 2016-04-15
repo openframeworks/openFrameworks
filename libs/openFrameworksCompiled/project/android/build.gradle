@@ -1,15 +1,15 @@
-// build.gradle project file for Android Studio support
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+def ofRoot = '../../../../'
+def ofSource = ofRoot + 'libs/openFrameworks'
+def libs = ofRoot + 'libs'
 
+
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.1'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.android.tools.build:gradle-experimental:0.7.0-alpha1'
     }
 }
 
@@ -19,153 +19,141 @@ allprojects {
     }
 }
 
-import org.apache.tools.ant.taskdefs.condition.Os
+apply plugin: "com.android.model.native"
 
-// OpenFrameworks support functions
-/**
- * Initialization task to set up NDK paths.
- */
-task ofNdkSetup {
-    logger.lifecycle name
+model {
+    android {
+        compileSdkVersion 23
 
-    /* Find NDK directory */
-    def pathsmake = new File(project.projectDir, "paths.make")
-    if (!pathsmake.exists()) {
-        throw new GradleException("pathsmake is missing!")
-    }
+        ndk {
+            moduleName "openFrameworksLib"
+            toolchain "clang"
 
 
-    def localProperties = new File(rootProject.projectDir, "local.properties")
-    if (!localProperties.exists()) {
-        throw new GradleException("local.properties is missing!")
-    }
+            CFlags.addAll([
+                    "-gcc-toolchain /Users/jonas/Library/Android/sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/",
 
-    Properties ndkProperties = new Properties()
-    pathsmake.withInputStream { instr ->
-        ndkProperties.load(instr)
-    }
+            ])
+            cppFlags.addAll(["-std=c++14",
+                             "-Wall",
+                             "-frtti",
+                             "-fexceptions",
+                             "-nostdlib ",
+                             "-fno-short-enums",
+                             "-ffunction-sections",
+                             "-fdata-sections",
 
-    Properties properties = new Properties()
-    localProperties.withInputStream { instr ->
-        properties.load(instr)
-    }
-    String sdkDirectory = properties.get("sdk.dir")
-    String ndkDirectory = ndkProperties.get("NDK_ROOT")
-    if (ndkDirectory == null) {
-        throw new GradleException("NDK not configured. Add NDK_ROOT=/path/to/ndk to paths.make.")
-    }
-    if (ndkDirectory.contains(' ')) {
-        // Make really hates spaces in filenames, so we have to avoid them.
-        throw new GradleException("NDK path cannot contain spaces; please move the NDK.")
-    }
-    def ndkDir = new File(ndkDirectory)
-    if (!ndkDir.directory) {
-        throw new GradleException("NDK directory is invalid. Check NDK_ROOT path in paths.make.")
-    }
+                             "-I${file(ofSource+"/3d")}".toString(),
+                             "-I${file(ofSource+"/app")}".toString(),
+                             "-I${file(ofSource+"/communication")}".toString(),
+                             "-I${file(ofSource+"/events")}".toString(),
+                             "-I${file(ofSource+"/gl")}".toString(),
+                             "-I${file(ofSource+"/graphics")}".toString(),
+                             "-I${file(ofSource+"/math")}".toString(),
+                             "-I${file(ofSource+"/output")}".toString(),
+                             "-I${file(ofSource+"/sound")}".toString(),
+                             "-I${file(ofSource+"/types")}".toString(),
+                             "-I${file(ofSource+"/utils")}".toString(),
+                             "-I${file(ofSource+"/video")}".toString(),
 
-    /* Find suitable make executable */
-    def make = null;
-    def num_parallel = Runtime.runtime.availableProcessors() - 1; // Assume that parallel support works on most systems
+                             "-I${file(libs+"/glu/include_android")}".toString(),
+                             "-I${file(ofRoot+"/addons/ofxAndroid/src")}".toString(),
 
-    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        /* Require MinGW on Windows */
-        make = "make"
-        def proc = [make, "--version"].execute()
-        proc.waitFor()
-        if (proc.exitValue() != 0) {
-            throw new GradleException("Building on Windows requires MinGW to be installed!")
-        }
-        def makever = proc.in.text
-        if (!makever.contains("GNU Make")) {
-            throw new GradleException("make executable does not refer to GNU Make: please check that you have added MinGW to the system PATH variable!")
-        }
-        if (makever.contains("3.81")) {
-            /* GNU Make 3.81 on MinGW has a bug that prevents parallel builds from working. */
-            logger.info " -> disabling parallel build for msys-make 3.81"
-            num_parallel = 1;
-        }
 
-        /* Test to see that MinGW is installed properly */
-        proc = ["sh", "-c", "find --version"].execute()
-        proc.waitFor()
-        if (proc.exitValue() != 0) {
-            throw new GradleException("Building on Windows requires MinGW and msys to be on PATH!\nPlease add both MinGW\\bin and MinGW\\msys\\1.0\\bin to your system PATH variable.")
+                             "-I${file(libs+"/FreeImage/include")}".toString(),
+                             "-I${file(libs+"/boost/include")}".toString(),
+                             "-I${file(libs+"/boost/include/boost")}".toString(),
+                             "-I${file(libs+"/cairo/include")}".toString(),
+                             "-I${file(libs+"/cairo/include/cairo")}".toString(),
+                             "-I${file(libs+"/freetype/include")}".toString(),
+                             "-I${file(libs+"/freetype/include/freetype2")}".toString(),
+                             "-I${file(libs+"/freetype/include/freetype2/config")}".toString(),
+                             "-I${file(libs+"/freetype/include/freetype2/internal")}".toString(),
+                             "-I${file(libs+"/freetype/include/freetype2/internal/services")}".toString(),
+                             "-I${file(libs+"/glfw/include")}".toString(),
+                             "-I${file(libs+"/glfw/include/GLFW")}".toString(),
+                             "-I${file(libs+"/openssl/include")}".toString(),
+                             "-I${file(libs+"/openssl/include/openssl")}".toString(),
+                             "-I${file(libs+"/poco/include")}".toString(),
+                             "-I${file(libs+"/tess2/include")}".toString(),
+                             "-I${file(libs+"/utf8cpp/include")}".toString(),
+                             "-I${file(libs+"/utf8cpp/include/utf8")}".toString(),
+                             "-I${file(libs+"/json/include")}".toString(),
+
+                             "-I${file(libs+'/kiss/include')}".toString()
+                             //                 "-I${file("src/main/jni")}".toString(),
+                             //                 "-I${file("src/main/jni/data")}".toString()]
+            ])
+            ldLibs.addAll(["android", "atomic", "EGL", "GLESv2", "OpenSLES", "log", "c++_static"])
+
+            stl        = "c++_static"
         }
 
-        /* Replace backslashes by forward slashes to make Make happy */
-        ndkDirectory = ndkDirectory.replace('\\','/');
-    }
+        productFlavors {
+            create("x86") {
+                ndk {
+                    // You can customize the NDK configurations for each
+                    // productFlavors and buildTypes.
+                    abiFilters.add("x86")
+                }
+            }
+            create ("arm7") {
+                ndk.abiFilters.add("armeabi-v7a")
+            }
+            create("fat") {
+                // If ndk.abiFilters is not configured, the application
+                // compile and package all suppported ABI.
+            }
+        }
 
-    new File(ndkDirectory, "prebuilt").eachDir { dir ->
-        if(make != null)
-            return
 
-        def binDir = new File(dir, "bin");
-        for(fn in ["make", "make.exe"]) {
-            def makeFile = new File(binDir, fn);
-            if(makeFile.exists()) {
-                def proc = [makeFile.absolutePath, "--version"].execute()
-                proc.waitFor()
-                if(proc.exitValue() == 0) {
-                    make = makeFile;
+        sources {
+            main {
+                jni {
+                    exportedHeaders {
+                        srcDir ofSource
+                    }
+                    source {
+                        srcDirs =[ofSource]
+                        excludes = [  "**/ofQtUtils.cpp",
+                                      "**/ofQuickTimeGrabber.cpp",
+                                      "**/ofQuickTimePlayer.cpp",
+                                      "**/ofDirectShowGrabber.cpp",
+                                      "**/ofDirectShowPlayer.cpp",
+                                      "**/ofGstUtils.cpp",
+                                      "**/ofGstVideoGrabber.cpp",
+                                      "**/ofGstVideoPlayer.cpp",
+                                      "**/ofAppGlutWindow.cpp",
+                                      "**/ofAppEGLWindow.cpp",
+                                      "**/ofAppGLFWWindow.cpp",
+                                      "**/ofCairoRenderer.cpp",
+                                      "**/ofFmodSoundPlayer.cpp",
+                                      "**/ofOpenALSoundPlayer.cpp",
+                                      "**/ofRtAudioSoundStream.cpp",
+
+                                      "**/glew/**/*",
+                                      "**/poco/include/Poc**/*",
+                                      "**/poco/include/CppUni**/*",
+                                      "**/poco/include/Poco/**/*",
+                                      "**/poco/include/CppUnit/**/*",
+                                      "**/quicktime/**/*",
+                                      "**/videoInput/**/*",
+                                      "**/glu/includ**/*",
+                                      "**/fmodex/**/*",
+                                      "**/kiss/**/*",
+                                      "**/assimp/**/*",
+                                      "**/glut/**/*",
+                                      "**/portaudio/**/*",
+                                      "**/rtAudio/**/*",
+                                      "**/poco/lib/**/*",
+                                      "**/openssl/lib/**/*",
+                                      "**/boost/include/boost/**/*",
+                        ]
+
+
+                    }
                 }
             }
         }
     }
-
-    if(make == null) {
-        throw new GradleException("GNU make not found in NDK...")
-    }
-
-    logger.info " -> found make '$make'"
-    if (num_parallel > 1) {
-        logger.info " -> using $num_parallel parallel jobs"
-    }
-
-
-    ext.sdkDirectory = sdkDirectory
-    ext.ndkDirectory = ndkDirectory
-    ext.make = make
-    ext.num_parallel = num_parallel
-}
-
-/**
- * Helper function to run make with a given set of options
- */
-def ofRunMake(List opts) {
-    def num_parallel = ofNdkSetup.ext.num_parallel
-    if (num_parallel > 1) {
-        opts.add(0, "-j$num_parallel")
-    }
-    List cmd = [ofNdkSetup.ext.make] + opts
-    logger.info("Executing make command " + cmd)
-    def proc = cmd.execute()
-    proc.in.eachLine {line ->
-        logger.lifecycle(line)
-    }
-    proc.err.eachLine {line ->
-        if(line.contains(": warning:")) {
-            logger.warn(line)
-        } else if(line.contains(": error:") || line.contains(": ***")) {
-            logger.error(line)
-        } else {
-            logger.quiet(line)
-        }
-    }
-    proc.waitFor()
-    if(proc.exitValue() != 0) {
-        throw new GradleException("make failed with exit status " + proc.exitValue())
-    }
-}
-
-task compileDebugOF {
-    ofRunMake(["-C", rootProject.projectDir.absolutePath, "PLATFORM_OS=Android", "Debug"])
-}
-
-task compileReleaseOF {
-    ofRunMake(["-C", rootProject.projectDir.absolutePath, "PLATFORM_OS=Android", "Release"])
-}
-
-task clean(dependsOn: ofNdkSetup) << {
-    ofRunMake(["-C", rootProject.projectDir.absolutePath, "PLATFORM_OS=Android", "clean"])
 }
