@@ -1,12 +1,11 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.3.1'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.android.tools.build:gradle-experimental:0.7.0-alpha1'
     }
 }
 
@@ -16,45 +15,71 @@ allprojects {
     }
 }
 
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.model.application'
 
-android {
-    compileSdkVersion 22
-    buildToolsVersion "21.1.1"
+model {
+    android {
+        compileSdkVersion = 23
+        buildToolsVersion = "23.0.2"
 
-    defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 22
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
+        defaultConfig.with {
+            minSdkVersion.apiLevel    = 9
+            targetSdkVersion.apiLevel = 23
+            versionCode     =  1
+            versionName     = "1.0"
         }
     }
 
-    // Configure source folders like Eclipse
-    sourceSets {
+    android.ndk {
+        moduleName = "native"
+        cppFlags.addAll(["-std=c++11"
+        //                 "-I${file("src/native_app_glue")}".toString()
+        //                 "-I${file("src/main/jni")}".toString(),
+        //                 "-I${file("src/main/jni/data")}".toString()]
+                         ])
+        ldLibs.addAll(["android", "atomic", "EGL", "GLESv2", "OpenSLES", "log"])
+        stl        = "c++_static"
+    }
+
+    android.sources {
         main {
-            manifest.srcFile 'AndroidManifest.xml'
-            jni.srcDirs = []
-            java.srcDirs = ['srcJava']
-            resources.srcDirs = ['srcJava']
-            aidl.srcDirs = ['srcJava']
-            renderscript.srcDirs = ['srcJava']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-            jniLibs.srcDirs = ['libs']
+            manifest.source {
+                srcDir '.'
+                include 'AndroidManifest.xml'
+            }
+            res.source.srcDirs = ['res']
+            jni {
+                source {
+                    srcDir 'src'
+                }
+            }
         }
     }
+
+    android.lintOptions {
+        abortOnError  = false
+    }
+
+    android.buildTypes {
+        release {
+            minifyEnabled = false
+        }
+    }
+
+    android.productFlavors {
+        create ("arm7") {
+            ndk.abiFilters.add("armeabi-v7a")
+        }
+        create ("arm8") {
+            ndk.abiFilters.add("arm64-v8a")
+        }
+        create ("x86-32") {
+            ndk.abiFilters.add("x86")
+        }
+        // for detailed abiFilter descriptions, refer to "Supported ABIs" @
+        // https://developer.android.com/ndk/guides/abis.html#sa
+
+        // build one including all cpu architectures
+        create("all")
+    }
 }
-
-dependencies {
-    compile project(':ofAndroidLib')
-}
-
-clean.dependsOn(":openFrameworksProject:clean")
-
-assembleDebug.dependsOn(":openFrameworksProject:compileDebugOF")
-
-assembleRelease.dependsOn(":openFrameworksProject:compileReleaseOF")
