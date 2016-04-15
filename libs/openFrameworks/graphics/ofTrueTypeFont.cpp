@@ -1234,24 +1234,37 @@ ofVec2f ofTrueTypeFont::getFirstGlyphPosForTexture(const std::string & str, bool
 	if(!str.empty()){
 		try{
 			auto c = *ofUTF8Iterator(str).begin();
-			if (c == '\n') {
-				return {0.f, 0.f};
-			} else {
-				auto g = loadGlyph(c);
-				if(settings.direction == ofTtfSettings::LeftToRight){
-					return {-float(g.props.xmin), getLineHeight() + g.props.ymin + getDescenderHeight()};
-				}else{
+			if(settings.direction == ofTtfSettings::LeftToRight){
+				if (c != '\n') {
+					auto g = loadGlyph(c);
 					return {-float(g.props.xmin), getLineHeight() + g.props.ymin + getDescenderHeight()};
 				}
+			}else{
+				int width = 0;
+				int lineWidth = 0;
+				iterateString(str, 0, 0, vflip, [&](uint32_t c, ofVec2f){
+					try{
+						if (c != '\n') {
+							auto g = loadGlyph(c);
+							lineWidth += g.props.advance * letterSpacing;
+							width = max(width, lineWidth);
+						}else{
+							lineWidth = 0;
+						}
+					}catch(...){
+					}
+				});
+				if (c != '\n') {
+					auto g = loadGlyph(c);
+					return {width - float(g.props.xmin), getLineHeight() + g.props.ymin + getDescenderHeight()};
+				}else{
+					return {float(width), 0.0};
+				}
 			}
-		}catch(...){
-			return {0.f, 0.f};
-		}
+		}catch(...){}
 	}
-	else
-	{
-		return {0.f, 0.f};
-	}
+
+	return {0.f, 0.f};
 }
 
 //-----------------------------------------------------------
@@ -1261,7 +1274,6 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 	long height = 0;
 	int width = 0;
 	int lineWidth = 0;
-	uint32_t prevC = 0;
 	iterateString(str, 0, 0, vflip, [&](uint32_t c, ofVec2f pos){
 		try{
 			if (c != '\n') {
@@ -1270,7 +1282,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 				int x = pos.x + g.props.xmin;
 				int y = g.props.ymax + pos.y;
 				glyphPositions.emplace_back(x, y);
-				lineWidth += glyphs.back().props.advance * letterSpacing;
+				lineWidth += g.props.advance * letterSpacing;
 				width = max(width, lineWidth);
 				height = max(height, y + long(getLineHeight()));
 			}else{
