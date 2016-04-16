@@ -3,11 +3,9 @@ final ofSource = ofRoot + 'libs/openFrameworks'
 final addons = ofRoot + 'addons'
 final libs = ofRoot + 'libs'
 
-final APP_ABIS = ["armeabi", "armeabi-v7a"]
-
+final APP_ABIS = ["armeabi-v7a", "x86"]
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
     repositories {
         jcenter()
@@ -51,7 +49,6 @@ model {
                          "-fno-short-enums",
                          "-ffunction-sections",
                          "-fdata-sections",
-                         "-fdata-sections",
 
                          "-I${file(ofSource)}".toString(),
                          "-I${file(ofSource+"/3d")}".toString(),
@@ -66,8 +63,6 @@ model {
                          "-I${file(ofSource+"/types")}".toString(),
                          "-I${file(ofSource+"/utils")}".toString(),
                          "-I${file(ofSource+"/video")}".toString(),
-
-                         "-I${file(libs+"/glu/include_android")}".toString(),
 
                          "-I${file(ofRoot+"/addons/ofxAndroid/src")}".toString(),
                          "-I${file(ofRoot+"/addons/ofxAccelerometer/src")}".toString(),
@@ -91,22 +86,17 @@ model {
                          "-I${file(libs+"/utf8cpp/include")}".toString(),
                          "-I${file(libs+"/utf8cpp/include/utf8")}".toString(),
                          "-I${file(libs+"/json/include")}".toString(),
-
                          "-I${file(libs+'/kiss/include')}".toString()
-        //        '-DTARGET_ANDROID'
-        //                 "-I${file("src/native_app_glue")}".toString()
-        //                 "-I${file("src/main/jni")}".toString(),
-        //                 "-I${file("src/main/jni/data")}".toString()]
-                         ])
-        ldLibs.addAll(["atomic","android", "OpenSLES", "z", "GLESv1_CM", "GLESv2", "log"
         ])
+
+        ldLibs.addAll(["atomic","android", "OpenSLES", "z", "GLESv1_CM", "GLESv2", "log"])
 
         ldFlags.addAll([
                 '-Wl,--exclude-libs,ALL',
-                '-Wl,--no-undefined',
                 '-Wl,--as-needed',
                 '-Wl,--gc-sections'
         ])
+
         stl        = "c++_static"
     }
 
@@ -158,6 +148,7 @@ model {
                                   "**/boost/include/boost/**/*",
                     ]
                 }
+
                 /*dependencies {
                     project ":openFrameworksProject"  linkage "static"
                 }*/
@@ -165,11 +156,11 @@ model {
 
             java.source.srcDirs = ['srcJava']
             resources.source.srcDirs = ['srcJava']
-            //aidl.source.srcDirs = ['srcJava']
-            //renderscript.source.srcDirs = ['srcJava']
+            aidl.source.srcDirs = ['srcJava']
+            renderscript.source.srcDirs = ['srcJava']
             res.source.srcDirs = ['res']
             assets.source.srcDirs = ['assets']
-            //jniLibs.source.srcDirs = ['libs']
+            jniLibs.source.srcDirs = ['libs']
         }
     }
 
@@ -184,7 +175,7 @@ model {
     }
 
     android.productFlavors {
-        /*APP_ABIS.each { abi ->
+        APP_ABIS.each { abi ->
             create(getFlavorName(abi)) {
                 ndk {
                     abiFilters.add(abi)
@@ -194,36 +185,13 @@ model {
 
                 }
             }
-        }*/
-
-        create("all") {
-            ndk {
-                // You can customize the NDK configurations for each
-                // productFlavors and buildTypes.
-                //abiFilters.add("armeabi")
-                abiFilters.add("armeabi-v7a")
-
-                getPrebuiltLibPaths("armeabi-v7a", libs).each { path ->
-                    ldFlags.add( path.toString())
-                }
-            }
         }
-    }
-}
-
-// http://stackoverflow.com/questions/32727361/gradle-android-experimental-plugin-ignores-a-project-dependency
-repositories {
-    flatDir {
-        dirs ofRoot + 'addons/ofxAndroid/ofAndroidLib/build/outputs/aar'
     }
 }
 
 
 dependencies {
     compile project(path: ':ofAndroidLib')
-   // compile(name:'ofAndroidLib-arm7-debug', ext:'aar')
-    //compile fileTree(dir: "libs", include: ["*.jar"])
-
 }
 
 

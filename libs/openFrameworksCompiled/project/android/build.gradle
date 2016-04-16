@@ -14,7 +14,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle-experimental:0.7.0-alpha1'
+        classpath 'com.android.tools.build:gradle-experimental:0.7.0-alpha4'
     }
 }
 
@@ -38,10 +38,6 @@ model {
             toolchain "clang"
 
 
-            CFlags.addAll([
-                    "-gcc-toolchain /Users/jonas/Library/Android/sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/",
-
-            ])
             cppFlags.addAll(["-std=c++14",
                              "-Wall",
                              "-frtti",
@@ -50,9 +46,6 @@ model {
                              "-fno-short-enums",
                              "-ffunction-sections",
                              "-fdata-sections",
-
-                             "-I/Users/jonas/Development/Android/android-ndk-r10e/platforms/android-19/arch-arm//usr/include/",
-                             "-I/Users/jonas/Development/Android/android-ndk-r10e/sources/android/support/include",
 
                              "-I${file(ofSource+"/3d")}".toString(),
                              "-I${file(ofSource+"/app")}".toString(),
@@ -66,8 +59,6 @@ model {
                              "-I${file(ofSource+"/types")}".toString(),
                              "-I${file(ofSource+"/utils")}".toString(),
                              "-I${file(ofSource+"/video")}".toString(),
-
-                             "-I${file(libs+"/glu/include_android")}".toString(),
 
                              "-I${file(ofRoot+"/addons/ofxAndroid/src")}".toString(),
                              "-I${file(ofRoot+"/addons/ofxAccelerometer/src")}".toString(),
@@ -92,34 +83,19 @@ model {
                              "-I${file(libs+"/utf8cpp/include")}".toString(),
                              "-I${file(libs+"/utf8cpp/include/utf8")}".toString(),
                              "-I${file(libs+"/json/include")}".toString(),
-
                              "-I${file(libs+'/kiss/include')}".toString()
-                             //                 "-I${file("src/main/jni")}".toString(),
-                             //                 "-I${file("src/main/jni/data")}".toString()]
             ])
             ldLibs.addAll(["atomic","android", "OpenSLES", "z", "GLESv1_CM", "GLESv2", "log"
             ])
 
+            ldFlags.addAll([
+                    '-Wl,--exclude-libs,ALL',
+                    '-Wl,--as-needed',
+                    '-Wl,--gc-sections'
+            ])
+
             stl        = "c++_static"
         }
-
-        /* productFlavors {
-             create("x86") {
-                 ndk {
-                     // You can customize the NDK configurations for each
-                     // productFlavors and buildTypes.
-                     abiFilters.add("x86")
-                 }
-             }
-             create ("arm7") {
-                 ndk.abiFilters.add("armeabi-v7a")
-             }
-             create("fat") {
-                 // If ndk.abiFilters is not configured, the application
-                 // compile and package all suppported ABI.
-             }
-         }*/
-
 
         sources {
             main {
@@ -196,7 +172,7 @@ model {
     }
 
     android.productFlavors {
-        /*APP_ABIS.each { abi ->
+        APP_ABIS.each { abi ->
             create(getFlavorName(abi)) {
                 ndk {
                     abiFilters.add(abi)
@@ -206,24 +182,7 @@ model {
 
                 }
             }
-        }*/
-
-        create("all") {
-            ndk {
-                // You can customize the NDK configurations for each
-                // productFlavors and buildTypes.
-                abiFilters.add("armeabi")
-                abiFilters.add("armeabi-v7a")
-
-                getPrebuiltLibPaths("armeabi-v7a", libs).each { path ->
-                    ldFlags.add( path.toString())
-                }
-            }
         }
-/*
-        create("arm") {
-            ndk.abiFilters.add("armeabi")
-        }*/
     }
 }
 
@@ -264,10 +223,5 @@ def getPrebuiltLibPaths(abi, libs) {
     paths += file(libs+"/poco/lib/android/${abi}/libPocoFoundation.a")
     paths += file(libs+"/openssl/lib/android/${abi}/libssl.a")
     paths += file(libs+"/openssl/lib/android/${abi}/libcrypto.a")
-
-    //paths += "-Lboost_system"
-    //paths += "-Lboost_filesystem"
-    //paths += "-Lrtaudio"
-    //paths += "-Lfreeimage"
     return paths
 }
