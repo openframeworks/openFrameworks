@@ -53,6 +53,22 @@ model {
                          "-fdata-sections",
                          "-fdata-sections",
 
+                         "-I${file(ofSource)}".toString(),
+                         "-I${file(ofSource+"/3d")}".toString(),
+                         "-I${file(ofSource+"/app")}".toString(),
+                         "-I${file(ofSource+"/communication")}".toString(),
+                         "-I${file(ofSource+"/events")}".toString(),
+                         "-I${file(ofSource+"/gl")}".toString(),
+                         "-I${file(ofSource+"/graphics")}".toString(),
+                         "-I${file(ofSource+"/math")}".toString(),
+                         "-I${file(ofSource+"/output")}".toString(),
+                         "-I${file(ofSource+"/sound")}".toString(),
+                         "-I${file(ofSource+"/types")}".toString(),
+                         "-I${file(ofSource+"/utils")}".toString(),
+                         "-I${file(ofSource+"/video")}".toString(),
+
+                         "-I${file(libs+"/glu/include_android")}".toString(),
+
                          "-I${file(ofRoot+"/addons/ofxAndroid/src")}".toString(),
                          "-I${file(ofRoot+"/addons/ofxAccelerometer/src")}".toString(),
 
@@ -102,11 +118,49 @@ model {
             }
             jni {
                 source {
-                    srcDir 'src'
+                    srcDirs= ['src',
+                              ofSource,
+                              addons+"/ofxAndroid/src",
+                              addons+"/ofxAccelerometer/src"
+                    ]
+                    excludes = [  "**/ofQtUtils.cpp",
+                                  "**/ofQuickTimeGrabber.cpp",
+                                  "**/ofQuickTimePlayer.cpp",
+                                  "**/ofDirectShowGrabber.cpp",
+                                  "**/ofDirectShowPlayer.cpp",
+                                  "**/ofGstUtils.cpp",
+                                  "**/ofGstVideoGrabber.cpp",
+                                  "**/ofGstVideoPlayer.cpp",
+                                  "**/ofAppGlutWindow.cpp",
+                                  "**/ofAppEGLWindow.cpp",
+                                  "**/ofAppGLFWWindow.cpp",
+                                  "**/ofCairoRenderer.cpp",
+                                  "**/ofFmodSoundPlayer.cpp",
+                                  "**/ofOpenALSoundPlayer.cpp",
+                                  "**/ofRtAudioSoundStream.cpp",
+
+                                  "**/glew/**/*",
+                                  "**/poco/include/Poc**/*",
+                                  "**/poco/include/CppUni**/*",
+                                  "**/poco/include/Poco/**/*",
+                                  "**/poco/include/CppUnit/**/*",
+                                  "**/quicktime/**/*",
+                                  "**/videoInput/**/*",
+                                  "**/glu/includ**/*",
+                                  "**/fmodex/**/*",
+                                  "**/kiss/**/*",
+                                  "**/assimp/**/*",
+                                  "**/glut/**/*",
+                                  "**/portaudio/**/*",
+                                  "**/rtAudio/**/*",
+                                  "**/poco/lib/**/*",
+                                  "**/openssl/lib/**/*",
+                                  "**/boost/include/boost/**/*",
+                    ]
                 }
-                dependencies {
+                /*dependencies {
                     project ":openFrameworksProject"  linkage "static"
-                }
+                }*/
             }
 
             java.source.srcDirs = ['srcJava']
@@ -158,15 +212,15 @@ model {
 }
 
 // http://stackoverflow.com/questions/32727361/gradle-android-experimental-plugin-ignores-a-project-dependency
-/*repositories {
+repositories {
     flatDir {
         dirs ofRoot + 'addons/ofxAndroid/ofAndroidLib/build/outputs/aar'
     }
-}*/
+}
 
 
 dependencies {
-    //compile project(path: ':ofAndroidLib')
+    compile project(path: ':ofAndroidLib')
    // compile(name:'ofAndroidLib-arm7-debug', ext:'aar')
     //compile fileTree(dir: "libs", include: ["*.jar"])
 
