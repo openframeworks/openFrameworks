@@ -66,7 +66,7 @@ public:
 };
 
 
-#if defined( BOOST_CORE_HAS_CXXABI_H )
+#if defined( BOOST_CORE_HAS_CXXABI_H ) && !__ANDROID__
 
 inline char const * demangle_alloc( char const * name ) BOOST_NOEXCEPT
 {

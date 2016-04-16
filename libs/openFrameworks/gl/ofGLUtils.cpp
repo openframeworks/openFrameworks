@@ -785,8 +785,7 @@ shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 	}
 }
 #endif
-
-#if defined(TARGET_ANDROID)
+/*if defined(TARGET_ANDROID)
 void ofRegenerateAllVbos();
 void ofRegenerateAllTextures();
 void ofReloadAllImageTextures();
@@ -799,4 +798,4 @@ void ofReloadGLResources(){
 	ofReloadAllFontTextures();
 }
 #endif
-
+*/
