@@ -18,7 +18,7 @@
 <!--android:hasCode="false"-->
         <!--android:name="android.app.NativeActivity"-->
         <activity
-            android:name=".OFActivity"
+            android:name="cc.openframeworks.OFActivity"
             android:label="@string/app_name"
             android:configChanges="orientation|screenSize">
 
