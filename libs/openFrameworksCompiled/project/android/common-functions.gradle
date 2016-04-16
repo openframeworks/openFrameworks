@@ -1,0 +1,134 @@
+def getFlavorName(abi) {
+    switch (abi) {
+        case "armeabi":
+            return "armeabi";
+        case "armeabi-v7a":
+            return "arm7"
+        case "arm64-v8a":
+            return "arm64"
+        default:
+            return abi.replaceAll('-', '_')
+    }
+}
+
+def getAbis(){
+    return ["armeabi-v7a", "x86"]
+}
+
+def ofAppModuleName(){
+    return "OFAndroidApp"
+}
+
+def buildToolchain(){
+    return "clang"
+}
+
+def cppFlags(ofRoot){
+    def ofSource = ofRoot + 'libs/openFrameworks'
+    def libs = ofRoot + 'libs'
+
+    return ["-std=c++14",
+            "-Wall",
+            "-frtti",
+            "-fexceptions",
+            "-nostdlib ",
+            "-fno-short-enums",
+            "-ffunction-sections",
+            "-fdata-sections",
+
+            "-I${file(ofSource)}".toString(),
+            "-I${file(ofSource+"/3d")}".toString(),
+            "-I${file(ofSource+"/app")}".toString(),
+            "-I${file(ofSource+"/communication")}".toString(),
+            "-I${file(ofSource+"/events")}".toString(),
+            "-I${file(ofSource+"/gl")}".toString(),
+            "-I${file(ofSource+"/graphics")}".toString(),
+            "-I${file(ofSource+"/math")}".toString(),
+            "-I${file(ofSource+"/output")}".toString(),
+            "-I${file(ofSource+"/sound")}".toString(),
+            "-I${file(ofSource+"/types")}".toString(),
+            "-I${file(ofSource+"/utils")}".toString(),
+            "-I${file(ofSource+"/video")}".toString(),
+
+            "-I${file(ofRoot+"/addons/ofxAndroid/src")}".toString(),
+            "-I${file(ofRoot+"/addons/ofxAccelerometer/src")}".toString(),
+
+            "-I${file(libs+"/FreeImage/include")}".toString(),
+            "-I${file(libs+"/boost/include")}".toString(),
+            "-I${file(libs+"/boost/include/boost")}".toString(),
+            "-I${file(libs+"/cairo/include")}".toString(),
+            "-I${file(libs+"/cairo/include/cairo")}".toString(),
+            "-I${file(libs+"/freetype/include")}".toString(),
+            "-I${file(libs+"/freetype/include/freetype2")}".toString(),
+            "-I${file(libs+"/freetype/include/freetype2/config")}".toString(),
+            "-I${file(libs+"/freetype/include/freetype2/internal")}".toString(),
+            "-I${file(libs+"/freetype/include/freetype2/internal/services")}".toString(),
+            "-I${file(libs+"/glfw/include")}".toString(),
+            "-I${file(libs+"/glfw/include/GLFW")}".toString(),
+            "-I${file(libs+"/openssl/include")}".toString(),
+            "-I${file(libs+"/openssl/include/openssl")}".toString(),
+            "-I${file(libs+"/poco/include")}".toString(),
+            "-I${file(libs+"/tess2/include")}".toString(),
+            "-I${file(libs+"/utf8cpp/include")}".toString(),
+            "-I${file(libs+"/utf8cpp/include/utf8")}".toString(),
+            "-I${file(libs+"/json/include")}".toString(),
+            "-I${file(libs+'/kiss/include')}".toString()
+    ]
+}
+
+def ldLibs(ofRoot){
+    return ["atomic","android", "OpenSLES", "z", "GLESv1_CM", "GLESv2", "log"]
+}
+
+def ldCompilerFlags(){
+    return [
+            '-Wl,--exclude-libs,ALL',
+            '-Wl,--as-needed',
+            '-Wl,--gc-sections'
+    ]
+}
+
+def compilerStl(){
+    return "c++_static"
+}
+
+def getPrebuiltLibPaths(abi, ofRoot) {
+    def libs = ofRoot + 'libs'
+
+    def paths = []
+    paths += file(libs+"/FreeImage/lib/android/${abi}/libfreeimage.a")
+    paths += file(libs+"/boost/lib/android/${abi}/libboost_filesystem.a")
+    paths += file(libs+"/boost/lib/android/${abi}/libboost_system.a")
+    paths += file(libs+"/freetype/lib/android/${abi}/libfreetype.a")
+    paths += file(libs+"/glu/lib/android/${abi}/libGLU.a")
+    paths += file(libs+"/tess2/lib/android/${abi}/libtess2.a")
+
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoNetSSL.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoNet.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoCrypto.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoJSON.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoMongoDB.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoDataSQLite.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoData.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoUtil.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoXML.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoFoundation.a")
+    paths += file(libs+"/openssl/lib/android/${abi}/libssl.a")
+    paths += file(libs+"/openssl/lib/android/${abi}/libcrypto.a")
+
+    return paths
+}
+
+
+// Export the functions
+ext {
+    getFlavorName = this.&getFlavorName
+    getPrebuiltLibPaths = this.&getPrebuiltLibPaths
+    getAbis = this.&getAbis
+    cppFlags = this.&cppFlags
+    ofAppModuleName = this.&ofAppModuleName
+    buildToolchain= this.&buildToolchain
+    ldLibs= this.&ldLibs
+    ldCompilerFlags = this.&ldCompilerFlags
+    compilerStl= this.&compilerStl
+}
