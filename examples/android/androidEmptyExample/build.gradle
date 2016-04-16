@@ -109,49 +109,15 @@ model {
             jni {
                 source {
                     srcDirs= ['src',
-                              ofSource,
                               addons+"/ofxAndroid/src",
                               addons+"/ofxAccelerometer/src"
                     ]
-                    excludes = [  "**/ofQtUtils.cpp",
-                                  "**/ofQuickTimeGrabber.cpp",
-                                  "**/ofQuickTimePlayer.cpp",
-                                  "**/ofDirectShowGrabber.cpp",
-                                  "**/ofDirectShowPlayer.cpp",
-                                  "**/ofGstUtils.cpp",
-                                  "**/ofGstVideoGrabber.cpp",
-                                  "**/ofGstVideoPlayer.cpp",
-                                  "**/ofAppGlutWindow.cpp",
-                                  "**/ofAppEGLWindow.cpp",
-                                  "**/ofAppGLFWWindow.cpp",
-                                  "**/ofCairoRenderer.cpp",
-                                  "**/ofFmodSoundPlayer.cpp",
-                                  "**/ofOpenALSoundPlayer.cpp",
-                                  "**/ofRtAudioSoundStream.cpp",
-
-                                  "**/glew/**/*",
-                                  "**/poco/include/Poc**/*",
-                                  "**/poco/include/CppUni**/*",
-                                  "**/poco/include/Poco/**/*",
-                                  "**/poco/include/CppUnit/**/*",
-                                  "**/quicktime/**/*",
-                                  "**/videoInput/**/*",
-                                  "**/glu/includ**/*",
-                                  "**/fmodex/**/*",
-                                  "**/kiss/**/*",
-                                  "**/assimp/**/*",
-                                  "**/glut/**/*",
-                                  "**/portaudio/**/*",
-                                  "**/rtAudio/**/*",
-                                  "**/poco/lib/**/*",
-                                  "**/openssl/lib/**/*",
-                                  "**/boost/include/boost/**/*",
-                    ]
+                    excludes = []
                 }
 
-                /*dependencies {
+                dependencies {
                     project ":openFrameworksProject"  linkage "static"
-                }*/
+                }
             }
 
             java.source.srcDirs = ['srcJava']
