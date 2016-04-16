@@ -7,7 +7,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 
-public abstract class OFActivity extends Activity implements ILifeCycleCallback{
+public class OFActivity extends Activity implements ILifeCycleCallback{
 	public void onGLSurfaceCreated(){}
 	public void onLoadPercent(float percent){}
 	public void onUnpackingResourcesDone(){}
