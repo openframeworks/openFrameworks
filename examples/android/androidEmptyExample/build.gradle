@@ -1,3 +1,11 @@
+final ofRoot = '../../../'
+final ofSource = ofRoot + 'libs/openFrameworks'
+final addons = ofRoot + 'addons'
+final libs = ofRoot + 'libs'
+
+final APP_ABIS = ["armeabi", "armeabi-v7a"]
+
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
@@ -5,7 +13,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle-experimental:0.7.0-alpha1'
+        classpath 'com.android.tools.build:gradle-experimental:0.7.0-alpha4'
     }
 }
 
@@ -19,25 +27,70 @@ apply plugin: 'com.android.model.application'
 
 model {
     android {
-        compileSdkVersion = 23
+        compileSdkVersion = 22
         buildToolsVersion = "23.0.2"
 
         defaultConfig.with {
+            applicationId = "cc.openframeworks.androidEmptyExample"
             minSdkVersion.apiLevel    = 9
-            targetSdkVersion.apiLevel = 23
+            targetSdkVersion.apiLevel = 22
             versionCode     =  1
             versionName     = "1.0"
         }
     }
 
     android.ndk {
-        moduleName = "native"
-        cppFlags.addAll(["-std=c++11"
+        moduleName = "OFAndroidApp"
+        toolchain "clang"
+
+        cppFlags.addAll(["-std=c++14",
+                         "-Wall",
+                         "-frtti",
+                         "-fexceptions",
+                         "-nostdlib ",
+                         "-fno-short-enums",
+                         "-ffunction-sections",
+                         "-fdata-sections",
+                         "-fdata-sections",
+
+                         "-I${file(ofRoot+"/addons/ofxAndroid/src")}".toString(),
+                         "-I${file(ofRoot+"/addons/ofxAccelerometer/src")}".toString(),
+
+                         "-I${file(libs+"/FreeImage/include")}".toString(),
+                         "-I${file(libs+"/boost/include")}".toString(),
+                         "-I${file(libs+"/boost/include/boost")}".toString(),
+                         "-I${file(libs+"/cairo/include")}".toString(),
+                         "-I${file(libs+"/cairo/include/cairo")}".toString(),
+                         "-I${file(libs+"/freetype/include")}".toString(),
+                         "-I${file(libs+"/freetype/include/freetype2")}".toString(),
+                         "-I${file(libs+"/freetype/include/freetype2/config")}".toString(),
+                         "-I${file(libs+"/freetype/include/freetype2/internal")}".toString(),
+                         "-I${file(libs+"/freetype/include/freetype2/internal/services")}".toString(),
+                         "-I${file(libs+"/glfw/include")}".toString(),
+                         "-I${file(libs+"/glfw/include/GLFW")}".toString(),
+                         "-I${file(libs+"/openssl/include")}".toString(),
+                         "-I${file(libs+"/openssl/include/openssl")}".toString(),
+                         "-I${file(libs+"/poco/include")}".toString(),
+                         "-I${file(libs+"/tess2/include")}".toString(),
+                         "-I${file(libs+"/utf8cpp/include")}".toString(),
+                         "-I${file(libs+"/utf8cpp/include/utf8")}".toString(),
+                         "-I${file(libs+"/json/include")}".toString(),
+
+                         "-I${file(libs+'/kiss/include')}".toString()
+        //        '-DTARGET_ANDROID'
         //                 "-I${file("src/native_app_glue")}".toString()
         //                 "-I${file("src/main/jni")}".toString(),
         //                 "-I${file("src/main/jni/data")}".toString()]
                          ])
-        ldLibs.addAll(["android", "atomic", "EGL", "GLESv2", "OpenSLES", "log"])
+        ldLibs.addAll(["atomic","android", "OpenSLES", "z", "GLESv1_CM", "GLESv2", "log"
+        ])
+
+        ldFlags.addAll([
+                '-Wl,--exclude-libs,ALL',
+                '-Wl,--no-undefined',
+                '-Wl,--as-needed',
+                '-Wl,--gc-sections'
+        ])
         stl        = "c++_static"
     }
 
@@ -47,15 +100,22 @@ model {
                 srcDir '.'
                 include 'AndroidManifest.xml'
             }
-            res.source.srcDirs = ['res']
             jni {
                 source {
                     srcDir 'src'
                 }
                 dependencies {
-                    project ":openFrameworksProject"
+                    project ":openFrameworksProject"  linkage "static"
                 }
             }
+
+            java.source.srcDirs = ['srcJava']
+            resources.source.srcDirs = ['srcJava']
+            //aidl.source.srcDirs = ['srcJava']
+            //renderscript.source.srcDirs = ['srcJava']
+            res.source.srcDirs = ['res']
+            assets.source.srcDirs = ['assets']
+            //jniLibs.source.srcDirs = ['libs']
         }
     }
 
@@ -70,19 +130,88 @@ model {
     }
 
     android.productFlavors {
-        create ("arm7") {
-            ndk.abiFilters.add("armeabi-v7a")
-        }
-       /* create ("arm8") {
-            ndk.abiFilters.add("arm64-v8a")
-        }*/
-        create ("x86") {
-            ndk.abiFilters.add("x86")
-        }
-        // for detailed abiFilter descriptions, refer to "Supported ABIs" @
-        // https://developer.android.com/ndk/guides/abis.html#sa
+        /*APP_ABIS.each { abi ->
+            create(getFlavorName(abi)) {
+                ndk {
+                    abiFilters.add(abi)
+                    getPrebuiltLibPaths(abi, libs).each { path ->
+                        ldFlags.add( path.toString())
+                    }
 
-        // build one including all cpu architectures
-       //create("all")
+                }
+            }
+        }*/
+
+        create("all") {
+            ndk {
+                // You can customize the NDK configurations for each
+                // productFlavors and buildTypes.
+                //abiFilters.add("armeabi")
+                abiFilters.add("armeabi-v7a")
+
+                getPrebuiltLibPaths("armeabi-v7a", libs).each { path ->
+                    ldFlags.add( path.toString())
+                }
+            }
+        }
     }
+}
+
+// http://stackoverflow.com/questions/32727361/gradle-android-experimental-plugin-ignores-a-project-dependency
+/*repositories {
+    flatDir {
+        dirs ofRoot + 'addons/ofxAndroid/ofAndroidLib/build/outputs/aar'
+    }
+}*/
+
+
+dependencies {
+    //compile project(path: ':ofAndroidLib')
+   // compile(name:'ofAndroidLib-arm7-debug', ext:'aar')
+    //compile fileTree(dir: "libs", include: ["*.jar"])
+
+}
+
+
+
+def getFlavorName(abi) {
+    switch (abi) {
+        case "armeabi":
+            return "armeabi";
+        case "armeabi-v7a":
+            return "arm7"
+        case "arm64-v8a":
+            return "arm64"
+        default:
+            return abi.replaceAll('-', '_')
+    }
+}
+
+
+
+def getPrebuiltLibPaths(abi, libs) {
+    def paths = []
+
+    paths += file(libs+"/FreeImage/lib/android/armeabi-v7a/libfreeimage.a")
+    paths += file(libs+"/boost/lib/android/armeabi-v7a/libboost_filesystem.a")
+    paths += file(libs+"/boost/lib/android/armeabi-v7a/libboost_system.a")
+    paths += file(libs+"/freetype/lib/android/armeabi-v7a/libfreetype.a")
+    paths += file(libs+"/glu/lib/android/armeabi-v7a/libGLU.a")
+    paths += file(libs+"/tess2/lib/android/armeabi-v7a/libtess2.a")
+
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoNetSSL.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoNet.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoCrypto.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoJSON.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoMongoDB.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoDataSQLite.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoData.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoUtil.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoXML.a")
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoFoundation.a")
+    paths += file(libs+"/openssl/lib/android/${abi}/libssl.a")
+    paths += file(libs+"/openssl/lib/android/${abi}/libcrypto.a")
+
+
+    return paths
 }

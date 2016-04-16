@@ -1,35 +1,81 @@
-apply plugin: 'com.android.library'
+final APP_ABIS = ["armeabi", "armeabi-v7a", "x86"]
 
-android {
-    compileSdkVersion 22
-    buildToolsVersion "23.0.1"
 
-    defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
+apply plugin: 'com.android.model.library'
+
+model {
+    android {
+        compileSdkVersion = 22
+        buildToolsVersion = "23.0.2"
+
+        /*defaultConfig.with {
+            minSdkVersion 8
+            targetSdkVersion 22
+            versionCode 1
+            versionName "1.0"
         }
+        buildTypes {
+            release {
+                minifyEnabled false
+            }
+        }*/
+        // Configure source folders like Eclipse
+
+        /* sourceSets {
+             main {
+                 manifest.srcFile 'AndroidManifest.xml'
+                 java.srcDirs = ['src']
+                 resources.srcDirs = ['src']
+                 aidl.srcDirs = ['src']
+                 renderscript.srcDirs = ['src']
+                 res.srcDirs = ['res']
+                 assets.srcDirs = ['assets']
+             }
+         }*/
     }
-    // Configure source folders like Eclipse
-    sourceSets {
+
+    android.sources {
         main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
+            manifest.source {
+                srcDir '.'
+                include 'AndroidManifest.xml'
+            }
+            java.source.srcDirs = ['src']
+            resources.source.srcDirs = ['src']
+            aidl.source.srcDirs = ['src']
+            renderscript.source.srcDirs = ['src']
+            res.source.srcDirs = ['res']
+            assets.source.srcDirs = ['assets']
         }
     }
+/*
+    android.productFlavors {
+        APP_ABIS.each { abi ->
+            create(getFlavorName(abi)) {
+                ndk {
+                    abiFilters.add(abi)
+                }
+            }
+        }
+    }*/
 }
+
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
+
+
+def getFlavorName(abi) {
+    switch (abi) {
+        case "armeabi":
+            return "arm";
+        case "armeabi-v7a":
+            return "arm7"
+        case "arm64-v8a":
+            return "arm64"
+        default:
+            return abi.replaceAll('-', '_')
+    }
+}

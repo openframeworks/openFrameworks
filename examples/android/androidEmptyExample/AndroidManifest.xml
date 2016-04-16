@@ -5,24 +5,25 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="22" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
 
     <application
         android:icon="@drawable/ic_launcher"
         android:allowBackup="false"
-        android:fullBackupContent="false"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:hasCode="false">
+        >
+<!--android:hasCode="false"-->
+        <!--android:name="android.app.NativeActivity"-->
         <activity
-            android:name="android.app.NativeActivity"
+            android:name=".OFActivity"
             android:label="@string/app_name"
             android:configChanges="orientation|screenSize">
 
             <meta-data android:name="android.app.lib_name"
-                       android:value="native" />
+                       android:value="OFAndroidApp" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
