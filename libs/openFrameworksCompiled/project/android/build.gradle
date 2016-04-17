@@ -1,6 +1,6 @@
-final ofRoot = '../../../../'
-final ofSource = ofRoot + 'libs/openFrameworks'
-final addons = ofRoot + 'addons'
+def ofRoot(){ return '../../../../' }
+final ofSource = ofRoot() + 'libs/openFrameworks'
+final addons = ofRoot() + 'addons'
 
 // Load common functions
 apply from: "common-functions.gradle"
@@ -16,10 +16,6 @@ model {
             moduleName "openFrameworksLib"
             toolchain  = buildToolchain()
             stl        = compilerStl()
-
-            cppFlags.addAll(cppFlags(ofRoot))
-            ldLibs.addAll(ldLibs(ofRoot))
-            ldFlags.addAll(ldCompilerFlags())
         }
 
         sources {
@@ -76,9 +72,13 @@ model {
             create(getFlavorName(abi)) {
                 ndk {
                     abiFilters.add(abi)
-                    getPrebuiltLibPaths(abi, ofRoot).each { path ->
+
+                    cppFlags.addAll(coreCppFlags(abi, ofRoot()))
+                    ldLibs.addAll(coreLdLibs(abi, ofRoot()))
+                    ldFlags.addAll(coreLdFlags(abi, ofRoot()))
+                    /*getPrebuiltLibPaths(abi, ofRoot).each { path ->
                         ldFlags.add( path.toString())
-                    }
+                    }*/
                 }
             }
         }

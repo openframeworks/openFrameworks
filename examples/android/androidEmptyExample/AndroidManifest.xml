@@ -15,15 +15,10 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         >
-<!--android:hasCode="false"-->
-        <!--android:name="android.app.NativeActivity"-->
         <activity
             android:name="cc.openframeworks.OFActivity"
             android:label="@string/app_name"
             android:configChanges="orientation|screenSize">
-
-            <meta-data android:name="android.app.lib_name"
-                       android:value="OFAndroidApp" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

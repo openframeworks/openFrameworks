@@ -1,3 +1,167 @@
+
+def getFilesRecursive(path){
+    FileTree tree = fileTree(dir: path)
+    println "TRESS"
+    def files = tree.matching({includes ["*.cpp"]}).toList()
+    println files
+
+    return files
+}
+
+def getFoldersRecursive(String path){
+    def file = new File(path)
+    def ret = [path]
+    if(!file.exists()) return []
+
+    file.eachDirRecurse() { dir ->
+        println dir.getPath()
+        ret.add(dir.getAbsolutePath())
+    }
+    return ret
+
+}
+
+
+def addonPaths(){
+    def file = new File('addons.make')
+    if(!file.exists()) {
+        return []
+    }
+    def addonRoot = ofRoot()+"addons/"
+
+    def ret = []
+    file.eachLine { line ->
+        def folder = new File(addonRoot+line)
+        if (!folder.exists()) {
+            throw new GradleException("Addon ${line} could not be found at ${folder.absolutePath}")
+        }
+        ret += folder.absolutePath
+    }
+
+    return ret
+}
+
+def parseAddonConfig(String addon, String param, String abi, defaultVal = []){
+    println "Parse addonconfig "+addon+"/addon_config.mk"
+    def file = new File(addon+"/addon_config.mk")
+    if(!file.exists()){
+        println addon+"/addon_config.mk not found"
+        return defaultVal
+    }
+
+    def mode = ""
+    def ret = defaultVal
+
+    file.eachLine { line ->
+        def stripLine = line.replaceAll("^\\s*","").replaceAll("\\s*\$","")
+        if(stripLine.startsWith("#") || stripLine.length() == 0){
+            return
+        }
+
+        if(stripLine.endsWith(":")){
+            mode = stripLine.replaceAll(":\$","")
+        }
+
+        if(mode == "common" || mode == "android" || mode == "android/${abi}".toString()){
+            group = (stripLine =~ /^(\w+)\s*(\+?=)\s*(.+)$/)
+//                print "GROUP "+ group.getAt(0)
+            if(group.hasGroup() && group.size() == 1 && group[0].size() == 4){
+                if(group[0][1] == param) {
+                    def _p = group[0][3].replaceAll("%", "*")
+                    if (group[0][2] == '=') {
+                        ret = [_p]
+                    } else {
+                        ret += _p
+                    }
+                }
+            }
+
+        }
+    }
+    //println "RET"+ret
+    return ret
+}
+
+def addonSources(String root, String abi=""){
+    def ret = []
+    addonPaths().each { String addon ->
+        def config = parseAddonConfig(
+                addon,
+                "ADDON_SOURCES",
+                abi,
+                ["src", "libs"]
+        )
+
+        //ret += addon
+        config.each { String path ->
+            ret += addon+'/'+path
+        }
+    }
+    println "\n\n Addon sources "+ret
+
+    return ret
+}
+
+def addonIncludes(String root, String abi=""){
+    def ret = []
+    return ret
+}
+
+def addonSourcesExclude(String root, String abi=""){
+    def ret = []
+    addonPaths().each { String addon ->
+        def config = parseAddonConfig(
+                addon,
+                "ADDON_SOURCES_EXCLUDE",
+                abi
+        )
+
+        config.each { String path ->
+            ret += addon+path
+        }
+    }
+    return ret
+}
+
+def addonLdFlags(abi, ofRoot){
+    def ret = []
+    addonPaths().each { String addon ->
+        def config = parseAddonConfig(
+                addon,
+                "ADDON_LIBS",
+                abi
+        )
+
+        config.each { String path ->
+            def f = new File(addon+"/"+path)
+            if(f.exists()) {
+                ret += f.absolutePath
+            }
+        }
+    }
+
+    println "\n\n\nflags "+ret+" abi "+abi
+    return ret
+}
+
+
+
+def addonCppFlags(abi, ofRoot){
+    def ret = []
+    addonPaths().each { addon ->
+        ret += getFoldersRecursive(addon + "/libs").collect{ folder ->
+            return "-I${folder}".toString()
+        }
+        ret += getFoldersRecursive(addon + "/src").collect{ folder ->
+            return "-I${folder}".toString()
+        }
+    }
+    //println ret
+    return ret
+}
+
+
+
 def getFlavorName(abi) {
     switch (abi) {
         case "armeabi":
@@ -23,7 +187,27 @@ def buildToolchain(){
     return "clang"
 }
 
-def cppFlags(ofRoot){
+def appSrcDirs(ofRoot){
+    def ret = ['src',
+               ofRoot+"/addons/ofxAndroid/src",
+               ofRoot+"/addons/ofxAccelerometer/src"
+    ]
+
+    ret += addonSources(ofRoot)
+
+    return ret
+}
+
+def srcExcludes(ofRoot){
+    return addonSourcesExclude(ofRoot)
+}
+
+def srcIncludes(ofRoot){
+    return []
+}
+
+
+def coreCppFlags(abi, ofRoot){
     def ofSource = ofRoot + 'libs/openFrameworks'
     def libs = ofRoot + 'libs'
 
@@ -76,59 +260,87 @@ def cppFlags(ofRoot){
     ]
 }
 
-def ldLibs(ofRoot){
+def addonLdLibs(abi, ofRoot){
+    return []
+}
+
+def addonLdCompilerFlags(abi, ofRoot){
+    return []
+}
+
+def coreLdLibs(abi, ofRoot){
     return ["atomic","android", "OpenSLES", "z", "GLESv1_CM", "GLESv2", "log"]
 }
 
-def ldCompilerFlags(){
-    return [
-            '-Wl,--exclude-libs,ALL',
-            '-Wl,--as-needed',
-            '-Wl,--gc-sections'
-    ]
-}
 
-def compilerStl(){
-    return "c++_static"
-}
 
 def getPrebuiltLibPaths(abi, ofRoot) {
     def libs = ofRoot + 'libs'
 
     def paths = []
-    paths += file(libs+"/FreeImage/lib/android/${abi}/libfreeimage.a")
-    paths += file(libs+"/boost/lib/android/${abi}/libboost_filesystem.a")
-    paths += file(libs+"/boost/lib/android/${abi}/libboost_system.a")
-    paths += file(libs+"/freetype/lib/android/${abi}/libfreetype.a")
-    paths += file(libs+"/glu/lib/android/${abi}/libGLU.a")
-    paths += file(libs+"/tess2/lib/android/${abi}/libtess2.a")
-
-    paths += file(libs+"/poco/lib/android/${abi}/libPocoNetSSL.a")
-    paths += file(libs+"/poco/lib/android/${abi}/libPocoNet.a")
-    paths += file(libs+"/poco/lib/android/${abi}/libPocoCrypto.a")
-    paths += file(libs+"/poco/lib/android/${abi}/libPocoJSON.a")
-    paths += file(libs+"/poco/lib/android/${abi}/libPocoMongoDB.a")
-    paths += file(libs+"/poco/lib/android/${abi}/libPocoDataSQLite.a")
-    paths += file(libs+"/poco/lib/android/${abi}/libPocoData.a")
-    paths += file(libs+"/poco/lib/android/${abi}/libPocoUtil.a")
-    paths += file(libs+"/poco/lib/android/${abi}/libPocoXML.a")
-    paths += file(libs+"/poco/lib/android/${abi}/libPocoFoundation.a")
-    paths += file(libs+"/openssl/lib/android/${abi}/libssl.a")
-    paths += file(libs+"/openssl/lib/android/${abi}/libcrypto.a")
+    paths += file(libs+"/FreeImage/lib/android/${abi}/libfreeimage.a").toString()
+    paths += file(libs+"/boost/lib/android/${abi}/libboost_filesystem.a").toString()
+    paths += file(libs+"/boost/lib/android/${abi}/libboost_system.a").toString()
+    paths += file(libs+"/freetype/lib/android/${abi}/libfreetype.a").toString()
+    paths += file(libs+"/glu/lib/android/${abi}/libGLU.a").toString()
+    paths += file(libs+"/tess2/lib/android/${abi}/libtess2.a").toString()
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoNetSSL.a").toString()
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoNet.a").toString()
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoCrypto.a").toString()
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoJSON.a").toString()
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoMongoDB.a").toString()
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoDataSQLite.a").toString()
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoData.a").toString()
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoUtil.a").toString()
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoXML.a").toString()
+    paths += file(libs+"/poco/lib/android/${abi}/libPocoFoundation.a").toString()
+    paths += file(libs+"/openssl/lib/android/${abi}/libssl.a").toString()
+    paths += file(libs+"/openssl/lib/android/${abi}/libcrypto.a").toString()
 
     return paths
 }
 
 
+def coreLdFlags(abi, ofRoot){
+    def ret =  [
+            '-Wl,--exclude-libs,ALL',
+            '-Wl,--as-needed',
+            '-Wl,--gc-sections'
+    ]
+
+    def prebuilt = getPrebuiltLibPaths(abi, ofRoot)
+    ret.addAll(prebuilt)
+
+    return ret
+}
+
+
+def compilerStl(){
+    return "c++_static"
+}
+
+
 // Export the functions
 ext {
-    getFlavorName = this.&getFlavorName
-    getPrebuiltLibPaths = this.&getPrebuiltLibPaths
-    getAbis = this.&getAbis
-    cppFlags = this.&cppFlags
     ofAppModuleName = this.&ofAppModuleName
+
+    getFlavorName = this.&getFlavorName
     buildToolchain= this.&buildToolchain
-    ldLibs= this.&ldLibs
-    ldCompilerFlags = this.&ldCompilerFlags
+    getAbis = this.&getAbis
     compilerStl= this.&compilerStl
+
+    appSrcDirs = this.&appSrcDirs
+    srcExcludes = this.&srcExcludes
+    srcIncludes = this.&srcIncludes
+
+    coreCppFlags = this.&coreCppFlags
+    addonCppFlags = this.&addonCppFlags
+
+    coreLdLibs= this.&coreLdLibs
+    addonLdLibs= this.&addonLdLibs
+
+    coreLdFlags = this.&coreLdFlags
+    addonLdFlags = this.&addonLdFlags
+
+
 }

@@ -1,9 +1,12 @@
-final ofRoot = '../../../'
-final APP_ID = "cc.openframeworks.androidEmptyExample"
-final addons = ofRoot + 'addons'
+
+def ofRoot(){ return '../../../' }
+
+
+import static groovy.io.FileType.*
+import static groovy.io.FileVisitResult.*
 
 // Load common functions
-apply from: ofRoot+"libs/openFrameworksCompiled/project/android/common-functions.gradle"
+apply from: ofRoot()+"libs/openFrameworksCompiled/project/android/common-functions.gradle"
 
 
 
@@ -31,7 +34,6 @@ model {
         buildToolsVersion = "23.0.2"
 
         defaultConfig.with {
-            applicationId = APP_ID
             minSdkVersion.apiLevel    = 9
             targetSdkVersion.apiLevel = 22
             versionCode     =  1
@@ -43,10 +45,6 @@ model {
         moduleName = ofAppModuleName()
         toolchain  = buildToolchain()
         stl        = compilerStl()
-
-        cppFlags.addAll(cppFlags(ofRoot))
-        ldLibs.addAll(ldLibs(ofRoot))
-        ldFlags.addAll(ldCompilerFlags())
     }
 
     android.sources {
@@ -57,11 +55,10 @@ model {
             }
             jni {
                 source {
-                    srcDirs= ['src',
-                              ofRoot+"/addons/ofxAndroid/src",
-                              ofRoot+"/addons/ofxAccelerometer/src"
-                    ]
-                    excludes = []
+                    srcDirs= appSrcDirs(ofRoot())
+
+                    includes = srcIncludes(ofRoot())
+                    excludes = srcExcludes(ofRoot())
                 }
 
                 // Link to openFrameworks
@@ -97,10 +94,15 @@ model {
             create(getFlavorName(abi)) {
                 ndk {
                     abiFilters.add(abi)
-                    getPrebuiltLibPaths(abi, ofRoot).each { path ->
-                        ldFlags.add( path.toString())
-                    }
 
+                    cppFlags.addAll(coreCppFlags(abi, ofRoot()))
+                    cppFlags.addAll(addonCppFlags(abi, ofRoot()))
+
+                    ldLibs.addAll(coreLdLibs(abi, ofRoot()))
+                    ldLibs.addAll(addonLdLibs(abi, ofRoot()))
+
+                    ldFlags.addAll(coreLdFlags(abi, ofRoot()))
+                    ldFlags.addAll(addonLdFlags(abi, ofRoot()))
                 }
             }
         }
