@@ -1,10 +1,7 @@
 
 def getFilesRecursive(path){
     FileTree tree = fileTree(dir: path)
-    println "TRESS"
     def files = tree.matching({includes ["*.cpp"]}).toList()
-    println files
-
     return files
 }
 
@@ -14,7 +11,6 @@ def getFoldersRecursive(String path){
     if(!file.exists()) return []
 
     file.eachDirRecurse() { dir ->
-        println dir.getPath()
         ret.add(dir.getAbsolutePath())
     }
     return ret
@@ -117,9 +113,13 @@ def addonSourcesExclude(String root, String abi=""){
         )
 
         config.each { String path ->
-            ret += addon+path
+            // TODO: Currently first part of path is stripped. Doesn't work otherwise
+            ret += path.replaceAll(/^\w+\//,"**/")
         }
     }
+
+//    ret += "**/dlib/include/*"
+    println "\n exclude "+ret+"\n\n"
     return ret
 }
 
@@ -149,14 +149,45 @@ def addonLdFlags(abi, ofRoot){
 def addonCppFlags(abi, ofRoot){
     def ret = []
     addonPaths().each { addon ->
+        def config = parseAddonConfig(
+                addon,
+                "ADDON_INCLUDES",
+                abi,
+                ["libs","src"]
+        )
+        def excludeConfig = parseAddonConfig(
+                addon,
+                "ADDON_INCLUDES_EXCLUDE",
+                abi
+        )
+
+        config.each { String path ->
+            def flags = []
+            getFoldersRecursive(addon+"/"+path).each{ String folder ->
+                def excluded = false
+                excludeConfig.each { ex ->
+                    def _ex = ex.replaceAll(/\*/,".+")
+                    if(folder ==~ /.*$addon\/$_ex/ ) {
+                        excluded = true
+                    }
+                }
+
+                if(!excluded) {
+                    flags += "-I${folder}".toString()
+                }
+            }
+
+            ret += flags
+        }
+
+        /*
         ret += getFoldersRecursive(addon + "/libs").collect{ folder ->
             return "-I${folder}".toString()
         }
         ret += getFoldersRecursive(addon + "/src").collect{ folder ->
             return "-I${folder}".toString()
-        }
+        }*/
     }
-    //println ret
     return ret
 }
 
