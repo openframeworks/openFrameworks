@@ -18,11 +18,16 @@ ofNode::ofNode()
 
 //----------------------------------------
 ofNode::~ofNode(){
-	if(parent){
+	if(parent != nullptr){
 		parent->removeListener(*this);
 	}
-	for(auto child: children){
-		child->clearParent();
+
+	// clearParent() will remove children of this element as a side-effect.
+	// This changes the "children", and so we can't use a normal foreach
+	// loop, but must use the following construction to deal with newly
+	// invalidated iterators:
+	while (!children.empty()){
+		(*children.begin())->clearParent();
 	}
 }
 
@@ -119,20 +124,26 @@ void ofNode::removeListener(ofNode & node){
 }
 
 //----------------------------------------
-void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
-    if(bMaintainGlobalTransform) {
-		ofMatrix4x4 postParentGlobalTransform = getGlobalTransformMatrix() * parent.getGlobalTransformMatrix().getInverse();
-		parent.addListener(*this);
+void ofNode::setParent(ofNode& parent_, bool bMaintainGlobalTransform) {
+	if (parent != nullptr)
+	{
+		// we need to make sure to clear before
+		// re-assigning parenthood.
+		clearParent(bMaintainGlobalTransform);
+	}
+	if(bMaintainGlobalTransform) {
+		ofMatrix4x4 postParentGlobalTransform = getGlobalTransformMatrix() * parent_.getGlobalTransformMatrix().getInverse();
+		parent_.addListener(*this);
 		setTransformMatrix(postParentGlobalTransform);
 	} else {
-		parent.addListener(*this);
+		parent_.addListener(*this);
 	}
-	this->parent = &parent;
+	parent = &parent_;
 }
 
 //----------------------------------------
 void ofNode::clearParent(bool bMaintainGlobalTransform) {
-	if(parent){
+	if(parent != nullptr){
 		parent->removeListener(*this);
 	}
     if(bMaintainGlobalTransform) {
