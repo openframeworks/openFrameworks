@@ -16,9 +16,9 @@ ofImage ofxPanel::saveIcon;
 ofxPanel::ofxPanel()
 :bGrabbed(false){}
 
-ofxPanel::ofxPanel(const ofParameterGroup & parameters, const std::string& filename, float x, float y)
-: ofxGuiGroup(parameters, filename, x, y)
-, bGrabbed(false){
+ofxPanel::ofxPanel(const ofParameterGroup & parameters, const Config & groupConfig, const Config &itemConfig)
+:ofxGuiGroup(parameters,groupConfig,itemConfig)
+,bGrabbed(false){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
 		loadIcons();
 	}
@@ -30,20 +30,39 @@ ofxPanel::~ofxPanel(){
 	//
 }
 
-ofxPanel * ofxPanel::setup(const std::string& collectionName, const std::string& filename, float x, float y){
+ofxPanel & ofxPanel::setup(const Config & config){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
 		loadIcons();
 	}
-	registerMouseEvents();
-	return (ofxPanel*)ofxGuiGroup::setup(collectionName,filename,x,y);
+	return (ofxPanel&)ofxGuiGroup::setup(config);
 }
 
-ofxPanel * ofxPanel::setup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
+ofxPanel & ofxPanel::setup(const std::string& collectionName, const Config & config){
+	setName(collectionName);
+	return setup(config);
+}
+
+ofxPanel & ofxPanel::setup(const ofParameterGroup & parameters, const Config & groupConfig, const Config &itemConfig){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
 		loadIcons();
 	}
-	registerMouseEvents();
-	return (ofxPanel*)ofxGuiGroup::setup(parameters,filename,x,y);
+	return (ofxPanel&)ofxGuiGroup::setup(parameters, groupConfig, itemConfig);
+}
+
+ofxPanel & ofxPanel::setup(const std::string& collectionName, const std::string& filename, float x, float y){
+	ofxPanel::Config config;
+	config.filename = filename;
+	config.shape.x = x;
+	config.shape.y = y;
+	return setup(collectionName, config);
+}
+
+ofxPanel & ofxPanel::setup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
+	ofxPanel::Config config;
+	config.filename = filename;
+	config.shape.x = x;
+	config.shape.y = y;
+	return setup(parameters, config);
 }
 
 void ofxPanel::loadIcons(){
@@ -60,14 +79,18 @@ void ofxPanel::loadIcons(){
 
 void ofxPanel::generateDraw(){
 	border.clear();
-	border.setStrokeColor(thisBorderColor);
-	border.setStrokeWidth(1);
-	border.setFilled(false);
-	border.rectangle(b.x,b.y,b.width+1,b.height-spacingNextElement);
+	border.setFillColor(thisBorderColor);
+	border.setFilled(true);
+	border.rectangle(b.x,b.y,b.width+1,b.height);
 
+	if(bShowHeader){
+		generateDrawHeader();
+	}
+}
 
+void ofxPanel::generateDrawHeader(){
 	headerBg.clear();
-	headerBg.setFillColor(ofColor(thisHeaderBackgroundColor,180));
+	headerBg.setFillColor(thisHeaderBackgroundColor);
 	headerBg.setFilled(true);
 	headerBg.rectangle(b.x,b.y+1,b.width,header);
 
@@ -82,30 +105,25 @@ void ofxPanel::generateDraw(){
 	saveBox.set(loadBox);
 	saveBox.x += iconWidth + iconSpacing;
 
-	textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
+	if(bShowName){
+		textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
+	}
 }
 
 void ofxPanel::render(){
 	border.draw();
-	headerBg.draw();
+	if(bShowHeader){
+		headerBg.draw();
+	}
 
 	ofBlendMode blendMode = ofGetStyle().blendingMode;
 	if(blendMode!=OF_BLENDMODE_ALPHA){
 		ofEnableAlphaBlending();
 	}
 	ofColor c = ofGetStyle().color;
-	ofSetColor(thisTextColor);
 
-	bindFontTexture();
-	textMesh.draw();
-	unbindFontTexture();
-
-	bool texHackEnabled = ofIsTextureEdgeHackEnabled();
-	ofDisableTextureEdgeHack();
-	loadIcon.draw(loadBox);
-	saveIcon.draw(saveBox);
-	if(texHackEnabled){
-		ofEnableTextureEdgeHack();
+	if(bShowHeader){
+		renderHeader();
 	}
 
 	for(std::size_t i = 0; i < collection.size(); i++){
@@ -118,14 +136,32 @@ void ofxPanel::render(){
 	}
 }
 
+void ofxPanel::renderHeader() {
+	ofSetColor(thisTextColor);
+
+	if(bShowName){
+		bindFontTexture();
+		textMesh.draw();
+		unbindFontTexture();
+	}
+
+	bool texHackEnabled = ofIsTextureEdgeHackEnabled();
+	ofDisableTextureEdgeHack();
+	loadIcon.draw(loadBox);
+	saveIcon.draw(saveBox);
+	if(texHackEnabled){
+		ofEnableTextureEdgeHack();
+	}
+}
+
 bool ofxPanel::mouseReleased(ofMouseEventArgs & args){
-    this->bGrabbed = false;
-    if(ofxGuiGroup::mouseReleased(args)) return true;
-    if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
-    	return true;
-    }else{
-    	return false;
-    }
+	this->bGrabbed = false;
+	if(ofxGuiGroup::mouseReleased(args)) return true;
+	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
+		return true;
+	}else{
+		return false;
+	}
 }
 
 bool ofxPanel::setValue(float mx, float my, bool bCheck){
@@ -139,22 +175,24 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
 
-			if( my > b.y && my <= b.y + header ){
-				bGrabbed = true;
-				grabPt.set(mx-b.x, my-b.y);
-			} else{
-				bGrabbed = false;
-			}
+			if(bShowHeader){
+				if( my > b.y && my <= b.y + header ){
+					bGrabbed = true;
+					grabPt.set(mx-b.x, my-b.y);
+				} else{
+					bGrabbed = false;
+				}
 
-			if(loadBox.inside(mx, my)) {
-				loadFromFile(filename);
-				ofNotifyEvent(loadPressedE,this);
-				return true;
-			}
-			if(saveBox.inside(mx, my)) {
-				saveToFile(filename);
-				ofNotifyEvent(savePressedE,this);
-				return true;
+				if(loadBox.inside(mx, my)) {
+					loadFromFile(filename);
+					ofNotifyEvent(loadPressedE,this);
+					return true;
+				}
+				if(saveBox.inside(mx, my)) {
+					saveToFile(filename);
+					ofNotifyEvent(savePressedE,this);
+					return true;
+				}
 			}
 		}
 	} else if( bGrabbed ){
@@ -162,4 +200,49 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 		return true;
 	}
 	return false;
+}
+
+void ofxPanel::sizeChangedCB(){
+	float x = b.x;
+	float y = b.y + spacingFirstElement;
+	if(bShowHeader){
+		y += header;
+	}
+
+	if(layout == ofxBaseGui::Vertical){
+		for(auto & e: collection){
+			e->setPosition(e->getPosition().x,y + spacing);
+			e->sizeChangedE.disable();
+			e->setSize(b.width-1, e->getHeight());
+			e->sizeChangedE.enable();
+			y += e->getHeight()+spacing;
+		}
+		b.height = y - b.y;
+	}else{
+		float max_h = 0;
+		for(auto & e: collection){
+			e->setPosition(x,y + spacing);
+			x += e->getWidth() + spacing;
+			if(max_h < e->getHeight()){
+				max_h = e->getHeight();
+			}
+		}
+		y += max_h+spacing;
+		b.width = x - b.x;
+		b.height = y - b.y;
+	}
+	sizeChangedE.notify(this);
+	setNeedsRedraw();
+}
+
+void ofxPanel::setSize(float w, float h){
+	ofxBaseGui::setSize(w,h);
+}
+
+void ofxPanel::setShape(ofRectangle r){
+	ofxBaseGui::setShape(r);
+}
+
+void ofxPanel::setShape(float x, float y, float w, float h){
+	ofxBaseGui::setShape(x,y,w,h);
 }

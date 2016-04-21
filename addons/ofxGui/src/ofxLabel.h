@@ -3,24 +3,34 @@
 #include "ofxBaseGui.h"
 #include "ofParameter.h"
 
-class ofxLabel: public ofxBaseGui {
+template<typename Type>
+class ofxValueLabel: public ofxBaseGui {
 public:
-    ofxLabel(){}
-    ofxLabel(ofParameter<std::string> _label, float width = defaultWidth, float height = defaultHeight);
-    virtual ~ofxLabel();
+	struct Config: public ofxBaseGui::Config{
+		Config(){}
+		Config(const ofxBaseGui::Config & c)
+		:ofxBaseGui::Config(c){}
+	};
 
-    ofxLabel * setup(ofParameter<std::string> _label, float width = defaultWidth, float height = defaultHeight);
-    ofxLabel * setup(const std::string& labelName, std::string label, float width = defaultWidth, float height = defaultHeight);
+	ofxValueLabel();
 
-    // Abstract methods we must implement, but have no need for!
-    virtual bool mouseMoved(ofMouseEventArgs & args){return false;}
-    virtual bool mousePressed(ofMouseEventArgs & args){return false;}
-    virtual bool mouseDragged(ofMouseEventArgs & args){return false;}
-    virtual bool mouseReleased(ofMouseEventArgs & args){return false;}
-    virtual bool mouseScrolled(ofMouseEventArgs & args){return false;}
+	ofxValueLabel(ofParameter<Type> _label, const Config & config = Config());
+	virtual ~ofxValueLabel();
 
-	virtual void saveTo(ofBaseSerializer& serializer){};
-	virtual void loadFrom(ofBaseSerializer& serializer){};
+	ofxValueLabel & setup(ofParameter<Type> _label, const Config & config);
+	ofxValueLabel & setup(ofParameter<Type> _label, float width = defaultWidth, float height = defaultHeight);
+	ofxValueLabel & setup(const std::string& labelName, const Type & label, const Config & config);
+	ofxValueLabel & setup(const std::string& labelName, const Type & label, float width = defaultWidth, float height = defaultHeight);
+
+	// Abstract methods we must implement, but have no need for!
+	virtual bool mouseMoved(ofMouseEventArgs & args){return false;}
+	virtual bool mousePressed(ofMouseEventArgs & args){return false;}
+	virtual bool mouseDragged(ofMouseEventArgs & args){return false;}
+	virtual bool mouseReleased(ofMouseEventArgs & args){return false;}
+	virtual bool mouseScrolled(ofMouseEventArgs & args){return false;}
+
+	virtual void saveTo(ofBaseSerializer& serializer){}
+	virtual void loadFrom(ofBaseSerializer& serializer){}
 
 
 	template<class ListenerClass, typename ListenerMethod>
@@ -34,17 +44,22 @@ public:
 	}
 
 
-	std::string operator=(std::string v) { label = v; return v; }
-    operator const std::string & ()       { return label; }
+	Type operator=(Type v) { label = v; return v; }
+	operator const Type & ()       { return label; }
 
-    ofAbstractParameter & getParameter();
+	ofAbstractParameter & getParameter();
 
 protected:
-    void render();
-    ofParameter<std::string> label;
-    void generateDraw();
-    void valueChanged(std::string & value);
-    bool setValue(float mx, float my, bool bCheckBounds){return false;}
-    ofPath bg;
-    ofVboMesh textMesh;
+	void render();
+	ofParameter<Type> label;
+	void generateDraw();
+	void valueChanged(Type & value);
+	bool setValue(float mx, float my, bool bCheckBounds){return false;}
+	ofPath bg;
+	ofVboMesh textMesh;
 };
+
+typedef ofxValueLabel<std::string> ofxLabel;
+typedef ofxValueLabel<int> ofxIntLabel;
+typedef ofxValueLabel<float> ofxFloatLabel;
+typedef ofxValueLabel<bool> ofxBoolLabel;

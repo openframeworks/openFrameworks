@@ -15,50 +15,84 @@ ofxSlider<Type>::~ofxSlider(){
 }
 
 template<typename Type>
-ofxSlider<Type>::ofxSlider(ofParameter<Type> _val, float width, float height){
-	setup(_val,width,height);
+ofxSlider<Type>::ofxSlider(ofParameter<Type> _val, const Config & config)
+:ofxBaseGui(config)
+,precision(config.precision)
+,bUpdateOnReleaseOnly(config.updateOnReleaseOnly)
+,bGuiActive(false)
+,mouseInside(false){
+	if(layout == ofxBaseGui::Vertical){
+		float _w = b.width;
+		float _h = b.height;
+		b.height = _w;
+		b.width = _h;
+	}
+	value.makeReferenceTo(_val);
+	value.addListener(this,&ofxSlider::valueChanged);
+	setNeedsRedraw();
+	registerMouseEvents();
 }
 
 template<typename Type>
-ofxSlider<Type>* ofxSlider<Type>::setup(ofParameter<Type> _val, float width, float height){
+ofxSlider<Type> & ofxSlider<Type>::setup(ofParameter<Type> _val, const Config & config){
+	ofxBaseGui::setup(config);
+	bUpdateOnReleaseOnly = config.updateOnReleaseOnly;
+	value.makeReferenceTo(_val);
+	precision = config.precision;
+	bGuiActive = false;
+	setNeedsRedraw();
+
+	value.addListener(this,&ofxSlider::valueChanged);
+	registerMouseEvents();
+	return *this;
+}
+
+template<typename Type>
+ofxSlider<Type> & ofxSlider<Type>::setup(ofParameter<Type> _val, float width, float height){
 	bUpdateOnReleaseOnly = false;
 	value.makeReferenceTo(_val);
 	b.x = 0;
 	b.y = 0;
 	b.width = width;
 	b.height = height;
+	precision = Config().precision;
 	bGuiActive = false;
 	setNeedsRedraw();
 
 	value.addListener(this,&ofxSlider::valueChanged);
 	registerMouseEvents();
-	return this;
+	return *this;
 }
 
 template<typename Type>
-ofxSlider<Type>* ofxSlider<Type>::setup(const std::string& sliderName, Type _val, Type _min, Type _max, float width, float height){
+ofxSlider<Type> & ofxSlider<Type>::setup(const std::string& sliderName, Type _val, Type _min, Type _max, float width, float height){
 	value.set(sliderName,_val,_min,_max);
 	return setup(value,width,height);
 }
 
 template<typename Type>
 void ofxSlider<Type>::setMin(Type min){
-    value.setMin(min);
+	value.setMin(min);
 }
 
 template<typename Type>
 Type ofxSlider<Type>::getMin(){
-    return value.getMin();
+	return value.getMin();
 }
 
 template<typename Type>
 void ofxSlider<Type>::setMax(Type max){
-    value.setMax(max);
+	value.setMax(max);
 }
 
 template<typename Type>
 Type ofxSlider<Type>::getMax(){
-    return value.getMax();
+	return value.getMax();
+}
+
+template<typename Type>
+void ofxSlider<Type>::setPrecision(int precision){
+	this->precision = precision;
 }
 
 template<typename Type>
@@ -149,54 +183,106 @@ template<typename Type>
 void ofxSlider<Type>::generateDraw(){
 	bg.clear();
 	bar.clear();
+	border.clear();
 
 	bg.setFillColor(thisBackgroundColor);
 	bg.setFilled(true);
-	bg.rectangle(b);
+	bg.rectangle(b.x+1, b.y+1, b.width-2, b.height-2);
 
-	float valAsPct = ofMap( value, value.getMin(), value.getMax(), 0, b.width-2, true );
+	border.setStrokeColor(thisBorderColor);
+	border.setFilled(false);
+	border.setStrokeWidth(1);
+	border.rectangle(b);
+
+	float valAsPct;
+	if(layout == ofxBaseGui::Horizontal){
+		valAsPct = ofMap( value, value.getMin(), value.getMax(), 0, b.width-2, true );
+	}else{
+		valAsPct = ofMap( value, value.getMin(), value.getMax(), 0, b.height-2, true );
+	}
 	bar.setFillColor(thisFillColor);
 	bar.setFilled(true);
-	bar.rectangle(b.x+1, b.y+1, valAsPct, b.height-2);
+	if(layout == ofxBaseGui::Horizontal){
+		bar.rectangle(b.x+1, b.y+1, valAsPct, b.height-2);
+	}else{
+		bar.rectangle(b.x + 1, b.y + b.height - 1 - valAsPct, b.width - 2, valAsPct);
+	}
 
-	generateText();
+	if(bShowName){
+		generateText();
+	}
 }
 
 
 template<typename Type>
 void ofxSlider<Type>::generateText(){
-	string valStr = ofToString(value);
-	textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
+	if(layout == ofxBaseGui::Horizontal){
+		string valStr = ofToString(value.get(), precision);
+		textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+		textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
+	}else{
+		textMesh.clear();
+		if(bShowName){
+			string nameStr = getName();
+			while(getTextBoundingBox(nameStr, 0, 0).getWidth() + textPadding * 2 > b.getWidth() && nameStr.length() > 1){
+				nameStr = nameStr.substr(0, nameStr.size() - 1);
+			}
+			textMesh.append(getTextMesh(nameStr, b.x + textPadding, b.y + textPadding + getTextBoundingBox(nameStr, 0, 0).height));
+		}
+		string valStr = ofToString(value.get(), precision);
+		while(getTextBoundingBox(valStr, 0, 0).getWidth() + textPadding * 2 > b.getWidth() && valStr.length() > 1){
+			valStr = valStr.substr(0, valStr.size() - 1);
+		}
+		textMesh.append(getTextMesh(valStr, b.x + textPadding, b.y + b.height - textPadding));
+	}
 }
 
 template<>
 void ofxSlider<unsigned char>::generateText(){
-	string valStr = ofToString((int)value);
-	textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
+	if(layout == ofxBaseGui::Horizontal){
+		string valStr = ofToString((int)value, precision);
+		textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+		textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
+	}else{
+		textMesh.clear();
+		if(bShowName){
+			string nameStr = getName();
+			while(getTextBoundingBox(nameStr, 0, 0).getWidth() + textPadding * 2 > b.getWidth() && nameStr.length() > 1){
+				nameStr = nameStr.substr(0, nameStr.size() - 1);
+			}
+			textMesh.append(getTextMesh(nameStr, b.x + textPadding, b.y + textPadding + getTextBoundingBox(nameStr, 0, 0).height));
+		}
+		string valStr = ofToString((int)value, precision);
+		while(getTextBoundingBox(valStr, 0, 0).getWidth() + textPadding * 2 > b.getWidth() && valStr.length() > 1){
+			valStr = valStr.substr(0, valStr.size() - 1);
+		}
+		textMesh.append(getTextMesh(valStr, b.x + textPadding, b.y + b.height - textPadding));
+	}
 }
 
 template<typename Type>
 void ofxSlider<Type>::render(){
 	ofColor c = ofGetStyle().color;
 
+	border.draw();
 	bg.draw();
 	bar.draw();
 
-	ofBlendMode blendMode = ofGetStyle().blendingMode;
-	if(blendMode!=OF_BLENDMODE_ALPHA){
-		ofEnableAlphaBlending();
-	}
-	ofSetColor(thisTextColor);
+	if(bShowName){
+		ofBlendMode blendMode = ofGetStyle().blendingMode;
+		if(blendMode!=OF_BLENDMODE_ALPHA){
+			ofEnableAlphaBlending();
+		}
+		ofSetColor(thisTextColor);
 
-	bindFontTexture();
-	textMesh.draw();
-	unbindFontTexture();
+		bindFontTexture();
+		textMesh.draw();
+		unbindFontTexture();
 
-	ofSetColor(c);
-	if(blendMode!=OF_BLENDMODE_ALPHA){
-		ofEnableBlendMode(blendMode);
+		ofSetColor(c);
+		if(blendMode!=OF_BLENDMODE_ALPHA){
+			ofEnableBlendMode(blendMode);
+		}
 	}
 }
 
@@ -215,7 +301,11 @@ bool ofxSlider<Type>::setValue(float mx, float my, bool bCheck){
 		}
 	}
 	if( bGuiActive ){
-		value = ofMap(mx, b.x, b.x + b.width, value.getMin(), value.getMax(), true);
+		if(layout == ofxBaseGui::Horizontal){
+			value = ofMap(mx, b.x, b.x + b.width, value.getMin(), value.getMax(), true);
+		}else{
+			value = ofMap(my, b.y + b.height, b.y, value.getMin(), value.getMax(), true);
+		}
 		return true;
 	}
 	return false;
@@ -234,7 +324,7 @@ void ofxSlider<Type>::setUpdateOnReleaseOnly(bool _bUpdateOnReleaseOnly){
 
 template<typename Type>
 void ofxSlider<Type>::valueChanged(Type & value){
-    setNeedsRedraw();
+	setNeedsRedraw();
 }
 
 template class ofxSlider<int8_t>;

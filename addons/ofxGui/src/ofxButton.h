@@ -4,12 +4,25 @@
 #include "ofParameter.h"
 
 class ofxButton : public ofxToggle{
-	friend class ofPanel;
-	
 public:
+	struct Config: public ofxToggle::Config{
+		Config(){}
+		Config(const ofxToggle::Config & c)
+		:ofxToggle::Config(c){}
+		Config(const ofxBaseGui::Config & c)
+		:ofxToggle::Config(c){}
+	};
+
 	ofxButton();
+	ofxButton(ofParameter<void> _val, const Config & config);
+	ofxButton(ofParameter<bool> _bVal, const Config & config);
 	~ofxButton();
-    ofxButton* setup(const std::string& toggleName, float width = defaultWidth, float height = defaultHeight);
+	ofxButton & setup(const std::string& buttonName, const Config & config);
+	ofxButton & setup(ofParameter<void>& _val, const Config & config);
+	ofxButton & setup(ofParameter<bool>& _bVal, const Config & config);
+	ofxButton & setup(const std::string& buttonName, float width = defaultWidth, float height = defaultHeight);
+	ofxButton & setup(ofParameter<void>& _val, float width = defaultWidth, float height = defaultHeight);
+	ofxButton & setup(ofParameter<bool>& _bVal, float width = defaultWidth, float height = defaultHeight);
 
 	virtual bool mouseReleased(ofMouseEventArgs & args);
 	virtual bool mouseMoved(ofMouseEventArgs & args);
@@ -18,16 +31,18 @@ public:
 
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method){
-		ofAddListener(triggerEvent,listener,method);
+		voidvalue.addListener(listener,method);
 	}
 
 	template<class ListenerClass, typename ListenerMethod>
 	void removeListener(ListenerClass * listener, ListenerMethod method){
-		ofRemoveListener(triggerEvent,listener,method);
+		voidvalue.removeListener(listener,method);
 	}
 
-private:
-	ofEvent<void> triggerEvent;
-	void valueChanged(bool & v);
+protected:
+	virtual void generateDraw();
+	bool setValue(float mx, float my, bool bCheck);
+	ofParameter<void> voidvalue;
+	bool useVoidValue {false};
 
 };

@@ -1,29 +1,87 @@
 #include "ofxButton.h"
 using namespace std;
 
-ofxButton::ofxButton(){
-	value.setSerializable(false);
+ofxButton::ofxButton():ofxToggle(){}
+
+ofxButton::ofxButton(ofParameter<void> _val, const Config & config)
+:ofxToggle(value, config){
+	//value.setSerializable(false);
+	voidvalue.makeReferenceTo(_val);
+	useVoidValue = true;
+}
+
+ofxButton::ofxButton(ofParameter<bool> _val, const Config & config)
+:ofxToggle(_val, config){
 }
 
 ofxButton::~ofxButton(){
-	//
 }
 
-ofxButton* ofxButton::setup(const std::string& toggleName, float width, float height){
-	setName(toggleName);
-	b.x = 0;
-	b.y = 0;
-	b.width = width;
-	b.height = height;
-	bGuiActive = false;
-	value = false;
-	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
+ofxButton & ofxButton::setup(ofParameter<void>& _val, const Config & config){
+	ofxToggle::setup(value, config);
+	voidvalue.makeReferenceTo(_val);
+	useVoidValue = true;
+	return *this;
+}
 
-	registerMouseEvents();
+ofxButton & ofxButton::setup(ofParameter<bool> &_val, const Config & config){
+	ofxToggle::setup(_val, config);
+	return *this;
+}
 
-	value.addListener(this,&ofxButton::valueChanged);
+ofxButton & ofxButton::setup(const std::string& buttonName, const Config & config){
+	value.setName(buttonName);
+	return setup(value, config);
+}
 
-	return this;
+ofxButton & ofxButton::setup(ofParameter<void>& _val, float width, float height){
+	ofxToggle::setup(value, width, height);
+	voidvalue.makeReferenceTo(_val);
+	useVoidValue = true;
+	return *this;
+}
+
+ofxButton & ofxButton::setup(ofParameter<bool>& _val, float width, float height){
+	ofxToggle::setup(_val, width, height);
+	return *this;
+}
+
+bool ofxButton::setValue(float mx, float my, bool bCheck){
+
+	if( !isGuiDrawing() ){
+		bGuiActive = false;
+		return false;
+	}
+	if( bCheck ){
+		ofRectangle checkRect = checkboxRect;
+		checkRect.x += b.x;
+		checkRect.y += b.y;
+
+		if( checkRect.inside(mx, my) ){
+			bGuiActive = true;
+		}else{
+			bGuiActive = false;
+
+		}
+	}
+	if( bGuiActive ){
+		value = !value;
+		voidvalue.trigger();
+		return true;
+	}
+	return false;
+}
+
+ofxButton & ofxButton::setup(const std::string& buttonName, float width, float height){
+	value.setName(buttonName);
+	return setup(value, width, height);
+}
+
+void ofxButton::generateDraw(){
+	if(useVoidValue){
+		value.setName(voidvalue.getName());
+	}
+	ofxToggle::generateDraw();
 }
 
 bool ofxButton::mouseReleased(ofMouseEventArgs & args){
@@ -48,8 +106,3 @@ bool ofxButton::mouseDragged(ofMouseEventArgs & args){
 	return ofxToggle::mouseDragged(args);
 }
 
-void ofxButton::valueChanged(bool & v){
-	if(!v){
-		ofNotifyEvent(triggerEvent, this);
-	}
-}
