@@ -72,7 +72,7 @@ model {
             aidl.source.srcDirs = ['srcJava']
             renderscript.source.srcDirs = ['srcJava']
             res.source.srcDirs = ['res']
-            assets.source.srcDirs = ['assets']
+            assets.source.srcDirs = ['bin/data']
             jniLibs.source.srcDirs = ['libs']
         }
     }
@@ -113,5 +113,3 @@ model {
 dependencies {
     compile project(path: ':ofAndroidLib')
 }
-
-
