@@ -350,7 +350,10 @@ PLATFORM_PKG_CONFIG_LIBRARIES += fontconfig
 PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
 PLATFORM_PKG_CONFIG_LIBRARIES += openal
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
-PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
+
+ifeq "$(shell pkg-config --exists rtaudio && echo 1)" "1"
+	PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
+endif
 
 
 ifneq ($(LINUX_ARM),1)
