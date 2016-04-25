@@ -1,6 +1,3 @@
-final APP_ABIS = ["armeabi", "armeabi-v7a", "x86"]
-
-
 apply plugin: 'com.android.model.library'
 
 model {
@@ -65,17 +62,3 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-
-
-def getFlavorName(abi) {
-    switch (abi) {
-        case "armeabi":
-            return "arm";
-        case "armeabi-v7a":
-            return "arm7"
-        case "arm64-v8a":
-            return "arm64"
-        default:
-            return abi.replaceAll('-', '_')
-    }
-}
