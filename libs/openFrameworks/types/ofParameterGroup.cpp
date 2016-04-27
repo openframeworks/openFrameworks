@@ -9,9 +9,37 @@ ofParameterGroup::ofParameterGroup()
 
 void ofParameterGroup::add(ofAbstractParameter & parameter){
 	shared_ptr<ofAbstractParameter> param = parameter.newReference();
+	const std::string name = param->getEscapedName();
+	if(obj->parametersIndex.find(name) != obj->parametersIndex.end()){
+		ofLogWarning() << "Adding another parameter with same name '" << param->getName() << "' to group '" << getName() << "'";
+	}
 	obj->parameters.push_back(param);
-	obj->parametersIndex[param->getEscapedName()] = obj->parameters.size()-1;
+	obj->parametersIndex[name] = obj->parameters.size()-1;
 	param->setParent(*this);
+}
+
+void ofParameterGroup::remove(ofAbstractParameter &param){
+	std::for_each(obj->parameters.begin(), obj->parameters.end(), [&](shared_ptr<ofAbstractParameter>& p){
+		//TODO: this is unsafe because it does not actually compare the two parameters
+		if(p->type() == param.type() && p->getName() == param.getName()){
+			remove(param.getName());
+		}
+	});
+}
+
+void ofParameterGroup::remove(size_t index){
+	if(index>obj->parameters.size()){
+		return;
+	}
+	remove(obj->parameters[index]->getName());
+}
+
+void ofParameterGroup::remove(const string &name){
+	if(!contains(name)){
+		return;
+	}
+	obj->parameters.erase(obj->parameters.begin() + obj->parametersIndex[name]);
+	obj->parametersIndex.erase(name);
 }
 
 void ofParameterGroup::clear(){
