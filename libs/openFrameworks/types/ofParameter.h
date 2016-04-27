@@ -84,6 +84,22 @@ public:
 
 	void add(ofAbstractParameter & param);
 
+	void remove(ofAbstractParameter & param);
+	void remove(std::size_t index);
+	void remove(const std::string& name);
+
+	template<typename ParameterType>
+	void remove(ofParameter<ParameterType>& param){
+		std::for_each(obj->parameters.begin(), obj->parameters.end(), [&](shared_ptr<ofAbstractParameter>& p){
+			if(p->type() == param.type()){
+				auto other = static_pointer_cast<ofParameter<ParameterType>>(p);
+				if(param.isReferenceTo(*other)){
+					remove(param.getName());
+				}
+			}
+		});
+	}
+
 
 	void clear();
 
@@ -485,6 +501,8 @@ public:
 	void setSerializable(bool serializable);
 	shared_ptr<ofAbstractParameter> newReference() const;
 
+	bool isReferenceTo(const ofParameter<ParameterType>& other);
+
 	void setParent(ofParameterGroup & _parent);
 
 	const ofParameterGroup getFirstParent() const{
@@ -540,6 +558,7 @@ private:
 		bool serializable;
 		vector<weak_ptr<ofParameterGroup::Value>> parents;
 	};
+
 	shared_ptr<Value> obj;
 	std::function<void(const ParameterType & v)> setMethod;
 
@@ -881,7 +900,12 @@ void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> & mo
 
 template<typename ParameterType>
 shared_ptr<ofAbstractParameter> ofParameter<ParameterType>::newReference() const{
-    return std::make_shared<ofParameter<ParameterType>>(*this);
+	return std::make_shared<ofParameter<ParameterType>>(*this);
+}
+
+template<typename ParameterType>
+bool ofParameter<ParameterType>::isReferenceTo(const ofParameter<ParameterType> &other){
+	return obj == other.obj;
 }
 
 template<typename ParameterType>
