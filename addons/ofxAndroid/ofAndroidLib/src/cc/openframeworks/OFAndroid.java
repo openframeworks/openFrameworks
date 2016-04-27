@@ -411,8 +411,8 @@ public class OFAndroid {
     public static native void onScaleEnd(ScaleGestureDetector detector);
     public static native boolean onScale(ScaleGestureDetector detector);
     
-    public static native void onKeyDown(int keyCode);
-    public static native void onKeyUp(int keyCode);
+    public static native boolean onKeyDown(int keyCode, int unicode);
+    public static native boolean onKeyUp(int keyCode, int unicode);
     public static native boolean onBackPressed();
     
     public static native boolean onMenuItemSelected(String menu_id);
@@ -850,22 +850,9 @@ public class OFAndroid {
            		return false;
            	}
         }
-		
-        if (KeyEvent.isModifierKey(keyCode)) {
-        	/* Android sends a shift keycode (for instance),
-        	   then the key that goes with the shift. We don't need the first
-        	   keycode, that info is in event.getMetaState() anyway */
-        	return false;
-        }
-        else
-        {
-        	int unicodeChar = event.getUnicodeChar();
-        	onKeyDown(unicodeChar);
 
-        	// return false to let Android handle certain keys
-    		// like the back and menu keys
-        	return false;
-        }
+		int unicodeChar = event.getUnicodeChar();
+		return onKeyDown(keyCode, unicodeChar);
 	}
 	
 	/**
@@ -875,21 +862,8 @@ public class OFAndroid {
 	 * @return true to say we handled this, false to tell Android to handle it
 	 */
 	public static boolean keyUp(int keyCode, KeyEvent event) {
-        if (KeyEvent.isModifierKey(keyCode)) {
-        	/* Android sends a shift keycode (for instance),
-        	   then the key that goes with the shift. We don't need the first
-        	   keycode, that info is in event.getMetaState() anyway */
-        	return false;
-        }
-        else
-        {
-    		int unicodeChar = event.getUnicodeChar();
-    		onKeyUp(unicodeChar);
-    		
-    		// return false to let Android handle certain keys
-    		// like the back and menu keys
-        	return false;
-        }
+		int unicodeChar = event.getUnicodeChar();
+		return onKeyUp(keyCode, unicodeChar);
 	}
 }
 
