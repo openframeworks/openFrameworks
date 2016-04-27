@@ -71,7 +71,7 @@ public:
 	/// \brief The raw scan code returned by the keyboard, OS and hardware specific. 
 	int scancode;
 	/// \brief The Unicode code point you'd expect if this key combo (including modifier keys) was pressed in a text editor, or -1 for non-printable characters. 
-	unsigned int codepoint;
+	uint32_t codepoint;
 };
 
 class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
@@ -243,27 +243,27 @@ class ofCoreEvents {
 	int getPreviousMouseY() const;
 
 	//  event notification only for internal OF use
-	void notifySetup();
-	void notifyUpdate();
-	void notifyDraw();
+	bool notifySetup();
+	bool notifyUpdate();
+	bool notifyDraw();
 
-	void notifyKeyPressed(int key, int keycode=-1, int scancode=-1, int codepoint=-1);
-	void notifyKeyReleased(int key, int keycode=-1, int scancode=-1, int codepoint=-1);
-	void notifyKeyEvent(const ofKeyEventArgs & keyEvent);
+	bool notifyKeyPressed(int key, int keycode=-1, int scancode=-1, uint32_t codepoint=0);
+	bool notifyKeyReleased(int key, int keycode=-1, int scancode=-1, uint32_t codepoint=0);
+	bool notifyKeyEvent(const ofKeyEventArgs & keyEvent);
 
-	void notifyMousePressed(int x, int y, int button);
-	void notifyMouseReleased(int x, int y, int button);
-	void notifyMouseDragged(int x, int y, int button);
-	void notifyMouseMoved(int x, int y);
-	void notifyMouseScrolled(int x, int y, float scrollX, float scrollY);
-	void notifyMouseEntered(int x, int y);
-	void notifyMouseExited(int x, int y);
-	void notifyMouseEvent(const ofMouseEventArgs & mouseEvent);
+	bool notifyMousePressed(int x, int y, int button);
+	bool notifyMouseReleased(int x, int y, int button);
+	bool notifyMouseDragged(int x, int y, int button);
+	bool notifyMouseMoved(int x, int y);
+	bool notifyMouseScrolled(int x, int y, float scrollX, float scrollY);
+	bool notifyMouseEntered(int x, int y);
+	bool notifyMouseExited(int x, int y);
+	bool notifyMouseEvent(const ofMouseEventArgs & mouseEvent);
 
-	void notifyExit();
-	void notifyWindowResized(int width, int height);
+	bool notifyExit();
+	bool notifyWindowResized(int width, int height);
 
-	void notifyDragEvent(ofDragInfo info);
+	bool notifyDragEvent(ofDragInfo info);
 
 private:
 	float targetRate;
@@ -278,8 +278,8 @@ private:
 	set<int> pressedKeys;
 };
 
-void ofSendMessage(ofMessage msg);
-void ofSendMessage(string messageString);
+bool ofSendMessage(ofMessage msg);
+bool ofSendMessage(string messageString);
 
 ofCoreEvents & ofEvents();
 
