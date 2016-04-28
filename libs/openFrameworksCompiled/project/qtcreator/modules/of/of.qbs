@@ -55,7 +55,7 @@ Module{
                 "rtAudio",
                 "openssl",
                 "boost",
-                "glfw",
+                //"glfw",
                 "openFrameworksCompiled",
             ];
         }else if(platform==="msys2"){
