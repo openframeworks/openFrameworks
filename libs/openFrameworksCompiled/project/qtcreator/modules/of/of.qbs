@@ -119,7 +119,7 @@ Module{
                 "glew",
                 "gtk+-3.0",
                 "libmpg123",
-                "glfw3",
+            //"glfw3",
             ].concat(pkgConfigs)
         }else if(qbs.targetOS.indexOf("windows")!=-1){
             return [
@@ -146,8 +146,8 @@ Module{
                 "freeimage",
                 "rtaudio",
                 "boost_filesystem",
-                "boost_system"
-
+                "boost_system",
+                "glfw",
             ];
         }else if(platform === "msys2"){
             return [
