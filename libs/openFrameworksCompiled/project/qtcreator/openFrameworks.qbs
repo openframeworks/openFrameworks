@@ -29,6 +29,22 @@ Product{
         name: "of"
     }
 
+    cpp.includePaths: of.coreIncludePaths
+    cpp.defines: of.coreDefines
+    cpp.cxxStandardLibrary: of.coreCxxStandardLibrary
+    cpp.cxxLanguageVersion: of.coreCxxLanguageVersion
+    cpp.frameworks: of.coreFrameworks
+    cpp.cxxFlags: of.coreCxxFlags
+    cpp.cFlags: of.coreCFlags
+    cpp.warningLevel: of.coreWarningLevel
+    cpp.architecture: qbs.architecture
+
+    Properties{
+        condition: qbs.targetOS.contains("android")
+        cpp.architecture: "armv7"
+        cpp.sysroot: of.coreSysroot
+    }
+
     property stringList FILES_EXCLUDE: {
 
         if(qbs.targetOS.indexOf("linux")>-1){
