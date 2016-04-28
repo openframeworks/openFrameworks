@@ -20,8 +20,7 @@ void ofParameterGroup::add(ofAbstractParameter & parameter){
 
 void ofParameterGroup::remove(ofAbstractParameter &param){
 	std::for_each(obj->parameters.begin(), obj->parameters.end(), [&](shared_ptr<ofAbstractParameter>& p){
-		//TODO: this is unsafe because it does not actually compare the two parameters
-		if(p->type() == param.type() && p->getName() == param.getName()){
+		if(p->isReferenceTo(param)){
 			remove(param.getName());
 		}
 	});
@@ -431,6 +430,10 @@ bool ofParameterGroup::isReadOnly() const{
 	return false;
 }
 
+const void* ofParameterGroup::getInternalObject() const{
+	return obj.get();
+}
+
 shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const{
 	return std::make_shared<ofParameterGroup>(*this);
 }
@@ -474,4 +477,5 @@ vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator ofParameterGrou
 vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator ofParameterGroup::rend() const{
 	return obj->parameters.rend();
 }
+
 

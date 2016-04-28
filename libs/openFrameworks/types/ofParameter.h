@@ -52,10 +52,13 @@ public:
 	virtual bool isReadOnly() const = 0;
 	virtual shared_ptr<ofAbstractParameter> newReference() const = 0;
 
+	virtual bool isReferenceTo(const ofAbstractParameter& other) const;
+
 protected:
 	virtual const ofParameterGroup getFirstParent() const = 0;
 	virtual void setSerializable(bool serializable)=0;
 	virtual string escape(const string& str) const;
+	virtual const void* getInternalObject() const = 0;
 };
 
 
@@ -87,19 +90,6 @@ public:
 	void remove(ofAbstractParameter & param);
 	void remove(std::size_t index);
 	void remove(const std::string& name);
-
-	template<typename ParameterType>
-	void remove(ofParameter<ParameterType>& param){
-		std::for_each(obj->parameters.begin(), obj->parameters.end(), [&](shared_ptr<ofAbstractParameter>& p){
-			if(p->type() == param.type()){
-				auto other = static_pointer_cast<ofParameter<ParameterType>>(p);
-				if(param.isReferenceTo(*other)){
-					remove(param.getName());
-				}
-			}
-		});
-	}
-
 
 	void clear();
 
@@ -225,6 +215,9 @@ public:
 	vector<shared_ptr<ofAbstractParameter> >::reverse_iterator rend();
 	vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator rbegin() const;
 	vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator rend() const;
+
+protected:
+	const void* getInternalObject() const;
 
 private:
 	class Value{
@@ -501,8 +494,6 @@ public:
 	void setSerializable(bool serializable);
 	shared_ptr<ofAbstractParameter> newReference() const;
 
-	bool isReferenceTo(const ofParameter<ParameterType>& other);
-
 	void setParent(ofParameterGroup & _parent);
 
 	const ofParameterGroup getFirstParent() const{
@@ -517,6 +508,9 @@ public:
 	}
 
 	size_t getNumListeners() const;
+
+protected:
+	const void* getInternalObject() const;
 
 private:
 	class Value{
@@ -904,11 +898,6 @@ shared_ptr<ofAbstractParameter> ofParameter<ParameterType>::newReference() const
 }
 
 template<typename ParameterType>
-bool ofParameter<ParameterType>::isReferenceTo(const ofParameter<ParameterType> &other){
-	return obj == other.obj;
-}
-
-template<typename ParameterType>
 void ofParameter<ParameterType>::setParent(ofParameterGroup & parent){
 	obj->parents.emplace_back(parent.obj);
 }
@@ -916,6 +905,11 @@ void ofParameter<ParameterType>::setParent(ofParameterGroup & parent){
 template<typename ParameterType>
 size_t ofParameter<ParameterType>::getNumListeners() const{
 	return obj->changedE.size();
+}
+
+template<typename ParameterType>
+const void* ofParameter<ParameterType>::getInternalObject() const{
+	return obj.get();
 }
 
 template<>
@@ -965,6 +959,12 @@ public:
 		}
 	}
 	size_t getNumListeners() const;
+
+protected:
+	const void* getInternalObject() const{
+		return obj.get();
+	}
+
 private:
 	class Value{
 	public:
@@ -1082,6 +1082,10 @@ protected:
 
 	const ofParameterGroup getFirstParent() const{
 		return parameter.getFirstParent();
+	}
+
+	const void* getInternalObject() const{
+		return parameter.getInternalObject();
 	}
 
 
