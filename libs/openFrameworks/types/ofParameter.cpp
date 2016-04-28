@@ -43,6 +43,10 @@ vector<string> ofAbstractParameter::getGroupHierarchyNames() const{
 	return hierarchy;
 }
 
+bool ofAbstractParameter::isReferenceTo(const ofAbstractParameter &other) const{
+	return getInternalObject() == other.getInternalObject();
+}
+
 ostream& operator<<(ostream& os, const ofAbstractParameter& p){
 	os << p.toString();
 	return os;

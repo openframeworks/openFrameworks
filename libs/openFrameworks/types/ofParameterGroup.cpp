@@ -9,9 +9,36 @@ ofParameterGroup::ofParameterGroup()
 
 void ofParameterGroup::add(ofAbstractParameter & parameter){
 	shared_ptr<ofAbstractParameter> param = parameter.newReference();
+	const std::string name = param->getEscapedName();
+	if(obj->parametersIndex.find(name) != obj->parametersIndex.end()){
+		ofLogWarning() << "Adding another parameter with same name '" << param->getName() << "' to group '" << getName() << "'";
+	}
 	obj->parameters.push_back(param);
-	obj->parametersIndex[param->getEscapedName()] = obj->parameters.size()-1;
+	obj->parametersIndex[name] = obj->parameters.size()-1;
 	param->setParent(*this);
+}
+
+void ofParameterGroup::remove(ofAbstractParameter &param){
+	std::for_each(obj->parameters.begin(), obj->parameters.end(), [&](shared_ptr<ofAbstractParameter>& p){
+		if(p->isReferenceTo(param)){
+			remove(param.getName());
+		}
+	});
+}
+
+void ofParameterGroup::remove(size_t index){
+	if(index>obj->parameters.size()){
+		return;
+	}
+	remove(obj->parameters[index]->getName());
+}
+
+void ofParameterGroup::remove(const string &name){
+	if(!contains(name)){
+		return;
+	}
+	obj->parameters.erase(obj->parameters.begin() + obj->parametersIndex[name]);
+	obj->parametersIndex.erase(name);
 }
 
 void ofParameterGroup::clear(){
@@ -403,6 +430,10 @@ bool ofParameterGroup::isReadOnly() const{
 	return false;
 }
 
+const void* ofParameterGroup::getInternalObject() const{
+	return obj.get();
+}
+
 shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const{
 	return std::make_shared<ofParameterGroup>(*this);
 }
@@ -446,4 +477,5 @@ vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator ofParameterGrou
 vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator ofParameterGroup::rend() const{
 	return obj->parameters.rend();
 }
+
 
