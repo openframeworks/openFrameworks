@@ -147,7 +147,6 @@ Module{
                 "rtaudio",
                 "boost_filesystem",
                 "boost_system",
-                "glfw",
             ];
         }else if(platform === "msys2"){
             return [
