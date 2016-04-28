@@ -1085,9 +1085,13 @@ protected:
 	}
 
 	const void* getInternalObject() const{
-		return parameter.getInternalObject();
+		//NOTE: we don't have access to the actual data object here
+		return this;
 	}
 
+	bool isReferenceTo(const ofAbstractParameter &other) const override{
+		return parameter.isReferenceTo(other);
+	}
 
 	ofParameter<ParameterType> parameter;
 	
