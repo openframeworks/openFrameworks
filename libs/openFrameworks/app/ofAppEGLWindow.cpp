@@ -1395,32 +1395,32 @@ void ofAppEGLWindow::setupNativeKeyboard() {
 	struct dirent **eps;
 	int n = scandir("/dev/input/by-path/", &eps, filter_kbd, dummy_sort);
 
+	// if any keyboard is unplugged, remove them!
+	for (int i=0;i<keyboard_fd_length;i++){
+		bool entry_found=false;
+		for (int j=0;j<n;j++){
+			if (eps != 0 && eps[j] != 0){
+				string devicePathBuffer;
+				devicePathBuffer.append("/dev/input/by-path/");
+				devicePathBuffer.append(eps[j]->d_name);
+				if (keyboard_fd_paths[i].compare(devicePathBuffer) == 0) entry_found=true;
+			}
+		}
+		if (entry_found==false){
+			//remove this element!
+			ofLogNotice("ofAppEGLWindow") << "keyboard removed on: " << keyboard_fd_paths[i];
+			::close(keyboard_fd_array[i]);
+			for ( int j = i ; j < keyboard_fd_length - 1 ; j++ ){
+				keyboard_fd_paths[j] = keyboard_fd_paths[j+1];
+				keyboard_fd_array[j] = keyboard_fd_array[j+1];
+			}
+			keyboard_fd_length--;
+			i--;	//try new element in this position
+		}	
+	}
+	
 	// make sure that we found an appropriate entry
 	if(n >= 0 && eps != 0) {
-		// if any keyboard is unplugged, remove them!
-		for (int i=0;i<keyboard_fd_length;i++){
-			bool entry_found=false;
-			for (int j=0;j<n;j++){
-				if (eps[j] != 0){
-					string devicePathBuffer;
-					devicePathBuffer.append("/dev/input/by-path/");
-					devicePathBuffer.append(eps[j]->d_name);
-					if (keyboard_fd_paths[i].compare(devicePathBuffer) == 0) entry_found=true;
-				}
-			}
-			if (entry_found==false){
-				//remove this element!
-				ofLogNotice("ofAppEGLWindow") << "keyboard removed on: " << keyboard_fd_paths[i];
-				::close(keyboard_fd_array[i]);
-				for ( int j = i ; j < keyboard_fd_length - 1 ; j++ ){
-					keyboard_fd_paths[j] = keyboard_fd_paths[j+1];
-					keyboard_fd_array[j] = keyboard_fd_array[j+1];
-				}
-				keyboard_fd_length--;
-				i--;	//try new element in this position
-			}	
-		}
-		
 		for (int i=0;i<n;i++){
 			if (eps[i] != 0){
 				string devicePathBuffer;
