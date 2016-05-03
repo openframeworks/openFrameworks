@@ -154,6 +154,7 @@ ofxAndroidVideoGrabber::~ofxAndroidVideoGrabber(){
 
 void ofxAndroidVideoGrabber::Data::onAppPause(){
 	appPaused = true;
+	glDeleteTextures(1, &texture.texData.textureID);
 	texture.texData.textureID = 0;
 	ofLogVerbose("ofxAndroidVideoGrabber") << "ofPauseVideoGrabbers(): releasing textures";
 }
