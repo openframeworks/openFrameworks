@@ -62,6 +62,8 @@ protected:
 };
 
 
+
+
 //----------------------------------------------------------------------
 /// A collection of parameters with events to notify if a parameter changed
 /// and serialization facilities
@@ -263,6 +265,8 @@ template<typename ParameterType>
 ofParameter<ParameterType> & ofParameterGroup::get(std::size_t pos){
 	return static_cast<ofParameter<ParameterType>& >(get(pos));
 }
+
+
 
 
 /*! \cond PRIVATE */
