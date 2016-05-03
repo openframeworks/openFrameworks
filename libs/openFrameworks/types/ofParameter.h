@@ -62,9 +62,6 @@ protected:
 };
 
 
-
-
-
 //----------------------------------------------------------------------
 /// A collection of parameters with events to notify if a parameter changed
 /// and serialization facilities
@@ -266,8 +263,6 @@ template<typename ParameterType>
 ofParameter<ParameterType> & ofParameterGroup::get(std::size_t pos){
 	return static_cast<ofParameter<ParameterType>& >(get(pos));
 }
-
-
 
 
 /*! \cond PRIVATE */
@@ -558,6 +553,9 @@ private:
 
 	void eventsSetValue(const ParameterType & v);
 	void noEventsSetValue(const ParameterType & v);
+
+	template<typename T, typename F>
+	friend class ofReadOnlyParameter;
 };
 
 
@@ -1085,12 +1083,7 @@ protected:
 	}
 
 	const void* getInternalObject() const{
-		//NOTE: we don't have access to the actual data object here
-		return this;
-	}
-
-	bool isReferenceTo(const ofAbstractParameter &other) const override{
-		return parameter.isReferenceTo(other);
+		return parameter.getInternalObject();
 	}
 
 	ofParameter<ParameterType> parameter;
