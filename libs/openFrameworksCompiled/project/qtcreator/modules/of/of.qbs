@@ -18,13 +18,15 @@ Module{
     }
 
     property string platform: {
-        if(qbs.targetOS.contains("linux")){
+        if(qbs.targetOS.contains("android")){
+            return "android";
+        }else if(qbs.targetOS.contains("linux")){
             if(qbs.architecture==="x86_64"){
                 return "linux64";
             }else if(qbs.architecture==="x86"){
                 return "linux";
             }else{
-                throw(qbs.architecture + " not supported yet");
+                throw(qbs.architecture + " not supported yet on " + qbs.targetOS);
             }
         }else if(qbs.targetOS.contains("windows")){
             return "msys2";
@@ -38,7 +40,7 @@ Module{
     property stringList addons
 
     readonly property stringList LIBS_EXCEPTIONS: {
-        if(qbs.targetOS.indexOf("linux")!=-1){
+        if(platform === "linux"  || platform === "linux64"){
             return [
                 "glew",
                 "cairo",
@@ -53,7 +55,8 @@ Module{
                 "rtAudio",
                 "openssl",
                 "boost",
-                "openFrameworksCompiled"
+                //"glfw",
+                "openFrameworksCompiled",
             ];
         }else if(platform==="msys2"){
             return [
@@ -75,13 +78,27 @@ Module{
                 "quicktime",
                 "glut",
                 "openFrameworksCompiled",
+                "videoInput"
             ];
-
+        }else if(platform==="android"){
+            return [
+                "poco",
+                "quicktime",
+                "glut",
+                "glfw",
+                "glu",
+                "fmodex",
+                "glew",
+                "kiss",
+                "rtAudio",
+                "videoInput",
+                "openFrameworksCompiled",
+            ];
         }
     }
 
     readonly property stringList PKG_CONFIGS: {
-        if(qbs.targetOS.indexOf("linux")!=-1){
+        if(platform === "linux"  || platform === "linux64"){
             return [
                 "cairo",
                 "gstreamer-1.0",
@@ -102,6 +119,7 @@ Module{
                 "glew",
                 "gtk+-3.0",
                 "libmpg123",
+            //"glfw3",
             ].concat(pkgConfigs)
         }else if(qbs.targetOS.indexOf("windows")!=-1){
             return [
@@ -115,7 +133,7 @@ Module{
     }
 
     readonly property stringList ADDITIONAL_LIBS: {
-        if(qbs.targetOS.contains("linux")){
+        if(platform === "linux"  || platform === "linux64"){
             return [
                 "glut",
                 "X11",
@@ -140,7 +158,7 @@ Module{
     }
 
     readonly property stringList PKG_CONFIG_INCLUDES: {
-        if(platform.contains("linux") || platform === "msys2"){
+        if(platform === "linux"  || platform === "linux64" || platform === "msys2"){
             return Helpers.pkgconfig(PKG_CONFIGS,["--cflags-only-I"]).map(function(element){
                 return element.substr(2).trim()
             });
@@ -150,7 +168,7 @@ Module{
     }
 
     readonly property stringList PKG_CONFIG_CFLAGS: {
-        if(platform.contains("linux") || platform === "msys2"){
+        if(platform === "linux"  || platform === "linux64" || platform === "msys2"){
             return (Helpers.pkgconfig(PKG_CONFIGS,["--cflags-only-other"]));
         }else{
             return [];
@@ -158,8 +176,19 @@ Module{
     }
 
     readonly property stringList PKG_CONFIG_LDFLAGS: {
-        if(platform.contains("linux") || platform === "msys2"){
-            return (Helpers.pkgconfig(PKG_CONFIGS,["--libs"]));
+        if(platform === "linux"  || platform === "linux64" || platform === "msys2"){
+            return (Helpers.pkgconfig(PKG_CONFIGS,["--libs-only-L"]));
+        }else{
+            return [];
+        }
+    }
+
+    readonly property stringList PKG_CONFIG_LIBS: {
+        if(platform === "linux"  || platform === "linux64" || platform === "msys2"){
+            var pkgconfiglibs = Helpers.pkgconfig(PKG_CONFIGS,["--libs-only-l"]);
+            return pkgconfiglibs.map(function(lib){
+                return lib.substr(2);
+            });
         }else{
             return [];
         }
@@ -339,6 +368,11 @@ Module{
             }
             libs = libs.concat(addonLibs);
         }
+
+        libs = libs.concat(ADDON_LDFLAGS
+            .filter(function(flag){ return flag.startsWith("-l"); })
+            .map(function(flag){ return flag.substr(2); }))
+
         return libs;
     }
 
@@ -373,7 +407,12 @@ Module{
     }
 
     readonly property stringList ADDON_PKG_CONFIG_LDFLAGS: {
-        return Helpers.pkgconfig(ADDON_PKG_CONFIGS,["--libs"])
+        return Helpers.pkgconfig(ADDON_PKG_CONFIGS,["--libs-only-L"])
+    }
+
+    readonly property stringList ADDON_PKG_CONFIG_LIBS: {
+        return Helpers.pkgconfig(ADDON_PKG_CONFIGS,["--libs-only-l"])
+            .map(function(flag){ return flag.substr(2); })
     }
 
     readonly property stringList ADDON_CFLAGS: {
@@ -406,13 +445,6 @@ Module{
         return defines;
     }
 
-    property stringList pkgConfigs: []
-    property pathList includePaths: []
-    property stringList cFlags: []
-    property stringList cxxFlags: []
-    property stringList linkerFlags: []
-    property stringList defines: []
-    property stringList frameworks: []
 
     Depends{
         name: "cpp"
@@ -424,16 +456,16 @@ Module{
     }
 
     //cpp.cxxLanguageVersion: "c++14"
-    cpp.warningLevel: 'default'
-    cpp.cFlags: PKG_CONFIG_CFLAGS
+    coreWarningLevel: 'default'
+    coreCFlags: PKG_CONFIG_CFLAGS
         .concat(['-Wno-unused-parameter'])
         .concat(ADDON_PKG_CONFIG_CFLAGS)
         .concat(ADDON_CFLAGS)
         .concat(cFlags)
 
     Properties{
-        condition: qbs.targetOS.contains("linux") || platform === "msys2"
-        cpp.cxxFlags: PKG_CONFIG_CFLAGS
+        condition: of.platform === "linux" || of.platform === "linux64" || of.platform === "msys2"
+        coreCxxFlags: PKG_CONFIG_CFLAGS
             .concat(['-Wno-unused-parameter','-std=gnu++14'])
             .concat(ADDON_PKG_CONFIG_CFLAGS)
             .concat(ADDON_CFLAGS)
@@ -441,17 +473,17 @@ Module{
     }
 
     Properties{
-        condition: platform === "osx"
-        cpp.cxxLanguageVersion: "c++11"
-        cpp.cxxStandardLibrary: "libc++"
+        condition: of.platform === "osx"
+        coreCxxLanguageVersion: "c++11"
+        coreCxxStandardLibrary: "libc++"
 
-        cpp.cxxFlags: PKG_CONFIG_CFLAGS
+        coreCxxFlags: PKG_CONFIG_CFLAGS
             .concat(['-Wno-unused-parameter'])
             .concat(ADDON_PKG_CONFIG_CFLAGS)
             .concat(ADDON_CFLAGS)
             .concat(cxxFlags)
 
-        cpp.frameworks: [
+        coreFrameworks: [
                 'Accelerate',
                 'AGL',
                 'AppKit',
@@ -472,40 +504,73 @@ Module{
     }
 
     Properties{
-        condition: platform === "msys2"
-        cpp.cxxStandardLibrary: ""
+        condition: of.platform === "msys2"
+        coreCxxStandardLibrary: ""
     }
 
     Properties{
-        condition: qbs.buildVariant.contains("debug") && platform === "osx"
+        condition: qbs.targetOS.contains("android")
+        readonly property string ndk_root: '/home/arturo/Code/android-ndk-r10e'
+        readonly property string toolchainVersion: '4.9'
+        readonly property string abiPath: 'armeabi-v7a'
+        coreCxxFlags: ['-Wno-unused-parameter','-std=gnu++14']
+            .concat(ADDON_CFLAGS)
+            .concat('-I'+ndk_root+'/sources/android/support/include')
+            .concat('-I'+ndk_root+'/sources/cxx-stl/gnu-libstdc++/include')
+            .concat('-I'+ndk_root+'/sources/cxx-stl/gnu-libstdc++/'+toolchainVersion+'/include')
+            .concat('-I'+ndk_root+'/sources/cxx-stl/gnu-libstdc++/libs/'+abiPath+'/include')
+            .concat('-I'+ndk_root+'/sources/cxx-stl/gnu-libstdc++/'+toolchainVersion+'/libs/'+abiPath+'/include')
+            .concat('-I'+ndk_root+'/libs/glu/include_android')
+            .concat('-I'+of_root+'/addons/ofxAndroid/src')
+            .concat('-Wformat')
+            .concat(cxxFlags)
+        coreSysroot: ndk_root + '/platforms/android-19/arch-arm'
+
+    }
+
+    Properties{
+        condition: qbs.buildVariant.contains("debug") && of.platform === "osx"
         bundle.infoPlist: ({"CFBundleIconFile":"icon-debug.icns"})
     }
 
     Properties{
-        condition: qbs.buildVariant.contains("release") && platform === "osx"
+        condition: qbs.buildVariant.contains("release") && of.platform === "osx"
         bundle.infoPlist: ({"CFBundleIconFile":"icon.icns"})
     }
 
-    cpp.includePaths: INCLUDE_PATHS
+    property stringList pkgConfigs: []
+    property pathList includePaths: []
+    property stringList cFlags: []
+    property stringList cxxFlags: []
+    property stringList linkerFlags: []
+    property stringList defines: []
+    property stringList frameworks: []
+
+    coreIncludePaths: INCLUDE_PATHS
         .concat(ADDON_INCLUDES)
         .concat(ADDON_PKG_CONFIG_INCLUDES)
         .concat(includePaths)
 
-    cpp.linkerFlags:
+    coreStaticLibs: ADDON_LIBS
+        .concat(ADDON_PKG_CONFIG_LIBS)
+        .concat(STATIC_LIBS)
+        .concat(PKG_CONFIG_LIBS)
+        .concat(ADDITIONAL_LIBS)
+
+    coreLinkerFlags:
         LDFLAGS
-        .concat(ADDON_LIBS)
         .concat(ADDON_PKG_CONFIG_LDFLAGS)
         .concat(ADDON_LDFLAGS)
         .concat(linkerFlags)
 
     Properties{
         condition: qbs.buildVariant.contains("debug")
-        cpp.defines: ['DEBUG'].concat(DEFINES).concat(defines)
+        coreDefines: ['DEBUG'].concat(DEFINES).concat(defines)
     }
 
     Properties{
         condition: qbs.buildVariant.contains("release")
-        cpp.defines: ['NDEBUG'].concat(DEFINES).concat(defines)
+        coreDefines: ['NDEBUG'].concat(DEFINES).concat(defines)
     }
 
     Group{
