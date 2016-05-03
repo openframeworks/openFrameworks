@@ -1230,38 +1230,71 @@ const ofTexture & ofTrueTypeFont::getFontTexture() const{
 }
 
 //-----------------------------------------------------------
+ofVec2f ofTrueTypeFont::getFirstGlyphPosForTexture(const std::string & str, bool vflip) const{
+	if(!str.empty()){
+		try{
+			auto c = *ofUTF8Iterator(str).begin();
+			if(settings.direction == ofTtfSettings::LeftToRight){
+				if (c != '\n') {
+					auto g = loadGlyph(c);
+					return {-float(g.props.xmin), getLineHeight() + g.props.ymin + getDescenderHeight()};
+				}
+			}else{
+				int width = 0;
+				int lineWidth = 0;
+				iterateString(str, 0, 0, vflip, [&](uint32_t c, ofVec2f){
+					try{
+						if (c != '\n') {
+							auto g = loadGlyph(c);
+							lineWidth += g.props.advance * letterSpacing;
+							width = max(width, lineWidth);
+						}else{
+							lineWidth = 0;
+						}
+					}catch(...){
+					}
+				});
+				if (c != '\n') {
+					auto g = loadGlyph(c);
+					return {width - float(g.props.xmin), getLineHeight() + g.props.ymin + getDescenderHeight()};
+				}else{
+					return {float(width), 0.0};
+				}
+			}
+		}catch(...){}
+	}
+
+	return {0.f, 0.f};
+}
+
+//-----------------------------------------------------------
 ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) const{
 	vector<glyph> glyphs;
 	vector<ofVec2f> glyphPositions;
-	int	x = 0;
-	int	y = 0;
 	long height = 0;
-	uint32_t prevC = 0;
-	for(auto c: ofUTF8Iterator(str)){
+	int width = 0;
+	int lineWidth = 0;
+	iterateString(str, 0, 0, vflip, [&](uint32_t c, ofVec2f pos){
 		try{
-			if (c == '\n') {
-				y += lineHeight;
-				x = 0 ; //reset X Pos back to zero
-				prevC = 0;
-			} else {
-				glyphs.push_back(loadGlyph(c));
-				if(prevC>0){
-					x += getKerning(c,prevC);
-				}else if(settings.direction == ofTtfSettings::RightToLeft){
-					x += glyphs.back().props.width;
-				}
-				glyphPositions.emplace_back(static_cast<float>(x), static_cast<float>(y));
-				x += glyphs.back().props.advance * letterSpacing;
-				height = max(height, glyphs.back().props.ymax + y + long(getLineHeight()));
+			if (c != '\n') {
+				auto g = loadGlyph(c);
+				glyphs.push_back(g);
+				int x = pos.x + g.props.xmin;
+				int y = g.props.ymax + pos.y;
+				glyphPositions.emplace_back(x, y);
+				lineWidth += g.props.advance * letterSpacing;
+				width = max(width, lineWidth);
+				height = max(height, y + long(getLineHeight()));
+			}else{
+				lineWidth = 0;
 			}
-			prevC = c;
 		}catch(...){
-			break;
 		}
-	}
+	});
+
 	ofTexture tex;
 	ofPixels totalPixels;
-	totalPixels.allocate(x, height, OF_PIXELS_GRAY_ALPHA);
+	totalPixels.allocate(width, height, OF_PIXELS_GRAY_ALPHA);
 	//-------------------------------- clear data:
 	totalPixels.set(0,255); // every luminance pixel = 255
 	totalPixels.set(1,0);
@@ -1270,7 +1303,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 		if(settings.direction == ofTtfSettings::LeftToRight){
 			g.pixels.blendInto(totalPixels, glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );
 		}else{
-			g.pixels.blendInto(totalPixels, x-glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );
+			g.pixels.blendInto(totalPixels, width-glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );
 		}
 		i++;
 		if(i==glyphPositions.size()){

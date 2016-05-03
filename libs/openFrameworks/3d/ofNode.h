@@ -346,7 +346,7 @@ protected:
 	/// \brief classes extending ofNode can override this methods to get notified when the scale changed.
 	virtual void onScaleChanged() {}
 
-	ofNode * parent;
+	ofNode * parent = nullptr;
 
 private:
 	void onParentPositionChanged(ofVec3f & position) {onPositionChanged();}

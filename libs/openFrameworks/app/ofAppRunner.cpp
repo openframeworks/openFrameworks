@@ -57,6 +57,16 @@ namespace{
         return *initialized;
     }
 
+	bool & exiting(){
+		static bool * exiting = new bool(false);
+		return *exiting;
+	}
+
+	ofCoreEvents & noopEvents(){
+		static auto * noopEvents = new ofCoreEvents();
+		return *noopEvents;
+	}
+
     #if defined(TARGET_LINUX) || defined(TARGET_OSX)
         #include <signal.h>
         #include <string.h>
@@ -90,6 +100,7 @@ void ofURLFileLoaderShutdown();
 void ofInit(){
 	if(initialized()) return;
 	initialized() = true;
+	exiting() = false;
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
     // manage own exit
@@ -245,16 +256,26 @@ void ofExitCallback(){
 	// static deinitialization happens after this finishes
 	// every object should have ended by now and won't receive any
 	// events
-
-        of::priv::endutils();
+	of::priv::endutils();
 
 	initialized() = false;
+	exiting() = true;
 }
 
 //--------------------------------------
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
-	return mainLoop()->events();
+	auto window = mainLoop()->getCurrentWindow();
+	if(window){
+		return window->events();
+	}else{
+		if(!exiting()){
+			ofLogError("ofEvents") << "Trying to call ofEvents() before a window has been setup";
+			ofLogError("ofEvents") << "We'll return a void events instance to avoid crashes but somethings might not work";
+			ofLogError("ofEvents") << "Set a breakpoint in " << __FILE__ << " line " << __LINE__ << " to check where is the wrong call";
+		}
+		return noopEvents();
+	}
 }
 
 //--------------------------------------
@@ -280,11 +301,6 @@ ofAppBaseWindow * ofGetWindowPtr(){
 //--------------------------------------
 std::shared_ptr<ofAppBaseWindow> ofGetCurrentWindow() {
 	return mainLoop()->getCurrentWindow();
-}
-
-//--------------------------------------
-void ofSetAppPtr(shared_ptr<ofBaseApp> appPtr) {
-	//OFSAptr = appPtr;
 }
 
 //--------------------------------------
