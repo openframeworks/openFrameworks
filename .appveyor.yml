@@ -40,6 +40,7 @@ build_script:
     }
 
 test_script:
+- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/msys2/run_tests.sh")
 - ps: |
     if ($env:BUILDER -eq "VS") {
       cd scripts/ci/vs
