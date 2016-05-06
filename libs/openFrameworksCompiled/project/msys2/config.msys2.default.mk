@@ -76,7 +76,8 @@ PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_DEFINES = POCO_STATIC
+PLATFORM_DEFINES =
+PLATFORM_DEFINES += OF_USING_MPG123
 
 ##########################################################################################
 # PLATFORM REQUIRED ADDON
@@ -188,6 +189,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
 
 
 ifeq ($(LIB_ARCH),x64)
@@ -236,15 +238,16 @@ PLATFORM_LIBRARIES += freeimage boost_filesystem-mt boost_system-mt freetype cai
 #PLATFORM_LIBRARIES += gstapp-1.0 gstvideo-1.0 gstbase-1.0 gstreamer-1.0 gobject-2.0 glib-2.0 intl
 
 #static libraries (fully qualified paths)
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/kiss/lib/$(ABI_LIB_SUBPATH)/libkiss.a
 #PLATFORM_STATIC_LIBRARIES += somestaticlib
 
-#PLATFORM_CFLAGS += -std=gnu++14 -I$(MSYS2_ROOT)/include/glib-2.0 -I$(MSYS2_ROOT)/lib/glib-2.0/include -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include/harfbuzz -DUNICODE -D_UNICODE -DPOCO_STATIC 
 PLATFORM_PKG_CONFIG_LIBRARIES =
 PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
 PLATFORM_PKG_CONFIG_LIBRARIES += cairo
 PLATFORM_PKG_CONFIG_LIBRARIES += zlib
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += glew
+PLATFORM_PKG_CONFIG_LIBRARIES += openal sndfile libmpg123
 #PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-1.0
 
 # shared libraries 

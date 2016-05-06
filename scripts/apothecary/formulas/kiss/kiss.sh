@@ -30,7 +30,7 @@ function prepare() {
 
 # executed inside the lib src dir
 function build() {
-
+	echo "Building fo $TYPE"
 	if [ "$TYPE" == "linux" ] ; then
 		gcc -I./include -c src/kiss_fft.c -o kiss_fft.o
 		gcc -I./include -c src/kiss_fftr.c -o kiss_fftr.o
@@ -40,6 +40,17 @@ function build() {
 	
 	elif [ "$TYPE" == "linux64" ] ; then
 		echoWarning "TODO: linux64 build"
+	
+	elif [ "$TYPE" == "msys2" ] ; then
+		if [ $ARCH == 32 ] ; then
+			/mingw32/bin/gcc.exe -I./include -c src/kiss_fft.c -o kiss_fft.o
+			/mingw32/bin/gcc.exe -I./include -c src/kiss_fftr.c -o kiss_fftr.o
+			/mingw32/bin/ar.exe r libkiss.a kiss_fft.o kiss_fftr.o
+		elif [ $ARCH == 64 ] ; then
+			#/mingw64/bin/gcc.exe -I./include -c src/kiss_fft.c -o kiss_fft_64.o
+			#/mingw64/bin/gcc.exe -I./include -c src/kiss_fftr.c -o kiss_fftr_64.o
+			#/mingw64/bin/ar.exe r libkiss64.a kiss.o
+		fi
 	
 	else
 		echo "build not needed for $TYPE"

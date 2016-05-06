@@ -1,3 +1,7 @@
+#include "ofConstants.h"
+
+#ifdef OF_SOUND_PLAYER_FMOD
+
 #include "ofFmodSoundPlayer.h"
 
 
@@ -395,4 +399,4 @@ void ofFmodSoundPlayer::play(){
 void ofFmodSoundPlayer::stop(){
 	FMOD_Channel_Stop(channel);
 }
-
+#endif // OF_SOUND_PLAYER_FMOD

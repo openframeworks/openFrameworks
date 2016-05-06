@@ -46,8 +46,10 @@ fi
 pacman -Sy
 pacman -Su
 pacman -S $confirm ca-certificates
-echo "Installing packages for $arch architecture (i686=32bits; x86_64=64bits)"
-pacman -Sy $confirm --needed make mingw-w64-$arch-gcc mingw-w64-$arch-glew mingw-w64-$arch-freeglut mingw-w64-$arch-FreeImage mingw-w64-$arch-opencv mingw-w64-$arch-assimp mingw-w64-$arch-boost mingw-w64-$arch-cairo mingw-w64-$arch-clang mingw-w64-$arch-gdb mingw-w64-$arch-zlib  mingw-w64-$arch-tools mingw-w64-$arch-pkg-config mingw-w64-$arch-poco mingw-w64-$arch-glfw
+
+pacman -Sy $confirm --needed make mingw-w64-$arch-gcc mingw-w64-$arch-glew mingw-w64-$arch-freeglut mingw-w64-$arch-FreeImage mingw-w64-$arch-opencv mingw-w64-$arch-assimp \
+                             mingw-w64-$arch-boost mingw-w64-$arch-cairo mingw-w64-$arch-clang mingw-w64-$arch-gdb mingw-w64-$arch-zlib  mingw-w64-$arch-tools mingw-w64-$arch-pkg-config \
+							 mingw-w64-$arch-poco mingw-w64-$arch-glfw mingw-w64-$arch-openal mingw-w64-$arch-kiss_fft mingw-w64-$arch-mpg123 mingw-w64-$arch-libsndfile
 
 # this would install gstreamer which can be used in mingw too
 #pacman -Sy mingw-w64-$arch-gst-libav mingw-w64-$arch-gst-plugins-bad mingw-w64-$arch-gst-plugins-base mingw-w64-$arch-gst-plugins-good mingw-w64-$arch-gst-plugins-ugly mingw-w64-$arch-gstreamer
