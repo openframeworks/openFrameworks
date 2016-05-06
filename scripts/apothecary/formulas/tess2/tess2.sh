@@ -38,10 +38,15 @@ function download() {
 function prepare() {
 	
 	# check if the patch was applied, if not then patch
+	#TODO
 	patch -p1 -u -N  < $FORMULA_DIR/tess2.patch
+	#patch -p1 -u -N  < $FORMULA_DIR/tess2.patch
 	# copy in build script and CMake toolchains adapted from Assimp
 	if [ "$OS" == "osx" ] ; then
 		mkdir -p build
+	fi
+	if [ "$TYPE" == "msys2" ] ; then
+		cp -v Include/tesselator.h Source/tesselator.h
 	fi
 }
 
@@ -337,11 +342,25 @@ function build() {
 	    premake4 gmake
 	    cd Build
 	    make config=release32 tess2
+		
+	elif [ "$TYPE" == "msys2" ] ; then
+		
+		if [ $ARCH == 32 ] ; then
+			TOOLCHAIN_FILE=$APOTHECARY_DIR/toolchains/mingw32.cmake
+		elif [ $ARCH == 64 ] ; then
+			TOOLCHAIN_FILE=$APOTHECARY_DIR/toolchains/mingw64.cmake
+		fi
+		
+		echo Compiling $ARCH bits version of rtAudio
+		mkdir -p build/$ARCH
+    	cd build/$ARCH
+		rm -f CMakeCache.txt Makefile libtess2.a
+		rm -rf CMakeFiles 
+		cmake ../.. -G "Unix Makefiles"  -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_FILE \
+				 -DCMAKE_CXX_FLAGS=-DNDEBUG -DCMAKE_C_FLAGS=-DNDEBUG
+		make 
 	else
-		mkdir -p build/$TYPE
-		cd build/$TYPE
-		cmake -G "Unix Makefiles" -DCMAKE_CXX_COMPILER=/mingw32/bin/g++.exe -DCMAKE_C_COMPILER=/mingw32/bin/gcc.exe -DCMAKE_CXX_FLAGS=-DNDEBUG -DCMAKE_C_FLAGS=-DNDEBUG ../../
-		make
+		echoWarning "Unknown type $TYPE"
 	fi
 }
 
@@ -363,7 +382,19 @@ function copy() {
 			mkdir -p $1/lib/$TYPE/x64
 			cp -v build_vs_64/Release/tess2.lib $1/lib/$TYPE/x64/tess2.lib
 		fi
+<<<<<<< 57ceac1e1495570c501861e3c6057bd1051e7094
 	elif [[ "$TYPE" == "ios" || "$TYPE" == "tvos" ]]; then 
+=======
+	elif [ "$TYPE" == "msys2" ] ; then 
+		if [ $ARCH == 32 ] ; then
+			mkdir -p $1/lib/$TYPE/Win32
+			cp -v build/$ARCH/libtess2.a $1/lib/$TYPE/Win32/libtess2.a
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p $1/lib/$TYPE/x64
+			cp -v build/$ARCH/libtess2.a $1/lib/$TYPE/x64/libtess2.a
+		fi
+	elif [ "$TYPE" == "ios" ] ; then 
+>>>>>>> apothecar tess2 script for MSYS2 32/64
 		cp -v lib/$TYPE/libtess2.a $1/lib/$TYPE/tess2.a
 
 	elif [ "$TYPE" == "osx" ]; then
