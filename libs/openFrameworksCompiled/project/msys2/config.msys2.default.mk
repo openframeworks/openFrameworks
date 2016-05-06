@@ -239,14 +239,12 @@ PLATFORM_LIBRARIES += uuid ole32 oleaut32 setupapi wsock32 ws2_32 Iphlpapi Comdl
 PLATFORM_LIBRARIES += freeimage boost_filesystem-mt boost_system-mt freetype cairo
 #PLATFORM_LIBRARIES += gstapp-1.0 gstvideo-1.0 gstbase-1.0 gstreamer-1.0 gobject-2.0 glib-2.0 intl
 
-ifeq ($(LIB_ARCH),x64)
-	PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/glfw/lib/$(ABI_LIB_SUBPATH)/x64/libglfw3.a
-	PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/kiss/lib/$(ABI_LIB_SUBPATH)/x64/libkiss.a
-	PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/tess2/lib/$(ABI_LIB_SUBPATH)/x64/libtess2.a
-	
-else ifeq ($(LIB_ARCH),Win32)
-	PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/kiss/lib/$(ABI_LIB_SUBPATH)/Win32/libkiss.a
-endif
+#static libraries (fully qualified paths)
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/glfw/lib/$(ABI_LIB_SUBPATH)/$(LIB_ARCH)/libglfw3.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/kiss/lib/$(ABI_LIB_SUBPATH)/$(LIB_ARCH)/libkiss.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/tess2/lib/$(ABI_LIB_SUBPATH)/$(LIB_ARCH)/libtess2.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/rtAudio/lib/$(ABI_LIB_SUBPATH)/$(LIB_ARCH)/librtaudio.a
+
 
 
 PLATFORM_PKG_CONFIG_LIBRARIES =
