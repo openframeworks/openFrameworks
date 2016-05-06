@@ -10,6 +10,8 @@ function usage {
     echo install packages without user confirmation
 }
 
+
+
 #Analyse script arguments
 while [[ $# > 0 ]] ; do
 	arg=$1
@@ -27,19 +29,25 @@ while [[ $# > 0 ]] ; do
 	exit 1
 done
 
-NOT_HAS_PATH=$(echo $PATH | grep /mingw32/bin > /dev/null; echo $?)
-if [ "$NOT_HAS_PATH" -ne "0" ]; then
-	cd /
-	MSYS2_ROOT=$(pwd -W)
-	setx PATH "$MSYS2_ROOT/mingw32/bin;$MSYS2_ROOT/usr/bin/;%PATH%;"
-fi
 
-arch=i686
+
+OS=`uname | sed "y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/"`
+OS=${OS:0:7}
+echo "DetectedOS $OS"
+if [ "$OS" == "MINGW64" ]; then
+	arch=x86_64
+elif [ "$OS" == "MINGW32" ]; then
+	arch=i686
+else
+	echo "$OS is not supported."
+	exit 1
+fi
 
 pacman -Sy
 pacman -Su
 pacman -S $confirm ca-certificates
-pacman -Sy $confirm --needed make mingw-w64-$arch-gcc mingw-w64-$arch-glew mingw-w64-$arch-freeglut mingw-w64-$arch-freeimage mingw-w64-$arch-opencv mingw-w64-$arch-assimp mingw-w64-$arch-boost mingw-w64-$arch-cairo mingw-w64-$arch-clang mingw-w64-$arch-gdb mingw-w64-$arch-zlib  mingw-w64-$arch-tools mingw-w64-$arch-pkg-config mingw-w64-$arch-poco mingw-w64-$arch-glfw
+echo "Installing packages for $arch architecture (i686=32bits; x86_64=64bits)"
+pacman -Sy $confirm --needed make mingw-w64-$arch-gcc mingw-w64-$arch-glew mingw-w64-$arch-freeglut mingw-w64-$arch-FreeImage mingw-w64-$arch-opencv mingw-w64-$arch-assimp mingw-w64-$arch-boost mingw-w64-$arch-cairo mingw-w64-$arch-clang mingw-w64-$arch-gdb mingw-w64-$arch-zlib  mingw-w64-$arch-tools mingw-w64-$arch-pkg-config mingw-w64-$arch-poco mingw-w64-$arch-glfw
 
 # this would install gstreamer which can be used in mingw too
 #pacman -Sy mingw-w64-$arch-gst-libav mingw-w64-$arch-gst-plugins-bad mingw-w64-$arch-gst-plugins-base mingw-w64-$arch-gst-plugins-good mingw-w64-$arch-gst-plugins-ugly mingw-w64-$arch-gstreamer
