@@ -32,7 +32,7 @@ PLATFORM_RUN_COMMAND =
 MSYS2_ROOT = /mingw32
 PLATFORM_CFLAGS += -std=gnu++14 -DUNICODE -D_UNICODE 
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER 
-PLATFORM_LDFLAGS += -lpthread
+PLATFORM_LDFLAGS += -L$(MSYS_ROOT)/lib -lpthread
 #ifeq ($(PLATFORM_ARCH),x86_64)
 CC = $(MSYS2_ROOT)/bin/gcc
 CXX = $(MSYS2_ROOT)/bin/g++
@@ -166,7 +166,6 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlaye
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 
 # third party
-
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
