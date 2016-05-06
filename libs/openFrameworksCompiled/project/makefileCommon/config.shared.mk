@@ -195,12 +195,13 @@ else
 endif
 
 ifndef OF_CORE_LIB_PATH
-    OF_CORE_LIB_PATH=$(OF_LIBS_OF_COMPILED_PATH)/lib/$(PLATFORM_LIB_SUBPATH)
+	ifdef LIB_ARCH
+		OF_CORE_LIB_PATH=$(OF_LIBS_OF_COMPILED_PATH)/lib/$(PLATFORM_LIB_SUBPATH)/$(LIB_ARCH)
+	else 
+		OF_CORE_LIB_PATH=$(OF_LIBS_OF_COMPILED_PATH)/lib/$(PLATFORM_LIB_SUBPATH)
+	endif
 endif
 
-ifdef LIB_ARCH
-    OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH)/$(LIB_ARCH)
-endif
 
 ################################################################################
 # print debug information if needed

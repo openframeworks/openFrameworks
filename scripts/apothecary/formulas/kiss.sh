@@ -42,6 +42,7 @@ function build() {
 	elif [ "$TYPE" == "linux64" ] ; then
 		make  -j${PARALLEL_MAKE} -f Makefile.linux64	
 	elif [ "$TYPE" == "msys2" ] ; then
+		rm -f *.o tools/*.o libkiss.a #if we changed architecture between 2 build...
 		make  -j${PARALLEL_MAKE} -f Makefile.msys2	
 	else
 		echo "build not needed for $TYPE"
@@ -70,9 +71,15 @@ function copy() {
 	elif [ "$TYPE" == "linux64" ] ; then
 		mkdir -p $1/lib/linux64
 		cp -v libkiss.a $1/lib/linux64/libkiss.a
+		
 	elif [ "$TYPE" == "msys2" ] ; then
-		mkdir -p $1/lib/$TYPE
-		cp -v libkiss.a $1/lib/$TYPE/libkiss.a
+		if [ $ARCH == 32 ] ; then
+			mkdir -p $1/lib/$TYPE/Win32
+			cp -v libkiss.a $1/lib/$TYPE/Win32/libkiss.a
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p $1/lib/$TYPE/x64
+			cp -v libkiss.a $1/lib/$TYPE/x64/libkiss.a
+		fi
 	fi
 
 	# copy license file
@@ -84,7 +91,7 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
 	
-	if [ "$TYPE" == "linux" -o "$TYPE" == "linux64" ] ; then
+	if [ "$TYPE" == "linux" -o "$TYPE" == "linux64" -o "$TYPE" == "msys2" ] ; then
 		make clean
 		rm -f *.a
 	fi

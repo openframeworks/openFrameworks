@@ -1,5 +1,5 @@
-CC=/mingw32/bin/gcc.exe
-AR=/mingw32/bin/ar.exe
+CC=gcc.exe
+AR=ar.exe
 CFLAGS=-I. -I./tools
 
 LIB=libkiss.a

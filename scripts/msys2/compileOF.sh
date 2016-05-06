@@ -17,12 +17,12 @@ while getopts tj: opt ; do
 	esac
 done
 
-if [ "$MSYSTEM" != "MINGW32" ]
-then
-	echo "This is not a MINGW32 shell!"
-	echo "Please launch compileOF.sh from a MINGW32 shell."
-	exit 1
-fi
+#if [ "$MSYSTEM" != "MINGW32" ]
+#then
+#	echo "This is not a MINGW32 shell!"
+#	echo "Please launch compileOF.sh from a MINGW32 shell."
+#   exit 1
+#fi
 
 cd ${SCRIPTPATH}/../../libs/openFrameworksCompiled/project
 make -j${PARALLEL_MAKE} Debug

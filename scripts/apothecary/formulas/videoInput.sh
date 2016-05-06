@@ -39,9 +39,14 @@ function build() {
 			vs-build "videoInput.sln" Build "Release|x64"
 			vs-build "videoInput.sln" Build "Debug|x64"
 		fi
+		
 	elif [ "$TYPE" == "msys2" ] ; then
 		cd msys2
+		make clean
 		make 
+		
+	else
+		echoWarning "Unknown type $TYPE"
 	fi
 }
 
@@ -63,10 +68,17 @@ function copy() {
 			cp -v videoInputSrcAndDemos/VS-videoInputcompileAsLib/x64/Release/videoInput.lib $1/lib/$TYPE/x64/videoInput.lib
 		fi
 		
-
+	elif [ "$TYPE" == "msys2" ] ; then
+		if [ $ARCH == 32 ] ; then
+			mkdir -p $1/lib/$TYPE/Win32
+			cp -v compiledLib/msys2/libvideoinput.a $1/lib/$TYPE/Win32/
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p $1/lib/$TYPE/x64
+			cp -v compiledLib/msys2/libvideoinput.a $1/lib/$TYPE/x64/
+		fi
+		
 	else
-		mkdir -p $1/lib/$TYPE
-		cp -v compiledLib/msys2/libvideoinput.a $1/lib/$TYPE/
+		echoWarning "Unknown type $TYPE"
 	fi
 
 	echoWarning "TODO: License Copy"
@@ -78,8 +90,12 @@ function clean() {
 	if [ "$TYPE" == "vs" ] ; then
 		cd videoInputSrcAndDemos/VS-videoInputcompileAsLib
 		vs-clean "videoInput.sln"
+		
 	elif [ "$TYPE" == "msys2" ] ; then
 		cd videoInputSrcAndDemos/msys2
 		make clean
+		
+	else
+		echoWarning "Unknown type $TYPE"
 	fi
 }

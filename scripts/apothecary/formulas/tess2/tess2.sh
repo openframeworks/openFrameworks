@@ -351,7 +351,6 @@ function build() {
 			TOOLCHAIN_FILE=$APOTHECARY_DIR/toolchains/mingw64.cmake
 		fi
 		
-		echo Compiling $ARCH bits version of rtAudio
 		mkdir -p build/$ARCH
     	cd build/$ARCH
 		rm -f CMakeCache.txt Makefile libtess2.a
