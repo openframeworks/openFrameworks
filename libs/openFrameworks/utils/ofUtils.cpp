@@ -4,7 +4,9 @@
 
 #include <chrono>
 #include <numeric>
-#include <boost/locale.hpp>
+#if defined(__MINGW32__)  //Use boost::locale on MSYS2 as MSYS2 only supports "C" locale natively (do not use GNU lib C"
+    #include <boost/locale.hpp>
+#endif
 #include <locale>
 
 #if !defined(TARGET_EMSCRIPTEN)
@@ -720,9 +722,12 @@ utf8::iterator<std::string::const_reverse_iterator> ofUTF8Iterator::rend() const
 static std::locale getLocale(const string & locale) {
 	std::locale loc;
 	try {
+#if defined(__MINGW32__) //Use to boost::locale on MSYS2
 		boost::locale::generator gen;
 		loc = gen(locale);
-		//loc = std::locale(locale.c_str());
+#else
+		loc = std::locale(locale.c_str());
+#endif
 	}
 	catch (...) {
 		ofLogWarning("ofUtils") << "Couldn't create locale " << locale << " using default, " << loc.name();
@@ -735,10 +740,13 @@ string ofToLower(const string & src, const string & locale){
 	std::string dst;
 	std::locale loc = getLocale(locale);
 	try{
+#if defined(__MINGW32__) //Use to boost::locale on MSYS2
 		dst = boost::locale::to_lower(src,loc);
-		/*for(auto c: ofUTF8Iterator(src)){
+#else
+		for(auto c: ofUTF8Iterator(src)){
 			utf8::append(std::tolower<wchar_t>(c, loc), back_inserter(dst));
-		}*/
+		}
+#endif
 	}catch(...){
 	}
 	return dst;
@@ -749,10 +757,13 @@ string ofToUpper(const string & src, const string & locale){
 	std::string dst;
 	std::locale loc = getLocale(locale);
 	try{
+#if defined(__MINGW32__) //Use to boost::locale on MSYS2
 		dst = boost::locale::to_upper(src,loc);
-		/*for(auto c: ofUTF8Iterator(src)){
+#else
+		for(auto c: ofUTF8Iterator(src)){
 			utf8::append(std::toupper<wchar_t>(c, loc), back_inserter(dst));
-		}*/
+		}
+#endif
 	}catch(...){
 	}
 	return dst;
