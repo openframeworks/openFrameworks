@@ -67,6 +67,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.glView startAnimation];
+	[self.glView resetTouches];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
