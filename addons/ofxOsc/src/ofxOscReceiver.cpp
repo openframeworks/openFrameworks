@@ -200,7 +200,12 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter)
                 if(address[i]==p->getEscapedName()){
                     if(p->type()==typeid(ofParameterGroup).name()){
                         if(address.size()>=i+1){
-                            p = &static_cast<ofParameterGroup*>(p)->get(address[i+1]);
+                            ofParameterGroup* g = static_cast<ofParameterGroup*>(p);
+                            if(g->contains(address[i+1])){
+                                p = &g->get(address[i+1]);
+                            }else{
+                                p = nullptr;
+                            }
                         }
                     }else if(p->type()==typeid(ofParameter<int>).name() && msg.getArgType(0)==OFXOSC_TYPE_INT32){
                         p->cast<int>() = msg.getArgAsInt32(0);
