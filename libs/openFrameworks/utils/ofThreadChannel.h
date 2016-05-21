@@ -293,7 +293,7 @@ private:
 	std::queue<T> queue;
 
 	/// \brief The mutext to protect the data.
-	std::mutex mutex;
+	mutable std::mutex mutex;
 
 	/// \brief The condition even to notify receivers.
 	std::condition_variable condition;
