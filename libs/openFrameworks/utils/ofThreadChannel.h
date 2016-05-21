@@ -269,7 +269,7 @@ public:
 	}
 
 
-	/// \brief Queries if the channel queue is empty.
+	/// \brief Queries whether the channel queue is empty.
 	///
 	/// This call is only an approximation, since messages come from a different
 	/// thread the channel can return true when calling empty() and then receive
