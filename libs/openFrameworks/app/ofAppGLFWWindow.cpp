@@ -60,6 +60,14 @@ ofAppGLFWWindow::~ofAppGLFWWindow(){
 
 void ofAppGLFWWindow::close(){
 	if(windowP){
+                glfwSetMouseButtonCallback(windowP, nullptr);
+                glfwSetCursorPosCallback(windowP, nullptr);
+                glfwSetCursorEnterCallback(windowP, nullptr);
+                glfwSetKeyCallback(windowP, nullptr);
+                glfwSetWindowSizeCallback(windowP, nullptr);
+                glfwSetWindowCloseCallback(windowP, nullptr);
+                glfwSetScrollCallback(windowP, nullptr);
+                glfwSetDropCallback(windowP, nullptr);
 		//hide the window before we destroy it stops a flicker on OS X on exit.
 		glfwHideWindow(windowP);
 		glfwDestroyWindow(windowP);
