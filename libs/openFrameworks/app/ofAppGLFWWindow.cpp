@@ -19,6 +19,8 @@
 	#include <X11/extensions/Xrandr.h>
 	#include "GLFW/glfw3native.h"
 	#include <X11/Xatom.h>
+	#include <xcb/xcb.h>
+	#include <xcb/xcbext.h>
 #elif defined(TARGET_OSX)
 	#include <Cocoa/Cocoa.h>
 	#define GLFW_EXPOSE_NATIVE_COCOA
@@ -60,14 +62,14 @@ ofAppGLFWWindow::~ofAppGLFWWindow(){
 
 void ofAppGLFWWindow::close(){
 	if(windowP){
-                glfwSetMouseButtonCallback(windowP, nullptr);
-                glfwSetCursorPosCallback(windowP, nullptr);
-                glfwSetCursorEnterCallback(windowP, nullptr);
-                glfwSetKeyCallback(windowP, nullptr);
-                glfwSetWindowSizeCallback(windowP, nullptr);
-                glfwSetWindowCloseCallback(windowP, nullptr);
-                glfwSetScrollCallback(windowP, nullptr);
-                glfwSetDropCallback(windowP, nullptr);
+		glfwSetMouseButtonCallback( windowP, nullptr );
+		glfwSetCursorPosCallback( windowP, nullptr );
+		glfwSetCursorEnterCallback( windowP, nullptr );
+		glfwSetKeyCallback( windowP, nullptr );
+		glfwSetWindowSizeCallback( windowP, nullptr );
+		glfwSetWindowCloseCallback( windowP, nullptr );
+		glfwSetScrollCallback( windowP, nullptr );
+		glfwSetDropCallback( windowP, nullptr );
 		//hide the window before we destroy it stops a flicker on OS X on exit.
 		glfwHideWindow(windowP);
 		glfwDestroyWindow(windowP);
@@ -310,7 +312,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwSetMouseButtonCallback(windowP, mouse_cb);
 	glfwSetCursorPosCallback(windowP, motion_cb);
 	glfwSetCursorEnterCallback(windowP, entry_cb);
-	glfwSetKeyCallback(windowP, keyboard_cb);
+	glfwSetKeyCallback(windowP, keyboard_cb);	
 	glfwSetWindowSizeCallback(windowP, resize_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
@@ -1057,8 +1059,47 @@ void ofAppGLFWWindow::error_cb(int errorCode, const char* errorDescription){
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancode, unsigned int codepoint, int action, int mods) {
-	int key;
+
+unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int keycode, int scancode, int modifier){
+#ifdef TARGET_LINUX
+	return XKeycodeToKeysym(window->getX11Display(), scancode, modifier);
+#endif
+#ifdef TARGET_WIN32
+	static WCHAR buf[2];
+	static BYTE keyboardState[256];
+	GetKeyboardState( keyboardState );
+
+	// Careful: keycode arrives translated into GLFW key codes,
+	// but keycode needs to be a virtual key (VK_...) so we're 
+	// in deep troble, since this information has been removed
+	// by GLFW...
+	//
+	// The way around this is to ask the operating system
+	// nicely to create a virtual key for us, based on 
+	// the scancode and the currently bound keyboard layout.
+	// https://msdn.microsoft.com/en-us/library/windows/desktop/ms646306(v=vs.85).aspx
+	//
+	// create a "fake" virtual key 
+	
+	UINT fakeVirtualKey = MapVirtualKey( scancode, MAPVK_VSC_TO_VK_EX );
+
+	int ret = ToUnicode( fakeVirtualKey, scancode, keyboardState, buf , 2, 0);
+
+	TCHAR;
+
+	if ( ret == 1 ){
+		return buf[0]; 
+	} else {
+		return 0;
+	}
+#endif
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancode, int action, int mods) {
+	int key = 0;
+	uint32_t codepoint = 0;
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	switch (keycode) {
 		case GLFW_KEY_ESCAPE:
 			key = OF_KEY_ESC;
@@ -1166,11 +1207,11 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 			key = OF_KEY_TAB;
 			break;   
 		default:
+			codepoint = keycodeToUnicode(instance, keycode, scancode, mods);
 			key = codepoint;
 			break;
 	}
 
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	if(action == GLFW_PRESS || action == GLFW_REPEAT){
 		instance->events().notifyKeyPressed(key,keycode,scancode,codepoint);
 	}else if (action == GLFW_RELEASE){
@@ -1266,7 +1307,7 @@ bool ofAppGLFWWindow::isWindowResizeable(){
 //------------------------------------------------------------
 void ofAppGLFWWindow::iconify(bool bIconify){
 	if(bIconify)
-			glfwIconifyWindow(windowP);
+		glfwIconifyWindow(windowP);
 	else
 		glfwRestoreWindow(windowP);
 }
