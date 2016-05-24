@@ -1,13 +1,8 @@
 
 def ofRoot(){ return '../../../' }
 
-
-import static groovy.io.FileType.*
-import static groovy.io.FileVisitResult.*
-
 // Load common functions
 apply from: ofRoot()+"libs/openFrameworksCompiled/project/android/common-functions.gradle"
-
 
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
@@ -16,7 +11,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle-experimental:0.7.0-alpha4'
+        classpath 'com.android.tools.build:gradle-experimental:0.7.0'
     }
 }
 
@@ -31,7 +26,7 @@ apply plugin: 'com.android.model.application'
 model {
     android {
         compileSdkVersion = 22
-        buildToolsVersion = "23.0.2"
+        buildToolsVersion = "23.0.3"
 
         defaultConfig.with {
             minSdkVersion.apiLevel    = 9
