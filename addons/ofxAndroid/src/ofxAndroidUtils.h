@@ -143,6 +143,7 @@ public:
 	ofEvent<void> cancelPressed;
 	ofEvent<void> backPressed;
 	ofEvent<bool> networkConnected;
+	ofEvent<ofOrientation> deviceOrientationChanged;
 	ofEvent<void> pause;
 	ofEvent<void> resume;
 	ofEvent<void> unloadGL;

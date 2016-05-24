@@ -32,6 +32,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
+import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
@@ -339,12 +340,14 @@ public class OFAndroid {
 	public void start(){
 		Log.i("OF","onStart");
 		enableTouchEvents();
+		enableOrientationChangeEvents();
 	}
 	
 	public void restart(){
 		Log.i("OF","onRestart");
 		enableTouchEvents();
 		onRestart();
+		enableOrientationChangeEvents();
         /*if(OFAndroidSoundStream.isInitialized() && OFAndroidSoundStream.wasStarted())
         	OFAndroidSoundStream.getInstance().start();*/
 	}
@@ -354,7 +357,8 @@ public class OFAndroid {
 	public void pause(){
 		Log.i("OF","onPause");
 		disableTouchEvents();
-		
+		disableOrientationChangeEvents();
+
 		onPause();
 
 		synchronized (OFAndroidObject.ofObjects) {
@@ -380,6 +384,7 @@ public class OFAndroid {
 		resumed = true;
 		Log.i("OF","onResume");
 		enableTouchEvents();
+		enableOrientationChangeEvents();
 		mGLView.onResume();
 		synchronized (OFAndroidObject.ofObjects) {
 			for(OFAndroidObject object : OFAndroidObject.ofObjects){
@@ -407,6 +412,7 @@ public class OFAndroid {
 		resumed = false;
 		Log.i("OF","onStop");
 		disableTouchEvents();
+		disableOrientationChangeEvents();
 		onStop();
 		
 		synchronized (OFAndroidObject.ofObjects) {
@@ -664,9 +670,10 @@ public class OFAndroid {
     public static native void cancelPressed();
     
     public static native void networkConnected(boolean conected);
-    
+	public static native void deviceOrientationChanged(int orientation);
 
-    // static methods to be called from OF c++ code
+
+	// static methods to be called from OF c++ code
     public static void setFullscreen(boolean fs){
     	//ofActivity.requestWindowFeature(Window.FEATURE_NO_TITLE);
     	//ofActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
@@ -699,10 +706,18 @@ public class OFAndroid {
     		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     		break;
     	case 270:
-    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+				ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+				break;
+			}
+			ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     		break;
     	case 180:
-    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+				ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+				break;
+			}
+			ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     		break;
     	case -1:
     		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
@@ -1012,6 +1027,7 @@ public class OFAndroid {
     private static OFActivity ofActivity;
     private static OFAndroid instance;
     private static OFGestureListener gestureListener;
+	private static OFOrientationListener orientationListener;
 	private static String packageName;
 	private static String dataPath;
 	public static boolean unpackingDone;
@@ -1064,7 +1080,15 @@ public class OFAndroid {
 	        mGLView.setOnTouchListener(gestureListener.touchListener);
 		}
 	}
-	
+
+	public static void enableOrientationChangeEvents(){
+		orientationListener.enable();
+	}
+
+	public static void disableOrientationChangeEvents(){
+		orientationListener.disable();
+	}
+
 	public static void initView(){        
         try {
         	Log.v("OF","trying to find class: "+packageName+".R$layout");
@@ -1089,6 +1113,7 @@ public class OFAndroid {
 			@Override
 			public void run() {
 				gestureListener = new OFGestureListener(ofActivity);
+				orientationListener = new OFOrientationListener(getContext());
 		        OFEGLConfigChooser.setGLESVersion(finalversion);
 		        initView();
 		        instance.resume();
