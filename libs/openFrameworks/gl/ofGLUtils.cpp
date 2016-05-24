@@ -712,7 +712,7 @@ bool ofGLCheckExtension(string searchName){
 	extensionsSet.insert(extensionsList.begin(),extensionsList.end());
 	return extensionsSet.find(searchName)!=extensionsSet.end();
 #else
-	return glewGetExtension(searchName.c_str());
+	return glewIsSupported(searchName.c_str());
 #endif
 }
 

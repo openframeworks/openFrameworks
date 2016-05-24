@@ -96,6 +96,15 @@ public:
 	GLint getAttributeLocation(const string & name) const;
 
 #ifndef TARGET_OPENGLES
+#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
+	GLint getUniformBlockIndex(const string & name) const;
+	GLint getUniformBlockBinding(const string & name) const;
+	void bindUniformBlock(GLuint bindind, const string & name) const;
+	void printActiveUniformBlocks() const;
+#endif
+#endif
+
+#ifndef TARGET_OPENGLES
 	void setAttribute1s(GLint location, short v1) const;
 	void setAttribute2s(GLint location, short v1, short v2) const;
 	void setAttribute3s(GLint location, short v1, short v2, short v3) const;
@@ -176,6 +185,13 @@ private:
 	unordered_map<GLenum, Shader> shaders;
 	unordered_map<string, GLint> uniformsCache;
 	mutable unordered_map<string, GLint> attributesBindingsCache;
+
+#ifndef TARGET_OPENGLES
+#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
+	bool uboAvailable;
+	unordered_map<string, GLint> uniformBlocksCache;
+#endif
+#endif
 
 	void checkProgramInfoLog(GLuint program);
 	bool checkProgramLinkStatus(GLuint program);
