@@ -182,7 +182,7 @@ void ofCoreEvents::setFrameRate(int _targetRate){
 
 	// --- > f / s
 
-	if (_targetRate == 0){
+	if (_targetRate <= 0){
 		bFrameRateSet = false;
 	}else{
 		bFrameRateSet	= true;
