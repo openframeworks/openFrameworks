@@ -8,8 +8,8 @@
 
 FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "msys2" "ios" "android" )
 
-# define the version
-VER=3.0.4
+# define the version by sha
+VER=32f38b97d544eb2fd9a568e94e37830106417b51
 
 # tools for git use
 GIT_URL=https://github.com/glfw/glfw.git
@@ -17,13 +17,7 @@ GIT_TAG=$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	# curl -Lk https://github.com/glfw/glfw/archive/$GIT_TAG.tar.gz -o glfw-$GIT_TAG.tar.gz
-	# temporary fix until https://github.com/openframeworks/openFrameworks/issues/3621 is resolved.
-	GIT_TAG=feature-keysUnicode
-	curl -Lk https://github.com/arturoc/glfw/archive/feature-keysUnicode.tar.gz -o glfw-$GIT_TAG.tar.gz
-	# need this version for cursor hotfix + arturos key modifiers 
-	# curl -Lk https://github.com/ofTheo/glfw/archive/feature-keysUnicode.tar.gz -o glfw-$GIT_TAG.tar.gz
-	# end fix
+	curl -Lk https://github.com/glfw/glfw/archive/$GIT_TAG.tar.gz -o glfw-$GIT_TAG.tar.gz
 	tar -xf glfw-$GIT_TAG.tar.gz
 	mv glfw-$GIT_TAG glfw
 	rm glfw*.tar.gz
