@@ -599,6 +599,9 @@ public:
     template<typename SrcType>
     ofImage_<PixelType>& operator= (const ofImage_<SrcType>& mom);
     
+    //move assignment
+    ofImage_<PixelType>& operator=(ofImage_<PixelType>&& mom);
+
     /// \}
     ///< \sa ofImageType
     
