@@ -600,6 +600,10 @@ Java_cc_openframeworks_OFAndroid_networkConnected( JNIEnv*  env, jobject  thiz, 
 	bool bConnected = (bool)connected;
 	ofNotifyEvent(ofxAndroidEvents().networkConnected,bConnected);
 }
+
+void
+Java_cc_openframeworks_OFAndroid_deviceOrientationChanged(JNIEnv*  env, jclass  thiz, jint orientation){
+	ofOrientation _orientation = (ofOrientation) orientation;
+	ofNotifyEvent(ofxAndroidEvents().deviceOrientationChanged,_orientation );
 }
-
-
+}
