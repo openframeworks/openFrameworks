@@ -1091,6 +1091,92 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int keycode, int scanco
 		return 0;
 	}
 #endif
+#ifdef TARGET_OSX
+	static UInt32 deadKeyState = 0;
+	static UniChar characters[8];
+	static UniCharCount characterCount = 0;
+
+	typedef struct __TISInputSource*  TISInputSourceRef;
+	typedef TISInputSourceRef (*pFnGetInputSource)(void); // define function pointer that may return a input source ref, no arguments
+	typedef void* (*pFnGetInputSourceProperty)(TISInputSourceRef,CFStringRef);
+	typedef UInt8 (*pFnGetKeyboardType)(void);
+	
+	static const CFBundleRef tisBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.HIToolbox"));
+	
+	// We need to call some system methods, following GLFW's example
+	// in their OS X version of ```_glfwPlatformGetKeyName```.
+	//
+	// We know these methods must be available, since GLFW uses them
+	// internally.
+	//
+	// The most important method is ```UCKeyTranslate``` - everything
+	// else here is just a royal preparation party to feed it with the
+	// correct parameters.
+	//
+	// Since these methods are hidden deep within Carbon,
+	// we have to first request function pointers to make
+	// them callable.
+	//
+	// We do this only the first time, then we're re-using them,
+	// that's why these elements are marked static, and static const.
+	//
+	static pFnGetInputSource         getInputSource         = (pFnGetInputSource)CFBundleGetFunctionPointerForName(tisBundle, CFSTR("TISCopyCurrentKeyboardLayoutInputSource"));
+	static pFnGetKeyboardType        getKeyboardType        = (pFnGetKeyboardType)CFBundleGetFunctionPointerForName(tisBundle,CFSTR("LMGetKbdType"));
+	static pFnGetInputSourceProperty getInputSourceProperty = (pFnGetInputSourceProperty)CFBundleGetFunctionPointerForName(tisBundle, CFSTR("TISGetInputSourceProperty"));
+	
+	static const TISInputSourceRef sourceRef = getInputSource(); // note that for the first time, this creates a copy on the heap, then we're re-using it.
+	
+	static const CFStringRef* kPropertyUnicodeKeyLayoutData = (CFStringRef*)CFBundleGetDataPointerForName(tisBundle, CFSTR("kTISPropertyUnicodeKeyLayoutData"));
+	static const CFStringRef kTISPropertyUnicodeKeyLayoutData = * kPropertyUnicodeKeyLayoutData;
+	static const CFDataRef UnicodeKeyLayoutData = (CFDataRef)getInputSourceProperty(sourceRef, kTISPropertyUnicodeKeyLayoutData);
+	
+	static const UCKeyboardLayout* pKeyboardLayout = (UCKeyboardLayout*)CFDataGetBytePtr(UnicodeKeyLayoutData);
+	
+	UInt32 mod_OSX = 0;
+	{
+		// We have to translate the GLFW modifier bitflags back to OS X,
+		// so that SHIFT, CONTROL, etc can be taken into account when
+		// calculating the unicode codepoint.
+		
+		if (modifier & GLFW_MOD_SHIFT)
+			mod_OSX |= NSShiftKeyMask;
+		if (modifier & GLFW_MOD_CONTROL)
+			mod_OSX |= NSControlKeyMask;
+		if (modifier & GLFW_MOD_ALT)
+			mod_OSX |= NSAlternateKeyMask;
+		if (modifier & GLFW_MOD_SUPER)
+			mod_OSX |= NSCommandKeyMask;
+	
+		// This is really weird, but although OSX documentation says to do to the following:
+		//		modifierKeyState = ((EventRecord.modifiers) >> 8) & 0xFF;
+		// Bit-shifting by 16 bit seems to be necessary...
+		//
+		// (Tested using an Austrian Mac Keyboard).
+		mod_OSX = (mod_OSX >> 16) & 0xFF;
+	}
+	
+	// All this yak shaving was necessary to feed this diva of a function call:
+	// https://developer.apple.com/library/mac/documentation/Carbon/Reference/Unicode_Utilities_Ref/index.html#//apple_ref/c/func/UCKeyTranslate
+	
+	if (noErr == UCKeyTranslate(pKeyboardLayout,
+					   scancode,
+					   kUCKeyActionDisplay,
+					   mod_OSX,
+					   getKeyboardType(),
+					   kUCKeyTranslateNoDeadKeysBit,
+					   &deadKeyState,
+					   sizeof(characters) / sizeof(characters[0]),
+					   &characterCount,
+					   characters))
+	{
+		// if successful, first character contains codepoint
+		return characters[0];
+	} else {
+		return 0;
+	}
+	
+#endif
+	return 0;
 }
 
 //------------------------------------------------------------
