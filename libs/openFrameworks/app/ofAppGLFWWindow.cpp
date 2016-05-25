@@ -1085,8 +1085,6 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int keycode, int scanco
 
 	int ret = ToUnicode( fakeVirtualKey, scancode, keyboardState, buf , 2, 0);
 
-	TCHAR;
-
 	if ( ret == 1 ){
 		return buf[0]; 
 	} else {
