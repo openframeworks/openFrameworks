@@ -45,7 +45,7 @@ void ofThread::startThread(){
 
 	threadDone = false;
 	threadRunning = true;
-	this->mutexBlocks = false;
+	this->mutexBlocks = true;
 
 	thread = std::thread(std::bind(&ofThread::run,this));
 }
