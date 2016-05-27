@@ -72,6 +72,7 @@ function build() {
 
  		make clean
  		make -j${PARALLEL_MAKE}
+ 		make install
 	fi
 }
 
