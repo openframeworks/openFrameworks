@@ -4,28 +4,52 @@
 
 class ofxGuiGroup;
 
+class ofxPanelHeader : public ofxGuiGroupHeader {
+
+	public:
+
+		ofxPanelHeader();
+		ofxPanelHeader(const ofJson &config);
+
+		~ofxPanelHeader(){
+		}
+
+		virtual bool mousePressed(ofMouseEventArgs & args) override;
+
+		ofEvent<void> loadPressedE;
+		ofEvent<void> savePressedE;
+
+	protected:
+
+		virtual void generateDraw() override;
+		virtual void render() override;
+		virtual void loadIcons();
+
+		ofRectangle loadBox, saveBox;
+		static ofImage loadIcon, saveIcon;
+
+};
+
 class ofxPanel : public ofxGuiGroup {
-public:
-	ofxPanel();
-	ofxPanel(const ofParameterGroup & parameters, const std::string& filename="settings.xml", float x = 10, float y = 10);
-	~ofxPanel();
 
-	ofxPanel * setup(const std::string& collectionName="", const std::string& filename="settings.xml", float x = 10, float y = 10);
-	ofxPanel * setup(const ofParameterGroup & parameters, const std::string& filename="settings.xml", float x = 10, float y = 10);
+	public:
 
-	bool mouseReleased(ofMouseEventArgs & args);
+		ofxPanel(const std::string& collectionName="");
+		ofxPanel(const std::string& collectionName, const ofJson & config);
+		ofxPanel(const ofParameterGroup & parameters, const ofJson & config = ofJson());
+		ofxPanel(const std::string& collectionName, const std::string& filename, float x = 10, float y = 10);
+		ofxPanel(const ofParameterGroup & parameters, const std::string& filename, float x = 10, float y = 10);
 
-	ofEvent<void> loadPressedE;
-	ofEvent<void> savePressedE;
-protected:
-	void render();
-	bool setValue(float mx, float my, bool bCheck);
-	void generateDraw();
-	void loadIcons();
-private:
-	ofRectangle loadBox, saveBox;
-	static ofImage loadIcon, saveIcon;
-    
-    ofPoint grabPt;
-	bool bGrabbed;
+		~ofxPanel();
+
+		void setup();
+
+		void onHeaderMove(MoveEventArgs& args);
+		void onLoadPressed();
+		void onSavePressed();
+
+	private:
+
+		bool headerListenersLoaded;
+
 };

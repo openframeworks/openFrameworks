@@ -1,411 +1,406 @@
 #include "ofxGuiGroup.h"
 #include "ofxPanel.h"
-#include "ofxSliderGroup.h"
 #include "ofGraphics.h"
-#include "ofxLabel.h"
-using namespace std;
+#include "ofxSliderGroup.h"
+#include "ofxGuiTabs.h"
+#include "ofxFpsPlotter.h"
+#include "JsonConfigParser.h"
 
-ofxGuiGroup::ofxGuiGroup(){
-	minimized = false;
-	spacing = 1;
-	spacingNextElement = 3;
-	header = defaultHeight;
-	bGuiActive = false;
+ofxGuiGroupHeader::ofxGuiGroupHeader(const ofJson &config):ofxBaseGui(config){
+	registerMouseEvents();
 }
 
-ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
-	minimized = false;
-	parent = nullptr;
-	setup(parameters, filename, x, y);
-}
+void ofxGuiGroupHeader::generateDraw(){
+	ofxBaseGui::generateDraw();
 
-ofxGuiGroup * ofxGuiGroup::setup(const std::string& collectionName, const std::string& filename, float x, float y){
-	parameters.setName(collectionName);
-	return setup(parameters, filename, x, y);
-}
-
-ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std::string& _filename, float x, float y){
-	b.x = x;
-	b.y = y;
-	header = defaultHeight;
-	spacing = 1;
-	spacingNextElement = 3;
-	if(parent != nullptr){
-		b.width = parent->getWidth();
-	}else{
-		b.width = defaultWidth;
-	}
-	clear();
-	filename = _filename;
-	bGuiActive = false;
-
-	for(std::size_t i = 0; i < _parameters.size(); i++){
-		string type = _parameters.getType(i);
-		if(type == typeid(ofParameter <int32_t> ).name()){
-			auto p = _parameters.getInt(i);
-			add(p);
-		}else if(type == typeid(ofParameter <uint32_t> ).name()){
-			auto p = _parameters.get<uint32_t>(i);
-			add(p);
-		}else if(type == typeid(ofParameter <int64_t> ).name()){
-			auto p = _parameters.get<int64_t>(i);
-			add(p);
-		}else if(type == typeid(ofParameter <uint64_t> ).name()){
-			auto p = _parameters.get<uint64_t>(i);
-			add(p);
-		}else if(type == typeid(ofParameter <int8_t> ).name()){
-			auto p = _parameters.get<int8_t>(i);
-			add(p);
-		}else if(type == typeid(ofParameter <uint8_t> ).name()){
-			auto p = _parameters.get<uint8_t>(i);
-			add(p);
-		}else if(type == typeid(ofParameter <int16_t> ).name()){
-			auto p = _parameters.get<int16_t>(i);
-			add(p);
-		}else if(type == typeid(ofParameter <uint16_t> ).name()){
-			auto p = _parameters.get<uint16_t>(i);
-			add(p);
-		}else if(type == typeid(ofParameter <float> ).name()){
-			auto p = _parameters.getFloat(i);
-			add(p);
-		}else if(type == typeid(ofParameter <double> ).name()){
-			auto p = _parameters.get<double>(i);
-			add(p);
-		}else if(type == typeid(ofParameter <bool> ).name()){
-			auto p = _parameters.getBool(i);
-			add(p);
-		}else if(type == typeid(ofParameter <ofVec2f> ).name()){
-			auto p = _parameters.getVec2f(i);
-			add(p);
-		}else if(type == typeid(ofParameter <ofVec3f> ).name()){
-			auto p = _parameters.getVec3f(i);
-			add(p);
-		}else if(type == typeid(ofParameter <ofVec4f> ).name()){
-			auto p = _parameters.getVec4f(i);
-			add(p);
-		}else if(type == typeid(ofParameter <ofColor> ).name()){
-			auto p = _parameters.getColor(i);
-			add(p);
-		}else if(type == typeid(ofParameter <ofShortColor> ).name()){
-			auto p = _parameters.getShortColor(i);
-			add(p);
-		}else if(type == typeid(ofParameter <ofFloatColor> ).name()){
-			auto p = _parameters.getFloatColor(i);
-			add(p);
-		}else if(type == typeid(ofParameter <string> ).name()){
-			auto p = _parameters.getString(i);
-			add(p);
-		}else if(type == typeid(ofParameterGroup).name()){
-			auto p = _parameters.getGroup(i);
-			ofxGuiGroup * panel = new ofxGuiGroup(p);
-			add(panel);
+	ofxGuiGroup* _parent = dynamic_cast<ofxGuiGroup*>(parent());
+	if(_parent){
+		textMesh.clear();
+		if(_parent->getShowName()){
+			textMesh.append(getTextMesh(_parent->getName(), textPadding, getHeight()/ 2 + 4));
+		}
+		if(_parent->getMinimized()){
+			textMesh.append(getTextMesh("+", getWidth() - textPadding - 8, getHeight() / 2 + 4));
 		}else{
-			ofLogWarning() << "ofxBaseGroup; no control for parameter of type " << type;
+			textMesh.append(getTextMesh("-", getWidth()- textPadding - 8, getHeight() / 2 + 4));
+		}
+	}
+}
+
+ofxGuiGroupHeader::~ofxGuiGroupHeader(){
+}
+
+void ofxGuiGroupHeader::render() {
+	ofxBaseGui::render();
+
+	ofSetColor(textColor);
+
+	ofxGuiGroup* _parent = dynamic_cast<ofxGuiGroup*>(parent());
+	if(_parent){
+		if(_parent->getShowName()){
+			ofSetColor(textColor);
+			bindFontTexture();
+			textMesh.draw();
+			unbindFontTexture();
 		}
 	}
 
-	parameters = _parameters;
+}
+
+bool ofxGuiGroupHeader::mousePressed(ofMouseEventArgs & args){
+
+	if(!isHidden()){
+		ofRectangle minButton(getWidth() - textPadding * 3, 0, textPadding * 3, getHeight());
+		minButton.setPosition(localToScreen(minButton.getPosition()));
+		if(minButton.inside(args.x, args.y)){
+			ofxGuiGroup* _parent = dynamic_cast<ofxGuiGroup*>(parent());
+			if(_parent){
+				_parent->toggleMinimize();
+				this->setNeedsRedraw();
+				return true;
+			}
+		}
+	}
+
+	return ofxBaseGui::mousePressed(args);
+
+}
+
+ofxGuiGroup::ofxGuiGroup()
+	:ofxBaseGui(){
+
+	setup();
+
+}
+
+ofxGuiGroup::ofxGuiGroup(const std::string& collectionName)
+	:ofxBaseGui(){
+
+	setup();
+	parameters.setName(collectionName);
+
+}
+
+ofxGuiGroup::ofxGuiGroup(const std::string& collectionName, const ofJson & config)
+	:ofxGuiGroup(collectionName){
+
+	_setConfig(config);
+
+}
+
+ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const ofJson & config)
+	:ofxGuiGroup(_parameters.getName()){
+
+	addParametersFrom(_parameters);
+	_setConfig(config);
+
+}
+
+ofxGuiGroup::ofxGuiGroup(const std::string& collectionName, const std::string& _filename, float x, float y)
+	:ofxGuiGroup(collectionName){
+
+	filename = _filename;
+	setPosition(x,y);
+
+}
+
+ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const std::string& _filename, float x, float y)
+	:ofxGuiGroup(_parameters.getName()){
+
+	filename = _filename;
+	setPosition(x,y);
+	addParametersFrom(_parameters);
+
+}
+
+
+ofxGuiGroup::~ofxGuiGroup(){
+
+	showHeader.removeListener(this, &ofxGuiGroup::onHeaderVisibility);
+	headerHeight.removeListener(this, &ofxGuiGroup::onHeaderHeight);
+	ofRemoveListener(resize, this, &ofxGuiGroup::onResize);
+	unregisterMouseEvents();
+
+}
+
+void ofxGuiGroup::setup(){
+
+//	setPercentalWidth(false);
+//	setSize(defaultWidth, defaultHeight);
+
+	header = nullptr;
+
+	filename.set("filename","settings.xml");
+
+	exclusiveToggles.set("exclusive toggles", false);
+	minimized.set("minimized", false);
+
+	createLayout<FloatingBoxLayout>(this, Orientation::VERTICAL);
+	headerHeight.set("header-height", defaultHeight);
+	showHeader.set("show-header", true);
+
+	showHeader.addListener(this, &ofxGuiGroup::onHeaderVisibility);
+	headerHeight.addListener(this, &ofxGuiGroup::onHeaderHeight);
+	ofAddListener(resize, this, &ofxGuiGroup::onResize);
+
+	header = add<ofxGuiGroupHeader>();
+	header->setMargin(0);
+	header->setHeight(headerHeight);
+	header->setBackgroundColor(headerBackgroundColor);
+	header->setBorderWidth(0);
+
+	clear();
+
 	registerMouseEvents();
 
-	setNeedsRedraw();
-
-	return this;
 }
 
-void ofxGuiGroup::add(ofxBaseGui * element){
-	collection.push_back(element);
+void ofxGuiGroup::_setConfig(const ofJson &config){
 
-	element->setPosition(b.x, b.y + b.height  + spacing);
+	ofxBaseGui::_setConfig(config);
 
-	b.height += element->getHeight() + spacing;
+	JsonConfigParser::parse(config, headerHeight);
+	JsonConfigParser::parse(config, showHeader);
 
-	//if(b.width<element->getWidth()) b.width = element->getWidth();
+}
 
-	element->unregisterMouseEvents();
+void ofxGuiGroup::addParametersFrom(const ofParameterGroup & parameters){
+	for(auto & p: parameters){
+		if(p->isReadOnly()){
+			ofLogWarning("ofxGui") << "Trying to add " << p->getName() << ": read only parameters not supported yet in ofxGui";
+			continue;
+		}
+		string type = p->type();
+		// TODO is this neccessary?
+		if(type == typeid(ofParameter <int32_t> ).name()){
+			add(p->cast<int>());
+		}else if(type == typeid(ofParameter <uint32_t> ).name()){
+			add(p->cast<uint32_t>());
+		}else if(type == typeid(ofParameter <int64_t> ).name()){
+			add(p->cast<int64_t>());
+		}else if(type == typeid(ofParameter <uint64_t> ).name()){
+			add(p->cast<uint64_t>());
+		}else if(type == typeid(ofParameter <int8_t> ).name()){
+			add(p->cast<int8_t>());
+		}else if(type == typeid(ofParameter <uint8_t> ).name()){
+			add(p->cast<uint8_t>());
+		}else if(type == typeid(ofParameter <int16_t> ).name()){
+			add(p->cast<int16_t>());
+		}else if(type == typeid(ofParameter <uint16_t> ).name()){
+			add(p->cast<uint16_t>());
+		}else if(type == typeid(ofParameter<float>).name()){
+			add(p->cast<float>());
+		}else if(type == typeid(ofParameter <double> ).name()){
+			add(p->cast<double>());
+		}else if(type == typeid(ofParameter<void>).name()){
+			add(p->cast<void>());
+		}else if(type == typeid(ofParameter<bool>).name()){
+			add(p->cast<bool>());
+		}else if(type == typeid(ofParameter<ofVec2f>).name()){
+			add(p->cast<ofVec2f>());
+		}else if(type == typeid(ofParameter<ofVec3f>).name()){
+			add(p->cast<ofVec3f>());
+		}else if(type == typeid(ofParameter<ofVec4f>).name()){
+			add(p->cast<ofVec4f>());
+		}else if(type == typeid(ofParameter<ofColor>).name()){
+			add(p->cast<ofColor>());
+		}else if(type == typeid(ofParameter<ofShortColor>).name()){
+			add(p->cast<ofShortColor>());
+		}else if(type == typeid(ofParameter<ofFloatColor>).name()){
+			add(p->cast<ofFloatColor>());
+		}else if(type == typeid(ofParameter<string>).name()){
+			add(p->cast<string>());
+		}else if(type == typeid(ofParameterGroup).name()){
+			add<ofxGuiGroup>(static_cast<ofParameterGroup& >(*p));
+		}else{
+			ofLogWarning("ofxGui") << "Trying to add " << p->getName() << ": ofxBaseGroup; no control for parameter of type " << type;
 
-	element->setParent(this);
-
-	ofxGuiGroup * subgroup = dynamic_cast <ofxGuiGroup *>(element);
-	if(subgroup != nullptr){
-		subgroup->filename = filename;
-		subgroup->setWidthElements(b.width * .98);
-	}else{
-		if(parent != nullptr){
-			element->setSize(b.width * .98, element->getHeight());
-			element->setPosition(b.x + b.width - element->getWidth(), element->getPosition().y);
 		}
 	}
-
-	parameters.add(element->getParameter());
-	setNeedsRedraw();
 }
 
-void ofxGuiGroup::setWidthElements(float w){
-    for(std::size_t i = 0; i < collection.size(); i++){
-		collection[i]->setSize(w, collection[i]->getHeight());
-		collection[i]->setPosition(b.x + b.width - w, collection[i]->getPosition().y);
-		ofxGuiGroup * subgroup = dynamic_cast <ofxGuiGroup *>(collection[i]);
-		if(subgroup != nullptr){
-			subgroup->setWidthElements(w * .98);
-		}
-	}
-	sizeChangedCB();
-	setNeedsRedraw();
+ofxButton* ofxGuiGroup::add(ofParameter <void> & parameter, const ofJson & config){
+	return add<ofxButton>(parameter, config);
 }
 
-void ofxGuiGroup::add(const ofParameterGroup & parameters){
-	ofxGuiGroup * panel = new ofxGuiGroup(parameters);
-	panel->parent = this;
-	add(panel);
+ofxToggle* ofxGuiGroup::add(ofParameter <bool> & parameter, const ofJson & config){
+	return add<ofxToggle>(parameter, config);
 }
 
-void ofxGuiGroup::add(ofParameter <bool> & parameter){
-	add(new ofxToggle(parameter, b.width));
+ofxLabel *ofxGuiGroup::add(ofParameter <std::string> & parameter, const ofJson & config){
+	return add<ofxLabel>(parameter, config);
 }
 
-void ofxGuiGroup::add(ofParameter <string> & parameter){
-	add(new ofxLabel(parameter, b.width));
+ofxVec2Slider* ofxGuiGroup::add(ofParameter <ofVec2f> & parameter, const ofJson & config){
+	return add<ofxVec2Slider>(parameter, config);
 }
 
-void ofxGuiGroup::add(ofParameter <ofVec2f> & parameter){
-	add(new ofxVecSlider_ <ofVec2f>(parameter, b.width));
+ofxVec3Slider* ofxGuiGroup::add(ofParameter <ofVec3f> & parameter, const ofJson & config){
+	return add<ofxVec3Slider>(parameter, config);
 }
 
-void ofxGuiGroup::add(ofParameter <ofVec3f> & parameter){
-	add(new ofxVecSlider_ <ofVec3f>(parameter, b.width));
+ofxVec4Slider* ofxGuiGroup::add(ofParameter <ofVec4f> & parameter, const ofJson & config){
+	return add<ofxVec4Slider>(parameter, config);
 }
 
-void ofxGuiGroup::add(ofParameter <ofVec4f> & parameter){
-	add(new ofxVecSlider_ <ofVec4f>(parameter, b.width));
+ofxColorSlider* ofxGuiGroup::add(ofParameter <ofColor> & parameter, const ofJson & config){
+	return add<ofxColorSlider>(parameter, config);
 }
 
-void ofxGuiGroup::add(ofParameter <ofColor> & parameter){
-	add(new ofxColorSlider_ <unsigned char>(parameter, b.width));
+ofxShortColorSlider* ofxGuiGroup::add(ofParameter <ofShortColor> & parameter, const ofJson & config){
+	return add<ofxShortColorSlider>(parameter, config);
 }
 
-void ofxGuiGroup::add(ofParameter <ofShortColor> & parameter){
-	add(new ofxColorSlider_ <unsigned short>(parameter, b.width));
+ofxFloatColorSlider* ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter, const ofJson & config){
+	return add<ofxFloatColorSlider>(parameter, config);
 }
 
-void ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter){
-	add(new ofxColorSlider_ <float>(parameter, b.width));
+void ofxGuiGroup::add(const ofParameterGroup &parameters){
+	addParametersFrom(parameters);
+}
+
+ofxBaseGui* ofxGuiGroup::addSpacer(float width, float height){
+	ofxBaseGui* e = add<ofxBaseGui>();
+	e->setSize(width, height);
+	e->setBorderWidth(0);
+	e->setBackgroundColor(ofColor(0,0,0,0));
+	return e;
+}
+
+ofxBaseGui *ofxGuiGroup::addSpacer(const ofJson& config){
+	ofxBaseGui* e = add<ofxBaseGui>();
+	e->setBorderWidth(0);
+	e->setBackgroundColor(ofColor(0,0,0,0));
+	e->setConfig(config);
+	return e;
+}
+
+ofxFpsPlotter* ofxGuiGroup::addFpsPlotter(const ofJson &config){
+	return add<ofxFpsPlotter>(config);
+}
+
+ofxGuiGroup* ofxGuiGroup::addGroup(const string &name, const ofJson &config){
+	return add<ofxGuiGroup>(name, config);
+}
+
+ofxGuiGroup* ofxGuiGroup::addGroup(const ofParameterGroup & parameters, const ofJson &config){
+	return add<ofxGuiGroup>(parameters, config);
+}
+
+ofxPanel* ofxGuiGroup::addPanel(const string &name, const ofJson &config){
+	return add<ofxPanel>(name, config);
+}
+
+ofxPanel* ofxGuiGroup::addPanel(const ofParameterGroup & parameters, const ofJson &config){
+	return add<ofxPanel>(parameters, config);
+}
+
+ofxGuiTabs* ofxGuiGroup::addTabs(const string &name, const ofJson &config){
+	return add<ofxGuiTabs>(name, config);
 }
 
 void ofxGuiGroup::clear(){
-	collection.clear();
-	parameters.clear();
-	b.height = header + spacing + spacingNextElement;
-	sizeChangedCB();
-}
-
-bool ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
-	ofMouseEventArgs a = args;
-	for(std::size_t i = 0; i < collection.size(); i++){
-		if(collection[i]->mouseMoved(a)){
-			return true;
+	while(getControls().size() > 0) {
+		if(!removeChild(getControls().at(0))){
+			ofLogError("Element::clear") << "Could not remove child";
+			return;
 		}
 	}
-	if(isGuiDrawing() && b.inside(ofPoint(args.x, args.y))){
-		return true;
-	}else{
-		return false;
-	}
+	active_toggle_index = -1;
 }
 
-bool ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
-	if(setValue(args.x, args.y, true)){
-		return true;
-	}
-	if(bGuiActive){
-		ofMouseEventArgs a = args;
-		for(std::size_t i = 0; i < collection.size(); i++){
-			if(collection[i]->mousePressed(a)){
-				return true;
-			}
-		}
-	}
-	return false;
-}
+//vector <string> ofxGuiGroup::getControlNames() const{
+//	vector <string> names;
+//	// TODO
+////	for(auto & e: collection){
+////		names.push_back(e->getName());
+////	}
+//	return names;
+//}
 
-bool ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
-	if(setValue(args.x, args.y, false)){
-		return true;
-	}
-	if(bGuiActive){
-		ofMouseEventArgs a = args;
-		for(std::size_t i = 0; i < collection.size(); i++){
-			if(collection[i]->mouseDragged(a)){
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-bool ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
-	bGuiActive = false;
-	for(std::size_t k = 0; k < collection.size(); k++){
-		ofMouseEventArgs a = args;
-		if(collection[k]->mouseReleased(a)){
-			return true;
-		}
-	}
-	if(isGuiDrawing() && b.inside(ofPoint(args.x, args.y))){
-		return true;
-	}else{
-		return false;
-	}
-}
-
-bool ofxGuiGroup::mouseScrolled(ofMouseEventArgs & args){
-	ofMouseEventArgs a = args;
-	for(std::size_t i = 0; i < collection.size(); i++){
-		if(collection[i]->mouseScrolled(a)){
-			return true;
-		}
-	}
-	if(isGuiDrawing() && b.inside(ofPoint(args.x, args.y))){
-		return true;
-	}else{
-		return false;
-	}
-}
-
-void ofxGuiGroup::generateDraw(){
-	border.clear();
-	border.setFillColor(ofColor(thisBorderColor, 180));
-	border.setFilled(true);
-	border.rectangle(b.x, b.y + spacingNextElement, b.width + 1, b.height);
-
-
-	headerBg.clear();
-	headerBg.setFillColor(thisHeaderBackgroundColor);
-	headerBg.setFilled(true);
-	headerBg.rectangle(b.x, b.y + 1 + spacingNextElement, b.width, header);
-
-	textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y + spacingNextElement);
-	if(minimized){
-		textMesh.append(getTextMesh("+", b.width - textPadding - 8 + b.x, header / 2 + 4 + b.y + spacingNextElement));
-	}else{
-		textMesh.append(getTextMesh("-", b.width - textPadding - 8 + b.x, header / 2 + 4 + b.y + spacingNextElement));
-	}
-}
-
-void ofxGuiGroup::render(){
-	border.draw();
-	headerBg.draw();
-
-	ofBlendMode blendMode = ofGetStyle().blendingMode;
-	if(blendMode != OF_BLENDMODE_ALPHA){
-		ofEnableAlphaBlending();
-	}
-	ofColor c = ofGetStyle().color;
-	ofSetColor(thisTextColor);
-
-	bindFontTexture();
-	textMesh.draw();
-	unbindFontTexture();
-
-	if(!minimized){
-		for(std::size_t i = 0; i < collection.size(); i++){
-			collection[i]->draw();
-		}
-	}
-
-	ofSetColor(c);
-	if(blendMode != OF_BLENDMODE_ALPHA){
-		ofEnableBlendMode(blendMode);
-	}
-}
-
-vector <string> ofxGuiGroup::getControlNames() const{
-	vector <string> names;
-	for(std::size_t i = 0; i < collection.size(); i++){
-		names.push_back(collection[i]->getName());
-	}
-	return names;
-}
-
-ofxIntSlider & ofxGuiGroup::getIntSlider(const std::string& name){
+ofxIntSlider* ofxGuiGroup::getIntSlider(const std::string& name){
 	return getControlType <ofxIntSlider>(name);
 }
 
-ofxFloatSlider & ofxGuiGroup::getFloatSlider(const std::string& name){
+ofxFloatSlider* ofxGuiGroup::getFloatSlider(const std::string& name){
 	return getControlType <ofxFloatSlider>(name);
 }
 
-ofxToggle & ofxGuiGroup::getToggle(const std::string& name){
+ofxToggle* ofxGuiGroup::getToggle(const std::string& name){
 	return getControlType <ofxToggle>(name);
 }
 
-ofxButton & ofxGuiGroup::getButton(const std::string& name){
+ofxButton* ofxGuiGroup::getButton(const std::string& name){
 	return getControlType <ofxButton>(name);
 }
 
-ofxGuiGroup & ofxGuiGroup::getGroup(const std::string& name){
+ofxGuiGroup* ofxGuiGroup::getGroup(const std::string& name){
 	return getControlType <ofxGuiGroup>(name);
 }
 
-ofxBaseGui * ofxGuiGroup::getControl(const std::string& name){
-    for(std::size_t i = 0; i < collection.size(); i++){
-		if(collection[i]->getName() == name){
-			return collection[i];
+ofxBaseGui* ofxGuiGroup::getControl(const std::string& name){
+	for(auto & e: getControls()){
+		if(e){
+			if(e->getName() == name){
+				return e;
+			}
 		}
 	}
 	return nullptr;
 }
 
-bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
+int ofxGuiGroup::getControlIndex(ofxBaseGui* element){
 
-	if(!isGuiDrawing()){
-		bGuiActive = false;
-		return false;
-	}
-
-
-	if(bCheck){
-		if(b.inside(mx, my)){
-			bGuiActive = true;
-
-			ofRectangle minButton(b.x + b.width - textPadding * 3, b.y, textPadding * 3, header);
-			if(minButton.inside(mx, my)){
-				minimized = !minimized;
-				if(minimized){
-					minimize();
-				}else{
-					maximize();
-				}
-				return true;
+	for(int i = 0; i < (int)getControls().size(); i++){
+		ofxBaseGui *e = getControl(i);
+		if(e){
+			if(e == element){
+				return i;
 			}
 		}
 	}
+	return -1;
 
-	return false;
+}
+
+int ofxGuiGroup::getControlIndex(const std::string& name){
+
+	for(int i = 0; i < (int)getControls().size(); i++){
+		ofxBaseGui *e = getControl(i);
+		if(e){
+			if(e->getName() == name){
+				return i;
+			}
+		}
+	}
+	return -1;
 }
 
 void ofxGuiGroup::minimize(){
 	minimized = true;
-	b.height = header + spacing + spacingNextElement + 1 /*border*/;
-	if(parent){
-		parent->sizeChangedCB();
+
+	for(auto& child : getControls()){
+		child->setHidden(true);
 	}
+
+	invalidateChildShape();
 	setNeedsRedraw();
 }
 
 void ofxGuiGroup::maximize(){
 	minimized = false;
-    for(std::size_t i = 0; i < collection.size(); i++){
-		b.height += collection[i]->getHeight() + spacing;
+
+	for(auto& child : getControls()){
+		child->setHidden(false);
 	}
-	if(parent){
-		parent->sizeChangedCB();
-	}
+
+	invalidateChildShape();
 	setNeedsRedraw();
 }
 
 void ofxGuiGroup::minimizeAll(){
-	for(std::size_t i = 0; i < collection.size(); i++){
-		ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(collection[i]);
+	for(auto & e: getControls()){
+		ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(e);
 		if(group){
 			group->minimize();
 		}
@@ -413,60 +408,172 @@ void ofxGuiGroup::minimizeAll(){
 }
 
 void ofxGuiGroup::maximizeAll(){
-	for(std::size_t i = 0; i < collection.size(); i++){
-		ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(collection[i]);
+	for(auto & e: getControls()){
+		ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(e);
 		if(group){
 			group->maximize();
 		}
 	}
 }
 
-void ofxGuiGroup::sizeChangedCB(){
-	float y;
-	if(parent){
-		y = b.y  + header + spacing + spacingNextElement;
-	}else{
-		y = b.y  + header + spacing;
+bool ofxGuiGroup::getMinimized(){
+	return minimized;
+}
+
+void ofxGuiGroup::toggleMinimize(){
+	if(minimized){
+		maximize();
+	}else {
+		minimize();
 	}
-	for(std::size_t i = 0; i < collection.size(); i++){
-		collection[i]->setPosition(collection[i]->getPosition().x, y + spacing);
-		y += collection[i]->getHeight() + spacing;
+}
+
+void ofxGuiGroup::setShowHeader(bool show) {
+	if(show == false){
+		if(minimized)
+			maximize();
 	}
-	b.height = y - b.y;
-	if(parent){
-		parent->sizeChangedCB();
+	showHeader = show;
+	invalidateChildShape();
+ }
+
+std::vector<ofxBaseGui*> ofxGuiGroup::getControls(){
+	static_assert(std::is_base_of<Element, ofxBaseGui>(), "ElementType must be an Element or derived from Element.");
+
+	std::vector<ofxBaseGui*> results;
+
+	for (auto& child : _children){
+		ofxBaseGui* pChild = dynamic_cast<ofxBaseGui*>(child.get());
+
+		if (pChild && pChild != header){
+			results.push_back(pChild);
+		}
 	}
-	setNeedsRedraw();
+
+	return results;
 }
 
 
-std::size_t ofxGuiGroup::getNumControls() const {
-	return collection.size();
+std::size_t ofxGuiGroup::getNumControls() {
+	return getControls().size();
 }
 
 ofxBaseGui * ofxGuiGroup::getControl(std::size_t num){
-	if(num < collection.size()){
-		return collection[num];
+	if(num < getControls().size()){
+		return dynamic_cast <ofxBaseGui *>(getControls().at(num));
 	}else{
 		return nullptr;
 	}
 }
 
+bool ofxGuiGroup::getTogglesExclusive() const {
+	return exclusiveToggles;
+}
+
+void ofxGuiGroup::setExclusiveToggles(bool exclusive) {
+	exclusiveToggles = exclusive;
+	if(exclusiveToggles) {
+		setOneToggleActive();
+	}
+}
+
+bool ofxGuiGroup::setActiveToggle(ofxToggle* toggle) {
+	if(!(*toggle)) {
+		*toggle = true;
+		deactivateAllOtherToggles(toggle);
+		return true;
+	}
+	return false;
+}
+
+bool ofxGuiGroup::setActiveToggle(int index) {
+	if(index >= 0 && index < (int)getControls().size()){
+		if(ofxToggle* toggle = dynamic_cast<ofxToggle*>(getControls().at(index))) {
+			return setActiveToggle(toggle);
+		}
+		else {
+			ofLogError("ofxGuiGroup", "cannot activate control " + ofToString(index) + " because it's no ofxToggle.");
+			return false;
+		}
+	}
+	return false;
+}
+
+void ofxGuiGroup::deactivateAllOtherToggles(ofxToggle *toggle) {
+	if(exclusiveToggles) {
+		int active_index = -1;
+		for(int i = 0; i < (int)getControls().size(); i++){
+			if(ofxToggle* t = dynamic_cast<ofxToggle*>(getControls()[i])) {
+				active_index++;
+				if(t != toggle) {
+				   *t = false;
+				}
+				else {
+					active_toggle_index.set(active_index);
+				}
+			}
+		}
+	}
+}
+
+void ofxGuiGroup::setOneToggleActive() {
+	if(active_toggle_index == -1){
+		for(auto &e : getControls()){
+			if(ofxToggle* t = dynamic_cast<ofxToggle*>(e)) {
+				setActiveToggle(t);
+				return;
+			}
+		}
+	}
+}
+
+
+ofParameter<int>& ofxGuiGroup::getActiveToggleIndex() {
+	return active_toggle_index;
+}
+
 ofAbstractParameter & ofxGuiGroup::getParameter(){
+	parameters.clear();
+	for(auto child : getControls()){
+		ofxBaseGui* e = dynamic_cast<ofxBaseGui*>(child);
+		if(e){
+			parameters.add(e->getParameter());
+		}
+	}
 	return parameters;
 }
 
-void ofxGuiGroup::setPosition(const ofPoint& p){
-	ofVec2f diff = p - b.getPosition();
-
-	for(std::size_t i = 0; i < collection.size(); i++){
-		collection[i]->setPosition(collection[i]->getPosition() + diff);
-	}
-
-	b.setPosition(p);
-	setNeedsRedraw();
+string ofxGuiGroup::getName(){
+	return parameters.getName();
 }
 
-void ofxGuiGroup::setPosition(float x, float y){
-	setPosition(ofVec2f(x, y));
+void ofxGuiGroup::setName(const std::string& _name){
+	parameters.setName(_name);
+}
+
+ofxBaseGui* ofxGuiGroup::getHeader(){
+	return header;
+}
+
+void ofxGuiGroup::onHeaderVisibility(bool &showing){
+	if(header){
+		header->setHidden(!showing);
+	}
+}
+
+void ofxGuiGroup::onHeaderHeight(float &height){
+	if(header){
+		header->setHeight(height);
+	}
+}
+
+void ofxGuiGroup::onResize(ResizeEventArgs & re){
+
+}
+
+void ofxGuiGroup::setHeaderBackgroundColor(const ofColor & color){
+	ofxBaseGui::setHeaderBackgroundColor(color);
+	if(header){
+		header->setBackgroundColor(color);
+	}
 }

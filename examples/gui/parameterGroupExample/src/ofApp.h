@@ -22,10 +22,11 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+
 		void vSyncChanged(bool & vSync);
 
-		ofxPanel gui;
+		ofxGui gui;
+		ofxPanel* panel;
 		ofParameter<bool> vSync;
 		ofParameterGroup parameters;
 		ofXml settings;

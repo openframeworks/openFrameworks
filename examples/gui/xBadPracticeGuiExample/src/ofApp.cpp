@@ -1,24 +1,27 @@
 #include "ofApp.h"
 
-	
 //--------------------------------------------------------------
 void ofApp::setup(){
-	ofSetVerticalSync(true);
-	
-	// we add this listener before setting up so the initial circle resolution is correct
-	circleResolution.addListener(this, &ofApp::circleResolutionChanged);
-	ringButton.addListener(this,&ofApp::ringButtonPressed);
 
-	gui.setup("panel"); // most of the time you don't need a name but don't forget to call setup
-	gui.add(filled.set("bFill", true));
-	gui.add(radius.set( "radius", 140, 10, 300 ));
-	gui.add(center.set("center",ofVec2f(ofGetWidth()*.5,ofGetHeight()*.5),ofVec2f(0,0),ofVec2f(ofGetWidth(),ofGetHeight())));
-	gui.add(color.set("color",ofColor(100,100,140),ofColor(0,0),ofColor(255,255)));
-	gui.add(circleResolution.set("circleRes", 5, 3, 90));
-	gui.add(twoCircles.setup("twoCircles"));
-	gui.add(ringButton.setup("ring"));
-	gui.add(screenSize.set("screenSize", ""));
-	
+	ofSetFrameRate(60);
+
+	ofSetVerticalSync(true);
+
+	panel = gui.getRoot()->add<ofxPanel>("panel","",10,10);
+
+	filled = panel->add<ofxToggle>("fill");
+	radius = panel->add<ofxFloatSlider>("radius", 140, 10, 300);
+	center = panel->add<ofxVec2Slider>("center", ofVec2f(ofGetWidth()*.5, ofGetHeight()*.5), ofVec2f(0, 0), ofVec2f(ofGetWidth(), ofGetHeight()));
+	color = panel->add<ofxColorSlider>("color", ofColor(100, 100, 140), ofColor(0, 0), ofColor(255, 255));
+	circleResolution = panel->add<ofxIntSlider>("circle res", 5, 3, 90);
+	twoCircles = panel->add<ofxButton>("two circles");
+	ringButton = panel->add<ofxButton>("ring");
+	screenSize = panel->add<ofxLabel>("screen size", ofToString(ofGetWidth())+"x"+ofToString(ofGetHeight()));
+
+	ringButton->addListener(this, &ofApp::ringButtonPressed);
+	//ugly fix to trigger initial value
+	ringButton->getParameter().cast<bool>().set(*ringButton);
+
 	bHide = false;
 
 	ring.load("ring.wav");
@@ -26,12 +29,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-	ringButton.removeListener(this,&ofApp::ringButtonPressed);
-}
-
-//--------------------------------------------------------------
-void ofApp::circleResolutionChanged(int & circleResolution){
-	ofSetCircleResolution(circleResolution);
+	ringButton->removeListener(this, &ofApp::ringButtonPressed);
 }
 
 //--------------------------------------------------------------
@@ -41,69 +39,68 @@ void ofApp::ringButtonPressed(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	ofSetCircleResolution(*circleResolution);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackgroundGradient(ofColor::white, ofColor::gray);
-    
-	if( filled ){
+	ofBackgroundGradient(ofColor::white, ofColor::gray);
+
+	if(*filled){
 		ofFill();
 	}else{
 		ofNoFill();
 	}
 
-	ofSetColor(color);
-	if(twoCircles){
-		ofDrawCircle(center->x-radius*.5, center->y, radius );
-		ofDrawCircle(center->x+radius*.5, center->y, radius );
+	ofSetColor(*color);
+	if(*twoCircles){
+		ofDrawCircle((*center)->x-*radius*.5, (*center)->y, *radius );
+		ofDrawCircle((*center)->x+*radius*.5, (*center)->y, *radius );
 	}else{
-		ofDrawCircle((ofVec2f)center, radius );
+		ofDrawCircle((ofVec2f)*center, *radius );
 	}
-	
-	if( !bHide ){
-		gui.draw();
-	}
+
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	if( key == 'h' ){
+	if(key == 'h'){
 		bHide = !bHide;
 	}
-	if(key == 's') {
-		gui.saveToFile("settings.xml");
+	else if(key == 's'){
+		panel->saveToFile("settings.xml");
 	}
-	if(key == 'l') {
-		gui.loadFromFile("settings.xml");
+	else if(key == 'l'){
+		panel->loadFromFile("settings.xml");
 	}
-	if(key == ' '){
-		color = ofColor(255);
+	else if(key == ' '){
+		*color = ofColor(255);
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
@@ -118,15 +115,15 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-    screenSize = ofToString(w) + "x" + ofToString(h);
+	*screenSize = ofToString(w) + "x" + ofToString(h);
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-	
+
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-	
+void ofApp::dragEvent(ofDragInfo dragInfo){
+
 }

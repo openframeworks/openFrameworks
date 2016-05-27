@@ -3,30 +3,47 @@
 #include "ofxBaseGui.h"
 #include "ofParameter.h"
 
-template<typename Type>
-class ofxSlider : public ofxBaseGui{
-	friend class ofPanel;
-	
-public:	
-	ofxSlider();
-	~ofxSlider();
-	ofxSlider(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
-	ofxSlider* setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
-	ofxSlider* setup(const std::string& sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
-	
-	void setMin(Type min);
-	Type getMin();
-	void setMax(Type max);
-	Type getMax();
+class ofxSliderType{
+	public:
+	enum Type{
+		/// \brief Default. Shows slider as a vertical or horizontal bar.
+		STRAIGHT,
+		/// \brief Displays circular slider.
+		CIRCULAR
+	};
+};
 
-	virtual bool mouseMoved(ofMouseEventArgs & args);
-	virtual bool mousePressed(ofMouseEventArgs & args);
-	virtual bool mouseDragged(ofMouseEventArgs & args);
-	virtual bool mouseReleased(ofMouseEventArgs & args);
-    virtual bool mouseScrolled(ofMouseEventArgs & args);
+template<typename DataType>
+class ofxSlider : public ofxBaseGui, public ofxSliderType{
+public:
+
+	ofxSlider();
+	ofxSlider(const ofJson & config);
+	ofxSlider(ofParameter<DataType> _val, const ofJson & config = ofJson());
+	ofxSlider(ofParameter<DataType> _val, float width, float height = defaultHeight);
+	ofxSlider(const std::string& sliderName, DataType _val, DataType _min, DataType _max, float width = defaultWidth, float height = defaultHeight);
+
+	~ofxSlider();
+
+	void setup();
+
+	void setMin(DataType min);
+	DataType getMin();
+	void setMax(DataType max);
+	DataType getMax();
+
+	void setType(const std::string &type);
+	void setType(const Type &type);
+	Type getType();
+
+	void setPrecision(int precision);
 
 	void setUpdateOnReleaseOnly(bool bUpdateOnReleaseOnly);
 
+	virtual bool mousePressed(ofMouseEventArgs & args) override;
+	virtual bool mouseDragged(ofMouseEventArgs & args) override;
+	virtual bool mouseReleased(ofMouseEventArgs & args) override;
+	virtual bool mouseScrolled(ofMouseEventArgs & args) override;
 
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method){
@@ -38,27 +55,39 @@ public:
 		value.removeListener(listener,method);
 	}
 
-
-
-	double operator=(Type v);
-	operator const Type & ();
-
-	
+	double operator=(DataType v);
+	operator const DataType & ();
 
 	ofAbstractParameter & getParameter();
 
 protected:
-	virtual void render();
-	ofParameter<Type> value;
-	bool bUpdateOnReleaseOnly;
-	bool bGuiActive;
-	bool mouseInside;
-	bool setValue(float mx, float my, bool bCheck);
-	virtual void generateDraw();
+	virtual void _setConfig(const ofJson & config) override;
+	virtual void render() override;
+
+	virtual void resized(ResizeEventArgs&);
+
+	ofParameter<DataType> value;
+	ofParameter<ofxSliderType::Type> type;
+	virtual bool setValue(float mx, float my, bool bCheck) override;
+	virtual void generateDraw() override;
 	virtual void generateText();
-	void valueChanged(Type & value);
-	ofPath bg, bar;
+	virtual void _generateText(std::string valStr);
+	void valueChanged(DataType & value);
+	ofPath bar;
 	ofVboMesh textMesh;
+
+	ofParameter<bool> updateOnReleaseOnly;
+	ofParameter<unsigned int> precision;
+	/// \brief The Slider orientation.
+	bool horizontal;
+
+	bool hasFocus;
+
+	//circular type
+	void arcStrip(ofPath & path, ofPoint center, float outer_radius, float inner_radius, float percent);
+	float _mouseOffset;
+
+
 };
 
 typedef ofxSlider<float> ofxFloatSlider;

@@ -4,12 +4,12 @@
 #include "ofxGui.h"
 
 class ofApp : public ofBaseApp{
-	
+
 public:
 	void setup();
 	void update();
 	void draw();
-	
+
 	void exit();
 
 	void keyPressed(int key);
@@ -22,23 +22,23 @@ public:
 	void mouseExited(int x, int y);
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo dragInfo);
-	void gotMessage(ofMessage msg);		
+	void gotMessage(ofMessage msg);
 
-	void circleResolutionChanged(int & circleResolution);
 	void ringButtonPressed();
 
 	bool bHide;
 
-	ofParameter<float> radius;
-	ofParameter<ofColor> color;
-	ofParameter<ofVec2f> center;
-	ofParameter<int> circleResolution;
-	ofParameter<bool> filled;
-	ofxButton twoCircles;
-	ofxButton ringButton;
-	ofParameter<string> screenSize;
+	ofxFloatSlider* radius;
+	ofxColorSlider* color;
+	ofxVec2Slider* center;
+	ofxIntSlider* circleResolution;
+	ofxToggle* filled;
+	ofxButton* twoCircles;
+	ofxButton* ringButton;
+	ofxLabel* screenSize;
 
-	ofxPanel gui;
+	ofxPanel* panel;
+	ofxGui gui;
 
 	ofSoundPlayer ring;
 };

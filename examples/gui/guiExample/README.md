@@ -1,7 +1,11 @@
-# About the GUI Example
+# About guiExample
+
+![Screenshot of guiExample](guiExample.png)
 
 ### Learning Objectives
 This example shows you how to use a GUI to interact dynamically with sketch parameters. It also includes the use of listeners to check for changes.
+
+Pay special attention to the usage of `ofParameter`.
 
 ### Expected Behavior
 
@@ -11,20 +15,9 @@ Try changing the `circle res` slider to create a circle. Try clicking the `fill`
 
 Pressing the `h` key will hide and show the panel; spacebar sets color to white.
 
-![Gif of the GUI in use](./gui.gif)
-
 ### Classes Used in This File
 
-A GUI is rendered from a number of oFxGui classes:
-
-	ofxFloatSlider
-	ofxColorSlider
-	ofxVec2Slider
-	ofxIntSlider
-	ofxToggle
-	ofxButton
-	ofxLabel
-	ofxPanel
+TODO
 
 This example also uses:
 

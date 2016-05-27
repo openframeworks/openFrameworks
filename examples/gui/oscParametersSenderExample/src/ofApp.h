@@ -22,7 +22,7 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+
 		ofxOscParameterSync sync;
 
 		ofParameter<float> size;
@@ -30,6 +30,7 @@ class ofApp : public ofBaseApp{
 		ofParameter<bool> check;
 		ofParameterGroup parameters;
 		ofParameter<ofColor> color;
-		ofxPanel gui;
+		ofxPanel* panel;
+		ofxGui gui;
 
 };
