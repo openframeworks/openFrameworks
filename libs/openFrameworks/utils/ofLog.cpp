@@ -7,8 +7,8 @@ static ofLogLevel currentLogLevel =  OF_LOG_NOTICE;
 
 bool ofLog::bAutoSpace = false;
 string & ofLog::getPadding() {
-	static string padding = "";
-	return padding;
+	static string * padding = new string;
+	return *padding;
 }
 
 static map<string,ofLogLevel> & getModules(){
