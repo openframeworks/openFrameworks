@@ -392,7 +392,7 @@ void ofBackground(int r, int g, int b, int a){
 
 //----------------------------------------------------------
 void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode) {
-	float w = ofGetWidth(), h = ofGetHeight();
+	float w = ofGetViewportWidth(), h = ofGetViewportHeight();
 	gradientMesh.clear();
 	gradientMesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 #ifndef TARGET_EMSCRIPTEN
