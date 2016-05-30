@@ -165,7 +165,8 @@ public:
 			return false;
 		}
 		if(queue.empty()){
-			if(condition.wait_for(lock,std::chrono::milliseconds(timeoutMs))==std::cv_status::timeout){
+			condition.wait_for(lock, std::chrono::milliseconds(timeoutMs));
+			if(queue.empty()) {
 				return false;
 			}
 		}
