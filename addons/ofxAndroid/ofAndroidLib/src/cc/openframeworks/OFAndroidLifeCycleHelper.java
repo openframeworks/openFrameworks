@@ -184,8 +184,8 @@ public class OFAndroidLifeCycleHelper
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.enableTouchEvents();
+				OFAndroid.enableOrientationChangeEvents();
 			}
 		});
 	}
@@ -196,8 +196,8 @@ public class OFAndroidLifeCycleHelper
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.enableTouchEvents();
+				OFAndroid.enableOrientationChangeEvents();
 			}
 		});
 		OFAndroid.onRestart();
@@ -214,8 +214,8 @@ public class OFAndroidLifeCycleHelper
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.enableTouchEvents();
+				OFAndroid.enableOrientationChangeEvents();
 				glView.onResume();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
@@ -242,8 +242,8 @@ public class OFAndroidLifeCycleHelper
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.disableTouchEvents();
+				OFAndroid.disableOrientationChangeEvents();
 
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
@@ -270,9 +270,9 @@ public class OFAndroidLifeCycleHelper
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.disableTouchEvents();
-				
+				OFAndroid.disableOrientationChangeEvents();
+
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
 						object.onStop();
