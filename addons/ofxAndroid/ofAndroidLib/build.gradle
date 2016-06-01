@@ -2,8 +2,8 @@ apply plugin: 'com.android.model.library'
 
 model {
     android {
-        compileSdkVersion = 22
-        buildToolsVersion = "23.0.2"
+        compileSdkVersion = 18
+        buildToolsVersion = "23.0.3"
 
         /*defaultConfig.with {
             minSdkVersion 8
