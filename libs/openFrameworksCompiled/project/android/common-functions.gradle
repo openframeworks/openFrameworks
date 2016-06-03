@@ -18,12 +18,14 @@ def getFoldersRecursive(String path){
 }
 
 
-def addonPaths(){
+
+def addonPaths(ofRoot){
     def file = new File('addons.make')
     if(!file.exists()) {
         return []
     }
-    def addonRoot = ofRoot()+"addons/"
+
+    def addonRoot = ofRoot+"addons/"
 
     def ret = []
     file.eachLine { line ->
@@ -37,8 +39,12 @@ def addonPaths(){
     return ret
 }
 
+
+
 def parseAddonConfig(String addon, String param, String abi, defaultVal = []){
     println "Parse addonconfig "+addon+"/addon_config.mk"
+    def ret = defaultVal
+
     def file = new File(addon+"/addon_config.mk")
     if(!file.exists()){
         println addon+"/addon_config.mk not found"
@@ -46,7 +52,6 @@ def parseAddonConfig(String addon, String param, String abi, defaultVal = []){
     }
 
     def mode = ""
-    def ret = defaultVal
 
     file.eachLine { line ->
         def stripLine = line.replaceAll("^\\s*","").replaceAll("\\s*\$","")
@@ -59,8 +64,7 @@ def parseAddonConfig(String addon, String param, String abi, defaultVal = []){
         }
 
         if(mode == "common" || mode == "android" || mode == "android/${abi}".toString()){
-            group = (stripLine =~ /^(\w+)\s*(\+?=)\s*(.+)$/)
-//                print "GROUP "+ group.getAt(0)
+            def group = (stripLine =~ /^(\w+)\s*(\+?=)\s*(.+)$/)
             if(group.hasGroup() && group.size() == 1 && group[0].size() == 4){
                 if(group[0][1] == param) {
                     def _p = group[0][3].replaceAll("%", "*")
@@ -74,13 +78,14 @@ def parseAddonConfig(String addon, String param, String abi, defaultVal = []){
 
         }
     }
-    //println "RET"+ret
+
     return ret
 }
 
 def addonSources(String root, String abi=""){
+
     def ret = []
-    addonPaths().each { String addon ->
+    addonPaths(root).each { String addon ->
         def config = parseAddonConfig(
                 addon,
                 "ADDON_SOURCES",
@@ -105,7 +110,7 @@ def addonIncludes(String root, String abi=""){
 
 def addonSourcesExclude(String root, String abi=""){
     def ret = []
-    addonPaths().each { String addon ->
+    addonPaths(root).each { String addon ->
         def config = parseAddonConfig(
                 addon,
                 "ADDON_SOURCES_EXCLUDE",
@@ -123,9 +128,10 @@ def addonSourcesExclude(String root, String abi=""){
     return ret
 }
 
+
 def addonLdFlags(abi, ofRoot){
     def ret = []
-    addonPaths().each { String addon ->
+    addonPaths(ofRoot).each { String addon ->
         def config = parseAddonConfig(
                 addon,
                 "ADDON_LIBS",
@@ -148,7 +154,7 @@ def addonLdFlags(abi, ofRoot){
 
 def addonCppFlags(abi, ofRoot){
     def ret = []
-    addonPaths().each { addon ->
+    addonPaths(ofRoot).each { addon ->
         def config = parseAddonConfig(
                 addon,
                 "ADDON_INCLUDES",
@@ -191,6 +197,32 @@ def addonCppFlags(abi, ofRoot){
     return ret
 }
 
+def addonJavaDependencies(root,abi=""){
+    def ret = []
+    addonPaths(root).each { String addon ->
+        def config = parseAddonConfig(
+                addon,
+                "ADDON_ANDROID_LIBS",
+                abi
+        )
+
+        config.each { String path ->
+            def f = new File(addon+"/"+path)
+            if(f.exists()) {
+                ret += [[f.absolutePath, ':'+new File(addon).name]]
+            }
+        }
+    }
+
+    return ret
+}
+
+def javaDependencies(ofRoot){
+    def ret = []
+    ret += [[ofRoot+'addons/ofxAndroid/ofAndroidLib', ':ofAndroidLib']]
+    ret += [[ofRoot+'libs/openFrameworksCompiled/project/android', ':openFrameworksProject']]
+    return ret
+}
 
 
 def getFlavorName(abi) {
@@ -372,6 +404,9 @@ ext {
 
     coreLdFlags = this.&coreLdFlags
     addonLdFlags = this.&addonLdFlags
+
+    addonJavaDependencies = this.&addonJavaDependencies
+    javaDependencies = this.&javaDependencies
 
 
 }
