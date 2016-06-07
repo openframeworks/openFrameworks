@@ -596,11 +596,19 @@ void ofNextContour(bool bClose = false);  // for multi contour shapes!
 ///
 /// Valid modes:
 ///
-///     OF_BITMAPMODE_SIMPLE
-///     OF_BITMAPMODE_SCREEN
-///     OF_BITMAPMODE_VIEWPORT
-///     OF_BITMAPMODE_MODEL
-///     OF_BITMAPMODE_MODEL_BILLBOARD
+/// OF_BITMAPMODE_SCREEN: this is the default mode. It projects the 3d prosition onto
+/// the screen so the letters always look the same size but can be positioned in any 3d coordinate.
+///
+/// OF_BITMAPMODE_VIEWPORT: does the same as screen but uses the current viewport instead
+/// of the full window if it's different.
+///
+/// OF_BITMAPMODE_MODEL: uses real 3d coordinates so the text will look scaled if it's not in z=0
+///
+/// OF_BITMAPMODE_MODEL_BILLBOARD: uses real 3d coordinates but the text always faces the camera.
+///
+/// OF_BITMAPMODE_SIMPLE: only does 2d and the z coordinate is just disacarded, so if z is not 0
+/// the position in which it'll be drawn will be wrong.
+///
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
 
 /// \brief Draws a bitmapped string, on screen, at point (x,y).
