@@ -9,8 +9,10 @@ RtAudio::Api toRtAudio(ofSoundDevice::Api api){
 	switch (api) {
 	case ofSoundDevice::Api::ALSA:
 		return RtAudio::Api::LINUX_ALSA;
+#ifdef __LINUX_PULSE__
 	case ofSoundDevice::Api::PULSE:
 		return RtAudio::Api::LINUX_PULSE;
+#endif
 	case ofSoundDevice::Api::OSS:
 		return RtAudio::Api::LINUX_OSS;
 	case ofSoundDevice::Api::JACK:
@@ -35,8 +37,10 @@ ofSoundDevice::Api toOf(RtAudio::Api api){
 	switch (api) {
 	case RtAudio::Api::LINUX_ALSA:
 		return ofSoundDevice::Api::ALSA;
+#ifdef __LINUX_PULSE__
 	case RtAudio::Api::LINUX_PULSE:
 		return ofSoundDevice::Api::PULSE;
+#endif
 	case RtAudio::Api::LINUX_OSS:
 		return ofSoundDevice::Api::OSS;
 	case RtAudio::Api::UNIX_JACK:
