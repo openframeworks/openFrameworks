@@ -628,9 +628,13 @@ ofTrueTypeFont::ofTrueTypeFont(ofTrueTypeFont&& mom)
 	glyphBBox = mom.glyphBBox;
 	letterSpacing = mom.letterSpacing;
 	spaceSize = mom.spaceSize;
+	fontUnitScale = mom.fontUnitScale;
 
 	cps = mom.cps; // properties for each character
+	settings = mom.settings;
+	glyphIndexMap = std::move(mom.glyphIndexMap);
 	texAtlas = mom.texAtlas;
+	stringQuads = mom.stringQuads;
 	face = mom.face;
 }
 
