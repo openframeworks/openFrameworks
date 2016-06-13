@@ -562,9 +562,13 @@ ofTrueTypeFont::ofTrueTypeFont(const ofTrueTypeFont& mom)
 	glyphBBox = mom.glyphBBox;
 	letterSpacing = mom.letterSpacing;
 	spaceSize = mom.spaceSize;
+	fontUnitScale = mom.fontUnitScale;
 
 	cps = mom.cps; // properties for each character
+	settings = mom.settings;
+	glyphIndexMap = mom.glyphIndexMap;
 	texAtlas = mom.texAtlas;
+	stringQuads = mom.stringQuads;
 	face = mom.face;
 }
 
