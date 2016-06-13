@@ -568,7 +568,6 @@ ofTrueTypeFont::ofTrueTypeFont(const ofTrueTypeFont& mom)
 	settings = mom.settings;
 	glyphIndexMap = mom.glyphIndexMap;
 	texAtlas = mom.texAtlas;
-	stringQuads = mom.stringQuads;
 	face = mom.face;
 }
 
@@ -600,7 +599,6 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(const ofTrueTypeFont& mom){
 	settings = mom.settings;
 	glyphIndexMap = mom.glyphIndexMap;
 	texAtlas = mom.texAtlas;
-	stringQuads = mom.stringQuads;
 	face = mom.face;
 
 	return *this;
@@ -634,7 +632,6 @@ ofTrueTypeFont::ofTrueTypeFont(ofTrueTypeFont&& mom)
 	settings = mom.settings;
 	glyphIndexMap = std::move(mom.glyphIndexMap);
 	texAtlas = mom.texAtlas;
-	stringQuads = mom.stringQuads;
 	face = mom.face;
 }
 
@@ -666,7 +663,6 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 	settings = mom.settings;
 	glyphIndexMap = std::move(mom.glyphIndexMap);
 	texAtlas = mom.texAtlas;
-	stringQuads = mom.stringQuads;
 
 	return *this;
 }
