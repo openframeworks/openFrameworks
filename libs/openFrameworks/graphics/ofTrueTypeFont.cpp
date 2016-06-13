@@ -647,7 +647,6 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 		ofAddListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
 	}
 #endif
-	settings = mom.settings;
 	bLoadedOk = mom.bLoadedOk;
 
 	charOutlines = std::move(mom.charOutlines);
@@ -661,11 +660,14 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 	glyphBBox = mom.glyphBBox;
 	letterSpacing = mom.letterSpacing;
 	spaceSize = mom.spaceSize;
+	fontUnitScale = mom.fontUnitScale;
 
 	cps = mom.cps; // properties for each character
-
+	settings = mom.settings;
+	glyphIndexMap = std::move(mom.glyphIndexMap);
 	texAtlas = mom.texAtlas;
-	face = mom.face;
+	stringQuads = mom.stringQuads;
+
 	return *this;
 }
 
