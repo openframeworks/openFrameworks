@@ -562,8 +562,11 @@ ofTrueTypeFont::ofTrueTypeFont(const ofTrueTypeFont& mom)
 	glyphBBox = mom.glyphBBox;
 	letterSpacing = mom.letterSpacing;
 	spaceSize = mom.spaceSize;
+	fontUnitScale = mom.fontUnitScale;
 
 	cps = mom.cps; // properties for each character
+	settings = mom.settings;
+	glyphIndexMap = mom.glyphIndexMap;
 	texAtlas = mom.texAtlas;
 	face = mom.face;
 }
@@ -577,8 +580,8 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(const ofTrueTypeFont& mom){
 		ofAddListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
 	}
 #endif
-	settings = mom.settings;
 	bLoadedOk = mom.bLoadedOk;
+
 	charOutlines = mom.charOutlines;
 	charOutlinesNonVFlipped = mom.charOutlinesNonVFlipped;
 	charOutlinesContour = mom.charOutlinesContour;
@@ -590,11 +593,14 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(const ofTrueTypeFont& mom){
 	glyphBBox = mom.glyphBBox;
 	letterSpacing = mom.letterSpacing;
 	spaceSize = mom.spaceSize;
+	fontUnitScale = mom.fontUnitScale;
 
 	cps = mom.cps; // properties for each character
-
+	settings = mom.settings;
+	glyphIndexMap = mom.glyphIndexMap;
 	texAtlas = mom.texAtlas;
 	face = mom.face;
+
 	return *this;
 }
 
@@ -620,8 +626,11 @@ ofTrueTypeFont::ofTrueTypeFont(ofTrueTypeFont&& mom)
 	glyphBBox = mom.glyphBBox;
 	letterSpacing = mom.letterSpacing;
 	spaceSize = mom.spaceSize;
+	fontUnitScale = mom.fontUnitScale;
 
 	cps = mom.cps; // properties for each character
+	settings = mom.settings;
+	glyphIndexMap = std::move(mom.glyphIndexMap);
 	texAtlas = mom.texAtlas;
 	face = mom.face;
 }
@@ -635,7 +644,6 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 		ofAddListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
 	}
 #endif
-	settings = mom.settings;
 	bLoadedOk = mom.bLoadedOk;
 
 	charOutlines = std::move(mom.charOutlines);
@@ -649,11 +657,13 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 	glyphBBox = mom.glyphBBox;
 	letterSpacing = mom.letterSpacing;
 	spaceSize = mom.spaceSize;
+	fontUnitScale = mom.fontUnitScale;
 
 	cps = mom.cps; // properties for each character
-
+	settings = mom.settings;
+	glyphIndexMap = std::move(mom.glyphIndexMap);
 	texAtlas = mom.texAtlas;
-	face = mom.face;
+
 	return *this;
 }
 
