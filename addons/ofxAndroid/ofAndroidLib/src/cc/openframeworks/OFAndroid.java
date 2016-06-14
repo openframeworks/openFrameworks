@@ -24,6 +24,7 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Build;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ScaleGestureDetector;
@@ -170,7 +171,13 @@ public class OFAndroid {
 			}  
 		});
 	}
-	
+
+	static public void requestPermission(String permission){
+		ActivityCompat.requestPermissions(ofActivity,
+				new String[]{permission},
+				1);
+	}
+
 	static public void onUnpackingResourcesDone(){
 		unpackingDone = true;
 		if(ofActivity != null)

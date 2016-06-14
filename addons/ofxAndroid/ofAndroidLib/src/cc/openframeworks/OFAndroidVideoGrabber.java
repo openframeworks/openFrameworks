@@ -4,12 +4,15 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.os.Build;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 import android.view.OrientationEventListener;
 
@@ -87,6 +90,8 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		if(camera != null){
 			camera.release();
 		}
+
+		checkPermissions();
 
 		if(deviceID==-1)
 			deviceID = getCameraFacing(0);
@@ -308,6 +313,14 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		}
 		
 	}
+
+	private void checkPermissions(){
+		if(PermissionChecker.checkSelfPermission(OFAndroid.getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+			OFAndroid.requestPermission(Manifest.permission.CAMERA);
+		}
+	}
+
+
 	
 	private AutoFocusCB autoFocusCB = new AutoFocusCB();
 	
