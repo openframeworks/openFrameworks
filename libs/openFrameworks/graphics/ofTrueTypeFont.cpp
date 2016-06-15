@@ -1205,8 +1205,8 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 	    return ofRectangle(x,y,0,0);
 
 	ofRectangle bb(std::numeric_limits<float>::max(),std::numeric_limits<float>::max(),0,0);
-	float maxX = std::numeric_limits<float>::min();
-	float maxY = std::numeric_limits<float>::min();
+	float maxX = -std::numeric_limits<float>::max();
+	float maxY = -std::numeric_limits<float>::max();
 	for(const auto & v: mesh.getVertices()){
 		bb.x = min(v.x,bb.x);
 		bb.y = min(v.y,bb.y);
