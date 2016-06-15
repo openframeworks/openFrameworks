@@ -1,4 +1,3 @@
-
 def ofRoot(){ return '../../../' }
 
 // Load common functions
@@ -106,5 +105,8 @@ model {
 
 
 dependencies {
+    addonJavaDependencies(ofRoot()).each { dep ->
+        compile(project(path: dep[1] ))
+    }
     compile project(path: ':ofAndroidLib')
 }
