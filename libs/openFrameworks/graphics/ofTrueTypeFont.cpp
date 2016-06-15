@@ -1200,18 +1200,23 @@ float ofTrueTypeFont::stringWidth(const std::string& c) const{
 //-----------------------------------------------------------
 ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, float y, bool vflip) const{
 	ofMesh mesh = getStringMesh(c,x,y,vflip);
-	ofRectangle bb(std::numeric_limits<float>::max(),std::numeric_limits<float>::max(),0,0);
-	float maxX = std::numeric_limits<float>::min();
-	float maxY = std::numeric_limits<float>::min();
+
+	if(mesh.getNumVertices() == 0)
+	    return ofRectangle(x,y,0,0);
+
+	float minX = std::numeric_limits<float>::max();
+	float minY = std::numeric_limits<float>::max();
+	float maxX = -std::numeric_limits<float>::max();
+	float maxY = -std::numeric_limits<float>::max();
 	for(const auto & v: mesh.getVertices()){
-		bb.x = min(v.x,bb.x);
-		bb.y = min(v.y,bb.y);
+		minX = min(v.x,minX);
+		minY = min(v.y,minY);
 		maxX = max(v.x,maxX);
 		maxY = max(v.y,maxY);
 	}
-	bb.width = maxX - bb.x;
-	bb.height = maxY - bb.y;
-	return bb;
+	float width = maxX - minX;
+	float height = maxY - minY;
+	return ofRectangle(minX, minY, width, height);
 }
 
 //-----------------------------------------------------------
