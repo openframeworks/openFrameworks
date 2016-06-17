@@ -524,7 +524,7 @@ ofTrueTypeFont::ofTrueTypeFont()
 :settings("",0){
 	bLoadedOk		= false;
 	letterSpacing = 1;
-	spaceSize = 0;
+	spaceSize = 1;
 	fontUnitScale = 1;
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
 	ascenderHeight = 0;
