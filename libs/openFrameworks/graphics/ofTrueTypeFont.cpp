@@ -1118,6 +1118,9 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 			}if (c == '\t') {
 				pos.x += getGlyphProperties(' ').advance * letterSpacing * 4 * directionX;
 				prevC = c;
+			} else if (c == ' ') {
+				pos.x += getGlyphProperties(' ').advance * letterSpacing * directionX * spaceSize;
+				prevC = c;
 			} else if(isValidGlyph(c)) {
 				const auto & props = getGlyphProperties(c);
 				if(prevC>0){
