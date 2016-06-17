@@ -1115,7 +1115,7 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 				pos.y += lineHeight*newLineDirection;
 				pos.x = x ; //reset X Pos back to zero
 				prevC = 0;
-			}if (c == '\t') {
+			} else if (c == '\t') {
 				pos.x += getGlyphProperties(' ').advance * letterSpacing * 4 * directionX;
 				prevC = c;
 			} else if (c == ' ') {
