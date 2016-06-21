@@ -1126,8 +1126,13 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 				if(prevC>0){
 					pos.x += getKerning(c,prevC);// * directionX;
 				}
-				f(c,pos);
-				pos.x += props.advance * letterSpacing * directionX;
+				if(settings.direction == ofTtfSettings::LeftToRight){
+				    f(c,pos);
+				    pos.x += props.advance * letterSpacing * directionX;
+				}else{
+				    pos.x += props.advance * letterSpacing * directionX;
+				    f(c,pos);
+				}
 				prevC = c;
 			}
 		}catch(...){
