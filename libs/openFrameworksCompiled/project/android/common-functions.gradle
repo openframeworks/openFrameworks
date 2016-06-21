@@ -186,6 +186,12 @@ def addonCppFlags(abi, ofRoot){
             ret += flags
         }
 
+
+        def configFlags = parseAddonConfig(addon, "ADDON_CFLAGS", abi);
+        configFlags.each { String flag ->
+            ret += flag
+        }
+
         /*
         ret += getFoldersRecursive(addon + "/libs").collect{ folder ->
             return "-I${folder}".toString()
@@ -193,6 +199,17 @@ def addonCppFlags(abi, ofRoot){
         ret += getFoldersRecursive(addon + "/src").collect{ folder ->
             return "-I${folder}".toString()
         }*/
+    }
+    return ret
+}
+
+def addonData(ofRoot){
+    def ret = []
+    addonPaths(ofRoot).each { addon ->
+        def configFlags = parseAddonConfig(addon, "ADDON_DATA", "");
+        configFlags.each { String path ->
+            ret += addon + "/" + path
+        }
     }
     return ret
 }
@@ -404,6 +421,8 @@ ext {
 
     coreLdFlags = this.&coreLdFlags
     addonLdFlags = this.&addonLdFlags
+
+    addonData = this.&addonData
 
     addonJavaDependencies = this.&addonJavaDependencies
     javaDependencies = this.&javaDependencies
