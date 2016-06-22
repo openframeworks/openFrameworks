@@ -49,7 +49,7 @@ function prepare() {
 	if [ "$SHA" != "" ] ; then
 		git reset --hard $SHA
 	fi
-	
+
 	if [ "$TYPE" != "msys2" ] && [ "$TYPE" != "linux" ] && [ "$TYPE" != "ios" ] && [ "$TYPE" != "tvos" ]; then
 		# manually prepare dependencies
 		apothecaryDependencies download
@@ -66,7 +66,7 @@ function prepare() {
 
 		cd build/config
 
-		if [[ "$TYPE" == "tvos" ]]; then 
+		if [[ "$TYPE" == "tvos" ]]; then
 			cp $FORMULA_DIR/AppleTV AppleTV
 			cp $FORMULA_DIR/AppleTVSimulator AppleTVSimulator
 		fi
@@ -94,8 +94,8 @@ function prepare() {
 		rm buildwin.cmd
 		CURRENTPATH=`pwd`
 		cp -v $FORMULA_DIR/buildwin.cmd $CURRENTPATH
-		
-		
+
+
 		# Patch the components to exclude those that we aren't using.
 		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/components.patch 2>/dev/null ; then
 			patch -p0 -u < $FORMULA_DIR/components.patch
@@ -119,6 +119,7 @@ function prepare() {
 		# replace OPENSSL_LIB=%OPENSSL_DIR%\lib;%OPENSSL_DIR%\lib\VC with OPENSSL_LIB=%OPENSSL_DIR%\lib\vs
 		sed -i.tmp "s|%OPENSSL_DIR%\\\lib;.*|%OPENSSL_DIR%\\\lib\\\vs|g" buildwin.cmd
 	elif [ "$TYPE" == "android" ] ; then
+		cd "$BUILD_DIR/poco"
 		installAndroidToolchain
 		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/android.patch 2>/dev/null ; then
 			patch -p0 -u < $FORMULA_DIR/android.patch
@@ -249,7 +250,7 @@ PING_LOOP_PID=$!
 	elif [[ "$TYPE" == "ios" || "$TYPE" == "tvos" ]] ; then
 		set -e
 		SDKVERSION=""
-        if [ "${TYPE}" == "tvos" ]; then 
+        if [ "${TYPE}" == "tvos" ]; then
             SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`
         elif [ "$TYPE" == "ios" ]; then
             SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
@@ -261,7 +262,7 @@ PING_LOOP_PID=$!
 		VERSION=$VER
 
 		local IOS_ARCHS
-        if [ "${TYPE}" == "tvos" ]; then 
+        if [ "${TYPE}" == "tvos" ]; then
             IOS_ARCHS="x86_64 arm64"
         elif [ "$TYPE" == "ios" ]; then
             IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
@@ -311,7 +312,7 @@ PING_LOOP_PID=$!
 		do
 			MIN_IOS_VERSION=$IOS_MIN_SDK_VER
 		    # min iOS version for arm64 is iOS 7
-		
+
 		    if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
 		    	MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
 		    elif [ "${IOS_ARCH}" == "i386" ]; then
@@ -325,7 +326,7 @@ PING_LOOP_PID=$!
 
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
-                if [ "${TYPE}" == "tvos" ]; then 
+                if [ "${TYPE}" == "tvos" ]; then
                     PLATFORM="AppleTVSimulator"
                     BUILD_POCO_CONFIG="AppleTVSimulator"
                 elif [ "$TYPE" == "ios" ]; then
@@ -333,7 +334,7 @@ PING_LOOP_PID=$!
                     BUILD_POCO_CONFIG=$BUILD_POCO_CONFIG_SIMULATOR
                 fi
 			else
-                if [ "${TYPE}" == "tvos" ]; then 
+                if [ "${TYPE}" == "tvos" ]; then
                     PLATFORM="AppleTVOS"
                     BUILD_POCO_CONFIG="AppleTV"
                 elif [ "$TYPE" == "ios" ]; then
@@ -342,7 +343,7 @@ PING_LOOP_PID=$!
                 fi
 			fi
 
-			if [ "${TYPE}" == "tvos" ]; then 
+			if [ "${TYPE}" == "tvos" ]; then
     		    MIN_TYPE=-mtvos-version-min=
     		    if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
     		    	MIN_TYPE=-mtvos-simulator-version-min=
@@ -405,7 +406,7 @@ PING_LOOP_PID=$!
 			dump_output
 			kill $PING_LOOP_PID
 			trap - ERR
-			
+
 			if [ $? != 0 ];
 		    then
 		    	tail -n 100 "${LOG}"
@@ -449,7 +450,7 @@ PING_LOOP_PID=$!
 				fi
 			done
 		fi
-		
+
 
 		cd ../../
 
@@ -473,7 +474,7 @@ PING_LOOP_PID=$!
 			done
 			cd ../../
 		fi
-		
+
 
 		echo "--------------------"
 		echo "Reseting changed files back to originals"
@@ -511,7 +512,7 @@ PING_LOOP_PID=$!
 					--config=Android
         make clean ANDROID_ABI=armeabi-v7a
 		make -j${PARALLEL_MAKE} ANDROID_ABI=armeabi-v7a
-		
+
         export CXX=clang++
         export PATH=$BUILD_DIR/Toolchains/Android/x86/bin:$OLD_PATH
 		./configure $BUILD_OPTS \
@@ -573,7 +574,7 @@ function copy() {
 			mkdir -p $1/lib/$TYPE/x64
 			cp -v lib64/*.lib $1/lib/$TYPE/x64
 		fi
-		
+
 	elif [ "$TYPE" == "msys2" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -vf lib/MinGW/i686/*.a $1/lib/$TYPE
