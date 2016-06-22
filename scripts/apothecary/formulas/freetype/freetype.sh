@@ -335,9 +335,8 @@ function build() {
 		unset IOS_AR IOS_HOST IOS_PREFIX  CPP CXX CXXCPP CXXCPP CC LD AS AR NM RANLIB LDFLAGS STDLIB
 
 	elif [ "$TYPE" == "android" ] ; then
-		
-        source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
-		
+
+        
 		# armv7
 		ABI=armeabi-v7a
 		local BUILD_TO_DIR=$BUILD_DIR/freetype/build/$TYPE/$ABI
