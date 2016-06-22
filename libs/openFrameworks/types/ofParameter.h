@@ -64,7 +64,6 @@ protected:
 
 
 
-
 //----------------------------------------------------------------------
 /// A collection of parameters with events to notify if a parameter changed
 /// and serialization facilities
@@ -558,6 +557,9 @@ private:
 
 	void eventsSetValue(const ParameterType & v);
 	void noEventsSetValue(const ParameterType & v);
+
+	template<typename T, typename F>
+	friend class ofReadOnlyParameter;
 };
 
 
@@ -1087,7 +1089,6 @@ protected:
 	const void* getInternalObject() const{
 		return parameter.getInternalObject();
 	}
-
 
 	ofParameter<ParameterType> parameter;
 	
