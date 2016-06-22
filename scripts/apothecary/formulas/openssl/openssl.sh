@@ -30,12 +30,12 @@ function download() {
 		rm $FILENAME.tar.gz
 		rm $FILENAME.tar.gz.sha1
 	else
-		if [ "$(shasum $FILENAME.tar.gz | awk '{print $1}')" == "$(cat $FILENAME.tar.gz.sha1)" ] ;  then  
+		if [ "$(shasum $FILENAME.tar.gz | awk '{print $1}')" == "$(cat $FILENAME.tar.gz.sha1)" ] ;  then
 			tar -xvf $FILENAME.tar.gz
 			mv $FILENAME openssl
 			rm $FILENAME.tar.gz
 			rm $FILENAME.tar.gz.sha1
-		else 
+		else
 			echoError "Invalid shasum for $FILENAME."
 		fi
 	fi
@@ -86,7 +86,7 @@ function prepare() {
 
 # executed inside the lib src dir
 function build() {
-	
+
 	if [ "$TYPE" == "osx" ] ; then
 
         set -e
@@ -104,20 +104,20 @@ function build() {
             fi
 
         # Validate environment
-        case $XCODE_DEV_ROOT in  
+        case $XCODE_DEV_ROOT in
              *\ * )
                    echo "Your Xcode path contains whitespaces, which is not supported."
                    exit 1
                   ;;
         esac
-        case $CURRENTPATH in  
+        case $CURRENTPATH in
              *\ * )
                    echo "Your path contains whitespaces, which is not supported by 'make install'."
                    exit 1
                   ;;
-        esac 
-        local TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain 
-        
+        esac
+        local TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain
+
         export OSX_CC=$TOOLCHAIN/usr/bin/$THECOMPILER
         export OSX_CXX=$TOOLCHAIN/usr/bin/$THECOMPILER++
         export LD=$TOOLCHAIN/usr/bin/ld
@@ -125,24 +125,24 @@ function build() {
         export AS=$TOOLCHAIN/usr/bin/as
         export NM=$TOOLCHAIN/usr/bin/nm
         export RANLIB=$TOOLCHAIN/usr/bin/ranlib
-		
+
 		local BUILD_OPTS="-no-shared -no-asm -no-ec_nistp_64_gcc_128 -no-gmp -no-jpake -no-krb5 -no-md2 -no-rc5 -no-rfc3779 -no-sctp -no-shared -no-store -no-unit-test -no-zlib -no-zlib-dynamic"
 		local OSX_ARCHS="i386 x86_64"
-		
+
 		VERSION=$VER
 		CURRENTPATH=`pwd`
-		
-		# create build directories 
+
+		# create build directories
 
 		for OSX_ARCH in ${OSX_ARCHS}
 			do
-			
-            make -j 1 clean 
+
+            make -j 1 clean
             rm -rf build/$TYPE/OSX_ARCH
             rm -rf *.a # remove temp lib from main directory
 			# Back up configure & makefile
 
-			cp "Configure" "Configure.orig" 
+			cp "Configure" "Configure.orig"
 			cp "Makefile" "Makefile.orig"
 
 			# create build directory for current arch
@@ -156,7 +156,7 @@ function build() {
 			export LC_CTYPE=C
             export LANG=C
             sed -ie "s!\"darwin-i386-cc\",\"cc:-arch i386 -O3!\"darwin-i386-cc\",\"cc:-arch i386 -O3!" Configure
-            
+
             export LC_CTYPE=C
             export LANG=C
             sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!" Configure
@@ -180,7 +180,7 @@ function build() {
 
 		    ./Configure $CONFIG_TARGET $BUILD_OPTS --openssldir="$CURRENTPATH/build/$TYPE/$OSX_ARCH" > "${LOG}" 2>&1
 
-			if [ $? != 0 ]; then 
+			if [ $? != 0 ]; then
                 tail -n 100 "${LOG}"
 		    	echo "Problem during configure - Please check ${LOG}"
 		    	exit 1
@@ -232,9 +232,9 @@ PING_LOOP_PID=$!
             dump_output
             kill $PING_LOOP_PID
 			trap - ERR
-            
+
 			if [ $? != 0 ];
-		    then 
+		    then
                 tail -n 100 "${LOG}"
 		    	echo "Problem while make - Please check ${LOG}"
 		    	exit 1
@@ -244,11 +244,11 @@ PING_LOOP_PID=$!
 
 			set -e
 			make -j 1 install >> "${LOG}" 2>&1
-			make -j 1 clean 
+			make -j 1 clean
 
 			# restore configure & makefile
 
-			cp "Configure.orig" "Configure" 
+			cp "Configure.orig" "Configure"
 			cp "Makefile.orig" "Makefile"
 
             rm -rf *.a # remove temp lib from main directory
@@ -283,7 +283,7 @@ PING_LOOP_PID=$!
         cd ../../
 
         echo "Build Finished!"
-		
+
 		# ------------ END OS X Recipe.
 
 	 elif [ "$TYPE" == "vs" ] ; then
@@ -329,16 +329,16 @@ PING_LOOP_PID=$!
 
 		# This was quite helpful as a reference: https://github.com/x2on/OpenSSL-for-iPhone
 		# Refer to the other script if anything drastic changes for future versions
-		
+
 		set -e
 		CURRENTPATH=`pwd`
-		
+
 		DEVELOPER=$XCODE_DEV_ROOT
 		TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
 		VERSION=$VER
 
         local IOS_ARCHS
-        if [ "${TYPE}" == "tvos" ]; then 
+        if [ "${TYPE}" == "tvos" ]; then
             IOS_ARCHS="x86_64 arm64"
         elif [ "$TYPE" == "ios" ]; then
             IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
@@ -346,32 +346,32 @@ PING_LOOP_PID=$!
 		local STDLIB="libc++"
 
         SDKVERSION=""
-        if [ "${TYPE}" == "tvos" ]; then 
+        if [ "${TYPE}" == "tvos" ]; then
             SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`
         elif [ "$TYPE" == "ios" ]; then
             SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
         fi
 
 		# Validate environment
-		case $XCODE_DEV_ROOT in  
+		case $XCODE_DEV_ROOT in
 		     *\ * )
 		           echo "Your Xcode path contains whitespaces, which is not supported."
 		           exit 1
 		          ;;
 		esac
-		case $CURRENTPATH in  
+		case $CURRENTPATH in
 		     *\ * )
 		           echo "Your path contains whitespaces, which is not supported by 'make install'."
 		           exit 1
 		          ;;
-		esac 
+		esac
 
 		# loop through architectures! yay for loops!
 		for IOS_ARCH in ${IOS_ARCHS}
 		do
 			# make sure backed up
-			cp "Configure" "Configure.orig" 
-            cp "apps/speed.c" "apps/speed.c.orig" 
+			cp "Configure" "Configure.orig"
+            cp "apps/speed.c" "apps/speed.c.orig"
 			cp "Makefile" "Makefile.orig"
 
 			if [ "${COMPILER_TYPE}" == "clang" ]; then
@@ -388,17 +388,17 @@ PING_LOOP_PID=$!
                 LC_ALL=C sed -i -- 's/define HAVE_FORK 1/define HAVE_FORK 0/' "apps/speed.c"
                 # Patch Configure to build for tvOS, not iOS
                 LC_ALL=C sed -i -- 's/D\_REENTRANT\:iOS/D\_REENTRANT\:tvOS/' "Configure"
-                chmod u+x ./Configure 
-            #     export LC_CTYPE=C 
+                chmod u+x ./Configure
+            #     export LC_CTYPE=C
             #     export LANG=C
             #     sed -ie "s!\"defined(OPENSSL_SYS_NETWARE)\"!\"defined(OPENSSL_SYS_NETWARE) || defined(TARGET_IOS)\"!" "./apps/speed.c"
-                
+
             #     sed -ie "s!\"-D_REENTRANT:iOS\"!\"-D_REENTRANT:tvOS\"!" "./Configure"
             fi
 
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
-				if [ "${TYPE}" == "tvos" ]; then 
+				if [ "${TYPE}" == "tvos" ]; then
                     PLATFORM="AppleTVSimulator"
                 elif [ "$TYPE" == "ios" ]; then
                     PLATFORM="iPhoneSimulator"
@@ -436,7 +436,7 @@ PING_LOOP_PID=$!
 			else
 				cp "crypto/ui/ui_openssl.c" "crypto/ui/ui_openssl.c.orig"
 				LC_ALL=C sed -ie "s!static volatile sig_atomic_t intr_signal;!static volatile intr_signal;!" "crypto/ui/ui_openssl.c"
-				if [ "${TYPE}" == "tvos" ]; then 
+				if [ "${TYPE}" == "tvos" ]; then
                     PLATFORM="AppleTVOS"
                 elif [ "$TYPE" == "ios" ]; then
                     PLATFORM="iPhoneOS"
@@ -445,7 +445,7 @@ PING_LOOP_PID=$!
                 # unset LANG if defined
 				if test ${LANG+defined};
 				then
-					OLD_LANG=$LANG				
+					OLD_LANG=$LANG
 					unset LANG
 				fi
 
@@ -477,7 +477,7 @@ PING_LOOP_PID=$!
 
             MIN_IOS_VERSION=$IOS_MIN_SDK_VER
             # min iOS version for arm64 is iOS 7
-        
+
             if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
                 MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
             elif [ "${IOS_ARCH}" == "i386" ]; then
@@ -493,8 +493,8 @@ PING_LOOP_PID=$!
 			export CC="${THECOMPILER} -arch ${IOS_ARCH} -std=${CSTANDARD} $BITCODE"
 			mkdir -p "$CURRENTPATH/build/$TYPE/$IOS_ARCH"
 			LOG="$CURRENTPATH/build/$TYPE/$IOS_ARCH/build-openssl-${VER}.log"
-			
-			
+
+
 
 			echo "Compiler: $CC"
 			echo "Building openssl-${VER} for ${PLATFORM} ${SDKVERSION} ${IOS_ARCH} : iOS Minimum=$MIN_IOS_VERSION"
@@ -512,13 +512,13 @@ PING_LOOP_PID=$!
 			    ./Configure iphoneos-cross -no-asm --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH" > "${LOG}" 2>&1
 		    fi
 
-		    if [ $? != 0 ]; then 
+		    if [ $? != 0 ]; then
                 tail -n 100 "${LOG}"
 		    	echo "Problem while configure - Please check ${LOG}"
 		    	exit 1
 		    fi
 
-		    if [ "${TYPE}" == "tvos" ]; then 
+		    if [ "${TYPE}" == "tvos" ]; then
                 MIN_TYPE=-mtvos-version-min=
                 if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
                     MIN_TYPE=-mtvos-simulator-version-min=
@@ -574,7 +574,7 @@ PING_LOOP_PID=$!
             trap - ERR
 
 			if [ $? != 0 ];
-		    then 
+		    then
                 tail -n 100 "${LOG}"
 		    	echo "Problem while make - Please check ${LOG}"
 		    	exit 1
@@ -604,15 +604,15 @@ PING_LOOP_PID=$!
 
 		done
 
-		unset CC CFLAG CFLAGS 
+		unset CC CFLAG CFLAGS
 		unset PLATFORM CROSS_TOP CROSS_SDK BUILD_TOOLS
-		unset IOS_DEVROOT IOS_SDKROOT 
+		unset IOS_DEVROOT IOS_SDKROOT
 
 		cd lib/$TYPE/
 
         # stripping the lib prefix to bypass any issues with existing sdk libraries
         echo "Creating Fat Lib for crypto"
-        if [ "${TYPE}" == "tvos" ]; then 
+        if [ "${TYPE}" == "tvos" ]; then
             lipo -create arm64/crypto.a \
                         x86_64/crypto.a \
                         -output crypto.a
@@ -645,16 +645,15 @@ PING_LOOP_PID=$!
 		unset TOOLCHAIN DEVELOPER
 
 	elif [ "$TYPE" == "android" ]; then
-		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
 		perl -pi -e 's/install: all install_docs install_sw/install: install_docs install_sw/g' Makefile.org
 		export _ANDROID_NDK_ROOT=$NDK_ROOT
 		export FIPS_SIG=
-		wget http://wiki.openssl.org/images/7/70/Setenv-android.sh
+		curl -OL http://wiki.openssl.org/images/7/70/Setenv-android.sh
 		perl -pi -e 's/^_ANDROID_EABI=(.*)$/#_ANDROID_EABI=\1/g' Setenv-android.sh
 		perl -pi -e 's/^_ANDROID_ARCH=(.*)$/#_ANDROID_ARCH=\1/g' Setenv-android.sh
 		perl -pi -e 's/^_ANDROID_API=(.*)$/#_ANDROID_API=\1/g' Setenv-android.sh
 		export _ANDROID_API=$ANDROID_PLATFORM
-		
+
         # armv7
         echoInfo "Compiling armv7"
         export _ANDROID_EABI=arm-linux-androideabi-4.9
@@ -669,7 +668,7 @@ PING_LOOP_PID=$!
         mkdir -p $BUILD_TO_DIR/lib
 		cp libssl.a $BUILD_TO_DIR/lib/
         cp libcrypto.a $BUILD_TO_DIR/lib/
-        
+
         # x86
         echoInfo "Compiling x86"
         export _ANDROID_EABI=x86-4.9
@@ -685,7 +684,7 @@ PING_LOOP_PID=$!
         cp libssl.a $BUILD_TO_DIR/lib/
         cp libcrypto.a $BUILD_TO_DIR/lib/
 
-	else 
+	else
 
 		echoWarning "TODO: build $TYPE lib"
 
@@ -700,12 +699,12 @@ function copy() {
 	if [ -d $1/include/ ]; then
 	    rm -r $1/include/
 	fi
-	
+
 	mkdir -pv $1/include/openssl/
-	
+
 	# opensslconf.h is different in every platform, we need to copy
-	# it as opensslconf_$(TYPE).h and use a modified version of 
-	# opensslconf.h that detects the platform and includes the 
+	# it as opensslconf_$(TYPE).h and use a modified version of
+	# opensslconf.h that detects the platform and includes the
 	# correct one. Then every platform checkouts the rest of the config
 	# files that were deleted here
      if [[ "$TYPE" == "osx" || "$TYPE" == "ios" || "$TYPE" == "tvos" ]] ; then
@@ -728,9 +727,9 @@ function copy() {
 	if [ "$TYPE" == "osx" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/$TYPE/*.a $1/lib/$TYPE
-        if [[ "$CHECKOUT" == "NO" ]]; then 
+        if [[ "$CHECKOUT" == "NO" ]]; then
             echo "no git checkout"
-        else 
+        else
     		git checkout $1/include/openssl/opensslconf_osx.h
             git checkout $1/include/openssl/opensslconf_ios.h
         	git checkout $1/include/openssl/opensslconf_android.h
@@ -740,16 +739,16 @@ function copy() {
 	elif [[ "$TYPE" == "ios" || "${TYPE}" == "tvos" ]] ; then
 	 	mkdir -p $1/lib/$TYPE
 	 	cp -v lib/$TYPE/*.a $1/lib/$TYPE
-        if [[ "$CHECKOUT" == "NO" ]]; then 
+        if [[ "$CHECKOUT" == "NO" ]]; then
             echo "no git checkout"
-        else 
+        else
     		git checkout $1/include/openssl/opensslconf_osx.h
             git checkout $1/include/openssl/opensslconf_ios.h
         	git checkout $1/include/openssl/opensslconf_android.h
         	git checkout $1/include/openssl/opensslconf_vs.h
         	git checkout $1/include/openssl/opensslconf_win32.h
         fi
-	elif [ "$TYPE" == "vs" ] ; then	 
+	elif [ "$TYPE" == "vs" ] ; then
 		if [ $ARCH == 32 ] ; then
 			rm -rf $1/lib/$TYPE/Win32
 			mkdir -p $1/lib/$TYPE/Win32
@@ -767,7 +766,7 @@ function copy() {
 				mv -v $f $1/lib/$TYPE/x64/${base}md.lib
 			done
 		fi
-	 	
+
 		git checkout $1/include/openssl/opensslconf_ios.h
 		git checkout $1/include/openssl/opensslconf_osx.h
     	git checkout $1/include/openssl/opensslconf_android.h
@@ -775,7 +774,7 @@ function copy() {
 	# elif [ "$TYPE" == "msys2" ] ; then
 	# 	mkdir -p $1/lib/$TYPE
 	# 	cp -v lib/MinGW/i686/*.a $1/lib/$TYPE
-	
+
 	elif [ "$TYPE" == "android" ] ; then
 	    if [ -d $1/lib/$TYPE/ ]; then
 	        rm -r $1/lib/$TYPE/
@@ -806,8 +805,8 @@ function copy() {
     rm -rf $1/license # remove any older files if exists
     mkdir -p $1/license
     cp -v LICENSE $1/license/
-	
-	
+
+
 }
 
 # executed inside the lib src dir
@@ -820,7 +819,7 @@ function clean() {
 		# clean up compiled libraries
 		rm -rf /lib
 
-		# reset files back to original if 
+		# reset files back to original if
 		cp "crypto/ui/ui_openssl.c.orig" "crypto/ui/ui_openssl.c"
 		cp "Makefile.orig" "Makefile"
 		cp "Configure.orig" "Configure"
@@ -843,4 +842,3 @@ function clean() {
 	 	make clean
 	fi
 }
-
