@@ -324,7 +324,6 @@ function build() {
 		unset TOOLCHAIN
 
 	elif [ "$TYPE" == "android" ] ; then
-        source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
         local BUILD_TO_DIR=$BUILD_DIR/FreeImage/build/$TYPE
         cd $BUILD_DIR/FreeImage_patched
         
