@@ -88,7 +88,8 @@ VS_64_BIT_ENV='VC\bin\x86_amd64\vcvarsx86_amd64.bat'
 # paths to android SDK, etc
 ANDROID_NDK_ROOT=
 ANDROID_SDK_ROOT=
-ANDROID_PLATFORM=android-19
+ANDROID_API=21
+ANDROID_PLATFORM="android-$ANDROID_API"
 
 ################################################################################
 ### PRIVATE VARS, for internal use
@@ -313,47 +314,28 @@ function installAndroidToolchain() {
 	local WD=$(pwd)
 
 	if [ ! -d $ANDROID_NDK_ROOT/build/tools ]; then
-		echoError "ANDROID_NDK_ROOT not defined, please configure ../../libs/openFrameworksCompiled/project/android/paths.make"
+		echoError "NDK_ROOT not defined correctly"
 	fi
 
 
 	cd $ANDROID_NDK_ROOT/build/tools
-	
-	local HOST=$(${BUILD_DIR}/../ostype.sh)
-	
-	if [ "${HOST}" == "linux" ]; then
-	    ANDROID_HOST="linux-x86"
-	elif [ "${HOST}" == "linux64" ]; then
-	    ANDROID_HOST="linux-x86_64"
-	elif [ "${HOST}" == "osx" ]; then
-	    ANDROID_HOST="Darwin"
-	else
-	    echoError "Building for android only supported on linux and osx by now"
-	    exit 1
-	fi
 
 	if [ ! -d "$BUILD_DIR/Toolchains/Android/arm" ]; then
 	    echo "preparing toolchain arm"
-		./make-standalone-toolchain.sh \
-			--ndk-dir=$ANDROID_NDK_ROOT \
-			--platform=$ANDROID_PLATFORM \
-			--install-dir=$BUILD_DIR/Toolchains/Android/arm \
-			--arch=arm \
-			--system=${ANDROID_HOST} \
-			--toolchain=arm-linux-androideabi-clang3.6 \
-			--stl=libc++
+		python ./make_standalone_toolchain.py \
+			--install-dir $BUILD_DIR/Toolchains/Android/arm \
+			--arch arm \
+      --api $ANDROID_API \
+			--stl libc++
 	fi
 
 
 	if [ ! -d "$BUILD_DIR/Toolchains/Android/x86" ]; then
-		./make-standalone-toolchain.sh \
-			--ndk-dir=$ANDROID_NDK_ROOT \
-			--platform=$ANDROID_PLATFORM \
-			--install-dir=$BUILD_DIR/Toolchains/Android/x86 \
-			--arch=x86  \
-			--system=${ANDROID_HOST} \
-			--toolchain=x86-clang3.6 \
-			--stl=libc++
+    python ./make_standalone_toolchain.py \
+      --install-dir $BUILD_DIR/Toolchains/Android/x86 \
+      --arch x86 \
+      --api $ANDROID_API \
+      --stl libc++
 	fi
 
 	cd $WD
@@ -1030,15 +1012,12 @@ BUILD_ROOT_DIR=$BUILD_DIR/$BUILDROOT_SUBDIR
 
 # set for android sdk info
 if [[ "$TYPE" == "android" ]] ; then
-	if [[ -e ${LIBS_DIR}/openFrameworksCompiled/project/android/paths.make ]] ; then
-		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
-		ANDROID_NDK_ROOT=${NDK_ROOT}
+  ANDROID_NDK_ROOT=${NDK_ROOT:-}
+  if [[ "$ANDROID_NDK_ROOT" != "" ]] ; then
 		echoVerbose "Android NDK root: $ANDROID_NDK_ROOT"
 	else
-		echoError "Targeting android, but can't find the SDK. Missing"
-		echoError "libs/openFrameworksCompiled/project/android/paths.make ..."
-		echoError "See the following for info:"
-		echoError "libs/openFrameworksCompiled/project/android/paths.make.default"
+		echoError "Targeting android, NDK_ROOT is not set."
+		echoError "Please set it to the path of NDK 12"
 		exit 1
 	fi
 fi

@@ -17,7 +17,7 @@ elif [ $ABI = x86 ]; then
     export ANDROID_PREFIX=i686-linux-android
     export GCC_TOOLCHAIN=x86-${TOOLCHAIN_VERSION}
 fi
-export TOOLCHAIN=llvm-${CLANG_VERSION}
+export TOOLCHAIN=llvm
 export TOOLCHAIN_PATH=${NDK_ROOT}/toolchains/${TOOLCHAIN}/prebuilt/${HOST_PLATFORM}/bin
 export GCC_TOOLCHAIN_PATH=${NDK_ROOT}/toolchains/${GCC_TOOLCHAIN}/prebuilt/${HOST_PLATFORM}/bin
 export PATH=${PATH}:${TOOLCHAIN_PATH}
