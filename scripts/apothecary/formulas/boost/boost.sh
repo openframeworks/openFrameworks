@@ -2,7 +2,7 @@
 #
 # Boost
 # Filesystem and system modules only until they are part of c++ std
-# 
+#
 # uses a own build system
 
 FORMULA_TYPES=( "osx" "msys2" "ios" "tvos" "android" "emscripten" "vs" )
@@ -10,7 +10,7 @@ FORMULA_TYPES=( "osx" "msys2" "ios" "tvos" "android" "emscripten" "vs" )
 # define the version
 VERSION=1.58.0
 VERSION_UNDERSCORES="$(echo "$VERSION" | sed 's/\./_/g')"
-TARBALL="boost_${VERSION_UNDERSCORES}.tar.gz" 
+TARBALL="boost_${VERSION_UNDERSCORES}.tar.gz"
 
 BOOST_LIBS="filesystem system"
 EXTRA_CPPFLAGS="-std=c++11 -stdlib=libc++ -fPIC -DBOOST_SP_USE_SPINLOCK"
@@ -37,11 +37,11 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	if [ "$VERSION" == "1.58.0" ]; then 
+	if [ "$VERSION" == "1.58.0" ]; then
 		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/operations.cpp.patch_1.58 2>/dev/null ; then
                	    patch -p0 -u < $FORMULA_DIR/operations.cpp.patch_1.58
                 fi
-                
+
 		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/visualc.hpp.patch_1.58 2>/dev/null ; then
                     patch -p0 -u < $FORMULA_DIR/visualc.hpp.patch_1.58
                 fi
@@ -53,16 +53,16 @@ function prepare() {
 		mkdir -p lib/
 		mkdir -p build/
 		SDKVERSION=""
-        
+
         SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
- 
+
 		cp -v tools/build/example/user-config.jam.orig tools/build/example/user-config.jam
 		cp $XCODE_DEV_ROOT/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator${SDKVERSION}.sdk/usr/include/{crt_externs,bzlib}.h .
 		BOOST_LIBS_COMMA=$(echo $BOOST_LIBS | sed -e "s/ /,/g")
 	    echo "Bootstrapping (with libs $BOOST_LIBS_COMMA)"
 	    ./bootstrap.sh --with-libraries=$BOOST_LIBS_COMMA
 	elif [ "$TYPE" == "android" ]; then
-		./bootstrap.sh --with-toolset=clang --with-libraries=filesystemel
+		./bootstrap.sh --with-toolset=clang --with-libraries=filesystem
 	elif [ "$TYPE" == "vs" ]; then
 		cmd.exe /c "bootstrap"
 	else
@@ -74,32 +74,32 @@ function prepare() {
 function build() {
 	if [ "$TYPE" == "wincb" ] ; then
 		: #noop by now
-		
+
 	elif [ "$TYPE" == "vs" ]; then
 		./b2 -j${PARALLEL_MAKE} threading=multi variant=release --build-dir=build --with-filesystem link=static address-model=$ARCH stage
 		./b2 -j${PARALLEL_MAKE} threading=multi variant=debug --build-dir=build --with-filesystem link=static address-model=$ARCH stage
 		mv stage stage_$ARCH
-		
-		cd tools/bcp  
+
+		cd tools/bcp
 		../../b2
-		
-		
+
+
 	elif [ "$TYPE" == "osx" ]; then
 		./b2 -j${PARALLEL_MAKE} toolset=clang cxxflags="-std=c++11 -stdlib=libc++ -arch i386 -arch x86_64 -mmacosx-version-min=${OSX_MIN_SDK_VER}" linkflags="-stdlib=libc++" threading=multi variant=release --build-dir=build --stage-dir=stage link=static stage
-		cd tools/bcp  
+		cd tools/bcp
 		../../b2
 	elif [[ "$TYPE" == "ios" || "${TYPE}" == "tvos" ]]; then
 		# set some initial variables
 
 		local IOS_ARCHS
-        if [ "${TYPE}" == "tvos" ]; then 
+        if [ "${TYPE}" == "tvos" ]; then
             IOS_ARCHS="x86_64 arm64"
         elif [ "$TYPE" == "ios" ]; then
             IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
         fi
 
 		SDKVERSION=""
-        if [ "${TYPE}" == "tvos" ]; then 
+        if [ "${TYPE}" == "tvos" ]; then
             SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`
         elif [ "$TYPE" == "ios" ]; then
             SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
@@ -138,7 +138,7 @@ function build() {
         BOOST_SRC=$CURRENTPATH
         BITCODE=""
         MIN_IOS_VERSION=$IOS_MIN_SDK_VER
-        if [ "${TYPE}" == "tvos" ]; then 
+        if [ "${TYPE}" == "tvos" ]; then
 			local CROSS_TOP_IOS="${DEVELOPER}/Platforms/AppleTVOS.platform/Developer"
 			local CROSS_SDK_IOS="AppleTVOS${SDKVERSION}.sdk"
 			local CROSS_TOP_SIM="${DEVELOPER}/Platforms/AppleTVSimulator.platform/Developer"
@@ -267,7 +267,7 @@ EOF
 	    echo "------------------"
 	    echo "Copying Includes to Final Dir $OUTPUT_DIR_SRC"
 	    set +e
-	    cp -r $PREFIXDIR/include/boost/*  $OUTPUT_DIR_SRC/ 
+	    cp -r $PREFIXDIR/include/boost/*  $OUTPUT_DIR_SRC/
 	    echo "------------------"
 	    # clean up the build area as it is quite large.
 	    rm -rf build/lib iphone-build iphonesim-build
@@ -277,18 +277,26 @@ EOF
 		./b2 -j${PARALLEL_MAKE} toolset=clang cxxflags="-std=c++11" threading=single variant=release --build-dir=build --stage-dir=stage link=static stage
 	elif [ "$TYPE" == "android" ]; then
 	    rm -rf stage
-	    
-	    ABI=armeabi-v7a
+			rm -rf stage_arm
+			rm -rf stage_x86
+
+			ABI=armeabi-v7a
 	    source ../../android_configure.sh $ABI
-	    cp $FORMULA_DIR/project-config-android_arm.jam project-config.jam
-		./b2 -j${PARALLEL_MAKE} toolset=clang cxxflags="-std=c++11 $CFLAGS" threading=multi threadapi=pthread target-os=android variant=release --build-dir=build_arm link=static stage
+			export AR=arm-linux-androideabi-ar
+		./b2 --debug-configuration -j${PARALLEL_MAKE} toolset=clang cxxflags="-std=c++11 $CFLAGS" threading=multi threadapi=pthread target-os=android variant=release --build-dir=build_arm link=static stage
 		mv stage stage_arm
-		
+
 	    ABI=x86
 	    source ../../android_configure.sh $ABI
-	    cp $FORMULA_DIR/project-config-android_x86.jam project-config.jam
 		./b2 -j${PARALLEL_MAKE} toolset=clang cxxflags="-std=c++11 $CFLAGS" threading=multi threadapi=pthread target-os=android variant=release --build-dir=build_x86 link=static stage
 		mv stage stage_x86
+
+		# Run ranlib on binaries (not called corectly by b2)
+		${NDK_ROOT}/toolchains/arm-linux-androideabi-4.9/prebuilt/${HOST_PLATFORM}/bin/arm-linux-androideabi-ranlib stage_arm/lib/libboost_filesystem.a
+		${NDK_ROOT}/toolchains/arm-linux-androideabi-4.9/prebuilt/${HOST_PLATFORM}/bin/arm-linux-androideabi-ranlib stage_arm/lib/libboost_system.a
+
+		${NDK_ROOT}/toolchains/arm-linux-androideabi-4.9/prebuilt/${HOST_PLATFORM}/bin/arm-linux-androideabi-ranlib stage_x86/lib/libboost_filesystem.a
+		${NDK_ROOT}/toolchains/arm-linux-androideabi-4.9/prebuilt/${HOST_PLATFORM}/bin/arm-linux-androideabi-ranlib stage_x86/lib/libboost_system.a
 	fi
 }
 
@@ -300,7 +308,7 @@ function copy() {
 	# prepare libs directory if needed
 	mkdir -p $1/lib/$TYPE
 	mkdir -p install_dir
-	
+
 	if [ "$TYPE" == "wincb" ] ; then
 		: #noop by now
 	elif [ "$TYPE" == "vs" ] ; then
@@ -326,7 +334,7 @@ function copy() {
 		OUTPUT_DIR_LIB=`pwd`/lib/boost/ios/
         OUTPUT_DIR_SRC=`pwd`/lib/boost/include/boost
         #rsync -ar $OUTPUT_DIR_SRC/* $1/include/boost/
-        lipo -info $OUTPUT_DIR_LIB/boost_filesystem.a 
+        lipo -info $OUTPUT_DIR_LIB/boost_filesystem.a
         lipo -info $OUTPUT_DIR_LIB/boost_system.a
         cp -v $OUTPUT_DIR_LIB/boost_filesystem.a $1/lib/$TYPE/
 		cp -v $OUTPUT_DIR_LIB/boost_system.a $1/lib/$TYPE/
