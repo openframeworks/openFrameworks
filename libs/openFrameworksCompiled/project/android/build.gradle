@@ -10,7 +10,7 @@ apply plugin: "com.android.model.native"
 
 model {
     android {
-        compileSdkVersion 22
+        compileSdkVersion 19
 
         ndk {
             moduleName "openFrameworksLib"

@@ -24,12 +24,12 @@ apply plugin: 'com.android.model.application'
 
 model {
     android {
-        compileSdkVersion = 22
+        compileSdkVersion = 19
         buildToolsVersion = "23.0.3"
 
         defaultConfig.with {
-            minSdkVersion.apiLevel    = 9
-            targetSdkVersion.apiLevel = 22
+            minSdkVersion.apiLevel    = 19
+            targetSdkVersion.apiLevel = 19
             versionCode     =  1
             versionName     = "1.0"
         }
