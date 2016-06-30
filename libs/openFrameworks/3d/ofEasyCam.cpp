@@ -35,6 +35,7 @@ ofEasyCam::ofEasyCam(){
 	doTranslationKey = 'm';
 	bEventsSet = false;
 	events = nullptr;
+	relativeYAxis = false;
 
 	reset();
 }
@@ -250,6 +251,24 @@ bool ofEasyCam::getMouseMiddleButtonEnabled(){
 }
 
 //----------------------------------------
+ofVec3f ofEasyCam::up() const{
+	if(relativeYAxis){
+		if(bApplyInertia){
+			return getYAxis();
+		}else{
+			return prevAxisY;
+		}
+	}else{
+		return ofVec3f(0, 1, 0);
+	}
+}
+
+//----------------------------------------
+void ofEasyCam::setRelativeYAxis(bool relative){
+	relativeYAxis = relative;
+}
+
+//----------------------------------------
 void ofEasyCam::updateTranslation(){
 	if(bApplyInertia){
 		moveX *= drag;
@@ -276,11 +295,11 @@ void ofEasyCam::updateRotation(){
 			bApplyInertia = false;
 			bDoRotate = false;
 		}
-		curRot = ofQuaternion(xRot, getXAxis(), yRot, getYAxis(), zRot, getZAxis());
+		curRot = ofQuaternion(xRot, getXAxis(), yRot, up(), zRot, getZAxis());
 		setPosition((getGlobalPosition()-target.getGlobalPosition())*curRot +target.getGlobalPosition());
 		rotate(curRot);
 	}else{
-		curRot = ofQuaternion(xRot, prevAxisX, yRot, prevAxisY, zRot, prevAxisZ);
+		curRot = ofQuaternion(xRot, prevAxisX, yRot, up(), zRot, prevAxisZ);
 		setPosition((prevPosition-target.getGlobalPosition())*curRot +target.getGlobalPosition());
 		setOrientation(prevOrientation * curRot);
 	}

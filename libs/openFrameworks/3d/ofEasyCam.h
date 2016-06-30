@@ -16,7 +16,7 @@ public:
     /// \brief Destroy the camera.
 	~ofEasyCam();
 
-	/// \}
+	/// \}
 	/// \name Rendering
 	/// \{
 
@@ -26,8 +26,8 @@ public:
 	void reset();
 
 	/// \}
-	/// \name Camera Target
-	/// \{
+	/// \name Camera Target
+	/// \{
 
     /// \brief Set the camera's target.
     /// \param target The position of the target.
@@ -131,6 +131,10 @@ public:
 
 	/// \}
 
+	/// Uses Y axis relative to the camera orientation
+	/// By default the Y axis used for interactive rotation
+	/// is vec3(0,1,0)
+	void setRelativeYAxis(bool relative=true);
 
 	
 private:
@@ -178,6 +182,7 @@ private:
 	void mouseDragged(ofMouseEventArgs & mouse);
 	void mouseScrolled(ofMouseEventArgs & mouse);
 	void updateMouse(const ofMouseEventArgs & mouse);
+	ofVec3f up() const;
 
     /// \brief The key used to differentiate between translation and rotation.
 	char doTranslationKey;
@@ -206,4 +211,6 @@ private:
 	ofRectangle viewport;
 
 	ofCoreEvents * events;
+
+	bool relativeYAxis;
 };
