@@ -6,7 +6,7 @@
 
 //--------------------------------------------------------------------
 ofVideoGrabber::ofVideoGrabber(){
-	bUseTexture			= false;
+	bUseTexture			= true;
 	requestedDeviceID	= -1;
 	internalPixelFormat = OF_PIXELS_RGB;
 	desiredFramerate 	= -1;
