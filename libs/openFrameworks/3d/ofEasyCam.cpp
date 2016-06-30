@@ -36,6 +36,7 @@ ofEasyCam::ofEasyCam(){
 	bEventsSet = false;
 	events = nullptr;
 	relativeYAxis = false;
+	doInertia = true;
 
 	reset();
 }
@@ -269,6 +270,16 @@ void ofEasyCam::setRelativeYAxis(bool relative){
 }
 
 //----------------------------------------
+void ofEasyCam::enableInertia(){
+	doInertia = true;
+}
+
+//----------------------------------------
+void ofEasyCam::disableInertia(){
+	doInertia = false;
+}
+
+//----------------------------------------
 void ofEasyCam::updateTranslation(){
 	if(bApplyInertia){
 		moveX *= drag;
@@ -340,7 +351,7 @@ void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
 		return;
 	}
 	lastTap = curTap;
-	bApplyInertia = true;
+	bApplyInertia = doInertia;
 	mouseVel = mouse  - prevMouse;
 
 	updateMouse(mouse);

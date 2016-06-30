@@ -136,6 +136,8 @@ public:
 	/// is vec3(0,1,0)
 	void setRelativeYAxis(bool relative=true);
 
+	void enableInertia();
+	void disableInertia();
 	
 private:
 	void setDistance(float distance, bool save);
@@ -213,4 +215,5 @@ private:
 	ofCoreEvents * events;
 
 	bool relativeYAxis;
+	bool doInertia;
 };
