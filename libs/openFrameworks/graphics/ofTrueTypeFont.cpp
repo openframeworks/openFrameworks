@@ -524,7 +524,7 @@ ofTrueTypeFont::ofTrueTypeFont()
 :settings("",0){
 	bLoadedOk		= false;
 	letterSpacing = 1;
-	spaceSize = 0;
+	spaceSize = 1;
 	fontUnitScale = 1;
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
 	ascenderHeight = 0;
@@ -1115,16 +1115,24 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 				pos.y += lineHeight*newLineDirection;
 				pos.x = x ; //reset X Pos back to zero
 				prevC = 0;
-			}if (c == '\t') {
+			} else if (c == '\t') {
 				pos.x += getGlyphProperties(' ').advance * letterSpacing * 4 * directionX;
+				prevC = c;
+			} else if (c == ' ') {
+				pos.x += getGlyphProperties(' ').advance * letterSpacing * directionX * spaceSize;
 				prevC = c;
 			} else if(isValidGlyph(c)) {
 				const auto & props = getGlyphProperties(c);
 				if(prevC>0){
 					pos.x += getKerning(c,prevC);// * directionX;
 				}
-				f(c,pos);
-				pos.x += props.advance * letterSpacing * directionX;
+				if(settings.direction == ofTtfSettings::LeftToRight){
+				    f(c,pos);
+				    pos.x += props.advance * letterSpacing * directionX;
+				}else{
+				    pos.x += props.advance * letterSpacing * directionX;
+				    f(c,pos);
+				}
 				prevC = c;
 			}
 		}catch(...){
