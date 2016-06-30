@@ -303,6 +303,9 @@ void ofEasyCam::updateRotation(){
 		zRot *=drag;
 
 		if(ABS(xRot) <= minDifference && ABS(yRot) <= minDifference && ABS(zRot) <= minDifference){
+			xRot = 0;
+			yRot = 0;
+			zRot = 0;
 			bApplyInertia = false;
 			bDoRotate = false;
 		}
@@ -316,6 +319,7 @@ void ofEasyCam::updateRotation(){
 	}
 }
 
+//----------------------------------------
 void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 	ofRectangle viewport = getViewport(this->viewport);
 	if(viewport.inside(mouse.x, mouse.y)){
@@ -343,34 +347,44 @@ void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 	}
 }
 
+//----------------------------------------
 void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
-	unsigned long curTap = ofGetElapsedTimeMillis();
-	ofRectangle viewport = getViewport(this->viewport);
-	if(lastTap != 0 && curTap - lastTap < doubleclickTime){
-		reset();
-		return;
-	}
-	lastTap = curTap;
-	bApplyInertia = doInertia;
-	mouseVel = mouse  - prevMouse;
+	if(doInertia){
+		unsigned long curTap = ofGetElapsedTimeMillis();
+		ofRectangle viewport = getViewport(this->viewport);
+		if(lastTap != 0 && curTap - lastTap < doubleclickTime){
+			reset();
+			return;
+		}
+		lastTap = curTap;
+		bApplyInertia = true;
+		mouseVel = mouse  - prevMouse;
 
-	updateMouse(mouse);
-	ofVec2f center(viewport.width/2, viewport.height/2);
-	int vFlip;
-	if(isVFlipped()){
-		vFlip = -1;
+		updateMouse(mouse);
+		ofVec2f center(viewport.width/2, viewport.height/2);
+		int vFlip;
+		if(isVFlipped()){
+			vFlip = -1;
+		}else{
+			vFlip =  1;
+		}
+		zRot = -vFlip * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(prevMouse - ofVec2f(viewport.x, viewport.y) - center);
 	}else{
-		vFlip =  1;
+		bDoRotate = false;
+		xRot = 0;
+		yRot = 0;
+		zRot = 0;
 	}
-	zRot = -vFlip * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(prevMouse - ofVec2f(viewport.x, viewport.y) - center);
 }
 
+//----------------------------------------
 void ofEasyCam::mouseDragged(ofMouseEventArgs & mouse){
 	mouseVel = mouse  - lastMouse;
 
 	updateMouse(mouse);
 }
 
+//----------------------------------------
 void ofEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
 	ofRectangle viewport = getViewport(this->viewport);
 	prevPosition = ofCamera::getGlobalPosition();
@@ -379,6 +393,7 @@ void ofEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
 	bDoScrollZoom = true;
 }
 
+//----------------------------------------
 void ofEasyCam::updateMouse(const ofMouseEventArgs & mouse){
 	ofRectangle viewport = getViewport(this->viewport);
 	int vFlip;
@@ -397,7 +412,7 @@ void ofEasyCam::updateMouse(const ofMouseEventArgs & mouse){
 			moveX = -mouseVel.x * (sensitivityX * 0.5f) * (getDistance() + FLT_EPSILON)/viewport.width;
 			moveY = vFlip * mouseVel.y * (sensitivityY* 0.5f) * (getDistance() + FLT_EPSILON)/viewport.height;
 		}
-	}else{
+	}else if(bDoRotate){
 		xRot = 0;
 		yRot = 0;
 		zRot = 0;
