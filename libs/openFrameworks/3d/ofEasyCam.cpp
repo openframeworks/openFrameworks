@@ -11,33 +11,6 @@ static const unsigned long doubleclickTime = 200;
 
 //----------------------------------------
 ofEasyCam::ofEasyCam(){
-	lastTap	= 0;
-	lastDistance = 0;
-	drag = 0.9f;
- 
-	sensitivityRotX = 1.0f;
-	sensitivityRotY = 1.0f;
-	sensitivityRotZ = 1.0f;
-	
-	sensitivityX = 1.0f;
-	sensitivityY = 1.0f;
-	sensitivityZ = 1.0f;
-
-	bDistanceSet = false; 
-	bMouseInputEnabled = true;
-	bDoRotate = false;
-	bApplyInertia =false;
-	bDoTranslate = false;
-	bDoScrollZoom = false;
-	bInsideArcball = true;
-	bEnableMouseMiddleButton = true;
-	bAutoDistance = true;
-	doTranslationKey = 'm';
-	bEventsSet = false;
-	events = nullptr;
-	relativeYAxis = false;
-	doInertia = true;
-
 	reset();
 }
 
@@ -78,7 +51,7 @@ void ofEasyCam::begin(ofRectangle _viewport){
 void ofEasyCam::reset(){
 	target.resetTransform();
 
-	target.setPosition(0,0, 0);
+	target.setPosition(0, 0, 0);
 	lookAt(target);
 
 	resetTransform();

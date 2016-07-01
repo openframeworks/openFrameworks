@@ -150,34 +150,34 @@ private:
 
 	ofNode target;
 
-	bool bEnableMouseMiddleButton;
-	bool bApplyInertia;
-	bool bDoTranslate;
-	bool bDoRotate;
-	bool bDoScrollZoom;
-	bool bInsideArcball;
-	bool bMouseInputEnabled;
-	bool bDistanceSet;
-    bool bAutoDistance;
-    bool bEventsSet;
-	float lastDistance;
+	bool bEnableMouseMiddleButton = true;
+	bool bApplyInertia = false;
+	bool bDoTranslate = false;
+	bool bDoRotate = false;
+	bool bDoScrollZoom = false;
+	bool bInsideArcball = false;
+	bool bMouseInputEnabled = false;
+	bool bDistanceSet = false;
+	bool bAutoDistance = true;
+	bool bEventsSet = false;
+	float lastDistance = 0.f;
 
-	float drag;
+	float drag = 0.9f;
 	
-	float xRot;
-	float yRot;
-	float zRot;
+	float xRot = 0.0f;
+	float yRot = 0.0f;
+	float zRot = 0.0f;
 	
-	float moveX;
-	float moveY;
-	float moveZ;
+	float moveX = 0.0f;
+	float moveY = 0.0f;
+	float moveZ = 0.0f;
 	
-	float sensitivityX;
-	float sensitivityY;
-	float sensitivityZ;
-	float sensitivityRotX;
-	float sensitivityRotY;
-	float sensitivityRotZ;
+	float sensitivityX = 1.0f;
+	float sensitivityY = 1.0f;
+	float sensitivityZ = 1.0f;
+	float sensitivityRotX = 1.0f;
+	float sensitivityRotY = 1.0f;
+	float sensitivityRotZ = 1.0f;
 
 	ofVec2f lastMouse, prevMouse;
 	ofVec2f mouseVel;
@@ -193,10 +193,10 @@ private:
 	ofVec3f up() const;
 
     /// \brief The key used to differentiate between translation and rotation.
-	char doTranslationKey;
+	char doTranslationKey = 'm';
 
     /// \brief The time of the last pointer down event.
-	unsigned long lastTap;
+	unsigned long lastTap = 0;
 
     /// \brief The current rotation quaternion.
 	ofQuaternion curRot;
@@ -218,9 +218,9 @@ private:
 
 	ofRectangle viewport;
 
-	ofCoreEvents * events;
+	ofCoreEvents * events = nullptr;
 
-	bool relativeYAxis;
-	bool doInertia;
-	ofVec3f upAxis;
+	bool relativeYAxis = false;
+	bool doInertia = true;
+	ofVec3f upAxis{0,1,0};
 };
