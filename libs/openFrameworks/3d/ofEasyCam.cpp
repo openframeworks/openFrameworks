@@ -260,13 +260,18 @@ ofVec3f ofEasyCam::up() const{
 			return prevAxisY;
 		}
 	}else{
-		return ofVec3f(0, 1, 0);
+		return upAxis;
 	}
 }
 
 //----------------------------------------
 void ofEasyCam::setRelativeYAxis(bool relative){
 	relativeYAxis = relative;
+}
+
+//----------------------------------------
+void ofEasyCam::setUpAxis(const ofVec3f & _up){
+	upAxis = _up;
 }
 
 //----------------------------------------

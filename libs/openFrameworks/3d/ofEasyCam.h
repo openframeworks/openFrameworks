@@ -132,9 +132,15 @@ public:
 	/// \}
 
 	/// Uses Y axis relative to the camera orientation
+	///
 	/// By default the Y axis used for interactive rotation
-	/// is vec3(0,1,0)
+	/// is vec3(0,1,0) or whatever is set as up axis using
+	/// setUpAxis
 	void setRelativeYAxis(bool relative=true);
+
+	/// Set the camera fixed up axis for interactive
+	/// manipulation
+	void setUpAxis(const ofVec3f & up);
 
 	void enableInertia();
 	void disableInertia();
@@ -216,4 +222,5 @@ private:
 
 	bool relativeYAxis;
 	bool doInertia;
+	ofVec3f upAxis;
 };
