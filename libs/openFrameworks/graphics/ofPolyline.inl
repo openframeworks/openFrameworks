@@ -917,7 +917,7 @@ float ofPolyline_<T>::getDegreesAtIndexInterpolated(float findex) const {
 	int i1, i2;
 	float t;
 	getInterpolationParams(findex, i1, i2, t);
-	return ofRadToDeg(ofLerp(getAngleAtIndex(i1), getAngleAtIndex(i2), t));
+	return ofRadToDeg(ofLerp(getDegreesAtIndex(i1), getDegreesAtIndex(i2), t));
 }
 
 
@@ -936,7 +936,7 @@ float ofPolyline_<T>::getRadiansAtIndexInterpolated(float findex) const {
 	int i1, i2;
 	float t;
 	getInterpolationParams(findex, i1, i2, t);
-	return ofLerp(getAngleAtIndex(i1), getAngleAtIndex(i2), t);
+	return ofLerp(getRadiansAtIndex(i1), getRadiansAtIndex(i2), t);
 }
 
 //--------------------------------------------------
