@@ -45,7 +45,7 @@ public:
 	ofHttpRequest	    request; //< matching HTTP request for this response
 	ofBuffer		    data; //< response raw data
 	int					status; //< HTTP response status (200: OK, 404: Not Found, etc)
-	string				error; //< HTTP error string, if any (OK, Not Foudn, etc)
+	string				error; //< HTTP error string, if any (OK, Not Found, etc)
 };
 
 /// \brief make an HTTP GET request

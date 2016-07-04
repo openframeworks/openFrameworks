@@ -1,5 +1,11 @@
-                           
-
+   ___   ___  _  _   
+  / _ \ / _ \| || |  
+ | | | | (_) | || |_ 
+ | | | |\__, |__   _|
+ | |_| |  / /   | |  
+  \___(_)/_(_)  |_|  
+                     
+                     
 OF 0.9.3
 ========                          
 
@@ -10,20 +16,78 @@ OF 0.9.3
 
 ------------------------------------------------------------------------------
 
+CORE
+---- 
+
+### types
+   / ofParameterGroup: fix for clear not freeing the children weak_ptrs
+   / ofParameter: clean invalid weak_ptr
+
+
+PLATFORM SPECIFIC
+-----------------
+
+### osx
+    / recompiled freeimage to fix support for 32bits
+
+### linux
+    / install_dependencies: add check to see if all packages are up to date
+
+
+
+   ___         ___        ____  
+  / _ \       / _ \      |___ \ 
+ | | | |     | (_) |       __) |
+ | | | |      \__, |      |__ < 
+ | |_| |  _     / /   _   ___) |
+  \___/  (_)   /_/   (_) |____/ 
+                                
+                                
+OF 0.9.3
+========                          
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+CORE
+---- 
+
+### graphics
+    / fixes for ofPixels move constructor and operator
+    
+### gl
+    / fix for ofSetColor as default material in fixed pipeline
+    
+    
 PLATFORM SPECIFIC
 -----------------
 
 ### msys2
-   / FreeImage to freeimage dependencies fix
+    / FreeImage to freeimage dependencies fix
 
+### osx
+    / remove data copy to bundle in osx default target 
+    / AVFoundation player fix for getPixels after unsuccessful movie load
+    / fixes for window size on osx retina
+    / FreeImage static libs recompiled to fix SSL errors #4812
 
- _____     _____     _____ 
+    
+### linux
+    / fixes for linux fullscreen in gnome shell, openbox and others
+    
+    
+
+ _____     _____     _____
 |  _  |   |  _  |   / __  \
 | |/' |   | |_| |   `' / /'
 |  /| |   \____ |     / /  
 \ |_/ / _ .___/ / _ ./ /___
  \___/ (_)\____/ (_)\_____/
-                           
+
 
 OF 0.9.2
 ========                          
@@ -36,7 +100,7 @@ OF 0.9.2
 ------------------------------------------------------------------------------
 
 CORE
----- 
+----
 
 ### graphics
     / ttf font size had wrong dpi
@@ -61,7 +125,7 @@ PLATFORM SPECIFIC
     \ \ \   \ \ \    \ \/__\ \ \          \ \ \       
      \ \ \   \ \ \    \_____\ \ \          \ \ \      
       \ \ \___\ \ \   _      \ \ \   _    __\ \ \___  
-       \ \/____\ \ \ /\_\     \ \ \ /\_\ /___\_\/__/\ 
+       \ \/____\ \ \ /\_\     \ \ \ /\_\ /___\_\/__/\
         \_________\/ \/_/      \_\/ \/_/ \_________\/
 
 OF 0.9.1

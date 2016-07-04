@@ -524,53 +524,47 @@ Java_cc_openframeworks_OFAndroid_onSwipe(JNIEnv*  env, jclass  thiz, jint id, ji
 
 jboolean
 Java_cc_openframeworks_OFAndroid_onScale(JNIEnv*  env, jclass  thiz, jobject detector){
-	try{
-		ofxAndroidScaleEventArgs scale(detector);
-		ofxAndroidEvents().scale.notify(nullptr,scale);
-	}catch(...){
-		return true;
-	}
-	return false;
+	ofxAndroidScaleEventArgs scale(detector);
+	return ofxAndroidEvents().scale.notify(nullptr,scale);
 }
 
 jboolean
 Java_cc_openframeworks_OFAndroid_onScaleBegin(JNIEnv*  env, jclass  thiz, jobject detector){
-	try{
-		ofxAndroidScaleEventArgs scale(detector);
-		ofxAndroidEvents().scaleBegin.notify(nullptr,scale);
-	}catch(...){
-		return true;
-	}
-	return false;
+	ofxAndroidScaleEventArgs scale(detector);
+	return ofxAndroidEvents().scaleBegin.notify(nullptr,scale);
 }
 
 void
 Java_cc_openframeworks_OFAndroid_onScaleEnd(JNIEnv*  env, jclass  thiz, jobject detector){
-	try{
-		ofxAndroidScaleEventArgs scale(detector);
-		ofxAndroidEvents().scaleEnd.notify(nullptr,scale);
-	}catch(...){
-	}
+	ofxAndroidScaleEventArgs scale(detector);
+    ofxAndroidEvents().scaleEnd.notify(nullptr,scale);
 }
 
-void
-Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jobject  thiz, jint  keyCode){
-	window->events().notifyKeyPressed(keyCode);
+jboolean
+Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jobject  thiz, jint  keyCode, jint unicode){
+    ofKeyEventArgs key;
+	key.type = ofKeyEventArgs::Pressed;
+    key.key = unicode;
+    key.keycode = keyCode;
+    key.scancode = keyCode;
+    key.codepoint = unicode;
+    return window->events().notifyKeyEvent(key);
 }
 
-void
-Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jobject  thiz, jint  keyCode){
-	window->events().notifyKeyReleased(keyCode);
+jboolean
+Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jobject  thiz, jint  keyCode, jint unicode){
+    ofKeyEventArgs key;
+	key.type = ofKeyEventArgs::Released;
+    key.key = unicode;
+    key.keycode = keyCode;
+    key.scancode = keyCode;
+    key.codepoint = unicode;
+    return window->events().notifyKeyEvent(key);
 }
 
 jboolean
 Java_cc_openframeworks_OFAndroid_onBackPressed(){
-	try{
-		ofxAndroidEvents().backPressed.notify(nullptr);
-	}catch(...){
-		return true;
-	}
-	return false;
+	return ofxAndroidEvents().backPressed.notify(nullptr);
 }
 
 jboolean
@@ -578,13 +572,8 @@ Java_cc_openframeworks_OFAndroid_onMenuItemSelected( JNIEnv*  env, jobject  thiz
 	jboolean iscopy;
 	const char * menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
 	if(!menu_id_str) return false;
-	try{
-		string id_str(menu_id_str);
-		ofxAndroidEvents().menuItemSelected.notify(nullptr,id_str);
-	}catch(...){
-		return true;
-	}
-	return false;
+	string id_str(menu_id_str);
+	return ofxAndroidEvents().menuItemSelected.notify(nullptr,id_str);
 }
 
 jboolean
@@ -592,13 +581,8 @@ Java_cc_openframeworks_OFAndroid_onMenuItemChecked( JNIEnv*  env, jobject  thiz,
 	jboolean iscopy;
 	const char *menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
 	if(!menu_id_str) return false;
-	try{
-		string id_str(menu_id_str);
-		ofxAndroidEvents().menuItemChecked.notify(nullptr,id_str);
-	}catch(...){
-		return true;
-	}
-	return false;
+	string id_str(menu_id_str);
+	return ofxAndroidEvents().menuItemChecked.notify(nullptr,id_str);
 }
 
 void
@@ -616,6 +600,10 @@ Java_cc_openframeworks_OFAndroid_networkConnected( JNIEnv*  env, jobject  thiz, 
 	bool bConnected = (bool)connected;
 	ofNotifyEvent(ofxAndroidEvents().networkConnected,bConnected);
 }
+
+void
+Java_cc_openframeworks_OFAndroid_deviceOrientationChanged(JNIEnv*  env, jclass  thiz, jint orientation){
+	ofOrientation _orientation = (ofOrientation) orientation;
+	ofNotifyEvent(ofxAndroidEvents().deviceOrientationChanged,_orientation );
 }
-
-
+}
