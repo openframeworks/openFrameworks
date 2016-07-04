@@ -256,30 +256,83 @@ void ofScale(const glm::vec3 & p) {
 	ofScale(p.x, p.y, p.z); 
 }
 
-//----------------------------------------------------------
-void ofRotate(float degrees, float vecX, float vecY, float vecZ){
-	ofGetCurrentRenderer()->rotate(degrees, vecX, vecY, vecZ);
-}
-
-//----------------------------------------------------------
-void ofRotateX(float degrees){
-	ofGetCurrentRenderer()->rotateX(degrees);
-}
-
-//----------------------------------------------------------
-void ofRotateY(float degrees){
-	ofGetCurrentRenderer()->rotateY(degrees);
-}
-
-//----------------------------------------------------------
-void ofRotateZ(float degrees){
-	ofGetCurrentRenderer()->rotateZ(degrees);
-}
 
 //same as ofRotateZ
 //----------------------------------------------------------
 void ofRotate(float degrees){
-	ofGetCurrentRenderer()->rotate(degrees);
+	ofGetCurrentRenderer()->rotateDeg(degrees);
+}
+
+//----------------------------------------------------------
+void ofRotate(float degrees, float vecX, float vecY, float vecZ){
+	ofGetCurrentRenderer()->rotateDeg(degrees, vecX, vecY, vecZ);
+}
+
+//----------------------------------------------------------
+void ofRotateX(float degrees){
+	ofGetCurrentRenderer()->rotateXDeg(degrees);
+}
+
+//----------------------------------------------------------
+void ofRotateY(float degrees){
+	ofGetCurrentRenderer()->rotateYDeg(degrees);
+}
+
+//----------------------------------------------------------
+void ofRotateZ(float degrees){
+	ofGetCurrentRenderer()->rotateZDeg(degrees);
+}
+
+//same as ofRotateZ
+//----------------------------------------------------------
+void ofRotateDeg(float degrees){
+	ofGetCurrentRenderer()->rotateDeg(degrees);
+}
+
+//----------------------------------------------------------
+void ofRotateDeg(float degrees, float vecX, float vecY, float vecZ){
+	ofGetCurrentRenderer()->rotateDeg(degrees, vecX, vecY, vecZ);
+}
+
+//----------------------------------------------------------
+void ofRotateXDeg(float degrees){
+	ofGetCurrentRenderer()->rotateXDeg(degrees);
+}
+
+//----------------------------------------------------------
+void ofRotateYDeg(float degrees){
+	ofGetCurrentRenderer()->rotateYDeg(degrees);
+}
+
+//----------------------------------------------------------
+void ofRotateZDeg(float degrees){
+	ofGetCurrentRenderer()->rotateZDeg(degrees);
+}
+
+//same as ofRotateZ
+//----------------------------------------------------------
+void ofRotateRad(float degrees){
+	ofGetCurrentRenderer()->rotateRad(degrees);
+}
+
+//----------------------------------------------------------
+void ofRotateRad(float degrees, float vecX, float vecY, float vecZ){
+	ofGetCurrentRenderer()->rotateRad(degrees, vecX, vecY, vecZ);
+}
+
+//----------------------------------------------------------
+void ofRotateXRad(float degrees){
+	ofGetCurrentRenderer()->rotateXRad(degrees);
+}
+
+//----------------------------------------------------------
+void ofRotateYRad(float degrees){
+	ofGetCurrentRenderer()->rotateYRad(degrees);
+}
+
+//----------------------------------------------------------
+void ofRotateZRad(float degrees){
+	ofGetCurrentRenderer()->rotateZRad(degrees);
 }
 
 //----------------------------------------------------------

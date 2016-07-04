@@ -892,19 +892,51 @@ T ofPolyline_<T>::getPointAtIndexInterpolated(float findex) const {
 //--------------------------------------------------
 template<class T>
 float ofPolyline_<T>::getAngleAtIndex(int index) const {
-    if(points.size() < 2) return 0;
-    updateCache();
-    return angles[getWrappedIndex(index)];
+	return getDegreesAtIndex(index);
 }
 
 //--------------------------------------------------
 template<class T>
 float ofPolyline_<T>::getAngleAtIndexInterpolated(float findex) const {
-    if(points.size() < 2) return 0;
-    int i1, i2;
-    float t;
-    getInterpolationParams(findex, i1, i2, t);
-    return ofLerp(getAngleAtIndex(i1), getAngleAtIndex(i2), t);
+	return getDegreesAtIndexInterpolated(findex);
+}
+
+
+//--------------------------------------------------
+template<class T>
+float ofPolyline_<T>::getDegreesAtIndex(int index) const {
+	if(points.size() < 2) return 0;
+	updateCache();
+	return ofRadToDeg(angles[getWrappedIndex(index)]);
+}
+
+//--------------------------------------------------
+template<class T>
+float ofPolyline_<T>::getDegreesAtIndexInterpolated(float findex) const {
+	if(points.size() < 2) return 0;
+	int i1, i2;
+	float t;
+	getInterpolationParams(findex, i1, i2, t);
+	return ofRadToDeg(ofLerp(getAngleAtIndex(i1), getAngleAtIndex(i2), t));
+}
+
+
+//--------------------------------------------------
+template<class T>
+float ofPolyline_<T>::getRadiansAtIndex(int index) const {
+	if(points.size() < 2) return 0;
+	updateCache();
+	return angles[getWrappedIndex(index)];
+}
+
+//--------------------------------------------------
+template<class T>
+float ofPolyline_<T>::getRadiansAtIndexInterpolated(float findex) const {
+	if(points.size() < 2) return 0;
+	int i1, i2;
+	float t;
+	getInterpolationParams(findex, i1, i2, t);
+	return ofLerp(getAngleAtIndex(i1), getAngleAtIndex(i2), t);
 }
 
 //--------------------------------------------------
@@ -982,7 +1014,7 @@ void ofPolyline_<T>::calcData(int index, T &tangent, float &angle, T &rotation, 
 	glm::normalize(toGlm(tangent));
     
 	rotation = glm::cross(toGlm(v1), toGlm(v2));
-    angle = 180 - ofRadToDeg(acos(ofClamp(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z, -1, 1)));
+	angle = glm::pi<float>() - acos(ofClamp(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z, -1, 1));
 
 	normal = glm::cross(toGlm(rightVector), toGlm(tangent));
 	glm::normalize(toGlm(normal));

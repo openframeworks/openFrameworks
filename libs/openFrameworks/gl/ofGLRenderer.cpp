@@ -846,29 +846,55 @@ void ofGLRenderer::scale(float xAmnt, float yAmnt, float zAmnt){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
+void ofGLRenderer::rotateDeg(float degrees, float vecX, float vecY, float vecZ){
 	glRotatef(degrees, vecX, vecY, vecZ);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::rotateX(float degrees){
+void ofGLRenderer::rotateXDeg(float degrees){
 	glRotatef(degrees, 1, 0, 0);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::rotateY(float degrees){
+void ofGLRenderer::rotateYDeg(float degrees){
 	glRotatef(degrees, 0, 1, 0);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::rotateZ(float degrees){
+void ofGLRenderer::rotateZDeg(float degrees){
 	glRotatef(degrees, 0, 0, 1);
 }
 
 //same as ofRotateZ
 //----------------------------------------------------------
-void ofGLRenderer::rotate(float degrees){
+void ofGLRenderer::rotateDeg(float degrees){
 	glRotatef(degrees, 0, 0, 1);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::rotateRad(float radians, float vecX, float vecY, float vecZ){
+	glRotatef(ofRadToDeg(radians), vecX, vecY, vecZ);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::rotateXRad(float radians){
+	glRotatef(ofRadToDeg(radians), 1, 0, 0);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::rotateYRad(float radians){
+	glRotatef(ofRadToDeg(radians), 0, 1, 0);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::rotateZRad(float radians){
+	glRotatef(ofRadToDeg(radians), 0, 0, 1);
+}
+
+//same as ofRotateZ
+//----------------------------------------------------------
+void ofGLRenderer::rotateRad(float radians){
+	glRotatef(ofRadToDeg(radians), 0, 0, 1);
 }
 
 //----------------------------------------------------------

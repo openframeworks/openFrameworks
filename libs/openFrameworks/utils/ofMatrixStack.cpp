@@ -347,8 +347,8 @@ void ofMatrixStack::scale(float xAmnt, float yAmnt, float zAmnt){
 	updatedRelatedMatrices();
 }
 
-void ofMatrixStack::rotate(float degrees, float vecX, float vecY, float vecZ){
-	*currentMatrix = glm::rotate(*currentMatrix, ofDegToRad(degrees), glm::vec3(vecX, vecY, vecZ));
+void ofMatrixStack::rotateRad(float radians, float vecX, float vecY, float vecZ){
+	*currentMatrix = glm::rotate(*currentMatrix, radians, glm::vec3(vecX, vecY, vecZ));
 	updatedRelatedMatrices();
 }
 

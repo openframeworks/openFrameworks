@@ -56,7 +56,7 @@ public:
 	void popMatrix();
 	void translate(float x, float y, float z = 0);
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1);
-	void rotate(float degrees, float vecX, float vecY, float vecZ);
+	void rotateRad(float radians, float vecX, float vecY, float vecZ);
 	void matrixMode(ofMatrixMode mode);
 	void loadIdentityMatrix (void);
 	

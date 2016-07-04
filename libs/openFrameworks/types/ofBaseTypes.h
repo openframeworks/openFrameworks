@@ -953,22 +953,30 @@ public:
 	/// \param vecX The x axis to rotate about.
 	/// \param vecY The y axis to rotate about.
 	/// \param vecZ The z axis to rotate about.
-	virtual void rotate(float degrees, float vecX, float vecY, float vecZ)=0;
+	virtual void rotateDeg(float degrees, float vecX, float vecY, float vecZ){
+		rotateRad(ofDegToRad(degrees), vecX, vecY, vecZ);
+	}
 
 	/// \brief Rotate this renderer's current matrix by \p degrees about the x
 	/// axis.
 	/// \param degrees Degrees to rotate about the x axis.
-	virtual void rotateX(float degrees)=0;
+	virtual void rotateXDeg(float degrees){
+		rotateXRad(ofDegToRad(degrees));
+	}
 
 	/// \brief Rotate this renderer's current matrix by \p degrees about the y
 	/// axis.
 	/// \param degrees Degrees to rotate about the y axis.
-	virtual void rotateY(float degrees)=0;
+	virtual void rotateYDeg(float degrees){
+		rotateYRad(ofDegToRad(degrees));
+	}
 
 	/// \brief Rotate this renderer's current matrix by \p degrees about the z
 	/// axis.
 	/// \param degrees Degrees to rotate about the z axis.
-	virtual void rotateZ(float degrees)=0;
+	virtual void rotateZDeg(float degrees){
+		rotateZRad(ofDegToRad(degrees));
+	}
 
 	/// \brief Rotate this renderer's current matrix by \p degrees about the z
 	/// axis.
@@ -977,7 +985,40 @@ public:
 	///
 	/// \param degrees Degrees to rotate about the z axis.
 	/// \sa rotateZ()
-	virtual void rotate(float degrees)=0;
+	virtual void rotateDeg(float degrees){
+		rotateRad(ofDegToRad(degrees));
+	}
+
+	/// \brief Rotate this renderer's current matrix by \p degrees about a euler.
+	/// \param degrees Degrees to rotate about vecX, vecY, and vecZ.
+	/// \param vecX The x axis to rotate about.
+	/// \param vecY The y axis to rotate about.
+	/// \param vecZ The z axis to rotate about.
+	virtual void rotateRad(float degrees, float vecX, float vecY, float vecZ)=0;
+
+	/// \brief Rotate this renderer's current matrix by \p degrees about the x
+	/// axis.
+	/// \param degrees Degrees to rotate about the x axis.
+	virtual void rotateXRad(float degrees)=0;
+
+	/// \brief Rotate this renderer's current matrix by \p degrees about the y
+	/// axis.
+	/// \param degrees Degrees to rotate about the y axis.
+	virtual void rotateYRad(float degrees)=0;
+
+	/// \brief Rotate this renderer's current matrix by \p degrees about the z
+	/// axis.
+	/// \param degrees Degrees to rotate about the z axis.
+	virtual void rotateZRad(float degrees)=0;
+
+	/// \brief Rotate this renderer's current matrix by \p degrees about the z
+	/// axis.
+	///
+	/// This method is an alias of rotateZ().
+	///
+	/// \param degrees Degrees to rotate about the z axis.
+	/// \sa rotateZ()
+	virtual void rotateRad(float degrees)=0;
 
 	/// \brief Sets this renderer's current matrix mode.
 	///
