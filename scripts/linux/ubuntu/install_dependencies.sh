@@ -11,6 +11,8 @@ fi
 
 if [ "$1" == "-y" ]; then
     FORCE_YES=-y
+else 
+    FORCE_YES=""
 fi
 
 function installPackages {
@@ -20,11 +22,11 @@ function installPackages {
         if [ $? -eq 0 ]; then 
             echo "Already installed"
         else
-            error="$(apt-get install --dry-run ${pkg})"
+            error="$(apt-get install -y --dry-run ${pkg})"
             exit_code=$?
             echo "$error" | grep Remv > /dev/null
             if [ $? -eq 0 ]; then
-                apt-get install ${pkg}
+                apt-get install ${FORCE_YES} ${pkg}
                 exit_code=$?
                 if [ $exit_code != 0 ]; then
                     echo "error installing ${pkg}, there could be an error with your internet connection"
@@ -32,7 +34,7 @@ function installPackages {
                     exit $exit_code
                 fi
             elif [ $exit_code -eq 0 ]; then
-                apt-get -y install ${pkg} > /dev/null
+                apt-get -y -qq install ${pkg}
                 exit_code=$?
                 if [ $exit_code != 0 ]; then
                     echo "error installing ${pkg}, there could be an error with your internet connection"
@@ -78,6 +80,22 @@ else
 fi
 
 apt-get update
+REGULAR_UPDATES=$(/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 1)
+SECURITY_UPDATES=$(/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 2)
+
+if [ "$1" != "-y" ]; then
+    if [ $REGULAR_UPDATES -ne 0 ] || [ $SECURITY_UPDATES -ne 0 ]; then
+        read -p "Your system is not updated, that can create problems when installing the OF dependencies. Do you want to update all the packages now? [Y/n]"
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            read -p "Do you want to try installing the OF dependencies anyway?"
+            if [[ $REPLY =~ ^[Nn]$ ]]; then
+                exit 0
+            fi
+        else
+            apt-get dist-upgrade
+        fi
+    fi
+fi
 
 GSTREAMER_VERSION=0.10
 GSTREAMER_FFMPEG=gstreamer${GSTREAMER_VERSION}-ffmpeg

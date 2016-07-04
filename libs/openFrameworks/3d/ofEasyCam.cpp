@@ -108,7 +108,7 @@ void ofEasyCam::setTarget(ofNode& targetNode){
 }
 
 //----------------------------------------
-ofNode& ofEasyCam::getTarget(){
+const ofNode& ofEasyCam::getTarget() const{
 	return target;
 }
 
@@ -157,7 +157,7 @@ void ofEasyCam::setTranslationKey(char key){
 }
 
 //----------------------------------------
-char ofEasyCam::getTranslationKey(){
+char ofEasyCam::getTranslationKey() const{
 	return doTranslationKey;
 }
 
@@ -230,7 +230,7 @@ void ofEasyCam::setTranslationSensitivity(float x, float y, float z){
 }
 
 //----------------------------------------
-bool ofEasyCam::getMouseInputEnabled(){
+bool ofEasyCam::getMouseInputEnabled() const{
 	return bMouseInputEnabled;
 }
 
@@ -245,7 +245,7 @@ void ofEasyCam::disableMouseMiddleButton(){
 }
 
 //----------------------------------------
-bool ofEasyCam::getMouseMiddleButtonEnabled(){
+bool ofEasyCam::getMouseMiddleButtonEnabled() const{
 	return bEnableMouseMiddleButton;
 }
 

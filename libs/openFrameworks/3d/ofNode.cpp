@@ -3,7 +3,6 @@
 #include "ofMath.h"
 #include "ofLog.h"
 #include "of3dGraphics.h"
-#include "ofVec3f.h"
 
 //----------------------------------------
 ofNode::ofNode()
@@ -19,11 +18,16 @@ ofNode::ofNode()
 
 //----------------------------------------
 ofNode::~ofNode(){
-	if(parent){
+	if(parent != nullptr){
 		parent->removeListener(*this);
 	}
-	for(auto child: children){
-		child->clearParent();
+
+	// clearParent() will remove children of this element as a side-effect.
+	// This changes the "children", and so we can't use a normal foreach
+	// loop, but must use the following construction to deal with newly
+	// invalidated iterators:
+	while (!children.empty()){
+		(*children.begin())->clearParent();
 	}
 }
 
@@ -121,6 +125,12 @@ void ofNode::removeListener(ofNode & node){
 
 //----------------------------------------
 void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
+	if (parent)
+	{
+		// we need to make sure to clear before
+		// re-assigning parenthood.
+		clearParent(bMaintainGlobalTransform);
+	}
     if(bMaintainGlobalTransform) {
 		auto postParentGlobalTransform = glm::inverse(parent.getGlobalTransformMatrix()) * getGlobalTransformMatrix();
 		parent.addListener(*this);
@@ -137,7 +147,7 @@ void ofNode::clearParent(bool bMaintainGlobalTransform) {
 		parent->removeListener(*this);
 	}
     if(bMaintainGlobalTransform) {
-		auto globalTransform = getGlobalTransformMatrix();
+        auto globalTransform(getGlobalTransformMatrix());
         this->parent = nullptr;
         setTransformMatrix(globalTransform);
     } else {

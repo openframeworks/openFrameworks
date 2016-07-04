@@ -90,19 +90,19 @@ msys2:
     ADDON_INCLUDES_EXCLUDE = libs/opencv
     ADDON_INCLUDES_EXCLUDE += libs/opencv/%
 
-android/armeabi:	
+android/x86:	
 	ADDON_LIBS =
-	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_legacy.a 
-	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_calib3d.a
-	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_features2d.a 
-	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_objdetect.a 
-	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_video.a  
-	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_imgproc.a
-	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_highgui.a 
-	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_ml.a 
-	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_core.a 
-	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_flann.a
-	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_contrib.a
+	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_legacy.a 
+	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_calib3d.a
+	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_features2d.a 
+	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_objdetect.a 
+	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_video.a  
+	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_imgproc.a
+	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_highgui.a 
+	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_ml.a 
+	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_core.a 
+	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_flann.a
+	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_contrib.a
 	
 android/armeabi-v7a:	
 	ADDON_LIBS =

@@ -8,9 +8,11 @@ void ofApp::setup(){
 	ofEnableAntiAliasing();
 
 	//create the socket and bind to port 11999
-	udpConnection.Create();
-	udpConnection.Bind(11999);
-	udpConnection.SetNonBlocking(true);
+	ofxUDPSettings settings;
+	settings.receiveOn(11999);
+	settings.blocking = false;
+
+	udpConnection.Setup(settings);
 
 	ofSetBackgroundAuto(false);
 	ofSetBackgroundColor(255);

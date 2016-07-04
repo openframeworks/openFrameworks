@@ -24,6 +24,7 @@
 	#include "ofImage.h"
 	#include <X11/Xatom.h>
 	#include <GL/freeglut_ext.h>
+	#include <GL/glx.h>
 #endif
 
 
@@ -677,6 +678,21 @@ void ofAppGlutWindow::display(void){
 
     nFramesSinceWindowResized++;
 
+}
+
+//------------------------------------------------------------
+void ofAppGlutWindow::swapBuffers() {
+	glutSwapBuffers();
+}
+
+//--------------------------------------------
+void ofAppGlutWindow::startRender() {
+	renderer()->startRender();
+}
+
+//--------------------------------------------
+void ofAppGlutWindow::finishRender() {
+	renderer()->finishRender();
 }
 
 //------------------------------------------------------------

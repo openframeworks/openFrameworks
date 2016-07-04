@@ -22,8 +22,8 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		void start();
 		void stop();
 		void close();
-		
-		long unsigned long getTickCount() const;
+
+		uint64_t getTickCount() const;
 
 		ofSoundDevice getInDevice() const{ return ofSoundDevice(); }
 		ofSoundDevice getOutDevice() const{ return ofSoundDevice(); }

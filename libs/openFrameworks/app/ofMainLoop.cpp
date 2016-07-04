@@ -99,6 +99,7 @@ void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> a
 			ofAddListener(ofxAndroidEvents().unloadGL,androidApp,&ofxAndroidApp::unloadGL,OF_EVENT_ORDER_APP);
 			ofAddListener(ofxAndroidEvents().reloadGL,androidApp,&ofxAndroidApp::reloadGL,OF_EVENT_ORDER_APP);
 			ofAddListener(ofxAndroidEvents().swipe,androidApp,&ofxAndroidApp::swipe,OF_EVENT_ORDER_APP);
+			ofAddListener(ofxAndroidEvents().deviceOrientationChanged,androidApp,&ofxAndroidApp::deviceOrientationChangedEvent,OF_EVENT_ORDER_APP);
 		}
 #endif
 	}
@@ -121,7 +122,6 @@ int ofMainLoop::loop(){
 			loopOnce();
 			pollEvents();
 		}
-		exit();
 	}else{
 		windowLoop();
 	}
@@ -194,6 +194,7 @@ void ofMainLoop::exit(){
 			ofRemoveListener(ofxAndroidEvents().unloadGL,androidApp,&ofxAndroidApp::unloadGL,OF_EVENT_ORDER_APP);
 			ofRemoveListener(ofxAndroidEvents().reloadGL,androidApp,&ofxAndroidApp::reloadGL,OF_EVENT_ORDER_APP);
 			ofRemoveListener(ofxAndroidEvents().swipe,androidApp,&ofxAndroidApp::swipe,OF_EVENT_ORDER_APP);
+			ofRemoveListener(ofxAndroidEvents().deviceOrientationChanged,androidApp,&ofxAndroidApp::deviceOrientationChangedEvent,OF_EVENT_ORDER_APP);
 		}
 #endif
 	}
@@ -203,7 +204,7 @@ void ofMainLoop::exit(){
 }
 
 shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
-	return currentWindow;
+	return currentWindow.lock();
 }
 
 void ofMainLoop::setCurrentWindow(shared_ptr<ofAppBaseWindow> window){
@@ -211,7 +212,7 @@ void ofMainLoop::setCurrentWindow(shared_ptr<ofAppBaseWindow> window){
 }
 
 void ofMainLoop::setCurrentWindow(ofAppBaseWindow * window){
-	if(currentWindow.get() == window){
+	if(currentWindow.lock().get() == window){
 		return;
 	}
 	for(auto i: windowsApps){
@@ -223,11 +224,7 @@ void ofMainLoop::setCurrentWindow(ofAppBaseWindow * window){
 }
 
 shared_ptr<ofBaseApp> ofMainLoop::getCurrentApp(){
-	return windowsApps[currentWindow];
-}
-
-ofCoreEvents & ofMainLoop::events(){
-	return currentWindow->events();
+	return windowsApps[currentWindow.lock()];
 }
 
 void ofMainLoop::shouldClose(int _status){
