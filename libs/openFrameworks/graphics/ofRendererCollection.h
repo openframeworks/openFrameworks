@@ -250,29 +250,56 @@ public:
 			 renderer->scale(xAmnt,yAmnt,zAmnt);
 		 }
 	 }
-	 void rotate(float degrees, float vecX, float vecY, float vecZ){
+
+	 void rotateDeg(float degrees, float vecX, float vecY, float vecZ){
 		 for(auto renderer: renderers){
-			 renderer->rotate(degrees,vecX,vecY,vecZ);
+			 renderer->rotateDeg(degrees,vecX,vecY,vecZ);
 		 }
 	 }
-	 void rotateX(float degrees){
+	 void rotateXDeg(float degrees){
 		 for(auto renderer: renderers){
-			 renderer->rotateX(degrees);
+			 renderer->rotateXDeg(degrees);
 		 }
 	 }
-	 void rotateY(float degrees){
+	 void rotateYDeg(float degrees){
 		 for(auto renderer: renderers){
-			 renderer->rotateY(degrees);
+			 renderer->rotateYDeg(degrees);
 		 }
 	 }
-	 void rotateZ(float degrees){
+	 void rotateZDeg(float degrees){
 		 for(auto renderer: renderers){
-			 renderer->rotateZ(degrees);
+			 renderer->rotateZDeg(degrees);
 		 }
 	 }
-	 void rotate(float degrees){
+	 void rotateDeg(float degrees){
 		 for(auto renderer: renderers){
-			 renderer->rotate(degrees);
+			 renderer->rotateDeg(degrees);
+		 }
+	 }
+
+	 void rotateRad(float radians, float vecX, float vecY, float vecZ){
+		 for(auto renderer: renderers){
+			 renderer->rotateRad(radians,vecX,vecY,vecZ);
+		 }
+	 }
+	 void rotateXRad(float radians){
+		 for(auto renderer: renderers){
+			 renderer->rotateXRad(radians);
+		 }
+	 }
+	 void rotateYRad(float radians){
+		 for(auto renderer: renderers){
+			 renderer->rotateYRad(radians);
+		 }
+	 }
+	 void rotateZRad(float radians){
+		 for(auto renderer: renderers){
+			 renderer->rotateZRad(radians);
+		 }
+	 }
+	 void rotateRad(float radians){
+		 for(auto renderer: renderers){
+			 renderer->rotateRad(radians);
 		 }
 	 }
 

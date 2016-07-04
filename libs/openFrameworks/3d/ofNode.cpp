@@ -125,7 +125,7 @@ void ofNode::removeListener(ofNode & node){
 
 //----------------------------------------
 void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
-	if (parent)
+	if (this->parent)
 	{
 		// we need to make sure to clear before
 		// re-assigning parenthood.
@@ -259,7 +259,18 @@ glm::quat ofNode::getOrientationQuat() const {
 
 //----------------------------------------
 glm::vec3 ofNode::getOrientationEuler() const {
-	return glm::eulerAngles((const glm::quat&)orientation);
+	return getOrientationEulerDeg();
+}
+
+//----------------------------------------
+glm::vec3 ofNode::getOrientationEulerDeg() const {
+	auto euler = glm::eulerAngles(orientation.get());
+	return {ofRadToDeg(euler.x), ofRadToDeg(euler.y), ofRadToDeg(euler.z)};
+}
+
+//----------------------------------------
+glm::vec3 ofNode::getOrientationEulerRad() const {
+	return glm::eulerAngles(orientation.get());
 }
 
 //----------------------------------------
@@ -313,17 +324,47 @@ void ofNode::dolly(float amount) {
 
 //----------------------------------------
 void ofNode::tilt(float degrees) {
-	rotate(degrees, getXAxis());
+	rotateDeg(degrees, getXAxis());
 }
 
 //----------------------------------------
 void ofNode::pan(float degrees) {
-	rotate(degrees, getYAxis());
+	rotateDeg(degrees, getYAxis());
 }
 
 //----------------------------------------
 void ofNode::roll(float degrees) {
-	rotate(degrees, getZAxis());
+	rotateDeg(degrees, getZAxis());
+}
+
+//----------------------------------------
+void ofNode::tiltDeg(float degrees) {
+	rotateDeg(degrees, getXAxis());
+}
+
+//----------------------------------------
+void ofNode::panDeg(float degrees) {
+	rotateDeg(degrees, getYAxis());
+}
+
+//----------------------------------------
+void ofNode::rollDeg(float degrees) {
+	rotateDeg(degrees, getZAxis());
+}
+
+//----------------------------------------
+void ofNode::tiltRad(float radians) {
+	rotateRad(radians, getXAxis());
+}
+
+//----------------------------------------
+void ofNode::panRad(float radians) {
+	rotateRad(radians, getYAxis());
+}
+
+//----------------------------------------
+void ofNode::rollRad(float radians) {
+	rotateRad(radians, getZAxis());
 }
 
 //----------------------------------------
@@ -335,12 +376,32 @@ void ofNode::rotate(const glm::quat& q) {
 
 //----------------------------------------
 void ofNode::rotate(float degrees, const glm::vec3& v) {
+	rotateDeg(degrees, v);
+}
+
+//----------------------------------------
+void ofNode::rotateDeg(float degrees, const glm::vec3& v) {
 	rotate(glm::angleAxis(ofDegToRad(degrees), v));
 }
 
 //----------------------------------------
+void ofNode::rotateRad(float radians, const glm::vec3& v) {
+	rotate(glm::angleAxis(radians, v));
+}
+
+//----------------------------------------
 void ofNode::rotate(float degrees, float vx, float vy, float vz) {
+	rotateDeg(degrees, vx, vy, vz);
+}
+
+//----------------------------------------
+void ofNode::rotateDeg(float degrees, float vx, float vy, float vz) {
 	rotate(glm::angleAxis(ofDegToRad(degrees), glm::vec3(vx, vy, vz)));
+}
+
+//----------------------------------------
+void ofNode::rotateRad(float radians, float vx, float vy, float vz) {
+	rotate(glm::angleAxis(radians, glm::vec3(vx, vy, vz)));
 }
 
 //----------------------------------------
@@ -358,7 +419,17 @@ void ofNode::rotateAround(const glm::quat& q, const glm::vec3& point) {
 
 //----------------------------------------
 void ofNode::rotateAround(float degrees, const glm::vec3& axis, const glm::vec3& point) {
+	rotateAroundDeg(degrees, axis, point);
+}
+
+//----------------------------------------
+void ofNode::rotateAroundDeg(float degrees, const glm::vec3& axis, const glm::vec3& point) {
 	rotateAround(glm::angleAxis(ofDegToRad(degrees), axis), point);
+}
+
+//----------------------------------------
+void ofNode::rotateAroundRad(float radians, const glm::vec3& axis, const glm::vec3& point) {
+	rotateAround(glm::angleAxis(radians, axis), point);
 }
 
 //----------------------------------------
@@ -484,6 +555,16 @@ glm::vec3 ofNode::getGlobalScale() const {
 
 //----------------------------------------
 void ofNode::orbit(float longitude, float latitude, float radius, const glm::vec3& centerPoint) {
+	orbitDeg(longitude, latitude, radius, centerPoint);
+}
+
+//----------------------------------------
+void ofNode::orbit(float longitude, float latitude, float radius, ofNode& centerNode) {
+	orbitDeg(longitude, latitude, radius, centerNode);
+}
+
+//----------------------------------------
+void ofNode::orbitDeg(float longitude, float latitude, float radius, const glm::vec3& centerPoint) {
 	glm::quat q = glm::angleAxis(ofDegToRad(latitude), glm::vec3(1,0,0)) * glm::angleAxis(ofDegToRad(longitude), glm::vec3(0,1,0)) * glm::angleAxis(0.f, glm::vec3(0,0,1));
 	setPosition(q * (glm::vec3(0,0,radius)-centerPoint) + centerPoint);
 	setOrientation(q);
@@ -493,8 +574,23 @@ void ofNode::orbit(float longitude, float latitude, float radius, const glm::vec
 }
 
 //----------------------------------------
-void ofNode::orbit(float longitude, float latitude, float radius, ofNode& centerNode) {
-	orbit(longitude, latitude, radius, centerNode.getGlobalPosition());
+void ofNode::orbitDeg(float longitude, float latitude, float radius, ofNode& centerNode) {
+	orbitDeg(longitude, latitude, radius, centerNode.getGlobalPosition());
+}
+
+//----------------------------------------
+void ofNode::orbitRad(float longitude, float latitude, float radius, const glm::vec3& centerPoint) {
+	glm::quat q = glm::angleAxis(latitude, glm::vec3(1,0,0)) * glm::angleAxis(longitude, glm::vec3(0,1,0)) * glm::angleAxis(0.f, glm::vec3(0,0,1));
+	setPosition(q * (glm::vec3(0,0,radius)-centerPoint) + centerPoint);
+	setOrientation(q);
+	onOrientationChanged();
+	onPositionChanged();
+//	lookAt(centerPoint);//, v - centerPoint);
+}
+
+//----------------------------------------
+void ofNode::orbitRad(float longitude, float latitude, float radius, ofNode& centerNode) {
+	orbitRad(longitude, latitude, radius, centerNode.getGlobalPosition());
 }
 
 //----------------------------------------

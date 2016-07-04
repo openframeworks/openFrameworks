@@ -92,11 +92,11 @@ private:
 	void translate(float x, float y, float z = 0){};
 	void translate(const glm::vec3 & p){};
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1){};
-	void rotate(float degrees, float vecX, float vecY, float vecZ){};
-	void rotateX(float degrees){};
-	void rotateY(float degrees){};
-	void rotateZ(float degrees){};
-	void rotate(float degrees){};
+	void rotateRad(float radians, float vecX, float vecY, float vecZ){};
+	void rotateXRad(float radians){};
+	void rotateYRad(float radians){};
+	void rotateZRad(float radians){};
+	void rotateRad(float radians){};
 
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults(){};

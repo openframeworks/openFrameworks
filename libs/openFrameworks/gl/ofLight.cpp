@@ -301,7 +301,7 @@ void ofLight::customDraw(const ofBaseRenderer * renderer) const{;
     } else if (getIsSpotlight()) {
         float coneHeight = (sin(data->spotCutOff*DEG_TO_RAD) * 30.f) + 1;
         float coneRadius = (cos(data->spotCutOff*DEG_TO_RAD) * 30.f) + 8;
-		const_cast<ofBaseRenderer*>(renderer)->rotate(-90,1,0,0);
+		const_cast<ofBaseRenderer*>(renderer)->rotateDeg(-90,1,0,0);
 		renderer->drawCone(0, -(coneHeight*.5), 0, coneHeight, coneRadius);
     } else  if (getIsAreaLight()) {
     	const_cast<ofBaseRenderer*>(renderer)->pushMatrix();

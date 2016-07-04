@@ -434,11 +434,11 @@ public:
 	T getPointAtIndexInterpolated(float findex) const;
 
     /// \brief Get angle (degrees) of the path at index
-    float getAngleAtIndex(int index) const;
+	OF_DEPRECATED_MSG("Use the Deg/Rad versions", float getAngleAtIndex(int index) const);
     
     /// \brief Get angle (degrees) at interpolated index (interpolated between
     /// neighboring indices)
-    float getAngleAtIndexInterpolated(float findex) const;
+	OF_DEPRECATED_MSG("Use the Deg/Rad versions", float getAngleAtIndexInterpolated(float findex) const);
     
     /// \brief Get rotation vector at index (magnitude is sin of angle)
 	T getRotationAtIndex(int index) const;
@@ -446,6 +446,20 @@ public:
     /// \brief Get rotation vector at interpolated index 
     /// (interpolated between neighboring indices) (magnitude is sin of angle)
 	T getRotationAtIndexInterpolated(float findex) const;
+
+	/// \brief Get angle (degrees) of the path at index
+	float getDegreesAtIndex(int index) const;
+
+	/// \brief Get angle (degrees) at interpolated index (interpolated between
+	/// neighboring indices)
+	float getDegreesAtIndexInterpolated(float findex) const;
+
+	/// \brief Get angle (degrees) of the path at index
+	float getRadiansAtIndex(int index) const;
+
+	/// \brief Get angle (degrees) at interpolated index (interpolated between
+	/// neighboring indices)
+	float getRadiansAtIndexInterpolated(float findex) const;
     
     /// \brief Get tangent vector at index
 	T getTangentAtIndex(int index) const;

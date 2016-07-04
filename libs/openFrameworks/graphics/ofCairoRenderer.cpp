@@ -795,16 +795,6 @@ void ofCairoRenderer::scale(float xAmnt, float yAmnt, float zAmnt ){
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::rotateZ(float degrees){
-    rotate(degrees,0,0,1);
-}
-
-//----------------------------------------------------------
-void ofCairoRenderer::rotate(float degrees){
-	rotateZ(degrees);
-}
-
-//----------------------------------------------------------
 void ofCairoRenderer::matrixMode(ofMatrixMode mode){
 	currentMatrixMode = mode;
 }
@@ -859,10 +849,9 @@ void ofCairoRenderer::multMatrix (const float * m){
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
+void ofCairoRenderer::rotateRad(float radians, float vecX, float vecY, float vecZ){
     if(!surface || !cr) return;
 
-	auto radians = ofDegToRad(degrees);
     // we can only do Z-axis rotations via cairo_matrix_rotate.
     if(vecZ == 1.0f) {
     	cairo_matrix_t matrix;
@@ -876,12 +865,22 @@ void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::rotateX(float degrees){
-	rotate(degrees,1,0,0);
+void ofCairoRenderer::rotateXRad(float radians){
+	rotateRad(radians,1,0,0);
 }
 //----------------------------------------------------------
-void ofCairoRenderer::rotateY(float degrees){
-	rotate(degrees,0,1,0);
+void ofCairoRenderer::rotateYRad(float radians){
+	rotateRad(radians,0,1,0);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::rotateZRad(float radians){
+	rotateRad(radians,0,0,1);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::rotateRad(float radians){
+	rotateZRad(radians);
 }
 
 //----------------------------------------------------------

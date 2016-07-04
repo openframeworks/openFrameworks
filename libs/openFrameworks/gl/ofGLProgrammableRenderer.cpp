@@ -696,30 +696,30 @@ void ofGLProgrammableRenderer::scale(float xAmnt, float yAmnt, float zAmnt){
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
-	matrixStack.rotate(degrees, vecX, vecY, vecZ);
+void ofGLProgrammableRenderer::rotateRad(float radians, float vecX, float vecY, float vecZ){
+	matrixStack.rotateRad(radians, vecX, vecY, vecZ);
 	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::rotateX(float degrees){
-	rotate(degrees, 1, 0, 0);
+void ofGLProgrammableRenderer::rotateXRad(float radians){
+	rotateRad(radians, 1, 0, 0);
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::rotateY(float degrees){
-	rotate(degrees, 0, 1, 0);
+void ofGLProgrammableRenderer::rotateYRad(float radians){
+	rotateRad(radians, 0, 1, 0);
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::rotateZ(float degrees){
-	rotate(degrees, 0, 0, 1);
+void ofGLProgrammableRenderer::rotateZRad(float radians){
+	rotateRad(radians, 0, 0, 1);
 }
 
 //same as ofRotateZ
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::rotate(float degrees){
-	rotateZ(degrees);
+void ofGLProgrammableRenderer::rotateRad(float radians){
+	rotateZRad(radians);
 }
 
 //----------------------------------------------------------

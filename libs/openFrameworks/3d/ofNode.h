@@ -101,7 +101,15 @@ public:
 	
 	/// \brief Get local orientation of node in degrees around x, y, and z axes.
 	/// \returns The local x, y and z axes orientation in degrees, as a 3D vector.
-	glm::vec3 getOrientationEuler() const;
+	OF_DEPRECATED_MSG("Use the Deg/Rad version", glm::vec3 getOrientationEuler() const);
+
+	/// \brief Get local orientation of node in degrees around x, y, and z axes.
+	/// \returns The local x, y and z axes orientation in degrees, as a 3D vector.
+	glm::vec3 getOrientationEulerDeg() const;
+
+	/// \brief Get local orientation of node in degrees around x, y, and z axes.
+	/// \returns The local x, y and z axes orientation in degrees, as a 3D vector.
+	glm::vec3 getOrientationEulerRad() const;
 	
 	/// \brief Get local scale of node in xyz axes where 1 is default.
 	/// \returns The local scale in the xyz axes where 1 = 100% of size.
@@ -217,15 +225,39 @@ public:
 	
 	/// \brief Tilt up+down relative to current orientation (around local x axis).
 	/// \param param0 Desired relative rotation change along local x axis in degrees as float.
-	void tilt(float degrees);						
+	OF_DEPRECATED_MSG("Use the Deg/Rad version", void tilt(float degrees));
+
+	/// \brief Tilt up+down relative to current orientation (around local x axis).
+	/// \param param0 Desired relative rotation change along local x axis in degrees as float.
+	void tiltDeg(float degrees);
+
+	/// \brief Tilt up+down relative to current orientation (around local x axis).
+	/// \param param0 Desired relative rotation change along local x axis in radians as float.
+	void tiltRad(float radians);
 	
 	/// \brief Rotate left+right relative to current orientation (around local y axis).
 	/// \param param0 Desired relative rotation change along local y axis in degrees as float.
-	void pan(float degrees);
+	OF_DEPRECATED_MSG("Use the Deg/Rad version", void pan(float degrees));
+
+	/// \brief Rotate left+right relative to current orientation (around local y axis).
+	/// \param param0 Desired relative rotation change along local y axis in degrees as float.
+	void panDeg(float degrees);
+
+	/// \brief Rotate left+right relative to current orientation (around local y axis).
+	/// \param param0 Desired relative rotation change along local y axis in radians as float.
+	void panRad(float radians);
 
 	/// \brief Roll left+right relative to current orientation (around local z axis).
 	/// \param param0 Desired relative rotation change along local z axis in degrees as float.
-	void roll(float degrees);					
+	OF_DEPRECATED_MSG("Use the Deg/Rad version", void roll(float degrees));
+
+	/// \brief Roll left+right relative to current orientation (around local z axis).
+	/// \param param0 Desired relative rotation change along local z axis in degrees as float.
+	void rollDeg(float degrees);
+
+	/// \brief Roll left+right relative to current orientation (around local z axis).
+	/// \param param0 Desired relative rotation change along local z axis in radians as float.
+	void rollRad(float radians);
 	
 	/// \brief Rotate relative to current orientation by quaternion.
 	/// \param param0 Desired relative rotation change as a ref to quaternion.
@@ -234,25 +266,61 @@ public:
 	/// \brief Rotate relative to current orientation around arbitrary axis.
 	/// \param param0 Desired relative angle change in degrees as float.	
 	/// \param param1 Desired axis to rotate around as a ref to cartesian 3D Vector.	
-	void rotate(float degrees, const glm::vec3& v);
+	OF_DEPRECATED_MSG("Use the Deg/Rad version", void rotate(float degrees, const glm::vec3& v));
+
+	/// \brief Rotate relative to current orientation around arbitrary axis.
+	/// \param param0 Desired relative angle change in degrees as float.
+	/// \param param1 Desired axis to rotate around as a ref to cartesian 3D Vector.
+	void rotateDeg(float degrees, const glm::vec3& v);
+
+	/// \brief Rotate relative to current orientation around arbitrary axis.
+	/// \param param0 Desired relative angle change in radians as float.
+	/// \param param1 Desired axis to rotate around as a ref to cartesian 3D Vector.
+	void rotateRad(float radians, const glm::vec3& v);
 
 	/// \brief Rotate relative to current orientation around arbitrary axis.
 	/// \param param0 Desired relative angle change in degrees as float.	
 	/// \param param1 X angle of the axis to rotate around in degrees as float.
 	/// \param param2 Y angle of the axis to rotate around in degrees as float.
 	/// \param param3 Z angle of the axis to rotate around in degrees as float.
-	void rotate(float degrees, float vx, float vy, float vz);
+	OF_DEPRECATED_MSG("Use the Deg/Rad version", void rotate(float degrees, float vx, float vy, float vz));
+
+	/// \brief Rotate relative to current orientation around arbitrary axis.
+	/// \param param0 Desired relative angle change in degrees as float.
+	/// \param param1 X angle of the axis to rotate around in degrees as float.
+	/// \param param2 Y angle of the axis to rotate around in degrees as float.
+	/// \param param3 Z angle of the axis to rotate around in degrees as float.
+	void rotateDeg(float degrees, float vx, float vy, float vz);
+
+	/// \brief Rotate relative to current orientation around arbitrary axis.
+	/// \param param0 Desired relative angle change in radians as float.
+	/// \param param1 X angle of the axis to rotate around in degrees as float.
+	/// \param param2 Y angle of the axis to rotate around in degrees as float.
+	/// \param param3 Z angle of the axis to rotate around in degrees as float.
+	void rotateRad(float radians, float vx, float vy, float vz);
 	
 	/// \brief Rotate relative to current orientation by quaternion around point.
 	/// \param param0 Desired relative rotation change as a ref to quaternion.
 	/// \param param1 Point to rotate around in local xyz coordinates as ref to 3D vector.	
 	void rotateAround(const glm::quat& q, const glm::vec3& point);
+
+	/// \brief Rotate relative to current orientation around arbitrary axis around point.
+	/// \param param0 Desired relative angle change in degrees as float.
+	/// \param param1 The arbitrary axis to rotate around as ref to cartesian 3D vector.
+	/// \param param2 Point to rotate around in local xyz coordinates as ref to 3D vector.
+	OF_DEPRECATED_MSG("Use the Deg/Rad version", void rotateAround(float degrees, const glm::vec3& axis, const glm::vec3& point));
 	
 	/// \brief Rotate relative to current orientation around arbitrary axis around point.
 	/// \param param0 Desired relative angle change in degrees as float.    
 	/// \param param1 The arbitrary axis to rotate around as ref to cartesian 3D vector.
     /// \param param2 Point to rotate around in local xyz coordinates as ref to 3D vector.
-	void rotateAround(float degrees, const glm::vec3& axis, const glm::vec3& point);
+	void rotateAroundDeg(float degrees, const glm::vec3& axis, const glm::vec3& point);
+
+	/// \brief Rotate relative to current orientation around arbitrary axis around point.
+	/// \param param0 Desired relative angle change in degrees as float.
+	/// \param param1 The arbitrary axis to rotate around as ref to cartesian 3D vector.
+	/// \param param2 Point to rotate around in local xyz coordinates as ref to 3D vector.
+	void rotateAroundRad(float radians, const glm::vec3& axis, const glm::vec3& point);
 
     /// \brief Orient node to look at point (-z axis pointing to global position).
     /// \param param0 XYZ coordinates of point to look at as ref to 3D vector.
@@ -281,13 +349,42 @@ public:
 	/// \param param1 The latitudinal position of the node in degrees as float.
 	/// \param param2 The desired radius from the position in degrees as float.
 	/// \param param3 The global position to orbit around as ref to 3D vector. Default = (0, 0, 0).	
-	void orbit(float longitude, float latitude, float radius, const glm::vec3& centerPoint = glm::vec3(0, 0, 0));
+	OF_DEPRECATED_MSG("Use the Deg/Rad version", void orbit(float longitude, float latitude, float radius, const glm::vec3& centerPoint = glm::vec3(0, 0, 0)));
+
 	/// \brief Orbit node around another node at a specific radius.
 	/// \param param0 The longitudinal position of the node in degrees as float.
 	/// \param param1 The latitudinal position of the node in degrees as float.
 	/// \param param2 The desired radius from the other node in degrees as float.
 	/// \param param3 A reference to the node to rotate around.	
-	void orbit(float longitude, float latitude, float radius, ofNode& centerNode);
+	OF_DEPRECATED_MSG("Use the Deg/Rad version", void orbit(float longitude, float latitude, float radius, ofNode& centerNode));
+
+	/// \brief Orbit node around a global position at a specific radius.
+	/// \param param0 The longitudinal position of the node in degrees as float.
+	/// \param param1 The latitudinal position of the node in degrees as float.
+	/// \param param2 The desired radius from the position in degrees as float.
+	/// \param param3 The global position to orbit around as ref to 3D vector. Default = (0, 0, 0).
+	void orbitDeg(float longitude, float latitude, float radius, const glm::vec3& centerPoint = glm::vec3(0, 0, 0));
+
+	/// \brief Orbit node around another node at a specific radius.
+	/// \param param0 The longitudinal position of the node in degrees as float.
+	/// \param param1 The latitudinal position of the node in degrees as float.
+	/// \param param2 The desired radius from the other node in degrees as float.
+	/// \param param3 A reference to the node to rotate around.
+	void orbitDeg(float longitude, float latitude, float radius, ofNode& centerNode);
+
+	/// \brief Orbit node around a global position at a specific radius.
+	/// \param param0 The longitudinal position of the node in radians as float.
+	/// \param param1 The latitudinal position of the node in radians as float.
+	/// \param param2 The desired radius from the position in radians as float.
+	/// \param param3 The global position to orbit around as ref to 3D vector. Default = (0, 0, 0).
+	void orbitRad(float longitude, float latitude, float radius, const glm::vec3& centerPoint = glm::vec3(0, 0, 0));
+
+	/// \brief Orbit node around another node at a specific radius.
+	/// \param param0 The longitudinal position of the node in radians as float.
+	/// \param param1 The latitudinal position of the node in radians as float.
+	/// \param param2 The desired radius from the other node in radians as float.
+	/// \param param3 A reference to the node to rotate around.
+	void orbitRad(float longitude, float latitude, float radius, ofNode& centerNode);
 	
 	/// \}
 	/// \name OpenGL Transformation
