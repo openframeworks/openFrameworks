@@ -18,7 +18,7 @@ ofNode::ofNode()
 
 //----------------------------------------
 ofNode::~ofNode(){
-	if(parent != nullptr){
+	if(parent){
 		parent->removeListener(*this);
 	}
 
@@ -131,7 +131,7 @@ void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
 		// re-assigning parenthood.
 		clearParent(bMaintainGlobalTransform);
 	}
-    if(bMaintainGlobalTransform) {
+	if(bMaintainGlobalTransform) {
 		auto postParentGlobalTransform = glm::inverse(parent.getGlobalTransformMatrix()) * getGlobalTransformMatrix();
 		parent.addListener(*this);
 		setTransformMatrix(postParentGlobalTransform);
@@ -564,33 +564,49 @@ void ofNode::orbit(float longitude, float latitude, float radius, ofNode& center
 }
 
 //----------------------------------------
-void ofNode::orbitDeg(float longitude, float latitude, float radius, const glm::vec3& centerPoint) {
-	glm::quat q = glm::angleAxis(ofDegToRad(latitude), glm::vec3(1,0,0)) * glm::angleAxis(ofDegToRad(longitude), glm::vec3(0,1,0)) * glm::angleAxis(0.f, glm::vec3(0,0,1));
-	setPosition(q * (glm::vec3(0,0,radius)-centerPoint) + centerPoint);
-	setOrientation(q);
-	onOrientationChanged();
-	onPositionChanged();
-//	lookAt(centerPoint);//, v - centerPoint);
-}
-
-//----------------------------------------
 void ofNode::orbitDeg(float longitude, float latitude, float radius, ofNode& centerNode) {
 	orbitDeg(longitude, latitude, radius, centerNode.getGlobalPosition());
 }
 
 //----------------------------------------
-void ofNode::orbitRad(float longitude, float latitude, float radius, const glm::vec3& centerPoint) {
-	glm::quat q = glm::angleAxis(latitude, glm::vec3(1,0,0)) * glm::angleAxis(longitude, glm::vec3(0,1,0)) * glm::angleAxis(0.f, glm::vec3(0,0,1));
-	setPosition(q * (glm::vec3(0,0,radius)-centerPoint) + centerPoint);
+void ofNode::orbitDeg(float longitude, float latitude, float radius, const glm::vec3& centerPoint) {
+	glm::quat q = 
+	          glm::angleAxis(ofDegToRad(longitude), glm::vec3(0, 1, 0)) 
+	        * glm::angleAxis(ofDegToRad(latitude),  glm::vec3(1, 0, 0));
+
+	glm::vec4 p { 0.f, 0.f, 1.f, 0.f };	   // p is a direction, not a position, so .w == 0
+	
+	p = q * p;							   // rotate p on unit sphere based on quaternion
+	p = p * radius;						   // scale p by radius from its position on unit sphere
+
+	setGlobalPosition(centerPoint + p);
 	setOrientation(q);
+
 	onOrientationChanged();
 	onPositionChanged();
-//	lookAt(centerPoint);//, v - centerPoint);
 }
 
 //----------------------------------------
 void ofNode::orbitRad(float longitude, float latitude, float radius, ofNode& centerNode) {
 	orbitRad(longitude, latitude, radius, centerNode.getGlobalPosition());
+}
+
+//----------------------------------------
+void ofNode::orbitRad(float longitude, float latitude, float radius, const glm::vec3& centerPoint) {
+	glm::quat q = 
+	          glm::angleAxis(longitude, glm::vec3(0, 1, 0)) 
+	        * glm::angleAxis(latitude,  glm::vec3(1, 0, 0));
+
+	glm::vec4 p { 0.f, 0.f, 1.f, 0.f };	   // p is a direction, not a position, so .w == 0
+	
+	p = q * p;							   // rotate p on unit sphere based on quaternion
+	p = p * radius;						   // scale p by radius from its position on unit sphere
+
+	setGlobalPosition(centerPoint + p);
+	setOrientation(q);
+
+	onOrientationChanged();
+	onPositionChanged();
 }
 
 //----------------------------------------
