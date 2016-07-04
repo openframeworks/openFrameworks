@@ -799,6 +799,7 @@ void ofReloadGLResources(){
 }
 #endif
 
+#ifndef TARGET_OPENGLES
 namespace{
 	void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, void * user){
 		ofLogNotice("GL DEBUG") << message;
@@ -813,3 +814,4 @@ void ofEnableGLDebugLog(){
 void ofDisableGLDebugLog(){
 	glDisable(GL_DEBUG_OUTPUT);
 }
+#endif
