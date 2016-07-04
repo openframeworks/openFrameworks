@@ -31,6 +31,7 @@ ofEasyCam::ofEasyCam(){
 	bDoScrollZoom = false;
 	bInsideArcball = true;
 	bEnableMouseMiddleButton = true;
+	bMouseReleaseInertiaEnabled = true;
 	bAutoDistance = true;
 	doTranslationKey = 'm';
 	bEventsSet = false;
@@ -196,6 +197,16 @@ void ofEasyCam::disableMouseInput(){
 }
 
 //----------------------------------------
+void ofEasyCam::enableMouseReleaseInertia(){
+  bMouseReleaseInertiaEnabled = true;
+}
+
+//----------------------------------------
+void ofEasyCam::disableMouseReleaseInertia(){
+  bMouseReleaseInertiaEnabled = false;
+}
+
+//----------------------------------------
 void ofEasyCam::setEvents(ofCoreEvents & _events){
 	// If en/disableMouseInput were called within ofApp::setup(),
 	// bMouseInputEnabled will tell us about whether the camera
@@ -321,18 +332,21 @@ void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
 		return;
 	}
 	lastTap = curTap;
-	bApplyInertia = true;
-	mouseVel = mouse  - prevMouse;
 
-	updateMouse(mouse);
-	ofVec2f center(viewport.width/2, viewport.height/2);
-	int vFlip;
-	if(isVFlipped()){
-		vFlip = -1;
-	}else{
-		vFlip =  1;
-	}
-	zRot = -vFlip * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(prevMouse - ofVec2f(viewport.x, viewport.y) - center);
+	if (bMouseReleaseInertiaEnabled){
+		bApplyInertia = true;
+		mouseVel = mouse  - prevMouse;
+
+		updateMouse(mouse);
+		ofVec2f center(viewport.width/2, viewport.height/2);
+		int vFlip;
+		if(isVFlipped()){
+			vFlip = -1;
+		}else{
+			vFlip =  1;
+		}
+		zRot = -vFlip * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(prevMouse - ofVec2f(viewport.x, viewport.y) - center);
+  }
 }
 
 void ofEasyCam::mouseDragged(ofMouseEventArgs & mouse){
