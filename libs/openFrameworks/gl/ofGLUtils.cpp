@@ -6,6 +6,7 @@
 #include "ofShader.h"
 #include "ofBaseTypes.h"
 #include "ofRendererCollection.h"
+#include "ofLog.h"
 
 //---------------------------------
 int ofGetGlInternalFormat(const ofPixels& pix) {
@@ -680,8 +681,6 @@ void ofSetPixelStoreiAlignment(GLenum pname, int stride){
     }
 }
 
-
-
 vector<string> ofGLSupportedExtensions(){
 #ifdef TARGET_OPENGLES
 	char* extensions = (char*)glGetString(GL_EXTENSIONS);
@@ -800,3 +799,17 @@ void ofReloadGLResources(){
 }
 #endif
 
+namespace{
+	void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void * user){
+		ofLogNotice("GL DEBUG") << message;
+	}
+}
+
+void ofEnableGLDebugLog(){
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(gl_debug_callback, nullptr);
+}
+
+void ofDisableGLDebugLog(){
+	glDisable(GL_DEBUG_OUTPUT);
+}
