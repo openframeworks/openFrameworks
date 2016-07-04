@@ -800,14 +800,14 @@ void ofReloadGLResources(){
 #endif
 
 namespace{
-	void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void * user){
+	void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, void * user){
 		ofLogNotice("GL DEBUG") << message;
 	}
 }
 
 void ofEnableGLDebugLog(){
 	glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback(gl_debug_callback, nullptr);
+	glDebugMessageCallback((GLDEBUGPROC)gl_debug_callback, nullptr);
 }
 
 void ofDisableGLDebugLog(){
