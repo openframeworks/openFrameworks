@@ -25,6 +25,11 @@ ofRectangle::ofRectangle(const glm::vec2& p, float w, float h) : x(position.x), 
 }
 
 //----------------------------------------------------------
+ofRectangle::ofRectangle(const glm::vec2& p, float w, float h) : x(position.x), y(position.y) {
+	set(p,w,h);
+}
+
+//----------------------------------------------------------
 ofRectangle::ofRectangle(const ofRectangle& rect) : x(position.x), y(position.y) {
     set(rect);
 }
