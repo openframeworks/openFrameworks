@@ -47,6 +47,36 @@ enum ofTargetPlatform{
 	OF_TARGET_EMSCRIPTEN
 };
 
+// core: ---------------------------
+#include <cstdio>
+#include <cstdarg>
+#include <cmath>
+#include <ctime>
+#include <cstdlib>
+#include <string>
+#include <iostream>
+#include <vector>
+#include <cstring>
+#include <sstream>  //for ostringsream
+#include <iomanip>  //for setprecision
+#include <fstream>
+#include <algorithm>
+#include <cfloat>
+#include <map>
+#include <stack>
+#include <unordered_map>
+#include <memory>
+
+#include "json.hpp"
+
+// for convenience
+using ofJson = nlohmann::json;
+
+#define GLM_SWIZZLE
+#define GLM_FORCE_SIZE_FUNC
+#include "glm/glm.hpp"
+#include "glm/ext.hpp"
+
 #ifndef OF_TARGET_IPHONE
     #define OF_TARGET_IPHONE OF_TARGET_IOS
 #endif 
@@ -401,35 +431,6 @@ typedef ofBaseApp ofSimpleApp;
 #define OF_SERIAL_NO_DATA 	-2
 #define OF_SERIAL_ERROR		-1
 
-// core: ---------------------------
-#include <cstdio>
-#include <cstdarg>
-#include <cmath>
-#include <ctime>
-#include <cstdlib>
-#include <string>
-#include <iostream>
-#include <vector>
-#include <cstring>
-#include <sstream>  //for ostringsream
-#include <iomanip>  //for setprecision
-#include <fstream>
-#include <algorithm>
-#include <cfloat>
-#include <map>
-#include <stack>
-#include <unordered_map>
-#include <memory>
-
-#include "json.hpp"
-
-// for convenience
-using ofJson = nlohmann::json;
-
-#define GLM_SWIZZLE
-#define GLM_FORCE_SIZE_FUNC
-#include "glm/glm.hpp"
-#include "glm/ext.hpp"
 
 
 using namespace std;
