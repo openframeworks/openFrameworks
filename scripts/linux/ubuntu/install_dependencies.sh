@@ -144,6 +144,10 @@ else
     GLFW_GIT_URL=https://github.com/glfw/glfw.git
     GLFW_GIT_TAG=$VER
     curl -Lk https://github.com/glfw/glfw/archive/$GLFW_GGIT_TAG.tar.gz -o glfw-$GLFW_GGIT_TAG.tar.gz
+    tar -xf glfw-$GIT_TAG.tar.gz
+	mv glfw-$GIT_TAG glfw
+	rm glfw-$GIT_TAG.tar.gz
+	cd glfw
     mkdir -p build 
     cd build
     cmake .. -DGLFW_BUILD_DOCS=OFF \
@@ -154,6 +158,8 @@ else
     make clean
     make
     make install
+    cd ../..
+    rm -rf glfw
     GLFW_PKG=
 fi
 
