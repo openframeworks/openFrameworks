@@ -935,7 +935,7 @@ enum ofTextEncoding{
 	OF_ENCODING_ISO_8859_15
 };
 
-#define OF_USE_LEGACY_MESH
+//#define OF_USE_LEGACY_MESH
 template<class V, class N, class C, class T>
 class ofMesh_;
 class ofVec2f;
