@@ -1087,7 +1087,7 @@ glm::vec2 ofAppEGLWindow::getWindowSize(){
 
 //------------------------------------------------------------
 glm::vec2 ofAppEGLWindow::getWindowPosition(){
-	return currentWindowRect.getPosition();
+	return currentWindowRect.getPosition().xy();
 }
 
 //------------------------------------------------------------
@@ -1117,7 +1117,7 @@ glm::vec2 ofAppEGLWindow::getScreenSize(){
 
 	}
 
-	return {screenWidth, screenHeight,0};
+	return {screenWidth, screenHeight};
 }
 
 //------------------------------------------------------------
