@@ -90,6 +90,38 @@ inline istream& operator>>(istream& is, glm::vec3& vec) {
 }
 
 //--------------------------------------------------------------
+inline ostream& operator<<(ostream& os, const glm::vec2& vec) {
+	os << vec.x << ", " << vec.y;
+	return os;
+}
+
+//--------------------------------------------------------------
+inline istream& operator>>(istream& is, glm::vec2& vec) {
+	is >> vec.x;
+	is.ignore(2);
+	is >> vec.y;
+	return is;
+}
+
+//--------------------------------------------------------------
+inline ostream& operator<<(ostream& os, const glm::vec4& vec) {
+	os << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w;
+	return os;
+}
+
+//--------------------------------------------------------------
+inline istream& operator>>(istream& is, glm::vec4& vec) {
+	is >> vec.x;
+	is.ignore(2);
+	is >> vec.y;
+	is.ignore(2);
+	is >> vec.z;
+	is.ignore(2);
+	is >> vec.w;
+	return is;
+}
+
+//--------------------------------------------------------------
 inline glm::vec3 operator+(const glm::vec3 & v1, const ofVec3f & v2){
 	return v1 + glm::vec3(v2);
 }
