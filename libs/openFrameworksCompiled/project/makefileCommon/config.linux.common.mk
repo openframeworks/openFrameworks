@@ -354,6 +354,7 @@ PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 
 ifeq "$(shell pkg-config --exists glfw3 && echo 1)" "1"
     PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
+    PLATFORM_LIBRARIES += Xinerama 
 endif
 
 ifeq "$(shell pkg-config --exists rtaudio && echo 1)" "1"
