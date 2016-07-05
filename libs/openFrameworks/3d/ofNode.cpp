@@ -513,17 +513,47 @@ glm::vec3 ofNode::getUpDir() const {
 
 //----------------------------------------
 float ofNode::getPitch() const {
-	return getOrientationEuler().x;
+	return getPitchDeg();
 }
 
 //----------------------------------------
 float ofNode::getHeading() const {
-	return getOrientationEuler().y;
+	return getHeadingDeg();
 }
 
 //----------------------------------------
 float ofNode::getRoll() const {
-	return getOrientationEuler().z;
+	return getRollDeg();
+}
+
+//----------------------------------------
+float ofNode::getPitchDeg() const {
+	return getOrientationEulerDeg().x;
+}
+
+//----------------------------------------
+float ofNode::getHeadingDeg() const {
+	return getOrientationEulerDeg().y;
+}
+
+//----------------------------------------
+float ofNode::getRollDeg() const {
+	return getOrientationEulerDeg().z;
+}
+
+//----------------------------------------
+float ofNode::getPitchRad() const {
+	return getOrientationEulerRad().x;
+}
+
+//----------------------------------------
+float ofNode::getHeadingRad() const {
+	return getOrientationEulerRad().y;
+}
+
+//----------------------------------------
+float ofNode::getRollRad() const {
+	return getOrientationEulerRad().z;
 }
 
 //----------------------------------------

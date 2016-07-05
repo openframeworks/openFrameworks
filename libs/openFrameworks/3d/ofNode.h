@@ -85,15 +85,39 @@ public:
 	
 	/// \brief Get pitch of node, aka the rotation along local x axis.
 	/// \returns The rotation around the local x axis in degrees, as a float.
-	float getPitch() const;
+	OF_DEPRECATED_MSG("Use Deg/Rad versions", float getPitch() const);
 	
 	/// \brief Get heading of node, aka the rotation along local y axis.
 	/// \returns The rotation around the local y axis in degrees, as a float.
-	float getHeading() const;
+	OF_DEPRECATED_MSG("Use Deg/Rad versions", float getHeading() const);
 	
 	/// \brief Get roll of node, aka the rotation along local z axis.
 	/// \returns The rotation around the local z axis in degrees, as a float.
-	float getRoll() const;
+	OF_DEPRECATED_MSG("Use Deg/Rad versions", float getRoll() const);
+
+	/// \brief Get pitch of node, aka the rotation along local x axis.
+	/// \returns The rotation around the local x axis in degrees, as a float.
+	float getPitchDeg() const;
+
+	/// \brief Get heading of node, aka the rotation along local y axis.
+	/// \returns The rotation around the local y axis in degrees, as a float.
+	float getHeadingDeg() const;
+
+	/// \brief Get roll of node, aka the rotation along local z axis.
+	/// \returns The rotation around the local z axis in degrees, as a float.
+	float getRollDeg() const;
+
+	/// \brief Get pitch of node, aka the rotation along local x axis.
+	/// \returns The rotation around the local x axis in degrees, as a float.
+	float getPitchRad() const;
+
+	/// \brief Get heading of node, aka the rotation along local y axis.
+	/// \returns The rotation around the local y axis in degrees, as a float.
+	float getHeadingRad() const;
+
+	/// \brief Get roll of node, aka the rotation along local z axis.
+	/// \returns The rotation around the local z axis in degrees, as a float.
+	float getRollRad() const;
 	
 	/// \brief Get the local orientation of the node as a quaternion.
 	/// \returns A quaternion of local orientation (useful for complex rotations)
