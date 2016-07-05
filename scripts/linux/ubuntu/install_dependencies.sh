@@ -142,7 +142,7 @@ else
 
     # tools for git use
     GLFW_GIT_TAG=$GLFW_VER
-    apt-get install -y -qq libxrandr-dev
+    apt-get install -y -qq libxrandr-dev libxinerama-dev
     curl -Lk https://github.com/glfw/glfw/archive/$GLFW_GIT_TAG.tar.gz -o glfw-$GLFW_GIT_TAG.tar.gz
     tar -xf glfw-$GLFW_GIT_TAG.tar.gz
 	mv glfw-$GLFW_GIT_TAG glfw
