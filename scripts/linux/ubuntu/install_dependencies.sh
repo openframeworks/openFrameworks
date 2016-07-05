@@ -141,9 +141,13 @@ else
     GLFW_VER=32f38b97d544eb2fd9a568e94e37830106417b51
 
     # tools for git use
-    GLFW_GIT_URL=https://github.com/glfw/glfw.git
-    GLFW_GIT_TAG=$VER
-    curl -Lk https://github.com/glfw/glfw/archive/$GLFW_GGIT_TAG.tar.gz -o glfw-$GLFW_GGIT_TAG.tar.gz
+    GLFW_GIT_TAG=$GLFW_VER
+    apt-get install -y -qq libxrandr-dev libxinerama-dev libxcursor-dev
+    curl -Lk https://github.com/glfw/glfw/archive/$GLFW_GIT_TAG.tar.gz -o glfw-$GLFW_GIT_TAG.tar.gz
+    tar -xf glfw-$GLFW_GIT_TAG.tar.gz
+	mv glfw-$GLFW_GIT_TAG glfw
+	rm glfw-$GLFW_GIT_TAG.tar.gz
+	cd glfw
     mkdir -p build 
     cd build
     cmake .. -DGLFW_BUILD_DOCS=OFF \
@@ -154,6 +158,8 @@ else
     make clean
     make
     make install
+    cd ../..
+    rm -rf glfw
     GLFW_PKG=
 fi
 
