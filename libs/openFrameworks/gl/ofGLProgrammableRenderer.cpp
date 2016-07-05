@@ -1201,7 +1201,7 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 	if(wasColorsEnabled!=color){
 		if(currentShader) currentShader->setUniform1f(USE_COLORS_UNIFORM,color);
 	}
-#ifdef TARGET_OPENGLES
+#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 	if(vertices){
 		glEnableClientState(GL_VERTEX_ARRAY);
 	}
