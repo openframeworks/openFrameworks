@@ -150,8 +150,8 @@ void ofAppAndroidWindow::draw(){
 
 }
 
-ofPoint	ofAppAndroidWindow::getWindowSize(){
-	return ofPoint(sWindowWidth,sWindowHeight);
+glm::vec2 ofAppAndroidWindow::getWindowSize(){
+	return glm::vec2(sWindowWidth,sWindowHeight);
 }
 
 int	ofAppAndroidWindow::getWidth(){

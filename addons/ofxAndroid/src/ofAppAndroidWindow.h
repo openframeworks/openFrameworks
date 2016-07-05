@@ -36,9 +36,9 @@ public:
 	void	setWindowPosition(int x, int y) {}
 	void	setWindowShape(int w, int h) {}
 
-	ofPoint	getWindowPosition() {return ofPoint(); }
-	ofPoint	getWindowSize();
-	ofPoint	getScreenSize(){return getWindowSize(); }
+	glm::vec2	getWindowPosition() {return glm::vec2(); }
+	glm::vec2	getWindowSize();
+	glm::vec2	getScreenSize(){return getWindowSize(); }
 
 	int		getWidth();
 	int		getHeight();
