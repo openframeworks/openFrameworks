@@ -257,6 +257,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/%
 
 ifeq ($(USE_FMOD),0)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
@@ -350,6 +351,11 @@ PLATFORM_PKG_CONFIG_LIBRARIES += fontconfig
 PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
 PLATFORM_PKG_CONFIG_LIBRARIES += openal
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
+
+ifeq "$(shell pkg-config --exists glfw3 && echo 1)" "1"
+    PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
+    PLATFORM_LIBRARIES += Xinerama 
+endif
 
 ifeq "$(shell pkg-config --exists rtaudio && echo 1)" "1"
 	PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio

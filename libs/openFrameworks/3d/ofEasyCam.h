@@ -39,7 +39,7 @@ public:
 
     /// \brief Get the camera's target node reference.
     /// \returns a reference the the camera's target node.
-	ofNode& getTarget();
+	const ofNode& getTarget() const;
 
 	/// \}
 	/// \name Getters
@@ -101,7 +101,7 @@ public:
 
     /// \brief Get the current translation key code.
     /// \returns the current translation key code.
-    char getTranslationKey();
+    char getTranslationKey() const;
 
     /// \}
     /// \name Mouse Input
@@ -116,7 +116,7 @@ public:
     /// \brief Determine if mouse camera control is enabled.
     /// \todo Rename to isMouseInputEnabled().
     /// \returns true iff mouse camera control is enabled.
-	bool getMouseInputEnabled();
+	bool getMouseInputEnabled() const;
 
     /// \brief Enable the mouse's middle button for camera control.
 	void enableMouseMiddleButton();
@@ -127,7 +127,7 @@ public:
     /// \brief Determine if the middle mouse button is enabled.
     /// \todo Rename to isMouseMiddleButtonEnabled().
     /// \returns true iff the mouse's middle button is enabled.
-	bool getMouseMiddleButtonEnabled();
+	bool getMouseMiddleButtonEnabled() const;
 
 	/// \}
 

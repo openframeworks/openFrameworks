@@ -41,7 +41,6 @@ Product{
 
     Properties{
         condition: qbs.targetOS.contains("android")
-        cpp.architecture: "armv7"
         cpp.sysroot: of.coreSysroot
     }
 
