@@ -141,10 +141,9 @@ else
     GLFW_VER=32f38b97d544eb2fd9a568e94e37830106417b51
 
     # tools for git use
-    GLFW_GIT_URL=https://github.com/glfw/glfw.git
     GLFW_GIT_TAG=$VER
     curl -Lk https://github.com/glfw/glfw/archive/$GLFW_GIT_TAG.tar.gz -o glfw-$GLFW_GIT_TAG.tar.gz
-    tar -xf glfw-$GIT_TAG.tar.gz
+    tar -xf glfw-$GLFW_GIT_TAG.tar.gz
 	mv glfw-$GLFW_GIT_TAG glfw
 	rm glfw-$GLFW_GIT_TAG.tar.gz
 	cd glfw
