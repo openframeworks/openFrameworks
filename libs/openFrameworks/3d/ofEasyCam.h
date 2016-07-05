@@ -221,6 +221,6 @@ private:
 	ofCoreEvents * events = nullptr;
 
 	bool relativeYAxis = false;
-	bool doInertia = true;
+	bool doInertia = false;
 	ofVec3f upAxis{0,1,0};
 };
