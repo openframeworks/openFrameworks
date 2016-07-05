@@ -351,7 +351,10 @@ PLATFORM_PKG_CONFIG_LIBRARIES += fontconfig
 PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
 PLATFORM_PKG_CONFIG_LIBRARIES += openal
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
-PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
+
+ifeq "$(shell pkg-config --exists glfw3 && echo 1)" "1"
+    PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
+endif
 
 ifeq "$(shell pkg-config --exists rtaudio && echo 1)" "1"
 	PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
