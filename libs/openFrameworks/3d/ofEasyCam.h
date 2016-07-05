@@ -21,6 +21,8 @@ public:
 	/// \{
 
 	virtual void begin(ofRectangle viewport = ofRectangle());
+    
+    virtual void begin(ofRectangle viewport = ofRectangle(), ofRectangle inputArea = ofRectangle());
 
     /// \brief Reset the camera position and orientation.
 	void reset();
@@ -202,7 +204,10 @@ private:
 
     /// \brief The previous camera orientation.
 	ofQuaternion prevOrientation;
-
+    
+    /// \brief Area listening mouse inputs to control camera.
+    ofRectangle inputArea;
+    /// \brief Camera rendering viewport.
 	ofRectangle viewport;
 
 	ofCoreEvents * events;
