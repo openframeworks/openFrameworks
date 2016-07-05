@@ -6,4 +6,4 @@
 /// ofPoint is a typedef (alias) of ofVec3f
 
 /// \brief Look at ofVec3f for documentation
-typedef ofVec3f ofPoint;
+typedef glm::vec3 ofPoint;
