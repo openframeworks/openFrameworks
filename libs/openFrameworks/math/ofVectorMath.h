@@ -29,6 +29,11 @@ inline const ofMatrix4x4 & toOf(const glm::mat4 & v){
 }
 
 //--------------------------------------------------------------
+inline const ofMatrix3x3 & toOf(const glm::mat3 & v){
+	return *reinterpret_cast<const ofMatrix3x3*>(&v);
+}
+
+//--------------------------------------------------------------
 inline const glm::vec2 & toGlm(const ofVec2f & v){
 	return *reinterpret_cast<const glm::vec2*>(&v);
 }
@@ -46,6 +51,11 @@ inline const glm::vec4 & toGlm(const ofVec4f & v){
 //--------------------------------------------------------------
 inline const glm::mat4 & toGlm(const ofMatrix4x4 & v){
 	return *reinterpret_cast<const glm::mat4*>(&v);
+}
+
+//--------------------------------------------------------------
+inline const glm::mat3 & toGlm(const ofMatrix3x3 & v){
+	return *reinterpret_cast<const glm::mat3*>(&v);
 }
 
 //--------------------------------------------------------------
