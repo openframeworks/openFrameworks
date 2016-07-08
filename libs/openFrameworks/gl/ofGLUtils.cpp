@@ -743,7 +743,15 @@ bool ofGLSupportsNPOTTextures(){
 
 string ofGLSLVersionFromGL(int major, int minor){
 #ifdef TARGET_OPENGLES
-	return "ES1";
+	if(major == 1){
+		return "ES1";
+	}else if(major == 2){
+		return "ES2";
+	}else if(major == 3){
+		return "ES3";
+	}else {
+		return "ES1";
+	}
 #else
 	switch(major){
 	case 3:
@@ -763,6 +771,33 @@ string ofGLSLVersionFromGL(int major, int minor){
 	}
 #endif
 }
+
+#ifdef TARGET_OPENGLES
+int ofGLESVersionFromGL(){
+	const GLubyte * version = glGetString(GL_VERSION);
+	if(version != nullptr){
+		if(strstr((const char*)version, "ES 1.0")){
+			return 100;
+		}else if(strstr((const char*)version, "ES 1.1")){
+			return 101;
+		}else if(strstr((const char*)version, "ES-CM 1.1")){
+			return 101;
+		}else if(strstr((const char*)version, "ES 2.0")){
+			return 200;
+		}else if(strstr((const char*)version, "ES 3.0")){
+			return 300;
+		}else if(strstr((const char*)version, "ES 3.1")){
+			return 301;
+		}else if(strstr((const char*)version, "ES 3.2")){
+			return 302;
+		}else{
+			return 101;
+		}
+	}else{
+		return 101;
+	}
+}
+#endif
 
 #ifndef TARGET_PROGRAMMABLE_GL
 shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){

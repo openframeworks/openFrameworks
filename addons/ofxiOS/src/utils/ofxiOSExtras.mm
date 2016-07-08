@@ -279,7 +279,11 @@ bool ofxiOSUIImageToGLTexture(UIImage * uiImage, GLuint * spriteTexture) {
 	// Bind the texture name. 
 	glBindTexture(GL_TEXTURE_2D, *spriteTexture);
 	// Speidfy a 2D texture image, provideing the a pointer to the image data in memory
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+	if(ofGLESVersionFromGL() >= 300){
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+	} else {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+	}
 	// Release the image data
 	free(pixels);
 	

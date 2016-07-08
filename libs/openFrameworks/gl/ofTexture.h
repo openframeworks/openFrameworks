@@ -161,6 +161,14 @@ public:
 #ifndef TARGET_OPENGLES
 		glInternalFormat = GL_RGB8;
 		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
+#elif defined(TARGET_OPENGLES) && defined(TARGET_OPENGLES_3_0)
+		if(ofGLESVersionFromGL() >= 300) {
+			glInternalFormat = GL_RGB16F;
+			textureTarget = GL_TEXTURE_2D;
+		} else {
+			glInternalFormat = GL_RGB;
+			textureTarget = GL_TEXTURE_2D;
+		}
 #else
 		glInternalFormat = GL_RGB;
 		textureTarget = GL_TEXTURE_2D;

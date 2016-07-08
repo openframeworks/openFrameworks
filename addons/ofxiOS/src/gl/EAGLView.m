@@ -38,6 +38,7 @@
 
 #import "ES1Renderer.h"
 #import "ES2Renderer.h"
+#import "ES3Renderer.h"
 
 @interface EAGLView() {
     BOOL bInit;
@@ -100,10 +101,15 @@ andPreferedRenderer:(ESRendererVersion)version
         
         //------------------------------------------------------
         if(rendererVersion == ESRendererVersion_30) {
-            NSLog(@"OpenGLES 3.0 Renderer not implemented for oF. Defaulting to OpenGLES 2.0");
-            rendererVersion = ESRendererVersion_20;
+			renderer = [[ES3Renderer alloc] initWithDepth:bUseDepth
+													andAA:bUseFSAA
+										   andFSAASamples:fsaaSamples
+												andRetina:bUseRetina];
+			if(!renderer){ // if OpenGLES 3.0 fails to load try OpenGLES 2.0
+				rendererVersion = ESRendererVersion_20;
+			}
         }
-        
+		
         if(rendererVersion == ESRendererVersion_20) {
             renderer = [[ES2Renderer alloc] initWithDepth:bUseDepth
                                                     andAA:bUseFSAA
@@ -304,6 +310,10 @@ andPreferedRenderer:(ESRendererVersion)version
 //------------------------------------------------------------------- getters.
 -(EAGLContext*) context{
 	return [renderer context];
+}
+
+- (ESRendererVersion) getESVersion {
+	return rendererVersion;
 }
 
 - (GLint)getWidth {

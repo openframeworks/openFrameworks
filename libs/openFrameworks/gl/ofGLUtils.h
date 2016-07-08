@@ -87,6 +87,9 @@ int ofGetGlFormat(const ofPixels_<T> & pixels) {
 }
 
 string ofGLSLVersionFromGL(int major, int minor);
+#ifdef TARGET_OPENGLES
+int ofGLESVersionFromGL();
+#endif
 
 
 #ifndef TARGET_OPENGLES

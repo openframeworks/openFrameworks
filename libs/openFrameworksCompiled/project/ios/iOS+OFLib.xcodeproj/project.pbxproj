@@ -89,6 +89,8 @@
 		67D48ED31C103BAE00F719BC /* ofxiOSCoreMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 67D48ED11C103BAE00F719BC /* ofxiOSCoreMotion.h */; };
 		67D48ED41C103BAE00F719BC /* ofxiOSCoreMotion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 67D48ED21C103BAE00F719BC /* ofxiOSCoreMotion.mm */; };
 		860B024D17A96D840032B827 /* ofxiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 860B024C17A96D840032B827 /* ofxiOS.h */; };
+		9912538F1C89D3E100595AC8 /* ES3Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9912538D1C89D3E100595AC8 /* ES3Renderer.h */; };
+		991253901C89D3E100595AC8 /* ES3Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9912538E1C89D3E100595AC8 /* ES3Renderer.m */; };
 		9957D8701BDDCD440002D53C /* ofEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9957D86F1BDDCD440002D53C /* ofEvent.h */; };
 		99752D331BF21EEE0026316A /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99752D321BF21EEE0026316A /* GameController.framework */; };
 		9979E8181A1B9883007E55D1 /* ofWindowSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979E8171A1B9883007E55D1 /* ofWindowSettings.h */; };
@@ -306,6 +308,8 @@
 		67D48ED11C103BAE00F719BC /* ofxiOSCoreMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSCoreMotion.h; sourceTree = "<group>"; };
 		67D48ED21C103BAE00F719BC /* ofxiOSCoreMotion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSCoreMotion.mm; sourceTree = "<group>"; };
 		860B024C17A96D840032B827 /* ofxiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOS.h; sourceTree = "<group>"; };
+		9912538D1C89D3E100595AC8 /* ES3Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES3Renderer.h; sourceTree = "<group>"; };
+		9912538E1C89D3E100595AC8 /* ES3Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES3Renderer.m; sourceTree = "<group>"; };
 		9957D86F1BDDCD440002D53C /* ofEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofEvent.h; sourceTree = "<group>"; };
 		99752D321BF21EEE0026316A /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		9979E8171A1B9883007E55D1 /* ofWindowSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowSettings.h; sourceTree = "<group>"; };
@@ -484,11 +488,13 @@
 			children = (
 				15594F0815C55AC900727FF2 /* EAGLView.h */,
 				15594F0515C55AC900727FF2 /* EAGLView.m */,
-				15594F0B15C55AC900727FF2 /* ESRenderer.h */,
 				15594F0915C55AC900727FF2 /* ES1Renderer.h */,
 				15594F0615C55AC900727FF2 /* ES1Renderer.m */,
 				15594F0A15C55AC900727FF2 /* ES2Renderer.h */,
 				15594F0715C55AC900727FF2 /* ES2Renderer.m */,
+				9912538D1C89D3E100595AC8 /* ES3Renderer.h */,
+				9912538E1C89D3E100595AC8 /* ES3Renderer.m */,
+				15594F0B15C55AC900727FF2 /* ESRenderer.h */,
 			);
 			path = gl;
 			sourceTree = "<group>";
@@ -936,6 +942,7 @@
 				E4F76E66176CB27200798745 /* ofMath.h in Headers */,
 				E4F76E68176CB27200798745 /* ofMatrix3x3.h in Headers */,
 				E4F76E6A176CB27200798745 /* ofMatrix4x4.h in Headers */,
+				9912538F1C89D3E100595AC8 /* ES3Renderer.h in Headers */,
 				E4F76E6C176CB27200798745 /* ofQuaternion.h in Headers */,
 				E4F76E6E176CB27200798745 /* ofVec2f.h in Headers */,
 				9979E8291A1CDBD4007E55D1 /* ofMainLoop.h in Headers */,
@@ -1118,6 +1125,7 @@
 				15594F0C15C55AC900727FF2 /* EAGLView.m in Sources */,
 				9979E8281A1CDBD4007E55D1 /* ofMainLoop.cpp in Sources */,
 				15594F0D15C55AC900727FF2 /* ES1Renderer.m in Sources */,
+				991253901C89D3E100595AC8 /* ES3Renderer.m in Sources */,
 				15594F0E15C55AC900727FF2 /* ES2Renderer.m in Sources */,
 				15594F8115C5697C00727FF2 /* ofAppiOSWindow.mm in Sources */,
 				15594F9115C56A8A00727FF2 /* ofxiOSEAGLView.mm in Sources */,

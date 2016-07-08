@@ -100,6 +100,7 @@ andPreferedRenderer:(ESRendererVersion)rendererVersion
 - (void) destroy;
 
 - (EAGLContext *) context;
+- (ESRendererVersion) getESVersion;
 
 - (GLint) getWidth;
 - (GLint) getHeight;
