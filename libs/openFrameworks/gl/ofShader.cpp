@@ -958,7 +958,7 @@ void ofShader::setUniforms(const ofParameterGroup & parameters) const{
 void ofShader::setUniformMatrix3f(const string & name, const glm::mat3 & m, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
-		if (loc != -1) glUniformMatrix3fv(loc, count, GL_FALSE, &m.a);
+		if (loc != -1) glUniformMatrix3fv(loc, count, GL_FALSE, glm::value_ptr(m));
 	}
 }
 
