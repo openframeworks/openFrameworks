@@ -27,6 +27,9 @@ class ofxGuiGroup : public ofxBaseGui {
 		void add(ofParameter <ofVec2f> & parameter);
 		void add(ofParameter <ofVec3f> & parameter);
 		void add(ofParameter <ofVec4f> & parameter);
+		void add(ofParameter <glm::vec2> & parameter);
+		void add(ofParameter <glm::vec3> & parameter);
+		void add(ofParameter <glm::vec4> & parameter);
 		void add(ofParameter <ofColor> & parameter);
 		void add(ofParameter <ofShortColor> & parameter);
 		void add(ofParameter <ofFloatColor> & parameter);
