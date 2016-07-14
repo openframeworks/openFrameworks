@@ -89,6 +89,8 @@
 		67D48ED31C103BAE00F719BC /* ofxiOSCoreMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 67D48ED11C103BAE00F719BC /* ofxiOSCoreMotion.h */; };
 		67D48ED41C103BAE00F719BC /* ofxiOSCoreMotion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 67D48ED21C103BAE00F719BC /* ofxiOSCoreMotion.mm */; };
 		860B024D17A96D840032B827 /* ofxiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 860B024C17A96D840032B827 /* ofxiOS.h */; };
+		9252B7F11CDA2A6100A8032B /* ofxiOSEventAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9252B7EF1CDA2A6100A8032B /* ofxiOSEventAdapter.h */; };
+		9252B7F21CDA2A6100A8032B /* ofxiOSEventAdapter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9252B7F01CDA2A6100A8032B /* ofxiOSEventAdapter.mm */; };
 		9957D8701BDDCD440002D53C /* ofEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9957D86F1BDDCD440002D53C /* ofEvent.h */; };
 		99752D331BF21EEE0026316A /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99752D321BF21EEE0026316A /* GameController.framework */; };
 		9979E8181A1B9883007E55D1 /* ofWindowSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979E8171A1B9883007E55D1 /* ofWindowSettings.h */; };
@@ -306,6 +308,8 @@
 		67D48ED11C103BAE00F719BC /* ofxiOSCoreMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSCoreMotion.h; sourceTree = "<group>"; };
 		67D48ED21C103BAE00F719BC /* ofxiOSCoreMotion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSCoreMotion.mm; sourceTree = "<group>"; };
 		860B024C17A96D840032B827 /* ofxiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOS.h; sourceTree = "<group>"; };
+		9252B7EF1CDA2A6100A8032B /* ofxiOSEventAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSEventAdapter.h; sourceTree = "<group>"; };
+		9252B7F01CDA2A6100A8032B /* ofxiOSEventAdapter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSEventAdapter.mm; sourceTree = "<group>"; };
 		9957D86F1BDDCD440002D53C /* ofEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofEvent.h; sourceTree = "<group>"; };
 		99752D321BF21EEE0026316A /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		9979E8171A1B9883007E55D1 /* ofWindowSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowSettings.h; sourceTree = "<group>"; };
@@ -521,14 +525,16 @@
 		15594F0215C55A5700727FF2 /* utils */ = {
 			isa = PBXGroup;
 			children = (
-				15594FB815C56D1E00727FF2 /* ofxiOSExtras.h */,
-				15594FB115C56D1E00727FF2 /* ofxiOSExtras.mm */,
-				67D48ED11C103BAE00F719BC /* ofxiOSCoreMotion.h */,
-				67D48ED21C103BAE00F719BC /* ofxiOSCoreMotion.mm */,
-				15594FB715C56D1E00727FF2 /* ofxiOSExternalDisplay.h */,
-				15594FB015C56D1E00727FF2 /* ofxiOSExternalDisplay.mm */,
 				15594FB615C56D1E00727FF2 /* ofxiOSCoreLocation.h */,
 				15594FAF15C56D1E00727FF2 /* ofxiOSCoreLocation.mm */,
+				67D48ED11C103BAE00F719BC /* ofxiOSCoreMotion.h */,
+				67D48ED21C103BAE00F719BC /* ofxiOSCoreMotion.mm */,
+				9252B7EF1CDA2A6100A8032B /* ofxiOSEventAdapter.h */,
+				9252B7F01CDA2A6100A8032B /* ofxiOSEventAdapter.mm */,
+				15594FB715C56D1E00727FF2 /* ofxiOSExternalDisplay.h */,
+				15594FB015C56D1E00727FF2 /* ofxiOSExternalDisplay.mm */,
+				15594FB815C56D1E00727FF2 /* ofxiOSExtras.h */,
+				15594FB115C56D1E00727FF2 /* ofxiOSExtras.mm */,
 				15594FB915C56D1E00727FF2 /* ofxiOSImagePicker.h */,
 				15594FB215C56D1E00727FF2 /* ofxiOSImagePicker.mm */,
 				15594FBA15C56D1E00727FF2 /* ofxiOSKeyboard.h */,
@@ -919,6 +925,7 @@
 				E4F76E40176CB27200798745 /* ofGLUtils.h in Headers */,
 				E4F76E42176CB27200798745 /* ofLight.h in Headers */,
 				E4F76E44176CB27200798745 /* ofMaterial.h in Headers */,
+				9252B7F11CDA2A6100A8032B /* ofxiOSEventAdapter.h in Headers */,
 				E4F76E46176CB27200798745 /* ofShader.h in Headers */,
 				E4F76E4A176CB27200798745 /* ofTexture.h in Headers */,
 				E4F76E4C176CB27200798745 /* ofVbo.h in Headers */,
@@ -1116,6 +1123,7 @@
 				E4F76EB5176CB27200798745 /* ofVideoGrabber.cpp in Sources */,
 				E4F76EB7176CB27200798745 /* ofVideoPlayer.cpp in Sources */,
 				15594F0C15C55AC900727FF2 /* EAGLView.m in Sources */,
+				9252B7F21CDA2A6100A8032B /* ofxiOSEventAdapter.mm in Sources */,
 				9979E8281A1CDBD4007E55D1 /* ofMainLoop.cpp in Sources */,
 				15594F0D15C55AC900727FF2 /* ES1Renderer.m in Sources */,
 				15594F0E15C55AC900727FF2 /* ES2Renderer.m in Sources */,
