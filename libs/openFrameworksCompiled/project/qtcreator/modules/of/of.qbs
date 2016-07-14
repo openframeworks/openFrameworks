@@ -55,7 +55,7 @@ Module{
                 "rtAudio",
                 "openssl",
                 "boost",
-                //"glfw",
+                "glfw",
                 "openFrameworksCompiled",
             ];
         }else if(platform==="msys2"){
@@ -119,7 +119,7 @@ Module{
                 "glew",
                 "gtk+-3.0",
                 "libmpg123",
-            //"glfw3",
+                "glfw3",
             ].concat(pkgConfigs)
         }else if(qbs.targetOS.indexOf("windows")!=-1){
             return [
@@ -153,6 +153,10 @@ Module{
                 'opengl32', 'gdi32', 'msimg32', 'glu32', 'dsound', 'winmm', 'strmiids',
                 'uuid', 'ole32', 'oleaut32', 'setupapi', 'wsock32', 'ws2_32', 'Iphlpapi', 'Comdlg32',
                 'freeimage', 'boost_filesystem-mt', 'boost_system-mt', 'freetype', 'cairo','pthread'
+            ];
+        }else if(platform === "android"){
+            return [
+                'OpenSLES', 'z', 'GLESv1_CM', 'GLESv2', 'log'
             ];
         }
     }
@@ -221,6 +225,11 @@ Module{
         return includes;
     }
 
+    Depends{
+        condition: platform === "android"
+        name: "Android.ndk"
+    }
+
     readonly property pathList STATIC_LIBS: {
         var staticLibraries = Helpers.findLibsRecursive(ofRoot + "/libs",platform,LIBS_EXCEPTIONS);
         if(platform === "osx"){
@@ -231,6 +240,15 @@ Module{
             staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoJSON.a');
             staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoXML.a');
             staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoFoundation.a');
+        }else if(platform === "android"){
+            platform_abi = platform + '/' + Android.ndk.abi;
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoNetSSL.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoNet.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoCrypto.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoUtil.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoJSON.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoXML.a');
+            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoFoundation.a');
         }else{
             staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNetSSL.a');
             staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNet.a');
@@ -245,18 +263,11 @@ Module{
 
     readonly property stringList LDFLAGS: {
         var ret = PKG_CONFIG_LDFLAGS;
-        for(lib in ADDITIONAL_LIBS){
-            var libname = ADDITIONAL_LIBS[lib].trim();
-            if(libname!=""){
-                ret.push("-l" + libname);
-            }
-        }
         if(qbs.targetOS.contains("windows")){
             ret.push("-L"+FileInfo.joinPaths(msys2root,"mingw32/lib"));
             //ret.push("-fuse-ld=gold");
         }
-
-        return STATIC_LIBS.concat(ret);
+        return ret;
     }
 
     readonly property stringList addonsMake: {
@@ -470,6 +481,12 @@ Module{
             .concat(ADDON_PKG_CONFIG_CFLAGS)
             .concat(ADDON_CFLAGS)
             .concat(cxxFlags)
+
+        coreLinkerFlags:
+            LDFLAGS
+            .concat(ADDON_PKG_CONFIG_LDFLAGS)
+            .concat(ADDON_LDFLAGS)
+            .concat(linkerFlags)
     }
 
     Properties{
@@ -500,7 +517,12 @@ Module{
                 'OpenGL',
                 'QuartzCore',
         ].concat(frameworks)
-        .concat(ADDON_FRAMEWORKS)
+         .concat(ADDON_FRAMEWORKS)
+
+        coreLinkerFlags:
+            LDFLAGS
+            .concat(ADDON_LDFLAGS)
+            .concat(linkerFlags)
     }
 
     Properties{
@@ -510,22 +532,31 @@ Module{
 
     Properties{
         condition: qbs.targetOS.contains("android")
-        readonly property string ndk_root: '/home/arturo/Code/android-ndk-r10e'
-        readonly property string toolchainVersion: '4.9'
-        readonly property string abiPath: 'armeabi-v7a'
+        readonly property string ndk_root: Android.ndk.ndkDir
+        //readonly property string toolchainVersion: '4.9'
+        readonly property string abiPath: Android.ndk.abi
+        coreSysroot: ndk_root + '/platforms/android-19/arch-arm'
         coreCxxFlags: ['-Wno-unused-parameter','-std=gnu++14']
             .concat(ADDON_CFLAGS)
+            .concat('-I'+coreSysroot+'/usr/include')
             .concat('-I'+ndk_root+'/sources/android/support/include')
-            .concat('-I'+ndk_root+'/sources/cxx-stl/gnu-libstdc++/include')
-            .concat('-I'+ndk_root+'/sources/cxx-stl/gnu-libstdc++/'+toolchainVersion+'/include')
-            .concat('-I'+ndk_root+'/sources/cxx-stl/gnu-libstdc++/libs/'+abiPath+'/include')
-            .concat('-I'+ndk_root+'/sources/cxx-stl/gnu-libstdc++/'+toolchainVersion+'/libs/'+abiPath+'/include')
+            .concat('-I'+ndk_root+'/sources/cxx-stl/llvm-libc++/libcxx/include')
             .concat('-I'+ndk_root+'/libs/glu/include_android')
             .concat('-I'+of_root+'/addons/ofxAndroid/src')
             .concat('-Wformat')
+            .concat(['-target','armv7-none-linux-androideabi'])
+            .concat(['-gcc-toolchain',ndk_root+'/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64'])
+            .concat('-DANDROID_NDK')
             .concat(cxxFlags)
-        coreSysroot: ndk_root + '/platforms/android-19/arch-arm'
 
+        coreLinkerFlags:
+            LDFLAGS
+            .concat(ADDON_LDFLAGS)
+            .concat('-L"'+ndk_root+'/sources/cxx-stl/llvm-libc++/libs/'+abiPath+'"')
+            .concat(['-target', 'armv7-none-linux-androideabi'])
+            .concat(['-gcc-toolchain', ndk_root+'/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64'])
+            //.concat('-Wl,--as-needed -Wl,--gc-sections -Wl,--exclude-libs,ALL')
+            .concat(linkerFlags)
     }
 
     Properties{
@@ -557,11 +588,6 @@ Module{
         .concat(PKG_CONFIG_LIBS)
         .concat(ADDITIONAL_LIBS)
 
-    coreLinkerFlags:
-        LDFLAGS
-        .concat(ADDON_PKG_CONFIG_LDFLAGS)
-        .concat(ADDON_LDFLAGS)
-        .concat(linkerFlags)
 
     Properties{
         condition: qbs.buildVariant.contains("debug")
