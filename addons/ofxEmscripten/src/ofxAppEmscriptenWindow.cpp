@@ -124,6 +124,11 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
     emscripten_set_mousedown_callback(0,this,1,&mousedown_cb);
     emscripten_set_mouseup_callback(0,this,1,&mouseup_cb);
     emscripten_set_mousemove_callback(0,this,1,&mousemoved_cb);
+    
+    emscripten_set_touchstart_callback(0,this,1,&touch_cb);
+    emscripten_set_touchend_callback(0,this,1,&touch_cb);
+    emscripten_set_touchmove_callback(0,this,1,&touch_cb);
+    emscripten_set_touchcancel_callback(0,this,1,&touch_cb);
 }
 
 void ofxAppEmscriptenWindow::loop(){
@@ -201,6 +206,37 @@ int ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMouseEv
 	}
 	return 0;
 
+}
+
+int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* e, void* userData) {
+    
+        ofTouchEventArgs::Type touchArgsType;
+        switch (eventType) {
+                    case EMSCRIPTEN_EVENT_TOUCHSTART:
+                        touchArgsType = ofTouchEventArgs::down;
+                        break;
+                    case EMSCRIPTEN_EVENT_TOUCHEND:
+                        touchArgsType = ofTouchEventArgs::up;
+                        break;
+                    case EMSCRIPTEN_EVENT_TOUCHMOVE:
+                        touchArgsType = ofTouchEventArgs::move;
+                        break;
+                    case EMSCRIPTEN_EVENT_TOUCHCANCEL:
+                        touchArgsType = ofTouchEventArgs::cancel;
+                        break;
+                    default:
+                        return 1;
+            }
+        int numTouches = e->numTouches;
+        for (int i = 0; i < numTouches; i++) {
+                ofTouchEventArgs touchArgs;
+                touchArgs.type = touchArgsType;
+                touchArgs.id = i;
+                touchArgs.x =  e->touches[i].canvasX;
+                touchArgs.y =  e->touches[i].canvasY;
+                instance->events().notifyTouchEvent(touchArgs);
+           }
+    return 0;
 }
 
 void ofxAppEmscriptenWindow::hideCursor(){
