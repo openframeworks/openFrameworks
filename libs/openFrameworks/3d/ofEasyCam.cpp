@@ -352,6 +352,11 @@ void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
 		xRot = 0;
 		yRot = 0;
 		zRot = 0;
+
+		bDoTranslate = false;
+		moveX = 0;
+		moveY = 0;
+		moveZ = 0;
 	}
 }
 
