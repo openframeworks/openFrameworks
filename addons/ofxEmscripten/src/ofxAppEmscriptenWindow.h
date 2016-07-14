@@ -74,6 +74,7 @@ private:
 	static int mousedown_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
 	static int mouseup_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
 	static int mousemoved_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
+    static int touch_cb(int eventType, const EmscriptenTouchEvent *touchEvent, void *userData);
 	void update();
 	void draw();
 	EGLDisplay display;

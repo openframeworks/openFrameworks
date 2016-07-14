@@ -258,6 +258,13 @@ class ofCoreEvents {
 	bool notifyMouseEntered(int x, int y);
 	bool notifyMouseExited(int x, int y);
 	bool notifyMouseEvent(const ofMouseEventArgs & mouseEvent);
+	
+	void notifyTouchDown(int x, int y, int touchID);
+	void notifyTouchUp(int x, int y, int touchID);
+	void notifyTouchMoved(int x, int y, int touchID);
+	void notifyTouchCancelled(int x, int y, int touchID);
+	void notifyTouchDoubleTap(int x, int y, int touchID);
+	void notifyTouchEvent(const ofTouchEventArgs & touchEvent);
 
 	bool notifyExit();
 	bool notifyWindowResized(int width, int height);
