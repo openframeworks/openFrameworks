@@ -844,11 +844,15 @@ namespace{
 }
 
 void ofEnableGLDebugLog(){
-	glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback((GLDEBUGPROC)gl_debug_callback, nullptr);
+	if(ofGLCheckExtension("GL_KHR_debug") && ofGLCheckExtension("GL_ARB_debug_output")){
+		glEnable(GL_DEBUG_OUTPUT);
+		glDebugMessageCallback((GLDEBUGPROC)gl_debug_callback, nullptr);
+	}
 }
 
 void ofDisableGLDebugLog(){
-	glDisable(GL_DEBUG_OUTPUT);
+	if(ofGLCheckExtension("GL_KHR_debug") && ofGLCheckExtension("GL_ARB_debug_output")){
+		glDisable(GL_DEBUG_OUTPUT);
+	}
 }
 #endif
