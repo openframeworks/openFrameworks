@@ -360,6 +360,80 @@ bool ofCoreEvents::notifyKeyEvent(const ofKeyEventArgs & keyEvent){
 }
 
 //------------------------------------------
+void ofCoreEvents::notifyTouchDown(int x, int y, int touchID){
+	ofTouchEventArgs touchArgs;
+	touchArgs.id = touchID;
+	touchArgs.x = x;
+	touchArgs.y = y;
+	touchArgs.type = ofTouchEventArgs::down;
+	ofNotifyEvent( touchDown, touchArgs );
+}
+
+//------------------------------------------
+void ofCoreEvents::notifyTouchUp(int x, int y, int touchID){
+	ofTouchEventArgs touchArgs;
+	touchArgs.id = touchID;
+	touchArgs.x = x;
+	touchArgs.y = y;
+	touchArgs.type = ofTouchEventArgs::up;
+	ofNotifyEvent( touchUp, touchArgs );
+}
+
+//------------------------------------------
+void ofCoreEvents::notifyTouchMoved(int x, int y, int touchID){
+	ofTouchEventArgs touchArgs;
+	touchArgs.id = touchID;
+	touchArgs.x = x;
+	touchArgs.y = y;
+	touchArgs.type = ofTouchEventArgs::move;
+	ofNotifyEvent( touchMoved, touchArgs );
+}
+
+//------------------------------------------
+void ofCoreEvents::notifyTouchCancelled(int x, int y, int touchID){
+	ofTouchEventArgs touchArgs;
+	touchArgs.id = touchID;
+	touchArgs.x = x;
+	touchArgs.y = y;
+	touchArgs.type = ofTouchEventArgs::cancel;
+	ofNotifyEvent( touchCancelled, touchArgs );
+}
+
+
+//------------------------------------------
+void ofCoreEvents::notifyTouchDoubleTap(int x, int y, int touchID){
+	ofTouchEventArgs touchArgs;
+	touchArgs.id = touchID;
+	touchArgs.x = x;
+	touchArgs.y = y;
+	touchArgs.type = ofTouchEventArgs::doubleTap;
+	ofNotifyEvent( touchDoubleTap, touchArgs );
+}
+
+
+//------------------------------------------
+void ofCoreEvents::notifyTouchEvent(const ofTouchEventArgs & touchEvent){
+	switch(touchEvent.type){
+		case ofTouchEventArgs::move:
+			notifyTouchMoved(touchEvent.x,touchEvent.y,touchEvent.id);
+			break;
+		case ofTouchEventArgs::down:
+			notifyTouchDown(touchEvent.x,touchEvent.y,touchEvent.id);
+			break;
+		case ofTouchEventArgs::up:
+			notifyTouchUp(touchEvent.x,touchEvent.y,touchEvent.id);
+			break;
+		case ofTouchEventArgs::cancel:
+			notifyTouchCancelled(touchEvent.x,touchEvent.y,touchEvent.id);
+			break;
+		case ofTouchEventArgs::doubleTap:
+			notifyTouchDoubleTap(touchEvent.x,touchEvent.y,touchEvent.id);
+			break;
+	}
+}
+
+
+//------------------------------------------
 bool  ofCoreEvents::notifyMouseEvent(const ofMouseEventArgs & mouseEvent){
 	switch(mouseEvent.type){
 		case ofMouseEventArgs::Moved:
