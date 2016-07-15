@@ -23,20 +23,14 @@ inline ofFloatColor aiColorToOfColor(const aiColor3D& c){
 }
 
 //--------------------------------------------------------------
-inline ofVec3f aiVecToOfVec(const aiVector3D& v){
-	return ofVec3f(v.x,v.y,v.z);
+inline ofDefaultVec3 aiVecToOfVec(const aiVector3D& v){
+	return ofDefaultVec3(v.x,v.y,v.z);
 }
 
 //--------------------------------------------------------------
-inline vector<ofVec3f> aiVecVecToOfVecVec(const vector<aiVector3D>& v){
-	vector<ofVec3f> ofv(v.size());
-	if(sizeof(aiVector3D)==sizeof(ofVec3f)){
-		memcpy(&ofv[0],&v[0],v.size()*sizeof(ofVec3f));
-	}else{
-		for(int i=0;i<(int)v.size();i++){
-			ofv[i]=aiVecToOfVec(v[i]);
-		}
-	}
+inline vector<ofDefaultVec3> aiVecVecToOfVecVec(const vector<aiVector3D>& v){
+	vector<ofDefaultVec3> ofv(v.size());
+	memcpy(ofv.data(),v.data(),v.size()*sizeof(ofDefaultVec3));
 	return ofv;
 }
 
