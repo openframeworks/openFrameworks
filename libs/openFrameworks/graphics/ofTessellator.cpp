@@ -59,7 +59,10 @@ ofTessellator::ofTessellator()
 
 //----------------------------------------------------------
 ofTessellator::~ofTessellator(){
-	tessDeleteTess(cacheTess);
+	if ( cacheTess ){
+		tessDeleteTess( cacheTess );
+		cacheTess = nullptr;
+	}
 }
 
 //----------------------------------------------------------

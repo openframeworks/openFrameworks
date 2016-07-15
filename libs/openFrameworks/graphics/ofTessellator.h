@@ -54,7 +54,7 @@ private:
 	void performTessellation(ofPolyWindingMode polyWindingMode, vector<ofPolyline>& dstpoly, bool bIs2D );
 	void init();
 
-	TESStesselator * cacheTess;
+	TESStesselator * cacheTess = nullptr;
 	TESSalloc tessAllocator;
 };
 
