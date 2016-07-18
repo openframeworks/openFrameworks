@@ -491,14 +491,24 @@ function build() {
   # end if iOS
   
   elif [ "$TYPE" == "android" ]; then
-    export ANDROID_NDK=${ANDROID_NDK_ROOT}
+    export ANDROID_NDK=${NDK_ROOT}
+    
+    if [ $ABI = armeabi-v7a ] || [ $ABI = armeabi ]; then
+      local BUILD_FOLDER="build_android_arm"
+      local BUILD_SCRIPT="cmake_android_arm.sh"
+    elif [ $ABI = x86 ]; then
+      local BUILD_FOLDER="build_android_x86"
+      local BUILD_SCRIPT="cmake_android_x86.sh"
+    fi
+    
+    source ../../android_configure.sh $ABI
+
     cd platforms
     cp ${FORMULA_DIR}/android.toolchain.cmake android/
     
-    rm -rf build_android_arm
-    rm -rf build_android_x86
+    rm -rf $BUILD_FOLDER
     
-    scripts/cmake_android_arm.sh \
+    scripts/${BUILD_SCRIPT} \
       -DCMAKE_BUILD_TYPE="Release" \
       -DBUILD_SHARED_LIBS=OFF \
       -DBUILD_DOCS=OFF \
@@ -533,54 +543,11 @@ function build() {
       -DWITH_EIGEN=OFF \
       -DBUILD_TESTS=OFF \
       -DANDROID_STL=c++_static \
-      -DANDROID_TOOLCHAIN_NAME=arm-linux-androideabi-clang3.6 \
-      -DANDROID_NATIVE_API_LEVEL=android-19 \
+      -DANDROID_TOOLCHAIN_NAME=${GCC_TOOLCHAIN} \
+      -DANDROID_NATIVE_API_LEVEL=android-${ANDROID_API} \
       -DBUILD_PERF_TESTS=OFF
-    cd build_android_arm
+    cd $BUILD_FOLDER
     make -j${PARALLEL_MAKE}
-    cd ..
-    
-    scripts/cmake_android_x86.sh \
-      -DCMAKE_BUILD_TYPE="Release" \
-      -DBUILD_SHARED_LIBS=OFF \
-      -DBUILD_DOCS=OFF \
-      -DBUILD_EXAMPLES=OFF \
-      -DBUILD_FAT_JAVA_LIB=OFF \
-      -DBUILD_JASPER=OFF \
-      -DBUILD_PACKAGE=OFF \
-      -DBUILD_opencv_java=OFF \
-      -DBUILD_opencv_python=OFF \
-      -DBUILD_opencv_apps=OFF \
-      -DBUILD_JPEG=OFF \
-      -DBUILD_PNG=OFF \
-      -DHAVE_opencv_androidcamera=OFF \
-      -DWITH_TIFF=OFF \
-      -DWITH_OPENEXR=OFF \
-      -DWITH_1394=OFF \
-      -DWITH_JPEG=OFF \
-      -DWITH_PNG=OFF \
-      -DWITH_FFMPEG=OFF \
-      -DWITH_OPENCL=OFF \
-      -DWITH_GIGEAPI=OFF \
-      -DWITH_CUDA=OFF \
-      -DWITH_CUFFT=OFF \
-      -DWITH_JASPER=OFF \
-      -DWITH_IMAGEIO=OFF \
-      -DWITH_IPP=OFF \
-      -DWITH_OPENNI=OFF \
-      -DWITH_QT=OFF \
-      -DWITH_QUICKTIME=OFF \
-      -DWITH_V4L=OFF \
-      -DWITH_PVAPI=OFF \
-      -DWITH_EIGEN=OFF \
-      -DBUILD_TESTS=OFF \
-      -DANDROID_STL=c++_static \
-      -DANDROID_TOOLCHAIN_NAME=x86-clang3.6 \
-      -DANDROID_NATIVE_API_LEVEL=android-19 \
-      -DBUILD_PERF_TESTS=OFF
-    cd build_android_x86
-    make -j${PARALLEL_MAKE}
-    cd ..
     
   elif [ "$TYPE" == "emscripten" ]; then
     mkdir -p build_${TYPE}
@@ -676,16 +643,19 @@ function copy() {
     mkdir -p $1/lib/$TYPE
     cp -v lib/$TYPE/*.a $1/lib/$TYPE
   elif [ "$TYPE" == "android" ]; then
+    if [ $ABI = armeabi-v7a ] || [ $ABI = armeabi ]; then
+      local BUILD_FOLDER="build_android_arm"
+    elif [ $ABI = x86 ]; then
+      local BUILD_FOLDER="build_android_x86"
+    fi
+    
     cp -r include/opencv $1/include/
     cp -r include/opencv2 $1/include/
     
-    rm -f platforms/build_android_arm/lib/armeabi-v7a/*pch_dephelp.a
-    rm -f platforms/build_android_arm/lib/armeabi-v7a/*.so
-    cp -r platforms/build_android_arm/lib/armeabi-v7a $1/lib/$TYPE/
+    rm -f platforms/$BUILD_FOLDER/lib/$ABI/*pch_dephelp.a
+    rm -f platforms/$BUILD_FOLDER/lib/$ABI/*.so
+    cp -r platforms/$BUILD_FOLDER/lib/$ABI $1/lib/$TYPE/
     
-    rm -f platforms/build_android_x86/lib/x86/*pch_dephelp.a
-    rm -f platforms/build_android_x86/lib/x86/*.so
-    cp -r platforms/build_android_x86/lib/x86 $1/lib/$TYPE/
   elif [ "$TYPE" == "emscripten" ]; then
     cp -r include/opencv $1/include/
     cp -r include/opencv2 $1/include/
