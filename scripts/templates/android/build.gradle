@@ -3,13 +3,12 @@ def ofRoot(){ return '../../../' }
 // Load common functions
 apply from: ofRoot()+"libs/openFrameworksCompiled/project/android/common-functions.gradle"
 
-
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
+        // Using the gradle-experimental version that supports c++
         classpath 'com.android.tools.build:gradle-experimental:0.7.0'
     }
 }
@@ -24,6 +23,7 @@ apply plugin: 'com.android.model.application'
 
 model {
     android {
+        // openFrameworks currently only supports compiling against SDK 19
         compileSdkVersion = 19
         buildToolsVersion = "23.0.3"
 
@@ -66,8 +66,10 @@ model {
             aidl.source.srcDirs = ['srcJava']
             renderscript.source.srcDirs = ['srcJava']
             res.source.srcDirs = ['res']
-            assets.source.srcDirs = ['bin/data']
             jniLibs.source.srcDirs = ['libs']
+            
+            assets.source.srcDirs = ['bin/data']
+            assets.source.srcDirs += addonData(ofRoot())
         }
     }
 
