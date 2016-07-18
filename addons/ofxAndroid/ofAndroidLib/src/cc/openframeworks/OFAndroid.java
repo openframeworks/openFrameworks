@@ -172,12 +172,6 @@ public class OFAndroid {
 		});
 	}
 
-	static public void requestPermission(String permission){
-		ActivityCompat.requestPermissions(ofActivity,
-				new String[]{permission},
-				1);
-	}
-
 	static public void onUnpackingResourcesDone(){
 		unpackingDone = true;
 		if(ofActivity != null)
