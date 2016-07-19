@@ -275,8 +275,9 @@ void ofEasyCam::updateTranslation(){
 			bDoTranslate = false;
 		}
 		move((getXAxis() * moveX) + (getYAxis() * moveY) + (getZAxis() * moveZ));
-	}else{
+	}else if(bDoTranslate || bIsBeingScrolled){
 		setPosition(prevPosition + glm::vec3(prevAxisX * moveX) + (prevAxisY * moveY) + (prevAxisZ * moveZ));
+		bIsBeingScrolled = false;
 	}
 }	
 
@@ -297,7 +298,7 @@ void ofEasyCam::updateRotation(){
 		curRot = glm::angleAxis(zRot, getZAxis()) * glm::angleAxis(yRot, up()) * glm::angleAxis(xRot, getXAxis());
 		setPosition(curRot * (getGlobalPosition()-target.getGlobalPosition()) + target.getGlobalPosition());
 		rotate(curRot);
-	}else{
+	}else if(bDoRotate){
 		curRot = glm::angleAxis(zRot, prevAxisZ) * glm::angleAxis(yRot, up()) * glm::angleAxis(xRot, prevAxisX);
 		setPosition(curRot * (prevPosition-target.getGlobalPosition()) + target.getGlobalPosition());
 		setOrientation(curRot * prevOrientation);
