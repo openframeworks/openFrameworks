@@ -155,6 +155,7 @@ private:
 	bool bDoTranslate = false;
 	bool bDoRotate = false;
 	bool bDoScrollZoom = false;
+	bool bIsBeingScrolled = false;
 	bool bInsideArcball = false;
 	bool bMouseInputEnabled = false;
 	bool bDistanceSet = false;

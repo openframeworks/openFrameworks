@@ -31,7 +31,7 @@ void ofEasyCam::update(ofEventArgs & args){
 
 		if (bDoRotate) {
 			updateRotation();
-		}else if (bDoTranslate || bDoScrollZoom) {
+		}else if (bDoTranslate || bDoScrollZoom || bIsBeingScrolled) {
 			updateTranslation(); 
 			bDoScrollZoom = false;
 		}
@@ -263,6 +263,13 @@ void ofEasyCam::updateTranslation(){
 		moveX *= drag;
 		moveY *= drag;
 		moveZ *= drag;
+
+		if(ABS(moveZ) >= minDifference){
+			bIsBeingScrolled = true;
+		} else {
+			bIsBeingScrolled = false;
+		}
+
 		if(ABS(moveX) <= minDifference && ABS(moveY) <= minDifference && ABS(moveZ) <= minDifference){
 			bApplyInertia = false;
 			bDoTranslate = false;
@@ -371,11 +378,15 @@ void ofEasyCam::mouseDragged(ofMouseEventArgs & mouse){
 
 //----------------------------------------
 void ofEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
+	if (doInertia) {
+		bApplyInertia = true;
+	}
 	ofRectangle viewport = getViewport(this->viewport);
 	prevPosition = ofCamera::getGlobalPosition();
 	prevAxisZ = getZAxis();
 	moveZ = mouse.scrollY * 30 * sensitivityZ * (getDistance() + FLT_EPSILON)/ viewport.height;
 	bDoScrollZoom = true;
+	bIsBeingScrolled = true;
 }
 
 //----------------------------------------
