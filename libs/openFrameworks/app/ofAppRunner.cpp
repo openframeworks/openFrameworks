@@ -161,14 +161,13 @@ void ofSetMainLoop(shared_ptr<ofMainLoop> newMainLoop) {
 
 //--------------------------------------
 int ofRunApp(ofBaseApp * OFSA){
-	return ofRunApp(shared_ptr<ofBaseApp>(OFSA));
+	return ofRunApp(std::move(shared_ptr<ofBaseApp>(OFSA)));
 }
 
 //--------------------------------------
-int ofRunApp(shared_ptr<ofBaseApp> app){
-	mainLoop()->run(app);
+int ofRunApp(shared_ptr<ofBaseApp> && app){
+	mainLoop()->run(std::move(app));
 	auto ret = ofRunMainLoop();
-	app.reset();
 #if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
 	ofExitCallback();
 #endif
@@ -176,8 +175,8 @@ int ofRunApp(shared_ptr<ofBaseApp> app){
 }
 
 //--------------------------------------
-void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app){
-	mainLoop()->run(window,app);
+void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> && app){
+	mainLoop()->run(window, std::move(app));
 }
 
 int ofRunMainLoop(){
