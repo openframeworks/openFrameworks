@@ -2,21 +2,47 @@
 #include "ofParameter.h"
 
 ofParameterGroup::ofParameterGroup()
-:obj(std::make_shared<Value>())
+:obj(new Value)
 {
 
 }
 
 void ofParameterGroup::add(ofAbstractParameter & parameter){
 	shared_ptr<ofAbstractParameter> param = parameter.newReference();
+	const std::string name = param->getEscapedName();
+	if(obj->parametersIndex.find(name) != obj->parametersIndex.end()){
+		ofLogWarning() << "Adding another parameter with same name '" << param->getName() << "' to group '" << getName() << "'";
+	}
 	obj->parameters.push_back(param);
-	obj->parametersIndex[param->getEscapedName()] = obj->parameters.size()-1;
+	obj->parametersIndex[name] = obj->parameters.size()-1;
 	param->setParent(*this);
 }
 
+void ofParameterGroup::remove(ofAbstractParameter &param){
+	std::for_each(obj->parameters.begin(), obj->parameters.end(), [&](shared_ptr<ofAbstractParameter>& p){
+		if(p->isReferenceTo(param)){
+			remove(param.getName());
+		}
+	});
+}
+
+void ofParameterGroup::remove(size_t index){
+	if(index>obj->parameters.size()){
+		return;
+	}
+	remove(obj->parameters[index]->getName());
+}
+
+void ofParameterGroup::remove(const string &name){
+	if(!contains(name)){
+		return;
+	}
+	obj->parameters.erase(obj->parameters.begin() + obj->parametersIndex[name]);
+	obj->parametersIndex.erase(name);
+}
+
 void ofParameterGroup::clear(){
-	obj->parameters.clear();
-	obj->parametersIndex.clear();
+	obj.reset(new Value);
 }
 
 const ofParameter<bool> & ofParameterGroup::getBool(const string& name) const	{
@@ -43,16 +69,16 @@ const ofParameter<ofPoint> & ofParameterGroup::getPoint(const string& name) cons
 	return get<ofPoint>(name);
 }
 
-const ofParameter<ofVec2f> & ofParameterGroup::getVec2f(const string& name) const{
-	return get<ofVec2f>(name);
+const ofParameter<ofDefaultVec2> & ofParameterGroup::getVec2f(const string& name) const{
+	return get<ofDefaultVec2>(name);
 }
 
-const ofParameter<ofVec3f> & ofParameterGroup::getVec3f(const string& name) const{
-	return get<ofVec3f>(name);
+const ofParameter<ofDefaultVec3> & ofParameterGroup::getVec3f(const string& name) const{
+	return get<ofDefaultVec3>(name);
 }
 
-const ofParameter<ofVec4f> & ofParameterGroup::getVec4f(const string& name) const{
-	return get<ofVec4f>(name);
+const ofParameter<ofDefaultVec4> & ofParameterGroup::getVec4f(const string& name) const{
+	return get<ofDefaultVec4>(name);
 }
 
 const ofParameter<ofColor> & ofParameterGroup::getColor(const string& name) const{
@@ -95,16 +121,16 @@ const ofParameter<ofPoint> & ofParameterGroup::getPoint(std::size_t pos)	 const{
 	return get<ofPoint>(pos);
 }
 
-const ofParameter<ofVec2f> & ofParameterGroup::getVec2f(std::size_t pos) const{
-	return get<ofVec2f>(pos);
+const ofParameter<ofDefaultVec2> & ofParameterGroup::getVec2f(std::size_t pos) const{
+	return get<ofDefaultVec2>(pos);
 }
 
-const ofParameter<ofVec3f> & ofParameterGroup::getVec3f(std::size_t pos) const{
-	return get<ofVec3f>(pos);
+const ofParameter<ofDefaultVec3> & ofParameterGroup::getVec3f(std::size_t pos) const{
+	return get<ofDefaultVec3>(pos);
 }
 
-const ofParameter<ofVec4f> & ofParameterGroup::getVec4f(std::size_t pos) const{
-	return get<ofVec4f>(pos);
+const ofParameter<ofDefaultVec4> & ofParameterGroup::getVec4f(std::size_t pos) const{
+	return get<ofDefaultVec4>(pos);
 }
 
 const ofParameter<ofColor> & ofParameterGroup::getColor(std::size_t pos) const{
@@ -156,16 +182,16 @@ ofParameter<ofPoint> & ofParameterGroup::getPoint(const string& name){
 	return get<ofPoint>(name);
 }
 
-ofParameter<ofVec2f> & ofParameterGroup::getVec2f(const string& name){
-	return get<ofVec2f>(name);
+ofParameter<ofDefaultVec2> & ofParameterGroup::getVec2f(const string& name){
+	return get<ofDefaultVec2>(name);
 }
 
-ofParameter<ofVec3f> & ofParameterGroup::getVec3f(const string& name){
-	return get<ofVec3f>(name);
+ofParameter<ofDefaultVec3> & ofParameterGroup::getVec3f(const string& name){
+	return get<ofDefaultVec3>(name);
 }
 
-ofParameter<ofVec4f> & ofParameterGroup::getVec4f(const string& name){
-	return get<ofVec4f>(name);
+ofParameter<ofDefaultVec4> & ofParameterGroup::getVec4f(const string& name){
+	return get<ofDefaultVec4>(name);
 }
 
 ofParameter<ofColor> & ofParameterGroup::getColor(const string& name){
@@ -208,16 +234,16 @@ ofParameter<ofPoint> & ofParameterGroup::getPoint(std::size_t pos){
 	return get<ofPoint>(pos);
 }
 
-ofParameter<ofVec2f> & ofParameterGroup::getVec2f(std::size_t pos){
-	return get<ofVec2f>(pos);
+ofParameter<ofDefaultVec2> & ofParameterGroup::getVec2f(std::size_t pos){
+	return get<ofDefaultVec2>(pos);
 }
 
-ofParameter<ofVec3f> & ofParameterGroup::getVec3f(std::size_t pos){
-	return get<ofVec3f>(pos);
+ofParameter<ofDefaultVec3> & ofParameterGroup::getVec3f(std::size_t pos){
+	return get<ofDefaultVec3>(pos);
 }
 
-ofParameter<ofVec4f> & ofParameterGroup::getVec4f(std::size_t pos){
-	return get<ofVec4f>(pos);
+ofParameter<ofDefaultVec4> & ofParameterGroup::getVec4f(std::size_t pos){
+	return get<ofDefaultVec4>(pos);
 }
 
 ofParameter<ofColor> & ofParameterGroup::getColor(std::size_t pos){
@@ -404,6 +430,10 @@ bool ofParameterGroup::isReadOnly() const{
 	return false;
 }
 
+const void* ofParameterGroup::getInternalObject() const{
+	return obj.get();
+}
+
 shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const{
 	return std::make_shared<ofParameterGroup>(*this);
 }
@@ -447,4 +477,5 @@ vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator ofParameterGrou
 vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator ofParameterGroup::rend() const{
 	return obj->parameters.rend();
 }
+
 

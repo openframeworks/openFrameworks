@@ -120,7 +120,7 @@ public class OFAndroidLifeCycleHelper
     					String resName = activity.getResources().getText(fileId).toString();
     					fileName = resName.substring(resName.lastIndexOf("/"));
     					Log.i(TAG,"checking " + fileName);
-    					if(fileName.equals("/" + app_name + "resources.zip")){
+    					if(fileName.equals("/ofdataresources.zip")){
     						
 	    					from = activity.getResources().openRawResource(fileId);
 							try{
@@ -162,7 +162,9 @@ public class OFAndroidLifeCycleHelper
 							}catch(Exception e){
 								OFAndroid.fatalErrorDialog(activity, "Error while copying resources to sdcard:\nCheck that you have enough space available.\n");
 							}
-    					}
+    					}else{
+							Log.i(TAG, "Resources file not found");
+						}
     	        	}catch (Exception e) {
     					Log.e(TAG,"error copying file",e);
     				} finally {
@@ -200,8 +202,8 @@ public class OFAndroidLifeCycleHelper
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.enableTouchEvents();
+				OFAndroid.enableOrientationChangeEvents();
 			}
 		});
 	}
@@ -212,8 +214,8 @@ public class OFAndroidLifeCycleHelper
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.enableTouchEvents();
+				OFAndroid.enableOrientationChangeEvents();
 			}
 		});
 		OFAndroid.onRestart();
@@ -230,8 +232,8 @@ public class OFAndroidLifeCycleHelper
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.enableTouchEvents();
+				OFAndroid.enableOrientationChangeEvents();
 				glView.onResume();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
@@ -258,8 +260,8 @@ public class OFAndroidLifeCycleHelper
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.disableTouchEvents();
+				OFAndroid.disableOrientationChangeEvents();
 
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
@@ -286,9 +288,9 @@ public class OFAndroidLifeCycleHelper
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.disableTouchEvents();
-				
+				OFAndroid.disableOrientationChangeEvents();
+
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
 						object.onStop();

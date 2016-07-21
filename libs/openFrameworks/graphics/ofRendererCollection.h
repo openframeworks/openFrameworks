@@ -8,18 +8,18 @@
 
 class ofRendererCollection: public ofBaseRenderer{
 public:
-	ofRendererCollection():graphics3d(this){}
+	 ofRendererCollection():graphics3d(this){}
 	 ~ofRendererCollection(){}
 
 	 static const string TYPE;
 	 const string & getType(){ return TYPE; }
 
 	 shared_ptr<ofBaseGLRenderer> getGLRenderer(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 if(renderers[i]->getType()=="GL" || renderers[i]->getType()=="ProgrammableGL"){
-				 return (shared_ptr<ofBaseGLRenderer>&)renderers[i];
-			 }
-		 }
+		for(auto renderer: renderers){
+			  if(renderer->getType()=="GL" || renderer->getType()=="ProgrammableGL"){
+				  return dynamic_pointer_cast<ofBaseGLRenderer>(renderer);
+			  }
+		}
 		#ifndef TARGET_PROGRAMMABLE_GL
 		 	 return shared_ptr<ofGLRenderer>();
 		#else
@@ -30,14 +30,14 @@ public:
 	 bool rendersPathPrimitives(){return true;}
 
 	 void startRender(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->startRender();
+		 for(auto renderer: renderers){
+			 renderer->startRender();
 		 }
 	 }
 
 	 void finishRender(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->finishRender();
+		 for(auto renderer: renderers){
+			 renderer->finishRender();
 		 }
 	 }
 
@@ -45,55 +45,55 @@ public:
 	 using ofBaseRenderer::draw;
 
 	 void draw(const ofPolyline & poly) const{
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->draw(poly);
+		 for(auto renderer: renderers){
+			 renderer->draw(poly);
 		 }
 	 }
 	 void draw(const ofPath & shape) const{
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->draw(shape);
+		 for(auto renderer: renderers){
+			 renderer->draw(shape);
 		 }
 	 }
 
 	 void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->draw(vertexData,mode,useColors,useTextures,useNormals);
+		 for(auto renderer: renderers){
+			 renderer->draw(vertexData,mode,useColors,useTextures,useNormals);
 		 }
 	 }
 
     void draw(const  of3dPrimitive& model, ofPolyRenderMode renderType ) const {
-        for(int i=0;i<(int)renderers.size();i++) {
-            renderers[i]->draw( model, renderType );
+		for(auto renderer: renderers){
+			renderer->draw( model, renderType );
         }
     }
 
     void draw(const  ofNode& node) const {
-        for(int i=0;i<(int)renderers.size();i++) {
-            renderers[i]->draw( node );
+		for(auto renderer: renderers){
+			renderer->draw( node );
         }
     }
 
 	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
+		for(auto renderer: renderers){
+			renderer->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		 }
 	}
 
 	void draw(const ofFloatImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
+		for(auto renderer: renderers){
+			renderer->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		}
 	}
 
 	void draw(const ofShortImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
+		for(auto renderer: renderers){
+			renderer->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		}
 	}
 
 	void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->draw(video,x,y,w,h);
+		for(auto renderer: renderers){
+			renderer->draw(video,x,y,w,h);
 		}
 	}
 
@@ -110,48 +110,46 @@ public:
 	}*/
 
 
-	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const{
-		static ofMatrix4x4 identityMatrix;
+	glm::mat4 getCurrentMatrix(ofMatrixMode matrixMode_) const{
 		if (!renderers.empty()) {
 			return renderers.front()->getCurrentMatrix(matrixMode_);
 		} else {
 			ofLogWarning() << "No renderer in renderer collection, but current matrix requested. Returning identity matrix.";
-			return identityMatrix;
+			return glm::mat4(1.0f);
 		}
-	};
+	}
 
 
-	ofMatrix4x4 getCurrentOrientationMatrix() const{
-		static ofMatrix4x4 identityMatrix;
+	glm::mat4 getCurrentOrientationMatrix() const{
 		if (!renderers.empty()) {
 			return renderers.front()->getCurrentOrientationMatrix();
 		} else {
 			ofLogWarning() << "No renderer in renderer collection, but current matrix requested. Returning identity matrix.";
-			return identityMatrix;
+			return glm::mat4(1.0f);
 		}
-	};
+	}
 
 
-	ofMatrix4x4 getCurrentNormalMatrix() const{
-		static ofMatrix4x4 identityMatrix;
+	glm::mat4 getCurrentNormalMatrix() const{
 		if (!renderers.empty()) {
 			return renderers.front()->getCurrentNormalMatrix();
 		} else {
 			ofLogWarning() << "No renderer in renderer collection, but current matrix requested. Returning identity matrix.";
-			return identityMatrix;
+			return glm::mat4(1.0f);
 		}
-	};
+	}
 
 	//--------------------------------------------
 	// transformations
 	 void pushView(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->pushView();
+		 for(auto renderer: renderers){
+			 renderer->pushView();
 		 }
 	 }
+
 	 void popView(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->popView();
+		 for(auto renderer: renderers){
+			 renderer->popView();
 		 }
 	 }
 
@@ -159,25 +157,29 @@ public:
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	void viewport(ofRectangle viewport){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->viewport(viewport);
+		for(auto renderer: renderers){
+			renderer->viewport(viewport);
 		 }
 	}
+
 	 void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=true){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->viewport(x,y,width,height);
+		 for(auto renderer: renderers){
+			 renderer->viewport(x,y,width,height,vflip);
 		 }
 	 }
+
 	 void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setupScreenPerspective(width,height,fov,nearDist,farDist);
+		 for(auto renderer: renderers){
+			 renderer->setupScreenPerspective(width,height,fov,nearDist,farDist);
 		 }
 	 }
+
 	 void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setupScreenOrtho(width,height,nearDist,farDist);
+		 for(auto renderer: renderers){
+			 renderer->setupScreenOrtho(width,height,nearDist,farDist);
 		 }
 	 }
+
 	 ofRectangle getCurrentViewport() const{
 		 if(renderers.size()){
 			 return renderers[0]->getCurrentViewport();
@@ -210,8 +212,8 @@ public:
 	 }
 
 	 void setCoordHandedness(ofHandednessType handedness){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setCoordHandedness(handedness);
+		 for(auto renderer: renderers){
+			 renderer->setCoordHandedness(handedness);
 		 }
 	 }
 	 ofHandednessType getCoordHandedness() const{
@@ -224,89 +226,116 @@ public:
 
 	//our openGL wrappers
 	 void pushMatrix(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->pushMatrix();
+		 for(auto renderer: renderers){
+			 renderer->pushMatrix();
 		 }
 	 }
 	 void popMatrix(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->popMatrix();
+		 for(auto renderer: renderers){
+			 renderer->popMatrix();
 		 }
 	 }
 	 void translate(float x, float y, float z = 0){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->translate(x,y,z);
+		 for(auto renderer: renderers){
+			 renderer->translate(x,y,z);
 		 }
 	 }
-	 void translate(const ofPoint & p){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->translate(p);
+	 void translate(const glm::vec3 & p){
+		 for(auto renderer: renderers){
+			 renderer->translate(p);
 		 }
 	 }
 	 void scale(float xAmnt, float yAmnt, float zAmnt = 1){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->scale(xAmnt,yAmnt,zAmnt);
+		 for(auto renderer: renderers){
+			 renderer->scale(xAmnt,yAmnt,zAmnt);
 		 }
 	 }
-	 void rotate(float degrees, float vecX, float vecY, float vecZ){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->rotate(degrees,vecX,vecY,vecZ);
+
+	 void rotateDeg(float degrees, float vecX, float vecY, float vecZ){
+		 for(auto renderer: renderers){
+			 renderer->rotateDeg(degrees,vecX,vecY,vecZ);
 		 }
 	 }
-	 void rotateX(float degrees){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->rotateX(degrees);
+	 void rotateXDeg(float degrees){
+		 for(auto renderer: renderers){
+			 renderer->rotateXDeg(degrees);
 		 }
 	 }
-	 void rotateY(float degrees){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->rotateY(degrees);
+	 void rotateYDeg(float degrees){
+		 for(auto renderer: renderers){
+			 renderer->rotateYDeg(degrees);
 		 }
 	 }
-	 void rotateZ(float degrees){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->rotateZ(degrees);
+	 void rotateZDeg(float degrees){
+		 for(auto renderer: renderers){
+			 renderer->rotateZDeg(degrees);
 		 }
 	 }
-	 void rotate(float degrees){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->rotate(degrees);
+	 void rotateDeg(float degrees){
+		 for(auto renderer: renderers){
+			 renderer->rotateDeg(degrees);
+		 }
+	 }
+
+	 void rotateRad(float radians, float vecX, float vecY, float vecZ){
+		 for(auto renderer: renderers){
+			 renderer->rotateRad(radians,vecX,vecY,vecZ);
+		 }
+	 }
+	 void rotateXRad(float radians){
+		 for(auto renderer: renderers){
+			 renderer->rotateXRad(radians);
+		 }
+	 }
+	 void rotateYRad(float radians){
+		 for(auto renderer: renderers){
+			 renderer->rotateYRad(radians);
+		 }
+	 }
+	 void rotateZRad(float radians){
+		 for(auto renderer: renderers){
+			 renderer->rotateZRad(radians);
+		 }
+	 }
+	 void rotateRad(float radians){
+		 for(auto renderer: renderers){
+			 renderer->rotateRad(radians);
 		 }
 	 }
 
 	void loadIdentityMatrix (void){
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->loadIdentityMatrix();
+		for(auto renderer: renderers){
+			renderer->loadIdentityMatrix();
 		}
 	}
 
-	void loadMatrix (const ofMatrix4x4 & m){
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->loadMatrix( m );
+	void loadMatrix (const glm::mat4 & m){
+		for(auto renderer: renderers){
+			renderer->loadMatrix( m );
 		}
 	}
 
 	void loadMatrix (const float * m){
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->loadMatrix( m );
+		for(auto renderer: renderers){
+			renderer->loadMatrix( m );
 		}
 	}
 
-	void multMatrix (const ofMatrix4x4 & m){
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->multMatrix( m );
+	void multMatrix (const glm::mat4 & m){
+		for(auto renderer: renderers){
+			renderer->multMatrix( m );
 		}
 	}
 
 	void multMatrix (const float * m){
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->multMatrix( m );
+		for(auto renderer: renderers){
+			renderer->multMatrix( m );
 		}
 	}
 
 	void setOrientation(ofOrientation orientation, bool vflip){
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->setOrientation( orientation, vflip );
+		for(auto renderer: renderers){
+			renderer->setOrientation( orientation, vflip );
 		}
 	}
 
@@ -320,83 +349,84 @@ public:
 	}
 
 	void matrixMode(ofMatrixMode mode){
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->matrixMode( mode );
+		for(auto renderer: renderers){
+			renderer->matrixMode( mode );
 		}
 	}
 
-	void loadViewMatrix(const ofMatrix4x4& m){
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->loadViewMatrix( m );
+	void loadViewMatrix(const glm::mat4& m){
+		for(auto renderer: renderers){
+			renderer->loadViewMatrix( m );
 		}
 	}
 
-	void multViewMatrix(const ofMatrix4x4& m){
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->multViewMatrix( m );
+	void multViewMatrix(const glm::mat4& m){
+		for(auto renderer: renderers){
+			renderer->multViewMatrix( m );
 		}
 	}
 
-	ofMatrix4x4 getCurrentViewMatrix() const{
+	glm::mat4 getCurrentViewMatrix() const{
 		if(!renderers.empty()){
 			return renderers.front()->getCurrentViewMatrix();
 		}else{
 			ofLogWarning() << "No renderer in renderer collection, but current view matrix requested. Returning identity matrix.";
-			return ofMatrix4x4::newIdentityMatrix();
+			return glm::mat4(1.0);
 		}
 	}
 
 
 	// screen coordinate things / default gl values
 	 void setupGraphicDefaults(){
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->setupGraphicDefaults();
+		 for(auto renderer: renderers){
+			 renderer->setupGraphicDefaults();
 		}
 		path.setMode(ofPath::COMMANDS);
 		path.setUseShapeColor(false);
 	 }
+
 	 void setupScreen(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setupScreen();
+		 for(auto renderer: renderers){
+			 renderer->setupScreen();
 		 }
 	 }
 
 	// color options
 	void setColor(int r, int g, int b){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setColor(r,g,b);
+		for(auto renderer: renderers){
+			renderer->setColor(r,g,b);
 		 }
 	}
 
 	void setColor(int r, int g, int b, int a){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setColor(r,g,b,a);
+		for(auto renderer: renderers){
+			renderer->setColor(r,g,b,a);
 		 }
 	}
 
 	void setColor(const ofColor & color){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setColor(color);
+		for(auto renderer: renderers){
+			renderer->setColor(color);
 		 }
 	}
 
 	void setColor(const ofColor & color, int _a){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setColor(color,_a);
+		for(auto renderer: renderers){
+			renderer->setColor(color,_a);
 		 }
 	}
 
 	void setColor(int gray){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setColor(gray);
+		for(auto renderer: renderers){
+			renderer->setColor(gray);
 		 }
-	};
+	}
 
 	void setHexColor( int hexColor ){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setHexColor(hexColor);
+		for(auto renderer: renderers){
+			renderer->setHexColor(hexColor);
 		 }
-	 }; // hex, like web 0xFF0033;
+	 } // hex, like web 0xFF0033;
 
 	// bg color
 	ofColor getBackgroundColor(){
@@ -408,8 +438,8 @@ public:
 	}
 
 	void setBackgroundColor(const ofColor & color){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setBackgroundColor(color);
+		for(auto renderer: renderers){
+			renderer->setBackgroundColor(color);
 		 }
 	}
 
@@ -422,63 +452,63 @@ public:
 	}
 
 	void background(const ofColor & c){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->background(c);
+		for(auto renderer: renderers){
+			renderer->background(c);
 		 }
 	}
 
 	void background(float brightness){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->background(brightness);
+		for(auto renderer: renderers){
+			renderer->background(brightness);
 		 }
 	}
 
 	void background(int hexColor, float _a=255.0f){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->background(hexColor,_a);
+		for(auto renderer: renderers){
+			renderer->background(hexColor,_a);
 		 }
 	}
 
 	void background(int r, int g, int b, int a=255){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->background(r,g,b,a);
+		for(auto renderer: renderers){
+			renderer->background(r,g,b,a);
 		 }
 	}
 
 	void setBackgroundAuto(bool bManual){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setBackgroundAuto(bManual);
+		for(auto renderer: renderers){
+			renderer->setBackgroundAuto(bManual);
 		 }
 	}
 
 	void clear(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->clear();
+		for(auto renderer: renderers){
+			renderer->clear();
 		 }
 	}
 
 	void clear(float r, float g, float b, float a=0){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->clear(r,g,b,a);
+		for(auto renderer: renderers){
+			renderer->clear(r,g,b,a);
 		 }
 	}
 
 	void clear(float brightness, float a=0){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->clear(brightness,a);
+		for(auto renderer: renderers){
+			renderer->clear(brightness,a);
 		 }
 	}
 
 	void clearAlpha(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->clearAlpha();
+		for(auto renderer: renderers){
+			renderer->clearAlpha();
 		 }
 	}
 
 	// drawing modes
 	void setRectMode(ofRectMode mode){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setRectMode(mode);
+		for(auto renderer: renderers){
+			renderer->setRectMode(mode);
 		 }
 	}
 
@@ -491,8 +521,8 @@ public:
 	}
 
 	void setFillMode(ofFillFlag fill){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setFillMode(fill);
+		for(auto renderer: renderers){
+			renderer->setFillMode(fill);
 		 }
 		if(fill==OF_FILLED){
 			path.setFilled(true);
@@ -512,8 +542,8 @@ public:
 	}
 
 	void setLineWidth(float lineWidth){
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->setLineWidth(lineWidth);
+		for(auto renderer: renderers){
+			renderer->setLineWidth(lineWidth);
 		}
 		if(!getStyle().bFill){
 			path.setStrokeWidth(lineWidth);
@@ -521,56 +551,56 @@ public:
 	}
 
 	void setDepthTest(bool depthTest) {
-		for(int i=0;i<(int)renderers.size();i++){
-			renderers[i]->setDepthTest(depthTest);
+		for(auto renderer: renderers){
+			renderer->setDepthTest(depthTest);
 		}
 	}
 
 	void setBlendMode(ofBlendMode blendMode){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setBlendMode(blendMode);
+		for(auto renderer: renderers){
+			renderer->setBlendMode(blendMode);
 		 }
 	}
 	void setLineSmoothing(bool smooth){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setLineSmoothing(smooth);
+		for(auto renderer: renderers){
+			renderer->setLineSmoothing(smooth);
 		 }
 	}
 	void setCircleResolution(int res){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setCircleResolution(res);
+		for(auto renderer: renderers){
+			renderer->setCircleResolution(res);
 		 }
 	}
 	void enablePointSprites(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 if(renderers[i]->getType()=="GL" || renderers[i]->getType()=="ProgrammableGL"){
-				 ((shared_ptr<ofBaseGLRenderer>&)renderers[i])->enablePointSprites();
+		for(auto renderer: renderers){
+			 if(renderer->getType()=="GL" || renderer->getType()=="ProgrammableGL"){
+				 dynamic_pointer_cast<ofBaseGLRenderer>(renderer)->enablePointSprites();
 			 }
 		 }
 	}
 	void disablePointSprites(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 if(renderers[i]->getType()=="GL" || renderers[i]->getType()=="ProgrammableGL"){
-				 ((shared_ptr<ofBaseGLRenderer>&)renderers[i])->disablePointSprites();
+		for(auto renderer: renderers){
+			 if(renderer->getType()=="GL" || renderer->getType()=="ProgrammableGL"){
+				 dynamic_pointer_cast<ofBaseGLRenderer>(renderer)->disablePointSprites();
 			 }
 		 }
 	}
 
 	void enableAntiAliasing(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->enableAntiAliasing();
+		for(auto renderer: renderers){
+			renderer->enableAntiAliasing();
 		 }
 	}
 
 	void disableAntiAliasing(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->disableAntiAliasing();
+		for(auto renderer: renderers){
+			renderer->disableAntiAliasing();
 		 }
 	}
 
 	void setBitmapTextMode(ofDrawBitmapMode mode){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setBitmapTextMode(mode);
+		for(auto renderer: renderers){
+			renderer->setBitmapTextMode(mode);
 		 }
 	}
 
@@ -583,88 +613,88 @@ public:
 	}
 
 	void pushStyle(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->pushStyle();
+		for(auto renderer: renderers){
+			renderer->pushStyle();
 		 }
 	}
 
 	void popStyle(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->popStyle();
+		for(auto renderer: renderers){
+			renderer->popStyle();
 		 }
 	}
 
 	void setStyle(const ofStyle & style){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setStyle(style);
+		for(auto renderer: renderers){
+			renderer->setStyle(style);
 		 }
 	}
 
 	void setCurveResolution(int res){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setCurveResolution(res);
+		for(auto renderer: renderers){
+			renderer->setCurveResolution(res);
 		 }
 		 path.setCurveResolution(res);
 	}
 
 	void setPolyMode(ofPolyWindingMode mode){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setPolyMode(mode);
+		for(auto renderer: renderers){
+			renderer->setPolyMode(mode);
 		 }
 		 path.setPolyWindingMode(mode);
 	}
 
 	// drawing
 	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const{
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->drawLine(x1,y1,z1,x2,y2,z2);
+		for(auto renderer: renderers){
+			renderer->drawLine(x1,y1,z1,x2,y2,z2);
 		 }
 	}
 
 	void drawRectangle(float x, float y, float z, float w, float h) const{
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->drawRectangle(x,y,z,w,h);
+		for(auto renderer: renderers){
+			renderer->drawRectangle(x,y,z,w,h);
 		 }
 	}
 
 	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const{
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->drawTriangle(x1,y1,z1,x2,y2,z2,x3,y3,z3);
+		for(auto renderer: renderers){
+			renderer->drawTriangle(x1,y1,z1,x2,y2,z2,x3,y3,z3);
 		 }
 	}
 
 	void drawCircle(float x, float y, float z, float radius) const{
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->drawCircle(x,y,z,radius);
+		for(auto renderer: renderers){
+			renderer->drawCircle(x,y,z,radius);
 		 }
 	}
 
 	void drawEllipse(float x, float y, float z, float width, float height) const{
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->drawEllipse(x,y,z,width,height);
+		for(auto renderer: renderers){
+			renderer->drawEllipse(x,y,z,width,height);
 		 }
 	}
 
 	void drawString(string text, float x, float y, float z) const{
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->drawString(text, x,y,z);
+		for(auto renderer: renderers){
+			renderer->drawString(text, x,y,z);
 		 }
 	}
 
 	void drawString(const ofTrueTypeFont & font, string text, float x, float y) const{
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->drawString(font, text, x,y);
+		for(auto renderer: renderers){
+			renderer->drawString(font, text, x,y);
 		 }
 	}
 
 	virtual void bind(const ofCamera & camera, const ofRectangle & viewport){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->bind(camera, viewport);
+		for(auto renderer: renderers){
+			renderer->bind(camera, viewport);
 		 }
 	}
 	virtual void unbind(const ofCamera & camera){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->unbind(camera);
+		 for(auto renderer: renderers){
+			 renderer->unbind(camera);
 		 }
 	}
 

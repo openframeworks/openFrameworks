@@ -7,7 +7,7 @@
 #include <cmath>
 #include <iostream>
 
-/// \brief  ofVec3f is a class for storing a three dimensional vector.
+/// \brief  ofVec3f is a class for storing a three dimensional vector.
 /// 
 /// Moving through space requires knowledge of where things are and where they are
 /// going. Vector Maths is the class of mathematics that gives us control over
@@ -124,7 +124,12 @@ public:
 	/// ofVec3f v(mom); // v is (40, 20, 10)
 	/// ~~~~
     ofVec3f( const ofVec4f& vec );
-	
+
+	ofVec3f( const glm::vec2 & vec );
+	ofVec3f( const glm::vec3 & vec );
+	ofVec3f( const glm::vec4 & vec );
+	operator glm::vec3() const;
+
 	/// \}
 
 	//---------------------
@@ -286,7 +291,7 @@ public:
 	/// ofVec3f v2 = ofVec3f(25, 50, 10);
 	/// ofVec3f v3 = v1 + v2; // v3 is (65, 70, 20)
 	/// ~~~~
-    ofVec3f  operator+( const ofVec3f& pnt ) const;
+	ofVec3f  operator+( const ofVec3f& pnt ) const;
 
 	/// Returns a new vector with a float value 'f' added to 'x', 'y' and 'z'
 	/// members.
@@ -324,7 +329,7 @@ public:
 	/// ofVec3f v2 = ofVec3f(25, 50, 10);
 	/// ofVec3f v3 = v1 - v2; // v3 is (15, -30, 0)
 	/// ~~~~
-    ofVec3f  operator-( const ofVec3f& vec ) const;
+	ofVec3f  operator-( const ofVec3f& vec ) const;
 
 
 
@@ -355,7 +360,7 @@ public:
 	/// ofVec3f v2 = ofVec3f(25, 50, 10);
 	/// v1 -= v2; // v1 is (15, -30, 0)
 	/// ~~~~    
-    ofVec3f& operator-=( const ofVec3f& vec );
+	ofVec3f& operator-=( const ofVec3f& vec );
 
 	/// Subtract a float value 'f' from 'x', 'y', and 'z' members.
 	/// 
@@ -1066,6 +1071,14 @@ inline ofVec3f::ofVec3f( const ofVec4f& vec ):x(vec.x), y(vec.y), z(vec.z) {}
 inline ofVec3f::ofVec3f(): x(0), y(0), z(0) {}
 inline ofVec3f::ofVec3f( float _all ): x(_all), y(_all), z(_all) {}
 inline ofVec3f::ofVec3f( float _x, float _y, float _z ):x(_x), y(_y), z(_z) {}
+
+inline ofVec3f::ofVec3f( const glm::vec2 & vec ):x(vec.x), y(vec.y), z(0.f){}
+inline ofVec3f::ofVec3f( const glm::vec3 & vec ):x(vec.x), y(vec.y), z(vec.z){}
+inline ofVec3f::ofVec3f( const glm::vec4 & vec ):x(vec.x), y(vec.y), z(vec.z){}
+
+inline ofVec3f::operator glm::vec3() const{
+	return glm::vec3(x,y,z);
+}
 
 
 // Getters and Setters.

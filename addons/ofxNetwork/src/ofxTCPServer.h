@@ -3,6 +3,7 @@
 #include "ofConstants.h"
 #include "ofThread.h"
 #include "ofxTCPManager.h"
+#include "ofxTCPSettings.h"
 #include <map>
 #include <condition_variable>
 
@@ -24,8 +25,9 @@ class ofxTCPServer : public ofThread{
 
 		void setVerbose(bool _verbose);
 		bool setup(int _port, bool blocking = false);
+		bool setup(const ofxTCPSettings & settings);
 		void setMessageDelimiter(std::string delim);
-	
+
 		bool close();
 		bool disconnectClient(int clientID);
         bool disconnectAllClients();
