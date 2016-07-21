@@ -53,7 +53,6 @@
 		9957D8FF1BDDDC9B0002D53C /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8741BDDDC9B0002D53C /* of3dUtils.cpp */; };
 		9957D9001BDDDC9B0002D53C /* ofCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8761BDDDC9B0002D53C /* ofCamera.cpp */; };
 		9957D9011BDDDC9B0002D53C /* ofEasyCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8781BDDDC9B0002D53C /* ofEasyCam.cpp */; };
-		9957D9021BDDDC9B0002D53C /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D87A1BDDDC9B0002D53C /* ofMesh.cpp */; };
 		9957D9031BDDDC9B0002D53C /* ofNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D87C1BDDDC9B0002D53C /* ofNode.cpp */; };
 		9957D9041BDDDC9B0002D53C /* ofAppRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8801BDDDC9B0002D53C /* ofAppRunner.cpp */; };
 		9957D9051BDDDC9B0002D53C /* ofMainLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8831BDDDC9B0002D53C /* ofMainLoop.cpp */; };
@@ -75,7 +74,6 @@
 		9957D9151BDDDC9B0002D53C /* ofImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8AA1BDDDC9B0002D53C /* ofImage.cpp */; };
 		9957D9161BDDDC9B0002D53C /* ofPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8AC1BDDDC9B0002D53C /* ofPath.cpp */; };
 		9957D9171BDDDC9B0002D53C /* ofPixels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8AE1BDDDC9B0002D53C /* ofPixels.cpp */; };
-		9957D9181BDDDC9B0002D53C /* ofPolyline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8B01BDDDC9B0002D53C /* ofPolyline.cpp */; };
 		9957D9191BDDDC9B0002D53C /* ofRendererCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8B21BDDDC9B0002D53C /* ofRendererCollection.cpp */; };
 		9957D91A1BDDDC9B0002D53C /* ofTessellator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8B41BDDDC9B0002D53C /* ofTessellator.cpp */; };
 		9957D91B1BDDDC9B0002D53C /* ofTrueTypeFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8B61BDDDC9B0002D53C /* ofTrueTypeFont.cpp */; };
@@ -219,7 +217,6 @@
 		9957D8771BDDDC9B0002D53C /* ofCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofCamera.h; sourceTree = "<group>"; };
 		9957D8781BDDDC9B0002D53C /* ofEasyCam.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; fileEncoding = 4; path = ofEasyCam.cpp; sourceTree = "<group>"; };
 		9957D8791BDDDC9B0002D53C /* ofEasyCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofEasyCam.h; sourceTree = "<group>"; };
-		9957D87A1BDDDC9B0002D53C /* ofMesh.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; fileEncoding = 4; path = ofMesh.cpp; sourceTree = "<group>"; };
 		9957D87B1BDDDC9B0002D53C /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
 		9957D87C1BDDDC9B0002D53C /* ofNode.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; fileEncoding = 4; path = ofNode.cpp; sourceTree = "<group>"; };
 		9957D87D1BDDDC9B0002D53C /* ofNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofNode.h; sourceTree = "<group>"; };
@@ -268,7 +265,6 @@
 		9957D8AD1BDDDC9B0002D53C /* ofPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPath.h; sourceTree = "<group>"; };
 		9957D8AE1BDDDC9B0002D53C /* ofPixels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPixels.cpp; sourceTree = "<group>"; };
 		9957D8AF1BDDDC9B0002D53C /* ofPixels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPixels.h; sourceTree = "<group>"; };
-		9957D8B01BDDDC9B0002D53C /* ofPolyline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPolyline.cpp; sourceTree = "<group>"; };
 		9957D8B11BDDDC9B0002D53C /* ofPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyline.h; sourceTree = "<group>"; };
 		9957D8B21BDDDC9B0002D53C /* ofRendererCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofRendererCollection.cpp; sourceTree = "<group>"; };
 		9957D8B31BDDDC9B0002D53C /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRendererCollection.h; sourceTree = "<group>"; };
@@ -610,7 +606,6 @@
 				9957D8771BDDDC9B0002D53C /* ofCamera.h */,
 				9957D8781BDDDC9B0002D53C /* ofEasyCam.cpp */,
 				9957D8791BDDDC9B0002D53C /* ofEasyCam.h */,
-				9957D87A1BDDDC9B0002D53C /* ofMesh.cpp */,
 				9957D87B1BDDDC9B0002D53C /* ofMesh.h */,
 				9957D87C1BDDDC9B0002D53C /* ofNode.cpp */,
 				9957D87D1BDDDC9B0002D53C /* ofNode.h */,
@@ -694,7 +689,6 @@
 				9957D8AD1BDDDC9B0002D53C /* ofPath.h */,
 				9957D8AE1BDDDC9B0002D53C /* ofPixels.cpp */,
 				9957D8AF1BDDDC9B0002D53C /* ofPixels.h */,
-				9957D8B01BDDDC9B0002D53C /* ofPolyline.cpp */,
 				9957D8B11BDDDC9B0002D53C /* ofPolyline.h */,
 				9957D8B21BDDDC9B0002D53C /* ofRendererCollection.cpp */,
 				9957D8B31BDDDC9B0002D53C /* ofRendererCollection.h */,
@@ -901,7 +895,6 @@
 				844639C71BC3443E00F24926 /* EAGLView.m in Sources */,
 				9957D9011BDDDC9B0002D53C /* ofEasyCam.cpp in Sources */,
 				844639CD1BC3443E00F24926 /* ofxiOSSoundStreamDelegate.mm in Sources */,
-				9957D9021BDDDC9B0002D53C /* ofMesh.cpp in Sources */,
 				844639DA1BC3443E00F24926 /* ofxiOSExternalDisplay.mm in Sources */,
 				9957D9111BDDDC9B0002D53C /* ofVboMesh.cpp in Sources */,
 				9957D9231BDDDC9B0002D53C /* ofSoundBuffer.cpp in Sources */,
@@ -947,7 +940,6 @@
 				9957D92F1BDDDC9B0002D53C /* ofSystemUtils.cpp in Sources */,
 				9957D9071BDDDC9B0002D53C /* ofBufferObject.cpp in Sources */,
 				844639CC1BC3443E00F24926 /* ofxiOSSoundStream.mm in Sources */,
-				9957D9181BDDDC9B0002D53C /* ofPolyline.cpp in Sources */,
 				844639D91BC3443E00F24926 /* ofxiOSExtras.mm in Sources */,
 				9957D53A1BDDBB1E0002D53C /* ofxtvOSViewController.mm in Sources */,
 				9957D91B1BDDDC9B0002D53C /* ofTrueTypeFont.cpp in Sources */,
