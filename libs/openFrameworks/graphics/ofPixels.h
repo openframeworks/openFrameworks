@@ -4,6 +4,7 @@
 #include "ofUtils.h"
 #include "ofColor.h"
 #include "ofMath.h"
+#include "ofLog.h"
 #include <limits>
 
 

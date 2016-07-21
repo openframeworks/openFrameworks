@@ -8,7 +8,7 @@ void ofApp::setup(){
 	images.resize(total*2);
 	for(int i = 0; i < total; ++i) {
 		loader.loadFromDisk(images[i*2], "of" + ofToString(i) + ".png");
-		loader.loadFromURL(images[i*2+1], "http://www.openframeworks.cc/of_inverted.png");
+		loader.loadFromURL(images[i*2+1], "http://www.openframeworks.cc/images/of_inverted.png");
 	}
 }
 

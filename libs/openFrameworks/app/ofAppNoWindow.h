@@ -27,9 +27,9 @@ public:
 	void update();
 	void draw();
 
-	ofPoint		getWindowPosition();
-	ofPoint		getWindowSize();
-	ofPoint		getScreenSize();
+	glm::vec2	getWindowPosition();
+	glm::vec2	getWindowSize();
+	glm::vec2	getScreenSize();
 
 	int			getWidth();
 	int			getHeight();
@@ -90,13 +90,13 @@ private:
 	void pushMatrix(){};
 	void popMatrix(){};
 	void translate(float x, float y, float z = 0){};
-	void translate(const ofPoint & p){};
+	void translate(const glm::vec3 & p){};
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1){};
-	void rotate(float degrees, float vecX, float vecY, float vecZ){};
-	void rotateX(float degrees){};
-	void rotateY(float degrees){};
-	void rotateZ(float degrees){};
-	void rotate(float degrees){};
+	void rotateRad(float radians, float vecX, float vecY, float vecZ){};
+	void rotateXRad(float radians){};
+	void rotateYRad(float radians){};
+	void rotateZRad(float radians){};
+	void rotateRad(float radians){};
 
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults(){};
@@ -104,18 +104,18 @@ private:
 
 	void setOrientation(ofOrientation, bool){}
 	bool isVFlipped() const{return true;}
-	ofMatrix4x4 getCurrentMatrix(ofMatrixMode) const{return ofMatrix4x4::newIdentityMatrix();};
-	ofMatrix4x4 getCurrentOrientationMatrix() const{return ofMatrix4x4::newIdentityMatrix();}
+	glm::mat4 getCurrentMatrix(ofMatrixMode) const{return glm::mat4(1.0);};
+	glm::mat4 getCurrentOrientationMatrix() const{return glm::mat4(1.0);}
 	void matrixMode(ofMatrixMode){}
 	void loadIdentityMatrix(){}
-	void loadMatrix(const ofMatrix4x4&){}
+	void loadMatrix(const glm::mat4&){}
 	void loadMatrix(const float*){}
-	void multMatrix(const ofMatrix4x4&){}
+	void multMatrix(const glm::mat4&){}
 	void multMatrix(const float*){}
-	void loadViewMatrix(const ofMatrix4x4&){}
-	void multViewMatrix(const ofMatrix4x4&){}
-	ofMatrix4x4 getCurrentViewMatrix() const{return ofMatrix4x4::newIdentityMatrix();}
-	ofMatrix4x4 getCurrentNormalMatrix() const{return ofMatrix4x4::newIdentityMatrix();}
+	void loadViewMatrix(const glm::mat4&){}
+	void multViewMatrix(const glm::mat4&){}
+	glm::mat4 getCurrentViewMatrix() const{return glm::mat4(1.0);}
+	glm::mat4 getCurrentNormalMatrix() const{return glm::mat4(1.0);}
 	void enableAntiAliasing(){}
 	void disableAntiAliasing(){}
 

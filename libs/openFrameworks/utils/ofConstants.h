@@ -47,6 +47,36 @@ enum ofTargetPlatform{
 	OF_TARGET_EMSCRIPTEN
 };
 
+// core: ---------------------------
+#include <cstdio>
+#include <cstdarg>
+#include <cmath>
+#include <ctime>
+#include <cstdlib>
+#include <string>
+#include <iostream>
+#include <vector>
+#include <cstring>
+#include <sstream>  //for ostringsream
+#include <iomanip>  //for setprecision
+#include <fstream>
+#include <algorithm>
+#include <cfloat>
+#include <map>
+#include <stack>
+#include <unordered_map>
+#include <memory>
+
+#include "json.hpp"
+
+// for convenience
+using ofJson = nlohmann::json;
+
+#define GLM_SWIZZLE
+#define GLM_FORCE_SIZE_FUNC
+#include "glm/glm.hpp"
+#include "glm/ext.hpp"
+
 #ifndef OF_TARGET_IPHONE
     #define OF_TARGET_IPHONE OF_TARGET_IOS
 #endif 
@@ -209,7 +239,6 @@ enum ofTargetPlatform{
 		#include <GL/glew.h>
 		#include <GL/gl.h>
 		#include <GL/glext.h>
-		#include <GL/glx.h>
 	#endif
 
 	// for some reason, this isn't defined at compile time,
@@ -384,7 +413,7 @@ typedef TESSindex ofIndexType;
 // clang has a bug where it won't support tls on some versions even
 // on c++11, this is a workaround that bug
 #ifndef HAS_TLS
-	#if __clang__
+	#if defined(__clang__) && __clang__
 		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__) && !defined(__ANDROID__)
 			#define HAS_TLS 1
 		#endif
@@ -402,30 +431,7 @@ typedef ofBaseApp ofSimpleApp;
 #define OF_SERIAL_NO_DATA 	-2
 #define OF_SERIAL_ERROR		-1
 
-// core: ---------------------------
-#include <cstdio>
-#include <cstdarg>
-#include <cmath>
-#include <ctime>
-#include <cstdlib>
-#include <string>
-#include <iostream>
-#include <vector>
-#include <cstring>
-#include <sstream>  //for ostringsream
-#include <iomanip>  //for setprecision
-#include <fstream>
-#include <algorithm>
-#include <cfloat>
-#include <map>
-#include <stack>
-#include <unordered_map>
-#include <memory>
 
-#include "json.hpp"
-
-// for convenience
-using ofJson = nlohmann::json;
 
 using namespace std;
 
@@ -928,3 +934,28 @@ enum ofTextEncoding{
 	OF_ENCODING_UTF8,
 	OF_ENCODING_ISO_8859_15
 };
+
+//#define OF_USE_LEGACY_MESH
+template<class V, class N, class C, class T>
+class ofMesh_;
+class ofVec2f;
+class ofVec3f;
+class ofVec4f;
+
+template<typename T>
+class ofColor_;
+typedef ofColor_<float> ofFloatColor;
+
+#ifdef OF_USE_LEGACY_MESH
+using ofDefaultVec2 = ofVec2f;
+using ofDefaultVec3 = ofVec3f;
+using ofDefaultVec4 = ofVec4f;
+#else
+using ofDefaultVec2 = glm::vec2;
+using ofDefaultVec3 = glm::vec3;
+using ofDefaultVec4 = glm::vec4;
+#endif
+using ofDefaultVertexType = ofDefaultVec3;
+using ofDefaultNormalType = ofDefaultVec3;
+using ofDefaultColorType = ofFloatColor;
+using ofDefaultTexCoordType = ofDefaultVec2;

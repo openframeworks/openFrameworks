@@ -155,7 +155,7 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			shader.setUniform1f("lights["+idx+"].enabled",0);
 			continue;
 		}
-		ofVec4f lightEyePosition = light->position * renderer.getCurrentViewMatrix();
+		auto lightEyePosition = renderer.getCurrentViewMatrix() * light->position;
 		shader.setUniform1f("lights["+idx+"].enabled",1);
 		shader.setUniform1f("lights["+idx+"].type", light->lightType);
 		shader.setUniform4f("lights["+idx+"].position", lightEyePosition);
@@ -170,29 +170,32 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 		}
 
 		if(light->lightType==OF_LIGHT_SPOT){
-			ofVec3f direction = light->position + light->direction;
-			direction = direction * renderer.getCurrentViewMatrix();
-			direction = direction - lightEyePosition;
-			shader.setUniform3f("lights["+idx+"].spotDirection", direction.normalize());
+			auto direction = toGlm(light->position).xyz() + light->direction;
+			auto direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction,1.0);
+			direction = direction4.xyz() / direction4.w;
+			direction = direction - lightEyePosition.xyz();
+			shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			shader.setUniform1f("lights["+idx+"].spotExponent", light->exponent);
 			shader.setUniform1f("lights["+idx+"].spotCutoff", light->spotCutOff);
 			shader.setUniform1f("lights["+idx+"].spotCosCutoff", cos(ofDegToRad(light->spotCutOff)));
 		}else if(light->lightType==OF_LIGHT_DIRECTIONAL){
-			ofVec3f halfVector = (ofVec3f(0,0,1) + lightEyePosition).getNormalized();
-			shader.setUniform3f("lights["+idx+"].halfVector", halfVector);
+			auto halfVector = glm::normalize(glm::vec4(0.f, 0.f, 1.f, 0.f) + lightEyePosition);
+			shader.setUniform3f("lights["+idx+"].halfVector", halfVector.xyz());
 		}else if(light->lightType==OF_LIGHT_AREA){
 			shader.setUniform1f("lights["+idx+"].width", light->width);
 			shader.setUniform1f("lights["+idx+"].height", light->height);
-			ofVec3f direction = light->position + light->direction;
-			direction = direction * renderer.getCurrentViewMatrix();
-			direction = direction - lightEyePosition;
-			shader.setUniform3f("lights["+idx+"].spotDirection", direction.normalize());
-			ofVec3f right = light->position + light->right;
-			right = right * renderer.getCurrentViewMatrix();
-			right = right - lightEyePosition;
-			ofVec3f up = right.getCrossed(direction);
-			shader.setUniform3f("lights["+idx+"].right", right.normalize());
-			shader.setUniform3f("lights["+idx+"].up", up.normalize());
+			auto direction = light->position.xyz() + light->direction;
+			auto direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction, 1.0);
+			direction = direction4.xyz() / direction4.w;
+			direction = direction - lightEyePosition.xyz();
+			shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
+			auto right = toGlm(light->position).xyz() + light->right;
+			auto right4 = renderer.getCurrentViewMatrix() * glm::vec4(right, 1.0);
+			right = right4.xyz() / right4.w;
+			right = right - lightEyePosition.xyz();
+			auto up = glm::cross(toGlm(right), direction);
+			shader.setUniform3f("lights["+idx+"].right", glm::normalize(toGlm(right)));
+			shader.setUniform3f("lights["+idx+"].up", glm::normalize(up));
 		}
 	}
 }
@@ -287,7 +290,7 @@ static const string fragmentShader = R"(
 		float d;            // distance from surface to light source
 		vec3  VP;           // direction from surface to light position
 		vec3  halfVector;   // direction of maximum highlights
-		vec3 eye = vec3 (0.0, 0.0, 1.0);
+		vec3 eye = -eyePosition3;
 
 		// Compute vector from surface to light position
 		VP = vec3 (light.position.xyz) - ecPosition3;
@@ -347,7 +350,7 @@ static const string fragmentShader = R"(
 		float pf;
 		float d;            // distance from surface to light source
 		vec3  VP;           // direction from surface to light position
-		vec3 eye = vec3 (0.0, 0.0, 1.0);
+		vec3 eye = -eyePosition3;
 		float spotEffect;
 		float attenuation=1.0;
 		vec3  halfVector;   // direction of maximum highlights
