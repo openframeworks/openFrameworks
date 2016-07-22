@@ -56,7 +56,7 @@ static int pixelBitsFromPixelFormat(ofPixelFormat format){
 
 template<typename PixelType>
 static int bytesFromPixelFormat(int w, int h, ofPixelFormat format){
-	return w*h*pixelBitsFromPixelFormat<PixelType>(format)/8;
+	return w*h*(pixelBitsFromPixelFormat<PixelType>(format)/8);
 }
 
 static int channelsFromPixelFormat(ofPixelFormat format){
