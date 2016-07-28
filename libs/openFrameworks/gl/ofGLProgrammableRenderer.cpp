@@ -985,7 +985,7 @@ void ofGLProgrammableRenderer::setLineWidth(float lineWidth){
 	if(!currentStyle.bFill){
 		path.setStrokeWidth(lineWidth);
 	}
-	glLineWidth(lineWidth);
+	//glLineWidth(lineWidth);
 }
 
 //----------------------------------------------------------
