@@ -529,15 +529,39 @@ void ofTexture::setSwizzle(GLenum srcSwizzle, GLenum dstChannel){
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(const unsigned char * data, int w, int h, int glFormat){
+void ofTexture::loadData(const uint8_t * data, int w, int h, int glFormat){
 	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,1,ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(data, w, h, glFormat, GL_UNSIGNED_BYTE);
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(const unsigned short * data, int w, int h, int glFormat){
+void ofTexture::loadData(const uint16_t * data, int w, int h, int glFormat){
 	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(data, w, h, glFormat, GL_UNSIGNED_SHORT);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const uint32_t * data, int w, int h, int glFormat){
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_SHORT);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const int8_t * data, int w, int h, int glFormat){
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,1,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_BYTE);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const int16_t * data, int w, int h, int glFormat){
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_SHORT);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const int32_t * data, int w, int h, int glFormat){
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_SHORT);
 }
 
 //----------------------------------------------------------

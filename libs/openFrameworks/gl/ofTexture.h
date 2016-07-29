@@ -470,7 +470,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param w Pixel data width.
 	/// \param h Pixel data height.
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
-	void loadData(const unsigned char* const data, int w, int h, int glFormat);
+	void loadData(const uint8_t* const data, int w, int h, int glFormat);
 
 	/// \brief Load short (2 byte) pixel data.
 	/// \sa loadData(const unsigned char* const data, int w, int h, int glFormat)
@@ -478,7 +478,12 @@ class ofTexture : public ofBaseDraws {
 	/// \param w Pixel data width.
 	/// \param h Pixel data height.
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
-	void loadData(const unsigned short* data, int w, int h, int glFormat);
+	void loadData(const uint16_t* data, int w, int h, int glFormat);
+	void loadData(const uint32_t* data, int w, int h, int glFormat);
+
+	void loadData(const int8_t * data, int w, int h, int glFormat);
+	void loadData(const int16_t * data, int w, int h, int glFormat);
+	void loadData(const int32_t * data, int w, int h, int glFormat);
 
 	/// \brief Load float pixel data.
 	/// \sa loadData(const unsigned char* const data, int w, int h, int glFormat)
