@@ -1336,7 +1336,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 		}
 	}
 	tex.allocate(totalPixels);
-	return tex;
+    return std::move(tex);
 }
 
 //-----------------------------------------------------------
