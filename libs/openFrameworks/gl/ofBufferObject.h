@@ -127,6 +127,8 @@ public:
 	}
 
 	void copyTo(ofBufferObject & dstBuffer);
+
+    void invalidate();
 #endif
 
 	GLsizeiptr size() const;

@@ -229,6 +229,12 @@ void ofBufferObject::copyTo(ofBufferObject & dstBuffer){
 	unbind(GL_COPY_READ_BUFFER);
 	dstBuffer.unbind(GL_COPY_WRITE_BUFFER);
 }
+
+
+void ofBufferObject::invalidate(){
+    glInvalidateBufferData(data->id);
+}
+
 #endif
 
 GLsizeiptr ofBufferObject::size() const{
