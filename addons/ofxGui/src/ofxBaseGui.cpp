@@ -177,21 +177,9 @@ void ofxBaseGui::saveToFile(const std::string& filename){
 		saveTo(xml);
 		xml.save(filename);
 	}else if(extension == "json"){
-		ofJson json;
-		{
-			ofFile jsonFile(filename);
-			if(jsonFile.exists()){
-				jsonFile >> json;
-			}
-		}
-
+        ofJson json = ofLoadJson(filename);
 		saveTo(json);
-
-		{
-			ofFile jsonFile(filename, ofFile::WriteOnly);
-			jsonFile << json;
-		}
-
+        ofSavePrettyJson(filename, json);
 	}else{
 		ofLogError("ofxGui") << extension << " not recognized, only .xml and .json supported by now";
 	}
