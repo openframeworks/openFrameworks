@@ -335,6 +335,9 @@ public:
 
 	void setNumChannels(int numChannels);
 
+    static int pixelBitsFromPixelFormat(ofPixelFormat format);
+    static int bytesFromPixelFormat(int w, int h, ofPixelFormat format);
+
 	/// \}
 	/// \name Iterator
 	/// \{
