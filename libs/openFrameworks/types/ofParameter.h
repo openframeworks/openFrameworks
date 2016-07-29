@@ -4,6 +4,8 @@
 #include "ofTypes.h"
 #include "ofUtils.h"
 #include "ofConstants.h"
+#include "ofVectorMath.h"
+#include "ofPoint.h"
 #include <map>
 
 template<typename ParameterType>
@@ -52,12 +54,14 @@ public:
 	virtual bool isReadOnly() const = 0;
 	virtual shared_ptr<ofAbstractParameter> newReference() const = 0;
 
+	virtual bool isReferenceTo(const ofAbstractParameter& other) const;
+
 protected:
 	virtual const ofParameterGroup getFirstParent() const = 0;
 	virtual void setSerializable(bool serializable)=0;
 	virtual string escape(const string& str) const;
+	virtual const void* getInternalObject() const = 0;
 };
-
 
 
 
@@ -84,6 +88,9 @@ public:
 
 	void add(ofAbstractParameter & param);
 
+	void remove(ofAbstractParameter & param);
+	void remove(std::size_t index);
+	void remove(const std::string& name);
 
 	void clear();
 
@@ -93,9 +100,9 @@ public:
 	const ofParameter<char> & getChar(const string& name) const;
 	const ofParameter<string> & getString(const string& name) const;
 	const ofParameter<ofPoint> & getPoint(const string& name) const;
-	const ofParameter<ofVec2f> & getVec2f(const string& name) const;
-	const ofParameter<ofVec3f> & getVec3f(const string& name) const;
-	const ofParameter<ofVec4f> & getVec4f(const string& name) const;
+	const ofParameter<ofDefaultVec2> & getVec2f(const string& name) const;
+	const ofParameter<ofDefaultVec3> & getVec3f(const string& name) const;
+	const ofParameter<ofDefaultVec4> & getVec4f(const string& name) const;
 	const ofParameter<ofColor> & getColor(const string& name) const;
 	const ofParameter<ofShortColor> & getShortColor(const string& name) const;
 	const ofParameter<ofFloatColor> & getFloatColor(const string& name) const;
@@ -108,9 +115,9 @@ public:
 	const ofParameter<char> & getChar(std::size_t pos) const;
 	const ofParameter<string> & getString(std::size_t pos) const;
 	const ofParameter<ofPoint> & getPoint(std::size_t pos) const;
-	const ofParameter<ofVec2f> & getVec2f(std::size_t pos) const;
-	const ofParameter<ofVec3f> & getVec3f(std::size_t pos) const;
-	const ofParameter<ofVec4f> & getVec4f(std::size_t pos) const;
+	const ofParameter<ofDefaultVec2> & getVec2f(std::size_t pos) const;
+	const ofParameter<ofDefaultVec3> & getVec3f(std::size_t pos) const;
+	const ofParameter<ofDefaultVec4> & getVec4f(std::size_t pos) const;
 	const ofParameter<ofColor> & getColor(std::size_t pose) const;
 	const ofParameter<ofShortColor> & getShortColor(std::size_t pos) const;
 	const ofParameter<ofFloatColor> & getFloatColor(std::size_t pos) const;
@@ -122,9 +129,9 @@ public:
 	ofParameter<char> & getChar(const string& name);
 	ofParameter<string> & getString(const string& name);
 	ofParameter<ofPoint> & getPoint(const string& name);
-	ofParameter<ofVec2f> & getVec2f(const string& name);
-	ofParameter<ofVec3f> & getVec3f(const string& name);
-	ofParameter<ofVec4f> & getVec4f(const string& name);
+	ofParameter<ofDefaultVec2> & getVec2f(const string& name);
+	ofParameter<ofDefaultVec3> & getVec3f(const string& name);
+	ofParameter<ofDefaultVec4> & getVec4f(const string& name);
 	ofParameter<ofColor> & getColor(const string& name);
 	ofParameter<ofShortColor> & getShortColor(const string& name);
 	ofParameter<ofFloatColor> & getFloatColor(const string& name);
@@ -137,9 +144,9 @@ public:
 	ofParameter<char> & getChar(std::size_t pos);
 	ofParameter<string> & getString(std::size_t pos);
 	ofParameter<ofPoint> & getPoint(std::size_t pos);
-	ofParameter<ofVec2f> & getVec2f(std::size_t pos);
-	ofParameter<ofVec3f> & getVec3f(std::size_t pos);
-	ofParameter<ofVec4f> & getVec4f(std::size_t pos);
+	ofParameter<ofDefaultVec2> & getVec2f(std::size_t pos);
+	ofParameter<ofDefaultVec3> & getVec3f(std::size_t pos);
+	ofParameter<ofDefaultVec4> & getVec4f(std::size_t pos);
 	ofParameter<ofColor> & getColor(std::size_t pose);
 	ofParameter<ofShortColor> & getShortColor(std::size_t pos);
 	ofParameter<ofFloatColor> & getFloatColor(std::size_t pos);
@@ -209,6 +216,9 @@ public:
 	vector<shared_ptr<ofAbstractParameter> >::reverse_iterator rend();
 	vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator rbegin() const;
 	vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator rend() const;
+
+protected:
+	const void* getInternalObject() const;
 
 private:
 	class Value{
@@ -308,15 +318,33 @@ namespace priv{
 	};
 
 	template<>
+	struct TypeInfo <glm::vec2> {
+		static glm::vec2 min() { return glm::vec2(0); }
+		static glm::vec2 max() { return glm::vec2(1); }
+	};
+
+	template<>
 	struct TypeInfo <ofVec3f> {
 		static ofVec3f min() { return ofVec3f(0); }
 		static ofVec3f max() { return ofVec3f(1); }
 	};
 
 	template<>
+	struct TypeInfo <glm::vec3> {
+		static glm::vec3 min() { return glm::vec3(0); }
+		static glm::vec3 max() { return glm::vec3(1); }
+	};
+
+	template<>
 	struct TypeInfo <ofVec4f> {
 		static ofVec4f min() { return ofVec4f(0); }
 		static ofVec4f max() { return ofVec4f(1); }
+	};
+
+	template<>
+	struct TypeInfo <glm::vec4> {
+		static glm::vec4 min() { return glm::vec4(0); }
+		static glm::vec4 max() { return glm::vec4(1); }
 	};
 
 	template<typename T>
@@ -488,15 +516,20 @@ public:
 	void setParent(ofParameterGroup & _parent);
 
 	const ofParameterGroup getFirstParent() const{
-		auto first = std::find_if(obj->parents.begin(),obj->parents.end(),[](weak_ptr<ofParameterGroup::Value> p){return p.lock()!=nullptr;});
-		if(first!=obj->parents.end()){
-			return first->lock();
+		obj->parents.erase(std::remove_if(obj->parents.begin(),obj->parents.end(),
+						   [](weak_ptr<ofParameterGroup::Value> p){return p.lock()==nullptr;}),
+						obj->parents.end());
+		if(!obj->parents.empty()){
+			return obj->parents.front().lock();
 		}else{
 			return shared_ptr<ofParameterGroup::Value>(nullptr);
 		}
 	}
 
 	size_t getNumListeners() const;
+
+protected:
+	const void* getInternalObject() const;
 
 private:
 	class Value{
@@ -538,11 +571,15 @@ private:
 		bool serializable;
 		vector<weak_ptr<ofParameterGroup::Value>> parents;
 	};
+
 	shared_ptr<Value> obj;
 	std::function<void(const ParameterType & v)> setMethod;
 
 	void eventsSetValue(const ParameterType & v);
 	void noEventsSetValue(const ParameterType & v);
+
+	template<typename T, typename F>
+	friend class ofReadOnlyParameter;
 };
 
 
@@ -879,7 +916,7 @@ void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> & mo
 
 template<typename ParameterType>
 shared_ptr<ofAbstractParameter> ofParameter<ParameterType>::newReference() const{
-    return std::make_shared<ofParameter<ParameterType>>(*this);
+	return std::make_shared<ofParameter<ParameterType>>(*this);
 }
 
 template<typename ParameterType>
@@ -890,6 +927,11 @@ void ofParameter<ParameterType>::setParent(ofParameterGroup & parent){
 template<typename ParameterType>
 size_t ofParameter<ParameterType>::getNumListeners() const{
 	return obj->changedE.size();
+}
+
+template<typename ParameterType>
+const void* ofParameter<ParameterType>::getInternalObject() const{
+	return obj.get();
 }
 
 template<>
@@ -939,6 +981,12 @@ public:
 		}
 	}
 	size_t getNumListeners() const;
+
+protected:
+	const void* getInternalObject() const{
+		return obj.get();
+	}
+
 private:
 	class Value{
 	public:
@@ -1058,6 +1106,9 @@ protected:
 		return parameter.getFirstParent();
 	}
 
+	const void* getInternalObject() const{
+		return parameter.getInternalObject();
+	}
 
 	ofParameter<ParameterType> parameter;
 	

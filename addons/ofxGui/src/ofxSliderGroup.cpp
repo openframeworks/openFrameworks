@@ -22,7 +22,7 @@ ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(ofParameter<VecType> valu
     VecType min = value.getMin();
     VecType max = value.getMax();
     
-    for (int i=0; i<VecType::DIM; i++) {
+	for (int i=0; i<dim(); i++) {
     	ofParameter<float> p(names[i], val[i], min[i], max[i]);
         add(new ofxSlider<float>(p, width, height));
         p.addListener(this, & ofxVecSlider_::changeSlider);
@@ -55,9 +55,39 @@ void ofxVecSlider_<VecType>::changeValue(VecType & value){
     if (sliderChanging){
         return;
     }
-    for (int i=0; i<VecType::DIM; i++){
+	for (int i=0; i<dim(); i++){
         parameters[i].template cast<float>() = value[i];
     }
+}
+
+template<>
+size_t ofxVecSlider_<glm::vec2>::dim(){
+	return 2;
+}
+
+template<>
+size_t ofxVecSlider_<glm::vec3>::dim(){
+	return 3;
+}
+
+template<>
+size_t ofxVecSlider_<glm::vec4>::dim(){
+	return 4;
+}
+
+template<>
+size_t ofxVecSlider_<ofVec2f>::dim(){
+	return 2;
+}
+
+template<>
+size_t ofxVecSlider_<ofVec3f>::dim(){
+	return 3;
+}
+
+template<>
+size_t ofxVecSlider_<ofVec4f>::dim(){
+	return 4;
 }
 
 template<class VecType>
@@ -84,6 +114,9 @@ const VecType * ofxVecSlider_<VecType>::operator->(){
 template class ofxVecSlider_<ofVec2f>;
 template class ofxVecSlider_<ofVec3f>;
 template class ofxVecSlider_<ofVec4f>;
+template class ofxVecSlider_<glm::vec2>;
+template class ofxVecSlider_<glm::vec3>;
+template class ofxVecSlider_<glm::vec4>;
 
 
 template<class ColorType>

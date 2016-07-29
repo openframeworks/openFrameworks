@@ -63,6 +63,7 @@ x) Close()
 
 --------------------------------------------------------------------------------*/
 #include "ofConstants.h"
+#include "ofxUDPSettings.h"
 #include <string.h>
 #include <wchar.h>
 #include <stdio.h>
@@ -102,8 +103,6 @@ x) Close()
 
 /// Socket constants.
 #define SOCKET_TIMEOUT			SOCKET_ERROR - 1
-#define NO_TIMEOUT				0xFFFF
-#define OF_UDP_DEFAULT_TIMEOUT   NO_TIMEOUT
 
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
@@ -124,6 +123,7 @@ public:
 
 	bool	HasSocket() const	{	return (m_hSocket)&&(m_hSocket != INVALID_SOCKET);	}
 	bool Close();
+	bool Setup(const ofxUDPSettings & settings);
 	bool Create();
 	bool Connect(const char *pHost, unsigned short usPort);
 	bool ConnectMcast(char *pMcast, unsigned short usPort);

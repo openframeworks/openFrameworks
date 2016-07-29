@@ -156,6 +156,27 @@ class ofApp: public ofxUnitTestsApp{
 			test_eq(toggleForVoidListenerWithToken, false, "Unregistered void event with member function with release token");
 			test_eq(toggleVoidFunc, false, "Unregistered void event with c function");
 		}
+
+
+		{
+			ofEvent<const int> e;
+			auto listener = e.newListener([](const int & v){
+			});
+			auto listenerSender = e.newListener([](const void * sender, const int & v){
+			});
+			auto listenerBool = e.newListener([](const int & v){
+				return false;
+			});
+			auto listenerSenderBool = e.newListener([](const void * sender, const int & v){
+				return false;
+			});
+			e.notify(5);
+
+			ofEvent<void> voidE;
+			auto voidListener = voidE.newListener([]{
+
+			});
+		}
 	}
 };
 

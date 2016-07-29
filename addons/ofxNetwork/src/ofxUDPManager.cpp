@@ -52,6 +52,47 @@ bool ofxUDPManager::Close()
 }
 
 //--------------------------------------------------------------------------------
+bool ofxUDPManager::Setup(const ofxUDPSettings & settings)
+{
+	if (!settings.bindPort && !settings.sendPort) {
+		ofLogError("ofxUDPManager") << "passed settings object was not initialized with .receiveOn or .sendTo";
+		return false;
+	}
+
+	if (!Create()) {
+		return false;
+	}
+
+	// TODO: check each return value, destroy socket and return false ?
+	SetReuseAddress(settings.reuse);
+	SetEnableBroadcast(settings.broadcast);
+	SetNonBlocking(!settings.blocking);
+
+	SetTimeoutSend(settings.sendTimeout);
+	SetTimeoutReceive(settings.receiveTimeout);
+
+	if (settings.receiveBufferSize) SetReceiveBufferSize(settings.receiveBufferSize);
+	if (settings.sendBufferSize) SetSendBufferSize(settings.sendBufferSize);
+	SetTTL(settings.ttl);
+
+	if (settings.bindPort) {
+		if (settings.multicast) {
+			return BindMcast((char*)settings.bindAddress.c_str(), settings.bindPort);
+		} else {
+			return Bind(settings.bindPort);
+		}
+	}
+	if (settings.sendPort) {
+		if (settings.multicast) {
+			return ConnectMcast((char*)settings.sendAddress.c_str(), settings.sendPort);
+		} else {
+			return Connect((char*)settings.sendAddress.c_str(), settings.sendPort);
+		}
+	}
+	return true;
+}
+
+//--------------------------------------------------------------------------------
 bool ofxUDPManager::Create()
 {
 	if (m_hSocket != INVALID_SOCKET)

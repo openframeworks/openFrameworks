@@ -145,6 +145,7 @@ public:
 	ofEvent<void> cancelPressed;
 	ofEvent<void> backPressed;
 	ofEvent<bool> networkConnected;
+	ofEvent<ofOrientation> deviceOrientationChanged;
 	ofEvent<void> pause;
 	ofEvent<void> resume;
 	ofEvent<void> unloadGL;
@@ -160,3 +161,49 @@ public:
 };
 
 ofxAndroidEventsClass & ofxAndroidEvents();
+
+enum ofxAndroidKeyCode{
+    KEYCODE_SOFT_LEFT       = 1,
+    /** Key code constant: Soft Right key.
+     * Usually situated below the display on phones and used as a multi-function
+     * feature key for selecting a software defined function shown on the bottom right
+     * of the display. */
+    KEYCODE_SOFT_RIGHT      = 2,
+    /** Key code constant: Home key.
+     * This key is handled by the framework and is never delivered to applications. */
+    KEYCODE_HOME            = 3,
+    /** Key code constant: Back key. */
+    KEYCODE_BACK            = 4,
+    /** Key code constant: Call key. */
+    KEYCODE_CALL            = 5,
+    /** Key code constant: End Call key. */
+    KEYCODE_ENDCALL         = 6,
+    /** Key code constant: Directional Pad Up key.
+     * May also be synthesized from trackball motions. */
+    KEYCODE_DPAD_UP         = 19,
+    /** Key code constant: Directional Pad Down key.
+     * May also be synthesized from trackball motions. */
+    KEYCODE_DPAD_DOWN       = 20,
+    /** Key code constant: Directional Pad Left key.
+     * May also be synthesized from trackball motions. */
+    KEYCODE_DPAD_LEFT       = 21,
+    /** Key code constant: Directional Pad Right key.
+     * May also be synthesized from trackball motions. */
+    KEYCODE_DPAD_RIGHT      = 22,
+    /** Key code constant: Directional Pad Center key.
+     * May also be synthesized from trackball motions. */
+    KEYCODE_DPAD_CENTER     = 23,
+    /** Key code constant: Volume Up key.
+     * Adjusts the speaker volume up. */
+    KEYCODE_VOLUME_UP       = 24,
+    /** Key code constant: Volume Down key.
+     * Adjusts the speaker volume down. */
+    KEYCODE_VOLUME_DOWN     = 25,
+    /** Key code constant: Power key. */
+    KEYCODE_POWER           = 26,
+    /** Key code constant: Camera key.
+     * Used to launch a camera application or take pictures. */
+    KEYCODE_CAMERA          = 27,
+    /** Key code constant: Clear key. */
+    KEYCODE_CLEAR           = 28,
+};

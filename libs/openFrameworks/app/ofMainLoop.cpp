@@ -63,7 +63,7 @@ shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & se
 	return window;
 }
 
-void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app){
+void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> && app){
 	windowsApps[window] = app;
 	if(app){
 		ofAddListener(window->events().setup,app.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
@@ -99,6 +99,7 @@ void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> a
 			ofAddListener(ofxAndroidEvents().unloadGL,androidApp,&ofxAndroidApp::unloadGL,OF_EVENT_ORDER_APP);
 			ofAddListener(ofxAndroidEvents().reloadGL,androidApp,&ofxAndroidApp::reloadGL,OF_EVENT_ORDER_APP);
 			ofAddListener(ofxAndroidEvents().swipe,androidApp,&ofxAndroidApp::swipe,OF_EVENT_ORDER_APP);
+			ofAddListener(ofxAndroidEvents().deviceOrientationChanged,androidApp,&ofxAndroidApp::deviceOrientationChangedEvent,OF_EVENT_ORDER_APP);
 		}
 #endif
 	}
@@ -109,9 +110,9 @@ void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> a
 	}
 }
 
-void ofMainLoop::run(shared_ptr<ofBaseApp> app){
+void ofMainLoop::run(std::shared_ptr<ofBaseApp> && app){
 	if(!windowsApps.empty()){
-		run(windowsApps.begin()->first,app);
+		run(windowsApps.begin()->first, std::move(app));
 	}
 }
 
@@ -121,7 +122,6 @@ int ofMainLoop::loop(){
 			loopOnce();
 			pollEvents();
 		}
-		exit();
 	}else{
 		windowLoop();
 	}
@@ -194,16 +194,24 @@ void ofMainLoop::exit(){
 			ofRemoveListener(ofxAndroidEvents().unloadGL,androidApp,&ofxAndroidApp::unloadGL,OF_EVENT_ORDER_APP);
 			ofRemoveListener(ofxAndroidEvents().reloadGL,androidApp,&ofxAndroidApp::reloadGL,OF_EVENT_ORDER_APP);
 			ofRemoveListener(ofxAndroidEvents().swipe,androidApp,&ofxAndroidApp::swipe,OF_EVENT_ORDER_APP);
+			ofRemoveListener(ofxAndroidEvents().deviceOrientationChanged,androidApp,&ofxAndroidApp::deviceOrientationChangedEvent,OF_EVENT_ORDER_APP);
 		}
 #endif
 	}
 	
 	exitEvent.notify(this);
+
+	// reset applications then windows
+	// so events are present until the
+	// end of the application
+	for(auto & window_app: windowsApps){
+		window_app.second.reset();
+	}
 	windowsApps.clear();
 }
 
 shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
-	return currentWindow;
+	return currentWindow.lock();
 }
 
 void ofMainLoop::setCurrentWindow(shared_ptr<ofAppBaseWindow> window){
@@ -211,7 +219,7 @@ void ofMainLoop::setCurrentWindow(shared_ptr<ofAppBaseWindow> window){
 }
 
 void ofMainLoop::setCurrentWindow(ofAppBaseWindow * window){
-	if(currentWindow.get() == window){
+	if(currentWindow.lock().get() == window){
 		return;
 	}
 	for(auto i: windowsApps){
@@ -223,11 +231,7 @@ void ofMainLoop::setCurrentWindow(ofAppBaseWindow * window){
 }
 
 shared_ptr<ofBaseApp> ofMainLoop::getCurrentApp(){
-	return windowsApps[currentWindow];
-}
-
-ofCoreEvents & ofMainLoop::events(){
-	return currentWindow->events();
+	return windowsApps[currentWindow.lock()];
 }
 
 void ofMainLoop::shouldClose(int _status){

@@ -813,6 +813,25 @@ void ofAppEGLWindow::makeCurrent(){
 }
 
 //------------------------------------------------------------
+void ofAppEGLWindow::swapBuffers(){
+	EGLBoolean success = eglSwapBuffers(eglDisplay, eglSurface);
+	if(!success) {
+		GLint error = eglGetError();
+		ofLogNotice("ofAppEGLWindow") << "display(): eglSwapBuffers failed: " << eglErrorString(error);
+	}
+}
+
+//--------------------------------------------
+void ofAppEGLWindow::startRender() {
+	renderer()->startRender();
+}
+
+//--------------------------------------------
+void ofAppEGLWindow::finishRender() {
+	renderer()->finishRender();
+}
+
+//------------------------------------------------------------
 void ofAppEGLWindow::update() {
 	coreEvents.notifyUpdate();
 }
@@ -1062,17 +1081,17 @@ void ofAppEGLWindow::setWindowTitle(string title) {
 }
 
 //------------------------------------------------------------
-ofPoint ofAppEGLWindow::getWindowSize(){
-	return ofPoint(currentWindowRect.width, currentWindowRect.height,0);
+glm::vec2 ofAppEGLWindow::getWindowSize(){
+	return {currentWindowRect.width, currentWindowRect.height};
 }
 
 //------------------------------------------------------------
-ofPoint ofAppEGLWindow::getWindowPosition(){
-	return currentWindowRect.getPosition();
+glm::vec2 ofAppEGLWindow::getWindowPosition(){
+	return currentWindowRect.getPosition().xy();
 }
 
 //------------------------------------------------------------
-ofPoint ofAppEGLWindow::getScreenSize(){
+glm::vec2 ofAppEGLWindow::getScreenSize(){
 	unsigned int screenWidth = 0;
 	unsigned int screenHeight = 0;
 
@@ -1098,7 +1117,7 @@ ofPoint ofAppEGLWindow::getScreenSize(){
 
 	}
 
-	return ofPoint(screenWidth, screenHeight,0);
+	return {screenWidth, screenHeight};
 }
 
 //------------------------------------------------------------
@@ -1157,7 +1176,7 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
 #ifdef TARGET_RASPBERRY_PI
 
 		// keep it in bounds
-		ofPoint screenSize = getScreenSize();
+		auto screenSize = getScreenSize();
 		x = ofClamp(x, 0, screenSize.x - currentWindowRect.width);
 		y = ofClamp(y, 0, screenSize.y - currentWindowRect.height);
 
@@ -1266,7 +1285,7 @@ void ofAppEGLWindow::disableSetupScreen(){
 
 //------------------------------------------------------------
 ofRectangle ofAppEGLWindow::getScreenRect(){
-	ofPoint screenSize = getScreenSize();
+	auto screenSize = getScreenSize();
 	return ofRectangle(0,0,screenSize.x,screenSize.y);
 }
 

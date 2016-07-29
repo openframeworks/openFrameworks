@@ -1,17 +1,6 @@
 #pragma once
 
-#include "ofPoint.h"
 #include "ofConstants.h"
-
-// notes:
-// -----------------------------------------------------------
-// for fast things look here: http://musicdsp.org/archive.php?classid=5#115
-// -----------------------------------------------------------
-// the random () calls are based on misconceptions described here:
-// http://www.azillionmonkeys.com/qed/random.html
-// (Bad advice from C.L.C. FAQ)
-// we should correct this --
-// -----------------------------------------------------------
 
 /// \file
 /// ofMath provides a collection of mathematical utilities and functions.
@@ -390,19 +379,19 @@ float ofNoise(float x);
 float ofNoise(float x, float y);
 
 /// \brief Calculates a two dimensional Perlin noise value between 0.0...1.0.
-float ofNoise(const ofVec2f& p);
+float ofNoise(const glm::vec2& p);
 
 /// \brief Calculates a three dimensional Perlin noise value between 0.0...1.0.
 float ofNoise(float x, float y, float z);
 
 /// \brief Calculates a three dimensional Perlin noise value between 0.0...1.0.
-float ofNoise(const ofVec3f& p);
+float ofNoise(const glm::vec3& p);
 
 /// \brief Calculates a four dimensional Perlin noise value between 0.0...1.0.
 float ofNoise(float x, float y, float z, float w);
 
 /// \brief Calculates a four dimensional Perlin noise value between 0.0...1.0.
-float ofNoise(const ofVec4f& p);
+float ofNoise(const glm::vec4& p);
 
 /// \brief Calculates a one dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x);
@@ -411,19 +400,19 @@ float ofSignedNoise(float x);
 float ofSignedNoise(float x, float y);
 
 /// \brief Calculates a two dimensional Perlin noise value between -1.0...1.0.
-float ofSignedNoise(const ofVec2f& p);
+float ofSignedNoise(const glm::vec2& p);
 
 /// \brief Calculates a three dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x, float y, float z);
 
 /// \brief Calculates a three dimensional Perlin noise value between -1.0...1.0.
-float ofSignedNoise(const ofVec3f& p);
+float ofSignedNoise(const glm::vec3& p);
 
 /// \brief Calculates a four dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x, float y, float z, float w);
 
 /// \brief Calculates a four dimensional Perlin noise value between -1.0...1.0.
-float ofSignedNoise(const ofVec4f& p);
+float ofSignedNoise(const glm::vec4 & p);
 
 /// \}
 
@@ -431,27 +420,43 @@ float ofSignedNoise(const ofVec4f& p);
 /// \name Geometry
 /// \{
 
-/// \brief Determine if an (x,y) coordinate is within the polygon defined by a vector of ofPoints.
-/// \param x The x dimension of the coordinate.
-/// \param y The y dimension of the coordinate.
-/// \param poly a vector of ofPoints defining a polygon.
-/// \returns True if the point defined by the coordinates is enclosed, false otherwise.
-bool ofInsidePoly(float x, float y, const vector<ofPoint>& poly);
-
-/// \brief Determine if an ofPoint is within the polygon defined by a vector of ofPoints.
-/// \param p A point to check.
-/// \param poly A vector of ofPoints defining a polygon.
-/// \returns True if the ofPoint is enclosed, false otherwise.
-bool ofInsidePoly(const ofPoint & p, const vector<ofPoint>& poly);
 
 /// \brief Determine the intersection between two lines.
 /// \param line1Start Starting point for first line.
 /// \param line1End End point for first line.
 /// \param line2Start Starting point for second line.
 /// \param line2End End point for second line.
-/// \param intersection ofPoint reference in which to store the computed intersection point.
+/// \param intersection glm::vec3 reference in which to store the computed intersection point.
 /// \returns True if the lines intersect.
-bool ofLineSegmentIntersection(const ofPoint& line1Start, const ofPoint& line1End, const ofPoint& line2Start, const ofPoint& line2End, ofPoint& intersection);
+template<class vectype>
+bool ofLineSegmentIntersection(const vectype& line1Start, const vectype& line1End, const vectype& line2Start, const vectype& line2End, vectype& intersection){
+	vectype diffLA, diffLB;
+	float compareA, compareB;
+	diffLA = line1End - line1Start;
+	diffLB = line2End - line2Start;
+	compareA = diffLA.x*line1Start.y - diffLA.y*line1Start.x;
+	compareB = diffLB.x*line2Start.y - diffLB.y*line2Start.x;
+	if (
+		(
+			( ( diffLA.x*line2Start.y - diffLA.y*line2Start.x ) < compareA ) ^
+			( ( diffLA.x*line2End.y - diffLA.y*line2End.x ) < compareA )
+		)
+		&&
+		(
+			( ( diffLB.x*line1Start.y - diffLB.y*line1Start.x ) < compareB ) ^
+			( ( diffLB.x*line1End.y - diffLB.y*line1End.x) < compareB )
+		)
+	)
+	{
+		float lDetDivInv = 1 / ((diffLA.x*diffLB.y) - (diffLA.y*diffLB.x));
+		intersection.x =  -((diffLA.x*compareB) - (compareA*diffLB.x)) * lDetDivInv ;
+		intersection.y =  -((diffLA.y*compareB) - (compareA*diffLB.y)) * lDetDivInv ;
+
+		return true;
+	}
+
+	return false;
+}
 
 /// \brief Given the four points that determine a bezier curve, return an interpolated point on the curve.
 /// \param a The beginning point of the curve.
@@ -459,8 +464,12 @@ bool ofLineSegmentIntersection(const ofPoint& line1Start, const ofPoint& line1En
 /// \param c The second control point.
 /// \param d The end point of the curve.
 /// \param t an offset along the curve, normalized between 0 and 1.
-/// \returns A ofPoint on the curve.
-ofPoint ofBezierPoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t);
+/// \returns A glm::vec3 on the curve.
+template<class vectype>
+vectype ofBezierPoint(const vectype& a, const vectype& b, const vectype& c, const vectype& d, float t){
+	float tp = 1.0f - t;
+	return a*tp*tp*tp + b*3*t*tp*tp + c*3*t*t*tp + d*t*t*t;
+}
 
 /// \brief Given the four points that determine a Catmull Rom curve, return an interpolated point on the curve.
 /// \param a The first control point.
@@ -468,8 +477,22 @@ ofPoint ofBezierPoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, cons
 /// \param c The end point of the curve.
 /// \param d The second control point.
 /// \param t an offset along the curve, normalized between 0 and 1.
-/// \returns A ofPoint on the curve.
-ofPoint ofCurvePoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t);
+/// \returns A glm::vec3 on the curve.
+template <class vectype>
+vectype ofCurvePoint(const vectype& a, const vectype& b, const vectype& c, const vectype& d, float t){
+	vectype pt;
+	float t2 = t * t;
+	float t3 = t2 * t;
+	pt.x = 0.5f * ( ( 2.0f * b.x ) +
+				   ( -a.x + c.x ) * t +
+				   ( 2.0f * a.x - 5.0f * b.x + 4 * c.x - d.x ) * t2 +
+				   ( -a.x + 3.0f * b.x - 3.0f * c.x + d.x ) * t3 );
+	pt.y = 0.5f * ( ( 2.0f * b.y ) +
+				   ( -a.y + c.y ) * t +
+				   ( 2.0f * a.y - 5.0f * b.y + 4 * c.y - d.y ) * t2 +
+				   ( -a.y + 3.0f * b.y - 3.0f * c.y + d.y ) * t3 );
+	return pt;
+}
 
 /// Given the four points that determine a bezier curve and an offset along the curve, return an tangent vector to a point on the curve.
 /// Currently this is not a normalized point, and will need to be normalized.
@@ -478,8 +501,11 @@ ofPoint ofCurvePoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const
 /// \param c The second control point.
 /// \param d The end point of the curve.
 /// \param t an offset along the curve, normalized between 0 and 1.
-/// \returns A ofPoint on the curve.
-ofPoint ofBezierTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t);
+/// \returns A glm::vec3 on the curve.
+template <class vectype>
+vectype ofBezierTangent(const vectype& a, const vectype& b, const vectype& c, const vectype& d, float t){
+	return (d-a-c*3+b*3)*(t*t)*3 + (a+c-b*2)*t*6 - a*3+b*3;
+}
 
 /// \brief Return a tangent point for an offset along a Catmull Rom curve.
 /// \param a The first control point.
@@ -487,8 +513,14 @@ ofPoint ofBezierTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, co
 /// \param c The end point of the curve.
 /// \param d The second control point.
 /// \param t an offset along the curve, normalized between 0 and 1.
-/// \returns A ofPoint on the curve.
-ofPoint ofCurveTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t);
+/// \returns A glm::vec3 on the curve.
+template <class vectype>
+vectype ofCurveTangent(const vectype& a, const vectype& b, const vectype& c, const vectype& d, float t){
+	glm::vec3 v0 = ( c - a )*0.5;
+	glm::vec3 v1 = ( d - b )*0.5;
+	return ( b*2 -c*2 + v0 + v1)*(3*t*t) + ( c*3 - b*3 - v1 - v0*2 )*( 2*t) + v0;
+
+}
 
 template<typename Type>
 Type ofInterpolateCosine(const Type& y1, const Type& y2, float pct);

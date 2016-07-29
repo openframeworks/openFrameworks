@@ -96,9 +96,9 @@ public:
     void * getWindowContext(){return getGLFWWindow();}
 	ofGLFWWindowSettings getSettings(){ return settings; }
 
-	ofVec3f		getWindowSize();
-	ofVec3f		getScreenSize();
-	ofVec3f 	getWindowPosition();
+	glm::vec2	getWindowSize();
+	glm::vec2	getScreenSize();
+	glm::vec2 	getWindowPosition();
 
 	void setWindowTitle(string title);
 	void setWindowPosition(int x, int y);
@@ -123,6 +123,9 @@ public:
     int         getPixelScreenCoordScale();
 
     void 		makeCurrent();
+	void swapBuffers();
+	void startRender();
+	void finishRender();
 
 	static void listVideoModes();
 	static void listMonitors();
@@ -171,7 +174,7 @@ private:
 	static void 	mouse_cb(GLFWwindow* windowP_, int button, int state, int mods);
 	static void 	motion_cb(GLFWwindow* windowP_, double x, double y);
 	static void 	entry_cb(GLFWwindow* windowP_, int entered);
-	static void 	keyboard_cb(GLFWwindow* windowP_, int key, int scancode, unsigned int codepoint, int action, int mods);
+	static void 	keyboard_cb(GLFWwindow* windowP_, int key, int scancode, int action, int mods);
 	static void 	resize_cb(GLFWwindow* windowP_, int w, int h);
 	static void 	exit_cb(GLFWwindow* windowP_);
 	static void		scroll_cb(GLFWwindow* windowP_, double x, double y);
@@ -190,7 +193,8 @@ private:
 	ofWindowMode	windowMode;
 
 	bool			bEnableSetupScreen;
-	int				windowW, windowH;
+	int				windowW, windowH;		// physical pixels width
+	int				currentW, currentH;		// scaled pixels width
 
 	ofRectangle windowRect;
 
@@ -201,7 +205,7 @@ private:
 	bool			bWindowNeedsShowing;
 
 	GLFWwindow* 	windowP;
-    
+
 	int				getCurrentMonitor();
 
 	ofBaseApp *	ofAppPtr;

@@ -59,11 +59,11 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 	EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE, EGL_NONE };
 	EGLint attribList[] =
 	   {
-		   EGL_RED_SIZE, 8,
-		   EGL_GREEN_SIZE, 8,
-		   EGL_BLUE_SIZE, 8,
-		   EGL_ALPHA_SIZE, 8,
-		   EGL_DEPTH_SIZE, 8,
+		   EGL_RED_SIZE, EGL_DONT_CARE,
+		   EGL_GREEN_SIZE, EGL_DONT_CARE,
+		   EGL_BLUE_SIZE, EGL_DONT_CARE,
+		   EGL_ALPHA_SIZE, EGL_DONT_CARE,
+		   EGL_DEPTH_SIZE, EGL_DONT_CARE,
 		   EGL_STENCIL_SIZE, EGL_DONT_CARE,
 		   EGL_SAMPLE_BUFFERS, EGL_DONT_CARE,
 		   EGL_NONE
@@ -87,6 +87,8 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 		ofLogError() << "couldn't get configs";
 		return;
 	}
+	
+	ofLogNotice("ofxAppEmscriptenWindow") << "Got " << numConfigs << " display configs";
 
 	// Choose config
 	if ( !eglChooseConfig(display, attribList, &config, 1, &numConfigs) ){
@@ -103,9 +105,9 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 
 	// Create a GL context
 	context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs );
-	if ( context == EGL_NO_CONTEXT )
-	{
-	  return;
+	if ( context == EGL_NO_CONTEXT ){
+		ofLogError() << "couldn't create context";
+	    return;
 	}
 
 	// Make the context current
@@ -124,6 +126,11 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
     emscripten_set_mousedown_callback(0,this,1,&mousedown_cb);
     emscripten_set_mouseup_callback(0,this,1,&mouseup_cb);
     emscripten_set_mousemove_callback(0,this,1,&mousemoved_cb);
+    
+    emscripten_set_touchstart_callback(0,this,1,&touch_cb);
+    emscripten_set_touchend_callback(0,this,1,&touch_cb);
+    emscripten_set_touchmove_callback(0,this,1,&touch_cb);
+    emscripten_set_touchcancel_callback(0,this,1,&touch_cb);
 }
 
 void ofxAppEmscriptenWindow::loop(){
@@ -203,6 +210,37 @@ int ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMouseEv
 
 }
 
+int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* e, void* userData) {
+    
+        ofTouchEventArgs::Type touchArgsType;
+        switch (eventType) {
+                    case EMSCRIPTEN_EVENT_TOUCHSTART:
+                        touchArgsType = ofTouchEventArgs::down;
+                        break;
+                    case EMSCRIPTEN_EVENT_TOUCHEND:
+                        touchArgsType = ofTouchEventArgs::up;
+                        break;
+                    case EMSCRIPTEN_EVENT_TOUCHMOVE:
+                        touchArgsType = ofTouchEventArgs::move;
+                        break;
+                    case EMSCRIPTEN_EVENT_TOUCHCANCEL:
+                        touchArgsType = ofTouchEventArgs::cancel;
+                        break;
+                    default:
+                        return 1;
+            }
+        int numTouches = e->numTouches;
+        for (int i = 0; i < numTouches; i++) {
+                ofTouchEventArgs touchArgs;
+                touchArgs.type = touchArgsType;
+                touchArgs.id = i;
+                touchArgs.x =  e->touches[i].canvasX;
+                touchArgs.y =  e->touches[i].canvasY;
+                instance->events().notifyTouchEvent(touchArgs);
+           }
+    return 0;
+}
+
 void ofxAppEmscriptenWindow::hideCursor(){
 	emscripten_hide_mouse();
 }
@@ -222,20 +260,20 @@ void ofxAppEmscriptenWindow::setWindowShape(int w, int h){
 
 
 
-ofPoint	ofxAppEmscriptenWindow::getWindowPosition(){
-	return ofVec2f(0,0);
+glm::vec2 ofxAppEmscriptenWindow::getWindowPosition(){
+	return glm::vec2(0,0);
 }
 
 
-ofPoint	ofxAppEmscriptenWindow::getWindowSize(){
+glm::vec2 ofxAppEmscriptenWindow::getWindowSize(){
 	int width;
 	int height;
 	int isFullscreen;
 	emscripten_get_canvas_size( &width, &height, &isFullscreen );
-	return ofVec2f(width,height);
+	return glm::vec2(width,height);
 }
 
-ofPoint	ofxAppEmscriptenWindow::getScreenSize(){
+glm::vec2 ofxAppEmscriptenWindow::getScreenSize(){
 	return getWindowSize();
 }
 
