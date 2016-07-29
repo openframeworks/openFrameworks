@@ -73,6 +73,46 @@ enum ofImageFormat {
     OF_IMAGE_FORMAT_RAW     = 34
 };
 
+inline std::string ofImageFormatExtension(ofImageFormat format){
+    switch(format){
+    case OF_IMAGE_FORMAT_BMP: return "bmp";
+    case OF_IMAGE_FORMAT_ICO: return "ico";
+    case OF_IMAGE_FORMAT_JPEG: return "jpg";
+    case OF_IMAGE_FORMAT_JNG: return "jng";
+    case OF_IMAGE_FORMAT_KOALA: return "koala";
+    case OF_IMAGE_FORMAT_LBM: return "lbm";
+    case OF_IMAGE_FORMAT_MNG: return "mng";
+    case OF_IMAGE_FORMAT_PBM: return "pbm";
+    case OF_IMAGE_FORMAT_PBMRAW: return "pbm";
+    case OF_IMAGE_FORMAT_PCD: return "pcd";
+    case OF_IMAGE_FORMAT_PCX: return "pcx";
+    case OF_IMAGE_FORMAT_PGM: return "pgm";
+    case OF_IMAGE_FORMAT_PGMRAW: return "pgm";
+    case OF_IMAGE_FORMAT_PNG: return "png";
+    case OF_IMAGE_FORMAT_PPM: return "ppm";
+    case OF_IMAGE_FORMAT_PPMRAW: return "ppm";
+    case OF_IMAGE_FORMAT_RAS: return "ras";
+    case OF_IMAGE_FORMAT_TARGA: return "tga";
+    case OF_IMAGE_FORMAT_TIFF: return "tif";
+    case OF_IMAGE_FORMAT_WBMP: return "wbmp";
+    case OF_IMAGE_FORMAT_PSD: return "psd";
+    case OF_IMAGE_FORMAT_CUT: return "cut";
+    case OF_IMAGE_FORMAT_XBM: return "xbm";
+    case OF_IMAGE_FORMAT_XPM: return "xpm";
+    case OF_IMAGE_FORMAT_DDS: return "dds";
+    case OF_IMAGE_FORMAT_GIF: return "gif";
+    case OF_IMAGE_FORMAT_HDR: return "hdr";
+    case OF_IMAGE_FORMAT_FAXG3: return "faxg3";
+    case OF_IMAGE_FORMAT_SGI: return "sgi";
+    case OF_IMAGE_FORMAT_EXR: return "exr";
+    case OF_IMAGE_FORMAT_J2K: return "j2k";
+    case OF_IMAGE_FORMAT_JP2: return "jp2";
+    case OF_IMAGE_FORMAT_PFM: return "pfm";
+    case OF_IMAGE_FORMAT_PICT: return "pict";
+    case OF_IMAGE_FORMAT_RAW: return "raw";
+    }
+}
+
 /// \todo Needs documentation.
 struct ofImageLoadSettings {
     ofImageLoadSettings(bool accurate = false, bool exifRotate = false, bool grayscale = false, bool separateCMYK = false)
