@@ -228,7 +228,7 @@ char ofxOscMessage::getArgAsChar(int index) const
 	else
     {
 		ofLogError("ofxOscMessage") << "getArgAsSymbol(): argument " << index << " is not a symbol (string)";
-		return NULL;
+		return 0;
 	}
 }
 
