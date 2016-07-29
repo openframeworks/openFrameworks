@@ -24,6 +24,7 @@
 	#include "ofImage.h"
 	#include <X11/Xatom.h>
 	#include <GL/freeglut_ext.h>
+	#include <GL/glx.h>
 #endif
 
 
@@ -399,29 +400,29 @@ void ofAppGlutWindow::setWindowTitle(string title){
 }
 
 //------------------------------------------------------------
-ofPoint ofAppGlutWindow::getWindowSize(){
-	return ofPoint(windowW, windowH,0);
+glm::vec2 ofAppGlutWindow::getWindowSize(){
+	return {windowW, windowH};
 }
 
 //------------------------------------------------------------
-ofPoint ofAppGlutWindow::getWindowPosition(){
+glm::vec2 ofAppGlutWindow::getWindowPosition(){
 	int x = glutGet(GLUT_WINDOW_X);
 	int y = glutGet(GLUT_WINDOW_Y);
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return ofPoint(x,y,0);
+		return {x,y};
 	}else{
-		return ofPoint(y,x,0);
+		return {y,x};
 	}
 }
 
 //------------------------------------------------------------
-ofPoint ofAppGlutWindow::getScreenSize(){
+glm::vec2 ofAppGlutWindow::getScreenSize(){
 	int width = glutGet(GLUT_SCREEN_WIDTH);
 	int height = glutGet(GLUT_SCREEN_HEIGHT);
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return ofPoint(width, height,0);
+		return {width, height};
 	}else{
-		return ofPoint(height, width,0);
+		return {height, width};
 	}
 }
 
@@ -677,6 +678,21 @@ void ofAppGlutWindow::display(void){
 
     nFramesSinceWindowResized++;
 
+}
+
+//------------------------------------------------------------
+void ofAppGlutWindow::swapBuffers() {
+	glutSwapBuffers();
+}
+
+//--------------------------------------------
+void ofAppGlutWindow::startRender() {
+	renderer()->startRender();
+}
+
+//--------------------------------------------
+void ofAppGlutWindow::finishRender() {
+	renderer()->finishRender();
 }
 
 //------------------------------------------------------------

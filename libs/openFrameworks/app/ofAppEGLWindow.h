@@ -66,6 +66,9 @@ public:
 	void draw();
 	void close();
 	void makeCurrent();
+	void swapBuffers();
+	void startRender();
+	void finishRender();
 
 	ofCoreEvents & events();
 	shared_ptr<ofBaseRenderer> & renderer();
@@ -78,9 +81,9 @@ public:
 	virtual void setWindowPosition(int x, int y);
 	virtual void setWindowShape(int w, int h);
 
-	virtual ofPoint	getWindowPosition();
-	virtual ofPoint	getWindowSize();
-	virtual ofPoint	getScreenSize();
+	virtual glm::vec2 getWindowPosition();
+	virtual glm::vec2 getWindowSize();
+	virtual glm::vec2 getScreenSize();
 
 	virtual void setOrientation(ofOrientation orientation);
 	virtual ofOrientation getOrientation();

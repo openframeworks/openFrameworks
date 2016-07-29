@@ -629,13 +629,45 @@ ofImage_<PixelType>::ofImage_(const ofImage_<PixelType>& mom) {
 //----------------------------------------------------------
 template<typename PixelType>
 ofImage_<PixelType>::ofImage_(ofImage_<PixelType>&& mom){
-    clear();
-    clone(mom);
+    pixels      = std::move(mom.pixels);
+    tex         = std::move(mom.tex);
+
+    bUseTexture = mom.bUseTexture;
+    width       = mom.width;
+    height      = mom.height;
+    bpp         = mom.bpp;
+    type        = mom.type;
+
+    mom.clear(); //clear remaining flags and sizes from the mom
 
     #if defined(TARGET_ANDROID)
     ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
     ofAddListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
     #endif
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
+ofImage_<PixelType>& ofImage_<PixelType>::operator=(ofImage_<PixelType>&& mom){
+    if(&mom==this) return *this;
+
+    pixels      = std::move(mom.pixels);
+    tex         = std::move(mom.tex);
+
+    bUseTexture = mom.bUseTexture;
+    width       = mom.width;
+    height      = mom.height;
+    bpp         = mom.bpp;
+    type        = mom.type;
+
+    mom.clear(); //clear remaining flags and sizes from the mom
+
+    #if defined(TARGET_ANDROID)
+    ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
+    ofAddListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
+    #endif
+
+    return *this;
 }
 
 //----------------------------------------------------------

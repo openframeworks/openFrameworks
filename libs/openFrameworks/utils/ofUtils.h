@@ -316,7 +316,7 @@ void ofSort(vector<T>& values) {
 /// \sa http://www.cplusplus.com/reference/algorithm/sort/
 template<class T, class BoolFunction>
 void ofSort(vector<T>& values, BoolFunction compare) {
-	sort(values.begin(), values.end(), compare);
+	std::sort(values.begin(), values.end(), compare);
 }
 
 /// \brief Search for a target value in a vector of values.
@@ -327,7 +327,7 @@ void ofSort(vector<T>& values, BoolFunction compare) {
 /// \sa http://www.cplusplus.com/reference/iterator/distance/
 template <class T>
 std::size_t ofFind(const vector<T>& values, const T& target) {
-	return distance(values.begin(), find(values.begin(), values.end(), target));
+	return std::distance(values.begin(), find(values.begin(), values.end(), target));
 }
 
 /// \brief Search for a target value in a vector of values.

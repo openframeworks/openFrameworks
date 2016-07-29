@@ -1176,7 +1176,7 @@ void ofPixels_<PixelType>::mirrorTo(ofPixels_<PixelType> & dst, bool vertically,
 		int hToDo = height;
 		for (int i = 0; i < wToDo; i++){
 			for (int j = 0; j < hToDo; j++){
-				int pixelb = i;
+				int pixelb = j*width + (width - 1 - i);
 				int pixela = j*width + i;
 				for (int k = 0; k < bytesPerPixel; k++){
 					dst[pixela*bytesPerPixel + k] = pixels[pixelb*bytesPerPixel + k];
