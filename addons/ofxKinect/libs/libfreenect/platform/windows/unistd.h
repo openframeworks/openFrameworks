@@ -33,5 +33,9 @@
 // MSVC does not define this.
 #ifndef _SSIZE_T_
 #define _SSIZE_T_
+#ifdef _WIN64
+typedef __int64 ssize_t;
+#else
 typedef long ssize_t;
+#endif
 #endif // _SSIZE_T_
