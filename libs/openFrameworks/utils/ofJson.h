@@ -38,6 +38,20 @@ inline bool ofSaveJson(const std::string & filename, ofJson & json){
 	return true;
 }
 
+inline bool ofSavePrettyJson(const std::string & filename, ofJson & json){
+    ofFile jsonFile(filename, ofFile::WriteOnly);
+    try{
+        jsonFile << json.dump(4);
+    }catch(std::exception & e){
+        ofLogError("ofLoadJson") << "error saving json to " + filename + ": " + e.what();
+        return false;
+    }catch(...){
+        ofLogError("ofLoadJson") << "error saving json to " + filename;
+        return false;
+    }
+    return true;
+}
+
 inline void ofSerialize(ofJson & js, ofAbstractParameter & parameter){
 	if(!parameter.isSerializable()){
 		return;
