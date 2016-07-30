@@ -190,11 +190,14 @@ void ofxBaseGui::saveToFile(const std::string& filename){
 
 void ofxBaseGui::loadFromFile(const std::string& filename){
 	auto extension = ofToLower(ofFilePath::getFileExt(filename));
+#ifndef TARGET_EMSCRIPTEN
 	if(extension == "xml"){
 		ofXml xml;
 		xml.load(filename);
 		loadFrom(xml);
-	}else if(extension == "json"){
+    }else
+#endif
+    if(extension == "json"){
 		ofJson json;
 		ofFile jsonFile(filename);
 		jsonFile >> json;
