@@ -169,6 +169,7 @@ ofRectangle ofxBaseGui::getTextBoundingBox(const string & text, float x, float y
 
 void ofxBaseGui::saveToFile(const std::string& filename){
 	auto extension = ofToLower(ofFilePath::getFileExt(filename));
+#ifndef TARGET_EMSCRIPTEN
 	if(extension == "xml"){
 		ofXml xml;
 		if(ofFile(filename, ofFile::Reference).exists()){
@@ -176,7 +177,9 @@ void ofxBaseGui::saveToFile(const std::string& filename){
 		}
 		saveTo(xml);
 		xml.save(filename);
-	}else if(extension == "json"){
+    }else
+#endif
+    if(extension == "json"){
         ofJson json = ofLoadJson(filename);
 		saveTo(json);
         ofSavePrettyJson(filename, json);
