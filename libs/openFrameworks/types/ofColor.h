@@ -668,3 +668,8 @@ void ofColor_<PixelType>::copyFrom(const ofColor_<SrcType> & mom){
 		}
 	}
 }
+
+template <typename PixelType>
+ofColor_<PixelType> operator*(float val, const ofColor_<PixelType> &color) {
+	return color * val;
+}
