@@ -330,7 +330,7 @@ public:
     ///
     /// \param value The grayscale value.
     /// \returns A reference to itself.
-    ofColor_<PixelType>& operator = (const float& value);
+    ofColor_<PixelType>& operator = (float value);
 
     /// \brief Test two colors for equality.
 	///
@@ -359,7 +359,7 @@ public:
     ///
     /// \param color The value to add.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator +  (const float& color) const;
+    ofColor_<PixelType>  operator +  (float color) const;
 
     /// \brief Clamped addition operator.
     ///
@@ -379,7 +379,7 @@ public:
     ///
     /// \param color The value to add.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator += (const float& color);
+    ofColor_<PixelType>& operator += (float color);
 
     /// \brief Clamped subtraction operator.
     ///
@@ -400,7 +400,7 @@ public:
     ///
     /// \param value The value to subtract.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator -  (const float& value) const;
+    ofColor_<PixelType>  operator -  (float value) const;
 
     /// \brief Clamped subtraction operator.
     ///
@@ -418,7 +418,7 @@ public:
     ///
     /// \param color The value to subtract.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator -= (const float& color);
+    ofColor_<PixelType>& operator -= (float color);
 
     /// \brief Clamped multiplication operator.
     ///
@@ -439,7 +439,7 @@ public:
     ///
     /// \param value The value to multiply.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator *  (const float& value) const;
+    ofColor_<PixelType>  operator *  (float value) const;
 
     /// \brief Clamped multiplication operator.
     ///
@@ -460,7 +460,7 @@ public:
     ///
     /// \param value The scaler value.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator *= (const float& value);
+    ofColor_<PixelType>& operator *= (float value);
 
     /// \brief Clamped division operator.
     ///
@@ -480,7 +480,7 @@ public:
     ///
     /// \param value The divisor value.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator /  (const float& value) const;
+    ofColor_<PixelType>  operator /  (float value) const;
 
     /// \brief Clamped division operator.
     ///
@@ -498,7 +498,7 @@ public:
     ///
     /// \param value The divisor value.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator /= (const float& value);
+    ofColor_<PixelType>& operator /= (float value);
 
     /// \brief Array subscript operator.
     ///
@@ -667,4 +667,9 @@ void ofColor_<PixelType>::copyFrom(const ofColor_<SrcType> & mom){
 			v[i] = mom[i] * factor;
 		}
 	}
+}
+
+template <typename PixelType>
+ofColor_<PixelType> operator*(float val, const ofColor_<PixelType> &color) {
+	return color * val;
 }
