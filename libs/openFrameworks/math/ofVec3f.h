@@ -869,10 +869,21 @@ public:
 	/// ofVec3f v2(0,1,0);
 	/// float angle = v1.angle(v2); // angle is 90
 	/// ~~~~    
+	float angleSigned( const ofVec3f& vec , const ofVec3f& norm) const;
+	
+    	/// \brief Calculate and return the angle in degrees from -180 to 180 between this vector
+	/// and 'vec'. Requires a known normal from those vectors other than the cross product between them.
+	/// 
+	/// ~~~~{.cpp}
+	/// ofVec3f v1(1,0,0);
+	/// ofVec3f v2(-0.5,-0.5,0);
+	/// ofVec3f norm(0,0,1);
+	/// float angle = v1.angleSigned(v2); // angle is -120
+	/// ~~~~    
 	float angle( const ofVec3f& vec ) const;
     
 	/// \brief Calculate and return the coplanar angle in radians between this 
-	/// vector and 'vec'.
+	/// vector and 'vec'. Returns unsigned value between 0 and 180.
 	/// 
 	/// ~~~~{.cpp}
 	/// ofVec3f v1(1,0,0);
@@ -1834,6 +1845,24 @@ inline float ofVec3f::angle( const ofVec3f& vec ) const {
 	ofVec3f n1 = this->getNormalized();
 	ofVec3f n2 = vec.getNormalized();
 	return (float)(acos( n1.dot(n2) )*RAD_TO_DEG);
+}
+
+/**
+ * Angle (deg) between two vectors.
+ * This is a signed relative angle from -180 to 180.
+ */
+inline float ofVec3f::angleSigned( const ofVec3f& vec , const ofVec3f& norm ) const {
+	ofVec3f n1 = this->getNormalized();
+	ofVec3f n2 = vec.getNormalized();
+	float dot = n1.dot(n2);
+	ofVec3f cross = n1.cross(n2);
+	float angle = acos(dot);
+	float dir = cross.dot(norm);
+	if(dir < 0){
+		angle *= -1.0f;
+	}
+	angle *=RAD_TO_DEG;
+	return angle;
 }
 
 inline float ofVec3f::angleRad( const ofVec3f& vec ) const {
