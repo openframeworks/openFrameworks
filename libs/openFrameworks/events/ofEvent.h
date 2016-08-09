@@ -702,7 +702,6 @@ public:
 	}
 };
 
-
 // -------------------------------------
 /// Non thread safe event that avoids locks and copies of the listeners
 /// making it faster than a plain ofEvent
@@ -710,13 +709,14 @@ template<typename T>
 class ofFastEvent: public ofEvent<T,of::priv::NoopMutex>{
 public:
 	inline bool notify(const void* sender, T & param){
-		if(ofFastEvent::enabled){
-			for(auto & f: ofFastEvent::functions){
-                if(f->notify(sender,param)){
+		if(this->isEnabled()){
+			for(auto & f: ofFastEvent<T>::self->functions){
+				if(f->notify(sender, param)){
 					return true;
-                }
+				}
 			}
 		}
 		return false;
 	}
 };
+
