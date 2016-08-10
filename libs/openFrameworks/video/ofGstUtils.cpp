@@ -44,9 +44,12 @@ GMainLoop * ofGstUtils::getGstMainLoop(){
 }
 
 void ofGstUtils::quitGstMainLoop(){
-	mainLoop->quit();
-	delete mainLoop;
-	mainLoop=0;
+	if(mainLoop)
+	{
+		mainLoop->quit();
+		delete mainLoop;
+		mainLoop=0;
+	}
 }
 
 
@@ -524,6 +527,17 @@ void ofGstUtils::close(){
 	}
 
 	bLoaded = false;
+}
+
+void ofGstUtils::closePipeline() {
+
+    gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
+    gst_element_get_state(gstPipeline,NULL,NULL,2*GST_SECOND);
+    ofGstUtils::quitGstMainLoop();
+    if(busWatchID!=0) g_source_remove(busWatchID);
+    gst_object_unref(gstPipeline);
+    gstPipeline = NULL;
+    gstSink = NULL;
 }
 
 /*static string getName(GstState state){
@@ -1382,3 +1396,4 @@ void ofGstVideoUtils::eos_cb(){
 }
 
 #endif
+
