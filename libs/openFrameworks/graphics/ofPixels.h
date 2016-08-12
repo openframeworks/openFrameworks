@@ -158,8 +158,8 @@ public:
 	void cropTo(ofPixels_<PixelType> &toPix, size_t x, size_t y, size_t width, size_t height) const;
 
 	// crop to a new width and height, this reallocates memory.
-	void rotate90(size_t nClockwiseRotations);
-	void rotate90To(ofPixels_<PixelType> & dst, size_t nClockwiseRotations) const;
+	void rotate90(int nClockwiseRotations);
+	void rotate90To(ofPixels_<PixelType> & dst, int nClockwiseRotations) const;
 	void mirrorTo(ofPixels_<PixelType> & dst, bool vertically, bool horizontal) const;
 	
 	/// \brief Mirror the pixels across the vertical and/or horizontal axis.
