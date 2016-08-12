@@ -285,7 +285,7 @@ public:
 	/// RGB is 3 channels, RGBA is 4, and grayscale is 1.	
 	int getNumChannels() const;
 
-	int getTotalBytes() const;
+	size_t getTotalBytes() const;
 
 	int getNumPlanes() const;
 

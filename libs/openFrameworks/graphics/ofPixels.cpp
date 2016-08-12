@@ -55,8 +55,8 @@ static int pixelBitsFromPixelFormat(ofPixelFormat format){
 }
 
 template<typename PixelType>
-static int bytesFromPixelFormat(int w, int h, ofPixelFormat format){
-	return w*h*pixelBitsFromPixelFormat<PixelType>(format)/8;
+static size_t bytesFromPixelFormat(size_t w, size_t h, ofPixelFormat format){
+	return w * h * pixelBitsFromPixelFormat<PixelType>(format)/8;
 }
 
 static int channelsFromPixelFormat(ofPixelFormat format){
@@ -348,7 +348,7 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int
 		return;
 	}
 	allocate(width, height, _pixelFormat);
-	int dstStride = width * pixelBitsFromPixelFormat<PixelType>(_pixelFormat)/8;
+	int dstStride = width * pixelBitsFromPixelFormat<PixelType>(_pixelFormat) / 8;
 	const unsigned char* src = (unsigned char*) newPixels;
 	unsigned char* dst =  (unsigned char*) pixels;
 	for(int i = 0; i < height; i++) {
@@ -453,8 +453,8 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 		return;
 	}
 
-	int newSize = bytesFromPixelFormat<PixelType>(w,h,format);
-	int oldSize = getTotalBytes();
+	size_t newSize = bytesFromPixelFormat<PixelType>(w,h,format);
+	size_t oldSize = getTotalBytes();
 	//we check if we are already allocated at the right size
 	if(bAllocated && newSize==oldSize){
         pixelFormat = format;
@@ -772,7 +772,7 @@ int ofPixels_<PixelType>::getNumChannels() const{
 }
 
 template<typename PixelType>
-int ofPixels_<PixelType>::getTotalBytes() const{
+size_t ofPixels_<PixelType>::getTotalBytes() const{
 	return bytesFromPixelFormat<PixelType>(width,height,pixelFormat);
 }
 
