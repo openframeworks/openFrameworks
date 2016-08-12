@@ -353,10 +353,10 @@ ofFile::ofFile()
 ,binary(true){
 }
 
-ofFile::ofFile(const std::filesystem::path & path, Mode mode, bool binary)
+ofFile::ofFile(const std::filesystem::path & path, Mode mode, bool binary, bool bRelativeToData)
 :mode(mode)
 ,binary(true){
-	open(path, mode, binary);
+	open(path, mode, binary, bRelativeToData);
 }
 
 //-------------------------------------------------------------------------------------------------------------
@@ -435,9 +435,13 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::open(const std::filesystem::path & _path, Mode _mode, bool binary){
+bool ofFile::open(const std::filesystem::path & _path, Mode _mode, bool binary, bool bRelativeToData){
 	close();
-	myFile = std::filesystem::path(ofToDataPath(_path.string()));
+	if( bRelativeToData ){
+		myFile = std::filesystem::path(ofToDataPath(_path.string()));
+	}else{
+		myFile = std::filesystem::path(_path.string());
+	}
 	return openStream(_mode, binary);
 }
 
@@ -471,15 +475,18 @@ bool ofFile::create(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::create(const std::filesystem::path & path){
+bool ofFile::create(const std::filesystem::path & path, bool bRelativeToData){
 	bool success = false;
-
+	
+	//TODO: this looks like a bug here.
+	//it will only let you create a file if you already have opened a file.
+	//needs a case for when the ofFile doesn't have a previous path specified?
 	if(!myFile.string().empty()){
 		auto oldmode = this->mode;
 		auto oldpath = this->path();
-		success = open(path,ofFile::WriteOnly,binary);
+		success = open(path,ofFile::WriteOnly,binary,bRelativeToData);
 		close();
-		open(oldpath,oldmode,binary);
+		open(oldpath,oldmode,binary,bRelativeToData);
 	}
 
 	return success;
@@ -701,7 +708,7 @@ bool ofFile::copyTo(const string& _path, bool bRelativeToData, bool overwrite) c
 	std::string path = _path;
 
 	if(isDirectory()){
-		return ofDirectory(myFile).copyTo(path,bRelativeToData,overwrite);
+		return ofDirectory(myFile, bRelativeToData).copyTo(path,bRelativeToData,overwrite);
 	}
 	if(path.empty()){
 		ofLogError("ofFile") << "copyTo(): destination path " << _path << " is empty";
@@ -716,7 +723,7 @@ bool ofFile::copyTo(const string& _path, bool bRelativeToData, bool overwrite) c
 		path = ofToDataPath(path);
 	}
 	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(isFile() && ofFile(path,ofFile::Reference).isDirectory()){
+		if(isFile() && ofFile(path,ofFile::Reference,true,false).isDirectory()){
 			path = ofFilePath::join(path,getFileName());
 		}
 		if(ofFile::doesFileExist(path, bRelativeToData)){
@@ -729,7 +736,7 @@ bool ofFile::copyTo(const string& _path, bool bRelativeToData, bool overwrite) c
 	}
 
 	try{
-		if(!ofDirectory(ofFilePath::getEnclosingDirectory(path,bRelativeToData)).exists()){
+		if(!ofDirectory(ofFilePath::getEnclosingDirectory(path,bRelativeToData), false).exists()){
 			ofFilePath::createEnclosingDirectory(path, bRelativeToData);
 		}
 		std::filesystem::copy_file(myFile,path);
@@ -758,7 +765,7 @@ bool ofFile::moveTo(const string& _path, bool bRelativeToData, bool overwrite){
 		path = ofToDataPath(path);
 	}
 	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(isFile() && ofFile(path,ofFile::Reference).isDirectory()){
+		if(isFile() && ofFile(path,ofFile::Reference,true,false).isDirectory()){
 			path = ofFilePath::join(path,getFileName());
 		}
 		if(ofFile::doesFileExist(path, bRelativeToData)){
@@ -775,7 +782,7 @@ bool ofFile::moveTo(const string& _path, bool bRelativeToData, bool overwrite){
 		if(mode != ofFile::Reference){
 			changeMode(ofFile::Reference, binary);
 		}
-		if(!ofDirectory(ofFilePath::getEnclosingDirectory(path,bRelativeToData)).exists()){
+		if(!ofDirectory(ofFilePath::getEnclosingDirectory(path,bRelativeToData), false).exists()){
 			ofFilePath::createEnclosingDirectory(path, bRelativeToData);
 		}
 		std::filesystem::rename(myFile,path);
@@ -810,7 +817,8 @@ bool ofFile::remove(bool recursive){
 
 	try{
 		if(mode!=Reference){
-			open(path(),Reference,binary);
+			//set false here for bRelativeToData as path() already contains the correct expanded path
+			open(path(),Reference,binary,false);
 		}
 		if(recursive){
 			std::filesystem::remove_all(myFile);
@@ -870,32 +878,26 @@ bool ofFile::operator>=(const ofFile & file) const {
 //------------------------------------------------------------------------------------------------------------
 
 bool ofFile::copyFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData,  bool overwrite){
-	return ofFile(pathSrc,ofFile::Reference).copyTo(pathDst,bRelativeToData,overwrite);
+	return ofFile(pathSrc,ofFile::Reference,true,bRelativeToData).copyTo(pathDst,bRelativeToData,overwrite);
 }
 
 //be careful with slashes here - appending a slash when moving a folder will causes mad headaches
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::moveFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData, bool overwrite){
-	return ofFile(pathSrc,ofFile::Reference).moveTo(pathDst, bRelativeToData, overwrite);
+	return ofFile(pathSrc,ofFile::Reference,true,bRelativeToData).moveTo(pathDst, bRelativeToData, overwrite);
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::doesFileExist(const std::string& _fPath, bool bRelativeToData){
 	std::string fPath = _fPath;
-	if(bRelativeToData){
-		fPath = ofToDataPath(fPath);
-	}
-	ofFile file(fPath,ofFile::Reference);
+	ofFile file(fPath,ofFile::Reference,true,bRelativeToData);
 	return !fPath.empty() && file.exists();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::removeFile(const std::string& _path, bool bRelativeToData){
 	std::string path = _path;
-	if(bRelativeToData){
-		path = ofToDataPath(path);
-	}
-	return ofFile(path,ofFile::Reference).remove();
+	return ofFile(path,ofFile::Reference,true,bRelativeToData).remove();
 }
 
 
@@ -911,16 +913,20 @@ ofDirectory::ofDirectory(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-ofDirectory::ofDirectory(const std::filesystem::path & path){
+ofDirectory::ofDirectory(const std::filesystem::path & path, bool bRelativeToData){
 	showHidden = false;
-	open(path);
+	open(path, bRelativeToData);
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofDirectory::open(const std::filesystem::path & path){
+void ofDirectory::open(const std::filesystem::path & path, bool bRelativeToData){
 	originalDirectory = ofFilePath::getPathForDirectory(path.string());
 	files.clear();
-	myDir = std::filesystem::path(ofToDataPath(originalDirectory));
+	if( bRelativeToData ){
+		myDir = std::filesystem::path(ofToDataPath(originalDirectory));
+	}else{
+		myDir = std::filesystem::path(originalDirectory);
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1048,13 +1054,13 @@ bool ofDirectory::copyTo(const std::string& _path, bool bRelativeToData, bool ov
 		}
 	}
 
-	ofDirectory(path).create(true);
+	ofDirectory(path,false).create(true);
 	// Iterate through the source directory
 	for(std::filesystem::directory_iterator file(myDir); file != std::filesystem::directory_iterator(); ++file){
 		auto currentPath = std::filesystem::absolute(file->path());
 		auto dst = std::filesystem::path(path) / currentPath.filename();
 		if(std::filesystem::is_directory(currentPath)){
-			ofDirectory current(currentPath);
+			ofDirectory current(currentPath,false);
 			// Found directory: Recursion
 			if(!current.copyTo(dst.string(),false)){
 				return false;
@@ -1249,10 +1255,7 @@ int ofDirectory::numFiles(){
 bool ofDirectory::removeDirectory(const std::string& _path, bool deleteIfNotEmpty, bool bRelativeToData){
 	std::string path = _path;
 
-	if(bRelativeToData){
-		path = ofToDataPath(path);
-	}
-	return ofFile(path,ofFile::Reference).remove(deleteIfNotEmpty);
+	return ofFile(path,ofFile::Reference,true,bRelativeToData).remove(deleteIfNotEmpty);
 }
 
 //------------------------------------------------------------------------------------------------------------

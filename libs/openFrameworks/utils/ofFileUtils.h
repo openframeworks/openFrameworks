@@ -431,7 +431,9 @@ public:
 	/// (read only, read write, etc)
 	/// \param binary set to false if you are working with a text file & want
 	/// lines split at endline characters automatically
-	ofFile(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
+	/// \param bRelativeToData set to false if you are working with paths that
+	/// are *not* in the data directory
+	ofFile(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true, bool bRelativeToData = true);
 	
 	/// \brief Create a new file path using the same path & settings of another
 	/// file.
@@ -456,7 +458,9 @@ public:
 	/// \param binary set to false if you are reading a text file & want lines
 	/// split at endline characters automatically
 	/// \returns true if the path was opened
-	bool open(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
+	/// \param bRelativeToData set to false if you are working with paths that
+	/// are *not* in the data directory
+	bool open(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true, bool bRelativeToData = true);
 	
 	/// \brief Reopen the current file path with a different access mode.
 	///
@@ -483,7 +487,7 @@ public:
 	///
 	/// \param path file path
 	/// \returns true if the file was created
-	bool create(const std::filesystem::path & path);
+	bool create(const std::filesystem::path & path, bool bRelativeToData = true);
 	
 	/// \brief Check if a file exists at the current path.
 	///
@@ -765,12 +769,16 @@ public:
 	/// \brief Create an ofDirectory instance and attempt to open the path.
 	///
 	/// \param path directory path
-	ofDirectory(const std::filesystem::path & path);
+	/// \param bRelativeToData set to false if you are working with paths that
+	/// are *not* in the data directory
+	ofDirectory(const std::filesystem::path & path, bool bRelativeToData = true);
 
 	/// \brief Open a directory path, clears the current file list.
 	///
 	/// \param path directory path
-	void open(const std::filesystem::path & path);
+	/// \param bRelativeToData set to false if you are working with paths that
+	/// are *not* in the data directory
+	void open(const std::filesystem::path & path, bool bRelativeToData = true);
 	
 	/// \brief Close the currently open path.
 	void close();
