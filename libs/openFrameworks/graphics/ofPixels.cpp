@@ -55,8 +55,8 @@ int ofPixels_<PixelType>::pixelBitsFromPixelFormat(ofPixelFormat format){
 }
 
 template<typename PixelType>
-int ofPixels_<PixelType>::bytesFromPixelFormat(int w, int h, ofPixelFormat format){
-    return w*h*pixelBitsFromPixelFormat(format)/8;
+size_t ofPixels_<PixelType>::bytesFromPixelFormat(int w, int h, ofPixelFormat format){
+    return (size_t)w * h * pixelBitsFromPixelFormat(format) / 8;
 }
 
 static int channelsFromPixelFormat(ofPixelFormat format){
@@ -348,10 +348,10 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int
 		return;
 	}
 	allocate(width, height, _pixelFormat);
-    int dstStride = width * pixelBitsFromPixelFormat(_pixelFormat)/8;
+    size_t dstStride = width * pixelBitsFromPixelFormat(_pixelFormat)/8;
 	const unsigned char* src = (unsigned char*) newPixels;
 	unsigned char* dst =  (unsigned char*) pixels;
-	for(int i = 0; i < height; i++) {
+	for(size_t i = 0; i < height; i++) {
 		memcpy(dst, src, dstStride);
 		src += stride;
 		dst += dstStride;
@@ -453,8 +453,8 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 		return;
 	}
 
-    int newSize = bytesFromPixelFormat(w,h,format);
-	int oldSize = getTotalBytes();
+    size_t newSize = bytesFromPixelFormat(w,h,format);
+	size_t oldSize = getTotalBytes();
 	//we check if we are already allocated at the right size
 	if(bAllocated && newSize==oldSize){
         pixelFormat = format;
@@ -531,7 +531,7 @@ void ofPixels_<PixelType>::clear(){
 }
 
 template<typename PixelType>
-int ofPixels_<PixelType>::getPixelIndex(int x, int y) const {
+size_t ofPixels_<PixelType>::getPixelIndex(int x, int y) const {
 	if( !bAllocated ){
 		return 0;
 	}else{
@@ -579,7 +579,7 @@ int ofPixels_<PixelType>::getPixelIndex(int x, int y) const {
 }
 
 template<typename PixelType>
-ofColor_<PixelType> ofPixels_<PixelType>::getColor(int index) const {
+ofColor_<PixelType> ofPixels_<PixelType>::getColor(size_t index) const {
 	return Pixel(pixels + index,getNumChannels(),pixelFormat).getColor();
 }
 
@@ -589,7 +589,7 @@ ofColor_<PixelType> ofPixels_<PixelType>::getColor(int x, int y) const {
 }
 
 template<typename PixelType>
-void ofPixels_<PixelType>::setColor(int index, const ofColor_<PixelType>& color) {
+void ofPixels_<PixelType>::setColor(size_t index, const ofColor_<PixelType>& color) {
 
 	switch(pixelFormat){
 		case OF_PIXELS_RGB:
@@ -717,12 +717,12 @@ void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
 }
 
 template<typename PixelType>
-PixelType & ofPixels_<PixelType>::operator[](int pos){
+PixelType & ofPixels_<PixelType>::operator[](size_t pos){
 	return pixels[pos];
 }
 
 template<typename PixelType>
-const PixelType & ofPixels_<PixelType>::operator[](int pos) const{
+const PixelType & ofPixels_<PixelType>::operator[](size_t pos) const{
 	return pixels[pos];
 }
 
@@ -762,7 +762,7 @@ int ofPixels_<PixelType>::getBitsPerChannel() const{
 }
 
 template<typename PixelType>
-int ofPixels_<PixelType>::getBytesStride() const{
+size_t ofPixels_<PixelType>::getBytesStride() const{
     return pixelBitsFromPixelFormat(pixelFormat) * width / 8;
 }
 
@@ -772,7 +772,8 @@ int ofPixels_<PixelType>::getNumChannels() const{
 }
 
 template<typename PixelType>
-int ofPixels_<PixelType>::getTotalBytes() const{
+
+size_t ofPixels_<PixelType>::getTotalBytes() const{
     return bytesFromPixelFormat(width,height,pixelFormat);
 }
 
@@ -893,15 +894,15 @@ void ofPixels_<PixelType>::setImageType(ofImageType imageType){
 	if(!isAllocated() || imageType==getImageType()) return;
 	ofPixels_<PixelType> dst;
 	dst.allocate(width,height,imageType);
-	PixelType * dstPtr = &dst[0];
-	PixelType * srcPtr = &pixels[0];
+	PixelType * dstPtr = &dst[(size_t)0];
+	PixelType * srcPtr = &pixels[(size_t)0];
 	int dstNumChannels = dst.getNumChannels();
 	int srcNumChannels = getNumChannels();
 	int diffNumChannels = 0;
 	if(dstNumChannels<srcNumChannels){
 		diffNumChannels = srcNumChannels-dstNumChannels;
 	}
-	for(int i=0;i<width*height;i++){
+	for(size_t i=0;i<width*height;i++){
 		const PixelType & gray = *srcPtr;
 		for(int j=0;j<dstNumChannels;j++){
 			if(j<srcNumChannels){
@@ -929,7 +930,7 @@ void ofPixels_<PixelType>::setNumChannels(int numChannels){
 }
 
 template<typename PixelType>
-int ofPixels_<PixelType>::size() const{
+size_t ofPixels_<PixelType>::size() const{
 	return pixelsSize;
 }
 
@@ -1039,17 +1040,17 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 	// otherwise, we will need to do some new allocaiton.
 	dst.allocate(height,width,getImageType());
     
-	int strideSrc = width * channels;
-	int strideDst = dst.width * channels;
+	size_t strideSrc = width * channels;
+	size_t strideDst = dst.width * channels;
 
 	if(rotation == 1){
 		PixelType * srcPixels = pixels;
 		PixelType * startPixels = dst.getData() + strideDst;
-		for (int i = 0; i < height; ++i){
+		for (size_t i = 0; i < height; ++i){
 			startPixels -= channels;
 			PixelType * dstPixels = startPixels;
-			for (int j = 0; j < width; ++j){
-				for (int k = 0; k < channels; ++k){
+			for (size_t j = 0; j < width; ++j){
+				for (size_t k = 0; k < channels; ++k){
 					dstPixels[k] = srcPixels[k];
 				}
 				srcPixels += channels;
@@ -1059,10 +1060,10 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 	} else if(rotation == 3){
 		PixelType * dstPixels = dst.pixels;
 		PixelType * startPixels = pixels + strideSrc;
-		for (int i = 0; i < dst.height; ++i){
+		for (size_t i = 0; i < dst.height; ++i){
 			startPixels -= channels;
 			PixelType * srcPixels = startPixels;
-			for (int j = 0; j < dst.width; ++j){
+			for (size_t j = 0; j < dst.width; ++j){
 				for (int k = 0; k < channels; ++k){
 					dstPixels[k] = srcPixels[k];
 				}
@@ -1127,8 +1128,8 @@ void ofPixels_<PixelType>::mirror(bool vertically, bool horizontal){
 		for (int i = 0; i < wToDo; i++){
 			for (int j = 0; j < hToDo; j++){
 
-				int pixelb = (vertically ? (height - j - 1) : j) * width + (horizontal ? (width - i - 1) : i);
-				int pixela = j*width + i;
+				size_t  pixelb = (vertically ? (height - j - 1) : j) * width + (horizontal ? (width - i - 1) : i);
+				size_t  pixela = j*width + i;
 				for (int k = 0; k < bytesPerPixel; k++){
 
 					tempVal = oldPixels[pixela*bytesPerPixel + k];
@@ -1176,8 +1177,8 @@ void ofPixels_<PixelType>::mirrorTo(ofPixels_<PixelType> & dst, bool vertically,
 		int hToDo = height;
 		for (int i = 0; i < wToDo; i++){
 			for (int j = 0; j < hToDo; j++){
-				int pixelb = j*width + (width - 1 - i);
-				int pixela = j*width + i;
+				size_t pixelb = j*width + (width - 1 - i);
+				size_t pixela = j*width + i;
 				for (int k = 0; k < bytesPerPixel; k++){
 					dst[pixela*bytesPerPixel + k] = pixels[pixelb*bytesPerPixel + k];
 					dst[pixelb*bytesPerPixel + k] = pixels[pixela*bytesPerPixel + k];
@@ -1288,15 +1289,15 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 
 			//----------------------------------------
 		case OF_INTERPOLATE_NEAREST_NEIGHBOR:{
-			int dstIndex = 0;
+			size_t dstIndex = 0;
 			float srcxFactor = (float)srcWidth/dstWidth;
 			float srcyFactor = (float)srcHeight/dstHeight;
 			float srcy = 0.5;
 			for (int dsty=0; dsty<dstHeight; dsty++){
 				float srcx = 0.5;
-				int srcIndex = int(srcy)*srcWidth;
+				size_t srcIndex = int(srcy)*srcWidth;
 				for (int dstx=0; dstx<dstWidth; dstx++){
-					int pixelIndex = int(srcIndex + srcx) * bytesPerPixel;
+					size_t pixelIndex = int(srcIndex + srcx) * bytesPerPixel;
 					for (int k=0; k<bytesPerPixel; k++){
 						dstPixels[dstIndex] = pixels[pixelIndex];
 						dstIndex++;
@@ -1323,22 +1324,22 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 			float srcColor = 0;
 			float interpCol;
 			int patchRow;
-			int patchIndex;
+			size_t patchIndex;
 			float patch[16];
 
 			int srcRowBytes = srcWidth*bytesPerPixel;
 			int loIndex = (srcRowBytes)+1;
-			int hiIndex = (srcWidth*srcHeight*bytesPerPixel)-(srcRowBytes)-1;
+			size_t hiIndex = (srcWidth*srcHeight*bytesPerPixel)-(srcRowBytes)-1;
 
 			for (int dsty=0; dsty<dstHeight; dsty++){
 				for (int dstx=0; dstx<dstWidth; dstx++){
 
-					int   dstIndex0 = (dsty*dstWidth + dstx) * bytesPerPixel;
+					size_t   dstIndex0 = (dsty*dstWidth + dstx) * bytesPerPixel;
 					float srcxf = srcWidth  * (float)dstx/(float)dstWidth;
 					float srcyf = srcHeight * (float)dsty/(float)dstHeight;
 					int   srcx = (int) MIN(srcWidth-1,   srcxf);
 					int   srcy = (int) MIN(srcHeight-1,  srcyf);
-					int   srcIndex0 = (srcy*srcWidth + srcx) * bytesPerPixel;
+					size_t   srcIndex0 = (srcy*srcWidth + srcx) * bytesPerPixel;
 
 					px1 = srcxf - srcx;
 					py1 = srcyf - srcy;
@@ -1348,8 +1349,8 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 					py3 = py2 * py1;
 
 					for (int k=0; k<bytesPerPixel; k++){
-						int   dstIndex = dstIndex0+k;
-						int   srcIndex = srcIndex0+k;
+						size_t   dstIndex = dstIndex0+k;
+						size_t   srcIndex = srcIndex0+k;
 
 						for (int dy=0; dy<4; dy++) {
 							patchRow = srcIndex + ((dy-1)*srcRowBytes);
