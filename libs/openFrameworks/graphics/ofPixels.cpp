@@ -1,6 +1,6 @@
 #include "ofPixels.h"
 #include "ofMath.h"
-
+#include <algorithm>
 
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
@@ -449,7 +449,7 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, size_t _channels){
 
 template<typename PixelType>
 void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
-	if (w <= 0 || h <= 0 || format==OF_PIXELS_UNKNOWN) {
+	if (w == 0 || h == 0 || format == OF_PIXELS_UNKNOWN) {
 		return;
 	}
 
@@ -859,7 +859,7 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getPlane(size_t planeIdx){
 				plane.setFromExternalPixels(pixels+width*height,width/2,height/2,OF_PIXELS_V);
 				break;
 			case 2:
-				plane.setFromExternalPixels(pixels+size_t(width*height+width/2*height/2),width/2,height/2,OF_PIXELS_U);
+				plane.setFromExternalPixels(pixels + (width*height+width/2*height/2), width/2, height/2, OF_PIXELS_U);
 				break;
 			}
 			break;
@@ -872,7 +872,7 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getPlane(size_t planeIdx){
 				plane.setFromExternalPixels(pixels+width*height,width/2,height/2,OF_PIXELS_U);
 				break;
 			case 2:
-				plane.setFromExternalPixels(pixels+size_t(width*height+width/2*height/2),width/2,height/2,OF_PIXELS_V);
+				plane.setFromExternalPixels(pixels + (width*height+width/2*height/2), width/2, height/2, OF_PIXELS_V);
 				break;
 			}
 			break;
@@ -991,11 +991,10 @@ void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, size_t x, size_t 
 		}
 
 		// this prevents having to do a check for bounds in the for loop;
-		size_t minX = MAX(x, 0);
-		size_t maxX = MIN(x+_width, width);
-		size_t minY = MAX(y, 0);
-		size_t maxY = MIN(y+_height, height);
-
+		size_t minX = std::max(x, static_cast<size_t>(0));
+		size_t maxX = std::min(x + _width, width);
+		size_t minY = std::max(y, static_cast<size_t>(0));
+		size_t maxY = std::min(y + _height, height);
 
 		auto newPixel = toPix.getPixelsIter().begin();
 		for(auto line: getConstLines(minY, maxY - minY)){
@@ -1008,7 +1007,7 @@ void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, size_t x, size_t 
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, size_t nClockwiseRotations) const{
+void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwiseRotations) const{
 	size_t channels = channelsFromPixelFormat(pixelFormat);
 
 	if (bAllocated == false || channels==0){
@@ -1021,7 +1020,7 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, size_t nClockw
 	}
 
 	// first, figure out which type of rotation we have
-	size_t rotation = nClockwiseRotations;
+	int rotation = nClockwiseRotations;
 	while (rotation < 0){
 		rotation+=4;
 	}
@@ -1076,7 +1075,7 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, size_t nClockw
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-void ofPixels_<PixelType>::rotate90(size_t nClockwiseRotations){
+void ofPixels_<PixelType>::rotate90(int nClockwiseRotations){
 	size_t channels = channelsFromPixelFormat(pixelFormat);
 
 	if (bAllocated == false || channels==0){
@@ -1084,7 +1083,7 @@ void ofPixels_<PixelType>::rotate90(size_t nClockwiseRotations){
 	}
 
 	// first, figure out which type of rotation we have
-	size_t rotation = nClockwiseRotations;
+	int rotation = nClockwiseRotations;
 	while (rotation < 0){
 		rotation+=4;
 	}
@@ -1198,7 +1197,7 @@ void ofPixels_<PixelType>::mirrorTo(ofPixels_<PixelType> & dst, bool vertically,
 template<typename PixelType>
 bool ofPixels_<PixelType>::resize(size_t dstWidth, size_t dstHeight, ofInterpolationMethod interpMethod){
 
-	if ((dstWidth<=0) || (dstHeight<=0) || !(isAllocated())) return false;
+	if ((dstWidth == 0) || (dstHeight == 0) || !(isAllocated())) return false;
 
 	ofPixels_<PixelType> dstPixels;
 	dstPixels.allocate(dstWidth, dstHeight, getPixelFormat());
@@ -1264,7 +1263,7 @@ float ofPixels_<PixelType>::bicubicInterpolate (const float *patch, float x,floa
     a20 * x2 + a21 * x2 * y + a22 * x2 * y2 + a23 * x2 * y3 +
     a30 * x3 + a31 * x3 * y + a32 * x3 * y2 + a33 * x3 * y3;
 
-	return MIN(255, MAX(out, 0));
+	return std::min(static_cast<size_t>(255), std::max(static_cast<size_t>(out), static_cast<size_t>(0)));
 }
 
 //----------------------------------------------------------------------
@@ -1295,9 +1294,9 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 			float srcy = 0.5;
 			for (size_t dsty=0; dsty<dstHeight; dsty++){
 				float srcx = 0.5;
-				size_t srcIndex = size_t(srcy) * srcWidth;
+				size_t srcIndex = static_cast<size_t>(srcy) * srcWidth;
 				for (size_t dstx=0; dstx<dstWidth; dstx++){
-					size_t pixelIndex = size_t(srcIndex + srcx) * bytesPerPixel;
+					size_t pixelIndex = static_cast<size_t>(srcIndex + srcx) * bytesPerPixel;
 					for (size_t k=0; k<bytesPerPixel; k++){
 						dstPixels[dstIndex] = pixels[pixelIndex];
 						dstIndex++;
@@ -1337,8 +1336,8 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 					size_t   dstIndex0 = (dsty*dstWidth + dstx) * bytesPerPixel;
 					float srcxf = srcWidth  * (float)dstx/(float)dstWidth;
 					float srcyf = srcHeight * (float)dsty/(float)dstHeight;
-					size_t   srcx = static_cast<size_t>(MIN(srcWidth-1,   srcxf));
-					size_t   srcy = static_cast<size_t>(MIN(srcHeight-1,  srcyf));
+					size_t   srcx = static_cast<size_t>(std::min(srcWidth-1, static_cast<size_t>(srcxf)));
+					size_t   srcy = static_cast<size_t>(std::min(srcHeight-1, static_cast<size_t>(srcyf)));
 					size_t   srcIndex0 = (srcy*srcWidth + srcx) * bytesPerPixel;
 
 					px1 = srcxf - srcx;
