@@ -36,7 +36,7 @@
 /// ~~~~{.cpp}
 /// ofPixels pix;
 /// // put some stuff in the pixels
-/// int i = 0;
+/// size_t i = 0;
 /// while( i < pix.size()) {
 /// 	char c = pix[i];
 /// 	i++;
@@ -217,22 +217,22 @@ public:
 	///
 	/// ~~~~{.cpp}
 	/// ofColor yellow = ofColor::yellow;
-	/// int ind = pix.getPixelIndex(mouseX, mouseY);
+	/// size_t ind = pix.getPixelIndex(mouseX, mouseY);
 	/// pix.setPixel(ind, yellow);
 	/// ~~~~
-	int getPixelIndex(int x, int y) const;
+	size_t getPixelIndex(int x, int y) const;
 	
 	/// \brief Get the color at a x,y position
 	ofColor_<PixelType> getColor(int x, int y) const;
 
 	/// \brief Get the color at a specific index
-	ofColor_<PixelType> getColor(int index) const;
+	ofColor_<PixelType> getColor(size_t index) const;
 	
 	/// \brief Set the color of the pixel at the x,y location
 	void setColor(int x, int y, const ofColor_<PixelType>& color);
 
 	/// \brief Set the color of the pixel at a specific index
-	void setColor(int index, const ofColor_<PixelType>& color);
+	void setColor(size_t index, const ofColor_<PixelType>& color);
 
 	/// \brief Set the color of all pixels
 	void setColor(const ofColor_<PixelType>& color);
@@ -240,8 +240,8 @@ public:
 	/// \brief Provides access to each channel of each pixel. If you have RGB pixel
 	/// data, then you'll have 3 values for each pixel, if you have RGBA,
 	/// you'll have 4
-	const PixelType& operator[](int pos) const;
-	PixelType& operator[](int pos);
+	const PixelType& operator[](size_t pos) const;
+	PixelType& operator[](size_t pos);
 
 	/// \}
 	/// \name Getters
@@ -279,13 +279,13 @@ public:
 	/// \note This returns bits, not bytes, so you should see ofPixels<float>
 	/// return 32 and ofPixels<unsigned char> return 8.
 	int getBitsPerChannel() const;
-	int getBytesStride() const;
+	size_t getBytesStride() const;
 	
 	/// \brief Get the number of channels that the ofPixels object contains.
 	/// RGB is 3 channels, RGBA is 4, and grayscale is 1.	
 	int getNumChannels() const;
 
-	int getTotalBytes() const;
+	size_t getTotalBytes() const;
 
 	int getNumPlanes() const;
 
@@ -312,7 +312,7 @@ public:
 	/// \brief Get the number of values that the ofPixels object
 	/// contains, so an RGB data 400x400 would be 480,000, whereas RGBA data
 	/// of the same dimensions would be 640,000.
-	int size() const;
+	size_t size() const;
 	
 	/// \brief Get the type of the image
 	/// \returns One of the following types: `OF_IMAGE_GRAYSCALE`,
@@ -336,7 +336,7 @@ public:
 	void setNumChannels(int numChannels);
 
     static int pixelBitsFromPixelFormat(ofPixelFormat format);
-    static int bytesFromPixelFormat(int w, int h, ofPixelFormat format);
+    static size_t bytesFromPixelFormat(int w, int h, ofPixelFormat format);
 
 	/// \}
 	/// \name Iterator
@@ -370,7 +370,7 @@ public:
         ConstPixel operator+=(int);
         bool operator!=(ConstPixel const& rhs) const;
         bool operator<(ConstPixel const& rhs) const;
-        const PixelType & operator[](int idx) const;
+        const PixelType & operator[](size_t idx) const;
         int getComponentsPerPixel() const;
         ofPixelFormat getPixelFormat() const;
         ofColor_<PixelType> getColor() const;
@@ -396,8 +396,8 @@ public:
         bool operator<(Pixel const& rhs) const;
         Pixel & operator=(Pixel const& rhs);
         Pixel & operator=(ConstPixel const& rhs);
-        PixelType & operator[](int idx);
-        const PixelType & operator[](int idx) const;
+        PixelType & operator[](size_t idx);
+        const PixelType & operator[](size_t idx) const;
 		int getComponentsPerPixel() const;
 		ofPixelFormat getPixelFormat() const;
 		ofColor_<PixelType> getColor() const;
@@ -768,13 +768,13 @@ inline typename ofPixels_<PixelType>::Pixel & ofPixels_<PixelType>::Pixel::opera
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-inline PixelType & ofPixels_<PixelType>::Pixel::operator[](int idx){
+inline PixelType & ofPixels_<PixelType>::Pixel::operator[](size_t idx){
 	return pixel[idx];
 }
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-inline const PixelType & ofPixels_<PixelType>::Pixel::operator[](int idx) const{
+inline const PixelType & ofPixels_<PixelType>::Pixel::operator[](size_t idx) const{
 	return pixel[idx];
 }
 
@@ -1145,7 +1145,7 @@ inline bool ofPixels_<PixelType>::ConstPixel::operator<(ConstPixel const& rhs) c
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-inline const PixelType & ofPixels_<PixelType>::ConstPixel::operator[](int idx) const{
+inline const PixelType & ofPixels_<PixelType>::ConstPixel::operator[](size_t idx) const{
 	return pixel[idx];
 }
 
