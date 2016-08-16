@@ -186,13 +186,23 @@ bool ofShader::load(string shaderName) {
 
 //--------------------------------------------------------------
 bool ofShader::load(string vertName, string fragName, string geomName) {
-	if(vertName.empty() == false) setupShaderFromFile(GL_VERTEX_SHADER, vertName);
-	if(fragName.empty() == false) setupShaderFromFile(GL_FRAGMENT_SHADER, fragName);
+	if(vertName.empty() == false) {
+		bool success = setupShaderFromFile(GL_VERTEX_SHADER, vertName);
+		if (success == false) return false;
+	}
+	if(fragName.empty() == false) {
+		bool success = setupShaderFromFile(GL_FRAGMENT_SHADER, fragName);
+		if (success == false) return false;
+	}
 #ifndef TARGET_OPENGLES
-	if(geomName.empty() == false) setupShaderFromFile(GL_GEOMETRY_SHADER_EXT, geomName);
+	if(geomName.empty() == false) {
+		bool success = setupShaderFromFile(GL_GEOMETRY_SHADER_EXT, geomName);
+		if (success == false) return false;
+	}
 #endif
 	if(ofIsGLProgrammableRenderer()){
-		bindDefaults();
+		bool success = bindDefaults();
+		if (success == false) return false;
 	}
 	return linkProgram();
 }
@@ -518,6 +528,7 @@ void ofShader::checkAndCreateProgram() {
 
 //--------------------------------------------------------------
 bool ofShader::linkProgram() {
+	bool linkStatus = false;
 	if(shaders.empty()) {
 		ofLogError("ofShader") << "linkProgram(): trying to link GLSL program, but no shaders created yet";
 	} else {
@@ -533,7 +544,7 @@ bool ofShader::linkProgram() {
 
 		glLinkProgram(program);
 
-		checkProgramLinkStatus(program);
+		linkStatus = checkProgramLinkStatus(program);
 
 
 		// Pre-cache all active uniforms
@@ -595,7 +606,10 @@ bool ofShader::linkProgram() {
 		// it doesn't necessarily mean that these shaders have compiled and linked successfully.
 		bLoaded = true;
 	}
-	return bLoaded;
+	// only returns true if both values are true,
+	// that is, the shader has been loaded onto
+	// the graphics card and linking was successful.
+	return (bLoaded && linkStatus);
 }
 
 
