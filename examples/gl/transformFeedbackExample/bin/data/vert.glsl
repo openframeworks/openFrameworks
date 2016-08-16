@@ -34,6 +34,4 @@ void main(){
 	vec3 pos = hemisphereSample_uniform(uint(gl_VertexID), uint(256));
 	v_position = vec4(pos * -600, 1.0);
 	v_color = vec4(pos, 1.0);
-	//gl_Position = modelViewProjectionMatrix * v_position;
-	//gl_PointSize = 4;
 }
