@@ -203,6 +203,8 @@ public:
 	void unbind(const ofCamera & camera);
 
 	void begin(const ofFbo & fbo, bool setupPerspective);
+	void beginNoMatrixFlip(const ofFbo & fbo);
+	void beginNoMatrixFlipNoPerspective(const ofFbo & fbo);
 	void end(const ofFbo & fbo);
 
 	void bind(const ofFbo & fbo);

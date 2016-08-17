@@ -17,13 +17,21 @@ ofMatrixStack::ofMatrixStack(const ofAppBaseWindow * window)
 ,currentWindow(const_cast<ofAppBaseWindow*>(window))
 ,currentMatrixMode(OF_MATRIX_MODELVIEW)
 ,currentMatrix(&modelViewMatrix)
+,flipFboMatrix(true)
 {
 
 }
 
 void ofMatrixStack::setRenderSurface(const ofFbo & fbo){
 	currentFbo = const_cast<ofFbo*>(&fbo);
+	flipFboMatrix = true;
 	setOrientation(orientation,vFlipped);
+}
+
+void ofMatrixStack::setRenderSurfaceNoMatrixFlip(const ofFbo & fbo) {
+	currentFbo = const_cast<ofFbo*>(&fbo);
+	flipFboMatrix = false;
+	setOrientation(orientation, vFlipped);
 }
 
 void ofMatrixStack::setRenderSurface(const ofAppBaseWindow & window){
@@ -83,7 +91,7 @@ bool ofMatrixStack::isVFlipped() const{
 }
 
 bool ofMatrixStack::customMatrixNeedsFlip() const{
-	return vFlipped != bool(currentFbo);
+	return vFlipped != (bool(currentFbo) && flipFboMatrix);
 }
 
 int ofMatrixStack::getRenderSurfaceWidth() const{

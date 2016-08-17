@@ -7,6 +7,7 @@ class ofFbo : public ofBaseDraws, public ofBaseHasTexture {
 public:
 	struct Settings;
 
+
 	ofFbo();
 	ofFbo(const ofFbo & mom);
 	ofFbo & operator=(const ofFbo & fbo);
@@ -46,6 +47,7 @@ public:
 	void setUseTexture(bool){ /*irrelevant*/ };
 	bool isUsingTexture() const {return true;}
 
+
 	/// \brief    Sets up the framebuffer and binds it for rendering.
 	/// \warning  This is a convenience method, and is considered unsafe 
 	///           in multi-window and/or multi-renderer scenarios.
@@ -53,7 +55,13 @@ public:
 	///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, bool setupPerspective) 
 	///           method instead.
 	/// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, bool setupPerspective) 
-	void begin(bool setupScreen=true) const;
+	OF_DEPRECATED_MSG("Use beginNoPerspective instead", void begin(bool setupScreen) const);
+
+	/// Bind fbo so 
+	void begin() const;
+	void beginNoPerspective() const;
+	void beginNoMatrixFlip() const;
+	void beginNoMatrixFlipNoPerspective() const;
 
 	/// \brief    Ends the current framebuffer render context.
 	/// \sa       void begin(bool setupScreen=true) const;

@@ -1924,6 +1924,8 @@ public:
 	virtual void bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint=0)=0;
 #endif
 	virtual void begin(const ofFbo & fbo, bool setupPerspective)=0;
+	virtual void beginNoMatrixFlip(const ofFbo & fbo) = 0;
+	virtual void beginNoMatrixFlipNoPerspective(const ofFbo & fbo) = 0;
 	virtual void end(const ofFbo & fbo)=0;
 
 };
