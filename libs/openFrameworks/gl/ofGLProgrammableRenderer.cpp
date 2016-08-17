@@ -1321,6 +1321,26 @@ void ofGLProgrammableRenderer::begin(const ofFbo & fbo, bool setupPerspective){
 }
 
 //----------------------------------------------------------
+void ofGLProgrammableRenderer::beginNoMatrixFlip(const ofFbo & fbo) {
+	pushView();
+	pushStyle();
+	matrixStack.setRenderSurfaceNoMatrixFlip(fbo);
+	viewport();
+	setupScreenPerspective();
+	bind(fbo);
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::beginNoMatrixFlipNoPerspective(const ofFbo & fbo) {
+	pushView();
+	pushStyle();
+	matrixStack.setRenderSurfaceNoMatrixFlip(fbo);
+	viewport();
+	uploadMatrices();
+	bind(fbo);
+}
+
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::end(const ofFbo & fbo){
 	unbind(fbo);
 	matrixStack.setRenderSurface(*window);
@@ -1394,6 +1414,7 @@ void ofGLProgrammableRenderer::bind(const ofBaseMaterial & material){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::unbind(const ofBaseMaterial &){
     currentMaterial = nullptr;
+	beginDefaultShader();
 }
 
 //----------------------------------------------------------
