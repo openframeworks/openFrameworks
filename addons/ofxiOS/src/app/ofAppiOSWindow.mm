@@ -164,15 +164,15 @@ void ofAppiOSWindow::setWindowShape(int w, int h) {
 	// not supported on iOS.
 }
 
-ofPoint	ofAppiOSWindow::getWindowPosition() {
+glm::vec2	ofAppiOSWindow::getWindowPosition() {
 	return *[[ofxiOSEAGLView getInstance] getWindowPosition];
 }
 
-ofPoint	ofAppiOSWindow::getWindowSize() {
+glm::vec2	ofAppiOSWindow::getWindowSize() {
 	return *[[ofxiOSEAGLView getInstance] getWindowSize];
 }
 
-ofPoint	ofAppiOSWindow::getScreenSize() {
+glm::vec2	ofAppiOSWindow::getScreenSize() {
 	return *[[ofxiOSEAGLView getInstance] getScreenSize];
 }
 

@@ -59,9 +59,9 @@ static ofxiOSEAGLView * _instanceRef = nil;
         app = shared_ptr<ofxiOSApp>(appPtr);
         activeTouches = [[NSMutableDictionary alloc] init];
                 
-        screenSize = new ofVec3f();
-        windowSize = new ofVec3f();
-        windowPos = new ofVec3f();
+        screenSize = new glm::vec2();
+        windowSize = new glm::vec2();
+        windowPos = new glm::vec2();
 		ofSetOrientation(window->getOrientation());
         [self updateDimensions];
 		
