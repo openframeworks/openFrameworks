@@ -144,6 +144,17 @@ public:
 
 	void enableInertia();
 	void disableInertia();
+
+	/// Set the area bounds for mouse control.
+	/// Uses the full viewport by default.
+	void setControlArea(const ofRectangle & controlArea);
+
+	/// Clears the area bounds for mouse control so that 
+	/// the full viewport is used.
+	void clearControlArea();
+
+	/// Returns the area bounds used for mouse control.
+	ofRectangle getControlArea() const;
 	
 private:
 	void setDistance(float distance, bool save);
@@ -218,6 +229,9 @@ private:
 	glm::quat prevOrientation;
 
 	ofRectangle viewport;
+
+	/// \brief If set, the area mouse control is bound to.
+	ofRectangle controlArea;
 
 	ofCoreEvents * events = nullptr;
 
