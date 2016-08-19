@@ -149,14 +149,14 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (void)updateDimensions {
-    *windowPos = glm::vec2(self.frame.origin.x * scaleFactor, self.frame.origin.y * scaleFactor, 0);
-    *windowSize = glm::vec2(self.bounds.size.width * scaleFactor, self.bounds.size.height * scaleFactor, 0);
+    *windowPos = glm::vec2(self.frame.origin.x * scaleFactor, self.frame.origin.y * scaleFactor);
+    *windowSize = glm::vec2(self.bounds.size.width * scaleFactor, self.bounds.size.height * scaleFactor);
     
     UIScreen * currentScreen = self.window.screen;  // current screen is the screen that GLView is attached to.
     if(!currentScreen) {                            // if GLView is not attached, assume to be main device screen.
         currentScreen = [UIScreen mainScreen];
     }
-    *screenSize = glm::vec2(currentScreen.bounds.size.width * scaleFactor, currentScreen.bounds.size.height * scaleFactor, 0);
+    *screenSize = glm::vec2(currentScreen.bounds.size.width * scaleFactor, currentScreen.bounds.size.height * scaleFactor);
 }
 
 - (void)notifyResized {
