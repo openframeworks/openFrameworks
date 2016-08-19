@@ -9,9 +9,9 @@
 #include <TargetConditionals.h>
 #import <UIKit/UIKit.h>
 #import "EAGLView.h"
+#include <glm/fwd.hpp>
 
 class ofxiOSApp;
-class glm::vec2;
 class ofAppiOSWindow;
 
 @interface ofxiOSEAGLView : EAGLView {
