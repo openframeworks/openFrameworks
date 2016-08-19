@@ -159,12 +159,12 @@ CLLocationCoordinate2D ofxiOSMapKit::getCenterLocation() {
 
 
 // convert location (latitude, longitude) to screen coordinates (i.e. pixels)
-ofPoint ofxiOSMapKit::getScreenCoordinatesForLocation(double latitude, double longitude) {
+glm::vec2 ofxiOSMapKit::getScreenCoordinatesForLocation(double latitude, double longitude) {
     if(isOpen()) {
         CGPoint cgPoint = [mapView convertCoordinate:makeCLLocation(latitude, longitude) toPointToView:nil];
-        return ofPoint(cgPoint.x, cgPoint.y);
+        return glm::vec2(cgPoint.x, cgPoint.y);
     } else {
-        return ofPoint();
+        return glm::vec2();
     }
 }
 
