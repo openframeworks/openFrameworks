@@ -9,7 +9,7 @@
 #include <TargetConditionals.h>
 #import <UIKit/UIKit.h>
 #import "EAGLView.h"
-#include <glm/fwd.hpp>
+#include <glm/glm.hpp>
 
 class ofxiOSApp;
 class ofAppiOSWindow;
