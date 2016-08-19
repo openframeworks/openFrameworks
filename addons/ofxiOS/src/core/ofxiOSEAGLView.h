@@ -9,23 +9,23 @@
 #include <TargetConditionals.h>
 #import <UIKit/UIKit.h>
 #import "EAGLView.h"
+#include <glm/glm.hpp>
 
 class ofxiOSApp;
-class ofVec3f;
 class ofAppiOSWindow;
 
 @interface ofxiOSEAGLView : EAGLView {
 
 @protected
     NSMutableDictionary	* activeTouches;
-	ofVec3f * screenSize;   // because ofVec3f is forward declared,
-	ofVec3f * windowSize;   // these values have to be pointers.
-	ofVec3f * windowPos;
+	glm::vec2 * screenSize;   // because glm::vec2 is forward declared,
+	glm::vec2 * windowSize;   // these values have to be pointers.
+	glm::vec2 * windowPos;
 }
 
-@property (readonly, nonatomic, getter=getScreenSize) ofVec3f * screenSize;
-@property (readonly, nonatomic, getter=getWindowSize) ofVec3f * windowSize;
-@property (readonly, nonatomic, getter=getWindowPosition) ofVec3f * windowPos;
+@property (readonly, nonatomic, getter=getScreenSize) glm::vec2 * screenSize;
+@property (readonly, nonatomic, getter=getWindowSize) glm::vec2 * windowSize;
+@property (readonly, nonatomic, getter=getWindowPosition) glm::vec2 * windowPos;
 
 + (ofxiOSEAGLView *) getInstance;
 
