@@ -197,6 +197,73 @@ bool ofShader::load(string vertName, string fragName, string geomName) {
 	return linkProgram();
 }
 
+#if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
+//--------------------------------------------------------------
+bool ofShader::loadCompute(string shaderName) {
+	return setupShaderFromFile(GL_COMPUTE_SHADER, shaderName) && linkProgram();
+}
+#endif
+
+//--------------------------------------------------------------
+bool ofShader::setup(const Settings & settings) {
+	for (auto shader : settings.shaderFiles) {
+		auto ty = shader.first;
+		auto file = shader.second;
+		if (!setupShaderFromFile(ty, file)) {
+			return false;
+		}
+	}
+
+	for (auto shader : settings.shaderSources) {
+		auto ty = shader.first;
+		auto source = shader.second;
+		if (!setupShaderFromSource(ty, source)) {
+			return false;
+		}
+	}
+	
+	if (ofIsGLProgrammableRenderer() && settings.bindDefaults) {
+		bindDefaults();
+	}
+
+	return linkProgram();
+}
+
+#if !defined(TARGET_OPENGLES)
+//--------------------------------------------------------------
+bool ofShader::setup(const TransformFeedbackSettings & settings) {
+	for (auto shader : settings.shaderFiles) {
+		auto ty = shader.first;
+		auto file = shader.second;
+		if (!setupShaderFromFile(ty, file)) {
+			return false;
+		}
+	}
+
+	for (auto shader : settings.shaderSources) {
+		auto ty = shader.first;
+		auto source = shader.second;
+		if (!setupShaderFromSource(ty, source)) {
+			return false;
+		}
+	}
+
+	if (ofIsGLProgrammableRenderer() && settings.bindDefaults) {
+		bindDefaults();
+	}
+
+	if (!settings.varyingsToCapture.empty()) {
+		std::vector<const char*> varyings(settings.varyingsToCapture.size());
+		std::transform(settings.varyingsToCapture.begin(), settings.varyingsToCapture.end(), varyings.begin(), [](const std::string & str) {
+			return str.c_str();
+		});
+		glTransformFeedbackVaryings(getProgram(), 2, varyings.data(), settings.bufferMode);
+	}
+
+	return linkProgram();
+}
+#endif
+
 //--------------------------------------------------------------
 bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 	ofBuffer buffer = ofBufferFromFile(filename);
@@ -724,6 +791,48 @@ void ofShader::begin()  const{
 void ofShader::end()  const{
 	ofGetGLRenderer()->unbind(*this);
 }
+
+#if !defined(TARGET_OPENGLES)
+//--------------------------------------------------------------
+void ofShader::beginTransformFeedback(GLenum mode) const {
+	begin();
+	glBeginTransformFeedback(mode);
+}
+
+//--------------------------------------------------------------
+void ofShader::beginTransformFeedback(GLenum mode, const TransformFeedbackBinding & binding) const {
+	binding.buffer.bindRange(GL_TRANSFORM_FEEDBACK_BUFFER, binding.index, binding.offset, binding.size);
+	beginTransformFeedback(mode);
+}
+
+//--------------------------------------------------------------
+void ofShader::beginTransformFeedback(GLenum mode, const std::vector<TransformFeedbackBinding> & bindings) const {
+	for (auto & binding : bindings) {
+		binding.buffer.bindRange(GL_TRANSFORM_FEEDBACK_BUFFER, binding.index, binding.offset, binding.size);
+	}
+	beginTransformFeedback(mode);
+}
+
+//--------------------------------------------------------------
+void ofShader::endTransformFeedback() const {
+	glEndTransformFeedback();
+	end();
+}
+
+//--------------------------------------------------------------
+void ofShader::endTransformFeedback(const TransformFeedbackBinding & binding) const {
+	binding.buffer.unbindRange(GL_TRANSFORM_FEEDBACK_BUFFER, binding.index);
+	endTransformFeedback();
+}
+
+//--------------------------------------------------------------
+void ofShader::endTransformFeedback(const std::vector<TransformFeedbackBinding> & bindings) const {
+	for (auto & binding : bindings) {
+		binding.buffer.unbindRange(GL_TRANSFORM_FEEDBACK_BUFFER, binding.index);
+	}
+	endTransformFeedback();
+}
+#endif
 
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
 //--------------------------------------------------------------
