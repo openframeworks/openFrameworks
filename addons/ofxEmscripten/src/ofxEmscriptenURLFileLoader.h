@@ -17,6 +17,7 @@ public:
 	ofHttpResponse saveTo(const string &  url, const string &  path);
 	int saveAsync(const string &  url, const string &  path);
 	ofHttpResponse handleRequest(ofHttpRequest request);
+	int handleRequestAsync(ofHttpRequest request);
 	void remove(int id);
 	void clear();
 	void stop();
