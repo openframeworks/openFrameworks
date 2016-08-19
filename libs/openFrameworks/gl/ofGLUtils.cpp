@@ -821,7 +821,7 @@ shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 	}
 }
 #endif
-
+/*
 #if defined(TARGET_ANDROID)
 void ofRegenerateAllVbos();
 void ofRegenerateAllTextures();
@@ -835,6 +835,7 @@ void ofReloadGLResources(){
 	ofReloadAllFontTextures();
 }
 #endif
+*/
 
 #ifndef TARGET_OPENGLES
 namespace{

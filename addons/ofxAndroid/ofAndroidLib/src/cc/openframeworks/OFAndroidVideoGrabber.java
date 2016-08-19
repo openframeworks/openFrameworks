@@ -4,7 +4,9 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -308,7 +310,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		}
 		
 	}
-	
+
 	private AutoFocusCB autoFocusCB = new AutoFocusCB();
 	
 	@Override

@@ -24,6 +24,7 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Build;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ScaleGestureDetector;
@@ -170,7 +171,7 @@ public class OFAndroid {
 			}  
 		});
 	}
-	
+
 	static public void onUnpackingResourcesDone(){
 		unpackingDone = true;
 		if(ofActivity != null)
@@ -783,33 +784,14 @@ public class OFAndroid {
 		return ofActivity.getGLContentView();
 	}
 
-    public static native boolean hasNeon();
-	 
     static {
-        
-        Log.i("OF","static init");
-        
         try {
             Log.i("OF","loading x86 library");
             System.loadLibrary("OFAndroidApp_x86");
         }
         catch(Throwable ex)	{
-            Log.i("OF","failed x86 loading, trying neon detection",ex);
-            
-            try{
-                System.loadLibrary("neondetection");
-                if(hasNeon()){
-                    Log.i("OF","loading neon optimized library");
-                    System.loadLibrary("OFAndroidApp_neon");
-                }
-                else{
-                    Log.i("OF","loading not-neon optimized library");
-                    System.loadLibrary("OFAndroidApp");
-                }
-            }catch(Throwable ex2){
-                Log.i("OF","failed neon detection, loading not-neon library",ex2);
-                System.loadLibrary("OFAndroidApp");
-            }
+            Log.i("OF","Could not load x86, using default lib");
+			System.loadLibrary("OFAndroidApp");
         }
         Log.i("OF","initializing app");
     }
