@@ -118,7 +118,7 @@ public:
 	float	pitch;
 	float	volume;
 	unsigned int length;
-	ofPoint location;
+	glm::vec3 location;
 	
 protected: //internal
 	
