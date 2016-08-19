@@ -454,12 +454,16 @@ void ofGLRenderer::unbind(const ofShader & shader){
 
 
 //----------------------------------------------------------
-void ofGLRenderer::begin(const ofFbo & fbo, bool setupPerspective){
+void ofGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode){
 	pushView();
 	pushStyle();
-	matrixStack.setRenderSurface(fbo);
+    if(mode & ofFboBeginMode::MatrixFlip){
+        matrixStack.setRenderSurface(fbo);
+    }else{
+        matrixStack.setRenderSurfaceNoMatrixFlip(fbo);
+    }
 	viewport();
-	if(setupPerspective){
+    if(mode & ofFboBeginMode::Perspective){
 		setupScreenPerspective();
 	}else{
 		glm::mat4 m;
@@ -472,34 +476,6 @@ void ofGLRenderer::begin(const ofFbo & fbo, bool setupPerspective){
 		glLoadMatrixf(glm::value_ptr(matrixStack.getProjectionMatrix()));
 		matrixMode(currentMode);
 	}
-	bind(fbo);
-}
-
-//----------------------------------------------------------
-void ofGLRenderer::beginNoMatrixFlip(const ofFbo & fbo) {
-	pushView();
-	pushStyle();
-	matrixStack.setRenderSurfaceNoMatrixFlip(fbo);
-	viewport();
-	setupScreenPerspective();
-	bind(fbo);
-}
-
-//----------------------------------------------------------
-void ofGLRenderer::beginNoMatrixFlipNoPerspective(const ofFbo & fbo) {
-	pushView();
-	pushStyle();
-	matrixStack.setRenderSurfaceNoMatrixFlip(fbo);
-	viewport();
-	glm::mat4 m;
-	glGetFloatv(GL_PROJECTION_MATRIX, glm::value_ptr(m));
-	m = matrixStack.getOrientationMatrixInverse() * m;
-	ofMatrixMode currentMode = matrixStack.getCurrentMatrixMode();
-	matrixStack.matrixMode(OF_MATRIX_PROJECTION);
-	matrixStack.loadMatrix(m);
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(glm::value_ptr(matrixStack.getProjectionMatrix()));
-	matrixMode(currentMode);
 	bind(fbo);
 }
 
