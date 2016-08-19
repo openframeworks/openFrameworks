@@ -1947,7 +1947,7 @@ public:
 	/// \param name optional key to use when sorting requests
 	/// \return unique id for the active HTTP request
 	virtual int getAsync(const string& url, const string& name="")=0;
-	
+
 	/// \brief make an HTTP request and save the response data to a file
 	/// blocks until a response is returned or the request times out
 	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
@@ -1976,6 +1976,8 @@ public:
 	/// blocks until a response is returned or the request times out
 	/// \return HTTP response on success or failure
 	virtual ofHttpResponse handleRequest(ofHttpRequest request) = 0;
+	virtual int handleRequestAsync(const ofHttpRequest& request)=0; // returns id
+	
 };
 
 /// \class ofBaseMaterial
