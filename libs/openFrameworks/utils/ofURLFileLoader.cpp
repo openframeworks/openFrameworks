@@ -50,7 +50,7 @@ public:
 	void remove(int id);
 	void clear();
     void stop();
-	ofHttpResponse handleRequest(ofHttpRequest request);
+    ofHttpResponse handleRequest(const ofHttpRequest & request);
     int handleRequestAsync(const ofHttpRequest& request); // returns id
 
 protected:
@@ -167,7 +167,7 @@ void ofURLFileLoaderImpl::threadedFunction() {
 	}
 }
 
-ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
+ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request) {
 	try {
 		URI uri(request.url);
 		std::string path(uri.getPathAndQuery());
@@ -179,7 +179,7 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 			pocoMethod = HTTPRequest::HTTP_POST;
 		}
 		HTTPRequest req(pocoMethod, path, HTTPMessage::HTTP_1_1);
-		for(map<string,string>::iterator it = request.headers.begin(); it!=request.headers.end(); it++){
+        for(map<string,string>::const_iterator it = request.headers.cbegin(); it!=request.headers.cend(); it++){
 			req.add(it->first,it->second);
 		}
 		HTTPResponse res;
@@ -288,7 +288,7 @@ void ofURLFileLoader::stop(){
 	impl->stop();
 }
 
-ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest & request){
+ofHttpResponse ofURLFileLoader::handleRequest(const ofHttpRequest & request){
 	return impl->handleRequest(request);
 }
 
