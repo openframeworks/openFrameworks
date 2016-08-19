@@ -20,9 +20,7 @@
 
 
 
-/// \name Global texture settings
-/// \{
-
+/// \section Global Texture Settings
 /// \brief Check whether OF is using GL_TEXTURE_RECTANGLE rectangular or GL_TEXTURE_2D textures.
 /// \sa ofEnableArbTex()
 /// \returns true if using GL_TEXTURE_RECTANGLE textures, false if using GL_TEXTURE_2D textures.
@@ -132,8 +130,6 @@ OF_DEPRECATED_MSG("Use member method ofTexture::setTextureMinMagFilter() instead
 /// \warning Deprecated. Use member methods instead.
 OF_DEPRECATED_MSG("Use member method ofTexture::setTextureMinMagFilter() instead.",void ofRestoreMinMagFilters());
 
-/// \}
-
 /// \brief Texture compression types.
 ///
 /// Compression is only available through OpenGL for textures using
@@ -147,9 +143,8 @@ enum ofTexCompression {
 };
 
 
-/// \cond INTERNAL
-
 /// \class ofTextureData
+/// \advanced
 /// \brief Internal texture data structure.
 ///
 /// Used by ofTexture internally. You won't need to work with this in most cases.
@@ -247,9 +242,7 @@ bool ofIsTextureEdgeHackEnabled();
 class ofTexture : public ofBaseDraws {
 	public :
 
-	/// \name Construction and allocation
-	/// \{
-
+	/// \section Construction and Allocation
 	/// \brief Construct an ofTexture instance.
 	ofTexture();
 
@@ -428,12 +421,7 @@ class ofTexture : public ofBaseDraws {
 	/// references to the internal texture ID.
 	virtual ~ofTexture();
 
-
-	/// \}
-
-	/// \name Update texture
-	/// \{
-
+	/// \section Update Texture
 	/// \brief Copy a given ofTexture into this texture.
 	/// \param mom The ofTexture to copy from. Reuses internal GL texture ID.
 	ofTexture& operator=(const ofTexture & mom);
@@ -582,14 +570,9 @@ class ofTexture : public ofBaseDraws {
 	/// \param h Height of the area to copy in pixels.
 	void loadScreenData(int x, int y, int w, int h);
 	
-	/// \}
-
-
-	/// \name Drawing
-	/// \{
-
 	using ofBaseDraws::draw;
 	
+	/// \section Drawing
 	void draw(float x, float y) const;
 	void draw(float x, float y, float z) const;
 
@@ -713,11 +696,8 @@ class ofTexture : public ofBaseDraws {
 #endif
 
 	const ofTexture * getAlphaMask() const;
-	/// \}
 
-	/// \name Size and coordinates
-	/// \{
-
+	/// \section Size and Coordinates
 	/// \brief Display height of texture.
 	///
 	/// Return value is pixel size (default) or normalized (0 - 1) if ofEnableNormalizedTextures() is set to true.
@@ -769,11 +749,7 @@ class ofTexture : public ofBaseDraws {
 	/// \returns Texture coordinate or zero if texture is not allocated.
 	glm::vec2 getCoordFromPercent(float xPts, float yPts) const;
 
-	/// \}
-
-	/// \name Texture settings
-	/// \{
-
+	/// \section Texture Settings
 	/// \brief Set another ofTexture to use as an alpha mask.
 	/// \param mask The texture to use as alpha mask.
 	void setAlphaMask(ofTexture & mask);
@@ -851,11 +827,7 @@ class ofTexture : public ofBaseDraws {
 	/// \sa https://en.wikipedia.org/wiki/Swizzling_(computer_graphics)
 	void setSwizzle(GLenum srcSwizzle, GLenum dstChannel);
 
-	/// \}
-
-	/// \name Read pixel data
-	/// \{
-
+	/// \section Read Pixel Data
 	/// \brief Read current texture data from the GPU into pixels.
 	///
 	/// \warning This is not supported in OpenGL ES and does nothing.
@@ -883,11 +855,7 @@ class ofTexture : public ofBaseDraws {
 	void copyTo(ofBufferObject & buffer) const;
 #endif
 
-	/// \}
-
-	/// \name Texture data
-	/// \{
-
+	/// \section Texture Data
 	/// \brief Internal texture data access.
 	///
 	/// This returns the internal texture data for this texture, for instance,
@@ -901,12 +869,7 @@ class ofTexture : public ofBaseDraws {
 	/// \sa ofTextureData::getTextureData()
 	const ofTextureData& getTextureData() const;
 
-	/// \}
-
-
-	/// \name Mipmapping
-	/// \{
-
+	/// \section Mipmapping
 	/// \brief Sets flag allowing texture to auto-generate a mipmap.
 	///
 	/// By default, this will set your minFilter to GL_LINEAR_MIPMAP_LINEAR.
@@ -951,9 +914,7 @@ class ofTexture : public ofBaseDraws {
 	/// \sa enableMipmap()
 	bool hasMipmap() const;
 	
-	/// \}
-
-	/// \cond INTERNAL
+	/// \internal
 	ofTextureData texData; ///< Internal texture data access.
 	                       ///< For backwards compatibility.
 
@@ -971,8 +932,6 @@ protected:
 
 	bool bAnchorIsPct; ///< Is the anchor point represented as a normalized
 					   ///< (0 - 1) coordinate?
-
-	/// \endcond
 
 private:
 	bool bWantsMipmap; ///< Should mipmaps be created?
