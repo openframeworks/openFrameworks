@@ -1307,12 +1307,16 @@ void ofGLProgrammableRenderer::unbind(const ofShader & shader){
 
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::begin(const ofFbo & fbo, bool setupPerspective){
+void ofGLProgrammableRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode){
 	pushView();
-	pushStyle();
-	matrixStack.setRenderSurface(fbo);
+    pushStyle();
+    if(mode & ofFboBeginMode::MatrixFlip){
+        matrixStack.setRenderSurface(fbo);
+    }else{
+        matrixStack.setRenderSurfaceNoMatrixFlip(fbo);
+    }
 	viewport();
-	if(setupPerspective){
+    if(mode & ofFboBeginMode::Perspective){
 		setupScreenPerspective();
 	}else{
 		uploadMatrices();
@@ -1394,6 +1398,7 @@ void ofGLProgrammableRenderer::bind(const ofBaseMaterial & material){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::unbind(const ofBaseMaterial &){
     currentMaterial = nullptr;
+	beginDefaultShader();
 }
 
 //----------------------------------------------------------

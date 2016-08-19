@@ -21,6 +21,7 @@ public:
 	ofMatrixStack(const ofAppBaseWindow * window);
 
 	void setRenderSurface(const ofFbo & fbo);
+	void setRenderSurfaceNoMatrixFlip(const ofFbo & fbo);
 	void setRenderSurface(const ofAppBaseWindow & window);
 
 	void setOrientation(ofOrientation orientation, bool vFlip);
@@ -96,6 +97,7 @@ private:
 	std::stack <glm::mat4> projectionMatrixStack;
 	std::stack <glm::mat4> textureMatrixStack;
 	std::stack <std::pair<ofOrientation,bool> > orientationStack;
+	bool flipFboMatrix;
 
 	int getRenderSurfaceWidth() const;
 	int getRenderSurfaceHeight() const;

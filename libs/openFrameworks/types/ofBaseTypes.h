@@ -36,7 +36,6 @@ class ofMesh_;
 using ofMesh = ofMesh_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorType, ofDefaultTexCoordType>;
 
 class ofPath;
-class ofFbo;
 class of3dPrimitive;
 class ofLight;
 class ofMaterial;
@@ -48,6 +47,8 @@ class of3dGraphics;
 class ofVbo;
 class ofVboMesh;
 class ofSoundBuffer;
+class ofFbo;
+enum class ofFboBeginMode : short;
 
 
 bool ofIsVFlipped();
@@ -1923,7 +1924,7 @@ public:
 #ifndef TARGET_OPENGLES
 	virtual void bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint=0)=0;
 #endif
-	virtual void begin(const ofFbo & fbo, bool setupPerspective)=0;
+    virtual void begin(const ofFbo & fbo, ofFboBeginMode mode)=0;
 	virtual void end(const ofFbo & fbo)=0;
 
 };

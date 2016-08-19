@@ -3,9 +3,24 @@
 #include "ofTexture.h"
 #include <stack>
 
+enum class ofFboBeginMode : short{
+    NoDefaults = 0,
+    Perspective = 1,
+    MatrixFlip = 2,
+};
+
+inline ofFboBeginMode operator | (ofFboBeginMode m1, ofFboBeginMode m2){
+    return static_cast<ofFboBeginMode>(int(m1) | int(m2));
+}
+
+inline bool operator & (ofFboBeginMode m1, ofFboBeginMode m2){
+    return static_cast<bool>(int(m1) & int(m2));
+}
+
 class ofFbo : public ofBaseDraws, public ofBaseHasTexture {
 public:
 	struct Settings;
+
 
 	ofFbo();
 	ofFbo(const ofFbo & mom);
@@ -46,14 +61,45 @@ public:
 	void setUseTexture(bool){ /*irrelevant*/ };
 	bool isUsingTexture() const {return true;}
 
-	/// \brief    Sets up the framebuffer and binds it for rendering.
+
+    /// Sets up the framebuffer and binds it for rendering.
+    ///
 	/// \warning  This is a convenience method, and is considered unsafe 
 	///           in multi-window and/or multi-renderer scenarios.
 	///           If you use more than one renderer, use each renderer's
-	///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, bool setupPerspective) 
+    ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
 	///           method instead.
-	/// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, bool setupPerspective) 
-	void begin(bool setupScreen=true) const;
+    /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
+    OF_DEPRECATED_MSG("Use begin(ofFboBeginMode::NoDefauls) instead", void begin(bool setupScreen) const);
+
+
+    /// Sets up the framebuffer and binds it for rendering.
+    ///
+    /// The mode parameter indicates which defaults are set when binding
+    /// the fbo.
+    ///
+    /// The default ofFboBeginMode::Perspective | ofFboBeginMode::MatrixFlip
+    /// will set the screen perspective to the OF default for the fbo size, the
+    /// correct viewport to cover the full fbo and will flip the orientation
+    /// matrix in y so when drawing the fbo later or accesing it from a shader
+    /// it's correctly oriented
+    ///
+    /// Passing ofFboBeginMode::Perspetive will only set perspective and viewport
+    ///
+    /// Passing ofFboBeginMode::MatrixFlip won't set the perspective but will flip
+    /// the matrix.
+    ///
+    /// Passing ofFboBeginMode::NoDefaults won't change anything and just bind the fbo
+    /// and set it as current rendering surface in OF
+    ///
+    /// \warning  This is a convenience method, and is considered unsafe
+    ///           in multi-window and/or multi-renderer scenarios.
+    ///           If you use more than one renderer, use each renderer's
+    ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
+    ///           method instead.
+    /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
+    void begin(ofFboBeginMode mode = ofFboBeginMode::Perspective | ofFboBeginMode::MatrixFlip);
+
 
 	/// \brief    Ends the current framebuffer render context.
 	/// \sa       void begin(bool setupScreen=true) const;
@@ -191,4 +237,5 @@ private:
 #endif
 
 };
+
 
