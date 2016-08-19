@@ -1976,7 +1976,7 @@ public:
 	/// \brief low level HTTP request implementation
 	/// blocks until a response is returned or the request times out
 	/// \return HTTP response on success or failure
-	virtual ofHttpResponse handleRequest(ofHttpRequest request) = 0;
+    virtual ofHttpResponse handleRequest(const ofHttpRequest & request) = 0;
 	virtual int handleRequestAsync(const ofHttpRequest& request)=0; // returns id
 	
 };
