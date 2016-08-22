@@ -27,7 +27,8 @@ class ofApp: public ofxUnitTestsApp{
 			ofLogNotice() << "-------------------";
 			ofLogNotice() << "text constructor allocator";
 			std::string text("This is a text test");
-			ofBuffer buffer(text);
+			ofBuffer buffer;
+			buffer.set(text);
 			test_eq(buffer.size(), text.size(), "constructor does correct allocation");
 			test(buffer.end() == buffer.begin() + text.size(), "correct boundaries");
 			bool bufferEqual = true;

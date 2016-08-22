@@ -332,11 +332,11 @@ void ofSetDataPathRoot(const string& newRoot){
 }
 
 //--------------------------------------------------
-string ofToDataPath(const string& path, bool makeAbsolute){
+string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
 	if (!enableDataPath)
-		return path;
+        return path.string();
 
-    bool hasTrailingSlash = !path.empty() && std::filesystem::path(path).generic_string().back()=='/';
+    bool hasTrailingSlash = !path.empty() && path.generic_string().back()=='/';
 
 	// if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32

@@ -167,7 +167,9 @@ void ofSoundStream::setDeviceID(int deviceID){
 
 //------------------------------------------------------------
 void ofSoundStream::setDevice(const ofSoundDevice &device) {
-	setDeviceID(device.deviceID);
+    if( soundStream ){
+        tmpDeviceId = device.deviceID;
+    }
 }
 
 //------------------------------------------------------------

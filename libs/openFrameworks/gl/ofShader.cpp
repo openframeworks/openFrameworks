@@ -180,12 +180,12 @@ ofShader & ofShader::operator=(ofShader && mom){
 }
 
 //--------------------------------------------------------------
-bool ofShader::load(string shaderName) {
-	return load(shaderName + ".vert", shaderName + ".frag");
+bool ofShader::load(std::filesystem::path shaderName) {
+    return load(shaderName.string() + ".vert", shaderName.string() + ".frag");
 }
 
 //--------------------------------------------------------------
-bool ofShader::load(string vertName, string fragName, string geomName) {
+bool ofShader::load(std::filesystem::path vertName, std::filesystem::path fragName, std::filesystem::path geomName) {
 	if(vertName.empty() == false) setupShaderFromFile(GL_VERTEX_SHADER, vertName);
 	if(fragName.empty() == false) setupShaderFromFile(GL_FRAGMENT_SHADER, fragName);
 #ifndef TARGET_OPENGLES
@@ -199,7 +199,7 @@ bool ofShader::load(string vertName, string fragName, string geomName) {
 
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
 //--------------------------------------------------------------
-bool ofShader::loadCompute(string shaderName) {
+bool ofShader::loadCompute(std::filesystem::path shaderName) {
 	return setupShaderFromFile(GL_COMPUTE_SHADER, shaderName) && linkProgram();
 }
 #endif
@@ -265,7 +265,7 @@ bool ofShader::setup(const TransformFeedbackSettings & settings) {
 #endif
 
 //--------------------------------------------------------------
-bool ofShader::setupShaderFromFile(GLenum type, string filename) {
+bool ofShader::setupShaderFromFile(GLenum type, std::filesystem::path filename) {
 	ofBuffer buffer = ofBufferFromFile(filename);
 	// we need to make absolutely sure to have an absolute path here, so that any #includes
 	// within the shader files have a root directory to traverse from.
@@ -519,7 +519,8 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 			std::smatch matches;
 			string infoString = ofTrim(infoBuffer);
 			if (std::regex_search(infoString, matches, intel) || std::regex_search(infoString, matches, nvidia_ati)){
-				ofBuffer buf = shaders[type].expandedSource;
+                ofBuffer buf;
+                buf.set(shaders[type].expandedSource);
 				ofBuffer::Line line = buf.getLines().begin();
 				int  offendingLineNumber = ofToInt(matches[1]);
 				ostringstream msg;

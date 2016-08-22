@@ -85,12 +85,13 @@ ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() {
 
 //--------------------------------------------------------------
 
-bool ofxOpenALSoundPlayer::load(string fileName, bool stream) {
+bool ofxOpenALSoundPlayer::load(std::filesystem::path filePath, bool stream) {
 	
 	if(!SoundEngineInitialized) {
 		ofxOpenALSoundPlayer::initializeSoundEngine();
 	}
 	
+    auto fileName = filePath.string();
 	if( fileName.length()-3 == fileName.rfind("mp3") )
 		iAmAnMp3=true;
 	
