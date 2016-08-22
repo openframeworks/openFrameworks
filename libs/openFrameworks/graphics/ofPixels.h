@@ -209,10 +209,6 @@ public:
 	OF_DEPRECATED_MSG("Use getData instead",PixelType * getPixels());
 	OF_DEPRECATED_MSG("Use getData instead",const PixelType * getPixels() const);
 
-	OF_DEPRECATED_MSG("Accessing pixels as unsigned char*, instead use ofPixels or getPixels().getData() if you are really trying to access the raw data",operator PixelType*());
-	OF_DEPRECATED_MSG("Accessing pixels as unsigned char*, instead use ofPixels or getPixels().getData() if you are really trying to access the raw data",operator const PixelType*());
-
-	
 	/// \brief Get the pixel index at a x,y position
 	///
 	/// ~~~~{.cpp}
