@@ -1286,7 +1286,7 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 	guint size = mapinfo.size;
 
 	size_t stride = 0;
-	if(pixels.isAllocated() && pixels.getTotalBytes()!=size_t(size){
+	if(pixels.isAllocated() && (pixels.getTotalBytes() != size_t(size)) {
 		GstVideoInfo v_info = getVideoInfo(sample.get());
 		stride = v_info.stride[0];
 
