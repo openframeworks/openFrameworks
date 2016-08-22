@@ -413,16 +413,6 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, siz
 }
 
 template<typename PixelType>
-ofPixels_<PixelType>::operator PixelType*(){
-	return pixels;
-}
-
-template<typename PixelType>
-ofPixels_<PixelType>::operator const PixelType*(){
-	return pixels;
-}
-
-template<typename PixelType>
 PixelType * ofPixels_<PixelType>::getPixels(){
 	return pixels;
 }
@@ -894,8 +884,8 @@ void ofPixels_<PixelType>::setImageType(ofImageType imageType){
 	if(!isAllocated() || imageType==getImageType()) return;
 	ofPixels_<PixelType> dst;
 	dst.allocate(width,height,imageType);
-	PixelType * dstPtr = &dst[static_cast<size_t>(0)];
-	PixelType * srcPtr = &pixels[static_cast<size_t>(0)];
+	PixelType * dstPtr = &dst[0];
+	PixelType * srcPtr = &pixels[0];
 	size_t dstNumChannels = dst.getNumChannels();
 	size_t srcNumChannels = getNumChannels();
 	size_t diffNumChannels = 0;
