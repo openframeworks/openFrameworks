@@ -262,7 +262,7 @@ bool ofShader::setup(const TransformFeedbackSettings & settings) {
 		std::transform(settings.varyingsToCapture.begin(), settings.varyingsToCapture.end(), varyings.begin(), [](const std::string & str) {
 			return str.c_str();
 		});
-		glTransformFeedbackVaryings(getProgram(), 2, varyings.data(), settings.bufferMode);
+        glTransformFeedbackVaryings(getProgram(), varyings.size(), varyings.data(), settings.bufferMode);
 	}
 
 	return linkProgram();
