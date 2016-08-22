@@ -38,8 +38,8 @@ public:
     ofXml( const ofXml& rhs );
     const ofXml& operator =( const ofXml& rhs );
 
-	bool load(const string & path);
-	bool save(const string & path);
+    bool load(const std::filesystem::path & path);
+    bool save(const std::filesystem::path & path);
 
     bool            addChild( const string& path );
     void            addXml( ofXml& xml, bool copyAll = false);
