@@ -1285,8 +1285,8 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 	gst_buffer_map (_buffer, &mapinfo, GST_MAP_READ);
 	guint size = mapinfo.size;
 
-	int stride = 0;
-	if(pixels.isAllocated() && pixels.getTotalBytes()!=(int)size){
+	size_t stride = 0;
+	if(pixels.isAllocated() && (pixels.getTotalBytes() != size_t(size))){
 		GstVideoInfo v_info = getVideoInfo(sample.get());
 		stride = v_info.stride[0];
 
@@ -1304,7 +1304,7 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 		if(stride > 0) {
 			if(pixels.getPixelFormat() == OF_PIXELS_I420){
 				GstVideoInfo v_info = getVideoInfo(sample.get());
-				std::vector<int> strides{v_info.stride[0],v_info.stride[1],v_info.stride[2]};
+				std::vector<size_t> strides{size_t(v_info.stride[0]),size_t(v_info.stride[1]),size_t(v_info.stride[2])};
 				backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),strides);
 			} else {
 				backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
