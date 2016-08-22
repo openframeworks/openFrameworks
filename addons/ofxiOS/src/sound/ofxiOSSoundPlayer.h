@@ -15,7 +15,7 @@ public:
     ofxiOSSoundPlayer();
     ~ofxiOSSoundPlayer();
     
-    bool load(string fileName, bool stream = false);
+    bool load(std::filesystem::path fileName, bool stream = false);
     void unload();
     void play();
     void stop();

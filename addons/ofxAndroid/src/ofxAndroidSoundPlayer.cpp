@@ -43,7 +43,7 @@ ofxAndroidSoundPlayer::~ofxAndroidSoundPlayer(){
 
 
 //------------------------------------------------------------
-bool ofxAndroidSoundPlayer::load(string fileName, bool stream){
+bool ofxAndroidSoundPlayer::load(std::filesystem::path fileName, bool stream){
 	if(!javaSoundPlayer){
 		ofLogError("ofxAndroidSoundPlayer") << "loadSound(): java SoundPlayer not loaded";
 		return false;

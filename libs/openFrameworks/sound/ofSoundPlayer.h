@@ -87,7 +87,7 @@ public:
     ///
     /// \param fileName Path to the sound file, relative to your app's data folder.
     /// \param stream set "true" to enable streaming from disk (for large files).
-    bool load(string fileName, bool stream = false);
+    bool load(std::filesystem::path fileName, bool stream = false);
     OF_DEPRECATED_MSG("Use load",bool loadSound(string fileName, bool stream = false));
 
     /// \brief Stops and unloads the current sound.

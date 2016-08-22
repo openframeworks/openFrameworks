@@ -120,11 +120,11 @@ class ofTtfSettings{
 	vector<ofUnicode::range> ranges;
 
 public:
-	ofTtfSettings(const string & name, int size)
+    ofTtfSettings(const std::filesystem::path & name, int size)
 	:fontName(name)
 	,fontSize(size){}
 
-	string fontName;
+    std::filesystem::path fontName;
 	int fontSize;
 	bool antialiased = true;
 	bool contours = false;
@@ -183,7 +183,7 @@ public:
     /// \param simplifyAmt the amount to simplify the vector contours.  Larger number means more simplified.
     /// \param dpi the dots per inch used to specify rendering size.
 	/// \returns true if the font was loaded correctly.
-	bool load(string filename,
+    bool load(std::filesystem::path filename,
                   int fontsize,
                   bool _bAntiAliased=true,
                   bool _bFullCharacterSet=true,
