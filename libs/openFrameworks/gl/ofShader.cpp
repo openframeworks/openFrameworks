@@ -83,6 +83,11 @@ static void releaseProgram(GLuint id){
 }
 
 //--------------------------------------------------------------
+ofShader::TransformFeedbackBinding::TransformFeedbackBinding(const ofBufferObject & buffer)
+:size(buffer.size())
+,buffer(buffer){}
+
+//--------------------------------------------------------------
 ofShader::ofShader() :
 program(0),
 bLoaded(false)
@@ -217,7 +222,7 @@ bool ofShader::setup(const Settings & settings) {
 	for (auto shader : settings.shaderSources) {
 		auto ty = shader.first;
 		auto source = shader.second;
-		if (!setupShaderFromSource(ty, source)) {
+        if (!setupShaderFromSource(ty, source, settings.sourceDirectoryPath)) {
 			return false;
 		}
 	}
@@ -243,7 +248,7 @@ bool ofShader::setup(const TransformFeedbackSettings & settings) {
 	for (auto shader : settings.shaderSources) {
 		auto ty = shader.first;
 		auto source = shader.second;
-		if (!setupShaderFromSource(ty, source)) {
+        if (!setupShaderFromSource(ty, source, settings.sourceDirectoryPath)) {
 			return false;
 		}
 	}
