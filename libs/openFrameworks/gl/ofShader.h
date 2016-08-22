@@ -34,6 +34,7 @@ public:
 	struct Settings {
         std::map<GLuint, std::filesystem::path> shaderFiles;
 		std::map<GLuint, std::string> shaderSources;
+        std::string sourceDirectoryPath;
 		bool bindDefaults = true;
 	};
 
@@ -42,13 +43,13 @@ public:
         std::map<GLuint, std::filesystem::path> shaderFiles;
 		std::map<GLuint, std::string> shaderSources;
 		std::vector<std::string> varyingsToCapture;
+        std::string sourceDirectoryPath;
 		bool bindDefaults = true;
 		GLuint bufferMode = GL_INTERLEAVED_ATTRIBS; // GL_INTERLEAVED_ATTRIBS or GL_SEPARATE_ATTRIBS
 	};
 
 	struct TransformFeedbackBinding {
-		TransformFeedbackBinding(const ofBufferObject & buffer)
-		:buffer(buffer) {}
+        TransformFeedbackBinding(const ofBufferObject & buffer);
 
 		GLuint index = 0;
 		GLuint offset = 0;
