@@ -1,7 +1,7 @@
 #include "ofVideoPlayer.h"
 #include "ofUtils.h"
 #include "ofAppRunner.h"
-
+#include <algorithm>
 
 
 //---------------------------------------------------------------------------
@@ -77,7 +77,7 @@ bool ofVideoPlayer::load(string name){
         if(bUseTexture){
         	if(player->getTexturePtr()==nullptr){
 				if(tex.empty()) {
-					tex.resize(max(player->getPixels().getNumPlanes(),1));
+					tex.resize(std::max(player->getPixels().getNumPlanes(),static_cast<size_t>(1)));
 					for(int i=0;i<player->getPixels().getNumPlanes();i++){
 						ofPixels plane = player->getPixels().getPlane(i);
 						tex[i].allocate(plane);
@@ -204,7 +204,7 @@ void ofVideoPlayer::update(){
 			
 			if(playerTex == nullptr){
 				if(int(tex.size())!=player->getPixels().getNumPlanes()){
-					tex.resize(max(player->getPixels().getNumPlanes(),1));
+					tex.resize(std::max(player->getPixels().getNumPlanes(),static_cast<size_t>(1)));
 				}
 				if(player->getWidth() != 0 && player->getHeight() != 0) {
 					for(int i=0;i<player->getPixels().getNumPlanes();i++){
