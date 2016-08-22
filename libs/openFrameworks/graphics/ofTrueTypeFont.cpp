@@ -439,13 +439,13 @@ static std::string linuxFontPathByName(const std::string& fontname){
 #endif
 
 //-----------------------------------------------------------
-static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string & filename){
+static bool loadFontFace(std::filesystem::path fontname, FT_Face & face, std::filesystem::path & filename){
 	filename = ofToDataPath(fontname,true);
 	ofFile fontFile(filename,ofFile::Reference);
 	int fontID = 0;
 	if(!fontFile.exists()){
 #ifdef TARGET_LINUX
-		filename = linuxFontPathByName(fontname);
+        filename = linuxFontPathByName(fontname.string());
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
 			fontname = "Helvetica Neue";
@@ -455,7 +455,7 @@ static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string 
 		}else if(fontname==OF_TTF_MONO){
 			fontname = "Menlo Regular";
 		}
-		filename = osxFontPathByName(fontname);
+        filename = osxFontPathByName(fontname.string());
 #elif defined(TARGET_WIN32)
 		if(fontname==OF_TTF_SANS){
 			fontname = "Arial";
@@ -464,7 +464,7 @@ static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string 
 		}else if(fontname==OF_TTF_MONO){
 			fontname = "Courier New";
 		}
-		filename = winFontPathByName(fontname);
+        filename = winFontPathByName(fontname.string());
 #endif
 		if(filename == "" ){
 			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font \"" << fontname << "\"";
@@ -473,7 +473,7 @@ static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string 
 		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): \"" << fontname << "\" not a file in data loading system font from \"" << filename << "\"";
 	}
 	FT_Error err;
-	err = FT_New_Face( library, filename.c_str(), fontID, &face );
+    err = FT_New_Face( library, filename.string().c_str(), fontID, &face );
 	if (err) {
 		// simple error table in lieu of full table (see fterrors.h)
 		string errorString = "unknown freetype";
@@ -757,7 +757,7 @@ ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::load(string filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+bool ofTrueTypeFont::load(std::filesystem::path filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
 	ofTtfSettings settings(filename,fontSize);
 	settings.antialiased = antialiased;
 	settings.contours = makeContours;
@@ -787,7 +787,7 @@ bool ofTrueTypeFont::load(const ofTtfSettings & _settings){
 
 	//--------------- load the library and typeface
 	FT_Face loadFace;
-	if(!loadFontFace(settings.fontName,settings.fontSize,loadFace,settings.fontName)){
+    if(!loadFontFace(settings.fontName, loadFace, settings.fontName)){
 		return false;
 	}
 	face = std::shared_ptr<struct FT_FaceRec_>(loadFace,FT_Done_Face);

@@ -29,12 +29,7 @@ public:
 	/// \param _size the number of bytes to read
 	/// \warning buffer *must* not be NULL
 	/// \warning _size *must* be <= the number of bytes allocated in _buffer
-	ofBuffer(const char * buffer, std::size_t size);
-	
-	/// \brief Create a buffer and set its contents from a string.
-	///
-	/// \param text string to copy data from
-	ofBuffer(const string & text);
+    ofBuffer(const char * buffer, std::size_t size);
 	
 	/// \brief Create a buffer and set its contents from an input stream.
 	///
@@ -219,7 +214,7 @@ private:
 /// \param path file to open
 /// \param binary set to false if you are reading a text file & want lines
 /// split at endline characters automatically
-ofBuffer ofBufferFromFile(const string & path, bool binary=true);
+ofBuffer ofBufferFromFile(const std::filesystem::path & path, bool binary=true);
 
 //--------------------------------------------------
 /// \brief Write the contents of a buffer to a file at path.
@@ -230,7 +225,7 @@ ofBuffer ofBufferFromFile(const string & path, bool binary=true);
 /// \param buffer data source to write from
 /// \param binary set to false if you are writing a text file & want lines
 /// split at endline characters automatically
-bool ofBufferToFile(const string & path, const ofBuffer& buffer, bool binary=true);
+bool ofBufferToFile(const std::filesystem::path & path, const ofBuffer& buffer, bool binary=true);
 
 //--------------------------------------------------
 /// \class ofFilePath
@@ -244,32 +239,32 @@ public:
 	///
 	/// \param filename file path
 	/// \returns filename extension only
-	static string getFileExt(const std::string& filename);
+    static string getFileExt(const std::filesystem::path& filename);
 	
 	/// \brief Remove extension from a filename, ie. "duck.jpg" ->"duck".
 	///
 	/// \param filename file path
 	/// \returns filename without extension
-	static string removeExt(const std::string& filename);
+    static string removeExt(const std::filesystem::path& filename);
 	
 	/// \brief Prepend path with a slash, ie. "images" -> "/images".
 	///
 	/// \param path file or directory path
 	/// \returns slah + path
-	static string addLeadingSlash(const std::string& path);
+    static string addLeadingSlash(const std::filesystem::path& path);
 	
 	/// \brief Append path with a slash, ie. "images" -> "images/".
 	///
 	/// \param path directory path
 	/// \returns path + slash
-	static string addTrailingSlash(const std::string& path);
+    static string addTrailingSlash(const std::filesystem::path& path);
 	
 	/// \brief Remove a path's trailing slash (if found),
 	/// ie. "images/" -> "images".
 	///
 	/// \param path directory path
 	/// \returns path minus trailing slash
-	static string removeTrailingSlash(const std::string& path);
+    static string removeTrailingSlash(const std::filesystem::path& path);
 	
 	/// \brief Cleaned up a directory path by adding a trailing slash if needed.
 	///
@@ -278,7 +273,7 @@ public:
 	///
 	/// \param path directory path
 	/// \returns cleaned path + trailing slash (if needed)
-	static string getPathForDirectory(const std::string& path);
+    static string getPathForDirectory(const std::filesystem::path& path);
 	
 	/// \brief Get the absolute, full path for a given path,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
@@ -288,7 +283,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns absolute path
-	static string getAbsolutePath(const std::string& path, bool bRelativeToData = true);
+    static string getAbsolutePath(const std::filesystem::path& path, bool bRelativeToData = true);
 
 	/// \brief Check if a path is an absolute (aka a full path),
 	/// ie. "images" -> false,
@@ -296,7 +291,7 @@ public:
 	///
 	/// \param path file or directory path
 	/// \returns true if the path is an absolute path
-	static bool isAbsolute(const std::string& path);
+    static bool isAbsolute(const std::filesystem::path& path);
 	
 	/// \brief Get the filename of a given path by stripping the parent
 	/// directories ie. "images/duck.jpg" -> "duck.jpg", assumes the path is in
@@ -307,7 +302,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns filename
-	static string getFileName(const std::string& filePath, bool bRelativeToData = true);
+    static string getFileName(const std::filesystem::path& filePath, bool bRelativeToData = true);
 	
 	/// \brief Get a file path without its last component,
 	/// ie. "images/duck.jpg" -> "images" and
@@ -315,7 +310,7 @@ public:
 	///
 	/// \param filePath file path
 	/// \returns basename
-	static string getBaseName(const std::string& filePath);
+    static string getBaseName(const std::filesystem::path& filePath);
 
 	/// \brief Get the enclosing parent directory of a path,
 	/// ie. "images/duck.jpg" -> "images", assumes the path is in the data
@@ -326,7 +321,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	///\returns enclosing directory
-	static string getEnclosingDirectory(const std::string& filePath, bool bRelativeToData = true);
+    static string getEnclosingDirectory(const std::filesystem::path& filePath, bool bRelativeToData = true);
 	
 	/// \brief Create the enclosing parent directory of a path, ie.
 	/// "images" is the enclosing directory of "duck.jpg" = "images/duck.jpg".
@@ -340,7 +335,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns true if the enclosing directory was created
-	static bool createEnclosingDirectory(const std::string& filePath, bool bRelativeToData = true, bool bRecursive = true);
+    static bool createEnclosingDirectory(const std::filesystem::path& filePath, bool bRelativeToData = true, bool bRecursive = true);
 	
 	/// \brief Get the full path to the app's current working directory.
 	///
@@ -358,7 +353,7 @@ public:
 	/// \param path1 left half of the path to join
 	/// \param path2 right half of the path to join
 	/// \returns joined path
-	static string join(const std::string& path1, const std::string& path2);
+    static string join(const std::filesystem::path& path1, const std::filesystem::path& path2);
 	
 	/// \brief Get the full path to the application's executable file.
 	///
@@ -393,7 +388,7 @@ public:
 	/// \param from starting path
 	/// \param to destination path
 	/// \returns relative path
-	static string makeRelative(const std::string & from, const std::string & to);
+    static string makeRelative(const std::filesystem::path & from, const std::filesystem::path & to);
 };
 
 /// \class ofFile

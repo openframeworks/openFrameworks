@@ -49,7 +49,7 @@ ofLogLevel ofGetLogLevel(string module){
 }
 
 //--------------------------------------------------
-void ofLogToFile(const string & path, bool append){
+void ofLogToFile(const std::filesystem::path & path, bool append){
 	ofLog::setChannel(shared_ptr<ofFileLoggerChannel>(new ofFileLoggerChannel(path,append)));
 }
 
@@ -297,7 +297,7 @@ void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const 
 ofFileLoggerChannel::ofFileLoggerChannel(){
 }
 
-ofFileLoggerChannel::ofFileLoggerChannel(const string & path, bool append){
+ofFileLoggerChannel::ofFileLoggerChannel(const std::filesystem::path & path, bool append){
 	setFile(path,append);
 }
 
@@ -309,7 +309,7 @@ void ofFileLoggerChannel::close(){
 	file.close();
 }
 
-void ofFileLoggerChannel::setFile(const string & path,bool append){
+void ofFileLoggerChannel::setFile(const std::filesystem::path & path,bool append){
 	file.open(path,append?ofFile::Append:ofFile::WriteOnly);
 	file << endl;
 	file << endl;

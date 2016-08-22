@@ -31,12 +31,6 @@ ofBuffer::ofBuffer(const char * _buffer, std::size_t size)
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(const string & text)
-:buffer(text.begin(),text.end())
-,currentLine(end(),end()){
-}
-
-//--------------------------------------------------
 ofBuffer::ofBuffer(istream & stream, size_t ioBlockSize)
 :currentLine(end(),end()){
 	set(stream, ioBlockSize);
@@ -330,13 +324,13 @@ istream & operator>>(istream & istr, ofBuffer & buf){
 }
 
 //--------------------------------------------------
-ofBuffer ofBufferFromFile(const string & path, bool binary){
+ofBuffer ofBufferFromFile(const std::filesystem::path & path, bool binary){
 	ofFile f(path,ofFile::ReadOnly, binary);
 	return ofBuffer(f);
 }
 
 //--------------------------------------------------
-bool ofBufferToFile(const string & path, const ofBuffer& buffer, bool binary){
+bool ofBufferToFile(const std::filesystem::path & path, const ofBuffer& buffer, bool binary){
 	ofFile f(path, ofFile::WriteOnly, binary);
 	return buffer.writeTo(f);
 }
@@ -1378,8 +1372,8 @@ vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::addLeadingSlash(const std::string& _path){
-	std::string path = _path;
+string ofFilePath::addLeadingSlash(const std::filesystem::path& _path){
+    auto path = _path.string();
 	auto sep = std::filesystem::path("/").make_preferred();
 	if(!path.empty()){
 		if(ofToString(path[0]) != sep.string()){
@@ -1390,9 +1384,8 @@ string ofFilePath::addLeadingSlash(const std::string& _path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::addTrailingSlash(const std::string& _path){
-	std::string path = _path;
-	path = std::filesystem::path(path).make_preferred().string();
+string ofFilePath::addTrailingSlash(const std::filesystem::path& _path){
+    auto path = std::filesystem::path(_path).make_preferred().string();
 	auto sep = std::filesystem::path("/").make_preferred();
 	if(!path.empty()){
 		if(ofToString(path.back()) != sep.string()){
@@ -1404,32 +1397,32 @@ string ofFilePath::addTrailingSlash(const std::string& _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getFileExt(const std::string& filename){
+string ofFilePath::getFileExt(const std::filesystem::path& filename){
 	return ofFile(filename,ofFile::Reference).getExtension();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::removeExt(const std::string& filename){
+string ofFilePath::removeExt(const std::filesystem::path& filename){
 	return ofFilePath::join(getEnclosingDirectory(filename,false), ofFile(filename,ofFile::Reference).getBaseName());
 }
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getPathForDirectory(const std::string& path){
+string ofFilePath::getPathForDirectory(const std::filesystem::path& path){
 	// if a trailing slash is missing from a path, this will clean it up
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
 	auto sep = std::filesystem::path("/").make_preferred();
-	if(!path.empty() && ofToString(path.back())!=sep.string()){
-		return (std::filesystem::path(path) / sep).string();
+    if(!path.empty() && ofToString(path.string().back())!=sep.string()){
+        return (path / sep).string();
 	}else{
-		return path;
+        return path.string();
 	}
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::removeTrailingSlash(const std::string& _path){
-	std::string path = _path;
+string ofFilePath::removeTrailingSlash(const std::filesystem::path& _path){
+    auto path = _path.string();
 	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
 		path = path.substr(0, path.length() - 1);
 	}
@@ -1438,24 +1431,24 @@ string ofFilePath::removeTrailingSlash(const std::string& _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getFileName(const std::string& _filePath, bool bRelativeToData){
-	std::string filePath = _filePath;
+string ofFilePath::getFileName(const std::filesystem::path& _filePath, bool bRelativeToData){
+    std::string filePath = _filePath.string();
 
 	if(bRelativeToData){
-		filePath = ofToDataPath(filePath);
+        filePath = ofToDataPath(_filePath);
 	}
 
 	return std::filesystem::path(filePath).filename().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getBaseName(const std::string& filePath){
+string ofFilePath::getBaseName(const std::filesystem::path& filePath){
 	return ofFile(filePath,ofFile::Reference).getBaseName();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getEnclosingDirectory(const std::string& _filePath, bool bRelativeToData){
-	std::string filePath = _filePath;
+string ofFilePath::getEnclosingDirectory(const std::filesystem::path& _filePath, bool bRelativeToData){
+    std::string filePath = _filePath.string();
 	if(bRelativeToData){
 		filePath = ofToDataPath(filePath);
 	}
@@ -1463,12 +1456,12 @@ string ofFilePath::getEnclosingDirectory(const std::string& _filePath, bool bRel
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFilePath::createEnclosingDirectory(const std::string& filePath, bool bRelativeToData, bool bRecursive) {
+bool ofFilePath::createEnclosingDirectory(const std::filesystem::path& filePath, bool bRelativeToData, bool bRecursive) {
 	return ofDirectory::createDirectory(ofFilePath::getEnclosingDirectory(filePath), bRelativeToData, bRecursive);
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getAbsolutePath(const std::string& path, bool bRelativeToData){
+string ofFilePath::getAbsolutePath(const std::filesystem::path& path, bool bRelativeToData){
 	if(bRelativeToData){
 		return ofToDataPath(path, true);
 	}else{
@@ -1482,7 +1475,7 @@ string ofFilePath::getAbsolutePath(const std::string& path, bool bRelativeToData
 
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFilePath::isAbsolute(const std::string& path){
+bool ofFilePath::isAbsolute(const std::filesystem::path& path){
 	return std::filesystem::path(path).is_absolute();
 }
 
@@ -1492,7 +1485,7 @@ string ofFilePath::getCurrentWorkingDirectory(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::join(const std::string& path1, const std::string& path2){
+string ofFilePath::join(const std::filesystem::path& path1, const std::filesystem::path& path2){
 	return (std::filesystem::path(path1) / std::filesystem::path(path2)).string();
 }
 
@@ -1547,7 +1540,7 @@ string ofFilePath::getUserHomeDir(){
 	#endif
 }
 
-string ofFilePath::makeRelative(const std::string & from, const std::string & to){
+string ofFilePath::makeRelative(const std::filesystem::path & from, const std::filesystem::path & to){
 	auto pathFrom = std::filesystem::absolute( from );
 	auto pathTo = std::filesystem::absolute( to );
 	std::filesystem::path ret;

@@ -464,7 +464,7 @@ public:
 	/// \param name The name of the video resource to load.
 	/// \returns True if the video was loaded successfully.
 	/// \sa loadAsync()
-	virtual bool				load(string name) = 0;
+    virtual bool				load(string name) = 0;
 	/// \brief Asynchronously load a video resource by name.
 	///
 	/// The list of supported video types and sources (e.g. rtsp:// sources) is
@@ -475,7 +475,7 @@ public:
 	///
 	/// \param name The name of the video resource to load.
 	/// \sa isLoaded()
-	virtual void				loadAsync(string name);
+    virtual void				loadAsync(string name);
 	
 	/// \brief Play the video from the current playhead position.
 	/// \sa getPosition()
@@ -1954,14 +1954,14 @@ public:
 	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 	/// \param path file path to save to
 	/// \return HTTP response on success or failure
-	virtual ofHttpResponse saveTo(const string& url, const string& path)=0;
+    virtual ofHttpResponse saveTo(const string& url, const std::filesystem::path& path)=0;
 	
 	/// \brief make an asynchronous HTTP request and save the response data to a file
 	/// will not block, placed in a queue and run using a background thread
 	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 	/// \param path file path to save to
 	/// \returns unique id for the active HTTP request
-	virtual int saveAsync(const string& url, const string& path)=0;
+    virtual int saveAsync(const string& url, const std::filesystem::path& path)=0;
 	
 	/// \brief remove an active HTTP request from the queue
 	/// \param unique HTTP request id

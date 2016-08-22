@@ -66,7 +66,7 @@ int ofLoadURLAsync(const string& url, const string& name=""); // returns id
 /// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 /// \param path file path to save to
 /// \return HTTP response on success or failure
-ofHttpResponse ofSaveURLTo(const string& url, const string& path);
+ofHttpResponse ofSaveURLTo(const string& url, const std::filesystem::path& path);
 
 /// make an asynchronous HTTP request for a url and save the response to a file at path
 /// \returns unique request id for the active HTTP request
@@ -76,7 +76,7 @@ ofHttpResponse ofSaveURLTo(const string& url, const string& path);
 /// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 /// \param path file path to save to
 /// \returns unique id for the active HTTP request
-int ofSaveURLAsync(const string& url, const string& path);
+int ofSaveURLAsync(const string& url, const std::filesystem::path& path);
 
 /// \brief remove an active HTTP request from the queue
 /// \param unique HTTP request id
@@ -127,14 +127,14 @@ class ofURLFileLoader  {
 		/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 		/// \param path file path to save to
 		/// \return HTTP response on success or failure
-		ofHttpResponse saveTo(const string& url, const string& path);
+        ofHttpResponse saveTo(const string& url, const std::filesystem::path& path);
 	
 		/// \brief make an asynchronous HTTP request and save the response data to a file
 		/// will not block, placed in a queue and run using a background thread
 		/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 		/// \param path file path to save to
 		/// \returns unique id for the active HTTP request
-		int saveAsync(const string& url, const string& path);
+        int saveAsync(const string& url, const std::filesystem::path& path);
 	
 		/// \brief remove an active HTTP request from the queue
 		/// \param unique HTTP request id

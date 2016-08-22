@@ -25,21 +25,21 @@ public:
     ofShader(ofShader && shader);
     ofShader & operator=(ofShader && shader);
 	
-	bool load(string shaderName);
-	bool load(string vertName, string fragName, string geomName="");
+    bool load(std::filesystem::path shaderName);
+    bool load(std::filesystem::path vertName, std::filesystem::path fragName, std::filesystem::path geomName="");
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
-	bool loadCompute(string shaderName);
+    bool loadCompute(std::filesystem::path shaderName);
 #endif
 
 	struct Settings {
-		std::map<GLuint, std::string> shaderFiles;
+        std::map<GLuint, std::filesystem::path> shaderFiles;
 		std::map<GLuint, std::string> shaderSources;
 		bool bindDefaults = true;
 	};
 
 #if !defined(TARGET_OPENGLES)
 	struct TransformFeedbackSettings {
-		std::map<GLuint, std::string> shaderFiles;
+        std::map<GLuint, std::filesystem::path> shaderFiles;
 		std::map<GLuint, std::string> shaderSources;
 		std::vector<std::string> varyingsToCapture;
 		bool bindDefaults = true;
@@ -179,7 +179,7 @@ public:
 	// these methods create and compile a shader from source or file
 	// type: GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER_EXT etc.
 	bool setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath = "");
-	bool setupShaderFromFile(GLenum type, string filename);
+    bool setupShaderFromFile(GLenum type, std::filesystem::path filename);
 	
 	// links program with all compiled shaders
 	bool linkProgram();
