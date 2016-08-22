@@ -446,7 +446,7 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 
 PLATFORM_CC=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/clang
 PLATFORM_CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/clang++
-PLATFORM_AR=ar
+PLATFORM_AR=$(NDK_ROOT)/toolchains/arm-linux-androideabi-4.9/prebuilt/$(HOST_PLATFORM)/arm-linux-androideabi/bin/ar
 PLATFORM_LD=$(NDK_ROOT)/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/arm-linux-androideabi/bin/ld
 
 #ifeq (,$(findstring MINGW32_NT,$(shell uname)))
