@@ -155,7 +155,7 @@ float ofWrap(float value, float from, float to){
 		swap(from, to);
 	}
 	float cycle = to - from;
-	if(cycle == 0){
+	if(ofIsFloatEqual(cycle, 0.0f)){
 		return to;
 	}
 	return value - cycle * floor((value - from) / cycle);
