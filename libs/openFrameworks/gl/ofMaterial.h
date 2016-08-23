@@ -111,8 +111,8 @@ public:
     ///
     ///     MAX_LIGHTS                // the total number of lights in the scen
     ///
-    /// And and an array of lights
-    /// each light as the following properties:
+    /// And an array of lights
+    /// each light has the following properties:
     ///
     ///     float lights[i].enabled;
     ///     vec4 lights[i].ambient;
