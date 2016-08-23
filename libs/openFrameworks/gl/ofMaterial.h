@@ -156,13 +156,17 @@ private:
     
     Data data;
 
-    static std::map<std::string, ofShader> shaderNoTexture;
-    static std::map<std::string, ofShader> shaderColor;
-    static std::map<std::string, ofShader> shaderTexture2DColor;
-    static std::map<std::string, ofShader> shaderTextureRectColor;
-    static std::map<std::string, ofShader> shaderTexture2D;
-    static std::map<std::string, ofShader> shaderTextureRect;
-    static std::map<std::string, size_t> shaderLights;
+    struct Shaders{
+        ofShader noTexture;
+        ofShader color;
+        ofShader texture2DColor;
+        ofShader textureRectColor;
+        ofShader texture2D;
+        ofShader textureRect;
+        size_t numLights;
+    };
+    mutable std::shared_ptr<Shaders> shaders;
+    static std::map<std::string, std::weak_ptr<Shaders>> shadersMap;
 	static string vertexShader;
 	static string fragmentShader;
     std::string postFragment;
