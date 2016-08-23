@@ -980,10 +980,10 @@ void ofScale(const glm::vec3 & p);
 /// \param vecX specifies the x coordinates of a vector
 /// \param vecY specifies the y coordinates of a vector
 /// \param vecZ specifies the z coordinates of a vector
-OF_DEPRECATED_MSG("Use the Deg/Rad versions", void ofRotate(float degrees, float vecX, float vecY, float vecZ));
+OF_DEPRECATED_MSG("Use ofRotateDeg or ofRotateRad", void ofRotate(float degrees, float vecX, float vecY, float vecZ));
 
 /// \brief Rotate around the z-axis
-OF_DEPRECATED_MSG("Use the Deg/Rad versions", void ofRotate(float degrees));
+OF_DEPRECATED_MSG("Use ofRotateDeg or ofRotateRad", void ofRotate(float degrees));
 
 /// \brief Produces a rotation around the X-axis of our coordinate
 /// system represented by the vector (1,0,0).
@@ -994,7 +994,7 @@ OF_DEPRECATED_MSG("Use the Deg/Rad versions", void ofRotate(float degrees));
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
-OF_DEPRECATED_MSG("Use the Deg/Rad versions", void ofRotateX(float degrees));
+OF_DEPRECATED_MSG("Use ofRotateXDeg or ofRotateXRad", void ofRotateX(float degrees));
 
 /// \brief Produces a rotation around the Y-axis of our coordinate
 /// system represented by the vector (0,1,0).
@@ -1005,7 +1005,7 @@ OF_DEPRECATED_MSG("Use the Deg/Rad versions", void ofRotateX(float degrees));
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
-OF_DEPRECATED_MSG("Use the Deg/Rad versions", void ofRotateY(float degrees));
+OF_DEPRECATED_MSG("Use ofRotateYDeg or ofRotateYRad", void ofRotateY(float degrees));
 
 /// \brief Produces a rotation around the Z-axis of our coordinate
 /// system represented by the vector (0,0,1).
@@ -1016,7 +1016,7 @@ OF_DEPRECATED_MSG("Use the Deg/Rad versions", void ofRotateY(float degrees));
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
-OF_DEPRECATED_MSG("Use the Deg/Rad versions", void ofRotateZ(float degrees));
+OF_DEPRECATED_MSG("Use ofRotateZDeg or ofRotateZRad", void ofRotateZ(float degrees));
 
 /// \brief Produces a rotation around the vector (vecX,vecY,vecZ).
 ///
