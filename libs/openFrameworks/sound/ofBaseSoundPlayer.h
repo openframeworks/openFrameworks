@@ -10,17 +10,17 @@
 // ofBaseSoundPlayer
 //----------------------------------------------------------
 class ofBaseSoundPlayer {
-	
+
 public:
-	
+
 	ofBaseSoundPlayer(){};
 	virtual ~ofBaseSoundPlayer(){};
-	
-    virtual bool load(std::filesystem::path fileName, bool stream = false)=0;
+
+    virtual bool load(const std::filesystem::path& fileName, bool stream = false)=0;
 	virtual void unload()=0;
 	virtual void play() = 0;
 	virtual void stop() = 0;
-	
+
 	virtual void setVolume(float vol) = 0;
 	virtual void setPan(float vol) = 0; // -1 = left, 1 = right
 	virtual void setSpeed(float spd) = 0;
@@ -37,5 +37,5 @@ public:
 	virtual float getPan() const = 0;
 	virtual bool isLoaded() const = 0;
 	virtual float getVolume() const = 0;
-	
+
 };

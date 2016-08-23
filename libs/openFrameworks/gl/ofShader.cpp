@@ -187,12 +187,12 @@ ofShader & ofShader::operator=(ofShader && mom){
 }
 
 //--------------------------------------------------------------
-bool ofShader::load(std::filesystem::path shaderName) {
+bool ofShader::load(const std::filesystem::path& shaderName) {
     return load(shaderName.string() + ".vert", shaderName.string() + ".frag");
 }
 
 //--------------------------------------------------------------
-bool ofShader::load(std::filesystem::path vertName, std::filesystem::path fragName, std::filesystem::path geomName) {
+bool ofShader::load(const std::filesystem::path& vertName, const std::filesystem::path& fragName, const std::filesystem::path& geomName) {
 	if(vertName.empty() == false) setupShaderFromFile(GL_VERTEX_SHADER, vertName);
 	if(fragName.empty() == false) setupShaderFromFile(GL_FRAGMENT_SHADER, fragName);
 #ifndef TARGET_OPENGLES
@@ -206,7 +206,7 @@ bool ofShader::load(std::filesystem::path vertName, std::filesystem::path fragNa
 
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
 //--------------------------------------------------------------
-bool ofShader::loadCompute(std::filesystem::path shaderName) {
+bool ofShader::loadCompute(const std::filesystem::path& shaderName) {
 	return setupShaderFromFile(GL_COMPUTE_SHADER, shaderName) && linkProgram();
 }
 #endif
@@ -228,7 +228,7 @@ bool ofShader::setup(const Settings & settings) {
 			return false;
 		}
 	}
-	
+
 	if (ofIsGLProgrammableRenderer() && settings.bindDefaults) {
 		bindDefaults();
 	}
@@ -289,7 +289,7 @@ bool ofShader::setupShaderFromFile(GLenum type, std::filesystem::path filename) 
 //--------------------------------------------------------------
 bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath) {
     unload();
-    
+
 	// create program if it doesn't exist already
 	checkAndCreateProgram();
 	GLuint clearErrors = glGetError(); //needed for some users to clear gl errors
@@ -303,10 +303,10 @@ bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDi
 		ofLogError("ofShader") << "setupShaderFromSource(): failed creating " << nameForType(type) << " shader";
 		return false;
 	} else {
-		// if the shader object has been allocated successfully on the GPU 
+		// if the shader object has been allocated successfully on the GPU
 		// we must retain it so that it can be de-allocated again, once
 		// this ofShader object has been discarded, or re-allocated.
-		// we need to do this at this point in the code path, since early 
+		// we need to do this at this point in the code path, since early
 		// return statements might prevent us from retaining later.
 		retainShader(shader);
 	}
@@ -315,8 +315,8 @@ bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDi
 	string src = parseForIncludes( source , sourceDirectoryPath);
 
 	// store source code (that's the expanded source with all includes copied in)
-	// we need to store this here, and before shader compilation, 
-	// so that any shader compilation errors can be 
+	// we need to store this here, and before shader compilation,
+	// so that any shader compilation errors can be
 	// traced down to the correct shader source code line.
 	shaders[type] = { type, shader, source, src, sourceDirectoryPath };
 
@@ -325,7 +325,7 @@ bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDi
 	int ssize = src.size();
 	glShaderSource(shader, 1, &sptr, &ssize);
 	glCompileShader(shader);
-	
+
 	// check compile status
 	GLint status = GL_FALSE;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
@@ -334,7 +334,7 @@ bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDi
         ofLogError("ofShader") << "setupShaderFromSource(): OpenGL generated error " << err << " trying to get the compile status for a " << nameForType(type) << " shader, does your video card support this?";
         return false;
     }
-    
+
 	if(status == GL_TRUE){
 		ofLogVerbose("ofShader") << "setupShaderFromSource(): " << nameForType(type) + " shader compiled";
 #ifdef TARGET_EMSCRIPTEN
@@ -361,12 +361,12 @@ string ofShader::parseForIncludes( const string& source, const string& sourceDir
 }
 
 string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const string& sourceDirectoryPath) {
-    
+
 	if ( level > 32 ) {
 		ofLogError( "ofShader", "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
 		return "";
 	}
-	
+
 	stringstream output;
 	stringstream input;
 	input << source;
@@ -375,71 +375,71 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		filename_ = "";
 		std::istringstream s(s_);
 		s >> std::ws; // eat up any leading whitespace.
-		
+
 		if (s.peek() != '#') return false;
 		// -----| invariant: found '#'
 		s.seekg(1, std::ios::cur); // move forward one character
-		
+
 		std::string p, i, f;
-		
+
 		// while skipping whitespace, read in tokens for: pragma, include, and filename
 		s >> std::skipws >> p >> i >> f;
-		
+
 		if (p.empty() || i.empty() || (f.size() < 2) ) return false;
 		// -----| invariant: all tokens have values
-		
+
 		if (p != "pragma") return false;
 		if (i != "include") return false;
-		
+
 		// first and last character of filename token must match and be either
 		// '<' and '>', or '"
-		
+
 		if (f[0] == '<' && f[f.size()-1] != '>') return false; //< mismatching brackets
-		
+
 		if ((f[0] == '"' || f[0] == '\'') && (f[0] != f[f.size()-1])) return false; // mismatching quotes
-		
+
 		// invariant: filename properly quoted.
-		
+
 		filename_ = f.substr(1,f.size()-2);
-		
+
 		return true;
 	};
-	
+
 	// once std::regex is available across the board, use this regex in favour of the above lambda:
 	// std::regex re("^\\s*#\\s*pragma\\s+include\\s+[\"<](.*)[\">].*");
-	
+
 	string line;
 	while( std::getline( input, line ) ) {
 
 		string include;
-		
+
 		if (!match_pragma_include(line, include)){
 			output << line << endl;
 			continue;
 		};
-		
+
 		// --------| invariant: '#pragma include' has been requested
-		
+
 		if ( std::find( included.begin(), included.end(), include ) != included.end() ) {
 			ofLogVerbose("ofShader") << include << " already included";
 			continue;
 		}
-		
+
 		// we store the absolute paths so as have (more) unique file identifiers.
-		
+
 		include = ofFile(ofFilePath::join(sourceDirectoryPath, include)).getAbsolutePath();
 		included.push_back( include );
-		
+
 		ofBuffer buffer = ofBufferFromFile( include );
 		if ( !buffer.size() ) {
 			ofLogError("ofShader") <<"Could not open glsl include file " << include;
 			continue;
 		}
-		
+
 		string currentDir = ofFile(include).getEnclosingDirectory();
 		output << parseForIncludes( buffer.getText(), included, level + 1, currentDir ) << endl;
 	}
-	
+
 	return output.str();
 }
 
@@ -504,7 +504,7 @@ bool ofShader::checkProgramLinkStatus(GLuint program) {
 		ofLogError("ofShader") << "checkProgramLinkStatus(): program failed to link";
 		checkProgramInfoLog(program);
 		return false;
-	}										  
+	}
 	return true;
 }
 
@@ -1070,7 +1070,7 @@ void ofShader::setUniforms(const ofParameterGroup & parameters) const{
 		}
 	}
 }
-	
+
 //--------------------------------------------------------------
 void ofShader::setUniformMatrix3f(const string & name, const glm::mat3 & m, int count)  const{
 	if(bLoaded) {
@@ -1299,10 +1299,10 @@ void ofShader::printActiveUniforms()  const{
 	GLint numUniforms = 0;
 	glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &numUniforms);
 	ofLogNotice("ofShader") << numUniforms << " uniforms";
-	
+
 	GLint uniformMaxLength = 0;
 	glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniformMaxLength);
-	
+
 	GLint count = -1;
 	GLenum type = 0;
 	GLchar* uniformName = new GLchar[uniformMaxLength];
@@ -1328,10 +1328,10 @@ void ofShader::printActiveAttributes()  const{
 	GLint numAttributes = 0;
 	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &numAttributes);
 	ofLogNotice("ofShader") << numAttributes << " attributes";
-	
+
 	GLint attributeMaxLength = 0;
 	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &attributeMaxLength);
-	
+
 	GLint count = -1;
 	GLenum type = 0;
 	GLchar* attributeName = new GLchar[attributeMaxLength];

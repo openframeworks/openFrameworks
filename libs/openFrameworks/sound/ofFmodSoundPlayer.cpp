@@ -155,9 +155,9 @@ ofFmodSoundPlayer::~ofFmodSoundPlayer(){
 // this should only be called once
 void ofFmodSoundPlayer::initializeFmod(){
 	if(!bFmodInitialized_){
-		
+
 		FMOD_System_Create(&sys);
-		
+
 		// set buffersize, keep number of buffers
 		unsigned int bsTmp;
 		int nbTmp;
@@ -185,9 +185,9 @@ void ofFmodSoundPlayer::closeFmod(){
 }
 
 //------------------------------------------------------------
-bool ofFmodSoundPlayer::load(std::filesystem::path fileName, bool stream){
+bool ofFmodSoundPlayer::load(const std::filesystem::path& _fileName, bool stream){
 
-	fileName = ofToDataPath(fileName);
+	std::filesystem::path fileName = ofToDataPath(_fileName);
 
 	// fmod uses IO posix internally, might have trouble
 	// with unicode paths...

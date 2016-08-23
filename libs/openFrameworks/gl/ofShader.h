@@ -24,11 +24,11 @@ public:
 	ofShader & operator=(const ofShader & shader);
     ofShader(ofShader && shader);
     ofShader & operator=(ofShader && shader);
-	
-    bool load(std::filesystem::path shaderName);
-    bool load(std::filesystem::path vertName, std::filesystem::path fragName, std::filesystem::path geomName="");
+
+    bool load(const std::filesystem::path& shaderName);
+    bool load(const std::filesystem::path& vertName, const std::filesystem::path& fragName, const std::filesystem::path& geomName="");
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
-    bool loadCompute(std::filesystem::path shaderName);
+    bool loadCompute(const std::filesystem::path& shaderName);
 #endif
 
 	struct Settings {
@@ -64,17 +64,17 @@ public:
 #if !defined(TARGET_OPENGLES)
 	bool setup(const TransformFeedbackSettings & settings);
 #endif
-	
+
 	// these are essential to call before linking the program with geometry shaders
 	void setGeometryInputType(GLenum type); // type: GL_POINTS, GL_LINES, GL_LINES_ADJACENCY_EXT, GL_TRIANGLES, GL_TRIANGLES_ADJACENCY_EXT
 	void setGeometryOutputType(GLenum type); // type: GL_POINTS, GL_LINE_STRIP or GL_TRIANGLE_STRIP
 	void setGeometryOutputCount(int count);	// set number of output vertices
-	
+
 	int getGeometryMaxOutputCount() const;		// returns maximum number of supported vertices
 
 
 	void unload();
-	
+
 	bool isLoaded() const;
 
 	void begin() const;
@@ -88,7 +88,7 @@ public:
 	void endTransformFeedback(const TransformFeedbackBinding & binding) const;
 	void endTransformFeedback(const std::vector<TransformFeedbackBinding> & binding) const;
 #endif
-	
+
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
 	void dispatchCompute(GLuint x, GLuint y, GLuint z) const;
 #endif
@@ -97,18 +97,18 @@ public:
 	void setUniformTexture(const string & name, const ofBaseHasTexture& img, int textureLocation) const;
 	void setUniformTexture(const string & name, const ofTexture& img, int textureLocation) const;
 	void setUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation) const;
-	
+
 	// set a single uniform value
 	void setUniform1i(const string & name, int v1) const;
 	void setUniform2i(const string & name, int v1, int v2) const;
 	void setUniform3i(const string & name, int v1, int v2, int v3) const;
 	void setUniform4i(const string & name, int v1, int v2, int v3, int v4) const;
-	
+
 	void setUniform1f(const string & name, float v1) const;
 	void setUniform2f(const string & name, float v1, float v2) const;
 	void setUniform3f(const string & name, float v1, float v2, float v3) const;
 	void setUniform4f(const string & name, float v1, float v2, float v3, float v4) const;
-	
+
 	void setUniform2f(const string & name, const glm::vec2 & v) const;
 	void setUniform3f(const string & name, const glm::vec3 & v) const;
 	void setUniform4f(const string & name, const glm::vec4 & v) const;
@@ -119,12 +119,12 @@ public:
 	void setUniform2iv(const string & name, const int* v, int count = 1) const;
 	void setUniform3iv(const string & name, const int* v, int count = 1) const;
 	void setUniform4iv(const string & name, const int* v, int count = 1) const;
-	
+
 	void setUniform1fv(const string & name, const float* v, int count = 1) const;
 	void setUniform2fv(const string & name, const float* v, int count = 1) const;
 	void setUniform3fv(const string & name, const float* v, int count = 1) const;
 	void setUniform4fv(const string & name, const float* v, int count = 1) const;
-	
+
 	void setUniforms(const ofParameterGroup & parameters) const;
 
 	// note: it may be more optimal to use a 4x4 matrix than a 3x3 matrix, if possible
@@ -132,7 +132,7 @@ public:
 	void setUniformMatrix4f(const string & name, const glm::mat4 & m, int count = 1) const;
 
 	GLint getUniformLocation(const string & name) const;
-	
+
 	// set attributes that vary per vertex (look up the location before glBegin)
 	GLint getAttributeLocation(const string & name) const;
 
@@ -151,7 +151,7 @@ public:
 	void setAttribute3s(GLint location, short v1, short v2, short v3) const;
 	void setAttribute4s(GLint location, short v1, short v2, short v3, short v4) const;
 #endif
-	
+
 	void setAttribute1f(GLint location, float v1) const;
 	void setAttribute2f(GLint location, float v1, float v2) const;
 	void setAttribute3f(GLint location, float v1, float v2, float v3) const;
@@ -168,20 +168,20 @@ public:
 	void setAttribute2fv(const string & name, const float* v, GLsizei stride=sizeof(float)*2) const;
 	void setAttribute3fv(const string & name, const float* v, GLsizei stride=sizeof(float)*3) const;
 	void setAttribute4fv(const string & name, const float* v, GLsizei stride=sizeof(float)*4) const;
-	
+
 	void bindAttribute(GLuint location, const string & name) const;
 
 	void printActiveUniforms() const;
 	void printActiveAttributes() const;
-	
+
 
 	// advanced use
-	
+
 	// these methods create and compile a shader from source or file
 	// type: GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER_EXT etc.
 	bool setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath = "");
     bool setupShaderFromFile(GLenum type, std::filesystem::path filename);
-	
+
 	// links program with all compiled shaders
 	bool linkProgram();
 
@@ -192,7 +192,7 @@ public:
 
 	GLuint getProgram() const;
 	GLuint getShader(GLenum type) const;
-	
+
 	bool operator==(const ofShader & other) const;
 	bool operator!=(const ofShader & other) const;
 
@@ -237,9 +237,9 @@ private:
 	void checkProgramInfoLog(GLuint program);
 	bool checkProgramLinkStatus(GLuint program);
 	void checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLevel);
-	
+
 	static string nameForType(GLenum type);
-	
+
     /// @brief			Mimics the #include behaviour of the c preprocessor
 	/// @description	Includes files specified using the
 	///					'#pragma include <filepath>' directive.
@@ -248,7 +248,7 @@ private:
 	/// @note			Includes will be processed up to 32 levels deep
     static string parseForIncludes( const string& source, const string& sourceDirectoryPath = "");
     static string parseForIncludes( const string& source, vector<string>& included, int level = 0, const string& sourceDirectoryPath = "");
-	
+
 	void checkAndCreateProgram();
 #ifdef TARGET_ANDROID
 	void unloadGL();
