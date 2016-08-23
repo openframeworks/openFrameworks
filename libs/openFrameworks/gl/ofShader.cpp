@@ -82,10 +82,12 @@ static void releaseProgram(GLuint id){
 	}
 }
 
+#ifndef TARGET_OPENGLES
 //--------------------------------------------------------------
 ofShader::TransformFeedbackBinding::TransformFeedbackBinding(const ofBufferObject & buffer)
 :size(buffer.size())
 ,buffer(buffer){}
+#endif
 
 //--------------------------------------------------------------
 ofShader::ofShader() :
