@@ -8,11 +8,16 @@
 ofShader ofMaterial::shaderNoTexture;
 ofShader ofMaterial::shaderTexture2D;
 ofShader ofMaterial::shaderTextureRect;
+ofShader ofMaterial::shaderTexture2DColor;
+ofShader ofMaterial::shaderTextureRectColor;
+ofShader ofMaterial::shaderColor;
 bool ofMaterial::shadersInitialized = false;
 size_t ofMaterial::shaderLights = 0;
 
-static string vertexSource(string defaultHeader, int maxLights, bool hasTexture);
-static string fragmentSource(string defaultHeader, int maxLights, bool hasTexture);
+namespace{
+string vertexSource(string defaultHeader, int maxLights, bool hasTexture, bool hasColor);
+string fragmentSource(string defaultHeader, int maxLights, bool hasTexture, bool hasColor);
+}
 
 ofMaterial::Data::Data()
 :diffuse(0.8f, 0.8f, 0.8f, 1.0f)
@@ -94,7 +99,7 @@ void ofMaterial::end() const{
 }
 
 void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
-	if(!shadersInitialized || ofLightsData().size()!=shaderLights){
+    if(!shadersInitialized || ofLightsData().size()!=shaderLights){
 #ifndef TARGET_OPENGLES
 		string vertexRectHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
 		string fragmentRectHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_RECTANGLE);
@@ -102,38 +107,68 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 		string vertex2DHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_2D);
 		string fragment2DHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_2D);
 		shaderLights = ofLightsData().size();
-		shaderNoTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,shaderLights,false));
-		shaderNoTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,false));
+        shaderNoTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,shaderLights,false,false));
+        shaderNoTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,false,false));
 		shaderNoTexture.bindDefaults();
 		shaderNoTexture.linkProgram();
 
-		shaderTexture2D.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,shaderLights,true));
-		shaderTexture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,true));
+        shaderTexture2D.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,shaderLights,true,false));
+        shaderTexture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,true,false));
 		shaderTexture2D.bindDefaults();
 		shaderTexture2D.linkProgram();
 
 #ifndef TARGET_OPENGLES
-		shaderTextureRect.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,shaderLights,true));
-		shaderTextureRect.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader,shaderLights,true));
+        shaderTextureRect.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,shaderLights,true,false));
+        shaderTextureRect.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader,shaderLights,true,false));
 		shaderTextureRect.bindDefaults();
 		shaderTextureRect.linkProgram();
+#endif
+
+        shaderColor.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,shaderLights,false,true));
+        shaderColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,false,true));
+        shaderColor.bindDefaults();
+        shaderColor.linkProgram();
+
+
+        shaderTexture2DColor.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,shaderLights,true,true));
+        shaderTexture2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,true,true));
+        shaderTexture2DColor.bindDefaults();
+        shaderTexture2DColor.linkProgram();
+
+#ifndef TARGET_OPENGLES
+        shaderTextureRectColor.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,shaderLights,true,true));
+        shaderTextureRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader,shaderLights,true,true));
+        shaderTextureRectColor.bindDefaults();
+        shaderTextureRectColor.linkProgram();
 #endif
 
 		shadersInitialized = true;
 	}
 }
 
-const ofShader & ofMaterial::getShader(int textureTarget, ofGLProgrammableRenderer & renderer) const{
-	initShaders(renderer);
+const ofShader & ofMaterial::getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const{
+    initShaders(renderer);
 	switch(textureTarget){
 	case OF_NO_TEXTURE:
-		return shaderNoTexture;
+        if(geometryHasColor){
+            return shaderColor;
+        }else{
+            return shaderNoTexture;
+        }
 		break;
 	case GL_TEXTURE_2D:
-		return shaderTexture2D;
+        if(geometryHasColor){
+            return shaderTexture2DColor;
+        }else{
+            return shaderTexture2D;
+        }
 		break;
-	default:
-		return shaderTextureRect;
+    default:
+        if(geometryHasColor){
+            return shaderTextureRectColor;
+        }else{
+            return shaderTextureRect;
+        }
 		break;
 	}
 }
@@ -203,9 +238,12 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 static const string vertexShader = R"(
 	OUT vec2 outtexcoord; // pass the texCoord if needed
 	OUT vec3 transformedNormal;
-	OUT vec3 eyePosition3;
+    OUT vec3 eyePosition3;
+#if HAS_COLOR
+    OUT vec4 v_color;
+#endif
 
-	IN vec4 position;
+    IN vec4 position;
 	IN vec4 color;
 	IN vec4 normal;
 	IN vec2 texcoord;
@@ -224,7 +262,10 @@ static const string vertexShader = R"(
 		transformedNormal = normalize(tempNormal);
 		eyePosition3 = (eyePosition.xyz) / eyePosition.w;
 
-		outtexcoord = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
+        outtexcoord = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
+        #if HAS_COLOR
+            v_color = color;
+        #endif
 		gl_Position = modelViewProjectionMatrix * position;
 	}
 )";
@@ -234,7 +275,10 @@ static const string fragmentShader = R"(
 	IN vec2 outtexcoord; // pass the texCoord if needed
 	IN vec3 transformedNormal;
 	// Eye-coordinate position of vertex
-	IN vec3 eyePosition3;
+    IN vec3 eyePosition3;
+#if HAS_COLOR
+    IN vec4 v_color;
+#endif
 
 
 	struct lightData
@@ -300,7 +344,7 @@ static const string fragmentShader = R"(
 
 
 		// Compute attenuation
-		attenuation = 1.0 / (light.constantAttenuation + light.linearAttenuation * d + light.quadraticAttenuation * d * d);
+        attenuation = 1.0 / (light.constantAttenuation + light.linearAttenuation * d + light.quadraticAttenuation * d * d);
 
 		// Normalize the vector from surface to light position
 		VP = normalize(VP);
@@ -308,9 +352,8 @@ static const string fragmentShader = R"(
 		nDotHV = max(0.0, dot(normal, halfVector));
 		nDotVP = max(0.0, dot(normal, VP));
 
-
-		ambient += light.ambient.rgb * attenuation;
-		diffuse += light.diffuse.rgb * nDotVP * attenuation;
+        ambient += light.ambient.rgb * attenuation;
+        diffuse += light.diffuse.rgb * nDotVP * attenuation;
 #ifndef TARGET_OPENGLES
 #define SPECULAR_REFLECTION
 #endif
@@ -325,7 +368,7 @@ static const string fragmentShader = R"(
 		vec3 specularReflection = attenuation * vec3(light.specular.rgb)
 		  * mix(vec3(mat_specular.rgb), vec3(1.0), w)
 		  * pow(nDotHV, mat_shininess);
-		specular += mix(vec3(0.0), specularReflection, step(0.0000001, nDotVP));
+        specular += mix(vec3(0.0), specularReflection, step(0.0000001, nDotVP));
 #endif
 	}
 
@@ -460,29 +503,38 @@ static const string fragmentShader = R"(
 
 		////////////////////////////////////////////////////////////
 		// now add the material info
-		#ifdef HAS_TEXTURE
+        #if HAS_TEXTURE && !HAS_COLOR
 			vec4 tex = TEXTURE(tex0, outtexcoord);
-			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * tex + vec4(specular,1.0) * mat_specular + mat_emissive;
-		#else
-			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * mat_diffuse + vec4(specular,1.0) * mat_specular + mat_emissive;
-		#endif
+            vec4 localColor = vec4(ambient,1.0) * tex + vec4(diffuse,1.0) * tex + vec4(specular,1.0) * mat_specular + mat_emissive;
+        #elif HAS_TEXTURE && HAS_COLOR
+            vec4 tex = TEXTURE(tex0, outtexcoord);
+            vec4 localColor = vec4(ambient,1.0) * tex * v_color + vec4(diffuse,1.0) * tex * v_color + vec4(specular,1.0) * mat_specular + mat_emissive;
+        #elif HAS_COLOR
+            vec4 localColor = vec4(ambient,1.0) * v_color + vec4(diffuse,1.0) * v_color + vec4(specular,1.0) * mat_specular + mat_emissive;
+        #else
+            vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * mat_diffuse + vec4(specular,1.0) * mat_specular + mat_emissive;
+        #endif
 		FRAG_COLOR = clamp( localColor, 0.0, 1.0 );
 	}
 )";
 
+namespace{
+    string shaderHeader(string header, int maxLights, bool hasTexture, bool hasColor){
+        header += "#define MAX_LIGHTS " + ofToString(max(1,maxLights)) + "\n";
+        if(hasTexture){
+            header += "#define HAS_TEXTURE 1\n";
+        }
+        if(hasColor){
+            header += "#define HAS_COLOR 1\n";
+        }
+        return header;
+    }
 
-static string shaderHeader(string header, int maxLights, bool hasTexture){
-	header += "#define MAX_LIGHTS " + ofToString(max(1,maxLights)) + "\n";
-	if(hasTexture){
-		header += "#define HAS_TEXTURE\n";
-	}
-	return header;
-}
+    string vertexSource(string defaultHeader, int maxLights, bool hasTexture, bool hasColor){
+        return shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + vertexShader;
+    }
 
-static string vertexSource(string defaultHeader, int maxLights, bool hasTexture){
-	return shaderHeader(defaultHeader,maxLights,hasTexture) + vertexShader;
-}
-
-static string fragmentSource(string defaultHeader, int maxLights, bool hasTexture){
-	return shaderHeader(defaultHeader,maxLights,hasTexture) + fragmentShader;
+    string fragmentSource(string defaultHeader, int maxLights, bool hasTexture, bool hasColor){
+        return shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + fragmentShader;
+    }
 }

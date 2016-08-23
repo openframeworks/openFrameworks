@@ -2014,7 +2014,7 @@ public:
 	/// \brief create and return a shader used to implement the materials effect for a given renderer
 	/// \param textureTarget an implementation-specific value to specify the type of shader to use
 	/// \param renderer programmable renderer instance to create the material shader for
-	virtual const ofShader & getShader(int textureTarget, ofGLProgrammableRenderer & renderer) const=0;
+    virtual const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const=0;
 	
 	/// \brief upload the given renderer's normal matrix to the material shader
 	/// \param shader the material shader, created by getShader()
