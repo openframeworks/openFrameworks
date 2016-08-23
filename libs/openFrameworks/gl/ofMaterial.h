@@ -77,13 +77,16 @@ public:
 
 private:
 	void initShaders(ofGLProgrammableRenderer & renderer) const;
-	const ofShader & getShader(int textureTarget, ofGLProgrammableRenderer & renderer) const;
+    const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const;
 	void updateMaterial(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
 	void updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
     
     Data data;
 
 	static ofShader shaderNoTexture;
+    static ofShader shaderColor;
+    static ofShader shaderTexture2DColor;
+    static ofShader shaderTextureRectColor;
 	static ofShader shaderTexture2D;
 	static ofShader shaderTextureRect;
 	static bool shadersInitialized;
