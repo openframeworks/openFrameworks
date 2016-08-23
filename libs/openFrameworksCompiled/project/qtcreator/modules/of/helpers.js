@@ -117,7 +117,9 @@ function findSourceRecursive(dir){
                   ,'-or', '-name', '*.S'
                   ,'-or', '-name', '*.c'
                   ,'-or', '-name', '*.inl'
-                  ,'-or', '-name', '*.glsl'];
+                  ,'-or', '-name', '*.glsl'
+                  ,'-or', '-name', '*.vert'
+                  ,'-or', '-name', '*.frag'];
     find.exec("find", params);
     if(find.exitCode()!==0){
         find.exec("C:\\msys64\\usr\\bin\\find", params);
