@@ -5,7 +5,7 @@
 #include "ofGLProgrammableRenderer.h"
 #include "ofAppRunner.h"
 
-std::map<std::string, std::weak_ptr<ofMaterial::Shaders>> ofMaterial::shadersMap;
+std::map<ofGLProgrammableRenderer*, std::map<std::string, std::weak_ptr<ofMaterial::Shaders>>> ofMaterial::shadersMap;
 
 namespace{
 string vertexSource(string defaultHeader, int maxLights, bool hasTexture, bool hasColor);
@@ -92,19 +92,20 @@ void ofMaterial::end() const{
 }
 
 void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
-    if(shaders == nullptr || shaders->numLights != ofLightsData().size()){
-        if(shadersMap.find(postFragment)!=shadersMap.end()){
-            auto newShaders = shadersMap[postFragment].lock();
+    auto rendererShaders = shaders.find(&renderer);
+    if(rendererShaders == shaders.end() || rendererShaders->second->numLights != ofLightsData().size()){
+        if(shadersMap[&renderer].find(postFragment)!=shadersMap[&renderer].end()){
+            auto newShaders = shadersMap[&renderer][postFragment].lock();
             if(newShaders == nullptr || newShaders->numLights != ofLightsData().size()){
-                shadersMap.erase(postFragment);
-                shaders = nullptr;
+                shadersMap[&renderer].erase(postFragment);
+                shaders[&renderer] = nullptr;
             }else{
-                shaders = newShaders;
+                shaders[&renderer] = newShaders;
             }
         }
     }
 
-    if(shaders == nullptr){
+    if(shaders[&renderer] == nullptr){
         #ifndef TARGET_OPENGLES
             string vertexRectHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
             string fragmentRectHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_RECTANGLE);
@@ -112,44 +113,44 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
         string vertex2DHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_2D);
         string fragment2DHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_2D);
         auto numLights = ofLightsData().size();
-        shaders.reset(new Shaders);
-        shaders->numLights = numLights;
-        shaders->noTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,false,false));
-        shaders->noTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,postFragment,numLights,false,false));
-        shaders->noTexture.bindDefaults();
-        shaders->noTexture.linkProgram();
+        shaders[&renderer].reset(new Shaders);
+        shaders[&renderer]->numLights = numLights;
+        shaders[&renderer]->noTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,false,false));
+        shaders[&renderer]->noTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,postFragment,numLights,false,false));
+        shaders[&renderer]->noTexture.bindDefaults();
+        shaders[&renderer]->noTexture.linkProgram();
 
-        shaders->texture2D.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,true,false));
-        shaders->texture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,postFragment,numLights,true,false));
-        shaders->texture2D.bindDefaults();
-        shaders->texture2D.linkProgram();
-
-        #ifndef TARGET_OPENGLES
-            shaders->textureRect.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,numLights,true,false));
-            shaders->textureRect.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader,postFragment,numLights,true,false));
-            shaders->textureRect.bindDefaults();
-            shaders->textureRect.linkProgram();
-        #endif
-
-        shaders->color.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,false,true));
-        shaders->color.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,postFragment,numLights,false,true));
-        shaders->color.bindDefaults();
-        shaders->color.linkProgram();
-
-
-        shaders->texture2DColor.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,true,true));
-        shaders->texture2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,postFragment,numLights,true,true));
-        shaders->texture2DColor.bindDefaults();
-        shaders->texture2DColor.linkProgram();
+        shaders[&renderer]->texture2D.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,true,false));
+        shaders[&renderer]->texture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,postFragment,numLights,true,false));
+        shaders[&renderer]->texture2D.bindDefaults();
+        shaders[&renderer]->texture2D.linkProgram();
 
         #ifndef TARGET_OPENGLES
-            shaders->textureRectColor.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,numLights,true,true));
-            shaders->textureRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader,postFragment,numLights,true,true));
-            shaders->textureRectColor.bindDefaults();
-            shaders->textureRectColor.linkProgram();
+            shaders[&renderer]->textureRect.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,numLights,true,false));
+            shaders[&renderer]->textureRect.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader,postFragment,numLights,true,false));
+            shaders[&renderer]->textureRect.bindDefaults();
+            shaders[&renderer]->textureRect.linkProgram();
         #endif
 
-        shadersMap[postFragment] = shaders;
+        shaders[&renderer]->color.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,false,true));
+        shaders[&renderer]->color.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,postFragment,numLights,false,true));
+        shaders[&renderer]->color.bindDefaults();
+        shaders[&renderer]->color.linkProgram();
+
+
+        shaders[&renderer]->texture2DColor.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,true,true));
+        shaders[&renderer]->texture2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,postFragment,numLights,true,true));
+        shaders[&renderer]->texture2DColor.bindDefaults();
+        shaders[&renderer]->texture2DColor.linkProgram();
+
+        #ifndef TARGET_OPENGLES
+            shaders[&renderer]->textureRectColor.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,numLights,true,true));
+            shaders[&renderer]->textureRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader,postFragment,numLights,true,true));
+            shaders[&renderer]->textureRectColor.bindDefaults();
+            shaders[&renderer]->textureRectColor.linkProgram();
+        #endif
+
+        shadersMap[&renderer][postFragment] = shaders[&renderer];
     }
 
 }
@@ -159,23 +160,23 @@ const ofShader & ofMaterial::getShader(int textureTarget, bool geometryHasColor,
 	switch(textureTarget){
 	case OF_NO_TEXTURE:
         if(geometryHasColor){
-            return shaders->color;
+            return shaders[&renderer]->color;
         }else{
-            return shaders->noTexture;
+            return shaders[&renderer]->noTexture;
         }
 		break;
 	case GL_TEXTURE_2D:
         if(geometryHasColor){
-            return shaders->texture2DColor;
+            return shaders[&renderer]->texture2DColor;
         }else{
-            return shaders->texture2D;
+            return shaders[&renderer]->texture2D;
         }
 		break;
     default:
         if(geometryHasColor){
-            return shaders->textureRectColor;
+            return shaders[&renderer]->textureRectColor;
         }else{
-            return shaders->textureRect;
+            return shaders[&renderer]->textureRect;
         }
 		break;
 	}
@@ -245,7 +246,7 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 
 void ofMaterial::setPostFragment(const std::string & source){
     if(postFragment != source){
-        shaders.reset();
+        shaders.clear();
         postFragment = source;
     }
 }
