@@ -165,8 +165,8 @@ private:
         ofShader textureRect;
         size_t numLights;
     };
-    mutable std::shared_ptr<Shaders> shaders;
-    static std::map<std::string, std::weak_ptr<Shaders>> shadersMap;
+    mutable std::map<ofGLProgrammableRenderer*,std::shared_ptr<Shaders>> shaders;
+    static std::map<ofGLProgrammableRenderer*, std::map<std::string,std::weak_ptr<Shaders>>> shadersMap;
 	static string vertexShader;
 	static string fragmentShader;
     std::string postFragment;
