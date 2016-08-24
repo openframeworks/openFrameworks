@@ -214,6 +214,14 @@ void ofLogToFile(const std::filesystem::path & path, bool append=false);
 /// after ofLogToFile or ofSetLoggerChannel has been called.
 void ofLogToConsole();
 
+#ifdef TARGET_WIN32
+/// Set the logging to ouptut to windows debug view or visual studio console
+/// 
+/// This is the default state and can be called to reset console logging
+/// after ofLogToFile or ofSetLoggerChannel has been called.
+void ofLogToDebugView();
+#endif
+
 /// \brief Set the logger to use a custom logger channel.
 ///
 /// Custom logger channels must extend ofBaseLoggerChannel. Custom log channels
@@ -633,6 +641,18 @@ public:
 	void log(ofLogLevel level, const string & module, const char* format, ...) OF_PRINTF_ATTR(4, 5);
 	void log(ofLogLevel level, const string & module, const char* format, va_list args);
 };
+
+#ifdef TARGET_WIN32
+/// A logger channel that logs its messages to windows debug view and visual studio output.
+class ofDebugViewLoggerChannel : public ofBaseLoggerChannel {
+public:
+	/// \brief Destroy the console logger channel.
+	virtual ~ofDebugViewLoggerChannel() {};
+	void log(ofLogLevel level, const string & module, const string & message);
+	void log(ofLogLevel level, const string & module, const char* format, ...) OF_PRINTF_ATTR(4, 5);
+	void log(ofLogLevel level, const string & module, const char* format, va_list args);
+};
+#endif
 
 /// \brief A logger channel that logs its messages to a log file.
 class ofFileLoggerChannel: public ofBaseLoggerChannel{
