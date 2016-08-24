@@ -1089,6 +1089,7 @@ void ofShader::setDefineConstantTemp(const string & name, T value){
             auto & shader = shader_pair.second;
             shader.expandedSource = std::regex_replace(shader.expandedSource, re_define, "#define " + name + " " + std::to_string(value));
         }
+#ifndef TARGET_OPENGLES
         if(bLoadedAsXFB){
             auto settings = TransformFeedbackSettings();
             settings.bindDefaults = boundDefaults;
@@ -1099,13 +1100,16 @@ void ofShader::setDefineConstantTemp(const string & name, T value){
             settings.bufferMode = xfbBufferMode;
             setup(settings);
         }else{
+#endif
             auto settings = Settings();
             settings.bindDefaults = boundDefaults;
             for(auto & shader_pair: shaders){
                 settings.shaderSources[shader_pair.first] = shader_pair.second.expandedSource;
             }
             setup(settings);
+#ifndef TARGET_OPENGLES
         }
+#endif
     }
 #endif
 }
@@ -1129,6 +1133,7 @@ void ofShader::setDefineConstant(const string & name, bool value){
             auto & shader = shader_pair.second;
             shader.expandedSource = std::regex_replace(shader.expandedSource, re_define, "#define " + name + " " + std::to_string(value));
         }
+#ifndef TARGET_OPENGLES
         if(bLoadedAsXFB){
             auto settings = TransformFeedbackSettings();
             settings.bindDefaults = boundDefaults;
@@ -1139,13 +1144,16 @@ void ofShader::setDefineConstant(const string & name, bool value){
             settings.bufferMode = xfbBufferMode;
             setup(settings);
         }else{
+#endif
             auto settings = Settings();
             settings.bindDefaults = boundDefaults;
             for(auto & shader_pair: shaders){
                 settings.shaderSources[shader_pair.first] = shader_pair.second.expandedSource;
             }
             setup(settings);
+#ifndef TARGET_OPENGLES
         }
+#endif
     }
 #endif
 }
@@ -1162,6 +1170,7 @@ void ofShader::setConstantTemp(const string & name, const string & type, T value
             auto & shader = shader_pair.second;
             shader.expandedSource = std::regex_replace(shader.expandedSource, re_define, "const " + type + " " + name + " " + std::to_string(value) + ";");
         }
+#ifndef TARGET_OPENGLES
         if(bLoadedAsXFB){
             auto settings = TransformFeedbackSettings();
             settings.bindDefaults = boundDefaults;
@@ -1172,13 +1181,16 @@ void ofShader::setConstantTemp(const string & name, const string & type, T value
             settings.bufferMode = xfbBufferMode;
             setup(settings);
         }else{
+#endif
             auto settings = Settings();
             settings.bindDefaults = boundDefaults;
             for(auto & shader_pair: shaders){
                 settings.shaderSources[shader_pair.first] = shader_pair.second.expandedSource;
             }
             setup(settings);
+#ifndef TARGET_OPENGLES
         }
+#endif
     }
 #endif
 }
