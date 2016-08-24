@@ -37,14 +37,11 @@
 
 #include "ofxKinectExtras.h"
 
-#ifndef BUILD_AUDIO
-	#undef OFX_KINECT_EXTRA_FW //Audio / Motor via Audio support is not currently working with libfreenect on win32
-#endif 
-
 #define OFX_KINECT_GRAVITY 9.80665
 
 // context static
 ofxKinectContext ofxKinect::kinectContext;
+float ofxKinect::reconnectWaitTime = 5.0;
 
 //--------------------------------------------------------------------
 ofxKinect::ofxKinect() {
@@ -80,7 +77,8 @@ ofxKinect::ofxKinect() {
 	lastDeviceId = -1;
 	tryCount = 0;
 	timeSinceOpen = 0;
-	bGotData = false;
+	bGotDataVideo = false;
+	bGotDataDepth = false;
 
 	bUseRegistration = false;
 	bNearWhite = true;
@@ -220,8 +218,9 @@ bool ofxKinect::open(int deviceIndex) {
 
 	lastDeviceId = deviceId;
 	timeSinceOpen = ofGetElapsedTimef();
-	bGotData = false;
-
+	bGotDataVideo = false;
+    bGotDataDepth = false;
+    
 	freenect_set_user(kinectDevice, this);
 	freenect_set_depth_buffer(kinectDevice, depthPixelsRawBack.getData());
 	freenect_set_video_buffer(kinectDevice, videoPixelsBack.getData());
@@ -260,7 +259,8 @@ bool ofxKinect::open(string serial) {
     
 	lastDeviceId = deviceId;
 	timeSinceOpen = ofGetElapsedTimef();
-	bGotData = false;
+	bGotDataVideo = false;
+    bGotDataDepth = false;
 	
 	freenect_set_user(kinectDevice, this);
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
@@ -337,10 +337,17 @@ void ofxKinect::update() {
 	if(!bGrabberInited) {
 		return;
 	}
+    
+    //if we aren't grabbing the video stream we don't need to check for video
+    bool bVideoOkay = true;
+    if( bGrabVideo ){
+        bVideoOkay = bGotDataVideo;
+    }
 
-	if(!bNeedsUpdateVideo && !bNeedsUpdateDepth && !bGotData && tryCount < 5 && ofGetElapsedTimef() - timeSinceOpen > 2.0 ){
+    //try reconnect if we don't have color coming in or if we don't have depth coming in
+	if( (!bVideoOkay || !bGotDataDepth ) && tryCount < 5 && ofGetElapsedTimef() - timeSinceOpen > reconnectWaitTime ){
 		close();
-		ofLogWarning("ofxKinect") << "update(): device " << lastDeviceId << " isn't delivering data, reconnecting tries: " << tryCount+1;
+		ofLogWarning("ofxKinect") << "update(): device " << lastDeviceId << " isn't delivering data. depth: " << bGotDataDepth << " color: " << bGotDataVideo <<"  , reconnecting tries: " << tryCount+1;
 		kinectContext.buildDeviceList();
 		open(lastDeviceId);
 		tryCount++;
@@ -350,7 +357,7 @@ void ofxKinect::update() {
 
 	if(bNeedsUpdateVideo){
 		bIsFrameNewVideo = true;
-		bGotData = true;
+		bGotDataVideo = true;
 		tryCount = 0;
 		if(this->lock()) {
             if( videoPixels.getHeight() == videoPixelsIntra.getHeight() ){
@@ -372,7 +379,7 @@ void ofxKinect::update() {
 
 	if(bNeedsUpdateDepth){
 		bIsFrameNewDepth = true;
-		bGotData = true;
+		bGotDataDepth = true;
 		tryCount = 0;
 		if(this->lock()) {
 			swap(depthPixelsRaw, depthPixelsRawIntra);
@@ -741,6 +748,12 @@ int ofxKinect::nextAvailableId() {
 string ofxKinect::nextAvailableSerial() {
 	return kinectContext.nextAvailableSerial();
 }
+
+//---------------------------------------------------------------------------
+void ofxKinect::setReconnectWaitTime(float waitTime) {
+	reconnectWaitTime = waitTime;
+}
+
 
 /* ***** PRIVATE ***** */
 
