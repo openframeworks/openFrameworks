@@ -366,7 +366,7 @@ protected:
 	// for auto connect tries
 	float timeSinceOpen;
     static float reconnectWaitTime;
-	int lastDeviceId;
+	int lastDeviceIndex;
 	bool bGotDataDepth;
     bool bGotDataVideo;
     bool bFirstUpdate;

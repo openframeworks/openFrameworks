@@ -41,7 +41,7 @@
 
 // context static
 ofxKinectContext ofxKinect::kinectContext;
-float ofxKinect::reconnectWaitTime = 5.0;
+float ofxKinect::reconnectWaitTime = 3.0;
 
 //--------------------------------------------------------------------
 ofxKinect::ofxKinect() {
@@ -74,7 +74,7 @@ ofxKinect::ofxKinect() {
     bLedNeedsApplying = false;
 	bHasMotorControl = false;
 	
-	lastDeviceId = -1;
+	lastDeviceIndex = -1;
 	tryCount = 0;
 	timeSinceOpen = 0;
 	bGotDataVideo = false;
@@ -217,7 +217,7 @@ bool ofxKinect::open(int deviceIndex) {
 		bHasMotorControl = true;
 	}
 
-	lastDeviceId = deviceId;
+	lastDeviceIndex = deviceIndex;
 	timeSinceOpen = ofGetElapsedTimef();
 	bGotDataVideo = false;
     bGotDataDepth = false;
@@ -259,7 +259,7 @@ bool ofxKinect::open(string serial) {
 		bHasMotorControl = true;
 	}
     
-	lastDeviceId = deviceId;
+	lastDeviceIndex = kinectContext.getDeviceIndex(serial);
 	timeSinceOpen = ofGetElapsedTimef();
 	bGotDataVideo = false;
     bGotDataDepth = false;
@@ -282,10 +282,6 @@ void ofxKinect::close() {
 		waitForThread(false);
 	}
     
-    if( deviceId != -1 ){
-        kinectContext.close(*this);
-    }
-
 	deviceId = -1;
 	serial = "";
 	bIsFrameNewVideo = false;
@@ -345,6 +341,8 @@ void ofxKinect::update() {
 		return;
 	}
     
+    // - Start handle reconnection
+    
     //we need to do timing for reconnection based on the first update call
     //as a project with a long setup call could exceed the reconnectWaitTime and create a false positive
     if( bFirstUpdate ){
@@ -369,13 +367,14 @@ void ofxKinect::update() {
     //try reconnect if we don't have color coming in or if we don't have depth coming in
 	if( (!bVideoOkay || !bGotDataDepth ) && tryCount < 5 && ofGetElapsedTimef() - timeSinceOpen > reconnectWaitTime ){
 		close();
-		ofLogWarning("ofxKinect") << "update(): device " << lastDeviceId << " isn't delivering data. depth: " << bGotDataDepth << " color: " << bGotDataVideo <<"  , reconnecting tries: " << tryCount+1;
+		ofLogWarning("ofxKinect") << "update(): device " << lastDeviceIndex << " isn't delivering data. depth: " << bGotDataDepth << " color: " << bGotDataVideo <<"  , reconnecting tries: " << tryCount+1;
 		kinectContext.buildDeviceList();
-		open(lastDeviceId);
+		open(lastDeviceIndex);
 		tryCount++;
 		timeSinceOpen = ofGetElapsedTimef();
-		return;
 	}
+
+    // - End handle reconnection
 
 	if(bNeedsUpdateVideo){
 		bIsFrameNewVideo = true;
