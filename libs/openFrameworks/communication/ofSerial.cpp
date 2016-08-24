@@ -152,8 +152,8 @@ void ofSerial::buildDeviceList(){
 
 	#ifdef TARGET_OSX
 
-		prefixMatch.push_back("cu.");
-		prefixMatch.push_back("tty.");
+		prefixMatch.push_back("/dev/cu.");
+		prefixMatch.push_back("/dev/tty.");
 
 	#endif
 
