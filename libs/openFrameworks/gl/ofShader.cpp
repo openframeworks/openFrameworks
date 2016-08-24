@@ -1217,6 +1217,7 @@ void ofShader::setConstantb(const string & name, bool value){
             auto & shader = shader_pair.second;
             shader.expandedSource = std::regex_replace(shader.expandedSource, re_define, "const bool " + name + "=" + (value?"true":"false") + ";");
         }
+#ifndef TARGET_OPENGLES
         if(bLoadedAsXFB){
             auto settings = TransformFeedbackSettings();
             settings.bindDefaults = boundDefaults;
@@ -1227,13 +1228,16 @@ void ofShader::setConstantb(const string & name, bool value){
             settings.bufferMode = xfbBufferMode;
             setup(settings);
         }else{
+#endif
             auto settings = Settings();
             settings.bindDefaults = boundDefaults;
             for(auto & shader_pair: shaders){
                 settings.shaderSources[shader_pair.first] = shader_pair.second.expandedSource;
             }
             setup(settings);
+#ifndef TARGET_OPENGLES
         }
+#endif
     }
 #endif
 }
