@@ -193,6 +193,29 @@ protected:
 		return do_test_eq(t1,t2,v1,v2,testName,"",file,line);
 	}
 
+    template<typename T1, typename T2>
+    bool do_test_ne(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
+        numTestsTotal++;
+        if(t1!=t2){
+            ofLogNotice() << testName << " passed";
+            numTestsPassed++;
+            return true;
+        }else{
+            ofLogError() << testName << " failed " << msg;
+            ofLogError() << "test_eq(" << v1 << ", " << v2 << ")";
+            ofLogError() << "value1: " << v1 << " is " << t1;
+            ofLogError() << "value2: " << v2 << " is " << t2;
+            ofLogError() << file << ": " << line;
+            numTestsFailed++;
+            return false;
+        }
+    }
+
+    template<typename T1, typename T2>
+    bool do_test_ne(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & file, int line){
+        return do_test_ne(t1,t2,v1,v2,testName,"",file,line);
+    }
+
 	template<typename T1, typename T2>
 	bool do_test_gt(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
@@ -297,5 +320,6 @@ private:
 
 #define test(x, ...) this->do_test(x,__VA_ARGS__,__FILE__,__LINE__)
 #define test_eq(x,y, ...) this->do_test_eq(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define test_ne(x,y, ...) this->do_test_ne(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
 #define test_gt(x,y, ...) this->do_test_gt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
 #define test_lt(x,y, ...) this->do_test_lt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)

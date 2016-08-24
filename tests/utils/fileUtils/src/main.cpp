@@ -251,6 +251,19 @@ class ofApp: public ofxUnitTestsApp{
 
 
         //========================================================================
+        {
+#if defined TARGET_LINUX | defined(TARGET_OSX)
+            ofLogNotice() << "";
+            ofLogNotice() << "tests #5221";
+            ofDirectory absDir("/dev");
+            test_ne(absDir.begin()->path().substr(0,4), "/dev","#5521 test1");
+            ofDirectory localDir(".");
+            test_ne(localDir.begin()->path().substr(0,1), "/","#5521 test1");
+#endif
+        }
+
+
+        //========================================================================
 		// clean test files
 		dir.open(".");
 		for(auto f: dir){
