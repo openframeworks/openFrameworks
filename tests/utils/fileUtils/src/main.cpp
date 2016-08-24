@@ -252,13 +252,18 @@ class ofApp: public ofxUnitTestsApp{
 
         //========================================================================
         {
-#if defined TARGET_LINUX | defined(TARGET_OSX)
-            ofLogNotice() << "";
-            ofLogNotice() << "tests #5221";
+			ofLogNotice() << "";
+			ofLogNotice() << "tests #5221";
+#ifndef TARGET_WIN32
             ofDirectory absDir("/dev");
-            test_ne(absDir.begin()->path().substr(0,4), "/dev","#5521 test1");
+            test_ne(absDir.begin()->path().substr(0,4), "/dev","#5521 test absolute dir returns relative paths");
             ofDirectory localDir(".");
-            test_ne(localDir.begin()->path().substr(0,1), "/","#5521 test1");
+            test_ne(localDir.begin()->path().substr(0,1), "/","#5521 test relative dir returns relative paths");
+#else
+			ofDirectory absDir("c:\\");
+			test_ne(absDir.begin()->path().substr(0, 4), "c:\\", "#5521 test absolute dir returns relative paths");
+			ofDirectory localDir(".");
+			test_ne(localDir.begin()->path().substr(1, 2), ":", "#5521 test relative dir returns relative paths");
 #endif
         }
 

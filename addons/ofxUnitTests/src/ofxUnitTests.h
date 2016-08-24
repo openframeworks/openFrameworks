@@ -12,6 +12,8 @@
 #include "ofAppRunner.h"
 #include <string>
 
+constexpr auto APPVEYOR_API_URL = "APPVEYOR_API_URL";
+
 class ofColorsLoggerChannel: public ofBaseLoggerChannel{
 	std::string CON_DEFAULT="\033[0m";
 	std::string CON_BOLD="\033[1m";
@@ -129,7 +131,13 @@ public:
 class ofxUnitTestsApp: public ofBaseApp{
 
     void setup(){
-        ofSetLoggerChannel(logger);
+#ifdef TARGET_WIN32
+		if (ofGetEnv(APPVEYOR_API_URL) != "") {
+			ofSetLoggerChannel(logger);
+		}
+#else
+		ofSetLoggerChannel(logger);
+#endif
 		auto then = ofGetElapsedTimeMillis();
 		run();
 		auto now = ofGetElapsedTimeMillis();
@@ -268,7 +276,6 @@ private:
     }
 
     bool reportAppVeyor(bool passed, uint64_t durationMs){
-        const std::string APPVEYOR_API_URL = "APPVEYOR_API_URL";
         if(ofGetEnv(APPVEYOR_API_URL)!=""){
             //ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then));
             auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
