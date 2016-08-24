@@ -369,6 +369,7 @@ protected:
 	int lastDeviceId;
 	bool bGotDataDepth;
     bool bGotDataVideo;
+    bool bFirstUpdate;
 	int tryCount;
 
 private:

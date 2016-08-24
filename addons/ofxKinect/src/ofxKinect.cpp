@@ -79,6 +79,7 @@ ofxKinect::ofxKinect() {
 	timeSinceOpen = 0;
 	bGotDataVideo = false;
 	bGotDataDepth = false;
+    bFirstUpdate = true;
 
 	bUseRegistration = false;
 	bNearWhite = true;
@@ -220,6 +221,7 @@ bool ofxKinect::open(int deviceIndex) {
 	timeSinceOpen = ofGetElapsedTimef();
 	bGotDataVideo = false;
     bGotDataDepth = false;
+    bFirstUpdate = true;
     
 	freenect_set_user(kinectDevice, this);
 	freenect_set_depth_buffer(kinectDevice, depthPixelsRawBack.getData());
@@ -261,7 +263,8 @@ bool ofxKinect::open(string serial) {
 	timeSinceOpen = ofGetElapsedTimef();
 	bGotDataVideo = false;
     bGotDataDepth = false;
-	
+	bFirstUpdate = true;
+    
 	freenect_set_user(kinectDevice, this);
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
 	freenect_set_video_callback(kinectDevice, &grabVideoFrame);
@@ -278,6 +281,10 @@ void ofxKinect::close() {
 		ofSleepMillis(10);
 		waitForThread(false);
 	}
+    
+    if( deviceId != -1 ){
+        kinectContext.close(*this);
+    }
 
 	deviceId = -1;
 	serial = "";
@@ -338,12 +345,27 @@ void ofxKinect::update() {
 		return;
 	}
     
+    //we need to do timing for reconnection based on the first update call
+    //as a project with a long setup call could exceed the reconnectWaitTime and create a false positive
+    if( bFirstUpdate ){
+        timeSinceOpen = ofGetElapsedTimef();
+        bFirstUpdate = false;
+    }
+    
     //if we aren't grabbing the video stream we don't need to check for video
     bool bVideoOkay = true;
     if( bGrabVideo ){
         bVideoOkay = bGotDataVideo;
+        if( bNeedsUpdateVideo ){
+            bVideoOkay = true;
+            bGotDataVideo = true;
+        }
     }
 
+    if( bNeedsUpdateDepth ){
+        bGotDataDepth = true;
+    }
+    
     //try reconnect if we don't have color coming in or if we don't have depth coming in
 	if( (!bVideoOkay || !bGotDataDepth ) && tryCount < 5 && ofGetElapsedTimef() - timeSinceOpen > reconnectWaitTime ){
 		close();
@@ -357,7 +379,6 @@ void ofxKinect::update() {
 
 	if(bNeedsUpdateVideo){
 		bIsFrameNewVideo = true;
-		bGotDataVideo = true;
 		tryCount = 0;
 		if(this->lock()) {
             if( videoPixels.getHeight() == videoPixelsIntra.getHeight() ){
@@ -379,7 +400,6 @@ void ofxKinect::update() {
 
 	if(bNeedsUpdateDepth){
 		bIsFrameNewDepth = true;
-		bGotDataDepth = true;
 		tryCount = 0;
 		if(this->lock()) {
 			swap(depthPixelsRaw, depthPixelsRawIntra);
