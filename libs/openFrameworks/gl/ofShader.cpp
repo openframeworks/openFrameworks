@@ -788,8 +788,11 @@ void ofShader::unload() {
 	}
 	bLoaded = false;
     boundDefaults = false;
+
+#ifndef TARGET_OPENGLES
     bLoadedAsXFB = false;
     varyingsToCapture.clear();
+#endif
 }
 
 //--------------------------------------------------------------
