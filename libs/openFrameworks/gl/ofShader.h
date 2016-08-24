@@ -127,10 +127,34 @@ public:
 	
 	void setUniforms(const ofParameterGroup & parameters) const;
 
+    /// Changes a numerical define value
+    ///
+    /// Allows to change a define in the shader declared like
+    ///
+    /// #define SOME_FEATURE 1
+    ///
+    /// calling setDefineConstant("SOME_FEATURE", 0);
+    ///
+    /// Be aware that this recompiles the shader which can be
+    /// slow if done often. This is only recommendable for
+    /// values that don't change very often and if they
+    /// were a uniform would introduce runtime evaluated
+    /// conditionals or similar which would slow down the shader
     void setDefineConstant(const string & name, float value);
     void setDefineConstant(const string & name, int value);
     void setDefineConstant(const string & name, bool value);
 
+
+    /// Changes a numerical define value
+    ///
+    /// Allows to change a define in the shader declared like
+    ///
+    /// const float somevalue=10;
+    ///
+    /// calling setConstant1f("somevalue", 20.f);
+    ///
+    /// Be aware that this recompiles the shader which can be
+    /// slow if done often.
     void setConstant1f(const string & name, float value);
     void setConstant1i(const string & name, int value);
     void setConstantb(const string & name, bool value);
@@ -222,10 +246,12 @@ public:
 private:
     GLuint program = 0;
     bool bLoaded = false;
-    bool bLoadedAsXFB = false;
     bool boundDefaults = false;
+#ifndef TARGET_OPENGLES
+    bool bLoadedAsXFB = false;
     GLuint xfbBufferMode = GL_INTERLEAVED_ATTRIBS;
     std::vector<std::string> varyingsToCapture;
+#endif
 
 	struct Shader{
 		GLenum type;
