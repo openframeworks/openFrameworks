@@ -75,6 +75,79 @@ public:
 	void begin() const;
 	void end() const;
 
+    /// Adds a function to the material shader that will get
+    /// executed after all lighting and material calculations
+    ///
+    /// The source passed has to include a function with the
+    /// signature:
+    ///
+    /// vec4 postFragment(vec4 localColor){
+    ///     return localColor;
+    /// }
+    ///
+    /// which will receive the final color after calculating all
+    /// the lights and material and can modify it and return a new color
+    ///
+    /// The function has access to the following variables:
+    ///
+    ///     vec2 v_texcoord;          // texture coordinate
+    ///     vec3 v_normal;            // normal at this fragment
+    ///     vec3 v_transformedNormal; // normal multiplied by the normal matrix
+    ///     vec3 v_eyePosition;       // position of this fragment in eye coordinates
+    ///     vec4 v_color;             // color interpolated from the vertex colors
+    ///     SAMPLER tex0;             // the bound texture if there's any
+    ///
+    ///     vec4 mat_ambient;         // material ambient color
+    ///     vec4 mat_diffuse;         // material diffuse color
+    ///     vec4 mat_specular;        // material specular
+    ///     vec4 mat_emissive;        // material emissive
+    ///     float mat_shininess;      // material shininess
+    ///
+    ///     vec4 global_ambient;      // global ambient light
+    ///     mat4 modelViewMatrix;     // model view matrix
+    ///     mat4 projectionMatrix;    // projection matrix
+    ///     mat4 textureMatrix;       // texture matrix
+    ///     mat4 modelViewProjectionMatrix; // model view projection matrix
+    ///
+    ///     MAX_LIGHTS                // the total number of lights in the scen
+    ///
+    /// And an array of lights
+    /// each light has the following properties:
+    ///
+    ///     float lights[i].enabled;
+    ///     vec4 lights[i].ambient;
+    ///     float lights[i].type;     // 0 = pointlight
+    ///                               // 1 = directionlight
+    ///                               // 2 = spotlight
+    ///                               // 3 = area
+    ///     vec4 lights[i].position;  // where are we
+    ///     vec4 lights[i].diffuse;   // how diffuse
+    ///     vec4 lights[i].specular;  // what kinda specular stuff we got going on?
+    ///
+    ///     // attenuation, how the light attenuates with the distance
+    ///     float lights[i].constantAttenuation;
+    ///     float lights[i].linearAttenuation;
+    ///     float lights[i].quadraticAttenuation;
+    ///
+    ///     // only for spot
+    ///     float lights[i].spotCutoff;
+    ///     float lights[i].spotCosCutoff;
+    ///     float lights[i].spotExponent;
+    ///
+    ///     // spot and area
+    ///     vec3 lights[i].spotDirection;
+    ///
+    ///     // only for directional
+    ///     vec3 lights[i].halfVector;
+    ///
+    ///     // only for area
+    ///     float lights[i].width;
+    ///     float lights[i].height;
+    ///     vec3 lights[i].right;
+    ///     vec3 lights[i].up;
+    ///
+    void setPostFragment(const std::string & source);
+
 private:
 	void initShaders(ofGLProgrammableRenderer & renderer) const;
     const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const;
@@ -83,14 +156,18 @@ private:
     
     Data data;
 
-	static ofShader shaderNoTexture;
-    static ofShader shaderColor;
-    static ofShader shaderTexture2DColor;
-    static ofShader shaderTextureRectColor;
-	static ofShader shaderTexture2D;
-	static ofShader shaderTextureRect;
-	static bool shadersInitialized;
-	static size_t shaderLights;
+    struct Shaders{
+        ofShader noTexture;
+        ofShader color;
+        ofShader texture2DColor;
+        ofShader textureRectColor;
+        ofShader texture2D;
+        ofShader textureRect;
+        size_t numLights;
+    };
+    mutable std::map<ofGLProgrammableRenderer*,std::shared_ptr<Shaders>> shaders;
+    static std::map<ofGLProgrammableRenderer*, std::map<std::string,std::weak_ptr<Shaders>>> shadersMap;
 	static string vertexShader;
 	static string fragmentShader;
+    std::string postFragment;
 };
