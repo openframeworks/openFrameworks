@@ -138,12 +138,22 @@ public:
 	/// setUpAxis
 	void setRelativeYAxis(bool relative=true);
 
+	/// Determine if the Y axis is set to be relative to the 
+	/// camera orientation
+	bool getRelativeYAxis() const;
+
 	/// Set the camera fixed up axis for interactive
-	/// manipulation
+	/// manipulation.
 	void setUpAxis(const glm::vec3 & up);
+
+	/// Get the up axis.
+	const glm::vec3 & getUpAxis() const;
 
 	void enableInertia();
 	void disableInertia();
+
+	/// Determine if intertia is enabled.
+	bool getInertiaEnabled() const;
 
 	/// Set the area bounds for mouse control.
 	/// Uses the full viewport by default.

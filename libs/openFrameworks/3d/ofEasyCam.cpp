@@ -243,8 +243,18 @@ void ofEasyCam::setRelativeYAxis(bool relative){
 }
 
 //----------------------------------------
+bool ofEasyCam::getRelativeYAxis() const{
+	return relativeYAxis;
+}
+
+//----------------------------------------
 void ofEasyCam::setUpAxis(const glm::vec3 & _up){
 	upAxis = _up;
+}
+
+//----------------------------------------
+const glm::vec3 & ofEasyCam::getUpAxis() const{
+	return upAxis;
 }
 
 //----------------------------------------
@@ -255,6 +265,11 @@ void ofEasyCam::enableInertia(){
 //----------------------------------------
 void ofEasyCam::disableInertia(){
 	doInertia = false;
+}
+
+//----------------------------------------
+bool ofEasyCam::getInertiaEnabled() const{
+	return doInertia;
 }
 
 //----------------------------------------
