@@ -66,7 +66,7 @@ void ofxAndroidOkCancelBox(string msg);
 void ofxAndroidYesNoBox(string msg);
 void ofxAndroidAlertTextBox(string question, string text);
 string ofxAndroidGetTextBoxResult();
-bool ofxAndroidAlertListBox(string title, const vector<string> & list);
+bool ofxAndroidAlertListBox(string title, const vector<string> & list, bool multi=false);
 
 void ofxAndroidToast(string msg);
 

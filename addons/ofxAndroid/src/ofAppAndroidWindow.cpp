@@ -590,6 +590,84 @@ Java_cc_openframeworks_OFAndroid_okPressed( JNIEnv*  env, jobject  thiz ){
 	ofNotifyEvent(ofxAndroidEvents().okPressed);
 }
 
+
+// okPressed with string
+void
+Java_cc_openframeworks_OFAndroid_okPressedString( JNIEnv*  env, jobject  thiz, jstring data ){
+	
+	jboolean iscopy;
+	const char *text = env->GetStringUTFChars(data, &iscopy);
+	
+	if(androidApp) androidApp->okPressed(string(text));
+	bool yes = true;
+	ofNotifyEvent(ofxAndroidEvents().okPressed,yes);
+}
+
+
+// okPressed with int
+void
+Java_cc_openframeworks_OFAndroid_okPressedInt( JNIEnv*  env, jobject  thiz, jint num ){
+	
+	if(androidApp) androidApp->okPressed(num);
+	bool yes = true;
+	ofNotifyEvent(ofxAndroidEvents().okPressed,yes);
+}
+
+
+// okPressed with boolean array
+void
+Java_cc_openframeworks_OFAndroid_okPressedBooleanArray( JNIEnv*  env, jobject  thiz, jbooleanArray arr ){
+	
+	vector<bool> result;
+	
+	// get array size
+	jsize length = env->GetArrayLength( arr );
+	
+	// get array elements
+	jboolean *body = env->GetBooleanArrayElements(arr, 0);
+	for (int i=0; i<length; i++) {
+		result.push_back(body[i]);
+	}
+	
+	// call okPressed with vector
+	if(androidApp) androidApp->okPressed(result);
+	bool yes = true;
+	ofNotifyEvent(ofxAndroidEvents().okPressed,yes);
+}
+
+
+// okPressed with int array
+void
+Java_cc_openframeworks_OFAndroid_okPressedIntArray( JNIEnv*  env, jobject  thiz, jintArray arr ){
+	
+	vector<int> result;
+	
+	// get array size
+	jsize length = env->GetArrayLength( arr );
+	
+	// get array elements
+	jint *body = env->GetIntArrayElements(arr, 0);
+	for (int i=0; i<length; i++) {
+		result.push_back(body[i]);
+	}
+	
+	// call okPressed with vector
+	if(androidApp) androidApp->okPressed(result);
+	bool yes = true;
+	ofNotifyEvent(ofxAndroidEvents().okPressed,yes);
+}
+
+
+// listItem pressed
+void
+Java_cc_openframeworks_OFAndroid_listItemPressed( JNIEnv*  env, jobject  thiz, jint num, jboolean state ){
+	
+	if(androidApp) androidApp->listItemPressed(num, state);
+	bool yes = true;
+	ofNotifyEvent(ofxAndroidEvents().okPressed,yes);
+}
+
+// cancel pressed
 void
 Java_cc_openframeworks_OFAndroid_cancelPressed( JNIEnv*  env, jobject  thiz ){
 	ofNotifyEvent(ofxAndroidEvents().cancelPressed);

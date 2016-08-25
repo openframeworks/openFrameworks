@@ -33,6 +33,11 @@ public:
 	}
 
 	virtual void okPressed(){};
+	virtual void okPressed(string text){};
+	virtual void okPressed(int num){};
+	virtual void okPressed(vector<bool> array){};
+	virtual void okPressed(vector<int> array){};
+	virtual void listItemPressed(int num, bool state){};
 	virtual void cancelPressed(){};
 	virtual void networkConnected(bool connected){};
 	virtual void networkConnectedEvent(bool & connected){

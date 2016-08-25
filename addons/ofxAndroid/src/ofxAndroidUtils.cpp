@@ -215,21 +215,21 @@ void ofxAndroidAlertTextBox(string question, string text){
 	ofGetJNIEnv()->DeleteLocalRef((jobject)jQuestion);
 }
 
-bool ofxAndroidAlertListBox(string title, const vector<string> & list){
+bool ofxAndroidAlertListBox(string title, const vector<string> & list, bool multi){
 	jclass javaClass = ofGetJavaOFAndroid();
-
+	
 	if(javaClass==0){
 		ofLogError("ofxAndroidUtils") << "ofxAndroidAlertListBox(): couldn't find OFAndroid java class";
 		return "";
 	}
-
-	jmethodID alertListBox = ofGetJNIEnv()->GetStaticMethodID(javaClass,"alertListBox","(Ljava/lang/String;[Ljava/lang/String;)Z");
+	
+	jmethodID alertListBox = ofGetJNIEnv()->GetStaticMethodID(javaClass,"alertListBox","(Ljava/lang/String;[Ljava/lang/String;Z)Z");
 	if(!alertListBox){
 		ofLogError("ofxAndroidUtils") << "ofxAndroidAlertListBox(): couldn't find OFAndroid alertListBox method";
 		return "";
 	}
 	jstring jTitle = ofGetJNIEnv()->NewStringUTF(title.c_str());
-
+	
 	jclass jStringClass = ofGetJNIEnv()->FindClass("java/lang/String");
 	jobjectArray jList = ofGetJNIEnv()->NewObjectArray(list.size(), jStringClass, NULL);
 	for(int i=0;i<(int)list.size(); i++){
@@ -237,12 +237,13 @@ bool ofxAndroidAlertListBox(string title, const vector<string> & list){
 		ofGetJNIEnv()->SetObjectArrayElement(jList,i,(jobject)element);
 		ofGetJNIEnv()->DeleteLocalRef((jobject)element);
 	}
-
-	jboolean res = ofGetJNIEnv()->CallStaticBooleanMethod(javaClass,alertListBox,jTitle,jList);
+	
+	jboolean res = ofGetJNIEnv()->CallStaticBooleanMethod(javaClass,alertListBox,jTitle,jList,multi);
 	ofGetJNIEnv()->DeleteLocalRef((jobject)jTitle);
 	ofGetJNIEnv()->DeleteLocalRef((jobject)jList);
 	return res;
 }
+
 
 void ofxAndroidToast(string msg){
 	jclass javaClass = ofGetJavaOFAndroid();

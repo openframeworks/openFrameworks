@@ -25,6 +25,7 @@ import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.ScaleGestureDetector;
 import android.view.WindowManager.LayoutParams;
@@ -33,6 +34,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 public class OFAndroid {
@@ -375,7 +377,7 @@ public class OFAndroid {
 		return canSaveExternal;
 	}
 	
-	public static void onActivityResult(int requestCode, int resultCode,Intent intent){
+	static public void onActivityResult(int requestCode, int resultCode,Intent intent){
 
 		synchronized (OFAndroidObject.ofObjects) {
 			for(OFAndroidObject object : OFAndroidObject.ofObjects){
@@ -420,7 +422,13 @@ public class OFAndroid {
     public static native boolean onMenuItemChecked(String menu_id, boolean checked);
     
     public static native void okPressed();
+    public static native void okPressedString(String data);
+    public static native void okPressedInt(int num);
+    public static native void okPressedBooleanArray(boolean[] arr);
+    public static native void okPressedIntArray(int[] arr);
     public static native void cancelPressed();
+    
+    public static native void listItemPressed(int num, boolean state);    
     
     public static native void networkConnected(boolean conected);
 
@@ -598,7 +606,9 @@ public class OFAndroid {
 		positiveNegativeBox(msg,android.R.string.yes,android.R.string.no);
 	}
 
+	@Deprecated
     private static String textBoxResult="";
+    // alert Textbox
 	public static void alertTextBox(String question, String text){  
 		final String alertQuestion = question;
 		final String alertMsg = text;
@@ -624,8 +634,12 @@ public class OFAndroid {
 					.setNeutralButton(android.R.string.ok,  
 							new DialogInterface.OnClickListener() {  
 						public void onClick(DialogInterface dialog, int whichButton){
+							
+							// deprecated
 							textBoxResult = input.getText().toString();
-							OFAndroid.okPressed();
+							
+							// call okPressed passing string
+							OFAndroid.okPressedString(input.getText().toString());
 							//handler.sendMessage(handler.obtainMessage());
 						}
 	
@@ -648,47 +662,98 @@ public class OFAndroid {
 	    //alert.dismiss();
 	}
 	
+	@Deprecated
 	public static String getLastTextBoxResult(){
 		return textBoxResult;
 	}
 	
-	private static boolean alertListResult;
-	public static boolean alertListBox(String title, String[] list){  
+	
+	public static boolean alertListBox(String title, String[] list, boolean multi){  
 		final String[] alertList = list;
 		final String alertTitle = title;
+		final boolean multiSelection = multi;
+		
 		/*Looper.prepare();
 		final Handler handler = new Handler() {
 	        @Override
 	        public void handleMessage(Message mesg) {
 	            throw new RuntimeException();
 	        } 
-	    };*/
-	    alertListResult=false;
+	    };*/	    
 		ofActivity.runOnUiThread(new Runnable(){
 			public void run() {
 				final ListView listView = new ListView(ofActivity); 
-				final ListAdapter adapter = new ArrayAdapter<String>(ofActivity, android.R.layout.simple_list_item_1, alertList);
+				final ListAdapter adapter = new ArrayAdapter<String>(ofActivity, android.R.layout.simple_list_item_activated_1, alertList);
 				listView.setAdapter(adapter);
+				
+				// support multiple-choice lists
+				if (multiSelection) {
+					listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE); //CHOICE_MODE_SINGLE
+				} else {
+					listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+				}
+				
+				// 
+				listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+						SparseBooleanArray selections = listView.getCheckedItemPositions();						
+						
+						// sending pressed item with state						
+						OFAndroid.listItemPressed(position, selections.get(position));
+					}
+				});
+				
 				new AlertDialog.Builder(ofActivity)   
 					.setTitle(alertTitle)  
 					.setCancelable(false)  
 					.setNeutralButton(android.R.string.ok,  
 							new DialogInterface.OnClickListener() {  
 						public void onClick(DialogInterface dialog, int whichButton){
-							alertListResult = true;
-							//OFAndroid.okPressed();
+							
+							// get choices from listView
+							SparseBooleanArray selections = listView.getCheckedItemPositions();
+							
+							// call native function according to choice-mode
+							switch(listView.getChoiceMode()) {
+								case ListView.CHOICE_MODE_NONE:
+									OFAndroid.okPressed();
+									break;
+								case ListView.CHOICE_MODE_SINGLE:
+									
+									if (selections.size() > 0) {
+										OFAndroid.okPressedInt(selections.keyAt(0));
+									} else {
+										// should not happen
+										Log.e("selection error", "selection is empty");
+									}
+									break;
+								case ListView.CHOICE_MODE_MULTIPLE:
+									
+									// prepare array for callback with all states
+									boolean[] states = new boolean[listView.getAdapter().getCount()];
+									// get selected states of touched list items
+									for (int i=0; i<selections.size(); i++) {
+										states[selections.keyAt(i)] = selections.valueAt(i);
+									}
+									
+									OFAndroid.okPressedBooleanArray(states);
+									break;
+							}
+														
 							//handler.sendMessage(handler.obtainMessage());
 						}
 	
 				  	})  
-				  	/*.setNegativeButton(android.R.string.cancel,
+				  	.setNegativeButton(android.R.string.cancel,
 							new DialogInterface.OnClickListener() {  
 						public void onClick(DialogInterface dialog, int whichButton){
-							alertListResult = false;
+														
 							OFAndroid.cancelPressed();
 							//handler.sendMessage(handler.obtainMessage());
 						}
-				  	})*/
+				  	})
 				  	.setView(listView)
 				  	.show();  
 			}  
@@ -698,8 +763,9 @@ public class OFAndroid {
 	    //try { Looper.loop(); }
 	    //catch(RuntimeException e2) {}
 	    
-	    return alertListResult;
+	    return true;
 	}
+	
 	
 	public static void toast(String msg){  
 		if(msg=="") return;
