@@ -30,11 +30,8 @@ public:
 		return false;
 	}
 	virtual void setWindowShouldClose(){
-		close();
 	}
 	virtual void close(){
-		events().notifyExit();
-		events().disable();
 	}
 	virtual ofCoreEvents & events() = 0;
 	virtual shared_ptr<ofBaseRenderer> & renderer() = 0;
