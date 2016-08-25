@@ -17,6 +17,24 @@ class ofBufferObject;
 
 
 class ofShader {
+
+    struct Source{
+        Source(GLuint type, const std::string & source, const std::string & directoryPath)
+            :type(type)
+            ,source(source)
+            ,directoryPath(directoryPath){}
+
+        Source(){}
+
+        GLuint type;
+        std::string source;
+        std::string expandedSource;
+        std::string directoryPath;
+        std::map<std::string, int>   intDefines;
+        std::map<std::string, float> floatDefines;
+        std::map<std::string, bool>  boolDefines;
+    };
+
 public:
 	ofShader();
 	~ofShader();
@@ -33,7 +51,10 @@ public:
 
 	struct Settings {
         std::map<GLuint, std::filesystem::path> shaderFiles;
-		std::map<GLuint, std::string> shaderSources;
+        std::map<GLuint, std::string> shaderSources;
+        std::map<std::string, int> intDefines;
+        std::map<std::string, float> floatDefines;
+        std::map<std::string, bool> boolDefines;
         std::string sourceDirectoryPath;
 		bool bindDefaults = true;
 	};
@@ -41,8 +62,11 @@ public:
 #if !defined(TARGET_OPENGLES)
 	struct TransformFeedbackSettings {
         std::map<GLuint, std::filesystem::path> shaderFiles;
-		std::map<GLuint, std::string> shaderSources;
+        std::map<GLuint, std::string> shaderSources;
 		std::vector<std::string> varyingsToCapture;
+        std::map<std::string, int> intDefines;
+        std::map<std::string, float> floatDefines;
+        std::map<std::string, bool> boolDefines;
         std::string sourceDirectoryPath;
 		bool bindDefaults = true;
 		GLuint bufferMode = GL_INTERLEAVED_ATTRIBS; // GL_INTERLEAVED_ATTRIBS or GL_SEPARATE_ATTRIBS
@@ -125,39 +149,7 @@ public:
 	void setUniform3fv(const string & name, const float* v, int count = 1) const;
 	void setUniform4fv(const string & name, const float* v, int count = 1) const;
 	
-	void setUniforms(const ofParameterGroup & parameters) const;
-
-    /// Changes a numerical define value
-    ///
-    /// Allows to change a define in the shader declared like
-    ///
-    /// #define SOME_FEATURE 1
-    ///
-    /// calling setDefineConstant("SOME_FEATURE", 0);
-    ///
-    /// Be aware that this recompiles the shader which can be
-    /// slow if done often. This is only recommendable for
-    /// values that don't change very often and if they
-    /// were a uniform would introduce runtime evaluated
-    /// conditionals or similar which would slow down the shader
-    void setDefineConstant(const string & name, float value);
-    void setDefineConstant(const string & name, int value);
-    void setDefineConstant(const string & name, bool value);
-
-
-    /// Changes a numerical define value
-    ///
-    /// Allows to change a define in the shader declared like
-    ///
-    /// const float somevalue=10;
-    ///
-    /// calling setConstant1f("somevalue", 20.f);
-    ///
-    /// Be aware that this recompiles the shader which can be
-    /// slow if done often.
-    void setConstant1f(const string & name, float value);
-    void setConstant1i(const string & name, int value);
-    void setConstantb(const string & name, bool value);
+    void setUniforms(const ofParameterGroup & parameters) const;
 
 	// note: it may be more optimal to use a 4x4 matrix than a 3x3 matrix, if possible
 	void setUniformMatrix3f(const string & name, const glm::mat3 & m, int count = 1) const;
@@ -246,19 +238,10 @@ public:
 private:
     GLuint program = 0;
     bool bLoaded = false;
-    bool boundDefaults = false;
-#ifndef TARGET_OPENGLES
-    bool bLoadedAsXFB = false;
-    GLuint xfbBufferMode = GL_INTERLEAVED_ATTRIBS;
-    std::vector<std::string> varyingsToCapture;
-#endif
 
-	struct Shader{
-		GLenum type;
+    struct Shader{
 		GLuint id;
-		std::string source;
-		std::string expandedSource;
-		std::string sourcePath;
+        Source source;
 	};
 
 	unordered_map<GLenum, Shader> shaders;
@@ -272,8 +255,9 @@ private:
 #endif
 #endif
 
-	void checkProgramInfoLog(GLuint program);
-	bool checkProgramLinkStatus(GLuint program);
+    bool setupShaderFromSource(Source && source);
+    void checkProgramInfoLog();
+    bool checkProgramLinkStatus();
     void checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLevel);
     template<typename T>
     void setDefineConstantTemp(const string & name, T value);

@@ -224,7 +224,11 @@ bool ofShader::setup(const Settings & settings) {
 	for (auto shader : settings.shaderSources) {
 		auto ty = shader.first;
 		auto source = shader.second;
-        if (!setupShaderFromSource(ty, source, settings.sourceDirectoryPath)) {
+        Source shaderSource{ty, source, settings.sourceDirectoryPath};
+        shaderSource.intDefines = settings.intDefines;
+        shaderSource.floatDefines = settings.floatDefines;
+        shaderSource.boolDefines = settings.boolDefines;
+        if (!setupShaderFromSource(std::move(shaderSource))) {
 			return false;
 		}
 	}
@@ -247,10 +251,14 @@ bool ofShader::setup(const TransformFeedbackSettings & settings) {
 		}
 	}
 
-	for (auto shader : settings.shaderSources) {
-		auto ty = shader.first;
-		auto source = shader.second;
-        if (!setupShaderFromSource(ty, source, settings.sourceDirectoryPath)) {
+    for (auto shader : settings.shaderSources) {
+        auto ty = shader.first;
+        auto source = shader.second;
+        Source shaderSource{ty, source, settings.sourceDirectoryPath};
+        shaderSource.intDefines = settings.intDefines;
+        shaderSource.floatDefines = settings.floatDefines;
+        shaderSource.boolDefines = settings.boolDefines;
+        if (!setupShaderFromSource(std::move(shaderSource))) {
 			return false;
 		}
 	}
@@ -259,18 +267,14 @@ bool ofShader::setup(const TransformFeedbackSettings & settings) {
 		bindDefaults();
     }
 
-	if (!settings.varyingsToCapture.empty()) {
-        varyingsToCapture = settings.varyingsToCapture;
+    if (!settings.varyingsToCapture.empty()) {
 		std::vector<const char*> varyings(settings.varyingsToCapture.size());
 		std::transform(settings.varyingsToCapture.begin(), settings.varyingsToCapture.end(), varyings.begin(), [](const std::string & str) {
 			return str.c_str();
 		});
         glTransformFeedbackVaryings(getProgram(), varyings.size(), varyings.data(), settings.bufferMode);
 	}
-
-    xfbBufferMode = settings.bufferMode;
-    bLoadedAsXFB = linkProgram();
-    return bLoadedAsXFB;
+    return linkProgram();
 }
 #endif
 
@@ -291,66 +295,95 @@ bool ofShader::setupShaderFromFile(GLenum type, std::filesystem::path filename) 
 
 //--------------------------------------------------------------
 bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath) {
+    return setupShaderFromSource({type, source, sourceDirectoryPath});
+}
+
+
+//--------------------------------------------------------------
+bool ofShader::setupShaderFromSource(ofShader::Source && source){
     unload();
-    
-	// create program if it doesn't exist already
-	checkAndCreateProgram();
-	GLuint clearErrors = glGetError(); //needed for some users to clear gl errors
+
+    // create program if it doesn't exist already
+    checkAndCreateProgram();
+    GLuint clearErrors = glGetError(); //needed for some users to clear gl errors
     if( clearErrors != GL_NO_ERROR ){
         ofLogVerbose("ofShader") << "setupShaderFromSource(): OpenGL error after checkAndCreateProgram() (probably harmless): error " << clearErrors;
     }
 
-	// create shader
-	GLuint shader = glCreateShader(type);
-	if(shader == 0) {
-		ofLogError("ofShader") << "setupShaderFromSource(): failed creating " << nameForType(type) << " shader";
-		return false;
-	} else {
-		// if the shader object has been allocated successfully on the GPU 
-		// we must retain it so that it can be de-allocated again, once
-		// this ofShader object has been discarded, or re-allocated.
-		// we need to do this at this point in the code path, since early 
-		// return statements might prevent us from retaining later.
-		retainShader(shader);
-	}
+    // create shader
+    GLuint shaderId = glCreateShader(source.type);
+    if(shaderId == 0) {
+        ofLogError("ofShader") << "setupShaderFromSource(): failed creating " << nameForType(source.type) << " shader";
+        return false;
+    } else {
+        // if the shader object has been allocated successfully on the GPU
+        // we must retain it so that it can be de-allocated again, once
+        // this ofShader object has been discarded, or re-allocated.
+        // we need to do this at this point in the code path, since early
+        // return statements might prevent us from retaining later.
+        retainShader(shaderId);
+    }
 
-	// parse for includes
-	string src = parseForIncludes( source , sourceDirectoryPath);
+    // parse for includes
+    source.expandedSource = parseForIncludes( source.source, source.directoryPath );
 
-	// store source code (that's the expanded source with all includes copied in)
-	// we need to store this here, and before shader compilation, 
-	// so that any shader compilation errors can be 
-	// traced down to the correct shader source code line.
-	shaders[type] = { type, shader, source, src, sourceDirectoryPath };
+    // parse and set defines
+    for(auto & define: source.intDefines){
+        const auto & name = define.first;
+        const auto & value = define.second;
+        std::regex re_define("#define[ \t]+" + name + "[ \t]+(([0-9]+)|(([0-9]*).([0-9]*)))");
+        source.expandedSource = std::regex_replace(source.expandedSource, re_define, "#define " + name + " " + std::to_string(value));
+    }
 
-	// compile shader
-	const char* sptr = src.c_str();
-	int ssize = src.size();
-	glShaderSource(shader, 1, &sptr, &ssize);
-	glCompileShader(shader);
-	
-	// check compile status
-	GLint status = GL_FALSE;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+    for(auto & define: source.floatDefines){
+        const auto & name = define.first;
+        const auto & value = define.second;
+        std::regex re_define("#define[ \t]+" + name + "[ \t]+(([0-9]+)|(([0-9]*).([0-9]*)))");
+        source.expandedSource = std::regex_replace(source.expandedSource, re_define, "#define " + name + " " + std::to_string(value));
+    }
+
+    for(auto & define: source.boolDefines){
+        const auto & name = define.first;
+        const auto & value = define.second;
+        std::regex re_define("#define[ \t]+" + name + "[ \t]+(([0-1])|(true|false))");
+        source.expandedSource = std::regex_replace(source.expandedSource, re_define, "#define " + name + " " + std::to_string(value));
+    }
+
+    // store source code (that's the expanded source with all includes copied in)
+    // we need to store this here, and before shader compilation,
+    // so that any shader compilation errors can be
+    // traced down to the correct shader source code line.
+    shaders[source.type] = { shaderId, std::move(source) };
+    auto & shader = shaders[source.type];
+
+    // compile shader
+    const char* sptr = shader.source.expandedSource.c_str();
+    int ssize = shader.source.expandedSource.size();
+    glShaderSource(shaderId, 1, &sptr, &ssize);
+    glCompileShader(shaderId);
+
+    // check compile status
+    GLint status = GL_FALSE;
+    glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
     GLuint err = glGetError();
     if (err != GL_NO_ERROR){
-        ofLogError("ofShader") << "setupShaderFromSource(): OpenGL generated error " << err << " trying to get the compile status for a " << nameForType(type) << " shader, does your video card support this?";
+        ofLogError("ofShader") << "setupShaderFromSource(): OpenGL generated error " << err << " trying to get the compile status for a " << nameForType(shader.source.type) << " shader, does your video card support this?";
         return false;
     }
-    
-	if(status == GL_TRUE){
-		ofLogVerbose("ofShader") << "setupShaderFromSource(): " << nameForType(type) + " shader compiled";
+
+    if(status == GL_TRUE){
+        ofLogVerbose("ofShader") << "setupShaderFromSource(): " << nameForType(shader.source.type) + " shader compiled";
 #ifdef TARGET_EMSCRIPTEN
-		checkShaderInfoLog(shader, type, OF_LOG_VERBOSE);
+        checkShaderInfoLog(shaderId, source.type, OF_LOG_VERBOSE);
 #else
-		checkShaderInfoLog(shader, type, OF_LOG_WARNING);
+        checkShaderInfoLog(shaderId, source.type, OF_LOG_WARNING);
 #endif
-	}else if (status == GL_FALSE) {
-		ofLogError("ofShader") << "setupShaderFromSource(): " << nameForType(type) + " shader failed to compile";
-		checkShaderInfoLog(shader, type, OF_LOG_ERROR);
-		return false;
-	}
-	return true;
+    }else if (status == GL_FALSE) {
+        ofLogError("ofShader") << "setupShaderFromSource(): " << nameForType(shader.source.type) + " shader failed to compile";
+        checkShaderInfoLog(shaderId, source.type, OF_LOG_ERROR);
+        return false;
+    }
+    return true;
 }
 
 /*
@@ -358,11 +391,13 @@ bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDi
  * https://www.opengl.org/discussion_boards/showthread.php/169209-include-in-glsl?p=1192415&viewfull=1#post1192415
  */
 
+//--------------------------------------------------------------
 string ofShader::parseForIncludes( const string& source, const string& sourceDirectoryPath) {
 	vector<string> included;
 	return parseForIncludes( source, included, 0, sourceDirectoryPath);
 }
 
+//--------------------------------------------------------------
 string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const string& sourceDirectoryPath) {
     
 	if ( level > 32 ) {
@@ -450,7 +485,7 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 string ofShader::getShaderSource(GLenum type)  const{
 	auto source = shaders.find(type);
 	if ( source != shaders.end()) {
-		return source->second.expandedSource;
+        return source->second.source.expandedSource;
 	} else {
 		ofLogError("ofShader") << "No shader source for shader of type: " << nameForType(type);
 		return "";
@@ -493,7 +528,7 @@ int ofShader::getGeometryMaxOutputCount()  const{
 }
 
 //--------------------------------------------------------------
-bool ofShader::checkProgramLinkStatus(GLuint program) {
+bool ofShader::checkProgramLinkStatus() {
 	GLint status;
 	glGetProgramiv(program, GL_LINK_STATUS, &status);
     GLuint err = glGetError();
@@ -505,7 +540,7 @@ bool ofShader::checkProgramLinkStatus(GLuint program) {
 		ofLogVerbose("ofShader") << "checkProgramLinkStatus(): program " << program << " linked";
 	else if (status == GL_FALSE) {
 		ofLogError("ofShader") << "checkProgramLinkStatus(): program failed to link";
-		checkProgramInfoLog(program);
+        checkProgramInfoLog();
 		return false;
 	}										  
 	return true;
@@ -530,7 +565,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 			string infoString = ofTrim(infoBuffer);
 			if (std::regex_search(infoString, matches, intel) || std::regex_search(infoString, matches, nvidia_ati)){
                 ofBuffer buf;
-                buf.set(shaders[type].expandedSource);
+                buf.set(shaders[type].source.expandedSource);
 				ofBuffer::Line line = buf.getLines().begin();
 				int  offendingLineNumber = ofToInt(matches[1]);
 				ostringstream msg;
@@ -543,7 +578,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 				}
 				ofLog(logLevel) << msg.str();
 			}else{
-				ofLog(logLevel) << shaders[type].expandedSource;
+                ofLog(logLevel) << shaders[type].source.expandedSource;
 			}
 		}
 #endif
@@ -551,7 +586,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 }
 
 //--------------------------------------------------------------
-void ofShader::checkProgramInfoLog(GLuint program) {
+void ofShader::checkProgramInfoLog() {
 	GLsizei infoLength;
 	glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLength);
 	if (infoLength > 1) {
@@ -611,7 +646,7 @@ bool ofShader::linkProgram() {
 
 		glLinkProgram(program);
 
-		checkProgramLinkStatus(program);
+        checkProgramLinkStatus();
 
 
 		// Pre-cache all active uniforms
@@ -733,8 +768,7 @@ bool ofShader::bindDefaults(){
 		bindAttribute(ofShader::POSITION_ATTRIBUTE,::POSITION_ATTRIBUTE);
 		bindAttribute(ofShader::COLOR_ATTRIBUTE,::COLOR_ATTRIBUTE);
 		bindAttribute(ofShader::NORMAL_ATTRIBUTE,::NORMAL_ATTRIBUTE);
-		bindAttribute(ofShader::TEXCOORD_ATTRIBUTE,::TEXCOORD_ATTRIBUTE);
-        boundDefaults = true;
+        bindAttribute(ofShader::TEXCOORD_ATTRIBUTE,::TEXCOORD_ATTRIBUTE);
 		return true;
 	}
 
@@ -763,7 +797,7 @@ void ofShader::unload() {
 		for(auto it: shaders) {
 			auto shader = it.second;
 			if(shader.id) {
-				ofLogVerbose("ofShader") << "unload(): detaching and deleting " << nameForType(shader.type) << " shader from program " << program;
+                ofLogVerbose("ofShader") << "unload(): detaching and deleting " << nameForType(shader.source.type) << " shader from program " << program;
 				releaseShader(program,shader.id);
 			}
 		}
@@ -786,13 +820,7 @@ void ofShader::unload() {
 		ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofShader::unloadGL);
 #endif
 	}
-	bLoaded = false;
-    boundDefaults = false;
-
-#ifndef TARGET_OPENGLES
-    bLoadedAsXFB = false;
-    varyingsToCapture.clear();
-#endif
+    bLoaded = false;
 }
 
 //--------------------------------------------------------------
@@ -1079,163 +1107,6 @@ void ofShader::setUniforms(const ofParameterGroup & parameters) const{
 			setUniforms((ofParameterGroup&)parameters[i]);
 		}
 	}
-}
-
-
-//--------------------------------------------------------------
-template<typename T>
-void ofShader::setDefineConstantTemp(const string & name, T value){
-#if (!defined(TARGET_LINUX) || defined(GCC_HAS_REGEX))
-    if(bLoaded){
-        std::regex re_define("#define[ \t]+" + name + "[ \t]+(([0-9]+)|(([0-9]*).([0-9]*)))");
-        for(auto & shader_pair: shaders){
-            auto & shader = shader_pair.second;
-            shader.expandedSource = std::regex_replace(shader.expandedSource, re_define, "#define " + name + " " + std::to_string(value));
-        }
-#ifndef TARGET_OPENGLES
-        if(bLoadedAsXFB){
-            auto settings = TransformFeedbackSettings();
-            settings.bindDefaults = boundDefaults;
-            settings.varyingsToCapture = varyingsToCapture;
-            for(auto & shader_pair: shaders){
-                settings.shaderSources[shader_pair.first] = shader_pair.second.expandedSource;
-            }
-            settings.bufferMode = xfbBufferMode;
-            setup(settings);
-        }else{
-#endif
-            auto settings = Settings();
-            settings.bindDefaults = boundDefaults;
-            for(auto & shader_pair: shaders){
-                settings.shaderSources[shader_pair.first] = shader_pair.second.expandedSource;
-            }
-            setup(settings);
-#ifndef TARGET_OPENGLES
-        }
-#endif
-    }
-#endif
-}
-
-//--------------------------------------------------------------
-void ofShader::setDefineConstant(const string & name, float value){
-    setDefineConstantTemp(name, value);
-}
-
-//--------------------------------------------------------------
-void ofShader::setDefineConstant(const string & name, int value){
-    setDefineConstantTemp(name, value);
-}
-
-//--------------------------------------------------------------
-void ofShader::setDefineConstant(const string & name, bool value){
-#if (!defined(TARGET_LINUX) || defined(GCC_HAS_REGEX))
-    if(bLoaded){
-        std::regex re_define("#define[ \t]+" + name + "[ \t]+(([0-1])|(true|false))");
-        for(auto & shader_pair: shaders){
-            auto & shader = shader_pair.second;
-            shader.expandedSource = std::regex_replace(shader.expandedSource, re_define, "#define " + name + " " + std::to_string(value));
-        }
-#ifndef TARGET_OPENGLES
-        if(bLoadedAsXFB){
-            auto settings = TransformFeedbackSettings();
-            settings.bindDefaults = boundDefaults;
-            settings.varyingsToCapture = varyingsToCapture;
-            for(auto & shader_pair: shaders){
-                settings.shaderSources[shader_pair.first] = shader_pair.second.expandedSource;
-            }
-            settings.bufferMode = xfbBufferMode;
-            setup(settings);
-        }else{
-#endif
-            auto settings = Settings();
-            settings.bindDefaults = boundDefaults;
-            for(auto & shader_pair: shaders){
-                settings.shaderSources[shader_pair.first] = shader_pair.second.expandedSource;
-            }
-            setup(settings);
-#ifndef TARGET_OPENGLES
-        }
-#endif
-    }
-#endif
-}
-
-
-
-//--------------------------------------------------------------
-template<typename T>
-void ofShader::setConstantTemp(const string & name, const string & type, T value){
-#if (!defined(TARGET_LINUX) || defined(GCC_HAS_REGEX))
-    if(bLoaded){
-        std::regex re_define("const[ \t]+" + type + "[ \t]+" + name + "[ \t]*=[ \t]*(([0-9]+)|(([0-9]*).([0-9]*)));");
-        for(auto & shader_pair: shaders){
-            auto & shader = shader_pair.second;
-            shader.expandedSource = std::regex_replace(shader.expandedSource, re_define, "const " + type + " " + name + " " + std::to_string(value) + ";");
-        }
-#ifndef TARGET_OPENGLES
-        if(bLoadedAsXFB){
-            auto settings = TransformFeedbackSettings();
-            settings.bindDefaults = boundDefaults;
-            settings.varyingsToCapture = varyingsToCapture;
-            for(auto & shader_pair: shaders){
-                settings.shaderSources[shader_pair.first] = shader_pair.second.expandedSource;
-            }
-            settings.bufferMode = xfbBufferMode;
-            setup(settings);
-        }else{
-#endif
-            auto settings = Settings();
-            settings.bindDefaults = boundDefaults;
-            for(auto & shader_pair: shaders){
-                settings.shaderSources[shader_pair.first] = shader_pair.second.expandedSource;
-            }
-            setup(settings);
-#ifndef TARGET_OPENGLES
-        }
-#endif
-    }
-#endif
-}
-
-//--------------------------------------------------------------
-void ofShader::setConstant1f(const string & name, float value){
-    setConstantTemp(name, "float", value);
-}
-
-//--------------------------------------------------------------
-void ofShader::setConstant1i(const string & name, int value){
-    setConstantTemp(name, "int", value);
-}
-
-//--------------------------------------------------------------
-void ofShader::setConstantb(const string & name, bool value){
-#if (!defined(TARGET_LINUX) || defined(GCC_HAS_REGEX))
-    if(bLoaded){
-        std::regex re_define("const[ \t]+bool[ \t]+" + name + "[ \t]*=[ \t]*(([0-1])|(true|false));");
-        for(auto & shader_pair: shaders){
-            auto & shader = shader_pair.second;
-            shader.expandedSource = std::regex_replace(shader.expandedSource, re_define, "const bool " + name + "=" + (value?"true":"false") + ";");
-        }
-        if(bLoadedAsXFB){
-            auto settings = TransformFeedbackSettings();
-            settings.bindDefaults = boundDefaults;
-            settings.varyingsToCapture = varyingsToCapture;
-            for(auto & shader_pair: shaders){
-                settings.shaderSources[shader_pair.first] = shader_pair.second.expandedSource;
-            }
-            settings.bufferMode = xfbBufferMode;
-            setup(settings);
-        }else{
-            auto settings = Settings();
-            settings.bindDefaults = boundDefaults;
-            for(auto & shader_pair: shaders){
-                settings.shaderSources[shader_pair.first] = shader_pair.second.expandedSource;
-            }
-            setup(settings);
-        }
-    }
-#endif
 }
 	
 //--------------------------------------------------------------
