@@ -127,6 +127,38 @@ public:
 	
 	void setUniforms(const ofParameterGroup & parameters) const;
 
+    /// Changes a numerical define value
+    ///
+    /// Allows to change a define in the shader declared like
+    ///
+    /// #define SOME_FEATURE 1
+    ///
+    /// calling setDefineConstant("SOME_FEATURE", 0);
+    ///
+    /// Be aware that this recompiles the shader which can be
+    /// slow if done often. This is only recommendable for
+    /// values that don't change very often and if they
+    /// were a uniform would introduce runtime evaluated
+    /// conditionals or similar which would slow down the shader
+    void setDefineConstant(const string & name, float value);
+    void setDefineConstant(const string & name, int value);
+    void setDefineConstant(const string & name, bool value);
+
+
+    /// Changes a numerical define value
+    ///
+    /// Allows to change a define in the shader declared like
+    ///
+    /// const float somevalue=10;
+    ///
+    /// calling setConstant1f("somevalue", 20.f);
+    ///
+    /// Be aware that this recompiles the shader which can be
+    /// slow if done often.
+    void setConstant1f(const string & name, float value);
+    void setConstant1i(const string & name, int value);
+    void setConstantb(const string & name, bool value);
+
 	// note: it may be more optimal to use a 4x4 matrix than a 3x3 matrix, if possible
 	void setUniformMatrix3f(const string & name, const glm::mat3 & m, int count = 1) const;
 	void setUniformMatrix4f(const string & name, const glm::mat4 & m, int count = 1) const;
@@ -188,7 +220,7 @@ public:
 	// binds default uniforms and attributes, only useful for
 	// fixed pipeline simulation under programmable renderer
 	// has to be called before linking
-	bool bindDefaults() const;
+    bool bindDefaults();
 
 	GLuint getProgram() const;
 	GLuint getShader(GLenum type) const;
@@ -212,8 +244,14 @@ public:
 
 
 private:
-	GLuint program;
-	bool bLoaded;
+    GLuint program = 0;
+    bool bLoaded = false;
+    bool boundDefaults = false;
+#ifndef TARGET_OPENGLES
+    bool bLoadedAsXFB = false;
+    GLuint xfbBufferMode = GL_INTERLEAVED_ATTRIBS;
+    std::vector<std::string> varyingsToCapture;
+#endif
 
 	struct Shader{
 		GLenum type;
@@ -236,7 +274,11 @@ private:
 
 	void checkProgramInfoLog(GLuint program);
 	bool checkProgramLinkStatus(GLuint program);
-	void checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLevel);
+    void checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLevel);
+    template<typename T>
+    void setDefineConstantTemp(const string & name, T value);
+    template<typename T>
+    void setConstantTemp(const string & name, const std::string & type, T value);
 	
 	static string nameForType(GLenum type);
 	
