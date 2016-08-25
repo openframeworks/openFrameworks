@@ -323,10 +323,14 @@ istream& operator>>(istream& is, ofMatrix3x3& M) {
 	is >> M.a; is.ignore(2);
 	is >> M.b; is.ignore(2);
 	is >> M.c; is.ignore(1);
+
 	is >> M.d; is.ignore(2);
 	is >> M.e; is.ignore(2);
 	is >> M.f; is.ignore(1);
-	is >> M.h;
+
+	is >> M.g; is.ignore(2);
+	is >> M.h; is.ignore(2);
+	is >> M.i;
 	return is;
 }
 
