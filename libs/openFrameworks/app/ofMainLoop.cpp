@@ -150,6 +150,8 @@ void ofMainLoop::pollEvents(){
 }
 
 void ofMainLoop::exit(){
+	exitEvent.notify(this);
+
 	for(auto i: windowsApps){
 		shared_ptr<ofAppBaseWindow> window = i.first;
 		shared_ptr<ofBaseApp> app = i.second;
@@ -160,7 +162,10 @@ void ofMainLoop::exit(){
 		if(app == nullptr) {
 			continue;
 		}
-		
+
+		ofEventArgs args;
+		ofNotifyEvent(window->events().exit, args, this);
+
 		ofRemoveListener(window->events().setup,app.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
 		ofRemoveListener(window->events().update,app.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
 		ofRemoveListener(window->events().draw,app.get(),&ofBaseApp::draw,OF_EVENT_ORDER_APP);
@@ -198,8 +203,7 @@ void ofMainLoop::exit(){
 		}
 #endif
 	}
-	
-	exitEvent.notify(this);
+
 
 	// reset applications then windows
 	// so events are present until the
