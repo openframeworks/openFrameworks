@@ -420,9 +420,9 @@ bool ofOpenALSoundPlayer::readFile(const std::filesystem::path& fileName, vector
 }
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::load(const std::filesystem::path& fileName, bool is_stream){
+bool ofOpenALSoundPlayer::load(const std::filesystem::path& _fileName, bool is_stream){
 
-	fileName = ofToDataPath(fileName);
+	std::filesystem::path fileName = ofToDataPath(_fileName);
 
 	bMultiPlay = false;
 	isStreaming = is_stream;
