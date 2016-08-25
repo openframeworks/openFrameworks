@@ -345,7 +345,8 @@ void ofxKinect::update() {
     
     //we need to do timing for reconnection based on the first update call
     //as a project with a long setup call could exceed the reconnectWaitTime and create a false positive
-    if( bFirstUpdate ){
+    //we also need to not try reconnection if the camera is tilting as this can shutoff the data coming in and cause a false positive. 
+    if( bFirstUpdate || fabs(targetTiltAngleDeg-currentTiltAngleDeg) > 1.0 ){
         timeSinceOpen = ofGetElapsedTimef();
         bFirstUpdate = false;
     }
@@ -940,7 +941,6 @@ void ofxKinectContext::clear() {
 		freenect_shutdown(kinectContext);
 		kinectContext = NULL;
 		bInited = false;
-		ofLogVerbose("ofxKinect") << "context cleared";
 	}
 }
 
