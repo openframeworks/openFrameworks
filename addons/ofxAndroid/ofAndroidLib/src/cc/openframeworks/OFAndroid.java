@@ -491,6 +491,20 @@ public class OFAndroid {
 		if(accelerometer==null)
 			accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
 	}
+
+	public static OFAndroidMagneticField setupMagneticField(){
+		if(magneticField==null) 
+		{
+			magneticField = new OFAndroidMagneticField((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
+			if(accelerometer!=null) 
+			{
+				accelerometer.addOFAndroidAccelerometerListener(magneticField);
+			} else {
+				Log.w("OF","Accelerometer not available. Compass may not return true heading.");
+			}
+		}
+		return magneticField;
+	}
 	
 	static MulticastLock mcLock;
 	public static void enableMulticast(){
@@ -769,6 +783,7 @@ public class OFAndroid {
     
 //    private static OFGLSurfaceView glView;
     private static OFAndroidAccelerometer accelerometer;
+    private static OFAndroidMagneticField magneticField;
     private static OFAndroidGPS gps;
     private static OFActivity ofActivity;
 //    private static OFAndroid instance;
