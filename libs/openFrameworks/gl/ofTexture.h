@@ -636,6 +636,13 @@ class ofTexture : public ofBaseDraws {
 	/// \param sw Subsection width within the texture.
 	/// \param sh Subsection height within the texture.
 	void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh) const;
+
+	/// \brief Draw a subsection of the texture with an offset.
+	///
+	/// \sa drawSubsection(ofRectangle& dstBounds, ofRectangle& srcBounds)
+	/// \param dstBounds Draw position and dimensions.
+	/// \param sx Subsection position and dimensions within the texture.
+	void drawSubsection(ofRectangle& dstBounds, ofRectangle& srcBounds) const;
 	
 	/// \brief Draw a subsection of the texture with an offset and depth.
 	///
