@@ -329,6 +329,73 @@ void freenect_camera_to_world(freenect_device* dev, int cx, int cy, int wz, doub
 	*wy = (double)(cy - DEPTH_Y_RES/2) * factor;
 }
 
+/// RGB -> depth mapping function (inverse of default FREENECT_DEPTH_REGISTERED mapping)
+void freenect_map_rgb_to_depth(freenect_device* dev, uint16_t* depth_mm, uint8_t* rgb_raw, uint8_t* rgb_registered)
+{
+	uint32_t target_offset = dev->registration.reg_pad_info.start_lines * DEPTH_Y_RES;
+	int x,y;
+	int* map = (int*)malloc(DEPTH_Y_RES*DEPTH_X_RES* sizeof(int));
+	unsigned short* zBuffer = (unsigned short*)malloc(DEPTH_Y_RES*DEPTH_X_RES* sizeof(unsigned short));
+	memset(zBuffer, DEPTH_NO_MM_VALUE, DEPTH_X_RES*DEPTH_Y_RES * sizeof(unsigned short));
+
+	for (y = 0; y < DEPTH_Y_RES; y++) for (x = 0; x < DEPTH_X_RES; x++) {
+		uint32_t index = y * DEPTH_X_RES + x;
+		uint32_t cx,cy,cindex;
+
+		map[index] = -1;
+
+		int wz = depth_mm[index];
+
+		if (wz == DEPTH_NO_MM_VALUE) {
+			continue;
+		}
+
+		// coordinates in rgb image corresponding to x,y in depth image
+		cx = (dev->registration.registration_table[index][0] + dev->registration.depth_to_rgb_shift[wz]) / REG_X_VAL_SCALE;
+		cy =  dev->registration.registration_table[index][1] - target_offset;
+
+		if (cx >= DEPTH_X_RES) continue;
+
+		cindex = cy*DEPTH_X_RES+cx;
+		map[index] = cindex;
+
+		if (zBuffer[cindex] == DEPTH_NO_MM_VALUE || zBuffer[cindex] > wz) {
+			zBuffer[cindex] = wz;
+		}
+	}
+
+	for (y = 0; y < DEPTH_Y_RES; y++) for (x = 0; x < DEPTH_X_RES; x++) {
+		uint32_t index = y * DEPTH_X_RES + x;
+		uint32_t cindex = map[index];
+
+		// pixels without depth data or out of bounds are black
+		if (cindex == -1) {
+			index *= 3;
+			rgb_registered[index+0] = 0;
+			rgb_registered[index+1] = 0;
+			rgb_registered[index+2] = 0;
+
+			continue;
+		}
+
+		unsigned short currentDepth = depth_mm[index];
+		unsigned short minDepth = zBuffer[cindex];
+
+		// filters out pixels that are occluded
+		if (currentDepth <= minDepth) {
+			index *= 3;
+			cindex *= 3;
+
+			rgb_registered[index+0] = rgb_raw[cindex+0];
+			rgb_registered[index+1] = rgb_raw[cindex+1];
+			rgb_registered[index+2] = rgb_raw[cindex+2];
+		}
+	}
+
+	free(zBuffer);
+	free(map);
+}
+
 /// Allocate and fill registration tables
 /// This function should be called every time a new video (not depth!) mode is
 /// activated.
