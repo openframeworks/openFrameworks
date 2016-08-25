@@ -26,20 +26,20 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	
+
 	//translate so that 0,0 is the center of the screen
     ofPushMatrix();
-    ofTranslate(ofGetWidth()/2, ofGetHeight()/2, 40);  
+    ofTranslate(ofGetWidth()/2, ofGetHeight()/2, 40);
 	//Extract the rotation from the current rotation
-    ofVec3f axis;  
-    float angle;  
-    curRot.getRotate(angle, axis);  
-	
+    ofVec3f axis;
+    float angle;
+    curRot.getRotate(angle, axis);
+
 	//apply the quaternion's rotation to the viewport and draw the sphere
-	ofRotate(angle, axis.x, axis.y, axis.z);  
+	ofRotateDeg(angle, axis.x, axis.y, axis.z);  
 	ofDrawSphere(0, 0, 0, 200);
-	
-	ofPopMatrix();  
+
+	ofPopMatrix();
 }
 
 //--------------------------------------------------------------
@@ -58,14 +58,14 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-	
+
 	//every time the mouse is dragged, track the change
 	//accumulate the changes inside of curRot through multiplication
-    ofVec2f mouse(x,y);  
-    ofQuaternion yRot((x-lastMouse.x)*dampen, ofVec3f(0,1,0));  
-    ofQuaternion xRot((y-lastMouse.y)*dampen, ofVec3f(-1,0,0));  
-    curRot *= yRot*xRot;  
-    lastMouse = mouse;  
+    ofVec2f mouse(x,y);
+    ofQuaternion yRot((x-lastMouse.x)*dampen, ofVec3f(0,1,0));
+    ofQuaternion xRot((y-lastMouse.y)*dampen, ofVec3f(-1,0,0));
+    curRot *= yRot*xRot;
+    lastMouse = mouse;
 }
 
 //--------------------------------------------------------------
@@ -100,6 +100,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }
