@@ -256,6 +256,7 @@ private:
 #endif
 
 	bool setupShaderFromSource(Source && source);
+	ofShader::Source sourceFromFile(GLenum type, std::filesystem::path filename);
 	void checkProgramInfoLog();
 	bool checkProgramLinkStatus();
 	void checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLevel);
@@ -263,7 +264,7 @@ private:
 	void setDefineConstantTemp(const string & name, T value);
 	template<typename T>
 	void setConstantTemp(const string & name, const std::string & type, T value);
-
+	
 	static string nameForType(GLenum type);
 
 	/// @brief			Mimics the #include behaviour of the c preprocessor
