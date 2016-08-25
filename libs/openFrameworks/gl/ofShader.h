@@ -32,7 +32,6 @@ class ofShader {
 		std::string directoryPath;
 		std::map<std::string, int>   intDefines;
 		std::map<std::string, float> floatDefines;
-		std::map<std::string, bool>  boolDefines;
 	};
 
 public:

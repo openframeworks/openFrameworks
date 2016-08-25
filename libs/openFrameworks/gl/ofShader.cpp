@@ -219,7 +219,6 @@ bool ofShader::setup(const Settings & settings) {
 		auto shaderSource = sourceFromFile(ty, file);
 		shaderSource.intDefines = settings.intDefines;
 		shaderSource.floatDefines = settings.floatDefines;
-		shaderSource.boolDefines = settings.boolDefines;
 		if (!setupShaderFromSource(std::move(shaderSource))) {
 			return false;
 		}
@@ -231,7 +230,6 @@ bool ofShader::setup(const Settings & settings) {
 		Source shaderSource{ty, source, settings.sourceDirectoryPath};
 		shaderSource.intDefines = settings.intDefines;
 		shaderSource.floatDefines = settings.floatDefines;
-		shaderSource.boolDefines = settings.boolDefines;
 		if (!setupShaderFromSource(std::move(shaderSource))) {
 			return false;
 		}
@@ -253,7 +251,6 @@ bool ofShader::setup(const TransformFeedbackSettings & settings) {
 		auto shaderSource = sourceFromFile(ty, file);
 		shaderSource.intDefines = settings.intDefines;
 		shaderSource.floatDefines = settings.floatDefines;
-		shaderSource.boolDefines = settings.boolDefines;
 		if (!setupShaderFromSource(std::move(shaderSource))) {
 			return false;
 		}
@@ -265,7 +262,6 @@ bool ofShader::setup(const TransformFeedbackSettings & settings) {
 		Source shaderSource{ty, source, settings.sourceDirectoryPath};
 		shaderSource.intDefines = settings.intDefines;
 		shaderSource.floatDefines = settings.floatDefines;
-		shaderSource.boolDefines = settings.boolDefines;
 		if (!setupShaderFromSource(std::move(shaderSource))) {
 			return false;
 		}
@@ -354,23 +350,16 @@ bool ofShader::setupShaderFromSource(ofShader::Source && source){
     for(auto & define: source.intDefines){
         const auto & name = define.first;
         const auto & value = define.second;
-	std::regex re_define("#define[ \t]+" + name + "[ \t]+([0-9]+)");
+		std::regex re_define("#define[ \t]+" + name + "[ \t]+([0-9]+)");
         source.expandedSource = std::regex_replace(source.expandedSource, re_define, "#define " + name + " " + std::to_string(value));
     }
 
     for(auto & define: source.floatDefines){
         const auto & name = define.first;
         const auto & value = define.second;
-	std::regex re_define("#define[ \t]+" + name + "[ \t]+[0-9]*(\\.[0-9]*f?)?");
+		std::regex re_define("#define[ \t]+" + name + "[ \t]+[0-9]*(\\.[0-9]*f?)?");
         source.expandedSource = std::regex_replace(source.expandedSource, re_define, "#define " + name + " " + std::to_string(value));
-    }
-
-    for(auto & define: source.boolDefines){
-        const auto & name = define.first;
-        const auto & value = define.second;
-        std::regex re_define("#define[ \t]+" + name + "[ \t]+(([0-1])|(true|false))");
-	source.expandedSource = std::regex_replace(source.expandedSource, re_define, "#define " + name + " " + (value?"true":"false"));
-    }
+	}
 
 	// store source code (that's the expanded source with all includes copied in)
 	// we need to store this here, and before shader compilation,
