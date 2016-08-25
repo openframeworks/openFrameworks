@@ -279,7 +279,7 @@ void ofxKinect::close() {
 	if(isThreadRunning()) {
 		stopThread();
 		ofSleepMillis(10);
-		waitForThread(false);
+		waitForThread(false,5000);
 	}
     
 	deviceId = -1;
