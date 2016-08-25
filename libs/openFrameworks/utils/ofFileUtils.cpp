@@ -468,14 +468,14 @@ bool ofFile::create(){
 bool ofFile::create(const std::filesystem::path & path){
 	bool success = false;
 
-	if(!myFile.string().empty()){
-		auto oldmode = this->mode;
-		auto oldpath = this->path();
-		success = open(path,ofFile::WriteOnly,binary);
-		close();
+	auto oldmode = this->mode;
+	auto oldpath = this->path();
+	success = open(path,ofFile::WriteOnly,binary);
+	close();
+	if( oldpath.length() ){
 		open(oldpath,oldmode,binary);
 	}
-
+	
 	return success;
 }
 
