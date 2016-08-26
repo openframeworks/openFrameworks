@@ -59,6 +59,9 @@ void ofSoundStreamClose();
 /// \return all sound devices found on the system
 std::vector<ofSoundDevice> ofSoundStreamListDevices();
 
+/// \brief Sets the device represented by the stream, see ofSoundStreamListDevices().
+void ofSoundStreamSetDeviceID(int deviceID);
+
 /// \class ofSoundStream
 /// \brief Gives access to audio input and output devices
 ///
