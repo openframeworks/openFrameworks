@@ -203,14 +203,15 @@ void ofVideoPlayer::update(){
 			playerTex = player->getTexturePtr();
 			
 			if(playerTex == nullptr){
-				if(int(tex.size())!=player->getPixels().getNumPlanes()){
-					tex.resize(std::max(player->getPixels().getNumPlanes(),static_cast<size_t>(1)));
+				if(tex.size()!=player->getPixels().getNumPlanes()){
+					tex.resize(std::max(player->getPixels().getNumPlanes(),static_cast<std::size_t>(1)));
 				}
-				if(!ofIsFloatEqual(player->getWidth(), 0.0f) && !ofIsFloatEqual(player->getHeight(), 0.0f)) {
+				if(std::size_t(player->getWidth()) != 0 && std::size_t(player->getHeight()) != 0) {
 					for(std::size_t i=0;i<player->getPixels().getNumPlanes();i++){
 						ofPixels plane = player->getPixels().getPlane(i);
 						bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glInternalFormat != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
-						if(bDiffPixFormat || !tex[i].isAllocated() || !ofIsFloatEqual(tex[i].getWidth(), float(plane.getWidth())) || !ofIsFloatEqual(tex[i].getHeight(), float(plane.getHeight()))){
+						if(bDiffPixFormat || !tex[i].isAllocated() || std::size_t(tex[i].getWidth()) != plane.getWidth() || std::size_t(tex[i].getHeight()) != plane.getHeight())
+						{
 							tex[i].allocate(plane);
 						}
 						tex[i].loadData(plane);
@@ -370,7 +371,7 @@ void ofVideoPlayer::setPaused(bool _bPause){
 //------------------------------------
 void ofVideoPlayer::setUseTexture(bool bUse){
 	bUseTexture = bUse;
-	if(bUse && player && !player->getTexturePtr() && !ofIsFloatEqual(getWidth(), 0.0f) && !ofIsFloatEqual(getHeight(), 0.0f)){
+	if(bUse && player && !player->getTexturePtr() && std::size_t(getWidth()) != 0 && std::size_t(getHeight()) != 0){
 		for(std::size_t i=0;i<player->getPixels().getNumPlanes();i++){
 			ofPixels plane = player->getPixels().getPlane(i);
 			bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glInternalFormat != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
