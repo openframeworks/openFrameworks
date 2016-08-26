@@ -207,7 +207,7 @@ if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
 	fi
 	
     DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-    cd ${DIR}/../../apothecary
+    cd ${DIR}/../../apothecary/apothecary
     ./apothecary -j${cores} update poco
     WHO=`who am i`;ID=`echo ${WHO%% *}`
     GROUP_ID=`id --group -n ${ID}`
