@@ -53,7 +53,6 @@ public:
 		std::map<GLuint, std::string> shaderSources;
 		std::map<std::string, int> intDefines;
 		std::map<std::string, float> floatDefines;
-		std::map<std::string, bool> boolDefines;
 		std::string sourceDirectoryPath;
 		bool bindDefaults = true;
 	};
@@ -65,7 +64,6 @@ public:
 		std::vector<std::string> varyingsToCapture;
 		std::map<std::string, int> intDefines;
 		std::map<std::string, float> floatDefines;
-		std::map<std::string, bool> boolDefines;
 		std::string sourceDirectoryPath;
 		bool bindDefaults = true;
 		GLuint bufferMode = GL_INTERLEAVED_ATTRIBS; // GL_INTERLEAVED_ATTRIBS or GL_SEPARATE_ATTRIBS
