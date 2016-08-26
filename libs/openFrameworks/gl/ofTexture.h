@@ -640,8 +640,8 @@ class ofTexture : public ofBaseDraws {
 	/// \brief Draw a subsection of the texture with an offset.
 	///
 	/// \sa drawSubsection(ofRectangle& drawBounds, ofRectangle& subsectionBounds)
-	/// \param dstBounds Draw position and dimensions.
-	/// \param sx Subsection position and dimensions within the texture.
+	/// \param drawBounds Draw position and dimensions.
+	/// \param subsectionBounds Subsection position and dimensions within the texture.
 	void drawSubsection(ofRectangle& drawBounds, ofRectangle& subsectionBounds) const;
 	
 	/// \brief Draw a subsection of the texture with an offset and depth.
