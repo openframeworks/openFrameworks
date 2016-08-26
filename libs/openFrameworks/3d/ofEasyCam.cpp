@@ -243,8 +243,18 @@ void ofEasyCam::setRelativeYAxis(bool relative){
 }
 
 //----------------------------------------
+bool ofEasyCam::getRelativeYAxis() const{
+	return relativeYAxis;
+}
+
+//----------------------------------------
 void ofEasyCam::setUpAxis(const glm::vec3 & _up){
 	upAxis = _up;
+}
+
+//----------------------------------------
+const glm::vec3 & ofEasyCam::getUpAxis() const{
+	return upAxis;
 }
 
 //----------------------------------------
@@ -255,6 +265,11 @@ void ofEasyCam::enableInertia(){
 //----------------------------------------
 void ofEasyCam::disableInertia(){
 	doInertia = false;
+}
+
+//----------------------------------------
+bool ofEasyCam::getInertiaEnabled() const{
+	return doInertia;
 }
 
 //----------------------------------------
@@ -356,14 +371,19 @@ void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 
 //----------------------------------------
 void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
-	if(doInertia){
+	ofRectangle area = getControlArea();
+
+	if(area.inside(mouse)){
+		// Check if it's double click
 		unsigned long curTap = ofGetElapsedTimeMillis();
-		ofRectangle area = getControlArea();
 		if(lastTap != 0 && curTap - lastTap < doubleclickTime){
 			reset();
 			return;
 		}
 		lastTap = curTap;
+	}
+
+	if(doInertia){
 		bApplyInertia = true;
 		mouseVel = mouse  - prevMouse;
 
