@@ -109,3 +109,23 @@
 #include "ofMesh.h"
 #include "ofNode.h"
 
+// undef unsafe <windows.h> macros
+#ifdef RGB
+	#undef RGB
+#endif
+
+#ifdef near
+	#undef near
+#endif
+
+#ifdef far
+	#undef far
+#endif
+
+#ifdef min
+	#undef min
+#endif
+
+#ifdef max
+	#undef max
+#endif
