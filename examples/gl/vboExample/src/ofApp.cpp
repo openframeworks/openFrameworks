@@ -56,19 +56,19 @@ ofVec3f ofApp::getVertexFromImg(ofImage& img, int x, int y) {
 void ofApp::setup() {
 
     #ifdef TARGET_OPENGLES
-    // While this will will work on normal OpenGL as well, it is 
+    // While this will will work on normal OpenGL as well, it is
     // required for OpenGL ES because ARB textures are not supported.
-    // If this IS set, then we conditionally normalize our 
+    // If this IS set, then we conditionally normalize our
     // texture coordinates below.
     ofEnableNormalizedTexCoords();
     #endif
 
 	img.load("linzer.png");
-	
+
 	// OF_PRIMITIVE_TRIANGLES means every three vertices create a triangle
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
 	int skip = 10;	// this controls the resolution of the mesh
-	
+
 	int width = img.getWidth();
 	int height = img.getHeight();
 
@@ -91,12 +91,12 @@ void ofApp::setup() {
 			ofVec2f nei(x + skip, y);
 			ofVec2f swi(x, y + skip);
 			ofVec2f sei(x + skip, y + skip);
-			
+
 			// ignore any zero-data (where there is no depth info)
 			if(nw != zero && ne != zero && sw != zero && se != zero) {
 				addFace(mesh, nw, ne, se, sw);
 
-				// Normalize our texture coordinates if normalized 
+				// Normalize our texture coordinates if normalized
 				// texture coordinates are currently enabled.
 				if(ofGetUsingNormalizedTexCoords()) {
 					nwi /= imageSize;
@@ -109,13 +109,13 @@ void ofApp::setup() {
 			}
 		}
 	}
-	
+
 	vboMesh = mesh;
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
-	
+
 }
 
 //--------------------------------------------------------------
@@ -123,12 +123,12 @@ void ofApp::draw() {
 	ofBackgroundGradient(ofColor(64), ofColor(0));
 	cam.begin();
 	ofEnableDepthTest();
-	
-	ofRotateY(ofGetElapsedTimef() * 30); // slowly rotate the model
-	
+
+	ofRotateYDeg(ofGetElapsedTimef() * 30); // slowly rotate the model
+
 	ofScale(1, -1, 1); // make y point down
 	ofScale(.5, .5, .5); // make everything a bit smaller
-	
+
 	img.bind(); // bind the image to begin texture mapping
 	int n = 5; // make a 5x5 grid
 	ofVec2f spacing(img.getWidth(), img.getHeight()); // spacing between meshes
@@ -147,10 +147,10 @@ void ofApp::draw() {
 		}
 	}
 	img.unbind();
-	
+
 	ofDisableDepthTest();
 	cam.end();
-	
+
 	// draw the framerate in the top left corner
 	ofDrawBitmapString(ofToString((int) ofGetFrameRate()) + " fps", 10, 20);
 	ofDrawBitmapString("Hold any key for ofVboMesh mode.", 10, 40);
@@ -167,27 +167,27 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
@@ -202,15 +202,15 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-	
+
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-	
+void ofApp::dragEvent(ofDragInfo dragInfo){
+
 }

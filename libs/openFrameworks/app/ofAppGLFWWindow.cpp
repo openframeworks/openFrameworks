@@ -441,7 +441,6 @@ bool ofAppGLFWWindow::getWindowShouldClose(){
 //--------------------------------------------
 void ofAppGLFWWindow::setWindowShouldClose(){
 	glfwSetWindowShouldClose(windowP,1);
-	events().notifyExit();
 }
 
 //------------------------------------------------------------
