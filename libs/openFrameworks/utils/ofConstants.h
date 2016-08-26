@@ -258,8 +258,11 @@ enum ofTargetPlatform{
 	#import <OpenGLES/ES2/gl.h>
 	#import <OpenGLES/ES2/glext.h>
 
-	
-	#define TARGET_LITTLE_ENDIAN		// arm cpu	
+	#define TARGET_LITTLE_ENDIAN		// arm cpu
+
+	#ifndef GL_STENCIL_INDEX
+		#define GL_STENCIL_INDEX 0x1901     // not defined in iOS7
+	#endif
 #endif
 
 #ifdef TARGET_ANDROID
