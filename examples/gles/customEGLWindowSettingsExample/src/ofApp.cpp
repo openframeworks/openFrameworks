@@ -1,6 +1,6 @@
 #include "ofApp.h"
 
-	
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
@@ -29,7 +29,7 @@ void ofApp::draw() {
     ofSetColor(255);
     ofPushMatrix();
     ofTranslate(ofGetWidth()/2.0f,ofGetHeight()/2.0f);
-    ofRotateZ(angle);
+    ofRotateZDeg(angle);
     ofEnableAlphaBlending();
     rpiLogo.draw(-rpiLogo.getWidth()/2.0f,-rpiLogo.getHeight()/2.0f);
     ofDisableAlphaBlending();
