@@ -371,14 +371,19 @@ void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 
 //----------------------------------------
 void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
-	if(doInertia){
+	ofRectangle area = getControlArea();
+
+	if(area.inside(mouse)){
+		// Check if it's double click
 		unsigned long curTap = ofGetElapsedTimeMillis();
-		ofRectangle area = getControlArea();
 		if(lastTap != 0 && curTap - lastTap < doubleclickTime){
 			reset();
 			return;
 		}
 		lastTap = curTap;
+	}
+
+	if(doInertia){
 		bApplyInertia = true;
 		mouseVel = mouse  - prevMouse;
 
