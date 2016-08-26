@@ -512,7 +512,13 @@ double ofToDouble(const string& doubleString) {
 int64_t ofToInt64(const string& intString) {
 	return ofTo<int64_t>(intString);
 }
-
+//----------------------------------------
+double ofToDouble(const string& doubleString){
+	double x = 0;
+	istringstream cur(doubleString);
+	cur >> x;
+	return x;
+}
 //----------------------------------------
 bool ofToBool(const string& boolString) {
 	auto lower = ofToLower(boolString);
