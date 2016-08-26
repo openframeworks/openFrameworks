@@ -30,7 +30,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     model.update();
-    
+
     if(bAnimateMouse) {
         model.setPositionForAllAnimations(animationPosition);
     }
@@ -44,7 +44,7 @@ void ofApp::draw(){
 
     ofPushMatrix();
     ofTranslate(model.getPosition().x+100, model.getPosition().y, 0);
-    ofRotate(-mouseX, 0, 1, 0);
+    ofRotateDeg(-mouseX, 0, 1, 0);
     ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
     model.drawFaces();
     ofPopMatrix();
@@ -53,7 +53,7 @@ void ofApp::draw(){
 
     ofPushMatrix();
     ofTranslate(model.getPosition().x-300, model.getPosition().y, 0);
-    ofRotate(-mouseX, 0, 1, 0);
+    ofRotateDeg(-mouseX, 0, 1, 0);
     ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
 
     ofxAssimpMeshHelper & meshHelper = model.getMeshHelper(0);
