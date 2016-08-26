@@ -685,9 +685,9 @@ int ofGetBytesPerChannelFromGLType(int glType){
 #ifndef TARGET_OPENGLES
 		case GL_UNSIGNED_INT:
 			return 4;
-#endif
 		case GL_HALF_FLOAT:
 			return 2;
+#endif
 
 		default:
 			ofLogError("ofGetBytesPerChannelFromGLType") << "unknown type returning 1";
