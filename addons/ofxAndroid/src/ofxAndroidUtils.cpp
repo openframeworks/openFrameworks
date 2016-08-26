@@ -244,6 +244,27 @@ bool ofxAndroidAlertListBox(string title, const vector<string> & list){
 	return res;
 }
 
+int ofxAndroidGetLastAlertListSelection() {
+	
+	ofLogNotice() << "ofxAndroidGetLastAlertListSelection";
+	
+	jclass javaClass = ofGetJavaOFAndroid();
+	
+	if(javaClass==0){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidGetLastAlertListSelection(): couldn't find OFAndroid java class";
+		return -1;
+	}
+	
+	jmethodID getLastAlertListSelection = ofGetJNIEnv()->GetStaticMethodID(javaClass,"getLastAlertListSelection","()I");
+	if(!getLastAlertListSelection){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidGetLastAlertListSelection(): couldn't find OFAndroid getLastAlertListSelection method";
+		return -1;
+	}
+	
+	int ret = ofGetJNIEnv()->CallStaticIntMethod(javaClass,getLastAlertListSelection);
+	return ret;
+}
+
 void ofxAndroidToast(string msg){
 	jclass javaClass = ofGetJavaOFAndroid();
 

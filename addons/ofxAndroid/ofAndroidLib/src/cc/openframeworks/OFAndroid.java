@@ -33,6 +33,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 public class OFAndroid {
@@ -653,62 +654,85 @@ public class OFAndroid {
 	}
 	
 	private static boolean alertListResult;
-	public static boolean alertListBox(String title, String[] list){  
+	private static int listBoxResult;
+	public static boolean alertListBox(String title, String[] list){
 		final String[] alertList = list;
 		final String alertTitle = title;
 		/*Looper.prepare();
-		final Handler handler = new Handler() {
-	        @Override
-	        public void handleMessage(Message mesg) {
-	            throw new RuntimeException();
-	        } 
-	    };*/
-	    alertListResult=false;
+		 final Handler handler = new Handler() {
+		 @Override
+		 public void handleMessage(Message mesg) {
+		 throw new RuntimeException();
+		 }
+		 };*/
+		alertListResult=false;
+		listBoxResult=-1;
 		ofActivity.runOnUiThread(new Runnable(){
 			public void run() {
-				final ListView listView = new ListView(ofActivity); 
-				final ListAdapter adapter = new ArrayAdapter<String>(ofActivity, android.R.layout.simple_list_item_1, alertList);
+				final ListView listView = new ListView(ofActivity);
+				final ListAdapter adapter = new ArrayAdapter<String>(ofActivity, android.R.layout.simple_list_item_activated_1, alertList);
 				listView.setAdapter(adapter);
-				new AlertDialog.Builder(ofActivity)   
-					.setTitle(alertTitle)  
-					.setCancelable(false)  
-					.setNeutralButton(android.R.string.ok,  
-							new DialogInterface.OnClickListener() {  
-						public void onClick(DialogInterface dialog, int whichButton){
-							alertListResult = true;
-							//OFAndroid.okPressed();
-							//handler.sendMessage(handler.obtainMessage());
-						}
-	
-				  	})  
-				  	/*.setNegativeButton(android.R.string.cancel,
-							new DialogInterface.OnClickListener() {  
-						public void onClick(DialogInterface dialog, int whichButton){
-							alertListResult = false;
-							OFAndroid.cancelPressed();
-							//handler.sendMessage(handler.obtainMessage());
-						}
-				  	})*/
-				  	.setView(listView)
-				  	.show();  
-			}  
+				
+				// support multiple-choice lists in the future?
+				listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+				
+				// add item click listener
+				listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+						// calling native function instead?
+						// like: OFAndroid.ListEntryPressed(position);
+						
+						// set the result
+						listBoxResult = position;
+					}
+				});
+				
+				new AlertDialog.Builder(ofActivity)
+				.setTitle(alertTitle)
+				.setCancelable(false)
+				.setNeutralButton(android.R.string.ok,
+								  new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton){
+						alertListResult = true;
+						OFAndroid.okPressed();
+						//handler.sendMessage(handler.obtainMessage());
+					}
+					
+				})
+				/*.setNegativeButton(android.R.string.cancel,
+				 new DialogInterface.OnClickListener() {
+				 public void onClick(DialogInterface dialog, int whichButton){
+				 alertListResult = false;
+				 OFAndroid.cancelPressed();
+				 //handler.sendMessage(handler.obtainMessage());
+				 }
+				 })*/
+				.setView(listView)
+				.show();
+			}
 		});
 		
 		// loop till a runtime exception is triggered.
-	    //try { Looper.loop(); }
-	    //catch(RuntimeException e2) {}
-	    
-	    return alertListResult;
+		//try { Looper.loop(); }
+		//catch(RuntimeException e2) {}
+		
+		return alertListResult;
 	}
 	
-	public static void toast(String msg){  
+	public static int getLastAlertListSelection(){
+		return listBoxResult;
+	}
+	
+	
+	public static void toast(String msg){
 		if(msg=="") return;
 		final String alertMsg = msg;
 		ofActivity.runOnUiThread(new Runnable(){
 			public void run() {
 				Toast toast = Toast.makeText(ofActivity, alertMsg, Toast.LENGTH_SHORT);
-	        	toast.show();  
-			}  
+				toast.show();
+			}
 		});
 	}
 	

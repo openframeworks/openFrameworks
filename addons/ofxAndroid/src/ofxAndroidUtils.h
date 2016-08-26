@@ -67,6 +67,7 @@ void ofxAndroidYesNoBox(string msg);
 void ofxAndroidAlertTextBox(string question, string text);
 string ofxAndroidGetTextBoxResult();
 bool ofxAndroidAlertListBox(string title, const vector<string> & list);
+int ofxAndroidGetLastAlertListSelection();
 
 void ofxAndroidToast(string msg);
 
