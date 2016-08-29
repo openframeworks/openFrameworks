@@ -754,9 +754,7 @@ void ofShader::reloadGL(){
 #endif
 	attributesBindingsCache.clear();
 	for(auto & shader: source){
-		auto type = shader.second.type;
-		auto source = shader.second.expandedSource;
-		setupShaderFromSource(type,source);
+		setupShaderFromSource(shader.second.source);
 	}
 	for(auto binding: bindings){
 		bindAttribute(binding.second, binding.first);
@@ -1187,6 +1185,7 @@ void ofShader::setAttribute4f(GLint location, float v1, float v2, float v3, floa
 		glVertexAttrib4f(location, v1, v2, v3, v4);
 }
 
+//--------------------------------------------------------------
 void ofShader::setAttribute1fv(const string & name, const float* v, GLsizei stride) const{
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
@@ -1197,6 +1196,7 @@ void ofShader::setAttribute1fv(const string & name, const float* v, GLsizei stri
 	}
 }
 
+//--------------------------------------------------------------
 void ofShader::setAttribute2fv(const string & name, const float* v, GLsizei stride) const{
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
@@ -1208,6 +1208,7 @@ void ofShader::setAttribute2fv(const string & name, const float* v, GLsizei stri
 
 }
 
+//--------------------------------------------------------------
 void ofShader::setAttribute3fv(const string & name, const float* v, GLsizei stride) const{
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
@@ -1218,6 +1219,7 @@ void ofShader::setAttribute3fv(const string & name, const float* v, GLsizei stri
 	}
 }
 
+//--------------------------------------------------------------
 void ofShader::setAttribute4fv(const string & name, const float* v, GLsizei stride) const{
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
