@@ -754,7 +754,8 @@ void ofShader::reloadGL(){
 #endif
 	attributesBindingsCache.clear();
 	for(auto & shader: source){
-		setupShaderFromSource(shader.second.source);
+		auto source = shader.second.source;
+		setupShaderFromSource(std::move(shader.second.source));
 	}
 	for(auto binding: bindings){
 		bindAttribute(binding.second, binding.first);
