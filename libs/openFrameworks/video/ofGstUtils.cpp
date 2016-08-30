@@ -409,6 +409,9 @@ void ofGstUtils::setPosition(float pct){
 	//pct = CLAMP(pct, 0,1);// check between 0 and 1;
 	GstFormat format = GST_FORMAT_TIME;
 	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
+	if(speed > 1 || speed < -1){
+		flags = (GstSeekFlags)(flags | GST_SEEK_FLAG_SKIP);
+	}
 	gint64 pos = (guint64)((double)pct*(double)durationNanos);
 
 	/*if(bPaused){
@@ -448,8 +451,14 @@ void ofGstUtils::setLoopState(ofLoopType state){
 }
 
 void ofGstUtils::setSpeed(float _speed){
+	if(_speed == speed) return;
+
 	GstFormat format = GST_FORMAT_TIME;
 	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
+	if(_speed > 1 || _speed < -1){
+		flags = (GstSeekFlags)(flags | GST_SEEK_FLAG_SKIP);
+	}
+
 	gint64 pos;
 
 	if(_speed==0){
