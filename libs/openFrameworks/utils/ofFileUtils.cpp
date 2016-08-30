@@ -435,6 +435,13 @@ bool ofFile::open(const std::filesystem::path & _path, Mode _mode, bool binary){
 	return openStream(_mode, binary);
 }
 
+//------------------------------------------------------------------------------------------------------------
+bool ofFile::openFromCWD(const std::filesystem::path & _path, Mode _mode, bool binary){
+	close();
+	myFile = std::filesystem::path(_path.string());
+	return openStream(_mode, binary);
+}
+
 //-------------------------------------------------------------------------------------------------------------
 bool ofFile::changeMode(Mode _mode, bool binary){
 	if(_mode != mode){
@@ -694,28 +701,37 @@ void ofFile::setExecutable(bool flag){
 bool ofFile::copyTo(const string& _path, bool bRelativeToData, bool overwrite) const{
 	std::string path = _path;
 
-	if(isDirectory()){
-		return ofDirectory(myFile).copyTo(path,bRelativeToData,overwrite);
-	}
 	if(path.empty()){
 		ofLogError("ofFile") << "copyTo(): destination path " << _path << " is empty";
 		return false;
+	}
+	if(isDirectory()){
+		ofDirectory tmp;
+		//don't want to add ofToDataPath to myFile path as it was already done in ofFile::open
+		tmp.openFromCWD(myFile);
+		return tmp.copyTo(path,bRelativeToData,overwrite);
 	}
 	if(!exists()){
 		ofLogError("ofFile") << "copyTo(): source file " << this->path() << " does not exist";
 		return false;
 	}
 
+	//bRelativeToData is handled here for the destination path - so we pass false to static functions below
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(isFile() && ofFile(path,ofFile::Reference).isDirectory()){
-			path = ofFilePath::join(path,getFileName());
+	
+	if(ofFile::doesFileExist(path, false)){
+		if(isFile()){
+			ofFile tmp;
+			tmp.openFromCWD(path,ofFile::Reference);
+			if(tmp.isDirectory()){
+				path = ofFilePath::join(path,getFileName());
+			}
 		}
-		if(ofFile::doesFileExist(path, bRelativeToData)){
+		if(ofFile::doesFileExist(path, false)){
 			if(overwrite){
-				ofFile::removeFile(path, bRelativeToData);
+				ofFile::removeFile(path, false);
 			}else{
 				ofLogWarning("ofFile") << "copyTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
 			}
@@ -723,8 +739,10 @@ bool ofFile::copyTo(const string& _path, bool bRelativeToData, bool overwrite) c
 	}
 
 	try{
-		if(!ofDirectory(ofFilePath::getEnclosingDirectory(path,bRelativeToData)).exists()){
-			ofFilePath::createEnclosingDirectory(path, bRelativeToData);
+		ofDirectory destDir;
+		destDir.openFromCWD(ofFilePath::getEnclosingDirectory(path,false));
+		if(!destDir.exists()){
+			ofFilePath::createEnclosingDirectory(path, false);
 		}
 		std::filesystem::copy_file(myFile,path);
 	}catch(std::exception & except){
@@ -751,13 +769,18 @@ bool ofFile::moveTo(const string& _path, bool bRelativeToData, bool overwrite){
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(isFile() && ofFile(path,ofFile::Reference).isDirectory()){
-			path = ofFilePath::join(path,getFileName());
+	if(ofFile::doesFileExist(path, false)){
+	
+		if(isFile()){
+			ofFile tmp;
+			tmp.openFromCWD(path,ofFile::Reference);
+			if(tmp.isDirectory()){
+				path = ofFilePath::join(path,getFileName());
+			}
 		}
-		if(ofFile::doesFileExist(path, bRelativeToData)){
+		if(ofFile::doesFileExist(path, false)){
 			if(overwrite){
-				ofFile::removeFile(path, bRelativeToData);
+				ofFile::removeFile(path, false);
 			}else{
 				ofLogWarning("ofFile") << "copyTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
 			}
@@ -769,8 +792,10 @@ bool ofFile::moveTo(const string& _path, bool bRelativeToData, bool overwrite){
 		if(mode != ofFile::Reference){
 			changeMode(ofFile::Reference, binary);
 		}
-		if(!ofDirectory(ofFilePath::getEnclosingDirectory(path,bRelativeToData)).exists()){
-			ofFilePath::createEnclosingDirectory(path, bRelativeToData);
+		ofDirectory destDir;
+		destDir.openFromCWD(ofFilePath::getEnclosingDirectory(path,false));
+		if(!destDir.exists()){
+			ofFilePath::createEnclosingDirectory(path,false);
 		}
 		std::filesystem::rename(myFile,path);
 		myFile = path;
@@ -864,32 +889,47 @@ bool ofFile::operator>=(const ofFile & file) const {
 //------------------------------------------------------------------------------------------------------------
 
 bool ofFile::copyFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData,  bool overwrite){
-	return ofFile(pathSrc,ofFile::Reference).copyTo(pathDst,bRelativeToData,overwrite);
+	ofFile tmp;
+	if( bRelativeToData ){
+		tmp.open(pathSrc,ofFile::Reference);
+	}else{
+		tmp.openFromCWD(pathSrc,ofFile::Reference);
+	}
+	return tmp.copyTo(pathDst,bRelativeToData,overwrite);
 }
 
 //be careful with slashes here - appending a slash when moving a folder will causes mad headaches
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::moveFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData, bool overwrite){
-	return ofFile(pathSrc,ofFile::Reference).moveTo(pathDst, bRelativeToData, overwrite);
+	ofFile tmp;
+	if( bRelativeToData ){
+		tmp.open(pathSrc,ofFile::Reference);
+	}else{
+		tmp.openFromCWD(pathSrc,ofFile::Reference);
+	}
+	return tmp.moveTo(pathDst, bRelativeToData, overwrite);
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::doesFileExist(const std::string& _fPath, bool bRelativeToData){
-	std::string fPath = _fPath;
+	ofFile tmp;
 	if(bRelativeToData){
-		fPath = ofToDataPath(fPath);
+		tmp.open(_fPath,ofFile::Reference);
+	}else{
+		tmp.openFromCWD(_fPath,ofFile::Reference);
 	}
-	ofFile file(fPath,ofFile::Reference);
-	return !fPath.empty() && file.exists();
+	return !_fPath.empty() && tmp.exists();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::removeFile(const std::string& _path, bool bRelativeToData){
-	std::string path = _path;
+	ofFile tmp;
 	if(bRelativeToData){
-		path = ofToDataPath(path);
+		tmp.open(_path,ofFile::Reference);
+	}else{
+		tmp.openFromCWD(_path,ofFile::Reference);
 	}
-	return ofFile(path,ofFile::Reference).remove();
+	return tmp.remove();
 }
 
 
@@ -915,6 +955,13 @@ void ofDirectory::open(const std::filesystem::path & path){
 	originalDirectory = ofFilePath::getPathForDirectory(path.string());
 	files.clear();
 	myDir = std::filesystem::path(ofToDataPath(originalDirectory));
+}
+
+//------------------------------------------------------------------------------------------------------------
+void ofDirectory::openFromCWD(const std::filesystem::path & path){
+	originalDirectory = ofFilePath::getPathForDirectory(path.string());
+	files.clear();
+	myDir = std::filesystem::path(originalDirectory);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -944,7 +991,7 @@ bool ofDirectory::create(bool recursive){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::exists() const {
-	return std::filesystem::exists(myDir);
+	return (myDir == "" || std::filesystem::exists(myDir));
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1033,16 +1080,20 @@ bool ofDirectory::copyTo(const std::string& _path, bool bRelativeToData, bool ov
 		path = ofToDataPath(path, bRelativeToData);
 	}
 
-	if(ofDirectory::doesDirectoryExist(path, bRelativeToData)){
+	if(ofDirectory::doesDirectoryExist(path, false)){
 		if(overwrite){
-			ofDirectory::removeDirectory(path, true, bRelativeToData);
+			ofDirectory::removeDirectory(path, true, false);
 		}else{
 			ofLogWarning("ofDirectory") << "copyTo(): dest \"" << path << "\" already exists, set bool overwrite to true to overwrite it";
 			return false;
 		}
 	}
 
-	ofDirectory(path).create(true);
+	//our path is bRelativeToData handled from above - so can't open via the constructor approach 
+	ofDirectory dir;
+	dir.openFromCWD(path);
+	dir.create(true);
+	
 	// Iterate through the source directory
 	for(std::filesystem::directory_iterator file(myDir); file != std::filesystem::directory_iterator(); ++file){
 		auto currentPath = std::filesystem::absolute(file->path());
@@ -1050,11 +1101,13 @@ bool ofDirectory::copyTo(const std::string& _path, bool bRelativeToData, bool ov
 		if(std::filesystem::is_directory(currentPath)){
 			ofDirectory current(currentPath);
 			// Found directory: Recursion
-			if(!current.copyTo(dst.string(),false)){
+			if(!current.copyTo(dst.string(),false,overwrite)){
 				return false;
 			}
 		}else{
-			ofFile(file->path(),ofFile::Reference).copyTo(dst.string(),false);
+			ofFile tmp;
+			tmp.openFromCWD(file->path(),ofFile::Reference);
+			tmp.copyTo(dst.string(),false,overwrite);
 		}
 	}
 
@@ -1243,10 +1296,14 @@ int ofDirectory::numFiles(){
 bool ofDirectory::removeDirectory(const std::string& _path, bool deleteIfNotEmpty, bool bRelativeToData){
 	std::string path = _path;
 
+	ofFile dirToRemove;
 	if(bRelativeToData){
-		path = ofToDataPath(path);
+		dirToRemove.open(path,ofFile::Reference);
+	}else{
+		dirToRemove.openFromCWD(path,ofFile::Reference);
 	}
-	return ofFile(path,ofFile::Reference).remove(deleteIfNotEmpty);
+	
+	return dirToRemove.remove(deleteIfNotEmpty);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1258,12 +1315,11 @@ bool ofDirectory::createDirectory(const std::string& _dirPath, bool bRelativeToD
 		dirPath = ofToDataPath(dirPath);
 	}
 	
-	
 	// on OSX,std::filesystem::create_directories seems to return false *if* the path has folders that already exist
 	// and true if it doesn't
 	// so to avoid unnecessary warnings on OSX, we check if it exists here:
 	
-	bool bDoesExistAlready = ofDirectory::doesDirectoryExist(dirPath);
+	bool bDoesExistAlready = ofDirectory::doesDirectoryExist(dirPath,false);
 	
 	if (!bDoesExistAlready){
 		
@@ -1457,7 +1513,7 @@ string ofFilePath::getEnclosingDirectory(const std::filesystem::path& _filePath,
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFilePath::createEnclosingDirectory(const std::filesystem::path& filePath, bool bRelativeToData, bool bRecursive) {
-	return ofDirectory::createDirectory(ofFilePath::getEnclosingDirectory(filePath), bRelativeToData, bRecursive);
+	return ofDirectory::createDirectory(ofFilePath::getEnclosingDirectory(filePath,bRelativeToData), bRelativeToData, bRecursive);
 }
 
 //------------------------------------------------------------------------------------------------------------
