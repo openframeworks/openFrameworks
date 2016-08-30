@@ -449,7 +449,7 @@ void ofGstUtils::setLoopState(ofLoopType state){
 
 void ofGstUtils::setSpeed(float _speed){
 	GstFormat format = GST_FORMAT_TIME;
-	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_SKIP | GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
+	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
 	gint64 pos;
 
 	if(_speed==0){
@@ -475,7 +475,7 @@ void ofGstUtils::setSpeed(float _speed){
 		gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
 
 	if(speed>0){
-		if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
+		if(!gst_element_seek(GST_ELEMENT(gstSink), speed, 	format,
 				flags,
 				GST_SEEK_TYPE_SET,
 				pos,
@@ -484,7 +484,7 @@ void ofGstUtils::setSpeed(float _speed){
 			ofLogWarning("ofGstUtils") << "setSpeed(): unable to change speed";
 		}
 	}else{
-		if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
+		if(!gst_element_seek(GST_ELEMENT(gstSink), speed, 	format,
 				flags,
 				GST_SEEK_TYPE_SET,
 				0,
