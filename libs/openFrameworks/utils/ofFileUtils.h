@@ -452,6 +452,18 @@ public:
 	/// split at endline characters automatically
 	/// \returns true if the path was opened
 	bool open(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
+
+	/// \brief Open the path as a file.
+	///
+	/// Opens as a text file with read only access by default from the current working directory without internally calling ofToDataPath.
+	///
+	/// \param path file path
+	/// \param mode file access mode depending on how you plan to use the file
+	/// (read only, read write, etc)
+	/// \param binary set to false if you are reading a text file & want lines
+	/// split at endline characters automatically
+	/// \returns true if the path was opened
+	bool openFromCWD(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 	
 	/// \brief Reopen the current file path with a different access mode.
 	///
@@ -766,6 +778,11 @@ public:
 	///
 	/// \param path directory path
 	void open(const std::filesystem::path & path);
+	
+	/// \brief Open a directory path relative to the current working directory without calling ofToDataPath internally, clears the current file list.
+	///
+	/// \param path directory path
+	void openFromCWD(const std::filesystem::path & path);
 	
 	/// \brief Close the currently open path.
 	void close();
