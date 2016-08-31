@@ -123,7 +123,13 @@ ofGstUtils::ofGstUtils() {
 
 	if(!gst_inited){
 #ifdef TARGET_WIN32
-		string gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86");
+		string gst_path;
+		if (sizeof(int) == 32) {
+			 gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86");
+		}else
+		{
+			gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86_64");
+		}
 		//putenv(("GST_PLUGIN_PATH_1_0=" + ofFilePath::join(gst_path, "lib\\gstreamer-1.0") + ";.").c_str());
 		// to make it compatible with gcc and C++11 standard
 		SetEnvironmentVariableA("GST_PLUGIN_PATH_1_0", ofFilePath::join(gst_path, "lib\\gstreamer-1.0").c_str());
