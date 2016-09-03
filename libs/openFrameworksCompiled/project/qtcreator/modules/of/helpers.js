@@ -1,3 +1,6 @@
+var Process = loadExtension("qbs.Process");
+var File = loadExtension("qbs.File");
+
 function listDir(dir){
     var ls = new Process();
     ls.exec("ls", [dir]);
