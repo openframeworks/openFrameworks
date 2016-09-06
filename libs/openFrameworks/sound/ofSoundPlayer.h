@@ -161,9 +161,9 @@ public:
     /// \return whether or not the player is ready to begin playback.
     bool isLoaded() const;
 
-	/// \brief Gets if player is paused.
-	/// \return whether or not the player is paused.
-	bool isPaused() const;
+    /// \brief Gets if player is paused.
+    /// \return whether or not the player is paused.
+    bool isPaused() const;
 
 protected:
     shared_ptr<ofBaseSoundPlayer> player;
