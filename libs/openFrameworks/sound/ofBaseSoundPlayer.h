@@ -33,6 +33,7 @@ public:
 	virtual float getPosition() const = 0;
 	virtual int getPositionMS() const = 0;
 	virtual bool isPlaying() const = 0;
+	virtual bool isPaused() const = 0;
 	virtual float getSpeed() const = 0;
 	virtual float getPan() const = 0;
 	virtual bool isLoaded() const = 0;
