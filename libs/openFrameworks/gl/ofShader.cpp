@@ -1319,8 +1319,6 @@ void ofShader::printActiveUniformBlocks()  const{
 		GLint uniformBlockMaxLength = 0;
 		glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniformBlockMaxLength);
 
-		GLint count = -1;
-		GLenum type = 0;
 		GLchar* uniformBlockName = new GLchar[uniformBlockMaxLength];
 		stringstream line;
 		for(GLint i = 0; i < numUniformBlocks; i++) {
