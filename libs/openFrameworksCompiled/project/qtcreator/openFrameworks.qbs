@@ -18,6 +18,7 @@ Product{
     // but will build on each application rebuild instead of in
     // a common directory
     readonly property bool qbsBuild: false
+    readonly property bool usePoco: project.usePoco
 
     Properties{
         condition: qbsBuild
@@ -104,12 +105,17 @@ Product{
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworksDebug.a")
              fileTags: "staticlibrary"
         }
-        prepare: {           
-            var qbsCmd = new Command(product.make, ['Debug']);
+        prepare: {
+            var parameters = ['-j4', 'Debug'];
+
+            var qbsCmd = new Command(product.make, parameters);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
             qbsCmd.highlight = 'compiler';
+            if(!product.usePoco){
+                qbsCmd.environment = "CFLAGS=-DOF_USE_POCO=0"
+            }
             return [qbsCmd];
         }
     }
@@ -122,7 +128,13 @@ Product{
              fileTags: "staticlibrary"
         }
         prepare: {
-            var qbsCmd = new Command(product.make, ['Release']);
+            var parameters = ['-j4', 'Release'];
+            if(!product.usePoco){
+                parameters.push("CFLAGS=-DOF_USE_POCO=0");
+                parameters.push("CXXFLAGS=-DOF_USE_POCO=0");
+            }
+
+            var qbsCmd = new Command(product.make, parameters);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
