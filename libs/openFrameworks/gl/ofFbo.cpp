@@ -469,12 +469,12 @@ void ofFbo::clearDepthBuffer(float value){
 }
 
 //--------------------------------------------------------------
-void ofFbo::clearStencilBuffer(float value){
-	glClearBufferfv(GL_STENCIL, 0, &value);
+void ofFbo::clearStencilBuffer(int value){
+	glClearBufferiv(GL_STENCIL, 0, &value);
 }
 
 //--------------------------------------------------------------
-void ofFbo::clearDepthStencilBuffer(float depth, float stencil){
+void ofFbo::clearDepthStencilBuffer(float depth, int stencil){
 	glClearBufferfi(GL_DEPTH_STENCIL, 0, depth, stencil);
 }
 

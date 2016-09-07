@@ -52,15 +52,15 @@ public:
 	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
 	void clearDepthBuffer(float value);
 
-	/// glClearBufferfv(GL_STENCIL...)
+	/// glClearBufferiv(GL_STENCIL...)
 	///
 	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
-	void clearStencilBuffer(float value);
+	void clearStencilBuffer(int value);
 
 	/// glClearBufferfi(GL_DEPTH_STENCIL...)
 	///
 	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
-	void clearDepthStencilBuffer(float depth, float stencil);
+	void clearDepthStencilBuffer(float depth, int stencil);
 
 	using ofBaseDraws::draw;
 	void draw(float x, float y) const;
