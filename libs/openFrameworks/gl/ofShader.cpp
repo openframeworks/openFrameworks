@@ -292,7 +292,7 @@ bool ofShader::setupShaderFromFile(GLenum type, std::filesystem::path filename) 
 	if(buffer.size()) {
 		return setupShaderFromSource(type, buffer.getText(), sourceDirectoryPath);
 	} else {
-		ofLogError("ofShader") << "setupShaderFromFile(): couldn't load " << nameForType(type) << " shader " << " from \"" << filename << "\"";
+		ofLogError("ofShader") << "setupShaderFromFile(): couldn't load " << nameForType(type) << " shader " << " from \"" << absoluteFilePath << "\"";
 		return false;
 	}
 }
@@ -307,7 +307,7 @@ ofShader::Source ofShader::sourceFromFile(GLenum type, std::filesystem::path fil
 	if(buffer.size()) {
 		return std::move(Source{type, buffer.getText(), sourceDirectoryPath});
 	} else {
-		ofLogError("ofShader") << "setupShaderFromFile(): couldn't load " << nameForType(type) << " shader " << " from \"" << filename << "\"";
+		ofLogError("ofShader") << "setupShaderFromFile(): couldn't load " << nameForType(type) << " shader " << " from \"" << absoluteFilePath << "\"";
 		return Source{};
 	}
 }
