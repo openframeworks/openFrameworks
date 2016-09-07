@@ -20,62 +20,15 @@ class ofMaterial: public ofBaseMaterial {
 public:
 	ofMaterial();
 	virtual ~ofMaterial(){};
-	
-	/// \brief set all material colors: reflectance type & light intensity
-	/// \param oDiffuse the diffuse reflectance
-	/// \param oAmbient the ambient reflectance
-	/// \param oSpecular the specular reflectance
-	/// \param oEmmissive the emitted light intensity
-	void setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloatColor oSpecular, ofFloatColor emissive);
-	
-	/// \brief set the diffuse reflectance
-	/// \param oDiffuse the diffuse reflectance
-	void setDiffuseColor(ofFloatColor oDiffuse);
-	
-	/// \brief set the ambient reflectance
-	/// \param oAmbient the ambient reflectance
-	void setAmbientColor(ofFloatColor oAmbient);
-	
-	/// \brief set the specular reflectance
-	/// \param oSpecular the specular reflectance
-	void setSpecularColor(ofFloatColor oSpecular);
-	
-	/// \brief set the emitted light intensity
-	/// \param oEmmissive the emitted light intensity
-	void setEmissiveColor(ofFloatColor oEmmisive);
-	
-	/// \brief set the specular exponent
-	void setShininess(float nShininess);
 
-	// documented in ofBaseMaterial
-	ofFloatColor getDiffuseColor() const;
-	ofFloatColor getAmbientColor() const;
-	ofFloatColor getSpecularColor() const;
-	ofFloatColor getEmissiveColor() const;
-	float getShininess() const;
-	
+
 	/// \class Data
-	/// \brief wrapper for material color properties
-    struct Data{
-		Data();
-        ofFloatColor diffuse; ///< diffuse reflectance
-        ofFloatColor ambient; //< ambient reflectance
-        ofFloatColor specular; //< specular reflectance
-        ofFloatColor emissive; //< emitted light intensity
-        float shininess; //< specular exponent
-    };
-	
-	/// \return material color properties data struct
-    Data getData() const;
-	
-	/// \brief set the material color properties data struct
-	void setData(const ofMaterial::Data& data);
-	
-	// documented in ofBaseMaterial
-	void begin() const;
-	void end() const;
-
-    /// Adds a function to the material shader that will get
+	/// wrapper for material color properties and other settings
+	///
+	/// customUniforms: adds some uniforms to the shader so they can be accessed
+	/// from the postFragment function
+	///
+	/// postFragment: Adds a function to the material shader that will get
     /// executed after all lighting and material calculations
     ///
     /// The source passed has to include a function with the
@@ -146,7 +99,75 @@ public:
     ///     vec3 lights[i].right;
     ///     vec3 lights[i].up;
     ///
-    void setPostFragment(const std::string & source);
+	struct Settings {
+		ofFloatColor diffuse{ 0.8f, 0.8f, 0.8f, 1.0f }; ///< diffuse reflectance
+		ofFloatColor ambient{ 0.2f, 0.2f, 0.2f, 1.0f }; //< ambient reflectance
+		ofFloatColor specular{ 0.0f, 0.0f, 0.0f, 1.0f }; //< specular reflectance
+		ofFloatColor emissive{ 0.0f, 0.0f, 0.0f, 1.0f }; //< emitted light intensity
+		float shininess{ 0.2f }; //< specular exponent
+		std::string postFragment;
+		std::string customUniforms;
+	};
+
+	void setup(const ofMaterial::Settings & settings);
+	
+	/// \brief set all material colors: reflectance type & light intensity
+	/// \param oDiffuse the diffuse reflectance
+	/// \param oAmbient the ambient reflectance
+	/// \param oSpecular the specular reflectance
+	/// \param oEmmissive the emitted light intensity
+	void setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloatColor oSpecular, ofFloatColor emissive);
+	
+	/// \brief set the diffuse reflectance
+	/// \param oDiffuse the diffuse reflectance
+	void setDiffuseColor(ofFloatColor oDiffuse);
+	
+	/// \brief set the ambient reflectance
+	/// \param oAmbient the ambient reflectance
+	void setAmbientColor(ofFloatColor oAmbient);
+	
+	/// \brief set the specular reflectance
+	/// \param oSpecular the specular reflectance
+	void setSpecularColor(ofFloatColor oSpecular);
+	
+	/// \brief set the emitted light intensity
+	/// \param oEmmissive the emitted light intensity
+	void setEmissiveColor(ofFloatColor oEmmisive);
+	
+	/// \brief set the specular exponent
+	void setShininess(float nShininess);
+
+	// documented in ofBaseMaterial
+	ofFloatColor getDiffuseColor() const;
+	ofFloatColor getAmbientColor() const;
+	ofFloatColor getSpecularColor() const;
+	ofFloatColor getEmissiveColor() const;
+	float getShininess() const;
+	
+	/// \return material color properties data struct
+	typedef Settings Data;
+	OF_DEPRECATED_MSG("Use getSettings instead", Data getData() const);
+    Settings getSettings() const;
+	
+	/// \brief set the material color properties data struct
+	OF_DEPRECATED_MSG("Use setup(settings) instead", void setData(const ofMaterial::Data& data));
+	
+	// documented in ofBaseMaterial
+	void begin() const;
+	void end() const;
+
+
+	void setCustomUniform1f(const std::string & name, float value);
+	void setCustomUniform2f(const std::string & name, glm::vec2 value);
+	void setCustomUniform3f(const std::string & name, glm::vec3 value);
+	void setCustomUniform4f(const std::string & name, glm::vec4 value);
+
+	void setCustomUniform1i(const std::string & name, int value);
+	void setCustomUniform2i(const std::string & name, glm::tvec2<int> value);
+	void setCustomUniform3i(const std::string & name, glm::tvec3<int> value);
+	void setCustomUniform4i(const std::string & name, glm::tvec4<int> value);
+
+
 
 private:
 	void initShaders(ofGLProgrammableRenderer & renderer) const;
@@ -154,7 +175,7 @@ private:
 	void updateMaterial(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
 	void updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
     
-    Data data;
+    Settings data;
 
     struct Shaders{
         ofShader noTexture;
@@ -169,5 +190,12 @@ private:
     static std::map<ofGLProgrammableRenderer*, std::map<std::string,std::weak_ptr<Shaders>>> shadersMap;
 	static string vertexShader;
 	static string fragmentShader;
-    std::string postFragment;
+	std::map<std::string, float> uniforms1f;
+	std::map<std::string, glm::vec2> uniforms2f;
+	std::map<std::string, glm::vec3> uniforms3f;
+	std::map<std::string, glm::vec4> uniforms4f;
+	std::map<std::string, float> uniforms1i;
+	std::map<std::string, glm::tvec2<int>> uniforms2i;
+	std::map<std::string, glm::tvec3<int>> uniforms3i;
+	std::map<std::string, glm::tvec4<int>> uniforms4i;
 };
