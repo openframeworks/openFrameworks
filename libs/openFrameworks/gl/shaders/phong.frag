@@ -53,6 +53,8 @@ static const string fragmentShader = R"(
 
     uniform lightData lights[MAX_LIGHTS];
 
+	%custom_uniforms%
+
 
     void pointLight( in lightData light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular ){
         float nDotVP;       // normal . light direction
