@@ -527,9 +527,9 @@ public:
 	}
 
 	size_t getNumListeners() const;
+	const void* getInternalObject() const;
 
 protected:
-	const void* getInternalObject() const;
 
 private:
 	class Value{
@@ -690,7 +690,7 @@ inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType & v){
             //
             // This return value is used by the std::remove_if algorithm
             // to erase invalid parents from this object's parent list.
-            auto notifyParents = [this](weak_ptr<ofParameterGroup::Value> p){
+			auto notifyParents = [this](const weak_ptr<ofParameterGroup::Value> & p){
                 // Try to get a valid shared pointer ot the parent.
                 auto parent = p.lock();
 
@@ -982,10 +982,10 @@ public:
 	}
 	size_t getNumListeners() const;
 
-protected:
 	const void* getInternalObject() const{
 		return obj.get();
 	}
+protected:
 
 private:
 	class Value{
@@ -1111,7 +1111,9 @@ protected:
 	}
 
 	ofParameter<ParameterType> parameter;
-	
+
+	template<typename T>
+	friend class ofParameter;
 	friend class ofParameterGroup;
 	friend Friend;
 };
