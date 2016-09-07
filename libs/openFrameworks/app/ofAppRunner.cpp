@@ -16,7 +16,11 @@
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
+
+#if OF_USE_POCO
 #include "ofURLFileLoader.h"
+#endif
+
 #include "ofMainLoop.h"
 
 #if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI)
@@ -227,7 +231,7 @@ void ofExitCallback(){
 
 
 	// finish every library and subsystem
-	#ifndef TARGET_EMSCRIPTEN
+	#if OF_USE_POCO
 		ofURLFileLoaderShutdown();
 	#endif
 

@@ -5,7 +5,7 @@
 
 #include "ofConstants.h"
 
-#ifndef TARGET_IMPLEMENTS_URL_LOADER
+#if !defined(TARGET_IMPLEMENTS_URL_LOADER) && OF_USE_POCO
 	#include "Poco/Net/HTTPSession.h"
 	#include "Poco/Net/HTTPClientSession.h"
 	#include "Poco/Net/HTTPSClientSession.h"
@@ -39,7 +39,7 @@ ofEvent<ofHttpResponse> & ofURLResponseEvent(){
 	return *event;
 }
 
-#ifndef TARGET_IMPLEMENTS_URL_LOADER
+#if !defined(TARGET_IMPLEMENTS_URL_LOADER) && OF_USE_POCO
 class ofURLFileLoaderImpl: public ofThread, public ofBaseURLFileLoader{
 public:
 	ofURLFileLoaderImpl();
@@ -387,7 +387,7 @@ void ofURLFileLoaderShutdown(){
 	if(initialized){
 		ofRemoveAllURLRequests();
 		ofStopURLLoader();
-		#ifndef TARGET_IMPLEMENTS_URL_LOADER
+		#if !defined(TARGET_IMPLEMENTS_URL_LOADER) && OF_USE_POCO
 			Poco::Net::uninitializeSSL();
 		#endif
 	}

@@ -4,7 +4,7 @@
 #include "ofGraphics.h"
 #include "FreeImage.h"
 
-#ifndef TARGET_EMSCRIPTEN
+#if OF_USE_POCO
 	#include "ofURLFileLoader.h"
 	#include "Poco/URI.h"
 #endif
@@ -184,7 +184,7 @@ template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _fileName, const ofImageLoadSettings& settings){
 	ofInitFreeImage();
 
-#ifndef TARGET_EMSCRIPTEN
+#if OF_USE_POCO
 	Poco::URI uri;
 	try {
         uri = Poco::URI(_fileName.string());
