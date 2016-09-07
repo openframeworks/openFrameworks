@@ -690,8 +690,11 @@ inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType & v){
 			// this can't happen in the same iterator as above, because a notified listener
 			// might perform similar cleanups that would corrupt our iterator
 			// (which appens for example if the listener calls getFirstParent on us)
-			for(auto parent = obj->parents.begin(); parent != obj->parents.end(); parent++){
-				parent->lock()->notifyParameterChanged(*this);
+			for(auto & parent: obj->parents){
+				auto p = parent.lock();
+				if(p){
+					p->notifyParameterChanged(*this);
+				}
 			}
         }
         obj->bInNotify = false;
