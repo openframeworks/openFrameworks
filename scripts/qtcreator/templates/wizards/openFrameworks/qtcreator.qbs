@@ -7,6 +7,7 @@ import "%{JS: %{CorrectInitialOFPath}?'../../..':'%{OFPath}'}/libs/openFramework
 
 Project{
     property string of_root: %{JS: %{CorrectInitialOFPath}?'\'../../..\'':'\'%{OFPath}\''}
+    property bool usePoco: true
 
     ofApp {
         name: { return FileInfo.baseName(path) }
