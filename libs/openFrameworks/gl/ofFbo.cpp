@@ -451,6 +451,33 @@ void ofFbo::clear() {
 #endif
 }
 
+
+//--------------------------------------------------------------
+void ofFbo::clearColorBuffer(const ofFloatColor & color){
+	glClearBufferfv(GL_COLOR, 0, &color.r);
+}
+
+
+//--------------------------------------------------------------
+void ofFbo::clearColorBuffer(size_t buffer_idx, const ofFloatColor & color){
+	glClearBufferfv(GL_COLOR, buffer_idx, &color.r);
+}
+
+//--------------------------------------------------------------
+void ofFbo::clearDepthBuffer(float value){
+	glClearBufferfv(GL_DEPTH, 0, &value);
+}
+
+//--------------------------------------------------------------
+void ofFbo::clearStencilBuffer(float value){
+	glClearBufferfv(GL_STENCIL, 0, &value);
+}
+
+//--------------------------------------------------------------
+void ofFbo::clearDepthStencilBuffer(float depth, float stencil){
+	glClearBufferfi(GL_DEPTH_STENCIL, 0, depth, stencil);
+}
+
 //--------------------------------------------------------------
 void ofFbo::destroy() {
 	clear();
@@ -504,7 +531,7 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 	settings.useStencil		= false;
 	//we do this as the fbo and the settings object it contains could be created before the user had the chance to disable or enable arb rect.
     settings.textureTarget	= GL_TEXTURE_2D;
-#else    
+#else
 	settings.useDepth		= true;
 	settings.useStencil		= true;
 	//we do this as the fbo and the settings object it contains could be created before the user had the chance to disable or enable arb rect. 	
@@ -652,7 +679,8 @@ void ofFbo::allocate(Settings _settings) {
 		for(int i=0; i<_settings.numColorbuffers; i++) createAndAttachTexture(_settings.internalformat, i);
 		_settings.colorFormats = settings.colorFormats;
 	} else {
-		ofLogWarning("ofFbo") << "allocate(): no color buffers specified for frame buffer object " << fbo;
+		//ofLogWarning("ofFbo") << "allocate(): no color buffers specified for frame buffer object " << fbo;
+		glDrawBuffer(GL_NONE);
 	}
 	settings.internalformat = _settings.internalformat;
 	
@@ -1105,7 +1133,7 @@ void ofFbo::draw(float x, float y) const{
 
 //----------------------------------------------------------
 void ofFbo::draw(float x, float y, float width, float height) const{
-	if(!bIsAllocated) return;
+	if(!bIsAllocated || settings.numColorbuffers==0) return;
     getTexture().draw(x, y, width, height);
 }
 

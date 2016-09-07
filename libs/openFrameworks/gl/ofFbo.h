@@ -37,6 +37,31 @@ public:
 	OF_DEPRECATED_MSG("Use clear instead",void destroy());
 	void clear();
 
+	/// glClearBufferfv(GL_COLOR, 0...)
+	///
+	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
+	void clearColorBuffer(const ofFloatColor & color);
+
+	/// glClearBufferfv(GL_COLOR, buffer_idx...)
+	///
+	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
+	void clearColorBuffer(size_t buffer_idx, const ofFloatColor & color);
+
+	/// glClearBufferfv(GL_DEPTH...)
+	///
+	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
+	void clearDepthBuffer(float value);
+
+	/// glClearBufferfv(GL_STENCIL...)
+	///
+	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
+	void clearStencilBuffer(float value);
+
+	/// glClearBufferfi(GL_DEPTH_STENCIL...)
+	///
+	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
+	void clearDepthStencilBuffer(float depth, float stencil);
+
 	using ofBaseDraws::draw;
 	void draw(float x, float y) const;
 	void draw(float x, float y, float width, float height) const;
