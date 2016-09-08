@@ -37,6 +37,7 @@ public:
 	OF_DEPRECATED_MSG("Use clear instead",void destroy());
 	void clear();
 
+#ifndef TARGET_OPENGLES
 	/// glClearBufferfv(GL_COLOR, 0...)
 	///
 	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
@@ -61,6 +62,7 @@ public:
 	///
 	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
 	void clearDepthStencilBuffer(float depth, int stencil);
+#endif
 
 	using ofBaseDraws::draw;
 	void draw(float x, float y) const;
