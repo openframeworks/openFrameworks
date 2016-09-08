@@ -97,7 +97,7 @@ Product{
         }
     }
 
-    Transformer {
+    Rule {
         condition: qbs.buildVariant.contains('debug') && !product.qbsBuild
         inputs: files
         Artifact {
@@ -114,7 +114,7 @@ Product{
         }
     }
 
-    Transformer {
+    Rule {
         condition: qbs.buildVariant.contains('release') && !product.qbsBuild
         inputs: files
         Artifact {
