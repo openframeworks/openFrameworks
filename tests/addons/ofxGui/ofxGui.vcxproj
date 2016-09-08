@@ -172,7 +172,6 @@
 	</ItemDefinitionGroup>
 	<ItemGroup>
 		<ClCompile Include="src\main.cpp" />
-		<ClCompile Include="src\ofApp.cpp" />
 		<ClCompile Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.cpp" />
 		<ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiGroup.cpp" />
 		<ClCompile Include="..\..\..\addons\ofxGui\src\ofxBaseGui.cpp" />
@@ -183,7 +182,6 @@
 		<ClCompile Include="..\..\..\addons\ofxGui\src\ofxSlider.cpp" />
 	</ItemGroup>
 	<ItemGroup>
-		<ClInclude Include="src\ofApp.h" />
 		<ClInclude Include="..\..\..\addons\ofxUnitTests\src\ofxUnitTests.h" />
 		<ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiGroup.h" />
 		<ClInclude Include="..\..\..\addons\ofxGui\src\ofxLabel.h" />
