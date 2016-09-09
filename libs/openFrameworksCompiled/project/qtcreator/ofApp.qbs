@@ -40,7 +40,7 @@ CppApplication{
     }
 
     // Copy windows dlls from export to bin folder
-    Rule {
+    Transformer {
         condition: qbs.targetOS.contains("windows")
         inputs: []
         Artifact {
@@ -66,7 +66,7 @@ CppApplication{
     }
 
     // Copy osx dylibs into bundle and run install_name_tool on the binary
-    Rule {
+    Transformer {
         condition: qbs.targetOS.contains("osx")
         Artifact {
             filePath: FileInfo.joinPaths(parent.destinationDirectory, parent.targetName + ".app", "Contents/MacOS/libfmodex.dylib")
@@ -93,7 +93,7 @@ CppApplication{
     }
 
     // Copy osx icon release
-    Rule {
+    Transformer {
         condition: qbs.targetOS.contains("osx") && qbs.buildVariant.contains("release")
         Artifact {
             filePath: FileInfo.joinPaths(parent.destinationDirectory, parent.targetName + ".app", "Contents/Resources/icon.icns")
@@ -120,7 +120,7 @@ CppApplication{
     }
 
     // Copy osx icon debug
-    Rule {
+    Transformer {
         condition: qbs.targetOS.contains("osx") && qbs.buildVariant.contains("debug")
         Artifact {
             filePath: FileInfo.joinPaths(product.destinationDirectory, product.targetName + ".app", "Contents/Resources/icon-debug.icns")
