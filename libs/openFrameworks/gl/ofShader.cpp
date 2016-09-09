@@ -102,17 +102,18 @@ ofShader::~ofShader() {
 }
 
 //--------------------------------------------------------------
-ofShader::ofShader(const ofShader & mom) :
-	program(mom.program),
-	bLoaded(mom.bLoaded),
-	shaders(mom.shaders),
-	uniformsCache(mom.uniformsCache),
-	#ifndef TARGET_OPENGLES
-	#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
-	uniformBlocksCache(mom.uniformBlocksCache),
-	#endif
-	#endif
-	attributesBindingsCache(mom.attributesBindingsCache){
+ofShader::ofShader(const ofShader & mom)
+	:program(mom.program)
+	,bLoaded(mom.bLoaded)
+	,shaders(mom.shaders)
+	,uniformsCache(mom.uniformsCache)
+	,attributesBindingsCache(mom.attributesBindingsCache)
+  #ifndef TARGET_OPENGLES
+  #ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
+	,uniformBlocksCache(mom.uniformBlocksCache)
+  #endif
+  #endif
+{
 	if(mom.bLoaded){
 		retainProgram(program);
 		for(auto it: shaders){
@@ -1319,8 +1320,6 @@ void ofShader::printActiveUniformBlocks()  const{
 		GLint uniformBlockMaxLength = 0;
 		glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniformBlockMaxLength);
 
-		GLint count = -1;
-		GLenum type = 0;
 		GLchar* uniformBlockName = new GLchar[uniformBlockMaxLength];
 		stringstream line;
 		for(GLint i = 0; i < numUniformBlocks; i++) {
