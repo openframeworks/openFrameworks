@@ -17,7 +17,7 @@ Product{
     // qbs instead of makefiles which helps catching errors...
     // but will build on each application rebuild instead of in
     // a common directory
-    readonly property bool qbsBuild: false
+    readonly property bool qbsBuild: project.makeOF !== undefined ? !project.makeOF : false
     readonly property bool usePoco: project.usePoco
 
     Properties{
@@ -129,16 +129,15 @@ Product{
         }
         prepare: {
             var parameters = ['-j4', 'Release'];
-            if(!product.usePoco){
-                parameters.push("CFLAGS=-DOF_USE_POCO=0");
-                parameters.push("CXXFLAGS=-DOF_USE_POCO=0");
-            }
 
             var qbsCmd = new Command(product.make, parameters);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
             qbsCmd.highlight = 'compiler';
+            if(!product.usePoco){
+                qbsCmd.environment = "CFLAGS=-DOF_USE_POCO=0"
+            }
             return [qbsCmd];
         }
     }
