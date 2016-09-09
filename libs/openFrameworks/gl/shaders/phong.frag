@@ -4,6 +4,7 @@ static const string fragmentShader = R"(
     IN vec3 v_transformedNormal;
     // Eye-coordinate position of vertex
     IN vec3 v_eyePosition;
+    IN vec3 v_worldPosition;
 #if HAS_COLOR
     IN vec4 v_color;
 #endif
