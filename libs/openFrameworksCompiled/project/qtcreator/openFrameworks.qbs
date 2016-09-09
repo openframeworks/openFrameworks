@@ -17,7 +17,7 @@ Product{
     // qbs instead of makefiles which helps catching errors...
     // but will build on each application rebuild instead of in
     // a common directory
-    readonly property bool qbsBuild: false
+    readonly property bool qbsBuild: project.makeOF !== undefined ? !project.makeOF : false
 
     Properties{
         condition: qbsBuild
@@ -97,7 +97,7 @@ Product{
         }
     }
 
-    Rule {
+    Transformer {
         condition: qbs.buildVariant.contains('debug') && !product.qbsBuild
         inputs: files
         Artifact {
@@ -105,7 +105,7 @@ Product{
              fileTags: "staticlibrary"
         }
         prepare: {           
-            var qbsCmd = new Command(product.make, ['Debug']);
+            var qbsCmd = new Command(product.make, ['Debug', '-j4']);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
@@ -114,7 +114,7 @@ Product{
         }
     }
 
-    Rule {
+    Transformer {
         condition: qbs.buildVariant.contains('release') && !product.qbsBuild
         inputs: files
         Artifact {
@@ -122,7 +122,7 @@ Product{
              fileTags: "staticlibrary"
         }
         prepare: {
-            var qbsCmd = new Command(product.make, ['Release']);
+            var qbsCmd = new Command(product.make, ['Release', '-j4']);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
