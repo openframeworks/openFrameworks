@@ -107,15 +107,15 @@ Product{
         }
         prepare: {
             var parameters = ['-j4', 'Debug'];
+            if(!product.usePoco){
+                parameters.push('OF_USE_POCO=0');
+            }
 
             var qbsCmd = new Command(product.make, parameters);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
             qbsCmd.highlight = 'compiler';
-            if(!product.usePoco){
-                qbsCmd.environment = "CFLAGS=-DOF_USE_POCO=0"
-            }
             return [qbsCmd];
         }
     }
@@ -129,15 +129,15 @@ Product{
         }
         prepare: {
             var parameters = ['-j4', 'Release'];
+            if(!product.usePoco){
+                parameters.push('OF_USE_POCO=0');
+            }
 
             var qbsCmd = new Command(product.make, parameters);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
             qbsCmd.highlight = 'compiler';
-            if(!product.usePoco){
-                qbsCmd.environment = "CFLAGS=-DOF_USE_POCO=0"
-            }
             return [qbsCmd];
         }
     }
