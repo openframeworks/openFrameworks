@@ -318,7 +318,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwSetWindowSizeCallback(windowP, resize_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
-	glfwSetDropCallback(windowP, drop_cb);
+#if GLFW_VERSION_MAJOR>3 || GLFW_VERSION_MINOR>=1
+		glfwSetDropCallback( windowP, drop_cb );
+#endif
 }
 
 #ifdef TARGET_LINUX
