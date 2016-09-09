@@ -45,13 +45,11 @@ cd $ROOT
 # Add compiler flag to reduce memory usage to enable builds to complete
 # see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56746#c7
 # the "proper" way does not work currently:
-export CXXFLAGS="$\(CXXFLAGS\) --param ftrack-macro-expansion=0"
-CUSTOMFLAGS="-ftrack-macro-expansion=0"
+export CXXFLAGS="${CXXFLAGS} -ftrack-macro-expansion=0"
 
 echo "**** Building OF core ****"
 cd $OF_ROOT
 # this carries over to subsequent compilations of examples
-echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> $PROJECTS/linuxarmv7l/config.linuxarmv7l.raspberry2.mk
 sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" $PROJECTS/makefileCommon/config.linux.common.mk
 cd $PROJECTS
 

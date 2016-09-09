@@ -18,6 +18,7 @@ Product{
     // but will build on each application rebuild instead of in
     // a common directory
     readonly property bool qbsBuild: project.makeOF !== undefined ? !project.makeOF : false
+    readonly property bool usePoco: project.usePoco
 
     Properties{
         condition: qbsBuild
@@ -104,8 +105,13 @@ Product{
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworksDebug.a")
              fileTags: "staticlibrary"
         }
-        prepare: {           
-            var qbsCmd = new Command(product.make, ['Debug', '-j4']);
+        prepare: {
+            var parameters = ['-j4', 'Debug'];
+            if(!product.usePoco){
+                parameters.push('OF_USE_POCO=0');
+            }
+
+            var qbsCmd = new Command(product.make, parameters);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
@@ -122,7 +128,12 @@ Product{
              fileTags: "staticlibrary"
         }
         prepare: {
-            var qbsCmd = new Command(product.make, ['Release', '-j4']);
+            var parameters = ['-j4', 'Release'];
+            if(!product.usePoco){
+                parameters.push('OF_USE_POCO=0');
+            }
+
+            var qbsCmd = new Command(product.make, parameters);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
