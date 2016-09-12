@@ -220,6 +220,25 @@ namespace glm {
 		is >> mat[3][3];
 		return is;
 	}
+
+	//----------------------------------------
+	inline std::ostream& operator<<(std::ostream& os, const glm::quat& q) {
+		os << q.w << ", " << q.x << ", " << q.y << ", " << q.z;
+		return os;
+	}
+
+
+	//----------------------------------------
+	inline std::istream& operator>> (std::istream& is, glm::quat& q) {
+		is >> q.w;
+		is.ignore(2);
+		is >> q.x;
+		is.ignore(2);
+		is >> q.y;
+		is.ignore(2);
+		is >> q.z;
+		return is;
+	}
 }
 
 //--------------------------------------------------------------
