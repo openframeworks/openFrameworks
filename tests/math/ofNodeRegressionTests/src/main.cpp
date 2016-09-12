@@ -2,25 +2,26 @@
 #include "ofxUnitTests.h"
 #include "ofAppNoWindow.h"
 
-bool aprox_eq(const ofVec3f & v1, const ofVec3f & v2){
-    bool eq = fabs(v1.x - v2.x) < 0.001 &&
-              fabs(v1.y - v2.y) < 0.001 &&
-              fabs(v1.z - v2.z) < 0.001;
-    if(!eq){
-        ofLogError() << "value1: " << v1;
-        ofLogError() << "value2: " << v2;
-    }
-    return eq;
-}
 
-bool aprox_eq(const ofQuaternion & v1, const ofQuaternion & v2) {
-	bool eq = fabs(v1.x() - v2.x()) < 0.001 &&
-		      fabs(v1.y() - v2.y()) < 0.001 &&
-		      fabs(v1.z() - v2.z()) < 0.001 &&
-		      fabs(v1.w() - v2.w()) < 0.001;
-	if (!eq) {
+bool aprox_eq(const glm::vec3 & v1, const glm::vec3 & v2){
+	bool eq = fabs(v1.x - v2.x) < 0.001 &&
+			  fabs(v1.y - v2.y) < 0.001 &&
+			  fabs(v1.z - v2.z) < 0.001;
+	if(!eq){
 		ofLogError() << "value1: " << v1;
 		ofLogError() << "value2: " << v2;
+	}
+	return eq;
+}
+
+bool aprox_eq(const glm::quat & v1, const glm::quat & v2) {
+	bool eq = fabs(v1.x - v2.x) < 0.001 &&
+			  fabs(v1.y - v2.y) < 0.001 &&
+			  fabs(v1.z - v2.z) < 0.001 &&
+			  fabs(v1.w - v2.w) < 0.001;
+	if (!eq) {
+		ofLogError() << "value1: " << v1.x << ", " <<v1.y << ", " <<v1.z << ", " <<v1.w;
+		ofLogError() << "value2: " << v2.x << ", " <<v2.y << ", " <<v2.z << ", " <<v2.w;
 	}
 	return eq;
 }
@@ -35,7 +36,7 @@ public:
 			auto orient = n1.getGlobalOrientation();
 
 			test(aprox_eq(pos, { 50.f, -70.7107f, 50.f }), "\tposition");
-			test(aprox_eq(orient, { 0.353553f, 0.353553f, -0.146447f, 0.853553f }), "\torientation");
+			test(aprox_eq(orient, { 0.853553f, 0.353553f, 0.353553f, -0.146447f }), "\torientation");
 			ofLogNotice() << "end orbit test";
 		}
 
@@ -54,8 +55,8 @@ public:
 			auto orient2 = n2.getGlobalOrientation();
 			
 			test(aprox_eq(pos1, { 100.f, 0.f, 0.f }), "\tposition1");
-			test(aprox_eq(orient1, { 0.f, 0.707107f, 0.f, 0.707107f }), "\torientation1");
-			test(aprox_eq(orient2, { 0.f, 1.f, 0.f, 0.f }), "\torientation2");
+			test(aprox_eq(orient1, { 0.707107f, 0.f, 0.707107f, 0.f }), "\torientation1");
+			test(aprox_eq(orient2, { 0.f, 0.f, 1.f, 0.f }), "\torientation2");
 			
 			ofLogNotice() << "parent pos/orient end";
 
@@ -99,6 +100,27 @@ public:
 			ofLogNotice() << "parent simple pos end";
 
 		}
+
+
+		{
+			ofLogNotice() << "add / clear parent and keep global transform";
+			ofNode n1;
+			ofNode n2;
+			n1.setPosition({ 100.f,100.f,0.f });
+			n1.setOrientation(glm::quat({glm::radians(45.f), 0.f, 0.f}));
+			n1.setScale(1.5f);
+			n2.setParent(n1);
+			n2.clearParent(true);
+			test(aprox_eq(n1.getPosition(), n2.getPosition()), "\tposition");
+			test(aprox_eq(n1.getOrientationQuat(), n2.getOrientationQuat()), "\torientation");
+			test(aprox_eq(n1.getScale(), n2.getScale()), "\tscale");
+			n2.setParent(n1, true);
+			test(aprox_eq(n2.getPosition(), glm::vec3(0,0,0)), "\tposition");
+			test(aprox_eq(n2.getOrientationQuat(), glm::quat()), "\torientation");
+			test(aprox_eq(n2.getScale(), glm::vec3(1,1,1)), "\tscale");
+			ofLogNotice() << "end add / clear parent and keep global transform";
+		}
+
 
     }
 };
