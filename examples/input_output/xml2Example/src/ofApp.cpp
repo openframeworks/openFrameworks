@@ -66,7 +66,6 @@ void ofApp::setup(){
 	// select all strokes and iterate through them
 	// for each stroke, create a new mesh
 	auto strokesXml = xml.find("//drawing/stroke");
-	cout << "there's " << strokesXml.size() << " strokes " << endl;
 	for(auto & stroke: strokesXml){
 		strokes.emplace_back();
 		strokes.back().setMode(OF_PRIMITIVE_LINE_STRIP);
