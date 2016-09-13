@@ -945,6 +945,11 @@ public:
 		ofRemoveListener(obj->changedE,listener,method,prio);
 	}
 
+	template<typename... Args>
+	ofEventListener newListener(Args...args) {
+		return obj->changedE.newListener(args...);
+	}
+
 	void trigger();
 
 	void enableEvents();
