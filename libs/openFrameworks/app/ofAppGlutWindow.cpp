@@ -12,6 +12,7 @@
 		#include <GL/glut.h>
 		#include <GL/freeglut_ext.h>
 	#endif
+	#include <Shellapi.h>
 #endif
 #ifdef TARGET_OSX
     #include <OpenGL/OpenGL.h>
