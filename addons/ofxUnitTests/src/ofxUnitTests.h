@@ -141,10 +141,12 @@ class ofxUnitTestsApp: public ofBaseApp{
 			ofLogError() <<  numTestsFailed << "/" << numTestsTotal << " tests failed";
 		}
 
-        ofLogNotice() << "took " << ofToString(durationMs) << "ms";
+		ofLogNotice() << "took " << ofToString(durationMs) << "ms";
+#if defined(TARGET_WIN32)
         if(!reportAppVeyor(passed, durationMs)){
             ++numTestsFailed;
         }
+#endif
         ofExit(numTestsFailed);
     }
 
@@ -244,6 +246,7 @@ private:
         return "\"" + var + "\": \"" + value + "\"";
     }
 
+#if defined(TARGET_WIN32)
     bool reportAppVeyor(bool passed, uint64_t durationMs){
         const std::string APPVEYOR_API_URL = "APPVEYOR_API_URL";
         if(ofGetEnv(APPVEYOR_API_URL)!=""){
@@ -288,6 +291,7 @@ private:
             return true;
         }
     }
+#endif
 
 	int numTestsTotal = 0;
 	int numTestsPassed = 0;
