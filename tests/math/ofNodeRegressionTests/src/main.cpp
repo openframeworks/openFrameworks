@@ -14,6 +14,18 @@ bool aprox_eq(const glm::vec3 & v1, const glm::vec3 & v2){
 	return eq;
 }
 
+bool aprox_eq(const glm::vec4 & v1, const glm::vec4 & v2){
+	bool eq = fabs(v1.x - v2.x) < 0.001 &&
+			  fabs(v1.y - v2.y) < 0.001 &&
+			  fabs(v1.z - v2.z) < 0.001 &&
+			  fabs(v1.w - v2.w) < 0.001;
+	if(!eq){
+		ofLogError() << "value1: " << v1;
+		ofLogError() << "value2: " << v2;
+	}
+	return eq;
+}
+
 bool aprox_eq(const glm::quat & v1, const glm::quat & v2) {
 	bool eq = fabs(v1.x - v2.x) < 0.001 &&
 			  fabs(v1.y - v2.y) < 0.001 &&
@@ -104,20 +116,26 @@ public:
 
 		{
 			ofLogNotice() << "add / clear parent and keep global transform";
-			ofNode n1;
-			ofNode n2;
+			ofNode n1, n2, n3;
+			auto zero = glm::vec4(0,0,0,1);
 			n1.setPosition({ 100.f,100.f,0.f });
 			n1.setOrientation(glm::quat({glm::radians(45.f), 0.f, 0.f}));
 			n1.setScale(1.5f);
+			n2.setPosition({ 100.f,100.f,0.f });
+			n2.setOrientation(glm::quat({glm::radians(45.f), 0.f, 0.f}));
+			n2.setScale(1.5f);
 			n2.setParent(n1);
-			n2.clearParent(true);
-			test(aprox_eq(n1.getPosition(), n2.getPosition()), "\tposition");
-			test(aprox_eq(n1.getOrientationQuat(), n2.getOrientationQuat()), "\torientation");
-			test(aprox_eq(n1.getScale(), n2.getScale()), "\tscale");
-			n2.setParent(n1, true);
-			test(aprox_eq(n2.getPosition(), glm::vec3(0,0,0)), "\tposition");
-			test(aprox_eq(n2.getOrientationQuat(), glm::quat()), "\torientation");
-			test(aprox_eq(n2.getScale(), glm::vec3(1,1,1)), "\tscale");
+			n3.setParent(n2);
+			n3.clearParent(true);
+			test(aprox_eq(n3.getPosition(), n2.getGlobalPosition()), "\tposition");
+			test(aprox_eq(n3.getOrientationQuat(), n2.getGlobalOrientation()), "\torientation");
+			test(aprox_eq(n3.getScale(), n2.getGlobalScale()), "\tscale");
+			test(aprox_eq(n3.getLocalTransformMatrix() * zero, n2.getGlobalTransformMatrix() * zero), "\tmatrices");
+			n3.setParent(n2, true);
+			test(aprox_eq(n3.getPosition(), glm::vec3(0,0,0)), "\tposition");
+			test(aprox_eq(n3.getOrientationQuat(), glm::quat()), "\torientation");
+			test(aprox_eq(n3.getScale(), glm::vec3(1,1,1)), "\tscale");
+			test(aprox_eq(n3.getGlobalTransformMatrix() * zero, n2.getGlobalTransformMatrix() * zero), "\tmatrices");
 			ofLogNotice() << "end add / clear parent and keep global transform";
 		}
 
