@@ -223,29 +223,20 @@ ofBuffer::Line::Line(vector<char>::iterator _begin, vector<char>::iterator _end)
 	:_current(_begin)
 	,_begin(_begin)
 	,_end(_end){
+
 	if(_begin == _end){
 		line =  "";
 		return;
 	}
 
-	bool lineEndWasCR = false;
-	while(_current != _end && *_current != '\n'){
-		if(*_current == '\r'){
-			lineEndWasCR = true;
-			break;
-		}else if(*_current==0 && _current+1 == _end){
-			break;
-		}else{
-			_current++;
-		}
+	_current = std::find(_begin, _end, '\n');
+	if(_current - 1 >= _begin && *(_current - 1) == '\r'){
+		line = string(_begin, _current - 1);
+	}else{
+		line = string(_begin, _current);
 	}
-	line = string(_begin, _current);
 	if(_current != _end){
-		_current++;
-	}
-	// if lineEndWasCR check for CRLF
-	if(lineEndWasCR && _current != _end && *_current == '\n'){
-		_current++;
+		_current+=1;
 	}
 }
 
@@ -291,6 +282,67 @@ bool ofBuffer::Line::empty() const{
 	return _begin == _end;
 }
 
+
+
+//--------------------------------------------------
+ofBuffer::RLine::RLine(vector<char>::reverse_iterator _rbegin, vector<char>::reverse_iterator _rend)
+	:_current(_rbegin)
+	,_rbegin(_rbegin)
+	,_rend(_rend){
+
+	if(_rbegin == _rend){
+		line =  "";
+		return;
+	}
+	_current = std::find(_rbegin+1, _rend, '\n');
+	line = string(_current.base(), _rbegin.base() - 1);
+	if(_current < _rend-1 && *(_current + 1) == '\r'){
+		_current+=1;
+	}
+}
+
+//--------------------------------------------------
+const string & ofBuffer::RLine::operator*() const{
+	return line;
+}
+
+//--------------------------------------------------
+const string * ofBuffer::RLine::operator->() const{
+	return &line;
+}
+
+//--------------------------------------------------
+const string & ofBuffer::RLine::asString() const{
+	return line;
+}
+
+//--------------------------------------------------
+ofBuffer::RLine & ofBuffer::RLine::operator++(){
+	*this = RLine(_current,_rend);
+	return *this;
+}
+
+//--------------------------------------------------
+ofBuffer::RLine ofBuffer::RLine::operator++(int) {
+	RLine tmp(*this);
+	operator++();
+	return tmp;
+}
+
+//--------------------------------------------------
+bool ofBuffer::RLine::operator!=(RLine const& rhs) const{
+	return rhs._rbegin != _rbegin || rhs._rend != _rend;
+}
+
+//--------------------------------------------------
+bool ofBuffer::RLine::operator==(RLine const& rhs) const{
+	return rhs._rbegin == _rbegin && rhs._rend == _rend;
+}
+
+bool ofBuffer::RLine::empty() const{
+	return _rbegin == _rend;
+}
+
 //--------------------------------------------------
 ofBuffer::Lines::Lines(vector<char>::iterator begin, vector<char>::iterator end)
 :_begin(begin)
@@ -306,9 +358,30 @@ ofBuffer::Line ofBuffer::Lines::end(){
 	return Line(_end,_end);
 }
 
+
+//--------------------------------------------------
+ofBuffer::RLines::RLines(vector<char>::reverse_iterator rbegin, vector<char>::reverse_iterator rend)
+:_rbegin(rbegin)
+,_rend(rend){}
+
+//--------------------------------------------------
+ofBuffer::RLine ofBuffer::RLines::begin(){
+	return RLine(_rbegin,_rend);
+}
+
+//--------------------------------------------------
+ofBuffer::RLine ofBuffer::RLines::end(){
+	return RLine(_rend,_rend);
+}
+
 //--------------------------------------------------
 ofBuffer::Lines ofBuffer::getLines(){
 	return ofBuffer::Lines(begin(), end());
+}
+
+//--------------------------------------------------
+ofBuffer::RLines ofBuffer::getReverseLines(){
+	return ofBuffer::RLines(rbegin(), rend());
 }
 
 //--------------------------------------------------

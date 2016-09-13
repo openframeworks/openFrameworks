@@ -174,6 +174,43 @@ class ofApp: public ofxUnitTestsApp{
 			test(allLinesEqual, "all lines are correct");
 			test_eq(numLines,lines.size(),"lines iterator correct numLines");
 		}
+
+		{
+			ofLogNotice() << "-------------------";
+			ofLogNotice() << "lines reverse iterator";
+			std::vector<std::string> lines;
+			lines.push_back("Lorem ipsum dolor sit amet,");
+			lines.push_back("consectetur adipiscing elit.");
+			lines.push_back("Vivamus viverra tortor ut condimentum");
+			lines.push_back("condimentum. Vestibulum id luctus lectus.");
+			lines.push_back("Duis porttitor turpis orci, eget pellentesque");
+			lines.push_back("enim varius eu. Integer lectus urna,");
+			lines.push_back("auctor in tincidunt nec, porta vitae tellus.");
+			lines.push_back("Integer ac blandit felis, ullamcorper iaculis felis.");
+			lines.push_back("Fusce eget sollicitudin purus, sed porttitor ante.");
+			lines.push_back("Integer mattis tortor at lectus venenatis laoreet.");
+			lines.push_back("Phasellus nibh massa, pellentesque non consequat vitae,");
+			lines.push_back("volutpat ac quam. Cras ac mauris in justo");
+			lines.push_back("hendrerit tincidunt eget a magna. Nullam volutpat,");
+			lines.push_back("erat sit amet facilisis tempor,");
+			lines.push_back("tellus urna volutpat dolor,");
+			lines.push_back("a ornare nisl libero quis orci.");
+			lines.push_back("Fusce in nunc id orci lobortis semper.");
+			ofBuffer buffer;
+			for(auto & line: lines){
+				buffer.append(line + "\n"); // This should append one more line but the result should be correct
+			}
+
+			auto numLines = 0;
+			auto linesIt = lines.rbegin();
+			auto allLinesEqual = true;
+			for(auto rline : buffer.getReverseLines()){
+				allLinesEqual &= rline == *linesIt++;
+				++numLines;
+			}
+			test(allLinesEqual, "all lines are correct");
+			test_eq(numLines,lines.size(),"lines iterator correct numLines");
+		}
 	}
 };
 
