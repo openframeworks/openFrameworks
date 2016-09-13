@@ -953,5 +953,5 @@ using ofDefaultTexCoordType = ofDefaultVec2;
 #endif
 
 #ifndef OF_USE_XML2
-	#define OF_USE_XML2 1
+	#define OF_USE_XML2 0
 #endif

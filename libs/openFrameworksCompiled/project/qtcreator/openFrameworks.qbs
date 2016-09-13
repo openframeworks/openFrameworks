@@ -19,6 +19,7 @@ Product{
     // a common directory
     readonly property bool qbsBuild: project.makeOF !== undefined ? !project.makeOF : false
     readonly property bool usePoco: project.usePoco !== undefined ? project.usePoco : true
+    readonly property bool useXml2: project.useXml2 !== undefined ? project.useXml2 : false
 
     Properties{
         condition: qbsBuild
@@ -48,7 +49,7 @@ Product{
     property stringList FILES_EXCLUDE: {
 
         if(qbs.targetOS.indexOf("linux")>-1){
-            return [
+            var excludes = [
                 "video/ofDirectShowPlayer\\..*",
                 "video/ofDirectShowGrabber\\..*",
                 "video/ofAVFoundationVideoPlayer\\..*",
@@ -58,21 +59,51 @@ Product{
                 "video/ofQtUtils\\..*",
                 "video/ofQTKit\\..*",
                 "app/ofAppEGLWindow\\..*",
-                "utils/ofXml\\..*",
             ];
+            if(useXml2){
+                excludes.push("utils/ofXml\\..*");
+            }else{
+                excludes.push("utils/ofXml2\\..*");
+            }
+            return excludes;
         }else if(qbs.targetOS.indexOf("windows")>-1){
-            return [
-                "video/ofGstVideoPlayer.*",
-                "video/ofGstVideoGrabber.*",
-                "video/ofGstUtils.*",
-                "video/ofAVFoundationVideoPlayer.*",
-                "video/ofAVFoundationVideoGrabber.*",
-                "video/ofQuickTimePlayer.*",
-                "video/ofQuickTimeGrabber.*",
-                "video/ofQtUtils.*",
-                "video/ofQTKit.*",
-                "app/ofAppEGLWindow.*",
+            var excludes = [
+                "video/ofGstVideoPlayer\\..*",
+                "video/ofGstVideoGrabber\\..*",
+                "video/ofGstUtils\\..*",
+                "video/ofAVFoundationVideoPlayer\\..*",
+                "video/ofAVFoundationVideoGrabber\\..*",
+                "video/ofQuickTimePlayer\\..*",
+                "video/ofQuickTimeGrabber\\..*",
+                "video/ofQtUtils\\..*",
+                "video/ofQTKit\\..*",
+                "app/ofAppEGLWindow\\..*",
             ];
+            if(useXml2){
+                excludes.push("utils/ofXml\\..*");
+            }else{
+                excludes.push("utils/ofXml2\\..*");
+            }
+            return excludes;
+        }else if(qbs.targetOS.indexOf("osx")>-1){
+            var excludes = [
+                "video/ofGstVideoPlayer\\..*",
+                "video/ofGstVideoGrabber\\..*",
+                "video/ofGstUtils\\..*",
+                "video/ofDirectShowPlayer\\..*",
+                "video/ofDirectShowGrabber\\..*",
+                "video/ofQuickTimePlayer\\..*",
+                "video/ofQuickTimeGrabber\\..*",
+                "video/ofQtUtils\\..*",
+                "video/ofQTKit\\..*",
+                "app/ofAppEGLWindow\\..*",
+            ];
+            if(useXml2){
+                excludes.push("utils/ofXml\\..*");
+            }else{
+                excludes.push("utils/ofXml2\\..*");
+            }
+            return excludes;
         }
     }
 
@@ -102,6 +133,7 @@ Product{
     Transformer {
         condition: qbs.buildVariant.contains('debug') && !product.qbsBuild
         inputs: files
+        alwaysRun: true
         Artifact {
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworksDebug.a")
              fileTags: "staticlibrary"
@@ -110,6 +142,9 @@ Product{
             var parameters = ['-j4', 'Debug'];
             if(!product.usePoco){
                 parameters.push('OF_USE_POCO=0');
+            }
+            if(product.useXml2){
+                parameters.push('OF_USE_XML2=1');
             }
 
             var qbsCmd = new Command(product.make, parameters);
@@ -124,6 +159,7 @@ Product{
     Transformer {
         condition: qbs.buildVariant.contains('release') && !product.qbsBuild
         inputs: files
+        alwaysRun: true
         Artifact {
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworks.a")
              fileTags: "staticlibrary"
@@ -132,6 +168,9 @@ Product{
             var parameters = ['-j4', 'Release'];
             if(!product.usePoco){
                 parameters.push('OF_USE_POCO=0');
+            }
+            if(product.useXml2){
+                parameters.push('OF_USE_XML2=1');
             }
 
             var qbsCmd = new Command(product.make, parameters);

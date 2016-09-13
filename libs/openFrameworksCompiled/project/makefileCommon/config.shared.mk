@@ -260,6 +260,16 @@ ifeq ($(OF_USE_POCO),0)
     CFLAGS+=-DOF_USE_POCO=0
 endif
 
+ifdef OF_USE_XML2
+    ifeq ($(OF_USE_XML2),0)
+        PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml2.cpp
+    else
+        PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml.cpp
+    endif
+else
+    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml2.cpp
+endif
+
 CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
 
 ################################################################################
