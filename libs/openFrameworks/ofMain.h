@@ -16,8 +16,10 @@
 #endif
 #if OF_USE_XML2
 	#include "ofXml2.h"
-#else
+#elif OF_USE_POCO
 	#include "ofXml.h"
+#else
+	#include "ofXmlPugi.h"
 #endif
 #include "ofFpsCounter.h"
 #include "ofJson.h"

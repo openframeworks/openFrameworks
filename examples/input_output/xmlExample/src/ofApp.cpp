@@ -55,13 +55,22 @@ void ofApp::setup(){
     // load them into the dragPts so they're drawn to the screen
 	if(xml.exists("stroke"))
     {
+#if OF_USE_POCO
+		// This gets the first stroke (notice the [0], it's just like an array but the first index is 0)
+		// The standard for xpath uses 1 based arrays but poco uses 0
+		xml.setTo("stroke[0]");
+#else
 		// This gets the first stroke (notice the [1], it's just like an array but the first index is 1)
 		xml.setTo("stroke[1]");
-        
+#endif
         
         do {
             // set our "current" PT to the first one
+#if OF_USE_POCO
+			if(xml.getName() == "stroke" && xml.setTo("pt[0]"))
+#else
 			if(xml.getName() == "stroke" && xml.setTo("pt[1]"))
+#endif
             {
 				dragPts.emplace_back();
 				dragPts.back().setMode(OF_PRIMITIVE_LINE_STRIP);
@@ -94,7 +103,8 @@ void ofApp::update(){
 	ofBackground((int)red,(int)green,(int)blue);
 
 	ofBuffer auxBuffer;
-	auxBuffer.set(xml.toString("  "));
+	auxBuffer.set(xml.toString());
+
 	xmlStructure.clear();
 	auto i = 0;
 	for(auto & line: auxBuffer.getReverseLines()){

@@ -262,12 +262,25 @@ endif
 
 ifdef OF_USE_XML2
     ifeq ($(OF_USE_XML2),0)
-        PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml2.cpp
+        ifeq ($(OF_USE_POCO),0)
+            PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml2.cpp
+            PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml.cpp
+        else
+            PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml2.cpp
+            PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXmlPugi.cpp
+        endif
     else
         PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml.cpp
+        PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXmlPugi.cpp
     endif
 else
-    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml2.cpp
+    ifeq ($(OF_USE_POCO),0)
+        PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml2.cpp
+        PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml.cpp
+    else
+        PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml2.cpp
+        PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXmlPugi.cpp
+    endif
 endif
 
 CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
