@@ -14,6 +14,11 @@
 #include "ofThread.h"
 #include "ofThreadChannel.h"
 #endif
+#if OF_USE_XML2
+	#include "ofXml2.h"
+#else
+	#include "ofXml.h"
+#endif
 #include "ofFpsCounter.h"
 #include "ofJson.h"
 

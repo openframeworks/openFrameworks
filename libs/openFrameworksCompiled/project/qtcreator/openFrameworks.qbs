@@ -49,15 +49,16 @@ Product{
 
         if(qbs.targetOS.indexOf("linux")>-1){
             return [
-                "video/ofDirectShowPlayer.*",
-                "video/ofDirectShowGrabber.*",
-                "video/ofAVFoundationVideoPlayer.*",
-                "video/ofAVFoundationVideoGrabber.*",
-                "video/ofQuickTimePlayer.*",
-                "video/ofQuickTimeGrabber.*",
-                "video/ofQtUtils.*",
-                "video/ofQTKit.*",
-                "app/ofAppEGLWindow.*",
+                "video/ofDirectShowPlayer\\..*",
+                "video/ofDirectShowGrabber\\..*",
+                "video/ofAVFoundationVideoPlayer\\..*",
+                "video/ofAVFoundationVideoGrabber\\..*",
+                "video/ofQuickTimePlayer\\..*",
+                "video/ofQuickTimeGrabber\\..*",
+                "video/ofQtUtils\\..*",
+                "video/ofQTKit\\..*",
+                "app/ofAppEGLWindow\\..*",
+                "utils/ofXml\\..*",
             ];
         }else if(qbs.targetOS.indexOf("windows")>-1){
             return [

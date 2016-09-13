@@ -42,16 +42,15 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
 
-		ofXml XML;
+		ofXml xml;
 		ofTrueTypeFont TTF;
 
 		string xmlStructure;
 		string message;
 
-		vector<ofVec2f> dragPts;
+		vector<ofMesh> dragPts;
 
 		int pointCount;
-		int lineCount;
 		int lastTagNumber;
 
 		float red;
