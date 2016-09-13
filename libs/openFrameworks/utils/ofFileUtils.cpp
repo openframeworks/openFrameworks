@@ -296,7 +296,7 @@ ofBuffer::RLine::RLine(vector<char>::reverse_iterator _rbegin, vector<char>::rev
 	}
 	_current = std::find(_rbegin+1, _rend, '\n');
 	line = string(_current.base(), _rbegin.base() - 1);
-	if(_current + 1 < _rend-1 && *(_current + 1) == '\r'){
+	if(_current < _rend-1 && *(_current + 1) == '\r'){
 		_current+=1;
 	}
 }
