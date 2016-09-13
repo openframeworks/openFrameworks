@@ -6,21 +6,26 @@
 #include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofSystemUtils.h"
+
 #if OF_USE_POCO || defined (TARGET_IMPLEMENTS_URL_LOADER)
 	#include "ofURLFileLoader.h"
 #endif
+
 #include "ofUtils.h"
+
 #if !defined(TARGET_EMSCRIPTEN)
 #include "ofThread.h"
 #include "ofThreadChannel.h"
 #endif
+
 #if OF_USE_XML2
 	#include "ofXml2.h"
 #elif OF_USE_POCO
 	#include "ofXml.h"
-#else
+#elif !defined(TARGET_EMSCRIPTEN)
 	#include "ofXmlPugi.h"
 #endif
+
 #include "ofFpsCounter.h"
 #include "ofJson.h"
 
