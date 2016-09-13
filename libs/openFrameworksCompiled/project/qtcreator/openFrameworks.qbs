@@ -47,9 +47,9 @@ Product{
     }
 
     property stringList FILES_EXCLUDE: {
-
+        var excludes = [];
         if(qbs.targetOS.indexOf("linux")>-1){
-            var excludes = [
+            excludes = [
                 "video/ofDirectShowPlayer\\..*",
                 "video/ofDirectShowGrabber\\..*",
                 "video/ofAVFoundationVideoPlayer\\..*",
@@ -60,14 +60,8 @@ Product{
                 "video/ofQTKit\\..*",
                 "app/ofAppEGLWindow\\..*",
             ];
-            if(useXml2){
-                excludes.push("utils/ofXml\\..*");
-            }else{
-                excludes.push("utils/ofXml2\\..*");
-            }
-            return excludes;
         }else if(qbs.targetOS.indexOf("windows")>-1){
-            var excludes = [
+            excludes = [
                 "video/ofGstVideoPlayer\\..*",
                 "video/ofGstVideoGrabber\\..*",
                 "video/ofGstUtils\\..*",
@@ -79,14 +73,8 @@ Product{
                 "video/ofQTKit\\..*",
                 "app/ofAppEGLWindow\\..*",
             ];
-            if(useXml2){
-                excludes.push("utils/ofXml\\..*");
-            }else{
-                excludes.push("utils/ofXml2\\..*");
-            }
-            return excludes;
         }else if(qbs.targetOS.indexOf("osx")>-1){
-            var excludes = [
+            excludes = [
                 "video/ofGstVideoPlayer\\..*",
                 "video/ofGstVideoGrabber\\..*",
                 "video/ofGstUtils\\..*",
@@ -98,13 +86,18 @@ Product{
                 "video/ofQTKit\\..*",
                 "app/ofAppEGLWindow\\..*",
             ];
-            if(useXml2){
-                excludes.push("utils/ofXml\\..*");
-            }else{
-                excludes.push("utils/ofXml2\\..*");
-            }
-            return excludes;
         }
+        if(useXml2){
+            excludes.push("utils/ofXml\\..*");
+            excludes.push("utils/ofXmlPugi\\..*");
+        }else if(usePoco){
+            excludes.push("utils/ofXmlPugi\\..*");
+            excludes.push("utils/ofXml2\\..*");
+        }else{
+            excludes.push("utils/ofXml2\\..*");
+            excludes.push("utils/ofXml\\..*");
+        }
+        return excludes;
     }
 
     files: {

@@ -6,33 +6,13 @@
 #include "ofBaseTypes.h"
 
 #include <numeric>
-
-#include <Poco/DOM/Document.h>
-#include <Poco/DOM/DocumentFragment.h>
-#include <Poco/DOM/Element.h>
-#include <Poco/DOM/DOMParser.h>
-
-#include <Poco/DOM/DOMException.h>
-#include <Poco/SAX/SAXException.h>
-#include <Poco/XML/XMLString.h>
-#include <Poco/XML/XMLWriter.h>
-#include <Poco/DOM/DOMParser.h>
-#include <Poco/DOM/DOMWriter.h>
-#include <Poco/DOM/Document.h>
-#include <Poco/DOM/Attr.h>
-#include <Poco/DOM/Node.h>
-#include <Poco/DOM/Text.h>
-#include <Poco/DOM/NodeIterator.h>
-#include <Poco/DOM/NodeFilter.h>
-#include <Poco/DOM/NamedNodeMap.h>
-#include <Poco/DOM/ChildNodesList.h>
+#include "pugixml.hpp"
 
 class ofXml{
     
 public:
     
-    ofXml();
-    ~ofXml();
+	ofXml();
 
     ofXml( const string & path );
     ofXml( const ofXml& rhs );
@@ -48,8 +28,8 @@ public:
     string          getValue(const string & path) const;
     int				getIntValue() const;
     int				getIntValue(const string & path) const;
-    int64_t getInt64Value() const;
-    int64_t getInt64Value(const string& path) const;
+	int64_t			getInt64Value() const;
+	int64_t			getInt64Value(const string& path) const;
     float			getFloatValue() const;
     float			getFloatValue(const string & path) const;
     bool			getBoolValue() const;
@@ -89,8 +69,7 @@ public:
     
     bool            loadFromBuffer( const string& buffer );
     
-	string          toString() const;
-
+	string          toString(const std::string & indent = "\t") const;
 
     //////////////////////////////////////////////////////////////////
     // please excuse our mess: templated get/set
@@ -124,64 +103,49 @@ public:
         // is this a tokenized tag?
         if(tokens.size() > 1){
             // don't 'push' down into the new nodes
-            Poco::XML::Element* firstElement=nullptr, *lastElement=nullptr;
-            if(element){
-                lastElement = element;
+			pugi::xml_node firstElement, lastElement;
+			if(element){
+				lastElement = element;
+				firstElement = element;
             }
 
-            if(!firstElement){
-                firstElement = lastElement;
-            }
             
-			for(std::size_t i = 0; i < tokens.size(); i++){
-                Poco::XML::Element* newElement = getPocoDocument()->createElement(tokens.at(i));
+			for(const auto & token: tokens){
+				pugi::xml_node newElement;
 
                 //ofLogVerbose("ofxXml") << "addValue(): creating " << newElement->nodeName();
 
                 if(lastElement){
-                    lastElement->appendChild(newElement);
-                }
+					newElement = lastElement.append_child(token.c_str());
+				}else{
+					newElement = document.append_child(token.c_str());
+					firstElement = newElement;
+				}
 
                 lastElement = newElement;
             }
             
             if(value != ""){
-                Poco::XML::Text *text = getPocoDocument()->createTextNode(value);
-                try {
-                    lastElement->appendChild( text );
-                } catch ( Poco::XML::DOMException &e ){
-                    ofLogError("ofxXml") << "addValue(): couldn't set node value: " << DOMErrorMessage(e.code());
-                    return false;
-                }
+				lastElement.append_child(pugi::node_pcdata).set_value(value.c_str());
             }
 
             if(!element){
-                element = firstElement;
-                document->appendChild(element);
+				element = firstElement;
             }
             
             return true;
             
-        }else{
-            Poco::XML::Element *newElement = getPocoDocument()->createElement(path);
+		}else{
+			pugi::xml_node newElement;
+			if(element){
+				newElement = element.append_child(path.c_str());
+			}else{
+				element = newElement = document.append_child(path.c_str());
+			}
 
-            if(value != ""){
-                Poco::XML::Text *text = getPocoDocument()->createTextNode(value);
-                try {
-                    newElement->appendChild(text);
-                    text->release();
-                    
-                } catch ( Poco::XML::DOMException &e ){
-                    ofLogError("ofxXml") << "addValue(): couldn't set node value: " << DOMErrorMessage(e.code());
-                    return false;
-                }
-            }
-            
-            if(element){
-                element->appendChild(newElement);
-            }else{
-                element = newElement;
-            }
+			if(value != ""){
+				newElement.append_child(pugi::node_pcdata).set_value(value.c_str());
+			}
         }
         return true;
     }
@@ -191,16 +155,17 @@ public:
     template <class T> T getValue(const string& path, T returnVal=T()) const{
     	if(element){
 			if(path == ""){
-				if(element->firstChild() && element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
-					return ofFromString<T>(element->innerText());
+				const auto & first_child = element.first_child();
+				if(first_child && (first_child.type() == pugi::node_pcdata || first_child.type() == pugi::node_cdata)) {
+					return ofFromString<T>(element.text().as_string());
 				}else{
 					ofLogWarning("ofXml") << "getValue(): path \"" << path<< "\" not found when getting value";
 					return returnVal; // hmm. this could be a problem
 				}
 			}else{
-				Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
-				if(e){
-					return ofFromString<T>(e->innerText());
+				const auto & e = element.select_node(path.c_str()).node();
+				if(!e.empty()){
+					return ofFromString<T>(e.first_child().text().as_string());
 				}
 			}
     	}
@@ -210,21 +175,19 @@ public:
     
     // these are advanced, you probably don't want to use them
     
-    Poco::XML::Element*        getPocoElement();
-    Poco::XML::Element*        getPocoElement(const string& path);
-    const Poco::XML::Element*  getPocoElement() const;
-    const Poco::XML::Element*  getPocoElement(const string& path) const;
+	pugi::xml_node&				getPugiElement();
+	const pugi::xml_node&		getPugiElement() const;
+	pugi::xml_node				getPugiElement(const string& path);
 
-    Poco::XML::Document*       getPocoDocument();
-    const Poco::XML::Document* getPocoDocument() const;
+	pugi::xml_document &		getPugiDocument();
+	const pugi::xml_document &	getPugiDocument() const;
 
 
 protected:
-    void releaseAll();
     string DOMErrorMessage(short msg);
 
-    Poco::XML::Document *document;
-    Poco::XML::Element *element;
+	pugi::xml_document document;
+	pugi::xml_node element;
 };
 
 // serializer

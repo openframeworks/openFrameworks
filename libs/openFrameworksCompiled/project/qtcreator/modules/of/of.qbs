@@ -467,6 +467,7 @@ Module{
     }
 
     readonly property bool usePoco: project.usePoco!==undefined ? project.usePoco : true
+    readonly property bool useXml2: project.useXml2!==undefined ? project.useXml2 : false
 
     readonly property stringList DEFINES: {
         var defines = ['GCC_HAS_REGEX'];
@@ -485,6 +486,9 @@ Module{
 
         if(!usePoco){
             defines = defines.concat(['OF_USE_POCO=0'])
+        }
+        if(useXml2){
+           defines = defines.concat(['OF_USE_XML2=1'])
         }
 
         return defines;
