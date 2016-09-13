@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="110px" height="58px" viewBox="0 0 110 58" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>openFrameworks Logo</title>
+	<defs></defs>
+	<g id="Page-1" stroke="none" stroke-width="1" fill="#000000" fill-rule="evenodd">
+	    <path id="Oval-1" d="M58,29 C58,13 45,0 29,0 C13,0 0,13 0,29 C0,45 13,58 29,58 C45,58 58,45 58,29 Z"></path>
+		<rect id="Rectangle-1" x="59" y="0" width="25" height="58"></rect>
+		<rect id="Rectangle-2" x="85" y="26" width="15" height="15"></rect>
+		<path id="Path-2" d="M85,0 L110,0 L85,25 L85,0 Z"></path>
+	</g>
+</svg>

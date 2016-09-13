@@ -164,6 +164,7 @@ Module{
                 "rtaudio",
                 "boost_filesystem",
                 "boost_system",
+                "pugixml"
             ];
         }else if(platform === "msys2"){
             return [
