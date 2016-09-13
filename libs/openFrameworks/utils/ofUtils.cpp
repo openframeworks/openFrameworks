@@ -1,20 +1,28 @@
 #include "ofUtils.h"
 #include "ofImage.h"
 #include "ofFileUtils.h"
+#include "ofLog.h"
 
 #include <chrono>
 #include <numeric>
 #include <locale>
 
+
 #if OF_USE_POCO
 #include "Poco/URI.h"
+#elif OF_USE_URIPARSER
+#include "uriparser/Uri.h"
+#endif
+
+#ifdef TARGET_WIN32	 // For ofLaunchBrowser.
+	#include <shellapi.h>
 #endif
 
 
 #ifdef TARGET_WIN32
     #ifndef _MSC_VER
         #include <unistd.h> // this if for MINGW / _getcwd
-	#include <sys/param.h> // for MAXPATHLEN
+		#include <sys/param.h> // for MAXPATHLEN
     #endif
 #endif
 
@@ -833,9 +841,9 @@ string ofVAArgsToString(const char * format, va_list args){
 	return retStr;
 }
 
-#if OF_USE_POCO
 //--------------------------------------------------
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
+#if OF_USE_POCO
 	Poco::URI uri;
 	try {
 		uri = Poco::URI(url);
@@ -843,28 +851,51 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.what();
 		return;
 	}
-
+	std::string scheme = uri.getScheme();
 	if(uriEncodeQuery) {
 		uri.setQuery(uri.getRawQuery()); // URI encodes during set
 	}
+	std::string uriStr = uri.toString();
+#elif OF_USE_URIPARSER
+	UriParserStateA state;
+	UriUriA uri;
+	state.uri = &uri;
+	if(uriParseUriA(&state, url.c_str())!=URI_SUCCESS){
+		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\"";
+		uriFreeUriMembersA(&uri);
+		return;
+	}
+	if(uriEncodeQuery) {
+		uriNormalizeSyntaxA(&uri); // URI encodes during set
+	}
+	std::string scheme(uri.scheme.first, uri.scheme.afterLast);
+	int size;
+	uriToStringCharsRequiredA(&uri, &size);
+	std::vector<char> buffer(size+1, 0);
+	int written;
+	uriToStringA(buffer.data(), &uri, url.size()*2, &written);
+	std::string uriStr(buffer.data(), written-1);
+	uriFreeUriMembersA(&uri);
+#endif
+
 
 	// http://support.microsoft.com/kb/224816
 	// make sure it is a properly formatted url:
 	//   some platforms, like Android, require urls to start with lower-case http/https
 	//   Poco::URI automatically converts the scheme to lower case
-	if(uri.getScheme() != "http" && uri.getScheme() != "https"){
-		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uri.toString() << "\"";
+	if(scheme != "http" && scheme != "https"){
+		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uriStr << "\"";
 		return;
 	}
 
 	#ifdef TARGET_WIN32
-		ShellExecuteA(nullptr, "open", uri.toString().c_str(),
+		ShellExecuteA(nullptr, "open", uriStr.c_str(),
                 nullptr, nullptr, SW_SHOWNORMAL);
 	#endif
 
 	#ifdef TARGET_OSX
         // could also do with LSOpenCFURLRef
-		string commandStr = "open \"" + uri.toString() + "\"";
+		string commandStr = "open \"" + uriStr + "\"";
 		int ret = system(commandStr.c_str());
         if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -872,7 +903,7 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#endif
 
 	#ifdef TARGET_LINUX
-		string commandStr = "xdg-open \"" + uri.toString() + "\"";
+		string commandStr = "xdg-open \"" + uriStr + "\"";
 		int ret = system(commandStr.c_str());
 		if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -880,14 +911,13 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#endif
 
 	#ifdef TARGET_OF_IOS
-		ofxiOSLaunchBrowser(uri.toString());
+		ofxiOSLaunchBrowser(uriStr);
 	#endif
 
 	#ifdef TARGET_ANDROID
-		ofxAndroidLaunchBrowser(uri.toString());
+		ofxAndroidLaunchBrowser(uriStr);
 	#endif
 }
-#endif
 
 //--------------------------------------------------
 string ofGetVersionInfo(){

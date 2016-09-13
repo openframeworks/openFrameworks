@@ -3,11 +3,16 @@
 #include "ofTypes.h"
 #include "ofGraphics.h"
 #include "FreeImage.h"
+#include "ofConstants.h"
 
 #if OF_USE_POCO
 	#include "ofURLFileLoader.h"
 	#include "Poco/URI.h"
+#elif OF_USE_CURL && OF_USE_URIPARSER
+	#include "ofURLFileLoader.h"
+	#include "uriparser/Uri.h"
 #endif
+
 #if defined(TARGET_ANDROID)
 #include "ofxAndroidUtils.h"
 #endif
@@ -194,6 +199,25 @@ static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _
 	}
 	if(uri.getScheme() == "http" || uri.getScheme() == "https"){
         return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
+	}
+#elif OF_USE_CURL && OF_USE_URIPARSER
+	UriParserStateA state;
+	UriUriA uri;
+	auto uriStr = _fileName.string();
+	state.uri = &uri;
+	if(uriParseUriA(&state, uriStr.c_str())!=URI_SUCCESS){
+		ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri " << _fileName;
+		uriFreeUriMembersA(&uri);
+		return false;
+	}
+	std::string scheme(uri.scheme.first, uri.scheme.afterLast);
+	uriFreeUriMembersA(&uri);
+	if(scheme == "http" || scheme == "https"){
+		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
+	}
+#elif OF_USE_CURL
+	if(_fileName.string().substr(0, 7) == "http://" || _fileName.string().substr(0, 8) == "https://"){
+		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
 	}
 #endif
 	

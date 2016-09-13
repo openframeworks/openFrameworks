@@ -132,7 +132,10 @@ Module{
 
             if(usePoco){
                 pkgs.push("openssl")
+            }else{
+                pkgs = pkgs.concat(["libcurl", "liburiparser"])
             }
+
             return pkgs;
         }else if(qbs.targetOS.indexOf("windows")!=-1){
             var pkgs = [
@@ -142,7 +145,10 @@ Module{
 
             if(usePoco){
                 pkgs.push("openssl")
+            }else{
+                pkgs = pkgs.concat(["libcurl", "liburiparser"])
             }
+
             return pkgs;
         }else{
             return [];
