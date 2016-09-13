@@ -843,6 +843,7 @@ string ofVAArgsToString(const char * format, va_list args){
 
 //--------------------------------------------------
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
+#ifndef TARGET_EMSCRIPTEN
 #if OF_USE_POCO
 	Poco::URI uri;
 	try {
@@ -917,6 +918,7 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#ifdef TARGET_ANDROID
 		ofxAndroidLaunchBrowser(uriStr);
 	#endif
+#endif
 }
 
 //--------------------------------------------------
