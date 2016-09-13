@@ -369,6 +369,11 @@ ifneq ($(LINUX_ARM),1)
 	PLATFORM_PKG_CONFIG_LIBRARIES += glew
 endif
 
+ifneq ($(OF_USE_POCO),0)
+	PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
+	PLATFORM_PKG_CONFIG_LIBRARIES += liburiparser
+endif
+
 # conditionally add GTK
 ifeq ($(HAS_SYSTEM_GTK3),0)
     PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-3.0
