@@ -132,9 +132,13 @@ void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
 		clearParent(bMaintainGlobalTransform);
 	}
 	if(bMaintainGlobalTransform) {
-		auto postParentGlobalTransform = glm::inverse(parent.getGlobalTransformMatrix()) * getGlobalTransformMatrix();
+		auto postParentPosition = position - parent.getGlobalPosition();
+		auto postParentOrientation = orientation.get() * glm::inverse(parent.getGlobalOrientation());
+		auto postParentScale = scale / parent.getGlobalScale();
 		parent.addListener(*this);
-		setTransformMatrix(postParentGlobalTransform);
+		setOrientation(postParentOrientation);
+		setPosition(postParentPosition);
+		setScale(postParentScale);
 	} else {
 		parent.addListener(*this);
 	}
@@ -146,40 +150,23 @@ void ofNode::clearParent(bool bMaintainGlobalTransform) {
 	if(parent){
 		parent->removeListener(*this);
 	}
-    if(bMaintainGlobalTransform) {
-        auto globalTransform(getGlobalTransformMatrix());
-        this->parent = nullptr;
-        setTransformMatrix(globalTransform);
-    } else {
-        this->parent = nullptr;
-    }
+	if(bMaintainGlobalTransform && parent) {
+		auto orientation = getGlobalOrientation();
+		auto position = getGlobalPosition();
+		auto scale = getGlobalScale();
+		this->parent = nullptr;
+		setOrientation(orientation);
+		setPosition(position);
+		setScale(scale);
+	}else{
+		this->parent = nullptr;
+	}
+
 }
 
 //----------------------------------------
 ofNode* ofNode::getParent() const {
 	return parent;
-}
-
-#include "glm/gtx/matrix_decompose.hpp"
-
-//----------------------------------------
-void ofNode::setTransformMatrix(const glm::mat4 &m44) {
-	localTransformMatrix = m44;
-
-	glm::vec3 scale;
-	glm::quat orientation;
-	glm::vec3 translation;
-	glm::vec3 skew;
-	glm::vec4 perspective;
-	glm::decompose(m44, scale, orientation, translation, skew, perspective);
-	this->position = translation;
-	this->scale = scale;
-	this->orientation = orientation;
-	updateAxis();
-	
-	onPositionChanged();
-	onOrientationChanged();
-	onScaleChanged();
 }
 
 //----------------------------------------
@@ -574,7 +561,8 @@ glm::vec3 ofNode::getGlobalPosition() const {
 
 //----------------------------------------
 glm::quat ofNode::getGlobalOrientation() const {
-	return glm::toQuat(getGlobalTransformMatrix());
+	auto rot = glm::scale(getGlobalTransformMatrix(), 1.f/getGlobalScale());
+	return glm::toQuat(rot);
 }
 
 //----------------------------------------
