@@ -369,7 +369,7 @@ ifneq ($(LINUX_ARM),1)
 	PLATFORM_PKG_CONFIG_LIBRARIES += glew
 endif
 
-ifneq ($(OF_USE_POCO),0)
+ifeq ($(OF_USE_POCO),0)
 	PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
 	PLATFORM_PKG_CONFIG_LIBRARIES += liburiparser
 endif
