@@ -222,13 +222,22 @@ void ofBufferObject::unmapRange(){
 	unmap();
 }
 
-void ofBufferObject::copyTo(ofBufferObject & dstBuffer){
+void ofBufferObject::copyTo(ofBufferObject & dstBuffer) const{
 	bind(GL_COPY_READ_BUFFER);
 	dstBuffer.bind(GL_COPY_WRITE_BUFFER);
 	glCopyBufferSubData(GL_COPY_READ_BUFFER,GL_COPY_WRITE_BUFFER,0,0,size());
 	unbind(GL_COPY_READ_BUFFER);
 	dstBuffer.unbind(GL_COPY_WRITE_BUFFER);
 }
+
+void ofBufferObject::copyTo(ofBufferObject & dstBuffer, int readOffset, int writeOffset, size_t size) const{
+	bind(GL_COPY_READ_BUFFER);
+	dstBuffer.bind(GL_COPY_WRITE_BUFFER);
+	glCopyBufferSubData(GL_COPY_READ_BUFFER,GL_COPY_WRITE_BUFFER,readOffset,writeOffset,size);
+	unbind(GL_COPY_READ_BUFFER);
+	dstBuffer.unbind(GL_COPY_WRITE_BUFFER);
+}
+
 
 
 void ofBufferObject::invalidate(){
