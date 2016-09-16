@@ -177,10 +177,12 @@ public:
 	GLint getAttributeLocation(const string & name) const;
 
 #ifndef TARGET_OPENGLES
+#ifdef GLEW_ARB_uniform_buffer_object
 	GLint getUniformBlockIndex(const string & name) const;
 	GLint getUniformBlockBinding(const string & name) const;
 	void bindUniformBlock(GLuint bindind, const string & name) const;
 	void printActiveUniformBlocks() const;
+#endif
 #endif
 
 #ifndef TARGET_OPENGLES

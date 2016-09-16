@@ -17,9 +17,6 @@
 #include "ofxAndroidUtils.h"
 #endif
 
-#ifndef GLEW_ARB_uniform_buffer_object
-#define GLEW_ARB_uniform_buffer_object 0
-#endif
 
 static const string COLOR_ATTRIBUTE="color";
 static const string POSITION_ATTRIBUTE="position";
@@ -698,6 +695,7 @@ bool ofShader::linkProgram() {
 		}
 
 #ifndef TARGET_OPENGLES
+#ifdef GLEW_ARB_uniform_buffer_object
 		if(GLEW_ARB_uniform_buffer_object) {
 			// Pre-cache all active uniforms blocks
 			GLint numUniformBlocks = 0;
@@ -712,6 +710,7 @@ bool ofShader::linkProgram() {
 				uniformBlocksCache[name] = glGetUniformBlockIndex(program, name.c_str());
 			}
 		}
+#endif
 #endif
 
 #ifdef TARGET_ANDROID
@@ -1287,6 +1286,7 @@ GLint ofShader::getUniformLocation(const string & name)  const{
 }
 
 #ifndef TARGET_OPENGLES
+#ifdef GLEW_ARB_uniform_buffer_object
 //--------------------------------------------------------------
 GLint ofShader::getUniformBlockIndex(const string & name)  const{
 	if(!bLoaded) return -1;
@@ -1368,6 +1368,7 @@ void ofShader::bindUniformBlock(GLuint binding, const string & name) const{
 		}
 	}
 }
+#endif
 #endif
 
 //--------------------------------------------------------------
