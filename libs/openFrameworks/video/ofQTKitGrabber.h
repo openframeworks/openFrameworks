@@ -4,6 +4,8 @@
 
 #include "ofMain.h"
 
+#ifdef OF_VIDEO_CAPTURE_QTKIT
+
 #if !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 
 //using this #ifdef lets this .h file be included in cpp files without throwing errors
@@ -99,4 +101,5 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		#endif
 };
 
+#endif
 #endif

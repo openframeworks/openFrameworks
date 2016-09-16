@@ -1,5 +1,13 @@
 
 #include "ofQTKitGrabber.h"
+
+#ifdef OF_VIDEO_CAPTURE_QTKIT
+
+#if !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+#if defined(MAC_OS_X_VERSION_10_9)
+	#warning Using QTKit, which is deprecated in OSX 10.9
+#endif
+
 #import <QTKit/QTKit.h>
 #import <QuickTime/QuickTime.h>
 #import <Accelerate/Accelerate.h>
@@ -14,11 +22,6 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
-#if defined(MAC_OS_X_VERSION_10_9)
-	#warning Using QTKit, which is deprecated in OSX 10.9
-#endif
-
-#if !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 
 @interface QTKitVideoGrabber : QTCaptureVideoPreviewOutput
 {
@@ -962,6 +965,8 @@ void ofQTKitGrabber::setDesiredFrameRate(int framerate){
 	ofLogWarning("ofQTKitGrabber") << "setDesiredFrameRate(): cannot set framerate for QTKitGrabber";
 }
 
+#pragma clang diagnostic pop
+
+#endif
 #endif
 
-#pragma clang diagnostic pop
