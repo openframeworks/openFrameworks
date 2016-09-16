@@ -18,6 +18,8 @@
 	#warning Using QTKit, which is deprecated in OSX 10.9
 #endif
 
+#if !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+
 @interface QTKitVideoGrabber : QTCaptureVideoPreviewOutput
 {
     QTCaptureSession *session;
@@ -959,5 +961,7 @@ bool ofQTKitGrabber::confirmInit() const {
 void ofQTKitGrabber::setDesiredFrameRate(int framerate){
 	ofLogWarning("ofQTKitGrabber") << "setDesiredFrameRate(): cannot set framerate for QTKitGrabber";
 }
+
+#endif
 
 #pragma clang diagnostic pop

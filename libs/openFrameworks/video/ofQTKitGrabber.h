@@ -4,6 +4,8 @@
 
 #include "ofMain.h"
 
+#if !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+
 //using this #ifdef lets this .h file be included in cpp files without throwing errors
 //but when included in .m files it works correctly.  another useful trick for mixing oF/ObjC
 #ifdef __OBJC__
@@ -97,4 +99,4 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		#endif
 };
 
-
+#endif
