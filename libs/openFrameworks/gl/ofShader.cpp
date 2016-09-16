@@ -17,6 +17,10 @@
 #include "ofxAndroidUtils.h"
 #endif
 
+#ifndef GLEW_ARB_uniform_buffer_object
+#define GLEW_ARB_uniform_buffer_object 0
+#endif
+
 static const string COLOR_ATTRIBUTE="color";
 static const string POSITION_ATTRIBUTE="position";
 static const string NORMAL_ATTRIBUTE="normal";
@@ -114,9 +118,7 @@ ofShader::ofShader(const ofShader & mom)
 	,uniformsCache(mom.uniformsCache)
 	,attributesBindingsCache(mom.attributesBindingsCache)
   #ifndef TARGET_OPENGLES
-  #ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
 	,uniformBlocksCache(mom.uniformBlocksCache)
-  #endif
   #endif
 {
 	if(mom.bLoaded){
