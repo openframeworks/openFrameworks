@@ -84,9 +84,14 @@ static void releaseProgram(GLuint id){
 
 #ifndef TARGET_OPENGLES
 //--------------------------------------------------------------
-ofShader::TransformFeedbackBinding::TransformFeedbackBinding(const ofBufferObject & buffer)
-	:size(buffer.size())
+ofShader::TransformFeedbackRangeBinding::TransformFeedbackRangeBinding(const ofBufferObject & buffer, GLuint offset, GLuint size)
+	:offset(offset)
+	,size(size)
 	,buffer(buffer){}
+
+//--------------------------------------------------------------
+ofShader::TransformFeedbackBaseBinding::TransformFeedbackBaseBinding(const ofBufferObject & buffer)
+	:buffer(buffer){}
 #endif
 
 //--------------------------------------------------------------
@@ -691,10 +696,7 @@ bool ofShader::linkProgram() {
 		}
 
 #ifndef TARGET_OPENGLES
-#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
-		if(ofGLCheckExtension("GL_ARB_uniform_buffer_object")) {
-			uboAvailable = true;
-
+		if(GLEW_ARB_uniform_buffer_object) {
 			// Pre-cache all active uniforms blocks
 			GLint numUniformBlocks = 0;
 			glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
@@ -707,10 +709,7 @@ bool ofShader::linkProgram() {
 				string name(uniformBlockName.begin(), uniformBlockName.begin()+length);
 				uniformBlocksCache[name] = glGetUniformBlockIndex(program, name.c_str());
 			}
-		} else {
-			uboAvailable = false;
 		}
-#endif
 #endif
 
 #ifdef TARGET_ANDROID
@@ -786,23 +785,6 @@ bool ofShader::bindDefaults(){
 
 }
 
-#ifndef TARGET_OPENGLES
-#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
-void ofShader::bindUniformBlock(GLuint binding, const string & name) const{
-	if(bLoaded){
-		if(uboAvailable) {
-			GLint index = getUniformBlockIndex(name);
-			if (index != -1) {
-				glUniformBlockBinding( program, index, binding );
-			}
-		} else {
-			ofLogError("ofShader::bindUniformBlock") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
-		}
-	}
-}
-#endif
-#endif
-
 //--------------------------------------------------------------
 void ofShader::unload() {
 	if(bLoaded) {
@@ -858,15 +840,29 @@ void ofShader::beginTransformFeedback(GLenum mode) const {
 }
 
 //--------------------------------------------------------------
-void ofShader::beginTransformFeedback(GLenum mode, const TransformFeedbackBinding & binding) const {
+void ofShader::beginTransformFeedback(GLenum mode, const TransformFeedbackRangeBinding & binding) const {
 	binding.buffer.bindRange(GL_TRANSFORM_FEEDBACK_BUFFER, binding.index, binding.offset, binding.size);
 	beginTransformFeedback(mode);
 }
 
 //--------------------------------------------------------------
-void ofShader::beginTransformFeedback(GLenum mode, const std::vector<TransformFeedbackBinding> & bindings) const {
+void ofShader::beginTransformFeedback(GLenum mode, const std::vector<TransformFeedbackRangeBinding> & bindings) const {
 	for (auto & binding : bindings) {
 		binding.buffer.bindRange(GL_TRANSFORM_FEEDBACK_BUFFER, binding.index, binding.offset, binding.size);
+	}
+	beginTransformFeedback(mode);
+}
+
+//--------------------------------------------------------------
+void ofShader::beginTransformFeedback(GLenum mode, const TransformFeedbackBaseBinding & binding) const {
+	binding.buffer.bindBase(GL_TRANSFORM_FEEDBACK_BUFFER, binding.index);
+	beginTransformFeedback(mode);
+}
+
+//--------------------------------------------------------------
+void ofShader::beginTransformFeedback(GLenum mode, const std::vector<TransformFeedbackBaseBinding> & bindings) const {
+	for (auto & binding : bindings) {
+		binding.buffer.bindBase(GL_TRANSFORM_FEEDBACK_BUFFER, binding.index);
 	}
 	beginTransformFeedback(mode);
 }
@@ -878,15 +874,29 @@ void ofShader::endTransformFeedback() const {
 }
 
 //--------------------------------------------------------------
-void ofShader::endTransformFeedback(const TransformFeedbackBinding & binding) const {
+void ofShader::endTransformFeedback(const TransformFeedbackRangeBinding & binding) const {
 	binding.buffer.unbindRange(GL_TRANSFORM_FEEDBACK_BUFFER, binding.index);
 	endTransformFeedback();
 }
 
 //--------------------------------------------------------------
-void ofShader::endTransformFeedback(const std::vector<TransformFeedbackBinding> & bindings) const {
+void ofShader::endTransformFeedback(const std::vector<TransformFeedbackRangeBinding> & bindings) const {
 	for (auto & binding : bindings) {
 		binding.buffer.unbindRange(GL_TRANSFORM_FEEDBACK_BUFFER, binding.index);
+	}
+	endTransformFeedback();
+}
+
+//--------------------------------------------------------------
+void ofShader::endTransformFeedback(const TransformFeedbackBaseBinding & binding) const {
+	binding.buffer.unbindBase(GL_TRANSFORM_FEEDBACK_BUFFER, binding.index);
+	endTransformFeedback();
+}
+
+//--------------------------------------------------------------
+void ofShader::endTransformFeedback(const std::vector<TransformFeedbackBaseBinding> & bindings) const {
+	for (auto & binding : bindings) {
+		binding.buffer.unbindBase(GL_TRANSFORM_FEEDBACK_BUFFER, binding.index);
 	}
 	endTransformFeedback();
 }
@@ -1274,13 +1284,12 @@ GLint ofShader::getUniformLocation(const string & name)  const{
 	}
 }
 
-#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
-
+#ifndef TARGET_OPENGLES
 //--------------------------------------------------------------
 GLint ofShader::getUniformBlockIndex(const string & name)  const{
 	if(!bLoaded) return -1;
 
-	if(uboAvailable) {
+	if(GLEW_ARB_uniform_buffer_object) {
 		auto it = uniformBlocksCache.find(name);
 		if (it == uniformBlocksCache.end()){
 			return -1;
@@ -1297,7 +1306,7 @@ GLint ofShader::getUniformBlockIndex(const string & name)  const{
 GLint ofShader::getUniformBlockBinding( const string & name ) const{
 	if(!bLoaded) return -1;
 
-	if(uboAvailable) {
+	if(GLEW_ARB_uniform_buffer_object) {
 		GLint index = getUniformBlockIndex(name);
 		if (index == -1) return -1;
 
@@ -1312,7 +1321,7 @@ GLint ofShader::getUniformBlockBinding( const string & name ) const{
 
 //--------------------------------------------------------------
 void ofShader::printActiveUniformBlocks()  const{
-	if(uboAvailable) {
+	if(GLEW_ARB_uniform_buffer_object) {
 		GLint numUniformBlocks = 0;
 		glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
 		ofLogNotice("ofShader") << numUniformBlocks << " uniform blocks";
@@ -1344,6 +1353,19 @@ void ofShader::printActiveUniformBlocks()  const{
 	}
 }
 
+
+void ofShader::bindUniformBlock(GLuint binding, const string & name) const{
+	if(bLoaded){
+		if(GLEW_ARB_uniform_buffer_object) {
+			GLint index = getUniformBlockIndex(name);
+			if (index != -1) {
+				glUniformBlockBinding( program, index, binding );
+			}
+		} else {
+			ofLogError("ofShader::bindUniformBlock") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
+		}
+	}
+}
 #endif
 
 //--------------------------------------------------------------
