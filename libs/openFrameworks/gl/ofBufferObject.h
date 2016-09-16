@@ -126,7 +126,8 @@ public:
 		return static_cast<T*>(mapRange(offset,length,access));
 	}
 
-	void copyTo(ofBufferObject & dstBuffer);
+	void copyTo(ofBufferObject & dstBuffer) const;
+	void copyTo(ofBufferObject & dstBuffer, int readOffset, int writeOffset, size_t size) const;
 
     void invalidate();
 #endif
