@@ -47,6 +47,7 @@ ofEvent<ofHttpResponse> & ofURLResponseEvent(){
 class ofURLFileLoaderImpl: public ofThread, public ofBaseURLFileLoader{
 public:
 	ofURLFileLoaderImpl();
+	~ofURLFileLoaderImpl();
     ofHttpResponse get(const string& url);
     int getAsync(const string& url, const string& name=""); // returns id
     ofHttpResponse saveTo(const string& url, const std::filesystem::path& path);
@@ -90,6 +91,12 @@ ofURLFileLoaderImpl::ofURLFileLoaderImpl() {
 			ofLogError("ofURLFileLoader") << "couldn't create factory: " << PS.displayText();
 		}
 	}
+}
+
+
+ofURLFileLoaderImpl::~ofURLFileLoaderImpl(){
+	clear();
+	stop();
 }
 
 ofHttpResponse ofURLFileLoaderImpl::get(const string& url) {
@@ -250,6 +257,12 @@ int ofURLFileLoaderImpl::handleRequestAsync(const ofHttpRequest& request){
 void ofURLFileLoaderImpl::update(ofEventArgs & args){
 	ofHttpResponse response;
 	while(responses.tryReceive(response)){
+		try{
+			response.request.done(response);
+		}catch(...){
+
+		}
+
 		ofNotifyEvent(ofURLResponseEvent(),response);
 	}
 
@@ -267,6 +280,7 @@ ofURLFileLoader::ofURLFileLoader()
 class ofURLFileLoaderImpl: public ofThread, public ofBaseURLFileLoader{
 public:
 	ofURLFileLoaderImpl();
+	~ofURLFileLoaderImpl();
 	ofHttpResponse get(const string& url);
 	int getAsync(const string& url, const string& name=""); // returns id
 	ofHttpResponse saveTo(const string& url, const std::filesystem::path& path);
@@ -299,6 +313,11 @@ ofURLFileLoaderImpl::ofURLFileLoaderImpl()
 		 curl_global_init(CURL_GLOBAL_ALL);
 	}
 	curl = std::unique_ptr<CURL, void(*)(CURL*)>(curl_easy_init(), curl_easy_cleanup);
+}
+
+ofURLFileLoaderImpl::~ofURLFileLoaderImpl(){
+	clear();
+	stop();
 }
 
 ofHttpResponse ofURLFileLoaderImpl::get(const string& url) {
@@ -465,6 +484,12 @@ int ofURLFileLoaderImpl::handleRequestAsync(const ofHttpRequest& request){
 void ofURLFileLoaderImpl::update(ofEventArgs & args){
 	ofHttpResponse response;
 	while(responses.tryReceive(response)){
+		try{
+			response.request.done(response);
+		}catch(...){
+
+		}
+
 		ofNotifyEvent(ofURLResponseEvent(),response);
 	}
 
