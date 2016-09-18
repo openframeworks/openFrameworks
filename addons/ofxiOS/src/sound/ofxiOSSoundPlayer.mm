@@ -163,3 +163,10 @@ float ofxiOSSoundPlayer::getVolume()  const{
 void * ofxiOSSoundPlayer::getAVSoundPlayer() {
     return soundPlayer;
 }
+
+bool ofxiOSSoundPlayer::isPaused() const{
+    if(soundPlayer == NULL) {
+        return false;
+    }
+    return [(AVSoundPlayer *)soundPlayer paused;
+}

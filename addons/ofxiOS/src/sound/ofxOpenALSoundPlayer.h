@@ -78,8 +78,9 @@ public:
 	void    setPositionMS(int ms);
 
 	float	getPosition() const;
-	int	getPositionMS() const;
-	bool	isPlaying();
+	int		getPositionMS() const;
+	bool	isPlaying() const;
+	bool	isPaused() const;
 	float	getPitch() const;
 	float	getSpeed() const{return getPitch();}; // same as pitch. mapped for ofSoundPlayer compatibility
 	float   getVolume() const;
