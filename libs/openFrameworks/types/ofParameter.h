@@ -527,9 +527,9 @@ public:
 	}
 
 	size_t getNumListeners() const;
+	const void* getInternalObject() const;
 
 protected:
-	const void* getInternalObject() const;
 
 private:
 	class Value{
@@ -680,35 +680,22 @@ inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType & v){
         // Notify all parents, if there are any.
         if(!obj->parents.empty())
         {
-
-            // This lambda will conditionally notify a parent if its child
-            // value has changed.
-            //
-            // If it was successful (i.e. the parent pointer is valid) the
-            // lambda will return false.  If it was unsuccessful (i.e. the
-            // parent pointer is invalid) the lambda will return true.
-            //
-            // This return value is used by the std::remove_if algorithm
-            // to erase invalid parents from this object's parent list.
-            auto notifyParents = [this](weak_ptr<ofParameterGroup::Value> p){
-                // Try to get a valid shared pointer ot the parent.
-                auto parent = p.lock();
-
-                // If the parent's shared pointer is not nullptr, notify it.
-                if(parent != nullptr) {
-                    parent->notifyParameterChanged(*this);
-                    return false;
-                } else {
-                    return true;
-                }
-            };
-
-            // Erase each invalid parent and notify all valid parents of this
-            // object's changed value.
+            // Erase each invalid parent
             obj->parents.erase(std::remove_if(obj->parents.begin(),
                                               obj->parents.end(),
-                                              notifyParents),
+											  [this](const weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
                                obj->parents.end());
+
+			// notify all leftover (valid) parents of this object's changed value.
+			// this can't happen in the same iterator as above, because a notified listener
+			// might perform similar cleanups that would corrupt our iterator
+			// (which appens for example if the listener calls getFirstParent on us)
+			for(auto & parent: obj->parents){
+				auto p = parent.lock();
+				if(p){
+					p->notifyParameterChanged(*this);
+				}
+			}
         }
         obj->bInNotify = false;
     }
@@ -958,6 +945,11 @@ public:
 		ofRemoveListener(obj->changedE,listener,method,prio);
 	}
 
+	template<typename... Args>
+	ofEventListener newListener(Args...args) {
+		return obj->changedE.newListener(args...);
+	}
+
 	void trigger();
 
 	void enableEvents();
@@ -982,10 +974,10 @@ public:
 	}
 	size_t getNumListeners() const;
 
-protected:
 	const void* getInternalObject() const{
 		return obj.get();
 	}
+protected:
 
 private:
 	class Value{
@@ -1111,7 +1103,9 @@ protected:
 	}
 
 	ofParameter<ParameterType> parameter;
-	
+
+	template<typename T>
+	friend class ofParameter;
 	friend class ofParameterGroup;
 	friend Friend;
 };

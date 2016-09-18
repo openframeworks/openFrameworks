@@ -4,6 +4,7 @@ static const string fragmentShader = R"(
     IN vec3 v_transformedNormal;
     // Eye-coordinate position of vertex
     IN vec3 v_eyePosition;
+    IN vec3 v_worldPosition;
 #if HAS_COLOR
     IN vec4 v_color;
 #endif
@@ -52,6 +53,8 @@ static const string fragmentShader = R"(
     uniform mat4 modelViewProjectionMatrix;
 
     uniform lightData lights[MAX_LIGHTS];
+
+	%custom_uniforms%
 
 
     void pointLight( in lightData light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular ){

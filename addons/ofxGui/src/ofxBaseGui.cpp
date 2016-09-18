@@ -1,7 +1,7 @@
 #include "ofxBaseGui.h"
 #include "ofImage.h"
 #include "ofBitmapFont.h"
-#ifndef TARGET_EMSCRIPTEN
+#if OF_USE_POCO
 #include "ofXml.h"
 #endif
 #include "ofJson.h"
@@ -169,7 +169,7 @@ ofRectangle ofxBaseGui::getTextBoundingBox(const string & text, float x, float y
 
 void ofxBaseGui::saveToFile(const std::string& filename){
 	auto extension = ofToLower(ofFilePath::getFileExt(filename));
-#ifndef TARGET_EMSCRIPTEN
+#if OF_USE_POCO
 	if(extension == "xml"){
 		ofXml xml;
 		if(ofFile(filename, ofFile::Reference).exists()){
@@ -190,7 +190,7 @@ void ofxBaseGui::saveToFile(const std::string& filename){
 
 void ofxBaseGui::loadFromFile(const std::string& filename){
 	auto extension = ofToLower(ofFilePath::getFileExt(filename));
-#ifndef TARGET_EMSCRIPTEN
+#if OF_USE_POCO
 	if(extension == "xml"){
 		ofXml xml;
 		xml.load(filename);

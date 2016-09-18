@@ -56,6 +56,7 @@ Module{
                 "openssl",
                 "boost",
                 "glfw",
+                "poco",
                 "openFrameworksCompiled",
             ];
         }else if(platform==="msys2"){
@@ -73,15 +74,19 @@ Module{
                 "openFrameworksCompiled"
             ];
         }else if(platform==="osx"){
-            return [
+            var exceptions = [
                 "poco",
                 "quicktime",
                 "glut",
                 "openFrameworksCompiled",
                 "videoInput"
             ];
+            if(!usePoco){
+                exceptions.push("openssl");
+            }
+            return exceptions;
         }else if(platform==="android"){
-            return [
+            var exceptions =  [
                 "poco",
                 "quicktime",
                 "glut",
@@ -94,12 +99,16 @@ Module{
                 "videoInput",
                 "openFrameworksCompiled",
             ];
+            if(!usePoco){
+                exceptions.push("openssl");
+            }
+            return exceptions;
         }
     }
 
     readonly property stringList PKG_CONFIGS: {
         if(platform === "linux"  || platform === "linux64"){
-            return [
+            var pkgs = [
                 "cairo",
                 "gstreamer-1.0",
                 "zlib",
@@ -111,7 +120,6 @@ Module{
                 "fontconfig",
                 "sndfile",
                 "openal",
-                "openssl",
                 "libpulse-simple",
                 "alsa",
                 "gl",
@@ -120,13 +128,22 @@ Module{
                 "gtk+-3.0",
                 "libmpg123",
                 "glfw3",
-            ].concat(pkgConfigs)
+            ].concat(pkgConfigs);
+
+            if(usePoco){
+                pkgs.push("openssl")
+            }
+            return pkgs;
         }else if(qbs.targetOS.indexOf("windows")!=-1){
-            return [
+            var pkgs = [
                 "zlib",
-                "openssl",
                 "glew",
-            ].concat(pkgConfigs)
+            ].concat(pkgConfigs);
+
+            if(usePoco){
+                pkgs.push("openssl")
+            }
+            return pkgs;
         }else{
             return [];
         }
@@ -209,7 +226,9 @@ Module{
                 includes = includes.concat(include_paths);
             }
         }
-        includes.push(ofRoot+'/libs/poco/include');
+        if(usePoco){
+            includes.push(ofRoot+'/libs/poco/include');
+        }
         includes = includes.concat(PKG_CONFIG_INCLUDES);
         if(platform === "msys2"){
             includes.push(FileInfo.joinPaths(msys2root,'mingw32/include'));
@@ -232,31 +251,33 @@ Module{
 
     readonly property pathList STATIC_LIBS: {
         var staticLibraries = Helpers.findLibsRecursive(ofRoot + "/libs",platform,LIBS_EXCEPTIONS);
-        if(platform === "osx"){
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoNetSSL.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoNet.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoCrypto.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoUtil.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoJSON.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoXML.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoFoundation.a');
-        }else if(platform === "android"){
-            platform_abi = platform + '/' + Android.ndk.abi;
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoNetSSL.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoNet.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoCrypto.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoUtil.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoJSON.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoXML.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoFoundation.a');
-        }else{
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNetSSL.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNet.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoCrypto.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoUtil.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoJSON.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoXML.a');
-            staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoFoundation.a');
+        if(usePoco){
+            if(platform === "osx"){
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoNetSSL.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoNet.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoCrypto.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoUtil.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoJSON.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoXML.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoFoundation.a');
+            }else if(platform === "android"){
+                platform_abi = platform + '/' + Android.ndk.abi;
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoNetSSL.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoNet.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoCrypto.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoUtil.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoJSON.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoXML.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoFoundation.a');
+            }else{
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNetSSL.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNet.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoCrypto.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoUtil.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoJSON.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoXML.a');
+                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoFoundation.a');
+            }
         }
         return(staticLibraries)
     }
@@ -444,15 +465,27 @@ Module{
         return ldflags;
     }
 
+    readonly property bool usePoco: project.usePoco!==undefined ? project.usePoco : true
+
     readonly property stringList DEFINES: {
         var defines = ['GCC_HAS_REGEX'];
+
         if(qbs.targetOS.contains("linux")){
-            defines.concat([ 'OF_USING_GTK', 'OF_USING_MPG123']);
+            defines = defines.concat([ 'OF_USING_GTK', 'OF_USING_MPG123']);
         }
 
         if(qbs.targetOS.indexOf("windows")>-1){
-            defines.concat(['UNICODE','_UNICODE','POCO_STATIC']);
+            defines = defines.concat(['UNICODE','_UNICODE']);
+
+            if(usePoco){
+                defines = defines.concat(['POCO_STATIC'])
+            }
         }
+
+        if(!usePoco){
+            defines = defines.concat(['OF_USE_POCO=0'])
+        }
+
         return defines;
     }
 
@@ -575,7 +608,7 @@ Module{
     property stringList cxxFlags: []
     property stringList linkerFlags: []
     property stringList defines: []
-    property stringList frameworks: []
+    property stringList frameworks: [] 
 
     coreIncludePaths: INCLUDE_PATHS
         .concat(ADDON_INCLUDES)

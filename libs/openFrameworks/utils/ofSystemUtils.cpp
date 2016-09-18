@@ -77,7 +77,7 @@ static void restoreAppWindowFocus(){
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 #include <gtk/gtk.h>
 #include "ofGstUtils.h"
-#include "Poco/Condition.h"
+#include <thread>
 
 #if GTK_MAJOR_VERSION>=3
 #define OPEN_BUTTON "_Open"
@@ -104,7 +104,7 @@ struct FileDialogData{
 	string defaultName;
 	string results;
 	bool done;
-	Poco::Condition condition;
+	std::condition_variable condition;
 	std::mutex mutex;
 };
 
@@ -141,10 +141,9 @@ gboolean file_dialog_gtk(gpointer userdata){
 		gtk_widget_destroy (dialog);
 	}
 
-	dialogData->mutex.lock();
-	dialogData->condition.signal();
+	std::unique_lock<std::mutex> lck(dialogData->mutex);
+	dialogData->condition.notify_all();
 	dialogData->done = true;
-	dialogData->mutex.unlock();
 	return FALSE;
 }
 
@@ -214,8 +213,8 @@ static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,strin
 
 	g_main_context_invoke(g_main_loop_get_context(ofGstUtils::getGstMainLoop()), &file_dialog_gtk, &dialogData);
 	if(!dialogData.done){
-		dialogData.mutex.lock();
-		dialogData.condition.wait(dialogData.mutex);
+		std::unique_lock<std::mutex> lck(dialogData.mutex);
+		dialogData.condition.wait(lck);
 	}
 	return dialogData.results;
 }

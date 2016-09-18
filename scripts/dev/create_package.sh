@@ -134,7 +134,7 @@ function createProjectFiles {
         git pull origin master
         cd commandLine
         echo "Recompiling command line PG"
-        PROJECT_OPTIMIZATION_CFLAGS_RELEASE=-O3 make -j2 > /dev/null
+        PROJECT_OPTIMIZATION_CFLAGS_RELEASE=-O0 CXXFLAGS=-ftrack-macro-expansion=0 make > /dev/null
         cd ${pkg_ofroot}
         echo "Creating project files for $pkg_platform"
         ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pkg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
