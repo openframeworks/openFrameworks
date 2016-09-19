@@ -49,8 +49,8 @@ ALL_CFLAGS += $(OF_CORE_DEFINES_CFLAGS)
 # add the include cflags
 ALL_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
 # clean up all extra whitespaces in the CFLAGS
-CFLAGS = $(strip $(ALL_CFLAGS))
-CXXFLAGS = $(OF_CORE_BASE_CXXFLAGS)
+CFLAGS += $(strip $(ALL_CFLAGS))
+CXXFLAGS += $(OF_CORE_BASE_CXXFLAGS)
 
 ################################################################################
 # COMPILER OPTIMIZATIONS and TARGET GENERATION

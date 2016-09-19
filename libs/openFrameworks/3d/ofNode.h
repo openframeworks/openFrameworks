@@ -168,10 +168,6 @@ public:
 	/// \}	
 	/// \name Setters
 	/// \{
-
-	/// \brief Directly set the local transformation matrix.
-	/// \param param0 Desired transform matrix as ref to mat4.
-	void setTransformMatrix(const glm::mat4 &m44);
 	
 	/// \brief Set the local position of the node using xyz coordinates.
 	/// \param param0 Desired local x coordinate as a float.

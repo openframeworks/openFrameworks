@@ -3,6 +3,7 @@ OUT vec2 v_texcoord; // pass the texCoord if needed
 OUT vec3 v_transformedNormal;
 OUT vec3 v_normal;
 OUT vec3 v_eyePosition;
+OUT vec3 v_worldPosition;
 #if HAS_COLOR
 OUT vec4 v_color;
 #endif
@@ -26,6 +27,7 @@ void main (void){
     v_transformedNormal = normalize(tempNormal);
     v_normal = normal.xyz;
     v_eyePosition = (eyePosition.xyz) / eyePosition.w;
+    v_worldPosition = position.xyz;
 
     v_texcoord = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
     #if HAS_COLOR

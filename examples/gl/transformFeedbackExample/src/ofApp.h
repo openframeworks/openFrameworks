@@ -20,8 +20,7 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
-		ofShader shader;
+
 		ofVbo vbo;
 		ofBufferObject buffer;
 		ofEasyCam cam;

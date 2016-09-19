@@ -1,3 +1,6 @@
+#include "ofConstants.h"
+
+#if OF_USE_POCO
 #include "ofXml.h"
 #include "Poco/AutoPtr.h"
 
@@ -986,3 +989,4 @@ void ofDeserialize(const ofXml & xml, ofAbstractParameter & parameter){
 	}
 
 }
+#endif

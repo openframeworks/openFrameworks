@@ -6,7 +6,7 @@
 #include <numeric>
 #include <locale>
 
-#if !defined(TARGET_EMSCRIPTEN)
+#if OF_USE_POCO
 #include "Poco/URI.h"
 #endif
 
@@ -819,7 +819,7 @@ string ofVAArgsToString(const char * format, va_list args){
 	return s;
 }
 
-#ifndef TARGET_EMSCRIPTEN
+#if OF_USE_POCO
 //--------------------------------------------------
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	Poco::URI uri;

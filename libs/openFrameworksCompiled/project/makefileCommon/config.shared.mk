@@ -254,8 +254,13 @@ endif
 ################################################################################
 
 # take from the platform core exclusions and strip and collapse spaces
-CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
+ifeq ($(OF_USE_POCO),0)
+    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include
+    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/%
+    CFLAGS+=-DOF_USE_POCO=0
+endif
 
+CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
 
 ################################################################################
 # OF CORE HEADER INCLUDES (-I ...)
