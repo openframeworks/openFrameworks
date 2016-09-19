@@ -785,7 +785,7 @@ void ofAppendUTF8(string & str, uint32_t utf8){
 string ofVAArgsToString(const char * format, ...){
 	va_list args;
 	va_start(args, format);
-	char buf[32];
+	char buf[256];
 	size_t n = std::vsnprintf(buf, sizeof(buf), format, args);
 	va_end(args);
 
@@ -804,7 +804,7 @@ string ofVAArgsToString(const char * format, ...){
 }
 
 string ofVAArgsToString(const char * format, va_list args){
-	char buf[32];
+	char buf[256];
 	size_t n = std::vsnprintf(buf, sizeof(buf), format, args);
 
 	// Static buffer large enough?
