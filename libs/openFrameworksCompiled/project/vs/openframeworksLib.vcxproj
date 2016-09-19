@@ -279,6 +279,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\openFrameworks\3d\ofMesh.inl" />
+    <None Include="..\..\..\openFrameworks\gl\shaders\phong.frag" />
+    <None Include="..\..\..\openFrameworks\gl\shaders\phong.vert" />
     <None Include="..\..\..\openFrameworks\graphics\ofPolyline.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
