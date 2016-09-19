@@ -382,7 +382,7 @@ bool ofParameterGroup::contains(const string& name) const{
 
 void ofParameterGroup::Value::notifyParameterChanged(ofAbstractParameter & param){
 	ofNotifyEvent(parameterChangedE,param);
-	parents.erase(std::remove_if(parents.begin(),parents.end(),[&param](weak_ptr<Value> p){
+	parents.erase(std::remove_if(parents.begin(),parents.end(),[&param](const weak_ptr<Value> & p){
 		auto parent = p.lock();
 		if(parent) parent->notifyParameterChanged(param);
 		return !parent;
@@ -390,7 +390,7 @@ void ofParameterGroup::Value::notifyParameterChanged(ofAbstractParameter & param
 }
 
 const ofParameterGroup ofParameterGroup::getFirstParent() const{
-	auto first = std::find_if(obj->parents.begin(),obj->parents.end(),[](weak_ptr<Value> p){return p.lock()!=nullptr;});
+	auto first = std::find_if(obj->parents.begin(),obj->parents.end(),[](const weak_ptr<Value> & p){return p.lock()!=nullptr;});
 	if(first!=obj->parents.end()){
 		return first->lock();
 	}else{
