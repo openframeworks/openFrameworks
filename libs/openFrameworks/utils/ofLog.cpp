@@ -325,14 +325,14 @@ void ofDebugViewLoggerChannel::log(ofLogLevel level, const string & module, cons
 }
 
 void ofDebugViewLoggerChannel::log(ofLogLevel level, const string & module, const char* format, va_list args) {
-	std::array<char, 1024> logBuffer;
-	sprintf(logBuffer.data(), "[%s] ", ofGetLogLevelName(level, true).c_str());
+	std::string buffer;;
+	buffer =  "[" + ofGetLogLevelName(level, true) + "] ";
 	if (module != "") {
-		sprintf(logBuffer.data(), "%s: ", module.c_str());
+		buffer += module + ": ";
 	}
-	vsprintf(logBuffer.data(), format, args);
-	sprintf(logBuffer.data(), "\n");
-	OutputDebugStringA(logBuffer.data());
+	buffer += ofVAArgsToString(format, args);
+	buffer += "\n";
+	OutputDebugStringA(buffer.c_str());
 }
 #endif
 
