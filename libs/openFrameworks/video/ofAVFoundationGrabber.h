@@ -99,7 +99,7 @@ class ofAVFoundationGrabber : virtual public ofBaseVideoGrabber{
 		int device = 0;
         bool bIsInit = false;
 	
-		int fps  = 30;
+		int fps  = -1;
 		ofTexture tex;
 		ofPixels pixels;
 
