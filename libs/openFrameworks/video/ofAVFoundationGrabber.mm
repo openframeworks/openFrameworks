@@ -306,7 +306,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 					vImage_Error err;
 					err = vImageConvert_BGRA8888toRGB888(&srcImg, &dstImg, kvImageNoFlags);
 					if(err != kvImageNoError){
-						NSLog(@"Error in Pixel Copy vImage_error %ld", err);
+						ofLogError("ofAVFoundationGrabber") << "Error using accelerate to convert bgra to rgb with vImageConvert_BGRA8888toRGB888 error: " << err;
 					}else{
 					
 						if( grabberPtr->capMutex.try_lock() ){
