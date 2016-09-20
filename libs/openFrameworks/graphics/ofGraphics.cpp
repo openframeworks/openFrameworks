@@ -336,6 +336,19 @@ void ofRotateZRad(float degrees){
 }
 
 //----------------------------------------------------------
+void ofSkew(const ofVec2f& skew){
+    const float skewMatArray[16] = {
+        1, tanf(ofDegToRad(skew.x)), 0, 0,
+        tanf(ofDegToRad(skew.y)), 1, 0, 0,
+        0,  0,  1, 0,
+        0,  0,  0, 1
+    };
+    ofMatrix4x4 skewMatrix(skewMatArray);
+    const ofMatrix4x4 currentMatrix(ofGetCurrentRenderer()->getCurrentMatrix(ofMatrixMode::OF_MATRIX_MODELVIEW));
+    ofGetCurrentRenderer()->loadMatrix(currentMatrix * skewMatrix);
+}
+
+//----------------------------------------------------------
 void ofLoadIdentityMatrix (void){
 	ofGetCurrentRenderer()->loadIdentityMatrix();
 }
