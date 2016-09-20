@@ -6,6 +6,8 @@
 
 #ifdef OF_VIDEO_CAPTURE_AVF
 
+#import <Accelerate/Accelerate.h>
+
 @interface OSXVideoGrabber ()
 @property (nonatomic,retain) AVCaptureSession *captureSession;
 @end
@@ -45,26 +47,40 @@
 		
 		NSError *error = nil;
 		[device lockForConfiguration:&error];
+		
 		if(!error) {
-			NSArray * supportedFrameRates = device.activeFormat.videoSupportedFrameRateRanges;
-			float minFrameRate = 1;
-			float maxFrameRate = 1;
-			for(AVFrameRateRange * range in supportedFrameRates) {
-				minFrameRate = range.minFrameRate;
-				maxFrameRate = range.maxFrameRate;
-				break;
+			
+			//only set the framerate if it has been set by the user
+			if( framerate > 0 ){
+		
+				AVFrameRateRange * desiredRange = [AVFrameRateRange alloc];
+			
+				NSArray * supportedFrameRates = device.activeFormat.videoSupportedFrameRateRanges;
+
+				int numMatch = 0;
+				for(AVFrameRateRange * range in supportedFrameRates){
+
+					if( (floor(range.minFrameRate) <= framerate && floor(range.maxFrameRate) >= framerate) ){
+						ofLogVerbose("ofAvFoundationGrabber") << "found good framerate range, min: " << range.minFrameRate << " max: " << range.maxFrameRate << " for requested fps: " << framerate;
+						desiredRange = range;
+						numMatch++;
+					}
+				}
+	
+				if( numMatch > 0 ){
+					//TODO: this crashes on some devices ( Orbecc Astra Pro )
+					device.activeVideoMinFrameDuration = desiredRange.minFrameDuration;
+					device.activeVideoMaxFrameDuration = desiredRange.maxFrameDuration;
+				}else{
+					ofLogError("ofAvFoundationGrabber") << " could not set framerate to: " << framerate << ". Device supports: ";
+					for(AVFrameRateRange * range in supportedFrameRates){
+						ofLogError() << "  framerate range of: " << range.minFrameRate <<
+					 " to " << range.maxFrameRate;
+					 }
+				}
+				
 			}
-			if(framerate < minFrameRate) {
-				NSLog(@"OSXVideoGrabber: Framerate set is less than minimum. Setting to Minimum");
-				framerate = minFrameRate;
-			}
-			if(framerate > maxFrameRate) {
-				NSLog(@"OSXVideoGrabber: Framerate set is greater than maximum. Setting to Maximum");
-				framerate = maxFrameRate;
-			}
-			//TODO: this crashes on some devices ( Orbecc Astra Pro )
-			device.activeVideoMinFrameDuration = CMTimeMake(1, framerate);
-			device.activeVideoMaxFrameDuration = CMTimeMake(1, framerate);
+			
 			[device unlockForConfiguration];
 		} else {
 			NSLog(@"OSXVideoGrabber Init Error: %@", error);
@@ -93,16 +109,10 @@
 		width = w;
 		height = h;
 		
-		//TODO: setting capture to RGB limits some devices in terms of captures size ( Orbecc Astra Pro )
-		//Maybe go back to converting from BGRA to RGB? 
-		int pixelType = kCVPixelFormatType_24RGB;
-		if( grabberPtr->pixelFormat == OF_PIXELS_BGRA ){
-			pixelType = kCVPixelFormatType_32BGRA;
-		}
 		NSDictionary* videoSettings =[NSDictionary dictionaryWithObjectsAndKeys:
                               [NSNumber numberWithDouble:width], (id)kCVPixelBufferWidthKey,
                               [NSNumber numberWithDouble:height], (id)kCVPixelBufferHeightKey,
-                              [NSNumber numberWithUnsignedInt:pixelType], (id)kCVPixelBufferPixelFormatTypeKey,
+                              [NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA], (id)kCVPixelBufferPixelFormatTypeKey,
                               nil];
 		[captureOutput setVideoSettings:videoSettings];
 
@@ -219,19 +229,52 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 			CVPixelBufferLockBaseAddress(imageBuffer,0); 
 
 			if( grabberPtr != NULL && !grabberPtr->bLock ){
+				
 				unsigned char *isrc4 = (unsigned char *)CVPixelBufferGetBaseAddress(imageBuffer);
 				size_t widthIn  = CVPixelBufferGetWidth(imageBuffer);
 				size_t heightIn	= CVPixelBufferGetHeight(imageBuffer);
 				
-				int numChannels = 3;
 				if( grabberPtr->pixelFormat == OF_PIXELS_BGRA ){
-					numChannels = 4;
+					
+					if( grabberPtr->capMutex.try_lock() ){
+						grabberPtr->pixelsTmp.setFromPixels(isrc4, widthIn, heightIn, 4);
+						grabberPtr->updatePixelsCB();
+						grabberPtr->capMutex.unlock();
+					}
+					
+				}else{
+				
+					ofPixels rgbConvertPixels;
+					rgbConvertPixels.allocate(widthIn, heightIn, 3);
+					
+					vImage_Buffer srcImg;
+					srcImg.width = widthIn;
+					srcImg.height = heightIn;
+					srcImg.data = isrc4;
+					srcImg.rowBytes = CVPixelBufferGetBytesPerRow(imageBuffer);
+
+					vImage_Buffer dstImg;
+					dstImg.width = srcImg.width;
+					dstImg.height = srcImg.height;
+					dstImg.rowBytes = width*3;
+					dstImg.data = rgbConvertPixels.getData();
+
+					vImage_Error err;
+					err = vImageConvert_BGRA8888toRGB888(&srcImg, &dstImg, kvImageNoFlags);
+					if(err != kvImageNoError){
+						NSLog(@"Error in Pixel Copy vImage_error %ld", err);
+					}else{
+					
+						if( grabberPtr->capMutex.try_lock() ){
+							grabberPtr->pixelsTmp = rgbConvertPixels;
+							grabberPtr->updatePixelsCB();
+							grabberPtr->capMutex.unlock();
+						}
+					
+					}
 				}
-				if( grabberPtr->capMutex.try_lock() ){
-					grabberPtr->pixelsTmp.setFromPixels(isrc4, widthIn, heightIn, numChannels);
-					grabberPtr->updatePixelsCB();
-					grabberPtr->capMutex.unlock();
-				}
+				
+				
 			}
 		}
 	}
@@ -277,7 +320,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
 
 ofAVFoundationGrabber::ofAVFoundationGrabber(){
-	fps		= 30;
+	fps		= -1;
 	grabber = [OSXVideoGrabber alloc];
     width = 0;
     height = 0;
@@ -313,7 +356,7 @@ void ofAVFoundationGrabber::close(){
 	bIsInit = false;
 	width = 0;
     height = 0;
-	fps		= 30;
+	fps		= -1;
 	pixelFormat = OF_PIXELS_RGB;
 	newFrame = false;
 	bHavePixelsChanged = false;
