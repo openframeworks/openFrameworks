@@ -49,12 +49,59 @@
 		[device lockForConfiguration:&error];
 		
 		if(!error) {
+
+			float smallestDist = 99999999.0;
+			int bestW, bestH = 0;
 			
+			// Set width and height to be passed in dimensions
+			// We will then check to see if the dimensions are supported and if not find the closest matching size.
+			width = w;
+			height = h;
+
+			ofVec2f requestedDimension(width, height);
+			
+			AVCaptureDeviceFormat * bestFormat  = nullptr;
+			for ( AVCaptureDeviceFormat * format in [device formats] ) {
+				CMFormatDescriptionRef desc = format.formatDescription;
+				CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(desc);
+				
+				float tw = dimensions.width;
+				float th = dimensions.height;
+				ofVec2f formatDimension(tw, th);
+				
+				if( tw == width && th == height ){
+					bestW = tw;
+					bestH = th;
+					bestFormat = format;
+					break;
+				}
+				
+				float dist = (formatDimension-requestedDimension).length(); 
+				if( dist < smallestDist ){
+					smallestDist = dist;
+					bestW = tw;
+					bestH = th;
+					bestFormat = format;
+				}
+				
+				ofLogVerbose("ofAvFoundationGrabber") << " supported dimensions are: " << dimensions.width << " " << dimensions.height;
+			}
+			
+			// Set the new dimensions and format
+			if( bestFormat != nullptr && bestW != 0 && bestH != 0 ){
+				if( bestW != width || bestH != height ){
+					ofLogWarning("ofAvFoundationGrabber") << " requested width and height aren't supported. Setting capture size to closest match: " << bestW << " by " << bestH<< endl;
+				}
+				
+				[device setActiveFormat:bestFormat];
+				width = bestW;
+				height = bestH;
+			}
+		
 			//only set the framerate if it has been set by the user
 			if( framerate > 0 ){
-		
+				
 				AVFrameRateRange * desiredRange = [AVFrameRateRange alloc];
-			
 				NSArray * supportedFrameRates = device.activeFormat.videoSupportedFrameRateRanges;
 
 				int numMatch = 0;
@@ -104,11 +151,7 @@
 		queue = dispatch_queue_create("cameraQueue", NULL);
 		[captureOutput setSampleBufferDelegate:self queue:queue];
 		dispatch_release(queue);
-		
-		// Set width and height to be passed in dimensions
-		width = w;
-		height = h;
-		
+				
 		NSDictionary* videoSettings =[NSDictionary dictionaryWithObjectsAndKeys:
                               [NSNumber numberWithDouble:width], (id)kCVPixelBufferWidthKey,
                               [NSNumber numberWithDouble:height], (id)kCVPixelBufferHeightKey,
@@ -142,7 +185,7 @@
 		}
 		
 		// We start the capture Session
-		[self.captureSession commitConfiguration];		
+		[self.captureSession commitConfiguration];
 		[self.captureSession startRunning];
 
 		bInitCalled = YES;
@@ -152,10 +195,6 @@
 }
 
 -(void) startCapture{
-
-	if( !bInitCalled ){
-		[self initCapture:30 capWidth:480 capHeight:320];
-	}
 
 	[self.captureSession startRunning];
 	
@@ -233,6 +272,11 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 				unsigned char *isrc4 = (unsigned char *)CVPixelBufferGetBaseAddress(imageBuffer);
 				size_t widthIn  = CVPixelBufferGetWidth(imageBuffer);
 				size_t heightIn	= CVPixelBufferGetHeight(imageBuffer);
+				
+				if( widthIn != grabberPtr->getWidth() || heightIn != grabberPtr->getHeight() ){
+					ofLogError("ofAVFoundationGrabber") << " incoming image dimensions " << widthIn << " by " << heightIn << " don't match. This shouldn't happen! Returning.";
+					return;
+				}
 				
 				if( grabberPtr->pixelFormat == OF_PIXELS_BGRA ){
 					
@@ -377,6 +421,7 @@ bool ofAVFoundationGrabber::setup(int w, int h){
 
 	if( [grabber initCapture:fps capWidth:w capHeight:h] ) {
 		
+		//update the pixel dimensions based on what the camera supports
 		width = grabber->width;
 		height = grabber->height;
 		
