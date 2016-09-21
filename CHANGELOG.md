@@ -34,7 +34,7 @@ PLATFORM SPECIFIC
 
 ### linux
     / install_dependencies: add check to see if all packages are up to date
-
+    / fix to support latest Qt Creator
 
 
    ___         ___        ____  
