@@ -1,3 +1,7 @@
+var Process = loadExtension("qbs.Process");
+var File = loadExtension("qbs.File");
+var TextFile = loadExtension("qbs.TextFile");
+
 function listDir(dir){
     var ls = new Process();
     ls.exec("ls", [dir]);
@@ -115,7 +119,11 @@ function findSourceRecursive(dir){
                   ,'-or', '-name', '*.c++'
                   ,'-or', '-name', '*.s'
                   ,'-or', '-name', '*.S'
-                  ,'-or', '-name', '*.c'];
+                  ,'-or', '-name', '*.c'
+                  ,'-or', '-name', '*.inl'
+                  ,'-or', '-name', '*.glsl'
+                  ,'-or', '-name', '*.vert'
+                  ,'-or', '-name', '*.frag'];
     find.exec("find", params);
     if(find.exitCode()!==0){
         find.exec("C:\\msys64\\usr\\bin\\find", params);
@@ -155,11 +163,10 @@ function pkgconfig(pkgs,parameters){
 function addonIncludes(addon){
     var includes = listDirsRecursive(addon + '/src')
     try{
-        var libs = Helpers.listDir(addon + '/libs');
+        var libs = listDir(addon + '/libs/');
         var libsIncludes = [];
         for(var lib in libs){
             var libpath = addon + '/libs/' + libs[lib];
-            var include_path = libpath + "/include"
             try{
                 var include_paths = listDirsRecursive(libpath);
                 libsIncludes = libsIncludes.concat(include_paths);
@@ -170,7 +177,7 @@ function addonIncludes(addon){
         }else{
             includes = includes.concat(libsIncludes);
         }
-    }catch(e){}
+    }catch(e){ }
     return includes;
 }
 
