@@ -783,54 +783,40 @@ void ofAppendUTF8(string & str, uint32_t utf8){
 
 //--------------------------------------------------
 string ofVAArgsToString(const char * format, ...){
-	// variadic args to string:
-	// http://www.codeproject.com/KB/string/string_format.aspx
-	char aux_buffer[10000];
-	string retStr("");
-	if (nullptr != format){
+	va_list args;
+	va_start(args, format);
+	char buf[256];
+	size_t n = std::vsnprintf(buf, sizeof(buf), format, args);
+	va_end(args);
 
-		va_list marker;
-
-		// initialize variable arguments
-		va_start(marker, format);
-
-		// Get formatted string length adding one for nullptr
-		size_t len = vsprintf(aux_buffer, format, marker) + 1;
-
-		// Reset variable arguments
-		va_end(marker);
-
-		if (len > 0)
-		{
-			va_list args;
-
-			// initialize variable arguments
-			va_start(args, format);
-
-			// Create a char vector to hold the formatted string.
-			vector<char> buffer(len, '\0');
-			vsprintf(&buffer[0], format, args);
-			retStr = &buffer[0];
-			va_end(args);
-		}
-
+	// Static buffer large enough?
+	if (n < sizeof(buf)) {
+		return{ buf, n };
 	}
-	return retStr;
+
+	// Static buffer too small
+	std::string s(n + 1, 0);
+	va_start(args, format);
+	std::vsnprintf(const_cast<char*>(s.data()), s.size(), format, args);
+	va_end(args);
+
+	return s;
 }
 
 string ofVAArgsToString(const char * format, va_list args){
-	// variadic args to string:
-	// http://www.codeproject.com/KB/string/string_format.aspx
-	char aux_buffer[10000];
-	string retStr("");
-	if (nullptr != format){
+	char buf[256];
+	size_t n = std::vsnprintf(buf, sizeof(buf), format, args);
 
-		// Get formatted string length adding one for nullptr
-		vsprintf(aux_buffer, format, args);
-		retStr = aux_buffer;
-
+	// Static buffer large enough?
+	if (n < sizeof(buf)) {
+		return{ buf, n };
 	}
-	return retStr;
+
+	// Static buffer too small
+	std::string s(n + 1, 0);
+	std::vsnprintf(const_cast<char*>(s.data()), s.size(), format, args);
+
+	return s;
 }
 
 #if OF_USE_POCO
