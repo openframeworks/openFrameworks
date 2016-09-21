@@ -29,6 +29,8 @@ PLATFORM SPECIFIC
 
 ### osx
     / recompiled freeimage to fix support for 32bits
+    / Change to not include QuickTime or QTKit files for 10.12 
+    + New AVFoundation grabber for OS X 10.12 
 
 ### linux
     / install_dependencies: add check to see if all packages are up to date
