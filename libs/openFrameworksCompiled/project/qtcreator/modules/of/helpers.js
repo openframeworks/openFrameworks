@@ -1,6 +1,39 @@
 var Process = loadExtension("qbs.Process");
 var File = loadExtension("qbs.File");
 var TextFile = loadExtension("qbs.TextFile");
+var Environment = loadExtension("qbs.Environment");
+
+
+function detectMSYS2(){
+	var msys2 = "";
+	var where = new Process();
+    where.exec("where.exe", ['find']); 
+    if(where.exitCode()!==0){
+		throw("error: There is a problem to detect the 'find' command.");
+		return msys2;
+    }
+	
+	var line = where.readLine();
+	var findPos = line.indexOf("usr\\bin\\find.exe");
+	
+	if (findPos > -1){
+		msys2 = line.slice(0,findPos);
+	}
+	
+	var systemPath = Environment.getEnv("PATH");
+	var usrPos = systemPath.indexOf(msys2 + "usr\\bin;");
+	var mingw32Pos = systemPath.indexOf(msys2 + "mingw32\\bin;");
+	
+    if( (usrPos == -1) || (mingw32Pos == -1) || (mingw32Pos > usrPos) ){
+		console.error("PATH="+systemPath);
+		throw("error : your PATH is incorrect. Please make sure that {MSYS2ROOT}\\mingw32\\bin;{MSYS2ROOT}\\usr\\bin is at the beginning of your PATH");
+	}
+	
+	return msys2;
+}
+
+var msys2root = detectMSYS2();
+
 
 function listDir(dir){
     var ls = new Process();
@@ -311,26 +344,3 @@ function absOFRoot(){
     }
 }
 
-function detectMSYS2(){
-	var where = new Process();
-    where.exec("where.exe", ['pkg-config']);
-    if(where.exitCode()!==0){
-		//Not running on Windows or running on an unsupported version of windows
-		return "";
-    }
-	
-    var line = where.readLine();
-	var pos = line.indexOf("\\bin\\pkg-config.exe");
-	if (pos == -1){
-		throw("error: MSYS2 is not in your PATH. Please configure it !");
-	}
-	
-	
-	pos = line.indexOf("mingw32\\bin\\pkg-config.exe");
-    if(pos == -1){
-		throw("error: {MSYS2_ROOT}\\usr\\bin must be after {MSYS2_ROOT}\\mingw32\\bin in your PATH !");
-	}
-	
-	var msys2_root= line.slice(0,pos);
-	return msys2_root;
-}
