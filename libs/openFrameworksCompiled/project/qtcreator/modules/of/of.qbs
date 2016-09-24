@@ -8,7 +8,7 @@ import "helpers.js" as Helpers
 Module{
     name: "ofCore"
     property string msys2root: {
-		return (Helpers.detectMSYS2());
+        return (Helpers.msys2root);
 	}
 
     property string ofRoot: {
