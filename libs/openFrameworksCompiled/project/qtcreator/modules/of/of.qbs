@@ -7,7 +7,9 @@ import "helpers.js" as Helpers
 
 Module{
     name: "ofCore"
-    property string msys2root: "c:/msys64"
+    property string msys2root: {
+		return (Helpers.detectMSYS2());
+	}
 
     property string ofRoot: {
         if(FileInfo.isAbsolutePath(project.of_root)){
@@ -134,8 +136,9 @@ Module{
                 pkgs.push("openssl")
             }
             return pkgs;
-        }else if(qbs.targetOS.indexOf("windows")!=-1){
+        }else if(platform === "msys2"){
             var pkgs = [
+				"cairo",
                 "zlib",
                 "glew",
             ].concat(pkgConfigs);

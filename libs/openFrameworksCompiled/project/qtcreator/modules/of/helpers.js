@@ -28,14 +28,8 @@ function listDirsRecursive(dir){
     var params = [dir,'-type','d'];
     find.exec("find", params)
     if(find.exitCode()!==0){
-        find.exec("C:\\msys64\\usr\\bin\\find", params);
-        if(find.exitCode()!==0){
-            find.exec("C:\\msys32\\usr\\bin\\find", params);
-            if(find.exitCode()!==0){
-                var error = find.readStdErr();
-                throw("error: " + error)
-            }
-        }
+		var error = find.readStdErr();
+		throw("error: " + error)
     }
     var line = find.readLine();
     while(line.trim()!==""){
@@ -126,14 +120,8 @@ function findSourceRecursive(dir){
                   ,'-or', '-name', '*.frag'];
     find.exec("find", params);
     if(find.exitCode()!==0){
-        find.exec("C:\\msys64\\usr\\bin\\find", params);
-        if(find.exitCode()!==0){
-            find.exec("C:\\msys32\\usr\\bin\\find", params);
-            if(find.exitCode()!==0){
-                var error = find.readStdErr();
-                throw("error: " + error)
-            }
-        }
+		var error = find.readStdErr();
+		throw("error: " + error)
     }
     var line = find.readLine();
     while(line.trim()!==""){
@@ -321,4 +309,28 @@ function absOFRoot(){
     }else{
         return FileInfo.joinPaths(path, project.of_root);
     }
+}
+
+function detectMSYS2(){
+	var where = new Process();
+    where.exec("where.exe", ['pkg-config']);
+    if(where.exitCode()!==0){
+		//Not running on Windows or running on an unsupported version of windows
+		return "";
+    }
+	
+    var line = where.readLine();
+	var pos = line.indexOf("\\bin\\pkg-config.exe");
+	if (pos == -1){
+		throw("error: MSYS2 is not in your PATH. Please configure it !");
+	}
+	
+	
+	pos = line.indexOf("mingw32\\bin\\pkg-config.exe");
+    if(pos == -1){
+		throw("error: {MSYS2_ROOT}\\usr\\bin must be after {MSYS2_ROOT}\\mingw32\\bin in your PATH !");
+	}
+	
+	var msys2_root= line.slice(0,pos);
+	return msys2_root;
 }
