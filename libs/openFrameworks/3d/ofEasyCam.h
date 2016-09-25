@@ -176,7 +176,7 @@ private:
 	bool bDoScrollZoom = false;
 	bool bIsBeingScrolled = false;
 	bool bInsideArcball = false;
-	bool bMouseInputEnabled = false;
+	bool bMouseInputEnabled = true;
 	bool bDistanceSet = false;
 	bool bAutoDistance = true;
 	bool bEventsSet = false;
