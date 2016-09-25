@@ -77,8 +77,6 @@ public:
     /// \param bAutoDistance true to enable auto distance.
     void setAutoDistance(bool bAutoDistance);
 
-    void setEvents(ofCoreEvents & events);
-	
 	/// \brief Set the input sensitivity of the rotation.
 	/// X and Y axes - when the value is 1.0, moving the mouse from one side to
 	/// the other of the arcball (min(viewport.width, viewport.height)) will
@@ -243,7 +241,11 @@ private:
 	/// \brief If set, the area mouse control is bound to.
 	ofRectangle controlArea;
 
-	ofCoreEvents * events = nullptr;
+	ofEventListener updateEventListener;
+	ofEventListener mouseDraggedEventListener;
+	ofEventListener mousePressedEventListener;
+	ofEventListener mouseReleasedEventListener;
+	ofEventListener mouseScrolledEventListener;
 
 	bool relativeYAxis = false;
 	bool doInertia = false;
