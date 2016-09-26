@@ -361,6 +361,10 @@ bool ofSerial::setup(string portName, int baud){
 		options.c_iflag &= (tcflag_t) ~(INLCR | IGNCR | ICRNL | IGNBRK);
 		options.c_oflag &= (tcflag_t) ~(OPOST);
 		options.c_cflag |= CS8;
+		#if defined( TARGET_LINUX )
+			options.c_cflag |= CRTSCTS;
+			options.c_lflag &= ~(ICANON | ECHO | ISIG);
+		#endif
 		tcsetattr(fd, TCSANOW, &options);
 
 		bInited = true;
