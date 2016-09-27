@@ -593,7 +593,7 @@ set -o errexit   # set -e : exit the script if any statement returns a non-true 
 cleanup() {
     cd $packageroot/..  
     rm -rf ${pkgfolder} 
-    rm -f $HOME/.tmp/npm*
+    rm -rf $HOME/.tmp/npm*
 }
 trap cleanup 0
 
