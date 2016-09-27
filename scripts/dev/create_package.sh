@@ -607,7 +607,7 @@ error() {
     local code="${2:-1}"
     echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
   fi
-  rm -f $HOME/.tmp/npm*
+  rm -rf $HOME/.tmp/npm*
 }
 trap 'error ${LINENO}' ERR
 
