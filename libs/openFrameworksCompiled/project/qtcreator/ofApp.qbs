@@ -40,9 +40,9 @@ CppApplication{
     }
 
     // Copy windows dlls from export to bin folder
-    Transformer {
+    Rule {
         condition: qbs.targetOS.contains("windows")
-        inputs: []
+        multiplex : true
         Artifact {
             filePath: "bin/fmodex.dll"
             fileTags: "processed_file"
