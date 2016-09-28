@@ -73,7 +73,7 @@ pkgfolder=openFrameworks_pkg_creation
 
 rm -rf ${pkgfolder}
 echo "Cloning OF from $REPO $BRANCH" 
-git clone $REPO --branch=$BRANCH ${pkgfolder} #2> /dev/null
+git clone $REPO --depth=1 --branch=$BRANCH ${pkgfolder} 2> /dev/null
 gitfinishedok=$?
 if [ $gitfinishedok -ne 0 ]; then
     echo "Error connecting to github"
