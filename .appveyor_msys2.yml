@@ -1,0 +1,10 @@
+install:
+    - set "PATH=C:\msys64\usr\bin;C:\msys64\mingw32\bin;C:\Windows\System32;C:\Windows;%PATH%"
+    - set MSYSTEM=MINGW32
+    - C:\msys64\usr\bin\bash -lc "cd scripts/msys2; ./install_dependencies.sh"
+
+build_script:
+    - C:\msys64\usr\bin\bash -lc "scripts/ci/msys2/build.sh"
+
+test_script:
+    - C:\msys64\usr\bin\bash -lc "scripts/ci/msys2/run_tests.sh"
