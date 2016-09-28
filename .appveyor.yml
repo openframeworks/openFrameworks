@@ -6,14 +6,16 @@ environment:
     APPVEYOR_OS_NAME: windows
   matrix:
   #MSYS2 Building
-    - BUILDER: MSYS2
+    - platform: x86
+      BUILDER: MSYS2
+
   #VisualStudio Building
-    - BUILDER : VS 
+    - platform: x86
+      BUILDER : VS 
+    - platform: x64
+      BUILDER : VS 
     
 configuration: Debug
-platform:
-- x86
-- x64
 shallow_clone: true
 clone_depth: 10  
 
@@ -49,3 +51,4 @@ test_script:
 
 cache:
   - C:\msys64
+
