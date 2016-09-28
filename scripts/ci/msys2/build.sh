@@ -1,6 +1,6 @@
 #!/bin/bash
 set -ev
-$ROOT="$PWD"
+ROOT="$PWD"
 
 echo "**** Building OF core ****"
 cd $ROOT/libs/openFrameworksCompiled/project
