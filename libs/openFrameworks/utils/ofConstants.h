@@ -257,7 +257,7 @@ typedef TESSindex ofIndexType;
 		#ifndef MAC_OS_X_VERSION_10_7
 			#define OF_VIDEO_CAPTURE_QUICKTIME
 		//if we are below 10.12 or targeting below 10.12 we use QTKit
-		#elseif !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+		#elif !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 			#define OF_VIDEO_CAPTURE_QTKIT
 		#else
 			#define OF_VIDEO_CAPTURE_AVF
