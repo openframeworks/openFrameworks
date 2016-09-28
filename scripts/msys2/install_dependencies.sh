@@ -55,6 +55,7 @@ pacman -S $confirm --needed mingw-w64-$arch-tools
 pacman -S $confirm --needed mingw-w64-$arch-pkg-config 
 pacman -S $confirm --needed mingw-w64-$arch-poco 
 pacman -S $confirm --needed mingw-w64-$arch-glfw
+pacman -S $confirm --needed mingw-w64-$arch-libusb
 
 # this would install gstreamer which can be used in mingw too
 #pacman -Sy mingw-w64-$arch-gst-libav mingw-w64-$arch-gst-plugins-bad mingw-w64-$arch-gst-plugins-base mingw-w64-$arch-gst-plugins-good mingw-w64-$arch-gst-plugins-ugly mingw-w64-$arch-gstreamer
