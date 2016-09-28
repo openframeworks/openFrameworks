@@ -64,10 +64,11 @@ If you are working with the Git repository, the `stable` branch of the OF reposi
 2. This GitHub repository contains code and libs for all the platforms, but the releases are done on a per-platform basis.
 3. This GitHub repository has no project files for the different examples. They are generated automatically for each release using a tool in `apps/devApps/projectGenerator/`.
 
-If you want to work with the openFrameworks GitHub repository, you should use the project generator to create project files for all the code in `examples/`.  
-For per-platform readmes, and more informations, see the [documentation](docs/table_of_contents.md).
+If you want to work with the openFrameworks GitHub repository, you should use the project generator to create project files for all the code in `examples/`.  To generate the project files with the project generator enable the 'Advanced Options' in the settings tab, then use 'Update Multiple' to update the projects for the `examples/` folder path in the repo.
 
-To set up the project generator submodule, use the command `git submodule init` then `git submodule update` whilst inside the openFrameworks repo.
+To set up the project generator submodule within the OF repo, use the command `git submodule init` then `git submodule update` whilst inside the openFrameworks repo.
+
+For more info on working with the Project Generator, for per-platform readmes, and more information, see the [documentation](docs/table_of_contents.md).
 
 Versioning
 ----------

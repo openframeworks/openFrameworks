@@ -73,7 +73,7 @@ pkgfolder=openFrameworks_pkg_creation
 
 rm -rf ${pkgfolder}
 echo "Cloning OF from $REPO $BRANCH" 
-git clone $REPO --depth=1 --branch=$BRANCH ${pkgfolder} 2> /dev/null
+git clone $REPO --branch=$BRANCH ${pkgfolder} #2> /dev/null
 gitfinishedok=$?
 if [ $gitfinishedok -ne 0 ]; then
     echo "Error connecting to github"
@@ -593,6 +593,7 @@ set -o errexit   # set -e : exit the script if any statement returns a non-true 
 cleanup() {
     cd $packageroot/..  
     rm -rf ${pkgfolder} 
+    rm -rf $HOME/.tmp/npm*
 }
 trap cleanup 0
 
@@ -606,7 +607,7 @@ error() {
     local code="${2:-1}"
     echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
   fi
-  exit "${code}"
+  rm -rf $HOME/.tmp/npm*
 }
 trap 'error ${LINENO}' ERR
 
