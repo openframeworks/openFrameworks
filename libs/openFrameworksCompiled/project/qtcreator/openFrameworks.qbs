@@ -45,6 +45,10 @@ Product{
         cpp.sysroot: of.coreSysroot
     }
 
+    Properties{
+        condition: of.platform === "osx"
+        cpp.minimumOsxVersion: 10.8
+    }
     property stringList FILES_EXCLUDE: {
 
         if(qbs.targetOS.indexOf("linux")>-1){
