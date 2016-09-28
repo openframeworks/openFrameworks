@@ -30,6 +30,11 @@ CppApplication{
     cpp.architecture: qbs.architecture
 
     Properties{
+        condition: of.platform === "osx"
+        cpp.minimumOsxVersion: 10.8
+    }
+
+    Properties{
         condition: qbs.buildVariant.contains("debug")
         targetName: Helpers.parseConfig(project.sourceDirectory + "/config.make","APPNAME",name,"all") + "_debug"
     }
@@ -66,8 +71,9 @@ CppApplication{
     }
 
     // Copy osx dylibs into bundle and run install_name_tool on the binary
-    Transformer {
+    Rule {
         condition: qbs.targetOS.contains("osx")
+        multiplex : true
         Artifact {
             filePath: FileInfo.joinPaths(parent.destinationDirectory, parent.targetName + ".app", "Contents/MacOS/libfmodex.dylib")
             fileTags: "preprocessed_file"
@@ -93,8 +99,9 @@ CppApplication{
     }
 
     // Copy osx icon release
-    Transformer {
+    Rule {
         condition: qbs.targetOS.contains("osx") && qbs.buildVariant.contains("release")
+        multiplex: true
         Artifact {
             filePath: FileInfo.joinPaths(parent.destinationDirectory, parent.targetName + ".app", "Contents/Resources/icon.icns")
             fileTags: "preprocessed_file"
@@ -120,8 +127,9 @@ CppApplication{
     }
 
     // Copy osx icon debug
-    Transformer {
+    Rule {
         condition: qbs.targetOS.contains("osx") && qbs.buildVariant.contains("debug")
+        multiplex: true
         Artifact {
             filePath: FileInfo.joinPaths(product.destinationDirectory, product.targetName + ".app", "Contents/Resources/icon-debug.icns")
             fileTags: "preprocessed_file"
