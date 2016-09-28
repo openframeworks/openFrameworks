@@ -175,7 +175,7 @@ Module{
             return [
                 'OpenSLES', 'z', 'GLESv1_CM', 'GLESv2', 'log'
             ];
-        }
+        }else return [];
     }
 
     readonly property stringList PKG_CONFIG_INCLUDES: {
@@ -279,7 +279,7 @@ Module{
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoFoundation.a');
             }
         }
-        return(staticLibraries)
+        return staticLibraries
     }
 
     readonly property stringList LDFLAGS: {
