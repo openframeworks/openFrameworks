@@ -5,7 +5,13 @@ var Environment = loadExtension("qbs.Environment");
 
 
 function detectMSYS2(){
-	var msys2 = "";
+    var msys2 = "";
+	var systemPath = Environment.getEnv("PATH");
+	if(systemPath === undefined){
+        console.error("PATH is not defined")
+        return msys2;
+	}
+	
 	var where = new Process();
     where.exec("where.exe", ['find']); 
     if(where.exitCode()!==0){
@@ -20,7 +26,7 @@ function detectMSYS2(){
 		msys2 = line.slice(0,findPos);
 	}
 	
-	var systemPath = Environment.getEnv("PATH");
+    //console.error("PATH=>"+systemPath);
 	var usrPos = systemPath.indexOf(msys2 + "usr\\bin;");
 	var mingw32Pos = systemPath.indexOf(msys2 + "mingw32\\bin;");
 	
