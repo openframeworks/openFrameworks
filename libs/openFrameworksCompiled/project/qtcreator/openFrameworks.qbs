@@ -75,32 +75,34 @@ Product{
         }
     }
 
-    files: {
-        var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
-        var filteredSource = source.filter(function filterExcludes(path){
-            for(exclude in FILES_EXCLUDE){
-                var patt = new RegExp(FILES_EXCLUDE[exclude]);
-                var match = patt.exec(path);
-                if(match!=null){
-                    return false;
+    Group {
+        files: {
+            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
+            var filteredSource = source.filter(function filterExcludes(path){
+                for(exclude in FILES_EXCLUDE){
+                    var patt = new RegExp(FILES_EXCLUDE[exclude]);
+                    var match = patt.exec(path);
+                    if(match!=null){
+                        return false;
+                    }
                 }
-            }
-            return true;
-        });
-        return filteredSource;
+                return true;
+            });
+            return filteredSource;
+        }
+        fileTags: ["filtered_sources"]
     }
+
+
 
     readonly property string make: {
-        if(qbs.targetOS.contains("windows")){
-            return FileInfo.joinPaths(of.msys2root,"usr/bin/make");
-        }else{
-            return "make";
-        }
+        return "make";
     }
 
-    Transformer {
+    Rule {
         condition: qbs.buildVariant.contains('debug') && !product.qbsBuild
-        inputs: files
+        inputs: ["filtered_sources"]
+        multiplex : true
         Artifact {
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworksDebug.a")
              fileTags: "staticlibrary"
@@ -120,9 +122,10 @@ Product{
         }
     }
 
-    Transformer {
+    Rule {
         condition: qbs.buildVariant.contains('release') && !product.qbsBuild
-        inputs: files
+        inputs: ["filtered_sources"]
+        multiplex : true
         Artifact {
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworks.a")
              fileTags: "staticlibrary"
