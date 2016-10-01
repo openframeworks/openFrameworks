@@ -30,6 +30,11 @@ CppApplication{
     cpp.architecture: qbs.architecture
 
     Properties{
+        condition: of.platform === "osx"
+        cpp.minimumOsxVersion: 10.8
+    }
+
+    Properties{
         condition: qbs.buildVariant.contains("debug")
         targetName: Helpers.parseConfig(project.sourceDirectory + "/config.make","APPNAME",name,"all") + "_debug"
     }
@@ -41,5 +46,3 @@ CppApplication{
 
 
 }
-
-

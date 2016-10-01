@@ -191,13 +191,14 @@ function createPackage {
 		rm -Rf empty
 		rm -Rf events
 		rm -Rf gl
+		rm -Rf gles
 		rm -Rf graphics
+		rm -Rf gui
 		rm -Rf math
+        rm -Rf shader
 		rm -Rf sound
 		rm -Rf utils
 		rm -Rf video
-		rm -Rf gles
-		rm -Rf gui
 	fi 
 	
 	#delete osx examples in linux

@@ -34,7 +34,16 @@ PLATFORM SPECIFIC
 
 ### linux
     / install_dependencies: add check to see if all packages are up to date
-    / fix to support latest Qt Creator
+    / fix compatibility with qtcreator 4.1.0
+    / fixes for serial in msys2 and linux
+
+### windows 
+    / fixes for msys2 with qtcreator
+    / fixes for serial in msys2 and linux
+    
+### ios
+    / Fix to iOS examples which had missing Icon and Splash screen files.  
+
 
 
    ___         ___        ____  
