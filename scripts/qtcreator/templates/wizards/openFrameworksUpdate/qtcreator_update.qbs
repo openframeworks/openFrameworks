@@ -57,13 +57,7 @@ Project{
         Depends{
             name: "openFrameworks"
         }
-		
-		// common rules to copy resources to build directory
-        Depends{
-            name: "copy_resources"
-        }
     }
 
-    references: [FileInfo.joinPaths(of_root, "/libs/openFrameworksCompiled/project/qtcreator/openFrameworks.qbs"),
-                 FileInfo.joinPaths(of_root, "/libs/openFrameworksCompiled/project/qtcreator/ofResources.qbs")]
+    references: [FileInfo.joinPaths(of_root, "/libs/openFrameworksCompiled/project/qtcreator/openFrameworks.qbs")]
 }
