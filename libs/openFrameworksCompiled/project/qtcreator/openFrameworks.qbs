@@ -8,7 +8,9 @@ import "modules/of/helpers.js" as Helpers
 Product{
     of.ofRoot: Helpers.normalize(FileInfo.joinPaths(path, "../../../.."))
     name: "openFrameworks"
+    type: "staticlibrary"
     qbsSearchPaths: "."
+
 
     readonly property string projectDir: of.ofRoot + "/libs/openFrameworksCompiled/project"
     readonly property string libDir: of.ofRoot + "/libs/openFrameworksCompiled/lib/" + of.platform
@@ -22,7 +24,6 @@ Product{
 
     Properties{
         condition: qbsBuild
-        type: "staticlibrary"
         destinationDirectory: Helpers.normalize(FileInfo.joinPaths(path, "../../lib", project.platform))
     }
 
