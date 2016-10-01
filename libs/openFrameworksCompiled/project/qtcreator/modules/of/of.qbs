@@ -7,9 +7,6 @@ import "helpers.js" as Helpers
 
 Module{
     name: "ofCore"
-    property string msys2root: {
-        return (Helpers.msys2root);
-	}
 
     property string ofRoot: {
         if(FileInfo.isAbsolutePath(project.of_root)){
@@ -178,7 +175,7 @@ Module{
             return [
                 'OpenSLES', 'z', 'GLESv1_CM', 'GLESv2', 'log'
             ];
-        }
+        }else return [];
     }
 
     readonly property stringList PKG_CONFIG_INCLUDES: {
@@ -234,14 +231,14 @@ Module{
         }
         includes = includes.concat(PKG_CONFIG_INCLUDES);
         if(platform === "msys2"){
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include'));
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/cairo'));
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/glib-2.0'));
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/lib/glib-2.0/include'));
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/pixman-1'));
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/freetype2'));
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/harfbuzz'));
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/libpng16'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/cairo'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/glib-2.0'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/lib/glib-2.0/include'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/pixman-1'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/freetype2'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/harfbuzz'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/libpng16'));
         }
 
         return includes;
@@ -282,14 +279,13 @@ Module{
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoFoundation.a');
             }
         }
-        return(staticLibraries)
+        return staticLibraries
     }
 
     readonly property stringList LDFLAGS: {
         var ret = PKG_CONFIG_LDFLAGS;
-        if(qbs.targetOS.contains("windows")){
-            ret.push("-L"+FileInfo.joinPaths(msys2root,"mingw32/lib"));
-            //ret.push("-fuse-ld=gold");
+        if(platform === "msys2"){
+            ret.push("-L"+FileInfo.joinPaths(Helpers.msys2root(),"mingw32/lib"));
         }
         return ret;
     }

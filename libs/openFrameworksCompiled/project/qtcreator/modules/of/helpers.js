@@ -4,7 +4,7 @@ var TextFile = loadExtension("qbs.TextFile");
 var Environment = loadExtension("qbs.Environment");
 
 
-function detectMSYS2(){
+function msys2root(){
     var msys2 = "";
 	var systemPath = Environment.getEnv("PATH");
 	if(systemPath === undefined){
@@ -15,8 +15,7 @@ function detectMSYS2(){
 	var where = new Process();
     where.exec("where.exe", ['find']); 
     if(where.exitCode()!==0){
-		throw("error: There is a problem to detect the 'find' command.");
-		return msys2;
+        throw("error: There is a problem to detect the 'find' command.");
     }
 	
 	var line = where.readLine();
@@ -37,8 +36,6 @@ function detectMSYS2(){
 	
 	return msys2;
 }
-
-var msys2root = detectMSYS2();
 
 
 function listDir(dir){
