@@ -8,7 +8,9 @@ import "modules/of/helpers.js" as Helpers
 Product{
     of.ofRoot: Helpers.normalize(FileInfo.joinPaths(path, "../../../.."))
     name: "openFrameworks"
+    type: "staticlibrary"
     qbsSearchPaths: "."
+
 
     readonly property string projectDir: of.ofRoot + "/libs/openFrameworksCompiled/project"
     readonly property string libDir: of.ofRoot + "/libs/openFrameworksCompiled/lib/" + of.platform
@@ -22,7 +24,6 @@ Product{
 
     Properties{
         condition: qbsBuild
-        type: "staticlibrary"
         destinationDirectory: Helpers.normalize(FileInfo.joinPaths(path, "../../lib", project.platform))
     }
 
@@ -49,8 +50,8 @@ Product{
         condition: of.platform === "osx"
         cpp.minimumOsxVersion: 10.8
     }
-    property stringList FILES_EXCLUDE: {
 
+    property stringList FILES_EXCLUDE: {
         if(qbs.targetOS.indexOf("linux")>-1){
             return [
                 "video/ofDirectShowPlayer.*",
@@ -75,36 +76,50 @@ Product{
                 "video/ofQtUtils.*",
                 "video/ofQTKit.*",
                 "app/ofAppEGLWindow.*",
+                "sound/ofOpenALSoundPlayer.*"
+            ];
+        }else if(qbs.targetOS.indexOf("osx")>-1){
+            return [
+                "video/ofGstVideoPlayer.*",
+                "video/ofGstVideoGrabber.*",
+                "video/ofGstUtils.*",
+                "video/ofDirectShowPlayer.*",
+                "video/ofDirectShowGrabber.*",
+                "app/ofAppEGLWindow.*",
+                "sound/ofOpenALSoundPlayer.*"
             ];
         }
     }
 
-    files: {
-        var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
-        var filteredSource = source.filter(function filterExcludes(path){
-            for(exclude in FILES_EXCLUDE){
-                var patt = new RegExp(FILES_EXCLUDE[exclude]);
-                var match = patt.exec(path);
-                if(match!=null){
-                    return false;
+    Group {
+        name: "src"
+        files: {
+            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
+            var filteredSource = source.filter(function filterExcludes(path){
+                for(exclude in FILES_EXCLUDE){
+                    var patt = new RegExp(FILES_EXCLUDE[exclude]);
+                    var match = patt.exec(path);
+                    if(match!=null){
+                        return false;
+                    }
                 }
-            }
-            return true;
-        });
-        return filteredSource;
+                return true;
+            });
+            return filteredSource;
+        }
+        fileTags: ["filtered_sources"]
     }
+
+
 
     readonly property string make: {
-        if(qbs.targetOS.contains("windows")){
-            return FileInfo.joinPaths(of.msys2root,"usr/bin/make");
-        }else{
-            return "make";
-        }
+        return "make";
     }
 
-    Transformer {
+    Rule {
         condition: qbs.buildVariant.contains('debug') && !product.qbsBuild
-        inputs: files
+        inputs: ["filtered_sources"]
+        multiplex : true
         Artifact {
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworksDebug.a")
              fileTags: "staticlibrary"
@@ -124,9 +139,10 @@ Product{
         }
     }
 
-    Transformer {
+    Rule {
         condition: qbs.buildVariant.contains('release') && !product.qbsBuild
-        inputs: files
+        inputs: ["filtered_sources"]
+        multiplex : true
         Artifact {
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworks.a")
              fileTags: "staticlibrary"

@@ -75,7 +75,7 @@ public:
 
 	template<typename ...Args>
 	ofParameterGroup(const string & name, Args&... p)
-    :obj(std::make_shared<Value>()){
+	:obj(std::make_shared<Value>()){
 		add(p...);
 		setName(name);
 	}
@@ -369,43 +369,43 @@ namespace priv{
 
 	template <typename T>
 	struct has_loading_support {
-	    static istream & stream;
-	    static T & x;
-	    static const bool value = sizeof(check(stream >> x)) == sizeof(yes);
+		static istream & stream;
+		static T & x;
+		static const bool value = sizeof(check(stream >> x)) == sizeof(yes);
 	};
 
 	template <typename T>
 	struct has_saving_support {
-	    static ostream & stream;
-	    static T & x;
-	    static const bool value = sizeof(check(stream << x)) == sizeof(yes);
+		static ostream & stream;
+		static T & x;
+		static const bool value = sizeof(check(stream << x)) == sizeof(yes);
 	};
 
 	template <typename T>
 	struct has_stream_operators {
-	    static const bool can_load = has_loading_support<T>::value;
-	    static const bool can_save = has_saving_support<T>::value;
-	    static const bool value = can_load && can_save;
+		static const bool can_load = has_loading_support<T>::value;
+		static const bool can_save = has_saving_support<T>::value;
+		static const bool value = can_load && can_save;
 	};
 
 	template<typename ParameterType>
 	typename std::enable_if<of::priv::has_saving_support<ParameterType>::value, std::string>::type toStringImpl(const ParameterType & value){
-	    return ofToString(value);
+		return ofToString(value);
 	}
 
 	template<typename ParameterType>
 	typename std::enable_if<!of::priv::has_saving_support<ParameterType>::value, std::string>::type toStringImpl(const ParameterType &){
-	    throw std::exception();
+		throw std::exception();
 	}
 
 	template<typename ParameterType>
 	typename std::enable_if<of::priv::has_loading_support<ParameterType>::value, ParameterType>::type fromStringImpl(const std::string & str){
-	    return ofFromString<ParameterType>(str);
+		return ofFromString<ParameterType>(str);
 	}
 
 	template<typename ParameterType>
 	typename std::enable_if<!of::priv::has_loading_support<ParameterType>::value, ParameterType>::type fromStringImpl(const std::string &){
-	    throw std::exception();
+		throw std::exception();
 
 	}
 }
@@ -446,7 +446,7 @@ public:
 
 
 	std::string toString() const;
-    void fromString(const std::string & name);
+	void fromString(const std::string & name);
 
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method, int prio=OF_EVENT_ORDER_AFTER_APP){
@@ -505,7 +505,7 @@ public:
 	ofParameter<ParameterType> & set(const string& name, const ParameterType & v);
 	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
 
-    ofParameter<ParameterType> & setWithoutEventNotifications(const ParameterType & v);
+	ofParameter<ParameterType> & setWithoutEventNotifications(const ParameterType & v);
 
 	void setMin(const ParameterType & min);
 	void setMax(const ParameterType & max);
@@ -645,8 +645,8 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name,
 
 template<typename ParameterType>
 inline ofParameter<ParameterType> & ofParameter<ParameterType>::setWithoutEventNotifications(const ParameterType & v){
-    noEventsSetValue(v);
-    return *this;
+	noEventsSetValue(v);
+	return *this;
 }
 
 template<typename ParameterType>
@@ -661,30 +661,30 @@ inline const ParameterType * ofParameter<ParameterType>::operator->() const{
 template<typename ParameterType>
 inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType & v){
 
-    // If the object is notifying its parents, just set the value without triggering an event.
-    if(obj->bInNotify)
-    {
+	// If the object is notifying its parents, just set the value without triggering an event.
+	if(obj->bInNotify)
+	{
 		noEventsSetValue(v);
 	}
-    else
-    {
-        // Mark the object as in its notification loop.
-        obj->bInNotify = true;
+	else
+	{
+		// Mark the object as in its notification loop.
+		obj->bInNotify = true;
 
-        // Set the value.
-        obj->value = v;
+		// Set the value.
+		obj->value = v;
 
-        // Notify any local subscribers.
-        ofNotifyEvent(obj->changedE,obj->value,this);
+		// Notify any local subscribers.
+		ofNotifyEvent(obj->changedE,obj->value,this);
 
-        // Notify all parents, if there are any.
-        if(!obj->parents.empty())
-        {
-            // Erase each invalid parent
-            obj->parents.erase(std::remove_if(obj->parents.begin(),
-                                              obj->parents.end(),
+		// Notify all parents, if there are any.
+		if(!obj->parents.empty())
+		{
+			// Erase each invalid parent
+			obj->parents.erase(std::remove_if(obj->parents.begin(),
+											  obj->parents.end(),
 											  [this](const weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
-                               obj->parents.end());
+							   obj->parents.end());
 
 			// notify all leftover (valid) parents of this object's changed value.
 			// this can't happen in the same iterator as above, because a notified listener
@@ -696,9 +696,9 @@ inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType & v){
 					p->notifyParameterChanged(*this);
 				}
 			}
-        }
-        obj->bInNotify = false;
-    }
+		}
+		obj->bInNotify = false;
+	}
 }
 
 template<typename ParameterType>
@@ -759,21 +759,21 @@ string ofParameter<ParameterType>::getName() const{
 
 template<typename ParameterType>
 inline std::string ofParameter<ParameterType>::toString() const{
-    try{
-        return of::priv::toStringImpl(obj->value);
-    }catch(...){
-        ofLogError("ofParameter") << "Trying to serialize non-serializable parameter";
-        return "";
-    }
+	try{
+		return of::priv::toStringImpl(obj->value);
+	}catch(...){
+		ofLogError("ofParameter") << "Trying to serialize non-serializable parameter";
+		return "";
+	}
 }
 
 template<typename ParameterType>
 inline void ofParameter<ParameterType>::fromString(const std::string & str){
-    try{
-        set(of::priv::fromStringImpl<ParameterType>(str));
-    }catch(...){
-        ofLogError("ofParameter") << "Trying to de-serialize non-serializable parameter";
-    }
+	try{
+		set(of::priv::fromStringImpl<ParameterType>(str));
+	}catch(...){
+		ofLogError("ofParameter") << "Trying to de-serialize non-serializable parameter";
+	}
 }
 
 template<typename ParameterType>

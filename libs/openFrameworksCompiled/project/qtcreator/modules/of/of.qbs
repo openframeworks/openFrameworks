@@ -54,7 +54,6 @@ Module{
                 "rtAudio",
                 "openssl",
                 "boost",
-                "glfw",
                 "poco",
                 "openFrameworksCompiled",
             ];
@@ -126,7 +125,6 @@ Module{
                 "glew",
                 "gtk+-3.0",
                 "libmpg123",
-                "glfw3",
             ].concat(pkgConfigs);
 
             if(usePoco){
@@ -493,11 +491,6 @@ Module{
         name: "cpp"
     }
 
-    Depends{
-        condition: platform==="osx"
-        name: "bundle"
-    }
-
     //cpp.cxxLanguageVersion: "c++14"
     coreWarningLevel: 'default'
     coreCFlags: PKG_CONFIG_CFLAGS
@@ -591,16 +584,6 @@ Module{
             .concat(linkerFlags)
     }
 
-    Properties{
-        condition: qbs.buildVariant.contains("debug") && of.platform === "osx"
-        bundle.infoPlist: ({"CFBundleIconFile":"icon-debug.icns"})
-    }
-
-    Properties{
-        condition: qbs.buildVariant.contains("release") && of.platform === "osx"
-        bundle.infoPlist: ({"CFBundleIconFile":"icon.icns"})
-    }
-
     property stringList pkgConfigs: []
     property pathList includePaths: []
     property stringList cFlags: []
@@ -629,10 +612,5 @@ Module{
     Properties{
         condition: qbs.buildVariant.contains("release")
         coreDefines: ['NDEBUG'].concat(DEFINES).concat(defines)
-    }
-
-    Group{
-        name: "addons"
-        files: of.ADDONS_SOURCES
     }
 }
