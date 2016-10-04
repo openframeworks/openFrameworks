@@ -7,7 +7,7 @@ import "modules/of/helpers.js" as Helpers
 
 Product{
     name: "ofApp"
-    type: ["application", "exportdylib"]
+    type: ["application", "exportdylib", "exporticon"]
     destinationDirectory: Helpers.normalize(FileInfo.joinPaths(project.sourceDirectory,"bin"))
     qbsSearchPaths: "."
     readonly property string platform: of.platform
@@ -64,37 +64,36 @@ Product{
         files: of.ADDONS_SOURCES
     }
 
-
     Group {
-        condition: platform === "osx" || product.platform === "msys2"
+        condition: product.platform === "osx" || product.platform === "msys2"
         name: "dynamic libraries"
-        files: {
-            var libs = [];
+        prefix: {
             var srcDir = project.of_root;
             if(FileInfo.isAbsolutePath(project.of_root) == false){
                 srcDir = FileInfo.joinPaths(project.path, srcDir);
             }
+            srcDir = FileInfo.joinPaths(srcDir, "libs/*/lib/", of.platform, "/");
+            //throw srcDir;
+            return srcDir;
+        }
 
+        files: {
             if( product.platform == "msys2" ){
-                srcDir = FileInfo.joinPaths(srcDir, "export", "msys2");
-                libs.push("fmodex.dll")
-                for (lib in libs){
-                    libs[lib] = FileInfo.joinPaths(srcDir,libs[lib]);
-                }
+                return ["*.dll"];
             }
             if( product.platform == "osx" ){
-                srcDir = FileInfo.joinPaths(srcDir, "libs");
-                libs.push(FileInfo.joinPaths(srcDir, "fmodex/lib", of.platform, "libfmodex.dylib"));
+                return ["*.dylib"];
             }
-
-            return libs;
+            /*if( product.platform == "linux" ||  product.platform == "linux64" ){
+                return ["*.so"];
+            }*/
         }
         fileTags: ["dynamic libraries"]
     }
 
-
     // Copy dynamic libraries
     Rule {
+        condition: product.platform === "osx" || product.platform === "msys2"
         inputs: ["dynamic libraries"]
         Artifact {
             filePath: {
@@ -154,14 +153,16 @@ Product{
 
 
     Rule {
+        condition: qbs.targetOS.contains("osx")
         inputs: ["icons"]
         Artifact {
             filePath: [FileInfo.joinPaths(product.destinationDirectory, product.targetName + ".app", "Contents/Resources/", input.fileName)]
-            fileTags: ["application"]
+            fileTags: ["exporticon"]
         }
         prepare: {
             var cmd = new JavaScriptCommand();
-            cmd.description = "Copying icon " +  input.fileName +" to build directory " + output.filePath;
+            cmd.description = "copying icon " +  input.fileName +" to build directory " + output.filePath;
+            cmd.silent = false;
             cmd.highlight = "codegen";
             cmd.sourceCode = function() {
                 File.copy(input.filePath, output.filePath);
