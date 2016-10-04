@@ -5,10 +5,9 @@ import qbs.File
 import qbs.TextFile
 import "modules/of/helpers.js" as Helpers
 
-CppApplication{
+Product{
     name: "ofApp"
-    type: ["application"]
-    consoleApplication: false
+    type: ["application", "exportdylib"]
     destinationDirectory: Helpers.normalize(FileInfo.joinPaths(project.sourceDirectory,"bin"))
     qbsSearchPaths: "."
     readonly property string platform: of.platform
@@ -16,6 +15,15 @@ CppApplication{
 
     Depends{
         name: "of"
+    }
+
+    Depends{
+        condition: platform==="osx"
+        name: "bundle"
+    }
+
+    Depends{
+        name: "cpp"
     }
 
     cpp.includePaths: of.coreIncludePaths.concat(ofAppIncludePaths)
@@ -33,6 +41,12 @@ CppApplication{
     Properties{
         condition: of.platform === "osx"
         cpp.minimumOsxVersion: 10.8
+        consoleApplication: false
+    }
+
+    Properties{
+        condition: of.platform === "windows"
+        consoleApplication: false
     }
 
     Properties{
@@ -52,7 +66,6 @@ CppApplication{
 
 
     Group {
-        condition: product.platform == "msys2" || product.platform == "osx"
         name: "dynamic libraries"
         files: {
             var libs = [];
@@ -82,19 +95,18 @@ CppApplication{
     // Copy dynamic libraries
     Rule {
         inputs: ["dynamic libraries"]
-
         Artifact {
             filePath: {
                 if( product.platform == "msys2" ){
-                    return [FileInfo.joinPaths(project.sourceDirectory,'bin',input.fileName)]
+                    return FileInfo.joinPaths(product.destinationDirectory, input.fileName)
                 }
                 if( product.platform == "osx" ){
-                    return [FileInfo.joinPaths(parent.destinationDirectory, parent.targetName + ".app", "Contents/MacOS", input.fileName)];
+                    return FileInfo.joinPaths(product.destinationDirectory, product.targetName + ".app", "Contents/MacOS", input.fileName);
                 }
 
             }
 
-            fileTags: ["application"]
+            fileTags: ["exportdylib"]
         }
 
         prepare: {
@@ -155,5 +167,15 @@ CppApplication{
             }
             return cmd;
         }
+    }
+
+    Properties{
+        condition: qbs.buildVariant.contains("debug") && of.platform === "osx"
+        bundle.infoPlist: ({"CFBundleIconFile":"icon-debug.icns"})
+    }
+
+    Properties{
+        condition: qbs.buildVariant.contains("release") && of.platform === "osx"
+        bundle.infoPlist: ({"CFBundleIconFile":"icon.icns"})
     }
 }

@@ -76,6 +76,17 @@ Product{
                 "video/ofQtUtils.*",
                 "video/ofQTKit.*",
                 "app/ofAppEGLWindow.*",
+                "sound/ofOpenALSoundPlayer.*"
+            ];
+        }else if(qbs.targetOS.indexOf("osx")>-1){
+            return [
+                "video/ofGstVideoPlayer.*",
+                "video/ofGstVideoGrabber.*",
+                "video/ofGstUtils.*",
+                "video/ofDirectShowPlayer.*",
+                "video/ofDirectShowGrabber.*",
+                "app/ofAppEGLWindow.*",
+                "sound/ofOpenALSoundPlayer.*"
             ];
         }
     }

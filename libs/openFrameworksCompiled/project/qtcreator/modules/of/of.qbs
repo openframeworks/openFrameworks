@@ -491,11 +491,6 @@ Module{
         name: "cpp"
     }
 
-    Depends{
-        condition: platform==="osx"
-        name: "bundle"
-    }
-
     //cpp.cxxLanguageVersion: "c++14"
     coreWarningLevel: 'default'
     coreCFlags: PKG_CONFIG_CFLAGS
@@ -587,16 +582,6 @@ Module{
             .concat(['-gcc-toolchain', ndk_root+'/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64'])
             //.concat('-Wl,--as-needed -Wl,--gc-sections -Wl,--exclude-libs,ALL')
             .concat(linkerFlags)
-    }
-
-    Properties{
-        condition: qbs.buildVariant.contains("debug") && of.platform === "osx"
-        bundle.infoPlist: ({"CFBundleIconFile":"icon-debug.icns"})
-    }
-
-    Properties{
-        condition: qbs.buildVariant.contains("release") && of.platform === "osx"
-        bundle.infoPlist: ({"CFBundleIconFile":"icon.icns"})
     }
 
     property stringList pkgConfigs: []
