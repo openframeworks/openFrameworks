@@ -17,14 +17,22 @@ while getopts tj: opt ; do
 	esac
 done
 
-if [ "$MSYSTEM" != "MINGW32" ]
+if [ "${MSYSTEM:0:5}" != "MINGW" ]
 then
-	echo "This is not a MINGW32 shell!"
-	echo "Please launch compileOF.sh from a MINGW32 shell."
+	echo "This is not a MINGW(32|64) shell!"
+	echo "Please launch compileOF.sh from a MINGW(32|64) shell."
 	exit 1
 fi
 
 cd ${SCRIPTPATH}/../../libs/openFrameworksCompiled/project
+
+if [ -v CI ]; then
+	echo "Building in CI mode"
+	make  Debug
+	exit_code=$?
+	exit $exit_code
+fi
+ 
 make -j$JOBS Debug
 exit_code=$?
 if [ $exit_code != 0 ]; then
