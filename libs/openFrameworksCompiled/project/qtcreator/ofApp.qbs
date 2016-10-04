@@ -45,10 +45,15 @@ CppApplication{
         targetName: Helpers.parseConfig(project.sourceDirectory + "/config.make","APPNAME",name,"all")
     }
 
+    Group{
+        name: "addons"
+        files: of.ADDONS_SOURCES
+    }
+
 
     Group {
-        //condition: qbs.targetOS.contains("windows")
-        name: "Exported dynamic libraries"
+        condition: product.platform == "msys2" || product.platform == "osx"
+        name: "dynamic libraries"
         files: {
             var libs = [];
             var srcDir = project.of_root;
@@ -107,7 +112,7 @@ CppApplication{
 
 
     Group {
-        name: "Icons"
+        name: "icons"
         condition: qbs.targetOS.contains("osx")
         files: {
             var icons = [];
@@ -117,15 +122,13 @@ CppApplication{
                 srcDir = FileInfo.joinPaths(project.path, srcDir);
             }
 
-            if( of.platform === "osx" ){
-                if( qbs.buildVariant.contains("release") ){
-                    icons.push("osx/icon.icns");
-                }
-                if( qbs.buildVariant.contains("debug") ){
-                    icons.push("osx/icon-debug.icns");
-                }
+            if( qbs.buildVariant.contains("release") ){
+                icons.push("osx/icon.icns");
             }
 
+            if( qbs.buildVariant.contains("debug") ){
+                icons.push("osx/icon-debug.icns");
+            }
 
             for (i in icons){
                 icons[i] = FileInfo.joinPaths(srcDir,icons[i]);
