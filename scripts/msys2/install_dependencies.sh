@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 function usage {
-	echo usage: 
+	echo usage:
     echo ./install_dependencies.sh [--help] [--noconfirm]
     echo --help:
     echo display this message
-    echo 
+    echo
     echo --noconfirm:
     echo install packages without user confirmation
 }
@@ -31,7 +31,7 @@ NOT_HAS_PATH=$(echo $PATH | grep /mingw32/bin > /dev/null; echo $?)
 if [ "$NOT_HAS_PATH" -ne "0" ]; then
 	cd /
 	MSYS2_ROOT=$(pwd -W)
-	setx PATH "$MSYS2_ROOT/mingw32/bin;$MSYS2_ROOT/usr/bin/;%PATH%;"
+	setx PATH "$MSYS2_ROOT\\mingw32\\bin;$MSYS2_ROOT\\usr\\bin\\;%PATH%;"
 fi
 
 arch=i686
