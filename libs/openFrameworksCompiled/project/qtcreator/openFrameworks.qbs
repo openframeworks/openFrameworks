@@ -50,8 +50,8 @@ Product{
         condition: of.platform === "osx"
         cpp.minimumOsxVersion: 10.8
     }
-    property stringList FILES_EXCLUDE: {
 
+    property stringList FILES_EXCLUDE: {
         if(qbs.targetOS.indexOf("linux")>-1){
             return [
                 "video/ofDirectShowPlayer.*",
@@ -81,6 +81,7 @@ Product{
     }
 
     Group {
+        name: "src"
         files: {
             var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
             var filteredSource = source.filter(function filterExcludes(path){

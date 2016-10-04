@@ -54,7 +54,6 @@ Module{
                 "rtAudio",
                 "openssl",
                 "boost",
-                "glfw",
                 "poco",
                 "openFrameworksCompiled",
             ];
@@ -126,7 +125,6 @@ Module{
                 "glew",
                 "gtk+-3.0",
                 "libmpg123",
-                "glfw3",
             ].concat(pkgConfigs);
 
             if(usePoco){
@@ -629,10 +627,5 @@ Module{
     Properties{
         condition: qbs.buildVariant.contains("release")
         coreDefines: ['NDEBUG'].concat(DEFINES).concat(defines)
-    }
-
-    Group{
-        name: "addons"
-        files: of.ADDONS_SOURCES
     }
 }
