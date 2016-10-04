@@ -5,11 +5,12 @@ import qbs.File
 import qbs.TextFile
 import "modules/of/helpers.js" as Helpers
 
-Product{
+CppApplication{
     name: "ofApp"
     type: ["application", "exportdylib", "exporticon"]
     destinationDirectory: Helpers.normalize(FileInfo.joinPaths(project.sourceDirectory,"bin"))
     qbsSearchPaths: "."
+    consoleApplication: false
     readonly property string platform: of.platform
     readonly property stringList ofAppIncludePaths: Helpers.listDirsRecursive(project.sourceDirectory + '/src')
 
@@ -20,10 +21,6 @@ Product{
     Depends{
         condition: platform==="osx"
         name: "bundle"
-    }
-
-    Depends{
-        name: "cpp"
     }
 
     cpp.includePaths: of.coreIncludePaths.concat(ofAppIncludePaths)
@@ -41,12 +38,6 @@ Product{
     Properties{
         condition: of.platform === "osx"
         cpp.minimumOsxVersion: 10.8
-        consoleApplication: false
-    }
-
-    Properties{
-        condition: of.platform === "windows"
-        consoleApplication: false
     }
 
     Properties{
