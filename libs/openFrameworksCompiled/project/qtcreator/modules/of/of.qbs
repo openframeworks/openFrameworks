@@ -55,6 +55,7 @@ Module{
                 "openssl",
                 "boost",
                 "poco",
+                "glfw",
                 "openFrameworksCompiled",
             ];
         }else if(platform==="msys2"){
@@ -125,6 +126,7 @@ Module{
                 "glew",
                 "gtk+-3.0",
                 "libmpg123",
+                "glfw3",
             ].concat(pkgConfigs);
 
             if(usePoco){
