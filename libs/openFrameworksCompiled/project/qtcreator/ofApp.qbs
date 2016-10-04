@@ -66,6 +66,7 @@ Product{
 
 
     Group {
+        condition: platform === "osx" || product.platform === "msys2"
         name: "dynamic libraries"
         files: {
             var libs = [];
