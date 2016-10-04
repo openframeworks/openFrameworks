@@ -1,5 +1,6 @@
 #include "ofMain.h"
 #include "ofxUnitTests.h"
+#include "ofAppNoWindow.h"
 #include "ofxGui.h"
 
 class ofApp : public ofxUnitTestsApp{
@@ -23,6 +24,12 @@ class ofApp : public ofxUnitTestsApp{
 
 //========================================================================
 int main( ){
-    ofSetupOpenGL(1024,768, OF_WINDOW);
-    ofRunApp( new ofApp());
+	ofInit();
+	auto window = make_shared<ofAppNoWindow>();
+	auto app = make_shared<ofApp>();
+	// this kicks off the running of my app
+	// can be OF_WINDOW or OF_FULLSCREEN
+	// pass in width and height too:
+	ofRunApp(window, app);
+	return ofRunMainLoop();
 }
