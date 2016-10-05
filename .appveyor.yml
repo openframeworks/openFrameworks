@@ -34,7 +34,7 @@ init:
 install:
 - ps: |
     if ($env:BUILDER -eq "VS") {
-        .\scripts\vs\download_libraries.ps1
+        .\scripts\vs\download_libs.ps1
     }
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/msys2/install_dependencies.sh --noconfirm")
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/msys2/download_libs.sh")
