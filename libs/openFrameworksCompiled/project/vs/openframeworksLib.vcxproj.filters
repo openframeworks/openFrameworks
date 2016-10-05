@@ -48,9 +48,6 @@
     <ClInclude Include="..\..\..\openFrameworks\ofMain.h">
       <Filter>libs\openFrameworks</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\app\ofAppGlutWindow.h">
-      <Filter>libs\openFrameworks\app</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppRunner.h">
       <Filter>libs\openFrameworks\app</Filter>
     </ClInclude>
@@ -287,9 +284,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">
-      <Filter>libs\openFrameworks\app</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp">
       <Filter>libs\openFrameworks\app</Filter>
     </ClCompile>
