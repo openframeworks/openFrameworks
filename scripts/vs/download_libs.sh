@@ -4,10 +4,10 @@ if [ $# -gt 1 ]; then
 else
     version=master
 fi
+
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR
-
-if [ ! -z ${PLATFORM+x} ]; then
+if [ $# -gt 2 ]; then
     if [ "$PLATFORM" == "x86" ]; then
         BITS=32
     else
