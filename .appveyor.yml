@@ -36,8 +36,8 @@ install:
 #    if ($env:BUILDER -eq "VS") {
 #        .\scripts\vs\download_libs.ps1
 #    }
-- if "%BUILDER%"=="VS" -AND "%platform"=="x86" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/vs/download_libs.sh master 32")
-- if "%BUILDER%"=="VS" -AND "%platform"=="x64" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/vs/download_libs.sh master 64")
+- if "%BUILDER%"=="VS" IF "%platform"=="x86" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/vs/download_libs.sh master 32")
+- if "%BUILDER%"=="VS" IF "%platform"=="x64" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/vs/download_libs.sh master 64")
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/msys2/install_dependencies.sh --noconfirm")
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/msys2/download_libs.sh")
 
