@@ -14,7 +14,7 @@ function DownloadLibs{
         Remove-Item $pkg
     }
 
-    echo "Downloading $url"
+    echo "Downloading $url to $scriptPath\$pkg"
     $client.DownloadFile($url, '.\'+$pkg)
 
     If(Test-Path "$libsDir\$arch") {
