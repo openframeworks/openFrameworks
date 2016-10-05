@@ -92,6 +92,7 @@ Product{
     }
 
     Group {
+        condition: !product.qbsBuild
         name: "src"
         files: {
             var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
@@ -110,6 +111,24 @@ Product{
         fileTags: ["filtered_sources"]
     }
 
+    files: {
+        if(qbsBuild){
+            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
+            var filteredSource = source.filter(function filterExcludes(path){
+                for(exclude in FILES_EXCLUDE){
+                    var patt = new RegExp(FILES_EXCLUDE[exclude]);
+                    var match = patt.exec(path);
+                    if(match!=null){
+                        return false;
+                    }
+                }
+                return true;
+            });
+            return filteredSource;
+        }else{
+            return [];
+        }
+    }
 
 
     readonly property string make: {
