@@ -1,5 +1,5 @@
 param([String]$ver="master")
-
+$currentPath = $pwd
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 cd $scriptPath
 $libsDir = "..\..\libs"
@@ -61,3 +61,5 @@ if(Test-Path "..\..\libs\64"){
 if(Test-Path "..\..\libs\README.md"){
     Remove-Item "..\..\libs\README.md" -Force -Recurse
 }
+
+cd $currentPath
