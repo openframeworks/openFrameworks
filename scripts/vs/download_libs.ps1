@@ -1,10 +1,10 @@
 param([String]$ver="master")
 $currentPath = $pwd
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
-cd $scriptPath
 $libsDir = "..\..\libs"
 
 function DownloadLibs{
+    cd $scriptPath
     $client = new-object System.Net.WebClient
     $arch = $args[0]
     $pkg = "openFrameworksLibs_"+$ver+"_vs"+$arch+".zip"
