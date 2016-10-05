@@ -77,6 +77,13 @@ matrix:
     - compiler: gcc
 
 install:
+  - if [ "$TARGET" == "linux" ]; then
+        scripts/linux/download_libs_linux64.sh
+    elif  [ "$TARGET" == "linuxarmv6" ] || [ "$TARGET" == "linuxarmv7" ]; then
+        scripts/linux/download_libs_$TARGET.sh
+    else
+        scripts/$TARGET/download_libs.sh
+    fi
   - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "linuxarmv6" ] || [ "$TARGET" == "linuxarmv7" ] || [ "$TARGET" == "docs" ] || [ "$TARGET" == "osx" ] || [ "$TARGET" == "emscripten" ]; then
         scripts/ci/$TARGET/install.sh;
     fi
