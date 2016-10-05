@@ -22,8 +22,8 @@ clone_depth: 10
 init:
 - set MSYS2_PATH=c:\msys64
 - set CHERE_INVOKING=1
-- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Sy pacman"'
-- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syuu"'
+#- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Sy pacman"'
+#- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syuu"'
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x86" set MSYSTEM=MINGW32
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x64" set MSYSTEM=MINGW64
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed tar"'
@@ -34,7 +34,7 @@ init:
 install:
 - ps: |
     if ($env:BUILDER -eq "VS") {
-        .\scripts/vs/download_libraries.ps1
+        .\scripts\vs\download_libraries.ps1
     }
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/msys2/install_dependencies.sh --noconfirm")
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/msys2/download_libs.sh")
