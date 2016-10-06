@@ -70,6 +70,7 @@ Module{
                 "rtAudio",
                 "openssl",
                 "boost",
+                "glfw",
                 "openFrameworksCompiled"
             ];
         }else if(platform==="osx"){
@@ -138,6 +139,7 @@ Module{
 				"cairo",
                 "zlib",
                 "glew",
+                "glfw3",
             ].concat(pkgConfigs);
 
             if(usePoco){
