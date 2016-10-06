@@ -57,6 +57,3 @@ test_script:
       cd scripts/ci/vs
       .\run_tests.bat
     }
-
-cache:
-  - C:\msys64
