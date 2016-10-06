@@ -55,7 +55,8 @@ if [ -z ${confirm+x} ]; then
 		mingw-w64-$arch-poco \
 		mingw-w64-$arch-glfw \
 		mingw-w64-$arch-libusb \
-		mingw-w64-$arch-harfbuzz
+		mingw-w64-$arch-harfbuzz \
+		mingw-w64-$arch-curl
 else
 	pacman -S $confirm --needed mingw-w64-$arch-harfbuzz
 	pacman -S $confirm --needed ca-certificates
@@ -78,6 +79,7 @@ else
 	pacman -S $confirm --needed mingw-w64-$arch-poco
 	pacman -S $confirm --needed mingw-w64-$arch-glfw
 	pacman -S $confirm --needed mingw-w64-$arch-libusb
+	pacman -S $confirm --needed mingw-w64-$arch-curl
 fi
 
 
