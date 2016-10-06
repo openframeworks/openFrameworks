@@ -6,4 +6,5 @@ else
 fi
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR
-../dev/download_libs.sh $version osx
+../dev/download_libs.sh $version osx 1
+../dev/download_libs.sh $version osx 2 0
