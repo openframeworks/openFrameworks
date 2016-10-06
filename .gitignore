@@ -20,6 +20,11 @@ addons/*
 # see apps/.gitignore
 apps/*
 
+# rule to ignore compiled / downloaded libs
+/libs/*
+!/libs/openFrameworks
+!/libs/openFrameworksCompiled
+
 # also, see examples/.gitignore
 
 #########################
@@ -128,4 +133,3 @@ Desktop.ini
 
 .mailmap
 /apps*/
-
