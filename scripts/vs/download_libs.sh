@@ -7,9 +7,9 @@ fi
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR
-echo "BUILDER $BUILDER PLATFORM $PLATFORM"
-if [ ! -z ${PLATFORM+x} ]; then
-    if [ "$PLATFORM" == "x86" ]; then
+echo "BUILDER $BUILDER PLATFORM $platform"
+if [ ! -z ${platform+x} ]; then
+    if [ "$platform" == "x86" ]; then
         BITS=32
     else
         BITS=64
