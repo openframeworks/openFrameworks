@@ -70,7 +70,7 @@ PLATFORM_REQUIRED_ADDONS =
 ##########################################################################################
 
 ifndef MAC_OS_MIN_VERSION
-	MAC_OS_MIN_VERSION = 10.7
+	MAC_OS_MIN_VERSION = 10.9
 endif
 
 ifndef MAC_OS_STD_LIB
