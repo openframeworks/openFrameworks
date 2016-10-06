@@ -54,6 +54,7 @@ Product{
     property stringList FILES_EXCLUDE: {
         if(qbs.targetOS.indexOf("linux")>-1){
             return [
+                "app/ofAppGlutWindow.*",
                 "video/ofDirectShowPlayer.*",
                 "video/ofDirectShowGrabber.*",
                 "video/ofAVFoundationVideoPlayer.*",
@@ -66,6 +67,7 @@ Product{
             ];
         }else if(qbs.targetOS.indexOf("windows")>-1){
             return [
+                "app/ofAppGlutWindow.*",
                 "video/ofGstVideoPlayer.*",
                 "video/ofGstVideoGrabber.*",
                 "video/ofGstUtils.*",
@@ -80,6 +82,7 @@ Product{
             ];
         }else if(qbs.targetOS.indexOf("osx")>-1){
             return [
+                "app/ofAppGlutWindow.*",
                 "video/ofGstVideoPlayer.*",
                 "video/ofGstVideoGrabber.*",
                 "video/ofGstUtils.*",

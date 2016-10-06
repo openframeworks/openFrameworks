@@ -152,7 +152,6 @@ Module{
     readonly property stringList ADDITIONAL_LIBS: {
         if(platform === "linux"  || platform === "linux64"){
             return [
-                "glut",
                 "X11",
                 "Xrandr",
                 "Xxf86vm",
