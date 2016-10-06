@@ -180,7 +180,15 @@ PLATFORM_REQUIRED_ADDONS = ofxAndroid ofxAccelerometer
 PLATFORM_CFLAGS = -Wall -std=c++14
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS +=  -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -ffunction-sections -fdata-sections  -gcc-toolchain $(GCC_TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)
+PLATFORM_CFLAGS +=  -nostdlib --sysroot=$(SYSROOT) -fpic \
+    -ffunction-sections \
+    -funwind-tables \
+    -fstack-protector-strong \
+    -Wno-invalid-command-line-argument \
+    -Wno-unused-command-line-argument \
+    -no-canonical-prefixes \
+		-gcc-toolchain $(GCC_TOOLCHAIN)/prebuilt/$(HOST_PLATFORM) \
+		-fno-integrated-as
 
 
 ifeq ($(ABI),armv7)
@@ -357,12 +365,15 @@ PLATFORM_LIBRARIES += z
 PLATFORM_LIBRARIES += GLESv1_CM
 PLATFORM_LIBRARIES += GLESv2
 PLATFORM_LIBRARIES += log
-#PLATFORM_LIBRARIES += dl
-#PLATFORM_LIBRARIES += m
-#PLATFORM_LIBRARIES += c
 #PLATFORM_LIBRARIES += gnustl_static
-#PLATFORM_LIBRARIES += gcc
-PLATFORM_LIBRARIES += c++_static
+#PLATFORM_LIBRARIES += stdc++
+PLATFORM_LIBRARIES += c++
+PLATFORM_LIBRARIES += c++abi
+PLATFORM_LIBRARIES += unwind
+PLATFORM_LIBRARIES += c
+PLATFORM_LIBRARIES += dl
+PLATFORM_LIBRARIES += gcc
+PLATFORM_LIBRARIES += m
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
