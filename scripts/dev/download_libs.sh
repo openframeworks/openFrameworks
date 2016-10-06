@@ -3,7 +3,7 @@ set -e
 VER=$1
 PLATFORM=$2
 ARCH=$3
-if [ $# -gt 4 ]; then
+if [ $# -eq 4 ]; then
     OVERWRITE=$4
 else
     OVERWRITE=1
@@ -32,20 +32,13 @@ if [ $OVERWRITE -eq 1 ]; then
             rm -rf $lib
         fi
     done
-    echo "Uncompressing libraries $PLATFORM $ARCH"
-    if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
-        unzip -qo ../scripts/dev/$PKG
-    else
-        tar xjf ../scripts/dev/$PKG
-    fi
-else
-    echo "Uncompressing libraries $PLATFORM $ARCH"
-    if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
-        unzip -qn ../scripts/dev/$PKG
-    else
-        tar xjkf ../scripts/dev/$PKG
-    fi
 fi
 
+echo "Uncompressing libraries $PLATFORM $ARCH"
+if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
+    unzip -qo ../scripts/dev/$PKG
+else
+    tar xjf ../scripts/dev/$PKG
+fi
 
 rm ../scripts/dev/$PKG
