@@ -12,5 +12,5 @@ if [ ! -z ${BITS+x} ]; then
     ../dev/download_libs.sh $version vs $BITS
 else
     ../dev/download_libs.sh $version vs 32
-    ../dev/download_libs.sh $version vs 64
+    ../dev/download_libs.sh $version vs 64 0
 fi
