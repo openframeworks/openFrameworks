@@ -80,12 +80,12 @@ PROJECT_PATH=$(PWD)
 
 ifeq ($(ABI),x86)
 ANDROID_PREFIX=i686-linux-android-
-TOOLCHAIN=llvm-$(CLANG_VERSION)
+TOOLCHAIN=llvm
 GCC_TOOLCHAIN=$(NDK_ROOT)/toolchains/x86-4.9
 SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-x86/
 else
 ANDROID_PREFIX=arm-linux-androideabi-
-TOOLCHAIN=llvm-$(CLANG_VERSION)
+TOOLCHAIN=llvm
 GCC_TOOLCHAIN=$(NDK_ROOT)/toolchains/arm-linux-androideabi-4.9
 SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
 endif
