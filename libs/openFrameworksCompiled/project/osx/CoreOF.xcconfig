@@ -11,7 +11,7 @@ CLANG_CXX_LANGUAGE_STANDARD[arch=i386] = c++11
 CLANG_CXX_LIBRARY[arch=x86_64] = libc++
 CLANG_CXX_LANGUAGE_STANDARD[arch=x86_64] = c++11
 
-MACOSX_DEPLOYMENT_TARGET = 10.7		// libstdc++ is only available in 10.7+
+MACOSX_DEPLOYMENT_TARGET = 10.9		// libstdc++ is only available in 10.7+
 
 
 HEADER_OF = "$(OF_PATH)/libs/openFrameworks/**"
