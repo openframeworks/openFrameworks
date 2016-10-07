@@ -81,11 +81,13 @@ install:
         scripts/ci/$TARGET/install.sh;
     fi
   - if [ "$TARGET" == "linux" ]; then
-        scripts/$TARGET/download_libs.sh;
+        scripts/linux/download_libs.sh;
     elif [ "$TARGET" == "linuxarmv6" ]; then
-        scripts/$TARGET/download_libs.sh armv6l;
+        scripts/linux/download_libs.sh armv6l;
     elif [ "$TARGET" == "linuxarmv7" ]; then
-        scripts/$TARGET/download_libs.sh armv7l;
+        scripts/linux/download_libs.sh armv7l;
+    else
+        scripts/$TARGET/download_libs.sh;
     fi
 
 
