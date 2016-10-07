@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-if [ $# -gt 1 ]; then
+if [ $# -gt 0 ]; then
     ARCH=$1
 else
     ARCH=$(uname -m)
