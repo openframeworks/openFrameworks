@@ -48,10 +48,10 @@ public:
 	void clear();
 
 	/// return the address
-    std::string getAddress() const { return address; }
+    const std::string &getAddress() const { return address; }
 
 	/// return the remote ip
-	std::string getRemoteIp() const { return remote_host; }
+	const std::string &getRemoteIp() const { return remote_host; }
 	/// return the remote port
 	int getRemotePort() const { return remote_port; }
 
