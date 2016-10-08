@@ -1,16 +1,9 @@
 #!/usr/bin/env bash
-if [ $# -gt 0 ]; then
-    version=$1
-else
-    version=master
-fi
-
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR
-echo "BUILDER $BUILDER PLATFORM $BITS"
 if [ ! -z ${BITS+x} ]; then
-    ../dev/download_libs.sh $version vs $BITS
+    ../dev/download_libs.sh -p vs -a $BITS -o
 else
-    ../dev/download_libs.sh $version vs 32
-    ../dev/download_libs.sh $version vs 64 0
+    ../dev/download_libs.sh -p vs -a 32 -o
+    ../dev/download_libs.sh -p vs -a 64
 fi

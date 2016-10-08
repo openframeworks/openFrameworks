@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
-if [ $# -gt 0 ]; then
-    version=$1
-else
-    version=master
-fi
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR
-../dev/download_libs.sh $version osx 1
-../dev/download_libs.sh $version osx 2 0
+../dev/download_libs.sh -p osx -a 1 -o
+../dev/download_libs.sh -p osx -a 2
