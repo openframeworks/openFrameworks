@@ -55,6 +55,7 @@ Module{
                 "openssl",
                 "boost",
                 "poco",
+                "glfw",
                 "openFrameworksCompiled",
             ];
         }else if(platform==="msys2"){
@@ -69,6 +70,7 @@ Module{
                 "rtAudio",
                 "openssl",
                 "boost",
+                "glfw",
                 "openFrameworksCompiled"
             ];
         }else if(platform==="osx"){
@@ -125,6 +127,7 @@ Module{
                 "glew",
                 "gtk+-3.0",
                 "libmpg123",
+                "glfw3",
             ].concat(pkgConfigs);
 
             if(usePoco){
@@ -136,6 +139,7 @@ Module{
 				"cairo",
                 "zlib",
                 "glew",
+                "glfw3",
             ].concat(pkgConfigs);
 
             if(usePoco){

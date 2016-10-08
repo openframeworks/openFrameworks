@@ -17,7 +17,7 @@ void ofDrawGridPlane(float stepSize, size_t numberOfSteps, bool labels) {
 }
 
 //--------------------------------------------------------------
-void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) {
+void ofDrawArrow(const glm::vec3& start, const glm::vec3& end, float headSize) {
 	ofGetCurrentRenderer()->drawArrow(start,end,headSize);
 }
 

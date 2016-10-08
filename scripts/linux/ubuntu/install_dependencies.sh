@@ -11,6 +11,8 @@ fi
 
 if [ "$1" == "-y" ]; then
     FORCE_YES=-y
+else 
+    FORCE_YES=""
 fi
 
 function installPackages {
@@ -20,11 +22,11 @@ function installPackages {
         if [ $? -eq 0 ]; then 
             echo "Already installed"
         else
-            error="$(apt-get install --dry-run ${pkg})"
+            error="$(apt-get install -y --dry-run ${pkg})"
             exit_code=$?
             echo "$error" | grep Remv > /dev/null
             if [ $? -eq 0 ]; then
-                apt-get install ${pkg}
+                apt-get install ${FORCE_YES} ${pkg}
                 exit_code=$?
                 if [ $exit_code != 0 ]; then
                     echo "error installing ${pkg}, there could be an error with your internet connection"
@@ -32,7 +34,7 @@ function installPackages {
                     exit $exit_code
                 fi
             elif [ $exit_code -eq 0 ]; then
-                apt-get -y install ${pkg} > /dev/null
+                apt-get -y -qq install ${pkg}
                 exit_code=$?
                 if [ $exit_code != 0 ]; then
                     echo "error installing ${pkg}, there could be an error with your internet connection"
@@ -129,7 +131,39 @@ then
 	fi
 fi
 
-PACKAGES="curl libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem${BOOST_VER}-dev libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good"
+#check if glfw3 exists
+apt-cache show libglfw3-dev
+exit_code=$?
+if [ $exit_code = 0 ]; then
+    GLFW_PKG=libglfw3-dev
+else
+    echo installing glfw from source
+    GLFW_VER=32f38b97d544eb2fd9a568e94e37830106417b51
+
+    # tools for git use
+    GLFW_GIT_TAG=$GLFW_VER
+    apt-get install -y -qq libxrandr-dev libxinerama-dev libxcursor-dev
+    curl -Lk https://github.com/glfw/glfw/archive/$GLFW_GIT_TAG.tar.gz -o glfw-$GLFW_GIT_TAG.tar.gz
+    tar -xf glfw-$GLFW_GIT_TAG.tar.gz
+	mv glfw-$GLFW_GIT_TAG glfw
+	rm glfw-$GLFW_GIT_TAG.tar.gz
+	cd glfw
+    mkdir -p build 
+    cd build
+    cmake .. -DGLFW_BUILD_DOCS=OFF \
+	-DGLFW_BUILD_TESTS=OFF \
+	-DGLFW_BUILD_EXAMPLES=OFF \
+	-DBUILD_SHARED_LIBS=OFF \
+	-DCMAKE_BUILD_TYPE=Release
+    make clean
+    make
+    make install
+    cd ../..
+    rm -rf glfw
+    GLFW_PKG=
+fi
+
+PACKAGES="curl libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem${BOOST_VER}-dev libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good gdb ${GLFW_PKG}"
 
 echo "installing OF dependencies"
 echo "OF needs to install the following packages using apt-get:"
@@ -173,7 +207,7 @@ if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
 	fi
 	
     DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-    cd ${DIR}/../../apothecary
+    cd ${DIR}/../../apothecary/apothecary
     ./apothecary -j${cores} update poco
     WHO=`who am i`;ID=`echo ${WHO%% *}`
     GROUP_ID=`id --group -n ${ID}`

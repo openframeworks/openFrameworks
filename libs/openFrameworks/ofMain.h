@@ -6,13 +6,16 @@
 #include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofSystemUtils.h"
-#include "ofURLFileLoader.h"
+#if OF_USE_POCO || defined (TARGET_IMPLEMENTS_URL_LOADER)
+	#include "ofURLFileLoader.h"
+#endif
 #include "ofUtils.h"
 #if !defined(TARGET_EMSCRIPTEN)
 #include "ofThread.h"
 #include "ofThreadChannel.h"
 #endif
 #include "ofFpsCounter.h"
+#include "ofJson.h"
 
 //--------------------------
 // types
@@ -21,8 +24,8 @@
 #include "ofColor.h"
 #include "ofPoint.h"
 #include "ofRectangle.h"
-#if !defined(TARGET_EMSCRIPTEN)
-#include "ofXml.h"
+#if OF_USE_POCO
+	#include "ofXml.h"
 #endif
 #include "ofParameter.h"
 #include "ofParameterGroup.h"
@@ -76,7 +79,7 @@
 #include "ofAppBaseWindow.h"
 #include "ofWindowSettings.h"
 #include "ofMainLoop.h"
-#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN)
+#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI)
 	#include "ofAppGLFWWindow.h"
 	#if !defined( TARGET_LINUX_ARM )
 		#include "ofAppGlutWindow.h"

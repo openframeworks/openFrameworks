@@ -6,6 +6,10 @@
 #include "ofGLUtils.h"
 #include <map>
 
+#ifdef TARGET_ANDROID
+#include "ofAppAndroidWindow.h"
+#endif
+
 //----------------------------------------------------------
 // static
 static bool bTexHackEnabled = true;
@@ -137,12 +141,21 @@ static void release(GLuint id){
 		if(getTexturesIndex().find(id)!=getTexturesIndex().end()){
 			getTexturesIndex()[id]--;
 			if(getTexturesIndex()[id]==0){
-				glDeleteTextures(1, (GLuint *)&id);
+
+#ifdef TARGET_ANDROID
+				if (!ofAppAndroidWindow::isSurfaceDestroyed())
+#endif
+					glDeleteTextures(1, (GLuint *)&id);
+
 				getTexturesIndex().erase(id);
 			}
 		}else{
 			ofLogError("ofTexture") << "release(): something's wrong here, releasing unknown texture id " << id;
-			glDeleteTextures(1, (GLuint *)&id);
+
+#ifdef TARGET_ANDROID
+			if (!ofAppAndroidWindow::isSurfaceDestroyed())
+#endif
+				glDeleteTextures(1, (GLuint *)&id);
 		}
 	}
 }
@@ -472,8 +485,18 @@ void ofTexture::setRGToRGBASwizzles(bool rToRGBSwizzles){
 	glBindTexture(texData.textureTarget,texData.textureID);
 	if(rToRGBSwizzles){
 		if(texData.glInternalFormat==GL_R8 ||
-				texData.glInternalFormat==GL_R16 ||
-				texData.glInternalFormat==GL_R32F){
+			texData.glInternalFormat==GL_R16 ||
+			texData.glInternalFormat==GL_R32F||
+			texData.glInternalFormat==GL_DEPTH_COMPONENT
+
+	#ifndef TARGET_OPENGLES
+			||
+			texData.glInternalFormat==GL_DEPTH_COMPONENT16 ||
+			texData.glInternalFormat==GL_DEPTH_COMPONENT24 ||
+			texData.glInternalFormat==GL_DEPTH_COMPONENT32
+
+	#endif
+		   ){
 			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_R, GL_RED);
 			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_G, GL_RED);
 			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_B, GL_RED);
@@ -516,15 +539,39 @@ void ofTexture::setSwizzle(GLenum srcSwizzle, GLenum dstChannel){
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(const unsigned char * data, int w, int h, int glFormat){
+void ofTexture::loadData(const uint8_t * data, int w, int h, int glFormat){
 	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,1,ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(data, w, h, glFormat, GL_UNSIGNED_BYTE);
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(const unsigned short * data, int w, int h, int glFormat){
+void ofTexture::loadData(const uint16_t * data, int w, int h, int glFormat){
 	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(data, w, h, glFormat, GL_UNSIGNED_SHORT);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const uint32_t * data, int w, int h, int glFormat){
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_SHORT);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const int8_t * data, int w, int h, int glFormat){
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,1,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_BYTE);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const int16_t * data, int w, int h, int glFormat){
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_SHORT);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const int32_t * data, int w, int h, int glFormat){
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_SHORT);
 }
 
 //----------------------------------------------------------
@@ -769,7 +816,7 @@ void ofTexture::setAnchorPoint(float x, float y){
 
 //----------------------------------------------------------
 void ofTexture::resetAnchor(){
-	anchor.set( 0 );
+	anchor = {0.f, 0.f, 0.f};
 	bAnchorIsPct = false;
 }
 
@@ -813,16 +860,16 @@ void ofTexture::disableAlphaMask(){
 
 
 //----------------------------------------------------------
-ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos) const{
+glm::vec2 ofTexture::getCoordFromPoint(float xPos, float yPos) const{
 	
-	ofPoint temp;
+	glm::vec2 temp;
 	
 	if (!isAllocated()) return temp;
 	
 #ifndef TARGET_OPENGLES	
 	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 		
-		temp.set(xPos, yPos);
+		temp = {xPos, yPos};
 		
 	} else {
 #endif		
@@ -837,7 +884,7 @@ ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos) const{
 		pctx *= texData.tex_t;
 		pcty *= texData.tex_u;
 		
-		temp.set(pctx, pcty);
+		temp = {pctx, pcty};
 		
 #ifndef TARGET_OPENGLES	
 	}
@@ -850,7 +897,7 @@ ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos) const{
 //----------------------------------------------------------
 /// Sets a texture matrix that will be uploaded whenever the texture is
 /// binded.
-void ofTexture::setTextureMatrix(const ofMatrix4x4 & m){
+void ofTexture::setTextureMatrix(const glm::mat4 & m){
 	texData.textureMatrix = m;
 	texData.useTextureMatrix = true;
 }
@@ -859,12 +906,12 @@ void ofTexture::setTextureMatrix(const ofMatrix4x4 & m){
 /// Disable the texture matrix.
 void ofTexture::disableTextureMatrix(){
 	texData.useTextureMatrix = false;
-	texData.textureMatrix.makeIdentityMatrix();
+	texData.textureMatrix = glm::mat4(1.0);
 }
 
 
 //----------------------------------------------------------
-const ofMatrix4x4 & ofTexture::getTextureMatrix() const{
+const glm::mat4 & ofTexture::getTextureMatrix() const{
 	return texData.textureMatrix;
 }
 
@@ -874,22 +921,22 @@ bool ofTexture::isUsingTextureMatrix() const{
 }
 
 //----------------------------------------------------------
-ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct) const{
+glm::vec2 ofTexture::getCoordFromPercent(float xPct, float yPct) const{
 	
-	ofPoint temp;
+	glm::vec2 temp;
 	
 	if (!isAllocated()) return temp;
 	
 #ifndef TARGET_OPENGLES	
 	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 		
-		temp.set(xPct * texData.width, yPct * texData.height);
+		temp = {xPct * texData.width, yPct * texData.height};
 		
 	} else {
 #endif	
 		xPct *= texData.tex_t;
 		yPct *= texData.tex_u;
-		temp.set(xPct, yPct);
+		temp = {xPct, yPct};
 		
 #ifndef TARGET_OPENGLES	
 	}
@@ -995,6 +1042,11 @@ void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, flo
 }
 
 //------------------------------------
+void ofTexture::drawSubsection(ofRectangle& drawBounds, ofRectangle& subsectionBounds) const {
+	drawSubsection(drawBounds.x,drawBounds.y,0,drawBounds.width,drawBounds.height,subsectionBounds.x,subsectionBounds.y,subsectionBounds.width,subsectionBounds.height);
+}
+
+//------------------------------------
 void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy) const{
 	drawSubsection(x,y,z,w,h,sx,sy,w,h);
 }
@@ -1069,8 +1121,8 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 	}
 	// -------------------------------------------------
 
-	ofPoint topLeft = getCoordFromPoint(sx, sy);
-	ofPoint bottomRight = getCoordFromPoint(sx + sw, sy + sh);
+	auto topLeft = getCoordFromPoint(sx, sy);
+	auto bottomRight = getCoordFromPoint(sx + sw, sy + sh);
 
 	GLfloat tx0 = topLeft.x + offsetw;
 	GLfloat ty0 = topLeft.y + offseth;
@@ -1080,22 +1132,22 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 	quad.getVertices().resize(4);
 	quad.getTexCoords().resize(4);
-	quad.getVertices()[0].set(px0,py0,z);
-	quad.getVertices()[1].set(px1,py0,z);
-	quad.getVertices()[2].set(px1,py1,z);
-	quad.getVertices()[3].set(px0,py1,z);
+	quad.getVertices()[0] = {px0,py0,z};
+	quad.getVertices()[1] = {px1,py0,z};
+	quad.getVertices()[2] = {px1,py1,z};
+	quad.getVertices()[3] = {px0,py1,z};
 
-	quad.getTexCoords()[0].set(tx0,ty0);
-	quad.getTexCoords()[1].set(tx1,ty0);
-	quad.getTexCoords()[2].set(tx1,ty1);
-	quad.getTexCoords()[3].set(tx0,ty1);
+	quad.getTexCoords()[0] = {tx0,ty0};
+	quad.getTexCoords()[1] = {tx1,ty0};
+	quad.getTexCoords()[2] = {tx1,ty1};
+	quad.getTexCoords()[3] = {tx0,ty1};
 
 	return quad;
 }
 
 // ROGER
 //----------------------------------------------------------
-void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const{
+void ofTexture::draw(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3, const glm::vec3 & p4) const{
 
 	// make sure we are on unit 0 - we may change this when setting shader samplers
 	// before glEnable or else the shader gets confused
@@ -1109,7 +1161,7 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 	}
 }
 
-ofMesh ofTexture::getQuad(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const{
+ofMesh ofTexture::getQuad(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3, const glm::vec3 & p4) const{
 	// -------------------------------------------------
 	// complete hack to remove border artifacts.
 	// slightly, slightly alters an image, scaling...
@@ -1136,15 +1188,15 @@ ofMesh ofTexture::getQuad(const ofPoint & p1, const ofPoint & p2, const ofPoint 
 	quad.getVertices().resize(4);
 	quad.getTexCoords().resize(4);
 	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
-	quad.getVertices()[0].set(p1.x, p1.y, p1.z);
-	quad.getVertices()[1].set(p2.x, p2.y, p2.z);
-	quad.getVertices()[2].set(p3.x, p3.y, p3.z);
-	quad.getVertices()[3].set(p4.x, p4.y, p4.z);
+	quad.getVertices()[0] = {p1.x, p1.y, p1.z};
+	quad.getVertices()[1] = {p2.x, p2.y, p2.z};
+	quad.getVertices()[2] = {p3.x, p3.y, p3.z};
+	quad.getVertices()[3] = {p4.x, p4.y, p4.z};
 	
-	quad.getTexCoords()[0].set(tx0,ty0);
-	quad.getTexCoords()[1].set(tx1,ty0);
-	quad.getTexCoords()[2].set(tx1,ty1);
-	quad.getTexCoords()[3].set(tx0,ty1);
+	quad.getTexCoords()[0] = {tx0,ty0};
+	quad.getTexCoords()[1] = {tx1,ty0};
+	quad.getTexCoords()[2] = {tx1,ty1};
+	quad.getTexCoords()[3] = {tx0,ty1};
 	return quad;
 }
 

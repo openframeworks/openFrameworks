@@ -1,17 +1,12 @@
 package cc.openframeworks;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -19,26 +14,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.hardware.SensorManager;
-import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
+import android.os.Build;
 import android.os.Environment;
-import android.os.StatFs;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ScaleGestureDetector;
-import android.view.SurfaceView;
-import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -61,6 +48,10 @@ public class OFAndroid {
 			"/mnt/Removable/MicroSD",
 			"/Removable/MicroSD",
 			"/sdcard"};
+		
+	private static String getPackageName(){
+		return OFAndroidLifeCycle.getActivity().getPackageName();
+	}
 	
 	public static String getRealExternalStorageDirectory(Context context)
 	{				
@@ -131,202 +122,41 @@ public class OFAndroid {
 		return dataPath;
 	}
 	
-	Thread resourcesExtractorThread;
-	Thread appInitThread;
+	public static void initAppDataDirectory(Activity activity)
+	{
+		dataPath = getRealExternalStorageDirectory(activity);
+	}
 	
-	public OFAndroid(String appPackageName, OFActivity activity){
-		Log.i("OF","OFAndroid init...");
-		OFAndroid.ofActivity = activity;
-		ofActivity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-		//Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null));
-		OFAndroid.packageName = appPackageName;
-		OFAndroidObject.setActivity(ofActivity);
-		instance = this;
-		//unpackingDone = false;
-		
-		if(unpackingDone){
-			initView();
-			return;
-		}
-		
-		
-		resourcesExtractorThread = new Thread(new Runnable(){
-			@Override
+
+	static void runOnMainThread(Runnable runnable)
+	{
+		OFAndroidLifeCycle.getActivity().runOnUiThread(runnable);
+	}
+	
+	static void runOnGLThread(Runnable runnable)
+	{
+		OFAndroidLifeCycle.getGLView().queueEvent(runnable);
+	}
+	
+	
+	static void reportPrecentage(float precent)
+	{
+		Activity activity = OFAndroidLifeCycle.getActivity();
+		if(activity != null && OFActivity.class.isInstance(activity))
+			((OFActivity)activity).onLoadPercent(precent);
+	}
+	
+	static void fatalErrorDialog(final Activity activity, final String msg){
+		activity.runOnUiThread(new Runnable(){
 			public void run() {
-				Log.i("OF","starting resources extractor");
-				Class<?> raw = null;
-		        boolean copydata = false;
-		        Field[] files = null;
-		        try {
-		        	
-					// try to find if R.raw class exists will throw
-		        	// an exception if not
-		        	raw = Class.forName(packageName+".R$raw");
-		        	// if it exists copy all the raw resources
-		        	// to a folder in the sdcard
-			        files = raw.getDeclaredFields(); 
-		
-			        SharedPreferences preferences = ofActivity.getPreferences(Context.MODE_PRIVATE);
-			        long lastInstalled = preferences.getLong("installed", 0);
-			        
-			        PackageManager pm = ofActivity.getPackageManager();
-
-					ApplicationInfo appInfo = pm.getApplicationInfo(packageName, 0);
-
-			        String appFile = appInfo.sourceDir;
-			        long installed = new File(appFile).lastModified();
-			        if(installed>lastInstalled){
-			        	Editor editor = preferences.edit();
-			        	editor.putLong("installed", installed);
-			        	editor.commit();
-			        	copydata = true;
-			        }
-				} catch (NameNotFoundException e1) {
-					copydata = false;
-		        } catch (ClassNotFoundException e1) { 
-		        } 
-	        	
-		        
-		        ofActivity.onLoadPercent(.05f);
-	
-		        dataPath="";
-	    		try{
-	    			Log.i("OF", "sd mounted: " + checkSDCardMounted());
-					dataPath = getRealExternalStorageDirectory(ofActivity);
-
-	    			Log.i("OF","creating app directory: " + dataPath);
-					try{
-						File dir = new File(dataPath);
-						if(!(dir.mkdirs() || dir.isDirectory())){
-							if(copydata){
-								fatalErrorDialog("Error while copying resources to sdcard:\nCouldn't create directory " + dataPath);
-								Log.e("OF","error creating dir " + dataPath);
-								return;
-							}else{
-								throw new Exception();
-							}
-						}
-					}catch(Exception e){
-						fatalErrorDialog("Error while copying resources to sdcard:\nCouldn't create directory " + dataPath + "\n"+e.getMessage());
-						Log.e("OF","error creating dir " + dataPath,e);
-					}
-					moveOldData(getOldExternalStorageDirectory(packageName), dataPath);
-					OFAndroid.setAppDataDir(dataPath);
-			        ofActivity.onLoadPercent(.10f);
-	    		}catch(Exception e){
-	    			Log.e("OF","couldn't move app resources to data directory " + dataPath,e);
-	    		}
-	    		
-	    		
-				try {
-					int app_name_id = Class.forName(packageName+".R$string").getField("app_name").getInt(null);
-
-					if(copydata){
-						StatFs stat = new StatFs(dataPath);
-						double sdAvailSize = (double)stat.getAvailableBlocks()
-				                   * (double)stat.getBlockSize();
-						for(int i=0; i<files.length; i++){
-		    	        	int fileId;
-		    	        	String fileName="";
-		    				
-		    				InputStream from=null;
-		    				FileOutputStream to=null;
-		    	        	try {
-		    					fileId = files[i].getInt(null);
-		    					String resName = ofActivity.getResources().getText(fileId).toString();
-		    					fileName = resName.substring(resName.lastIndexOf("/"));
-		    					if(fileName.equals("/ofdataresources.zip")){
-		    						
-			    					from = ofActivity.getResources().openRawResource(fileId);
-									try{
-										ZipInputStream resourceszip = new ZipInputStream(from);
-										int totalZipSize = 0;
-										ZipEntry entry;
-										File outdir = new File(dataPath);
-										while ((entry = resourceszip.getNextEntry()) != null){
-											totalZipSize+=entry.getSize();
-										}
-										resourceszip.close();
-										Log.i("OF","size of uncompressed resources: " + totalZipSize + " avaliable space:" + sdAvailSize);
-										if(totalZipSize>=sdAvailSize){
-											final int mbsize = totalZipSize/1024/1024;
-											fatalErrorDialog("Error while copying resources to sdcard:\nNot enough space available.("+mbsize+"Mb)\nMake more space by deleting some file in your sdcard");
-										}else{
-											from = ofActivity.getResources().openRawResource(fileId);
-											resourceszip = new ZipInputStream(from);
-											
-
-											while ((entry = resourceszip.getNextEntry()) != null){
-												String name = entry.getName();
-										        if( entry.isDirectory() )
-										        {
-										        	OFZipUtil.mkdirs(outdir,name);
-										          continue;
-										        }
-										        String dir = OFZipUtil.dirpart(name);
-										        if( dir != null )
-										        	OFZipUtil.mkdirs(outdir,dir);
-	
-										        OFZipUtil.extractFile(resourceszip, outdir, name);
-										        ofActivity.onLoadPercent((float)(.10+i*.01));
-											}
-
-											resourceszip.close();
-									        ofActivity.onLoadPercent(.80f);
-										}
-									}catch(Exception e){
-										fatalErrorDialog("Error while copying resources to sdcard:\nCheck that you have enough space available.\n");
-									}
-		    					}
-		    	        	}catch (Exception e) {
-		    					Log.e("OF","error copying file",e);
-		    				} finally {
-		    					if (from != null)
-		    					  try {
-		    					    from.close();
-		    					  } catch (IOException e) { }
-		    					  
-		    			        if (to != null)
-		    			          try {
-		    			            to.close();
-		    			          } catch (IOException e) { }
-		    				}
-						}
-					}else{
-				        ofActivity.onLoadPercent(.80f);
-					}
-				} catch (Exception e) {
-					Log.e("OF","error retrieving app name",e);
-				} 	
-
-			}
-		});
-
-    	appInitThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				OFAndroid.init();
-				OFAndroid.onUnpackingResourcesDone();
-				
-			}
-		});
-
-    	resourcesExtractorThread.start();
-    	appInitThread.start();
-		
-    }
-	
-	private void fatalErrorDialog(final String msg){
-		ofActivity.runOnUiThread(new Runnable(){
-			public void run() {
-				new AlertDialog.Builder(ofActivity)  
+				new AlertDialog.Builder(activity)  
 					.setMessage(msg)  
 					.setTitle("")  
 					.setCancelable(false)  
 					.setNeutralButton(android.R.string.ok,  
 							new DialogInterface.OnClickListener() {  
 						public void onClick(DialogInterface dialog, int whichButton){
-							ofActivity.finish();
+							activity.finish();
 						}
 	
 				  	})  
@@ -335,111 +165,16 @@ public class OFAndroid {
 		});
 	}
 	
-	
-	public void start(){
-		Log.i("OF","onStart");
-		enableTouchEvents();
-	}
-	
-	public void restart(){
-		Log.i("OF","onRestart");
-		enableTouchEvents();
-		onRestart();
-        /*if(OFAndroidSoundStream.isInitialized() && OFAndroidSoundStream.wasStarted())
-        	OFAndroidSoundStream.getInstance().start();*/
-	}
-	
-	private boolean resumed;
-	
-	public void pause(){
-		Log.i("OF","onPause");
-		disableTouchEvents();
-		
-		onPause();
-
-		synchronized (OFAndroidObject.ofObjects) {
-			for(OFAndroidObject object : OFAndroidObject.ofObjects){
-				object.onPause();
-			}
-		}
-		if(mGLView!=null) mGLView.onPause();
-		if(networkStateReceiver!=null){
-			try{
-				ofActivity.unregisterReceiver(networkStateReceiver);
-			}catch(java.lang.IllegalArgumentException e){
-				
-			}
-		}
-
-		sleepLocked=false;
-		resumed = false;
-	}
-	
-	public void resume(){
-		if(mGLView==null || resumed) return;
-		resumed = true;
-		Log.i("OF","onResume");
-		enableTouchEvents();
-		mGLView.onResume();
-		synchronized (OFAndroidObject.ofObjects) {
-			for(OFAndroidObject object : OFAndroidObject.ofObjects){
-				object.onResume();
-			}
-			
-		}
-		
-    	
-		
-        if(mGLView.isSetup()){
-        	Log.i("OF","resume view and native");
-        	onResume();
-        }
-        
-        if(OFAndroid.orientation!=-1) OFAndroid.setScreenOrientation(OFAndroid.orientation);
-		
-		if(networkStateReceiver!=null){
-			monitorNetworkState();
-		}
-		
-	}
-	
-	public void stop(){
-		resumed = false;
-		Log.i("OF","onStop");
-		disableTouchEvents();
-		onStop();
-		
-		synchronized (OFAndroidObject.ofObjects) {
-			for(OFAndroidObject object : OFAndroidObject.ofObjects){
-				object.onStop();
-			}
-		}
-		
-
-		if(networkStateReceiver!=null){
-			try{
-				ofActivity.unregisterReceiver(networkStateReceiver);
-			}catch(java.lang.IllegalArgumentException e){
-				
-			}
-		}
-		
-		sleepLocked=false;
-	}
-	
-	public void destroy(){
-		Log.i("OF","onDestroy");
-		onDestroy();
-	}
-	
 	static public void onUnpackingResourcesDone(){
 		unpackingDone = true;
-        ofActivity.onUnpackingResourcesDone();
+		Activity activity = OFAndroidLifeCycle.getActivity();
+		if(activity != null && OFActivity.class.isInstance(activity))
+			((OFActivity)activity).onUnpackingResourcesDone();
 	}
 	
 	static public boolean menuItemSelected(int id){
 		try {
-			Class<?> menu_ids = Class.forName(packageName+".R$id");
+			Class<?> menu_ids = Class.forName(getPackageName()+".R$id");
 			Field[] fields = menu_ids.getFields();
 			for(Field field: fields){
 				Log.i("OF", "checking " + field.getName());
@@ -455,7 +190,7 @@ public class OFAndroid {
 	
 	static public boolean menuItemChecked(int id, boolean checked){
 		try {
-			Class<?> menu_ids = Class.forName(packageName+".R$id");
+			Class<?> menu_ids = Class.forName(getPackageName()+".R$id");
 			Field[] fields = menu_ids.getFields();
 			for(Field field: fields){
 				if(id == field.getInt(null)){
@@ -470,10 +205,10 @@ public class OFAndroid {
 	
 	static public void setMenuItemChecked(String idStr, boolean checked){
 		final String id = idStr;
-		ofActivity.runOnUiThread(new Runnable(){
+		runOnMainThread(new Runnable(){
 			public void run() {
 				try {
-					Class<?> menu_ids = Class.forName(packageName+".R$id");
+					Class<?> menu_ids = Class.forName(getPackageName()+".R$id");
 					Field field = menu_ids.getField(id);
 					//ofActivity.getMenuInflater().
 				} catch (Exception e) {
@@ -486,12 +221,12 @@ public class OFAndroid {
 	static public void setViewItemChecked(String idStr, boolean checked){
 		final String id = idStr;
 		final boolean fchecked = checked;
-		ofActivity.runOnUiThread(new Runnable(){
+		runOnMainThread(new Runnable(){
 			public void run() {
 				try {
-					Class<?> menu_ids = Class.forName(packageName+".R$id");
+					Class<?> menu_ids = Class.forName(getPackageName()+".R$id");
 					Field field = menu_ids.getField(id);
-					CompoundButton checkbox = (CompoundButton) ofActivity.findViewById(field.getInt(null));
+					CompoundButton checkbox = (CompoundButton) OFAndroidLifeCycle.getActivity().findViewById(field.getInt(null));
 					checkbox.setChecked(fchecked);
 				} catch (Exception e) {
 					Log.w("OF","Trying to get menu items ", e);
@@ -503,10 +238,10 @@ public class OFAndroid {
 	static public String getStringRes(String idStr){
 		Class<?> string_ids;
 		try {
-			string_ids = Class.forName(packageName+".R$string");
+			string_ids = Class.forName(getPackageName()+".R$string");
 			Field field = string_ids.getField(idStr);
 			int id = field.getInt(null);
-			return (String) ofActivity.getResources().getText(id);
+			return (String) OFAndroidLifeCycle.getActivity().getResources().getText(id);
 		} catch (Exception e) {
 			Log.e("OF","Couldn't get string resource",e);
 		} 
@@ -524,7 +259,7 @@ public class OFAndroid {
 	
 	static public boolean isWifiOnline(){
 		try{
-			ConnectivityManager conMgr =  (ConnectivityManager)ofActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+			ConnectivityManager conMgr =  (ConnectivityManager)OFAndroidLifeCycle.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 			return conMgr!=null && ( conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED  ) ;
 		}catch(Exception e){
 			Log.e("OF","error checking wifi connection",e);
@@ -534,7 +269,7 @@ public class OFAndroid {
 	
 	static public boolean isMobileOnline(){
 		try{
-			ConnectivityManager conMgr =  (ConnectivityManager)ofActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+			ConnectivityManager conMgr =  (ConnectivityManager)OFAndroidLifeCycle.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 			
 			return conMgr!=null && ( conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED  ) ;
 		}catch(Exception e){
@@ -544,6 +279,24 @@ public class OFAndroid {
 	}
 
 	static private BroadcastReceiver networkStateReceiver;
+	
+	public static void registerNetworkStateReceiver()
+	{
+		if(OFAndroid.networkStateReceiver!=null){
+			OFAndroid.monitorNetworkState();
+		}
+	}
+	
+	public static void unregisterNetworkStateReceiver()
+	{
+		if(OFAndroid.networkStateReceiver!=null){
+			try{
+				OFAndroidLifeCycle.getActivity().unregisterReceiver(OFAndroid.networkStateReceiver);
+			}catch(java.lang.IllegalArgumentException e){
+				
+			}
+		}
+	}
 
 	static public void monitorNetworkState(){
 		networkStateReceiver = new BroadcastReceiver() {
@@ -565,12 +318,12 @@ public class OFAndroid {
 		    }
 		};
 		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
-		ofActivity.registerReceiver(networkStateReceiver, filter);
+		OFAndroidLifeCycle.getActivity().registerReceiver(networkStateReceiver, filter);
 		networkConnected(isOnline());
 	}
 	
 	static public void launchBrowser(String url){
-		ofActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+		OFAndroidLifeCycle.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 	}
 	
 	
@@ -579,9 +332,9 @@ public class OFAndroid {
 	static public int progressBox(String msg){
 		final String finmsg = msg;
 		final int id = lastProgressID++;
-		ofActivity.runOnUiThread(new Runnable(){
+		runOnMainThread(new Runnable(){
 			public void run() {
-				ProgressDialog d = new ProgressDialog(ofActivity);
+				ProgressDialog d = new ProgressDialog(OFAndroidLifeCycle.getActivity());
 				d.setMessage(finmsg);
 				d.setCancelable(false);
 				d.show();
@@ -595,7 +348,7 @@ public class OFAndroid {
 		final int dId = id;
 		final ProgressDialog d = progressDialogs.get(id);
 		if(d!=null){
-			ofActivity.runOnUiThread(new Runnable(){
+			runOnMainThread(new Runnable(){
 				public void run() {
 					d.dismiss();
 					progressDialogs.remove(dId);
@@ -629,6 +382,7 @@ public class OFAndroid {
 	// native methods to call OF c++ callbacks
     public static native void setAppDataDir(String data_dir);
     public static native void init();
+    public static native void onCreate();
     public static native void onRestart();
     public static native void onPause();
     public static native void onResume();
@@ -653,8 +407,8 @@ public class OFAndroid {
     public static native void onScaleEnd(ScaleGestureDetector detector);
     public static native boolean onScale(ScaleGestureDetector detector);
     
-    public static native void onKeyDown(int keyCode);
-    public static native void onKeyUp(int keyCode);
+    public static native boolean onKeyDown(int keyCode, int unicode);
+    public static native boolean onKeyUp(int keyCode, int unicode);
     public static native boolean onBackPressed();
     
     public static native boolean onMenuItemSelected(String menu_id);
@@ -664,7 +418,8 @@ public class OFAndroid {
     public static native void cancelPressed();
     
     public static native void networkConnected(boolean conected);
-    
+
+	public static native void deviceOrientationChanged(int orientation);
 
     // static methods to be called from OF c++ code
     public static void setFullscreen(boolean fs){
@@ -687,54 +442,54 @@ public class OFAndroid {
     	//ofActivity.getWindow().setAttributes(attrs);
     }
     
+    public static int getOrientation()
+    {
+    	return orientation;
+    }
     
     private static int orientation=-1;
     public static void setScreenOrientation(int orientation){
     	OFAndroid.orientation = orientation;
     	switch(orientation){
     	case 0:
-    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    		OFAndroidLifeCycle.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     		break;
     	case 90:
-    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    		OFAndroidLifeCycle.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     		break;
     	case 270:
-    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			if (Build.VERSION.SDK_INT >= 9) {
+				OFAndroidLifeCycle.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+				break;
+			}
+			OFAndroidLifeCycle.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     		break;
     	case 180:
-    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+			if (Build.VERSION.SDK_INT >= 9) {
+				OFAndroidLifeCycle.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+				break;
+			}
+			OFAndroidLifeCycle.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     		break;
     	case -1:
-    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+    		OFAndroidLifeCycle.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
     		break;
     	}
     }
     
     public static void pauseApp(){
-		ofActivity.moveTaskToBack(true);
+    	OFAndroidLifeCycle.getActivity().moveTaskToBack(true);
     }
 
 	
 	public static void setupAccelerometer(){
 		if(accelerometer==null)
-			accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
-	}
-	
-	public static void setupGPS(){
-		if(gps==null)
-			gps = new OFAndroidGPS(ofActivity);
-		gps.startGPS();
-	}
-	
-	public static void stopGPS(){
-		if(gps==null)
-			return;
-		gps.stopGPS();
+			accelerometer = new OFAndroidAccelerometer((SensorManager)OFAndroidLifeCycle.getActivity().getSystemService(Context.SENSOR_SERVICE));
 	}
 	
 	static MulticastLock mcLock;
 	public static void enableMulticast(){
-		WifiManager wifi = (WifiManager)ofActivity.getSystemService( Context.WIFI_SERVICE );
+		WifiManager wifi = (WifiManager)OFAndroidLifeCycle.getActivity().getSystemService( Context.WIFI_SERVICE );
 		if(wifi != null)
 		{
 		    mcLock = wifi.createMulticastLock("mylock");
@@ -761,9 +516,9 @@ public class OFAndroid {
 	            throw new RuntimeException();
 	        } 
 	    };*/
-		ofActivity.runOnUiThread(new Runnable(){
+		runOnMainThread(new Runnable(){
 			public void run() {
-				new AlertDialog.Builder(ofActivity)  
+				new AlertDialog.Builder(OFAndroidLifeCycle.getActivity())  
 					.setMessage(alertMsg)  
 					.setTitle("")  
 					.setCancelable(false)  
@@ -799,9 +554,9 @@ public class OFAndroid {
 	            throw new RuntimeException();
 	        } 
 	    };*/
-		ofActivity.runOnUiThread(new Runnable(){
+		runOnMainThread(new Runnable(){
 			public void run() {
-				new AlertDialog.Builder(ofActivity)  
+				new AlertDialog.Builder(OFAndroidLifeCycle.getActivity())  
 					.setMessage(alertMsg)  
 					.setTitle("OF")  
 					.setCancelable(false)  
@@ -854,10 +609,11 @@ public class OFAndroid {
 	        } 
 	    };*/
 	    textBoxResult=text;
-		ofActivity.runOnUiThread(new Runnable(){
+		runOnMainThread(new Runnable(){
 			public void run() {
-				final EditText input = new EditText(ofActivity); 
-					new AlertDialog.Builder(ofActivity)  
+				Activity activity = OFAndroidLifeCycle.getActivity();
+				final EditText input = new EditText(activity); 
+					new AlertDialog.Builder(activity)  
 					.setMessage(alertMsg)  
 					.setTitle(alertQuestion)  
 					.setCancelable(false)  
@@ -904,12 +660,13 @@ public class OFAndroid {
 	        } 
 	    };*/
 	    alertListResult=false;
-		ofActivity.runOnUiThread(new Runnable(){
+		runOnMainThread(new Runnable(){
 			public void run() {
-				final ListView listView = new ListView(ofActivity); 
-				final ListAdapter adapter = new ArrayAdapter<String>(ofActivity, android.R.layout.simple_list_item_1, alertList);
+				Activity activity = OFAndroidLifeCycle.getActivity();
+				final ListView listView = new ListView(activity); 
+				final ListAdapter adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, alertList);
 				listView.setAdapter(adapter);
-				new AlertDialog.Builder(ofActivity)   
+				new AlertDialog.Builder(activity)   
 					.setTitle(alertTitle)  
 					.setCancelable(false)  
 					.setNeutralButton(android.R.string.ok,  
@@ -944,16 +701,12 @@ public class OFAndroid {
 	public static void toast(String msg){  
 		if(msg=="") return;
 		final String alertMsg = msg;
-		ofActivity.runOnUiThread(new Runnable(){
+		runOnMainThread(new Runnable(){
 			public void run() {
-				Toast toast = Toast.makeText(ofActivity, alertMsg, Toast.LENGTH_SHORT);
+				Toast toast = Toast.makeText(OFAndroidLifeCycle.getActivity(), alertMsg, Toast.LENGTH_SHORT);
 	        	toast.show();  
 			}  
 		});
-	}
-	
-	public static Context getContext(){
-		return ofActivity;
 	}
 	
 	public static String toDataPath(String path){
@@ -964,13 +717,13 @@ public class OFAndroid {
 	
 	public static void lockScreenSleep(){
 		if(!sleepLocked){
-			ofActivity.runOnUiThread(new Runnable() {
+			runOnMainThread(new Runnable() {
 				
 				@Override
 				public void run() {
 					try{
 						sleepLocked=true;
-						ofActivity.getWindow().addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
+						OFAndroidLifeCycle.getActivity().getWindow().addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
 					}catch(Exception e){
 						
 					}
@@ -982,13 +735,13 @@ public class OFAndroid {
 	
 	public static void unlockScreenSleep(){
 		if(sleepLocked){
-			ofActivity.runOnUiThread(new Runnable() {
+			runOnMainThread(new Runnable() {
 			
 				@Override
 				public void run() {
 					try{
 						sleepLocked=false;
-				        ofActivity.getWindow().clearFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
+						OFAndroidLifeCycle.getActivity().getWindow().clearFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
 					}catch(Exception e){
 						
 					}
@@ -1003,107 +756,52 @@ public class OFAndroid {
 	}
 	
 	public static boolean isApplicationSetup(){
-		return mGLView!=null && mGLView.isSetup();
+		return OFAndroidLifeCycle.getGLView().isSetup();
 	}
     
-    private static OFGLSurfaceView mGLView;
     private static OFAndroidAccelerometer accelerometer;
     private static OFAndroidGPS gps;
-    private static OFActivity ofActivity;
-    private static OFAndroid instance;
     private static OFGestureListener gestureListener;
-	private static String packageName;
+	private static OFOrientationListener orientationListener;
 	private static String dataPath;
 	public static boolean unpackingDone;
 
     public static native boolean hasNeon();
-	 
-    static {
-        
-        Log.i("OF","static init");
-        
-        try {
-            Log.i("OF","loading x86 library");
-            System.loadLibrary("OFAndroidApp_x86");
-        }
-        catch(Throwable ex)	{
-            Log.i("OF","failed x86 loading, trying neon detection",ex);
-            
-            try{
-                System.loadLibrary("neondetection");
-                if(hasNeon()){
-                    Log.i("OF","loading neon optimized library");
-                    System.loadLibrary("OFAndroidApp_neon");
-                }
-                else{
-                    Log.i("OF","loading not-neon optimized library");
-                    System.loadLibrary("OFAndroidApp");
-                }
-            }catch(Throwable ex2){
-                Log.i("OF","failed neon detection, loading not-neon library",ex2);
-                System.loadLibrary("OFAndroidApp");
-            }
-        }
-        Log.i("OF","initializing app");
-    }
-
-	public static SurfaceView getGLContentView() {
-        return mGLView;
-	}
 	
 	public static void disableTouchEvents(){
-		if(mGLView!=null){
-	        mGLView.setOnClickListener(null); 
-	        mGLView.setOnTouchListener(null);
-		}
+		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+        glView.setOnClickListener(null); 
+        glView.setOnTouchListener(null);
 	}
 	
 	public static void enableTouchEvents(){
-		if(mGLView!=null){
-	        mGLView.setOnClickListener(gestureListener); 
-	        mGLView.setOnTouchListener(gestureListener.touchListener);
-		}
+		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+		if(gestureListener == null)
+			gestureListener = new OFGestureListener(OFAndroidLifeCycle.getActivity());
+        glView.setOnClickListener(gestureListener); 
+        glView.setOnTouchListener(gestureListener.touchListener);
 	}
-	
-	public static void initView(){        
-        try {
-        	Log.v("OF","trying to find class: "+packageName+".R$layout");
-			Class<?> layout = Class.forName(packageName+".R$layout");
-			View view = ofActivity.getLayoutInflater().inflate(layout.getField("main_layout").getInt(null),null);
-			ofActivity.setContentView(view);
-			
-			Class<?> id = Class.forName(packageName+".R$id");
-			mGLView = (OFGLSurfaceView)ofActivity.findViewById(id.getField("of_gl_surface").getInt(null));
-			
-		} catch (Exception e) {
-			Log.e("OF", "couldn't create view from layout falling back to GL only",e);
-	        mGLView = new OFGLSurfaceView(ofActivity);
-	        ofActivity.setContentView(mGLView);
-		}
+
+	public static void enableOrientationChangeEvents(){
+		if(orientationListener == null)
+			orientationListener = new OFOrientationListener(OFAndroidLifeCycle.getActivity());
+		orientationListener.enable();
+	}
+
+	public static void disableOrientationChangeEvents(){
+		if(orientationListener != null)
+			orientationListener.disable();
 	}
 	
 	public static void setupGL(int version){	
 		final int finalversion = version;
-		ofActivity.runOnUiThread(new Runnable() {
+		runOnMainThread(new Runnable() {
 			
 			@Override
 			public void run() {
-				gestureListener = new OFGestureListener(ofActivity);
 		        OFEGLConfigChooser.setGLESVersion(finalversion);
-		        initView();
-		        instance.resume();
-				
 			}
 		});
-        
-        try {
-        	Log.i("OF","joining");
-			instance.resourcesExtractorThread.join();
-			Log.i("OF","joined");
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-        
 	}
 	
 	/**
@@ -1121,22 +819,9 @@ public class OFAndroid {
            		return false;
            	}
         }
-		
-        if (KeyEvent.isModifierKey(keyCode)) {
-        	/* Android sends a shift keycode (for instance),
-        	   then the key that goes with the shift. We don't need the first
-        	   keycode, that info is in event.getMetaState() anyway */
-        	return false;
-        }
-        else
-        {
-        	int unicodeChar = event.getUnicodeChar();
-        	onKeyDown(unicodeChar);
 
-        	// return false to let Android handle certain keys
-    		// like the back and menu keys
-        	return false;
-        }
+		int unicodeChar = event.getUnicodeChar();
+		return onKeyDown(keyCode, unicodeChar);
 	}
 	
 	/**
@@ -1146,21 +831,8 @@ public class OFAndroid {
 	 * @return true to say we handled this, false to tell Android to handle it
 	 */
 	public static boolean keyUp(int keyCode, KeyEvent event) {
-        if (KeyEvent.isModifierKey(keyCode)) {
-        	/* Android sends a shift keycode (for instance),
-        	   then the key that goes with the shift. We don't need the first
-        	   keycode, that info is in event.getMetaState() anyway */
-        	return false;
-        }
-        else
-        {
-    		int unicodeChar = event.getUnicodeChar();
-    		onKeyUp(unicodeChar);
-    		
-    		// return false to let Android handle certain keys
-    		// like the back and menu keys
-        	return false;
-        }
+		int unicodeChar = event.getUnicodeChar();
+		return onKeyUp(keyCode, unicodeChar);
 	}
 }
 

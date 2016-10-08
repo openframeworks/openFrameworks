@@ -46,6 +46,10 @@ static bool accumulateTouchEvents = false;
 
 void ofExitCallback();
 
+//----- define in main.cpp---//
+void ofAndroidApplicationInit();
+void ofAndroidActivityInit();
+
 //static ofAppAndroidWindow window;
 
 JavaVM * ofGetJavaVMPtr(){
@@ -103,11 +107,14 @@ ofAppAndroidWindow::ofAppAndroidWindow()
 :currentRenderer(new ofGLRenderer(this))
 ,glesVersion(1){
 	window = this;
-
 }
 
 ofAppAndroidWindow::~ofAppAndroidWindow() {
 	// TODO Auto-generated destructor stub
+}
+
+bool ofAppAndroidWindow::isSurfaceDestroyed() {
+	return surfaceDestroyed;
 }
 
 void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings){
@@ -143,8 +150,8 @@ void ofAppAndroidWindow::draw(){
 
 }
 
-ofPoint	ofAppAndroidWindow::getWindowSize(){
-	return ofPoint(sWindowWidth,sWindowHeight);
+glm::vec2 ofAppAndroidWindow::getWindowSize(){
+	return glm::vec2(sWindowWidth,sWindowHeight);
 }
 
 int	ofAppAndroidWindow::getWidth(){
@@ -247,6 +254,17 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
 	const char *mfile = env->GetStringUTFChars(data_dir, &iscopy);
 	__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("setting app dir name to: \"" + string(mfile) + "\"").c_str());
     ofSetDataPathRoot(string(mfile)+"/");
+    env->ReleaseStringUTFChars(data_dir, mfile);
+}
+
+void Java_cc_openframeworks_OFAndroid_init( JNIEnv*  env, jclass  clazz)
+{
+	ofAndroidApplicationInit();
+}
+
+void Java_cc_openframeworks_OFAndroid_onCreate( JNIEnv*  env, jclass  clazz)
+{
+	ofAndroidActivityInit();
 }
 
 void
@@ -277,6 +295,8 @@ Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jobject  thiz ){
 
 void
 Java_cc_openframeworks_OFAndroid_onDestroy( JNIEnv*  env, jclass  thiz ){
+	appSetup = false;
+	ofEvents().notifyExit();
 	ofExitCallback();
 }
 
@@ -298,14 +318,20 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		window->renderer()->pushStyle();
 		window->renderer()->setupGraphicDefaults();
 		window->renderer()->popStyle();
-		surfaceDestroyed = false;
+
 	}else{
-	    if(window->renderer()->getType()==ofGLProgrammableRenderer::TYPE){
+
+	    if(window->renderer()->getType()==ofGLProgrammableRenderer::TYPE)
+	    {
 	    	static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(2,0);
-	    }else{
+	    }
+	    else
+	    {
 	    	static_cast<ofGLRenderer*>(window->renderer().get())->setup();
 	    }
 	}
+
+	surfaceDestroyed = false;
 }
 
 void
@@ -335,7 +361,8 @@ Java_cc_openframeworks_OFAndroid_resize( JNIEnv*  env, jclass  thiz, jint w, jin
 void
 Java_cc_openframeworks_OFAndroid_exit( JNIEnv*  env, jclass  thiz )
 {
-	window->events().notifyExit();
+	exit(0);
+	//window->events().notifyExit();
 }
 
 /* Call to render the next GL frame */
@@ -497,53 +524,47 @@ Java_cc_openframeworks_OFAndroid_onSwipe(JNIEnv*  env, jclass  thiz, jint id, ji
 
 jboolean
 Java_cc_openframeworks_OFAndroid_onScale(JNIEnv*  env, jclass  thiz, jobject detector){
-	try{
-		ofxAndroidScaleEventArgs scale(detector);
-		ofxAndroidEvents().scale.notify(nullptr,scale);
-	}catch(...){
-		return true;
-	}
-	return false;
+	ofxAndroidScaleEventArgs scale(detector);
+	return ofxAndroidEvents().scale.notify(nullptr,scale);
 }
 
 jboolean
 Java_cc_openframeworks_OFAndroid_onScaleBegin(JNIEnv*  env, jclass  thiz, jobject detector){
-	try{
-		ofxAndroidScaleEventArgs scale(detector);
-		ofxAndroidEvents().scaleBegin.notify(nullptr,scale);
-	}catch(...){
-		return true;
-	}
-	return false;
+	ofxAndroidScaleEventArgs scale(detector);
+	return ofxAndroidEvents().scaleBegin.notify(nullptr,scale);
 }
 
 void
 Java_cc_openframeworks_OFAndroid_onScaleEnd(JNIEnv*  env, jclass  thiz, jobject detector){
-	try{
-		ofxAndroidScaleEventArgs scale(detector);
-		ofxAndroidEvents().scaleEnd.notify(nullptr,scale);
-	}catch(...){
-	}
+	ofxAndroidScaleEventArgs scale(detector);
+    ofxAndroidEvents().scaleEnd.notify(nullptr,scale);
 }
 
-void
-Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jobject  thiz, jint  keyCode){
-	window->events().notifyKeyPressed(keyCode);
+jboolean
+Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jobject  thiz, jint  keyCode, jint unicode){
+    ofKeyEventArgs key;
+	key.type = ofKeyEventArgs::Pressed;
+    key.key = unicode;
+    key.keycode = keyCode;
+    key.scancode = keyCode;
+    key.codepoint = unicode;
+    return window->events().notifyKeyEvent(key);
 }
 
-void
-Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jobject  thiz, jint  keyCode){
-	window->events().notifyKeyReleased(keyCode);
+jboolean
+Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jobject  thiz, jint  keyCode, jint unicode){
+    ofKeyEventArgs key;
+	key.type = ofKeyEventArgs::Released;
+    key.key = unicode;
+    key.keycode = keyCode;
+    key.scancode = keyCode;
+    key.codepoint = unicode;
+    return window->events().notifyKeyEvent(key);
 }
 
 jboolean
 Java_cc_openframeworks_OFAndroid_onBackPressed(){
-	try{
-		ofxAndroidEvents().backPressed.notify(nullptr);
-	}catch(...){
-		return true;
-	}
-	return false;
+	return ofxAndroidEvents().backPressed.notify(nullptr);
 }
 
 jboolean
@@ -551,13 +572,8 @@ Java_cc_openframeworks_OFAndroid_onMenuItemSelected( JNIEnv*  env, jobject  thiz
 	jboolean iscopy;
 	const char * menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
 	if(!menu_id_str) return false;
-	try{
-		string id_str(menu_id_str);
-		ofxAndroidEvents().menuItemSelected.notify(nullptr,id_str);
-	}catch(...){
-		return true;
-	}
-	return false;
+	string id_str(menu_id_str);
+	return ofxAndroidEvents().menuItemSelected.notify(nullptr,id_str);
 }
 
 jboolean
@@ -565,13 +581,8 @@ Java_cc_openframeworks_OFAndroid_onMenuItemChecked( JNIEnv*  env, jobject  thiz,
 	jboolean iscopy;
 	const char *menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
 	if(!menu_id_str) return false;
-	try{
-		string id_str(menu_id_str);
-		ofxAndroidEvents().menuItemChecked.notify(nullptr,id_str);
-	}catch(...){
-		return true;
-	}
-	return false;
+	string id_str(menu_id_str);
+	return ofxAndroidEvents().menuItemChecked.notify(nullptr,id_str);
 }
 
 void
@@ -589,6 +600,10 @@ Java_cc_openframeworks_OFAndroid_networkConnected( JNIEnv*  env, jobject  thiz, 
 	bool bConnected = (bool)connected;
 	ofNotifyEvent(ofxAndroidEvents().networkConnected,bConnected);
 }
+
+void
+Java_cc_openframeworks_OFAndroid_deviceOrientationChanged(JNIEnv*  env, jclass  thiz, jint orientation){
+	ofOrientation _orientation = (ofOrientation) orientation;
+	ofNotifyEvent(ofxAndroidEvents().deviceOrientationChanged,_orientation );
 }
-
-
+}

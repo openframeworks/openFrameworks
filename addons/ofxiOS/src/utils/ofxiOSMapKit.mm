@@ -29,6 +29,9 @@
  * ***********************************************************************/ 
 
 #include "ofxiOSMapKit.h"
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+
 #include "ofxiOSMapKitDelegate.h"
 #include "ofxiOSExtras.h"
 #include "ofAppRunner.h"
@@ -156,12 +159,12 @@ CLLocationCoordinate2D ofxiOSMapKit::getCenterLocation() {
 
 
 // convert location (latitude, longitude) to screen coordinates (i.e. pixels)
-ofPoint ofxiOSMapKit::getScreenCoordinatesForLocation(double latitude, double longitude) {
+glm::vec2 ofxiOSMapKit::getScreenCoordinatesForLocation(double latitude, double longitude) {
     if(isOpen()) {
         CGPoint cgPoint = [mapView convertCoordinate:makeCLLocation(latitude, longitude) toPointToView:nil];
-        return ofPoint(cgPoint.x, cgPoint.y);
+        return glm::vec2(cgPoint.x, cgPoint.y);
     } else {
-        return ofPoint();
+        return glm::vec2();
     }
 }
 
@@ -262,3 +265,5 @@ void ofxiOSMapKit::errorLoadingMap(string errorDescription) {
 		o->errorLoadingMap(errorDescription);
 	}
 }
+
+#endif

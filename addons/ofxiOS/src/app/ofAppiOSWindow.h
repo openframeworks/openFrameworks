@@ -30,7 +30,7 @@
  * ***********************************************************************/
 
 #pragma once
-
+#include <TargetConditionals.h>
 #include "ofAppBaseWindow.h"
 #include "ofxiOSConstants.h"
 
@@ -162,13 +162,21 @@ public:
 	virtual void setWindowPosition(int x, int y);
 	virtual void setWindowShape(int w, int h);
 		
-	virtual ofPoint getWindowPosition();
-	virtual ofPoint getWindowSize();
-	virtual ofPoint getScreenSize();
+	virtual glm::vec2 getWindowPosition();
+	virtual glm::vec2 getWindowSize();
+	virtual glm::vec2 getScreenSize();
     
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 	virtual void setOrientation(ofOrientation orientation);
 	virtual ofOrientation getOrientation();
     virtual bool doesHWOrientation();
+    //-------------------------------------------- ios config.
+    bool enableHardwareOrientation();
+    bool disableHardwareOrientation();
+    
+    bool enableOrientationAnimation();
+    bool disableOrientationAnimation();
+#endif
 	
 	virtual int getWidth();
 	virtual int getHeight();
@@ -190,13 +198,6 @@ public:
     
     virtual void setVerticalSync(bool enabled);
 		
-    //-------------------------------------------- ios config.
-    bool enableHardwareOrientation();
-    bool disableHardwareOrientation();
-
-    bool enableOrientationAnimation();
-    bool disableOrientationAnimation();
-    
     bool isProgrammableRenderer();
     ofxiOSRendererType getGLESVersion();
     OF_DEPRECATED_MSG("Use ofiOSWindowSettings to setup programmable renderer by selecting glesVerison to >=2", bool enableRendererES2());

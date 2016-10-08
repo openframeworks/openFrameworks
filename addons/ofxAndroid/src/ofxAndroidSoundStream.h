@@ -11,22 +11,22 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 	public:
 		ofxAndroidSoundStream();
         ~ofxAndroidSoundStream();
-		
-		std::vector<ofSoundDevice> getDeviceList() const;
+
+		std::vector<ofSoundDevice> getDeviceList(ofSoundDevice::Api api) const;
 		void setDeviceID(int deviceID);
 
 		void setInput(ofBaseSoundInput * soundInput);
 		void setOutput(ofBaseSoundOutput * soundOutput);
-		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
-		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
+		bool setup(const ofSoundStreamSettings & settings);
 		
 		void start();
 		void stop();
 		void close();
-		
-		long unsigned long getTickCount() const;
 
-        int getDeviceID() const{return 0;}
+		uint64_t getTickCount() const;
+
+		ofSoundDevice getInDevice() const{ return ofSoundDevice(); }
+		ofSoundDevice getOutDevice() const{ return ofSoundDevice(); }
 		int getNumInputChannels() const;
 		int getNumOutputChannels() const;
 		int getSampleRate() const;

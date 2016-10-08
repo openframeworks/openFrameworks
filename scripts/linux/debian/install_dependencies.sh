@@ -35,7 +35,7 @@ fi
 
 
 echo "installing OF dependencies"
-apt-get install freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev libopencv-dev libegl1-mesa-dev libgles1-mesa-dev libgles2-mesa-dev libassimp-dev librtaudio-dev libboost-filesystem-dev
+apt-get install freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev libopencv-dev libegl1-mesa-dev libgles1-mesa-dev libgles2-mesa-dev libassimp-dev librtaudio-dev libboost-filesystem-dev libglfw3-dev
 exit_code=$?
 if [ $exit_code != 0 ]; then
     echo "error installing dependencies, there could be an error with your internet connection"
@@ -86,6 +86,6 @@ if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
 	fi
 	
     DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-    cd ${DIR}/../../apothecary
+    cd ${DIR}/../../apothecary/apothecary
     ./apothecary -j${cores} update poco
 fi

@@ -155,7 +155,7 @@ float ofWrap(float value, float from, float to){
 		swap(from, to);
 	}
 	float cycle = to - from;
-	if(cycle == 0){
+	if(ofIsFloatEqual(cycle, 0.0f)){
 		return to;
 	}
 	return value - cycle * floor((value - from) / cycle);
@@ -191,7 +191,7 @@ float ofNoise(float x, float y){
 }
 
 //--------------------------------------------------
-float ofNoise(const ofVec2f& p){
+float ofNoise(const glm::vec2& p){
 	return ofNoise( p.x, p.y );
 }
 
@@ -201,7 +201,7 @@ float ofNoise(float x, float y, float z){
 }
 
 //--------------------------------------------------
-float ofNoise(const ofVec3f& p){
+float ofNoise(const glm::vec3& p){
 	return ofNoise( p.x, p.y, p.z );
 }
 
@@ -211,7 +211,7 @@ float ofNoise(float x, float y, float z, float w){
 }
 
 //--------------------------------------------------
-float ofNoise(const ofVec4f& p){
+float ofNoise(const glm::vec4& p){
 	return ofNoise( p.x, p.y, p.z, p.w );
 }
 
@@ -226,7 +226,7 @@ float ofSignedNoise(float x, float y){
 }
 
 //--------------------------------------------------
-float ofSignedNoise(const ofVec2f& p){
+float ofSignedNoise(const glm::vec2& p){
 	return ofSignedNoise( p.x, p.y );
 }
 
@@ -236,7 +236,7 @@ float ofSignedNoise(float x, float y, float z){
 }
 
 //--------------------------------------------------
-float ofSignedNoise(const ofVec3f& p){
+float ofSignedNoise(const glm::vec3& p){
 	return ofSignedNoise( p.x, p.y, p.z );
 }
 
@@ -246,83 +246,8 @@ float ofSignedNoise(float x, float y, float z, float w){
 }
 
 //--------------------------------------------------
-float ofSignedNoise(const ofVec4f& p){
+float ofSignedNoise(const glm::vec4& p){
 	return ofSignedNoise( p.x, p.y, p.z, p.w );
-}
-
-//--------------------------------------------------
-bool ofInsidePoly(float x, float y, const vector<ofPoint>& polygon){
-    return ofPolyline::inside(x,y, ofPolyline(polygon));
-}
-
-//--------------------------------------------------
-bool ofInsidePoly(const ofPoint& p, const vector<ofPoint>& poly){
-    return ofPolyline::inside(p.x,p.y, ofPolyline(poly));
-}
-
-//--------------------------------------------------
-bool ofLineSegmentIntersection(const ofPoint& line1Start, const ofPoint& line1End, const ofPoint& line2Start, const ofPoint& line2End, ofPoint& intersection){
-	ofPoint diffLA, diffLB;
-	float compareA, compareB;
-	diffLA = line1End - line1Start;
-	diffLB = line2End - line2Start;
-	compareA = diffLA.x*line1Start.y - diffLA.y*line1Start.x;
-	compareB = diffLB.x*line2Start.y - diffLB.y*line2Start.x;
-	if (
-		(
-			( ( diffLA.x*line2Start.y - diffLA.y*line2Start.x ) < compareA ) ^
-			( ( diffLA.x*line2End.y - diffLA.y*line2End.x ) < compareA )
-		)
-		&&
-		(
-			( ( diffLB.x*line1Start.y - diffLB.y*line1Start.x ) < compareB ) ^
-			( ( diffLB.x*line1End.y - diffLB.y*line1End.x) < compareB )
-		)
-	)
-	{
-		float lDetDivInv = 1 / ((diffLA.x*diffLB.y) - (diffLA.y*diffLB.x));
-		intersection.x =  -((diffLA.x*compareB) - (compareA*diffLB.x)) * lDetDivInv ;
-		intersection.y =  -((diffLA.y*compareB) - (compareA*diffLB.y)) * lDetDivInv ;
-
-		return true;
-	}
-
-	return false;
-}
-
-//--------------------------------------------------
-ofPoint ofBezierPoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
-    float tp = 1.0f - t;
-    return a*tp*tp*tp + b*3*t*tp*tp + c*3*t*t*tp + d*t*t*t;
-}
-
-//--------------------------------------------------
-ofPoint ofCurvePoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
-    ofPoint pt;
-    float t2 = t * t;
-    float t3 = t2 * t;
-    pt.x = 0.5f * ( ( 2.0f * b.x ) +
-                   ( -a.x + c.x ) * t +
-                   ( 2.0f * a.x - 5.0f * b.x + 4 * c.x - d.x ) * t2 +
-                   ( -a.x + 3.0f * b.x - 3.0f * c.x + d.x ) * t3 );
-    pt.y = 0.5f * ( ( 2.0f * b.y ) +
-                   ( -a.y + c.y ) * t +
-                   ( 2.0f * a.y - 5.0f * b.y + 4 * c.y - d.y ) * t2 +
-                   ( -a.y + 3.0f * b.y - 3.0f * c.y + d.y ) * t3 );
-    return pt;
-}
-
-//--------------------------------------------------
-ofPoint ofBezierTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
-    return (d-a-c*3+b*3)*(t*t)*3 + (a+c-b*2)*t*6 - a*3+b*3;
-}
-
-//--------------------------------------------------
-ofPoint ofCurveTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
-    ofPoint v0 = ( c - a )*0.5;
-    ofPoint v1 = ( d - b )*0.5;
-    return ( b*2 -c*2 + v0 + v1)*(3*t*t) + ( c*3 - b*3 - v1 - v0*2 )*( 2*t) + v0;
-
 }
 
 //--------------------------------------------------

@@ -81,8 +81,8 @@ void ofApp::draw() {
 	ofPushMatrix();
 	ofTranslate(ofGetWidth()/2, ofGetHeight()/2, zoom);
 
-	ofRotate(mouseX, 1, 0, 0);
-	ofRotate(mouseY, 0, 1, 1);
+	ofRotateDeg(mouseX, 1, 0, 0);
+	ofRotateDeg(mouseY, 0, 1, 1);
 
 
 	// the lines

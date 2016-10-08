@@ -1,3 +1,6 @@
+#include "ofConstants.h"
+
+#if OF_USE_POCO
 #include "ofXml.h"
 #include "Poco/AutoPtr.h"
 
@@ -39,7 +42,7 @@ ofXml::ofXml(){
 }
 
 
-bool ofXml::load(const string & path){
+bool ofXml::load(const std::filesystem::path & path){
 	ofFile file(path, ofFile::ReadOnly);
 	if(!file.exists()){
 		ofLogError("ofXml") << "couldn't load, \"" << file.getFileName() << "\" not found";
@@ -50,77 +53,11 @@ bool ofXml::load(const string & path){
 }
 
 
-bool ofXml::save(const string & path){
-    ofBuffer buffer(toString());
+bool ofXml::save(const std::filesystem::path & path){
+    ofBuffer buffer;
+    buffer.set(toString());
     ofFile file(path, ofFile::WriteOnly);
     return file.writeFromBuffer(buffer);
-}
-
-
-void ofXml::serialize(const ofAbstractParameter & parameter){
-	if(!parameter.isSerializable()){
-		return;
-	}
-	string name = parameter.getEscapedName();
-	if(name == ""){
-		name = "UnknownName";
-	}
-	if(parameter.type() == typeid(ofParameterGroup).name()){
-		const ofParameterGroup & group = static_cast <const ofParameterGroup &>(parameter);
-		if(!exists(name)){
-			addChild(name);
-			ofLogVerbose("ofXml") << "creating group " << name;
-		}
-		setTo(name);
-		ofLogVerbose("ofXml") << "group " << name;
-		for(auto & p: group){
-			serialize(*p);
-		}
-		ofLogVerbose("ofXml") << "end group " << name;
-		setToParent();
-	}else{
-		string value = parameter.toString();
-		if(!exists(name)){
-			addChild(name);
-			ofLogVerbose("ofXml") << "creating tag " << name;
-		}
-		ofLogVerbose("ofXml") << "setting tag " << name << ": " << value;
-		setValue(name, value);
-	}
-}
-
-
-void ofXml::deserialize(ofAbstractParameter & parameter){
-	if(!parameter.isSerializable()){
-		return;
-	}
-	string name = parameter.getEscapedName();
-	if(parameter.type() == typeid(ofParameterGroup).name()){
-		ofParameterGroup & group = static_cast <ofParameterGroup &>(parameter);
-		if(setTo(name)){
-			for(auto & p: group){
-				deserialize(*p);
-			}
-			setToParent();
-		}
-	}else{
-		if(exists(name)){
-			if(parameter.type() == typeid(ofParameter <int> ).name()){
-				parameter.cast <int>() = getIntValue(name);
-			}else if(parameter.type() == typeid(ofParameter <float> ).name()){
-				parameter.cast <float>() = getFloatValue(name);
-			}else if(parameter.type() == typeid(ofParameter <bool> ).name()){
-				parameter.cast <bool>() = getBoolValue(name);
-			}else if(parameter.type() == typeid(ofParameter <int64_t> ).name()){
-				parameter.cast <int64_t>() = getInt64Value(name);
-			}else if(parameter.type() == typeid(ofParameter <string> ).name()){
-				parameter.cast <string>() = getValue(name);
-			}else{
-				parameter.fromString(getValue(name));
-			}
-		}
-	}
-
 }
 
 int ofXml::getNumChildren() const{
@@ -985,3 +922,71 @@ string ofXml::DOMErrorMessage(short msg){
 
 	return "DOM ERROR";
 }
+
+
+void ofSerialize(ofXml & xml, const ofAbstractParameter & parameter){
+	if(!parameter.isSerializable()){
+		return;
+	}
+	string name = parameter.getEscapedName();
+	if(name == ""){
+		name = "UnknownName";
+	}
+	if(parameter.type() == typeid(ofParameterGroup).name()){
+		const ofParameterGroup & group = static_cast <const ofParameterGroup &>(parameter);
+		if(!xml.exists(name)){
+			xml.addChild(name);
+			ofLogVerbose("ofXml") << "creating group " << name;
+		}
+		xml.setTo(name);
+		ofLogVerbose("ofXml") << "group " << name;
+		for(auto & p: group){
+			ofSerialize(xml, *p);
+		}
+		ofLogVerbose("ofXml") << "end group " << name;
+		xml.setToParent();
+	}else{
+		string value = parameter.toString();
+		if(!xml.exists(name)){
+			xml.addChild(name);
+			ofLogVerbose("ofXml") << "creating tag " << name;
+		}
+		ofLogVerbose("ofXml") << "setting tag " << name << ": " << value;
+		xml.setValue(name, value);
+	}
+}
+
+
+void ofDeserialize(const ofXml & xml, ofAbstractParameter & parameter){
+	if(!parameter.isSerializable()){
+		return;
+	}
+	string name = parameter.getEscapedName();
+	if(parameter.type() == typeid(ofParameterGroup).name()){
+		ofParameterGroup & group = static_cast <ofParameterGroup &>(parameter);
+		if(const_cast<ofXml&>(xml).setTo(name)){
+			for(auto & p: group){
+				ofDeserialize(xml, *p);
+			}
+			const_cast<ofXml&>(xml).setToParent();
+		}
+	}else{
+		if(xml.exists(name)){
+			if(parameter.type() == typeid(ofParameter <int> ).name()){
+				parameter.cast <int>() = xml.getIntValue(name);
+			}else if(parameter.type() == typeid(ofParameter <float> ).name()){
+				parameter.cast <float>() = xml.getFloatValue(name);
+			}else if(parameter.type() == typeid(ofParameter <bool> ).name()){
+				parameter.cast <bool>() = xml.getBoolValue(name);
+			}else if(parameter.type() == typeid(ofParameter <int64_t> ).name()){
+				parameter.cast <int64_t>() = xml.getInt64Value(name);
+			}else if(parameter.type() == typeid(ofParameter <string> ).name()){
+				parameter.cast <string>() = xml.getValue(name);
+			}else{
+				parameter.fromString(xml.getValue(name));
+			}
+		}
+	}
+
+}
+#endif

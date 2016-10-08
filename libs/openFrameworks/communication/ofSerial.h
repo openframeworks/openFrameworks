@@ -3,6 +3,7 @@
 #include <climits>
 #include "ofConstants.h"
 #include "ofTypes.h"
+#include "ofFileUtils.h"
 
 #if defined( TARGET_OSX ) || defined( TARGET_LINUX ) || defined (TARGET_ANDROID)
 	#include <termios.h>
@@ -191,7 +192,9 @@ public:
 	/// Be aware that the type of your buffer can only be unsigned char. If you're
 	/// trying to receieve ints or signed chars over a serial connection you'll
 	/// need to do some bit manipulation to correctly interpret that values.
-	int readBytes(unsigned char * buffer, int length);
+	long readBytes(unsigned char * buffer, size_t length);
+	long readBytes(char * buffer, size_t length);
+	long readBytes(ofBuffer & buffer, size_t length);
 
 	/// \brief Reads and returns a single byte from the requested device.
 	///
@@ -224,7 +227,9 @@ public:
 	/// unsigned char buf[3] = {'o', 'f', '!'};
 	/// device.writeBytes(&buf[0], 3);
 	/// ~~~~
-	int writeBytes(unsigned char * buffer, int length);
+	long writeBytes(const unsigned char * buffer, size_t length);
+	long writeBytes(const char * buffer, size_t length);
+	long writeBytes(const ofBuffer & buffer);
 
 	/// \brief Writes a single byte to the connected serial device.
 	///
@@ -238,6 +243,7 @@ public:
 	///	 ofLog(OF_LOG_ERROR, "Byte was not written to serial port");
 	/// ~~~~
 	bool writeByte(unsigned char singleByte);
+	bool writeByte(char singleByte);
 
 	/// \}
 	/// \name Clear Data

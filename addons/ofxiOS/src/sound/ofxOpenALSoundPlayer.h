@@ -61,7 +61,7 @@ public:
 	ofxOpenALSoundPlayer();
 	~ofxOpenALSoundPlayer();
 	
-	bool	load(string fileName, bool stream=false);
+	bool	load(std::filesystem::path fileName, bool stream=false);
 	void	unload();
 
 	void	play();
@@ -118,7 +118,7 @@ public:
 	float	pitch;
 	float	volume;
 	unsigned int length;
-	ofPoint location;
+	glm::vec3 location;
 	
 protected: //internal
 	

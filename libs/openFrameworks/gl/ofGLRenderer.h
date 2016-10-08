@@ -1,7 +1,6 @@
 #pragma once
 #include "ofBaseTypes.h"
 #include "ofPolyline.h"
-#include "ofMatrix4x4.h"
 #include <stack>
 #include "of3dGraphics.h"
 #include "ofBitmapFont.h"
@@ -10,7 +9,6 @@
 #include <set>
 
 class ofShapeTessellation;
-class ofMesh;
 class ofFbo;
 class of3dPrimitive;
 
@@ -76,26 +74,31 @@ public:
 	void pushMatrix();
 	void popMatrix();
 	void translate(float x, float y, float z = 0);
-	void translate(const ofPoint & p);
+	void translate(const glm::vec3 & p);
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1);
-	void rotate(float degrees, float vecX, float vecY, float vecZ);
-	void rotateX(float degrees);
-	void rotateY(float degrees);
-	void rotateZ(float degrees);
-	void rotate(float degrees);
+	void rotateDeg(float radians, float vecX, float vecY, float vecZ);
+	void rotateXDeg(float radians);
+	void rotateYDeg(float radians);
+	void rotateZDeg(float radians);
+	void rotateDeg(float radians);
+	void rotateRad(float radians, float vecX, float vecY, float vecZ);
+	void rotateXRad(float radians);
+	void rotateYRad(float radians);
+	void rotateZRad(float radians);
+	void rotateRad(float radians);
 	void matrixMode(ofMatrixMode mode);
 	void loadIdentityMatrix (void);
-	void loadMatrix (const ofMatrix4x4 & m);
+	void loadMatrix (const glm::mat4 & m);
 	void loadMatrix (const float * m);
-	void multMatrix (const ofMatrix4x4 & m);
+	void multMatrix (const glm::mat4 & m);
 	void multMatrix (const float * m);
-	void loadViewMatrix(const ofMatrix4x4 & m);
-	void multViewMatrix(const ofMatrix4x4 & m);
+	void loadViewMatrix(const glm::mat4 & m);
+	void multViewMatrix(const glm::mat4 & m);
 
-	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
-	ofMatrix4x4 getCurrentOrientationMatrix() const;
-	ofMatrix4x4 getCurrentViewMatrix() const;
-	ofMatrix4x4 getCurrentNormalMatrix() const;
+	glm::mat4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
+	glm::mat4 getCurrentOrientationMatrix() const;
+	glm::mat4 getCurrentViewMatrix() const;
+	glm::mat4 getCurrentNormalMatrix() const;
 	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
@@ -184,8 +187,8 @@ public:
 	void setLightAmbientColor(int lightIndex, const ofFloatColor& c);
 	void setLightDiffuseColor(int lightIndex, const ofFloatColor& c);
 	void setLightSpecularColor(int lightIndex, const ofFloatColor& c);
-	void setLightPosition(int lightIndex, const ofVec4f & position);
-	void setLightSpotDirection(int lightIndex, const ofVec4f & direction);
+	void setLightPosition(int lightIndex, const glm::vec4 & position);
+	void setLightSpotDirection(int lightIndex, const glm::vec4 & direction);
 
 
 	void bind(const ofBaseVideoDraws & video);
@@ -199,7 +202,7 @@ public:
 	void unbind(const ofTexture & texture, int location);
 	void unbind(const ofCamera & camera);
 
-	void begin(const ofFbo & fbo, bool setupPerspective);
+    void begin(const ofFbo & fbo, ofFboBeginMode mode);
 	void end(const ofFbo & fbo);
 
 	void bind(const ofFbo & fbo);
@@ -223,10 +226,10 @@ private:
 
 	bool bBackgroundAuto;
 
-	mutable vector<ofPoint> linePoints;
-	mutable vector<ofPoint> rectPoints;
-	mutable vector<ofPoint> triPoints;
-	mutable vector<ofPoint> circlePoints;
+	mutable vector<glm::vec3> linePoints;
+	mutable vector<glm::vec3> rectPoints;
+	mutable vector<glm::vec3> triPoints;
+	mutable vector<glm::vec3> circlePoints;
 	ofPolyline circlePolyline;
 
 	ofMatrixStack matrixStack;

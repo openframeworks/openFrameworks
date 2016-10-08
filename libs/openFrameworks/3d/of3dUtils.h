@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofConstants.h"
-class ofVec3f;
 
 /// \brief Draws x,y,z axes representing the current reference frame.
 ///
@@ -62,7 +61,7 @@ void ofDrawGridPlane(float stepSize = 1.25f, size_t numberOfSteps = 8, bool labe
 /// \param start The start point (tail) of the arrow, expressed as an ofVec3f.
 /// \param end The end point (head) of the arrow, expressed as an ofVec3f. 
 /// \param headSize The size of the arrowhead. 
-void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize = 0.05f);
+void ofDrawArrow(const glm::vec3& start, const glm::vec3& end, float headSize = 0.05f);
 
 /// \brief This function renders a set of 3 axis-aligned circular bands, centered at the origin.
 ///

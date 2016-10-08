@@ -70,9 +70,12 @@ public:
 		makeIdentityMatrix();
 	}
 
-	/// \brief You can pass another ofMatrix4x4 to create a copy.
-	ofMatrix4x4( const ofMatrix4x4& mat) {
-		set(mat.getPtr());
+	ofMatrix4x4( const glm::mat4 & mat) {
+		*this = reinterpret_cast<const ofMatrix4x4&>(mat);
+	}
+
+	operator glm::mat4(){
+		return *reinterpret_cast<glm::mat4*>(this);
 	}
 
 	/// \brief Construct with a pointer.
@@ -669,7 +672,7 @@ public:
 
 inline bool ofMatrix4x4::isNaN() const {
 	
-#if (_MSC_VER) || defined (TARGET_ANDROID)
+#if defined (TARGET_ANDROID)
 #ifndef isnan
 #define isnan(a) ((a) != (a))
 #endif

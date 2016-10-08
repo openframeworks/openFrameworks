@@ -124,7 +124,13 @@ public:
 	/// 
     ofVec2f( const ofVec4f& vec );
 	
-    /// \}
+	/// \}
+
+	ofVec2f(const glm::vec2 & v);
+	ofVec2f(const glm::vec3 & v);
+	ofVec2f(const glm::vec4 & v);
+
+	operator glm::vec2() const;
 
 	//---------------------
 	/// \name Access components
@@ -991,6 +997,9 @@ ofVec2f operator/( float f, const ofVec2f& vec );
 inline ofVec2f::ofVec2f(): x(0), y(0) {}
 inline ofVec2f::ofVec2f( float _scalar ): x(_scalar), y(_scalar) {}
 inline ofVec2f::ofVec2f( float _x, float _y ):x(_x), y(_y) {}
+inline ofVec2f::ofVec2f(const glm::vec2 & v): x(v.x), y(v.y) {}
+inline ofVec2f::ofVec2f(const glm::vec3 & v): x(v.x), y(v.y) {}
+inline ofVec2f::ofVec2f(const glm::vec4 & v): x(v.x), y(v.y) {}
 
 // Getters and Setters.
 //
@@ -1010,6 +1019,9 @@ inline void ofVec2f::set( const ofVec2f& vec ) {
 	y = vec.y;
 }
 
+inline ofVec2f::operator glm::vec2() const{
+	return glm::vec2(x,y);
+}
 
 // Check similarity/equality.
 //
@@ -1360,7 +1372,7 @@ inline ofVec2f& ofVec2f::average( const ofVec2f* points, std::size_t num ) {
 	}
 	x = 0.f;
 	y = 0.f;
-	for( size_t i=0; i<num; i++) {
+	for( std::size_t i=0; i<num; i++) {
 		x += points[i].x;
 		y += points[i].y;
 	}

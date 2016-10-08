@@ -88,6 +88,10 @@ int ofGetGlFormat(const ofPixels_<T> & pixels) {
 
 string ofGLSLVersionFromGL(int major, int minor);
 
+#ifndef TARGET_OPENGLES
+void ofEnableGLDebugLog();
+void ofDisableGLDebugLog();
+#endif
 
 #ifndef TARGET_OPENGLES
 	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT
