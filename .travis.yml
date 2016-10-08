@@ -56,6 +56,12 @@ matrix:
     env: TARGET="ios"
 
 
+  - os: osx
+    osx_image: xcode8
+    compiler: clang
+    env: TARGET="tvos"
+
+
   - os: linux
     sudo: false
     env: TARGET="android" OPT="armv7"
