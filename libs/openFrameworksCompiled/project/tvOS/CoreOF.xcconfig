@@ -12,7 +12,7 @@ HEADER_TESS2 = "$(OF_PATH)/libs/tess2/include"
 HEADER_RTAUDIO = "$(OF_PATH)/libs/rtaudio/include"
 HEADER_SSL = "$(OF_PATH)/libs/openssl/include"
 HEADER_BOOST = "$(OF_PATH)/libs/boost/include"
-HEADER_UTF8 = "$(OF_PATH)/libs/utf8cpp/include"
+HEADER_UTF8 = "$(OF_PATH)/libs/utf8/include"
 HEADER_JSON = "$(OF_PATH)/libs/json/include"
 HEADER_GLM = "$(OF_PATH)/libs/glm/include"
 
