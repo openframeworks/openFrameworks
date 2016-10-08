@@ -93,6 +93,8 @@ install:
         scripts/linux/download_libs.sh armv6l;
     elif [ "$TARGET" == "linuxarmv7" ]; then
         scripts/linux/download_libs.sh armv7l;
+    elif [ "$TARGET" == "tvos" ]; then
+        scripts/ios/download_libs.sh;
     else
         scripts/$TARGET/download_libs.sh;
     fi
