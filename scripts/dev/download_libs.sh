@@ -1,14 +1,45 @@
 #!/usr/bin/env bash
 set -e
-VER=$1
-PLATFORM=$2
-ARCH=$3
-if [ $# -eq 4 ]; then
-    OVERWRITE=$4
-else
-    OVERWRITE=1
-fi
+VER=master
+PLATFORM=""
+ARCH=""
+OVERWRITE=0
 
+while [[ $# -gt 1 ]]; do
+    key="$1"
+    case $key in
+        -v|--version)
+        VER="$2"
+        shift # past argument
+        ;;
+        -p|--platform)
+        PLATFORM="$2"
+        shift # past argument
+        ;;
+        -a|--arch)
+        ARCH="$2"
+        shift # past argument
+        ;;
+        -o|--overwrite)
+        OVERWRITE=1
+        ;;
+        *)
+                # unknown option
+        ;;
+    esac
+    shift # past argument or value
+done
+
+
+
+#VER=$1
+#PLATFORM=$2
+#ARCH=$3
+#if [ $# -eq 4 ]; then
+#    OVERWRITE=$4
+#else
+#    OVERWRITE=1
+#fi
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
