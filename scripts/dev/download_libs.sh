@@ -18,7 +18,7 @@ cat << EOF
                                     vs: 32 or 64
                                     msys2: 32
                                     android: armv7 or x86 (if not specified will download both)
-                                    linux: 64, armv6l or armv7l
+                                    linux: 64, 64gcc5, armv6l or armv7l
     -n, --no-overwrite          Merge new libraries with exisiting ones, use only to download same version for different platforms
                                 If not set deletes any existing libraries
     -h, --help                  Shows this message
@@ -86,9 +86,11 @@ if [ "$ARCH" == "" ]; then
                 ARCH=64
             fi
         elif [ "$ARCH" == "i686" ] || [ "$ARCH" == "i386" ]; then
-            echo "32bit linux is not officially supported anymore but compiling \
-    the libraries using the build script in apothecary/scripts \
-    should compile all the dependencies without problem"
+            cat << EOF
+32bit linux is not officially supported anymore but compiling
+the libraries using the build script in apothecary/scripts
+should compile all the dependencies without problem
+EOF
             exit 1
         fi
     elif [ "$PLATFORM" == "msys2" ]; then
