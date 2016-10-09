@@ -1,9 +1,9 @@
 ###############################################################################
 # CONFIGURE CORE PLATFORM MAKEFILE
-#   This file is where we make platform and architecture specific 
+#   This file is where we make platform and architecture specific
 #   configurations. This file can be specified for a generic architecture or can
-#   be defined as variants. For instance, normally this file will be located in 
-#   a platform specific subpath such as 
+#   be defined as variants. For instance, normally this file will be located in
+#   a platform specific subpath such as
 #
 #        $(OF_ROOT)/libs/openFrameworksComplied/linux64
 #
@@ -32,16 +32,16 @@ PLATFORM_DEFINES += LINUX
 
 ################################################################################
 # PLATFORM CFLAGS
-#   This is a list of fully qualified CFLAGS required when compiling for this 
-#   platform. These flags will always be added when compiling a project or the 
-#   core library.  These flags are presented to the compiler AFTER the 
-#   PLATFORM_OPTIMIZATION_CFLAGS below. 
+#   This is a list of fully qualified CFLAGS required when compiling for this
+#   platform. These flags will always be added when compiling a project or the
+#   core library.  These flags are presented to the compiler AFTER the
+#   PLATFORM_OPTIMIZATION_CFLAGS below.
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 PLATFORM_CFLAGS += -march=armv7
-PLATFORM_CFLAGS += -mtune=cortex-a8 
+PLATFORM_CFLAGS += -mtune=cortex-a8
 PLATFORM_CFLAGS += -mfpu=neon
 PLATFORM_CFLAGS += -mfloat-abi=hard
 PLATFORM_CFLAGS += -fPIC
@@ -72,38 +72,56 @@ PLATFORM_LIBRARIES += GLESv1_CM
 PLATFORM_LIBRARIES += GLESv2
 PLATFORM_LIBRARIES += EGL
 
-ifeq ($(CROSS_COMPILING),1)	
-	
+
+################################################################################
+# PLATFORM CORE EXCLUSIONS
+#   During compilation, these makefiles will generate lists of sources, headers
+#   and third party libraries to be compiled and linked into a program or core
+#   library. The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file
+#   paths that will be used to exclude matching paths and files during list
+#   generation.
+#
+#   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete
+#   string unless teh user adds a wildcard (%) operator to match subdirectories.
+#   GNU make only allows one wildcard for matching.  The second wildcard (%) is
+#   treated literally.
+#
+#   Note: Leave a leading space when adding list items with the += operator
+################################################################################
+
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
+
+ifeq ($(CROSS_COMPILING),1)
+
 	ifdef TOOLCHAIN_ROOT
 		#You have specified TOOLCHAIN_ROOT with an environment variable
 	else
 		TOOLCHAIN_ROOT = /opt/cross/bin
 	endif
-	
+
 	ifdef GCC_PREFIX
 		#You have specified GCC_PREFIX with an environment variable
 	else
 		GCC_PREFIX = arm-linux-gnueabihf
 	endif
-	
+
     PLATFORM_CXX = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-g++
 	PLATFORM_CC = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-gcc
 	PLATFORM_AR = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-ar
 	PLATFORM_LD = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-ld
-	
+
 	SYSROOT=$(RPI_ROOT)
-	
+
 	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
-	
+
 	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++/4.9
 
 	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/$(GCC_PREFIX)
 
-	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) 
-	PLATFORM_LDFLAGS += -Wl,-rpath=$(SYSROOT)/usr/lib/$(GCC_PREFIX) 
-	PLATFORM_LDFLAGS += -Wl,-rpath=$(SYSROOT)/lib/$(GCC_PREFIX) 
-	 
-	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
-	
-endif
+	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT)
+	PLATFORM_LDFLAGS += -Wl,-rpath=$(SYSROOT)/usr/lib/$(GCC_PREFIX)
+	PLATFORM_LDFLAGS += -Wl,-rpath=$(SYSROOT)/lib/$(GCC_PREFIX)
 
+	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
+
+endif

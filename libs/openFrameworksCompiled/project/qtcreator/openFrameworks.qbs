@@ -48,12 +48,13 @@ Product{
 
     Properties{
         condition: of.platform === "osx"
-        cpp.minimumOsxVersion: 10.8
+        cpp.minimumOsxVersion: 10.9
     }
 
     property stringList FILES_EXCLUDE: {
         if(qbs.targetOS.indexOf("linux")>-1){
             return [
+                "app/ofAppGlutWindow.*",
                 "video/ofDirectShowPlayer.*",
                 "video/ofDirectShowGrabber.*",
                 "video/ofAVFoundationVideoPlayer.*",
@@ -66,6 +67,7 @@ Product{
             ];
         }else if(qbs.targetOS.indexOf("windows")>-1){
             return [
+                "app/ofAppGlutWindow.*",
                 "video/ofGstVideoPlayer.*",
                 "video/ofGstVideoGrabber.*",
                 "video/ofGstUtils.*",
@@ -80,6 +82,7 @@ Product{
             ];
         }else if(qbs.targetOS.indexOf("osx")>-1){
             return [
+                "app/ofAppGlutWindow.*",
                 "video/ofGstVideoPlayer.*",
                 "video/ofGstVideoGrabber.*",
                 "video/ofGstUtils.*",
@@ -92,6 +95,7 @@ Product{
     }
 
     Group {
+        condition: !product.qbsBuild
         name: "src"
         files: {
             var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
@@ -110,6 +114,24 @@ Product{
         fileTags: ["filtered_sources"]
     }
 
+    files: {
+        if(qbsBuild){
+            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
+            var filteredSource = source.filter(function filterExcludes(path){
+                for(exclude in FILES_EXCLUDE){
+                    var patt = new RegExp(FILES_EXCLUDE[exclude]);
+                    var match = patt.exec(path);
+                    if(match!=null){
+                        return false;
+                    }
+                }
+                return true;
+            });
+            return filteredSource;
+        }else{
+            return [];
+        }
+    }
 
 
     readonly property string make: {
