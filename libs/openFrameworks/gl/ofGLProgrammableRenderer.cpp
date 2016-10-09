@@ -921,7 +921,7 @@ void ofGLProgrammableRenderer::background(const ofColor & c){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::background(float brightness) {
-	background(brightness);
+	background(ofColor(brightness));
 }
 
 //----------------------------------------------------------

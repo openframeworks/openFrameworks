@@ -1124,7 +1124,7 @@ void ofGLRenderer::background(const ofColor & c){
 
 //----------------------------------------------------------
 void ofGLRenderer::background(float brightness) {
-	background(brightness);
+	background(ofColor(brightness));
 }
 
 //----------------------------------------------------------

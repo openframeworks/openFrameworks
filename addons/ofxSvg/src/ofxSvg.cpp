@@ -26,9 +26,9 @@ void ofxSVG::load(string path){
 			 msg = "svgtiny_OUT_OF_MEMORY";
 			 break;
 
-		 case svgtiny_LIBXML_ERROR:
+		 /*case svgtiny_LIBXML_ERROR:
 			 msg = "svgtiny_LIBXML_ERROR";
-			 break;
+			 break;*/
 
 		 case svgtiny_NOT_SVG:
 			 msg = "svgtiny_NOT_SVG";
