@@ -11,7 +11,7 @@ HEADER_TESS2 = "$(OF_PATH)/libs/tess2/include"
 HEADER_RTAUDIO = "$(OF_PATH)/libs/rtaudio/include"
 HEADER_SSL = "$(OF_PATH)/libs/openssl/include"
 HEADER_BOOST = "$(OF_PATH)/libs/boost/include"
-HEADER_UTF8 = "$(OF_PATH)/libs/utf8cpp/include"
+HEADER_UTF8 = "$(OF_PATH)/libs/utf8/include"
 HEADER_JSON = "$(OF_PATH)/libs/json/include"
 HEADER_GLM = "$(OF_PATH)/libs/glm/include"
 
@@ -24,8 +24,6 @@ LIB_OPENSSL_1 = "$(OF_PATH)/libs/openssl/lib/ios/ssl.a"
 LIB_OPENSSL_2 = "$(OF_PATH)/libs/openssl/lib/ios/crypto.a"
 LIB_OPENSSL = $(LIB_OPENSSL_1) $(LIB_OPENSSL_2)
 LIB_POCO_0 = "$(OF_PATH)/libs/poco/lib/ios/PocoCrypto.a"
-LIB_POCO_1 = "$(OF_PATH)/libs/poco/lib/ios/PocoData.a"
-LIB_POCO_2 = "$(OF_PATH)/libs/poco/lib/ios/PocoDataSQLite.a"
 LIB_POCO_3 = "$(OF_PATH)/libs/poco/lib/ios/PocoJSON.a"
 LIB_POCO_4 = "$(OF_PATH)/libs/poco/lib/ios/PocoUtil.a"
 LIB_POCO_5 = "$(OF_PATH)/libs/poco/lib/ios/PocoXML.a"
@@ -43,7 +41,7 @@ MISC_FLAGS = "-ObjC"
 
 OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_POCO) $(LIB_BOOST) $(LIB_FREEIMAGE) $(LIB_FREETYPE) $(LIB_OPENSSL) $(LIB_TESS)
 OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_OFXACCELEROMETER) $(HEADER_POCO) $(HEADER_BOOST) $(HEADER_UTF8) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMODEX) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_RTAUDIO) $(HEADER_SSL) $(HEADER_JSON) $(HEADER_GLM)
- 
+
 // once all libraries are compiled for libc++ / all architectures
 CLANG_CXX_LIBRARY = libc++
 CLANG_CXX_LANGUAGE_STANDARD = c++11

@@ -70,7 +70,7 @@ PLATFORM_REQUIRED_ADDONS =
 ##########################################################################################
 
 ifndef MAC_OS_MIN_VERSION
-	MAC_OS_MIN_VERSION = 10.7
+	MAC_OS_MIN_VERSION = 10.9
 endif
 
 ifndef MAC_OS_STD_LIB
@@ -147,7 +147,6 @@ endif
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
 #PLATFORM_LDFLAGS += -arch i386
-#PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
 
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 
@@ -193,6 +192,7 @@ endif
 PLATFORM_CORE_EXCLUSIONS =
 
 # core sources
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitGrabber.cpp
@@ -293,7 +293,6 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 PLATFORM_FRAMEWORKS =
 PLATFORM_FRAMEWORKS += Accelerate
 PLATFORM_FRAMEWORKS += QTKit
-PLATFORM_FRAMEWORKS += GLUT
 PLATFORM_FRAMEWORKS += AGL
 PLATFORM_FRAMEWORKS += ApplicationServices
 PLATFORM_FRAMEWORKS += AudioToolbox
@@ -387,11 +386,11 @@ afterplatform: $(TARGET_NAME)
 
 
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
-	
+
 ifneq ($(USE_FMOD),0)
 	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/libs/* bin/$(BIN_NAME).app/Contents/MacOS
 endif
-	
+
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"

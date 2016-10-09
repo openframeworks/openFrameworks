@@ -45,14 +45,21 @@ matrix:
           - libstdc++6
 
   - os: osx
+    osx_image: xcode8
     compiler: clang
     env: TARGET="osx"
 
 
   - os: osx
-    osx_image: xcode7.1
+    osx_image: xcode8
     compiler: clang
     env: TARGET="ios"
+
+
+  - os: osx
+    osx_image: xcode8
+    compiler: clang
+    env: TARGET="tvos"
 
 
   - os: linux
@@ -60,7 +67,7 @@ matrix:
     env: TARGET="android" OPT="armv7"
     cache:
       directories:
-        - ~/android-ndk-r10e
+        - ~/android-ndk-r12b
 
 
   - os: linux
@@ -68,7 +75,7 @@ matrix:
     env: TARGET="android" OPT="x86"
     cache:
       directories:
-        - ~/android-ndk-r10e
+        - ~/android-ndk-r12b
 
 
   # Exclude the default build that would otherwise be generated
@@ -80,6 +87,18 @@ install:
   - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "linuxarmv6" ] || [ "$TARGET" == "linuxarmv7" ] || [ "$TARGET" == "docs" ] || [ "$TARGET" == "osx" ] || [ "$TARGET" == "emscripten" ]; then
         scripts/ci/$TARGET/install.sh;
     fi
+  - if [ "$TARGET" == "linux" ]; then
+        scripts/linux/download_libs.sh -a 64;
+    elif [ "$TARGET" == "linuxarmv6" ]; then
+        scripts/linux/download_libs.sh -a armv6l;
+    elif [ "$TARGET" == "linuxarmv7" ]; then
+        scripts/linux/download_libs.sh -a armv7l;
+    elif [ "$TARGET" == "tvos" ]; then
+        scripts/ios/download_libs.sh;
+    else
+        scripts/$TARGET/download_libs.sh;
+    fi
+
 
 script:
   - scripts/ci/$TARGET/build.sh $OPT

@@ -67,7 +67,6 @@ Module{
                 "FreeImage",
                 "assimp",
                 "glut",
-                "rtAudio",
                 "openssl",
                 "boost",
                 "glfw",
@@ -154,7 +153,6 @@ Module{
     readonly property stringList ADDITIONAL_LIBS: {
         if(platform === "linux"  || platform === "linux64"){
             return [
-                "glut",
                 "X11",
                 "Xrandr",
                 "Xxf86vm",
@@ -168,11 +166,15 @@ Module{
                 "boost_system",
             ];
         }else if(platform === "msys2"){
-            return [
+            var libs=[];
+            if(usePoco){
+                libs = ['PocoNetSSL', 'PocoNet', 'PocoCrypto', 'PocoUtil', 'PocoJSON', 'PocoXML', 'PocoFoundation',];
+            }
+            return libs.concat([
                 'opengl32', 'gdi32', 'msimg32', 'glu32', 'dsound', 'winmm', 'strmiids',
                 'uuid', 'ole32', 'oleaut32', 'setupapi', 'wsock32', 'ws2_32', 'Iphlpapi', 'Comdlg32',
-                'freeimage', 'boost_filesystem-mt', 'boost_system-mt', 'freetype', 'cairo','pthread'
-            ];
+                'freeimage', 'boost_filesystem-mt', 'boost_system-mt', 'freetype', 'cairo','pthread',
+            ]);
         }else if(platform === "android"){
             return [
                 'OpenSLES', 'z', 'GLESv1_CM', 'GLESv2', 'log'
@@ -271,7 +273,7 @@ Module{
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoJSON.a');
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoXML.a');
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoFoundation.a');
-            }else{
+            }else if(platform === "linux" || platform === "linux64"){
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNetSSL.a');
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNet.a');
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoCrypto.a');

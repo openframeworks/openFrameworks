@@ -47,7 +47,7 @@ else
 rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/"
 
 # ---- Code Sign App Package ----
- 
+
 # WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!
 
 # Verify that $CODE_SIGN_IDENTITY is set
@@ -172,7 +172,7 @@ fi
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>NO</string>
 				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>10.8</string>
+				<string>10.9</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
@@ -416,7 +416,7 @@ fi
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>NO</string>
 				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>10.8</string>
+				<string>10.9</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>YES</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
@@ -471,7 +471,7 @@ fi
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>NO</string>
 				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>10.8</string>
+				<string>10.9</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
@@ -767,14 +767,6 @@ rsync -aved ../../../libs/fmodex/lib/osx/libfmodex.dylib "$TARGET_BUILD_DIR/$PRO
 install_name_tool -change @executable_path/libfmodex.dylib @executable_path/../Frameworks/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";
 
 echo "$GCC_PREPROCESSOR_DEFINITIONS";
-APPSTORE=`expr "$GCC_PREPROCESSOR_DEFINITIONS" : ".*APPSTORE=\([0-9]*\)"`
-if [ -z "${APPSTORE}" ] ; then
-echo "Copying GLUT framework";
-# Copy GLUT framework (must remove for AppStore submissions)
-rsync -aved ../../../libs/glut/lib/osx/GLUT.framework "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/"
-else
-echo "Not including GLUT";
-fi
 </string>
 		</dict>
 		<key>E4C2427710CC5ABF004149E2</key>
