@@ -19,7 +19,7 @@ This project generator is new since 0.9 -- the original one in earlier OF releas
 
 Usage
 -----
-It's pretty simple to make an new project, or update an exisiting project, in the simple mode. there are 3 things you can adjust: 
+It's pretty simple to make an new project, or update an existing project, in the simple mode. there are 3 things you can adjust: 
 
 1. **Name of the project**  
 This is where you set the name of the project. This creates both a folder with this name and a project file, so for example, if your name is "myCoolExample" it will generate: 
