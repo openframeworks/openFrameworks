@@ -153,12 +153,15 @@ for PKG in $PKGS; do
 done
 
 if [ -e opencv ]; then
+    mkdir -p ../addons/ofxOpenCv/libs/opencv
     rsync -a opencv/ ../addons/ofxOpenCv/libs/opencv
 fi
 if [ -e ippicv ]; then
+    mkdir -p ../addons/ofxOpenCv/libs/ippicv
     rsync -a ippicv/ ../addons/ofxOpenCv/libs/ippicv
 fi
-if [ -e assimp ]; then
+if [ -e assimp ]; thenn
+    mkdir -p ../addons/ofxAssimpModelLoader/libs/assimp
     rsync -a assimp/ ../addons/ofxAssimpModelLoader/libs/assimp
 fi
 
