@@ -30,6 +30,16 @@ download(){
     wget ci.openframeworks.cc/libs/$1
 }
 
+# trap any script errors and exit
+trap "trapError" ERR SIGINT SIGTERM
+
+trapError() {
+    if [ -e openFrameworksLibs* ]; then
+        echo "removing packages"
+    	rm openFrameworksLibs*
+    fi
+}
+
 
 while [[ $# -gt 0 ]]; do
     key="$1"
@@ -106,7 +116,7 @@ if [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
 elif [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.zip"
 elif [ "$ARCH" == "" ] && [[ "$PLATFORM" == "osx" || "$PLATFORM" == "ios" || "$PLATFORM" == "tvos" ]]; then
-    PKGS="openFrameworksLibs_${VER}_${PLATFORM}1.tar.bz2 openFrameworksLibs_${VER}_${PLATFORM}2.tar.bz2"
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}1.tar.bz2 openFrameworksLibs_${VER}_${PLATFORM}2.tar.bz2 openFrameworksLibs_${VER}_${PLATFORM}3.tar.bz2"
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "android" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}armv7.tar.bz2 openFrameworksLibs_${VER}_${PLATFORM}x86.tar.bz2"
 else
@@ -141,3 +151,14 @@ for PKG in $PKGS; do
         rm ../scripts/dev/$PKG
     fi
 done
+
+if [ -e opencv ]; then
+    rsync -a opencv/ ../addons/ofxOpenCv/libs/opencv
+fi
+if [ -e ippicv ]; then
+    rsync -a ippicv/ ../addons/ofxOpenCv/libs/ippicv
+fi
+if [ -e assimp ]; then
+    rsync -a assimp/ ../addons/ofxAssimpModelLoader/libs/assimp
+fi
+
