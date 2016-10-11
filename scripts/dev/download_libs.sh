@@ -160,7 +160,7 @@ if [ -e ippicv ]; then
     mkdir -p ../addons/ofxOpenCv/libs/ippicv
     rsync -a ippicv/ ../addons/ofxOpenCv/libs/ippicv
 fi
-if [ -e assimp ]; thenn
+if [ -e assimp ]; then
     mkdir -p ../addons/ofxAssimpModelLoader/libs/assimp
     rsync -a assimp/ ../addons/ofxAssimpModelLoader/libs/assimp
 fi
