@@ -133,7 +133,7 @@ cd libs
 
 if [ $OVERWRITE -eq 1 ]; then
     echo "Removing old libraries"
-    libs=("boost" "cairo" "curl" "FreeImage" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "README.md")
+    libs=("boost" "cairo" "curl" "FreeImage" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "assimp" "README.md")
     for lib in $libs; do
         if [ -e $lib ]; then
             rm -rf $lib
@@ -153,18 +153,29 @@ for PKG in $PKGS; do
 done
 
 if [ -e opencv ]; then
+    if [ $OVERWRITE -eq 1 ] && [ -e ../addons/ofxOpenCv/libs/opencv ]; then
+        echo "Removing old opencv libraries"
+        rm -rf ../addons/ofxOpenCv/libs/opencv
+    fi
     mkdir -p ../addons/ofxOpenCv/libs/opencv
     rsync -a opencv/ ../addons/ofxOpenCv/libs/opencv
     rm -rf opencv
 fi
 if [ -e ippicv ]; then
+    if [ $OVERWRITE -eq 1 ] && [ -e ../addons/ofxOpenCv/libs/ippicv ]; then
+        echo "Removing old ippicv libraries"
+        rm -rf ../addons/ofxOpenCv/libs/ippicv
+    fi
     mkdir -p ../addons/ofxOpenCv/libs/ippicv
     rsync -a ippicv/ ../addons/ofxOpenCv/libs/ippicv
     rm -rf ippicv
 fi
 if [ -e assimp ]; then
+    if [ $OVERWRITE -eq 1 ] && [ -e ../addons/ofxOpenCv/libs/assimp ]; then
+        echo "Removing old assimp libraries"
+        rm -rf ../addons/ofxOpenCv/libs/assimp
+    fi
     mkdir -p ../addons/ofxAssimpModelLoader/libs/assimp
     rsync -a assimp/ ../addons/ofxAssimpModelLoader/libs/assimp
     rm -rf assimp
 fi
-
