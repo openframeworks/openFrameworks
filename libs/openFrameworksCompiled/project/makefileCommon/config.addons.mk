@@ -110,48 +110,48 @@ define parse_addon
 		$(eval ADDON_INCLUDES_FILTERED = $(filter-out $(addprefix $(addon)/,$(ADDON_INCLUDES_EXCLUDE)),$(ADDON_INCLUDES))) \
 		$(foreach addon_include, $(strip $(ADDON_INCLUDES_FILTERED)), \
 			$(if $(wildcard $(addon)/$(addon_include)), \
-				$(eval PROJECT_ADDONS_INCLUDES += $(addon)/$(addon_include)) \
+				$(eval TMP_PROJECT_ADDONS_INCLUDES += $(addon)/$(addon_include)) \
 			) \
 			$(if $(wildcard $(addon_include)), \
-				$(eval PROJECT_ADDONS_INCLUDES += $(addon_include)) \
+				$(eval TMP_PROJECT_ADDONS_INCLUDES += $(addon_include)) \
 			) \
 		) \
 	) \
-	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_CFLAGS)) \
-	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_CPPFLAGS)) \
+	$(eval TMP_PROJECT_ADDONS_CFLAGS += $(ADDON_CFLAGS)) \
+	$(eval TMP_PROJECT_ADDONS_CFLAGS += $(ADDON_CPPFLAGS)) \
 	$(if $(strip $(ADDON_LIBS)), \
 		$(foreach addon_lib, $(strip $(ADDON_LIBS)), \
 			$(if $(wildcard $(addon)/$(addon_lib)), \
-				$(eval PROJECT_ADDONS_LIBS += $(addon)/$(addon_lib)) \
+				$(eval TMP_PROJECT_ADDONS_LIBS += $(addon)/$(addon_lib)) \
 			) \
 			$(if $(wildcard $(addon_lib)), \
-				$(eval PROJECT_ADDONS_LIBS += $(addon_lib)) \
+				$(eval TMP_PROJECT_ADDONS_LIBS += $(addon_lib)) \
 			) \
 		) \
 	) \
-	$(eval PROJECT_ADDONS_LDFLAGS += $(ADDON_LDFLAGS)) \
-	$(eval PROJECT_ADDONS_PKG_CONFIG_LIBRARIES += $(ADDON_PKG_CONFIG_LIBRARIES)) \
-	$(eval PROJECT_ADDONS_FRAMEWORKS += $(ADDON_FRAMEWORKS)) \
+	$(eval TMP_PROJECT_ADDONS_LDFLAGS += $(ADDON_LDFLAGS)) \
+	$(eval TMP_PROJECT_ADDONS_PKG_CONFIG_LIBRARIES += $(ADDON_PKG_CONFIG_LIBRARIES)) \
+	$(eval TMP_PROJECT_ADDONS_FRAMEWORKS += $(ADDON_FRAMEWORKS)) \
 	$(eval PROJECT_AFTER += $(ADDON_AFTER)) \
 	$(if $(strip $(ADDON_SOURCES)), \
 		$(eval ADDON_SOURCES_FILTERED = $(filter-out $(addprefix $(addon)/,$(ADDON_SOURCES_EXCLUDE)),$(ADDON_SOURCES))) \
 		$(foreach addon_src, $(strip $(ADDON_SOURCES_FILTERED)), \
 			$(if $(filter $(addon)%, $(addon_src)), \
-				$(eval PROJECT_ADDONS_SOURCE_FILES += $(addon_src)) \
+				$(eval TMP_PROJECT_ADDONS_SOURCE_FILES += $(addon_src)) \
 				$(eval SRC_OBJ_FILE=$(addprefix $(addon_obj_path)/,$(strip $(call src_to_obj, $(addon_src:$(addon)/%=%),$(notdir $1)/,$(obj_prefix))))) \
-				$(eval PROJECT_ADDONS_OBJ_FILES += $(SRC_OBJ_FILE)) \
+				$(eval TMP_PROJECT_ADDONS_OBJ_FILES += $(SRC_OBJ_FILE)) \
 			, \
 				$(if $(filter $(OF_ROOT)%, $(addon_src)), \
-					$(eval PROJECT_ADDONS_SOURCE_FILES += $(addon_src)) \
+					$(eval TMP_PROJECT_ADDONS_SOURCE_FILES += $(addon_src)) \
 					$(eval SRC_OBJ_FILE=$(strip $(call src_to_obj, $(addon_src:$(OF_ROOT)/%=%),,$(obj_prefix)))) \
-					$(eval PROJECT_ADDONS_OBJ_FILES += $(SRC_OBJ_FILE)) \
+					$(eval TMP_PROJECT_ADDONS_OBJ_FILES += $(SRC_OBJ_FILE)) \
 				,$(error cannot find addon source file $(addon_src)) \
 				) \
 			) \
 		) \
 	) \
 	$(if $(strip $(ADDON_DATA)), \
-		$(eval PROJECT_ADDONS_DATA += $(addprefix $(addon)/,$(ADDON_DATA))) \
+		$(eval TMP_PROJECT_ADDONS_DATA += $(addprefix $(addon)/,$(ADDON_DATA))) \
 	) \
 	$(foreach addon_dep, $(strip $(ADDON_DEPENDENCIES)), \
 		$(if $(filter-out $(PROJECT_ADDONS),$(addon_dep)), \
@@ -166,6 +166,25 @@ $(foreach addon_to_parse, $(PROJECT_ADDONS), \
 	$(call parse_addon,$(addon_to_parse)) \
 )
 
+#define uniq =
+#  $(eval seen :=)
+#  $(foreach _,$1,$(if $(filter $_,${seen}),,$(eval seen += $_)))
+#  ${seen}
+#endef
+
+
+uniq = $(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$1)))
+
+
+PROJECT_ADDONS_CFLAGS = $(call uniq,$(TMP_PROJECT_ADDONS_CFLAGS))
+PROJECT_ADDONS_INCLUDES = $(call uniq,$(TMP_PROJECT_ADDONS_INCLUDES))
+PROJECT_ADDONS_LIBS = $(call uniq,$(TMP_PROJECT_ADDONS_LIBS))
+PROJECT_ADDONS_LDFLAGS = $(call uniq,$(TMP_PROJECT_ADDONS_LDFLAGS))
+PROJECT_ADDONS_PKG_CONFIG_LIBRARIES = $(call uniq,$(TMP_PROJECT_ADDONS_PKG_CONFIG_LIBRARIES))
+PROJECT_ADDONS_FRAMEWORKS = $(call uniq,$(TMP_PROJECT_ADDONS_FRAMEWORKS))
+PROJECT_ADDONS_SOURCE_FILES = $(call uniq,$(TMP_PROJECT_ADDONS_SOURCE_FILES))
+PROJECT_ADDONS_OBJ_FILES = $(call uniq,$(TMP_PROJECT_ADDONS_OBJ_FILES))
+PROJECT_ADDONS_DATA = $(call uniq,$(TMP_PROJECT_ADDONS_DATA))
 
 OF_PROJECT_ADDONS_OBJS = $(PROJECT_ADDONS_OBJ_FILES)
 OF_PROJECT_ADDONS_DEPS = $(patsubst %.o,%.d,$(PROJECT_ADDONS_OBJ_FILES))
