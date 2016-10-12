@@ -388,7 +388,7 @@ afterplatform: $(TARGET_NAME)
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 
 ifneq ($(USE_FMOD),0)
-	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/libs/* bin/$(BIN_NAME).app/Contents/MacOS
+	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/MacOS;
 endif
 
 	@echo
