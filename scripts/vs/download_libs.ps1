@@ -1,7 +1,7 @@
 param([String]$ver="master")
 $currentPath = $pwd
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
-$libsDir = "..\..\libs"
+$libsDir = $scriptPath + "\..\..\libs"
 
 function DownloadLibs{
     cd $scriptPath
@@ -15,16 +15,16 @@ function DownloadLibs{
     }
 
     echo "Downloading $url to $scriptPath\$pkg"
-    $client.DownloadFile($url, '.\'+$pkg)
+    $client.DownloadFile($url, "$scriptPath\$pkg")
 
     If(Test-Path "$libsDir\$arch") {
         Remove-Item "$libsDir\$arch" -Force -Recurse
     }
     new-item "$libsDir\$arch" -itemtype directory
 
-    echo "Uncompressing downloaded libs"
+    echo "Uncompressing downloaded libs to $libsDir\$arch"
     Add-Type -A System.IO.Compression.FileSystem
-    [IO.Compression.ZipFile]::ExtractToDirectory($pkg, "..\..\libs\$arch")
+    [IO.Compression.ZipFile]::ExtractToDirectory($pkg, "$libsDir\$arch")
 
     Remove-Item $pkg
 }
@@ -36,7 +36,7 @@ If(-Not $libsExists) {
     new-item $libsDir -itemtype directory
 }
 
-$libs = @("32", "64", "boost", "cairo", "curl", "FreeImage", "freetype", "glew", "glfw", "json", "libpng", "openssl", "pixman", "poco", "rtAudio", "tess2", "uriparser", "utf8", "videoInput", "zlib", "README.md", ".appveyor.yml", ".travis.yml")
+$libs = @("32", "64", "boost", "cairo", "curl", "FreeImage", "freetype", "glew", "glfw", "json", "libpng", "openssl", "pixman", "poco", "rtAudio", "tess2", "uriparser", "utf8", "videoInput", "zlib", "opencv", "assimp", "README.md", ".appveyor.yml", ".travis.yml")
 echo "Deleting existing libs"
 ForEach ($lib in $libs){
     if(Test-Path "..\..\libs\$lib"){
@@ -46,6 +46,14 @@ ForEach ($lib in $libs){
 
 DownloadLibs 32
 DownloadLibs 64
+
+robocopy.exe ..\..\libs\32\opencv ..\..\addons\ofxOpenCv\libs\ /MOVE /NFL /R:5 /S
+robocopy.exe ..\..\libs\64\opencv\lib\vs\x64 ..\..\addons\ofxOpenCv\libs\opencv\lib\vs\ /MOVE /NFL /R:5 /S
+Remove-Item "..\..\libs\64\opencv" -Force -Recurse
+
+robocopy.exe ..\..\libs\32\assimp ..\..\addons\ofxOpenCv\libs\ /MOVE /NFL /R:5 /S
+robocopy.exe ..\..\libs\64\assimp\lib\vs\x64 ..\..\addons\ofxOpenCv\libs\assimp\lib\vs\ /MOVE /NFL /R:5 /S
+Remove-Item "..\..\libs\64\assimp" -Force -Recurse
 
 robocopy.exe ..\..\libs\32\ ..\..\libs\ /MOVE /NFL /R:5 /S
 robocopy.exe ..\..\libs\64\ ..\..\libs\ /MOVE /NFL /R:5 /S
