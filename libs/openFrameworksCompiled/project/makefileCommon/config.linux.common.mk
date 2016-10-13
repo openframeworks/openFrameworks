@@ -324,7 +324,7 @@ PLATFORM_LIBRARIES += boost_system
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
-ifneq ($(OF_USE_POCO),0)
+ifeq ($(OF_USE_POCO),1)
     PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
     PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
     PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a

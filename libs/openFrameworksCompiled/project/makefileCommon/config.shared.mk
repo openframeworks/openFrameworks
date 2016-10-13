@@ -256,6 +256,9 @@ endif
 ################################################################################
 
 # take from the platform core exclusions and strip and collapse spaces
+ifndef OF_USE_POCO
+    OF_USE_POCO=0
+endif
 ifeq ($(OF_USE_POCO),0)
     PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include
     PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/%

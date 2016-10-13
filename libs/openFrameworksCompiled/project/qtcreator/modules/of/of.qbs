@@ -474,7 +474,7 @@ Module{
         return ldflags;
     }
 
-    readonly property bool usePoco: project.usePoco!==undefined ? project.usePoco : true
+    readonly property bool usePoco: project.usePoco!==undefined ? project.usePoco : false
 
     readonly property stringList DEFINES: {
         var defines = ['GCC_HAS_REGEX'];
@@ -491,8 +491,8 @@ Module{
             }
         }
 
-        if(!usePoco){
-            defines = defines.concat(['OF_USE_POCO=0'])
+        if(usePoco){
+            defines = defines.concat(['OF_USE_POCO=1'])
         }
 
         return defines;
