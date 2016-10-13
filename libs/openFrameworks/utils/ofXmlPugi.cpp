@@ -272,7 +272,7 @@ bool ofXml::setToPrevSibling(){
 bool ofXml::setValue(const string& path, const string& value){
 	pugi::xml_node e;
     if(element){
-		e = element.select_node(path.c_str()).node();
+		e = element.select_single_node(path.c_str()).node();
     }else{
         ofLogWarning("ofXml") << "setValue(): no element set yet";
         return false;
@@ -301,7 +301,7 @@ string ofXml::getAttribute(const string& path) const{
 		if(path.find("[@") == string::npos){
 			return element.attribute(path.c_str()).as_string();
 		}else{
-			return element.select_node(path.c_str()).node().text().as_string();
+			return element.select_single_node(path.c_str()).node().text().as_string();
         }
     }else{
         ofLogWarning("ofXml") << "getAttribute(): no element set yet";
@@ -313,7 +313,7 @@ string ofXml::getAttribute(const string& path) const{
 bool ofXml::removeAttribute(const string& path){
 	if(element){
         if(path.find("[@") != string::npos){
-			auto node = element.select_node(path.c_str()).node();
+			auto node = element.select_single_node(path.c_str()).node();
 			element.remove_child(node);
 		}else{
 			element.remove_attribute(path.c_str());
@@ -371,7 +371,7 @@ bool ofXml::removeContents(){
 bool ofXml::removeContents(const string& path){
 	pugi::xml_node e;
     if(element){
-		e = element.select_node(path.c_str()).node();
+		e = element.select_single_node(path.c_str()).node();
     }else{
         ofLogWarning("ofXml") << "clearContents(): no element set yet";
         return false;
@@ -396,7 +396,7 @@ void ofXml::clear(){
 bool ofXml::remove(const string & path){ // works for both attributes and tags
 	pugi::xml_node node;
 	if(element){
-		node = element.select_node(path.c_str()).node();
+		node = element.select_single_node(path.c_str()).node();
 	}else{
 		ofLogWarning("ofXml") << "remove(): no element set yet";
 		return false;
@@ -423,7 +423,7 @@ void ofXml::remove(){
 
 bool ofXml::exists(const string & path) const{ // works for both attributes and tags
 	if(element){
-		return element.select_node(path.c_str()).node();
+		return element.select_single_node(path.c_str()).node();
 	}else{
 		return false;
 	}
@@ -452,7 +452,7 @@ bool ofXml::setAttribute(const string& path, const string& value){
 
     // you can pass either /node[@attr] or just attr
     if(path.find("[@") != string::npos){
-		element.select_node(path.c_str()).attribute().set_value(value.c_str());
+		element.select_single_node(path.c_str()).attribute().set_value(value.c_str());
     }else{
 		auto attr = element.attribute(path.c_str());
 		if(attr){
@@ -484,7 +484,7 @@ string ofXml::getName() const {
 
 bool ofXml::setTo(const string& path){
 	if(path.find("//") != string::npos){
-		auto node = document.select_node(path.c_str()).node();
+		auto node = document.select_single_node(path.c_str()).node();
 		if(node){
 			element = node;
 			return true;
@@ -492,7 +492,7 @@ bool ofXml::setTo(const string& path){
 			return false;
 		}
 	}else{
-		auto node = element.select_node(path.c_str()).node();
+		auto node = element.select_single_node(path.c_str()).node();
 		if(node){
 			element = node;
 			return true;
@@ -511,7 +511,7 @@ const pugi::xml_node & ofXml::getPugiElement() const{
 }
 
 pugi::xml_node ofXml::getPugiElement(const string& path){
-	return element.select_node(path.c_str()).node();
+	return element.select_single_node(path.c_str()).node();
 }
 
 
