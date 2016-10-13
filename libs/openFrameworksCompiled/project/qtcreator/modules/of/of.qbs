@@ -69,6 +69,7 @@ Module{
                 "glut",
                 "openssl",
                 "boost",
+                "glfw",
                 "openFrameworksCompiled"
             ];
         }else if(platform==="osx"){
@@ -130,7 +131,10 @@ Module{
 
             if(usePoco){
                 pkgs.push("openssl")
+            }else{
+                pkgs = pkgs.concat(["libcurl", "liburiparser"])
             }
+
             return pkgs;
         }else if(platform === "msys2"){
             var pkgs = [
@@ -142,7 +146,10 @@ Module{
 
             if(usePoco){
                 pkgs.push("openssl")
+            }else{
+                pkgs = pkgs.concat(["libcurl", "liburiparser"])
             }
+
             return pkgs;
         }else{
             return [];
@@ -467,7 +474,7 @@ Module{
         return ldflags;
     }
 
-    readonly property bool usePoco: project.usePoco!==undefined ? project.usePoco : true
+    readonly property bool usePoco: project.usePoco!==undefined ? project.usePoco : false
 
     readonly property stringList DEFINES: {
         var defines = ['GCC_HAS_REGEX'];
@@ -484,8 +491,8 @@ Module{
             }
         }
 
-        if(!usePoco){
-            defines = defines.concat(['OF_USE_POCO=0'])
+        if(usePoco){
+            defines = defines.concat(['OF_USE_POCO=1'])
         }
 
         return defines;

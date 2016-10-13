@@ -238,13 +238,13 @@ endif
 ################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os -DNDEBUG
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
 
 # RELEASE options
 PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -s
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -O0 -g3 -DANDROID_NDK -D_DEBUG -DDEBUG #-D_GLIBCXX_DEBUG
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -O0 -g3 -DANDROID_NDK -D_DEBUG #-D_GLIBCXX_DEBUG
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -379,12 +379,14 @@ PLATFORM_LIBRARIES += m
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
+ifeq ($(OF_USE_POCO),1)
+    PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
+    PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
+    PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
+    PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
+    PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
+    PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
+endif
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libssl.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libcrypto.a
 # shared libraries

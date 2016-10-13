@@ -164,7 +164,7 @@ PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os -DNDEBUG
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
@@ -220,8 +220,13 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 
-# third party static libs (this may not matter due to exclusions in poco's libsorder.make)
+# third party static libs
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/lib/$(PLATFORM_LIB_SUBPATH)/%
+
+ifneq ($(OF_USE_POCO),1)
+    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/%
+    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/lib/%
+endif
 
 ifeq ($(USE_FMOD),0)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
@@ -306,6 +311,10 @@ PLATFORM_FRAMEWORKS += CoreVideo
 PLATFORM_FRAMEWORKS += AVFoundation
 PLATFORM_FRAMEWORKS += CoreMedia
 PLATFORM_FRAMEWORKS += QuartzCore
+ifneq ($(OF_USE_POCO),1)
+    PLATFORM_FRAMEWORKS += Security
+    PLATFORM_FRAMEWORKS += LDAP
+endif
 
 ifeq ($(USE_GST),1)
 	PLATFORM_FRAMEWORKS += GStreamer
@@ -388,7 +397,7 @@ afterplatform: $(TARGET_NAME)
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 
 ifneq ($(USE_FMOD),0)
-	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/libs/* bin/$(BIN_NAME).app/Contents/MacOS
+	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/MacOS;
 endif
 
 	@echo

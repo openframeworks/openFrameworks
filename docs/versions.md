@@ -42,4 +42,4 @@ _10: patch for events which only affects headers so binaries can be compiled fro
 
 _11: modified oF headers so patch is no longer necessary
 
-_12: (not mantained anymore) patched to remove asserts, source in libs/tess2/Sources
+_12: (not maintained anymore) patched to remove asserts, source in libs/tess2/Sources

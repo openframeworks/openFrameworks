@@ -192,7 +192,7 @@ PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-section
 
 ifndef PROJECT_OPTIMIZATION_CFLAGS_RELEASE
 	# RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-	PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3 -DNDEBUG
+	PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
 	
 	ifneq ($(LINUX_ARM),1)
 		PLATFORM_OPTIMIZATION_CFLAGS_RELEASE += -march=native -mtune=native
@@ -258,6 +258,8 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/uriparser/%
 
 ifeq ($(USE_FMOD),0)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
@@ -322,7 +324,7 @@ PLATFORM_LIBRARIES += boost_system
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
-ifneq ($(OF_USE_POCO),0)
+ifeq ($(OF_USE_POCO),1)
     PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
     PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
     PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
@@ -367,6 +369,11 @@ ifneq ($(LINUX_ARM),1)
 	PLATFORM_PKG_CONFIG_LIBRARIES += gl
 	PLATFORM_PKG_CONFIG_LIBRARIES += glu
 	PLATFORM_PKG_CONFIG_LIBRARIES += glew
+endif
+
+ifeq ($(OF_USE_POCO),0)
+	PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
+	PLATFORM_PKG_CONFIG_LIBRARIES += liburiparser
 endif
 
 # conditionally add GTK

@@ -61,9 +61,9 @@ public:
 	void setup( const std::string &hostname, int port );
 
 	/// send the given message
-	void sendMessage( ofxOscMessage& message, bool wrapInBundle = true );
+	void sendMessage( const ofxOscMessage& message, bool wrapInBundle = true );
 	/// send the given bundle
-	void sendBundle( ofxOscBundle& bundle );
+	void sendBundle( const ofxOscBundle& bundle );
 	/// creates a message using an ofParameter
 	void sendParameter( const ofAbstractParameter & parameter);
 
@@ -78,8 +78,8 @@ private:
 	void shutdown();
 		
 	// helper methods for constructing messages
-	void appendBundle( ofxOscBundle& bundle, osc::OutboundPacketStream& p );
-	void appendMessage( ofxOscMessage& message, osc::OutboundPacketStream& p );
+	void appendBundle( const ofxOscBundle& bundle, osc::OutboundPacketStream& p );
+	void appendMessage( const ofxOscMessage& message, osc::OutboundPacketStream& p );
     void appendParameter( ofxOscBundle & bundle, const ofAbstractParameter & parameter, const std::string &address);
     void appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, const std::string &address);
 
