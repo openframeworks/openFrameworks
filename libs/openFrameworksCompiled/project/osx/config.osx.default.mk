@@ -223,6 +223,11 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 # third party static libs
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/lib/$(PLATFORM_LIB_SUBPATH)/%
 
+ifneq ($(OF_USE_POCO),1)
+    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/%
+    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/lib/%
+endif
+
 ifeq ($(USE_FMOD),0)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
@@ -306,6 +311,10 @@ PLATFORM_FRAMEWORKS += CoreVideo
 PLATFORM_FRAMEWORKS += AVFoundation
 PLATFORM_FRAMEWORKS += CoreMedia
 PLATFORM_FRAMEWORKS += QuartzCore
+ifneq ($(OF_USE_POCO),1)
+    PLATFORM_FRAMEWORKS += Security
+    PLATFORM_FRAMEWORKS += LDAP
+endif
 
 ifeq ($(USE_GST),1)
 	PLATFORM_FRAMEWORKS += GStreamer
