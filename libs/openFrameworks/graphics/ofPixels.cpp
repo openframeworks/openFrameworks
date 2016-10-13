@@ -363,7 +363,7 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, siz
 	size_t channels = channelsFromPixelFormat(_pixelFormat);
 	if(channels==0) return;
 
-	switch(pixelFormat){
+	switch(_pixelFormat){
 	case OF_PIXELS_I420: {
 	    if(strides.size() != 3){
 		ofLogError("ofPixels") << "number of planes for I420 should be 3";

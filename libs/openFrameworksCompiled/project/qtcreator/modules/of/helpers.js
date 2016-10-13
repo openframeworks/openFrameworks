@@ -1,6 +1,42 @@
 var Process = loadExtension("qbs.Process");
 var File = loadExtension("qbs.File");
 var TextFile = loadExtension("qbs.TextFile");
+var Environment = loadExtension("qbs.Environment");
+
+
+function msys2root(){
+    var msys2 = "";
+	var systemPath = Environment.getEnv("PATH");
+	if(systemPath === undefined){
+        console.error("PATH is not defined")
+        return msys2;
+	}
+	
+	var where = new Process();
+    where.exec("where.exe", ['find']); 
+    if(where.exitCode()!==0){
+        throw("error: There is a problem to detect the 'find' command.");
+    }
+	
+	var line = where.readLine();
+	var findPos = line.indexOf("usr\\bin\\find.exe");
+	
+	if (findPos > -1){
+		msys2 = line.slice(0,findPos);
+	}
+	
+    //console.error("PATH=>"+systemPath);
+	var usrPos = systemPath.indexOf(msys2 + "usr\\bin;");
+	var mingw32Pos = systemPath.indexOf(msys2 + "mingw32\\bin;");
+	
+    if( (usrPos == -1) || (mingw32Pos == -1) || (mingw32Pos > usrPos) ){
+		console.error("PATH="+systemPath);
+		throw("error : your PATH is incorrect. Please make sure that {MSYS2ROOT}\\mingw32\\bin;{MSYS2ROOT}\\usr\\bin is at the beginning of your PATH");
+	}
+	
+	return msys2;
+}
+
 
 function listDir(dir){
     var ls = new Process();
@@ -28,14 +64,8 @@ function listDirsRecursive(dir){
     var params = [dir,'-type','d'];
     find.exec("find", params)
     if(find.exitCode()!==0){
-        find.exec("C:\\msys64\\usr\\bin\\find", params);
-        if(find.exitCode()!==0){
-            find.exec("C:\\msys32\\usr\\bin\\find", params);
-            if(find.exitCode()!==0){
-                var error = find.readStdErr();
-                throw("error: " + error)
-            }
-        }
+		var error = find.readStdErr();
+		throw("error: " + error)
     }
     var line = find.readLine();
     while(line.trim()!==""){
@@ -126,14 +156,8 @@ function findSourceRecursive(dir){
                   ,'-or', '-name', '*.frag'];
     find.exec("find", params);
     if(find.exitCode()!==0){
-        find.exec("C:\\msys64\\usr\\bin\\find", params);
-        if(find.exitCode()!==0){
-            find.exec("C:\\msys32\\usr\\bin\\find", params);
-            if(find.exitCode()!==0){
-                var error = find.readStdErr();
-                throw("error: " + error)
-            }
-        }
+		var error = find.readStdErr();
+		throw("error: " + error)
     }
     var line = find.readLine();
     while(line.trim()!==""){
@@ -322,3 +346,4 @@ function absOFRoot(){
         return FileInfo.joinPaths(path, project.of_root);
     }
 }
+
