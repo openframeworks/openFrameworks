@@ -17,30 +17,18 @@
 ################################################################################
 #   
 
-ifndef SHELL
-    SHELL := /bin/sh
-endif
 
-ifndef OF_ROOT
-    OF_ROOT=$(realpath ../../..)
-endif
-
-# if the user has not specified a special variant, then use the default variant
-ifndef PLATFORM_VARIANT
-    PLATFORM_VARIANT = default
-endif
+SHELL ?= /bin/sh
+OF_ROOT ?=  $(realpath ../../..)
+OF_USE_POCO ?= 0
+PLATFORM_VARIANT ?= default
 
 ifeq ($(CC),$(EMSCRIPTEN)/emcc)
 	PLATFORM_OS=emscripten
 endif
+PLATFORM_OS ?= $(shell uname -s)
 
 FIND=find
-
-# if not defined, determine this platform's operating system via uname -s
-ifndef PLATFORM_OS 
-    # determine from the uname if not defined manually
-    PLATFORM_OS=$(shell uname -s)
-endif
 HOST_OS=$(shell uname -s)
 $(info HOST_OS=${HOST_OS})
 
@@ -97,18 +85,25 @@ ifndef PLATFORM_LIB_SUBPATH
         else
             $(error This makefile does not support your architecture $(PLATFORM_ARCH))
         endif
+        SHARED_LIB_EXTENSION=so
     else ifneq (,$(findstring MINGW32_NT,$(PLATFORM_OS)))
         PLATFORM_LIB_SUBPATH=msys2
+        SHARED_LIB_EXTENSION=dll
     else ifneq (,$(findstring MSYS_NT,$(PLATFORM_OS)))
         PLATFORM_LIB_SUBPATH=msys2
+        SHARED_LIB_EXTENSION=dll
     else ifneq (,$(findstring MINGW64_NT,$(PLATFORM_OS)))
         PLATFORM_LIB_SUBPATH=msys2
+        SHARED_LIB_EXTENSION=dll
     else ifeq ($(PLATFORM_OS),Android)
         PLATFORM_LIB_SUBPATH=android
+        SHARED_LIB_EXTENSION=so
     else ifeq ($(PLATFORM_OS),Darwin)
         PLATFORM_LIB_SUBPATH=osx
+        SHARED_LIB_EXTENSION=dylib
     else ifeq ($(PLATFORM_OS),emscripten)
         PLATFORM_LIB_SUBPATH=emscripten
+        SHARED_LIB_EXTENSION=so
     else
         $(error This makefile does not support your operating system)
     endif
@@ -139,7 +134,6 @@ endif
 # confgure all core paths, excluding platform and project specific paths
 #
 #   $(OF_ADDONS_PATH)
-#   $(OF_EXPORT_PATH)
 #   $(OF_EXAMPLES_PATH)
 #   $(OF_APPS_PATH)
 #   $(OF_LIBS_PATH)
@@ -157,9 +151,6 @@ endif
 # create path definitions
 ifndef OF_ADDONS_PATH
     OF_ADDONS_PATH=$(OF_ROOT)/addons
-endif
-ifndef OF_EXPORT_PATH
-    OF_EXPORT_PATH=$(OF_ROOT)/export
 endif
 ifndef OF_EXAMPLES_PATH
     OF_EXAMPLES_PATH=$(OF_ROOT)/examples
@@ -200,7 +191,6 @@ endif
 ifdef MAKEFILE_DEBUG
     $(info =================== config.mk paths =============================)
     $(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
-    $(info OF_EXPORT_PATH=$(OF_EXPORT_PATH))
     $(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
     $(info OF_APPS_PATH=$(OF_APPS_PATH))
     $(info OF_LIBS_PATH=$(OF_LIBS_PATH))

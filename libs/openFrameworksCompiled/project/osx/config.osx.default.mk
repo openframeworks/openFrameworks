@@ -70,7 +70,7 @@ PLATFORM_REQUIRED_ADDONS =
 ##########################################################################################
 
 ifndef MAC_OS_MIN_VERSION
-	MAC_OS_MIN_VERSION = 10.7
+	MAC_OS_MIN_VERSION = 10.9
 endif
 
 ifndef MAC_OS_STD_LIB
@@ -147,7 +147,6 @@ endif
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
 #PLATFORM_LDFLAGS += -arch i386
-#PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
 
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 
@@ -165,7 +164,7 @@ PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os -DNDEBUG
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
@@ -193,6 +192,7 @@ endif
 PLATFORM_CORE_EXCLUSIONS =
 
 # core sources
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitGrabber.cpp
@@ -220,8 +220,13 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 
-# third party static libs (this may not matter due to exclusions in poco's libsorder.make)
+# third party static libs
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/lib/$(PLATFORM_LIB_SUBPATH)/%
+
+ifneq ($(OF_USE_POCO),1)
+    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/%
+    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/lib/%
+endif
 
 ifeq ($(USE_FMOD),0)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
@@ -293,7 +298,6 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 PLATFORM_FRAMEWORKS =
 PLATFORM_FRAMEWORKS += Accelerate
 PLATFORM_FRAMEWORKS += QTKit
-PLATFORM_FRAMEWORKS += GLUT
 PLATFORM_FRAMEWORKS += AGL
 PLATFORM_FRAMEWORKS += ApplicationServices
 PLATFORM_FRAMEWORKS += AudioToolbox
@@ -307,6 +311,10 @@ PLATFORM_FRAMEWORKS += CoreVideo
 PLATFORM_FRAMEWORKS += AVFoundation
 PLATFORM_FRAMEWORKS += CoreMedia
 PLATFORM_FRAMEWORKS += QuartzCore
+ifneq ($(OF_USE_POCO),1)
+    PLATFORM_FRAMEWORKS += Security
+    PLATFORM_FRAMEWORKS += LDAP
+endif
 
 ifeq ($(USE_GST),1)
 	PLATFORM_FRAMEWORKS += GStreamer
@@ -387,11 +395,11 @@ afterplatform: $(TARGET_NAME)
 
 
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
-	
+
 ifneq ($(USE_FMOD),0)
-	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/libs/* bin/$(BIN_NAME).app/Contents/MacOS
+	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/MacOS;
 endif
-	
+
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"

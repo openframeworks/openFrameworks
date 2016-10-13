@@ -8,7 +8,9 @@ import "modules/of/helpers.js" as Helpers
 Product{
     of.ofRoot: Helpers.normalize(FileInfo.joinPaths(path, "../../../.."))
     name: "openFrameworks"
+    type: "staticlibrary"
     qbsSearchPaths: "."
+
 
     readonly property string projectDir: of.ofRoot + "/libs/openFrameworksCompiled/project"
     readonly property string libDir: of.ofRoot + "/libs/openFrameworksCompiled/lib/" + of.platform
@@ -23,7 +25,6 @@ Product{
 
     Properties{
         condition: qbsBuild
-        type: "staticlibrary"
         destinationDirectory: Helpers.normalize(FileInfo.joinPaths(path, "../../lib", project.platform))
     }
 
@@ -46,10 +47,16 @@ Product{
         cpp.sysroot: of.coreSysroot
     }
 
+    Properties{
+        condition: of.platform === "osx"
+        cpp.minimumOsxVersion: 10.9
+    }
+
     property stringList FILES_EXCLUDE: {
         var excludes = [];
         if(qbs.targetOS.indexOf("linux")>-1){
             excludes = [
+                "app/ofAppGlutWindow\\..*",
                 "video/ofDirectShowPlayer\\..*",
                 "video/ofDirectShowGrabber\\..*",
                 "video/ofAVFoundationVideoPlayer\\..*",
@@ -62,6 +69,7 @@ Product{
             ];
         }else if(qbs.targetOS.indexOf("windows")>-1){
             excludes = [
+                "app/ofAppGlutWindow\\..*",
                 "video/ofGstVideoPlayer\\..*",
                 "video/ofGstVideoGrabber\\..*",
                 "video/ofGstUtils\\..*",
@@ -75,6 +83,7 @@ Product{
             ];
         }else if(qbs.targetOS.indexOf("osx")>-1){
             excludes = [
+                "app/ofAppGlutWindow.*",
                 "video/ofGstVideoPlayer\\..*",
                 "video/ofGstVideoGrabber\\..*",
                 "video/ofGstUtils\\..*",
@@ -100,32 +109,54 @@ Product{
         return excludes;
     }
 
-    files: {
-        var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
-        var filteredSource = source.filter(function filterExcludes(path){
-            for(exclude in FILES_EXCLUDE){
-                var patt = new RegExp(FILES_EXCLUDE[exclude]);
-                var match = patt.exec(path);
-                if(match!=null){
-                    return false;
+    Group {
+        condition: !product.qbsBuild
+        name: "src"
+        files: {
+            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
+            var filteredSource = source.filter(function filterExcludes(path){
+                for(exclude in FILES_EXCLUDE){
+                    var patt = new RegExp(FILES_EXCLUDE[exclude]);
+                    var match = patt.exec(path);
+                    if(match!=null){
+                        return false;
+                    }
                 }
-            }
-            return true;
-        });
-        return filteredSource;
+                return true;
+            });
+            return filteredSource;
+        }
+        fileTags: ["filtered_sources"]
     }
 
-    readonly property string make: {
-        if(qbs.targetOS.contains("windows")){
-            return FileInfo.joinPaths(of.msys2root,"usr/bin/make");
+    files: {
+        if(qbsBuild){
+            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
+            var filteredSource = source.filter(function filterExcludes(path){
+                for(exclude in FILES_EXCLUDE){
+                    var patt = new RegExp(FILES_EXCLUDE[exclude]);
+                    var match = patt.exec(path);
+                    if(match!=null){
+                        return false;
+                    }
+                }
+                return true;
+            });
+            return filteredSource;
         }else{
-            return "make";
+            return [];
         }
     }
 
-    Transformer {
+
+    readonly property string make: {
+        return "make";
+    }
+
+    Rule {
         condition: qbs.buildVariant.contains('debug') && !product.qbsBuild
-        inputs: files
+        inputs: ["filtered_sources"]
+        multiplex : true
         alwaysRun: true
         Artifact {
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworksDebug.a")
@@ -149,9 +180,10 @@ Product{
         }
     }
 
-    Transformer {
+    Rule {
         condition: qbs.buildVariant.contains('release') && !product.qbsBuild
-        inputs: files
+        inputs: ["filtered_sources"]
+        multiplex : true
         alwaysRun: true
         Artifact {
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworks.a")
