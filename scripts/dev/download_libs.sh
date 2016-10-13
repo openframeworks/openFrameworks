@@ -171,9 +171,9 @@ if [ -e ippicv ]; then
     rm -rf ippicv
 fi
 if [ -e assimp ]; then
-    if [ $OVERWRITE -eq 1 ] && [ -e ../addons/ofxOpenCv/libs/assimp ]; then
+    if [ $OVERWRITE -eq 1 ] && [ -e ../addons/ofxAssimpModelLoader/libs/assimp ]; then
         echo "Removing old assimp libraries"
-        rm -rf ../addons/ofxOpenCv/libs/assimp
+        rm -rf ../addons/ofxAssimpModelLoader/libs/assimp
     fi
     mkdir -p ../addons/ofxAssimpModelLoader/libs/assimp
     rsync -a assimp/ ../addons/ofxAssimpModelLoader/libs/assimp
