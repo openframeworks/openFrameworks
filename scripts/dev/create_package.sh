@@ -593,6 +593,7 @@ set -o errexit   # set -e : exit the script if any statement returns a non-true 
 cleanup() {
     cd $packageroot/..  
     rm -rf ${pkgfolder} 
+    rm -rf $HOME/.tmp/npm*
 }
 trap cleanup 0
 
@@ -606,7 +607,7 @@ error() {
     local code="${2:-1}"
     echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
   fi
-  exit "${code}"
+  rm -rf $HOME/.tmp/npm*
 }
 trap 'error ${LINENO}' ERR
 

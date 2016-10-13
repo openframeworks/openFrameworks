@@ -88,8 +88,7 @@ ifeq ($(findstring clean,$(MAKECMDGOALS)),clean)
 # check to see if any part of our target includes the String "Debug"
 # this will happen if we call Debug OR CleanDebug
 else ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
-    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
-	CFLAGS += -DDEBUG
+    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG) -DDEBUG
     TARGET_NAME = Debug
     ifdef PLATFORM_CORELIB_DEBUG_TARGET
     	TARGET = $(PLATFORM_CORELIB_DEBUG_TARGET)
@@ -100,7 +99,7 @@ else ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 # check to see if any part of our target includes the String "Release"
 # this will happen if we call Release OR CleanRelease
 else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
-    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
+    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE) -DNDEBUG
     TARGET_NAME = Release
     ifdef PLATFORM_CORELIB_RELEASE_TARGET
     	TARGET = $(PLATFORM_CORELIB_RELEASE_TARGET)
@@ -113,7 +112,7 @@ else ifeq ($(MAKECMDGOALS),after)
     TARGET_NAME = 
     
 else ## why doesn't make allow for easy logical operators?
-    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
+    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE) -DNDEBUG
     TARGET_NAME = Release
     ifdef PLATFORM_CORELIB_RELEASE_TARGET
     	TARGET += $(PLATFORM_CORELIB_RELEASE_TARGET)
@@ -231,7 +230,7 @@ all:
 	
 $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags: force
 	@mkdir -p $(OF_CORE_OBJ_OUTPUT_PATH)
-	@if [ "$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))" != "$(strip $$(cat $@))" ]; then echo $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))> $@; fi
+	@if [ "$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))" != "$(strip $$(cat $@))" ]; then echo "Compiler flags have changed, recompiling"; echo "Old: $(strip $$(cat $@))"; echo "New $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))"; echo $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))> $@; fi
 	
 
 #This rule does the compilation

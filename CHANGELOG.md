@@ -6,7 +6,7 @@
   \___(_)/_(_)  |_|  
                      
                      
-OF 0.9.3
+OF 0.9.4
 ========                          
 
 #### change key
@@ -29,9 +29,20 @@ PLATFORM SPECIFIC
 
 ### osx
     / recompiled freeimage to fix support for 32bits
+    / Change to not include QuickTime or QTKit files for 10.12 
+    + New AVFoundation grabber for OS X 10.12 
 
 ### linux
     / install_dependencies: add check to see if all packages are up to date
+    / fix compatibility with qtcreator 4.1.0
+    / fixes for serial in msys2 and linux
+
+### windows 
+    / fixes for msys2 with qtcreator
+    / fixes for serial in msys2 and linux
+    
+### ios
+    / Fix to iOS examples which had missing Icon and Splash screen files.  
 
 
 

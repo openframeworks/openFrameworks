@@ -95,7 +95,7 @@ void ofxOscSender::shutdown()
 	socket.reset();
 }
 
-void ofxOscSender::sendBundle( ofxOscBundle& bundle )
+void ofxOscSender::sendBundle( const ofxOscBundle& bundle )
 {
 	if(!socket){
 		ofLogError("ofxOscSender") << "trying to send before setup";
@@ -112,7 +112,7 @@ void ofxOscSender::sendBundle( ofxOscBundle& bundle )
 	socket->Send( p.Data(), p.Size() );
 }
 
-void ofxOscSender::sendMessage( ofxOscMessage& message, bool wrapInBundle )
+void ofxOscSender::sendMessage( const ofxOscMessage& message, bool wrapInBundle )
 {
 	if(!socket){
 		ofLogError("ofxOscSender") << "trying to send before setup";
@@ -191,7 +191,7 @@ void ofxOscSender::appendParameter( ofxOscMessage & msg, const ofAbstractParamet
 	}
 }
 
-void ofxOscSender::appendBundle( ofxOscBundle& bundle, osc::OutboundPacketStream& p )
+void ofxOscSender::appendBundle( const ofxOscBundle& bundle, osc::OutboundPacketStream& p )
 {
 	// recursively serialise the bundle
 	p << osc::BeginBundleImmediate;
@@ -206,7 +206,7 @@ void ofxOscSender::appendBundle( ofxOscBundle& bundle, osc::OutboundPacketStream
 	p << osc::EndBundle;
 }
 
-void ofxOscSender::appendMessage( ofxOscMessage& message, osc::OutboundPacketStream& p )
+void ofxOscSender::appendMessage( const ofxOscMessage& message, osc::OutboundPacketStream& p )
 {
     p << osc::BeginMessage( message.getAddress().c_str() );
 	for ( int i=0; i< message.getNumArgs(); ++i )

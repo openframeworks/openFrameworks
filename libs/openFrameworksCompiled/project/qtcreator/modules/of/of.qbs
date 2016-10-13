@@ -7,7 +7,6 @@ import "helpers.js" as Helpers
 
 Module{
     name: "ofCore"
-    property string msys2root: "c:/msys64"
 
     property string ofRoot: {
         if(FileInfo.isAbsolutePath(project.of_root)){
@@ -55,8 +54,8 @@ Module{
                 "rtAudio",
                 "openssl",
                 "boost",
-                "glfw",
                 "poco",
+                "glfw",
                 "openFrameworksCompiled",
             ];
         }else if(platform==="msys2"){
@@ -68,9 +67,9 @@ Module{
                 "FreeImage",
                 "assimp",
                 "glut",
-                "rtAudio",
                 "openssl",
                 "boost",
+                "glfw",
                 "openFrameworksCompiled"
             ];
         }else if(platform==="osx"){
@@ -137,10 +136,12 @@ Module{
             }
 
             return pkgs;
-        }else if(qbs.targetOS.indexOf("windows")!=-1){
+        }else if(platform === "msys2"){
             var pkgs = [
+				"cairo",
                 "zlib",
                 "glew",
+                "glfw3",
             ].concat(pkgConfigs);
 
             if(usePoco){
@@ -158,7 +159,6 @@ Module{
     readonly property stringList ADDITIONAL_LIBS: {
         if(platform === "linux"  || platform === "linux64"){
             return [
-                "glut",
                 "X11",
                 "Xrandr",
                 "Xxf86vm",
@@ -172,16 +172,20 @@ Module{
                 "boost_system",
             ];
         }else if(platform === "msys2"){
-            return [
+            var libs=[];
+            if(usePoco){
+                libs = ['PocoNetSSL', 'PocoNet', 'PocoCrypto', 'PocoUtil', 'PocoJSON', 'PocoXML', 'PocoFoundation',];
+            }
+            return libs.concat([
                 'opengl32', 'gdi32', 'msimg32', 'glu32', 'dsound', 'winmm', 'strmiids',
                 'uuid', 'ole32', 'oleaut32', 'setupapi', 'wsock32', 'ws2_32', 'Iphlpapi', 'Comdlg32',
-                'freeimage', 'boost_filesystem-mt', 'boost_system-mt', 'freetype', 'cairo','pthread'
-            ];
+                'freeimage', 'boost_filesystem-mt', 'boost_system-mt', 'freetype', 'cairo','pthread',
+            ]);
         }else if(platform === "android"){
             return [
                 'OpenSLES', 'z', 'GLESv1_CM', 'GLESv2', 'log'
             ];
-        }
+        }else return [];
     }
 
     readonly property stringList PKG_CONFIG_INCLUDES: {
@@ -237,14 +241,14 @@ Module{
         }
         includes = includes.concat(PKG_CONFIG_INCLUDES);
         if(platform === "msys2"){
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include'));
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/cairo'));
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/glib-2.0'));
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/lib/glib-2.0/include'));
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/pixman-1'));
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/freetype2'));
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/harfbuzz'));
-            includes.push(FileInfo.joinPaths(msys2root,'mingw32/include/libpng16'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/cairo'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/glib-2.0'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/lib/glib-2.0/include'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/pixman-1'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/freetype2'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/harfbuzz'));
+            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/libpng16'));
         }
 
         return includes;
@@ -275,7 +279,7 @@ Module{
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoJSON.a');
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoXML.a');
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoFoundation.a');
-            }else{
+            }else if(platform === "linux" || platform === "linux64"){
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNetSSL.a');
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNet.a');
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoCrypto.a');
@@ -285,14 +289,13 @@ Module{
                 staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoFoundation.a');
             }
         }
-        return(staticLibraries)
+        return staticLibraries
     }
 
     readonly property stringList LDFLAGS: {
         var ret = PKG_CONFIG_LDFLAGS;
-        if(qbs.targetOS.contains("windows")){
-            ret.push("-L"+FileInfo.joinPaths(msys2root,"mingw32/lib"));
-            //ret.push("-fuse-ld=gold");
+        if(platform === "msys2"){
+            ret.push("-L"+FileInfo.joinPaths(Helpers.msys2root(),"mingw32/lib"));
         }
         return ret;
     }
@@ -500,11 +503,6 @@ Module{
         name: "cpp"
     }
 
-    Depends{
-        condition: platform==="osx"
-        name: "bundle"
-    }
-
     //cpp.cxxLanguageVersion: "c++14"
     coreWarningLevel: 'default'
     coreCFlags: PKG_CONFIG_CFLAGS
@@ -598,16 +596,6 @@ Module{
             .concat(linkerFlags)
     }
 
-    Properties{
-        condition: qbs.buildVariant.contains("debug") && of.platform === "osx"
-        bundle.infoPlist: ({"CFBundleIconFile":"icon-debug.icns"})
-    }
-
-    Properties{
-        condition: qbs.buildVariant.contains("release") && of.platform === "osx"
-        bundle.infoPlist: ({"CFBundleIconFile":"icon.icns"})
-    }
-
     property stringList pkgConfigs: []
     property pathList includePaths: []
     property stringList cFlags: []
@@ -636,10 +624,5 @@ Module{
     Properties{
         condition: qbs.buildVariant.contains("release")
         coreDefines: ['NDEBUG'].concat(DEFINES).concat(defines)
-    }
-
-    Group{
-        name: "addons"
-        files: of.ADDONS_SOURCES
     }
 }

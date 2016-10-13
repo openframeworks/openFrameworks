@@ -24,7 +24,7 @@ string ofAbstractParameter::escape(const string& _str) const{
 	ofStringReplace(str, "/", "_");
 	ofStringReplace(str, "\\", "_");
 	ofStringReplace(str, ".", "_");
-	
+
 	return str;
 }
 
