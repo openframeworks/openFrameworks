@@ -133,7 +133,7 @@ cd libs
 
 if [ $OVERWRITE -eq 1 ]; then
     echo "Removing old libraries"
-    libs=("boost" "cairo" "curl" "FreeImage" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "assimp" "README.md")
+    libs=("boost" "cairo" "curl" "FreeImage" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "README.md")
     for lib in $libs; do
         if [ -e $lib ]; then
             rm -rf $lib
@@ -152,30 +152,18 @@ for PKG in $PKGS; do
     fi
 done
 
-if [ -e opencv ]; then
-    if [ $OVERWRITE -eq 1 ] && [ -e ../addons/ofxOpenCv/libs/opencv ]; then
-        echo "Removing old opencv libraries"
-        rm -rf ../addons/ofxOpenCv/libs/opencv
+addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny")
+addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg")
+for ((i=0;i<${#array[@]};++i)); do
+    if [ -e ${addonslibs[i]} ]; then
+        echo "Copying ${addonslibs[i]} to ${addons[i]}"
+        if [ $OVERWRITE -eq 1 ] && [ -e ../addons/${addons[i]}/libs/${addonslibs[i]} ]; then
+            echo "Removing old opencv libraries"
+            rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}
+        fi
+        mkdir -p ../addons/${addons[i]}/libs/${addonslibs[i]}
+        rsync -a ${addonslibs[i]}/ ../addons/${addons[i]}/libs/${addonslibs[i]}
+        rm -rf ${addonslibs[i]}
     fi
-    mkdir -p ../addons/ofxOpenCv/libs/opencv
-    rsync -a opencv/ ../addons/ofxOpenCv/libs/opencv
-    rm -rf opencv
-fi
-if [ -e ippicv ]; then
-    if [ $OVERWRITE -eq 1 ] && [ -e ../addons/ofxOpenCv/libs/ippicv ]; then
-        echo "Removing old ippicv libraries"
-        rm -rf ../addons/ofxOpenCv/libs/ippicv
-    fi
-    mkdir -p ../addons/ofxOpenCv/libs/ippicv
-    rsync -a ippicv/ ../addons/ofxOpenCv/libs/ippicv
-    rm -rf ippicv
-fi
-if [ -e assimp ]; then
-    if [ $OVERWRITE -eq 1 ] && [ -e ../addons/ofxAssimpModelLoader/libs/assimp ]; then
-        echo "Removing old assimp libraries"
-        rm -rf ../addons/ofxAssimpModelLoader/libs/assimp
-    fi
-    mkdir -p ../addons/ofxAssimpModelLoader/libs/assimp
-    rsync -a assimp/ ../addons/ofxAssimpModelLoader/libs/assimp
-    rm -rf assimp
-fi
+done
+
