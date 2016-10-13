@@ -154,7 +154,7 @@ done
 
 addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny")
 addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg")
-for ((i=0;i<${#array[@]};++i)); do
+for ((i=0;i<${#addonslibs[@]};++i)); do
     if [ -e ${addonslibs[i]} ]; then
         echo "Copying ${addonslibs[i]} to ${addons[i]}"
         if [ $OVERWRITE -eq 1 ] && [ -e ../addons/${addons[i]}/libs/${addonslibs[i]} ]; then
