@@ -1,6 +1,9 @@
 #include "ofxSvg.h"
 #include "ofConstants.h"
 
+extern "C"{
+	#include "svgtiny.h"
+}
 ofxSVG::~ofxSVG(){
 	paths.clear();
 }
