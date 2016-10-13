@@ -107,7 +107,7 @@ Android studio in it's version 1.3 still has very limited support for c++ source
 - If your connected device is not recognized by Android Studio, restart adb
   with `adb kill-server && adb start-server`
 
-- If, when syncronizing a project for the first time, clicking on the console
+- If, when synchronizing a project for the first time, clicking on the console
   messages does not solves the problem regarding a missing dependency of the
   android API (like for example Android API 22), open the sdk from the console,
    select the missing API and install it

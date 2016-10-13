@@ -4,6 +4,8 @@
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
 
+#if !defined(TARGET_LINUX) && (!defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12)
+
 #ifdef OF_VIDEO_PLAYER_QUICKTIME
 	#include "ofQtUtils.h"
 
@@ -95,7 +97,7 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 
 #endif
 
-
+#endif
 
 
 

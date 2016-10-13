@@ -69,12 +69,27 @@ public:
 		GLuint bufferMode = GL_INTERLEAVED_ATTRIBS; // GL_INTERLEAVED_ATTRIBS or GL_SEPARATE_ATTRIBS
 	};
 
-	struct TransformFeedbackBinding {
-		TransformFeedbackBinding(const ofBufferObject & buffer);
+	/// a range of the buffer will be bound with glBindBufferRange
+	///
+	/// @see: https://www.opengl.org/sdk/docs/man4/html/glBindBufferRange.xhtml
+	struct TransformFeedbackRangeBinding {
+		TransformFeedbackRangeBinding(const ofBufferObject & buffer, GLuint offset, GLuint size);
 
 		GLuint index = 0;
 		GLuint offset = 0;
 		GLuint size;
+	private:
+		const ofBufferObject & buffer;
+		friend class ofShader;
+	};
+
+	/// full buffer will be bound with glBindBufferBase
+	///
+	/// @see: https://www.opengl.org/sdk/docs/man4/html/glBindBufferBase.xhtml
+	struct TransformFeedbackBaseBinding {
+		TransformFeedbackBaseBinding(const ofBufferObject & buffer);
+
+		GLuint index = 0;
 	private:
 		const ofBufferObject & buffer;
 		friend class ofShader;
@@ -103,11 +118,15 @@ public:
 
 #if !defined(TARGET_OPENGLES)
 	void beginTransformFeedback(GLenum mode) const;
-	void beginTransformFeedback(GLenum mode, const TransformFeedbackBinding & binding) const;
-	void beginTransformFeedback(GLenum mode, const std::vector<TransformFeedbackBinding> & binding) const;
+	void beginTransformFeedback(GLenum mode, const TransformFeedbackRangeBinding & binding) const;
+	void beginTransformFeedback(GLenum mode, const std::vector<TransformFeedbackRangeBinding> & binding) const;
+	void beginTransformFeedback(GLenum mode, const TransformFeedbackBaseBinding & binding) const;
+	void beginTransformFeedback(GLenum mode, const std::vector<TransformFeedbackBaseBinding> & binding) const;
 	void endTransformFeedback() const;
-	void endTransformFeedback(const TransformFeedbackBinding & binding) const;
-	void endTransformFeedback(const std::vector<TransformFeedbackBinding> & binding) const;
+	void endTransformFeedback(const TransformFeedbackRangeBinding & binding) const;
+	void endTransformFeedback(const std::vector<TransformFeedbackRangeBinding> & binding) const;
+	void endTransformFeedback(const TransformFeedbackBaseBinding & binding) const;
+	void endTransformFeedback(const std::vector<TransformFeedbackBaseBinding> & binding) const;
 #endif
 
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
@@ -158,7 +177,7 @@ public:
 	GLint getAttributeLocation(const string & name) const;
 
 #ifndef TARGET_OPENGLES
-#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
+#ifdef GLEW_ARB_uniform_buffer_object
 	GLint getUniformBlockIndex(const string & name) const;
 	GLint getUniformBlockBinding(const string & name) const;
 	void bindUniformBlock(GLuint bindind, const string & name) const;
@@ -246,10 +265,7 @@ private:
 	mutable unordered_map<string, GLint> attributesBindingsCache;
 
 #ifndef TARGET_OPENGLES
-#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
-	bool uboAvailable;
 	unordered_map<string, GLint> uniformBlocksCache;
-#endif
 #endif
 
 	bool setupShaderFromSource(Source && source);

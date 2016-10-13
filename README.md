@@ -14,7 +14,7 @@ Visual studio [![Build status](https://ci.appveyor.com/api/projects/status/sm9jx
 folder structure
 --------
 
-This release of OF comes with several folders: 
+This release of OF comes with several folders:
 
 * addons
 * apps
@@ -41,33 +41,35 @@ The openframeworks forum:
 
 is a warm and friendly place.  Please ask or answer a question.  The most important part of this project is that it's a community, more than just a tool, so please join us!  Also, this is free software, and we learn so much about what is hard, what doesn't make sense, what is useful, etc. The most basic questions are acceptable here!  Don't worry, just join the conversation.  Learning in OF is social, it's hard to do it alone, but together we can get far!
 
-Our github site is active: 
+Our github site is active:
 
 [https://github.com/openframeworks/openFrameworks](https://github.com/openframeworks/openFrameworks)
 
-if you have bugs or feature requests, consider opening an issue.  If you are a developer and want to help, pull requests are warmly welcome.  Please read the contributing guide for guidelines: 
+if you have bugs or feature requests, consider opening an issue.  If you are a developer and want to help, pull requests are warmly welcome.  Please read the contributing guide for guidelines:
 
 [https://github.com/openframeworks/openFrameworks/blob/master/CONTRIBUTING.md](https://github.com/openframeworks/openFrameworks/blob/master/CONTRIBUTING.md
 )
 
-We also have a developer's mailing list, which is useful for discussing issues around the development and future of OF. 
+We also have a developer's mailing list, which is useful for discussing issues around the development and future of OF.
 
 
 Developers
 ------
 
 To grab a copy of openFrameworks for your platform, check the [download page](http://openframeworks.cc/download) on the main site.  
- 
+
 If you are working with the Git repository, the `stable` branch of the OF repository corresponds to the most recent release, with a few important differences:  
 
 1. The release includes a simple openFrameworks project generator.
 2. This GitHub repository contains code and libs for all the platforms, but the releases are done on a per-platform basis.
 3. This GitHub repository has no project files for the different examples. They are generated automatically for each release using a tool in `apps/devApps/projectGenerator/`.
+4. There's no external dependencies in this repository, you can download them using the download_libs.sh script for each platform in the particular platform folder inside scripts.
 
-If you want to work with the openFrameworks GitHub repository, you should use the project generator to create project files for all the code in `examples/`.  
-For per-platform readmes, and more informations, see the [documentation](docs/table_of_contents.md).
+If you want to work with the openFrameworks GitHub repository, you need to download the external dependencies and you should use the project generator to create project files for all the code in `examples/`.  To generate the project files with the project generator enable the 'Advanced Options' in the settings tab, then use 'Update Multiple' to update the projects for the `examples/` folder path in the repo.
 
-To set up the project generator submodule, use the command `git submodule init` then `git submodule update` whilst inside the openFrameworks repo.
+To set up the project generator submodule within the OF repo, use the command `git submodule init` then `git submodule update` whilst inside the openFrameworks repo.
+
+For more info on working with the Project Generator, for per-platform readmes, and more information, see the [documentation](docs/table_of_contents.md).
 
 Versioning
 ----------
