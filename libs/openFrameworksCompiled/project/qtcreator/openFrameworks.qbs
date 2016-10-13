@@ -20,7 +20,7 @@ Product{
     // but will build on each application rebuild instead of in
     // a common directory
     readonly property bool qbsBuild: project.makeOF !== undefined ? !project.makeOF : false
-    readonly property bool usePoco: project.usePoco !== undefined ? project.usePoco : true
+    readonly property bool usePoco: project.usePoco !== undefined ? project.usePoco : false
     readonly property bool useXml2: project.useXml2 !== undefined ? project.useXml2 : false
 
     Properties{
