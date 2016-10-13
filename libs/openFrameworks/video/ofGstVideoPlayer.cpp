@@ -157,21 +157,17 @@ bool ofGstVideoPlayer::createPipeline(string name){
 	auto glfilter = gst_bin_get_by_name(GST_BIN(gstPipeline),"gl_filter");
 	gst_app_sink_set_caps(GST_APP_SINK(gstSink), caps);
 	gst_caps_unref(caps);
-
 	glXMakeCurrent (ofGetX11Display(), None, 0);
 	glDisplay = (GstGLDisplay *)gst_gl_display_x11_new_with_display(ofGetX11Display());
 	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetGLXContext(),
 	    		  GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
-
 	g_object_set (G_OBJECT (glfilter), "other-context", glContext, NULL);
-
 	// FIXME: this seems to be the way to add the context in 1.4.5
 	//
 	// GstBus * bus = gst_pipeline_get_bus (GST_PIPELINE(gstPipeline));
 	// gst_bus_enable_sync_message_emission (bus);
 	// g_signal_connect (bus, "sync-message", G_CALLBACK (sync_bus_call), this);
 	// gst_object_unref(bus);
-
 	auto ret = videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream);
 	glXMakeCurrent (ofGetX11Display(), ofGetX11Window(), ofGetGLXContext());
 	return ret;*/
@@ -218,12 +214,15 @@ bool ofGstVideoPlayer::load(string name){
 		}else{
 			return true;
 		}
-	}else{
-		ofGstUtils::startGstMainLoop();
-		return createPipeline(name) &&
-				videoUtils.startPipeline() &&
-				(bIsStream || allocate());
-	}
+    }else{
+        ofGstUtils::startGstMainLoop();
+
+        bool bResult = createPipeline(name) && videoUtils.startPipeline() && (bIsStream || allocate());
+        if( !bResult && videoUtils.getPipeline() != NULL ) {
+            videoUtils.closePipeline();
+        }
+        return bResult;
+    }
 }
 
 void ofGstVideoPlayer::setThreadAppSink(bool threaded){
@@ -452,3 +451,5 @@ bool ofGstVideoPlayer::isThreadedAppSink() const{
 bool ofGstVideoPlayer::isFrameByFrame() const{
 	return videoUtils.isFrameByFrame();
 }
+
+

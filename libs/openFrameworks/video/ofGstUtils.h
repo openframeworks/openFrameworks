@@ -70,6 +70,7 @@ public:
 	uint64_t getMaxLatencyNanos() const;
 
 	virtual void close();
+	void closePipeline();
 
 	void setSinkListener(ofGstAppSink * appsink);
 
@@ -265,4 +266,5 @@ public:
 };
 
 #endif
+
 
