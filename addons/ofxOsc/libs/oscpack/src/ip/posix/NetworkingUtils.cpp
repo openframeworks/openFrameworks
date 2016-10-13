@@ -39,10 +39,9 @@
 #include <netdb.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+
 #include <cstring>
-#ifdef ANDROID
-#include <sys/endian.h>
-#endif
+
 
 
 namespace osc{
