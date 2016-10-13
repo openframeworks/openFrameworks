@@ -25,6 +25,8 @@ ofxAndroid/ofAndroidLib/gen
 !ofxGPS
 !ofxUnitTests
 !ofxProjectGenerator
+ofxOpenCv/libs
+ofxAssimpModelLoader/libs
 
 # don't ignore the .gitignore file
 !.gitignore

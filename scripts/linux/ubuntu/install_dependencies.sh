@@ -163,7 +163,7 @@ else
     GLFW_PKG=
 fi
 
-PACKAGES="curl libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem${BOOST_VER}-dev libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good gdb ${GLFW_PKG}"
+PACKAGES="curl libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem${BOOST_VER}-dev libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good gdb ${GLFW_PKG} liburiparser-dev libcurl4-openssl-dev"
 
 echo "installing OF dependencies"
 echo "OF needs to install the following packages using apt-get:"
@@ -190,27 +190,4 @@ if [ $(expr $MAJOR_VERSION \< 13 ) -eq 1 ]; then
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++${CXX_VER} 50
 fi
 
-export LC_ALL=C
-GCC_MAJOR_GT_4=$(expr `gcc -dumpversion | cut -f1 -d.` \> 4)
-if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
-    echo
-    echo
-    echo "It seems you are running gcc 5 or later, due to incomatible ABI with previous versions"
-    echo "we need to recompile poco. This will take a while"
-    read -p "Press any key to continue... " -n1 -s
-    
-	sys_cores=$(getconf _NPROCESSORS_ONLN)
-	if [ $sys_cores -gt 1 ]; then
-		cores=$(($sys_cores-1))
-	else
-		cores=1
-	fi
-	
-    DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-    cd ${DIR}/../../apothecary/apothecary
-    ./apothecary -j${cores} update poco
-    WHO=`who am i`;ID=`echo ${WHO%% *}`
-    GROUP_ID=`id --group -n ${ID}`
-    chown -R $ID:$GROUP_ID build/poco
-    chown -R $ID:$GROUP_ID ../../libs/poco
-fi
+

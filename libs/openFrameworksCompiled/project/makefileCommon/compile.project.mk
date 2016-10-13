@@ -13,7 +13,6 @@ endif
 # Name TARGET
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
-	CFLAGS += -DDEBUG
 
 	ifndef RUN_TARGET
 		RUN_TARGET = RunDebug
@@ -409,7 +408,7 @@ endif
 	@rm -rf bin/libs
 
 after: $(TARGET_NAME)
-	@if [ -d $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH) ]; then cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/; fi
+	@if [ -e $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) ]; then cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/; fi
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"

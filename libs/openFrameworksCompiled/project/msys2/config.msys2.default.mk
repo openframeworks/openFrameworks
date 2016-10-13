@@ -64,7 +64,9 @@ PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_DEFINES = POCO_STATIC
+ifeq ($(OF_USE_POCO),1)
+    PLATFORM_DEFINES = POCO_STATIC
+endif
 
 ##########################################################################################
 # PLATFORM REQUIRED ADDON
@@ -131,7 +133,7 @@ endif
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os -DNDEBUG
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 #-D_GLIBCXX_DEBUG
@@ -209,7 +211,9 @@ PLATFORM_HEADER_SEARCH_PATHS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_LIBRARIES += PocoNetSSL PocoNet PocoCrypto PocoUtil PocoXML PocoFoundation PocoZip PocoJSON PocoData PocoDataSQLite
+ifeq ($(OF_USE_POCO),1)
+    PLATFORM_LIBRARIES += PocoNetSSL PocoNet PocoCrypto PocoUtil PocoXML PocoFoundation PocoZip PocoJSON PocoData PocoDataSQLite
+endif
 PLATFORM_LIBRARIES += ksuser opengl32 gdi32 msimg32 glu32 dsound winmm strmiids #dxguid  
 PLATFORM_LIBRARIES += uuid ole32 oleaut32 setupapi wsock32 ws2_32 Iphlpapi Comdlg32
 PLATFORM_LIBRARIES += freeimage boost_filesystem-mt boost_system-mt freetype cairo
@@ -225,6 +229,10 @@ PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += glew
 PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
 #PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-1.0
+
+ifeq ($(OF_USE_POCO),0)
+	PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
+endif
 
 # shared libraries 
 PLATFORM_SHARED_LIBRARIES =
@@ -332,7 +340,7 @@ copy_dlls:
 	@cp $(MSYS2_ROOT)/bin/libassimp.dll bin/
 	
 afterplatform: $(TARGET_NAME)
-	@if [ -d $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH) ]; then cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/; fi
+	@if [ -e $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) ]; then cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/; fi
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"

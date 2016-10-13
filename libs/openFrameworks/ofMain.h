@@ -6,9 +6,7 @@
 #include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofSystemUtils.h"
-#if OF_USE_POCO || defined (TARGET_IMPLEMENTS_URL_LOADER)
-	#include "ofURLFileLoader.h"
-#endif
+#include "ofURLFileLoader.h"
 #include "ofUtils.h"
 #if !defined(TARGET_EMSCRIPTEN)
 #include "ofThread.h"
@@ -24,9 +22,6 @@
 #include "ofColor.h"
 #include "ofPoint.h"
 #include "ofRectangle.h"
-#if OF_USE_POCO
-	#include "ofXml.h"
-#endif
 #include "ofParameter.h"
 #include "ofParameterGroup.h"
 
