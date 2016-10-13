@@ -220,7 +220,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 
-# third party static libs (this may not matter due to exclusions in poco's libsorder.make)
+# third party static libs
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/lib/$(PLATFORM_LIB_SUBPATH)/%
 
 ifeq ($(USE_FMOD),0)
