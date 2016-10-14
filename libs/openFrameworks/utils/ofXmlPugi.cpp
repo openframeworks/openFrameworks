@@ -446,10 +446,6 @@ map<string, string> ofXml::getAttributes() const{ // works for both attributes a
 
 
 bool ofXml::setAttribute(const string& path, const string& value){
-
-    string attributeName, pathToAttribute;
-    bool hasPath = false;
-
     // you can pass either /node[@attr] or just attr
     if(path.find("[@") != string::npos){
 		element.select_single_node(path.c_str()).attribute().set_value(value.c_str());
