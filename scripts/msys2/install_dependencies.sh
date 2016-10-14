@@ -59,6 +59,7 @@ if [ -z ${confirm+x} ]; then
 		mingw-w64-$arch-poco \
 		mingw-w64-$arch-curl \
 		mingw-w64-$arch-libxml2 \
+		mingw-w64-$arch-expat \
 		mingw-w64-$arch-pugixml
 else
 	pacman -S $confirm --needed mingw-w64-$arch-harfbuzz
@@ -88,6 +89,7 @@ else
 	pacman -S $confirm --needed mingw-w64-$arch-poco
 	pacman -S $confirm --needed mingw-w64-$arch-curl
 	pacman -S $confirm --needed mingw-w64-$arch-libxml2
+	pacman -S $confirm --needed mingw-w64-$arch-expat
 	pacman -S $confirm --needed mingw-w64-$arch-pugixml
 fi
 
