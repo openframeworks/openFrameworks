@@ -162,7 +162,7 @@ ofXml::Attribute ofXml::prependAttribute(const std::string & name){
 
 ofXml ofXml::findFirst(const std::string & path) const{
 	try{
-		return ofXml(doc, this->xml.select_node(path.c_str()).node());
+		return ofXml(doc, this->xml.select_single_node(path.c_str()).node());
 	}catch(pugi::xpath_exception & e){
 		return ofXml();
 	}
