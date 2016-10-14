@@ -38,7 +38,7 @@ arch=i686
 if [ -z ${confirm+x} ]; then
 	pacman -S $confirm --needed ca-certificates
 	if [ ! -z ${APPVEYOR+x} ]; then
-		pacman -S $confirm --needed wget make mingw-w64-$arch-gcc
+		pacman -S $confirm --needed wget rsync unzip make mingw-w64-$arch-gcc
 	fi
 	pacman -S $confirm --needed mingw-w64-$arch-glew \
 		mingw-w64-$arch-freeglut \
@@ -65,6 +65,8 @@ else
 	pacman -S $confirm --needed ca-certificates
 	if [ ! -z ${APPVEYOR+x} ]; then
 		pacman -S $confirm --needed wget
+		pacman -S $confirm --needed rsync
+		pacman -S $confirm --needed unzip
 		pacman -S $confirm --needed make
 		pacman -S $confirm --needed mingw-w64-$arch-gcc
 	fi
