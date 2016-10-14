@@ -163,7 +163,7 @@ public:
 					return returnVal; // hmm. this could be a problem
 				}
 			}else{
-				const auto & e = element.select_node(path.c_str()).node();
+				const auto & e = element.select_single_node(path.c_str()).node();
 				if(!e.empty()){
 					return ofFromString<T>(e.first_child().text().as_string());
 				}
