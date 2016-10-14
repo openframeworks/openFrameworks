@@ -247,7 +247,9 @@ endif
 ifeq ($(OF_USE_POCO),0)
     PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include
     PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/%
-    CFLAGS+=-DOF_USE_POCO=0
+    POCO_DEFINES = OF_USE_POCO=0
+else
+    POCO_DEFINES = OF_USE_POCO=1
 endif
 
 ifdef OF_USE_XML2
@@ -336,7 +338,7 @@ OF_CORE_INCLUDES_CFLAGS += $(addprefix -I,$(OF_CORE_HEADER_PATHS))
 # OF CORE DEFINES
 ################################################################################
 
-OF_CORE_DEFINES_CFLAGS=$(addprefix -D,$(PLATFORM_DEFINES))
+OF_CORE_DEFINES_CFLAGS=$(addprefix -D,$(PLATFORM_DEFINES) $(POCO_DEFINES))
 
 ################################################################################
 # OF PLATFORM CFLAGS
