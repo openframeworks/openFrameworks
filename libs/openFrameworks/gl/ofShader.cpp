@@ -310,7 +310,7 @@ ofShader::Source ofShader::sourceFromFile(GLenum type, std::filesystem::path fil
 	string absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
 	string sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
 	if(buffer.size()) {
-		return std::move(Source{type, buffer.getText(), sourceDirectoryPath});
+		return Source{type, buffer.getText(), sourceDirectoryPath};
 	} else {
 		ofLogError("ofShader") << "setupShaderFromFile(): couldn't load " << nameForType(type) << " shader " << " from \"" << absoluteFilePath << "\"";
 		return Source{};
