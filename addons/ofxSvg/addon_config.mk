@@ -62,9 +62,11 @@ common:
 	
 linux64:
     ADDON_PKG_CONFIG_LIBRARIES = libxml-2.0
+	ADDON_PKG_CONFIG_LIBRARIES += expat
 	
 linux:
     ADDON_PKG_CONFIG_LIBRARIES = libxml-2.0
+	ADDON_PKG_CONFIG_LIBRARIES += expat
 
 linuxarmv6l:
     ADDON_PKG_CONFIG_LIBRARIES = libxml-2.0
