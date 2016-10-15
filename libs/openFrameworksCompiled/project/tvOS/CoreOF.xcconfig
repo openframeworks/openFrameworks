@@ -39,7 +39,7 @@ LIB_BOOST_SYSTEM = "$(OF_PATH)/libs/boost/lib/tvos/boost_system.a"
 LIB_BOOST_FS = "$(OF_PATH)/libs/boost/lib/tvos/boost_filesystem.a"
 LIB_BOOST = $(LIB_BOOST_SYSTEM) $(LIB_BOOST_FS)
 LIB_CURL = "$(OF_PATH)/libs/curl/lib/tvos/curl.a"
-LIB_URIPARSER = "$(OF_PATH)/libs/uriparser/tvos/uriparser.a"
+LIB_URIPARSER = "$(OF_PATH)/libs/uriparser/lib/tvos/uriparser.a"
 LIB_PUGIXML = "$(OF_PATH)/libs/pugixml/lib/tvos/pugixml.a"
 
 
