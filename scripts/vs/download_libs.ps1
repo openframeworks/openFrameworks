@@ -36,7 +36,7 @@ If(-Not $libsExists) {
     new-item $libsDir -itemtype directory
 }
 
-$libs = @("32", "64", "boost", "cairo", "curl", "FreeImage", "freetype", "glew", "glfw", "json", "libpng", "openssl", "pixman", "poco", "rtAudio", "tess2", "uriparser", "utf8", "videoInput", "zlib", "opencv", "assimp", "README.md", ".appveyor.yml", ".travis.yml")
+$libs = @("32", "64", "boost", "cairo", "curl", "FreeImage", "freetype", "glew", "glfw", "json", "libpng", "openssl", "pixman", "poco", "rtAudio", "tess2", "uriparser", "utf8", "videoInput", "zlib", "opencv", "ippicv", "assimp", "README.md", ".appveyor.yml", ".travis.yml")
 echo "Deleting existing libs"
 ForEach ($lib in $libs){
     if(Test-Path "..\..\libs\$lib"){
@@ -51,9 +51,21 @@ robocopy.exe ..\..\libs\32\opencv ..\..\addons\ofxOpenCv\libs\ /MOVE /NFL /R:5 /
 robocopy.exe ..\..\libs\64\opencv\lib\vs\x64 ..\..\addons\ofxOpenCv\libs\opencv\lib\vs\ /MOVE /NFL /R:5 /S
 Remove-Item "..\..\libs\64\opencv" -Force -Recurse
 
-robocopy.exe ..\..\libs\32\assimp ..\..\addons\ofxOpenCv\libs\ /MOVE /NFL /R:5 /S
-robocopy.exe ..\..\libs\64\assimp\lib\vs\x64 ..\..\addons\ofxOpenCv\libs\assimp\lib\vs\ /MOVE /NFL /R:5 /S
+robocopy.exe ..\..\libs\32\ippicv ..\..\addons\ofxOpenCv\libs\ /MOVE /NFL /R:5 /S
+robocopy.exe ..\..\libs\64\ippicv\lib\vs\x64 ..\..\addons\ofxOpenCv\libs\ippicv\lib\vs\ /MOVE /NFL /R:5 /S
+Remove-Item "..\..\libs\64\ippicv" -Force -Recurse
+
+robocopy.exe ..\..\libs\32\assimp ..\..\addons\ofxAssimpModelLoader\libs\ /MOVE /NFL /R:5 /S
+robocopy.exe ..\..\libs\64\assimp\lib\vs\x64 ..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\ /MOVE /NFL /R:5 /S
 Remove-Item "..\..\libs\64\assimp" -Force -Recurse
+
+robocopy.exe ..\..\libs\32\libxml2 ..\..\addons\ofxSvg\libs\ /MOVE /NFL /R:5 /S
+robocopy.exe ..\..\libs\64\libxml2\lib\vs\x64 ..\..\addons\ofxSvg\libs\libxml2\lib\vs\ /MOVE /NFL /R:5 /S
+Remove-Item "..\..\libs\64\libxml2" -Force -Recurse
+
+robocopy.exe ..\..\libs\32\svgtiny ..\..\addons\ofxSvg\libs\ /MOVE /NFL /R:5 /S
+robocopy.exe ..\..\libs\64\svgtiny\lib\vs\x64 ..\..\addons\ofxSvg\libs\svgtiny\lib\vs\ /MOVE /NFL /R:5 /S
+Remove-Item "..\..\libs\64\svgtiny" -Force -Recurse
 
 robocopy.exe ..\..\libs\32\ ..\..\libs\ /MOVE /NFL /R:5 /S
 robocopy.exe ..\..\libs\64\ ..\..\libs\ /MOVE /NFL /R:5 /S
