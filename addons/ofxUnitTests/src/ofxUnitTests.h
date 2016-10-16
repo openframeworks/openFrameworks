@@ -275,6 +275,8 @@ private:
                         json_var_value("StdOut", stdOut) + ", " +
                         json_var_value("StdErr", stdErr) +
                     "}";
+            req.timeoutSeconds = 20;
+
             ofURLFileLoader http;
             auto res = http.handleRequest(req);
             if(res.status<200 || res.status>=300){
