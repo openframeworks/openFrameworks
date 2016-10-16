@@ -413,6 +413,22 @@ namespace{
 		response->data.append((const char*)buffer, size * nmemb);
 		return size * nmemb;
 	}
+
+    size_t readBody_cb(void *ptr, size_t size, size_t nmemb, void *userdata){
+        auto body = (std::string*)userdata;
+
+        if(size*nmemb < 1){
+            return 0;
+        }
+
+        if(!body->empty()) {
+            memcpy(ptr, body->c_str(), size * nmemb);
+            *body = body->substr(size * nmemb);
+            return size * nmemb;
+        }
+
+        return 0;                          /* no more data left to deliver */
+    }
 }
 
 ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request) {
@@ -432,15 +448,21 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 
 	curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, headers);
 
+    std::string body = request.body;
+
 	// set body if there's any
 	if(request.body!=""){
 		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1L);
 		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, request.body.size());
-		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, request.body.c_str());
+        //curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, request.body.c_str());
+        curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, readBody_cb);
+        curl_easy_setopt(curl.get(), CURLOPT_READDATA, &body);
 	}else{
 		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 0L);
 		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0);
-		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, nullptr);
+        //curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, nullptr);
+        curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, nullptr);
+        curl_easy_setopt(curl.get(), CURLOPT_READDATA, nullptr);
 	}
 	if(request.method == ofHttpRequest::GET){
 		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 1);
