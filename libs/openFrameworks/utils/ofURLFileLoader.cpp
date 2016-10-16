@@ -201,7 +201,9 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		}else{
 			session.reset(new HTTPClientSession(uri.getHost(), uri.getPort()));
 		}
-		session->setTimeout(Poco::Timespan(120,0));
+        if(request.timeout > 0){
+            session->setTimeout(Poco::Timespan(request.timeout,0));
+        }
 		if(request.contentType!=""){
 			req.setContentType(request.contentType);
 		}
@@ -445,6 +447,10 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	}else{
 		curl_easy_setopt(curl.get(), CURLOPT_POST, 1);
 	}
+
+    if(request.timeoutSeconds>0){
+        curl_easy_setopt(curl.get(), CURLOPT_TIMEOUT, request.timeoutSeconds);
+    }
 
 	// start request and receive response
 	ofHttpResponse response(request, 0, "");
