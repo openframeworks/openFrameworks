@@ -147,7 +147,7 @@ Module{
             if(usePoco){
                 pkgs.push("openssl")
             }else{
-                pkgs = pkgs.concat(["libcurl", "liburiparser"])
+                pkgs = pkgs.concat(["libcurl"])
             }
 
             return pkgs;
