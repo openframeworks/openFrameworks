@@ -29,7 +29,7 @@ init:
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x86" set MSYSTEM=MINGW32
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x64" set MSYSTEM=MINGW64
 
-- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syuu")
+#- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syuu")
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync"'
 
 - IF "%BUILDER%"=="VS" set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
