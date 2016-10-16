@@ -180,6 +180,8 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/pugixml/%
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS
