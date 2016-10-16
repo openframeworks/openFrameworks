@@ -422,9 +422,10 @@ namespace{
         }
 
         if(!body->empty()) {
-            memcpy(ptr, body->c_str(), size * nmemb);
-            *body = body->substr(size * nmemb);
-            return size * nmemb;
+            auto sent = std::min(size * nmemb, body->size());
+            memcpy(ptr, body->c_str(), sent);
+            *body = body->substr(sent);
+            return sent;
         }
 
         return 0;                          /* no more data left to deliver */
