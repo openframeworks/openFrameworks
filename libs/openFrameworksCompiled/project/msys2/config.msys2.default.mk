@@ -181,7 +181,11 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/pugixml/%
+
+ifeq ($(OF_USE_POCO),1)
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/pugixml/%
+endif
+
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -193,7 +197,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/pugixml/%
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_HEADER_SEARCH_PATHS = /mingw32/include/pugixml-1.7/
+# PLATFORM_HEADER_SEARCH_PATHS =
 
 ##########################################################################################
 # PLATFORM LIBRARIES
