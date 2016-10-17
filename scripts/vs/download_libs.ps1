@@ -67,6 +67,10 @@ robocopy.exe ..\..\libs\32\svgtiny ..\..\addons\ofxSvg\libs\ /MOVE /NFL /R:5 /S
 robocopy.exe ..\..\libs\64\svgtiny\lib\vs\x64 ..\..\addons\ofxSvg\libs\svgtiny\lib\vs\ /MOVE /NFL /R:5 /S
 Remove-Item "..\..\libs\64\svgtiny" -Force -Recurse
 
+robocopy.exe ..\..\libs\32\poco ..\..\addons\ofxPoco\libs\ /MOVE /NFL /R:5 /S
+robocopy.exe ..\..\libs\64\poco\lib\vs\x64 ..\..\addons\ofxPoco\libs\poco\lib\vs\ /MOVE /NFL /R:5 /S
+Remove-Item "..\..\libs\64\poco" -Force -Recurse
+
 robocopy.exe ..\..\libs\32\ ..\..\libs\ /MOVE /NFL /R:5 /S
 robocopy.exe ..\..\libs\64\ ..\..\libs\ /MOVE /NFL /R:5 /S
 
