@@ -20,7 +20,6 @@ Product{
     // but will build on each application rebuild instead of in
     // a common directory
     readonly property bool qbsBuild: project.makeOF !== undefined ? !project.makeOF : false
-    readonly property bool usePoco: project.usePoco !== undefined ? project.usePoco : false
     readonly property bool useXml2: project.useXml2 !== undefined ? project.useXml2 : false
 
     Properties{
@@ -97,14 +96,9 @@ Product{
             ];
         }
         if(useXml2){
-            excludes.push("utils/ofXml\\..*");
             excludes.push("utils/ofXmlPugi\\..*");
-        }else if(usePoco){
-            excludes.push("utils/ofXmlPugi\\..*");
-            excludes.push("utils/ofXml2\\..*");
         }else{
             excludes.push("utils/ofXml2\\..*");
-            excludes.push("utils/ofXml\\..*");
         }
         return excludes;
     }
@@ -164,9 +158,6 @@ Product{
         }
         prepare: {
             var parameters = ['-j4', 'Debug'];
-            if(!product.usePoco){
-                parameters.push('OF_USE_POCO=0');
-            }
             if(product.useXml2){
                 parameters.push('OF_USE_XML2=1');
             }
@@ -191,9 +182,6 @@ Product{
         }
         prepare: {
             var parameters = ['-j4', 'Release'];
-            if(!product.usePoco){
-                parameters.push('OF_USE_POCO=0');
-            }
             if(product.useXml2){
                 parameters.push('OF_USE_XML2=1');
             }

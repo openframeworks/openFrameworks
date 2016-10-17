@@ -27,22 +27,22 @@
 #include <Poco/DOM/NamedNodeMap.h>
 #include <Poco/DOM/ChildNodesList.h>
 
-class ofXml{
+class ofxXmlPoco{
     
 public:
     
-    ofXml();
-    ~ofXml();
+    ofxXmlPoco();
+    ~ofxXmlPoco();
 
-    ofXml( const string & path );
-    ofXml( const ofXml& rhs );
-    const ofXml& operator =( const ofXml& rhs );
+    ofxXmlPoco( const string & path );
+    ofxXmlPoco( const ofxXmlPoco& rhs );
+    const ofxXmlPoco& operator =( const ofxXmlPoco& rhs );
 
     bool load(const std::filesystem::path & path);
     bool save(const std::filesystem::path & path);
 
     bool            addChild( const string& path );
-    void            addXml( ofXml& xml, bool copyAll = false);
+    void            addXml( ofxXmlPoco& xml, bool copyAll = false);
 
     string          getValue() const;
     string          getValue(const string & path) const;
@@ -65,7 +65,7 @@ public:
 
     bool            removeAttribute(const string& path);
     bool            removeAttributes(const string& path); // removes attributes for the passed path
-    bool            removeAttributes(); // removes attributes for the element ofXml is pointing to
+    bool            removeAttributes(); // removes attributes for the element ofxXmlPoco is pointing to
     bool            removeContents(const string& path); // removes the path passed as parameter
     bool            removeContents(); // removes the childs of the current element
     bool            remove(const string& path); // removes both attributes and tags for the passed path
@@ -194,7 +194,7 @@ public:
 				if(element->firstChild() && element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
 					return ofFromString<T>(element->innerText());
 				}else{
-					ofLogWarning("ofXml") << "getValue(): path \"" << path<< "\" not found when getting value";
+					ofLogWarning("ofxXmlPoco") << "getValue(): path \"" << path<< "\" not found when getting value";
 					return returnVal; // hmm. this could be a problem
 				}
 			}else{
@@ -228,5 +228,5 @@ protected:
 };
 
 // serializer
-void ofSerialize(ofXml & xml, const ofAbstractParameter & parameter);
-void ofDeserialize(const ofXml & xml, ofAbstractParameter & parameter);
+void ofSerialize(ofxXmlPoco & xml, const ofAbstractParameter & parameter);
+void ofDeserialize(const ofxXmlPoco & xml, ofAbstractParameter & parameter);

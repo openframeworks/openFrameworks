@@ -59,9 +59,6 @@ Project{
         }
     }
 
-    property bool usePoco: true // enables / disables compiling poco with OF 
-                                // (will disable some functionality)
-
     property bool makeOF: true  // use makfiles to compile the OF library
                                 // will compile OF only once for all your projects
                                 // otherwise compiled per project with qbs
