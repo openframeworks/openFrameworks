@@ -279,7 +279,7 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofThreadChannel.h">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\utils\ofXmlPugi.h">
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofXml.h">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
   </ItemGroup>
@@ -473,7 +473,7 @@
     <ClCompile Include="..\..\..\openFrameworks\app\ofMainLoop.cpp">
       <Filter>libs\openFrameworks\app</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\utils\ofXmlPugi.cpp">
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofXml.cpp">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClCompile>
   </ItemGroup>
