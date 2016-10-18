@@ -2,6 +2,7 @@
 #include "ofEvents.h"
 #include "ofFileUtils.h"
 #include "ofTypes.h"
+class ofHttpResponse;
 
 /// \class ofHttpRequest
 /// \brief an HTTP GET or POST request
@@ -16,6 +17,8 @@ public:
 	map<string,string>	headers; //< HTTP header keys & values
 	string				body; //< POST body data
 	string				contentType; //< POST data mime type
+	std::function<void(const ofHttpResponse&)> done;
+    size_t              timeoutSeconds = 0;
 
 	/// \return the unique id for this request
 	int getId() const;

@@ -20,7 +20,6 @@ Product{
     // but will build on each application rebuild instead of in
     // a common directory
     readonly property bool qbsBuild: project.makeOF !== undefined ? !project.makeOF : false
-    readonly property bool usePoco: project.usePoco !== undefined ? project.usePoco : true
 
     Properties{
         condition: qbsBuild
@@ -52,46 +51,51 @@ Product{
     }
 
     property stringList FILES_EXCLUDE: {
+        var excludes = [];
         if(qbs.targetOS.indexOf("linux")>-1){
-            return [
-                "app/ofAppGlutWindow.*",
-                "video/ofDirectShowPlayer.*",
-                "video/ofDirectShowGrabber.*",
-                "video/ofAVFoundationVideoPlayer.*",
-                "video/ofAVFoundationVideoGrabber.*",
-                "video/ofQuickTimePlayer.*",
-                "video/ofQuickTimeGrabber.*",
-                "video/ofQtUtils.*",
-                "video/ofQTKit.*",
-                "app/ofAppEGLWindow.*",
+            excludes = [
+                "app/ofAppGlutWindow\\..*",
+                "video/ofDirectShowPlayer\\..*",
+                "video/ofDirectShowGrabber\\..*",
+                "video/ofAVFoundationVideoPlayer\\..*",
+                "video/ofAVFoundationVideoGrabber\\..*",
+                "video/ofQuickTimePlayer\\..*",
+                "video/ofQuickTimeGrabber\\..*",
+                "video/ofQtUtils\\..*",
+                "video/ofQTKit\\..*",
+                "app/ofAppEGLWindow\\..*",
             ];
         }else if(qbs.targetOS.indexOf("windows")>-1){
-            return [
-                "app/ofAppGlutWindow.*",
-                "video/ofGstVideoPlayer.*",
-                "video/ofGstVideoGrabber.*",
-                "video/ofGstUtils.*",
-                "video/ofAVFoundationVideoPlayer.*",
-                "video/ofAVFoundationVideoGrabber.*",
-                "video/ofQuickTimePlayer.*",
-                "video/ofQuickTimeGrabber.*",
-                "video/ofQtUtils.*",
-                "video/ofQTKit.*",
-                "app/ofAppEGLWindow.*",
-                "sound/ofOpenALSoundPlayer.*"
+            excludes = [
+                "app/ofAppGlutWindow\\..*",
+                "video/ofGstVideoPlayer\\..*",
+                "video/ofGstVideoGrabber\\..*",
+                "video/ofGstUtils\\..*",
+                "video/ofAVFoundationVideoPlayer\\..*",
+                "video/ofAVFoundationVideoGrabber\\..*",
+                "video/ofQuickTimePlayer\\..*",
+                "video/ofQuickTimeGrabber\\..*",
+                "video/ofQtUtils\\..*",
+                "video/ofQTKit\\..*",
+                "app/ofAppEGLWindow\\..*",
             ];
         }else if(qbs.targetOS.indexOf("osx")>-1){
-            return [
+            excludes = [
                 "app/ofAppGlutWindow.*",
-                "video/ofGstVideoPlayer.*",
-                "video/ofGstVideoGrabber.*",
-                "video/ofGstUtils.*",
-                "video/ofDirectShowPlayer.*",
-                "video/ofDirectShowGrabber.*",
-                "app/ofAppEGLWindow.*",
-                "sound/ofOpenALSoundPlayer.*"
+                "video/ofGstVideoPlayer\\..*",
+                "video/ofGstVideoGrabber\\..*",
+                "video/ofGstUtils\\..*",
+                "video/ofDirectShowPlayer\\..*",
+                "video/ofDirectShowGrabber\\..*",
+                "video/ofQuickTimePlayer\\..*",
+                "video/ofQuickTimeGrabber\\..*",
+                "video/ofQtUtils\\..*",
+                "video/ofQTKit\\..*",
+                "app/ofAppEGLWindow\\..*",
             ];
         }
+
+        return excludes;
     }
 
     Group {
@@ -142,16 +146,13 @@ Product{
         condition: qbs.buildVariant.contains('debug') && !product.qbsBuild
         inputs: ["filtered_sources"]
         multiplex : true
+        alwaysRun: true
         Artifact {
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworksDebug.a")
              fileTags: "staticlibrary"
         }
         prepare: {
             var parameters = ['-j4', 'Debug'];
-            if(!product.usePoco){
-                parameters.push('OF_USE_POCO=0');
-            }
-
             var qbsCmd = new Command(product.make, parameters);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
@@ -165,16 +166,13 @@ Product{
         condition: qbs.buildVariant.contains('release') && !product.qbsBuild
         inputs: ["filtered_sources"]
         multiplex : true
+        alwaysRun: true
         Artifact {
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworks.a")
              fileTags: "staticlibrary"
         }
         prepare: {
             var parameters = ['-j4', 'Release'];
-            if(!product.usePoco){
-                parameters.push('OF_USE_POCO=0');
-            }
-
             var qbsCmd = new Command(product.make, parameters);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;

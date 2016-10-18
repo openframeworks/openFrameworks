@@ -6,9 +6,6 @@
 
 #include "ofLog.h"
 
-#ifdef TARGET_WIN32	 // For ofLaunchBrowser.
-	#include <shellapi.h>
-#endif
 
 /// \section Elapsed Time
 /// \brief Reset the elapsed time counter.

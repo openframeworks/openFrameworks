@@ -6,16 +6,19 @@
 #include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofSystemUtils.h"
-#if OF_USE_POCO || defined (TARGET_IMPLEMENTS_URL_LOADER)
-	#include "ofURLFileLoader.h"
-#endif
+
+#include "ofURLFileLoader.h"
+
 #include "ofUtils.h"
+
 #if !defined(TARGET_EMSCRIPTEN)
 #include "ofThread.h"
 #include "ofThreadChannel.h"
 #endif
+
 #include "ofFpsCounter.h"
 #include "ofJson.h"
+#include "ofXml.h"
 
 //--------------------------
 // types
@@ -24,9 +27,6 @@
 #include "ofColor.h"
 #include "ofPoint.h"
 #include "ofRectangle.h"
-#if OF_USE_POCO
-	#include "ofXml.h"
-#endif
 #include "ofParameter.h"
 #include "ofParameterGroup.h"
 
@@ -110,4 +110,3 @@
 #include "ofEasyCam.h"
 #include "ofMesh.h"
 #include "ofNode.h"
-

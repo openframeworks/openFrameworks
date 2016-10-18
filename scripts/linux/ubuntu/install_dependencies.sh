@@ -142,8 +142,8 @@ else
 
     # tools for git use
     GLFW_GIT_TAG=$GLFW_VER
-    apt-get install -y -qq libxrandr-dev libxinerama-dev libxcursor-dev
-    curl -Lk https://github.com/glfw/glfw/archive/$GLFW_GIT_TAG.tar.gz -o glfw-$GLFW_GIT_TAG.tar.gz
+    apt-get install -y -qq libxrandr-dev libxinerama-dev libxcursor-dev cmake
+    wget https://github.com/glfw/glfw/archive/$GLFW_GIT_TAG.tar.gz -O glfw-$GLFW_GIT_TAG.tar.gz
     tar -xf glfw-$GLFW_GIT_TAG.tar.gz
 	mv glfw-$GLFW_GIT_TAG glfw
 	rm glfw-$GLFW_GIT_TAG.tar.gz
@@ -163,7 +163,7 @@ else
     GLFW_PKG=
 fi
 
-PACKAGES="curl libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem${BOOST_VER}-dev libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good gdb ${GLFW_PKG}"
+PACKAGES="curl libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem${BOOST_VER}-dev libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good gdb ${GLFW_PKG} liburiparser-dev libcurl4-openssl-dev libxml2-dev libpugixml-dev"
 
 echo "installing OF dependencies"
 echo "OF needs to install the following packages using apt-get:"
