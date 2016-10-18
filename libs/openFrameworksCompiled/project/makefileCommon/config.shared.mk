@@ -17,30 +17,17 @@
 ################################################################################
 #   
 
-ifndef SHELL
-    SHELL := /bin/sh
-endif
 
-ifndef OF_ROOT
-    OF_ROOT=$(realpath ../../..)
-endif
-
-# if the user has not specified a special variant, then use the default variant
-ifndef PLATFORM_VARIANT
-    PLATFORM_VARIANT = default
-endif
+SHELL ?= /bin/sh
+OF_ROOT ?=  $(realpath ../../..)
+PLATFORM_VARIANT ?= default
 
 ifeq ($(CC),$(EMSCRIPTEN)/emcc)
 	PLATFORM_OS=emscripten
 endif
+PLATFORM_OS ?= $(shell uname -s)
 
 FIND=find
-
-# if not defined, determine this platform's operating system via uname -s
-ifndef PLATFORM_OS 
-    # determine from the uname if not defined manually
-    PLATFORM_OS=$(shell uname -s)
-endif
 HOST_OS=$(shell uname -s)
 $(info HOST_OS=${HOST_OS})
 
@@ -256,12 +243,6 @@ endif
 ################################################################################
 
 # take from the platform core exclusions and strip and collapse spaces
-ifeq ($(OF_USE_POCO),0)
-    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include
-    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/%
-    CFLAGS+=-DOF_USE_POCO=0
-endif
-
 CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
 
 ################################################################################

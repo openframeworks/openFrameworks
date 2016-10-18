@@ -18,7 +18,7 @@ Project{
         ]
 
         of.addons: [
-            %{JS: 
+            %{JS:
                 [].concat(%{ofx3DModelLoader}       ? ['\'ofx3DModelLoader\'']       : [])
                 .concat(%{ofxAssimpModelLoader}     ? ['\'ofxAssimpModelLoader\'']   : [])
                 .concat(%{ofxGui}                   ? ['\'ofxGui\'']                 : [])
@@ -64,9 +64,6 @@ Project{
             name: "openFrameworks"
         }
     }
-
-    property bool usePoco: true // enables / disables compiling poco with OF 
-                                // (will disable some functionality)
 
     property bool makeOF: true  // use makfiles to compile the OF library
                                 // will compile OF only once for all your projects

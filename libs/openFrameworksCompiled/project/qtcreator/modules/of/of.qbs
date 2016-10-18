@@ -42,65 +42,45 @@ Module{
         if(platform === "linux"  || platform === "linux64"){
             return [
                 "glew",
-                "cairo",
-                "glu",
-                "poco",
-                "quicktime",
+				"cairo",
                 "videoInput",
                 "freetype",
                 "FreeImage",
-                "assimp",
-                "glut",
+				"assimp",
                 "rtAudio",
                 "openssl",
-                "boost",
-                "poco",
+				"boost",
                 "glfw",
                 "openFrameworksCompiled",
             ];
         }else if(platform==="msys2"){
             return [
                 "glew",
-                "cairo",
-                "poco",
+				"cairo",
                 "freetype",
                 "FreeImage",
-                "assimp",
-                "glut",
+				"assimp",
                 "openssl",
                 "boost",
                 "glfw",
                 "openFrameworksCompiled"
             ];
         }else if(platform==="osx"){
-            var exceptions = [
-                "poco",
-                "quicktime",
-                "glut",
+		    var exceptions = [
                 "openFrameworksCompiled",
                 "videoInput"
-            ];
-            if(!usePoco){
-                exceptions.push("openssl");
-            }
+				];
             return exceptions;
         }else if(platform==="android"){
-            var exceptions =  [
-                "poco",
-                "quicktime",
-                "glut",
-                "glfw",
-                "glu",
+		    var exceptions =  [
+			    "glfw",
                 "fmodex",
                 "glew",
                 "kiss",
                 "rtAudio",
                 "videoInput",
                 "openFrameworksCompiled",
-            ];
-            if(!usePoco){
-                exceptions.push("openssl");
-            }
+				];
             return exceptions;
         }
     }
@@ -127,23 +107,22 @@ Module{
                 "gtk+-3.0",
                 "libmpg123",
                 "glfw3",
-            ].concat(pkgConfigs);
+				"openssl",
+				"libcurl",
+				"liburiparser",
+				].concat(pkgConfigs);
 
-            if(usePoco){
-                pkgs.push("openssl")
-            }
             return pkgs;
         }else if(platform === "msys2"){
             var pkgs = [
 				"cairo",
                 "zlib",
                 "glew",
-                "glfw3",
-            ].concat(pkgConfigs);
+				"glfw3",
+				"libcurl",
+				"openssl",
+				].concat(pkgConfigs);
 
-            if(usePoco){
-                pkgs.push("openssl")
-            }
             return pkgs;
         }else{
             return [];
@@ -164,12 +143,10 @@ Module{
                 "rtaudio",
                 "boost_filesystem",
                 "boost_system",
+				"pugixml",
             ];
         }else if(platform === "msys2"){
-            var libs=[];
-            if(usePoco){
-                libs = ['PocoNetSSL', 'PocoNet', 'PocoCrypto', 'PocoUtil', 'PocoJSON', 'PocoXML', 'PocoFoundation',];
-            }
+		    var libs=[];
             return libs.concat([
                 'opengl32', 'gdi32', 'msimg32', 'glu32', 'dsound', 'winmm', 'strmiids',
                 'uuid', 'ole32', 'oleaut32', 'setupapi', 'wsock32', 'ws2_32', 'Iphlpapi', 'Comdlg32',
@@ -229,10 +206,7 @@ Module{
                 var include_paths = Helpers.listDirsRecursive(include_path);
                 includes = includes.concat(include_paths);
             }
-        }
-        if(usePoco){
-            includes.push(ofRoot+'/libs/poco/include');
-        }
+			}
         includes = includes.concat(PKG_CONFIG_INCLUDES);
         if(platform === "msys2"){
             includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include'));
@@ -254,35 +228,7 @@ Module{
     }
 
     readonly property pathList STATIC_LIBS: {
-        var staticLibraries = Helpers.findLibsRecursive(ofRoot + "/libs",platform,LIBS_EXCEPTIONS);
-        if(usePoco){
-            if(platform === "osx"){
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoNetSSL.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoNet.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoCrypto.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoUtil.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoJSON.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoXML.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/PocoFoundation.a');
-            }else if(platform === "android"){
-                platform_abi = platform + '/' + Android.ndk.abi;
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoNetSSL.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoNet.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoCrypto.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoUtil.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoJSON.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoXML.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform_abi + '/libPocoFoundation.a');
-            }else if(platform === "linux" || platform === "linux64"){
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNetSSL.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoNet.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoCrypto.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoUtil.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoJSON.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoXML.a');
-                staticLibraries.push(ofRoot + '/libs/poco/lib/' + platform + '/libPocoFoundation.a');
-            }
-        }
+	    var staticLibraries = Helpers.findLibsRecursive(ofRoot + "/libs",platform,LIBS_EXCEPTIONS);
         return staticLibraries
     }
 
@@ -468,8 +414,6 @@ Module{
         return ldflags;
     }
 
-    readonly property bool usePoco: project.usePoco!==undefined ? project.usePoco : true
-
     readonly property stringList DEFINES: {
         var defines = ['GCC_HAS_REGEX'];
 
@@ -479,16 +423,8 @@ Module{
 
         if(qbs.targetOS.indexOf("windows")>-1){
             defines = defines.concat(['UNICODE','_UNICODE']);
-
-            if(usePoco){
-                defines = defines.concat(['POCO_STATIC'])
-            }
-        }
-
-        if(!usePoco){
-            defines = defines.concat(['OF_USE_POCO=0'])
-        }
-
+		}
+        
         return defines;
     }
 
@@ -596,7 +532,7 @@ Module{
     property stringList cxxFlags: []
     property stringList linkerFlags: []
     property stringList defines: []
-    property stringList frameworks: [] 
+    property stringList frameworks: []
 
     coreIncludePaths: INCLUDE_PATHS
         .concat(ADDON_INCLUDES)

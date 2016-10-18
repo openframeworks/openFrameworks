@@ -275,6 +275,8 @@ private:
                         json_var_value("StdOut", stdOut) + ", " +
                         json_var_value("StdErr", stdErr) +
                     "}";
+            req.timeoutSeconds = 20;
+            ofLogNotice() << "Sending appveyor test results to " << req.url;
             ofURLFileLoader http;
             auto res = http.handleRequest(req);
             if(res.status<200 || res.status>=300){
@@ -285,6 +287,7 @@ private:
                 cout << req.body << endl;
                 return false;
             }else{
+                ofLogNotice() << "Test results sent correctly";
                 return true;
             }
         }else{
