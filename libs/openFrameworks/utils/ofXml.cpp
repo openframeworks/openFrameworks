@@ -1,4 +1,4 @@
-#include "ofXml2.h"
+#include "ofXml.h"
 #include "ofUtils.h"
 
 ofXml::ofXml()
