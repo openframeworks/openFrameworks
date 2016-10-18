@@ -140,7 +140,7 @@ public:
 			attr = appendAttribute(name);
 		}
 		attr.set(value);
-		return std::move(attr);
+		return attr;
 	}
 
 	ofXml findFirst(const std::string & path) const;
