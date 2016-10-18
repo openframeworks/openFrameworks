@@ -73,17 +73,19 @@ ofXml ofXml::appendChild(const ofXml & xml){
 	return ofXml(doc, this->xml.append_copy(xml.xml));
 }
 
-ofXml ofXml::appendChild(ofXml && xml){
-	return ofXml(doc, this->xml.append_move(xml.xml));
-}
-
 ofXml ofXml::prependChild(const ofXml & xml){
 	return ofXml(doc, this->xml.prepend_copy(xml.xml));
+}
+
+#if PUGIXML_VERSION>=170
+ofXml ofXml::appendChild(ofXml && xml){
+	return ofXml(doc, this->xml.append_move(xml.xml));
 }
 
 ofXml ofXml::prependChild(ofXml && xml){
 	return ofXml(doc, this->xml.prepend_move(xml.xml));
 }
+#endif
 
 ofXml ofXml::appendChild(const std::string & name){
 	return ofXml(doc, this->xml.append_child(name.c_str()));
