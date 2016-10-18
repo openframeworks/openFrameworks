@@ -103,9 +103,13 @@ public:
 	Range<ofXmlIterator<pugi::xml_named_node_iterator>> getChildren(const std::string & name) const;
 
 	ofXml appendChild(const ofXml & xml);
-	ofXml appendChild(ofXml && xml);
 	ofXml prependChild(const ofXml & xml);
+
+#if PUGIXML_VERSION>=170
+	ofXml appendChild(ofXml && xml);
 	ofXml prependChild(ofXml && xml);
+#endif
+
 	ofXml appendChild(const std::string & name);
 	ofXml prependChild(const std::string & name);
 	bool removeChild(const std::string & name);
