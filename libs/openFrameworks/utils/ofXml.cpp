@@ -57,15 +57,15 @@ std::string ofXml::toString(const std::string & indent) const{
 	return stream.str();
 }
 
-ofXml ofXml::child(const std::string & name) const{
+ofXml ofXml::getChild(const std::string & name) const{
 	return ofXml(doc, xml.child(name.c_str()));
 }
 
-ofXml::Range<ofXmlIterator<pugi::xml_node_iterator>> ofXml::children() const{
+ofXml::Range<ofXmlIterator<pugi::xml_node_iterator>> ofXml::getChildren() const{
 	return ofXml::Range<ofXmlIterator<pugi::xml_node_iterator>>(doc, xml.children());
 }
 
-ofXml::Range<ofXmlIterator<pugi::xml_named_node_iterator>> ofXml::children(const std::string & name) const{
+ofXml::Range<ofXmlIterator<pugi::xml_named_node_iterator>> ofXml::getChildren(const std::string & name) const{
 	return ofXml::Range<ofXmlIterator<pugi::xml_named_node_iterator>>(doc, xml.children(name.c_str()));
 }
 
@@ -105,44 +105,44 @@ bool ofXml::removeChild(const std::string & name){
 	return xml.remove_child(name.c_str());
 }
 
-ofXml ofXml::nextSibling() const{
+ofXml ofXml::getNextSibling() const{
 	return ofXml(doc, this->xml.next_sibling());
 }
 
-ofXml ofXml::previousSibling() const{
+ofXml ofXml::getPreviousSibling() const{
 	return ofXml(doc, this->xml.previous_sibling());
 }
 
-ofXml ofXml::nextSibling(const std::string & name) const{
+ofXml ofXml::getNextSibling(const std::string & name) const{
 	return ofXml(doc, this->xml.next_sibling(name.c_str()));
 }
 
-ofXml ofXml::previousSibling(const std::string & name) const{
+ofXml ofXml::getPreviousSibling(const std::string & name) const{
 	return ofXml(doc, this->xml.previous_sibling(name.c_str()));
 }
 
-ofXml ofXml::firstChild() const{
+ofXml ofXml::getFirstChild() const{
 	return ofXml(doc, this->xml.first_child());
 }
 
-ofXml ofXml::lastChild() const{
+ofXml ofXml::getLastChild() const{
 	return ofXml(doc, this->xml.last_child());
 }
 
 
-ofXml::Attribute ofXml::attribute(const std::string & name) const{
+ofXml::Attribute ofXml::getAttribute(const std::string & name) const{
 	return this->xml.attribute(name.c_str());
 }
 
-ofXml::Range<ofXmlIterator<pugi::xml_attribute_iterator>> ofXml::attributes() const{
+ofXml::Range<ofXmlIterator<pugi::xml_attribute_iterator>> ofXml::getAttributes() const{
 	return ofXml::Range<ofXmlIterator<pugi::xml_attribute_iterator>>(doc, this->xml.attributes());
 }
 
-ofXml::Attribute ofXml::firstAttribute() const{
+ofXml::Attribute ofXml::getFirstAttribute() const{
 	return this->xml.first_attribute();
 }
 
-ofXml::Attribute ofXml::lastAttribute() const{
+ofXml::Attribute ofXml::getLastAttribute() const{
 	return this->xml.last_attribute();
 }
 
@@ -177,7 +177,7 @@ ofXml::Search ofXml::find(const std::string & path) const{
 	}
 }
 
-std::string ofXml::value() const{
+std::string ofXml::getValue() const{
 	return this->xml.text().as_string();
 }
 
@@ -188,23 +188,23 @@ void ofXml::setName(const std::string & name){
 	this->xml.set_name(name.c_str());
 }
 
-int ofXml::intValue() const{
+int ofXml::getIntValue() const{
 	return this->xml.text().as_int();
 }
 
-unsigned int ofXml::uintValue() const{
+unsigned int ofXml::getUintValue() const{
 	return this->xml.text().as_uint();
 }
 
-float ofXml::floatValue() const{
+float ofXml::getFloatValue() const{
 	return this->xml.text().as_float();
 }
 
-double ofXml::doubleValue() const{
+double ofXml::getDoubleValue() const{
 	return this->xml.text().as_double();
 }
 
-bool ofXml::boolValue() const{
+bool ofXml::getBoolValue() const{
 	return this->xml.text().as_bool();
 }
 
@@ -220,7 +220,7 @@ ofXml::operator bool() const{
 ofXml::Attribute::Attribute(const pugi::xml_attribute & attr)
 :attr(attr){}
 
-std::string ofXml::Attribute::value() const{
+std::string ofXml::Attribute::getValue() const{
 	return this->attr.as_string();
 }
 
@@ -228,23 +228,23 @@ void ofXml::Attribute::setName(const std::string & name){
 	this->attr.set_name(name.c_str());
 }
 
-int ofXml::Attribute::intValue() const{
+int ofXml::Attribute::getIntValue() const{
 	return this->attr.as_int();
 }
 
-unsigned int ofXml::Attribute::uintValue() const{
+unsigned int ofXml::Attribute::getUintValue() const{
 	return this->attr.as_uint();
 }
 
-float ofXml::Attribute::floatValue() const{
+float ofXml::Attribute::getFloatValue() const{
 	return this->attr.as_float();
 }
 
-double ofXml::Attribute::doubleValue() const{
+double ofXml::Attribute::getDoubleValue() const{
 	return this->attr.as_double();
 }
 
-bool ofXml::Attribute::boolValue() const{
+bool ofXml::Attribute::getBoolValue() const{
 	return this->attr.as_bool();
 }
 
@@ -252,11 +252,11 @@ ofXml::Attribute::operator bool() const{
 	return this->attr;
 }
 
-ofXml::Attribute ofXml::Attribute::nextAttribute() const{
+ofXml::Attribute ofXml::Attribute::getNextAttribute() const{
 	return this->attr.next_attribute();
 }
 
-ofXml::Attribute ofXml::Attribute::previousAttribute() const{
+ofXml::Attribute ofXml::Attribute::getPreviousAttribute() const{
 	return this->attr.previous_attribute();
 }
 
@@ -294,7 +294,7 @@ void ofXml::Search::sort(bool reverse){
 }
 
 // Get first node in the collection by document order
-ofXml ofXml::Search::first() const{
+ofXml ofXml::Search::getFirst() const{
 	return ofXml(doc, search.first().node());
 }
 
