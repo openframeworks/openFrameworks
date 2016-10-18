@@ -414,8 +414,6 @@ Module{
         return ldflags;
     }
 
-    readonly property bool useXml2: project.useXml2!==undefined ? project.useXml2 : false
-
     readonly property stringList DEFINES: {
         var defines = ['GCC_HAS_REGEX'];
 
@@ -426,10 +424,7 @@ Module{
         if(qbs.targetOS.indexOf("windows")>-1){
             defines = defines.concat(['UNICODE','_UNICODE']);
 		}
-        if(useXml2){
-           defines = defines.concat(['OF_USE_XML2=1'])
-        }
-
+        
         return defines;
     }
 
@@ -537,7 +532,7 @@ Module{
     property stringList cxxFlags: []
     property stringList linkerFlags: []
     property stringList defines: []
-    property stringList frameworks: [] 
+    property stringList frameworks: []
 
     coreIncludePaths: INCLUDE_PATHS
         .concat(ADDON_INCLUDES)

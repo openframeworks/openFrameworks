@@ -16,16 +16,9 @@
 #include "ofThreadChannel.h"
 #endif
 
-#if OF_USE_XML2
-	#include "ofXml2.h"
-#elif OF_USE_POCO
-	#include "ofXml.h"
-#elif !defined(TARGET_EMSCRIPTEN)
-	#include "ofXmlPugi.h"
-#endif
-
 #include "ofFpsCounter.h"
 #include "ofJson.h"
+#include "ofXml.h"
 
 //--------------------------
 // types
@@ -117,4 +110,3 @@
 #include "ofEasyCam.h"
 #include "ofMesh.h"
 #include "ofNode.h"
-

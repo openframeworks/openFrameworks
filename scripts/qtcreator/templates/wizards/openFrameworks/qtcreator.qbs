@@ -18,7 +18,7 @@ Project{
         ]
 
         of.addons: [
-            %{JS: 
+            %{JS:
                 [].concat(%{ofx3DModelLoader}       ? ['\'ofx3DModelLoader\'']       : [])
                 .concat(%{ofxAssimpModelLoader}     ? ['\'ofxAssimpModelLoader\'']   : [])
                 .concat(%{ofxGui}                   ? ['\'ofxGui\'']                 : [])
@@ -68,8 +68,6 @@ Project{
     property bool makeOF: true  // use makfiles to compile the OF library
                                 // will compile OF only once for all your projects
                                 // otherwise compiled per project with qbs
-
-    property bool useXml2: false // enables / disables the new ofXml api
 
     references: [FileInfo.joinPaths(of_root, "/libs/openFrameworksCompiled/project/qtcreator/openFrameworks.qbs")]
 }
