@@ -32,7 +32,7 @@ public:
 		void sort(bool reverse = false);
 
 		// Get first node in the collection by document order
-		ofXml first() const;
+		ofXml getFirst() const;
 
 		// Check if collection is empty
 		bool empty() const;
@@ -46,19 +46,19 @@ public:
 	class Attribute{
 	public:
 		Attribute(){}
-		std::string value() const;
+		std::string getValue() const;
 
 		void setName(const std::string & name);
 
-		int intValue() const;
-		unsigned int uintValue() const;
-		float floatValue() const;
-		double doubleValue() const;
-		bool boolValue() const;
+		int getIntValue() const;
+		unsigned int getUintValue() const;
+		float getFloatValue() const;
+		double getDoubleValue() const;
+		bool getBoolValue() const;
 		operator bool() const;
 
-		Attribute nextAttribute() const;
-		Attribute previousAttribute() const;
+		Attribute getNextAttribute() const;
+		Attribute getPreviousAttribute() const;
 
 		template<typename T>
 		ofXml::Attribute & operator=(const T & value){
@@ -98,9 +98,9 @@ public:
 	bool save(const std::filesystem::path & file) const;
 	std::string toString(const std::string & indent = "\t") const;
 
-	ofXml child(const std::string & name) const;
-	Range<ofXmlIterator<pugi::xml_node_iterator>> children() const;
-	Range<ofXmlIterator<pugi::xml_named_node_iterator>> children(const std::string & name) const;
+	ofXml getChild(const std::string & name) const;
+	Range<ofXmlIterator<pugi::xml_node_iterator>> getChildren() const;
+	Range<ofXmlIterator<pugi::xml_named_node_iterator>> getChildren(const std::string & name) const;
 
 	ofXml appendChild(const ofXml & xml);
 	ofXml appendChild(ofXml && xml);
@@ -113,25 +113,25 @@ public:
 	ofXml insertChildAfter(const std::string & name, const ofXml & after);
 	ofXml insertChildBefore(const std::string & name, const ofXml & after);
 
-	ofXml nextSibling() const;
-	ofXml previousSibling() const;
-	ofXml nextSibling(const std::string & name) const;
-	ofXml previousSibling(const std::string & name) const;
+	ofXml getNextSibling() const;
+	ofXml getPreviousSibling() const;
+	ofXml getNextSibling(const std::string & name) const;
+	ofXml getPreviousSibling(const std::string & name) const;
 
-	ofXml firstChild() const;
-	ofXml lastChild() const;
+	ofXml getFirstChild() const;
+	ofXml getLastChild() const;
 
 
-	Attribute attribute(const std::string & name) const;
-	Range<ofXmlIterator<pugi::xml_attribute_iterator>> attributes() const;
-	Attribute firstAttribute() const;
-	Attribute lastAttribute() const;
+	Attribute getAttribute(const std::string & name) const;
+	Range<ofXmlIterator<pugi::xml_attribute_iterator>> getAttributes() const;
+	Attribute getFirstAttribute() const;
+	Attribute getLastAttribute() const;
 	Attribute appendAttribute(const std::string & name);
 	Attribute prependAttribute(const std::string & name);
 
 	template<typename T>
 	Attribute setAttribute(const std::string & name, const T & value){
-		auto attr = attribute(name);
+		auto attr = getAttribute(name);
 		if(!attr){
 			attr = appendAttribute(name);
 		}
@@ -143,11 +143,11 @@ public:
 	Search find(const std::string & path) const;
 
 	template<typename T>
-	T value() const{
+	T getValue() const{
 		return ofFromString<T>(this->xml.text().as_string());
 	}
 
-	std::string value() const;
+	std::string getValue() const;
 
 	template<typename T>
 	void set(const T & value){
@@ -179,11 +179,11 @@ public:
 
 	void setName(const std::string & name);
 
-	int intValue() const;
-	unsigned int uintValue() const;
-	float floatValue() const;
-	double doubleValue() const;
-	bool boolValue() const;
+	int getIntValue() const;
+	unsigned int getUintValue() const;
+	float getFloatValue() const;
+	double getDoubleValue() const;
+	bool getBoolValue() const;
 
 	operator bool() const;
 
@@ -220,24 +220,24 @@ public:
 	}
 
 	const ofXmlIterator& operator++(){
-		this->xml = xml.nextSibling();
+		this->xml = xml.getNextSibling();
 		return *this;
 	}
 
 	ofXmlIterator operator++(int){
 		auto now = xml;
-		this->xml = xml.nextSibling();
+		this->xml = xml.getNextSibling();
 		return now;
 	}
 
 	const ofXmlIterator& operator--(){
-		this->xml = xml.previousSibling();
+		this->xml = xml.getPreviousSibling();
 		return *this;
 	}
 
 	ofXmlIterator operator--(int){
 		auto now = xml;
-		this->xml = xml.previousSibling();
+		this->xml = xml.getPreviousSibling();
 		return now;
 	}
 	typedef It Base;
