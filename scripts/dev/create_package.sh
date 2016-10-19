@@ -387,7 +387,7 @@ function createPackage {
     elif [ "$pkg_platform" = "linuxarmv7l" ]; then
         scripts/linux/download_libs.sh -a armv7l
     elif [ "$pkg_platform" = "msys2" ]; then
-        scripts/msys2/download_libs.sh -a 64
+        scripts/msys2/download_libs.sh
     elif [ "$pkg_platform" = "vs" ]; then
         scripts/vs/download_libs.sh
     elif [ "$pkg_platform" = "android" ]; then
