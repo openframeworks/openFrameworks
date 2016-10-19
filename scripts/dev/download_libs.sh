@@ -31,13 +31,25 @@ download(){
 }
 
 # trap any script errors and exit
-trap "trapError" ERR SIGINT SIGTERM
+trap 'trapError ${LINENO}' ERR
+trap "trapError" SIGINT SIGTERM
 
-trapError() {
+trapError() { 
+    local parent_lineno="$1"
+    if [[ "$#" = "3" ]] ; then
+        local message="$2"
+        local code="${3:-1}"
+        echo "Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
+    else
+        local code="${2:-1}"
+        echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
+    fi
+    
     if [ -e openFrameworksLibs* ]; then
         echo "removing packages"
     	rm openFrameworksLibs*
     fi
+    exit "${code}"
 }
 
 
@@ -89,7 +101,8 @@ if [ "$ARCH" == "" ]; then
     if [ "$PLATFORM" == "linux" ]; then
         ARCH=$(uname -m)
         if [ "$ARCH" == "x86_64" ]; then
-            GCC_MAJOR_GT_4=$(expr `gcc -dumpversion | cut -f1 -d.` \> 4)
+            GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
+            GCC_MAJOR_GT_4=$(expr $GCC_VERSION > 4)
             if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
                 ARCH=64gcc5
             else
