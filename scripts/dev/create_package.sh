@@ -445,10 +445,6 @@ function createPackage {
     cd ${pkg_ofroot}/libs/openFrameworksCompiled/project
     rm -Rf $otherplatforms
 
-    #delete dynamic libraries for other platforms
-    cd $pkg_ofroot/export
-    rm -Rf $otherplatforms
-
     #delete scripts
     cd $pkg_ofroot/scripts
 	if [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
