@@ -32,7 +32,6 @@ branch=master
 fi
 cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 
-./create_package.sh linux $version $branch
 ./create_package.sh linux64 $version $branch
 ./create_package.sh linuxarmv6l $version $branch
 ./create_package.sh linuxarmv7l $version $branch
