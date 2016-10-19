@@ -55,13 +55,6 @@ echo "Creating package $version for $platform"
 echo --------------------------------------------------------------------------
 echo
 
-libsnotinmac="glu quicktime videoInput kiss"
-libsnotinlinux="quicktime videoInput glut glu cairo glew openssl rtAudio"
-libsnotinvs="kiss"
-libsnotinmingw="kiss glut cairo glew openssl"
-libsnotinandroid="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
-libsnotinios="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
-
 # This script removes folders clones the openFrameworks repo 
 # and deletes parts of it to create the final package.
 # Do not try to modify it to run over your local install of
@@ -273,39 +266,39 @@ function createPackage {
 
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 linuxarmv6l linuxarmv7l osx msys2 vs ios android"
+        otherplatforms="linux64 linuxarmv6l linuxarmv7l osx msys2 vs ios tvos android"
     fi
 
     if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux linuxarmv6l linuxarmv7l osx msys2 vs ios android"
+        otherplatforms="linux linuxarmv6l linuxarmv7l osx msys2 vs ios tvos android"
     fi
 
     if [ "$pkg_platform" = "linuxarmv6l" ]; then
-        otherplatforms="linux64 linux linuxarmv7l osx msys2 vs ios android"
+        otherplatforms="linux64 linux linuxarmv7l osx msys2 vs ios tvos android"
     fi
     
     if [ "$pkg_platform" = "linuxarmv7l" ]; then
-        otherplatforms="linux64 linux linuxarmv6l osx msys2 vs ios android"
+        otherplatforms="linux64 linux linuxarmv6l osx msys2 vs ios tvos android"
     fi
     
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs ios android"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs ios tvos android"
     fi
 
     if [ "$pkg_platform" = "msys2" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs ios android"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs ios tvos android"
     fi
 
     if [ "$pkg_platform" = "vs" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 ios android"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 ios tvos android"
     fi
 
     if [ "$pkg_platform" = "ios" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs android"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs android osx"
     fi
 
     if [ "$pkg_platform" = "android" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 vs ios"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 vs ios tvos"
     fi
     
     
@@ -381,41 +374,27 @@ function createPackage {
 		deleteXcode
 	fi
 
-    #delete libraries for other platforms
-    echo "Deleting core libraries from other platforms"
-    cd $pkg_ofroot/libs  
-    for lib in $( find . -maxdepth 1 -mindepth 1 -type d )
-    do
-        if [ -d $lib/lib ]; then
-            #echo deleting $lib/lib
-            cd $lib/lib
-            rm -Rf $lib/lib/$otherplatforms
-            cd $pkg_ofroot/libs
-        fi
-    done
+    #download external dependencies
+    cd $pkg_ofroot/
     if [ "$pkg_platform" = "osx" ]; then
-        rm -Rf $libsnotinmac
-    elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
-        rm -Rf $libsnotinlinux
+        scripts/osx/download_libs.sh
+        scripts/emscripten/download_libs.sh
+    elif [ "$pkg_platform" = "linux64" ]; then
+        scripts/linux/download_libs.sh -a 64
+        scripts/emscripten/download_libs.sh
+    elif [ "$pkg_platform" = "linuxarmv6l" ]; then
+        scripts/linux/download_libs.sh -a armv6l
+    elif [ "$pkg_platform" = "linuxarmv7l" ]; then
+        scripts/linux/download_libs.sh -a armv7l
     elif [ "$pkg_platform" = "msys2" ]; then
-        rm -Rf $libsnotinmingw
+        scripts/msys2/download_libs.sh -a 64
     elif [ "$pkg_platform" = "vs" ]; then
-        rm -Rf $libsnotinvs
+        scripts/vs/download_libs.sh
     elif [ "$pkg_platform" = "android" ]; then
-        rm -Rf $libsnotinandroid
+        scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
-        rm -Rf $libsnotinios
+        scripts/ios/download_libs.sh
     fi
-    
-    cd ${pkg_ofroot}/addons
-    echo "Deleting addon libraries from other platforms"
-    for lib in $( ls -d */libs/*/lib/ )
-    do
-        cd ${lib}
-        #echo deleting $lib
-        rm -Rf $otherplatforms
-        cd $pkg_ofroot/addons
-    done
     
 	#delete ofxAndroid in non android
 	if [ "$pkg_platform" != "android" ]; then
@@ -465,29 +444,6 @@ function createPackage {
     rm -Rf $otherplatforms
     cd ${pkg_ofroot}/libs/openFrameworksCompiled/project
     rm -Rf $otherplatforms
-    
-    #remove osx in ios from openFrameworksCompiled 
-    #(can't delete by default since it needs to keep things in libs for the simulator)
-    if [ "$pkg_platform" = "ios" ]; then
-	    rm -Rf ${pkg_ofroot}/libs/openFrameworksCompiled/lib/osx
-    	rm -Rf ${pkg_ofroot}/libs/openFrameworksCompiled/project/osx
-    fi
-
-	cd ${pkg_ofroot}/libs
-	#delete specific include folders non-android
-	if [ "$pkg_platform" != "android" ] && [ -d */include_android ]; then
-		rm -Rf $( ls -d */include_android )
-	fi
-
-	#delete specific include folders for non-ios
-	if [ "$pkg_platform" != "ios" ] && [ -d */include_ios ]; then
-		rm -Rf $( ls -d */include_ios )
-	fi
-
-	#delete generic includes for libs that has specific ones in android
-	if [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "ios" ]; then
-		rm -Rf glu/include
-	fi
 
     #delete dynamic libraries for other platforms
     cd $pkg_ofroot/export
