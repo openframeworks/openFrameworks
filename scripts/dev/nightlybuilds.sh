@@ -31,6 +31,8 @@ export PG_OF_PATH=$(cat ~/.ofprojectgenerator/config)
 cd $(cat ~/.ofprojectgenerator/config)
 git fetch upstreamhttps
 git reset --hard upstreamhttps/master
+scripts/dev/download_libs.sh
+
 cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 lasthash=$(cat lasthash.txt)
 currenthash=$(git rev-parse HEAD)
