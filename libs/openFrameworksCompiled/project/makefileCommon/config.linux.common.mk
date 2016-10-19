@@ -313,6 +313,7 @@ PLATFORM_LIBRARIES += freeimage
 PLATFORM_LIBRARIES += rtaudio
 PLATFORM_LIBRARIES += boost_filesystem
 PLATFORM_LIBRARIES += boost_system
+PLATFORM_LIBRARIES += pugixml
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
