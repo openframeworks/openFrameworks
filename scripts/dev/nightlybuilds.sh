@@ -40,7 +40,6 @@ if [ "$currenthash" = "$lasthash" ]; then
 fi
 
 echo $currenthash>lasthash.txt
-./create_package.sh linux $lastversion master
 ./create_package.sh linux64 $lastversion master
 ./create_package.sh msys2 $lastversion master
 ./create_package.sh vs $lastversion master
