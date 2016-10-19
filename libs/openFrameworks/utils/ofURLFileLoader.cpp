@@ -5,31 +5,7 @@
 
 #include "ofConstants.h"
 
-#if !defined(TARGET_IMPLEMENTS_URL_LOADER) && OF_USE_POCO
-	#include "Poco/Net/HTTPSession.h"
-	#include "Poco/Net/HTTPClientSession.h"
-	#include "Poco/Net/HTTPSClientSession.h"
-	#include "Poco/Net/HTTPRequest.h"
-	#include "Poco/Net/HTTPResponse.h"
-	#include "Poco/StreamCopier.h"
-	#include "Poco/Path.h"
-	#include "Poco/URI.h"
-	#include "Poco/Exception.h"
-	#include "Poco/URIStreamOpener.h"
-	#include "Poco/Net/HTTPStreamFactory.h"
-	#include "Poco/Net/HTTPSStreamFactory.h"
-	#include "Poco/Net/SSLManager.h"
-	#include "Poco/Net/KeyConsoleHandler.h"
-	#include "Poco/Net/ConsoleCertificateHandler.h"
-
-	#include "ofThreadChannel.h"
-	#include "ofThread.h"
-
-	using namespace Poco::Net;
-	using namespace Poco;
-
-	static bool factoryLoaded = false;
-#elif OF_USE_CURL
+#if !defined(TARGET_IMPLEMENTS_URL_LOADER)
 	#include <curl/curl.h>
 	#include "ofThreadChannel.h"
 	#include "ofThread.h"
@@ -43,240 +19,7 @@ ofEvent<ofHttpResponse> & ofURLResponseEvent(){
 	return *event;
 }
 
-#if !defined(TARGET_IMPLEMENTS_URL_LOADER) && OF_USE_POCO
-class ofURLFileLoaderImpl: public ofThread, public ofBaseURLFileLoader{
-public:
-	ofURLFileLoaderImpl();
-	~ofURLFileLoaderImpl();
-    ofHttpResponse get(const string& url);
-    int getAsync(const string& url, const string& name=""); // returns id
-    ofHttpResponse saveTo(const string& url, const std::filesystem::path& path);
-    int saveAsync(const string& url, const std::filesystem::path& path);
-	void remove(int id);
-	void clear();
-    void stop();
-    ofHttpResponse handleRequest(const ofHttpRequest & request);
-    int handleRequestAsync(const ofHttpRequest& request); // returns id
-
-protected:
-	// threading -----------------------------------------------
-	void threadedFunction();
-    void start();
-    void update(ofEventArgs & args);  // notify in update so the notification is thread safe
-
-private:
-	// perform the requests on the thread
-
-	ofThreadChannel<ofHttpRequest> requests;
-	ofThreadChannel<ofHttpResponse> responses;
-	ofThreadChannel<int> cancelRequestQueue;
-	set<int> cancelledRequests;
-};
-
-ofURLFileLoaderImpl::ofURLFileLoaderImpl() {
-	if(!factoryLoaded){
-		try {
-			HTTPStreamFactory::registerFactory();
-			HTTPSStreamFactory::registerFactory();
-			SharedPtr<PrivateKeyPassphraseHandler> pConsoleHandler = new KeyConsoleHandler(false);
-			SharedPtr<InvalidCertificateHandler> pInvalidCertHandler = new ConsoleCertificateHandler(true);
-			Context::Ptr pContext = new Context(Context::CLIENT_USE, "", Context::VERIFY_NONE);
-			SSLManager::instance().initializeClient(pConsoleHandler, pInvalidCertHandler, pContext);
-			factoryLoaded = true;
-		}
-		catch (Poco::SystemException & PS) {
-			ofLogError("ofURLFileLoader") << "couldn't create factory: " << PS.displayText();
-		}
-		catch (Poco::ExistsException & PS) {
-			ofLogError("ofURLFileLoader") << "couldn't create factory: " << PS.displayText();
-		}
-	}
-}
-
-
-ofURLFileLoaderImpl::~ofURLFileLoaderImpl(){
-	clear();
-	stop();
-}
-
-ofHttpResponse ofURLFileLoaderImpl::get(const string& url) {
-    ofHttpRequest request(url,url);
-    return handleRequest(request);
-}
-
-
-int ofURLFileLoaderImpl::getAsync(const string& url, const string& name){
-    ofHttpRequest request(url, name.empty() ? url : name);
-    requests.send(request);
-    start();
-    return request.getId();
-}
-
-
-ofHttpResponse ofURLFileLoaderImpl::saveTo(const string& url, const std::filesystem::path& path){
-    ofHttpRequest request(url,path.string(),true);
-    return handleRequest(request);
-}
-
-int ofURLFileLoaderImpl::saveAsync(const string& url, const std::filesystem::path& path){
-    ofHttpRequest request(url,path.string(),true);
-	requests.send(request);
-	start();
-	return request.getId();
-}
-
-void ofURLFileLoaderImpl::remove(int id){
-	cancelRequestQueue.send(id);
-}
-
-void ofURLFileLoaderImpl::clear(){
-	ofHttpResponse resp;
-	ofHttpRequest req;
-	while(requests.tryReceive(req)){}
-	while(responses.tryReceive(resp)){}
-}
-
-void ofURLFileLoaderImpl::start() {
-     if (!isThreadRunning()){
-		ofAddListener(ofEvents().update,this,&ofURLFileLoaderImpl::update);
-        startThread();
-    }
-}
-
-void ofURLFileLoaderImpl::stop() {
-    stopThread();
-    requests.close();
-    responses.close();
-    waitForThread();
-}
-
-void ofURLFileLoaderImpl::threadedFunction() {
-	setThreadName("ofURLFileLoader " + ofToString(getThreadId()));
-	while( isThreadRunning() ){
-		int cancelled;
-		while(cancelRequestQueue.tryReceive(cancelled)){
-			cancelledRequests.insert(cancelled);
-		}
-		ofHttpRequest request;
-		if(requests.receive(request)){
-			if(cancelledRequests.find(request.getId())==cancelledRequests.end()){
-				ofHttpResponse response(handleRequest(request));
-				int status = response.status;
-				if(!responses.send(move(response))){
-					break;
-				}
-				if(status==-1){
-					// retry
-					requests.send(request);
-				}
-			}else{
-				cancelledRequests.erase(cancelled);
-			}
-		}else{
-			break;
-		}
-	}
-}
-
-ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request) {
-	try {
-		URI uri(request.url);
-		std::string path(uri.getPathAndQuery());
-		if (path.empty()) path = "/";
-		std::string pocoMethod;
-		if(request.method==ofHttpRequest::GET){
-			pocoMethod = HTTPRequest::HTTP_GET;
-		}else{
-			pocoMethod = HTTPRequest::HTTP_POST;
-		}
-		HTTPRequest req(pocoMethod, path, HTTPMessage::HTTP_1_1);
-        for(map<string,string>::const_iterator it = request.headers.cbegin(); it!=request.headers.cend(); it++){
-			req.add(it->first,it->second);
-		}
-		HTTPResponse res;
-		std::unique_ptr<HTTPClientSession> session;
-		if(uri.getScheme()=="https"){
-			 //const Poco::Net::Context::Ptr context( new Poco::Net::Context( Poco::Net::Context::CLIENT_USE, "", "", "rootcert.pem" ) );
-			session.reset(new HTTPSClientSession(uri.getHost(), uri.getPort()));//,context);
-		}else{
-			session.reset(new HTTPClientSession(uri.getHost(), uri.getPort()));
-		}
-		session->setTimeout(Poco::Timespan(120,0));
-		if(request.contentType!=""){
-			req.setContentType(request.contentType);
-		}
-		if(request.body!=""){
-			req.setContentLength( request.body.length() );
-			auto & send = session->sendRequest(req);
-			send.write(request.body.c_str(), request.body.size());
-			send << std::flush;
-		}else{
-			session->sendRequest(req);
-		}
-
-		auto & rs = session->receiveResponse(res);
-		if(!request.saveTo){
-			return ofHttpResponse(request,rs,res.getStatus(),res.getReason());
-		}else{
-			ofFile saveTo(request.name,ofFile::WriteOnly,true);
-			char aux_buffer[1024];
-			rs.read(aux_buffer, 1024);
-			std::streamsize n = rs.gcount();
-			while (n > 0){
-				// we resize to size+1 initialized to 0 to have a 0 at the end for strings
-				saveTo.write(aux_buffer,n);
-				if (rs.good()){
-					rs.read(aux_buffer, 1024);
-					n = rs.gcount();
-				}
-				else n = 0;
-			}
-			return ofHttpResponse(request,res.getStatus(),res.getReason());
-		}
-
-	} catch (const Exception& exc) {
-        ofLogError("ofURLFileLoader") << "handleRequest(): "+ exc.displayText();
-
-        return ofHttpResponse(request,-1,exc.displayText());
-
-    } catch (...) {
-    	return ofHttpResponse(request,-1,"ofURLFileLoader: fatal error, couldn't catch Exception");
-    }
-
-	return ofHttpResponse(request,-1,"ofURLFileLoader: fatal error, couldn't catch Exception");
-	
-}
-
-
-int ofURLFileLoaderImpl::handleRequestAsync(const ofHttpRequest& request){
-	requests.send(request);
-	start();
-	return request.getId();
-}
-
-void ofURLFileLoaderImpl::update(ofEventArgs & args){
-	ofHttpResponse response;
-	while(responses.tryReceive(response)){
-		try{
-			response.request.done(response);
-		}catch(...){
-
-		}
-
-		ofNotifyEvent(ofURLResponseEvent(),response);
-	}
-
-}
-
-ofURLFileLoader::ofURLFileLoader()
-:impl(new ofURLFileLoaderImpl){}
-
-#elif defined(TARGET_EMSCRIPTEN)
-#include "ofxEmscriptenURLFileLoader.h"
-ofURLFileLoader::ofURLFileLoader()
-:impl(new ofxEmscriptenURLFileLoader){}
-
-#elif OF_USE_CURL
+#if !defined(TARGET_IMPLEMENTS_URL_LOADER)
 class ofURLFileLoaderImpl: public ofThread, public ofBaseURLFileLoader{
 public:
 	ofURLFileLoaderImpl();
@@ -411,6 +154,23 @@ namespace{
 		response->data.append((const char*)buffer, size * nmemb);
 		return size * nmemb;
 	}
+
+    size_t readBody_cb(void *ptr, size_t size, size_t nmemb, void *userdata){
+        auto body = (std::string*)userdata;
+
+        if(size*nmemb < 1){
+            return 0;
+        }
+
+        if(!body->empty()) {
+            auto sent = std::min(size * nmemb, body->size());
+            memcpy(ptr, body->c_str(), sent);
+            *body = body->substr(sent);
+            return sent;
+        }
+
+        return 0;                          /* no more data left to deliver */
+    }
 }
 
 ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request) {
@@ -430,21 +190,31 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 
 	curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, headers);
 
+    std::string body = request.body;
+
 	// set body if there's any
 	if(request.body!=""){
 		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1L);
 		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, request.body.size());
-		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, request.body.c_str());
+        //curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, request.body.c_str());
+        curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, readBody_cb);
+        curl_easy_setopt(curl.get(), CURLOPT_READDATA, &body);
 	}else{
 		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 0L);
 		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0);
-		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, nullptr);
+        //curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, nullptr);
+        curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, nullptr);
+        curl_easy_setopt(curl.get(), CURLOPT_READDATA, nullptr);
 	}
 	if(request.method == ofHttpRequest::GET){
 		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 1);
 	}else{
 		curl_easy_setopt(curl.get(), CURLOPT_POST, 1);
 	}
+
+    if(request.timeoutSeconds>0){
+        curl_easy_setopt(curl.get(), CURLOPT_TIMEOUT, request.timeoutSeconds);
+    }
 
 	// start request and receive response
 	ofHttpResponse response(request, 0, "");
@@ -626,8 +396,5 @@ void ofURLFileLoaderShutdown(){
 	if(initialized){
 		ofRemoveAllURLRequests();
 		ofStopURLLoader();
-		#if !defined(TARGET_IMPLEMENTS_URL_LOADER) && OF_USE_POCO
-			Poco::Net::uninitializeSSL();
-		#endif
 	}
 }

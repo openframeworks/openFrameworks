@@ -3,10 +3,10 @@ import qbs.Process
 import qbs.File
 import qbs.FileInfo
 import qbs.TextFile
-import "%{JS: %{CorrectInitialOFPath}?'../../..':'%{OFPath}'}/libs/openFrameworksCompiled/project/qtcreator/ofApp.qbs" as ofApp
+import "../../../libs/openFrameworksCompiled/project/qtcreator/ofApp.qbs" as ofApp
 
 Project{
-    property string of_root: %{JS: %{CorrectInitialOFPath}?'\'../../..\'':'\'%{OFPath}\''}
+    property string of_root: "../../.."
 
     ofApp {
         name: { return FileInfo.baseName(path) }
@@ -18,19 +18,6 @@ Project{
         ]
 
         of.addons: [
-            %{JS: 
-                [].concat(%{ofx3DModelLoader}       ? ['\'ofx3DModelLoader\'']       : [])
-                .concat(%{ofxAssimpModelLoader}     ? ['\'ofxAssimpModelLoader\'']   : [])
-                .concat(%{ofxGui}                   ? ['\'ofxGui\'']                 : [])
-                .concat(%{ofxKinect}                ? ['\'ofxKinect\'']              : [])
-                .concat(%{ofxNetwork}               ? ['\'ofxNetwork\'']             : [])
-                .concat(%{ofxOpenCv}                ? ['\'ofxOpenCv\'']              : [])
-                .concat(%{ofxOsc}                   ? ['\'ofxOsc\'']                 : [])
-                .concat(%{ofxSvg}                   ? ['\'ofxSvg\'']                 : [])
-                .concat(%{ofxTween}                 ? ['\'ofxTween\'']               : [])
-                .concat(%{ofxVectorGraphics}        ? ['\'ofxVectorGraphics\'']      : [])
-                .concat(%{ofxXmlSettings}           ? ['\'ofxXmlSettings\'']         : []).toString()
-            }
         ]
 
         // additional flags for the project. the of module sets some
@@ -43,7 +30,6 @@ Project{
         of.linkerFlags: []      // flags passed to the linker
         of.defines: []          // defines are passed as -D to the compiler
                                 // and can be checked with #ifdef or #if in the code
-        of.frameworks: []       // osx only, additional frameworks to link with the project
 
         // other flags can be set through the cpp module: http://doc.qt.io/qbs/cpp-module.html
         // eg: this will enable ccache when compiling
@@ -65,14 +51,9 @@ Project{
         }
     }
 
-    property bool usePoco: true // enables / disables compiling poco with OF 
-                                // (will disable some functionality)
-
     property bool makeOF: true  // use makfiles to compile the OF library
                                 // will compile OF only once for all your projects
                                 // otherwise compiled per project with qbs
-
-    property bool useXml2: false // enables / disables the new ofXml api
 
     references: [FileInfo.joinPaths(of_root, "/libs/openFrameworksCompiled/project/qtcreator/openFrameworks.qbs")]
 }

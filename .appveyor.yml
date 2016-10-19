@@ -28,8 +28,9 @@ init:
 #- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syuu"'
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x86" set MSYSTEM=MINGW32
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x64" set MSYSTEM=MINGW64
-- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync"'
 
+#- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syuu")
+- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync"'
 
 - IF "%BUILDER%"=="VS" set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
 
@@ -39,6 +40,8 @@ install:
 #        .\scripts\vs\download_libs.ps1
 #    }
 - if "%BUILDER%"=="VS" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/vs/download_libs.sh")
+- if "%BUILDER%"=="VS" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/vs/install.sh")
+
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/msys2/install_dependencies.sh --noconfirm")
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/msys2/download_libs.sh")
 
@@ -48,6 +51,8 @@ build_script:
 - ps: |
     if ($env:BUILDER -eq "VS") {
       msbuild libs/openFrameworksCompiled/project/vs/openframeworksLib.vcxproj  /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+      msbuild examples/templates/emptyExample/emptyExample.vcxproj  /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+      msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj  /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
     }
 
 test_script:
