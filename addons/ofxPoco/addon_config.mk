@@ -61,6 +61,9 @@ common:
 	# a specific platform
 	# ADDON_LIBS_EXCLUDE =
 
+
+    ADDON_SOURCES_EXCLUDE = libs/poco/include/%
+
 linux:
     ADDON_LIBS = libs/poco/lib/linux/libPocoNetSSL.a
     ADDON_LIBS += libs/poco/lib/linux/libPocoNet.a
