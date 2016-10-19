@@ -6,13 +6,7 @@
 #include <chrono>
 #include <numeric>
 #include <locale>
-
-
-#if OF_USE_POCO
-#include "Poco/URI.h"
-#elif OF_USE_URIPARSER
 #include "uriparser/Uri.h"
-#endif
 
 #ifdef TARGET_WIN32	 // For ofLaunchBrowser.
 	#include <shellapi.h>
@@ -829,21 +823,6 @@ string ofVAArgsToString(const char * format, va_list args){
 
 //--------------------------------------------------
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
-#ifndef TARGET_EMSCRIPTEN
-#if OF_USE_POCO
-	Poco::URI uri;
-	try {
-		uri = Poco::URI(url);
-	} catch(const std::exception & exc) {
-		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.what();
-		return;
-	}
-	std::string scheme = uri.getScheme();
-	if(uriEncodeQuery) {
-		uri.setQuery(uri.getRawQuery()); // URI encodes during set
-	}
-	std::string uriStr = uri.toString();
-#elif OF_USE_URIPARSER
 	UriParserStateA state;
 	UriUriA uri;
 	state.uri = &uri;
@@ -863,7 +842,6 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	uriToStringA(buffer.data(), &uri, url.size()*2, &written);
 	std::string uriStr(buffer.data(), written-1);
 	uriFreeUriMembersA(&uri);
-#endif
 
 
 	// http://support.microsoft.com/kb/224816
@@ -904,7 +882,10 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#ifdef TARGET_ANDROID
 		ofxAndroidLaunchBrowser(uriStr);
 	#endif
-#endif
+
+	#ifdef TARGET_EMSCRIPTEN
+		ofLogError("ofUtils") << "ofLaunchBrowser() not implementeed in emscripten";
+	#endif
 }
 
 //--------------------------------------------------

@@ -18,6 +18,7 @@ public:
 	string				body; //< POST body data
 	string				contentType; //< POST data mime type
 	std::function<void(const ofHttpResponse&)> done;
+    size_t              timeoutSeconds = 0;
 
 	/// \return the unique id for this request
 	int getId() const;

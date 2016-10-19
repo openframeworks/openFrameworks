@@ -20,7 +20,6 @@
 
 SHELL ?= /bin/sh
 OF_ROOT ?=  $(realpath ../../..)
-OF_USE_POCO ?= 0
 PLATFORM_VARIANT ?= default
 
 ifeq ($(CC),$(EMSCRIPTEN)/emcc)
@@ -244,35 +243,6 @@ endif
 ################################################################################
 
 # take from the platform core exclusions and strip and collapse spaces
-ifeq ($(OF_USE_POCO),0)
-    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include
-    PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/%
-    CFLAGS+=-DOF_USE_POCO=0
-endif
-
-ifdef OF_USE_XML2
-    ifeq ($(OF_USE_XML2),0)
-        ifeq ($(OF_USE_POCO),0)
-            PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml2.cpp
-            PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml.cpp
-        else
-            PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml2.cpp
-            PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXmlPugi.cpp
-        endif
-    else
-        PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml.cpp
-        PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXmlPugi.cpp
-    endif
-else
-    ifeq ($(OF_USE_POCO),0)
-        PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml2.cpp
-        PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml.cpp
-    else
-        PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXml2.cpp
-        PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofXmlPugi.cpp
-    endif
-endif
-
 CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
 
 ################################################################################

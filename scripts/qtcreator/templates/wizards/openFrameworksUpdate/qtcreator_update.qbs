@@ -16,7 +16,7 @@ Project{
             'src/ofApp.cpp',
             'src/ofApp.h',
         ]
-        
+
         // This project is using addons.make to include the addons
         // since it was imported from old code. To change it to include
         // the addons from the qbs file change the following lines to
@@ -59,14 +59,9 @@ Project{
         }
     }
 
-    property bool usePoco: true // enables / disables compiling poco with OF 
-                                // (will disable some functionality)
-
     property bool makeOF: true  // use makfiles to compile the OF library
                                 // will compile OF only once for all your projects
                                 // otherwise compiled per project with qbs
-
-    property bool useXml2: false // enables / disables the new ofXml api
 
     references: [FileInfo.joinPaths(of_root, "/libs/openFrameworksCompiled/project/qtcreator/openFrameworks.qbs")]
 }
