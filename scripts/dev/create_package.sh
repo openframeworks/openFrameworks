@@ -477,6 +477,7 @@ function createPackage {
     #delete dev folders
     cd ${pkg_ofroot}/scripts
     rm -Rf dev
+    rm */download_libs.sh
 
 	#delete xcode templates in other platforms
 	cd $pkg_ofroot
