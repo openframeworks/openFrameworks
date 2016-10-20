@@ -214,7 +214,7 @@ function addonIncludes(addon){
 function addonSources(addon){
     var sources = findSourceRecursive(addon + '/src')
     try{
-        sources = sources.concat(Helpers.findSourceRecursive(addon + '/libs'));
+        sources = sources.concat(findSourceRecursive(addon + '/libs'));
     }catch(e){}
     return sources;
 }
