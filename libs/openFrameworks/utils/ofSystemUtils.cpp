@@ -144,7 +144,7 @@ gboolean file_dialog_gtk(gpointer userdata){
 	std::unique_lock<std::mutex> lck(dialogData->mutex);
 	dialogData->condition.notify_all();
 	dialogData->done = true;
-	return FALSE;
+	return G_SOURCE_REMOVE;
 }
 
 struct TextDialogData{
@@ -166,7 +166,7 @@ gboolean alert_dialog_gtk(gpointer userdata){
 	dialogData->done = true;
 	dialogData->mutex.unlock();
 
-	return FALSE;
+	return G_SOURCE_REMOVE;
 }
 
 gboolean text_dialog_gtk(gpointer userdata){
@@ -186,7 +186,7 @@ gboolean text_dialog_gtk(gpointer userdata){
 	dialogData->done = true;
 	dialogData->mutex.unlock();
 
-	return FALSE;
+	return G_SOURCE_REMOVE;
 }
 
 static void initGTK(){

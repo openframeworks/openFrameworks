@@ -28,7 +28,7 @@
 #endif
 
 
-ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop;
+ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop = nullptr;
 
 void ofGstUtils::startGstMainLoop(){
 	static bool initialized = false;
@@ -44,9 +44,11 @@ GMainLoop * ofGstUtils::getGstMainLoop(){
 }
 
 void ofGstUtils::quitGstMainLoop(){
-	mainLoop->quit();
-	delete mainLoop;
-	mainLoop=0;
+	if(mainLoop){
+		mainLoop->quit();
+		delete mainLoop;
+		mainLoop = nullptr;
+	}
 }
 
 
