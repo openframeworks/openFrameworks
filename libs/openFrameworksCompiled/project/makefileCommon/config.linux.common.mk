@@ -344,7 +344,7 @@ ifeq "$(shell pkg-config --exists glfw3 && echo 1)" "1"
 endif
 
 ifeq "$(shell pkg-config --exists rtaudio && echo 1)" "1"
-	PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
+    PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
 else    
     PLATFORM_LIBRARIES += rtaudio
 endif
