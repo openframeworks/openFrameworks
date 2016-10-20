@@ -158,6 +158,7 @@ fi
 
 export LC_ALL=C
 GCC_MAJOR_GT_4=$(expr `gcc -dumpversion | cut -f1 -d.` \> 4)
+GCC_MAJOR_GT_5=$(expr `gcc -dumpversion | cut -f1 -d.` \> 5)
 if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
     echo
     echo
@@ -175,8 +176,15 @@ if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
     DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
     cd ${DIR}/../../apothecary
     ./apothecary -j${cores} update poco
+    if [ $GCC_MAJOR_GT_5 -eq 1 ]; then
+        ./apothecary -j${cores} update kiss
+        ./apothecary -j${cores} update tess2
+    fi
     WHO=`who am i`;ID=`echo ${WHO%% *}`
     GROUP_ID=`id --group -n ${ID}`
     chown -R $ID:$GROUP_ID build/poco
     chown -R $ID:$GROUP_ID ../../libs/poco
-fi
+    chown -R $ID:$GROUP_ID build/kiss
+    chown -R $ID:$GROUP_ID ../../libs/kiss
+    chown -R $ID:$GROUP_ID build/tess2
+    chown -R $ID:$GROUP_ID ../../libs/tess2
