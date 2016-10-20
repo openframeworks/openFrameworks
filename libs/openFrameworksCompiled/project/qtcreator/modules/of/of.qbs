@@ -127,8 +127,12 @@ Module{
                 "libmpg123",
             ].concat(pkgConfigs);
 
+            if(usePoco){
+                pkgs.push("openssl");
+            }
+
             if(Helpers.pkgExists("rtaudio")){
-                pkgs = pkgs.concat(["rtaudio"]);
+                pkgs.push("rtaudio");
             }
 
             return pkgs;
@@ -140,7 +144,7 @@ Module{
             ].concat(pkgConfigs);
 
             if(Helpers.pkgExists("rtaudio")){
-                pkgs = pkgs.concat(["rtaudio"]);
+                pkgs.push("rtaudio");
             }
 
             return pkgs;
@@ -167,7 +171,7 @@ Module{
             ];
 
             if(!Helpers.pkgExists("rtaudio")){
-                libs = libs.concat(["rtaudio"]);
+                libs.push("rtaudio");
             }
 
             return libs;
