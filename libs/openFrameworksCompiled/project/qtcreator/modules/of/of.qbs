@@ -42,45 +42,45 @@ Module{
         if(platform === "linux"  || platform === "linux64"){
             return [
                 "glew",
-				"cairo",
+                "cairo",
                 "videoInput",
                 "freetype",
                 "FreeImage",
-				"assimp",
+                "assimp",
                 "rtAudio",
                 "openssl",
-				"boost",
+                "boost",
                 "glfw",
                 "openFrameworksCompiled",
             ];
         }else if(platform==="msys2"){
             return [
                 "glew",
-				"cairo",
+                "cairo",
                 "freetype",
                 "FreeImage",
-				"assimp",
+                "assimp",
                 "openssl",
                 "boost",
                 "glfw",
                 "openFrameworksCompiled"
             ];
         }else if(platform==="osx"){
-		    var exceptions = [
+            var exceptions = [
                 "openFrameworksCompiled",
                 "videoInput"
-				];
+            ];
             return exceptions;
         }else if(platform==="android"){
-		    var exceptions =  [
-			    "glfw",
+            var exceptions =  [
+                "glfw",
                 "fmodex",
                 "glew",
                 "kiss",
                 "rtAudio",
                 "videoInput",
                 "openFrameworksCompiled",
-				];
+            ];
             return exceptions;
         }
     }
@@ -107,21 +107,29 @@ Module{
                 "gtk+-3.0",
                 "libmpg123",
                 "glfw3",
-				"openssl",
-				"libcurl",
-				"liburiparser",
-				].concat(pkgConfigs);
+                "openssl",
+                "libcurl",
+                "liburiparser",
+            ].concat(pkgConfigs);
 
+
+            if(Helpers.pkgExists("rtaudio")){
+                pkgs.push("rtaudio");
+            }
             return pkgs;
         }else if(platform === "msys2"){
             var pkgs = [
-				"cairo",
+                "cairo",
                 "zlib",
                 "glew",
-				"glfw3",
-				"libcurl",
-				"openssl",
-				].concat(pkgConfigs);
+                "glfw3",
+                "libcurl",
+                "openssl",
+            ].concat(pkgConfigs);
+
+            if(Helpers.pkgExists("rtaudio")){
+                pkgs.push("rtaudio");
+            }
 
             return pkgs;
         }else{
@@ -132,6 +140,7 @@ Module{
     readonly property stringList ADDITIONAL_LIBS: {
         if(platform === "linux"  || platform === "linux64"){
             return [
+                "glut",
                 "X11",
                 "Xrandr",
                 "Xxf86vm",
@@ -140,18 +149,26 @@ Module{
                 "dl",
                 "pthread",
                 "freeimage",
-                "rtaudio",
                 "boost_filesystem",
                 "boost_system",
-				"pugixml",
+                "pugixml",
             ];
+
+            if(!Helpers.pkgExists("rtaudio")){
+                libs.push("rtaudio");
+            }
         }else if(platform === "msys2"){
-		    var libs=[];
-            return libs.concat([
+            var libs = [
                 'opengl32', 'gdi32', 'msimg32', 'glu32', 'dsound', 'winmm', 'strmiids',
                 'uuid', 'ole32', 'oleaut32', 'setupapi', 'wsock32', 'ws2_32', 'Iphlpapi', 'Comdlg32',
-                'freeimage', 'boost_filesystem-mt', 'boost_system-mt', 'freetype', 'cairo','pthread',
-            ]);
+                'freeimage', 'boost_filesystem-mt', 'boost_system-mt', 'freetype', 'cairo','pthread'
+            ];
+
+            if(!Helpers.pkgExists("rtaudio")){
+                libs.push("rtaudio");
+            }
+
+            return libs;
         }else if(platform === "android"){
             return [
                 'OpenSLES', 'z', 'GLESv1_CM', 'GLESv2', 'log'
@@ -206,7 +223,7 @@ Module{
                 var include_paths = Helpers.listDirsRecursive(include_path);
                 includes = includes.concat(include_paths);
             }
-			}
+        }
         includes = includes.concat(PKG_CONFIG_INCLUDES);
         if(platform === "msys2"){
             includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include'));
@@ -228,7 +245,7 @@ Module{
     }
 
     readonly property pathList STATIC_LIBS: {
-	    var staticLibraries = Helpers.findLibsRecursive(ofRoot + "/libs",platform,LIBS_EXCEPTIONS);
+        var staticLibraries = Helpers.findLibsRecursive(ofRoot + "/libs",platform,LIBS_EXCEPTIONS);
         return staticLibraries
     }
 
@@ -423,7 +440,7 @@ Module{
 
         if(qbs.targetOS.indexOf("windows")>-1){
             defines = defines.concat(['UNICODE','_UNICODE']);
-		}
+        }
         
         return defines;
     }

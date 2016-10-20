@@ -115,9 +115,11 @@ private:
 	class ofGstMainLoopThread: public ofThread{
 	public:
 		ofGstMainLoopThread()
-		:main_loop(NULL)
+		:main_loop(nullptr)
 		{
 		}
+
+		~ofGstMainLoopThread(){};
 
 		void start(){
 			main_loop = g_main_loop_new (NULL, FALSE);
@@ -132,10 +134,13 @@ private:
 		}
 
 		void quit(){
-			g_main_loop_quit(main_loop);
+			if(main_loop){
+				g_main_loop_quit(main_loop);
+				waitForThread();
+			}
 		}
 	private:
-		GMainLoop *main_loop;
+		GMainLoop *main_loop = nullptr;
 	};
 
 	static ofGstMainLoopThread * mainLoop;

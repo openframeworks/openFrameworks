@@ -37,6 +37,10 @@
 	}
 #endif
 
+#ifdef TARGET_LINUX
+#include "ofGstUtils.h"
+#endif
+
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
 #if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
 	#include "ofQtUtils.h"
@@ -251,6 +255,12 @@ void ofExitCallback(){
 
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeEndPeriod(1);
+	#endif
+
+	//------------------------
+	// try to close gstreamer
+	#ifdef TARGET_LINUX
+		ofGstUtils::quitGstMainLoop();
 	#endif
 
 	//------------------------
