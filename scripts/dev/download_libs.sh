@@ -102,11 +102,12 @@ if [ "$ARCH" == "" ]; then
         ARCH=$(uname -m)
         if [ "$ARCH" == "x86_64" ]; then
             GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
-            GCC_MAJOR_GT_4=$(expr $GCC_VERSION > 4)
-            if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
+            if [ $GCC_VERSION -eq 4 ]; then
+                ARCH=64
+            elif [ $GCC_VERSION -eq 5]; then
                 ARCH=64gcc5
             else
-                ARCH=64
+                ARCH=64gcc6
             fi
         elif [ "$ARCH" == "i686" ] || [ "$ARCH" == "i386" ]; then
             cat << EOF
