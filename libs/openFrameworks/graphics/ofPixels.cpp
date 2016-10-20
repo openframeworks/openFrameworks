@@ -570,7 +570,7 @@ size_t ofPixels_<PixelType>::getPixelIndex(size_t x, size_t y) const {
 
 template<typename PixelType>
 ofColor_<PixelType> ofPixels_<PixelType>::getColor(size_t index) const {
-	return Pixel(pixels + index,getNumChannels(),pixelFormat).getColor();
+	return (Pixel(pixels, getNumChannels(),pixelFormat) + index).getColor();
 }
 
 template<typename PixelType>
