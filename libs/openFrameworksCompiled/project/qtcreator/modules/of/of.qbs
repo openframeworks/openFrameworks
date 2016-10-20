@@ -112,6 +112,10 @@ Module{
 				"liburiparser",
 				].concat(pkgConfigs);
 
+            if(Helpers.pkgExists("rtaudio")){
+                pkgs = pkgs.concat("rtaudio");
+            }
+
             return pkgs;
         }else if(platform === "msys2"){
             var pkgs = [
@@ -123,6 +127,10 @@ Module{
 				"openssl",
 				].concat(pkgConfigs);
 
+            if(Helpers.pkgExists("rtaudio")){
+                pkgs = pkgs.concat("rtaudio");
+            }
+
             return pkgs;
         }else{
             return [];
@@ -131,7 +139,7 @@ Module{
 
     readonly property stringList ADDITIONAL_LIBS: {
         if(platform === "linux"  || platform === "linux64"){
-            return [
+            var libs = [
                 "X11",
                 "Xrandr",
                 "Xxf86vm",
@@ -145,13 +153,24 @@ Module{
                 "boost_system",
 				"pugixml",
             ];
+
+            if(!Helpers.pkgExists("rtaudio")){
+                libs = libs.concat("rtaudio");
+            }
+
+            return libs;
         }else if(platform === "msys2"){
-		    var libs=[];
-            return libs.concat([
+            var libs = [
                 'opengl32', 'gdi32', 'msimg32', 'glu32', 'dsound', 'winmm', 'strmiids',
                 'uuid', 'ole32', 'oleaut32', 'setupapi', 'wsock32', 'ws2_32', 'Iphlpapi', 'Comdlg32',
                 'freeimage', 'boost_filesystem-mt', 'boost_system-mt', 'freetype', 'cairo','pthread',
-            ]);
+            ];
+
+            if(!Helpers.pkgExists("rtaudio")){
+                libs = libs.concat("rtaudio");
+            }
+
+            return libs;
         }else if(platform === "android"){
             return [
                 'OpenSLES', 'z', 'GLESv1_CM', 'GLESv2', 'log'
