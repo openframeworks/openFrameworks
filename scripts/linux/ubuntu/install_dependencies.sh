@@ -188,3 +188,5 @@ if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
     chown -R $ID:$GROUP_ID ../../libs/kiss
     chown -R $ID:$GROUP_ID build/tess2
     chown -R $ID:$GROUP_ID ../../libs/tess2
+fi
+
