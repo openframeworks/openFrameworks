@@ -127,9 +127,10 @@ Module{
                 "libmpg123",
             ].concat(pkgConfigs);
 
-            if(usePoco){
-                pkgs.push("openssl")
+            if(Helpers.pkgExists("rtaudio")){
+                pkgs = pkgs.concat(["rtaudio"]);
             }
+
             return pkgs;
         }else if(platform === "msys2"){
             var pkgs = [
@@ -138,9 +139,10 @@ Module{
                 "glew",
             ].concat(pkgConfigs);
 
-            if(usePoco){
-                pkgs.push("openssl")
+            if(Helpers.pkgExists("rtaudio")){
+                pkgs = pkgs.concat(["rtaudio"]);
             }
+
             return pkgs;
         }else{
             return [];
@@ -149,7 +151,7 @@ Module{
 
     readonly property stringList ADDITIONAL_LIBS: {
         if(platform === "linux"  || platform === "linux64"){
-            return [
+            var libs = [
                 "glut",
                 "X11",
                 "Xrandr",
@@ -163,6 +165,12 @@ Module{
                 "boost_filesystem",
                 "boost_system",
             ];
+
+            if(!Helpers.pkgExists("rtaudio")){
+                libs = libs.concat(["rtaudio"]);
+            }
+
+            return libs;
         }else if(platform === "msys2"){
             return [
                 'opengl32', 'gdi32', 'msimg32', 'glu32', 'winmm', 'strmiids',
