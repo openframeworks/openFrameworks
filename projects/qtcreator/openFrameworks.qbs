@@ -6,14 +6,14 @@ import qbs.TextFile
 import "modules/of/helpers.js" as Helpers
 
 Product{
-    of.ofRoot: Helpers.normalize(FileInfo.joinPaths(path, "../../../.."))
+    of.ofRoot: Helpers.normalize(FileInfo.joinPaths(path, "../.."))
     name: "openFrameworks"
     type: "staticlibrary"
     qbsSearchPaths: "."
 
 
-    readonly property string projectDir: of.ofRoot + "/libs/openFrameworksCompiled/project"
-    readonly property string libDir: of.ofRoot + "/libs/openFrameworksCompiled/lib/" + of.platform
+    readonly property string projectDir: FileInfo.joinPaths(of.ofRoot, "projects")
+    readonly property string libDir: FileInfo.joinPaths(of.ofRoot, "build", of.platform)
 
     // setting this variable to true will build OF using
     // qbs instead of makefiles which helps catching errors...
@@ -23,7 +23,7 @@ Product{
 
     Properties{
         condition: qbsBuild
-        destinationDirectory: Helpers.normalize(FileInfo.joinPaths(path, "../../lib", project.platform))
+        destinationDirectory: Helpers.normalize(FileInfo.joinPaths(path, "build", project.platform))
     }
 
     Depends {
@@ -102,7 +102,7 @@ Product{
         condition: !product.qbsBuild
         name: "src"
         files: {
-            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
+            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, 'src'));
             var filteredSource = source.filter(function filterExcludes(path){
                 for(exclude in FILES_EXCLUDE){
                     var patt = new RegExp(FILES_EXCLUDE[exclude]);
@@ -120,7 +120,7 @@ Product{
 
     files: {
         if(qbsBuild){
-            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
+            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, 'src'));
             var filteredSource = source.filter(function filterExcludes(path){
                 for(exclude in FILES_EXCLUDE){
                     var patt = new RegExp(FILES_EXCLUDE[exclude]);

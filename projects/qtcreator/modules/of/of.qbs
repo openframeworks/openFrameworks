@@ -214,7 +214,7 @@ Module{
     }
 
     readonly property pathList INCLUDE_PATHS: {
-        var includes = Helpers.listDirsRecursive(ofRoot + "/libs/openFrameworks");
+        var includes = Helpers.listDirsRecursive(FileInfo.joinPaths(ofRoot,"src"));
         var libs = Helpers.listDir(ofRoot + '/libs/');
         for(var lib in libs){
             if(LIBS_EXCEPTIONS.indexOf(libs[lib])==-1){

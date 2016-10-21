@@ -3,7 +3,7 @@ import qbs.Process
 import qbs.File
 import qbs.FileInfo
 import qbs.TextFile
-import "../../../libs/openFrameworksCompiled/project/qtcreator/ofApp.qbs" as ofApp
+import "../../../projects/qtcreator/ofApp.qbs" as ofApp
 
 Project{
     property string of_root: "../../.."
@@ -55,5 +55,5 @@ Project{
                                 // will compile OF only once for all your projects
                                 // otherwise compiled per project with qbs
 
-    references: [FileInfo.joinPaths(of_root, "/libs/openFrameworksCompiled/project/qtcreator/openFrameworks.qbs")]
+    references: [FileInfo.joinPaths(of_root, "projects/qtcreator/openFrameworks.qbs")]
 }

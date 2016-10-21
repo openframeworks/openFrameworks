@@ -3,7 +3,7 @@ import qbs.Process
 import qbs.File
 import qbs.FileInfo
 import qbs.TextFile
-import "%{JS: %{CorrectInitialOFPath}?'../../..':'%{OFPath}'}/libs/openFrameworksCompiled/project/qtcreator/ofApp.qbs" as ofApp
+import "%{JS: %{CorrectInitialOFPath}?'../../..':'%{OFPath}'}/projects/qtcreator/ofApp.qbs" as ofApp
 
 Project{
     property string of_root: %{JS: %{CorrectInitialOFPath}?'\'../../..\'':'\'%{OFPath}\''}
@@ -59,5 +59,5 @@ Project{
 
     property bool useXml2: false // enables / disables the new ofXml api
 
-    references: [FileInfo.joinPaths(of_root, "/libs/openFrameworksCompiled/project/qtcreator/openFrameworks.qbs")]
+    references: [FileInfo.joinPaths(of_root, "projects/qtcreator/openFrameworks.qbs")]
 }
