@@ -48,27 +48,27 @@ DownloadLibs 32
 DownloadLibs 64
 
 robocopy.exe ..\..\libs\32\opencv ..\..\addons\ofxOpenCv\libs\ /MOVE /NFL /R:5 /S
-robocopy.exe ..\..\libs\64\opencv\lib\vs\x64 ..\..\addons\ofxOpenCv\libs\opencv\lib\vs\ /MOVE /NFL /R:5 /S
+robocopy.exe ..\..\libs\64\opencv\lib\vs\x64 ..\..\addons\ofxOpenCv\libs\opencv\lib\vs\x64 /MOVE /NFL /R:5 /S
 Remove-Item "..\..\libs\64\opencv" -Force -Recurse
 
 robocopy.exe ..\..\libs\32\ippicv ..\..\addons\ofxOpenCv\libs\ /MOVE /NFL /R:5 /S
-robocopy.exe ..\..\libs\64\ippicv\lib\vs\x64 ..\..\addons\ofxOpenCv\libs\ippicv\lib\vs\ /MOVE /NFL /R:5 /S
+robocopy.exe ..\..\libs\64\ippicv\lib\vs\x64 ..\..\addons\ofxOpenCv\libs\ippicv\lib\vs\x64 /MOVE /NFL /R:5 /S
 Remove-Item "..\..\libs\64\ippicv" -Force -Recurse
 
 robocopy.exe ..\..\libs\32\assimp ..\..\addons\ofxAssimpModelLoader\libs\ /MOVE /NFL /R:5 /S
-robocopy.exe ..\..\libs\64\assimp\lib\vs\x64 ..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\ /MOVE /NFL /R:5 /S
+robocopy.exe ..\..\libs\64\assimp\lib\vs\x64 ..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\x64 /MOVE /NFL /R:5 /S
 Remove-Item "..\..\libs\64\assimp" -Force -Recurse
 
 robocopy.exe ..\..\libs\32\libxml2 ..\..\addons\ofxSvg\libs\ /MOVE /NFL /R:5 /S
-robocopy.exe ..\..\libs\64\libxml2\lib\vs\x64 ..\..\addons\ofxSvg\libs\libxml2\lib\vs\ /MOVE /NFL /R:5 /S
+robocopy.exe ..\..\libs\64\libxml2\lib\vs\x64 ..\..\addons\ofxSvg\libs\libxml2\lib\vs\x64 /MOVE /NFL /R:5 /S
 Remove-Item "..\..\libs\64\libxml2" -Force -Recurse
 
 robocopy.exe ..\..\libs\32\svgtiny ..\..\addons\ofxSvg\libs\ /MOVE /NFL /R:5 /S
-robocopy.exe ..\..\libs\64\svgtiny\lib\vs\x64 ..\..\addons\ofxSvg\libs\svgtiny\lib\vs\ /MOVE /NFL /R:5 /S
+robocopy.exe ..\..\libs\64\svgtiny\lib\vs\x64 ..\..\addons\ofxSvg\libs\svgtiny\lib\vs\x64 /MOVE /NFL /R:5 /S
 Remove-Item "..\..\libs\64\svgtiny" -Force -Recurse
 
 robocopy.exe ..\..\libs\32\poco ..\..\addons\ofxPoco\libs\ /MOVE /NFL /R:5 /S
-robocopy.exe ..\..\libs\64\poco\lib\vs\x64 ..\..\addons\ofxPoco\libs\poco\lib\vs\ /MOVE /NFL /R:5 /S
+robocopy.exe ..\..\libs\64\poco\lib\vs\x64 ..\..\addons\ofxPoco\libs\poco\lib\vs\x64 /MOVE /NFL /R:5 /S
 Remove-Item "..\..\libs\64\poco" -Force -Recurse
 
 robocopy.exe ..\..\libs\32\ ..\..\libs\ /MOVE /NFL /R:5 /S

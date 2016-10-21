@@ -797,7 +797,7 @@
 			<key>name</key>
 			<string>CoreOF.xcconfig</string>
 			<key>path</key>
-			<string>../../../libs/openFrameworksCompiled/project/ios/CoreOF.xcconfig</string>
+			<string>../../../build/projects/ios/CoreOF.xcconfig</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>
@@ -890,7 +890,7 @@
 			<key>name</key>
 			<string>iOS+OFLib.xcodeproj</string>
 			<key>path</key>
-			<string>../../../libs/openFrameworksCompiled/project/ios/iOS+OFLib.xcodeproj</string>
+			<string>../../../build/projects/ios/iOS+OFLib.xcodeproj</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>

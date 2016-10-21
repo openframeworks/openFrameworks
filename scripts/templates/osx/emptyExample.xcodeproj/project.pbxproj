@@ -246,7 +246,7 @@ fi
 			<key>name</key>
 			<string>openFrameworksLib.xcodeproj</string>
 			<key>path</key>
-			<string>../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj</string>
+			<string>../../../build/projects/osx/openFrameworksLib.xcodeproj</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>
@@ -780,7 +780,7 @@ echo "$GCC_PREPROCESSOR_DEFINITIONS";
 			<key>name</key>
 			<string>CoreOF.xcconfig</string>
 			<key>path</key>
-			<string>../../../libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig</string>
+			<string>../../../build/projects/osx/CoreOF.xcconfig</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>

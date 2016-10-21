@@ -815,7 +815,7 @@
 				9957D8FC1BDDDC9B0002D53C /* video */,
 			);
 			name = openFrameworks;
-			path = ../../../openFrameworks;
+			path = ../../../src;
 			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */

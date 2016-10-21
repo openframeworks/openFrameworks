@@ -459,7 +459,7 @@
 			<key>name</key>
 			<string>openFrameworks</string>
 			<key>path</key>
-			<string>../../../libs/openFrameworksCompiled/project/tvOS</string>
+			<string>../../../build/projects/tvOS</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>

@@ -687,7 +687,7 @@
 				E4F76E00176CB27200798745 /* video */,
 			);
 			name = openFrameworks;
-			path = ../../../openFrameworks;
+			path = ../../../src;
 			sourceTree = "<group>";
 		};
 		E4F76D6E176CB27200798745 /* 3d */ = {

@@ -39,16 +39,16 @@
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/3d}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/app}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/events}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/math}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/types}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/video}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/utils}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/include_android}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include/freetype2}&quot;"/>
@@ -1482,16 +1482,16 @@
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/3d}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/app}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/events}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/math}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/types}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/video}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/utils}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/include_android}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include/freetype2}&quot;"/>
@@ -2931,16 +2931,16 @@
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/3d}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/app}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/events}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/math}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/types}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/video}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src/utils}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/include_android}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include/freetype2}&quot;"/>

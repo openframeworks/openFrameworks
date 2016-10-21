@@ -5,8 +5,8 @@ include ':ofAndroidLib'
 project(':ofAndroidLib').projectDir = new File(ofRoot + 'addons/ofxAndroid/ofAndroidLib')
 
 include ':openFrameworksProject'
-project(':openFrameworksProject').projectDir = new File(ofRoot + 'libs/openFrameworksCompiled/project/android')
+project(':openFrameworksProject').projectDir = new File(ofRoot + 'build/projects/android')
 
 include ':openFrameworks'
-project(':openFrameworks').projectDir = new File(ofRoot + 'libs/openFrameworks')
+project(':openFrameworks').projectDir = new File(ofRoot + 'src')
 
