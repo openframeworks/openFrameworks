@@ -192,23 +192,23 @@ endif
 PLATFORM_CORE_EXCLUSIONS =
 
 # core sources
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitMovieRenderer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitPlayer.mm
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuicktimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuicktimePlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/app/ofAppGlutWindow.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofDirectShowGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofDirectShowPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofQtKitGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofQtKitPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofQtKitMovieRenderer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofQtKitPlayer.mm
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofQtUtils.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofQuicktimeGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofQuicktimePlayer.cpp
 
 ifneq ($(USE_GST),1)
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
+	PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofGstUtils.cpp
+	PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofGstVideoGrabber.cpp
+	PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofGstVideoPlayer.cpp
 endif
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/app/ofAppEGLWindow.cpp
 
 
 # third party
@@ -218,7 +218,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 
 ifeq ($(USE_FMOD),0)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
+	PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/sound/ofFmodSoundPlayer.cpp
 	PLATFORM_CFLAGS += -DUSE_FMOD=0
 endif
 

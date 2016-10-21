@@ -183,8 +183,8 @@ PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
 ################################################################################
 
 #PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-egl-$(GST_VERSION)
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/app/ofAppGLFWWindow.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/sound/ofFmodSoundPlayer.cpp
 
 ifeq ($(CROSS_COMPILING),1)
 	ifdef TOOLCHAIN_ROOT

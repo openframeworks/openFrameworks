@@ -12,7 +12,7 @@ endif
 
 
 # define the OF_SHARED_MAKEFILES location
-OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon
+OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/projects/makefileCommon
 
 
 ################################################################################

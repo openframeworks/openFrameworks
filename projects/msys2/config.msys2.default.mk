@@ -158,14 +158,14 @@ PLATFORM_CORE_EXCLUSIONS =
 
 PLATFORM_CORE_EXCLUSIONS += %.mm
 PLATFORM_CORE_EXCLUSIONS += %.m
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
-#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofQtUtils.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofQuickTimeGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofQuickTimePlayer.cpp
+#PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofDirectShowPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofGstUtils.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofGstVideoGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofGstVideoPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/app/ofAppEGLWindow.cpp
 
 # third party
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%

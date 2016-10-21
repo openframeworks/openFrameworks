@@ -89,7 +89,7 @@ PLATFORM_LIBRARIES += EGL
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/sound/ofFmodSoundPlayer.cpp
 
 ifeq ($(CROSS_COMPILING),1)
 

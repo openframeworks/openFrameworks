@@ -88,7 +88,7 @@ PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio
 ifdef PROJECT_EMSCRIPTEN_TEMPLATE
 	PLATFORM_LDFLAGS += --shell-file $(PROJECT_EMSCRIPTEN_TEMPLATE)
 else
-	PLATFORM_LDFLAGS += --shell-file $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/template.html
+	PLATFORM_LDFLAGS += --shell-file $(OF_SRC_PATH)Compiled/project/emscripten/template.html
 endif
 
 PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s OUTLINING_LIMIT=100000 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY) --memory-init-file 1 
@@ -137,25 +137,25 @@ PLATFORM_CORE_EXCLUSIONS =
 # core sources
 PLATFORM_CORE_EXCLUSIONS += %.mm
 PLATFORM_CORE_EXCLUSIONS += %.m
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/communication/%.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofOpenALSoundPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofRtAudioSoundStream.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/graphics/ofCairoRenderer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/gl/ofGLRenderer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofThread.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofThreadChannel.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofQtUtils.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofQuickTimeGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofQuickTimePlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofDirectShowGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofDirectShowPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofGstUtils.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofGstVideoGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/video/ofGstVideoPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/communication/%.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/sound/ofFmodSoundPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/sound/ofOpenALSoundPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/sound/ofRtAudioSoundStream.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/app/ofAppGlutWindow.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/app/ofAppGLFWWindow.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/app/ofAppEGLWindow.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/graphics/ofCairoRenderer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/gl/ofGLRenderer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/utils/ofThread.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_SRC_PATH)/utils/ofThreadChannel.cpp
 
 # third party
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%

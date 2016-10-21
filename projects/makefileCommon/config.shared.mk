@@ -19,7 +19,7 @@
 
 
 SHELL ?= /bin/sh
-OF_ROOT ?=  $(realpath ../../..)
+OF_ROOT ?=  $(realpath ..)
 PLATFORM_VARIANT ?= default
 
 ifeq ($(CC),$(EMSCRIPTEN)/emcc)
@@ -137,9 +137,9 @@ endif
 #   $(OF_APPS_PATH)
 #   $(OF_LIBS_PATH)
 #
-#   $(OF_LIBS_OPENFRAMEWORKS_PATH)
+#   $(OF_SRC_PATH)
 #   $(OF_LIBS_OF_COMPILED_PATH)
-#   $(OF_LIBS_OF_COMPILED_PROJECT_PATH)
+#   $(OF_PROJECTS_PATH)
 #   $(OF_MAKEFILE_INCLUDES_PATH)
 #
 #   $(OF_ROOT) must be defined previously.
@@ -148,42 +148,18 @@ endif
 
 ################################################################################
 # create path definitions
-ifndef OF_ADDONS_PATH
-    OF_ADDONS_PATH=$(OF_ROOT)/addons
-endif
-ifndef OF_EXAMPLES_PATH
-    OF_EXAMPLES_PATH=$(OF_ROOT)/examples
-endif
-ifndef OF_APPS_PATH
-    OF_APPS_PATH=$(OF_ROOT)/apps
-endif
-ifndef OF_LIBS_PATH
-    OF_LIBS_PATH=$(OF_ROOT)/libs
-endif
+OF_ADDONS_PATH ?= $(OF_ROOT)/addons
+OF_EXAMPLES_PATH ?= $(OF_ROOT)/examples
+OF_APPS_PATH ?= $(OF_ROOT)/apps
+OF_LIBS_PATH ?= $(OF_ROOT)/libs
 
 ################################################################################
-ifndef OF_LIBS_OPENFRAMEWORKS_PATH
-    OF_LIBS_OPENFRAMEWORKS_PATH=$(OF_LIBS_PATH)/openFrameworks
-endif
-ifndef OF_LIBS_OF_COMPILED_PATH
-    OF_LIBS_OF_COMPILED_PATH=$(OF_LIBS_OPENFRAMEWORKS_PATH)Compiled
-endif
-ifndef OF_LIBS_OF_COMPILED_PROJECT_PATH
-    OF_LIBS_OF_COMPILED_PROJECT_PATH=$(OF_LIBS_OF_COMPILED_PATH)/project
-endif
-ifndef OF_SHARED_MAKEFILES_PATH
-    OF_SHARED_MAKEFILES_PATH=$(OF_LIBS_OF_COMPILED_PROJECT_PATH)/makefileCommon
-endif
-
-ifdef OF_LIBS_OF_COMPILED_PROJECT_PATH
-    OF_PLATFORM_MAKEFILES=$(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)
-else 
-    $(error OF_LIBS_OF_COMPILED_PATH is not defined)
-endif
-
-ifndef OF_CORE_LIB_PATH
-    OF_CORE_LIB_PATH=$(OF_LIBS_OF_COMPILED_PATH)/lib/$(PLATFORM_LIB_SUBPATH)
-endif
+OF_SRC_PATH ?= $(OF_ROOT)/src
+OF_PROJECTS_PATH ?= $(OF_ROOT)/projects
+OF_SHARED_MAKEFILES_PATH ?= $(OF_PROJECTS_PATH)/makefileCommon
+OF_PLATFORM_MAKEFILES ?= $(OF_PROJECTS_PATH)/$(PLATFORM_LIB_SUBPATH)
+OF_BUILD_PATH ?= $(OF_ROOT)/build
+OF_CORE_LIB_PATH ?= $(OF_BUILD_PATH)/lib/$(PLATFORM_LIB_SUBPATH)
 
 ################################################################################
 # print debug information if needed
@@ -193,16 +169,15 @@ ifdef MAKEFILE_DEBUG
     $(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
     $(info OF_APPS_PATH=$(OF_APPS_PATH))
     $(info OF_LIBS_PATH=$(OF_LIBS_PATH))
-    $(info OF_LIBS_OPENFRAMEWORKS_PATH=$(OF_LIBS_OPENFRAMEWORKS_PATH))
-    $(info OF_LIBS_OF_COMPILED_PATH=$(OF_LIBS_OF_COMPILED_PATH))
-    $(info OF_LIBS_OF_COMPILED_PROJECT_PATH=$(OF_LIBS_OF_COMPILED_PROJECT_PATH))
+    $(info OF_SRC_PATH=$(OF_SRC_PATH))
+    $(info OF_PROJECTS_PATH=$(OF_PROJECTS_PATH))
     $(info OF_SHARED_MAKEFILES_PATH=$(OF_SHARED_MAKEFILES_PATH))
     $(info OF_PLATFORM_MAKEFILES=$(OF_PLATFORM_MAKEFILES))
     $(info OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH))
 endif
 
 
-ifeq ($(wildcard $(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)),)
+ifeq ($(wildcard $(OF_PROJECTS_PATH)/$(PLATFORM_LIB_SUBPATH)),)
 $(error This package doesn't support your platform, probably you downloaded the wrong package?)
 endif
 
@@ -234,8 +209,8 @@ ifndef PLATFORM_CORE_EXCLUSIONS
     $(error PLATFORM_CORE_EXCLUSIONS not defined)
 endif
 
-ifndef OF_LIBS_OPENFRAMEWORKS_PATH
-    $(error OF_LIBS_OPENFRAMEWORKS_PATH not defined)
+ifndef OF_SRC_PATH
+    $(error OF_SRC_PATH not defined)
 endif
 
 ################################################################################
@@ -251,7 +226,7 @@ CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
 
 # find all of the source directories
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_SOURCE_PATHS=$(shell $(FIND) $(OF_LIBS_OPENFRAMEWORKS_PATH) -maxdepth 1 -mindepth 1 -type d | grep -v "/\.[^\.]" )
+ALL_OF_CORE_SOURCE_PATHS=$(shell $(FIND) $(OF_SRC_PATH) -maxdepth 1 -mindepth 1 -type d | grep -v "/\.[^\.]" )
 
 # create a list of core source PATHS, filtering out any  items that have a match in the CORE_EXCLUSIONS list
 OF_CORE_SOURCE_PATHS=$(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_SOURCE_PATHS))
@@ -259,7 +234,7 @@ OF_CORE_SOURCE_PATHS=$(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_SOURCE_PATHS)
 # create our core include paths from the source directory paths, 
 # these have already been filtered and processed according to rules.
 # plus the root so that we don't miss the ofMain.h.
-OF_CORE_HEADER_PATHS = $(OF_LIBS_OPENFRAMEWORKS_PATH) $(OF_CORE_SOURCE_PATHS)
+OF_CORE_HEADER_PATHS = $(OF_SRC_PATH) $(OF_CORE_SOURCE_PATHS)
 
 # add folders or single files to exclude fromt he compiled lib
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
