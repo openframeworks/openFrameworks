@@ -1,4 +1,4 @@
-HEADER_OF = "$(OF_PATH)/libs/openFrameworks/**"
+HEADER_OF = "$(OF_PATH)/src/**"
 HEADER_OFXIOS = "$(OF_PATH)/addons/ofxiOS/**"
 HEADER_OFXACCELEROMETER = "$(OF_PATH)/addons/ofxAccelerometer/**"
 HEADER_FREETYPE = "$(OF_PATH)/libs/freetype/include"

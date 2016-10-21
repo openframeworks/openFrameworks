@@ -14,7 +14,7 @@ CLANG_CXX_LANGUAGE_STANDARD[arch=x86_64] = c++11
 MACOSX_DEPLOYMENT_TARGET = 10.9
 
 
-HEADER_OF = "$(OF_PATH)/libs/openFrameworks/**"
+HEADER_OF = "$(OF_PATH)/src/**"
 HEADER_FREETYPE = "$(OF_PATH)/libs/freetype/include"
 HEADER_FREETYPE2 = "$(OF_PATH)/libs/freetype/include/freetype2"
 HEADER_FMODEX = "$(OF_PATH)/libs/fmodex/include"

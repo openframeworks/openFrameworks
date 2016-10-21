@@ -500,6 +500,8 @@ Module{
                 'IOKit',
                 'OpenGL',
                 'QuartzCore',
+                'Security',
+                'LDAP',
         ].concat(frameworks)
          .concat(ADDON_FRAMEWORKS)
 

@@ -8,7 +8,7 @@ OF_PATH = ../../..
 //ICONS - NEW IN 0072 
 ICON_NAME_DEBUG = icon-debug.icns
 ICON_NAME_RELEASE = icon.icns
-ICON_FILE_PATH = $(OF_PATH)/libs/openFrameworksCompiled/project/osx/
+ICON_FILE_PATH = $(OF_PATH)/build/projects/osx/
 
 //IF YOU WANT AN APP TO HAVE A CUSTOM ICON - PUT THEM IN YOUR DATA FOLDER AND CHANGE ICON_FILE_PATH to:
 //ICON_FILE_PATH = bin/data/
