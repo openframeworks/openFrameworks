@@ -6,14 +6,14 @@ import qbs.TextFile
 import "modules/of/helpers.js" as Helpers
 
 Product{
-    of.ofRoot: Helpers.normalize(FileInfo.joinPaths(path, "../.."))
+    of.ofRoot: Helpers.normalize(FileInfo.joinPaths(path, "../../.."))
     name: "openFrameworks"
     type: "staticlibrary"
     qbsSearchPaths: "."
 
 
-    readonly property string projectDir: FileInfo.joinPaths(of.ofRoot, "projects")
-    readonly property string libDir: FileInfo.joinPaths(of.ofRoot, "build", of.platform)
+    readonly property string projectDir: FileInfo.joinPaths(of.ofRoot, "build/projects")
+    readonly property string libDir: FileInfo.joinPaths(of.ofRoot, "build/lib", of.platform)
 
     // setting this variable to true will build OF using
     // qbs instead of makefiles which helps catching errors...

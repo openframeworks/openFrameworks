@@ -3,7 +3,7 @@ import qbs.Process
 import qbs.File
 import qbs.FileInfo
 import qbs.TextFile
-import "%{JS: %{CorrectInitialOFPath}?'../../..':'%{OFPath}'}/projects/qtcreator/ofApp.qbs" as ofApp
+import "%{JS: %{CorrectInitialOFPath}?'../../..':'%{OFPath}'}/build/projects/qtcreator/ofApp.qbs" as ofApp
 
 Project{
     property string of_root: %{JS: %{CorrectInitialOFPath}?'\'../../..\'':'\'%{OFPath}\''}
@@ -69,5 +69,5 @@ Project{
                                 // will compile OF only once for all your projects
                                 // otherwise compiled per project with qbs
 
-    references: [FileInfo.joinPaths(of_root, "projects/qtcreator/openFrameworks.qbs")]
+    references: [FileInfo.joinPaths(of_root, "build/projects/qtcreator/openFrameworks.qbs")]
 }

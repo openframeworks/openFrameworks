@@ -1,7 +1,7 @@
 .DEFAULT_GOAL=Release
 
 # define the OF_SHARED_MAKEFILES location
-OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/projects/makefileCommon
+OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/build/projects/makefileCommon
 
 include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
 
@@ -122,7 +122,7 @@ endif
 
 Release:
 	@echo Compiling OF library for Release
-	@$(MAKE) -C $(OF_ROOT)/projects/ Release PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
+	@$(MAKE) -C $(OF_ROOT)/build/projects/ Release PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
 	@echo
 	@echo
 	@echo Compiling $(APPNAME) for Release
@@ -139,7 +139,7 @@ endif
 
 Debug:
 	@echo Compiling OF library for Debug
-	$(MAKE) -C $(OF_ROOT)/projects/ Debug PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
+	$(MAKE) -C $(OF_ROOT)/build/projects/ Debug PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
 	@echo
 	@echo
 	@echo Compiling $(APPNAME) for Debug

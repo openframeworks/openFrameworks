@@ -10,4 +10,4 @@ ifndef OF_ROOT
 endif
 
 # call the project makefile!
-include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/compile.project.mk
+include $(OF_ROOT)/build/projects/project/makefileCommon/compile.project.mk

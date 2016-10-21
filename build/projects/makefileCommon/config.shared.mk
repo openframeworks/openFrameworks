@@ -19,7 +19,7 @@
 
 
 SHELL ?= /bin/sh
-OF_ROOT ?=  $(realpath ..)
+OF_ROOT ?=  $(realpath ../..)
 PLATFORM_VARIANT ?= default
 
 ifeq ($(CC),$(EMSCRIPTEN)/emcc)
@@ -155,7 +155,7 @@ OF_LIBS_PATH ?= $(OF_ROOT)/libs
 
 ################################################################################
 OF_SRC_PATH ?= $(OF_ROOT)/src
-OF_PROJECTS_PATH ?= $(OF_ROOT)/projects
+OF_PROJECTS_PATH ?= $(OF_ROOT)/build/projects
 OF_SHARED_MAKEFILES_PATH ?= $(OF_PROJECTS_PATH)/makefileCommon
 OF_PLATFORM_MAKEFILES ?= $(OF_PROJECTS_PATH)/$(PLATFORM_LIB_SUBPATH)
 OF_BUILD_PATH ?= $(OF_ROOT)/build
