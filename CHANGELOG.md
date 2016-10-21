@@ -1,10 +1,56 @@
-   ___   ___  _  _   
-  / _ \ / _ \| || |  
- | | | | (_) | || |_ 
- | | | |\__, |__   _|
- | |_| |  / /   | |  
-  \___(_)/_(_)  |_|  
-                     
+   ___         ___        _____ 
+  / _ \       / _ \      | ____|
+ | | | |     | (_) |     | |__  
+ | | | |      \__, |     |___ \ 
+ | |_| |  _     / /   _   ___) |
+  \___/  (_)   /_/   (_) |____/ 
+
+                    
+                             
+OF 0.9.5
+========                          
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+CORE
+---- 
+
+### graphcis
+    / ofPixels ported to use size_t so it supports higher image sizes
+    / ofPixels fix for getColor(int)
+
+
+PLATFORM SPECIFIC
+-----------------
+
+### osx
+    / qtcreator: fixes not finding addons libs
+
+### linux
+    / mk: fixes rtaudio in latest distributions
+    / mk: show exact package if one is missing
+    / ubuntu 16.10 requires recompiling all libraries
+    / ttf: solve a crash when closing after using a file dialog
+
+### windows 
+    / qtcreator: fixes rtaudio
+
+
+
+
+   ___         ___        _  _   
+  / _ \       / _ \      | || |  
+ | | | |     | (_) |     | || |_ 
+ | | | |      \__, |     |__   _|
+ | |_| |  _     / /   _     | |  
+  \___/  (_)   /_/   (_)    |_|  
+                                 
+
                      
 OF 0.9.4
 ========                          

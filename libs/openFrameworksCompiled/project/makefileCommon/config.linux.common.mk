@@ -313,6 +313,7 @@ PLATFORM_LIBRARIES += freeimage
 PLATFORM_LIBRARIES += boost_filesystem
 PLATFORM_LIBRARIES += boost_system
 PLATFORM_LIBRARIES += pugixml
+PLATFORM_LIBRARIES += uriparser
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
@@ -336,7 +337,6 @@ PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
 PLATFORM_PKG_CONFIG_LIBRARIES += openal
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
-PLATFORM_PKG_CONFIG_LIBRARIES += liburiparser
 
 ifeq "$(shell pkg-config --exists glfw3 && echo 1)" "1"
     PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
