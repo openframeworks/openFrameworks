@@ -12,8 +12,8 @@ echo "**** Building OF core ****"
 cd $ROOT
 # this carries over to subsequent compilations of examples
 #echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/emscripten/config.emscripten.default.mk
-sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" libs/openFrameworksCompiled/project/emscripten/config.emscripten.default.mk
-cd libs/openFrameworksCompiled/project
+sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" build/projects/emscripten/config.emscripten.default.mk
+cd build/projects
 emmake make Debug
 
 echo "**** Building emptyExample ****"
