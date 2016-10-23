@@ -81,6 +81,12 @@ function hasExtension(str, extension){
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
+function pkgExists(pkg){
+    var pkgconfig = new Process();
+    pkgconfig.exec("pkg-config", ["--exists", pkg]);
+    return pkgconfig.exitCode() === 0;
+}
+
 function findLibsRecursive(dir, platform, exclude){
     var ret = []
     if(!File.exists(dir)){
@@ -208,7 +214,7 @@ function addonIncludes(addon){
 function addonSources(addon){
     var sources = findSourceRecursive(addon + '/src')
     try{
-        sources = sources.concat(Helpers.findSourceRecursive(addon + '/libs'));
+        sources = sources.concat(findSourceRecursive(addon + '/libs'));
     }catch(e){}
     return sources;
 }

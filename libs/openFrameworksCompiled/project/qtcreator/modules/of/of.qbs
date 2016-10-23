@@ -128,8 +128,13 @@ Module{
             ].concat(pkgConfigs);
 
             if(usePoco){
-                pkgs.push("openssl")
+                pkgs.push("openssl");
             }
+
+            if(Helpers.pkgExists("rtaudio")){
+                pkgs.push("rtaudio");
+            }
+
             return pkgs;
         }else if(platform === "msys2"){
             var pkgs = [
@@ -138,9 +143,10 @@ Module{
                 "glew",
             ].concat(pkgConfigs);
 
-            if(usePoco){
-                pkgs.push("openssl")
+            if(Helpers.pkgExists("rtaudio")){
+                pkgs.push("rtaudio");
             }
+
             return pkgs;
         }else{
             return [];
@@ -149,7 +155,7 @@ Module{
 
     readonly property stringList ADDITIONAL_LIBS: {
         if(platform === "linux"  || platform === "linux64"){
-            return [
+            var libs = [
                 "glut",
                 "X11",
                 "Xrandr",
@@ -163,11 +169,18 @@ Module{
                 "boost_filesystem",
                 "boost_system",
             ];
+
+            if(!Helpers.pkgExists("rtaudio")){
+                libs.push("rtaudio");
+            }
+
+            return libs;
         }else if(platform === "msys2"){
             return [
-                'opengl32', 'gdi32', 'msimg32', 'glu32', 'dsound', 'winmm', 'strmiids',
-                'uuid', 'ole32', 'oleaut32', 'setupapi', 'wsock32', 'ws2_32', 'Iphlpapi', 'Comdlg32',
-                'freeimage', 'boost_filesystem-mt', 'boost_system-mt', 'freetype', 'cairo','pthread'
+                'opengl32', 'gdi32', 'msimg32', 'glu32', 'winmm', 'strmiids',
+                'uuid', 'oleaut32', 'setupapi', 'wsock32', 'ws2_32', 'Iphlpapi', 'Comdlg32',
+                'freeimage', 'boost_filesystem-mt', 'boost_system-mt', 'freetype', 'cairo','pthread',
+                'rtaudio', 'ksuser', 'ole32', 'dsound'
             ];
         }else if(platform === "android"){
             return [
