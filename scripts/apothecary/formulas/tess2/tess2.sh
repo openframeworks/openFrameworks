@@ -38,7 +38,9 @@ function download() {
 function prepare() {
 	
 	# check if the patch was applied, if not then patch
-	patch -p1 -u -N  < $FORMULA_DIR/tess2.patch
+    if [ patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/tess2.patch 2> /dev/null ]; then
+    	patch -p1 -u -N  < $FORMULA_DIR/tess2.patch
+    fi
 	# copy in build script and CMake toolchains adapted from Assimp
 	if [ "$OS" == "osx" ] ; then
 		mkdir -p build

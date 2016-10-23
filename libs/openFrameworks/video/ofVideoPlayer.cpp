@@ -77,8 +77,8 @@ bool ofVideoPlayer::load(string name){
         if(bUseTexture){
         	if(player->getTexturePtr()==nullptr){
 				if(tex.empty()) {
-					tex.resize(max(player->getPixels().getNumPlanes(),1));
-					for(int i=0;i<player->getPixels().getNumPlanes();i++){
+					tex.resize(std::max(player->getPixels().getNumPlanes(),size_t(1)));
+					for(size_t i=0;i<player->getPixels().getNumPlanes();i++){
 						ofPixels plane = player->getPixels().getPlane(i);
 						tex[i].allocate(plane);
 						if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
@@ -203,11 +203,11 @@ void ofVideoPlayer::update(){
 			playerTex = player->getTexturePtr();
 			
 			if(playerTex == nullptr){
-				if(int(tex.size())!=player->getPixels().getNumPlanes()){
-					tex.resize(max(player->getPixels().getNumPlanes(),1));
+				if(tex.size()!=player->getPixels().getNumPlanes()){
+					tex.resize(std::max(player->getPixels().getNumPlanes(),size_t(1)));
 				}
 				if(player->getWidth() != 0 && player->getHeight() != 0) {
-					for(int i=0;i<player->getPixels().getNumPlanes();i++){
+					for(size_t i=0;i<player->getPixels().getNumPlanes();i++){
 						ofPixels plane = player->getPixels().getPlane(i);
 						bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glInternalFormat != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
 						if(bDiffPixFormat || !tex[i].isAllocated() || tex[i].getWidth() != plane.getWidth() || tex[i].getHeight() != plane.getHeight()){
@@ -371,7 +371,7 @@ void ofVideoPlayer::setPaused(bool _bPause){
 void ofVideoPlayer::setUseTexture(bool bUse){
 	bUseTexture = bUse;
 	if(bUse && player && !player->getTexturePtr() && getWidth()!=0 && getHeight()!=0){
-		for(int i=0;i<player->getPixels().getNumPlanes();i++){
+		for(size_t i=0;i<player->getPixels().getNumPlanes();i++){
 			ofPixels plane = player->getPixels().getPlane(i);
 			bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glInternalFormat != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
 			if(!tex[i].isAllocated() || bDiffPixFormat){
