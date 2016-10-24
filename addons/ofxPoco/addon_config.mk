@@ -119,6 +119,7 @@ android/x86:
     ADDON_LIBS += libs/poco/lib/android/x86/libPocoFoundation.a
 
 osx:
+    ADDON_INCLUDES += libs/openssl/include
     ADDON_LIBS = libs/poco/lib/osx/PocoNetSSL.a
     ADDON_LIBS += libs/poco/lib/osx/PocoNet.a
     ADDON_LIBS += libs/poco/lib/osx/PocoCrypto.a
@@ -130,6 +131,7 @@ osx:
     ADDON_LIBS += libs/openssl/lib/osx/ssl.a"
 
 ios:
+    ADDON_INCLUDES += libs/openssl/include
     ADDON_LIBS = libs/poco/lib/ios/PocoNetSSL.a
     ADDON_LIBS += libs/poco/lib/ios/PocoNet.a
     ADDON_LIBS += libs/poco/lib/ios/PocoCrypto.a
@@ -141,6 +143,7 @@ ios:
     ADDON_LIBS += libs/openssl/lib/ios/ssl.a"
 
 tvos:
+    ADDON_INCLUDES += libs/openssl/include
     ADDON_LIBS = libs/poco/lib/tvos/PocoNetSSL.a
     ADDON_LIBS += libs/poco/lib/tvos/PocoNet.a
     ADDON_LIBS += libs/poco/lib/tvos/PocoCrypto.a
