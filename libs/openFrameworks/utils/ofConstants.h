@@ -360,7 +360,7 @@ typedef TESSindex ofIndexType;
 // on c++11, this is a workaround that bug
 #ifndef HAS_TLS
 	#if __clang__
-		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__)
+		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__) && !defined(TARGET_OF_IOS)
 			#define HAS_TLS 1
 		#endif
     #elif !defined(TARGET_WIN32) || _MSC_VER
