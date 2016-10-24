@@ -180,13 +180,16 @@ if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
         ./apothecary -j${cores} update kiss
         ./apothecary -j${cores} update tess2
     fi
-    WHO=`who am i`;ID=`echo ${WHO%% *}`
+
+    ID=`logname`
     GROUP_ID=`id --group -n ${ID}`
     chown -R $ID:$GROUP_ID build/poco
     chown -R $ID:$GROUP_ID ../../libs/poco
-    chown -R $ID:$GROUP_ID build/kiss
-    chown -R $ID:$GROUP_ID ../../libs/kiss
-    chown -R $ID:$GROUP_ID build/tess2
-    chown -R $ID:$GROUP_ID ../../libs/tess2
+    if [ $GCC_MAJOR_GT_5 -eq 1 ]; then
+        chown -R $ID:$GROUP_ID build/kiss
+        chown -R $ID:$GROUP_ID ../../libs/kiss
+        chown -R $ID:$GROUP_ID build/tess2
+        chown -R $ID:$GROUP_ID ../../libs/tess2
+    fi
 fi
 
