@@ -4,6 +4,7 @@ set -ev
 # capture failing exits in commands obscured behind a pipe
 set -o pipefail
 ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
+PROJECTS=$ROOT/build/projects
 cd ~
 # check if cached directory exists
 if [ "$(ls -A ${NDK_DIR})" ]; then
@@ -16,4 +17,4 @@ else
     unzip android-ndk-r12b-linux-x86_64.zip > /dev/null 2>&1
 fi
 NDK_ROOT=$(echo ${PWD} | sed "s/\//\\\\\//g")
-cat $ROOT/libs/openFrameworksCompiled/project/android/paths.default.make | sed s/path_to/${NDK_ROOT}/ > $ROOT/libs/openFrameworksCompiled/project/android/paths.make
+cat $PROJECTS/android/paths.default.make | sed s/path_to/${NDK_ROOT}/ > $PROJECTS/android/paths.make
