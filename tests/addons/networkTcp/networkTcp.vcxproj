@@ -49,19 +49,19 @@
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
 	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
 		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-		<Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
+		<Import Project="..\..\..\build\projects\vs\openFrameworksRelease.props" />
 	</ImportGroup>
 	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
 		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-		<Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
+		<Import Project="..\..\..\build\projects\vs\openFrameworksRelease.props" />
 	</ImportGroup>
 	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
 		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-		<Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
+		<Import Project="..\..\..\build\projects\vs\openFrameworksDebug.props" />
 	</ImportGroup>
 	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
 		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-		<Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
+		<Import Project="..\..\..\build\projects\vs\openFrameworksDebug.props" />
 	</ImportGroup>
 	<PropertyGroup Label="UserMacros" />
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -172,22 +172,24 @@
 	</ItemDefinitionGroup>
 	<ItemGroup>
 		<ClCompile Include="src\main.cpp" />
-		<ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.cpp" />
 		<ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.cpp" />
 		<ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.cpp" />
+		<ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.cpp" />
 		<ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="..\..\..\addons\ofxUnitTests\src\ofxUnitTests.h" />
 		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.h" />
-		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetworkUtils.h" />
 		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.h" />
-		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.h" />
-		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetwork.h" />
 		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.h" />
+		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxUDPSettings.h" />
+		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetworkUtils.h" />
+		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPSettings.h" />
+		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetwork.h" />
+		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.h" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="$(OF_ROOT)\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
+		<ProjectReference Include="$(OF_ROOT)\build\projects\vs\openframeworksLib.vcxproj">
 			<Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
 		</ProjectReference>
 	</ItemGroup>
@@ -195,7 +197,7 @@
 		<ResourceCompile Include="icon.rc">
 			<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/D_DEBUG %(AdditionalOptions)</AdditionalOptions>
 			<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/D_DEBUG %(AdditionalOptions)</AdditionalOptions>
-			<AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworksCompiled\project\vs</AdditionalIncludeDirectories>
+			<AdditionalIncludeDirectories>$(OF_ROOT)\build\projects\vs</AdditionalIncludeDirectories>
 		</ResourceCompile>
 	</ItemGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

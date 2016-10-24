@@ -20,9 +20,6 @@
 		</Filter>
 	</ItemGroup>
 	<ItemGroup>
-		<ClInclude Include="src\ofApp.h">
-			<Filter>src</Filter>
-		</ClInclude>
 		<ClInclude Include="..\..\..\addons\ofxUnitTests\src\ofxUnitTests.h">
 			<Filter>addons\ofxUnitTests\src</Filter>
 		</ClInclude>
