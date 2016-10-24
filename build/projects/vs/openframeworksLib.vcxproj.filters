@@ -45,449 +45,449 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\src\ofMain.h">
+    <ClInclude Include="$(OF_ROOT)\src\ofMain.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\app\ofAppRunner.h">
+    <ClInclude Include="$(OF_ROOT)\src\app\ofAppRunner.h">
       <Filter>src\app</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\sound\ofSoundPlayer.h">
+    <ClInclude Include="$(OF_ROOT)\src\sound\ofSoundPlayer.h">
       <Filter>src\sound</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\sound\ofSoundStream.h">
+    <ClInclude Include="$(OF_ROOT)\src\sound\ofSoundStream.h">
       <Filter>src\sound</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\video\ofVideoGrabber.h">
+    <ClInclude Include="$(OF_ROOT)\src\video\ofVideoGrabber.h">
       <Filter>src\video</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\video\ofVideoPlayer.h">
+    <ClInclude Include="$(OF_ROOT)\src\video\ofVideoPlayer.h">
       <Filter>src\video</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\communication\ofArduino.h">
+    <ClInclude Include="$(OF_ROOT)\src\communication\ofArduino.h">
       <Filter>src\communication</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\communication\ofSerial.h">
+    <ClInclude Include="$(OF_ROOT)\src\communication\ofSerial.h">
       <Filter>src\communication</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\events\ofEvents.h">
+    <ClInclude Include="$(OF_ROOT)\src\events\ofEvents.h">
       <Filter>src\events</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\events\ofEventUtils.h">
+    <ClInclude Include="$(OF_ROOT)\src\events\ofEventUtils.h">
       <Filter>src\events</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\types\ofTypes.h">
+    <ClInclude Include="$(OF_ROOT)\src\types\ofTypes.h">
       <Filter>src\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\types\ofBaseTypes.h">
+    <ClInclude Include="$(OF_ROOT)\src\types\ofBaseTypes.h">
       <Filter>src\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\types\ofColor.h">
+    <ClInclude Include="$(OF_ROOT)\src\types\ofColor.h">
       <Filter>src\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\types\ofPoint.h">
+    <ClInclude Include="$(OF_ROOT)\src\types\ofPoint.h">
       <Filter>src\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\types\ofRectangle.h">
+    <ClInclude Include="$(OF_ROOT)\src\types\ofRectangle.h">
       <Filter>src\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\video\ofDirectShowGrabber.h">
+    <ClInclude Include="$(OF_ROOT)\src\video\ofDirectShowGrabber.h">
       <Filter>src\video</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\app\ofAppBaseWindow.h">
+    <ClInclude Include="$(OF_ROOT)\src\app\ofAppBaseWindow.h">
       <Filter>src\app</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\math\ofVectorMath.h">
+    <ClInclude Include="$(OF_ROOT)\src\math\ofVectorMath.h">
       <Filter>src\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\math\ofMath.h">
+    <ClInclude Include="$(OF_ROOT)\src\math\ofMath.h">
       <Filter>src\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\math\ofMatrix3x3.h">
+    <ClInclude Include="$(OF_ROOT)\src\math\ofMatrix3x3.h">
       <Filter>src\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\math\ofMatrix4x4.h">
+    <ClInclude Include="$(OF_ROOT)\src\math\ofMatrix4x4.h">
       <Filter>src\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\math\ofQuaternion.h">
+    <ClInclude Include="$(OF_ROOT)\src\math\ofQuaternion.h">
       <Filter>src\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\math\ofVec2f.h">
+    <ClInclude Include="$(OF_ROOT)\src\math\ofVec2f.h">
       <Filter>src\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\math\ofVec3f.h">
+    <ClInclude Include="$(OF_ROOT)\src\math\ofVec3f.h">
       <Filter>src\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\math\ofVec4f.h">
+    <ClInclude Include="$(OF_ROOT)\src\math\ofVec4f.h">
       <Filter>src\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\app\ofBaseApp.h">
+    <ClInclude Include="$(OF_ROOT)\src\app\ofBaseApp.h">
       <Filter>src\app</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\3d\of3dUtils.h">
+    <ClInclude Include="$(OF_ROOT)\src\3d\of3dUtils.h">
       <Filter>src\3d</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\3d\ofCamera.h">
+    <ClInclude Include="$(OF_ROOT)\src\3d\ofCamera.h">
       <Filter>src\3d</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\3d\ofEasyCam.h">
+    <ClInclude Include="$(OF_ROOT)\src\3d\ofEasyCam.h">
       <Filter>src\3d</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\3d\ofMesh.h">
+    <ClInclude Include="$(OF_ROOT)\src\3d\ofMesh.h">
       <Filter>src\3d</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\3d\ofNode.h">
+    <ClInclude Include="$(OF_ROOT)\src\3d\ofNode.h">
       <Filter>src\3d</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\gl\ofFbo.h">
+    <ClInclude Include="$(OF_ROOT)\src\gl\ofFbo.h">
       <Filter>src\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\gl\ofGLRenderer.h">
+    <ClInclude Include="$(OF_ROOT)\src\gl\ofGLRenderer.h">
       <Filter>src\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\gl\ofGLUtils.h">
+    <ClInclude Include="$(OF_ROOT)\src\gl\ofGLUtils.h">
       <Filter>src\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\gl\ofLight.h">
+    <ClInclude Include="$(OF_ROOT)\src\gl\ofLight.h">
       <Filter>src\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\gl\ofMaterial.h">
+    <ClInclude Include="$(OF_ROOT)\src\gl\ofMaterial.h">
       <Filter>src\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\gl\ofShader.h">
+    <ClInclude Include="$(OF_ROOT)\src\gl\ofShader.h">
       <Filter>src\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\gl\ofTexture.h">
+    <ClInclude Include="$(OF_ROOT)\src\gl\ofTexture.h">
       <Filter>src\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\gl\ofVbo.h">
+    <ClInclude Include="$(OF_ROOT)\src\gl\ofVbo.h">
       <Filter>src\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\gl\ofVboMesh.h">
+    <ClInclude Include="$(OF_ROOT)\src\gl\ofVboMesh.h">
       <Filter>src\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\graphics\ofBitmapFont.h">
+    <ClInclude Include="$(OF_ROOT)\src\graphics\ofBitmapFont.h">
       <Filter>src\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\graphics\ofCairoRenderer.h">
+    <ClInclude Include="$(OF_ROOT)\src\graphics\ofCairoRenderer.h">
       <Filter>src\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\graphics\ofGraphics.h">
+    <ClInclude Include="$(OF_ROOT)\src\graphics\ofGraphics.h">
       <Filter>src\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\graphics\ofImage.h">
+    <ClInclude Include="$(OF_ROOT)\src\graphics\ofImage.h">
       <Filter>src\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\graphics\ofPath.h">
+    <ClInclude Include="$(OF_ROOT)\src\graphics\ofPath.h">
       <Filter>src\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\graphics\ofPixels.h">
+    <ClInclude Include="$(OF_ROOT)\src\graphics\ofPixels.h">
       <Filter>src\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\graphics\ofPolyline.h">
+    <ClInclude Include="$(OF_ROOT)\src\graphics\ofPolyline.h">
       <Filter>src\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\graphics\ofRendererCollection.h">
+    <ClInclude Include="$(OF_ROOT)\src\graphics\ofRendererCollection.h">
       <Filter>src\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\graphics\ofTessellator.h">
+    <ClInclude Include="$(OF_ROOT)\src\graphics\ofTessellator.h">
       <Filter>src\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\graphics\ofTrueTypeFont.h">
+    <ClInclude Include="$(OF_ROOT)\src\graphics\ofTrueTypeFont.h">
       <Filter>src\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\utils\ofConstants.h">
+    <ClInclude Include="$(OF_ROOT)\src\utils\ofConstants.h">
       <Filter>src\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\utils\ofFileUtils.h">
+    <ClInclude Include="$(OF_ROOT)\src\utils\ofFileUtils.h">
       <Filter>src\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\utils\ofLog.h">
+    <ClInclude Include="$(OF_ROOT)\src\utils\ofLog.h">
       <Filter>src\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\utils\ofNoise.h">
+    <ClInclude Include="$(OF_ROOT)\src\utils\ofNoise.h">
       <Filter>src\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\utils\ofSystemUtils.h">
+    <ClInclude Include="$(OF_ROOT)\src\utils\ofSystemUtils.h">
       <Filter>src\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\utils\ofThread.h">
+    <ClInclude Include="$(OF_ROOT)\src\utils\ofThread.h">
       <Filter>src\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\utils\ofURLFileLoader.h">
+    <ClInclude Include="$(OF_ROOT)\src\utils\ofURLFileLoader.h">
       <Filter>src\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\utils\ofUtils.h">
+    <ClInclude Include="$(OF_ROOT)\src\utils\ofUtils.h">
       <Filter>src\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\sound\ofRtAudioSoundStream.h">
+    <ClInclude Include="$(OF_ROOT)\src\sound\ofRtAudioSoundStream.h">
       <Filter>src\sound</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\sound\ofBaseSoundPlayer.h">
+    <ClInclude Include="$(OF_ROOT)\src\sound\ofBaseSoundPlayer.h">
       <Filter>src\sound</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\sound\ofBaseSoundStream.h">
+    <ClInclude Include="$(OF_ROOT)\src\sound\ofBaseSoundStream.h">
       <Filter>src\sound</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\sound\ofFmodSoundPlayer.h">
+    <ClInclude Include="$(OF_ROOT)\src\sound\ofFmodSoundPlayer.h">
       <Filter>src\sound</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\types\ofParameter.h">
+    <ClInclude Include="$(OF_ROOT)\src\types\ofParameter.h">
       <Filter>src\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\types\ofParameterGroup.h">
+    <ClInclude Include="$(OF_ROOT)\src\types\ofParameterGroup.h">
       <Filter>src\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\3d\of3dPrimitives.h">
+    <ClInclude Include="$(OF_ROOT)\src\3d\of3dPrimitives.h">
       <Filter>src\3d</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\graphics\of3dGraphics.h">
+    <ClInclude Include="$(OF_ROOT)\src\graphics\of3dGraphics.h">
       <Filter>src\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\utils\ofMatrixStack.h">
+    <ClInclude Include="$(OF_ROOT)\src\utils\ofMatrixStack.h">
       <Filter>src\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\gl\ofGLProgrammableRenderer.h">
+    <ClInclude Include="$(OF_ROOT)\src\gl\ofGLProgrammableRenderer.h">
       <Filter>src\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\app\ofAppGLFWWindow.h">
+    <ClInclude Include="$(OF_ROOT)\src\app\ofAppGLFWWindow.h">
       <Filter>src\app</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\app\ofAppNoWindow.h">
+    <ClInclude Include="$(OF_ROOT)\src\app\ofAppNoWindow.h">
       <Filter>src\app</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\gl\ofBufferObject.h">
+    <ClInclude Include="$(OF_ROOT)\src\gl\ofBufferObject.h">
       <Filter>src\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\utils\ofFpsCounter.h">
+    <ClInclude Include="$(OF_ROOT)\src\utils\ofFpsCounter.h">
       <Filter>src\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\utils\ofTimer.h">
+    <ClInclude Include="$(OF_ROOT)\src\utils\ofTimer.h">
       <Filter>src\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\video\ofDirectShowPlayer.h">
+    <ClInclude Include="$(OF_ROOT)\src\video\ofDirectShowPlayer.h">
       <Filter>src\video</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\app\ofMainLoop.h">
+    <ClInclude Include="$(OF_ROOT)\src\app\ofMainLoop.h">
       <Filter>src\app</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\app\ofWindowSettings.h">
+    <ClInclude Include="$(OF_ROOT)\src\app\ofWindowSettings.h">
       <Filter>src\app</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\events\ofEvent.h">
+    <ClInclude Include="$(OF_ROOT)\src\events\ofEvent.h">
       <Filter>src\events</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\utils\ofThreadChannel.h">
+    <ClInclude Include="$(OF_ROOT)\src\utils\ofThreadChannel.h">
       <Filter>src\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\utils\ofXml.h">
+    <ClInclude Include="$(OF_ROOT)\src\utils\ofXml.h">
       <Filter>src\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\app\ofAppRunner.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\app\ofAppRunner.cpp">
       <Filter>src\app</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\sound\ofSoundPlayer.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\sound\ofSoundPlayer.cpp">
       <Filter>src\sound</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\sound\ofSoundStream.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\sound\ofSoundStream.cpp">
       <Filter>src\sound</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\video\ofVideoGrabber.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\video\ofVideoGrabber.cpp">
       <Filter>src\video</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\video\ofVideoPlayer.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\video\ofVideoPlayer.cpp">
       <Filter>src\video</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\communication\ofArduino.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\communication\ofArduino.cpp">
       <Filter>src\communication</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\communication\ofSerial.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\communication\ofSerial.cpp">
       <Filter>src\communication</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\types\ofBaseTypes.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\types\ofBaseTypes.cpp">
       <Filter>src\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\types\ofColor.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\types\ofColor.cpp">
       <Filter>src\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\types\ofRectangle.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\types\ofRectangle.cpp">
       <Filter>src\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\video\ofDirectShowGrabber.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\video\ofDirectShowGrabber.cpp">
       <Filter>src\video</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\events\ofEvents.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\events\ofEvents.cpp">
       <Filter>src\events</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\math\ofMath.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\math\ofMath.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\math\ofMatrix3x3.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\math\ofMatrix3x3.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\math\ofMatrix4x4.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\math\ofMatrix4x4.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\math\ofQuaternion.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\math\ofQuaternion.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\3d\of3dUtils.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\3d\of3dUtils.cpp">
       <Filter>src\3d</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\3d\ofCamera.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\3d\ofCamera.cpp">
       <Filter>src\3d</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\3d\ofEasyCam.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\3d\ofEasyCam.cpp">
       <Filter>src\3d</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\3d\ofNode.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\3d\ofNode.cpp">
       <Filter>src\3d</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\gl\ofFbo.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\gl\ofFbo.cpp">
       <Filter>src\gl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\gl\ofGLRenderer.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\gl\ofGLRenderer.cpp">
       <Filter>src\gl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\gl\ofLight.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\gl\ofLight.cpp">
       <Filter>src\gl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\gl\ofMaterial.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\gl\ofMaterial.cpp">
       <Filter>src\gl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\gl\ofShader.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\gl\ofShader.cpp">
       <Filter>src\gl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\gl\ofTexture.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\gl\ofTexture.cpp">
       <Filter>src\gl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\gl\ofVbo.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\gl\ofVbo.cpp">
       <Filter>src\gl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\gl\ofVboMesh.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\gl\ofVboMesh.cpp">
       <Filter>src\gl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\graphics\ofBitmapFont.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\graphics\ofBitmapFont.cpp">
       <Filter>src\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\graphics\ofCairoRenderer.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\graphics\ofCairoRenderer.cpp">
       <Filter>src\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\graphics\ofGraphics.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\graphics\ofGraphics.cpp">
       <Filter>src\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\graphics\ofImage.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\graphics\ofImage.cpp">
       <Filter>src\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\graphics\ofPath.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\graphics\ofPath.cpp">
       <Filter>src\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\graphics\ofPixels.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\graphics\ofPixels.cpp">
       <Filter>src\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\graphics\ofTessellator.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\graphics\ofTessellator.cpp">
       <Filter>src\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\graphics\ofTrueTypeFont.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\graphics\ofTrueTypeFont.cpp">
       <Filter>src\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\utils\ofFileUtils.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\utils\ofFileUtils.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\utils\ofLog.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\utils\ofLog.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\utils\ofSystemUtils.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\utils\ofSystemUtils.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\utils\ofThread.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\utils\ofThread.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\utils\ofURLFileLoader.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\utils\ofURLFileLoader.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\utils\ofUtils.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\utils\ofUtils.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\sound\ofFmodSoundPlayer.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\sound\ofFmodSoundPlayer.cpp">
       <Filter>src\sound</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\sound\ofRtAudioSoundStream.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\sound\ofRtAudioSoundStream.cpp">
       <Filter>src\sound</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\math\ofVec4f.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\math\ofVec4f.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\math\ofVec2f.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\math\ofVec2f.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\types\ofParameter.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\types\ofParameter.cpp">
       <Filter>src\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\types\ofParameterGroup.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\types\ofParameterGroup.cpp">
       <Filter>src\types</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\3d\of3dPrimitives.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\3d\of3dPrimitives.cpp">
       <Filter>src\3d</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\graphics\of3dGraphics.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\graphics\of3dGraphics.cpp">
       <Filter>src\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\gl\ofGLUtils.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\gl\ofGLUtils.cpp">
       <Filter>src\gl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\utils\ofMatrixStack.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\utils\ofMatrixStack.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\graphics\ofRendererCollection.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\graphics\ofRendererCollection.cpp">
       <Filter>src\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\gl\ofGLProgrammableRenderer.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\gl\ofGLProgrammableRenderer.cpp">
       <Filter>src\gl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\app\ofAppGLFWWindow.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\app\ofAppGLFWWindow.cpp">
       <Filter>src\app</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\app\ofAppNoWindow.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\app\ofAppNoWindow.cpp">
       <Filter>src\app</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\utils\ofFpsCounter.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\utils\ofFpsCounter.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\utils\ofTimer.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\utils\ofTimer.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\gl\ofBufferObject.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\gl\ofBufferObject.cpp">
       <Filter>src\gl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\video\ofDirectShowPlayer.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\video\ofDirectShowPlayer.cpp">
       <Filter>src\video</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\sound\ofSoundBuffer.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\sound\ofSoundBuffer.cpp">
       <Filter>src\sound</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\sound\ofBaseSoundStream.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\sound\ofBaseSoundStream.cpp">
       <Filter>src\sound</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\app\ofMainLoop.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\app\ofMainLoop.cpp">
       <Filter>src\app</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\utils\ofXml.cpp">
+    <ClCompile Include="$(OF_ROOT)\src\utils\ofXml.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\src\3d\ofMesh.inl">
+    <None Include="$(OF_ROOT)\src\3d\ofMesh.inl">
       <Filter>src\3d</Filter>
     </None>
-    <None Include="..\..\..\src\graphics\ofPolyline.inl">
+    <None Include="$(OF_ROOT)\src\graphics\ofPolyline.inl">
       <Filter>src\graphics</Filter>
     </None>
-    <None Include="..\..\..\src\gl\shaders\phong.frag">
+    <None Include="$(OF_ROOT)\src\gl\shaders\phong.frag">
       <Filter>src\gl\shaders</Filter>
     </None>
-    <None Include="..\..\..\src\gl\shaders\phong.vert">
+    <None Include="$(OF_ROOT)\src\gl\shaders\phong.vert">
       <Filter>src\gl\shaders</Filter>
     </None>
   </ItemGroup>
