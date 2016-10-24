@@ -1,3 +1,38 @@
+   ___         ___          __  
+  / _ \       / _ \        / /  
+ | | | |     | (_) |      / /_  
+ | | | |      \__, |     | '_ \ 
+ | |_| |  _     / /   _  | (_) |
+  \___/  (_)   /_/   (_)  \___/ 
+                                
+                                
+                     
+OF 0.9.6
+========                          
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+PROJECT GENERATOR
+=================
+
+/ Fixed a problem where PG included wasn't compatible with 0.9.x anymore
+
+
+PLATFORM SPECIFIC
+-----------------
+
+### ios
+    / Disable TLS to avoid access to non-public symbols in appstore
+
+### linux
+    / Fix some problems with install dependencies scripts in latest dsitributions
+
+                                 
    ___         ___        _____ 
   / _ \       / _ \      | ____|
  | | | |     | (_) |     | |__  

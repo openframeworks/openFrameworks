@@ -3,7 +3,7 @@ set -ev
 ROOT="$PWD"
 
 echo "**** Building OF core ****"
-cd $ROOT/libs/openFrameworksCompiled/project
+cd $ROOT/build/projects
 make -j4 Debug
 
 echo "**** Building emptyExample ****"

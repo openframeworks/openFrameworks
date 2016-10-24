@@ -120,7 +120,7 @@ CppApplication{
         files: {
             var icons = [];
 
-            var srcDir = FileInfo.joinPaths(project.of_root,'libs/openFrameworksCompiled/project');
+            var srcDir = FileInfo.joinPaths(project.of_root,'build/projects');
             if(FileInfo.isAbsolutePath(project.of_root) == false){
                 srcDir = FileInfo.joinPaths(project.path, srcDir);
             }

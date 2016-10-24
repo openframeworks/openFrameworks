@@ -399,7 +399,7 @@
 				844639751BC3443E00F24926 /* src */,
 			);
 			name = ofxAccelerometer;
-			path = ../../../../addons/ofxAccelerometer;
+			path = ../../../addons/ofxAccelerometer;
 			sourceTree = "<group>";
 		};
 		8446397D1BC3443E00F24926 /* app */ = {
@@ -537,7 +537,7 @@
 				844639BE1BC3443E00F24926 /* src */,
 			);
 			name = ofxiOS;
-			path = ../../../../addons/ofxiOS;
+			path = ../../../addons/ofxiOS;
 			sourceTree = "<group>";
 		};
 		844639C01BC3443E00F24926 /* addons */ = {

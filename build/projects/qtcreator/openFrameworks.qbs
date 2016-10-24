@@ -6,7 +6,13 @@ import qbs.TextFile
 import "modules/of/helpers.js" as Helpers
 
 Product{
-    of.ofRoot: Helpers.normalize(FileInfo.joinPaths(path, "../../.."))
+    of.ofRoot: {
+        if(path.contains("openFrameworksCompiled")){
+            return Helpers.normalize(FileInfo.joinPaths(path, "../../../.."))
+        }else{
+            return Helpers.normalize(FileInfo.joinPaths(path, "../../.."))
+        }
+    }
     name: "openFrameworks"
     type: "staticlibrary"
     qbsSearchPaths: "."
@@ -146,7 +152,7 @@ Product{
         condition: qbs.buildVariant.contains('debug') && !product.qbsBuild
         inputs: ["filtered_sources"]
         multiplex : true
-        alwaysRun: true
+        alwaysRun: false
         Artifact {
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworksDebug.a")
              fileTags: "staticlibrary"
@@ -166,7 +172,7 @@ Product{
         condition: qbs.buildVariant.contains('release') && !product.qbsBuild
         inputs: ["filtered_sources"]
         multiplex : true
-        alwaysRun: true
+        alwaysRun: false
         Artifact {
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworks.a")
              fileTags: "staticlibrary"

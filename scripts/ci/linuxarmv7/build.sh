@@ -2,7 +2,7 @@
 set -ev
 ROOT=$(cd $(dirname $0); pwd -P)
 OF_ROOT=$(cd $ROOT/../../..; pwd -P)
-PROJECTS=$OF_ROOT/libs/openFrameworksCompiled/project
+PROJECTS=$OF_ROOT/build/projects
 export GCC_PREFIX=armv7l-unknown-linux-gnueabihf
 export TOOLCHAIN_PREFIX=arm-linux-gnueabihf
 export GST_VERSION=1.0
@@ -27,7 +27,7 @@ export CXXFLAGS="$CXXFLAGS --sysroot=${RPI_ROOT}"
 #tar xzf rtaudio-4.1.1.tar.gz
 #cd rtaudio-4.1.1
 #./configure --host=${GCC_PREFIX}
-#sed -i "s|CFLAGS[ ]*=\(.*\)|CFLAGS = ${CFLAGS} \1|g" Makefile 
+#sed -i "s|CFLAGS[ ]*=\(.*\)|CFLAGS = ${CFLAGS} \1|g" Makefile
 #perl -p -i -e 's|\$\(CC\) (?!\$\(CFLAGS\))|\$(CC) \$(CFLAGS) |g' Makefile
 
 #make

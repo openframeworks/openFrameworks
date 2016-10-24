@@ -5,7 +5,7 @@
 #   be defined as variants. For instance, normally this file will be located in
 #   a platform specific subpath such as
 #
-#        $(OF_ROOT)/libs/openFrameworksComplied/linux64
+#        $(OF_ROOT)/build/projects/linux64
 #
 #   This file will then be a generic platform file like:
 #
@@ -29,7 +29,7 @@
 #check if mpg123 exists and add it
 #HAS_SYSTEM_MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
 
-include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
+include $(OF_ROOT)/build/projects/android/paths.make
 ARCH = android
 
 ifndef ABIS_TO_COMPILE_RELEASE
@@ -445,7 +445,7 @@ PLATFORM_AR=$(NDK_ROOT)/toolchains/arm-linux-androideabi-4.9/prebuilt/$(HOST_PLA
 PLATFORM_LD=$(NDK_ROOT)/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/arm-linux-androideabi/bin/ld
 
 #ifeq (,$(findstring MINGW32_NT,$(shell uname)))
-ZIPWINDOWS=..\\..\\..\\..\\..\\libs\\openFrameworksCompiled\\project\\android\\windows\\zip -r ../../res/raw/$(RESFILE)
+ZIPWINDOWS=..\\..\\..\\..\\..\\build\\projects\\android\\windows\\zip -r ../../res/raw/$(RESFILE)
 #endif
 
 afterplatform:$(RESFILE)
@@ -453,7 +453,7 @@ afterplatform:$(RESFILE)
 
 	@echo copying debugging binaries for $(ABIS_TO_COMPILE)
 	@if [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
-		cp $(OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi-v7a/; \
+		cp $(OF_ROOT)/build/projects/android/libneondetection.so libs/armeabi-v7a/; \
 		cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi-v7a; \
 	fi
 
