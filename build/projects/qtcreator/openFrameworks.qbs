@@ -146,7 +146,7 @@ Product{
         condition: qbs.buildVariant.contains('debug') && !product.qbsBuild
         inputs: ["filtered_sources"]
         multiplex : true
-        alwaysRun: true
+        alwaysRun: false
         Artifact {
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworksDebug.a")
              fileTags: "staticlibrary"
@@ -166,7 +166,7 @@ Product{
         condition: qbs.buildVariant.contains('release') && !product.qbsBuild
         inputs: ["filtered_sources"]
         multiplex : true
-        alwaysRun: true
+        alwaysRun: false
         Artifact {
              filePath: Helpers.normalize(product.libDir + "/libopenFrameworks.a")
              fileTags: "staticlibrary"
