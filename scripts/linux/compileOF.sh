@@ -9,7 +9,7 @@ else
         LIBSPATH=linux
 fi
 
-WHO=`who am i`;ID=`echo ${WHO%% *}`
+ID=`logname`
 GROUP_ID=`id --group -n ${ID}`
 
 pushd `dirname $0` > /dev/null
