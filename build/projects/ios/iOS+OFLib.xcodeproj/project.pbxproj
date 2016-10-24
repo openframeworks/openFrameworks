@@ -642,7 +642,7 @@
 				BB24E02810DA7C6100E9C588 /* src */,
 			);
 			name = ofxiOS;
-			path = ../../../../addons/ofxiOS;
+			path = ../../../addons/ofxiOS;
 			sourceTree = SOURCE_ROOT;
 		};
 		BB24E02810DA7C6100E9C588 /* src */ = {
