@@ -6,7 +6,13 @@ import qbs.TextFile
 import "modules/of/helpers.js" as Helpers
 
 Product{
-    of.ofRoot: Helpers.normalize(FileInfo.joinPaths(path, "../../.."))
+    of.ofRoot: {
+        if(path.contains("openFrameworksCompiled")){
+            return Helpers.normalize(FileInfo.joinPaths(path, "../../../.."))
+        }else{
+            return Helpers.normalize(FileInfo.joinPaths(path, "../../.."))
+        }
+    }
     name: "openFrameworks"
     type: "staticlibrary"
     qbsSearchPaths: "."
