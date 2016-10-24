@@ -24,7 +24,7 @@ BRANCH=$branch
 
 PG_REPO=https://github.com/openframeworks/projectGenerator.git
 PG_REPO_ALIAS=originhttps
-PG_BRANCH=master
+PG_BRANCH=$branch
 
 hostArch=`uname`
 
@@ -124,7 +124,7 @@ function deleteEclipse {
 function createProjectFiles {
     if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
         cd ${main_ofroot}/apps/projectGenerator
-        git pull origin master
+        git pull origin $PG_BRANCH
         cd commandLine
         echo "Recompiling command line PG"
         PROJECT_OPTIMIZATION_CFLAGS_RELEASE=-O0 CXXFLAGS=-ftrack-macro-expansion=0 make > /dev/null
