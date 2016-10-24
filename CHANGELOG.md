@@ -23,6 +23,15 @@ PROJECT GENERATOR
 / Fixed a problem where PG included wasn't compatible with 0.9.x anymore
 
 
+PLATFORM SPECIFIC
+-----------------
+
+### ios
+    / Disable TLS to avoid access to non-public symbols in appstore
+
+### linux
+    / Fix some problems with install dependencies scripts in latest dsitributions
+
                                  
    ___         ___        _____ 
   / _ \       / _ \      | ____|
