@@ -278,9 +278,9 @@ void ofPolyline_<T>::curveTo( const T & to, int curveResolution ){
 		float t,t2,t3;
 		float x,y,z;
         
-		for (int i = 0; i < curveResolution; i++){
+		for (int i = 1; i <= curveResolution; i++){
             
-			t 	=  (float)i / (float)(curveResolution-1);
+			t 	=  (float)i / (float)(curveResolution);
 			t2 	= t * t;
 			t3 	= t2 * t;
             
