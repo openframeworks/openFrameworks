@@ -2,6 +2,7 @@ var Process = loadExtension("qbs.Process");
 var File = loadExtension("qbs.File");
 var TextFile = loadExtension("qbs.TextFile");
 var Environment = loadExtension("qbs.Environment");
+var FileInfo = loadExtension("qbs.FileInfo");
 
 
 function msys2root(){
