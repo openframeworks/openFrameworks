@@ -224,8 +224,8 @@ void ofPolyline_<T>::bezierTo( const T & cp1, const T & cp2, const T & to, int c
 		bz = 3.0f * (cp2.z - cp1.z) - cz;
 		az = to.z - z0 - cz - bz;
         
-		for (int i = 0; i < curveResolution; i++){
-			t 	=  (float)i / (float)(curveResolution-1);
+		for (int i = 1; i <= curveResolution; i++){
+			t 	=  (float)i / (float)(curveResolution);
 			t2 = t * t;
 			t3 = t2 * t;
 			x = (ax * t3) + (bx * t2) + (cx * t) + x0;
