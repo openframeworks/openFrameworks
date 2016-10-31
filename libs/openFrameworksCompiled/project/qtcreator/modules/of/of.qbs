@@ -104,10 +104,8 @@ Module{
                 "gl",
                 "glu",
                 "glew",
-                "glfw3",
-                "openssl",
-                "libcurl",
-                "liburiparser",
+                "gtk+-3.0",
+                "libmpg123",
             ].concat(pkgConfigs);
 
 
@@ -144,7 +142,7 @@ Module{
 
     readonly property stringList ADDITIONAL_LIBS: {
         if(platform === "linux"  || platform === "linux64"){
-            return [
+            var libs = [
                 "glut",
                 "X11",
                 "Xrandr",
@@ -162,6 +160,8 @@ Module{
             if(!Helpers.pkgExists("rtaudio")){
                 libs.push("rtaudio");
             }
+
+            return libs;
         }else if(platform === "msys2"){
             var libs = [
                 'opengl32', 'gdi32', 'msimg32', 'glu32', 'dsound', 'winmm', 'strmiids',
@@ -170,7 +170,7 @@ Module{
             ];
 
             if(!Helpers.pkgExists("rtaudio")){
-                libs.push("rtaudio");
+                libs = libs.concat(['rtaudio', 'ksuser', 'ole32', 'dsound']);
             }
 
             return libs;
