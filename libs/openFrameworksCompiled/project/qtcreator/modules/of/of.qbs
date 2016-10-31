@@ -104,8 +104,6 @@ Module{
                 "gl",
                 "glu",
                 "glew",
-                "gtk+-3.0",
-                "libmpg123",
                 "glfw3",
                 "openssl",
                 "libcurl",
@@ -116,6 +114,13 @@ Module{
             if(Helpers.pkgExists("rtaudio")){
                 pkgs.push("rtaudio");
             }
+            if(Helpers.pkgExists("libmpg123")){
+                pkgs.push("libmpg123");
+            }
+            if(Helpers.pkgExists("gtk+-3.0")){
+                pkgs.push("gtk+-3.0")
+            }
+
             return pkgs;
         }else if(platform === "msys2"){
             var pkgs = [
@@ -435,7 +440,12 @@ Module{
         var defines = ['GCC_HAS_REGEX'];
 
         if(qbs.targetOS.contains("linux")){
-            defines = defines.concat([ 'OF_USING_GTK', 'OF_USING_MPG123']);
+            if(Helpers.pkgExists("gtk+-3.0")){
+                defines.push("OF_USING_GTK")
+            }
+            if(Helpers.pkgExists("libmpg123")){
+                defines.push("OF_USING_MPG123");
+            }
         }
 
         if(qbs.targetOS.indexOf("windows")>-1){
