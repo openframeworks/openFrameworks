@@ -1,3 +1,46 @@
+   ___         ___        ______ 
+  / _ \       / _ \      |____  |
+ | | | |     | (_) |         / / 
+ | | | |      \__, |        / /  
+ | |_| |  _     / /   _    / /   
+  \___/  (_)   /_/   (_)  /_/    
+                                 
+                                
+                                
+                     
+OF 0.9.6
+========                          
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+PROJECT GENERATOR
+=================
+
+/ Fixed a problem where PG included wouldn't run correctly on OSX Sierra
+ 
+
+CORE
+---- 
+
+### graphics
+    / revert bug introduced in ofPixels getColor(int) in 0.9.5
+
+
+PLATFORM SPECIFIC
+-----------------
+
+### linux
+    / fixes for install_dependencies.sh
+
+### qtcreator
+    / better detection for some libraries
+
+
    ___         ___          __  
   / _ \       / _ \        / /  
  | | | |     | (_) |      / /_  
