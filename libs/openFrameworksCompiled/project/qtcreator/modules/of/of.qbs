@@ -106,6 +106,9 @@ Module{
                 "glew",
                 "gtk+-3.0",
                 "libmpg123",
+                "glfw3",
+                "liburiparser",
+                "libcurl",
             ].concat(pkgConfigs);
 
 
