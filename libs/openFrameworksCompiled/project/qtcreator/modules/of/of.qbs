@@ -152,6 +152,7 @@ Module{
                 "Xxf86vm",
                 "Xi",
                 "Xcursor",
+                "Xinerama",
                 "dl",
                 "pthread",
                 "freeimage",
