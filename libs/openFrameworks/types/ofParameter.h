@@ -371,21 +371,21 @@ namespace priv{
 	struct has_loading_support {
 		static istream & stream;
 		static T & x;
-		static const bool value = sizeof(check_op(stream >> x)) == sizeof(yes);
+		static constexpr bool value = sizeof(check_op(stream >> x)) == sizeof(yes);
 	};
 
 	template <typename T>
 	struct has_saving_support {
 		static ostream & stream;
 		static T & x;
-		static const bool value = sizeof(check_op(stream << x)) == sizeof(yes);
+		static constexpr bool value = sizeof(check_op(stream << x)) == sizeof(yes);
 	};
 
 	template <typename T>
 	struct has_stream_operators {
-		static const bool can_load = has_loading_support<T>::value;
-		static const bool can_save = has_saving_support<T>::value;
-		static const bool value = can_load && can_save;
+		static constexpr bool can_load = has_loading_support<T>::value;
+		static constexpr bool can_save = has_saving_support<T>::value;
+		static constexpr bool value = can_load && can_save;
 	};
 
 	template<typename ParameterType>
