@@ -1042,7 +1042,7 @@ void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, flo
 }
 
 //------------------------------------
-void ofTexture::drawSubsection(ofRectangle& drawBounds, ofRectangle& subsectionBounds) const {
+void ofTexture::drawSubsection(const ofRectangle& drawBounds, const ofRectangle& subsectionBounds) const {
 	drawSubsection(drawBounds.x,drawBounds.y,0,drawBounds.width,drawBounds.height,subsectionBounds.x,subsectionBounds.y,subsectionBounds.width,subsectionBounds.height);
 }
 
