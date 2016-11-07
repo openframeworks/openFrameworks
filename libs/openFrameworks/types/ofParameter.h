@@ -363,22 +363,22 @@ namespace priv{
 	no operator << (const anyx &, const anyx &);
 	no operator >> (const anyx &, const anyx &);
 
-
-	template <class T> yes check(T const&);
-	no check(no);
+	
+	template <class T> yes check_op(T const&);
+	no check_op(no);
 
 	template <typename T>
 	struct has_loading_support {
 		static istream & stream;
 		static T & x;
-		static const bool value = sizeof(check(stream >> x)) == sizeof(yes);
+		static const bool value = sizeof(check_op(stream >> x)) == sizeof(yes);
 	};
 
 	template <typename T>
 	struct has_saving_support {
 		static ostream & stream;
 		static T & x;
-		static const bool value = sizeof(check(stream << x)) == sizeof(yes);
+		static const bool value = sizeof(check_op(stream << x)) == sizeof(yes);
 	};
 
 	template <typename T>
