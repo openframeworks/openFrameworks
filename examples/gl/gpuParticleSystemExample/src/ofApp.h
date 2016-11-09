@@ -20,7 +20,6 @@
 // using to pair of ofFbo attached together on what we call pingPongBuffer
 // Learn more about Ping-Pong at:
 //
-// http://www.comp.nus.edu/~ashwinna/docs/PingPong_FBO.pdf
 // http://www.seas.upenn.edu/~cis565/fbo.htm#setupgl4
 //
 struct pingPongBuffer {
