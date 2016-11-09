@@ -1,8 +1,0 @@
-ofx3DModelLoader
-ofxNetwork
-ofxOpenCv
-ofxOsc
-ofxVectorGraphics
-ofxXmlSettings
-ofxAssimpModelLoader
-ofxThreadedImageLoader

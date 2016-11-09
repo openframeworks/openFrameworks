@@ -70,57 +70,24 @@ http://openframeworks.cc/download
 
 You may also check out the openFrameworks source from GitHub (under master branch): http://github.com/openframeworks/openFrameworks
 
-**e) Install Ant:**
-
-This build tool is used to build, install and run applications on the Android device from the command line:
-
-- Ubuntu:
-
-    sudo apt-get install ant
-
-Other Linux distros have similar installation procedures.
-
-- OS X:
-
-Download and uncompress Apache Ant 1.8 or greater from http://ant.apache.org/bin/download.cgi
-
-Certain build tools like make might not be installed by default. To install these you can either:
-
-- Download and install Xcode. It's provided in the Mac App store, among other places.
-- Or, just download the build tools separately. They were repackaged and are hosted on GitHub: https://github.com/kennethreitz/osx-gcc-installer
-    There are pkg files you can install for OS X 10.6 and 10.7. Note that this bundle doesn't include pkg-config, and errors may show up because it is missing, but you can ignore these.
-
-**f) Set the paths for the SDK, NDK and Ant:**
+**f) Set the paths for the NDK:**
 
 Edit this file:
 
     openFrameworks/libs/openFrameworksCompiled/project/android/paths.make
 
-This will tell openFrameworks where to find the SDK, NDK and Ant.
+This will tell openFrameworks where to find the android NDK.
 If you don't have this file, create it from the paths.make.default template in the same directory.
 
 - Set the values of NDK_ROOT to their install paths
 
-- Set ANT_HOME:
--- Only for OS X: Set it to the folder where you uncompressed Ant before.
-
-The final file in Linux has to look something like:
+The final file has to look something like:
 
 ```
 # Default paths.make file.
 # Enter the correct paths for your system and save this file as paths.make
 
 NDK_ROOT=/home/arturo/Code/android-ndk-r10e
-```
-
-And in OSX:
-
-```
-# Default paths.make file.
-# Enter the correct paths for your system and save this file as paths.make
-
-NDK_ROOT=/Users/arturo/Code/android-ndk-r10e
-ANT_HOME=/Users/arturo/Code/ant-1.8
 ```
 
 **g) Start Eclipse**: You will see a pop up asking you what workspace to use. Just point it to:
@@ -149,8 +116,9 @@ Select it and press 'Next' until you get to the "Review Licenses" screen. Check 
 
 Once we have installed the Android plugin we need to tell it where to find the SDK. In Eclipse go to Window > Preferences > Android (or Eclipse > Preferences for OS X) and set the SDK location by browsing to the folder where you uncompressed the SDK before.
 
-
 Now Eclipse knows where the SDK is.
+
+Do the same for the path to the NDK.
 
 Next you'll need to install the API files and optionally create an emulator to be able to test programs without uploading to the phone. Press the Android button in the Eclipse toolbar, or go to Window > Android SDK Manager.
 

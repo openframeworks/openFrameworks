@@ -4,12 +4,17 @@
 #include "ofTypes.h"
 #include "ofEvents.h"
 #include "ofWindowSettings.h"
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
-#include <X11/Xlib.h>
-#endif
 
 class ofBaseApp;
 class ofBaseRenderer;
+
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+struct __GLXcontextRec;
+typedef __GLXcontextRec * GLXContext;
+typedef unsigned long Window;
+struct _XDisplay;
+typedef struct _XDisplay Display;
+#endif
 
 class ofAppBaseWindow{
 
@@ -25,11 +30,8 @@ public:
 		return false;
 	}
 	virtual void setWindowShouldClose(){
-		close();
 	}
 	virtual void close(){
-		events().notifyExit();
-		events().disable();
 	}
 	virtual ofCoreEvents & events() = 0;
 	virtual shared_ptr<ofBaseRenderer> & renderer() = 0;
@@ -40,9 +42,9 @@ public:
 	virtual void	setWindowPosition(int x, int y) {}
 	virtual void	setWindowShape(int w, int h) {}
 
-	virtual ofPoint	getWindowPosition() {return ofPoint(); }
-	virtual ofPoint	getWindowSize(){return ofPoint(); }
-	virtual ofPoint	getScreenSize(){return ofPoint(); }
+	virtual glm::vec2	getWindowPosition() {return glm::vec2(); }
+	virtual glm::vec2	getWindowSize(){return glm::vec2(); }
+	virtual glm::vec2	getScreenSize(){return glm::vec2(); }
 
 	virtual void			setOrientation(ofOrientation orientation){ }
 	virtual ofOrientation	getOrientation(){ return OF_ORIENTATION_DEFAULT; }
@@ -67,6 +69,9 @@ public:
     virtual string  getClipboardString() { return ""; }
 
     virtual void makeCurrent(){};
+	virtual void swapBuffers() {}
+	virtual void startRender() {}
+	virtual void finishRender() {}
 
     virtual void * getWindowContext(){return nullptr;};
 

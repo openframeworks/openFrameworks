@@ -184,6 +184,11 @@ void ofSetLogLevel(string module, ofLogLevel level);
 /// \returns The currently set global logging level.
 ofLogLevel ofGetLogLevel();
 
+/// \brief Get the logging level for a specific module.
+/// \param module specific module name.
+/// \returns The currently set specific module logging level.
+ofLogLevel ofGetLogLevel(string module);
+
 /// \brief Get log level name as a string.
 /// \param level The ofLogLevel you want as a string.
 /// \param pad True if you want all log level names to be the same length.
@@ -201,13 +206,21 @@ class ofBaseLoggerChannel;
 /// \brief Set the logging to output to a file instead of the console.
 /// \param path The path to the log file to use.
 /// \param append True if you want to append to the existing file.
-void ofLogToFile(const string & path, bool append=false);
+void ofLogToFile(const std::filesystem::path & path, bool append=false);
 
 /// \brief Set the logging to ouptut to the console.
 /// 
 /// This is the default state and can be called to reset console logging
 /// after ofLogToFile or ofSetLoggerChannel has been called.
 void ofLogToConsole();
+
+#ifdef TARGET_WIN32
+/// Set the logging to ouptut to windows debug view or visual studio console
+/// 
+/// This is the default state and can be called to reset console logging
+/// after ofLogToFile or ofSetLoggerChannel has been called.
+void ofLogToDebugView();
+#endif
 
 /// \brief Set the logger to use a custom logger channel.
 ///
@@ -388,7 +401,7 @@ class ofLog{
 		/// \param format The printf-style format string.
 		ofLog(ofLogLevel level, const char* format, ...) OF_PRINTF_ATTR(3, 4);
 		
-		/// \}
+		/// \}
 	
 		//--------------------------------------------------
 		/// \name Logging configuration
@@ -429,7 +442,7 @@ class ofLog{
 		/// \returns A reference to itself.
 		template <class T> 
 			ofLog& operator<<(const T& value){
-			message << value << padding;
+			message << value << getPadding();
 			return *this;
 		}
 	
@@ -481,7 +494,7 @@ class ofLog{
 		ofLog(ofLog const&) {}        					// not defined, not copyable
 		ofLog& operator=(ofLog& from) {return *this;}	// not defined, not assignable
 		
-		static string padding; ///< The padding between std::ostream calls.
+		static string & getPadding(); ///< The padding between std::ostream calls.
 };
 
 
@@ -629,6 +642,18 @@ public:
 	void log(ofLogLevel level, const string & module, const char* format, va_list args);
 };
 
+#ifdef TARGET_WIN32
+/// A logger channel that logs its messages to windows debug view and visual studio output.
+class ofDebugViewLoggerChannel : public ofBaseLoggerChannel {
+public:
+	/// \brief Destroy the console logger channel.
+	virtual ~ofDebugViewLoggerChannel() {};
+	void log(ofLogLevel level, const string & module, const string & message);
+	void log(ofLogLevel level, const string & module, const char* format, ...) OF_PRINTF_ATTR(4, 5);
+	void log(ofLogLevel level, const string & module, const char* format, va_list args);
+};
+#endif
+
 /// \brief A logger channel that logs its messages to a log file.
 class ofFileLoggerChannel: public ofBaseLoggerChannel{
 public:
@@ -638,7 +663,7 @@ public:
 	/// \brief Create an ofFileLoggerChannel with parameters.
 	/// \param path The file path for the log file.
 	/// \param append True if the log data should be added to an existing file.
-	ofFileLoggerChannel(const string & path, bool append);
+    ofFileLoggerChannel(const std::filesystem::path & path, bool append);
 
 	/// \brief Destroy the file logger channel.
 	virtual ~ofFileLoggerChannel();
@@ -646,7 +671,7 @@ public:
 	/// \brief Set the log file.
 	/// \param path The file path for the log file.
 	/// \param append True if the log data should be added to an existing file.
-	void setFile(const string & path,bool append=false);
+    void setFile(const std::filesystem::path & path,bool append=false);
 
 	void log(ofLogLevel level, const string & module, const string & message);
 	void log(ofLogLevel level, const string & module, const char* format, ...) OF_PRINTF_ATTR(4, 5);

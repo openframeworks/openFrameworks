@@ -1,8 +1,6 @@
 #pragma once
 
-#include "ofMain.h"
 #include "ofxiOS.h"
-#include "ofxiOSExtras.h"
 
 //  Note:
 //      If the app is not compiling, try removing the MyGuiView.xib reference

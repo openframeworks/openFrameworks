@@ -1,5 +1,10 @@
 #include "ofApp.h"
 
+#ifndef OF_VIDEO_CAPTURE_QTKIT
+    #error This example requires OF_VIDEO_PLAYER_QTKIT to be defined.  
+    #error For OS X versions > 10.6 and < 10.12 #define OF_VIDEO_PLAYER_QTKIT before including ofMain.h in main.cpp
+#endif
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 
@@ -91,6 +96,7 @@ void ofApp::draw(){
         ofPushStyle();
         ofFill();
         ofSetColor(255);
+
         // fit it into the preview window, but use the correct aspect ratio
         ofRectangle videoGrabberRect(0,0,vidGrabber.getWidth(),vidGrabber.getHeight());
         videoGrabberRect.scaleTo(previewWindow);
@@ -98,6 +104,7 @@ void ofApp::draw(){
         ofPopStyle();
     } else{
 		ofPushStyle();
+
 		// x out to show there is no video preview
         ofSetColor(255);
 		ofSetLineWidth(3);
@@ -111,6 +118,7 @@ void ofApp::draw(){
         ofPushStyle();
         ofFill();
         ofSetColor(255);
+
         // fit it into the preview window, but use the correct aspect ratio
         ofRectangle recordedRect(ofRectangle(0,0,recordedVideoPlayback.getWidth(),recordedVideoPlayback.getHeight()));
         recordedRect.scaleTo(playbackWindow);
@@ -194,9 +202,11 @@ void ofApp::keyPressed(int key){
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){ 
 	if(key == 'v'){
+        //switch video device
 		vidRecorder->setVideoDeviceID( (vidRecorder->getVideoDeviceID()+1) % videoDevices.size() );
     }
 	if(key == 'a'){
+        //switch audio device
         vidRecorder->setAudioDeviceID( (vidRecorder->getAudioDeviceID()+1) % audioDevices.size() );
     }
 }

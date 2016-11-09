@@ -5,6 +5,7 @@
 //
 
 #import "AVSoundPlayer.h"
+#include <TargetConditionals.h>
 
 @interface AVSoundPlayer() {
     BOOL bMultiPlay;
@@ -23,6 +24,26 @@
         bMultiPlay = NO;
     }
     return self;
+}
+
+// setupSharedSession is to prevent other iOS Classes closing the audio feed, such as AVAssetReader, when reading from disk
+// It is set once on first launch of a AVAudioPlayer and remains as a set property from then on
+- (void) setupSharedSession {
+	static BOOL audioSessionSetup = NO;
+	if(audioSessionSetup) {
+		return;
+	}
+	[[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error: nil];
+    AVAudioSession * audioSession = [AVAudioSession sharedInstance];
+    NSError * err = nil;
+    // need to configure set the audio category, and override to it route the audio to the speaker
+    if([audioSession respondsToSelector:@selector(setCategory:withOptions:error:)]) {
+        if(![audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
+             						  withOptions:AVAudioSessionCategoryOptionMixWithOthers
+                                        error:&err]) { err = nil; }
+    }
+	[[AVAudioSession sharedInstance] setActive: YES error: nil];
+	audioSessionSetup = YES;
 }
 
 - (void)dealloc {
@@ -45,7 +66,7 @@
 
 - (BOOL)loadWithURL:(NSURL*)url {
     [self unloadSound];
-    
+	[self setupSharedSession];
     NSError * error = nil;
     self.player = [[[AVAudioPlayer alloc] initWithContentsOfURL:url
                                                           error:&error] autorelease];
@@ -224,9 +245,13 @@
 }
 
 - (void) audioPlayerEndInterruption:(AVAudioPlayer *)player withFlags:(NSUInteger)flags {
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 	if(flags == AVAudioSessionInterruptionFlags_ShouldResume) {
 		[self.player play];
 	}
+#elif TARGET_OS_TV
+	//
+#endif
 }
 
 @end

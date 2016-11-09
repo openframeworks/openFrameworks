@@ -6,13 +6,8 @@
 
 #include "ofLog.h"
 
-#ifdef TARGET_WIN32	 // For ofLaunchBrowser.
-	#include <shellapi.h>
-#endif
 
-/// \name Elapsed Time
-/// \{
-
+/// \section Elapsed Time
 /// \brief Reset the elapsed time counter.
 ///
 /// This method resets the times returned by ofGetElapsedTimef(),
@@ -53,11 +48,7 @@ uint64_t ofGetElapsedTimeMicros();
 /// \returns the number of frames rendered since the program started.
 uint64_t ofGetFrameNum();
 
-/// \}
-
-/// \name System time
-/// \{
-
+/// \section System Time
 /// \brief Get the seconds after the minute.
 /// \returns the seconds after the minute [0-59].
 int ofGetSeconds();
@@ -153,11 +144,7 @@ int ofGetDay();
 /// \returns the current weekday [0-6].
 int ofGetWeekday();
 
-/// \}
-
-/// \name Data Path
-/// \{
-
+/// \section Data Path
 /// \brief Enable the use of the data path.
 ///
 /// This function causes ofToDataPath() to respect the relative path set
@@ -181,7 +168,7 @@ void ofDisableDataPath();
 /// \param path The path to make relative to the data/ folder.
 /// \param absolute Set to true to return an absolute path.
 /// \returns the new path, unless paths were disabled with ofDisableDataPath().
-string ofToDataPath(const string& path, bool absolute=false);
+string ofToDataPath(const std::filesystem::path & path, bool absolute=false);
 
 /// \brief Reset the working directory to the platform default.
 ///
@@ -203,11 +190,7 @@ bool ofRestoreWorkingDirectoryToDefault();
 void ofSetDataPathRoot(const string& root);
 
 
-/// \}
-
-/// \name Vectors
-/// \{
-
+/// \section Vectors
 /// \brief Randomly reorder the values in a vector.
 /// \tparam T the type contained by the vector.
 /// \param values The vector of values to modify.
@@ -316,7 +299,7 @@ void ofSort(vector<T>& values) {
 /// \sa http://www.cplusplus.com/reference/algorithm/sort/
 template<class T, class BoolFunction>
 void ofSort(vector<T>& values, BoolFunction compare) {
-	sort(values.begin(), values.end(), compare);
+	std::sort(values.begin(), values.end(), compare);
 }
 
 /// \brief Search for a target value in a vector of values.
@@ -327,7 +310,7 @@ void ofSort(vector<T>& values, BoolFunction compare) {
 /// \sa http://www.cplusplus.com/reference/iterator/distance/
 template <class T>
 std::size_t ofFind(const vector<T>& values, const T& target) {
-	return distance(values.begin(), find(values.begin(), values.end(), target));
+	return std::distance(values.begin(), find(values.begin(), values.end(), target));
 }
 
 /// \brief Search for a target value in a vector of values.
@@ -342,13 +325,8 @@ bool ofContains(const vector<T>& values, const T& target) {
 
 
 
-/// \}
-
-
-/// \name String Manipulation
-/// \{
-
-/// \brief Splits a string using a delimiter.
+/// \section String Manipulation
+/// \brief Splits a string using a delimiter.
 ///
 /// ofSplitString splits a string and returns the collection of string
 /// tokens inside of a std::vector<std::string>.
@@ -439,7 +417,7 @@ string ofTrimFront(const string & src, const string & locale = "");
 string ofTrimBack(const string & src, const string & locale = "");
 string ofTrim(const string & src, const string & locale = "");
 
-void ofAppendUTF8(string & str, int utf8);
+void ofAppendUTF8(string & str, uint32_t utf8);
 
 /// \brief Convert a variable length argument to a string.
 /// \param format a printf-style format string.
@@ -452,12 +430,7 @@ string ofVAArgsToString(const char * format, ...);
 /// \returns A string representation of the argument list.
 string ofVAArgsToString(const char * format, va_list args);
 
-/// \}
-
-/// \name String conversion
-/// \{
-
-
+/// \section String Conversion
 /// \brief Convert a value to a string.
 ///
 /// ofToString does its best to convert any value to a string. If the data type
@@ -582,12 +555,14 @@ string ofFromString(const string & value);
 template<>
 const char * ofFromString(const string & value);
 
-/// \}
+template<typename T> T ofTo(const std::string & str){
+	T x;
+	istringstream cur(str);
+	cur >> x;
+	return x;
+}
 
-// --------------------------------------------
-/// \name Number conversion
-/// \{
-
+/// \section Number Conversion
 /// \brief Convert a string to an integer.
 ///
 /// Converts a `std::string` representation of an int (e.g., `"3"`) to an actual
@@ -596,10 +571,6 @@ const char * ofFromString(const string & value);
 /// \param intString The string representation of the integer.
 /// \returns the integer represented by the string or 0 on failure.
 int ofToInt(const string& intString);
-
-// --------------------------------------------
-/// \name Number conversion
-/// \{
 
 /// \brief Convert a string to a int64_t.
 ///
@@ -795,12 +766,7 @@ float ofBinaryToFloat(const string& value);
 /// \returns the ASCII string represented by the string.
 string ofBinaryToString(const string& value);
 
-/// \}
-
-// --------------------------------------------
-/// \name openFrameworks version
-/// \{
-
+/// \section openFrameworks Version
 /// \brief Get the current version of openFrameworks as a string.
 ///
 /// openFrameworks uses the semantic versioning system.
@@ -847,13 +813,7 @@ unsigned int ofGetVersionPatch();
 std::string ofGetVersionPreRelease();
 
 
-/// \}
-
-// --------------------------------------------
-/// \name Frame saving
-/// \{
-
-
+/// \section Frame Saving
 /// \brief Saves the current screen image to a file on disk.
 ///
 /// Example:
@@ -882,11 +842,7 @@ void ofSaveFrame(bool bUseViewport = false);
 void ofSaveViewport(const string& filename);
 
 
-/// \}
-
-/// \name System
-/// \{
-
+/// \section System
 /// \brief Launch the given URL in the default browser.
 /// \param url the URL to open.
 /// \param uriEncodeQuery true if the query parameters in the given URL have
@@ -904,6 +860,8 @@ string ofSystem(const string& command);
 /// \returns the current ofTargetPlatform.
 ofTargetPlatform ofGetTargetPlatform();
 
+
+std::string ofGetEnv(const std::string & var);
 
 /// Allows to iterate over a string's utf8 codepoints.
 /// The easiest way to use it is with a c++11 range style
@@ -927,14 +885,14 @@ private:
 	std::string src_valid;
 };
 
-/// \}
-
 
 
 /*! \cond PRIVATE */
 namespace of{
 namespace priv{
     void setWorkingDirectoryToDefault();
+    void initutils();
+    void endutils();
 }
 }
 /*! \endcond */

@@ -21,6 +21,7 @@ class ofApp : public ofxAndroidApp{
 		void touchDoubleTap(int x, int y, int id);
 		void touchCancelled(int x, int y, int id);
 		void swipe(ofxAndroidSwipeDir swipeDir, int id);
+		void deviceOrientationChanged(ofOrientation newOrientation);
 
 		void pause();
 		void stop();
@@ -31,10 +32,18 @@ class ofApp : public ofxAndroidApp{
 		void okPressed();
 		void cancelPressed();
 
-
 		ofVideoGrabber grabber;
+
+		// Image storing a clone of the grabber image
+		ofImage grabberImage;
+
 		int one_second_time;
 		int camera_fps;
 		int frames_one_sec;
+
+		bool cameraFacingFront;
+		int cameraOrientation;
+
+		int appOrientation;
 
 };

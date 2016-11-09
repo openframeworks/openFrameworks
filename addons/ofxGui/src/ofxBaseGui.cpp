@@ -1,9 +1,10 @@
 #include "ofxBaseGui.h"
 #include "ofImage.h"
 #include "ofBitmapFont.h"
-#ifndef TARGET_EMSCRIPTEN
+#if OF_USE_POCO
 #include "ofXml.h"
 #endif
+#include "ofJson.h"
 using namespace std;
 
 
@@ -67,10 +68,6 @@ ofBitmapFont ofxBaseGui::bitmapFont;
 ofxBaseGui::ofxBaseGui(){
 	parent = nullptr;
 	currentFrame = ofGetFrameNum();
-#ifndef TARGET_EMSCRIPTEN
-    serializer = std::make_shared<ofXml>();
-#endif
-
 	thisHeaderBackgroundColor = headerBackgroundColor;
 	thisBackgroundColor = backgroundColor;
 	thisBorderColor = borderColor;
@@ -171,36 +168,43 @@ ofRectangle ofxBaseGui::getTextBoundingBox(const string & text, float x, float y
 }
 
 void ofxBaseGui::saveToFile(const std::string& filename){
-	if(serializer){
-		serializer->load(filename);
-		saveTo(*serializer);
-		serializer->save(filename);
+	auto extension = ofToLower(ofFilePath::getFileExt(filename));
+#if OF_USE_POCO
+	if(extension == "xml"){
+		ofXml xml;
+		if(ofFile(filename, ofFile::Reference).exists()){
+			xml.load(filename);
+		}
+		saveTo(xml);
+		xml.save(filename);
+    }else
+#endif
+    if(extension == "json"){
+        ofJson json = ofLoadJson(filename);
+		saveTo(json);
+        ofSavePrettyJson(filename, json);
 	}else{
-		ofLogError("ofxGui") << "element has no serializer to save to";
+		ofLogError("ofxGui") << extension << " not recognized, only .xml and .json supported by now";
 	}
 }
 
 void ofxBaseGui::loadFromFile(const std::string& filename){
-	if(serializer){
-		serializer->load(filename);
-		loadFrom(*serializer);
+	auto extension = ofToLower(ofFilePath::getFileExt(filename));
+#if OF_USE_POCO
+	if(extension == "xml"){
+		ofXml xml;
+		xml.load(filename);
+		loadFrom(xml);
+    }else
+#endif
+    if(extension == "json"){
+		ofJson json;
+		ofFile jsonFile(filename);
+		jsonFile >> json;
+		loadFrom(json);
 	}else{
-		ofLogError("ofxGui") << "element has no serializer to load from";
+		ofLogError("ofxGui") << extension << " not recognized, only .xml and .json supported by now";
 	}
-}
-
-
-void ofxBaseGui::saveTo(ofBaseSerializer & serializer){
-	serializer.serialize(getParameter());
-}
-
-void ofxBaseGui::loadFrom(ofBaseSerializer & serializer){
-	serializer.deserialize(getParameter());
-}
-
-
-void ofxBaseGui::setDefaultSerializer(std::shared_ptr <ofBaseFileSerializer> _serializer){
-	serializer = _serializer;
 }
 
 string ofxBaseGui::getName(){

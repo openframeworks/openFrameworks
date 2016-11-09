@@ -1,26 +1,23 @@
 #pragma once
 #include "ofBaseTypes.h"
 #include "ofPolyline.h"
-#include "ofMatrix4x4.h"
 #include "ofShader.h"
 #include "ofMatrixStack.h"
 #include "ofVboMesh.h"
 #include "of3dGraphics.h"
 #include "ofBitmapFont.h"
 #include "ofPath.h"
+#include "ofMaterial.h"
 
 
 class ofShapeTessellation;
-class ofMesh;
 class ofFbo;
 class ofVbo;
-class ofMaterial;
 static const int OF_NO_TEXTURE=-1;
 
 class ofGLProgrammableRenderer: public ofBaseGLRenderer{
 public:
-	ofGLProgrammableRenderer(const ofAppBaseWindow * window);
-	~ofGLProgrammableRenderer();
+    ofGLProgrammableRenderer(const ofAppBaseWindow * window);
 
 	void setup(int glVersionMajor, int glVersionMinor);
 
@@ -78,21 +75,21 @@ public:
 	void pushMatrix();
 	void popMatrix();
 	void translate(float x, float y, float z = 0);
-	void translate(const ofVec3f & p);
+	void translate(const glm::vec3 & p);
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1);
-	void rotate(float degrees, float vecX, float vecY, float vecZ);
-	void rotateX(float degrees);
-	void rotateY(float degrees);
-	void rotateZ(float degrees);
-	void rotate(float degrees);
+	void rotateRad(float radians, float vecX, float vecY, float vecZ);
+	void rotateXRad(float radians);
+	void rotateYRad(float radians);
+	void rotateZRad(float radians);
+	void rotateRad(float radians);
 	void matrixMode(ofMatrixMode mode);
 	void loadIdentityMatrix (void);
-	void loadMatrix (const ofMatrix4x4 & m);
+	void loadMatrix (const glm::mat4 & m);
 	void loadMatrix (const float * m);
-	void multMatrix (const ofMatrix4x4 & m);
+	void multMatrix (const glm::mat4 & m);
 	void multMatrix (const float * m);
-	void loadViewMatrix(const ofMatrix4x4 & m);
-	void multViewMatrix(const ofMatrix4x4 & m);
+	void loadViewMatrix(const glm::mat4 & m);
+	void multViewMatrix(const glm::mat4 & m);
 
     /// \brief Queries the current OpenGL matrix state
     ///
@@ -109,10 +106,10 @@ public:
     /// \param	matrixMode_ Which matrix mode to query
     /// \note   If an invalid matrixMode is queried, this method will return the
     ///         identity matrix, and print an error message.
-	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
-	ofMatrix4x4 getCurrentOrientationMatrix() const;
-	ofMatrix4x4 getCurrentViewMatrix() const;
-	ofMatrix4x4 getCurrentNormalMatrix() const;
+	glm::mat4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
+	glm::mat4 getCurrentOrientationMatrix() const;
+	glm::mat4 getCurrentViewMatrix() const;
+	glm::mat4 getCurrentNormalMatrix() const;
 	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
@@ -195,7 +192,7 @@ public:
 #endif
 	void unbind(const ofFbo & fbo);
 
-	void begin(const ofFbo & fbo, bool setupPerspective);
+    void begin(const ofFbo & fbo, ofFboBeginMode mode);
 	void end(const ofFbo & fbo);
 
 	ofStyle getStyle() const;
@@ -208,23 +205,23 @@ public:
 	const ofShader * getVideoShader(const ofBaseVideoDraws & video) const;
 	void setVideoShaderUniforms(const ofBaseVideoDraws & video, const ofShader & shader) const;
 
-	void enableLighting(){};
-	void disableLighting(){};
-	void enableSeparateSpecularLight(){};
-	void disableSeparateSpecularLight(){}
-	bool getLightingEnabled(){return true;}
+    void enableLighting();
+    void disableLighting();
+    bool getLightingEnabled();
+    void enableSeparateSpecularLight(){}
+    void disableSeparateSpecularLight(){}
 	void setSmoothLighting(bool b){}
 	void setGlobalAmbientColor(const ofColor& c){}
-	void enableLight(int lightIndex){}
-	void disableLight(int lightIndex){}
+    void enableLight(int lightIndex);
+    void disableLight(int lightIndex);
 	void setLightSpotlightCutOff(int lightIndex, float spotCutOff){}
 	void setLightSpotConcentration(int lightIndex, float exponent){}
 	void setLightAttenuation(int lightIndex, float constant, float linear, float quadratic ){}
 	void setLightAmbientColor(int lightIndex, const ofFloatColor& c){}
 	void setLightDiffuseColor(int lightIndex, const ofFloatColor& c){}
 	void setLightSpecularColor(int lightIndex, const ofFloatColor& c){}
-	void setLightPosition(int lightIndex, const ofVec4f & position){}
-	void setLightSpotDirection(int lightIndex, const ofVec4f & direction){}
+	void setLightPosition(int lightIndex, const glm::vec4 & position){}
+	void setLightSpotDirection(int lightIndex, const glm::vec4 & direction){}
 
 	string defaultVertexShaderHeader(GLenum textureTarget);
 	string defaultFragmentShaderHeader(GLenum textureTarget);
@@ -292,10 +289,17 @@ private:
 	ofShader defaultTex2DNoColor;
 	ofShader defaultNoTexColor;
 	ofShader defaultNoTexNoColor;
+	ofShader defaultUniqueShader;
+#ifdef TARGET_ANDROID
+	ofShader defaultOESTexColor;
+	ofShader defaultOESTexNoColor;
+#endif
+	
 	ofShader alphaMaskRectShader;
 	ofShader alphaMask2DShader;
+	
 	ofShader bitmapStringShader;
-	ofShader defaultUniqueShader;
+	
 	ofShader shaderPlanarYUY2;
 	ofShader shaderNV12;
 	ofShader shaderNV21;
@@ -315,6 +319,5 @@ private:
 	// framebuffer binding state
 	deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
 	GLuint defaultFramebufferId;		///< default GL_FRAMEBUFFER_BINDING, windowing frameworks might want to set this to their MSAA framebuffer, defaults to 0
-	GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
-
+    GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
 };

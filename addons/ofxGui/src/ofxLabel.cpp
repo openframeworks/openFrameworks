@@ -16,6 +16,7 @@ ofxLabel* ofxLabel::setup(ofParameter<string> _label, float width, float height)
     b.height = height;
     setNeedsRedraw();
     label.addListener(this,&ofxLabel::valueChanged);
+	label.setSerializable(false);
     return this;
 }
 

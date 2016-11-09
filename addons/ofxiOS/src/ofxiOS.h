@@ -36,10 +36,18 @@
 
 #pragma once
 
-#import <OpenGLES/ES1/gl.h>
-#import <OpenGLES/ES1/glext.h>
+#include "ofMain.h"
 
-#import "ofxAccelerometer.h"
-#import "ofxiOSAlerts.h"
-#import "ofxiOSApp.h"
+#ifndef TARGET_OF_TVOS
 
+#include "ofAppiOSWindow.h"
+#include "ofxiOSConstants.h"
+#include "ofxiOSExtensions.h"
+#include "ofxiOSAppDelegate.h"
+#include "ofxiOSViewController.h"
+#include "ofxiOSEAGLView.h"
+#include "ofxiOSApp.h"
+#include "ofxiOSExtras.h"
+#include "ofxAccelerometer.h"
+
+#endif

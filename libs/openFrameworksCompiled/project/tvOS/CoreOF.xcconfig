@@ -1,0 +1,42 @@
+HEADER_OF = "$(OF_PATH)/libs/openFrameworks/**"
+HEADER_OFXIOS = "$(OF_PATH)/addons/ofxiOS/**"
+HEADER_OFXMULTITOUCH = "$(OF_PATH)/addons/ofxMultiTouch/**"
+HEADER_OFXACCELEROMETER = "$(OF_PATH)/addons/ofxAccelerometer/**"
+HEADER_FREETYPE = "$(OF_PATH)/libs/freetype/include"
+HEADER_FREETYPE2 = "$(OF_PATH)/libs/freetype/include/freetype2"
+HEADER_FMODEX = "$(OF_PATH)/libs/fmodex/include"
+HEADER_GLEW = "$(OF_PATH)/libs/glew/include"
+HEADER_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/include"
+HEADER_TESS2 = "$(OF_PATH)/libs/tess2/include"
+HEADER_RTAUDIO = "$(OF_PATH)/libs/rtaudio/include"
+HEADER_BOOST = "$(OF_PATH)/libs/boost/include"
+HEADER_UTF8 = "$(OF_PATH)/libs/utf8/include"
+HEADER_JSON = "$(OF_PATH)/libs/json/include"
+HEADER_GLM = "$(OF_PATH)/libs/glm/include"
+HEADER_CURL = "$(OF_PATH)/libs/curl/include"
+HEADER_URIPARSER = "$(OF_PATH)/libs/uriparser/include"
+HEADER_PUGIXML = "$(OF_PATH)/libs/pugixml/include"
+
+//------- Libraries
+LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/tvos/freeimage.a"
+LIB_FREETYPE = "$(OF_PATH)/libs/freetype/lib/tvos/freetype.a"
+LIB_TESS = "$(OF_PATH)/libs/tess2/lib/tvos/tess2.a"
+LIB_BOOST_SYSTEM = "$(OF_PATH)/libs/boost/lib/tvos/boost_system.a"
+LIB_BOOST_FS = "$(OF_PATH)/libs/boost/lib/tvos/boost_filesystem.a"
+LIB_BOOST = $(LIB_BOOST_SYSTEM) $(LIB_BOOST_FS)
+LIB_CURL = "$(OF_PATH)/libs/curl/lib/tvos/curl.a"
+LIB_URIPARSER = "$(OF_PATH)/libs/uriparser/lib/tvos/uriparser.a"
+LIB_PUGIXML = "$(OF_PATH)/libs/pugixml/lib/tvos/pugixml.a"
+
+
+MISC_FLAGS = "-ObjC"
+
+OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_BOOST) $(LIB_FREEIMAGE) $(LIB_FREETYPE) $(LIB_OPENSSL) $(LIB_TESS) $(LIB_CURL) $(LIB_URIPARSER) $(LIB_PUGIXML)
+
+OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_OFXACCELEROMETER) $(HEADER_BOOST) $(HEADER_UTF8) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMODEX) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_RTAUDIO) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML)
+
+OF_CORE_FRAMEWORKS = -framework Security
+
+// once all libraries are compiled for libc++ / all architectures
+CLANG_CXX_LIBRARY = libc++
+CLANG_CXX_LANGUAGE_STANDARD = c++11

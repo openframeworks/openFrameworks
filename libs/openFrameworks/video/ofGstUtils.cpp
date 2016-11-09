@@ -18,7 +18,9 @@
 #include <algorithm>
 #include "ofAppRunner.h"
 #ifdef OF_USE_GST_GL
+#ifndef TARGET_OPENGLES
 #include <gst/gl/x11/gstgldisplay_x11.h>
+#endif
 #include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
 #ifdef TARGET_WIN32
@@ -26,7 +28,7 @@
 #endif
 
 
-ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop;
+ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop = nullptr;
 
 void ofGstUtils::startGstMainLoop(){
 	static bool initialized = false;
@@ -42,9 +44,11 @@ GMainLoop * ofGstUtils::getGstMainLoop(){
 }
 
 void ofGstUtils::quitGstMainLoop(){
-	mainLoop->quit();
-	delete mainLoop;
-	mainLoop=0;
+	if(mainLoop){
+		mainLoop->quit();
+		delete mainLoop;
+		mainLoop = nullptr;
+	}
 }
 
 
@@ -121,7 +125,13 @@ ofGstUtils::ofGstUtils() {
 
 	if(!gst_inited){
 #ifdef TARGET_WIN32
-		string gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86");
+		string gst_path;
+		if (sizeof(int) == 32) {
+			 gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86");
+		}else
+		{
+			gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86_64");
+		}
 		//putenv(("GST_PLUGIN_PATH_1_0=" + ofFilePath::join(gst_path, "lib\\gstreamer-1.0") + ";.").c_str());
 		// to make it compatible with gcc and C++11 standard
 		SetEnvironmentVariableA("GST_PLUGIN_PATH_1_0", ofFilePath::join(gst_path, "lib\\gstreamer-1.0").c_str());
@@ -407,6 +417,9 @@ void ofGstUtils::setPosition(float pct){
 	//pct = CLAMP(pct, 0,1);// check between 0 and 1;
 	GstFormat format = GST_FORMAT_TIME;
 	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
+	if(speed > 1 || speed < -1){
+		flags = (GstSeekFlags)(flags | GST_SEEK_FLAG_SKIP);
+	}
 	gint64 pos = (guint64)((double)pct*(double)durationNanos);
 
 	/*if(bPaused){
@@ -446,8 +459,14 @@ void ofGstUtils::setLoopState(ofLoopType state){
 }
 
 void ofGstUtils::setSpeed(float _speed){
+	if(_speed == speed) return;
+
 	GstFormat format = GST_FORMAT_TIME;
-	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_SKIP | GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
+	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
+	if(_speed > 1 || _speed < -1){
+		flags = (GstSeekFlags)(flags | GST_SEEK_FLAG_SKIP);
+	}
+
 	gint64 pos;
 
 	if(_speed==0){
@@ -473,7 +492,7 @@ void ofGstUtils::setSpeed(float _speed){
 		gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
 
 	if(speed>0){
-		if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
+		if(!gst_element_seek(GST_ELEMENT(gstSink), speed, 	format,
 				flags,
 				GST_SEEK_TYPE_SET,
 				pos,
@@ -482,7 +501,7 @@ void ofGstUtils::setSpeed(float _speed){
 			ofLogWarning("ofGstUtils") << "setSpeed(): unable to change speed";
 		}
 	}else{
-		if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
+		if(!gst_element_seek(GST_ELEMENT(gstSink), speed, 	format,
 				flags,
 				GST_SEEK_TYPE_SET,
 				0,
@@ -1126,7 +1145,7 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 	eglMakeCurrent (eglGetDisplay(EGL_DEFAULT_DISPLAY), 0,0, 0);
 	glDisplay = (GstGLDisplay *)gst_gl_display_egl_new_with_egl_display(eglGetDisplay(EGL_DEFAULT_DISPLAY));
 	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetEGLContext(),
-	    		  GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
+	    		  GST_GL_PLATFORM_EGL, GST_GL_API_GLES2);
 
 	g_object_set (G_OBJECT (glfilter), "other-context", glContext, NULL);
 	// FIXME: this seems to be the way to add the context in 1.4.5
@@ -1258,7 +1277,7 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 				ofTextureData & texData = backTexture.getTextureData();
 				texData.bAllocated = true;
 				texData.bFlipTexture = false;
-				texData.glTypeInternal = GL_RGBA;
+				texData.glInternalFormat = GL_RGBA;
 				texData.height = getHeight();
 				texData.width = getWidth();
 				texData.magFilter = GL_LINEAR;
@@ -1283,8 +1302,8 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 	gst_buffer_map (_buffer, &mapinfo, GST_MAP_READ);
 	guint size = mapinfo.size;
 
-	int stride = 0;
-	if(pixels.isAllocated() && pixels.getTotalBytes()!=(int)size){
+	size_t stride = 0;
+	if(pixels.isAllocated() && (pixels.getTotalBytes() != size_t(size))){
 		GstVideoInfo v_info = getVideoInfo(sample.get());
 		stride = v_info.stride[0];
 
@@ -1300,7 +1319,13 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 
 	if(pixels.isAllocated()){
 		if(stride > 0) {
-			backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
+			if(pixels.getPixelFormat() == OF_PIXELS_I420){
+				GstVideoInfo v_info = getVideoInfo(sample.get());
+				std::vector<size_t> strides{size_t(v_info.stride[0]),size_t(v_info.stride[1]),size_t(v_info.stride[2])};
+				backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),strides);
+			} else {
+				backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
+			}
 		} else if(!copyPixels){
 			backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
 			eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());

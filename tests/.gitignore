@@ -23,16 +23,22 @@
 /*/*/*.workspace
 
 # Visual Studio
-/*/*/*.sln
-/*/*/*.vcxproj
-/*/*/*.vcxproj.user
-/*/*/*.vcxproj.filters
-/*/*/icon.rc
+#/*/*/*.sln
+#/*/*/*.vcxproj
+#/*/*/*.vcxproj.user
+#/*/*/*.vcxproj.filters
+#/*/*/icon.rc
 
 # Eclipse
 /*/*/.cproject
 /*/*/.project
 /*/*/.settings/
+
+# QtCreator
+/*/*/*.qbs
+/*/*/*.qbs.user
+/*/*/*.pro
+/*/*/*.pro.user
 
 #########################
 # operating system

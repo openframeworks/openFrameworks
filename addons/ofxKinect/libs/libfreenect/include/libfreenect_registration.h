@@ -120,6 +120,11 @@ FREENECTAPI int freenect_destroy_registration(freenect_registration* reg);
 FREENECTAPI void freenect_camera_to_world(freenect_device* dev,
 	int cx, int cy, int wz, double* wx, double* wy);
 
+// helper function to map one FREENECT_VIDEO_RGB image to a FREENECT_DEPTH_MM
+// image (inverse mapping to FREENECT_DEPTH_REGISTERED, which is depth -> RGB)
+FREENECTAPI void freenect_map_rgb_to_depth( freenect_device* dev,
+	uint16_t* depth_mm, uint8_t* rgb_raw, uint8_t* rgb_registered );
+
 #ifdef __cplusplus
 }
 #endif

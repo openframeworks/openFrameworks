@@ -4,6 +4,8 @@
 //  http://julapy.com/blog
 //
 
+#pragma once
+
 #import "SoundStream.h"
 
 @interface SoundInputStream : SoundStream {

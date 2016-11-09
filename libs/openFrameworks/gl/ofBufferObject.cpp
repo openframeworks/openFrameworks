@@ -2,11 +2,11 @@
 #include "ofConstants.h"
 #include "ofAppRunner.h"
 
+
 ofBufferObject::Data::Data()
 :id(0)
 ,size(0)
-,lastTarget(GL_ARRAY_BUFFER)
-,useDSA(false){
+,lastTarget(GL_ARRAY_BUFFER){
 	
 	// tig: glGenBuffers does not actually create a buffer, it just 
 	//      returns the next available name, and only a subsequent 
@@ -18,9 +18,9 @@ ofBufferObject::Data::Data()
 	//      when we pin data to it using setData()
 	// 
 	//      see also: https://www.opengl.org/registry/specs/ARB/direct_state_access.txt
+
 #ifdef GLEW_ARB_direct_state_access
-	if (ofGLCheckExtension("GL_ARB_direct_state_access")) {
-		useDSA = true;
+	if (GLEW_ARB_direct_state_access) {
 		// the above condition is only true if GLEW can provide us
 		// with direct state access methods. we use this to test
 		// whether the driver is OpenGL 4.5 ready.
@@ -63,11 +63,15 @@ void ofBufferObject::bind(GLenum target) const{
 	if(data){
 		glBindBuffer(target, data->id);
 		data->lastTarget = target;
+		data->isBound = true;
 	}
 }
 
 void ofBufferObject::unbind(GLenum target) const{
 	glBindBuffer(target, 0);
+	if(data){
+		data->isBound = false;
+	}
 }
 
 #ifndef TARGET_OPENGLES
@@ -75,17 +79,22 @@ void ofBufferObject::bindBase(GLenum target,GLuint index) const{
 	if(data){
 		glBindBufferBase(target,index,data->id);
 		data->lastTarget = target;
+		data->isBound = true;
 	}
 }
 
 void ofBufferObject::unbindBase(GLenum target,GLuint index) const{
 	glBindBufferBase(target,index,0);
+	if(data){
+		data->isBound = false;
+	}
 }
 
 void ofBufferObject::bindRange(GLenum target,GLuint index, GLintptr offset, GLsizeiptr size) const{
 	if(data){
 		glBindBufferRange(target,index,data->id,offset,size);
 		data->lastTarget = target;
+		data->isBound = true;
 	}
 }
 
@@ -104,7 +113,7 @@ void ofBufferObject::setData(GLsizeiptr bytes, const void * data, GLenum usage){
 	this->data->size = bytes;
 
 #ifdef GLEW_ARB_direct_state_access
-	if (this->data->useDSA) {
+	if (GLEW_ARB_direct_state_access) {
 		glNamedBufferData(this->data->id, bytes, data, usage);
 		return;
 	}
@@ -120,7 +129,7 @@ void ofBufferObject::updateData(GLintptr offset, GLsizeiptr bytes, const void * 
 	if(!this->data) return;
 
 #ifdef GLEW_ARB_direct_state_access
-	if(this->data->useDSA){
+	if(GLEW_ARB_direct_state_access){
 		glNamedBufferSubData(this->data->id,offset,bytes,data);
 		return;
 	}
@@ -133,47 +142,72 @@ void ofBufferObject::updateData(GLintptr offset, GLsizeiptr bytes, const void * 
 	unbind(this->data->lastTarget);
 }
 
+void ofBufferObject::updateData(GLsizeiptr bytes, const void * data){
+    updateData(0,bytes,data);
+}
+
 #ifndef TARGET_OPENGLES
 void * ofBufferObject::map(GLenum access){
 	if(!this->data) return nullptr;
 
 #ifdef GLEW_ARB_direct_state_access
-	if (data->useDSA) {
+	if (GLEW_ARB_direct_state_access) {
 		return glMapNamedBuffer(data->id,access);
 	}
 #endif
 
 	/// --------| invariant: direct state access is not available
-
-	if(data->lastTarget==GL_PIXEL_PACK_BUFFER){
-		bind(GL_PIXEL_UNPACK_BUFFER);
-	}else{
-		bind(data->lastTarget);
+	if(!data->isBound){
+		// if the buffer wasn't already bound and the operation
+		// is one of unpack/pack buffer alternate between the 2
+		// since the tipical use is to pack to copy to the buffer
+		// then unpack to copy from it.
+		// for more advanced usages one can just bind the buffer
+		// before mapping
+		if(data->lastTarget==GL_PIXEL_PACK_BUFFER){
+			data->lastTarget = GL_PIXEL_UNPACK_BUFFER;
+		}else if(data->lastTarget == GL_PIXEL_UNPACK_BUFFER){
+			data->lastTarget = GL_PIXEL_PACK_BUFFER;
+		}
+		glBindBuffer(data->lastTarget, data->id);
 	}
-	return glMapBuffer(data->lastTarget,access);
+
+	auto ret = glMapBuffer(data->lastTarget,access);
+
+	if(!data->isBound){
+		unbind(data->lastTarget);
+	}
+
+	return ret;
 }
 
 void ofBufferObject::unmap(){
 	if(!this->data) return;
 
 #ifdef GLEW_ARB_direct_state_access
-	if (data->useDSA) {
+	if (GLEW_ARB_direct_state_access) {
 		glUnmapNamedBuffer(data->id);
 		return;
 	}
 #endif
 
 	/// --------| invariant: direct state access is not available
+	if(!data->isBound){
+		glBindBuffer(data->lastTarget, data->id);
+	}
 
 	glUnmapBuffer(data->lastTarget);
-	unbind(data->lastTarget);
+
+	if(!data->isBound){
+		unbind(data->lastTarget);
+	}
 }
 
 void * ofBufferObject::mapRange(GLintptr offset, GLsizeiptr length, GLenum access){
 	if(!this->data) return nullptr;
 
 #ifdef GLEW_ARB_direct_state_access
-	if (data->useDSA) {
+	if (GLEW_ARB_direct_state_access) {
 		return glMapBufferRange(data->id,offset,length,access);
 	}
 #endif
@@ -188,13 +222,28 @@ void ofBufferObject::unmapRange(){
 	unmap();
 }
 
-void ofBufferObject::copyTo(ofBufferObject & dstBuffer){
+void ofBufferObject::copyTo(ofBufferObject & dstBuffer) const{
 	bind(GL_COPY_READ_BUFFER);
 	dstBuffer.bind(GL_COPY_WRITE_BUFFER);
 	glCopyBufferSubData(GL_COPY_READ_BUFFER,GL_COPY_WRITE_BUFFER,0,0,size());
 	unbind(GL_COPY_READ_BUFFER);
 	dstBuffer.unbind(GL_COPY_WRITE_BUFFER);
 }
+
+void ofBufferObject::copyTo(ofBufferObject & dstBuffer, int readOffset, int writeOffset, size_t size) const{
+	bind(GL_COPY_READ_BUFFER);
+	dstBuffer.bind(GL_COPY_WRITE_BUFFER);
+	glCopyBufferSubData(GL_COPY_READ_BUFFER,GL_COPY_WRITE_BUFFER,readOffset,writeOffset,size);
+	unbind(GL_COPY_READ_BUFFER);
+	dstBuffer.unbind(GL_COPY_WRITE_BUFFER);
+}
+
+
+
+void ofBufferObject::invalidate(){
+    glInvalidateBufferData(data->id);
+}
+
 #endif
 
 GLsizeiptr ofBufferObject::size() const{

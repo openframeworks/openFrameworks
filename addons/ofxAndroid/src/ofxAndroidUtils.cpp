@@ -1,5 +1,6 @@
 
 #include "ofxAndroidUtils.h"
+#ifndef __clang__
 // fix for undefined symbols from ndk r8c
 extern "C" {
   extern void *__dso_handle __attribute__((__visibility__ ("hidden")));
@@ -10,6 +11,7 @@ extern int atexit (void (*func)(void)) noexcept;
 int atexit (void (*func)(void)){
 	return 0;
 }
+#endif
 #include "ofLog.h"
 
 bool ofxAndroidIsOnline(){
@@ -882,6 +884,19 @@ bool ofxJavaCallBoolMethod(jobject object, std::string className, std::string me
 	return result;
 }
 
+void ofxJavaGetJString(const std::string& str, jstring &jstr)
+{
+	jstr = ofGetJNIEnv()->NewStringUTF(str.c_str());
+}
+
+void ofxJstringToString(JNIEnv * env, jstring jstr, std::string &str)
+{
+    jboolean isCopy;
+    const char *arrayChar = env->GetStringUTFChars(jstr, &isCopy);
+    if(isCopy == JNI_FALSE)
+        return;
+    str = arrayChar;
+}
 
 ofxAndroidScaleEventArgs::ofxAndroidScaleEventArgs(jobject detector){
 	this->detector = detector;

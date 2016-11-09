@@ -4,6 +4,7 @@
 
 
 #include "ofBaseSoundPlayer.h"
+#include "ofFileUtils.h"
 
 
 extern "C" {
@@ -40,7 +41,7 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 		ofFmodSoundPlayer();
 		virtual ~ofFmodSoundPlayer();
 
-		bool load(string fileName, bool stream = false);
+        bool load(std::filesystem::path fileName, bool stream = false);
 		void unload();
 		void play();
 		void stop();

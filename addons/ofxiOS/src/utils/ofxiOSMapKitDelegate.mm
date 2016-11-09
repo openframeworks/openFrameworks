@@ -26,13 +26,13 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
- * ***********************************************************************/ 
+ * ***********************************************************************/
 
-#include <Availability.h>
+#include <TargetConditionals.h>
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
-
-#import "ofxiOSMapKitDelegate.h"
-#import "ofxiOSMapKit.h"
+#include "ofxiOSMapKitDelegate.h"
+#include "ofxiOSMapKit.h"
 
 @implementation ofxiOSMapKitDelegate
 
@@ -75,3 +75,5 @@
 
 
 @end
+
+#endif

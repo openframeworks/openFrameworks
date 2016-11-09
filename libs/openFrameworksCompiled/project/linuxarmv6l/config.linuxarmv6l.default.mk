@@ -1,9 +1,9 @@
 ###############################################################################
 # CONFIGURE CORE PLATFORM MAKEFILE
-#   This file is where we make platform and architecture specific 
+#   This file is where we make platform and architecture specific
 #   configurations. This file can be specified for a generic architecture or can
-#   be defined as variants. For instance, normally this file will be located in 
-#   a platform specific subpath such as 
+#   be defined as variants. For instance, normally this file will be located in
+#   a platform specific subpath such as
 #
 #        $(OF_ROOT)/libs/openFrameworksComplied/linux64
 #
@@ -30,14 +30,14 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 
 ################################################################################
 # PLATFORM DEFINES
-#   Create a list of DEFINES for this platform.  The list will be converted into 
-#   CFLAGS with the "-D" flag later in the makefile.  An example of fully 
+#   Create a list of DEFINES for this platform.  The list will be converted into
+#   CFLAGS with the "-D" flag later in the makefile.  An example of fully
 #   qualified flag might look something like this: -DTARGET_OPENGLES2
 #
 #   DEFINES are used throughout the openFrameworks code, especially when making
-#   #ifdef decisions for cross-platform compatibility.  For instance, when 
+#   #ifdef decisions for cross-platform compatibility.  For instance, when
 #   choosing a video playback framework, the openFrameworks base classes look at
-#   the DEFINES to determine what source files to include or what default player 
+#   the DEFINES to determine what source files to include or what default player
 #   to use.
 #
 #   Note: Leave a leading space when adding list items with the += operator
@@ -53,7 +53,6 @@ PLATFORM_DEFINES += PIC
 PLATFORM_DEFINES += _REENTRANT
 PLATFORM_DEFINES += _LARGEFILE64_SOURCE
 PLATFORM_DEFINES += _FILE_OFFSET_BITS=64
-PLATFORM_DEFINES += _FORTIFY_SOURCE
 PLATFORM_DEFINES += __STDC_CONSTANT_MACROS
 PLATFORM_DEFINES += __STDC_LIMIT_MACROS
 PLATFORM_DEFINES += TARGET_POSIX
@@ -65,21 +64,16 @@ PLATFORM_DEFINES += HAVE_LIBBCM_HOST
 PLATFORM_DEFINES += USE_EXTERNAL_LIBBCM_HOST
 PLATFORM_DEFINES += USE_VCHIQ_ARM
 
-# Fix for firmware update @
-# https://github.com/Hexxeh/rpi-firmware/commit/ca3703d2d282ac96a97650e2e496276727e1b65b
-ifeq ($(strip $(shell cat $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/vc_dispmanx.h | grep VC_IMAGE_TRANSFORM_T)),) 
-PLATFORM_DEFINES += USE_DISPMANX_TRANSFORM_T
-endif
 
 ################################################################################
 # PLATFORM REQUIRED ADDONS
-#   This is a list of addons required for this platform.  This list is used to 
-#   EXCLUDE addon source files when compiling projects, while INCLUDING their 
-#   header files. During core library compilation, this is used to include 
-#   required addon header files as needed within the core. 
+#   This is a list of addons required for this platform.  This list is used to
+#   EXCLUDE addon source files when compiling projects, while INCLUDING their
+#   header files. During core library compilation, this is used to include
+#   required addon header files as needed within the core.
 #
-#   For instance, if you are compiling for Android, you would add ofxAndroid 
-#   here. If you are compiling for Raspberry Pi, you would add ofxRaspberryPi 
+#   For instance, if you are compiling for Android, you would add ofxAndroid
+#   here. If you are compiling for Raspberry Pi, you would add ofxRaspberryPi
 #   here.
 #
 #   Note: Leave a leading space when adding list items with the += operator
@@ -89,10 +83,10 @@ endif
 
 ################################################################################
 # PLATFORM CFLAGS
-#   This is a list of fully qualified CFLAGS required when compiling for this 
-#   platform. These flags will always be added when compiling a project or the 
-#   core library.  These flags are presented to the compiler AFTER the 
-#   PLATFORM_OPTIMIZATION_CFLAGS below. 
+#   This is a list of fully qualified CFLAGS required when compiling for this
+#   platform. These flags will always be added when compiling a project or the
+#   core library.  These flags are presented to the compiler AFTER the
+#   PLATFORM_OPTIMIZATION_CFLAGS below.
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
@@ -108,15 +102,15 @@ PLATFORM_CFLAGS += -pipe
 
 ################################################################################
 # PLATFORM LIBRARIES
-#   These are library names/paths that are platform specific and are specified 
+#   These are library names/paths that are platform specific and are specified
 #   using names or paths.  The library flag (i.e. -l) is prefixed automatically.
 #
-#   PLATFORM_LIBRARIES are libraries that can be found in the library search 
+#   PLATFORM_LIBRARIES are libraries that can be found in the library search
 #       paths.
 #   PLATFORM_STATIC_LIBRARIES is a list of required static libraries.
 #   PLATFORM_SHARED_LIBRARIES is a list of required shared libraries.
-#   PLATFORM_PKG_CONFIG_LIBRARIES is a list of required libraries that are 
-#       under system control and are easily accesible via the package 
+#   PLATFORM_PKG_CONFIG_LIBRARIES is a list of required libraries that are
+#       under system control and are easily accesible via the package
 #       configuration utility (i.e. pkg-config)
 #
 #   See the helpfile for the -l flag here for more information:
@@ -134,31 +128,30 @@ PLATFORM_LIBRARIES += bcm_host
 PLATFORM_LIBRARIES += vcos
 PLATFORM_LIBRARIES += vchiq_arm
 PLATFORM_LIBRARIES += pcre
-PLATFORM_LIBRARIES += rt 
-PLATFORM_LIBRARIES += X11 
+PLATFORM_LIBRARIES += rt
+PLATFORM_LIBRARIES += X11
 PLATFORM_LIBRARIES += dl
 
 
-PLATFORM_LDFLAGS += -pthread 
+PLATFORM_LDFLAGS += -pthread
 
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
-#   These are header search paths that are platform specific and are specified 
-#   using fully-qualified paths.  The include flag (i.e. -I) is prefixed 
-#   automatically. These are usually not required, but may be required by some 
-#   experimental platforms such as the raspberry pi or other other embedded 
+#   These are header search paths that are platform specific and are specified
+#   using fully-qualified paths.  The include flag (i.e. -I) is prefixed
+#   automatically. These are usually not required, but may be required by some
+#   experimental platforms such as the raspberry pi or other other embedded
 #   architectures.
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 # Broadcom hardware interface library
-PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include
-PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/IL
-PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vcos/pthreads
-PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vmcs_host/linux
-
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/IL
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vcos/pthreads
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/linux
 
 ##########################################################################################
 # PLATFORM LIBRARY SEARCH PATH
@@ -169,15 +162,15 @@ PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vmcs_host/linux
 #   Note: Leave a leading space when adding list items with the += operator
 ##########################################################################################
 
-PLATFORM_LIBRARY_SEARCH_PATHS += /opt/vc/lib
+PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
 
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
-#   During compilation, these makefiles will generate lists of sources, headers 
-#   and third party libraries to be compiled and linked into a program or core 
-#   library. The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file 
-#   paths that will be used to exclude matching paths and files during list 
+#   During compilation, these makefiles will generate lists of sources, headers
+#   and third party libraries to be compiled and linked into a program or core
+#   library. The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file
+#   paths that will be used to exclude matching paths and files during list
 #   generation.
 #
 #   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete
@@ -188,51 +181,44 @@ PLATFORM_LIBRARY_SEARCH_PATHS += /opt/vc/lib
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-#PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-egl-$(GST_VERSION)
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
-$(info $(PLATFORM_ARCH))
-ifeq ($(CROSS_COMPILING),1)	
-	ifneq ($(wildcard $(RPI_ROOT)/etc/debian_version),)
-		#RASPBIAN
-		ifeq ($(HOST_ARCH),x86_64)
-			TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
-		else
-			TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin
-		endif
-		GCC_PREFIX=arm-linux-gnueabihf
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
+
+ifeq ($(CROSS_COMPILING),1)
+$(info detected cross compiling $(CROSS_COMPILING))
+	ifdef TOOLCHAIN_ROOT
+		#You have specified TOOLCHAIN_ROOT with an environment variable
 	else
-		#ARCH LINUX
-		TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-unknown-linux-gnueabihf/bin
-		GCC_PREFIX=arm-unknown-linux-gnueabihf
+		TOOLCHAIN_ROOT = /opt/cross/bin
 	endif
 
-    PLATFORM_CXX = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-g++
-	PLATFORM_CC = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-gcc
-	PLATFORM_AR = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-ar
-	PLATFORM_LD = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-ld
-	
-	SYSROOT=$(RPI_ROOT)
-	#$(RPI_TOOLS)/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/libc/
-	
-	# Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
-	
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vcos/pthreads
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/linux
-	ifneq ($(wildcard $(RPI_ROOT)/etc/debian_version),)
-		PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.6/
-		PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.6/arm-linux-gnueabihf
+	ifdef GCC_PREFIX
+		#You have specified GCC_PREFIX with an environment variable
 	else
-		PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.8.2/
-		PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.8.2/armv6l-unknown-linux-gnueabihf/
+		GCC_PREFIX = arm-linux-gnueabihf
 	endif
-	
-	
-	PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
-	
+
+    PLATFORM_CXX = $(TOOLCHAIN_ROOT)/bin/$(GCC_PREFIX)-g++
+	PLATFORM_CC = $(TOOLCHAIN_ROOT)/bin/$(GCC_PREFIX)-gcc
+	PLATFORM_AR = $(TOOLCHAIN_ROOT)/bin/$(GCC_PREFIX)-ar
+	PLATFORM_LD = $(TOOLCHAIN_ROOT)/bin/$(GCC_PREFIX)-ld
+
+	SYSROOT=$(RPI_ROOT)
+
+	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
+
+	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++/4.9
+	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/$(GCC_PREFIX)/c++/4.9
+
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/$(GCC_PREFIX)
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/gcc/$(GCC_PREFIX)/4.9
+
 	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT)
-	
-	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
-	
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/$(GCC_PREFIX)
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/lib/$(GCC_PREFIX)
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/opt/vc/lib
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pulseaudio
+
+	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/$(GCC_PREFIX)/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
+
 endif

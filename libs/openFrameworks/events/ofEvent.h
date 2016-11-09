@@ -6,186 +6,395 @@
 #include <thread>
 #include <memory>
 #include <iterator>
+#include <atomic>
+#include <stddef.h>
+#include <functional>
 
-class ofEventAttendedException: public std::exception{};
-
-
-template<typename Function, typename Mutex=std::mutex>
-class ofBaseEvent{
-public:
-	/// \brief Basic constructor enabling an ofBaseEvent.
-	///
-	/// \see ofBaseEvent::ofBaseEvent(const ofBaseEvent & mom)
-	/// \see ofBaseEvent::enable()
-	/// \see ofBaseEvent::disable()
-	/// \see ofBaseEvent::isEnabled()
-	ofBaseEvent()
-	:enabled(true)
-    ,notifying(false){
-	}
-
-	/// \brief Copy-constructor for ofBaseEvent.
-	///
-	/// \see ofBaseEvent::ofBaseEvent()
-	ofBaseEvent(const ofBaseEvent & mom)
-	:enabled(mom.enabled)
-	,notifying(false){
-		std::unique_lock<Mutex> lck(const_cast<ofBaseEvent&>(mom).mtx);
-		functions = mom.functions;
-	}
-
-	/// \brief Overloading the assignment operator.
-	ofBaseEvent & operator=(const ofBaseEvent & mom){
-		if(&mom==this){
-			return *this;
-		}
-		std::unique_lock<Mutex> lck(const_cast<ofBaseEvent&>(mom).mtx);
-		functions = mom.functions;
-		enabled = mom.enabled;
-        notifying = mom.notifying;
-		return *this;
-	}
-
-	/// \brief Enable an event.
-	///
-	/// \see ofBaseEvent::disable()
-	/// \see ofBaseEvent::isEnabled()
-	void enable() {
-		enabled = true;
-	}
-
-	/// \brief Disable an event.
-	///
-	/// \see ofBaseEvent::enable()
-	/// \see ofBaseEvent::isEnabled()
-	void disable() {
-		enabled = false;
-	}
-
-	/// \brief Check whether an event is enabled or not.
-	///
-	/// \returns true if enables
-	/// \see ofBaseEvent::enable()
-	/// \see ofBaseEvent::disable()
-	bool isEnabled() const {
-		return enabled;
-	}
-
-	std::size_t size() const {
-		return functions.size();
-	}
-
-protected:
-	template<typename TFunction>
-	void add(TFunction && f){
-		std::unique_lock<Mutex> lck(mtx);
-		auto it = functions.begin();
-		for(; it!=functions.end(); ++it){
-			if(it->priority>f.priority) break;
-		}
-		functions.emplace(it, f);
-	}
-
-	template<typename TFunction>
-	void remove(const TFunction & function){
-		std::unique_lock<Mutex> lck(mtx);
-		if(notifying){
-            for(auto & f: functions){
-                if(f == function){
-                    f.function = nullptr;
-                }
-            }
-		}else{
-            functions.erase(std::remove_if(functions.begin(), functions.end(),
-                [&](Function & f){
-                    return f.function == nullptr || f == function;
-                }), functions.end());
-		}
-	}
-
-	Mutex mtx;
-	std::vector<Function> functions;
-	bool enabled;
-	bool notifying;
-};
 
 /*! \cond PRIVATE */
 namespace of{
 namespace priv{
+	// Helper classes and methods, only for internal use of ofEvent
+
+	// -------------------------------------
 	class NoopMutex{
 	public:
 		void lock(){}
 		void unlock(){}
 	};
 
+	// -------------------------------------
+	class AbstractEventToken{
+		public:
+			virtual ~AbstractEventToken();
+	};
+
+
+	// -------------------------------------
 	class BaseFunctionId{
 	public:
-		virtual ~BaseFunctionId(){};
+		BaseFunctionId(){}
+		BaseFunctionId(const BaseFunctionId &) = delete;
+		BaseFunctionId & operator=(const BaseFunctionId &) = delete;
+		virtual ~BaseFunctionId();
 		virtual bool operator==(const BaseFunctionId &) const = 0;
 		virtual BaseFunctionId * clone() const = 0;
 	};
 
-	template <class T>
-	class clone_ptr : public std::unique_ptr<T> {
+	// -------------------------------------
+	class StdFunctionId: public BaseFunctionId{
+		static std::atomic<uint_fast64_t> nextId;
+		uint64_t id;
+
+		StdFunctionId(uint64_t id)
+		:id(id){}
 	public:
-		clone_ptr(T * t)
-		  :std::unique_ptr<T>(t) { };
+		StdFunctionId(){
+			id = nextId++;
+		}
 
-		clone_ptr(std::unique_ptr<T> && t)
-		  :std::unique_ptr<T>(std::move(t)) { };
+		virtual ~StdFunctionId();
 
-		clone_ptr(clone_ptr<T> && other) = default;
-		clone_ptr<T> & operator=(clone_ptr<T> && other) = default;
+		bool operator==(const BaseFunctionId & otherid) const{
+			const auto * other = dynamic_cast<const StdFunctionId*>(&otherid);
+			return other && id == other->id;
+		}
 
-		clone_ptr(const clone_ptr<T> & other)
-		  :std::unique_ptr<T>(other->clone()) { }
-
-		clone_ptr & operator=(const clone_ptr<T> & other) {
-			this->reset(other->clone());
-			return *this;
+		BaseFunctionId * clone() const{
+			return new StdFunctionId(id);
 		}
 	};
 
-	template<typename T>
+
+	// -------------------------------------
+	inline std::unique_ptr<StdFunctionId> make_function_id(){
+		return std::unique_ptr<StdFunctionId>(new StdFunctionId());
+	}
+
+	// -------------------------------------
+	template<typename T, class Mutex>
 	class Function{
 	public:
 		Function(int priority, std::function<bool(const void*,T&)> function,  std::unique_ptr<BaseFunctionId>&& id )
 		:priority(priority)
-		,function(function)
-		,id(std::move(id)){}
+		,id(std::move(id))
+		,function(function){}
 
-		bool operator==(const Function<T> & f) const{
+		bool operator==(const Function<T,Mutex> & f) const{
 			return f.priority == priority && *id == *f.id;
 		}
 
+		inline bool notify(const void*s,T&t){
+			std::unique_lock<Mutex> lck(mtx);
+			try{
+				return function(s,t);
+			}catch(std::bad_function_call &){
+				return false;
+			}
+		}
+
+		inline void disable(){
+			std::unique_lock<Mutex> lck(mtx);
+			function = nullptr;
+		}
+
 		int priority;
+		std::unique_ptr<BaseFunctionId> id;
+
+	private:
 		std::function<bool(const void*,T&)> function;
-		clone_ptr<BaseFunctionId> id;
+		Mutex mtx;
 	};
 
-	template<>
-	class Function<void>{
+	// -------------------------------------
+	template<class Mutex>
+	class Function<void,Mutex>{
 	public:
 		Function(int priority, std::function<bool(const void*)> function,  std::unique_ptr<BaseFunctionId> && id )
 		:priority(priority)
-		,function(function)
-		,id(std::move(id)){}
+		,id(std::move(id))
+		,function(function){}
 
-		bool operator==(const Function<void> & f) const{
+		bool operator==(const Function<void,Mutex> & f) const{
 			return f.priority == priority && *id == *f.id;
 		}
 
+		inline bool notify(const void*s){
+			std::unique_lock<Mutex> lck(mtx);
+			try{
+				return function(s);
+			}catch(std::bad_function_call &){
+				return false;
+			}
+		}
+
+		inline void disable(){
+			std::unique_lock<Mutex> lck(mtx);
+			function = nullptr;
+		}
+
 		int priority;
+		std::unique_ptr<BaseFunctionId> id;
+	private:
 		std::function<bool(const void*)> function;
-		clone_ptr<BaseFunctionId> id;
+		Mutex mtx;
+	};
+
+
+	// -------------------------------------
+	template<typename Function, typename Mutex=std::recursive_mutex>
+	class BaseEvent{
+	public:
+		BaseEvent(){}
+
+		BaseEvent(const BaseEvent & mom){
+			std::unique_lock<Mutex> lck(const_cast<BaseEvent&>(mom).self->mtx);
+			self->functions = mom.self->functions;
+		}
+
+		BaseEvent & operator=(const BaseEvent & mom){
+			if(&mom==this){
+				return *this;
+			}
+			std::unique_lock<Mutex> lck(const_cast<BaseEvent&>(mom).self->mtx);
+			std::unique_lock<Mutex> lck2(self->mtx);
+			self->functions = mom.self->functions;
+			self->enabled = mom.self->enabled;
+			return *this;
+		}
+
+		BaseEvent(BaseEvent && mom){
+			std::unique_lock<Mutex> lck(const_cast<BaseEvent&>(mom).self->mtx);
+			self->functions = std::move(mom.self->functions);
+			self->enabled = std::move(mom.self->enabled);
+		}
+
+		BaseEvent & operator=(BaseEvent && mom){
+			if(&mom==this){
+				return *this;
+			}
+			std::unique_lock<Mutex> lck(const_cast<BaseEvent&>(mom).self->mtx);
+			std::unique_lock<Mutex> lck2(self->mtx);
+			self->functions = mom.self->functions;
+			self->enabled = mom.self->enabled;
+			return *this;
+		}
+
+		void enable() {
+			self->enabled = true;
+		}
+
+		void disable() {
+			self->enabled = false;
+		}
+
+		bool isEnabled() const {
+			return self->enabled;
+		}
+
+		std::size_t size() const {
+			return self->functions.size();
+		}
+
+	protected:
+
+		struct Data{
+			Mutex mtx;
+			std::vector<std::shared_ptr<Function>> functions;
+			bool enabled = true;
+
+			void remove(const BaseFunctionId & id){
+				std::unique_lock<Mutex> lck(mtx);
+				auto it = functions.begin();
+				for(; it!=functions.end(); ++it){
+					auto f = *it;
+					if(*f->id == id){
+						f->disable();
+						functions.erase(it);
+						break;
+					}
+				}
+			}
+		};
+		std::shared_ptr<Data> self{new Data};
+
+		class EventToken: public AbstractEventToken{
+			public:
+				EventToken() {};
+				template<typename Id>
+				EventToken(std::shared_ptr<Data> & event, const Id & id)
+				:event(event)
+				,id(id.clone()){
+
+				}
+
+				~EventToken(){
+					auto event = this->event.lock();
+					if(event){
+						event->remove(*id);
+					}
+				}
+
+			private:
+				std::weak_ptr<Data> event;
+				std::unique_ptr<BaseFunctionId> id;
+		};
+
+		std::unique_ptr<EventToken> make_token(const Function & f){
+			return std::unique_ptr<EventToken>(new EventToken(self,*f.id));
+		}
+
+		template<typename TFunction>
+		void addNoToken(TFunction && f){
+			std::unique_lock<Mutex> lck(self->mtx);
+			auto it = self->functions.begin();
+			for(; it!=self->functions.end(); ++it){
+				if((*it)->priority>f->priority) break;
+			}
+			self->functions.emplace(it, f);
+		}
+
+		template<typename TFunction>
+		std::unique_ptr<EventToken> addFunction(TFunction && f){
+			std::unique_lock<Mutex> lck(self->mtx);
+			auto it = self->functions.begin();
+			for(; it!=self->functions.end(); ++it){
+				if((*it)->priority>f->priority) break;
+			}
+			self->functions.emplace(it, f);
+			return make_token(*f);
+		}
+	};
+
+
+
+
+	// -------------------------------------
+	// Helper functions to disambiguate parameters
+	// https://github.com/sth/callable.hpp
+	namespace detail {
+
+	/** Count the number of types given to the template */
+	template<typename... Types>
+	struct tva_count;
+
+	template<>
+	struct tva_count<> {
+		static const size_t value = 0;
+	};
+
+	template<typename Type, typename... Types>
+	struct tva_count<Type, Types...> {
+		static const size_t value = tva_count<Types...>::value + 1;
+	};
+
+
+	/** Get the nth type given to the template */
+	template<size_t n, typename... Types>
+	struct tva_n;
+
+	template<size_t N, typename Type, typename... Types>
+	struct tva_n<N, Type, Types...> : tva_n<N-1, Types...> {
+	};
+
+	template<typename Type, typename... Types>
+	struct tva_n<0, Type, Types...> {
+		typedef Type type;
+	};
+
+
+	/** Define traits for a function type */
+	template<typename Fun>
+	struct callable_traits_fn;
+
+	template<typename Ret, typename... Args>
+	struct callable_traits_fn<Ret (Args...)> {
+		typedef Ret (*function_ptr)(Args...);
+		typedef Ret function_type(Args...);
+		typedef Ret return_type;
+		static const size_t argc;
+
+		template<size_t N>
+		using argument_type = typename tva_n<N, Args...>::type;
+	};
+
+	template<typename Ret, typename... Args>
+	const size_t callable_traits_fn<Ret (Args...)>::argc = tva_count<Args...>::value;
+
+
+	/** Define traits for a operator() member function pointer type */
+	template<typename MemFun>
+	struct callable_traits_memfn;
+
+	template<typename Class, typename Ret, typename... Args>
+	struct callable_traits_memfn<Ret (Class::*)(Args...)> : callable_traits_fn<Ret (Args...)> {
+	};
+
+	template<typename Class, typename Ret, typename... Args>
+	struct callable_traits_memfn<Ret (Class::*)(Args...) const> : callable_traits_fn<Ret (Args...)> {
+	};
+
+
+	// classes with operator()
+	template<typename Callable>
+	struct callable_traits_d : detail::callable_traits_memfn<decltype(&Callable::operator())> {
+	};
+
+	// functions
+	template<typename Ret, typename... Args>
+	struct callable_traits_d<Ret (Args...)> : detail::callable_traits_fn<Ret (Args...)> {
+	};
+
+	// function pointers
+	template<typename Ret, typename... Args>
+	struct callable_traits_d<Ret (*)(Args...)> : detail::callable_traits_fn<Ret (Args...)> {
+	};
+
+	// std::function specializations
+	template<typename Ret, typename... Args>
+	struct callable_traits_d<std::function<Ret (Args...)>> : detail::callable_traits_fn<Ret (Args...)> {
+	};
+
+	} // namespace detail
+
+
+	// Main template
+
+	template<typename Callable>
+	struct callable_traits : detail::callable_traits_d<typename std::remove_reference<Callable>::type> {
 	};
 }
 }
 /*! \endcond */
 
-template<typename T, typename Mutex=std::mutex>
-class ofEvent: public ofBaseEvent<of::priv::Function<T>,Mutex>{
+// -------------------------------------
+enum ofEventOrder{
+	OF_EVENT_ORDER_BEFORE_APP=0,
+	OF_EVENT_ORDER_APP=100,
+	OF_EVENT_ORDER_AFTER_APP=200
+};
+
+// -------------------------------------
+class ofEventListener{
+public:
+	ofEventListener(){}
+	ofEventListener(std::unique_ptr<of::priv::AbstractEventToken> && token)
+	:token(std::move(token)){}
+	void unsubscribe(){
+		token.reset();
+	}
+private:
+	std::unique_ptr<of::priv::AbstractEventToken> token;
+};
+
+
+// -------------------------------------
+// ofEvent main implementation
+template<typename T, typename Mutex=std::recursive_mutex>
+class ofEvent: public of::priv::BaseEvent<of::priv::Function<T,Mutex>,Mutex>{
 protected:
+	typedef of::priv::Function<T,Mutex> Function;
+	typedef std::shared_ptr<Function> FunctionPtr;
 
 	template<class TObj, typename TMethod>
 	class FunctionId: public of::priv::BaseFunctionId{
@@ -220,101 +429,130 @@ protected:
 	}
 
 	template<class TObj>
-	of::priv::Function<T> make_function(TObj * listener, bool (TObj::*method)(T&), int priority){
-		return of::priv::Function<T>(priority, std::bind(method,listener,std::placeholders::_2), make_function_id(listener,method));
+	FunctionPtr make_function(TObj * listener, bool (TObj::*method)(T&), int priority){
+		return std::make_shared<Function>(priority, std::bind(method,listener,std::placeholders::_2), make_function_id(listener,method));
 	}
 
 	template<class TObj>
-	of::priv::Function<T> make_function(TObj * listener, void (TObj::*method)(T&), int priority){
-		return of::priv::Function<T>(priority, [listener, method](const void*, T&t){
+	FunctionPtr make_function(TObj * listener, void (TObj::*method)(T&), int priority){
+		return std::make_shared<Function>(priority, [listener, method](const void*, T&t){
 			((listener)->*(method))(t);
 			return false;
 		}, make_function_id(listener,method));
 	}
 
 	template<class TObj>
-	of::priv::Function<T> make_function(TObj * listener, bool (TObj::*method)(const void*, T&), int priority){
-		return of::priv::Function<T>(priority, std::bind(method,listener,std::placeholders::_1,std::placeholders::_2), make_function_id(listener,method));
+	FunctionPtr make_function(TObj * listener, bool (TObj::*method)(const void*, T&), int priority){
+		return std::make_shared<Function>(priority, std::bind(method,listener,std::placeholders::_1,std::placeholders::_2), make_function_id(listener,method));
 	}
 
 	template<class TObj>
-	of::priv::Function<T> make_function(TObj * listener, void (TObj::*method)(const void*, T&), int priority){
-		return of::priv::Function<T>(priority, [listener, method](const void*s, T&t){
+	FunctionPtr make_function(TObj * listener, void (TObj::*method)(const void*, T&), int priority){
+		return std::make_shared<Function>(priority, [listener, method](const void*s, T&t){
 			std::bind(method,listener,std::placeholders::_1,std::placeholders::_2)(s,t);
 			return false;
 		}, make_function_id(listener,method));
 	}
 
-	of::priv::Function<T> make_function(bool (*function)(T&), int priority){
-		return of::priv::Function<T>(priority, std::bind(function,std::placeholders::_2), make_function_id((ofEvent<T>*)nullptr,function));
+	template<typename F>
+	std::unique_ptr<of::priv::BaseFunctionId> make_std_function_id(const F & f){
+		auto function = f.template target<typename of::priv::callable_traits<F>::function_ptr>();
+		if(function){
+			return make_function_id((ofEvent<T>*)nullptr,*function);
+		}else{
+			return of::priv::make_function_id();
+		}
 	}
 
-	of::priv::Function<T> make_function(void (*function)(T&), int priority){
-		return of::priv::Function<T>(priority, [function](const void*, T&t){
-			(function)(t);
-			return false;
-		}, make_function_id((ofEvent<T>*)nullptr,function));
+	FunctionPtr make_function(std::function<bool(T&)> f, int priority) {
+		return std::make_shared<Function>(priority, [f](const void*, T&t) {return f(t); }, make_std_function_id(f));
 	}
 
-	of::priv::Function<T> make_function(bool (*function)(const void*, T&), int priority){
-		return of::priv::Function<T>(priority, function, make_function_id((ofEvent<T>*)nullptr,function));
+	FunctionPtr make_function(std::function<bool(const void*, T&)> f, int priority) {
+		return std::make_shared<Function>(priority, f, make_std_function_id(f));
 	}
 
-	of::priv::Function<T> make_function(void (*function)(const void*, T&), int priority){
-		return of::priv::Function<T>(priority, [function](const void*s, T&t){
-			function(s,t);
-			return false;
-		}, make_function_id((ofEvent<T>*)nullptr,function));
+	FunctionPtr make_function(std::function<void(T&)> f, int priority) {
+		return std::make_shared<Function>(priority, [f](const void*, T&t) {f(t); return false; }, make_std_function_id(f));
 	}
+
+	FunctionPtr make_function(std::function<void(const void*, T&)> f, int priority) {
+		return std::make_shared<Function>(priority, [f](const void*s, T&t) {f(s, t); return false; }, make_std_function_id(f));
+	}
+
+
+	using of::priv::BaseEvent<of::priv::Function<T,Mutex>,Mutex>::addFunction;
+	using of::priv::BaseEvent<of::priv::Function<T,Mutex>,Mutex>::addNoToken;
+
 public:
 	template<class TObj, typename TMethod>
+	ofEventListener newListener(TObj * listener, TMethod method, int priority = OF_EVENT_ORDER_AFTER_APP){
+		return ofEventListener(addFunction(make_function(listener,method,priority)));
+	}
+
+	template<class TObj, typename TMethod>
 	void add(TObj * listener, TMethod method, int priority){
-		ofBaseEvent<of::priv::Function<T>,Mutex>::add(make_function(listener,method,priority));
+		addNoToken(make_function(listener,method,priority));
 	}
 
 	template<class TObj, typename TMethod>
 	void remove(TObj * listener, TMethod method, int priority){
-		ofBaseEvent<of::priv::Function<T>,Mutex>::remove(make_function(listener,method,priority));
+		 ofEvent<T,Mutex>::self->remove(*make_function_id(listener,method));
+	}
+
+	template<typename TFunction>
+	ofEventListener newListener(TFunction function, int priority = OF_EVENT_ORDER_AFTER_APP) {
+		return ofEventListener(addFunction(make_function(std::function<typename of::priv::callable_traits<TFunction>::function_type>(function), priority)));
 	}
 
 	template<typename TFunction>
 	void add(TFunction function, int priority){
-		ofBaseEvent<of::priv::Function<T>,Mutex>::add(make_function(function,priority));
+		addNoToken(make_function(std::function<typename of::priv::callable_traits<TFunction>::function_type>(function),priority));
 	}
 
 	template<typename TFunction>
 	void remove(TFunction function, int priority){
-		ofBaseEvent<of::priv::Function<T>,Mutex>::remove(make_function(function,priority));
+		 ofEvent<T,Mutex>::self->remove(*make_function(std::function<typename of::priv::callable_traits<TFunction>::function_type>(function), priority)->id);
 	}
 
-	inline void notify(const void* sender, T & param){
-		if(ofEvent<T,Mutex>::enabled && !ofEvent<T,Mutex>::functions.empty()){
-			std::vector<of::priv::Function<T>*> functions_copy;
-			{
-				std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::mtx);
-				functions_copy.resize(ofEvent<T,Mutex>::functions.size());
-				std::transform(ofEvent<T,Mutex>::functions.begin(), ofEvent<T,Mutex>::functions.end(),
-						functions_copy.begin(),
-						[&](of::priv::Function<T>&f){return &f;});
-	            ofEvent<T,Mutex>::notifying = true;
-			}
+	inline bool notify(const void* sender, T & param){
+		if(ofEvent<T,Mutex>::self->enabled && !ofEvent<T,Mutex>::self->functions.empty()){
+			std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::self->mtx);
+			auto functions_copy = ofEvent<T,Mutex>::self->functions;
+			lck.unlock();
 			for(auto & f: functions_copy){
-                bool ret = false;
-                try{
-                    ret = f->function(sender,param);
-                }catch(std::bad_function_call &){}
-                if(ret){
-                    throw ofEventAttendedException();
+                if(f->notify(sender,param)){
+					return true;
                 }
 			}
-			ofEvent<T,Mutex>::notifying = false;
 		}
+		return false;
+	}
+
+	inline bool notify(T & param){
+		if(ofEvent<T,Mutex>::self->enabled && !ofEvent<T,Mutex>::self->functions.empty()){
+			std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::self->mtx);
+			auto functions_copy = ofEvent<T,Mutex>::self->functions;
+			lck.unlock();
+			for(auto & f: functions_copy){
+				if(f->notify(nullptr,param)){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 };
 
+
+
+// -------------------------------------
+// void event template specialization,
 template<typename Mutex>
-class ofEvent<void,Mutex>: public ofBaseEvent<of::priv::Function<void>,Mutex>{
+class ofEvent<void,Mutex>: public of::priv::BaseEvent<of::priv::Function<void,Mutex>,Mutex>{
 protected:
+	typedef of::priv::Function<void,Mutex> Function;
+	typedef std::shared_ptr<Function> FunctionPtr;
 
 	template<class TObj, typename TMethod>
 	class FunctionId: public of::priv::BaseFunctionId{
@@ -350,115 +588,135 @@ protected:
 	}
 
 	template<class TObj>
-	of::priv::Function<void> make_function(TObj * listener, bool (TObj::*method)(), int priority){
-		return of::priv::Function<void>(priority, std::bind(method,listener), make_function_id(listener,method));
+	FunctionPtr make_function(TObj * listener, bool (TObj::*method)(), int priority){
+		return std::make_shared<Function>(priority, std::bind(method,listener), make_function_id(listener,method));
 	}
 
 	template<class TObj>
-	of::priv::Function<void> make_function(TObj * listener, void (TObj::*method)(), int priority){
-		return of::priv::Function<void>(priority,[listener, method](const void*){
+	FunctionPtr make_function(TObj * listener, void (TObj::*method)(), int priority){
+		return std::make_shared<Function>(priority,[listener, method](const void*){
 			std::bind(method,listener)();
 			return false;
 		}, make_function_id(listener,method));
 	}
 
 	template<class TObj>
-	of::priv::Function<void> make_function(TObj * listener, bool (TObj::*method)(const void*), int priority){
-		return of::priv::Function<void>(priority,std::bind(method,listener,std::placeholders::_1), make_function_id(listener,method));
+	FunctionPtr make_function(TObj * listener, bool (TObj::*method)(const void*), int priority){
+		return std::make_shared<Function>(priority,std::bind(method,listener,std::placeholders::_1), make_function_id(listener,method));
 	}
 
 	template<class TObj>
-	of::priv::Function<void> make_function(TObj * listener, void (TObj::*method)(const void*), int priority){
-		return of::priv::Function<void>(priority,[listener, method](const void* sender){
+	FunctionPtr make_function(TObj * listener, void (TObj::*method)(const void*), int priority){
+		return std::make_shared<Function>(priority,[listener, method](const void* sender){
 			std::bind(method,listener,std::placeholders::_1)(sender);
 			return false;
 		}, make_function_id(listener,method));
 	}
 
-	of::priv::Function<void> make_function(bool (*function)(), int priority){
-		return of::priv::Function<void>(priority, std::bind(function), make_function_id((ofEvent<void>*)nullptr,function));
+	template<typename F>
+	std::unique_ptr<of::priv::BaseFunctionId> make_std_function_id(const F & f){
+		auto function = f.template target<typename of::priv::callable_traits<F>::function_ptr>();
+		if(function){
+			return make_function_id((ofEvent<void>*)nullptr,*function);
+		}else{
+			return of::priv::make_function_id();
+		}
 	}
 
-	of::priv::Function<void> make_function(void (*function)(), int priority){
-		return of::priv::Function<void>(priority,[function](const void*){
-			function();
-			return false;
-		}, make_function_id((ofEvent<void>*)nullptr,function));
+	FunctionPtr make_function(std::function<bool()> f, int priority) {
+		return std::make_shared<Function>(priority, [f](const void*) {return f(); }, make_std_function_id(f));
 	}
 
-	of::priv::Function<void> make_function(bool (*function)(const void*), int priority){
-		return of::priv::Function<void>(priority, function, make_function_id((ofEvent<void>*)nullptr,function));
+	FunctionPtr make_function(std::function<bool(const void*)> f, int priority) {
+		return std::make_shared<Function>(priority, f, make_std_function_id(f));
 	}
 
-	of::priv::Function<void> make_function(void (*function)(const void*), int priority){
-		return of::priv::Function<void>(priority,[function](const void* sender){
-			function(sender);
-			return false;
-		}, make_function_id((ofEvent<void>*)nullptr,function));
+	FunctionPtr make_function(std::function<void()> f, int priority) {
+		return std::make_shared<Function>(priority, [f](const void*) {f(); return false; }, make_std_function_id(f));
 	}
+
+	FunctionPtr make_function(std::function<void(const void*)> f, int priority) {
+		return std::make_shared<Function>(priority, [f](const void*s) {f(s); return false; }, make_std_function_id(f));
+	}
+
+	using of::priv::BaseEvent<of::priv::Function<void,Mutex>,Mutex>::addFunction;
+	using of::priv::BaseEvent<of::priv::Function<void,Mutex>,Mutex>::addNoToken;
+
 public:
 	template<class TObj, typename TMethod>
 	void add(TObj * listener, TMethod method, int priority){
-		ofBaseEvent<of::priv::Function<void>,Mutex>::add(make_function(listener,method,priority));
+		addNoToken(make_function(listener,method,priority));
+	}
+
+	template<class TObj, typename TMethod>
+	ofEventListener newListener(TObj * listener, TMethod method, int priority = OF_EVENT_ORDER_AFTER_APP){
+		return ofEventListener(addFunction(make_function(listener,method,priority)));
 	}
 
 	template<class TObj, typename TMethod>
 	void remove(TObj * listener, TMethod method, int priority){
-		ofBaseEvent<of::priv::Function<void>,Mutex>::remove(make_function(listener,method,priority));
+		ofEvent<void,Mutex>::self->remove(*make_function_id(listener,method));
 	}
 
 	template<typename TFunction>
 	void add(TFunction function, int priority){
-		ofBaseEvent<of::priv::Function<void>,Mutex>::add(make_function(function,priority));
+		addNoToken(make_function(std::function<typename of::priv::callable_traits<TFunction>::function_type>(function),priority));
+	}
+
+	template<typename TFunction>
+	ofEventListener newListener(TFunction function, int priority = OF_EVENT_ORDER_AFTER_APP) {
+		return ofEventListener(addFunction(make_function(std::function<typename of::priv::callable_traits<TFunction>::function_type>(function), priority)));
 	}
 
 	template<typename TFunction>
 	void remove(TFunction function, int priority){
-		ofBaseEvent<of::priv::Function<void>,Mutex>::remove(make_function(function,priority));
+		 ofEvent<void,Mutex>::self->remove(*make_function(std::function<typename of::priv::callable_traits<TFunction>::function_type>(function),priority)->id);
 	}
 
-	void notify(const void* sender){
-		if(ofEvent<void,Mutex>::enabled && !ofEvent<void,Mutex>::functions.empty()){
-			std::vector<of::priv::Function<void>*> functions_copy;
-			{
-				std::unique_lock<Mutex> lck(ofEvent<void,Mutex>::mtx);
-				std::transform(ofEvent<void,Mutex>::functions.begin(), ofEvent<void,Mutex>::functions.end(),
-						std::back_inserter(functions_copy),
-						[&](of::priv::Function<void> & f){return &f;});
-	            ofEvent<void,Mutex>::notifying = true;
-			}
+	bool notify(const void* sender){
+		if(ofEvent<void,Mutex>::self->enabled && !ofEvent<void,Mutex>::self->functions.empty()){
+			std::unique_lock<Mutex> lck(ofEvent<void,Mutex>::self->mtx);
+			auto functions_copy = ofEvent<void,Mutex>::self->functions;
+			lck.unlock();
 			for(auto & f: functions_copy){
-			    bool ret = false;
-			    try{
-			        ret = f->function(sender);
-			    }catch(std::bad_function_call &){}
-				if(ret){
-					throw ofEventAttendedException();
+				if(f->notify(sender)){
+					return true;
 				}
 			}
-			ofEvent<void,Mutex>::notifying = false;
 		}
+		return false;
+	}
+
+	bool notify(){
+		if(ofEvent<void,Mutex>::self->enabled && !ofEvent<void,Mutex>::self->functions.empty()){
+			std::unique_lock<Mutex> lck(ofEvent<void,Mutex>::self->mtx);
+			auto functions_copy = ofEvent<void,Mutex>::self->functions;
+			lck.unlock();
+			for(auto & f: functions_copy){
+				if(f->notify(nullptr)){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 };
 
+// -------------------------------------
 /// Non thread safe event that avoids locks and copies of the listeners
 /// making it faster than a plain ofEvent
 template<typename T>
 class ofFastEvent: public ofEvent<T,of::priv::NoopMutex>{
 public:
-	inline void notify(const void* sender, T & param){
-		if(ofFastEvent::enabled && !ofFastEvent::functions.empty()){
-		    ofFastEvent<T>::notifying = true;
-			for(auto & f: ofFastEvent::functions){
-                bool ret = false;
-                try{
-                    ret = f->function(sender,param);
-                }catch(std::bad_function_call &){}
-                if(ret){
-                    throw ofEventAttendedException();
-                }
+	inline bool notify(const void* sender, T & param){
+		if(this->isEnabled()){
+			for(auto & f: ofFastEvent<T>::self->functions){
+				if(f->notify(sender, param)){
+					return true;
+				}
 			}
-			ofFastEvent<T>::notifying = false;
 		}
+		return false;
 	}
 };
+

@@ -294,3 +294,21 @@ ofVec3f ofQuaternion::getEuler() const {
 #define QZ  _v.z
 #define QW  _v.w
 
+//----------------------------------------
+std::ostream& operator<<(std::ostream& os, const ofQuaternion &q) {
+    os << q._v.x << ", " << q._v.y << ", " << q._v.z << ", " << q._v.w;
+    return os;
+}
+
+
+//----------------------------------------
+std::istream& operator>>(std::istream& is, ofQuaternion &q) {
+    is >> q._v.x;
+    is.ignore(2);
+    is >> q._v.y;
+    is.ignore(2);
+    is >> q._v.z;
+    is.ignore(2);
+    is >> q._v.w;
+    return is;
+}

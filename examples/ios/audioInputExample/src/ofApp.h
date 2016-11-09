@@ -1,8 +1,8 @@
+/* Refer to the README.md in the example's root folder for more information on usage */
+
 #pragma once
 
-#include "ofMain.h"
 #include "ofxiOS.h"
-#include "ofxiOSExtras.h"
 
 class ofApp : public ofxiOSApp{
 	

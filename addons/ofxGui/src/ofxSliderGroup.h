@@ -22,13 +22,14 @@ public:
 protected:
     void changeSlider(const void * parameter, float & value);
     void changeValue(VecType & value);
+	static size_t dim();
     ofParameter<VecType> value;
     bool sliderChanging;
 };
 
-typedef ofxVecSlider_<ofVec3f> ofxVec3Slider;
-typedef ofxVecSlider_<ofVec2f> ofxVec2Slider;
-typedef ofxVecSlider_<ofVec4f> ofxVec4Slider;
+typedef ofxVecSlider_<ofDefaultVec3> ofxVec3Slider;
+typedef ofxVecSlider_<ofDefaultVec2> ofxVec2Slider;
+typedef ofxVecSlider_<ofDefaultVec4> ofxVec4Slider;
 typedef ofxVecSlider_<ofVec3f> ofxPointSlider;
 
 template<typename ColorType>

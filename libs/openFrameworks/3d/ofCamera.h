@@ -51,7 +51,7 @@ public:
 	///
 	/// \param lensOffset The "lens offset" to apply to this camera, encoded in
     ///     an ofVec2f.
-	void setLensOffset(const ofVec2f & lensOffset);
+	void setLensOffset(const glm::vec2 & lensOffset);
 	
 	/// \brief Set the recommended aspect ratio for a perspective camera.
 	///
@@ -96,7 +96,7 @@ public:
     /// more information see http://www.orthostereo.com/geometryopengl.html.
 	///
 	/// \returns The "lens offset" applied to this camera, encoded in an ofVec2f.
-	ofVec2f getLensOffset() const { return lensOffset; };
+	glm::vec2 getLensOffset() const { return lensOffset; };
 	
 	/// \brief Get the boolean state which indicates whether the aspect ratio of this camera is forced to a non-default setting.
 	/// 
@@ -116,9 +116,9 @@ public:
 	/// \name OpenGL Setup
 	/// \{
 	
-	void setupPerspective(bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0, const ofVec2f & lensOffset = ofVec2f(0.0f, 0.0f));
+	void setupPerspective(bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0, const glm::vec2 & lensOffset = glm::vec2(0.0f, 0.0f));
 
-    void setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & bottomLeft, const ofVec3f & bottomRight);
+	void setupOffAxisViewPortal(const glm::vec3 & topLeft, const glm::vec3 & bottomLeft, const glm::vec3 & bottomRight);
 	
 	void setVFlip(bool vflip);
 
@@ -132,8 +132,8 @@ public:
 	
 	float getImagePlaneDistance(ofRectangle viewport = ofRectangle()) const;
 
-	/// \}
-	/// \name Rendering
+	/// \}
+	/// \name Rendering
 	/// \{
 
 	/// \brief Begins rendering with the camera.
@@ -157,19 +157,19 @@ public:
 	virtual void end();
 	
 	/// \}
-	/// \name OpenGL Matrix
-	/// \{
+	/// \name OpenGL Matrix
+	/// \{
 
 	/// \brief Access the projection matrix.
     /// \returns the current 4x4 projection matrix.
-	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofRectangle()) const;
+	glm::mat4 getProjectionMatrix(ofRectangle viewport = ofRectangle()) const;
 
     /// \brief Access the model view matrix.
     /// \returns the current 4x4 model view matrix.
-    ofMatrix4x4 getModelViewMatrix() const;
+	glm::mat4 getModelViewMatrix() const;
 
     /// \todo getModelViewProjectionMatrix()
-    ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofRectangle()) const;
+	glm::mat4 getModelViewProjectionMatrix(ofRectangle viewport = ofRectangle()) const;
 
     /// \}
     /// \name Coordinate Conversion
@@ -185,7 +185,7 @@ public:
 	/// \param WorldXYZ A 3D point in the world, whose screen coordinates you wish to know. 
 	/// \param viewport (Optional) A viewport. The default is ofGetCurrentViewport(). 
 	/// \returns An ofVec3f containing the screen coordinates of your 3D point of interest. 
-	ofVec3f worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport = ofRectangle()) const;
+	glm::vec3 worldToScreen(glm::vec3 WorldXYZ, ofRectangle viewport = ofRectangle()) const;
 	
 	/// \brief Obtain the coordinates, in the 3D world, of a 2D point presumed to be on your screen.
 	///
@@ -195,21 +195,21 @@ public:
 	/// This Z value is interpreted as a distance into or away from the screen. 
 	///
 	/// \param ScreenXYZ A point on your screen, whose 3D world coordinates you wish to know.
-	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofRectangle()) const;
+	glm::vec3 screenToWorld(glm::vec3 ScreenXYZ, ofRectangle viewport = ofRectangle()) const;
 	
 	/// \todo worldToCamera()
-	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofRectangle()) const;
+	glm::vec3 worldToCamera(glm::vec3 WorldXYZ, ofRectangle viewport = ofRectangle()) const;
 
 	/// \todo cameraToWorld()
-	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofRectangle()) const;
+	glm::vec3 cameraToWorld(glm::vec3 CameraXYZ, ofRectangle viewport = ofRectangle()) const;
 
 	/// \}
 	/// \name Renderer
-	/// \{
+	/// \{
     
     void setRenderer(shared_ptr<ofBaseRenderer> renderer);
 	
-	/// \}
+	/// \}
 protected:
 	ofRectangle getViewport(const ofRectangle & _viewport) const;
 	shared_ptr<ofBaseRenderer> getRenderer() const;
@@ -220,7 +220,7 @@ private:
 	float fov;
 	float nearClip;
 	float farClip;
-	ofVec2f lensOffset;
+	glm::vec2 lensOffset;
 	bool forceAspectRatio;
 	float aspectRatio; // only used when forceAspect=true, = w / h
 	bool vFlip;
