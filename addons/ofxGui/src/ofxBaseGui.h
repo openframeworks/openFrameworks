@@ -16,10 +16,15 @@ class ofxBaseGui {
 		void saveToFile(const std::string& filename);
 		void loadFromFile(const std::string& filename);
 
-		void setDefaultSerializer(std::shared_ptr <ofBaseFileSerializer> serializer);
+		template<class T>
+		void saveTo(T & serializer){
+			ofSerialize(serializer, getParameter());
+		}
 
-		virtual void saveTo(ofBaseSerializer & serializer);
-		virtual void loadFrom(ofBaseSerializer & serializer);
+		template<class T>
+		void loadFrom(T & serializer){
+			ofDeserialize(serializer, getParameter());
+		}
 
 		std::string getName();
 		void setName(const std::string& name);
@@ -94,7 +99,6 @@ class ofxBaseGui {
 		static bool fontLoaded;
 		static bool useTTF;
 		static ofBitmapFont bitmapFont;
-		std::shared_ptr <ofBaseFileSerializer> serializer;
 
 		static ofColor headerBackgroundColor;
 		static ofColor backgroundColor;

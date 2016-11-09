@@ -112,7 +112,7 @@ void ofApp::draw(){
 	for(int i=0; i<kNumCameras; i++) {
 		
 		// lookat node if it has one
-		if(lookatIndex[i] >= 0) cam[i].lookAt(testNodes[lookatIndex[i]]);
+		if(lookatIndex[i] >= 0) cam[i].lookAt(testNodes[lookatIndex[i]], {0.f,1.f,0.f});
 		
 		// mouse orbit camera
 		if(doMouseOrbit[i] && ofGetMousePressed(0)) {

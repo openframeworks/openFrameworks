@@ -40,13 +40,13 @@
     <Filter Include="libs\openFrameworks\utils">
       <UniqueIdentifier>{e769ef16-c02a-402a-8eff-5d109f5a3a86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="libs\openFrameworks\gl\shaders">
+      <UniqueIdentifier>{5f96bf6a-8a5d-485f-a2ec-68642528d3ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\openFrameworks\ofMain.h">
       <Filter>libs\openFrameworks</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\app\ofAppGlutWindow.h">
-      <Filter>libs\openFrameworks\app</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppRunner.h">
       <Filter>libs\openFrameworks\app</Filter>
@@ -255,9 +255,6 @@
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppNoWindow.h">
       <Filter>libs\openFrameworks\app</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\utils\ofXml.h">
-      <Filter>libs\openFrameworks\utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\gl\ofBufferObject.h">
       <Filter>libs\openFrameworks\gl</Filter>
     </ClInclude>
@@ -282,11 +279,11 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofThreadChannel.h">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofXml.h">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">
-      <Filter>libs\openFrameworks\app</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp">
       <Filter>libs\openFrameworks\app</Filter>
     </ClCompile>
@@ -344,9 +341,6 @@
     <ClCompile Include="..\..\..\openFrameworks\3d\ofEasyCam.cpp">
       <Filter>libs\openFrameworks\3d</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\3d\ofMesh.cpp">
-      <Filter>libs\openFrameworks\3d</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\3d\ofNode.cpp">
       <Filter>libs\openFrameworks\3d</Filter>
     </ClCompile>
@@ -390,9 +384,6 @@
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofPixels.cpp">
-      <Filter>libs\openFrameworks\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\graphics\ofPolyline.cpp">
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofTessellator.cpp">
@@ -461,9 +452,6 @@
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppNoWindow.cpp">
       <Filter>libs\openFrameworks\app</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\utils\ofXml.cpp">
-      <Filter>libs\openFrameworks\utils</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\utils\ofFpsCounter.cpp">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClCompile>
@@ -485,5 +473,22 @@
     <ClCompile Include="..\..\..\openFrameworks\app\ofMainLoop.cpp">
       <Filter>libs\openFrameworks\app</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofXml.cpp">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\openFrameworks\3d\ofMesh.inl">
+      <Filter>libs\openFrameworks\3d</Filter>
+    </None>
+    <None Include="..\..\..\openFrameworks\graphics\ofPolyline.inl">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </None>
+    <None Include="..\..\..\openFrameworks\gl\shaders\phong.frag">
+      <Filter>libs\openFrameworks\gl\shaders</Filter>
+    </None>
+    <None Include="..\..\..\openFrameworks\gl\shaders\phong.vert">
+      <Filter>libs\openFrameworks\gl\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

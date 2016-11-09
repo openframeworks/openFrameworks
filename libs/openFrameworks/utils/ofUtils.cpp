@@ -1,20 +1,22 @@
 #include "ofUtils.h"
 #include "ofImage.h"
 #include "ofFileUtils.h"
+#include "ofLog.h"
 
 #include <chrono>
 #include <numeric>
 #include <locale>
+#include "uriparser/Uri.h"
 
-#if !defined(TARGET_EMSCRIPTEN)
-#include "Poco/URI.h"
+#ifdef TARGET_WIN32	 // For ofLaunchBrowser.
+	#include <shellapi.h>
 #endif
 
 
 #ifdef TARGET_WIN32
     #ifndef _MSC_VER
         #include <unistd.h> // this if for MINGW / _getcwd
-	#include <sys/param.h> // for MAXPATHLEN
+		#include <sys/param.h> // for MAXPATHLEN
     #endif
 #endif
 
@@ -52,10 +54,64 @@
 	#define MAXPATHLEN 1024
 #endif
 
-static bool enableDataPath = true;
-static uint64_t startTimeSeconds;   //  better at the first frame ?? (currently, there is some delay from static init, to running.
-static uint64_t startTimeNanos;
+namespace{
+    bool enableDataPath = true;
+    uint64_t startTimeSeconds;   //  better at the first frame ?? (currently, there is some delay from static init, to running.
+    uint64_t startTimeNanos;
+#ifdef TARGET_OSX
+    clock_serv_t cs;
+#endif
 
+    //--------------------------------------------------
+    string defaultDataPath(){
+    #if defined TARGET_OSX
+        try{
+            return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/")).string();
+        }catch(...){
+            return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
+        }
+    #elif defined TARGET_ANDROID
+            return string("sdcard/");
+    #else
+            try{
+                return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).string();
+            }catch(...){
+                return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
+            }
+    #endif
+    }
+
+    //--------------------------------------------------
+    std::filesystem::path & defaultWorkingDirectory(){
+            static auto * defaultWorkingDirectory = new std::filesystem::path();
+            return * defaultWorkingDirectory;
+    }
+
+    //--------------------------------------------------
+    std::filesystem::path & dataPathRoot(){
+            static auto * dataPathRoot = new std::filesystem::path(defaultDataPath());
+            return *dataPathRoot;
+    }
+}
+
+namespace of{
+namespace priv{
+    void initutils(){
+#ifdef TARGET_OSX
+        host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cs);
+#endif
+        defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
+        ofResetElapsedTimeCounter();
+        ofSeedRandom();
+    }
+
+    void endutils(){
+#ifdef TARGET_OSX
+        mach_port_deallocate(mach_task_self(), cs);
+#endif
+    }
+}
+}
 
 //--------------------------------------
 void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds){
@@ -65,11 +121,8 @@ void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds){
 	seconds = now.tv_sec;
 	nanoseconds = now.tv_nsec;
 #elif defined(TARGET_OSX)
-	clock_serv_t cs;
-	mach_timespec_t now;
-	host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cs);
-	clock_get_time(cs, &now);
-	mach_port_deallocate(mach_task_self(), cs);
+        mach_timespec_t now;
+        clock_get_time(cs, &now);
 	seconds = now.tv_sec;
 	nanoseconds = now.tv_nsec;
 #elif defined( TARGET_WIN32 )
@@ -266,46 +319,6 @@ void ofDisableDataPath(){
 }
 
 //--------------------------------------------------
-string defaultDataPath(){
-#if defined TARGET_OSX
-    try{
-        return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/")).string();
-    }catch(...){
-        return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
-    }
-#elif defined TARGET_ANDROID
-	return string("sdcard/");
-#else
-	try{
-	    return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).string();
-	}catch(...){
-	    return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
-	}
-#endif
-}
-
-//--------------------------------------------------
-static std::filesystem::path & defaultWorkingDirectory(){
-	static auto * defaultWorkingDirectory = new std::filesystem::path();
-	return * defaultWorkingDirectory;
-}
-
-//--------------------------------------------------
-static std::filesystem::path & dataPathRoot(){
-	static auto * dataPathRoot = new std::filesystem::path(defaultDataPath());
-	return *dataPathRoot;
-}
-
-namespace of{
-namespace priv{
-    //--------------------------------------------------
-    void setWorkingDirectoryToDefault(){
-        defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
-    }
-}
-}
-
-//--------------------------------------------------
 bool ofRestoreWorkingDirectoryToDefault(){
     try{
         std::filesystem::current_path(defaultWorkingDirectory());
@@ -321,9 +334,11 @@ void ofSetDataPathRoot(const string& newRoot){
 }
 
 //--------------------------------------------------
-string ofToDataPath(const string& path, bool makeAbsolute){
+string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
 	if (!enableDataPath)
-		return path;
+        return path.string();
+
+    bool hasTrailingSlash = !path.empty() && path.generic_string().back()=='/';
 
 	// if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
@@ -335,8 +350,8 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 		}
 	}
 #endif
-	// this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
 
+	// this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
 	const auto  & dataPath = dataPathRoot();
 	std::filesystem::path inputPath(path);
 	std::filesystem::path outputPath;
@@ -344,29 +359,34 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	// if path is already absolute, just return it
 	if (inputPath.is_absolute()) {
 		try {
-			return std::filesystem::canonical(inputPath).string();
+            auto outpath = std::filesystem::canonical(inputPath);
+            if(std::filesystem::is_directory(outpath) && hasTrailingSlash){
+                return ofFilePath::addTrailingSlash(outpath.string());
+            }else{
+                return outpath.string();
+            }
 		}
 		catch (...) {
-			return inputPath.string();
+            return inputPath.string();
 		}
 	}
 
 	// here we check whether path already refers to the data folder by looking for common elements
 	// if the path begins with the full contents of dataPathRoot then the data path has already been added
 	// we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
-	auto strippedDataPath = dataPath.string();
+    auto dirDataPath = dataPath.string();
 	// also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
-	strippedDataPath = ofFilePath::removeTrailingSlash(strippedDataPath);
+    dirDataPath = ofFilePath::addTrailingSlash(dirDataPath);
 
-	auto relativeStrippedDataPath = ofFilePath::makeRelative(std::filesystem::current_path().string(),dataPath.string());
-	relativeStrippedDataPath  = ofFilePath::removeTrailingSlash(relativeStrippedDataPath);
+    auto relativeDirDataPath = ofFilePath::makeRelative(std::filesystem::current_path().string(),dataPath.string());
+    relativeDirDataPath  = ofFilePath::addTrailingSlash(relativeDirDataPath);
 
-	if (inputPath.string().find(strippedDataPath) != 0 && inputPath.string().find(relativeStrippedDataPath)!=0) {
+    if (inputPath.string().find(dirDataPath) != 0 && inputPath.string().find(relativeDirDataPath)!=0) {
 		// inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
 	    if(makeAbsolute){
-	        outputPath = dataPath / inputPath;
+            outputPath = dirDataPath / inputPath;
 	    }else{
-	        outputPath = relativeStrippedDataPath / inputPath;
+            outputPath = relativeDirDataPath / inputPath;
 	    }
 	} else {
 		// inputPath already contains data path, so no need to change
@@ -377,14 +397,19 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	if(makeAbsolute){
 	    // then we return the absolute form of the path
 	    try {
-	        return std::filesystem::canonical(std::filesystem::absolute(outputPath)).string();
+            auto outpath = std::filesystem::canonical(std::filesystem::absolute(outputPath));
+            if(std::filesystem::is_directory(outpath) && hasTrailingSlash){
+                return ofFilePath::addTrailingSlash(outpath.string());
+            }else{
+                return outpath.string();
+            }
 	    }
 	    catch (std::exception &) {
-	        return std::filesystem::absolute(outputPath).string();
+            return std::filesystem::absolute(outputPath).string();
 	    }
 	}else{
 		// or output the relative path
-		return outputPath.string();
+        return outputPath.string();
 	}
 }
 
@@ -423,10 +448,7 @@ string ofToHex(const char* value) {
 
 //----------------------------------------
 int ofToInt(const string& intString) {
-	int x = 0;
-	istringstream cur(intString);
-	cur >> x;
-	return x;
+	return ofTo<int>(intString);
 }
 
 //----------------------------------------
@@ -480,26 +502,17 @@ string ofHexToString(const string& stringHexString) {
 
 //----------------------------------------
 float ofToFloat(const string& floatString) {
-	float x = 0;
-	istringstream cur(floatString);
-	cur >> x;
-	return x;
+	return ofTo<float>(floatString);
 }
 
 //----------------------------------------
 double ofToDouble(const string& doubleString) {
-	double x = 0;
-	istringstream cur(doubleString);
-	cur >> x;
-	return x;
+	return ofTo<double>(doubleString);
 }
 
 //----------------------------------------
 int64_t ofToInt64(const string& intString) {
-	int64_t x = 0;
-	istringstream cur(intString);
-	cur >> x;
-	return x;
+	return ofTo<int64_t>(intString);
 }
 
 //----------------------------------------
@@ -519,10 +532,7 @@ bool ofToBool(const string& boolString) {
 
 //----------------------------------------
 char ofToChar(const string& charString) {
-	char x = '\0';
-	istringstream cur(charString);
-	cur >> x;
-	return x;
+	return ofTo<char>(charString);
 }
 
 //----------------------------------------
@@ -767,7 +777,7 @@ string ofTrim(const string & src, const string& locale){
 }
 
 //--------------------------------------------------
-void ofAppendUTF8(string & str, int utf8){
+void ofAppendUTF8(string & str, uint32_t utf8){
 	try{
 		utf8::append(utf8, back_inserter(str));
 	}catch(...){}
@@ -775,88 +785,82 @@ void ofAppendUTF8(string & str, int utf8){
 
 //--------------------------------------------------
 string ofVAArgsToString(const char * format, ...){
-	// variadic args to string:
-	// http://www.codeproject.com/KB/string/string_format.aspx
-	char aux_buffer[10000];
-	string retStr("");
-	if (nullptr != format){
+	va_list args;
+	va_start(args, format);
+	char buf[256];
+	size_t n = std::vsnprintf(buf, sizeof(buf), format, args);
+	va_end(args);
 
-		va_list marker;
-
-		// initialize variable arguments
-		va_start(marker, format);
-
-		// Get formatted string length adding one for nullptr
-		size_t len = vsprintf(aux_buffer, format, marker) + 1;
-
-		// Reset variable arguments
-		va_end(marker);
-
-		if (len > 0)
-		{
-			va_list args;
-
-			// initialize variable arguments
-			va_start(args, format);
-
-			// Create a char vector to hold the formatted string.
-			vector<char> buffer(len, '\0');
-			vsprintf(&buffer[0], format, args);
-			retStr = &buffer[0];
-			va_end(args);
-		}
-
+	// Static buffer large enough?
+	if (n < sizeof(buf)) {
+		return{ buf, n };
 	}
-	return retStr;
+
+	// Static buffer too small
+	std::string s(n + 1, 0);
+	va_start(args, format);
+	std::vsnprintf(const_cast<char*>(s.data()), s.size(), format, args);
+	va_end(args);
+
+	return s;
 }
 
 string ofVAArgsToString(const char * format, va_list args){
-	// variadic args to string:
-	// http://www.codeproject.com/KB/string/string_format.aspx
-	char aux_buffer[10000];
-	string retStr("");
-	if (nullptr != format){
+	char buf[256];
+	size_t n = std::vsnprintf(buf, sizeof(buf), format, args);
 
-		// Get formatted string length adding one for nullptr
-		vsprintf(aux_buffer, format, args);
-		retStr = aux_buffer;
-
+	// Static buffer large enough?
+	if (n < sizeof(buf)) {
+		return{ buf, n };
 	}
-	return retStr;
+
+	// Static buffer too small
+	std::string s(n + 1, 0);
+	std::vsnprintf(const_cast<char*>(s.data()), s.size(), format, args);
+
+	return s;
 }
 
-#ifndef TARGET_EMSCRIPTEN
 //--------------------------------------------------
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
-	Poco::URI uri;
-	try {
-		uri = Poco::URI(url);
-	} catch(const std::exception & exc) {
-		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.what();
+	UriParserStateA state;
+	UriUriA uri;
+	state.uri = &uri;
+	if(uriParseUriA(&state, url.c_str())!=URI_SUCCESS){
+		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\"";
+		uriFreeUriMembersA(&uri);
 		return;
 	}
-
 	if(uriEncodeQuery) {
-		uri.setQuery(uri.getRawQuery()); // URI encodes during set
+		uriNormalizeSyntaxA(&uri); // URI encodes during set
 	}
+	std::string scheme(uri.scheme.first, uri.scheme.afterLast);
+	int size;
+	uriToStringCharsRequiredA(&uri, &size);
+	std::vector<char> buffer(size+1, 0);
+	int written;
+	uriToStringA(buffer.data(), &uri, url.size()*2, &written);
+	std::string uriStr(buffer.data(), written-1);
+	uriFreeUriMembersA(&uri);
+
 
 	// http://support.microsoft.com/kb/224816
 	// make sure it is a properly formatted url:
 	//   some platforms, like Android, require urls to start with lower-case http/https
 	//   Poco::URI automatically converts the scheme to lower case
-	if(uri.getScheme() != "http" && uri.getScheme() != "https"){
-		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uri.toString() << "\"";
+	if(scheme != "http" && scheme != "https"){
+		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uriStr << "\"";
 		return;
 	}
 
 	#ifdef TARGET_WIN32
-		ShellExecuteA(nullptr, "open", uri.toString().c_str(),
+		ShellExecuteA(nullptr, "open", uriStr.c_str(),
                 nullptr, nullptr, SW_SHOWNORMAL);
 	#endif
 
 	#ifdef TARGET_OSX
         // could also do with LSOpenCFURLRef
-		string commandStr = "open \"" + uri.toString() + "\"";
+		string commandStr = "open \"" + uriStr + "\"";
 		int ret = system(commandStr.c_str());
         if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -864,7 +868,7 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#endif
 
 	#ifdef TARGET_LINUX
-		string commandStr = "xdg-open \"" + uri.toString() + "\"";
+		string commandStr = "xdg-open \"" + uriStr + "\"";
 		int ret = system(commandStr.c_str());
 		if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -872,14 +876,17 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#endif
 
 	#ifdef TARGET_OF_IOS
-		ofxiOSLaunchBrowser(uri.toString());
+		ofxiOSLaunchBrowser(uriStr);
 	#endif
 
 	#ifdef TARGET_ANDROID
-		ofxAndroidLaunchBrowser(uri.toString());
+		ofxAndroidLaunchBrowser(uriStr);
+	#endif
+
+	#ifdef TARGET_EMSCRIPTEN
+		ofLogError("ofUtils") << "ofLaunchBrowser() not implementeed in emscripten";
 	#endif
 }
-#endif
 
 //--------------------------------------------------
 string ofGetVersionInfo(){
@@ -1001,7 +1008,7 @@ ofTargetPlatform ofGetTargetPlatform(){
     #if (_MSC_VER)
         return OF_TARGET_WINVS;
     #else
-        return OF_TARGET_WINGCC;
+        return OF_TARGET_MINGW;
     #endif
 #elif defined(TARGET_ANDROID)
     return OF_TARGET_ANDROID;
@@ -1009,5 +1016,25 @@ ofTargetPlatform ofGetTargetPlatform(){
     return OF_TARGET_IOS;
 #elif defined(TARGET_EMSCRIPTEN)
     return OF_TARGET_EMSCRIPTEN;
+#endif
+}
+
+std::string ofGetEnv(const std::string & var){
+#ifdef TARGET_WIN32
+	const size_t BUFSIZE = 4096;
+	std::vector<char> pszOldVal(BUFSIZE, 0);
+	auto size = GetEnvironmentVariableA(var.c_str(), pszOldVal.data(), BUFSIZE);
+	if(size>0){
+		return std::string(pszOldVal.begin(), pszOldVal.begin()+size);
+	}else{
+		return "";
+	}
+#else
+	auto value = getenv(var.c_str());
+	if(value){
+		return value;
+	}else{
+		return "";
+	}
 #endif
 }

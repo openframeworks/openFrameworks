@@ -28,12 +28,12 @@ int ofxEmscriptenURLFileLoader::getAsync(const string &  url, const string &  na
 	return req->getId();
 }
 
-ofHttpResponse ofxEmscriptenURLFileLoader::saveTo(const string &  url, const string &  path){
+ofHttpResponse ofxEmscriptenURLFileLoader::saveTo(const string &  url, const std::filesystem::path &  path){
 	saveAsync(url,path);
 	return ofHttpResponse();
 }
 
-int ofxEmscriptenURLFileLoader::saveAsync(const string &  url, const string &  path){
+int ofxEmscriptenURLFileLoader::saveAsync(const string &  url, const std::filesystem::path &  path){
 	ofHttpRequest * req = new ofHttpRequest(url,url,true);
 #if __EMSCRIPTEN_major__>1 || (__EMSCRIPTEN_major__==1 && __EMSCRIPTEN_minor__>22)
 	emscripten_async_wget2(url.c_str(), path.c_str(), "GET", "", req, &onload_file_cb, &onerror_file_cb, NULL);
@@ -41,9 +41,14 @@ int ofxEmscriptenURLFileLoader::saveAsync(const string &  url, const string &  p
 	return 0;
 }
 
-ofHttpResponse handleRequest(ofHttpRequest request){
+ofHttpResponse handleRequest(const ofHttpRequest & request){
 	ofLogWarning() << "handleRequest is still not implemented on emscripten";
 	return ofHttpResponse();
+}
+
+int handleRequestAsync(const ofHttpRequest & request){
+	ofLogWarning() << "handleRequest is still not implemented on emscripten";
+	return -1;
 }
 
 void ofxEmscriptenURLFileLoader::remove(int id){

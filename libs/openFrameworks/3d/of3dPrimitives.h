@@ -30,11 +30,11 @@ public:
     const ofMesh* getMeshPtr() const;
     const ofMesh& getMesh() const;
 
-    ofVec4f* getTexCoordsPtr();
-    ofVec4f& getTexCoords();
+	glm::vec4* getTexCoordsPtr();
+	glm::vec4& getTexCoords();
 
-    const ofVec4f* getTexCoordsPtr() const;
-    const ofVec4f& getTexCoords() const;
+	const glm::vec4* getTexCoordsPtr() const;
+	const glm::vec4& getTexCoords() const;
 
     bool hasScaling() const;
     bool hasNormalsEnabled() const;
@@ -63,7 +63,7 @@ protected:
     // useful when creating a new model, since it uses normalized tex coords //
     void normalizeAndApplySavedTexCoords();
 
-    ofVec4f texCoords;
+	glm::vec4 texCoords;
     bool usingVbo;
     shared_ptr<ofMesh>  mesh;
     mutable ofMesh normalsMesh;
@@ -137,7 +137,7 @@ public:
     int getNumColumns() const;
     int getNumRows() const;
     // x = columns, y = rows //
-    ofVec2f getResolution() const;
+	glm::vec2 getResolution() const;
 
     float getWidth() const;
     float getHeight() const;
@@ -145,7 +145,7 @@ public:
 protected:
     float width;
     float height;
-    ofVec2f resolution;
+	glm::vec2 resolution;
 };
 
 
@@ -347,7 +347,7 @@ public:
     int getResolutionRadius() const;
     int getResolutionHeight() const;
     int getResolutionCap() const;
-    ofVec3f getResolution() const;
+	glm::vec3 getResolution() const;
 
     float getHeight() const;
     float getRadius() const;
@@ -358,7 +358,7 @@ protected:
     bool bCapped;
     int strides[3][2];
     int vertices[3][2];
-    ofVec3f resolution;
+	glm::vec3 resolution;
 };
 
 /// \brief The ofConePrimitive allows you to create a 3D cone. 
@@ -446,7 +446,7 @@ public:
     int getResolutionCap() const;
 
     /// \return the resolution of the cone (rather than the cap).
-    ofVec3f getResolution() const;
+	glm::vec3 getResolution() const;
 
     /// \return the radius of the cap.
     float getRadius() const;
@@ -458,7 +458,7 @@ protected:
     float radius;
     float height;
 
-    ofVec3f resolution;
+	glm::vec3 resolution;
 
     int strides[2][2];
     int vertices[2][2];
@@ -549,15 +549,15 @@ public:
     int getResolutionWidth() const;
     int getResolutionHeight() const;
     int getResolutionDepth() const;
-    ofVec3f getResolution() const;
+	glm::vec3 getResolution() const;
 
     float getWidth() const;
     float getHeight() const;
     float getDepth() const;
-    ofVec3f getSize() const;
+	glm::vec3 getSize() const;
 protected:
-    ofVec3f size;
-    ofVec3f resolution;
+	glm::vec3 size;
+	glm::vec3 resolution;
     // indices strides for faces //
     int strides[6][2];
     int vertices[6][2];

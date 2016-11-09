@@ -55,14 +55,14 @@
 
 /*
  * ---------------------------------------------------------------------
- * Static data
+ * inline data
  */
 
 /*
  * Permutation table. This is just a random jumble of all numbers 0-255,
  * repeated twice to avoid wrapping the index at 255 for each lookup.
  * This needs to be exactly the same for all instances on all platforms,
- * so it's easiest to just keep it as static explicit data.
+ * so it's easiest to just keep it as inline explicit data.
  * This also removes the need for any initialisation of this class.
  *
  * Note that making this an int[] instead of a char[] might make the
@@ -75,7 +75,8 @@
  * A vector-valued noise over 3D accesses it 96 times, and a
  * float-valued 4D noise 64 times. We want this to fit in the cache!
  */
-static unsigned char perm[512] = {151,160,137,91,90,15,
+namespace{
+unsigned char perm[512] = {151,160,137,91,90,15,
   131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
   190, 6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,
   88,237,149,56,87,174,20,125,136,171,168, 68,175,74,165,71,134,139,48,27,166,
@@ -102,6 +103,7 @@ static unsigned char perm[512] = {151,160,137,91,90,15,
   49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
   138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180 
 };
+}
 
 /*
  * ---------------------------------------------------------------------
@@ -120,39 +122,40 @@ static unsigned char perm[512] = {151,160,137,91,90,15,
  * float SLnoise = (SimplexNoise1234::noise(x,y,z) + 1.0) * 0.5;
  */
 
-static float  grad1( int hash, float x ) {
+inline float  grad1( int hash, float x ) {
     int h = hash & 15;
-    float grad = 1.0f + (h & 7);   /* Gradient value 1.0, 2.0, ..., 8.0 */
+	float grad = 1.0f + (h & 7);   /* Gradient value 1.0, 2.0, ..., 8.0 */
     if (h&8) grad = -grad;         /* Set a random sign for the gradient */
     return ( grad * x );           /* Multiply the gradient with the distance */
 }
 
-static float  grad2( int hash, float x, float y ) {
+inline float  grad2( int hash, float x, float y ) {
     int h = hash & 7;      /* Convert low 3 bits of hash code */
-    float u = h<4 ? x : y;  /* into 8 simple gradient directions, */
-    float v = h<4 ? y : x;  /* and compute the dot product with (x,y). */
+	float u = h<4 ? x : y;  /* into 8 simple gradient directions, */
+	float v = h<4 ? y : x;  /* and compute the dot product with (x,y). */
     return ((h&1)? -u : u) + ((h&2)? -2.0f*v : 2.0f*v);
 }
 
-static float  grad3( int hash, float x, float y , float z ) {
+inline float  grad3( int hash, float x, float y , float z ) {
     int h = hash & 15;     /* Convert low 4 bits of hash code into 12 simple */
-    float u = h<8 ? x : y; /* gradient directions, and compute dot product. */
-    float v = h<4 ? y : h==12||h==14 ? x : z; /* Fix repeats at h = 12 to 15 */
+	float u = h<8 ? x : y; /* gradient directions, and compute dot product. */
+	float v = h<4 ? y : h==12||h==14 ? x : z; /* Fix repeats at h = 12 to 15 */
     return ((h&1)? -u : u) + ((h&2)? -v : v);
 }
 
-static float  grad4( int hash, float x, float y, float z, float t ) {
+inline float  grad4( int hash, float x, float y, float z, float t ) {
     int h = hash & 31;      /* Convert low 5 bits of hash code into 32 simple */
-    float u = h<24 ? x : y; /* gradient directions, and compute dot product. */
-    float v = h<16 ? y : z;
-    float w = h<8 ? z : t;
+	float u = h<24 ? x : y; /* gradient directions, and compute dot product. */
+	float v = h<16 ? y : z;
+	float w = h<8 ? z : t;
     return ((h&1)? -u : u) + ((h&2)? -v : v) + ((h&4)? -w : w);
 }
 
   /* A lookup table to traverse the simplex around a given point in 4D. */
   /* Details can be found where this table is used, in the 4D noise method. */
   /* TODO: This should not be required, backport it from Bill's GLSL code! */
-  static unsigned char simplex[64][4] = {
+namespace{
+  unsigned char simplex[64][4] = {
     {0,1,2,3},{0,1,3,2},{0,0,0,0},{0,2,3,1},{0,0,0,0},{0,0,0,0},{0,0,0,0},{1,2,3,0},
     {0,2,1,3},{0,0,0,0},{0,3,1,2},{0,3,2,1},{0,0,0,0},{0,0,0,0},{0,0,0,0},{1,3,2,0},
     {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},
@@ -161,9 +164,9 @@ static float  grad4( int hash, float x, float y, float z, float t ) {
     {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},
     {2,0,1,3},{0,0,0,0},{0,0,0,0},{0,0,0,0},{3,0,1,2},{3,0,2,1},{0,0,0,0},{3,1,2,0},
     {2,1,0,3},{0,0,0,0},{0,0,0,0},{0,0,0,0},{3,1,0,2},{0,0,0,0},{3,2,0,1},{3,2,1,0}};
-
+}
 /* 1D simplex noise */
-static float _slang_library_noise1 (float x)
+inline float _slang_library_noise1 (float x)
 {
   int i0 = FASTFLOOR(x);
   int i1 = i0 + 1;
@@ -187,29 +190,29 @@ static float _slang_library_noise1 (float x)
 }
 
 /* 2D simplex noise */
-static float _slang_library_noise2 (float x, float y)
+inline float _slang_library_noise2 (float x, float y)
 {
 #define F2 0.366025403f /* F2 = 0.5*(sqrt(3.0)-1.0) */
 #define G2 0.211324865f /* G2 = (3.0-Math.sqrt(3.0))/6.0 */
 
-    float n0, n1, n2; /* Noise contributions from the three corners */
+	float n0, n1, n2; /* Noise contributions from the three corners */
 
     /* Skew the input space to determine which simplex cell we're in */
-    float s = (x+y)*F2; /* Hairy factor for 2D */
-    float xs = x + s;
-    float ys = y + s;
+	float s = (x+y)*F2; /* Hairy factor for 2D */
+	float xs = x + s;
+	float ys = y + s;
     int i = FASTFLOOR(xs);
     int j = FASTFLOOR(ys);
 
-    float t = (float)(i+j)*G2;
-    float X0 = i-t; /* Unskew the cell origin back to (x,y) space */
-    float Y0 = j-t;
-    float x0 = x-X0; /* The x,y distances from the cell origin */
-    float y0 = y-Y0;
+	float t = (float)(i+j)*G2;
+	float X0 = i-t; /* Unskew the cell origin back to (x,y) space */
+	float Y0 = j-t;
+	float x0 = x-X0; /* The x,y distances from the cell origin */
+	float y0 = y-Y0;
 
-    float x1, y1, x2, y2;
+	float x1, y1, x2, y2;
     int ii, jj;
-    float t0, t1, t2;
+	float t0, t1, t2;
 
     /* For the 2D case, the simplex shape is an equilateral triangle. */
     /* Determine which simplex we are in. */
@@ -258,34 +261,34 @@ static float _slang_library_noise2 (float x, float y)
 }
 
 /* 3D simplex noise */
-static float _slang_library_noise3 (float x, float y, float z)
+inline float _slang_library_noise3 (float x, float y, float z)
 {
 /* Simple skewing factors for the 3D case */
 #define F3 0.333333333f
 #define G3 0.166666667f
 
-    float n0, n1, n2, n3; /* Noise contributions from the four corners */
+	float n0, n1, n2, n3; /* Noise contributions from the four corners */
 
     /* Skew the input space to determine which simplex cell we're in */
-    float s = (x+y+z)*F3; /* Very nice and simple skew factor for 3D */
-    float xs = x+s;
-    float ys = y+s;
-    float zs = z+s;
+	float s = (x+y+z)*F3; /* Very nice and simple skew factor for 3D */
+	float xs = x+s;
+	float ys = y+s;
+	float zs = z+s;
     int i = FASTFLOOR(xs);
     int j = FASTFLOOR(ys);
     int k = FASTFLOOR(zs);
 
-    float t = (float)(i+j+k)*G3; 
-    float X0 = i-t; /* Unskew the cell origin back to (x,y,z) space */
-    float Y0 = j-t;
-    float Z0 = k-t;
-    float x0 = x-X0; /* The x,y,z distances from the cell origin */
-    float y0 = y-Y0;
-    float z0 = z-Z0;
+	float t = (float)(i+j+k)*G3;
+	float X0 = i-t; /* Unskew the cell origin back to (x,y,z) space */
+	float Y0 = j-t;
+	float Z0 = k-t;
+	float x0 = x-X0; /* The x,y,z distances from the cell origin */
+	float y0 = y-Y0;
+	float z0 = z-Z0;
 
-    float x1, y1, z1, x2, y2, z2, x3, y3, z3;
+	float x1, y1, z1, x2, y2, z2, x3, y3, z3;
     int ii, jj, kk;
-    float t0, t1, t2, t3;
+	float t0, t1, t2, t3;
 
     /* For the 3D case, the simplex shape is a slightly irregular tetrahedron. */
     /* Determine which simplex we are in. */
@@ -360,35 +363,35 @@ static float _slang_library_noise3 (float x, float y, float z)
 }
 
 /* 4D simplex noise */
-static float _slang_library_noise4 (float x, float y, float z, float w)
+inline float _slang_library_noise4 (float x, float y, float z, float w)
 {
   /* The skewing and unskewing factors are hairy again for the 4D case */
 #define F4 0.309016994f /* F4 = (Math.sqrt(5.0)-1.0)/4.0 */
 #define G4 0.138196601f /* G4 = (5.0-Math.sqrt(5.0))/20.0 */
 
-    float n0, n1, n2, n3, n4; /* Noise contributions from the five corners */
+	float n0, n1, n2, n3, n4; /* Noise contributions from the five corners */
 
     /* Skew the (x,y,z,w) space to determine which cell of 24 simplices we're in */
-    float s = (x + y + z + w) * F4; /* Factor for 4D skewing */
-    float xs = x + s;
-    float ys = y + s;
-    float zs = z + s;
-    float ws = w + s;
+	float s = (x + y + z + w) * F4; /* Factor for 4D skewing */
+	float xs = x + s;
+	float ys = y + s;
+	float zs = z + s;
+	float ws = w + s;
     int i = FASTFLOOR(xs);
     int j = FASTFLOOR(ys);
     int k = FASTFLOOR(zs);
     int l = FASTFLOOR(ws);
 
-    float t = (i + j + k + l) * G4; /* Factor for 4D unskewing */
-    float X0 = i - t; /* Unskew the cell origin back to (x,y,z,w) space */
-    float Y0 = j - t;
-    float Z0 = k - t;
-    float W0 = l - t;
+	float t = (i + j + k + l) * G4; /* Factor for 4D unskewing */
+	float X0 = i - t; /* Unskew the cell origin back to (x,y,z,w) space */
+	float Y0 = j - t;
+	float Z0 = k - t;
+	float W0 = l - t;
 
-    float x0 = x - X0;  /* The x,y,z,w distances from the cell origin */
-    float y0 = y - Y0;
-    float z0 = z - Z0;
-    float w0 = w - W0;
+	float x0 = x - X0;  /* The x,y,z,w distances from the cell origin */
+	float y0 = y - Y0;
+	float z0 = z - Z0;
+	float w0 = w - W0;
 
     /* For the 4D case, the simplex is a 4D shape I won't even try to describe. */
     /* To find out which of the 24 possible simplices we're in, we need to */
@@ -410,9 +413,9 @@ static float _slang_library_noise4 (float x, float y, float z, float w)
     int i2, j2, k2, l2; /* The integer offsets for the third simplex corner */
     int i3, j3, k3, l3; /* The integer offsets for the fourth simplex corner */
 
-    float x1, y1, z1, w1, x2, y2, z2, w2, x3, y3, z3, w3, x4, y4, z4, w4;
+	float x1, y1, z1, w1, x2, y2, z2, w2, x3, y3, z3, w3, x4, y4, z4, w4;
     int ii, jj, kk, ll;
-    float t0, t1, t2, t3, t4;
+	float t0, t1, t2, t3, t4;
 
     /* simplex[c] is a 4-vector with the numbers 0, 1, 2 and 3 in some order. */
     /* Many values of c will never occur, since e.g. x>y>z>w makes x<z, y<w and x<w */

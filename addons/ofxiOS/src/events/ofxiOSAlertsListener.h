@@ -29,8 +29,10 @@
  * ***********************************************************************/ 
 
 #pragma once
-#include "ofMain.h"
 
+#include <string>
+
+using namespace std;
 
 /****** protocol, delegate, interface, whatever you want to call it ******/
 class ofxiOSAlertsListener {
@@ -41,7 +43,7 @@ public:
 	virtual void gotFocus(){};
 	virtual void gotMemoryWarning(){};
     virtual void deviceOrientationChanged(int newOrientation){};
-	virtual void launchedWithURL(string url){};
+	virtual void launchedWithURL(std::string url){};
 };
 
 #define ofxiPhoneAlertsListener ofxiOSAlertsListener

@@ -1,0 +1,303 @@
+{
+    "version": 1,
+    "kind": "project",
+    "id": "R.OF Application",
+    "category": "I.openFrameworks",
+    "trDescription": "Creates an empty openFrameworks application using Qbs to build.",
+    "trDisplayName": "openFrameworks Application",
+    "trDisplayCategory": "openFrameworks",
+    "icon": "of.png",
+    "enabled": "%{JS: [ %{Plugins} ].indexOf('QbsProjectManager') >= 0 }",
+
+    "options":
+    [
+        { "key": "ProjectFile", "value": "%{QbsFile}" },
+        { "key": "QbsFile", "value": "%{JS: Util.fileName('%{ProjectDirectory}/%{ProjectName}', 'qbs')}" },
+        { "key": "IsTopLevelProject", "value": "%{JS: !'%{Exists:ProjectExplorer.Profile.Ids}'}" },
+        { "key": "InitialOFPath", "value": "%{JS: Util.absoluteFilePath('%{ProjectDirectory}/../../..')}" },
+        { "key": "CorrectInitialOFPath", "value": "%{JS: Util.isDirectory('%{InitialOFPath}') && Util.isDirectory('%{InitialOFPath}/libs/openFrameworks') && Util.isDirectory('%{InitialOFPath}/addons') && Util.isDirectory('%{InitialOFPath}/scripts')}" },
+        { "key": "CorrectOFPath", "value": "%{JS: Util.isDirectory('%{OFPath}') && Util.isDirectory('%{OFPath}/libs/openFrameworks') && Util.isDirectory('%{OFPath}/addons') && Util.isDirectory('%{OFPath}/scripts')}" },
+        { "key": "UtilsInspect", "value": "%{JS: Object.getOwnPropertyNames(Util).toString()}" }
+    ],
+
+    "pages":
+    [
+        {
+            "trDisplayName": "Project Location",
+            "trShortTitle": "Location",
+            "typeId": "Project"
+        },
+        {
+            "trDisplayName": "openFrameworks config",
+            "trShortTitle": "OF config",
+            "typeId": "Fields",
+            "data" :
+            [
+                {
+                    "name": "ErrorOFPath",
+                    "type": "Label",
+                    "span": true,
+                    "visible": "%{JS: !%{CorrectInitialOFPath} && !%{CorrectOFPath}}",
+                    "data":
+                    {
+                        "wordWrap": true,
+                        "trText": "Couldn't find openFrameworks, please check that the project path in the previous page is 2 levels below the OF root.\n\nEg: /home/myname/Code/openFrameworks/apps/myapps\n\nOr select a correct OF path in the following field"
+                    }
+                },
+                {
+                    "name": "NoErrorOFPath",
+                    "type": "Label",
+                    "span": true,
+                    "visible": "%{JS: !%{CorrectInitialOFPath} && %{CorrectOFPath}}",
+                    "data":
+                    {
+                        "wordWrap": true,
+                        "trText": "Correct openFrameworks install found."
+                    }
+                },
+                {
+                    "name": "Sp0",
+                    "type": "Spacer",
+                    "visible": "%{JS: !%{CorrectInitialOFPath}}",
+                    "data":
+                    {
+                        "factor": 1
+                    }
+                },
+                {
+                    "name": "OFPath",
+                    "type": "PathChooser",
+                    "trDisplayName": "OF path:",
+                    "mandatory": "%{JS: !%{CorrectInitialOFPath}}",
+                    "visible": "%{JS: !%{CorrectInitialOFPath}}",
+                    "isComplete": "%{JS: %{CorrectOFPath}}",
+                    "data":
+                    {
+                        "kind": "existingDirectory",
+                        "basePath": "%{InitialOFPath}",
+                        "path": "%{InitialOFPath}"
+                    }
+                },
+                {
+                    "name": "ErrorOFPath",
+                    "type": "Label",
+                    "span": true,
+                    "visible": "%{JS: %{CorrectInitialOFPath}}",
+                    "data":
+                    {
+                        "wordWrap": true,
+                        "trText": "Correct openFrameworks install detected in:"
+                    }
+                },
+                {
+                    "name": "OFPathLabel",
+                    "type": "LineEdit",
+                    "span": "true",
+                    "visible": "%{JS: %{CorrectInitialOFPath}}",
+                    "enabled": false,
+                    "data":
+                    {
+                        "trText": "%{InitialOFPath}",
+                        "trDisabledText": "%{InitialOFPath}"
+                    }
+                }
+            ]
+        },
+        {
+            "trDisplayName": "Addons",
+            "trShortTitle": "Addons",
+            "typeId": "Fields",
+            "data" :
+            [
+                {
+                    "name": "AddonsLabel",
+                    "type": "Label",
+                    "span": true,
+                    "visible": "true",
+                    "data":
+                    {
+                        "wordWrap": true,
+                        "trText": "Select the addons to include in the project Only official addons supported by now. You can easily add other addons later in the project file"
+                    }
+                },
+                {
+                    "name": "Sp2",
+                    "type": "Spacer",
+                    "data":
+                    {
+                        "factor": 1
+                    }
+                },
+                {
+                    "name": "ofx3DModelLoader",
+                    "trDisplayName": "ofx3DModelLoader",
+                    "type": "CheckBox",
+                    "data": { 
+                        "checkedValue": "1",
+                        "uncheckedValue": "0",
+                        "checked": "false" 
+                    }
+                },                
+			    {
+                    "name": "ofxAssimpModelLoader",
+                    "trDisplayName": "ofxAssimpModelLoader",
+                    "type": "CheckBox",
+                    "data": { 
+                        "checkedValue": "1",
+                        "uncheckedValue": "0",
+                        "checked": "false" 
+                    }
+                },
+			    {
+                    "name": "ofxGui",
+                    "trDisplayName": "ofxGui",
+                    "type": "CheckBox",
+                    "data": { 
+                        "checkedValue": "1",
+                        "uncheckedValue": "0",
+                        "checked": "false" 
+                    }
+                },
+			    {
+                    "name": "ofxKinect",
+                    "trDisplayName": "ofxKinect",
+                    "type": "CheckBox",
+                    "data": { 
+                        "checkedValue": "1",
+                        "uncheckedValue": "0",
+                        "checked": "false" 
+                    }
+                },
+			    {
+                    "name": "ofxNetwork",
+                    "trDisplayName": "ofxNetwork",
+                    "type": "CheckBox",
+                    "data": { 
+                        "checkedValue": "1",
+                        "uncheckedValue": "0",
+                        "checked": "false" 
+                    }
+                },
+			    {
+                    "name": "ofxOpenCv",
+                    "trDisplayName": "ofxOpenCv",
+                    "type": "CheckBox",
+                    "data": { 
+                        "checkedValue": "1",
+                        "uncheckedValue": "0",
+                        "checked": "false" 
+                    }
+                },
+			    {
+                    "name": "ofxOsc",
+                    "trDisplayName": "ofxOsc",
+                    "type": "CheckBox",
+                    "data": { 
+                        "checkedValue": "1",
+                        "uncheckedValue": "0",
+                        "checked": "false" 
+                    }
+                },
+			    {
+                    "name": "ofxSvg",
+                    "trDisplayName": "ofxSvg",
+                    "type": "CheckBox",
+                    "data": { 
+                        "checkedValue": "1",
+                        "uncheckedValue": "0",
+                        "checked": "false" 
+                    }
+                },
+			    {
+                    "name": "ofxThreadedImageLoader",
+                    "trDisplayName": "ofxThreadedImageLoader",
+                    "type": "CheckBox",
+                    "data": { 
+                        "checkedValue": "1",
+                        "uncheckedValue": "0",
+                        "checked": "false" 
+                    }
+                },
+			    {
+                    "name": "ofxTween",
+                    "trDisplayName": "ofxTween",
+                    "type": "CheckBox",
+                    "data": { 
+                        "checkedValue": "1",
+                        "uncheckedValue": "0",
+                        "checked": "false" 
+                    }
+                },
+			    {
+                    "name": "ofxVectorGraphics",
+                    "trDisplayName": "ofxVectorGraphics",
+                    "type": "CheckBox",
+                    "data": { 
+                        "checkedValue": "1",
+                        "uncheckedValue": "0",
+                        "checked": "false" 
+                    }
+                },
+			    {
+                    "name": "ofxXmlSettings",
+                    "trDisplayName": "ofxXmlSettings",
+                    "type": "CheckBox",
+                    "data": { 
+                        "checkedValue": "1",
+                        "uncheckedValue": "0",
+                        "checked": "false" 
+                    }
+                }
+            ]
+        },
+        {
+            "trDisplayName": "Project Management",
+            "trShortTitle": "Summary",
+            "typeId": "Summary"
+        }
+    ],
+    "generators":
+    [
+        {
+            "typeId": "File",
+            "data":
+            [
+                {
+                    "source": "qtcreator.qbs",
+                    "target": "%{QbsFile}",
+                    "openAsProject": true
+                },
+                {
+                    "source": "src/main.cpp",
+                    "target": "src/main.cpp",
+                    "openInEditor": false
+                },
+                {
+                    "source": "src/ofApp.cpp",
+                    "target": "src/ofApp.cpp",
+                    "openInEditor": true
+                },
+                {
+                    "source": "src/ofApp.h",
+                    "target": "src/ofApp.h",
+                    "openInEditor": true
+                },
+                {
+                    "source": "bin/data/.gitkeep",
+                    "target": "bin/data/.gitkeep",
+                    "openInEditor": false
+                },
+                {
+                    "source": "Makefile",
+                    "target": "Makefile",
+                    "openInEditor": false
+                },
+                {
+                    "source": "config.make",
+                    "target": "config.make",
+                    "openInEditor": false
+                }
+            ]
+        }
+    ]
+}

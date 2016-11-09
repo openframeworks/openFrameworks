@@ -126,10 +126,6 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
-	ofDrawBitmapString("test", 10, 10);
-
-
 	//--
 	// Highlight background of selected camera
 

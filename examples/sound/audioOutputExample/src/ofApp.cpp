@@ -4,12 +4,6 @@
 void ofApp::setup(){
 
 	ofBackground(34, 34, 34);
-
-	// 2 output channels,
-	// 0 input channels
-	// 22050 samples per second
-	// 512 samples per buffer
-	// 4 num buffers (latency)
 	
 	int bufferSize		= 512;
 	sampleRate 			= 44100;
@@ -23,16 +17,49 @@ void ofApp::setup(){
 	rAudio.assign(bufferSize, 0.0);
 	
 	soundStream.printDeviceList();
-	
-	//if you want to set the device id to be different than the default
-	//soundStream.setDeviceID(1); 	//note some devices are input only and some are output only 
 
-	soundStream.setup(this, 2, 0, sampleRate, bufferSize, 4);
+	ofSoundStreamSettings settings;
+
+	// if you want to set the device id to be different than the default:
+	//
+	//	auto devices = soundStream.getDeviceList();
+	//	settings.setOutDevice(devices[3]);
+
+	// you can also get devices for an specific api:
+	//
+	//	auto devices = soundStream.getDeviceList(ofSoundDevice::Api::PULSE);
+	//	settings.setOutDevice(devices[0]);
+
+	// or get the default device for an specific api:
+	//
+	// settings.api = ofSoundDevice::Api::PULSE;
+
+	// or by name:
+	//
+	//	auto devices = soundStream.getMatchingDevices("default");
+	//	if(!devices.empty()){
+	//		settings.setOutDevice(devices[0]);
+	//	}
+
+#ifdef TARGET_LINUX
+	// Latest linux versions default to the HDMI output
+	// this usually fixes that. Also check the list of available
+	// devices if sound doesn't work
+	auto devices = soundStream.getMatchingDevices("default");
+	if(!devices.empty()){
+		settings.setOutDevice(devices[0]);
+	}
+#endif
+
+	settings.setOutListener(this);
+	settings.sampleRate = sampleRate;
+	settings.numOutputChannels = 2;
+	settings.numInputChannels = 0;
+	settings.bufferSize = bufferSize;
+	soundStream.setup(settings);
 
 	// on OSX: if you want to use ofSoundPlayer together with ofSoundStream you need to synchronize buffersizes.
 	// use ofFmodSetBuffersize(bufferSize) to set the buffersize in fmodx prior to loading a file.
-	
-	ofSetFrameRate(60);
 }
 
 
@@ -179,7 +206,7 @@ void ofApp::windowResized(int w, int h){
 }
 
 //--------------------------------------------------------------
-void ofApp::audioOut(float * output, int bufferSize, int nChannels){
+void ofApp::audioOut(ofSoundBuffer & buffer){
 	//pan = 0.5f;
 	float leftScale = 1 - pan;
 	float rightScale = pan;
@@ -192,17 +219,17 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels){
 
 	if ( bNoise == true){
 		// ---------------------- noise --------------
-		for (int i = 0; i < bufferSize; i++){
-			lAudio[i] = output[i*nChannels    ] = ofRandom(0, 1) * volume * leftScale;
-			rAudio[i] = output[i*nChannels + 1] = ofRandom(0, 1) * volume * rightScale;
+		for (int i = 0; i < buffer.getNumFrames(); i++){
+			lAudio[i] = buffer[i*buffer.getNumChannels()    ] = ofRandom(0, 1) * volume * leftScale;
+			rAudio[i] = buffer[i*buffer.getNumChannels() + 1] = ofRandom(0, 1) * volume * rightScale;
 		}
 	} else {
 		phaseAdder = 0.95f * phaseAdder + 0.05f * phaseAdderTarget;
-		for (int i = 0; i < bufferSize; i++){
+		for (int i = 0; i < buffer.getNumFrames(); i++){
 			phase += phaseAdder;
 			float sample = sin(phase);
-			lAudio[i] = output[i*nChannels    ] = sample * volume * leftScale;
-			rAudio[i] = output[i*nChannels + 1] = sample * volume * rightScale;
+			lAudio[i] = buffer[i*buffer.getNumChannels()    ] = sample * volume * leftScale;
+			rAudio[i] = buffer[i*buffer.getNumChannels() + 1] = sample * volume * rightScale;
 		}
 	}
 

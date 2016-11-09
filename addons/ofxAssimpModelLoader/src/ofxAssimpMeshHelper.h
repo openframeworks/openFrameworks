@@ -11,7 +11,7 @@
 #include <assimp/postprocess.h>
 #include "ofxAssimpTexture.h"
 
-class aiMesh;
+struct aiMesh;
 
 class ofxAssimpMeshHelper {
 

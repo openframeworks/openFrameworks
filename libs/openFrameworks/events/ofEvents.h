@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofPoint.h"
 #include "ofEventUtils.h"
 #include "ofTimer.h"
 #include "ofFpsCounter.h"
@@ -21,7 +20,7 @@ int	ofGetPreviousMouseY();
 class ofDragInfo{
 	public:
 		vector <string> files;
-		ofPoint position;
+		glm::vec2 position;
 };
 
 
@@ -71,10 +70,10 @@ public:
 	/// \brief The raw scan code returned by the keyboard, OS and hardware specific. 
 	int scancode;
 	/// \brief The Unicode code point you'd expect if this key combo (including modifier keys) was pressed in a text editor, or -1 for non-printable characters. 
-	unsigned int codepoint;
+	uint32_t codepoint;
 };
 
-class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
+class ofMouseEventArgs : public ofEventArgs, public glm::vec2 {
   public:
 	enum Type{
 		Pressed,
@@ -88,23 +87,34 @@ class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 
 	ofMouseEventArgs()
 	:type(Pressed)
-	,button(OF_MOUSE_BUTTON_LEFT){}
+	,button(OF_MOUSE_BUTTON_LEFT)
+	,scrollX(0.f)
+	,scrollY(0.f)
+	{}
 
 	ofMouseEventArgs(Type type, float x, float y, int button)
-	:ofVec2f(x,y)
+	:glm::vec2(x,y)
 	,type(type)
-	,button(button){}
+	,button(button)
+	,scrollX(0.f)
+	,scrollY(0.f)
+	{}
 
 	ofMouseEventArgs(Type type, float x, float y)
-	:ofVec2f(x,y)
+	:glm::vec2(x,y)
 	,type(type)
-	,button(0){}
+	,button(0)
+	,scrollX(0.f)
+	,scrollY(0.f)
+	{}
 
 	Type type;
 	int button;
+	float scrollX;
+	float scrollY;
 };
 
-class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
+class ofTouchEventArgs : public ofEventArgs, public glm::vec2 {
   public:
 	enum Type{
 		down,
@@ -134,7 +144,7 @@ class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
 	}
 
 	ofTouchEventArgs(Type type, float x, float y, int id)
-	:ofVec2f(x,y)
+	:glm::vec2(x,y)
 	,type(type)
 	,id(id)
 	,time(0)
@@ -232,27 +242,34 @@ class ofCoreEvents {
 	int getPreviousMouseY() const;
 
 	//  event notification only for internal OF use
-	void notifySetup();
-	void notifyUpdate();
-	void notifyDraw();
+	bool notifySetup();
+	bool notifyUpdate();
+	bool notifyDraw();
 
-	void notifyKeyPressed(int key, int keycode=-1, int scancode=-1, int codepoint=-1);
-	void notifyKeyReleased(int key, int keycode=-1, int scancode=-1, int codepoint=-1);
-	void notifyKeyEvent(const ofKeyEventArgs & keyEvent);
+	bool notifyKeyPressed(int key, int keycode=-1, int scancode=-1, uint32_t codepoint=0);
+	bool notifyKeyReleased(int key, int keycode=-1, int scancode=-1, uint32_t codepoint=0);
+	bool notifyKeyEvent(const ofKeyEventArgs & keyEvent);
 
-	void notifyMousePressed(int x, int y, int button);
-	void notifyMouseReleased(int x, int y, int button);
-	void notifyMouseDragged(int x, int y, int button);
-	void notifyMouseMoved(int x, int y);
-	void notifyMouseScrolled(float x, float y);
-	void notifyMouseEntered(int x, int y);
-	void notifyMouseExited(int x, int y);
-	void notifyMouseEvent(const ofMouseEventArgs & mouseEvent);
+	bool notifyMousePressed(int x, int y, int button);
+	bool notifyMouseReleased(int x, int y, int button);
+	bool notifyMouseDragged(int x, int y, int button);
+	bool notifyMouseMoved(int x, int y);
+	bool notifyMouseScrolled(int x, int y, float scrollX, float scrollY);
+	bool notifyMouseEntered(int x, int y);
+	bool notifyMouseExited(int x, int y);
+	bool notifyMouseEvent(const ofMouseEventArgs & mouseEvent);
+	
+	void notifyTouchDown(int x, int y, int touchID);
+	void notifyTouchUp(int x, int y, int touchID);
+	void notifyTouchMoved(int x, int y, int touchID);
+	void notifyTouchCancelled(int x, int y, int touchID);
+	void notifyTouchDoubleTap(int x, int y, int touchID);
+	void notifyTouchEvent(const ofTouchEventArgs & touchEvent);
 
-	void notifyExit();
-	void notifyWindowResized(int width, int height);
+	bool notifyExit();
+	bool notifyWindowResized(int width, int height);
 
-	void notifyDragEvent(ofDragInfo info);
+	bool notifyDragEvent(ofDragInfo info);
 
 private:
 	float targetRate;
@@ -267,8 +284,8 @@ private:
 	set<int> pressedKeys;
 };
 
-void ofSendMessage(ofMessage msg);
-void ofSendMessage(string messageString);
+bool ofSendMessage(ofMessage msg);
+bool ofSendMessage(string messageString);
 
 ofCoreEvents & ofEvents();
 

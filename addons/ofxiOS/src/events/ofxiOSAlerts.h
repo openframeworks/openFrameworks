@@ -30,8 +30,10 @@
 
 #pragma once
 
-#import "ofxiOSAlertsListener.h"
-#import <list>
+#include <list>
+#include "ofxiOSAlertsListener.h"
+
+using namespace std;
 
 class ofxiOSAlertsHandler : public ofxiOSAlertsListener {
 public:

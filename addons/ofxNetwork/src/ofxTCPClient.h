@@ -2,6 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofxTCPManager.h"
+#include "ofxTCPSettings.h"
 #include "ofFileUtils.h"
 #include "ofTypes.h"
 
@@ -22,6 +23,7 @@ class ofxTCPClient{
 
 		void setVerbose(bool _verbose);
 		bool setup(string ip, int _port, bool blocking = false);
+		bool setup(const ofxTCPSettings & settings);
 		void setMessageDelimiter(string delim);
 		bool close();
 
@@ -80,10 +82,6 @@ class ofxTCPClient{
 		int getPort();
 		string getIP();
 
-		//don't use this one
-		//for server to use internally only!
-		//--------------------------
-		bool setup(int _index, bool blocking);
 
 
 
@@ -92,6 +90,11 @@ private:
 		ofxTCPClient(const ofxTCPManager & mom){};
 		ofxTCPClient & operator=(const ofxTCPClient & mom){return *this;}
 
+        //don't use this one
+        //for server to use internally only!
+        //--------------------------
+		bool setupConnectionIdx(int _index, bool blocking);
+		bool isClosingCondition(int messageSize, int errorCode);
 		friend class ofxTCPServer;
 
 		ofxTCPManager	TCPClient;

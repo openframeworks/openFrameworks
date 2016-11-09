@@ -16,9 +16,30 @@
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
+
 #include "ofURLFileLoader.h"
+
 #include "ofMainLoop.h"
 
+#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI)
+	#include "ofAppGLFWWindow.h"
+	//special case so we preserve supplied settngs
+	//TODO: remove me when we remove the ofAppGLFWWindow setters.
+	//--------------------------------------
+	void ofSetupOpenGL(shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode){
+		ofInit();
+		auto settings = windowPtr->getSettings();
+		settings.width = w;
+		settings.height = h;
+		settings.windowMode = screenMode;
+		ofGetMainLoop()->addWindow(windowPtr);
+		windowPtr->setup(settings);
+	}
+#endif
+
+#ifdef TARGET_LINUX
+#include "ofGstUtils.h"
+#endif
 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
 #if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
@@ -41,6 +62,16 @@ namespace{
         static bool * initialized = new bool(false);
         return *initialized;
     }
+
+	bool & exiting(){
+		static bool * exiting = new bool(false);
+		return *exiting;
+	}
+
+	ofCoreEvents & noopEvents(){
+		static auto * noopEvents = new ofCoreEvents();
+		return *noopEvents;
+	}
 
     #if defined(TARGET_LINUX) || defined(TARGET_OSX)
         #include <signal.h>
@@ -75,6 +106,7 @@ void ofURLFileLoaderShutdown();
 void ofInit(){
 	if(initialized()) return;
 	initialized() = true;
+	exiting() = false;
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
     // manage own exit
@@ -94,6 +126,8 @@ void ofInit(){
 	signal(SIGABRT, &ofSignalHandler);  // abort signal
 #endif
 
+        of::priv::initutils();
+
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeBeginPeriod(1);		// ! experimental, sets high res time
 								// you need to call timeEndPeriod.
@@ -104,10 +138,6 @@ void ofInit(){
 								// up on your system.
 								// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
 	#endif
-
-	ofSeedRandom();
-	ofResetElapsedTimeCounter();
-	of::priv::setWorkingDirectoryToDefault();
 
 #ifdef TARGET_LINUX
 	if(std::locale().name() == "C"){
@@ -137,14 +167,8 @@ void ofSetMainLoop(shared_ptr<ofMainLoop> newMainLoop) {
 
 //--------------------------------------
 int ofRunApp(ofBaseApp * OFSA){
-	return ofRunApp(shared_ptr<ofBaseApp>(OFSA));
-}
-
-//--------------------------------------
-int ofRunApp(shared_ptr<ofBaseApp> app){
-	mainLoop()->run(app);
+	mainLoop()->run(std::move(shared_ptr<ofBaseApp>(OFSA)));
 	auto ret = ofRunMainLoop();
-	app.reset();
 #if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
 	ofExitCallback();
 #endif
@@ -152,8 +176,18 @@ int ofRunApp(shared_ptr<ofBaseApp> app){
 }
 
 //--------------------------------------
-void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app){
-	mainLoop()->run(window,app);
+int ofRunApp(shared_ptr<ofBaseApp> && app){
+	mainLoop()->run(std::move(app));
+	auto ret = ofRunMainLoop();
+#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
+	ofExitCallback();
+#endif
+	return ret;
+}
+
+//--------------------------------------
+void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> && app){
+	mainLoop()->run(window, std::move(app));
 }
 
 int ofRunMainLoop(){
@@ -199,9 +233,7 @@ void ofExitCallback(){
 
 
 	// finish every library and subsystem
-	#ifndef TARGET_EMSCRIPTEN
-		ofURLFileLoaderShutdown();
-	#endif
+	ofURLFileLoaderShutdown();
 
 	#ifndef TARGET_NO_SOUND
 		//------------------------
@@ -226,20 +258,38 @@ void ofExitCallback(){
 	#endif
 
 	//------------------------
+	// try to close gstreamer
+	#ifdef TARGET_LINUX
+		ofGstUtils::quitGstMainLoop();
+	#endif
+
+	//------------------------
 	// try to close font libraries
 	ofTrueTypeShutdown();
 
 	// static deinitialization happens after this finishes
 	// every object should have ended by now and won't receive any
 	// events
+	of::priv::endutils();
 
 	initialized() = false;
+	exiting() = true;
 }
 
 //--------------------------------------
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
-	return mainLoop()->events();
+	auto window = mainLoop()->getCurrentWindow();
+	if(window){
+		return window->events();
+	}else{
+		if(!exiting()){
+			ofLogError("ofEvents") << "Trying to call ofEvents() before a window has been setup";
+			ofLogError("ofEvents") << "We'll return a void events instance to avoid crashes but somethings might not work";
+			ofLogError("ofEvents") << "Set a breakpoint in " << __FILE__ << " line " << __LINE__ << " to check where is the wrong call";
+		}
+		return noopEvents();
+	}
 }
 
 //--------------------------------------
@@ -263,8 +313,8 @@ ofAppBaseWindow * ofGetWindowPtr(){
 }
 
 //--------------------------------------
-void ofSetAppPtr(shared_ptr<ofBaseApp> appPtr) {
-	//OFSAptr = appPtr;
+std::shared_ptr<ofAppBaseWindow> ofGetCurrentWindow() {
+	return mainLoop()->getCurrentWindow();
 }
 
 //--------------------------------------
@@ -350,8 +400,8 @@ bool ofDoesHWOrientation(){
 }
 
 //--------------------------------------------------
-ofPoint	ofGetWindowSize() {
-	//this can't be return ofPoint(ofGetWidth(), ofGetHeight()) as width and height change based on orientation.
+glm::vec2 ofGetWindowSize() {
+	//this can't return glm::vec2(ofGetWidth(), ofGetHeight()) as width and height change based on orientation.
 	return mainLoop()->getCurrentWindow()->getWindowSize();
 }
 

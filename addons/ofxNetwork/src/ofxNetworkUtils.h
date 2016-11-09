@@ -19,9 +19,9 @@
 #endif
 
 
-#define ofxNetworkCheckError() ofxNetworkCheckErrno(__FILE__,ofToString(__LINE__))
+#define ofxNetworkCheckError() ofxNetworkCheckErrno(__FILE__, __LINE__)
 
-inline int ofxNetworkCheckErrno(const string & file, const string & line){
+inline int ofxNetworkCheckErrno(const char* file, int line) {
 	#ifdef TARGET_WIN32
 		int	err	= WSAGetLastError();
 	#else
@@ -36,9 +36,9 @@ inline int ofxNetworkCheckErrno(const string & file, const string & line){
 	case OFXNETWORK_ERROR(CONNRESET):
 		ofLogError("ofxNetwork") << file << ": " << line << " ECONNRESET: connection closed by peer";
 		break;
-	case OFXNETWORK_ERROR(INTR):
-		ofLogError("ofxNetwork") << file << ": " << line << " EINTR: receive interrupted by a signal, before any data available";
-		break;
+	case OFXNETWORK_ERROR(CONNABORTED):
+		ofLogError("ofxNetwork") << file << ": " << line << " ECONNABORTED: connection aborted by peer";
+        break;
 	case OFXNETWORK_ERROR(NOTCONN):
 		ofLogError("ofxNetwork") << file << ": " << line << " ENOTCONN: trying to receive before establishing a connection";
 		break;
@@ -80,12 +80,6 @@ inline int ofxNetworkCheckErrno(const string & file, const string & line){
 	case OFXNETWORK_ERROR(ADDRINUSE):
 		ofLogError("ofxNetwork") << file << ": " << line << " EADDRINUSE: the socket address of the given addr is already in use";
 		break;
-	case OFXNETWORK_ERROR(INPROGRESS):
-		ofLogWarning("ofxNetwork") << file << ": " << line << " EINPROGRESS: the socket is non-blocking and the connection could not be established immediately";
-		break;
-	case EALREADY:
-		ofLogError("ofxNetwork") << file << ": " << line << " EALREADY: the socket is non-blocking and already has a pending connection in progress";
-		break;
 	case ENOPROTOOPT:
 		ofLogError("ofxNetwork") << file << ": " << line << " ENOPROTOOPT: the optname doesn't make sense for the given level";
 		break;
@@ -115,12 +109,23 @@ inline int ofxNetworkCheckErrno(const string & file, const string & line){
 		ofLogError("ofxNetwork") << file << ": " << line << " EINVAL: invalid argument";
 		break;
 #if !defined(TARGET_WIN32)
-	case OFXNETWORK_ERROR(AGAIN):
+#if !defined(EWOULDBLOCK) || EAGAIN != EWOULDBLOCK
+	case EAGAIN:
+		// Not an error worth reporting, this is normal if the socket is non-blocking
 		//ofLogError("ofxNetwork") << file << ": " << line << " EAGAIN: try again";
 		break;
 #endif
+#endif
+	case OFXNETWORK_ERROR(WOULDBLOCK):
+	case OFXNETWORK_ERROR(INPROGRESS):
+	case OFXNETWORK_ERROR(ALREADY):
+        // Not an error worth reporting, this is normal if the socket is non-blocking
+        break;
+    case OFXNETWORK_ERROR(INTR):
+        //ofLogError("ofxNetwork") << file << ": " << line << " EINTR: receive interrupted by a signal, before any data available";
+		break;
 	default:
-		ofLogError("ofxNetwork") << file << ": " << line << " unknown error: " << err << " see errno.h for description of the error";
+		ofLogVerbose("ofxNetwork") << file << ": " << line << " unknown error: " << err << " see errno.h for description of the error";
 		break;
 	}
 

@@ -1,10 +1,7 @@
 #pragma once
 
-#include "ofPixels.h"
 #include "ofBaseTypes.h"
 #include "ofTexture.h"
-
-#include "ofVideoPlayer.h"
 
 class ofxiOSVideoPlayer : public ofBaseVideoPlayer {
 	

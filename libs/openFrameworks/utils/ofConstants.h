@@ -3,39 +3,84 @@
 
 //-------------------------------
 #define OF_VERSION_MAJOR 0
-#define OF_VERSION_MINOR 9
+#define OF_VERSION_MINOR 10
 #define OF_VERSION_PATCH 0
 #define OF_VERSION_PRE_RELEASE "master"
 
 //-------------------------------
 
+/// \brief Used to represent the available video looping modes.
+/// 
+/// \sa ofVideoPlayer::setLoopState()
+/// \sa ofVideoPlayer::getLoopState()
 enum ofLoopType{
+	/// \brief Plays the video once without looping.
 	OF_LOOP_NONE=0x01,
+	/// \brief Plays the video forwards then backwards repeatedly.
 	OF_LOOP_PALINDROME=0x02,
+	/// \brief Repeats the video over and over.
 	OF_LOOP_NORMAL=0x03
 };
 
+/// \brief This enumerates the targeted operating systems or platforms.
 enum ofTargetPlatform{
+	/// \brief 32- and 64-bit x86 architecture on Mac OSX.
 	OF_TARGET_OSX,
-	OF_TARGET_WINGCC,
+	/// \brief 32- and 64-bit x86 architecture using MinGW on Windows OS.
+    OF_TARGET_MINGW,
+	/// \brief 32- and 64-bit x86 architecture using Visual Studio on Windows OS.
 	OF_TARGET_WINVS,
+	/// \brief 32- and 64-bit armv7, arm64, x86 (simulator) architecture Mac iOS.
 	OF_TARGET_IOS,
+	/// \brief 32- and 64-bit armeabi-v7a and x86 Android OS.
 	OF_TARGET_ANDROID,
+	/// \brief 32-bit x86 architecture on Linux OS.
 	OF_TARGET_LINUX,
+	/// \brief 64-bit x86 architecture on Linux OS.
 	OF_TARGET_LINUX64,
-	OF_TARGET_LINUXARMV6L, // arm v6 little endian
-	OF_TARGET_LINUXARMV7L, // arm v7 little endian
+	/// \brief 32-bit armv6 little endian architecture on Linux OS.
+	OF_TARGET_LINUXARMV6L,
+	/// \brief 32-bit armv7 little endian architecture on Linux OS.
+	OF_TARGET_LINUXARMV7L,
+	/// \brief Compiled to javascript using Emscripten.
+	/// \sa https://github.com/kripken/emscripten
 	OF_TARGET_EMSCRIPTEN
 };
+
+// core: ---------------------------
+#include <cstdio>
+#include <cstdarg>
+#include <cmath>
+#include <ctime>
+#include <cstdlib>
+#include <string>
+#include <iostream>
+#include <vector>
+#include <cstring>
+#include <sstream>  //for ostringsream
+#include <iomanip>  //for setprecision
+#include <fstream>
+#include <algorithm>
+#include <cfloat>
+#include <map>
+#include <stack>
+#include <unordered_map>
+#include <memory>
+
+#define GLM_SWIZZLE
+#define GLM_FORCE_SIZE_FUNC
+#include "glm/glm.hpp"
+#include "glm/ext.hpp"
 
 #ifndef OF_TARGET_IPHONE
     #define OF_TARGET_IPHONE OF_TARGET_IOS
 #endif 
 
+
 // Cross-platform deprecation warning
 #ifdef __GNUC__
 	// clang also has this defined. deprecated(message) is only for gcc>=4.5
-	#if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 5)
+	#if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || __GNUC__ > 4
         #define OF_DEPRECATED_MSG(message, func) func __attribute__ ((deprecated(message)))
     #else
         #define OF_DEPRECATED_MSG(message, func) func __attribute__ ((deprecated))
@@ -64,11 +109,20 @@ enum ofTargetPlatform{
 #elif defined( __APPLE_CC__)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
-
-	#if TARGET_OS_IPHONE_SIMULATOR || TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE || TARGET_IPHONE
-		#define TARGET_OF_IPHONE
+	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_OS_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
+        #define TARGET_OF_IPHONE
         #define TARGET_OF_IOS
-		#define TARGET_OPENGLES
+        #define TARGET_OPENGLES
+        #include <unistd.h>
+    #elif TARGET_OS_TV
+        #define TARGET_OF_IOS
+        #define TARGET_OF_TVOS
+        #define TARGET_OPENGLES
+        #include <unistd.h>
+    #elif TARGET_OS_WATCH
+        #define TARGET_OF_IOS
+        #define TARGET_OF_WATCHOS
+        #define TARGET_OPENGLES
         #include <unistd.h>
 	#else
 		#define TARGET_OSX
@@ -94,15 +148,17 @@ enum ofTargetPlatform{
 
 // then the the platform specific includes:
 #ifdef TARGET_WIN32
-
 	#define GLEW_STATIC
 	#define GLEW_NO_GLU
 	#include "GL/glew.h"
-	#include "GL/wglew.h"
-   	#include "glu.h"
+    #include "GL/wglew.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
+		//TODO: Fix this in the code instead of disabling the warnings
+		#define _CRT_SECURE_NO_WARNINGS
+		#define _WINSOCK_DEPRECATED_NO_WARNINGS
+
 		#include <stdint.h>
 		#include <functional>
 		#pragma warning(disable : 4068)		// unknown pragmas
@@ -158,39 +214,39 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_LINUX
 
-		#define GL_GLEXT_PROTOTYPES
-        #include <unistd.h>
+	#include <unistd.h>
 
-    #ifdef TARGET_LINUX_ARM
-    	#ifdef TARGET_RASPBERRY_PI
-        	#include "bcm_host.h"
-        #endif
-       
+	#ifdef TARGET_LINUX_ARM
+		#ifdef TARGET_RASPBERRY_PI
+			#include "bcm_host.h"
+		#endif
+
 		#include "GLES/gl.h"
-		#include "GLES/glext.h" 
+		#include "GLES/glext.h"
 		#include "GLES2/gl2.h"
 		#include "GLES2/gl2ext.h"
-		
+
 		#define EGL_EGLEXT_PROTOTYPES
 		#include "EGL/egl.h"
 		#include "EGL/eglext.h"
-    #else // normal linux
-        #include <GL/glew.h>
-        #include <GL/gl.h>
-        #include <GL/glx.h>
-    #endif
+	#else // normal linux
+		#define GL_GLEXT_PROTOTYPES
+		#include <GL/glew.h>
+		#include <GL/gl.h>
+		#include <GL/glext.h>
+	#endif
 
-    // for some reason, this isn't defined at compile time,
-    // so this hack let's us work
-    // for 99% of the linux folks that are on intel
-    // everyone one else will have RGB / BGR issues.
+	// for some reason, this isn't defined at compile time,
+	// so this hack let's us work
+	// for 99% of the linux folks that are on intel
+	// everyone one else will have RGB / BGR issues.
 	//#if defined(__LITTLE_ENDIAN__)
-		#define TARGET_LITTLE_ENDIAN		// intel cpu
+	#define TARGET_LITTLE_ENDIAN		// intel cpu
 	//#endif
 
-        // some things for serial compilation:
-        #define B14400	14400
-        #define B28800	28800
+	// some things for serial compilation:
+	#define B14400	14400
+	#define B28800	28800
 
 #endif
 
@@ -252,8 +308,11 @@ typedef TESSindex ofIndexType;
 		//on 10.6 and below we can use the old grabber
 		#ifndef MAC_OS_X_VERSION_10_7
 			#define OF_VIDEO_CAPTURE_QUICKTIME
-		#else
+		//if we are below 10.12 or targeting below 10.12 we use QTKit
+		#elif !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 			#define OF_VIDEO_CAPTURE_QTKIT
+		#else
+			#define OF_VIDEO_CAPTURE_AVF
         #endif
 
 	#elif defined (TARGET_WIN32)
@@ -336,7 +395,7 @@ typedef TESSindex ofIndexType;
   	#define OF_SOUND_PLAYER_OPENAL
   #elif defined(TARGET_EMSCRIPTEN)
 	#define OF_SOUND_PLAYER_EMSCRIPTEN
-  #elif !defined(TARGET_ANDROID)
+  #elif !defined(TARGET_ANDROID) && (!defined(USE_FMOD) || USE_FMOD)
   	#define OF_SOUND_PLAYER_FMOD
   #endif
 #endif
@@ -352,11 +411,11 @@ typedef TESSindex ofIndexType;
 // clang has a bug where it won't support tls on some versions even
 // on c++11, this is a workaround that bug
 #ifndef HAS_TLS
-	#if __clang__
-		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__)
+	#if defined(__clang__) && __clang__
+		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__) && !defined(__ANDROID__) && !defined(TARGET_OF_IOS)
 			#define HAS_TLS 1
 		#endif
-	#else
+    #elif !defined(TARGET_WIN32) || _MSC_VER
 		#define HAS_TLS 1
 	#endif
 #endif
@@ -370,25 +429,7 @@ typedef ofBaseApp ofSimpleApp;
 #define OF_SERIAL_NO_DATA 	-2
 #define OF_SERIAL_ERROR		-1
 
-// core: ---------------------------
-#include <cstdio>
-#include <cstdarg>
-#include <cmath>
-#include <ctime>
-#include <cstdlib>
-#include <string>
-#include <iostream>
-#include <vector>
-#include <cstring>
-#include <sstream>  //for ostringsream
-#include <iomanip>  //for setprecision
-#include <fstream>
-#include <algorithm>
-#include <cfloat>
-#include <map>
-#include <stack>
-#include <unordered_map>
-#include <memory>
+
 
 using namespace std;
 
@@ -436,129 +477,228 @@ using namespace std;
 	#define ABS(x) (((x) < 0) ? -(x) : (x))
 #endif
 
+/// \brief Used to represent the available fill modes.
+/// 
+/// \sa ofBaseRenderer
 enum ofFillFlag{
+	/// \brief Draw shapes as outlines, unfilled.
 	OF_OUTLINE=	0,
+	/// \brief Draw shapes filled with the current draw color.
 	OF_FILLED = 1,
 };
 
+/// \brief Used to represent the available windowing modes for the application.
 enum ofWindowMode{
+	/// \brief A floating application window.
 	OF_WINDOW 		= 0,
+	/// \brief A fullscreen application window.
 	OF_FULLSCREEN 	= 1,
+	/// \brief A fullscreen application window with a custom width and height.
  	OF_GAME_MODE	= 2
 };
 
+/// \brief Used to represent the available rectangle aspect ratio scaling modes.
+/// 
+/// \sa ofRectangle
 enum ofAspectRatioMode {
+	/// \brief Set the rectangle's width and height to match the target.
     OF_ASPECT_RATIO_IGNORE            = 0,
+    /// \brief Resizes the rectangle to completely fit within the target.
     OF_ASPECT_RATIO_KEEP              = 1,
+    /// \brief Resizes the rectangle to completely enclose the target.
     OF_ASPECT_RATIO_KEEP_BY_EXPANDING = 2,
 };
 
+/// \brief Used to represent the available vertical rectangle alignment modes.
+/// 
+/// \sa ofRectangle
 enum ofAlignVert {
+	/// \brief Do not perform any vertical alignment.
     OF_ALIGN_VERT_IGNORE   = 0x0000,
+	/// \brief Use the upper edge of the rectangle to vertically anchor the alignment.
     OF_ALIGN_VERT_TOP      = 0x0010,
+	/// \brief Use the bottom edge of the rectangle to vertically anchor the alignment.
     OF_ALIGN_VERT_BOTTOM   = 0x0020,
+	/// \brief Use the center of the rectangle to vertically anchor the alignment.
     OF_ALIGN_VERT_CENTER   = 0x0040,
 };
 
+
+/// \brief Used to represent the available horizontal rectangle alignment modes.
+/// 
+/// \sa ofRectangle
 enum ofAlignHorz {
+    /// \brief Do not perform any horizontal alignment.
     OF_ALIGN_HORZ_IGNORE   = 0x0000,
+    /// \brief Use the left edge of the rectangle to horizontally anchor the alignment.
     OF_ALIGN_HORZ_LEFT     = 0x0001,
+    /// \brief Use the right edge of the rectangle to horizontally anchor the alignment.
     OF_ALIGN_HORZ_RIGHT    = 0x0002,
+    /// \brief Use the center of the rectangle to horizontally anchor the alignment.
     OF_ALIGN_HORZ_CENTER   = 0x0004,
 };
 
+/// \brief Used to represent the available rectangle drawing modes.
+///
+/// \sa ofRectangle
+/// \sa ofTexture
+/// \sa ofImage
 enum ofRectMode{
+	/// \brief Represents the mode where rectangles draw from the top left.
 	OF_RECTMODE_CORNER=0,
+	/// \brief Represents the mode where rectangles draw from the center.
  	OF_RECTMODE_CENTER=1
 };
 
+/// \brief Used to represent the available rectangle scaling modes.
+///
+/// ofScaleMode can usually be interpreted as a concise combination of
+/// an ::ofAspectRatioMode, an ::ofAlignVert and an ::ofAlignHorz.
 enum ofScaleMode{
-    // ofScaleMode can usually be interpreted as a concise combination of
-    // an ofAspectRatioMode, an ofAlignVert and an ofAlignHorz.
-    
-    // fits the SUBJECT rect INSIDE the TARGET rect.
-    // Preserves SUBJECTS's aspect ratio.
-    // Final Subject's Area <= Target's Area.
-    // Subject's Center == Target's Center
+
+    /// \brief Center and scale the rectangle to fit inside the target.
+	/// 
+	/// This centers the subject rectangle within the target rectangle and
+	/// resizes the subject rectangle to completely fit within the target
+	/// rectangle.
     OF_SCALEMODE_FIT     = 0,
-    // FILLS the TARGET rect with the SUBJECT rect.
-    // Preserves the SUBJECT's aspect ratio.
-    // Subject's Area >= Target's Area.
-    // Subject's Center == Target's Center
+
+    /// \brief Move and scale the rectangle to completely enclose the target.
+    ///
+    /// This centers the subject rectangle within the target rectangle and
+    /// resizes the subject rectangle to completely encompass the target
+    /// rectangle.
     OF_SCALEMODE_FILL    = 1,
-    // Preserves the SUBJECT's aspect ratio.
-    // Subject's Area is Unchanged
-    // Subject's Center == Target's Center
+
+    /// \brief Move the rectangle to be centered on the target.
+    /// 
+    /// This centers the subject rectangle within the target rectangle and
+    /// does not modify the Subject's size or aspect ratio.
     OF_SCALEMODE_CENTER  = 2, // centers the subject
-    // Can CHANGE the SUBJECT's aspect ratio.
-    // Subject's Area == Target's Area
-    // Subject's Center == Target's Center
- 	OF_SCALEMODE_STRETCH_TO_FILL = 3, // simply matches the target dims
+
+ 	/// \brief Match the target rectangle's position and dimensions.
+ 	OF_SCALEMODE_STRETCH_TO_FILL = 3
 };
 
+/// \brief Used to represent the available channel types in ofImage.
+/// 
+/// These represent an abstraction of both CPU pixels (ofPixels) and GPU pixels
+/// (ofTexture). In most cases, developers should prefer ::ofPixelFormat over
+/// ::ofImageType for a more precise description of channel types.
+/// 
+/// \sa ofImage
 enum ofImageType{
+	/// \brief A single channel (or monochrome) image.
+	/// 
+	/// \sa OF_PIXELS_GRAY
 	OF_IMAGE_GRAYSCALE		= 0x00,
+	/// \brief A three channel (or RGB) image.
+	/// 
+	/// \sa OF_PIXELS_RGB
  	OF_IMAGE_COLOR			= 0x01,
+	/// \brief A four channel (or RGBA) image.
+	/// 
+	/// \sa OF_PIXELS_RGBA
  	OF_IMAGE_COLOR_ALPHA	= 0x02,
+ 	/// \brief An unknown and unsupported image type.
+	/// 
+	/// \sa OF_PIXELS_UNKNOWN
  	OF_IMAGE_UNDEFINED		= 0x03
 };
 
 #define		OF_MAX_STYLE_HISTORY	32
+
+/// \deprecated Not currently used in the OF codebase.
 #define		OF_MAX_VIEWPORT_HISTORY	32
+
+/// \deprecated Not currently used in the OF codebase.
 #define		OF_MAX_CIRCLE_PTS 1024
 
-// Blend Modes
+/// \brief Used to represent the available blending modes for drawing.
 enum ofBlendMode{
+	/// \brief Blend mode is disabled.
 	OF_BLENDMODE_DISABLED = 0,
+	/// \brief Blend mode used for alpha blending. 
 	OF_BLENDMODE_ALPHA 	  = 1,
+	/// \brief Blend mode used for additive blending. 
 	OF_BLENDMODE_ADD 	  = 2,
+	/// \brief Blend mode used for subtractive blending. 
 	OF_BLENDMODE_SUBTRACT = 3,
+	/// \brief Blend mode used for multiplicative blending. 
 	OF_BLENDMODE_MULTIPLY = 4,
+	/// \brief Blend mode used for screen blending. 
 	OF_BLENDMODE_SCREEN   = 5
 };
 
-//this is done to match the iPhone defaults 
-//we don't say landscape, portrait etc because iPhone apps default to portrait while desktop apps are typically landscape
+/// \brief Used to represent the available screen orientations.
+///
+/// These don't use "landscape" or "portrait", because phones typically default 
+/// to portrait while desktop screens are typically landscape by default.
+/// 
+/// \sa ::ofSetOrientation
+/// \sa ::ofGetOrientation
 enum ofOrientation{
+	/// \brief Represents the default screen orientation.
 	OF_ORIENTATION_DEFAULT = 1,	
+	/// \brief Represents a screen rotated 180 degrees, also known as upside-down.	
 	OF_ORIENTATION_180 = 2,
+	/// \brief Represents a screen rotated 90 degrees clockwise.	
     OF_ORIENTATION_90_LEFT = 3,
+	/// \brief Represents a screen rotated 90 degrees counter-clockwise.	
 	OF_ORIENTATION_90_RIGHT = 4,
-    OF_ORIENTATION_UNKNOWN = 5
+	/// \brief Represents an unknown orientation.	
+	OF_ORIENTATION_UNKNOWN = 5
 };
 
-// gradient modes when using ofBackgroundGradient
+/// \brief Represents the gradient types available to ofBackgroundGradient(). 
 enum ofGradientMode {
+	/// \brief Represents a top-to-bottom linear gradient.
 	OF_GRADIENT_LINEAR = 0,
+	/// \brief Represents a circular gradient beginning at the screen's center.
 	OF_GRADIENT_CIRCULAR,
+	/// \brief Represents a horizontal bar gradient.
+	/// 
+	///  This is a horizontal gradient starting across the screen's center,
+	///  and extending both to the top and bottom of the screen.
 	OF_GRADIENT_BAR
 };
 
-// these are straight out of glu, but renamed and included here
-// for convenience
-//
-// we don't mean to wrap the whole glu library (or any other library for that matter)
-// but these defines are useful to give people flexibility over the polygonizer
-//
-// some info:
-// http://glprogramming.com/red/images/Image128.gif
-//
-// also: http://glprogramming.com/red/chapter11.html
-// (CSG ideas)
-
+/// \brief represents the available polygon winding modes.
+/// 
+/// These are straight out of glu, but renamed and included here
+/// for convenience.  We don't mean to wrap the whole glu library
+/// (or any other library for that matter), but these defines are useful
+/// to give people flexibility over the polygonizer.
+/// 
+/// \sa ofPath::tessellate()
+/// \sa ofTessellator::performTessellation()
+/// \sa http://glprogramming.com/red/images/Image128.gif
+/// \sa http://glprogramming.com/red/chapter11.html
 enum ofPolyWindingMode{
+	/// \brief Fill odd winding numbers.
 	OF_POLY_WINDING_ODD 	        ,
+	/// \brief Fill all non-zero winding numbers.
 	OF_POLY_WINDING_NONZERO         ,
+	/// \brief Fill all winding numbers greater than zero.
 	OF_POLY_WINDING_POSITIVE        ,
+	/// \brief Fill all winding numbers less than zero.
 	OF_POLY_WINDING_NEGATIVE        ,
+	/// \brief Fill all winding numbers greater than 1 or less than -1.
+	/// 
+	/// This stands for "Fill ABSolute values Greater than EQual to TWO".
 	OF_POLY_WINDING_ABS_GEQ_TWO
 };
 
+/// \deprecated Not currently used in the OF codebase.
 #define 	OF_CLOSE						  (true)
 
-
+/// \brief represents the available matrix coordinate system handednesses.
+///
+/// \sa ofMatrixStack
+/// \sa http://seanmiddleditch.com/matrices-handedness-pre-and-post-multiplication-row-vs-column-major-and-notations/ 
 enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
 
+/// \brief represents the available matrix types used internally in ::ofMatrixStack.
 enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTURE};
 
 //--------------------------------------------
@@ -676,39 +816,95 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 
 #endif
 
-
+/// \brief Used to represent the available pixel formats.
+///
+/// \sa ofPixels
 enum ofPixelFormat{
-	// grayscale
+	/// \brief A single-channel pixel, typically used for greyscale images.
+	///
+	/// This has 1 channel and a type-dependent number of bits per-pixel.
 	OF_PIXELS_GRAY = 0,
+	/// \brief A single-channel pixel with an alpha channel.
+	///
+	/// This has 2 channels and a type-dependent number of bits per-pixel.
 	OF_PIXELS_GRAY_ALPHA = 1,
 
-	// rgb (can be 8,16 or 32 bpp depending on pixeltype)
+	/// \brief An RGB pixel with no alpha channel.
+	///
+	/// This has 3 channels and a type-dependent number of bits per-pixel.
+	///
+	/// \sa http://www.fourcc.org/rgb.php#BI_RGB
 	OF_PIXELS_RGB=2,
+	/// \brief A pixel used for color data with a blue/green/red channel order.
+	///
+	/// This has 3 channels and a type-dependent number of bits per-pixel.
 	OF_PIXELS_BGR=3,
+	/// \brief An RGBA pixel. This is typically used for color with transparency.
+	///
+	/// This has 4 channels and a type-dependent number of bits per-pixel.
+	///
+	/// \sa http://www.fourcc.org/rgb.php#RGBA
 	OF_PIXELS_RGBA=4,
+	/// \brief A pixel used for color/transparency with a blue/green/red/alpha channel order.
+	///
+	/// This has 4 channels and a type-dependent number of bits per-pixel.
 	OF_PIXELS_BGRA=5,
 
-	// rgb 16bit
+	// \brief A 16-bit color pixel with 5-bit red and blue channels and a 6-bit green channel.
 	OF_PIXELS_RGB565=6,
 
-	// yuv
+	/// \brief A 12-bit YUV 4:2:0 pixel with an interleaved U/V plane.
+	///
+	/// YUV 4:2:0 image with a plane of 8-bit Y samples followed by an
+	/// interleaved U/V plane containing 8-bit 2x2 subsampled color difference
+	/// samples.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#NV12
 	OF_PIXELS_NV12=7,
+	/// \brief A 12-bit YUV 4:2:0 pixel with an interleaved V/U plane.
+	/// 
+	/// YUV 4:2:0 image with a plane of 8-bit Y samples followed by an
+	/// interleaved V/U plane containing 8-bit 2x2 subsampled chroma samples.
+	/// The same as NV12 except the interleave order of U and V is reversed.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#NV21
 	OF_PIXELS_NV21=8,
+	/// \brief A 12-bit YUV NxM Y plane followed by (N/2)x(M/2) V and U planes.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#YV12
 	OF_PIXELS_YV12=9,
+	/// \brief A 12-bit YUV format similar to ::OF_PIXELS_YV12, but with U & V reversed.
+	/// 
+	/// Note that IYUV and I420 appear to be identical.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#IYUV
 	OF_PIXELS_I420=10,
+	/// \brief A 16-bit YUV 4:2:2 format.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#YUY2
 	OF_PIXELS_YUY2=11,
+	/// \brief A 16-bit YUV 4:2:2 format.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#UYVY
 	OF_PIXELS_UYVY=12,
 
-	// yuv planes
+	/// \brief A single channel pixel, typically used for the luma component of YUV.
 	OF_PIXELS_Y,
+	/// \brief A single channel pixel, typically used (with V) for the chroma component of YUV.
 	OF_PIXELS_U,
+	/// \brief A single channel pixel, typically used (with U) for the chroma component of YUV.
 	OF_PIXELS_V,
+	/// \brief A two channel pixel, with U first, representing both chroma components of YUV.
 	OF_PIXELS_UV,
+	/// \brief A two channel pixel, with V first, representing both chroma components of YUV.
 	OF_PIXELS_VU,
 
+	/// \brief This is a placeholder to indicate the last valid enum.
 	OF_PIXELS_NUM_FORMATS,
 
+	/// \brief This indicates an unknown pixel type.
 	OF_PIXELS_UNKNOWN=-1,
+	/// \brief This indicates an unknown, native pixel type.
 	OF_PIXELS_NATIVE=-2
 };
 
@@ -717,8 +913,8 @@ enum ofPixelFormat{
 #define OF_PIXELS_RG OF_PIXELS_GRAY_ALPHA
 
 
-//--------------------------------------------
-//ofBitmap draw mode
+/// \brief Sets the bitmap drawing mode for text.
+/// \sa ofSetDrawBitmapMode()
 enum ofDrawBitmapMode{
 	OF_BITMAPMODE_SIMPLE = 0,
 	OF_BITMAPMODE_SCREEN,
@@ -727,7 +923,28 @@ enum ofDrawBitmapMode{
 	OF_BITMAPMODE_MODEL_BILLBOARD
 };
 
-enum ofTextEncoding{
-	OF_ENCODING_UTF8,
-	OF_ENCODING_ISO_8859_15
-};
+//#define OF_USE_LEGACY_MESH
+template<class V, class N, class C, class T>
+class ofMesh_;
+class ofVec2f;
+class ofVec3f;
+class ofVec4f;
+
+template<typename T>
+class ofColor_;
+typedef ofColor_<float> ofFloatColor;
+
+#ifdef OF_USE_LEGACY_MESH
+using ofDefaultVec2 = ofVec2f;
+using ofDefaultVec3 = ofVec3f;
+using ofDefaultVec4 = ofVec4f;
+#else
+using ofDefaultVec2 = glm::vec2;
+using ofDefaultVec3 = glm::vec3;
+using ofDefaultVec4 = glm::vec4;
+#endif
+using ofDefaultVertexType = ofDefaultVec3;
+using ofDefaultNormalType = ofDefaultVec3;
+using ofDefaultColorType = ofFloatColor;
+using ofDefaultTexCoordType = ofDefaultVec2;
+

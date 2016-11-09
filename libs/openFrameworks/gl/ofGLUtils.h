@@ -75,7 +75,7 @@ int ofGetNumChannelsFromGLFormat(int glFormat);
 void ofSetPixelStoreiAlignment(GLenum pname, int w, int bpc, int numChannels);
 void ofSetPixelStoreiAlignment(GLenum panme, int stride);
 
-//vector<string> ofGLSupportedExtensions();
+vector<string> ofGLSupportedExtensions();
 bool ofGLCheckExtension(string searchName);
 bool ofGLSupportsNPOTTextures();
 
@@ -88,6 +88,10 @@ int ofGetGlFormat(const ofPixels_<T> & pixels) {
 
 string ofGLSLVersionFromGL(int major, int minor);
 
+#ifndef TARGET_OPENGLES
+void ofEnableGLDebugLog();
+void ofDisableGLDebugLog();
+#endif
 
 #ifndef TARGET_OPENGLES
 	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT

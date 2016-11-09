@@ -95,13 +95,13 @@ public:
 		int isEnabled;
 	    float spotCutOff;
 	    float exponent;
-	    ofVec4f position;
-	    ofVec3f direction;
+		glm::vec4 position;
+		glm::vec3 direction;
 
 	    float width;
 	    float height;
-	    ofVec3f up;
-	    ofVec3f right;
+		glm::vec3 up;
+		glm::vec3 right;
 	};
 	
 private:
