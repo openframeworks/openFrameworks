@@ -1,12 +1,12 @@
-/*  
+/*
  *  summary:Example of how to use GPU for data processing. The data it«s going to be stored
  *          on the color channels of the FBO«s textures. In this case we are going to use just
  *          RED and GREEN channels on two textures. One for the position and the other one for
- *          the velocity. For updating the informacion of those textures we are going to use 
- *          two FBO«s for each type of information. This pair of FBO will pass the information 
- *          from one to other in a techninc call PingPong.
+ *          the velocity. For updating the information of those textures we are going to use
+ *          two FBO«s for each type of information. This pair of FBO will pass the information
+ *          from one to other in a technique called PingPong.
  *          After updating this information, we are going to use the textures allocated on GPU memory
- *          for moving some vertex and then multiplied them in order to make little frames that hold 
+ *          for moving some vertex and then multiplied them in order to make little frames that hold
  *          a texture of a spark of light.
  */
 
