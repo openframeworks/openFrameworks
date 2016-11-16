@@ -1423,10 +1423,16 @@ bool ofDirectory::createDirectory(const std::string& _dirPath, bool bRelativeToD
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::doesDirectoryExist(const std::string& _dirPath, bool bRelativeToData){
 	std::string dirPath = _dirPath;
-	if(bRelativeToData){
-		dirPath = ofToDataPath(dirPath);
+	try {
+		if (bRelativeToData) {
+			dirPath = ofToDataPath(dirPath);
+		}
+		return std::filesystem::exists(dirPath) && std::filesystem::is_directory(dirPath);
 	}
-	return std::filesystem::exists(dirPath) && std::filesystem::is_directory(dirPath);
+	catch (std::exception & except) {
+		ofLogError("ofDirectory") << "doesDirectoryExist(): couldn't find directory \"" << dirPath << "\": " << except.what() << endl;
+		return false;
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
