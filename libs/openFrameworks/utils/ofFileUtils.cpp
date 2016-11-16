@@ -1337,30 +1337,9 @@ static bool natural(const ofFile& a, const ofFile& b) {
 
 //------------------------------------------------------------------------------------------------------------
 static bool byDate(const ofFile& a, const ofFile& b) {
-	struct stat st1;
-	struct stat st2;
-	int date1, date2;
-
-	int err1 = stat(a.getAbsolutePath().c_str(), &st1);
-	int err2 = stat(b.getAbsolutePath().c_str(), &st2);
-
-	if (err1 == 0) {
-		date1 = st1.st_mtime;
-	}
-	else {
-		ofLogError("ofDirectory") << "sortByDate(): stat() failed for file 'a' while sorting by date.";
-		return false;
-	}
-
-	if (err2 == 0) {
-		date2 = st2.st_mtime;
-	}
-	else {
-		ofLogError("ofDirectory") << "sortByDate(): stat() failed for file 'b' while sorting by date.";
-		return false;
-	}
-
-	return date1 < date2;
+	auto ta = std::filesystem::last_write_time(a);
+	auto tb = std::filesystem::last_write_time(b);
+	return ta < tb;
 }
 
 //------------------------------------------------------------------------------------------------------------
