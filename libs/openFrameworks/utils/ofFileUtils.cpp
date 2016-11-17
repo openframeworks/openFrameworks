@@ -1344,6 +1344,9 @@ static bool byDate(const ofFile& a, const ofFile& b) {
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::sortByDate() {
+	if (files.empty() && !myDir.empty()) {
+		listDir();
+	}
 	ofSort(files, byDate);
 }
 
