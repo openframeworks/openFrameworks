@@ -10,6 +10,8 @@ uniform float timeValX;
 uniform float timeValY;
 uniform vec2 mouse;
 
+out vec2 texCoordVarying;
+
 //generate a random value from four points
 vec4 rand(vec2 A,vec2 B,vec2 C,vec2 D){ 
 
@@ -47,6 +49,9 @@ float noise(vec2 coord,float d){
 
 void main(){
     
+	//copy texture coordinates to varying in fragment shader
+	texCoordVarying = texcoord;
+	
 	//get our current vertex position so we can modify it
 	vec4 pos = modelViewProjectionMatrix * position;
 	
