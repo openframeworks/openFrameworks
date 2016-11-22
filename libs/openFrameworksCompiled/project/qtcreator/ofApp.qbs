@@ -64,7 +64,6 @@ CppApplication{
                 srcDir = FileInfo.joinPaths(project.path, srcDir);
             }
             srcDir = FileInfo.joinPaths(srcDir, "libs/*/lib/", of.platform, "/");
-            //throw srcDir;
             return srcDir;
         }
 
