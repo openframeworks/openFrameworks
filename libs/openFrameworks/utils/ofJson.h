@@ -78,15 +78,13 @@ inline void ofDeserialize(const ofJson & json, ofAbstractParameter & parameter){
 		return;
 	}
 	string name = parameter.getEscapedName();
-	if(parameter.type() == typeid(ofParameterGroup).name()){
-		ofParameterGroup & group = static_cast <ofParameterGroup &>(parameter);
-		if(json.find(name) != json.end()){
+	if(json.find(name) != json.end()){
+		if(parameter.type() == typeid(ofParameterGroup).name()){
+			ofParameterGroup & group = static_cast <ofParameterGroup &>(parameter);
 			for(auto & p: group){
 				ofDeserialize(json[name], *p);
 			}
-		}
-	}else{
-		if(json.find(name) != json.end()){
+		}else{
 			if(parameter.type() == typeid(ofParameter <int> ).name() && json[name].is_number_integer()){
 				parameter.cast <int>() = json[name].get<int>();
 			}else if(parameter.type() == typeid(ofParameter <float> ).name() && json[name].is_number_float()){
@@ -102,5 +100,4 @@ inline void ofDeserialize(const ofJson & json, ofAbstractParameter & parameter){
 			}
 		}
 	}
-
 }

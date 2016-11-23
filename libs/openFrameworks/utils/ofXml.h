@@ -4,6 +4,7 @@
 #include "pugixml.hpp"
 #include "ofFileUtils.h"
 #include "ofUtils.h"
+#include "ofParameter.h"
 
 template<class It>
 class ofXmlIterator;
@@ -286,3 +287,6 @@ private:
 	mutable ofXml xml;
 	friend ofXml::Search;
 };
+// serializer
+void ofSerialize(ofXml & xml, const ofAbstractParameter & parameter);
+void ofDeserialize(const ofXml & xml, ofAbstractParameter & parameter);
