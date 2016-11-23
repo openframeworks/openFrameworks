@@ -1,7 +1,6 @@
 #version 150
 
 in vec4 position;
-in vec2 texcoord;
 
 uniform mat4 modelViewProjectionMatrix;
 
@@ -46,7 +45,7 @@ float noise(vec2 coord,float d){
 
 
 void main(){
-    
+    	
 	//get our current vertex position so we can modify it
 	vec4 pos = modelViewProjectionMatrix * position;
 	
