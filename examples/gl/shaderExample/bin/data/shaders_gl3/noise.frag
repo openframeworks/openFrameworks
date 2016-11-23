@@ -3,8 +3,6 @@
 uniform sampler2D src_tex_unit0;
 uniform vec4 globalColor;
 
-in vec2 texCoordVarying;
-
 out vec4 fragColor;
 
 void main(){
