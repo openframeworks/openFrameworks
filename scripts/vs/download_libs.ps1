@@ -24,7 +24,7 @@ function DownloadLibs{
 
     echo "Uncompressing downloaded libs to $libsDir\$arch"
     Add-Type -A System.IO.Compression.FileSystem
-    [IO.Compression.ZipFile]::ExtractToDirectory($pkg, "$libsDir\$arch")
+    [IO.Compression.ZipFile]::ExtractToDirectory("$scriptPath\$pkg", "$libsDir\$arch")
 
     Remove-Item $pkg
 }
