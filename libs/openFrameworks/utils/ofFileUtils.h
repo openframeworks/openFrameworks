@@ -1072,6 +1072,12 @@ public:
 	/// nothing to sort.
 	void sort();
 	
+	/// Sort the directory contents list alphabetically.
+	///
+	/// \warning Call listDir() before using this function or there will be
+	/// nothing to sort.
+	void sortByDate();
+
 	/// Get a sorted ofDirectory instance using the current path.
 	///
 	/// \returns sorted ofDirectory instance

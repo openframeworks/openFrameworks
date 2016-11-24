@@ -1336,6 +1336,21 @@ static bool natural(const ofFile& a, const ofFile& b) {
 }
 
 //------------------------------------------------------------------------------------------------------------
+static bool byDate(const ofFile& a, const ofFile& b) {
+	auto ta = std::filesystem::last_write_time(a);
+	auto tb = std::filesystem::last_write_time(b);
+	return ta < tb;
+}
+
+//------------------------------------------------------------------------------------------------------------
+void ofDirectory::sortByDate() {
+	if (files.empty() && !myDir.empty()) {
+		listDir();
+	}
+	ofSort(files, byDate);
+}
+
+//------------------------------------------------------------------------------------------------------------
 void ofDirectory::sort(){
 	if(files.empty() && !myDir.empty()){
 		listDir();
@@ -1423,10 +1438,16 @@ bool ofDirectory::createDirectory(const std::string& _dirPath, bool bRelativeToD
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::doesDirectoryExist(const std::string& _dirPath, bool bRelativeToData){
 	std::string dirPath = _dirPath;
-	if(bRelativeToData){
-		dirPath = ofToDataPath(dirPath);
+	try {
+		if (bRelativeToData) {
+			dirPath = ofToDataPath(dirPath);
+		}
+		return std::filesystem::exists(dirPath) && std::filesystem::is_directory(dirPath);
 	}
-	return std::filesystem::exists(dirPath) && std::filesystem::is_directory(dirPath);
+	catch (std::exception & except) {
+		ofLogError("ofDirectory") << "doesDirectoryExist(): couldn't find directory \"" << dirPath << "\": " << except.what() << endl;
+		return false;
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------

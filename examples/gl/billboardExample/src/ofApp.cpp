@@ -16,10 +16,8 @@ void ofApp::setup() {
 	for (int i=0; i<NUM_BILLBOARDS; i++) {
 
 		billboardVels[i].set(ofRandomf(), -1.0, ofRandomf());
-		billboards.getVertices()[i].set(ofRandom(-500, 500),
-													ofRandom(-500, 500),
-													ofRandom(-500, 500));
-
+        billboards.getVertices()[i] = {ofRandom(-500, 500),ofRandom(-500, 500),ofRandom(-500, 500)};
+		
 		billboards.getColors()[i].set(ofColor::fromHsb(ofRandom(96, 160), 255, 255));
 	    billboardSizeTarget[i] = ofRandom(4, 64);
 
