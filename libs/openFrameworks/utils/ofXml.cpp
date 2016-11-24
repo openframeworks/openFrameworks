@@ -370,3 +370,61 @@ ofXmlSearchIterator ofXmlSearchIterator::operator--(int){
 		return *this;
 	}
 }
+
+void ofSerialize(ofXml & xml, const ofAbstractParameter & parameter){
+	if(!parameter.isSerializable()){
+		return;
+	}
+	string name = parameter.getEscapedName();
+	if(name == ""){
+		name = "UnknownName";
+	}
+	ofXml child	= xml.findFirst(name);
+	
+	if(!child){
+		child = xml.appendChild(name);
+		ofLogVerbose("ofXml") << "creating group " << name;
+	}
+	if(parameter.type() == typeid(ofParameterGroup).name()){
+		const ofParameterGroup & group = static_cast <const ofParameterGroup &>(parameter);
+		
+		ofLogVerbose("ofXml") << "group " << name;
+		for(auto & p: group){
+			ofSerialize(child, *p);
+		}
+		ofLogVerbose("ofXml") << "end group " << name;
+	}else{
+		string value = parameter.toString();
+		child.set(value);
+	}
+}
+
+
+void ofDeserialize(const ofXml & xml, ofAbstractParameter & parameter){
+	if(!parameter.isSerializable()){
+		return;
+	}
+	string name = parameter.getEscapedName();
+	
+	ofXml child = xml.findFirst(name);
+	if(child){
+		if(parameter.type() == typeid(ofParameterGroup).name()){
+			ofParameterGroup & group = static_cast <ofParameterGroup &>(parameter);
+			for(auto & p: group){
+				ofDeserialize(child, *p);
+			}
+		}else{
+			if(parameter.type() == typeid(ofParameter <int> ).name()){
+				parameter.cast <int>() = child.getIntValue();
+			}else if(parameter.type() == typeid(ofParameter <float> ).name()){
+				parameter.cast <float>() = child.getFloatValue();
+			}else if(parameter.type() == typeid(ofParameter <bool> ).name()){
+				parameter.cast <bool>() = child.getBoolValue();
+			}else if(parameter.type() == typeid(ofParameter <string> ).name()){
+				parameter.cast <string>() = child.getValue();
+			}else{
+				parameter.fromString(child.getValue());
+			}
+		}
+	}
+}
