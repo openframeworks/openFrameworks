@@ -320,6 +320,8 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 				
 				
 			}
+
+			CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
 		}
 	}
 } 
