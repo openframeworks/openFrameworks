@@ -42,18 +42,18 @@ endif
 ifndef GST_VERSION
 	ifeq ($(CROSS_COMPILING),1)
 		ifeq ($(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gstreamer-1.0 --exists; echo $$?),0)
-		    GST_VERSION = 1.0
+			GST_VERSION = 1.0
 $(info GSTVERSION=$(GST_VERSION))
 		else
-		    GST_VERSION = 0.10
+			GST_VERSION = 0.10
 $(info GSTVERSION=$(GST_VERSION))
 $(info $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gstreamer-1.0 --exists; echo $$?))
 		endif
 	else
 		ifeq ($(shell pkg-config gstreamer-1.0 --exists; echo $$?),0)
-		    GST_VERSION = 1.0
+			GST_VERSION = 1.0
 		else
-		    GST_VERSION = 0.10
+			GST_VERSION = 0.10
 		endif
 	endif
 endif
@@ -77,20 +77,20 @@ PLATFORM_DEFINES =
 
 # add OF_USING_GTK define IF we have it defined as a system library
 ifeq ($(HAS_SYSTEM_GTK2),0)
-    PLATFORM_DEFINES += OF_USING_GTK
+	PLATFORM_DEFINES += OF_USING_GTK
 endif
 ifeq ($(HAS_SYSTEM_GTK3),0)
-    PLATFORM_DEFINES += OF_USING_GTK
+	PLATFORM_DEFINES += OF_USING_GTK
 endif
 
 # add OF_USING_MPG123 define IF we have it defined as a system library
 ifeq ($(HAS_SYSTEM_MPG123),0)
-    PLATFORM_DEFINES += OF_USING_MPG123
+	PLATFORM_DEFINES += OF_USING_MPG123
 endif
 
 # add OF_USE_GST_GL if requested
 ifdef USE_GST_GL
-    PLATFORM_DEFINES += OF_USE_GST_GL
+	PLATFORM_DEFINES += OF_USE_GST_GL
 endif
 
 
@@ -149,15 +149,15 @@ else
 	ifeq ($(CXX),g++-5)
 		PLATFORM_CFLAGS = -Wall -std=c++14 -DGCC_HAS_REGEX
 	else
-	    ifeq ($(CXX),g++-4.9)
-		    PLATFORM_CFLAGS = -Wall -std=c++14 -DGCC_HAS_REGEX
-	    else
-	        ifeq ($(CXX),g++-4.8)
-		        PLATFORM_CFLAGS = -Wall -std=c++11
-	        else
-	            PLATFORM_CFLAGS = -Wall -std=c++11
-	        endif
-	    endif
+		ifeq ($(CXX),g++-4.9)
+			PLATFORM_CFLAGS = -Wall -std=c++14 -DGCC_HAS_REGEX
+		else
+			ifeq ($(CXX),g++-4.8)
+				PLATFORM_CFLAGS = -Wall -std=c++11
+			else
+				PLATFORM_CFLAGS = -Wall -std=c++11
+			endif
+		endif
 	endif
 endif
 
@@ -300,13 +300,13 @@ ifneq ($(LINUX_ARM),1)
 	#PLATFORM_LIBRARIES += ICE
 endif
 ifneq ($(PLATFORM_ARCH),armv6l)
-    PLATFORM_LIBRARIES += X11
-    PLATFORM_LIBRARIES += Xrandr
-    PLATFORM_LIBRARIES += Xxf86vm
-    PLATFORM_LIBRARIES += Xi
-    PLATFORM_LIBRARIES += Xcursor
-    PLATFORM_LIBRARIES += dl
-    PLATFORM_LIBRARIES += pthread
+	PLATFORM_LIBRARIES += X11
+	PLATFORM_LIBRARIES += Xrandr
+	PLATFORM_LIBRARIES += Xxf86vm
+	PLATFORM_LIBRARIES += Xi
+	PLATFORM_LIBRARIES += Xcursor
+	PLATFORM_LIBRARIES += dl
+	PLATFORM_LIBRARIES += pthread
 endif
 
 PLATFORM_LIBRARIES += freeimage
@@ -339,20 +339,20 @@ PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
 
 ifeq "$(shell pkg-config --exists glfw3 && echo 1)" "1"
-    PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
-    PLATFORM_LIBRARIES += Xinerama
+	PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
+	PLATFORM_LIBRARIES += Xinerama
 endif
 
 ifeq "$(shell pkg-config --exists rtaudio && echo 1)" "1"
-    PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
-else    
-    PLATFORM_LIBRARIES += rtaudio
+	PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
+else
+	PLATFORM_LIBRARIES += rtaudio
 endif
 
 
 ifneq ($(LINUX_ARM),1)
-    PLATFORM_PKG_CONFIG_LIBRARIES += libpulse-simple
-    PLATFORM_PKG_CONFIG_LIBRARIES += alsa
+	PLATFORM_PKG_CONFIG_LIBRARIES += libpulse-simple
+	PLATFORM_PKG_CONFIG_LIBRARIES += alsa
 	PLATFORM_PKG_CONFIG_LIBRARIES += gl
 	PLATFORM_PKG_CONFIG_LIBRARIES += glu
 	PLATFORM_PKG_CONFIG_LIBRARIES += glew
@@ -361,21 +361,21 @@ endif
 
 # conditionally add GTK
 ifeq ($(HAS_SYSTEM_GTK3),0)
-    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-3.0
+	PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-3.0
 else
 	ifeq ($(HAS_SYSTEM_GTK2),0)
-	    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-2.0
+		PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-2.0
 	endif
 endif
 
 # conditionally add mpg123
 ifeq ($(HAS_SYSTEM_MPG123),0)
-    PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
+	PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
 endif
 
 # conditionally add gstreamer-gl
 ifdef USE_GST_GL
-    PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-gl-$(GST_VERSION)
+	PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-gl-$(GST_VERSION)
 endif
 
 ################################################################################
