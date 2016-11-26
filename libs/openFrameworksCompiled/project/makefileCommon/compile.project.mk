@@ -7,7 +7,7 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
 
 # if APPNAME is not defined, set it to the project dir name
 ifndef APPNAME
-    APPNAME = $(shell basename `pwd`)
+	APPNAME = $(shell basename `pwd`)
 endif
 
 # Name TARGET
@@ -101,8 +101,8 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 endif
 
 ifeq ($(MAKECMDGOALS),clean)
-    TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
-    TARGET_NAME = Release
+	TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
+	TARGET_NAME = Release
 endif
 
 # we only get a CLEAN_TARGET if a TARGET_NAME has been defined
@@ -229,11 +229,11 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_ROOT)/%.S $(OF_PROJECT_OBJ_OUTPUT_PA
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS)  $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
-	
-	
-	
-	
-	
+
+
+
+
+
 
 
 # Rules to compile the project external sources
@@ -324,9 +324,9 @@ ifdef PROJECT_ADDON_PATHS
 	@mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
 endif
-	
-	
-	
+
+
+
 
 
 
