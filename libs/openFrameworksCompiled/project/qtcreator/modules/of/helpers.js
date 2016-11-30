@@ -4,6 +4,36 @@ var TextFile = loadExtension("qbs.TextFile");
 var Environment = loadExtension("qbs.Environment");
 var FileInfo = loadExtension("qbs.FileInfo");
 
+function findCommand(){
+    // check if it's unix
+    if(File.exists("/usr/bin/find")){
+        return "/usr/bin/find";
+    }
+
+    // else msys2, search unix find command
+    var where = new Process();
+    where.exec("where.exe", ['find'], true);
+    if(where.exitCode()!==0){
+        throw("error: There is a problem to detect the 'find' command."+where.exitCode());
+    }
+
+    while(true){
+        var line = where.readLine();
+        if(line!=="" && line!==undefined){
+            var findPos = line.indexOf("usr\\bin\\find.exe");
+            if (findPos > -1){
+                return line;
+            }
+        }else{
+            break;
+        }
+    }
+    return "find";
+}
+
+function getSystemPath(){
+    return Environment.getEnv("PATH");
+}
 
 function msys2root(){
     var msys2 = "";
@@ -18,22 +48,30 @@ function msys2root(){
     if(where.exitCode()!==0){
         throw("error: There is a problem to detect the 'find' command.");
     }
-	
-	var line = where.readLine();
-	var findPos = line.indexOf("usr\\bin\\find.exe");
-	
-	if (findPos > -1){
-		msys2 = line.slice(0,findPos);
-	}
+
+
+    while(true){
+        var line = where.readLine();
+        if(line!=="" && line!==undefined){
+            var findPos = line.indexOf("usr\\bin\\find.exe");
+            if (findPos > -1){
+                msys2 = line.slice(0,findPos);
+                break;
+            }
+        }else{
+            break;
+        }
+    }
+
 	
     //console.error("PATH=>"+systemPath);
-	var usrPos = systemPath.indexOf(msys2 + "usr\\bin;");
-	var mingw32Pos = systemPath.indexOf(msys2 + "mingw32\\bin;");
+    var usrPos = systemPath.indexOf(msys2 + "usr\\bin");
+    var mingw32Pos = systemPath.indexOf(msys2 + "mingw32\\bin");
 	
-    if( (usrPos == -1) || (mingw32Pos == -1) || (mingw32Pos > usrPos) ){
-		console.error("PATH="+systemPath);
+    if( (usrPos === -1) || (mingw32Pos === -1) || (mingw32Pos > usrPos) ){
+        console.error("PATH="+systemPath);
 		throw("error : your PATH is incorrect. Please make sure that {MSYS2ROOT}\\mingw32\\bin;{MSYS2ROOT}\\usr\\bin is at the beginning of your PATH");
-	}
+    }
 	
 	return msys2;
 }
@@ -63,7 +101,7 @@ function listDirsRecursive(dir){
     }
     var find = new Process();
     var params = [dir,'-type','d'];
-    find.exec("find", params)
+    find.exec(findCommand(), params)
     if(find.exitCode()!==0){
 		var error = find.readStdErr();
 		throw("error: " + error)
@@ -161,7 +199,7 @@ function findSourceRecursive(dir){
                   ,'-or', '-name', '*.glsl'
                   ,'-or', '-name', '*.vert'
                   ,'-or', '-name', '*.frag'];
-    find.exec("find", params);
+    find.exec(findCommand(), params);
     if(find.exitCode()!==0){
 		var error = find.readStdErr();
 		throw("error: " + error)

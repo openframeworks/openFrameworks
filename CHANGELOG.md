@@ -1,12 +1,81 @@
+  ___         ___         ___  
+ / _ \       / _ \       / _ \
+| | | |     | (_) |     | (_) |
+| | | |      \__, |      > _ <
+| |_| |  _     / /   _  | (_) |
+ \___/  (_)   /_/   (_)  \___/
+
+
+
+ OF 0.9.8
+ ========                          
+
+ #### change key
+ + added
+ - removed
+ / modified
+
+ ------------------------------------------------------------------------------                             
+
+   ___         ___        ______
+  / _ \       / _ \      |____  |
+ | | | |     | (_) |         / /
+ | | | |      \__, |        / /  
+ | |_| |  _     / /   _    / /   
+  \___/  (_)   /_/   (_)  /_/    
+
+  PLATFORM SPECIFIC
+  -----------------
+
+  ### linux
+      / fixes for debian alpha testing install_dependencies.sh
+
+  ### qtcreator
+      / fix some problems in msys2         
+
+
+OF 0.9.7
+========                          
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+PROJECT GENERATOR
+=================
+
+/ Fixed a problem where PG included wouldn't run correctly on OSX Sierra
+
+
+CORE
+----
+
+### graphics
+    / revert bug introduced in ofPixels getColor(int) in 0.9.5
+
+
+PLATFORM SPECIFIC
+-----------------
+
+### linux
+    / fixes for install_dependencies.sh
+
+### qtcreator
+    / better detection for some libraries
+
+
    ___         ___          __  
   / _ \       / _ \        / /  
  | | | |     | (_) |      / /_  
- | | | |      \__, |     | '_ \ 
+ | | | |      \__, |     | '_ \
  | |_| |  _     / /   _  | (_) |
-  \___/  (_)   /_/   (_)  \___/ 
-                                
-                                
-                     
+  \___/  (_)   /_/   (_)  \___/
+
+
+
 OF 0.9.6
 ========                          
 
@@ -32,16 +101,16 @@ PLATFORM SPECIFIC
 ### linux
     / Fix some problems with install dependencies scripts in latest dsitributions
 
-                                 
-   ___         ___        _____ 
+
+   ___         ___        _____
   / _ \       / _ \      | ____|
  | | | |     | (_) |     | |__  
- | | | |      \__, |     |___ \ 
+ | | | |      \__, |     |___ \
  | |_| |  _     / /   _   ___) |
-  \___/  (_)   /_/   (_) |____/ 
+  \___/  (_)   /_/   (_) |____/
 
-                    
-                             
+
+
 OF 0.9.5
 ========                          
 
@@ -53,7 +122,7 @@ OF 0.9.5
 ------------------------------------------------------------------------------
 
 CORE
----- 
+----
 
 ### graphcis
     / ofPixels ported to use size_t so it supports higher image sizes
@@ -72,7 +141,7 @@ PLATFORM SPECIFIC
     / ubuntu 16.10 requires recompiling all libraries
     / ttf: solve a crash when closing after using a file dialog
 
-### windows 
+### windows
     / qtcreator: fixes rtaudio
 
 
@@ -80,13 +149,13 @@ PLATFORM SPECIFIC
 
    ___         ___        _  _   
   / _ \       / _ \      | || |  
- | | | |     | (_) |     | || |_ 
+ | | | |     | (_) |     | || |_
  | | | |      \__, |     |__   _|
  | |_| |  _     / /   _     | |  
   \___/  (_)   /_/   (_)    |_|  
-                                 
 
-                     
+
+
 OF 0.9.4
 ========                          
 
@@ -98,7 +167,7 @@ OF 0.9.4
 ------------------------------------------------------------------------------
 
 CORE
----- 
+----
 
 ### types
    / ofParameterGroup: fix for clear not freeing the children weak_ptrs
@@ -110,31 +179,31 @@ PLATFORM SPECIFIC
 
 ### osx
     / recompiled freeimage to fix support for 32bits
-    / Change to not include QuickTime or QTKit files for 10.12 
-    + New AVFoundation grabber for OS X 10.12 
+    / Change to not include QuickTime or QTKit files for 10.12
+    + New AVFoundation grabber for OS X 10.12
 
 ### linux
     / install_dependencies: add check to see if all packages are up to date
     / fix compatibility with qtcreator 4.1.0
     / fixes for serial in msys2 and linux
 
-### windows 
+### windows
     / fixes for msys2 with qtcreator
     / fixes for serial in msys2 and linux
-    
+
 ### ios
     / Fix to iOS examples which had missing Icon and Splash screen files.  
 
 
 
    ___         ___        ____  
-  / _ \       / _ \      |___ \ 
+  / _ \       / _ \      |___ \
  | | | |     | (_) |       __) |
- | | | |      \__, |      |__ < 
+ | | | |      \__, |      |__ <
  | |_| |  _     / /   _   ___) |
-  \___/  (_)   /_/   (_) |____/ 
-                                
-                                
+  \___/  (_)   /_/   (_) |____/
+
+
 OF 0.9.3
 ========                          
 
@@ -146,15 +215,15 @@ OF 0.9.3
 ------------------------------------------------------------------------------
 
 CORE
----- 
+----
 
 ### graphics
     / fixes for ofPixels move constructor and operator
-    
+
 ### gl
     / fix for ofSetColor as default material in fixed pipeline
-    
-    
+
+
 PLATFORM SPECIFIC
 -----------------
 
@@ -162,16 +231,16 @@ PLATFORM SPECIFIC
     / FreeImage to freeimage dependencies fix
 
 ### osx
-    / remove data copy to bundle in osx default target 
+    / remove data copy to bundle in osx default target
     / AVFoundation player fix for getPixels after unsuccessful movie load
     / fixes for window size on osx retina
     / FreeImage static libs recompiled to fix SSL errors #4812
 
-    
+
 ### linux
     / fixes for linux fullscreen in gnome shell, openbox and others
-    
-    
+
+
 
  _____     _____     _____
 |  _  |   |  _  |   / __  \
@@ -359,9 +428,9 @@ PROJECT GENERATOR
         .-''` ''-.            \     ,  /      .-''` ''-.     
       .'          '.           `'-'/  /     .'          '.   
      /              `      .-.    /  /     /              `  
-    '                '     \  '--'  /     '                ' 
-    |         .-.    | ,.--.'-....-',.--. |         .-.    | 
-    .        |   |   .//    \      //    \.        |   |   . 
+    '                '     \  '--'  /     '                '
+    |         .-.    | ,.--.'-....-',.--. |         .-.    |
+    .        |   |   .//    \      //    \.        |   |   .
      .       '._.'  / \\    /      \\    / .       '._.'  /  
       '._         .'   `'--'        `'--'   '._         .'   
          '-....-'`                             '-....-'`  
@@ -624,7 +693,7 @@ PROJECT GENERATOR
      d8P'`Y8b      d88'   `8.         .d88   
     888    888     Y88..  .8'       .d'888   
     888    888      `88888b.      .d'  888   
-    888    888     .8'  ``88b     88ooo888oo 
+    888    888     .8'  ``88b     88ooo888oo
     `88b  d88' .o. `8.   .88P .o.      888   
      `Y8bd8P'  Y8P  `boood8'  Y8P     o888o  
 
@@ -651,9 +720,9 @@ PLATFORM SPECIFIC
 
       .oooo.        .ooooo.         .oooo.   
      d8P'`Y8b      d88'   `8.     .dP""Y88b  
-    888    888     Y88..  .8'           ]8P' 
+    888    888     Y88..  .8'           ]8P'
     888    888      `88888b.          <88b.  
-    888    888     .8'  ``88b          `88b. 
+    888    888     .8'  ``88b          `88b.
     `88b  d88' .o. `8.   .88P .o. o.   .88P  
      `Y8bd8P'  Y8P  `boood8'  Y8P `8bd88P'   
 
@@ -684,11 +753,11 @@ CORE ADDONS
 
       .oooo.        .ooooo.         .oooo.   
      d8P'`Y8b      d88'   `8.     .dP""Y88b  
-    888    888     Y88..  .8'           ]8P' 
+    888    888     Y88..  .8'           ]8P'
     888    888      `88888b.          .d8P'  
     888    888     .8'  ``88b       .dP'     
-    `88b  d88' .o. `8.   .88P .o. .oP     .o 
-     `Y8bd8P'  Y8P  `boood8'  Y8P 8888888888 
+    `88b  d88' .o. `8.   .88P .o. .oP     .o
+     `Y8bd8P'  Y8P  `boood8'  Y8P 8888888888
 
 
 OF 0.8.2
@@ -952,12 +1021,12 @@ EXAMPLES
         ,----..      /   /      \       ,----..    
        /   /   \    .   ;  ,/.  :      /   /   \   
       /   .     :   '   |  | :  ;     /   .     :  
-     .   /   ;.  \  '   |  ./   :    .   /   ;.  \ 
-    .   ;   /  ` ;  |   :       ,   .   ;   /  ` ; 
-    ;   |  ; \ ; |   \   \     /    ;   |  ; \ ; | 
-    |   :  | ; | '    ;   ,   '\    |   :  | ; | ' 
-    .   |  ' ' ' :   /   /      \   .   |  ' ' ' : 
-    '   ;  \; /  |  .   ;  ,/.  :   '   ;  \; /  | 
+     .   /   ;.  \  '   |  ./   :    .   /   ;.  \
+    .   ;   /  ` ;  |   :       ,   .   ;   /  ` ;
+    ;   |  ; \ ; |   \   \     /    ;   |  ; \ ; |
+    |   :  | ; | '    ;   ,   '\    |   :  | ; | '
+    .   |  ' ' ' :   /   /      \   .   |  ' ' ' :
+    '   ;  \; /  |  .   ;  ,/.  :   '   ;  \; /  |
      \   \  ',  /__ '   |  | :  ; ___\   \  ',  /  
       ;   :    /  .\'   |  ./   :/  .\;   :    /   
        \   \ .'\  ; |   :      / \  ; |\   \ .'    
