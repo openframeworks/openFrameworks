@@ -85,4 +85,6 @@ msys2:
 	ADDON_LIBS_EXCLUDE = libs/assimp
 	ADDON_INCLUDES_EXCLUDE = libs/assimp/%
 	
-	
+vs:
+	ADDON_DLLS_TO_COPY = libs/assimp/lib/vs/Win32/assimp32.dll
+	ADDON_DLLS_TO_COPY += libs/assimp/lib/vs/Win32/assimp64.dll	
