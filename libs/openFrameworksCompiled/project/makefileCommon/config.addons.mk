@@ -17,7 +17,7 @@ define parse_addons_includes
 	$(eval PARSED_ADDONS_FILTERED_LIBS_INCLUDE_PATHS = $(filter-out $(ADDONS_INCLUDES_FILTER),$(PARSED_ADDONS_LIBS_INCLUDES))) \
 	$(eval PARSED_ADDONS_INCLUDES = $(PARSED_ADDONS_FILTERED_INCLUDE_PATHS)) \
 	$(eval PARSED_ADDONS_INCLUDES += $(PARSED_ADDONS_FILTERED_LIBS_SOURCE_INCLUDE_PATHS)) \
-	$(eval PARSED_ADDONS_INCLUDES += $(PARSED_ADDONS_FILTERED_LIBS_INCLUDE_PATHS)) 
+	$(eval PARSED_ADDONS_INCLUDES += $(PARSED_ADDONS_FILTERED_LIBS_INCLUDE_PATHS))
 endef
 
 # parses addons sources, in PARSED_ADDON_SOURCES receives full PATHS to addons
@@ -30,7 +30,7 @@ define parse_addons_sources
 	$(eval PARSED_ADDONS_LIBS_SOURCES = $(shell $(FIND) $(PARSED_ADDONS_LIBS_SOURCE_PATHS) -type f \( -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" \) 2> /dev/null | grep -v "/\.[^\.]"  )) \
 	$(eval PARSED_ADDONS_FILTERED_LIBS_SOURCE_PATHS = $(filter-out $(ADDONS_SOURCES_FILTER),$(PARSED_ADDONS_LIBS_SOURCES))) \
 	$(eval PARSED_ADDONS_SOURCE_FILES = $(PARSED_ADDONS_FILTERED_SOURCE_PATHS)) \
-	$(eval PARSED_ADDONS_SOURCE_FILES += $(PARSED_ADDONS_FILTERED_LIBS_SOURCE_PATHS)) 
+	$(eval PARSED_ADDONS_SOURCE_FILES += $(PARSED_ADDONS_FILTERED_LIBS_SOURCE_PATHS))
 endef
 
 # parses addons libraries, in PARSED_ADDON_LIBS receives full PATHS to addons and libs_exclude
@@ -49,7 +49,7 @@ endef
 
 
 space :=
-space += 
+space +=
 
 define src_to_obj
 	$(addsuffix .o,$(basename $(filter %.c %.cpp %.cc %.cxx %.cc %.s %.S, $(addprefix $3,$(addprefix $2,$1)))))
@@ -158,7 +158,7 @@ define parse_addon
 			$(eval PROJECT_ADDONS += $(addon_dep)) \
 			$(call parse_addon,$(addon_dep)) \
 		) \
-	) 
+	)
 endef
 
 
@@ -194,24 +194,24 @@ OF_PROJECT_ADDONS_DEPS = $(patsubst %.o,%.d,$(PROJECT_ADDONS_OBJ_FILES))
 ########################################################################
 # print debug information if so instructed
 ifdef MAKEFILE_DEBUG
-    $(info ---PROJECT_ADDONS_PATHS---)
-    $(foreach v, $(PROJECT_ADDONS_PATHS),$(info $(v)))
-    $(info ---PROJECT_ADDONS_WITH_CONFIG---)
-    $(foreach v, $(PROJECT_ADDONS_WITH_CONFIG),$(info $(v)))
-    $(info ---PROJECT_ADDONS_INCLUDES---)
-    $(foreach v, $(PROJECT_ADDONS_INCLUDES),$(info $(v)))
-    $(info ---PROJECT_ADDONS_SOURCE_FILES---)
-    $(foreach v, $(PROJECT_ADDONS_SOURCE_FILES),$(info $(v)))
-    $(info ---PROJECT_ADDONS_LIBS---)
-    $(foreach v, $(PROJECT_ADDONS_LIBS),$(info $(v)))
-    $(info ---PROJECT_ADDONS_OBJFILES---)
-    $(foreach v, $(PROJECT_ADDONS_OBJFILES),$(info $(v)))
-    $(info ---PROJECT_ADDONS_BASE_CFLAGS---)
-    $(foreach v, $(PROJECT_ADDONS_BASE_CFLAGS),$(info $(v)))
-    $(info ---PROJECT_ADDONS_DEFINES_CFLAGS---)
-    $(foreach v, $(PROJECT_ADDONS_DEFINES_CFLAGS),$(info $(v)))
-    $(info ---PROJECT_ADDONS_INCLUDES_CFLAGS---)
-    $(foreach v, $(PROJECT_ADDONS_INCLUDES_CFLAGS),$(info $(v)))
-    $(info ---PROJECT_ADDONS_LDFLAGS---)
-    $(foreach v, $(PROJECT_ADDONS_LDFLAGS),$(info $(v)))
+	$(info ---PROJECT_ADDONS_PATHS---)
+	$(foreach v, $(PROJECT_ADDONS_PATHS),$(info $(v)))
+	$(info ---PROJECT_ADDONS_WITH_CONFIG---)
+	$(foreach v, $(PROJECT_ADDONS_WITH_CONFIG),$(info $(v)))
+	$(info ---PROJECT_ADDONS_INCLUDES---)
+	$(foreach v, $(PROJECT_ADDONS_INCLUDES),$(info $(v)))
+	$(info ---PROJECT_ADDONS_SOURCE_FILES---)
+	$(foreach v, $(PROJECT_ADDONS_SOURCE_FILES),$(info $(v)))
+	$(info ---PROJECT_ADDONS_LIBS---)
+	$(foreach v, $(PROJECT_ADDONS_LIBS),$(info $(v)))
+	$(info ---PROJECT_ADDONS_OBJFILES---)
+	$(foreach v, $(PROJECT_ADDONS_OBJFILES),$(info $(v)))
+	$(info ---PROJECT_ADDONS_BASE_CFLAGS---)
+	$(foreach v, $(PROJECT_ADDONS_BASE_CFLAGS),$(info $(v)))
+	$(info ---PROJECT_ADDONS_DEFINES_CFLAGS---)
+	$(foreach v, $(PROJECT_ADDONS_DEFINES_CFLAGS),$(info $(v)))
+	$(info ---PROJECT_ADDONS_INCLUDES_CFLAGS---)
+	$(foreach v, $(PROJECT_ADDONS_INCLUDES_CFLAGS),$(info $(v)))
+	$(info ---PROJECT_ADDONS_LDFLAGS---)
+	$(foreach v, $(PROJECT_ADDONS_LDFLAGS),$(info $(v)))
 endif

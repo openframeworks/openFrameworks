@@ -54,7 +54,7 @@ Module{
                 "openFrameworksCompiled",
             ];
         }else if(platform==="msys2"){
-            return [
+            var exceptions = [
                 "glew",
                 "cairo",
                 "freetype",
@@ -65,6 +65,10 @@ Module{
                 "glfw",
                 "openFrameworksCompiled"
             ];
+            if(Helpers.pkgExists("rtaudio")){
+                exceptions.push("rtAudio")
+            }
+            return exceptions;
         }else if(platform==="osx"){
             var exceptions = [
                 "openFrameworksCompiled",
@@ -167,17 +171,12 @@ Module{
 
             return libs;
         }else if(platform === "msys2"){
-            var libs = [
-                'opengl32', 'gdi32', 'msimg32', 'glu32', 'dsound', 'winmm', 'strmiids',
-                'uuid', 'ole32', 'oleaut32', 'setupapi', 'wsock32', 'ws2_32', 'Iphlpapi', 'Comdlg32',
-                'freeimage', 'boost_filesystem-mt', 'boost_system-mt', 'freetype', 'cairo','pthread'
+            return [
+                'opengl32', 'gdi32', 'msimg32', 'glu32', 'winmm', 'strmiids',
+                'uuid', 'oleaut32', 'setupapi', 'wsock32', 'ws2_32', 'Iphlpapi', 'Comdlg32',
+                'freeimage', 'boost_filesystem-mt', 'boost_system-mt', 'freetype', 'pthread',
+                'ksuser', 'ole32', 'dsound',
             ];
-
-            if(!Helpers.pkgExists("rtaudio")){
-                libs = libs.concat(['rtaudio', 'ksuser', 'ole32', 'dsound']);
-            }
-
-            return libs;
         }else if(platform === "android"){
             return [
                 'OpenSLES', 'z', 'GLESv1_CM', 'GLESv2', 'log'
@@ -234,16 +233,6 @@ Module{
             }
         }
         includes = includes.concat(PKG_CONFIG_INCLUDES);
-        if(platform === "msys2"){
-            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include'));
-            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/cairo'));
-            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/glib-2.0'));
-            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/lib/glib-2.0/include'));
-            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/pixman-1'));
-            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/freetype2'));
-            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/harfbuzz'));
-            includes.push(FileInfo.joinPaths(Helpers.msys2root(),'mingw32/include/libpng16'));
-        }
 
         return includes;
     }
@@ -262,6 +251,7 @@ Module{
         var ret = PKG_CONFIG_LDFLAGS;
         if(platform === "msys2"){
             ret.push("-L"+FileInfo.joinPaths(Helpers.msys2root(),"mingw32/lib"));
+            //ret.push("-fuse-ld=gold");
         }
         return ret;
     }

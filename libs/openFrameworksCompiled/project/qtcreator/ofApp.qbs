@@ -63,8 +63,7 @@ CppApplication{
             if(FileInfo.isAbsolutePath(project.of_root) == false){
                 srcDir = FileInfo.joinPaths(project.path, srcDir);
             }
-            srcDir = FileInfo.joinPaths(srcDir, "libs/*/lib/", of.platform, "/");
-            //throw srcDir;
+            srcDir = FileInfo.joinPaths(srcDir, "libs/*/lib/", product.platform, "/");
             return srcDir;
         }
 

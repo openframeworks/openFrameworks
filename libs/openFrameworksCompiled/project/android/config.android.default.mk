@@ -137,8 +137,8 @@ endif
 
 ifeq ($(ABI),x86)
 	ABI_PATH = x86
-    PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_x86.so
-    PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_x86.so
+	PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_x86.so
+	PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_x86.so
 endif
 
 PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/$(ABI)/libopenFrameworks.a
@@ -181,12 +181,12 @@ PLATFORM_CFLAGS = -Wall -std=c++14
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS +=  -nostdlib --sysroot=$(SYSROOT) -fpic \
-    -ffunction-sections \
-    -funwind-tables \
-    -fstack-protector-strong \
-    -Wno-invalid-command-line-argument \
-    -Wno-unused-command-line-argument \
-    -no-canonical-prefixes \
+	-ffunction-sections \
+	-funwind-tables \
+	-fstack-protector-strong \
+	-Wno-invalid-command-line-argument \
+	-Wno-unused-command-line-argument \
+	-no-canonical-prefixes \
 		-gcc-toolchain $(GCC_TOOLCHAIN)/prebuilt/$(HOST_PLATFORM) \
 		-fno-integrated-as
 
