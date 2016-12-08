@@ -30,14 +30,15 @@ done
 NOT_HAS_PATH=$(echo $PATH | grep /mingw32/bin > /dev/null; echo $?)
 if [ "$NOT_HAS_PATH" -ne "0" ]; then
 	cd /
-	MSYS2_ROOT=$(pwd -W)
-	setx PATH "$MSYS2_ROOT\\mingw32\\bin;$MSYS2_ROOT\\usr\\bin\\;%PATH%;"
+	MSYS2_ROOT=$(pwd)
+	MSYS2_ROOT=$(cygpath -w $MSYS2_ROOT)
+	setx PATH "%PATH%;${MSYS2_ROOT}mingw32\\bin;${MSYS2_ROOT}usr\\bin\\"
 fi
 
 arch=i686
 if [ -z ${confirm+x} ]; then
 	pacman -S $confirm --needed ca-certificates
-	if [ ! -z ${APPVEYOR+x} ]; then
+	if [ -z ${APPVEYOR+x} ]; then
 		pacman -S $confirm --needed wget rsync unzip make mingw-w64-$arch-gcc
 	fi
 	pacman -S $confirm --needed mingw-w64-$arch-glew \
@@ -62,7 +63,7 @@ if [ -z ${confirm+x} ]; then
 else
 	pacman -S $confirm --needed mingw-w64-$arch-harfbuzz
 	pacman -S $confirm --needed ca-certificates
-	if [ ! -z ${APPVEYOR+x} ]; then
+	if [ -z ${APPVEYOR+x} ]; then
 		pacman -S $confirm --needed wget
 		pacman -S $confirm --needed rsync
 		pacman -S $confirm --needed unzip

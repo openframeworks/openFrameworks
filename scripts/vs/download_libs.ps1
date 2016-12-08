@@ -24,7 +24,7 @@ function DownloadLibs{
 
     echo "Uncompressing downloaded libs to $libsDir\$arch"
     Add-Type -A System.IO.Compression.FileSystem
-    [IO.Compression.ZipFile]::ExtractToDirectory($pkg, "$libsDir\$arch")
+    [IO.Compression.ZipFile]::ExtractToDirectory("$scriptPath\$pkg", "$libsDir\$arch")
 
     Remove-Item $pkg
 }
@@ -36,7 +36,44 @@ If(-Not $libsExists) {
     new-item $libsDir -itemtype directory
 }
 
-$libs = @("32", "64", "boost", "cairo", "curl", "FreeImage", "freetype", "glew", "glfw", "json", "libpng", "openssl", "pixman", "poco", "rtAudio", "tess2", "uriparser", "utf8", "videoInput", "zlib", "opencv", "ippicv", "assimp", "README.md", ".appveyor.yml", ".travis.yml")
+$libs = @(
+    "32", 
+    "64", 
+    "boost", 
+    "cairo", 
+    "curl", 
+    "FreeImage", 
+    "freetype", 
+    "glew", 
+    "glfw", 
+    "json", 
+    "libpng", 
+    "openssl", 
+    "pixman", 
+    "poco", 
+    "rtAudio", 
+    "tess2", 
+    "uriparser", 
+    "utf8", 
+    "videoInput", 
+    "zlib", 
+    "opencv", 
+    "ippicv", 
+    "assimp", 
+    "README.md", 
+    ".appveyor.yml", 
+    ".travis.yml"
+    )
+
+$addon_libs = @(
+    "ofxOpenCv\libs\opencv", 
+    "ofxOpenCv\libs\ippicv", 
+    "ofxAssimpModelLoader\libs\assimp",
+    "ofxSvg\libs\libxml2",
+    "ofxSvg\libs\svgtiny",
+    "ofxPoco\libs\poco"
+    )
+
 echo "Deleting existing libs"
 ForEach ($lib in $libs){
     if(Test-Path "..\..\libs\$lib"){
@@ -44,32 +81,34 @@ ForEach ($lib in $libs){
     }
 }
 
+echo "Deleting existing addons libs"
+ForEach ($lib in $addon_libs){
+    if(Test-Path "..\..\addons\$lib"){
+        Remove-Item "..\..\addons\$lib" -Force -Recurse
+    }
+}
+
 DownloadLibs 32
 DownloadLibs 64
 
-robocopy.exe ..\..\libs\32\opencv ..\..\addons\ofxOpenCv\libs\ /MOVE /NFL /R:5 /S
-robocopy.exe ..\..\libs\64\opencv\lib\vs\x64 ..\..\addons\ofxOpenCv\libs\opencv\lib\vs\ /MOVE /NFL /R:5 /S
-Remove-Item "..\..\libs\64\opencv" -Force -Recurse
+function moveAddonLib {
+    $addonLib = $args[0]
 
-robocopy.exe ..\..\libs\32\ippicv ..\..\addons\ofxOpenCv\libs\ /MOVE /NFL /R:5 /S
-robocopy.exe ..\..\libs\64\ippicv\lib\vs\x64 ..\..\addons\ofxOpenCv\libs\ippicv\lib\vs\ /MOVE /NFL /R:5 /S
-Remove-Item "..\..\libs\64\ippicv" -Force -Recurse
+    $addon_path = split-path -parent "$addonLib"
+    $lib_name   = split-path -leaf "$addonLib"
 
-robocopy.exe ..\..\libs\32\assimp ..\..\addons\ofxAssimpModelLoader\libs\ /MOVE /NFL /R:5 /S
-robocopy.exe ..\..\libs\64\assimp\lib\vs\x64 ..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\ /MOVE /NFL /R:5 /S
-Remove-Item "..\..\libs\64\assimp" -Force -Recurse
+    echo "Moving addon lib: $lib_name"
 
-robocopy.exe ..\..\libs\32\libxml2 ..\..\addons\ofxSvg\libs\ /MOVE /NFL /R:5 /S
-robocopy.exe ..\..\libs\64\libxml2\lib\vs\x64 ..\..\addons\ofxSvg\libs\libxml2\lib\vs\ /MOVE /NFL /R:5 /S
-Remove-Item "..\..\libs\64\libxml2" -Force -Recurse
+    robocopy.exe "..\..\libs\32\$lib_name" "..\..\addons\$addon_path\$lib_name" /MOVE /NFL /R:5 /S
+    robocopy.exe "..\..\libs\64\$lib_name\lib\vs\x64" "..\..\addons\$addon_path\$lib_name\lib\vs\x64" /MOVE /NFL /R:5 /S
+    Remove-Item  "..\..\libs\64\$lib_name" -Force -Recurse
 
-robocopy.exe ..\..\libs\32\svgtiny ..\..\addons\ofxSvg\libs\ /MOVE /NFL /R:5 /S
-robocopy.exe ..\..\libs\64\svgtiny\lib\vs\x64 ..\..\addons\ofxSvg\libs\svgtiny\lib\vs\ /MOVE /NFL /R:5 /S
-Remove-Item "..\..\libs\64\svgtiny" -Force -Recurse
+}
 
-robocopy.exe ..\..\libs\32\poco ..\..\addons\ofxPoco\libs\ /MOVE /NFL /R:5 /S
-robocopy.exe ..\..\libs\64\poco\lib\vs\x64 ..\..\addons\ofxPoco\libs\poco\lib\vs\ /MOVE /NFL /R:5 /S
-Remove-Item "..\..\libs\64\poco" -Force -Recurse
+echo "Moving addons libs"
+ForEach ($lib in $addon_libs){
+   moveAddonLib $lib
+}
 
 robocopy.exe ..\..\libs\32\ ..\..\libs\ /MOVE /NFL /R:5 /S
 robocopy.exe ..\..\libs\64\ ..\..\libs\ /MOVE /NFL /R:5 /S

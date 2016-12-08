@@ -165,7 +165,7 @@ int ofxXmlSettings::getValue(const string& tag, int defaultValue, int which) con
 double ofxXmlSettings::getValue(const string& tag, double defaultValue, int which) const{
     TiXmlHandle valHandle(NULL);
 	if (readTag(tag, valHandle, which)){
-		return ofToFloat(valHandle.ToText()->Value());
+		return ofToDouble(valHandle.ToText()->Value());
 	}
 	return defaultValue;
 }

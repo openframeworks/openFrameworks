@@ -65,7 +65,7 @@ PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 ##########################################################################################
 
 ifeq ($(OF_USE_POCO),1)
-    PLATFORM_DEFINES = POCO_STATIC
+	PLATFORM_DEFINES = POCO_STATIC
 endif
 
 ##########################################################################################
