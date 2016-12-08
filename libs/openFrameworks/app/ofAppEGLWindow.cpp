@@ -1630,6 +1630,11 @@ void ofAppEGLWindow::readNativeKeyboardEvents() {
 				pushKeyEvent = true;
 				keyEvent.key = OF_KEY_INSERT;
 				break;
+			case KEY_ENTER:
+			case KEY_KPENTER:
+				pushKeyEvent = true;
+				keyEvent.key = OF_KEY_RETURN;
+				break;
 
 			default:
 				// VERY RUDIMENTARY KEY MAPPING WITH MAPS ABOVE
