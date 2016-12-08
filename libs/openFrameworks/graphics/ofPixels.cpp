@@ -462,7 +462,7 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 
 	pixelsSize = newSize / sizeof(PixelType);
 
-	pixels = new PixelType[newSize];
+	pixels = new PixelType[pixelsSize];
 	bAllocated = true;
 	pixelsOwner = true;
 }
