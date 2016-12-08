@@ -16,7 +16,7 @@ void ofApp::setup(){
     img.allocate(80, 60, OF_IMAGE_GRAYSCALE);
 
     plane.set(800, 600, 80, 60);
-    plane.mapTexCoordsFromTexture(img.getTextureReference());
+    plane.mapTexCoordsFromTexture(img.getTexture());
 }
 
 //--------------------------------------------------------------
@@ -24,7 +24,7 @@ void ofApp::update(){
     float noiseScale = ofMap(mouseX, 0, ofGetWidth(), 0, 0.1);
     float noiseVel = ofGetElapsedTimef();
 
-    unsigned char * pixels = img.getPixels();
+    ofPixels & pixels = img.getPixels();
     int w = img.getWidth();
     int h = img.getHeight();
     for(int y=0; y<h; y++) {
@@ -42,7 +42,7 @@ void ofApp::draw(){
 
     // bind our texture. in our shader this will now be tex0 by default
     // so we can just go ahead and access it there.
-    img.getTextureReference().bind();
+    img.getTexture().bind();
 
     shader.begin();
 
