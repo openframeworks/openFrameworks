@@ -202,7 +202,7 @@ void ofApp::renderRadialSignedNoiseDemo (){
 		// Good old-fashioned trigonometry: y = cos(t), x = sin(t)
 		px = wigglyRadius * cos( angle );
 		py = wigglyRadius * sin( angle );
-		wigglyMeshLine.addVertex(ofVec2f(px,py));
+        wigglyMeshLine.addVertex({px,py,0});
 	}
 
 	// draw the "mesh" (line)
@@ -242,7 +242,7 @@ void ofApp::renderLinearSignedNoiseDemo(){
 		// an angle (around a circle) and an alpha value.
 		float px = ofMap(i, 0,nSignedNoiseData-1, drawWiggleWidth,0);
 		float py = 0 - radialNoiseDemoR * signedNoiseData[i];
-		wigglyPolyLine.addVertex(ofVec2f(px,py));
+        wigglyPolyLine.addVertex({px,py,0}  );
 	}
 
 	// draw the line
