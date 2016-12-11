@@ -6,7 +6,7 @@ PROJECTS=$OF_ROOT/libs/openFrameworksCompiled/project
 export GCC_PREFIX=armv7l-unknown-linux-gnueabihf
 export TOOLCHAIN_PREFIX=arm-linux-gnueabihf
 export GST_VERSION=1.0
-export RPI_ROOT=${OF_ROOT}/scripts/ci/linuxarmv7/archlinux
+export RPI_ROOT=${OF_ROOT}/scripts/ci/$TARGET/archlinux
 #export TOOLCHAIN_ROOT=/usr
 export TOOLCHAIN_ROOT=$HOME/rpi2_toolchain
 #${OF_ROOT}/scripts/ci/linuxarmv7/x-tools7h/${GCC_PREFIX}
