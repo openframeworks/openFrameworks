@@ -14,8 +14,8 @@ sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_D
 cd $PROJECTS
 export GCC_PREFIX=arm-linux-gnueabihf
 export GST_VERSION=1.0
-export RPI_ROOT=${OF_ROOT}/scripts/ci/linuxarmv6/raspbian
-export TOOLCHAIN_ROOT=${OF_ROOT}/scripts/ci/linuxarmv6/rpi_toolchain
+export RPI_ROOT=${OF_ROOT}/scripts/ci/$TARGET/raspbian
+export TOOLCHAIN_ROOT=${OF_ROOT}/scripts/ci/$TARGET/rpi_toolchain
 export PLATFORM_OS=Linux
 export PLATFORM_ARCH=armv6l
 export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
