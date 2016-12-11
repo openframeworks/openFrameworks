@@ -43,6 +43,8 @@ fi
 
 echo $currenthash>lasthash.txt
 ./create_package.sh linux64 $lastversion master
+./create_package.sh linux64 $lastversion master gcc5
+./create_package.sh linux64 $lastversion master gcc6
 ./create_package.sh msys2 $lastversion master
 ./create_package.sh vs $lastversion master
 ./create_package.sh ios $lastversion master
@@ -58,6 +60,8 @@ mv *.tar.gz /var/www/versions/nightly
 mv *.zip /var/www/versions/nightly
 
 mv /var/www/versions/nightly/of_v${lastversion}_linux64_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_nightly.tar.gz
+mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_nightly.tar.gz
+mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc6_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_vs_release.zip /var/www/versions/nightly/of_v${lastversion}_vs_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_ios_release.zip /var/www/versions/nightly/of_v${lastversion}_ios_nightly.zip
