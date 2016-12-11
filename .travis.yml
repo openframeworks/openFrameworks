@@ -23,12 +23,12 @@ matrix:
   - os: linux
     sudo: required
     dist: trusty
-    env: TARGET="linuxarmv6"
+    env: TARGET="linuxarmv6l"
 
 
   - os: linux
     sudo: false
-    env: TARGET="linuxarmv7"
+    env: TARGET="linuxarmv7l"
     cache:
       directories:
         - ~/rpi2_toolchain
@@ -84,14 +84,14 @@ matrix:
     - compiler: gcc
 
 install:
-  - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "linuxarmv6" ] || [ "$TARGET" == "linuxarmv7" ] || [ "$TARGET" == "docs" ] || [ "$TARGET" == "osx" ] || [ "$TARGET" == "emscripten" ]; then
+  - if [ -f scripts/ci/$TARGET/install.sh ]; then
         scripts/ci/$TARGET/install.sh;
     fi
   - if [ "$TARGET" == "linux" ]; then
         scripts/linux/download_libs.sh -a 64;
-    elif [ "$TARGET" == "linuxarmv6" ]; then
+    elif [ "$TARGET" == "linuxarmv6l" ]; then
         scripts/linux/download_libs.sh -a armv6l;
-    elif [ "$TARGET" == "linuxarmv7" ]; then
+    elif [ "$TARGET" == "linuxarmv7l" ]; then
         scripts/linux/download_libs.sh -a armv7l;
     elif [ "$TARGET" == "tvos" ]; then
         scripts/ios/download_libs.sh;
