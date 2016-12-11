@@ -1,6 +1,9 @@
 #!/bin/bash
 set -ev
-ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
+
+if [ -z ${OF_ROOT} ]; then
+    OF_ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
+fi
 
 # Trusty/14.04 builds don't have databases running - disable this
 # echo "Memory usage debugging output"
@@ -12,4 +15,4 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 # sudo service mysql stop
 # sudo service postgresql stop
 
-sudo $ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
+sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
