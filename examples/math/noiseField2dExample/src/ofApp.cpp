@@ -76,7 +76,7 @@ void ofApp::update() {
     points[i].x = x;
     points[i].y = y;
 		// add the current point to our collection of drawn points
-		cloud.addVertex(ofVec2f(x, y));
+      cloud.addVertex({x, y,0});
 	}
 } 
 
