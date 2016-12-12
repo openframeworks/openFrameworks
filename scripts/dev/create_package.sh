@@ -12,7 +12,7 @@ platform=$1
 version=$2
 of_root=$(readlink -f "$(dirname "$(readlink -f "$0")")/../..")
 
-if [ $# -ge 3 ] || ; then
+if [ $# -ge 3 ]; then
     branch=$3
 else
     branch=stable
