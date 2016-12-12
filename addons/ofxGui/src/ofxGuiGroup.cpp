@@ -20,7 +20,7 @@ ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, const std::string&
 }
 
 ofxGuiGroup * ofxGuiGroup::setup(const std::string& collectionName, const std::string& filename, float x, float y){
-	parameters.setName(collectionName);
+	ofParameterGroup parameters(collectionName);
 	return setup(parameters, filename, x, y);
 }
 
