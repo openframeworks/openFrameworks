@@ -74,6 +74,12 @@ public:
 	ofParameterGroup();
 
 	template<typename ...Args>
+	ofParameterGroup(const string & name)
+	:obj(std::make_shared<Value>()){
+		setName(name);
+	}
+
+	template<typename ...Args>
 	ofParameterGroup(const string & name, Args&... p)
 	:obj(std::make_shared<Value>()){
 		add(p...);
