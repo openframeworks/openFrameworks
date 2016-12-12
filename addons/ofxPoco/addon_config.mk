@@ -100,7 +100,7 @@ linuxarmv7l:
     ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoXML.a
     ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoFoundation.a
 
-android/armv7:
+android/armeabi-v7a:
     ADDON_LIBS = libs/poco/lib/android/armv7/libPocoNetSSL.a
     ADDON_LIBS += libs/poco/lib/android/armv7/libPocoNet.a
     ADDON_LIBS += libs/poco/lib/android/armv7/libPocoCrypto.a
