@@ -158,8 +158,8 @@ function createPackage {
     
     #remove previously created package 
     cd $pkg_ofroot/..
-	rm -Rf of_v${pkg_version}_${pkg_platform}.*
-	rm -Rf of_v${pkg_version}_${pkg_platform}_*
+	rm -Rf of_v${pkg_version}_${pkg_platform}${libs_abi}.*
+	rm -Rf of_v${pkg_version}_${pkg_platform}${libs_abi}_*
     echo "Creating package $pkg_platform $version in $pkg_ofroot"
     
     #remove devApps folder
