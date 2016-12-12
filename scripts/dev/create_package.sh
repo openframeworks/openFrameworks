@@ -386,11 +386,7 @@ function createPackage {
         scripts/osx/download_libs.sh
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "linux64" ]; then
-        if [ ! -z $libs_abi ]; then
-            scripts/linux/download_libs.sh -a 64$libs_abi
-        else
-            scripts/linux/download_libs.sh -a 64
-        fi
+        scripts/linux/download_libs.sh -a 64$libs_abi
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "linuxarmv6l" ]; then
         scripts/linux/download_libs.sh -a armv6l
