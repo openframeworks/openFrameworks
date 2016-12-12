@@ -57,7 +57,7 @@ echo
 echo
 echo
 echo --------------------------------------------------------------------------
-echo "Creating package $version for $platform"
+echo "Creating package $version for $platform $libs_abi"
 echo --------------------------------------------------------------------------
 echo
 
