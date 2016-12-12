@@ -20,6 +20,8 @@ fi
 
 if [ $# -eq 4 ]; then
     libs_abi=$4
+else
+    libs_abi=""
 fi
 
 REPO=../..
