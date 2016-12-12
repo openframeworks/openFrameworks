@@ -12,13 +12,13 @@ platform=$1
 version=$2
 of_root=$(readlink -f "$(dirname "$(readlink -f "$0")")/../..")
 
-if [ $# -eq 3 ]; then
+if [ $# -ge 3 ] || ; then
     branch=$3
 else
     branch=stable
 fi
 
-if [ $# -eq 4 ]; then
+if [ $# -ge 4 ]; then
     libs_abi=$4
 else
     libs_abi=""
