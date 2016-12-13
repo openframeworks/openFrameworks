@@ -1,4 +1,4 @@
-Host 198.61.170.130
+Host ci.openframeworks.cc
 	StrictHostKeyChecking 	no
 	PasswordAuthentication	no
 	CheckHostIP			      	no

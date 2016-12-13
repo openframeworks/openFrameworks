@@ -6,12 +6,16 @@ if [ "${TRAVIS_REPO_SLUG}/${TRAVIS_BRANCH}" = "openframeworks/openFrameworks/mas
     cp $CI_ROOT/ssh_config ~/.ssh/config
     chmod 600 $CI_ROOT/id_rsa
     if [ "$TARGET"=="android" ]; then
-        scp -i $CI_ROOT/id_rsa $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/armv7/libopenFrameworksDebug.a tests@ci.openframeworks.cc:openFrameworks_libs/armv7/$TARGET
-        scp -i $CI_ROOT/id_rsa $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/x86/libopenFrameworksDebug.a tests@ci.openframeworks.cc:openFrameworks_libs/x86/$TARGET
+        scp -i $CI_ROOT/id_rsa $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/armv7/libopenFrameworksDebug.a_new tests@ci.openframeworks.cc:openFrameworks_libs/armv7/$TARGET
+        ssh -i $CI_ROOT/id_rsa tests@ci.openframeworks.cc "mv $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/armv7/libopenFrameworksDebug.a_new $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/armv7/libopenFrameworksDebug.a"
+        scp -i $CI_ROOT/id_rsa $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/x86/libopenFrameworksDebug.a_new tests@ci.openframeworks.cc:openFrameworks_libs/x86/$TARGET
+        ssh -i $CI_ROOT/id_rsa tests@ci.openframeworks.cc "mv $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/x86/libopenFrameworksDebug.a_new $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/x86/libopenFrameworksDebug.a"
     elif [ "$TARGET"=="emscripten" ]; then
-        scp -i $CI_ROOT/id_rsa $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/*/libopenFrameworksDebug.bc tests@ci.openframeworks.cc:openFrameworks_libs/$TARGET/
+        scp -i $CI_ROOT/id_rsa $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/*/libopenFrameworksDebug.bc_new tests@ci.openframeworks.cc:openFrameworks_libs/$TARGET/
+        ssh -i $CI_ROOT/id_rsa tests@ci.openframeworks.cc "mv $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/libopenFrameworksDebug.bc_new $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/libopenFrameworksDebug.bc"
     else
-        scp -i $CI_ROOT/id_rsa $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/*/libopenFrameworksDebug.a tests@ci.openframeworks.cc:openFrameworks_libs/$TARGET/
+        scp -i $CI_ROOT/id_rsa $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/*/libopenFrameworksDebug.a_new tests@ci.openframeworks.cc:openFrameworks_libs/$TARGET/
+        ssh -i $CI_ROOT/id_rsa tests@ci.openframeworks.cc "mv $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/libopenFrameworksDebug.a_new $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/libopenFrameworksDebug.a"
     fi
 fi
 rm -rf $CI_ROOT/id_rsa
