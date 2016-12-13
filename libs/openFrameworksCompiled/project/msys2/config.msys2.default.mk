@@ -329,6 +329,8 @@ copy_dlls:
 	@cp $(MSYS2_ROOT)/bin/tbb.dll bin/
 	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libassimp.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libgraphite2.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libgomp-1.dll bin/
 
 afterplatform: $(TARGET_NAME)
 	@if [ -e $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) ]; then cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/; fi
