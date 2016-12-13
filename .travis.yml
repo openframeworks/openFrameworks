@@ -1,6 +1,10 @@
 language: c++
 compiler: gcc
 sudo: true
+env:
+  global:
+    secure: LBTN8d1hS7ocrqDwxLQqU0tfK3FMCXBI8q1yASEjtkp/v5HEyFkbj22H4jXZ20SkpCTlIG2L6i/fU3d6KzJUzTFuxkQEWsnjkj4jAhxGEWRsT1RV6VcUPQDGLHapXwTy+ZYgMNxE7aAdQaBskPHdVzAhjrzlTwVuKp6KjFn+kMU=
+
 matrix:
   include:
   # fully specify builds, include can't dynamically expand matrix entries
@@ -105,6 +109,7 @@ script:
   - if [ "$TARGET" == "osx" ] || [ "$TARGET" == "linux" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     fi
+  - scripts/ci/upload_of_lib.sh
 
 git:
   depth: 10
