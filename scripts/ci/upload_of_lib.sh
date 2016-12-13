@@ -2,7 +2,7 @@
 OF_ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 CI_ROOT=$OF_ROOT/scripts/ci
 if [ "${TRAVIS_REPO_SLUG}/${TRAVIS_BRANCH}" = "openframeworks/openFrameworks/master" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
-    openssl aes-256-cbc -K $encrypted_cd38768cbb9d_key -iv $encrypted_cd38768cbb9d_iv -in $CI_ROOT/id_rsa.enc -out $CI_ROOT/id_rsa -d
+    openssl aes-256-cbc -K $encrypted_418b42d90fab_key -iv $encrypted_418b42d90fab_iv -in $CI_ROOT/id_rsa.enc -out $CI_ROOT/id_rsa -d
     cp $CI_ROOT/ssh_config ~/.ssh/config
     chmod 600 $CI_ROOT/id_rsa
     if [ "$TARGET"=="android" ]; then
