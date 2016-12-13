@@ -13,7 +13,7 @@ matrix:
   - os: linux
     dist: trusty
     sudo: required
-    env: TARGET="linux"
+    env: TARGET="linux64"
     addons:
       apt:
         sources:
@@ -91,7 +91,7 @@ install:
   - if [ -f scripts/ci/$TARGET/install.sh ]; then
         scripts/ci/$TARGET/install.sh;
     fi
-  - if [ "$TARGET" == "linux" ]; then
+  - if [ "$TARGET" == "linux64" ]; then
         scripts/linux/download_libs.sh -a 64;
     elif [ "$TARGET" == "linuxarmv6l" ]; then
         scripts/linux/download_libs.sh -a armv6l;
@@ -106,7 +106,7 @@ install:
 
 script:
   - scripts/ci/$TARGET/build.sh $OPT
-  - if [ "$TARGET" == "osx" ] || [ "$TARGET" == "linux" ]; then
+  - if [ "$TARGET" == "osx" ] || [ "$TARGET" == "linux64" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     fi
   - scripts/ci/upload_of_lib.sh
