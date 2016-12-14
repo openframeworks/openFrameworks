@@ -1,6 +1,6 @@
 #!/bin/bash
-#set -e
-#set -o pipefail
+set -e
+set -o pipefail
 # trap any script errors and exit
 trap "trapError" ERR
 age () { stat=$(stat --printf="%Y %F\n" "$1"); echo $((($(date +%s) - ${stat%% *})/86400)); }
