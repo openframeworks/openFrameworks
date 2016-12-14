@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-OF_ROOT=~/openFrameworks
+export OF_ROOT=~/openFrameworks
 
 cd $OF_ROOT
 if [ -f scripts/ci/$TARGET/install.sh ]; then
