@@ -36,8 +36,8 @@ matrix:
     cache:
       directories:
         - ~/rpi2_toolchain
-        - $TRAVIS_BUILD_DIR/scripts/ci/linuxarmv7l/firmware-master
-        - $TRAVIS_BUILD_DIR/scripts/ci/linuxarmv7l/archlinux
+        - ~/firmware-master
+        - ~/archlinux
 
 
   - os: linux
