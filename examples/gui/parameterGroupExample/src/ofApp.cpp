@@ -1,6 +1,4 @@
 #include "ofApp.h"
-#include "ofMain.h"
-#include "ofxGui.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
