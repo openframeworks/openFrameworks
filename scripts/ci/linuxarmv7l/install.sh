@@ -24,8 +24,8 @@ createArchImg(){
     #sudo ./arch-bootstrap.sh archlinux
     
     if [ ! "$(ls -A ~/archlinux)" ] || [ $(age archlinux/timestamp) -gt 7 ]; then
-        ./arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" archlinux
-        touch archlinux/timestamp
+        $ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
+        touch ~/archlinux/timestamp
     fi
 }
 
@@ -79,12 +79,11 @@ relativeSoftLinks(){
 
 
 echo $ROOT
-cd ~
 createArchImg
 downloadToolchain
 downloadFirmware
 
-cd $ROOT/archlinux/usr/lib
+cd ~/archlinux/usr/lib
 relativeSoftLinks "../.." "..\/.."
 #cd $ROOT/archlinux/usr/lib/arm-unknown-linux-gnueabihf
 #relativeSoftLinks  "../../.." "..\/..\/.."
