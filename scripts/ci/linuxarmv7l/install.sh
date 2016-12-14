@@ -52,8 +52,7 @@ downloadFirmware(){
         wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
         unzip firmware.zip
     fi
-    ${SUDO} cp -r firmware-master/opt archlinux/
-    rm firmware.zip
+    ${SUDO} cp -r ~/firmware-master/opt archlinux/
 }
 
 
