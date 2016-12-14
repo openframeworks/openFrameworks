@@ -1,4 +1,6 @@
 #include "ofApp.h"
+#include "ofMain.h"
+#include "ofxGui.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -44,10 +46,12 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 	if(key=='s'){
+        ofSerialize(settings,parameters);
 		settings.save("settings.xml");
 	}
 	if(key=='l'){
 		settings.load("settings.xml");
+        ofDeserialize(settings, parameters);
 	}
 	if(key=='o'){
 		cout << renderer1.parameters;
