@@ -23,7 +23,7 @@ createArchImg(){
     #sudo apt-get install -y libgssapi-krb5-2 libkrb5-3 libidn11
     #sudo ./arch-bootstrap.sh archlinux
     
-    if [ ! "$(ls -A ${ROOT}/archlinux)" ] || [ $(age archlinux/timestamp) -gt 7 ]; then
+    if [ ! "$(ls -A ~/archlinux)" ] || [ $(age archlinux/timestamp) -gt 7 ]; then
         ./arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" archlinux
         touch archlinux/timestamp
     fi
@@ -43,13 +43,14 @@ downloadToolchain(){
 }
 
 downloadFirmware(){
-    if [ "$(ls -A ${ROOT}/firmware-master)" ]; then
+    if [ "$(ls -A ~/firmware-master)" ]; then
         echo "Using cached RPI2 firmware-master"
+        ${SUDO} cp -r firmware-master/opt archlinux/
     else
         wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
         unzip firmware.zip
+        ${SUDO} cp -r firmware-master/opt ~/archlinux/
     fi
-    ${SUDO} cp -r firmware-master/opt archlinux/
 #    rm -r firmware-master
 #    rm firmware.zip
 }
@@ -78,7 +79,7 @@ relativeSoftLinks(){
 
 
 echo $ROOT
-cd $ROOT
+cd ~
 createArchImg
 downloadToolchain
 downloadFirmware
