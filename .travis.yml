@@ -36,6 +36,8 @@ matrix:
     cache:
       directories:
         - ~/rpi2_toolchain
+        - ~/firmware-master
+        - ~/archlinux
 
 
   - os: linux
