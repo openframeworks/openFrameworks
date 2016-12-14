@@ -47,14 +47,13 @@ downloadToolchain(){
 downloadFirmware(){
     if [ "$(ls -A ~/firmware-master)" ]; then
         echo "Using cached RPI2 firmware-master"
-        ${SUDO} cp -r firmware-master/opt archlinux/
     else
+        cd ~
         wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
         unzip firmware.zip
-        ${SUDO} cp -r firmware-master/opt ~/archlinux/
     fi
-#    rm -r firmware-master
-#    rm firmware.zip
+    ${SUDO} cp -r firmware-master/opt archlinux/
+    rm firmware.zip
 }
 
 
