@@ -26,6 +26,8 @@ createArchImg(){
     if [ ! "$(ls -A ~/archlinux)" ] || [ $(age ~/archlinux/timestamp) -gt 7 ]; then
         $ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
         touch ~/archlinux/timestamp
+    else
+        echo "Using cached archlinux image"
     fi
 }
 
