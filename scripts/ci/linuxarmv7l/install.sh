@@ -101,6 +101,7 @@ echo $ROOT
 createArchImg
 downloadToolchain
 downloadFirmware
+installRtAudio
 
 cd ~/archlinux/usr/lib
 relativeSoftLinks "../.." "..\/.."
