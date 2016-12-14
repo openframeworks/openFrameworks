@@ -7,6 +7,7 @@ age () { stat=$(stat --printf="%Y %F\n" "$1"); echo $((($(date +%s) - ${stat%% *
 
 
 SUDO=
+ROOT=$( cd "$(dirname "$0")" ; pwd -P )
 
 trapError() {
 	echo
@@ -22,7 +23,7 @@ createArchImg(){
     #sudo apt-get install -y libgssapi-krb5-2 libkrb5-3 libidn11
     #sudo ./arch-bootstrap.sh archlinux
     
-    if [ ! "$(ls -A ~/archlinux)" ] || [ $(age archlinux/timestamp) -gt 7 ]; then
+    if [ ! "$(ls -A ${ROOT}/archlinux)" ] || [ $(age archlinux/timestamp) -gt 7 ]; then
         ./arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" archlinux
         touch archlinux/timestamp
     fi
@@ -42,7 +43,7 @@ downloadToolchain(){
 }
 
 downloadFirmware(){
-    if [ "$(ls -A ~/firmware-master)" ]; then
+    if [ "$(ls -A ${ROOT}/firmware-master)" ]; then
         echo "Using cached RPI2 firmware-master"
     else
         wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
@@ -76,7 +77,6 @@ relativeSoftLinks(){
 
 
 
-ROOT=$( cd "$(dirname "$0")" ; pwd -P )
 echo $ROOT
 cd $ROOT
 createArchImg
