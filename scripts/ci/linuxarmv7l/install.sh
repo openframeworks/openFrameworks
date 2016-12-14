@@ -3,6 +3,8 @@
 #set -o pipefail
 # trap any script errors and exit
 trap "trapError" ERR
+age () { stat=$(stat --printf="%Y %F\n" "$1"); echo $((($(date +%s) - ${stat%% *})/86400)); }
+
 
 SUDO=
 
@@ -20,7 +22,10 @@ createArchImg(){
     #sudo apt-get install -y libgssapi-krb5-2 libkrb5-3 libidn11
     #sudo ./arch-bootstrap.sh archlinux
     
-    ./arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" archlinux
+    if [ ! "$(ls -A ~/archlinux)" ] || [ $(age archlinux/timestamp) -gt 7 ]; then
+        ./arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" archlinux
+        touch archlinux/timestamp
+    fi
 }
 
 downloadToolchain(){
@@ -37,11 +42,15 @@ downloadToolchain(){
 }
 
 downloadFirmware(){
-    wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
-    unzip firmware.zip
+    if [ "$(ls -A ~/firmware-master)" ]; then
+        echo "Using cached RPI2 firmware-master"
+    else
+        wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+        unzip firmware.zip
+    fi
     ${SUDO} cp -r firmware-master/opt archlinux/
-    rm -r firmware-master
-    rm firmware.zip
+#    rm -r firmware-master
+#    rm firmware.zip
 }
 
 
