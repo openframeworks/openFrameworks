@@ -5,6 +5,7 @@ cd openFrameworks
 
 if "%BUILDER%"=="VS" (
     set PATH="C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%"
+    set OF_PATH=%APPVEYOR_BUILD_FOLDER%\..\openFrameworks
     set PG_OF_PATH=%APPVEYOR_BUILD_FOLDER%\..\openFrameworks
     %MSYS2_PATH%\usr\bin\bash -lc "scripts/vs/download_libs.sh --silent"
     echo "Downloading projectGenerator from ci server"
