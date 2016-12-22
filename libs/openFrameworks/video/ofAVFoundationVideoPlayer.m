@@ -127,6 +127,13 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		deallocCond = nil;
 	}
 	
+    [_asset release];
+    [_assetReader release];
+    [_player release];
+    [_playerItem release];
+    [_assetReaderVideoTrackOutput release];
+    [_assetReaderVideoTrackOutput release];
+    [_videoOutput release];
 	
 	[super dealloc];
 }
