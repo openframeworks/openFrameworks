@@ -1,5 +1,7 @@
 openFrameworks currently supports the following platforms:
 
+Note: If you cloned this openFrameworks from the git repo, you have to run download_libs.sh in the appropriate platform folder under /scripts
+
 # Android #
 
 versions: 2.2+
