@@ -35,6 +35,9 @@ mkdir -p ~/openFrameworks/libs/openFrameworksCompiled/lib/$TARGET/
 
 cd ~/openFrameworks/libs/openFrameworksCompiled/lib/$TARGET/
 if [ "$TARGET" == "android" ]; then
+    mkdir armv7;
+    mkdir x86;
+    
     cd armv7;
     wget http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/armv7libopenFrameworksDebug.a;
     cd ../x86;
