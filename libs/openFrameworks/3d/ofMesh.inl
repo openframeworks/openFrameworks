@@ -1933,9 +1933,9 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::sphere( float radius, int res, ofPrimitiveMod
 					index2 = (iy+0) * (nr) + (ix+1);
 					index3 = (iy+1) * (nr) + (ix+0);
 
-					mesh.addIndex(index1);
-					mesh.addIndex(index3);
 					mesh.addIndex(index2);
+					mesh.addIndex(index3);
+					mesh.addIndex(index1);
 				}
 
 				if(iy < res-1 ) {
@@ -1944,9 +1944,9 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::sphere( float radius, int res, ofPrimitiveMod
 					index2 = (iy+1) * (nr) + (ix+1);
 					index3 = (iy+1) * (nr) + (ix+0);
 
-					mesh.addIndex(index1);
-					mesh.addIndex(index3);
 					mesh.addIndex(index2);
+					mesh.addIndex(index3);
+					mesh.addIndex(index1);
 
 				}
 			}
