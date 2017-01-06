@@ -30,16 +30,16 @@ if [ -f scripts/ci/$TARGET/install.sh ]; then
 fi
 
 cd ~
-mv $TRAVIS_BUILD_DIR ~/openFrameworks/addons/
-mkdir -p ~/openFrameworks/libs/openFrameworksCompiled/lib/$TARGET/
+mv $TRAVIS_BUILD_DIR $OF_ROOT/addons/
+mkdir -p $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/
 
-cd ~/openFrameworks/libs/openFrameworksCompiled/lib/$TARGET/
+cd $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/
 if [ "$TARGET" == "android" ]; then
     mkdir armv7;
     mkdir x86;
 
     cd armv7;
-    wget http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/armv7libopenFrameworksDebug.a;
+    wget http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/armv7/libopenFrameworksDebug.a;
     cd ../x86;
     wget http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/x86/libopenFrameworksDebug.a;
     cd ..;
