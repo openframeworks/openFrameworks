@@ -39,7 +39,7 @@ if [ "$TARGET" == "android" ]; then
     mkdir x86;
 
     cd armv7;
-    wget http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/armv7libopenFrameworksDebug.a;
+    wget http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/armv7/libopenFrameworksDebug.a;
     cd ../x86;
     wget http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/x86/libopenFrameworksDebug.a;
     cd ..;
