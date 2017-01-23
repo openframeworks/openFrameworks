@@ -19,8 +19,8 @@ ofBufferObject::Data::Data()
 	// 
 	//      see also: https://www.opengl.org/registry/specs/ARB/direct_state_access.txt
 
-#ifdef GLEW_ARB_direct_state_access
-	if (GLEW_ARB_direct_state_access) {
+#ifdef GLEW_EXT_direct_state_access
+	if (GLEW_EXT_direct_state_access) {
 		// the above condition is only true if GLEW can provide us
 		// with direct state access methods. we use this to test
 		// whether the driver is OpenGL 4.5 ready.
@@ -112,8 +112,8 @@ void ofBufferObject::setData(GLsizeiptr bytes, const void * data, GLenum usage){
 	if(!this->data) return;
 	this->data->size = bytes;
 
-#ifdef GLEW_ARB_direct_state_access
-	if (GLEW_ARB_direct_state_access) {
+#ifdef GLEW_EXT_direct_state_access
+	if (GLEW_EXT_direct_state_access) {
 		glNamedBufferData(this->data->id, bytes, data, usage);
 		return;
 	}
@@ -128,8 +128,8 @@ void ofBufferObject::setData(GLsizeiptr bytes, const void * data, GLenum usage){
 void ofBufferObject::updateData(GLintptr offset, GLsizeiptr bytes, const void * data){
 	if(!this->data) return;
 
-#ifdef GLEW_ARB_direct_state_access
-	if(GLEW_ARB_direct_state_access){
+#ifdef GLEW_EXT_direct_state_access
+	if(GLEW_EXT_direct_state_access){
 		glNamedBufferSubData(this->data->id,offset,bytes,data);
 		return;
 	}
@@ -150,8 +150,8 @@ void ofBufferObject::updateData(GLsizeiptr bytes, const void * data){
 void * ofBufferObject::map(GLenum access){
 	if(!this->data) return nullptr;
 
-#ifdef GLEW_ARB_direct_state_access
-	if (GLEW_ARB_direct_state_access) {
+#ifdef GLEW_EXT_direct_state_access
+	if (GLEW_EXT_direct_state_access) {
 		return glMapNamedBuffer(data->id,access);
 	}
 #endif
@@ -184,8 +184,8 @@ void * ofBufferObject::map(GLenum access){
 void ofBufferObject::unmap(){
 	if(!this->data) return;
 
-#ifdef GLEW_ARB_direct_state_access
-	if (GLEW_ARB_direct_state_access) {
+#ifdef GLEW_EXT_direct_state_access
+	if (GLEW_EXT_direct_state_access) {
 		glUnmapNamedBuffer(data->id);
 		return;
 	}
@@ -206,9 +206,9 @@ void ofBufferObject::unmap(){
 void * ofBufferObject::mapRange(GLintptr offset, GLsizeiptr length, GLenum access){
 	if(!this->data) return nullptr;
 
-#ifdef GLEW_ARB_direct_state_access
-	if (GLEW_ARB_direct_state_access) {
-		return glMapBufferRange(data->id,offset,length,access);
+#ifdef GLEW_EXT_direct_state_access
+	if (GLEW_EXT_direct_state_access) {
+		return glMapNamedBufferRange(data->id,offset,length,access);
 	}
 #endif
 
@@ -223,6 +223,12 @@ void ofBufferObject::unmapRange(){
 }
 
 void ofBufferObject::copyTo(ofBufferObject & dstBuffer) const{
+#ifdef GLEW_EXT_direct_state_access
+	if (GLEW_EXT_direct_state_access) {
+		glCopyNamedBufferSubData(data->id,dstBuffer.getId(),0,0,size());
+		return;
+	}
+#endif
 	bind(GL_COPY_READ_BUFFER);
 	dstBuffer.bind(GL_COPY_WRITE_BUFFER);
 	glCopyBufferSubData(GL_COPY_READ_BUFFER,GL_COPY_WRITE_BUFFER,0,0,size());
@@ -231,6 +237,12 @@ void ofBufferObject::copyTo(ofBufferObject & dstBuffer) const{
 }
 
 void ofBufferObject::copyTo(ofBufferObject & dstBuffer, int readOffset, int writeOffset, size_t size) const{
+#ifdef GLEW_EXT_direct_state_access
+	if (GLEW_EXT_direct_state_access) {
+		glCopyNamedBufferSubData(data->id,dstBuffer.getId(),readOffset,writeOffset,size);
+		return;
+	}
+#endif
 	bind(GL_COPY_READ_BUFFER);
 	dstBuffer.bind(GL_COPY_WRITE_BUFFER);
 	glCopyBufferSubData(GL_COPY_READ_BUFFER,GL_COPY_WRITE_BUFFER,readOffset,writeOffset,size);
