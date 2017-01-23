@@ -43,10 +43,6 @@ public class OFAndroidLifeCycle
         }
         Log.i("OF","initializing app");
     }
-	
-	private static final int POP_AND_REMOVE_SELF = 1;
-	private static final int POP = 2;
-	private static final int PUSH = 3;
 		
 	private static Vector<State> m_statesStack = new Vector<State>();
 	private static State m_currentState = null;
@@ -63,34 +59,10 @@ public class OFAndroidLifeCycle
 	
 	private static void pushState(State state)
 	{
-		int action = 0;
 //        close
         try {
             m_semaphor.acquire();
-            do {
-                if (m_statesStack.isEmpty()) {
-                    action = PUSH;
-                    break;
-                }
-                State lastState = m_statesStack.lastElement();
-                action = isDisableState(lastState, state);
-                if (action == POP) {
-                    m_statesStack.remove(lastState);
-                }
-            }
-            while (action == POP);
-            
-            switch (action) {
-                case POP_AND_REMOVE_SELF:
-                    m_statesStack.remove(m_statesStack.size() - 1);
-                    break;
-                case PUSH:
-                    m_statesStack.add(state);
-                    break;
-
-                default:
-                    break;
-            }
+            m_statesStack.add(state);
 //        release
             m_semaphor.release();
             startWorkerThread();
@@ -100,56 +72,6 @@ public class OFAndroidLifeCycle
             Log.e(OFAndroidLifeCycle.class.getSimpleName(), "pushState exception message: "+ex.getMessage(), ex);
             throw new RuntimeException("pushState state: "+ state +" exception message: "+ex.getMessage());
         }
-	}
-	
-	private static int isDisableState(State lastInStack, State newState)
-	{
-		String errorMessage = "Illegal pushed state! Last state in stack "+ lastInStack.toString()+" new state: "+newState.toString();
-		int  result = PUSH;
-		switch (lastInStack) {
-		case create:
-			if(newState.equals(State.pause)||newState.equals(State.init)||newState.equals(State.create))
-			{
-				throw new IllegalStateException(errorMessage);
-			} 
-			else if(newState.equals(State.exit))
-				result = POP;
-			else if(newState.equals(State.destroy))
-				result = POP_AND_REMOVE_SELF;
-			break;
-		case resume:
-			if(newState.equals(State.resume)||newState.equals(State.create)||newState.equals(State.init))
-			{
-				throw new IllegalStateException(errorMessage);
-			}
-			else if(newState.equals(State.destroy))
-				result = POP;
-			else if(newState.equals(State.pause))
-				result = POP_AND_REMOVE_SELF;
-			break;
-		case pause:
-			if(newState.equals(State.exit)||newState.equals(State.create)||newState.equals(State.init)||newState.equals(State.pause))
-			{
-				throw new IllegalStateException(errorMessage);
-			}
-			else if(newState.equals(State.resume))
-				result = POP_AND_REMOVE_SELF;
-			break;
-		case destroy:
-			if(newState.equals(State.destroy)||newState.equals(State.init)||newState.equals(State.resume)||newState.equals(State.pause))
-			{
-				throw new IllegalStateException(errorMessage);
-			}
-			else if(newState.equals(State.create))
-				result = POP_AND_REMOVE_SELF;
-			break;
-		case exit:
-			throw new IllegalStateException(errorMessage);
-
-		default:
-			break;
-		}
-		return result;
 	}
 	
 	private static boolean isNextStateLegal(State next)

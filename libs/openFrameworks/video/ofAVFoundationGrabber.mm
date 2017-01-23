@@ -65,8 +65,8 @@
 				CMFormatDescriptionRef desc = format.formatDescription;
 				CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(desc);
 				
-				float tw = dimensions.width;
-				float th = dimensions.height;
+				int tw = dimensions.width;
+				int th = dimensions.height;
 				ofVec2f formatDimension(tw, th);
 				
 				if( tw == width && th == height ){
