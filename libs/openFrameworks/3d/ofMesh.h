@@ -293,7 +293,7 @@ public:
 	/// brighter the surface will look. See the normalsExample for advice on
 	/// computing the normals.
 	/// addNormal adds the 3D vector to the end of the list, so you need to
-	/// make sure you add normals at the same index of the matching face.
+	/// make sure you add normals at the same index of the matching vertex.
 	void addNormal(const N& n);
 
 	/// \brief Add a vector of normals to a mesh,
