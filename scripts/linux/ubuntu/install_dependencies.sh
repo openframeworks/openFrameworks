@@ -58,7 +58,7 @@ function installPackages {
 # Ubuntu derivatives supported: ElementaryOS
 # Loads: NAME, VERSION, ID, ID_LIKE, PRETTY_NAME,
 # 	VERSION_ID, HOME_URL, SUPPORT_URL, BUG_REPORT_URL, VERSION_CODENAME, UBUNTU_CODENAME
-export $(cat /etc/os-release | xargs) $2>&/dev/null # Can fail with: export: not an identifier: 0.4
+source /etc/os-release
 
 if [ "$ID" = "elementary" ]; then
 	# Gets ubuntu base version
