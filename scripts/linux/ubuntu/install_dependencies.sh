@@ -55,8 +55,20 @@ function installPackages {
     echo
 }
 
-MAJOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f1 -d. | sed "s/\t//g")
-MINOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f2 -d.)
+# Ubuntu derivatives supported: ElementaryOS
+# Loads: NAME, VERSION, ID, ID_LIKE, PRETTY_NAME,
+# 	VERSION_ID, HOME_URL, SUPPORT_URL, BUG_REPORT_URL, VERSION_CODENAME, UBUNTU_CODENAME
+export $(cat /etc/os-release | xargs) $2>&/dev/null # Can fail with: export: not an identifier: 0.4
+
+if [ "$ID" = "elementary" ]; then
+	# Gets ubuntu base version
+	RELEASE=$(lsb_release -r -u)
+else
+	RELEASE=$(lsb_release -r)
+fi
+
+MAJOR_VERSION=$(echo $RELEASE | cut -f2 -d: | cut -f1 -d. | sed "s/\t//g")
+MINOR_VERSION=$(echo $RELEASE | cut -f2 -d: | cut -f2 -d.)
 
 echo "Running on ubuntu ${MAJOR_VERSION}.${MINOR_VERSION}"
 
@@ -189,5 +201,3 @@ if [ $(expr $MAJOR_VERSION \< 13 ) -eq 1 ]; then
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.6 20
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++${CXX_VER} 50
 fi
-
-
