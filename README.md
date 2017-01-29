@@ -6,6 +6,7 @@ openFrameworks is a C++ toolkit for creative coding.  If you are new to OF, welc
 [![Slack Status](https://ofslack.herokuapp.com/badge.svg)](https://ofslack.herokuapp.com)
 
 ##Build status
+================
 
 Linux, OSX, iOS and Android     [![Build Status](https://travis-ci.org/openframeworks/openFrameworks.svg?branch=master)](https://travis-ci.org/openframeworks/openFrameworks)
 
@@ -16,15 +17,15 @@ folder structure
 
 This release of OF comes with several folders:
 
-* addons
-* apps
-* docs
-* examples
-* export (on some systems)
-* libs
-* other
-* scripts
-* project generator
+* **addons**
+* **apps**
+* **docs**
+* **examples**
+* **export (on some systems)**
+* **libs**
+* **other**
+* **scripts**
+* **project generator**
 
 
 `docs` has some documentation around OF usage, per platform things to consider, etc. You should definitely take a look in there; for example, if you are on OSX, read the osx.md.   `apps` and `examples` are where projects go -- `examples` contains a variety of projects that show you how to use OF, and `apps` is where your own projects will go.  `libs` contains the libraries that OF uses, including the openframeworks core itself.  `addons` are for additional functionality that's not part of the core.  `export` is for DLLs and dylibs that need to be put in each compiled project.  The `scripts` folder has the templates and small scripts for automating OF per platform. `project generator` is a GUI based tool for making new projects - this folder is only there in packaged releases.  
