@@ -40,7 +40,7 @@ The openframeworks forum:
 
 [http://forum.openframeworks.cc/](http://forum.openframeworks.cc/)
 
-is a warm and friendly place.  Please ask or answer a question.  The most important part of this project is that it's a community, more than just a tool, so please join us!  Also, this is free software, and we learn so much about what is hard, what doesn't make sense, what is useful, etc. The most basic questions are acceptable here!  Don't worry, just join the conversation.  Learning in OF is social, it's hard to do it alone, but together we can get far!
+is a warm and friendly place.  Ask or answer a question.  This project is a community, more than just a tool, so join us!  Also, this is free software, and we learn so much about what is hard, what doesn't make sense, what is useful, etc. The most basic questions are acceptable!  Don't worry, just join the conversation.  Learning in OF is social, it's hard to do it alone, but together we can get far!
 
 Our github site is active:
 
