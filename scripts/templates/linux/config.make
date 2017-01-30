@@ -87,7 +87,8 @@
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-# PROJECT_DEFINES = 
+# PROJECT_DEFINES =
+# PROJECT_DEFINES_DEBUG = DEBUG
 
 ################################################################################
 # PROJECT CFLAGS
