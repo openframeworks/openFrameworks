@@ -22,6 +22,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		typename std::enable_if<std::is_arithmetic<T>::value, void>::type add(ofParameter<T> & p){
 			add(new ofxSlider<T>(p));
 		}
+		void add(ofParameter <void> & parameter);
 		void add(ofParameter <bool> & parameter);
 		void add(ofParameter <std::string> & parameter);
 		void add(ofParameter <ofVec2f> & parameter);
