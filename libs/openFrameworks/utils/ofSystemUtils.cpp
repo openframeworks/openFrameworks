@@ -5,6 +5,7 @@
 #include "ofLog.h"
 #include "ofUtils.h"
 #include "ofAppRunner.h"
+#include "ofParameter.h"
 #include <condition_variable>
 #include <mutex>
 
@@ -133,7 +134,11 @@ gboolean file_dialog_gtk(gpointer userdata){
 							  CANCEL_BUTTON, GTK_RESPONSE_CANCEL,
 							  nullptr);
 
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog),dialogData->defaultName.c_str());
+		if(ofFile(dialogData->defaultName, ofFile::Reference).isDirectory()){
+			gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), dialogData->defaultName.c_str());
+		}else{
+			gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), dialogData->defaultName.c_str());
+		}
 
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			dialogData->results = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
