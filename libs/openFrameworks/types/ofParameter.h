@@ -100,6 +100,7 @@ public:
 
 	void clear();
 
+	const ofParameter<void> & getVoid(const string& name) const;
 	const ofParameter<bool> & getBool(const string& name) const;
 	const ofParameter<int> & getInt(const string& name) const;
 	const ofParameter<float> & getFloat(const string& name) const;
@@ -115,6 +116,7 @@ public:
 	const ofParameterGroup & getGroup(const string& name) const;
 
 
+	const ofParameter<void> & getVoid(std::size_t pos) const;
 	const ofParameter<bool> & getBool(std::size_t pos) const;
 	const ofParameter<int> & getInt(std::size_t pos) const;
 	const ofParameter<float> & getFloat(std::size_t pos) const;
@@ -129,6 +131,7 @@ public:
 	const ofParameter<ofFloatColor> & getFloatColor(std::size_t pos) const;
 	const ofParameterGroup & getGroup(std::size_t pos) const;
 
+	ofParameter<void> & getVoid(const string& name);
 	ofParameter<bool> & getBool(const string& name);
 	ofParameter<int> & getInt(const string& name);
 	ofParameter<float> & getFloat(const string& name);
@@ -144,6 +147,7 @@ public:
 	ofParameterGroup & getGroup(const string& name);
 
 
+	ofParameter<void> & getVoid(std::size_t pos);
 	ofParameter<bool> & getBool(std::size_t pos);
 	ofParameter<int> & getInt(std::size_t pos);
 	ofParameter<float> & getFloat(std::size_t pos);
@@ -957,6 +961,7 @@ public:
 	}
 
 	void trigger();
+	void trigger(const void * sender);
 
 	void enableEvents();
 	void disableEvents();

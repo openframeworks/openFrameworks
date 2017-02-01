@@ -74,6 +74,9 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 		}else if(type == typeid(ofParameter <bool> ).name()){
 			auto p = _parameters.getBool(i);
 			add(p);
+		}else if(type == typeid(ofParameter <void> ).name()){
+			auto p = _parameters.getVoid(i);
+			add(p);
 		}else if(type == typeid(ofParameter <ofDefaultVec2> ).name()){
 			auto p = _parameters.getVec2f(i);
 			add(p);
@@ -157,6 +160,10 @@ void ofxGuiGroup::add(const ofParameterGroup & parameters){
 	ofxGuiGroup * panel = new ofxGuiGroup(parameters);
 	panel->parent = this;
 	add(panel);
+}
+
+void ofxGuiGroup::add(ofParameter <void> & parameter){
+	add(new ofxButton(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <bool> & parameter){
