@@ -1072,7 +1072,7 @@ public:
 	/// nothing to sort.
 	void sort();
 	
-	/// Sort the directory contents list alphabetically.
+	/// Sort the directory contents list by date.
 	///
 	/// \warning Call listDir() before using this function or there will be
 	/// nothing to sort.
