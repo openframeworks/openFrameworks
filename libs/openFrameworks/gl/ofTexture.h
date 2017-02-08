@@ -575,6 +575,7 @@ class ofTexture : public ofBaseDraws {
 	/// \section Drawing
 	void draw(float x, float y) const;
 	void draw(float x, float y, float z) const;
+	void draw(const glm::vec3 & pos) const;
 
 	void draw(float x, float y, float w, float h) const;
 
@@ -586,6 +587,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param w Draw width.
 	/// \param h Draw height.
 	void draw(float x, float y, float z, float w, float h) const;
+	void draw(const glm::vec3 & pos, float w, float h) const;
 	
 	/// \brief Draws the texture at 4 points passed in as if you created 4 glVertices.
 	///

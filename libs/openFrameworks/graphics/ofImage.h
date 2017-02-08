@@ -255,6 +255,8 @@ public:
     /// \param y Draw position on the y axis.
     /// \param z Draw position on the z axis.
     void draw(float x, float y, float z) const;
+
+	void draw(const glm::vec3 & pos) const;
     
     /// \brief Draw the image at a given size.
     ///
@@ -272,6 +274,8 @@ public:
     /// \param w Draw width.
     /// \param h Draw height.
     void draw(float x, float y, float z, float w, float h) const;
+
+	void draw(const glm::vec3 & pos, float w, float h) const;
     
     /// \brief Draws a subsection of the image.
     ///
