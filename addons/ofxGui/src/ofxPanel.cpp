@@ -10,18 +10,13 @@
 #include "ofImage.h"
 using namespace std;
 
-ofImage ofxPanel::loadIcon;
-ofImage ofxPanel::saveIcon;
-
 ofxPanel::ofxPanel()
 :bGrabbed(false){}
 
 ofxPanel::ofxPanel(const ofParameterGroup & parameters, const std::string& filename, float x, float y)
 : ofxGuiGroup(parameters, filename, x, y)
 , bGrabbed(false){
-	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
-		loadIcons();
-	}
+	loadIcons();
 	registerMouseEvents();
 	setNeedsRedraw();
 }
@@ -31,17 +26,13 @@ ofxPanel::~ofxPanel(){
 }
 
 ofxPanel * ofxPanel::setup(const std::string& collectionName, const std::string& filename, float x, float y){
-	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
-		loadIcons();
-	}
+	loadIcons();
 	registerMouseEvents();
 	return (ofxPanel*)ofxGuiGroup::setup(collectionName,filename,x,y);
 }
 
 ofxPanel * ofxPanel::setup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
-	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
-		loadIcons();
-	}
+	loadIcons();
 	registerMouseEvents();
 	return (ofxPanel*)ofxGuiGroup::setup(parameters,filename,x,y);
 }

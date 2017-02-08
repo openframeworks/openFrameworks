@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxGuiGroup.h"
+#include "ofImage.h"
 
 #ifndef TARGET_EMSCRIPTEN
 constexpr const char* ofxPanelDefaultFilename = "settings.xml";
@@ -30,7 +31,7 @@ protected:
 	void loadIcons();
 private:
 	ofRectangle loadBox, saveBox;
-	static ofImage loadIcon, saveIcon;
+	ofImage loadIcon, saveIcon;
     
     ofPoint grabPt;
 	bool bGrabbed;
