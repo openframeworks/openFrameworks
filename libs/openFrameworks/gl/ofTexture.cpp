@@ -1022,8 +1022,17 @@ void ofTexture::draw(float x, float y, float z) const{
 }
 
 //------------------------------------
+void ofTexture::draw(const glm::vec3 & pos) const{
+	draw(pos.x,pos.y,pos.z,getWidth(),getHeight());
+}
+
+//------------------------------------
 void ofTexture::draw(float x, float y, float w, float h) const{
 	draw(x,y,0,w,h);
+}
+
+void ofTexture::draw(const glm::vec3 & pos, float w, float h) const{
+	draw(pos.x,pos.y,pos.z,w,h);
 }
 
 //------------------------------------

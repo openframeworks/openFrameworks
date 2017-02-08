@@ -86,7 +86,7 @@ public:
 	/// Native size is determined by getWidth() and getHeight().
 	///
 	/// \param point Draw position.
-	virtual void draw(const glm::vec3 & point) const {
+	virtual void draw(const glm::vec2 & point) const {
 		draw(point.x, point.y);
 	}
 
@@ -102,7 +102,7 @@ public:
 	/// \param point Draw position.
 	/// \param w Draw width.
 	/// \param h Draw height.
-	virtual void draw(const glm::vec3 & point, float w, float h) const {
+	virtual void draw(const glm::vec2 & point, float w, float h) const {
 		draw(point.x, point.y, w, h);
 	}
 
