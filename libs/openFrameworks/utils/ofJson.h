@@ -24,7 +24,7 @@ inline ofJson ofLoadJson(const std::string & filename){
 	return json;
 }
 
-inline bool ofSaveJson(const std::string & filename, ofJson & json){
+inline bool ofSaveJson(const std::string & filename, const ofJson & json){
 	ofFile jsonFile(filename, ofFile::WriteOnly);
 	try{
 		jsonFile << json;
@@ -38,7 +38,7 @@ inline bool ofSaveJson(const std::string & filename, ofJson & json){
 	return true;
 }
 
-inline bool ofSavePrettyJson(const std::string & filename, ofJson & json){
+inline bool ofSavePrettyJson(const std::string & filename, const ofJson & json){
     ofFile jsonFile(filename, ofFile::WriteOnly);
     try{
         jsonFile << json.dump(4);
