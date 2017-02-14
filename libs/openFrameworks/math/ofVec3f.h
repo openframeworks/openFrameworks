@@ -481,131 +481,123 @@ public:
     ofVec3f& scale( const float length );
     
 	
-	/// \brief Return a new 'ofVec3f' that is the result of rotating this vector by 'angle'
-	/// degrees around the given axis.
-	/// 
+	/// \brief Returns a new vector that is the result of rotating this vector
+	/// by 'angle' degrees about the given axis.
+	///
 	/// ~~~~{.cpp}
 	/// ofVec3f v1(1, 0, 0);
-	/// // rotate v1 around the z axis
-	/// ofVec3f v2 = v1.getRotated(45, ofVec3f(0, 0, 1)); // v2 is (√2, √2, 0)
-	/// // rotate v1 around the y axis
-	/// ofVec3f v3 = v1.getRotated(45, ofVec3f(0, 1, 0)); // v3 is (√2, 0, √2)
+	/// ofVec3f v2 = v1.getRotated(45, ofVec3f(0, 0, 1)); // v2 is (0.707, 0.707, 0)
+	/// ofVec3f v3 = v1.getRotated(45, ofVec3f(0, 1, 0)); // v3 is (0.707, 0, -0.707)
 	/// ~~~~
-	/// 
+	///
     ofVec3f  getRotated( float angle, const ofVec3f& axis ) const;
-    
-	/// \brief Make a copy of this vector and perform an Euler rotation of the copy around
-	/// three axes: 'ax' degrees about the x axis, 'ay' about the y axis and 'az'
-	/// about the z axis. Return the copy.
-	/// 
-	/// ~~~~~{.cpp}
-	/// ofVec3f v1( 1, 0, 0 );
-	/// ofVec3f v2 = v1.getRotated( 0, 0, 90 ); // v is now (0, 1, 0)
-	/// ofVec3f v3 = v1.getRotated( 45, 0, 0 ); // v is now (0, √2, √2)
-	/// ~~~~~
-	/// 
-	/// Watch out for gimbal lock when specifying multiple rotations in the same call.
-	/// 
-    ofVec3f  getRotated(float ax, float ay, float az) const;
-    
-	/// \brief Return a new 'ofVec3f' that is the result of rotating this vector by
-	/// 'angle' degrees around the axis specified by 'axis', using 'pivot' as
-	/// the origin of rotation.
-    ofVec3f  getRotated( float angle, const ofVec3f& pivot, const ofVec3f& axis ) const;
-    
-    
-    /// \brief Return a new 'ofVec3f' that is the result of rotating this 
-    /// vector by 'angle' radians around the given axis.
-    ///
-    /// ~~~~{.cpp}
-    /// ofVec3f v1(1, 0, 0);
-    /// // rotate v1 around the z axis
-    /// ofVec3f v2 = v1.getRotated(PI/4, ofVec3f(0, 0, 1)); // v2 is (√2, √2, 0)
-    /// // rotate v1 around the y axis
-    /// ofVec3f v3 = v1.getRotated(PI/4, ofVec3f(0, 1, 0)); // v3 is (√2, 0, √2)
-    /// ~~~~
-    ofVec3f  getRotatedRad( float angle, const ofVec3f& axis ) const;
 
-	/// \brief Make a copy of this vector and perform an Euler rotation of the copy around
-	/// three axes: 'ax' radians about the x axis, 'ay' about the y axis and 'az'
-	/// about the z axis. Return the copy.
+	/// \brief Returns a new vector that is the result of performing an Euler
+	/// rotation of this vector by 'ax' degrees about the x axis, 'ay' degrees
+	/// about the y axis, and 'az' degrees about the z axis.
 	///
 	/// ~~~~~{.cpp}
-	/// ofVec3f v1( 1, 0, 0 );
-	/// ofVec3f v2 = v1.getRotatedRad( 0, 0, HALF_PI ); // v is now (0, 1, 0)
-	/// ofVec3f v3 = v1.getRotatedRad( PI/4, 0, 0 ); // v is now (0, √2, √2)
+	/// ofVec3f v1(1, 0, 0);
+	/// ofVec3f v2 = v1.getRotated(0, 0, 45); // v2 is (0.707, 0.707, 0)
+	/// ofVec3f v3 = v1.getRotated(0, 45, 0); // v3 is (0.707, 0, -0.707)
 	/// ~~~~~
-	/// 
+	///
 	/// Watch out for gimbal lock when specifying multiple rotations in the same call.
-    /// 
-	ofVec3f  getRotatedRad(float ax, float ay, float az) const;
-  	
-  	/// \brief Return a new 'ofVec3f' that is the result of rotating this vector by 'angle' radians
-    /// around the axis specified by 'axis', using 'pivot' as the origin of rotation.
-    ofVec3f   getRotatedRad( float angle, const ofVec3f& pivot, const ofVec3f& axis ) const;
-    	
- 	/// \brief Return a new 'ofVec3f' that is the result of rotating this vector by
-	/// 'angle' degrees around the given axis.
-	/// 
+	///
+    ofVec3f  getRotated(float ax, float ay, float az) const;
+
+	/// \brief Returns a new vector that is the result of rotating this vector by
+	/// 'angle' degrees about the axis specified by 'axis', using 'pivot' as the
+	/// origin of rotation.
+    ofVec3f  getRotated( float angle, const ofVec3f& pivot, const ofVec3f& axis ) const;
+
+
+	/// \brief Returns a new vector that is the result of rotating this vector by
+	/// 'angle' radians about the given axis.
+	///
 	/// ~~~~{.cpp}
 	/// ofVec3f v1(1, 0, 0);
-	/// // rotate v1 around the z axis
-	/// v1.rotate(45, ofVec3f(0, 0, 1)); // v2 is (√2, √2, 0)
-	/// 
-	/// v1.set(1, 0, 0);
-	/// // then rotate around the y axis
-	/// v1.rotate(45, ofVec3f(0, 1, 0)); // v3 is (√2, 0, √2)
+	/// ofVec3f v2 = v1.getRotated(PI / 4, ofVec3f(0, 0, 1)); // v2 is (0.707, 0.707, 0)
+	/// ofVec3f v3 = v1.getRotated(PI / 4, ofVec3f(0, 1, 0)); // v3 is (0.707, 0, -0.707)
+	/// ~~~~
+    ofVec3f  getRotatedRad( float angle, const ofVec3f& axis ) const;
+
+	/// \brief Returns a new vector that is the result of performing an Euler
+	/// rotation of this vector by 'ax' radians about the x axis, 'ay' radians
+	/// about the y axis, and 'az' radians about the z axis.
+	///
+	/// ~~~~~{.cpp}
+	/// ofVec3f v1(1, 0, 0);
+	/// ofVec3f v2 = v1.getRotatedRad(0, 0, PI / 4); // v2 is (0.707, 0.707, 0)
+	/// ofVec3f v3 = v1.getRotatedRad(0, PI / 4, 0); // v3 is (0.707, 0, -0.707)
+	/// ~~~~~
+	///
+	/// Watch out for gimbal lock when specifying multiple rotations in the same call.
+	///
+	ofVec3f  getRotatedRad(float ax, float ay, float az) const;
+
+	/// \brief Returns a new vector that is the result of rotating this vector by
+	/// 'angle' radians about the axis specified by 'axis', using 'pivot' as the
+	/// origin of rotation.
+    ofVec3f   getRotatedRad( float angle, const ofVec3f& pivot, const ofVec3f& axis ) const;
+
+	/// \brief Rotates this vector by 'angle' degrees around the given axis.
+	///
+	/// ~~~~{.cpp}
+	/// ofVec3f v1(1, 0, 0);
+	/// ofVec3f v2(1, 0, 0);
+	/// v1.rotate(45, ofVec3f(0, 0, 1)); // v1 is now (0.707, 0.707, 0)
+	/// v2.rotate(45, ofVec3f(0, 1, 0)); // v2 is now (0.707, 0, -0.707)
 	/// ~~~~
 	ofVec3f& rotate( float angle, const ofVec3f& axis );
 
-	/// \brief Perform an Euler rotation of this vector around three axes: 'ax' degrees about
-	/// the x axis, 'ay' about the y axis and 'az' about the z axis.
-	/// 
+	/// \brief Performs an Euler rotation of this vector by 'ax' degrees about the
+	/// x axis, 'ay' degrees about the y axis, and 'az' degrees about the z axis.
+	///
 	/// ~~~~~{.cpp}
-	/// ofVec3f v( 1, 0, 0 );
-	/// v.rotate( 0, 0, 90 ); // v is now (0, 1, 0)
-	/// v.rotate( 45, 0, 0 ); // v is now (0, √2, √2)
+	/// ofVec3f v1(1, 0, 0);
+	/// ofVec3f v2(1, 0, 0);
+	/// v1.rotate(0, 0, 45); // v1 is now (0.707, 0.707, 0)
+	/// v2.rotate(0, 45, 0); // v2 is now (0.707, 0, -0.707)
 	/// ~~~~~
-	/// 
+	///
 	/// Watch out for gimbal lock when specifying multiple rotations in the same call.
-	/// 
+	///
     ofVec3f& rotate(float ax, float ay, float az);
 
-	/// \brief Rotate this vector by 'angle' degrees around the axis specified by 'axis',
+	/// \brief Rotates this vector by 'angle' degrees about the axis specified by 'axis',
 	/// using 'pivot' as the origin of rotation.
 	ofVec3f& rotate( float angle, const ofVec3f& pivot, const ofVec3f& axis );
-    
 
-	/// \brief Return a new 'ofVec3f' that is the result of rotating this vector by 'angle'
-	/// degrees around the given axis.
-	/// 
+
+	/// \brief Rotates this vector by 'angle' radians about the given axis.
+	///
 	/// ~~~~{.cpp}
 	/// ofVec3f v1(1, 0, 0);
-	/// // rotate v1 around the z axis
-	/// v1.rotate(45, ofVec3f(0, 0, 1)); // v2 is (√2, √2, 0)
-	/// 
-	/// v1.set(1, 0, 0);
-	/// // then rotate around the y axis
-	/// v1.rotate(45, ofVec3f(0, 1, 0)); // v3 is (√2, 0, √2)
+	/// ofVec3f v2(1, 0, 0)
+	/// v1.rotateRad(PI / 4, ofVec3f(0, 0, 1)); // v1 is now (0.707, 0.707, 0)
+	/// v2.rotateRad(PI / 4, ofVec3f(0, 1, 0)); // v2 is now (0.707, 0, -0.707)
 	/// ~~~~
     ofVec3f& rotateRad( float angle, const ofVec3f& axis );
-    
-	/// \brief Perform an Euler rotation of this vector around three axes: 'ax' radians about
-	/// the x axis, 'ay' about the y axis and 'az' about the z axis.
-	/// 
+
+	/// \brief Performs an Euler rotation of this vector by 'ax' radians about
+	/// the x axis, 'ay' radians about the y axis, and 'az' radians about the z axis.
+	///
 	/// ~~~~~{.cpp}
-	/// ofVec3f v( 1, 0, 0 );
-	/// v.rotateRad( 0, 0, HALF_PI ); // v is now (0, 1, 0)
-	/// v.rotateRad( PI/4, 0, 0 ); // v is now (0, √2, √2)
+	/// ofVec3f v1(1, 0, 0);
+	/// ofVec3f v2(1, 0, 0);
+	/// v1.rotateRad(0, 0, PI / 4); // v1 is now (0.707, 0.707, 0)
+	/// v2.rotateRad(0, PI / 4, 0); // v2 is now (0.707, 0, -0.707)
 	/// ~~~~~
-	/// 
+	///
 	/// Watch out for gimbal lock when specifying multiple rotations in the same call.
     ofVec3f& rotateRad(float ax, float ay, float az);
-    
-	/// \brief Rotate this vector by 'angle' radians around the axis specified by 'axis',
+
+	/// \brief Rotates this vector by 'angle' radians around the axis specified by 'axis',
 	/// using 'pivot' as the origin of rotation.
-    ofVec3f& rotateRad( float angle, const ofVec3f& pivot, const ofVec3f& axis );    
-    
+    ofVec3f& rotateRad( float angle, const ofVec3f& pivot, const ofVec3f& axis );
+
+
     	
 	
 	/// \brief Return a new 'ofVec3f' calculated by copying this vector and then mapping from
