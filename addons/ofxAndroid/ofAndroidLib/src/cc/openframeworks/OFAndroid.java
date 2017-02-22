@@ -117,6 +117,10 @@ public class OFAndroid {
 			}
 		}
 	}
+
+	public static Context getContext(){
+		return getContext();
+	}
 	
 	public static String getAppDataDirectory(){
 		return dataPath;
