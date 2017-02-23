@@ -35,7 +35,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class OFAndroid {
-	
+
+	public static String packageName;
 	// List based on http://bit.ly/NpkL4Q
 	private static final String[] mExternalStorageDirectories = new String[] { 
 			"/mnt/sdcard-ext", 
@@ -119,7 +120,7 @@ public class OFAndroid {
 	}
 
 	public static Context getContext(){
-		return getContext();
+		return OFAndroidLifeCycle.getActivity();
 	}
 	
 	public static String getAppDataDirectory(){

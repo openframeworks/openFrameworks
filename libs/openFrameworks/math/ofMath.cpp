@@ -30,12 +30,12 @@ void ofSeedRandom() {
 		struct timeval tv;
 		gettimeofday(&tv, 0);
 		long int n = (tv.tv_sec ^ tv.tv_usec) ^ getpid();
-		srand(n);
+		ofSeedRandom(n);
 	#else
 		struct timeval tv;
 		gettimeofday(&tv, 0);
 		long int n = (tv.tv_sec ^ tv.tv_usec);
-		srand(n);
+		ofSeedRandom(n);
 	#endif
 }
 

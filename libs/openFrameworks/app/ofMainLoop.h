@@ -49,7 +49,7 @@ private:
 	std::weak_ptr<ofAppBaseWindow> currentWindow;
 	int status;
 	bool allowMultiWindow;
-	std::function<void()> windowLoop;
+	std::function<void()> \windowLoop;
 	std::function<void()> windowPollEvents;
 	bool escapeQuits;
 };
