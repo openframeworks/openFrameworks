@@ -329,7 +329,7 @@ def coreCppFlags(abi, ofRoot){
             "-I${file(libs+"/glfw/include/GLFW")}".toString(),
             "-I${file(libs+"/openssl/include")}".toString(),
             "-I${file(libs+"/openssl/include/openssl")}".toString(),
-            "-I${file(libs+'/curl/include')}".toString(),
+            "-I${file(libs+"/poco/include")}".toString(),
             "-I${file(libs+"/tess2/include")}".toString(),
             "-I${file(libs+"/utf8cpp/include")}".toString(),
             "-I${file(libs+"/json/include")}".toString(),
@@ -337,6 +337,7 @@ def coreCppFlags(abi, ofRoot){
             "-I${file(libs+'/glm/include')}".toString(),
             "-I${file(libs+'/utf8/include')}".toString(),
             "-I${file(libs+'/uriparser/include')}".toString(),
+            "-I${file(libs+'/curl/include')}".toString(),
             "-I${file(libs+'/pugixml/include')}".toString(),
             "-I${file(libs+'/libxml2/include')}".toString(),
             "-I${file(libs+'/libs/glu/include_android')}".toString()
