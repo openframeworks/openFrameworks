@@ -757,11 +757,11 @@ public:
     
     /// \brief Maps a normalized coordinate into this rectangle
     /// \returns The mapped coordinate
-    glm::vec2 map(const glm::vec2 & coef) const;
+    glm::vec2 map(const glm::vec2 & coef, bool clamp=false) const;
     
     /// \brief Maps a normalized rectangle into this rectangle
     /// \returns The mapped rectangle
-    ofRectangle map(const ofRectangle & coef) const;
+    ofRectangle map(const ofRectangle & coef, bool clamp=false) const;
     
     
     /// \}
