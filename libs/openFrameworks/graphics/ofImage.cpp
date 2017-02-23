@@ -186,25 +186,23 @@ static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _
 
 	auto uriStr = _fileName.string();
 	const int bytesNeeded = 8 + 3 * strlen(uriStr.c_str()) + 1;
-	char* absUri = (char*) malloc(bytesNeeded * sizeof(char));
+	std::vector<char> absUri(bytesNeeded);
 
 #ifdef TARGET_WIN32
-	uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri);
+	uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri.data());
 #else
-	uriUnixFilenameToUriStringA(uriStr.c_str(), absUri);
+	uriUnixFilenameToUriStringA(uriStr.c_str(), absUri.data());
 #endif
 
 	UriUriA uri;
 	UriParserStateA state;
 	state.uri = &uri;
-	if(uriParseUriA(&state, absUri)!=URI_SUCCESS){
+	if(uriParseUriA(&state, absUri.data())!=URI_SUCCESS){
 		ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri " << _fileName;
-		free(absUri);
 		uriFreeUriMembersA(&uri);
 		return false;
 	}
 	std::string scheme(uri.scheme.first, uri.scheme.afterLast);
-	free(absUri);
 	uriFreeUriMembersA(&uri);
 
 	if(scheme == "http" || scheme == "https"){
