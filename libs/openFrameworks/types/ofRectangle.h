@@ -768,10 +768,10 @@ public:
     
     /// \brief Maps a normalized coordinate into this rectangle
     /// 
-    /// Normalized coordinates range from [0,1] inclusive. It is used to define a ratio
-    /// between the coordinates and a unitary rectangle. This ratio is mapped into
-    /// this rectangle to scale to real values. If normalized rectangle is out of bounds,
-    /// output will be scaled accordingly.
+    /// Normalized rectangles' position, width and height range from [0,1] inclusive.
+    /// It is used to define a ratio between the rectangle and a unitary rectangle.
+    /// This ratio is mapped into this rectangle to scale to real values. 
+    /// If normalized rectangle is out of bounds, output will be scaled accordingly.
     /// 
     /// \param coeff Normalized rectangle to map to this rectangle
     /// \returns The mapped coordinate
