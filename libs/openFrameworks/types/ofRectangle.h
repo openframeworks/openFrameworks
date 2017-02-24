@@ -756,13 +756,49 @@ public:
 
     
     /// \brief Maps a normalized coordinate into this rectangle
+    /// 
+    /// Normalized coordinates range from [0,1] inclusive. It is used to define a ratio
+    /// between the coordinates and a unitary rectangle. This ratio is mapped into
+    /// this rectangle to scale to real values. If normalized coordinates are out of bounds,
+    /// output will be scaled accordingly.
+    ///
+    /// \param coef Normalized coordinate to map to this rectangle
     /// \returns The mapped coordinate
-    glm::vec2 map(const glm::vec2 & coef, bool clamp=false) const;
+    glm::vec2 map(const glm::vec2 & coeff) const;
     
-    /// \brief Maps a normalized rectangle into this rectangle
+    /// \brief Maps a normalized coordinate into this rectangle
+    /// 
+    /// Normalized coordinates range from [0,1] inclusive. It is used to define a ratio
+    /// between the coordinates and a unitary rectangle. This ratio is mapped into
+    /// this rectangle to scale to real values. If normalized rectangle is out of bounds,
+    /// output will be scaled accordingly.
+    /// 
+    /// \param coef Normalized rectangle to map to this rectangle
+    /// \returns The mapped coordinate
+    ofRectangle map(const ofRectangle & coeff) const;
+    
+    /// \brief Maps a normalized coordinate into this rectangle, clamping if out of bounds
+    /// 
+    /// Normalized coordinates range from [0,1] inclusive. It is used to define a ratio
+    /// between the coordinates and a unitary rectangle. This ratio is mapped into
+    /// this rectangle to scale to real values. If normalized coordinates are out of bounds,
+    /// output will be clamped to this rectangle's position, width and height.
+    /// 
+    /// \param coef Normalized coordinate to map to this rectangle
+    /// \returns The mapped coordinate, clamped
+    glm::vec2 mapClamp(const glm::vec2 & coeff) const;
+    
+    /// \brief Maps a normalized rectangle to this rectangle, clamping if out of bounds
+    /// 
+    /// Normalized rectangles' position, width and height range from [0,1] inclusive.
+    /// It is used to define a ratio between the rectangle and a unitary rectangle.
+    /// This ratio is mapped into this rectangle to scale to real values. 
+    /// If normalized rectangle is out of bounds, output will be clamped to this 
+    /// rectangle's position, width and height.
+    /// 
+    /// \param coef Normalized rectangle to map to this rectangle
     /// \returns The mapped rectangle
-    ofRectangle map(const ofRectangle & coef, bool clamp=false) const;
-    
+    ofRectangle mapClamp(const ofRectangle & coeff) const;
     
     /// \}
 
