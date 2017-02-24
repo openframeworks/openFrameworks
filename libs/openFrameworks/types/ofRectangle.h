@@ -762,7 +762,7 @@ public:
     /// this rectangle to scale to real values. If normalized coordinates are out of bounds,
     /// output will be scaled accordingly.
     ///
-    /// \param coef Normalized coordinate to map to this rectangle
+    /// \param coeff Normalized coordinate to map to this rectangle
     /// \returns The mapped coordinate
     glm::vec2 map(const glm::vec2 & coeff) const;
     
@@ -773,7 +773,7 @@ public:
     /// this rectangle to scale to real values. If normalized rectangle is out of bounds,
     /// output will be scaled accordingly.
     /// 
-    /// \param coef Normalized rectangle to map to this rectangle
+    /// \param coeff Normalized rectangle to map to this rectangle
     /// \returns The mapped coordinate
     ofRectangle map(const ofRectangle & coeff) const;
     
@@ -784,7 +784,7 @@ public:
     /// this rectangle to scale to real values. If normalized coordinates are out of bounds,
     /// output will be clamped to this rectangle's position, width and height.
     /// 
-    /// \param coef Normalized coordinate to map to this rectangle
+    /// \param coeff Normalized coordinate to map to this rectangle
     /// \returns The mapped coordinate, clamped
     glm::vec2 mapClamp(const glm::vec2 & coeff) const;
     
@@ -796,7 +796,7 @@ public:
     /// If normalized rectangle is out of bounds, output will be clamped to this 
     /// rectangle's position, width and height.
     /// 
-    /// \param coef Normalized rectangle to map to this rectangle
+    /// \param coeff Normalized rectangle to map to this rectangle
     /// \returns The mapped rectangle
     ofRectangle mapClamp(const ofRectangle & coeff) const;
     
