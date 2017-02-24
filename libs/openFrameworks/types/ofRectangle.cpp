@@ -751,16 +751,16 @@ float ofRectangle::getHeight() const {
 }
 
 //----------------------------------------------------------
-glm::vec2 ofRectangle::map(const glm::vec2 & coef, bool clamp) const {
+glm::vec2 ofRectangle::map(const glm::vec2 & coeff, bool clamp) const {
     return glm::vec2(
-        ofMap(coef.x, 0.0f, 1.0f, getMinX(), getMaxX(), clamp), 
-        ofMap(coef.y, 0.0f, 1.0f, getMinY(), getMaxY(), clamp)
+        ofMap(coeff.x, 0.0f, 1.0f, getMinX(), getMaxX(), clamp), 
+        ofMap(coeff.y, 0.0f, 1.0f, getMinY(), getMaxY(), clamp)
         );
 }
 
 //----------------------------------------------------------
 
-ofRectangle ofRectangle::map(const ofRectangle & coef, bool clamp) const {
+ofRectangle ofRectangle::map(const ofRectangle & coeff, bool clamp) const {
     return ofRectangle(
        map(coeff.getMinX(), coeff.getMinY(), clamp),
        map(coeff.getMaxX(), coeff.getMaxY(), clamp)
