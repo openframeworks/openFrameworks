@@ -774,7 +774,7 @@ glm::vec2 ofRectangle::mapClamp(const glm::vec2 & coeff) const {
         );
 }
 
-glm::vec2 ofRectangle::mapClamp(const ofRectangle & coeff) const {
+ofRectangle ofRectangle::mapClamp(const ofRectangle & coeff) const {
     return ofRectangle(
        mapClamp(coeff.getMinX(), coeff.getMinY()),
        mapClamp(coeff.getMaxX(), coeff.getMaxY())
