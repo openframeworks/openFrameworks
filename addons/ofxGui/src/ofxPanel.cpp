@@ -138,13 +138,15 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 			}
 
 			if(loadBox.inside(mx, my)) {
-				loadFromFile(filename);
-				ofNotifyEvent(loadPressedE,this);
+				if(!ofNotifyEvent(loadPressedE,this)){
+					loadFromFile(filename);
+				}
 				return true;
 			}
 			if(saveBox.inside(mx, my)) {
-				saveToFile(filename);
-				ofNotifyEvent(savePressedE,this);
+				if(!ofNotifyEvent(savePressedE,this)){
+					saveToFile(filename);
+				}
 				return true;
 			}
 		}
