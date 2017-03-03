@@ -9,7 +9,7 @@ else
         LIBSPATH=linux
 fi
 
-ID=`logname`
+ID=`whoami`
 GROUP_ID=`id --group -n ${ID}`
 
 pushd `dirname $0` > /dev/null
