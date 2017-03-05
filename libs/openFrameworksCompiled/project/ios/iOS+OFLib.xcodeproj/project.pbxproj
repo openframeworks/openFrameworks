@@ -24,7 +24,7 @@
 		15594F9515C56A8A00727FF2 /* ofxiOSAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */; };
 		15594F9615C56A8A00727FF2 /* ofxiOSViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */; };
 		15594FA315C56BB700727FF2 /* AVFoundationVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */; };
-		15594FA415C56BB700727FF2 /* AVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */; };
+		15594FA415C56BB700727FF2 /* AVFoundationVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.mm */; };
 		15594FA515C56BB700727FF2 /* AVFoundationVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */; };
 		15594FA615C56BB700727FF2 /* AVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA215C56BB700727FF2 /* AVFoundationVideoPlayer.h */; };
 		15594FAC15C56C9500727FF2 /* ofxiOSAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FA815C56C9500727FF2 /* ofxiOSAlerts.mm */; };
@@ -234,7 +234,7 @@
 		15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSAppDelegate.h; sourceTree = "<group>"; };
 		15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSViewController.h; sourceTree = "<group>"; };
 		15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoGrabber.mm; sourceTree = "<group>"; };
-		15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVFoundationVideoPlayer.m; sourceTree = "<group>"; };
+		15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoPlayer.mm; sourceTree = "<group>"; };
 		15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoGrabber.h; sourceTree = "<group>"; };
 		15594FA215C56BB700727FF2 /* AVFoundationVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoPlayer.h; sourceTree = "<group>"; };
 		15594FA815C56C9500727FF2 /* ofxiOSAlerts.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSAlerts.mm; sourceTree = "<group>"; };
@@ -429,7 +429,7 @@
 		E4F76DFF176CB27200798745 /* ofUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofUtils.h; sourceTree = "<group>"; };
 		E4F76E15176CB27200798745 /* ofVideoGrabber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVideoGrabber.cpp; sourceTree = "<group>"; };
 		E4F76E16176CB27200798745 /* ofVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVideoGrabber.h; sourceTree = "<group>"; };
-		E4F76E17176CB27200798745 /* ofVideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVideoPlayer.cpp; sourceTree = "<group>"; };
+		E4F76E17176CB27200798745 /* ofVideoPlayer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ofVideoPlayer.cpp; sourceTree = "<group>"; };
 		E4F76E18176CB27200798745 /* ofVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVideoPlayer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -548,7 +548,7 @@
 			isa = PBXGroup;
 			children = (
 				15594FA215C56BB700727FF2 /* AVFoundationVideoPlayer.h */,
-				15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */,
+				15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.mm */,
 				15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */,
 				15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */,
 				1594366315CF5F420087B684 /* ofxiOSVideoPlayer.h */,
@@ -1124,7 +1124,7 @@
 				15594F9215C56A8A00727FF2 /* ofxiOSAppDelegate.mm in Sources */,
 				15594F9315C56A8A00727FF2 /* ofxiOSViewController.mm in Sources */,
 				15594FA315C56BB700727FF2 /* AVFoundationVideoGrabber.mm in Sources */,
-				15594FA415C56BB700727FF2 /* AVFoundationVideoPlayer.m in Sources */,
+				15594FA415C56BB700727FF2 /* AVFoundationVideoPlayer.mm in Sources */,
 				15594FAC15C56C9500727FF2 /* ofxiOSAlerts.mm in Sources */,
 				15594FBE15C56D1E00727FF2 /* ofxiOSCoreLocation.mm in Sources */,
 				15594FBF15C56D1E00727FF2 /* ofxiOSExternalDisplay.mm in Sources */,

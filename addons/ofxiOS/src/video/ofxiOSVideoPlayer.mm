@@ -1,7 +1,6 @@
 #include "ofxiOSVideoPlayer.h"
 #include "ofxiOSExtras.h"
 #include "ofxiOSEAGLView.h"
-#import "AVFoundationVideoPlayer.h"
 
 CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
 CVOpenGLESTextureRef _videoTextureRef = NULL;
@@ -37,12 +36,14 @@ void ofxiOSVideoPlayer::disableTextureCache() {
 bool ofxiOSVideoPlayer::load(string name) {
 	
     if(!videoPlayer) {
-        videoPlayer = (__bridge void *)[[AVFoundationVideoPlayer alloc] init];
-        [(__bridge AVFoundationVideoPlayer *)videoPlayer setWillBeUpdatedExternally:YES];
+        avFoundationVideoPlayer = [[AVFoundationVideoPlayer alloc] init];
+        [avFoundationVideoPlayer setWillBeUpdatedExternally:YES];
+		videoPlayer = (__bridge void*)avFoundationVideoPlayer;
+		
     }
     
     NSString * videoPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
-    [(__bridge AVFoundationVideoPlayer*)videoPlayer loadWithPath:videoPath];
+    [avFoundationVideoPlayer loadWithPath:videoPath];
     
     bResetPixels = true;
     bUpdatePixels = true;
@@ -79,9 +80,7 @@ void ofxiOSVideoPlayer::close() {
         pixels.clear();
         
         videoTexture.clear();
-		
-        ((__bridge AVFoundationVideoPlayer *)videoPlayer).delegate = nil;
-        
+		        
         if(bTextureCacheSupported == true) {
             killTextureCache();
         }
@@ -130,8 +129,8 @@ void ofxiOSVideoPlayer::update() {
         return;
     }
     
-    [(__bridge AVFoundationVideoPlayer *)videoPlayer update];
-    bFrameNew = [(__bridge AVFoundationVideoPlayer *)videoPlayer isNewFrame]; // check for new frame staright after the call to update.
+    [avFoundationVideoPlayer update];
+    bFrameNew = [avFoundationVideoPlayer isNewFrame]; // check for new frame staright after the call to update.
     
     if(bFrameNew) {
         /**
@@ -151,7 +150,7 @@ void ofxiOSVideoPlayer::play() {
         ofLogWarning("ofxiOSVideoPlayer::play()") << "video not loaded";
     }
     
-	[(__bridge AVFoundationVideoPlayer *)videoPlayer play];
+	[avFoundationVideoPlayer play];
 }
 
 //----------------------------------------
@@ -160,8 +159,8 @@ void ofxiOSVideoPlayer::stop() {
         return;
     }
     
-    [(__bridge AVFoundationVideoPlayer *)videoPlayer pause];
-    [(__bridge AVFoundationVideoPlayer *)videoPlayer setPosition:0];
+    [avFoundationVideoPlayer pause];
+    [avFoundationVideoPlayer setPosition:0];
 }		
 
 //----------------------------------------
@@ -190,7 +189,7 @@ ofPixels & ofxiOSVideoPlayer::getPixels() {
         bResetPixels = false;
     }
     
-    CVImageBufferRef imageBuffer = [(__bridge AVFoundationVideoPlayer *)videoPlayer getCurrentFrame];
+    CVImageBufferRef imageBuffer = [avFoundationVideoPlayer getCurrentFrame];
     
     CVPixelBufferLockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
     
@@ -283,10 +282,10 @@ ofTexture * ofxiOSVideoPlayer::getTexturePtr() {
         int maxTextureSize = 0;
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
         
-        if([(__bridge AVFoundationVideoPlayer *)videoPlayer getWidth] > maxTextureSize || 
-           [(__bridge AVFoundationVideoPlayer *)videoPlayer getHeight] > maxTextureSize) {
+        if([avFoundationVideoPlayer getWidth] > maxTextureSize || 
+           [avFoundationVideoPlayer getHeight] > maxTextureSize) {
             ofLogWarning("ofxiOSVideoPlayer::getTexturePtr()")
-            << [(__bridge AVFoundationVideoPlayer *)videoPlayer getWidth] << "x" << [(__bridge AVFoundationVideoPlayer *)videoPlayer getHeight]
+            << [avFoundationVideoPlayer getWidth] << "x" << [avFoundationVideoPlayer getHeight]
             << " video image is bigger then max supported texture size " << maxTextureSize;
             return NULL;
         }
@@ -302,7 +301,7 @@ ofTexture * ofxiOSVideoPlayer::getTexturePtr() {
 //---------------------------------------- texture cache
 void ofxiOSVideoPlayer::initTextureCache() {
 
-    CVImageBufferRef imageBuffer = [(__bridge AVFoundationVideoPlayer *)videoPlayer getCurrentFrame];
+    CVImageBufferRef imageBuffer = [avFoundationVideoPlayer getCurrentFrame];
     if(imageBuffer == nil) {
         return;
     }
@@ -324,8 +323,8 @@ void ofxiOSVideoPlayer::initTextureCache() {
      *  so... we can use ofTexture::setUseExternalTextureID() to get around this.
      */
     
-    int videoTextureW = [(__bridge AVFoundationVideoPlayer *)videoPlayer getWidth];
-    int videoTextureH = [(__bridge AVFoundationVideoPlayer *)videoPlayer getHeight];
+    int videoTextureW = [avFoundationVideoPlayer getWidth];
+    int videoTextureH = [avFoundationVideoPlayer getHeight];
     videoTexture.allocate(videoTextureW, videoTextureH, GL_RGBA);
     
     ofTextureData & texData = videoTexture.getTextureData();
@@ -392,7 +391,7 @@ float ofxiOSVideoPlayer::getWidth() const {
         return 0;
     }
     
-    return [((__bridge AVFoundationVideoPlayer *)videoPlayer) getWidth];
+    return [avFoundationVideoPlayer getWidth];
 }
 
 //----------------------------------------
@@ -401,7 +400,7 @@ float ofxiOSVideoPlayer::getHeight() const {
         return 0;
     }
     
-    return [((__bridge AVFoundationVideoPlayer *)videoPlayer) getHeight];
+    return [avFoundationVideoPlayer getHeight];
 }
 
 //----------------------------------------
@@ -410,7 +409,7 @@ bool ofxiOSVideoPlayer::isPaused() const {
         return false;
     }
     
-    return ![((__bridge AVFoundationVideoPlayer *)videoPlayer) isPlaying];
+    return ![avFoundationVideoPlayer isPlaying];
 }
 
 //----------------------------------------
@@ -419,7 +418,7 @@ bool ofxiOSVideoPlayer::isLoaded() const {
         return false;
     }
     
-    return [((__bridge AVFoundationVideoPlayer *)videoPlayer) isReady];
+    return [avFoundationVideoPlayer isReady];
 }
 
 //----------------------------------------
@@ -428,7 +427,7 @@ bool ofxiOSVideoPlayer::isPlaying() const {
         return false;
     }
     
-    return [((__bridge AVFoundationVideoPlayer *)videoPlayer) isPlaying];
+    return [avFoundationVideoPlayer isPlaying];
 }
 
 //----------------------------------------
@@ -437,7 +436,7 @@ float ofxiOSVideoPlayer::getPosition() const {
         return 0;
     }
     
-    return [((__bridge AVFoundationVideoPlayer *)videoPlayer) getPosition];
+    return [avFoundationVideoPlayer getPosition];
 }
 
 //----------------------------------------
@@ -446,7 +445,7 @@ float ofxiOSVideoPlayer::getSpeed() const {
         return 0;
     }
     
-    return [((__bridge AVFoundationVideoPlayer *)videoPlayer) getSpeed];
+    return [avFoundationVideoPlayer getSpeed];
 }
 
 //----------------------------------------
@@ -455,7 +454,7 @@ float ofxiOSVideoPlayer::getDuration() const {
         return 0;
     }
     
-    return [((__bridge AVFoundationVideoPlayer *)videoPlayer) getDurationInSec];
+    return [avFoundationVideoPlayer getDurationInSec];
 }
 
 //----------------------------------------
@@ -464,7 +463,7 @@ bool ofxiOSVideoPlayer::getIsMovieDone() const {
         return false;
     }
     
-    return [((__bridge AVFoundationVideoPlayer *)videoPlayer) isFinished];
+    return [avFoundationVideoPlayer isFinished];
 }
 
 //----------------------------------------
@@ -474,9 +473,9 @@ void ofxiOSVideoPlayer::setPaused(bool bPause) {
     }
     
     if(bPause) {
-        [((__bridge AVFoundationVideoPlayer *)videoPlayer) pause];
+        [avFoundationVideoPlayer pause];
     } else {
-        [((__bridge AVFoundationVideoPlayer *)videoPlayer) play];
+        [avFoundationVideoPlayer play];
     }
 }
 
@@ -486,7 +485,7 @@ void ofxiOSVideoPlayer::setPosition(float pct) {
         return;
     }
     
-    [((__bridge AVFoundationVideoPlayer *)videoPlayer) setPosition:pct];
+    [avFoundationVideoPlayer setPosition:pct];
 }
 
 //----------------------------------------
@@ -498,7 +497,7 @@ void ofxiOSVideoPlayer::setVolume(float volume) {
 		ofLogWarning("ofxiOSVideoPlayer::setVolume()") << "expected range is 0-1, limiting requested volume " << volume << " to 1.0";
 		volume = 1.0f;
 	}
-    [((__bridge AVFoundationVideoPlayer *)videoPlayer) setVolume:volume];    
+    [avFoundationVideoPlayer setVolume:volume];    
 }
 
 //----------------------------------------
@@ -512,7 +511,7 @@ void ofxiOSVideoPlayer::setLoopState(ofLoopType state) {
        (state == OF_LOOP_PALINDROME)) {
         bLoop = true;
     }
-    [((__bridge AVFoundationVideoPlayer *)videoPlayer) setLoop:bLoop];
+    [avFoundationVideoPlayer setLoop:bLoop];
 }
 
 //----------------------------------------
@@ -521,7 +520,7 @@ void ofxiOSVideoPlayer::setSpeed(float speed) {
         return;
     }
     
-    [((__bridge AVFoundationVideoPlayer *)videoPlayer) setSpeed:speed];
+    [avFoundationVideoPlayer setSpeed:speed];
 }
 
 //----------------------------------------
@@ -530,7 +529,7 @@ void ofxiOSVideoPlayer::setFrame(int frame) {
         return;
     }
 
-    [((__bridge AVFoundationVideoPlayer *)videoPlayer) setFrame:frame];
+    [avFoundationVideoPlayer setFrame:frame];
 }
 
 //----------------------------------------
@@ -538,7 +537,7 @@ int	ofxiOSVideoPlayer::getCurrentFrame() const {
     if(videoPlayer == NULL){
         return 0;
     }
-    return [((__bridge AVFoundationVideoPlayer *)videoPlayer) getCurrentFrameNum];
+    return [avFoundationVideoPlayer getCurrentFrameNum];
 }
 
 //----------------------------------------
@@ -546,7 +545,7 @@ int	ofxiOSVideoPlayer::getTotalNumFrames() const {
     if(videoPlayer == NULL){
         return 0;
     }
-    return [((__bridge AVFoundationVideoPlayer *)videoPlayer) getDurationInFrames];
+    return [avFoundationVideoPlayer getDurationInFrames];
 }
 
 //----------------------------------------
@@ -555,7 +554,7 @@ ofLoopType	ofxiOSVideoPlayer::getLoopState() const {
         return OF_LOOP_NONE;
     }
     
-    bool bLoop =  [((__bridge AVFoundationVideoPlayer *)videoPlayer) getLoop];
+    bool bLoop =  [avFoundationVideoPlayer getLoop];
     if(bLoop) {
         return OF_LOOP_NORMAL;
     }
@@ -568,7 +567,7 @@ void ofxiOSVideoPlayer::firstFrame() {
         return;
     }
     
-    [((__bridge AVFoundationVideoPlayer *)videoPlayer) setPosition:0];
+    [avFoundationVideoPlayer setPosition:0];
 }
 
 //----------------------------------------

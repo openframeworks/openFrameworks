@@ -24,10 +24,9 @@
 @end
 
 @interface VideoPlayerControls : UIViewController <UIGestureRecognizerDelegate> {
-    id<VideoPlayerControlsDelegate> delegate;
 }
 
-@property(nonatomic, assign) id delegate;
+@property(nonatomic, strong) id<VideoPlayerControlsDelegate> delegate;
 
 - (void)setPlay:(BOOL)bPlay;
 - (void)setNative:(BOOL)bNative;
