@@ -30,24 +30,23 @@ typedef enum {
 @end
 
 @interface SoundStream : NSObject {
-    __unsafe_unretained id<SoundStreamDelegate> delegate;
-    SoundStreamType streamType;
+    /*SoundStreamType streamType;
     NSInteger numOfChannels;
     NSInteger sampleRate;
     NSInteger bufferSize;
     NSInteger numOfBuffers;
     AudioUnit audioUnit;
-    BOOL bInterruptedWhileRunning;
+    BOOL bInterruptedWhileRunning;*/
 }
 
-@property (nonatomic, assign) id delegate;
-@property (readonly) SoundStreamType streamType;
-@property (readonly) NSInteger numOfChannels;
-@property (readonly) NSInteger sampleRate;
-@property (readonly) NSInteger bufferSize;
-@property (readonly) NSInteger numOfBuffers;
-@property (readonly) AudioUnit audioUnit;
-@property (assign) BOOL bInterruptedWhileRunning;
+@property (nonatomic, strong) id<SoundStreamDelegate> delegate;
+@property (nonatomic, assign) SoundStreamType streamType;
+@property (nonatomic, assign) NSInteger numOfChannels;
+@property (nonatomic, assign) NSInteger sampleRate;
+@property (nonatomic, assign) NSInteger bufferSize;
+@property (nonatomic, assign) NSInteger numOfBuffers;
+@property (nonatomic, assign) AudioUnit audioUnit;
+@property (nonatomic, assign) BOOL bInterruptedWhileRunning;
 
 - (id)initWithNumOfChannels:(NSInteger)numOfChannels
              withSampleRate:(NSInteger)sampleRate

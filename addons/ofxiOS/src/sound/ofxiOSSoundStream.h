@@ -8,7 +8,8 @@
 
 #include "ofBaseSoundStream.h"
 #include "ofSoundStream.h"
-
+#include "SoundInputStream.h"
+#include "SoundOutputStream.h"
 class ofxiOSSoundStream : public ofBaseSoundStream {
 
 	public:
@@ -51,8 +52,8 @@ class ofxiOSSoundStream : public ofBaseSoundStream {
 		
 	private:
 
-		void * soundInputStream;
-		void * soundOutputStream;
+		SoundInputStream * soundInputStream;
+		SoundOutputStream * soundOutputStream;
 
 		ofSoundStreamSettings settings;
 };

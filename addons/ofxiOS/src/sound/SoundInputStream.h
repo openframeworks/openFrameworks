@@ -9,7 +9,6 @@
 #import "SoundStream.h"
 
 @interface SoundInputStream : SoundStream {
-
+	
 }
-
 @end

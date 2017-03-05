@@ -10,8 +10,7 @@
 #include "ofBaseApp.h"
 #include <functional>
 
-#import "SoundInputStream.h"
-#import "SoundOutputStream.h"
+
 #import <AVFoundation/AVFoundation.h>
 
 //------------------------------------------------------------------------------
@@ -44,13 +43,13 @@ int ofxiOSSoundStream::getDeviceID()  const{
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::setInput(ofBaseSoundInput * soundInput) {
 	settings.setInListener(soundInput);
-	[(ofxiOSSoundStreamDelegate *)[(__bridge id)soundInputStream delegate] setInput: settings.inCallback];
+	[(ofxiOSSoundStreamDelegate *)[soundInputStream delegate] setInput: settings.inCallback];
 }
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::setOutput(ofBaseSoundOutput * soundOutput) {
 	settings.setOutListener(soundOutput);
-	[(ofxiOSSoundStreamDelegate *)[(__bridge id)soundOutputStream delegate] setOutput: settings.outCallback];
+	[(ofxiOSSoundStreamDelegate *)[soundOutputStream delegate] setOutput: settings.outCallback];
 }
 
 //------------------------------------------------------------------------------
@@ -60,21 +59,21 @@ bool ofxiOSSoundStream::setup(const ofSoundStreamSettings & settings) {
 	this->settings = settings;
 	
     if(settings.numInputChannels > 0) {
-        soundInputStream = (__bridge void*)[[SoundInputStream alloc] initWithNumOfChannels:settings.numInputChannels
+        soundInputStream = [[SoundInputStream alloc] initWithNumOfChannels:settings.numInputChannels
                                                             withSampleRate:settings.sampleRate
                                                             withBufferSize:settings.bufferSize];
         ofxiOSSoundStreamDelegate * delegate = [[ofxiOSSoundStreamDelegate alloc] initWithSoundInputFn:settings.inCallback];
-        ((__bridge SoundInputStream *)soundInputStream).delegate = delegate;
-        [(__bridge SoundInputStream *)soundInputStream start];
+        soundInputStream.delegate = delegate;
+        [soundInputStream start];
     }
     
     if(settings.numOutputChannels > 0) {
-        soundOutputStream = (__bridge void*)[[SoundOutputStream alloc] initWithNumOfChannels:settings.numOutputChannels
+        soundOutputStream = [[SoundOutputStream alloc] initWithNumOfChannels:settings.numOutputChannels
                                                               withSampleRate:settings.sampleRate
                                                               withBufferSize:settings.bufferSize];
         ofxiOSSoundStreamDelegate * delegate = [[ofxiOSSoundStreamDelegate alloc] initWithSoundOutputFn:settings.outCallback];
-        ((__bridge SoundInputStream *)soundOutputStream).delegate = delegate;
-        [(__bridge SoundInputStream *)soundOutputStream start];
+        soundOutputStream.delegate = delegate;
+        [soundOutputStream start];
     }
     
     bool bOk = (soundInputStream != NULL) || (soundOutputStream != NULL);
@@ -84,36 +83,36 @@ bool ofxiOSSoundStream::setup(const ofSoundStreamSettings & settings) {
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::start(){
     if(soundInputStream != NULL) {
-        [(__bridge SoundInputStream *)soundInputStream start];
+        [soundInputStream start];
     }
     
     if(soundOutputStream != NULL) {
-        [(__bridge SoundOutputStream *)soundOutputStream start];
+        [soundOutputStream start];
     }
 }
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::stop(){
     if(soundInputStream != NULL) {
-        [(__bridge SoundInputStream *)soundInputStream stop];
+        [soundInputStream stop];
     }
     
     if(soundOutputStream != NULL) {
-        [(__bridge SoundOutputStream *)soundOutputStream stop];
+        [soundOutputStream stop];
     }
 }
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::close(){
     if(soundInputStream != NULL) {
-        [(__bridge SoundInputStream *)soundInputStream setDelegate:nil];
-        [(__bridge SoundInputStream *)soundInputStream stop];
+        [soundInputStream setDelegate:nil];
+        [soundInputStream stop];
         soundInputStream = NULL;
     }
     
     if(soundOutputStream != NULL) {
-        [(__bridge SoundOutputStream *)soundInputStream setDelegate:nil];
-        [(__bridge SoundOutputStream *)soundOutputStream stop];
+        [soundInputStream setDelegate:nil];
+        [soundOutputStream stop];
         soundOutputStream = NULL;
     }
 	

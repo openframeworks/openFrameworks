@@ -15,26 +15,19 @@
 
 @implementation SoundStream
 
-@synthesize delegate;
-@synthesize streamType;
-@synthesize numOfChannels;
-@synthesize sampleRate;
-@synthesize bufferSize;
-@synthesize numOfBuffers;
-@synthesize audioUnit;
-@synthesize bInterruptedWhileRunning;
+
 
 - (id)initWithNumOfChannels:(NSInteger)value0
              withSampleRate:(NSInteger)value1
              withBufferSize:(NSInteger)value2 {
     self = [super init];
     if(self) {
-        numOfChannels = value0;
-        sampleRate = value1;
-        bufferSize = value2;
-        numOfBuffers = 1; // always 1.
-        audioUnit = nil;
-        bInterruptedWhileRunning = NO;
+        self.numOfChannels = value0;
+        self.sampleRate = value1;
+        self.bufferSize = value2;
+        self.numOfBuffers = 1; // always 1.
+        self.audioUnit = nil;
+        self.bInterruptedWhileRunning = NO;
 		
 		
 		if([SoundStream shouldUseAudioSessionNotifications]) {
@@ -70,7 +63,7 @@
 }
 
 - (BOOL)isStreaming {
-    return (audioUnit != nil);
+    return (self.audioUnit != nil);
 }
 
 #pragma mark - Audio Session Config
@@ -87,18 +80,18 @@
 	}
 	
 	// setting sample rate (this has different selectors for iOS 5- and iOS 6+)
-	double trueSampleRate = sampleRate;
+	double trueSampleRate = self.sampleRate;
 	if([audioSession respondsToSelector:@selector(setPreferredSampleRate:error:)]) {
-		if(![audioSession setPreferredSampleRate:sampleRate error:&audioSessionError]) {
+		if(![audioSession setPreferredSampleRate:self.sampleRate error:&audioSessionError]) {
 			[self reportError:audioSessionError];
 			audioSessionError = nil;
 		}
 		trueSampleRate = [audioSession sampleRate];
 	} 
-	sampleRate = trueSampleRate;
+	self.sampleRate = trueSampleRate;
 	
 	// setting buffer size
-	NSTimeInterval bufferDuration = bufferSize / trueSampleRate;
+	NSTimeInterval bufferDuration = self.bufferSize / trueSampleRate;
 	if(![audioSession setPreferredIOBufferDuration:bufferDuration error:&audioSessionError]) {
 		[self reportError:audioSessionError];
 		audioSessionError = nil;

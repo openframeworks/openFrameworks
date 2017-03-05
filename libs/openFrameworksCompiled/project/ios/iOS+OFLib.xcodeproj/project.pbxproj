@@ -84,7 +84,7 @@
 		678C3D29176F04F800D1CC68 /* SoundOutputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 678C3D1F176F04F800D1CC68 /* SoundOutputStream.h */; };
 		678C3D2A176F04F800D1CC68 /* SoundOutputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 678C3D20176F04F800D1CC68 /* SoundOutputStream.m */; };
 		678C3D2B176F04F800D1CC68 /* SoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 678C3D21176F04F800D1CC68 /* SoundStream.h */; };
-		678C3D2C176F04F800D1CC68 /* SoundStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 678C3D22176F04F800D1CC68 /* SoundStream.m */; };
+		678C3D2C176F04F800D1CC68 /* SoundStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 678C3D22176F04F800D1CC68 /* SoundStream.mm */; };
 		67D48ED01C10399900F719BC /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67D48ECF1C10399900F719BC /* CoreMotion.framework */; };
 		67D48ED31C103BAE00F719BC /* ofxiOSCoreMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 67D48ED11C103BAE00F719BC /* ofxiOSCoreMotion.h */; };
 		67D48ED41C103BAE00F719BC /* ofxiOSCoreMotion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 67D48ED21C103BAE00F719BC /* ofxiOSCoreMotion.mm */; };
@@ -270,7 +270,7 @@
 		53DA339112DF8F5000C622CE /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		5E2E99DC10ED147800587639 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		6678E97119FEB2DF00C00581 /* ofBaseSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseSoundStream.cpp; sourceTree = "<group>"; };
+		6678E97119FEB2DF00C00581 /* ofBaseSoundStream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ofBaseSoundStream.cpp; sourceTree = "<group>"; };
 		6678E97219FEB2DF00C00581 /* ofSoundBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundBuffer.cpp; sourceTree = "<group>"; };
 		6678E97319FEB2DF00C00581 /* ofSoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBuffer.h; sourceTree = "<group>"; };
 		6678E97419FEB2DF00C00581 /* ofSoundUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUtils.h; sourceTree = "<group>"; };
@@ -301,7 +301,7 @@
 		678C3D1F176F04F800D1CC68 /* SoundOutputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundOutputStream.h; sourceTree = "<group>"; };
 		678C3D20176F04F800D1CC68 /* SoundOutputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoundOutputStream.m; sourceTree = "<group>"; };
 		678C3D21176F04F800D1CC68 /* SoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundStream.h; sourceTree = "<group>"; };
-		678C3D22176F04F800D1CC68 /* SoundStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoundStream.m; sourceTree = "<group>"; };
+		678C3D22176F04F800D1CC68 /* SoundStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SoundStream.mm; sourceTree = "<group>"; };
 		67D48ECF1C10399900F719BC /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		67D48ED11C103BAE00F719BC /* ofxiOSCoreMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSCoreMotion.h; sourceTree = "<group>"; };
 		67D48ED21C103BAE00F719BC /* ofxiOSCoreMotion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSCoreMotion.mm; sourceTree = "<group>"; };
@@ -397,7 +397,7 @@
 		E4F76DD4176CB27200798745 /* ofBaseSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseSoundStream.h; sourceTree = "<group>"; };
 		E4F76DDD176CB27200798745 /* ofSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundPlayer.cpp; sourceTree = "<group>"; };
 		E4F76DDE176CB27200798745 /* ofSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundPlayer.h; sourceTree = "<group>"; };
-		E4F76DDF176CB27200798745 /* ofSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundStream.cpp; sourceTree = "<group>"; };
+		E4F76DDF176CB27200798745 /* ofSoundStream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ofSoundStream.cpp; sourceTree = "<group>"; };
 		E4F76DE0176CB27200798745 /* ofSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundStream.h; sourceTree = "<group>"; };
 		E4F76DE2176CB27200798745 /* ofBaseTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseTypes.cpp; sourceTree = "<group>"; };
 		E4F76DE3176CB27200798745 /* ofBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseTypes.h; sourceTree = "<group>"; };
@@ -513,7 +513,7 @@
 				678C3D1F176F04F800D1CC68 /* SoundOutputStream.h */,
 				678C3D20176F04F800D1CC68 /* SoundOutputStream.m */,
 				678C3D21176F04F800D1CC68 /* SoundStream.h */,
-				678C3D22176F04F800D1CC68 /* SoundStream.m */,
+				678C3D22176F04F800D1CC68 /* SoundStream.mm */,
 			);
 			path = sound;
 			sourceTree = "<group>";
@@ -1140,7 +1140,7 @@
 				678C3D26176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.mm in Sources */,
 				678C3D28176F04F800D1CC68 /* SoundInputStream.m in Sources */,
 				678C3D2A176F04F800D1CC68 /* SoundOutputStream.m in Sources */,
-				678C3D2C176F04F800D1CC68 /* SoundStream.m in Sources */,
+				678C3D2C176F04F800D1CC68 /* SoundStream.mm in Sources */,
 				671C0AF51770246200DF03B3 /* AVSoundPlayer.m in Sources */,
 				671C0AF71770246200DF03B3 /* ofxiOSSoundPlayer.mm in Sources */,
 				67509ABC17979781003A3A29 /* ofXml.cpp in Sources */,
