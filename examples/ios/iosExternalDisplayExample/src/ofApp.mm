@@ -165,13 +165,13 @@ void ofApp::exit(){
 //--------------------------------------------------------------
 void ofApp::presentExternalDisplayPopup(){
     
-    alertViewDelegate = [[[AlertViewDelegate alloc] init] retain];
+    alertViewDelegate = [[AlertViewDelegate alloc] init];
     
-    UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"External Display" 
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"External Display" 
                                                       message:@"Select a External Display Mode" 
                                                      delegate:alertViewDelegate 
                                             cancelButtonTitle:@"Cancel" 
-                                            otherButtonTitles:nil] retain];
+                                            otherButtonTitles:nil];
     
     vector<ofxiOSExternalDisplayMode> displayModes;
     displayModes = ofxiOSExternalDisplay::getExternalDisplayModes();
@@ -184,34 +184,30 @@ void ofApp::presentExternalDisplayPopup(){
     }
     
     [alert show];
-    [alert release];
 }
 
 //--------------------------------------------------------------
 void ofApp::presentExternalDisplayNotFoundPopup(){
-    UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"External Display" 
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"External Display" 
                                                       message:@"External Display not found.\nConnect to an external display using a VGA adapter or AirPlay."
                                                      delegate:nil 
                                             cancelButtonTitle:@"OK" 
-                                            otherButtonTitles:nil] retain];
+                                            otherButtonTitles:nil];
     [alert show];
-    [alert release];
 }
 
 void ofApp::presentMirroringFailedPopup(){
-    UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"Mirroring Failed" 
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Mirroring Failed" 
                                                       message:@"Either you are not connected to an external display or your device does not support mirroring."
                                                      delegate:nil 
                                             cancelButtonTitle:@"OK" 
-                                            otherButtonTitles:nil] retain];
+                                            otherButtonTitles:nil];
     [alert show];
-    [alert release];
 }
 
 //--------------------------------------------------------------
 void ofApp::popupDismissed(){
     if(alertViewDelegate){
-        [alertViewDelegate release];
         alertViewDelegate = nil;
     }
 }
@@ -301,12 +297,11 @@ void ofApp::externalDisplayChanged(){
     if(ofxiOSExternalDisplay::isDisplayingOnDeviceScreen()){
         if(viewController){
             [viewController.view removeFromSuperview];
-            [viewController release];
             viewController = nil;
         }
     } else if(ofxiOSExternalDisplay::isDisplayingOnExternalScreen()) {
         if(!viewController){
-            viewController = [[[MyViewController alloc] init] retain];
+            viewController = [[MyViewController alloc] init];
             [ofxiOSGetAppDelegate().window addSubview:viewController.view];  // add to device window.
         }
     }

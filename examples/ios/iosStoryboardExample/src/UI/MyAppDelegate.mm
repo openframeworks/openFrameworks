@@ -14,7 +14,7 @@
     
     [super applicationDidFinishLaunching:application];
     
-    self.navigationController = [[[UINavigationController alloc] init] autorelease];
+    self.navigationController = [[UINavigationController alloc] init];
     [self.window setRootViewController:self.navigationController];
     
     UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"MyApp" bundle:nil];
@@ -29,7 +29,6 @@
 
 - (void) dealloc {
     self.navigationController = nil;
-    [super dealloc];
 }
 
 @end

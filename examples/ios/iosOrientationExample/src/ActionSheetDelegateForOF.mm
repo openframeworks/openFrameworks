@@ -20,9 +20,7 @@
     return self;
 }
 
-- (void)dealloc {
-    [super dealloc];
-}
+
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     switch (buttonIndex) {
