@@ -30,7 +30,7 @@ typedef enum {
 @end
 
 @interface SoundStream : NSObject {
-    id<SoundStreamDelegate> delegate;
+    __unsafe_unretained id<SoundStreamDelegate> delegate;
     SoundStreamType streamType;
     NSInteger numOfChannels;
     NSInteger sampleRate;

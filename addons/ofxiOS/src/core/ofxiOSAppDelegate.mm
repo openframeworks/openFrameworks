@@ -52,12 +52,11 @@
     self.window = nil;
     self.externalWindow = nil;
     self.glViewController = nil;
-    [super dealloc];
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 	
-    self.window = [[[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]] autorelease];
+    self.window = [[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
 	[self.window makeKeyAndVisible];
     
     currentScreenIndex = 0;
@@ -136,7 +135,7 @@
     NSString * appDelegateClassName = [[self class] description];
     if ([appDelegateClassName isEqualToString:@"ofxiOSAppDelegate"]) { // app delegate is not being extended.
 		
-        self.glViewController = [[[ofxiOSViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()] autorelease];
+        self.glViewController = [[ofxiOSViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()];
         self.window.rootViewController = self.glViewController;
         
         ofOrientation requested = ofGetOrientation();
@@ -268,7 +267,7 @@
     externalScreenFrame = CGRectZero;
     externalScreenFrame.size = CGSizeMake(w, h);
     
-    self.externalWindow = [[[UIWindow alloc] initWithFrame:externalScreenFrame] autorelease];
+    self.externalWindow = [[UIWindow alloc] initWithFrame:externalScreenFrame];
     self.externalWindow.screen = externalScreen;
     self.externalWindow.clipsToBounds = YES;
     self.externalWindow.hidden = NO;
@@ -303,7 +302,7 @@
     externalScreenFrame = CGRectZero;
     externalScreenFrame.size = CGSizeMake(w, h);
     
-    self.externalWindow = [[[UIWindow alloc] initWithFrame:externalScreenFrame] autorelease];
+    self.externalWindow = [[UIWindow alloc] initWithFrame:externalScreenFrame];
     self.externalWindow.screen = externalScreen;
     self.externalWindow.clipsToBounds = YES;
     self.externalWindow.hidden = NO;

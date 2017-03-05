@@ -50,7 +50,6 @@
 @property (nonatomic, readonly) double headingAccuracy;
 
 - (id) init;
-- (void) dealloc;
 
 - (bool) startHeading;
 - (void) stopHeading;
@@ -79,7 +78,6 @@ class ofxiOSCoreLocation
 	public:
 		
 		ofxiOSCoreLocation();
-		~ofxiOSCoreLocation();	
 		
 		bool startHeading();
 		void stopHeading();

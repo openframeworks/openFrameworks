@@ -30,11 +30,7 @@ ofxiOSCoreLocation::ofxiOSCoreLocation()
 	coreLoc = [[ofxiOSCoreLocationDelegate alloc] init];
 }
 
-//--------------------------------------------------------------
-ofxiOSCoreLocation::~ofxiOSCoreLocation()
-{
-	[coreLoc release];
-}
+
 
 //--------------------------------------------------------------
 
@@ -186,14 +182,6 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 }
 
 //--------------------------------------------------------------
-- (void)dealloc 
-{ 
-	[locationManager release];
-	
-	[super dealloc];
-}
-
-//--------------------------------------------------------------
 
 - (bool) startHeading
 {
@@ -298,7 +286,7 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 - (void)locationManager:(CLLocationManager *)manager
 	   didFailWithError:(NSError *)error //thx apple
 {
-	NSMutableString *errorString = [[[NSMutableString alloc] init] autorelease];
+	NSMutableString *errorString = [[NSMutableString alloc] init];
 	
 	if ([error domain] == kCLErrorDomain) {
 		

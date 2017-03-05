@@ -20,7 +20,7 @@
 typedef struct {
 	AudioBufferList * bufferList;
 	AudioUnit remoteIO;
-	SoundInputStream * stream;
+	__unsafe_unretained SoundInputStream * stream;
 }
 SoundInputStreamContext;
 
@@ -99,7 +99,6 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 
 - (void)dealloc {
     [self stop];
-    [super dealloc];
 }
 
 - (void)start {

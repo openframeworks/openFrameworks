@@ -51,9 +51,7 @@
 }
 
 - (void)dealloc {
-    [super dealloc];
-	
-	
+		
 	if([SoundStream shouldUseAudioSessionNotifications]) {
 		[[NSNotificationCenter defaultCenter] removeObserver:self
 														name:AVAudioSessionInterruptionNotification

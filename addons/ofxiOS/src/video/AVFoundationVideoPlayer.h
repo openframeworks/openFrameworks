@@ -36,7 +36,7 @@
 
 //---------------------------------------------------------- video player.
 @interface AVFoundationVideoPlayer : NSObject {
-    id<AVFoundationVideoPlayerDelegate> delegate;
+    __unsafe_unretained id<AVFoundationVideoPlayerDelegate> delegate;
 }
 
 @property (nonatomic, assign) id delegate;

@@ -48,7 +48,7 @@
 @interface EAGLView : UIView
 {
 @public
-    id<EAGLViewDelegate> delegate;
+    __unsafe_unretained id<EAGLViewDelegate> delegate;
     
 @protected
     id <ESRenderer> renderer;

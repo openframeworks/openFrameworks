@@ -17,7 +17,7 @@
 @end
 
 @interface AVSoundPlayer : NSObject <AVAudioPlayerDelegate> {
-    id<AVSoundPlayerDelegate> delegate;
+    __unsafe_unretained id<AVSoundPlayerDelegate> delegate;
 }
 
 @property(nonatomic, assign) id delegate;

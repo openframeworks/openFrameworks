@@ -535,12 +535,10 @@ string ofxiOSGetClipboardString() {
         [delegate performSelector:@selector(saveComplete)];
     }
 	
-	[self release];
 }
 
 -(void)dealloc {
-	[delegate release];
-	[super dealloc];
+	delegate = nil;
 }
 
 @end

@@ -60,7 +60,6 @@ void ofxiOSMapKit::close() {
 		ofLogVerbose("ofxiOSMapKit") << "close(): releasing MKMapView";
         mapView.delegate = nil;
         [mapView removeFromSuperview];
-        [mapView release];
         mapView = nil;
     }
 }
