@@ -40,3 +40,5 @@ OF_CORE_FRAMEWORKS = -framework Security
 // once all libraries are compiled for libc++ / all architectures
 CLANG_CXX_LIBRARY = libc++
 CLANG_CXX_LANGUAGE_STANDARD = c++11
+IPHONEOS_DEPLOYMENT_TARGET = 8.3
+CLANG_ENABLE_OBJC_ARC = YES
