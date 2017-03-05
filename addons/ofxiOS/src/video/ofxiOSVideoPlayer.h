@@ -2,6 +2,7 @@
 
 #include "ofBaseTypes.h"
 #include "ofTexture.h"
+#include "AVFoundationVideoPlayer.h"
 
 class ofxiOSVideoPlayer : public ofBaseVideoPlayer {
 	
@@ -78,6 +79,8 @@ protected:
     ofPixels pixels;
 	ofPixelFormat pixelFormat;
 	ofTexture videoTexture;
+	AVFoundationVideoPlayer* avFoundationVideoPlayer;
+	
 };
 
 #define ofxiPhoneVideoPlayer ofxiOSVideoPlayer
