@@ -59,7 +59,7 @@
 
 
 typedef int socklen_t;
-
+using namespace ofx;
 
 namespace osc{
 static void SockaddrFromIpEndpointName( struct sockaddr_in& sockAddr, const IpEndpointName& endpoint )
