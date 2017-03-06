@@ -37,7 +37,10 @@ void ofApp::draw(){
     int x = (ofGetWidth() - rect.width) * 0.5;                              // position in center screen.
     int padding = rect.height + 50;                                         // draw the text multiple times.
     for(int y=rect.height; y<ofGetHeight(); y+=padding) {
-        font.drawStringAsShapes("openFrameworks", x, y);
+        //BUG
+        //font.drawStringAsShapes("openFrameworks", x, y);
+        font.drawString("openFrameworks", x, y);
+
     }
 
     if(bUseShader) {
