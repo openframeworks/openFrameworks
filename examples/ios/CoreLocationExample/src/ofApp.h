@@ -7,6 +7,7 @@
 class ofApp : public ofxiOSApp{
 	
     public:
+        ofApp();
         void setup();
         void update();
         void draw();
