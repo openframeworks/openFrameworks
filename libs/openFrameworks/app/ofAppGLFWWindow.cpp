@@ -449,7 +449,8 @@ void ofAppGLFWWindow::setWindowShouldClose(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowTitle(string title){
-	glfwSetWindowTitle(windowP,title.c_str());
+	settings.title = title;
+	glfwSetWindowTitle(windowP,settings.title.c_str());
 }
 
 //------------------------------------------------------------
@@ -814,7 +815,8 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		[cocoaWindow setStyleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask];
  
 		setWindowShape(windowRect.width, windowRect.height);
- 
+		setWindowTitle(settings.title);
+		
 		//----------------------------------------------------
 		// if we have recorded the screen posion, put it there
 		// if not, better to let the system do it (and put it where it wants)
