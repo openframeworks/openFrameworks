@@ -89,16 +89,31 @@ std::int32_t ofxOscMessage::getArgAsInt( int index ) const
 
 std::int32_t ofxOscMessage::getArgAsInt32( int index ) const
 {
-	if ( getArgType(index) != OFXOSC_TYPE_INT32 )
-	{
-	    if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
+    if ( getArgType(index) != OFXOSC_TYPE_INT32 )
+    {
+        if ( getArgType( index ) == OFXOSC_TYPE_INT64 )
         {
-	    	ofLogWarning("ofxOscMessage") << "getArgAsInt32(): converting float to int32 for argument " << index;
+            // warn about possible lack of precision
+            ofLogWarning("ofxOscMessage") << "getArgAsInt32(): converting int64 to int32 for argument " << index;
+            return (std::int32_t)((ofxOscArgInt64*)args[index])->get();
+        }
+        else if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
+        {
             return (std::int32_t)((ofxOscArgFloat*)args[index])->get();
+        }
+        else if ( getArgType( index ) == OFXOSC_TYPE_DOUBLE )
+        {
+            // warn about possible lack of precision
+            ofLogWarning("ofxOscMessage") << "getArgAsInt32(): converting double to int32 for argument " << index;
+            return (std::int32_t)((ofxOscArgDouble*)args[index])->get();
+        }
+        else if( getArgType( index )  == OFXOSC_TYPE_TRUE || getArgType( index ) == OFXOSC_TYPE_FALSE)
+        {
+            return (std::int32_t)((ofxOscArgBool*)args[index])->get();
         }
         else
         {
-        	ofLogError("ofxOscMessage") << "getArgAsInt32(): argument " << index << " is not a number";
+            ofLogError("ofxOscMessage") << "getArgAsInt32(): argument " << index << " is not a number";
             return 0;
         }
 	}
@@ -108,16 +123,27 @@ std::int32_t ofxOscMessage::getArgAsInt32( int index ) const
 
 std::int64_t ofxOscMessage::getArgAsInt64( int index ) const
 {
-	if ( getArgType(index) != OFXOSC_TYPE_INT64 )
-	{
-	    if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
+    if ( getArgType(index) != OFXOSC_TYPE_INT64 )
+    {
+        if ( getArgType( index ) == OFXOSC_TYPE_INT32 )
         {
-	    	ofLogWarning("ofxOscMessage") << "getArgAsInt64(): converting float to int64 for argument " << index;
+            return (std::int64_t)((ofxOscArgInt32*)args[index])->get();
+        }
+        else if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
+        {
             return (std::int64_t)((ofxOscArgFloat*)args[index])->get();
+        }
+        else if ( getArgType( index ) == OFXOSC_TYPE_DOUBLE )
+        {
+            return (std::int64_t)((ofxOscArgDouble*)args[index])->get();
+        }
+        else if( getArgType( index )  == OFXOSC_TYPE_TRUE || getArgType( index ) == OFXOSC_TYPE_FALSE)
+        {
+            return (std::int64_t)((ofxOscArgBool*)args[index])->get();
         }
         else
         {
-        	ofLogError("ofxOscMessage") << "getArgAsInt64(): argument " << index << " is not a number";
+            ofLogError("ofxOscMessage") << "getArgAsInt64(): argument " << index << " is not a number";
             return 0;
         }
 	}
@@ -131,12 +157,27 @@ float ofxOscMessage::getArgAsFloat( int index ) const
 	{
 	    if ( getArgType( index ) == OFXOSC_TYPE_INT32 )
         {
-	    	ofLogWarning("ofxOscMessage") << "getArgAsFloat(): converting int32 to float for argument " << index;
             return (float)((ofxOscArgInt32*)args[index])->get();
+        }
+        else if ( getArgType( index ) == OFXOSC_TYPE_INT64 )
+        {
+            // warn about possible lack of precision
+            ofLogWarning("ofxOscMessage") << "getArgAsFloat(): converting int64 to float for argument " << index;
+            return (float)((ofxOscArgInt64*)args[index])->get();
+        }
+        else if ( getArgType( index ) == OFXOSC_TYPE_DOUBLE )
+        {
+            // warn about possible lack of precision
+            ofLogWarning("ofxOscMessage") << "getArgAsFloat(): converting double to float for argument " << index;
+            return (float)((ofxOscArgDouble*)args[index])->get();
+        }
+        else if( getArgType( index )  == OFXOSC_TYPE_TRUE || getArgType( index ) == OFXOSC_TYPE_FALSE)
+        {
+            return (float)((ofxOscArgBool*)args[index])->get();
         }
         else
         {
-        	ofLogError("ofxOscMessage") << "getArgAsFloat(): argument " << index << " is not a number";
+            ofLogError("ofxOscMessage") << "getArgAsFloat(): argument " << index << " is not a number";
             return 0;
         }
 	}
@@ -150,12 +191,23 @@ double ofxOscMessage::getArgAsDouble( int index ) const
 	{
 	    if ( getArgType( index ) == OFXOSC_TYPE_INT32 )
         {
-	    	ofLogWarning("ofxOscMessage") << "getArgAsDouble(): converting int32 to double for argument " << index;
             return (double)((ofxOscArgInt32*)args[index])->get();
+        }
+        else if ( getArgType( index ) == OFXOSC_TYPE_INT64 )
+        {
+            return (double)((ofxOscArgInt64*)args[index])->get();
+        }
+        else if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
+        {
+            return (double)((ofxOscArgFloat*)args[index])->get();
+        }
+        else if( getArgType( index )  == OFXOSC_TYPE_TRUE || getArgType( index ) == OFXOSC_TYPE_FALSE)
+        {
+            return (double)((ofxOscArgBool*)args[index])->get();
         }
         else
         {
-        	ofLogError("ofxOscMessage") << "getArgAsDouble(): argument " << index << " is not a number";
+            ofLogError("ofxOscMessage") << "getArgAsDouble(): argument " << index << " is not a number";
             return 0;
         }
 	}
@@ -166,133 +218,151 @@ double ofxOscMessage::getArgAsDouble( int index ) const
 std::string ofxOscMessage::getArgAsString( int index ) const
 {
     if ( getArgType(index) != OFXOSC_TYPE_STRING )
-	{
-	    if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
+    {
+        // warn about string conversions
+        if ( getArgType( index ) == OFXOSC_TYPE_INT32 )
         {
-            char buf[1024];
-            sprintf(buf,"%f",((ofxOscArgFloat*)args[index])->get() );
-            ofLogWarning("ofxOscMessage") << "getArgAsString(): converting float to string for argument " << index;
-            return buf;
-        }
-	    else if ( getArgType( index ) == OFXOSC_TYPE_INT32 )
-        {
-            char buf[1024];
-            sprintf(buf,"%i",((ofxOscArgInt32*)args[index])->get() );
             ofLogWarning("ofxOscMessage") << "getArgAsString(): converting int32 to string for argument " << index;
-            return buf;
+            return ofToString(((ofxOscArgInt32*)args[index])->get());
+        }
+        else if ( getArgType( index ) == OFXOSC_TYPE_INT64 )
+        {
+            ofLogWarning("ofxOscMessage") << "getArgAsString(): converting int64 to string for argument " << index;
+            return ofToString(((ofxOscArgInt64*)args[index])->get());
+        }
+        else if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
+        {
+            ofLogWarning("ofxOscMessage") << "getArgAsString(): converting float to string for argument " << index;
+            return ofToString(((ofxOscArgFloat*)args[index])->get());
+        }
+        else if ( getArgType( index ) == OFXOSC_TYPE_DOUBLE )
+        {
+            ofLogWarning("ofxOscMessage") << "getArgAsString(): converting double to string for argument " << index;
+            return ofToString(((ofxOscArgDouble*)args[index])->get());
+        }
+        else if ( getArgType(index) == OFXOSC_TYPE_CHAR )
+        {
+            ofLogWarning("ofxOscMessage") << "getArgAsString(): converting char to string for argument " << index;
+            return ofToString(((ofxOscArgChar*)args[index])->get());
         }
         else
         {
-        	ofLogError("ofxOscMessage") << "getArgAsString(): argument " << index << " is not a string";
+            ofLogError("ofxOscMessage") << "getArgAsString(): argument " << index << " is not a string interpretable value";
             return "";
         }
-	}
-	else
+    }
+    else
         return ((ofxOscArgString*)args[index])->get();
 }
 
 std::string ofxOscMessage::getArgAsSymbol(int index) const
 {
     if ( getArgType(index) != OFXOSC_TYPE_SYMBOL )
-	{
-	    if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
+    {
+        // warn about string conversions
+        if ( getArgType( index ) == OFXOSC_TYPE_INT32 )
         {
-            char buf[1024];
-            sprintf(buf,"%f",((ofxOscArgFloat*)args[index])->get() );
-            ofLogWarning("ofxOscMessage") << "getArgAsSymbol(): converting float to symbol (string) for argument " << index;
-            return buf;
-        }
-	    else if ( getArgType( index ) == OFXOSC_TYPE_INT32 )
-        {
-            char buf[1024];
-            sprintf(buf,"%i",((ofxOscArgInt32*)args[index])->get() );
             ofLogWarning("ofxOscMessage") << "getArgAsSymbol(): converting int32 to symbol (string) for argument " << index;
-            return buf;
+            return ofToString(((ofxOscArgInt32*)args[index])->get());
+        }
+        else if ( getArgType( index ) == OFXOSC_TYPE_INT64 )
+        {
+            ofLogWarning("ofxOscMessage") << "getArgAsSymbol(): converting int64 to symbol (string) for argument " << index;
+            return ofToString(((ofxOscArgInt64*)args[index])->get());
+        }
+        else if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
+        {
+            ofLogWarning("ofxOscMessage") << "getArgAsSymbol(): converting float to symbol (string) for argument " << index;
+            return ofToString(((ofxOscArgFloat*)args[index])->get());
+        }
+        else if ( getArgType( index ) == OFXOSC_TYPE_DOUBLE )
+        {
+            ofLogWarning("ofxOscMessage") << "getArgAsSymbol(): converting double to symbol (string) for argument " << index;
+            return ofToString(((ofxOscArgDouble*)args[index])->get());
+        }
+        else if ( getArgType(index) == OFXOSC_TYPE_CHAR )
+        {
+            ofLogWarning("ofxOscMessage") << "getArgAsSymbol(): converting char to symbol (string) for argument " << index;
+            return ofToString(((ofxOscArgChar*)args[index])->get());
         }
         else
         {
-        	ofLogError("ofxOscMessage") << "getArgAsSymbol(): argument " << index << " is not a symbol (string)";
+            ofLogError("ofxOscMessage") << "getArgAsSymbol(): argument " << index << " is not a symbol (string) interpretable value";
             return "";
         }
-	}
-	else
+    }
+    else
         return ((ofxOscArgSymbol*)args[index])->get();
 }
 
 char ofxOscMessage::getArgAsChar(int index) const
 {
     if ( getArgType(index) == OFXOSC_TYPE_CHAR )
-	{
-		return ((ofxOscArgChar*)args[index])->get();
-	}
-	else
     {
-		ofLogError("ofxOscMessage") << "getArgAsSymbol(): argument " << index << " is not a symbol (string)";
-		return 0;
-	}
+        return ((ofxOscArgChar*)args[index])->get();
+    }
+    else
+    {
+        ofLogError("ofxOscMessage") << "getArgAsChar(): argument " << index << " is not a char";
+        return 0;
+    }
 }
 
 std::int32_t ofxOscMessage::getArgAsMidiMessage(int index) const
 {
-	if ( getArgType(index) != OFXOSC_TYPE_INT32 )
-	{
-	    if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
-        {
-	    	ofLogWarning("ofxOscMessage") << "getArgAsInt32(): converting float to int32 for argument " << index;
-            return (std::int32_t)((ofxOscArgFloat*)args[index])->get();
-        }
-        else
-        {
-        	ofLogError("ofxOscMessage") << "getArgAsInt32(): argument " << index << " is not a number";
-            return 0;
-        }
-	}
-	else
-        return ((ofxOscArgInt32*)args[index])->get();
+    if ( getArgType(index) == OFXOSC_TYPE_MIDI_MESSAGE )
+    {
+        return ((ofxOscArgMidiMessage*)args[index])->get();
+    }
+    else
+    {
+        ofLogError("ofxOscMessage") << "getArgAsMidiMessage(): argument " << index << " is not a midi message";
+        return 0;
+    }
 }
 
 bool ofxOscMessage::getArgAsBool(int index) const
 {
-	ofxOscArgType incomingArgType = getArgType( index );
-	if(incomingArgType == OFXOSC_TYPE_TRUE || incomingArgType == OFXOSC_TYPE_FALSE)
-	{
-		return ((ofxOscArgBool*)args[index])->get();
-	}
-	else if(incomingArgType == OFXOSC_TYPE_INT32)
-	{
-		return ((ofxOscArgInt32*)args[index])->get() > 0;
-	}
-	else if(incomingArgType == OFXOSC_TYPE_INT64)
-	{
-		return ((ofxOscArgInt64*)args[index])->get() > 0;
-	}
-	else if(incomingArgType == OFXOSC_TYPE_FLOAT)
-	{
-		return ((ofxOscArgFloat*)args[index])->get() > 0;
-	}
-	else if(incomingArgType == OFXOSC_TYPE_DOUBLE)
-	{
-		return ((ofxOscArgDouble*)args[index])->get() > 0;
-	}
-	else if(incomingArgType == OFXOSC_TYPE_STRING || incomingArgType == OFXOSC_TYPE_SYMBOL)
-	{
-		return ((ofxOscArgString*)args[index])->get() == "true";
-	}
-	else
-	{
-		ofLogError("ofxOscMessage") << "getArgAsBool(): argument " << index << " is not a boolean interpretable value";
-		return false;
-	}
+    ofxOscArgType incomingArgType = getArgType( index );
+    if(incomingArgType == OFXOSC_TYPE_TRUE || incomingArgType == OFXOSC_TYPE_FALSE)
+    {
+        return ((ofxOscArgBool*)args[index])->get();
+    }
+    else if(incomingArgType == OFXOSC_TYPE_INT32)
+    {
+        return ((ofxOscArgInt32*)args[index])->get() > 0;
+    }
+    else if(incomingArgType == OFXOSC_TYPE_INT64)
+    {
+        return ((ofxOscArgInt64*)args[index])->get() > 0;
+    }
+    else if(incomingArgType == OFXOSC_TYPE_FLOAT)
+    {
+        return ((ofxOscArgFloat*)args[index])->get() > 0;
+    }
+    else if(incomingArgType == OFXOSC_TYPE_DOUBLE)
+    {
+        return ((ofxOscArgDouble*)args[index])->get() > 0;
+    }
+    else if(incomingArgType == OFXOSC_TYPE_STRING || incomingArgType == OFXOSC_TYPE_SYMBOL)
+    {
+        return ((ofxOscArgString*)args[index])->get() == "true";
+    }
+    else
+    {
+        ofLogError("ofxOscMessage") << "getArgAsBool(): argument " << index << " is not a boolean interpretable value";
+        return false;
+    }
 }
 
 bool ofxOscMessage::getArgAsTrigger(int index) const
 {
-	if ( getArgType(index) != OFXOSC_TYPE_TRIGGER )
-	{
-		ofLogError("ofxOscMessage") << "getArgAsTrigger(): argument " << index << " is not a trigger";
-		return NULL;
-	}
-	else
+    if ( getArgType(index) != OFXOSC_TYPE_TRIGGER )
+    {
+        ofLogError("ofxOscMessage") << "getArgAsTrigger(): argument " << index << " is not a trigger";
+        return false;
+    }
+    else
         return ((ofxOscArgTrigger*)args[index])->get();
 }
 
@@ -312,8 +382,9 @@ std::int64_t ofxOscMessage::getArgAsTimetag(int index) const
 	{
 	    if ( getArgType( index ) == OFXOSC_TYPE_DOUBLE )
         {
-	    	ofLogWarning("ofxOscMessage") << "getArgAsTimetag(): converting double to Timetag for argument " << index;
-            return (std::int32_t)((ofxOscArgFloat*)args[index])->get();
+            // warn about possible conversion issue
+            ofLogWarning("ofxOscMessage") << "getArgAsTimetag(): converting double to Timetag for argument " << index;
+            return (std::int64_t)((ofxOscArgDouble*)args[index])->get();
         }
         else
         {
@@ -340,8 +411,15 @@ std::int32_t ofxOscMessage::getArgAsRgbaColor( int index ) const
 {
     if ( getArgType(index) != OFXOSC_TYPE_RGBA_COLOR )
     {
-        ofLogError("ofxOscMessage") << "getArgAsRgbaColor(): argument " << index << " is not a rgba color";
-        return 0;
+        if ( getArgType( index ) == OFXOSC_TYPE_INT32 )
+        {
+            return ((ofxOscArgInt32*)args[index])->get();
+        }
+        else 
+        {
+            ofLogError("ofxOscMessage") << "getArgAsRgbaColor(): argument " << index << " is not an rgba color";
+            return 0;
+        }
     }
     else
         return ((ofxOscArgRgbaColor*)args[index])->get();
