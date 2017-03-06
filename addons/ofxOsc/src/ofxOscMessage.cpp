@@ -498,7 +498,7 @@ void ofxOscMessage::addInfinitumArg()
 
 void ofxOscMessage::addTimetagArg( std::int64_t argument )
 {
-	args.push_back( new ofxOscArgBool( argument ) );
+	args.push_back( new ofxOscArgTimetag( argument ) );
 }
 
 void ofxOscMessage::addBlobArg( const ofBuffer &argument )
