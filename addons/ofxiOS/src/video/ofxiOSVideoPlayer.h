@@ -58,7 +58,7 @@ public:
     void nextFrame();
     void previousFrame();
     
-	void * getAVFoundationVideoPlayer();
+	AVFoundationVideoPlayer * getAVFoundationVideoPlayer();
     
     OF_DEPRECATED_MSG("ofxiOSVideoPlayer::loadMovie() is deprecated, use load() instead.", bool loadMovie(string name));
     OF_DEPRECATED_MSG("ofxiOSVideoPlayer::getPixelsRef() is deprecated, use getPixels() instead.", ofPixels & getPixelsRef());
@@ -67,7 +67,7 @@ public:
     
 protected:
     
-	void * videoPlayer; // super hack to forward declare an objective c class inside a header file that can only handle c classes.
+	//void * videoPlayer; // super hack to forward declare an objective c class inside a header file that can only handle c classes.
 	
     bool bFrameNew;
     bool bResetPixels;
@@ -79,7 +79,7 @@ protected:
     ofPixels pixels;
 	ofPixelFormat pixelFormat;
 	ofTexture videoTexture;
-	AVFoundationVideoPlayer* avFoundationVideoPlayer;
+	AVFoundationVideoPlayer* videoPlayer;
 	
 };
 
