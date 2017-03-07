@@ -59,6 +59,9 @@ public:
 
 	/// send messages to hostname and port
 	void setup( const std::string &hostname, int port );
+	
+	/// clear the sender 
+	void clear();
 
 	/// send the given message
 	void sendMessage( const ofxOscMessage& message, bool wrapInBundle = true );
@@ -81,7 +84,6 @@ public:
 
 private:
 	void setup(osc::UdpTransmitSocket * socket);
-	void shutdown();
 		
 	// helper methods for constructing messages
 	void appendBundle( const ofxOscBundle& bundle, osc::OutboundPacketStream& p );

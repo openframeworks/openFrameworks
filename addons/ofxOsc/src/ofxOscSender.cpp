@@ -75,6 +75,13 @@ void ofxOscSender::setup( const std::string &hostname, int port )
     this->port = port;
 }
 
+void ofxOscSender::clear()
+{
+	socket.reset();
+	hostname = "";
+	port = 0;
+}
+
 void ofxOscSender::disableBroadcast()
 {
 	broadcast = false;
@@ -99,11 +106,6 @@ std::string ofxOscSender::getHostname()
 int ofxOscSender::getPort()
 {
 	return port;
-}
-
-void ofxOscSender::shutdown()
-{
-	socket.reset();
 }
 
 void ofxOscSender::sendBundle( const ofxOscBundle& bundle )

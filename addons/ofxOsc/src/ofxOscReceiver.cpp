@@ -67,7 +67,7 @@ bool ofxOscReceiver::setup( int listen_port )
     
 	// if we're already running, shutdown before running again
 	if ( listen_socket ){
-		shutdown();
+		clear();
 	}
 	
 	// create socket
@@ -110,9 +110,10 @@ bool ofxOscReceiver::setup( int listen_port )
     return true;
 }
 
-void ofxOscReceiver::shutdown()
+void ofxOscReceiver::clear()
 {
 	listen_socket.reset();
+	listen_port = 0;
 }
 
 void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint )
