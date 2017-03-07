@@ -1,10 +1,4 @@
-/*
- * ofxOscParameterSync.cpp
- *
- *  Created on: 13/07/2012
- *      Author: arturo
- */
-
+// copyright (c) openFrameworks team 2012-2017
 #include "ofxOscParameterSync.h"
 
 //--------------------------------------------------------------
