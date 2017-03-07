@@ -30,39 +30,41 @@
 
 #include "ofxOscArg.h"
 
-class ofxOscMessage
-{
+class ofxOscMessage{
 public:
+
 	ofxOscMessage();
 	~ofxOscMessage();
-	ofxOscMessage( const ofxOscMessage& other ){ copy ( other ); }
-	ofxOscMessage& operator= ( const ofxOscMessage& other ) { return copy( other ); }
+	ofxOscMessage(const ofxOscMessage& other);
+	ofxOscMessage& operator=(const ofxOscMessage& other);
 	/// for operator= and copy constructor
-	ofxOscMessage& copy( const ofxOscMessage& other );
+	ofxOscMessage& copy(const ofxOscMessage& other);
 
 	/// clear this message, erase all contents
 	void clear();
 
 	/// return the address
-	string getAddress() const { return address; }
+	string getAddress() const;
 
 	/// return the remote ip
-	string getRemoteIp() const { return remote_host; }
+	string getRemoteIp() const;
+	
 	/// return the remote port
-	int getRemotePort() const { return remote_port; }
+	int getRemotePort() const;
 
-	/// return number of argumentsļ
+	/// return number of arguments
 	int getNumArgs() const;
+	
 	/// return argument type code for argument # index
-	ofxOscArgType getArgType( int index ) const;
+	ofxOscArgType getArgType(int index) const;
+	
 	/// return argument type name as string
-	/// - either "int", "float", or "string"
-	string getArgTypeName( int index ) const;
+	string getArgTypeName(int index) const;
 
 	/// get the argument with the given index as an int, float, or string
 	/// ensure that the type matches what you're requesting
 	/// (eg for an int argument, getArgType(index)==OF_TYPE_INT32
-	/// or getArgTypeName(index)=="int32")
+	/// or getArgTypeName(index)=="i")
 	/*
 	OSC 1.1 specifications types:
 			  i - 32bit integer
@@ -81,52 +83,51 @@ public:
 
 	See : http://cnmat.berkeley.edu/system/files/attachments/Nime09OSCfinal.pdf
 	*/
-    int32_t getArgAsInt( int index ) const;
-	int32_t getArgAsInt32( int index ) const;
-	int64_t getArgAsInt64( int index ) const;
-	float getArgAsFloat( int index ) const;
-	double getArgAsDouble( int index ) const;
-	string getArgAsString( int index ) const;
-	string getArgAsSymbol( int index ) const;
-	char getArgAsChar( int index ) const;
-	int32_t getArgAsMidiMessage( int index ) const;
+	int32_t getArgAsInt(int index) const;
+	int32_t getArgAsInt32(int index) const;
+	int64_t getArgAsInt64(int index) const;
+	float getArgAsFloat(int index) const;
+	double getArgAsDouble(int index) const;
+	string getArgAsString(int index) const;
+	string getArgAsSymbol(int index) const;
+	char getArgAsChar(int index) const;
+	int32_t getArgAsMidiMessage(int index) const;
 	bool getArgAsBool(int index) const;
 	bool getArgAsTrigger(int index) const;
 	bool getArgAsImpulse(int index) const;
 	bool getArgAsInfinitum(int index) const;
-	int64_t getArgAsTimetag( int index ) const;
-	ofBuffer getArgAsBlob( int index ) const;
-	int32_t getArgAsRgbaColor( int index ) const;
+	int64_t getArgAsTimetag(int index) const;
+	ofBuffer getArgAsBlob(int index) const;
+	int32_t getArgAsRgbaColor(int index) const;
 
-	/// message construction
-	void setAddress( const string &_address ) { address = _address; };
-	/// host and port of the remote endpoint
-    void setRemoteEndpoint( const string &host, int port ) { remote_host = host; remote_port = port; }
+	/// set the message address, must start with a /
+	void setAddress(const string &_address);
 
-	void addIntArg( int32_t argument );
-	void addInt32Arg( int32_t argument );
-	void addInt64Arg( int64_t argument );
-	void addFloatArg( float argument );
-	void addDoubleArg( double argument );
-	void addStringArg( const string &argument );
-	void addSymbolArg( const string &argument );
-	void addCharArg( char argument );
-	void addMidiMessageArg( int32_t argument );
-	void addBoolArg( bool argument );
+	void addIntArg(int32_t argument);
+	void addInt32Arg(int32_t argument);
+	void addInt64Arg(int64_t argument);
+	void addFloatArg(float argument);
+	void addDoubleArg(double argument);
+	void addStringArg(const string &argument);
+	void addSymbolArg(const string &argument);
+	void addCharArg(char argument);
+	void addMidiMessageArg(int32_t argument);
+	void addBoolArg(bool argument);
 	void addTriggerArg();
 	void addImpulseArg();
 	void addInfinitumArg();
-	void addTimetagArg( int64_t argument );
-	void addBlobArg( const ofBuffer &argument );
-	void addRgbaColorArg( int32_t argument );
+	void addTimetagArg(int64_t argument);
+	void addBlobArg(const ofBuffer &argument);
+	void addRgbaColorArg(int32_t argument);
+
+	/// host and port of the remote endpoint
+	void setRemoteEndpoint(const string &host, int port);
 
 private:
 
-    string address;
-    vector<ofxOscArg*> args;
+	string address;
+	vector<ofxOscArg*> args;
 
-    string remote_host;
+	string remote_host;
 	int remote_port;
-
-
 };

@@ -33,151 +33,224 @@
 
 #include "UdpSocket.h"
 
-ofxOscSender::ofxOscSender()
-:broadcast(true)
-,hostname("")
-,port(0)
-{
+//--------------------------------------------------------------
+ofxOscSender::ofxOscSender() : broadcast(true), hostname(""), port(0) {}
+
+//--------------------------------------------------------------
+ofxOscSender::ofxOscSender(const ofxOscSender & mom) : broadcast(mom.broadcast){
+	copy(mom);
 }
 
-ofxOscSender::ofxOscSender(const ofxOscSender & mom)
-:broadcast(mom.broadcast)
-,hostname(mom.hostname)
-,port(mom.port){
-	if(mom.socket){
-		setup(hostname,port);
-	}
+//--------------------------------------------------------------
+ofxOscSender& ofxOscSender::operator=(const ofxOscSender & mom){
+	return copy(mom);
 }
 
-ofxOscSender & ofxOscSender::operator=(const ofxOscSender & mom){
-	if(this == &mom) return *this;
-
-	broadcast = mom.broadcast;
-	hostname = mom.hostname;
-	port = mom.port;
-	if(mom.socket){
-		setup(hostname,port);
+//--------------------------------------------------------------
+ofxOscSender& ofxOscSender::copy(const ofxOscSender& other){
+	if(this == &other) return *this;
+	broadcast = other.broadcast;
+	hostname = other.hostname;
+	port = other.port;
+	if(other.socket){
+		setup(hostname, port);
 	}
 	return *this;
 }
 
-void ofxOscSender::setup( const string &hostname, int port )
-{
-    if( osc::UdpSocket::GetUdpBufferSize() == 0 ){
-    	osc::UdpSocket::SetUdpBufferSize(65535);
-    }
-
-    socket.reset(new osc::UdpTransmitSocket(osc::IpEndpointName( hostname.c_str(), port), broadcast));
-    this->hostname = hostname;
-    this->port = port;
+//--------------------------------------------------------------
+void ofxOscSender::setup(const string &hostname, int port){
+	if(osc::UdpSocket::GetUdpBufferSize() == 0){
+	   osc::UdpSocket::SetUdpBufferSize(65535);
+	}
+	socket.reset(new osc::UdpTransmitSocket(osc::IpEndpointName(hostname.c_str(), port), broadcast));
+	this->hostname = hostname;
+	this->port = port;
 }
 
-void ofxOscSender::clear()
-{
+//--------------------------------------------------------------
+void ofxOscSender::clear(){
 	socket.reset();
 	hostname = "";
 	port = 0;
 }
 
-void ofxOscSender::disableBroadcast()
-{
+//--------------------------------------------------------------
+void ofxOscSender::sendBundle(const ofxOscBundle& bundle){
+	if(!socket){
+		ofLogError("ofxOscSender") << "trying to send before setup";
+	}
+	//setting this much larger as it gets trimmed down to the size its using before being sent.
+	//TODO: much better if we could make this dynamic? Maybe have ofxOscBundle return its size?
+	static const int OUTPUT_BUFFER_SIZE = 327680;
+	char buffer[OUTPUT_BUFFER_SIZE];
+	osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);
+
+	// serialise the bundle
+	appendBundle(bundle, p);
+
+	socket->Send(p.Data(), p.Size());
+}
+
+//--------------------------------------------------------------
+void ofxOscSender::sendMessage(const ofxOscMessage& message, bool wrapInBundle){
+	if(!socket){
+		ofLogError("ofxOscSender") << "trying to send before setup";
+	}
+	//setting this much larger as it gets trimmed down to the size its using before being sent.
+	//TODO: much better if we could make this dynamic? Maybe have ofxOscMessage return its size?
+	static const int OUTPUT_BUFFER_SIZE = 327680;
+	char buffer[OUTPUT_BUFFER_SIZE];
+	osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);
+
+	// serialise the message
+	if(wrapInBundle) {
+		p << osc::BeginBundleImmediate;
+	}
+	appendMessage(message, p);
+	if(wrapInBundle) {
+		p << osc::EndBundle;
+	}
+
+	socket->Send(p.Data(), p.Size());
+}
+
+//--------------------------------------------------------------
+void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
+	if(!parameter.isSerializable()) return;
+	if(parameter.type() == typeid(ofParameterGroup).name()){
+		string address = "/";
+		const vector<string> hierarchy = parameter.getGroupHierarchyNames();
+		for(int i = 0; i < (int)hierarchy.size()-1; i++){
+			address += hierarchy[i] + "/";
+		}
+		ofxOscBundle bundle;
+		appendParameter(bundle, parameter, address);
+		sendBundle(bundle);
+	}
+	else{
+		string address = "";
+		const vector<string> hierarchy = parameter.getGroupHierarchyNames();
+		for(int i=0;i<(int)hierarchy.size()-1;i++){
+			address+= "/" + hierarchy[i];
+		}
+		if(address.length()) {
+			address += "/";
+		}
+		ofxOscMessage msg;
+		appendParameter(msg, parameter, address);
+		sendMessage(msg, false);
+	}
+}
+
+//--------------------------------------------------------------
+string ofxOscSender::getHostname(){
+	return hostname;
+}
+
+//--------------------------------------------------------------
+int ofxOscSender::getPort(){
+	return port;
+}
+
+//--------------------------------------------------------------
+void ofxOscSender::disableBroadcast(){
 	broadcast = false;
 	if(socket){
 		setup(hostname, port);
 	}
 }
 
-void ofxOscSender::enableBroadcast()
-{
+//--------------------------------------------------------------
+void ofxOscSender::enableBroadcast(){
 	broadcast = true;
 	if(socket){
 		setup(hostname, port);
 	}
 }
 
-string ofxOscSender::getHostname()
-{
-	return hostname;
-}
-
-int ofxOscSender::getPort()
-{
-	return port;
-}
-
-void ofxOscSender::sendBundle( const ofxOscBundle& bundle )
-{
-	if(!socket){
-		ofLogError("ofxOscSender") << "trying to send before setup";
+// PRIVATE
+//--------------------------------------------------------------
+void ofxOscSender::appendBundle(const ofxOscBundle& bundle, osc::OutboundPacketStream& p){
+	// recursively serialise the bundle
+	p << osc::BeginBundleImmediate;
+	for(int i = 0; i < bundle.getBundleCount(); i++){
+		appendBundle(bundle.getBundleAt(i), p);
 	}
-    //setting this much larger as it gets trimmed down to the size its using before being sent.
-    //TODO: much better if we could make this dynamic? Maybe have ofxOscBundle return its size?
-	static const int OUTPUT_BUFFER_SIZE = 327680;
-	char buffer[OUTPUT_BUFFER_SIZE];
-	osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE );
-
-	// serialise the bundle
-	appendBundle( bundle, p );
-
-	socket->Send( p.Data(), p.Size() );
-}
-
-void ofxOscSender::sendMessage( const ofxOscMessage& message, bool wrapInBundle )
-{
-	if(!socket){
-		ofLogError("ofxOscSender") << "trying to send before setup";
+	for(int i = 0; i < bundle.getMessageCount(); i++){
+		appendMessage( bundle.getMessageAt(i), p);
 	}
-    //setting this much larger as it gets trimmed down to the size its using before being sent.
-    //TODO: much better if we could make this dynamic? Maybe have ofxOscMessage return its size?
-    static const int OUTPUT_BUFFER_SIZE = 327680;
-	char buffer[OUTPUT_BUFFER_SIZE];
-    osc::OutboundPacketStream p( buffer, OUTPUT_BUFFER_SIZE );
-
-	// serialise the message
-	if(wrapInBundle) p << osc::BeginBundleImmediate;
-	appendMessage( message, p );
-	if(wrapInBundle) p << osc::EndBundle;
-
-	socket->Send( p.Data(), p.Size() );
+	p << osc::EndBundle;
 }
 
-void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
-	if(!parameter.isSerializable()) return;
-	if(parameter.type()==typeid(ofParameterGroup).name()){
-        string address = "/";
-        const vector<string> hierarchy = parameter.getGroupHierarchyNames();
-		for(int i=0;i<(int)hierarchy.size()-1;i++){
-			address+=hierarchy[i] + "/";
+//--------------------------------------------------------------
+void ofxOscSender::appendMessage(const ofxOscMessage& message, osc::OutboundPacketStream& p){
+	p << osc::BeginMessage(message.getAddress().c_str());
+	for(int i = 0; i < message.getNumArgs(); ++i) {
+		switch(message.getArgType(i)){
+			case OFXOSC_TYPE_INT32:
+				p << message.getArgAsInt32(i);
+				break;
+			case OFXOSC_TYPE_INT64:
+				p << (osc::int64)message.getArgAsInt64(i);
+				break;
+			case OFXOSC_TYPE_FLOAT:
+				p << message.getArgAsFloat(i);
+				break;
+			case OFXOSC_TYPE_DOUBLE:
+				p << message.getArgAsDouble(i);
+				break;
+			case OFXOSC_TYPE_STRING: case OFXOSC_TYPE_SYMBOL:
+				p << message.getArgAsString(i).c_str();
+				break;
+			case OFXOSC_TYPE_CHAR:
+				p << message.getArgAsChar(i);
+				break;
+			case OFXOSC_TYPE_MIDI_MESSAGE:
+				p << message.getArgAsMidiMessage(i);
+				break;
+			case OFXOSC_TYPE_TRUE: case OFXOSC_TYPE_FALSE:
+				p << message.getArgAsBool(i);
+				break;
+			case OFXOSC_TYPE_TRIGGER:
+				p << message.getArgAsTrigger(i);
+				break;
+			case OFXOSC_TYPE_TIMETAG:
+				p << (osc::int64)message.getArgAsTimetag(i);
+				break;
+			case OFXOSC_TYPE_RGBA_COLOR:
+				p << message.getArgAsRgbaColor(i);
+				break;
+			case OFXOSC_TYPE_BLOB: {
+				ofBuffer buff = message.getArgAsBlob(i);
+				osc::Blob b(buff.getData(), (unsigned long)buff.size());
+				p << b;
+				break;
+			}
+			default:
+				ofLogError("ofxOscSender") << "appendMessage(): bad argument type "
+					<< message.getArgType(i);
+				assert(false);
+				break;
 		}
-		ofxOscBundle bundle;
-		appendParameter(bundle,parameter,address);
-		sendBundle(bundle);
-	}else{
-        string address = "";
-        const vector<string> hierarchy = parameter.getGroupHierarchyNames();
-		for(int i=0;i<(int)hierarchy.size()-1;i++){
-			address+= "/" + hierarchy[i];
-		}
-		if(address.length()) address += "/";
-		ofxOscMessage msg;
-		appendParameter(msg,parameter,address);
-		sendMessage(msg, false);
 	}
+	p << osc::EndMessage;
 }
 
-
+//--------------------------------------------------------------
 void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractParameter & parameter, const string &address){
-	if(parameter.type()==typeid(ofParameterGroup).name()){
+	if(parameter.type() == typeid(ofParameterGroup).name()){
 		ofxOscBundle bundle;
 		const ofParameterGroup & group = static_cast<const ofParameterGroup &>(parameter);
-		for(size_t i=0;i<group.size();i++){
+		for(size_t i = 0; i < group.size(); i++){
 			const ofAbstractParameter & p = group[i];
 			if(p.isSerializable()){
-				appendParameter(bundle,p,address+group.getEscapedName()+"/");
+				appendParameter(bundle, p, address+group.getEscapedName()+"/");
 			}
 		}
 		_bundle.addBundle(bundle);
-	}else{
+	}
+	else{
 		if(parameter.isSerializable()){
 			ofxOscMessage msg;
 			appendParameter(msg,parameter,address);
@@ -186,72 +259,22 @@ void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractPara
 	}
 }
 
+//--------------------------------------------------------------
 void ofxOscSender::appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, const string &address){
 	msg.setAddress(address+parameter.getEscapedName());
 	if(parameter.type()==typeid(ofParameter<int>).name()){
 		msg.addIntArg(parameter.cast<int>());
-	}else if(parameter.type()==typeid(ofParameter<float>).name()){
+	}
+	else if(parameter.type()==typeid(ofParameter<float>).name()){
 		msg.addFloatArg(parameter.cast<float>());
-	}else if(parameter.type()==typeid(ofParameter<double>).name()){
+	}
+	else if(parameter.type()==typeid(ofParameter<double>).name()){
 		msg.addDoubleArg(parameter.cast<double>());
-	}else if(parameter.type()==typeid(ofParameter<bool>).name()){
+	}
+	else if(parameter.type()==typeid(ofParameter<bool>).name()){
 		msg.addBoolArg(parameter.cast<bool>());
-	}else{
+	}
+	else{
 		msg.addStringArg(parameter.toString());
 	}
-}
-
-void ofxOscSender::appendBundle( const ofxOscBundle& bundle, osc::OutboundPacketStream& p )
-{
-	// recursively serialise the bundle
-	p << osc::BeginBundleImmediate;
-	for ( int i=0; i<bundle.getBundleCount(); i++ )
-	{
-		appendBundle( bundle.getBundleAt( i ), p );
-	}
-	for ( int i=0; i<bundle.getMessageCount(); i++ )
-	{
-		appendMessage( bundle.getMessageAt( i ), p );
-	}
-	p << osc::EndBundle;
-}
-
-void ofxOscSender::appendMessage( const ofxOscMessage& message, osc::OutboundPacketStream& p )
-{
-    p << osc::BeginMessage( message.getAddress().c_str() );
-	for ( int i=0; i< message.getNumArgs(); ++i )
-	{
-		if ( message.getArgType(i) == OFXOSC_TYPE_INT32 )
-			p << message.getArgAsInt32( i );
-		else if ( message.getArgType(i) == OFXOSC_TYPE_INT64 )
-			p << (osc::int64)message.getArgAsInt64( i );
-		else if ( message.getArgType( i ) == OFXOSC_TYPE_FLOAT )
-			p << message.getArgAsFloat( i );
-		else if ( message.getArgType( i ) == OFXOSC_TYPE_DOUBLE )
-			p << message.getArgAsDouble( i );
-		else if ( message.getArgType( i ) == OFXOSC_TYPE_STRING || message.getArgType( i ) == OFXOSC_TYPE_SYMBOL)
-			p << message.getArgAsString( i ).c_str();
-		else if ( message.getArgType( i ) == OFXOSC_TYPE_CHAR )
-			p << message.getArgAsChar( i );
-		else if ( message.getArgType( i ) == OFXOSC_TYPE_MIDI_MESSAGE )
-			p << message.getArgAsMidiMessage( i );
-		else if ( message.getArgType( i ) == OFXOSC_TYPE_TRUE || message.getArgType( i ) == OFXOSC_TYPE_FALSE )
-			p << message.getArgAsBool( i );
-		else if ( message.getArgType( i ) == OFXOSC_TYPE_TRIGGER )
-			p << message.getArgAsTrigger( i );
-		else if ( message.getArgType( i ) == OFXOSC_TYPE_TIMETAG )
-			p << (osc::int64)message.getArgAsTimetag( i );
-		else if ( message.getArgType( i ) == OFXOSC_TYPE_RGBA_COLOR )
-			p << message.getArgAsRgbaColor( i );
-        else if ( message.getArgType( i ) == OFXOSC_TYPE_BLOB ){
-            ofBuffer buff = message.getArgAsBlob(i);
-            osc::Blob b(buff.getData(), (unsigned long)buff.size());
-            p << b; 
-		}else
-		{
-			ofLogError("ofxOscSender") << "appendMessage(): bad argument type " << message.getArgType( i );
-			assert( false );
-		}
-	}
-	p << osc::EndMessage;
 }

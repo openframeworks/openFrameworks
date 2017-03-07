@@ -32,46 +32,50 @@
 #include "ofParameter.h"
 #include "ofThreadChannel.h"
 
-// osc
 #include "OscTypes.h"
 #include "OscPacketListener.h"
 #include "UdpSocket.h"
 
-class ofxOscReceiver : public osc::OscPacketListener
-{
+class ofxOscReceiver : public osc::OscPacketListener {
 public:
+
 	ofxOscReceiver();
 	ofxOscReceiver(const ofxOscReceiver & mom);
-	ofxOscReceiver & operator=(const ofxOscReceiver & mom);
+	ofxOscReceiver& operator=(const ofxOscReceiver & mom);
+	/// for operator= and copy constructor
+	ofxOscReceiver& copy(const ofxOscReceiver& other);
 
 	/// listen_port is the port to listen for messages on
-	bool setup( int listen_port );
+	bool setup(int listen_port);
 	
 	/// stop listening and clear the receiver 
 	void clear();
 
 	/// returns true if there are any messages waiting for collection
 	bool hasWaitingMessages();
+
 	/// take the next message on the queue of received messages, copy its details into message, and
 	/// remove it from the queue. return false if there are no more messages to be got, otherwise
 	/// return true
-	OF_DEPRECATED_MSG("Pass a reference instead of a pointer", bool getNextMessage( ofxOscMessage* msg));
-	bool getNextMessage( ofxOscMessage& msg );
+	OF_DEPRECATED_MSG("Pass a reference instead of a pointer", bool getNextMessage(ofxOscMessage* msg));
+	bool getNextMessage(ofxOscMessage& msg);
 
+	/// try to get waiting message an ofParameter
+	/// return true if message was handled by the given parameter
 	bool getParameter(ofAbstractParameter & parameter);
 
+	/// return current port or 0 if setup was not called
+	int getPort();
+	
 	/// disables port reuse reuse which allows to use the same port by several sockets
 	void disableReuse();
 
 	/// enabled broadcast capabilities (usually no need to call this, enabled by default)
 	void enableReuse();
 
-	/// return current port or 0 if setup was not called
-	int getPort();
-
 protected:
 	/// process an incoming osc message and add it to the queue
-	virtual void ProcessMessage( const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint );
+	virtual void ProcessMessage(const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint);
 
 private:
 	// socket to listen on

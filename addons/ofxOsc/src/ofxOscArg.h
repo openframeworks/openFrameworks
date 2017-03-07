@@ -33,25 +33,24 @@
 
 /*
 OSC 1.1 specifications types:
-          i - 32bit integer
-          h - 64bit integer
-          f - 32bit floating point number
-          d - 64bit (double) floating point number
-          s - string
-          S - symbol
-          c - char
-          m - 4 byte midi packet (8 digits hexadecimal)
-          T - TRUE (no value required)
-          F - FALSE (no value required)
-          N - NIL (no value required)
-          I - IMPULSE, act as a trigger (no value required), previously named INFINITUM
-          t - TIMETAG, an OSC timetag in NTP format, encoded in the data section
+		  i - 32bit integer
+		  h - 64bit integer
+		  f - 32bit floating point number
+		  d - 64bit (double) floating point number
+		  s - string
+		  S - symbol
+		  c - char
+		  m - 4 byte midi packet (8 digits hexadecimal)
+		  T - TRUE (no value required)
+		  F - FALSE (no value required)
+		  N - NIL (no value required)
+		  I - IMPULSE, act as a trigger (no value required), previously named INFINITUM
+		  t - TIMETAG, an OSC timetag in NTP format, encoded in the data section
 
 See: http://cnmat.berkeley.edu/system/files/attachments/Nime09OSCfinal.pdf
 See also: https://code.google.com/p/oscpack/source/browse/trunk/osc/OscTypes.h#113
 */
-typedef enum _ofxOscArgType
-{
+typedef enum _ofxOscArgType{
 	OFXOSC_TYPE_INT32 = 'i',
 	OFXOSC_TYPE_INT64 = 'h',
 	OFXOSC_TYPE_FLOAT = 'f',
@@ -79,16 +78,13 @@ base class for arguments
 
 */
 
-class ofxOscArg
-{
+class ofxOscArg{
 public:
 	ofxOscArg() {};
 	virtual ~ofxOscArg() {};
 
-	virtual ofxOscArgType getType() { return OFXOSC_TYPE_NONE; };
-	virtual string getTypeName() { return "N"; };
-
-private:
+	virtual ofxOscArgType getType() {return OFXOSC_TYPE_NONE;}
+	virtual string getTypeName() {return "N";}
 };
 
 
@@ -98,238 +94,217 @@ subclasses for each possible argument type
 
 */
 
-class ofxOscArgInt32 : public ofxOscArg
-{
+class ofxOscArgInt32 : public ofxOscArg{
 public:
-	ofxOscArgInt32( int32_t _value ) { value = _value; };
+	ofxOscArgInt32(int32_t value) : value(value) {};
 	~ofxOscArgInt32() {};
 
 	/// return the type of this argument
-	ofxOscArgType getType() { return OFXOSC_TYPE_INT32; };
-	string getTypeName() { return "i"; };
+	ofxOscArgType getType() {return OFXOSC_TYPE_INT32;}
+	string getTypeName() {return "i";}
 
 	/// return value
-	int32_t get() const { return value; };
+	int32_t get() const {return value;}
 	/// set value
-	void set( int32_t _value ) { value = _value; };
+	void set(int32_t value) {this->value = value;};
 
 private:
 	int32_t value;
 };
 
-class ofxOscArgInt : public ofxOscArgInt32
-{
+class ofxOscArgInt : public ofxOscArgInt32{
 public:
-	ofxOscArgInt( int32_t _value ) : ofxOscArgInt32(_value) {};
-	~ofxOscArgInt(){};
+	ofxOscArgInt(int32_t value) : ofxOscArgInt32(value) {};
+	~ofxOscArgInt() {};
 };
 
-class ofxOscArgInt64 : public ofxOscArg
-{
+class ofxOscArgInt64 : public ofxOscArg{
 public:
-	ofxOscArgInt64( int64_t _value ) { value = _value; };
+	ofxOscArgInt64(int64_t value) : value(value) {};
 	~ofxOscArgInt64() {};
 
 	/// return the type of this argument
-	ofxOscArgType getType() { return OFXOSC_TYPE_INT64; };
-	string getTypeName() { return "h"; };
+	ofxOscArgType getType() {return OFXOSC_TYPE_INT64;}
+	string getTypeName() {return "h";}
 
 	/// return value
-	int64_t get() const { return value; };
+	int64_t get() const {return value;}
 	/// set value
-	void set( int64_t _value ) { value = _value; };
+	void set(int64_t value) {this->value = value;}
 
 private:
-    int64_t value;
+	int64_t value;
 };
 
-class ofxOscArgFloat : public ofxOscArg
-{
+class ofxOscArgFloat : public ofxOscArg{
 public:
-	ofxOscArgFloat( float _value ) { value = _value; };
+	ofxOscArgFloat(float value) : value(value) {};
 	~ofxOscArgFloat() {};
 
 	/// return the type of this argument
-	ofxOscArgType getType() { return OFXOSC_TYPE_FLOAT; };
-    string getTypeName() { return "f"; };
+	ofxOscArgType getType() {return OFXOSC_TYPE_FLOAT;}
+	string getTypeName() {return "f";}
 
 	/// return value
-	float get() const { return value; };
+	float get() const {return value;}
 	/// set value
-	void set( float _value ) { value = _value; };
+	void set(float value) {this->value = value;}
 
 private:
 	float value;
 };
 
-class ofxOscArgDouble : public ofxOscArg
-{
+class ofxOscArgDouble : public ofxOscArg{
 public:
-	ofxOscArgDouble( double _value ) { value = _value; };
+	ofxOscArgDouble(double value) : value(value) {};
 	~ofxOscArgDouble() {};
 
 	/// return the type of this argument
-	ofxOscArgType getType() {return OFXOSC_TYPE_DOUBLE;};
-	string getTypeName() {return "d";};
+	ofxOscArgType getType() {return OFXOSC_TYPE_DOUBLE;}
+	string getTypeName() {return "d";}
 
 	/// return value
-	double get() const { return value; };
+	double get() const {return value;}
 	/// set value
-	void set( double _value ) { value = _value; };
+	void set(double value) {this->value = value;}
 
 private:
 	double value;
 };
 
-class ofxOscArgString : public ofxOscArg
-{
+class ofxOscArgString : public ofxOscArg{
 public:
-	ofxOscArgString( const string &_value ) { value = _value; };
+	ofxOscArgString(const string &value ) : value(value) {};
 	~ofxOscArgString() {};
 
 	/// return the type of this argument
-	ofxOscArgType getType() { return OFXOSC_TYPE_STRING; };
-	string getTypeName() { return "s"; };
+	ofxOscArgType getType() {return OFXOSC_TYPE_STRING;}
+	string getTypeName() {return "s";}
 
 	/// return value
-	const string &get() const { return value; }
+	const string &get() const {return value;}
 	/// set value
-	void set( const char* _value ) { value = _value; };
-	void set( const string &_value ) {value = _value; };
+	void set(const char* value) {this->value = value;}
+	void set(const string &value) {this->value = value;}
 
 private:
 	string value;
 };
 
-class ofxOscArgSymbol : public ofxOscArgString
-{
+class ofxOscArgSymbol : public ofxOscArgString{
 public:
-	ofxOscArgSymbol( const string &_value ) : ofxOscArgString(_value){};
+	ofxOscArgSymbol(const string &value) : ofxOscArgString(value) {};
 	~ofxOscArgSymbol() {};
 
 	/// return the type of this argument
-	ofxOscArgType getType() { return OFXOSC_TYPE_SYMBOL; };
-	string getTypeName() { return "S"; };
+	ofxOscArgType getType() {return OFXOSC_TYPE_SYMBOL;}
+	string getTypeName() {return "S";}
 };
 
-class ofxOscArgChar : public ofxOscArg
-{
+class ofxOscArgChar : public ofxOscArg{
 public:
-	ofxOscArgChar( char _value ) { value = _value; };
+	ofxOscArgChar(char _value) : value(value) {};
 	~ofxOscArgChar() {};
 
 	/// return the type of this argument
-	ofxOscArgType getType() { return OFXOSC_TYPE_CHAR; };
-	string getTypeName() { return "c"; };
+	ofxOscArgType getType() {return OFXOSC_TYPE_CHAR;}
+	string getTypeName() {return "c";}
 
 	/// return value
-	char get() const { return value; };
+	char get() const {return value;}
 	/// set value
-	void set( char _value ) { value = _value; };
+	void set(char value) {this->value = value;}
 
 private:
 	char value;
 };
 
-class ofxOscArgMidiMessage : public ofxOscArgInt32
-{
+class ofxOscArgMidiMessage : public ofxOscArgInt32{
 public:
-    ofxOscArgMidiMessage( int32_t _value ) : ofxOscArgInt32(_value) {};
+	ofxOscArgMidiMessage(int32_t value) : ofxOscArgInt32(value) {};
 	~ofxOscArgMidiMessage() {};
 
 	/// return the type of this argument
-	ofxOscArgType getType() { return OFXOSC_TYPE_MIDI_MESSAGE; };
-	string getTypeName() { return "m"; };
+	ofxOscArgType getType() {return OFXOSC_TYPE_MIDI_MESSAGE;}
+	string getTypeName() {return "m";}
 };
 
-class ofxOscArgBool : public ofxOscArg
-{
+class ofxOscArgBool : public ofxOscArg{
 public:
-	ofxOscArgBool( bool _value ) { value = _value; };
+	ofxOscArgBool(bool value) : value(value) {};
 	~ofxOscArgBool() {};
 
 	/// return the type of this argument
 	ofxOscArgType getType() {
-		if(value)
-			return OFXOSC_TYPE_TRUE;
-		else
-			return OFXOSC_TYPE_FALSE;
-	};
+		return value ? OFXOSC_TYPE_TRUE : OFXOSC_TYPE_FALSE;
+	}
 	string getTypeName() {
-		if(value)
-			return "T";
-		else
-			return "F";
-	};
+		return value ? "T" : "F";
+	}
 
 	/// return value
-	bool get() const { return value; };
+	bool get() const {return value;}
 	/// set value
-	void set( bool _value ) { value = _value; };
+	void set(bool value) {this->value = value;}
 
 private:
 	bool value;
 };
 
-class ofxOscArgTrigger : public ofxOscArgBool
-{
+class ofxOscArgTrigger : public ofxOscArgBool{
 public:
 	ofxOscArgTrigger() : ofxOscArgBool(true) {};
-    ~ofxOscArgTrigger(){};
+	~ofxOscArgTrigger() {};
 
 	/// return the type of this argument
-	ofxOscArgType getType() { return OFXOSC_TYPE_TRIGGER; };
-	string getTypeName() { return "I"; };
+	ofxOscArgType getType() {return OFXOSC_TYPE_TRIGGER;}
+	string getTypeName() {return "I";}
 };
 
-class ofxOscArgTimetag : public ofxOscArgInt64
-{
+class ofxOscArgTimetag : public ofxOscArgInt64{
 public:
-    ofxOscArgTimetag( int64_t _value ) : ofxOscArgInt64(_value) {};
+	ofxOscArgTimetag(int64_t value) : ofxOscArgInt64(value) {};
 	~ofxOscArgTimetag() {};
 
 	/// return the type of this argument
-	ofxOscArgType getType() { return OFXOSC_TYPE_TIMETAG; };
-	string getTypeName() { return "t"; };
+	ofxOscArgType getType() {return OFXOSC_TYPE_TIMETAG;}
+	string getTypeName() {return "t";}
 };
 
-class ofxOscArgBlob : public ofxOscArg
-{
+class ofxOscArgBlob : public ofxOscArg{
 public:
-	ofxOscArgBlob( const ofBuffer &_value ){
-        value = _value;
-    }
-    ~ofxOscArgBlob(){};
+	ofxOscArgBlob(const ofBuffer &value) : value(value){}
+	~ofxOscArgBlob() {};
 
 	/// return the type of this argument
-	ofxOscArgType getType() { return OFXOSC_TYPE_BLOB; };
-	string getTypeName() { return "b"; };
+	ofxOscArgType getType() {return OFXOSC_TYPE_BLOB;}
+	string getTypeName() {return "b";}
 
 	/// return value
-	const ofBuffer &get() const { return value; };
+	const ofBuffer &get() const {return value;}
 	/// set value
-	void set( const char * _value, unsigned int length ) { value.set(_value, length); };
+	void set(const char * value, unsigned int length) {
+		this->value.set(value, length);
+	}
 
 private:
 	ofBuffer value;
 };
 
-class ofxOscArgRgbaColor : public ofxOscArg
-{
+class ofxOscArgRgbaColor : public ofxOscArg{
 public:
-    ofxOscArgRgbaColor( int32_t _value ) { value = _value; };
+	ofxOscArgRgbaColor(int32_t value) : value(value) {};
 	~ofxOscArgRgbaColor() {};
 
 	/// return the type of this argument
-	ofxOscArgType getType() { return OFXOSC_TYPE_RGBA_COLOR; };
-	string getTypeName() { return "r"; };
+	ofxOscArgType getType() {return OFXOSC_TYPE_RGBA_COLOR;}
+	string getTypeName() {return "r";}
 
 	/// return value
-    int32_t get() const { return value; };
+	int32_t get() const {return value;}
 	/// set value
-    void set( int32_t _value ) { value = _value; };
+	void set(int32_t value) {this->value = value;}
 
 private:
-    int32_t value;
+	int32_t value;
 };
-
