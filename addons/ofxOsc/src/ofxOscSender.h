@@ -39,16 +39,14 @@ an ofxOscSender sends messages to a single host/port
 namespace osc{
 	class UdpTransmitSocket;
 }
-#include <string>
+
 #include "OscTypes.h"
 #include "OscOutboundPacketStream.h"
 #include "UdpSocket.h"
 
 #include "ofxOscBundle.h"
-#include "ofxOscMessage.h"
 #include "ofParameter.h"
 #include "ofParameterGroup.h"
-
 
 class ofxOscSender
 {
@@ -58,7 +56,7 @@ public:
 	ofxOscSender & operator=(const ofxOscSender & mom);
 
 	/// send messages to hostname and port
-	void setup( const std::string &hostname, int port );
+	void setup( const string &hostname, int port );
 	
 	/// clear the sender 
 	void clear();
@@ -77,7 +75,7 @@ public:
 	void enableBroadcast();
 
 	/// return current hostname or "" if setup was not called
-	std::string getHostname();
+	string getHostname();
 
 	/// return current port or 0 if setup was not called
 	int getPort();
@@ -88,12 +86,12 @@ private:
 	// helper methods for constructing messages
 	void appendBundle( const ofxOscBundle& bundle, osc::OutboundPacketStream& p );
 	void appendMessage( const ofxOscMessage& message, osc::OutboundPacketStream& p );
-    void appendParameter( ofxOscBundle & bundle, const ofAbstractParameter & parameter, const std::string &address);
-    void appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, const std::string &address);
+    void appendParameter( ofxOscBundle & bundle, const ofAbstractParameter & parameter, const string &address);
+    void appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, const string &address);
 
  	std::unique_ptr<osc::UdpTransmitSocket> socket;
  	bool broadcast;
- 	std::string hostname;
+ 	string hostname;
  	int port;
 
 };

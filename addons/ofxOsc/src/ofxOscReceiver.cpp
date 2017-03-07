@@ -28,12 +28,6 @@
 
 #include "ofxOscReceiver.h"
 
-#ifndef TARGET_WIN32
-        #include <pthread.h>
-#endif
-#include <iostream>
-#include <assert.h>
-
 ofxOscReceiver::ofxOscReceiver()
 :allowReuse(true)
 ,listen_port(0)
@@ -195,7 +189,7 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter)
 	ofxOscMessage msg;
 	while(messagesChannel.tryReceive(msg)){
 		ofAbstractParameter * p = &parameter;
-        std::vector<std::string> address = ofSplitString(msg.getAddress(),"/",true);
+        vector<string> address = ofSplitString(msg.getAddress(),"/",true);
         for(unsigned int i=0;i<address.size();i++){
             if(p) {
                 if(address[i]==p->getEscapedName()){

@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include <string>
-#include "ofMain.h"
+#include "ofConstants.h"
+#include "ofFileUtils.h"
 
 /*
 OSC 1.1 specifications types:
@@ -86,7 +86,7 @@ public:
 	virtual ~ofxOscArg() {};
 
 	virtual ofxOscArgType getType() { return OFXOSC_TYPE_NONE; };
-	virtual std::string getTypeName() { return "N"; };
+	virtual string getTypeName() { return "N"; };
 
 private:
 };
@@ -101,46 +101,46 @@ subclasses for each possible argument type
 class ofxOscArgInt32 : public ofxOscArg
 {
 public:
-	ofxOscArgInt32( std::int32_t _value ) { value = _value; };
+	ofxOscArgInt32( int32_t _value ) { value = _value; };
 	~ofxOscArgInt32() {};
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_INT32; };
-	std::string getTypeName() { return "i"; };
+	string getTypeName() { return "i"; };
 
 	/// return value
-	std::int32_t get() const { return value; };
+	int32_t get() const { return value; };
 	/// set value
-	void set( std::int32_t _value ) { value = _value; };
+	void set( int32_t _value ) { value = _value; };
 
 private:
-	std::int32_t value;
+	int32_t value;
 };
 
 class ofxOscArgInt : public ofxOscArgInt32
 {
 public:
-	ofxOscArgInt( std::int32_t _value ) : ofxOscArgInt32(_value) {};
+	ofxOscArgInt( int32_t _value ) : ofxOscArgInt32(_value) {};
 	~ofxOscArgInt(){};
 };
 
 class ofxOscArgInt64 : public ofxOscArg
 {
 public:
-	ofxOscArgInt64( std::int64_t _value ) { value = _value; };
+	ofxOscArgInt64( int64_t _value ) { value = _value; };
 	~ofxOscArgInt64() {};
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_INT64; };
-	std::string getTypeName() { return "h"; };
+	string getTypeName() { return "h"; };
 
 	/// return value
-	std::int64_t get() const { return value; };
+	int64_t get() const { return value; };
 	/// set value
-	void set( std::int64_t _value ) { value = _value; };
+	void set( int64_t _value ) { value = _value; };
 
 private:
-    std::int64_t value;
+    int64_t value;
 };
 
 class ofxOscArgFloat : public ofxOscArg
@@ -151,7 +151,7 @@ public:
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_FLOAT; };
-    std::string getTypeName() { return "f"; };
+    string getTypeName() { return "f"; };
 
 	/// return value
 	float get() const { return value; };
@@ -170,7 +170,7 @@ public:
 
 	/// return the type of this argument
 	ofxOscArgType getType() {return OFXOSC_TYPE_DOUBLE;};
-	std::string getTypeName() {return "d";};
+	string getTypeName() {return "d";};
 
 	/// return value
 	double get() const { return value; };
@@ -184,32 +184,32 @@ private:
 class ofxOscArgString : public ofxOscArg
 {
 public:
-	ofxOscArgString( const std::string &_value ) { value = _value; };
+	ofxOscArgString( const string &_value ) { value = _value; };
 	~ofxOscArgString() {};
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_STRING; };
-	std::string getTypeName() { return "s"; };
+	string getTypeName() { return "s"; };
 
 	/// return value
-	const std::string &get() const { return value; }
+	const string &get() const { return value; }
 	/// set value
 	void set( const char* _value ) { value = _value; };
-	void set( const std::string &_value ) {value = _value; };
+	void set( const string &_value ) {value = _value; };
 
 private:
-	std::string value;
+	string value;
 };
 
 class ofxOscArgSymbol : public ofxOscArgString
 {
 public:
-	ofxOscArgSymbol( const std::string &_value ) : ofxOscArgString(_value){};
+	ofxOscArgSymbol( const string &_value ) : ofxOscArgString(_value){};
 	~ofxOscArgSymbol() {};
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_SYMBOL; };
-	std::string getTypeName() { return "S"; };
+	string getTypeName() { return "S"; };
 };
 
 class ofxOscArgChar : public ofxOscArg
@@ -220,7 +220,7 @@ public:
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_CHAR; };
-	std::string getTypeName() { return "c"; };
+	string getTypeName() { return "c"; };
 
 	/// return value
 	char get() const { return value; };
@@ -234,12 +234,12 @@ private:
 class ofxOscArgMidiMessage : public ofxOscArgInt32
 {
 public:
-    ofxOscArgMidiMessage( std::int32_t _value ) : ofxOscArgInt32(_value) {};
+    ofxOscArgMidiMessage( int32_t _value ) : ofxOscArgInt32(_value) {};
 	~ofxOscArgMidiMessage() {};
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_MIDI_MESSAGE; };
-	std::string getTypeName() { return "m"; };
+	string getTypeName() { return "m"; };
 };
 
 class ofxOscArgBool : public ofxOscArg
@@ -255,7 +255,7 @@ public:
 		else
 			return OFXOSC_TYPE_FALSE;
 	};
-	std::string getTypeName() {
+	string getTypeName() {
 		if(value)
 			return "T";
 		else
@@ -279,18 +279,18 @@ public:
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_TRIGGER; };
-	std::string getTypeName() { return "I"; };
+	string getTypeName() { return "I"; };
 };
 
 class ofxOscArgTimetag : public ofxOscArgInt64
 {
 public:
-    ofxOscArgTimetag( std::int64_t _value ) : ofxOscArgInt64(_value) {};
+    ofxOscArgTimetag( int64_t _value ) : ofxOscArgInt64(_value) {};
 	~ofxOscArgTimetag() {};
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_TIMETAG; };
-	std::string getTypeName() { return "t"; };
+	string getTypeName() { return "t"; };
 };
 
 class ofxOscArgBlob : public ofxOscArg
@@ -303,7 +303,7 @@ public:
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_BLOB; };
-	std::string getTypeName() { return "b"; };
+	string getTypeName() { return "b"; };
 
 	/// return value
 	const ofBuffer &get() const { return value; };
@@ -317,19 +317,19 @@ private:
 class ofxOscArgRgbaColor : public ofxOscArg
 {
 public:
-    ofxOscArgRgbaColor( std::int32_t _value ) { value = _value; };
+    ofxOscArgRgbaColor( int32_t _value ) { value = _value; };
 	~ofxOscArgRgbaColor() {};
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_RGBA_COLOR; };
-	std::string getTypeName() { return "r"; };
+	string getTypeName() { return "r"; };
 
 	/// return value
-    std::int32_t get() const { return value; };
+    int32_t get() const { return value; };
 	/// set value
-    void set( std::int32_t _value ) { value = _value; };
+    void set( int32_t _value ) { value = _value; };
 
 private:
-    std::int32_t value;
+    int32_t value;
 };
 
