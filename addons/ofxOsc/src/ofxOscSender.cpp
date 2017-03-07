@@ -241,8 +241,8 @@ void ofxOscSender::appendMessage( const ofxOscMessage& message, osc::OutboundPac
 			p << message.getArgAsTrigger( i );
 		else if ( message.getArgType( i ) == OFXOSC_TYPE_TIMETAG )
 			p << (osc::int64)message.getArgAsTimetag( i );
-		//else if ( message.getArgType( i ) == OFXOSC_TYPE_RGBA_COLOR )
-		//	p << message.getArgAsRgbaColor( i );
+		else if ( message.getArgType( i ) == OFXOSC_TYPE_RGBA_COLOR )
+			p << message.getArgAsRgbaColor( i );
         else if ( message.getArgType( i ) == OFXOSC_TYPE_BLOB ){
             ofBuffer buff = message.getArgAsBlob(i);
             osc::Blob b(buff.getData(), (unsigned long)buff.size());
