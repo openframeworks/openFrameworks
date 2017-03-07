@@ -97,8 +97,8 @@ void ofxOscMessage::clear(){
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::setAddress(const string &_address){
-	address = _address;
+void ofxOscMessage::setAddress(const string &address){
+	this->address = address;
 }
 
 //--------------------------------------------------------------
@@ -149,6 +149,15 @@ string ofxOscMessage::getArgTypeName(int index) const{
 	else{
 		return args[index]->getTypeName();
 	}
+}
+
+//--------------------------------------------------------------
+string ofxOscMessage::getTypeString() const {
+	string types = "";
+	for(int i = 0; i < (int)args.size(); ++i) {
+		types += args[i]->getTypeName();
+	}
+	return types;
 }
 
 //--------------------------------------------------------------
