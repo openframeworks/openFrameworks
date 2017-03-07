@@ -73,6 +73,9 @@ public:
 	/// enabled broadcast capabilities (usually no need to call this, enabled by default)
 	void enableReuse();
 
+	/// return current port or 0 if setup was not called
+	int getPort();
+
 protected:
 	/// process an incoming osc message and add it to the queue
 	virtual void ProcessMessage( const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint );

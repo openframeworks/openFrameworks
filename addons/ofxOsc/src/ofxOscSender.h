@@ -73,6 +73,12 @@ public:
 	/// enabled broadcast capabilities (usually no need to call this, enabled by default)
 	void enableBroadcast();
 
+	/// return current hostname or "" if setup was not called
+	std::string getHostname();
+
+	/// return current port or 0 if setup was not called
+	int getPort();
+
 private:
 	void setup(osc::UdpTransmitSocket * socket);
 	void shutdown();
