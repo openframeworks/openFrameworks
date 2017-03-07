@@ -120,12 +120,22 @@ void ofxOscMessage::clear(){
 }
 
 //--------------------------------------------------------------
+void ofxOscMessage::setAddress(const string &_address){
+	address = _address;
+}
+
+//--------------------------------------------------------------
 string ofxOscMessage::getAddress() const{ 
 	return address;
 }
 
 //--------------------------------------------------------------
 string ofxOscMessage::getRemoteIp() const{ 
+	return remote_host;
+}
+
+//--------------------------------------------------------------
+string ofxOscMessage::getRemoteHost() const{
 	return remote_host;
 }
 
@@ -510,11 +520,6 @@ int32_t ofxOscMessage::getArgAsRgbaColor(int index) const{
 
 // set methods
 //--------------------------------------------------------------
-void ofxOscMessage::setAddress(const string &_address){
-	address = _address;
-}
-
-//--------------------------------------------------------------
 void ofxOscMessage::addIntArg(int32_t argument){
 	args.push_back(new ofxOscArgInt32(argument));
 }
@@ -597,5 +602,6 @@ void ofxOscMessage::addRgbaColorArg(int32_t argument){
 // util
 //--------------------------------------------------------------
 void ofxOscMessage::setRemoteEndpoint(const string &host, int port){
-	remote_host = host; remote_port = port;
+	remote_host = host;
+	remote_port = port;
 }

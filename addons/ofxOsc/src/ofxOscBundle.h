@@ -30,6 +30,8 @@
 
 #include "ofxOscMessage.h"
 
+/// \class ofxOscBundle
+/// \brief an OSC bundle of ofxMessages and/or other ofxOscBundles
 class ofxOscBundle{
 public:
 
@@ -40,25 +42,35 @@ public:
 	/// for operator= and copy constructor
 	ofxOscBundle& copy(const ofxOscBundle& other);
 	
-	/// erase contents
+	/// clear bundle & message contents
 	void clear();
 
-	/// add bundle elements
+	/// add another bundle to the bundle
 	void addBundle(const ofxOscBundle& element);
+	
+	/// add a message to the bundle
 	void addMessage(const ofxOscMessage& message);
 	
-	/// get bundle elements
+	/// \return the current bundle count
 	int getBundleCount() const;
+	
+	/// \return the current message count
 	int getMessageCount() const;
 	
-	/// return the bundle or message at the given index
+	/// \return the bundle at the given index
 	const ofxOscBundle& getBundleAt(int i) const;
+	
+	/// \return the bundle at the given index
 	ofxOscBundle& getBundleAt(int i);
+	
+	/// \return the message at the given index
 	const ofxOscMessage& getMessageAt(int i) const;
+	
+	/// \return the message at the given index
 	ofxOscMessage& getMessageAt(int i);
 	
 private:
 		
-	vector<ofxOscMessage> messages;
-	vector<ofxOscBundle> bundles;
+	vector<ofxOscMessage> messages; //< bundled messages
+	vector<ofxOscBundle> bundles; //< bundled bundles
 };

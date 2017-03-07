@@ -28,14 +28,6 @@
 
 #pragma once
 
-/**
-
-ofxOscSender
-
-an ofxOscSender sends messages to a single host/port
-
-*/
-
 #include "OscTypes.h"
 #include "OscOutboundPacketStream.h"
 #include "UdpSocket.h"
@@ -44,6 +36,8 @@ an ofxOscSender sends messages to a single host/port
 #include "ofParameter.h"
 #include "ofParameterGroup.h"
 
+/// \class ofxOscSender
+/// \brief OSC message sender which sends to a specific host & port
 class ofxOscSender{
 public:
 
@@ -53,31 +47,34 @@ public:
 	/// for operator= and copy constructor
 	ofxOscSender& copy(const ofxOscSender& other);
 
-	/// send messages to hostname and port
+	/// set up the sender with the destination host name/ip and port
 	void setup(const string &hostname, int port);
 	
 	/// clear the sender 
 	void clear();
 
 	/// send the given message
-	void sendMessage(const ofxOscMessage& message, bool wrapInBundle = true);
+	/// if wrapInBundle is true (default), message sent in a timetagged bundle
+	void sendMessage(const ofxOscMessage& message, bool wrapInBundle=true);
 	
 	/// send the given bundle
 	void sendBundle(const ofxOscBundle& bundle);
 	
-	/// creates a message using an ofParameter
+	/// create & send a message with data from an ofParameter
 	void sendParameter(const ofAbstractParameter & parameter);
 
-	/// return current hostname or "" if setup was not called
+	/// return current host name/ip or "" if setup was not called
 	string getHostname();
 
 	/// return current port or 0 if setup was not called
 	int getPort();
 	
-	/// disables broadcast capabilities, usually call this before setup
+	/// disable broadcast capabilities
+	/// usually call this before setup
 	void disableBroadcast();
 
-	/// enabled broadcast capabilities (usually no need to call this, enabled by default)
+	/// enabled broadcast capabilities
+	/// usually no need to call this, enabled by default
 	void enableBroadcast();
 
 private:
@@ -88,8 +85,8 @@ private:
 	void appendParameter(ofxOscBundle & bundle, const ofAbstractParameter & parameter, const string &address);
 	void appendParameter(ofxOscMessage & msg, const ofAbstractParameter & parameter, const string &address);
 
-	std::unique_ptr<osc::UdpTransmitSocket> socket;
-	bool broadcast;
-	string hostname;
-	int port;
+	std::unique_ptr<osc::UdpTransmitSocket> socket; //< sender socket
+	bool broadcast; //< allow multicast broadcasting ip range?
+	string hostname; //< destination host/ip
+	int port; //< destination port
 };
