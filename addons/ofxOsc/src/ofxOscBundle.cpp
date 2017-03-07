@@ -28,37 +28,76 @@
 
 #include "ofxOscBundle.h"
 
+//--------------------------------------------------------------
+ofxOscBundle::ofxOscBundle() {}
 
-ofxOscBundle::ofxOscBundle()
-{
+//--------------------------------------------------------------
+ofxOscBundle::~ofxOscBundle() {}
+
+//--------------------------------------------------------------
+ofxOscBundle::ofxOscBundle(const ofxOscBundle& other){ 
+	copy(other);
 }
 
-ofxOscBundle::~ofxOscBundle()
-{
+//--------------------------------------------------------------
+ofxOscBundle& ofxOscBundle::operator=(const ofxOscBundle& other){
+	return copy(other);
 }
 
-ofxOscBundle& ofxOscBundle::copy( const ofxOscBundle& other )
-{
-	for ( int i=0; i<(int)other.bundles.size(); i++ )
-	{
-		bundles.push_back( other.bundles[i] );
+//--------------------------------------------------------------
+ofxOscBundle& ofxOscBundle::copy(const ofxOscBundle& other){
+	if(this == &other) return *this;
+	for(int i = 0; i < (int)other.bundles.size(); i++){
+		bundles.push_back(other.bundles[i]);
 	}
-	for ( int i=0; i<(int)other.messages.size(); i++ )
-	{
-		messages.push_back( other.messages[i] );
+	for(int i = 0; i < (int)other.messages.size(); i++){
+		messages.push_back(other.messages[i]);
 	}
 	return *this;
 }
 
-
-
-void ofxOscBundle::addBundle( const ofxOscBundle& bundle )
-{
-	bundles.push_back( bundle );
+//--------------------------------------------------------------
+void ofxOscBundle::clear(){
+	bundles.clear();
+	messages.clear();
 }
 
-void ofxOscBundle::addMessage( const ofxOscMessage& message )
-{
-	messages.push_back( message );
+//--------------------------------------------------------------
+void ofxOscBundle::addBundle(const ofxOscBundle& bundle){
+	bundles.push_back(bundle);
 }
 
+//--------------------------------------------------------------
+void ofxOscBundle::addMessage(const ofxOscMessage& message){
+	messages.push_back(message);
+}
+
+//--------------------------------------------------------------
+int ofxOscBundle::getBundleCount() const{ 
+	return bundles.size();
+}
+
+//--------------------------------------------------------------
+int ofxOscBundle::getMessageCount() const{
+	return messages.size();
+}
+
+//--------------------------------------------------------------
+const ofxOscBundle& ofxOscBundle::getBundleAt(int i) const{
+	return bundles[i];
+}
+
+//--------------------------------------------------------------
+ofxOscBundle& ofxOscBundle::getBundleAt(int i){
+	return bundles[i];
+}
+
+//--------------------------------------------------------------
+const ofxOscMessage& ofxOscBundle::getMessageAt(int i) const{
+	return messages[i];
+}
+
+//--------------------------------------------------------------
+ofxOscMessage& ofxOscBundle::getMessageAt(int i){
+	return messages[i];
+}

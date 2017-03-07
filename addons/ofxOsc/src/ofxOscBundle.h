@@ -28,37 +28,37 @@
 
 #pragma once
 
-#include <vector>
 #include "ofxOscMessage.h"
 
-class ofxOscBundle
-{
-public:	
+class ofxOscBundle{
+public:
+
 	ofxOscBundle();
 	~ofxOscBundle();
-	ofxOscBundle( const ofxOscBundle& other ) { copy ( other ); }
-	ofxOscBundle& operator= ( const ofxOscBundle& other ) { return copy( other ); }
+	ofxOscBundle(const ofxOscBundle& other);
+	ofxOscBundle& operator=(const ofxOscBundle& other);
 	/// for operator= and copy constructor
-	ofxOscBundle& copy( const ofxOscBundle& other );
+	ofxOscBundle& copy(const ofxOscBundle& other);
 	
 	/// erase contents
-	void clear() { messages.clear(); bundles.clear(); }
+	void clear();
 
 	/// add bundle elements
-	void addBundle( const ofxOscBundle& element );
-	void addMessage( const ofxOscMessage& message );
+	void addBundle(const ofxOscBundle& element);
+	void addMessage(const ofxOscMessage& message);
 	
 	/// get bundle elements
-	int getBundleCount() const { return bundles.size(); }
-	int getMessageCount() const { return messages.size(); }
+	int getBundleCount() const;
+	int getMessageCount() const;
+	
 	/// return the bundle or message at the given index
-	const ofxOscBundle& getBundleAt( int i ) const { return bundles[i]; }
-    ofxOscBundle& getBundleAt( int i ) { return bundles[i]; }
-	const ofxOscMessage& getMessageAt( int i ) const { return messages[i]; }
-    ofxOscMessage& getMessageAt( int i ) { return messages[i]; }
+	const ofxOscBundle& getBundleAt(int i) const;
+	ofxOscBundle& getBundleAt(int i);
+	const ofxOscMessage& getMessageAt(int i) const;
+	ofxOscMessage& getMessageAt(int i);
 	
 private:
 		
-	vector< ofxOscMessage > messages;
-	vector< ofxOscBundle > bundles;
+	vector<ofxOscMessage> messages;
+	vector<ofxOscBundle> bundles;
 };

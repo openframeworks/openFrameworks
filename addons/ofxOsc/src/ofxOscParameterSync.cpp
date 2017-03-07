@@ -7,15 +7,17 @@
 
 #include "ofxOscParameterSync.h"
 
-ofxOscParameterSync::ofxOscParameterSync() {
+//--------------------------------------------------------------
+ofxOscParameterSync::ofxOscParameterSync(){
 	updatingParameter = false;
 }
 
+//--------------------------------------------------------------
 ofxOscParameterSync::~ofxOscParameterSync(){
 	ofRemoveListener(syncGroup.parameterChangedE(),this,&ofxOscParameterSync::parameterChanged);
 }
 
-
+//--------------------------------------------------------------
 void ofxOscParameterSync::setup(ofParameterGroup & group, int localPort, const std::string& host, int remotePort){
 	syncGroup = group;
 	ofAddListener(syncGroup.parameterChangedE(),this,&ofxOscParameterSync::parameterChanged);
@@ -23,6 +25,7 @@ void ofxOscParameterSync::setup(ofParameterGroup & group, int localPort, const s
 	receiver.setup(localPort);
 }
 
+//--------------------------------------------------------------
 void ofxOscParameterSync::update(){
 	if(receiver.hasWaitingMessages()){
 		updatingParameter = true;
@@ -31,7 +34,8 @@ void ofxOscParameterSync::update(){
 	}
 }
 
-void ofxOscParameterSync::parameterChanged( ofAbstractParameter & parameter ){
+//--------------------------------------------------------------
+void ofxOscParameterSync::parameterChanged(ofAbstractParameter & parameter){
 	if(updatingParameter) return;
 	sender.sendParameter(parameter);
 }

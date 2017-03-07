@@ -36,10 +36,6 @@ an ofxOscSender sends messages to a single host/port
 
 */
 
-namespace osc{
-	class UdpTransmitSocket;
-}
-
 #include "OscTypes.h"
 #include "OscOutboundPacketStream.h"
 #include "UdpSocket.h"
@@ -48,50 +44,52 @@ namespace osc{
 #include "ofParameter.h"
 #include "ofParameterGroup.h"
 
-class ofxOscSender
-{
+class ofxOscSender{
 public:
+
 	ofxOscSender();
 	ofxOscSender(const ofxOscSender & mom);
-	ofxOscSender & operator=(const ofxOscSender & mom);
+	ofxOscSender& operator=(const ofxOscSender & mom);
+	/// for operator= and copy constructor
+	ofxOscSender& copy(const ofxOscSender& other);
 
 	/// send messages to hostname and port
-	void setup( const string &hostname, int port );
+	void setup(const string &hostname, int port);
 	
 	/// clear the sender 
 	void clear();
 
 	/// send the given message
-	void sendMessage( const ofxOscMessage& message, bool wrapInBundle = true );
+	void sendMessage(const ofxOscMessage& message, bool wrapInBundle = true);
+	
 	/// send the given bundle
-	void sendBundle( const ofxOscBundle& bundle );
+	void sendBundle(const ofxOscBundle& bundle);
+	
 	/// creates a message using an ofParameter
-	void sendParameter( const ofAbstractParameter & parameter);
-
-	/// disables broadcast capabilities, usually call this before setup
-	void disableBroadcast();
-
-	/// enabled broadcast capabilities (usually no need to call this, enabled by default)
-	void enableBroadcast();
+	void sendParameter(const ofAbstractParameter & parameter);
 
 	/// return current hostname or "" if setup was not called
 	string getHostname();
 
 	/// return current port or 0 if setup was not called
 	int getPort();
+	
+	/// disables broadcast capabilities, usually call this before setup
+	void disableBroadcast();
+
+	/// enabled broadcast capabilities (usually no need to call this, enabled by default)
+	void enableBroadcast();
 
 private:
-	void setup(osc::UdpTransmitSocket * socket);
 		
 	// helper methods for constructing messages
-	void appendBundle( const ofxOscBundle& bundle, osc::OutboundPacketStream& p );
-	void appendMessage( const ofxOscMessage& message, osc::OutboundPacketStream& p );
-    void appendParameter( ofxOscBundle & bundle, const ofAbstractParameter & parameter, const string &address);
-    void appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, const string &address);
+	void appendBundle(const ofxOscBundle& bundle, osc::OutboundPacketStream& p);
+	void appendMessage(const ofxOscMessage& message, osc::OutboundPacketStream& p);
+	void appendParameter(ofxOscBundle & bundle, const ofAbstractParameter & parameter, const string &address);
+	void appendParameter(ofxOscMessage & msg, const ofAbstractParameter & parameter, const string &address);
 
- 	std::unique_ptr<osc::UdpTransmitSocket> socket;
- 	bool broadcast;
- 	string hostname;
- 	int port;
-
+	std::unique_ptr<osc::UdpTransmitSocket> socket;
+	bool broadcast;
+	string hostname;
+	int port;
 };

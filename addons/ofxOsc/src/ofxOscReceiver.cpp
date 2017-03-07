@@ -28,70 +28,72 @@
 
 #include "ofxOscReceiver.h"
 
-ofxOscReceiver::ofxOscReceiver()
-:allowReuse(true)
-,listen_port(0)
-{
+//--------------------------------------------------------------
+ofxOscReceiver::ofxOscReceiver() : allowReuse(true) ,listen_port(0) {}
+
+//--------------------------------------------------------------
+ofxOscReceiver::ofxOscReceiver(const ofxOscReceiver & mom){
+	copy(mom);
 }
 
-ofxOscReceiver::ofxOscReceiver(const ofxOscReceiver & mom)
-:allowReuse(mom.allowReuse)
-,listen_port(mom.listen_port){
-	if(mom.listen_socket){
-		setup(listen_port);
-	}
+//--------------------------------------------------------------
+ofxOscReceiver& ofxOscReceiver::operator=(const ofxOscReceiver & mom){
+	return copy(mom);
 }
 
-ofxOscReceiver & ofxOscReceiver::operator=(const ofxOscReceiver & mom){
-	if(this == &mom) return *this;
-
-	allowReuse = mom.allowReuse;
-	listen_port = mom.listen_port;
-	if(mom.listen_socket){
+//--------------------------------------------------------------
+ofxOscReceiver& ofxOscReceiver::copy(const ofxOscReceiver& other){
+	if(this == &other) return *this;
+	allowReuse = other.allowReuse;
+	listen_port = other.listen_port;
+	// should the new listener be started with the same port another is using?
+	if(other.listen_socket){
 		setup(listen_port);
 	}
 	return *this;
 }
 
-bool ofxOscReceiver::setup( int listen_port )
-{
-    if( osc::UdpSocket::GetUdpBufferSize() == 0 ){
-    	osc::UdpSocket::SetUdpBufferSize(65535);
-    }
-    
+//--------------------------------------------------------------
+bool ofxOscReceiver::setup(int listen_port){
+	if(osc::UdpSocket::GetUdpBufferSize() == 0){
+	   osc::UdpSocket::SetUdpBufferSize(65535);
+	}
+	
 	// if we're already running, shutdown before running again
-	if ( listen_socket ){
+	if(listen_socket){
 		clear();
 	}
 	
 	// create socket
-    osc::UdpListeningReceiveSocket *socket = nullptr;
-    try {
-        socket = new osc::UdpListeningReceiveSocket( osc::IpEndpointName( osc::IpEndpointName::ANY_ADDRESS, listen_port ), this, allowReuse );
-        auto deleter = [](osc::UdpListeningReceiveSocket*socket){
-            // tell the socket to shutdown
-            socket->Break();
-            delete socket;
-        };
-        auto new_ptr = std::unique_ptr<osc::UdpListeningReceiveSocket, decltype(deleter)>(socket, deleter);
-        listen_socket = std::move(new_ptr);
-    } catch (std::exception &e) {
-        ofLogError("ofxOscReceiver") << "listen_port: " << listen_port << " " << e.what();
-        if(socket != nullptr) {
-            delete socket;
-            socket = nullptr;
-        }
-        return false;
-    }
+	osc::UdpListeningReceiveSocket *socket = nullptr;
+	try{
+		socket = new osc::UdpListeningReceiveSocket(osc::IpEndpointName(osc::IpEndpointName::ANY_ADDRESS, listen_port ), this, allowReuse);
+		auto deleter = [](osc::UdpListeningReceiveSocket*socket){
+			// tell the socket to shutdown
+			socket->Break();
+			delete socket;
+		};
+		auto new_ptr = std::unique_ptr<osc::UdpListeningReceiveSocket, decltype(deleter)>(socket, deleter);
+		listen_socket = std::move(new_ptr);
+	}
+	catch(std::exception &e){
+		ofLogError("ofxOscReceiver") << "listen_port: " << listen_port << " " << e.what();
+		if(socket != nullptr){
+			delete socket;
+			socket = nullptr;
+		}
+		return false;
+	}
 
 	listen_thread = std::thread([this]{
-        while(listen_socket) {
-            try {
-                listen_socket->Run();
-            } catch(std::exception &e) {
-                ofLogWarning() << e.what();
-            }
-        }
+		while(listen_socket){
+			try{
+				listen_socket->Run();
+			}
+			catch(std::exception &e){
+				ofLogWarning() << e.what();
+			}
+		}
 	});
 
 	// detach thread so we don't have to wait on it before creating a new socket
@@ -100,133 +102,90 @@ bool ofxOscReceiver::setup( int listen_port )
 	listen_thread.detach();
 
 	this->listen_port = listen_port;
-    
-    return true;
+	
+	return true;
 }
 
-void ofxOscReceiver::clear()
-{
+//--------------------------------------------------------------
+void ofxOscReceiver::clear() {
 	listen_socket.reset();
 	listen_port = 0;
 }
 
-void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint )
-{
-	// convert the message to an ofxOscMessage
-	ofxOscMessage msg;
-
-	// set the address
-	msg.setAddress( m.AddressPattern() );
-    
-	// set the sender ip/host
-	char endpoint_host[ osc::IpEndpointName::ADDRESS_STRING_LENGTH ];
-	remoteEndpoint.AddressAsString( endpoint_host );
-    msg.setRemoteEndpoint( endpoint_host, remoteEndpoint.port );
-
-	// transfer the arguments
-	for ( osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
-		  arg != m.ArgumentsEnd();
-		  ++arg )
-	{
-		if ( arg->IsInt32() )
-			msg.addIntArg( arg->AsInt32Unchecked() );
-		else if ( arg->IsInt64() )
-			msg.addInt64Arg( arg->AsInt64Unchecked() );
-		else if ( arg->IsFloat() )
-			msg.addFloatArg( arg->AsFloatUnchecked() );
-		else if ( arg->IsDouble() )
-			msg.addDoubleArg( arg->AsDoubleUnchecked() );
-		else if ( arg->IsString() )
-			msg.addStringArg( arg->AsStringUnchecked() );
-		else if ( arg->IsSymbol() )
-			msg.addSymbolArg( arg->AsSymbolUnchecked() );
-		else if ( arg->IsChar() )
-			msg.addCharArg( arg->AsCharUnchecked() );
-		else if ( arg->IsMidiMessage() )
-			msg.addMidiMessageArg( arg->AsMidiMessageUnchecked() );
-		else if ( arg->IsBool())
-			msg.addBoolArg( arg->AsBoolUnchecked() );
-		else if ( arg->IsInfinitum() )
-			msg.addTriggerArg();
-		else if ( arg->IsTimeTag() )
-			msg.addTimetagArg( arg->AsTimeTagUnchecked() );
-		else if ( arg->IsRgbaColor() )
-			msg.addRgbaColorArg( arg->AsRgbaColorUnchecked() );
-		else if ( arg->IsBlob() ){
-            const char * dataPtr;
-            osc::osc_bundle_element_size_t len = 0;
-            arg->AsBlobUnchecked((const void*&)dataPtr, len);
-            ofBuffer buffer(dataPtr, len);
-			msg.addBlobArg( buffer );
-		}
-		else
-		{
-			ofLogError("ofxOscReceiver") << "ProcessMessage: argument in message " << m.AddressPattern() << " is not an int, float, or string";
-		}
-	}
-
-	// send msg to main thread
-	messagesChannel.send( std::move(msg) );
-}
-
-bool ofxOscReceiver::hasWaitingMessages()
-{
+//--------------------------------------------------------------
+bool ofxOscReceiver::hasWaitingMessages(){
 	return !messagesChannel.empty();
 }
 
-bool ofxOscReceiver::getNextMessage( ofxOscMessage * message )
-{
+//--------------------------------------------------------------
+bool ofxOscReceiver::getNextMessage(ofxOscMessage * message){
 	return getNextMessage(*message);
 }
 
-bool ofxOscReceiver::getNextMessage( ofxOscMessage & message )
-{
+//--------------------------------------------------------------
+bool ofxOscReceiver::getNextMessage(ofxOscMessage & message){
 	return messagesChannel.tryReceive(message);
 }
 
-bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter)
-{
+//--------------------------------------------------------------
+bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
 	ofxOscMessage msg;
 	while(messagesChannel.tryReceive(msg)){
 		ofAbstractParameter * p = &parameter;
-        vector<string> address = ofSplitString(msg.getAddress(),"/",true);
-        for(unsigned int i=0;i<address.size();i++){
-            if(p) {
-                if(address[i]==p->getEscapedName()){
-                    if(p->type()==typeid(ofParameterGroup).name()){
-                        if(address.size()>=i+1){
-                            ofParameterGroup* g = static_cast<ofParameterGroup*>(p);
-                            if(g->contains(address[i+1])){
-                                p = &g->get(address[i+1]);
-                            }else{
-                                p = nullptr;
-                            }
-                        }
-                    }else if(p->type()==typeid(ofParameter<int>).name() && msg.getArgType(0)==OFXOSC_TYPE_INT32){
-                        p->cast<int>() = msg.getArgAsInt32(0);
-                    }else if(p->type()==typeid(ofParameter<float>).name() && msg.getArgType(0)==OFXOSC_TYPE_FLOAT){
-                        p->cast<float>() = msg.getArgAsFloat(0);
-                    }else if(p->type()==typeid(ofParameter<double>).name() && msg.getArgType(0)==OFXOSC_TYPE_DOUBLE){
-                        p->cast<double>() = msg.getArgAsDouble(0);
-                    }else if(p->type()==typeid(ofParameter<bool>).name() && (msg.getArgType(0)==OFXOSC_TYPE_TRUE
-																			|| msg.getArgType(0)==OFXOSC_TYPE_FALSE
-																			|| msg.getArgType(0)==OFXOSC_TYPE_INT32
-																			|| msg.getArgType(0)==OFXOSC_TYPE_INT64
-																			|| msg.getArgType(0)==OFXOSC_TYPE_FLOAT
-																			|| msg.getArgType(0)==OFXOSC_TYPE_DOUBLE
-																			|| msg.getArgType(0)==OFXOSC_TYPE_STRING
-																			|| msg.getArgType(0)==OFXOSC_TYPE_SYMBOL)){
-                        p->cast<bool>() = msg.getArgAsBool(0);
-                    }else if(msg.getArgType(0)==OFXOSC_TYPE_STRING){
-                        p->fromString(msg.getArgAsString(0));
-                    }
-                }
-            }
-        }
+		vector<string> address = ofSplitString(msg.getAddress(),"/", true);
+		for(unsigned int i = 0; i < address.size(); i++){
+			if(p){
+				if(address[i] == p->getEscapedName()){
+					if(p->type() == typeid(ofParameterGroup).name()){
+						if(address.size() >= i+1){
+							ofParameterGroup* g = static_cast<ofParameterGroup*>(p);
+							if(g->contains(address[i+1])){
+								p = &g->get(address[i+1]);
+							}
+							else{
+								p = nullptr;
+							}
+						}
+					}
+					else if(p->type() == typeid(ofParameter<int>).name() &&
+						msg.getArgType(0) == OFXOSC_TYPE_INT32){
+						p->cast<int>() = msg.getArgAsInt32(0);
+					}
+					else if(p->type() == typeid(ofParameter<float>).name() &&
+						msg.getArgType(0) == OFXOSC_TYPE_FLOAT){
+						p->cast<float>() = msg.getArgAsFloat(0);
+					}
+					else if(p->type() == typeid(ofParameter<double>).name() &&
+						msg.getArgType(0) == OFXOSC_TYPE_DOUBLE){
+						p->cast<double>() = msg.getArgAsDouble(0);
+					}
+					else if(p->type() == typeid(ofParameter<bool>).name() &&
+						(msg.getArgType(0) == OFXOSC_TYPE_TRUE ||
+						 msg.getArgType(0) == OFXOSC_TYPE_FALSE ||
+						 msg.getArgType(0) == OFXOSC_TYPE_INT32 ||
+						 msg.getArgType(0) == OFXOSC_TYPE_INT64 ||
+						 msg.getArgType(0) == OFXOSC_TYPE_FLOAT ||
+						 msg.getArgType(0) == OFXOSC_TYPE_DOUBLE ||
+						 msg.getArgType(0) == OFXOSC_TYPE_STRING ||
+						 msg.getArgType(0) == OFXOSC_TYPE_SYMBOL)){
+						p->cast<bool>() = msg.getArgAsBool(0);
+					}
+					else if(msg.getArgType(0) == OFXOSC_TYPE_STRING){
+						p->fromString(msg.getArgAsString(0));
+					}
+				}
+			}
+		}
 	}
 	return true;
 }
 
+//--------------------------------------------------------------
+int ofxOscReceiver::getPort(){
+	return listen_port;
+}
+
+//--------------------------------------------------------------
 void ofxOscReceiver::disableReuse(){
 	allowReuse = false;
 	if(listen_socket){
@@ -234,6 +193,7 @@ void ofxOscReceiver::disableReuse(){
 	}
 }
 
+//--------------------------------------------------------------
 void ofxOscReceiver::enableReuse(){
 	allowReuse = true;
 	if(listen_socket){
@@ -241,6 +201,71 @@ void ofxOscReceiver::enableReuse(){
 	}
 }
 
-int ofxOscReceiver::getPort() {
-	return listen_port;
+// PROTECTED
+//--------------------------------------------------------------
+void ofxOscReceiver::ProcessMessage(const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint){
+	// convert the message to an ofxOscMessage
+	ofxOscMessage msg;
+
+	// set the address
+	msg.setAddress(m.AddressPattern());
+	
+	// set the sender ip/host
+	char endpoint_host[osc::IpEndpointName::ADDRESS_STRING_LENGTH];
+	remoteEndpoint.AddressAsString(endpoint_host);
+	msg.setRemoteEndpoint(endpoint_host, remoteEndpoint.port);
+
+	// transfer the arguments
+	for(osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin(); arg != m.ArgumentsEnd(); ++arg){
+		if(arg->IsInt32()){
+			msg.addIntArg(arg->AsInt32Unchecked());
+		}
+		else if(arg->IsInt64()){
+			msg.addInt64Arg(arg->AsInt64Unchecked());
+		}
+		else if( arg->IsFloat()){
+			msg.addFloatArg(arg->AsFloatUnchecked());
+		}
+		else if(arg->IsDouble()){
+			msg.addDoubleArg(arg->AsDoubleUnchecked());
+		}
+		else if(arg->IsString()){
+			msg.addStringArg(arg->AsStringUnchecked());
+		}
+		else if(arg->IsSymbol()){
+			msg.addSymbolArg(arg->AsSymbolUnchecked());
+		}
+		else if(arg->IsChar()){
+			msg.addCharArg(arg->AsCharUnchecked());
+		}
+		else if(arg->IsMidiMessage()){
+			msg.addMidiMessageArg(arg->AsMidiMessageUnchecked());
+		}
+		else if(arg->IsBool()){
+			msg.addBoolArg(arg->AsBoolUnchecked());
+		}
+		else if(arg->IsInfinitum()){
+			msg.addTriggerArg();
+		}
+		else if(arg->IsTimeTag()){
+			msg.addTimetagArg(arg->AsTimeTagUnchecked());
+		}
+		else if(arg->IsRgbaColor()){
+			msg.addRgbaColorArg(arg->AsRgbaColorUnchecked());
+		}
+		else if(arg->IsBlob()){
+			const char * dataPtr;
+			osc::osc_bundle_element_size_t len = 0;
+			arg->AsBlobUnchecked((const void*&)dataPtr, len);
+			ofBuffer buffer(dataPtr, len);
+			msg.addBlobArg(buffer);
+		}
+		else {
+			ofLogError("ofxOscReceiver") << "ProcessMessage: argument in message "
+				<< m.AddressPattern() << " is an unknown type";
+		}
+	}
+
+	// send msg to main thread
+	messagesChannel.send(std::move(msg));
 }
