@@ -56,6 +56,9 @@ public:
 
 	/// listen_port is the port to listen for messages on
 	bool setup( int listen_port );
+	
+	/// stop listening and clear the receiver 
+	void clear();
 
 	/// returns true if there are any messages waiting for collection
 	bool hasWaitingMessages();
@@ -82,8 +85,6 @@ protected:
 
 private:
 	void setup(osc::UdpListeningReceiveSocket * socket);
-	// shutdown the listener
-	void shutdown();
 
 	// start the listening thread
 #ifdef TARGET_WIN32
