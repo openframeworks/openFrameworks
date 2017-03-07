@@ -217,6 +217,9 @@ void ofxOscReceiver::ProcessMessage(const osc::ReceivedMessage &m, const osc::Ip
 		else if(arg->IsBool()){
 			msg.addBoolArg(arg->AsBoolUnchecked());
 		}
+		else if(arg->IsNil()){
+			msg.addNoneArg();
+		}
 		else if(arg->IsInfinitum()){
 			msg.addTriggerArg();
 		}

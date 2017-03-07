@@ -185,6 +185,9 @@ void ofxOscSender::appendMessage(const ofxOscMessage& message, osc::OutboundPack
 			case OFXOSC_TYPE_TRUE: case OFXOSC_TYPE_FALSE:
 				p << message.getArgAsBool(i);
 				break;
+			case OFXOSC_TYPE_NONE:
+				p << message.getArgAsNone(i);
+				break;
 			case OFXOSC_TYPE_TRIGGER:
 				p << message.getArgAsTrigger(i);
 				break;
