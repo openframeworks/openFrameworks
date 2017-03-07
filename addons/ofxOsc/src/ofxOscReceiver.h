@@ -21,16 +21,24 @@ public:
 	/// for operator= and copy constructor
 	ofxOscReceiver& copy(const ofxOscReceiver& other);
 
-	/// set up the receiver with the port to listen for messages on,
+	/// set up the receiver with the port to listen for messages on
+	///
 	/// multiple receivers can share the same port if port reuse is
 	/// enabled (true by default)
+	///
+	/// if port is set to 0, receiver will try to use current port value to
+	/// restart listening
+	///
 	/// \return true is listening was started
-	bool setup(int port);
+	bool setup(int port=0);
 	
-	/// stop listening and clear the receiver 
+	/// stop listening and clear the receiver, does not clear port value
 	void clear();
+	
+	/// \return true if the receiver is listening
+	bool isListening();
 
-	/// /return true if there are any messages waiting for collection
+	/// \return true if there are any messages waiting for collection
 	bool hasWaitingMessages();
 
 	/// take the next message on the queue of received messages, copy its

@@ -24,7 +24,7 @@ public:
 	/// set up the sender with the destination host name/ip and port
 	void setup(const string &host, int port);
 	
-	/// clear the sender 
+	/// clear the sender, does not clear host or port values
 	void clear();
 
 	/// send the given message

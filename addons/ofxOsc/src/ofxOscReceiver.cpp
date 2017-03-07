@@ -37,6 +37,17 @@ bool ofxOscReceiver::setup(int port){
 		clear();
 	}
 	
+	// reuse current port?
+	if(port == 0) {
+		if(this->port > 0) {
+			port = this->port;
+		}
+		else {
+			ofLogError("ofxOscReceiver") << "cannot restart with port value of 0";
+			return false;
+		}
+	}
+	
 	// create socket
 	osc::UdpListeningReceiveSocket *socket = nullptr;
 	try{
@@ -64,7 +75,7 @@ bool ofxOscReceiver::setup(int port){
 				listenSocket->Run();
 			}
 			catch(std::exception &e){
-				ofLogWarning() << e.what();
+				ofLogWarning("ofxOscReceiver") << e.what();
 			}
 		}
 	});
@@ -82,7 +93,11 @@ bool ofxOscReceiver::setup(int port){
 //--------------------------------------------------------------
 void ofxOscReceiver::clear() {
 	listenSocket.reset();
-	port = 0;
+}
+
+//--------------------------------------------------------------
+bool ofxOscReceiver::isListening(){
+	return listenSocket != nullptr;
 }
 
 //--------------------------------------------------------------

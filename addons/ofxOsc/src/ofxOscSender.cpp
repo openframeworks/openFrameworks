@@ -44,8 +44,6 @@ void ofxOscSender::setup(const string &host, int port){
 //--------------------------------------------------------------
 void ofxOscSender::clear(){
 	sendSocket.reset();
-	host = "";
-	port = 0;
 }
 
 //--------------------------------------------------------------
