@@ -38,6 +38,7 @@
 
 ofxOscSender::ofxOscSender()
 :broadcast(true)
+,hostname("")
 ,port(0)
 {
 }
@@ -88,6 +89,16 @@ void ofxOscSender::enableBroadcast()
 	if(socket){
 		setup(hostname, port);
 	}
+}
+
+std::string ofxOscSender::getHostname()
+{
+	return hostname;
+}
+
+int ofxOscSender::getPort()
+{
+	return port;
 }
 
 void ofxOscSender::shutdown()

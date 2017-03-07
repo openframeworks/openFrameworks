@@ -245,3 +245,7 @@ void ofxOscReceiver::enableReuse(){
 		setup(listen_port);
 	}
 }
+
+int ofxOscReceiver::getPort() {
+	return listen_port;
+}
