@@ -173,34 +173,36 @@ void ofxOscSender::appendMessage(const ofxOscMessage& message, osc::OutboundPack
 			case OFXOSC_TYPE_DOUBLE:
 				p << message.getArgAsDouble(i);
 				break;
-			case OFXOSC_TYPE_STRING: case OFXOSC_TYPE_SYMBOL:
+			case OFXOSC_TYPE_STRING:
 				p << message.getArgAsString(i).c_str();
+				break;
+			case OFXOSC_TYPE_SYMBOL:
+				p << osc::Symbol(message.getArgAsString(i).c_str());
 				break;
 			case OFXOSC_TYPE_CHAR:
 				p << message.getArgAsChar(i);
 				break;
 			case OFXOSC_TYPE_MIDI_MESSAGE:
-				p << message.getArgAsMidiMessage(i);
+				p << osc::MidiMessage(message.getArgAsMidiMessage(i));
 				break;
 			case OFXOSC_TYPE_TRUE: case OFXOSC_TYPE_FALSE:
 				p << message.getArgAsBool(i);
 				break;
 			case OFXOSC_TYPE_NONE:
-				p << message.getArgAsNone(i);
+				p << osc::NilType();
 				break;
 			case OFXOSC_TYPE_TRIGGER:
-				p << message.getArgAsTrigger(i);
+				p << osc::InfinitumType();
 				break;
 			case OFXOSC_TYPE_TIMETAG:
-				p << (osc::int64)message.getArgAsTimetag(i);
+				p << osc::TimeTag(message.getArgAsTimetag(i));
 				break;
 			case OFXOSC_TYPE_RGBA_COLOR:
-				p << message.getArgAsRgbaColor(i);
+				p << osc::RgbaColor(message.getArgAsRgbaColor(i));
 				break;
 			case OFXOSC_TYPE_BLOB: {
 				ofBuffer buff = message.getArgAsBlob(i);
-				osc::Blob b(buff.getData(), (unsigned long)buff.size());
-				p << b;
+				p << osc::Blob(buff.getData(), (unsigned long)buff.size());
 				break;
 			}
 			default:
