@@ -69,7 +69,7 @@ protected:
 private:
 
 	/// socket to listen on, unique for each port
-	/// shared between objects is allowReuse is true
+	/// shared between objects if allowReuse is true
 	std::unique_ptr<osc::UdpListeningReceiveSocket, std::function<void(osc::UdpListeningReceiveSocket*)>> listenSocket;
 
 	std::thread listenThread; //< listener thread

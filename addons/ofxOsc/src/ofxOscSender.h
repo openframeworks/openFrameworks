@@ -37,10 +37,10 @@ public:
 	/// create & send a message with data from an ofParameter
 	void sendParameter(const ofAbstractParameter & parameter);
 
-	/// return current host name/ip or "" if setup was not called
+	/// \return current host name/ip or "" if setup was not called
 	string getHost();
 
-	/// return current port or 0 if setup was not called
+	/// \return current port or 0 if setup was not called
 	int getPort();
 	
 	/// disable broadcast capabilities

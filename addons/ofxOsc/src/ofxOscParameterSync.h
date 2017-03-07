@@ -14,7 +14,7 @@ public:
 	ofxOscParameterSync();
 	~ofxOscParameterSync();
 
-	/// set the parameter group & local/remote connection info
+	/// set the parameter group & connection info
 	/// the remote and local ports must be different to avoid collisions
 	void setup(ofParameterGroup & group, int localPort, const string& remoteHost, int remotePort);
 	

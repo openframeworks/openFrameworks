@@ -20,7 +20,7 @@ public:
 	void clear();
 
 	/// set the message address, must start with a /
-	void setAddress(const string &_address);
+	void setAddress(const string &address);
 
 	/// \return the OSC address
 	string getAddress() const;
@@ -54,6 +54,15 @@ public:
 	///         i = message.getArgAsInt32(index);
 	///     }
 	///
+	/// you can also check against the type string for all arguments:
+	///
+	///     int i = 0; float f = 0.0; string s = "";
+	///     if(message.getTypeString() == "ifs") {
+	///         i = message.getArgAsInt32(0);
+	///         f = message.getArgAsFloat(1);
+	///         s = message.getArgAsString(2);
+	///     }
+	///
 	/// see ofxOscArg.h for argument type tag char values
 
 	/// \return number of arguments
@@ -64,6 +73,9 @@ public:
 	
 	/// \return argument type tag char as a string
 	string getArgTypeName(int index) const;
+	
+	/// \return type tags for all arguments as a string, 1 char for each argument
+	string getTypeString() const;
 	
 	/// get argument as an integer, converts numeric types automatically
 	/// prints a warning when converting higher precision types
