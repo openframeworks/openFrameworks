@@ -228,8 +228,20 @@ private:
 	bool value;
 };
 
+/// \class ofxOscArgNone
+/// \brief a none/nil (has no value), type name "I"
+class ofxOscArgNone : public ofxOscArgBool{
+public:
+	ofxOscArgNone() : ofxOscArgBool(true) {};
+	~ofxOscArgNone() {};
+
+	/// return the type of this argument
+	ofxOscArgType getType() {return OFXOSC_TYPE_NONE;}
+	string getTypeName() {return "N";}
+};
+
 /// \class ofxOscArgTrigger
-/// \brief a trigger impulse, type name "I"
+/// \brief a trigger impulse (has no value), type name "I"
 class ofxOscArgTrigger : public ofxOscArgBool{
 public:
 	ofxOscArgTrigger() : ofxOscArgBool(true) {};

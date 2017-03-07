@@ -22,6 +22,7 @@ ofxOscMessage& ofxOscMessage::operator=(const ofxOscMessage& other){
 	return copy(other);
 }
 
+//--------------------------------------------------------------
 ofxOscMessage& ofxOscMessage::copy(const ofxOscMessage& other){
 	if(this == &other) return *this;
 	clear();
@@ -423,6 +424,18 @@ bool ofxOscMessage::getArgAsBool(int index) const{
 }
 
 //--------------------------------------------------------------
+bool ofxOscMessage::getArgAsNone(int index) const{
+	if(getArgType(index) != OFXOSC_TYPE_NONE){
+		ofLogError("ofxOscMessage") << "getArgAsNone(): argument "
+			<< index << " is not a none/nil";
+		return false;
+	}
+	else{
+		return ((ofxOscArgNone*)args[index])->get();
+	}
+}
+
+//--------------------------------------------------------------
 bool ofxOscMessage::getArgAsTrigger(int index) const{
 	if(getArgType(index) != OFXOSC_TYPE_TRIGGER){
 		ofLogError("ofxOscMessage") << "getArgAsTrigger(): argument "
@@ -543,6 +556,11 @@ void ofxOscMessage::addMidiMessageArg(int32_t argument){
 //--------------------------------------------------------------
 void ofxOscMessage::addBoolArg(bool argument){
 	args.push_back(new ofxOscArgBool(argument));
+}
+
+//--------------------------------------------------------------
+void ofxOscMessage::addNoneArg(){
+	args.push_back(new ofxOscArgNone());
 }
 
 //--------------------------------------------------------------

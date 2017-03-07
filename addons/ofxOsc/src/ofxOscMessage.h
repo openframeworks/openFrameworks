@@ -108,6 +108,10 @@ public:
 	/// \return given argument value as a bool
 	bool getArgAsBool(int index) const;
 	
+	/// get argument as a none/nil
+	/// \return true if argument was a none/nil
+	bool getArgAsNone(int index) const;
+	
 	/// get argument as a trigger impulse
 	/// \return true if argument was a trigger
 	bool getArgAsTrigger(int index) const;
@@ -164,6 +168,9 @@ public:
 	/// add a bool
 	/// true sends a OFXOSC_TYPE_TRUE & false sends an OFXOSC_TYPE_FALSE
 	void addBoolArg(bool argument);
+	
+	/// add a none/nil (has no value)
+	void addNoneArg();
 	
 	/// add a trigger impulse (has no value)
 	void addTriggerArg();
