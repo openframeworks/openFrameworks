@@ -43,7 +43,7 @@ bool ofxOscReceiver::setup(int port){
 			port = this->port;
 		}
 		else {
-			ofLogError("ofxOscReceiver") << "cannot restart with port value of 0";
+			ofLogError("ofxOscReceiver") << "cannot (re)start with port value of 0";
 			return false;
 		}
 	}
