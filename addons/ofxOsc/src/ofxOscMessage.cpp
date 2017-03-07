@@ -239,7 +239,11 @@ std::string ofxOscMessage::getArgAsString( int index ) const
             ofLogWarning("ofxOscMessage") << "getArgAsString(): converting double to string for argument " << index;
             return ofToString(((ofxOscArgDouble*)args[index])->get());
         }
-        else if ( getArgType(index) == OFXOSC_TYPE_CHAR )
+		else if ( getArgType(index) == OFXOSC_TYPE_SYMBOL )
+        {
+            return ((ofxOscArgSymbol*)args[index])->get();
+        }
+		else if ( getArgType(index) == OFXOSC_TYPE_CHAR )
         {
             ofLogWarning("ofxOscMessage") << "getArgAsString(): converting char to string for argument " << index;
             return ofToString(((ofxOscArgChar*)args[index])->get());
@@ -278,6 +282,10 @@ std::string ofxOscMessage::getArgAsSymbol(int index) const
         {
             ofLogWarning("ofxOscMessage") << "getArgAsSymbol(): converting double to symbol (string) for argument " << index;
             return ofToString(((ofxOscArgDouble*)args[index])->get());
+        }
+		else if ( getArgType(index) == OFXOSC_TYPE_STRING )
+        {
+            return ((ofxOscArgString*)args[index])->get();
         }
         else if ( getArgType(index) == OFXOSC_TYPE_CHAR )
         {
