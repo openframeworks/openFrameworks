@@ -31,7 +31,7 @@
 #include "ofUtils.h"
 
 //--------------------------------------------------------------
-ofxOscMessage::ofxOscMessage() {}
+ofxOscMessage::ofxOscMessage() : remoteHost(""), remotePort(0) {}
 
 //--------------------------------------------------------------
 ofxOscMessage::~ofxOscMessage(){
@@ -54,8 +54,8 @@ ofxOscMessage& ofxOscMessage::copy(const ofxOscMessage& other){
 
 	// copy address & remote info
 	address = other.address;
-	remote_host = other.remote_host;
-	remote_port = other.remote_port;
+	remoteHost = other.remoteHost;
+	remotePort = other.remotePort;
 
 	// copy arguments
 	for(int i = 0; i < (int)other.args.size(); ++i){
@@ -113,6 +113,8 @@ ofxOscMessage& ofxOscMessage::copy(const ofxOscMessage& other){
 //--------------------------------------------------------------
 void ofxOscMessage::clear(){
 	address = "";
+	remoteHost = "";
+	remotePort = 0;
 	for(unsigned int i = 0; i < args.size(); ++i){
 		delete args[i];
 	}
@@ -131,17 +133,17 @@ string ofxOscMessage::getAddress() const{
 
 //--------------------------------------------------------------
 string ofxOscMessage::getRemoteIp() const{ 
-	return remote_host;
+	return remoteHost;
 }
 
 //--------------------------------------------------------------
 string ofxOscMessage::getRemoteHost() const{
-	return remote_host;
+	return remoteHost;
 }
 
 //--------------------------------------------------------------
 int ofxOscMessage::getRemotePort() const{
-	return remote_port;
+	return remotePort;
 }
 
 // get methods
@@ -602,6 +604,6 @@ void ofxOscMessage::addRgbaColorArg(int32_t argument){
 // util
 //--------------------------------------------------------------
 void ofxOscMessage::setRemoteEndpoint(const string &host, int port){
-	remote_host = host;
-	remote_port = port;
+	remoteHost = host;
+	remotePort = port;
 }

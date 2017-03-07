@@ -34,7 +34,7 @@
 #include "UdpSocket.h"
 
 //--------------------------------------------------------------
-ofxOscSender::ofxOscSender() : broadcast(true), hostname(""), port(0) {}
+ofxOscSender::ofxOscSender() : broadcast(true), host(""), port(0) {}
 
 //--------------------------------------------------------------
 ofxOscSender::ofxOscSender(const ofxOscSender & mom) : broadcast(mom.broadcast){
@@ -50,34 +50,34 @@ ofxOscSender& ofxOscSender::operator=(const ofxOscSender & mom){
 ofxOscSender& ofxOscSender::copy(const ofxOscSender& other){
 	if(this == &other) return *this;
 	broadcast = other.broadcast;
-	hostname = other.hostname;
+	host = other.host;
 	port = other.port;
-	if(other.socket){
-		setup(hostname, port);
+	if(other.sendSocket){
+		setup(host, port);
 	}
 	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::setup(const string &hostname, int port){
+void ofxOscSender::setup(const string &host, int port){
 	if(osc::UdpSocket::GetUdpBufferSize() == 0){
 	   osc::UdpSocket::SetUdpBufferSize(65535);
 	}
-	socket.reset(new osc::UdpTransmitSocket(osc::IpEndpointName(hostname.c_str(), port), broadcast));
-	this->hostname = hostname;
+	sendSocket.reset(new osc::UdpTransmitSocket(osc::IpEndpointName(host.c_str(), port), broadcast));
+	this->host = host;
 	this->port = port;
 }
 
 //--------------------------------------------------------------
 void ofxOscSender::clear(){
-	socket.reset();
-	hostname = "";
+	sendSocket.reset();
+	host = "";
 	port = 0;
 }
 
 //--------------------------------------------------------------
 void ofxOscSender::sendBundle(const ofxOscBundle& bundle){
-	if(!socket){
+	if(!sendSocket){
 		ofLogError("ofxOscSender") << "trying to send before setup";
 	}
 	
@@ -89,12 +89,12 @@ void ofxOscSender::sendBundle(const ofxOscBundle& bundle){
 
 	// serialise the bundle and send
 	appendBundle(bundle, p);
-	socket->Send(p.Data(), p.Size());
+	sendSocket->Send(p.Data(), p.Size());
 }
 
 //--------------------------------------------------------------
 void ofxOscSender::sendMessage(const ofxOscMessage& message, bool wrapInBundle){
-	if(!socket){
+	if(!sendSocket){
 		ofLogError("ofxOscSender") << "trying to send before setup";
 	}
 	
@@ -112,7 +112,7 @@ void ofxOscSender::sendMessage(const ofxOscMessage& message, bool wrapInBundle){
 	if(wrapInBundle) {
 		p << osc::EndBundle;
 	}
-	socket->Send(p.Data(), p.Size());
+	sendSocket->Send(p.Data(), p.Size());
 }
 
 //--------------------------------------------------------------
@@ -144,8 +144,8 @@ void ofxOscSender::sendParameter(const ofAbstractParameter & parameter){
 }
 
 //--------------------------------------------------------------
-string ofxOscSender::getHostname(){
-	return hostname;
+string ofxOscSender::getHost(){
+	return host;
 }
 
 //--------------------------------------------------------------
@@ -156,16 +156,16 @@ int ofxOscSender::getPort(){
 //--------------------------------------------------------------
 void ofxOscSender::disableBroadcast(){
 	broadcast = false;
-	if(socket){
-		setup(hostname, port);
+	if(sendSocket){
+		setup(host, port);
 	}
 }
 
 //--------------------------------------------------------------
 void ofxOscSender::enableBroadcast(){
 	broadcast = true;
-	if(socket){
-		setup(hostname, port);
+	if(sendSocket){
+		setup(host, port);
 	}
 }
 

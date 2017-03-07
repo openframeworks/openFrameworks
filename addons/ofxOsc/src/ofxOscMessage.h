@@ -54,10 +54,10 @@ public:
 	/// \return the remote host name/ip (deprecated)
 	OF_DEPRECATED_MSG("Use getRemoteHost() instead", string getRemoteIp() const);
 	
-	/// \return the remote host name/ip
+	/// \return the remote host name/ip or "" if not set
 	string getRemoteHost() const;
 	
-	/// \return the remote port
+	/// \return the remote port or 0 if not set
 	int getRemotePort() const;
 	
 	/// \section Argument Getters
@@ -220,6 +220,6 @@ private:
 	string address; //< OSC address, must start with a /
 	vector<ofxOscArg*> args; //< current arguments
 
-	string remote_host; //< host name/ip the message was sent from
-	int remote_port; //< port the message was sent from
+	string remoteHost; //< host name/ip the message was sent from
+	int remotePort; //< port the message was sent from
 };
