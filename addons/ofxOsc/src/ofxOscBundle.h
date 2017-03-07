@@ -59,6 +59,6 @@ public:
 	
 private:
 		
-	std::vector< ofxOscMessage > messages;
-	std::vector< ofxOscBundle > bundles;
+	vector< ofxOscMessage > messages;
+	vector< ofxOscBundle > bundles;
 };

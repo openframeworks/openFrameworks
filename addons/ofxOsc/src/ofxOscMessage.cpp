@@ -28,8 +28,7 @@
 
 #include "ofxOscMessage.h"
 #include "ofLog.h"
-#include <iostream>
-#include <assert.h>
+#include "ofUtils.h"
 
 ofxOscMessage::ofxOscMessage()
 

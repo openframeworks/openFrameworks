@@ -28,24 +28,14 @@
 
 #pragma once
 
-#include <deque>
-#include "ofMain.h"
-
-#ifdef TARGET_WIN32
-// threads
-#include <windows.h>
-#else
-// threads
-#include <pthread.h>
-#endif
+#include "ofxOscMessage.h"
+#include "ofParameter.h"
+#include "ofThreadChannel.h"
 
 // osc
 #include "OscTypes.h"
 #include "OscPacketListener.h"
 #include "UdpSocket.h"
-
-// ofxOsc
-#include "ofxOscMessage.h"
 
 class ofxOscReceiver : public osc::OscPacketListener
 {
@@ -84,15 +74,6 @@ protected:
 	virtual void ProcessMessage( const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint );
 
 private:
-	void setup(osc::UdpListeningReceiveSocket * socket);
-
-	// start the listening thread
-#ifdef TARGET_WIN32
-	static DWORD WINAPI startThread( void* ofxOscReceiverInstance );
-#else
-	static void* startThread( void* ofxOscReceiverInstance );
-#endif
-
 	// socket to listen on
 	std::unique_ptr<osc::UdpListeningReceiveSocket, std::function<void(osc::UdpListeningReceiveSocket*)>> listen_socket;
 
@@ -101,5 +82,4 @@ private:
 
 	bool allowReuse;
 	int listen_port;
-
 };
