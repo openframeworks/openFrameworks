@@ -47,9 +47,11 @@ public:
 	/// for operator= and copy constructor
 	ofxOscReceiver& copy(const ofxOscReceiver& other);
 
-	/// set up the receiver with the port to listen for messages on
+	/// set up the receiver with the port to listen for messages on,
+	/// multiple receivers can share the same port if port reuse is
+	/// enabled (true by default)
 	/// \return true is listening was started
-	bool setup(int listen_port);
+	bool setup(int port);
 	
 	/// stop listening and clear the receiver 
 	void clear();
@@ -67,7 +69,7 @@ public:
 	/// \return true if message was handled by the given parameter
 	bool getParameter(ofAbstractParameter & parameter);
 
-	/// \return current port or 0 if setup was not called
+	/// \return listening port or 0 if setup was not called
 	int getPort();
 	
 	/// disables port reuse reuse which allows the same port to be used by several sockets
@@ -86,11 +88,11 @@ private:
 
 	/// socket to listen on, unique for each port
 	/// shared between objects is allowReuse is true
-	std::unique_ptr<osc::UdpListeningReceiveSocket, std::function<void(osc::UdpListeningReceiveSocket*)>> listen_socket;
+	std::unique_ptr<osc::UdpListeningReceiveSocket, std::function<void(osc::UdpListeningReceiveSocket*)>> listenSocket;
 
-	std::thread listen_thread; //< listener thread
+	std::thread listenThread; //< listener thread
 	ofThreadChannel<ofxOscMessage> messagesChannel; //< message passing thread channel
 
 	bool allowReuse; //< all the port to be reused by several sockets?
-	int listen_port; //< port to listen on
+	int port; //< port to listen on
 };

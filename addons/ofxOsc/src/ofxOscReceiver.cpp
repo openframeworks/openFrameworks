@@ -29,7 +29,7 @@
 #include "ofxOscReceiver.h"
 
 //--------------------------------------------------------------
-ofxOscReceiver::ofxOscReceiver() : allowReuse(true) ,listen_port(0) {}
+ofxOscReceiver::ofxOscReceiver() : allowReuse(true), port(0) {}
 
 //--------------------------------------------------------------
 ofxOscReceiver::ofxOscReceiver(const ofxOscReceiver & mom){
@@ -45,38 +45,38 @@ ofxOscReceiver& ofxOscReceiver::operator=(const ofxOscReceiver & mom){
 ofxOscReceiver& ofxOscReceiver::copy(const ofxOscReceiver& other){
 	if(this == &other) return *this;
 	allowReuse = other.allowReuse;
-	listen_port = other.listen_port;
-	if(other.listen_socket){
-		setup(listen_port);
+	port = other.port;
+	if(other.listenSocket){
+		setup(port);
 	}
 	return *this;
 }
 
 //--------------------------------------------------------------
-bool ofxOscReceiver::setup(int listen_port){
+bool ofxOscReceiver::setup(int port){
 	if(osc::UdpSocket::GetUdpBufferSize() == 0){
 	   osc::UdpSocket::SetUdpBufferSize(65535);
 	}
 	
 	// if we're already running, shutdown before running again
-	if(listen_socket){
+	if(listenSocket){
 		clear();
 	}
 	
 	// create socket
 	osc::UdpListeningReceiveSocket *socket = nullptr;
 	try{
-		socket = new osc::UdpListeningReceiveSocket(osc::IpEndpointName(osc::IpEndpointName::ANY_ADDRESS, listen_port ), this, allowReuse);
+		socket = new osc::UdpListeningReceiveSocket(osc::IpEndpointName(osc::IpEndpointName::ANY_ADDRESS, port), this, allowReuse);
 		auto deleter = [](osc::UdpListeningReceiveSocket*socket){
 			// tell the socket to shutdown
 			socket->Break();
 			delete socket;
 		};
-		auto new_ptr = std::unique_ptr<osc::UdpListeningReceiveSocket, decltype(deleter)>(socket, deleter);
-		listen_socket = std::move(new_ptr);
+		auto newPtr = std::unique_ptr<osc::UdpListeningReceiveSocket, decltype(deleter)>(socket, deleter);
+		listenSocket = std::move(newPtr);
 	}
 	catch(std::exception &e){
-		ofLogError("ofxOscReceiver") << "listen_port: " << listen_port << " " << e.what();
+		ofLogError("ofxOscReceiver") << "couldn't create receive socket on port: " << port << " " << e.what();
 		if(socket != nullptr){
 			delete socket;
 			socket = nullptr;
@@ -84,10 +84,10 @@ bool ofxOscReceiver::setup(int listen_port){
 		return false;
 	}
 
-	listen_thread = std::thread([this]{
-		while(listen_socket){
+	listenThread = std::thread([this]{
+		while(listenSocket){
 			try{
-				listen_socket->Run();
+				listenSocket->Run();
 			}
 			catch(std::exception &e){
 				ofLogWarning() << e.what();
@@ -98,17 +98,17 @@ bool ofxOscReceiver::setup(int listen_port){
 	// detach thread so we don't have to wait on it before creating a new socket
 	// or on destruction, the custom deleter for the socket unique_ptr already
 	// does the right thing
-	listen_thread.detach();
+	listenThread.detach();
 
-	this->listen_port = listen_port;
+	this->port = port;
 	
 	return true;
 }
 
 //--------------------------------------------------------------
 void ofxOscReceiver::clear() {
-	listen_socket.reset();
-	listen_port = 0;
+	listenSocket.reset();
+	port = 0;
 }
 
 //--------------------------------------------------------------
@@ -181,22 +181,22 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
 
 //--------------------------------------------------------------
 int ofxOscReceiver::getPort(){
-	return listen_port;
+	return port;
 }
 
 //--------------------------------------------------------------
 void ofxOscReceiver::disableReuse(){
 	allowReuse = false;
-	if(listen_socket){
-		setup(listen_port);
+	if(listenSocket){
+		setup(port);
 	}
 }
 
 //--------------------------------------------------------------
 void ofxOscReceiver::enableReuse(){
 	allowReuse = true;
-	if(listen_socket){
-		setup(listen_port);
+	if(listenSocket){
+		setup(port);
 	}
 }
 
@@ -210,9 +210,9 @@ void ofxOscReceiver::ProcessMessage(const osc::ReceivedMessage &m, const osc::Ip
 	msg.setAddress(m.AddressPattern());
 	
 	// set the sender ip/host
-	char endpoint_host[osc::IpEndpointName::ADDRESS_STRING_LENGTH];
-	remoteEndpoint.AddressAsString(endpoint_host);
-	msg.setRemoteEndpoint(endpoint_host, remoteEndpoint.port);
+	char endpointHost[osc::IpEndpointName::ADDRESS_STRING_LENGTH];
+	remoteEndpoint.AddressAsString(endpointHost);
+	msg.setRemoteEndpoint(endpointHost, remoteEndpoint.port);
 
 	// transfer the arguments
 	for(osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin(); arg != m.ArgumentsEnd(); ++arg){

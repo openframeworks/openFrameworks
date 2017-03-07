@@ -48,7 +48,7 @@ public:
 	ofxOscSender& copy(const ofxOscSender& other);
 
 	/// set up the sender with the destination host name/ip and port
-	void setup(const string &hostname, int port);
+	void setup(const string &host, int port);
 	
 	/// clear the sender 
 	void clear();
@@ -64,7 +64,7 @@ public:
 	void sendParameter(const ofAbstractParameter & parameter);
 
 	/// return current host name/ip or "" if setup was not called
-	string getHostname();
+	string getHost();
 
 	/// return current port or 0 if setup was not called
 	int getPort();
@@ -85,8 +85,8 @@ private:
 	void appendParameter(ofxOscBundle & bundle, const ofAbstractParameter & parameter, const string &address);
 	void appendParameter(ofxOscMessage & msg, const ofAbstractParameter & parameter, const string &address);
 
-	std::unique_ptr<osc::UdpTransmitSocket> socket; //< sender socket
+	std::unique_ptr<osc::UdpTransmitSocket> sendSocket; //< sender socket
 	bool broadcast; //< allow multicast broadcasting ip range?
-	string hostname; //< destination host/ip
+	string host; //< destination host name/ip
 	int port; //< destination port
 };
