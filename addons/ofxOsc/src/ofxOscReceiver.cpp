@@ -46,7 +46,6 @@ ofxOscReceiver& ofxOscReceiver::copy(const ofxOscReceiver& other){
 	if(this == &other) return *this;
 	allowReuse = other.allowReuse;
 	listen_port = other.listen_port;
-	// should the new listener be started with the same port another is using?
 	if(other.listen_socket){
 		setup(listen_port);
 	}

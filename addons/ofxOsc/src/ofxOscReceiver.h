@@ -36,6 +36,8 @@
 #include "OscPacketListener.h"
 #include "UdpSocket.h"
 
+/// \class ofxOscReceiver
+/// \brief OSC message receiver which listens on a network port
 class ofxOscReceiver : public osc::OscPacketListener {
 public:
 
@@ -45,45 +47,50 @@ public:
 	/// for operator= and copy constructor
 	ofxOscReceiver& copy(const ofxOscReceiver& other);
 
-	/// listen_port is the port to listen for messages on
+	/// set up the receiver with the port to listen for messages on
+	/// \return true is listening was started
 	bool setup(int listen_port);
 	
 	/// stop listening and clear the receiver 
 	void clear();
 
-	/// returns true if there are any messages waiting for collection
+	/// /return true if there are any messages waiting for collection
 	bool hasWaitingMessages();
 
-	/// take the next message on the queue of received messages, copy its details into message, and
-	/// remove it from the queue. return false if there are no more messages to be got, otherwise
-	/// return true
-	OF_DEPRECATED_MSG("Pass a reference instead of a pointer", bool getNextMessage(ofxOscMessage* msg));
+	/// take the next message on the queue of received messages, copy its
+	/// details into message, and remove it from the queue
+	/// \return false if there are no more messages to be got, otherwise return true
 	bool getNextMessage(ofxOscMessage& msg);
-
+	OF_DEPRECATED_MSG("Pass a reference instead of a pointer", bool getNextMessage(ofxOscMessage* msg));
+	
 	/// try to get waiting message an ofParameter
-	/// return true if message was handled by the given parameter
+	/// \return true if message was handled by the given parameter
 	bool getParameter(ofAbstractParameter & parameter);
 
-	/// return current port or 0 if setup was not called
+	/// \return current port or 0 if setup was not called
 	int getPort();
 	
-	/// disables port reuse reuse which allows to use the same port by several sockets
+	/// disables port reuse reuse which allows the same port to be used by several sockets
 	void disableReuse();
 
-	/// enabled broadcast capabilities (usually no need to call this, enabled by default)
+	/// enable broadcast capabilities
+	/// usually no need to call this, enabled by default
 	void enableReuse();
 
 protected:
+
 	/// process an incoming osc message and add it to the queue
 	virtual void ProcessMessage(const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint);
 
 private:
-	// socket to listen on
+
+	/// socket to listen on, unique for each port
+	/// shared between objects is allowReuse is true
 	std::unique_ptr<osc::UdpListeningReceiveSocket, std::function<void(osc::UdpListeningReceiveSocket*)>> listen_socket;
 
-	std::thread listen_thread;
-	ofThreadChannel<ofxOscMessage> messagesChannel;
+	std::thread listen_thread; //< listener thread
+	ofThreadChannel<ofxOscMessage> messagesChannel; //< message passing thread channel
 
-	bool allowReuse;
-	int listen_port;
+	bool allowReuse; //< all the port to be reused by several sockets?
+	int listen_port; //< port to listen on
 };

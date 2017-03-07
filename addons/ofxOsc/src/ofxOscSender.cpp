@@ -80,15 +80,15 @@ void ofxOscSender::sendBundle(const ofxOscBundle& bundle){
 	if(!socket){
 		ofLogError("ofxOscSender") << "trying to send before setup";
 	}
-	//setting this much larger as it gets trimmed down to the size its using before being sent.
-	//TODO: much better if we could make this dynamic? Maybe have ofxOscBundle return its size?
+	
+	// setting this much larger as it gets trimmed down to the size its using before being sent.
+	// TODO: much better if we could make this dynamic? Maybe have ofxOscBundle return its size?
 	static const int OUTPUT_BUFFER_SIZE = 327680;
 	char buffer[OUTPUT_BUFFER_SIZE];
 	osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);
 
-	// serialise the bundle
+	// serialise the bundle and send
 	appendBundle(bundle, p);
-
 	socket->Send(p.Data(), p.Size());
 }
 
@@ -97,13 +97,14 @@ void ofxOscSender::sendMessage(const ofxOscMessage& message, bool wrapInBundle){
 	if(!socket){
 		ofLogError("ofxOscSender") << "trying to send before setup";
 	}
-	//setting this much larger as it gets trimmed down to the size its using before being sent.
-	//TODO: much better if we could make this dynamic? Maybe have ofxOscMessage return its size?
+	
+	// setting this much larger as it gets trimmed down to the size its using before being sent.
+	// TODO: much better if we could make this dynamic? Maybe have ofxOscMessage return its size?
 	static const int OUTPUT_BUFFER_SIZE = 327680;
 	char buffer[OUTPUT_BUFFER_SIZE];
 	osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);
 
-	// serialise the message
+	// serialise the message and send
 	if(wrapInBundle) {
 		p << osc::BeginBundleImmediate;
 	}
@@ -111,12 +112,11 @@ void ofxOscSender::sendMessage(const ofxOscMessage& message, bool wrapInBundle){
 	if(wrapInBundle) {
 		p << osc::EndBundle;
 	}
-
 	socket->Send(p.Data(), p.Size());
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
+void ofxOscSender::sendParameter(const ofAbstractParameter & parameter){
 	if(!parameter.isSerializable()) return;
 	if(parameter.type() == typeid(ofParameterGroup).name()){
 		string address = "/";
@@ -131,8 +131,8 @@ void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
 	else{
 		string address = "";
 		const vector<string> hierarchy = parameter.getGroupHierarchyNames();
-		for(int i=0;i<(int)hierarchy.size()-1;i++){
-			address+= "/" + hierarchy[i];
+		for(int i = 0; i < (int)hierarchy.size()-1; i++){
+			address += "/" + hierarchy[i];
 		}
 		if(address.length()) {
 			address += "/";
@@ -178,7 +178,7 @@ void ofxOscSender::appendBundle(const ofxOscBundle& bundle, osc::OutboundPacketS
 		appendBundle(bundle.getBundleAt(i), p);
 	}
 	for(int i = 0; i < bundle.getMessageCount(); i++){
-		appendMessage( bundle.getMessageAt(i), p);
+		appendMessage(bundle.getMessageAt(i), p);
 	}
 	p << osc::EndBundle;
 }
@@ -238,7 +238,7 @@ void ofxOscSender::appendMessage(const ofxOscMessage& message, osc::OutboundPack
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractParameter & parameter, const string &address){
+void ofxOscSender::appendParameter(ofxOscBundle & _bundle, const ofAbstractParameter & parameter, const string &address){
 	if(parameter.type() == typeid(ofParameterGroup).name()){
 		ofxOscBundle bundle;
 		const ofParameterGroup & group = static_cast<const ofParameterGroup &>(parameter);
@@ -253,25 +253,25 @@ void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractPara
 	else{
 		if(parameter.isSerializable()){
 			ofxOscMessage msg;
-			appendParameter(msg,parameter,address);
+			appendParameter(msg, parameter, address);
 			_bundle.addMessage(msg);
 		}
 	}
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, const string &address){
+void ofxOscSender::appendParameter(ofxOscMessage & msg, const ofAbstractParameter & parameter, const string &address){
 	msg.setAddress(address+parameter.getEscapedName());
-	if(parameter.type()==typeid(ofParameter<int>).name()){
+	if(parameter.type() == typeid(ofParameter<int>).name()){
 		msg.addIntArg(parameter.cast<int>());
 	}
-	else if(parameter.type()==typeid(ofParameter<float>).name()){
+	else if(parameter.type() == typeid(ofParameter<float>).name()){
 		msg.addFloatArg(parameter.cast<float>());
 	}
-	else if(parameter.type()==typeid(ofParameter<double>).name()){
+	else if(parameter.type() == typeid(ofParameter<double>).name()){
 		msg.addDoubleArg(parameter.cast<double>());
 	}
-	else if(parameter.type()==typeid(ofParameter<bool>).name()){
+	else if(parameter.type() == typeid(ofParameter<bool>).name()){
 		msg.addBoolArg(parameter.cast<bool>());
 	}
 	else{
