@@ -207,6 +207,7 @@ string ofxBaseGui::getName(){
 
 void ofxBaseGui::setName(const std::string& _name){
 	getParameter().setName(_name);
+	setNeedsRedraw();
 }
 
 void ofxBaseGui::setPosition(const ofPoint & p){
