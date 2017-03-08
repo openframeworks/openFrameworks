@@ -61,7 +61,12 @@ bool ofxOscReceiver::setup(int port){
 		listenSocket = std::move(newPtr);
 	}
 	catch(std::exception &e){
-		ofLogError("ofxOscReceiver") << "couldn't create receive socket on port " << port << ": " << e.what();
+		string what = e.what();
+		// strip endline as ofLogError already adds one
+		if(!what.empty() && what.back() == '\n') {
+			what = what.substr(0, what.size()-1);
+		}
+		ofLogError("ofxOscReceiver") << "couldn't create receive socket on port " << port << ": " << what;
 		if(socket != nullptr){
 			delete socket;
 			socket = nullptr;
