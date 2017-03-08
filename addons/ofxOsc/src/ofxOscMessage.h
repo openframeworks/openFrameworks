@@ -113,7 +113,7 @@ public:
 	char getArgAsChar(int index) const;
 	
 	/// \return given argument value as a 4-byte midi message
-	int32_t getArgAsMidiMessage(int index) const;
+	uint32_t getArgAsMidiMessage(int index) const;
 	
 	/// get argument as a bool, converts numeric types automatically
 	/// this argument type matches both OFXOSC_TYPE_TRUE & OFXOSC_TYPE_FALSE
@@ -139,14 +139,14 @@ public:
 	bool getArgAsInfinitum(int index) const;
 	
 	/// \return given argument as a 64-bit NTP time tag
-	int64_t getArgAsTimetag(int index) const;
+	uint64_t getArgAsTimetag(int index) const;
 	
 	/// \return given argument as a binary blob
 	ofBuffer getArgAsBlob(int index) const;
 	
 	/// get an argument as an RGBA color, converts int32 automatically
 	/// \return given argument as a 32-bit color value
-	int32_t getArgAsRgbaColor(int index) const;
+	uint32_t getArgAsRgbaColor(int index) const;
 
 	/// \section Argument Setters
 
@@ -175,7 +175,7 @@ public:
 	void addCharArg(char argument);
 	
 	/// add a 4-byte MIDI message
-	void addMidiMessageArg(int32_t argument);
+	void addMidiMessageArg(uint32_t argument);
 	
 	/// add a bool
 	/// true sends a OFXOSC_TYPE_TRUE & false sends an OFXOSC_TYPE_FALSE
@@ -195,14 +195,14 @@ public:
 	/// alias for addTriggerArg()
 	void addInfinitumArg();
 	
-	/// add a 64-bt NTP time tag
-	void addTimetagArg(int64_t argument);
+	/// add a 64-bit NTP time tag
+	void addTimetagArg(uint64_t argument);
 	
 	/// add a binary blog
 	void addBlobArg(const ofBuffer &argument);
 	
 	/// add a 32-bit color
-	void addRgbaColorArg(int32_t argument);
+	void addRgbaColorArg(uint32_t argument);
 
 	/// set host and port of the remote endpoint,
 	/// this is mainly used by ofxOscReceiver
