@@ -176,7 +176,7 @@ public:
 /// \brief a null-terminated char argument, type name "c"
 class ofxOscArgChar : public ofxOscArg{
 public:
-	ofxOscArgChar(char _value) : value(value) {};
+	ofxOscArgChar(char value) : value(value) {};
 	~ofxOscArgChar() {};
 
 	/// return the type of this argument
@@ -194,14 +194,22 @@ private:
 
 /// \class ofxOscArgMidiMessage
 /// \brief a 4-byte MIDI message argument, type name "m"
-class ofxOscArgMidiMessage : public ofxOscArgInt32{
+class ofxOscArgMidiMessage : public ofxOscArg{
 public:
-	ofxOscArgMidiMessage(int32_t value) : ofxOscArgInt32(value) {};
+	ofxOscArgMidiMessage(uint32_t value) : value(value) {};
 	~ofxOscArgMidiMessage() {};
 
 	/// return the type of this argument
 	ofxOscArgType getType() {return OFXOSC_TYPE_MIDI_MESSAGE;}
 	string getTypeName() {return "m";}
+	
+	/// return value
+	uint32_t get() const {return value;}
+	/// set value
+	void set(uint32_t value) {this->value = value;}
+
+private:
+	uint32_t value;
 };
 
 /// \class ofxOscArgBool
@@ -254,14 +262,22 @@ public:
 
 /// \class ofxOscArgTimetag
 /// \brief a 64-bit NTP time tag argument, type name "t"
-class ofxOscArgTimetag : public ofxOscArgInt64{
+class ofxOscArgTimetag : public ofxOscArg{
 public:
-	ofxOscArgTimetag(int64_t value) : ofxOscArgInt64(value) {};
+	ofxOscArgTimetag(uint64_t value) : value(value) {};
 	~ofxOscArgTimetag() {};
 
 	/// return the type of this argument
 	ofxOscArgType getType() {return OFXOSC_TYPE_TIMETAG;}
 	string getTypeName() {return "t";}
+	
+	/// return value
+	uint64_t get() const {return value;}
+	/// set value
+	void set(uint64_t value) {this->value = value;}
+
+private:
+	uint64_t value;
 };
 
 /// \class ofxOscArgBlob
@@ -288,20 +304,12 @@ private:
 
 /// \class ofxOscArgRgbaColor
 /// \brief a 32-bit RGBA color argument, type name "r"
-class ofxOscArgRgbaColor : public ofxOscArg{
+class ofxOscArgRgbaColor : public ofxOscArgMidiMessage{
 public:
-	ofxOscArgRgbaColor(int32_t value) : value(value) {};
+	ofxOscArgRgbaColor(uint32_t value) : ofxOscArgMidiMessage(value) {};
 	~ofxOscArgRgbaColor() {};
 
 	/// return the type of this argument
 	ofxOscArgType getType() {return OFXOSC_TYPE_RGBA_COLOR;}
 	string getTypeName() {return "r";}
-
-	/// return value
-	int32_t get() const {return value;}
-	/// set value
-	void set(int32_t value) {this->value = value;}
-
-private:
-	int32_t value;
 };
