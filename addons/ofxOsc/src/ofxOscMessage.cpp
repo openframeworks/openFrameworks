@@ -603,3 +603,65 @@ void ofxOscMessage::setRemoteEndpoint(const string &host, int port){
 	remoteHost = host;
 	remotePort = port;
 }
+
+// friend functions
+//--------------------------------------------------------------
+ostream& operator<<(ostream &os, const ofxOscMessage &message) {
+	os << message.getAddress();
+	for(int i = 0; i < message.getNumArgs(); ++i) {
+		os << " ";
+		switch(message.getArgType(i)) {
+			case OFXOSC_TYPE_INT32:
+				os << message.getArgAsInt32(i);
+				break;
+			case OFXOSC_TYPE_INT64:
+				os << message.getArgAsInt64(i);
+				break;
+			case OFXOSC_TYPE_FLOAT:
+				os << message.getArgAsFloat(i);
+				break;
+			case OFXOSC_TYPE_DOUBLE:
+				os << message.getArgAsDouble(i);
+				break;
+			case OFXOSC_TYPE_STRING:
+				os << message.getArgAsString(i);
+				break;
+			case OFXOSC_TYPE_SYMBOL:
+				os << message.getArgAsSymbol(i);
+				break;
+			case OFXOSC_TYPE_CHAR:
+				os << message.getArgAsChar(i);
+				break;
+			case OFXOSC_TYPE_MIDI_MESSAGE:
+				os << ofToHex(message.getArgAsMidiMessage(i));
+				break;
+			case OFXOSC_TYPE_TRUE:
+				os << "T";
+				break;
+			case OFXOSC_TYPE_FALSE:
+				os << "F";
+				break;
+			case OFXOSC_TYPE_NONE:
+				os << "NONE";
+				break;
+			case OFXOSC_TYPE_TRIGGER:
+				os << "TRIGGER";
+				break;
+			case OFXOSC_TYPE_TIMETAG:
+				os << "TIMETAG";
+				break;
+			case OFXOSC_TYPE_BLOB:
+				os << "BLOB";
+				break;
+			case OFXOSC_TYPE_BUNDLE:
+				os << "BUNDLE";
+				break;
+			case OFXOSC_TYPE_RGBA_COLOR:
+				os << ofToHex(message.getArgAsRgbaColor(i));
+				break;
+			default:
+				break;
+		}
+	}
+	return os;
+}

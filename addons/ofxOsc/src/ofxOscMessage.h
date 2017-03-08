@@ -207,6 +207,20 @@ public:
 	/// set host and port of the remote endpoint,
 	/// this is mainly used by ofxOscReceiver
 	void setRemoteEndpoint(const string &host, int port);
+	
+	/// output stream operator for string conversion and printing
+	/// converts argument contents to strings with following caveats per type:
+	///   * true: printed as T
+	///   * false: printed as F
+	///   * midi message:  printed as 4-byte hex
+	///   * none/nil: printed as NONE (has no value)
+	///   * trigger impulse: printed as TRIGGER (has no value)
+	///   * timetag: printed as TIMETAG (does not show value)
+	///   * blob: printed as BLOB (does not show value)
+	///   * bundle: printed as BLOB (does not show value)
+	///   * rgba color: printed as 4-byte hex
+	/// \return message address & arguments separated by spaces
+	friend ostream& operator<<(ostream &os, const ofxOscMessage &message);
 
 private:
 
