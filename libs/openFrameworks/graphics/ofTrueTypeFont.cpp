@@ -171,6 +171,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face face){
 
 		ofTTFCharacter charOutlines;
 		charOutlines.setUseShapeColor(false);
+		charOutlines.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
 
 		for(int k = 0; k < nContours; k++){
 			if( k > 0 ){
