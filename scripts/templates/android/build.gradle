@@ -25,7 +25,7 @@ model {
     android {
         // openFrameworks currently only supports compiling against SDK 19
         compileSdkVersion = 19
-        buildToolsVersion = "25.0.0"
+        buildToolsVersion = "25.0.2"
 
         defaultConfig.with {
             minSdkVersion.apiLevel    = 19
@@ -72,15 +72,21 @@ model {
                     srcDirs = [ "srcJava" ]
                 }
             }
-//            aidl.source.srcDirs = ['srcJava']
-//            renderscript.source.srcDirs = ['srcJava']
-//            res.source.srcDirs = ['res']
+            aidl {
+                source{
+                    srcDirs = ['srcJava']
+                }
+            }
+            renderscript{
+                source{
+                    srcDirs = ['srcJava']
+                }
+            }
             jniLibs {
                 source {
                     srcDirs = ['libs']
                 }
             }
-            
             assets {
                 source {
                     srcDirs = ['bin/data'] + addonData(ofRoot())
