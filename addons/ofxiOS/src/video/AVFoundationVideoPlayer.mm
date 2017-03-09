@@ -78,14 +78,7 @@ NSString * const kCurrentItemKey	= @"currentItem";
     BOOL bSampleAudio;
 }
 
-@synthesize delegate;
-@synthesize playerView;
-@synthesize player = _player;
-@synthesize playerItem;
-@synthesize asset;
-@synthesize assetReader;
-@synthesize assetReaderVideoTrackOutput;
-@synthesize assetReaderAudioTrackOutput;
+
 
 static const NSString * ItemStatusContext;
 

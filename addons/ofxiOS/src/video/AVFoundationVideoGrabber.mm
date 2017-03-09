@@ -26,7 +26,6 @@
 
 @implementation iOSVideoGrabber
 
-@synthesize captureSession;
 
 #pragma mark -
 #pragma mark Initialization

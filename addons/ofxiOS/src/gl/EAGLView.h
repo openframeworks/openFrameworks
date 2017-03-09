@@ -48,7 +48,6 @@
 @interface EAGLView : UIView
 {
 @public
-    __unsafe_unretained id<EAGLViewDelegate> delegate;
     
 @protected
     id <ESRenderer> renderer;
@@ -61,7 +60,6 @@
     NSInteger fsaaSamples;
     ESRendererVersion rendererVersion;
     
-	BOOL animating;
 	BOOL displayLinkSupported;
 	float animationFrameInterval;
 	// Use of the CADisplayLink class is the preferred method for controlling your animation timing.
@@ -74,8 +72,8 @@
     NSLock * glLock;
 }
 
-@property (nonatomic, assign) id delegate;
-@property (readonly, nonatomic, getter=isAnimating) BOOL animating;
+@property (nonatomic, strong) id<EAGLViewDelegate> delegate;
+@property (nonatomic, assign) BOOL animating;
 @property (nonatomic) float animationFrameInterval;
 @property (nonatomic) float animationFrameRate;
 
@@ -108,5 +106,6 @@ andPreferedRenderer:(ESRendererVersion)rendererVersion
 - (void) notifyAnimationStopped;
 - (void) notifyDraw;
 - (void) notifyResized;
+-(BOOL) isAnimating;
 
 @end

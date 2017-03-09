@@ -15,39 +15,22 @@
 
 @interface ofxiOSCoreLocationDelegate : NSObject <CLLocationManagerDelegate>
 {
-	CLLocationManager *locationManager;
 	
-	//location
-	double lat;
-	double lng;
-	double hAccuracy;
-	double alt;
-	double vAccuracy;
-	double distMoved;
-	//NSString * lastUpdatedLocationTimestamp
-	
-	//heading
-	double x;
-	double y;
-	double z;
-	double magneticHeading;
-	double trueHeading;
-	double headingAccuracy;
-	//NSString * lastUpdatedCompasTimestamp
 }
 
-@property (nonatomic, readonly) double lat;
-@property (nonatomic, readonly) double lng;
-@property (nonatomic, readonly) double hAccuracy;
-@property (nonatomic, readonly) double alt;
-@property (nonatomic, readonly) double vAccuracy;
-@property (nonatomic, readonly) double distMoved;
-@property (nonatomic, readonly) double x;
-@property (nonatomic, readonly) double y;
-@property (nonatomic, readonly) double z;
-@property (nonatomic, readonly) double magneticHeading;
-@property (nonatomic, readonly) double trueHeading;
-@property (nonatomic, readonly) double headingAccuracy;
+@property (nonatomic, assign) double lat;
+@property (nonatomic, assign) double lng;
+@property (nonatomic, assign) double hAccuracy;
+@property (nonatomic, assign) double alt;
+@property (nonatomic, assign) double vAccuracy;
+@property (nonatomic, assign) double distMoved;
+@property (nonatomic, assign) double x;
+@property (nonatomic, assign) double y;
+@property (nonatomic, assign) double z;
+@property (nonatomic, assign) double magneticHeading;
+@property (nonatomic, assign) double trueHeading;
+@property (nonatomic, assign) double headingAccuracy;
+@property (nonatomic, strong) CLLocationManager* locationManager;
 
 - (id) init;
 

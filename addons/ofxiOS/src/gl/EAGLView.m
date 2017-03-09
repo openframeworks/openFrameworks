@@ -47,8 +47,7 @@
 
 @implementation EAGLView
 
-@synthesize delegate;
-@synthesize animating;
+
 @dynamic animationFrameInterval;
 @dynamic animationFrameRate;
 
@@ -131,7 +130,7 @@ andPreferedRenderer:(ESRendererVersion)version
 #endif
 		self.opaque = true;
         
-		animating = NO;
+		self.animating = NO;
 		displayLinkSupported = NO;
 		animationFrameInterval = 1;
 		displayLink = nil;
@@ -159,7 +158,10 @@ andPreferedRenderer:(ESRendererVersion)version
 	
 	return self;
 }
-
+-(BOOL) isAnimating
+{
+	return self.animating;
+}
 - (void) destroy {
     if(!bInit) {
         return;
@@ -241,7 +243,7 @@ andPreferedRenderer:(ESRendererVersion)version
 	if(frameInterval >= 1) {
 		animationFrameInterval = frameInterval;
 		
-		if(animating) {
+		if(self.animating) {
 			[self stopAnimation];
 			[self startAnimation];
 		}
@@ -258,7 +260,7 @@ andPreferedRenderer:(ESRendererVersion)version
 }
 
 - (void) startAnimation {
-	if(!animating) {
+	if(!self.animating) {
 		if(displayLinkSupported) {
 			// CADisplayLink is API new to iPhone SDK 3.1. Compiling against earlier versions will result in a warning, but can be dismissed
 			// if the system version runtime check for CADisplayLink exists in -initWithCoder:. The runtime check ensures this code will
@@ -275,7 +277,7 @@ andPreferedRenderer:(ESRendererVersion)version
                                                              repeats:TRUE];
         }
 		
-		animating = YES;
+		self.animating = YES;
         
         [self notifyAnimationStarted];
 	}
@@ -284,7 +286,7 @@ andPreferedRenderer:(ESRendererVersion)version
 }
 
 - (void)stopAnimation {
-	if(animating) {
+	if(self.animating) {
 		if (displayLinkSupported) {
 			[displayLink invalidate];
 			displayLink = nil;
@@ -293,7 +295,7 @@ andPreferedRenderer:(ESRendererVersion)version
 			animationTimer = nil;
 		}
 		
-		animating = NO;
+		self.animating = NO;
         
         [self notifyAnimationStopped];
 	}

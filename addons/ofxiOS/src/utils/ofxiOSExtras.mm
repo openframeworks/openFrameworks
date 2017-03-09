@@ -518,27 +518,26 @@ string ofxiOSGetClipboardString() {
 /******************** ofxiOSScreenGrab *********************/
 
 @interface SaveDelegate : NSObject {
-	id delegate;
 }
-@property (retain, nonatomic) id delegate;
+@property (nonatomic, strong) id delegate;
 @end
 
 
 @implementation SaveDelegate
-@synthesize delegate;
+
 
 // callback for UIImageWriteToSavedPhotosAlbum
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
 	ofLogVerbose("ofxiOSExtras") << "didFinishSavingWithError: save finished";
 
-	if([delegate respondsToSelector: @selector(saveComplete)]) {
-        [delegate performSelector:@selector(saveComplete)];
+	if([self.delegate respondsToSelector: @selector(saveComplete)]) {
+        [self.delegate performSelector:@selector(saveComplete)];
     }
 	
 }
 
 -(void)dealloc {
-	delegate = nil;
+	self.delegate = nil;
 }
 
 @end

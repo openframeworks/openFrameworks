@@ -151,7 +151,6 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 
 //--------------------------------------------------------------
 //create getter/setter functions for these variables
-@synthesize lat, lng, hAccuracy, alt, vAccuracy, distMoved, x, y, z, magneticHeading, trueHeading, headingAccuracy;
 
 //--------------------------------------------------------------
 - (id) init
@@ -159,24 +158,24 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 	if(self = [super init])
 	{		
 		
-		lat = 0;
-		lng = 0;
-		hAccuracy = 0;
-		alt = 0;
-		vAccuracy = 0;
-		distMoved = 0;
+		self.lat = 0;
+		self.lng = 0;
+		self.hAccuracy = 0;
+		self.alt = 0;
+		self.vAccuracy = 0;
+		self.distMoved = 0;
 		
 		
-		x = 0;
-		y = 0;
-		z = 0;
-		magneticHeading = 0;
-		trueHeading = 0;
-		headingAccuracy = 0;
+		self.x = 0;
+		self.y = 0;
+		self.z = 0;
+		self.magneticHeading = 0;
+		self.trueHeading = 0;
+		self.headingAccuracy = 0;
 		
 		
-		locationManager = [[CLLocationManager alloc] init];
-		locationManager.delegate = self;
+		self.locationManager = [[CLLocationManager alloc] init];
+		self.locationManager.delegate = self;
 	}
 	return self;
 }
@@ -187,7 +186,7 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 {
 	if([CLLocationManager headingAvailable])
 	{
-		[locationManager startUpdatingHeading];
+		[self.locationManager startUpdatingHeading];
 		return true;
 	}
 	else
@@ -198,7 +197,7 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 
 - (void) stopHeading
 {
-	[locationManager stopUpdatingHeading];
+	[self.locationManager stopUpdatingHeading];
 }
 
 //--------------------------------------------------------------
@@ -207,7 +206,7 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 {
 	if([CLLocationManager locationServicesEnabled])
 	{
-		[locationManager startUpdatingLocation];
+		[self.locationManager startUpdatingLocation];
 		return true;
 	}
 	else
@@ -218,14 +217,14 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 //--------------------------------------------------------------
 
 - (void) stopLocation {
-	[locationManager stopUpdatingLocation];
+	[self.locationManager stopUpdatingLocation];
 }
 
 //--------------------------------------------------------------
 
 - (bool) startMonitoringSignificantLocationChanges {
     if ([CLLocationManager locationServicesEnabled]) {
-		[locationManager startMonitoringSignificantLocationChanges];
+		[self.locationManager startMonitoringSignificantLocationChanges];
 		return true;
 	}
     return false;
@@ -234,7 +233,7 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 //--------------------------------------------------------------
 
 - (void) stopMonitoringSignificantLocationChanges {
-  [locationManager stopMonitoringSignificantLocationChanges];
+  [self.locationManager stopMonitoringSignificantLocationChanges];
 }
 
 //--------------------------------------------------------------
@@ -248,13 +247,13 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 		// Negative accuracy means an invalid or unavailable measurement
 		NSLog(@"LatLongUnavailable");
 	} else {
-		lat = newLocation.coordinate.latitude;
-		lng = newLocation.coordinate.longitude;
-		hAccuracy = newLocation.horizontalAccuracy;
+		self.lat = newLocation.coordinate.latitude;
+		self.lng = newLocation.coordinate.longitude;
+		self.hAccuracy = newLocation.horizontalAccuracy;
 		
 		if (oldLocation != nil) {
 			CLLocationDistance distanceMoved = [newLocation distanceFromLocation:oldLocation];
-			distMoved = distanceMoved;
+			self.distMoved = distanceMoved;
 		}
 	}
 
@@ -262,8 +261,8 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 		// Negative accuracy means an invalid or unavailable measurement
 		NSLog(@"AltUnavailable");
 	} else {
-		vAccuracy = newLocation.verticalAccuracy;
-		alt = newLocation.altitude;
+		self.vAccuracy = newLocation.verticalAccuracy;
+		self.alt = newLocation.altitude;
 	}
 	
 }
@@ -273,12 +272,12 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 //called when the heading is updated
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
-	x = newHeading.x;
-	y = newHeading.y;
-	z = newHeading.z;
-	magneticHeading = newHeading.magneticHeading;
-	trueHeading = newHeading.trueHeading;
-	headingAccuracy = newHeading.headingAccuracy;
+	self.x = newHeading.x;
+	self.y = newHeading.y;
+	self.z = newHeading.z;
+	self.magneticHeading = newHeading.magneticHeading;
+	self.trueHeading = newHeading.trueHeading;
+	self.headingAccuracy = newHeading.headingAccuracy;
 }
 
 //--------------------------------------------------------------

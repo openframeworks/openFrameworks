@@ -25,9 +25,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 @implementation ofxiOSEAGLView
 
-@synthesize screenSize;
-@synthesize windowSize;
-@synthesize windowPos;
+
 
 + (ofxiOSEAGLView *) getInstance {
     return _instanceRef;
@@ -375,6 +373,19 @@ static ofxiOSEAGLView * _instanceRef = nil;
 	[self touchesEnded:touches withEvent:event];
 }
 
+-(glm::vec2*)getScreenSize;
+{
+	return self->screenSize;
+}
 
+-(glm::vec2*)getWindowSize
+{
+	return self->windowSize;
+}
+
+-(glm::vec2*)getWindowPosition;
+{
+	return self->windowPos;
+}
 
 @end
