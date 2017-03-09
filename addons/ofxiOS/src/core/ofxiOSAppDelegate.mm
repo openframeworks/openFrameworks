@@ -43,10 +43,6 @@
 
 @implementation ofxiOSAppDelegate
 
-@synthesize window;
-@synthesize externalWindow;
-@synthesize glViewController;
-@synthesize currentScreenIndex;
 
 - (void)dealloc {
     self.window = nil;
@@ -59,7 +55,7 @@
     self.window = [[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
 	[self.window makeKeyAndVisible];
     
-    currentScreenIndex = 0;
+    self.currentScreenIndex = 0;
     
     // set the root application path
     ofSetDataPathRoot([[NSString stringWithFormat:@"%@/", [[NSBundle mainBundle] resourcePath]] cStringUsingEncoding:NSUTF8StringEncoding]);
@@ -330,8 +326,8 @@
         return NO; // invalid screen index.
     }
     
-    if(currentScreenIndex != screenIndex){
-        currentScreenIndex = screenIndex;
+    if( self.currentScreenIndex != screenIndex){
+         self.currentScreenIndex = screenIndex;
     } else {
         return NO; // already displaying on this screen.
     }

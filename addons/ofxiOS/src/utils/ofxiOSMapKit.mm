@@ -32,12 +32,12 @@
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
-#include "ofxiOSMapKitDelegate.h"
 #include "ofxiOSExtras.h"
 #include "ofAppRunner.h"
 
 ofxiOSMapKit::ofxiOSMapKit() {
 	mapView = nil;
+	mapKitDelegate = nil;
 }
 
 ofxiOSMapKit::~ofxiOSMapKit() {
@@ -216,8 +216,10 @@ MKCoordinateSpan ofxiOSMapKit::makeMKCoordinateSpan(double latitudeDelta, double
 void ofxiOSMapKit::addListener(ofxiOSMapKitListener* o) {
     if(isOpen()) {
         ofLogVerbose("ofxiOSMapKit") << "addListener(): adding ofxiOSMapKitDelegate";
-        if(mapView.delegate == nil) {
-            mapView.delegate = [[ofxiOSMapKitDelegate alloc] initWithMapKit:this];
+        if(!mapKitDelegate) 
+		{
+			mapKitDelegate = [[ofxiOSMapKitDelegate alloc] initWithMapKit:this];
+			mapView.delegate = mapKitDelegate;
         }
         listeners.push_back(o);
     }

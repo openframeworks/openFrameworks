@@ -516,7 +516,6 @@ bool ofxiOSImagePicker::getImageUpdated(){
 //----------------------------------------------------------- overlay.
 @implementation OverlayView
 
-@synthesize delegate;
 
 - (id)initWithFrame:(CGRect)frame{
     if (self = [super initWithFrame:frame]) {
@@ -550,8 +549,8 @@ bool ofxiOSImagePicker::getImageUpdated(){
 }
 
 - (void)takePhoto:(id)sender {
-    if([delegate respondsToSelector:@selector(takePicture)]) {
-        [delegate takePicture];
+    if([self.delegate respondsToSelector:@selector(takePicture)]) {
+        [self.delegate takePicture];
     }	
 }
 

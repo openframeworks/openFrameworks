@@ -22,7 +22,6 @@
 
 @implementation ofxiOSViewController
 
-@synthesize glView;
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
     currentInterfaceOrientation = pendingInterfaceOrientation = UIInterfaceOrientationPortrait;

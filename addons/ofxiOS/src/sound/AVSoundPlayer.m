@@ -14,9 +14,6 @@
 
 @implementation AVSoundPlayer
 
-@synthesize delegate;
-@synthesize player;
-@synthesize timer;
 
 - (id)init {
     self = [super init];
