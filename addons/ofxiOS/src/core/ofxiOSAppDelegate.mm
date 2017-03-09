@@ -83,7 +83,7 @@
     
     [center addObserver:self
                selector:@selector(handleScreenModeDidChangeNotification:)
-                   name:UIScreenDidDisconnectNotification object:nil];
+                   name:UIScreenModeDidChangeNotification object:nil];
     
     
     bool bDoesHWOrientation = ofxiOSGetOFWindow()->doesHWOrientation();

@@ -79,6 +79,7 @@ static void restoreAppWindowFocus(){
 #include <gtk/gtk.h>
 #include "ofGstUtils.h"
 #include <thread>
+#include <X11/Xlib.h>
 
 #if GTK_MAJOR_VERSION>=3
 #define OPEN_BUTTON "_Open"
