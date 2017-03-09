@@ -10,7 +10,7 @@ void ofApp::setup(){
 	ofBackground(225, 225, 225);
 
 	// initialize the accelerometer
-	//ofxAccelerometer.setup();
+	ofxiOSAccelerometerHandler().setup();
 	
 	hasCompass = coreLocation->startHeading();
 	hasGPS = coreLocation->startLocation();

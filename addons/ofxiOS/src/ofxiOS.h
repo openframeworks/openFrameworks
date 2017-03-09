@@ -48,6 +48,6 @@
 #include "ofxiOSEAGLView.h"
 #include "ofxiOSApp.h"
 #include "ofxiOSExtras.h"
-#include "ofxAccelerometer.h"
+#include "ofxiOSAccelerometer.h"
 
 #endif

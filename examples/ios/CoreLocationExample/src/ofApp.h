@@ -2,7 +2,7 @@
 
 #include "ofxiOS.h"
 #include "ofxiOSCoreLocation.h"
-#include "ofxAccelerometer.h"
+#include "ofxiOSAccelerometer.h"
 
 class ofApp : public ofxiOSApp{
 	

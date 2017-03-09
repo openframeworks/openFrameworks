@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){	
 	// initialize the accelerometer
-	ofxAccelerometer.setup();
+	ofxiOSAccelerometerHandler().setup();
 	
 	ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
 	

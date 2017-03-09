@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0333726B1E6E881A002D30FE /* ofxiOSAccelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = 033372691E6E881A002D30FE /* ofxiOSAccelerometer.h */; };
+		0333726C1E6E881A002D30FE /* ofxiOSAccelerometer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0333726A1E6E881A002D30FE /* ofxiOSAccelerometer.mm */; };
 		037950391E6DD627002BBF10 /* AVFoundationVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 037950381E6DD627002BBF10 /* AVFoundationVideoPlayer.mm */; };
 		15594F0C15C55AC900727FF2 /* EAGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0515C55AC900727FF2 /* EAGLView.m */; };
 		15594F0D15C55AC900727FF2 /* ES1Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0615C55AC900727FF2 /* ES1Renderer.m */; };
@@ -217,6 +219,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		033372691E6E881A002D30FE /* ofxiOSAccelerometer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSAccelerometer.h; sourceTree = "<group>"; };
+		0333726A1E6E881A002D30FE /* ofxiOSAccelerometer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSAccelerometer.mm; sourceTree = "<group>"; };
 		037950381E6DD627002BBF10 /* AVFoundationVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoPlayer.mm; sourceTree = "<group>"; };
 		15594F0515C55AC900727FF2 /* EAGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLView.m; sourceTree = "<group>"; };
 		15594F0615C55AC900727FF2 /* ES1Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES1Renderer.m; sourceTree = "<group>"; };
@@ -521,6 +525,8 @@
 		15594F0215C55A5700727FF2 /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				033372691E6E881A002D30FE /* ofxiOSAccelerometer.h */,
+				0333726A1E6E881A002D30FE /* ofxiOSAccelerometer.mm */,
 				15594FB615C56D1E00727FF2 /* ofxiOSCoreLocation.h */,
 				15594FAF15C56D1E00727FF2 /* ofxiOSCoreLocation.mm */,
 				67D48ED11C103BAE00F719BC /* ofxiOSCoreMotion.h */,
@@ -946,6 +952,7 @@
 				67833F8519F8990D00DBE7AA /* ofThreadChannel.h in Headers */,
 				E4F76E73176CB27200798745 /* ofMain.h in Headers */,
 				E4F76E75176CB27200798745 /* ofBaseSoundPlayer.h in Headers */,
+				0333726B1E6E881A002D30FE /* ofxiOSAccelerometer.h in Headers */,
 				E4F76E77176CB27200798745 /* ofBaseSoundStream.h in Headers */,
 				E4F76E81176CB27200798745 /* ofSoundPlayer.h in Headers */,
 				E4F76E83176CB27200798745 /* ofSoundStream.h in Headers */,
@@ -1095,6 +1102,7 @@
 				E4F76E67176CB27200798745 /* ofMatrix3x3.cpp in Sources */,
 				E4F76E69176CB27200798745 /* ofMatrix4x4.cpp in Sources */,
 				E4F76E6B176CB27200798745 /* ofQuaternion.cpp in Sources */,
+				0333726C1E6E881A002D30FE /* ofxiOSAccelerometer.mm in Sources */,
 				E4F76E6D176CB27200798745 /* ofVec2f.cpp in Sources */,
 				6678E97519FEB2DF00C00581 /* ofBaseSoundStream.cpp in Sources */,
 				E4F76E70176CB27200798745 /* ofVec4f.cpp in Sources */,

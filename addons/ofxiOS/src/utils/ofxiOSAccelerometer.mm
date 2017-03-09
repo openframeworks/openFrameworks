@@ -32,7 +32,8 @@
 
 #import <UIKit/UIKit.h>
 
-#include "ofxAccelerometer.h"
+#include "ofxiOSAccelerometer.h"
+
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
@@ -51,9 +52,8 @@ static ofxiOSAccelerometerDelegate* iOSAccelerometerDelegate;
 
 /************ Impementation of standard C++ accel interface tailored for iPhone ************/
 // call this to setup the accelerometer
-void ofxAccelerometerHandler::setup() {
-	ofLogVerbose("ofxAccelerometer") << "setup(): initing iPhoneAccelerometerDelegate";
-	[iOSAccelerometerDelegate release];		// in case we've already called it for some reason
+void ofxiOSAccelerometerHandler::setup() {
+	ofLogVerbose("ofxiOSAccelerometer") << "setup(): initing iPhoneAccelerometerDelegate";
 	iOSAccelerometerDelegate = [[ofxiOSAccelerometerDelegate alloc] init];
 //	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications]; 
 
@@ -63,9 +63,8 @@ void ofxAccelerometerHandler::setup() {
 }
 	
 // call this when accelerometer is no longer needed
-void ofxAccelerometerHandler::exit() {
-	ofLogVerbose("ofxAccelerometer") << "exit(): releasing iPhoneAccelerometerDelegate";
-	[iOSAccelerometerDelegate release];
+void ofxiOSAccelerometerHandler::exit() {
+	ofLogVerbose("ofxiOSAccelerometer") << "exit(): releasing iPhoneAccelerometerDelegate";
 }
 
 
@@ -86,7 +85,7 @@ void ofxAccelerometerHandler::exit() {
 
 
 -(void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration*)accel {
-	ofxAccelerometer.update(accel.x, accel.y, accel.z);
+	ofxiOSAccelerometerHandler().update(accel.x, accel.y, accel.z);
 }
 
 @end
@@ -103,10 +102,10 @@ static ofxiOSAccelerometerDelegate* iOSAccelerometerDelegate;
 
 /************ Impementation of standard C++ accel interface tailored for iPhone ************/
 // call this to setup the accelerometer
-void ofxAccelerometerHandler::setup() {
+void ofxiOSAccelerometerHandler::setup() {
 
 }
-void ofxAccelerometerHandler::exit() {
+void ofxiOSAccelerometerHandler::exit() {
     
 }
 

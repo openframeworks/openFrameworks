@@ -14,7 +14,7 @@ void ofApp::setup(){
     ofBackground(0, 0);
     
 	// initialize the accelerometer
-	ofxAccelerometer.setup();
+	ofxiOSAccelerometerHandler().setup();
 	
 	// dump lots of info to console (useful for debugging)
 	ofSetLogLevel(OF_LOG_VERBOSE);

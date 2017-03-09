@@ -7,7 +7,7 @@
 void ofApp::setup(){	
 	
 	// initialize the accelerometer
-	ofxAccelerometer.setup();
+	ofxiOSAccelerometerHandler().setup();
 	
 	ofBackground(127,127,127);
 }

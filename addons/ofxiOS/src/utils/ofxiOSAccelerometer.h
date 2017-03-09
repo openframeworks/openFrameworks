@@ -37,9 +37,9 @@
 
 typedef void (*ofxAccelCB)(ofPoint&);			// typedef for accelerometer callback
 
-class ofxAccelerometerHandler {
+class ofxiOSAccelerometerHandler {
 public:
-	ofxAccelerometerHandler() {
+	ofxiOSAccelerometerHandler() {
 		callback = NULL;
 		setForceSmoothing(0.1f);					// little bit of smoothing for force
 		setOrientationSmoothing(0.9f);				// lots of smoothing for orientation / matrix
@@ -183,10 +183,9 @@ protected:
 
 };
 
-extern ofxAccelerometerHandler ofxAccelerometer;
 
 template<class T>
 void ofxRegisterAccelEvents(T * listener){
-	ofAddListener(ofxAccelerometer.accelChanged,listener,&T::accelerationChanged);
+	ofAddListener(ofxiOSAccelerometerHandler().accelChanged,listener,&T::accelerationChanged);
 }
 
