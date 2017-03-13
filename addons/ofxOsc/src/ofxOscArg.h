@@ -1,5 +1,5 @@
 // copyright (c) openFrameworks team 2010-2017
-// copyright (c) damian stewart 2007-2009
+// copyright (c) Damian Stewart 2007-2009
 #pragma once
 
 #include "ofConstants.h"
@@ -17,7 +17,7 @@
 ///   T - TRUE (no value required)
 ///   F - FALSE (no value required)
 ///   N - NIL (no value required)
-///   I - impulse TRIGGER, act as an trigger (no value required), aka IMPULSE &  INFINITUM
+///   I - impulse TRIGGER (no value required), aka IMPULSE & INFINITUM
 ///   t - TIMETAG, an OSC timetag in NTP format, encoded in the data section
 /// See: http://cnmat.berkeley.edu/system/files/attachments/Nime09OSCfinal.pdf
 typedef enum _ofxOscArgType{
@@ -37,7 +37,7 @@ typedef enum _ofxOscArgType{
 	OFXOSC_TYPE_BLOB             = 'b',
 	OFXOSC_TYPE_BUNDLE           = 'B',
 	OFXOSC_TYPE_RGBA_COLOR       = 'r',
-	OFXOSC_TYPE_INDEXOUTOFBOUNDS = 0    //< bad index value
+	OFXOSC_TYPE_INDEXOUTOFBOUNDS = 0 //< bad index value
 } ofxOscArgType;
 
 /// \class ofxOscArg
@@ -237,7 +237,7 @@ private:
 };
 
 /// \class ofxOscArgNone
-/// \brief a none/nil (has no value), type name "I"
+/// \brief a none/nil (has no value), type name "N"
 class ofxOscArgNone : public ofxOscArgBool{
 public:
 	ofxOscArgNone() : ofxOscArgBool(true) {};
