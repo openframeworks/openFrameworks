@@ -59,6 +59,13 @@ istream& operator>>(istream& is, ofAbstractParameter& p){
 	return is;
 }
 
+ofParameterGroup & ofAbstractParameter::castGroup(){
+	return static_cast<ofParameterGroup &>(*this);
+}
+
+const ofParameterGroup & ofAbstractParameter::castGroup() const{
+	return static_cast<const ofParameterGroup &>(*this);
+}
 
 
 ofParameter<void>::ofParameter()
