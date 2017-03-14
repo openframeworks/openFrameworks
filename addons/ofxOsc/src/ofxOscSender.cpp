@@ -205,8 +205,7 @@ void ofxOscSender::appendMessage(const ofxOscMessage& message, osc::OutboundPack
 			}
 			default:
 				ofLogError("ofxOscSender") << "appendMessage(): bad argument type "
-					<< message.getArgType(i);
-				assert(false);
+					<< message.getArgType(i) << " '" << (char) message.getArgType(i) << "'";
 				break;
 		}
 	}

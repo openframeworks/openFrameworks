@@ -257,8 +257,10 @@ void ofxOscReceiver::ProcessMessage(const osc::ReceivedMessage &m, const osc::Ip
 			msg.addBlobArg(buffer);
 		}
 		else {
-			ofLogError("ofxOscReceiver") << "ProcessMessage: argument in message "
-				<< m.AddressPattern() << " is an unknown type";
+			ofLogError("ofxOscReceiver") << "ProcessMessage(): argument in message "
+				<< m.AddressPattern() << " is an unknown type "
+				<< (int) arg->TypeTag() << " '" << (char) arg->TypeTag() << "'";
+				break;
 		}
 	}
 
