@@ -76,8 +76,7 @@ ofxOscMessage& ofxOscMessage::copy(const ofxOscMessage& other){
 				break;
 			default:
 				ofLogError("ofxOscMessage") << "copy(): bad argument type "
-					<< other.getArgType(i);
-				assert(false);
+					<< other.getArgType(i) << " '" << (char) other.getArgType(i) << "'";	
 				break;
 		}
 	}

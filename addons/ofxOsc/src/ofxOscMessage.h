@@ -178,7 +178,7 @@ public:
 	void addMidiMessageArg(uint32_t argument);
 	
 	/// add a bool
-	/// true sends a OFXOSC_TYPE_TRUE & false sends an OFXOSC_TYPE_FALSE
+	/// true sends a OFXOSC_TYPE_TRUE & false sends a OFXOSC_TYPE_FALSE
 	void addBoolArg(bool argument);
 	
 	/// add a none/nil (has no value)
