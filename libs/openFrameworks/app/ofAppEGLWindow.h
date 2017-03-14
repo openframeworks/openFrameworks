@@ -60,8 +60,10 @@ public:
 	static bool needsPolling(){ return true; }
 	static void pollEvents();
 
+	using ofAppBaseGLESWindow::setup;
 	void setup(const Settings & settings);
 	void setup(const ofGLESWindowSettings & settings);
+
 	void update();
 	void draw();
 	void close();
