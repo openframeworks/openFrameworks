@@ -168,11 +168,10 @@ void ofVboMesh::updateVbo(){
 			if(getNumColors()==0){
 				vbo.clearColors();
 				vboNumColors = getNumColors();
-			}else if(vboNumColors<getNumColors()){
+			}else{
+				vbo.clearColors();
 				vbo.setColorData(getColorsPointer(),getNumColors(),usage);
 				vboNumColors = getNumColors();
-			}else{
-				vbo.updateColorData(getColorsPointer(),getNumColors());
 			}
 		}
 
