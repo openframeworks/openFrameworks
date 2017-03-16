@@ -29,8 +29,11 @@ public:
 	/// if port is set to 0, receiver will try to use current port value to
 	/// restart listening
 	///
-	/// \return true is listening was started
-	bool setup(int port=0);
+	/// if start is true, receiver will start listening (default)
+	/// if start is false, port value is set without starting
+	///
+	/// \return true on success
+	bool setup(int port=0, bool start=true);
 	
 	/// stop listening and clear the receiver, does not clear port value
 	void clear();
