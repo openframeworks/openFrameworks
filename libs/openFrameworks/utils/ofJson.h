@@ -18,12 +18,12 @@ inline ofJson ofLoadJson(const std::filesystem::path& filename){
 		try{
 			jsonFile >> json;
 		}catch(std::exception & e){
-			ofLogError("ofLoadJson") << "Error loading json from " + filename.string() + ": " + e.what();
+			ofLogError("ofLoadJson") << "Error loading json from " << filename.string() << ": " << e.what();
 		}catch(...){
-			ofLogError("ofLoadJson") << "Error loading json from " + filename.string();
+			ofLogError("ofLoadJson") << "Error loading json from " << filename.string();
 		}
 	}else{
-		ofLogError("ofLoadJson") << "Error loading json from " + filename.string() + ": file doesn't exist";
+		ofLogError("ofLoadJson") << "Error loading json from " << filename.string() << ": file doesn't exist";
 	}
 	return json;
 }
@@ -37,10 +37,10 @@ inline bool ofSaveJson(const std::filesystem::path& filename, const ofJson & jso
 	try{
 		jsonFile << json;
 	}catch(std::exception & e){
-		ofLogError("ofLoadJson") << "Error saving json to " + filename.string() + ": " + e.what();
+		ofLogError("ofLoadJson") << "Error saving json to " << filename.string() << ": " << e.what();
 		return false;
 	}catch(...){
-		ofLogError("ofLoadJson") << "Error saving json to " + filename.string();
+		ofLogError("ofLoadJson") << "Error saving json to " << filename.string();
 		return false;
 	}
 	return true;
@@ -55,10 +55,10 @@ inline bool ofSavePrettyJson(const std::filesystem::path& filename, const ofJson
     try{
         jsonFile << json.dump(4);
     }catch(std::exception & e){
-        ofLogError("ofLoadJson") << "Error saving json to " + filename.string() + ": " + e.what();
+        ofLogError("ofLoadJson") << "Error saving json to " << filename.string() << ": " << e.what();
         return false;
     }catch(...){
-        ofLogError("ofLoadJson") << "Error saving json to " + filename.string();
+        ofLogError("ofLoadJson") << "Error saving json to " << filename.string();
         return false;
     }
     return true;
