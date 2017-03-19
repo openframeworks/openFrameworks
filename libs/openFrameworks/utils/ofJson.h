@@ -7,46 +7,58 @@
 // for convenience
 using ofJson = nlohmann::json;
 
-inline ofJson ofLoadJson(const std::string & filename){
+
+/// \brief Load Json from the given path.
+/// \param filename The file to load from.
+/// \returns loaded json, or an empty json object on failure.
+inline ofJson ofLoadJson(const std::filesystem::path& filename){
 	ofJson json;
 	ofFile jsonFile(filename);
 	if(jsonFile.exists()){
 		try{
 			jsonFile >> json;
 		}catch(std::exception & e){
-			ofLogError("ofLoadJson") << "error loading json from " + filename + ": " + e.what();
+			ofLogError("ofLoadJson") << "Error loading json from " << filename.string() << ": " << e.what();
 		}catch(...){
-			ofLogError("ofLoadJson") << "error loading json from " + filename;
+			ofLogError("ofLoadJson") << "Error loading json from " << filename.string();
 		}
 	}else{
-		ofLogError("ofLoadJson") << "error loading json from " + filename + ": file doesn't exist";
+		ofLogError("ofLoadJson") << "Error loading json from " << filename.string() << ": file doesn't exist";
 	}
 	return json;
 }
 
-inline bool ofSaveJson(const std::string & filename, const ofJson & json){
+/// \brief Save minified Json to the given path.
+/// \param filename The destination path.
+/// \param json The Json to save.
+/// \returns true if the json was saved successfully.
+inline bool ofSaveJson(const std::filesystem::path& filename, const ofJson & json){
 	ofFile jsonFile(filename, ofFile::WriteOnly);
 	try{
 		jsonFile << json;
 	}catch(std::exception & e){
-		ofLogError("ofLoadJson") << "error saving json to " + filename + ": " + e.what();
+		ofLogError("ofLoadJson") << "Error saving json to " << filename.string() << ": " << e.what();
 		return false;
 	}catch(...){
-		ofLogError("ofLoadJson") << "error saving json to " + filename;
+		ofLogError("ofLoadJson") << "Error saving json to " << filename.string();
 		return false;
 	}
 	return true;
 }
 
-inline bool ofSavePrettyJson(const std::string & filename, const ofJson & json){
+/// \brief Save "pretty" indented Json to the given path.
+/// \param filename The destination path.
+/// \param json The Json to save.
+/// \returns true if the json was saved successfully.
+inline bool ofSavePrettyJson(const std::filesystem::path& filename, const ofJson & json){
     ofFile jsonFile(filename, ofFile::WriteOnly);
     try{
         jsonFile << json.dump(4);
     }catch(std::exception & e){
-        ofLogError("ofLoadJson") << "error saving json to " + filename + ": " + e.what();
+        ofLogError("ofLoadJson") << "Error saving json to " << filename.string() << ": " << e.what();
         return false;
     }catch(...){
-        ofLogError("ofLoadJson") << "error saving json to " + filename;
+        ofLogError("ofLoadJson") << "Error saving json to " << filename.string();
         return false;
     }
     return true;
