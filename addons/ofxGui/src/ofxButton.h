@@ -25,7 +25,7 @@ public:
 
 	template<class ListenerClass, typename ListenerMethod>
 	void removeListener(ListenerClass * listener, ListenerMethod method){
-		value.addListener(listener,method);
+		value.removeListener(listener,method);
 	}
 	virtual ofAbstractParameter & getParameter();
 
