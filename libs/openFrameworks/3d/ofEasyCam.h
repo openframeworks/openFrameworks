@@ -13,9 +13,6 @@ public:
     /// \brief Create a default camera.
 	ofEasyCam();
 
-    /// \brief Destroy the camera.
-	~ofEasyCam();
-
 	/// \}
 	/// \name Rendering
 	/// \{
@@ -243,6 +240,7 @@ private:
 	/// \brief If set, the area mouse control is bound to.
 	ofRectangle controlArea;
 
+	std::vector<ofEventListener> listeners;
 	ofCoreEvents * events = nullptr;
 
 	bool relativeYAxis = false;
