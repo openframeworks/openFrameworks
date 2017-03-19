@@ -15,11 +15,6 @@ ofEasyCam::ofEasyCam(){
 }
 
 //----------------------------------------
-ofEasyCam::~ofEasyCam(){
-	disableMouseInput();
-}
-
-//----------------------------------------
 void ofEasyCam::update(ofEventArgs & args){
 	viewport = getViewport(this->viewport);
 	if(!bDistanceSet && bAutoDistance){
@@ -139,11 +134,11 @@ char ofEasyCam::getTranslationKey() const{
 //----------------------------------------
 void ofEasyCam::enableMouseInput(){
 	if(!bMouseInputEnabled && events){
-		ofAddListener(events->update, this, &ofEasyCam::update);
-		ofAddListener(events->mouseDragged , this, &ofEasyCam::mouseDragged);
-		ofAddListener(events->mousePressed, this, &ofEasyCam::mousePressed);
-		ofAddListener(events->mouseReleased, this, &ofEasyCam::mouseReleased);
-		ofAddListener(events->mouseScrolled, this, &ofEasyCam::mouseScrolled);
+		listeners.push_back(events->update.newListener(this, &ofEasyCam::update));
+		listeners.push_back(events->mouseDragged.newListener(this, &ofEasyCam::mouseDragged));
+		listeners.push_back(events->mousePressed.newListener(this, &ofEasyCam::mousePressed));
+		listeners.push_back(events->mouseReleased.newListener(this, &ofEasyCam::mouseReleased));
+		listeners.push_back(events->mouseScrolled.newListener(this, &ofEasyCam::mouseScrolled));
 	}
 	// if enableMouseInput was called within ofApp::setup()
 	// `events` will still carry a null pointer, and bad things
@@ -156,11 +151,7 @@ void ofEasyCam::enableMouseInput(){
 //----------------------------------------
 void ofEasyCam::disableMouseInput(){
 	if(bMouseInputEnabled && events){
-		ofRemoveListener(events->update, this, &ofEasyCam::update);
-		ofRemoveListener(events->mouseDragged, this, &ofEasyCam::mouseDragged);
-		ofRemoveListener(events->mousePressed, this, &ofEasyCam::mousePressed);
-		ofRemoveListener(events->mouseReleased, this, &ofEasyCam::mouseReleased);
-		ofRemoveListener(events->mouseScrolled, this, &ofEasyCam::mouseScrolled);
+		listeners.clear();
 	}
 	// if disableMouseInput was called within ofApp::setup()
 	// `events` will still carry a null pointer, and bad things
