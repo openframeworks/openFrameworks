@@ -41,19 +41,6 @@ bool ofxOscReceiver::setup(int port){
 }
 
 //--------------------------------------------------------------
-bool ofxOscReceiver::setPort(int port) {
-	if(listenSocket) { // restart
-		stop();
-		this->port = port;
-		return start();
-	}
-	else { // not running
-		this->port = port;
-		return true;
-	}
-}
-
-//--------------------------------------------------------------
 bool ofxOscReceiver::start() {
 	if(listenSocket) {
 		return true;
@@ -186,6 +173,19 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter &parameter){
 		}
 	}
 	return true;
+}
+
+//--------------------------------------------------------------
+bool ofxOscReceiver::setPort(int port) {
+	if(listenSocket) { // restart
+		stop();
+		this->port = port;
+		return start();
+	}
+	else { // not running
+		this->port = port;
+		return true;
+	}
 }
 
 //--------------------------------------------------------------
