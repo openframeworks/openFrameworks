@@ -38,6 +38,7 @@ ofxOscSender& ofxOscSender::copy(const ofxOscSender& other){
 
 //--------------------------------------------------------------
 void ofxOscSender::setup(const std::string &host, int port){
+	// manually set larger buffer size instead of oscpack per-message size
 	if(osc::UdpSocket::GetUdpBufferSize() == 0){
 	   osc::UdpSocket::SetUdpBufferSize(65535);
 	}

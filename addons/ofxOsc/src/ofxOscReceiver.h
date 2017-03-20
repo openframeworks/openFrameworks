@@ -23,21 +23,33 @@ public:
 	ofxOscReceiver& copy(const ofxOscReceiver &other);
 
 	/// set up the receiver with the port to listen for messages on
+	/// and start listening
 	///
 	/// multiple receivers can share the same port if port reuse is
 	/// enabled (true by default)
 	///
-	/// if port is set to 0, receiver will try to use current port value to
-	/// restart listening
-	///
-	/// if start is true, receiver will start listening (default)
-	/// if start is false, port value is set without starting
-	///
-	/// \return true on success
-	bool setup(int port=0, bool start=true);
+	/// \return true if listening started successfully
+	bool setup(int port);
 	
-	/// stop listening and clear the receiver, does not clear port value
-	void clear();
+	/// set the receiver port manually
+	///
+	/// does not *start* listening, restarts receiver if already running
+	///
+	/// multiple receivers can share the same port if port reuse is
+	/// enabled (true by default)
+	///
+	/// \returns true if port set successfully
+	bool setPort(int port);
+	
+	/// start listening manually using the current port value
+	///
+	/// note: this is not required if you called setup()
+	///
+	/// \return true if listening started or was already running
+	bool start();
+	
+	/// stop listening, does not clear port value
+	void stop();
 	
 	/// \return true if the receiver is listening
 	bool isListening();
@@ -55,7 +67,7 @@ public:
 	/// \return true if message was handled by the given parameter
 	bool getParameter(ofAbstractParameter &parameter);
 
-	/// \return listening port or 0 if setup was not called
+	/// \return listening port or 0 if port has not been set
 	int getPort();
 	
 	/// disables port reuse reuse which allows the same port to be used by several sockets
