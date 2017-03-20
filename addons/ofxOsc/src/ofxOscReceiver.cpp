@@ -7,7 +7,7 @@ ofxOscReceiver::ofxOscReceiver() : allowReuse(true), port(0) {}
 
 //--------------------------------------------------------------
 ofxOscReceiver::~ofxOscReceiver(){
-	clear();
+	stop();
 }
 
 //--------------------------------------------------------------
@@ -32,78 +32,86 @@ ofxOscReceiver& ofxOscReceiver::copy(const ofxOscReceiver &other){
 }
 
 //--------------------------------------------------------------
-bool ofxOscReceiver::setup(int port, bool start){
+bool ofxOscReceiver::setup(int port){
+	if(listenSocket){ // already running
+		stop();
+	}
+	this->port = port;
+	return start();
+}
+
+//--------------------------------------------------------------
+bool ofxOscReceiver::setPort(int port) {
+	if(listenSocket) { // restart
+		stop();
+		this->port = port;
+		return start();
+	}
+	else { // not running
+		this->port = port;
+		return true;
+	}
+}
+
+//--------------------------------------------------------------
+bool ofxOscReceiver::start() {
+	if(listenSocket) {
+		return true;
+	}
+	
+	// manually set larger buffer size instead of oscpack per-message size
 	if(osc::UdpSocket::GetUdpBufferSize() == 0){
 	   osc::UdpSocket::SetUdpBufferSize(65535);
 	}
 	
-	// if we're already running, shutdown before running again
-	if(listenSocket){
-		clear();
-	}
-	
-	// reuse current port value?
-	if(port == 0) {
-		if(this->port > 0) {
-			port = this->port;
-		}
-		else {
-			ofLogError("ofxOscReceiver") << "cannot (re)start with port value of 0";
-			return false;
-		}
-	}
-	
 	// create socket
-	if(start) {
-		osc::UdpListeningReceiveSocket *socket = nullptr;
-		try{
-			socket = new osc::UdpListeningReceiveSocket(osc::IpEndpointName(osc::IpEndpointName::ANY_ADDRESS, port), this, allowReuse);
-			auto deleter = [](osc::UdpListeningReceiveSocket*socket){
-				// tell the socket to shutdown
-				socket->Break();
-				delete socket;
-			};
-			auto newPtr = std::unique_ptr<osc::UdpListeningReceiveSocket, decltype(deleter)>(socket, deleter);
-			listenSocket = std::move(newPtr);
+	osc::UdpListeningReceiveSocket *socket = nullptr;
+	try{
+		socket = new osc::UdpListeningReceiveSocket(osc::IpEndpointName(osc::IpEndpointName::ANY_ADDRESS, port), this, allowReuse);
+		auto deleter = [](osc::UdpListeningReceiveSocket*socket){
+			// tell the socket to shutdown
+			socket->Break();
+			delete socket;
+		};
+		auto newPtr = std::unique_ptr<osc::UdpListeningReceiveSocket, decltype(deleter)>(socket, deleter);
+		listenSocket = std::move(newPtr);
+	}
+	catch(std::exception &e){
+		string what = e.what();
+		// strip endline as ofLogError already adds one
+		if(!what.empty() && what.back() == '\n') {
+			what = what.substr(0, what.size()-1);
 		}
-		catch(std::exception &e){
-			string what = e.what();
-			// strip endline as ofLogError already adds one
-			if(!what.empty() && what.back() == '\n') {
-				what = what.substr(0, what.size()-1);
-			}
-			ofLogError("ofxOscReceiver") << "couldn't create receive socket on port " << port << ": " << what;
-			if(socket != nullptr){
-				delete socket;
-				socket = nullptr;
-			}
-			return false;
+		ofLogError("ofxOscReceiver") << "couldn't create receive socket on port "
+		                             << port << ": " << what;
+		if(socket != nullptr){
+			delete socket;
+			socket = nullptr;
 		}
-
-		listenThread = std::thread([this]{
-			while(listenSocket){
-				try{
-					listenSocket->Run();
-				}
-				catch(std::exception &e){
-					ofLogWarning("ofxOscReceiver") << e.what();
-				}
-			}
-		});
-
-		// detach thread so we don't have to wait on it before creating a new socket
-		// or on destruction, the custom deleter for the socket unique_ptr already
-		// does the right thing
-		listenThread.detach();
+		return false;
 	}
 
-	this->port = port;
+	listenThread = std::thread([this]{
+		while(listenSocket){
+			try{
+				listenSocket->Run();
+			}
+			catch(std::exception &e){
+				ofLogWarning("ofxOscReceiver") << e.what();
+			}
+		}
+	});
+
+	// detach thread so we don't have to wait on it before creating a new socket
+	// or on destruction, the custom deleter for the socket unique_ptr already
+	// does the right thing
+	listenThread.detach();
 	
 	return true;
 }
 
 //--------------------------------------------------------------
-void ofxOscReceiver::clear() {
+void ofxOscReceiver::stop() {
 	listenSocket.reset();
 }
 
