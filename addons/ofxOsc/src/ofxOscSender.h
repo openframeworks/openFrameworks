@@ -42,13 +42,13 @@ public:
 	void setHost(const std::string &host);
 
 	/// \return current host name/ip or "" if setup was not called
-	std::string getHost();
+	std::string getHost() const;
 
 	/// set the destination port
 	void setPort(int port);
 
 	/// \return current port or 0 if setup was not called
-	int getPort();
+	int getPort() const;
 	
 	/// disable broadcast capabilities
 	/// usually call this before setup
@@ -57,6 +57,10 @@ public:
 	/// enabled broadcast capabilities
 	/// usually no need to call this, enabled by default
 	void enableBroadcast();
+	
+	/// output stream operator for string conversion and printing
+	/// \return host name/ip and port separated by a space
+	friend std::ostream& operator<<(std::ostream &os, const ofxOscSender &sender);
 
 private:
 		

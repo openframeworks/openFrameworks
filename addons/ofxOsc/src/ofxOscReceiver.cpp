@@ -103,7 +103,7 @@ void ofxOscReceiver::stop() {
 }
 
 //--------------------------------------------------------------
-bool ofxOscReceiver::isListening(){
+bool ofxOscReceiver::isListening() const{
 	return listenSocket != nullptr;
 }
 
@@ -189,7 +189,7 @@ bool ofxOscReceiver::setPort(int port) {
 }
 
 //--------------------------------------------------------------
-int ofxOscReceiver::getPort(){
+int ofxOscReceiver::getPort() const{
 	return port;
 }
 
@@ -281,4 +281,14 @@ void ofxOscReceiver::ProcessMessage(const osc::ReceivedMessage &m, const osc::Ip
 
 	// send msg to main thread
 	messagesChannel.send(std::move(msg));
+}
+
+// friend functions
+//--------------------------------------------------------------
+std::ostream& operator<<(std::ostream &os, const ofxOscReceiver &receiver) {
+	os << receiver.getPort();
+	if(receiver.isListening()) {
+		os << " listening";
+	}
+	return os;
 }

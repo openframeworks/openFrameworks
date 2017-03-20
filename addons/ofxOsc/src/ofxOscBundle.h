@@ -42,6 +42,10 @@ public:
 	/// \return the message at the given index
 	ofxOscMessage& getMessageAt(int i);
 	
+	/// output stream operator for string conversion and printing
+	/// \return number of messages & bundles
+	friend std::ostream& operator<<(std::ostream &os, const ofxOscBundle &sender);
+	
 private:
 		
 	std::vector<ofxOscMessage> messages; //< bundled messages

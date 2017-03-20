@@ -69,3 +69,11 @@ const ofxOscMessage& ofxOscBundle::getMessageAt(int i) const{
 ofxOscMessage& ofxOscBundle::getMessageAt(int i){
 	return messages[i];
 }
+
+// friend functions
+//--------------------------------------------------------------
+std::ostream& operator<<(std::ostream &os, const ofxOscBundle &bundle) {
+	os << bundle.getMessageCount() << " messages "
+	   << bundle.getBundleCount() << " bundles";
+	return os;
+}
