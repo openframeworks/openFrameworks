@@ -42,7 +42,7 @@ public:
 	void stop();
 	
 	/// \return true if the receiver is listening
-	bool isListening();
+	bool isListening() const;
 
 	/// \return true if there are any messages waiting for collection
 	bool hasWaitingMessages();
@@ -70,7 +70,7 @@ public:
 	bool setPort(int port);
 
 	/// \return listening port or 0 if port has not been set
-	int getPort();
+	int getPort() const;
 	
 	/// disables port reuse reuse which allows the same port to be used by several sockets
 	void disableReuse();
@@ -78,6 +78,10 @@ public:
 	/// enable broadcast capabilities
 	/// usually no need to call this, enabled by default
 	void enableReuse();
+	
+	/// output stream operator for string conversion and printing
+	/// \return current port value and "listening" if receiver is listening
+	friend std::ostream& operator<<(std::ostream &os, const ofxOscReceiver &receiver);
 
 protected:
 

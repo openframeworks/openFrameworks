@@ -126,7 +126,7 @@ void ofxOscSender::setHost(const std::string &host) {
 }
 
 //--------------------------------------------------------------
-std::string ofxOscSender::getHost(){
+std::string ofxOscSender::getHost() const{
 	return host;
 }
 
@@ -136,7 +136,7 @@ void ofxOscSender::setPort(int port){
 }
 
 //--------------------------------------------------------------
-int ofxOscSender::getPort(){
+int ofxOscSender::getPort() const{
 	return port;
 }
 
@@ -268,4 +268,11 @@ void ofxOscSender::appendParameter(ofxOscMessage &msg, const ofAbstractParameter
 	else{
 		msg.addStringArg(parameter.toString());
 	}
+}
+
+// friend functions
+//--------------------------------------------------------------
+std::ostream& operator<<(std::ostream &os, const ofxOscSender &sender) {
+	os << sender.getHost() << " " << sender.getPort();
+	return os;
 }
