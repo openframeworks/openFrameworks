@@ -121,8 +121,18 @@ void ofxOscSender::sendParameter(const ofAbstractParameter &parameter){
 }
 
 //--------------------------------------------------------------
+void ofxOscSender::setHost(const std::string &host) {
+	setup(host, this->port);
+}
+
+//--------------------------------------------------------------
 std::string ofxOscSender::getHost(){
 	return host;
+}
+
+//--------------------------------------------------------------
+void ofxOscSender::setPort(int port){
+	setup(this->host, port);
 }
 
 //--------------------------------------------------------------

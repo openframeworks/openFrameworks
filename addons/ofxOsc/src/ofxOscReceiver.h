@@ -31,18 +31,6 @@ public:
 	/// \return true if listening started successfully
 	bool setup(int port);
 	
-	/// set the receiver port manually, does not start listening
-	///
-	/// restarts receiver if already running
-	///
-	/// this is not required if you called setup()
-	///
-	/// multiple receivers can share the same port if port reuse is
-	/// enabled (true by default)
-	///
-	/// \returns true if port set successfully
-	bool setPort(int port);
-	
 	/// start listening manually using the current port value
 	///
 	/// this is not required if you called setup()
@@ -68,6 +56,18 @@ public:
 	/// try to get waiting message an ofParameter
 	/// \return true if message was handled by the given parameter
 	bool getParameter(ofAbstractParameter &parameter);
+
+	/// set the receiver port manually, does not start listening
+	///
+	/// restarts receiver if already running
+	///
+	/// this is not required if you called setup()
+	///
+	/// multiple receivers can share the same port if port reuse is
+	/// enabled (true by default)
+	///
+	/// \returns true if port set successfully
+	bool setPort(int port);
 
 	/// \return listening port or 0 if port has not been set
 	int getPort();

@@ -38,8 +38,14 @@ public:
 	/// create & send a message with data from an ofParameter
 	void sendParameter(const ofAbstractParameter &parameter);
 
+	/// set the desintation host name/ip
+	void setHost(const std::string &host);
+
 	/// \return current host name/ip or "" if setup was not called
 	std::string getHost();
+
+	/// set the destination port
+	void setPort(int port);
 
 	/// \return current port or 0 if setup was not called
 	int getPort();
