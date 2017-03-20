@@ -16,7 +16,7 @@ public:
 
 	/// set the parameter group & connection info
 	/// the remote and local ports must be different to avoid collisions
-	void setup(ofParameterGroup & group, int localPort, const string& remoteHost, int remotePort);
+	void setup(ofParameterGroup &group, int localPort, const std::string &remoteHost, int remotePort);
 	
 	/// process any incoming messages
 	void update();
@@ -24,7 +24,7 @@ public:
 private:
 
 	/// parameter change callaback
-	void parameterChanged(ofAbstractParameter & parameter);
+	void parameterChanged(ofAbstractParameter &parameter);
 	
 	ofxOscSender sender; //< sync sender
 	ofxOscReceiver receiver; //< sync receiver

@@ -3,23 +3,17 @@
 #include "ofxOscBundle.h"
 
 //--------------------------------------------------------------
-ofxOscBundle::ofxOscBundle() {}
-
-//--------------------------------------------------------------
-ofxOscBundle::~ofxOscBundle() {}
-
-//--------------------------------------------------------------
-ofxOscBundle::ofxOscBundle(const ofxOscBundle& other){ 
+ofxOscBundle::ofxOscBundle(const ofxOscBundle &other){ 
 	copy(other);
 }
 
 //--------------------------------------------------------------
-ofxOscBundle& ofxOscBundle::operator=(const ofxOscBundle& other){
+ofxOscBundle& ofxOscBundle::operator=(const ofxOscBundle &other){
 	return copy(other);
 }
 
 //--------------------------------------------------------------
-ofxOscBundle& ofxOscBundle::copy(const ofxOscBundle& other){
+ofxOscBundle& ofxOscBundle::copy(const ofxOscBundle &other){
 	if(this == &other) return *this;
 	for(int i = 0; i < (int)other.bundles.size(); i++){
 		bundles.push_back(other.bundles[i]);
@@ -37,12 +31,12 @@ void ofxOscBundle::clear(){
 }
 
 //--------------------------------------------------------------
-void ofxOscBundle::addBundle(const ofxOscBundle& bundle){
+void ofxOscBundle::addBundle(const ofxOscBundle &bundle){
 	bundles.push_back(bundle);
 }
 
 //--------------------------------------------------------------
-void ofxOscBundle::addMessage(const ofxOscMessage& message){
+void ofxOscBundle::addMessage(const ofxOscMessage &message){
 	messages.push_back(message);
 }
 

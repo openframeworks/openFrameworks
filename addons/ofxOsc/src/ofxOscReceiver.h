@@ -16,10 +16,11 @@ class ofxOscReceiver : public osc::OscPacketListener {
 public:
 
 	ofxOscReceiver();
-	ofxOscReceiver(const ofxOscReceiver & mom);
-	ofxOscReceiver& operator=(const ofxOscReceiver & mom);
+	~ofxOscReceiver();
+	ofxOscReceiver(const ofxOscReceiver &mom);
+	ofxOscReceiver& operator=(const ofxOscReceiver &mom);
 	/// for operator= and copy constructor
-	ofxOscReceiver& copy(const ofxOscReceiver& other);
+	ofxOscReceiver& copy(const ofxOscReceiver &other);
 
 	/// set up the receiver with the port to listen for messages on
 	///
@@ -48,11 +49,11 @@ public:
 	/// details into message, and remove it from the queue
 	/// \return false if there are no more messages to be got, otherwise return true
 	bool getNextMessage(ofxOscMessage& msg);
-	OF_DEPRECATED_MSG("Pass a reference instead of a pointer", bool getNextMessage(ofxOscMessage* msg));
+	OF_DEPRECATED_MSG("Pass a reference instead of a pointer", bool getNextMessage(ofxOscMessage *msg));
 	
 	/// try to get waiting message an ofParameter
 	/// \return true if message was handled by the given parameter
-	bool getParameter(ofAbstractParameter & parameter);
+	bool getParameter(ofAbstractParameter &parameter);
 
 	/// \return listening port or 0 if setup was not called
 	int getPort();
@@ -67,7 +68,7 @@ public:
 protected:
 
 	/// process an incoming osc message and add it to the queue
-	virtual void ProcessMessage(const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint);
+	virtual void ProcessMessage(const osc::ReceivedMessage &m, const osc::IpEndpointName &remoteEndpoint);
 
 private:
 

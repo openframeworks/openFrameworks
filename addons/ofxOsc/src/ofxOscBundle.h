@@ -9,21 +9,20 @@
 class ofxOscBundle{
 public:
 
-	ofxOscBundle();
-	~ofxOscBundle();
+	ofxOscBundle() {}
 	ofxOscBundle(const ofxOscBundle& other);
-	ofxOscBundle& operator=(const ofxOscBundle& other);
+	ofxOscBundle& operator=(const ofxOscBundle &other);
 	/// for operator= and copy constructor
-	ofxOscBundle& copy(const ofxOscBundle& other);
+	ofxOscBundle& copy(const ofxOscBundle &other);
 	
 	/// clear bundle & message contents
 	void clear();
 
 	/// add another bundle to the bundle
-	void addBundle(const ofxOscBundle& element);
+	void addBundle(const ofxOscBundle &element);
 	
 	/// add a message to the bundle
-	void addMessage(const ofxOscMessage& message);
+	void addMessage(const ofxOscMessage &message);
 	
 	/// \return the current bundle count
 	int getBundleCount() const;
@@ -45,6 +44,6 @@ public:
 	
 private:
 		
-	vector<ofxOscMessage> messages; //< bundled messages
-	vector<ofxOscBundle> bundles; //< bundled bundles
+	std::vector<ofxOscMessage> messages; //< bundled messages
+	std::vector<ofxOscBundle> bundles; //< bundled bundles
 };

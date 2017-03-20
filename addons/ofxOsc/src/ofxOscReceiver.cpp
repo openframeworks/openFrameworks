@@ -6,17 +6,22 @@
 ofxOscReceiver::ofxOscReceiver() : allowReuse(true), port(0) {}
 
 //--------------------------------------------------------------
-ofxOscReceiver::ofxOscReceiver(const ofxOscReceiver & mom){
+ofxOscReceiver::~ofxOscReceiver(){
+	clear();
+}
+
+//--------------------------------------------------------------
+ofxOscReceiver::ofxOscReceiver(const ofxOscReceiver &mom){
 	copy(mom);
 }
 
 //--------------------------------------------------------------
-ofxOscReceiver& ofxOscReceiver::operator=(const ofxOscReceiver & mom){
+ofxOscReceiver& ofxOscReceiver::operator=(const ofxOscReceiver &mom){
 	return copy(mom);
 }
 
 //--------------------------------------------------------------
-ofxOscReceiver& ofxOscReceiver::copy(const ofxOscReceiver& other){
+ofxOscReceiver& ofxOscReceiver::copy(const ofxOscReceiver &other){
 	if(this == &other) return *this;
 	allowReuse = other.allowReuse;
 	port = other.port;
@@ -113,21 +118,21 @@ bool ofxOscReceiver::hasWaitingMessages(){
 }
 
 //--------------------------------------------------------------
-bool ofxOscReceiver::getNextMessage(ofxOscMessage * message){
+bool ofxOscReceiver::getNextMessage(ofxOscMessage *message){
 	return getNextMessage(*message);
 }
 
 //--------------------------------------------------------------
-bool ofxOscReceiver::getNextMessage(ofxOscMessage & message){
+bool ofxOscReceiver::getNextMessage(ofxOscMessage &message){
 	return messagesChannel.tryReceive(message);
 }
 
 //--------------------------------------------------------------
-bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
+bool ofxOscReceiver::getParameter(ofAbstractParameter &parameter){
 	ofxOscMessage msg;
 	while(messagesChannel.tryReceive(msg)){
 		ofAbstractParameter * p = &parameter;
-		vector<string> address = ofSplitString(msg.getAddress(),"/", true);
+		std::vector<std::string> address = ofSplitString(msg.getAddress(),"/", true);
 		for(unsigned int i = 0; i < address.size(); i++){
 			if(p){
 				if(address[i] == p->getEscapedName()){
@@ -198,7 +203,7 @@ void ofxOscReceiver::enableReuse(){
 
 // PROTECTED
 //--------------------------------------------------------------
-void ofxOscReceiver::ProcessMessage(const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint){
+void ofxOscReceiver::ProcessMessage(const osc::ReceivedMessage &m, const osc::IpEndpointName &remoteEndpoint){
 	// convert the message to an ofxOscMessage
 	ofxOscMessage msg;
 

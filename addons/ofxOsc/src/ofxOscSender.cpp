@@ -10,6 +10,11 @@
 ofxOscSender::ofxOscSender() : broadcast(true), host(""), port(0) {}
 
 //--------------------------------------------------------------
+ofxOscSender::~ofxOscSender() {
+	clear();
+}
+
+//--------------------------------------------------------------
 ofxOscSender::ofxOscSender(const ofxOscSender & mom) : broadcast(mom.broadcast){
 	copy(mom);
 }
@@ -32,7 +37,7 @@ ofxOscSender& ofxOscSender::copy(const ofxOscSender& other){
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::setup(const string &host, int port){
+void ofxOscSender::setup(const std::string &host, int port){
 	if(osc::UdpSocket::GetUdpBufferSize() == 0){
 	   osc::UdpSocket::SetUdpBufferSize(65535);
 	}
@@ -47,7 +52,7 @@ void ofxOscSender::clear(){
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::sendBundle(const ofxOscBundle& bundle){
+void ofxOscSender::sendBundle(const ofxOscBundle &bundle){
 	if(!sendSocket){
 		ofLogError("ofxOscSender") << "trying to send before setup";
 	}
@@ -64,7 +69,7 @@ void ofxOscSender::sendBundle(const ofxOscBundle& bundle){
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::sendMessage(const ofxOscMessage& message, bool wrapInBundle){
+void ofxOscSender::sendMessage(const ofxOscMessage &message, bool wrapInBundle){
 	if(!sendSocket){
 		ofLogError("ofxOscSender") << "trying to send before setup";
 	}
@@ -87,11 +92,11 @@ void ofxOscSender::sendMessage(const ofxOscMessage& message, bool wrapInBundle){
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::sendParameter(const ofAbstractParameter & parameter){
+void ofxOscSender::sendParameter(const ofAbstractParameter &parameter){
 	if(!parameter.isSerializable()) return;
 	if(parameter.type() == typeid(ofParameterGroup).name()){
-		string address = "/";
-		const vector<string> hierarchy = parameter.getGroupHierarchyNames();
+		std::string address = "/";
+		const std::vector<std::string> hierarchy = parameter.getGroupHierarchyNames();
 		for(int i = 0; i < (int)hierarchy.size()-1; i++){
 			address += hierarchy[i] + "/";
 		}
@@ -100,8 +105,8 @@ void ofxOscSender::sendParameter(const ofAbstractParameter & parameter){
 		sendBundle(bundle);
 	}
 	else{
-		string address = "";
-		const vector<string> hierarchy = parameter.getGroupHierarchyNames();
+		std::string address = "";
+		const std::vector<std::string> hierarchy = parameter.getGroupHierarchyNames();
 		for(int i = 0; i < (int)hierarchy.size()-1; i++){
 			address += "/" + hierarchy[i];
 		}
@@ -115,7 +120,7 @@ void ofxOscSender::sendParameter(const ofAbstractParameter & parameter){
 }
 
 //--------------------------------------------------------------
-string ofxOscSender::getHost(){
+std::string ofxOscSender::getHost(){
 	return host;
 }
 
@@ -142,7 +147,7 @@ void ofxOscSender::enableBroadcast(){
 
 // PRIVATE
 //--------------------------------------------------------------
-void ofxOscSender::appendBundle(const ofxOscBundle& bundle, osc::OutboundPacketStream& p){
+void ofxOscSender::appendBundle(const ofxOscBundle &bundle, osc::OutboundPacketStream &p){
 	// recursively serialise the bundle
 	p << osc::BeginBundleImmediate;
 	for(int i = 0; i < bundle.getBundleCount(); i++){
@@ -155,7 +160,7 @@ void ofxOscSender::appendBundle(const ofxOscBundle& bundle, osc::OutboundPacketS
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::appendMessage(const ofxOscMessage& message, osc::OutboundPacketStream& p){
+void ofxOscSender::appendMessage(const ofxOscMessage &message, osc::OutboundPacketStream &p){
 	p << osc::BeginMessage(message.getAddress().c_str());
 	for(int i = 0; i < message.getNumArgs(); ++i) {
 		switch(message.getArgType(i)){
@@ -213,11 +218,11 @@ void ofxOscSender::appendMessage(const ofxOscMessage& message, osc::OutboundPack
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::appendParameter(ofxOscBundle & _bundle, const ofAbstractParameter & parameter, const string &address){
+void ofxOscSender::appendParameter(ofxOscBundle &_bundle, const ofAbstractParameter &parameter, const std::string &address){
 	if(parameter.type() == typeid(ofParameterGroup).name()){
 		ofxOscBundle bundle;
-		const ofParameterGroup & group = static_cast<const ofParameterGroup &>(parameter);
-		for(size_t i = 0; i < group.size(); i++){
+		const ofParameterGroup &group = static_cast<const ofParameterGroup &>(parameter);
+		for(std::size_t i = 0; i < group.size(); i++){
 			const ofAbstractParameter & p = group[i];
 			if(p.isSerializable()){
 				appendParameter(bundle, p, address+group.getEscapedName()+"/");
@@ -235,7 +240,7 @@ void ofxOscSender::appendParameter(ofxOscBundle & _bundle, const ofAbstractParam
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::appendParameter(ofxOscMessage & msg, const ofAbstractParameter & parameter, const string &address){
+void ofxOscSender::appendParameter(ofxOscMessage &msg, const ofAbstractParameter &parameter, const std::string &address){
 	msg.setAddress(address+parameter.getEscapedName());
 	if(parameter.type() == typeid(ofParameter<int>).name()){
 		msg.addIntArg(parameter.cast<int>());
