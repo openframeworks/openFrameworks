@@ -31,9 +31,11 @@ public:
 	/// \return true if listening started successfully
 	bool setup(int port);
 	
-	/// set the receiver port manually
+	/// set the receiver port manually, does not start listening
 	///
-	/// does not *start* listening, restarts receiver if already running
+	/// restarts receiver if already running
+	///
+	/// this is not required if you called setup()
 	///
 	/// multiple receivers can share the same port if port reuse is
 	/// enabled (true by default)
@@ -43,7 +45,7 @@ public:
 	
 	/// start listening manually using the current port value
 	///
-	/// note: this is not required if you called setup()
+	/// this is not required if you called setup()
 	///
 	/// \return true if listening started or was already running
 	bool start();
