@@ -108,7 +108,7 @@ bool ofxOscReceiver::isListening() const{
 }
 
 //--------------------------------------------------------------
-bool ofxOscReceiver::hasWaitingMessages(){
+bool ofxOscReceiver::hasWaitingMessages() const{
 	return !messagesChannel.empty();
 }
 

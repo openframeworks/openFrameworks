@@ -45,7 +45,7 @@ public:
 	bool isListening() const;
 
 	/// \return true if there are any messages waiting for collection
-	bool hasWaitingMessages();
+	bool hasWaitingMessages() const;
 
 	/// take the next message on the queue of received messages, copy its
 	/// details into message, and remove it from the queue
