@@ -37,14 +37,42 @@ ofxOscSender& ofxOscSender::copy(const ofxOscSender& other){
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::setup(const std::string &host, int port){
+bool ofxOscSender::setup(const std::string &host, int port){
 	// manually set larger buffer size instead of oscpack per-message size
 	if(osc::UdpSocket::GetUdpBufferSize() == 0){
 	   osc::UdpSocket::SetUdpBufferSize(65535);
 	}
-	sendSocket.reset(new osc::UdpTransmitSocket(osc::IpEndpointName(host.c_str(), port), broadcast));
+	
+	// check for empty host
+	if(host == "") {
+		ofLogError("ofxOscSender") << "couldn't create sender to empty host";
+		return false;
+	}
+	
+	// create socket
+	osc::UdpTransmitSocket *socket = nullptr;
+	try{
+		socket = new osc::UdpTransmitSocket(osc::IpEndpointName(host.c_str(), port), broadcast);
+		sendSocket.reset(socket);
+	}
+	catch(std::exception &e){
+		string what = e.what();
+		// strip endline as ofLogError already adds one
+		if(!what.empty() && what.back() == '\n') {
+			what = what.substr(0, what.size()-1);
+		}
+		ofLogError("ofxOscSender") << "couldn't create sender to "
+		                           << host << " on port " << port << ": " << what;
+		if(socket != nullptr){
+			delete socket;
+			socket = nullptr;
+		}
+		sendSocket.reset();
+		return false;
+	}
 	this->host = host;
 	this->port = port;
+	return true;
 }
 
 //--------------------------------------------------------------
@@ -55,7 +83,8 @@ void ofxOscSender::clear(){
 //--------------------------------------------------------------
 void ofxOscSender::sendBundle(const ofxOscBundle &bundle){
 	if(!sendSocket){
-		ofLogError("ofxOscSender") << "trying to send before setup";
+		ofLogError("ofxOscSender") << "trying to send with empty socket";
+		return;
 	}
 	
 	// setting this much larger as it gets trimmed down to the size its using before being sent.
@@ -72,7 +101,8 @@ void ofxOscSender::sendBundle(const ofxOscBundle &bundle){
 //--------------------------------------------------------------
 void ofxOscSender::sendMessage(const ofxOscMessage &message, bool wrapInBundle){
 	if(!sendSocket){
-		ofLogError("ofxOscSender") << "trying to send before setup";
+		ofLogError("ofxOscSender") << "trying to send with empty socket";
+		return;
 	}
 	
 	// setting this much larger as it gets trimmed down to the size its using before being sent.
@@ -121,8 +151,8 @@ void ofxOscSender::sendParameter(const ofAbstractParameter &parameter){
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::setHost(const std::string &host) {
-	setup(host, this->port);
+bool ofxOscSender::setHost(const std::string &host) {
+	return setup(host, this->port);
 }
 
 //--------------------------------------------------------------
@@ -131,8 +161,8 @@ std::string ofxOscSender::getHost() const{
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::setPort(int port){
-	setup(this->host, port);
+bool ofxOscSender::setPort(int port){
+	return setup(this->host, port);
 }
 
 //--------------------------------------------------------------
