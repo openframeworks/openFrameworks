@@ -23,7 +23,8 @@ public:
 	ofxOscSender& copy(const ofxOscSender &other);
 
 	/// set up the sender with the destination host name/ip and port
-	void setup(const std::string &host, int port);
+	/// \return true on success
+	bool setup(const std::string &host, int port);
 	
 	/// clear the sender, does not clear host or port values
 	void clear();
@@ -39,13 +40,15 @@ public:
 	void sendParameter(const ofAbstractParameter &parameter);
 
 	/// set the desintation host name/ip
-	void setHost(const std::string &host);
+	/// \return true on success
+	bool setHost(const std::string &host);
 
 	/// \return current host name/ip or "" if setup was not called
 	std::string getHost() const;
 
 	/// set the destination port
-	void setPort(int port);
+	/// \return true on success
+	bool setPort(int port);
 
 	/// \return current port or 0 if setup was not called
 	int getPort() const;

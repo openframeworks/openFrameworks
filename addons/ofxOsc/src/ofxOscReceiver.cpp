@@ -69,7 +69,7 @@ bool ofxOscReceiver::start() {
 		if(!what.empty() && what.back() == '\n') {
 			what = what.substr(0, what.size()-1);
 		}
-		ofLogError("ofxOscReceiver") << "couldn't create receive socket on port "
+		ofLogError("ofxOscReceiver") << "couldn't create receiver on port "
 		                             << port << ": " << what;
 		if(socket != nullptr){
 			delete socket;
