@@ -115,16 +115,10 @@ inline std::string ofImageFormatExtension(ofImageFormat format){
 
 /// \todo Needs documentation.
 struct ofImageLoadSettings {
-    ofImageLoadSettings(bool accurate = false, bool exifRotate = false, bool grayscale = false, bool separateCMYK = false)
-    : accurate(accurate)
-    , exifRotate(exifRotate)
-    , grayscale(grayscale)
-    , separateCMYK(separateCMYK) {}
-    bool accurate;
-    bool exifRotate;
-    bool grayscale;
-    bool separateCMYK;
-    static ofImageLoadSettings defaultSetting;
+	bool accurate = false;
+	bool exifRotate = false;
+	bool grayscale = false;
+	bool separateCMYK = false;
 };
 
 //----------------------------------------------------
@@ -132,16 +126,16 @@ struct ofImageLoadSettings {
 
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofFloatPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofShortPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofFloatPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofShortPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofTexture & tex, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofTexture & tex, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
 void ofSaveImage(const ofPixels & pix, const std::filesystem::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
@@ -171,7 +165,7 @@ public:
     ofImage_();
     
     ofImage_(const ofPixels_<PixelType> & pix);
-    ofImage_(const std::filesystem::path & fileName, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+	ofImage_(const std::filesystem::path & fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
     ofImage_(const ofImage_<PixelType>& mom);
     ofImage_(ofImage_<PixelType>&& mom);
     
@@ -222,14 +216,14 @@ public:
     /// the data folder.
     /// \param settings Load options
     /// \returns true if image loaded correctly.
-    bool load(const std::filesystem::path& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+	bool load(const std::filesystem::path& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
     
     /// \brief Loads an image from an ofBuffer instance created by, for
     /// instance, ofFile::readToBuffer().
     ///
     /// This actually loads the image data into an ofPixels object and then
     /// into the texture.
-    bool load(const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+	bool load(const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
     
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(const std::string& fileName));
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(const ofBuffer & buffer));
