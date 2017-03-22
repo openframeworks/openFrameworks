@@ -10,12 +10,21 @@
 #include "ofParameter.h"
 #include "ofParameterGroup.h"
 
+/// \struct ofxOscSenderSettings
+/// \brief OSC message sender settings
+struct ofxOscSenderSettings {
+	std::string host = "localhost"; //< destination host name/ip
+	int port = 0;                   //< destination port
+	bool broadcast = true;          //< allow multicast (broadcasting) ip range?
+};
+
 /// \class ofxOscSender
 /// \brief OSC message sender which sends to a specific host & port
 class ofxOscSender{
 public:
 
-	ofxOscSender();
+
+	ofxOscSender() {}
 	~ofxOscSender();
 	ofxOscSender(const ofxOscSender &mom);
 	ofxOscSender& operator=(const ofxOscSender &mom);
@@ -25,6 +34,10 @@ public:
 	/// set up the sender with the destination host name/ip and port
 	/// \return true on success
 	bool setup(const std::string &host, int port);
+	
+	/// set up the sender with the given settings
+	/// \returns true on success
+	bool setup(const ofxOscSenderSettings &settings);
 	
 	/// clear the sender, does not clear host or port values
 	void clear();
@@ -39,27 +52,14 @@ public:
 	/// create & send a message with data from an ofParameter
 	void sendParameter(const ofAbstractParameter &parameter);
 
-	/// set the desintation host name/ip
-	/// \return true on success
-	bool setHost(const std::string &host);
-
-	/// \return current host name/ip or "" if setup was not called
+	/// \return current host name/ip
 	std::string getHost() const;
 
-	/// set the destination port
-	/// \return true on success
-	bool setPort(int port);
-
-	/// \return current port or 0 if setup was not called
+	/// \return current port
 	int getPort() const;
 	
-	/// disable broadcast capabilities
-	/// usually call this before setup
-	void disableBroadcast();
-
-	/// enabled broadcast capabilities
-	/// usually no need to call this, enabled by default
-	void enableBroadcast();
+	/// \return the current sender settings
+	const ofxOscSenderSettings &getSettings() const;
 	
 	/// output stream operator for string conversion and printing
 	/// \return host name/ip and port separated by a space
@@ -73,8 +73,6 @@ private:
 	void appendParameter(ofxOscBundle &bundle, const ofAbstractParameter &parameter, const std::string &address);
 	void appendParameter(ofxOscMessage &msg, const ofAbstractParameter &parameter, const std::string &address);
 
+	ofxOscSenderSettings settings; //< current settings
 	std::unique_ptr<osc::UdpTransmitSocket> sendSocket; //< sender socket
-	bool broadcast; //< allow multicast broadcasting ip range?
-	std::string host; //< destination host name/ip
-	int port; //< destination port
 };
