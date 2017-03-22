@@ -10,12 +10,20 @@
 #include "OscPacketListener.h"
 #include "UdpSocket.h"
 
+/// \struct ofxOscSenderSettings
+/// \brief OSC message sender settings
+struct ofxOscReceiverSettings {
+	int port = 0;        //< port to listen on
+	bool reuse = true;   //< should the port be reused by other receivers?
+	bool start = true;   //< start listening after setup?
+};
+
 /// \class ofxOscReceiver
 /// \brief OSC message receiver which listens on a network port
 class ofxOscReceiver : public osc::OscPacketListener {
 public:
 
-	ofxOscReceiver();
+	ofxOscReceiver() {};
 	~ofxOscReceiver();
 	ofxOscReceiver(const ofxOscReceiver &mom);
 	ofxOscReceiver& operator=(const ofxOscReceiver &mom);
@@ -28,12 +36,23 @@ public:
 	/// multiple receivers can share the same port if port reuse is
 	/// enabled (true by default)
 	///
-	/// \return true if listening started successfully
+	/// \return true if listening started
 	bool setup(int port);
 	
-	/// start listening manually using the current port value
+	/// set up the receiver with the given settings
 	///
-	/// this is not required if you called setup()
+	/// starts listening if start is true (true by default)
+	///
+	/// multiple receivers can share the same port if port reuse is
+	/// enabled (true by default)
+	///
+	/// \return true if listening was started or start was not required
+	bool setup(const ofxOscReceiverSettings &settings);
+	
+	/// start listening manually using the current settings
+	///
+	/// this is not required if you called setup(port)
+	/// or setup(settings) with start set to true
 	///
 	/// \return true if listening started or was already running
 	bool start();
@@ -57,27 +76,11 @@ public:
 	/// \return true if message was handled by the given parameter
 	bool getParameter(ofAbstractParameter &parameter);
 
-	/// set the receiver port manually, does not start listening
-	///
-	/// restarts receiver if already running
-	///
-	/// this is not required if you called setup()
-	///
-	/// multiple receivers can share the same port if port reuse is
-	/// enabled (true by default)
-	///
-	/// \returns true if port set successfully
-	bool setPort(int port);
-
-	/// \return listening port or 0 if port has not been set
+	/// \return listening port
 	int getPort() const;
 	
-	/// disables port reuse reuse which allows the same port to be used by several sockets
-	void disableReuse();
-
-	/// enable broadcast capabilities
-	/// usually no need to call this, enabled by default
-	void enableReuse();
+	/// \return the current receiver settings
+	const ofxOscReceiverSettings &getSettings() const;
 	
 	/// output stream operator for string conversion and printing
 	/// \return current port value and "listening" if receiver is listening
@@ -97,6 +100,5 @@ private:
 	std::thread listenThread; //< listener thread
 	ofThreadChannel<ofxOscMessage> messagesChannel; //< message passing thread channel
 
-	bool allowReuse; //< all the port to be reused by several sockets?
-	int port; //< port to listen on
+	ofxOscReceiverSettings settings; //< current settings
 };

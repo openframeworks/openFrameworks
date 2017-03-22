@@ -7,15 +7,12 @@
 #include "UdpSocket.h"
 
 //--------------------------------------------------------------
-ofxOscSender::ofxOscSender() : broadcast(true), host(""), port(0) {}
-
-//--------------------------------------------------------------
 ofxOscSender::~ofxOscSender() {
 	clear();
 }
 
 //--------------------------------------------------------------
-ofxOscSender::ofxOscSender(const ofxOscSender & mom) : broadcast(mom.broadcast){
+ofxOscSender::ofxOscSender(const ofxOscSender & mom){
 	copy(mom);
 }
 
@@ -27,24 +24,31 @@ ofxOscSender& ofxOscSender::operator=(const ofxOscSender & mom){
 //--------------------------------------------------------------
 ofxOscSender& ofxOscSender::copy(const ofxOscSender& other){
 	if(this == &other) return *this;
-	broadcast = other.broadcast;
-	host = other.host;
-	port = other.port;
+	settings = other.settings;
 	if(other.sendSocket){
-		setup(host, port);
+		setup(settings);
 	}
 	return *this;
 }
 
 //--------------------------------------------------------------
 bool ofxOscSender::setup(const std::string &host, int port){
+	settings.host = host;
+	settings.port = port;
+	return setup(settings);
+}
+
+//--------------------------------------------------------------
+bool ofxOscSender::setup(const ofxOscSenderSettings &settings){
 	// manually set larger buffer size instead of oscpack per-message size
 	if(osc::UdpSocket::GetUdpBufferSize() == 0){
 	   osc::UdpSocket::SetUdpBufferSize(65535);
 	}
 	
+	this->settings = settings;
+	
 	// check for empty host
-	if(host == "") {
+	if(settings.host == "") {
 		ofLogError("ofxOscSender") << "couldn't create sender to empty host";
 		return false;
 	}
@@ -52,7 +56,8 @@ bool ofxOscSender::setup(const std::string &host, int port){
 	// create socket
 	osc::UdpTransmitSocket *socket = nullptr;
 	try{
-		socket = new osc::UdpTransmitSocket(osc::IpEndpointName(host.c_str(), port), broadcast);
+		osc::IpEndpointName name = osc::IpEndpointName(settings.host.c_str(), settings.port);
+		socket = new osc::UdpTransmitSocket(name, settings.broadcast);
 		sendSocket.reset(socket);
 	}
 	catch(std::exception &e){
@@ -62,7 +67,8 @@ bool ofxOscSender::setup(const std::string &host, int port){
 			what = what.substr(0, what.size()-1);
 		}
 		ofLogError("ofxOscSender") << "couldn't create sender to "
-		                           << host << " on port " << port << ": " << what;
+		                           << settings.host << " on port "
+		                           << settings.port << ": " << what;
 		if(socket != nullptr){
 			delete socket;
 			socket = nullptr;
@@ -70,8 +76,6 @@ bool ofxOscSender::setup(const std::string &host, int port){
 		sendSocket.reset();
 		return false;
 	}
-	this->host = host;
-	this->port = port;
 	return true;
 }
 
@@ -151,39 +155,18 @@ void ofxOscSender::sendParameter(const ofAbstractParameter &parameter){
 }
 
 //--------------------------------------------------------------
-bool ofxOscSender::setHost(const std::string &host) {
-	return setup(host, this->port);
-}
-
-//--------------------------------------------------------------
 std::string ofxOscSender::getHost() const{
-	return host;
-}
-
-//--------------------------------------------------------------
-bool ofxOscSender::setPort(int port){
-	return setup(this->host, port);
+	return settings.host;
 }
 
 //--------------------------------------------------------------
 int ofxOscSender::getPort() const{
-	return port;
+	return settings.port;
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::disableBroadcast(){
-	broadcast = false;
-	if(sendSocket){
-		setup(host, port);
-	}
-}
-
-//--------------------------------------------------------------
-void ofxOscSender::enableBroadcast(){
-	broadcast = true;
-	if(sendSocket){
-		setup(host, port);
-	}
+const ofxOscSenderSettings &ofxOscSender::getSettings() const {
+	return settings;
 }
 
 // PRIVATE

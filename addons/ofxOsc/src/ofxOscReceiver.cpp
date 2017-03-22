@@ -3,9 +3,6 @@
 #include "ofxOscReceiver.h"
 
 //--------------------------------------------------------------
-ofxOscReceiver::ofxOscReceiver() : allowReuse(true), port(0) {}
-
-//--------------------------------------------------------------
 ofxOscReceiver::~ofxOscReceiver(){
 	stop();
 }
@@ -23,10 +20,9 @@ ofxOscReceiver& ofxOscReceiver::operator=(const ofxOscReceiver &mom){
 //--------------------------------------------------------------
 ofxOscReceiver& ofxOscReceiver::copy(const ofxOscReceiver &other){
 	if(this == &other) return *this;
-	allowReuse = other.allowReuse;
-	port = other.port;
+	settings = other.settings;
 	if(other.listenSocket){
-		setup(port);
+		setup(settings);
 	}
 	return *this;
 }
@@ -36,8 +32,20 @@ bool ofxOscReceiver::setup(int port){
 	if(listenSocket){ // already running
 		stop();
 	}
-	this->port = port;
+	settings.port = port;
 	return start();
+}
+
+//--------------------------------------------------------------
+bool ofxOscReceiver::setup(const ofxOscReceiverSettings &settings) {
+	if(listenSocket){ // already running
+		stop();
+	}
+	this->settings = settings;
+	if(settings.start) {
+		return start();
+	}
+	return true;
 }
 
 //--------------------------------------------------------------
@@ -54,7 +62,8 @@ bool ofxOscReceiver::start() {
 	// create socket
 	osc::UdpListeningReceiveSocket *socket = nullptr;
 	try{
-		socket = new osc::UdpListeningReceiveSocket(osc::IpEndpointName(osc::IpEndpointName::ANY_ADDRESS, port), this, allowReuse);
+		osc::IpEndpointName name(osc::IpEndpointName::ANY_ADDRESS, settings.port);
+		socket = new osc::UdpListeningReceiveSocket(name, this, settings.reuse);
 		auto deleter = [](osc::UdpListeningReceiveSocket*socket){
 			// tell the socket to shutdown
 			socket->Break();
@@ -70,7 +79,7 @@ bool ofxOscReceiver::start() {
 			what = what.substr(0, what.size()-1);
 		}
 		ofLogError("ofxOscReceiver") << "couldn't create receiver on port "
-		                             << port << ": " << what;
+		                             << settings.port << ": " << what;
 		if(socket != nullptr){
 			delete socket;
 			socket = nullptr;
@@ -176,37 +185,13 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter &parameter){
 }
 
 //--------------------------------------------------------------
-bool ofxOscReceiver::setPort(int port) {
-	if(listenSocket) { // restart
-		stop();
-		this->port = port;
-		return start();
-	}
-	else { // not running
-		this->port = port;
-		return true;
-	}
-}
-
-//--------------------------------------------------------------
 int ofxOscReceiver::getPort() const{
-	return port;
+	return settings.port;
 }
 
 //--------------------------------------------------------------
-void ofxOscReceiver::disableReuse(){
-	allowReuse = false;
-	if(listenSocket){
-		setup(port);
-	}
-}
-
-//--------------------------------------------------------------
-void ofxOscReceiver::enableReuse(){
-	allowReuse = true;
-	if(listenSocket){
-		setup(port);
-	}
+const ofxOscReceiverSettings &ofxOscReceiver::getSettings() const {
+	return settings;
 }
 
 // PROTECTED
