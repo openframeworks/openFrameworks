@@ -15,6 +15,10 @@ void ofApp::setup(){
     // default is 20 //
     ofSetSphereResolution(128);
 
+	// This is not needed when using gl3 since the lighting
+	// is calculated per fragment
+	ofSetBoxResolution(30);
+
     // radius of the sphere //
 	radius		= 180.f;
 	center.set(ofGetWidth()*.5, ofGetHeight()*.5, 0);
