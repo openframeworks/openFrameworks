@@ -12,8 +12,6 @@
 #include "ofxAndroidUtils.h"
 #endif
 
-ofImageLoadSettings ofImageLoadSettings::defaultSetting;
-
 
 //----------------------------------------------------------
 // static variable for freeImage initialization:
