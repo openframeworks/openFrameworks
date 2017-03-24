@@ -104,6 +104,7 @@ class UdpSocket::Implementation{
 	bool isConnected_;
 
 	int socket_;
+	IpEndpointName connectedRemoteEndpoint_;
 	struct sockaddr_in connectedAddr_;
 	struct sockaddr_in sendToAddr_;
 
@@ -152,44 +153,67 @@ public:
 
 	IpEndpointName LocalEndpointFor( const IpEndpointName& remoteEndpoint ) const
 	{
-		assert( isBound_ );
+		assert( isBound_ || isConnected_ );
 
-		// first connect the socket to the remote server
-        
-        struct sockaddr_in connectSockAddr;
-		SockaddrFromIpEndpointName( connectSockAddr, remoteEndpoint );
-       
-        if (connect(socket_, (struct sockaddr *)&connectSockAddr, sizeof(connectSockAddr)) < 0) {
-            throw std::runtime_error("unable to connect udp socket\n");
-        }
+		bool localEndpointForConnectedRemoteEndpoint = (isConnected_ && (remoteEndpoint == connectedRemoteEndpoint_));
 
-        // get the address
+		if( !localEndpointForConnectedRemoteEndpoint ) {
+			// first connect the socket to the remote server
 
-        struct sockaddr_in sockAddr;
-        std::memset( (char *)&sockAddr, 0, sizeof(sockAddr ) );
-        socklen_t length = sizeof(sockAddr);
-        if (getsockname(socket_, (struct sockaddr *)&sockAddr, &length) < 0) {
-            throw std::runtime_error("unable to getsockname\n");
-        }
-        
-		if( isConnected_ ){
-			// reconnect to the connected address
-			
-			if (connect(socket_, (struct sockaddr *)&connectedAddr_, sizeof(connectedAddr_)) < 0) {
+			struct sockaddr_in connectSockAddr;
+			SockaddrFromIpEndpointName( connectSockAddr, remoteEndpoint );
+
+			if (connect(socket_, (struct sockaddr *)&connectSockAddr, sizeof(connectSockAddr)) < 0) {
 				throw std::runtime_error("unable to connect udp socket\n");
 			}
+		}
 
-		}else{
-			// unconnect from the remote address
-		
-			struct sockaddr_in unconnectSockAddr;
-			std::memset( (char *)&unconnectSockAddr, 0, sizeof(unconnectSockAddr ) );
-			unconnectSockAddr.sin_family = AF_UNSPEC;
-			// address fields are zero
-			int connectResult = connect(socket_, (struct sockaddr *)&unconnectSockAddr, sizeof(unconnectSockAddr));
-			if ( connectResult < 0 && errno != EAFNOSUPPORT ) {
-				throw std::runtime_error("unable to un-connect udp socket\n");
+		// get the address
+
+		struct sockaddr_in sockAddr;
+		std::memset( (char *)&sockAddr, 0, sizeof(sockAddr ) );
+		socklen_t length = sizeof(sockAddr);
+		if (getsockname(socket_, (struct sockaddr *)&sockAddr, &length) < 0) {
+			throw std::runtime_error("unable to getsockname\n");
+		}
+
+		if( !localEndpointForConnectedRemoteEndpoint ) {
+
+			if( isConnected_ ){
+				// reconnect to the connected address
+
+				if (connect(socket_, (struct sockaddr *)&connectedAddr_, sizeof(connectedAddr_)) < 0) {
+					throw std::runtime_error("unable to connect udp socket\n");
+				}
+
+			}else{
+				// unconnect from the remote address
+
+				struct sockaddr_in unconnectSockAddr;
+				std::memset( (char *)&unconnectSockAddr, 0, sizeof(unconnectSockAddr ) );
+				unconnectSockAddr.sin_family = AF_UNSPEC;
+				// address fields are zero
+				int connectResult = connect(socket_, (struct sockaddr *)&unconnectSockAddr, sizeof(unconnectSockAddr));
+				if ( connectResult < 0 && errno != EAFNOSUPPORT ) {
+					throw std::runtime_error("unable to un-connect udp socket\n");
+				}
 			}
+		}
+
+		return IpEndpointNameFromSockaddr( sockAddr );
+	}
+
+	IpEndpointName LocalEndpointForConnectedRemoteEndpoint() const
+	{
+		assert( isConnected_ );
+
+		// get the address
+
+		struct sockaddr_in sockAddr;
+		std::memset( (char *)&sockAddr, 0, sizeof(sockAddr ) );
+		socklen_t length = sizeof(sockAddr);
+		if (getsockname(socket_, (struct sockaddr *)&sockAddr, &length) < 0) {
+			throw std::runtime_error("unable to getsockname\n");
 		}
 
 		return IpEndpointNameFromSockaddr( sockAddr );
@@ -198,13 +222,14 @@ public:
 	void Connect( const IpEndpointName& remoteEndpoint, bool enableBroadcast = false )
 	{
 		SockaddrFromIpEndpointName( connectedAddr_, remoteEndpoint );
-       
-        SetEnableBroadcast(enableBroadcast);
-       
-        if (connect(socket_, (struct sockaddr *)&connectedAddr_, sizeof(connectedAddr_)) < 0) {
-            throw std::runtime_error("unable to connect udp socket\n");
-        }
 
+		SetEnableBroadcast(enableBroadcast);
+
+		if (connect(socket_, (struct sockaddr *)&connectedAddr_, sizeof(connectedAddr_)) < 0) {
+			throw std::runtime_error("unable to connect udp socket\n");
+		}
+
+		connectedRemoteEndpoint_ = remoteEndpoint;
 		isConnected_ = true;
 	}
 
@@ -291,6 +316,11 @@ void UdpSocket::SetAllowReuse( bool allowReuse )
 IpEndpointName UdpSocket::LocalEndpointFor( const IpEndpointName& remoteEndpoint ) const
 {
 	return impl_->LocalEndpointFor( remoteEndpoint );
+}
+
+IpEndpointName UdpSocket::LocalEndpointForConnectedRemoteEndpoint() const
+{
+	return impl_->LocalEndpointForConnectedRemoteEndpoint();
 }
 
 void UdpSocket::Connect( const IpEndpointName& remoteEndpoint, bool enableBroadcast )

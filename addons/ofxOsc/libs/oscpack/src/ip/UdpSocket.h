@@ -114,12 +114,13 @@ public:
 
 	// Retrieve the local endpoint name when sending to 'to'
 	IpEndpointName LocalEndpointFor( const IpEndpointName& remoteEndpoint ) const;
+	IpEndpointName LocalEndpointForConnectedRemoteEndpoint() const;
 
 	// Connect to a remote endpoint which is used as the target
 	// for calls to Send()
 	void Connect( const IpEndpointName& remoteEndpoint, bool enableBroadcast = false );
 	void Send( const char *data, std::size_t size );
-    void SendTo( const IpEndpointName& remoteEndpoint, const char *data, std::size_t size );
+	void SendTo( const IpEndpointName& remoteEndpoint, const char *data, std::size_t size );
 
 
 	// Bind a local endpoint to receive incoming data. Endpoint
