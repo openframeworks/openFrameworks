@@ -672,7 +672,7 @@ char ofHexToChar(const string& charHexString);
 /// \brief Convert a string representing an float in hexadecimal to a float.
 ///
 /// Converts a hexadecimal representation of an float (little-endian, 32-bit
-/// IEEE 754, e.g., `"4060000000000000"`) to an actual float (e.g., `128.f`).
+/// IEEE 754, e.g., `"43000000"`) to an actual float (e.g., `128.f`).
 ///
 /// \param floatHexString The string representing an float in hexadecimal.
 /// \returns the float represented by the string.
