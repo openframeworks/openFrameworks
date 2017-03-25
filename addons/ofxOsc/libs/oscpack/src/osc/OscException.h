@@ -45,11 +45,11 @@ class Exception : public std::exception {
     const char *what_;
     
 public:
-    Exception() throw() {}
+    Exception() throw() { what_ = NULL; }
     Exception( const Exception& src ) throw()
         : std::exception( src )
         , what_( src.what_ ) {}
-    Exception( const char *w ) throw()
+    explicit Exception( const char *w ) throw()
         : what_( w ) {}
     Exception& operator=( const Exception& src ) throw()
         { what_ = src.what_; return *this; }

@@ -368,6 +368,7 @@ class SocketReceiveMultiplexer::Implementation{
 public:
     Implementation()
 	{
+		break_ = false;
 		breakEvent_ = CreateEvent( NULL, FALSE, FALSE, NULL );
 	}
 
