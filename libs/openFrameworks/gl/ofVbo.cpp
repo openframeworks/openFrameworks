@@ -446,7 +446,6 @@ void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords
 		bUsingColors |= (location == ofShader::COLOR_ATTRIBUTE);
 		bUsingNormals |= (location == ofShader::NORMAL_ATTRIBUTE);
 		bUsingTexCoords |= (location == ofShader::TEXCOORD_ATTRIBUTE);
-		normalize = (location == ofShader::NORMAL_ATTRIBUTE);
 	}
 
 	getOrCreateAttr(location).setData(attrib0x,numCoords,total,usage,stride,normalize);
