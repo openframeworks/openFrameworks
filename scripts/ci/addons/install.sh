@@ -2,6 +2,9 @@
 set -e
 
 export OF_ROOT=~/openFrameworks
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 1 --force
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 1 --force
+gcc --version
 
 cd $OF_ROOT
 if [ -f scripts/ci/$TARGET/install.sh ]; then
