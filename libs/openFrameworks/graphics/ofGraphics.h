@@ -197,7 +197,7 @@ void ofSetBackgroundColorHex(int hexColor, int alpha = 255);
 /// void ofApp::draw(){
 ///     if(ofGetFrameNum() % 10 == 0){
 ///         // draws a black background every 10 frames
-///         ofSetBackground(0,0,0);
+///         ofSetBackgroundColor(0,0,0);
 ///     }
 /// }
 /// ~~~~
