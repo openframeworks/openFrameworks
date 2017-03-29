@@ -33,7 +33,7 @@ ofxOscMessage& ofxOscMessage::copy(const ofxOscMessage &other){
 	remotePort = other.remotePort;
 
 	// copy arguments
-	for(int i = 0; i < (int)other.args.size(); ++i){
+    for(std::size_t i = 0; i < other.args.size(); ++i){
 		switch(other.getArgType(i)){
 			case OFXOSC_TYPE_TRUE: case OFXOSC_TYPE_FALSE:
 				args.push_back(new ofxOscArgBool(other.getArgAsBool(i)));
@@ -122,13 +122,13 @@ int ofxOscMessage::getRemotePort() const{
 
 // get methods
 //--------------------------------------------------------------
-int ofxOscMessage::getNumArgs() const{
-	return (int)args.size();
+std::size_t ofxOscMessage::getNumArgs() const{
+	return args.size();
 }
 
 //--------------------------------------------------------------
-ofxOscArgType ofxOscMessage::getArgType(int index) const{
-	if(index >= (int)args.size()) {
+ofxOscArgType ofxOscMessage::getArgType(std::size_t index) const{
+	if(index >= args.size()) {
 		ofLogError("ofxOscMessage") << "getArgType(): index "
 		                            << index << " out of bounds";
 		return OFXOSC_TYPE_INDEXOUTOFBOUNDS;
@@ -139,8 +139,8 @@ ofxOscArgType ofxOscMessage::getArgType(int index) const{
 }
 
 //--------------------------------------------------------------
-std::string ofxOscMessage::getArgTypeName(int index) const{
-	if(index >= (int)args.size()) {
+std::string ofxOscMessage::getArgTypeName(std::size_t index) const{
+	if(index >= args.size()) {
 		ofLogError("ofxOscMessage") << "getArgTypeName(): index "
 		                            << index << " out of bounds";
 		return "INDEX OUT OF BOUNDS";
@@ -153,19 +153,19 @@ std::string ofxOscMessage::getArgTypeName(int index) const{
 //--------------------------------------------------------------
 std::string ofxOscMessage::getTypeString() const {
 	std::string types = "";
-	for(int i = 0; i < (int)args.size(); ++i) {
+	for(std::size_t i = 0; i < args.size(); ++i) {
 		types += args[i]->getTypeName();
 	}
 	return types;
 }
 
 //--------------------------------------------------------------
-std::int32_t ofxOscMessage::getArgAsInt(int index) const{
+std::int32_t ofxOscMessage::getArgAsInt(std::size_t index) const{
 	return getArgAsInt32(index);
 }
 
 //--------------------------------------------------------------
-std::int32_t ofxOscMessage::getArgAsInt32(int index) const{
+std::int32_t ofxOscMessage::getArgAsInt32(std::size_t index) const{
 	if(getArgType(index) != OFXOSC_TYPE_INT32){
 		if(getArgType(index) == OFXOSC_TYPE_INT64){
 			// warn about possible lack of precision
@@ -200,7 +200,7 @@ std::int32_t ofxOscMessage::getArgAsInt32(int index) const{
 }
 
 //--------------------------------------------------------------
-std::int64_t ofxOscMessage::getArgAsInt64(int index) const{
+std::int64_t ofxOscMessage::getArgAsInt64(std::size_t index) const{
 	if(getArgType(index) != OFXOSC_TYPE_INT64){
 		if(getArgType(index) == OFXOSC_TYPE_INT32){
 			return (std::int64_t)((ofxOscArgInt32*)args[index])->get();
@@ -227,7 +227,7 @@ std::int64_t ofxOscMessage::getArgAsInt64(int index) const{
 }
 
 //--------------------------------------------------------------
-float ofxOscMessage::getArgAsFloat(int index) const{
+float ofxOscMessage::getArgAsFloat(std::size_t index) const{
 	if(getArgType(index) != OFXOSC_TYPE_FLOAT){
 		if(getArgType(index) == OFXOSC_TYPE_INT32){
 			return (float)((ofxOscArgInt32*)args[index])->get();
@@ -262,7 +262,7 @@ float ofxOscMessage::getArgAsFloat(int index) const{
 }
 
 //--------------------------------------------------------------
-double ofxOscMessage::getArgAsDouble(int index) const{
+double ofxOscMessage::getArgAsDouble(std::size_t index) const{
 	if(getArgType(index) != OFXOSC_TYPE_DOUBLE){
 		if(getArgType(index) == OFXOSC_TYPE_INT32){
 			return (double)((ofxOscArgInt32*)args[index])->get();
@@ -289,7 +289,7 @@ double ofxOscMessage::getArgAsDouble(int index) const{
 }
 
 //--------------------------------------------------------------
-std::string ofxOscMessage::getArgAsString(int index) const{
+std::string ofxOscMessage::getArgAsString(std::size_t index) const{
 	if(getArgType(index) != OFXOSC_TYPE_STRING){
 		// warn about string conversions
 		if(getArgType(index) == OFXOSC_TYPE_INT32){
@@ -338,7 +338,7 @@ std::string ofxOscMessage::getArgAsString(int index) const{
 }
 
 //--------------------------------------------------------------
-std::string ofxOscMessage::getArgAsSymbol(int index) const{
+std::string ofxOscMessage::getArgAsSymbol(std::size_t index) const{
 	if(getArgType(index) != OFXOSC_TYPE_SYMBOL){
 		// warn about string conversions
 		if(getArgType(index) == OFXOSC_TYPE_INT32){
@@ -386,7 +386,7 @@ std::string ofxOscMessage::getArgAsSymbol(int index) const{
 }
 
 //--------------------------------------------------------------
-char ofxOscMessage::getArgAsChar(int index) const{
+char ofxOscMessage::getArgAsChar(std::size_t index) const{
 	if(getArgType(index) == OFXOSC_TYPE_CHAR){
 		return ((ofxOscArgChar*)args[index])->get();
 	}
@@ -398,7 +398,7 @@ char ofxOscMessage::getArgAsChar(int index) const{
 }
 
 //--------------------------------------------------------------
-std::uint32_t ofxOscMessage::getArgAsMidiMessage(int index) const{
+std::uint32_t ofxOscMessage::getArgAsMidiMessage(std::size_t index) const{
 	if(getArgType(index) == OFXOSC_TYPE_MIDI_MESSAGE){
 		return ((ofxOscArgMidiMessage*)args[index])->get();
 	}
@@ -410,7 +410,7 @@ std::uint32_t ofxOscMessage::getArgAsMidiMessage(int index) const{
 }
 
 //--------------------------------------------------------------
-bool ofxOscMessage::getArgAsBool(int index) const{
+bool ofxOscMessage::getArgAsBool(std::size_t index) const{
 	switch(getArgType(index)){
 		case OFXOSC_TYPE_TRUE: case OFXOSC_TYPE_FALSE:
 			return ((ofxOscArgBool*)args[index])->get();
@@ -432,7 +432,7 @@ bool ofxOscMessage::getArgAsBool(int index) const{
 }
 
 //--------------------------------------------------------------
-bool ofxOscMessage::getArgAsNone(int index) const{
+bool ofxOscMessage::getArgAsNone(std::size_t index) const{
 	if(getArgType(index) != OFXOSC_TYPE_NONE){
 		ofLogError("ofxOscMessage") << "getArgAsNone(): argument "
 			<< index << " is not a none/nil";
@@ -444,7 +444,7 @@ bool ofxOscMessage::getArgAsNone(int index) const{
 }
 
 //--------------------------------------------------------------
-bool ofxOscMessage::getArgAsTrigger(int index) const{
+bool ofxOscMessage::getArgAsTrigger(std::size_t index) const{
 	if(getArgType(index) != OFXOSC_TYPE_TRIGGER){
 		ofLogError("ofxOscMessage") << "getArgAsTrigger(): argument "
 			<< index << " is not a trigger";
@@ -456,17 +456,17 @@ bool ofxOscMessage::getArgAsTrigger(int index) const{
 }
 
 //--------------------------------------------------------------
-bool ofxOscMessage::getArgAsImpulse(int index) const{
+bool ofxOscMessage::getArgAsImpulse(std::size_t index) const{
 	return getArgAsTrigger(index);
 }
 
 //--------------------------------------------------------------
-bool ofxOscMessage::getArgAsInfinitum(int index) const{
+bool ofxOscMessage::getArgAsInfinitum(std::size_t index) const{
 	return getArgAsTrigger(index);
 }
 
 //--------------------------------------------------------------
-std::uint64_t ofxOscMessage::getArgAsTimetag(int index) const{
+std::uint64_t ofxOscMessage::getArgAsTimetag(std::size_t index) const{
 	if(getArgType(index) != OFXOSC_TYPE_TIMETAG){
 		if(getArgType(index) == OFXOSC_TYPE_DOUBLE){
 			// warn about possible conversion issue
@@ -487,7 +487,7 @@ std::uint64_t ofxOscMessage::getArgAsTimetag(int index) const{
 }
 
 //--------------------------------------------------------------
-ofBuffer ofxOscMessage::getArgAsBlob(int index) const{
+ofBuffer ofxOscMessage::getArgAsBlob(std::size_t index) const{
 	if(getArgType(index) != OFXOSC_TYPE_BLOB){
 		ofLogError("ofxOscMessage") << "getArgAsBlob(): argument "
 			<< index << " is not a blob";
@@ -499,7 +499,7 @@ ofBuffer ofxOscMessage::getArgAsBlob(int index) const{
 }
 
 //--------------------------------------------------------------
-std::uint32_t ofxOscMessage::getArgAsRgbaColor(int index) const{
+std::uint32_t ofxOscMessage::getArgAsRgbaColor(std::size_t index) const{
 	if(getArgType(index) != OFXOSC_TYPE_RGBA_COLOR){
 		ofLogError("ofxOscMessage") << "getArgAsRgbaColor(): argument "
 			<< index << " is not an rgba color";
@@ -607,7 +607,7 @@ void ofxOscMessage::setRemoteEndpoint(const std::string &host, int port){
 //--------------------------------------------------------------
 std::ostream& operator<<(std::ostream &os, const ofxOscMessage &message) {
 	os << message.getAddress();
-	for(int i = 0; i < message.getNumArgs(); ++i) {
+	for(std::size_t i = 0; i < message.getNumArgs(); ++i) {
 		os << " ";
 		switch(message.getArgType(i)) {
 			case OFXOSC_TYPE_INT32:
