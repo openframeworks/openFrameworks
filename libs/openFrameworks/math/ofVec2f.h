@@ -890,34 +890,36 @@ public:
 	/// \sa getPerpendicular()
 	ofVec2f& perpendicular();
 	
-	/// \brief Calculate and return the dot product of this vector with vec.
-	/// 
-	/// *Dot product* (less commonly known as *Euclidean inner product*) expresses 
-	/// the angular relationship between two vectors. In other words it is a measure 
-	/// of how *parallel* two vectors are. If they are completely perpendicular the dot 
-	/// product is 0; if they are completely parallel their dot product is either 1 if 
-	/// they are pointing in the same direction, or -1 if they are pointing in 
-	/// opposite directions.
+	/// \brief Returns the dot product of this vector with 'vec'.
 	///
-	/// ![DOT](math/dotproduct.png)
-	/// Image courtesy of Wikipedia
+	/// The *dot product* of two vectors, also known as the *scalar product*, is
+	/// the product of the magnitude of the two vectors and the cosine of the
+	/// angle between them.
+	///
+	/// One interpretation of the dot product is as a measure of how closely two
+	/// vectors align with each other. If they point in exactly the same
+	/// direction, their dot product will simply be the product of their
+	/// magnitudes, if they are perpendicular, their dot product will be 0, and
+	/// if they point in opposite directions, their dot product will be
+	/// negative.
+	///
+	/// The dot product is in contrast to the *cross product*, which returns a
+	/// vector rather than a scalar.
 	/// 
 	/// ~~~~{.cpp}
-	/// ofvec2f a1(1, 0);
-	/// ofVec2f b1(0, 1); // 90 degree angle to a1
-	/// dot = a1.dot(b1); // dot is 0, ie cos(90)
-	/// 
-	/// ofVec2f a2(1, 0); 
-	/// ofVec2f b2(1, 1); // 45 degree angle to a2
-	/// b2.normalize(); // vectors should to be unit vectors (normalized)
-	/// float dot = a2.dot(b2); // dot is 0.707, ie cos(45)
-	/// 
-	/// ofVec2f a3(1, 0);
-	/// ofVec2f b3(-1, 0); // 180 degree angle to a3
-	/// dot = a3.dot(b3); // dot is -1, ie cos(180)
+	/// ofVec2f a1(2, 0); // magnitude 2, parallel to x-axis
+	/// ofVec2f b1(3, 4); // magnitude 5, 53.13 degree angle to a1
+	/// float dot = a1.dot(b1); // dot is 2 * 5 * cos(53.13) = 6.0
+	///
+	/// ofVec2f a2(1, 0); // magnitude 1, parallel to x-axis
+	/// ofVec2f b2(0, 1); // magnitude 1, 90 degree angle to a2
+	/// dot = a2.dot(b2); // dot is 1 * 1 * cos(90) = 0.0
+	///
+	/// ofVec2f a3(0, 1); // magnitude 1, parallel to y-axis
+	/// ofVec2f b3(0, -1); // magnitude 1, 180 degree angle to a3
+	/// dot = a3.dot(b3); // dot is 1 * 1 * cos(180) = -1.0
 	/// ~~~~
 	/// 
-	/// \param vec The vector to dotproduct
     float dot( const ofVec2f& vec ) const;
 	
 	
