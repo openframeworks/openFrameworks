@@ -15,12 +15,15 @@ ofxOscBundle& ofxOscBundle::operator=(const ofxOscBundle &other){
 //--------------------------------------------------------------
 ofxOscBundle& ofxOscBundle::copy(const ofxOscBundle &other){
 	if(this == &other) return *this;
-	for(int i = 0; i < (int)other.bundles.size(); i++){
-		bundles.push_back(other.bundles[i]);
-	}
-	for(int i = 0; i < (int)other.messages.size(); i++){
-		messages.push_back(other.messages[i]);
-	}
+
+    std::copy(other.bundles.begin(),
+              other.bundles.end(),
+              std::back_inserter(bundles));
+
+    std::copy(other.messages.begin(),
+              other.messages.end(),
+              std::back_inserter(messages));
+
 	return *this;
 }
 
@@ -51,22 +54,22 @@ int ofxOscBundle::getMessageCount() const{
 }
 
 //--------------------------------------------------------------
-const ofxOscBundle& ofxOscBundle::getBundleAt(int i) const{
+const ofxOscBundle& ofxOscBundle::getBundleAt(std::size_t i) const{
 	return bundles[i];
 }
 
 //--------------------------------------------------------------
-ofxOscBundle& ofxOscBundle::getBundleAt(int i){
+ofxOscBundle& ofxOscBundle::getBundleAt(std::size_t i){
 	return bundles[i];
 }
 
 //--------------------------------------------------------------
-const ofxOscMessage& ofxOscBundle::getMessageAt(int i) const{
+const ofxOscMessage& ofxOscBundle::getMessageAt(std::size_t i) const{
 	return messages[i];
 }
 
 //--------------------------------------------------------------
-ofxOscMessage& ofxOscBundle::getMessageAt(int i){
+ofxOscMessage& ofxOscBundle::getMessageAt(std::size_t i){
 	return messages[i];
 }
 
