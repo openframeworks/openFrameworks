@@ -484,63 +484,63 @@ public:
     ofVec2f& scale( const float length );
 	
 	
-	/// \brief Return a new ofVec2f that is the result of rotating this vector by angle
-	/// degrees around the origin.
+	/// \brief Returns a new vector that is the result of rotating this vector 
+	/// by 'angle' degrees about the origin.
 	/// 
 	/// ~~~~{.cpp}
 	/// ofVec2f v1(1, 0);
-	/// ofVec2f v2 = v1.getRotated( 45 ); // v2 is (√2, √2)
-	/// ofVec3f v3 = v2.getRotated( 45 ); // v3 is (0, 1)
+	/// ofVec2f v2 = v1.getRotated(45); // v2 is (0.707, 0.707)
 	/// ~~~~
 	/// 
 	/// \sa getRotatedRad()
 	/// \sa rotate()
     ofVec2f  getRotated( float angle ) const;
 
-    /// \brief Like getRotated() but rotates around `pivot` rather than around the origin
+	/// \brief Returns a new vector that is the result of rotating this vector
+	/// by 'angle' degrees about the point 'pivot'.
+	///
     ofVec2f  getRotated( float angle, const ofVec2f& pivot ) const;
     
-	/// \brief Return a new ofVec2f that is the result of rotating this vector by angle
-	/// radians around the origin.
+	/// \brief Returns a new vector that is the result of rotating this vector 
+	/// by 'angle' radians about the origin.
 	/// 
 	/// ~~~~{.cpp}
 	/// ofVec2f v1(1, 0);
-	/// ofVec2f v2 = v1.getRotatedRad( PI/4 ); // v2 is (√2, √2)
-	/// ofVec3f v3 = v2.getRotatedRad( PI/4 ); // v3 is (0, 1)
+	/// ofVec2f v2 = v1.getRotatedRad(PI / 4); // v2 is (0.707, 0.707)
 	/// ~~~~
 	///     
     ofVec2f  getRotatedRad( float angle ) const;
 
-    /// \brief Like getRotatedRad() but rotates around `pivot` rather than around the origin
+	/// \brief Returns a new vector that is the result of rotating this vector
+	/// by 'angle' radians about the origin. 
+	///
     ofVec2f  getRotatedRad( float angle, const ofVec2f& pivot ) const;
 
 
-	/// \brief Rotate this vector by angle degrees around the origin.
+	/// \brief Rotates this vector by 'angle' degrees about the origin.
 	/// 
 	/// ~~~~{.cpp}
 	/// ofVec2f v1(1, 0);
-	/// v1.rotate( 45 ); // (√2, √2)
-	/// v1.rotate( 45 ); // (0, 1)
+	/// v1.rotate(45); // v1 is now (0.707, 0.707)
 	/// ~~~~
 	///
 	/// \sa getRotated()
     ofVec2f& rotate( float angle );
 
-    /// \brief Like rotate() but rotates around `pivot` rather than around the origin
+	/// \brief Rotates this vector by 'angle' degrees about the point 'pivot'.
     ofVec2f& rotate( float angle, const ofVec2f& pivot );
     
-	/// \brief Rotate this vector by angle radians around the origin.
+	/// \brief Rotates this vector by 'angle' radians about the origin.
 	/// 
 	/// ~~~~{.cpp}
 	/// ofVec2f v1(1, 0);
-	/// v1.rotate( PI/4 ); // (√2, √2)
-	/// v1.rotate( PI/4 ); // (0, 1)
+	/// v1.rotateRad(PI / 4); // v1 is now (0.707, 0.707)
 	/// ~~~~
 	///
 	/// \sa getRotatedRad()
     ofVec2f& rotateRad( float angle );
 	
-    /// \brief Like rotateRad() but rotates around `pivot` rather than around the origin
+	/// \brief Rotates this vector by 'angle' radians about the point 'pivot'.
 	ofVec2f& rotateRad( float angle, const ofVec2f& pivot );
 	
 	
