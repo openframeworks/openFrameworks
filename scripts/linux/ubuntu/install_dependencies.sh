@@ -11,7 +11,7 @@ fi
 
 if [ "$1" == "-y" ]; then
     FORCE_YES=-y
-else 
+else
     FORCE_YES=""
 fi
 
@@ -19,7 +19,7 @@ function installPackages {
     for pkg in $@; do
         echo "Installing ${pkg}"
         dpkg-query -W -f=' ' ${pkg} 2> /dev/null
-        if [ $? -eq 0 ]; then 
+        if [ $? -eq 0 ]; then
             echo "Already installed"
         else
             error="$(apt-get install -y --dry-run ${pkg})"
@@ -70,6 +70,11 @@ elif [ $(expr $MAJOR_VERSION \< 13 ) -eq 1 ]; then
     CXX_VER=-4.9
     BOOST_VER=1.55
 elif [ $(expr $MAJOR_VERSION \< 14 ) -eq 1 ]; then
+    add-apt-repository ppa:ubuntu-toolchain-r/test --yes
+    add-apt-repository ppa:boost-latest/ppa --yes
+    CXX_VER=-4.9
+    BOOST_VER=1.55
+elif [ $(expr $MAJOR_VERSION \= 14 ) -eq 1 ] && [ $(expr $MINOR_VERSION \= 4) -eq 1 ]; then
     add-apt-repository ppa:ubuntu-toolchain-r/test --yes
     add-apt-repository ppa:boost-latest/ppa --yes
     CXX_VER=-4.9
@@ -127,7 +132,7 @@ then
 		echo
 		echo "installation of OF dependencies with "${XTAG}" packages confirmed"
 	else
-		XTAG="" 
+		XTAG=""
 	fi
 fi
 
@@ -148,7 +153,7 @@ else
 	mv glfw-$GLFW_GIT_TAG glfw
 	rm glfw-$GLFW_GIT_TAG.tar.gz
 	cd glfw
-    mkdir -p build 
+    mkdir -p build
     cd build
     cmake .. -DGLFW_BUILD_DOCS=OFF \
 	-DGLFW_BUILD_TESTS=OFF \
@@ -173,7 +178,7 @@ if [ "$1" != "-y" ]; then
     if [[ $REPLY =~ ^[Nn]$ ]]; then
         exit 0
     fi
-    
+
     echo
     echo "Installing..."
     echo
@@ -182,12 +187,10 @@ else
     installPackages ${PACKAGES}
 fi
 
-if [ $(expr $MAJOR_VERSION \< 13 ) -eq 1 ]; then
-    echo "detected ubuntu 12.xx setting gcc-${CXX_VER} as default compiler" 
+if [ $(expr $MAJOR_VERSION \< 14 ) -eq 1 ] || [ [ $(expr $MAJOR_VERSION \= 14 ) -eq 1 ] && [ $(expr $MAJOR_MINOR \= 4 ) -eq 1 ] ]; then
+    echo "detected ubuntu default gcc to old for compatibility with c++11 setting gcc-${CXX_VER} as default compiler"
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 20
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc${CXX_VER} 50
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.6 20
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++${CXX_VER} 50
 fi
-
-
