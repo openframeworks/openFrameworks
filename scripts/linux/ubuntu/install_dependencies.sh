@@ -180,7 +180,7 @@ if [ "$1" != "-y" ]; then
 fi
 installPackages ${PACKAGES}
 
-if [ $MAJOR_VERSION -lt 14 ] || [[ $MAJOR_VERSION -eq 14 ] && [ $MINOR_VERSION -eq 4 ]]; then
+if [[ $MAJOR_VERSION -lt 14 || ($MAJOR_VERSION -eq 14 && $MINOR_VERSION -eq 4) ]]; then
     echo "detected ubuntu default gcc to old for compatibility with c++11"
 	echo "OF needs at least ${CXX_VER} as default compiler, we can install this now"
 	echo "or you will need to setup this manually before compiling"
