@@ -69,7 +69,7 @@ elif [ $MAJOR_VERSION -lt 13 ]; then
     add-apt-repository ppa:boost-latest/ppa --yes
     CXX_VER=-4.9
     BOOST_VER=1.55
-elif [ $MAJOR_VERSION -lt 14 ] || [[ $MAJOR_VERSION -eq 14 ] && [ $MINOR_VERSION -eq 4 ]]; then
+elif [[ $MAJOR_VERSION -lt 14 || ($MAJOR_VERSION -eq 14 && $MINOR_VERSION -eq 4) ]]; then
     add-apt-repository ppa:ubuntu-toolchain-r/test --yes
     add-apt-repository ppa:boost-latest/ppa --yes
     CXX_VER=-4.9
