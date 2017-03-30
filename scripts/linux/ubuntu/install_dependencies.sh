@@ -60,21 +60,16 @@ MINOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f2 -d.)
 
 echo "Running on ubuntu ${MAJOR_VERSION}.${MINOR_VERSION}"
 
-if [ $(expr $MAJOR_VERSION \< 12 ) -eq 1 ]; then
+if [ $MAJOR_VERSION -lt 12 ]; then
     echo "Your ubuntu version is too old try using an older version of openFrameworks or updating your system"
     exit 1
-elif [ $(expr $MAJOR_VERSION \< 13 ) -eq 1 ]; then
+elif [ $MAJOR_VERSION -lt 13 ]; then
     add-apt-repository ppa:ubuntu-toolchain-r/test --yes
     add-apt-repository ppa:gstreamer-developers/ppa --yes
     add-apt-repository ppa:boost-latest/ppa --yes
     CXX_VER=-4.9
     BOOST_VER=1.55
-elif [ $(expr $MAJOR_VERSION \< 14 ) -eq 1 ]; then
-    add-apt-repository ppa:ubuntu-toolchain-r/test --yes
-    add-apt-repository ppa:boost-latest/ppa --yes
-    CXX_VER=-4.9
-    BOOST_VER=1.55
-elif [ $(expr $MAJOR_VERSION \= 14 ) -eq 1 ] && [ $(expr $MINOR_VERSION \= 4) -eq 1 ]; then
+elif [ $MAJOR_VERSION -lt 14 ] || [[ $MAJOR_VERSION -eq 14 ] && [ $MINOR_VERSION -eq 4 ]]; then
     add-apt-repository ppa:ubuntu-toolchain-r/test --yes
     add-apt-repository ppa:boost-latest/ppa --yes
     CXX_VER=-4.9
@@ -187,10 +182,8 @@ else
     installPackages ${PACKAGES}
 fi
 
-if [ $(expr $MAJOR_VERSION \< 14 ) -eq 1 ] || [ [ $(expr $MAJOR_VERSION \= 14 ) -eq 1 ] && [ $(expr $MAJOR_MINOR \= 4 ) -eq 1 ] ]; then
+elif [ $MAJOR_VERSION -lt 14 ] || [[ $MAJOR_VERSION -eq 14 ] && [ $MINOR_VERSION -eq 4 ]]; then
     echo "detected ubuntu default gcc to old for compatibility with c++11 setting gcc-${CXX_VER} as default compiler"
-    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 20
-    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc${CXX_VER} 50
-    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.6 20
-    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++${CXX_VER} 50
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc${CXX_VER} 1 --force
+    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++${CXX_VER} 1 --force
 fi
