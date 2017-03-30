@@ -236,7 +236,6 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 		case GL_RG32F:
 		case GL_RGB32F:
 		case GL_RGBA32F:
-#endif
 			return GL_FLOAT;
 
 		case GL_R16F:
@@ -250,6 +249,7 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 		case GL_RGB16:
 		case GL_RGBA16:
 			return GL_HALF_FLOAT;
+#endif
 
 		case GL_DEPTH_STENCIL:
 			 return GL_UNSIGNED_INT_24_8;
