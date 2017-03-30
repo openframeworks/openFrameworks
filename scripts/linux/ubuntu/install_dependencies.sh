@@ -177,13 +177,21 @@ if [ "$1" != "-y" ]; then
     echo
     echo "Installing..."
     echo
-    installPackages ${PACKAGES}
-else
-    installPackages ${PACKAGES}
 fi
+installPackages ${PACKAGES}
 
-elif [ $MAJOR_VERSION -lt 14 ] || [[ $MAJOR_VERSION -eq 14 ] && [ $MINOR_VERSION -eq 4 ]]; then
-    echo "detected ubuntu default gcc to old for compatibility with c++11 setting gcc-${CXX_VER} as default compiler"
+if [ $MAJOR_VERSION -lt 14 ] || [[ $MAJOR_VERSION -eq 14 ] && [ $MINOR_VERSION -eq 4 ]]; then
+    echo "detected ubuntu default gcc to old for compatibility with c++11"
+	echo "OF needs at least ${CXX_VER} as default compiler, we can install this now"
+	echo "or you will need to setup this manually before compiling"
+	echo ${PACKAGES}
+	if [ "$1" != "-y" ]; then
+	    read -p "Do you want to set gcc/g++ ${CXX_VER} as default now? [Y/n] "
+	    if [[ $REPLY =~ ^[Nn]$ ]]; then
+	        exit 0
+	    fi
+	fi
+	echo "setting gcc-${CXX_VER} as default compiler"
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc${CXX_VER} 1 --force
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++${CXX_VER} 1 --force
 fi
