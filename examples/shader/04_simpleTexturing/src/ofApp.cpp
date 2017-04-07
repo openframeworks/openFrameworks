@@ -12,7 +12,7 @@ void ofApp::setup() {
 	}
 #endif
 
-    img.loadImage("img.jpg");
+    img.load("img.jpg");
 
     plane.set(800, 600, 10, 10);
     plane.mapTexCoords(0, 0, img.getWidth(), img.getHeight());
