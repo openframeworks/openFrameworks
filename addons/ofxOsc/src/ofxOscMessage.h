@@ -66,87 +66,107 @@ public:
 	/// see ofxOscArg.h for argument type tag char values
 
 	/// \return number of arguments
-	int getNumArgs() const;
-	
+	std::size_t getNumArgs() const;
+
+	/// \param index The index of the queried item.
 	/// \return argument type code for a given index
-	ofxOscArgType getArgType(int index) const;
+	ofxOscArgType getArgType(std::size_t index) const;
 	
+	/// \param index The index of the queried item.
 	/// \return argument type tag char as a string
-	std::string getArgTypeName(int index) const;
+	std::string getArgTypeName(std::size_t index) const;
 	
+	/// \param index The index of the queried item.
 	/// \return type tags for all arguments as a string, 1 char for each argument
 	std::string getTypeString() const;
 	
 	/// get argument as an integer, converts numeric types automatically
 	/// prints a warning when converting higher precision types
+	/// \param index The index of the queried item.
 	/// \return given argument value as a 32-bit int
-	std::int32_t getArgAsInt(int index) const;
+	std::int32_t getArgAsInt(std::size_t index) const;
 	
 	/// get argument as an integer, converts numeric types automatically
 	/// prints a warning when converting higher precision types
+	/// \param index The index of the queried item.
 	/// \return given argument value as a 32-bit int
-	std::int32_t getArgAsInt32(int index) const;
+	std::int32_t getArgAsInt32(std::size_t index) const;
 	
 	/// get argument as a 64-bit integer, converts numeric types automatically
 	/// \return given argument value as a 64-bit int
-	std::int64_t getArgAsInt64(int index) const;
+	/// \param index The index of the queried item.
+	std::int64_t getArgAsInt64(std::size_t index) const;
 	
 	/// get argument as a float, converts numeric types automatically
 	/// prints a warning when converting higher precision types
+	/// \param index The index of the queried item.
 	/// \return given argument value as a float
-	float getArgAsFloat(int index) const;
+	float getArgAsFloat(std::size_t index) const;
 	
 	/// get argument as a double, converts numeric types automatically
+	/// \param index The index of the queried item.
 	/// \return given argument value as a double
-	double getArgAsDouble(int index) const;
+	double getArgAsDouble(std::size_t index) const;
 	
 	/// get argument as a string, converts numeric types with a warning
+	/// \param index The index of the queried item.
 	/// \return given argument value as a string
-	std::string getArgAsString(int index) const;
+	std::string getArgAsString(std::size_t index) const;
 	
 	/// get argument as a symbol (string), converts numeric types with a warning
+	/// \param index The index of the queried item.
 	/// \return given argument value as a symbol (string)
-	std::string getArgAsSymbol(int index) const;
+	std::string getArgAsSymbol(std::size_t index) const;
 	
 	/// get argument as a string, converts numeric types with a warning
+	/// \param index The index of the queried item.
 	/// \return given argument value as a string
-	char getArgAsChar(int index) const;
+	char getArgAsChar(std::size_t index) const;
 	
+	/// \param index The index of the queried item.
 	/// \return given argument value as a 4-byte midi message
-	std::uint32_t getArgAsMidiMessage(int index) const;
+	std::uint32_t getArgAsMidiMessage(std::size_t index) const;
 	
 	/// get argument as a bool, converts numeric types automatically
 	/// this argument type matches both OFXOSC_TYPE_TRUE & OFXOSC_TYPE_FALSE
+	/// \param index The index of the queried item.
 	/// \return given argument value as a bool
-	bool getArgAsBool(int index) const;
+	bool getArgAsBool(std::size_t index) const;
 	
 	/// get argument as a none/nil
+	/// \param index The index of the queried item.
 	/// \return true if argument was a none/nil
-	bool getArgAsNone(int index) const;
+	bool getArgAsNone(std::size_t index) const;
 	
 	/// get argument as a trigger impulse
+	/// \param index The index of the queried item.
 	/// \return true if argument was a trigger
-	bool getArgAsTrigger(int index) const;
-	
-	/// get argument as a trigger impulse
-	/// this is an alias for getArgAsTrigger()
-	/// \return true if argument was a trigger
-	bool getArgAsImpulse(int index) const;
+	bool getArgAsTrigger(std::size_t index) const;
 	
 	/// get argument as a trigger impulse
 	/// this is an alias for getArgAsTrigger()
+	/// \param index The index of the queried item.
 	/// \return true if argument was a trigger
-	bool getArgAsInfinitum(int index) const;
+	bool getArgAsImpulse(std::size_t index) const;
 	
+	/// get argument as a trigger impulse
+	/// this is an alias for getArgAsTrigger()
+	/// \param index The index of the queried item.
+	/// \return true if argument was a trigger
+	bool getArgAsInfinitum(std::size_t index) const;
+	
+	/// \param index The index of the queried item.
 	/// \return given argument as a 64-bit NTP time tag
-	std::uint64_t getArgAsTimetag(int index) const;
+	std::uint64_t getArgAsTimetag(std::size_t index) const;
 	
+	/// \param index The index of the queried item.
 	/// \return given argument as a binary blob
-	ofBuffer getArgAsBlob(int index) const;
+	ofBuffer getArgAsBlob(std::size_t index) const;
 	
 	/// get an argument as an RGBA color, converts int32 automatically
+	/// \param index The index of the queried item.
 	/// \return given argument as a 32-bit color value
-	std::uint32_t getArgAsRgbaColor(int index) const;
+	std::uint32_t getArgAsRgbaColor(std::size_t index) const;
 
 	/// \section Argument Setters
 

@@ -182,17 +182,27 @@ template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _fileName, const ofImageLoadSettings& settings){
 	ofInitFreeImage();
 
-	UriParserStateA state;
-	UriUriA uri;
 	auto uriStr = _fileName.string();
+	const int bytesNeeded = 8 + 3 * strlen(uriStr.c_str()) + 1;
+	std::vector<char> absUri(bytesNeeded);
+
+#ifdef TARGET_WIN32
+	uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri.data());
+#else
+	uriUnixFilenameToUriStringA(uriStr.c_str(), absUri.data());
+#endif
+
+	UriUriA uri;
+	UriParserStateA state;
 	state.uri = &uri;
-	if(uriParseUriA(&state, uriStr.c_str())!=URI_SUCCESS){
+	if(uriParseUriA(&state, absUri.data())!=URI_SUCCESS){
 		ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri " << _fileName;
 		uriFreeUriMembersA(&uri);
 		return false;
 	}
 	std::string scheme(uri.scheme.first, uri.scheme.afterLast);
 	uriFreeUriMembersA(&uri);
+
 	if(scheme == "http" || scheme == "https"){
 		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
 	}
