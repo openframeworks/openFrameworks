@@ -19,11 +19,11 @@ void ofApp::setup(){
     camera.setVerbose(false);
 	camera.initGrabber(camWidth, camHeight);
     
-    movie.loadMovie("movie.mov");
+    movie.load("movie.mov");
 	movie.play();
     
-    image.loadImage("img.jpg");
-    imageMask.loadImage("mask.jpg");
+    image.load("img.jpg");
+    imageMask.load("mask.jpg");
     
     fbo.allocate(camWidth, camHeight);
     maskFbo.allocate(camWidth, camHeight);
@@ -55,10 +55,10 @@ void ofApp::draw(){
     ofClear(0, 0, 0,255);
     
     shader.begin();
-    shader.setUniformTexture("tex0", camera.getTextureReference(), 1);
+    shader.setUniformTexture("tex0", camera.getTexture(), 1);
     shader.setUniformTexture("tex1", image, 2);
-    shader.setUniformTexture("tex2", movie.getTextureReference(), 3);
-    shader.setUniformTexture("imageMask", maskFbo.getTextureReference(), 4);
+    shader.setUniformTexture("tex2", movie.getTexture(), 3);
+    shader.setUniformTexture("imageMask", maskFbo.getTexture(), 4);
     
     // we are drawing this fbo so it is used just as a frame.
     maskFbo.draw(0, 0);
