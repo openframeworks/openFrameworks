@@ -330,10 +330,14 @@ namespace{
         header += "#define MAX_LIGHTS " + ofToString(max(1,maxLights)) + "\n";
         if(hasTexture){
             header += "#define HAS_TEXTURE 1\n";
-        }
+		} else {
+			header += "#define HAS_TEXTURE 0\n";
+		}
         if(hasColor){
             header += "#define HAS_COLOR 1\n";
-        }
+		} else {
+			header += "#define HAS_COLOR 0\n";
+		}
         return header;
     }
 
