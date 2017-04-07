@@ -62,6 +62,10 @@ float 		ofGetTargetFrameRate();
 uint64_t	ofGetFrameNum();
 void 		ofSetFrameRate(int targetRate);
 double		ofGetLastFrameTime();
+void		ofSetTimeModeSystem();
+uint64_t	ofGetFixedStepForFps(double fps);
+void		ofSetTimeModeFixedRate(uint64_t stepNanos = ofGetFixedStepForFps(60)); //default nanos for 1 frame at 60fps
+void		ofSetTimeModeFiltered(float alpha = 0.9);
 
 void		ofSetOrientation(ofOrientation orientation, bool vFlip=true);
 ofOrientation			ofGetOrientation();

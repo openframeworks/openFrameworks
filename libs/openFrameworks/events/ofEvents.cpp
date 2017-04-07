@@ -175,6 +175,20 @@ void ofCoreEvents::enable(){
 	fileDragEvent.enable();
 }
 
+void ofCoreEvents::setTimeModeSystem(){
+	timeMode = System;
+}
+
+void ofCoreEvents::setTimeModeFixedRate(uint64_t nanosecsPerFrame){
+	timeMode = FixedRate;
+	fixedRateTimeNanos = std::chrono::nanoseconds(nanosecsPerFrame);
+}
+
+void ofCoreEvents::setTimeModeFiltered(float alpha){
+	timeMode = Filtered;
+	fps.setFilterAlpha(alpha);
+}
+
 //--------------------------------------
 void ofCoreEvents::setFrameRate(int _targetRate){
 	// given this FPS, what is the amount of millis per frame
@@ -204,7 +218,16 @@ float ofCoreEvents::getTargetFrameRate() const{
 
 //--------------------------------------
 double ofCoreEvents::getLastFrameTime() const{
-	return fps.getLastFrameSecs();
+	switch(timeMode){
+		case Filtered:
+			return fps.getLastFrameFilteredSecs();
+		case FixedRate:
+			return std::chrono::duration<double>(fixedRateTimeNanos).count();
+		case System:
+		default:
+			return fps.getLastFrameSecs();
+	}
+
 }
 
 //--------------------------------------
@@ -558,6 +581,12 @@ bool ofCoreEvents::notifyExit(){
 bool ofCoreEvents::notifyWindowResized(int width, int height){
 	ofResizeEventArgs resizeEventArgs(width,height);
 	return ofNotifyEvent( windowResized, resizeEventArgs );
+}
+
+//------------------------------------------
+bool ofCoreEvents::notifyWindowMoved(int x, int y){
+	ofWindowPosEventArgs windowPosEventArgs(x,y);
+	return ofNotifyEvent( windowMoved, windowPosEventArgs );
 }
 
 //------------------------------------------

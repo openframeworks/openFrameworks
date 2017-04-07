@@ -3,6 +3,7 @@
 #include "ofConstants.h"
 #include "utf8.h"
 #include <bitset> // For ofToBinary.
+#include <chrono>
 
 #include "ofLog.h"
 
@@ -70,11 +71,37 @@ unsigned int ofGetUnixTime();
 
 /// \brief Get the system time in milliseconds.
 /// \returns the system time in milliseconds.
-uint64_t ofGetSystemTime();
+OF_DEPRECATED_MSG("Use ofGetSystemTimeMillis() instead", uint64_t ofGetSystemTime());
+
+/// \brief Get the system time in milliseconds.
+/// \returns the system time in milliseconds.
+uint64_t ofGetSystemTimeMillis();
 
 /// \brief Get the system time in microseconds.
 /// \returns the system time in microseconds.
 uint64_t ofGetSystemTimeMicros();
+
+
+struct ofTime{
+	uint64_t seconds = 0;
+	uint64_t nanoseconds = 0;
+
+	enum Mode{
+		System,
+		FixedRate,
+	} mode = System;
+
+	uint64_t getAsMilliseconds();
+	uint64_t getAsMicroseconds();
+	uint64_t getAsNanoseconds();
+	double getAsSeconds();
+	std::chrono::time_point<std::chrono::nanoseconds> getAsTimePoint();
+	std::chrono::nanoseconds operator-(const ofTime&);
+};
+
+/// \brief Get the system time.
+/// \returns the system time.
+ofTime ofGetCurrentTime();
 
 /// \brief Sleeps the current thread for the specified amount of milliseconds.
 /// \param millis The number of millseconds to sleep.
