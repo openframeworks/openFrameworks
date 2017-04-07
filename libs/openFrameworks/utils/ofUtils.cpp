@@ -320,17 +320,17 @@ void ofResetElapsedTimeCounter(){
 
 //--------------------------------------
 uint64_t ofGetSystemTime( ) {
-	of::priv::getClock().getCurrentTime().getAsMilliseconds();
+	return of::priv::getClock().getCurrentTime().getAsMilliseconds();
 }
 
 //--------------------------------------
 uint64_t ofGetSystemTimeMillis( ) {
-	of::priv::getClock().getCurrentTime().getAsMilliseconds();
+	return of::priv::getClock().getCurrentTime().getAsMilliseconds();
 }
 
 //--------------------------------------
 uint64_t ofGetSystemTimeMicros( ) {
-	of::priv::getClock().getCurrentTime().getAsMicroseconds();
+	return of::priv::getClock().getCurrentTime().getAsMicroseconds();
 }
 
 //--------------------------------------------------
