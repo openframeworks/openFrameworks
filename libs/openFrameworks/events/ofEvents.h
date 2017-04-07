@@ -186,6 +186,14 @@ public:
 	int height;
 };
 
+class ofWindowPosEventArgs : public ofEventArgs, public glm::vec2  {
+public:
+	ofWindowPosEventArgs(){}
+
+	ofWindowPosEventArgs(int x, int y)
+	:glm::vec2(x,y){}
+};
+
 class ofMessage : public ofEventArgs{
 	public:
 		ofMessage( string msg ){
@@ -194,6 +202,11 @@ class ofMessage : public ofEventArgs{
 		string message;
 };
 		
+enum ofTimeMode{
+	System,
+	FixedRate,
+	Filtered,
+};
 
 class ofCoreEvents {
   public:
@@ -204,6 +217,7 @@ class ofCoreEvents {
 	ofEvent<ofEventArgs> 		exit;
 
 	ofEvent<ofResizeEventArgs> 	windowResized;
+	ofEvent<ofWindowPosEventArgs> 	windowMoved;
 
 	ofEvent<ofKeyEventArgs> 	keyPressed;
 	ofEvent<ofKeyEventArgs> 	keyReleased;
@@ -227,6 +241,10 @@ class ofCoreEvents {
 
 	void disable();
 	void enable();
+
+	void setTimeModeSystem();
+	void setTimeModeFixedRate(uint64_t nanosecsPerFrame);
+	void setTimeModeFiltered(float alpha);
 
 	void setFrameRate(int _targetRate);
 	float getFrameRate() const;
@@ -268,6 +286,7 @@ class ofCoreEvents {
 
 	bool notifyExit();
 	bool notifyWindowResized(int width, int height);
+	bool notifyWindowMoved(int x, int y);
 
 	bool notifyDragEvent(ofDragInfo info);
 
@@ -282,6 +301,13 @@ private:
 	bool bPreMouseNotSet;
 	set<int> pressedMouseButtons;
 	set<int> pressedKeys;
+
+	enum TimeMode{
+		System,
+		FixedRate,
+		Filtered,
+	} timeMode = System;
+	std::chrono::nanoseconds fixedRateTimeNanos;
 };
 
 bool ofSendMessage(ofMessage msg);

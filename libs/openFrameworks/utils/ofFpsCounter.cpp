@@ -1,48 +1,38 @@
 #include "ofFpsCounter.h"
 
-#define NANOS_PER_SEC 1000000000
-#define NANOS_TO_SEC .000000001
-
-void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds);
-
 ofFpsCounter::ofFpsCounter()
 :nFrameCount(0)
-,secsThen(0)
-,nanosThen(0)
+,then(ofGetCurrentTime())
 ,fps(0)
-,lastFrameTime(0){
-	ofGetMonotonicTime(secsThen,nanosThen);
-}
+,lastFrameTime(0)
+,filteredTime(0)
+,filterAlpha(0.9){}
 
 
 
 ofFpsCounter::ofFpsCounter(double targetFPS)
 :nFrameCount(0)
-,secsThen(0)
-,nanosThen(0)
+,then(ofGetCurrentTime())
 ,fps(targetFPS)
-,lastFrameTime(0){
-	ofGetMonotonicTime(secsThen,nanosThen);
-}
+,lastFrameTime(0)
+,filteredTime(0)
+,filterAlpha(0.9){}
 
 void ofFpsCounter::newFrame(){
-	uint64_t secsNow, nanosNow;
-	ofGetMonotonicTime(secsNow,nanosNow);
-	auto now = secsNow + nanosNow/double(NANOS_PER_SEC);
-	update(now);
-	timestamps.push(now);
+	auto now = ofGetCurrentTime();
+	update(now.getAsSeconds());
+	timestamps.push(now.getAsSeconds());
 
-	lastFrameTime = (secsNow-secsThen)*NANOS_PER_SEC + (long long)nanosNow-nanosThen;
-	secsThen = secsNow;
-	nanosThen = nanosNow;
+	lastFrameTime = now - then;
+	uint64_t filtered = filteredTime.count() * filterAlpha + lastFrameTime.count() * (1-filterAlpha);
+	filteredTime = std::chrono::nanoseconds(filtered);
+	then = now;
 	nFrameCount++;
 }
 
 void ofFpsCounter::update(){
-	uint64_t secsNow, nanosNow;
-	ofGetMonotonicTime(secsNow,nanosNow);
-	auto now = secsNow + nanosNow/double(NANOS_PER_SEC);
-	update(now);
+	auto now = ofGetCurrentTime();
+	update(now.getAsSeconds());
 }
 
 void ofFpsCounter::update(double now){
@@ -70,9 +60,21 @@ uint64_t ofFpsCounter::getNumFrames() const{
 }
 
 uint64_t ofFpsCounter::getLastFrameNanos() const{
-	return lastFrameTime;
+	return lastFrameTime.count();
 }
 
 double ofFpsCounter::getLastFrameSecs() const{
-	return lastFrameTime*NANOS_TO_SEC;
+	return std::chrono::duration<double>(lastFrameTime).count();
+}
+
+uint64_t ofFpsCounter::getLastFrameFilteredNanos() const{
+	return lastFrameTime.count();
+}
+
+double ofFpsCounter::getLastFrameFilteredSecs() const{
+	return std::chrono::duration<double>(filteredTime).count();
+}
+
+void ofFpsCounter::setFilterAlpha(float alpha){
+	filterAlpha = alpha;
 }
