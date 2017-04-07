@@ -67,6 +67,7 @@ enum ofTargetPlatform{
 #include <unordered_map>
 #include <memory>
 
+#define GLM_META_PROG_HELPERS
 #define GLM_SWIZZLE
 #define GLM_FORCE_SIZE_FUNC
 #include "glm/glm.hpp"
