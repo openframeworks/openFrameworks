@@ -31,16 +31,16 @@ public:
 	int getMessageCount() const;
 	
 	/// \return the bundle at the given index
-	const ofxOscBundle& getBundleAt(int i) const;
+	const ofxOscBundle& getBundleAt(std::size_t i) const;
 	
 	/// \return the bundle at the given index
-	ofxOscBundle& getBundleAt(int i);
+	ofxOscBundle& getBundleAt(std::size_t i);
 	
 	/// \return the message at the given index
-	const ofxOscMessage& getMessageAt(int i) const;
+	const ofxOscMessage& getMessageAt(std::size_t i) const;
 	
 	/// \return the message at the given index
-	ofxOscMessage& getMessageAt(int i);
+	ofxOscMessage& getMessageAt(std::size_t i);
 	
 	/// output stream operator for string conversion and printing
 	/// \return number of messages & bundles
