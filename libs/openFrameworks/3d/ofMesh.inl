@@ -1297,7 +1297,7 @@ void ofMesh_<V,N,C,T>::save(std::filesystem::path path, bool useBinary) const{
 		}
 	}
 
-	std::size_t faceSize = 3;
+	uint8_t faceSize = 3;
 	if(data.getNumIndices()){
 		os << "element face " << data.getNumIndices() / faceSize << endl;
 		os << "property list uchar int vertex_indices" << endl;
@@ -1343,25 +1343,20 @@ void ofMesh_<V,N,C,T>::save(std::filesystem::path path, bool useBinary) const{
 	}
 
 	if(data.getNumIndices()) {
-		for(std::size_t i = 0; i < data.getNumIndices(); i += faceSize) {
+		for(uint32_t i = 0; i < data.getNumIndices(); i += faceSize) {
 			if(useBinary) {
 				os.write((char*) &faceSize, sizeof(unsigned char));
-				for(std::size_t j = 0; j < faceSize; j++) {
-					std::size_t curIndex = data.getIndex(i + j);
-					os.write((char*) &curIndex, sizeof(std::size_t));
-				}
+				os.write((char*)&data.getIndices()[i], faceSize);
 			} else {
 				os << (std::size_t) faceSize << " " << data.getIndex(i) << " " << data.getIndex(i+1) << " " << data.getIndex(i+2) << endl;
 			}
 		}
 	} else if(data.getMode() == OF_PRIMITIVE_TRIANGLES) {
-		for(std::size_t i = 0; i < data.getNumVertices(); i += faceSize) {
-			std::size_t indices[] = {i, i + 1, i + 2};
+		for(uint32_t i = 0; i < data.getNumVertices(); i += faceSize) {
+			uint32_t indices[] = {i, i + 1, i + 2};
 			if(useBinary) {
 				os.write((char*) &faceSize, sizeof(unsigned char));
-				for(std::size_t j = 0; j < faceSize; j++) {
-					os.write((char*) &indices[j], sizeof(std::size_t));
-				}
+				os.write((char*) indices, sizeof(indices));
 			} else {
 				os << (std::size_t) faceSize << " " << indices[0] << " " << indices[1] << " " << indices[2] << endl;
 			}
