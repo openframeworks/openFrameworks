@@ -1313,7 +1313,13 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 - (void)setPosition:(float)position {
 	if ([self isReady]) {
-		double time = [self getDurationInSec] * position;
+		
+		double time = position;
+		
+		if (!bStream) {
+			time = [self getDurationInSec] * position;
+		}
+		
 		[self seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC)];
 	}
 }
