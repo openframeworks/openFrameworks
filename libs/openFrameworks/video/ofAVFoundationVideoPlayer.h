@@ -81,6 +81,7 @@ typedef enum _playerLoopType{
     BOOL bSampleVideo; // default to YES
     BOOL bSampleAudio; // default to NO
 	BOOL bIsUnloaded;
+	BOOL bStream;
 	
 	NSLock* asyncLock;
 	NSCondition* deallocCond;
@@ -161,5 +162,7 @@ typedef enum _playerLoopType{
 - (BOOL)getAutoplay;
 - (void)setWillBeUpdatedExternally:(BOOL)value;
 - (void)close;
+- (void)setStreaming:(BOOL)value;
+
 
 @end
