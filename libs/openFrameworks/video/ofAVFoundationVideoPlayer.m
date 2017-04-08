@@ -1366,16 +1366,23 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		value = 0.0;
 #else
 		if (!self.playerItem.canPlayReverse) {
-			NSLog(@"ERROR: can not play backwards: not supported (check your codec)");
+			if (!bStream) {
+				NSLog(@"ERROR: can not play backwards: not supported (check your codec)");
+			} else {
+				NSLog(@"ERROR: can not play backwards a stream");
+			}
+			
 			value = 0.0;
 		}
 		if (self.videoOutput == nil) {
 			NSLog(@"ERROR: can not play backwards: no video output");
 			value = 0.0;
 		}
-		
-		bWasPlayingBackwards = YES;
 #endif
+	}
+	
+	if (value < 0.0) {
+		bWasPlayingBackwards = YES;
 	}
 	
 	speed = value;
