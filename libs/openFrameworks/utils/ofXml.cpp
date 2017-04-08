@@ -183,6 +183,10 @@ std::string ofXml::getValue() const{
 	return this->xml.text().as_string();
 }
 
+std::string ofXml::getName() const{
+	return this->xml.name();
+}
+
 void ofXml::setName(const std::string & name){
 	if(xml==doc->document_element()){
 		xml = doc->append_child(pugi::node_element);
