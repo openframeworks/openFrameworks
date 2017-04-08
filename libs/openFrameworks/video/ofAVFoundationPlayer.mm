@@ -89,9 +89,10 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 	
 	bool bLoaded = false;
 	
-    if(videoPlayer == nullptr) {
+	if(videoPlayer == nullptr) {
 		// create a new player if its not allocated
 		videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
+		[videoPlayer setStreaming:bStream];
 		[videoPlayer setWillBeUpdatedExternally:YES];
 	}
 	
