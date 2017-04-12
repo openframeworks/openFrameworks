@@ -4,7 +4,7 @@
 
 ### Learning Objectives
 
-This example demonstrates how to use a compute shader to set up an animated point cloud with editable parameters. Compute shaders are rather used to do generic computation in contrast to graphics-oriented shaders. In this case it computes the movement of particles by attraction, cohesion and repulsion. It also includes forces in order to separate the particles into groups that can be animated differently.
+This example demonstrates how to use a compute shader to set up an animated point cloud with editable parameters. Compute shaders are rather used to do generic computation in contrast to graphics-oriented shaders. In this case the shader computes the movement of particles using a [flocking algorithm](https://en.wikipedia.org/wiki/Flocking%20%28behavior%29#Flocking_rules) based on three parameters: attraction, cohesion and repulsion. It additionally includes different forces in order to separate the particles into groups.
 
 You will learn how to..
 * write a shader that animates particles according to their attraction, cohesion or repulsion
