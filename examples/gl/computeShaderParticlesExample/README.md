@@ -4,17 +4,20 @@
 
 ### Learning Objectives
 
-This example demonstrates how to set up a point cloud with editable parameters like attraction, cohesion or repulsion. It uses a shader that computes the movements of each particle according to these parameters. The shader also includes two forces in order to separate the particles into two groups that can be animated differently.
+This example demonstrates how to use a compute shader to set up an animated point cloud with editable parameters. Compute shaders are rather used to do generic computation in contrast to graphics-oriented shaders. In this case it computes the movement of particles by attraction, cohesion and repulsion. It also includes forces in order to separate the particles into groups that can be animated differently.
 
 You will learn how to..
 * write a shader that animates particles according to their attraction, cohesion or repulsion
-* write a shader that creates particle groups by applying different forces
 * create lively animations using [`ofNoise()`](http://openframeworks.cc/documentation/math/ofMath/#show_ofNoise)
 * use `ofParameter` objects and `ofxGui` to create editable variables
 * connect parameters to a shader
 * set a blend mode
 * easily navigate in 3D with `ofEasyCam`
 
+In the code, pay attention to:
+* the separation of two particle groups by their `gl_GlobalInvocationID`
+* the double buffer (`ofBufferObject`) for faster computation that allows to draw from one buffer while the other one is being updated
+* the definition of working groups by setting `dispatchCompute()` from the C++ shader object and `layout()` from within the shader
 
 ### Expected Behavior
 
