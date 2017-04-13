@@ -31,6 +31,10 @@ public:
 			FBOs[i].getTexture().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
 		}
 
+		//Assign
+		src = &FBOs[0];
+		dst = &FBOs[1];
+
 		// Clean
 		clear();
 	}
