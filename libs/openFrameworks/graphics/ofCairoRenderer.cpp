@@ -1350,8 +1350,16 @@ cairo_t * ofCairoRenderer::getCairoContext(){
 	return cr;
 }
 
+void ofCairoRenderer::setCairoContext(cairo_t * _cr){
+  cr = _cr;
+}
+
 cairo_surface_t * ofCairoRenderer::getCairoSurface(){
 	return surface;
+}
+
+void ofCairoRenderer::setCairoSurface(cairo_surface_t * _surface){
+  surface = _surface;
 }
 
 ofPixels & ofCairoRenderer::getImageSurfacePixels(){
