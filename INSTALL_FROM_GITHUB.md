@@ -36,9 +36,5 @@ The procedure to install openFrameworks locally is almost the same, but you neef
 
 Once you have your forked repo locally, add the project generator as explained in the previous section.
 
-To make your changes, create e new branch based on master. In that branch, make the changes that you want to sumbit in the pull request. Then compile the examples using the project generator, and maybe check one of the example where your code could be used, to verify that everything is working and that your change did not brake anything. Once you are done, commit your change. Try to be descriptive in your commit message, and try to commit one logical change per commit. Nobody want to read a pull request made by one giant single commit ;).
-
-Once you are done, push your featured branch to your forked repository on github. A new button should appear, with something like "submit your pull request". Click that button and wait for feedback.
-
-
+In the openFrameworks repository you can find the instruction about [how to contribute](https://github.com/openframeworks/openFrameworks/blob/master/CONTRIBUTING.md)
 
