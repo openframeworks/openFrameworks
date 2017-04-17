@@ -4,10 +4,10 @@ This instructions are useful just in case you want to submit a pull request or y
 
 If you are a developer, or if you want to submit a pull request, [read this first](https://github.com/openframeworks/openFrameworks/blob/master/README.md#developers)
 
-Let's start cloning the last `stable` branch of openframeworks.
+Let's start cloning the last `master` branch of openframeworks and its submodules.
 
 ```bash
-git clone git@github.com:openframeworks/openFrameworks.git
+git clone --recursive git@github.com:openframeworks/openFrameworks.git
 ```
 
 As the external dependencies are not in the repository, you need to download them. To make the things simplier, there is a bash script for this goal called `download_lib.sh`. This bash script is located in the `scripts` folder. In this folder, there are several subfolders, one for each paltform. Assuming you are, for example, using OSX, you need to run `/bin/bash scripts/osx/download_libs.sh`.
@@ -32,7 +32,7 @@ Once the success message appears you are done.
 
 ## How to submit you pull requests
 
-The procedure to install openFrameworks locally is almost the same, but you neef first to fork the openFrameworks repository from github, and clone on your local machine your fork of the openFrameworks repository instead `git@github.com:openframeworks/openFrameworks.git`. Please be sure to read [this](https://help.github.com/articles/creating-a-pull-request-from-a-fork/) before starting.
+The procedure to install openFrameworks locally is almost the same, but you need first to fork the openFrameworks repository from github, and clone on your local machine your fork of the openFrameworks repository instead `git@github.com:openframeworks/openFrameworks.git`. Please be sure to read [this](https://help.github.com/articles/creating-a-pull-request-from-a-fork/) before starting.
 
 Once you have your forked repo locally, add the project generator as explained in the previous section.
 
