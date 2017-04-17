@@ -511,9 +511,9 @@ public:
 	ofParameter<ParameterType> & operator>>=(const OtherType & v);
 
 
-	ofParameter<ParameterType> & set(const ParameterType & v);
-	ofParameter<ParameterType> & set(const string& name, const ParameterType & v);
-	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
+	ofParameter<ParameterType> & set(const ParameterType & v, bool disableEventNotifications = false);
+	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, bool disableEventNotifications = false);
+	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max, bool disableEventNotifications = false);
 
 	ofParameter<ParameterType> & setWithoutEventNotifications(const ParameterType & v);
 
@@ -632,24 +632,30 @@ inline const ParameterType & ofParameter<ParameterType>::operator=(const Paramet
 }
 
 template<typename ParameterType>
-inline ofParameter<ParameterType> & ofParameter<ParameterType>::set(const ParameterType & v){
-	setMethod(v);
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::set(const ParameterType & v, bool disableEventNotifications){
+    if (disableEventNotifications) {
+        noEventsSetValue(v);
+    }
+    else
+    {
+        setMethod(v);
+    }
 	return *this;
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, const ParameterType & value, const ParameterType & min, const ParameterType & max){
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, const ParameterType & value, const ParameterType & min, const ParameterType & max, bool disableEventNotifications){
 	setName(name);
-	set(value);
+	set(value, disableEventNotifications);
 	setMin(min);
 	setMax(max);
 	return *this;
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, const ParameterType & value){
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, const ParameterType & value, bool disableEventNotifications){
 	setName(name);
-	set(value);
+	set(value, disableEventNotifications);
 	return *this;
 }
 
