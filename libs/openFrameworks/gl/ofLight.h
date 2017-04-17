@@ -102,6 +102,8 @@ public:
 	    float height;
 		glm::vec3 up;
 		glm::vec3 right;
+		/// weak link back to renderer for which this light was created/setup
+		std::weak_ptr<ofBaseGLRenderer> rendererP;
 	};
 	
 private:
