@@ -900,6 +900,9 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		
 		videoSampleTime = time;
 		
+		// release buffer
+		CVBufferRelease(buffer);
+		
 		
 	} else {
 		// no new frame for time
