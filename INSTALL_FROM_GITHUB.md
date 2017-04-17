@@ -29,7 +29,6 @@ Now that you have the project generator, you are ready to compile all the exampl
 
 Once the success message appears you are done.
 
-
 ## How to submit you pull requests
 
 The procedure to install openFrameworks locally is almost the same, but you need first to fork the openFrameworks repository from github, and clone on your local machine your fork of the openFrameworks repository instead `git@github.com:openframeworks/openFrameworks.git`. Please be sure to read [this](https://help.github.com/articles/creating-a-pull-request-from-a-fork/) before starting.
