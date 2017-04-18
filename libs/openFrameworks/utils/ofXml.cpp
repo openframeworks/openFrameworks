@@ -23,6 +23,17 @@ bool ofXml::load(const std::filesystem::path & file){
 	}
 }
 
+bool ofXml::load(const ofBuffer & buffer){
+	auto auxDoc = std::make_shared<pugi::xml_document>();
+	if(auxDoc->load_file(buffer.getData())){
+		doc = auxDoc;
+		xml = doc->root();
+		return true;
+	}else{
+		return false;
+	}
+}
+
 bool ofXml::parse(const std::string & xmlStr){
 	auto auxDoc = std::make_shared<pugi::xml_document>();
 	if(auxDoc->load(xmlStr.c_str())){
