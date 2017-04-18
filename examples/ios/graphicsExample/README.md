@@ -1,8 +1,8 @@
-#About graphicsExample
+# About graphicsExample
 
 ![Screenshot of graphicsExample](graphicsExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates a few of the most basic graphics capabilities of openFrameworks. After studying this example, you'll understand how to render some simple colored lines and elementary shapes, such as ellipses and rectangles.
 
@@ -28,7 +28,7 @@ Instructions for using the app:
 
 * Touch the screen to toggle whether or not the red lines are anti-aliased.
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses the following classes:
 

@@ -1,8 +1,8 @@
-#About Gaussian Blue Filter Example
+# About Gaussian Blue Filter Example
 
 ![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](gaussianBlurFilterExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks example demonstrates how to apply a gaussian blur filter to an image in multiple passes.
 
@@ -22,6 +22,6 @@ Instructions for use:
 
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 No other classes were used for this example. 
