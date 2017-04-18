@@ -5,6 +5,7 @@
 
 #include <chrono>
 #include <numeric>
+#include <boost/locale.hpp>
 #include <locale>
 #include "uriparser/Uri.h"
 
@@ -721,7 +722,9 @@ utf8::iterator<std::string::const_reverse_iterator> ofUTF8Iterator::rend() const
 static std::locale getLocale(const string & locale) {
 	std::locale loc;
 	try {
-		loc = std::locale(locale.c_str());
+		boost::locale::generator gen;
+		loc = gen(locale);
+		//loc = std::locale(locale.c_str());
 	}
 	catch (...) {
 		ofLogWarning("ofUtils") << "Couldn't create locale " << locale << " using default, " << loc.name();
@@ -734,9 +737,10 @@ string ofToLower(const string & src, const string & locale){
 	std::string dst;
 	std::locale loc = getLocale(locale);
 	try{
-		for(auto c: ofUTF8Iterator(src)){
+		dst = boost::locale::to_lower(src,loc);
+		/*for(auto c: ofUTF8Iterator(src)){
 			utf8::append(std::tolower<wchar_t>(c, loc), back_inserter(dst));
-		}
+		}*/
 	}catch(...){
 	}
 	return dst;
@@ -747,9 +751,10 @@ string ofToUpper(const string & src, const string & locale){
 	std::string dst;
 	std::locale loc = getLocale(locale);
 	try{
-		for(auto c: ofUTF8Iterator(src)){
+		dst = boost::locale::to_upper(src,loc);
+		/*for(auto c: ofUTF8Iterator(src)){
 			utf8::append(std::toupper<wchar_t>(c, loc), back_inserter(dst));
-		}
+		}*/
 	}catch(...){
 	}
 	return dst;
