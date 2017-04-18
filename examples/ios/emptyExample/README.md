@@ -1,8 +1,8 @@
-#About emptyExample
+# About emptyExample
 
 ![Screenshot of emptyExample](emptyExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This example is the simplest possible openFrameworks app! It does nothing.  
 
@@ -27,7 +27,7 @@ Instructions for using the app:
 
 * There's nothing to do. Move along.
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses the following classes:
 

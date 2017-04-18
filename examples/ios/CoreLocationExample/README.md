@@ -1,8 +1,8 @@
-#About coreLocationExample
+# About coreLocationExample
 
 ![Screenshot of coreLocationExample](coreLocationExample.gif)
 
-###Learning Objectives
+### Learning Objectives
 
 This Example demonstrates using the native CoreLocation Apple SDK to understand your device's general cardinal direction.
 
@@ -24,7 +24,7 @@ Instructions for use:
 
 * Move around, point your device at your nearest landmark, and note its cardinal direction.
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses the following classes:
 

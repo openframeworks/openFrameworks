@@ -1,9 +1,9 @@
-#About dragDropExample
+# About dragDropExample
 
 ![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](dragDropExample.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates how to enabled and capture the dragging and dropping of files into the application window.  
 
@@ -33,6 +33,6 @@ Instructions for use:
 * Drag and drop an image file ( png or jpg ) onto the application window. 
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no other classes.
