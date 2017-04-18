@@ -1,15 +1,15 @@
-#About allEventsExample
+# About allEventsExample
 
 ![Screenshot of allEventsExample](allEventsExample.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This Example demonstrates the keyboard and mouse event of openFrameworks.
 
-After studying this example, you'll understand how to trigger events and retrieve information from events such as mouse behavior, cursor position, which mouse button is pressed or what key is pressed. 
+After studying this example, you'll understand how to trigger events and retrieve information from events such as mouse behavior, cursor position, which mouse button is pressed or what key is pressed.
 
-In the code, pay attention to: 
+In the code, pay attention to:
 
 * Different commands to access the current time information: ```ofGetTimestampString()``` and ```ofGetElapsedTimeMillis()```
 * Access individual key information: ```keyReleased(int key)```
@@ -31,9 +31,9 @@ When launching this app, you should see a screen with
 
 Instructions for use:
 
-* Press  keys to see how their corresponding labels are displayed. Manipulate the mouse to see how different mouse events are triggered. 
- 
+* Press  keys to see how their corresponding labels are displayed. Manipulate the mouse to see how different mouse events are triggered.
 
-###Other classes used in this file
+
+### Other classes used in this file
 
 This Example uses no other classes.

@@ -1,8 +1,8 @@
-#About events
+# About events
 
 --
 
-###Learning Objectives
+### Learning Objectives
 
 This section of examples aims to provide understanding about the built-in events of OF such as keyboard events and mouse events as well as understanding how to create and use custom events.
 
@@ -34,4 +34,3 @@ This section of examples aims to provide understanding about the built-in events
 
 ![Screenshot of simpleTimer](simpleTimer/simpleTimer.png)
 ([simpleTimer](simpleTimer/))
-
