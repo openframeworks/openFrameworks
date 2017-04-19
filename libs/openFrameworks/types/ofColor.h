@@ -74,7 +74,7 @@ public:
     /// \param alpha The alpha value of the color.
     static ofColor_<PixelType> fromHex(int hexColor, float alpha = limit());
 
-    /// \}
+    /// \}
 
     /// \name Data Accessors
     /// \{
@@ -92,7 +92,7 @@ public:
         PixelType v[4]; ///< \brief The pixel values as an array.
     };
 
-    /// \}
+    /// \}
 
     /// \name Setters
     /// \{
@@ -251,7 +251,7 @@ public:
     /// \brief Get the Hue of this color.
     ///
     /// The color is converted from the default RGB to an HSB color space and
-    /// the resulting Hue value is returned.  The resulting hue value will
+    /// the resulting Hue value is returned.  The resulting hue value will
     /// always be returned in the range 0 - limit().
     ///
     /// \returns The Hue value in the range 0 - limit().
@@ -260,7 +260,7 @@ public:
     /// \brief Get the Hue angle of this color.
     ///
     /// The color is converted from the default RGB to an HSB color space and
-    /// the resulting Hue angle is returned.  The resulting hue value will
+    /// the resulting Hue angle is returned.  The resulting hue value will
     /// always be returned in degrees in the range 0 - 360.
     ///
     /// \returns The Hue angle in the range 0 - 360.
@@ -269,8 +269,8 @@ public:
     /// \brief Get the Saturation of this color.
     ///
     /// The color is converted from the default RGB to an HSB color space and
-    /// the resulting saturation is returned.  The resulting saturation value
-    /// will always be returned in the range 0 - limit().
+    /// the resulting saturation is returned.  The resulting saturation value
+    /// will always be returned in the range 0 - limit().
     ///
     /// \returns The saturation in the range 0 - limit().
     float getSaturation() const;
@@ -309,7 +309,7 @@ public:
 
     /// \}
 
-    /// \name Operators
+    /// \name Operators
     /// \{
 
     /// \brief Assign a color using an existing color.
@@ -572,7 +572,7 @@ public:
 
     /// \}
 
-    /// \name Predefined Colors
+    /// \name Predefined Colors
 	///
 	/// \brief A collection of static colors defined by name.
     ///
@@ -608,6 +608,7 @@ public:
     sandyBrown,seaGreen,seaShell,sienna,silver,skyBlue,slateBlue,slateGray,slateGrey,snow,
     springGreen,steelBlue,blueSteel,tan,teal,thistle,tomato,turquoise,violet,wheat,whiteSmoke,
     yellowGreen;
+
 
     /// \}
 
@@ -673,3 +674,15 @@ template <typename PixelType>
 ofColor_<PixelType> operator*(float val, const ofColor_<PixelType> &color) {
 	return color * val;
 }
+
+
+extern template class ofColor_<char>;
+extern template class ofColor_<unsigned char>;
+extern template class ofColor_<short>;
+extern template class ofColor_<unsigned short>;
+extern template class ofColor_<int>;
+extern template class ofColor_<unsigned int>;
+extern template class ofColor_<long>;
+extern template class ofColor_<unsigned long>;
+extern template class ofColor_<float>;
+extern template class ofColor_<double>;
