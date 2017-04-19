@@ -110,6 +110,7 @@ inline std::string ofImageFormatExtension(ofImageFormat format){
     case OF_IMAGE_FORMAT_PFM: return "pfm";
     case OF_IMAGE_FORMAT_PICT: return "pict";
     case OF_IMAGE_FORMAT_RAW: return "raw";
+	default: return "unkown";
     }
 }
 
@@ -202,14 +203,7 @@ public:
     OF_DEPRECATED_MSG("Use isAllocated()", bool bAllocated());
     
     /// \brief This clears the texture and pixels contained within the ofImage.
-    void clear();
-    
-    /// \brief Create an ofImage from another ofImage instance.
-    ///
-    /// This allows you to create an ofImage from another ofImage instance,
-    /// copying all the pixels and the texture data while creating a new textureID.
-    template<typename SrcType>
-    void clone(const ofImage_<SrcType> &mom);
+	void clear();
     
     /// \brief Loads an image given by fileName.
     /// \param fileName Program looks for image given by fileName, relative to
@@ -643,6 +637,9 @@ protected:
     int height; ///< \brief Image Height in pixels.
     int bpp;    ///< \brief Bits per image pixel.
     ofImageType type;   ///< \brief Image type.
+
+	template<typename SrcType>
+	void clone(const ofImage_<SrcType> &mom);
     /// \endcond
 };
 
@@ -659,8 +656,7 @@ typedef ofImage_<unsigned short> ofShortImage;
 template<typename PixelType>
 template<typename SrcType>
 ofImage_<PixelType>& ofImage_<PixelType>::operator=(const ofImage_<SrcType>& mom) {
-    clone(mom);
-    update();
+	clone(mom);
     return *this;
 }
 
@@ -669,8 +665,7 @@ template<typename PixelType>
 template<typename SrcType>
 ofImage_<PixelType>::ofImage_(const ofImage_<SrcType>& mom) {
     clear();
-    clone(mom);
-    update();
+	clone(mom);
 }
 
 //------------------------------------
