@@ -14,6 +14,7 @@ Product{
 
     readonly property string projectDir: of.ofRoot + "/libs/openFrameworksCompiled/project"
     readonly property string libDir: of.ofRoot + "/libs/openFrameworksCompiled/lib/" + of.platform
+    readonly property bool isCoreLibrary: true
 
     // setting this variable to true will build OF using
     // qbs instead of makefiles which helps catching errors...
@@ -98,10 +99,10 @@ Product{
         return excludes;
     }
 
-    Group {
-        condition: !product.qbsBuild
-        name: "src"
-        files: {
+    Probe {
+        id: core_source
+        property stringList files
+        configure: {
             var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
             var filteredSource = source.filter(function filterExcludes(path){
                 for(exclude in FILES_EXCLUDE){
@@ -113,8 +114,15 @@ Product{
                 }
                 return true;
             });
-            return filteredSource;
+            files = filteredSource;
+            found = true;
         }
+    }
+
+    Group {
+        condition: !product.qbsBuild
+        name: "src"
+        files: core_source.files
         fileTags: ["filtered_sources"]
     }
 
