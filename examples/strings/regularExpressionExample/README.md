@@ -7,7 +7,7 @@
 This example demonstrates how to parse a string using regluar expressions. It will also cover basic HTTP requests. You will learn how to ...
 * perform an HTTP request using ```ofLoadURL()```
 * handle HTTP responses with ```ofHTTPResponse```
-* use ```Poco::RegularExpression``` to retrieve relevant information from a string
+* use ```std::regex``` to retrieve relevant information from a string
 * load images based on the parsed data
 
 
