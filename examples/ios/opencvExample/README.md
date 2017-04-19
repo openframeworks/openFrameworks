@@ -1,8 +1,8 @@
-#About opencvExample
+# About opencvExample
 
 ![Screenshot of opencvExample](opencvExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 OpenCV is a powerful open-source library for image processing and computer vision. This example demonstrates one particularly common workflow in new-media art: performing *background subtraction*, *blob detection* and *contour tracing*. This is immensely useful for locating objects or people that have entered a scene!
 
@@ -36,7 +36,7 @@ There are a few user-modifiable settings in this app:
  If you uncomment this line, the app will use your computer's built-in webcam instead of a stored video file! It accomplishes this by swapping out the `ofVideoPlayer` with an `ofVideoGrabber`.
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This example links against the `ofxOpenCv` core addon. It uses the following classes from that addon: 
 

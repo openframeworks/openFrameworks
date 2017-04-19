@@ -29,7 +29,7 @@ void ofApp::draw() {
     
     // bind our texture. in our shader this will now be tex0 by default
     // so we can just go ahead and access it there.
-    img.getTextureReference().bind();
+    img.getTexture().bind();
     
     // start our shader, in our OpenGL3 shader this will automagically set
     // up a lot of matrices that we want for figuring out the texture matrix
@@ -56,7 +56,7 @@ void ofApp::draw() {
     
     shader.end();
 
-    img.getTextureReference().unbind();
+    img.getTexture().unbind();
     
 }
 
