@@ -1,9 +1,9 @@
-#About systemSpeakExample
+# About systemSpeakExample
 
 ![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](systemSpeak.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates how to invoke a system level command on Windows or OS and in this particular example, to "say" the word. 
 
@@ -32,6 +32,6 @@ Instructions for use:
 * Run the application and let it play through the text. Press the ```r``` key to select a random voice. 
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no other classes.

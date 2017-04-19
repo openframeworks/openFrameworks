@@ -153,6 +153,7 @@ public:
 	}
 
 	std::string getValue() const;
+	std::string getName() const;
 
 	template<typename T>
 	void set(const T & value){
