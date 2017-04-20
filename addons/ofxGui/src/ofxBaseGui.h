@@ -62,7 +62,6 @@ class ofxBaseGui {
 		static void setDefaultWidth(int width);
 		static void setDefaultHeight(int height);
 
-		virtual ofAbstractParameter & getParameter() = 0;
 		static void loadFont(const std::string& filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, int dpi = 0);
 		static void setUseTTF(bool bUseTTF);
 
@@ -70,23 +69,26 @@ class ofxBaseGui {
 		void unregisterMouseEvents();
 
 		virtual void sizeChangedCB();
-		void setParent(ofxBaseGui * parent);
+		virtual void setParent(ofxBaseGui * parent);
 		ofxBaseGui * getParent();
 
+		virtual ofAbstractParameter & getParameter() = 0;
 		virtual bool mouseMoved(ofMouseEventArgs & args) = 0;
 		virtual bool mousePressed(ofMouseEventArgs & args) = 0;
 		virtual bool mouseDragged(ofMouseEventArgs & args) = 0;
 		virtual bool mouseReleased(ofMouseEventArgs & args) = 0;
 		virtual bool mouseScrolled(ofMouseEventArgs & args) = 0;
-		virtual void mouseEntered(ofMouseEventArgs & args){
+		virtual void mouseEntered(ofMouseEventArgs &){
 		}
-		virtual void mouseExited(ofMouseEventArgs & args){
+		virtual void mouseExited(ofMouseEventArgs &){
 		}
 
 	protected:
 		virtual void render() = 0;
-		bool isGuiDrawing();
 		virtual bool setValue(float mx, float my, bool bCheckBounds) = 0;
+		virtual void generateDraw() = 0;
+
+		bool isGuiDrawing();
 		void bindFontTexture();
 		void unbindFontTexture();
 		ofMesh getTextMesh(const std::string & text, float x, float y);
@@ -120,7 +122,6 @@ class ofxBaseGui {
 		static void loadStencilFromHex(ofImage & img, unsigned char * data);
 
 		void setNeedsRedraw();
-		virtual void generateDraw() = 0;
 
 	private:
 		bool needsRedraw;
