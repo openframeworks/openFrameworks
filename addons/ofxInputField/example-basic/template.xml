@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<template
+type="ProjTempl"
+version="0.1"
+supplier="openFrameworks"
+revision="1"
+author="Arturo Castro"   
+id="cc.openframeworks.templates.ofApp"
+label="OF application"
+description="Creates an openFrameworks application project."
+preview-icon="">
+	<property-group
+	id="properties"
+	label="Application properties"
+	description=""
+	type="PAGES-ONLY"
+	branding-icon="">
+		<property
+		id="addons"
+		label="Addons"
+		description="Select which addons to include in the project"
+		type="speciallist"
+		mandatory="false"
+		hidden="false"
+		/>
+	</property-group>
+	<process type="org.eclipse.cdt.core.CreateSourceFolder">
+	    <simple name="projectName" value="$(projectName)"/>
+	    <simple name="path" value="src"/>
+	</process>
+	<process type="org.eclipse.cdt.core.AddFiles">
+		<simple name="projectName" value="$(projectName)"/>
+		<complex-array name="files">
+			<element>
+				<simple name="source" value="src/ofApp.cpp"></simple>
+				<simple name="target" value="src/ofApp.cpp"></simple>
+				<simple name="replaceable" value="false"></simple>
+			</element>
+			<element>
+				<simple name="source" value="src/ofApp.h"></simple>
+				<simple name="target" value="src/ofApp.h"></simple>
+				<simple name="replaceable" value="false"></simple>
+			</element>
+			<element>
+				<simple name="source" value="src/main.cpp"></simple>
+				<simple name="target" value="src/main.cpp"></simple>
+				<simple name="replaceable" value="false"></simple>
+			</element>
+			<element>
+				<simple name="source" value="Makefile"></simple>
+				<simple name="target" value="Makefile"></simple>
+				<simple name="replaceable" value="true"></simple>
+			</element>
+			<element>
+				<simple name="source" value="config.make"></simple>
+				<simple name="target" value="config.make"></simple>
+				<simple name="replaceable" value="false"></simple>
+			</element>
+			<element>
+				<simple name="source" value="qtcreator.qbs"></simple>
+				<simple name="target" value="$(projectName).qbs"></simple>
+				<simple name="replaceable" value="false"></simple>
+			</element>
+		</complex-array>
+	</process>
+	<!-- process type="org.eclipse.cdt.core.AddLink" class="cc.openframeworks.templates.AddLink">
+		<simple name="projectName" value="$(projectName)"/>
+		<simple name="filePath" value="/home/arturo/Code/openFrameworks/addons/ofxGui/src/ofxGui.h"/>
+		<simple name="targetPath" value="ofxGui/src/ofxGui.h"/>
+	</process-->
+	
+    <process type="org.eclipse.cdt.managedbuilder.core.SetMBSStringOptionValue">
+        <simple name="projectName" value="$(projectName)" />
+
+        <complex-array name="resourcePaths">
+            <element>
+                <simple name="id" value="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector" />
+                <simple name="value" value="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot; -std=c++14" />
+                <simple name="path" value="parameter" />
+            </element>
+        </complex-array>
+    </process>
+    <process type="org.eclipse.cdt.make.core.AddMakeTarget">
+        <simple name="projectName" value="$(projectName)"/>
+        <simple name="targetName" value="debug"/>
+    </process>
+</template>
