@@ -64,6 +64,7 @@ class ofxBaseGui {
 
 		virtual ofAbstractParameter & getParameter() = 0;
 		static void loadFont(const std::string& filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, int dpi = 0);
+		static void loadFont(const ofTtfSettings & fontSettings);
 		static void setUseTTF(bool bUseTTF);
 
 		void registerMouseEvents();

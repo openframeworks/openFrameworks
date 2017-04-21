@@ -3,6 +3,8 @@
 #include "ofxSliderGroup.h"
 #include "ofGraphics.h"
 #include "ofxLabel.h"
+#include "ofxInputField.h"
+
 using namespace std;
 
 ofxGuiGroup::ofxGuiGroup(){
@@ -171,7 +173,7 @@ void ofxGuiGroup::add(ofParameter <bool> & parameter){
 }
 
 void ofxGuiGroup::add(ofParameter <string> & parameter){
-	add(new ofxLabel(parameter, b.width));
+	add(new ofxInputField(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <ofVec2f> & parameter){
