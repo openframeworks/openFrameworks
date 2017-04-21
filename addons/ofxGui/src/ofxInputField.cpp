@@ -196,17 +196,15 @@ template<typename Type>
 void ofxInputField<Type>::calculateSelectionArea(int selectIdx1, int selectIdx2){
 	std::string preSelectStr, selectStr;
 
-	if(selectIdx1 <= selectIdx2){
-		selectStartPos = selectIdx1;
-		selectEndPos = selectIdx2;
-	}else{
-		selectStartPos = selectIdx2;
-		selectEndPos = selectIdx1;
-	}
+	selectStartPos = selectIdx1;
+	selectEndPos = selectIdx2;
+
+	auto first = std::min(selectStartPos, selectEndPos);
+	auto last = std::max(selectStartPos, selectEndPos);
 
 	float preSelectWidth = 0;
-	if(selectStartPos > 0){
-		preSelectStr = ofUTF8Substring(input, 0, selectStartPos);
+	if(first > 0){
+		preSelectStr = ofUTF8Substring(input, 0, first);
 		preSelectWidth = getTextBoundingBox(preSelectStr,0,0).width;
 	}
 
@@ -218,7 +216,7 @@ void ofxInputField<Type>::calculateSelectionArea(int selectIdx1, int selectIdx2)
 	}
 
 	if(hasSelectedText()){
-		selectStr = ofUTF8Substring(input, selectStartPos, selectEndPos - selectStartPos);
+		selectStr = ofUTF8Substring(input, first, last - first);
 		selectionWidth = getTextBoundingBox(selectStr,0,0).width;
 	}
 
@@ -246,7 +244,7 @@ bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & mouse){
 			if(bGuiActive){
 				auto inputWidth = getTextBoundingBox(input,0,0).width;
 				float cursorX = mouse.x - (b.x + b.width - textPadding - inputWidth);
-				int cursorPos = round(ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(input), true));
+				auto cursorPos = round(ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(input), true));
 				mousePressedPos = cursorPos;
 
 				calculateSelectionArea(cursorPos, cursorPos);
@@ -279,7 +277,7 @@ bool ofxInputField<Type>::mouseDragged(ofMouseEventArgs & mouse){
 	if(!insideSlider || mouse.button == OF_MOUSE_BUTTON_LEFT){
 		auto inputWidth = getTextBoundingBox(input,0,0).width;
 		float cursorX = mouse.x - (b.x + b.width - textPadding - inputWidth);
-		int cursorPos = round(ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(input), true));
+		auto cursorPos = round(ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(input), true));
 		calculateSelectionArea(mousePressedPos,cursorPos);
 		setNeedsRedraw();
 	}
@@ -327,7 +325,7 @@ bool ofxInputField<Type>::charPressed(uint32_t & key){
 		int newCursorIdx = -1;
 		if(key >= '0' && key <= '9'){
 			newCursorIdx = insertKeystroke(key);
-		}else if(key == '.' ){
+		}else if(key == '.' || key == '-' || key == '+'){
 			newCursorIdx = insertKeystroke(key);
 		}else{
 			newCursorIdx = insertAlphabetic(key);
@@ -351,9 +349,12 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 	if(bGuiActive && !bMousePressed){
 		auto key = args.key;
 		int newCursorIdx = -1;
+		auto first = std::min(selectStartPos, selectEndPos);
+		auto last = std::max(selectStartPos, selectEndPos);
+		auto selectLen = last - first;
 		if(key == OF_KEY_BACKSPACE || key == OF_KEY_DEL){
 			if(hasSelectedText()){
-				ofUTF8Erase(input, selectStartPos, selectEndPos - selectStartPos);
+				ofUTF8Erase(input, first, selectLen);
 				newCursorIdx = selectStartPos;
 			}else{
 				int deleteIdx = -1;
@@ -370,17 +371,32 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 				}
 			}
 		}else if(key == OF_KEY_LEFT){
-			if(hasSelectedText()){
-				newCursorIdx = selectStartPos;
+			if(args.hasModifier(OF_KEY_SHIFT)){
+				selectEndPos -= 1;
+				selectEndPos = std::max(0, selectEndPos);
+				calculateSelectionArea(selectStartPos, selectEndPos);
 			}else{
-				newCursorIdx = selectStartPos == 0 ? 0 : selectStartPos-1;
+				if(hasSelectedText()){
+					newCursorIdx = first;
+				}else{
+					newCursorIdx = selectEndPos - 1;
+					newCursorIdx = std::max(0, newCursorIdx);
+				}
 			}
 		}else if(key == OF_KEY_RIGHT){
-			if(hasSelectedText()){
-				newCursorIdx = selectEndPos;
-			}else{
+			if(args.hasModifier(OF_KEY_SHIFT)){
 				auto inputSize = ofUTF8Length(input);
-				newCursorIdx = selectStartPos == (int)inputSize ? (int)inputSize : selectStartPos+1;
+				selectEndPos += 1;
+				selectEndPos = std::min(selectEndPos, int(inputSize));
+				calculateSelectionArea(selectStartPos, selectEndPos);
+			}else{
+				if(hasSelectedText()){
+					newCursorIdx = last;
+				}else{
+					auto inputSize = ofUTF8Length(input);
+					newCursorIdx  = selectEndPos + 1;
+					newCursorIdx = std::min(newCursorIdx, int(inputSize));
+				}
 			}
 		}else if(key == OF_KEY_RETURN){
 			leaveFocus();
@@ -390,14 +406,12 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 		}else if(key == 'a' && args.hasModifier(OF_KEY_CONTROL)){
 			calculateSelectionArea(0, ofUTF8Length(input));
 		}else if(key == 'c' && args.hasModifier(OF_KEY_CONTROL)){
-			auto selectLen = selectEndPos - selectStartPos;
 			if(selectLen>0){
-				auto selection = ofUTF8Substring(input, selectStartPos, selectLen);
+				auto selection = ofUTF8Substring(input, first, selectLen);
 				ofSetClipboardString(selection);
 			}
 		}else if(key == 'v' && args.hasModifier(OF_KEY_CONTROL)){
-			auto selectLen = selectEndPos - selectStartPos;
-			newCursorIdx = selectStartPos;
+			newCursorIdx = first;
 			if(selectLen>0){
 				ofUTF8Erase(input, newCursorIdx, selectLen);
 			}
@@ -407,11 +421,10 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 				newCursorIdx+=1;
 			}
 		}else if(key == 'x' && args.hasModifier(OF_KEY_CONTROL)){
-			auto selectLen = selectEndPos - selectStartPos;
 			if(selectLen>0){
-				auto selection = ofUTF8Substring(input, selectStartPos, selectLen);
+				auto selection = ofUTF8Substring(input, first, selectLen);
 				ofSetClipboardString(selection);
-				newCursorIdx = selectStartPos;
+				newCursorIdx = first;
 				ofUTF8Erase(input, newCursorIdx, selectLen);
 			}
 		}else if(key == OF_KEY_END){
@@ -432,12 +445,15 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 
 template<typename Type>
 int ofxInputField<Type>::insertKeystroke(uint32_t character){
+	auto first = std::min(selectStartPos, selectEndPos);
+	auto last = std::max(selectStartPos, selectEndPos);
+	auto selectLen = last - first;
 	if(hasSelectedText()){
-		ofUTF8Erase(input, selectStartPos, selectEndPos - selectStartPos);
+		ofUTF8Erase(input, first, selectLen);
 	}
-	ofUTF8Insert(input, selectStartPos, character);
+	ofUTF8Insert(input, first, character);
 	setNeedsRedraw();
-	return selectStartPos + 1;
+	return first + 1;
 }
 
 template<typename Type>
@@ -451,7 +467,11 @@ int ofxInputField<Type>::insertAlphabetic(uint32_t character){
 
 template<>
 int ofxInputField<string>::insertAlphabetic(uint32_t character){
-	return insertKeystroke(character);
+	if(character == 'x' || character == 'a' || character == 'b' || character=='c' || character=='d' || character=='e' || character=='f'){
+	   return insertKeystroke(character);
+	}else{
+		return -1; //cursor or selection area stay the same
+	}
 }
 
 template<typename Type>
