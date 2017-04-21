@@ -84,7 +84,7 @@ protected:
 	bool insideSlider = false;
 	bool blinkingCursor = true;
 	bool validValue = true;
-	bool showLabelWhileEditing = true;
+	bool showLabelWhileEditing = false;
 	bool overlappingLabel = false;
 	float errorTime = 0;
 
