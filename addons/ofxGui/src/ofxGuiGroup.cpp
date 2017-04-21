@@ -173,7 +173,7 @@ void ofxGuiGroup::add(ofParameter <bool> & parameter){
 }
 
 void ofxGuiGroup::add(ofParameter <string> & parameter){
-	add(new ofxInputField(parameter, b.width));
+	add(new ofxInputField<std::string>(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <ofVec2f> & parameter){
