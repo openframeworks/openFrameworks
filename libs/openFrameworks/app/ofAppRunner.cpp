@@ -395,6 +395,16 @@ int ofGetWindowHeight(){
 }
 
 //--------------------------------------------------
+std::string ofGetClipboardString(){
+	return mainLoop()->getCurrentWindow()->getClipboardString();
+}
+
+//--------------------------------------------------
+void ofSetClipboardString(const std::string & str){
+	mainLoop()->getCurrentWindow()->setClipboardString(str);
+}
+
+//--------------------------------------------------
 bool ofDoesHWOrientation(){
 	return mainLoop()->getCurrentWindow()->doesHWOrientation();
 }

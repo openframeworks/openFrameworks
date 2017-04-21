@@ -175,6 +175,7 @@ private:
 	static void 	motion_cb(GLFWwindow* windowP_, double x, double y);
 	static void 	entry_cb(GLFWwindow* windowP_, int entered);
 	static void 	keyboard_cb(GLFWwindow* windowP_, int key, int scancode, int action, int mods);
+	static void 	char_cb(GLFWwindow* windowP_, uint32_t key);
 	static void 	resize_cb(GLFWwindow* windowP_, int w, int h);
 	static void 	exit_cb(GLFWwindow* windowP_);
 	static void		scroll_cb(GLFWwindow* windowP_, double x, double y);
