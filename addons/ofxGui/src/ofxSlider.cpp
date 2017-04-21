@@ -73,7 +73,11 @@ Type ofxSlider<Type>::getMax(){
 
 template<typename Type>
 bool ofxSlider<Type>::mouseMoved(ofMouseEventArgs & mouse){
-	mouseInside = isGuiDrawing() && b.inside(mouse);
+	bool mouseInside = isGuiDrawing() && b.inside(mouse);
+	if(mouseInside != this->mouseInside && overlappingLabel){
+		setNeedsRedraw();
+	}
+	this->mouseInside = mouseInside;
 	return mouseInside;
 }
 
@@ -203,16 +207,32 @@ void ofxSlider<Type>::generateDraw(){
 
 
 template<typename Type>
-void ofxSlider<Type>::generateText(){
+void ofxSlider<Type>::generateText(){	
 	string valStr = ofToString(value);
-	textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+	auto inputWidth = getTextBoundingBox(valStr,0,0).width;
+	auto label = getTextBoundingBox(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+	auto value = getTextBoundingBox(valStr, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4);
+	overlappingLabel = label.getMaxX() > value.x;
+
+	textMesh.clear();
+	if(!mouseInside || !overlappingLabel){
+		textMesh.append(getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4));
+	}
 	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
 }
 
 template<>
 void ofxSlider<unsigned char>::generateText(){
 	string valStr = ofToString((int)value);
-	textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+	auto inputWidth = getTextBoundingBox(valStr,0,0).width;
+	auto label = getTextBoundingBox(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+	auto value = getTextBoundingBox(valStr, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4);
+	overlappingLabel = label.getMaxX() > value.x;
+
+	textMesh.clear();
+	if(!mouseInside || !overlappingLabel){
+		textMesh.append(getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4));
+	}
 	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
 }
 

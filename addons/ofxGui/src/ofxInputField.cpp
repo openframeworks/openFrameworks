@@ -54,7 +54,7 @@ namespace{
 	}
 
 	bool isANumber(std::string const& s){
-	  return s.find_first_not_of("0123456789.", 0) == std::string::npos
+	  return s.find_first_not_of("0123456789.-e", 0) == std::string::npos
 			  && std::count(s.begin(), s.end(), '.') <= 1;
 	}
 
@@ -210,20 +210,29 @@ void ofxInputField<Type>::calculateSelectionArea(int selectIdx1, int selectIdx2)
 		preSelectWidth = getTextBoundingBox(preSelectStr,0,0).width;
 	}
 
-	auto inputWidth = getTextBoundingBox(input,0,0).width;
-	inputWidth = getTextBoundingBox(input,0,0).width;
-	selectStartX = b.width - textPadding - inputWidth + preSelectWidth;
+	if(showLabelWhileEditing){
+		auto inputWidth = getTextBoundingBox(input,0,0).width;
+		selectStartX = b.getMaxX() - textPadding - inputWidth + preSelectWidth;
+	}else{
+		selectStartX = b.x + textPadding + preSelectWidth;
+	}
 
 	if(hasSelectedText()){
 		selectStr = ofUTF8Substring(input, selectStartPos, selectEndPos - selectStartPos);
 		selectionWidth = getTextBoundingBox(selectStr,0,0).width;
 	}
+
 	setNeedsRedraw();
 }
 
 template<typename Type>
 bool ofxInputField<Type>::mouseMoved(ofMouseEventArgs & mouse){
-	return (isGuiDrawing() || insideSlider) && b.inside(mouse);
+	bool mouseOver = b.inside(mouse);
+	if(mouseOver != bMouseOver && !bGuiActive && overlappingLabel){
+		setNeedsRedraw();
+	}
+	bMouseOver = mouseOver;
+	return (isGuiDrawing() || insideSlider) && bMouseOver;
 }
 
 template<typename Type>
@@ -469,10 +478,10 @@ void ofxInputField<Type>::generateDraw(){
 
 	if(bGuiActive){
 		if(hasSelectedText()){
-			ofRectangle selection(selectStartX+b.x, b.y+1, selectionWidth, b.height-2);
+			ofRectangle selection(selectStartX, b.y+1, selectionWidth, b.height-2);
 			bg.append(rectangle(selection, thisFillColor));
 		}else if(!blinkingCursor){
-			ofRectangle cursor(selectStartX+b.x, b.y, 1, b.height);
+			ofRectangle cursor(selectStartX, b.y, 1, b.height);
 			bg.append(rectangle(cursor, thisTextColor));
 		}
 	}
@@ -481,12 +490,22 @@ void ofxInputField<Type>::generateDraw(){
 	if(!bGuiActive && !containsValidValue()){
 		input = toString(value);
 	}
-	textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+
 	auto inputWidth = getTextBoundingBox(input,0,0).width;
-	textMesh.append(getTextMesh(input, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4));
-	for(auto & c: textMesh.getVertices()){
-		textMesh.addColor(thisTextColor);
+	auto label = getTextBoundingBox(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+	auto value = getTextBoundingBox(input, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4);
+	overlappingLabel = label.getMaxX() > value.x;
+
+	textMesh.clear();
+	if(!bGuiActive || showLabelWhileEditing){
+		if(!overlappingLabel || (!bMouseOver && !bGuiActive)){
+			textMesh.append(getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4) );
+		}
+		textMesh.append(getTextMesh(input, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4));
+	}else{
+		textMesh.append(getTextMesh(input, b.x + textPadding, b.y + b.height / 2 + 4));
 	}
+	textMesh.getColors().assign(textMesh.getVertices().size(), thisTextColor);
 }
 
 template<typename Type>
@@ -529,7 +548,7 @@ void ofxInputField<Type>::drawCursor(){
 	if(!blinkingCursor || (int(ofGetElapsedTimef()*2) % 2) == 0){
 		ofPushStyle();
 		ofSetColor(thisTextColor);
-		ofDrawLine( selectStartX+b.x, b.y, selectStartX+b.x, b.y+b.height );
+		ofDrawLine( selectStartX, b.y, selectStartX, b.y+b.height );
 		ofPopStyle();
 	}
 }
@@ -537,6 +556,12 @@ void ofxInputField<Type>::drawCursor(){
 template<typename Type>
 void ofxInputField<Type>::setBlinkingCursor(bool blink){
 	blinkingCursor = blink;
+	setNeedsRedraw();
+}
+
+template<typename Type>
+void ofxInputField<Type>::setShowLabelWhileEditing(bool show){
+	showLabelWhileEditing = show;
 	setNeedsRedraw();
 }
 

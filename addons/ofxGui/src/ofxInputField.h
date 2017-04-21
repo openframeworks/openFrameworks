@@ -27,7 +27,9 @@ public:
 	Type getMin();
 	void setMax(Type max);
 	Type getMax();
+
 	void setBlinkingCursor(bool blink);
+	void setShowLabelWhileEditing(bool show);
 
 	virtual bool mouseMoved(ofMouseEventArgs & args);
 	virtual bool mousePressed(ofMouseEventArgs & args);
@@ -58,7 +60,7 @@ protected:
 	static ofxInputField createInsideSlider();
 	virtual void render();
 	ofParameter<Type> value;
-	bool bGuiActive, bMousePressed;
+	bool bGuiActive=false, bMousePressed=false, bMouseOver=false;
 	bool setValue(float mx, float my, bool bCheck);
 	void generateDraw();
 	void valueChanged(Type & value);
@@ -82,6 +84,8 @@ protected:
 	bool insideSlider = false;
 	bool blinkingCursor = true;
 	bool validValue = true;
+	bool showLabelWhileEditing = true;
+	bool overlappingLabel = false;
 	float errorTime = 0;
 
 	void leaveFocus();

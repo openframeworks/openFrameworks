@@ -60,6 +60,7 @@ protected:
 	bool bUpdateOnReleaseOnly;
 	bool bGuiActive;
 	bool mouseInside;
+	bool overlappingLabel;
 	bool setValue(float mx, float my, bool bCheck);
 	virtual void generateDraw();
 	virtual void generateText();
