@@ -1,0 +1,12 @@
+#build
+
+*/bin/*
+*/obj/*
+
+#eclipse
+*/.settings/*
+
+#qt 
+build-*
+*/*.user
+
