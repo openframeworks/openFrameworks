@@ -23,6 +23,11 @@ template<typename Type>
 ofxSlider<Type>* ofxSlider<Type>::setup(ofParameter<Type> _val, float width, float height){
 	listener = input.leftFocus.newListener([this]{
 		state = Slider;
+		if(!input.containsValidValue()){
+			errorTime = ofGetElapsedTimef();
+		}else{
+			errorTime = 0;
+		}
 	});
 	bUpdateOnReleaseOnly = false;
 	value.makeReferenceTo(_val);
@@ -215,6 +220,18 @@ template<typename Type>
 void ofxSlider<Type>::render(){
 	if(state==Slider){
 		ofColor c = ofGetStyle().color;
+		if(errorTime>0 && !input.containsValidValue()){
+			auto now = ofGetElapsedTimef();
+			auto pct = (now - errorTime) / 0.5;
+			if(pct<1){
+				bg.setFillColor(ofColor::darkRed.getLerped(thisBackgroundColor, pct));
+				bar.setFillColor(ofColor::red.getLerped(thisFillColor, pct));
+			}else{
+				bg.setFillColor(thisBackgroundColor);
+				bar.setFillColor(thisFillColor);
+				errorTime = 0;
+			}
+		}
 
 		bg.draw();
 		bar.draw();
