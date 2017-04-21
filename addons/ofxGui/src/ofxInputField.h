@@ -37,6 +37,8 @@ public:
 	virtual bool keyPressed(ofKeyEventArgs & args);
 	virtual bool charPressed(uint32_t & key);
 
+	bool containsValidValue() const;
+
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method){
 		value.addListener(listener,method);
@@ -79,8 +81,12 @@ protected:
 
 	bool insideSlider = false;
 	bool blinkingCursor = true;
+	bool validValue = true;
+	float errorTime = 0;
 
 	void leaveFocus();
+
+	std::vector<ofFloatColor> originalColors;
 
 	ofEvent<void> leftFocus;
 	std::vector<ofEventListener> listeners;

@@ -47,26 +47,52 @@ namespace{
 		return t;
 	}
 
+	bool isHexNotation(std::string const& s){
+	  return s.compare(0, 2, "0x") == 0
+		  && s.size() > 2
+		  && s.find_first_not_of("0123456789abcdefABCDEF", 2) == std::string::npos;
+	}
+
+	bool isANumber(std::string const& s){
+	  return s.find_first_not_of("0123456789.", 0) == std::string::npos
+			  && std::count(s.begin(), s.end(), '.') <= 1;
+	}
+
 	template<typename Type>
 	Type fromString(const std::string & str){
-		return ofFromString<Type>(str);
+		if(isHexNotation(str)){
+			return ofHexToInt(str);
+		}else if(isANumber(str)){
+			return ofFromString<Type>(str);
+		}else{
+			throw std::exception();
+		}
 	}
 
 	template<>
 	uint8_t fromString(const std::string & str){
-		auto ret = ofFromString<int>(str);
+		auto ret = 0;
+		if(isHexNotation(str)){
+			ret = ofHexToInt(str);
+		}else if(isANumber(str)){
+			ret = ofFromString<int>(str);
+		}else{
+			throw std::exception();
+		}
 		return std::max(std::min(ret, 255), 0);
 	}
 
 	template<>
 	int8_t fromString(const std::string & str){
-		auto ret = ofFromString<int>(str);
+		auto ret = 0;
+		if(isHexNotation(str)){
+			ret = ofHexToInt(str);
+		}else if(isANumber(str)){
+			ret = ofFromString<int>(str);
+		}else{
+			throw std::exception();
+		}
 		return std::max(std::min(ret, -127), 127);
-	}
-
-	template<>
-	std::string fromString(const std::string & str){
-		return str;
 	}
 
 	ofMesh rectangle(const ofRectangle & r, const ofFloatColor & c){
@@ -206,7 +232,7 @@ bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & mouse){
 		return false;
 	}
 	if(b.inside(mouse)){
-		if(mouse.button == OF_MOUSE_BUTTON_LEFT){
+		if(!insideSlider || mouse.button == OF_MOUSE_BUTTON_LEFT){
 			bMousePressed = true;
 			if(bGuiActive){
 				auto inputWidth = getTextBoundingBox(input,0,0).width;
@@ -241,7 +267,7 @@ bool ofxInputField<Type>::mouseDragged(ofMouseEventArgs & mouse){
 		return false;
 	}
 
-	if(mouse.button == OF_MOUSE_BUTTON_LEFT){
+	if(!insideSlider || mouse.button == OF_MOUSE_BUTTON_LEFT){
 		auto inputWidth = getTextBoundingBox(input,0,0).width;
 		float cursorX = mouse.x - (b.x + b.width - textPadding - inputWidth);
 		int cursorPos = round(ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(input), true));
@@ -406,8 +432,12 @@ int ofxInputField<Type>::insertKeystroke(uint32_t character){
 }
 
 template<typename Type>
-int ofxInputField<Type>::insertAlphabetic(uint32_t){
-	return -1; //cursor or selection area stay the same
+int ofxInputField<Type>::insertAlphabetic(uint32_t character){
+	if(character == 'x' || character == 'a' || character == 'b' || character=='c' || character=='d' || character=='e' || character=='f'){
+	   return insertKeystroke(character);
+	}else{
+		return -1; //cursor or selection area stay the same
+	}
 }
 
 template<>
@@ -447,6 +477,10 @@ void ofxInputField<Type>::generateDraw(){
 		}
 	}
 
+	auto input = this->input;
+	if(!bGuiActive && !containsValidValue()){
+		input = toString(value);
+	}
 	textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
 	auto inputWidth = getTextBoundingBox(input,0,0).width;
 	textMesh.append(getTextMesh(input, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4));
@@ -458,6 +492,19 @@ void ofxInputField<Type>::generateDraw(){
 template<typename Type>
 void ofxInputField<Type>::render(){
 	bg.draw();
+
+	if(!insideSlider && errorTime>0 && !containsValidValue()){
+		auto now = ofGetElapsedTimef();
+		auto pct = (now - errorTime) / 0.5;
+		if(pct<1){
+			for(size_t i=0;i<originalColors.size();i++){
+				bg.getColors()[i] = ofFloatColor::darkRed.getLerped(originalColors[i], pct);
+			}
+		}else{
+			bg.getColors() = originalColors;
+			errorTime = 0;
+		}
+	}
 
 	if(bGuiActive && !hasSelectedText() && blinkingCursor){
 		drawCursor();
@@ -505,13 +552,22 @@ ofAbstractParameter & ofxInputField<Type>::getParameter(){
 
 template<typename Type>
 void ofxInputField<Type>::parseInput(){
-	Type tmpVal = fromString<Type>(input);
-	if(tmpVal < getMin()){
-		tmpVal = getMin();
-	}else if(tmpVal > getMax()){
-		tmpVal = getMax();
+	try{
+		Type tmpVal = fromString<Type>(input);
+		if(tmpVal < getMin()){
+			tmpVal = getMin();
+		}else if(tmpVal > getMax()){
+			tmpVal = getMax();
+		}
+		value = tmpVal;
+		validValue = true;
+	}catch(...){
+		if(!insideSlider){
+			originalColors = bg.getColors();
+			errorTime = ofGetElapsedTimef();
+		}
+		validValue = false;
 	}
-	value = tmpVal;
 }
 
 template<>
@@ -537,6 +593,11 @@ void ofxInputField<Type>::leaveFocus(){
 	leftFocus.notify(this);
 }
 
+template<typename Type>
+bool ofxInputField<Type>::containsValidValue() const{
+	return validValue;
+}
+
 template class ofxInputField<int8_t>;
 template class ofxInputField<uint8_t>;
 template class ofxInputField<int16_t>;
@@ -547,4 +608,4 @@ template class ofxInputField<int64_t>;
 template class ofxInputField<uint64_t>;
 template class ofxInputField<float>;
 template class ofxInputField<double>;
-template class ofxInputField<string>;
+template class ofxInputField<std::string>;

@@ -73,6 +73,7 @@ protected:
 		Input,
 	} state = Slider;
 	ofEventListener listener;
+	float errorTime = 0;
 };
 
 typedef ofxSlider<float> ofxFloatSlider;
