@@ -39,7 +39,7 @@ elif [ "$TARGET" == "emscripten" ]; then
 fi
 
 if ls example* 1> /dev/null 2>&1; then
-    for example in "example*"; do
+    for example in example*; do
         echo "cp ${OF_ROOT}/scripts/templates/$TARGET/Makefile $example/"
         cp ${OF_ROOT}/scripts/templates/$TARGET/Makefile $example/
         echo "cp ${OF_ROOT}/scripts/templates/$TARGET/config.make $example/"
