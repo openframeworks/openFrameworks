@@ -1,26 +1,112 @@
+//
+//  ofxInputField.cpp
+//  ofxInputField
+//
+//  Based on ofxInputField by Felix Lange
+//
+//
+
 #include "ofxInputField.h"
 
 #include "ofGraphics.h"
 
+namespace{
+	template<typename Type>
+	typename std::enable_if<std::is_integral<Type>::value, Type>::type
+	getRange(Type min, Type max, float width){
+		double range = max - min;
+		range /= width*4;
+		return std::max(range,1.0);
+	}
+
+	template<typename Type>
+	typename std::enable_if<std::is_floating_point<Type>::value, Type>::type
+	getRange(Type min, Type max, float width){
+		double range = max - min;
+		range /= width*4;
+		return range;
+	}
+
+	template<typename Type>
+	std::string toString(Type t){
+		return ofToString(t);
+	}
+
+	template<>
+	std::string toString(uint8_t t){
+		return ofToString((int) t);
+	}
+
+	template<>
+	std::string toString(int8_t t){
+		return ofToString((int) t);
+	}
+
+	template<>
+	std::string toString(std::string t){
+		return t;
+	}
+
+	template<typename Type>
+	Type fromString(const std::string & str){
+		return ofFromString<Type>(str);
+	}
+
+	template<>
+	uint8_t fromString(const std::string & str){
+		auto ret = ofFromString<int>(str);
+		return std::max(std::min(ret, 255), 0);
+	}
+
+	template<>
+	int8_t fromString(const std::string & str){
+		auto ret = ofFromString<int>(str);
+		return std::max(std::min(ret, -127), 127);
+	}
+
+	template<>
+	std::string fromString(const std::string & str){
+		return str;
+	}
+
+	ofMesh rectangle(const ofRectangle & r, const ofFloatColor & c){
+		ofMesh mesh;
+		mesh.addVertex(r.position);
+		mesh.addVertex(glm::vec3(r.x + r.width, r.y, 0));
+		mesh.addVertex(glm::vec3(r.x + r.width, r.y + r.height, 0));
+
+		mesh.addVertex(glm::vec3(r.x + r.width, r.y + r.height, 0));
+		mesh.addVertex(glm::vec3(r.x, r.y + r.height, 0));
+		mesh.addVertex(glm::vec3(r.x, r.y, 0));
+
+		mesh.addColor(c);
+		mesh.addColor(c);
+		mesh.addColor(c);
+
+		mesh.addColor(c);
+		mesh.addColor(c);
+		mesh.addColor(c);
+
+		return mesh;
+	}
+}
+
+template<typename Type>
+ofxInputField<Type> ofxInputField<Type>::createInsideSlider(){
+	ofxInputField<Type> input;
+	input.insideSlider = true;
+	return input;
+}
+
 template<typename Type>
 ofxInputField<Type>::ofxInputField(){
-	bChangedInternally = false;
 	bGuiActive = false;
 	bMousePressed = false;
-	mouseInside = false;
-	bRegisteredForKeyEvents = false;
 	mousePressedPos = -1;
 	selectStartX = -1;
 	selectStartPos = -1;
 	selectEndPos = -1;
-	pressCounter = 0;
-	inputWidth = 0;
 	selectionWidth = 0;
-}
-
-template<typename Type>
-ofxInputField<Type>::~ofxInputField(){
-	value.removeListener(this,&ofxInputField::valueChanged);
 }
 
 template<typename Type>
@@ -29,11 +115,9 @@ ofxInputField<Type>::ofxInputField(ofParameter<Type> _val, float width, float he
 }
 
 template<typename Type>
-
 ofxInputField<Type>* ofxInputField<Type>::setup(ofParameter<Type> _val, float width, float height){
 	value.makeReferenceTo(_val);
-	input = ofToString(value);
-	inputWidth = getTextBoundingBox(input,0,0).width;
+	input = toString(value.get());
 	b.x = 0;
 	b.y = 0;
 	b.width = width;
@@ -41,10 +125,12 @@ ofxInputField<Type>* ofxInputField<Type>::setup(ofParameter<Type> _val, float wi
 	bGuiActive = false;
 	setNeedsRedraw();
 
-	value.addListener(this,&ofxInputField::valueChanged);
-	registerMouseEvents();
-	registerKeyEvents();
-	pressCounter = 0;
+	if(!insideSlider){
+		registerMouseEvents();
+	}
+	listeners.push_back(value.newListener(this,&ofxInputField::valueChanged));
+	listeners.push_back(ofEvents().charEvent.newListener(this, &ofxInputField<Type>::charPressed, OF_EVENT_ORDER_BEFORE_APP));
+	listeners.push_back(ofEvents().keyPressed.newListener(this, &ofxInputField<Type>::keyPressed, OF_EVENT_ORDER_BEFORE_APP));
 	return this;
 }
 
@@ -94,38 +180,49 @@ void ofxInputField<Type>::calculateSelectionArea(int selectIdx1, int selectIdx2)
 
 	float preSelectWidth = 0;
 	if(selectStartPos > 0){
-		preSelectStr.assign(input,0,selectStartPos);
+		preSelectStr = ofUTF8Substring(input, 0, selectStartPos);
 		preSelectWidth = getTextBoundingBox(preSelectStr,0,0).width;
 	}
+
+	auto inputWidth = getTextBoundingBox(input,0,0).width;
+	inputWidth = getTextBoundingBox(input,0,0).width;
 	selectStartX = b.width - textPadding - inputWidth + preSelectWidth;
 
 	if(hasSelectedText()){
-		selectStr.assign(input,selectStartPos,selectEndPos-selectStartPos);
+		selectStr = ofUTF8Substring(input, selectStartPos, selectEndPos - selectStartPos);
 		selectionWidth = getTextBoundingBox(selectStr,0,0).width;
 	}
+	setNeedsRedraw();
 }
 
 template<typename Type>
-bool ofxInputField<Type>::mouseMoved(ofMouseEventArgs & args){
-	mouseInside = isGuiDrawing() && b.inside(ofPoint(args.x,args.y));
-	return mouseInside;
+bool ofxInputField<Type>::mouseMoved(ofMouseEventArgs & mouse){
+	return (isGuiDrawing() || insideSlider) && b.inside(mouse);
 }
 
 template<typename Type>
-bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & args){
-	if(b.inside(args.x,args.y)){
-		bMousePressed = true;
-		if(!bGuiActive){
-			bGuiActive = true;
+bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & mouse){
+	if(!isGuiDrawing() && !insideSlider){
+		return false;
+	}
+	if(b.inside(mouse)){
+		if(mouse.button == OF_MOUSE_BUTTON_LEFT){
+			bMousePressed = true;
+			if(bGuiActive){
+				auto inputWidth = getTextBoundingBox(input,0,0).width;
+				float cursorX = mouse.x - (b.x + b.width - textPadding - inputWidth);
+				int cursorPos = round(ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(input), true));
+				mousePressedPos = cursorPos;
+
+				calculateSelectionArea(cursorPos, cursorPos);
+			}else{
+				calculateSelectionArea(0, ofUTF8Length(input));
+				bGuiActive = true;
+			}
+
+			setNeedsRedraw();
 		}
-
-		float cursorX = args.x - (b.x + b.width - textPadding - inputWidth);
-		int cursorPos = ofMap(cursorX,0,inputWidth,0,input.size(),true);
-		mousePressedPos = cursorPos;
-
-		calculateSelectionArea(cursorPos, cursorPos);
-
-		pressCounter++;
+		return true;
 
 	}else{
 		if(bGuiActive){
@@ -136,97 +233,156 @@ bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & args){
 }
 
 template<typename Type>
-bool ofxInputField<Type>::mouseDragged(ofMouseEventArgs & args){
-	if(!bGuiActive || !bMousePressed)
+bool ofxInputField<Type>::mouseDragged(ofMouseEventArgs & mouse){
+	if(!isGuiDrawing() && !insideSlider){
 		return false;
+	}
+	if(!bGuiActive){
+		return false;
+	}
 
-	float cursorX = args.x - (b.x + b.width - textPadding - inputWidth);
-	int cursorPos = ofMap(cursorX,0,inputWidth,0,input.size(),true);
-	calculateSelectionArea(mousePressedPos,cursorPos);
-	return false;
+	if(mouse.button == OF_MOUSE_BUTTON_LEFT){
+		auto inputWidth = getTextBoundingBox(input,0,0).width;
+		float cursorX = mouse.x - (b.x + b.width - textPadding - inputWidth);
+		int cursorPos = round(ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(input), true));
+		calculateSelectionArea(mousePressedPos,cursorPos);
+		setNeedsRedraw();
+	}
+	return true;
 }
 
 template<typename Type>
-bool ofxInputField<Type>::mouseReleased(ofMouseEventArgs & args){
-//	if(bUpdateOnEnterOnly){
-//		value.enableEvents();
-//	}
-	if(bGuiActive){
-		if(pressCounter == 1 && !hasSelectedText()){
-			//activated panel without selecting an area => select all
-			calculateSelectionArea(0, input.size());
-		}
-	}
-
+bool ofxInputField<Type>::mouseReleased(ofMouseEventArgs &){
 	bMousePressed = false;
+	return bGuiActive;
+}
+
+template<typename Type>
+bool ofxInputField<Type>::mouseScrolled(ofMouseEventArgs & mouse){
+	if(b.inside(mouse)){
+		if(!bGuiActive){
+			if(mouse.y>0 || mouse.y<0){
+				double range = getRange(value.getMin(), value.getMax(), b.width);
+				Type newValue = value + ofMap(mouse.y,-1,1,-range, range);
+				newValue = ofClamp(newValue,value.getMin(),value.getMax());
+				value = newValue;
+			}
+		}
+		return true;
+	}else{
+		return false;
+	}
+}
+
+template<>
+bool ofxInputField<string>::mouseScrolled(ofMouseEventArgs & mouse){
+	if(b.inside(mouse)){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+template<typename Type>
+bool ofxInputField<Type>::charPressed(uint32_t & key){
+	if(!isGuiDrawing() && !insideSlider){
+		return false;
+	}
+	if(bGuiActive && !bMousePressed){
+		int newCursorIdx = -1;
+		if(key >= '0' && key <= '9'){
+			newCursorIdx = insertKeystroke(key);
+		}else if(key == '.' ){
+			newCursorIdx = insertKeystroke(key);
+		}else{
+			newCursorIdx = insertAlphabetic(key);
+		}
+
+		if(newCursorIdx != -1){
+			//set cursor
+			calculateSelectionArea(newCursorIdx,newCursorIdx);
+		}
+		setNeedsRedraw();
+		return true;
+	}
 	return false;
-}
-
-template<typename Type>
-void ofxInputField<Type>::registerKeyEvents(){
-	if(bRegisteredForKeyEvents == true){
-		return; // already registered.
-	}
-	bRegisteredForKeyEvents = true;
-	ofRegisterKeyEvents(this, OF_EVENT_ORDER_BEFORE_APP);
-}
-
-template<typename Type>
-void ofxInputField<Type>::unregisterKeyEvents(){
-	if(bRegisteredForKeyEvents == false){
-		return; // not registered.
-	}
-	ofUnregisterKeyEvents(this, OF_EVENT_ORDER_BEFORE_APP);
-	bRegisteredForKeyEvents = false;
 }
 
 template<typename Type>
 bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
+	if(!isGuiDrawing()){
+		return false;
+	}
 	if(bGuiActive && !bMousePressed){
-		ofLogNotice("ofxInputField::keyPressed") << args.key;
-
+		auto key = args.key;
 		int newCursorIdx = -1;
-		if(args.key >= '0' && args.key <= '9'){
-			int digit = args.key - '0';
-			newCursorIdx = insertKeystroke(ofToString(digit));
-		}else if(args.key == '.' ){
-			newCursorIdx = insertKeystroke(".");
-		}else if(args.key == OF_KEY_BACKSPACE || args.key == OF_KEY_DEL){
+		if(key == OF_KEY_BACKSPACE || key == OF_KEY_DEL){
 			if(hasSelectedText()){
-				input.erase(selectStartPos,selectEndPos-selectStartPos);
+				ofUTF8Erase(input, selectStartPos, selectEndPos - selectStartPos);
 				newCursorIdx = selectStartPos;
-				parseInput();
 			}else{
 				int deleteIdx = -1;
-				if(args.key == OF_KEY_BACKSPACE){
+				if(key == OF_KEY_BACKSPACE){
 					deleteIdx = selectStartPos-1;
-				}else if(args.key == OF_KEY_DEL){
+				}else if(key == OF_KEY_DEL){
 					deleteIdx = selectStartPos;
 				}
 
 				//erase char if valid deleteIdx
-				if(deleteIdx >= 0 && deleteIdx < input.size()){
-					input.erase(deleteIdx,1);
+				if(deleteIdx >= 0 && deleteIdx < (int)ofUTF8Length(input)){
+					ofUTF8Erase(input, deleteIdx, 1);
 					newCursorIdx = deleteIdx;
-					parseInput();
 				}
 			}
-		}else if(args.key == OF_KEY_LEFT){
+		}else if(key == OF_KEY_LEFT){
 			if(hasSelectedText()){
 				newCursorIdx = selectStartPos;
 			}else{
 				newCursorIdx = selectStartPos == 0 ? 0 : selectStartPos-1;
 			}
-		}else if(args.key == OF_KEY_RIGHT){
+		}else if(key == OF_KEY_RIGHT){
 			if(hasSelectedText()){
 				newCursorIdx = selectEndPos;
 			}else{
-				newCursorIdx = selectStartPos == input.size() ? input.size() : selectStartPos+1;
+				auto inputSize = ofUTF8Length(input);
+				newCursorIdx = selectStartPos == (int)inputSize ? (int)inputSize : selectStartPos+1;
 			}
-		}else if(args.key == OF_KEY_RETURN){
+		}else if(key == OF_KEY_RETURN){
 			leaveFocus();
-		}else if(args.key >= '!' && args.key <= '~'){
-			newCursorIdx = insertAlphabetic(ofToString((char)args.key));
+		}else if(key == OF_KEY_ESC){
+			input = toString(value.get());
+			leaveFocus();
+		}else if(key == 'a' && args.hasModifier(OF_KEY_CONTROL)){
+			calculateSelectionArea(0, ofUTF8Length(input));
+		}else if(key == 'c' && args.hasModifier(OF_KEY_CONTROL)){
+			auto selectLen = selectEndPos - selectStartPos;
+			if(selectLen>0){
+				auto selection = ofUTF8Substring(input, selectStartPos, selectLen);
+				ofSetClipboardString(selection);
+			}
+		}else if(key == 'v' && args.hasModifier(OF_KEY_CONTROL)){
+			auto selectLen = selectEndPos - selectStartPos;
+			newCursorIdx = selectStartPos;
+			if(selectLen>0){
+				ofUTF8Erase(input, newCursorIdx, selectLen);
+			}
+			auto clipboard = ofGetClipboardString();
+			for(auto c: ofUTF8Iterator(clipboard)){
+				ofUTF8Insert(input, newCursorIdx, c);
+				newCursorIdx+=1;
+			}
+		}else if(key == 'x' && args.hasModifier(OF_KEY_CONTROL)){
+			auto selectLen = selectEndPos - selectStartPos;
+			if(selectLen>0){
+				auto selection = ofUTF8Substring(input, selectStartPos, selectLen);
+				ofSetClipboardString(selection);
+				newCursorIdx = selectStartPos;
+				ofUTF8Erase(input, newCursorIdx, selectLen);
+			}
+		}else if(key == OF_KEY_END){
+			newCursorIdx = ofUTF8Length(input);
+		}else if(key == OF_KEY_HOME){
+			newCursorIdx = 0;
 		}
 
 		if(newCursorIdx != -1){
@@ -238,71 +394,25 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 	return false;
 }
 
-template<typename Type>
-bool ofxInputField<Type>::keyReleased(ofKeyEventArgs & args){
-	return bGuiActive && !bMousePressed;
-}
-
 
 template<typename Type>
-int ofxInputField<Type>::insertKeystroke(const std::string & character){
+int ofxInputField<Type>::insertKeystroke(uint32_t character){
 	if(hasSelectedText()){
-		input.erase(selectStartPos,selectEndPos-selectStartPos);
+		ofUTF8Erase(input, selectStartPos, selectEndPos - selectStartPos);
 	}
-	input.insert(selectStartPos,character);
-	parseInput();
+	ofUTF8Insert(input, selectStartPos, character);
+	setNeedsRedraw();
 	return selectStartPos + 1;
 }
 
 template<typename Type>
-int ofxInputField<Type>::insertAlphabetic(const std::string & character){
+int ofxInputField<Type>::insertAlphabetic(uint32_t){
 	return -1; //cursor or selection area stay the same
 }
 
 template<>
-int ofxInputField<string>::insertAlphabetic(const std::string & character){
+int ofxInputField<string>::insertAlphabetic(uint32_t character){
 	return insertKeystroke(character);
-}
-
-
-template<typename Type>
-typename std::enable_if<std::is_integral<Type>::value, Type>::type
-getRange(Type min, Type max, float width){
-	double range = max - min;
-	range /= width*4;
-	return std::max(range,1.0);
-}
-
-template<typename Type>
-typename std::enable_if<std::is_floating_point<Type>::value, Type>::type
-getRange(Type min, Type max, float width){
-	double range = max - min;
-	range /= width*4;
-	return range;
-}
-
-template<typename Type>
-bool ofxInputField<Type>::mouseScrolled(ofMouseEventArgs & args){
-	if(mouseInside || bGuiActive){
-		if(args.y>0 || args.y<0){
-			double range = getRange(value.getMin(),value.getMax(),b.width);
-			Type newValue = value + ofMap(args.y,-1,1,-range, range);
-			newValue = ofClamp(newValue,value.getMin(),value.getMax());
-			value = newValue;
-		}
-		return true;
-	}else{
-		return false;
-	}
-}
-
-template<>
-bool ofxInputField<string>::mouseScrolled(ofMouseEventArgs & args){
-	if(mouseInside || bGuiActive){
-		return true;
-	}else{
-		return false;
-	}
 }
 
 template<typename Type>
@@ -317,88 +427,70 @@ ofxInputField<Type>::operator const Type & (){
 }
 
 template<typename Type>
+bool ofxInputField<Type>::hasSelectedText(){
+	return selectStartPos != selectEndPos;
+}
+
+template<typename Type>
 void ofxInputField<Type>::generateDraw(){
 	bg.clear();
 
-	bg.setFillColor(thisBackgroundColor);
-	bg.setFilled(true);
-	bg.rectangle(b);
+	bg.append(rectangle(b, thisBackgroundColor));
 
-	generateText();
-}
+	if(bGuiActive){
+		if(hasSelectedText()){
+			ofRectangle selection(selectStartX+b.x, b.y+1, selectionWidth, b.height-2);
+			bg.append(rectangle(selection, thisFillColor));
+		}else if(!blinkingCursor){
+			ofRectangle cursor(selectStartX+b.x, b.y, 1, b.height);
+			bg.append(rectangle(cursor, thisTextColor));
+		}
+	}
 
-
-template<typename Type>
-void ofxInputField<Type>::generateText(){
-	string valStr = input;
 	textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
+	auto inputWidth = getTextBoundingBox(input,0,0).width;
+	textMesh.append(getTextMesh(input, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4));
+	for(auto & c: textMesh.getVertices()){
+		textMesh.addColor(thisTextColor);
+	}
 }
 
 template<typename Type>
 void ofxInputField<Type>::render(){
 	bg.draw();
 
-	if(bGuiActive){
-		drawFocusedBB();
-
-		if(hasSelectedText()){
-			drawSelectedArea();
-		}else{
-			drawCursor();
-		}
+	if(bGuiActive && !hasSelectedText() && blinkingCursor){
+		drawCursor();
 	}
 
-	drawMesh();
-}
-
-template<typename Type>
-bool ofxInputField<Type>::hasSelectedText(){
-	return selectStartPos != selectEndPos;
-}
-
-template<typename Type>
-void ofxInputField<Type>::drawMesh(){
 	ofBlendMode blendMode = ofGetStyle().blendingMode;
 	if(blendMode!=OF_BLENDMODE_ALPHA){
 		ofEnableAlphaBlending();
 	}
-	ofSetColor(thisTextColor);
 
 	bindFontTexture();
 	textMesh.draw();
 	unbindFontTexture();
 
-	ofColor c = ofGetStyle().color;
-	ofSetColor(c);
 	if(blendMode!=OF_BLENDMODE_ALPHA){
 		ofEnableBlendMode(blendMode);
 	}
 }
 
 template<typename Type>
-void ofxInputField<Type>::drawSelectedArea(){
-	ofPushStyle();
-	ofSetColor(thisFillColor);
-	ofFill();
-	ofDrawRectangle( selectStartX+b.x, b.y+1, selectionWidth, b.height-2 );
-	ofPopStyle();
-}
-
-template<typename Type>
 void ofxInputField<Type>::drawCursor(){
-	ofPushStyle();
-	ofSetColor(thisTextColor);
-	ofDrawLine( selectStartX+b.x, b.y, selectStartX+b.x, b.y+b.height );
-	ofPopStyle();
+	if(!blinkingCursor || (int(ofGetElapsedTimef()*2) % 2) == 0){
+		ofPushStyle();
+		ofSetColor(thisTextColor);
+		ofDrawLine( selectStartX+b.x, b.y, selectStartX+b.x, b.y+b.height );
+		ofPopStyle();
+	}
 }
 
 template<typename Type>
-void ofxInputField<Type>::drawFocusedBB(){
-	ofPushStyle();
-	ofSetColor(thisTextColor);
-	ofDrawLine( selectStartX+b.x, b.y, selectStartX+b.x, b.y+b.height );
-	ofPopStyle();
+void ofxInputField<Type>::setBlinkingCursor(bool blink){
+	blinkingCursor = blink;
+	setNeedsRedraw();
 }
 
 template<typename Type>
@@ -413,8 +505,7 @@ ofAbstractParameter & ofxInputField<Type>::getParameter(){
 
 template<typename Type>
 void ofxInputField<Type>::parseInput(){
-	bChangedInternally = true;
-	Type tmpVal = ofToFloat(input);
+	Type tmpVal = fromString<Type>(input);
 	if(tmpVal < getMin()){
 		tmpVal = getMin();
 	}else if(tmpVal > getMax()){
@@ -425,22 +516,15 @@ void ofxInputField<Type>::parseInput(){
 
 template<>
 void ofxInputField<string>::parseInput(){
-	bChangedInternally = true;
 	value = input;
 }
 
 template<typename Type>
 void ofxInputField<Type>::valueChanged(Type & value){
-	if(bChangedInternally){
-		bChangedInternally = false;
-		inputWidth = getTextBoundingBox(input,0,0).width;
-	}else{
-		input = ofToString(value);
-		inputWidth = getTextBoundingBox(input,0,0).width;
-		if(bGuiActive){
-			int cursorPos = input.size();
-			calculateSelectionArea(cursorPos,cursorPos);
-		}
+	input = toString(value);
+	if(bGuiActive){
+		int cursorPos = ofUTF8Length(input);
+		calculateSelectionArea(cursorPos,cursorPos);
 	}
     setNeedsRedraw();
 }
@@ -448,10 +532,9 @@ void ofxInputField<Type>::valueChanged(Type & value){
 template<typename Type>
 void ofxInputField<Type>::leaveFocus(){
 	bGuiActive = false;
-	pressCounter = 0;
-	input = ofToString(value);
-	inputWidth = getTextBoundingBox(input,0,0).width;
+	parseInput();
 	setNeedsRedraw();
+	leftFocus.notify(this);
 }
 
 template class ofxInputField<int8_t>;

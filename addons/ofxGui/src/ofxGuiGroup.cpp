@@ -235,15 +235,14 @@ bool ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
 	if(setValue(args.x, args.y, true)){
 		return true;
 	}
-	if(bGuiActive){
-		ofMouseEventArgs a = args;
-		for(std::size_t i = 0; i < collection.size(); i++){
-			if(collection[i]->mousePressed(a)){
-				return true;
-			}
+	auto attended = false;
+	ofMouseEventArgs a = args;
+	for(std::size_t i = 0; i < collection.size(); i++){
+		if(collection[i]->mousePressed(a)){
+			attended = true;
 		}
 	}
-	return false;
+	return attended;
 }
 
 bool ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){

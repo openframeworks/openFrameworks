@@ -1,14 +1,23 @@
+//
+//  ofxInputField.cpp
+//  ofxInputField
+//
+//  Based on ofxInputField by Felix Lange
+//
+//
+
 #pragma once
 
 #include "ofxBaseGui.h"
 
 template<typename Type>
 class ofxInputField : public ofxBaseGui{
-	friend class ofPanel;
+	template<typename T>
+	friend class ofxSlider;
+
 	
 public:	
 	ofxInputField();
-	~ofxInputField();
 	ofxInputField(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
 	ofxInputField* setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
 	ofxInputField* setup(const std::string& _name, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
@@ -18,18 +27,15 @@ public:
 	Type getMin();
 	void setMax(Type max);
 	Type getMax();
+	void setBlinkingCursor(bool blink);
 
 	virtual bool mouseMoved(ofMouseEventArgs & args);
 	virtual bool mousePressed(ofMouseEventArgs & args);
 	virtual bool mouseDragged(ofMouseEventArgs & args);
 	virtual bool mouseReleased(ofMouseEventArgs & args);
-    virtual bool mouseScrolled(ofMouseEventArgs & args);
-
-    void registerKeyEvents();
-    void unregisterKeyEvents();
-
-    virtual bool keyPressed(ofKeyEventArgs & args);
-    virtual bool keyReleased(ofKeyEventArgs & args);
+	virtual bool mouseScrolled(ofMouseEventArgs & args);
+	virtual bool keyPressed(ofKeyEventArgs & args);
+	virtual bool charPressed(uint32_t & key);
 
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method){
@@ -47,25 +53,20 @@ public:
 	ofAbstractParameter & getParameter();
 
 protected:
+	static ofxInputField createInsideSlider();
 	virtual void render();
 	ofParameter<Type> value;
 	bool bGuiActive, bMousePressed;
-	bool mouseInside;
 	bool setValue(float mx, float my, bool bCheck);
-	virtual void generateDraw();
-	virtual void generateText();
+	void generateDraw();
 	void valueChanged(Type & value);
-	ofPath bg;
+	ofVboMesh bg;
 	ofVboMesh textMesh;
 
-	bool bRegisteredForKeyEvents;
-
 	std::string input;
-	float inputWidth;
-	bool bChangedInternally;
 	void parseInput();
-	int insertKeystroke(const std::string & character);
-	int insertAlphabetic(const std::string & character);
+	int insertKeystroke(uint32_t character);
+	int insertAlphabetic(uint32_t character);
 
 	int mousePressedPos; //set by mouse interaction
 	bool hasSelectedText();
@@ -74,14 +75,15 @@ protected:
 	int selectStartPos, selectEndPos;
 	void calculateSelectionArea(int selectIdx1, int selectIdx2);
 
-	virtual void drawSelectedArea();
 	virtual void drawCursor();
-	virtual void drawFocusedBB();
-	virtual void drawMesh();
 
-	int pressCounter;
+	bool insideSlider = false;
+	bool blinkingCursor = true;
 
 	void leaveFocus();
+
+	ofEvent<void> leftFocus;
+	std::vector<ofEventListener> listeners;
 };
 
 typedef ofxInputField<float> ofxFloatField;
