@@ -6,8 +6,10 @@
 #include "ofxPanel.h"
 #include "ofxButton.h"
 #include "ofxLabel.h"
+#include "ofTrueTypeFont.h"
 
 void ofxGuiSetFont(const string & fontPath,int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
+void ofxGuiSetFont(const ofTtfSettings & fontSettings);
 void ofxGuiSetBitmapFont();
 
 void ofxGuiSetHeaderColor(const ofColor & color);
