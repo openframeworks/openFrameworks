@@ -22,12 +22,12 @@ public:
 	void waitNext();
 private:
 	void calculateNextPeriod();
+	std::chrono::nanoseconds nanosPerPeriod;
 #if defined(TARGET_WIN32)
 	LARGE_INTEGER nextWakeTime;
 	HANDLE hTimer;
 #else
 	ofTime nextWakeTime;
 #endif
-	std::chrono::nanoseconds nanosPerPeriod;
 };
 
