@@ -315,6 +315,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwSetCursorPosCallback(windowP, motion_cb);
 	glfwSetCursorEnterCallback(windowP, entry_cb);
 	glfwSetKeyCallback(windowP, keyboard_cb);	
+	glfwSetCharCallback(windowP, char_cb);
 	glfwSetWindowSizeCallback(windowP, resize_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
@@ -1295,17 +1296,115 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 		case GLFW_KEY_TAB:
 			key = OF_KEY_TAB;
 			break;   
+		case GLFW_KEY_KP_0:
+			key = '0';
+			break;
+		case GLFW_KEY_KP_1:
+			key = '1';
+			break;
+		case GLFW_KEY_KP_2:
+			key = '2';
+			break;
+		case GLFW_KEY_KP_3:
+			key = '3';
+			break;
+		case GLFW_KEY_KP_4:
+			key = '4';
+			break;
+		case GLFW_KEY_KP_5:
+			key = '5';
+			break;
+		case GLFW_KEY_KP_6:
+			key = '6';
+			break;
+		case GLFW_KEY_KP_7:
+			key = '7';
+			break;
+		case GLFW_KEY_KP_8:
+			key = '8';
+			break;
+		case GLFW_KEY_KP_9:
+			key = '9';
+			break;
+		case GLFW_KEY_KP_DIVIDE:
+			key = '/';
+			break;
+		case GLFW_KEY_KP_MULTIPLY:
+			key = '*';
+			break;
+		case GLFW_KEY_KP_SUBTRACT:
+			key = '-';
+			break;
+		case GLFW_KEY_KP_ADD:
+			key = '+';
+			break;
+		case GLFW_KEY_KP_DECIMAL:
+			key = '.';
+			break;
+		case GLFW_KEY_KP_EQUAL:
+			key = '=';
+			break;
 		default:
 			codepoint = keycodeToUnicode(instance, keycode, scancode, mods);
 			key = codepoint;
 			break;
 	}
 
-	if(action == GLFW_PRESS || action == GLFW_REPEAT){
-		instance->events().notifyKeyPressed(key,keycode,scancode,codepoint);
-	}else if (action == GLFW_RELEASE){
-		instance->events().notifyKeyReleased(key,keycode,scancode,codepoint);
+	int modifiers = 0;
+	if(mods & GLFW_KEY_LEFT_SHIFT){
+		modifiers |= OF_KEY_SHIFT;
+		modifiers |= OF_KEY_LEFT_SHIFT;
 	}
+	if(mods & GLFW_KEY_RIGHT_SHIFT){
+		modifiers |= OF_KEY_SHIFT;
+		modifiers |= OF_KEY_RIGHT_SHIFT;
+	}
+	if(mods & GLFW_KEY_LEFT_ALT){
+		modifiers |= OF_KEY_ALT;
+		modifiers |= OF_KEY_LEFT_ALT;
+	}
+	if(mods & GLFW_KEY_RIGHT_ALT){
+		modifiers |= OF_KEY_ALT;
+		modifiers |= OF_KEY_RIGHT_ALT;
+	}
+	if(mods & GLFW_KEY_LEFT_CONTROL){
+		modifiers |= OF_KEY_CONTROL;
+		modifiers |= OF_KEY_LEFT_CONTROL;
+	}
+	if(mods & GLFW_KEY_RIGHT_CONTROL){
+		modifiers |= OF_KEY_CONTROL;
+		modifiers |= OF_KEY_RIGHT_CONTROL;
+	}
+	if(mods & GLFW_KEY_LEFT_CONTROL){
+		modifiers |= OF_KEY_CONTROL;
+		modifiers |= OF_KEY_LEFT_CONTROL;
+	}
+	if(mods & GLFW_KEY_RIGHT_CONTROL){
+		modifiers |= OF_KEY_CONTROL;
+		modifiers |= OF_KEY_RIGHT_CONTROL;
+	}
+	if(mods & GLFW_KEY_LEFT_SUPER){
+		modifiers |= OF_KEY_SUPER;
+		modifiers |= OF_KEY_LEFT_SUPER;
+	}
+	if(mods & GLFW_KEY_RIGHT_SUPER){
+		modifiers |= OF_KEY_SUPER;
+		modifiers |= OF_KEY_RIGHT_SUPER;
+	}
+
+	if(action == GLFW_PRESS || action == GLFW_REPEAT){
+		ofKeyEventArgs keyE(ofKeyEventArgs::Pressed,key,keycode,scancode,codepoint,modifiers);
+		instance->events().notifyKeyEvent(keyE);
+	}else if (action == GLFW_RELEASE){
+		ofKeyEventArgs keyE(ofKeyEventArgs::Released,key,keycode,scancode,codepoint,modifiers);
+		instance->events().notifyKeyEvent(keyE);
+	}
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::char_cb(GLFWwindow* windowP_, uint32_t key){
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	instance->events().charEvent.notify(key);
 }
 
 //------------------------------------------------------------
