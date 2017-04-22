@@ -68,16 +68,19 @@ protected:
 	ofVboMesh textMesh;
 
 	std::string input;
+	std::string substr;
 	void parseInput();
 	int insertKeystroke(uint32_t character);
 	int insertAlphabetic(uint32_t character);
 
-	int mousePressedPos; //set by mouse interaction
 	bool hasSelectedText();
 
-	float selectStartX, selectionWidth; //calculated from select indices
-	int selectStartPos, selectEndPos;
+	int mousePressedPos = -1; //set by mouse interaction
+	float selectStartX = -1, selectionWidth = 0; //calculated from select indices
+	int selectStartPos = -1, selectEndPos = -1;
+	int substrStart = 0, substrEnd = 0;
 	void calculateSelectionArea(int selectIdx1, int selectIdx2);
+	void moveCursor(int cursorPos);
 
 	virtual void drawCursor();
 
