@@ -297,50 +297,51 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.S $(OF_PROJ
 
 
 
-# Rules to compile the addons sources when the addon path is specified explicitly
-PROJECT_ADDONS_CPPS=$(addsuffix %.cpp,$(PROJECT_ADDON_PATHS))
+#Rules to compile the addons sources when the addon path is specified explicitly
 PROJECT_ADDONS_OBJ_PATH=$(realpath .)/$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/
-$(PROJECT_ADDONS_OBJ_PATH)%.o: $(PROJECT_ADDONS_CPPS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
+$(PROJECT_ADDONS_OBJ_PATH)%.o: %.cpp $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
 endif
 
-PROJECT_ADDONS_CXXS=$(addsuffix %.cxx,$(PROJECT_ADDON_PATHS))
-$(PROJECT_ADDONS_OBJ_PATH)%.o: $(PROJECT_ADDONS_CXXS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
+$(PROJECT_ADDONS_OBJ_PATH)%.o: %.cxx $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	@$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
 endif
 
-PROJECT_ADDONS_MS=$(addsuffix %.m,$(PROJECT_ADDON_PATHS))
-$(PROJECT_ADDONS_OBJ_PATH)%.o: $(PROJECT_ADDONS_MS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
+$(PROJECT_ADDONS_OBJ_PATH)%.o: %.m $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
 endif
 
-PROJECT_ADDONS_MMS=$(addsuffix %.mm,$(PROJECT_ADDON_PATHS))
-$(PROJECT_ADDONS_OBJ_PATH)%.o: $(PROJECT_ADDONS_MMS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
+$(PROJECT_ADDONS_OBJ_PATH)%.o: %.mm $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
 endif
 
-PROJECT_ADDONS_CCS=$(addsuffix %.cc,$(PROJECT_ADDON_PATHS))
-$(PROJECT_ADDONS_OBJ_PATH)%.o: $(PROJECT_ADDONS_CCS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
+$(PROJECT_ADDONS_OBJ_PATH)%.o: %.cc $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
 endif
 
-PROJECT_ADDONS_SS=$(addsuffix %.S,$(PROJECT_ADDON_PATHS))
-$(PROJECT_ADDONS_OBJ_PATH)%.o: $(PROJECT_ADDONS_SS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
+$(PROJECT_ADDONS_OBJ_PATH)%.o: %.c $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
+ifdef PROJECT_ADDON_PATHS
+	@echo "Compiling" $<
+	@mkdir -p $(@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
+endif
+
+$(PROJECT_ADDONS_OBJ_PATH)%.o: %.S $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
@@ -352,7 +353,7 @@ endif
 
 
 
-# Rules to compile the standard addons sources
+#Rules to compile the standard addons sources
 $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(OF_ADDONS_PATH)/%.cpp $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
@@ -395,7 +396,6 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/%.o: $(OF_ROOT)/libs/openFramew
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(OF_CORE_INCLUDES_CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/$*.o -o $@ -c $<
-
 
 
 # Rules to link the project

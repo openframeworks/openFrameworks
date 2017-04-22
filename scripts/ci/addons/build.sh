@@ -39,8 +39,10 @@ elif [ "$TARGET" == "emscripten" ]; then
 fi
 
 if ls example* 1> /dev/null 2>&1; then
-    for example in "example*"; do
+    for example in example*; do
+        echo "cp ${OF_ROOT}/scripts/templates/$TARGET/Makefile $example/"
         cp ${OF_ROOT}/scripts/templates/$TARGET/Makefile $example/
+        echo "cp ${OF_ROOT}/scripts/templates/$TARGET/config.make $example/"
         cp ${OF_ROOT}/scripts/templates/$TARGET/config.make $example/
         if [ ! -f $example/addons.make ]; then
             echo "Examples should have an addons.make file with the addon name"
@@ -72,6 +74,6 @@ if ls example* 1> /dev/null 2>&1; then
     done
 else
     echo "There's no examples to test in this addon. Addons can only be tested"
-    echo "when there's at least an example folder which name starts or is example"
+    echo "when there's at least an example folder which name starts with or is example"
     exit 1
 fi

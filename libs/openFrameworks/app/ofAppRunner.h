@@ -84,6 +84,9 @@ int 		ofGetHeight();
 int 		ofGetWindowWidth();			// ofGetWindowWidth is correct for actual window coordinates - so doesn't change with orientation.
 int 		ofGetWindowHeight();
 
+std::string ofGetClipboardString();
+void		ofSetClipboardString(const std::string & str);
+
 /// \returns a random number between 0 and the width of the window.
 float ofRandomWidth();
 
