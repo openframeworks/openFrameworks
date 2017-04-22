@@ -95,7 +95,7 @@ struct ofTime{
 	uint64_t getAsMicroseconds() const;
 	uint64_t getAsNanoseconds() const;
 	double getAsSeconds() const;
-#ifdef TARGET_LINUX
+#ifndef TARGET_WIN32
 	timespec getAsTimespec() const;
 #endif
 
