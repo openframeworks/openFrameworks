@@ -249,7 +249,6 @@ void ofxInputField<Type>::calculateSelectionArea(int selectIdx1, int selectIdx2)
 
 	if(hasSelectedText()){
 		std::string selectStr = ofUTF8Substring(substr, substrFirst, substrLast - substrFirst);
-		cout << selectStr << endl;
 		selectionWidth = getTextBoundingBox(selectStr,0,0).width;
 	}
 
