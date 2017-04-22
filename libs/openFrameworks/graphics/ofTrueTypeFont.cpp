@@ -145,6 +145,8 @@ const ofTrueTypeFont::glyphProps ofTrueTypeFont::invalidProps{
 	0.0f,0.0f,0.0f,0.0f
 };
 
+const size_t TAB_WIDTH = 4; /// Number of spaces per tab
+
 static bool printVectorInfo = false;
 static int ttfGlobalDpi = 96;
 static bool librariesInitialized = false;
@@ -1121,10 +1123,13 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 				pos.x = x ; //reset X Pos back to zero
 				prevC = 0;
 			} else if (c == '\t') {
-				pos.x += getGlyphProperties(' ').advance * letterSpacing * 4 * directionX;
-				prevC = c;
-			} else if (c == ' ') {
-				pos.x += getGlyphProperties(' ').advance * letterSpacing * directionX * spaceSize;
+				if ( settings.direction == ofTtfSettings::LeftToRight ){
+					f( c, pos );
+					pos.x += getGlyphProperties( ' ' ).advance * TAB_WIDTH * letterSpacing  * directionX;
+				} else{
+					pos.x += getGlyphProperties( ' ' ).advance * TAB_WIDTH * letterSpacing  * directionX;
+					f( c, pos );
+				}
 				prevC = c;
 			} else if(isValidGlyph(c)) {
 				const auto & props = getGlyphProperties(c);
@@ -1212,23 +1217,43 @@ float ofTrueTypeFont::stringWidth(const std::string& c) const{
 
 //-----------------------------------------------------------
 ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, float y, bool vflip) const{
-	ofMesh mesh = getStringMesh(c,x,y,vflip);
 
-	if(mesh.getNumVertices() == 0)
-	    return ofRectangle(x,y,0,0);
+	if ( c.empty() ){
+		return ofRectangle( x, y, 0.f, 0.f);
+	}
 
-	float minX = std::numeric_limits<float>::max();
-	float minY = std::numeric_limits<float>::max();
+	float minX =  std::numeric_limits<float>::max();
+	float minY =  std::numeric_limits<float>::max();
 	float maxX = -std::numeric_limits<float>::max();
 	float maxY = -std::numeric_limits<float>::max();
-	for(const auto & v: mesh.getVertices()){
-		minX = min(v.x,minX);
-		minY = min(v.y,minY);
-		maxX = max(v.x,maxX);
-		maxY = max(v.y,maxY);
-	}
+
+	// Calculate bounding box by iterating over glyph properties
+	// Meaning of props can be deduced from illustration at top of:
+	// https://www.freetype.org/freetype2/docs/tutorial/step2.html
+	// 
+	// We deliberately not generate a mesh and iterate over its
+	// vertices, as this would not correctly return spacing for
+	// blank characters.
+
+	iterateString( c, x, y, vflip, [&]( uint32_t c, glm::vec2 pos ){
+		auto  props = getGlyphProperties( c );
+		if ( c == '\t' ){
+			props.advance = getGlyphProperties( ' ' ).advance * letterSpacing * TAB_WIDTH;
+		}
+		maxX = max( maxX, pos.x + props.advance * letterSpacing );
+		minX = min( minX, pos.x );
+		if ( vflip ){
+			minY = min( minY, pos.y - ( props.ymax - props.ymin ) );
+			maxY = max( maxY, pos.y - ( props.bearingY - props.height ) );
+		} else{
+			minY = min( minY, pos.y - ( props.ymax) );
+			maxY = max( maxY, pos.y - ( props.ymin ) );
+		}
+	} );
+
 	float width = maxX - minX;
 	float height = maxY - minY;
+
 	return ofRectangle(minX, minY, width, height);
 }
 
