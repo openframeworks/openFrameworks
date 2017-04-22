@@ -3,6 +3,8 @@
 #include "ofxSliderGroup.h"
 #include "ofGraphics.h"
 #include "ofxLabel.h"
+#include "ofxInputField.h"
+
 using namespace std;
 
 ofxGuiGroup::ofxGuiGroup(){
@@ -170,7 +172,7 @@ void ofxGuiGroup::add(ofParameter <bool> & parameter){
 }
 
 void ofxGuiGroup::add(ofParameter <string> & parameter){
-	add(new ofxLabel(parameter, b.width));
+	add(new ofxInputField<std::string>(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <ofVec2f> & parameter){
@@ -234,15 +236,14 @@ bool ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
 	if(setValue(args.x, args.y, true)){
 		return true;
 	}
-	if(bGuiActive){
-		ofMouseEventArgs a = args;
-		for(std::size_t i = 0; i < collection.size(); i++){
-			if(collection[i]->mousePressed(a)){
-				return true;
-			}
+	auto attended = false;
+	ofMouseEventArgs a = args;
+	for(std::size_t i = 0; i < collection.size(); i++){
+		if(collection[i]->mousePressed(a)){
+			attended = true;
 		}
 	}
-	return false;
+	return attended;
 }
 
 bool ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
