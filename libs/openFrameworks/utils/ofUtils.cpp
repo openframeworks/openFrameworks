@@ -952,6 +952,75 @@ void ofAppendUTF8(string & str, uint32_t utf8){
 }
 
 //--------------------------------------------------
+void ofUTF8Append(string & str, uint32_t utf8){
+	try{
+		utf8::append(utf8, back_inserter(str));
+	}catch(...){}
+}
+
+//--------------------------------------------------
+void ofUTF8Insert(string & str, size_t pos, uint32_t utf8){
+	std::string newText;
+	size_t i = 0;
+	for(auto c: ofUTF8Iterator(str)){
+		if(i==pos){
+			ofUTF8Append(newText, utf8);
+		}
+		ofUTF8Append(newText, c);
+		i+=1;
+	}
+	if(i==pos){
+		ofUTF8Append(newText, utf8);
+	}
+	str = newText;
+}
+
+//--------------------------------------------------
+void ofUTF8Erase(string & str, size_t start, size_t len){
+	std::string newText;
+	size_t i = 0;
+	for(auto c: ofUTF8Iterator(str)){
+		if(i<start || i>=start + len){
+			ofUTF8Append(newText, c);
+		}
+		i+=1;
+	}
+	str = newText;
+}
+
+//--------------------------------------------------
+std::string ofUTF8Substring(const string & str, size_t start, size_t len){
+	size_t i=0;
+	std::string newText;
+	for(auto c: ofUTF8Iterator(str)){
+		if(i>=start){
+			ofUTF8Append(newText, c);
+		}
+		i += 1;
+		if(i==start + len){
+			break;
+		}
+	}
+	return newText;
+}
+
+//--------------------------------------------------
+std::string ofUTF8ToString(uint32_t utf8){
+	std::string str;
+	ofUTF8Append(str, utf8);
+	return str;
+}
+
+//--------------------------------------------------
+size_t ofUTF8Length(const std::string & str){
+	try{
+		return utf8::distance(str.begin(), str.end());
+	}catch(...){
+		return 0;
+	}
+}
+
+//--------------------------------------------------
 string ofVAArgsToString(const char * format, ...){
 	va_list args;
 	va_start(args, format);

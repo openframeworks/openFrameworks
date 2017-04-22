@@ -1,9 +1,9 @@
-#About allEventsExample
+# About allEventsExample
 
 ![Screenshot of eventsExample](eventsExample.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This Example demonstrates the touch events and orientation event.
 
@@ -34,7 +34,7 @@ Instructions for use:
 * Touch the screen to see how their corresponding labels are displayed. Rotate the device to see orientation events trigger.
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses the following classes:
 

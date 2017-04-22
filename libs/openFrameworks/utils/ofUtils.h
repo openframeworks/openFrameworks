@@ -479,7 +479,14 @@ string ofTrimFront(const string & src, const string & locale = "");
 string ofTrimBack(const string & src, const string & locale = "");
 string ofTrim(const string & src, const string & locale = "");
 
-void ofAppendUTF8(string & str, uint32_t utf8);
+OF_DEPRECATED_MSG("Use ofUTF8Append instead", void ofAppendUTF8(string & str, uint32_t utf8));
+
+void ofUTF8Append(string & str, uint32_t utf8);
+void ofUTF8Insert(string & str, size_t pos, uint32_t utf8);
+void ofUTF8Erase(string & str, size_t start, size_t len);
+std::string ofUTF8Substring(const string & str, size_t start, size_t len);
+std::string ofUTF8ToString(uint32_t utf8);
+size_t ofUTF8Length(const std::string & str);
 
 /// \brief Convert a variable length argument to a string.
 /// \param format a printf-style format string.
