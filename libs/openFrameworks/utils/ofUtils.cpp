@@ -55,12 +55,7 @@
 #endif
 
 namespace{
-    bool enableDataPath = true;
-    uint64_t startTimeSeconds;   //  better at the first frame ?? (currently, there is some delay from static init, to running.
-    uint64_t startTimeNanos;
-#ifdef TARGET_OSX
-    clock_serv_t cs;
-#endif
+	bool enableDataPath = true;
 
     //--------------------------------------------------
     string defaultDataPath(){
@@ -96,97 +91,278 @@ namespace{
 
 namespace of{
 namespace priv{
-    void initutils(){
-#ifdef TARGET_OSX
-        host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cs);
-#endif
+	void initutils(){
         defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
         ofResetElapsedTimeCounter();
         ofSeedRandom();
     }
 
-    void endutils(){
-#ifdef TARGET_OSX
-        mach_port_deallocate(mach_task_self(), cs);
-#endif
+	void endutils(){
+//#ifdef TARGET_OSX
+//        mach_port_deallocate(mach_task_self(), cs);
+//#endif
     }
+
+	class Clock{
+	public:
+		Clock(){
+		#ifdef TARGET_OSX
+			host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cs);
+		#endif
+		}
+
+		//--------------------------------------
+		void setTimeModeSystem(){
+			mode = ofTime::System;
+			loopListener.unsubscribe();
+		}
+
+		//--------------------------------------
+		void setTimeModeFixedRate(uint64_t stepNanos, ofMainLoop & mainLoop){
+			fixedRateTime = getMonotonicTimeForMode(ofTime::System);
+			mode = ofTime::FixedRate;
+			fixedRateStep = stepNanos;
+			loopListener = mainLoop.loopEvent.newListener([this]{
+				fixedRateTime.nanoseconds += fixedRateStep;
+				while(fixedRateTime.nanoseconds>1000000000){
+					fixedRateTime.nanoseconds -= 1000000000;
+					fixedRateTime.seconds += 1;
+				}
+			});
+		}
+
+		//--------------------------------------
+		ofTime getCurrentTime(){
+			return getMonotonicTimeForMode(mode);
+		}
+
+		//--------------------------------------
+		std::chrono::nanoseconds getElapsedTime(){
+			return getCurrentTime() - startTime;
+		}
+
+		//--------------------------------------
+		void resetElapsedTimeCounter(){
+			startTime = getMonotonicTimeForMode(ofTime::System);
+		}
+
+	private:
+
+		//--------------------------------------
+		ofTime getMonotonicTimeForMode(ofTime::Mode mode){
+			ofTime t;
+			t.mode = mode;
+			if(mode == ofTime::System){
+			#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)) || defined(TARGET_EMSCRIPTEN)
+				struct timespec now;
+				clock_gettime(CLOCK_MONOTONIC, &now);
+				t.seconds = now.tv_sec;
+				t.nanoseconds = now.tv_nsec;
+			#elif defined(TARGET_OSX)
+				mach_timespec_t now;
+				clock_get_time(cs, &now);
+				t.seconds = now.tv_sec;
+				t.nanoseconds = now.tv_nsec;
+			#elif defined( TARGET_WIN32 )
+				LARGE_INTEGER freq;
+				LARGE_INTEGER counter;
+				QueryPerformanceFrequency(&freq);
+				QueryPerformanceCounter(&counter);
+				t.seconds = counter.QuadPart/freq.QuadPart;
+				t.nanoseconds = (counter.QuadPart % freq.QuadPart)*1000000000/freq.QuadPart;
+			#else
+				struct timeval now;
+				gettimeofday( &now, nullptr );
+				t.seconds = now.tv_sec;
+				t.nanoseconds = now.tv_usec * 1000;
+			#endif
+			}else{
+				t = fixedRateTime;
+			}
+			return t;
+		}
+		uint64_t fixedRateStep = 1666667;
+		ofTime fixedRateTime;
+		ofTime startTime;
+		ofTime::Mode mode = ofTime::System;
+		ofEventListener loopListener;
+	#ifdef TARGET_OSX
+		clock_serv_t cs;
+	#endif
+	};
+
+	Clock & getClock(){
+		static Clock * clock = new Clock;
+		return *clock;
+	}
 }
 }
 
+
 //--------------------------------------
-void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds){
-#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)) || defined(TARGET_EMSCRIPTEN)
-	struct timespec now;
-	clock_gettime(CLOCK_MONOTONIC, &now);
-	seconds = now.tv_sec;
-	nanoseconds = now.tv_nsec;
-#elif defined(TARGET_OSX)
-        mach_timespec_t now;
-        clock_get_time(cs, &now);
-	seconds = now.tv_sec;
-	nanoseconds = now.tv_nsec;
-#elif defined( TARGET_WIN32 )
-	LARGE_INTEGER freq;
-	LARGE_INTEGER counter;
-	QueryPerformanceFrequency(&freq);
-	QueryPerformanceCounter(&counter);
-	seconds = counter.QuadPart/freq.QuadPart;
-	nanoseconds = (counter.QuadPart % freq.QuadPart)*1000000000/freq.QuadPart;
-#else
-	struct timeval now;
-	gettimeofday( &now, nullptr );
-	seconds = now.tv_sec;
-	nanoseconds = now.tv_usec * 1000;
+uint64_t ofTime::getAsMilliseconds() const{
+	auto seconds = std::chrono::seconds(this->seconds);
+	auto nanoseconds = std::chrono::nanoseconds(this->nanoseconds);
+	return (std::chrono::duration_cast<std::chrono::milliseconds>(seconds) +
+			std::chrono::duration_cast<std::chrono::milliseconds>(nanoseconds)).count();
+}
+
+//--------------------------------------
+uint64_t ofTime::getAsMicroseconds() const{
+	auto seconds = std::chrono::seconds(this->seconds);
+	auto nanoseconds = std::chrono::nanoseconds(this->nanoseconds);
+	return (std::chrono::duration_cast<std::chrono::microseconds>(seconds) +
+			std::chrono::duration_cast<std::chrono::microseconds>(nanoseconds)).count();
+}
+
+//--------------------------------------
+uint64_t ofTime::getAsNanoseconds() const{
+	auto seconds = std::chrono::seconds(this->seconds);
+	auto nanoseconds = std::chrono::nanoseconds(this->nanoseconds);
+	return (std::chrono::duration_cast<std::chrono::nanoseconds>(seconds) + nanoseconds).count();
+}
+
+//--------------------------------------
+double ofTime::getAsSeconds() const{
+	return seconds + nanoseconds / 1000000000.;
+}
+
+#ifndef TARGET_WIN32
+timespec ofTime::getAsTimespec() const{
+	timespec ret;
+	ret.tv_sec = seconds;
+	ret.tv_nsec = nanoseconds;
+	return ret;
+}
 #endif
+
+//--------------------------------------
+std::chrono::time_point<std::chrono::nanoseconds> ofTime::getAsTimePoint() const{
+	auto seconds = std::chrono::seconds(this->seconds);
+	auto nanoseconds = std::chrono::nanoseconds(this->nanoseconds);
+	return std::chrono::time_point<std::chrono::nanoseconds>(
+				std::chrono::duration_cast<std::chrono::nanoseconds>(seconds) + nanoseconds);
+}
+
+//--------------------------------------
+std::chrono::nanoseconds ofTime::operator-(const ofTime& other) const{
+	auto seconds = std::chrono::seconds(this->seconds) - std::chrono::seconds(other.seconds);
+	auto nanoseconds = std::chrono::nanoseconds(this->nanoseconds) - std::chrono::nanoseconds(other.nanoseconds);
+	return std::chrono::duration_cast<std::chrono::nanoseconds>(seconds) + nanoseconds;
+}
+
+//--------------------------------------
+bool ofTime::operator<(const ofTime & other) const{
+	return seconds < other.seconds || (seconds == other.seconds && nanoseconds < other.nanoseconds);
+}
+
+//--------------------------------------
+bool ofTime::operator>(const ofTime & other) const{
+	return seconds > other.seconds || (seconds == other.seconds && nanoseconds > other.nanoseconds);
+}
+
+//--------------------------------------
+bool ofTime::operator<=(const ofTime & other) const{
+	return seconds <= other.seconds || (seconds == other.seconds && nanoseconds <= other.nanoseconds);
+}
+
+//--------------------------------------
+bool ofTime::operator>=(const ofTime & other) const{
+	return seconds >= other.seconds || (seconds == other.seconds && nanoseconds >= other.nanoseconds);
+}
+
+//--------------------------------------
+uint64_t ofGetFixedStepForFps(double fps){
+	return 1000000000 / fps;
+}
+
+//--------------------------------------
+void ofSetTimeModeSystem(){
+	auto mainLoop = ofGetMainLoop();
+	if(!mainLoop){
+		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
+		return;
+	}
+	auto window = mainLoop->getCurrentWindow();
+	if(!window){
+		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
+		return;
+	}
+	window->events().setTimeModeSystem();
+	of::priv::getClock().setTimeModeSystem();
+}
+
+//--------------------------------------
+void ofSetTimeModeFixedRate(uint64_t stepNanos){
+	auto mainLoop = ofGetMainLoop();
+	if(!mainLoop){
+		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
+		return;
+	}
+	auto window = mainLoop->getCurrentWindow();
+	if(!window){
+		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
+		return;
+	}
+	window->events().setTimeModeFixedRate(stepNanos);
+	of::priv::getClock().setTimeModeFixedRate(stepNanos, *mainLoop);
+}
+
+//--------------------------------------
+void ofSetTimeModeFiltered(float alpha){
+	auto mainLoop = ofGetMainLoop();
+	if(!mainLoop){
+		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
+		return;
+	}
+	auto window = mainLoop->getCurrentWindow();
+	if(!window){
+		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
+		return;
+	}
+	window->events().setTimeModeFiltered(alpha);
+	of::priv::getClock().setTimeModeSystem();
+}
+
+//--------------------------------------
+ofTime ofGetCurrentTime(){
+	return of::priv::getClock().getCurrentTime();
 }
 
 
 //--------------------------------------
 uint64_t ofGetElapsedTimeMillis(){
-    uint64_t seconds;
-    uint64_t nanos;
-	ofGetMonotonicTime(seconds,nanos);
-	return (seconds - startTimeSeconds)*1000 + ((long long)(nanos - startTimeNanos))/1000000;
+	return std::chrono::duration_cast<std::chrono::milliseconds>(of::priv::getClock().getElapsedTime()).count();
 }
 
 //--------------------------------------
 uint64_t ofGetElapsedTimeMicros(){
-    uint64_t seconds;
-    uint64_t nanos;
-	ofGetMonotonicTime(seconds,nanos);
-	return (seconds - startTimeSeconds)*1000000 + ((long long)(nanos - startTimeNanos))/1000;
+	return std::chrono::duration_cast<std::chrono::microseconds>(of::priv::getClock().getElapsedTime()).count();
 }
 
 //--------------------------------------
 float ofGetElapsedTimef(){
-    uint64_t seconds;
-    uint64_t nanos;
-	ofGetMonotonicTime(seconds,nanos);
-	return (seconds - startTimeSeconds) + ((long long)(nanos - startTimeNanos))/1000000000.;
+	return std::chrono::duration<double>(of::priv::getClock().getElapsedTime()).count();
 }
 
 //--------------------------------------
 void ofResetElapsedTimeCounter(){
-	ofGetMonotonicTime(startTimeSeconds,startTimeNanos);
+	of::priv::getClock().resetElapsedTimeCounter();
 }
 
-//=======================================
-// this is from freeglut, and used internally:
-/* Platform-dependent time in milliseconds, as an unsigned 32-bit integer.
- * This value wraps every 49.7 days, but integer overflows cancel
- * when subtracting an initial start time, unless the total time exceeds
- * 32-bit, where the GLUT API return value is also overflowed.
- */
+//--------------------------------------
 uint64_t ofGetSystemTime( ) {
-	uint64_t seconds, nanoseconds;
-	ofGetMonotonicTime(seconds,nanoseconds);
-	return seconds * 1000 + nanoseconds / 1000000;
+	return of::priv::getClock().getCurrentTime().getAsMilliseconds();
 }
 
+//--------------------------------------
+uint64_t ofGetSystemTimeMillis( ) {
+	return of::priv::getClock().getCurrentTime().getAsMilliseconds();
+}
+
+//--------------------------------------
 uint64_t ofGetSystemTimeMicros( ) {
-    uint64_t seconds, nanoseconds;
-	ofGetMonotonicTime(seconds,nanoseconds);
-	return seconds * 1000000 + nanoseconds / 1000;
+	return of::priv::getClock().getCurrentTime().getAsMicroseconds();
 }
 
 //--------------------------------------------------
@@ -272,40 +448,40 @@ int ofGetHours(){
 
 //--------------------------------------------------
 int ofGetYear(){
-  time_t    curr;
-  tm       local;
-  time(&curr);
-  local   =*(localtime(&curr));
-  int year = local.tm_year + 1900;
-  return year;
+	time_t    curr;
+	tm       local;
+	time(&curr);
+	local   =*(localtime(&curr));
+	int year = local.tm_year + 1900;
+	return year;
 }
 
 //--------------------------------------------------
 int ofGetMonth(){
-  time_t    curr;
-  tm       local;
-  time(&curr);
-  local   =*(localtime(&curr));
-  int month = local.tm_mon + 1;
-  return month;
+	time_t    curr;
+	tm       local;
+	time(&curr);
+	local   =*(localtime(&curr));
+	int month = local.tm_mon + 1;
+	return month;
 }
 
 //--------------------------------------------------
 int ofGetDay(){
-  time_t    curr;
-  tm       local;
-  time(&curr);
-  local   =*(localtime(&curr));
-  return local.tm_mday;
+	time_t    curr;
+	tm       local;
+	time(&curr);
+	local   =*(localtime(&curr));
+	return local.tm_mday;
 }
 
 //--------------------------------------------------
 int ofGetWeekday(){
-  time_t    curr;
-  tm       local;
-  time(&curr);
-  local   =*(localtime(&curr));
-  return local.tm_wday;
+	time_t    curr;
+	tm       local;
+	time(&curr);
+	local   =*(localtime(&curr));
+	return local.tm_wday;
 }
 
 //--------------------------------------------------
