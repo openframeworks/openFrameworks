@@ -55,8 +55,20 @@ function installPackages {
     echo
 }
 
-MAJOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f1 -d. | sed "s/\t//g")
-MINOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f2 -d.)
+# Ubuntu derivatives supported: ElementaryOS
+# Loads: NAME, VERSION, ID, ID_LIKE, PRETTY_NAME,
+# 	VERSION_ID, HOME_URL, SUPPORT_URL, BUG_REPORT_URL, VERSION_CODENAME, UBUNTU_CODENAME
+source /etc/os-release
+
+if [ "$ID" = "elementary" ]; then
+	# Gets ubuntu base version
+	RELEASE=$(lsb_release -r -u)
+else
+	RELEASE=$(lsb_release -r)
+fi
+
+MAJOR_VERSION=$(echo $RELEASE | cut -f2 -d: | cut -f1 -d. | sed "s/\t//g")
+MINOR_VERSION=$(echo $RELEASE | cut -f2 -d: | cut -f2 -d.)
 
 echo "Running on ubuntu ${MAJOR_VERSION}.${MINOR_VERSION}"
 
