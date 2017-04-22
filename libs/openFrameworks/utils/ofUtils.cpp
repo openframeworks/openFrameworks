@@ -91,23 +91,26 @@ namespace{
 
 namespace of{
 namespace priv{
-    void initutils(){
-#ifdef TARGET_OSX
-        host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cs);
-#endif
+	void initutils(){
         defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
         ofResetElapsedTimeCounter();
         ofSeedRandom();
     }
 
-    void endutils(){
-#ifdef TARGET_OSX
-        mach_port_deallocate(mach_task_self(), cs);
-#endif
+	void endutils(){
+//#ifdef TARGET_OSX
+//        mach_port_deallocate(mach_task_self(), cs);
+//#endif
     }
 
 	class Clock{
 	public:
+		Clock(){
+		#ifdef TARGET_OSX
+			host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cs);
+		#endif
+		}
+
 		//--------------------------------------
 		void setTimeModeSystem(){
 			mode = ofTime::System;
@@ -156,8 +159,8 @@ namespace priv{
 				t.seconds = now.tv_sec;
 				t.nanoseconds = now.tv_nsec;
 			#elif defined(TARGET_OSX)
-					mach_timespec_t now;
-					clock_get_time(cs, &now);
+				mach_timespec_t now;
+				clock_get_time(cs, &now);
 				t.seconds = now.tv_sec;
 				t.nanoseconds = now.tv_nsec;
 			#elif defined( TARGET_WIN32 )
@@ -226,7 +229,10 @@ double ofTime::getAsSeconds() const{
 
 #ifndef TARGET_WIN32
 timespec ofTime::getAsTimespec() const{
-	return {seconds, nanoseconds};
+	timespec ret;
+	ret.tv_sec = seconds;
+	ret.tv_nsec = nanoseconds;
+	return ret;
 }
 #endif
 
