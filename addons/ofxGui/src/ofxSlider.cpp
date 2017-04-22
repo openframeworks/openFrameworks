@@ -2,6 +2,23 @@
 #include "ofGraphics.h"
 using namespace std;
 
+namespace{
+	template<typename Type>
+	std::string toString(Type t){
+		return ofToString(t);
+	}
+
+	template<>
+	std::string toString(uint8_t t){
+		return ofToString((int) t);
+	}
+
+	template<>
+	std::string toString(int8_t t){
+		return ofToString((int) t);
+	}
+}
+
 template<typename Type>
 ofxSlider<Type>::ofxSlider(){
 	bUpdateOnReleaseOnly = false;
@@ -208,7 +225,7 @@ void ofxSlider<Type>::generateDraw(){
 
 template<typename Type>
 void ofxSlider<Type>::generateText(){	
-	string valStr = ofToString(value);
+	string valStr = toString(value.get());
 	auto inputWidth = getTextBoundingBox(valStr,0,0).width;
 	auto label = getTextBoundingBox(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
 	auto value = getTextBoundingBox(valStr, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4);
@@ -216,24 +233,25 @@ void ofxSlider<Type>::generateText(){
 
 	textMesh.clear();
 	if(!mouseInside || !overlappingLabel){
-		textMesh.append(getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4));
+		std::string name;
+		if(overlappingLabel){
+			for(auto c: ofUTF8Iterator(getName())){
+				auto next = name;
+				ofUTF8Append(next, c);
+				if(getTextBoundingBox(next,0,0).width > b.width-textPadding*2){
+					break;
+				}else{
+					name = next;
+				}
+			}
+		}else{
+			name = getName();
+		}
+		textMesh.append(getTextMesh(name, b.x + textPadding, b.y + b.height / 2 + 4));
 	}
-	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
-}
-
-template<>
-void ofxSlider<unsigned char>::generateText(){
-	string valStr = ofToString((int)value);
-	auto inputWidth = getTextBoundingBox(valStr,0,0).width;
-	auto label = getTextBoundingBox(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	auto value = getTextBoundingBox(valStr, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4);
-	overlappingLabel = label.getMaxX() > value.x;
-
-	textMesh.clear();
-	if(!mouseInside || !overlappingLabel){
-		textMesh.append(getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4));
+	if(!overlappingLabel || mouseInside){
+		textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
 	}
-	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
 }
 
 template<typename Type>

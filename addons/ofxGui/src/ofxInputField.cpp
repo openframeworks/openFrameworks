@@ -126,13 +126,6 @@ ofxInputField<Type> ofxInputField<Type>::createInsideSlider(){
 
 template<typename Type>
 ofxInputField<Type>::ofxInputField(){
-	bGuiActive = false;
-	bMousePressed = false;
-	mousePressedPos = -1;
-	selectStartX = -1;
-	selectStartPos = -1;
-	selectEndPos = -1;
-	selectionWidth = 0;
 }
 
 template<typename Type>
@@ -194,30 +187,130 @@ Type ofxInputField<Type>::getMax(){
 
 template<typename Type>
 void ofxInputField<Type>::calculateSelectionArea(int selectIdx1, int selectIdx2){
-	std::string preSelectStr, selectStr;
-
 	selectStartPos = selectIdx1;
 	selectEndPos = selectIdx2;
 
+	if(selectEndPos>substrEnd){
+		substrEnd = selectEndPos;
+	}else if(std::max(selectEndPos-1,0)<substrStart){
+		substrStart = std::max(selectEndPos-1,0);
+	}
+
+	substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
+	auto substrWidth = getTextBoundingBox(substr,0,0).width;
+	auto totalTextWidth = b.width - textPadding * 2;
+
+	if(substrWidth > totalTextWidth){
+		substrWidth = 0;
+		substr = "";
+		auto substrLen = 0;
+		while(substrWidth < totalTextWidth){
+			substrLen += 1;
+			substr = ofUTF8Substring(input, substrStart, substrLen);
+			substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrLen),0,0).width;
+		}
+		substrLen -= 1;
+		substr = ofUTF8Substring(input, substrStart, substrLen);
+		substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrLen),0,0).width;
+		substrEnd = substrStart + substrLen;
+
+		if(selectEndPos > substrEnd){
+			substrWidth = 0;
+			substr = "";
+			substrEnd = selectEndPos;
+			substrStart = selectEndPos;
+			while(substrWidth < totalTextWidth){
+				substrStart -= 1;
+				substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
+				substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrEnd - substrStart),0,0).width;
+			}
+			substrStart += 1;
+			substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
+			substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrEnd - substrStart),0,0).width;
+		}
+	}
+
 	auto first = std::min(selectStartPos, selectEndPos);
 	auto last = std::max(selectStartPos, selectEndPos);
-
+	auto substrLength = ofUTF8Length(substr);
 	float preSelectWidth = 0;
-	if(first > 0){
-		preSelectStr = ofUTF8Substring(input, 0, first);
+	auto substrFirst = ofClamp(first-substrStart, 0, substrLength);
+	auto substrLast = ofClamp(last-substrStart, 0, substrLength);
+	if(first > substrStart){
+		std::string preSelectStr = ofUTF8Substring(substr, 0, substrFirst);
 		preSelectWidth = getTextBoundingBox(preSelectStr,0,0).width;
 	}
 
 	if(showLabelWhileEditing){
-		auto inputWidth = getTextBoundingBox(input,0,0).width;
-		selectStartX = b.getMaxX() - textPadding - inputWidth + preSelectWidth;
+		selectStartX = b.getMaxX() - textPadding - substrWidth + preSelectWidth;
 	}else{
 		selectStartX = b.x + textPadding + preSelectWidth;
 	}
 
 	if(hasSelectedText()){
-		selectStr = ofUTF8Substring(input, first, last - first);
+		std::string selectStr = ofUTF8Substring(substr, substrFirst, substrLast - substrFirst);
+		cout << selectStr << endl;
 		selectionWidth = getTextBoundingBox(selectStr,0,0).width;
+	}
+
+	setNeedsRedraw();
+}
+
+template<typename Type>
+void ofxInputField<Type>::moveCursor(int cursorPos){
+	selectStartPos = selectEndPos = cursorPos;
+	selectionWidth = 0;
+	if(cursorPos>substrEnd){
+		substrEnd = cursorPos;
+	}else if(cursorPos<substrStart){
+		substrStart = cursorPos;
+	}
+
+	substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
+	auto substrWidth = getTextBoundingBox(substr,0,0).width;
+	auto totalTextWidth = b.width - textPadding * 2;
+
+	if(substrWidth > totalTextWidth){
+		substrWidth = 0;
+		substr = "";
+		auto substrLen = 0;
+		while(substrWidth < totalTextWidth){
+			substrLen += 1;
+			substr = ofUTF8Substring(input, substrStart, substrLen);
+			substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrLen),0,0).width;
+		}
+		substrLen -= 1;
+		substr = ofUTF8Substring(input, substrStart, substrLen);
+		substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrLen),0,0).width;
+		substrEnd = substrStart + substrLen;
+
+		if(cursorPos > substrEnd){
+			substrWidth = 0;
+			substr = "";
+			substrEnd = cursorPos;
+			substrStart = cursorPos;
+			while(substrWidth < totalTextWidth){
+				substrStart -= 1;
+				substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
+				substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrEnd - substrStart),0,0).width;
+			}
+			substrStart += 1;
+			substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
+			substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrEnd - substrStart),0,0).width;
+		}
+	}
+
+
+	float beforeCursorWidth = 0;
+	if(selectStartPos > substrStart){
+		auto beforeCursorStr = ofUTF8Substring(substr, 0, selectStartPos - substrStart);
+		beforeCursorWidth = getTextBoundingBox(beforeCursorStr,0,0).width;
+	}
+
+	if(showLabelWhileEditing){
+		selectStartX = b.getMaxX() - textPadding - substrWidth + beforeCursorWidth;
+	}else{
+		selectStartX = b.x + textPadding + beforeCursorWidth;
 	}
 
 	setNeedsRedraw();
@@ -242,12 +335,15 @@ bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & mouse){
 		if(!insideSlider || mouse.button == OF_MOUSE_BUTTON_LEFT){
 			bMousePressed = true;
 			if(bGuiActive){
-				auto inputWidth = getTextBoundingBox(input,0,0).width;
-				float cursorX = mouse.x - (b.x + b.width - textPadding - inputWidth);
-				auto cursorPos = round(ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(input), true));
-				mousePressedPos = cursorPos;
-
-				calculateSelectionArea(cursorPos, cursorPos);
+				auto inputWidth = getTextBoundingBox(substr,0,0).width;
+				float cursorX;
+				if(showLabelWhileEditing){
+					cursorX = mouse.x - (b.x + b.width - textPadding - inputWidth);
+				}else{
+					cursorX = mouse.x - (b.x + textPadding);
+				}
+				mousePressedPos =  round(substrStart + ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(substr), true));
+				moveCursor(mousePressedPos);
 			}else{
 				calculateSelectionArea(0, ofUTF8Length(input));
 				bGuiActive = true;
@@ -275,10 +371,16 @@ bool ofxInputField<Type>::mouseDragged(ofMouseEventArgs & mouse){
 	}
 
 	if(!insideSlider || mouse.button == OF_MOUSE_BUTTON_LEFT){
-		auto inputWidth = getTextBoundingBox(input,0,0).width;
-		float cursorX = mouse.x - (b.x + b.width - textPadding - inputWidth);
-		auto cursorPos = round(ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(input), true));
-		calculateSelectionArea(mousePressedPos,cursorPos);
+		auto inputWidth = getTextBoundingBox(substr,0,0).width;
+		float cursorX;
+		if(showLabelWhileEditing){
+			cursorX = mouse.x - (b.x + b.width - textPadding - inputWidth);
+		}else{
+			cursorX = mouse.x - (b.x + textPadding);
+		}
+		auto cursorPos = round(substrStart + ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(substr)));
+		cursorPos = ofClamp(cursorPos, 0, ofUTF8Length(input));
+		calculateSelectionArea(mousePressedPos, cursorPos);
 		setNeedsRedraw();
 	}
 	return true;
@@ -322,20 +424,13 @@ bool ofxInputField<Type>::charPressed(uint32_t & key){
 		return false;
 	}
 	if(bGuiActive && !bMousePressed){
-		int newCursorIdx = -1;
 		if(key >= '0' && key <= '9'){
-			newCursorIdx = insertKeystroke(key);
+			moveCursor(insertKeystroke(key));
 		}else if(key == '.' || key == '-' || key == '+'){
-			newCursorIdx = insertKeystroke(key);
+			moveCursor(insertKeystroke(key));
 		}else{
-			newCursorIdx = insertAlphabetic(key);
+			moveCursor(insertAlphabetic(key));
 		}
-
-		if(newCursorIdx != -1){
-			//set cursor
-			calculateSelectionArea(newCursorIdx,newCursorIdx);
-		}
-		setNeedsRedraw();
 		return true;
 	}
 	return false;
@@ -348,14 +443,13 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 	}
 	if(bGuiActive && !bMousePressed){
 		auto key = args.key;
-		int newCursorIdx = -1;
 		auto first = std::min(selectStartPos, selectEndPos);
 		auto last = std::max(selectStartPos, selectEndPos);
 		auto selectLen = last - first;
 		if(key == OF_KEY_BACKSPACE || key == OF_KEY_DEL){
 			if(hasSelectedText()){
 				ofUTF8Erase(input, first, selectLen);
-				newCursorIdx = selectStartPos;
+				moveCursor(selectStartPos);
 			}else{
 				int deleteIdx = -1;
 				if(key == OF_KEY_BACKSPACE){
@@ -367,7 +461,7 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 				//erase char if valid deleteIdx
 				if(deleteIdx >= 0 && deleteIdx < (int)ofUTF8Length(input)){
 					ofUTF8Erase(input, deleteIdx, 1);
-					newCursorIdx = deleteIdx;
+					moveCursor(deleteIdx);
 				}
 			}
 		}else if(key == OF_KEY_LEFT){
@@ -377,10 +471,9 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 				calculateSelectionArea(selectStartPos, selectEndPos);
 			}else{
 				if(hasSelectedText()){
-					newCursorIdx = first;
+					moveCursor(first);
 				}else{
-					newCursorIdx = selectEndPos - 1;
-					newCursorIdx = std::max(0, newCursorIdx);
+					moveCursor(std::max(0, selectEndPos - 1));
 				}
 			}
 		}else if(key == OF_KEY_RIGHT){
@@ -391,11 +484,10 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 				calculateSelectionArea(selectStartPos, selectEndPos);
 			}else{
 				if(hasSelectedText()){
-					newCursorIdx = last;
+					moveCursor(last);
 				}else{
 					auto inputSize = ofUTF8Length(input);
-					newCursorIdx  = selectEndPos + 1;
-					newCursorIdx = std::min(newCursorIdx, int(inputSize));
+					moveCursor(std::min(selectEndPos + 1, int(inputSize)));
 				}
 			}
 		}else if(key == OF_KEY_RETURN){
@@ -411,31 +503,36 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 				ofSetClipboardString(selection);
 			}
 		}else if(key == 'v' && args.hasModifier(OF_KEY_CONTROL)){
-			newCursorIdx = first;
+			auto cursorPos = first;
 			if(selectLen>0){
-				ofUTF8Erase(input, newCursorIdx, selectLen);
+				ofUTF8Erase(input, cursorPos, selectLen);
 			}
 			auto clipboard = ofGetClipboardString();
 			for(auto c: ofUTF8Iterator(clipboard)){
-				ofUTF8Insert(input, newCursorIdx, c);
-				newCursorIdx+=1;
+				ofUTF8Insert(input, cursorPos, c);
+				cursorPos+=1;
 			}
+			moveCursor(cursorPos);
 		}else if(key == 'x' && args.hasModifier(OF_KEY_CONTROL)){
 			if(selectLen>0){
 				auto selection = ofUTF8Substring(input, first, selectLen);
 				ofSetClipboardString(selection);
-				newCursorIdx = first;
-				ofUTF8Erase(input, newCursorIdx, selectLen);
+				ofUTF8Erase(input, first, selectLen);
+				moveCursor(first);
 			}
 		}else if(key == OF_KEY_END){
-			newCursorIdx = ofUTF8Length(input);
+			auto inputLength = ofUTF8Length(input);
+			if(args.hasModifier(OF_KEY_SHIFT)){
+				calculateSelectionArea(selectStartPos, inputLength);
+			}else{
+				moveCursor(inputLength);
+			}
 		}else if(key == OF_KEY_HOME){
-			newCursorIdx = 0;
-		}
-
-		if(newCursorIdx != -1){
-			//set cursor
-			calculateSelectionArea(newCursorIdx,newCursorIdx);
+			if(args.hasModifier(OF_KEY_SHIFT)){
+				calculateSelectionArea(selectStartPos, 0);
+			}else{
+				moveCursor(0);
+			}
 		}
 		return true;
 	}
@@ -452,8 +549,10 @@ int ofxInputField<Type>::insertKeystroke(uint32_t character){
 		ofUTF8Erase(input, first, selectLen);
 	}
 	ofUTF8Insert(input, first, character);
+	auto cursorPos = first + 1;
+
 	setNeedsRedraw();
-	return first + 1;
+	return cursorPos;
 }
 
 template<typename Type>
@@ -467,11 +566,7 @@ int ofxInputField<Type>::insertAlphabetic(uint32_t character){
 
 template<>
 int ofxInputField<string>::insertAlphabetic(uint32_t character){
-	if(character == 'x' || character == 'a' || character == 'b' || character=='c' || character=='d' || character=='e' || character=='f'){
-	   return insertKeystroke(character);
-	}else{
-		return -1; //cursor or selection area stay the same
-	}
+	return insertKeystroke(character);
 }
 
 template<typename Type>
@@ -506,7 +601,7 @@ void ofxInputField<Type>::generateDraw(){
 		}
 	}
 
-	auto input = this->input;
+	auto input = substr;
 	if(!bGuiActive && !containsValidValue()){
 		input = toString(value);
 	}
@@ -521,7 +616,9 @@ void ofxInputField<Type>::generateDraw(){
 		if(!overlappingLabel || (!bMouseOver && !bGuiActive)){
 			textMesh.append(getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4) );
 		}
-		textMesh.append(getTextMesh(input, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4));
+		if((!bGuiActive && (bMouseOver || !overlappingLabel)) || bGuiActive){
+			textMesh.append(getTextMesh(input, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4));
+		}
 	}else{
 		textMesh.append(getTextMesh(input, b.x + textPadding, b.y + b.height / 2 + 4));
 	}
@@ -624,8 +721,7 @@ template<typename Type>
 void ofxInputField<Type>::valueChanged(Type & value){
 	input = toString(value);
 	if(bGuiActive){
-		int cursorPos = ofUTF8Length(input);
-		calculateSelectionArea(cursorPos,cursorPos);
+		moveCursor(ofUTF8Length(input));
 	}
     setNeedsRedraw();
 }
