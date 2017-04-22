@@ -7,8 +7,7 @@
 
 #include "ImageSaverThread.h"
 
-ImageSaverThread::ImageSaverThread()
-:firstFrame(true){
+ImageSaverThread::ImageSaverThread(){
 	startThread();
 }
 
