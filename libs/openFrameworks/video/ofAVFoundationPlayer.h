@@ -52,10 +52,13 @@ public:
 	
     float getWidth() const;
     float getHeight() const;
-	
+    float getDisplayWidth() const;
+    float getDisplayHeight() const;
+
     bool isPaused() const;
     bool isLoaded() const;
     bool isPlaying() const;
+	bool isAnamorphic() const;
 	
     float getPosition() const;
     float getSpeed() const;

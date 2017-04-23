@@ -64,6 +64,9 @@ typedef enum _playerLoopType{
     
     NSInteger videoWidth;
     NSInteger videoHeight;
+
+    NSInteger displayWidth;
+    NSInteger displayHeight;
 	
     playerLoopType loop;
 	
@@ -124,6 +127,7 @@ typedef enum _playerLoopType{
 - (BOOL)isPlaying;
 - (BOOL)isNewFrame;
 - (BOOL)isFinished;
+- (BOOL)isAnamorphic;
 
 - (void)setEnableVideoSampling:(BOOL)value;
 - (void)setEnableAudioSampling:(BOOL)value;
@@ -140,6 +144,9 @@ typedef enum _playerLoopType{
 
 - (NSInteger)getWidth;
 - (NSInteger)getHeight;
+- (NSInteger)getDisplayWidth;
+- (NSInteger)getDisplayHeight;
+
 - (CMTime)getCurrentTime;
 - (double)getCurrentTimeInSec;
 - (CMTime)getDuration;

@@ -63,8 +63,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		speed = 1;
 		frameRate = 0;
 		
-		videoWidth = 0;
-		videoHeight = 0;
+		displayWidth = videoWidth = 0;
+		displayHeight = videoHeight = 0;
 		
 		bWillBeUpdatedExternally = NO;
 		bReady = NO;
@@ -272,14 +272,44 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				[asyncLock unlock];
 				return;
 			}
-			
-			
+
 			AVAssetTrack * videoTrack = [videoTracks objectAtIndex:0];
 			frameRate = videoTrack.nominalFrameRate;
 			videoWidth = [videoTrack naturalSize].width;
 			videoHeight = [videoTrack naturalSize].height;
+			displayWidth = videoWidth;
+			displayHeight = videoHeight;
+
+			//we look for the pixel aspect ratio key and use that to determine the real width and height of the video.
+			//from https://developer.apple.com/library/ios/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/05_Export.html
+			NSArray* formatDesc = videoTrack.formatDescriptions;
+			if ([formatDesc count] > 0){
+				CMFormatDescriptionRef formatDescription = (__bridge CMFormatDescriptionRef)[formatDesc objectAtIndex:0];
+				NSDictionary *pixelAspectRatio = nil;
+				
+				CFDictionaryRef pixelAspectRatioFromCMFormatDescription = (CFDictionaryRef)CMFormatDescriptionGetExtension(formatDescription, kCMFormatDescriptionExtension_PixelAspectRatio);
+				if(pixelAspectRatioFromCMFormatDescription){
+					NSString * spacingXStr = (NSString *)CFDictionaryGetValue(pixelAspectRatioFromCMFormatDescription, kCMFormatDescriptionKey_PixelAspectRatioHorizontalSpacing);
+					NSString * spacingYStr = (NSString *)CFDictionaryGetValue(pixelAspectRatioFromCMFormatDescription, kCMFormatDescriptionKey_PixelAspectRatioVerticalSpacing);
+					
+					//NSLog(@"spacing is %@ %@\n", spacingX, spacingY);
+
+					int spacingX = [spacingXStr integerValue];
+					int spacingY = [spacingYStr integerValue];
+					
+					if( spacingX > 0 && spacingX != spacingY ){
+						float pixelRatio = (float)spacingY / (float)spacingX;
+						
+						videoWidth = ((float)videoWidth) * pixelRatio;
+					}
+				}
+			}
 			
-			NSLog(@"video loaded at %li x %li @ %f fps", (long)videoWidth, (long)videoHeight, frameRate);
+			if( [self isAnamorphic] ){
+				NSLog(@"anamorphic video loaded at %li x %li - display width is %li x %li @ %f fps", (long)videoWidth, (long)videoHeight, (long)displayWidth, (long)displayHeight, frameRate);
+			}else{
+				NSLog(@"video loaded at %li x %li @ %f fps", (long)videoWidth, (long)videoHeight, frameRate);
+			}
 			
 //			currentTime = CMTimeMakeWithSeconds((1.0/frameRate), NSEC_PER_SEC);//kCMTimeZero;
 			currentTime = CMTimeMakeWithSeconds(0.0, NSEC_PER_SEC);//kCMTimeZero;
@@ -392,8 +422,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	duration = kCMTimeZero;
 	currentTime = kCMTimeZero;
 	
-	videoWidth = 0;
-	videoHeight = 0;
+	displayWidth = videoWidth = 0;
+	displayHeight = videoHeight = 0;
 	
 
 	// a reference to all the variables for the block
@@ -1216,6 +1246,10 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	return bFinished;
 }
 
+- (BOOL)isAnamorphic {
+	return ( displayWidth != videoWidth || displayHeight != videoHeight );
+}
+
 //---------------------------------------------------------- sampling getters / setters.
 - (void)setEnableVideoSampling:(BOOL)value {
 	bSampleVideo = value;
@@ -1267,6 +1301,14 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 - (NSInteger)getHeight {
 	return videoHeight;
+}
+
+- (NSInteger)getDisplayWidth {
+	return displayWidth;
+}
+
+- (NSInteger)getDisplayHeight {
+	return displayHeight;
 }
 
 - (CMTime)getCurrentTime {

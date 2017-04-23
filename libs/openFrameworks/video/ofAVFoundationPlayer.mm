@@ -566,6 +566,24 @@ float ofAVFoundationPlayer::getHeight() const {
 }
 
 //--------------------------------------------------------------
+float ofAVFoundationPlayer::getDisplayWidth() const {
+    if(videoPlayer == nullptr) {
+        return 0;
+    }
+    
+    return [videoPlayer getDisplayWidth];
+}
+
+//--------------------------------------------------------------
+float ofAVFoundationPlayer::getDisplayHeight() const {
+    if(videoPlayer == nullptr) {
+        return 0;
+    }
+    
+    return [videoPlayer getDisplayHeight];
+}
+
+//--------------------------------------------------------------
 bool ofAVFoundationPlayer::isPaused() const {
     if(videoPlayer == nullptr) {
         return false;
@@ -599,6 +617,15 @@ bool ofAVFoundationPlayer::isPlaying() const {
     }
     
     return [videoPlayer isPlaying];
+}
+
+//--------------------------------------------------------------
+bool ofAVFoundationPlayer::isAnamorphic() const {
+    if(videoPlayer == nullptr) {
+        return false;
+    }
+    
+    return [videoPlayer isAnamorphic];
 }
 
 //--------------------------------------------------------------
