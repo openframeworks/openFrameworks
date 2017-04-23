@@ -1095,15 +1095,11 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 	ev.xkey.type = KeyPress;
 	KeySym keysym = NoSymbol;
 	int status;
-	char buffer[100] = {0};
+	char buffer[32] = {0};
 	char* chars = buffer;
 	auto count = Xutf8LookupString(window->getX11XIC(), &ev.xkey, chars, 31, &keysym, &status);
-	if (status == XLookupChars || status == XLookupBoth){
-		chars[count] = '\0';
-		return *ofUTF8Iterator(chars).begin();
-	}else if(status == XLookupKeySym){
+	if ((count > 0 && (status == XLookupChars || status == XLookupBoth)) || status == XLookupKeySym){
 		char ** c = &chars;
-		// decodeUTF8 from glfw, ofUTF8Iterator doesn't work here?
 		unsigned int ch = 0, count = 0;
 		static const unsigned int offsets[] =
 		{
