@@ -283,8 +283,6 @@ Module{
                         var line = addonsmake.readLine().trim();
                         allAddons.push(line);
                         var addonPath = ofRoot + '/addons/' + line;
-                        var dependencies = Helpers.parseAddonConfig(addonPath, "ADDON_DEPENDENCIES", [], platform);
-                        allAddons = allAddons.concat(dependencies);
                     }
                 }catch(e){}
             }else{
@@ -297,7 +295,51 @@ Module{
             }
 
             // map addons list to addons paths
+            var addonsPaths = Helpers.removeDuplicates(allAddons.map(function(addon){
+                var addonPath = Helpers.normalize(FileInfo.joinPaths(sourceDirectory, addon))
+                if(File.exists(addonPath)){
+                    return addonPath;
+                }else{
+                    return Helpers.normalize(FileInfo.joinPaths(ofRoot, '/addons/', addon));
+                }
+            }));
+
+            // Look for dependencies
+            Object.defineProperties(Array.prototype, {
+                'flatMap': {
+                    value: function (lambda) {
+                        return Array.prototype.concat.apply([], this.map(lambda));
+                    },
+                    writeable: false,
+                    enumerable: false
+                }
+            });
+            var dependencies = addonsPaths.flatMap(function(addonPath){
+                var dependencies = Helpers.parseAddonConfig(addonPath, "ADDON_DEPENDENCIES", [], platform);
+                if(addonPath.startsWith(ofRoot + "/addons")){
+                    return dependencies;
+                }else{
+                    // If it's a local addon try to find dependencies in the same folder
+                    var parentAddonFolder = FileInfo.path(addonPath);
+                    return dependencies.map(function(dependency){
+                        var local = FileInfo.joinPaths(parentAddonFolder, dependency);
+                        if(File.exists(local)){
+                            return local;
+                        }else{
+                            return dependency;
+                        }
+                    })
+                }
+            });
+
+            allAddons = allAddons.concat(dependencies);
+
+            // Finally map all addons and dependencies to paths
             allAddons = Helpers.removeDuplicates(allAddons.map(function(addon){
+                if(FileInfo.isAbsolutePath(addon) && File.exists(addon)){
+                    return addon;
+                }
+
                 var addonPath = Helpers.normalize(FileInfo.joinPaths(sourceDirectory, addon))
                 if(File.exists(addonPath)){
                     return addonPath;
