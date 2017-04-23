@@ -10,6 +10,11 @@
 #include "ofPixels.h"
 #include "ofRectangle.h"
 
+#ifdef TARGET_LINUX
+typedef struct _XIM * XIM;
+typedef struct _XIC * XIC;
+#endif
+
 class ofBaseApp;
 
 #ifdef TARGET_OPENGLES
@@ -147,6 +152,7 @@ public:
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 	Display* 	getX11Display();
 	Window  	getX11Window();
+	XIC			getX11XIC();
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
@@ -185,6 +191,8 @@ private:
 #ifdef TARGET_LINUX
 	void setWindowIcon(const string & path);
 	void setWindowIcon(const ofPixels & iconPixels);
+	XIM xim;
+	XIC xic;
 #endif
 
 	ofCoreEvents coreEvents;
