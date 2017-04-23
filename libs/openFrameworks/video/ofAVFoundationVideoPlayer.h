@@ -103,7 +103,7 @@ typedef enum _playerLoopType{
 
 - (BOOL)loadWithFile:(NSString*)file async:(BOOL)bAsync;
 - (BOOL)loadWithPath:(NSString*)path async:(BOOL)bAsync;
-- (BOOL)loadWithURL:(NSURL*)url async:(BOOL)bAsync;
+- (BOOL)loadWithURL:(NSURL*)url async:(BOOL)bAsync stream:(BOOL)isStream;
 - (void)unloadVideoAsync;
 - (void)unloadVideo;
 
