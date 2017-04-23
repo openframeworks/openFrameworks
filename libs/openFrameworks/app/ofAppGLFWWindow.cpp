@@ -1087,11 +1087,10 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 #ifdef TARGET_LINUX
 	XkbStateRec xkb_state = {};
 	XkbGetState(window->getX11Display(), XkbUseCoreKbd, &xkb_state);
-	XEvent ev = {};
+	XEvent ev = {0};
 	ev.xkey.keycode = scancode;
 	ev.xkey.state = xkb_state.mods;
 	ev.xkey.display = window->getX11Display();
-	ev.type = KeyPress;
 	ev.xkey.type = KeyPress;
 	KeySym keysym = NoSymbol;
 	int status;
