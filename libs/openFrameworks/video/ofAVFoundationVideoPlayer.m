@@ -84,6 +84,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		// do not sample audio by default
 		// we are lacking interfaces for audiodata
 		bSampleAudio = NO;
+		
+		bStream = NO;
 	}
 	return self;
 }
