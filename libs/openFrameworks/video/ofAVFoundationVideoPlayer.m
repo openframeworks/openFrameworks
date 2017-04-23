@@ -141,15 +141,21 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	NSURL * fileURL = [[NSBundle mainBundle] URLForResource:[fileSplit objectAtIndex:0]
 											  withExtension:[fileSplit objectAtIndex:1]];
 	
-	return [self loadWithURL:fileURL async:bAsync];
+	return [self loadWithURL:fileURL async:bAsync stream:NO];
 }
 
 - (BOOL)loadWithPath:(NSString*)path async:(BOOL)bAsync{
 	NSURL * fileURL = [NSURL fileURLWithPath:path];
-	return [self loadWithURL:fileURL async:bAsync];
+	return [self loadWithURL:fileURL async:bAsync stream:NO];
+}
+
+- (BOOL)loadWithURL:(NSURL*)url async:(BOOL)bAsync stream:(BOOL)isStream {
+	bStream = isStream;
+	return [self loadWithURL:url async:bAsync];
 }
 
 - (BOOL)loadWithURL:(NSURL*)url async:(BOOL)bAsync {
+	
 	
 	NSDictionary *options = @{(id)AVURLAssetPreferPreciseDurationAndTimingKey:@(YES)};
 	AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url options:options];
