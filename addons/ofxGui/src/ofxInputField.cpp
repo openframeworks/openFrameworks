@@ -276,6 +276,14 @@ void ofxInputField<Type>::moveCursor(int cursorPos){
 
 	selectStartPos = selectEndPos = cursorPos;
 	selectionWidth = 0;
+	
+	if ( visibleInputEnd < ofUTF8Length( input ) ){
+		// Attempt to extend visible input range. If a character was being entered 
+		// somewhere inside the text, there might be enough space to the right to 
+		// show the newly extended input.
+		visibleInputEnd += 1;
+	}
+
 	if(cursorPos>visibleInputEnd){
 		visibleInputEnd = cursorPos;
 	}else if(cursorPos<visibleInputStart){
