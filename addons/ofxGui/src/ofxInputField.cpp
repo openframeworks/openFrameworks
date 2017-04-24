@@ -117,6 +117,7 @@ namespace{
 	}
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofxInputField<Type> ofxInputField<Type>::createInsideSlider(){
 	ofxInputField<Type> input;
@@ -124,15 +125,18 @@ ofxInputField<Type> ofxInputField<Type>::createInsideSlider(){
 	return input;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofxInputField<Type>::ofxInputField(){
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofxInputField<Type>::ofxInputField(ofParameter<Type> _val, float width, float height){
 	setup(_val,width,height);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofxInputField<Type>* ofxInputField<Type>::setup(ofParameter<Type> _val, float width, float height){
 	value.makeReferenceTo(_val);
@@ -153,38 +157,45 @@ ofxInputField<Type>* ofxInputField<Type>::setup(ofParameter<Type> _val, float wi
 	return this;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofxInputField<Type>* ofxInputField<Type>::setup(const std::string& _name, Type _val, Type _min, Type _max, float width, float height){
 	value.set(_name,_val,_min,_max);
 	return setup(value,width,height);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofxInputField<Type>* ofxInputField<Type>::setup(const std::string& _name, Type _val){
 	value.set(_name,_val);
 	return setup(value);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::setMin(Type min){
     value.setMin(min);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 Type ofxInputField<Type>::getMin(){
     return value.getMin();
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::setMax(Type max){
     value.setMax(max);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 Type ofxInputField<Type>::getMax(){
     return value.getMax();
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::calculateSelectionArea(int selectIdx1, int selectIdx2){
 	selectStartPos = selectIdx1;
@@ -255,6 +266,7 @@ void ofxInputField<Type>::calculateSelectionArea(int selectIdx1, int selectIdx2)
 	setNeedsRedraw();
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::moveCursor(int cursorPos){
 	
@@ -320,6 +332,7 @@ void ofxInputField<Type>::moveCursor(int cursorPos){
 	setNeedsRedraw();
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::mouseMoved(ofMouseEventArgs & mouse){
 	bool mouseOver = b.inside(mouse);
@@ -330,6 +343,7 @@ bool ofxInputField<Type>::mouseMoved(ofMouseEventArgs & mouse){
 	return (isGuiDrawing() || insideSlider) && bMouseOver;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & mouse){
 	if(!isGuiDrawing() && !insideSlider){
@@ -365,6 +379,7 @@ bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & mouse){
 	return false;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::mouseDragged(ofMouseEventArgs & mouse){
 	if(!isGuiDrawing() && !insideSlider){
@@ -390,12 +405,14 @@ bool ofxInputField<Type>::mouseDragged(ofMouseEventArgs & mouse){
 	return true;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::mouseReleased(ofMouseEventArgs &){
 	bMousePressed = false;
 	return bGuiActive;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::mouseScrolled(ofMouseEventArgs & mouse){
 	if(b.inside(mouse)){
@@ -413,6 +430,7 @@ bool ofxInputField<Type>::mouseScrolled(ofMouseEventArgs & mouse){
 	}
 }
 
+//-----------------------------------------------------------
 template<>
 bool ofxInputField<string>::mouseScrolled(ofMouseEventArgs & mouse){
 	if(b.inside(mouse)){
@@ -422,6 +440,7 @@ bool ofxInputField<string>::mouseScrolled(ofMouseEventArgs & mouse){
 	}
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::charPressed(uint32_t & key){
 	if(!isGuiDrawing() && !insideSlider){
@@ -440,6 +459,7 @@ bool ofxInputField<Type>::charPressed(uint32_t & key){
 	return false;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 	if(!isGuiDrawing()){
@@ -544,6 +564,7 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 }
 
 
+//-----------------------------------------------------------
 template<typename Type>
 int ofxInputField<Type>::insertKeystroke(uint32_t character){
 	auto first = std::min(selectStartPos, selectEndPos);
@@ -559,6 +580,7 @@ int ofxInputField<Type>::insertKeystroke(uint32_t character){
 	return cursorPos;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 int ofxInputField<Type>::insertAlphabetic(uint32_t character){
 	if(character == 'x' || character == 'a' || character == 'b' || character=='c' || character=='d' || character=='e' || character=='f'){
@@ -568,27 +590,32 @@ int ofxInputField<Type>::insertAlphabetic(uint32_t character){
 	}
 }
 
+//-----------------------------------------------------------
 template<>
 int ofxInputField<string>::insertAlphabetic(uint32_t character){
 	return insertKeystroke(character);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 Type ofxInputField<Type>::operator=(Type v){
 	value = v;
 	return v;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofxInputField<Type>::operator const Type & (){
 	return value;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::hasSelectedText(){
 	return selectStartPos != selectEndPos;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::generateDraw(){
 	bg.clear();
@@ -629,6 +656,7 @@ void ofxInputField<Type>::generateDraw(){
 	textMesh.getColors().assign(textMesh.getVertices().size(), thisTextColor);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::render(){
 	bg.draw();
@@ -664,6 +692,7 @@ void ofxInputField<Type>::render(){
 	}
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::drawCursor(){
 	if(!blinkingCursor || (int(ofGetElapsedTimef()*2) % 2) == 0){
@@ -674,28 +703,33 @@ void ofxInputField<Type>::drawCursor(){
 	}
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::setBlinkingCursor(bool blink){
 	blinkingCursor = blink;
 	setNeedsRedraw();
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::setShowLabelWhileEditing(bool show){
 	showLabelWhileEditing = show;
 	setNeedsRedraw();
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::setValue(float mx, float my, bool bCheck){
 	return false;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofAbstractParameter & ofxInputField<Type>::getParameter(){
 	return value;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::parseInput(){
 	try{
@@ -716,11 +750,13 @@ void ofxInputField<Type>::parseInput(){
 	}
 }
 
+//-----------------------------------------------------------
 template<>
 void ofxInputField<string>::parseInput(){
 	value = input;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::valueChanged(Type & value){
 	input = toString(value);
@@ -730,6 +766,7 @@ void ofxInputField<Type>::valueChanged(Type & value){
     setNeedsRedraw();
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::leaveFocus(){
 	bGuiActive = false;
@@ -738,11 +775,13 @@ void ofxInputField<Type>::leaveFocus(){
 	leftFocus.notify(this);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::containsValidValue() const{
 	return validValue;
 }
 
+//-----------------------------------------------------------
 template class ofxInputField<int8_t>;
 template class ofxInputField<uint8_t>;
 template class ofxInputField<int16_t>;
