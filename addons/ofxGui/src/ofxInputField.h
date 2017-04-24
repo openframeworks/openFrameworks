@@ -90,7 +90,8 @@ protected:
 	bool validValue = true;
 	bool showLabelWhileEditing = false;
 	bool overlappingLabel = false;
-	float errorTime = 0;
+	uint64_t errorTime = 0;  // time last input error occured, used for animations
+	uint64_t lastCursorMoveTime = 0; // last time cursor was moved, used to calculate whether to blink
 
 	void leaveFocus();
 

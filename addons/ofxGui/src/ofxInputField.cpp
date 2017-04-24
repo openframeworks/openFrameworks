@@ -274,6 +274,8 @@ void ofxInputField<Type>::moveCursor(int cursorPos){
 		return;
 	}
 
+	lastCursorMoveTime = ofGetElapsedTimeMillis();
+
 	selectStartPos = selectEndPos = cursorPos;
 	selectionWidth = 0;
 	
@@ -669,9 +671,9 @@ template<typename Type>
 void ofxInputField<Type>::render(){
 	bg.draw();
 
-	if(!insideSlider && errorTime>0 && !containsValidValue()){
-		auto now = ofGetElapsedTimef();
-		auto pct = (now - errorTime) / 0.5;
+	if(!insideSlider && errorTime > 0 && !containsValidValue()){
+		auto now = ofGetElapsedTimeMillis();
+		auto pct = (now - errorTime) * 0.5f;
 		if(pct<1){
 			for(size_t i=0;i<originalColors.size();i++){
 				bg.getColors()[i] = ofFloatColor::darkRed.getLerped(originalColors[i], pct);
@@ -703,7 +705,10 @@ void ofxInputField<Type>::render(){
 //-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::drawCursor(){
-	if(!blinkingCursor || (int(ofGetElapsedTimef()*2) % 2) == 0){
+	auto now = ofGetElapsedTimeMillis();
+	auto timeSinceLastCursorMove = now - lastCursorMoveTime;
+
+	if(!blinkingCursor || ((now % 2000) >= 1000) || (timeSinceLastCursorMove < 500)){
 		ofPushStyle();
 		ofSetColor(thisTextColor);
 		ofDrawLine( selectStartX, b.y, selectStartX, b.y+b.height );
@@ -752,7 +757,7 @@ void ofxInputField<Type>::parseInput(){
 	}catch(...){
 		if(!insideSlider){
 			originalColors = bg.getColors();
-			errorTime = ofGetElapsedTimef();
+			errorTime = ofGetElapsedTimeMillis();
 		}
 		validValue = false;
 	}
