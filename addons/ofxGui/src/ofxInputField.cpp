@@ -257,6 +257,11 @@ void ofxInputField<Type>::calculateSelectionArea(int selectIdx1, int selectIdx2)
 
 template<typename Type>
 void ofxInputField<Type>::moveCursor(int cursorPos){
+	
+	if ( cursorPos < 0 ){
+		return;
+	}
+
 	selectStartPos = selectEndPos = cursorPos;
 	selectionWidth = 0;
 	if(cursorPos>substrEnd){
