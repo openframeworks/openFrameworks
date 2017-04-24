@@ -190,54 +190,54 @@ void ofxInputField<Type>::calculateSelectionArea(int selectIdx1, int selectIdx2)
 	selectStartPos = selectIdx1;
 	selectEndPos = selectIdx2;
 
-	if(selectEndPos>substrEnd){
-		substrEnd = selectEndPos;
-	}else if(std::max(selectEndPos-1,0)<substrStart){
-		substrStart = std::max(selectEndPos-1,0);
+	if(selectEndPos>visibleInputEnd){
+		visibleInputEnd = selectEndPos;
+	}else if(std::max(selectEndPos-1,0)<visibleInputStart){
+		visibleInputStart = std::max(selectEndPos-1,0);
 	}
 
-	substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
-	auto substrWidth = getTextBoundingBox(substr,0,0).width;
+	visibleInput = ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart);
+	auto substrWidth = getTextBoundingBox(visibleInput,0,0).width;
 	auto totalTextWidth = b.width - textPadding * 2;
 
 	if(substrWidth > totalTextWidth){
 		substrWidth = 0;
-		substr = "";
+		visibleInput = "";
 		auto substrLen = 0;
 		while(substrWidth < totalTextWidth){
 			substrLen += 1;
-			substr = ofUTF8Substring(input, substrStart, substrLen);
-			substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrLen),0,0).width;
+			visibleInput = ofUTF8Substring(input, visibleInputStart, substrLen);
+			substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, substrLen),0,0).width;
 		}
 		substrLen -= 1;
-		substr = ofUTF8Substring(input, substrStart, substrLen);
-		substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrLen),0,0).width;
-		substrEnd = substrStart + substrLen;
+		visibleInput = ofUTF8Substring(input, visibleInputStart, substrLen);
+		substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, substrLen),0,0).width;
+		visibleInputEnd = visibleInputStart + substrLen;
 
-		if(selectEndPos > substrEnd){
+		if(selectEndPos > visibleInputEnd){
 			substrWidth = 0;
-			substr = "";
-			substrEnd = selectEndPos;
-			substrStart = selectEndPos;
+			visibleInput = "";
+			visibleInputEnd = selectEndPos;
+			visibleInputStart = selectEndPos;
 			while(substrWidth < totalTextWidth){
-				substrStart -= 1;
-				substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
-				substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrEnd - substrStart),0,0).width;
+				visibleInputStart -= 1;
+				visibleInput = ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart);
+				substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart),0,0).width;
 			}
-			substrStart += 1;
-			substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
-			substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrEnd - substrStart),0,0).width;
+			visibleInputStart += 1;
+			visibleInput = ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart);
+			substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart),0,0).width;
 		}
 	}
 
 	auto first = std::min(selectStartPos, selectEndPos);
 	auto last = std::max(selectStartPos, selectEndPos);
-	auto substrLength = ofUTF8Length(substr);
+	auto substrLength = ofUTF8Length(visibleInput);
 	float preSelectWidth = 0;
-	auto substrFirst = ofClamp(first-substrStart, 0, substrLength);
-	auto substrLast = ofClamp(last-substrStart, 0, substrLength);
-	if(first > substrStart){
-		std::string preSelectStr = ofUTF8Substring(substr, 0, substrFirst);
+	auto substrFirst = ofClamp(first-visibleInputStart, 0, substrLength);
+	auto substrLast = ofClamp(last-visibleInputStart, 0, substrLength);
+	if(first > visibleInputStart){
+		std::string preSelectStr = ofUTF8Substring(visibleInput, 0, substrFirst);
 		preSelectWidth = getTextBoundingBox(preSelectStr,0,0).width;
 	}
 
@@ -248,7 +248,7 @@ void ofxInputField<Type>::calculateSelectionArea(int selectIdx1, int selectIdx2)
 	}
 
 	if(hasSelectedText()){
-		std::string selectStr = ofUTF8Substring(substr, substrFirst, substrLast - substrFirst);
+		std::string selectStr = ofUTF8Substring(visibleInput, substrFirst, substrLast - substrFirst);
 		selectionWidth = getTextBoundingBox(selectStr,0,0).width;
 	}
 
@@ -264,50 +264,50 @@ void ofxInputField<Type>::moveCursor(int cursorPos){
 
 	selectStartPos = selectEndPos = cursorPos;
 	selectionWidth = 0;
-	if(cursorPos>substrEnd){
-		substrEnd = cursorPos;
-	}else if(cursorPos<substrStart){
-		substrStart = cursorPos;
+	if(cursorPos>visibleInputEnd){
+		visibleInputEnd = cursorPos;
+	}else if(cursorPos<visibleInputStart){
+		visibleInputStart = cursorPos;
 	}
 
-	substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
-	auto substrWidth = getTextBoundingBox(substr,0,0).width;
+	visibleInput = ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart);
+	auto substrWidth = getTextBoundingBox(visibleInput,0,0).width;
 	auto totalTextWidth = b.width - textPadding * 2;
 
 	if(substrWidth > totalTextWidth){
 		substrWidth = 0;
-		substr = "";
+		visibleInput = "";
 		auto substrLen = 0;
 		while(substrWidth < totalTextWidth){
 			substrLen += 1;
-			substr = ofUTF8Substring(input, substrStart, substrLen);
-			substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrLen),0,0).width;
+			visibleInput = ofUTF8Substring(input, visibleInputStart, substrLen);
+			substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, substrLen),0,0).width;
 		}
 		substrLen -= 1;
-		substr = ofUTF8Substring(input, substrStart, substrLen);
-		substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrLen),0,0).width;
-		substrEnd = substrStart + substrLen;
+		visibleInput = ofUTF8Substring(input, visibleInputStart, substrLen);
+		substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, substrLen),0,0).width;
+		visibleInputEnd = visibleInputStart + substrLen;
 
-		if(cursorPos > substrEnd){
+		if(cursorPos > visibleInputEnd){
 			substrWidth = 0;
-			substr = "";
-			substrEnd = cursorPos;
-			substrStart = cursorPos;
+			visibleInput = "";
+			visibleInputEnd = cursorPos;
+			visibleInputStart = cursorPos;
 			while(substrWidth < totalTextWidth){
-				substrStart -= 1;
-				substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
-				substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrEnd - substrStart),0,0).width;
+				visibleInputStart -= 1;
+				visibleInput = ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart);
+				substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart),0,0).width;
 			}
-			substrStart += 1;
-			substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
-			substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrEnd - substrStart),0,0).width;
+			visibleInputStart += 1;
+			visibleInput = ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart);
+			substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart),0,0).width;
 		}
 	}
 
 
 	float beforeCursorWidth = 0;
-	if(selectStartPos > substrStart){
-		auto beforeCursorStr = ofUTF8Substring(substr, 0, selectStartPos - substrStart);
+	if(selectStartPos > visibleInputStart){
+		auto beforeCursorStr = ofUTF8Substring(visibleInput, 0, selectStartPos - visibleInputStart);
 		beforeCursorWidth = getTextBoundingBox(beforeCursorStr,0,0).width;
 	}
 
@@ -339,14 +339,14 @@ bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & mouse){
 		if(!insideSlider || mouse.button == OF_MOUSE_BUTTON_LEFT){
 			bMousePressed = true;
 			if(bGuiActive){
-				auto inputWidth = getTextBoundingBox(substr,0,0).width;
+				auto inputWidth = getTextBoundingBox(visibleInput,0,0).width;
 				float cursorX;
 				if(showLabelWhileEditing){
 					cursorX = mouse.x - (b.x + b.width - textPadding - inputWidth);
 				}else{
 					cursorX = mouse.x - (b.x + textPadding);
 				}
-				mousePressedPos =  round(substrStart + ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(substr), true));
+				mousePressedPos =  round(visibleInputStart + ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(visibleInput), true));
 				moveCursor(mousePressedPos);
 			}else{
 				calculateSelectionArea(0, ofUTF8Length(input));
@@ -375,14 +375,14 @@ bool ofxInputField<Type>::mouseDragged(ofMouseEventArgs & mouse){
 	}
 
 	if(!insideSlider || mouse.button == OF_MOUSE_BUTTON_LEFT){
-		auto inputWidth = getTextBoundingBox(substr,0,0).width;
+		auto inputWidth = getTextBoundingBox(visibleInput,0,0).width;
 		float cursorX;
 		if(showLabelWhileEditing){
 			cursorX = mouse.x - (b.x + b.width - textPadding - inputWidth);
 		}else{
 			cursorX = mouse.x - (b.x + textPadding);
 		}
-		auto cursorPos = round(substrStart + ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(substr)));
+		auto cursorPos = round(visibleInputStart + ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(visibleInput)));
 		cursorPos = ofClamp(cursorPos, 0, ofUTF8Length(input));
 		calculateSelectionArea(mousePressedPos, cursorPos);
 		setNeedsRedraw();
@@ -605,7 +605,7 @@ void ofxInputField<Type>::generateDraw(){
 		}
 	}
 
-	auto input = substr;
+	auto input = visibleInput;
 	if(!bGuiActive && !containsValidValue()){
 		input = toString(value);
 	}
