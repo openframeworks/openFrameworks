@@ -89,13 +89,13 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 	
 	bool bLoaded = false;
 	
-    if(videoPlayer == nullptr) {
+	if(videoPlayer == nullptr) {
 		// create a new player if its not allocated
 		videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
 		[videoPlayer setWillBeUpdatedExternally:YES];
 	}
 	
-	bLoaded = [videoPlayer loadWithURL:url async:bAsync];
+	bLoaded = [videoPlayer loadWithURL:url async:bAsync stream:bStream];
 
 	pixels.clear();
 	videoTexture.clear();
