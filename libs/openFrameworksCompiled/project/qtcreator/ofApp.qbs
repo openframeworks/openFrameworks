@@ -34,7 +34,7 @@ CppApplication{
 
     cpp.includePaths: of.coreIncludePaths.concat(include.paths)
     cpp.linkerFlags: of.coreLinkerFlags
-    cpp.defines: of.coreDefines
+    cpp.defines: of.coreDefines.concat(of.ADDONS_DEFINES)
     cpp.cxxStandardLibrary: of.coreCxxStandardLibrary
     cpp.cxxLanguageVersion: of.coreCxxLanguageVersion
     cpp.frameworks: of.coreFrameworks
@@ -43,7 +43,6 @@ CppApplication{
     cpp.warningLevel: of.coreWarningLevel
     // TODO: system libs should go as dynamic?
     cpp.staticLibraries: of.coreStaticLibs.concat(of.coreSystemLibs)
-    cpp.architecture: qbs.architecture
 
     Properties{
         condition: of.platform === "osx"
