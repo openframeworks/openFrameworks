@@ -48,7 +48,7 @@ Product{
 
     Properties{
         condition: of.platform === "osx"
-        cpp.minimumOsxVersion: 10.9
+        cpp.minimumOsxVersion: "10.9"
     }
 
     property stringList FILES_EXCLUDE: {
