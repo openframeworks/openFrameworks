@@ -717,27 +717,39 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 // 	letters.. now they will be 256 + 104, 256 + 105....)
 
 
-	#define OF_KEY_MODIFIER 	0x0100
 	#define OF_KEY_RETURN		13
 	#define OF_KEY_ESC			27
-    #define OF_KEY_TAB          9
-    #define OF_KEY_COMMAND      OF_KEY_SUPER
-    
-	// http://www.openframeworks.cc/forum/viewtopic.php?t=494
-	// some issues with keys across platforms:
+	#define OF_KEY_TAB          9
 
-	#ifdef TARGET_OSX
-		#define OF_KEY_BACKSPACE	127
-		#define OF_KEY_DEL			8
-	#else
-		#define OF_KEY_BACKSPACE	8
-		#define OF_KEY_DEL			127
-	#endif
 
-	// zach - there are more of these keys, we can add them here...
-	// these are keys that are not coming through "special keys"
-	// via glut, but just other keys on your keyboard like
+	#define OF_KEY_BACKSPACE	8
+	#define OF_KEY_DEL			127
 
+
+	// For legacy reasons we are mixing up control keys
+	// and unicode codepoints when sending key events,
+	// for the modifiers that need to be usable as bitmask
+	// we are using some control codes that have nothing to do
+	// with the keys being represented and then 0x0ee0.. and 0x0e60...
+	// which are free in the unicode table
+
+	#define OF_KEY_SHIFT		 0x1
+	#define OF_KEY_CONTROL		 0x2
+	#define OF_KEY_ALT			 0x4
+	#define OF_KEY_SUPER		 0x16
+	#define OF_KEY_COMMAND       OF_KEY_SUPER
+	#define OF_KEY_LEFT_SHIFT	 0xe60
+	#define OF_KEY_RIGHT_SHIFT	 0xe61
+	#define OF_KEY_LEFT_CONTROL	 0xe62
+	#define OF_KEY_RIGHT_CONTROL 0xe63
+	#define OF_KEY_LEFT_ALT		 0xe64
+	#define OF_KEY_RIGHT_ALT	 0xe65
+	#define OF_KEY_LEFT_SUPER	 0xe66
+	#define OF_KEY_RIGHT_SUPER	 0xe67
+	#define OF_KEY_LEFT_COMMAND  OF_KEY_LEFT_SUPER
+	#define OF_KEY_RIGHT_COMMAND OF_KEY_RIGHT_SUPER
+
+	#define OF_KEY_MODIFIER 	0x0EE0
 	#define OF_KEY_F1			(1 | OF_KEY_MODIFIER)
 	#define OF_KEY_F2			(2 | OF_KEY_MODIFIER)
 	#define OF_KEY_F3			(3 | OF_KEY_MODIFIER)
@@ -759,21 +771,6 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 	#define OF_KEY_HOME			(106 | OF_KEY_MODIFIER)
 	#define OF_KEY_END			(107 | OF_KEY_MODIFIER)
 	#define OF_KEY_INSERT		(108 | OF_KEY_MODIFIER)
-	#define OF_KEY_CONTROL		(0x200 | OF_KEY_MODIFIER)
-	#define OF_KEY_ALT			(0x400 | OF_KEY_MODIFIER)
-	#define OF_KEY_SHIFT		(0x800 | OF_KEY_MODIFIER)
-	#define OF_KEY_SUPER		(0x1000 | OF_KEY_MODIFIER)
-	#define OF_KEY_LEFT_SHIFT	(0x1 | OF_KEY_SHIFT)
-	#define OF_KEY_RIGHT_SHIFT	(0x2 | OF_KEY_SHIFT)
-	#define OF_KEY_LEFT_CONTROL	(0x1 | OF_KEY_CONTROL)
-	#define OF_KEY_RIGHT_CONTROL (0x2 | OF_KEY_CONTROL)
-	#define OF_KEY_LEFT_ALT		(0x1 | OF_KEY_ALT)
-	#define OF_KEY_RIGHT_ALT	(0x2 | OF_KEY_ALT)
-	#define OF_KEY_LEFT_SUPER	(0x1 | OF_KEY_SUPER)
-	#define OF_KEY_RIGHT_SUPER	(0x2 | OF_KEY_SUPER)
-	#define OF_KEY_LEFT_COMMAND OF_KEY_LEFT_SUPER
-	#define OF_KEY_RIGHT_COMMAND OF_KEY_RIGHT_SUPER
-// not sure what to do in the case of non-glut apps....
 
     #define OF_MOUSE_BUTTON_1      0
     #define OF_MOUSE_BUTTON_2      1
