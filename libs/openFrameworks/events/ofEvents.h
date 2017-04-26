@@ -42,7 +42,8 @@ public:
   	,key(0)
 	,keycode(0)
 	,scancode(0)
-	,codepoint(0){}
+	,codepoint(0)
+	,isRepeat(false){}
 
 	ofKeyEventArgs(Type type, int key, int keycode, int scancode, unsigned int codepoint, int modifiers)
 	:type(type)
@@ -50,6 +51,7 @@ public:
 	,keycode(keycode)
 	,scancode(scancode)
 	,codepoint(codepoint)
+	,isRepeat(false)
 	,modifiers(modifiers){
 
 	}
@@ -59,7 +61,8 @@ public:
 	,key(key)
 	,keycode(0)
 	,scancode(0)
-	,codepoint(0){
+	,codepoint(0)
+	,isRepeat(false){
 
 	}
 
@@ -72,14 +75,14 @@ public:
 	int scancode;
 	/// The Unicode code point you'd expect if this key combo (including modifier keys) was pressed in a text editor, or -1 for non-printable characters.
 	uint32_t codepoint;
+	/// If this is a repeat event
+	bool isRepeat;
+	/// Key modifiers
+	int modifiers = 0;
 
 	bool hasModifier(int modifier){
 		return modifiers & modifier;
 	}
-
-private:
-	/// Key modifiers
-	int modifiers;
 };
 
 class ofMouseEventArgs : public ofEventArgs, public glm::vec2 {
@@ -109,6 +112,15 @@ class ofMouseEventArgs : public ofEventArgs, public glm::vec2 {
 	,scrollY(0.f)
 	{}
 
+	ofMouseEventArgs(Type type, float x, float y, int button, int modifiers)
+	:glm::vec2(x,y)
+	,type(type)
+	,button(button)
+	,scrollX(0.f)
+	,scrollY(0.f)
+	,modifiers(modifiers)
+	{}
+
 	ofMouseEventArgs(Type type, float x, float y)
 	:glm::vec2(x,y)
 	,type(type)
@@ -121,6 +133,12 @@ class ofMouseEventArgs : public ofEventArgs, public glm::vec2 {
 	int button;
 	float scrollX;
 	float scrollY;
+	/// Key modifiers
+	int modifiers = 0;
+
+	bool hasModifier(int modifier){
+		return modifiers & modifier;
+	}
 };
 
 class ofTouchEventArgs : public ofEventArgs, public glm::vec2 {
@@ -268,6 +286,7 @@ class ofCoreEvents {
 	int getMouseY() const;
 	int getPreviousMouseX() const;
 	int getPreviousMouseY() const;
+	int getModifiers() const;
 
 	//  event notification only for internal OF use
 	bool notifySetup();
@@ -285,14 +304,14 @@ class ofCoreEvents {
 	bool notifyMouseScrolled(int x, int y, float scrollX, float scrollY);
 	bool notifyMouseEntered(int x, int y);
 	bool notifyMouseExited(int x, int y);
-	bool notifyMouseEvent(const ofMouseEventArgs & mouseEvent);
+	bool notifyMouseEvent(ofMouseEventArgs & mouseEvent);
 	
 	void notifyTouchDown(int x, int y, int touchID);
 	void notifyTouchUp(int x, int y, int touchID);
 	void notifyTouchMoved(int x, int y, int touchID);
 	void notifyTouchCancelled(int x, int y, int touchID);
 	void notifyTouchDoubleTap(int x, int y, int touchID);
-	void notifyTouchEvent(const ofTouchEventArgs & touchEvent);
+	void notifyTouchEvent(ofTouchEventArgs & touchEvent);
 
 	bool notifyExit();
 	bool notifyWindowResized(int width, int height);
@@ -311,6 +330,7 @@ private:
 	bool bPreMouseNotSet;
 	set<int> pressedMouseButtons;
 	set<int> pressedKeys;
+	int modifiers = 0;
 
 	enum TimeMode{
 		System,
