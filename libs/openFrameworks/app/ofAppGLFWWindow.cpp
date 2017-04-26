@@ -334,10 +334,10 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		xim = XOpenIM(getX11Display(), 0, 0, 0);
 	}
 	xic = XCreateIC(xim,
-							XNInputStyle,   XIMPreeditNothing | XIMStatusNothing,
-							XNClientWindow, getX11Window(),
-							XNFocusWindow,  getX11Window(),
-						NULL);
+			XNInputStyle,   XIMPreeditNothing | XIMStatusNothing,
+			XNClientWindow, getX11Window(),
+			XNFocusWindow,  getX11Window(),
+		NULL);
 #endif
 }
 
@@ -998,91 +998,25 @@ ofAppGLFWWindow * ofAppGLFWWindow::setCurrent(GLFWwindow* windowP){
 	return instance;
 }
 
-//------------------------------------------------------------
-void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int mods) {
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
-#ifdef TARGET_OSX
-    //we do this as unlike glut, glfw doesn't report right click for ctrl click or middle click for alt click 
-    if( instance->events().getKeyPressed(OF_KEY_CONTROL) && button == GLFW_MOUSE_BUTTON_LEFT){
-        button = GLFW_MOUSE_BUTTON_RIGHT; 
-    }
-    if( instance->events().getKeyPressed(OF_KEY_ALT) && button == GLFW_MOUSE_BUTTON_LEFT){
-        button = GLFW_MOUSE_BUTTON_MIDDLE; 
-    }
-#endif
-
-	switch(button){
-	case GLFW_MOUSE_BUTTON_LEFT:
-		button = OF_MOUSE_BUTTON_LEFT;
-		break;
-	case GLFW_MOUSE_BUTTON_RIGHT:
-		button = OF_MOUSE_BUTTON_RIGHT;
-		break;
-	case GLFW_MOUSE_BUTTON_MIDDLE:
-		button = OF_MOUSE_BUTTON_MIDDLE;
-		break;
-	}
-
-	if (state == GLFW_PRESS) {
-		instance->events().notifyMousePressed(instance->events().getMouseX(), instance->events().getMouseY(), button);
-		instance->buttonPressed=true;
-	} else if (state == GLFW_RELEASE) {
-		instance->events().notifyMouseReleased(instance->events().getMouseX(), instance->events().getMouseY(), button);
-		instance->buttonPressed=false;
-	}
-	instance->buttonInUse = button;
-
-
-}
-
-//------------------------------------------------------------
-void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
-	rotateMouseXY(instance->orientation, instance->getWidth(), instance->getHeight(), x, y);
-
-	if(!instance->buttonPressed){
-		instance->events().notifyMouseMoved(x*instance->pixelScreenCoordScale, y*instance->pixelScreenCoordScale);
-	}else{
-		instance->events().notifyMouseDragged(x*instance->pixelScreenCoordScale, y*instance->pixelScreenCoordScale, instance->buttonInUse);
-	}
-}
-
-//------------------------------------------------------------
-void ofAppGLFWWindow::entry_cb(GLFWwindow *windowP_, int entered) {
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
-	if(entered){
-		instance->events().notifyMouseEntered(instance->events().getMouseX(), instance->events().getMouseY());
-	}else{
-		instance->events().notifyMouseExited(instance->events().getMouseX(), instance->events().getMouseY());
-	}
-}
-
-//------------------------------------------------------------
-void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
-	rotateMouseXY(instance->orientation, instance->getWidth(), instance->getHeight(), x, y);
-	instance->events().notifyMouseScrolled(instance->events().getMouseX(), instance->events().getMouseY(), x, y);
-}
-
-//------------------------------------------------------------
-void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** dropString) {
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
-	ofDragInfo drag;
-	drag.position = {instance->events().getMouseX(), instance->events().getMouseY()};
-	drag.files.resize(numFiles);
-	for(int i=0; i<(int)drag.files.size(); i++){
-		drag.files[i] = std::filesystem::path(dropString[i]).string();
-	}
-	instance->events().notifyDragEvent(drag);
-}
-
-//------------------------------------------------------------
-void ofAppGLFWWindow::error_cb(int errorCode, const char* errorDescription){
-	ofLogError("ofAppGLFWWindow") << errorCode << ": " << errorDescription;
-}
-
 
 namespace{
+int glfwtToOFModifiers(int mods){
+	int modifiers = 0;
+	if(mods & GLFW_MOD_SHIFT){
+		modifiers |= OF_KEY_SHIFT;
+	}
+	if(mods & GLFW_MOD_ALT){
+		modifiers |= OF_KEY_ALT;
+	}
+	if(mods & GLFW_MOD_CONTROL){
+		modifiers |= OF_KEY_CONTROL;
+	}
+	if(mods & GLFW_MOD_SUPER){
+		modifiers |= OF_KEY_SUPER;
+	}
+	return modifiers;
+}
+
 unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modifier){
 #ifdef TARGET_LINUX
 	XkbStateRec xkb_state = {};
@@ -1096,7 +1030,7 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 	int status;
 	char buffer[32] = {0};
 	char* chars = buffer;
-	auto count = Xutf8LookupString(window->getX11XIC(), &ev.xkey, chars, 31, &keysym, &status);
+	auto count = Xutf8LookupString(window->getX11XIC(), &ev.xkey, chars, sizeof(buffer) - 1, &keysym, &status);
 	if ((count > 0 && (status == XLookupChars || status == XLookupBoth)) || status == XLookupKeySym){
 		char ** c = &chars;
 		unsigned int ch = 0, count = 0;
@@ -1128,23 +1062,23 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 	GetKeyboardState( keyboardState );
 
 	// Careful: keycode arrives translated into GLFW key codes,
-	// but keycode needs to be a virtual key (VK_...) so we're 
+	// but keycode needs to be a virtual key (VK_...) so we're
 	// in deep troble, since this information has been removed
 	// by GLFW...
 	//
 	// The way around this is to ask the operating system
-	// nicely to create a virtual key for us, based on 
+	// nicely to create a virtual key for us, based on
 	// the scancode and the currently bound keyboard layout.
 	// https://msdn.microsoft.com/en-us/library/windows/desktop/ms646306(v=vs.85).aspx
 	//
-	// create a "fake" virtual key 
-	
+	// create a "fake" virtual key
+
 	UINT fakeVirtualKey = MapVirtualKey( scancode, MAPVK_VSC_TO_VK_EX );
 
 	int ret = ToUnicode( fakeVirtualKey, scancode, keyboardState, buf , 2, 0);
 
 	if ( ret == 1 ){
-		return buf[0]; 
+		return buf[0];
 	} else {
 		return 0;
 	}
@@ -1158,9 +1092,9 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 	typedef TISInputSourceRef (*pFnGetInputSource)(void); // define function pointer that may return a input source ref, no arguments
 	typedef void* (*pFnGetInputSourceProperty)(TISInputSourceRef,CFStringRef);
 	typedef UInt8 (*pFnGetKeyboardType)(void);
-	
+
 	static const CFBundleRef tisBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.HIToolbox"));
-	
+
 	// We need to call some system methods, following GLFW's example
 	// in their OS X version of ```_glfwPlatformGetKeyName```.
 	//
@@ -1181,21 +1115,21 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 	static pFnGetInputSource         getInputSource         = (pFnGetInputSource)CFBundleGetFunctionPointerForName(tisBundle, CFSTR("TISCopyCurrentKeyboardLayoutInputSource"));
 	static pFnGetKeyboardType        getKeyboardType        = (pFnGetKeyboardType)CFBundleGetFunctionPointerForName(tisBundle,CFSTR("LMGetKbdType"));
 	static pFnGetInputSourceProperty getInputSourceProperty = (pFnGetInputSourceProperty)CFBundleGetFunctionPointerForName(tisBundle, CFSTR("TISGetInputSourceProperty"));
-	
+
 	static const TISInputSourceRef sourceRef = getInputSource(); // note that for the first time, this creates a copy on the heap, then we're re-using it.
-	
+
 	static const CFStringRef* kPropertyUnicodeKeyLayoutData = (CFStringRef*)CFBundleGetDataPointerForName(tisBundle, CFSTR("kTISPropertyUnicodeKeyLayoutData"));
 	static const CFStringRef kTISPropertyUnicodeKeyLayoutData = * kPropertyUnicodeKeyLayoutData;
 	static const CFDataRef UnicodeKeyLayoutData = (CFDataRef)getInputSourceProperty(sourceRef, kTISPropertyUnicodeKeyLayoutData);
-	
+
 	static const UCKeyboardLayout* pKeyboardLayout = (UCKeyboardLayout*)CFDataGetBytePtr(UnicodeKeyLayoutData);
-	
+
 	UInt32 mod_OSX = 0;
 	{
 		// We have to translate the GLFW modifier bitflags back to OS X,
 		// so that SHIFT, CONTROL, etc can be taken into account when
 		// calculating the unicode codepoint.
-		
+
 		if (modifier & GLFW_MOD_SHIFT)
 			mod_OSX |= NSShiftKeyMask;
 		if (modifier & GLFW_MOD_CONTROL)
@@ -1204,7 +1138,7 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 			mod_OSX |= NSAlternateKeyMask;
 		if (modifier & GLFW_MOD_SUPER)
 			mod_OSX |= NSCommandKeyMask;
-	
+
 		// This is really weird, but although OSX documentation says to do to the following:
 		//		modifierKeyState = ((EventRecord.modifiers) >> 8) & 0xFF;
 		// Bit-shifting by 16 bit seems to be necessary...
@@ -1212,10 +1146,10 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 		// (Tested using an Austrian Mac Keyboard).
 		mod_OSX = (mod_OSX >> 16) & 0xFF;
 	}
-	
+
 	// All this yak shaving was necessary to feed this diva of a function call:
 	// https://developer.apple.com/library/mac/documentation/Carbon/Reference/Unicode_Utilities_Ref/index.html#//apple_ref/c/func/UCKeyTranslate
-	
+
 	if (noErr == UCKeyTranslate(pKeyboardLayout,
 					   scancode,
 					   kUCKeyActionDisplay,
@@ -1232,10 +1166,124 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 	} else {
 		return 0;
 	}
-	
+
 #endif
 	return 0;
 }
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int mods) {
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+
+#ifdef TARGET_OSX
+    //we do this as unlike glut, glfw doesn't report right click for ctrl click or middle click for alt click 
+    if( instance->events().getKeyPressed(OF_KEY_CONTROL) && button == GLFW_MOUSE_BUTTON_LEFT){
+		button = GLFW_MOUSE_BUTTON_RIGHT;
+    }
+    if( instance->events().getKeyPressed(OF_KEY_ALT) && button == GLFW_MOUSE_BUTTON_LEFT){
+		button = GLFW_MOUSE_BUTTON_MIDDLE;
+    }
+#endif
+
+	switch(button){
+	case GLFW_MOUSE_BUTTON_LEFT:
+		button = OF_MOUSE_BUTTON_LEFT;
+		break;
+	case GLFW_MOUSE_BUTTON_RIGHT:
+		button = OF_MOUSE_BUTTON_RIGHT;
+		break;
+	case GLFW_MOUSE_BUTTON_MIDDLE:
+		button = OF_MOUSE_BUTTON_MIDDLE;
+		break;
+	}
+	instance->buttonInUse = button;
+
+
+	ofMouseEventArgs::Type action;
+	if (state == GLFW_PRESS) {
+		action = ofMouseEventArgs::Pressed;
+		instance->buttonPressed=true;
+	} else if (state == GLFW_RELEASE) {
+		action = ofMouseEventArgs::Released;
+		instance->buttonPressed=false;
+	}
+
+	int modifiers = glfwtToOFModifiers(mods);
+
+	ofMouseEventArgs args(action, instance->events().getMouseX(), instance->events().getMouseY(), button, modifiers);
+
+	instance->events().notifyMouseEvent(args);
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	rotateMouseXY(instance->orientation, instance->getWidth(), instance->getHeight(), x, y);
+
+	ofMouseEventArgs::Type action;
+	if(!instance->buttonPressed){
+		action = ofMouseEventArgs::Moved;
+	}else{
+		action = ofMouseEventArgs::Dragged;
+	}
+
+	ofMouseEventArgs args(action,
+		x*instance->pixelScreenCoordScale,
+		y*instance->pixelScreenCoordScale,
+		instance->buttonInUse,
+		instance->events().getModifiers());
+	instance->events().notifyMouseEvent(args);
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::entry_cb(GLFWwindow *windowP_, int entered) {
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	ofMouseEventArgs::Type action;
+	if(entered){
+		action = ofMouseEventArgs::Entered;
+	}else{
+		action = ofMouseEventArgs::Exited;
+	}
+
+	ofMouseEventArgs args(action,
+		instance->events().getMouseX(),
+		instance->events().getMouseY(),
+		instance->buttonInUse,
+		instance->events().getModifiers());
+	instance->events().notifyMouseEvent(args);
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	rotateMouseXY(instance->orientation, instance->getWidth(), instance->getHeight(), x, y);
+
+	ofMouseEventArgs args(ofMouseEventArgs::Scrolled,
+		instance->events().getMouseX(),
+		instance->events().getMouseY(),
+		instance->buttonInUse,
+		instance->events().getModifiers());
+	args.scrollX = x;
+	args.scrollY = y;
+	instance->events().notifyMouseEvent(args);
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** dropString) {
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	ofDragInfo drag;
+	drag.position = {instance->events().getMouseX(), instance->events().getMouseY()};
+	drag.files.resize(numFiles);
+	for(int i=0; i<(int)drag.files.size(); i++){
+		drag.files[i] = std::filesystem::path(dropString[i]).string();
+	}
+	instance->events().notifyDragEvent(drag);
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::error_cb(int errorCode, const char* errorDescription){
+	ofLogError("ofAppGLFWWindow") << errorCode << ": " << errorDescription;
 }
 
 //------------------------------------------------------------
@@ -1403,50 +1451,14 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 			break;
 	}
 
-	int modifiers = 0;
-	if(mods & GLFW_KEY_LEFT_SHIFT){
-		modifiers |= OF_KEY_SHIFT;
-		modifiers |= OF_KEY_LEFT_SHIFT;
-	}
-	if(mods & GLFW_KEY_RIGHT_SHIFT){
-		modifiers |= OF_KEY_SHIFT;
-		modifiers |= OF_KEY_RIGHT_SHIFT;
-	}
-	if(mods & GLFW_KEY_LEFT_ALT){
-		modifiers |= OF_KEY_ALT;
-		modifiers |= OF_KEY_LEFT_ALT;
-	}
-	if(mods & GLFW_KEY_RIGHT_ALT){
-		modifiers |= OF_KEY_ALT;
-		modifiers |= OF_KEY_RIGHT_ALT;
-	}
-	if(mods & GLFW_KEY_LEFT_CONTROL){
-		modifiers |= OF_KEY_CONTROL;
-		modifiers |= OF_KEY_LEFT_CONTROL;
-	}
-	if(mods & GLFW_KEY_RIGHT_CONTROL){
-		modifiers |= OF_KEY_CONTROL;
-		modifiers |= OF_KEY_RIGHT_CONTROL;
-	}
-	if(mods & GLFW_KEY_LEFT_CONTROL){
-		modifiers |= OF_KEY_CONTROL;
-		modifiers |= OF_KEY_LEFT_CONTROL;
-	}
-	if(mods & GLFW_KEY_RIGHT_CONTROL){
-		modifiers |= OF_KEY_CONTROL;
-		modifiers |= OF_KEY_RIGHT_CONTROL;
-	}
-	if(mods & GLFW_KEY_LEFT_SUPER){
-		modifiers |= OF_KEY_SUPER;
-		modifiers |= OF_KEY_LEFT_SUPER;
-	}
-	if(mods & GLFW_KEY_RIGHT_SUPER){
-		modifiers |= OF_KEY_SUPER;
-		modifiers |= OF_KEY_RIGHT_SUPER;
-	}
+	int modifiers = glfwtToOFModifiers(mods);
 
-	if(action == GLFW_PRESS || action == GLFW_REPEAT){
+	if(action == GLFW_PRESS){
 		ofKeyEventArgs keyE(ofKeyEventArgs::Pressed,key,keycode,scancode,codepoint,modifiers);
+		instance->events().notifyKeyEvent(keyE);
+	}else if(action == GLFW_REPEAT){
+		ofKeyEventArgs keyE(ofKeyEventArgs::Pressed,key,keycode,scancode,codepoint,modifiers);
+		keyE.isRepeat = true;
 		instance->events().notifyKeyEvent(keyE);
 	}else if (action == GLFW_RELEASE){
 		ofKeyEventArgs keyE(ofKeyEventArgs::Released,key,keycode,scancode,codepoint,modifiers);
