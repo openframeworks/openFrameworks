@@ -138,11 +138,13 @@ ofSerial::~ofSerial(){
 }
 
 //----------------------------------------------------------------
+#if defined( TARGET_OSX )
 static bool isDeviceArduino( ofSerialDeviceInfo & A ){
 	//TODO - this should be ofStringInString
 	return (strstr(A.getDeviceName().c_str(), "usbserial") != nullptr
 			|| strstr(A.getDeviceName().c_str(), "usbmodem") != nullptr);
 }
+#endif
 
 //----------------------------------------------------------------
 void ofSerial::buildDeviceList(){
