@@ -18,6 +18,7 @@ public:
 	/// \{
 
 	virtual void begin(ofRectangle viewport = ofRectangle());
+	virtual void end();
 
     /// \brief Reset the camera position and orientation.
 	void reset();
@@ -197,6 +198,8 @@ private:
 	float sensitivityRotX = 1.0f;
 	float sensitivityRotY = 1.0f;
 	float sensitivityRotZ = 1.0f;
+
+	float orthoScale = 1.0f;
 
 	glm::vec2 lastMouse, prevMouse;
 	glm::vec2 mouseVel;
