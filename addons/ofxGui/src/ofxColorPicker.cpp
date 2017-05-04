@@ -153,26 +153,22 @@ ofxColorPicker_<ColorType>::ofxColorPicker_(ofParameter<ofColor_<ColorType>> par
 template<class ColorType>
 ofxColorPicker_<ColorType> * ofxColorPicker_<ColorType>::setup(ofParameter<ofColor_<ColorType>> parameter, float w, float h){
 	this->color.makeReferenceTo(parameter);
-
-	listener = color.newListener([this](ofColor_<ColorType> & c){
-		colorChanged();
-	});
+    auto colorChanged = [this](const ofColor_<ColorType> & c){
+        if(bSettingColor){
+            return;
+        }
+        ofFloatColor cf = c;
+        float hue, saturation, brightness;
+        cf.getHsb(hue,saturation,brightness);
+        colorScale = brightness;
+        colorRadius = saturation;
+        colorAngle = 360.f * hue;
+        setNeedsRedraw();
+    };
+    listener = color.newListener(colorChanged);
 	setShape(b.x, b.y, w, h);
-	colorChanged();//needs this so the color wheel shows the correct color once setup.
+	colorChanged(color.get());//needs this so the color wheel shows the correct color once setup.
 	return this;
-}
-template<class ColorType>
-void ofxColorPicker_<ColorType>::colorChanged(){
-	if(bSettingColor){
-		return;
-	}
-	ofFloatColor cf = color.get();
-	float hue, saturation, brightness;
-	cf.getHsb(hue,saturation,brightness);
-	colorScale = brightness;
-	colorRadius = saturation;
-	colorAngle = 360.f * hue;
-	setNeedsRedraw();
 }
 template<class ColorType>
 void ofxColorPicker_<ColorType>::setShape(float x, float y, float w, float h) {
