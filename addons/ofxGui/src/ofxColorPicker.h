@@ -72,8 +72,6 @@ private :
 	ofVboMesh geometry;
 	ofParameter<ofColor_<ColorType>> color;
 
-	void colorChanged();
-	
 	enum State{
 		Waiting,
 		ChangingWheel,
