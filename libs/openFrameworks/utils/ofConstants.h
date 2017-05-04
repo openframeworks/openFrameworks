@@ -718,12 +718,13 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 
 
 	#define OF_KEY_RETURN		13
-	#define OF_KEY_ESC			27
-	#define OF_KEY_TAB          9
-
+	#define OF_KEY_ESC		27
+	#define OF_KEY_TAB		9
 
 	#define OF_KEY_BACKSPACE	8
-	#define OF_KEY_DEL			127
+	#define OF_KEY_DEL		127
+
+	#define OF_KEY_SPACE		32
 
 
 	// For legacy reasons we are mixing up control keys
