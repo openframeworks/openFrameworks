@@ -70,11 +70,11 @@ public:
 		makeIdentityMatrix();
 	}
 
-	ofMatrix4x4( const glm::mat4 & mat) {
+	OF_DEPRECATED_MSG("Use glm::mat4.", ofMatrix4x4( const glm::mat4 & mat)) {
 		*this = reinterpret_cast<const ofMatrix4x4&>(mat);
 	}
 
-	operator glm::mat4(){
+	OF_DEPRECATED_MSG("Use glm::mat4.", operator glm::mat4()) {
 		return *reinterpret_cast<glm::mat4*>(this);
 	}
 

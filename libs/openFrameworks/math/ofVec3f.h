@@ -125,10 +125,10 @@ public:
 	/// ~~~~
     ofVec3f( const ofVec4f& vec );
 
-	ofVec3f( const glm::vec2 & vec );
-	ofVec3f( const glm::vec3 & vec );
-	ofVec3f( const glm::vec4 & vec );
-	operator glm::vec3() const;
+	OF_DEPRECATED_MSG("Use glm::vec3.", ofVec3f( const glm::vec2 & vec ));
+	OF_DEPRECATED_MSG("Use glm::vec3.", ofVec3f( const glm::vec3 & vec ));
+	OF_DEPRECATED_MSG("Use glm::vec3.", ofVec3f( const glm::vec4 & vec ));
+	OF_DEPRECATED_MSG("Use glm::vec3.", operator glm::vec3() const);
 
 	/// \}
 
