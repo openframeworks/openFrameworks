@@ -132,9 +132,9 @@ void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
 		clearParent(bMaintainGlobalTransform);
 	}
 	if(bMaintainGlobalTransform) {
-		auto postParentPosition = position - parent.getGlobalPosition();
+		auto postParentPosition = position.get() - parent.getGlobalPosition();
 		auto postParentOrientation = orientation.get() * glm::inverse(parent.getGlobalOrientation());
-		auto postParentScale = scale / parent.getGlobalScale();
+		auto postParentScale = scale.get() / parent.getGlobalScale();
 		parent.addListener(*this);
 		setOrientation(postParentOrientation);
 		setPosition(postParentPosition);
@@ -597,7 +597,7 @@ void ofNode::orbitDeg(float longitude, float latitude, float radius, const glm::
 	p = q * p;							   // rotate p on unit sphere based on quaternion
 	p = p * radius;						   // scale p by radius from its position on unit sphere
 
-	setGlobalPosition(centerPoint + p);
+	setGlobalPosition(centerPoint + p.xyz());
 	setOrientation(q);
 
 	onOrientationChanged();
@@ -620,7 +620,7 @@ void ofNode::orbitRad(float longitude, float latitude, float radius, const glm::
 	p = q * p;							   // rotate p on unit sphere based on quaternion
 	p = p * radius;						   // scale p by radius from its position on unit sphere
 
-	setGlobalPosition(centerPoint + p);
+	setGlobalPosition(centerPoint + p.xyz());
 	setOrientation(q);
 
 	onOrientationChanged();

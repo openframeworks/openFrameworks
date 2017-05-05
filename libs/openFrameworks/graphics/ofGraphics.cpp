@@ -1138,14 +1138,14 @@ void ofVertices( const vector <glm::vec2> & polyPoints ){
 //----------------------------------------------------------
 void ofVertices( const vector <ofVec3f> & polyPoints ){
 	for( const auto & p: polyPoints ){
-		ofGetCurrentRenderer()->getPath().lineTo(p);
+		ofGetCurrentRenderer()->getPath().lineTo(glm::vec3(p.x, p.y, p.z));
 	}
 }
 
 //----------------------------------------------------------
 void ofVertices( const vector <ofVec2f> & polyPoints ){
 	for( const auto & p: polyPoints ){
-		ofGetCurrentRenderer()->getPath().lineTo(p);
+		ofGetCurrentRenderer()->getPath().lineTo(glm::vec3(p.x, p.y, 0.0));
 	}
 }
 
@@ -1176,14 +1176,14 @@ void ofCurveVertices( const vector <glm::vec2> & curvePoints){
 //----------------------------------------------------------
 void ofCurveVertices( const vector <ofVec3f> & curvePoints){
 	for( const auto & p: curvePoints ){
-		ofGetCurrentRenderer()->getPath().curveTo(p);
+		ofGetCurrentRenderer()->getPath().curveTo(glm::vec3(p.x, p.y, p.z));
 	}
 }
 
 //----------------------------------------------------------
 void ofCurveVertices( const vector <ofVec2f> & curvePoints){
 	for( const auto & p: curvePoints ){
-		ofGetCurrentRenderer()->getPath().curveTo(p);
+		ofGetCurrentRenderer()->getPath().curveTo(glm::vec3(p.x, p.y, 0.0));
 	}
 }
 
