@@ -164,13 +164,14 @@ void of3dPrimitive::mapTexCoordsFromTexture( ofTexture& inTexture ) {
 #endif
     
     ofTextureData& tdata = inTexture.getTextureData();
-    if(bNormalized)
+	if(bNormalized){
         mapTexCoords( 0, 0, tdata.tex_t, tdata.tex_u );
-    else
+	}else{
         mapTexCoords(0, 0, inTexture.getWidth(), inTexture.getHeight());
+	}
     
 	auto tcoords = getTexCoords();
-    mapTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
+	mapTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
 }
 
 //----------------------------------------------------------
