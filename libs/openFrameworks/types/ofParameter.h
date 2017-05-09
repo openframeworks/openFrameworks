@@ -424,6 +424,12 @@ namespace priv{
 
 
 
+enum class ofParameterScale{
+	Linear,
+	Logarithmic,
+};
+
+
 /// \brief ofParameter holds a value and notifies its listeners when it changes.
 ///
 /// ofParameter can be used as the value itself. For example an `ofParameter<int>`
@@ -442,6 +448,7 @@ public:
 	ofParameter(const ParameterType & v);
 	ofParameter(const string& name, const ParameterType & v);
 	ofParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
+	ofParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max, ofParameterScale scale);
 
 	const ParameterType & get() const;
 	const ParameterType * operator->() const;
@@ -520,6 +527,15 @@ public:
 	void setMin(const ParameterType & min);
 	void setMax(const ParameterType & max);
 
+	template<typename T=ParameterType>
+	typename std::enable_if<std::is_arithmetic<T>::value, void>::type setScale(ofParameterScale scale);
+	template<typename T=ParameterType>
+	typename std::enable_if<std::is_arithmetic<T>::value, ofParameterScale>::type getScale() const;
+	template<typename T=ParameterType>
+	typename std::enable_if<std::is_arithmetic<T>::value, void>::type setPctScaled(double value);
+	template<typename T=ParameterType>
+	typename std::enable_if<std::is_arithmetic<T>::value, double>::type getPctScaled() const;
+
 	void setSerializable(bool serializable);
 	shared_ptr<ofAbstractParameter> newReference() const;
 
@@ -542,6 +558,37 @@ public:
 protected:
 
 private:
+	template<typename T, typename Enable = void>
+	class Scale;
+
+	template<typename T>
+	class Scale<T, typename std::enable_if<std::is_arithmetic<T>::value, T>::type>{
+		public:
+			ofParameterScale scale;
+			Scale():scale(ofParameterScale::Linear){}
+			Scale(ofParameterScale scale):scale(scale){}
+			Scale<T> & operator=(ofParameterScale scale){
+				this->scale = scale;
+				return *this;
+			}
+			operator ofParameterScale(){
+				return scale;
+			}
+	};
+
+	template<typename T>
+	class Scale<T, typename std::enable_if<!std::is_arithmetic<T>::value, T>::type>{
+	public:
+		Scale(){}
+		Scale(ofParameterScale){}
+		Scale<T> & operator=(ofParameterScale){
+			return *this;
+		}
+		operator ofParameterScale(){
+			return ofParameterScale::Linear;
+		}
+	};
+
 	class Value{
 	public:
 		Value()
@@ -573,6 +620,15 @@ private:
 		,bInNotify(false)
 		,serializable(true){}
 
+		Value(string name, ParameterType v, ParameterType min, ParameterType max, ofParameterScale scale)
+		:name(name)
+		,value(v)
+		,min(min)
+		,max(max)
+		,bInNotify(false)
+		,serializable(true)
+		,scale(scale){}
+
 		string name;
 		ParameterType value;
 		ParameterType min, max;
@@ -580,6 +636,7 @@ private:
 		bool bInNotify;
 		bool serializable;
 		vector<weak_ptr<ofParameterGroup::Value>> parents;
+		Scale<ParameterType,ParameterType> scale;
 	};
 
 	shared_ptr<Value> obj;
@@ -618,6 +675,10 @@ ofParameter<ParameterType>::ofParameter(const string& name, const ParameterType 
 :obj(std::make_shared<Value>(name, v, min, max))
 ,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)){}
 
+template<typename ParameterType>
+ofParameter<ParameterType>::ofParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max, ofParameterScale scale)
+:obj(std::make_shared<Value>(name, v, min, max, scale))
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)){}
 
 template<typename ParameterType>
 inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator=(const ofParameter<ParameterType> & v){
@@ -794,6 +855,57 @@ void ofParameter<ParameterType>::enableEvents(){
 template<typename ParameterType>
 void ofParameter<ParameterType>::disableEvents(){
 	setMethod = std::bind(&ofParameter<ParameterType>::noEventsSetValue, this, std::placeholders::_1);
+}
+
+
+template<typename ParameterType>
+template<typename T>
+typename std::enable_if<std::is_arithmetic<T>::value, void>::type ofParameter<ParameterType>::setScale(ofParameterScale scale){
+	obj->scale = scale;
+}
+
+template<typename ParameterType>
+template<typename T>
+typename std::enable_if<std::is_arithmetic<T>::value, ofParameterScale>::type ofParameter<ParameterType>::getScale() const{
+	return obj->scale;
+}
+
+template<typename ParameterType>
+template<typename T>
+typename std::enable_if<std::is_arithmetic<T>::value, void>::type ofParameter<ParameterType>::setPctScaled(double pct){
+	switch(static_cast<ofParameterScale>(obj->scale)){
+		case ofParameterScale::Linear:
+			set(ofMap(pct, 0, 1, obj->min, obj->max));
+		break;
+		case ofParameterScale::Logarithmic:{
+			auto offset = obj->min > 0 ? 0 : 1 - obj->min;
+			auto min = obj->min + offset;
+			auto max = obj->max + offset;
+			auto minv = log(min);
+			auto maxv = log(max);
+			auto scale = (maxv - minv);
+			set(exp(minv + scale * pct) - offset);
+		}break;
+	}
+}
+
+template<typename ParameterType>
+template<typename T>
+typename std::enable_if<std::is_arithmetic<T>::value, double>::type ofParameter<ParameterType>::getPctScaled() const{
+	switch(static_cast<ofParameterScale>(obj->scale)){
+		case ofParameterScale::Logarithmic:{
+			auto offset = obj->min > 0 ? 0 : 1 - obj->min;
+			auto min = obj->min + offset;
+			auto max = obj->max + offset;
+			auto minv = log(min);
+			auto maxv = log(max);
+			auto scale = (maxv - minv);
+			return (log(obj->value + offset) - minv) / scale;
+		}
+		case ofParameterScale::Linear:
+		default:
+			return ofMap(obj->value, obj->min, obj->max, 0, 1);
+	}
 }
 
 template<typename ParameterType>
