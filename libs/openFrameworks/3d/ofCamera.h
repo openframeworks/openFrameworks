@@ -124,9 +124,9 @@ public:
 
     bool isVFlipped() const;
 
-	void enableOrtho();
+	virtual void enableOrtho();
 
-    void disableOrtho();
+    virtual void disableOrtho();
 
     bool getOrtho() const;
 	
