@@ -16,22 +16,25 @@ ofEasyCam::ofEasyCam(){
 	sensitivityRot = {1,1,1};
 }
 //----------------------------------------
-void ofEasyCam::enableOrtho(){
-	if (!getOrtho()) {
-		prevFarClip = getFarClip();
-		prevNearClip = getNearClip();
+void ofEasyCam::enableOrtho(bool e){
+	if (e != getOrtho()) {
+		if (e) {
+			// the near and far clip used in the perspective camera mode are save so this can be restored if ortho mode is disabled.
+			prevFarClip = getFarClip();
+			prevNearClip = getNearClip();
+			// Just set the near and far clip to a large range to avoid clipping.
+			setNearClip(-10000);
+			setFarClip(10000);
+		}else{
+			setNearClip(prevNearClip);
+			setFarClip(prevFarClip);
+		}
+		ofCamera::enableOrtho(e);
 	}
-	setNearClip(-10000);
-	setFarClip(10000);
-	ofCamera::enableOrtho();	
 }
 //----------------------------------------
 void ofEasyCam::disableOrtho(){
-	if(getOrtho()){
-		setNearClip(prevNearClip);
-		setFarClip(prevFarClip);
-	}
-	ofCamera::disableOrtho();
+	enableOrtho(false);
 }
 //----------------------------------------
 void ofEasyCam::update(ofEventArgs & args){
@@ -145,32 +148,28 @@ char ofEasyCam::getTranslationKey() const{
 }
 
 //----------------------------------------
-void ofEasyCam::enableMouseInput(){
-	if(!bMouseInputEnabled && events){
-		listeners.push_back(events->update.newListener(this, &ofEasyCam::update));
-		listeners.push_back(events->mousePressed.newListener(this, &ofEasyCam::mousePressed));
-		listeners.push_back(events->mouseReleased.newListener(this, &ofEasyCam::mouseReleased));
-		listeners.push_back(events->mouseScrolled.newListener(this, &ofEasyCam::mouseScrolled));
+void ofEasyCam::enableMouseInput(bool e){
+	if(e != bMouseInputEnabled && events){
+		if(e){
+			listeners.push_back(events->update.newListener(this, &ofEasyCam::update));
+			listeners.push_back(events->mousePressed.newListener(this, &ofEasyCam::mousePressed));
+			listeners.push_back(events->mouseReleased.newListener(this, &ofEasyCam::mouseReleased));
+			listeners.push_back(events->mouseScrolled.newListener(this, &ofEasyCam::mouseScrolled));
+		}else{
+			listeners.clear();
+		}
+		// if enableMouseInput was called within ofApp::setup()
+		// `events` will still carry a null pointer, and bad things
+		// will happen. Therefore we only update the flag.
+		bMouseInputEnabled = e;
+		// setEvents() is called upon first load, and will make sure
+		// to enable the mouse input once the camera is fully loaded.
 	}
-	// if enableMouseInput was called within ofApp::setup()
-	// `events` will still carry a null pointer, and bad things
-	// will happen. Therefore we only update the flag. 
-	bMouseInputEnabled = true;
-	// setEvents() is called upon first load, and will make sure 
-	// to enable the mouse input once the camera is fully loaded.
 }
 
 //----------------------------------------
 void ofEasyCam::disableMouseInput(){
-	if(bMouseInputEnabled && events){
-		listeners.clear();
-	}
-	// if disableMouseInput was called within ofApp::setup()
-	// `events` will still carry a null pointer, and bad things
-	// will happen. Therefore we only update the flag. 
-	bMouseInputEnabled = false;
-	// setEvents() is called upon first load, and will make sure 
-	// to enable the mouse input once the camera is fully loaded.
+	enableMouseInput(false);
 }
 //----------------------------------------
 bool ofEasyCam::getMouseInputEnabled() const{
@@ -215,13 +214,13 @@ void ofEasyCam::setTranslationSensitivity(float x, float y, float z){
 }
 
 //----------------------------------------
-void ofEasyCam::enableMouseMiddleButton(){
-	bEnableMouseMiddleButton = true;
+void ofEasyCam::enableMouseMiddleButton(bool e){
+	bEnableMouseMiddleButton = e;
 }
 
 //----------------------------------------
 void ofEasyCam::disableMouseMiddleButton(){
-	bEnableMouseMiddleButton = false;
+	enableMouseMiddleButton(false);
 }
 
 //----------------------------------------
@@ -263,13 +262,13 @@ const glm::vec3 & ofEasyCam::getUpAxis() const{
 }
 
 //----------------------------------------
-void ofEasyCam::enableInertia(){
-	doInertia = true;
+void ofEasyCam::enableInertia(bool e){
+	doInertia = e;
 }
 
 //----------------------------------------
 void ofEasyCam::disableInertia(){
-	doInertia = false;
+	enableInertia(false);
 }
 
 //----------------------------------------
