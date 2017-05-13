@@ -249,7 +249,7 @@ bool ofRestoreWorkingDirectoryToDefault();
 ///
 /// \warning The provided path must have a trailing slash (/).
 /// \param root The path to the data/ folder relative to the app executable.
-void ofSetDataPathRoot(const string& root);
+void ofSetDataPathRoot(const std::filesystem::path& root);
 
 
 /// \section Vectors
