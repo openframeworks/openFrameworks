@@ -51,6 +51,10 @@ void ofxGuiSetDefaultHeight(int height){
 	ofxBaseGui::setDefaultHeight(height);
 }
 
+void ofxGuiSetDefaultEventsPriority(ofEventOrder eventsPriority){
+	ofxBaseGui::setDefaultEventsPriority(eventsPriority);
+}
+
 ofColor
 ofxBaseGui::headerBackgroundColor(64),
 ofxBaseGui::backgroundColor(0),
@@ -66,6 +70,7 @@ ofTrueTypeFont ofxBaseGui::font;
 bool ofxBaseGui::fontLoaded = false;
 bool ofxBaseGui::useTTF = false;
 ofBitmapFont ofxBaseGui::bitmapFont;
+ofEventOrder ofxBaseGui::defaultEventsPriority = OF_EVENT_ORDER_BEFORE_APP;
 
 ofxBaseGui::ofxBaseGui(){
 	parent = nullptr;
@@ -114,14 +119,14 @@ void ofxBaseGui::registerMouseEvents(){
 		return; // already registered.
 	}
 	bRegisteredForMouseEvents = true;
-	ofRegisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+	ofRegisterMouseEvents(this, defaultEventsPriority);
 }
 
 void ofxBaseGui::unregisterMouseEvents(){
 	if(bRegisteredForMouseEvents == false){
 		return; // not registered.
 	}
-	ofUnregisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+	ofUnregisterMouseEvents(this, defaultEventsPriority);
 	bRegisteredForMouseEvents = false;
 }
 
@@ -337,6 +342,10 @@ void ofxBaseGui::setDefaultWidth(int width){
 
 void ofxBaseGui::setDefaultHeight(int height){
 	defaultHeight = height;
+}
+
+void ofxBaseGui::setDefaultEventsPriority(ofEventOrder eventsPriority){
+	defaultEventsPriority = eventsPriority;
 }
 
 void ofxBaseGui::sizeChangedCB(){
