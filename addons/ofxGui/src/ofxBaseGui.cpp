@@ -209,8 +209,12 @@ void ofxBaseGui::loadFromFile(const std::string& filename){
     if(extension == "json"){
 		ofJson json;
 		ofFile jsonFile(filename);
-		jsonFile >> json;
-		loadFrom(json);
+		if (jsonFile.exists()) {
+			jsonFile >> json;
+			loadFrom(json);
+		}else{
+			ofLogError("ofxGui") << filename << " does not exist";
+		}
 	}else{
 		ofLogError("ofxGui") << extension << " not recognized, only .xml and .json supported by now";
 	}
