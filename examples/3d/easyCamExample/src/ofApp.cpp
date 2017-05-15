@@ -130,13 +130,13 @@ void ofApp::drawInteractionArea(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 	switch(key) {
-        case ' ':
-		    cam.getOrtho() ? cam.disableOrtho() : cam.enableOrtho();
+      case ' ':
+    	    cam.getOrtho() ? cam.disableOrtho() : cam.enableOrtho();
             break;
-		case 'C':
-		case 'c':
-		    cam.getMouseInputEnabled() ? cam.disableMouseInput() : cam.enableMouseInput();
-			break;
+	    case 'C':
+	    case 'c':
+            cam.getMouseInputEnabled() ? cam.disableMouseInput() : cam.enableMouseInput();
+            break;
 		case 'F':
 		case 'f':
 			ofToggleFullscreen();
