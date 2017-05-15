@@ -131,11 +131,19 @@ void ofApp::drawInteractionArea(){
 void ofApp::keyPressed(int key){
 	switch(key) {
         case ' ':
-            cam.enableOrtho(!cam.getOrtho());
+            if(cam.getOrtho()){
+                cam.disableOrtho();
+            }else{
+                cam.enableOrtho();
+            }
             break;
 		case 'C':
 		case 'c':
-			cam.enableMouseInput(!cam.getMouseInputEnabled());
+            if(cam.getMouseInputEnabled()){
+                cam.disableMouseInput();
+            }else{
+                cam.enableMouseInput();
+            }
 			break;
 
 		case 'F':
@@ -148,7 +156,11 @@ void ofApp::keyPressed(int key){
 			break;
         case 'I':
         case 'i':
-            cam.enableInertia(!cam.getInertiaEnabled());
+            if(cam.getInertiaEnabled()){
+                cam.disableInertia();
+            }else{
+                cam.enableInertia();
+            }
             break;
         case 'Y':
         case 'y':
