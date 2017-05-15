@@ -23,7 +23,7 @@ public:
 	void reset();
 
 	/// \enable and disable orthographic projection.
-	void enableOrtho(bool e = true);
+	void enableOrtho();
 
 	void disableOrtho();
 	
@@ -107,7 +107,7 @@ public:
     /// \{
 
     /// \brief Enable mouse camera control.
-	void enableMouseInput(bool e = true);
+	void enableMouseInput();
 
     /// \brief Disable mouse camera control.
 	void disableMouseInput();
@@ -118,7 +118,7 @@ public:
 	bool getMouseInputEnabled() const;
 
     /// \brief Enable the mouse's middle button for camera control.
-	void enableMouseMiddleButton(bool e = true);
+	void enableMouseMiddleButton();
 
     /// \brief Disable the mouse's middle button for camera control.
 	void disableMouseMiddleButton();
@@ -148,7 +148,7 @@ public:
 	/// Get the up axis.
 	const glm::vec3 & getUpAxis() const;
 
-	void enableInertia(bool e = true);
+	void enableInertia();
 	void disableInertia();
 
 	/// Determine if intertia is enabled.
