@@ -114,7 +114,7 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::drawInteractionArea(){
 	ofRectangle vp = ofGetCurrentViewport();
-	float r = MIN(vp.width, vp.height) * 0.5f;
+	float r = std::min<float>(vp.width, vp.height) * 0.5f;
 	float x = vp.width * 0.5f;
 	float y = vp.height * 0.5f;
 
@@ -131,13 +131,12 @@ void ofApp::drawInteractionArea(){
 void ofApp::keyPressed(int key){
 	switch(key) {
         case ' ':
-            cam.enableOrtho(!cam.getOrtho());
+		    cam.getOrtho() ? cam.disableOrtho() : cam.enableOrtho();
             break;
 		case 'C':
 		case 'c':
-			cam.enableMouseInput(!cam.getMouseInputEnabled());
+		    cam.getMouseInputEnabled() ? cam.disableMouseInput() : cam.enableMouseInput();
 			break;
-
 		case 'F':
 		case 'f':
 			ofToggleFullscreen();
@@ -148,7 +147,7 @@ void ofApp::keyPressed(int key){
 			break;
         case 'I':
         case 'i':
-            cam.enableInertia(!cam.getInertiaEnabled());
+		    cam.getInertiaEnabled() ? cam.disableInertia() : cam.enableInertia();
             break;
         case 'Y':
         case 'y':
