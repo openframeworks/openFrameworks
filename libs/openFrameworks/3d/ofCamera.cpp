@@ -106,13 +106,13 @@ bool ofCamera::isVFlipped() const{
 }
 
 //----------------------------------------
-void ofCamera::enableOrtho(bool e) {
-	isOrtho = e;
+void ofCamera::enableOrtho() {
+	isOrtho = true;
 }
 
 //----------------------------------------
 void ofCamera::disableOrtho() {
-	enableOrtho(false);
+	isOrtho = false;
 }
 
 //----------------------------------------
