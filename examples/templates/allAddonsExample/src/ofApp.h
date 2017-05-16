@@ -10,6 +10,8 @@
 #include "ofxKinect.h"
 #include "ofxGui.h"
 #include "ofxSvg.h"
+#include "ofxXmlPoco.h"
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -44,4 +46,5 @@ class ofApp : public ofBaseApp{
 	ofxKinect kinect;
 	ofxPanel gui;
 	ofxSVG svg;
+    ofxXmlPoco xml;
 };

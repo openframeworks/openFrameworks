@@ -1,56 +1,68 @@
 package cc.openframeworks;
 
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.Activity;
+import android.media.AudioManager;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 
 public class OFAndroidLifeCycle
 {
-	private static final int POP_AND_REMOVE_SELF = 1;
-	private static final int POP = 2;
-	private static final int PUSH = 3;
 	
+	static {
+        
+        Log.i("OF","static init");
+        
+        try {
+            Log.i("OF","loading x86 library");
+            System.loadLibrary("OFAndroidApp_x86");
+        }
+        catch(Throwable ex)	{
+            Log.i("OF","failed x86 loading, trying neon detection",ex);
+            
+            try{
+                System.loadLibrary("neondetection");
+                if(OFAndroid.hasNeon()){
+                    Log.i("OF","loading neon optimized library");
+                    System.loadLibrary("OFAndroidApp_neon");
+                }
+                else{
+                    Log.i("OF","loading not-neon optimized library");
+                    System.loadLibrary("OFAndroidApp");
+                }
+            }catch(Throwable ex2){
+                Log.i("OF","failed neon detection, loading not-neon library",ex2);
+                System.loadLibrary("OFAndroidApp");
+            }
+        }
+        Log.i("OF","initializing app");
+    }
+		
 	private static Vector<State> m_statesStack = new Vector<State>();
 	private static State m_currentState = null;
 	private static Semaphore m_semaphor = new Semaphore(1, false);
 	private static AtomicBoolean m_isWorkerDone = new AtomicBoolean(true);
+	private static AtomicBoolean m_isInit = new AtomicBoolean(false);
 
-	private static ILifeCycleCallback m_callback = null; 
 	private static Activity m_activity = null;
+	
+	private static int m_countActivities = 0;
+	private static ArrayList<Runnable> m_initializers = new ArrayList<Runnable>();
+	
+	private static OFGLSurfaceView mGLView = null;
 	
 	private static void pushState(State state)
 	{
-		int action = 0;
 //        close
         try {
             m_semaphor.acquire();
-            do {
-                if (m_statesStack.isEmpty()) {
-                    action = PUSH;
-                    break;
-                }
-                State lastState = m_statesStack.lastElement();
-                action = isDisableState(lastState, state);
-                if (action == POP) {
-                    m_statesStack.remove(lastState);
-                }
-            }
-            while (action == POP);
-            
-            switch (action) {
-                case POP_AND_REMOVE_SELF:
-                    m_statesStack.remove(m_statesStack.size() - 1);
-                    break;
-                case PUSH:
-                    m_statesStack.add(state);
-                    break;
-
-                default:
-                    break;
-            }
+            m_statesStack.add(state);
 //        release
             m_semaphor.release();
             startWorkerThread();
@@ -60,48 +72,6 @@ public class OFAndroidLifeCycle
             Log.e(OFAndroidLifeCycle.class.getSimpleName(), "pushState exception message: "+ex.getMessage(), ex);
             throw new RuntimeException("pushState state: "+ state +" exception message: "+ex.getMessage());
         }
-	}
-	
-	private static int isDisableState(State lastInStack, State newState)
-	{
-		String errorMessage = "Illegal pushed state! Last state in stack "+ lastInStack.toString()+" new state: "+newState.toString();
-		int  result = PUSH;
-		switch (lastInStack) {
-		case create:
-			if(newState.equals(State.pause)||newState.equals(State.init)||newState.equals(State.create))
-				throw new IllegalStateException(errorMessage);
-			else if(newState.equals(State.exit))
-				result = POP;
-			else if(newState.equals(State.destroy))
-				result = POP_AND_REMOVE_SELF;
-			break;
-		case resume:
-			if(newState.equals(State.resume)||newState.equals(State.create)||newState.equals(State.init))
-				throw new IllegalStateException(errorMessage);
-			else if(newState.equals(State.destroy))
-				result = POP;
-			else if(newState.equals(State.pause))
-				result = POP_AND_REMOVE_SELF;
-			break;
-		case pause:
-			if(newState.equals(State.exit)||newState.equals(State.create)||newState.equals(State.init)||newState.equals(State.pause))
-				throw new IllegalStateException(errorMessage);
-			else if(newState.equals(State.resume))
-				result = POP_AND_REMOVE_SELF;
-			break;
-		case destroy:
-			if(newState.equals(State.destroy)||newState.equals(State.init)||newState.equals(State.resume)||newState.equals(State.pause))
-				throw new IllegalStateException(errorMessage);
-			else if(newState.equals(State.create))
-				result = POP_AND_REMOVE_SELF;
-			break;
-		case exit:
-			throw new IllegalStateException(errorMessage);
-
-		default:
-			break;
-		}
-		return result;
 	}
 	
 	private static boolean isNextStateLegal(State next)
@@ -151,8 +121,6 @@ public class OFAndroidLifeCycle
 			@Override
 			public void run() 
 			{
-				// TODO Auto-generated method stub
-				Runnable callbackFunction = null;
 //close
                 try {
                     m_semaphor.acquire();
@@ -162,64 +130,28 @@ public class OFAndroidLifeCycle
 //                    release
                         m_semaphor.release();
                         if (!isNextStateLegal(next))
+                        {
                             throw new IllegalStateException("Illegal next state! when current state " + m_currentState.toString() + " next state: " + next.toString());
+                        }
 
                         m_currentState = next;
                         switch (next) {
                             case init:
                                 OFAndroidLifeCycleHelper.appInit(m_activity);
-                                callbackFunction = new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        // TODO Auto-generated method stub
-                                        m_callback.callbackInit();
-                                    }
-                                };
+                                coreInitialized();
                                 break;
                             case create:
                                 OFAndroidLifeCycleHelper.onCreate();
-                                callbackFunction = new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        // TODO Auto-generated method stub
-                                        m_callback.callbackCreated();
-                                    }
-                                };
                                 break;
                             case resume:
                                 OFAndroidLifeCycleHelper.onResume();
-                                callbackFunction = new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        // TODO Auto-generated method stub
-                                        m_callback.callbackResumed();
-                                    }
-                                };
+                                glResumed();
                                 break;
                             case pause:
                                 OFAndroidLifeCycleHelper.onPause();
-                                callbackFunction = new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        // TODO Auto-generated method stub
-                                        m_callback.callbackPaused();
-                                    }
-                                };
                                 break;
                             case destroy:
                                 OFAndroidLifeCycleHelper.onDestroy();
-                                callbackFunction = new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        // TODO Auto-generated method stub
-                                        m_callback.callbackDestroed();
-                                    }
-                                };
                                 break;
                             case exit:
                                 OFAndroidLifeCycleHelper.exit();
@@ -229,7 +161,6 @@ public class OFAndroidLifeCycle
                             default:
                                 break;
                         }
-                        m_activity.runOnUiThread(callbackFunction);
                         //close
                         m_semaphor.acquire();
                     }
@@ -249,39 +180,143 @@ public class OFAndroidLifeCycle
 		worker.start();
 	}
 	
+	private static void coreInitialized()
+    {
+        synchronized (m_isInit) {
+        	m_isInit.set(true);
+		}
+        if(m_activity != null)
+        	m_activity.runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					for (Runnable init : m_initializers)
+			        {
+						init.run();
+			        }
+			        m_initializers.clear();
+				}
+			});
+    }
+	
+	private static void glResumed(){
+		m_activity.runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				mGLView.setVisibility(View.VISIBLE);
+			}
+		});
+	}
+	
+	static Activity getActivity(){
+		return OFAndroidLifeCycle.m_activity;
+	}
+	
+	static OFGLSurfaceView getGLView(){
+		return mGLView;
+	}
+	
+	static void clearGLView(){
+		mGLView = null;
+	}
+	
+	public static void setActivity(Activity activity){
+		m_activity = activity;
+		activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+		OFAndroidObject.setActivity(activity);
+	}
+	
 //============================ Life Cycle Functions ===================//
-	public static void init(ILifeCycleCallback callback, Activity activity)
+	
+	public static void addPostInit(Runnable runnable)
 	{
-		OFAndroidLifeCycle.m_callback = callback;
-		OFAndroidLifeCycle.m_activity = activity;
+		if(isInit())
+			runnable.run();
+        else
+        {
+            m_initializers.add(runnable);
+        }
+	}
+	
+	public static void clearPostInit(){
+		m_initializers.clear();
+	}
+	
+	public static boolean isInit()
+	{
+		synchronized (m_isInit) {
+			return m_isInit.get();
+		}
+	}
+
+	
+	public static void init()
+	{
 		if(m_currentState != null)
 		{
-			callback.callbackInit();
 			return;
 		}
+		Log.i("OF","OFAndroid init...");
 		pushState(State.init);
 	}
 	
-	public static void onCreate(OFActivity activity)
+	static String TAG = "OF";
+	
+	public static void glCreate()
 	{
-		OFAndroidLifeCycle.m_activity = activity;
-		OFAndroidLifeCycle.m_callback = activity;
-		pushState(State.create);
+		Log.d(TAG, "glCreate");
+		if(mGLView == null)
+		{
+			Log.d(TAG, "Create surface");
+			mGLView = new OFGLSurfaceView(m_activity);
+		}
+		if(m_countActivities == 0)
+			pushState(State.create);
+		m_countActivities++;
 	}
 	
-	public static void onResume()
+	public static void glResume(ViewGroup glContainer)
 	{
+		Log.d(TAG, "glResume");
+		
+		OFGLSurfaceView glView = getGLView();
+		glView.setVisibility(View.INVISIBLE);
+			
+		glContainer.addView(glView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		Log.d(TAG, "addView surface");
+		
+		glView.onResume();
+		
 		pushState(State.resume);
 	}
 	
-	public static void onPause()
+	public static void glPause()
 	{
+		Log.d(TAG, "glPause");
+		
+		OFGLSurfaceView glView = getGLView();
+		
+		glView.onPause();
+		
+		ViewGroup parent = (ViewGroup)glView.getParent();
+		
+		if(parent != null){
+			Log.d(TAG, "remove surface");
+			parent.removeView(glView);
+		}
+		
 		pushState(State.pause);
 	}
 	
-	public static void onDestroy()
+	public static void glDestroy()
 	{
-		pushState(State.destroy);
+		Log.d(TAG, "glDestroy");
+		m_countActivities--;
+		if(m_countActivities == 0){
+			Log.d(TAG, "glDestroy destroy ofApp");
+			pushState(State.destroy);
+		}
 	}
 	
 	public static void exit()
@@ -292,18 +327,5 @@ public class OFAndroidLifeCycle
 	public enum State 
 	{
 		init, create, resume, pause, destroy, exit;
-	}
-
-	public interface ILifeCycleCallback
-	{
-		public void callbackInit();
-		
-		public void callbackCreated();
-		
-		public void callbackResumed();
-		
-		public void callbackPaused();
-		
-		public void callbackDestroed();
 	}
 }

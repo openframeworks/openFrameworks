@@ -85,13 +85,13 @@ inline const glm::quat & toGlm(const glm::quat & q){
 
 namespace glm {
 	//--------------------------------------------------------------
-	inline ostream& operator<<(ostream& os, const glm::vec3& vec) {
+	inline std::ostream& operator<<(std::ostream& os, const glm::vec3& vec) {
 		os << vec.x << ", " << vec.y << ", " << vec.z;
 		return os;
 	}
 
 	//--------------------------------------------------------------
-	inline istream& operator >> (istream& is, glm::vec3& vec) {
+	inline std::istream& operator>>(std::istream& is, glm::vec3& vec) {
 		is >> vec.x;
 		is.ignore(2);
 		is >> vec.y;
@@ -101,13 +101,13 @@ namespace glm {
 	}
 
 	//--------------------------------------------------------------
-	inline ostream& operator<<(ostream& os, const glm::vec2& vec) {
+	inline std::ostream& operator<<(std::ostream& os, const glm::vec2& vec) {
 		os << vec.x << ", " << vec.y;
 		return os;
 	}
 
 	//--------------------------------------------------------------
-	inline istream& operator >> (istream& is, glm::vec2& vec) {
+	inline std::istream& operator>>(std::istream& is, glm::vec2& vec) {
 		is >> vec.x;
 		is.ignore(2);
 		is >> vec.y;
@@ -115,13 +115,13 @@ namespace glm {
 	}
 
 	//--------------------------------------------------------------
-	inline ostream& operator<<(ostream& os, const glm::vec4& vec) {
+	inline std::ostream& operator<<(std::ostream& os, const glm::vec4& vec) {
 		os << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w;
 		return os;
 	}
 
 	//--------------------------------------------------------------
-	inline istream& operator >> (istream& is, glm::vec4& vec) {
+	inline std::istream& operator>>(std::istream& is, glm::vec4& vec) {
 		is >> vec.x;
 		is.ignore(2);
 		is >> vec.y;
@@ -129,6 +129,114 @@ namespace glm {
 		is >> vec.z;
 		is.ignore(2);
 		is >> vec.w;
+		return is;
+	}
+
+	//--------------------------------------------------------------
+	inline std::ostream& operator<<(std::ostream& os, const glm::mat3& mat) {
+		int w = 8;
+		os << setw(w)
+			<< mat[0][0] << ", " << setw(w)
+			<< mat[0][1] << ", " << setw(w)
+			<< mat[0][2] << std::endl;
+
+		os << setw(w)
+			<< mat[1][0] << ", " << setw(w)
+			<< mat[1][1] << ", " << setw(w)
+			<< mat[1][2] << std::endl;
+
+		os << setw(w)
+			<< mat[2][0] << ", " << setw(w)
+			<< mat[2][1] << ", " << setw(w)
+			<< mat[2][2];
+		return os;
+	}
+
+	//--------------------------------------------------------------
+	inline std::istream& operator>>(std::istream& is, mat3& mat) {
+		is >> mat[0][0]; is.ignore(2);
+		is >> mat[0][1]; is.ignore(2);
+		is >> mat[0][2]; is.ignore(1);
+
+		is >> mat[1][0]; is.ignore(2);
+		is >> mat[1][1]; is.ignore(2);
+		is >> mat[1][2]; is.ignore(1);
+		
+		is >> mat[2][0]; is.ignore(2);
+		is >> mat[2][1]; is.ignore(2);
+		is >> mat[2][2];
+		return is;
+	}
+
+	//--------------------------------------------------------------
+	inline std::ostream& operator<<(std::ostream& os, const glm::mat4& mat) {
+		int w = 8;
+		os << setw(w)
+			<< mat[0][0] << ", " << setw(w)
+			<< mat[0][1] << ", " << setw(w)
+			<< mat[0][2] << ", " << setw(w)
+			<< mat[0][3] << std::endl;
+
+		os << setw(w)
+			<< mat[1][0] << ", " << setw(w)
+			<< mat[1][1] << ", " << setw(w)
+			<< mat[1][2] << ", " << setw(w)
+			<< mat[1][3] << std::endl;
+
+		os << setw(w)
+			<< mat[2][0] << ", " << setw(w)
+			<< mat[2][1] << ", " << setw(w)
+			<< mat[2][2] << ", " << setw(w)
+			<< mat[2][3] << std::endl;
+
+		os << setw(w)
+			<< mat[3][0] << ", " << setw(w)
+			<< mat[3][1] << ", " << setw(w)
+			<< mat[3][2] << ", " << setw(w)
+			<< mat[3][3];
+		return os;
+	}
+
+	//--------------------------------------------------------------
+	inline std::istream& operator>>(std::istream& is, glm::mat4& mat) {
+		is >> mat[0][0]; is.ignore(2);
+		is >> mat[0][1]; is.ignore(2);
+		is >> mat[0][2]; is.ignore(2);
+		is >> mat[0][3]; is.ignore(1);
+			  
+		is >> mat[1][0]; is.ignore(2);
+		is >> mat[1][1]; is.ignore(2);
+		is >> mat[1][2]; is.ignore(2);
+		is >> mat[1][3]; is.ignore(1);
+			  
+		is >> mat[2][0]; is.ignore(2);
+		is >> mat[2][1]; is.ignore(2);
+		is >> mat[2][2]; is.ignore(2);
+		is >> mat[2][3]; is.ignore(1);
+			  
+		is >> mat[3][0]; is.ignore(2);
+		is >> mat[3][1]; is.ignore(2);
+		is >> mat[3][2]; is.ignore(2);
+		is >> mat[3][3];
+		return is;
+	}
+
+	//----------------------------------------
+	inline std::ostream& operator<<(std::ostream& os, const glm::quat& q) {
+		os << q.w << ", " << q.x << ", " << q.y << ", " << q.z;
+		return os;
+	}
+
+
+	//----------------------------------------
+	inline std::istream& operator>> (std::istream& is, glm::quat& q) {
+		is >> q.w;
+		is.ignore(2);
+		is >> q.x;
+		is.ignore(2);
+		is >> q.y;
+		is.ignore(2);
+		is >> q.z;
 		return is;
 	}
 }

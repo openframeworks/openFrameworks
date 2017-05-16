@@ -45,6 +45,10 @@ void ofParameterGroup::clear(){
 	obj.reset(new Value);
 }
 
+const ofParameter<void> & ofParameterGroup::getVoid(const string& name) const	{
+	return get<void>(name);
+}
+
 const ofParameter<bool> & ofParameterGroup::getBool(const string& name) const	{
 	return get<bool>(name);
 }
@@ -95,6 +99,10 @@ const ofParameter<ofFloatColor> & ofParameterGroup::getFloatColor(const string& 
 
 const ofParameterGroup & ofParameterGroup::getGroup(const string& name) const{
 	return static_cast<const ofParameterGroup&>(get(name));
+}
+
+const ofParameter<void> & ofParameterGroup::getVoid(std::size_t pos) const{
+	return get<void>(pos);
 }
 
 const ofParameter<bool> & ofParameterGroup::getBool(std::size_t pos) const{
@@ -158,6 +166,10 @@ const ofParameterGroup & ofParameterGroup::getGroup(std::size_t pos) const{
 	}
 }
 
+ofParameter<void> & ofParameterGroup::getVoid(const string& name){
+	return get<void>(name);
+}
+
 ofParameter<bool> & ofParameterGroup::getBool(const string& name){
 	return get<bool>(name);
 }
@@ -208,6 +220,10 @@ ofParameter<ofFloatColor> & ofParameterGroup::getFloatColor(const string& name){
 
 ofParameterGroup & ofParameterGroup::getGroup(const string& name){
 	return static_cast<ofParameterGroup& >(get(name));
+}
+
+ofParameter<void> & ofParameterGroup::getVoid(std::size_t pos){
+	return get<void>(pos);
 }
 
 ofParameter<bool> & ofParameterGroup::getBool(std::size_t pos){
@@ -382,7 +398,7 @@ bool ofParameterGroup::contains(const string& name) const{
 
 void ofParameterGroup::Value::notifyParameterChanged(ofAbstractParameter & param){
 	ofNotifyEvent(parameterChangedE,param);
-	parents.erase(std::remove_if(parents.begin(),parents.end(),[&param](weak_ptr<Value> p){
+	parents.erase(std::remove_if(parents.begin(),parents.end(),[&param](const weak_ptr<Value> & p){
 		auto parent = p.lock();
 		if(parent) parent->notifyParameterChanged(param);
 		return !parent;
@@ -390,7 +406,7 @@ void ofParameterGroup::Value::notifyParameterChanged(ofAbstractParameter & param
 }
 
 const ofParameterGroup ofParameterGroup::getFirstParent() const{
-	auto first = std::find_if(obj->parents.begin(),obj->parents.end(),[](weak_ptr<Value> p){return p.lock()!=nullptr;});
+	auto first = std::find_if(obj->parents.begin(),obj->parents.end(),[](const weak_ptr<Value> & p){return p.lock()!=nullptr;});
 	if(first!=obj->parents.end()){
 		return first->lock();
 	}else{

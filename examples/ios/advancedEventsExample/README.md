@@ -1,9 +1,9 @@
 
-#About advancedEventsExample
+# About advancedEventsExample
 
 ![Screenshot of advancedEventsExample](advancedEventsExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This Example demonstrates how you can register custom events in openFrameworks, in an iOS application.
 
@@ -26,7 +26,7 @@ Instructions for use:
 
 * Tap the screen to toggle whether or not the events are triggered (and thereby drawn on screen).
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses the following classes:
 

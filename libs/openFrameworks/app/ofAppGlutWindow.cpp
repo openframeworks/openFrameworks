@@ -12,6 +12,7 @@
 		#include <GL/glut.h>
 		#include <GL/freeglut_ext.h>
 	#endif
+	#include <Shellapi.h>
 #endif
 #ifdef TARGET_OSX
     #include <OpenGL/OpenGL.h>
@@ -352,7 +353,7 @@ void ofAppGlutWindow::setWindowIcon(const ofPixels & iconPixels){
 	unsigned long * buffer = new unsigned long[length];
 	buffer[0]=iconPixels.getWidth();
 	buffer[1]=iconPixels.getHeight();
-	for(int i=0;i<iconPixels.getWidth()*iconPixels.getHeight();i++){
+	for(size_t i=0;i<iconPixels.getWidth()*iconPixels.getHeight();i++){
 		buffer[i+2] = iconPixels[i*4+3]<<24;
 		buffer[i+2] += iconPixels[i*4]<<16;
 		buffer[i+2] += iconPixels[i*4+1]<<8;

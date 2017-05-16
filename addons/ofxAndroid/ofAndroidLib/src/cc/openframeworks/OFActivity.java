@@ -1,20 +1,20 @@
 package cc.openframeworks;
 
-import cc.openframeworks.OFAndroidLifeCycle.ILifeCycleCallback;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
-public abstract class OFActivity extends Activity implements ILifeCycleCallback{
+public abstract class OFActivity extends Activity{
 	public void onGLSurfaceCreated(){}
 	public void onLoadPercent(float percent){}
 	public void onUnpackingResourcesDone(){}
 	
 	//gesture handler member
-	
-	private OFGLSurfaceView mGLView = null;
+	private ViewGroup mOFGlSurfaceContainer;
 	
 	public void initView(){  
 		String packageName = this.getPackageName();
@@ -22,83 +22,55 @@ public abstract class OFActivity extends Activity implements ILifeCycleCallback{
         	Log.v("OF","trying to find class: "+packageName+".R$layout");
 			Class<?> layout = Class.forName(packageName+".R$layout");
 			View view = this.getLayoutInflater().inflate(layout.getField("main_layout").getInt(null),null);
+			if(view == null) {
+				Log.w("OF", "Could not find main_layout.xml.");
+				throw new Exception();
+			}
 			this.setContentView(view);
 			
 			Class<?> id = Class.forName(packageName+".R$id");
-			mGLView= (OFGLSurfaceView)this.findViewById(id.getField("of_gl_surface").getInt(null));
+			mOFGlSurfaceContainer = (ViewGroup)this.findViewById(id.getField("of_gl_surface_container").getInt(null));
+			
+			if(mOFGlSurfaceContainer == null) {
+				Log.w("OF", "Could not find of_gl_surface_container in main_layout.xml. Copy main_layout.xml from latest empty example to fix this warning.");
+				throw new Exception();
+			}
 			
 		} catch (Exception e) {
-			Log.e("OF", "couldn't create view from layout falling back to GL only",e);
-			mGLView = new OFGLSurfaceView(this);
-	        this.setContentView(mGLView);
+			Log.w("OF", "couldn't create view from layout falling back to GL only",e);
+			mOFGlSurfaceContainer = new FrameLayout(this);
+	        this.setContentView(mOFGlSurfaceContainer);
 		}
-	}
-	
-	public OFGLSurfaceView getGLContentView() {
-        return mGLView;
 	}
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
 		// TODO Auto-generated method stub
 		super.onCreate(arg0);
+		OFAndroidLifeCycle.setActivity(this);
+		OFAndroidLifeCycle.init();
+		OFAndroidLifeCycle.glCreate();
 		//create gesture listener
 		//register the two events
-		OFAndroid.initOFAndroid(this.getPackageName(), this);
 		initView();
-		mGLView.setVisibility(View.INVISIBLE);
-		OFAndroidLifeCycle.init(this, this);
-		OFAndroidLifeCycle.onCreate(this);
 	}
 	
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
-		OFAndroidLifeCycle.onResume();
+		OFAndroidLifeCycle.setActivity(this);
+		OFAndroidLifeCycle.glResume(mOFGlSurfaceContainer);
 		super.onResume();
 	}
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
-		OFAndroidLifeCycle.onPause();
+		OFAndroidLifeCycle.glPause();
 		super.onPause();
 	}
 	@Override
 	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		OFAndroidLifeCycle.onDestroy();
+		OFAndroidLifeCycle.glDestroy();
 		super.onDestroy();
-	}
-	
-	
-	@Override
-	public void callbackInit() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void callbackCreated() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void callbackResumed() {
-		// TODO Auto-generated method stub
-		mGLView.setVisibility(View.VISIBLE);
-	}
-	
-	@Override
-	public void callbackPaused() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void callbackDestroed() {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override

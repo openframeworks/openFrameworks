@@ -27,7 +27,7 @@ public class OFOrientationListener extends OrientationEventListener {
     }
 
     private void checkOrientation(){
-        WindowManager windowManager = (WindowManager)OFAndroid.getContext().getSystemService(Context.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager)OFAndroidLifeCycle.getActivity().getSystemService(Context.WINDOW_SERVICE);
         Display display = windowManager.getDefaultDisplay();
 
         if(lastOrientation != display.getRotation() || firstCheck){

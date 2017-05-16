@@ -1,6 +1,10 @@
 language: c++
 compiler: gcc
 sudo: true
+env:
+  global:
+    secure: LBTN8d1hS7ocrqDwxLQqU0tfK3FMCXBI8q1yASEjtkp/v5HEyFkbj22H4jXZ20SkpCTlIG2L6i/fU3d6KzJUzTFuxkQEWsnjkj4jAhxGEWRsT1RV6VcUPQDGLHapXwTy+ZYgMNxE7aAdQaBskPHdVzAhjrzlTwVuKp6KjFn+kMU=
+
 matrix:
   include:
   # fully specify builds, include can't dynamically expand matrix entries
@@ -9,7 +13,7 @@ matrix:
   - os: linux
     dist: trusty
     sudo: required
-    env: TARGET="linux"
+    env: TARGET="linux64"
     addons:
       apt:
         sources:
@@ -23,15 +27,17 @@ matrix:
   - os: linux
     sudo: required
     dist: trusty
-    env: TARGET="linuxarmv6"
+    env: TARGET="linuxarmv6l"
 
 
   - os: linux
     sudo: false
-    env: TARGET="linuxarmv7"
+    env: TARGET="linuxarmv7l"
     cache:
       directories:
         - ~/rpi2_toolchain
+        - ~/firmware-master
+        - ~/archlinux
 
 
   - os: linux
@@ -45,14 +51,21 @@ matrix:
           - libstdc++6
 
   - os: osx
+    osx_image: xcode8
     compiler: clang
     env: TARGET="osx"
 
 
   - os: osx
-    osx_image: xcode7.1
+    osx_image: xcode8
     compiler: clang
     env: TARGET="ios"
+
+
+  - os: osx
+    osx_image: xcode8
+    compiler: clang
+    env: TARGET="tvos"
 
 
   - os: linux
@@ -60,7 +73,7 @@ matrix:
     env: TARGET="android" OPT="armv7"
     cache:
       directories:
-        - ~/android-ndk-r10e
+        - ~/android-ndk-r12b
 
 
   - os: linux
@@ -68,7 +81,7 @@ matrix:
     env: TARGET="android" OPT="x86"
     cache:
       directories:
-        - ~/android-ndk-r10e
+        - ~/android-ndk-r12b
 
 
   # Exclude the default build that would otherwise be generated
@@ -77,15 +90,28 @@ matrix:
     - compiler: gcc
 
 install:
-  - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "linuxarmv6" ] || [ "$TARGET" == "linuxarmv7" ] || [ "$TARGET" == "docs" ] || [ "$TARGET" == "osx" ] || [ "$TARGET" == "emscripten" ]; then
+  - if [ -f scripts/ci/$TARGET/install.sh ]; then
         scripts/ci/$TARGET/install.sh;
     fi
+  - if [ "$TARGET" == "linux64" ]; then
+        scripts/linux/download_libs.sh -a 64;
+    elif [ "$TARGET" == "linuxarmv6l" ]; then
+        scripts/linux/download_libs.sh -a armv6l;
+    elif [ "$TARGET" == "linuxarmv7l" ]; then
+        scripts/linux/download_libs.sh -a armv7l;
+    elif [ "$TARGET" == "tvos" ]; then
+        scripts/ios/download_libs.sh;
+    else
+        scripts/$TARGET/download_libs.sh;
+    fi
+
 
 script:
   - scripts/ci/$TARGET/build.sh $OPT
-  - if [ "$TARGET" == "osx" ] || [ "$TARGET" == "linux" ]; then
+  - if [ "$TARGET" == "osx" ] || [ "$TARGET" == "linux64" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     fi
+  - scripts/ci/upload_of_lib.sh
 
 git:
   depth: 10

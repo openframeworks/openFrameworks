@@ -10,7 +10,7 @@ if [ $EUID != 0 ]; then
    exit 1
 fi
 
-pacman -Sy --needed make pkg-config gcc openal glew freeglut freeimage gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav opencv libxcursor assimp boost glfw-x11
+pacman -Sy --needed make pkg-config gcc openal glew freeglut freeimage gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav opencv libxcursor assimp boost glfw-x11 uriparser curl pugixml
 
 exit_code=$?
 if [ $exit_code != 0 ]; then
@@ -43,6 +43,6 @@ if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
 	fi
 	
     DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-    cd ${DIR}/../../apothecary
+    cd ${DIR}/../../apothecary/apothecary
     ./apothecary -j${cores} update poco
 fi

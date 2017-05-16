@@ -110,21 +110,16 @@ inline std::string ofImageFormatExtension(ofImageFormat format){
     case OF_IMAGE_FORMAT_PFM: return "pfm";
     case OF_IMAGE_FORMAT_PICT: return "pict";
     case OF_IMAGE_FORMAT_RAW: return "raw";
+	default: return "unkown";
     }
 }
 
 /// \todo Needs documentation.
 struct ofImageLoadSettings {
-    ofImageLoadSettings(bool accurate = false, bool exifRotate = false, bool grayscale = false, bool separateCMYK = false)
-    : accurate(accurate)
-    , exifRotate(exifRotate)
-    , grayscale(grayscale)
-    , separateCMYK(separateCMYK) {}
-    bool accurate;
-    bool exifRotate;
-    bool grayscale;
-    bool separateCMYK;
-    static ofImageLoadSettings defaultSetting;
+	bool accurate = false;
+	bool exifRotate = false;
+	bool grayscale = false;
+	bool separateCMYK = false;
 };
 
 //----------------------------------------------------
@@ -132,16 +127,16 @@ struct ofImageLoadSettings {
 
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofFloatPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofShortPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofFloatPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofShortPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofTexture & tex, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofTexture & tex, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
 void ofSaveImage(const ofPixels & pix, const std::filesystem::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
@@ -171,7 +166,7 @@ public:
     ofImage_();
     
     ofImage_(const ofPixels_<PixelType> & pix);
-    ofImage_(const std::filesystem::path & fileName, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+	ofImage_(const std::filesystem::path & fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
     ofImage_(const ofImage_<PixelType>& mom);
     ofImage_(ofImage_<PixelType>&& mom);
     
@@ -208,28 +203,21 @@ public:
     OF_DEPRECATED_MSG("Use isAllocated()", bool bAllocated());
     
     /// \brief This clears the texture and pixels contained within the ofImage.
-    void clear();
-    
-    /// \brief Create an ofImage from another ofImage instance.
-    ///
-    /// This allows you to create an ofImage from another ofImage instance,
-    /// copying all the pixels and the texture data while creating a new textureID.
-    template<typename SrcType>
-    void clone(const ofImage_<SrcType> &mom);
+	void clear();
     
     /// \brief Loads an image given by fileName.
     /// \param fileName Program looks for image given by fileName, relative to
     /// the data folder.
     /// \param settings Load options
     /// \returns true if image loaded correctly.
-    bool load(const std::filesystem::path& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+	bool load(const std::filesystem::path& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
     
     /// \brief Loads an image from an ofBuffer instance created by, for
     /// instance, ofFile::readToBuffer().
     ///
     /// This actually loads the image data into an ofPixels object and then
     /// into the texture.
-    bool load(const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+	bool load(const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
     
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(const std::string& fileName));
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(const ofBuffer & buffer));
@@ -255,6 +243,8 @@ public:
     /// \param y Draw position on the y axis.
     /// \param z Draw position on the z axis.
     void draw(float x, float y, float z) const;
+
+	void draw(const glm::vec3 & pos) const;
     
     /// \brief Draw the image at a given size.
     ///
@@ -272,6 +262,8 @@ public:
     /// \param w Draw width.
     /// \param h Draw height.
     void draw(float x, float y, float z, float w, float h) const;
+
+	void draw(const glm::vec3 & pos, float w, float h) const;
     
     /// \brief Draws a subsection of the image.
     ///
@@ -645,6 +637,9 @@ protected:
     int height; ///< \brief Image Height in pixels.
     int bpp;    ///< \brief Bits per image pixel.
     ofImageType type;   ///< \brief Image type.
+
+	template<typename SrcType>
+	void clone(const ofImage_<SrcType> &mom);
     /// \endcond
 };
 
@@ -661,8 +656,7 @@ typedef ofImage_<unsigned short> ofShortImage;
 template<typename PixelType>
 template<typename SrcType>
 ofImage_<PixelType>& ofImage_<PixelType>::operator=(const ofImage_<SrcType>& mom) {
-    clone(mom);
-    update();
+	clone(mom);
     return *this;
 }
 
@@ -671,8 +665,7 @@ template<typename PixelType>
 template<typename SrcType>
 ofImage_<PixelType>::ofImage_(const ofImage_<SrcType>& mom) {
     clear();
-    clone(mom);
-    update();
+	clone(mom);
 }
 
 //------------------------------------

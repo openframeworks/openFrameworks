@@ -17,13 +17,30 @@ class ofBufferObject;
 
 
 class ofShader {
+
+	struct Source{
+		Source(GLuint type, const std::string & source, const std::string & directoryPath)
+			:type(type)
+			,source(source)
+			,directoryPath(directoryPath){}
+
+		Source(){}
+
+		GLuint type;
+		std::string source;
+		std::string expandedSource;
+		std::string directoryPath;
+		std::map<std::string, int>   intDefines;
+		std::map<std::string, float> floatDefines;
+	};
+
 public:
 	ofShader();
 	~ofShader();
 	ofShader(const ofShader & shader);
 	ofShader & operator=(const ofShader & shader);
-    ofShader(ofShader && shader);
-    ofShader & operator=(ofShader && shader);
+	ofShader(ofShader && shader);
+  	ofShader & operator=(ofShader && shader);
 
     bool load(const std::filesystem::path& shaderName);
     bool load(const std::filesystem::path& vertName, const std::filesystem::path& fragName, const std::filesystem::path& geomName="");
@@ -32,28 +49,47 @@ public:
 #endif
 
 	struct Settings {
-        std::map<GLuint, std::filesystem::path> shaderFiles;
+		std::map<GLuint, std::filesystem::path> shaderFiles;
 		std::map<GLuint, std::string> shaderSources;
-        std::string sourceDirectoryPath;
+		std::map<std::string, int> intDefines;
+		std::map<std::string, float> floatDefines;
+		std::string sourceDirectoryPath;
 		bool bindDefaults = true;
 	};
 
 #if !defined(TARGET_OPENGLES)
 	struct TransformFeedbackSettings {
-        std::map<GLuint, std::filesystem::path> shaderFiles;
+		std::map<GLuint, std::filesystem::path> shaderFiles;
 		std::map<GLuint, std::string> shaderSources;
 		std::vector<std::string> varyingsToCapture;
-        std::string sourceDirectoryPath;
+		std::map<std::string, int> intDefines;
+		std::map<std::string, float> floatDefines;
+		std::string sourceDirectoryPath;
 		bool bindDefaults = true;
 		GLuint bufferMode = GL_INTERLEAVED_ATTRIBS; // GL_INTERLEAVED_ATTRIBS or GL_SEPARATE_ATTRIBS
 	};
 
-	struct TransformFeedbackBinding {
-        TransformFeedbackBinding(const ofBufferObject & buffer);
+	/// a range of the buffer will be bound with glBindBufferRange
+	///
+	/// @see: https://www.opengl.org/sdk/docs/man4/html/glBindBufferRange.xhtml
+	struct TransformFeedbackRangeBinding {
+		TransformFeedbackRangeBinding(const ofBufferObject & buffer, GLuint offset, GLuint size);
 
 		GLuint index = 0;
 		GLuint offset = 0;
 		GLuint size;
+	private:
+		const ofBufferObject & buffer;
+		friend class ofShader;
+	};
+
+	/// full buffer will be bound with glBindBufferBase
+	///
+	/// @see: https://www.opengl.org/sdk/docs/man4/html/glBindBufferBase.xhtml
+	struct TransformFeedbackBaseBinding {
+		TransformFeedbackBaseBinding(const ofBufferObject & buffer);
+
+		GLuint index = 0;
 	private:
 		const ofBufferObject & buffer;
 		friend class ofShader;
@@ -82,11 +118,15 @@ public:
 
 #if !defined(TARGET_OPENGLES)
 	void beginTransformFeedback(GLenum mode) const;
-	void beginTransformFeedback(GLenum mode, const TransformFeedbackBinding & binding) const;
-	void beginTransformFeedback(GLenum mode, const std::vector<TransformFeedbackBinding> & binding) const;
+	void beginTransformFeedback(GLenum mode, const TransformFeedbackRangeBinding & binding) const;
+	void beginTransformFeedback(GLenum mode, const std::vector<TransformFeedbackRangeBinding> & binding) const;
+	void beginTransformFeedback(GLenum mode, const TransformFeedbackBaseBinding & binding) const;
+	void beginTransformFeedback(GLenum mode, const std::vector<TransformFeedbackBaseBinding> & binding) const;
 	void endTransformFeedback() const;
-	void endTransformFeedback(const TransformFeedbackBinding & binding) const;
-	void endTransformFeedback(const std::vector<TransformFeedbackBinding> & binding) const;
+	void endTransformFeedback(const TransformFeedbackRangeBinding & binding) const;
+	void endTransformFeedback(const std::vector<TransformFeedbackRangeBinding> & binding) const;
+	void endTransformFeedback(const TransformFeedbackBaseBinding & binding) const;
+	void endTransformFeedback(const std::vector<TransformFeedbackBaseBinding> & binding) const;
 #endif
 
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
@@ -137,7 +177,7 @@ public:
 	GLint getAttributeLocation(const string & name) const;
 
 #ifndef TARGET_OPENGLES
-#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
+#ifdef GLEW_ARB_uniform_buffer_object
 	GLint getUniformBlockIndex(const string & name) const;
 	GLint getUniformBlockBinding(const string & name) const;
 	void bindUniformBlock(GLuint bindind, const string & name) const;
@@ -180,7 +220,7 @@ public:
 	// these methods create and compile a shader from source or file
 	// type: GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER_EXT etc.
 	bool setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath = "");
-    bool setupShaderFromFile(GLenum type, std::filesystem::path filename);
+	bool setupShaderFromFile(GLenum type, const std::filesystem::path& filename);
 
 	// links program with all compiled shaders
 	bool linkProgram();
@@ -188,7 +228,7 @@ public:
 	// binds default uniforms and attributes, only useful for
 	// fixed pipeline simulation under programmable renderer
 	// has to be called before linking
-	bool bindDefaults() const;
+	bool bindDefaults();
 
 	GLuint getProgram() const;
 	GLuint getShader(GLenum type) const;
@@ -212,15 +252,12 @@ public:
 
 
 private:
-	GLuint program;
-	bool bLoaded;
+	GLuint program = 0;
+	bool bLoaded = false;
 
 	struct Shader{
-		GLenum type;
 		GLuint id;
-		std::string source;
-		std::string expandedSource;
-		std::string sourcePath;
+		Source source;
 	};
 
 	unordered_map<GLenum, Shader> shaders;
@@ -228,26 +265,29 @@ private:
 	mutable unordered_map<string, GLint> attributesBindingsCache;
 
 #ifndef TARGET_OPENGLES
-#ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
-	bool uboAvailable;
 	unordered_map<string, GLint> uniformBlocksCache;
 #endif
-#endif
 
-	void checkProgramInfoLog(GLuint program);
-	bool checkProgramLinkStatus(GLuint program);
+	bool setupShaderFromSource(Source && source);
+	ofShader::Source sourceFromFile(GLenum type, std::filesystem::path filename);
+	void checkProgramInfoLog();
+	bool checkProgramLinkStatus();
 	void checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLevel);
-
+	template<typename T>
+	void setDefineConstantTemp(const string & name, T value);
+	template<typename T>
+	void setConstantTemp(const string & name, const std::string & type, T value);
+	
 	static string nameForType(GLenum type);
 
-    /// @brief			Mimics the #include behaviour of the c preprocessor
+	/// @brief			Mimics the #include behaviour of the c preprocessor
 	/// @description	Includes files specified using the
 	///					'#pragma include <filepath>' directive.
 	/// @note			Include paths are always specified _relative to the including file's current path_
 	///	@note			Recursive #pragma include statements are possible
 	/// @note			Includes will be processed up to 32 levels deep
-    static string parseForIncludes( const string& source, const string& sourceDirectoryPath = "");
-    static string parseForIncludes( const string& source, vector<string>& included, int level = 0, const string& sourceDirectoryPath = "");
+	static string parseForIncludes( const string& source, const string& sourceDirectoryPath = "");
+	static string parseForIncludes( const string& source, vector<string>& included, int level = 0, const string& sourceDirectoryPath = "");
 
 	void checkAndCreateProgram();
 #ifdef TARGET_ANDROID

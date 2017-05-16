@@ -10,7 +10,7 @@ libs/openFrameworksCompiled/lib/*/*
 !libs/openFrameworksCompiled/lib/*/.gitkeep
 
 # apothecary
-scripts/apothecary/build
+scripts/apothecary
 
 # rule to avoid non-official addons going into git
 # see addons/.gitignore
@@ -19,6 +19,11 @@ addons/*
 # rule to avoid non-official apps going into git
 # see apps/.gitignore
 apps/*
+
+# rule to ignore compiled / downloaded libs
+/libs/*
+!/libs/openFrameworks
+!/libs/openFrameworksCompiled
 
 # also, see examples/.gitignore
 
@@ -128,4 +133,3 @@ Desktop.ini
 
 .mailmap
 /apps*/
-

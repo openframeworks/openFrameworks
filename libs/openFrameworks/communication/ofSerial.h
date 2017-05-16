@@ -12,6 +12,7 @@
 	#include <tchar.h>
 	#include <iostream>
 	#include <string.h>
+	#include <devpropdef.h>
 	#include <setupapi.h>
 	#include <regstr.h>
 	/// \cond INTERNAL

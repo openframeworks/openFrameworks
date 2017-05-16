@@ -3,11 +3,11 @@
 # lists of source files, search paths, libraries, etc.
 #
 ifndef OF_ROOT
-    OF_ROOT= $(realpath ../../..)
+	OF_ROOT= $(realpath ../../..)
 endif
 
 ifndef PROJECT_ROOT
-    PROJECT_ROOT= $(realpath .)
+	PROJECT_ROOT= $(realpath .)
 endif
 
 
@@ -92,32 +92,32 @@ OF_CORE_LIBRARY_LDFLAGS += $(addprefix -L,$(PLATFORM_LIBRARY_SEARCH_PATHS))
 # DEBUG INFO
 ################################################################################
 ifdef MAKEFILE_DEBUG
-    $(info =============================configure.core.flags.make========================)
-    $(info ---OF_CORE_LIBS_LDFLAGS---)
-    $(foreach v, $(OF_CORE_LIBS_LDFLAGS),$(info $(v)))
+	$(info =============================configure.core.flags.make========================)
+	$(info ---OF_CORE_LIBS_LDFLAGS---)
+	$(foreach v, $(OF_CORE_LIBS_LDFLAGS),$(info $(v)))
 
-    $(info ---OF_CORE_LIBS---)
-    $(foreach v, $(OF_CORE_LIBS),$(info $(v)))
+	$(info ---OF_CORE_LIBS---)
+	$(foreach v, $(OF_CORE_LIBS),$(info $(v)))
 endif
 
 ################################# ADDONS ######################################
 
 ifdef MAKEFILE_DEBUG
-    $(info ===================ADDONS================)
+	$(info ===================ADDONS================)
 endif
 
 # check to make sure OF_ROOT is defined
 ifndef OF_ROOT
-    $(error OF_ROOT is not defined)
+	$(error OF_ROOT is not defined)
 endif
 
 ifndef OF_ADDONS_PATH
-    $(error OF_ADDONS_PATH is not defined)
+	$(error OF_ADDONS_PATH is not defined)
 endif
 
 # check to make sure ABI_LIB_SUBPATH is defined
 ifndef ABI_LIB_SUBPATH
-    $(error ABI_LIB_SUBPATH is not defined)
+	$(error ABI_LIB_SUBPATH is not defined)
 endif
 
 
@@ -136,81 +136,81 @@ endif
 # we do it this way because gnu make can't do logical ORs
 B_PROCESS_ADDONS =
 ifdef PLATFORM_REQUIRED_ADDONS
-    B_PROCESS_ADDONS = yes
+	B_PROCESS_ADDONS = yes
 endif
 ifeq ($(findstring addons.make,$(wildcard $(PROJECT_ROOT)/*.make)),addons.make)
-    B_PROCESS_ADDONS = yes
+	B_PROCESS_ADDONS = yes
 endif
 
 # you can't do LOGICAL ORs in make.  So we do this ...
 ifdef B_PROCESS_ADDONS
-    ############################################################################
-    # VALIDATE REQUESTED ADDONS
-    ############################################################################
+	############################################################################
+	# VALIDATE REQUESTED ADDONS
+	############################################################################
 
-    # create a list of every addon installed in the addons directory
-    ALL_INSTALLED_ADDONS = $(subst $(OF_ADDONS_PATH)/,,$(wildcard $(OF_ADDONS_PATH)/*))
+	# create a list of every addon installed in the addons directory
+	ALL_INSTALLED_ADDONS = $(subst $(OF_ADDONS_PATH)/,,$(wildcard $(OF_ADDONS_PATH)/*))
 
-    # get a list of all addons listed in addons.make file
-    # sed 's/[ ]*#.*//g' strips all comments beginning with #
-    # (to escape # in make, you must use \#)
-    # sed '/^$/d' removes all empty lines
-    # (to escape $ in make, you must use $$)
-    REQUESTED_PROJECT_ADDONS := $(shell cat $(PROJECT_ROOT)/addons.make 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d')
+	# get a list of all addons listed in addons.make file
+	# sed 's/[ ]*#.*//g' strips all comments beginning with #
+	# (to escape # in make, you must use \#)
+	# sed '/^$/d' removes all empty lines
+	# (to escape $ in make, you must use $$)
+	REQUESTED_PROJECT_ADDONS := $(shell cat $(PROJECT_ROOT)/addons.make 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d')
 
-    # deal with platform specfic addons
-    # remove any platform specific addons that were already added to the addons.make file
-    REQUESTED_PROJECT_ADDONS := $(filter-out $(PLATFORM_REQUIRED_ADDONS),$(REQUESTED_PROJECT_ADDONS))
+	# deal with platform specfic addons
+	# remove any platform specific addons that were already added to the addons.make file
+	REQUESTED_PROJECT_ADDONS := $(filter-out $(PLATFORM_REQUIRED_ADDONS),$(REQUESTED_PROJECT_ADDONS))
 
-    # define a function to remove duplicates without using sort, because sort
-    # will place the list in lexicographic order, and we want to respect the
-    # user's addons.make order.
-    remove-dupes-func = $(if $1,$(strip $(word 1,$1) \
-                        $(call $0,$(filter-out $(word 1,$1),$1))))
+	# define a function to remove duplicates without using sort, because sort
+	# will place the list in lexicographic order, and we want to respect the
+	# user's addons.make order.
+	remove-dupes-func = $(if $1,$(strip $(word 1,$1) \
+						$(call $0,$(filter-out $(word 1,$1),$1))))
 
-    # remove all duplicates that might be in the addons.make file
-    REQUESTED_PROJECT_ADDONS := $(call remove-dupes-func,$(REQUESTED_PROJECT_ADDONS))
+	# remove all duplicates that might be in the addons.make file
+	REQUESTED_PROJECT_ADDONS := $(call remove-dupes-func,$(REQUESTED_PROJECT_ADDONS))
 
-    # add platform required addons from the platform configuration file (if needed)
-    # add the platform required addons first, so that they are always linked first
-    REQUESTED_PROJECT_ADDONS := $(PLATFORM_REQUIRED_ADDONS) $(REQUESTED_PROJECT_ADDONS)
+	# add platform required addons from the platform configuration file (if needed)
+	# add the platform required addons first, so that they are always linked first
+	REQUESTED_PROJECT_ADDONS := $(PLATFORM_REQUIRED_ADDONS) $(REQUESTED_PROJECT_ADDONS)
 
-    # create a list requested addons that are actually installed on the system
-    VALID_PROJECT_ADDONS = $(filter $(REQUESTED_PROJECT_ADDONS),$(ALL_INSTALLED_ADDONS))
+	# create a list requested addons that are actually installed on the system
+	VALID_PROJECT_ADDONS = $(filter $(REQUESTED_PROJECT_ADDONS),$(ALL_INSTALLED_ADDONS))
 
-    # create a list of the invalid addons
-    INVALID_GLOBAL_ADDONS = $(filter-out $(VALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
+	# create a list of the invalid addons
+	INVALID_GLOBAL_ADDONS = $(filter-out $(VALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
 
 	INVALID_PROJECT_ADDONS = $(filter-out $(INVALID_GLOBAL_ADDONS), $(wildcard $(INVALID_GLOBAL_ADDONS)))
-	
-    # if any invalid addons are found, throw a warning, but don't cause an error
-    ifneq ($(INVALID_PROJECT_ADDONS),)
-        $(warning The following unknown addons will be ignored:)
-        $(foreach v, $(INVALID_PROJECT_ADDONS),$(warning $(v)))
-        # TODO: download and launch requested addons from ofxaddons?
-    endif
 
-    # create a list of addons, excluding invalid and platform-specific addons
-    PROJECT_ADDONS = $(filter-out $(INVALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
+	# if any invalid addons are found, throw a warning, but don't cause an error
+	ifneq ($(INVALID_PROJECT_ADDONS),)
+		$(warning The following unknown addons will be ignored:)
+		$(foreach v, $(INVALID_PROJECT_ADDONS),$(warning $(v)))
+		# TODO: download and launch requested addons from ofxaddons?
+	endif
 
-    ifdef MAKEFILE_DEBUG
-        $(info ---PROJECT_ADDONS---)
-        $(foreach v, $(PROJECT_ADDONS),$(info $(v)))
-        $(info --------------------)
-    endif
+	# create a list of addons, excluding invalid and platform-specific addons
+	PROJECT_ADDONS = $(filter-out $(INVALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
 
-    ############################################################################
-    # PROCESS PROJECT ADDONS IF AVAILABLE
-    ############################################################################
+	ifdef MAKEFILE_DEBUG
+		$(info ---PROJECT_ADDONS---)
+		$(foreach v, $(PROJECT_ADDONS),$(info $(v)))
+		$(info --------------------)
+	endif
 
-    # if the addons list is NOT empty ...
-    ifneq ($(PROJECT_ADDONS),)
+	############################################################################
+	# PROCESS PROJECT ADDONS IF AVAILABLE
+	############################################################################
+
+	# if the addons list is NOT empty ...
+	ifneq ($(PROJECT_ADDONS),)
 		include $(OF_SHARED_MAKEFILES_PATH)/config.addons.mk
-    endif
-        
-    ifdef ADDON_PATHS
-    	PROJECT_ADDON_PATHS = $(addsuffix /,$(call remove-dupes-func,$(ADDON_PATHS:%/=%)))
-    endif
+	endif
+
+	ifdef ADDON_PATHS
+		PROJECT_ADDON_PATHS = $(addsuffix /,$(call remove-dupes-func,$(ADDON_PATHS:%/=%)))
+	endif
 endif
 
 # generate the list of core libraries
@@ -274,11 +274,11 @@ OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/build/%
 # create a list of all dirs in the project root that might be valid project
 # source directories
 ALL_OF_PROJECT_SOURCE_PATHS = $(shell $(FIND) $(PROJECT_ROOT) -mindepth 1 \
-                                                           -type d \
-                                                           -not -path "./bin/*" \
-                                                           -not -path "./obj/*" \
-                                                           -not -path "./*.xcodeproj/*" \
-                                                           -not -path "*/\.*")
+														   -type d \
+														   -not -path "./bin/*" \
+														   -not -path "./obj/*" \
+														   -not -path "./*.xcodeproj/*" \
+														   -not -path "*/\.*")
 ifneq ($(PROJECT_EXTERNAL_SOURCE_PATHS),)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(PROJECT_EXTERNAL_SOURCE_PATHS)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(shell $(FIND) $(PROJECT_EXTERNAL_SOURCE_PATHS) -mindepth 1 -type d | grep -v "/\.[^\.]")
@@ -288,11 +288,11 @@ endif
 OF_PROJECT_SOURCE_PATHS = $(filter-out $(OF_PROJECT_EXCLUSIONS),$(ALL_OF_PROJECT_SOURCE_PATHS))
 
 ifdef MAKEFILE_DEBUG
-    $(info ---OF_PROJECT_SOURCE_PATHS---)
-    $(foreach v, $(OF_PROJECT_SOURCE_PATHS),$(info $(v)))
+	$(info ---OF_PROJECT_SOURCE_PATHS---)
+	$(foreach v, $(OF_PROJECT_SOURCE_PATHS),$(info $(v)))
 
-    $(info ---OF_PROJECT_EXCLUSIONS---)
-    $(foreach v, $(OF_PROJECT_EXCLUSIONS),$(info $(v)))
+	$(info ---OF_PROJECT_EXCLUSIONS---)
+	$(foreach v, $(OF_PROJECT_EXCLUSIONS),$(info $(v)))
 endif
 
 # find all sources inside the project's source directory (recursively)
@@ -307,8 +307,8 @@ OF_PROJECT_INCLUDES_CFLAGS := $(addprefix -I,$(filter-out $(PROJECT_INCLUDE_EXCL
 OF_ADDON_INCLUDES_CFLAGS += $(addprefix -I,$(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(PROJECT_ADDONS_INCLUDES)))
 
 ifdef MAKEFILE_DEBUG
-    $(info ---OF_PROJECT_INCLUDES_CFLAGS---)
-    $(foreach v, $(OF_PROJECT_INCLUDES_CFLAGS),$(info $(v)))
+	$(info ---OF_PROJECT_INCLUDES_CFLAGS---)
+	$(foreach v, $(OF_PROJECT_INCLUDES_CFLAGS),$(info $(v)))
 endif
 
 ################################################################################
@@ -370,23 +370,23 @@ OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PROJECT_ADDONS_FRAMEWORKS))
 
 ################################################################################
 ifdef MAKEFILE_DEBUG
-    $(info ===================compile.project.make=============================)
+	$(info ===================compile.project.make=============================)
 endif
 
 ifdef PLATFORM_CXX
-    CXX = $(PLATFORM_CXX)
+	CXX = $(PLATFORM_CXX)
 endif
 
 ifdef PROJECT_CXX
-    CXX = $(PROJECT_CXX)
+	CXX = $(PROJECT_CXX)
 endif
 
 ifdef PLATFORM_CC
-    CC = $(PLATFORM_CC)
+	CC = $(PLATFORM_CC)
 endif
 
 ifdef PROJECT_CC
-    CC = $(PROJECT_CC)
+	CC = $(PROJECT_CC)
 endif
 
 # TODO: what is this for?
@@ -407,10 +407,10 @@ ALL_CXXFLAGS =
 ALL_CXXFLAGS += $(OF_PROJECT_CXXFLAGS)
 
 # clean up all extra whitespaces in the CFLAGS
-CFLAGS = $(strip $(ALL_CFLAGS))
+CFLAGS += $(strip $(ALL_CFLAGS))
 
 # clean up all extra whitespaces in the CFLAGS
-CXXFLAGS = $(strip $(ALL_CXXFLAGS))
+CXXFLAGS += $(strip $(ALL_CXXFLAGS))
 
 PROJECT_INCLUDE_CFLAGS = $(strip $(OF_CORE_INCLUDES_CFLAGS) $(OF_PROJECT_INCLUDES_CFLAGS) $(OF_ADDON_INCLUDES_CFLAGS))
 ADDON_INCLUDE_CFLAGS = $(strip $(OF_CORE_INCLUDES_CFLAGS) $(OF_ADDON_INCLUDES_CFLAGS))
@@ -436,16 +436,16 @@ PROJECT_OPTIMIZATION_CFLAGS_DEBUG +=
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	ifeq ($(strip $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)),)
-		OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG)
+		OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_DEBUG) -DDEBUG
 	else
 		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
 	endif
 
-    ifdef PLATFORM_CORELIB_DEBUG_TARGET
-    	TARGET_LIBS += $(PLATFORM_CORELIB_DEBUG_TARGET)
-    else
-    	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
-    endif
+	ifdef PLATFORM_CORELIB_DEBUG_TARGET
+		TARGET_LIBS += $(PLATFORM_CORELIB_DEBUG_TARGET)
+	else
+		TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
+	endif
 
 	ifeq ($(strip $(PROJECT_OPTIMIZATION_LDFLAGS_DEBUG)),)
 		OPTIMIZATION_LDFLAGS = $(PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG)
@@ -456,19 +456,19 @@ endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
 	ifeq ($(strip $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)),)
-	    OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE)
+		OPTIMIZATION_CFLAGS = $(PLATFORM_OPTIMIZATION_CFLAGS_RELEASE) -DNDEBUG
 	else
 		OPTIMIZATION_CFLAGS = $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)
 	endif
 
-    ifdef PLATFORM_CORELIB_RELEASE_TARGET
-    	TARGET_LIBS += $(PLATFORM_CORELIB_RELEASE_TARGET)
-    else
-    	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
-    endif
+	ifdef PLATFORM_CORELIB_RELEASE_TARGET
+		TARGET_LIBS += $(PLATFORM_CORELIB_RELEASE_TARGET)
+	else
+		TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+	endif
 
 	ifeq ($(strip $(PROJECT_OPTIMIZATION_LDFLAGS_RELEASE)),)
-	    OPTIMIZATION_LDFLAGS = $(PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE)
+		OPTIMIZATION_LDFLAGS = $(PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE)
 	else
 		OPTIMIZATION_LDFLAGS = $(PROJECT_OPTIMIZATION_LDFLAGS_RELEASE)
 	endif
@@ -487,12 +487,12 @@ endif
 # define the subdirectory for our target name
 
 ifdef MAKEFILE_DEBUG
-    $(info ---OF_PROJECT_SOURCE_FILES---)
-    $(foreach v, $(OF_PROJECT_SOURCE_FILES),$(info $(v)))
+	$(info ---OF_PROJECT_SOURCE_FILES---)
+	$(foreach v, $(OF_PROJECT_SOURCE_FILES),$(info $(v)))
 endif
 ifdef MAKEFILE_DEBUG
-    $(info ---OF_PROJECT_DEPENDENCY_FILES---)
-    $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
+	$(info ---OF_PROJECT_DEPENDENCY_FILES---)
+	$(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
 endif
 
 
@@ -509,6 +509,6 @@ OF_PROJECT_DEPENDENCY_FILES = $(OF_PROJECT_DEPS) $(OF_PROJECT_ADDONS_DEPS)
 
 
 ifdef MAKEFILE_DEBUG
-    $(info ---OF_PROJECT_DEPENDENCY_FILES---)
-    $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
+	$(info ---OF_PROJECT_DEPENDENCY_FILES---)
+	$(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
 endif

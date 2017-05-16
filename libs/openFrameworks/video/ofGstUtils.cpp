@@ -28,7 +28,7 @@
 #endif
 
 
-ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop;
+ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop = nullptr;
 
 void ofGstUtils::startGstMainLoop(){
 	static bool initialized = false;
@@ -44,9 +44,11 @@ GMainLoop * ofGstUtils::getGstMainLoop(){
 }
 
 void ofGstUtils::quitGstMainLoop(){
-	mainLoop->quit();
-	delete mainLoop;
-	mainLoop=0;
+	if(mainLoop){
+		mainLoop->quit();
+		delete mainLoop;
+		mainLoop = nullptr;
+	}
 }
 
 
@@ -123,7 +125,13 @@ ofGstUtils::ofGstUtils() {
 
 	if(!gst_inited){
 #ifdef TARGET_WIN32
-		string gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86");
+		string gst_path;
+		if (sizeof(int) == 32) {
+			 gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86");
+		}else
+		{
+			gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86_64");
+		}
 		//putenv(("GST_PLUGIN_PATH_1_0=" + ofFilePath::join(gst_path, "lib\\gstreamer-1.0") + ";.").c_str());
 		// to make it compatible with gcc and C++11 standard
 		SetEnvironmentVariableA("GST_PLUGIN_PATH_1_0", ofFilePath::join(gst_path, "lib\\gstreamer-1.0").c_str());
@@ -409,6 +417,9 @@ void ofGstUtils::setPosition(float pct){
 	//pct = CLAMP(pct, 0,1);// check between 0 and 1;
 	GstFormat format = GST_FORMAT_TIME;
 	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
+	if(speed > 1 || speed < -1){
+		flags = (GstSeekFlags)(flags | GST_SEEK_FLAG_SKIP);
+	}
 	gint64 pos = (guint64)((double)pct*(double)durationNanos);
 
 	/*if(bPaused){
@@ -448,8 +459,14 @@ void ofGstUtils::setLoopState(ofLoopType state){
 }
 
 void ofGstUtils::setSpeed(float _speed){
+	if(_speed == speed) return;
+
 	GstFormat format = GST_FORMAT_TIME;
-	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_SKIP | GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
+	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
+	if(_speed > 1 || _speed < -1){
+		flags = (GstSeekFlags)(flags | GST_SEEK_FLAG_SKIP);
+	}
+
 	gint64 pos;
 
 	if(_speed==0){
@@ -475,7 +492,7 @@ void ofGstUtils::setSpeed(float _speed){
 		gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
 
 	if(speed>0){
-		if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
+		if(!gst_element_seek(GST_ELEMENT(gstSink), speed, 	format,
 				flags,
 				GST_SEEK_TYPE_SET,
 				pos,
@@ -484,7 +501,7 @@ void ofGstUtils::setSpeed(float _speed){
 			ofLogWarning("ofGstUtils") << "setSpeed(): unable to change speed";
 		}
 	}else{
-		if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
+		if(!gst_element_seek(GST_ELEMENT(gstSink), speed, 	format,
 				flags,
 				GST_SEEK_TYPE_SET,
 				0,

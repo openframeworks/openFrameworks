@@ -371,15 +371,7 @@ void ofVbo::setNormalData(const ofVec3f * normals, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setNormalData(const float * normal0x, int total, int usage, int stride) {
-	// tig: note that we set the 'Normalize' flag to true here, assuming that mesh normals need to be
-	// normalized while being uploaded to GPU memory.
-	// http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
-	// Normalizing the normals on the shader is probably faster, but sending non-normalized normals is
-	// more prone to lead to artifacts difficult to diagnose, especially with the built-in 3D primitives.
-	// If you need to optimise this, and you've dug this far through the code, you are most probably
-	// able to roll your own client code for binding & rendering vbos anyway...
 	normalAttribute.setData(normal0x, 3, total, usage, stride);
-	normalAttribute.normalize = true;
 	enableNormals();
 }
 
@@ -454,7 +446,6 @@ void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords
 		bUsingColors |= (location == ofShader::COLOR_ATTRIBUTE);
 		bUsingNormals |= (location == ofShader::NORMAL_ATTRIBUTE);
 		bUsingTexCoords |= (location == ofShader::TEXCOORD_ATTRIBUTE);
-		normalize = (location == ofShader::NORMAL_ATTRIBUTE);
 	}
 
 	getOrCreateAttr(location).setData(attrib0x,numCoords,total,usage,stride,normalize);

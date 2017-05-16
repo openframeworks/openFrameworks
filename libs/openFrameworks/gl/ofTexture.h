@@ -575,6 +575,7 @@ class ofTexture : public ofBaseDraws {
 	/// \section Drawing
 	void draw(float x, float y) const;
 	void draw(float x, float y, float z) const;
+	void draw(const glm::vec3 & pos) const;
 
 	void draw(float x, float y, float w, float h) const;
 
@@ -586,6 +587,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param w Draw width.
 	/// \param h Draw height.
 	void draw(float x, float y, float z, float w, float h) const;
+	void draw(const glm::vec3 & pos, float w, float h) const;
 	
 	/// \brief Draws the texture at 4 points passed in as if you created 4 glVertices.
 	///
@@ -636,6 +638,13 @@ class ofTexture : public ofBaseDraws {
 	/// \param sw Subsection width within the texture.
 	/// \param sh Subsection height within the texture.
 	void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh) const;
+
+	/// \brief Draw a subsection of the texture with an offset.
+	///
+	/// \sa drawSubsection(ofRectangle& drawBounds, ofRectangle& subsectionBounds)
+	/// \param drawBounds Draw position and dimensions.
+	/// \param subsectionBounds Subsection position and dimensions within the texture.
+	void drawSubsection(const ofRectangle& drawBounds, const ofRectangle& subsectionBounds) const;
 	
 	/// \brief Draw a subsection of the texture with an offset and depth.
 	///

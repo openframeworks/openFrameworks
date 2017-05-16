@@ -22,6 +22,11 @@
 	#define OF_VID_GRABBER_TYPE ofQTKitGrabber
 #endif
 
+#ifdef OF_VIDEO_CAPTURE_AVF
+	#include "ofAVFoundationGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofAVFoundationGrabber
+#endif
+
 #ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	#include "ofDirectShowGrabber.h"
 	#define OF_VID_GRABBER_TYPE ofDirectShowGrabber

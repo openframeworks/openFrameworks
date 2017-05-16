@@ -2,7 +2,7 @@
 --
 ![Screenshot of audioOutputExample](audioOutputExample.gif)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks example is designed to demonstrate how to play loaded sounds in your iOS application.
 
