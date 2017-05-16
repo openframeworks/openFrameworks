@@ -1,3 +1,4 @@
+#if !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 #ifdef OF_VIDEO_PLAYER_QTKIT
 
 #include "ofQTKitPlayer.h"
@@ -461,4 +462,5 @@ void ofQTKitPlayer::updateTexture(){
 	}
 }
 
+#endif
 #endif

@@ -174,7 +174,7 @@ void ofxAndroidSoundStream::close(){
 		ofLogError("ofxAndroidSoundStream") << "close(): couldn't get OFAndroidSoundStream instance or stop method";
 }
 
-long unsigned long ofxAndroidSoundStream::getTickCount() const{
+uint64_t ofxAndroidSoundStream::getTickCount() const{
 	return tickCount;
 }
 

@@ -5,6 +5,7 @@
 #include "ofLog.h"
 #include "ofUtils.h"
 #include "ofAppRunner.h"
+#include "ofParameter.h"
 #include <condition_variable>
 #include <mutex>
 
@@ -77,7 +78,8 @@ static void restoreAppWindowFocus(){
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 #include <gtk/gtk.h>
 #include "ofGstUtils.h"
-#include "Poco/Condition.h"
+#include <thread>
+#include <X11/Xlib.h>
 
 #if GTK_MAJOR_VERSION>=3
 #define OPEN_BUTTON "_Open"
@@ -104,7 +106,7 @@ struct FileDialogData{
 	string defaultName;
 	string results;
 	bool done;
-	Poco::Condition condition;
+	std::condition_variable condition;
 	std::mutex mutex;
 };
 
@@ -133,7 +135,11 @@ gboolean file_dialog_gtk(gpointer userdata){
 							  CANCEL_BUTTON, GTK_RESPONSE_CANCEL,
 							  nullptr);
 
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog),dialogData->defaultName.c_str());
+		if(ofFile(dialogData->defaultName, ofFile::Reference).isDirectory()){
+			gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), dialogData->defaultName.c_str());
+		}else{
+			gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), dialogData->defaultName.c_str());
+		}
 
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			dialogData->results = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
@@ -141,11 +147,10 @@ gboolean file_dialog_gtk(gpointer userdata){
 		gtk_widget_destroy (dialog);
 	}
 
-	dialogData->mutex.lock();
-	dialogData->condition.signal();
+	std::unique_lock<std::mutex> lck(dialogData->mutex);
+	dialogData->condition.notify_all();
 	dialogData->done = true;
-	dialogData->mutex.unlock();
-	return FALSE;
+	return G_SOURCE_REMOVE;
 }
 
 struct TextDialogData{
@@ -167,7 +172,7 @@ gboolean alert_dialog_gtk(gpointer userdata){
 	dialogData->done = true;
 	dialogData->mutex.unlock();
 
-	return FALSE;
+	return G_SOURCE_REMOVE;
 }
 
 gboolean text_dialog_gtk(gpointer userdata){
@@ -187,7 +192,7 @@ gboolean text_dialog_gtk(gpointer userdata){
 	dialogData->done = true;
 	dialogData->mutex.unlock();
 
-	return FALSE;
+	return G_SOURCE_REMOVE;
 }
 
 static void initGTK(){
@@ -214,8 +219,8 @@ static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,strin
 
 	g_main_context_invoke(g_main_loop_get_context(ofGstUtils::getGstMainLoop()), &file_dialog_gtk, &dialogData);
 	if(!dialogData.done){
-		dialogData.mutex.lock();
-		dialogData.condition.wait(dialogData.mutex);
+		std::unique_lock<std::mutex> lck(dialogData.mutex);
+		dialogData.condition.wait(lck);
 	}
 	return dialogData.results;
 }

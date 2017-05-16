@@ -2,7 +2,6 @@
 
 
 #include "ofConstants.h"
-#include "ofPoint.h"
 #include "ofLog.h"
 
 
@@ -12,8 +11,8 @@
 /// 2D rectangle. The ofRectangle::standardize() method can be used to ensure
 /// that the origin is in the "standard" form.
 ///
-/// \warning While ofRectangle takes ofPoint (a typedef for ofVec3f, a 3D
-/// vector), all ofRectangle operations are 2D only, ignoring the z-component.
+/// \warning While ofRectangle takes glm::vec3
+/// all ofRectangle operations are 2D only, ignoring the z-component.
 class ofRectangle{
 public:
 
@@ -39,12 +38,13 @@ public:
     /// To produce consistent results, users are encouraged to initialize
     /// rectangles in the standardized form with width >=0 and height >= 0.
     ///
-    /// \warning The z-component of the passed ofPoint is ignored.
+	/// \warning The z-component of the passed glm::vec3 is ignored.
     ///
-    /// \param p The ofPoint representing the position of the rectangle.
+	/// \param p The glm::vec3 representing the position of the rectangle.
     /// \param w The width of the rectangle.
     /// \param h The height of the rectangle.
-    ofRectangle(const ofPoint& p, float w, float h);
+	ofRectangle(const glm::vec3& p, float w, float h);
+	ofRectangle(const glm::vec2& p, float w, float h);
 
     /// \brief Construct a rectangle by copying another rectangle.
     /// \param rect The rectangle to copy.
@@ -52,11 +52,12 @@ public:
 
     /// \brief Construct a rectangle by defining two corners.
     ///
-    /// \warning The z-components of the passed ofPoints are ignored.
+	/// \warning The z-components of the passed glm::vec3s are ignored.
     ///
-    /// \param p0 An ofPoint representing the upper left hand corner.
-    /// \param p1 An ofPoint representing the lower right hand corner.
-    ofRectangle(const ofPoint& p0, const ofPoint& p1);
+	/// \param p0 An glm::vec3 representing the upper left hand corner.
+	/// \param p1 An glm::vec3 representing the lower right hand corner.
+	ofRectangle(const glm::vec3& p0, const glm::vec3& p1);
+	ofRectangle(const glm::vec2& p0, const glm::vec2& p1);
 
     /// \brief Destroy the rectangle.
     virtual ~ofRectangle();
@@ -82,12 +83,13 @@ public:
     /// To produce consistent results, users are encouraged to initialize
     /// rectangles in the standardized form with width >=0 and height >= 0.
     ///
-    /// \warning The z-component of the passed ofPoint is ignored.
+	/// \warning The z-component of the passed glm::vec3 is ignored.
     ///
     /// \param p The new position.
     /// \param w The new width.
     /// \param h The new height.
-    void set(const ofPoint& p, float w, float h);
+	void set(const glm::vec3& p, float w, float h);
+	void set(const glm::vec2& p, float w, float h);
 
     /// \brief Set the position and size by copying them from anohter rectangle.
     /// \param rect The rectangle to copy.
@@ -95,11 +97,12 @@ public:
 
     /// \brief Set the position and size of the rectangle using corners.
     ///
-    /// \warning The z-components of the passed ofPoints are ignored.
+	/// \warning The z-components of the passed glm::vec3s are ignored.
     ///
-    /// \param p0 The ofPoint representing the upper left hand corner.
-    /// \param p1 The ofPoint representing the lower right hand corner.
-    void set(const ofPoint& p0, const ofPoint& p1);
+	/// \param p0 The glm::vec3 representing the upper left hand corner.
+	/// \param p1 The glm::vec3 representing the lower right hand corner.
+	void set(const glm::vec3& p0, const glm::vec3& p1);
+	void set(const glm::vec2& p0, const glm::vec2& p1);
 
     /// \brief Set the x-position of the rectangle.
     /// \param px The new x-position.
@@ -124,10 +127,10 @@ public:
 
     /// \brief Set the position of the rectangle.
     ///
-    /// \warning The z-component of the passed ofPoint is ignored.
+	/// \warning The z-component of the passed glm::vec3 is ignored.
     ///
-    /// \param p The position as an ofPoint.
-    void setPosition(const ofPoint& p);
+	/// \param p The position as an glm::vec3.
+	void setPosition(const glm::vec3& p);
 
 	/// \brief Set the size of the rectangle.
 	/// \param w The new width.
@@ -150,10 +153,11 @@ public:
     /// The center of the rectangle is defined and the width and height grow
     /// out around the center.
     ///
-    /// \param p The position of the rectangle's center as an ofPoint.
+	/// \param p The position of the rectangle's center as an glm::vec3.
     /// \param w The width of the rectangle.
     /// \param h The height of the rectangle.
-    void setFromCenter(const ofPoint& p, float w, float h);
+	void setFromCenter(const glm::vec3& p, float w, float h);
+	void setFromCenter(const glm::vec2& p, float w, float h);
 
     /// \}
 
@@ -167,10 +171,11 @@ public:
 
     /// \brief Translate the rectangle's position by an x and y amount.
     ///
-    /// \warning The z-component of the passed ofPoint is ignored.
+	/// \warning The z-component of the passed glm::vec3 is ignored.
     ///
-    /// \param dp The amount to translate as an ofPoint.
-    void translate(const ofPoint& dp);
+	/// \param dp The amount to translate as an glm::vec3.
+	void translate(const glm::vec3& dp);
+	void translate(const glm::vec2& dp);
 
     /// \brief Translate the x-position of the rectangle.
     /// \param dx The amount to translate on the x-axis.
@@ -202,10 +207,11 @@ public:
     /// Scaling will scale the width and the height, but will not change the
     /// position.
     ///
-    /// \warning The z-component of the passed ofPoint is ignored.
+	/// \warning The z-component of the passed glm::vec3 is ignored.
     ///
     /// \param s The scaling factor.
-    void scale(const ofPoint& s);
+	void scale(const glm::vec3& s);
+	void scale(const glm::vec2& s);
 
     /// \brief Scale the width of the rectangle.
     ///
@@ -243,10 +249,11 @@ public:
     /// The center point of the rectangle will remain fixed and the width,
     /// height, x, and y will be adjusted.
     ///
-    /// \warning The z-component of the passed ofPoint is ignored.
+	/// \warning The z-component of the passed glm::vec3 is ignored.
     ///
     /// \param s The scaling factor.
-    void scaleFromCenter(const ofPoint& s);
+	void scaleFromCenter(const glm::vec3& s);
+	void scaleFromCenter(const glm::vec2& s);
 
     /// \brief Scale the rectanle using a target ofRectangle and ofScaleMode.
     ///
@@ -380,22 +387,25 @@ public:
                      ofAlignVert targetVertAnchor,
                      ofAlignVert thisVertAnchor);
 
-    /// \brief Align this ofRectangle to an ofPoint in both x- and y dimentions.
+	/// \brief Align this ofRectangle to an glm::vec3 in both x- and y dimentions.
     ///
     /// Aligns the position of the ofRectangle to the given point using an
     /// ofAlignHorz constant and an ofAlignVert constant. If neither constant is
     /// passed in, this will align the center of the rectangle.
     ///
-    /// \warning The z-component of the passed ofPoint is ignored.
+	/// \warning The z-component of the passed glm::vec3 is ignored.
     ///
-    /// \param targetPoint The target ofPoint to align to.
+	/// \param targetPoint The target glm::vec3 to align to.
     /// \param thisHorzAnchor The horizontal alignment anchor.
     /// \param thisVertAnchor The vertical alignment anchor.
-    void alignTo(const ofPoint& targetPoint,
+	void alignTo(const glm::vec3& targetPoint,
                 ofAlignHorz thisHorzAnchor = OF_ALIGN_HORZ_CENTER,
                 ofAlignVert thisVertAnchor = OF_ALIGN_VERT_CENTER);
+	void alignTo(const glm::vec2& targetPoint,
+				ofAlignHorz thisHorzAnchor = OF_ALIGN_HORZ_CENTER,
+				ofAlignVert thisVertAnchor = OF_ALIGN_VERT_CENTER);
 
-    /// \brief Align this ofRectangle to an ofPoint in both x- and y dimentions using a shared anchor.
+	/// \brief Align this ofRectangle to an glm::vec3 in both x- and y dimentions using a shared anchor.
     ///
     /// Aligns the position of the ofRectangle to that of the passed-in
     /// ofRectangle. Can take an ofAlignHorz constant and an ofAlignVert
@@ -450,16 +460,17 @@ public:
     /// \returns true if px and py are inside this ofRectangle.
     bool inside(float px, float py) const;
 
-    /// \brief Determines if the ofPoint is within the ofRectangle.
+	/// \brief Determines if the glm::vec3 is within the ofRectangle.
     ///
     /// Note that points on the edge of the ofRectangle are not
     /// considered within the rectangle and will return false.
     ///
-    /// \warning The z-component of the passed ofPoint is ignored.
+	/// \warning The z-component of the passed glm::vec3 is ignored.
     ///
     /// \param p The point to test.
     /// \returns true if the point p is inside this ofRectangle.
-    bool inside(const ofPoint& p) const;
+	bool inside(const glm::vec3& p) const;
+	bool inside(const glm::vec2& p) const;
 
     /// \brief Determines if another ofRectangle is completely within the ofRectangle.
     ///
@@ -470,17 +481,18 @@ public:
     /// \returns true if all four corners of the rect are within this rectangle.
     bool inside(const ofRectangle& rect) const;
 
-    /// \brief Determines if both of the passed ofPoints are within the ofRectangle or not.
+	/// \brief Determines if both of the passed glm::vec3s are within the ofRectangle or not.
     ///
     /// Note that points on the edge of the ofRectangle are not considered
     /// within the rectangle and will return false.
     ///
-    /// \warning The z-components of the passed ofPoints are ignored.
+	/// \warning The z-components of the passed glm::vec3s are ignored.
     ///
     /// \param p0 The first point to test.
     /// \param p1 The second point to test.
     /// \returns true if both points are inside the rectangle.
-    bool inside(const ofPoint& p0, const ofPoint& p1) const;
+	bool inside(const glm::vec3& p0, const glm::vec3& p1) const;
+	bool inside(const glm::vec2& p0, const glm::vec2& p1) const;
 
     /// \brief Determines if another rectangle intersects with this rectangle.
     ///
@@ -494,14 +506,15 @@ public:
 
     /// \brief Determines if a line segment intersects with the ofRectangle.
     ///
-    /// \warning The z-components of the passed ofPoints are ignored.
+	/// \warning The z-components of the passed glm::vec3s are ignored.
     ///
     /// \param p0 The first point to test.
     /// \param p1 The second point to test.
-    /// \returns `true` if the line segment defined by the two passed ofPoints
+	/// \returns `true` if the line segment defined by the two passed glm::vec3s
     ///     either crosses the perimeter of the ofRectangle or is completely
     ///     contained within.
-    bool intersects(const ofPoint& p0, const ofPoint& p1) const;
+	bool intersects(const glm::vec3& p0, const glm::vec3& p1) const;
+	bool intersects(const glm::vec2& p0, const glm::vec2& p1) const;
 
     /// \brief Grow the ofRectangle to include the given (x, y) coordinates.
     ///
@@ -519,10 +532,11 @@ public:
     /// position of the ofRectangle.  If the point is already within the
     /// rectangle, this rectangle will remain unchanged.
     ///
-    /// \warning The z-component of the passed ofPoint is ignored.
+	/// \warning The z-component of the passed glm::vec3 is ignored.
     ///
     /// \param p The position to include.
-    void growToInclude(const ofPoint& p);
+	void growToInclude(const glm::vec3& p);
+	void growToInclude(const glm::vec2& p);
 
     /// \brief Grow the ofRectangle to include the given ofRectangle.
     ///
@@ -539,11 +553,12 @@ public:
     /// y-position of the ofRectangle.  If the points are already within the
     /// rectangle, this rectangle will remain unchanged.
     ///
-    /// \warning The z-components of the passed ofPoints are ignored.
+	/// \warning The z-components of the passed glm::vec3s are ignored.
     ///
     /// \param p0 The first point to include.
     /// \param p1 The second point to include.
-    void growToInclude(const ofPoint& p0, const ofPoint& p1);
+	void growToInclude(const glm::vec3& p0, const glm::vec3& p1);
+	void growToInclude(const glm::vec2& p0, const glm::vec2& p1);
 
     /// \brief Get the intersecting area between this rectangle and another.
     ///
@@ -631,13 +646,13 @@ public:
     /// \returns true if both the width == 0 and height == 0, false if either is non-zero.
     bool isEmpty() const;
 
-    /// \brief Get the minimum x and y coordinates of the ofRectangle as ofPoint.
+	/// \brief Get the minimum x and y coordinates of the ofRectangle as glm::vec3.
     /// \returns The minimum x and y coordinates of the rectangle.
-    ofPoint getMin() const;
+	glm::vec3 getMin() const;
 
-    /// \brief Get the maximum x and y coordinates of the ofRectangle as ofPoint.
+	/// \brief Get the maximum x and y coordinates of the ofRectangle as glm::vec3.
     /// \returns The maximum x and y coordinates of the rectangle.
-    ofPoint getMax() const;
+	glm::vec3 getMax() const;
 
     /// \brief Get the smallest x position of the ofRectangle as float.
     /// \returns The smallest xposition of the rectangle.
@@ -675,23 +690,23 @@ public:
     /// \returns The y position of the bottom edge of the rectangle.
     float getBottom() const;
 
-    /// \brief Get the top-left coordinates of the ofRectangle as ofPoint.
+	/// \brief Get the top-left coordinates of the ofRectangle as glm::vec3.
     /// \sa getMin()
     /// \returns The top-left coordinates of the rectangle.
-    ofPoint getTopLeft() const;
+	glm::vec3 getTopLeft() const;
 
-    /// \brief Get the top-right coordinates of the ofRectangle as ofPoint.
+	/// \brief Get the top-right coordinates of the ofRectangle as glm::vec3.
     /// \returns The top-right coordinates of the rectangle.
-    ofPoint getTopRight() const;
+	glm::vec3 getTopRight() const;
 
-    /// \brief Get the bottom-left coordinates of the ofRectangle as ofPoint.
+	/// \brief Get the bottom-left coordinates of the ofRectangle as glm::vec3.
     /// \returns The bottom-left coordinates of the rectangle.
-    ofPoint getBottomLeft() const;
+	glm::vec3 getBottomLeft() const;
 
-    /// \brief Get the bottom-right coordinates of the ofRectangle as ofPoint.
+	/// \brief Get the bottom-right coordinates of the ofRectangle as glm::vec3.
     /// \sa getMax()
     /// \returns The bottom-right coordinates of the rectangle.
-    ofPoint getBottomRight() const;
+	glm::vec3 getBottomRight() const;
 
     /// \brief A convenience method that returns the value of one of
     /// the horizontal edges of the ofRectangle using the `ofAlignHorz` enum.
@@ -709,19 +724,19 @@ public:
 
     /// \brief Get the ofRectangle's position.
     ///
-    /// \warning The z component of the returned ofPoint is undefined.
+	/// \warning The z component of the returned glm::vec3 is undefined.
     ///
     /// \returns The rectangle's position.
-    const ofPoint& getPosition() const;
+	const glm::vec3& getPosition() const;
 
-	OF_DEPRECATED_MSG("Use getPosition() instead.", ofPoint& getPositionRef() );
+	OF_DEPRECATED_MSG("Use getPosition() instead.", glm::vec3& getPositionRef() );
 
-    /// \brief Get the coordiantes of the ofRectangle's center as ofPoint.
+	/// \brief Get the coordiantes of the ofRectangle's center as glm::vec3.
     ///
-    /// \warning The z component of the returned ofPoint will always be 0.
+	/// \warning The z component of the returned glm::vec3 will always be 0.
     ///
     /// \returns The x and y coordinates of the center of the rectangle (z = 0).
-    ofPoint getCenter() const;
+	glm::vec3 getCenter() const;
 
     /// \brief Gets the x position of the ofRectangle as float.
     /// \returns The x position of the rectangle.
@@ -739,6 +754,52 @@ public:
     /// \returns The height of the rectangle.
     float getHeight() const;
 
+    
+    /// \brief Maps a normalized coordinate into this rectangle
+    /// 
+    /// Normalized coordinates range from [0,1] inclusive. It is used to define a ratio
+    /// between the coordinates and a unitary rectangle. This ratio is mapped into
+    /// this rectangle to scale to real values. If normalized coordinates are out of bounds,
+    /// output will be scaled accordingly.
+    ///
+    /// \param coeff Normalized coordinate to map to this rectangle
+    /// \returns The mapped coordinate
+    glm::vec2 map(const glm::vec2 & coeff) const;
+    
+    /// \brief Maps a normalized coordinate into this rectangle
+    /// 
+    /// Normalized rectangles' position, width and height range from [0,1] inclusive.
+    /// It is used to define a ratio between the rectangle and a unitary rectangle.
+    /// This ratio is mapped into this rectangle to scale to real values. 
+    /// If normalized rectangle is out of bounds, output will be scaled accordingly.
+    /// 
+    /// \param coeff Normalized rectangle to map to this rectangle
+    /// \returns The mapped coordinate
+    ofRectangle map(const ofRectangle & coeff) const;
+    
+    /// \brief Maps a normalized coordinate into this rectangle, clamping if out of bounds
+    /// 
+    /// Normalized coordinates range from [0,1] inclusive. It is used to define a ratio
+    /// between the coordinates and a unitary rectangle. This ratio is mapped into
+    /// this rectangle to scale to real values. If normalized coordinates are out of bounds,
+    /// output will be clamped to this rectangle's position, width and height.
+    /// 
+    /// \param coeff Normalized coordinate to map to this rectangle
+    /// \returns The mapped coordinate, clamped
+    glm::vec2 mapClamp(const glm::vec2 & coeff) const;
+    
+    /// \brief Maps a normalized rectangle to this rectangle, clamping if out of bounds
+    /// 
+    /// Normalized rectangles' position, width and height range from [0,1] inclusive.
+    /// It is used to define a ratio between the rectangle and a unitary rectangle.
+    /// This ratio is mapped into this rectangle to scale to real values. 
+    /// If normalized rectangle is out of bounds, output will be clamped to this 
+    /// rectangle's position, width and height.
+    /// 
+    /// \param coeff Normalized rectangle to map to this rectangle
+    /// \returns The mapped rectangle
+    ofRectangle mapClamp(const ofRectangle & coeff) const;
+    
     /// \}
 
     /// \name Operators
@@ -750,16 +811,18 @@ public:
     ofRectangle& operator = (const ofRectangle& rect);
 
     /// \brief Returns a new ofRectangle where the x and y positions of the
-    /// rectangle are offset by the (x, y) coordinates of the ofPoint.
+	/// rectangle are offset by the (x, y) coordinates of the glm::vec3.
     /// \param p The point to translate.
     /// \returns The translated ofRectangle.
-    ofRectangle operator + (const ofPoint& p);
+	ofRectangle operator + (const glm::vec3& p);
+	ofRectangle operator + (const glm::vec2& p);
 
 	/// \brief Returns a new ofRectangle where the x and y-positions of the
-	/// rectangle are offset by the (x, y) coordinates of the ofPoint.
+	/// rectangle are offset by the (x, y) coordinates of the glm::vec3.
 	/// \param p The point to translate.
 	/// \returns The translated ofRectangle.
-	ofRectangle operator - (const ofPoint& p);
+	ofRectangle operator - (const glm::vec3& p);
+	ofRectangle operator - (const glm::vec2& p);
 
     /// \brief If both ofRectangles have the same x, y, width, and height,
     /// they are considered equal.
@@ -782,11 +845,11 @@ public:
     /// \{
 
 
-    /// \brief The (x,y) position of the ofRectangle as an ofPoint.
+	/// \brief The (x,y) position of the ofRectangle as an glm::vec3.
     ///
     /// \warning The z-component of this position is preserved and can be used
     /// but all ofRectangle operations will ignore the z-component.
-    ofPoint position;
+	glm::vec3 position;
 
     /// \brief The x position of the ofRectangle.
     float& x;
@@ -804,10 +867,10 @@ public:
 };
 
 /// \cond INTERNAL
-/// \warning The internal z component of the ofPoint is preserved even though it
+/// \warning The internal z component of the glm::vec3 is preserved even though it
 /// is not used.
 ostream& operator<<(ostream& os, const ofRectangle& rect);
-/// \warning The internal z component of the ofPoint is preserved even though it
+/// \warning The internal z component of the glm::vec3 is preserved even though it
 /// is not used.
 istream& operator>>(istream& is, ofRectangle& rect);
 /// \endcond

@@ -1,9 +1,9 @@
-#About Image Loader Example
+# About Image Loader Example
 
 --
 ![Screenshot of Example](imageLoaderExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks Example is designed to demonstrate
 how to load image files.
@@ -29,6 +29,6 @@ Instructions for use:
 * There is no user interaction with this sketch.
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no other classes.

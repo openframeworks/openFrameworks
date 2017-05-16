@@ -31,7 +31,7 @@ public class OFAndroidLifeCycleHelper
 			return;
 		appInitFlag = true;
 		
-		OFAndroid.packageName = activity.getPackageName();
+		String packageName = activity.getPackageName();
 		
 		Log.i(TAG,"starting resources extractor");
 		Class<?> raw = null;
@@ -41,7 +41,7 @@ public class OFAndroidLifeCycleHelper
         	
 			// try to find if R.raw class exists will throw
         	// an exception if not
-        	raw = Class.forName(OFAndroid.packageName+".R$raw");
+        	raw = Class.forName(packageName+".R$raw");
         	// if it exists copy all the raw resources
         	// to a folder in the sdcard
 	        files = raw.getDeclaredFields(); 
@@ -51,7 +51,7 @@ public class OFAndroidLifeCycleHelper
 	        
 	        PackageManager pm = activity.getPackageManager();
 
-			ApplicationInfo appInfo = pm.getApplicationInfo(OFAndroid.packageName, 0);
+			ApplicationInfo appInfo = pm.getApplicationInfo(packageName, 0);
 
 	        String appFile = appInfo.sourceDir;
 	        long installed = new File(appFile).lastModified();
@@ -91,7 +91,7 @@ public class OFAndroidLifeCycleHelper
 				OFAndroid.fatalErrorDialog(activity, "Error while copying resources to sdcard:\nCouldn't create directory " + dataPath + "\n"+e.getMessage());
 				Log.e(TAG,"error creating dir " + dataPath,e);
 			}
-			OFAndroid.moveOldData(OFAndroid.getOldExternalStorageDirectory(OFAndroid.packageName), dataPath);
+			OFAndroid.moveOldData(OFAndroid.getOldExternalStorageDirectory(packageName), dataPath);
 			OFAndroid.setAppDataDir(dataPath);
 	        OFAndroid.reportPrecentage(.10f);
 		}catch(Exception e){
@@ -101,7 +101,7 @@ public class OFAndroidLifeCycleHelper
 		
 		String app_name="";
 		try {
-			int app_name_id = Class.forName(OFAndroid.packageName+".R$string").getField("app_name").getInt(null);
+			int app_name_id = Class.forName(packageName+".R$string").getField("app_name").getInt(null);
 			app_name = activity.getResources().getText(app_name_id).toString().toLowerCase(Locale.US);
 			Log.i(TAG,"app name: " + app_name);
 			
@@ -120,7 +120,7 @@ public class OFAndroidLifeCycleHelper
     					String resName = activity.getResources().getText(fileId).toString();
     					fileName = resName.substring(resName.lastIndexOf("/"));
     					Log.i(TAG,"checking " + fileName);
-    					if(fileName.equals("/" + app_name + "resources.zip")){
+    					if(fileName.equals("/ofdataresources.zip")){
     						
 	    					from = activity.getResources().openRawResource(fileId);
 							try{
@@ -162,7 +162,9 @@ public class OFAndroidLifeCycleHelper
 							}catch(Exception e){
 								OFAndroid.fatalErrorDialog(activity, "Error while copying resources to sdcard:\nCheck that you have enough space available.\n");
 							}
-    					}
+    					}else{
+							Log.i(TAG, "Resources file not found");
+						}
     	        	}catch (Exception e) {
     					Log.e(TAG,"error copying file",e);
     				} finally {
@@ -189,7 +191,6 @@ public class OFAndroidLifeCycleHelper
 	
 	public static void onCreate()
 	{
-//		OFAndroid.initOFAndroid(activity.getPackageName(), activity);
 		OFAndroid.onCreate();
 		OFAndroid.onUnpackingResourcesDone();
 	}
@@ -200,8 +201,8 @@ public class OFAndroidLifeCycleHelper
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.enableTouchEvents();
+				OFAndroid.enableOrientationChangeEvents();
 			}
 		});
 	}
@@ -212,8 +213,8 @@ public class OFAndroidLifeCycleHelper
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.enableTouchEvents();
+				OFAndroid.enableOrientationChangeEvents();
 			}
 		});
 		OFAndroid.onRestart();
@@ -222,17 +223,16 @@ public class OFAndroidLifeCycleHelper
 	}
 	
 	public static void onResume(){
-		final OFGLSurfaceView glView = OFAndroid.getGLView();
-		if(glView == null || resumed) return;
+		final OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+		if(resumed) return;
 		Log.i(TAG,"onResume");
 		resumed = true;
 		OFAndroid.runOnMainThread(new Runnable() {
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.enableTouchEvents();
-				glView.onResume();
+				OFAndroid.enableOrientationChangeEvents();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
 						object.onResume();
@@ -258,16 +258,14 @@ public class OFAndroidLifeCycleHelper
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.disableTouchEvents();
+				OFAndroid.disableOrientationChangeEvents();
 
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
 						object.onPause();
 					}
 				}
-				OFGLSurfaceView glView = OFAndroid.getGLView();
-				if(glView != null) glView.onPause();
 			}
 		});
 		
@@ -286,9 +284,9 @@ public class OFAndroidLifeCycleHelper
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				OFAndroid.disableTouchEvents();
-				
+				OFAndroid.disableOrientationChangeEvents();
+
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
 						object.onStop();

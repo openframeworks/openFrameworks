@@ -35,6 +35,7 @@
 
 #import <MapKit/MapKit.h>
 #include "ofBaseTypes.h"
+#include "ofConstants.h"
 #include "ofxiOSMapKitListener.h"
 
 // these are the types you can set for the map
@@ -105,7 +106,7 @@ public:
 	
 	
 	// convert location (latitude, longitude) to screen coordinates (i.e. pixels)
-	ofPoint getScreenCoordinatesForLocation(double latitude, double longitude);
+	glm::vec2 getScreenCoordinatesForLocation(double latitude, double longitude);
 	
 	// convert screen coordinates (i.e. pixels) to location (latitude, longitude)
 	ofxMapKitLocation getLocationForScreenCoordinates(float x, float y);

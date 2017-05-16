@@ -15,14 +15,15 @@ for group in *; do
                 cp ../../../scripts/templates/osx/config.make .
                 make Debug
                 binname=$(basename ${test})
-                
+
                 if [ "${test}" == "networkTcp" ] || [ "${test}" == "networkUdp" ]; then
                     counter=0
                     errorcode=1
                     while [ $counter -lt 5 ] && [ $errorcode -ne 0 ]
                     do
                         cd bin/${binname}_debug.app/Contents/MacOS/
-                        sudo gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
+                        #sudo gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
+                        ./${binname}_debug
                         errorcode=$?
                         counter=$[$counter +1]
                     done
@@ -31,7 +32,8 @@ for group in *; do
                     fi
                 else
                     cd bin/${binname}_debug.app/Contents/MacOS/
-                    sudo gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
+                    #sudo gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
+                    ./${binname}_debug
                     errorcode=$?
                     if [[ $errorcode -ne 0 ]]; then
                         exit $errorcode

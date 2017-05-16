@@ -78,17 +78,38 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * app
 	if( appPtr == nullptr ){
 		appPtr = ofGetAppPtr();
 	}
-	ofSoundStreamSetup(nOutputChannels, nInputChannels, appPtr, 44100, 256, 4);
+	ofSoundStreamSettings settings;
+	settings.numOutputChannels = nOutputChannels;
+	settings.numInputChannels = nInputChannels;
+	settings.setOutListener(appPtr);
+	settings.setInListener(appPtr);
+	ofSoundStreamSetup(settings);
 }
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers){
-	ofSoundStreamSetup(nOutputChannels, nInputChannels, ofGetAppPtr(), sampleRate, bufferSize, nBuffers);
+	ofSoundStreamSettings settings;
+	settings.numOutputChannels = nOutputChannels;
+	settings.numInputChannels = nInputChannels;
+	settings.setOutListener(ofGetAppPtr());
+	settings.setInListener(ofGetAppPtr());
+	settings.numBuffers = nBuffers;
+	settings.sampleRate = sampleRate;
+	settings.bufferSize = bufferSize;
+	ofSoundStreamSetup(settings);
 }
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers){
-	systemSoundStream.setup(appPtr, nOutputChannels, nInputChannels, sampleRate, bufferSize, nBuffers);
+	ofSoundStreamSettings settings;
+	settings.numOutputChannels = nOutputChannels;
+	settings.numInputChannels = nInputChannels;
+	settings.setOutListener(appPtr);
+	settings.setInListener(appPtr);
+	settings.numBuffers = nBuffers;
+	settings.sampleRate = sampleRate;
+	settings.bufferSize = bufferSize;
+	ofSoundStreamSetup(settings);
 }
 
 //------------------------------------------------------------
@@ -167,7 +188,9 @@ void ofSoundStream::setDeviceID(int deviceID){
 
 //------------------------------------------------------------
 void ofSoundStream::setDevice(const ofSoundDevice &device) {
-	setDeviceID(device.deviceID);
+    if( soundStream ){
+        tmpDeviceId = device.deviceID;
+    }
 }
 
 //------------------------------------------------------------

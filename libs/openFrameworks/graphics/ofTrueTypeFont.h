@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofConstants.h"
 #include "ofPath.h"
@@ -121,11 +120,11 @@ class ofTtfSettings{
 	vector<ofUnicode::range> ranges;
 
 public:
-	ofTtfSettings(const string & name, int size)
+    ofTtfSettings(const std::filesystem::path & name, int size)
 	:fontName(name)
 	,fontSize(size){}
 
-	string fontName;
+    std::filesystem::path fontName;
 	int fontSize;
 	bool antialiased = true;
 	bool contours = false;
@@ -184,7 +183,7 @@ public:
     /// \param simplifyAmt the amount to simplify the vector contours.  Larger number means more simplified.
     /// \param dpi the dots per inch used to specify rendering size.
 	/// \returns true if the font was loaded correctly.
-	bool load(string filename,
+    bool load(std::filesystem::path filename,
                   int fontsize,
                   bool _bAntiAliased=true,
                   bool _bFullCharacterSet=true,
@@ -352,6 +351,7 @@ public:
 	const ofMesh & getStringMesh(const std::string &  s, float x, float y, bool vflip=true) const;
 	const ofTexture & getFontTexture() const;
 	ofTexture getStringTexture(const std::string &  s, bool vflip=true) const;
+	glm::vec2 getFirstGlyphPosForTexture(const std::string & str, bool vflip) const;
 	bool isValidGlyph(uint32_t) const;
 	/// \}
 
@@ -404,7 +404,7 @@ protected:
 	void createStringMesh(const string & s, float x, float y, bool vFlipped) const;
 	glyph loadGlyph(uint32_t utf8) const;
 	const glyphProps & getGlyphProperties(uint32_t glyph) const;
-	void iterateString(const string & str, float x, float y, bool vFlipped, std::function<void(uint32_t, ofVec2f)> f) const;
+	void iterateString(const string & str, float x, float y, bool vFlipped, std::function<void(uint32_t, glm::vec2)> f) const;
 	size_t indexForGlyph(uint32_t glyph) const;
 
 	ofTexture texAtlas;

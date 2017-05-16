@@ -3,16 +3,12 @@
 #include "ofConstants.h"
 #include "utf8.h"
 #include <bitset> // For ofToBinary.
+#include <chrono>
 
 #include "ofLog.h"
 
-#ifdef TARGET_WIN32	 // For ofLaunchBrowser.
-	#include <shellapi.h>
-#endif
 
-/// \name Elapsed Time
-/// \{
-
+/// \section Elapsed Time
 /// \brief Reset the elapsed time counter.
 ///
 /// This method resets the times returned by ofGetElapsedTimef(),
@@ -53,11 +49,7 @@ uint64_t ofGetElapsedTimeMicros();
 /// \returns the number of frames rendered since the program started.
 uint64_t ofGetFrameNum();
 
-/// \}
-
-/// \name System time
-/// \{
-
+/// \section System Time
 /// \brief Get the seconds after the minute.
 /// \returns the seconds after the minute [0-59].
 int ofGetSeconds();
@@ -79,11 +71,72 @@ unsigned int ofGetUnixTime();
 
 /// \brief Get the system time in milliseconds.
 /// \returns the system time in milliseconds.
-uint64_t ofGetSystemTime();
+OF_DEPRECATED_MSG("Use ofGetSystemTimeMillis() instead", uint64_t ofGetSystemTime());
+
+/// \brief Get the system time in milliseconds.
+/// \returns the system time in milliseconds.
+uint64_t ofGetSystemTimeMillis();
 
 /// \brief Get the system time in microseconds.
 /// \returns the system time in microseconds.
 uint64_t ofGetSystemTimeMicros();
+
+
+struct ofTime{
+	uint64_t seconds = 0;
+	uint64_t nanoseconds = 0;
+
+	enum Mode{
+		System,
+		FixedRate,
+	} mode = System;
+
+	uint64_t getAsMilliseconds() const;
+	uint64_t getAsMicroseconds() const;
+	uint64_t getAsNanoseconds() const;
+	double getAsSeconds() const;
+#ifndef TARGET_WIN32
+	timespec getAsTimespec() const;
+#endif
+
+	std::chrono::time_point<std::chrono::nanoseconds> getAsTimePoint() const;
+	std::chrono::nanoseconds operator-(const ofTime&) const;
+	bool operator<(const ofTime&) const;
+	bool operator>(const ofTime&) const;
+	bool operator<=(const ofTime&) const;
+	bool operator>=(const ofTime&) const;
+
+	template<typename rep, typename ratio>
+	ofTime operator+(const std::chrono::duration<rep,ratio> & duration) const{
+		constexpr uint64_t NANOS_PER_SEC = 1000000000ll;
+		auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(duration);
+		ofTime t = *this;
+		t.nanoseconds += ns.count();
+		if(this->nanoseconds>NANOS_PER_SEC){
+			uint64_t secs = this->nanoseconds / NANOS_PER_SEC;
+			t.nanoseconds -= NANOS_PER_SEC*secs;
+			t.seconds+=secs;
+		}
+		return t;
+	}
+
+	template<typename rep, typename ratio>
+	ofTime &operator+=(const std::chrono::duration<rep,ratio> & duration){
+		constexpr uint64_t NANOS_PER_SEC = 1000000000ll;
+		auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(duration);
+		this->nanoseconds += ns.count();
+		if(this->nanoseconds>NANOS_PER_SEC){
+			uint64_t secs = this->nanoseconds / NANOS_PER_SEC;
+			this->nanoseconds -= NANOS_PER_SEC*secs;
+			this->seconds+=secs;
+		}
+		return *this;
+	}
+};
+
+/// \brief Get the system time.
+/// \returns the system time.
+ofTime ofGetCurrentTime();
 
 /// \brief Sleeps the current thread for the specified amount of milliseconds.
 /// \param millis The number of millseconds to sleep.
@@ -153,11 +206,7 @@ int ofGetDay();
 /// \returns the current weekday [0-6].
 int ofGetWeekday();
 
-/// \}
-
-/// \name Data Path
-/// \{
-
+/// \section Data Path
 /// \brief Enable the use of the data path.
 ///
 /// This function causes ofToDataPath() to respect the relative path set
@@ -181,7 +230,7 @@ void ofDisableDataPath();
 /// \param path The path to make relative to the data/ folder.
 /// \param absolute Set to true to return an absolute path.
 /// \returns the new path, unless paths were disabled with ofDisableDataPath().
-string ofToDataPath(const string& path, bool absolute=false);
+string ofToDataPath(const std::filesystem::path & path, bool absolute=false);
 
 /// \brief Reset the working directory to the platform default.
 ///
@@ -200,14 +249,10 @@ bool ofRestoreWorkingDirectoryToDefault();
 ///
 /// \warning The provided path must have a trailing slash (/).
 /// \param root The path to the data/ folder relative to the app executable.
-void ofSetDataPathRoot(const string& root);
+void ofSetDataPathRoot(const std::filesystem::path& root);
 
 
-/// \}
-
-/// \name Vectors
-/// \{
-
+/// \section Vectors
 /// \brief Randomly reorder the values in a vector.
 /// \tparam T the type contained by the vector.
 /// \param values The vector of values to modify.
@@ -316,7 +361,7 @@ void ofSort(vector<T>& values) {
 /// \sa http://www.cplusplus.com/reference/algorithm/sort/
 template<class T, class BoolFunction>
 void ofSort(vector<T>& values, BoolFunction compare) {
-	sort(values.begin(), values.end(), compare);
+	std::sort(values.begin(), values.end(), compare);
 }
 
 /// \brief Search for a target value in a vector of values.
@@ -327,7 +372,7 @@ void ofSort(vector<T>& values, BoolFunction compare) {
 /// \sa http://www.cplusplus.com/reference/iterator/distance/
 template <class T>
 std::size_t ofFind(const vector<T>& values, const T& target) {
-	return distance(values.begin(), find(values.begin(), values.end(), target));
+	return std::distance(values.begin(), find(values.begin(), values.end(), target));
 }
 
 /// \brief Search for a target value in a vector of values.
@@ -342,12 +387,7 @@ bool ofContains(const vector<T>& values, const T& target) {
 
 
 
-/// \}
-
-
-/// \name String Manipulation
-/// \{
-
+/// \section String Manipulation
 /// \brief Splits a string using a delimiter.
 ///
 /// ofSplitString splits a string and returns the collection of string
@@ -439,7 +479,14 @@ string ofTrimFront(const string & src, const string & locale = "");
 string ofTrimBack(const string & src, const string & locale = "");
 string ofTrim(const string & src, const string & locale = "");
 
-void ofAppendUTF8(string & str, uint32_t utf8);
+OF_DEPRECATED_MSG("Use ofUTF8Append instead", void ofAppendUTF8(string & str, uint32_t utf8));
+
+void ofUTF8Append(string & str, uint32_t utf8);
+void ofUTF8Insert(string & str, size_t pos, uint32_t utf8);
+void ofUTF8Erase(string & str, size_t start, size_t len);
+std::string ofUTF8Substring(const string & str, size_t start, size_t len);
+std::string ofUTF8ToString(uint32_t utf8);
+size_t ofUTF8Length(const std::string & str);
 
 /// \brief Convert a variable length argument to a string.
 /// \param format a printf-style format string.
@@ -452,12 +499,7 @@ string ofVAArgsToString(const char * format, ...);
 /// \returns A string representation of the argument list.
 string ofVAArgsToString(const char * format, va_list args);
 
-/// \}
-
-/// \name String conversion
-/// \{
-
-
+/// \section String Conversion
 /// \brief Convert a value to a string.
 ///
 /// ofToString does its best to convert any value to a string. If the data type
@@ -582,8 +624,6 @@ string ofFromString(const string & value);
 template<>
 const char * ofFromString(const string & value);
 
-/// \}
-
 template<typename T> T ofTo(const std::string & str){
 	T x;
 	istringstream cur(str);
@@ -591,10 +631,7 @@ template<typename T> T ofTo(const std::string & str){
 	return x;
 }
 
-// --------------------------------------------
-/// \name Number conversion
-/// \{
-
+/// \section Number Conversion
 /// \brief Convert a string to an integer.
 ///
 /// Converts a `std::string` representation of an int (e.g., `"3"`) to an actual
@@ -603,10 +640,6 @@ template<typename T> T ofTo(const std::string & str){
 /// \param intString The string representation of the integer.
 /// \returns the integer represented by the string or 0 on failure.
 int ofToInt(const string& intString);
-
-// --------------------------------------------
-/// \name Number conversion
-/// \{
 
 /// \brief Convert a string to a int64_t.
 ///
@@ -708,7 +741,7 @@ char ofHexToChar(const string& charHexString);
 /// \brief Convert a string representing an float in hexadecimal to a float.
 ///
 /// Converts a hexadecimal representation of an float (little-endian, 32-bit
-/// IEEE 754, e.g., `"4060000000000000"`) to an actual float (e.g., `128.f`).
+/// IEEE 754, e.g., `"43000000"`) to an actual float (e.g., `128.f`).
 ///
 /// \param floatHexString The string representing an float in hexadecimal.
 /// \returns the float represented by the string.
@@ -802,12 +835,7 @@ float ofBinaryToFloat(const string& value);
 /// \returns the ASCII string represented by the string.
 string ofBinaryToString(const string& value);
 
-/// \}
-
-// --------------------------------------------
-/// \name openFrameworks version
-/// \{
-
+/// \section openFrameworks Version
 /// \brief Get the current version of openFrameworks as a string.
 ///
 /// openFrameworks uses the semantic versioning system.
@@ -854,13 +882,7 @@ unsigned int ofGetVersionPatch();
 std::string ofGetVersionPreRelease();
 
 
-/// \}
-
-// --------------------------------------------
-/// \name Frame saving
-/// \{
-
-
+/// \section Frame Saving
 /// \brief Saves the current screen image to a file on disk.
 ///
 /// Example:
@@ -889,11 +911,7 @@ void ofSaveFrame(bool bUseViewport = false);
 void ofSaveViewport(const string& filename);
 
 
-/// \}
-
-/// \name System
-/// \{
-
+/// \section System
 /// \brief Launch the given URL in the default browser.
 /// \param url the URL to open.
 /// \param uriEncodeQuery true if the query parameters in the given URL have
@@ -935,8 +953,6 @@ public:
 private:
 	std::string src_valid;
 };
-
-/// \}
 
 
 

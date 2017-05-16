@@ -7,7 +7,8 @@ About
 -----
 * The tool can be used to generate project files for the platform you've downloaded (osx Xcode, Windows, etc).
 * The project generator can add addons to your project, but not all addons (especially non core addons) are packaged in the right way for this.
-* It assumes you will want to put your project in `OF_ROOT/apps/myApps`, but you can put your projects anywhere relative to OF, and it should work. Putting your apps in non standard paths (ie, not at a height of `../../../`) is not recommended.  Also putting your apps outside of the OF folder itself is not recommended, since that makes the relative path system more fragile. 
+* It assumes you will want to put your project in `OF_ROOT/apps/myApps`, but you can put your projects anywhere relative to OF, and it should work. Putting your apps in non standard paths (ie, not at a height of `../../../`) is not recommended.  Also putting your apps outside of the OF folder itself is not recommended, since that makes the relative path system more fragile.
+* If you cloned the openFrameworks repo, you need to run `git submodule update --init` from inside the repo to set up the project generator.
 
 *NOTE: If you are on linux, be sure to run the install_dependencies.sh script, which will install necessary components for this.*
 
@@ -19,7 +20,7 @@ This project generator is new since 0.9 -- the original one in earlier OF releas
 
 Usage
 -----
-It's pretty simple to make an new project, or update an exisiting project, in the simple mode. there are 3 things you can adjust: 
+It's pretty simple to make an new project, or update an existing project, in the simple mode. there are 3 things you can adjust: 
 
 1. **Name of the project**  
 This is where you set the name of the project. This creates both a folder with this name and a project file, so for example, if your name is "myCoolExample" it will generate: 

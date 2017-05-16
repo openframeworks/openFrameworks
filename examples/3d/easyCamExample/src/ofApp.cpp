@@ -3,39 +3,39 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetVerticalSync(true);
-	
+
 	// this uses depth information for occlusion
 	// rather than always drawing things on top of each other
 	ofEnableDepthTest();
-	
+
 	// this sets the camera's distance from the object
 	cam.setDistance(100);
-	
+
 	ofSetCircleResolution(64);
 	bHelpText = true;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	
-	cam.begin();		
-	ofRotateX(ofRadToDeg(.5));
-	ofRotateY(ofRadToDeg(-.5));
-	
+
+	cam.begin();
+	ofRotateXRad(.5);
+	ofRotateYRad(-.5);
+
 	ofBackground(0);
-	
+
 	ofSetColor(255,0,0);
 	ofFill();
 	ofDrawBox(30);
 	ofNoFill();
 	ofSetColor(0);
 	ofDrawBox(30);
-	
+
 	ofPushMatrix();
 	ofTranslate(0,0,20);
 	ofSetColor(0,0,255);
@@ -48,7 +48,7 @@ void ofApp::draw(){
 	cam.end();
 	drawInteractionArea();
 	ofSetColor(255);
-	
+
     if (bHelpText) {
         stringstream ss;
         ss << "FPS: " << ofToString(ofGetFrameRate(),0) <<endl<<endl;
@@ -62,7 +62,7 @@ void ofApp::draw(){
         ss <<"(h): Toggle help."<<endl;
         ofDrawBitmapString(ss.str().c_str(), 20, 20);
     }
-    
+
 }
 //--------------------------------------------------------------
 void ofApp::drawInteractionArea(){
@@ -70,7 +70,7 @@ void ofApp::drawInteractionArea(){
 	float r = MIN(vp.width, vp.height) * 0.5f;
 	float x = vp.width * 0.5f;
 	float y = vp.height * 0.5f;
-	
+
 	ofPushStyle();
 	ofSetLineWidth(3);
 	ofSetColor(255, 255, 0);
@@ -88,7 +88,7 @@ void ofApp::keyPressed(int key){
 			if(cam.getMouseInputEnabled()) cam.disableMouseInput();
 			else cam.enableMouseInput();
 			break;
-			
+
 		case 'F':
 		case 'f':
 			ofToggleFullscreen();
@@ -102,27 +102,27 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
@@ -137,15 +137,15 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-	
+
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-	
+void ofApp::dragEvent(ofDragInfo dragInfo){
+
 }

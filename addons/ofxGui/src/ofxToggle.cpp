@@ -92,7 +92,23 @@ void ofxToggle::generateDraw(){
 	cross.moveTo(b.getPosition()+checkboxRect.getTopRight());
 	cross.lineTo(b.getPosition()+checkboxRect.getBottomLeft());
 
-	textMesh = getTextMesh(getName(), b.x+textPadding + checkboxRect.width, b.y+b.height / 2 + 4);
+	std::string name;
+	auto textX = b.x + textPadding + checkboxRect.width;
+	if(getTextBoundingBox(getName(), textX, 0).getMaxX() > b.getMaxX() - textPadding){
+		for(auto c: ofUTF8Iterator(getName())){
+			auto next = name;
+			ofUTF8Append(next, c);
+			if(getTextBoundingBox(next,textX,0).getMaxX() > b.getMaxX() - textPadding){
+				break;
+			}else{
+				name = next;
+			}
+		}
+	}else{
+		name = getName();
+	}
+
+	textMesh = getTextMesh(name, textX, b.y+b.height / 2 + 4);
 }
 
 void ofxToggle::render(){

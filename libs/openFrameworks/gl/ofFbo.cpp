@@ -451,6 +451,34 @@ void ofFbo::clear() {
 #endif
 }
 
+
+#ifndef TARGET_OPENGLES
+//--------------------------------------------------------------
+void ofFbo::clearColorBuffer(const ofFloatColor & color){
+	glClearBufferfv(GL_COLOR, 0, &color.r);
+}
+
+//--------------------------------------------------------------
+void ofFbo::clearColorBuffer(size_t buffer_idx, const ofFloatColor & color){
+	glClearBufferfv(GL_COLOR, buffer_idx, &color.r);
+}
+
+//--------------------------------------------------------------
+void ofFbo::clearDepthBuffer(float value){
+	glClearBufferfv(GL_DEPTH, 0, &value);
+}
+
+//--------------------------------------------------------------
+void ofFbo::clearStencilBuffer(int value){
+	glClearBufferiv(GL_STENCIL, 0, &value);
+}
+
+//--------------------------------------------------------------
+void ofFbo::clearDepthStencilBuffer(float depth, int stencil){
+	glClearBufferfi(GL_DEPTH_STENCIL, 0, depth, stencil);
+}
+#endif
+
 //--------------------------------------------------------------
 void ofFbo::destroy() {
 	clear();
@@ -504,7 +532,7 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 	settings.useStencil		= false;
 	//we do this as the fbo and the settings object it contains could be created before the user had the chance to disable or enable arb rect.
     settings.textureTarget	= GL_TEXTURE_2D;
-#else    
+#else
 	settings.useDepth		= true;
 	settings.useStencil		= true;
 	//we do this as the fbo and the settings object it contains could be created before the user had the chance to disable or enable arb rect. 	
@@ -652,7 +680,11 @@ void ofFbo::allocate(Settings _settings) {
 		for(int i=0; i<_settings.numColorbuffers; i++) createAndAttachTexture(_settings.internalformat, i);
 		_settings.colorFormats = settings.colorFormats;
 	} else {
+#ifndef TARGET_OPENGLES
+		glDrawBuffer(GL_NONE);
+#else
 		ofLogWarning("ofFbo") << "allocate(): no color buffers specified for frame buffer object " << fbo;
+#endif
 	}
 	settings.internalformat = _settings.internalformat;
 	
@@ -801,9 +833,54 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 void ofFbo::begin(bool setupScreen) const{
 	auto renderer = settings.renderer.lock();
 	if(renderer){
-		renderer->begin(*this,setupScreen);
+        if(setupScreen){
+            renderer->begin(*this, ofFboBeginMode::Perspective | ofFboBeginMode::MatrixFlip);
+        }else{
+            renderer->begin(*this, ofFboBeginMode::NoDefaults);
+        }
 	}
 }
+
+
+void ofFbo::begin(ofFboBeginMode mode){
+    auto renderer = settings.renderer.lock();
+    if(renderer){
+        renderer->begin(*this, mode);
+    }
+}
+
+
+//----------------------------------------------------------
+/*void ofFbo::begin() const {
+	auto renderer = settings.renderer.lock();
+	if (renderer) {
+		renderer->begin(*this, true);
+	}
+}
+
+//----------------------------------------------------------
+void ofFbo::beginNoPerspective() const {
+	auto renderer = settings.renderer.lock();
+	if (renderer) {
+		renderer->begin(*this, false);
+	}
+}
+
+//----------------------------------------------------------
+void ofFbo::beginNoMatrixFlip() const {
+	auto renderer = settings.renderer.lock();
+	if (renderer) {
+		renderer->beginNoMatrixFlip(*this);
+	}
+}
+
+//----------------------------------------------------------
+void ofFbo::beginNoMatrixFlipNoPerspective() const {
+	auto renderer = settings.renderer.lock();
+	if (renderer) {
+		renderer->beginNoMatrixFlipNoPerspective(*this);
+	}
+}*/
 
 //----------------------------------------------------------
 void ofFbo::end() const{
@@ -1060,7 +1137,7 @@ void ofFbo::draw(float x, float y) const{
 
 //----------------------------------------------------------
 void ofFbo::draw(float x, float y, float width, float height) const{
-	if(!bIsAllocated) return;
+	if(!bIsAllocated || settings.numColorbuffers==0) return;
     getTexture().draw(x, y, width, height);
 }
 
