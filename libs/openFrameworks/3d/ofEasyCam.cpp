@@ -22,24 +22,6 @@ ofEasyCam::ofEasyCam(){
 	
 }
 //----------------------------------------
-void ofEasyCam::enableOrtho(){
-	if (!getOrtho()) {
-		prevFarClip = getFarClip();
-		prevNearClip = getNearClip();
-	}
-	setNearClip(-10000);
-	setFarClip(10000);
-	ofCamera::enableOrtho();	
-}
-//----------------------------------------
-void ofEasyCam::disableOrtho(){
-	if(getOrtho()){
-		setNearClip(prevNearClip);
-		setFarClip(prevFarClip);
-	}
-	ofCamera::disableOrtho();
-}
-//----------------------------------------
 void ofEasyCam::update(ofEventArgs & args){
 	viewport = getViewport(this->viewport);
 	if(!bDistanceSet && bAutoDistance){
