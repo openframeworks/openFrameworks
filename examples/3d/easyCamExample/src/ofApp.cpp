@@ -55,59 +55,37 @@ void ofApp::draw(){
         ss << "MODE: " << (cam.getOrtho()?"ORTHO":"PERSPECTIVE")<<endl;
         ss << "MOUSE INPUT ENABLED: " << (cam.getMouseInputEnabled()?"TRUE":"FALSE")<<endl;
         ss << "INERTIA ENABLED: " << (cam.getInertiaEnabled()?"TRUE":"FALSE")<<endl;
-        ss << "ROTATION RELATIVE Y AXIS: " << (cam.getRelativeYAxis()?"TRUE":"FALSE");
-        ofDrawBitmapStringHighlight(ss.str().c_str(), 20, 20,ofColor(0,120));
-        ofBitmapFont f;
-        stringstream n;
-        n << "Notice that mouse interaction is different on each camera projection mode."<<endl;
-        n << "This is to make it more intuitive and easier to use.";
-        float ssMaxY = f.getBoundingBox(ss.str(), 20, 20).getMaxY();
-        ofDrawBitmapStringHighlight(n.str(), 20, ssMaxY +20, ofColor::yellow, ofColor::black);
-        
-        stringstream ss2;
-        ss2 << "Toogle camera projection mode (ORTHO or PERSPECTIVE):"<< endl;
-        ss2 << "    press space bar."<< endl;
-        ss2 << "Toggle mouse input:"<<endl;
-        ss2 << "    press 'c' key."<< endl;
-        ss2 << "Toggle camera inertia:"<<endl;
-        ss2 << "    press 'i' key."<< endl;
-        ss2 << "Toggle rotation relative Y axis:"<<endl;
-        ss2 << "    press 'y' key."<< endl;
-        ss2 << endl;
-        ss2 << "camera x,y rotation:" <<endl;
-            if (cam.getOrtho()) {
-                ss2 << "    LEFT MOUSE BUTTON DRAG + 'm' key inside yellow circle"<<endl;
-                ss2 << "    MIDDLE MOUSE BUTTON DRAG inside yellow circle"<<endl;
-            }else{
-                ss2 << "    LEFT MOUSE BUTTON DRAG inside yellow circle"<<endl;
-            }
-        ss2 << endl;
-        ss2 << "camera z rotation or roll"<<endl;
-        if (cam.getOrtho()) {
-            ss2 << "    LEFT MOUSE BUTTON DRAG + 'm' key outside yellow circle"<<endl;
-            ss2 << "    MIDDLE MOUSE BUTTON DRAG outside yellow circle"<<endl;
-        }else{
-            ss2 << "    LEFT MOUSE BUTTON DRAG outside yellow circle"<<endl;
-        }
-        ss2 << endl;
-        ss2 << "move over x,y axis / truck and boom:"<<endl;
-        if (cam.getOrtho()) {
-            ss2 << "    LEFT MOUSE BUTTON DRAG "<<endl;
-        }else{
-            ss2 << "    LEFT MOUSE BUTTON DRAG + m"<<endl;
-            ss2 << "    MIDDLE MOUSE BUTTON PRESS"<<endl;
-        }
-        ss2 << endl;
-        ss2 << "move over z axis / dolly / zoom in or out:"<<endl;
-        ss2 << "    RIGHT MOUSE BUTTON DRAG"<<endl;
-        ss2 << "    VERTICAL SCROLL"<<endl<<endl;
+        ss << "ROTATION RELATIVE Y AXIS: " << (cam.getRelativeYAxis()?"TRUE":"FALSE")<<endl;
+        ss << endl;
+        ss << "Toogle camera projection mode (ORTHO or PERSPECTIVE):"<< endl;
+        ss << "    press space bar."<< endl;
+        ss << "Toggle mouse input:"<<endl;
+        ss << "    press 'c' key."<< endl;
+        ss << "Toggle camera inertia:"<<endl;
+        ss << "    press 'i' key."<< endl;
+        ss << "Toggle rotation relative Y axis:"<<endl;
+        ss << "    press 'y' key."<< endl;
+        ss << "Toggle this help:"<<endl;
+        ss << "    press 'h' key."<< endl;
+        ss << endl;
+        ss << "camera x,y rotation:" <<endl;
+        ss << "    LEFT MOUSE BUTTON DRAG inside yellow circle"<<endl;
+        ss << endl;
+        ss << "camera z rotation or roll"<<endl;
+        ss << "    LEFT MOUSE BUTTON DRAG outside yellow circle"<<endl;
+
+        ss << endl;
+        ss << "move over x,y axis / truck and boom:"<<endl;
+        ss << "    LEFT MOUSE BUTTON DRAG + m"<<endl;
+        ss << "    MIDDLE MOUSE BUTTON PRESS"<<endl;
+        ss << endl;
+        ss << "move over z axis / dolly / zoom in or out:"<<endl;
+        ss << "    RIGHT MOUSE BUTTON DRAG"<<endl;
+        ss << "    VERTICAL SCROLL"<<endl<<endl;
         if (cam.getOrtho()) {
             ss << "    Notice that in ortho mode zoom will be centered at the mouse position." << endl;
         }
-        
-        ss2 << "(h): Toggle help."<<endl;
-
-        ofDrawBitmapString(ss2.str().c_str(), 20, 20+ f.getBoundingBox(n.str(), 20, ssMaxY+20).getMaxY());
+        ofDrawBitmapString(ss.str().c_str(), 20, 20);
     }
 
 }
