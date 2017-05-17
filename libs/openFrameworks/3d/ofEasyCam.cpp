@@ -224,7 +224,7 @@ glm::vec3 ofEasyCam::up() const{
 		if(bApplyInertia){
 			return getYAxis();
 		}else{
-			return onPressAxisY;
+			return lastPressAxisY;
 		}
 	}else{
 		return upAxis;
@@ -290,16 +290,16 @@ void ofEasyCam::updateTranslation(){
 			glm::vec3 mousePre ;
 			bool bDoScale = (currentTransformType == EASYCAM_TRANSFORM_SCALE || currentTransformType == EASYCAM_TRANSFORM_TRANSLATE_Z);
 			if (bDoScale) {
-				mousePre = screenToWorld(glm::vec3((bIsScrolling?mouseAtScroll:onPressMouse),0));
+				mousePre = screenToWorld(glm::vec3((bIsScrolling?mouseAtScroll:lastPressMouse),0));
 			}
-			move(glm::vec3(onPressAxisX * translate.x) + (onPressAxisY * translate.y));
+			move(glm::vec3(lastPressAxisX * translate.x) + (lastPressAxisY * translate.y));
 			if (bDoScale) {
 				setScale(getScale() + translate.z);
 				// this move call is to keep the scaling centered below the mouse.
-				move(mousePre - screenToWorld(glm::vec3((bIsScrolling?mouseAtScroll:onPressMouse),0)));
+				move(mousePre - screenToWorld(glm::vec3((bIsScrolling?mouseAtScroll:lastPressMouse),0)));
 			}
 		}else{
-			move(glm::vec3(onPressAxisX * translate.x) + (onPressAxisY * translate.y) + (onPressAxisZ * translate.z));
+			move(glm::vec3(lastPressAxisX * translate.x) + (lastPressAxisY * translate.y) + (lastPressAxisZ * translate.z));
 		}
 	}
 	if (bIsScrolling) {
@@ -324,7 +324,7 @@ void ofEasyCam::updateRotation(){
 	if (bApplyInertia) {
 		curRot = glm::angleAxis(rot.z, getZAxis()) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, getXAxis());
 	}else{
-		curRot = glm::angleAxis(rot.z, onPressAxisZ) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, onPressAxisX);
+		curRot = glm::angleAxis(rot.z, lastPressAxisZ) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, lastPressAxisX);
 	}
 	rotateAround(curRot, target.getGlobalPosition());
 	rotate(curRot);
@@ -355,13 +355,13 @@ ofRectangle ofEasyCam::getControlArea() const {
 void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 	ofRectangle area = getControlArea();
 	if(area.inside(mouse.x, mouse.y)){
-		onPressMouse = mouse;
+		lastPressMouse = mouse;
 		prevMouse = mouse;
-		onPressAxisX = getXAxis();
-		onPressAxisY = getYAxis();
-		onPressAxisZ = getZAxis();
-		onPressPosition = ofCamera::getGlobalPosition();
-		onPressOrientation = ofCamera::getGlobalOrientation();
+		lastPressAxisX = getXAxis();
+		lastPressAxisY = getYAxis();
+		lastPressAxisZ = getZAxis();
+		lastPressPosition = ofCamera::getGlobalPosition();
+		lastPressOrientation = ofCamera::getGlobalOrientation();
 
 		currentTransformType = EASYCAM_TRANSFORM_NONE;
 		if (events) {
@@ -410,8 +410,8 @@ void ofEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
 		if (doInertia) {
 			bApplyInertia = true;
 		}
-		onPressPosition = ofCamera::getGlobalPosition();
-		onPressAxisZ = getZAxis();
+		lastPressPosition = ofCamera::getGlobalPosition();
+		lastPressAxisZ = getZAxis();
 		if (getOrtho()) {
 			translate.z = sensitivityScroll * mouse.scrollY / ofGetHeight();
 			mouseAtScroll = mouse;
