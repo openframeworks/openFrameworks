@@ -21,11 +21,6 @@ public:
 
     /// \brief Reset the camera position and orientation.
 	void reset();
-
-	/// \enable and disable orthographic projection.
-	void enableOrtho();
-
-	void disableOrtho();
 	
 	/// \}
 	/// \name Camera Target
