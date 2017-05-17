@@ -14,6 +14,12 @@ ofEasyCam::ofEasyCam(){
 	reset();
 	sensitivityTranslate = {1,1,1};
 	sensitivityRot = {1,1,1};
+
+	addInteraction(EASYCAM_TRANSFORM_ROTATE, OF_MOUSE_BUTTON_LEFT);
+	addInteraction(EASYCAM_TRANSFORM_TRANSLATE_XY, OF_MOUSE_BUTTON_LEFT,doTranslationKey);
+	addInteraction(EASYCAM_TRANSFORM_TRANSLATE_Z, OF_MOUSE_BUTTON_RIGHT);
+	addInteraction(EASYCAM_TRANSFORM_TRANSLATE_XY, OF_MOUSE_BUTTON_MIDDLE);
+	
 }
 //----------------------------------------
 void ofEasyCam::enableOrtho(){
@@ -43,9 +49,11 @@ void ofEasyCam::update(ofEventArgs & args){
 		if(events->getMousePressed()) {
 			updateMouse(glm::vec2(events->getMouseX(),events->getMouseY()));
 		}
-		if (bDoRotate) {
+		if (currentTransformType == EASYCAM_TRANSFORM_ROTATE) {
 			updateRotation();
-		}else if (bDoTranslate || bDoZoom) {
+		}else if (currentTransformType == EASYCAM_TRANSFORM_TRANSLATE_XY ||
+				  currentTransformType == EASYCAM_TRANSFORM_TRANSLATE_Z  ||
+				  currentTransformType == EASYCAM_TRANSFORM_SCALE) {
 			updateTranslation();
 		}
 	}	
@@ -74,8 +82,7 @@ void ofEasyCam::reset(){
 	translate = {0,0,0};
 
 	bApplyInertia = false;
-	bDoTranslate = false;
-	bDoRotate = false;
+	currentTransformType = EASYCAM_TRANSFORM_NONE;
 }
 
 //----------------------------------------
@@ -281,35 +288,44 @@ bool ofEasyCam::getInertiaEnabled() const{
 void ofEasyCam::updateTranslation(){
 	if(bApplyInertia){
 		translate *= drag;
-		bDoZoom = (ABS(translate.z) >= minDifference);
+//		bDoZoom = (ABS(translate.z) >= minDifference);
 		if(ABS(translate.x) <= minDifference && ABS(translate.y) <= minDifference && ABS(translate.z) <= minDifference){
 			translate = {0,0,0};
 			bApplyInertia = false;
-			bDoTranslate = false;
-			bDoZoom = false;
+			currentTransformType = EASYCAM_TRANSFORM_NONE;
+
 			bIsScrolling = false;
 			return;
 		}
 		move((getXAxis() * translate.x) + (getYAxis() * translate.y) + (getZAxis() * translate.z));
 	}
-	if(bDoTranslate || bDoZoom){
+	if(currentTransformType == EASYCAM_TRANSFORM_TRANSLATE_XY ||
+	   currentTransformType == EASYCAM_TRANSFORM_TRANSLATE_Z  ||
+	   currentTransformType == EASYCAM_TRANSFORM_SCALE) {
 		if(getOrtho()){
+			//In ortho mode moving along the z axis has no effect besides clipping.
+			// Instead, scale is applied to achieve the effect of getting near or far from the target.
 			glm::vec3 mousePre ;
-			if (bDoZoom){
+			bool bDoScale = (currentTransformType == EASYCAM_TRANSFORM_SCALE || currentTransformType == EASYCAM_TRANSFORM_TRANSLATE_Z);
+			if (bDoScale) {
 				mousePre = screenToWorld(glm::vec3((bIsScrolling?mouseAtScroll:onPressMouse),0));
 			}
 			move(glm::vec3(onPressAxisX * translate.x) + (onPressAxisY * translate.y));
-			if (bDoZoom) {
+			if (bDoScale) {
 				setScale(getScale() + translate.z);
+				// this move call is to keep the scaling centered below the mouse.
 				move(mousePre - screenToWorld(glm::vec3((bIsScrolling?mouseAtScroll:onPressMouse),0)));
 			}
 		}else{
 			move(glm::vec3(onPressAxisX * translate.x) + (onPressAxisY * translate.y) + (onPressAxisZ * translate.z));
 		}
 	}
-	bDoZoom = false;
-	bIsScrolling = false;
-}	
+	if (bIsScrolling) {
+		//this it to avoid the transformation to keep on after scrolling ended.
+		currentTransformType = EASYCAM_TRANSFORM_NONE;
+		bIsScrolling = false;
+	}
+}
 
 //----------------------------------------
 void ofEasyCam::updateRotation(){
@@ -318,20 +334,18 @@ void ofEasyCam::updateRotation(){
 		if(ABS(rot.x) <= minDifference && ABS(rot.y) <= minDifference && ABS(rot.z) <= minDifference){
 			rot = {0,0,0};
 			bApplyInertia = false;
-			bDoRotate = false;
+			currentTransformType = EASYCAM_TRANSFORM_NONE;
 			return;
 		}
 		
 	}
-	if(bDoRotate){
-		if (bApplyInertia) {
-			curRot = glm::angleAxis(rot.z, getZAxis()) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, getXAxis());
-		}else{
-			curRot = glm::angleAxis(rot.z, onPressAxisZ) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, onPressAxisX);
-		}
-		rotateAround(curRot, target.getGlobalPosition());
-		rotate(curRot);
+	if (bApplyInertia) {
+		curRot = glm::angleAxis(rot.z, getZAxis()) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, getXAxis());
+	}else{
+		curRot = glm::angleAxis(rot.z, onPressAxisZ) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, onPressAxisX);
 	}
+	rotateAround(curRot, target.getGlobalPosition());
+	rotate(curRot);
 }
 
 //----------------------------------------
@@ -367,40 +381,16 @@ void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 		onPressPosition = ofCamera::getGlobalPosition();
 		onPressOrientation = ofCamera::getGlobalOrientation();
 
-		bool bMouseLeft = mouse.button == OF_MOUSE_BUTTON_LEFT;
-		bool bMouseRight = mouse.button == OF_MOUSE_BUTTON_RIGHT;
-		bool bMouseMiddle = (bEnableMouseMiddleButton && mouse.button == OF_MOUSE_BUTTON_MIDDLE);
-		bool bTransKey = events->getKeyPressed(doTranslationKey) ;
-
-		bool bSetRotation = false;
-		
-		if(getOrtho()){
-			if (!bTransKey) {
-				if(bMouseLeft){
-					bDoTranslate = true;
-					bDoRotate = false;
-				}else if(bMouseRight){
-					bDoTranslate = true;
-					bDoRotate = false;
-					bDoZoom = true;
-					mouseAtScroll = mouse;
-				}else{
-					bSetRotation = true;
-				}
-			}else{
-				bSetRotation = true;
-			}
-		}else{
-			if( bMouseMiddle|| bTransKey || bMouseRight){
-				bDoTranslate = true;
-				bDoRotate = false;
-			}else if(bMouseLeft){
-				bSetRotation = true;
+		currentTransformType = EASYCAM_TRANSFORM_NONE;
+		if (events) {
+		for (auto& i: interactions) {
+			if (i.mouseButton == mouse.button && ((i.key == -1) ^ events->getKeyPressed(i.key))) {
+				currentTransformType = i.transformType;
+				break;
 			}
 		}
-		if(bSetRotation){
-			bDoTranslate = false;
-			bDoRotate = true;
+		}
+		if(currentTransformType == EASYCAM_TRANSFORM_ROTATE){
 			bInsideArcball = glm::length(mouse - area.getCenter()) < std::min(area.width/2, area.height/2);
 		}
 		bApplyInertia = false;
@@ -424,9 +414,8 @@ void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
 	if(doInertia){
 		bApplyInertia = true;
 	}else{
-		bDoRotate = false;
+		currentTransformType = EASYCAM_TRANSFORM_NONE;
 		rot = {0,0,0};
-		bDoTranslate = false;
 		translate = {0,0,0};
 	}
 }
@@ -447,7 +436,7 @@ void ofEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
 		}else{
 			translate.z = mouse.scrollY * 30 * sensitivityTranslate.z * (getDistance() + FLT_EPSILON)/ area.height;
 		}
-		bDoZoom = true;
+		currentTransformType = EASYCAM_TRANSFORM_SCALE;
 		bIsScrolling = true;
 	}
 }
@@ -461,33 +450,69 @@ void ofEasyCam::updateMouse(const glm::vec2 & mouse){
 
 	rot = {0,0,0};
 	translate = {0,0,0};
-	if(bDoTranslate){
-		if (getOrtho()) {
-			if(ofGetMousePressed(OF_MOUSE_BUTTON_RIGHT)){
-				translate.z = mouseVel.y * sensitivityScroll / area.height;
-				bDoZoom = true;
+	switch (currentTransformType) {
+	    case EASYCAM_TRANSFORM_ROTATE:
+			if(bInsideArcball){
+				rot.x = vFlip * -mouseVel.y * sensitivityRot.x * glm::pi<float>() / std::min(area.width, area.height);
+				rot.y = -mouseVel.x * sensitivityRot.y * glm::pi<float>() / std::min(area.width, area.height);
 			}else{
+				glm::vec3 center = area.getCenter();
+				rot.z = sensitivityRot.z * -vFlip * glm::orientedAngle(glm::normalize(mouse - center),
+																	   glm::normalize(prevMouse - center));
+			}
+			break;
+		case EASYCAM_TRANSFORM_TRANSLATE_XY:
+			if (getOrtho()) {
 				translate.x = -mouseVel.x * getScale().z;
 				translate.y = vFlip * mouseVel.y * getScale().z;
-			}
-		}else{
-			if(ofGetMousePressed(OF_MOUSE_BUTTON_RIGHT)){
-				translate.z = mouseVel.y * (sensitivityTranslate.z * 0.7f) * (getDistance() + FLT_EPSILON)/ area.height;
 			}else{
 				translate.x = -mouseVel.x * sensitivityTranslate.x * 0.5f * (getDistance() + FLT_EPSILON)/ area.width;
 				translate.y = vFlip * mouseVel.y * sensitivityTranslate.y* 0.5f * (getDistance() + FLT_EPSILON)/ area.height;
 			}
-		}
-	}else if(bDoRotate){
-
-		if(bInsideArcball){
-			rot.x = vFlip * -mouseVel.y * sensitivityRot.x * glm::pi<float>() / std::min(area.width, area.height);
-			rot.y = -mouseVel.x * sensitivityRot.y * glm::pi<float>() / std::min(area.width, area.height);
-		}else{
-			glm::vec3 center = area.getCenter();
-			rot.z = sensitivityRot.z * -vFlip * glm::orientedAngle(glm::normalize(mouse - center),
-												glm::normalize(prevMouse - center));
-		}
+			break;
+		case EASYCAM_TRANSFORM_TRANSLATE_Z:
+			if (getOrtho()) {
+				translate.z = mouseVel.y * sensitivityScroll / area.height;
+			}else{
+				translate.z = mouseVel.y * (sensitivityTranslate.z * 0.7f) * (getDistance() + FLT_EPSILON)/ area.height;
+			}
+			break;
+        default:
+			break;
 	}
 	prevMouse = mouse;
+}
+//----------------------------------------
+void ofEasyCam::addInteraction(easyCamTransformType type, int mouseButton, int key){
+	if(!getHasInteraction(mouseButton, key)){
+		interactions.push_back(interaction(type, mouseButton, key));
+	}else{
+		ofLogNotice("ofEasyCam") << "Can not add interaction. It already exists";
+	}
+}
+//----------------------------------------
+void ofEasyCam::removeInteraction(easyCamTransformType type, int mouseButton, int key){
+	ofRemove(interactions, [&](interaction & i){ return i.transformType == type && i.mouseButton == mouseButton && i.key ==key;});
+}
+//----------------------------------------
+bool ofEasyCam:: getHasInteraction(int mouseButton, int key){
+	for(auto& i : interactions){
+		if(i.mouseButton == mouseButton && i.key == key){
+			return true;
+		}
+	}
+	return false;
+}
+//----------------------------------------
+bool ofEasyCam:: getHasInteraction(easyCamTransformType type, int mouseButton, int key){
+	for(auto& i : interactions){
+		if(i.transformType == type && i.mouseButton == mouseButton && i.key == key){
+			return true;
+		}
+	}
+	return false;
+}
+//----------------------------------------
+void ofEasyCam::removeAllInteractions(){
+	interactions.clear();
 }
