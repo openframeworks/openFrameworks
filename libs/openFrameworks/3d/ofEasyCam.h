@@ -239,12 +239,12 @@ private:
 	/// \{
 	/// \brief camera properties when the mouse is pressed.
 
-	glm::vec3 onPressAxisX;
-	glm::vec3 onPressAxisY;
-	glm::vec3 onPressAxisZ;
-	glm::vec3 onPressPosition;
-	glm::quat onPressOrientation;
-	glm::vec2 onPressMouse;
+	glm::vec3 lastPressAxisX;
+	glm::vec3 lastPressAxisY;
+	glm::vec3 lastPressAxisZ;
+	glm::vec3 lastPressPosition;
+	glm::quat lastPressOrientation;
+	glm::vec2 lastPressMouse;
 	
 	/// \}
 	
