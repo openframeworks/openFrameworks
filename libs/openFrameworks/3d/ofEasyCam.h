@@ -165,6 +165,20 @@ public:
 	/// Returns the area bounds used for mouse control.
 	ofRectangle getControlArea() const;
 	
+	
+	enum easyCamTransformType{
+		EASYCAM_TRANSFORM_NONE,
+		EASYCAM_TRANSFORM_ROTATE,
+		EASYCAM_TRANSFORM_TRANSLATE_XY,
+		EASYCAM_TRANSFORM_TRANSLATE_Z,
+		EASYCAM_TRANSFORM_SCALE
+	};
+
+	void addInteraction(easyCamTransformType type, int mouseButton, int key = -1);
+	void removeInteraction(easyCamTransformType type, int mouseButton, int key = -1);
+	bool getHasInteraction(easyCamTransformType type, int mouseButton, int key = -1);
+	bool getHasInteraction(int mouseButton, int key);
+	void removeAllInteractions();
 private:
 	void setDistance(float distance, bool save);
 
@@ -172,9 +186,11 @@ private:
 
 	bool bEnableMouseMiddleButton = true;
 	bool bApplyInertia = false;
-	bool bDoTranslate = false;
-	bool bDoRotate = false;
-	bool bDoZoom = false;
+	
+//	bool bDoTranslate = false;
+//	bool bDoRotate = false;
+//	bool bDoZoom = false;
+	
 	bool bInsideArcball = false;
 	bool bMouseInputEnabled = false;
 	bool bDistanceSet = false;
@@ -183,6 +199,7 @@ private:
 	bool bIsScrolling = false;
 	float lastDistance = 0.f;
 
+	
 	float drag = 0.9f;
 	
 	/// rot and translated are used as a temporary values shared between the mouse callbacks and the update method.
@@ -253,4 +270,20 @@ private:
 	
 	/// \brief previous far and near clip.
 	float prevFarClip, prevNearClip;
+	
+	easyCamTransformType currentTransformType;
+	struct interaction{
+		/// This map holds the combination of mouse button and key press that will trigger the interaction.
+		interaction():mouseButton(0), key(-1), transformType(EASYCAM_TRANSFORM_NONE){}
+		interaction(easyCamTransformType type, int _mouseButton, int _key = -1):mouseButton(_mouseButton), key(_key), transformType(type){}
+		int mouseButton;
+		int key;
+		easyCamTransformType transformType;
+	};
+
+	vector< interaction > interactions;
+	
+	
+	
+
 };
