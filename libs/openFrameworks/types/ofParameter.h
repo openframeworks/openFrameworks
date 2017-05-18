@@ -480,6 +480,11 @@ public:
 		return obj->changedE.newListener(args...);
 	}
 
+	template<typename... Args>
+	void ownListener(Args...args) {
+		obj->ownListeners.push_back(obj->changedE.newListener(args...));
+	}
+
 	void enableEvents();
 	void disableEvents();
 	bool isSerializable() const;
@@ -635,7 +640,8 @@ private:
 		ofEvent<ParameterType> changedE;
 		bool bInNotify;
 		bool serializable;
-		vector<weak_ptr<ofParameterGroup::Value>> parents;
+		std::vector<weak_ptr<ofParameterGroup::Value>> parents;
+		std::vector<ofEventListener> ownListeners;
 		Scale<ParameterType,ParameterType> scale;
 	};
 
@@ -1508,4 +1514,36 @@ shared_ptr<ofAbstractParameter> ofReadOnlyParameter<ParameterType,Friend>::newRe
 template<typename ParameterType,typename Friend>
 void ofReadOnlyParameter<ParameterType,Friend>::setParent(ofParameterGroup & _parent){
 	parameter.setParent(_parent);
+}
+
+
+template<typename ...Args>
+inline void ofSetMutuallyExclusive(ofParameter<bool> & p1, ofParameter<bool> & p2, Args&... parameters){
+	p1.ownListener([p2](bool & enabled) mutable{
+		if(enabled){
+			p2.set(false);
+		}
+	});
+	p2.ownListener([p1](bool & enabled) mutable{
+		if(enabled){
+			p1.set(false);
+		}
+	});
+
+	ofSetMutuallyExclusive(p1, parameters...);
+	ofSetMutuallyExclusive(p2, parameters...);
+}
+
+template<>
+inline void ofSetMutuallyExclusive(ofParameter<bool> & p1, ofParameter<bool> & p2){
+	p1.ownListener([p2](bool & enabled) mutable{
+		if(enabled){
+			p2.set(false);
+		}
+	});
+	p2.ownListener([p1](bool & enabled) mutable{
+		if(enabled){
+			p1.set(false);
+		}
+	});
 }
