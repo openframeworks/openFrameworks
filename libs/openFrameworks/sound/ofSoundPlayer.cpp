@@ -60,7 +60,7 @@ float * ofSoundGetSpectrum(int nBands){
 //---------------------------------------------------------------------------
 ofSoundPlayer::ofSoundPlayer (){
 #ifdef OF_SOUND_PLAYER_TYPE
-	player	= shared_ptr<OF_SOUND_PLAYER_TYPE>(new OF_SOUND_PLAYER_TYPE);
+	player	= std::make_shared<OF_SOUND_PLAYER_TYPE>();
 #endif
 }
 
