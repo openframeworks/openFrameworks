@@ -190,6 +190,7 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofConstants.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofFileUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofFpsCounter.h" />
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofJson.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofLog.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofMatrixStack.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofNoise.h" />

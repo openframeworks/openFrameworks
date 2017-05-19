@@ -653,7 +653,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool copyTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false) const;
+	bool copyTo(const std::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false) const;
 	
 	/// Move the current file or directory path to a new path.
 	///
@@ -667,7 +667,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool moveTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool moveTo(const std::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Rename the current file or directory path to a new path.
 	///
@@ -681,7 +681,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool renameTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool renameTo(const std::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Removes the file or directory at the current path.
 	///
@@ -759,7 +759,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	static bool copyFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData = true,  bool overwrite = false);
+	static bool copyFromTo(const std::filesystem::path& pathSrc, const std::filesystem::path& pathDst, bool bRelativeToData = true,  bool overwrite = false);
 
 	/// Move source path to destination path.
 	///
@@ -775,7 +775,7 @@ public:
 	/// \warning be careful with slashes here, appending a slash when moving a
 	/// folder may cause mad headaches in OSX
 	/// \returns true if the move was successful
-	static bool moveFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData = true, bool overwrite = false);
+	static bool moveFromTo(const std::filesystem::path& pathSrc, const std::filesystem::path& pathDst, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Check if a file or directory exists at a given path.
 	///
@@ -784,7 +784,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns true if a file or directory exists
-	static bool doesFileExist(const std::string& fPath,  bool bRelativeToData = true);
+	static bool doesFileExist(const std::filesystem::path& fPath,  bool bRelativeToData = true);
 	
 	/// Remove a file or directory at a given path.
 	///
@@ -792,7 +792,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns true if the path was removed successfully
-	static bool removeFile(const std::string& path, bool bRelativeToData = true);
+	static bool removeFile(const std::filesystem::path& path, bool bRelativeToData = true);
 
 private:
 	bool isWriteMode();
@@ -923,7 +923,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool copyTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool copyTo(const filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Move the current file or directory path to a new path.
 	///
@@ -937,7 +937,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool moveTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool moveTo(const filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Rename the current file or directory path to a new path.
 	///
@@ -951,7 +951,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool renameTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool renameTo(const filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Removes the file or directory at the current path.
 	///
@@ -1123,7 +1123,7 @@ public:
 	/// \param bRecursive set to true to automatically create nested directories
 	/// as required
 	/// \returns true if directory was created successfully
-	static bool createDirectory(const std::string& dirPath, bool bRelativeToData = true, bool recursive = false);
+	static bool createDirectory(const std::filesystem::path& dirPath, bool bRelativeToData = true, bool recursive = false);
 	
 	/// Check if a directory at a given path is empty.
 	///
@@ -1134,7 +1134,7 @@ public:
 	/// are *not* in the data directory
 	/// \returns true if the directory is empty aka contains no files or
 	/// directories
-	static bool isDirectoryEmpty(const std::string& dirPath, bool bRelativeToData = true );
+	static bool isDirectoryEmpty(const std::filesystem::path& dirPath, bool bRelativeToData = true );
 	
 	/// Check if a directory exists at a given path.
 	///
@@ -1144,7 +1144,7 @@ public:
 	/// \param bRelativeToData set to false if you are working with paths that
 	/// are *not* in the data directory
 	/// \returns true if the directory exists
-	static bool doesDirectoryExist(const std::string& dirPath, bool bRelativeToData = true);
+	static bool doesDirectoryExist(const std::filesystem::path& dirPath, bool bRelativeToData = true);
 	
 	
 	/// remove a directory at a given path
@@ -1154,7 +1154,7 @@ public:
 	/// \param bRelativeToData set to false if you are working with paths that
 	/// are *not* in the data directory
 	/// \returns true if the path was removed successfully
-	static bool removeDirectory(const std::string& path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
+	static bool removeDirectory(const std::filesystem::path& path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
 
 	vector<ofFile>::const_iterator begin() const;
 	vector<ofFile>::const_iterator end() const;
