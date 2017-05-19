@@ -330,6 +330,10 @@ OF_PROJECT_LIBS += $(PROJECT_ADDONS_LIBS)
 OF_PROJECT_DEFINES := $(PROJECT_DEFINES)
 OF_PROJECT_DEFINES += $(PROJECT_ADDONS_DEFINES)
 
+ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
+	OF_PROJECT_DEFINES += $(PROJECT_DEFINES_DEBUG)
+endif
+
 OF_PROJECT_DEFINES_CFLAGS = $(addprefix -D,$(OF_PROJECT_DEFINES))
 
 ################################################################################
