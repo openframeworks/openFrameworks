@@ -1203,7 +1203,7 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int 
 	if (state == GLFW_PRESS) {
 		action = ofMouseEventArgs::Pressed;
 		instance->buttonPressed=true;
-	} else if (state == GLFW_RELEASE) {
+	} else {
 		action = ofMouseEventArgs::Released;
 		instance->buttonPressed=false;
 	}

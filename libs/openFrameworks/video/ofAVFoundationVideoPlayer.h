@@ -42,7 +42,7 @@ typedef enum _playerLoopType{
 	AVAssetReaderTrackOutput * _assetReaderVideoTrackOutput;
 	AVAssetReaderTrackOutput * _assetReaderAudioTrackOutput;
 	
-#if USE_VIDEO_OUTPUT
+#if defined(USE_VIDEO_OUTPUT)
 	CMVideoFormatDescriptionRef _videoInfo;
 	AVPlayerItemVideoOutput * _videoOutput;
 #endif
@@ -96,7 +96,7 @@ typedef enum _playerLoopType{
 @property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderVideoTrackOutput;
 @property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderAudioTrackOutput;
 
-#if USE_VIDEO_OUTPUT
+#if defined(USE_VIDEO_OUTPUT)
 @property (nonatomic, retain) AVPlayerItemVideoOutput *videoOutput;
 #endif
 

@@ -7,36 +7,36 @@
 
 #include "ofMatrixStack.h"
 #include "ofAppBaseWindow.h"
-#include "ofFbo.h"
+#include "ofBaseTypes.h"
 
 ofMatrixStack::ofMatrixStack(const ofAppBaseWindow * window)
 :vFlipped(true)
 ,orientation(OF_ORIENTATION_DEFAULT)
 ,handedness(OF_LEFT_HANDED)
-,currentFbo(nullptr)
+,currentRenderSurface(nullptr)
 ,currentWindow(const_cast<ofAppBaseWindow*>(window))
 ,currentMatrixMode(OF_MATRIX_MODELVIEW)
 ,currentMatrix(&modelViewMatrix)
-,flipFboMatrix(true)
+,flipRenderSurfaceMatrix(true)
 {
 
 }
 
-void ofMatrixStack::setRenderSurface(const ofFbo & fbo){
-	currentFbo = const_cast<ofFbo*>(&fbo);
-	flipFboMatrix = true;
+void ofMatrixStack::setRenderSurface(const ofBaseDraws & renderSurface_){
+	currentRenderSurface = const_cast<ofBaseDraws*>(&renderSurface_);
+	flipRenderSurfaceMatrix = true;
 	setOrientation(orientation,vFlipped);
 }
 
-void ofMatrixStack::setRenderSurfaceNoMatrixFlip(const ofFbo & fbo) {
-	currentFbo = const_cast<ofFbo*>(&fbo);
-	flipFboMatrix = false;
+void ofMatrixStack::setRenderSurfaceNoMatrixFlip(const ofBaseDraws & renderSurface_) {
+	currentRenderSurface = const_cast<ofBaseDraws*>(&renderSurface_);
+	flipRenderSurfaceMatrix = false;
 	setOrientation(orientation, vFlipped);
 }
 
 void ofMatrixStack::setRenderSurface(const ofAppBaseWindow & window){
 	currentWindow = const_cast<ofAppBaseWindow*>(&window);
-	currentFbo = nullptr;
+	currentRenderSurface = nullptr;
 	setOrientation(orientation,vFlipped);
 }
 
@@ -91,12 +91,12 @@ bool ofMatrixStack::isVFlipped() const{
 }
 
 bool ofMatrixStack::customMatrixNeedsFlip() const{
-	return vFlipped != (bool(currentFbo) && flipFboMatrix);
+	return vFlipped != (bool(currentRenderSurface) && flipRenderSurfaceMatrix);
 }
 
 int ofMatrixStack::getRenderSurfaceWidth() const{
-	if(currentFbo){
-		return currentFbo->getWidth();
+	if(currentRenderSurface){
+		return currentRenderSurface->getWidth();
 	}else if(currentWindow){
 		return currentWindow->getWindowSize().x;
 	}else{
@@ -105,8 +105,8 @@ int ofMatrixStack::getRenderSurfaceWidth() const{
 }
 
 int ofMatrixStack::getRenderSurfaceHeight() const{
-	if(currentFbo){
-		return currentFbo->getHeight();
+	if(currentRenderSurface){
+		return currentRenderSurface->getHeight();
 	}else if(currentWindow){
 		return currentWindow->getWindowSize().y;
 	}else{
@@ -124,7 +124,7 @@ ofHandednessType ofMatrixStack::getHandedness() const{
 
 
 bool ofMatrixStack::doesHWOrientation() const{
-	return currentFbo || (currentWindow && currentWindow->doesHWOrientation());
+	return currentRenderSurface || (currentWindow && currentWindow->doesHWOrientation());
 }
 
 void ofMatrixStack::viewport(float x, float y, float width, float height, bool vflip){
@@ -164,8 +164,8 @@ ofRectangle ofMatrixStack::getNativeViewport() const{
 }
 
 ofRectangle ofMatrixStack::getFullSurfaceViewport() const{
-	if(currentFbo){
-		return ofRectangle(0,0,currentFbo->getWidth(),currentFbo->getHeight());
+	if(currentRenderSurface){
+		return ofRectangle(0,0,currentRenderSurface->getWidth(),currentRenderSurface->getHeight());
 	}else if(currentWindow){
 		return ofRectangle(0,0,currentWindow->getWidth(),currentWindow->getHeight());
 	}else{
@@ -422,7 +422,7 @@ void ofMatrixStack::updatedRelatedMatrices(){
 }
 
 bool ofMatrixStack::doesHardwareOrientation() const{
-	if(currentFbo){
+	if(currentRenderSurface){
 		return true;
 	}else{
 		return currentWindow->doesHWOrientation();

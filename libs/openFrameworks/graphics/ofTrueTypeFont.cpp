@@ -845,7 +845,7 @@ bool ofTrueTypeFont::load(const ofTtfSettings & _settings){
 			if(settings.contours){
 				if(printVectorInfo){
 					std::string str;
-					ofAppendUTF8(str,g);
+					ofUTF8Append(str,g);
 					ofLogNotice("ofTrueTypeFont") <<  "character " << str;
 				}
 
