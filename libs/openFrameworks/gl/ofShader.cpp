@@ -192,12 +192,12 @@ ofShader & ofShader::operator=(ofShader && mom){
 }
 
 //--------------------------------------------------------------
-bool ofShader::load(std::filesystem::path shaderName) {
-	return load(shaderName.string() + ".vert", shaderName.string() + ".frag");
+bool ofShader::load(const std::filesystem::path& shaderName) {
+    return load(shaderName.string() + ".vert", shaderName.string() + ".frag");
 }
 
 //--------------------------------------------------------------
-bool ofShader::load(std::filesystem::path vertName, std::filesystem::path fragName, std::filesystem::path geomName) {
+bool ofShader::load(const std::filesystem::path& vertName, const std::filesystem::path& fragName, const std::filesystem::path& geomName) {
 	if(vertName.empty() == false) setupShaderFromFile(GL_VERTEX_SHADER, vertName);
 	if(fragName.empty() == false) setupShaderFromFile(GL_FRAGMENT_SHADER, fragName);
 #ifndef TARGET_OPENGLES
@@ -211,7 +211,7 @@ bool ofShader::load(std::filesystem::path vertName, std::filesystem::path fragNa
 
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
 //--------------------------------------------------------------
-bool ofShader::loadCompute(std::filesystem::path shaderName) {
+bool ofShader::loadCompute(const std::filesystem::path& shaderName) {
 	return setupShaderFromFile(GL_COMPUTE_SHADER, shaderName) && linkProgram();
 }
 #endif

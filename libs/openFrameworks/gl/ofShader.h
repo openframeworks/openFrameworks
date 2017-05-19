@@ -40,12 +40,12 @@ public:
 	ofShader(const ofShader & shader);
 	ofShader & operator=(const ofShader & shader);
 	ofShader(ofShader && shader);
-	ofShader & operator=(ofShader && shader);
+  	ofShader & operator=(ofShader && shader);
 
-	bool load(std::filesystem::path shaderName);
-	bool load(std::filesystem::path vertName, std::filesystem::path fragName, std::filesystem::path geomName="");
+    bool load(const std::filesystem::path& shaderName);
+    bool load(const std::filesystem::path& vertName, const std::filesystem::path& fragName, const std::filesystem::path& geomName="");
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
-	bool loadCompute(std::filesystem::path shaderName);
+    bool loadCompute(const std::filesystem::path& shaderName);
 #endif
 
 	struct Settings {
@@ -220,7 +220,7 @@ public:
 	// these methods create and compile a shader from source or file
 	// type: GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER_EXT etc.
 	bool setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath = "");
-	bool setupShaderFromFile(GLenum type, std::filesystem::path filename);
+	bool setupShaderFromFile(GLenum type, const std::filesystem::path& filename);
 
 	// links program with all compiled shaders
 	bool linkProgram();

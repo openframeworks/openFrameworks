@@ -87,13 +87,13 @@ public:
     ///
     /// \param fileName Path to the sound file, relative to your app's data folder.
     /// \param stream set "true" to enable streaming from disk (for large files).
-    bool load(std::filesystem::path fileName, bool stream = false);
+    bool load(const std::filesystem::path& fileName, bool stream = false);
     OF_DEPRECATED_MSG("Use load",bool loadSound(string fileName, bool stream = false));
 
     /// \brief Stops and unloads the current sound.
     void unload();
     OF_DEPRECATED_MSG("Use load",void unloadSound());
-    
+
     /// \brief Starts playback.
     void play();
 
@@ -119,7 +119,7 @@ public:
     /// \brief Sets whether to loop once the end of the file is reached.
     /// \param loop "true" to loop, default is false.
     void setLoop(bool loop);
-    
+
     /// \brief Enables playing multiple simultaneous copies of the sound.
     /// \param multiplay "true" to enable, default is false.
     void setMultiPlay(bool multiplay);
@@ -127,7 +127,7 @@ public:
     /// \brief Sets position of the playhead within the file (aka "seeking").
     /// \param percent range is 0 (beginning of file) to 1 (end of file).
     void setPosition(float percent);
-    
+
     /// \brief Sets position of the playhead within the file (aka "seeking").
     /// \param ms number of milliseconds from the start of the file.
     void setPositionMS(int ms);
@@ -148,7 +148,7 @@ public:
     /// \brief Gets playback speed.
     /// \return playback speed (see ofSoundPlayer::setSpeed()).
     float getSpeed() const;
-    
+
     /// \brief Gets stereo pan.
     /// \return stereo pan in the range -1 to 1.
     float getPan() const;
