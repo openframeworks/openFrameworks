@@ -505,7 +505,7 @@ bool ofRestoreWorkingDirectoryToDefault(){
 }
 
 //--------------------------------------------------
-void ofSetDataPathRoot(const string& newRoot){
+void ofSetDataPathRoot(const std::filesystem::path& newRoot){
 	dataPathRoot() = newRoot;
 }
 
