@@ -270,21 +270,31 @@ public:
 	}
 
 
-	/// \brief Queries empty channel.
+	/// \brief Queries whether the channel queue is empty.
 	///
 	/// This call is only an approximation, since messages come from a different
 	/// thread the channel can return true when calling empty() and then receive
 	/// a message right afterwards
+    ///
+    /// \returns true if the channel queue is empty.
 	bool empty() const{
+        std::unique_lock<std::mutex> lock(mutex);
 		return queue.empty();
 	}
 
+    /// \brief Queries the size of the channel queue.
+    /// \returns the current size of the queue.
+    std::size_t size() const{
+        std::unique_lock<std::mutex> lock(mutex);
+        return queue.size();
+    }
+    
 private:
 	/// \brief The FIFO data queue.
 	std::queue<T> queue;
 
 	/// \brief The mutext to protect the data.
-	std::mutex mutex;
+	mutable std::mutex mutex;
 
 	/// \brief The condition even to notify receivers.
 	std::condition_variable condition;
