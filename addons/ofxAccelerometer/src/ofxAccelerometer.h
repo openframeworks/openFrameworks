@@ -140,8 +140,8 @@ protected:
 		if(!orientDirty) return;
 		orientDirty = false;
 		
-		orientation.x = atan2(accelOrientation.y, -accelOrientation.z) * RAD_TO_DEG; 
-		orientation.y = atan2(accelOrientation.x, -accelOrientation.z) * RAD_TO_DEG;
+		orientation.x = ofRadToDeg(atan2(accelOrientation.y, -accelOrientation.z)); 
+		orientation.y = ofRadToDeg(atan2(accelOrientation.x, -accelOrientation.z));
 		orientation.z = 0;
 	}
 	

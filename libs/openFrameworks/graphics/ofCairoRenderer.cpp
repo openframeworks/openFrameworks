@@ -469,11 +469,11 @@ void ofCairoRenderer::draw(const ofPath::Command & command) const{
 			mut_this->translate(0,-command.to.y*ellipse_ratio);
 			mut_this->scale(1,ellipse_ratio);
 			mut_this->translate(0,command.to.y/ellipse_ratio);
-			cairo_arc(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
+			cairo_arc(cr,command.to.x,command.to.y,command.radiusX,ofDegToRad(command.angleBegin),ofDegToRad(command.angleEnd));
 			//cairo_set_matrix(cr,&stored_matrix);
 			mut_this->popMatrix();
 		}else{
-			cairo_arc(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
+			cairo_arc(cr,command.to.x,command.to.y,command.radiusX,ofDegToRad(command.angleBegin),ofDegToRad(command.angleEnd));
 		}
 		break;
 
@@ -486,11 +486,11 @@ void ofCairoRenderer::draw(const ofPath::Command & command) const{
 			mut_this->translate(0,-command.to.y*ellipse_ratio);
 			mut_this->scale(1,ellipse_ratio);
 			mut_this->translate(0,command.to.y/ellipse_ratio);
-			cairo_arc_negative(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
+			cairo_arc_negative(cr,command.to.x,command.to.y,command.radiusX,ofDegToRad(command.angleBegin),ofDegToRad(command.angleEnd));
 			//cairo_set_matrix(cr,&stored_matrix);
 			mut_this->popMatrix();
 		}else{
-			cairo_arc_negative(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
+			cairo_arc_negative(cr,command.to.x,command.to.y,command.radiusX,ofDegToRad(command.angleBegin),ofDegToRad(command.angleEnd));
 		}
 	break;
 
@@ -944,7 +944,7 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, float fo
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
-	float halfFov = PI * fov / 360;
+	float halfFov = glm::pi<float>() * fov / 360;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
 	float aspect = (float) viewW / viewH;
@@ -1289,7 +1289,7 @@ void ofCairoRenderer::drawTriangle(float x1, float y1, float z1, float x2, float
 //----------------------------------------------------------
 void ofCairoRenderer::drawCircle(float x, float y, float z, float radius) const{
 	cairo_new_path(cr);
-	cairo_arc(cr, x,y,radius,0,2*PI);
+	cairo_arc(cr, x,y,radius,0,glm::two_pi<float>());
 
 	cairo_close_path(cr);
 
@@ -1319,7 +1319,7 @@ void ofCairoRenderer::drawEllipse(float x, float y, float z, float width, float 
 	mutThis->translate(0,-y*ellipse_ratio);
 	mutThis->scale(1,ellipse_ratio);
 	mutThis->translate(0,y/ellipse_ratio);
-	cairo_arc(cr,x,y,width*0.5,0,2*PI);
+	cairo_arc(cr,x,y,width*0.5,0,glm::two_pi<float>());
 	mutThis->popMatrix();
 
 	cairo_close_path(cr);

@@ -31,7 +31,7 @@ static OSStatus soundOutputStreamRenderCallback(void *inRefCon,
 	memset(audioBuffer->mData, 0, audioBuffer->mDataByteSize);
     
     int bufferSize = (audioBuffer->mDataByteSize / sizeof(Float32)) / audioBuffer->mNumberChannels;
-    bufferSize = MIN(bufferSize, MAX_BUFFER_SIZE / audioBuffer->mNumberChannels);
+    bufferSize = std::min(bufferSize, MAX_BUFFER_SIZE / audioBuffer->mNumberChannels);
     
     if([stream.delegate respondsToSelector:@selector(soundStreamRequested:output:bufferSize:numOfChannels:)]) {
         [stream.delegate soundStreamRequested:stream

@@ -414,7 +414,7 @@ bool  ofGstUtils::getIsMovieDone() const{
 }
 
 void ofGstUtils::setPosition(float pct){
-	//pct = CLAMP(pct, 0,1);// check between 0 and 1;
+	//pct = ofClamp(pct, 0,1);// check between 0 and 1;
 	GstFormat format = GST_FORMAT_TIME;
 	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
 	if(speed > 1 || speed < -1){

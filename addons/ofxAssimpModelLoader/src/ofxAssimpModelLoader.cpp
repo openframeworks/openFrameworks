@@ -133,8 +133,8 @@ void ofxAssimpModelLoader::calculateDimensions(){
 
 	// optional normalized scaling
 	normalizedScale = scene_max.x-scene_min.x;
-	normalizedScale = MAX(scene_max.y - scene_min.y,normalizedScale);
-	normalizedScale = MAX(scene_max.z - scene_min.z,normalizedScale);
+	normalizedScale = std::max(scene_max.y - scene_min.y,normalizedScale);
+	normalizedScale = std::max(scene_max.z - scene_min.z,normalizedScale);
     if (abs(normalizedScale) < std::numeric_limits<float>::epsilon()){
         ofLogWarning("ofxAssimpModelLoader") << "Error calculating normalized scale of scene" << endl;
         normalizedScale = 1.0;
@@ -629,25 +629,25 @@ void ofxAssimpModelLoader::getBoundingBoxForNode(const ofxAssimpMeshHelper & mes
             auto vertex = mesh.mesh->mVertices[i];
             auto tmp = ofVec3f(vertex.x,vertex.y,vertex.z) * mesh.matrix;
             
-            min->x = MIN(min->x,tmp.x);
-            min->y = MIN(min->y,tmp.y);
-            min->z = MIN(min->z,tmp.z);
+            min->x = std::min(min->x,tmp.x);
+            min->y = std::min(min->y,tmp.y);
+            min->z = std::min(min->z,tmp.z);
             
-            max->x = MAX(max->x,tmp.x);
-            max->y = MAX(max->y,tmp.y);
-            max->z = MAX(max->z,tmp.z);
+            max->x = std::max(max->x,tmp.x);
+            max->y = std::max(max->y,tmp.y);
+            max->z = std::max(max->z,tmp.z);
         }
     } else {
         for (auto & animPos: mesh.animatedPos){
             auto tmp = ofVec3f(animPos.x,animPos.y,animPos.z) * mesh.matrix;
             
-            min->x = MIN(min->x,tmp.x);
-            min->y = MIN(min->y,tmp.y);
-            min->z = MIN(min->z,tmp.z);
+            min->x = std::min(min->x,tmp.x);
+            min->y = std::min(min->y,tmp.y);
+            min->z = std::min(min->z,tmp.z);
 
-            max->x = MAX(max->x,tmp.x);
-            max->y = MAX(max->y,tmp.y);
-            max->z = MAX(max->z,tmp.z);
+            max->x = std::max(max->x,tmp.x);
+            max->y = std::max(max->y,tmp.y);
+            max->z = std::max(max->z,tmp.z);
         }
     }
 }

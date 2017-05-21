@@ -431,8 +431,11 @@ typedef ofBaseApp ofSimpleApp;
 #define OF_SERIAL_ERROR		-1
 
 
-
 using namespace std;
+
+
+#if defined(OF_USE_LEGACY_MACROS)
+#warning Using legacy macros. These are deprecated.
 
 #ifndef PI
 	#define PI       3.14159265358979323846
@@ -477,6 +480,10 @@ using namespace std;
 #ifndef ABS
 	#define ABS(x) (((x) < 0) ? -(x) : (x))
 #endif
+
+
+#endif
+
 
 /// \brief Used to represent the available fill modes.
 /// 
@@ -921,7 +928,6 @@ enum ofDrawBitmapMode{
 	OF_BITMAPMODE_MODEL_BILLBOARD
 };
 
-//#define OF_USE_LEGACY_MESH
 template<class V, class N, class C, class T>
 class ofMesh_;
 class ofVec2f;
@@ -932,7 +938,8 @@ template<typename T>
 class ofColor_;
 typedef ofColor_<float> ofFloatColor;
 
-#ifdef OF_USE_LEGACY_MESH
+#if defined(OF_USE_LEGACY_MESH)
+#warning Using legacy mesh. This is deprecated.
 using ofDefaultVec2 = ofVec2f;
 using ofDefaultVec3 = ofVec3f;
 using ofDefaultVec4 = ofVec4f;

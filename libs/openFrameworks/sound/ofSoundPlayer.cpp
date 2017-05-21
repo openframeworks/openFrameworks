@@ -123,7 +123,7 @@ void ofSoundPlayer::setVolume(float vol){
 //--------------------------------------------------------------------
 void ofSoundPlayer::setPan(float pan){
 	if( player ){
-		player->setPan(CLAMP(pan,-1.0f,1.0f));
+		player->setPan(ofClamp(pan,-1.0f,1.0f));
 	}
 }
 

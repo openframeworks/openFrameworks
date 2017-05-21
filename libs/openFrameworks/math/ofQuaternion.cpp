@@ -271,18 +271,18 @@ ofVec3f ofQuaternion::getEuler() const {
 	float bank;
 	if (test > 0.499) { // singularity at north pole
 		heading = 2 * atan2(x(), w());
-		attitude = PI/2;
+		attitude = glm::half_pi<float>();
 		bank = 0;
 	} else if (test < -0.499) { // singularity at south pole
 		heading = -2 * atan2(x(), w());
-		attitude = - PI/2;
+		attitude = - glm::half_pi<float>();
 		bank = 0;
 	} else {
 		float sqx = x() * x();
 		float sqy = y() * y();
 		float sqz = z() * z();
 		heading = atan2(2.0f * y() * w() - 2.0f * x() * z(), 1.0f - 2.0f*sqy - 2.0f*sqz);
-		attitude = asin(2*test);
+		attitude = asin(2.0f*test);
 		bank = atan2(2.0f*x() * w() - 2.0f * y() * z(), 1.0f - 2.0f*sqx - 2.0f*sqz);
 	}
 	

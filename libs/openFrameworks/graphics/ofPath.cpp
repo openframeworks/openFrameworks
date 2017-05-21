@@ -430,17 +430,17 @@ void ofPath::rectRounded(float x, float y, float z, float w, float h, float topL
 	}
 
 	// keep radii in check
-	float maxRadius = MIN(w / 2.0f, h / 2.0f);
-	topLeftRadius        = MIN(topLeftRadius,     maxRadius);
-	topRightRadius       = MIN(topRightRadius,    maxRadius);
-	bottomRightRadius    = MIN(bottomRightRadius, maxRadius);
-	bottomLeftRadius     = MIN(bottomLeftRadius,  maxRadius);
+	float maxRadius = std::min(w / 2.0f, h / 2.0f);
+	topLeftRadius        = std::min(topLeftRadius,     maxRadius);
+	topRightRadius       = std::min(topRightRadius,    maxRadius);
+	bottomRightRadius    = std::min(bottomRightRadius, maxRadius);
+	bottomLeftRadius     = std::min(bottomLeftRadius,  maxRadius);
 
 	// if all radii are ~= 0.0f, then render as a normal rectangle
-	if((fabs(topLeftRadius)     < FLT_EPSILON) &&
-	   (fabs(topRightRadius)    < FLT_EPSILON) &&
-	   (fabs(bottomRightRadius) < FLT_EPSILON) &&
-	   (fabs(bottomLeftRadius)  < FLT_EPSILON)) {
+	if((std::fabs(topLeftRadius)     < std::numeric_limits<float>::epsilon()) &&
+	   (std::fabs(topRightRadius)    < std::numeric_limits<float>::epsilon()) &&
+	   (std::fabs(bottomRightRadius) < std::numeric_limits<float>::epsilon()) &&
+	   (std::fabs(bottomLeftRadius)  < std::numeric_limits<float>::epsilon())) {
 
 		// rect mode respect happens in ofRect
 		rectangle(x, y, z, w, h);
@@ -454,7 +454,7 @@ void ofPath::rectRounded(float x, float y, float z, float w, float h, float topL
 		moveTo(left + topLeftRadius, top, z);
 
 		// top right
-		if(fabs(topRightRadius) >= FLT_EPSILON) {
+		if(fabs(topRightRadius) >= std::numeric_limits<float>::epsilon()) {
 			arc(right - topRightRadius, top + topRightRadius, z, topRightRadius, topRightRadius, 270, 360);
 		} else {
 			lineTo(right, top, z);
@@ -462,21 +462,21 @@ void ofPath::rectRounded(float x, float y, float z, float w, float h, float topL
 
 		lineTo(right, bottom - bottomRightRadius);
 		// bottom right
-		if(fabs(bottomRightRadius) >= FLT_EPSILON) {
+		if(fabs(bottomRightRadius) >= std::numeric_limits<float>::epsilon()) {
 			arc(right - bottomRightRadius, bottom - bottomRightRadius, z, bottomRightRadius, bottomRightRadius, 0, 90);
 		}
 
 		lineTo(left + bottomLeftRadius, bottom, z);
 
 		// bottom left
-		if(fabs(bottomLeftRadius) >= FLT_EPSILON) {
+		if(fabs(bottomLeftRadius) >= std::numeric_limits<float>::epsilon()) {
 			arc(left + bottomLeftRadius, bottom - bottomLeftRadius, z, bottomLeftRadius, bottomLeftRadius, 90, 180);
 		}
 
 		lineTo(left, top + topLeftRadius, z);
 
 		// top left
-		if(fabs(topLeftRadius) >= FLT_EPSILON) {
+		if(fabs(topLeftRadius) >= std::numeric_limits<float>::epsilon()) {
 			arc(left + topLeftRadius, top + topLeftRadius, z, topLeftRadius, topLeftRadius, 180, 270);
 		}
 		close();

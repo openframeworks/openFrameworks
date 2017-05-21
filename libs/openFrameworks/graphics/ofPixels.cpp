@@ -1388,7 +1388,7 @@ bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, size_t xTo, size
 
 template<typename A, typename B>
 inline A clampedAdd(const A& a, const B& b) {
-	return CLAMP((float) a + (float) b, 0, ofColor_<A>::limit());
+	return ofClamp((float) a + (float) b, 0, ofColor_<A>::limit());
 }
 
 

@@ -270,13 +270,13 @@ void ofEasyCam::updateTranslation(){
 		moveY *= drag;
 		moveZ *= drag;
 
-		if(ABS(moveZ) >= minDifference){
+		if(std::fabs(moveZ) >= minDifference){
 			bIsBeingScrolled = true;
 		} else {
 			bIsBeingScrolled = false;
 		}
 
-		if(ABS(moveX) <= minDifference && ABS(moveY) <= minDifference && ABS(moveZ) <= minDifference){
+		if(std::fabs(moveX) <= minDifference && std::fabs(moveY) <= minDifference && std::fabs(moveZ) <= minDifference){
 			bApplyInertia = false;
 			bDoTranslate = false;
 		}
@@ -294,7 +294,7 @@ void ofEasyCam::updateRotation(){
 		yRot *=drag;
 		zRot *=drag;
 
-		if(ABS(xRot) <= minDifference && ABS(yRot) <= minDifference && ABS(zRot) <= minDifference){
+		if(std::fabs(xRot) <= minDifference && std::fabs(yRot) <= minDifference && std::fabs(zRot) <= minDifference){
 			xRot = 0;
 			yRot = 0;
 			zRot = 0;
@@ -417,7 +417,7 @@ void ofEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
 	ofRectangle area = getControlArea();
 	prevPosition = ofCamera::getGlobalPosition();
 	prevAxisZ = getZAxis();
-	moveZ = mouse.scrollY * 30 * sensitivityZ * (getDistance() + FLT_EPSILON)/ area.height;
+	moveZ = mouse.scrollY * 30 * sensitivityZ * (getDistance() + std::numeric_limits<float>::epsilon())/ area.height;
 	bDoScrollZoom = true;
 	bIsBeingScrolled = true;
 }
@@ -436,10 +436,10 @@ void ofEasyCam::updateMouse(const ofMouseEventArgs & mouse){
 		moveY = 0;
 		moveZ = 0;
 		if(mouse.button == OF_MOUSE_BUTTON_RIGHT){
-			moveZ = mouseVel.y * (sensitivityZ * 0.7f) * (getDistance() + FLT_EPSILON)/ area.height;
+			moveZ = mouseVel.y * (sensitivityZ * 0.7f) * (getDistance() + std::numeric_limits<float>::epsilon())/ area.height;
 		}else{
-			moveX = -mouseVel.x * (sensitivityX * 0.5f) * (getDistance() + FLT_EPSILON)/ area.width;
-			moveY = vFlip * mouseVel.y * (sensitivityY* 0.5f) * (getDistance() + FLT_EPSILON)/ area.height;
+			moveX = -mouseVel.x * (sensitivityX * 0.5f) * (getDistance() + std::numeric_limits<float>::epsilon())/ area.width;
+			moveY = vFlip * mouseVel.y * (sensitivityY* 0.5f) * (getDistance() + std::numeric_limits<float>::epsilon())/ area.height;
 		}
 	}else if(bDoRotate){
 		xRot = 0;
