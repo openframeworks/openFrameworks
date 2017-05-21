@@ -213,9 +213,9 @@ andPreferedRenderer:(ESRendererVersion)version
     if([currentScreen respondsToSelector:@selector(scale)] == NO) {
         return;
     }
-    
-    scaleFactor = std::min(scaleFactorPref, [currentScreen scale]);
-    
+
+    scaleFactor = (scaleFactorPref < [currentScreen scale]) ? scaleFactorPref : [currentScreen scale];
+
     if(scaleFactor != self.contentScaleFactor) {
         self.contentScaleFactor = scaleFactor;
     }
