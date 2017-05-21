@@ -407,7 +407,7 @@ void ofAppEGLWindow::setup(const Settings & _settings) {
 	eglSurface = NULL;
 	eglContext = NULL;
 	eglConfig  = NULL;
-	eglVersionMinor = -1;
+	eglVersionMajor = -1;
 	eglVersionMinor = -1;
 	glesVersion = 1;
 
