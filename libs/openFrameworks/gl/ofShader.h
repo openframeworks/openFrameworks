@@ -19,7 +19,7 @@ class ofBufferObject;
 class ofShader {
 
 	struct Source{
-		Source(GLuint type, const std::string & source, const std::string & directoryPath)
+		Source(GLuint type, const std::string & source, const std::filesystem::path & directoryPath)
 			:type(type)
 			,source(source)
 			,directoryPath(directoryPath){}
@@ -29,7 +29,7 @@ class ofShader {
 		GLuint type;
 		std::string source;
 		std::string expandedSource;
-		std::string directoryPath;
+		std::filesystem::path directoryPath;
 		std::map<std::string, int>   intDefines;
 		std::map<std::string, float> floatDefines;
 	};
@@ -53,7 +53,7 @@ public:
 		std::map<GLuint, std::string> shaderSources;
 		std::map<std::string, int> intDefines;
 		std::map<std::string, float> floatDefines;
-		std::string sourceDirectoryPath;
+		std::filesystem::path sourceDirectoryPath;
 		bool bindDefaults = true;
 	};
 
@@ -64,7 +64,7 @@ public:
 		std::vector<std::string> varyingsToCapture;
 		std::map<std::string, int> intDefines;
 		std::map<std::string, float> floatDefines;
-		std::string sourceDirectoryPath;
+		std::filesystem::path sourceDirectoryPath;
 		bool bindDefaults = true;
 		GLuint bufferMode = GL_INTERLEAVED_ATTRIBS; // GL_INTERLEAVED_ATTRIBS or GL_SEPARATE_ATTRIBS
 	};
@@ -286,8 +286,8 @@ private:
 	/// @note			Include paths are always specified _relative to the including file's current path_
 	///	@note			Recursive #pragma include statements are possible
 	/// @note			Includes will be processed up to 32 levels deep
-	static string parseForIncludes( const string& source, const string& sourceDirectoryPath = "");
-	static string parseForIncludes( const string& source, vector<string>& included, int level = 0, const string& sourceDirectoryPath = "");
+	static string parseForIncludes( const string& source, const std::filesystem::path& sourceDirectoryPath = "");
+	static string parseForIncludes( const string& source, vector<string>& included, int level = 0, const std::filesystem::path& sourceDirectoryPath = "");
 
 	void checkAndCreateProgram();
 #ifdef TARGET_ANDROID

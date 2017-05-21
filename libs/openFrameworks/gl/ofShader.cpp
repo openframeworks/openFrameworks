@@ -409,13 +409,13 @@ bool ofShader::setupShaderFromSource(ofShader::Source && source){
  */
 
 //--------------------------------------------------------------
-string ofShader::parseForIncludes( const string& source, const string& sourceDirectoryPath) {
+string ofShader::parseForIncludes( const string& source, const std::filesystem::path& sourceDirectoryPath) {
 	vector<string> included;
 	return parseForIncludes( source, included, 0, sourceDirectoryPath);
 }
 
 //--------------------------------------------------------------
-string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const string& sourceDirectoryPath) {
+string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const std::filesystem::path& sourceDirectoryPath) {
 
 	if ( level > 32 ) {
 		ofLogError( "ofShader", "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
