@@ -365,12 +365,12 @@ void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 
 		currentTransformType = TRANSFORM_NONE;
 		if (events) {
-		for (auto& i: interactions) {
-			if (i.mouseButton == mouse.button && ((i.key == -1) ^ events->getKeyPressed(i.key))) {
-				currentTransformType = i.transformType;
-				break;
+			for (const auto& i: interactions) {
+				if (i.mouseButton == mouse.button && ((i.key == -1) ^ events->getKeyPressed(i.key))) {
+					currentTransformType = i.transformType;
+					break;
+				}
 			}
-		}
 		}
 		if(currentTransformType == TRANSFORM_ROTATE){
 			bInsideArcball = glm::length(mouse - area.getCenter()) < std::min(area.width/2, area.height/2);
@@ -478,7 +478,7 @@ void ofEasyCam::removeInteraction(TransformType type, int mouseButton, int key){
 }
 //----------------------------------------
 bool ofEasyCam:: hasInteraction(int mouseButton, int key){
-	for(auto& i : interactions){
+	for(const auto& i : interactions){
 		if(i.mouseButton == mouseButton && i.key == key){
 			return true;
 		}
@@ -487,7 +487,7 @@ bool ofEasyCam:: hasInteraction(int mouseButton, int key){
 }
 //----------------------------------------
 bool ofEasyCam:: hasInteraction(TransformType type, int mouseButton, int key){
-	for(auto& i : interactions){
+	for(const auto& i : interactions){
 		if(i.transformType == type && i.mouseButton == mouseButton && i.key == key){
 			return true;
 		}
