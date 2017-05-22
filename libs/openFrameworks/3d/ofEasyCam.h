@@ -160,7 +160,7 @@ public:
 	/// Returns the area bounds used for mouse control.
 	ofRectangle getControlArea() const;
 	
-	
+	/// Transformation types available for mouse interaction.
 	enum TransformType{
 		TRANSFORM_NONE,
 		TRANSFORM_ROTATE,
@@ -181,10 +181,6 @@ private:
 
 	bool bEnableMouseMiddleButton = true;
 	bool bApplyInertia = false;
-	
-//	bool bDoTranslate = false;
-//	bool bDoRotate = false;
-//	bool bDoZoom = false;
 	
 	bool bInsideArcball = false;
 	bool bMouseInputEnabled = false;
@@ -267,18 +263,13 @@ private:
 	float prevFarClip, prevNearClip;
 	
 	TransformType currentTransformType;
+	/// \brief This struct holds the combination of mouse button and key press that will trigger a specific interaction.
 	struct interaction{
-		/// This map holds the combination of mouse button and key press that will trigger the interaction.
 		interaction():mouseButton(0), key(-1), transformType(TRANSFORM_NONE){}
 		interaction(TransformType type, int _mouseButton, int _key = -1):mouseButton(_mouseButton), key(_key), transformType(type){}
 		int mouseButton;
 		int key;
 		TransformType transformType;
 	};
-
-	vector< interaction > interactions;
-	
-	
-	
-
+	vector<interaction> interactions;
 };
