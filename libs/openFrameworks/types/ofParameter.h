@@ -1517,23 +1517,15 @@ void ofReadOnlyParameter<ParameterType,Friend>::setParent(ofParameterGroup & _pa
 }
 
 
+/// Sets to false every other parameter when one of them is set to true
 template<typename ...Args>
 inline void ofSetMutuallyExclusive(ofParameter<bool> & p1, ofParameter<bool> & p2, Args&... parameters){
-	p1.ownListener([p2](bool & enabled) mutable{
-		if(enabled){
-			p2.set(false);
-		}
-	});
-	p2.ownListener([p1](bool & enabled) mutable{
-		if(enabled){
-			p1.set(false);
-		}
-	});
-
+	ofSetMutuallyExclusive(p1, p2);
 	ofSetMutuallyExclusive(p1, parameters...);
 	ofSetMutuallyExclusive(p2, parameters...);
 }
 
+/// Sets to false every other parameter when one of them is set to true
 template<>
 inline void ofSetMutuallyExclusive(ofParameter<bool> & p1, ofParameter<bool> & p2){
 	p1.ownListener([p2](bool & enabled) mutable{
@@ -1545,5 +1537,24 @@ inline void ofSetMutuallyExclusive(ofParameter<bool> & p1, ofParameter<bool> & p
 		if(enabled){
 			p1.set(false);
 		}
+	});
+}
+
+/// Sets the same value to every other passed parameter when any changes
+template<typename T, typename ...Args>
+inline void ofParameterLink(ofParameter<T> & p1, ofParameter<T> & p2, Args&... parameters){
+	ofParameterLink(p1, p2);
+	ofParameterLink(p1, parameters...);
+	ofParameterLink(p2, parameters...);
+}
+
+/// Sets the same value to every other passed parameter when any changes
+template<typename T>
+inline void ofParameterLink(ofParameter<T> & p1, ofParameter<T> & p2){
+	p1.ownListener([p2](T & v) mutable{
+		p2.set(v);
+	});
+	p2.ownListener([p1](T & v) mutable{
+		p1.set(v);
 	});
 }
