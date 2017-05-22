@@ -270,8 +270,7 @@ bool ofEasyCam::getInertiaEnabled() const{
 void ofEasyCam::updateTranslation(){
 	if(bApplyInertia){
 		translate *= drag;
-//		bDoZoom = (ABS(translate.z) >= minDifference);
-		if(ABS(translate.x) <= minDifference && ABS(translate.y) <= minDifference && ABS(translate.z) <= minDifference){
+		if(std::abs(translate.x) <= minDifference && std::abs(translate.y) <= minDifference && std::abs(translate.z) <= minDifference){
 			translate = {0,0,0};
 			bApplyInertia = false;
 			currentTransformType = TRANSFORM_NONE;
@@ -313,7 +312,7 @@ void ofEasyCam::updateTranslation(){
 void ofEasyCam::updateRotation(){
 	if(bApplyInertia){
 		rot *=drag;
-		if(ABS(rot.x) <= minDifference && ABS(rot.y) <= minDifference && ABS(rot.z) <= minDifference){
+		if(std::abs(rot.x) <= minDifference && std::abs(rot.y) <= minDifference && std::abs(rot.z) <= minDifference){
 			rot = {0,0,0};
 			bApplyInertia = false;
 			currentTransformType = TRANSFORM_NONE;
