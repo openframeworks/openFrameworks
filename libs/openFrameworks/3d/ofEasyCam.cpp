@@ -187,16 +187,16 @@ void ofEasyCam::setEvents(ofCoreEvents & _events){
 }
 
 //----------------------------------------
-void ofEasyCam::setRotationSensitivity(const glm::vec3& sens){
-	sensitivityRot = sens;
+void ofEasyCam::setRotationSensitivity(const glm::vec3& sensitivity){
+	sensitivityRot = sensitivity;
 }
 //----------------------------------------
 void ofEasyCam::setRotationSensitivity(float x, float y, float z){
 	setRotationSensitivity({x,y,z});
 }
 //----------------------------------------
-void ofEasyCam::setTranslationSensitivity(const glm::vec3& sens){
-	sensitivityTranslate = sens;
+void ofEasyCam::setTranslationSensitivity(const glm::vec3& sensitivity){
+	sensitivityTranslate = sensitivity;
 }
 //----------------------------------------
 void ofEasyCam::setTranslationSensitivity(float x, float y, float z){

@@ -79,12 +79,12 @@ public:
 	/// degrees.
 	/// \param value Scales the xyz axes rotation factor by these values.
 	void setRotationSensitivity(float x, float y, float z);
-	void setRotationSensitivity(const glm::vec3& sens);
+	void setRotationSensitivity(const glm::vec3& sensitivity);
 	
     /// \brief Set the input sensitivity of the translation.
     /// \param value Scales the xyz axes translation factor by these values.
     void setTranslationSensitivity(float x, float y, float z);
-	void setTranslationSensitivity(const glm::vec3& sens);
+	void setTranslationSensitivity(const glm::vec3& sensitivity);
     /// \brief Set the key used to switch between camera rotation and translation.
     ///
     /// Translation will only happen when the translation key is pressed.
