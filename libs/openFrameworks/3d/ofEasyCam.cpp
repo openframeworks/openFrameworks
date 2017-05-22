@@ -466,7 +466,7 @@ void ofEasyCam::updateMouse(const glm::vec2 & mouse){
 }
 //----------------------------------------
 void ofEasyCam::addInteraction(TransformType type, int mouseButton, int key){
-	if(!getHasInteraction(mouseButton, key)){
+	if(!hasInteraction(mouseButton, key)){
 		interactions.push_back(interaction(type, mouseButton, key));
 	}else{
 		ofLogNotice("ofEasyCam") << "Can not add interaction. It already exists";
@@ -477,7 +477,7 @@ void ofEasyCam::removeInteraction(TransformType type, int mouseButton, int key){
 	ofRemove(interactions, [&](interaction & i){ return i.transformType == type && i.mouseButton == mouseButton && i.key ==key;});
 }
 //----------------------------------------
-bool ofEasyCam:: getHasInteraction(int mouseButton, int key){
+bool ofEasyCam:: hasInteraction(int mouseButton, int key){
 	for(auto& i : interactions){
 		if(i.mouseButton == mouseButton && i.key == key){
 			return true;
@@ -486,7 +486,7 @@ bool ofEasyCam:: getHasInteraction(int mouseButton, int key){
 	return false;
 }
 //----------------------------------------
-bool ofEasyCam:: getHasInteraction(TransformType type, int mouseButton, int key){
+bool ofEasyCam:: hasInteraction(TransformType type, int mouseButton, int key){
 	for(auto& i : interactions){
 		if(i.transformType == type && i.mouseButton == mouseButton && i.key == key){
 			return true;

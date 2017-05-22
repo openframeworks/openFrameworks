@@ -171,8 +171,8 @@ public:
 
 	void addInteraction(TransformType type, int mouseButton, int key = -1);
 	void removeInteraction(TransformType type, int mouseButton, int key = -1);
-	bool getHasInteraction(TransformType type, int mouseButton, int key = -1);
-	bool getHasInteraction(int mouseButton, int key);
+	bool hasInteraction(TransformType type, int mouseButton, int key = -1);
+	bool hasInteraction(int mouseButton, int key);
 	void removeAllInteractions();
 private:
 	void setDistance(float distance, bool save);
