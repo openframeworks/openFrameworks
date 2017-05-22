@@ -161,17 +161,17 @@ public:
 	ofRectangle getControlArea() const;
 	
 	
-	enum easyCamTransformType{
-		EASYCAM_TRANSFORM_NONE,
-		EASYCAM_TRANSFORM_ROTATE,
-		EASYCAM_TRANSFORM_TRANSLATE_XY,
-		EASYCAM_TRANSFORM_TRANSLATE_Z,
-		EASYCAM_TRANSFORM_SCALE
+	enum TransformType{
+		TRANSFORM_NONE,
+		TRANSFORM_ROTATE,
+		TRANSFORM_TRANSLATE_XY,
+		TRANSFORM_TRANSLATE_Z,
+		TRANSFORM_SCALE
 	};
 
-	void addInteraction(easyCamTransformType type, int mouseButton, int key = -1);
-	void removeInteraction(easyCamTransformType type, int mouseButton, int key = -1);
-	bool getHasInteraction(easyCamTransformType type, int mouseButton, int key = -1);
+	void addInteraction(TransformType type, int mouseButton, int key = -1);
+	void removeInteraction(TransformType type, int mouseButton, int key = -1);
+	bool getHasInteraction(TransformType type, int mouseButton, int key = -1);
 	bool getHasInteraction(int mouseButton, int key);
 	void removeAllInteractions();
 private:
@@ -266,14 +266,14 @@ private:
 	/// \brief previous far and near clip.
 	float prevFarClip, prevNearClip;
 	
-	easyCamTransformType currentTransformType;
+	TransformType currentTransformType;
 	struct interaction{
 		/// This map holds the combination of mouse button and key press that will trigger the interaction.
-		interaction():mouseButton(0), key(-1), transformType(EASYCAM_TRANSFORM_NONE){}
-		interaction(easyCamTransformType type, int _mouseButton, int _key = -1):mouseButton(_mouseButton), key(_key), transformType(type){}
+		interaction():mouseButton(0), key(-1), transformType(TRANSFORM_NONE){}
+		interaction(TransformType type, int _mouseButton, int _key = -1):mouseButton(_mouseButton), key(_key), transformType(type){}
 		int mouseButton;
 		int key;
-		easyCamTransformType transformType;
+		TransformType transformType;
 	};
 
 	vector< interaction > interactions;
