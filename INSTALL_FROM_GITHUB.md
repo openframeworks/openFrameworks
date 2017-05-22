@@ -12,7 +12,7 @@ Let's start by cloning the last `master` branch of openFrameworks and its submod
 git clone --recursive git@github.com:openframeworks/openFrameworks.git
 ```
 
-Note: **Before proceeding make sure your new openFrameworks path is free of spaces** Many of the scripts below will fail on paths that include spaces.
+_Before continuing make sure your new openFrameworks path **has no spaces**. Many of the shell scripts below will fail on paths that include spaces._
 
 ### Download dependencies
 
