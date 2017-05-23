@@ -47,11 +47,13 @@ This is the C/C++ compiler, headers and libraries for Android. OF 0.9.0 has been
 
 [https://developer.android.com/ndk/downloads/index.html](https://developer.android.com/ndk/downloads/index.html)
 
-- OS X: [android-ndk-r10e-darwin-x86_64.bin](http://dl.google.com/android/ndk/android-ndk-r10e-darwin-x86_64.bin)
+- macOS: [android-ndk-r10e-darwin-x86_64.bin](http://dl.google.com/android/ndk/android-ndk-r10e-darwin-x86_64.bin)
 - Linux 32: [android-ndk-r10e-linux-x86.bin](http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86.bin)
 - Linux 64: [android-ndk-r10e-linux-x86_64.bin](http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin)
 - Windows 32: [android-ndk-r10e-windows-x86.exe](http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86.exe)
 - Windows 64: [android-ndk-r10e-windows-x86_64.exe](http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86_64.exe)
+
+On macOS, you may run into extraction errors if you simply double-click on the `*.bin` archive. To ensure that the file unpacks successfully, in the download directory run `chmod u+x android-ndk-r10e-darwin-x86_64.bin` on the command line, then `./android-ndk-r10e-darwin-x86_64.bin` to automatically extract it.
 
 On Windows, you will also need to install MinGW in order to build openFrameworks. MinGW provides some essential build tools which are not included in the NDK. Follow just the "Installing the MinGW and Msys" instructions on [this page](http://www.multigesture.net/articles/how-to-install-mingw-msys-and-eclipse-on-windows/).
 
@@ -75,7 +77,7 @@ Then browse to any of the android examples in `examples/android`.
 
 Accept all the prompts and wait for Android Studio to set up the project.
 
-You'll have to wait a bit. The first sync will automatically build openFrameworks. If it doesn't work (Gradle sync still fails), try looking at the **Troubleshooting** section below.  In some cases, clicking on the error in the console window will take you to a solution, such as installing various versions of the Android SDK. In some cases, you may have to do this several times to solve several missing dependencies.
+You'll have to wait a bit. The first sync will automatically build openFrameworks. If it doesn't work (Gradle sync still fails), try looking at the **Troubleshooting** section below.  In some cases, clicking on the error in the console window will take you to a solution, such as installing various versions of the Android SDK or installing additional versions of Gradle. In some cases, you may have to do this several times to solve several missing dependencies.
 
 ### Build and Run
 
