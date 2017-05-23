@@ -185,7 +185,6 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face face){
 				ofLogNotice("ofTrueTypeFont") << "--NEW CONTOUR";
 			}
 
-			//vector <ofPoint> testOutline;
 			glm::vec3 lastPoint;
 
 			for(int j = startPos; j < endPos; j++){

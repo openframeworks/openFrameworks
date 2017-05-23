@@ -388,8 +388,7 @@ void ofDrawRectRounded(const ofRectangle & b, float r);
 ///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofPoint p;
-///     p.set ( 10, 10 );
+///     glm::vec2 p(10, 10);
 ///     ofDrawRectRounded( p, 100, 100, 10 );
 /// }
 /// ~~~~

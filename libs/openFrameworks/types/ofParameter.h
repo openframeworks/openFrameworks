@@ -106,7 +106,7 @@ public:
 	const ofParameter<float> & getFloat(const string& name) const;
 	const ofParameter<char> & getChar(const string& name) const;
 	const ofParameter<string> & getString(const string& name) const;
-	const ofParameter<ofPoint> & getPoint(const string& name) const;
+	OF_DEPRECATED_MSG("Use getVec2f() or getVec3f().", const ofParameter<ofPoint> & getPoint(const string& name) const);
 	const ofParameter<ofDefaultVec2> & getVec2f(const string& name) const;
 	const ofParameter<ofDefaultVec3> & getVec3f(const string& name) const;
 	const ofParameter<ofDefaultVec4> & getVec4f(const string& name) const;
@@ -122,7 +122,7 @@ public:
 	const ofParameter<float> & getFloat(std::size_t pos) const;
 	const ofParameter<char> & getChar(std::size_t pos) const;
 	const ofParameter<string> & getString(std::size_t pos) const;
-	const ofParameter<ofPoint> & getPoint(std::size_t pos) const;
+	OF_DEPRECATED_MSG("Use getVec2f() or getVec3f().", const ofParameter<ofPoint> & getPoint(std::size_t pos) const);
 	const ofParameter<ofDefaultVec2> & getVec2f(std::size_t pos) const;
 	const ofParameter<ofDefaultVec3> & getVec3f(std::size_t pos) const;
 	const ofParameter<ofDefaultVec4> & getVec4f(std::size_t pos) const;
@@ -137,7 +137,7 @@ public:
 	ofParameter<float> & getFloat(const string& name);
 	ofParameter<char> & getChar(const string& name);
 	ofParameter<string> & getString(const string& name);
-	ofParameter<ofPoint> & getPoint(const string& name);
+	OF_DEPRECATED_MSG("Use getVec2f() or getVec3f().", ofParameter<ofPoint> & getPoint(const string& name));
 	ofParameter<ofDefaultVec2> & getVec2f(const string& name);
 	ofParameter<ofDefaultVec3> & getVec3f(const string& name);
 	ofParameter<ofDefaultVec4> & getVec4f(const string& name);
@@ -153,7 +153,7 @@ public:
 	ofParameter<float> & getFloat(std::size_t pos);
 	ofParameter<char> & getChar(std::size_t pos);
 	ofParameter<string> & getString(std::size_t pos);
-	ofParameter<ofPoint> & getPoint(std::size_t pos);
+	OF_DEPRECATED_MSG("Use getVec2f() or getVec3f().", ofParameter<ofPoint> & getPoint(std::size_t pos));
 	ofParameter<ofDefaultVec2> & getVec2f(std::size_t pos);
 	ofParameter<ofDefaultVec3> & getVec3f(std::size_t pos);
 	ofParameter<ofDefaultVec4> & getVec4f(std::size_t pos);

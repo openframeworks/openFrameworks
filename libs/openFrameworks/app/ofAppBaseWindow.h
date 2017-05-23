@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofPoint.h"
+
 #include "ofTypes.h"
 #include "ofEvents.h"
 #include "ofWindowSettings.h"
