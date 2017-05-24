@@ -9,6 +9,7 @@ static float fftValues_[8192];			//
 static float fftInterpValues_[8192];			//
 static float fftSpectrum_[8192];		// maximum #ofFmodSoundPlayer is 8192, in fmodex....
 static unsigned int buffersize = 1024;
+static int samplerate = -1;
 
 
 // ---------------------  static vars
@@ -128,6 +129,25 @@ void ofFmodSetBuffersize(unsigned int bs){
 	buffersize = bs;
 }
 
+void ofFmodSetSamplerate(unsigned int sr){
+	samplerate = sr;
+}
+
+ofTime ofFmodGetDSPTime(){
+	ofFmodSoundPlayer::initializeFmod();
+	unsigned int hi, lo;
+	FMOD_System_GetDSPClock(sys, &hi, &lo);
+	int rate;
+	FMOD_SOUND_FORMAT format;
+	int outchannels, inchannels, bits;
+	FMOD_DSP_RESAMPLER resamplemethod;
+	FMOD_System_GetSoftwareFormat(sys, &rate, &format, &outchannels, &inchannels, &resamplemethod, &bits);
+	ofTime time;
+	time.seconds = lo/rate;
+	time.nanoseconds = (lo/double(rate) - time.seconds) * 1000000000;
+	return time;
+}
+
 // ------------------------------------------------------------
 // ------------------------------------------------------------
 
@@ -163,6 +183,13 @@ void ofFmodSoundPlayer::initializeFmod(){
 		int nbTmp;
 		FMOD_System_GetDSPBufferSize(sys, &bsTmp, &nbTmp);
 		FMOD_System_SetDSPBufferSize(sys, buffersize, nbTmp);
+
+		int rate;
+		FMOD_SOUND_FORMAT format;
+		int outchannels, inchannels, bits;
+		FMOD_DSP_RESAMPLER resamplemethod;
+		FMOD_System_GetSoftwareFormat(sys, &rate, &format, &outchannels, &inchannels, &resamplemethod, &bits);
+		FMOD_System_SetSoftwareFormat(sys, samplerate, format, outchannels, inchannels, resamplemethod);
 
 		#ifdef TARGET_LINUX
 			FMOD_System_SetOutput(sys,FMOD_OUTPUTTYPE_ALSA);
@@ -341,7 +368,7 @@ void ofFmodSoundPlayer::setPaused(bool bP){
 //------------------------------------------------------------
 void ofFmodSoundPlayer::setSpeed(float spd){
 	if (isPlaying()){
-			FMOD_Channel_SetFrequency(channel, internalFreq * spd);
+		FMOD_Channel_SetFrequency(channel, internalFreq * spd);
 	}
 	speed = spd;
 }
@@ -388,7 +415,6 @@ void ofFmodSoundPlayer::play(){
 	//to be reused.  we should have some sort of global update function but putting it here
 	//solves the channel bug
 	FMOD_System_Update(sys);
-
 }
 
 // ----------------------------------------------------------------------------

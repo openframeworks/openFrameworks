@@ -132,6 +132,14 @@ namespace priv{
 		}
 
 		//--------------------------------------
+		void setTimeModeExternal(std::function<ofTime()> functime, ofTime startTime){
+			mode = ofTime::External;
+			loopListener.unsubscribe();
+			this->functime = functime;
+			this->startTime = startTime;
+		}
+
+		//--------------------------------------
 		ofTime getCurrentTime(){
 			return getMonotonicTimeForMode(mode);
 		}
@@ -152,32 +160,37 @@ namespace priv{
 		ofTime getMonotonicTimeForMode(ofTime::Mode mode){
 			ofTime t;
 			t.mode = mode;
-			if(mode == ofTime::System){
-			#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)) || defined(TARGET_EMSCRIPTEN)
-				struct timespec now;
-				clock_gettime(CLOCK_MONOTONIC, &now);
-				t.seconds = now.tv_sec;
-				t.nanoseconds = now.tv_nsec;
-			#elif defined(TARGET_OSX)
-				mach_timespec_t now;
-				clock_get_time(cs, &now);
-				t.seconds = now.tv_sec;
-				t.nanoseconds = now.tv_nsec;
-			#elif defined( TARGET_WIN32 )
-				LARGE_INTEGER freq;
-				LARGE_INTEGER counter;
-				QueryPerformanceFrequency(&freq);
-				QueryPerformanceCounter(&counter);
-				t.seconds = counter.QuadPart/freq.QuadPart;
-				t.nanoseconds = (counter.QuadPart % freq.QuadPart)*1000000000/freq.QuadPart;
-			#else
-				struct timeval now;
-				gettimeofday( &now, nullptr );
-				t.seconds = now.tv_sec;
-				t.nanoseconds = now.tv_usec * 1000;
-			#endif
-			}else{
-				t = fixedRateTime;
+			switch(mode){
+				case ofTime::System:
+				#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)) || defined(TARGET_EMSCRIPTEN)
+					struct timespec now;
+					clock_gettime(CLOCK_MONOTONIC, &now);
+					t.seconds = now.tv_sec;
+					t.nanoseconds = now.tv_nsec;
+				#elif defined(TARGET_OSX)
+					mach_timespec_t now;
+					clock_get_time(cs, &now);
+					t.seconds = now.tv_sec;
+					t.nanoseconds = now.tv_nsec;
+				#elif defined( TARGET_WIN32 )
+					LARGE_INTEGER freq;
+					LARGE_INTEGER counter;
+					QueryPerformanceFrequency(&freq);
+					QueryPerformanceCounter(&counter);
+					t.seconds = counter.QuadPart/freq.QuadPart;
+					t.nanoseconds = (counter.QuadPart % freq.QuadPart)*1000000000/freq.QuadPart;
+				#else
+					struct timeval now;
+					gettimeofday( &now, nullptr );
+					t.seconds = now.tv_sec;
+					t.nanoseconds = now.tv_usec * 1000;
+				#endif
+				break;
+				case ofTime::FixedRate:
+					t = fixedRateTime;
+				break;
+				case ofTime::External:
+					return functime();
 			}
 			return t;
 		}
@@ -189,6 +202,8 @@ namespace priv{
 	#ifdef TARGET_OSX
 		clock_serv_t cs;
 	#endif
+
+		std::function<ofTime()> functime;
 	};
 
 	Clock & getClock(){
@@ -325,10 +340,43 @@ void ofSetTimeModeFiltered(float alpha){
 }
 
 //--------------------------------------
+void ofSetTimeModeExternal(std::function<ofTime()> functime, ofTime startTime){
+	auto mainLoop = ofGetMainLoop();
+	if(!mainLoop){
+		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
+		return;
+	}
+	auto window = mainLoop->getCurrentWindow();
+	if(!window){
+		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
+		return;
+	}
+	of::priv::getClock().setTimeModeExternal(functime, startTime);
+	window->events().resetStartTime();
+	window->events().setTimeModeSystem();
+}
+
+//--------------------------------------
+void ofSetTimeModeExternalFiltered(std::function<ofTime()> functime, ofTime startTime, float alpha){
+	auto mainLoop = ofGetMainLoop();
+	if(!mainLoop){
+		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
+		return;
+	}
+	auto window = mainLoop->getCurrentWindow();
+	if(!window){
+		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
+		return;
+	}
+	of::priv::getClock().setTimeModeExternal(functime, startTime);
+	window->events().resetStartTime();
+	window->events().setTimeModeFiltered(alpha);
+}
+
+//--------------------------------------
 ofTime ofGetCurrentTime(){
 	return of::priv::getClock().getCurrentTime();
 }
-
 
 //--------------------------------------
 uint64_t ofGetElapsedTimeMillis(){
@@ -369,7 +417,6 @@ uint64_t ofGetSystemTimeMicros( ) {
 unsigned int ofGetUnixTime(){
 	return (unsigned int)time(nullptr);
 }
-
 
 //--------------------------------------
 void ofSleepMillis(int millis){

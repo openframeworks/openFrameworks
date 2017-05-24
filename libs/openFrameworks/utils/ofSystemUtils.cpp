@@ -18,6 +18,9 @@
 #include <shlobj.h>
 #include <tchar.h>
 #include <stdio.h>
+#include <locale>
+#include <sstream>
+#include <string>
 
 #endif
 
@@ -31,10 +34,27 @@
 	#include <Cocoa/Cocoa.h>
 #endif
 
+
+#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+#include <gtk/gtk.h>
+#include "ofGstUtils.h"
+#include <thread>
+#include <X11/Xlib.h>
+
+#if GTK_MAJOR_VERSION>=3
+#define OPEN_BUTTON "_Open"
+#define SELECT_BUTTON "_Select All"
+#define SAVE_BUTTON "_Save"
+#define CANCEL_BUTTON "_Cancel"
+#else
+#define OPEN_BUTTON GTK_STOCK_OPEN
+#define SELECT_BUTTON GTK_STOCK_SELECT_ALL
+#define SAVE_BUTTON GTK_STOCK_SAVE
+#define CANCEL_BUTTON GTK_STOCK_CANCEL
+#endif
+
+namespace{
 #ifdef TARGET_WIN32
-#include <locale>
-#include <sstream>
-#include <string>
 
 std::string convertWideToNarrow( const wchar_t *s, char dfault = '?',
                       const std::locale& loc = std::locale() )
@@ -67,30 +87,12 @@ std::wstring convertNarrowToWide( const std::string& as ){
 #endif
 
 #if defined( TARGET_OSX )
-static void restoreAppWindowFocus(){
+void restoreAppWindowFocus(){
 	NSWindow * appWindow = (NSWindow *)ofGetCocoaWindow();
 	if(appWindow) {
 		[appWindow makeKeyAndOrderFront:nil];
 	}
 }
-#endif
-
-#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
-#include <gtk/gtk.h>
-#include "ofGstUtils.h"
-#include <thread>
-#include <X11/Xlib.h>
-
-#if GTK_MAJOR_VERSION>=3
-#define OPEN_BUTTON "_Open"
-#define SELECT_BUTTON "_Select All"
-#define SAVE_BUTTON "_Save"
-#define CANCEL_BUTTON "_Cancel"
-#else
-#define OPEN_BUTTON GTK_STOCK_OPEN
-#define SELECT_BUTTON GTK_STOCK_SELECT_ALL
-#define SAVE_BUTTON GTK_STOCK_SAVE
-#define CANCEL_BUTTON GTK_STOCK_CANCEL
 #endif
 
 gboolean init_gtk(gpointer userdata){
@@ -195,7 +197,7 @@ gboolean text_dialog_gtk(gpointer userdata){
 	return G_SOURCE_REMOVE;
 }
 
-static void initGTK(){
+void initGTK(){
 	static bool initialized = false;
 	if(!initialized){
 		#if !defined(TARGET_RASPBERRY_PI) 
@@ -209,7 +211,7 @@ static void initGTK(){
 
 }
 
-static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,string defaultName=""){
+string gtkFileDialog(GtkFileChooserAction action,string windowTitle,string defaultName=""){
 	initGTK();
 	FileDialogData dialogData;
 	dialogData.action = action;
@@ -222,10 +224,26 @@ static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,strin
 		std::unique_lock<std::mutex> lck(dialogData.mutex);
 		dialogData.condition.wait(lck);
 	}
+
 	return dialogData.results;
 }
 
+void resetLocale(std::locale locale){
+	try{
+		std::locale::global(locale);
+	}catch(...){
+		if(ofToLower(std::locale("").name()).find("utf-8")==std::string::npos){
+			ofLogWarning("ofSystemUtils") << "GTK changes the locale when opening a dialog which can "
+				 "break number parsing. We tried to change back to " <<
+				 locale.name() <<
+				 "but failed some string parsing functions might behave differently "
+				 "after this";
+		}
+	}
+}
+
 #endif
+}
 
 #ifdef TARGET_ANDROID
 #include "ofxAndroidUtils.h"
@@ -280,6 +298,7 @@ void ofSystemAlertDialog(string errorMessage){
 	#endif
 
 	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+		auto locale = std::locale();
 		initGTK();
 		TextDialogData dialogData;
 		dialogData.text = errorMessage;
@@ -289,6 +308,7 @@ void ofSystemAlertDialog(string errorMessage){
 			std::unique_lock<std::mutex> lock(dialogData.mutex);
 			dialogData.condition.wait(lock);
 		}
+		resetLocale(locale);
 	#endif
 
 	#ifdef TARGET_ANDROID
@@ -465,8 +485,10 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	//------------------------------------------------------------------------------   linux
 	//----------------------------------------------------------------------------------------
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+		auto locale = std::locale();
 		if(bFolderSelection) results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,windowTitle,defaultPath);
 		else results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN,windowTitle,defaultPath);
+		resetLocale(locale);
 #endif
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
@@ -546,9 +568,9 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	//------------------------------------------------------------------------------   linux
 	//----------------------------------------------------------------------------------------
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
-
+	auto locale = std::locale();
 	results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SAVE, messageName,defaultName);
-
+	resetLocale(locale);
 #endif
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
@@ -582,6 +604,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 string ofSystemTextBoxDialog(string question, string text){
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+	auto locale = std::locale();
 	initGTK();
 	TextDialogData dialogData;
 	dialogData.text = text;
@@ -592,6 +615,7 @@ string ofSystemTextBoxDialog(string question, string text){
 		std::unique_lock<std::mutex> lock(dialogData.mutex);
 		dialogData.condition.wait(lock);
 	}
+	resetLocale(locale);
 	text = dialogData.text;
 #endif
 
