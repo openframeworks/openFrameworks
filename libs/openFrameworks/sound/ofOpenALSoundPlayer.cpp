@@ -689,6 +689,10 @@ bool ofOpenALSoundPlayer::isPaused() const{
 	return paused;
 }
 
+uint64_t ofOpenALSoundPlayer::getDurationMS() const{
+	return duration * 1000;
+}
+
 //------------------------------------------------------------
 float ofOpenALSoundPlayer::getSpeed() const{
 	return speed;

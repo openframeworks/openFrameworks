@@ -62,6 +62,7 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 		float getPan() const;
 		float getVolume() const;
 		bool isLoaded() const;
+		uint64_t getDurationMS() const;
 
 		static void initializeFmod();
 		static void closeFmod();

@@ -161,6 +161,9 @@ public:
     /// \return whether or not the player is ready to begin playback.
     bool isLoaded() const;
 
+	/// Returns the duration of the sound in ms.
+	uint64_t getDurationMS() const;
+
 protected:
     shared_ptr<ofBaseSoundPlayer> player;
 

@@ -236,3 +236,12 @@ float ofSoundPlayer::getVolume() const{
 		return 0;
 	}
 }
+
+//--------------------------------------------------------------------
+uint64_t ofSoundPlayer::getDurationMS() const{
+	if( player ){
+		return player->getDurationMS();
+	} else {
+		return 0;
+	}
+}

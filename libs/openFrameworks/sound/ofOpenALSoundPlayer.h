@@ -74,6 +74,7 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
         float getVolume() const;
 		bool isPaused() const;
 		bool isLoaded() const;
+		uint64_t getDurationMS() const;
 
 		static void initialize();
 		static void close();

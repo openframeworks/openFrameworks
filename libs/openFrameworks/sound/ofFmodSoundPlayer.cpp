@@ -31,10 +31,27 @@ void ofFmodSoundSetVolume(float vol){
 	FMOD_ChannelGroup_SetVolume(channelgroup, vol);
 }
 
+#include "ofAppRunner.h"
+
 //--------------------
 void ofFmodSoundUpdate(){
 	if (bFmodInitialized_){
 		FMOD_System_Update(sys);
+
+		unsigned int size;
+		int numbuffers;
+		FMOD_System_GetDSPBufferSize(sys, &size, &numbuffers);
+		unsigned int hi, lo;
+		FMOD_System_GetDSPClock(sys, &hi, &lo);
+		int rate;
+		FMOD_SOUND_FORMAT format;
+		int outchannels, inchannels;
+		FMOD_DSP_RESAMPLER resamplemethod;
+		int bits;
+		FMOD_System_GetSoftwareFormat(sys, &rate, &format, &outchannels, &inchannels, &resamplemethod, &bits);
+		cout << "size: " << buffersize << endl;
+		cout << hi << " " << lo << endl;
+		cout << lo / double(rate) << " - " << ofGetElapsedTimef() << endl;
 	}
 }
 
@@ -169,6 +186,7 @@ void ofFmodSoundPlayer::initializeFmod(){
 		#endif
 		FMOD_System_Init(sys, 32, FMOD_INIT_NORMAL, nullptr);  //do we want just 32 channels?
 		FMOD_System_GetMasterChannelGroup(sys, &channelgroup);
+
 		bFmodInitialized_ = true;
 	}
 }
@@ -283,9 +301,21 @@ void ofFmodSoundPlayer::setPosition(float pct){
 	}
 }
 
+//------------------------------------------------------------
 void ofFmodSoundPlayer::setPositionMS(int ms) {
 	if (isPlaying()){
 		FMOD_Channel_SetPosition(channel, ms, FMOD_TIMEUNIT_MS);
+	}
+}
+
+//------------------------------------------------------------
+uint64_t ofFmodSoundPlayer::getDurationMS() const{
+	if(isLoaded()){
+		unsigned int ms;
+		FMOD_Sound_GetLength(sound, &ms, FMOD_TIMEUNIT_MS);
+		return ms;
+	}else{
+		return 0;
 	}
 }
 
