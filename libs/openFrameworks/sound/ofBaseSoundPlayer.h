@@ -38,7 +38,7 @@ public:
 	virtual bool isLoaded() const = 0;
 	virtual float getVolume() const = 0;
 	//TODO: make this pure virtual and implement in implementations
-	uint64_t getDurationMS() const{
+	virtual uint64_t getDurationMS() const{
 		ofLogError("ofBaseSoundPlayer") << "getDurationMS not implemented for this platform";
 		return 0;
 	}
