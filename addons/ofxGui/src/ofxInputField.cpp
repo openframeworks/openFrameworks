@@ -772,7 +772,7 @@ void ofxInputField<string>::parseInput(){
 //-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::valueChanged(Type & value){
-	input = toString(value);
+	visibleInput = input = toString(value);
 	if(bGuiActive){
 		moveCursor(ofUTF8Length(input));
 	}
