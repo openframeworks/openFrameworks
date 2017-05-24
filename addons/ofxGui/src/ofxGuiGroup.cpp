@@ -403,6 +403,7 @@ bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 }
 
 void ofxGuiGroup::minimize(){
+	if(minimized) return;
 	minimized = true;
 	b.height = header + spacing + spacingNextElement + 1 /*border*/;
 	if(parent){
@@ -413,6 +414,7 @@ void ofxGuiGroup::minimize(){
 }
 
 void ofxGuiGroup::maximize(){
+	if(!minimized) return;
 	minimized = false;
     for(std::size_t i = 0; i < collection.size(); i++){
 		b.height += collection[i]->getHeight() + spacing;
