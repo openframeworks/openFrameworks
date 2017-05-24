@@ -16,7 +16,7 @@ ofxiOSSoundPlayer::~ofxiOSSoundPlayer() {
     unload();
 }
 
-bool ofxiOSSoundPlayer::load(std::filesystem::path fileName, bool stream) {
+bool ofxiOSSoundPlayer::load(const std::filesystem::path& fileName, bool stream) {
     if(soundPlayer != NULL) {
         unload();
     }
