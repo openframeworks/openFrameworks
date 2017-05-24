@@ -17,12 +17,13 @@ Setting up openFrameworks with Android Studio is fairly straightforward. The bas
 3. Download openFrameworks from the download page or from git
 2. Install the Android NDK (actually tested version is r10e)
 4. Set the path to the NDK in local.properties (`ndk.dir`)
-5. In Android Studio, use **File ➞ Import Project** and select an openFrameworks example from the examples/android folder
+5. In Android Studio, use **File ➞ New ➞ Import Project** and select an openFrameworks example from the examples/android folder
+6. Import Project From External Model (Gradel)
 6. Build and run
 
 ## Installation
 
-### Install Android Studio and the SDK
+### Install Android Studio and the Android SDK
 
 Download and install Android Studio from [https://developer.android.com/studio/index.html](https://developer.android.com/studio/index.html) (you need Android Studio 2.0 or higher). It should come with (or automatically install) a recent SDK, though you can customize the SDK version later from within Android Studio using **Tools ➞ Android ➞ SDK Manager**.
 
@@ -61,9 +62,18 @@ Make a note of where you installed the NDK as you will need the path during the 
 
 ### Configure the NDK
 
-With a text editor, edit the file `libs/openFrameworksCompiled/project/android/paths.make` and set the NDK path to the correct folder:
+With a text editor, edit the file `libs/openFrameworksCompiled/project/android/paths.make` and set the absolute path to the NDK like this:
 
-    NDK_ROOT=/path/to/the/ndk
+    NDK_ROOT=/absolute/path/to/the/ndk
+
+This will tell openFrameworks where to find the android NDK.
+
+The final `libs/openFrameworksCompiled/project/android/paths.make` file should look something like:
+
+    # Default paths.make file.
+    # Enter the correct paths for your system and save this file as paths.make
+
+    NDK_ROOT=/Volumes/Android/android-ndk-r10e
 
 ### Import the Project
 
@@ -101,6 +111,8 @@ Android Studio before 2.0 had very limited support for C++ source code editing. 
 6. Import the new project from Android Studio.
 
 ## Troubleshooting
+
+- You may need to close Android Studio and delete your `$HOME/.gradle` directory.
 
 - You may need to adjust the following numbers to match your installed Android Studio and Android SDK. Android Studio should offer to fix these values for you when you open the appropriate build files.
     - The Gradle version specified in `build.gradle`
