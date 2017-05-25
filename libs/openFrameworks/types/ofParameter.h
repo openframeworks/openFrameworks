@@ -526,16 +526,27 @@ public:
 	void setParent(ofParameterGroup & _parent);
 
 	const ofParameterGroup getFirstParent() const{
-		obj->parents.erase(std::remove_if(obj->parents.begin(),obj->parents.end(),
-						   [](weak_ptr<ofParameterGroup::Value> p){return p.lock()==nullptr;}),
-						obj->parents.end());
-		if(!obj->parents.empty()){
-			return obj->parents.front().lock();
-		}else{
-			return shared_ptr<ofParameterGroup::Value>(nullptr);
-		}
-	}
+		weak_ptr<ofParameterGroup::Value> ptr;
 
+		// loop over all parent pointers, we'll return the first valid pointer we find
+		while(!obj->parents.empty()){
+			// take the next one in line
+			ptr = obj->parents.front();
+
+			// if this pointer is NOT deprecated, return it
+			// it will be implicitly cast to an ofParameterGroup instance
+			if(!ptr.expired()){
+				return ptr.lock();
+			}
+
+			// this one is deprecated, remove it
+			obj->parents.erase(obj->parents.begin());
+		}
+
+		// none of the parents were valid anymore (and they are now all removed)
+		return shared_ptr<ofParameterGroup::Value>(nullptr);
+	}
+	
 	size_t getNumListeners() const;
 	const void* getInternalObject() const;
 
