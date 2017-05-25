@@ -444,8 +444,9 @@ static std::string linuxFontPathByName(const std::string& fontname){
 #endif
 
 //-----------------------------------------------------------
-static bool loadFontFace(std::filesystem::path fontname, FT_Face & face, std::filesystem::path & filename){
-	filename = ofToDataPath(fontname,true);
+static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face, std::filesystem::path & filename){
+	std::filesystem::path fontname;
+	filename = ofToDataPath(_fontname,true);
 	ofFile fontFile(filename,ofFile::Reference);
 	int fontID = 0;
 	if(!fontFile.exists()){
@@ -762,7 +763,7 @@ ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::load(std::filesystem::path filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+bool ofTrueTypeFont::load(const std::filesystem::path& filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
 	ofTtfSettings settings(filename,fontSize);
 	settings.antialiased = antialiased;
 	settings.contours = makeContours;

@@ -75,7 +75,7 @@ shared_ptr<ofBaseSoundPlayer> ofSoundPlayer::getPlayer(){
 }
 
 //--------------------------------------------------------------------
-bool ofSoundPlayer::load(std::filesystem::path fileName, bool stream){
+bool ofSoundPlayer::load(const std::filesystem::path& fileName, bool stream){
 	if( player ){
 		return player->load(fileName, stream);
 	}
