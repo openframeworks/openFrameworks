@@ -526,9 +526,6 @@ public:
 	void setParent(ofParameterGroup & _parent);
 
 	const ofParameterGroup getFirstParent() const{
-		obj->parents.erase(std::remove_if(obj->parents.begin(),obj->parents.end(),
-						   [](weak_ptr<ofParameterGroup::Value> p){return p.lock()==nullptr;}),
-						obj->parents.end());
 		if(!obj->parents.empty()){
 			return obj->parents.front().lock();
 		}else{
