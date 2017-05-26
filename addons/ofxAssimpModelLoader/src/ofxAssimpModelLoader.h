@@ -27,6 +27,7 @@ class ofxAssimpModelLoader{
     public:
         ~ofxAssimpModelLoader();
         ofxAssimpModelLoader();
+        ofxAssimpModelLoader(const ofxAssimpModelLoader& orig);
 
         bool loadModel(string modelName, bool optimize=false);
         bool loadModel(ofBuffer & buffer, bool optimize=false, const char * extension="");

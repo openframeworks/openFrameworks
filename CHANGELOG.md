@@ -861,6 +861,9 @@ CORE ADDONS
 
 
 
+### ofxAssimpModelLoader
+    + ofxAssimpModelLoader: added copy constructor
+
 OF 0.8.1
 ========
 
