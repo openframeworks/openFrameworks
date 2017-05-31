@@ -3,40 +3,35 @@
 Android
 =======
 
-The Android distribution of openFrameworks is setup to work with either the Eclipse IDE or experimentally with the newer Android Studio IDE. The projects are currently using a custom toolchain based on Makefiles to compile and install applications.
 
-This information is also online: http://openframeworks.cc/setup/android-eclipse
-
-**Note**: see the FAQ at the bottom of this page if you're having trouble.
+The Android distribution of openFrameworks is set up to work with either the Eclipse IDE or experimentally with the newer Android Studio IDE. This document outlines the process for working with Eclipse.
 
 The current version of the Android plugin for Eclipse has several problems with projects that mix C++ and Java code, so the projects are currently using a custom toolchain based on makefiles + Ant tasks to compile and install applications. If you are used to Android development in Eclipse, things are a little different. Check the following instructions to know how to install the development environment and compile/install applications.
 
-Right now this is only tested on Linux and OS X. To use it on Windows, check the instructions on this link: http://www.multigesture.net/articles/how-to-setup-openframeworks-for-android-on-windows/
+Right now this is only tested on Linux and OS X. To use it on Windows, check the instructions on [this link](http://www.multigesture.net/articles/how-to-setup-openframeworks-for-android-on-windows/).
 
-To use it you will need Eclipse, the Android SDK, the Android NDK, the Android Eclipse plugin and the openFrameworks for Android package.
+Because of the custom build system openFrameworks uses for Android, you may need to use the exact version of the SDK and NDK specified here. For this release you should use SDK 21 and NDK r10e. Later versions may work but they are untested.
 
-Because of the custom build system openFrameworks uses for Android, you may need to use the exact version of the SDK and NDK specified here. For this release you should use SDK 21 and NDK r8d. Later versions will probably work but it's not guaranteed.
+## Summary
 
-Summary
--------
 These instructions go into a lot of important detail, but the main steps are:
 
-- Install Eclipse, Ant and the Android SDK and NDK.
-- If you're using OS X, install the Developer Tools.
-- Setup the Android Eclipse plugin.
-- Download openFrameworks either from the download page, or clone from git.
-- Set path variables so openFrameworks knows where SDK and NDK are.
-- Import the openFrameworks projects into Eclipse.
-- Compile and install one of the Android openFrameworks examples to confirm that everything works.
+1. Install Eclipse, Ant and the Android SDK and NDK.
+2. Install platform specific tools (e.g. On macOS, install the Developer Tools).
+3. Setup the Android Eclipse plugin.
+4. Download openFrameworks either from the download page, or clone from git.
+5. Set path variables so openFrameworks knows where SDK and NDK are.
+6. Import the openFrameworks projects into Eclipse.
+7. Compile and install one of the Android openFrameworks examples to confirm that everything works.
 
-Installation
-------------
 
-**a) Eclipse**: download the C/C++ edition of Eclipse 4.5 (Mars) or later for your platform from here:
+## Installation
 
-http://www.eclipse.org/downloads/packages/eclipse-ide-cc-developers/marsr
+### Install Eclipse
 
-You will need Java to use Eclipse, you can download it from java.com.
+Get the C/C++ edition of Eclipse (Neon) or later for your platform from [here](https://www.eclipse.org/downloads/packages/eclipse-ide-cc-developers/neon3).
+
+You will need Java to use Eclipse, you can download it from [https://java.com/en/download/manual.jsp](https://java.com/en/download/manual.jsp).
 
 For Linux, it will probably be in the official repositories. For example, in Ubuntu:
 
@@ -46,75 +41,74 @@ or
 
     sudo apt-get install oracle-java8-installer
 
-**b) Android SDK**: This is the software that allows you to write Android apps. openFrameworks apps are written in C/C++, but you will still need this to interact with the NDK. You can download it from:
+### Install the Android SDK Tools
 
-http://developer.android.com/sdk/index.html
+This is the software that allows you to write Android apps. openFrameworks apps are written in C/C++, but you will still need this to interact with the NDK (Native Development Kit). You can download the SDK Tools [here](https://developer.android.com/studio/index.html#downloads).
 
-Uncompress it in any folder on your hard disk. Later you'll need to tell eclipse where to find it.
+Once you have the SDK `tools/` downloaded and and uncompressed in the the directory of your choice, make a note of its location for later.
 
-**c) Android NDK**: This is the C/C++ compiler, headers and libraries for Android. OF 0.9.0 has been tested with the NDK version r10e, newer versions might work but it's not guaranteed.
+### Install the Android NDK
 
-https://developer.android.com/ndk/downloads/index.html
+This is the C/C++ compiler, headers and libraries for Android. OF 0.9.0 has been tested with the NDK version r10e, newer versions might work but it's not guaranteed.
 
-- OS X: http://dl.google.com/android/ndk/android-ndk-r10e-darwin-x86_64.bin
-- Linux 32: http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86.bin
-- Linux 64: http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin
-- Windows 32: http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86.exe
-- Windows 64: http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86_64.exe
+[https://developer.android.com/ndk/downloads/index.html](https://developer.android.com/ndk/downloads/index.html)
 
-On Windows, you will also need to install MinGW in order to build openFrameworks. MinGW provides some essential build tools which are not included in the NDK. Follow just the "Installing the MinGW and Msys" instructions on this page: http://www.multigesture.net/articles/how-to-install-mingw-msys-and-eclipse-on-windows/.
+- macOS: [android-ndk-r10e-darwin-x86_64.bin](http://dl.google.com/android/ndk/android-ndk-r10e-darwin-x86_64.bin)
+- Linux 32: [android-ndk-r10e-linux-x86.bin](http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86.bin)
+- Linux 64: [android-ndk-r10e-linux-x86_64.bin](http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin)
+- Windows 32: [android-ndk-r10e-windows-x86.exe](http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86.exe)
+- Windows 64: [android-ndk-r10e-windows-x86_64.exe](http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86_64.exe)
 
-**d) openFrameworks for Android package**: Download it from the downloads page:
+On macOS, you may run into extraction errors if you simply double-click on the `*.bin` archive. To ensure that the file unpacks successfully, in the download directory run `chmod u+x android-ndk-r10e-darwin-x86_64.bin` on the command line, then `./android-ndk-r10e-darwin-x86_64.bin` to automatically extract it.
 
-http://openframeworks.cc/download
+On Windows, you will also need to install MinGW in order to build openFrameworks. MinGW provides some essential build tools which are not included in the NDK. Follow just the "Installing the MinGW and Msys" instructions on [this page](http://www.multigesture.net/articles/how-to-install-mingw-msys-and-eclipse-on-windows/).
 
-You may also check out the openFrameworks source from GitHub (under master branch): http://github.com/openframeworks/openFrameworks
+Make a note of where you installed the NDK as you will need the path during the next step.
 
-**f) Set the paths for the NDK:**
+### Configure the NDK
 
-Edit this file:
+With a text editor, edit the file `libs/openFrameworksCompiled/project/android/paths.make` and set the absolute path to the NDK like this:
 
-    openFrameworks/libs/openFrameworksCompiled/project/android/paths.make
+    NDK_ROOT=/absolute/path/to/the/ndk
 
 This will tell openFrameworks where to find the android NDK.
-If you don't have this file, create it from the paths.make.default template in the same directory.
 
-- Set the values of NDK_ROOT to their install paths
+The final `libs/openFrameworksCompiled/project/android/paths.make` file should look something like:
 
-The final file has to look something like:
+    # Default paths.make file.
+    # Enter the correct paths for your system and save this file as paths.make
 
-```
-# Default paths.make file.
-# Enter the correct paths for your system and save this file as paths.make
+    NDK_ROOT=/Volumes/Android/android-ndk-r10e
 
-NDK_ROOT=/home/arturo/Code/android-ndk-r10e
-```
 
-**g) Start Eclipse**: You will see a pop up asking you what workspace to use. Just point it to:
-openFrameworks/examples/android.
+### Configure Eclipse
 
-**h) Android Eclipse plugin**:
+#### Import the Project
 
-There are detailed instructions here: http://developer.android.com/sdk/eclipse-adt.html
+Start Eclipse. If it is your first time, you will see a pop up asking you what workspace to use. Just point it to `examples/android` in the openFrameworks folder.
+
+#### Install the Android Eclipse Plugin
+
+_Note: While the Android Plugin is officially deprecated, it should still work for the time being._
+
+There are detailed installation instructions [here](http://developer.android.com/sdk/eclipse-adt.html).
 
 To install it, inside Eclipse go to
-Help > Install New Software...
 
-Click 'Add...' and enter the following info:
+- Help > Install New Software...
+- Click 'Add...' and enter the following info:
 
-Name: Android SDK  
-Location: https://dl-ssl.google.com/android/eclipse/
+    Name: Android SDK  
+    Location: https://dl-ssl.google.com/android/eclipse/
 
-Press 'OK' and select the new repository in the "Work with:" drop down box in case it's not already selected.
+- Press 'OK' and select the new repository in the "Work with:" drop down box in case it's not already selected.
+- You will see the SDK plugin in the list called "Developer Tools".
+- Select it and press 'Next' until you get to the "Review Licenses" screen. Check the "I accept the terms of the license" checkbox and press 'Finish'.
+- Eclipse will download and install the Android plugin. Once it finishes press 'Yes' in the popup to restart Eclipse.
 
-You will see the SDK plugin in the list called "Developer Tools".
+#### Configure the Android Plugin
 
-Select it and press 'Next' until you get to the "Review Licenses" screen. Check the "I accept the terms of the license" checkbox and press 'Finish'. Eclipse will download and install the Android plugin. Once it finishes press 'Yes' in the popup to restart Eclipse.
-
-
-**j) Configuring the Android plugin**:
-
-Once we have installed the Android plugin we need to tell it where to find the SDK. In Eclipse go to Window > Preferences > Android (or Eclipse > Preferences for OS X) and set the SDK location by browsing to the folder where you uncompressed the SDK before.
+Once we have installed the Android plugin we need to tell it where to find the SDK.In Eclipse go to `Window > Preferences > Android (or Eclipse > Preferences for OS X)`.  If you'd like to send Google your usage stats, agree, otherwise ignore. Then set the SDK location by browsing to the folder where you uncompressed the SDK before.  
 
 Now Eclipse knows where the SDK is.
 
@@ -130,6 +124,26 @@ Once that is done you can create a new virtual device (AVD). Just select a name,
 
 Now that Eclipse has been completely configured to work with openFrameworks for Android, the last step is to import all the projects in the workspace. Go to
 File > Import and select General > Existing projects in the workspace...
+
+
+<!-- Please download a new SDK for Eclipse，Android Studio use another. Hope to help you！
+
+See Eclipse: Failed to get the required ADT version number from the SDK
+
+Download Old Version SDK
+
+https://dl.google.com/android/installer_r24.4.1-windows.exe
+https://dl.google.com/android/android-sdk_r24.4.1-windows.zip
+https://dl.google.com/android/android-sdk_r24.4.1-macosx.zip
+https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
+ -->
+<!--
+ Download earlier version of SDK tools (https://dl.google.com/android/repository/tools_r24.4.1-windows.zip). Replace suffix -windows with -macosx or -linux to get packages for other platforms.
+ Unpack to sdk-eclipse directory, you'll have following directory structure sdk-eclipse/tools/ .
+ Run android.bat from tools directory and download required platforms and build tools. Be careful NOT TO UPDATE SDK TOOLS!
+ Change Android SDK directory in Eclipse (Windows->Preferences->Android, SDK Location) to your new directory "sdk-eclipse". -->
+
+
 
 Import in this order:
 
@@ -211,8 +225,8 @@ After you're done copying the project, you'll need to change the name of the app
 
 It's important to keep the package prefix as cc.openframeworks or some things can stop working. This will be fixed in future versions when Eclipse support for native code is better.
 
-FAQ
----
+
+### Troubleshooting
 
 **If the build fails:**
 
