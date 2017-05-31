@@ -48,11 +48,11 @@ Module{
 
     Probe{
         id: CORE
-        property stringList includes
-        property stringList cflags
-        property stringList ldflags
-        property stringList system_libs
-        property stringList static_libs
+        property stringList includes: [];
+        property stringList cflags: [];
+        property stringList ldflags: [];
+        property stringList system_libs: [];
+        property stringList static_libs: [];
         configure: {
             includes = [];
             cflags = [];
