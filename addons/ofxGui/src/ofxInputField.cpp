@@ -461,8 +461,13 @@ bool ofxInputField<Type>::charPressed(uint32_t & key){
 			moveCursor(insertKeystroke(key));
 		}else if(key == '.' || key == '-' || key == '+'){
 			moveCursor(insertKeystroke(key));
-		}else{
-			moveCursor(insertAlphabetic(key));
+		}else {
+			int cursorPos = insertAlphabetic( key );
+			if ( cursorPos < 0 ){
+				return false;
+			} else{
+				moveCursor(cursorPos);
+			}
 		}
 		return true;
 	}
