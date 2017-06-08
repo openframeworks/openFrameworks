@@ -1797,6 +1797,51 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 	}
 }
 
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::flatNormals() {
+    if( getMode() == OF_PRIMITIVE_TRIANGLES) {
+        
+        // get copy original mesh data
+        auto numIndices = getIndices().size();
+        auto verts = getVertices();
+        auto texCoords = getTexCoords();
+        auto colors = getColors();
+        
+        // remove all data to start from scratch
+        clear();
+        
+        // add mesh data back, duplicating vertices and recalculating normals
+        N normal;
+        for(ofIndexType i = 0; i < numIndices; i++) {
+            ofIndexType indexCurr = getIndex(i);
+    
+            if(i % 3 == 0) {
+                ofIndexType indexNext1 = getIndex(i + 1);
+                ofIndexType indexNext2 = getIndex(i + 2);
+                auto e1 = verts[indexCurr] - verts[indexNext1];
+                auto e2 = verts[indexNext2] - verts[indexNext1];
+                normal = glm::normalize(glm::cross(e1, e2));
+            }
+    
+            addIndex(i);
+            addNormal(normal);
+    
+            if(indexCurr < texCoords.size()) {
+                addTexCoord(texCoords[indexCurr]);
+            }
+    
+            if(indexCurr < verts.size()) {
+                addVertex(verts[indexCurr]);
+            }
+    
+            if(indexCurr < colors.size()) {
+                addColor(colors[indexCurr]);
+            }
+        }
+    }
+}
+
 // PLANE MESH //
 
 
