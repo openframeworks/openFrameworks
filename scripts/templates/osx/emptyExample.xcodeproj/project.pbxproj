@@ -688,7 +688,7 @@ fi
 		<key>E4B69E1F0A3A1BDC003C02F2</key>
 		<dict>
 			<key>fileEncoding</key>
-            <string>4</string>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
