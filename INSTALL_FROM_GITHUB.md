@@ -31,11 +31,15 @@ As the first option can lead to [unexpected results](https://forum.openframework
 
 Now that you have the Project Generator, you are ready to compile all the examples:
 
+#### Option 1 - With the Project Generator app
 * Start the Project Generator application by double clicking on it.
 * Hit the cog wheel on the right side of the Project Generator window and select `advanced options`.
 * Select the `update multiple` tab, enter the path to the examples folder inside the current OpenFrameworks repo folder.
 * Make sure to select your platform in the platforms field below.
 * Click on `update multiple` and wait. This operation can take a while depending on your hardware.
+
+#### Option 2 - With the command line Project Generator
+* from the OF root directory, run `projectGenerator -r -o"." examples`
 
 Once the success message appears you are done.
 
