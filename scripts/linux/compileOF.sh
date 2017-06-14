@@ -14,7 +14,7 @@ SCRIPTPATH=`pwd`
 popd > /dev/null
 
 BUILD="install"
-JOBS=1
+JOBS=`nproc --all`
 while getopts tj: opt ; do
 	case "$opt" in
 		t)  # testing, only build Debug
