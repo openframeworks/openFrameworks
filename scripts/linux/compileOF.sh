@@ -14,7 +14,14 @@ SCRIPTPATH=`pwd`
 popd > /dev/null
 
 BUILD="install"
-JOBS=`nproc --all`
+
+# if nproc exists, use it to scale the number of jobs to number of processors
+if hash nproc 2>/dev/null; then
+  JOBS=`nproc --all`
+else
+  JOBS=1
+fi
+
 while getopts tj: opt ; do
 	case "$opt" in
 		t)  # testing, only build Debug
