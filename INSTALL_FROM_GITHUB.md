@@ -38,10 +38,10 @@ Now that you have the Project Generator, you are ready to compile all the exampl
 * Make sure to select your platform in the platforms field below.
 * Click on `update multiple` and wait. This operation can take a while depending on your hardware.
 
+Once the success message appears you are done.
+
 #### Option 2 - With the command line Project Generator
 * from the OF root directory, run `projectGenerator -r -o"." examples`
-
-Once the success message appears you are done.
 
 ## How to submit your pull requests
 
