@@ -16,7 +16,7 @@ _Before continuing make sure your new openFrameworks path **has no spaces**. Man
 
 ### Download dependencies
 
-As the external dependencies are not found in the repository, you need to download them. To make things simpler, use the bash script called `download_lib.sh` which can be found in the `scripts` folder. In this folder, there are several subfolders, one for each platform. Assuming you are, for example, using OSX, you need to run `/bin/bash scripts/osx/download_libs.sh`.
+As the external dependencies are not found in the repository, you need to download them. To make things simpler, use the bash script called `download_libs.sh` which can be found in the `scripts` folder. In this folder, there are several subfolders, one for each platform. Assuming you are, for example, using OSX, you need to run `/bin/bash scripts/osx/download_libs.sh`.
 
 ### Get the Project Generator
 
