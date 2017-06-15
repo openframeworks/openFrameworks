@@ -2703,8 +2703,8 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 		pixels.mirror(false,true);
 		break;
 	case OF_ORIENTATION_90_RIGHT:
-		swap(w,h);
-		swap(x,y);
+		std::swap(w,h);
+		std::swap(x,y);
 		if(!isVFlipped()){
 			x = sw - x;   // screen is flipped horizontally.
 			x -= w;
@@ -2718,8 +2718,8 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 		pixels.mirror(true,true);
 		break;
 	case OF_ORIENTATION_90_LEFT:
-		swap(w, h);
-		swap(x, y);
+		std::swap(w, h);
+		std::swap(x, y);
 		if(isVFlipped()){
 			x = sw - x;   // screen is flipped horizontally.
 			x -= w;

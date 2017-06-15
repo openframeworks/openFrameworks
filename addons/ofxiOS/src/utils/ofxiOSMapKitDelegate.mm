@@ -68,7 +68,7 @@
 
 - (void)mapViewDidFailLoadingMap:(MKMapView *)mapView withError:(NSError *)error {
 	ofLogVerbose("ofxiOSMapKitDelegate") << "mapViewDidFailLoadingMap";
-	string s = error != nil ? [[error localizedDescription] UTF8String] : "unknown error";
+	std::string s = error != nil ? [[error localizedDescription] UTF8String] : "unknown error";
 	mapKit->errorLoadingMap(s);
 }
 

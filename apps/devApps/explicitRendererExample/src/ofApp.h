@@ -22,9 +22,9 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		shared_ptr<GuiApp> gui;
-		shared_ptr<ofAppBaseWindow> window;
-		shared_ptr<ofBaseGLRenderer> gl;
+		std::shared_ptr<GuiApp> gui;
+		std::shared_ptr<ofAppBaseWindow> window;
+		std::shared_ptr<ofBaseGLRenderer> gl;
 		ofSpherePrimitive sphere;
 		ofEasyCam camera;
 };

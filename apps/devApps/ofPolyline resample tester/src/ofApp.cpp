@@ -143,52 +143,52 @@ void ofApp::draw(){
     ofPopMatrix();
     
     
-    stringstream s;
-    s << "Number of points: " << poly.size() << endl;
-    s << "totalLength: " << totalLength << endl;
+    std::stringstream s;
+    s << "Number of points: " << poly.size() << std::endl;
+    s << "totalLength: " << totalLength << std::endl;
     
-    s << endl;
-    s << "nearestIndex: " << nearestIndex << endl;
-    s << "nearestPoint: " << nearestPoint << endl;
-    s << "nearestDataPoint: " << nearestDataPoint << endl;
+    s << std::endl;
+    s << "nearestIndex: " << nearestIndex << std::endl;
+    s << "nearestPoint: " << nearestPoint << std::endl;
+    s << "nearestDataPoint: " << nearestDataPoint << std::endl;
     
-    s << endl;
-    s << "lengthAtIndex: " << lengthAtIndex << endl;
-    s << "pointAtIndex: " << pointAtIndex << endl;
+    s << std::endl;
+    s << "lengthAtIndex: " << lengthAtIndex << std::endl;
+    s << "pointAtIndex: " << pointAtIndex << std::endl;
     
-    s << endl;
-    s << "pointAtLength: " << pointAtLength << endl;
-    s << "pointAtPercent: " << pointAtPercent << endl;
+    s << std::endl;
+    s << "pointAtLength: " << pointAtLength << std::endl;
+    s << "pointAtPercent: " << pointAtPercent << std::endl;
     
-    s << endl;
-    s << "indexAtLength: " << indexAtLength << endl;
+    s << std::endl;
+    s << "indexAtLength: " << indexAtLength << std::endl;
     
     
-    s << endl;
-    s << "sinTime: " << sinTime << endl;
-    s << "sinIndex: " << sinIndex << endl;
-    s << "sinIndexLength: " << sinIndexLength << endl;
+    s << std::endl;
+    s << "sinTime: " << sinTime << std::endl;
+    s << "sinIndex: " << sinIndex << std::endl;
+    s << "sinIndexLength: " << sinIndexLength << std::endl;
     
-    s << endl;
-    s << "lengthAtIndexSin: " << lengthAtIndexSin << endl;
-    s << "pointAtIndexSin: " << pointAtIndexSin << endl;
-    s << "pointAtPercentSin: " << pointAtPercentSin << endl;
+    s << std::endl;
+    s << "lengthAtIndexSin: " << lengthAtIndexSin << std::endl;
+    s << "pointAtIndexSin: " << pointAtIndexSin << std::endl;
+    s << "pointAtPercentSin: " << pointAtPercentSin << std::endl;
     
-    s << endl;
-    s << "angleAtIndex: " << angleAtIndex << endl;
-    s << "angleAtIndexSin: " << angleAtIndexSin << endl;
+    s << std::endl;
+    s << "angleAtIndex: " << angleAtIndex << std::endl;
+    s << "angleAtIndexSin: " << angleAtIndexSin << std::endl;
     
-    s << endl;
-    s << "rotAtIndex: " << rotAtIndex << endl;
-    s << "rotAtIndexSin: " << rotAtIndexSin << endl;
+    s << std::endl;
+    s << "rotAtIndex: " << rotAtIndex << std::endl;
+    s << "rotAtIndexSin: " << rotAtIndexSin << std::endl;
     
-    s << endl;
-    s << "rotMagAtIndex: " << rotMagAtIndex << endl;
-    s << "rotMagAtIndexSin: " << rotMagAtIndexSin << endl;
+    s << std::endl;
+    s << "rotMagAtIndex: " << rotMagAtIndex << std::endl;
+    s << "rotMagAtIndexSin: " << rotMagAtIndexSin << std::endl;
     
-    s << endl;
-    s << "normalAtIndex: " << normalAtIndex << endl;
-    s << "normalAtIndexSin: " << normalAtIndexSin << endl;
+    s << std::endl;
+    s << "normalAtIndex: " << normalAtIndex << std::endl;
+    s << "normalAtIndexSin: " << normalAtIndexSin << std::endl;
     
     ofSetColor(255);
     ofDrawBitmapString(s.str(), 10, 30);

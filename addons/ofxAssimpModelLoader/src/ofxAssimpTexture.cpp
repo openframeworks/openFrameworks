@@ -12,7 +12,7 @@ ofxAssimpTexture::ofxAssimpTexture() {
     texturePath = "";
 }
 
-ofxAssimpTexture::ofxAssimpTexture(ofTexture texture, string texturePath) {
+ofxAssimpTexture::ofxAssimpTexture(ofTexture texture, std::string texturePath) {
     this->texture = texture;
     this->texturePath = texturePath;
 }
@@ -21,7 +21,7 @@ ofTexture & ofxAssimpTexture::getTextureRef() {
     return texture;
 }
 
-string ofxAssimpTexture::getTexturePath() {
+std::string ofxAssimpTexture::getTexturePath() {
     return texturePath;
 }
 

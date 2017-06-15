@@ -20,7 +20,6 @@
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
 #include "ofBaseTypes.h"
-using namespace std;
 
 static bool paused=true;
 static bool surfaceDestroyed=false;
@@ -37,7 +36,7 @@ static ofAppAndroidWindow * window;
 
 static ofOrientation orientation = OF_ORIENTATION_DEFAULT;
 
-static queue<ofTouchEventArgs> touchEventArgsQueue;
+static std::queue<ofTouchEventArgs> touchEventArgsQueue;
 static std::mutex mtx;
 static bool threadedTouchEvents = false;
 static bool appSetup = false;
@@ -121,9 +120,9 @@ void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings){
 	glesVersion = settings.glesVersion;
 	ofLogError() << "setup gles" << glesVersion;
 	if(glesVersion<2){
-		currentRenderer = make_shared<ofGLRenderer>(this);
+		currentRenderer = std::make_shared<ofGLRenderer>(this);
 	}else{
-		currentRenderer = make_shared<ofGLProgrammableRenderer>(this);
+		currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 	}
 
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
@@ -229,7 +228,7 @@ ofCoreEvents & ofAppAndroidWindow::events(){
 	return coreEvents;
 }
 
-shared_ptr<ofBaseRenderer> & ofAppAndroidWindow::renderer(){
+std::shared_ptr<ofBaseRenderer> & ofAppAndroidWindow::renderer(){
 	return currentRenderer;
 }
 
@@ -252,8 +251,8 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
 {
 	jboolean iscopy;
 	const char *mfile = env->GetStringUTFChars(data_dir, &iscopy);
-	__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("setting app dir name to: \"" + string(mfile) + "\"").c_str());
-    ofSetDataPathRoot(string(mfile)+"/");
+	__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("setting app dir name to: \"" + std::string(mfile) + "\"").c_str());
+    ofSetDataPathRoot(std::string(mfile)+"/");
     env->ReleaseStringUTFChars(data_dir, mfile);
 }
 
@@ -374,7 +373,7 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 
 	if(!threadedTouchEvents){
 		mtx.lock();
-		queue<ofTouchEventArgs> events = touchEventArgsQueue;
+		std::queue<ofTouchEventArgs> events = touchEventArgsQueue;
 		while(!touchEventArgsQueue.empty()) touchEventArgsQueue.pop();
 		mtx.unlock();
 
@@ -572,7 +571,7 @@ Java_cc_openframeworks_OFAndroid_onMenuItemSelected( JNIEnv*  env, jobject  thiz
 	jboolean iscopy;
 	const char * menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
 	if(!menu_id_str) return false;
-	string id_str(menu_id_str);
+	std::string id_str(menu_id_str);
 	return ofxAndroidEvents().menuItemSelected.notify(nullptr,id_str);
 }
 
@@ -581,7 +580,7 @@ Java_cc_openframeworks_OFAndroid_onMenuItemChecked( JNIEnv*  env, jobject  thiz,
 	jboolean iscopy;
 	const char *menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
 	if(!menu_id_str) return false;
-	string id_str(menu_id_str);
+	std::string id_str(menu_id_str);
 	return ofxAndroidEvents().menuItemChecked.notify(nullptr,id_str);
 }
 

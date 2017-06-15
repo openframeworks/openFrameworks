@@ -28,8 +28,8 @@ ofxEmscriptenVideoGrabber::~ofxEmscriptenVideoGrabber() {
 	// TODO Auto-generated destructor stub
 }
 
-vector<ofVideoDevice> ofxEmscriptenVideoGrabber::listDevices() const{
-	return vector<ofVideoDevice>();
+std::vector<ofVideoDevice> ofxEmscriptenVideoGrabber::listDevices() const{
+	return std::vector<ofVideoDevice>();
 }
 
 bool ofxEmscriptenVideoGrabber::setup(int w, int h){
@@ -134,7 +134,7 @@ bool ofxEmscriptenVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 ofPixelFormat ofxEmscriptenVideoGrabber::getPixelFormat() const{
-	string format = html5video_grabber_pixel_format(id);
+	std::string format = html5video_grabber_pixel_format(id);
 	if(format == "RGB"){
 		return OF_PIXELS_RGB;
 	}else if(format == "RGBA"){

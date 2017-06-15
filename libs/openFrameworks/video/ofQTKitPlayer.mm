@@ -25,12 +25,12 @@ ofQTKitPlayer::~ofQTKitPlayer() {
 }
 
 //--------------------------------------------------------------------
-bool ofQTKitPlayer::load(string path){
+bool ofQTKitPlayer::load(std::string path){
 	return load(path, OF_QTKIT_DECODE_PIXELS_ONLY);
 }
 
 //--------------------------------------------------------------------
-bool ofQTKitPlayer::load(string movieFilePath, ofQTKitDecodeMode mode) {
+bool ofQTKitPlayer::load(std::string movieFilePath, ofQTKitDecodeMode mode) {
 	if(mode != OF_QTKIT_DECODE_PIXELS_ONLY && mode != OF_QTKIT_DECODE_TEXTURE_ONLY && mode != OF_QTKIT_DECODE_PIXELS_AND_TEXTURE){
 		ofLogError("ofQTKitPlayer") << "loadMovie(): unknown ofQTKitDecodeMode mode";
 		return false;

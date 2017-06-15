@@ -1,6 +1,5 @@
 #include "ofxSlider.h"
 #include "ofGraphics.h"
-using namespace std;
 
 namespace{
 	template<typename Type>
@@ -225,7 +224,7 @@ void ofxSlider<Type>::generateDraw(){
 
 template<typename Type>
 void ofxSlider<Type>::generateText(){	
-	string valStr = toString(value.get());
+	std::string valStr = toString(value.get());
 	auto inputWidth = getTextBoundingBox(valStr,0,0).width;
 	auto label = getTextBoundingBox(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
 	auto value = getTextBoundingBox(valStr, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4);

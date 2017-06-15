@@ -50,7 +50,7 @@ jobject ofxAndroidVibrator::getVibratorService(){
 	return vibratorService;
 }
 
-jmethodID ofxAndroidVibrator::getVibratorMethodID(string name, string signature){
+jmethodID ofxAndroidVibrator::getVibratorMethodID(std::string name, std::string signature){
 	jclass vibratorClass = ofGetJNIEnv()->FindClass("android/os/Vibrator");
 	if(!vibratorClass){
 		ofLogError("ofxAndroidVibrator") << "getVibratorMethodID(): couldn't get Vibrator class";

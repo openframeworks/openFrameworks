@@ -5,7 +5,7 @@
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 ofxiOSVideoGrabber::ofxiOSVideoGrabber() {
-	grabber = shared_ptr<AVFoundationVideoGrabber>(new AVFoundationVideoGrabber());
+	grabber = std::shared_ptr<AVFoundationVideoGrabber>(new AVFoundationVideoGrabber());
 }
 
 ofxiOSVideoGrabber::~ofxiOSVideoGrabber() {
@@ -13,7 +13,7 @@ ofxiOSVideoGrabber::~ofxiOSVideoGrabber() {
 }
 
 //--------------------------------------------------------------
-vector <ofVideoDevice> ofxiOSVideoGrabber::listDevices() const {
+std::vector <ofVideoDevice> ofxiOSVideoGrabber::listDevices() const {
 	return grabber->listDevices();
 }
 

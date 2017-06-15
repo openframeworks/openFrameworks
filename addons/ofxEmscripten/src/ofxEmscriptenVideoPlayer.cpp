@@ -28,7 +28,7 @@ ofxEmscriptenVideoPlayer::~ofxEmscriptenVideoPlayer() {
 	html5video_player_delete(id);
 }
 
-bool ofxEmscriptenVideoPlayer::load(string name){
+bool ofxEmscriptenVideoPlayer::load(std::string name){
 	html5video_player_load(id,ofToDataPath(name).c_str());
 	return true;
 }
@@ -155,7 +155,7 @@ bool ofxEmscriptenVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 ofPixelFormat ofxEmscriptenVideoPlayer::getPixelFormat() const{
-	string format = html5video_player_pixel_format(id);
+	std::string format = html5video_player_pixel_format(id);
 	if(format == "RGB"){
 		return OF_PIXELS_RGB;
 	}else if(format == "RGBA"){

@@ -40,8 +40,8 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		ofQTKitPlayer();
 		virtual ~ofQTKitPlayer();
 
-		bool                load(string path); //default mode is PIXELS_ONLY
-		bool                load(string path, ofQTKitDecodeMode mode);
+		bool                load(std::string path); //default mode is PIXELS_ONLY
+		bool                load(std::string path, ofQTKitDecodeMode mode);
 
 		void                closeMovie();
 		void                close();
@@ -127,7 +127,7 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		
         ofQTKitDecodeMode decodeMode;
 	    
-        string moviePath;
+	std::string moviePath;
 		
         bool bSynchronousSeek;
 		

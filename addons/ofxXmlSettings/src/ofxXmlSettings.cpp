@@ -10,18 +10,18 @@ const float floatPrecision = 9;
 
 //----------------------------------------
 // a pretty useful tokenization system:
-static vector<string> tokenize(const string & str, const string & delim);
-static vector<string> tokenize(const string & str, const string & delim)
+static std::vector<std::string> tokenize(const std::string & str, const std::string & delim);
+static std::vector<std::string> tokenize(const std::string & str, const std::string & delim)
 {
-  vector<string> tokens;
+  std::vector<std::string> tokens;
 
-  size_t p0 = 0, p1 = string::npos;
-  while(p0 != string::npos)
+  size_t p0 = 0, p1 = std::string::npos;
+  while(p0 != std::string::npos)
   {
     p1 = str.find_first_of(delim, p0);
     if(p1 != p0)
     {
-      string token = str.substr(p0, p1 - p0);
+	std::string token = str.substr(p0, p1 - p0);
       tokens.push_back(token);
     }
     p0 = str.find_first_not_of(delim, p1);
@@ -41,7 +41,7 @@ ofxXmlSettings::ofxXmlSettings():
 }
 
 //----------------------------------------
-ofxXmlSettings::ofxXmlSettings(const string& xmlFile):
+ofxXmlSettings::ofxXmlSettings(const std::string& xmlFile):
     storedHandle(NULL)
 {
 	level			= 0;
@@ -72,9 +72,9 @@ void ofxXmlSettings::clear(){
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::loadFile(const string& xmlFile){
+bool ofxXmlSettings::loadFile(const std::string& xmlFile){
 
-	string fullXmlFile = ofToDataPath(xmlFile);
+    std::string fullXmlFile = ofToDataPath(xmlFile);
 
 	bool loadOkay = doc.LoadFile(fullXmlFile);
 
@@ -90,9 +90,9 @@ bool ofxXmlSettings::loadFile(const string& xmlFile){
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::saveFile(const string& xmlFile){
+bool ofxXmlSettings::saveFile(const std::string& xmlFile){
 
-	string fullXmlFile = ofToDataPath(xmlFile);
+	std::string fullXmlFile = ofToDataPath(xmlFile);
 	return doc.SaveFile(fullXmlFile);
 }
 
@@ -102,26 +102,26 @@ bool ofxXmlSettings::saveFile(){
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::load(const string & path){
+bool ofxXmlSettings::load(const std::string & path){
 	return loadFile(path);
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::save(const string & path){
+bool ofxXmlSettings::save(const std::string & path){
 	return saveFile(path);
 }
 
 //---------------------------------------------------------
-void ofxXmlSettings::clearTagContents(const string& tag, int which){
+void ofxXmlSettings::clearTagContents(const std::string& tag, int which){
 	//we check it first to see if it exists
 	//otherwise setValue will make a new empty tag
 	if( tagExists(tag, which) )setValue(tag, "", which);
 }
 
 //---------------------------------------------------------
-void ofxXmlSettings::removeTag(const string& tag, int which){
+void ofxXmlSettings::removeTag(const std::string& tag, int which){
 
-	vector<string> tokens = tokenize(tag,":");
+	std::vector<std::string> tokens = tokenize(tag,":");
 
 	//no tags so we return
 	if( tokens.size() == 0 ) return;
@@ -153,7 +153,7 @@ void ofxXmlSettings::removeTag(const string& tag, int which){
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::getValue(const string& tag, int defaultValue, int which) const{
+int ofxXmlSettings::getValue(const std::string& tag, int defaultValue, int which) const{
     TiXmlHandle valHandle(NULL);
 	if (readTag(tag, valHandle, which)){
 		return ofToInt(valHandle.ToText()->Value());
@@ -162,7 +162,7 @@ int ofxXmlSettings::getValue(const string& tag, int defaultValue, int which) con
 }
 
 //---------------------------------------------------------
-double ofxXmlSettings::getValue(const string& tag, double defaultValue, int which) const{
+double ofxXmlSettings::getValue(const std::string& tag, double defaultValue, int which) const{
     TiXmlHandle valHandle(NULL);
 	if (readTag(tag, valHandle, which)){
 		return ofToDouble(valHandle.ToText()->Value());
@@ -171,7 +171,7 @@ double ofxXmlSettings::getValue(const string& tag, double defaultValue, int whic
 }
 
 //---------------------------------------------------------
-string ofxXmlSettings::getValue(const string& tag, const string& defaultValue, int which) const{
+std::string ofxXmlSettings::getValue(const std::string& tag, const std::string& defaultValue, int which) const{
     TiXmlHandle valHandle(NULL);
 	if (readTag(tag, valHandle, which)){
 		return valHandle.ToText()->ValueStr();
@@ -180,9 +180,9 @@ string ofxXmlSettings::getValue(const string& tag, const string& defaultValue, i
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::readTag(const string&  tag, TiXmlHandle& valHandle, int which) const{
+bool ofxXmlSettings::readTag(const std::string&  tag, TiXmlHandle& valHandle, int which) const{
 
-	vector<string> tokens = tokenize(tag,":");
+	std::vector<std::string> tokens = tokenize(tag,":");
 
 	TiXmlHandle tagHandle = storedHandle;
 	for(int x=0;x<(int)tokens.size();x++){
@@ -197,12 +197,12 @@ bool ofxXmlSettings::readTag(const string&  tag, TiXmlHandle& valHandle, int whi
 
 
 //---------------------------------------------------------
-bool ofxXmlSettings::pushTag(const string&  tag, int which){
+bool ofxXmlSettings::pushTag(const std::string&  tag, int which){
 
 	int pos = tag.find(":");
 
     // Either find the tag specified, or the first tag if colon-seperated.
-    string tagToFind((pos > 0) ? tag.substr(0,pos) :tag);
+	std::string tagToFind((pos > 0) ? tag.substr(0,pos) :tag);
 
 	//we only allow to push one tag at a time.
 	TiXmlHandle isRealHandle = storedHandle.ChildElement(tagToFind, which);
@@ -239,9 +239,9 @@ int ofxXmlSettings::getPushLevel(){
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::tagExists(const string& tag, int which) const{
+bool ofxXmlSettings::tagExists(const std::string& tag, int which) const{
 
-	vector<string> tokens = tokenize(tag,":");
+	std::vector<std::string> tokens = tokenize(tag,":");
 
 	bool found = false;
 
@@ -276,13 +276,13 @@ bool ofxXmlSettings::tagExists(const string& tag, int which) const{
 
 
 //---------------------------------------------------------
-int ofxXmlSettings::getNumTags(const string&  tag) const{
+int ofxXmlSettings::getNumTags(const std::string&  tag) const{
 	//this only works for tags at the current root level
 
 	int pos = tag.find(":");
 
     // Either find the tag specified, or the first tag if colon-seperated.
-    string tagToFind((pos > 0) ? tag.substr(0,pos) :tag);
+	std::string tagToFind((pos > 0) ? tag.substr(0,pos) :tag);
 
 	//grab the handle from the level we are at
 	//normally this is the doc but could be a pushed node
@@ -304,12 +304,12 @@ int ofxXmlSettings::getNumTags(const string&  tag) const{
 
 
 //---------------------------------------------------------
-int ofxXmlSettings::writeTag(const string&  tag, const string& valueStr, int which){
+int ofxXmlSettings::writeTag(const std::string&  tag, const std::string& valueStr, int which){
 
-	vector<string> tokens = tokenize(tag,":");
+	std::vector<std::string> tokens = tokenize(tag,":");
 
 	// allocate on the stack
-    vector<TiXmlElement> elements;
+	std::vector<TiXmlElement> elements;
     elements.reserve(tokens.size());
 	for(int x=0;x<(int)tokens.size();x++)
         elements.push_back(tokens.at(x));
@@ -374,43 +374,43 @@ int ofxXmlSettings::writeTag(const string&  tag, const string& valueStr, int whi
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::setValue(const string& tag, int value, int which){
+int ofxXmlSettings::setValue(const std::string& tag, int value, int which){
 	int tagID = writeTag(tag, ofToString(value).c_str(), which) -1;
 	return tagID;
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::setValue(const string& tag, double value, int which){
+int ofxXmlSettings::setValue(const std::string& tag, double value, int which){
 	int tagID = writeTag(tag, ofToString(value, floatPrecision).c_str(), which) -1;
 	return tagID;
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::setValue(const string& tag, const string& value, int which){
+int ofxXmlSettings::setValue(const std::string& tag, const std::string& value, int which){
 	int tagID = writeTag(tag, value, which) -1;
 	return tagID;
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::addValue(const string& tag, int value){
+int ofxXmlSettings::addValue(const std::string& tag, int value){
 	int tagID = writeTag(tag, ofToString(value).c_str(), -1) -1;
 	return tagID;
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::addValue(const string&  tag, double value){
+int ofxXmlSettings::addValue(const std::string&  tag, double value){
 	int tagID = writeTag(tag, ofToString(value, floatPrecision).c_str(), -1) -1;
 	return tagID;
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::addValue(const string& tag, const string& value){
+int ofxXmlSettings::addValue(const std::string& tag, const std::string& value){
 	int tagID = writeTag(tag, value, -1) -1;
 	return tagID;
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::addTag(const string& tag){
+int ofxXmlSettings::addTag(const std::string& tag){
 	int tagID = writeTag(tag, "", -1) -1;
 	return tagID;
 }
@@ -421,41 +421,41 @@ int ofxXmlSettings::addTag(const string& tag){
 *******************/
 
 //---------------------------------------------------------
-int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, int value, int which){
+int ofxXmlSettings::addAttribute(const std::string& tag, const std::string& attribute, int value, int which){
 	int tagID = writeAttribute(tag, attribute, ofToString(value).c_str(), which) -1;
 	return tagID;
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, int value){
+int ofxXmlSettings::addAttribute(const std::string& tag, const std::string& attribute, int value){
 	return addAttribute(tag,attribute,value,-1);
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, double value, int which){
+int ofxXmlSettings::addAttribute(const std::string& tag, const std::string& attribute, double value, int which){
 	int tagID = writeAttribute(tag, attribute, ofToString(value, floatPrecision).c_str(), which) -1;
 	return tagID;
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, double value){
+int ofxXmlSettings::addAttribute(const std::string& tag, const std::string& attribute, double value){
 	return addAttribute(tag,attribute,value,-1);
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, const string& value, int which){
+int ofxXmlSettings::addAttribute(const std::string& tag, const std::string& attribute, const std::string& value, int which){
 	int tagID = writeAttribute(tag, attribute, value, which) -1;
 	return tagID;
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, const string& value){
+int ofxXmlSettings::addAttribute(const std::string& tag, const std::string& attribute, const std::string& value){
 	return addAttribute(tag,attribute,value,-1);
 }
 
 //---------------------------------------------------------
-void ofxXmlSettings::removeAttribute(const string& tag, const string& attribute, int which){
-	vector<string> tokens = tokenize(tag,":");
+void ofxXmlSettings::removeAttribute(const std::string& tag, const std::string& attribute, int which){
+	std::vector<std::string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
 	for (int x = 0; x < (int)tokens.size(); x++) {
 		if (x == 0)
@@ -471,16 +471,16 @@ void ofxXmlSettings::removeAttribute(const string& tag, const string& attribute,
 }
 
 //---------------------------------------------------------
-void ofxXmlSettings::clearTagAttributes(const string& tag, int which){
-	vector<string> names;
-    getAttributeNames( tag, names, which );
-	for (vector<string>::iterator i = names.begin(); i != names.end(); i++)
+void ofxXmlSettings::clearTagAttributes(const std::string& tag, int which){
+	std::vector<std::string> names;
+	getAttributeNames( tag, names, which );
+	for (std::vector<std::string>::iterator i = names.begin(); i != names.end(); i++)
 		removeAttribute(tag, *i, which);
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::getNumAttributes(const string& tag, int which) const{
-	vector<string> tokens = tokenize(tag,":");
+int ofxXmlSettings::getNumAttributes(const std::string& tag, int which) const{
+	std::vector<std::string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
 	for (int x = 0; x < (int)tokens.size(); x++) {
 		if (x == 0)
@@ -505,8 +505,8 @@ int ofxXmlSettings::getNumAttributes(const string& tag, int which) const{
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::attributeExists(const string& tag, const string& attribute, int which) const{
-	vector<string> tokens = tokenize(tag,":");
+bool ofxXmlSettings::attributeExists(const std::string& tag, const std::string& attribute, int which) const{
+	std::vector<std::string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
 	for (int x = 0; x < (int)tokens.size(); x++) {
 		if (x == 0)
@@ -528,8 +528,8 @@ bool ofxXmlSettings::attributeExists(const string& tag, const string& attribute,
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::getAttributeNames(const string& tag, vector<string>& outNames, int which) const{
-	vector<string> tokens = tokenize(tag,":");
+bool ofxXmlSettings::getAttributeNames(const std::string& tag, std::vector<std::string>& outNames, int which) const{
+	std::vector<std::string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
 	for (int x = 0; x < (int)tokens.size(); x++) {
 		if (x == 0)
@@ -543,34 +543,34 @@ bool ofxXmlSettings::getAttributeNames(const string& tag, vector<string>& outNam
 
 		// Do stuff with the element here
 		for (TiXmlAttribute* a = elem->FirstAttribute(); a; a = a->Next())
-			outNames.push_back( string(a->Name()) );
+			outNames.push_back( std::string(a->Name()) );
 	}
 	return !outNames.empty();
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::getAttribute(const string& tag, const string& attribute, int defaultValue, int which) const{
+int ofxXmlSettings::getAttribute(const std::string& tag, const std::string& attribute, int defaultValue, int which) const{
     int value = defaultValue;
 	readIntAttribute(tag, attribute, value, which);
 	return value;
 }
 
 //---------------------------------------------------------
-double ofxXmlSettings::getAttribute(const string& tag, const string& attribute, double defaultValue, int which) const{
+double ofxXmlSettings::getAttribute(const std::string& tag, const std::string& attribute, double defaultValue, int which) const{
     double value = defaultValue;
 	readDoubleAttribute(tag, attribute, value, which);
 	return value;
 }
 
 //---------------------------------------------------------
-string ofxXmlSettings::getAttribute(const string& tag, const string& attribute, const string& defaultValue, int which) const{
-    string value = defaultValue;
+std::string ofxXmlSettings::getAttribute(const std::string& tag, const std::string& attribute, const std::string& defaultValue, int which) const{
+	std::string value = defaultValue;
 	readStringAttribute(tag, attribute, value, which);
 	return value;
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::setAttribute(const string& tag, const string& attribute, int value, int which){
+int ofxXmlSettings::setAttribute(const std::string& tag, const std::string& attribute, int value, int which){
 	char valueStr[255];
 	sprintf(valueStr, "%i", value);
 	int tagID = writeAttribute(tag, attribute, valueStr, which) -1;
@@ -578,7 +578,7 @@ int ofxXmlSettings::setAttribute(const string& tag, const string& attribute, int
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::setAttribute(const string& tag, const string& attribute, double value, int which){
+int ofxXmlSettings::setAttribute(const std::string& tag, const std::string& attribute, double value, int which){
 	char valueStr[255];
 	sprintf(valueStr, "%lf", value);
 	int tagID = writeAttribute(tag, attribute, valueStr, which) -1;
@@ -586,14 +586,14 @@ int ofxXmlSettings::setAttribute(const string& tag, const string& attribute, dou
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::setAttribute(const string& tag, const string& attribute, const string& value, int which){
+int ofxXmlSettings::setAttribute(const std::string& tag, const std::string& attribute, const std::string& value, int which){
 	int tagID = writeAttribute(tag, attribute, value, which) -1;
 	return tagID;
 }
 
 //---------------------------------------------------------
-TiXmlElement* ofxXmlSettings::getElementForAttribute(const string& tag, int which) const{
-	vector<string> tokens = tokenize(tag,":");
+TiXmlElement* ofxXmlSettings::getElementForAttribute(const std::string& tag, int which) const{
+	std::vector<std::string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
 	for (int x = 0; x < (int)tokens.size(); x++) {
 		if (x == 0)
@@ -605,7 +605,7 @@ TiXmlElement* ofxXmlSettings::getElementForAttribute(const string& tag, int whic
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::readIntAttribute(const string& tag, const string& attribute, int& outValue, int which) const{
+bool ofxXmlSettings::readIntAttribute(const std::string& tag, const std::string& attribute, int& outValue, int which) const{
 
     TiXmlElement* elem = getElementForAttribute(tag, which);
     if (elem)
@@ -614,7 +614,7 @@ bool ofxXmlSettings::readIntAttribute(const string& tag, const string& attribute
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::readDoubleAttribute(const string& tag, const string& attribute, double& outValue, int which) const{
+bool ofxXmlSettings::readDoubleAttribute(const std::string& tag, const std::string& attribute, double& outValue, int which) const{
 
     TiXmlElement* elem = getElementForAttribute(tag, which);
     if (elem)
@@ -623,12 +623,12 @@ bool ofxXmlSettings::readDoubleAttribute(const string& tag, const string& attrib
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::readStringAttribute(const string& tag, const string& attribute, string& outValue, int which) const{
+bool ofxXmlSettings::readStringAttribute(const std::string& tag, const std::string& attribute, std::string& outValue, int which) const{
 
     TiXmlElement* elem = getElementForAttribute(tag, which);
     if (elem)
     {
-        const string* value = elem->Attribute(attribute);
+        const std::string* value = elem->Attribute(attribute);
         if (value)
         {
             outValue = *value;
@@ -639,8 +639,8 @@ bool ofxXmlSettings::readStringAttribute(const string& tag, const string& attrib
 }
 
 //---------------------------------------------------------
-int ofxXmlSettings::writeAttribute(const string& tag, const string& attribute, const string& valueString, int which){
-	vector<string> tokens = tokenize(tag,":");
+int ofxXmlSettings::writeAttribute(const std::string& tag, const std::string& attribute, const std::string& valueString, int which){
+	std::vector<std::string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
 	for (int x = 0; x < (int)tokens.size(); x++) {
 		if (x == 0)
@@ -667,7 +667,7 @@ int ofxXmlSettings::writeAttribute(const string& tag, const string& attribute, c
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::loadFromBuffer( string buffer )
+bool ofxXmlSettings::loadFromBuffer( std::string buffer )
 {
     int size = buffer.size();
     bool loadOkay = doc.ReadFromMemory( buffer.c_str(), size);//, TiXmlEncoding encoding = TIXML_DEFAULT_ENCODING);
@@ -677,7 +677,7 @@ bool ofxXmlSettings::loadFromBuffer( string buffer )
 }
 
 //---------------------------------------------------------
-void ofxXmlSettings::copyXmlToString(string & str) const
+void ofxXmlSettings::copyXmlToString(std::string & str) const
 {
 	TiXmlPrinter printer;
 	doc.Accept(&printer);
@@ -688,7 +688,7 @@ void ofxXmlSettings::copyXmlToString(string & str) const
 //---------------------------------------------------------
 void ofSerialize(ofxXmlSettings & xml, const ofAbstractParameter & parameter){
 	if(!parameter.isSerializable()) return;
-	string name = parameter.getEscapedName();
+	std::string name = parameter.getEscapedName();
 	if(name=="") name="UnknownName";
 	if(parameter.type()==typeid(ofParameterGroup).name()){
 		const ofParameterGroup & group = static_cast<const ofParameterGroup&>(parameter);
@@ -699,7 +699,7 @@ void ofSerialize(ofxXmlSettings & xml, const ofAbstractParameter & parameter){
 		}
 		xml.popTag();
 	}else{
-		string value = parameter.toString();
+		std::string value = parameter.toString();
 		if(!xml.tagExists(name))
 			xml.addValue(name,value);
 		else
@@ -710,7 +710,7 @@ void ofSerialize(ofxXmlSettings & xml, const ofAbstractParameter & parameter){
 //---------------------------------------------------------
 void ofDeserialize(const ofxXmlSettings & xml, ofAbstractParameter & parameter){
 	if(!parameter.isSerializable()) return;
-	string name = parameter.getEscapedName();
+	std::string name = parameter.getEscapedName();
 	if(parameter.type()==typeid(ofParameterGroup).name()){
 		ofParameterGroup & group = static_cast<ofParameterGroup&>(parameter);
 		if(xml.tagExists(name)){
@@ -728,8 +728,8 @@ void ofDeserialize(const ofxXmlSettings & xml, ofAbstractParameter & parameter){
 				parameter.cast<float>() = xml.getValue(name,0.0f);
 			}else if(parameter.type()==typeid(ofParameter<bool>).name()){
 				parameter.cast<bool>() = xml.getValue(name,false);
-			}else if(parameter.type()==typeid(ofParameter<string>).name()){
-				parameter.cast<string>() = xml.getValue(name,"");
+			}else if(parameter.type()==typeid(ofParameter<std::string>).name()){
+				parameter.cast<std::string>() = xml.getValue(name,"");
 			}else{
 				parameter.fromString(xml.getValue(name,""));
 			}

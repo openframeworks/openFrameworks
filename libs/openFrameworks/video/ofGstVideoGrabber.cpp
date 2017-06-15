@@ -477,7 +477,7 @@ static void get_supported_video_formats (ofGstDevice &webcam_device, GstCaps &ca
 			if(gst_structure_get_string(structure,"format"))
 				video_format.format_name = gst_structure_get_string(structure,"format");
 			#endif
-			//cout << gst_structure_to_string(structure) << endl;;
+			//std::cout << gst_structure_to_string(structure) << std::endl;;
 			add_video_format(webcam_device, video_format, *structure, desired_framerate, desiredPixelFormat);
 		}else if (GST_VALUE_HOLDS_INT_RANGE (width)){
 			int min_width, max_width, min_height, max_height;

@@ -368,7 +368,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//------------------------------------------------------------------------------   windoze
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
-	wstring windowTitleW;
+	std::wstring windowTitleW;
 	windowTitleW.assign(windowTitle.begin(), windowTitle.end());
 
 	if (bFolderSelection == false){

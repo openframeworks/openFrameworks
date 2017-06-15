@@ -100,21 +100,21 @@ void ofxiOSKeyboard::setBgColor(int r, int g, int b, int a)
 }
 
 //--------------------------------------------------------------
-void ofxiOSKeyboard::setText(string _text)
+void ofxiOSKeyboard::setText(std::string _text)
 {
 	NSString * text = [NSString stringWithUTF8String:_text.c_str()];
 	[keyboard setText:text];
 }
 
 //--------------------------------------------------------------
-void ofxiOSKeyboard::setPlaceholder(string _text)
+void ofxiOSKeyboard::setPlaceholder(std::string _text)
 {
 	NSString * text = [NSString stringWithUTF8String:_text.c_str()];
 	[keyboard setPlaceholder:text];
 }
 
 //--------------------------------------------------------------
-string ofxiOSKeyboard::getText()
+std::string ofxiOSKeyboard::getText()
 {
 	if([keyboard getText] == nil)
 	{
@@ -122,12 +122,12 @@ string ofxiOSKeyboard::getText()
 	}
 	else
 	{
-		return string([keyboard getText]);
+		return std::string([keyboard getText]);
 	}
 }
 
 //--------------------------------------------------------------
-string ofxiOSKeyboard::getLabelText()
+std::string ofxiOSKeyboard::getLabelText()
 {
 	if([keyboard getLabelText] == nil)
 	{
@@ -135,7 +135,7 @@ string ofxiOSKeyboard::getLabelText()
 	}
 	else
 	{
-		return string([keyboard getLabelText]);
+		return std::string([keyboard getLabelText]);
 	}
 }
 

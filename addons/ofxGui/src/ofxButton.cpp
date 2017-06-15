@@ -1,5 +1,4 @@
 #include "ofxButton.h"
-using namespace std;
 
 ofxButton::ofxButton(){
 	value.setSerializable(false);

@@ -27,7 +27,7 @@ public:
     ofVbo vbo;
     
     ofxAssimpTexture assimpTexture;
-    vector<ofIndexType> indices;
+    std::vector<ofIndexType> indices;
     
     ofMaterial material;
     
@@ -36,8 +36,8 @@ public:
     bool twoSided;
     bool hasChanged;
 
-    vector<aiVector3D> animatedPos;
-    vector<aiVector3D> animatedNorm;
+    std::vector<aiVector3D> animatedPos;
+    std::vector<aiVector3D> animatedNorm;
 
     ofMesh cachedMesh;
     bool validCache;

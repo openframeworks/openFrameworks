@@ -15,7 +15,7 @@ ofxAssimpModelLoader::~ofxAssimpModelLoader(){
 }
 
 //------------------------------------------
-bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
+bool ofxAssimpModelLoader::loadModel(std::string modelName, bool optimize){
     
     file.open(modelName, ofFile::ReadOnly, true); // Since it may be a binary file we should read it in binary -Ed
     if(!file.exists()) {
@@ -37,7 +37,7 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
     unsigned int flags = initImportProperties(optimize);
     
     // loads scene from file
-    scene = shared_ptr<const aiScene>(aiImportFileExWithProperties(file.getAbsolutePath().c_str(), flags, NULL, store.get()), aiReleaseImport);
+    scene = std::shared_ptr<const aiScene>(aiImportFileExWithProperties(file.getAbsolutePath().c_str(), flags, NULL, store.get()), aiReleaseImport);
     
     bool bOk = processScene();
     return bOk;
@@ -59,7 +59,7 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
     unsigned int flags = initImportProperties(optimize);
     
     // loads scene from memory buffer - note this will not work for multipart files (obj, md3, etc)
-    scene = shared_ptr<const aiScene>(aiImportFileFromMemoryWithProperties(buffer.getData(), buffer.size(), flags, extension, store.get()), aiReleaseImport);
+    scene = std::shared_ptr<const aiScene>(aiImportFileFromMemoryWithProperties(buffer.getData(), buffer.size(), flags, extension, store.get()), aiReleaseImport);
     
     bool bOk = processScene();
     return bOk;
@@ -98,7 +98,7 @@ bool ofxAssimpModelLoader::processScene() {
         
         return true;
     }else{
-        ofLogError("ofxAssimpModelLoader") << "loadModel(): " + (string) aiGetErrorString();
+        ofLogError("ofxAssimpModelLoader") << "loadModel(): " + (std::string) aiGetErrorString();
         clear();
         return false;
     }
@@ -136,7 +136,7 @@ void ofxAssimpModelLoader::calculateDimensions(){
 	normalizedScale = MAX(scene_max.y - scene_min.y,normalizedScale);
 	normalizedScale = MAX(scene_max.z - scene_min.z,normalizedScale);
     if (abs(normalizedScale) < std::numeric_limits<float>::epsilon()){
-        ofLogWarning("ofxAssimpModelLoader") << "Error calculating normalized scale of scene" << endl;
+        ofLogWarning("ofxAssimpModelLoader") << "Error calculating normalized scale of scene" << std::endl;
         normalizedScale = 1.0;
     } else {
         normalizedScale = 1.f / normalizedScale;
@@ -241,10 +241,10 @@ void ofxAssimpModelLoader::loadGLResources(){
         // TODO: handle other aiTextureTypes
         if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)){
             ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): loading image from \"" << texPath.data << "\"";
-            string modelFolder = file.getEnclosingDirectory();
-            string relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
-            string texFile = ofFilePath::getFileName(texPath.data);
-            string realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile);
+            std::string modelFolder = file.getEnclosingDirectory();
+            std::string relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
+            std::string texFile = ofFilePath::getFileName(texPath.data);
+            std::string realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile);
             
             if(ofFile::doesFileExist(realPath) == false) {
                 ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
@@ -422,7 +422,7 @@ void ofxAssimpModelLoader::updateBones() {
 		const aiMesh* mesh = modelMeshes[i].mesh;
         
 		// calculate bone matrices
-		vector<aiMatrix4x4> boneMatrices(mesh->mNumBones);
+		std::vector<aiMatrix4x4> boneMatrices(mesh->mNumBones);
 		for(unsigned int a=0; a<mesh->mNumBones; ++a) {
 			const aiBone* bone = mesh->mBones[a];
             
@@ -794,8 +794,8 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
 }
 
 //-------------------------------------------
-vector<string> ofxAssimpModelLoader::getMeshNames(){
-	vector<string> names(scene->mNumMeshes);
+std::vector<std::string> ofxAssimpModelLoader::getMeshNames(){
+	std::vector<std::string> names(scene->mNumMeshes);
 	for(int i=0; i<(int)scene->mNumMeshes; i++){
 		names[i] = scene->mMeshes[i]->mName.data;
 	}
@@ -808,13 +808,13 @@ int ofxAssimpModelLoader::getNumMeshes(){
 }
 
 //-------------------------------------------
-ofMesh ofxAssimpModelLoader::getMesh(string name){
+ofMesh ofxAssimpModelLoader::getMesh(std::string name){
 	ofMesh ofm;
 	// default to triangle mode
 	ofm.setMode(OF_PRIMITIVE_TRIANGLES);
 	aiMesh * aim = NULL;
 	for(int i=0; i<(int)scene->mNumMeshes; i++){
-		if(string(scene->mMeshes[i]->mName.data)==name){
+		if(std::string(scene->mMeshes[i]->mName.data)==name){
 			aim = scene->mMeshes[i];
 			break;
 		}
@@ -843,9 +843,9 @@ ofMesh ofxAssimpModelLoader::getMesh(int num){
 }
 
 //-------------------------------------------
-ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(string name){
+ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(std::string name){
 	for(int i=0; i<(int)modelMeshes.size(); i++){
-		if(string(modelMeshes[i].mesh->mName.data)==name){
+		if(std::string(modelMeshes[i].mesh->mName.data)==name){
 			if(!modelMeshes[i].validCache){
 				modelMeshes[i].cachedMesh.clearVertices();
 				modelMeshes[i].cachedMesh.clearNormals();
@@ -882,9 +882,9 @@ ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(int num){
 }
 
 //-------------------------------------------
-ofMaterial ofxAssimpModelLoader::getMaterialForMesh(string name){
+ofMaterial ofxAssimpModelLoader::getMaterialForMesh(std::string name){
 	for(int i=0; i<(int)modelMeshes.size(); i++){
-		if(string(modelMeshes[i].mesh->mName.data)==name){
+		if(std::string(modelMeshes[i].mesh->mName.data)==name){
 			return modelMeshes[i].material;
 		}
 	}
@@ -903,9 +903,9 @@ ofMaterial ofxAssimpModelLoader::getMaterialForMesh(int num){
 }
 
 //-------------------------------------------
-ofTexture ofxAssimpModelLoader::getTextureForMesh(string name){
+ofTexture ofxAssimpModelLoader::getTextureForMesh(std::string name){
 	for(int i=0; i<(int)modelMeshes.size(); i++){
-		if(string(modelMeshes[i].mesh->mName.data)==name){
+		if(std::string(modelMeshes[i].mesh->mName.data)==name){
             if(modelMeshes[i].hasTexture()) {
                 return modelMeshes[i].getTextureRef();
             }

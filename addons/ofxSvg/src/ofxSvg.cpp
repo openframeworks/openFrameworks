@@ -8,7 +8,7 @@ ofxSVG::~ofxSVG(){
 	paths.clear();
 }
 
-void ofxSVG::load(string path){
+void ofxSVG::load(std::string path){
 	path = ofToDataPath(path);
 
 	if(path.compare("") == 0){
@@ -23,7 +23,7 @@ void ofxSVG::load(string path){
 	svgtiny_code code = svgtiny_parse(diagram, buffer.getText().c_str(), size, path.c_str(), 0, 0);
 
 	if(code != svgtiny_OK){
-		string msg;
+		std::string msg;
 		switch(code){
 		 case svgtiny_OUT_OF_MEMORY:
 			 msg = "svgtiny_OUT_OF_MEMORY";
@@ -120,6 +120,6 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
 	}
 }
 
-const vector <ofPath> & ofxSVG::getPaths() const{
+const std::vector <ofPath> & ofxSVG::getPaths() const{
     return paths;
 }

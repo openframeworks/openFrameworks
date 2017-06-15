@@ -161,8 +161,8 @@ static void release(GLuint id){
 }
 
 #ifdef TARGET_ANDROID
-static set<ofTexture*> & allTextures(){
-	static set<ofTexture*> * allTextures = new set<ofTexture*>;
+static std::set<ofTexture*> & allTextures(){
+	static std::set<ofTexture*> * allTextures = new std::set<ofTexture*>;
 	return *allTextures;
 }
 

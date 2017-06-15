@@ -16,7 +16,7 @@ ofxAppEmscriptenWindow * ofxAppEmscriptenWindow::instance = NULL;
 #define CASE_STR(x,y) case x: str = y; break
 
 static const char* eglErrorString(EGLint err) {
-    string str;
+    std::string str;
     switch (err) {
         CASE_STR(EGL_SUCCESS, "no error");
         CASE_STR(EGL_NOT_INITIALIZED, "EGL not, or could not be, initialized");
@@ -118,7 +118,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 
 	setWindowShape(settings.width,settings.height);
 
-	_renderer = make_shared<ofGLProgrammableRenderer>(this);
+	_renderer = std::make_shared<ofGLProgrammableRenderer>(this);
 	((ofGLProgrammableRenderer*)_renderer.get())->setup(2,0);
 
     emscripten_set_keydown_callback(0,this,1,&keydown_cb);
@@ -298,7 +298,7 @@ int	ofxAppEmscriptenWindow::getHeight(){
 	return getWindowSize().y;
 }
 
-void ofxAppEmscriptenWindow::setWindowTitle(string title){
+void ofxAppEmscriptenWindow::setWindowTitle(std::string title){
 
 }
 
@@ -354,7 +354,7 @@ ofCoreEvents & ofxAppEmscriptenWindow::events(){
 	return _events;
 }
 
-shared_ptr<ofBaseRenderer> & ofxAppEmscriptenWindow::renderer(){
+std::shared_ptr<ofBaseRenderer> & ofxAppEmscriptenWindow::renderer(){
 	return _renderer;
 }
 

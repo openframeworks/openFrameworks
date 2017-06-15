@@ -244,8 +244,8 @@ public:
 		// wait for connection to be made
 		server.waitConnectedClient(500);
 
-		string str;
-		string received;
+		std::string str;
+		std::string received;
 		for(int i=0;i<TCP_MAX_MSG_SIZE;i++){
 			str.append(ofToString((int)ofRandom(10)));
 		}
@@ -272,8 +272,8 @@ public:
 //========================================================================
 int main( ){
     ofInit();
-	auto window = make_shared<ofAppNoWindow>();
-	auto app = make_shared<ofApp>();
+	auto window = std::make_shared<ofAppNoWindow>();
+	auto app = std::make_shared<ofApp>();
 	// this kicks off the running of my app
 	// can be OF_WINDOW or OF_FULLSCREEN
 	// pass in width and height too:

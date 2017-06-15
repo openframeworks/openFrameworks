@@ -19,7 +19,7 @@ class ofxVectorGraphics{
 
 			//----------------------------------------------------------
 			//only call these two functions when you are ready to capture your graphics to disk!!!
-			void beginEPS(string fileName, int x = 0, int y = 0, int w = ofGetWidth(), int h = ofGetHeight() );
+			void beginEPS(std::string fileName, int x = -1, int y = 0, int w = ofGetWidth(), int h = ofGetHeight() );
 			void endEPS();
 
 			//----------------------------------------------------------
@@ -75,5 +75,5 @@ class ofxVectorGraphics{
 			bool bFirstPoint;
 			int  whichShapeMode;
 
-			vector<double *>curvePts;
+			std::vector<double *>curvePts;
 };

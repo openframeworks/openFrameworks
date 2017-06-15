@@ -36,8 +36,8 @@ struct ofxAndroidVideoGrabber::Data{
 	void loadTexture();
 };
 
-map<int,weak_ptr<ofxAndroidVideoGrabber::Data>> & instances(){
-	static auto * instances = new map<int,weak_ptr<ofxAndroidVideoGrabber::Data>>;
+std::map<int,std::weak_ptr<ofxAndroidVideoGrabber::Data>> & instances(){
+	static auto * instances = new std::map<int,std::weak_ptr<ofxAndroidVideoGrabber::Data>>;
 	return *instances;
 }
 
@@ -145,7 +145,7 @@ void ofxAndroidVideoGrabber::Data::loadTexture(){
 ofxAndroidVideoGrabber::ofxAndroidVideoGrabber()
 :data(new Data){
 	if(data->cameraId!=-1){
-		instances().insert(std::pair<int,weak_ptr<ofxAndroidVideoGrabber::Data>>(data->cameraId,data));
+		instances().insert(std::pair<int,std::weak_ptr<ofxAndroidVideoGrabber::Data>>(data->cameraId,data));
 	}
 }
 
@@ -177,9 +177,9 @@ void ofxAndroidVideoGrabber::Data::onAppResume(){
 	ofLogVerbose("ofxAndroidVideoGrabber") << "ofResumeVideoGrabbers(): textures allocated";
 	appPaused = false;
 }
-vector<ofVideoDevice> ofxAndroidVideoGrabber::listDevices() const{
+std::vector<ofVideoDevice> ofxAndroidVideoGrabber::listDevices() const{
 
-	vector<ofVideoDevice> devices;
+	std::vector<ofVideoDevice> devices;
 
 	int numDevices = getNumCameras();
 	for(int i = 0; i < numDevices; i++){

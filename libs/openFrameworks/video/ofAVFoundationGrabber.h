@@ -46,7 +46,7 @@ class ofAVFoundationGrabber;
 -(void)startCapture;
 -(void)stopCapture;
 -(void)lockExposureAndFocus;
--(vector <string>)listDevices;
+-(std::vector <std::string>)listDevices;
 -(void)setDevice:(int)_device;
 -(void)eraseGrabberPtr;
 
@@ -87,7 +87,7 @@ class ofAVFoundationGrabber : virtual public ofBaseVideoGrabber{
         bool isInitialized() const;
 	
 		void updatePixelsCB();
-		vector <ofVideoDevice> listDevices() const;
+		std::vector <ofVideoDevice> listDevices() const;
 		ofPixelFormat getPixelFormat() const;
 	
 	protected:

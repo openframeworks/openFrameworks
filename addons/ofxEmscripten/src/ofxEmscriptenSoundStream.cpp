@@ -26,7 +26,7 @@ ofxEmscriptenSoundStream::~ofxEmscriptenSoundStream() {
 
 std::vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList(ofSoundDevice::Api api) const{
 	ofLogWarning() << "ofSoundStream::getDeviceList() not supported in emscripten";
-	return vector<ofSoundDevice>();
+	return std::vector<ofSoundDevice>();
 }
 
 bool ofxEmscriptenSoundStream::setup(const ofSoundStreamSettings & settings) {

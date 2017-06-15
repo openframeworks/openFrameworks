@@ -12,7 +12,7 @@ int main( ){
 	settings.setPosition(ofVec2f(300,0));
 	settings.resizable = true;
 	settings.numSamples = 8;
-	shared_ptr<ofAppBaseWindow> mainWindow = ofCreateWindow(settings);
+	std::shared_ptr<ofAppBaseWindow> mainWindow = ofCreateWindow(settings);
 
 	settings.width = 300;
 	settings.height = 300;
@@ -20,10 +20,10 @@ int main( ){
 	settings.resizable = false;
 	settings.numSamples = 4;
 	settings.shareContextWith = mainWindow;
-	shared_ptr<ofAppBaseWindow> guiWindow = ofCreateWindow(settings);
+	std::shared_ptr<ofAppBaseWindow> guiWindow = ofCreateWindow(settings);
 
-	shared_ptr<ofApp> mainApp(new ofApp);
-	shared_ptr<GuiApp> guiApp(new GuiApp);
+	std::shared_ptr<ofApp> mainApp(new ofApp);
+	std::shared_ptr<GuiApp> guiApp(new GuiApp);
 
 	mainApp->gui = guiApp;
 	mainApp->window = mainWindow;

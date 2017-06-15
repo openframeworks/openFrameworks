@@ -1141,7 +1141,7 @@ bool ofGstVideoUtils::setPipeline(std::string pipeline, ofPixelFormat pixelForma
 
 	glXMakeCurrent (ofGetX11Display(), ofGetX11Window(), ofGetGLXContext());
 #elif defined(TARGET_OPENGLES)
-	cout << "current display " << ofGetEGLDisplay() << endl;
+	    std::cout << "current display " << ofGetEGLDisplay() << std::endl;
 	eglMakeCurrent (eglGetDisplay(EGL_DEFAULT_DISPLAY), 0,0, 0);
 	glDisplay = (GstGLDisplay *)gst_gl_display_egl_new_with_egl_display(eglGetDisplay(EGL_DEFAULT_DISPLAY));
 	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetEGLContext(),

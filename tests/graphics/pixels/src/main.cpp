@@ -66,7 +66,7 @@ class ofApp: public ofxUnitTestsApp{
 		return OF_IMAGE_UNDEFINED;
 	}
 
-	string formatName(ofPixelFormat pixelFormat){
+	std::string formatName(ofPixelFormat pixelFormat){
 		switch(pixelFormat){
 			case OF_PIXELS_RGB:
 				return "RGB";
@@ -282,7 +282,7 @@ class ofApp: public ofxUnitTestsApp{
 		for(ofPixelFormat pixelFormat=OF_PIXELS_GRAY;pixelFormat<OF_PIXELS_NUM_FORMATS;pixelFormat = (ofPixelFormat)(pixelFormat+1)){
 			pixels.allocate(w,h,pixelFormat);
 			int bpp = bitsPerPixel(pixelFormat);
-			string format = formatName(pixelFormat);
+			std::string format = formatName(pixelFormat);
 			test_eq(pixels.getBitsPerChannel(),8,"getBitsPerChannel() " + format);
 			test_eq(pixels.getBitsPerPixel(),bpp,"getBitsPerPixel() " + format);
 			test_eq(pixels.getBytesPerChannel(),1,"getBytesPerChannel() " + format);
@@ -315,8 +315,8 @@ class ofApp: public ofxUnitTestsApp{
 //========================================================================
 int main( ){
 	ofInit();
-	auto window = make_shared<ofAppNoWindow>();
-	auto app = make_shared<ofApp>();
+	auto window = std::make_shared<ofAppNoWindow>();
+	auto app = std::make_shared<ofApp>();
 	// this kicks off the running of my app
 	// can be OF_WINDOW or OF_FULLSCREEN
 	// pass in width and height too:

@@ -150,7 +150,7 @@ ofxVectorGraphics::ofxVectorGraphics(){
 }
 
 //----------------------------------------------------------			
-void ofxVectorGraphics::beginEPS(string fileName, int x, int y, int w, int h){
+void ofxVectorGraphics::beginEPS(std::string fileName, int x, int y, int w, int h){
 	creeps.newFile(ofToDataPath(fileName).c_str(), x, y, x+w, y+h);
 	bRecord = true;
 	
@@ -561,7 +561,7 @@ void ofxVectorGraphics::endShape(bool bClose){
 
 //----------------------------------------------------------
 void ofxVectorGraphics::clearAllVertices(){
-	for(vector<double*>::iterator itr=curvePts.begin();
+	for(std::vector<double*>::iterator itr=curvePts.begin();
 		itr!=curvePts.end();
 		++itr){
 		delete [] (*itr);

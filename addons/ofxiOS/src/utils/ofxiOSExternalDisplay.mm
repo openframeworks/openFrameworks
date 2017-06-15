@@ -13,7 +13,7 @@
 #include "ofxiOSAppDelegate.h"
 
 //-----------------------------------------------------------------------------------------
-static vector<ofxiOSExternalDisplay *> externalDisplayListeners;
+static std::vector<ofxiOSExternalDisplay *> externalDisplayListeners;
 
 void ofxiOSExternalDisplay::alertExternalDisplayConnected(){
     for(int i = 0; i < externalDisplayListeners.size(); i++){
@@ -34,8 +34,8 @@ void ofxiOSExternalDisplay::alertExternalDisplayChanged(){
 }
 
 //-----------------------------------------------------------------------------------------
-vector<ofxiOSExternalDisplayMode> ofxiOSExternalDisplay::getExternalDisplayModes(){
-    vector<ofxiOSExternalDisplayMode> externalDislayModes;
+std::vector<ofxiOSExternalDisplayMode> ofxiOSExternalDisplay::getExternalDisplayModes(){
+    std::vector<ofxiOSExternalDisplayMode> externalDislayModes;
     if([[UIScreen screens] count] == 1){ // no external displays connected.
         return externalDislayModes;
     }

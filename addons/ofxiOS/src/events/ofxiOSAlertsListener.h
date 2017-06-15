@@ -32,8 +32,6 @@
 
 #include <string>
 
-using namespace std;
-
 /****** protocol, delegate, interface, whatever you want to call it ******/
 class ofxiOSAlertsListener {
 public:
