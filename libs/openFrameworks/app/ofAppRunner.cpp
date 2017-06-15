@@ -26,7 +26,7 @@
 	//special case so we preserve supplied settngs
 	//TODO: remove me when we remove the ofAppGLFWWindow setters.
 	//--------------------------------------
-	void ofSetupOpenGL(shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode){
+	void ofSetupOpenGL(std::shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode){
 		ofInit();
 		auto settings = windowPtr->getSettings();
 		settings.width = w;
@@ -53,8 +53,8 @@
 
 //--------------------------------------
 namespace{
-    shared_ptr<ofMainLoop> & mainLoop(){
-        static shared_ptr<ofMainLoop> * mainLoop(new shared_ptr<ofMainLoop>(new ofMainLoop));
+    std::shared_ptr<ofMainLoop> & mainLoop(){
+        static std::shared_ptr<ofMainLoop> * mainLoop(new std::shared_ptr<ofMainLoop>(new ofMainLoop));
         return *mainLoop;
     }
 
@@ -156,18 +156,18 @@ void ofInit(){
 }
 
 //--------------------------------------
-shared_ptr<ofMainLoop> ofGetMainLoop(){
+std::shared_ptr<ofMainLoop> ofGetMainLoop(){
 	return mainLoop();
 }
 
 //--------------------------------------
-void ofSetMainLoop(shared_ptr<ofMainLoop> newMainLoop) {
+void ofSetMainLoop(std::shared_ptr<ofMainLoop> newMainLoop) {
 	mainLoop() = newMainLoop;
 }
 
 //--------------------------------------
 int ofRunApp(ofBaseApp * OFSA){
-	mainLoop()->run(std::move(shared_ptr<ofBaseApp>(OFSA)));
+	mainLoop()->run(std::move(std::shared_ptr<ofBaseApp>(OFSA)));
 	auto ret = ofRunMainLoop();
 #if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
 	ofExitCallback();
@@ -176,7 +176,7 @@ int ofRunApp(ofBaseApp * OFSA){
 }
 
 //--------------------------------------
-int ofRunApp(shared_ptr<ofBaseApp> && app){
+int ofRunApp(std::shared_ptr<ofBaseApp> && app){
 	mainLoop()->run(std::move(app));
 	auto ret = ofRunMainLoop();
 #if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
@@ -186,7 +186,7 @@ int ofRunApp(shared_ptr<ofBaseApp> && app){
 }
 
 //--------------------------------------
-void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> && app){
+void ofRunApp(std::shared_ptr<ofAppBaseWindow> window, std::shared_ptr<ofBaseApp> && app){
 	mainLoop()->run(window, std::move(app));
 }
 
@@ -212,7 +212,7 @@ void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
 	ofCreateWindow(settings);
 }
 
-shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
+std::shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
 	ofInit();
 	return mainLoop()->createWindow(settings);
 }
@@ -298,7 +298,7 @@ void ofSetEscapeQuitsApp(bool bQuitOnEsc){
 }
 
 //--------------------------------------
-shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer(){
+std::shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer(){
 	return mainLoop()->getCurrentWindow()->renderer();
 }
 
@@ -431,7 +431,7 @@ ofRectangle	ofGetWindowRect() {
 }
 
 //--------------------------------------
-void ofSetWindowTitle(string title){
+void ofSetWindowTitle(std::string title){
 	mainLoop()->getCurrentWindow()->setWindowTitle(title);
 }
 

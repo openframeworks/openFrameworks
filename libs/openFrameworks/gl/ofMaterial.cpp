@@ -8,8 +8,8 @@
 std::map<ofGLProgrammableRenderer*, std::map<std::string, std::weak_ptr<ofMaterial::Shaders>>> ofMaterial::shadersMap;
 
 namespace{
-string vertexSource(string defaultHeader, int maxLights, bool hasTexture, bool hasColor);
-string fragmentSource(string defaultHeader, string customUniforms, string postFragment, int maxLights, bool hasTexture, bool hasColor);
+    std::string vertexSource(std::string defaultHeader, int maxLights, bool hasTexture, bool hasColor);
+    std::string fragmentSource(std::string defaultHeader, std::string customUniforms, std::string postFragment, int maxLights, bool hasTexture, bool hasColor);
 }
 
 
@@ -115,11 +115,11 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 
     if(shaders[&renderer] == nullptr){
         #ifndef TARGET_OPENGLES
-            string vertexRectHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
-            string fragmentRectHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_RECTANGLE);
+	std::string vertexRectHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
+	std::string fragmentRectHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_RECTANGLE);
         #endif
-        string vertex2DHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_2D);
-        string fragment2DHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_2D);
+	std::string vertex2DHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_2D);
+	std::string fragment2DHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_2D);
         auto numLights = ofLightsData().size();
         shaders[&renderer].reset(new Shaders);
         shaders[&renderer]->numLights = numLights;
@@ -237,8 +237,8 @@ void ofMaterial::updateMaterial(const ofShader & shader,ofGLProgrammableRenderer
 
 void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
 	for(size_t i=0;i<ofLightsData().size();i++){
-		string idx = ofToString(i);
-		shared_ptr<ofLight::Data> light = ofLightsData()[i].lock();
+		std::string idx = ofToString(i);
+		std::shared_ptr<ofLight::Data> light = ofLightsData()[i].lock();
 		if(!light || !light->isEnabled){
 			shader.setUniform1f("lights["+idx+"].enabled",0);
 			continue;
@@ -332,7 +332,7 @@ void ofMaterial::setCustomUniformTexture(const std::string & name, const ofTextu
 	uniformstex[name] = {value.getTextureData().textureTarget, int(value.getTextureData().textureID), textureLocation};
 }
 
-void ofMaterial::setCustomUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation){
+void ofMaterial::setCustomUniformTexture(const std::string & name, int textureTarget, GLint textureID, int textureLocation){
 	uniformstex[name] = {textureTarget, textureID, textureLocation};
 }
 
@@ -340,8 +340,8 @@ void ofMaterial::setCustomUniformTexture(const string & name, int textureTarget,
 #include "shaders/phong.frag"
 
 namespace{
-    string shaderHeader(string header, int maxLights, bool hasTexture, bool hasColor){
-        header += "#define MAX_LIGHTS " + ofToString(max(1,maxLights)) + "\n";
+    std::string shaderHeader(std::string header, int maxLights, bool hasTexture, bool hasColor){
+        header += "#define MAX_LIGHTS " + ofToString(std::max(1,maxLights)) + "\n";
         if(hasTexture){
             header += "#define HAS_TEXTURE 1\n";
 		} else {
@@ -355,11 +355,11 @@ namespace{
         return header;
     }
 
-    string vertexSource(string defaultHeader, int maxLights, bool hasTexture, bool hasColor){
+    std::string vertexSource(std::string defaultHeader, int maxLights, bool hasTexture, bool hasColor){
         return shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + vertexShader;
     }
 
-    string fragmentSource(string defaultHeader, string customUniforms,  string postFragment, int maxLights, bool hasTexture, bool hasColor){
+    std::string fragmentSource(std::string defaultHeader, std::string customUniforms, std::string postFragment, int maxLights, bool hasTexture, bool hasColor){
         auto source = fragmentShader;
         if(postFragment.empty()){
             postFragment = "vec4 postFragment(vec4 localColor){ return localColor; }";

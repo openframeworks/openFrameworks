@@ -36,7 +36,7 @@ void ofSoundBuffer::copyFrom(const short * shortBuffer, std::size_t numFrames, s
 	setSampleRate(samplerate);
 	buffer.resize(numFrames * numChannels);
 	for(std::size_t i = 0; i < size(); i++){
-		buffer[i] = shortBuffer[i]/float(numeric_limits<short>::max());
+		buffer[i] = shortBuffer[i]/float(std::numeric_limits<short>::max());
 	}
 	checkSizeAndChannelsConsistency("copyFrom");
 }
@@ -48,32 +48,32 @@ void ofSoundBuffer::copyFrom(const float * floatBuffer, std::size_t numFrames, s
 	checkSizeAndChannelsConsistency("copyFrom");
 }
 
-void ofSoundBuffer::copyFrom(const vector<short> & shortBuffer, std::size_t numChannels, unsigned int sampleRate){
+void ofSoundBuffer::copyFrom(const std::vector<short> & shortBuffer, std::size_t numChannels, unsigned int sampleRate){
 	copyFrom(&shortBuffer[0],shortBuffer.size()/numChannels,numChannels,sampleRate);
 }
 
-void ofSoundBuffer::copyFrom(const vector<float> & floatBuffer, std::size_t numChannels, unsigned int sampleRate){
+void ofSoundBuffer::copyFrom(const std::vector<float> & floatBuffer, std::size_t numChannels, unsigned int sampleRate){
 	copyFrom(&floatBuffer[0],floatBuffer.size()/numChannels,numChannels,sampleRate);
 }
 
-void ofSoundBuffer::toShortPCM(vector<short> & dst) const{
+void ofSoundBuffer::toShortPCM(std::vector<short> & dst) const{
 	dst.resize(size());
 	for(std::size_t i = 0; i < size(); i++){
-		dst[i] = buffer[i]*float(numeric_limits<short>::max());
+		dst[i] = buffer[i]*float(std::numeric_limits<short>::max());
 	}
 }
 
 void ofSoundBuffer::toShortPCM(short * dst) const{
 	for(std::size_t i = 0; i < size(); i++){
-		dst[i] = buffer[i]*float(numeric_limits<short>::max());
+		dst[i] = buffer[i]*float(std::numeric_limits<short>::max());
 	}
 }
 
-vector<float> & ofSoundBuffer::getBuffer(){
+std::vector<float> & ofSoundBuffer::getBuffer(){
 	return buffer;
 }
 
-const vector<float> & ofSoundBuffer::getBuffer() const{
+const std::vector<float> & ofSoundBuffer::getBuffer() const{
 	return buffer;
 }
 
@@ -548,7 +548,7 @@ float ofSoundBuffer::getRMSAmplitudeChannel(std::size_t channel) const {
 void ofSoundBuffer::normalize(float level){
 	float maxAmplitude = 0;
 	for(std::size_t i = 0; i < size(); i++) {
-		maxAmplitude = max(maxAmplitude, abs(buffer[i]));
+		maxAmplitude = std::max(maxAmplitude, abs(buffer[i]));
 	}
 	float normalizationFactor = level/maxAmplitude;
 	for(std::size_t i = 0; i < size(); i++) {

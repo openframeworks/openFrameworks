@@ -108,7 +108,7 @@ public:
 	
 private:
 	void customDraw(const ofBaseRenderer * renderer) const;
-	shared_ptr<Data> data;
+	std::shared_ptr<Data> data;
 	// update opengl light 
 	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
 	virtual void onPositionChanged();
@@ -116,4 +116,4 @@ private:
 };
 
 
-vector<weak_ptr<ofLight::Data> > & ofLightsData();
+std::vector<std::weak_ptr<ofLight::Data> > & ofLightsData();

@@ -163,8 +163,8 @@ bool ofFbo::Settings::operator!=(const Settings & other){
 }
 
 //--------------------------------------------------------------
-static map<GLuint,int> & getIdsFB(){
-	static map<GLuint,int> * idsFB = new map<GLuint,int>;
+static std::map<GLuint,int> & getIdsFB(){
+	static std::map<GLuint,int> * idsFB = new std::map<GLuint,int>;
 	return *idsFB;
 }
 
@@ -192,8 +192,8 @@ static void releaseFB(GLuint id){
 }
 
 //--------------------------------------------------------------
-static map<GLuint,int> & getIdsRB(){
-	static map<GLuint,int> * idsRB = new map<GLuint,int>;
+static std::map<GLuint,int> & getIdsRB(){
+	static std::map<GLuint,int> * idsRB = new std::map<GLuint,int>;
 	return *idsRB;
 }
 
@@ -917,7 +917,7 @@ void ofFbo::flagDirty() const{
 		// flagged dirty at activation, so we can be sure all buffers which have 
 		// been rendered to are flagged dirty.
 		// 
-		int numBuffersToFlag = min(dirty.size(), activeDrawBuffers.size());
+		int numBuffersToFlag = std::min(dirty.size(), activeDrawBuffers.size());
 		for(int i=0; i < numBuffersToFlag; i++){
 			dirty[i] = true;
 		}
@@ -933,13 +933,13 @@ int ofFbo::getNumTextures() const {
 void ofFbo::setActiveDrawBuffer(int i){
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
-	vector<int> activebuffers(1, i);
+	std::vector<int> activebuffers(1, i);
 	setActiveDrawBuffers(activebuffers);
 #endif
 }
 
 //----------------------------------------------------------
-void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
+void ofFbo::setActiveDrawBuffers(const std::vector<int>& ids){
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
     int numBuffers = activeDrawBuffers.size();
@@ -963,7 +963,7 @@ void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
 void ofFbo::activateAllDrawBuffers(){
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
-    vector<int> activeBuffers(getNumTextures(),0);
+	std::vector<int> activeBuffers(getNumTextures(),0);
     for(int i=0; i < getNumTextures(); i++){
     	activeBuffers[i] = i;
     }

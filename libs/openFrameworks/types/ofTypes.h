@@ -14,7 +14,7 @@ class ofSerialDeviceInfo{
 		/// \param devicePathIn The path to the device.
 		/// \param deviceNameIn The name of the device.
 		/// \param deviceIDIn The ID of the device.
-		ofSerialDeviceInfo(string devicePathIn, string deviceNameIn, int deviceIDIn){
+		ofSerialDeviceInfo(std::string devicePathIn, std::string deviceNameIn, int deviceIDIn){
 			devicePath = devicePathIn;
 			deviceName = deviceNameIn;
 			deviceID = deviceIDIn;
@@ -31,7 +31,7 @@ class ofSerialDeviceInfo{
 		/// Example: `/dev/tty.cu/usbdevice-a440`.
 		///
 		/// \returns the device path.
-		string getDevicePath(){
+		std::string getDevicePath(){
 			return devicePath;
 		}
 
@@ -40,7 +40,7 @@ class ofSerialDeviceInfo{
 		/// Example: `usbdevice-a440` or `COM4`.
 		///
 		/// \returns the device name.
-		string getDeviceName(){
+		std::string getDeviceName(){
 			return deviceName;
 		}
 
@@ -57,10 +57,10 @@ class ofSerialDeviceInfo{
 		/// \cond INTERNAL
 
 		/// \brief The device path (e.g /dev/tty.cu/usbdevice-a440).
-		string devicePath;
+		std::string devicePath;
 
 		/// \brief The device name (e.g. usbdevice-a440 / COM4).
-		string deviceName;
+		std::string deviceName;
 
 		/// \brief The device ID (e.g. 0, 1, 2, 3, etc).
 		int deviceID;
@@ -250,7 +250,7 @@ public:
 	int height;
 
 	/// \brief A list of framerates for this video format in frames per second.
-	vector<float> framerates;
+	std::vector<float> framerates;
 };
 
 /// \brief A structure describing attributes of a video device.
@@ -262,17 +262,17 @@ public:
 	int id;
 
 	/// \brief The video device name.
-	string deviceName;
+	std::string deviceName;
 
 	/// \brief The video device hardware name.
-	string hardwareName;
+	std::string hardwareName;
 
 	/// \brief Unique identifier for the device if it has one. 
-	string serialID;
+	std::string serialID;
 
 	/// \brief A list of video device formats provided by the device.
 	/// \sa ofVideoFormat
-	vector<ofVideoFormat> formats;
+	std::vector<ofVideoFormat> formats;
 
 	/// \brief Is true if this video device is available.
 	bool bAvailable;

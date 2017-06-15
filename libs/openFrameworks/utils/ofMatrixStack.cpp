@@ -129,8 +129,8 @@ bool ofMatrixStack::doesHWOrientation() const{
 
 void ofMatrixStack::viewport(float x, float y, float width, float height, bool vflip){
 	if(!doesHWOrientation() && (orientation==OF_ORIENTATION_90_LEFT || orientation==OF_ORIENTATION_90_RIGHT)){
-		swap(width,height);
-		swap(x,y);
+		std::swap(width,height);
+		std::swap(x,y);
 	}
 
 	if(width < 0 || height < 0){
@@ -153,8 +153,8 @@ ofRectangle ofMatrixStack::getCurrentViewport() const{
 	}
 
 	if(!doesHWOrientation() && (orientation==OF_ORIENTATION_90_LEFT || orientation==OF_ORIENTATION_90_RIGHT)){
-		swap(tmpCurrentViewport.width,tmpCurrentViewport.height);
-		swap(tmpCurrentViewport.x,tmpCurrentViewport.y);
+		std::swap(tmpCurrentViewport.width,tmpCurrentViewport.height);
+		std::swap(tmpCurrentViewport.x,tmpCurrentViewport.y);
 	}
 	return tmpCurrentViewport;
 }
@@ -228,7 +228,7 @@ void ofMatrixStack::pushView(){
 
 	viewMatrixStack.push(viewMatrix);
 
-	orientationStack.push(make_pair(orientation,vFlipped));
+	orientationStack.push(std::make_pair(orientation,vFlipped));
 }
 
 void ofMatrixStack::popView(){
@@ -238,7 +238,7 @@ void ofMatrixStack::popView(){
 	}
 
 	if(!orientationStack.empty()){
-		pair<ofOrientation,bool> orientationFlip = orientationStack.top();
+		std::pair<ofOrientation,bool> orientationFlip = orientationStack.top();
 		setOrientation(orientationFlip.first,orientationFlip.second);
 		orientationStack.pop();
 	}

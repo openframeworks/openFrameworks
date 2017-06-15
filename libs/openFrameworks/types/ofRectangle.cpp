@@ -825,13 +825,13 @@ bool ofRectangle::isZero() const{
 }
 
 //----------------------------------------------------------
-ostream& operator<<(ostream& os, const ofRectangle& rect){
+std::ostream& operator<<(std::ostream& os, const ofRectangle& rect){
 	os << rect.position << ", " << rect.width << ", " << rect.height;
 	return os;
 }
 
 //----------------------------------------------------------
-istream& operator>>(istream& is, ofRectangle& rect){
+std::istream& operator>>(std::istream& is, ofRectangle& rect){
 	is >> rect.position;
 	is.ignore(2);
 	is >> rect.width;

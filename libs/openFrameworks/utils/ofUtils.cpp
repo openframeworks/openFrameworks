@@ -58,7 +58,7 @@ namespace{
 	bool enableDataPath = true;
 
     //--------------------------------------------------
-    string defaultDataPath(){
+    std::string defaultDataPath(){
     #if defined TARGET_OSX
         try{
             return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/")).string();
@@ -66,7 +66,7 @@ namespace{
             return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
         }
     #elif defined TARGET_ANDROID
-            return string("sdcard/");
+            return std::string("sdcard/");
     #else
             try{
                 return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).string();
@@ -386,16 +386,16 @@ void ofSleepMillis(int millis){
 
 //default ofGetTimestampString returns in this format: 2011-01-15-18-29-35-299
 //--------------------------------------------------
-string ofGetTimestampString(){
+std::string ofGetTimestampString(){
 
-	string timeFormat = "%Y-%m-%d-%H-%M-%S-%i";
+	std::string timeFormat = "%Y-%m-%d-%H-%M-%S-%i";
 
 	return ofGetTimestampString(timeFormat);
 }
 
 //specify the string format - eg: %Y-%m-%d-%H-%M-%S-%i ( 2011-01-15-18-29-35-299 )
 //--------------------------------------------------
-string ofGetTimestampString(const string& timestampFormat){
+std::string ofGetTimestampString(const std::string& timestampFormat){
 	std::stringstream str;
 	auto now = std::chrono::system_clock::now();
 	auto t = std::chrono::system_clock::to_time_t(now);    std::chrono::duration<double> s = now - std::chrono::system_clock::from_time_t(t);
@@ -510,7 +510,7 @@ void ofSetDataPathRoot(const std::filesystem::path& newRoot){
 }
 
 //--------------------------------------------------
-string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
+std::string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
 	if (!enableDataPath)
         return path.string();
 
@@ -592,81 +592,81 @@ string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
 
 //----------------------------------------
 template<>
-string ofFromString(const string& value){
+std::string ofFromString(const std::string& value){
 	return value;
 }
 
 //----------------------------------------
 template<>
-const char * ofFromString(const string& value){
+const char * ofFromString(const std::string& value){
 	return value.c_str();
 }
 
 //----------------------------------------
 template <>
-string ofToHex(const string& value) {
-	ostringstream out;
+std::string ofToHex(const std::string& value) {
+	std::ostringstream out;
 	// how many bytes are in the string
 	std::size_t numBytes = value.size();
 	for(std::size_t i = 0; i < numBytes; i++) {
 		// print each byte as a 2-character wide hex value
-		out << setfill('0') << std::setw(2) << std::hex << (unsigned int) ((unsigned char)value[i]);
+		out << std::setfill('0') << std::setw(2) << std::hex << (unsigned int) ((unsigned char)value[i]);
 	}
 	return out.str();
 }
 
 //----------------------------------------
-string ofToHex(const char* value) {
+std::string ofToHex(const char* value) {
 	// this function is necessary if you want to print a string
 	// using a syntax like ofToHex("test")
-	return ofToHex((string) value);
+	return ofToHex((std::string) value);
 }
 
 //----------------------------------------
-int ofToInt(const string& intString) {
+int ofToInt(const std::string& intString) {
 	return ofTo<int>(intString);
 }
 
 //----------------------------------------
-int ofHexToInt(const string& intHexString) {
+int ofHexToInt(const std::string& intHexString) {
 	int x = 0;
-	istringstream cur(intHexString);
+	std::istringstream cur(intHexString);
 	cur >> std::hex >> x;
 	return x;
 }
 
 //----------------------------------------
-char ofHexToChar(const string& charHexString) {
+char ofHexToChar(const std::string& charHexString) {
 	int x = 0;
-	istringstream cur(charHexString);
+	std::istringstream cur(charHexString);
 	cur >> std::hex >> x;
 	return (char) x;
 }
 
 //----------------------------------------
-float ofHexToFloat(const string& floatHexString) {
+float ofHexToFloat(const std::string& floatHexString) {
 	union intFloatUnion {
 		uint32_t i;
 		float f;
 	} myUnion;
 	myUnion.i = 0;
-	istringstream cur(floatHexString);
+	std::istringstream cur(floatHexString);
 	cur >> std::hex >> myUnion.i;
 	return myUnion.f;
 }
 
 //----------------------------------------
-string ofHexToString(const string& stringHexString) {
-	stringstream out;
-	stringstream stream(stringHexString);
+std::string ofHexToString(const std::string& stringHexString) {
+	std::stringstream out;
+	std::stringstream stream(stringHexString);
 	// a hex string has two characters per byte
 	std::size_t numBytes = stringHexString.size() / 2;
 	for(std::size_t i = 0; i < numBytes; i++) {
-		string curByte;
+		std::string curByte;
 		// grab two characters from the hex string
-		stream >> setw(2) >> curByte;
+		stream >> std::setw(2) >> curByte;
 		// prepare to parse the two characters
-		stringstream curByteStream(curByte);
+		std::stringstream curByteStream(curByte);
 		int cur = 0;
 		// parse the two characters as a hex-encoded int
 		curByteStream >> std::hex >> cur;
@@ -677,22 +677,22 @@ string ofHexToString(const string& stringHexString) {
 }
 
 //----------------------------------------
-float ofToFloat(const string& floatString) {
+float ofToFloat(const std::string& floatString) {
 	return ofTo<float>(floatString);
 }
 
 //----------------------------------------
-double ofToDouble(const string& doubleString) {
+double ofToDouble(const std::string& doubleString) {
 	return ofTo<double>(doubleString);
 }
 
 //----------------------------------------
-int64_t ofToInt64(const string& intString) {
+int64_t ofToInt64(const std::string& intString) {
 	return ofTo<int64_t>(intString);
 }
 
 //----------------------------------------
-bool ofToBool(const string& boolString) {
+bool ofToBool(const std::string& boolString) {
 	auto lower = ofToLower(boolString);
 	if(lower == "true") {
 		return true;
@@ -701,19 +701,19 @@ bool ofToBool(const string& boolString) {
 		return false;
 	}
 	bool x = false;
-	istringstream cur(lower);
+	std::istringstream cur(lower);
 	cur >> x;
 	return x;
 }
 
 //----------------------------------------
-char ofToChar(const string& charString) {
+char ofToChar(const std::string& charString) {
 	return ofTo<char>(charString);
 }
 
 //----------------------------------------
-template <> string ofToBinary(const string& value) {
-	stringstream out;
+template <> std::string ofToBinary(const std::string& value) {
+	std::stringstream out;
 	std::size_t numBytes = value.size();
 	for(std::size_t i = 0; i < numBytes; i++) {
 		std::bitset<8> bitBuffer(value[i]);
@@ -723,28 +723,28 @@ template <> string ofToBinary(const string& value) {
 }
 
 //----------------------------------------
-string ofToBinary(const char* value) {
+std::string ofToBinary(const char* value) {
 	// this function is necessary if you want to print a string
 	// using a syntax like ofToBinary("test")
-	return ofToBinary((string) value);
+	return ofToBinary((std::string) value);
 }
 
 //----------------------------------------
-int ofBinaryToInt(const string& value) {
+int ofBinaryToInt(const std::string& value) {
 	const int intSize = sizeof(int) * 8;
 	std::bitset<intSize> binaryString(value);
 	return (int) binaryString.to_ulong();
 }
 
 //----------------------------------------
-char ofBinaryToChar(const string& value) {
+char ofBinaryToChar(const std::string& value) {
 	const int charSize = sizeof(char) * 8;
 	std::bitset<charSize> binaryString(value);
 	return (char) binaryString.to_ulong();
 }
 
 //----------------------------------------
-float ofBinaryToFloat(const string& value) {
+float ofBinaryToFloat(const std::string& value) {
 	const int floatSize = sizeof(float) * 8;
 	std::bitset<floatSize> binaryString(value);
 	union ulongFloatUnion {
@@ -755,9 +755,9 @@ float ofBinaryToFloat(const string& value) {
 	return myUFUnion.f;
 }
 //----------------------------------------
-string ofBinaryToString(const string& value) {
-	ostringstream out;
-	stringstream stream(value);
+std::string ofBinaryToString(const std::string& value) {
+	std::ostringstream out;
+	std::stringstream stream(value);
 	std::bitset<8> byteString;
 	std::size_t numBytes = value.size() / 8;
 	for(std::size_t i = 0; i < numBytes; i++) {
@@ -768,16 +768,16 @@ string ofBinaryToString(const string& value) {
 }
 
 //--------------------------------------------------
-vector <string> ofSplitString(const string & source, const string & delimiter, bool ignoreEmpty, bool trim) {
-	vector<string> result;
+std::vector <std::string> ofSplitString(const std::string & source, const std::string & delimiter, bool ignoreEmpty, bool trim) {
+	std::vector<std::string> result;
 	if (delimiter.empty()) {
 		result.push_back(source);
 		return result;
 	}
-	string::const_iterator substart = source.begin(), subend;
+	std::string::const_iterator substart = source.begin(), subend;
 	while (true) {
 		subend = search(substart, source.end(), delimiter.begin(), delimiter.end());
-		string sub(substart, subend);
+		std::string sub(substart, subend);
 		if(trim) {
 			sub = ofTrim(sub);
 		}
@@ -793,14 +793,14 @@ vector <string> ofSplitString(const string & source, const string & delimiter, b
 }
 
 //--------------------------------------------------
-string ofJoinString(const vector<string>& stringElements, const string& delimiter){
-	string str;
+std::string ofJoinString(const std::vector<std::string>& stringElements, const std::string& delimiter){
+	std::string str;
 	if(stringElements.empty()){
 		return str;
 	}
 	auto numStrings = stringElements.size();
-	string::size_type strSize = delimiter.size() * (numStrings - 1);
-	for (const string &s : stringElements) {
+	std::string::size_type strSize = delimiter.size() * (numStrings - 1);
+	for (const std::string &s : stringElements) {
 		strSize += s.size();
 	}
 	str.reserve(strSize);
@@ -813,7 +813,7 @@ string ofJoinString(const vector<string>& stringElements, const string& delimite
 }
 
 //--------------------------------------------------
-void ofStringReplace(string& input, const string& searchStr, const string& replaceStr){
+void ofStringReplace(std::string& input, const std::string& searchStr, const std::string& replaceStr){
 	auto pos = input.find(searchStr);
 	while(pos != std::string::npos){
 		input.replace(pos, searchStr.size(), replaceStr);
@@ -828,12 +828,12 @@ void ofStringReplace(string& input, const string& searchStr, const string& repla
 }
 
 //--------------------------------------------------
-bool ofIsStringInString(const string& haystack, const string& needle){
+bool ofIsStringInString(const std::string& haystack, const std::string& needle){
     return haystack.find(needle) != std::string::npos;
 }
 
 //--------------------------------------------------
-std::size_t ofStringTimesInString(const string& haystack, const string& needle){
+std::size_t ofStringTimesInString(const std::string& haystack, const std::string& needle){
 	const size_t step = needle.size();
 
 	size_t count(0);
@@ -848,7 +848,7 @@ std::size_t ofStringTimesInString(const string& haystack, const string& needle){
 }
 
 
-ofUTF8Iterator::ofUTF8Iterator(const string & str){
+ofUTF8Iterator::ofUTF8Iterator(const std::string & str){
 	try{
 		utf8::replace_invalid(str.begin(),str.end(),back_inserter(src_valid));
 	}catch(...){
@@ -894,7 +894,7 @@ utf8::iterator<std::string::const_reverse_iterator> ofUTF8Iterator::rend() const
 
 //--------------------------------------------------
 // helper method to get locale from name
-static std::locale getLocale(const string & locale) {
+static std::locale getLocale(const std::string & locale) {
 	std::locale loc;
 	try {
 		loc = std::locale(locale.c_str());
@@ -906,7 +906,7 @@ static std::locale getLocale(const string & locale) {
 }
 
 //--------------------------------------------------
-string ofToLower(const string & src, const string & locale){
+std::string ofToLower(const std::string & src, const std::string & locale){
 	std::string dst;
 	std::locale loc = getLocale(locale);
 	try{
@@ -919,7 +919,7 @@ string ofToLower(const string & src, const string & locale){
 }
 
 //--------------------------------------------------
-string ofToUpper(const string & src, const string & locale){
+std::string ofToUpper(const std::string & src, const std::string & locale){
 	std::string dst;
 	std::locale loc = getLocale(locale);
 	try{
@@ -932,7 +932,7 @@ string ofToUpper(const string & src, const string & locale){
 }
 
 //--------------------------------------------------
-string ofTrimFront(const string & src, const string& locale){
+std::string ofTrimFront(const std::string & src, const std::string& locale){
     auto dst = src;
     std::locale loc = getLocale(locale);
     dst.erase(dst.begin(),std::find_if_not(dst.begin(),dst.end(),[&](char & c){return std::isspace<char>(c,loc);}));
@@ -940,7 +940,7 @@ string ofTrimFront(const string & src, const string& locale){
 }
 
 //--------------------------------------------------
-string ofTrimBack(const string & src, const string& locale){
+std::string ofTrimBack(const std::string & src, const std::string& locale){
     auto dst = src;
     std::locale loc = getLocale(locale);
 	dst.erase(std::find_if_not(dst.rbegin(),dst.rend(),[&](char & c){return std::isspace<char>(c,loc);}).base(), dst.end());
@@ -948,26 +948,26 @@ string ofTrimBack(const string & src, const string& locale){
 }
 
 //--------------------------------------------------
-string ofTrim(const string & src, const string& locale){
+std::string ofTrim(const std::string & src, const std::string& locale){
     return ofTrimFront(ofTrimBack(src));
 }
 
 //--------------------------------------------------
-void ofAppendUTF8(string & str, uint32_t utf8){
+void ofAppendUTF8(std::string & str, uint32_t utf8){
 	try{
 		utf8::append(utf8, back_inserter(str));
 	}catch(...){}
 }
 
 //--------------------------------------------------
-void ofUTF8Append(string & str, uint32_t utf8){
+void ofUTF8Append(std::string & str, uint32_t utf8){
 	try{
 		utf8::append(utf8, back_inserter(str));
 	}catch(...){}
 }
 
 //--------------------------------------------------
-void ofUTF8Insert(string & str, size_t pos, uint32_t utf8){
+void ofUTF8Insert(std::string & str, size_t pos, uint32_t utf8){
 	std::string newText;
 	size_t i = 0;
 	for(auto c: ofUTF8Iterator(str)){
@@ -984,7 +984,7 @@ void ofUTF8Insert(string & str, size_t pos, uint32_t utf8){
 }
 
 //--------------------------------------------------
-void ofUTF8Erase(string & str, size_t start, size_t len){
+void ofUTF8Erase(std::string & str, size_t start, size_t len){
 	std::string newText;
 	size_t i = 0;
 	for(auto c: ofUTF8Iterator(str)){
@@ -997,7 +997,7 @@ void ofUTF8Erase(string & str, size_t start, size_t len){
 }
 
 //--------------------------------------------------
-std::string ofUTF8Substring(const string & str, size_t start, size_t len){
+std::string ofUTF8Substring(const std::string & str, size_t start, size_t len){
 	size_t i=0;
 	std::string newText;
 	for(auto c: ofUTF8Iterator(str)){
@@ -1029,7 +1029,7 @@ size_t ofUTF8Length(const std::string & str){
 }
 
 //--------------------------------------------------
-string ofVAArgsToString(const char * format, ...){
+std::string ofVAArgsToString(const char * format, ...){
 	va_list args;
 	va_start(args, format);
 	char buf[256];
@@ -1050,7 +1050,7 @@ string ofVAArgsToString(const char * format, ...){
 	return s;
 }
 
-string ofVAArgsToString(const char * format, va_list args){
+std::string ofVAArgsToString(const char * format, va_list args){
 	char buf[256];
 	size_t n = std::vsnprintf(buf, sizeof(buf), format, args);
 
@@ -1067,7 +1067,7 @@ string ofVAArgsToString(const char * format, va_list args){
 }
 
 //--------------------------------------------------
-void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
+void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery){
 	UriParserStateA state;
 	UriUriA uri;
 	state.uri = &uri;
@@ -1105,7 +1105,7 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 
 	#ifdef TARGET_OSX
         // could also do with LSOpenCFURLRef
-		string commandStr = "open \"" + uriStr + "\"";
+		std::string commandStr = "open \"" + uriStr + "\"";
 		int ret = system(commandStr.c_str());
         if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -1113,7 +1113,7 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#endif
 
 	#ifdef TARGET_LINUX
-		string commandStr = "xdg-open \"" + uriStr + "\"";
+		std::string commandStr = "xdg-open \"" + uriStr + "\"";
 		int ret = system(commandStr.c_str());
 		if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -1134,8 +1134,8 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 }
 
 //--------------------------------------------------
-string ofGetVersionInfo(){
-	stringstream sstr;
+std::string ofGetVersionInfo(){
+	std::stringstream sstr;
 	sstr << OF_VERSION_MAJOR << "." << OF_VERSION_MINOR << "." << OF_VERSION_PATCH;
 
 	if (!std::string(OF_VERSION_PRE_RELEASE).empty())
@@ -1168,7 +1168,7 @@ std::string ofGetVersionPreRelease() {
 //from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
 
 //--------------------------------------------------
-void ofSaveScreen(const string& filename) {
+void ofSaveScreen(const std::string& filename) {
    /*ofImage screen;
    screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
    screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
@@ -1179,7 +1179,7 @@ void ofSaveScreen(const string& filename) {
 }
 
 //--------------------------------------------------
-void ofSaveViewport(const string& filename) {
+void ofSaveViewport(const std::string& filename) {
 	// because ofSaveScreen doesn't related to viewports
 	/*ofImage screen;
 	ofRectangle view = ofGetCurrentViewport();
@@ -1195,7 +1195,7 @@ void ofSaveViewport(const string& filename) {
 //--------------------------------------------------
 int saveImageCounter = 0;
 void ofSaveFrame(bool bUseViewport){
-   string fileName = ofToString(saveImageCounter) + ".png";
+	std::string fileName = ofToString(saveImageCounter) + ".png";
 	if (bUseViewport){
 		ofSaveViewport(fileName);
 	} else {
@@ -1205,7 +1205,7 @@ void ofSaveFrame(bool bUseViewport){
 }
 
 //--------------------------------------------------
-string ofSystem(const string& command){
+std::string ofSystem(const std::string& command){
 	FILE * ret = nullptr;
 #ifdef TARGET_WIN32
 	ret = _popen(command.c_str(),"r");
@@ -1213,7 +1213,7 @@ string ofSystem(const string& command){
 	ret = popen(command.c_str(),"r");
 #endif
 
-	string strret;
+	std::string strret;
 	int c;
 
 	if (ret == nullptr){
@@ -1237,7 +1237,7 @@ string ofSystem(const string& command){
 //--------------------------------------------------
 ofTargetPlatform ofGetTargetPlatform(){
 #ifdef TARGET_LINUX
-    string arch = ofSystem("uname -m");
+    std::string arch = ofSystem("uname -m");
     if(ofIsStringInString(arch,"x86_64")) {
         return OF_TARGET_LINUX64;
     } else if(ofIsStringInString(arch,"armv6l")) {

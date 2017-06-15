@@ -13,21 +13,21 @@ ofVideoPlayer::ofVideoPlayer (){
 }
 
 //---------------------------------------------------------------------------
-void ofVideoPlayer::setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer){
+void ofVideoPlayer::setPlayer(std::shared_ptr<ofBaseVideoPlayer> newPlayer){
 	player = newPlayer;
 	setPixelFormat(internalPixelFormat);	//this means that it will try to set the pixel format you have been using before. 
 											//if the format is not supported ofVideoPlayer's internalPixelFormat will be updated to that of the player's
 }
 
 //---------------------------------------------------------------------------
-shared_ptr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
+std::shared_ptr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
 	if( !player ){
-		setPlayer( shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
+		setPlayer( std::shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
 	}
 	return player;
 }
 
-const shared_ptr<ofBaseVideoPlayer>	ofVideoPlayer::getPlayer() const{
+const std::shared_ptr<ofBaseVideoPlayer>	ofVideoPlayer::getPlayer() const{
 	return player;
 }
 
@@ -64,9 +64,9 @@ ofPixelFormat ofVideoPlayer::getPixelFormat() const{
 }
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::load(string name){
+bool ofVideoPlayer::load(std::string name){
 	if( !player ){
-		setPlayer( shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
+		setPlayer( std::shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
 		player->setPixelFormat(internalPixelFormat);
 	}
 	
@@ -97,9 +97,9 @@ bool ofVideoPlayer::load(string name){
 }
 
 //---------------------------------------------------------------------------
-void ofVideoPlayer::loadAsync(string name){
+void ofVideoPlayer::loadAsync(std::string name){
 	if( !player ){
-		setPlayer( shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
+		setPlayer( std::shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
 		player->setPixelFormat(internalPixelFormat);
 	}
 	
@@ -108,12 +108,12 @@ void ofVideoPlayer::loadAsync(string name){
 }
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::loadMovie(string name){
+bool ofVideoPlayer::loadMovie(std::string name){
 	return load(name);
 }
 
 //---------------------------------------------------------------------------
-string ofVideoPlayer::getMoviePath() const{
+std::string ofVideoPlayer::getMoviePath() const{
     return moviePath;	
 }
 
@@ -166,7 +166,7 @@ const ofTexture & ofVideoPlayer::getTextureReference() const{
 }
 
 //---------------------------------------------------------------------------
-vector<ofTexture> & ofVideoPlayer::getTexturePlanes(){
+std::vector<ofTexture> & ofVideoPlayer::getTexturePlanes(){
 	if(playerTex != nullptr){
 		tex.clear();
 		tex.push_back(*playerTex);
@@ -175,7 +175,7 @@ vector<ofTexture> & ofVideoPlayer::getTexturePlanes(){
 }
 
 //---------------------------------------------------------------------------
-const vector<ofTexture> & ofVideoPlayer::getTexturePlanes() const{
+const std::vector<ofTexture> & ofVideoPlayer::getTexturePlanes() const{
 	if(playerTex != nullptr){
 		ofVideoPlayer * mutThis = const_cast<ofVideoPlayer*>(this);
 		mutThis->tex.clear();
@@ -415,7 +415,7 @@ void ofVideoPlayer::draw(float _x, float _y) const{
 
 //------------------------------------
 void ofVideoPlayer::bind() const{
-	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	std::shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
 	if(renderer){
 		renderer->bind(*this);
 	}
@@ -423,7 +423,7 @@ void ofVideoPlayer::bind() const{
 
 //------------------------------------
 void ofVideoPlayer::unbind() const{
-	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	std::shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
 	if(renderer){
 		renderer->unbind(*this);
 	}

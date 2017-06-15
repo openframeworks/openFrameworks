@@ -8,7 +8,7 @@
 #include "ofNode.h"
 #include "ofGraphics.h"
 
-const string ofCairoRenderer::TYPE="cairo";
+const std::string ofCairoRenderer::TYPE="cairo";
 
 _cairo_status ofCairoRenderer::stream_function(void *closure,const unsigned char *data, unsigned int length){
 	((ofCairoRenderer*)closure)->streamBuffer.append((const char*)data,length);
@@ -31,7 +31,7 @@ ofCairoRenderer::~ofCairoRenderer(){
 	close();
 }
 
-void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
+void ofCairoRenderer::setup(std::string _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
 	if( outputsize.width == 0 || outputsize.height == 0 ){
 		outputsize.set(0, 0, ofGetViewportWidth(), ofGetViewportHeight());
 	}
@@ -41,7 +41,7 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	streamBuffer.clear();
 
 	if(type == FROM_FILE_EXTENSION){
-		string ext = ofFilePath::getFileExt(filename);
+		std::string ext = ofFilePath::getFileExt(filename);
 		if(ofToLower(ext)=="svg"){
 			type = SVG;
 		}else if(ofToLower(ext)=="pdf"){
@@ -190,7 +190,7 @@ void ofCairoRenderer::setCurveResolution(int resolution){
 
 void ofCairoRenderer::draw(const ofPath & shape) const{
 	cairo_new_path(cr);
-	const vector<ofPath::Command> & commands = shape.getCommands();
+	const std::vector<ofPath::Command> & commands = shape.getCommands();
 	for(int i=0;i<(int)commands.size();i++){
 		draw(commands[i]);
 	}
@@ -247,7 +247,7 @@ void ofCairoRenderer::draw(const ofPolyline & poly) const{
 	cairo_stroke( cr );
 }
 
-void ofCairoRenderer::draw(const vector<glm::vec3> & vertexData, ofPrimitiveMode drawMode) const{
+void ofCairoRenderer::draw(const std::vector<glm::vec3> & vertexData, ofPrimitiveMode drawMode) const{
 	if(vertexData.size()==0) return;
 	ofCairoRenderer * mut_this = const_cast<ofCairoRenderer*>(this);
 	mut_this->pushMatrix();
@@ -522,7 +522,7 @@ void ofCairoRenderer::draw(const ofPixels & raw, float x, float y, float z, floa
 	int picsize = pix.getWidth()* pix.getHeight();
 	const unsigned char *imgPix = pix.getData();
 
-	vector<unsigned char> swapPixels;
+	std::vector<unsigned char> swapPixels;
 
 	switch(pix.getImageType()){
 	case OF_IMAGE_COLOR:
@@ -914,7 +914,7 @@ void ofCairoRenderer::viewport(ofRectangle v){
 void ofCairoRenderer::viewport(float x, float y, float width, float height, bool invertY){
 	if(width < 0) width = originalViewport.width;
 	if(height < 0) height = originalViewport.height;
-	cout << "setting viewport to:" << width << ", " << height << endl;
+	std::cout << "setting viewport to:" << width << ", " << height << std::endl;
 
 	if (invertY){
 		y = -y;
@@ -1332,17 +1332,17 @@ void ofCairoRenderer::drawEllipse(float x, float y, float z, float width, float 
 	}
 }
 
-void ofCairoRenderer::drawString(string text, float x, float y, float z) const{
+void ofCairoRenderer::drawString(std::string text, float x, float y, float z) const{
 	cairo_select_font_face (cr, "Mono", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_set_font_size (cr, 10);
-	vector<string> lines = ofSplitString(text, "\n");
+	std::vector<std::string> lines = ofSplitString(text, "\n");
 	for(int i=0;i<(int)lines.size();i++){
 		cairo_move_to (cr, x, y+i*14.3);
 		cairo_show_text (cr, lines[i].c_str() );
 	}
 }
 
-void ofCairoRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y) const{
+void ofCairoRenderer::drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const{
 	font.drawStringAsShapes(text,x,y);
 }
 

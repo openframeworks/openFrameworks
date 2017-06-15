@@ -6,24 +6,24 @@
 static ofLogLevel currentLogLevel =  OF_LOG_NOTICE;
 
 bool ofLog::bAutoSpace = false;
-string & ofLog::getPadding() {
-	static string * padding = new string;
+std::string & ofLog::getPadding() {
+	static std::string * padding = new std::string;
 	return *padding;
 }
 
-static map<string,ofLogLevel> & getModules(){
-	static map<string,ofLogLevel> * modules = new map<string,ofLogLevel>;
+static std::map<std::string,ofLogLevel> & getModules(){
+	static std::map<std::string,ofLogLevel> * modules = new std::map<std::string,ofLogLevel>;
 	return *modules;
 }
 
 static void noopDeleter(ofBaseLoggerChannel*){}
 #ifdef TARGET_ANDROID
 	#include "ofxAndroidLogChannel.h"
-	shared_ptr<ofBaseLoggerChannel> ofLog::channel = shared_ptr<ofxAndroidLogChannel>(new ofxAndroidLogChannel,std::ptr_fun(noopDeleter));
+	std::shared_ptr<ofBaseLoggerChannel> ofLog::channel = std::shared_ptr<ofxAndroidLogChannel>(new ofxAndroidLogChannel,std::ptr_fun(noopDeleter));
 #elif defined(TARGET_WIN32)
-	shared_ptr<ofBaseLoggerChannel> ofLog::channel = IsDebuggerPresent() ? shared_ptr<ofBaseLoggerChannel>(new ofDebugViewLoggerChannel, std::ptr_fun(noopDeleter)) : shared_ptr<ofBaseLoggerChannel>(new ofConsoleLoggerChannel, std::ptr_fun(noopDeleter));
+	std::shared_ptr<ofBaseLoggerChannel> ofLog::channel = IsDebuggerPresent() ? std::shared_ptr<ofBaseLoggerChannel>(new ofDebugViewLoggerChannel, std::ptr_fun(noopDeleter)) : std::shared_ptr<ofBaseLoggerChannel>(new ofConsoleLoggerChannel, std::ptr_fun(noopDeleter));
 #else
-	shared_ptr<ofBaseLoggerChannel> ofLog::channel = shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,std::ptr_fun(noopDeleter));
+	std::shared_ptr<ofBaseLoggerChannel> ofLog::channel = std::shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,std::ptr_fun(noopDeleter));
 #endif
 
 //--------------------------------------------------
@@ -32,7 +32,7 @@ void ofSetLogLevel(ofLogLevel level){
 }
 
 //--------------------------------------------------
-void ofSetLogLevel(string module, ofLogLevel level){
+void ofSetLogLevel(std::string module, ofLogLevel level){
 	getModules()[module] = level;
 }
 
@@ -42,7 +42,7 @@ ofLogLevel ofGetLogLevel(){
 }
 
 //--------------------------------------------------
-ofLogLevel ofGetLogLevel(string module){
+ofLogLevel ofGetLogLevel(std::string module){
 	if (getModules().find(module) == getModules().end()) {
 		return currentLogLevel;
 	} else {
@@ -52,17 +52,17 @@ ofLogLevel ofGetLogLevel(string module){
 
 //--------------------------------------------------
 void ofLogToFile(const std::filesystem::path & path, bool append){
-	ofLog::setChannel(shared_ptr<ofFileLoggerChannel>(new ofFileLoggerChannel(path,append)));
+	ofLog::setChannel(std::shared_ptr<ofFileLoggerChannel>(new ofFileLoggerChannel(path,append)));
 }
 
 //--------------------------------------------------
 void ofLogToConsole(){
-	ofLog::setChannel(shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,std::ptr_fun(noopDeleter)));
+	ofLog::setChannel(std::shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,std::ptr_fun(noopDeleter)));
 }
 
 #ifdef TARGET_WIN32
 void ofLogToDebugView() {
-	ofLog::setChannel(shared_ptr<ofDebugViewLoggerChannel>(new ofDebugViewLoggerChannel, std::ptr_fun(noopDeleter)));
+	ofLog::setChannel(std::shared_ptr<ofDebugViewLoggerChannel>(new ofDebugViewLoggerChannel, std::ptr_fun(noopDeleter)));
 }
 #endif
 
@@ -81,7 +81,7 @@ ofLog::ofLog(ofLogLevel _level){
 }
 
 //--------------------------------------------------
-ofLog::ofLog(ofLogLevel level, const string & message){
+ofLog::ofLog(ofLogLevel level, const std::string & message){
 	_log(level,"",message);
 	bPrinted = true;
 }
@@ -116,7 +116,7 @@ ofLog::~ofLog(){
 	}
 }
 
-bool ofLog::checkLog(ofLogLevel level, const string & module){
+bool ofLog::checkLog(ofLogLevel level, const std::string & module){
 	if(getModules().find(module)==getModules().end()){
 		if(level >= currentLogLevel) return true;
 	}else{
@@ -126,25 +126,25 @@ bool ofLog::checkLog(ofLogLevel level, const string & module){
 }
 
 //-------------------------------------------------------
-void ofLog::_log(ofLogLevel level, const string & module, const string & message){
+void ofLog::_log(ofLogLevel level, const std::string & module, const std::string & message){
 	if(checkLog(level,module)){
 		channel->log(level,module, message);
 	}
 }
 
 //--------------------------------------------------
-ofLogVerbose::ofLogVerbose(const string & _module){
+ofLogVerbose::ofLogVerbose(const std::string & _module){
 	level = OF_LOG_VERBOSE;
 	module = _module;
 	bPrinted=false;
 }
 
-ofLogVerbose::ofLogVerbose(const string & _module, const string & _message){
+ofLogVerbose::ofLogVerbose(const std::string & _module, const std::string & _message){
 	_log(OF_LOG_VERBOSE,_module,_message);
 	bPrinted = true;
 }
 
-ofLogVerbose::ofLogVerbose(const string & module, const char* format, ...){
+ofLogVerbose::ofLogVerbose(const std::string & module, const char* format, ...){
 	if(checkLog(OF_LOG_VERBOSE, module)){
 		va_list args;
 		va_start(args, format);
@@ -155,18 +155,18 @@ ofLogVerbose::ofLogVerbose(const string & module, const char* format, ...){
 }
 
 //--------------------------------------------------
-ofLogNotice::ofLogNotice(const string & _module){
+ofLogNotice::ofLogNotice(const std::string & _module){
 	level = OF_LOG_NOTICE;
 	module = _module;
 	bPrinted=false;
 }
 
-ofLogNotice::ofLogNotice(const string & _module, const string & _message){
+ofLogNotice::ofLogNotice(const std::string & _module, const std::string & _message){
 	_log(OF_LOG_NOTICE,_module,_message);
 	bPrinted = true;
 }
 
-ofLogNotice::ofLogNotice(const string & module, const char* format, ...){
+ofLogNotice::ofLogNotice(const std::string & module, const char* format, ...){
 	if(checkLog(OF_LOG_NOTICE, module)){
 		va_list args;
 		va_start(args, format);
@@ -177,18 +177,18 @@ ofLogNotice::ofLogNotice(const string & module, const char* format, ...){
 }
 
 //--------------------------------------------------
-ofLogWarning::ofLogWarning(const string & _module){
+ofLogWarning::ofLogWarning(const std::string & _module){
 	level = OF_LOG_WARNING;
 	module = _module;
 	bPrinted=false;
 }
 
-ofLogWarning::ofLogWarning(const string & _module, const string & _message){
+ofLogWarning::ofLogWarning(const std::string & _module, const std::string & _message){
 	_log(OF_LOG_WARNING,_module,_message);
 	bPrinted = true;
 }
 
-ofLogWarning::ofLogWarning(const string & module, const char* format, ...){
+ofLogWarning::ofLogWarning(const std::string & module, const char* format, ...){
 	if(checkLog(OF_LOG_WARNING, module)){
 		va_list args;
 		va_start(args, format);
@@ -199,18 +199,18 @@ ofLogWarning::ofLogWarning(const string & module, const char* format, ...){
 }
 
 //--------------------------------------------------
-ofLogError::ofLogError(const string & _module){
+ofLogError::ofLogError(const std::string & _module){
 	level = OF_LOG_ERROR;
 	module = _module;
 	bPrinted=false;
 }
 
-ofLogError::ofLogError(const string & _module, const string & _message){
+ofLogError::ofLogError(const std::string & _module, const std::string & _message){
 	_log(OF_LOG_ERROR,_module,_message);
 	bPrinted = true;
 }
 
-ofLogError::ofLogError(const string & module, const char* format, ...){
+ofLogError::ofLogError(const std::string & module, const char* format, ...){
 	if(checkLog(OF_LOG_ERROR, module)){
 		va_list args;
 		va_start(args, format);
@@ -221,18 +221,18 @@ ofLogError::ofLogError(const string & module, const char* format, ...){
 }
 
 //--------------------------------------------------
-ofLogFatalError::ofLogFatalError(const string &  _module){
+ofLogFatalError::ofLogFatalError(const std::string &  _module){
 	level = OF_LOG_FATAL_ERROR;
 	module = _module;
 	bPrinted=false;
 }
 
-ofLogFatalError::ofLogFatalError(const string & _module, const string & _message){
+ofLogFatalError::ofLogFatalError(const std::string & _module, const std::string & _message){
 	_log(OF_LOG_FATAL_ERROR,_module,_message);
 	bPrinted = true;
 }
 
-ofLogFatalError::ofLogFatalError(const string & module, const char* format, ...){
+ofLogFatalError::ofLogFatalError(const std::string & module, const char* format, ...){
 	if(checkLog(OF_LOG_FATAL_ERROR, module)){
 		va_list args;
 		va_start(args, format);
@@ -243,15 +243,15 @@ ofLogFatalError::ofLogFatalError(const string & module, const char* format, ...)
 }
 
 //--------------------------------------------------
-void ofLog::setChannel(shared_ptr<ofBaseLoggerChannel> _channel){
+void ofLog::setChannel(std::shared_ptr<ofBaseLoggerChannel> _channel){
 	channel = _channel;
 }
 
-void ofSetLoggerChannel(shared_ptr<ofBaseLoggerChannel> loggerChannel){
+void ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel> loggerChannel){
 	ofLog::setChannel(loggerChannel);
 }
 
-string ofGetLogLevelName(ofLogLevel level, bool pad){
+std::string ofGetLogLevelName(ofLogLevel level, bool pad){
 	switch(level){
 		case OF_LOG_VERBOSE:
 			return "verbose";
@@ -271,25 +271,25 @@ string ofGetLogLevelName(ofLogLevel level, bool pad){
 }
 
 //--------------------------------------------------
-void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
+void ofConsoleLoggerChannel::log(ofLogLevel level, const std::string & module, const std::string & message){
 	// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout 
-	ostream& out = level < OF_LOG_ERROR ? cout : cerr;
+	std::ostream& out = level < OF_LOG_ERROR ? std::cout : std::cerr;
 	out << "[" << ofGetLogLevelName(level, true)  << "] ";
 	// only print the module name if it's not ""
 	if(module != ""){
 		out << module << ": ";
 	}
-	out << message << endl;
+	out << message << std::endl;
 }
 
-void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const char* format, ...){
+void ofConsoleLoggerChannel::log(ofLogLevel level, const std::string & module, const char* format, ...){
 	va_list args;
 	va_start(args, format);
 	log(level, module, format, args);
 	va_end(args);
 }
 
-void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const char* format, va_list args){
+void ofConsoleLoggerChannel::log(ofLogLevel level, const std::string & module, const char* format, va_list args){
 	//thanks stefan!
 	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
 	FILE* out = level < OF_LOG_ERROR ? stdout : stderr;
@@ -304,19 +304,19 @@ void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const 
 
 #ifdef TARGET_WIN32
 #include <array>
-void ofDebugViewLoggerChannel::log(ofLogLevel level, const string & module, const string & message) {
+void ofDebugViewLoggerChannel::log(ofLogLevel level, const std::string & module, const std::string & message) {
 	// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout 
-	stringstream out;
+	std::stringstream out;
 	out << "[" << ofGetLogLevelName(level, true) << "] ";
 	// only print the module name if it's not ""
 	if (module != "") {
 		out << module << ": ";
 	}
-	out << message << endl;
+	out << message << std::endl;
 	OutputDebugStringA(out.str().c_str());
 }
 
-void ofDebugViewLoggerChannel::log(ofLogLevel level, const string & module, const char* format, ...) {
+void ofDebugViewLoggerChannel::log(ofLogLevel level, const std::string & module, const char* format, ...) {
 	va_list args;
 	va_start(args, format);
 	log(level, module, format, args);
@@ -324,7 +324,7 @@ void ofDebugViewLoggerChannel::log(ofLogLevel level, const string & module, cons
 
 }
 
-void ofDebugViewLoggerChannel::log(ofLogLevel level, const string & module, const char* format, va_list args) {
+void ofDebugViewLoggerChannel::log(ofLogLevel level, const std::string & module, const char* format, va_list args) {
 	std::string buffer;;
 	buffer =  "[" + ofGetLogLevelName(level, true) + "] ";
 	if (module != "") {
@@ -354,30 +354,30 @@ void ofFileLoggerChannel::close(){
 
 void ofFileLoggerChannel::setFile(const std::filesystem::path & path,bool append){
 	file.open(path,append?ofFile::Append:ofFile::WriteOnly);
-	file << endl;
-	file << endl;
-	file << "--------------------------------------- " << ofGetTimestampString() << endl;
+	file << std::endl;
+	file << std::endl;
+	file << "--------------------------------------- " << ofGetTimestampString() << std::endl;
 }
 
-void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
+void ofFileLoggerChannel::log(ofLogLevel level, const std::string & module, const std::string & message){
 	file << "[" << ofGetLogLevelName(level, true) << "] ";
 	if(module != ""){
 		file << module << ": ";
 	}
-	file << message << endl;
+	file << message << std::endl;
 }
 
-void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const char* format, ...){
+void ofFileLoggerChannel::log(ofLogLevel level, const std::string & module, const char* format, ...){
 	va_list args;
 	va_start(args, format);
 	log(level, module, format, args);
 	va_end(args);
 }
 
-void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const char* format, va_list args){
+void ofFileLoggerChannel::log(ofLogLevel level, const std::string & module, const char* format, va_list args){
 	file << "[" << ofGetLogLevelName(level, true) << "] ";
 	if(module != ""){
 		file << module << ": ";
 	}
-	file << ofVAArgsToString(format,args) << endl;
+	file << ofVAArgsToString(format,args) << std::endl;
 }

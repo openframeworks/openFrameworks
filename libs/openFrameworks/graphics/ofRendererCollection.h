@@ -11,19 +11,19 @@ public:
 	 ofRendererCollection():graphics3d(this){}
 	 ~ofRendererCollection(){}
 
-	 static const string TYPE;
-	 const string & getType(){ return TYPE; }
+	 static const std::string TYPE;
+	 const std::string & getType(){ return TYPE; }
 
-	 shared_ptr<ofBaseGLRenderer> getGLRenderer(){
+	 std::shared_ptr<ofBaseGLRenderer> getGLRenderer(){
 		for(auto renderer: renderers){
 			  if(renderer->getType()=="GL" || renderer->getType()=="ProgrammableGL"){
-				  return dynamic_pointer_cast<ofBaseGLRenderer>(renderer);
+				  return std::dynamic_pointer_cast<ofBaseGLRenderer>(renderer);
 			  }
 		}
 		#ifndef TARGET_PROGRAMMABLE_GL
-		 	 return shared_ptr<ofGLRenderer>();
+		 	 return std::shared_ptr<ofGLRenderer>();
 		#else
-		 	 return shared_ptr<ofGLProgrammableRenderer>();
+		 	 return std::shared_ptr<ofGLProgrammableRenderer>();
 		#endif
 	 }
 
@@ -574,14 +574,14 @@ public:
 	void enablePointSprites(){
 		for(auto renderer: renderers){
 			 if(renderer->getType()=="GL" || renderer->getType()=="ProgrammableGL"){
-				 dynamic_pointer_cast<ofBaseGLRenderer>(renderer)->enablePointSprites();
+				 std::dynamic_pointer_cast<ofBaseGLRenderer>(renderer)->enablePointSprites();
 			 }
 		 }
 	}
 	void disablePointSprites(){
 		for(auto renderer: renderers){
 			 if(renderer->getType()=="GL" || renderer->getType()=="ProgrammableGL"){
-				 dynamic_pointer_cast<ofBaseGLRenderer>(renderer)->disablePointSprites();
+				 std::dynamic_pointer_cast<ofBaseGLRenderer>(renderer)->disablePointSprites();
 			 }
 		 }
 	}
@@ -675,13 +675,13 @@ public:
 		 }
 	}
 
-	void drawString(string text, float x, float y, float z) const{
+	void drawString(std::string text, float x, float y, float z) const{
 		for(auto renderer: renderers){
 			renderer->drawString(text, x,y,z);
 		 }
 	}
 
-	void drawString(const ofTrueTypeFont & font, string text, float x, float y) const{
+	void drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const{
 		for(auto renderer: renderers){
 			renderer->drawString(font, text, x,y);
 		 }
@@ -710,7 +710,7 @@ public:
 		return path;
 	}
 
-	vector<shared_ptr<ofBaseRenderer> > renderers;
+	std::vector<std::shared_ptr<ofBaseRenderer> > renderers;
 	of3dGraphics graphics3d;
 	ofPath path;
 };

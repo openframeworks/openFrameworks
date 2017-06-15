@@ -7,7 +7,7 @@ ofxXmlPoco::~ofxXmlPoco(){
 }
 
 
-ofxXmlPoco::ofxXmlPoco(const string & path){
+ofxXmlPoco::ofxXmlPoco(const std::string & path){
 	document = new Poco::XML::Document(); // we create this so that they can be merged later
 	element = document->documentElement();
 	load(path);
@@ -74,7 +74,7 @@ int ofxXmlPoco::getNumChildren() const{
     return numberOfChildren;
 }
 
-int ofxXmlPoco::getNumChildren(const string& path) const{
+int ofxXmlPoco::getNumChildren(const std::string& path) const{
 	if(!element){
 		return 0;
 	}
@@ -84,7 +84,7 @@ int ofxXmlPoco::getNumChildren(const string& path) const{
 
     for(unsigned long i=0; i < list->length(); i++){
         if(list->item(i) && list->item(i)->nodeType() == Poco::XML::Node::ELEMENT_NODE){
-            string nodeName = list->item(i)->localName();
+	    std::string nodeName = list->item(i)->localName();
             if(path.compare(nodeName) == 0){
                 numberOfChildren++;
             }
@@ -94,15 +94,15 @@ int ofxXmlPoco::getNumChildren(const string& path) const{
     return numberOfChildren;
 }
 
-string ofxXmlPoco::toString() const{
-    ostringstream stream;
+std::string ofxXmlPoco::toString() const{
+    std::ostringstream stream;
 
     Poco::XML::DOMWriter writer;
     writer.setOptions(Poco::XML::XMLWriter::PRETTY_PRINT);
     if(document){
         try{
             writer.writeNode( stream, getPocoDocument() );
-        }catch( exception & e ){
+        }catch( std::exception & e ){
             ofLogError("ofxXmlPoco") << "toString(): " << e.what();
         }
     } else if(element){
@@ -110,7 +110,7 @@ string ofxXmlPoco::toString() const{
         writer.writeNode( stream, element );
     }
 
-    string tmp = stream.str();
+    std::string tmp = stream.str();
 
     // don't know how else to get rid of the hidden <#text></#text> nodes :/
     ofStringReplace(tmp, "<#text>", "");
@@ -140,10 +140,10 @@ void ofxXmlPoco::addXml(ofxXmlPoco& xml, bool copyAll){
     }
 }
 
-bool ofxXmlPoco::addChild(const string& path){
-    vector<string> tokens;
+bool ofxXmlPoco::addChild(const std::string& path){
+    std::vector<std::string> tokens;
 
-    if(path.find('/') != string::npos){
+    if(path.find('/') != std::string::npos){
         tokens = tokenize(path, "/");
     }
     
@@ -152,7 +152,7 @@ bool ofxXmlPoco::addChild(const string& path){
         // don't 'push' down into the new nodes
         Poco::XML::Element *el = element;
 
-        vector<Poco::XML::Element*> toBeReleased;
+	std::vector<Poco::XML::Element*> toBeReleased;
 
 		for(std::size_t i = 0; i < tokens.size(); i++){
             Poco::XML::Element *pe = getPocoDocument()->createElement(tokens.at(i));
@@ -182,7 +182,7 @@ bool ofxXmlPoco::addChild(const string& path){
     return true;
 }
 
-string ofxXmlPoco::getValue() const{
+std::string ofxXmlPoco::getValue() const{
 	//if we don't have a DOM element, return the default value
 	if(!element){
 		return "";
@@ -200,8 +200,8 @@ string ofxXmlPoco::getValue() const{
 	return "";
 }
 
-string ofxXmlPoco::getValue(const string & path) const{
-	return getValue <string>(path, "");
+std::string ofxXmlPoco::getValue(const std::string & path) const{
+	return getValue <std::string>(path, "");
 }
 
 
@@ -210,7 +210,7 @@ int ofxXmlPoco::getIntValue() const {
 }
 
 
-int ofxXmlPoco::getIntValue(const string & path) const {
+int ofxXmlPoco::getIntValue(const std::string & path) const {
 	return getValue <int>(path, 0);
 }
 
@@ -220,7 +220,7 @@ float ofxXmlPoco::getFloatValue() const {
 }
 
 
-float ofxXmlPoco::getFloatValue(const string & path) const {
+float ofxXmlPoco::getFloatValue(const std::string & path) const {
 	return getValue <float>(path, 0.0);
 }
 
@@ -230,7 +230,7 @@ bool ofxXmlPoco::getBoolValue() const {
 }
 
 
-bool ofxXmlPoco::getBoolValue(const string & path) const {
+bool ofxXmlPoco::getBoolValue(const std::string & path) const {
 	return getValue <bool>(path, false);
 }
 
@@ -240,7 +240,7 @@ int64_t ofxXmlPoco::getInt64Value() const {
 }
 
 
-int64_t ofxXmlPoco::getInt64Value(const string & path) const {
+int64_t ofxXmlPoco::getInt64Value(const std::string & path) const {
 	return getValue <int64_t>(path, 0);
 }
 
@@ -365,7 +365,7 @@ bool ofxXmlPoco::setToPrevSibling(){
     return true;
 }
 
-bool ofxXmlPoco::setValue(const string& path, const string& value){
+bool ofxXmlPoco::setValue(const std::string& path, const std::string& value){
     Poco::XML::Element *e;
     if(element){
         e = (Poco::XML::Element*) element->getNodeByPath(path);
@@ -396,12 +396,12 @@ bool ofxXmlPoco::setValue(const string& path, const string& value){
     }
 }
 
-string ofxXmlPoco::getAttribute(const string& path) const{
+std::string ofxXmlPoco::getAttribute(const std::string& path) const{
     Poco::XML::Node *e;
     if(element){
-        if(path.find("[@") == string::npos){
+        if(path.find("[@") == std::string::npos){
             // we need to create a proper path
-            string attributePath = "[@" + path + "]";
+	    std::string attributePath = "[@" + path + "]";
             e = element->getNodeByPath(attributePath);
         }else{
             e = element->getNodeByPath(path);
@@ -417,14 +417,14 @@ string ofxXmlPoco::getAttribute(const string& path) const{
     return "";
 }
 
-bool ofxXmlPoco::removeAttribute(const string& path){
-    string attributeName, pathToAttribute;
+bool ofxXmlPoco::removeAttribute(const std::string& path){
+    std::string attributeName, pathToAttribute;
 
     Poco::XML::Element *e;
     if(element){
         bool hasPath = false;
         // you can pass either /node[@attr] or just attr
-        if(path.find("[@") != string::npos){
+        if(path.find("[@") != std::string::npos){
             int attrBegin = path.find("[@");
             int start = attrBegin + 2;
             int end = path.find("]", start);
@@ -461,12 +461,12 @@ bool ofxXmlPoco::removeAttribute(const string& path){
     return false;
 }
 
-bool ofxXmlPoco::removeAttributes(const string& path){
+bool ofxXmlPoco::removeAttributes(const std::string& path){
     Poco::XML::Element *e;
     if(element){
-        if(path.find("[@") == string::npos){
+        if(path.find("[@") == std::string::npos){
             // we need to create a proper path
-            string attributePath = "[@" + path + "]";
+	    std::string attributePath = "[@" + path + "]";
             e = (Poco::XML::Element*) element->getNodeByPath(attributePath);
         }else{
             e = (Poco::XML::Element*) element->getNodeByPath(path);
@@ -521,7 +521,7 @@ bool ofxXmlPoco::removeContents(){
     return false;
 }
 
-bool ofxXmlPoco::removeContents(const string& path){    
+bool ofxXmlPoco::removeContents(const std::string& path){    
     Poco::XML::Element *e;
     if(element){
         e = (Poco::XML::Element*) element->getNodeByPath(path);
@@ -558,7 +558,7 @@ void ofxXmlPoco::releaseAll(){
 }
 
 
-bool ofxXmlPoco::remove(const string & path){ // works for both attributes and tags
+bool ofxXmlPoco::remove(const std::string & path){ // works for both attributes and tags
 	Poco::XML::Node * node;
 	if(element){
 		node = element->getNodeByPath(path);
@@ -588,7 +588,7 @@ void ofxXmlPoco::remove(){
 }
 
 
-bool ofxXmlPoco::exists(const string & path) const{ // works for both attributes and tags
+bool ofxXmlPoco::exists(const std::string & path) const{ // works for both attributes and tags
 	Poco::XML::Node * node;
 	if(element){
 		node = element->getNodeByPath(path);
@@ -602,8 +602,8 @@ bool ofxXmlPoco::exists(const string & path) const{ // works for both attributes
 	return false;
 }
 
-map<string, string> ofxXmlPoco::getAttributes() const{ // works for both attributes and tags
-    map<string, string> attrMap;
+std::map<std::string, std::string> ofxXmlPoco::getAttributes() const{ // works for both attributes and tags
+    std::map<std::string, std::string> attrMap;
 
     if(element){
         Poco::AutoPtr<Poco::XML::NamedNodeMap> attr = element->attributes();
@@ -618,13 +618,13 @@ map<string, string> ofxXmlPoco::getAttributes() const{ // works for both attribu
 }
 
 
-bool ofxXmlPoco::setAttribute(const string& path, const string& value){
+bool ofxXmlPoco::setAttribute(const std::string& path, const std::string& value){
 
-    string attributeName, pathToAttribute;
+    std::string attributeName, pathToAttribute;
     bool hasPath = false;
 
     // you can pass either /node[@attr] or just attr
-    if(path.find("[@") != string::npos){
+    if(path.find("[@") != std::string::npos){
         size_t attrBegin = path.find("[@");
         size_t start = attrBegin + 2;
         size_t end = path.find("]", start);
@@ -649,9 +649,9 @@ bool ofxXmlPoco::setAttribute(const string& path, const string& value){
     Poco::XML::Element* curElement = getPocoElement(pathToAttribute);
 
     if(!curElement){ // if it doesn't exist
-        vector<string> tokens;
+	std::vector<std::string> tokens;
 
-        if(path.find('/') != string::npos){
+        if(path.find('/') != std::string::npos){
             tokens = tokenize(pathToAttribute, "/");
         }
 
@@ -664,9 +664,9 @@ bool ofxXmlPoco::setAttribute(const string& path, const string& value){
             size_t lastExistingTag = 0;
 
             // can't use reverse_iterator b/c accumulate doesn't like it
-            for(vector<string>::iterator it = tokens.end(); it != tokens.begin(); it--){
-                string empty = "";
-                string concat = accumulate(tokens.begin(), it, std::string());
+            for(std::vector<std::string>::iterator it = tokens.end(); it != tokens.begin(); it--){
+		std::string empty = "";
+		std::string concat = accumulate(tokens.begin(), it, std::string());
                 Poco::XML::Element* testElement = getPocoElement(concat);
                 if(testElement){
                     lastExistingTag++;
@@ -702,7 +702,7 @@ bool ofxXmlPoco::setAttribute(const string& path, const string& value){
 }
 
 
-bool ofxXmlPoco::loadFromBuffer(const string & buffer){
+bool ofxXmlPoco::loadFromBuffer(const std::string & buffer){
 	Poco::XML::DOMParser parser;
 
 	// release and null out if we already have a document
@@ -722,7 +722,7 @@ bool ofxXmlPoco::loadFromBuffer(const string & buffer){
 		element = document->documentElement();
 		return false;
 	}
-	catch(const exception & e){
+	catch(const std::exception & e){
 		short msg = atoi(e.what());
 		ofLogError("ofxXmlPoco") << "parse error: " << DOMErrorMessage(msg);
 		document = new Poco::XML::Document;
@@ -732,14 +732,14 @@ bool ofxXmlPoco::loadFromBuffer(const string & buffer){
 }
 
 
-string ofxXmlPoco::getName() const {
+std::string ofxXmlPoco::getName() const {
 	if(element){
 		return element->nodeName();
 	}
 	return "";
 }
 
-bool ofxXmlPoco::setTo(const string& path){
+bool ofxXmlPoco::setTo(const std::string& path){
     if(!element){
         if(document->documentElement()) {
             element = document->documentElement();
@@ -758,7 +758,7 @@ bool ofxXmlPoco::setTo(const string& path){
     //ofLogNotice("ofxXmlPoco") << path << " " << path.find("../");
 
     // another: let's go up a little
-    if(path.find("../") != string::npos){
+    if(path.find("../") != std::string::npos){
  
         Poco::XML::Element* prev = element;
         Poco::XML::Element* parent = nullptr;
@@ -782,7 +782,7 @@ bool ofxXmlPoco::setTo(const string& path){
             element = parent;
             return true;
         }else if (parent){
-            string remainingPath = path.substr((count * 3), path.size() - (count * 3));
+            std::string remainingPath = path.substr((count * 3), path.size() - (count * 3));
             element = (Poco::XML::Element*) parent->getNodeByPath(remainingPath);
 
              if(!element){
@@ -794,7 +794,7 @@ bool ofxXmlPoco::setTo(const string& path){
             ofLogWarning("ofxXmlPoco") << "setCurrentElement(): parent is nullptr.";
             return false;
         }
-    }else if(path.find("//") != string::npos){
+    }else if(path.find("//") != std::string::npos){
         // another: we're looking all over
         Poco::XML::Element* prev = element;
         element = (Poco::XML::Element*) document->getNodeByPath(path);
@@ -826,11 +826,11 @@ Poco::XML::Element * ofxXmlPoco::getPocoElement(){
 	return element;
 }
 
-Poco::XML::Element* ofxXmlPoco::getPocoElement(const string& path){
-    string copy = path;
+Poco::XML::Element* ofxXmlPoco::getPocoElement(const std::string& path){
+    std::string copy = path;
     // does it have an attribute? just in case
     std::size_t ind = copy.find("[@");
-    if(ind != string::npos){
+    if(ind != std::string::npos){
         copy = path.substr(0, ind);
     }
 
@@ -842,11 +842,11 @@ Poco::XML::Element* ofxXmlPoco::getPocoElement(const string& path){
     }
 }
 
-const Poco::XML::Element* ofxXmlPoco::getPocoElement(const string& path) const{
-    string copy = path;
+const Poco::XML::Element* ofxXmlPoco::getPocoElement(const std::string& path) const{
+    std::string copy = path;
     // does it have an attribute? just in case
 	std::size_t ind = copy.find("[@");
-    if(ind != string::npos){
+    if(ind != std::string::npos){
         copy = path.substr(0, ind);
     }
 
@@ -869,7 +869,7 @@ const Poco::XML::Document * ofxXmlPoco::getPocoDocument() const {
 }
 
 
-string ofxXmlPoco::DOMErrorMessage(short msg){
+std::string ofxXmlPoco::DOMErrorMessage(short msg){
 	switch(msg){
 	 case 1:
 		 return "INDEX_SIZE_ERR";
@@ -926,7 +926,7 @@ void ofSerialize(ofxXmlPoco & xml, const ofAbstractParameter & parameter){
 	if(!parameter.isSerializable()){
 		return;
 	}
-	string name = parameter.getEscapedName();
+	std::string name = parameter.getEscapedName();
 	if(name == ""){
 		name = "UnknownName";
 	}
@@ -944,7 +944,7 @@ void ofSerialize(ofxXmlPoco & xml, const ofAbstractParameter & parameter){
 		ofLogVerbose("ofxXmlPoco") << "end group " << name;
 		xml.setToParent();
 	}else{
-		string value = parameter.toString();
+		std::string value = parameter.toString();
 		if(!xml.exists(name)){
 			xml.addChild(name);
 			ofLogVerbose("ofxXmlPoco") << "creating tag " << name;
@@ -959,7 +959,7 @@ void ofDeserialize(const ofxXmlPoco & xml, ofAbstractParameter & parameter){
 	if(!parameter.isSerializable()){
 		return;
 	}
-	string name = parameter.getEscapedName();
+	std::string name = parameter.getEscapedName();
 	if(parameter.type() == typeid(ofParameterGroup).name()){
 		ofParameterGroup & group = static_cast <ofParameterGroup &>(parameter);
 		if(const_cast<ofxXmlPoco&>(xml).setTo(name)){
@@ -978,8 +978,8 @@ void ofDeserialize(const ofxXmlPoco & xml, ofAbstractParameter & parameter){
 				parameter.cast <bool>() = xml.getBoolValue(name);
 			}else if(parameter.type() == typeid(ofParameter <int64_t> ).name()){
 				parameter.cast <int64_t>() = xml.getInt64Value(name);
-			}else if(parameter.type() == typeid(ofParameter <string> ).name()){
-				parameter.cast <string>() = xml.getValue(name);
+			}else if(parameter.type() == typeid(ofParameter <std::string> ).name()){
+				parameter.cast <std::string>() = xml.getValue(name);
 			}else{
 				parameter.fromString(xml.getValue(name));
 			}

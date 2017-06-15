@@ -69,7 +69,7 @@ ofRtAudioSoundStream::~ofRtAudioSoundStream() {
 
 //------------------------------------------------------------------------------
 std::vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList(ofSoundDevice::Api api) const{
-	vector<ofSoundDevice> deviceList;
+	std::vector<ofSoundDevice> deviceList;
 	try {
 		auto rtAudioApi = toRtAudio(api);
 		RtAudio audioTemp(toRtAudio(api));

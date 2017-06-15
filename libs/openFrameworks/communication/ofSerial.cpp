@@ -150,7 +150,7 @@ static bool isDeviceArduino( ofSerialDeviceInfo & A ){
 void ofSerial::buildDeviceList(){
 	deviceType = "serial";
 	devices.clear();
-	vector <string> prefixMatch;
+	std::vector <std::string> prefixMatch;
 
 	#ifdef TARGET_OSX
 
@@ -196,7 +196,7 @@ void ofSerial::buildDeviceList(){
 		ofLogNotice("ofSerial") << "found " << nPorts << " devices";
 		for(int i = 0; i < nPorts; i++){
 			//NOTE: we give the short port name for both as that is what the user should pass and the short name is more friendly
-			devices.push_back(ofSerialDeviceInfo(string(portNamesShort[i]), string(portNamesFriendly[i]), i));
+			devices.push_back(ofSerialDeviceInfo(std::string(portNamesShort[i]), std::string(portNamesFriendly[i]), i));
 		}
 
 	#endif
@@ -224,7 +224,7 @@ void ofSerial::listDevices(){
 }
 
 //----------------------------------------------------------------
-vector <ofSerialDeviceInfo> ofSerial::getDeviceList(){
+std::vector <ofSerialDeviceInfo> ofSerial::getDeviceList(){
 	buildDeviceList();
 	return devices;
 }
@@ -276,7 +276,7 @@ bool ofSerial::setup(int deviceNumber, int baud){
 }
 
 //----------------------------------------------------------------
-bool ofSerial::setup(string portName, int baud){
+bool ofSerial::setup(std::string portName, int baud){
 	bInited = false;
 
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )

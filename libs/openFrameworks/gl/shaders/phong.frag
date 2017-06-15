@@ -1,4 +1,4 @@
-static const string fragmentShader = R"(
+static const std::string fragmentShader = R"(
     IN vec2 v_texcoord; // pass the texCoord if needed
     IN vec3 v_normal;
     IN vec3 v_transformedNormal;

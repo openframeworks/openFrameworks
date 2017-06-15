@@ -18,18 +18,18 @@
 #endif
 
 
-static const string COLOR_ATTRIBUTE="color";
-static const string POSITION_ATTRIBUTE="position";
-static const string NORMAL_ATTRIBUTE="normal";
-static const string TEXCOORD_ATTRIBUTE="texcoord";
+static const std::string COLOR_ATTRIBUTE="color";
+static const std::string POSITION_ATTRIBUTE="position";
+static const std::string NORMAL_ATTRIBUTE="normal";
+static const std::string TEXCOORD_ATTRIBUTE="texcoord";
 
-static map<GLuint,int> & getShaderIds(){
-	static map<GLuint,int> * ids = new map<GLuint,int>;
+static std::map<GLuint,int> & getShaderIds(){
+	static std::map<GLuint,int> * ids = new std::map<GLuint,int>;
 	return *ids;
 }
 
-static map<GLuint,int> & getProgramIds(){
-	static map<GLuint,int> * ids = new map<GLuint,int>;
+static std::map<GLuint,int> & getProgramIds(){
+	static std::map<GLuint,int> * ids = new std::map<GLuint,int>;
 	return *ids;
 }
 
@@ -292,8 +292,8 @@ bool ofShader::setupShaderFromFile(GLenum type, const std::filesystem::path& fil
 	ofBuffer buffer = ofBufferFromFile(filename);
 	// we need to make absolutely sure to have an absolute path here, so that any #includes
 	// within the shader files have a root directory to traverse from.
-	string absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
-	string sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
+	std::string absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
+	std::string sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
 	if(buffer.size()) {
 		return setupShaderFromSource(type, buffer.getText(), sourceDirectoryPath);
 	} else {
@@ -307,8 +307,8 @@ ofShader::Source ofShader::sourceFromFile(GLenum type, const std::filesystem::pa
 	ofBuffer buffer = ofBufferFromFile(filename);
 	// we need to make absolutely sure to have an absolute path here, so that any #includes
 	// within the shader files have a root directory to traverse from.
-	string absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
-	string sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
+	std::string absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
+	std::string sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
 	if(buffer.size()) {
 		return Source{type, buffer.getText(), sourceDirectoryPath};
 	} else {
@@ -318,7 +318,7 @@ ofShader::Source ofShader::sourceFromFile(GLenum type, const std::filesystem::pa
 }
 
 //--------------------------------------------------------------
-bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath) {
+bool ofShader::setupShaderFromSource(GLenum type, std::string source, std::string sourceDirectoryPath) {
 	return setupShaderFromSource({type, source, sourceDirectoryPath});
 }
 
@@ -409,21 +409,21 @@ bool ofShader::setupShaderFromSource(ofShader::Source && source){
  */
 
 //--------------------------------------------------------------
-string ofShader::parseForIncludes( const string& source, const std::filesystem::path& sourceDirectoryPath) {
-	vector<string> included;
+std::string ofShader::parseForIncludes( const std::string& source, const std::filesystem::path& sourceDirectoryPath) {
+	std::vector<std::string> included;
 	return parseForIncludes( source, included, 0, sourceDirectoryPath);
 }
 
 //--------------------------------------------------------------
-string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const std::filesystem::path& sourceDirectoryPath) {
+std::string ofShader::parseForIncludes( const std::string& source, std::vector<std::string>& included, int level, const std::filesystem::path& sourceDirectoryPath) {
 
 	if ( level > 32 ) {
 		ofLogError( "ofShader", "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
 		return "";
 	}
 
-	stringstream output;
-	stringstream input;
+	std::stringstream output;
+	std::stringstream input;
 	input << source;
 
 	auto match_pragma_include = [](const std::string& s_, std::string& filename_) -> bool {
@@ -463,13 +463,13 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 	// once std::regex is available across the board, use this regex in favour of the above lambda:
 	// std::regex re("^\\s*#\\s*pragma\\s+include\\s+[\"<](.*)[\">].*");
 
-	string line;
+	std::string line;
 	while( std::getline( input, line ) ) {
 
-		string include;
+		std::string include;
 
 		if (!match_pragma_include(line, include)){
-			output << line << endl;
+			output << line << std::endl;
 			continue;
 		};
 
@@ -491,15 +491,15 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 			continue;
 		}
 
-		string currentDir = ofFile(include).getEnclosingDirectory();
-		output << parseForIncludes( buffer.getText(), included, level + 1, currentDir ) << endl;
+		std::string currentDir = ofFile(include).getEnclosingDirectory();
+		output << parseForIncludes( buffer.getText(), included, level + 1, currentDir ) << std::endl;
 	}
 
 	return output.str();
 }
 
 //--------------------------------------------------------------
-string ofShader::getShaderSource(GLenum type)  const{
+std::string ofShader::getShaderSource(GLenum type)  const{
 	auto source = shaders.find(type);
 	if ( source != shaders.end()) {
 		return source->second.source.expandedSource;
@@ -579,18 +579,18 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 			std::regex nvidia_ati("^.*[(:]{1}(\\d+)[:)]{1}.*");
 			std::regex intel("^[0-9]+:([0-9]+)\\([0-9]+\\):.*$");
 			std::smatch matches;
-			string infoString = ofTrim(infoBuffer);
+			std::string infoString = ofTrim(infoBuffer);
 			if (std::regex_search(infoString, matches, intel) || std::regex_search(infoString, matches, nvidia_ati)){
 				ofBuffer buf;
 				buf.set(shaders[type].source.expandedSource);
 				ofBuffer::Line line = buf.getLines().begin();
 				int  offendingLineNumber = ofToInt(matches[1]);
-				ostringstream msg;
-				msg << "ofShader: " + nameForType(type) + ", offending line " << offendingLineNumber << " :"<< endl;
+				std::ostringstream msg;
+				msg << "ofShader: " + nameForType(type) + ", offending line " << offendingLineNumber << " :"<< std::endl;
 				for(int i=0; line != buf.getLines().end(); line++, i++ ){
-					string s = *line;
+					std::string s = *line;
 					if ( i >= offendingLineNumber -3 && i < offendingLineNumber + 2 ){
-						msg << "\t" << setw(5) << (i+1) << "\t" << s << endl;
+						msg << "\t" << std::setw(5) << (i+1) << "\t" << s << std::endl;
 					}
 				}
 				ofLog(logLevel) << msg.str();
@@ -616,7 +616,7 @@ void ofShader::checkProgramInfoLog() {
 		// We need to find a robust way of extracing this information from
 		// the log, and unfortunately can't use regex whilst gcc on RPi is assumed to
 		// be < 4.9, which is the first version fully supporting this c++11 feature.
-		string msg = "ofShader: program reports:\n";
+		std::string msg = "ofShader: program reports:\n";
 		ofLogError("ofShader") << msg + infoBuffer.getText();
 #ifdef TARGET_RAPSBERRY_PI
 		for(auto it: shaders){
@@ -677,10 +677,10 @@ bool ofShader::linkProgram() {
 		GLenum type = 0;
 		GLsizei length;
 		GLint location;
-		vector<GLchar> uniformName(uniformMaxLength);
+		std::vector<GLchar> uniformName(uniformMaxLength);
 		for(GLint i = 0; i < numUniforms; i++) {
 			glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName.data());
-			string name(uniformName.begin(), uniformName.begin()+length);
+			std::string name(uniformName.begin(), uniformName.begin()+length);
 			// some drivers return uniform_name[0] for array uniforms
 			// instead of the real uniform name
 			location = glGetUniformLocation(program, name.c_str());
@@ -703,10 +703,10 @@ bool ofShader::linkProgram() {
 
 			count = -1;
 			type = 0;
-			vector<GLchar> uniformBlockName(uniformMaxLength);
+			std::vector<GLchar> uniformBlockName(uniformMaxLength);
 			for(GLint i = 0; i < numUniformBlocks; i++) {
 				glGetActiveUniformBlockName(program, i, uniformMaxLength, &length, uniformBlockName.data() );
-				string name(uniformBlockName.begin(), uniformBlockName.begin()+length);
+				std::string name(uniformBlockName.begin(), uniformBlockName.begin()+length);
 				uniformBlocksCache[name] = glGetUniformBlockIndex(program, name.c_str());
 			}
 		}
@@ -766,7 +766,7 @@ void ofShader::reloadGL(){
 #endif
 
 //--------------------------------------------------------------
-void ofShader::bindAttribute(GLuint location, const string & name) const{
+void ofShader::bindAttribute(GLuint location, const std::string & name) const{
 	attributesBindingsCache[name] = location;
 	glBindAttribLocation(program,location,name.c_str());
 }
@@ -911,12 +911,12 @@ void ofShader::dispatchCompute(GLuint x, GLuint y, GLuint z) const{
 #endif
 
 //--------------------------------------------------------------
-void ofShader::setUniformTexture(const string & name, const ofBaseHasTexture& img, int textureLocation)  const{
+void ofShader::setUniformTexture(const std::string & name, const ofBaseHasTexture& img, int textureLocation)  const{
 	setUniformTexture(name, img.getTexture(), textureLocation);
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation) const{
+void ofShader::setUniformTexture(const std::string & name, int textureTarget, GLint textureID, int textureLocation) const{
 	if(bLoaded) {
 		glActiveTexture(GL_TEXTURE0 + textureLocation);
 		if (!ofIsGLProgrammableRenderer()){
@@ -932,7 +932,7 @@ void ofShader::setUniformTexture(const string & name, int textureTarget, GLint t
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformTexture(const string & name, const ofTexture& tex, int textureLocation)  const{
+void ofShader::setUniformTexture(const std::string & name, const ofTexture& tex, int textureLocation)  const{
 	if(bLoaded) {
 		ofTextureData texData = tex.getTextureData();
 		glActiveTexture(GL_TEXTURE0 + textureLocation);
@@ -959,7 +959,7 @@ void ofShader::setUniformTexture(const string & name, const ofTexture& tex, int 
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1i(const string & name, int v1)  const{
+void ofShader::setUniform1i(const std::string & name, int v1)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform1i(loc, v1);
@@ -967,7 +967,7 @@ void ofShader::setUniform1i(const string & name, int v1)  const{
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2i(const string & name, int v1, int v2)  const{
+void ofShader::setUniform2i(const std::string & name, int v1, int v2)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform2i(loc, v1, v2);
@@ -975,7 +975,7 @@ void ofShader::setUniform2i(const string & name, int v1, int v2)  const{
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3i(const string & name, int v1, int v2, int v3)  const{
+void ofShader::setUniform3i(const std::string & name, int v1, int v2, int v3)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform3i(loc, v1, v2, v3);
@@ -983,7 +983,7 @@ void ofShader::setUniform3i(const string & name, int v1, int v2, int v3)  const{
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4i(const string & name, int v1, int v2, int v3, int v4)  const{
+void ofShader::setUniform4i(const std::string & name, int v1, int v2, int v3, int v4)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) 	glUniform4i(loc, v1, v2, v3, v4);
@@ -991,7 +991,7 @@ void ofShader::setUniform4i(const string & name, int v1, int v2, int v3, int v4)
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1f(const string & name, float v1)  const{
+void ofShader::setUniform1f(const std::string & name, float v1)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform1f(loc, v1);
@@ -999,7 +999,7 @@ void ofShader::setUniform1f(const string & name, float v1)  const{
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2f(const string & name, float v1, float v2)  const{
+void ofShader::setUniform2f(const std::string & name, float v1, float v2)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform2f(loc, v1, v2);
@@ -1007,7 +1007,7 @@ void ofShader::setUniform2f(const string & name, float v1, float v2)  const{
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3f(const string & name, float v1, float v2, float v3)  const{
+void ofShader::setUniform3f(const std::string & name, float v1, float v2, float v3)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform3f(loc, v1, v2, v3);
@@ -1015,7 +1015,7 @@ void ofShader::setUniform3f(const string & name, float v1, float v2, float v3)  
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4f(const string & name, float v1, float v2, float v3, float v4)  const{
+void ofShader::setUniform4f(const std::string & name, float v1, float v2, float v3, float v4)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform4f(loc, v1, v2, v3, v4);
@@ -1024,27 +1024,27 @@ void ofShader::setUniform4f(const string & name, float v1, float v2, float v3, f
 
 
 //--------------------------------------------------------------
-void ofShader::setUniform2f(const string & name, const glm::vec2 & v) const{
+void ofShader::setUniform2f(const std::string & name, const glm::vec2 & v) const{
 	setUniform2f(name,v.x,v.y);
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3f(const string & name, const glm::vec3 & v) const{
+void ofShader::setUniform3f(const std::string & name, const glm::vec3 & v) const{
 	setUniform3f(name,v.x,v.y,v.z);
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4f(const string & name, const glm::vec4 & v) const{
+void ofShader::setUniform4f(const std::string & name, const glm::vec4 & v) const{
 	setUniform4f(name,v.x,v.y,v.z,v.w);
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4f(const string & name, const ofFloatColor & v) const{
+void ofShader::setUniform4f(const std::string & name, const ofFloatColor & v) const{
 	setUniform4f(name,v.r,v.g,v.b,v.a);
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1iv(const string & name, const int* v, int count)  const{
+void ofShader::setUniform1iv(const std::string & name, const int* v, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform1iv(loc, count, v);
@@ -1052,7 +1052,7 @@ void ofShader::setUniform1iv(const string & name, const int* v, int count)  cons
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2iv(const string & name, const int* v, int count)  const{
+void ofShader::setUniform2iv(const std::string & name, const int* v, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform2iv(loc, count, v);
@@ -1060,7 +1060,7 @@ void ofShader::setUniform2iv(const string & name, const int* v, int count)  cons
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3iv(const string & name, const int* v, int count)  const{
+void ofShader::setUniform3iv(const std::string & name, const int* v, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform3iv(loc, count, v);
@@ -1068,7 +1068,7 @@ void ofShader::setUniform3iv(const string & name, const int* v, int count)  cons
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4iv(const string & name, const int* v, int count)  const{
+void ofShader::setUniform4iv(const std::string & name, const int* v, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform4iv(loc, count, v);
@@ -1076,7 +1076,7 @@ void ofShader::setUniform4iv(const string & name, const int* v, int count)  cons
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1fv(const string & name, const float* v, int count)  const{
+void ofShader::setUniform1fv(const std::string & name, const float* v, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform1fv(loc, count, v);
@@ -1084,7 +1084,7 @@ void ofShader::setUniform1fv(const string & name, const float* v, int count)  co
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2fv(const string & name, const float* v, int count)  const{
+void ofShader::setUniform2fv(const std::string & name, const float* v, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform2fv(loc, count, v);
@@ -1092,7 +1092,7 @@ void ofShader::setUniform2fv(const string & name, const float* v, int count)  co
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3fv(const string & name, const float* v, int count)  const{
+void ofShader::setUniform3fv(const std::string & name, const float* v, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform3fv(loc, count, v);
@@ -1100,7 +1100,7 @@ void ofShader::setUniform3fv(const string & name, const float* v, int count)  co
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4fv(const string & name, const float* v, int count)  const{
+void ofShader::setUniform4fv(const std::string & name, const float* v, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform4fv(loc, count, v);
@@ -1133,7 +1133,7 @@ void ofShader::setUniforms(const ofParameterGroup & parameters) const{
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformMatrix3f(const string & name, const glm::mat3 & m, int count)  const{
+void ofShader::setUniformMatrix3f(const std::string & name, const glm::mat3 & m, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniformMatrix3fv(loc, count, GL_FALSE, glm::value_ptr(m));
@@ -1141,7 +1141,7 @@ void ofShader::setUniformMatrix3f(const string & name, const glm::mat3 & m, int 
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformMatrix4f(const string & name, const glm::mat4 & m, int count) const{
+void ofShader::setUniformMatrix4f(const std::string & name, const glm::mat4 & m, int count) const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniformMatrix4fv(loc, count, GL_FALSE, glm::value_ptr(m));
@@ -1199,7 +1199,7 @@ void ofShader::setAttribute4f(GLint location, float v1, float v2, float v3, floa
 }
 
 //--------------------------------------------------------------
-void ofShader::setAttribute1fv(const string & name, const float* v, GLsizei stride) const{
+void ofShader::setAttribute1fv(const std::string & name, const float* v, GLsizei stride) const{
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -1210,7 +1210,7 @@ void ofShader::setAttribute1fv(const string & name, const float* v, GLsizei stri
 }
 
 //--------------------------------------------------------------
-void ofShader::setAttribute2fv(const string & name, const float* v, GLsizei stride) const{
+void ofShader::setAttribute2fv(const std::string & name, const float* v, GLsizei stride) const{
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -1222,7 +1222,7 @@ void ofShader::setAttribute2fv(const string & name, const float* v, GLsizei stri
 }
 
 //--------------------------------------------------------------
-void ofShader::setAttribute3fv(const string & name, const float* v, GLsizei stride) const{
+void ofShader::setAttribute3fv(const std::string & name, const float* v, GLsizei stride) const{
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -1233,7 +1233,7 @@ void ofShader::setAttribute3fv(const string & name, const float* v, GLsizei stri
 }
 
 //--------------------------------------------------------------
-void ofShader::setAttribute4fv(const string & name, const float* v, GLsizei stride) const{
+void ofShader::setAttribute4fv(const std::string & name, const float* v, GLsizei stride) const{
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -1270,12 +1270,12 @@ void ofShader::setAttribute4d(GLint location, double v1, double v2, double v3, d
 #endif
 
 //--------------------------------------------------------------
-GLint ofShader::getAttributeLocation(const string & name)  const{
+GLint ofShader::getAttributeLocation(const std::string & name)  const{
 	return glGetAttribLocation(program, name.c_str());
 }
 
 //--------------------------------------------------------------
-GLint ofShader::getUniformLocation(const string & name)  const{
+GLint ofShader::getUniformLocation(const std::string & name)  const{
 	if(!bLoaded) return -1;
 	auto it = uniformsCache.find(name);
 	if (it == uniformsCache.end()){
@@ -1288,7 +1288,7 @@ GLint ofShader::getUniformLocation(const string & name)  const{
 #ifndef TARGET_OPENGLES
 #ifdef GLEW_ARB_uniform_buffer_object
 //--------------------------------------------------------------
-GLint ofShader::getUniformBlockIndex(const string & name)  const{
+GLint ofShader::getUniformBlockIndex(const std::string & name)  const{
 	if(!bLoaded) return -1;
 
 	if(GLEW_ARB_uniform_buffer_object) {
@@ -1305,7 +1305,7 @@ GLint ofShader::getUniformBlockIndex(const string & name)  const{
 }
 
 //--------------------------------------------------------------
-GLint ofShader::getUniformBlockBinding( const string & name ) const{
+GLint ofShader::getUniformBlockBinding( const std::string & name ) const{
 	if(!bLoaded) return -1;
 
 	if(GLEW_ARB_uniform_buffer_object) {
@@ -1332,7 +1332,7 @@ void ofShader::printActiveUniformBlocks()  const{
 		glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniformBlockMaxLength);
 
 		GLchar* uniformBlockName = new GLchar[uniformBlockMaxLength];
-		stringstream line;
+		std::stringstream line;
 		for(GLint i = 0; i < numUniformBlocks; i++) {
 			GLsizei length;
 			GLint blockBinding;
@@ -1356,7 +1356,7 @@ void ofShader::printActiveUniformBlocks()  const{
 }
 
 
-void ofShader::bindUniformBlock(GLuint binding, const string & name) const{
+void ofShader::bindUniformBlock(GLuint binding, const std::string & name) const{
 	if(bLoaded){
 		if(GLEW_ARB_uniform_buffer_object) {
 			GLint index = getUniformBlockIndex(name);
@@ -1384,7 +1384,7 @@ void ofShader::printActiveUniforms()  const{
 	GLenum type = 0;
 	GLchar* uniformName = new GLchar[uniformMaxLength];
 	for(GLint i = 0; i < numUniforms; i++) {
-		stringstream line;
+		std::stringstream line;
 		GLsizei length;
 		GLint location;
 		glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName);
@@ -1412,7 +1412,7 @@ void ofShader::printActiveAttributes()  const{
 	GLint count = -1;
 	GLenum type = 0;
 	GLchar* attributeName = new GLchar[attributeMaxLength];
-	stringstream line;
+	std::stringstream line;
 	for(GLint i = 0; i < numAttributes; i++) {
 		GLsizei length;
 		glGetActiveAttrib(program, i, attributeMaxLength, &length, &count, &type, attributeName);
@@ -1453,7 +1453,7 @@ bool ofShader::operator!=(const ofShader & other) const{
 }
 
 //--------------------------------------------------------------
-string ofShader::nameForType(GLenum type){
+std::string ofShader::nameForType(GLenum type){
 	switch(type) {
 		case GL_VERTEX_SHADER: return "GL_VERTEX_SHADER";
 		case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
