@@ -442,7 +442,7 @@ bool ofxInputField<Type>::mouseScrolled(ofMouseEventArgs & mouse){
 
 //-----------------------------------------------------------
 template<>
-bool ofxInputField<string>::mouseScrolled(ofMouseEventArgs & mouse){
+bool ofxInputField<std::string>::mouseScrolled(ofMouseEventArgs & mouse){
 	if(b.inside(mouse)){
 		return true;
 	}else{
@@ -602,7 +602,7 @@ int ofxInputField<Type>::insertAlphabetic(uint32_t character){
 
 //-----------------------------------------------------------
 template<>
-int ofxInputField<string>::insertAlphabetic(uint32_t character){
+int ofxInputField<std::string>::insertAlphabetic(uint32_t character){
 	return insertKeystroke(character);
 }
 
@@ -765,7 +765,7 @@ void ofxInputField<Type>::parseInput(){
 
 //-----------------------------------------------------------
 template<>
-void ofxInputField<string>::parseInput(){
+void ofxInputField<std::string>::parseInput(){
 	value = input;
 }
 

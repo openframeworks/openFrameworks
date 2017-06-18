@@ -28,8 +28,8 @@ inline ofDefaultVec3 aiVecToOfVec(const aiVector3D& v){
 }
 
 //--------------------------------------------------------------
-inline vector<ofDefaultVec3> aiVecVecToOfVecVec(const vector<aiVector3D>& v){
-	vector<ofDefaultVec3> ofv(v.size());
+inline std::vector<ofDefaultVec3> aiVecVecToOfVecVec(const std::vector<aiVector3D>& v){
+	std::vector<ofDefaultVec3> ofv(v.size());
 	memcpy(ofv.data(),v.data(),v.size()*sizeof(ofDefaultVec3));
 	return ofv;
 }

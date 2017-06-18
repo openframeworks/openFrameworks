@@ -119,8 +119,8 @@ void ofDisableArbTex(){
 }
 
 
-static map<GLuint,int> & getTexturesIndex(){
-	static map<GLuint,int> * textureReferences = new map<GLuint,int>;
+static std::map<GLuint,int> & getTexturesIndex(){
+	static std::map<GLuint,int> * textureReferences = new std::map<GLuint,int>;
 	return *textureReferences;
 }
 
@@ -161,8 +161,8 @@ static void release(GLuint id){
 }
 
 #ifdef TARGET_ANDROID
-static set<ofTexture*> & allTextures(){
-	static set<ofTexture*> * allTextures = new set<ofTexture*>;
+static std::set<ofTexture*> & allTextures(){
+	static std::set<ofTexture*> * allTextures = new std::set<ofTexture*>;
 	return *allTextures;
 }
 
@@ -739,8 +739,8 @@ void ofTexture::generateMipmap(){
 			static bool warningIssuedAlready = false;
 			
 			if (!warningIssuedAlready){
-				ofLogWarning() << "Mipmaps are not supported for textureTarget 0x" << hex << texData.textureTarget << endl
-				<< "Most probably you are trying to create mipmaps from a GL_TEXTURE_RECTANGLE texture." << endl
+				ofLogWarning() << "Mipmaps are not supported for textureTarget 0x" << std::hex << texData.textureTarget << std::endl
+				<< "Most probably you are trying to create mipmaps from a GL_TEXTURE_RECTANGLE texture." << std::endl
 				<< "Try ofDisableArbTex() before loading this texture.";
 				warningIssuedAlready = true;
 			}
@@ -842,7 +842,7 @@ void ofTexture::setAlphaMask(ofTexture & mask){
 	if(mask.texData.textureTarget!=this->texData.textureTarget){
 		ofLogError("ofTexture") << "Cannot set alpha mask with different texture target";
 	}else{
-		texData.alphaMask = shared_ptr<ofTexture>(new ofTexture(mask));
+		texData.alphaMask = std::shared_ptr<ofTexture>(new ofTexture(mask));
 	}
 }
 
@@ -963,8 +963,8 @@ void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint magFilter){
 	if ( (minFilter > GL_LINEAR) && texData.hasMipmap == false ){
 		static bool hasWarnedNoMipmapsForMinFilter = false;
 		if(!hasWarnedNoMipmapsForMinFilter) {
-			ofLogWarning() << "Texture has no mipmaps - but minFilter 0x"<< hex << minFilter << " requires mipmaps."
-			<< endl << "Call ofTexture::generateMipmaps() first.";
+			ofLogWarning() << "Texture has no mipmaps - but minFilter 0x"<< std::hex << minFilter << " requires mipmaps."
+			<< std::endl << "Call ofTexture::generateMipmaps() first.";
 		}
 		hasWarnedNoMipmapsForMinFilter = true;
 		return;
@@ -1062,7 +1062,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 
 //----------------------------------------------------------
 void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
-	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	std::shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
 	if(renderer){
 		renderer->draw(*this,x,y,z,w,h,sx,sy,sw,sh);
 	}
@@ -1082,7 +1082,7 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 	GLfloat py1 = h+y;
 
 	if (texData.bFlipTexture == vflipped){
-		swap(py0,py1);
+		std::swap(py0,py1);
 	}
 
 	// for rect mode center, let's do this:
@@ -1162,7 +1162,7 @@ void ofTexture::draw(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3
 	// before glEnable or else the shader gets confused
 	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
 	//glActiveTexture(GL_TEXTURE0);
-	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	std::shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
 	if(renderer){
 		bind(0);
 		renderer->draw(getQuad(p1,p2,p3,p4),OF_MESH_FILL);

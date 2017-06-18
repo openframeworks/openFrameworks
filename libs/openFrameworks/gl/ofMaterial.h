@@ -170,7 +170,7 @@ public:
 	void setCustomUniform3i(const std::string & name, glm::tvec3<int> value);
 	void setCustomUniform4i(const std::string & name, glm::tvec4<int> value);
 	void setCustomUniformTexture(const std::string & name, const ofTexture & value, int textureLocation);
-	void setCustomUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation);
+	void setCustomUniformTexture(const std::string & name, int textureTarget, GLint textureID, int textureLocation);
 
 
 
@@ -199,8 +199,8 @@ private:
 
 	mutable std::map<ofGLProgrammableRenderer*,std::shared_ptr<Shaders>> shaders;
 	static std::map<ofGLProgrammableRenderer*, std::map<std::string,std::weak_ptr<Shaders>>> shadersMap;
-	static string vertexShader;
-	static string fragmentShader;
+	static std::string vertexShader;
+	static std::string fragmentShader;
 	std::map<std::string, float> uniforms1f;
 	std::map<std::string, glm::vec2> uniforms2f;
 	std::map<std::string, glm::vec3> uniforms3f;

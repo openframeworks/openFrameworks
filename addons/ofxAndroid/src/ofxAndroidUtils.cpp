@@ -63,7 +63,7 @@ bool ofxAndroidIsMobileOnline(){
 	return ofGetJNIEnv()->CallStaticBooleanMethod(javaClass,isMobileOnline);
 }
 
-string ofxAndroidGetStringRes(string id){
+std::string ofxAndroidGetStringRes(std::string id){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
@@ -102,7 +102,7 @@ void ofxAndroidPauseApp(){
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,pauseApp);
 }
 
-void ofxAndroidAlertBox(string msg){
+void ofxAndroidAlertBox(std::string msg){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
@@ -121,7 +121,7 @@ void ofxAndroidAlertBox(string msg){
 }
 
 
-int ofxAndroidProgressBox(string msg){
+int ofxAndroidProgressBox(std::string msg){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
@@ -158,7 +158,7 @@ void ofxAndroidDismissProgressBox(int id){
 
 
 
-void ofxAndroidOkCancelBox(string msg){
+void ofxAndroidOkCancelBox(std::string msg){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
@@ -176,7 +176,7 @@ void ofxAndroidOkCancelBox(string msg){
 	ofGetJNIEnv()->DeleteLocalRef((jobject)jMsg);
 }
 
-void ofxAndroidYesNoBox(string msg){
+void ofxAndroidYesNoBox(std::string msg){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
@@ -195,7 +195,7 @@ void ofxAndroidYesNoBox(string msg){
 }
 
 
-void ofxAndroidAlertTextBox(string question, string text){
+void ofxAndroidAlertTextBox(std::string question, std::string text){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
@@ -215,7 +215,7 @@ void ofxAndroidAlertTextBox(string question, string text){
 	ofGetJNIEnv()->DeleteLocalRef((jobject)jQuestion);
 }
 
-bool ofxAndroidAlertListBox(string title, const vector<string> & list){
+bool ofxAndroidAlertListBox(std::string title, const std::vector<std::string> & list){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
@@ -244,7 +244,7 @@ bool ofxAndroidAlertListBox(string title, const vector<string> & list){
 	return res;
 }
 
-void ofxAndroidToast(string msg){
+void ofxAndroidToast(std::string msg){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
@@ -345,7 +345,7 @@ void ofxAndroidDisableMulticast(){
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method);
 }
 
-void ofxAndroidSetViewItemChecked(string item_name, bool checked){
+void ofxAndroidSetViewItemChecked(std::string item_name, bool checked){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
@@ -361,7 +361,7 @@ void ofxAndroidSetViewItemChecked(string item_name, bool checked){
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setViewItemChecked,ofGetJNIEnv()->NewStringUTF(item_name.c_str()),checked);
 }
 
-string ofxAndroidRandomUUID(){
+std::string ofxAndroidRandomUUID(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
@@ -397,7 +397,7 @@ void ofxAndroidMonitorNetworkState(){
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method);
 }
 
-string ofxAndroidGetTextBoxResult(){
+std::string ofxAndroidGetTextBoxResult(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
@@ -417,7 +417,7 @@ string ofxAndroidGetTextBoxResult(){
 	return ofGetJNIEnv()->GetStringUTFChars(str,&isCopy);
 }
 
-void ofxAndroidLaunchBrowser(string url){
+void ofxAndroidLaunchBrowser(std::string url){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){

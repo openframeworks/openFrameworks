@@ -3,10 +3,9 @@
 #include "ofBitmapFont.h"
 #include "ofXml.h"
 #include "ofJson.h"
-using namespace std;
 
 
-void ofxGuiSetFont(const string & fontPath, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
+void ofxGuiSetFont(const std::string & fontPath, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
 	ofxBaseGui::loadFont(fontPath, fontsize, _bAntiAliased, _bFullCharacterSet, dpi);
 }
 
@@ -164,7 +163,7 @@ void ofxBaseGui::unbindFontTexture(){
 }
 
 
-ofMesh ofxBaseGui::getTextMesh(const string & text, float x, float y){
+ofMesh ofxBaseGui::getTextMesh(const std::string & text, float x, float y){
 	if(useTTF){
 		return font.getStringMesh(text, x, y);
 	}else{
@@ -172,7 +171,7 @@ ofMesh ofxBaseGui::getTextMesh(const string & text, float x, float y){
 	}
 }
 
-ofRectangle ofxBaseGui::getTextBoundingBox(const string & text, float x, float y){
+ofRectangle ofxBaseGui::getTextBoundingBox(const std::string & text, float x, float y){
 	if(useTTF){
 		return font.getStringBoundingBox(text, x, y);
 	}else{
@@ -215,7 +214,7 @@ void ofxBaseGui::loadFromFile(const std::string& filename){
 	}
 }
 
-string ofxBaseGui::getName(){
+std::string ofxBaseGui::getName(){
 	return getParameter().getName();
 }
 
@@ -358,8 +357,8 @@ void ofxBaseGui::setNeedsRedraw(){
 	needsRedraw = true;
 }
 
-string ofxBaseGui::saveStencilToHex(const ofImage & img){
-	stringstream strm;
+std::string ofxBaseGui::saveStencilToHex(const ofImage & img){
+	std::stringstream strm;
 	int width = img.getWidth();
 	int height = img.getHeight();
 	int n = width * height;
@@ -372,7 +371,7 @@ string ofxBaseGui::saveStencilToHex(const ofImage & img){
 		}
 		i++;
 		if(i % 8 == 0){
-			strm << "0x" << hex << (unsigned int)cur;
+			strm << "0x" << std::hex << (unsigned int)cur;
 			cur = 0;
 			shift = 0;
 			if(i < n){

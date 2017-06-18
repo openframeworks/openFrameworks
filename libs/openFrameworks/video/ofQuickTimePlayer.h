@@ -16,7 +16,7 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		ofQuickTimePlayer();
 		~ofQuickTimePlayer();
 
-		 bool			load(string name);
+		 bool			load(std::string name);
 		 void			closeMovie();	
 		 void			close();
 		 void			update();

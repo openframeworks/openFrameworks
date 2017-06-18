@@ -281,7 +281,7 @@
         
 		selectedAudioDevice = [audioDevices objectAtIndex:_audioDeviceID];
         if(selectedAudioDevice == nil){
-            ofLogError("ofQTKitGrabber") << "audio device is NULL for id " << _audioDeviceID << endl;
+		ofLogError("ofQTKitGrabber") << "audio device is NULL for id " << _audioDeviceID << std::endl;
         }
 		if([self setSelectedAudioDevice:selectedAudioDevice]){
 			audioDeviceID = _audioDeviceID;
@@ -649,11 +649,11 @@ void ofQTKitGrabber::setAudioDeviceID(int _audioDeviceID){
 	}
 }
 
-void ofQTKitGrabber::setDeviceID(string _videoDeviceIDString){
+void ofQTKitGrabber::setDeviceID(std::string _videoDeviceIDString){
     setVideoDeviceID(_videoDeviceIDString);
 }
 
-void ofQTKitGrabber::setVideoDeviceID(string _videoDeviceIDString){
+void ofQTKitGrabber::setVideoDeviceID(std::string _videoDeviceIDString){
 	@autoreleasepool {	
 		// set array filled with devices
 		NSArray* deviceArray = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo] 
@@ -672,7 +672,7 @@ void ofQTKitGrabber::setVideoDeviceID(string _videoDeviceIDString){
 	}
 }
 
-void ofQTKitGrabber::setAudioDeviceID(string _audioDeviceIDString){
+void ofQTKitGrabber::setAudioDeviceID(std::string _audioDeviceIDString){
 	@autoreleasepool {
 		// set array filled with devices
 		NSArray* deviceArray = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeSound];
@@ -731,31 +731,31 @@ bool ofQTKitGrabber::initRecording(){
 	return success;
 }
 
-const vector<string>& ofQTKitGrabber::listVideoCodecs() const{
+const std::vector<std::string>& ofQTKitGrabber::listVideoCodecs() const{
 	@autoreleasepool {
 		NSArray* videoCodecs = [QTKitVideoGrabber listVideoCodecs];
 		videoCodecsVec.clear();
 		for (id object in videoCodecs){
-			string str = [[object description] UTF8String];
+			std::string str = [[object description] UTF8String];
 			videoCodecsVec.push_back(str);
 		}
 	}
 	return videoCodecsVec;
 }
 
-const vector<string>& ofQTKitGrabber::listAudioCodecs() const{
+const std::vector<std::string>& ofQTKitGrabber::listAudioCodecs() const{
 	@autoreleasepool {
 		NSArray* audioCodecs = [QTKitVideoGrabber listAudioCodecs];
 		audioCodecsVec.clear();
 		for (id object in audioCodecs){
-			string str = [[object description] UTF8String];
+			std::string str = [[object description] UTF8String];
 			audioCodecsVec.push_back(str);
 		}
 	}
 	return audioCodecsVec;
 }
 
-void ofQTKitGrabber::setVideoCodec(string _videoCodec){
+void ofQTKitGrabber::setVideoCodec(std::string _videoCodec){
 	videoCodecIDString = _videoCodec;
 	if(confirmInit()){
 		@autoreleasepool {
@@ -765,7 +765,7 @@ void ofQTKitGrabber::setVideoCodec(string _videoCodec){
 	}
 }
 
-void ofQTKitGrabber::setAudioCodec(string _audioCodec){
+void ofQTKitGrabber::setAudioCodec(std::string _audioCodec){
 	if(confirmInit()){
 		audioCodecIDString = _audioCodec;
 		@autoreleasepool {
@@ -775,7 +775,7 @@ void ofQTKitGrabber::setAudioCodec(string _audioCodec){
 	}
 }
 
-void ofQTKitGrabber::startRecording(string filePath){
+void ofQTKitGrabber::startRecording(std::string filePath){
 	if(confirmInit()){
 		@autoreleasepool {
 			NSString * NSfilePath = [NSString stringWithUTF8String: ofToDataPath(filePath).c_str()];
@@ -824,10 +824,10 @@ bool ofQTKitGrabber::hasPreview() const {
     return bPreview;
 }
 
-vector <ofVideoDevice> ofQTKitGrabber::listDevices() const {
-    vector <string> devList = listVideoDevices();
+std::vector <ofVideoDevice> ofQTKitGrabber::listDevices() const {
+    std::vector <std::string> devList = listVideoDevices();
     
-    vector <ofVideoDevice> devices; 
+    std::vector <ofVideoDevice> devices; 
     for(int i = 0; i < devList.size(); i++){
         ofVideoDevice vd; 
         vd.deviceName = devList[i]; 
@@ -856,24 +856,24 @@ ofPixelFormat ofQTKitGrabber::getPixelFormat() const{
 }
 
 //---------------------------------------------------------------------------
-const vector<string>& ofQTKitGrabber::listVideoDevices() const{
+const std::vector<std::string>& ofQTKitGrabber::listVideoDevices() const{
 	@autoreleasepool {
 		NSArray* videoDevices = [QTKitVideoGrabber listVideoDevices];
 		videoDeviceVec.clear();
 		for (id object in videoDevices){
-			string str = [[object description] UTF8String];
+			std::string str = [[object description] UTF8String];
 			videoDeviceVec.push_back(str);
 		}
 	}
 	return videoDeviceVec;
 }
 
-const vector<string>& ofQTKitGrabber::listAudioDevices() const{
+const std::vector<std::string>& ofQTKitGrabber::listAudioDevices() const{
 	@autoreleasepool {
 		NSArray* audioDevices = [QTKitVideoGrabber listAudioDevices];
 		audioDeviceVec.clear();
 		for (id object in audioDevices){
-			string str = [[object description] UTF8String];
+			std::string str = [[object description] UTF8String];
 			audioDeviceVec.push_back(str);
 		}
 	}

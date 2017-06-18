@@ -14,15 +14,15 @@ class ofxAssimpTexture {
 public:
     
     ofxAssimpTexture();
-    ofxAssimpTexture(ofTexture texture, string texturePath);
+    ofxAssimpTexture(ofTexture texture, std::string texturePath);
 
     ofTexture & getTextureRef();
-    string getTexturePath();
+    std::string getTexturePath();
     bool hasTexture();
     
 private:
     
     ofTexture texture;
-    string texturePath;
+    std::string texturePath;
     
 };

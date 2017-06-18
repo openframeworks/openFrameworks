@@ -17,8 +17,8 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 @interface ofxiOSEAGLView() {
     BOOL bInit;
-	shared_ptr<ofAppiOSWindow> window;
-	shared_ptr<ofxiOSApp> app;
+	std::shared_ptr<ofAppiOSWindow> window;
+	std::shared_ptr<ofxiOSApp> app;
 }
 - (void)updateDimensions;
 @end
@@ -35,7 +35,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr {
 	
-	window = dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
+	window = std::dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
 	
     if(window.get() == NULL) {
         ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView::initWithFrame - window is NULL");
@@ -56,7 +56,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
         
         _instanceRef = self;
         
-        app = shared_ptr<ofxiOSApp>(appPtr);
+        app = std::shared_ptr<ofxiOSApp>(appPtr);
         activeTouches = [[NSMutableDictionary alloc] init];
                 
         screenSize = new glm::vec2();
@@ -79,14 +79,14 @@ static ofxiOSEAGLView * _instanceRef = nil;
 	
 	if(app.get() != ofGetAppPtr()) { // check if already running.
 		
-		ofSetMainLoop(shared_ptr<ofMainLoop>(NULL)); // destroy old main loop.
+		ofSetMainLoop(std::shared_ptr<ofMainLoop>(NULL)); // destroy old main loop.
 		auto mainLoop = std::make_shared<ofMainLoop>(); // make new main loop.
 		ofSetMainLoop(mainLoop);
 		
 		ofiOSWindowSettings windowSettings = window->getSettings();
 		window = NULL;
 
-		window = dynamic_pointer_cast<ofAppiOSWindow>(ofCreateWindow(windowSettings));
+		window = std::dynamic_pointer_cast<ofAppiOSWindow>(ofCreateWindow(windowSettings));
 
 		ofRunApp(app);
 	}

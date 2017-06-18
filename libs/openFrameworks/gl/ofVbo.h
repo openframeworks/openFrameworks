@@ -197,7 +197,7 @@ private:
 	VertexAttribute colorAttribute;
 	VertexAttribute texCoordAttribute;
 	VertexAttribute normalAttribute;
-	map<int,VertexAttribute> customAttributes;
+	std::map<int,VertexAttribute> customAttributes;
 	
 	static bool vaoChecked;
 	static bool vaoSupported;

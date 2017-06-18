@@ -1,13 +1,12 @@
 #include "ofParameter.h"
 #include "ofParameterGroup.h"
-using namespace std;
 
-string ofAbstractParameter::getEscapedName() const{
+std::string ofAbstractParameter::getEscapedName() const{
 	return escape(getName());
 }
 
 
-string ofAbstractParameter::escape(const string& _str) const{
+std::string ofAbstractParameter::escape(const std::string& _str) const{
 
 	std::string str(_str);
 
@@ -29,12 +28,12 @@ string ofAbstractParameter::escape(const string& _str) const{
 }
 
 
-string ofAbstractParameter::type() const{
+std::string ofAbstractParameter::type() const{
 	return typeid(*this).name();
 }
 
-vector<string> ofAbstractParameter::getGroupHierarchyNames() const{
-	vector<string> hierarchy;
+std::vector<std::string> ofAbstractParameter::getGroupHierarchyNames() const{
+	std::vector<std::string> hierarchy;
 	auto p = getFirstParent();
 	if(p){
 		hierarchy = p.getGroupHierarchyNames();
@@ -47,13 +46,13 @@ bool ofAbstractParameter::isReferenceTo(const ofAbstractParameter &other) const{
 	return getInternalObject() == other.getInternalObject();
 }
 
-ostream& operator<<(ostream& os, const ofAbstractParameter& p){
+std::ostream& operator<<(std::ostream& os, const ofAbstractParameter& p){
 	os << p.toString();
 	return os;
 }
 
-istream& operator>>(istream& is, ofAbstractParameter& p){
-	string str;
+std::istream& operator>>(std::istream& is, ofAbstractParameter& p){
+	std::string str;
 	is >> str;
 	p.fromString(str);
 	return is;
@@ -73,16 +72,16 @@ ofParameter<void>::ofParameter()
 
 }
 
-ofParameter<void>::ofParameter(const string& name)
+ofParameter<void>::ofParameter(const std::string& name)
 :obj(new Value(name)){
 
 }
 
-void ofParameter<void>::setName(const string & name){
+void ofParameter<void>::setName(const std::string & name){
 	obj->name = name;
 }
 
-string ofParameter<void>::getName() const{
+std::string ofParameter<void>::getName() const{
 	return obj->name;
 }
 
@@ -131,7 +130,7 @@ void ofParameter<void>::setSerializable(bool serializable){
 	obj->serializable = serializable;
 }
 
-shared_ptr<ofAbstractParameter> ofParameter<void>::newReference() const{
+std::shared_ptr<ofAbstractParameter> ofParameter<void>::newReference() const{
 	return std::make_shared<ofParameter<void>>(*this);
 }
 

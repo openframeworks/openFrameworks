@@ -5,7 +5,7 @@
 
 #include "ofxAssimpAnimation.h"
 
-ofxAssimpAnimation::ofxAssimpAnimation(shared_ptr<const aiScene> scene, aiAnimation * animation) {
+ofxAssimpAnimation::ofxAssimpAnimation(std::shared_ptr<const aiScene> scene, aiAnimation * animation) {
     this->scene = scene;
     this->animation = animation;
     animationCurrTime = 0;

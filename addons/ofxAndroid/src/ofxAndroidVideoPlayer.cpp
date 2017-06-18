@@ -97,7 +97,7 @@ ofxAndroidVideoPlayer::~ofxAndroidVideoPlayer(){
 
 
 //---------------------------------------------------------------------------
-bool ofxAndroidVideoPlayer::load(string fileName){
+bool ofxAndroidVideoPlayer::load(std::string fileName){
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "load(): java soundVideoPlayer not loaded";

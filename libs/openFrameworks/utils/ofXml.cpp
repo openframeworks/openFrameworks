@@ -51,7 +51,7 @@ bool ofXml::save(const std::filesystem::path & file) const{
 }
 
 std::string ofXml::toString(const std::string & indent) const{
-	ostringstream stream;
+	std::ostringstream stream;
 	if(xml == doc->root()){
 		doc->print(stream, indent.c_str());
 	}else{
@@ -383,7 +383,7 @@ void ofSerialize(ofXml & xml, const ofAbstractParameter & parameter){
 	if(!parameter.isSerializable()){
 		return;
 	}
-	string name = parameter.getEscapedName();
+	std::string name = parameter.getEscapedName();
 	if(name == ""){
 		name = "UnknownName";
 	}
@@ -402,7 +402,7 @@ void ofSerialize(ofXml & xml, const ofAbstractParameter & parameter){
 		}
 		ofLogVerbose("ofXml") << "end group " << name;
 	}else{
-		string value = parameter.toString();
+		std::string value = parameter.toString();
 		child.set(value);
 	}
 }
@@ -412,7 +412,7 @@ void ofDeserialize(const ofXml & xml, ofAbstractParameter & parameter){
 	if(!parameter.isSerializable()){
 		return;
 	}
-	string name = parameter.getEscapedName();
+	std::string name = parameter.getEscapedName();
 	
 	ofXml child = xml.findFirst(name);
 	if(child){
@@ -428,8 +428,8 @@ void ofDeserialize(const ofXml & xml, ofAbstractParameter & parameter){
 				parameter.cast <float>() = child.getFloatValue();
 			}else if(parameter.type() == typeid(ofParameter <bool> ).name()){
 				parameter.cast <bool>() = child.getBoolValue();
-			}else if(parameter.type() == typeid(ofParameter <string> ).name()){
-				parameter.cast <string>() = child.getValue();
+			}else if(parameter.type() == typeid(ofParameter <std::string> ).name()){
+				parameter.cast <std::string>() = child.getValue();
 			}else{
 				parameter.fromString(child.getValue());
 			}

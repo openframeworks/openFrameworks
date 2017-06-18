@@ -133,8 +133,8 @@ void ofSoundStreamClose(){
 }
 
 //------------------------------------------------------------
-vector<ofSoundDevice> ofSoundStreamListDevices(){
-	vector<ofSoundDevice> deviceList = systemSoundStream.getDeviceList();
+std::vector<ofSoundDevice> ofSoundStreamListDevices(){
+	std::vector<ofSoundDevice> deviceList = systemSoundStream.getDeviceList();
 	ofLogNotice("ofSoundStreamListDevices") << std::endl << deviceList;
 	return deviceList;
 }
@@ -142,32 +142,32 @@ vector<ofSoundDevice> ofSoundStreamListDevices(){
 //------------------------------------------------------------
 ofSoundStream::ofSoundStream(){
 	#ifdef OF_SOUND_STREAM_TYPE
-		setSoundStream( shared_ptr<OF_SOUND_STREAM_TYPE>(new OF_SOUND_STREAM_TYPE) );
+		setSoundStream( std::shared_ptr<OF_SOUND_STREAM_TYPE>(new OF_SOUND_STREAM_TYPE) );
 	#endif
 }
 
 //------------------------------------------------------------
-void ofSoundStream::setSoundStream(shared_ptr<ofBaseSoundStream> soundStreamPtr){
+void ofSoundStream::setSoundStream(std::shared_ptr<ofBaseSoundStream> soundStreamPtr){
 	soundStream = soundStreamPtr;
 }
 
 //------------------------------------------------------------
-shared_ptr<ofBaseSoundStream> ofSoundStream::getSoundStream(){
+std::shared_ptr<ofBaseSoundStream> ofSoundStream::getSoundStream(){
 	return soundStream;
 }
 
 //------------------------------------------------------------
-vector<ofSoundDevice> ofSoundStream::getDeviceList(ofSoundDevice::Api api) const{
+std::vector<ofSoundDevice> ofSoundStream::getDeviceList(ofSoundDevice::Api api) const{
 	if( soundStream ){
 		return soundStream->getDeviceList(api);
 	} else {
-		return vector<ofSoundDevice>();
+		return std::vector<ofSoundDevice>();
 	}
 }
 
 //------------------------------------------------------------
-vector<ofSoundDevice> ofSoundStream::listDevices() const{
-	vector<ofSoundDevice> deviceList = getDeviceList();
+std::vector<ofSoundDevice> ofSoundStream::listDevices() const{
+	std::vector<ofSoundDevice> deviceList = getDeviceList();
 	ofLogNotice("ofSoundStream::listDevices") << std::endl << deviceList;
 	return deviceList;
 }
@@ -335,12 +335,12 @@ int ofSoundStream::getBufferSize() const{
 }
 
 //------------------------------------------------------------
-vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name, unsigned int inChannels, unsigned int outChannels) const {
-	vector<ofSoundDevice> devs = getDeviceList();
-	vector<ofSoundDevice> hits;
+std::vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name, unsigned int inChannels, unsigned int outChannels) const {
+	std::vector<ofSoundDevice> devs = getDeviceList();
+	std::vector<ofSoundDevice> hits;
 	
 	for(size_t i = 0; i < devs.size(); i++) {
-		bool nameMatch = devs[i].name.find(name) != string::npos;
+		bool nameMatch = devs[i].name.find(name) != std::string::npos;
 		bool inMatch = (inChannels == UINT_MAX) || (devs[i].inputChannels == inChannels);
 		bool outMatch = (outChannels == UINT_MAX) || (devs[i].outputChannels == outChannels);
 		

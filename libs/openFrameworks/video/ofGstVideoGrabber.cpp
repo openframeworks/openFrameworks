@@ -89,15 +89,15 @@ static void get_video_devices (ofGstCamData & cam_data)
 	udev_list_entry_foreach(entry,list){
 		const char * name = udev_list_entry_get_name(entry);
 		struct udev_device * device = udev_device_new_from_syspath(my_udev, name);
-		string subsystem = udev_device_get_subsystem(device);
+		std::string subsystem = udev_device_get_subsystem(device);
 
 		if(subsystem != "video4linux") continue;
 		const char  *gstreamer_src, *product_name;
 		struct v4l2_capability  v2cap;
 		struct video_capability v1cap;
-		string vendor_id;
-		string product_id;
-		string serial_id;
+		std::string vendor_id;
+		std::string product_id;
+		std::string serial_id;
 
 		const char * dev_node = udev_device_get_devnode(device);
 		struct udev_list_entry * properties = udev_device_get_properties_list_entry(device);
@@ -477,7 +477,7 @@ static void get_supported_video_formats (ofGstDevice &webcam_device, GstCaps &ca
 			if(gst_structure_get_string(structure,"format"))
 				video_format.format_name = gst_structure_get_string(structure,"format");
 			#endif
-			//cout << gst_structure_to_string(structure) << endl;;
+			//std::cout << gst_structure_to_string(structure) << std::endl;;
 			add_video_format(webcam_device, video_format, *structure, desired_framerate, desiredPixelFormat);
 		}else if (GST_VALUE_HOLDS_INT_RANGE (width)){
 			int min_width, max_width, min_height, max_height;
@@ -529,7 +529,7 @@ static void get_supported_video_formats (ofGstDevice &webcam_device, GstCaps &ca
 
 static void get_device_data (ofGstDevice &webcam_device, int desired_framerate, ofPixelFormat desiredPixelFormat)
 {
-	string pipeline_desc = webcam_device.gstreamer_src + " name=source device=" +
+	std::string pipeline_desc = webcam_device.gstreamer_src + " name=source device=" +
 			webcam_device.video_device + " ! fakesink";
 
 	GError * err = NULL;
@@ -622,7 +622,7 @@ bool ofGstVideoGrabber::isInitialized() const{
 	return videoUtils.isInitialized();
 }
 
-ofPixelFormat ofPixelFormatFromGstFormat(string format){
+ofPixelFormat ofPixelFormatFromGstFormat(std::string format){
 #if GST_VERSION_MAJOR>=1
 	switch(gst_video_format_from_string(format.c_str())){
 	case GST_VIDEO_FORMAT_RGB: return OF_PIXELS_RGB;
@@ -638,10 +638,10 @@ ofPixelFormat ofPixelFormatFromGstFormat(string format){
 #endif
 }
 
-vector<ofVideoDevice> ofGstVideoGrabber::listDevices() const {
+std::vector<ofVideoDevice> ofGstVideoGrabber::listDevices() const {
 #if GST_VERSION_MAJOR>=1
 	if(!camData.bInited) get_video_devices(camData);
-	vector<ofVideoDevice> devices(camData.webcam_devices.size());
+	std::vector<ofVideoDevice> devices(camData.webcam_devices.size());
 	for(unsigned i=0; i<camData.webcam_devices.size(); i++){
 		devices[i].id = i;
         devices[i].bAvailable = true; 
@@ -663,7 +663,7 @@ vector<ofVideoDevice> ofGstVideoGrabber::listDevices() const {
 	return devices;
 #else
 	ofLogWarning("ofGstVideoGrabber") << "listDevices(): only supported for gstreamer 1.0";
-	return vector<ofVideoDevice>();
+	return std::vector<ofVideoDevice>();
 #endif
 }
 
@@ -725,7 +725,7 @@ bool ofGstVideoGrabber::setup(int w, int h){
 	const char * scale = "! ffmpegcolorspace ";
 	if( w!=format.width || h!=format.height )	scale = "! ffvideoscale method=2 ";
 
-	string format_str_pipeline = "%s name=video_source device=%s ! "
+	std::string format_str_pipeline = "%s name=video_source device=%s ! "
 			 "%s,width=%d,height=%d,framerate=%d/%d "
 			 "%s %s ";
 
@@ -740,14 +740,14 @@ bool ofGstVideoGrabber::setup(int w, int h){
 		      format.choosen_framerate.denominator,
 		      decodebin, scale);
 #else
-	string pipeline_string;
-	string format_str_pipeline;
-	string fix_v4l2_316;
+	std::string pipeline_string;
+	std::string format_str_pipeline;
+	std::string fix_v4l2_316;
 #if defined(TARGET_LINUX) && !defined(OF_USE_GST_GL) && GST_VERSION_MAJOR>0 && GST_VERSION_MINOR>2 && GST_VERSION_MINOR<5
 	videoUtils.setCopyPixels(true);
 #endif
 	if(internalPixelFormat!=OF_PIXELS_NATIVE){
-		string decodebin, scale;
+		std::string decodebin, scale;
 		if(format.mimetype == "video/x-bayer"){
 			decodebin = "! bayer2rgb ";
 		}else if(gst_video_format_from_string(format.format_name.c_str()) == GST_VIDEO_FORMAT_ENCODED || gst_video_format_from_string(format.format_name.c_str()) ==GST_VIDEO_FORMAT_UNKNOWN){

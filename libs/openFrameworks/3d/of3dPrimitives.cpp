@@ -26,9 +26,9 @@ of3dPrimitive::of3dPrimitive(const of3dPrimitive & mom):ofNode(mom){
     texCoords = mom.texCoords;
     usingVbo = mom.usingVbo;
 	if(usingVbo){
-		mesh = shared_ptr<ofMesh>(new ofVboMesh);
+		mesh = std::shared_ptr<ofMesh>(new ofVboMesh);
 	}else{
-		mesh = shared_ptr<ofMesh>(new ofMesh);
+		mesh = std::shared_ptr<ofMesh>(new ofMesh);
 	}
 	*mesh = *mom.mesh;
 }
@@ -93,8 +93,8 @@ const glm::vec4& of3dPrimitive::getTexCoords() const{
 }
 
 //----------------------------------------------------------
-vector<ofIndexType> of3dPrimitive::getIndices( int startIndex, int endIndex ) const {
-    vector<ofIndexType> indices;
+std::vector<ofIndexType> of3dPrimitive::getIndices( int startIndex, int endIndex ) const {
+    std::vector<ofIndexType> indices;
     indices.assign( getMesh().getIndices().begin()+startIndex, getMesh().getIndices().begin()+endIndex );
     return indices;
 }
@@ -266,11 +266,11 @@ void of3dPrimitive::drawAxes(float a_size)  const{
 //--------------------------------------------------------------
 void of3dPrimitive::setUseVbo(bool useVbo){
 	if(useVbo!=usingVbo){
-		shared_ptr<ofMesh> newMesh;
+		std::shared_ptr<ofMesh> newMesh;
 		if(useVbo){
-			newMesh = shared_ptr<ofMesh>(new ofVboMesh);
+			newMesh = std::shared_ptr<ofMesh>(new ofVboMesh);
 		}else{
-			newMesh = shared_ptr<ofMesh>(new ofMesh);
+			newMesh = std::shared_ptr<ofMesh>(new ofMesh);
 		}
 		*newMesh = *mesh;
 		mesh = newMesh;
@@ -652,7 +652,7 @@ void ofCylinderPrimitive::setBottomCapColor( ofColor color ) {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofCylinderPrimitive::getTopCapIndices() const {
+std::vector<ofIndexType> ofCylinderPrimitive::getTopCapIndices() const {
     return of3dPrimitive::getIndices( strides[0][0], strides[0][0] + strides[0][1] );
 }
 
@@ -667,7 +667,7 @@ ofMesh ofCylinderPrimitive::getTopCapMesh() const {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofCylinderPrimitive::getCylinderIndices() const {
+std::vector<ofIndexType> ofCylinderPrimitive::getCylinderIndices() const {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofCylinderPrimitive") << "getCylinderIndices(): must be in triangle strip mode";
     }
@@ -685,7 +685,7 @@ ofMesh ofCylinderPrimitive::getCylinderMesh() const {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofCylinderPrimitive::getBottomCapIndices() const {
+std::vector<ofIndexType> ofCylinderPrimitive::getBottomCapIndices() const {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofCylinderPrimitive") << "getBottomCapIndices(): must be in triangle strip mode";
     }
@@ -853,7 +853,7 @@ void ofConePrimitive::setCapColor( ofColor color ) {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofConePrimitive::getConeIndices() const {
+std::vector<ofIndexType> ofConePrimitive::getConeIndices() const {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofConePrimitive") << "getConeIndices(): must be in triangle strip mode";
     }
@@ -875,7 +875,7 @@ ofMesh ofConePrimitive::getConeMesh() const {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofConePrimitive::getCapIndices() const {
+std::vector<ofIndexType> ofConePrimitive::getCapIndices() const {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofConePrimitive") << "getCapIndices(): must be in triangle strip mode";
     }
@@ -1035,7 +1035,7 @@ void ofBoxPrimitive::resizeToTexture( ofTexture& inTexture ) {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofBoxPrimitive::getSideIndices( int sideIndex ) const {
+std::vector<ofIndexType> ofBoxPrimitive::getSideIndices( int sideIndex ) const {
     
     if(sideIndex < 0 || sideIndex >= SIDES_TOTAL) {
         ofLogWarning("ofBoxPrimitive") << "getSideIndices(): faceIndex out of bounds, returning SIDE_FRONT";

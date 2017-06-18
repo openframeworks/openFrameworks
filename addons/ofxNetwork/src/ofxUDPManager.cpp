@@ -441,7 +441,7 @@ int	ofxUDPManager::GetTimeoutReceive()
 }
 
 //--------------------------------------------------------------------------------
-bool ofxUDPManager::GetRemoteAddr(string& address,int& port) const
+bool ofxUDPManager::GetRemoteAddr(std::string& address,int& port) const
 {
 	if (m_hSocket == INVALID_SOCKET) return(false);
 	if ( canGetRemoteAddress ==	false) return (false);
@@ -457,7 +457,7 @@ bool ofxUDPManager::GetRemoteAddr(string& address,int& port) const
 }
 
 //--------------------------------------------------------------------------------
-bool ofxUDPManager::GetListenAddr(string& address,int& port) const
+bool ofxUDPManager::GetListenAddr(std::string& address,int& port) const
 {
 	if (m_hSocket == INVALID_SOCKET) return(false);
 

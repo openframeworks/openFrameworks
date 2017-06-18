@@ -390,7 +390,7 @@ static void addBitmapCharacter(ofMesh & charMesh, int & vertexCount, int charact
 	}	
 }
 
-ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofDrawBitmapMode mode, bool vFlipped) const{
+ofMesh ofBitmapFont::getMesh(const std::string & text, int x, int y, ofDrawBitmapMode mode, bool vFlipped) const{
 	int len = (int)text.length();
 	float fontSize = 8.0f;
 
@@ -474,14 +474,14 @@ const ofTexture & ofBitmapFont::getTexture() const{
 }
 
 
-ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y) const{
+ofRectangle ofBitmapFont::getBoundingBox(const std::string & text, int x, int y) const{
     if(text.empty()){
         return ofRectangle(x,y,0,0);
     }
 
 	const ofMesh & mesh = getMesh(text,x,y);
-	glm::vec2 max(numeric_limits<float>::min(),numeric_limits<float>::min());
-	glm::vec2 min(numeric_limits<float>::max(),numeric_limits<float>::max());
+	glm::vec2 max(std::numeric_limits<float>::min(),std::numeric_limits<float>::min());
+	glm::vec2 min(std::numeric_limits<float>::max(),std::numeric_limits<float>::max());
 	for(std::size_t i=0;i< mesh.getNumVertices(); i++){
 		const auto & p = mesh.getVertex(i);
 		if(p.x<min.x) min.x = p.x;

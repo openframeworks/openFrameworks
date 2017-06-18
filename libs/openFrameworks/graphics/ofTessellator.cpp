@@ -106,7 +106,7 @@ void ofTessellator::tessellateToMesh( const ofPolyline& src,  ofPolyWindingMode 
 
 	
 //----------------------------------------------------------
-void ofTessellator::tessellateToMesh( const vector<ofPolyline>& src, ofPolyWindingMode polyWindingMode, ofMesh & dstmesh, bool bIs2D ) {
+void ofTessellator::tessellateToMesh( const std::vector<ofPolyline>& src, ofPolyWindingMode polyWindingMode, ofMesh & dstmesh, bool bIs2D ) {
 
 
 	// pass vertex pointers to GLU tessellator
@@ -122,7 +122,7 @@ void ofTessellator::tessellateToMesh( const vector<ofPolyline>& src, ofPolyWindi
 }
 
 //----------------------------------------------------------
-void ofTessellator::tessellateToPolylines( const ofPolyline& src,  ofPolyWindingMode polyWindingMode, vector<ofPolyline>& dstpoly, bool bIs2D){
+void ofTessellator::tessellateToPolylines( const ofPolyline& src,  ofPolyWindingMode polyWindingMode, std::vector<ofPolyline>& dstpoly, bool bIs2D){
 
 	if (src.size() > 0) {
 		ofPolyline& polyline = const_cast<ofPolyline&>(src);
@@ -133,7 +133,7 @@ void ofTessellator::tessellateToPolylines( const ofPolyline& src,  ofPolyWinding
 
 
 //----------------------------------------------------------
-void ofTessellator::tessellateToPolylines( const vector<ofPolyline>& src, ofPolyWindingMode polyWindingMode, vector<ofPolyline>& dstpoly, bool bIs2D ) {
+void ofTessellator::tessellateToPolylines( const std::vector<ofPolyline>& src, ofPolyWindingMode polyWindingMode, std::vector<ofPolyline>& dstpoly, bool bIs2D ) {
 
 	// pass vertex pointers to GLU tessellator
 	for ( int i=0; i<(int)src.size(); ++i ) {
@@ -173,7 +173,7 @@ void ofTessellator::performTessellation(ofPolyWindingMode polyWindingMode, ofMes
 
 
 //----------------------------------------------------------
-void ofTessellator::performTessellation(ofPolyWindingMode polyWindingMode, vector<ofPolyline>& dstpoly, bool bIs2D ) {
+void ofTessellator::performTessellation(ofPolyWindingMode polyWindingMode, std::vector<ofPolyline>& dstpoly, bool bIs2D ) {
 	if (!tessTesselate(cacheTess, polyWindingMode, TESS_BOUNDARY_CONTOURS, 0, 3, 0)){
 		ofLogError("ofTessellator") << "performTesselation(): polyline boundary contours tessellation failed, winding mode " << polyWindingMode;
 		return;

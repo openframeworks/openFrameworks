@@ -86,7 +86,6 @@
 #include <pthread.h>
 #include <mach/mach.h>
 #include <iostream>
-using namespace std;
 
 // Local Includes
 #include "SoundEngine.h"
@@ -164,7 +163,7 @@ OSStatus OpenFile(const char *inFilePath, AudioFileID &outAFID)
 	OSStatus result = AudioFileOpenURL(theURL, fsRdPerm, 0, &outAFID);
 #endif
 	CFRelease(theURL);
-		//cout<<inFilePath<<endl;
+		//std::cout<<inFilePath<<std::endl;
 		AssertNoError("Error opening file", end);
 	end:
 		return result;
@@ -174,7 +173,7 @@ OSStatus LoadFileDataInfo(const char *inFilePath, AudioFileID &outAFID, AudioStr
 {
 	UInt32 thePropSize = sizeof(outFormat);				
 	OSStatus result = OpenFile(inFilePath, outAFID);
-		//cout<<inFilePath<<endl;
+		//std::cout<<inFilePath<<std::endl;
 		AssertNoError("Error opening file", end);
 
 	result = AudioFileGetProperty(outAFID, kAudioFilePropertyDataFormat, &thePropSize, &outFormat);
@@ -1125,7 +1124,7 @@ class OpenALObject
 					else
 					{
 						mSourcePrimed[i] = FALSE;
-						cout<<"priming error"<<endl;
+						std::cout<<"priming error"<<std::endl;
 					}
 				}
 				
@@ -1140,10 +1139,10 @@ class OpenALObject
 						return i;
 					}
 					else
-						cout<<"priming error"<<endl;
+						std::cout<<"priming error"<<std::endl;
 				}
 			}
-			cout<<"no sources!"<<endl;
+			std::cout<<"no sources!"<<std::endl;
 			// If we fell through the loop, then no available sources
 			return -1;
 		}

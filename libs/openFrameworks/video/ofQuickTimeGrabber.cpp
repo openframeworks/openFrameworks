@@ -251,9 +251,9 @@ bool ofQuickTimeGrabber::isInitialized() const{
 }
 
 //--------------------------------------------------------------------
-vector<ofVideoDevice> ofQuickTimeGrabber::listDevices() const{
+std::vector<ofVideoDevice> ofQuickTimeGrabber::listDevices() const{
 
-    vector <ofVideoDevice> devices; 
+    std::vector <ofVideoDevice> devices; 
     
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
@@ -518,7 +518,7 @@ bool ofQuickTimeGrabber::saveSettings(){
 			ofLogError("ofQuickTimeGrabber") << "saveSettings(): couldn't get camera settings: ComponentResult " << err;
 			return false;
 		}
-		string pref = "ofVideoSettings-"+deviceName;
+		std::string pref = "ofVideoSettings-"+deviceName;
 		CFStringRef cameraString = CFStringCreateWithCString(kCFAllocatorDefault,pref.c_str(),kCFStringEncodingMacRoman);
 
 		//get the settings using the key "ofVideoSettings-the name of the device"
@@ -537,7 +537,7 @@ bool ofQuickTimeGrabber::loadSettings(){
    UserData mySGVideoSettings = nullptr;
 
    // get the settings using the key "ofVideoSettings-the name of the device"
-   string pref = "ofVideoSettings-"+deviceName;
+   std::string pref = "ofVideoSettings-"+deviceName;
    CFStringRef cameraString = CFStringCreateWithCString(kCFAllocatorDefault,pref.c_str(),kCFStringEncodingMacRoman);
 
    GetSettingsPreference(cameraString, &mySGVideoSettings);

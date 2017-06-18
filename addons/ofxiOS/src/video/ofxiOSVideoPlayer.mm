@@ -34,7 +34,7 @@ void ofxiOSVideoPlayer::disableTextureCache() {
 }
 
 //----------------------------------------
-bool ofxiOSVideoPlayer::load(string name) {
+bool ofxiOSVideoPlayer::load(std::string name) {
 	
     if(!videoPlayer) {
         videoPlayer = [[AVFoundationVideoPlayer alloc] init];
@@ -590,7 +590,7 @@ void * ofxiOSVideoPlayer::getAVFoundationVideoPlayer() {
 }
 
 //---------------------------------------- DEPRECATED.
-bool ofxiOSVideoPlayer::loadMovie(string name) {
+bool ofxiOSVideoPlayer::loadMovie(std::string name) {
     return load(name);
 }
 

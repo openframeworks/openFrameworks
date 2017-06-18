@@ -73,7 +73,7 @@ bool ofxOscReceiver::start() {
 		listenSocket = std::move(newPtr);
 	}
 	catch(std::exception &e){
-		string what = e.what();
+		std::string what = e.what();
 		// strip endline as ofLogError already adds one
 		if(!what.empty() && what.back() == '\n') {
 			what = what.substr(0, what.size()-1);

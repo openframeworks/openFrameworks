@@ -26,9 +26,9 @@ ofxiOSSoundStream::~ofxiOSSoundStream() {
 }
 
 //------------------------------------------------------------------------------
-vector<ofSoundDevice> ofxiOSSoundStream::getDeviceList(ofSoundDevice::Api api)  const{
+std::vector<ofSoundDevice> ofxiOSSoundStream::getDeviceList(ofSoundDevice::Api api)  const{
 	ofLogWarning("ofxiOSSoundStream") << "getDeviceList() isn't implemented on iOS";
-	return vector<ofSoundDevice>();
+	return std::vector<ofSoundDevice>();
 }
 
 //------------------------------------------------------------------------------

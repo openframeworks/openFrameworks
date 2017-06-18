@@ -180,8 +180,8 @@ public:
     inline const ofQuaternion operator -(const ofQuaternion& rhs) const;    ///< Binary subtraction
     inline const ofQuaternion operator -() const;                           ///< returns the negative of the quaternion. calls operator -() on the Vec4
     
-    friend ostream& operator<<(ostream& os, const ofQuaternion &q);
-    friend istream& operator>>(istream& is, ofQuaternion &q);
+    friend std::ostream& operator<<(std::ostream& os, const ofQuaternion &q);
+    friend std::istream& operator>>(std::istream& is, ofQuaternion &q);
     
     /// \}
 };

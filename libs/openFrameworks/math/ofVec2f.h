@@ -452,8 +452,8 @@ public:
 
 	
 	/// \cond INTERNAL
-	friend ostream& operator<<(ostream& os, const ofVec2f& vec);
-	friend istream& operator>>(istream& is, const ofVec2f& vec);
+	friend std::ostream& operator<<(std::ostream& os, const ofVec2f& vec);
+	friend std::istream& operator>>(std::istream& is, const ofVec2f& vec);
 	/// \endcond
 	
 	/// \}
@@ -1104,12 +1104,12 @@ inline ofVec2f& ofVec2f::operator/=( const ofVec2f& vec ) {
 	return *this;
 }
 
-inline ostream& operator<<(ostream& os, const ofVec2f& vec) {
+inline std::ostream& operator<<(std::ostream& os, const ofVec2f& vec) {
 	os << vec.x << ", " << vec.y;
 	return os;
 }
 
-inline istream& operator>>(istream& is, ofVec2f& vec) {
+inline std::istream& operator>>(std::istream& is, ofVec2f& vec) {
 	is >> vec.x;
 	is.ignore(2);
 	is >> vec.y;

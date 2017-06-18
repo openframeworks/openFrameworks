@@ -21,7 +21,7 @@ bool ofxiOSSoundPlayer::load(const std::filesystem::path& fileName, bool stream)
         unload();
     }
 
-    string filePath = ofToDataPath(fileName);
+    std::string filePath = ofToDataPath(fileName);
     soundPlayer = [[AVSoundPlayer alloc] init];
     BOOL bOk = [(AVSoundPlayer *)soundPlayer loadWithPath:[NSString stringWithUTF8String:filePath.c_str()]];
     

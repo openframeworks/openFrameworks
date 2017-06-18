@@ -35,11 +35,11 @@
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
     #include "ofxiOSAppDelegate.h"
     #include "ofxiOSViewController.h"
-    const string appDelegateName = "ofxiOSAppDelegate";
+    const std::string appDelegateName = "ofxiOSAppDelegate";
 #elif TARGET_OS_TV
     #include "ofxtvOSAppDelegate.h"
     #include "ofxtvOSViewController.h"
-    const string appDelegateName = "ofxtvOSAppDelegate";
+    const std::string appDelegateName = "ofxtvOSAppDelegate";
 #endif
 #include "ofxiOSEAGLView.h"
 
@@ -104,9 +104,9 @@ void ofAppiOSWindow::setup() {
 	}
 	setOrientation(settings.setupOrientation);
 	if(settings.glesVersion >= ESRendererVersion_20) {
-		currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
+		currentRenderer = std::shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
 	} else {
-		currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
+		currentRenderer = std::shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
 	}
 	
 	hasExited = false;
@@ -126,7 +126,7 @@ void ofAppiOSWindow::run(ofBaseApp * appPtr){
     startAppWithDelegate(appDelegateName);
 }
 
-void ofAppiOSWindow::startAppWithDelegate(string appDelegateClassName) {
+void ofAppiOSWindow::startAppWithDelegate(std::string appDelegateClassName) {
     static bool bAppCreated = false;
     if(bAppCreated == true) {
         return;
@@ -275,7 +275,7 @@ bool ofAppiOSWindow::disableOrientationAnimation() {
 #endif
 
 //-----------------------------------------------------------------------------------
-void ofAppiOSWindow::setWindowTitle(string title) {
+void ofAppiOSWindow::setWindowTitle(std::string title) {
     // not supported on iOS.
 }
 
@@ -305,7 +305,7 @@ bool ofAppiOSWindow::enableRendererES2() {
     if(isRendererES2() == true) {
         return false;
     }
-    shared_ptr<ofBaseRenderer>renderer (new ofGLProgrammableRenderer(this));
+    std::shared_ptr<ofBaseRenderer>renderer (new ofGLProgrammableRenderer(this));
     ofSetCurrentRenderer(renderer);
     return true;
 }
@@ -314,7 +314,7 @@ bool ofAppiOSWindow::enableRendererES1() {
     if(isRendererES1() == true) {
         return false;
     }
-    shared_ptr<ofBaseRenderer> renderer(new ofGLRenderer(this));
+    std::shared_ptr<ofBaseRenderer> renderer(new ofGLRenderer(this));
     ofSetCurrentRenderer(renderer);
     return true;
 }
@@ -429,7 +429,7 @@ ofCoreEvents & ofAppiOSWindow::events(){
 }
 
 //-----------------------------------------------------------------------------------
-shared_ptr<ofBaseRenderer> & ofAppiOSWindow::renderer(){
+std::shared_ptr<ofBaseRenderer> & ofAppiOSWindow::renderer(){
     return currentRenderer;
 }
 

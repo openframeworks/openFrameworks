@@ -13,7 +13,7 @@ ofxAndroidLogChannel::ofxAndroidLogChannel(){
 
 }
 
-void ofxAndroidLogChannel::log(ofLogLevel level, const string & module, const string& msg){
+void ofxAndroidLogChannel::log(ofLogLevel level, const std::string & module, const std::string& msg){
 	android_LogPriority androidPrio;
 	switch (level){
 	case OF_LOG_VERBOSE:
@@ -39,7 +39,7 @@ void ofxAndroidLogChannel::log(ofLogLevel level, const string & module, const st
 }
 
 
-void ofxAndroidLogChannel::log(ofLogLevel logLevel, const string & module, const char* format, ...){
+void ofxAndroidLogChannel::log(ofLogLevel logLevel, const std::string & module, const char* format, ...){
 	android_LogPriority androidPrio;
 	switch (logLevel){
 	case OF_LOG_VERBOSE:
@@ -68,7 +68,7 @@ void ofxAndroidLogChannel::log(ofLogLevel logLevel, const string & module, const
 }
 
 
-void ofxAndroidLogChannel::log(ofLogLevel logLevel, const string & module, const char* format, va_list args){
+void ofxAndroidLogChannel::log(ofLogLevel logLevel, const std::string & module, const char* format, va_list args){
 	android_LogPriority androidPrio;
 	switch (logLevel){
 	case OF_LOG_VERBOSE:

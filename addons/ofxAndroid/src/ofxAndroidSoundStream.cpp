@@ -47,7 +47,7 @@ ofxAndroidSoundStream::~ofxAndroidSoundStream(){
 
 std::vector<ofSoundDevice> ofxAndroidSoundStream::getDeviceList(ofSoundDevice::Api api) const{
     ofLogWarning("ofxAndroidSoundStream") << "getDeviceList() isn't implemented on android";
-    return vector<ofSoundDevice>();
+    return std::vector<ofSoundDevice>();
 }
 
 void ofxAndroidSoundStream::setDeviceID(int deviceID){

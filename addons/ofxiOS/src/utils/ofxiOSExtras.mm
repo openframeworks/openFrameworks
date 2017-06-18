@@ -63,7 +63,7 @@ ofxiOSDeviceType ofxiOSGetDeviceType() {
 
 
 //--------------------------------------------------------------
-string ofxiOSGetDeviceRevision() {
+std::string ofxiOSGetDeviceRevision() {
 	size_t size;
     sysctlbyname("hw.machine", NULL, &size, NULL, 0);
 	
@@ -72,7 +72,7 @@ string ofxiOSGetDeviceRevision() {
 	machine = new char[size];
 	sysctlbyname("hw.machine", machine, &size, NULL, 0);
 	
-	string device(machine);
+	std::string device(machine);
 	
 		delete[] machine;
         
@@ -96,7 +96,7 @@ ofxiOSDeviceInfo ofxiOSGetDeviceInfo(){
     
     info.deviceType = ofxiOSGetDeviceType();
     info.deviceString = ofxiOSGetDeviceRevision();
-    vector <string> split = ofSplitString(info.deviceString, ",");
+    std::vector <std::string> split = ofSplitString(info.deviceString, ",");
     
     if( split.size() == 2 ){
         if( split[0].size() ){
@@ -480,19 +480,19 @@ bool ofxiOSCGImageToPixels(CGImageRef & ref, unsigned char * pixels){
 
 //--------------------------------------------------------------
 
-string ofxiOSNSStringToString(NSString * s) {
-	return string([s UTF8String]);
+std::string ofxiOSNSStringToString(NSString * s) {
+	return std::string([s UTF8String]);
 }
 
 //--------------------------------------------------------------
 
-NSString * ofxiOSStringToNSString(string s) {
+NSString * ofxiOSStringToNSString(std::string s) {
 	return [NSString stringWithUTF8String:s.c_str()];
 }
 
 //--------------------------------------------------------------
 
-string ofxiOSGetDocumentsDirectory()
+std::string ofxiOSGetDocumentsDirectory()
 {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 	return ofxNSStringToString([paths objectAtIndex:0]) + "/";
@@ -500,17 +500,17 @@ string ofxiOSGetDocumentsDirectory()
 
 //--------------------------------------------------------------
 
-void ofxiOSLaunchBrowser(string url) {
+void ofxiOSLaunchBrowser(std::string url) {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:ofxStringToNSString(url)]];
 }
 
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 //--------------------------------------------------------------
-void ofxiOSSetClipboardString(string clipboardString) {
+void ofxiOSSetClipboardString(std::string clipboardString) {
     [UIPasteboard generalPasteboard].string = [NSString stringWithUTF8String:clipboardString.c_str()];
 }
 
-string ofxiOSGetClipboardString() {
+std::string ofxiOSGetClipboardString() {
     return [[UIPasteboard generalPasteboard].string UTF8String];
 }
 #endif

@@ -10,17 +10,17 @@
 
 ALCdevice * ofOpenALSoundPlayer::alDevice = 0;
 ALCcontext * ofOpenALSoundPlayer::alContext = 0;
-vector<float> ofOpenALSoundPlayer::window;
+std::vector<float> ofOpenALSoundPlayer::window;
 float ofOpenALSoundPlayer::windowSum=0;
 
 
 kiss_fftr_cfg ofOpenALSoundPlayer::systemFftCfg=0;
-vector<float> ofOpenALSoundPlayer::systemWindowedSignal;
-vector<float> ofOpenALSoundPlayer::systemBins;
-vector<kiss_fft_cpx> ofOpenALSoundPlayer::systemCx_out;
+std::vector<float> ofOpenALSoundPlayer::systemWindowedSignal;
+std::vector<float> ofOpenALSoundPlayer::systemBins;
+std::vector<kiss_fft_cpx> ofOpenALSoundPlayer::systemCx_out;
 
-static set<ofOpenALSoundPlayer*> & players(){
-	static set<ofOpenALSoundPlayer*> * players = new set<ofOpenALSoundPlayer*>;
+static std::set<ofOpenALSoundPlayer*> & players(){
+	static std::set<ofOpenALSoundPlayer*> * players = new std::set<ofOpenALSoundPlayer*>;
 	return *players;
 }
 
@@ -30,7 +30,7 @@ void ofOpenALSoundUpdate(){
 
 // ----------------------------------------------------------------------------
 // from http://devmaster.net/posts/2893/openal-lesson-6-advanced-loading-and-error-handles
-static string getALErrorString(ALenum error) {
+static std::string getALErrorString(ALenum error) {
 	switch(error) {
         case AL_NO_ERROR:
             return "AL_NO_ERROR";
@@ -49,7 +49,7 @@ static string getALErrorString(ALenum error) {
 }
 
 #ifdef OF_USING_MPG123
-static string getMpg123EncodingString(int encoding) {
+static std::string getMpg123EncodingString(int encoding) {
 	switch(encoding) {
 		case MPG123_ENC_16:
 			return "MPG123_ENC_16";
@@ -171,7 +171,7 @@ void ofOpenALSoundPlayer::close(){
 }
 
 // ----------------------------------------------------------------------------
-bool ofOpenALSoundPlayer::sfReadFile(const std::filesystem::path& path, vector<short> & buffer, vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::sfReadFile(const std::filesystem::path& path, std::vector<short> & buffer, std::vector<float> & fftAuxBuffer){
 	SF_INFO sfInfo;
 	SNDFILE* f = sf_open(path.c_str(),SFM_READ,&sfInfo);
 	if(!f){
@@ -225,7 +225,7 @@ bool ofOpenALSoundPlayer::sfReadFile(const std::filesystem::path& path, vector<s
 
 #ifdef OF_USING_MPG123
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::mpg123ReadFile(const std::filesystem::path& path,vector<short> & buffer,vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::mpg123ReadFile(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	int err = MPG123_OK;
 	mpg123_handle * f = mpg123_new(nullptr,&err);
 	if(mpg123_open(f,path.c_str())!=MPG123_OK){
@@ -263,7 +263,7 @@ bool ofOpenALSoundPlayer::mpg123ReadFile(const std::filesystem::path& path,vecto
 #endif
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::sfStream(const std::filesystem::path& path,vector<short> & buffer,vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::sfStream(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	if(!streamf){
 		SF_INFO sfInfo;
 		streamf = sf_open(path.c_str(),SFM_READ,&sfInfo);
@@ -326,7 +326,7 @@ bool ofOpenALSoundPlayer::sfStream(const std::filesystem::path& path,vector<shor
 
 #ifdef OF_USING_MPG123
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::mpg123Stream(const std::filesystem::path& path,vector<short> & buffer,vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::mpg123Stream(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	if(!mp3streamf){
 		int err = MPG123_OK;
 		mp3streamf = mpg123_new(nullptr,&err);
@@ -377,7 +377,7 @@ bool ofOpenALSoundPlayer::mpg123Stream(const std::filesystem::path& path,vector<
 #endif
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::stream(const std::filesystem::path& fileName, vector<short> & buffer){
+bool ofOpenALSoundPlayer::stream(const std::filesystem::path& fileName, std::vector<short> & buffer){
 #ifdef OF_USING_MPG123
 	if(ofFilePath::getFileExt(fileName)=="mp3" || ofFilePath::getFileExt(fileName)=="MP3" || mp3streamf){
 		if(!mpg123Stream(fileName,buffer,fftAuxBuffer)) return false;
@@ -397,7 +397,7 @@ bool ofOpenALSoundPlayer::stream(const std::filesystem::path& fileName, vector<s
 	return true;
 }
 
-bool ofOpenALSoundPlayer::readFile(const std::filesystem::path& fileName, vector<short> & buffer){
+bool ofOpenALSoundPlayer::readFile(const std::filesystem::path& fileName, std::vector<short> & buffer){
 #ifdef OF_USING_MPG123
 	if(ofFilePath::getFileExt(fileName)!="mp3" && ofFilePath::getFileExt(fileName)!="MP3"){
 		if(!sfReadFile(fileName,buffer,fftAuxBuffer)) return false;
@@ -488,7 +488,7 @@ bool ofOpenALSoundPlayer::load(const std::filesystem::path& _fileName, bool is_s
 	    alSourcef (sources[0], AL_ROLLOFF_FACTOR,  0.0);
 	    alSourcei (sources[0], AL_SOURCE_RELATIVE, AL_TRUE);
 	}else{
-		vector<vector<short> > multibuffer;
+		std::vector<std::vector<short> > multibuffer;
 		multibuffer.resize(channels);
 		sources.resize(channels);
 		alGenSources(channels, &sources[0]);
@@ -562,7 +562,7 @@ bool ofOpenALSoundPlayer::isLoaded() const{
 
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::threadedFunction(){
-	vector<vector<short> > multibuffer;
+	std::vector<std::vector<short> > multibuffer;
 	multibuffer.resize(channels);
 	while(isThreadRunning()){
 		std::unique_lock<std::mutex> lock(mutex);
@@ -987,7 +987,7 @@ float * ofOpenALSoundPlayer::getSystemSpectrum(int bands){
 	}
 	systemWindowedSignal.assign(systemWindowedSignal.size(),0);
 
-	set<ofOpenALSoundPlayer*>::iterator it;
+	std::set<ofOpenALSoundPlayer*>::iterator it;
 	for(it=players().begin();it!=players().end();it++){
 		if(!(*it)->isPlaying()) continue;
 		float * buffer = (*it)->getCurrentBufferSum(signalSize);
@@ -1006,7 +1006,7 @@ float * ofOpenALSoundPlayer::getSystemSpectrum(int bands){
 }
 
 // ----------------------------------------------------------------------------
-void ofOpenALSoundPlayer::runWindow(vector<float> & signal){
+void ofOpenALSoundPlayer::runWindow(std::vector<float> & signal){
 	for(int i = 0; i < (int)signal.size(); i++)
 		signal[i] *= window[i];
 }

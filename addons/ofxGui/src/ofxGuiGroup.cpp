@@ -5,8 +5,6 @@
 #include "ofxLabel.h"
 #include "ofxInputField.h"
 
-using namespace std;
-
 ofxGuiGroup::ofxGuiGroup(){
 	minimized = false;
 	spacing = 1;
@@ -42,7 +40,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 	bGuiActive = false;
 
 	for(std::size_t i = 0; i < _parameters.size(); i++){
-		string type = _parameters.getType(i);
+		std::string type = _parameters.getType(i);
 		if(type == typeid(ofParameter <int32_t> ).name()){
 			auto p = _parameters.getInt(i);
 			add(p);
@@ -97,7 +95,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 		}else if(type == typeid(ofParameter <ofFloatColor> ).name()){
 			auto p = _parameters.getFloatColor(i);
 			add(p);
-		}else if(type == typeid(ofParameter <string> ).name()){
+		}else if(type == typeid(ofParameter <std::string> ).name()){
 			auto p = _parameters.getString(i);
 			add(p);
 		}else if(type == typeid(ofParameterGroup).name()){
@@ -171,7 +169,7 @@ void ofxGuiGroup::add(ofParameter <bool> & parameter){
 	add(new ofxToggle(parameter, b.width));
 }
 
-void ofxGuiGroup::add(ofParameter <string> & parameter){
+void ofxGuiGroup::add(ofParameter <std::string> & parameter){
 	add(new ofxInputField<std::string>(parameter, b.width));
 }
 
@@ -337,8 +335,8 @@ void ofxGuiGroup::render(){
 	}
 }
 
-vector <string> ofxGuiGroup::getControlNames() const{
-	vector <string> names;
+std::vector <std::string> ofxGuiGroup::getControlNames() const{
+	std::vector <std::string> names;
 	for(std::size_t i = 0; i < collection.size(); i++){
 		names.push_back(collection[i]->getName());
 	}

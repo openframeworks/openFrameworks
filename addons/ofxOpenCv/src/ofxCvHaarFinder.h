@@ -19,13 +19,13 @@ http://www.comp.leeds.ac.uk/vision/opencv/opencvref_cv.html#decl_cvHaarDetectObj
 
 class ofxCvHaarFinder {
 public:
-	vector<ofxCvBlob> blobs;
+	std::vector<ofxCvBlob> blobs;
 
 	ofxCvHaarFinder();
 	ofxCvHaarFinder(const ofxCvHaarFinder& finder);
 	~ofxCvHaarFinder();
 	
-	void setup(string haarFile);
+	void setup(std::string haarFile);
 	
 	// The default value is 1.2. For accuracy, bring it closer but not equal to 1.0. To make it faster, use a larger value.
 	void setScaleHaar(float scaleHaar);
@@ -47,7 +47,7 @@ public:
 
 protected:
 	CvHaarClassifierCascade* cascade;
-	string haarFile;
+	std::string haarFile;
 	ofxCvGrayscaleImage img;
 	float scaleHaar;
 	unsigned neighbors;

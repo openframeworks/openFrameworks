@@ -154,7 +154,7 @@ static const struct {
 #define CASE_STR(x,y) case x: str = y; break
 
 static const char* eglErrorString(EGLint err) {
-	string str;
+	std::string str;
 	switch (err) {
 	CASE_STR(EGL_SUCCESS, "no error");
 	CASE_STR(EGL_NOT_INITIALIZED, "EGL not, or could not be, initialized");
@@ -477,9 +477,9 @@ void ofAppEGLWindow::setup(const Settings & _settings) {
 	nFramesSinceWindowResized = 0;
 
 	if(settings.glesVersion>1){
-		currentRenderer = make_shared<ofGLProgrammableRenderer>(this);
+		currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 	}else{
-		currentRenderer = make_shared<ofGLRenderer>(this);
+		currentRenderer = std::make_shared<ofGLRenderer>(this);
 	}
 
 	makeCurrent();
@@ -903,7 +903,7 @@ ofCoreEvents & ofAppEGLWindow::events(){
 }
 
 //------------------------------------------------------------
-shared_ptr<ofBaseRenderer> & ofAppEGLWindow::renderer(){
+std::shared_ptr<ofBaseRenderer> & ofAppEGLWindow::renderer(){
 	return currentRenderer;
 }
 
@@ -1039,7 +1039,7 @@ void ofAppEGLWindow::pollEvents(){
 			}
 		}
 	} else {
-		queue<ofMouseEventArgs> mouseEventsCopy;
+		std::queue<ofMouseEventArgs> mouseEventsCopy;
 		instance->lock();
 		mouseEventsCopy = instance->mouseEvents;
 		while(!instance->mouseEvents.empty()){
@@ -1052,7 +1052,7 @@ void ofAppEGLWindow::pollEvents(){
 		}
 
 		// KEYBOARD EVENTS
-		queue<ofKeyEventArgs> keyEventsCopy;
+		std::queue<ofKeyEventArgs> keyEventsCopy;
 		instance->lock();
 		keyEventsCopy = instance->keyEvents;
 		while(!instance->keyEvents.empty()){
@@ -1077,7 +1077,7 @@ void ofAppEGLWindow::showCursor(){
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setWindowTitle(string title) {
+void ofAppEGLWindow::setWindowTitle(std::string title) {
 	ofLogNotice("ofAppEGLWindow") << "setWindowTitle(): not implemented";
 }
 
@@ -1350,14 +1350,14 @@ void ofAppEGLWindow::setupNativeMouse() {
 	// fallback to /dev/input/eventX since some vnc servers use uinput to handle mouse & keyboard
 	typedef int (*filter_ptr)(const struct dirent *d);
 	filter_ptr mouse_filters[2] = { filter_mouse, filter_event };
-	string devicePathBuffers[2] = { "/dev/input/by-path/", "/dev/input/" };
+	std::string devicePathBuffers[2] = { "/dev/input/by-path/", "/dev/input/" };
 
 	for(int i=0; i<2; i++){
 		int n = scandir(devicePathBuffers[i].c_str(), &eps, mouse_filters[i], dummy_sort);
 
 		// make sure that we found an appropriate entry
 		if(n >= 0 && eps != 0 && eps[0] != 0) {
-			string devicePathBuffer;
+			std::string devicePathBuffer;
 			devicePathBuffer.append(devicePathBuffers[i]);
 			devicePathBuffer.append(eps[0]->d_name);
 			mouse_fd = open(devicePathBuffer.c_str(), O_RDONLY | O_NONBLOCK);
@@ -1390,14 +1390,14 @@ void ofAppEGLWindow::setupNativeKeyboard() {
 	struct dirent **eps;
 	typedef int (*filter_ptr)(const struct dirent *d);
 	filter_ptr kbd_filters[2] = { filter_kbd, filter_event };
-	string devicePathBuffers[2] = { "/dev/input/by-path/", "/dev/input/" };
+	std::string devicePathBuffers[2] = { "/dev/input/by-path/", "/dev/input/" };
 
 	for(int i=0; i<2; i++){
 		int n = scandir(devicePathBuffers[i].c_str(), &eps, kbd_filters[i], dummy_sort);
 
 		// make sure that we found an appropriate entry
 		if(n >= 0 && eps != 0 && eps[0] != 0) {
-			string devicePathBuffer;
+			std::string devicePathBuffer;
 			devicePathBuffer.append(devicePathBuffers[i]);
 			devicePathBuffer.append(eps[0]->d_name);
 			keyboard_fd = open(devicePathBuffer.c_str(), O_RDONLY | O_NONBLOCK);
@@ -2141,7 +2141,7 @@ void ofAppEGLWindow::handleX11Event(const XEvent& event){
 		instance->coreEvents.notifyMouseEvent(mouseEvent);
 		break;
 	case MotionNotify:
-		//cout << "motion notify" << endl;
+		//cout << "motion notify" << std::endl;
 		mouseEvent.x = static_cast<float>(event.xmotion.x);
 		mouseEvent.y = static_cast<float>(event.xmotion.y);
 		mouseEvent.button = event.xbutton.button;

@@ -40,22 +40,22 @@ ofMainLoop::~ofMainLoop() {
 	exit();
 }
 
-shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & settings){
+std::shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & settings){
 #ifdef TARGET_NODISPLAY
-	shared_ptr<ofAppNoWindow> window = shared_ptr<ofAppNoWindow>(new ofAppNoWindow());
+	std::shared_ptr<ofAppNoWindow> window = std::shared_ptr<ofAppNoWindow>(new ofAppNoWindow());
 #else
 	#if defined(TARGET_OF_IOS)
-	shared_ptr<ofAppiOSWindow> window = shared_ptr<ofAppiOSWindow>(new ofAppiOSWindow());
+	std::shared_ptr<ofAppiOSWindow> window = std::shared_ptr<ofAppiOSWindow>(new ofAppiOSWindow());
 	#elif defined(TARGET_ANDROID)
-	shared_ptr<ofAppAndroidWindow> window = shared_ptr<ofAppAndroidWindow>(new ofAppAndroidWindow());
+	std::shared_ptr<ofAppAndroidWindow> window = std::shared_ptr<ofAppAndroidWindow>(new ofAppAndroidWindow());
 	#elif defined(TARGET_RASPBERRY_PI)
-	shared_ptr<ofAppEGLWindow> window = shared_ptr<ofAppEGLWindow>(new ofAppEGLWindow());
+	std::shared_ptr<ofAppEGLWindow> window = std::shared_ptr<ofAppEGLWindow>(new ofAppEGLWindow());
 	#elif defined(TARGET_EMSCRIPTEN)
-	shared_ptr<ofxAppEmscriptenWindow> window = shared_ptr<ofxAppEmscriptenWindow>(new ofxAppEmscriptenWindow);
+	std::shared_ptr<ofxAppEmscriptenWindow> window = std::shared_ptr<ofxAppEmscriptenWindow>(new ofxAppEmscriptenWindow);
 	#elif defined(TARGET_OPENGLES)
-	shared_ptr<ofAppGLFWWindow> window = shared_ptr<ofAppGLFWWindow>(new ofAppGLFWWindow());
+	std::shared_ptr<ofAppGLFWWindow> window = std::shared_ptr<ofAppGLFWWindow>(new ofAppGLFWWindow());
 	#else
-	shared_ptr<ofAppGLFWWindow> window = shared_ptr<ofAppGLFWWindow>(new ofAppGLFWWindow());
+	std::shared_ptr<ofAppGLFWWindow> window = std::shared_ptr<ofAppGLFWWindow>(new ofAppGLFWWindow());
 	#endif
 #endif
 	addWindow(window);
@@ -63,7 +63,7 @@ shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & se
 	return window;
 }
 
-void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> && app){
+void ofMainLoop::run(std::shared_ptr<ofAppBaseWindow> window, std::shared_ptr<ofBaseApp> && app){
 	windowsApps[window] = app;
 	if(app){
 		ofAddListener(window->events().setup,app.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
@@ -155,8 +155,8 @@ void ofMainLoop::exit(){
 	exitEvent.notify(this);
 
 	for(auto i: windowsApps){
-		shared_ptr<ofAppBaseWindow> window = i.first;
-		shared_ptr<ofBaseApp> app = i.second;
+		std::shared_ptr<ofAppBaseWindow> window = i.first;
+		std::shared_ptr<ofBaseApp> app = i.second;
 		
 		if(window == nullptr) {
 			continue;
@@ -216,11 +216,11 @@ void ofMainLoop::exit(){
 	windowsApps.clear();
 }
 
-shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
+std::shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
 	return currentWindow.lock();
 }
 
-void ofMainLoop::setCurrentWindow(shared_ptr<ofAppBaseWindow> window){
+void ofMainLoop::setCurrentWindow(std::shared_ptr<ofAppBaseWindow> window){
 	currentWindow = window;
 }
 
@@ -236,7 +236,7 @@ void ofMainLoop::setCurrentWindow(ofAppBaseWindow * window){
 	}
 }
 
-shared_ptr<ofBaseApp> ofMainLoop::getCurrentApp(){
+std::shared_ptr<ofBaseApp> ofMainLoop::getCurrentApp(){
 	return windowsApps[currentWindow.lock()];
 }
 

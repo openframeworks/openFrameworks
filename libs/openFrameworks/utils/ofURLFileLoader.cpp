@@ -24,10 +24,10 @@ class ofURLFileLoaderImpl: public ofThread, public ofBaseURLFileLoader{
 public:
 	ofURLFileLoaderImpl();
 	~ofURLFileLoaderImpl();
-	ofHttpResponse get(const string& url);
-	int getAsync(const string& url, const string& name=""); // returns id
-	ofHttpResponse saveTo(const string& url, const std::filesystem::path& path);
-	int saveAsync(const string& url, const std::filesystem::path& path);
+	ofHttpResponse get(const std::string& url);
+	int getAsync(const std::string& url, const std::string& name=""); // returns id
+	ofHttpResponse saveTo(const std::string& url, const std::filesystem::path& path);
+	int saveAsync(const std::string& url, const std::filesystem::path& path);
 	void remove(int id);
 	void clear();
 	void stop();
@@ -46,7 +46,7 @@ private:
 	ofThreadChannel<ofHttpRequest> requests;
 	ofThreadChannel<ofHttpResponse> responses;
 	ofThreadChannel<int> cancelRequestQueue;
-	set<int> cancelledRequests;
+	std::set<int> cancelledRequests;
 	std::unique_ptr<CURL, void(*)(CURL*)> curl;
 };
 
@@ -63,13 +63,13 @@ ofURLFileLoaderImpl::~ofURLFileLoaderImpl(){
 	stop();
 }
 
-ofHttpResponse ofURLFileLoaderImpl::get(const string& url) {
+ofHttpResponse ofURLFileLoaderImpl::get(const std::string& url) {
 	ofHttpRequest request(url,url);
 	return handleRequest(request);
 }
 
 
-int ofURLFileLoaderImpl::getAsync(const string& url, const string& name){
+int ofURLFileLoaderImpl::getAsync(const std::string& url, const std::string& name){
 	ofHttpRequest request(url, name.empty() ? url : name);
 	requests.send(request);
 	start();
@@ -77,12 +77,12 @@ int ofURLFileLoaderImpl::getAsync(const string& url, const string& name){
 }
 
 
-ofHttpResponse ofURLFileLoaderImpl::saveTo(const string& url, const std::filesystem::path& path){
+ofHttpResponse ofURLFileLoaderImpl::saveTo(const std::string& url, const std::filesystem::path& path){
 	ofHttpRequest request(url,path.string(),true);
 	return handleRequest(request);
 }
 
-int ofURLFileLoaderImpl::saveAsync(const string& url, const std::filesystem::path& path){
+int ofURLFileLoaderImpl::saveAsync(const std::string& url, const std::filesystem::path& path){
 	ofHttpRequest request(url,path.string(),true);
 	requests.send(request);
 	start();
@@ -126,7 +126,7 @@ void ofURLFileLoaderImpl::threadedFunction() {
 			if(cancelledRequests.find(request.getId())==cancelledRequests.end()){
 				ofHttpResponse response(handleRequest(request));
 				int status = response.status;
-				if(!responses.send(move(response))){
+				if(!responses.send(std::move(response))){
 					break;
 				}
 				if(status==-1){
@@ -184,7 +184,7 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	if(request.contentType!=""){
 		headers = curl_slist_append(headers, ("Content-Type: " + request.contentType).c_str());
 	}
-	for(map<string,string>::const_iterator it = request.headers.cbegin(); it!=request.headers.cend(); it++){
+	for(std::map<std::string,std::string>::const_iterator it = request.headers.cbegin(); it!=request.headers.cend(); it++){
 		headers = curl_slist_append(headers, (it->first + ": " +it->second).c_str());
 	}
 
@@ -269,19 +269,19 @@ ofURLFileLoader::ofURLFileLoader()
 :impl(new ofURLFileLoaderImpl){}
 #endif
 
-ofHttpResponse ofURLFileLoader::get(const string& url){
+ofHttpResponse ofURLFileLoader::get(const std::string& url){
 	return impl->get(url);
 }
 
-int ofURLFileLoader::getAsync(const string& url, const string& name){
+int ofURLFileLoader::getAsync(const std::string& url, const std::string& name){
 	return impl->getAsync(url,name);
 }
 
-ofHttpResponse ofURLFileLoader::saveTo(const string& url, const std::filesystem::path & path){
+ofHttpResponse ofURLFileLoader::saveTo(const std::string& url, const std::filesystem::path & path){
 	return impl->saveTo(url,path);
 }
 
-int ofURLFileLoader::saveAsync(const string& url, const std::filesystem::path & path){
+int ofURLFileLoader::saveAsync(const std::string& url, const std::filesystem::path & path){
 	return impl->saveAsync(url,path);
 }
 
@@ -320,7 +320,7 @@ ofHttpRequest::ofHttpRequest()
 {
 }
 
-ofHttpRequest::ofHttpRequest(const string& url, const string& name,bool saveTo)
+ofHttpRequest::ofHttpRequest(const std::string& url, const std::string& name,bool saveTo)
 :url(url)
 ,name(name)
 ,saveTo(saveTo)
@@ -343,7 +343,7 @@ ofHttpResponse::ofHttpResponse()
 {
 }
 
-ofHttpResponse::ofHttpResponse(const ofHttpRequest& request, const ofBuffer& data, int status, const string& error)
+ofHttpResponse::ofHttpResponse(const ofHttpRequest& request, const ofBuffer& data, int status, const std::string& error)
 :request(request)
 ,data(data)
 ,status(status)
@@ -351,7 +351,7 @@ ofHttpResponse::ofHttpResponse(const ofHttpRequest& request, const ofBuffer& dat
 {
 }
 
-ofHttpResponse::ofHttpResponse(const ofHttpRequest& request, int status, const string& error)
+ofHttpResponse::ofHttpResponse(const ofHttpRequest& request, int status, const std::string& error)
 :request(request)
 ,status(status)
 ,error(error)
@@ -364,19 +364,19 @@ ofHttpResponse::operator ofBuffer&(){
 
 
 
-ofHttpResponse ofLoadURL(const string& url){
+ofHttpResponse ofLoadURL(const std::string& url){
 	return getFileLoader().get(url);
 }
 
-int ofLoadURLAsync(const string&  url, const string&  name){
+int ofLoadURLAsync(const std::string&  url, const std::string&  name){
 	return getFileLoader().getAsync(url,name);
 }
 
-ofHttpResponse ofSaveURLTo(const string& url, const std::filesystem::path& path){
+ofHttpResponse ofSaveURLTo(const std::string& url, const std::filesystem::path& path){
 	return getFileLoader().saveTo(url,path);
 }
 
-int ofSaveURLAsync(const string& url, const std::filesystem::path& path){
+int ofSaveURLAsync(const std::string& url, const std::filesystem::path& path){
 	return getFileLoader().saveAsync(url,path);
 }
 

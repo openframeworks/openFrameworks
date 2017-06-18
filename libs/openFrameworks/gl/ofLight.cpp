@@ -57,8 +57,8 @@ const ofFloatColor & ofGetGlobalAmbientColor(){
 }
 
 //----------------------------------------
-vector<weak_ptr<ofLight::Data> > & ofLightsData(){
-	static vector<weak_ptr<ofLight::Data> > * lightsActive = ofIsGLProgrammableRenderer()?new vector<weak_ptr<ofLight::Data> >:new vector<weak_ptr<ofLight::Data> >(8);
+std::vector<std::weak_ptr<ofLight::Data> > & ofLightsData(){
+	static std::vector<std::weak_ptr<ofLight::Data> > * lightsActive = ofIsGLProgrammableRenderer()?new std::vector<std::weak_ptr<ofLight::Data> >:new std::vector<std::weak_ptr<ofLight::Data> >(8);
 	return *lightsActive;
 }
 

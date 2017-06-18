@@ -95,7 +95,7 @@ public:
 	///
 	/// NOTE: currently, libfreenect returns a serial number with all 0s for
 	/// kinect models > 1414, so this will only work with the original xbox kinect
-	bool open(string serial);
+	bool open(std::string serial);
 
 	/// close the connection and stop grabbing images
 	void close();
@@ -298,7 +298,7 @@ public:
 	///
 	/// NOTE: currently, libfreenect returns a serial number with all 0s for
 	/// kinect models > 1414, so this will only work with the original xbox kinect
-	string getSerial() const;
+	std::string getSerial() const;
 
 	/// static kinect image size
 	const static int width = 640;
@@ -322,7 +322,7 @@ public:
 
 	/// is a device already connected?
 	static bool isDeviceConnected(int id);
-	static bool isDeviceConnected(string serial);
+	static bool isDeviceConnected(std::string serial);
 
 	/// get the id of the next available device,
 	/// returns -1 if nothing found
@@ -330,7 +330,7 @@ public:
 	
 	/// get the serial number of the next available device,
 	/// returns an empty string "" if nothing found
-	static string nextAvailableSerial();
+	static std::string nextAvailableSerial();
 
 	/// set the time to wait when not getting data before attempting to re-open device.
     static void setReconnectWaitTime(float waitTime);
@@ -338,7 +338,7 @@ public:
 protected:
 
 	int deviceId;	///< -1 when not connected
-	string serial;	///< unique serial number, "" when not connected
+	std::string serial;	///< unique serial number, "" when not connected
 	
 	bool bUseTexture;
 	ofTexture depthTex; ///< the depth texture
@@ -386,7 +386,7 @@ private:
 	ofShortPixels depthPixelsRawBack;	///< depth back
 	ofPixels videoPixelsBack;			///< rgb back
 
-	vector<unsigned char> depthLookupTable;
+	std::vector<unsigned char> depthLookupTable;
 	void updateDepthLookupTable();
 	void updateDepthPixels();
 
@@ -440,7 +440,7 @@ public:
 	bool open(ofxKinect& kinect, int id=-1);
 	
 	/// open a kinect device by it's unique serial number
-	bool open(ofxKinect& kinect, string serial);
+	bool open(ofxKinect& kinect, std::string serial);
 
 	/// close a kinect device
 	void close(ofxKinect& kinect);
@@ -475,7 +475,7 @@ public:
 	
 	/// get the deviceList index from an id
 	/// returns -1 if not found
-	int getDeviceIndex(string serial);
+	int getDeviceIndex(std::string serial);
 
 	/// get the deviceList id from an index
 	/// returns -1 if not found
@@ -483,13 +483,13 @@ public:
 
 	/// get the deviceList id from a serial
 	/// returns -1 if not found
-    int getDeviceId(string serial);
+    int getDeviceId(std::string serial);
 
 	/// is a device with this id already connected?
 	bool isConnected(int id);
 	
 	/// is a device with this serial already connected?
-	bool isConnected(string serial);
+	bool isConnected(std::string serial);
 
 	/// get the id of the next available device,
 	/// returns -1 if nothing found
@@ -497,14 +497,14 @@ public:
 	
 	/// get the serial number of the next available device,
 	/// returns an empty string "" if nothing found
-	string nextAvailableSerial();
+	std::string nextAvailableSerial();
 
 	/// get the raw pointer
 	freenect_context* getContext() {return kinectContext;}
 
 	// for auto-enumeration
     struct KinectPair{
-		string serial;	///< unique serial number
+	std::string serial;	///< unique serial number
 		int id;			///< freenect bus id
     };
 	

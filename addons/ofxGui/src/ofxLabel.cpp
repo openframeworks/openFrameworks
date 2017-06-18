@@ -1,8 +1,7 @@
 #include "ofxLabel.h"
 #include "ofGraphics.h"
-using namespace std;
 
-ofxLabel::ofxLabel(ofParameter<string> _label, float width, float height){
+ofxLabel::ofxLabel(ofParameter<std::string> _label, float width, float height){
 	setup(_label,width,height);
 }
 
@@ -10,7 +9,7 @@ ofxLabel::~ofxLabel(){
     label.removeListener(this,&ofxLabel::valueChanged);
 }
 
-ofxLabel* ofxLabel::setup(ofParameter<string> _label, float width, float height) {
+ofxLabel* ofxLabel::setup(ofParameter<std::string> _label, float width, float height) {
     label.makeReferenceTo(_label);
     b.width  = width;
     b.height = height;
@@ -20,7 +19,7 @@ ofxLabel* ofxLabel::setup(ofParameter<string> _label, float width, float height)
     return this;
 }
 
-ofxLabel* ofxLabel::setup(const std::string& labelName, string _label, float width, float height) {
+ofxLabel* ofxLabel::setup(const std::string& labelName, std::string _label, float width, float height) {
     label.set(labelName,_label);
     return setup(label,width,height);
 }
@@ -32,11 +31,11 @@ void ofxLabel::generateDraw(){
 	bg.setFilled(true);
 	bg.rectangle(b);
 
-    string name;
+	std::string name;
     if(!getName().empty()){
     	name = getName() + ": ";
     }
-    name += (string)label;    
+    name += (std::string)label;    
     
     // resize the string inside the max width
     if(font.isLoaded()){ // using font
@@ -76,6 +75,6 @@ ofAbstractParameter & ofxLabel::getParameter(){
 	return label;
 }
 
-void ofxLabel::valueChanged(string & value){
+void ofxLabel::valueChanged(std::string & value){
     setNeedsRedraw();
 }

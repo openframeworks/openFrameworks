@@ -29,7 +29,7 @@ void ofxTCPClient::setVerbose(bool _verbose){
 }
 
 //--------------------------
-bool ofxTCPClient::setup(string ip, int _port, bool blocking){
+bool ofxTCPClient::setup(std::string ip, int _port, bool blocking){
 
 	ofxTCPSettings settings(ip, _port);
 
@@ -98,14 +98,14 @@ bool ofxTCPClient::close(){
 }
 
 //--------------------------
-void ofxTCPClient::setMessageDelimiter(string delim){
+void ofxTCPClient::setMessageDelimiter(std::string delim){
 	if(delim != ""){
 		messageDelimiter = delim; 
 	}
 }
 
 //--------------------------
-bool ofxTCPClient::send(string message){
+bool ofxTCPClient::send(std::string message){
 	// tcp is a stream oriented protocol
 	// so there's no way to be sure were
 	// a message ends without using a terminator
@@ -181,7 +181,7 @@ bool ofxTCPClient::sendRawMsg(const char * msg, int size){
 }
 
 //--------------------------
-bool ofxTCPClient::sendRaw(string message){
+bool ofxTCPClient::sendRaw(std::string message){
 	if( message.length() == 0) return false;
     int ret = TCPClient.SendAll(message.c_str(), message.length());
     int errorCode = 0;
@@ -236,11 +236,11 @@ bool ofxTCPClient::isClosingCondition(int messageSize, int errorCode){
 }
 
 //--------------------------
-string ofxTCPClient::receive(){
+std::string ofxTCPClient::receive(){
 	str    = "";
 	int length=0;
 	//only get data from the buffer if we don't have already some complete message
-	if(tmpStr.find(messageDelimiter)==string::npos){
+	if(tmpStr.find(messageDelimiter)==std::string::npos){
 		memset(tmpBuff,  0, TCP_MAX_MSG_SIZE+1); //one more so there's always a \0 at the end for string concat
 		length = TCPClient.Receive(tmpBuff, TCP_MAX_MSG_SIZE);
 		if(length>0){ // don't copy the data if there was an error or disconnection
@@ -259,7 +259,7 @@ string ofxTCPClient::receive(){
 	}
 
 	// process any available data
-	if(tmpStr.find(messageDelimiter)!=string::npos){
+	if(tmpStr.find(messageDelimiter)!=std::string::npos){
 		str=tmpStr.substr(0,tmpStr.find(messageDelimiter));
 		tmpStr=tmpStr.substr(tmpStr.find(messageDelimiter)+messageDelimiter.size());
 	}
@@ -267,7 +267,7 @@ string ofxTCPClient::receive(){
 }
 
 //--------------------------
-static int findDelimiter(char * data, int size, string delimiter){
+static int findDelimiter(char * data, int size, std::string delimiter){
 	unsigned int posInDelimiter=0;
 	for(int i=0;i<size;i++){
 		if(data[i]==delimiter[posInDelimiter]){
@@ -335,7 +335,7 @@ int ofxTCPClient::peekReceiveRawBytes(char * receiveBuffer, int numBytes){
 }
 
 //--------------------------
-string ofxTCPClient::receiveRaw(){
+std::string ofxTCPClient::receiveRaw(){
     messageSize = TCPClient.Receive(tmpBuff, TCP_MAX_MSG_SIZE);
     int errorCode = 0;
     if(messageSize<0) errorCode = ofxNetworkCheckError();
@@ -365,6 +365,6 @@ int ofxTCPClient::getPort(){
 }
 
 //--------------------------
-string ofxTCPClient::getIP(){
+std::string ofxTCPClient::getIP(){
 	return ipAddr;
 }

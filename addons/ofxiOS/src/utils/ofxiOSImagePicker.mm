@@ -121,7 +121,7 @@ void ofxiOSImagePicker::loadPixels()
 	
 	photo = [imagePicker getCGImage];
     if(!photo){
-        ofLogError("ofxiOSImagePicker::loadPixels") << " photo is NULL " << endl;
+        ofLogError("ofxiOSImagePicker::loadPixels") << " photo is NULL " << std::endl;
         return;
     }
     

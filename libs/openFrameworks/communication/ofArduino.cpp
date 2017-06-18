@@ -197,7 +197,7 @@ void ofArduino::disconnect(){
 }
 
 void ofArduino::update(){
-	vector <unsigned char> bytesToProcess;
+	std::vector <unsigned char> bytesToProcess;
 	int bytesToRead = _port.available();
 	if(bytesToRead > 0){
 		bytesToProcess.resize(bytesToRead);
@@ -234,11 +234,11 @@ int ofArduino::getPwm(int pin) const {
 	}
 }
 
-vector <unsigned char> ofArduino::getSysEx() const {
+std::vector <unsigned char> ofArduino::getSysEx() const {
 	return _sysExHistory.front();
 }
 
-string ofArduino::getString() const {
+std::string ofArduino::getString() const {
 	return _stringHistory.front();
 }
 
@@ -301,10 +301,10 @@ void ofArduino::sendPwm(int pin, int value, bool force){
 	}
 }
 
-void ofArduino::sendSysEx(int command, vector <unsigned char> data){
+void ofArduino::sendSysEx(int command, std::vector <unsigned char> data){
 	sendByte(FIRMATA_START_SYSEX);
 	sendByte(command);
-	vector <unsigned char>::iterator it = data.begin();
+	std::vector <unsigned char>::iterator it = data.begin();
 	while(it != data.end()){
 		//sendByte(*it);	// need to split data into 2 bytes before sending
 		sendValueAsTwo7bitBytes(*it);
@@ -321,10 +321,10 @@ void ofArduino::sendSysExEnd(){
 	sendByte(FIRMATA_END_SYSEX);
 }
 
-void ofArduino::sendString(string str){
+void ofArduino::sendString(std::string str){
 	sendByte(FIRMATA_START_SYSEX);
 	sendByte(FIRMATA_SYSEX_FIRMATA_STRING);
-	string::iterator it = str.begin();
+	std::string::iterator it = str.begin();
 	while(it != str.end()){
 		sendValueAsTwo7bitBytes(*it);
 		it++;
@@ -387,19 +387,19 @@ int ofArduino::getAnalogPinReporting(int pin) const {
 	return _analogPinReporting[pin];
 }
 
-list <int> * ofArduino::getAnalogHistory(int pin){
+std::list <int> * ofArduino::getAnalogHistory(int pin){
 	return &_analogHistory[pin];
 }
 
-list <int> * ofArduino::getDigitalHistory(int pin){
+std::list <int> * ofArduino::getDigitalHistory(int pin){
 	return &_digitalHistory[pin];
 }
 
-list <vector <unsigned char> > * ofArduino::getSysExHistory(){
+std::list <std::vector <unsigned char> > * ofArduino::getSysExHistory(){
 	return &_sysExHistory;
 }
 
-list <string> * ofArduino::getStringHistory(){
+std::list <std::string> * ofArduino::getStringHistory(){
 	return &_stringHistory;
 }
 
@@ -419,7 +419,7 @@ int ofArduino::getMinorFirmwareVersion() const {
 	return _minorFirmwareVersion;
 }
 
-string ofArduino::getFirmwareName() const {
+std::string ofArduino::getFirmwareName() const {
 	return _firmwareName;
 }
 
@@ -526,11 +526,11 @@ void ofArduino::processData(unsigned char inputData){
 }
 
 // sysex data is assumed to be 8-bit bytes split into two 7-bit bytes.
-void ofArduino::processSysExData(vector <unsigned char> data){
+void ofArduino::processSysExData(std::vector <unsigned char> data){
 
-	string str;
+	std::string str;
 
-	vector <unsigned char>::iterator it;
+	std::vector <unsigned char>::iterator it;
 	unsigned char buffer;
 	//int i = 1;
 

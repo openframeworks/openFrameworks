@@ -235,7 +235,7 @@ bool ofxKinect::open(int deviceIndex) {
 }
 
 //--------------------------------------------------------------------
-bool ofxKinect::open(string serial) {
+bool ofxKinect::open(std::string serial) {
 	if(!bGrabberInited) {
 		ofLogVerbose("ofxKinect") << "open(): cannot open, init not called";
 		return false;
@@ -382,7 +382,7 @@ void ofxKinect::update() {
 		tryCount = 0;
 		if(this->lock()) {
             if( videoPixels.getHeight() == videoPixelsIntra.getHeight() ){
-                swap(videoPixels,videoPixelsIntra);
+		std::swap(videoPixels,videoPixelsIntra);
             }else{
 				int minimumSize = MIN(videoPixels.size(), videoPixelsIntra.size());
 				memcpy(videoPixels.getData(), videoPixelsIntra.getData(), minimumSize);
@@ -402,7 +402,7 @@ void ofxKinect::update() {
 		bIsFrameNewDepth = true;
 		tryCount = 0;
 		if(this->lock()) {
-			swap(depthPixelsRaw, depthPixelsRawIntra);
+			std::swap(depthPixelsRaw, depthPixelsRawIntra);
 			bNeedsUpdateDepth = false;
 			this->unlock();
 
@@ -715,7 +715,7 @@ int ofxKinect::getDeviceId() const{
 }
 
 //---------------------------------------------------------------------------
-string ofxKinect::getSerial() const{
+std::string ofxKinect::getSerial() const{
 	return serial;
 }
 
@@ -755,7 +755,7 @@ bool ofxKinect::isDeviceConnected(int id) {
 }
 
 //---------------------------------------------------------------------------
-bool ofxKinect::isDeviceConnected(string serial) {
+bool ofxKinect::isDeviceConnected(std::string serial) {
 	return kinectContext.isConnected(serial);
 }
 
@@ -765,7 +765,7 @@ int ofxKinect::nextAvailableId() {
 }
 
 //---------------------------------------------------------------------------
-string ofxKinect::nextAvailableSerial() {
+std::string ofxKinect::nextAvailableSerial() {
 	return kinectContext.nextAvailableSerial();
 }
 
@@ -807,7 +807,7 @@ void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t times
 
 	if(kinect->kinectDevice == dev) {
 		kinect->lock();
-		swap(kinect->depthPixelsRawBack,kinect->depthPixelsRawIntra);
+		std::swap(kinect->depthPixelsRawBack,kinect->depthPixelsRawIntra);
 		kinect->bNeedsUpdateDepth = true;
 		kinect->unlock();
 		freenect_set_depth_buffer(kinect->kinectDevice,kinect->depthPixelsRawBack.getData());
@@ -821,7 +821,7 @@ void ofxKinect::grabVideoFrame(freenect_device *dev, void *video, uint32_t times
 
 	if(kinect->kinectDevice == dev) {
 		kinect->lock();
-		swap(kinect->videoPixelsBack,kinect->videoPixelsIntra);
+		std::swap(kinect->videoPixelsBack,kinect->videoPixelsIntra);
 		kinect->bNeedsUpdateVideo = true;
 		kinect->unlock();
 		freenect_set_video_buffer(kinect->kinectDevice,kinect->videoPixelsBack.getData());
@@ -972,7 +972,7 @@ bool ofxKinectContext::open(ofxKinect& kinect, int id) {
 		ofLogError("ofxKinect") << "could not open device " <<  id;
 		return false;
 	}
-	kinects.insert(pair<int,ofxKinect*>(id, &kinect));
+	kinects.insert(std::pair<int,ofxKinect*>(id, &kinect));
 	
 	// set kinect id & serial from bus id
 	kinect.deviceId = id;
@@ -981,7 +981,7 @@ bool ofxKinectContext::open(ofxKinect& kinect, int id) {
 	return true;
 }
 
-bool ofxKinectContext::open(ofxKinect& kinect, string serial) {
+bool ofxKinectContext::open(ofxKinect& kinect, std::string serial) {
 	
 	// rebuild if necessary (aka new kinects plugged in)
 	buildDeviceList();
@@ -1003,7 +1003,7 @@ bool ofxKinectContext::open(ofxKinect& kinect, string serial) {
 		return false;
 	}
 	int index = getDeviceIndex(serial);
-	kinects.insert(pair<int,ofxKinect*>(deviceList[index].id, &kinect));
+	kinects.insert(std::pair<int,ofxKinect*>(deviceList[index].id, &kinect));
 	kinect.deviceId = deviceList[index].id;
 	kinect.serial = serial;
 	
@@ -1054,7 +1054,7 @@ void ofxKinectContext::buildDeviceList() {
 	for(int i = 0; i < numDevices; i++){
 		KinectPair kp;
 		kp.id = i;
-		kp.serial = (string) devAttrib->camera_serial; 
+		kp.serial = (std::string) devAttrib->camera_serial; 
 		deviceList.push_back(kp);
 		devAttrib = devAttrib->next;
 	}
@@ -1068,7 +1068,7 @@ void ofxKinectContext::listDevices(bool verbose) {
     if(!isInited())
 		init();
 	
-	stringstream stream;
+	std::stringstream stream;
 	
 	if(numTotal() == 0) {
 		stream << "no devices found";
@@ -1134,7 +1134,7 @@ int ofxKinectContext::getDeviceIndex(int id) {
 	return -1;
 }
 
-int ofxKinectContext::getDeviceIndex(string serial) {
+int ofxKinectContext::getDeviceIndex(std::string serial) {
 	for(unsigned int i = 0; i < deviceList.size(); ++i) {
 		if(deviceList[i].serial == serial)
 			return i;
@@ -1150,7 +1150,7 @@ int ofxKinectContext::getDeviceId(int index) {
 	return -1;
 }
 
-int ofxKinectContext::getDeviceId(string serial){
+int ofxKinectContext::getDeviceId(std::string serial){
 	for(unsigned int i = 0; i < deviceList.size(); ++i) {
 		if(deviceList[i].serial == serial){
 			return deviceList[i].id;
@@ -1164,7 +1164,7 @@ bool ofxKinectContext::isConnected(int id) {
 	return iter != kinects.end();
 }
 
-bool ofxKinectContext::isConnected(string serial) {
+bool ofxKinectContext::isConnected(std::string serial) {
 	std::map<int,ofxKinect*>::iterator iter;
 	for(iter = kinects.begin(); iter != kinects.end(); ++iter) {
 		if(iter->second->getSerial() == serial)
@@ -1187,7 +1187,7 @@ int ofxKinectContext::nextAvailableId() {
 	return -1;
 }
 
-string ofxKinectContext::nextAvailableSerial() {
+std::string ofxKinectContext::nextAvailableSerial() {
 	if(!isInited())
 		init();
 	

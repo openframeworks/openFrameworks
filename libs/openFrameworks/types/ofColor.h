@@ -526,7 +526,7 @@ public:
     /// \param os An output stream reference.
     /// \param color The color to write to the output stream.
     /// \returns The passed output stream reference, useful for method chaining.
-    friend ostream& operator << (ostream& os, const ofColor_<PixelType>& color) {
+    friend std::ostream& operator << (std::ostream& os, const ofColor_<PixelType>& color) {
         if(sizeof(PixelType) == 1) {
             os << (int) color.r << ", " << (int) color.g << ", " << (int) color.b << ", " << (int) color.a;
         } else {
@@ -543,7 +543,7 @@ public:
     /// \param is An input stream reference.
     /// \param color The color to fill with the input stream.
     /// \returns The passed input stream reference, useful for method chaining.
-    friend istream& operator >> (istream& is, ofColor_<PixelType>& color) {
+    friend std::istream& operator >> (std::istream& is, ofColor_<PixelType>& color) {
         if(sizeof(PixelType) == 1) {
             int component;
             is >> std::skipws >> component;
@@ -677,7 +677,7 @@ ofColor_<PixelType> operator*(float val, const ofColor_<PixelType> &color) {
 
 template<typename PixelType>
 inline float ofColor_<PixelType>::limit() {
-	return numeric_limits<PixelType>::max();
+	return std::numeric_limits<PixelType>::max();
 }
 
 template<>

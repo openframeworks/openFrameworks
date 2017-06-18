@@ -77,7 +77,7 @@ To:
 +++++ Step 5 ++++++
 To run the demo app make sure in ofConstants.h you have 
 
-using namespace std;
+using namespace std; // TODO: shouldn't be needed anymore
 #include <string>   
 #include <sstream>  //for ostringsream
 #include <iomanip>  //for setprecision

@@ -31,13 +31,13 @@ ofBuffer::ofBuffer(const char * _buffer, std::size_t size)
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(istream & stream, size_t ioBlockSize)
+ofBuffer::ofBuffer(std::istream & stream, size_t ioBlockSize)
 :currentLine(end(),end()){
 	set(stream, ioBlockSize);
 }
 
 //--------------------------------------------------
-bool ofBuffer::set(istream & stream, size_t ioBlockSize){
+bool ofBuffer::set(std::istream & stream, size_t ioBlockSize){
 	if(stream.bad()){
 		clear();
 		return false;
@@ -45,7 +45,7 @@ bool ofBuffer::set(istream & stream, size_t ioBlockSize){
 		buffer.clear();
 	}
 
-	vector<char> aux_buffer(ioBlockSize);
+	std::vector<char> aux_buffer(ioBlockSize);
 	while(stream.good()){
 		stream.read(&aux_buffer[0], ioBlockSize);
 		append(aux_buffer.data(), stream.gcount());
@@ -59,7 +59,7 @@ void ofBuffer::setall(char mem){
 }
 
 //--------------------------------------------------
-bool ofBuffer::writeTo(ostream & stream) const {
+bool ofBuffer::writeTo(std::ostream & stream) const {
 	if(stream.bad()){
 		return false;
 	}
@@ -73,12 +73,12 @@ void ofBuffer::set(const char * _buffer, std::size_t _size){
 }
 
 //--------------------------------------------------
-void ofBuffer::set(const string & text){
+void ofBuffer::set(const std::string & text){
 	set(text.c_str(), text.size());
 }
 
 //--------------------------------------------------
-void ofBuffer::append(const string& _buffer){
+void ofBuffer::append(const std::string& _buffer){
 	append(_buffer.c_str(), _buffer.size());
 }
 
@@ -129,7 +129,7 @@ const char * ofBuffer::getBinaryBuffer() const {
 }
 
 //--------------------------------------------------
-string ofBuffer::getText() const {
+std::string ofBuffer::getText() const {
 	if(buffer.empty()){
 		return "";
 	}
@@ -137,12 +137,12 @@ string ofBuffer::getText() const {
 }
 
 //--------------------------------------------------
-ofBuffer::operator string() const {
+ofBuffer::operator std::string() const {
 	return getText();
 }
 
 //--------------------------------------------------
-ofBuffer & ofBuffer::operator=(const string & text){
+ofBuffer & ofBuffer::operator=(const std::string & text){
 	set(text);
 	return *this;
 }
@@ -153,7 +153,7 @@ std::size_t ofBuffer::size() const {
 }
 
 //--------------------------------------------------
-string ofBuffer::getNextLine(){
+std::string ofBuffer::getNextLine(){
 	if(currentLine.empty()){
 		currentLine = getLines().begin();
 	}else{
@@ -163,7 +163,7 @@ string ofBuffer::getNextLine(){
 }
 
 //--------------------------------------------------
-string ofBuffer::getFirstLine(){
+std::string ofBuffer::getFirstLine(){
 	currentLine = getLines().begin();
 	return currentLine.asString();
 }
@@ -179,47 +179,47 @@ void ofBuffer::resetLineReader(){
 }
 
 //--------------------------------------------------
-vector<char>::iterator ofBuffer::begin(){
+std::vector<char>::iterator ofBuffer::begin(){
 	return buffer.begin();
 }
 
 //--------------------------------------------------
-vector<char>::iterator ofBuffer::end(){
+std::vector<char>::iterator ofBuffer::end(){
 	return buffer.end();
 }
 
 //--------------------------------------------------
-vector<char>::const_iterator ofBuffer::begin() const{
+std::vector<char>::const_iterator ofBuffer::begin() const{
 	return buffer.begin();
 }
 
 //--------------------------------------------------
-vector<char>::const_iterator ofBuffer::end() const{
+std::vector<char>::const_iterator ofBuffer::end() const{
 	return buffer.end();
 }
 
 //--------------------------------------------------
-vector<char>::reverse_iterator ofBuffer::rbegin(){
+std::vector<char>::reverse_iterator ofBuffer::rbegin(){
 	return buffer.rbegin();
 }
 
 //--------------------------------------------------
-vector<char>::reverse_iterator ofBuffer::rend(){
+std::vector<char>::reverse_iterator ofBuffer::rend(){
 	return buffer.rend();
 }
 
 //--------------------------------------------------
-vector<char>::const_reverse_iterator ofBuffer::rbegin() const{
+std::vector<char>::const_reverse_iterator ofBuffer::rbegin() const{
 	return buffer.rbegin();
 }
 
 //--------------------------------------------------
-vector<char>::const_reverse_iterator ofBuffer::rend() const{
+std::vector<char>::const_reverse_iterator ofBuffer::rend() const{
 	return buffer.rend();
 }
 
 //--------------------------------------------------
-ofBuffer::Line::Line(vector<char>::iterator _begin, vector<char>::iterator _end)
+ofBuffer::Line::Line(std::vector<char>::iterator _begin, std::vector<char>::iterator _end)
 	:_current(_begin)
 	,_begin(_begin)
 	,_end(_end){
@@ -231,9 +231,9 @@ ofBuffer::Line::Line(vector<char>::iterator _begin, vector<char>::iterator _end)
 
 	_current = std::find(_begin, _end, '\n');
 	if(_current - 1 >= _begin && *(_current - 1) == '\r'){
-		line = string(_begin, _current - 1);
+		line = std::string(_begin, _current - 1);
 	}else{
-		line = string(_begin, _current);
+		line = std::string(_begin, _current);
 	}
 	if(_current != _end){
 		_current+=1;
@@ -241,17 +241,17 @@ ofBuffer::Line::Line(vector<char>::iterator _begin, vector<char>::iterator _end)
 }
 
 //--------------------------------------------------
-const string & ofBuffer::Line::operator*() const{
+const std::string & ofBuffer::Line::operator*() const{
 	return line;
 }
 
 //--------------------------------------------------
-const string * ofBuffer::Line::operator->() const{
+const std::string * ofBuffer::Line::operator->() const{
 	return &line;
 }
 
 //--------------------------------------------------
-const string & ofBuffer::Line::asString() const{
+const std::string & ofBuffer::Line::asString() const{
 	return line;
 }
 
@@ -285,7 +285,7 @@ bool ofBuffer::Line::empty() const{
 
 
 //--------------------------------------------------
-ofBuffer::RLine::RLine(vector<char>::reverse_iterator _rbegin, vector<char>::reverse_iterator _rend)
+ofBuffer::RLine::RLine(std::vector<char>::reverse_iterator _rbegin, std::vector<char>::reverse_iterator _rend)
 	:_current(_rbegin)
 	,_rbegin(_rbegin)
 	,_rend(_rend){
@@ -295,24 +295,24 @@ ofBuffer::RLine::RLine(vector<char>::reverse_iterator _rbegin, vector<char>::rev
 		return;
 	}
 	_current = std::find(_rbegin+1, _rend, '\n');
-	line = string(_current.base(), _rbegin.base() - 1);
+	line = std::string(_current.base(), _rbegin.base() - 1);
 	if(_current < _rend-1 && *(_current + 1) == '\r'){
 		_current+=1;
 	}
 }
 
 //--------------------------------------------------
-const string & ofBuffer::RLine::operator*() const{
+const std::string & ofBuffer::RLine::operator*() const{
 	return line;
 }
 
 //--------------------------------------------------
-const string * ofBuffer::RLine::operator->() const{
+const std::string * ofBuffer::RLine::operator->() const{
 	return &line;
 }
 
 //--------------------------------------------------
-const string & ofBuffer::RLine::asString() const{
+const std::string & ofBuffer::RLine::asString() const{
 	return line;
 }
 
@@ -344,7 +344,7 @@ bool ofBuffer::RLine::empty() const{
 }
 
 //--------------------------------------------------
-ofBuffer::Lines::Lines(vector<char>::iterator begin, vector<char>::iterator end)
+ofBuffer::Lines::Lines(std::vector<char>::iterator begin, std::vector<char>::iterator end)
 :_begin(begin)
 ,_end(end){}
 
@@ -360,7 +360,7 @@ ofBuffer::Line ofBuffer::Lines::end(){
 
 
 //--------------------------------------------------
-ofBuffer::RLines::RLines(vector<char>::reverse_iterator rbegin, vector<char>::reverse_iterator rend)
+ofBuffer::RLines::RLines(std::vector<char>::reverse_iterator rbegin, std::vector<char>::reverse_iterator rend)
 :_rbegin(rbegin)
 ,_rend(rend){}
 
@@ -385,13 +385,13 @@ ofBuffer::RLines ofBuffer::getReverseLines(){
 }
 
 //--------------------------------------------------
-ostream & operator<<(ostream & ostr, const ofBuffer & buf){
+std::ostream & operator<<(std::ostream & ostr, const ofBuffer & buf){
 	buf.writeTo(ostr);
 	return ostr;
 }
 
 //--------------------------------------------------
-istream & operator>>(istream & istr, ofBuffer & buf){
+std::istream & operator>>(std::istream & istr, ofBuffer & buf){
 	buf.set(istr);
 	return istr;
 }
@@ -434,7 +434,7 @@ ofFile::~ofFile(){
 //-------------------------------------------------------------------------------------------------------------
 ofFile::ofFile(const ofFile & mom)
 :basic_ios()
-,fstream()
+,std::fstream()
 ,mode(Reference)
 ,binary(true){
 	copyFrom(mom);
@@ -462,7 +462,7 @@ void ofFile::copyFrom(const ofFile & mom){
 bool ofFile::openStream(Mode _mode, bool _binary){
 	mode = _mode;
 	binary = _binary;
-	ios_base::openmode binary_mode = binary ? ios::binary : (ios_base::openmode)0;
+	std::ios_base::openmode binary_mode = binary ? std::ios::binary : (std::ios_base::openmode)0;
 	switch(_mode) {
 		case WriteOnly:
 		case ReadWrite:
@@ -482,23 +482,23 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 
 		case ReadOnly:
 			if(exists() && isFile()){
-				fstream::open(path().c_str(), ios::in | binary_mode);
+				std::fstream::open(path().c_str(), std::ios::in | binary_mode);
 			}
 			break;
 
 		case WriteOnly:
-			fstream::open(path().c_str(), ios::out | binary_mode);
+				std::fstream::open(path().c_str(), std::ios::out | binary_mode);
 			break;
 
 		case ReadWrite:
-			fstream::open(path().c_str(), ios_base::in | ios_base::out | binary_mode);
+				std::fstream::open(path().c_str(), std::ios_base::in | std::ios_base::out | binary_mode);
 			break;
 
 		case Append:
-			fstream::open(path().c_str(), ios::out | ios::app | binary_mode);
+				std::fstream::open(path().c_str(), std::ios::out | std::ios::app | binary_mode);
 			break;
 	}
-	return fstream::good();
+	return std::fstream::good();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -518,7 +518,7 @@ bool ofFile::openFromCWD(const std::filesystem::path & _path, Mode _mode, bool b
 //-------------------------------------------------------------------------------------------------------------
 bool ofFile::changeMode(Mode _mode, bool binary){
 	if(_mode != mode){
-		string _path = path();
+		std::string _path = path();
 		close();
 		myFile = std::filesystem::path(_path);
 		return openStream(_mode, binary);
@@ -536,7 +536,7 @@ bool ofFile::isWriteMode(){
 //-------------------------------------------------------------------------------------------------------------
 void ofFile::close(){
 	myFile = std::filesystem::path();
-	if(mode!=Reference) fstream::close();
+	if(mode!=Reference) std::fstream::close();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -580,7 +580,7 @@ bool ofFile::writeFromBuffer(const ofBuffer & buffer){
 }
 
 //------------------------------------------------------------------------------------------------------------
-filebuf *ofFile::getFileBuffer() const {
+std::filebuf *ofFile::getFileBuffer() const {
 	return rdbuf();
 }
 
@@ -594,12 +594,12 @@ bool ofFile::exists() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::path() const {
+std::string ofFile::path() const {
 	return myFile.string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::getExtension() const {
+std::string ofFile::getExtension() const {
 	auto dotext = myFile.extension().string();
 	if(!dotext.empty() && dotext.front()=='.'){
 		return std::string(dotext.begin()+1,dotext.end());
@@ -609,22 +609,22 @@ string ofFile::getExtension() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::getFileName() const {
+std::string ofFile::getFileName() const {
 	return myFile.filename().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::getBaseName() const {
+std::string ofFile::getBaseName() const {
 	return myFile.stem().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::getEnclosingDirectory() const {
+std::string ofFile::getEnclosingDirectory() const {
 	return ofFilePath::getEnclosingDirectory(path());
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::getAbsolutePath() const {
+std::string ofFile::getAbsolutePath() const {
 	return ofFilePath::getAbsolutePath(path());
 }
 
@@ -771,7 +771,7 @@ void ofFile::setExecutable(bool flag){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::copyTo(const filesystem::path& _path, bool bRelativeToData, bool overwrite) const{
+bool ofFile::copyTo(const std::filesystem::path& _path, bool bRelativeToData, bool overwrite) const{
 	auto path = _path;
 
 	if(path.empty()){
@@ -827,7 +827,7 @@ bool ofFile::copyTo(const filesystem::path& _path, bool bRelativeToData, bool ov
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::moveTo(const filesystem::path& _path, bool bRelativeToData, bool overwrite){
+bool ofFile::moveTo(const std::filesystem::path& _path, bool bRelativeToData, bool overwrite){
 	auto path = _path;
 
 	if(path.empty()){
@@ -885,7 +885,7 @@ bool ofFile::moveTo(const filesystem::path& _path, bool bRelativeToData, bool ov
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::renameTo(const filesystem::path& path, bool bRelativeToData, bool overwrite){
+bool ofFile::renameTo(const std::filesystem::path& path, bool bRelativeToData, bool overwrite){
 	return moveTo(path,bRelativeToData,overwrite);
 }
 
@@ -1068,12 +1068,12 @@ bool ofDirectory::exists() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofDirectory::path() const {
+std::string ofDirectory::path() const {
 	return myDir.string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofDirectory::getAbsolutePath() const {
+std::string ofDirectory::getAbsolutePath() const {
 	try{
 		return std::filesystem::canonical(std::filesystem::absolute(myDir)).string();
 	}catch(...){
@@ -1264,7 +1264,7 @@ std::size_t ofDirectory::listDir(){
 	}
 
 
-	if(!extensions.empty() && !ofContains(extensions, (string)"*")){
+	if(!extensions.empty() && !ofContains(extensions, (std::string)"*")){
 		ofRemove(files, [&](ofFile & file){
 			return std::find(extensions.begin(), extensions.end(), ofToLower(file.getExtension())) == extensions.end();
 		});
@@ -1281,17 +1281,17 @@ std::size_t ofDirectory::listDir(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofDirectory::getOriginalDirectory() const {
+std::string ofDirectory::getOriginalDirectory() const {
 	return originalDirectory;
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofDirectory::getName(std::size_t position) const{
+std::string ofDirectory::getName(std::size_t position) const{
 	return files.at(position).getFileName();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofDirectory::getPath(std::size_t position) const{
+std::string ofDirectory::getPath(std::size_t position) const{
 	return originalDirectory + getName(position);
 }
 
@@ -1307,7 +1307,7 @@ ofFile ofDirectory::operator[](std::size_t position) const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-const vector<ofFile> & ofDirectory::getFiles() const{
+const std::vector<ofFile> & ofDirectory::getFiles() const{
 	if(files.empty() && !myDir.empty()){
 		const_cast<ofDirectory*>(this)->listDir();
 	}
@@ -1326,7 +1326,7 @@ void ofDirectory::reset(){
 
 //------------------------------------------------------------------------------------------------------------
 static bool natural(const ofFile& a, const ofFile& b) {
-	string aname = a.getBaseName(), bname = b.getBaseName();
+	std::string aname = a.getBaseName(), bname = b.getBaseName();
 	int aint = ofToInt(aname), bint = ofToInt(bname);
 	if(ofToString(aint) == aname && ofToString(bint) == bname) {
 		return aint < bint;
@@ -1438,7 +1438,7 @@ bool ofDirectory::doesDirectoryExist(const std::filesystem::path& _dirPath, bool
 		return std::filesystem::exists(dirPath) && std::filesystem::is_directory(dirPath);
 	}
 	catch (std::exception & except) {
-		ofLogError("ofDirectory") << "doesDirectoryExist(): couldn't find directory \"" << dirPath << "\": " << except.what() << endl;
+		ofLogError("ofDirectory") << "doesDirectoryExist(): couldn't find directory \"" << dirPath << "\": " << except.what() << std::endl;
 		return false;
 	}
 }
@@ -1487,22 +1487,22 @@ bool ofDirectory::operator>=(const ofDirectory & dir) const{
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::const_iterator ofDirectory::begin() const{
+std::vector<ofFile>::const_iterator ofDirectory::begin() const{
 	return getFiles().begin();
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::const_iterator ofDirectory::end() const{
+std::vector<ofFile>::const_iterator ofDirectory::end() const{
 	return files.end();
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::const_reverse_iterator ofDirectory::rbegin() const{
+std::vector<ofFile>::const_reverse_iterator ofDirectory::rbegin() const{
 	return getFiles().rbegin();
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
+std::vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
 	return files.rend();
 }
 
@@ -1515,7 +1515,7 @@ vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::addLeadingSlash(const std::filesystem::path& _path){
+std::string ofFilePath::addLeadingSlash(const std::filesystem::path& _path){
     auto path = _path.string();
 	auto sep = std::filesystem::path("/").make_preferred();
 	if(!path.empty()){
@@ -1527,7 +1527,7 @@ string ofFilePath::addLeadingSlash(const std::filesystem::path& _path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::addTrailingSlash(const std::filesystem::path& _path){
+std::string ofFilePath::addTrailingSlash(const std::filesystem::path& _path){
     auto path = std::filesystem::path(_path).make_preferred().string();
 	auto sep = std::filesystem::path("/").make_preferred();
 	if(!path.empty()){
@@ -1540,18 +1540,18 @@ string ofFilePath::addTrailingSlash(const std::filesystem::path& _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getFileExt(const std::filesystem::path& filename){
+std::string ofFilePath::getFileExt(const std::filesystem::path& filename){
 	return ofFile(filename,ofFile::Reference).getExtension();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::removeExt(const std::filesystem::path& filename){
+std::string ofFilePath::removeExt(const std::filesystem::path& filename){
 	return ofFilePath::join(getEnclosingDirectory(filename,false), ofFile(filename,ofFile::Reference).getBaseName());
 }
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getPathForDirectory(const std::filesystem::path& path){
+std::string ofFilePath::getPathForDirectory(const std::filesystem::path& path){
 	// if a trailing slash is missing from a path, this will clean it up
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
@@ -1564,7 +1564,7 @@ string ofFilePath::getPathForDirectory(const std::filesystem::path& path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::removeTrailingSlash(const std::filesystem::path& _path){
+std::string ofFilePath::removeTrailingSlash(const std::filesystem::path& _path){
     auto path = _path.string();
 	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
 		path = path.substr(0, path.length() - 1);
@@ -1574,7 +1574,7 @@ string ofFilePath::removeTrailingSlash(const std::filesystem::path& _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getFileName(const std::filesystem::path& _filePath, bool bRelativeToData){
+std::string ofFilePath::getFileName(const std::filesystem::path& _filePath, bool bRelativeToData){
     std::string filePath = _filePath.string();
 
 	if(bRelativeToData){
@@ -1585,12 +1585,12 @@ string ofFilePath::getFileName(const std::filesystem::path& _filePath, bool bRel
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getBaseName(const std::filesystem::path& filePath){
+std::string ofFilePath::getBaseName(const std::filesystem::path& filePath){
 	return ofFile(filePath,ofFile::Reference).getBaseName();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getEnclosingDirectory(const std::filesystem::path& _filePath, bool bRelativeToData){
+std::string ofFilePath::getEnclosingDirectory(const std::filesystem::path& _filePath, bool bRelativeToData){
     std::string filePath = _filePath.string();
 	if(bRelativeToData){
 		filePath = ofToDataPath(filePath);
@@ -1604,7 +1604,7 @@ bool ofFilePath::createEnclosingDirectory(const std::filesystem::path& filePath,
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getAbsolutePath(const std::filesystem::path& path, bool bRelativeToData){
+std::string ofFilePath::getAbsolutePath(const std::filesystem::path& path, bool bRelativeToData){
 	if(bRelativeToData){
 		return ofToDataPath(path, true);
 	}else{
@@ -1623,17 +1623,17 @@ bool ofFilePath::isAbsolute(const std::filesystem::path& path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getCurrentWorkingDirectory(){
+std::string ofFilePath::getCurrentWorkingDirectory(){
 	return std::filesystem::current_path().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::join(const std::filesystem::path& path1, const std::filesystem::path& path2){
+std::string ofFilePath::join(const std::filesystem::path& path1, const std::filesystem::path& path2){
 	return (std::filesystem::path(path1) / std::filesystem::path(path2)).string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getCurrentExePath(){
+std::string ofFilePath::getCurrentExePath(){
 	#if defined(TARGET_LINUX) || defined(TARGET_ANDROID)
 		char buff[FILENAME_MAX];
 		ssize_t size = readlink("/proc/self/exe", buff, sizeof(buff) - 1);
@@ -1652,24 +1652,24 @@ string ofFilePath::getCurrentExePath(){
 		}
 		return path;
 	#elif defined(TARGET_WIN32)
-		vector<char> executablePath(MAX_PATH);
+		std::vector<char> executablePath(MAX_PATH);
 		DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
 		if(result == 0) {
 			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
 		}else{
-			return string(executablePath.begin(), executablePath.begin() + result);
+			return std::string(executablePath.begin(), executablePath.begin() + result);
 		}
 	#endif
 	return "";
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getCurrentExeDir(){
+std::string ofFilePath::getCurrentExeDir(){
 	return getEnclosingDirectory(getCurrentExePath(), false);
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getUserHomeDir(){
+std::string ofFilePath::getUserHomeDir(){
 	#ifdef TARGET_WIN32
 		// getenv will return any Environent Variable on Windows
 		// USERPROFILE is the key on Windows 7 but it might be HOME
@@ -1683,7 +1683,7 @@ string ofFilePath::getUserHomeDir(){
 	#endif
 }
 
-string ofFilePath::makeRelative(const std::filesystem::path & from, const std::filesystem::path & to){
+std::string ofFilePath::makeRelative(const std::filesystem::path & from, const std::filesystem::path & to){
 	auto pathFrom = std::filesystem::absolute( from );
 	auto pathTo = std::filesystem::absolute( to );
 	std::filesystem::path ret;

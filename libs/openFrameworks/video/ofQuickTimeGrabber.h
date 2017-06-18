@@ -21,7 +21,7 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 		ofQuickTimeGrabber();
 		virtual ~ofQuickTimeGrabber();
 
-        vector<ofVideoDevice>	listDevices() const;
+		std::vector<ofVideoDevice>	listDevices() const;
 		bool					setup(int w, int h);
 		void					update();
 		bool					isFrameNew() const;
@@ -65,7 +65,7 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 		SGChannel				gVideoChannel;
 		Rect					videoRect;
 		bool					bSgInited;
-		string					deviceName;
+		std::string					deviceName;
 		SGGrabCompleteBottleUPP	myGrabCompleteProc;
 		
 		bool					qtInitSeqGrabber();

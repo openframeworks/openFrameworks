@@ -240,8 +240,8 @@
 	return currentFrame;
 }
 
--(vector <string>)listDevices{
-    vector <string> deviceNames;
+-(std::vector <std::string>)listDevices{
+    std::vector <std::string> deviceNames;
 	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
 	int i=0;
 	for (AVCaptureDevice * captureDevice in devices){
@@ -510,10 +510,10 @@ bool AVFoundationVideoGrabber::isFrameNew() {
 	return newFrame;
 }
 
-vector <ofVideoDevice> AVFoundationVideoGrabber::listDevices() {
-	vector <string> devList = [grabber listDevices];
+std::vector <ofVideoDevice> AVFoundationVideoGrabber::listDevices() {
+	std::vector <std::string> devList = [grabber listDevices];
     
-    vector <ofVideoDevice> devices; 
+    std::vector <ofVideoDevice> devices; 
     for(int i = 0; i < devList.size(); i++){
         ofVideoDevice vd; 
         vd.deviceName = devList[i]; 

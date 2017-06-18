@@ -60,7 +60,7 @@ int getch()
 
 #endif
 
-const string ofNoopRenderer::TYPE="NOOP";
+const std::string ofNoopRenderer::TYPE="NOOP";
 
 //----------------------------------------------------------
 ofAppNoWindow::ofAppNoWindow(){
@@ -75,7 +75,7 @@ void ofAppNoWindow::setup(const ofWindowSettings & settings){
 	width = settings.width;
 	height = settings.height;
 
-	currentRenderer = shared_ptr<ofBaseRenderer>(new ofNoopRenderer);
+	currentRenderer = std::shared_ptr<ofBaseRenderer>(new ofNoopRenderer);
 }
 
 //----------------------------------------------------------
@@ -97,7 +97,7 @@ void ofAppNoWindow::update(){
 		}
 		else if ( key == /* ctrl-c */ 3 )
 		{
-			ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << endl;
+			ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << std::endl;
 			break;
 		}
 		else
@@ -161,6 +161,6 @@ ofCoreEvents & ofAppNoWindow::events(){
 	return coreEvents;
 }
 
-shared_ptr<ofBaseRenderer> & ofAppNoWindow::renderer(){
+std::shared_ptr<ofBaseRenderer> & ofAppNoWindow::renderer(){
 	return currentRenderer;
 }

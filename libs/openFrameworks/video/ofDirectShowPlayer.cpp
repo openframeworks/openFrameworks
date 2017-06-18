@@ -426,7 +426,7 @@ class DirectShowVideo : public ISampleGrabberCB{
         return E_NOTIMPL;
     }
 
-    bool loadMovie(string path, ofPixelFormat format){
+    bool loadMovie(std::string path, ofPixelFormat format){
         tearDown();
 		this->pixelFormat = format;
 
@@ -1118,14 +1118,14 @@ ofDirectShowPlayer & ofDirectShowPlayer::operator=(ofDirectShowPlayer&& other) {
 	return *this;
 }
 
-bool ofDirectShowPlayer::load(string path){
+bool ofDirectShowPlayer::load(std::string path){
     path = ofToDataPath(path); 
 
     close();
     player.reset(new DirectShowVideo());
     bool loadOk = player->loadMovie(path, pixelFormat);
     if( !loadOk ){
-        ofLogError("ofDirectShowPlayer") << " Cannot load video of this file type.  Make sure you have codecs installed on your system.  OF recommends the free K-Lite Codec pack. " << endl;
+        ofLogError("ofDirectShowPlayer") << " Cannot load video of this file type.  Make sure you have codecs installed on your system.  OF recommends the free K-Lite Codec pack. " << std::endl;
     }
     return loadOk;
 }
@@ -1260,7 +1260,7 @@ void ofDirectShowPlayer::setLoopState(ofLoopType state){
         else if( state == OF_LOOP_NORMAL ){
             player->setLoop(true);
         }else{
-            ofLogError("ofDirectShowPlayer") << " cannot set loop of type palindrome " << endl;
+            ofLogError("ofDirectShowPlayer") << " cannot set loop of type palindrome " << std::endl;
         }
     }
 }

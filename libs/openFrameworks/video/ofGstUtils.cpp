@@ -66,18 +66,18 @@ static bool gst_inited = false;
 
 static GstFlowReturn on_new_buffer_from_source (GstAppSink * elt, void * data){
 #if GST_VERSION_MAJOR==0
-	shared_ptr<GstBuffer> buffer(gst_app_sink_pull_buffer (GST_APP_SINK (elt)),&gst_buffer_unref);
+	std::shared_ptr<GstBuffer> buffer(gst_app_sink_pull_buffer (GST_APP_SINK (elt)),&gst_buffer_unref);
 #else
-	shared_ptr<GstSample> buffer(gst_app_sink_pull_sample (GST_APP_SINK (elt)),&gst_sample_unref);
+	std::shared_ptr<GstSample> buffer(gst_app_sink_pull_sample (GST_APP_SINK (elt)),&gst_sample_unref);
 #endif
 	return ((ofGstUtils*)data)->buffer_cb(buffer);
 }
 
 static GstFlowReturn on_new_preroll_from_source (GstAppSink * elt, void * data){
 #if GST_VERSION_MAJOR==0
-	shared_ptr<GstBuffer> buffer(gst_app_sink_pull_preroll(GST_APP_SINK (elt)),&gst_buffer_unref);
+	std::shared_ptr<GstBuffer> buffer(gst_app_sink_pull_preroll(GST_APP_SINK (elt)),&gst_buffer_unref);
 #else
-	shared_ptr<GstSample> buffer(gst_app_sink_pull_preroll(GST_APP_SINK (elt)),&gst_sample_unref);
+	std::shared_ptr<GstSample> buffer(gst_app_sink_pull_preroll(GST_APP_SINK (elt)),&gst_sample_unref);
 #endif
 	return ((ofGstUtils*)data)->preroll_cb(buffer);
 }
@@ -125,7 +125,7 @@ ofGstUtils::ofGstUtils() {
 
 	if(!gst_inited){
 #ifdef TARGET_WIN32
-		string gst_path;
+		std::string gst_path;
 		if (sizeof(int) == 32) {
 			 gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86");
 		}else
@@ -155,9 +155,9 @@ ofGstUtils::~ofGstUtils() {
 }
 
 #if GST_VERSION_MAJOR==0
-GstFlowReturn ofGstUtils::preroll_cb(shared_ptr<GstBuffer> buffer){
+GstFlowReturn ofGstUtils::preroll_cb(std::shared_ptr<GstBuffer> buffer){
 #else
-GstFlowReturn ofGstUtils::preroll_cb(shared_ptr<GstSample> buffer){
+GstFlowReturn ofGstUtils::preroll_cb(std::shared_ptr<GstSample> buffer){
 #endif
 	bIsMovieDone = false;
 	if(appsink) return appsink->on_preroll(buffer);
@@ -166,9 +166,9 @@ GstFlowReturn ofGstUtils::preroll_cb(shared_ptr<GstSample> buffer){
 
 
 #if GST_VERSION_MAJOR==0
-GstFlowReturn ofGstUtils::buffer_cb(shared_ptr<GstBuffer> buffer){
+GstFlowReturn ofGstUtils::buffer_cb(std::shared_ptr<GstBuffer> buffer){
 #else
-GstFlowReturn ofGstUtils::buffer_cb(shared_ptr<GstSample> buffer){
+GstFlowReturn ofGstUtils::buffer_cb(std::shared_ptr<GstSample> buffer){
 #endif
 	bIsMovieDone = false;
 	if(appsink) return appsink->on_buffer(buffer);
@@ -184,7 +184,7 @@ void ofGstUtils::eos_cb(){
 	}
 }
 
-bool ofGstUtils::setPipelineWithSink(string pipeline, string sinkname, bool isStream){
+bool ofGstUtils::setPipelineWithSink(std::string pipeline, std::string sinkname, bool isStream){
 	ofGstUtils::startGstMainLoop();
 
 	GError * error = NULL;
@@ -219,7 +219,7 @@ bool ofGstUtils::setPipelineWithSink(GstElement * pipeline, GstElement * sink, b
 		gst_base_sink_set_sync(GST_BASE_SINK(gstSink), true);
 	}
 
-	if(gstSink && string(gst_plugin_feature_get_name( GST_PLUGIN_FEATURE(gst_element_get_factory(gstSink))))=="appsink"){
+	if(gstSink && std::string(gst_plugin_feature_get_name( GST_PLUGIN_FEATURE(gst_element_get_factory(gstSink))))=="appsink"){
 		isAppSink = true;
 	}else{
 		isAppSink = false;
@@ -543,7 +543,7 @@ void ofGstUtils::close(){
 	bLoaded = false;
 }
 
-/*static string getName(GstState state){
+/*static std::string getName(GstState state){
 	switch(state){
 	case   GST_STATE_VOID_PENDING:
 		return "void pending";
@@ -749,7 +749,7 @@ GstElement 	* ofGstUtils::getSink() const{
 	return gstSink;
 }
 
-GstElement 	* ofGstUtils::getGstElementByName(const string & name) const{
+GstElement 	* ofGstUtils::getGstElementByName(const std::string & name) const{
 	return gst_bin_get_by_name(GST_BIN(gstPipeline),name.c_str());
 }
 
@@ -859,7 +859,7 @@ void ofGstVideoUtils::update(){
 			bHavePixelsChanged = bBackPixelsChanged;
 			if (bHavePixelsChanged){
 				bBackPixelsChanged=false;
-				swap(pixels,backPixels);
+				std::swap(pixels,backPixels);
 				#ifdef OF_USE_GST_GL
 				if(backTexture.isAllocated()){
 					frontTexture.getTextureData() = backTexture.getTextureData();
@@ -891,7 +891,7 @@ void ofGstVideoUtils::update(){
 					gst_buffer_map (buffer, &mapinfo, GST_MAP_READ);
 					//TODO: stride = mapinfo.size / height;
 					pixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-					backBuffer = shared_ptr<GstSample>(sample,gst_sample_unref);
+					backBuffer = std::shared_ptr<GstSample>(sample,gst_sample_unref);
 					bHavePixelsChanged=true;
 					gst_buffer_unmap(buffer,&mapinfo);
 				}
@@ -915,7 +915,7 @@ float ofGstVideoUtils::getWidth() const{
 
 
 #if GST_VERSION_MAJOR>0
-string	ofGstVideoUtils::getGstFormatName(ofPixelFormat format){
+std::string	ofGstVideoUtils::getGstFormatName(ofPixelFormat format){
 	switch(format){
 	case OF_PIXELS_GRAY:
 		return "GRAY8";
@@ -1072,10 +1072,10 @@ void ofGstVideoUtils::setCopyPixels(bool copy){
 	copyPixels = copy;
 }
 
-bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bool isStream, int w, int h){
+bool ofGstVideoUtils::setPipeline(std::string pipeline, ofPixelFormat pixelFormat, bool isStream, int w, int h){
 	internalPixelFormat = pixelFormat;
 #ifndef OF_USE_GST_GL
-	string caps;
+	std::string caps;
 #if GST_VERSION_MAJOR==0
 	switch(pixelFormat){
 	case OF_PIXELS_MONO:
@@ -1104,7 +1104,7 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 		caps+=", width=" + ofToString(w) + ", height=" + ofToString(h);
 	}
 
-	string pipeline_string =
+	std::string pipeline_string =
 		pipeline + " ! appsink name=ofappsink enable-last-sample=0 caps=\"" + caps + "\"";
 
 	if((w==-1 || h==-1) || pixelFormat==OF_PIXELS_NATIVE || allocate(w,h,pixelFormat)){
@@ -1113,7 +1113,7 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 		return false;
 	}
 #else
-	string pipeline_string =
+	std::string pipeline_string =
 		pipeline + " ! glcolorscale name=gl_filter ! appsink name=ofappsink enable-last-sample=0 caps=\"video/x-raw,format=RGBA\"";
 
 	bool ret;
@@ -1141,7 +1141,7 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 
 	glXMakeCurrent (ofGetX11Display(), ofGetX11Window(), ofGetGLXContext());
 #elif defined(TARGET_OPENGLES)
-	cout << "current display " << ofGetEGLDisplay() << endl;
+	    std::cout << "current display " << ofGetEGLDisplay() << std::endl;
 	eglMakeCurrent (eglGetDisplay(EGL_DEFAULT_DISPLAY), 0,0, 0);
 	glDisplay = (GstGLDisplay *)gst_gl_display_egl_new_with_egl_display(eglGetDisplay(EGL_DEFAULT_DISPLAY));
 	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetEGLContext(),
@@ -1206,7 +1206,7 @@ void ofGstVideoUtils::reallocateOnNextFrame(){
 }
 
 #if GST_VERSION_MAJOR==0
-GstFlowReturn ofGstVideoUtils::process_buffer(shared_ptr<GstBuffer> _buffer){
+GstFlowReturn ofGstVideoUtils::process_buffer(std::shared_ptr<GstBuffer> _buffer){
 	guint size = GST_BUFFER_SIZE (_buffer.get());
 	int stride = 0;
 	if(pixels.isAllocated() && pixels.getTotalBytes()!=(int)size){
@@ -1254,7 +1254,7 @@ static GstVideoInfo getVideoInfo(GstSample * sample){
     return vinfo;
 }
 
-GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
+GstFlowReturn ofGstVideoUtils::process_sample(std::shared_ptr<GstSample> sample){
 	GstBuffer * _buffer = gst_sample_get_buffer(sample.get());
 
 #ifdef OF_USE_GST_GL
@@ -1353,7 +1353,7 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 #endif
 
 #if GST_VERSION_MAJOR==0
-GstFlowReturn ofGstVideoUtils::preroll_cb(shared_ptr<GstBuffer> buffer){
+GstFlowReturn ofGstVideoUtils::preroll_cb(std::shared_ptr<GstBuffer> buffer){
 	GstFlowReturn ret = process_buffer(buffer);
 	if(ret==GST_FLOW_OK){
 		return ofGstUtils::preroll_cb(buffer);
@@ -1362,7 +1362,7 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(shared_ptr<GstBuffer> buffer){
 	}
 }
 #else
-GstFlowReturn ofGstVideoUtils::preroll_cb(shared_ptr<GstSample> sample){
+GstFlowReturn ofGstVideoUtils::preroll_cb(std::shared_ptr<GstSample> sample){
 	GstFlowReturn ret = process_sample(sample);
 	if(ret==GST_FLOW_OK){
 		return ofGstUtils::preroll_cb(sample);
@@ -1373,7 +1373,7 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(shared_ptr<GstSample> sample){
 #endif
 
 #if GST_VERSION_MAJOR==0
-GstFlowReturn ofGstVideoUtils::buffer_cb(shared_ptr<GstBuffer> buffer){
+GstFlowReturn ofGstVideoUtils::buffer_cb(std::shared_ptr<GstBuffer> buffer){
 	GstFlowReturn ret = process_buffer(buffer);
 	if(ret==GST_FLOW_OK){
 		return ofGstUtils::buffer_cb(buffer);
@@ -1382,7 +1382,7 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(shared_ptr<GstBuffer> buffer){
 	}
 }
 #else
-GstFlowReturn ofGstVideoUtils::buffer_cb(shared_ptr<GstSample> sample){
+GstFlowReturn ofGstVideoUtils::buffer_cb(std::shared_ptr<GstSample> sample){
 	GstFlowReturn ret = process_sample(sample);
 	if(ret==GST_FLOW_OK){
 		return ofGstUtils::buffer_cb(sample);
