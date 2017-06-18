@@ -35,7 +35,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr {
 	
-	window = dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
+	window = std::dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
 	
     if(window.get() == NULL) {
         ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView::initWithFrame - window is NULL");
