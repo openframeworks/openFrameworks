@@ -86,7 +86,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		ofiOSWindowSettings windowSettings = window->getSettings();
 		window = NULL;
 
-		window = dynamic_pointer_cast<ofAppiOSWindow>(ofCreateWindow(windowSettings));
+		window = std::dynamic_pointer_cast<ofAppiOSWindow>(ofCreateWindow(windowSettings));
 
 		ofRunApp(app);
 	}
