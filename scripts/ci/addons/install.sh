@@ -9,6 +9,12 @@ if [ -f scripts/ci/$TARGET/install.sh ]; then
 fi
 if [ "$OF_BRANCH" == "master" ]; then
     if [ "$TARGET" == "linux64" ]; then
+        # sudo apt-add-repository ppa:ubuntu-toolchain-r/test
+        # sudo apt-get update
+        # sudo apt-get install gcc-4.9 g++4.9 gdb
+        # sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 1 --force
+        # sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 1 --force
+        gcc --version
         scripts/dev/download_libs.sh -a 64;
     elif [ "$TARGET" == "linuxarmv6l" ]; then
         scripts/linux/download_libs.sh -a armv6l;

@@ -2,7 +2,7 @@
 --
 ![Screenshot of Example, stored in the Level1_ExampleName/readme_assets/ folder](trigonometryExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks Example is designed to demonstrate how to move a point around a circle using sin and cosine and demonstrate angles and radians.
 
@@ -25,7 +25,7 @@ Instructions for use:
 * Press and release the mouse clicker inside of the yellow circle, and the blue ball will restart its rotation around the yellow ball at this position
 * Hold down the mouse clicker and drag your mouse inside of the yellow circle to control the rotation of the blue circle
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no additional classes.
 

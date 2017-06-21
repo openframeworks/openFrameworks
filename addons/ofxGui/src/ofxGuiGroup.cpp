@@ -3,6 +3,8 @@
 #include "ofxSliderGroup.h"
 #include "ofGraphics.h"
 #include "ofxLabel.h"
+#include "ofxInputField.h"
+
 using namespace std;
 
 ofxGuiGroup::ofxGuiGroup(){
@@ -115,6 +117,19 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 	return this;
 }
 
+void ofxGuiGroup::setWidthElements(float w){
+	for(std::size_t i = 0; i < collection.size(); i++){
+		collection[i]->setSize(w, collection[i]->getHeight());
+		collection[i]->setPosition(b.x + b.width - w, collection[i]->getPosition().y);
+		ofxGuiGroup * subgroup = dynamic_cast<ofxGuiGroup*>(collection[i]);
+		if(subgroup != nullptr){
+			subgroup->setWidthElements(w * .98);
+		}
+	}
+	sizeChangedCB();
+	setNeedsRedraw();
+}
+
 void ofxGuiGroup::add(ofxBaseGui * element){
 	collection.push_back(element);
 
@@ -143,22 +158,8 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 	setNeedsRedraw();
 }
 
-void ofxGuiGroup::setWidthElements(float w){
-    for(std::size_t i = 0; i < collection.size(); i++){
-		collection[i]->setSize(w, collection[i]->getHeight());
-		collection[i]->setPosition(b.x + b.width - w, collection[i]->getPosition().y);
-		ofxGuiGroup * subgroup = dynamic_cast <ofxGuiGroup *>(collection[i]);
-		if(subgroup != nullptr){
-			subgroup->setWidthElements(w * .98);
-		}
-	}
-	sizeChangedCB();
-	setNeedsRedraw();
-}
-
 void ofxGuiGroup::add(const ofParameterGroup & parameters){
 	ofxGuiGroup * panel = new ofxGuiGroup(parameters);
-	panel->parent = this;
 	add(panel);
 }
 
@@ -171,7 +172,7 @@ void ofxGuiGroup::add(ofParameter <bool> & parameter){
 }
 
 void ofxGuiGroup::add(ofParameter <string> & parameter){
-	add(new ofxLabel(parameter, b.width));
+	add(new ofxInputField<std::string>(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <ofVec2f> & parameter){
@@ -235,15 +236,14 @@ bool ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
 	if(setValue(args.x, args.y, true)){
 		return true;
 	}
-	if(bGuiActive){
-		ofMouseEventArgs a = args;
-		for(std::size_t i = 0; i < collection.size(); i++){
-			if(collection[i]->mousePressed(a)){
-				return true;
-			}
+	auto attended = false;
+	ofMouseEventArgs a = args;
+	for(std::size_t i = 0; i < collection.size(); i++){
+		if(collection[i]->mousePressed(a)){
+			attended = true;
 		}
 	}
-	return false;
+	return attended;
 }
 
 bool ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
@@ -409,6 +409,7 @@ void ofxGuiGroup::minimize(){
 		parent->sizeChangedCB();
 	}
 	setNeedsRedraw();
+	onMinimize();
 }
 
 void ofxGuiGroup::maximize(){
@@ -420,6 +421,7 @@ void ofxGuiGroup::maximize(){
 		parent->sizeChangedCB();
 	}
 	setNeedsRedraw();
+	onMaximize();
 }
 
 void ofxGuiGroup::minimizeAll(){
@@ -440,6 +442,18 @@ void ofxGuiGroup::maximizeAll(){
 	}
 }
 
+bool ofxGuiGroup::isMinimized() const{
+	return minimized;
+}
+
+void ofxGuiGroup::onMinimize(){
+
+}
+
+void ofxGuiGroup::onMaximize(){
+
+}
+
 void ofxGuiGroup::sizeChangedCB(){
 	float y;
 	if(parent){
@@ -451,7 +465,11 @@ void ofxGuiGroup::sizeChangedCB(){
 		collection[i]->setPosition(collection[i]->getPosition().x, y + spacing);
 		y += collection[i]->getHeight() + spacing;
 	}
-	b.height = y - b.y;
+	if(minimized){
+		b.height = header + spacing + spacingNextElement + 1 /*border*/;
+	}else{
+		b.height = y - b.y;
+	}
 	if(parent){
 		parent->sizeChangedCB();
 	}

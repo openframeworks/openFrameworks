@@ -20,12 +20,12 @@ public:
 
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method){
-		value.addListener(listener,method);
+		parameter.addListener(listener,method);
 	}
 
 	template<class ListenerClass, typename ListenerMethod>
 	void removeListener(ListenerClass * listener, ListenerMethod method){
-		value.addListener(listener,method);
+		parameter.removeListener(listener,method);
 	}
 	virtual ofAbstractParameter & getParameter();
 

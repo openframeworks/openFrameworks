@@ -2,7 +2,7 @@
 --
 ![Screenshot of Example](simpleColorKey.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks Example is designed to demonstrate how to manipulate the color of specific pixels in an image. Specifically, in this example, blue is keyed out of the original image.
 
@@ -25,6 +25,6 @@ Instructions for use:
 * You will find the saved file in the bin >> data file. 
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example does not use any other classes. 

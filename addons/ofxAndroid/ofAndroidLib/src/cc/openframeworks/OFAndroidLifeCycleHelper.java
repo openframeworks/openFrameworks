@@ -217,7 +217,6 @@ public class OFAndroidLifeCycleHelper
 			public void run() {
 				OFAndroid.enableTouchEvents();
 				OFAndroid.enableOrientationChangeEvents();
-				glView.onResume();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
 						object.onResume();
@@ -251,7 +250,6 @@ public class OFAndroidLifeCycleHelper
 						object.onPause();
 					}
 				}
-				OFAndroidLifeCycle.getGLView().onPause();
 			}
 		});
 		

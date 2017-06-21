@@ -41,14 +41,14 @@ void ofApp::update(){
 	while(serverReceiver.hasWaitingMessages()){
 		// get the next message
 		ofxOscMessage m;
-		serverReceiver.getNextMessage(&m);
+		serverReceiver.getNextMessage(m);
 		//Log received message for easier debugging of participants' messages:
-		ofLogVerbose("Server recvd msg " + getOscMsgAsString(m) + " from " + m.getRemoteIp());
+		ofLogVerbose("Server recvd msg " + getOscMsgAsString(m) + " from " + m.getRemoteHost());
 
 		// check the address of the incoming message
 		if(m.getAddress() == "/typing"){
 			//Identify host of incoming msg
-			string incomingHost = m.getRemoteIp();
+			string incomingHost = m.getRemoteHost();
 			//See if incoming host is a new one:
 			if(std::find(knownClients.begin(), knownClients.end(), incomingHost)
 			   == knownClients.end()){
@@ -85,7 +85,7 @@ void ofApp::update(){
 	while(clientReceiver.hasWaitingMessages()){
 		// get the next message
 		ofxOscMessage m;
-		clientReceiver.getNextMessage(&m);
+		clientReceiver.getNextMessage(m);
 		ofLogNotice("Client just received a message");
 		// check the address of the incoming message
 		if(m.getAddress() == "/chatlog"){
@@ -261,7 +261,7 @@ void ofApp::broadcastReceivedMessage(string chatmessage){
 		serverSender.setup(knownClients[i], serverRecvPort + 1);
 		m.setRemoteEndpoint(knownClients[i], serverRecvPort + 1);
 		serverSender.sendMessage(m, false);
-		ofLogVerbose("Server broadcast message " + m.getArgAsString(0) + " to " + m.getRemoteIp()
+		ofLogVerbose("Server broadcast message " + m.getArgAsString(0) + " to " + m.getRemoteHost()
 					 + ":" + ofToString(m.getRemotePort()));
 	}
 }

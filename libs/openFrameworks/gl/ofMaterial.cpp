@@ -221,6 +221,12 @@ void ofMaterial::updateMaterial(const ofShader & shader,ofGLProgrammableRenderer
 	for (auto & uniform : uniforms4i) {
 		shader.setUniform4i(uniform.first, uniform.second.x, uniform.second.y, uniform.second.z, uniform.second.w);
 	}
+	for (auto & uniform : uniforms4m) {
+		shader.setUniformMatrix4f(uniform.first, uniform.second);
+	}
+	for (auto & uniform : uniforms3m) {
+		shader.setUniformMatrix3f(uniform.first, uniform.second);
+	}
 	for (auto & uniform : uniformstex) {
 		shader.setUniformTexture(uniform.first,
 								 uniform.second.textureTarget,
@@ -314,6 +320,14 @@ void ofMaterial::setCustomUniform4i(const std::string & name, glm::tvec4<int> va
 	uniforms4i[name] = value;
 }
 
+void ofMaterial::setCustomUniformMatrix4f(const std::string & name, glm::mat4 value){
+	uniforms4m[name] = value;
+}
+
+void ofMaterial::setCustomUniformMatrix3f(const std::string & name, glm::mat3 value){
+	uniforms3m[name] = value;
+}
+
 void ofMaterial::setCustomUniformTexture(const std::string & name, const ofTexture & value, int textureLocation){
 	uniformstex[name] = {value.getTextureData().textureTarget, int(value.getTextureData().textureID), textureLocation};
 }
@@ -330,10 +344,14 @@ namespace{
         header += "#define MAX_LIGHTS " + ofToString(max(1,maxLights)) + "\n";
         if(hasTexture){
             header += "#define HAS_TEXTURE 1\n";
-        }
+		} else {
+			header += "#define HAS_TEXTURE 0\n";
+		}
         if(hasColor){
             header += "#define HAS_COLOR 1\n";
-        }
+		} else {
+			header += "#define HAS_COLOR 0\n";
+		}
         return header;
     }
 

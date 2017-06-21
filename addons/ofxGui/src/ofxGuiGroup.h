@@ -39,6 +39,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		void maximize();
 		void minimizeAll();
 		void maximizeAll();
+		bool isMinimized() const;
 
 		void setWidthElements(float w);
 
@@ -72,6 +73,8 @@ class ofxGuiGroup : public ofxBaseGui {
 	protected:
 		virtual void render();
 		virtual bool setValue(float mx, float my, bool bCheck);
+		virtual void onMinimize();
+		virtual void onMaximize();
 
 		float spacing, spacingNextElement;
 		float header;

@@ -276,6 +276,7 @@ ofAppEGLWindow::ofAppEGLWindow() {
 
 //------------------------------------------------------------
 ofAppEGLWindow::~ofAppEGLWindow() {
+	close();
 }
 
 //------------------------------------------------------------
@@ -406,7 +407,7 @@ void ofAppEGLWindow::setup(const Settings & _settings) {
 	eglSurface = NULL;
 	eglContext = NULL;
 	eglConfig  = NULL;
-	eglVersionMinor = -1;
+	eglVersionMajor = -1;
 	eglVersionMinor = -1;
 	glesVersion = 1;
 
@@ -1349,7 +1350,7 @@ void ofAppEGLWindow::setupNativeMouse() {
 	// fallback to /dev/input/eventX since some vnc servers use uinput to handle mouse & keyboard
 	typedef int (*filter_ptr)(const struct dirent *d);
 	filter_ptr mouse_filters[2] = { filter_mouse, filter_event };
-	string devicePathBuffers[2] = { "/dev/input/by-path", "/dev/input/" };
+	string devicePathBuffers[2] = { "/dev/input/by-path/", "/dev/input/" };
 
 	for(int i=0; i<2; i++){
 		int n = scandir(devicePathBuffers[i].c_str(), &eps, mouse_filters[i], dummy_sort);
@@ -1389,7 +1390,7 @@ void ofAppEGLWindow::setupNativeKeyboard() {
 	struct dirent **eps;
 	typedef int (*filter_ptr)(const struct dirent *d);
 	filter_ptr kbd_filters[2] = { filter_kbd, filter_event };
-	string devicePathBuffers[2] = { "/dev/input/by-path", "/dev/input/" };
+	string devicePathBuffers[2] = { "/dev/input/by-path/", "/dev/input/" };
 
 	for(int i=0; i<2; i++){
 		int n = scandir(devicePathBuffers[i].c_str(), &eps, kbd_filters[i], dummy_sort);

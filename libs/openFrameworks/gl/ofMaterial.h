@@ -162,6 +162,8 @@ public:
 	void setCustomUniform2f(const std::string & name, glm::vec2 value);
 	void setCustomUniform3f(const std::string & name, glm::vec3 value);
 	void setCustomUniform4f(const std::string & name, glm::vec4 value);
+	void setCustomUniformMatrix4f(const std::string & name, glm::mat4 value);
+	void setCustomUniformMatrix3f(const std::string & name, glm::mat3 value);
 
 	void setCustomUniform1i(const std::string & name, int value);
 	void setCustomUniform2i(const std::string & name, glm::tvec2<int> value);
@@ -207,5 +209,7 @@ private:
 	std::map<std::string, glm::tvec2<int>> uniforms2i;
 	std::map<std::string, glm::tvec3<int>> uniforms3i;
 	std::map<std::string, glm::tvec4<int>> uniforms4i;
+	std::map<std::string, glm::mat4> uniforms4m;
+	std::map<std::string, glm::mat3> uniforms3m;
 	std::map<std::string, TextureUnifom> uniformstex;
 };

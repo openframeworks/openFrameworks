@@ -23,6 +23,10 @@ bool ofXml::load(const std::filesystem::path & file){
 	}
 }
 
+bool ofXml::load(const ofBuffer & buffer){
+	return parse(buffer.getText());
+}
+
 bool ofXml::parse(const std::string & xmlStr){
 	auto auxDoc = std::make_shared<pugi::xml_document>();
 	if(auxDoc->load(xmlStr.c_str())){
@@ -181,6 +185,10 @@ ofXml::Search ofXml::find(const std::string & path) const{
 
 std::string ofXml::getValue() const{
 	return this->xml.text().as_string();
+}
+
+std::string ofXml::getName() const{
+	return this->xml.name();
 }
 
 void ofXml::setName(const std::string & name){
