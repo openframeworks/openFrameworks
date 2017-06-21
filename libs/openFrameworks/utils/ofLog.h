@@ -231,6 +231,9 @@ void ofLogToDebugView();
 /// \param loggerChannel A shared pointer to the logger channel.
 void ofSetLoggerChannel(shared_ptr<ofBaseLoggerChannel> loggerChannel);
 
+/// \brief Get the current logger channel.
+shared_ptr<ofBaseLoggerChannel> ofGetLoggerChannel();
+
 /// \}
 
 /// \class ofLog
@@ -421,6 +424,9 @@ class ofLog{
 		/// \sa ofFileLoggerChannel ofConsoleLoggerChannel
 		/// \param channel The channel to log to.
 		static void setChannel(shared_ptr<ofBaseLoggerChannel> channel);
+	
+		/// \brief Get the current logging channel.
+		static shared_ptr<ofBaseLoggerChannel> getChannel();
 	
 		/// \}
 
