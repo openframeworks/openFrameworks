@@ -33,24 +33,47 @@ elif [ "$TARGET" == "linuxarmv7l" ]; then
     export CFLAGS="$CFLAGS --sysroot=${RPI_ROOT}";
     export CXXFLAGS="$CXXFLAGS --sysroot=${RPI_ROOT}";
     export CXXFLAGS="${CXXFLAGS} -ftrack-macro-expansion=0";
-elif [ "$TARGET" == "emscripten" ]; then        
+elif [ "$TARGET" == "emscripten" ]; then
     sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" ${OF_ROOT}/libs/openFrameworksCompiled/project/makefileCommon/config.linux.common.mk;
     source ~/emscripten-sdk/emsdk_env.sh;
 fi
 
-for example in example*; do
-    cp ${OF_ROOT}/scripts/templates/$TARGET/Makefile $example/
-    cp ${OF_ROOT}/scripts/templates/$TARGET/config.make $example/
-    cd $example
-    if [ "$TARGET" == "android" ]; then
-        echo "ABIS_TO_COMPILE_DEBUG = $OPT" >> config.make
-        make DebugNoOF PLATFORM_OS=Android
-    elif [ "$TARGET" == "emscripten" ]; then
-        emmake make DebugNoOF
-    elif [ "$TARGET" == "linuxarmv7l" ]; then
-        make DebugNoOF PLATFORM_VARIANT=raspberry2
-    else
-        make DebugNoOF
-    fi
-    cd ..
-done
+if ls example* 1> /dev/null 2>&1; then
+    for example in example*; do
+        echo "cp ${OF_ROOT}/scripts/templates/$TARGET/Makefile $example/"
+        cp ${OF_ROOT}/scripts/templates/$TARGET/Makefile $example/
+        echo "cp ${OF_ROOT}/scripts/templates/$TARGET/config.make $example/"
+        cp ${OF_ROOT}/scripts/templates/$TARGET/config.make $example/
+        if [ ! -f $example/addons.make ]; then
+            echo "Examples should have an addons.make file with the addon name"
+            echo "$example doesn't conatain such file."
+            echo "Please add an addons.make to in the root of every example with"
+            echo "the name of the current addon and any other addon that might be"
+            echo "needed"
+            exit 1
+        else
+            if ! grep $(basename $TRAVIS_BUILD_DIR) $example/addons.make; then
+                echo "$example contains an addons.make file but it doesn't seem"
+                echo "to contain the name of this addon, this will probably fail"
+                echo "Please check that the addons.make file contains the name of"
+                echo "this addon and any other that might be needed"
+            fi
+        fi
+        cd $example
+        if [ "$TARGET" == "android" ]; then
+            echo "ABIS_TO_COMPILE_DEBUG = $OPT" >> config.make
+            make DebugNoOF PLATFORM_OS=Android
+        elif [ "$TARGET" == "emscripten" ]; then
+            emmake make DebugNoOF
+        elif [ "$TARGET" == "linuxarmv7l" ]; then
+            make DebugNoOF PLATFORM_VARIANT=raspberry2
+        else
+            make DebugNoOF
+        fi
+        cd ..
+    done
+else
+    echo "There's no examples to test in this addon. Addons can only be tested"
+    echo "when there's at least an example folder which name starts with or is example"
+    exit 1
+fi

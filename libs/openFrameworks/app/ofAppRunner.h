@@ -62,6 +62,10 @@ float 		ofGetTargetFrameRate();
 uint64_t	ofGetFrameNum();
 void 		ofSetFrameRate(int targetRate);
 double		ofGetLastFrameTime();
+void		ofSetTimeModeSystem();
+uint64_t	ofGetFixedStepForFps(double fps);
+void		ofSetTimeModeFixedRate(uint64_t stepNanos = ofGetFixedStepForFps(60)); //default nanos for 1 frame at 60fps
+void		ofSetTimeModeFiltered(float alpha = 0.9);
 
 void		ofSetOrientation(ofOrientation orientation, bool vFlip=true);
 ofOrientation			ofGetOrientation();
@@ -79,6 +83,9 @@ int 		ofGetWidth();			// ofGetWidth is correct for orientation
 int 		ofGetHeight();
 int 		ofGetWindowWidth();			// ofGetWindowWidth is correct for actual window coordinates - so doesn't change with orientation.
 int 		ofGetWindowHeight();
+
+std::string ofGetClipboardString();
+void		ofSetClipboardString(const std::string & str);
 
 /// \returns a random number between 0 and the width of the window.
 float ofRandomWidth();

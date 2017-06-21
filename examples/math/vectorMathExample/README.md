@@ -2,7 +2,7 @@
 --
 ![Screenshot of Example](vectorMathExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks Example is designed to demonstrate 
 [vector math](http://openframeworks.cc/tutorials/02_maths/001_vector_maths/) and how to draw using vectors.  Note, a vector represents a direction and magnitude in an abstract "space".
@@ -37,7 +37,7 @@ Instructions for use:
   * V - decrease the rotation amount in the z-direction
 * Press the mouse once to clear the screen
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no additional classes. 
 

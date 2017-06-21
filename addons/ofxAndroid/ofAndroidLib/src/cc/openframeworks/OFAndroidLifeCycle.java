@@ -278,24 +278,34 @@ public class OFAndroidLifeCycle
 	
 	public static void glResume(ViewGroup glContainer)
 	{
-		View glView = getGLView();
-		glView.setVisibility(View.INVISIBLE);
-		ViewGroup parent = (ViewGroup)glView.getParent();
-		if(parent != glContainer){
-			if(parent != null){
-				Log.d(TAG, "remove surface");
-				parent.removeView(glView);
-			}
-			glContainer.addView(glView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-			Log.d(TAG, "addView surface");
-		}
 		Log.d(TAG, "glResume");
+		
+		OFGLSurfaceView glView = getGLView();
+		glView.setVisibility(View.INVISIBLE);
+			
+		glContainer.addView(glView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		Log.d(TAG, "addView surface");
+		
+		glView.onResume();
+		
 		pushState(State.resume);
 	}
 	
 	public static void glPause()
 	{
 		Log.d(TAG, "glPause");
+		
+		OFGLSurfaceView glView = getGLView();
+		
+		glView.onPause();
+		
+		ViewGroup parent = (ViewGroup)glView.getParent();
+		
+		if(parent != null){
+			Log.d(TAG, "remove surface");
+			parent.removeView(glView);
+		}
+		
 		pushState(State.pause);
 	}
 	

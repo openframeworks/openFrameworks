@@ -232,23 +232,24 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 #ifndef TARGET_OPENGLES
 		case GL_LUMINANCE32F_ARB:
 		case GL_LUMINANCE_ALPHA32F_ARB:
-		case GL_R16F:
-		case GL_RG16F:
-		case GL_RGB16F:
-		case GL_RGBA16F:
 		case GL_R32F:
 		case GL_RG32F:
 		case GL_RGB32F:
 		case GL_RGBA32F:
+			return GL_FLOAT;
+
+		case GL_R16F:
+		case GL_RG16F:
+		case GL_RGB16F:
+		case GL_RGBA16F:
 		case GL_LUMINANCE16:
 		case GL_LUMINANCE16_ALPHA16:
 		case GL_R16:
 		case GL_RG16:
 		case GL_RGB16:
 		case GL_RGBA16:
+			return GL_HALF_FLOAT;
 #endif
-			return GL_FLOAT;
-
 
 		case GL_DEPTH_STENCIL:
 			 return GL_UNSIGNED_INT_24_8;
@@ -840,13 +841,60 @@ void ofReloadGLResources(){
 #ifndef TARGET_OPENGLES
 namespace{
 	void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, void * user){
-		ofLogNotice("GL DEBUG") << message;
+		ostringstream oss;
+		oss << "GL Debug: ";
+		
+		ofLogLevel level;
+		switch (type) {
+		case GL_DEBUG_TYPE_ERROR:
+			level = OF_LOG_ERROR;
+			oss << "ERROR";
+			break;
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+			level = OF_LOG_WARNING;
+			oss << "DEPRECATED_BEHAVIOR";
+			break;
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+			level = OF_LOG_WARNING;
+			oss << "UNDEFINED_BEHAVIOR";
+			break;
+		case GL_DEBUG_TYPE_PORTABILITY:
+			level = OF_LOG_NOTICE;
+			oss << "PORTABILITY";
+			break;
+		case GL_DEBUG_TYPE_PERFORMANCE:
+			level = OF_LOG_NOTICE;
+			oss << "PERFORMANCE";
+			break;
+		case GL_DEBUG_TYPE_OTHER:
+		default:
+			level = OF_LOG_VERBOSE;
+			oss << "OTHER";
+			break;
+		}
+
+		switch (severity) {
+		case GL_DEBUG_SEVERITY_LOW:
+			oss << " (LOW)";
+			break;
+		case GL_DEBUG_SEVERITY_MEDIUM:
+			oss << " (MEDIUM)";
+			break;
+		case GL_DEBUG_SEVERITY_HIGH:
+			oss << " (HIGH)";
+			break;
+		}
+
+		oss << ", " << id << ": " << message;
+		
+		ofLog(level, oss.str());
 	}
 }
 
 void ofEnableGLDebugLog(){
 	if(ofGLCheckExtension("GL_KHR_debug") && ofGLCheckExtension("GL_ARB_debug_output")){
 		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); 
 		glDebugMessageCallback((GLDEBUGPROC)gl_debug_callback, nullptr);
 	}
 }

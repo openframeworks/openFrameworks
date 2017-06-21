@@ -129,6 +129,7 @@ int ofMainLoop::loop(){
 }
 
 void ofMainLoop::loopOnce(){
+	if(bShouldClose) return;
 	for(auto i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end();){
 		if(i->first->getWindowShouldClose()){
 			i->first->close();
@@ -141,6 +142,7 @@ void ofMainLoop::loopOnce(){
 			i++; ///< continue to next window
 		}
 	}
+	loopEvent.notify(this);
 }
 
 void ofMainLoop::pollEvents(){

@@ -1,9 +1,9 @@
-#About imageSequenceExample
+# About imageSequenceExample
 
 ![Screenshot of imageSequenceExample](imageSequenceExample.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates loading a sequence of images from a folder. For this demonstration, we know that the images are in order and the we saved them out at 24fps. The goal is to play them back at 24fps independent of the FPS of the app.
  
@@ -32,7 +32,7 @@ The left side displays bitmap text with information about FPS, sequence FPS, and
 
 The right side displays a hero image of the current frame with a series of 5 adjacent frames underneath. The frame should be automatically sequencing through an animation.
 
-###Instructions for use:
+### Instructions for use:
 
 The following key commands will change the behavior of the animation:
 
@@ -40,6 +40,6 @@ The following key commands will change the behavior of the animation:
 * up and down arrows change the app frame rate
 * left and right arrows change the independent animation framerate
 
-###Other classes used in this file
+### Other classes used in this file
 
 This example uses no other classes.

@@ -12,8 +12,6 @@
 #include "ofxAndroidUtils.h"
 #endif
 
-ofImageLoadSettings ofImageLoadSettings::defaultSetting;
-
 
 //----------------------------------------------------------
 // static variable for freeImage initialization:
@@ -64,8 +62,8 @@ FREE_IMAGE_TYPE getFreeImageType(const ofFloatPixels& pix) {
 
 //----------------------------------------------------
 template<typename PixelType>
-FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
-	PixelType* pixels = pix.getData();
+FIBITMAP* getBmpFromPixels(const ofPixels_<PixelType> &pix){
+	const PixelType* pixels = pix.getData();
 	unsigned int width = pix.getWidth();
 	unsigned int height = pix.getHeight();
     unsigned int bpp = pix.getBitsPerPixel();
@@ -184,17 +182,27 @@ template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _fileName, const ofImageLoadSettings& settings){
 	ofInitFreeImage();
 
-	UriParserStateA state;
-	UriUriA uri;
 	auto uriStr = _fileName.string();
+	const int bytesNeeded = 8 + 3 * strlen(uriStr.c_str()) + 1;
+	std::vector<char> absUri(bytesNeeded);
+
+#ifdef TARGET_WIN32
+	uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri.data());
+#else
+	uriUnixFilenameToUriStringA(uriStr.c_str(), absUri.data());
+#endif
+
+	UriUriA uri;
+	UriParserStateA state;
 	state.uri = &uri;
-	if(uriParseUriA(&state, uriStr.c_str())!=URI_SUCCESS){
+	if(uriParseUriA(&state, absUri.data())!=URI_SUCCESS){
 		ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri " << _fileName;
 		uriFreeUriMembersA(&uri);
 		return false;
 	}
 	std::string scheme(uri.scheme.first, uri.scheme.afterLast);
 	uriFreeUriMembersA(&uri);
+
 	if(scheme == "http" || scheme == "https"){
 		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
 	}
@@ -341,29 +349,12 @@ bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSett
 //----------------------------------------------------------------
 template<typename PixelType>
 static void saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::path& _fileName, ofImageQualityType qualityLevel) {
-	// Make a local copy.
-	ofPixels_<PixelType> pix = _pix;
-
 	ofInitFreeImage();
-	if (pix.isAllocated() == false){
+	if (_pix.isAllocated() == false){
 		ofLogError("ofImage") << "saveImage(): couldn't save \"" << _fileName << "\", pixels are not allocated";
 		return;
 	}
 
-	#ifdef TARGET_LITTLE_ENDIAN
-	if(sizeof(PixelType) == 1 && (pix.getPixelFormat()==OF_PIXELS_RGB || pix.getPixelFormat()==OF_PIXELS_RGBA)) {
-		pix.swapRgb();
-	}
-	#endif
-
-	FIBITMAP * bmp	= getBmpFromPixels(pix);
-
-	#ifdef TARGET_LITTLE_ENDIAN
-	if(sizeof(PixelType) == 1 && (pix.getPixelFormat()==OF_PIXELS_BGR || pix.getPixelFormat()==OF_PIXELS_BGRA)) {
-		pix.swapRgb();
-	}
-	#endif
-	
 	ofFilePath::createEnclosingDirectory(_fileName);
 	std::string fileName = ofToDataPath(_fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
@@ -372,6 +363,29 @@ static void saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::
 		// or guess via filename
 		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 	}
+	if(fif==FIF_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
+		ofPixels pix3 = _pix;
+		pix3.setNumChannels(3);
+		saveImage(pix3,_fileName,qualityLevel);
+		return;
+	}
+
+	FIBITMAP * bmp = nullptr;
+	#ifdef TARGET_LITTLE_ENDIAN
+	if(sizeof(PixelType) == 1 && (_pix.getPixelFormat()==OF_PIXELS_RGB || _pix.getPixelFormat()==OF_PIXELS_RGBA)) {	// Make a local copy.
+		ofPixels_<PixelType> pix = _pix;
+		pix.swapRgb();
+		bmp	= getBmpFromPixels(pix);
+	}else{
+	#endif
+
+		bmp	= getBmpFromPixels(_pix);
+
+
+	#ifdef TARGET_LITTLE_ENDIAN
+	}
+	#endif
+
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		if(fif == FIF_JPEG) {
 			int quality = JPEG_QUALITYSUPERB;
@@ -391,7 +405,7 @@ static void saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::
 			
 			if (fif == FIF_GIF) {
 				FIBITMAP* convertedBmp;
-				if(pix.getImageType() == OF_IMAGE_COLOR_ALPHA) {
+				if(_pix.getImageType() == OF_IMAGE_COLOR_ALPHA) {
 					// this just converts the image to grayscale so it can save something
 					convertedBmp = FreeImage_ConvertTo8Bits(bmp);
 				} else {
@@ -433,34 +447,34 @@ template<typename PixelType>
 static void saveImage(const ofPixels_<PixelType> & _pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
 	// thanks to alvaro casinelli for the implementation
 
-	// Make a local copy.
-	ofPixels_<PixelType> pix = _pix;
-
 	ofInitFreeImage();
 
-	if (pix.isAllocated() == false){
+	if (_pix.isAllocated() == false){
 		ofLogError("ofImage","saveImage(): couldn't save to ofBuffer, pixels are not allocated");
 		return;
 	}
 
-	if(format==OF_IMAGE_FORMAT_JPEG && pix.getNumChannels()==4){
-		ofPixels pix3 = pix;
+	if(format==OF_IMAGE_FORMAT_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
+		ofPixels pix3 = _pix;
 		pix3.setNumChannels(3);
 		saveImage(pix3,buffer,format,qualityLevel);
 		return;
 	}
 
+
+	FIBITMAP * bmp = nullptr;
 	#ifdef TARGET_LITTLE_ENDIAN
-	if(sizeof(PixelType) == 1) {
+	if(sizeof(PixelType) == 1 && (_pix.getPixelFormat()==OF_PIXELS_RGB || _pix.getPixelFormat()==OF_PIXELS_RGBA)) {	// Make a local copy.
+		ofPixels_<PixelType> pix = _pix;
 		pix.swapRgb();
-	}
+		bmp	= getBmpFromPixels(pix);
+	}else{
 	#endif
 
-	FIBITMAP * bmp	= getBmpFromPixels(pix);
+		bmp	= getBmpFromPixels(_pix);
+
 
 	#ifdef TARGET_LITTLE_ENDIAN
-	if(sizeof(PixelType) == 1) {
-		pix.swapRgb();
 	}
 	#endif
 

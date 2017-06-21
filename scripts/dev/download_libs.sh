@@ -114,6 +114,11 @@ if [ "$ARCH" == "" ]; then
             else
                 ARCH=64gcc6
             fi
+        elif [ "$ARCH" == "armv7l" ]; then 
+            # Check for Raspberry Pi
+            if [ -f /opt/vc/include/bcm_host.h ]; then 
+                ARCH=armv6l
+            fi 
         elif [ "$ARCH" == "i686" ] || [ "$ARCH" == "i386" ]; then
             cat << EOF
 32bit linux is not officially supported anymore but compiling

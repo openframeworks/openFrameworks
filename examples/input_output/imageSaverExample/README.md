@@ -2,7 +2,7 @@
 --
 ![Screenshot of Example, stored in the Level1_ExampleName/readme_assets/ folder](imageSaverExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks Example is designed to demonstrate how to save a screenshot of a specific area of your output screen.
 
@@ -29,7 +29,7 @@ Instructions for use:
 ![Screenshot of Example, stored in the Level1_ExampleName/readme_assets/ folder](imageSaverExample2.png)
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no additional classes.
 

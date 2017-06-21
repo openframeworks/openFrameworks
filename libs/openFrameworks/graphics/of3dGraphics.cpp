@@ -29,7 +29,7 @@ of3dGraphics::of3dGraphics(ofBaseRenderer * renderer)
 ,plane(1.0f, 1.0f, 6, 4)
 ,sphere(1.0f, 20)
 ,icoSphere(1.0f, 2)
-,box(1.f, 1.f, 1.f)
+,box(1.f, 1.f, 1.f, 1, 1, 1)
 ,cone( 1.f, 1.f, 9, 3, 2 )
 ,cylinder(1.f, 1.f, 8, 4, 2, true)
 ,boxWireframe(1.f, 1.f, 1.f )
@@ -147,7 +147,7 @@ void of3dGraphics::drawPlane( float width, float height ) const{
 // UV SPHERE //
 //----------------------------------------------------------
 void of3dGraphics::setSphereResolution(int res) {
-    if(ofGetSphereResolution() != res) {
+	if(getSphereResolution() != res) {
        sphere.setResolution(res);
     }
 }
@@ -192,7 +192,7 @@ void of3dGraphics::drawSphere(float radius) const{
 // ICO SPHERE //
 //----------------------------------------------------------
 void of3dGraphics::setIcoSphereResolution( int res ) {
-    if(ofGetIcoSphereResolution() != res) {
+	if(getIcoSphereResolution() != res) {
         icoSphere.setResolution(res);
     }
 }
@@ -237,7 +237,7 @@ void of3dGraphics::drawIcoSphere(float radius) const{
 // Cylinder //
 //----------------------------------------------------------
 void of3dGraphics::setCylinderResolution( int radiusSegments, int heightSegments, int capSegments ) {
-	if(ofGetCylinderResolution() != glm::vec3{ radiusSegments, heightSegments, capSegments }) {
+	if(getCylinderResolution() != glm::vec3{ radiusSegments, heightSegments, capSegments }) {
         cylinder.setResolution(radiusSegments, heightSegments, capSegments);
     }
 }
@@ -283,7 +283,7 @@ void of3dGraphics::drawCylinder(float radius, float height) const{
 // CONE //
 //----------------------------------------------------------
 void of3dGraphics::setConeResolution( int radiusSegments, int heightSegments, int capSegments){
-	if(ofGetConeResolution() != glm::vec3( radiusSegments, heightSegments, capSegments )) {
+	if(getConeResolution() != glm::vec3( radiusSegments, heightSegments, capSegments )) {
         cone.setResolution(radiusSegments, heightSegments, capSegments);
     }
 }
@@ -334,9 +334,9 @@ void of3dGraphics::setBoxResolution( int res ) {
 
 //----------------------------------------------------------
 void of3dGraphics::setBoxResolution( int resWidth, int resHeight, int resDepth ) {
-	if(ofGetBoxResolution() != glm::vec3( resWidth, resHeight, resDepth )) {
+	if(getBoxResolution() != glm::vec3( resWidth, resHeight, resDepth )) {
         box.setResolution(resWidth, resHeight, resDepth);
-    }
+	}
 }
 
 //----------------------------------------------------------
@@ -352,7 +352,7 @@ void of3dGraphics::drawBox( float x, float y, float z, float width, float height
 
     renderer->pushMatrix();
     renderer->multMatrix(m);
-    if(renderer->getFillMode() == OF_FILLED) {
+	if(renderer->getFillMode() == OF_FILLED || box.getResolution() != glm::vec3(1,1,1)) {
         renderCached3dPrimitive( box );
     } else {
         renderCached3dPrimitive( boxWireframe );
