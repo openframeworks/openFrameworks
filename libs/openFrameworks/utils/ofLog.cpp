@@ -251,6 +251,14 @@ void ofSetLoggerChannel(shared_ptr<ofBaseLoggerChannel> loggerChannel){
 	ofLog::setChannel(loggerChannel);
 }
 
+shared_ptr<ofBaseLoggerChannel> ofLog::getChannel(){
+	return channel;
+}
+
+shared_ptr<ofBaseLoggerChannel> ofGetLoggerChannel(){
+	return ofLog::getChannel();
+}
+
 string ofGetLogLevelName(ofLogLevel level, bool pad){
 	switch(level){
 		case OF_LOG_VERBOSE:
