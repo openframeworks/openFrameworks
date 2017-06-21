@@ -67,7 +67,7 @@ def parseAddonConfig(String addon, String param, String abi, defaultVal = []){
             def group = (stripLine =~ /^(\w+)\s*(\+?=)\s*(.+)$/)
             if(group.hasGroup() && group.size() == 1 && group[0].size() == 4){
                 if(group[0][1] == param) {
-                    def _p = group[0][3].replaceAll("%", "*")
+                    def _p = group[0][3].replaceAll("%", "**/*")
                     if (group[0][2] == '=') {
                         ret = [_p]
                     } else {
