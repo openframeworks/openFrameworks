@@ -555,10 +555,10 @@ void ofVertex(float x, float y);
 void ofVertex(float x, float y, float z);
 void ofVertex(const glm::vec3 & p);
 void ofVertex(const glm::vec2 & p);
-void ofVertices(const vector <glm::vec3> & polyPoints);
-void ofVertices(const vector <glm::vec2> & polyPoints);
-void ofVertices(const vector <ofVec3f> & polyPoints);
-void ofVertices(const vector <ofVec2f> & polyPoints);
+void ofVertices(const std::vector <glm::vec3> & polyPoints);
+void ofVertices(const std::vector <glm::vec2> & polyPoints);
+void ofVertices(const std::vector <ofVec3f> & polyPoints);
+void ofVertices(const std::vector <ofVec2f> & polyPoints);
 
 /// \brief Specifies a single point of a shape. The difference from ofVertex is that
 /// the line describing the edge of the shape between two points will be a
@@ -573,10 +573,10 @@ void ofCurveVertex(const glm::vec2 & p);
 
 /// \brief Draws a curve through a series of vertices stored as a vector of
 /// ofPoints. Should be called between ofBeginShape() and ofEndShape().
-void ofCurveVertices(const vector <glm::vec3> & curvePoints);
-void ofCurveVertices(const vector <glm::vec2> & curvePoints);
-void ofCurveVertices(const vector <ofVec3f> & curvePoints);
-void ofCurveVertices(const vector <ofVec2f> & curvePoints);
+void ofCurveVertices(const std::vector <glm::vec3> & curvePoints);
+void ofCurveVertices(const std::vector <glm::vec2> & curvePoints);
+void ofCurveVertices(const std::vector <ofVec3f> & curvePoints);
+void ofCurveVertices(const std::vector <ofVec2f> & curvePoints);
 
 /// \brief Describes a bezier curve through three points of a shape. To be called
 /// between ofBeginShape() and ofEndShape().
@@ -664,10 +664,10 @@ void ofDrawBitmapString(const T & textString, const glm::vec3 & p);
 template<typename T>
 void ofDrawBitmapString(const T & textString, float x, float y, float z);
 template<>
-void ofDrawBitmapString(const string & textString, float x, float y, float z);
-void ofDrawBitmapStringHighlight(string text, const glm::vec3& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
-void ofDrawBitmapStringHighlight(string text, const glm::vec2& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
-void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
+void ofDrawBitmapString(const std::string & textString, float x, float y, float z);
+void ofDrawBitmapStringHighlight(std::string text, const glm::vec3& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
+void ofDrawBitmapStringHighlight(std::string text, const glm::vec2& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
+void ofDrawBitmapStringHighlight(std::string text, int x, int y, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
 
 
 /// \}
@@ -1217,7 +1217,7 @@ ofHandednessType ofGetCoordHandedness();
 /// }
 /// ~~~~
 /// \sa End drawing with ofEndSaveScreenAsPDF()
-void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
+void ofBeginSaveScreenAsPDF(std::string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
 
 /// \brief Terminates draw to PDF through ofCairoRenderer and outputs the file.
 /// \sa ofBeginSaveScreenAsPDF()
@@ -1225,7 +1225,7 @@ void ofEndSaveScreenAsPDF();
 
 /// \brief Begin rendering to a SVG file.
 /// \sa ofEndSaveScreenAsSVG(), ofBeginSaveScreenAsPDF()
-void ofBeginSaveScreenAsSVG(string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
+void ofBeginSaveScreenAsSVG(std::string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
 
 /// \brief Terminates draw to SVG and outputs the file.
 /// \sa ofBeginSaveScreenAsSVG()

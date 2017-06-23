@@ -86,7 +86,7 @@ public:
 
 	/// \brief Returns a vector of ofSerialDeviceInfo instances with the
 	/// devicePath, deviceName, deviceID set.
-	vector <ofSerialDeviceInfo> getDeviceList();
+	std::vector <ofSerialDeviceInfo> getDeviceList();
 
 	/// \}
 	/// \name Serial Connection
@@ -114,7 +114,7 @@ public:
 	/// ofSerial mySerial;
 	/// mySerial.setup("COM4", 57600);
 	/// ~~~~
-	bool setup(string portName, int baudrate);
+	bool setup(std::string portName, int baudrate);
 
 	/// \brief Opens the serial port based on the order in which is listed and
 	/// sets the baud rate.
@@ -272,8 +272,8 @@ protected:
 	/// \see enumerateWin32Ports()
 	void buildDeviceList();
 
-	string deviceType;  ///\< \brief Name of the device on the other end of the serial connection.
-	vector <ofSerialDeviceInfo> devices;  ///\< This vector stores information about all serial devices found.
+	std::string deviceType;  ///\< \brief Name of the device on the other end of the serial connection.
+	std::vector <ofSerialDeviceInfo> devices;  ///\< This vector stores information about all serial devices found.
 	bool bHaveEnumeratedDevices;  ///\< \brief Indicate having enumerated devices (serial ports) available.
 	bool bInited;  ///\< \brief Indicate the successful initialization of the serial connection.
 

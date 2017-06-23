@@ -3,6 +3,8 @@
 #include "ofTessellator.h"
 #include "ofVectorMath.h"
 
+using namespace std;
+
 #if defined(TARGET_EMSCRIPTEN)
 	ofTessellator ofPath::tessellator;
 #elif HAS_TLS

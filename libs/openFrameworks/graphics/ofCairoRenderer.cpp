@@ -8,6 +8,8 @@
 #include "ofNode.h"
 #include "ofGraphics.h"
 
+using namespace std;
+
 const string ofCairoRenderer::TYPE="cairo";
 
 _cairo_status ofCairoRenderer::stream_function(void *closure,const unsigned char *data, unsigned int length){

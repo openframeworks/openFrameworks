@@ -1,6 +1,8 @@
 #include "ofXml.h"
 #include "ofUtils.h"
 
+using namespace std;
+
 ofXml::ofXml()
 :doc(new pugi::xml_document){
 	xml = doc->root();

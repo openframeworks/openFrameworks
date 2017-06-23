@@ -4,6 +4,8 @@
 #include "ofAppRunner.h"
 #include "RtAudio.h"
 
+using namespace std;
+
 //------------------------------------------------------------------------------
 RtAudio::Api toRtAudio(ofSoundDevice::Api api){
 	switch (api) {

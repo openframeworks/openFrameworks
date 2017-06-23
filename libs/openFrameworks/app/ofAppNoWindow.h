@@ -35,22 +35,22 @@ public:
 	int			getHeight();
 
 	ofCoreEvents & events();
-	shared_ptr<ofBaseRenderer> & renderer();
+	std::shared_ptr<ofBaseRenderer> & renderer();
 
 private:
 	int width, height;
 
     ofBaseApp *		ofAppPtr;
     ofCoreEvents coreEvents;
-    shared_ptr<ofBaseRenderer> currentRenderer;
+    std::shared_ptr<ofBaseRenderer> currentRenderer;
 };
 
 class ofNoopRenderer: public ofBaseRenderer{
 public:
 	ofNoopRenderer():graphics3d(this){}
 private:
-	static const string TYPE;
-	const string & getType(){return TYPE;}
+	static const std::string TYPE;
+	const std::string & getType(){return TYPE;}
 
 	void startRender(){}
 	void finishRender(){}
@@ -166,8 +166,8 @@ private:
 	void drawCircle(float x, float y, float z, float radius) const{}
 	void drawSphere(float x, float y, float z, float radius) const{}
 	void drawEllipse(float x, float y, float z, float width, float height) const{}
-	void drawString(string text, float x, float y, float z) const{}
-	void drawString(const ofTrueTypeFont & font, string text, float x, float y) const{}
+	void drawString(std::string text, float x, float y, float z) const{}
+	void drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const{}
 
 	void setBitmapTextMode(ofDrawBitmapMode mode){}
 	ofStyle getStyle() const{ return ofStyle(); }

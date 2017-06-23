@@ -179,10 +179,10 @@ public:
 	virtual ~ofBaseHasTexturePlanes(){}
 
 	/// \returns a reference to a std::vector containing the ofTexture planes.
-	virtual vector<ofTexture> & getTexturePlanes()=0;
+	virtual std::vector<ofTexture> & getTexturePlanes()=0;
 
 	/// \returns a const reference to a std::vector containing the ofTexture planes.
-	virtual const vector<ofTexture> & getTexturePlanes() const=0;
+	virtual const std::vector<ofTexture> & getTexturePlanes() const=0;
 };
 
 
@@ -391,7 +391,7 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	//needs implementing
 	/// \brief Get a list of available video grabber devices.
 	/// \returns a std::vector of ofVideoDevice objects.
-	virtual vector<ofVideoDevice>	listDevices() const = 0;
+	virtual std::vector<ofVideoDevice>	listDevices() const = 0;
 
 	/// \brief Set up the grabber with the requested width and height.
 	///
@@ -464,7 +464,7 @@ public:
 	/// \param name The name of the video resource to load.
 	/// \returns True if the video was loaded successfully.
 	/// \sa loadAsync()
-    virtual bool				load(string name) = 0;
+    virtual bool				load(std::string name) = 0;
 	/// \brief Asynchronously load a video resource by name.
 	///
 	/// The list of supported video types and sources (e.g. rtsp:// sources) is
@@ -475,7 +475,7 @@ public:
 	///
 	/// \param name The name of the video resource to load.
 	/// \sa isLoaded()
-    virtual void				loadAsync(string name);
+    virtual void				loadAsync(std::string name);
 	
 	/// \brief Play the video from the current playhead position.
 	/// \sa getPosition()
@@ -637,7 +637,7 @@ public:
 	/// type depending on the renderer being used.
 	///
 	/// \returns The string representation of the renderer type.
-	virtual const string & getType()=0;
+	virtual const std::string & getType()=0;
 
 	/// \brief Starts using this renderer as the rendering surface.
 	virtual void startRender() = 0;
@@ -1373,13 +1373,13 @@ public:
 	/// \param x The x position for the bottom of \p text.
 	/// \param y The y position for the left alignment of \p text.
 	/// \param z The z position of the text.
-	virtual void drawString(string text, float x, float y, float z) const=0;
+	virtual void drawString(std::string text, float x, float y, float z) const=0;
 	/// \brief Draw text with this renderer using an ofTrueType font.
 	/// \param font The font to use when drawing \p text.
 	/// \param text The text to draw with the renderer.
 	/// \param x The x position for the bottom of \p text.
 	/// \param y The y position for the left alignment of \p text.
-	virtual void drawString(const ofTrueTypeFont & font, string text, float x, float y) const=0;
+	virtual void drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const=0;
 
 
 	// returns true an ofPath to draw with, this allows to keep
@@ -1940,28 +1940,28 @@ public:
 	/// blocks until a response is returned or the request times out
 	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 	/// \return HTTP response on success or failure
-	virtual ofHttpResponse get(const string& url)=0;
+	virtual ofHttpResponse get(const std::string& url)=0;
 
 	/// \brief make an asynchronous HTTP request
 	/// will not block, placed in a queue and run using a background thread
 	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 	/// \param name optional key to use when sorting requests
 	/// \return unique id for the active HTTP request
-	virtual int getAsync(const string& url, const string& name="")=0;
+	virtual int getAsync(const std::string& url, const std::string& name="")=0;
 
 	/// \brief make an HTTP request and save the response data to a file
 	/// blocks until a response is returned or the request times out
 	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 	/// \param path file path to save to
 	/// \return HTTP response on success or failure
-	virtual ofHttpResponse saveTo(const string& url, const std::filesystem::path& path)=0;
+	virtual ofHttpResponse saveTo(const std::string& url, const std::filesystem::path& path)=0;
 
 	/// \brief make an asynchronous HTTP request and save the response data to a file
 	/// will not block, placed in a queue and run using a background thread
 	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 	/// \param path file path to save to
 	/// \returns unique id for the active HTTP request
-	virtual int saveAsync(const string& url, const std::filesystem::path& path)=0;
+	virtual int saveAsync(const std::string& url, const std::filesystem::path& path)=0;
 
 	/// \brief remove an active HTTP request from the queue
 	/// \param unique HTTP request id

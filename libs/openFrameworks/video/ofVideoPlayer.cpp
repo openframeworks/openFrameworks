@@ -3,6 +3,7 @@
 #include "ofAppRunner.h"
 #include <algorithm>
 
+using namespace std;
 
 //---------------------------------------------------------------------------
 ofVideoPlayer::ofVideoPlayer (){

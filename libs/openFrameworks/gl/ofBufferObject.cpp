@@ -2,6 +2,7 @@
 #include "ofConstants.h"
 #include "ofAppRunner.h"
 
+using namespace std;
 
 ofBufferObject::Data::Data()
 :id(0)

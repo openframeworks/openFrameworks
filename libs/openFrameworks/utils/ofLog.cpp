@@ -3,6 +3,8 @@
 #include <ofUtils.h>
 #include <map>
 
+using namespace std;
+
 static ofLogLevel currentLogLevel =  OF_LOG_NOTICE;
 
 bool ofLog::bAutoSpace = false;

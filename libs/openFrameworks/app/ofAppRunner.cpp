@@ -21,6 +21,8 @@
 
 #include "ofMainLoop.h"
 
+using namespace std;
+
 #if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI)
 	#include "ofAppGLFWWindow.h"
 	//special case so we preserve supplied settngs

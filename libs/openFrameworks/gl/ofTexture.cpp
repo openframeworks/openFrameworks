@@ -10,6 +10,8 @@
 #include "ofAppAndroidWindow.h"
 #endif
 
+using namespace std;
+
 //----------------------------------------------------------
 // static
 static bool bTexHackEnabled = true;

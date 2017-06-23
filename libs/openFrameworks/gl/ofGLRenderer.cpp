@@ -13,6 +13,8 @@
 #include "ofTrueTypeFont.h"
 #include "ofNode.h"
 
+using namespace std;
+
 const string ofGLRenderer::TYPE="GL";
 
 //----------------------------------------------------------

@@ -94,8 +94,8 @@ public:
     ofVec4f& operator/=( const float f );
 	    
 	/// \cond INTERNAL
-	friend ostream& operator<<(ostream& os, const ofVec4f& vec);
-	friend istream& operator>>(istream& is, const ofVec4f& vec);
+	friend std::ostream& operator<<(std::ostream& os, const ofVec4f& vec);
+	friend std::istream& operator>>(std::istream& is, const ofVec4f& vec);
 	/// \endcond
 
     /// \}
@@ -464,12 +464,12 @@ inline ofVec4f& ofVec4f::operator/=( const float f ) {
 }
 
 
-inline ostream& operator<<(ostream& os, const ofVec4f& vec) {
+inline std::ostream& operator<<(std::ostream& os, const ofVec4f& vec) {
 	os << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w;
 	return os;
 }
 
-inline istream& operator>>(istream& is, ofVec4f& vec) {
+inline std::istream& operator>>(std::istream& is, ofVec4f& vec) {
 	is >> vec.x;
 	is.ignore(2);
 	is >> vec.y;

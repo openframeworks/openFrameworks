@@ -8,6 +8,8 @@
 #include "ofAppRunner.h"
 #include <set>
 
+using namespace std;
+
 ALCdevice * ofOpenALSoundPlayer::alDevice = 0;
 ALCcontext * ofOpenALSoundPlayer::alContext = 0;
 vector<float> ofOpenALSoundPlayer::window;

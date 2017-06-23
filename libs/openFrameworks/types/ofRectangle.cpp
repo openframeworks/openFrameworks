@@ -2,6 +2,8 @@
 #include "ofRectangle.h"
 #include "ofVectorMath.h"
 
+using namespace std;
+
 //----------------------------------------------------------
 ofRectangle::ofRectangle() : x(position.x), y(position.y) {
     set(0,0,0,0);

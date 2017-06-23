@@ -17,8 +17,8 @@ public:
 	ofGLRenderer(const ofAppBaseWindow * window);
 	~ofGLRenderer(){}
 
-    static const string TYPE;
-    const string & getType(){ return TYPE; }
+	static const std::string TYPE;
+	const std::string & getType(){ return TYPE; }
 
     void setup();
 
@@ -159,8 +159,8 @@ public:
 	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const;
 	void drawCircle(float x, float y, float z, float radius) const;
 	void drawEllipse(float x, float y, float z, float width, float height) const;
-	void drawString(string text, float x, float y, float z) const;
-	void drawString(const ofTrueTypeFont & font, string text, float x, float y) const;
+	void drawString(std::string text, float x, float y, float z) const;
+	void drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const;
 
 
 	// gl specifics
@@ -226,28 +226,28 @@ private:
 
 	bool bBackgroundAuto;
 
-	mutable vector<glm::vec3> linePoints;
-	mutable vector<glm::vec3> rectPoints;
-	mutable vector<glm::vec3> triPoints;
-	mutable vector<glm::vec3> circlePoints;
+	mutable std::vector<glm::vec3> linePoints;
+	mutable std::vector<glm::vec3> rectPoints;
+	mutable std::vector<glm::vec3> triPoints;
+	mutable std::vector<glm::vec3> circlePoints;
 	ofPolyline circlePolyline;
 
 	ofMatrixStack matrixStack;
 	bool normalsEnabled;
 	bool lightingEnabled;
         bool materialBound;
-	set<int> textureLocationsEnabled;
+	std::set<int> textureLocationsEnabled;
 
 	int alphaMaskTextureTarget;
 
 	ofStyle currentStyle;
-	deque <ofStyle> styleHistory;
+	std::deque <ofStyle> styleHistory;
 	of3dGraphics graphics3d;
 	ofBitmapFont bitmapFont;
 	ofPath path;
 	const ofAppBaseWindow * window;
 
-	deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
+	std::deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
 	GLuint defaultFramebufferId;		///< default GL_FRAMEBUFFER_BINDING, windowing frameworks might want to set this to their MSAA framebuffer, defaults to 0
 	GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
 

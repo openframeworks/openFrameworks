@@ -14,6 +14,8 @@
 #include <ctype.h>
 #include <algorithm>
 
+using namespace std;
+
 #ifdef TARGET_LINUX
 	#include <linux/serial.h>
 #endif

@@ -23,6 +23,8 @@ namespace{
     ofSoundStream systemSoundStream;
 }
 
+using namespace std;
+
 //------------------------------------------------------------
 bool ofSoundStreamSettings::setInDevice(const ofSoundDevice & device){
 	if(api!=ofSoundDevice::UNSPECIFIED && device.api!=api){

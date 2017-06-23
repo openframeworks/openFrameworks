@@ -34,7 +34,7 @@ public:
 	virtual void close(){
 	}
 	virtual ofCoreEvents & events() = 0;
-	virtual shared_ptr<ofBaseRenderer> & renderer() = 0;
+	virtual std::shared_ptr<ofBaseRenderer> & renderer() = 0;
 
 	virtual void hideCursor() {}
 	virtual void showCursor() {}
@@ -54,7 +54,7 @@ public:
 	virtual int		getWidth(){ return 0; }
 	virtual int		getHeight(){ return 0; }
 
-	virtual void	setWindowTitle(string title){}
+	virtual void	setWindowTitle(std::string title){}
 
 	virtual ofWindowMode	getWindowMode() {return OF_WINDOW ;}
 
@@ -65,8 +65,8 @@ public:
 	virtual void	disableSetupScreen(){}
 	
 	virtual void	setVerticalSync(bool enabled){};
-    virtual void    setClipboardString(const string& text) {}
-    virtual string  getClipboardString() { return ""; }
+    virtual void    setClipboardString(const std::string& text) {}
+    virtual std::string  getClipboardString() { return ""; }
 
     virtual void makeCurrent(){};
 	virtual void swapBuffers() {}

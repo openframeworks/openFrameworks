@@ -14,6 +14,7 @@
     #define CALLBACK
 #endif
 
+using namespace std;
 
 //style stuff - new in 006
 static ofVboMesh gradientMesh;
