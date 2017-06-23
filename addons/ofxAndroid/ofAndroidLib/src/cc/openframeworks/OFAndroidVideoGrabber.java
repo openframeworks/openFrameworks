@@ -25,6 +25,10 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		return instanceId;
 	}
 
+	public Camera getCamera(){
+		return camera;
+	}
+
 	public static boolean supportsTextureRendering(){
 		return Build.VERSION.SDK_INT >= 11;
 	}
