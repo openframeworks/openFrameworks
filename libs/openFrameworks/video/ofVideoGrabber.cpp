@@ -4,6 +4,8 @@
 #include "ofConstants.h"
 #include "ofAppRunner.h"
 
+using namespace std;
+
 //--------------------------------------------------------------------
 ofVideoGrabber::ofVideoGrabber(){
 	bUseTexture			= true;

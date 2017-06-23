@@ -42,6 +42,8 @@
 #include "ofArduino.h"
 #include "ofUtils.h"
 
+using namespace std;
+
 // TODO thread it?
 // TODO throw event or exception if the serial port goes down...
 //---------------------------------------------------------------------------

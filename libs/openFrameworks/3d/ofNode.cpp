@@ -424,8 +424,8 @@ void ofNode::lookAt(const glm::vec3& lookAtPosition){
     auto relPosition = (getGlobalPosition() - lookAtPosition);
 	auto radius = glm::length(relPosition);
     if(radius>0){
-		auto latitude = acos(relPosition.y / radius) - glm::half_pi<float>();
-		auto longitude = atan2(relPosition.x , relPosition.z);
+		float latitude = acos(relPosition.y / radius) - glm::half_pi<float>();
+		float longitude = atan2(relPosition.x , relPosition.z);
 		glm::quat q = glm::angleAxis(latitude, glm::vec3(1,0,0)) * glm::angleAxis(longitude, glm::vec3(0,1,0)) * glm::angleAxis(0.f, glm::vec3(0,0,1));
         setGlobalOrientation(q);
     }

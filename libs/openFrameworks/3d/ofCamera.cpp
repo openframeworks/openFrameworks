@@ -1,6 +1,8 @@
 #include "ofCamera.h"
 #include "ofLog.h"
 
+using namespace std;
+
 //----------------------------------------
 ofCamera::ofCamera() :
 isOrtho(false),

@@ -9,6 +9,8 @@
 #include "ofNoise.h"
 #include "ofPolyline.h"
 
+using namespace std;
+
 //--------------------------------------------------
 int ofNextPow2(int a){
 	// from nehe.gamedev.net lesson 43

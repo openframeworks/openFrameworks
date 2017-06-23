@@ -54,6 +54,8 @@
 	#define MAXPATHLEN 1024
 #endif
 
+using namespace std;
+
 namespace{
 	bool enableDataPath = true;
 

@@ -33,6 +33,8 @@
 	#include <GLFW/glfw3native.h>
 #endif
 
+using namespace std;
+
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow(){
 	bEnableSetupScreen	= true;

@@ -1,6 +1,8 @@
 #include "ofSoundPlayer.h"
 #include "ofUtils.h"
 
+using namespace std;
+
 // these are global functions, that affect every sound / channel:
 // ------------------------------------------------------------
 // ------------------------------------------------------------

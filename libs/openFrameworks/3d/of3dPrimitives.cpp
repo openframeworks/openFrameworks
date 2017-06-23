@@ -9,6 +9,8 @@
 #include "of3dPrimitives.h"
 #include "ofGraphics.h"
 
+using namespace std;
+
 of3dPrimitive::of3dPrimitive()
 :usingVbo(true)
 ,mesh(new ofVboMesh)

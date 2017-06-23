@@ -142,19 +142,19 @@ namespace glm {
 	template <typename T, precision P>
 	inline std::ostream& operator<<(std::ostream& os, const tmat3x3<T, P>& mat) {
 		int w = 8;
-		os << setw(w)
-			<< mat[0][0] << ", " << setw(w)
-			<< mat[0][1] << ", " << setw(w)
+		os << std::setw(w)
+			<< mat[0][0] << ", " << std::setw(w)
+			<< mat[0][1] << ", " << std::setw(w)
 			<< mat[0][2] << std::endl;
 
-		os << setw(w)
-			<< mat[1][0] << ", " << setw(w)
-			<< mat[1][1] << ", " << setw(w)
+		os << std::setw(w)
+			<< mat[1][0] << ", " << std::setw(w)
+			<< mat[1][1] << ", " << std::setw(w)
 			<< mat[1][2] << std::endl;
 
-		os << setw(w)
-			<< mat[2][0] << ", " << setw(w)
-			<< mat[2][1] << ", " << setw(w)
+		os << std::setw(w)
+			<< mat[2][0] << ", " << std::setw(w)
+			<< mat[2][1] << ", " << std::setw(w)
 			<< mat[2][2];
 		return os;
 	}
@@ -180,28 +180,28 @@ namespace glm {
 	template <typename T, precision P>
 	inline std::ostream& operator<<(std::ostream& os, const tmat4x4<T, P>& mat) {
 		int w = 8;
-		os << setw(w)
-			<< mat[0][0] << ", " << setw(w)
-			<< mat[0][1] << ", " << setw(w)
-			<< mat[0][2] << ", " << setw(w)
+		os << std::setw(w)
+			<< mat[0][0] << ", " << std::setw(w)
+			<< mat[0][1] << ", " << std::setw(w)
+			<< mat[0][2] << ", " << std::setw(w)
 			<< mat[0][3] << std::endl;
 
-		os << setw(w)
-			<< mat[1][0] << ", " << setw(w)
-			<< mat[1][1] << ", " << setw(w)
-			<< mat[1][2] << ", " << setw(w)
+		os << std::setw(w)
+			<< mat[1][0] << ", " << std::setw(w)
+			<< mat[1][1] << ", " << std::setw(w)
+			<< mat[1][2] << ", " << std::setw(w)
 			<< mat[1][3] << std::endl;
 
-		os << setw(w)
-			<< mat[2][0] << ", " << setw(w)
-			<< mat[2][1] << ", " << setw(w)
-			<< mat[2][2] << ", " << setw(w)
+		os << std::setw(w)
+			<< mat[2][0] << ", " << std::setw(w)
+			<< mat[2][1] << ", " << std::setw(w)
+			<< mat[2][2] << ", " << std::setw(w)
 			<< mat[2][3] << std::endl;
 
-		os << setw(w)
-			<< mat[3][0] << ", " << setw(w)
-			<< mat[3][1] << ", " << setw(w)
-			<< mat[3][2] << ", " << setw(w)
+		os << std::setw(w)
+			<< mat[3][0] << ", " << std::setw(w)
+			<< mat[3][1] << ", " << std::setw(w)
+			<< mat[3][2] << ", " << std::setw(w)
 			<< mat[3][3];
 		return os;
 	}

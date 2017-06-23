@@ -1,6 +1,7 @@
 #include "ofEvents.h"
 #include "ofAppRunner.h"
 
+using namespace std;
 
 static ofEventArgs voidEventArgs;
 

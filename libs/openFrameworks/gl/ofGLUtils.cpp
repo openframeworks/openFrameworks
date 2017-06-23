@@ -8,6 +8,8 @@
 #include "ofRendererCollection.h"
 #include "ofLog.h"
 
+using namespace std;
+
 //---------------------------------
 int ofGetGlInternalFormat(const ofPixels& pix) {
 	return ofGetGLInternalFormatFromPixelFormat(pix.getPixelFormat());

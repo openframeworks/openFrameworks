@@ -86,8 +86,8 @@ class ofSoundStream {
 public:
 	ofSoundStream();
 
-	void setSoundStream(shared_ptr<ofBaseSoundStream> soundStreamPtr);
-	shared_ptr<ofBaseSoundStream> getSoundStream();
+	void setSoundStream(std::shared_ptr<ofBaseSoundStream> soundStreamPtr);
+	std::shared_ptr<ofBaseSoundStream> getSoundStream();
 
 	/// \brief Prints a list of available audio devices to the console
 	void printDeviceList() const;
@@ -186,7 +186,7 @@ public:
 	OF_DEPRECATED_MSG("Use printDeviceList instead", std::vector<ofSoundDevice> listDevices() const);
 
 protected:
-	shared_ptr<ofBaseSoundStream> soundStream;
+	std::shared_ptr<ofBaseSoundStream> soundStream;
 	int tmpDeviceId = -1;
 
 };

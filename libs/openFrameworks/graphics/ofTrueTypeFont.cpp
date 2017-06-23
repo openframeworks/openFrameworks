@@ -21,6 +21,7 @@
 #include "utf8.h"
 #include "ofVectorMath.h"
 
+using namespace std;
 
 const ofUnicode::range ofUnicode::Space {32, 32};
 const ofUnicode::range ofUnicode::Latin {32, 0x007F};

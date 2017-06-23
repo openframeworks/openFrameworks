@@ -14,6 +14,8 @@
 #include "ofUtils.h"
 #include <map>
 
+using namespace std;
+
 static ofFloatColor globalAmbient(0.2, 0.2, 0.2, 1.0);
 
 //----------------------------------------

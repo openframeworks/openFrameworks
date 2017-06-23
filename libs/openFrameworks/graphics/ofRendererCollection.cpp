@@ -6,5 +6,5 @@
  */
 
 #include "ofRendererCollection.h"
-const string ofRendererCollection::TYPE="collection";
+const std::string ofRendererCollection::TYPE="collection";
 

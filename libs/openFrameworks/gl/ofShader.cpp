@@ -17,6 +17,8 @@
 #include "ofxAndroidUtils.h"
 #endif
 
+using namespace std;
+
 
 static const string COLOR_ATTRIBUTE="color";
 static const string POSITION_ATTRIBUTE="position";

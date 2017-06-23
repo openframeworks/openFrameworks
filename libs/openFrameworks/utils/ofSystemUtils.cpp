@@ -93,6 +93,8 @@ static void restoreAppWindowFocus(){
 #define CANCEL_BUTTON GTK_STOCK_CANCEL
 #endif
 
+using namespace std;
+
 gboolean init_gtk(gpointer userdata){
 	int argc=0; char **argv = nullptr;
 	gtk_init (&argc, &argv);
