@@ -10,7 +10,7 @@ void ofxGuiSetFont(const string & fontPath, int fontsize, bool _bAntiAliased, bo
 	ofxBaseGui::loadFont(fontPath, fontsize, _bAntiAliased, _bFullCharacterSet, dpi);
 }
 
-void ofxGuiSetFont(const ofTtfSettings & fontSettings){
+void ofxGuiSetFont(const ofTrueTypeFont::Settings & fontSettings){
 	ofxBaseGui::loadFont(fontSettings);
 }
 
@@ -97,7 +97,7 @@ void ofxBaseGui::loadFont(const std::string& filename, int fontsize, bool _bAnti
 	useTTF = true;
 }
 
-void ofxBaseGui::loadFont(const ofTtfSettings & fontSettings){
+void ofxBaseGui::loadFont(const ofTrueTypeFont::Settings & fontSettings){
 	font.load(fontSettings);
 	fontLoaded = true;
 	useTTF = true;
