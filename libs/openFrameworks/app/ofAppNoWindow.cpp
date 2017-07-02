@@ -1,6 +1,7 @@
 #include "ofAppNoWindow.h"
 #include "ofBaseApp.h"
 #include "ofGraphics.h"
+#include <memory>
 
 
 #if defined TARGET_OSX || defined TARGET_LINUX
