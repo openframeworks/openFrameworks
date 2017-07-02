@@ -9,6 +9,8 @@
 #include <condition_variable>
 #include <mutex>
 
+using namespace std;
+
 #ifdef TARGET_WIN32
 #include <winuser.h>
 #include <commdlg.h>
