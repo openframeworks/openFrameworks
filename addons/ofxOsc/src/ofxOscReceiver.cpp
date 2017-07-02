@@ -2,6 +2,8 @@
 // copyright (c) Damian Stewart 2007-2009
 #include "ofxOscReceiver.h"
 
+using namespace std;
+
 //--------------------------------------------------------------
 ofxOscReceiver::~ofxOscReceiver(){
 	stop();
