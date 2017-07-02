@@ -11,8 +11,6 @@
 #include <termios.h>
 #include <signal.h>
 
-using namespace std;
-
 struct termios orig_termios;
 struct sigaction act_open;
 
@@ -62,6 +60,8 @@ int getch()
 }
 
 #endif
+
+using namespace std;
 
 const string ofNoopRenderer::TYPE="NOOP";
 
