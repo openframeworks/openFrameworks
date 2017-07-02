@@ -43,8 +43,8 @@ enum ofAppEGLWindowType {
 	OF_APP_WINDOW_X11
 };
 
-typedef map<EGLint,EGLint> ofEGLAttributeList;
-typedef map<EGLint,EGLint>::iterator ofEGLAttributeListIterator;
+typedef std::map<EGLint,EGLint> ofEGLAttributeList;
+typedef std::map<EGLint,EGLint>::iterator ofEGLAttributeListIterator;
 
 class ofAppEGLWindow : public ofAppBaseGLESWindow, public ofThread {
 public:
