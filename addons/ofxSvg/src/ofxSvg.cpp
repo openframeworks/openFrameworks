@@ -1,6 +1,8 @@
 #include "ofxSvg.h"
 #include "ofConstants.h"
 
+using namespace std;
+
 extern "C"{
 	#include "svgtiny.h"
 }
