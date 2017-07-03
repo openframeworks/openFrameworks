@@ -103,4 +103,4 @@ protected:
 
 typedef ofxInputField<float> ofxFloatField;
 typedef ofxInputField<int> ofxIntField;
-typedef ofxInputField<string> ofxTextField;
+typedef ofxInputField<std::string> ofxTextField;
