@@ -60,15 +60,15 @@ public:
 	void setFontSize(int ptSize);
 	void setFontColor(int r, int g, int b, int a);
 	void setBgColor(int r, int g, int b, int a);
-	void setText(string _text);
-	void setPlaceholder(string _text);
+	void setText(std::string _text);
+	void setPlaceholder(std::string _text);
 	void openKeyboard();
 	void updateOrientation();
 	void makeSecure();
 	void setMaxChars(int max);
 	
-	string getText();
-    OF_DEPRECATED_MSG("Use getText() instead.", string getLabelText());
+	std::string getText();
+    OF_DEPRECATED_MSG("Use getText() instead.", std::string getLabelText());
 	bool isKeyboardShowing();
 	
     UITextField * getKeyboardTextField();
