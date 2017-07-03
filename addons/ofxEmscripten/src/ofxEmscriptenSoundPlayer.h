@@ -36,7 +36,7 @@ public:
 
 private:
 	void setPositionSecs(double s);
-	static vector<float> systemSpectrum;
+	static std::vector<float> systemSpectrum;
 	int context;
 	int sound;
 	bool multiplay;
