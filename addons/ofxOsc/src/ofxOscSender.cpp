@@ -6,6 +6,8 @@
 
 #include "UdpSocket.h"
 
+using namespace std;
+
 //--------------------------------------------------------------
 ofxOscSender::~ofxOscSender() {
 	clear();
