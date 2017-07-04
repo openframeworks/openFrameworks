@@ -26,9 +26,9 @@ of3dPrimitive::of3dPrimitive(const of3dPrimitive & mom):ofNode(mom){
     texCoords = mom.texCoords;
     usingVbo = mom.usingVbo;
 	if(usingVbo){
-		mesh = shared_ptr<ofMesh>(new ofVboMesh);
+		mesh = std::make_shared<ofVboMesh>();
 	}else{
-		mesh = shared_ptr<ofMesh>(new ofMesh);
+		mesh = std::make_shared<ofMesh>();
 	}
 	*mesh = *mom.mesh;
 }
@@ -268,9 +268,9 @@ void of3dPrimitive::setUseVbo(bool useVbo){
 	if(useVbo!=usingVbo){
 		shared_ptr<ofMesh> newMesh;
 		if(useVbo){
-			newMesh = shared_ptr<ofMesh>(new ofVboMesh);
+			newMesh = std::make_shared<ofVboMesh>();
 		}else{
-			newMesh = shared_ptr<ofMesh>(new ofMesh);
+			newMesh = std::make_shared<ofMesh>();
 		}
 		*newMesh = *mesh;
 		mesh = newMesh;
