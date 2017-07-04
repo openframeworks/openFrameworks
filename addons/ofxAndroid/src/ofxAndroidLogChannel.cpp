@@ -9,6 +9,8 @@
 
 #include <android/log.h>
 
+using namespace std;
+
 ofxAndroidLogChannel::ofxAndroidLogChannel(){
 
 }
