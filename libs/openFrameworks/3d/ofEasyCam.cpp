@@ -40,6 +40,20 @@ void ofEasyCam::begin(ofRectangle _viewport){
 	}
 	viewport = getViewport(_viewport);
 	ofCamera::begin(viewport);
+
+	if (getOrtho()) {
+		ofPushMatrix();
+		ofScale(orthoScale);
+	}
+}
+
+//----------------------------------------
+void ofEasyCam::end(){
+	if (getOrtho()) {
+		ofPopMatrix();
+	}
+
+	ofCamera::end();
 }
 
 //----------------------------------------
@@ -59,6 +73,8 @@ void ofEasyCam::reset(){
 	moveX = 0;
 	moveY = 0;
 	moveZ = 0;
+
+	orthoScale = 1.0f;
 
 	bApplyInertia = false;
 	bDoTranslate = false;
@@ -411,15 +427,19 @@ void ofEasyCam::mouseDragged(ofMouseEventArgs & mouse){
 
 //----------------------------------------
 void ofEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
-	if (doInertia) {
-		bApplyInertia = true;
+	if (!getOrtho()) {
+		if (doInertia) {
+			bApplyInertia = true;
+		}
+		ofRectangle area = getControlArea();
+		prevPosition = ofCamera::getGlobalPosition();
+		prevAxisZ = getZAxis();
+		moveZ = mouse.scrollY * 30 * sensitivityZ * (getDistance() + FLT_EPSILON)/ area.height;
+		bDoScrollZoom = true;
+		bIsBeingScrolled = true;
+	} else {
+		orthoScale /= 1 + (mouse.scrollY * 0.035f);
 	}
-	ofRectangle area = getControlArea();
-	prevPosition = ofCamera::getGlobalPosition();
-	prevAxisZ = getZAxis();
-	moveZ = mouse.scrollY * 30 * sensitivityZ * (getDistance() + FLT_EPSILON)/ area.height;
-	bDoScrollZoom = true;
-	bIsBeingScrolled = true;
 }
 
 //----------------------------------------
