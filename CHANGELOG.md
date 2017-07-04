@@ -1,31 +1,3 @@
- OF 0.9.9
-========                          
-
-#### change key
-          + added
-          - removed
-          / modified
-
-CORE
-----
-
-### graphics
-    / refactor ofTtfSettings -> ofTrueTypeFont::Settings
-
-
-PLATFORM SPECIFIC
------------------
-
-### osx
-
-### linux
-
-### windows
-
-
-------------------------------------------------------------------------------
-
-
   ___         ___         ___  
  / _ \       / _ \       / _ \
 | | | |     | (_) |     | (_) |
