@@ -2038,7 +2038,9 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::sphere( float radius, int res, ofPrimitiveMod
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
 ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosahedron(float radius) {
-	return icosphere(radius, 0);
+        auto mesh = icosphere(radius, 0);
+        mesh.flatNormals();
+	return mesh;
 }
 
 // based on code by Michael Broutin for the ogre-procedural library //
