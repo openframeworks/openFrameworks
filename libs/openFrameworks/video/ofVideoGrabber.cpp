@@ -61,7 +61,7 @@ bool ofVideoGrabber::setup(int w, int h, bool setUseTexture){
 
 	if( grabber->isInitialized() && bUseTexture ){
 		if(!grabber->getTexturePtr()){
-			for(int i=0;i<grabber->getPixels().getNumPlanes();i++){
+			for(std::size_t i=0;i<grabber->getPixels().getNumPlanes();i++){
 				ofPixels plane = grabber->getPixels().getPlane(i);
 				tex.push_back(ofTexture());
 				tex[i].allocate(plane);
@@ -220,10 +220,10 @@ void ofVideoGrabber::update(){
 	if(grabber){
 		grabber->update();
 		if( bUseTexture && !grabber->getTexturePtr() && grabber->isFrameNew() ){
-			if(int(tex.size())!=grabber->getPixels().getNumPlanes()){
+			if(tex.size()!=grabber->getPixels().getNumPlanes()){
 				tex.resize(grabber->getPixels().getNumPlanes());
 			}
-			for(int i=0;i<grabber->getPixels().getNumPlanes();i++){
+			for(std::size_t i=0;i<grabber->getPixels().getNumPlanes();i++){
 				ofPixels plane = grabber->getPixels().getPlane(i);
 				bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glInternalFormat != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
 				if(bDiffPixFormat || !tex[i].isAllocated() ){
