@@ -30,7 +30,7 @@ error() {
   fi
   exit "${code}"
 }
-#trap 'error ${LINENO}' ERR
+trap 'error ${LINENO}' ERR
 
 
 # Packages needed by pacman (see get-pacman-dependencies.sh)
@@ -38,7 +38,7 @@ error() {
 # acl archlinux-keyring attr bzip2 curl expat glibc gpgme libarchive  libassuan libgpg-error libssh2 lzo openssl pacman pacman-mirrorlist xz zlib linux-raspberrypi linux-raspberrypi-headers libutil-linux linux-api-headers linux-firmware krb5 e2fsprogs keyutils libidn gcc-libs gcc glibc coreutils systemd  make pkg-config openal glew freeimage freetype2 libsndfile openssl mesa fontconfig gstreamer gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-libav assimp boost cairo pixman libpng harfbuzz graphite libdrm libx11 xproto kbproto libxcb libxau libxdmcp libxext xextproto libxdamage damageproto libxfixes fixesproto libxxf86vm xf86vidmodeproto libxrender renderproto alsa-lib flex libxrandr libxi libxcursor libxshmfence wayland opencv glib2 pcre libsystemd filesystem libcap libffi libx11 xorg-server libsm libice libxinerama libxrandr libxext randrproto libxi inputproto glfw-x11 xineramaproto uriparser curl libxml2 pugixml orc libpsl icu
 # )
 PACMAN_PACKAGES=(
-make pkg-config gcc raspberrypi-firmware openal glew freeglut freeimage freetype2 cairo mesa gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav assimp boost libxcursor opencv assimp glfw-x11  uriparser curl pugixml
+make pkg-config gcc raspberrypi-firmware openal glew freeglut freeimage freetype2 cairo poco gstreamer assimp boost libxcursor opencv assimp glfw-x11 uriparser curl pugixml
 )
 BASIC_PACKAGES=(${PACMAN_PACKAGES[*]} )
 EXTRA_PACKAGES=()
@@ -153,7 +153,7 @@ parse_dependencies() {
                 echo "Adding aliased dependency $DEP to ${ALIASES[$DEP]}"
                 DEP=${ALIASES[$DEP]}
             fi
-            if echo $DEP | grep -qv lib[^.]*\.so && echo $DEP; then
+            if echo $DEP | grep -qv lib[^.]*\.so; then
                 DEPENDENCIES_PACKAGES["${DEP##*::}"]=1
             fi
         done
