@@ -266,7 +266,7 @@ main() {
       done
       DEPENDENCIES_PACKAGES=()
 
-      if [ ${#DEPENDENCIES_PACKAGES[@]} -ne 0 ]; do
+      if [ ${#DEPENDENCIES_PACKAGES[@]} -ne 0 ]; then
           install_pacman_packages "${NEW_DEPENDENCIES[*]}" "$DEST" "$DOWNLOAD_DIR"
           for DEP in ${NEW_DEPENDENCIES[*]}; do
               INSTALLED+=($DEP)
