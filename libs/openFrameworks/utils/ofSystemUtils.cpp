@@ -239,9 +239,7 @@ void resetLocale(std::locale locale){
 		}
 	}
 }
-
 #endif
-}
 
 #ifdef TARGET_ANDROID
 #include "ofxAndroidUtils.h"
