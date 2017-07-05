@@ -265,10 +265,13 @@ main() {
           NEW_DEPENDENCIES+=($DEP)
       done
       DEPENDENCIES_PACKAGES=()
-      install_pacman_packages "${NEW_DEPENDENCIES[*]}" "$DEST" "$DOWNLOAD_DIR"
-      for DEP in ${NEW_DEPENDENCIES[*]}; do
-          INSTALLED+=($DEP)
-      done
+
+      if [ ${#DEPENDENCIES_PACKAGES[@]} -ne 0 ]; do
+          install_pacman_packages "${NEW_DEPENDENCIES[*]}" "$DEST" "$DOWNLOAD_DIR"
+          for DEP in ${NEW_DEPENDENCIES[*]}; do
+              INSTALLED+=($DEP)
+          done
+      fi
   done
   #configure_pacman "$DEST" "$ARCH"
   #configure_minimal_system "$DEST"
