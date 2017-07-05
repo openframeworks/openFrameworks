@@ -38,7 +38,7 @@ error() {
 # acl archlinux-keyring attr bzip2 curl expat glibc gpgme libarchive  libassuan libgpg-error libssh2 lzo openssl pacman pacman-mirrorlist xz zlib linux-raspberrypi linux-raspberrypi-headers libutil-linux linux-api-headers linux-firmware krb5 e2fsprogs keyutils libidn gcc-libs gcc glibc coreutils systemd  make pkg-config openal glew freeimage freetype2 libsndfile openssl mesa fontconfig gstreamer gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-libav assimp boost cairo pixman libpng harfbuzz graphite libdrm libx11 xproto kbproto libxcb libxau libxdmcp libxext xextproto libxdamage damageproto libxfixes fixesproto libxxf86vm xf86vidmodeproto libxrender renderproto alsa-lib flex libxrandr libxi libxcursor libxshmfence wayland opencv glib2 pcre libsystemd filesystem libcap libffi libx11 xorg-server libsm libice libxinerama libxrandr libxext randrproto libxi inputproto glfw-x11 xineramaproto uriparser curl libxml2 pugixml orc libpsl icu
 # )
 PACMAN_PACKAGES=(
-make pkg-config gcc openal glew freeglut freeimage freetype2 cairo mesa gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav assimp boost libxcursor opencv assimp glfw-x11  uriparser curl pugixml
+make pkg-config gcc raspberrypi-firmware openal glew freeglut freeimage freetype2 cairo mesa gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav assimp boost libxcursor opencv assimp glfw-x11  uriparser curl pugixml
 )
 BASIC_PACKAGES=(${PACMAN_PACKAGES[*]} )
 EXTRA_PACKAGES=()
@@ -51,6 +51,8 @@ ALIASES["sh"]="bash"
 ALIASES["libltdl"]="libtool"
 ALIASES["libjpeg"]="libjpeg-turbo"
 ALIASES["libusbx"]="libusb"
+ALIASES["libgl"]="mesa"
+ALIASES["opengl-driver"]="mesa"
 
 stderr() {
   echo "$@" >&2
@@ -151,7 +153,7 @@ parse_dependencies() {
                 echo "Adding aliased dependency $DEP to ${ALIASES[$DEP]}"
                 DEP=${ALIASES[$DEP]}
             fi
-            if echo $DEP | grep -qv lib[^.]*\.so && echo $DEP | grep -qv libgl; then
+            if echo $DEP | grep -qv lib[^.]*\.so && echo $DEP; then
                 DEPENDENCIES_PACKAGES["${DEP##*::}"]=1
             fi
         done
@@ -166,11 +168,17 @@ install_pacman_packages() {
     local FILE=$(echo "$LIST" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
     local FILE_EXTRA=$(echo "$LIST_EXTRA" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
     local FILE_COMMUNITY=$(echo "$LIST_COMMUNITY" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
+    local FILE_ALARM=$(echo "$LIST_ALARM" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
     DOWNLOAD_REPO=$REPO
     if [ ! "$FILE" ]; then
         if [ ! "$FILE_EXTRA" ]; then
             if [ ! "$FILE_COMMUNITY" ]; then
-                debug "Error: cannot find package: $PACKAGE"; return 1;
+                if [ ! "$FILE_ALARM" ]; then
+                    debug "Error: cannot find package: $PACKAGE"; return 1;
+                else
+                    DOWNLOAD_REPO=$REPO_ALARM
+                    FILE=$FILE_ALARM
+                fi
             else
                 DOWNLOAD_REPO=$REPO_COMMUNITY
                 FILE=$FILE_COMMUNITY
@@ -239,6 +247,7 @@ main() {
   local REPO=$(get_repo_url "$REPO_URL" "$ARCH" "core")
   local REPO_EXTRA=$(get_repo_url "$REPO_URL" "$ARCH" "extra")
   local REPO_COMMUNITY=$(get_repo_url "$REPO_URL" "$ARCH" "community")
+  local REPO_ALARM=$(get_repo_url "$REPO_URL" "$ARCH" "alarm")
   [[ -z "$DOWNLOAD_DIR" ]] && DOWNLOAD_DIR=$(mktemp -d)
   mkdir -p "$DOWNLOAD_DIR"
   [[ "$DOWNLOAD_DIR" ]] && trap "rm -rf '$DOWNLOAD_DIR'" KILL TERM EXIT
@@ -251,6 +260,7 @@ main() {
   local LIST=$(fetch_packages_list $REPO)
   local LIST_EXTRA=$(fetch_packages_list $REPO_EXTRA)
   local LIST_COMMUNITY=$(fetch_packages_list $REPO_COMMUNITY)
+  local LIST_ALARM=$(fetch_packages_list $REPO_ALARM)
   install_pacman_packages "${BASIC_PACKAGES[*]}" "$DEST" "$DOWNLOAD_DIR"
   for DEP in ${BASIC_PACKAGES[*]}; do
       INSTALLED+=($DEP)
