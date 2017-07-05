@@ -37,7 +37,7 @@ matrix:
       directories:
         - ~/rpi2_toolchain
         - ~/firmware-master
-        - ~/archlinux
+        #- ~/archlinux
 
 
   - os: linux
