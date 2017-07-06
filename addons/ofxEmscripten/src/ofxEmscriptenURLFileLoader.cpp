@@ -8,6 +8,7 @@
 #include "ofxEmscriptenURLFileLoader.h"
 #include <emscripten/emscripten.h>
 
+using namespace std;
 
 ofxEmscriptenURLFileLoader::ofxEmscriptenURLFileLoader() {
 }
