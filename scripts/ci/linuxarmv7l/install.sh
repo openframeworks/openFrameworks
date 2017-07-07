@@ -100,7 +100,10 @@ installRtAudio(){
 installJunest(){
 	git clone git://github.com/fsquillace/junest ~/.local/share/junest
 	export PATH=~/.local/share/junest/bin:$PATH
-	junest -u ./install_junest_dependencies.sh
+	junest -u << EOF
+		pacman -S --noconfirm git flex grep gcc pkg-config make
+		#pacman -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -Syu
+	EOF
 }
 
 echo $ROOT
@@ -108,6 +111,7 @@ createArchImg
 downloadToolchain
 downloadFirmware
 installRtAudio
+installJunest
 
 cd ~/archlinux/usr/lib
 relativeSoftLinks "../.." "..\/.."
