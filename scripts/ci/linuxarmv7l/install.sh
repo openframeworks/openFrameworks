@@ -103,7 +103,7 @@ installJunest(){
 	junest -u << EOF
 		pacman -S --noconfirm git flex grep gcc pkg-config make
 		#pacman -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -Syu
-	EOF
+EOF
 }
 
 echo $ROOT
