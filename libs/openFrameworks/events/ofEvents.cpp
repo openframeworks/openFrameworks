@@ -189,6 +189,10 @@ void ofCoreEvents::setTimeModeFiltered(float alpha){
 	fps.setFilterAlpha(alpha);
 }
 
+void ofCoreEvents::resetStartTime(){
+	fps = ofFpsCounter(fps.getFps());
+}
+
 //--------------------------------------
 void ofCoreEvents::setFrameRate(int _targetRate){
 	// given this FPS, what is the amount of millis per frame

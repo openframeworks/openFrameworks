@@ -1,14 +1,22 @@
 #pragma once
 
 #include "ofConstants.h"
-#if !_MSC_VER
-#define BOOST_NO_CXX11_SCOPED_ENUMS
-#define BOOST_NO_SCOPED_ENUMS
+
+#if OF_USING_STD_FS
+	#include <experimental/filesystem>
+	namespace std {
+		namespace filesystem = std::experimental::filesystem;
+	}
+#else
+	#if !_MSC_VER
+	#define BOOST_NO_CXX11_SCOPED_ENUMS
+	#define BOOST_NO_SCOPED_ENUMS
+	#endif
+	#include <boost/filesystem.hpp>
+	namespace std {
+		namespace filesystem = boost::filesystem;
+	}
 #endif
-#include <boost/filesystem.hpp>
-namespace std {
-	namespace filesystem = boost::filesystem;
-}
 
 //----------------------------------------------------------
 // ofBuffer

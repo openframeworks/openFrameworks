@@ -504,7 +504,8 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::open(const std::filesystem::path & _path, Mode _mode, bool binary){
 	close();
-	myFile = std::filesystem::path(ofToDataPath(_path.string()));
+	auto p = ofToDataPath(_path.string());
+	myFile = std::filesystem::path(p);
 	return openStream(_mode, binary);
 }
 
@@ -630,7 +631,6 @@ string ofFile::getAbsolutePath() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canRead() const {
-	auto perm = std::filesystem::status(myFile).permissions();
 #ifdef TARGET_WIN32
 	DWORD attr = GetFileAttributes(myFile.native().c_str());
 	if (attr == INVALID_FILE_ATTRIBUTES)
@@ -639,21 +639,21 @@ bool ofFile::canRead() const {
 	}
 	return true;
 #else
+	auto perm = std::filesystem::status(myFile).permissions();
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
 	if(geteuid() == info.st_uid){
-		return perm & std::filesystem::owner_read;
+		return bool(perm & std::filesystem::perms::owner_read);
 	}else if (getegid() == info.st_gid){
-		return perm & std::filesystem::group_read;
+		return bool(perm & std::filesystem::perms::group_read);
 	}else{
-		return perm & std::filesystem::others_read;
+		return bool(perm & std::filesystem::perms::others_read);
 	}
 #endif
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canWrite() const {
-	auto perm = std::filesystem::status(myFile).permissions();
 #ifdef TARGET_WIN32
 	DWORD attr = GetFileAttributes(myFile.native().c_str());
 	if (attr == INVALID_FILE_ATTRIBUTES){
@@ -662,33 +662,44 @@ bool ofFile::canWrite() const {
 		return (attr & FILE_ATTRIBUTE_READONLY) == 0;
 	}
 #else
+	auto perm = std::filesystem::status(myFile).permissions();
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
 	if(geteuid() == info.st_uid){
-		return perm & std::filesystem::owner_write;
+		return bool(perm & std::filesystem::perms::owner_write);
 	}else if (getegid() == info.st_gid){
-		return perm & std::filesystem::group_write;
+		return bool(perm & std::filesystem::perms::group_write);
 	}else{
-		return perm & std::filesystem::others_write;
+		return bool(perm & std::filesystem::perms::others_write);
 	}
 #endif
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canExecute() const {
-	auto perm = std::filesystem::status(myFile).permissions();
 #ifdef TARGET_WIN32
 	return getExtension() == "exe";
 #else
+	auto perm = std::filesystem::status(myFile).permissions();
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
+#if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
-		return perm & std::filesystem::owner_exe;
+		return bool(perm & std::filesystem::perms::owner_exec);
 	}else if (getegid() == info.st_gid){
-		return perm & std::filesystem::group_exe;
+		return bool(perm & std::filesystem::perms::group_exec);
 	}else{
-		return perm & std::filesystem::others_exe;
+		return bool(perm & std::filesystem::perms::others_exec);
 	}
+#else
+	if(geteuid() == info.st_uid){
+		return bool(perm & std::filesystem::perms::owner_exe);
+	}else if (getegid() == info.st_gid){
+		return bool(perm & std::filesystem::perms::group_exe);
+	}else{
+		return bool(perm & std::filesystem::perms::others_exe);
+	}
+#endif
 #endif
 }
 
@@ -712,7 +723,11 @@ bool ofFile::isDevice() const {
 #ifdef TARGET_WIN32
 	return false;
 #else
-	return std::filesystem::status(myFile).type() == std::filesystem::block_file;
+#if OF_USING_STD_FS
+	return std::filesystem::status(myFile).type() == std::filesystem::file_type::block;
+#else
+	return std::filesystem::status(myFile).type() == std::filesystem::file_type::block_file;
+#endif
 #endif
 }
 
@@ -760,11 +775,19 @@ void ofFile::setReadable(bool flag){
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setExecutable(bool flag){
 	try{
+#if OF_USING_STD_FS
+		if(flag){
+			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exec | std::filesystem::perms::add_perms);
+		} else{
+			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exec | std::filesystem::perms::remove_perms);
+		}
+#else
 		if(flag){
 			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::add_perms);
 		} else{
 			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::remove_perms);
 		}
+#endif
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set executable permission on " << myFile << ": " << e.what();
 	}

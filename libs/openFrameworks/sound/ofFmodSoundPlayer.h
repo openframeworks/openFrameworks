@@ -5,6 +5,7 @@
 
 #include "ofBaseSoundPlayer.h"
 #include "ofFileUtils.h"
+#include "ofUtils.h"
 
 
 extern "C" {
@@ -31,6 +32,8 @@ void ofFmodSoundSetVolume(float vol);
 void ofFmodSoundUpdate();						// calls FMOD update.
 float * ofFmodSoundGetSpectrum(int nBands);		// max 512...
 void ofFmodSetBuffersize(unsigned int bs);
+void ofFmodSetSamplerate(unsigned int sr);
+ofTime ofFmodGetDSPTime();
 
 
 // --------------------- player functions:

@@ -89,6 +89,7 @@ struct ofTime{
 	enum Mode{
 		System,
 		FixedRate,
+		External,
 	} mode = System;
 
 	uint64_t getAsMilliseconds() const;
