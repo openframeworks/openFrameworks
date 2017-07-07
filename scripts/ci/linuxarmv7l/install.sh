@@ -36,8 +36,8 @@ downloadToolchain(){
         echo "Using cached RPI2 toolchain"
     else
 	    wget http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
-		xz -dc x-tools7h.tar.xz | tar x -C ~/;
-	    #tar xf x-tools7h.tar.xz -C ~/
+		#xz -dc x-tools7h.tar.xz | tar x -C ~/;
+	    sudo tar xf x-tools7h.tar.xz -C ~/
 	    rm x-tools7h.tar.xz
         #wget http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
         #tar xjf rpi2_toolchain.tar.bz2 -C ~/
