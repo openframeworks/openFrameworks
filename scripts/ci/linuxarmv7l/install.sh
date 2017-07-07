@@ -105,6 +105,7 @@ installJunest(){
 	git clone git://github.com/fsquillace/junest ~/.local/share/junest
 	export PATH=~/.local/share/junest/bin:$PATH
 	junest -u << EOF
+		pacman -Syy
 		pacman -S --noconfirm git flex grep gcc pkg-config make
 		#pacman -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -Syu
 EOF
