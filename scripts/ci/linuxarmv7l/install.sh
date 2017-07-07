@@ -37,8 +37,11 @@ downloadToolchain(){
     else
 	    wget http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
 		#xz -dc x-tools7h.tar.xz | tar x -C ~/;
-	    sudo tar xf x-tools7h.tar.xz -C ~/
+		junest -u << EOF
+		cd $ROOT
+	    tar -x --delay-directory-restore --no-same-owner -f x-tools7h.tar.xz -C ~/
 	    rm x-tools7h.tar.xz
+EOF
         #wget http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
         #tar xjf rpi2_toolchain.tar.bz2 -C ~/
         #rm rpi2_toolchain.tar.bz2
@@ -108,11 +111,11 @@ EOF
 }
 
 echo $ROOT
+installJunest
 createArchImg
 downloadToolchain
 downloadFirmware
 installRtAudio
-installJunest
 
 cd ~/archlinux/usr/lib
 relativeSoftLinks "../.." "..\/.."
