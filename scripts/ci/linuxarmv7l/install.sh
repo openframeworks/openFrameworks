@@ -7,7 +7,7 @@ age () { stat=$(stat --printf="%Y %F\n" "$1"); echo $((($(date +%s) - ${stat%% *
 
 
 SUDO=
-ROOT=$( cd "$(dirname "$0")" ; pwd -P )
+export ROOT=$( cd "$(dirname "$0")" ; pwd -P )
 
 trapError() {
 	echo
