@@ -24,8 +24,17 @@ createArchImg(){
     #sudo ./arch-bootstrap.sh archlinux
 
     if [ ! "$(ls -A ~/archlinux)" ] || [ $(age ~/archlinux/timestamp) -gt 7 ]; then
-        $ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
-        touch ~/archlinux/timestamp
+        #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
+		junest -u << EOF
+			cd ~
+			wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+			mkdir archlinux
+		    tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C archlinux/
+			sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g archlinux/etc/pacman.conf
+			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -Syu
+			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -S make pkg-config gcc raspberrypi-firmware openal glew freeglut freeimage freetype2 cairo poco gstreamer gst-plugins-base gst-plugins-good assimp boost libxcursor opencv assimp glfw-x11 uriparser curl pugixml
+        	touch ~/archlinux/timestamp
+EOF
     else
         echo "Using cached archlinux image"
     fi
@@ -108,9 +117,8 @@ installJunest(){
 	git clone git://github.com/fsquillace/junest ~/.local/share/junest
 	export PATH=~/.local/share/junest/bin:$PATH
 	junest -u << EOF
-		pacman -Syy
+		pacman -Syy --noconfirm
 		pacman -S --noconfirm git flex grep gcc pkg-config make wget
-		#pacman -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -Syu
 EOF
 }
 
