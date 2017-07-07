@@ -35,10 +35,13 @@ downloadToolchain(){
     if [ "$(ls -A ~/x-tools7h)" ]; then
         echo "Using cached RPI2 toolchain"
     else
-	    wget http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
 		#xz -dc x-tools7h.tar.xz | tar x -C ~/;
 		junest -u << EOF
-		cd $ROOT
+		cd /tmp
+		if [ -f x-tools7h.tar.xz ]; then
+			rm x-tools7h.tar.xz
+		fi
+		wget http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
 	    tar -x --delay-directory-restore --no-same-owner -f x-tools7h.tar.xz -C ~/
 	    rm x-tools7h.tar.xz
 EOF
@@ -106,7 +109,7 @@ installJunest(){
 	export PATH=~/.local/share/junest/bin:$PATH
 	junest -u << EOF
 		pacman -Syy
-		pacman -S --noconfirm git flex grep gcc pkg-config make
+		pacman -S --noconfirm git flex grep gcc pkg-config make wget
 		#pacman -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -Syu
 EOF
 }
