@@ -9,4 +9,4 @@ cd $ROOT
 cp scripts/templates/osx/Makefile examples/templates/allAddonsExample/
 cp scripts/templates/osx/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
-make Debug
+make DebugNoOF
