@@ -35,7 +35,7 @@ matrix:
     env: TARGET="linuxarmv7l"
     cache:
       directories:
-        - ~/rpi2_toolchain
+        #- ~/rpi2_toolchain
         - ~/firmware-master
         #- ~/archlinux
 
