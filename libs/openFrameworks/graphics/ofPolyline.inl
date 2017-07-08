@@ -335,7 +335,7 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
     
     // if the delta angle is in the CCW direction OR the start and stop angles are
     // effectively the same adjust the remaining angle to be a be a full rotation
-    if(deltaAngle < 0 || abs(deltaAngle) < epsilon) remainingAngle += M_TWO_PI;
+    if(deltaAngle < 0 || std::abs(deltaAngle) < epsilon) remainingAngle += M_TWO_PI;
     
 	T radii(radiusX, radiusY, 0.f);
 	T point;
@@ -361,7 +361,7 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
             float firstPointDelta = atan2(sin(d),cos(d)); // negative is in the clockwise direction
             
             // if the are "equal", get the next one CCW
-            if(abs(firstPointDelta) < epsilon) {
+            if(std::abs(firstPointDelta) < epsilon) {
                 currentLUTIndex = clockwise ? (currentLUTIndex + 1) : (currentLUTIndex - 1);
                 firstPointDelta = segmentArcSize; // we start at the next lut point
             }
