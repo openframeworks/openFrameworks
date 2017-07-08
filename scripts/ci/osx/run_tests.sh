@@ -6,8 +6,8 @@ trap 'for f in ~/Library/Logs/DiagnosticReports/*; do cat $f; done' 11
 
 echo "**** Building emptyExample ****"
 cd $ROOT
-cp scripts/templates/osx/Makefile examples/templates/allAddonsExample/
-cp scripts/templates/osx/config.make examples/templates/allAddonsExample/
+cp scripts/templates/osx/Makefile examples/templates/emptyExample/
+cp scripts/templates/osx/config.make examples/templates/emptyExample/
 cd examples/templates/emptyExample/
 make Debug
 
