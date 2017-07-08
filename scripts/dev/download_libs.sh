@@ -138,7 +138,7 @@ cd $SCRIPT_DIR
 if [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}32.zip openFrameworksLibs_${VER}_${PLATFORM}64.zip"
 elif [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
-    PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.zip"
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
 elif [ "$ARCH" == "" ] && [[ "$PLATFORM" == "osx" || "$PLATFORM" == "ios" || "$PLATFORM" == "tvos" ]]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}1.tar.bz2 openFrameworksLibs_${VER}_${PLATFORM}2.tar.bz2 openFrameworksLibs_${VER}_${PLATFORM}3.tar.bz2"
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "android" ]; then
