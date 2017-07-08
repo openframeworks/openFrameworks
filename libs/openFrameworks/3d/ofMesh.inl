@@ -2130,21 +2130,21 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 		T& t1 = texCoords[faces[i*3+1]];
 		T& t2 = texCoords[faces[i*3+2]];
 
-		if (abs(t2.x-t0.x)>0.5)
+		if (std::abs(t2.x-t0.x)>0.5)
 		{
 			if (t0.x<0.5)
 				indexToSplit.push_back(faces[i*3]);
 			else
 				indexToSplit.push_back(faces[i*3+2]);
 		}
-		if (abs(t1.x-t0.x)>0.5)
+		if (std::abs(t1.x-t0.x)>0.5)
 		{
 			if (t0.x<0.5)
 				indexToSplit.push_back(faces[i*3]);
 			else
 				indexToSplit.push_back(faces[i*3+1]);
 		}
-		if (abs(t2.x-t1.x)>0.5)
+		if (std::abs(t2.x-t1.x)>0.5)
 		{
 			if (t1.x<0.5)
 				indexToSplit.push_back(faces[i*3+1]);

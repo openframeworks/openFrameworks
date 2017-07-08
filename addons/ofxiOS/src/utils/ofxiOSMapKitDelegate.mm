@@ -30,8 +30,6 @@
 
 #include <TargetConditionals.h>
 
-using namespace std;
-
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #include "ofxiOSMapKitDelegate.h"
@@ -71,7 +69,7 @@ using namespace std;
 
 - (void)mapViewDidFailLoadingMap:(MKMapView *)mapView withError:(NSError *)error {
 	ofLogVerbose("ofxiOSMapKitDelegate") << "mapViewDidFailLoadingMap";
-	string s = error != nil ? [[error localizedDescription] UTF8String] : "unknown error";
+	std::string s = error != nil ? [[error localizedDescription] UTF8String] : "unknown error";
 	mapKit->errorLoadingMap(s);
 }
 
