@@ -71,17 +71,19 @@ if ls example* 1> /dev/null 2>&1; then
             cd $example
             echo "ABIS_TO_COMPILE_DEBUG = $OPT" >> config.make
             make DebugNoOF PLATFORM_OS=Android
+            cd ..
         elif [ "$TARGET" == "emscripten" ]; then
             cd $example
             emmake make DebugNoOF
+            cd ..
         elif [ "$TARGET" == "linuxarmv7l" ]; then
             #make DebugNoOF PLATFORM_VARIANT=raspberry2
             junest ./build_junest.sh $(cd $example; pwd -P)
         else
             cd $example
             make DebugNoOF
+            cd ..
         fi
-        cd ..
     done
 else
     echo "There's no examples to test in this addon. Addons can only be tested"
