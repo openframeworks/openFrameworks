@@ -76,7 +76,7 @@ if ls example* 1> /dev/null 2>&1; then
             emmake make DebugNoOF
         elif [ "$TARGET" == "linuxarmv7l" ]; then
             #make DebugNoOF PLATFORM_VARIANT=raspberry2
-            junest ./build_junest.sh $(cd $example; PWD -P)
+            junest ./build_junest.sh $(cd $example; pwd -P)
         else
             cd $example
             make DebugNoOF
