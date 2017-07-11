@@ -353,6 +353,9 @@ public:
 	virtual bool usingNormals() const;
 
 	void smoothNormals( float angle );
+        
+        /// \brief Duplicates vertices and updates normals to get a low-poly look.
+        void flatNormals();
 
 	/// \}
 	/// \name Faces

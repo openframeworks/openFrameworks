@@ -13,10 +13,11 @@ cat << EOF
     Options:
 
     -v, --version VERSION       OF version to download the libraries for. Defaults to master
-    -p, --platform PLATFORM     Platorm among: android, emscritpen, ios, linux, linux64, linuxarmv6l, linuxarmv7l, msys2, osx, tvos, vs
+    -p, --platform PLATFORM     Platorm among: android, emscritpen, ios, linux, linux64, linuxarmv6l, linuxarmv7l, msys2, osx, tvos, vs2015, vs2017
                                 If not specified tries to autodetect the platform.
     -a, --arch ARCH             Architecture:
-                                    vs: 32 or 64
+                                    vs2015: 32 or 64
+                                    vs2017: 32 or 64
                                     msys2: 32
                                     android: armv7 or x86 (if not specified will download both)
                                     linux: 64, 64gcc5, 64gcc6, armv6l or armv7l
@@ -135,10 +136,14 @@ fi
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR
 
-if [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
-    PKGS="openFrameworksLibs_${VER}_${PLATFORM}32.zip openFrameworksLibs_${VER}_${PLATFORM}64.zip"
-elif [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
-    PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.zip"
+if [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs2015" ]; then
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_32.zip openFrameworksLibs_${VER}_${PLATFORM}_64.zip"
+elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs2017" ]; then
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_32.zip openFrameworksLibs_${VER}_${PLATFORM}_64.zip"
+elif [ "$PLATFORM" == "msys2" ]; then
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
+elif [ "$PLATFORM" == "vs2015" ] || [ "$PLATFORM" == "vs2017" ]; then
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
 elif [ "$ARCH" == "" ] && [[ "$PLATFORM" == "osx" || "$PLATFORM" == "ios" || "$PLATFORM" == "tvos" ]]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}1.tar.bz2 openFrameworksLibs_${VER}_${PLATFORM}2.tar.bz2 openFrameworksLibs_${VER}_${PLATFORM}3.tar.bz2"
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "android" ]; then
@@ -167,7 +172,7 @@ fi
 
 for PKG in $PKGS; do
     echo "Uncompressing libraries ${PLATFORM}${ARCH} from $PKG"
-    if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
+    if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs2015" ] || [ "$PLATFORM" == "vs2017" ]; then
         unzip -qo ../scripts/dev/$PKG
         rm ../scripts/dev/$PKG
     else
