@@ -54,7 +54,7 @@ ofLogLevel ofGetLogLevel(string module){
 
 //--------------------------------------------------
 void ofLogToFile(const std::filesystem::path & path, bool append){
-	ofLog::setChannel(shared_ptr<ofFileLoggerChannel>(new ofFileLoggerChannel(path,append)));
+	ofLog::setChannel(std::make_shared<ofFileLoggerChannel>(path,append));
 }
 
 //--------------------------------------------------
@@ -251,6 +251,14 @@ void ofLog::setChannel(shared_ptr<ofBaseLoggerChannel> _channel){
 
 void ofSetLoggerChannel(shared_ptr<ofBaseLoggerChannel> loggerChannel){
 	ofLog::setChannel(loggerChannel);
+}
+
+shared_ptr<ofBaseLoggerChannel> ofLog::getChannel(){
+	return channel;
+}
+
+shared_ptr<ofBaseLoggerChannel> ofGetLoggerChannel(){
+	return ofLog::getChannel();
 }
 
 string ofGetLogLevelName(ofLogLevel level, bool pad){

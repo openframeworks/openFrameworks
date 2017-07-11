@@ -35,9 +35,9 @@ matrix:
     env: TARGET="linuxarmv7l"
     cache:
       directories:
-        - ~/rpi2_toolchain
+        #- ~/rpi2_toolchain
         - ~/firmware-master
-        - ~/archlinux
+        #- ~/archlinux
 
 
   - os: linux
@@ -55,6 +55,10 @@ matrix:
     compiler: clang
     env: TARGET="osx"
 
+  - os: osx
+    osx_image: xcode8
+    compiler: clang
+    env: TARGET="osx" OPT="makefiles"
 
   - os: osx
     osx_image: xcode8
@@ -101,17 +105,25 @@ install:
         scripts/linux/download_libs.sh -a armv7l;
     elif [ "$TARGET" == "tvos" ]; then
         scripts/ios/download_libs.sh;
+    elif [ "$TARGET" == "osxmake" ]; then
+        scripts/ios/download_libs.sh;
     else
         scripts/$TARGET/download_libs.sh;
     fi
 
 
 script:
-  - scripts/ci/$TARGET/build.sh $OPT
-  - if [ "$TARGET" == "osx" ] || [ "$TARGET" == "linux64" ]; then
+  - if [ "$TARGET" == "osx" ] && [ $OPT == "makefiles" ]; then
+      scripts/ci/$TARGET/run_tests.sh;
+    else
+      scripts/ci/$TARGET/build.sh $OPT;
+    fi
+  - if [ "$TARGET" == "linux64" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     fi
-  - scripts/ci/upload_of_lib.sh
+  - if [ "$TARGET" != "osx" ] || [ $OPT != "makefiles" ]; then
+      scripts/ci/upload_of_lib.sh;
+    fi
 
 git:
   depth: 10
