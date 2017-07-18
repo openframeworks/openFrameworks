@@ -16,7 +16,7 @@ _Before continuing make sure your new openFrameworks path **has no spaces**. Man
 
 ### Download dependencies
 
-As the external dependencies are not found in the repository, you need to download them. To make things simpler, use the bash script called `download_lib.sh` which can be found in the `scripts` folder. In this folder, there are several subfolders, one for each platform. Assuming you are, for example, using OSX, you need to run `/bin/bash scripts/osx/download_libs.sh`.
+As the external dependencies are not found in the repository, you need to download them. To make things simpler, use the bash script called `download_libs.sh` which can be found in the `scripts` folder. In this folder, there are several subfolders, one for each platform. Assuming you are, for example, using OSX, you need to run `/bin/bash scripts/osx/download_libs.sh`.
 
 ### Get the Project Generator
 
@@ -31,6 +31,7 @@ As the first option can lead to [unexpected results](https://forum.openframework
 
 Now that you have the Project Generator, you are ready to compile all the examples:
 
+#### Option 1 - With the Project Generator app
 * Start the Project Generator application by double clicking on it.
 * Hit the cog wheel on the right side of the Project Generator window and select `advanced options`.
 * Select the `update multiple` tab, enter the path to the examples folder inside the current OpenFrameworks repo folder.
@@ -38,6 +39,9 @@ Now that you have the Project Generator, you are ready to compile all the exampl
 * Click on `update multiple` and wait. This operation can take a while depending on your hardware.
 
 Once the success message appears you are done.
+
+#### Option 2 - With the command line Project Generator
+* from the OF root directory, run `projectGenerator -r -o"." examples`
 
 ## How to submit your pull requests
 

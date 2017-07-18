@@ -353,9 +353,9 @@ public:
 	/// \returns filename
     static string getFileName(const std::filesystem::path& filePath, bool bRelativeToData = true);
 	
-	/// Get a file path without its last component,
-	/// ie. "images/duck.jpg" -> "images" and
-	/// "images/some/folder" -> "images/some"
+	/// Get a file name without its extension,
+	/// ie. "images/duck.jpg" -> "duck" and
+	/// "images/some/folder" -> "folder"
 	///
 	/// \param filePath file path
 	/// \returns basename
