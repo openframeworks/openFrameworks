@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
         // Using the gradle-experimental version that supports c++
-        classpath 'com.android.tools.build:gradle-experimental:0.8.3'
+        classpath 'com.android.tools.build:gradle-experimental:0.9.3'
     }
 }
 
