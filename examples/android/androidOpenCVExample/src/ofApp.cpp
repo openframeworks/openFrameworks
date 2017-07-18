@@ -28,7 +28,7 @@ void ofApp::update(){
 			frames_one_sec = 0;
 			one_second_time = ofGetSystemTime();
 		}
-		gray.setFromPixels(grabber.getPixels(),grabber.getWidth(),grabber.getHeight());
+		gray.setFromPixels(grabber.getPixels());
 		if(captureBg){
 			bg = gray;
 			captureBg = false;
