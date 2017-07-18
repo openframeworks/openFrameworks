@@ -71,18 +71,15 @@ matrix:
     compiler: clang
     env: TARGET="tvos"
 
-
   - os: linux
-    sudo: false
-    env: TARGET="android" OPT="armv7"
-    cache:
-      directories:
-        - ~/android-ndk-r12b
-
-
-  - os: linux
-    sudo: false
-    env: TARGET="android" OPT="x86"
+    language: android
+    dist: trusty
+    sudo: required  
+    env: TARGET="android" NDK_DIR="android-ndk-r12b"
+    android:
+      components: 
+        - build-tools-25.0.2
+        - android-19
     cache:
       directories:
         - ~/android-ndk-r12b

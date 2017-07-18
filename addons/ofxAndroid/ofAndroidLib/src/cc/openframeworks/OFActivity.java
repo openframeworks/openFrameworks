@@ -7,6 +7,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.content.Context;
 
 public abstract class OFActivity extends Activity{
 	public void onGLSurfaceCreated(){}
@@ -42,6 +43,8 @@ public abstract class OFActivity extends Activity{
 	        this.setContentView(mOFGlSurfaceContainer);
 		}
 	}
+
+
 	
 	@Override
 	protected void onCreate(Bundle arg0) {

@@ -1,11 +1,17 @@
 #!/bin/bash
-NDK_DIR=android-ndk-r12b
 set -ev
 # capture failing exits in commands obscured behind a pipe
 set -o pipefail
+
+
 if [ -z ${OF_ROOT} ]; then
     OF_ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 fi
+
+# Install linux dependencies (for project generator to work)
+sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
+
+# Download NDK
 cd ~
 # check if cached directory exists
 if [ "$(ls -A ${NDK_DIR})" ]; then
@@ -13,9 +19,16 @@ if [ "$(ls -A ${NDK_DIR})" ]; then
     ls -A ${NDK_DIR}
 else
     echo "Downloading NDK"
-    wget https://dl.google.com/android/repository/android-ndk-r12b-linux-x86_64.zip
+    wget "https://dl.google.com/android/repository/$NDK_DIR-linux-x86_64.zip"
     echo "Uncompressing NDK"
-    unzip android-ndk-r12b-linux-x86_64.zip > /dev/null 2>&1
+    unzip "$NDK_DIR-linux-x86_64.zip" > /dev/null 2>&1
 fi
-NDK_ROOT=$(echo ${PWD} | sed "s/\//\\\\\//g")
-cat $OF_ROOT/libs/openFrameworksCompiled/project/android/paths.default.make | sed s/path_to/${NDK_ROOT}/ > $OF_ROOT/libs/openFrameworksCompiled/project/android/paths.make
+
+# Get project generator
+cd ~/
+rm -rf projectGenerator
+mkdir -p ~/projectGenerator
+cd ~/projectGenerator
+echo "Downloading projectGenerator from ci server"
+wget http://ci.openframeworks.cc/projectGenerator/projectGenerator_linux
+chmod +x projectGenerator_linux
