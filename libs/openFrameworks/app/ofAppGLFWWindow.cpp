@@ -169,9 +169,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
 		if(settings.glesVersion>=2){
-			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
+			currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 		}else{
-			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
+			currentRenderer = std::make_shared<ofGLRenderer>(this);
 		}
 	#else
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
@@ -182,9 +182,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		}
 		if(settings.glVersionMajor>=3){
 			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
+			currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 		}else{
-			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
+			currentRenderer = std::make_shared<ofGLRenderer>(this);
 		}
 	#endif
 

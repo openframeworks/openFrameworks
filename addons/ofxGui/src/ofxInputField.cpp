@@ -140,7 +140,7 @@ ofxInputField<Type>::ofxInputField(ofParameter<Type> _val, float width, float he
 template<typename Type>
 ofxInputField<Type>* ofxInputField<Type>::setup(ofParameter<Type> _val, float width, float height){
 	value.makeReferenceTo(_val);
-	input = toString(value.get());
+	visibleInput = input = toString(value.get());
 	b.x = 0;
 	b.y = 0;
 	b.width = width;

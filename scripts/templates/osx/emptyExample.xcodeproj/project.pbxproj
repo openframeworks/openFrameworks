@@ -658,7 +658,7 @@ fi
 		<key>E4B69E1D0A3A1BDC003C02F2</key>
 		<dict>
 			<key>fileEncoding</key>
-			<string>30</string>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
@@ -675,7 +675,7 @@ fi
 			<key>explicitFileType</key>
 			<string>sourcecode.cpp.cpp</string>
 			<key>fileEncoding</key>
-			<string>30</string>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>name</key>
@@ -688,7 +688,7 @@ fi
 		<key>E4B69E1F0A3A1BDC003C02F2</key>
 		<dict>
 			<key>fileEncoding</key>
-			<string>30</string>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
@@ -717,7 +717,7 @@ fi
 		<key>E4B6FCAD0C3E899E008CF71C</key>
 		<dict>
 			<key>fileEncoding</key>
-			<string>30</string>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
