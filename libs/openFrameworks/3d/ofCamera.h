@@ -210,6 +210,12 @@ public:
     void setRenderer(shared_ptr<ofBaseRenderer> renderer);
 	
 	/// \}
+
+	/// \brief Draw a visual representation of the camera's frustum
+	/// \note  This will only be visible when the camera drawing its 
+	///        frustum is viewed through another camera.
+	void drawFrustum();
+
 protected:
 	ofRectangle getViewport(const ofRectangle & _viewport) const;
 	shared_ptr<ofBaseRenderer> getRenderer() const;
