@@ -102,8 +102,6 @@ install:
         scripts/linux/download_libs.sh -a armv7l;
     elif [ "$TARGET" == "tvos" ]; then
         scripts/ios/download_libs.sh;
-    elif [ "$TARGET" == "osxmake" ]; then
-        scripts/osx/download_libs.sh;
     else
         scripts/$TARGET/download_libs.sh;
     fi
