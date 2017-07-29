@@ -74,10 +74,10 @@ matrix:
   - os: linux
     language: android
     dist: trusty
-    sudo: required  
+    sudo: required
     env: TARGET="android" NDK_DIR="android-ndk-r12b"
     android:
-      components: 
+      components:
         - build-tools-25.0.2
         - android-19
     cache:
@@ -103,7 +103,7 @@ install:
     elif [ "$TARGET" == "tvos" ]; then
         scripts/ios/download_libs.sh;
     elif [ "$TARGET" == "osxmake" ]; then
-        scripts/ios/download_libs.sh;
+        scripts/osx/download_libs.sh;
     else
         scripts/$TARGET/download_libs.sh;
     fi
