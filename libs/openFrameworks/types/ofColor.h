@@ -74,7 +74,7 @@ public:
     /// \param alpha The alpha value of the color.
     static ofColor_<PixelType> fromHex(int hexColor, float alpha = limit());
 
-    /// \}
+    /// \}
 
     /// \name Data Accessors
     /// \{
@@ -92,7 +92,7 @@ public:
         PixelType v[4]; ///< \brief The pixel values as an array.
     };
 
-    /// \}
+    /// \}
 
     /// \name Setters
     /// \{
@@ -251,7 +251,7 @@ public:
     /// \brief Get the Hue of this color.
     ///
     /// The color is converted from the default RGB to an HSB color space and
-    /// the resulting Hue value is returned.  The resulting hue value will
+    /// the resulting Hue value is returned.  The resulting hue value will
     /// always be returned in the range 0 - limit().
     ///
     /// \returns The Hue value in the range 0 - limit().
@@ -260,7 +260,7 @@ public:
     /// \brief Get the Hue angle of this color.
     ///
     /// The color is converted from the default RGB to an HSB color space and
-    /// the resulting Hue angle is returned.  The resulting hue value will
+    /// the resulting Hue angle is returned.  The resulting hue value will
     /// always be returned in degrees in the range 0 - 360.
     ///
     /// \returns The Hue angle in the range 0 - 360.
@@ -269,8 +269,8 @@ public:
     /// \brief Get the Saturation of this color.
     ///
     /// The color is converted from the default RGB to an HSB color space and
-    /// the resulting saturation is returned.  The resulting saturation value
-    /// will always be returned in the range 0 - limit().
+    /// the resulting saturation is returned.  The resulting saturation value
+    /// will always be returned in the range 0 - limit().
     ///
     /// \returns The saturation in the range 0 - limit().
     float getSaturation() const;
@@ -309,7 +309,7 @@ public:
 
     /// \}
 
-    /// \name Operators
+    /// \name Operators
     /// \{
 
     /// \brief Assign a color using an existing color.
@@ -330,7 +330,7 @@ public:
     ///
     /// \param value The grayscale value.
     /// \returns A reference to itself.
-    ofColor_<PixelType>& operator = (const float& value);
+    ofColor_<PixelType>& operator = (float value);
 
     /// \brief Test two colors for equality.
 	///
@@ -359,7 +359,7 @@ public:
     ///
     /// \param color The value to add.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator +  (const float& color) const;
+    ofColor_<PixelType>  operator +  (float color) const;
 
     /// \brief Clamped addition operator.
     ///
@@ -379,7 +379,7 @@ public:
     ///
     /// \param color The value to add.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator += (const float& color);
+    ofColor_<PixelType>& operator += (float color);
 
     /// \brief Clamped subtraction operator.
     ///
@@ -400,7 +400,7 @@ public:
     ///
     /// \param value The value to subtract.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator -  (const float& value) const;
+    ofColor_<PixelType>  operator -  (float value) const;
 
     /// \brief Clamped subtraction operator.
     ///
@@ -418,7 +418,7 @@ public:
     ///
     /// \param color The value to subtract.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator -= (const float& color);
+    ofColor_<PixelType>& operator -= (float color);
 
     /// \brief Clamped multiplication operator.
     ///
@@ -439,7 +439,7 @@ public:
     ///
     /// \param value The value to multiply.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator *  (const float& value) const;
+    ofColor_<PixelType>  operator *  (float value) const;
 
     /// \brief Clamped multiplication operator.
     ///
@@ -460,7 +460,7 @@ public:
     ///
     /// \param value The scaler value.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator *= (const float& value);
+    ofColor_<PixelType>& operator *= (float value);
 
     /// \brief Clamped division operator.
     ///
@@ -480,7 +480,7 @@ public:
     ///
     /// \param value The divisor value.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator /  (const float& value) const;
+    ofColor_<PixelType>  operator /  (float value) const;
 
     /// \brief Clamped division operator.
     ///
@@ -498,7 +498,7 @@ public:
     ///
     /// \param value The divisor value.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator /= (const float& value);
+    ofColor_<PixelType>& operator /= (float value);
 
     /// \brief Array subscript operator.
     ///
@@ -572,7 +572,7 @@ public:
 
     /// \}
 
-    /// \name Predefined Colors
+    /// \name Predefined Colors
 	///
 	/// \brief A collection of static colors defined by name.
     ///
@@ -608,6 +608,7 @@ public:
     sandyBrown,seaGreen,seaShell,sienna,silver,skyBlue,slateBlue,slateGray,slateGrey,snow,
     springGreen,steelBlue,blueSteel,tan,teal,thistle,tomato,turquoise,violet,wheat,whiteSmoke,
     yellowGreen;
+
 
     /// \}
 
@@ -668,3 +669,58 @@ void ofColor_<PixelType>::copyFrom(const ofColor_<SrcType> & mom){
 		}
 	}
 }
+
+template <typename PixelType>
+ofColor_<PixelType> operator*(float val, const ofColor_<PixelType> &color) {
+	return color * val;
+}
+
+template<typename PixelType>
+inline float ofColor_<PixelType>::limit() {
+	return numeric_limits<PixelType>::max();
+}
+
+template<>
+inline float ofColor_<float>::limit() {
+	return 1.f;
+}
+
+template<>
+inline int ofColor_<unsigned char>::getHex() const {
+	return
+		((0xff & (unsigned char) r) << 16) |
+		((0xff & (unsigned char) g) << 8) |
+		((0xff & (unsigned char) b));
+}
+
+template<typename PixelType>
+inline int ofColor_<PixelType>::getHex() const {
+	return ((ofColor) *this).getHex();
+}
+
+template<>
+inline void ofColor_<unsigned char>::setHex(int hexColor, float alpha){
+	r = (hexColor >> 16) & 0xff;
+	g = (hexColor >> 8) & 0xff;
+	b = (hexColor >> 0) & 0xff;
+	a = alpha;
+}
+
+template<typename PixelType>
+inline void ofColor_<PixelType>::setHex (int hexColor, float alpha){
+	ofColor c = ofColor::fromHex(hexColor);
+	*this = c;
+	a = alpha;
+}
+
+
+extern template class ofColor_<char>;
+extern template class ofColor_<unsigned char>;
+extern template class ofColor_<short>;
+extern template class ofColor_<unsigned short>;
+extern template class ofColor_<int>;
+extern template class ofColor_<unsigned int>;
+extern template class ofColor_<long>;
+extern template class ofColor_<unsigned long>;
+extern template class ofColor_<float>;
+extern template class ofColor_<double>;

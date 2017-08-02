@@ -67,12 +67,8 @@ enum ofTargetPlatform{
 #include <unordered_map>
 #include <memory>
 
-#include "json.hpp"
-
-// for convenience
-using ofJson = nlohmann::json;
-
-#define GLM_SWIZZLE
+#define GLM_META_PROG_HELPERS
+#define GLM_FORCE_SWIZZLE
 #define GLM_FORCE_SIZE_FUNC
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
@@ -80,6 +76,7 @@ using ofJson = nlohmann::json;
 #ifndef OF_TARGET_IPHONE
     #define OF_TARGET_IPHONE OF_TARGET_IOS
 #endif 
+
 
 // Cross-platform deprecation warning
 #ifdef __GNUC__
@@ -155,8 +152,7 @@ using ofJson = nlohmann::json;
 	#define GLEW_STATIC
 	#define GLEW_NO_GLU
 	#include "GL/glew.h"
-	#include "GL/wglew.h"
-   	#include "glu.h"
+    #include "GL/wglew.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
@@ -313,8 +309,11 @@ typedef TESSindex ofIndexType;
 		//on 10.6 and below we can use the old grabber
 		#ifndef MAC_OS_X_VERSION_10_7
 			#define OF_VIDEO_CAPTURE_QUICKTIME
-		#else
+		//if we are below 10.12 or targeting below 10.12 we use QTKit
+		#elif !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 			#define OF_VIDEO_CAPTURE_QTKIT
+		#else
+			#define OF_VIDEO_CAPTURE_AVF
         #endif
 
 	#elif defined (TARGET_WIN32)
@@ -414,7 +413,7 @@ typedef TESSindex ofIndexType;
 // on c++11, this is a workaround that bug
 #ifndef HAS_TLS
 	#if defined(__clang__) && __clang__
-		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__) && !defined(__ANDROID__)
+		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__) && !defined(__ANDROID__) && !defined(TARGET_OF_IOS)
 			#define HAS_TLS 1
 		#endif
     #elif !defined(TARGET_WIN32) || _MSC_VER
@@ -718,27 +717,39 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 // 	letters.. now they will be 256 + 104, 256 + 105....)
 
 
-	#define OF_KEY_MODIFIER 	0x0100
 	#define OF_KEY_RETURN		13
 	#define OF_KEY_ESC			27
-    #define OF_KEY_TAB          9
-    #define OF_KEY_COMMAND      OF_KEY_SUPER
-    
-	// http://www.openframeworks.cc/forum/viewtopic.php?t=494
-	// some issues with keys across platforms:
+	#define OF_KEY_TAB          9
 
-	#ifdef TARGET_OSX
-		#define OF_KEY_BACKSPACE	127
-		#define OF_KEY_DEL			8
-	#else
-		#define OF_KEY_BACKSPACE	8
-		#define OF_KEY_DEL			127
-	#endif
 
-	// zach - there are more of these keys, we can add them here...
-	// these are keys that are not coming through "special keys"
-	// via glut, but just other keys on your keyboard like
+	#define OF_KEY_BACKSPACE	8
+	#define OF_KEY_DEL			127
 
+
+	// For legacy reasons we are mixing up control keys
+	// and unicode codepoints when sending key events,
+	// for the modifiers that need to be usable as bitmask
+	// we are using some control codes that have nothing to do
+	// with the keys being represented and then 0x0ee0.. and 0x0e60...
+	// which are free in the unicode table
+
+	#define OF_KEY_SHIFT		 0x1
+	#define OF_KEY_CONTROL		 0x2
+	#define OF_KEY_ALT			 0x4
+	#define OF_KEY_SUPER		 0x16
+	#define OF_KEY_COMMAND       OF_KEY_SUPER
+	#define OF_KEY_LEFT_SHIFT	 0xe60
+	#define OF_KEY_RIGHT_SHIFT	 0xe61
+	#define OF_KEY_LEFT_CONTROL	 0xe62
+	#define OF_KEY_RIGHT_CONTROL 0xe63
+	#define OF_KEY_LEFT_ALT		 0xe64
+	#define OF_KEY_RIGHT_ALT	 0xe65
+	#define OF_KEY_LEFT_SUPER	 0xe66
+	#define OF_KEY_RIGHT_SUPER	 0xe67
+	#define OF_KEY_LEFT_COMMAND  OF_KEY_LEFT_SUPER
+	#define OF_KEY_RIGHT_COMMAND OF_KEY_RIGHT_SUPER
+
+	#define OF_KEY_MODIFIER 	0x0EE0
 	#define OF_KEY_F1			(1 | OF_KEY_MODIFIER)
 	#define OF_KEY_F2			(2 | OF_KEY_MODIFIER)
 	#define OF_KEY_F3			(3 | OF_KEY_MODIFIER)
@@ -760,21 +771,6 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 	#define OF_KEY_HOME			(106 | OF_KEY_MODIFIER)
 	#define OF_KEY_END			(107 | OF_KEY_MODIFIER)
 	#define OF_KEY_INSERT		(108 | OF_KEY_MODIFIER)
-	#define OF_KEY_CONTROL		(0x200 | OF_KEY_MODIFIER)
-	#define OF_KEY_ALT			(0x400 | OF_KEY_MODIFIER)
-	#define OF_KEY_SHIFT		(0x800 | OF_KEY_MODIFIER)
-	#define OF_KEY_SUPER		(0x1000 | OF_KEY_MODIFIER)
-	#define OF_KEY_LEFT_SHIFT	(0x1 | OF_KEY_SHIFT)
-	#define OF_KEY_RIGHT_SHIFT	(0x2 | OF_KEY_SHIFT)
-	#define OF_KEY_LEFT_CONTROL	(0x1 | OF_KEY_CONTROL)
-	#define OF_KEY_RIGHT_CONTROL (0x2 | OF_KEY_CONTROL)
-	#define OF_KEY_LEFT_ALT		(0x1 | OF_KEY_ALT)
-	#define OF_KEY_RIGHT_ALT	(0x2 | OF_KEY_ALT)
-	#define OF_KEY_LEFT_SUPER	(0x1 | OF_KEY_SUPER)
-	#define OF_KEY_RIGHT_SUPER	(0x2 | OF_KEY_SUPER)
-	#define OF_KEY_LEFT_COMMAND OF_KEY_LEFT_SUPER
-	#define OF_KEY_RIGHT_COMMAND OF_KEY_RIGHT_SUPER
-// not sure what to do in the case of non-glut apps....
 
     #define OF_MOUSE_BUTTON_1      0
     #define OF_MOUSE_BUTTON_2      1
@@ -925,16 +921,6 @@ enum ofDrawBitmapMode{
 	OF_BITMAPMODE_MODEL_BILLBOARD
 };
 
-/// \brief Sets the text encoding mode.
-/// 
-/// This is not currently used in the codebase, but the
-/// assumption is that will once again begin using this as we
-/// continue to work on our UTF8 implementation.
-enum ofTextEncoding{
-	OF_ENCODING_UTF8,
-	OF_ENCODING_ISO_8859_15
-};
-
 //#define OF_USE_LEGACY_MESH
 template<class V, class N, class C, class T>
 class ofMesh_;
@@ -959,3 +945,4 @@ using ofDefaultVertexType = ofDefaultVec3;
 using ofDefaultNormalType = ofDefaultVec3;
 using ofDefaultColorType = ofFloatColor;
 using ofDefaultTexCoordType = ofDefaultVec2;
+

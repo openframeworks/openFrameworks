@@ -19,6 +19,10 @@ error() {
   fi
   rm -f *.tar.gz
   rm -f *.zip
+
+  cd $(cat ~/.ofprojectgenerator/config)
+  git checkout master
+
   exit "${code}"
 }
 trap 'error ${LINENO}' ERR
@@ -30,10 +34,16 @@ branch=$2
 else
 branch=master
 fi
+cd $(cat ~/.ofprojectgenerator/config)
+git fetch upstreamhttps
+git reset --hard upstreamhttps/$branch
+scripts/dev/download_libs.sh
+
 cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 
-./create_package.sh linux $version $branch
 ./create_package.sh linux64 $version $branch
+./create_package.sh linux64 $version $branch gcc5
+./create_package.sh linux64 $version $branch gcc6
 ./create_package.sh linuxarmv6l $version $branch
 ./create_package.sh linuxarmv7l $version $branch
 ./create_package.sh msys2 $version $branch
@@ -46,3 +56,7 @@ mv *.tar.gz /var/www/versions/v${version}
 mv *.zip /var/www/versions/v${version}
 
 wget http://openframeworks.cc/release_hook.php?version=${version} -O /dev/null
+
+cd $(cat ~/.ofprojectgenerator/config)
+git checkout master
+

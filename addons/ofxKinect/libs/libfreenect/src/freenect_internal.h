@@ -29,15 +29,12 @@
 
 #include "libfreenect.h"
 #include "libfreenect_registration.h"
-
-#ifdef BUILD_AUDIO
-  #include "libfreenect_audio.h"
-#endif
+#include "libfreenect_audio.h"
 
 #ifdef __ELF__
-#define FN_INTERNAL	__attribute__ ((visibility ("hidden")))
+  #define FN_INTERNAL	__attribute__ ((visibility ("hidden")))
 #else
-#define FN_INTERNAL
+  #define FN_INTERNAL
 #endif
 
 
@@ -45,7 +42,7 @@ typedef void (*fnusb_iso_cb)(freenect_device *dev, uint8_t *buf, int len);
 
 #include "usb_libusb10.h"
 
-//needed to set the led state for non 1414 devices - replaces keep_alive.c
+// needed to set the led state for non 1414 devices
 FN_INTERNAL int fnusb_set_led_alt(libusb_device_handle * dev, freenect_context * ctx, freenect_led_options state);
 
 struct _freenect_context {
@@ -56,7 +53,7 @@ struct _freenect_context {
 	freenect_device *first;
 	int zero_plane_res;
     
-    //if you want to load firmware from memory rather than disk
+    // if you want to load firmware from memory rather than disk
     unsigned char *     fn_fw_nui_ptr;
     unsigned int        fn_fw_nui_size;
 
@@ -174,7 +171,6 @@ typedef struct {
 	void *proc_buf;
 } packet_stream;
 
-#ifdef BUILD_AUDIO
 typedef struct {
 	int running;
 
@@ -214,8 +210,6 @@ typedef struct {
 	freenect_sample_51 samples[6];  // Audio samples - 6 samples per transfer
 } audio_out_block;
 
-#endif
-
 struct _freenect_device {
 	freenect_context *parent;
 	freenect_device *next;
@@ -243,8 +237,7 @@ struct _freenect_device {
 
 	// Registration
 	freenect_registration registration;
-    
-#ifdef BUILD_AUDIO
+
 	// Audio
 	fnusb_dev usb_audio;
 	fnusb_isoc_stream audio_out_isoc;
@@ -255,11 +248,11 @@ struct _freenect_device {
 
 	audio_stream audio;
 	uint32_t audio_tag;
-#endif
+
 	// Motor
 	fnusb_dev usb_motor;
 	freenect_raw_tilt_state raw_state;
     
-    int device_does_motor_control_with_audio;
-    int motor_control_with_audio_enabled;
+	int device_does_motor_control_with_audio;
+	int motor_control_with_audio_enabled;
 };

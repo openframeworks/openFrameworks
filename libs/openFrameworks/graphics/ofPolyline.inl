@@ -224,8 +224,8 @@ void ofPolyline_<T>::bezierTo( const T & cp1, const T & cp2, const T & to, int c
 		bz = 3.0f * (cp2.z - cp1.z) - cz;
 		az = to.z - z0 - cz - bz;
         
-		for (int i = 0; i < curveResolution; i++){
-			t 	=  (float)i / (float)(curveResolution-1);
+		for (int i = 1; i <= curveResolution; i++){
+			t 	=  (float)i / (float)(curveResolution);
 			t2 = t * t;
 			t3 = t2 * t;
 			x = (ax * t3) + (bx * t2) + (cx * t) + x0;
@@ -278,9 +278,9 @@ void ofPolyline_<T>::curveTo( const T & to, int curveResolution ){
 		float t,t2,t3;
 		float x,y,z;
         
-		for (int i = 0; i < curveResolution; i++){
+		for (int i = 1; i <= curveResolution; i++){
             
-			t 	=  (float)i / (float)(curveResolution-1);
+			t 	=  (float)i / (float)(curveResolution);
 			t2 	= t * t;
 			t3 	= t2 * t;
             
@@ -997,27 +997,35 @@ T ofPolyline_<T>::getNormalAtIndexInterpolated(float findex) const {
 //--------------------------------------------------
 template<class T>
 void ofPolyline_<T>::calcData(int index, T &tangent, float &angle, T &rotation, T &normal) const {
-    int i1 = getWrappedIndex(index - 1);
-    int i2 = getWrappedIndex(index);
-    int i3 = getWrappedIndex(index + 1);
-    
-	T p1(points[i1]);
-	T p2(points[i2]);
-	T p3(points[i3]);
-    
-	T v1(p1 - p2); // vector to previous point
-	T v2(p3 - p2); // vector to next point
-	glm::normalize(toGlm(v1));
-	glm::normalize(toGlm(v2));
-    
-    tangent = (v2 - v1);
-	glm::normalize(toGlm(tangent));
-    
-	rotation = glm::cross(toGlm(v1), toGlm(v2));
-	angle = glm::pi<float>() - acos(ofClamp(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z, -1, 1));
+	int i1 = getWrappedIndex( index - 1 );
+	int i2 = getWrappedIndex( index     );
+	int i3 = getWrappedIndex( index + 1 );
 
-	normal = glm::cross(toGlm(rightVector), toGlm(tangent));
-	glm::normalize(toGlm(normal));
+	const auto &p1 = toGlm(points[i1]);
+	const auto &p2 = toGlm(points[i2]);
+	const auto &p3 = toGlm(points[i3]);
+
+	auto v1(p1 - p2); // vector to previous point
+	auto v2(p3 - p2); // vector to next point
+	
+	v1 = glm::normalize(v1);
+	v2 = glm::normalize(v2);
+
+	// If just one of p1, p2, or p3 was identical, further calculations 
+	// are (almost literally) pointless, as v1 or v2 will then contain 
+	// NaN values instead of floats.
+
+	bool noSegmentHasZeroLength = (v1 == v1 && v2 == v2);
+
+	if ( noSegmentHasZeroLength ){
+		tangent  = toOf( glm::length2(v2 - v1) > 0 ? glm::normalize(v2 - v1) : -v1 );
+		normal   = toOf( glm::normalize( glm::cross( toGlm( rightVector ), toGlm( tangent ) ) ) );
+		rotation = toOf( glm::cross( v1, v2 ) );
+		angle    = glm::pi<float>() - acosf( ofClamp( glm::dot( v1, v2 ), -1.f, 1.f ) );
+	} else{
+		rotation = tangent = normal = T( 0.f );
+		angle    = 0.f;
+	}
 }
 
 

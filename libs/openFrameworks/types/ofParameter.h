@@ -74,8 +74,14 @@ public:
 	ofParameterGroup();
 
 	template<typename ...Args>
+	ofParameterGroup(const string & name)
+	:obj(std::make_shared<Value>()){
+		setName(name);
+	}
+
+	template<typename ...Args>
 	ofParameterGroup(const string & name, Args&... p)
-    :obj(std::make_shared<Value>()){
+	:obj(std::make_shared<Value>()){
 		add(p...);
 		setName(name);
 	}
@@ -94,6 +100,7 @@ public:
 
 	void clear();
 
+	const ofParameter<void> & getVoid(const string& name) const;
 	const ofParameter<bool> & getBool(const string& name) const;
 	const ofParameter<int> & getInt(const string& name) const;
 	const ofParameter<float> & getFloat(const string& name) const;
@@ -109,6 +116,7 @@ public:
 	const ofParameterGroup & getGroup(const string& name) const;
 
 
+	const ofParameter<void> & getVoid(std::size_t pos) const;
 	const ofParameter<bool> & getBool(std::size_t pos) const;
 	const ofParameter<int> & getInt(std::size_t pos) const;
 	const ofParameter<float> & getFloat(std::size_t pos) const;
@@ -123,6 +131,7 @@ public:
 	const ofParameter<ofFloatColor> & getFloatColor(std::size_t pos) const;
 	const ofParameterGroup & getGroup(std::size_t pos) const;
 
+	ofParameter<void> & getVoid(const string& name);
 	ofParameter<bool> & getBool(const string& name);
 	ofParameter<int> & getInt(const string& name);
 	ofParameter<float> & getFloat(const string& name);
@@ -138,6 +147,7 @@ public:
 	ofParameterGroup & getGroup(const string& name);
 
 
+	ofParameter<void> & getVoid(std::size_t pos);
 	ofParameter<bool> & getBool(std::size_t pos);
 	ofParameter<int> & getInt(std::size_t pos);
 	ofParameter<float> & getFloat(std::size_t pos);
@@ -363,49 +373,49 @@ namespace priv{
 	no operator << (const anyx &, const anyx &);
 	no operator >> (const anyx &, const anyx &);
 
-
-	template <class T> yes check(T const&);
-	no check(no);
+	
+	template <class T> yes check_op(T const&);
+	no check_op(no);
 
 	template <typename T>
 	struct has_loading_support {
-	    static istream & stream;
-	    static T & x;
-	    static const bool value = sizeof(check(stream >> x)) == sizeof(yes);
+		static istream & stream;
+		static T & x;
+		static constexpr bool value = sizeof(check_op(stream >> x)) == sizeof(yes);
 	};
 
 	template <typename T>
 	struct has_saving_support {
-	    static ostream & stream;
-	    static T & x;
-	    static const bool value = sizeof(check(stream << x)) == sizeof(yes);
+		static ostream & stream;
+		static T & x;
+		static constexpr bool value = sizeof(check_op(stream << x)) == sizeof(yes);
 	};
 
 	template <typename T>
 	struct has_stream_operators {
-	    static const bool can_load = has_loading_support<T>::value;
-	    static const bool can_save = has_saving_support<T>::value;
-	    static const bool value = can_load && can_save;
+		static constexpr bool can_load = has_loading_support<T>::value;
+		static constexpr bool can_save = has_saving_support<T>::value;
+		static constexpr bool value = can_load && can_save;
 	};
 
 	template<typename ParameterType>
 	typename std::enable_if<of::priv::has_saving_support<ParameterType>::value, std::string>::type toStringImpl(const ParameterType & value){
-	    return ofToString(value);
+		return ofToString(value);
 	}
 
 	template<typename ParameterType>
 	typename std::enable_if<!of::priv::has_saving_support<ParameterType>::value, std::string>::type toStringImpl(const ParameterType &){
-	    throw std::exception();
+		throw std::exception();
 	}
 
 	template<typename ParameterType>
 	typename std::enable_if<of::priv::has_loading_support<ParameterType>::value, ParameterType>::type fromStringImpl(const std::string & str){
-	    return ofFromString<ParameterType>(str);
+		return ofFromString<ParameterType>(str);
 	}
 
 	template<typename ParameterType>
 	typename std::enable_if<!of::priv::has_loading_support<ParameterType>::value, ParameterType>::type fromStringImpl(const std::string &){
-	    throw std::exception();
+		throw std::exception();
 
 	}
 }
@@ -446,7 +456,7 @@ public:
 
 
 	std::string toString() const;
-    void fromString(const std::string & name);
+	void fromString(const std::string & name);
 
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method, int prio=OF_EVENT_ORDER_AFTER_APP){
@@ -505,7 +515,7 @@ public:
 	ofParameter<ParameterType> & set(const string& name, const ParameterType & v);
 	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
 
-    ofParameter<ParameterType> & setWithoutEventNotifications(const ParameterType & v);
+	ofParameter<ParameterType> & setWithoutEventNotifications(const ParameterType & v);
 
 	void setMin(const ParameterType & min);
 	void setMax(const ParameterType & max);
@@ -527,9 +537,9 @@ public:
 	}
 
 	size_t getNumListeners() const;
+	const void* getInternalObject() const;
 
 protected:
-	const void* getInternalObject() const;
 
 private:
 	class Value{
@@ -645,8 +655,8 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name,
 
 template<typename ParameterType>
 inline ofParameter<ParameterType> & ofParameter<ParameterType>::setWithoutEventNotifications(const ParameterType & v){
-    noEventsSetValue(v);
-    return *this;
+	noEventsSetValue(v);
+	return *this;
 }
 
 template<typename ParameterType>
@@ -661,57 +671,44 @@ inline const ParameterType * ofParameter<ParameterType>::operator->() const{
 template<typename ParameterType>
 inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType & v){
 
-    // If the object is notifying its parents, just set the value without triggering an event.
-    if(obj->bInNotify)
-    {
+	// If the object is notifying its parents, just set the value without triggering an event.
+	if(obj->bInNotify)
+	{
 		noEventsSetValue(v);
 	}
-    else
-    {
-        // Mark the object as in its notification loop.
-        obj->bInNotify = true;
+	else
+	{
+		// Mark the object as in its notification loop.
+		obj->bInNotify = true;
 
-        // Set the value.
-        obj->value = v;
+		// Set the value.
+		obj->value = v;
 
-        // Notify any local subscribers.
-        ofNotifyEvent(obj->changedE,obj->value,this);
+		// Notify any local subscribers.
+		ofNotifyEvent(obj->changedE,obj->value,this);
 
-        // Notify all parents, if there are any.
-        if(!obj->parents.empty())
-        {
+		// Notify all parents, if there are any.
+		if(!obj->parents.empty())
+		{
+			// Erase each invalid parent
+			obj->parents.erase(std::remove_if(obj->parents.begin(),
+											  obj->parents.end(),
+											  [this](const weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
+							   obj->parents.end());
 
-            // This lambda will conditionally notify a parent if its child
-            // value has changed.
-            //
-            // If it was successful (i.e. the parent pointer is valid) the
-            // lambda will return false.  If it was unsuccessful (i.e. the
-            // parent pointer is invalid) the lambda will return true.
-            //
-            // This return value is used by the std::remove_if algorithm
-            // to erase invalid parents from this object's parent list.
-            auto notifyParents = [this](weak_ptr<ofParameterGroup::Value> p){
-                // Try to get a valid shared pointer ot the parent.
-                auto parent = p.lock();
-
-                // If the parent's shared pointer is not nullptr, notify it.
-                if(parent != nullptr) {
-                    parent->notifyParameterChanged(*this);
-                    return false;
-                } else {
-                    return true;
-                }
-            };
-
-            // Erase each invalid parent and notify all valid parents of this
-            // object's changed value.
-            obj->parents.erase(std::remove_if(obj->parents.begin(),
-                                              obj->parents.end(),
-                                              notifyParents),
-                               obj->parents.end());
-        }
-        obj->bInNotify = false;
-    }
+			// notify all leftover (valid) parents of this object's changed value.
+			// this can't happen in the same iterator as above, because a notified listener
+			// might perform similar cleanups that would corrupt our iterator
+			// (which appens for example if the listener calls getFirstParent on us)
+			for(auto & parent: obj->parents){
+				auto p = parent.lock();
+				if(p){
+					p->notifyParameterChanged(*this);
+				}
+			}
+		}
+		obj->bInNotify = false;
+	}
 }
 
 template<typename ParameterType>
@@ -772,21 +769,21 @@ string ofParameter<ParameterType>::getName() const{
 
 template<typename ParameterType>
 inline std::string ofParameter<ParameterType>::toString() const{
-    try{
-        return of::priv::toStringImpl(obj->value);
-    }catch(...){
-        ofLogError("ofParameter") << "Trying to serialize non-serializable parameter";
-        return "";
-    }
+	try{
+		return of::priv::toStringImpl(obj->value);
+	}catch(...){
+		ofLogError("ofParameter") << "Trying to serialize non-serializable parameter";
+		return "";
+	}
 }
 
 template<typename ParameterType>
 inline void ofParameter<ParameterType>::fromString(const std::string & str){
-    try{
-        set(of::priv::fromStringImpl<ParameterType>(str));
-    }catch(...){
-        ofLogError("ofParameter") << "Trying to de-serialize non-serializable parameter";
-    }
+	try{
+		set(of::priv::fromStringImpl<ParameterType>(str));
+	}catch(...){
+		ofLogError("ofParameter") << "Trying to de-serialize non-serializable parameter";
+	}
 }
 
 template<typename ParameterType>
@@ -958,7 +955,13 @@ public:
 		ofRemoveListener(obj->changedE,listener,method,prio);
 	}
 
+	template<typename... Args>
+	ofEventListener newListener(Args...args) {
+		return obj->changedE.newListener(args...);
+	}
+
 	void trigger();
+	void trigger(const void * sender);
 
 	void enableEvents();
 	void disableEvents();
@@ -982,10 +985,10 @@ public:
 	}
 	size_t getNumListeners() const;
 
-protected:
 	const void* getInternalObject() const{
 		return obj.get();
 	}
+protected:
 
 private:
 	class Value{
@@ -1111,7 +1114,9 @@ protected:
 	}
 
 	ofParameter<ParameterType> parameter;
-	
+
+	template<typename T>
+	friend class ofParameter;
 	friend class ofParameterGroup;
 	friend Friend;
 };

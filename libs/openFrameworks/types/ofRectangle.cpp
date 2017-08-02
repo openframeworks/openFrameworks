@@ -212,7 +212,7 @@ void ofRectangle::scaleFromCenter(const glm::vec3& s) {
 
 //----------------------------------------------------------
 void ofRectangle::scaleFromCenter(const glm::vec2& s) {
-	if(s.x == 1.0f && s.y == 1.0f) return; // nothing to do
+	if(ofIsFloatEqual(s.x, 1.0f) && ofIsFloatEqual(s.y, 1.0f)) return; // nothing to do
 
 	float newWidth  = width  * s.x;
 	float newHeight = height * s.y;
@@ -601,7 +601,7 @@ float ofRectangle::getAspectRatio() const {
 
 //----------------------------------------------------------
 bool ofRectangle::isEmpty() const {
-    return width == 0.0f && height == 0.0f;
+    return ofIsFloatEqual(width, 0.0f) && ofIsFloatEqual(height, 0.0f);
 }
 
 //----------------------------------------------------------
@@ -751,6 +751,38 @@ float ofRectangle::getHeight() const {
 }
 
 //----------------------------------------------------------
+glm::vec2 ofRectangle::map(const glm::vec2 & coeff) const {
+    return glm::vec2(
+        ofMap(coeff.x, 0.0f, 1.0f, getMinX(), getMaxX(), false), 
+        ofMap(coeff.y, 0.0f, 1.0f, getMinY(), getMaxY(), false)
+        );
+}
+
+//----------------------------------------------------------
+
+ofRectangle ofRectangle::map(const ofRectangle & coeff) const {
+    return ofRectangle(
+       map(glm::vec2(coeff.getMinX(), coeff.getMinY())),
+       map(glm::vec2(coeff.getMaxX(), coeff.getMaxY()))
+       );
+}
+
+glm::vec2 ofRectangle::mapClamp(const glm::vec2 & coeff) const {
+    return glm::vec2(
+        ofMap(coeff.x, 0.0f, 1.0f, getMinX(), getMaxX(), true), 
+        ofMap(coeff.y, 0.0f, 1.0f, getMinY(), getMaxY(), true)
+        );
+}
+
+ofRectangle ofRectangle::mapClamp(const ofRectangle & coeff) const {
+    return ofRectangle(
+       mapClamp(glm::vec2(coeff.getMinX(), coeff.getMinY())),
+       mapClamp(glm::vec2(coeff.getMaxX(), coeff.getMaxY()))
+       );
+}
+    
+
+//----------------------------------------------------------
 ofRectangle& ofRectangle::operator = (const ofRectangle& rect) {
     set(rect);
 	return *this;
@@ -784,12 +816,12 @@ ofRectangle ofRectangle::operator - (const glm::vec2 & point){
 
 //----------------------------------------------------------
 bool ofRectangle::operator == (const ofRectangle& rect) const {
-	return (x == rect.x) && (y == rect.y) && (width == rect.width) && (height == rect.height);
+	return ofIsFloatEqual(x, rect.x) && ofIsFloatEqual(y, rect.y) && ofIsFloatEqual(width, rect.width) && ofIsFloatEqual(height, rect.height);
 }
 
 //----------------------------------------------------------
 bool ofRectangle::isZero() const{
-	return (x == 0) && (y == 0) && (width == 0) && (height == 0);
+	return ofIsFloatEqual(x, 0.0f) && ofIsFloatEqual(y, 0.0f) && ofIsFloatEqual(width, 0.0f) && ofIsFloatEqual(height, 0.0f);
 }
 
 //----------------------------------------------------------

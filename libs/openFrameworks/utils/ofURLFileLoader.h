@@ -2,6 +2,7 @@
 #include "ofEvents.h"
 #include "ofFileUtils.h"
 #include "ofTypes.h"
+class ofHttpResponse;
 
 /// \class ofHttpRequest
 /// \brief an HTTP GET or POST request
@@ -16,10 +17,12 @@ public:
 	map<string,string>	headers; //< HTTP header keys & values
 	string				body; //< POST body data
 	string				contentType; //< POST data mime type
+	std::function<void(const ofHttpResponse&)> done;
+    size_t              timeoutSeconds = 0;
 
 	/// \return the unique id for this request
 	int getId() const;
-	OF_DEPRECATED_MSG("Use ofGetId().", int getID());
+	OF_DEPRECATED_MSG("Use getId().", int getID());
 
 	/// HTTP request type
 	enum Method{
@@ -66,7 +69,7 @@ int ofLoadURLAsync(const string& url, const string& name=""); // returns id
 /// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 /// \param path file path to save to
 /// \return HTTP response on success or failure
-ofHttpResponse ofSaveURLTo(const string& url, const string& path);
+ofHttpResponse ofSaveURLTo(const string& url, const std::filesystem::path& path);
 
 /// make an asynchronous HTTP request for a url and save the response to a file at path
 /// \returns unique request id for the active HTTP request
@@ -76,7 +79,7 @@ ofHttpResponse ofSaveURLTo(const string& url, const string& path);
 /// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 /// \param path file path to save to
 /// \returns unique id for the active HTTP request
-int ofSaveURLAsync(const string& url, const string& path);
+int ofSaveURLAsync(const string& url, const std::filesystem::path& path);
 
 /// \brief remove an active HTTP request from the queue
 /// \param unique HTTP request id
@@ -127,14 +130,14 @@ class ofURLFileLoader  {
 		/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 		/// \param path file path to save to
 		/// \return HTTP response on success or failure
-		ofHttpResponse saveTo(const string& url, const string& path);
+        ofHttpResponse saveTo(const string& url, const std::filesystem::path& path);
 	
 		/// \brief make an asynchronous HTTP request and save the response data to a file
 		/// will not block, placed in a queue and run using a background thread
 		/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 		/// \param path file path to save to
 		/// \returns unique id for the active HTTP request
-		int saveAsync(const string& url, const string& path);
+        int saveAsync(const string& url, const std::filesystem::path& path);
 	
 		/// \brief remove an active HTTP request from the queue
 		/// \param unique HTTP request id
@@ -149,7 +152,12 @@ class ofURLFileLoader  {
 		// \brief low level HTTP request implementation
 		/// blocks until a response is returned or the request times out
 		/// \return HTTP response on success or failure
-        ofHttpResponse handleRequest(ofHttpRequest & request);
+        ofHttpResponse handleRequest(const ofHttpRequest & request);
+	
+		// \brief low level HTTP request implementation
+		/// this is a non-blocking version of handleRequest that will return a response in the urlResponse callback
+		/// \return unique id of the active HTTP request
+        int handleRequestAsync(const ofHttpRequest& request);
 
     private:
         shared_ptr<ofBaseURLFileLoader> impl;

@@ -42,6 +42,7 @@ public:
 	void setEscapeQuitsLoop(bool quits);
 
 	ofEvent<void> exitEvent;
+	ofEvent<void> loopEvent;
 private:
 	void keyPressed(ofKeyEventArgs & key);
 	map<std::shared_ptr<ofAppBaseWindow>,std::shared_ptr<ofBaseApp> > windowsApps;

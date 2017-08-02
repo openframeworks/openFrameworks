@@ -1,14 +1,17 @@
 #include "ofxBaseGui.h"
 #include "ofImage.h"
 #include "ofBitmapFont.h"
-#ifndef TARGET_EMSCRIPTEN
 #include "ofXml.h"
-#endif
+#include "ofJson.h"
 using namespace std;
 
 
 void ofxGuiSetFont(const string & fontPath, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
 	ofxBaseGui::loadFont(fontPath, fontsize, _bAntiAliased, _bFullCharacterSet, dpi);
+}
+
+void ofxGuiSetFont(const ofTrueTypeFont::Settings & fontSettings){
+	ofxBaseGui::loadFont(fontSettings);
 }
 
 void ofxGuiSetBitmapFont(){
@@ -48,6 +51,10 @@ void ofxGuiSetDefaultHeight(int height){
 	ofxBaseGui::setDefaultHeight(height);
 }
 
+void ofxGuiSetDefaultEventsPriority(ofEventOrder eventsPriority){
+	ofxBaseGui::setDefaultEventsPriority(eventsPriority);
+}
+
 ofColor
 ofxBaseGui::headerBackgroundColor(64),
 ofxBaseGui::backgroundColor(0),
@@ -63,14 +70,11 @@ ofTrueTypeFont ofxBaseGui::font;
 bool ofxBaseGui::fontLoaded = false;
 bool ofxBaseGui::useTTF = false;
 ofBitmapFont ofxBaseGui::bitmapFont;
+ofEventOrder ofxBaseGui::defaultEventsPriority = OF_EVENT_ORDER_BEFORE_APP;
 
 ofxBaseGui::ofxBaseGui(){
 	parent = nullptr;
 	currentFrame = ofGetFrameNum();
-#ifndef TARGET_EMSCRIPTEN
-    serializer = std::make_shared<ofXml>();
-#endif
-
 	thisHeaderBackgroundColor = headerBackgroundColor;
 	thisBackgroundColor = backgroundColor;
 	thisBorderColor = borderColor;
@@ -93,6 +97,12 @@ void ofxBaseGui::loadFont(const std::string& filename, int fontsize, bool _bAnti
 	useTTF = true;
 }
 
+void ofxBaseGui::loadFont(const ofTrueTypeFont::Settings & fontSettings){
+	font.load(fontSettings);
+	fontLoaded = true;
+	useTTF = true;
+}
+
 void ofxBaseGui::setUseTTF(bool bUseTTF){
 	if(bUseTTF && !fontLoaded){
 		loadFont(OF_TTF_MONO, 10, true, true);
@@ -109,14 +119,14 @@ void ofxBaseGui::registerMouseEvents(){
 		return; // already registered.
 	}
 	bRegisteredForMouseEvents = true;
-	ofRegisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+	ofRegisterMouseEvents(this, defaultEventsPriority);
 }
 
 void ofxBaseGui::unregisterMouseEvents(){
 	if(bRegisteredForMouseEvents == false){
 		return; // not registered.
 	}
-	ofUnregisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+	ofUnregisterMouseEvents(this, defaultEventsPriority);
 	bRegisteredForMouseEvents = false;
 }
 
@@ -171,36 +181,38 @@ ofRectangle ofxBaseGui::getTextBoundingBox(const string & text, float x, float y
 }
 
 void ofxBaseGui::saveToFile(const std::string& filename){
-	if(serializer){
-		serializer->load(filename);
-		saveTo(*serializer);
-		serializer->save(filename);
+	auto extension = ofToLower(ofFilePath::getFileExt(filename));
+	if(extension == "xml"){
+		ofXml xml;
+		if(ofFile(filename, ofFile::Reference).exists()){
+			xml.load(filename);
+		}
+		saveTo(xml);
+		xml.save(filename);
+    }else
+    if(extension == "json"){
+        ofJson json = ofLoadJson(filename);
+		saveTo(json);
+        ofSavePrettyJson(filename, json);
 	}else{
-		ofLogError("ofxGui") << "element has no serializer to save to";
+		ofLogError("ofxGui") << extension << " not recognized, only .xml and .json supported by now";
 	}
 }
 
 void ofxBaseGui::loadFromFile(const std::string& filename){
-	if(serializer){
-		serializer->load(filename);
-		loadFrom(*serializer);
+	auto extension = ofToLower(ofFilePath::getFileExt(filename));
+	if(extension == "xml"){
+		ofXml xml;
+		xml.load(filename);
+		loadFrom(xml);
+    }else
+    if(extension == "json"){
+		ofFile jsonFile(filename);
+		ofJson json = ofLoadJson(jsonFile);
+		loadFrom(json);
 	}else{
-		ofLogError("ofxGui") << "element has no serializer to load from";
+		ofLogError("ofxGui") << extension << " not recognized, only .xml and .json supported by now";
 	}
-}
-
-
-void ofxBaseGui::saveTo(ofBaseSerializer & serializer){
-	serializer.serialize(getParameter());
-}
-
-void ofxBaseGui::loadFrom(ofBaseSerializer & serializer){
-	serializer.deserialize(getParameter());
-}
-
-
-void ofxBaseGui::setDefaultSerializer(std::shared_ptr <ofBaseFileSerializer> _serializer){
-	serializer = _serializer;
 }
 
 string ofxBaseGui::getName(){
@@ -209,6 +221,7 @@ string ofxBaseGui::getName(){
 
 void ofxBaseGui::setName(const std::string& _name){
 	getParameter().setName(_name);
+	setNeedsRedraw();
 }
 
 void ofxBaseGui::setPosition(const ofPoint & p){
@@ -328,6 +341,10 @@ void ofxBaseGui::setDefaultWidth(int width){
 
 void ofxBaseGui::setDefaultHeight(int height){
 	defaultHeight = height;
+}
+
+void ofxBaseGui::setDefaultEventsPriority(ofEventOrder eventsPriority){
+	defaultEventsPriority = eventsPriority;
 }
 
 void ofxBaseGui::sizeChangedCB(){

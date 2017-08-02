@@ -5,7 +5,7 @@
 
 class ofxLabel: public ofxBaseGui {
 public:
-    ofxLabel(){}
+	ofxLabel(){label.setSerializable(false);}
     ofxLabel(ofParameter<std::string> _label, float width = defaultWidth, float height = defaultHeight);
     virtual ~ofxLabel();
 
@@ -18,10 +18,6 @@ public:
     virtual bool mouseDragged(ofMouseEventArgs & args){return false;}
     virtual bool mouseReleased(ofMouseEventArgs & args){return false;}
     virtual bool mouseScrolled(ofMouseEventArgs & args){return false;}
-
-	virtual void saveTo(ofBaseSerializer& serializer){};
-	virtual void loadFrom(ofBaseSerializer& serializer){};
-
 
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method){

@@ -921,7 +921,7 @@ void ofGLProgrammableRenderer::background(const ofColor & c){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::background(float brightness) {
-	background(brightness);
+	background(ofColor(brightness));
 }
 
 //----------------------------------------------------------
@@ -985,7 +985,7 @@ void ofGLProgrammableRenderer::setLineWidth(float lineWidth){
 	if(!currentStyle.bFill){
 		path.setStrokeWidth(lineWidth);
 	}
-	glLineWidth(lineWidth);
+	//glLineWidth(lineWidth);
 }
 
 //----------------------------------------------------------
@@ -1307,12 +1307,16 @@ void ofGLProgrammableRenderer::unbind(const ofShader & shader){
 
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::begin(const ofFbo & fbo, bool setupPerspective){
+void ofGLProgrammableRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode){
 	pushView();
-	pushStyle();
-	matrixStack.setRenderSurface(fbo);
+    pushStyle();
+    if(mode & ofFboBeginMode::MatrixFlip){
+        matrixStack.setRenderSurface(fbo);
+    }else{
+        matrixStack.setRenderSurfaceNoMatrixFlip(fbo);
+    }
 	viewport();
-	if(setupPerspective){
+    if(mode & ofFboBeginMode::Perspective){
 		setupScreenPerspective();
 	}else{
 		uploadMatrices();
@@ -1394,6 +1398,7 @@ void ofGLProgrammableRenderer::bind(const ofBaseMaterial & material){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::unbind(const ofBaseMaterial &){
     currentMaterial = nullptr;
+	beginDefaultShader();
 }
 
 //----------------------------------------------------------
@@ -1516,7 +1521,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 
 	if(!uniqueShader || currentMaterial){
         if(currentMaterial){
-			nextShader = &currentMaterial->getShader(currentTextureTarget,*this);
+            nextShader = &currentMaterial->getShader(currentTextureTarget,colorsEnabled,*this);
 
 		}else if(bitmapStringEnabled){
 			nextShader = &bitmapStringShader;

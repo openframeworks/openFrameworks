@@ -24,7 +24,7 @@ string ofAbstractParameter::escape(const string& _str) const{
 	ofStringReplace(str, "/", "_");
 	ofStringReplace(str, "\\", "_");
 	ofStringReplace(str, ".", "_");
-	
+
 	return str;
 }
 
@@ -59,6 +59,13 @@ istream& operator>>(istream& is, ofAbstractParameter& p){
 	return is;
 }
 
+ofParameterGroup & ofAbstractParameter::castGroup(){
+	return static_cast<ofParameterGroup &>(*this);
+}
+
+const ofParameterGroup & ofAbstractParameter::castGroup() const{
+	return static_cast<const ofParameterGroup &>(*this);
+}
 
 
 ofParameter<void>::ofParameter()
@@ -94,6 +101,10 @@ ofParameter<void>& ofParameter<void>::set(const std::string & name){
 
 void ofParameter<void>::trigger(){
 	ofNotifyEvent(obj->changedE,this);
+}
+
+void ofParameter<void>::trigger(const void * sender){
+	ofNotifyEvent(obj->changedE,sender);
 }
 
 void ofParameter<void>::enableEvents(){

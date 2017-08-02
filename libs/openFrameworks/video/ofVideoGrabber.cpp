@@ -25,7 +25,7 @@ void ofVideoGrabber::setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber){
 //--------------------------------------------------------------------
 shared_ptr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber(){
 	if(!grabber){
-		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
+		setGrabber(std::make_shared<OF_VID_GRABBER_TYPE>());
 	}
 	return grabber;
 }
@@ -42,7 +42,7 @@ bool ofVideoGrabber::setup(int w, int h, bool setUseTexture){
 #endif
 
 	if(!grabber){
-		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
+		setGrabber(std::make_shared<OF_VID_GRABBER_TYPE>());
 	}
 
 	bUseTexture = setUseTexture;
@@ -61,7 +61,7 @@ bool ofVideoGrabber::setup(int w, int h, bool setUseTexture){
 
 	if( grabber->isInitialized() && bUseTexture ){
 		if(!grabber->getTexturePtr()){
-			for(int i=0;i<grabber->getPixels().getNumPlanes();i++){
+			for(std::size_t i=0;i<grabber->getPixels().getNumPlanes();i++){
 				ofPixels plane = grabber->getPixels().getPlane(i);
 				tex.push_back(ofTexture());
 				tex[i].allocate(plane);
@@ -110,7 +110,7 @@ ofPixelFormat ofVideoGrabber::getPixelFormat() const{
 vector<ofVideoDevice> ofVideoGrabber::listDevices() const{
 	if(!grabber){
 		ofVideoGrabber * mutThis = const_cast<ofVideoGrabber*>(this);
-		mutThis->setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
+		mutThis->setGrabber(std::make_shared<OF_VID_GRABBER_TYPE>());
 	}
 	return grabber->listDevices();
 }
@@ -220,10 +220,10 @@ void ofVideoGrabber::update(){
 	if(grabber){
 		grabber->update();
 		if( bUseTexture && !grabber->getTexturePtr() && grabber->isFrameNew() ){
-			if(int(tex.size())!=grabber->getPixels().getNumPlanes()){
+			if(tex.size()!=grabber->getPixels().getNumPlanes()){
 				tex.resize(grabber->getPixels().getNumPlanes());
 			}
-			for(int i=0;i<grabber->getPixels().getNumPlanes();i++){
+			for(std::size_t i=0;i<grabber->getPixels().getNumPlanes();i++){
 				ofPixels plane = grabber->getPixels().getPlane(i);
 				bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glInternalFormat != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
 				if(bDiffPixFormat || !tex[i].isAllocated() ){

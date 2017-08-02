@@ -108,8 +108,8 @@ void ofApp::draw(){
     
     
     // draw our normals, and show that they are perpendicular to the vector from the center to the vertex
-    vector<ofVec3f> n = mesh.getNormals();
-    vector<ofVec3f> v = mesh.getVertices();
+    auto n = mesh.getNormals();
+    auto v = mesh.getVertices();
     float normalLength = 50.;
     
     if(!ofGetKeyPressed()){

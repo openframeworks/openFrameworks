@@ -83,52 +83,174 @@ inline const glm::quat & toGlm(const glm::quat & q){
 	return q;
 }
 
-//--------------------------------------------------------------
-inline ostream& operator<<(ostream& os, const glm::vec3& vec) {
-	os << vec.x << ", " << vec.y << ", " << vec.z;
-	return os;
-}
+namespace glm {
+	//--------------------------------------------------------------
+	template <typename T, precision P>
+	inline std::ostream& operator<<(std::ostream& os, const tvec3<T, P>& vec) {
+		os << vec.x << ", " << vec.y << ", " << vec.z;
+		return os;
+	}
 
-//--------------------------------------------------------------
-inline istream& operator>>(istream& is, glm::vec3& vec) {
-	is >> vec.x;
-	is.ignore(2);
-	is >> vec.y;
-	is.ignore(2);
-	is >> vec.z;
-	return is;
-}
+	//--------------------------------------------------------------
+	template <typename T, precision P>
+	inline std::istream& operator>>(std::istream& is, tvec3<T, P>& vec) {
+		is >> vec.x;
+		is.ignore(2);
+		is >> vec.y;
+		is.ignore(2);
+		is >> vec.z;
+		return is;
+	}
 
-//--------------------------------------------------------------
-inline ostream& operator<<(ostream& os, const glm::vec2& vec) {
-	os << vec.x << ", " << vec.y;
-	return os;
-}
+	//--------------------------------------------------------------
+	template <typename T, precision P>
+	inline std::ostream& operator<<(std::ostream& os, const tvec2<T, P>& vec) {
+		os << vec.x << ", " << vec.y;
+		return os;
+	}
 
-//--------------------------------------------------------------
-inline istream& operator>>(istream& is, glm::vec2& vec) {
-	is >> vec.x;
-	is.ignore(2);
-	is >> vec.y;
-	return is;
-}
+	//--------------------------------------------------------------
+	template <typename T, precision P>
+	inline std::istream& operator>>(std::istream& is, tvec2<T, P>& vec) {
+		is >> vec.x;
+		is.ignore(2);
+		is >> vec.y;
+		return is;
+	}
 
-//--------------------------------------------------------------
-inline ostream& operator<<(ostream& os, const glm::vec4& vec) {
-	os << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w;
-	return os;
-}
+	//--------------------------------------------------------------
+	template <typename T, precision P>
+	inline std::ostream& operator<<(std::ostream& os, const tvec4<T, P>& vec) {
+		os << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w;
+		return os;
+	}
 
-//--------------------------------------------------------------
-inline istream& operator>>(istream& is, glm::vec4& vec) {
-	is >> vec.x;
-	is.ignore(2);
-	is >> vec.y;
-	is.ignore(2);
-	is >> vec.z;
-	is.ignore(2);
-	is >> vec.w;
-	return is;
+	//--------------------------------------------------------------
+	template <typename T, precision P>
+	inline std::istream& operator>>(std::istream& is, tvec4<T, P>& vec) {
+		is >> vec.x;
+		is.ignore(2);
+		is >> vec.y;
+		is.ignore(2);
+		is >> vec.z;
+		is.ignore(2);
+		is >> vec.w;
+		return is;
+	}
+
+	//--------------------------------------------------------------
+	template <typename T, precision P>
+	inline std::ostream& operator<<(std::ostream& os, const tmat3x3<T, P>& mat) {
+		int w = 8;
+		os << setw(w)
+			<< mat[0][0] << ", " << setw(w)
+			<< mat[0][1] << ", " << setw(w)
+			<< mat[0][2] << std::endl;
+
+		os << setw(w)
+			<< mat[1][0] << ", " << setw(w)
+			<< mat[1][1] << ", " << setw(w)
+			<< mat[1][2] << std::endl;
+
+		os << setw(w)
+			<< mat[2][0] << ", " << setw(w)
+			<< mat[2][1] << ", " << setw(w)
+			<< mat[2][2];
+		return os;
+	}
+
+	//--------------------------------------------------------------
+	template <typename T, precision P>
+	inline std::istream& operator>>(std::istream& is, tmat3x3<T, P>& mat) {
+		is >> mat[0][0]; is.ignore(2);
+		is >> mat[0][1]; is.ignore(2);
+		is >> mat[0][2]; is.ignore(1);
+
+		is >> mat[1][0]; is.ignore(2);
+		is >> mat[1][1]; is.ignore(2);
+		is >> mat[1][2]; is.ignore(1);
+		
+		is >> mat[2][0]; is.ignore(2);
+		is >> mat[2][1]; is.ignore(2);
+		is >> mat[2][2];
+		return is;
+	}
+
+	//--------------------------------------------------------------
+	template <typename T, precision P>
+	inline std::ostream& operator<<(std::ostream& os, const tmat4x4<T, P>& mat) {
+		int w = 8;
+		os << setw(w)
+			<< mat[0][0] << ", " << setw(w)
+			<< mat[0][1] << ", " << setw(w)
+			<< mat[0][2] << ", " << setw(w)
+			<< mat[0][3] << std::endl;
+
+		os << setw(w)
+			<< mat[1][0] << ", " << setw(w)
+			<< mat[1][1] << ", " << setw(w)
+			<< mat[1][2] << ", " << setw(w)
+			<< mat[1][3] << std::endl;
+
+		os << setw(w)
+			<< mat[2][0] << ", " << setw(w)
+			<< mat[2][1] << ", " << setw(w)
+			<< mat[2][2] << ", " << setw(w)
+			<< mat[2][3] << std::endl;
+
+		os << setw(w)
+			<< mat[3][0] << ", " << setw(w)
+			<< mat[3][1] << ", " << setw(w)
+			<< mat[3][2] << ", " << setw(w)
+			<< mat[3][3];
+		return os;
+	}
+
+	//--------------------------------------------------------------
+	template <typename T, precision P>
+	inline std::istream& operator>>(std::istream& is, tmat4x4<T, P>& mat) {
+		is >> mat[0][0]; is.ignore(2);
+		is >> mat[0][1]; is.ignore(2);
+		is >> mat[0][2]; is.ignore(2);
+		is >> mat[0][3]; is.ignore(1);
+			  
+		is >> mat[1][0]; is.ignore(2);
+		is >> mat[1][1]; is.ignore(2);
+		is >> mat[1][2]; is.ignore(2);
+		is >> mat[1][3]; is.ignore(1);
+			  
+		is >> mat[2][0]; is.ignore(2);
+		is >> mat[2][1]; is.ignore(2);
+		is >> mat[2][2]; is.ignore(2);
+		is >> mat[2][3]; is.ignore(1);
+			  
+		is >> mat[3][0]; is.ignore(2);
+		is >> mat[3][1]; is.ignore(2);
+		is >> mat[3][2]; is.ignore(2);
+		is >> mat[3][3];
+		return is;
+	}
+
+	//----------------------------------------
+	template <typename T, precision P>
+	inline std::ostream& operator<<(std::ostream& os, const tquat<T, P>& q) {
+		os << q.w << ", " << q.x << ", " << q.y << ", " << q.z;
+		return os;
+	}
+
+
+	//----------------------------------------
+	template <typename T, precision P>
+	inline std::istream& operator>> (std::istream& is, tquat<T, P>& q) {
+		is >> q.w;
+		is.ignore(2);
+		is >> q.x;
+		is.ignore(2);
+		is >> q.y;
+		is.ignore(2);
+		is >> q.z;
+		return is;
+	}
 }
 
 //--------------------------------------------------------------

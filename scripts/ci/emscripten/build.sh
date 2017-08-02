@@ -27,18 +27,33 @@ cp scripts/templates/linux64/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
 sed -i s/ofxOsc// addons.make
 sed -i s/ofxNetwork// addons.make
-sed -i s/ofxSvg// addons.make
+#sed -i s/ofxSvg// addons.make
 sed -i s/ofxKinect// addons.make
 sed -i s/ofxThreadedImageLoader// addons.make
+#sed -i s/ofxAssimpModelLoader// addons.make
+#sed -i s/ofxGui// addons.make
+#sed -i s/ofxXmlSettings// addons.make
+#sed -i s/ofxOpenCv// addons.make
+
 sed -i "s/#include \"ofxOsc.h\"//" src/ofApp.h
 sed -i "s/#include \"ofxNetwork.h\"//" src/ofApp.h
-sed -i "s/#include \"ofxSvg.h\"//" src/ofApp.h
+#sed -i "s/#include \"ofxSvg.h\"//" src/ofApp.h
 sed -i "s/#include \"ofxKinect.h\"//" src/ofApp.h
 sed -i "s/#include \"ofxThreadedImageLoader.h\"//" src/ofApp.h
+#sed -i "s/#include \"ofxAssimpModelLoader.h\"//" src/ofApp.h
+#sed -i "s/#include \"ofxGui.h\"//" src/ofApp.h
+#sed -i "s/#include \"ofxXmlSettings.h\"//" src/ofApp.h
+#sed -i "s/#include \"ofxOpenCv.h\"//" src/ofApp.h
+
 sed -i "s/ofxTCPClient client;//" src/ofApp.h
 sed -i "s/ofxTCPServer server;//" src/ofApp.h
 sed -i "s/ofxOscSender osc_sender;//" src/ofApp.h
-sed -i "s/ofxSVG svg;//" src/ofApp.h
+#sed -i "s/ofxSVG svg;//" src/ofApp.h
 sed -i "s/ofxKinect kinect;//" src/ofApp.h
 sed -i "s/ofxThreadedImageLoader .*;//" src/ofApp.h
+#sed -i "s/ofxAssimpModelLoader .*;//" src/ofApp.h
+#sed -i "s/ofxPanel .*;//" src/ofApp.h
+#sed -i "s/ofxXmlSettings .*;//" src/ofApp.h
+#sed -i "s/ofxCv.* .*;//" src/ofApp.h
+
 emmake make Debug

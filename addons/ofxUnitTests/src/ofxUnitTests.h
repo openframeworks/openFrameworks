@@ -141,10 +141,12 @@ class ofxUnitTestsApp: public ofBaseApp{
 			ofLogError() <<  numTestsFailed << "/" << numTestsTotal << " tests failed";
 		}
 
-        ofLogNotice() << "took " << ofToString(durationMs) << "ms";
+		ofLogNotice() << "took " << ofToString(durationMs) << "ms";
+#if defined(TARGET_WIN32)
         if(!reportAppVeyor(passed, durationMs)){
             ++numTestsFailed;
         }
+#endif
         ofExit(numTestsFailed);
     }
 
@@ -244,6 +246,7 @@ private:
         return "\"" + var + "\": \"" + value + "\"";
     }
 
+#if defined(TARGET_WIN32)
     bool reportAppVeyor(bool passed, uint64_t durationMs){
         const std::string APPVEYOR_API_URL = "APPVEYOR_API_URL";
         if(ofGetEnv(APPVEYOR_API_URL)!=""){
@@ -272,6 +275,8 @@ private:
                         json_var_value("StdOut", stdOut) + ", " +
                         json_var_value("StdErr", stdErr) +
                     "}";
+            req.timeoutSeconds = 20;
+            ofLogNotice() << "Sending appveyor test results to " << req.url;
             ofURLFileLoader http;
             auto res = http.handleRequest(req);
             if(res.status<200 || res.status>=300){
@@ -282,12 +287,14 @@ private:
                 cout << req.body << endl;
                 return false;
             }else{
+                ofLogNotice() << "Test results sent correctly";
                 return true;
             }
         }else{
             return true;
         }
     }
+#endif
 
 	int numTestsTotal = 0;
 	int numTestsPassed = 0;

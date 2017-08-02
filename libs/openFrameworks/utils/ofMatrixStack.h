@@ -13,6 +13,7 @@
 #include "ofRectangle.h"
 #include "ofGraphics.h"
 
+class ofBaseDraws;
 class ofAppBaseWindow;
 class ofFbo;
 
@@ -20,7 +21,8 @@ class ofMatrixStack {
 public:
 	ofMatrixStack(const ofAppBaseWindow * window);
 
-	void setRenderSurface(const ofFbo & fbo);
+	void setRenderSurface(const ofBaseDraws & fbo);
+	void setRenderSurfaceNoMatrixFlip(const ofBaseDraws & fbo);
 	void setRenderSurface(const ofAppBaseWindow & window);
 
 	void setOrientation(ofOrientation orientation, bool vFlip);
@@ -74,7 +76,7 @@ private:
     ofOrientation orientation;
 	ofRectangle currentViewport;
 	ofHandednessType handedness;
-	ofFbo * currentFbo;
+	ofBaseDraws * currentRenderSurface;
 	ofAppBaseWindow * currentWindow;
 
     ofMatrixMode currentMatrixMode;
@@ -96,6 +98,7 @@ private:
 	std::stack <glm::mat4> projectionMatrixStack;
 	std::stack <glm::mat4> textureMatrixStack;
 	std::stack <std::pair<ofOrientation,bool> > orientationStack;
+	bool flipRenderSurfaceMatrix;
 
 	int getRenderSurfaceWidth() const;
 	int getRenderSurfaceHeight() const;

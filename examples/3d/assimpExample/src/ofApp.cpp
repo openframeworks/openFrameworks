@@ -10,7 +10,7 @@ void ofApp::setup(){
     bAnimate = false;
     bAnimateMouse = false;
     animationPosition = 0;
-    
+
     model.loadModel("astroBoy_walk.dae", false);
     model.setPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75 , 0);
     model.setLoopStateForAllAnimations(OF_LOOP_NORMAL);
@@ -18,15 +18,15 @@ void ofApp::setup(){
     if(!bAnimate) {
         model.setPausedForAllAnimations(true);
     }
-    
+
     bHelpText = true;
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     model.update();
-    
+
     if(bAnimateMouse) {
         model.setPositionForAllAnimations(animationPosition);
     }
@@ -37,11 +37,11 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofSetColor(255);
-    
+
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-    
+
 	ofEnableDepthTest();
-#ifndef TARGET_PROGRAMMABLE_GL    
+#ifndef TARGET_PROGRAMMABLE_GL
     glShadeModel(GL_SMOOTH); //some model / light stuff
 #endif
     light.enable();
@@ -49,23 +49,23 @@ void ofApp::draw(){
 
     ofPushMatrix();
     ofTranslate(model.getPosition().x+100, model.getPosition().y, 0);
-    ofRotate(-mouseX, 0, 1, 0);
+    ofRotateDeg(-mouseX, 0, 1, 0);
     ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
     model.drawFaces();
     ofPopMatrix();
-#ifndef TARGET_PROGRAMMABLE_GL    
+#ifndef TARGET_PROGRAMMABLE_GL
     glEnable(GL_NORMALIZE);
 #endif
     ofPushMatrix();
     ofTranslate(model.getPosition().x-300, model.getPosition().y, 0);
-    ofRotate(-mouseX, 0, 1, 0);
+    ofRotateDeg(-mouseX, 0, 1, 0);
     ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
-    
+
     ofxAssimpMeshHelper & meshHelper = model.getMeshHelper(0);
-    
+
     ofMultMatrix(model.getModelMatrix());
     ofMultMatrix(meshHelper.matrix);
-    
+
     ofMaterial & material = meshHelper.material;
     if(meshHelper.hasTexture()){
         meshHelper.getTextureRef().bind();
@@ -77,12 +77,12 @@ void ofApp::draw(){
         meshHelper.getTextureRef().unbind();
     }
     ofPopMatrix();
-    
+
     ofDisableDepthTest();
     light.disable();
     ofDisableLighting();
     ofDisableSeparateSpecularLight();
-    
+
     if(bHelpText){
     ofSetColor(255, 255, 255 );
     stringstream ss;

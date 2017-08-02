@@ -1,5 +1,10 @@
 #include "ofApp.h"
 
+#ifndef OF_VIDEO_CAPTURE_QTKIT
+    #error This example requires OF_VIDEO_PLAYER_QTKIT to be defined.  
+    #error For OS X versions > 10.6 and < 10.12 #define OF_VIDEO_PLAYER_QTKIT before including ofMain.h in main.cpp
+#endif
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 

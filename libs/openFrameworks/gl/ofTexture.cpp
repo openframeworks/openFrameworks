@@ -485,8 +485,18 @@ void ofTexture::setRGToRGBASwizzles(bool rToRGBSwizzles){
 	glBindTexture(texData.textureTarget,texData.textureID);
 	if(rToRGBSwizzles){
 		if(texData.glInternalFormat==GL_R8 ||
-				texData.glInternalFormat==GL_R16 ||
-				texData.glInternalFormat==GL_R32F){
+			texData.glInternalFormat==GL_R16 ||
+			texData.glInternalFormat==GL_R32F||
+			texData.glInternalFormat==GL_DEPTH_COMPONENT
+
+	#ifndef TARGET_OPENGLES
+			||
+			texData.glInternalFormat==GL_DEPTH_COMPONENT16 ||
+			texData.glInternalFormat==GL_DEPTH_COMPONENT24 ||
+			texData.glInternalFormat==GL_DEPTH_COMPONENT32
+
+	#endif
+		   ){
 			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_R, GL_RED);
 			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_G, GL_RED);
 			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_B, GL_RED);
@@ -529,15 +539,39 @@ void ofTexture::setSwizzle(GLenum srcSwizzle, GLenum dstChannel){
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(const unsigned char * data, int w, int h, int glFormat){
+void ofTexture::loadData(const uint8_t * data, int w, int h, int glFormat){
 	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,1,ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(data, w, h, glFormat, GL_UNSIGNED_BYTE);
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(const unsigned short * data, int w, int h, int glFormat){
+void ofTexture::loadData(const uint16_t * data, int w, int h, int glFormat){
 	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(data, w, h, glFormat, GL_UNSIGNED_SHORT);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const uint32_t * data, int w, int h, int glFormat){
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_SHORT);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const int8_t * data, int w, int h, int glFormat){
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,1,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_BYTE);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const int16_t * data, int w, int h, int glFormat){
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_SHORT);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const int32_t * data, int w, int h, int glFormat){
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_SHORT);
 }
 
 //----------------------------------------------------------
@@ -808,7 +842,7 @@ void ofTexture::setAlphaMask(ofTexture & mask){
 	if(mask.texData.textureTarget!=this->texData.textureTarget){
 		ofLogError("ofTexture") << "Cannot set alpha mask with different texture target";
 	}else{
-		texData.alphaMask = shared_ptr<ofTexture>(new ofTexture(mask));
+		texData.alphaMask = std::make_shared<ofTexture>(mask);
 	}
 }
 
@@ -988,8 +1022,17 @@ void ofTexture::draw(float x, float y, float z) const{
 }
 
 //------------------------------------
+void ofTexture::draw(const glm::vec3 & pos) const{
+	draw(pos.x,pos.y,pos.z,getWidth(),getHeight());
+}
+
+//------------------------------------
 void ofTexture::draw(float x, float y, float w, float h) const{
 	draw(x,y,0,w,h);
+}
+
+void ofTexture::draw(const glm::vec3 & pos, float w, float h) const{
+	draw(pos.x,pos.y,pos.z,w,h);
 }
 
 //------------------------------------
@@ -1005,6 +1048,11 @@ void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, flo
 //------------------------------------
 void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh) const{
 	drawSubsection(x,y,0,w,h,sx,sy,_sw,_sh);
+}
+
+//------------------------------------
+void ofTexture::drawSubsection(const ofRectangle& drawBounds, const ofRectangle& subsectionBounds) const {
+	drawSubsection(drawBounds.x,drawBounds.y,0,drawBounds.width,drawBounds.height,subsectionBounds.x,subsectionBounds.y,subsectionBounds.width,subsectionBounds.height);
 }
 
 //------------------------------------
