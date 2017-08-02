@@ -185,9 +185,9 @@ void ofFmodSoundPlayer::closeFmod(){
 }
 
 //------------------------------------------------------------
-bool ofFmodSoundPlayer::load(string fileName, bool stream){
+bool ofFmodSoundPlayer::load(const std::filesystem::path& _fileName, bool stream){
 
-	fileName = ofToDataPath(fileName);
+	auto fileName = ofToDataPath(_fileName);
 
 	// fmod uses IO posix internally, might have trouble
 	// with unicode paths...
@@ -214,7 +214,7 @@ bool ofFmodSoundPlayer::load(string fileName, bool stream){
 	int fmodFlags =  FMOD_SOFTWARE;
 	if(stream)fmodFlags =  FMOD_SOFTWARE | FMOD_CREATESTREAM;
 
-	result = FMOD_System_CreateSound(sys, fileName.c_str(),  fmodFlags, nullptr, &sound);
+    result = FMOD_System_CreateSound(sys, fileName.data(),  fmodFlags, nullptr, &sound);
 
 	if (result != FMOD_OK){
 		bLoadedOk = false;

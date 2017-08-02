@@ -47,7 +47,7 @@ else
 rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/"
 
 # ---- Code Sign App Package ----
- 
+
 # WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!
 
 # Verify that $CODE_SIGN_IDENTITY is set
@@ -172,7 +172,7 @@ fi
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>NO</string>
 				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>10.8</string>
+				<string>10.9</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
@@ -197,12 +197,7 @@ fi
 				<key>COPY_PHASE_STRIP</key>
 				<string>YES</string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)</string>
-				</array>
-				<key>FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1</key>
-				<string>"$(SRCROOT)/../../../libs/glut/lib/osx"</string>
+				<string>$(inherited)</string>
 				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
 				<string>YES</string>
 				<key>GCC_MODEL_TUNING</key>
@@ -416,7 +411,7 @@ fi
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>NO</string>
 				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>10.8</string>
+				<string>10.9</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>YES</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
@@ -471,7 +466,7 @@ fi
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>NO</string>
 				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>10.8</string>
+				<string>10.9</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
@@ -580,12 +575,7 @@ fi
 				<key>COPY_PHASE_STRIP</key>
 				<string>NO</string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)</string>
-				</array>
-				<key>FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1</key>
-				<string>"$(SRCROOT)/../../../libs/glut/lib/osx"</string>
+				<string>$(inherited)</string>
 				<key>GCC_DYNAMIC_NO_PIC</key>
 				<string>NO</string>
 				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
@@ -623,12 +613,7 @@ fi
 				<key>COPY_PHASE_STRIP</key>
 				<string>YES</string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)</string>
-				</array>
-				<key>FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1</key>
-				<string>"$(SRCROOT)/../../../libs/glut/lib/osx"</string>
+				<string>$(inherited)</string>
 				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
 				<string>YES</string>
 				<key>GCC_MODEL_TUNING</key>
@@ -673,7 +658,7 @@ fi
 		<key>E4B69E1D0A3A1BDC003C02F2</key>
 		<dict>
 			<key>fileEncoding</key>
-			<string>30</string>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
@@ -690,7 +675,7 @@ fi
 			<key>explicitFileType</key>
 			<string>sourcecode.cpp.cpp</string>
 			<key>fileEncoding</key>
-			<string>30</string>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>name</key>
@@ -703,7 +688,7 @@ fi
 		<key>E4B69E1F0A3A1BDC003C02F2</key>
 		<dict>
 			<key>fileEncoding</key>
-			<string>30</string>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
@@ -732,7 +717,7 @@ fi
 		<key>E4B6FCAD0C3E899E008CF71C</key>
 		<dict>
 			<key>fileEncoding</key>
-			<string>30</string>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
@@ -763,18 +748,10 @@ fi
 # Copy default icon file into App/Resources
 rsync -aved "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 # Copy libfmod and change install directory for fmod to run
-rsync -aved ../../../libs/fmodex/lib/osx/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
+rsync -aved "$OF_PATH/libs/fmodex/lib/osx/libfmodex.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 install_name_tool -change @executable_path/libfmodex.dylib @executable_path/../Frameworks/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";
 
 echo "$GCC_PREPROCESSOR_DEFINITIONS";
-APPSTORE=`expr "$GCC_PREPROCESSOR_DEFINITIONS" : ".*APPSTORE=\([0-9]*\)"`
-if [ -z "${APPSTORE}" ] ; then
-echo "Copying GLUT framework";
-# Copy GLUT framework (must remove for AppStore submissions)
-rsync -aved ../../../libs/glut/lib/osx/GLUT.framework "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/"
-else
-echo "Not including GLUT";
-fi
 </string>
 		</dict>
 		<key>E4C2427710CC5ABF004149E2</key>

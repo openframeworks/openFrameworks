@@ -324,7 +324,7 @@ void ofxAssimpModelLoader::loadGLResources(){
         	meshHelper.vbo.setNormalData(&mesh->mNormals[0].x,mesh->mNumVertices,usage,sizeof(aiVector3D));
         }
         if (meshHelper.cachedMesh.hasTexCoords()){			
-        	meshHelper.vbo.setTexCoordData(meshHelper.cachedMesh.getTexCoordsPointer()[0].getPtr(),mesh->mNumVertices,GL_STATIC_DRAW,sizeof(ofVec2f));
+			meshHelper.vbo.setTexCoordData(&meshHelper.cachedMesh.getTexCoords()[0].x, mesh->mNumVertices,GL_STATIC_DRAW,sizeof(ofVec2f));
         }
 
         meshHelper.indices.resize(mesh->mNumFaces * 3);

@@ -63,7 +63,7 @@ void ofApp::draw(){
     // we can pass in four values into the shader at the same time as a float array.
     // we do this by passing a pointer reference to the first element in the array.
     // inside the shader these four values are set inside a vec4 object.
-    shader.setUniform4fv("mouseColor", &mouseColor[0]);
+    shader.setUniform4fv("mouseColor", mouseColor);
     
     ofTranslate(cx, cy);
 

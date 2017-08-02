@@ -126,7 +126,10 @@ public:
 		return static_cast<T*>(mapRange(offset,length,access));
 	}
 
-	void copyTo(ofBufferObject & dstBuffer);
+	void copyTo(ofBufferObject & dstBuffer) const;
+	void copyTo(ofBufferObject & dstBuffer, int readOffset, int writeOffset, size_t size) const;
+
+    void invalidate();
 #endif
 
 	GLsizeiptr size() const;
@@ -138,7 +141,6 @@ private:
 		GLuint id;
 		GLsizeiptr size;
 		GLenum lastTarget;
-		bool useDSA;
 		bool isBound;
 	};
 	shared_ptr<Data> data;

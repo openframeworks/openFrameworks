@@ -22,12 +22,12 @@ public:
 	std::string title;
 	ofWindowMode windowMode;
 
-	void setPosition(const ofVec2f & position) {
+	void setPosition(const glm::vec2 & position) {
 		this->position = position;
 		this->positionSet = true;
 	}
 
-	const ofVec2f & getPosition() const {
+	const glm::vec2 & getPosition() const {
 		return position;
 	}
 
@@ -36,7 +36,7 @@ public:
 	}
 
 protected:
-	ofVec2f position;
+	glm::vec2 position;
 	bool positionSet;
 };
 

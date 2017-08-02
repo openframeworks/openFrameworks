@@ -154,6 +154,7 @@ ofxAndroidVideoGrabber::~ofxAndroidVideoGrabber(){
 
 void ofxAndroidVideoGrabber::Data::onAppPause(){
 	appPaused = true;
+	glDeleteTextures(1, &texture.texData.textureID);
 	texture.texData.textureID = 0;
 	ofLogVerbose("ofxAndroidVideoGrabber") << "ofPauseVideoGrabbers(): releasing textures";
 }
@@ -218,23 +219,6 @@ void ofxAndroidVideoGrabber::update(){
 		// This will tell the camera api that we are ready for a new frame
 		jmethodID update = ofGetJNIEnv()->GetMethodID(getJavaClass(), "update", "()V");
 		ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber, update);
-
-		// Get the texture matrix
-		jmethodID javaGetTextureMatrix = ofGetJNIEnv()->GetMethodID(getJavaClass(),"getTextureMatrix","([F)V");
-		if(!javaGetTextureMatrix){
-			ofLogError("ofxAndroidVideoPlayer") << "update(): couldn't get java javaGetTextureMatrix for VideoPlayer";
-			return;
-		}
-		ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber,javaGetTextureMatrix,data->matrixJava);
-		jfloat * m = ofGetJNIEnv()->GetFloatArrayElements(data->matrixJava,0);
-
-		ofMatrix4x4 vFlipTextureMatrix;
-		vFlipTextureMatrix.scale(-1,-1,1);
-		vFlipTextureMatrix.translate(1,1,0);
-		ofMatrix4x4 textureMatrix(m);
-		data->texture.setTextureMatrix(vFlipTextureMatrix * textureMatrix );
-
-		ofGetJNIEnv()->ReleaseFloatArrayElements(data->matrixJava,m,0);
 	} else {
 		data->bIsFrameNew = false;
 	}
@@ -726,7 +710,9 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 			ConvertYUV2toRGB565(currentFrame, pixels.getData(), width, height);
 		} else if (data->internalPixelFormat == OF_PIXELS_MONO) {
 			pixels.setFromPixels(currentFrame, width, height, OF_IMAGE_GRAYSCALE);
-		}
+		} else if (data->internalPixelFormat == OF_PIXELS_NV21) {
+            		pixels.setFromPixels(currentFrame, width, height, OF_PIXELS_NV21);
+        	}
 
 		if (needsResize) {
 			pixels.resize(data->width, data->height, OF_INTERPOLATE_NEAREST_NEIGHBOR);

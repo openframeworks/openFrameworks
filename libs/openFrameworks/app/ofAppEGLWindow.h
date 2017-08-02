@@ -60,8 +60,10 @@ public:
 	static bool needsPolling(){ return true; }
 	static void pollEvents();
 
+	using ofAppBaseGLESWindow::setup;
 	void setup(const Settings & settings);
 	void setup(const ofGLESWindowSettings & settings);
+
 	void update();
 	void draw();
 	void close();
@@ -81,9 +83,9 @@ public:
 	virtual void setWindowPosition(int x, int y);
 	virtual void setWindowShape(int w, int h);
 
-	virtual ofPoint	getWindowPosition();
-	virtual ofPoint	getWindowSize();
-	virtual ofPoint	getScreenSize();
+	virtual glm::vec2 getWindowPosition();
+	virtual glm::vec2 getWindowSize();
+	virtual glm::vec2 getScreenSize();
 
 	virtual void setOrientation(ofOrientation orientation);
 	virtual ofOrientation getOrientation();

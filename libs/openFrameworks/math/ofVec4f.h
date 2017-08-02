@@ -24,6 +24,10 @@ public:
 	ofVec4f( float _x, float _y, float _z, float _w );
 	ofVec4f( const ofVec2f& vec);
 	ofVec4f( const ofVec3f& vec);
+	ofVec4f( const glm::vec2& vec);
+	ofVec4f( const glm::vec3& vec);
+	ofVec4f( const glm::vec4& vec);
+	operator glm::vec4() const;
 
     /// \}
 
@@ -295,6 +299,13 @@ inline ofVec4f::ofVec4f( float _x,
 						float _z,
 						float _w ):x(_x), y(_y), z(_z), w(_w) {}
 
+inline ofVec4f::ofVec4f( const glm::vec2& v):x(v.x), y(v.y), z(0.0), w(0.0) {}
+inline ofVec4f::ofVec4f( const glm::vec3& v):x(v.x), y(v.y), z(v.z), w(0.0) {}
+inline ofVec4f::ofVec4f( const glm::vec4& v):x(v.x), y(v.y), z(v.z), w(v.w) {}
+
+inline ofVec4f::operator glm::vec4() const{
+	return glm::vec4(x,y,z,w);
+}
 // Getters and Setters.
 //
 //

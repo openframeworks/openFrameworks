@@ -38,4 +38,9 @@ public:
 	virtual void networkConnectedEvent(bool & connected){
 		networkConnected(connected);
 	}
+
+	virtual void deviceOrientationChanged(ofOrientation newOrientation){};
+	virtual void deviceOrientationChangedEvent(ofOrientation & newOrientation){
+		deviceOrientationChanged(newOrientation);
+	};
 };

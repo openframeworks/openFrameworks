@@ -2,8 +2,6 @@
 
 #include "ofConstants.h"
 #include "ofColor.h"
-#include "ofPoint.h"
-#include "ofMatrix4x4.h"
 #include "ofRectangle.h"
 #include "ofTypes.h"
 
@@ -199,7 +197,7 @@ void ofSetBackgroundColorHex(int hexColor, int alpha = 255);
 /// void ofApp::draw(){
 ///     if(ofGetFrameNum() % 10 == 0){
 ///         // draws a black background every 10 frames
-///         ofSetBackground(0,0,0);
+///         ofSetBackgroundColor(0,0,0);
 ///     }
 /// }
 /// ~~~~
@@ -282,7 +280,8 @@ OF_DEPRECATED_MSG("Use ofGetBackgroundAuto instead",bool ofbClearBg());
 /// ~~~~
 void ofDrawTriangle(float x1,float y1,float x2,float y2,float x3, float y3);
 void ofDrawTriangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3);
-void ofDrawTriangle(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3);
+void ofDrawTriangle(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3);
+void ofDrawTriangle(const glm::vec2 & p1, const glm::vec2 & p2, const glm::vec2 & p3);
 
 /// \brief Draws a circle, centered at x,y, with a given radius.
 ///
@@ -297,7 +296,8 @@ void ofDrawTriangle(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3);
 ///
 void ofDrawCircle(float x, float y, float radius);
 void ofDrawCircle(float x, float y, float z, float radius);
-void ofDrawCircle(const ofPoint & p, float radius);
+void ofDrawCircle(const glm::vec3 & p, float radius);
+void ofDrawCircle(const glm::vec2 & p, float radius);
 
 /// \brief Draws an ellipse from point (x,y) with a given width (w) and height (h).
 /// ~~~~{.cpp}
@@ -307,7 +307,8 @@ void ofDrawCircle(const ofPoint & p, float radius);
 /// ~~~~
 void ofDrawEllipse(float x, float y, float width, float height);
 void ofDrawEllipse(float x, float y, float z, float width, float height);
-void ofDrawEllipse(const ofPoint & p, float width, float height);
+void ofDrawEllipse(const glm::vec3 & p, float width, float height);
+void ofDrawEllipse(const glm::vec2 & p, float width, float height);
 
 /// Draws a line between two points: (x1,y1),(x2,y2).
 /// ~~~~{.cpp}
@@ -317,7 +318,8 @@ void ofDrawEllipse(const ofPoint & p, float width, float height);
 /// ~~~~
 void ofDrawLine(float x1,float y1,float x2,float y2);
 void ofDrawLine(float x1,float y1,float z1,float x2,float y2,float z2);
-void ofDrawLine(const ofPoint & p1, const ofPoint & p2);
+void ofDrawLine(const glm::vec3 & p1, const glm::vec3 & p2);
+void ofDrawLine(const glm::vec2 & p1, const glm::vec2 & p2);
 
 /// \brief Draws a rectangle from point x,y with a given width and height.
 /// ~~~~{.cpp}
@@ -346,14 +348,15 @@ void ofDrawRectangle(const ofRectangle & r);
 /// \brief Draws an rectangle from point p, with a given width and height.
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofPoint p;      // create a point P
+///     glm::vec3 p;      // create a point P
 ///     p.x = 10;       // set the x of the point
 ///     p.y = 10;       // set the y of the point
 ///
 ///     ofDrawRectangle(p, 80, 80); // Draw the rectangle
 /// }
 /// ~~~~
-void ofDrawRectangle(const ofPoint & p,float w,float h);
+void ofDrawRectangle(const glm::vec3 & p,float w,float h);
+void ofDrawRectangle(const glm::vec2 & p,float w,float h);
 
 
 /// Draws an rectangle from point X, Y at depth Z with a given width and height.
@@ -390,7 +393,8 @@ void ofDrawRectRounded(const ofRectangle & b, float r);
 ///     ofDrawRectRounded( p, 100, 100, 10 );
 /// }
 /// ~~~~
-void ofDrawRectRounded(const ofPoint & p, float w, float h, float r);
+void ofDrawRectRounded(const glm::vec3 & p, float w, float h, float r);
+void ofDrawRectRounded(const glm::vec2 & p, float w, float h, float r);
 
 
 /// \brief Draws a rectangle from point X, Y with a given width, height and radius of
@@ -423,7 +427,11 @@ void ofDrawRectRounded(float x, float y, float z, float w, float h, float r);
 ///     ofDrawRectRounded(10, 10, 10, 100, 100, 10);
 /// }
 /// ~~~~
-void ofDrawRectRounded(const ofPoint & p, float w, float h, float topLeftRadius,
+void ofDrawRectRounded(const glm::vec3 & p, float w, float h, float topLeftRadius,
+					   float topRightRadius,
+					   float bottomRightRadius,
+					   float bottomLeftRadius);
+void ofDrawRectRounded(const glm::vec2 & p, float w, float h, float topLeftRadius,
 					   float topRightRadius,
 					   float bottomRightRadius,
 					   float bottomLeftRadius);
@@ -473,32 +481,32 @@ void ofDrawBezier(float x0, float y0, float z0, float x1, float y1, float z1, fl
 
 OF_DEPRECATED_MSG("Use ofDrawTriangle instead",void ofTriangle(float x1,float y1,float x2,float y2,float x3, float y3));
 OF_DEPRECATED_MSG("Use ofDrawTriangle instead",void ofTriangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3));
-OF_DEPRECATED_MSG("Use ofDrawTriangle instead",void ofTriangle(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3));
+OF_DEPRECATED_MSG("Use ofDrawTriangle instead",void ofTriangle(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3));
 
 OF_DEPRECATED_MSG("Use ofDrawCircle instead",void ofCircle(float x, float y, float radius));
 OF_DEPRECATED_MSG("Use ofDrawCircle instead",void ofCircle(float x, float y, float z, float radius));
-OF_DEPRECATED_MSG("Use ofDrawCircle instead",void ofCircle(const ofPoint & p, float radius));
+OF_DEPRECATED_MSG("Use ofDrawCircle instead",void ofCircle(const glm::vec3 & p, float radius));
 
 OF_DEPRECATED_MSG("Use ofDrawEllipse instead",void ofEllipse(float x, float y, float width, float height));
 OF_DEPRECATED_MSG("Use ofDrawEllipse instead",void ofEllipse(float x, float y, float z, float width, float height));
-OF_DEPRECATED_MSG("Use ofDrawEllipse instead",void ofEllipse(const ofPoint & p, float width, float height));
+OF_DEPRECATED_MSG("Use ofDrawEllipse instead",void ofEllipse(const glm::vec3 & p, float width, float height));
 
 OF_DEPRECATED_MSG("Use ofDrawLine instead",void ofLine(float x1,float y1,float x2,float y2));
 OF_DEPRECATED_MSG("Use ofDrawLine instead",void ofLine(float x1,float y1,float z1,float x2,float y2,float z2));
-OF_DEPRECATED_MSG("Use ofDrawLine instead",void ofLine(const ofPoint & p1, const ofPoint & p2));
+OF_DEPRECATED_MSG("Use ofDrawLine instead",void ofLine(const glm::vec3 & p1, const glm::vec3 & p2));
 
 OF_DEPRECATED_MSG("Use ofDrawRectangle instead",void ofRect(float x1,float y1,float w,float h));
 OF_DEPRECATED_MSG("Use ofDrawRectangle instead",void ofRect(const ofRectangle & r));
-OF_DEPRECATED_MSG("Use ofDrawRectangle instead",void ofRect(const ofPoint & p,float w,float h));
+OF_DEPRECATED_MSG("Use ofDrawRectangle instead",void ofRect(const glm::vec3 & p,float w,float h));
 OF_DEPRECATED_MSG("Use ofDrawRectangle instead",void ofRect(float x,float y,float z,float w,float h));
 
 OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(const ofRectangle & b, float r));
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(const ofPoint & p, float w, float h, float r));
+OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(const glm::vec3 & p, float w, float h, float r));
 OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(float x, float y, float w, float h, float r));
 OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(float x, float y, float z, float w, float h, float r));
 
 //----------------------------------------------------------
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(const ofPoint & p, float w, float h, float topLeftRadius,
+OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(const glm::vec3 & p, float w, float h, float topLeftRadius,
 																	 float topRightRadius,
 																	 float bottomRightRadius,
 																	 float bottomLeftRadius));
@@ -545,8 +553,12 @@ void ofBeginShape();
 /// ofEndShape().
 void ofVertex(float x, float y);
 void ofVertex(float x, float y, float z);
-void ofVertex(ofPoint & p);
-void ofVertices(const vector <ofPoint> & polyPoints);
+void ofVertex(const glm::vec3 & p);
+void ofVertex(const glm::vec2 & p);
+void ofVertices(const vector <glm::vec3> & polyPoints);
+void ofVertices(const vector <glm::vec2> & polyPoints);
+void ofVertices(const vector <ofVec3f> & polyPoints);
+void ofVertices(const vector <ofVec2f> & polyPoints);
 
 /// \brief Specifies a single point of a shape. The difference from ofVertex is that
 /// the line describing the edge of the shape between two points will be a
@@ -556,16 +568,21 @@ void ofVertices(const vector <ofPoint> & polyPoints);
 /// This function has to be called between ofBeginShape() and ofEndShape().
 void ofCurveVertex(float x, float y);
 void ofCurveVertex(float x, float y, float z);
-void ofCurveVertex(ofPoint & p);
+void ofCurveVertex(const glm::vec3 & p);
+void ofCurveVertex(const glm::vec2 & p);
 
 /// \brief Draws a curve through a series of vertices stored as a vector of
 /// ofPoints. Should be called between ofBeginShape() and ofEndShape().
-void ofCurveVertices(const vector <ofPoint> & curvePoints);
+void ofCurveVertices(const vector <glm::vec3> & curvePoints);
+void ofCurveVertices(const vector <glm::vec2> & curvePoints);
+void ofCurveVertices(const vector <ofVec3f> & curvePoints);
+void ofCurveVertices(const vector <ofVec2f> & curvePoints);
 
 /// \brief Describes a bezier curve through three points of a shape. To be called
 /// between ofBeginShape() and ofEndShape().
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
-void ofBezierVertex(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3);
+void ofBezierVertex(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3);
+void ofBezierVertex(const glm::vec2 & p1, const glm::vec2 & p2, const glm::vec2 & p3);
 void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 
 
@@ -596,11 +613,19 @@ void ofNextContour(bool bClose = false);  // for multi contour shapes!
 ///
 /// Valid modes:
 ///
-///     OF_BITMAPMODE_SIMPLE
-///     OF_BITMAPMODE_SCREEN
-///     OF_BITMAPMODE_VIEWPORT
-///     OF_BITMAPMODE_MODEL
-///     OF_BITMAPMODE_MODEL_BILLBOARD
+/// OF_BITMAPMODE_SCREEN: this is the default mode. It projects the 3d prosition onto
+/// the screen so the letters always look the same size but can be positioned in any 3d coordinate.
+///
+/// OF_BITMAPMODE_VIEWPORT: does the same as screen but uses the current viewport instead
+/// of the full window if it's different.
+///
+/// OF_BITMAPMODE_MODEL: uses real 3d coordinates so the text will look scaled if it's not in z=0
+///
+/// OF_BITMAPMODE_MODEL_BILLBOARD: uses real 3d coordinates but the text always faces the camera.
+///
+/// OF_BITMAPMODE_SIMPLE: only does 2d and the z coordinate is just disacarded, so if z is not 0
+/// the position in which it'll be drawn will be wrong.
+///
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
 
 /// \brief Draws a bitmapped string, on screen, at point (x,y).
@@ -635,12 +660,13 @@ void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
 template<typename T>
 void ofDrawBitmapString(const T & textString, float x, float y);
 template<typename T>
-void ofDrawBitmapString(const T & textString, const ofPoint & p);
+void ofDrawBitmapString(const T & textString, const glm::vec3 & p);
 template<typename T>
 void ofDrawBitmapString(const T & textString, float x, float y, float z);
 template<>
 void ofDrawBitmapString(const string & textString, float x, float y, float z);
-void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
+void ofDrawBitmapStringHighlight(string text, const glm::vec3& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
+void ofDrawBitmapStringHighlight(string text, const glm::vec2& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
 void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
 
 
@@ -897,7 +923,7 @@ void ofPushMatrix();
 void ofPopMatrix();
 
 /// \brief Query the current (oF internal) Transformation Matrix state.
-ofMatrix4x4 ofGetCurrentMatrix(ofMatrixMode matrixMode);
+glm::mat4 ofGetCurrentMatrix(ofMatrixMode matrixMode);
 
 /// \brief Query the current (oF internal) Orientation Matrix state.
 /// \note  The matrix returned is the matrix openFrameworks uses internally
@@ -906,7 +932,7 @@ ofMatrix4x4 ofGetCurrentMatrix(ofMatrixMode matrixMode);
 ///
 ///        Currently, only GL Programmable Renderer and GL Renderer
 ///        implement ofGetCurrentOrientationMatrix.
-ofMatrix4x4 ofGetCurrentOrientationMatrix();
+glm::mat4 ofGetCurrentOrientationMatrix();
 
 /// \brief Query the current (oF internal) Normal Matrix state.
 /// \note  The matrix returned is the transposed of the inverse of the
@@ -914,7 +940,7 @@ ofMatrix4x4 ofGetCurrentOrientationMatrix();
 ///
 ///        Currently, only GL Programmable Renderer and GL Renderer
 ///        implement ofGetCurrentNormalMatrix.
-ofMatrix4x4 ofGetCurrentNormalMatrix();
+glm::mat4 ofGetCurrentNormalMatrix();
 
 /// \brief Translate by (x,y,z) vector of our coordinate system.
 /// The call of ofTranslate() modifies graphics positions.
@@ -929,14 +955,15 @@ ofMatrix4x4 ofGetCurrentNormalMatrix();
 /// ~~~~
 void ofTranslate(float x, float y, float z = 0);
 
-void ofTranslate(const ofPoint & p);
+void ofTranslate(const glm::vec3 & p);
+void ofTranslate(const glm::vec2 & p);
 
 void ofScale(float xAmnt, float yAmnt, float zAmnt = 1);
 
 /// \brief Scale along the X, Y and Z axis with the same amount.
 void ofScale(float amount);
 
-void ofScale(const ofPoint & p);
+void ofScale(const glm::vec3 & p);
 
 /// \brief Produces a rotation around the vector (vecX,vecY,vecZ).
 ///
@@ -953,10 +980,10 @@ void ofScale(const ofPoint & p);
 /// \param vecX specifies the x coordinates of a vector
 /// \param vecY specifies the y coordinates of a vector
 /// \param vecZ specifies the z coordinates of a vector
-void ofRotate(float degrees, float vecX, float vecY, float vecZ);
+OF_DEPRECATED_MSG("Use ofRotateDeg or ofRotateRad", void ofRotate(float degrees, float vecX, float vecY, float vecZ));
 
 /// \brief Rotate around the z-axis
-void ofRotate(float degrees);
+OF_DEPRECATED_MSG("Use ofRotateDeg or ofRotateRad", void ofRotate(float degrees));
 
 /// \brief Produces a rotation around the X-axis of our coordinate
 /// system represented by the vector (1,0,0).
@@ -967,7 +994,7 @@ void ofRotate(float degrees);
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
-void ofRotateX(float degrees);
+OF_DEPRECATED_MSG("Use ofRotateXDeg or ofRotateXRad", void ofRotateX(float degrees));
 
 /// \brief Produces a rotation around the Y-axis of our coordinate
 /// system represented by the vector (0,1,0).
@@ -978,7 +1005,7 @@ void ofRotateX(float degrees);
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
-void ofRotateY(float degrees);
+OF_DEPRECATED_MSG("Use ofRotateYDeg or ofRotateYRad", void ofRotateY(float degrees));
 
 /// \brief Produces a rotation around the Z-axis of our coordinate
 /// system represented by the vector (0,0,1).
@@ -989,22 +1016,127 @@ void ofRotateY(float degrees);
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
-void ofRotateZ(float degrees);
+OF_DEPRECATED_MSG("Use ofRotateZDeg or ofRotateZRad", void ofRotateZ(float degrees));
 
+/// \brief Produces a rotation around the vector (vecX,vecY,vecZ).
+///
+/// All graphics drawn after ofRotate is called are rotated. Use ofPushMatrix()
+/// and ofPopMatrix() to save and restore the unrotated coordinate system.
+/// ~~~~{.cpp}
+/// void ofApp::draw(){
+///     ofRotate(50, 1, 0.5, 0); //rotates the coordinate system 50 degrees along the x-axis and 25 degrees on the y-axis
+///     ofDrawRectangle(20,20,100,100);
+/// }
+/// ~~~~
+///
+/// \param degrees Specifies the angle of rotation, in degrees.
+/// \param vecX specifies the x coordinates of a vector
+/// \param vecY specifies the y coordinates of a vector
+/// \param vecZ specifies the z coordinates of a vector
+void ofRotateDeg(float degrees, float vecX, float vecY, float vecZ);
+
+/// \brief Rotate around the z-axis
+void ofRotateDeg(float degrees);
+
+/// \brief Produces a rotation around the X-axis of our coordinate
+/// system represented by the vector (1,0,0).
+/// ~~~~{.cpp}
+/// void ofApp::draw(){
+///     ofRotateX(45); //rotates the coordinate system 45 degrees around the x-axis
+///     ofDrawRectangle(20,20,100,100);
+/// }
+/// ~~~~
+/// \param degrees Specifies the angle of rotation, in degrees.
+void ofRotateXDeg(float degrees);
+
+/// \brief Produces a rotation around the Y-axis of our coordinate
+/// system represented by the vector (0,1,0).
+/// ~~~~{.cpp}
+/// void ofApp::draw(){
+///     ofRotateY(45); //rotates the coordinate system 45 degrees around the y-axis
+///     ofDrawRectangle(20,20,100,100);
+/// }
+/// ~~~~
+/// \param degrees Specifies the angle of rotation, in degrees.
+void ofRotateYDeg(float degrees);
+
+/// \brief Produces a rotation around the Z-axis of our coordinate
+/// system represented by the vector (0,0,1).
+/// ~~~~{.cpp}
+/// void ofApp::draw(){
+///     ofRotateZ(45); //rotates the coordinate system 45 degrees around the z-axis
+///     ofDrawRectangle(20,20,100,100);
+/// }
+/// ~~~~
+/// \param degrees Specifies the angle of rotation, in degrees.
+void ofRotateZDeg(float degrees);
+
+/// \brief Produces a rotation around the vector (vecX,vecY,vecZ).
+///
+/// All graphics drawn after ofRotate is called are rotated. Use ofPushMatrix()
+/// and ofPopMatrix() to save and restore the unrotated coordinate system.
+/// ~~~~{.cpp}
+/// void ofApp::draw(){
+///     ofRotate(50, 1, 0.5, 0); //rotates the coordinate system 50 degrees along the x-axis and 25 degrees on the y-axis
+///     ofDrawRectangle(20,20,100,100);
+/// }
+/// ~~~~
+///
+/// \param degrees Specifies the angle of rotation, in degrees.
+/// \param vecX specifies the x coordinates of a vector
+/// \param vecY specifies the y coordinates of a vector
+/// \param vecZ specifies the z coordinates of a vector
+void ofRotateRad(float degrees, float vecX, float vecY, float vecZ);
+
+/// \brief Rotate around the z-axis
+void ofRotateRad(float degrees);
+
+/// \brief Produces a rotation around the X-axis of our coordinate
+/// system represented by the vector (1,0,0).
+/// ~~~~{.cpp}
+/// void ofApp::draw(){
+///     ofRotateX(45); //rotates the coordinate system 45 degrees around the x-axis
+///     ofDrawRectangle(20,20,100,100);
+/// }
+/// ~~~~
+/// \param degrees Specifies the angle of rotation, in degrees.
+void ofRotateXRad(float degrees);
+
+/// \brief Produces a rotation around the Y-axis of our coordinate
+/// system represented by the vector (0,1,0).
+/// ~~~~{.cpp}
+/// void ofApp::draw(){
+///     ofRotateY(45); //rotates the coordinate system 45 degrees around the y-axis
+///     ofDrawRectangle(20,20,100,100);
+/// }
+/// ~~~~
+/// \param degrees Specifies the angle of rotation, in degrees.
+void ofRotateYRad(float degrees);
+
+/// \brief Produces a rotation around the Z-axis of our coordinate
+/// system represented by the vector (0,0,1).
+/// ~~~~{.cpp}
+/// void ofApp::draw(){
+///     ofRotateZ(45); //rotates the coordinate system 45 degrees around the z-axis
+///     ofDrawRectangle(20,20,100,100);
+/// }
+/// ~~~~
+/// \param degrees Specifies the angle of rotation, in degrees.
+void ofRotateZRad(float degrees);
 
 /// \}
 /// \name Matrix Transformation
 /// \{
 
 void ofLoadIdentityMatrix (void);
-void ofLoadMatrix (const ofMatrix4x4 & m);   // Andreas: I've included both a ofMatrix4x4* and a float* version here,
-void ofLoadMatrix (const float *m);     // ideally we would always use ofMatrix4x4, but in a lot of temporary
-void ofMultMatrix (const ofMatrix4x4 & m);  // ofMatrix4x4 objects when interacting with non-OF code
+void ofLoadMatrix (const glm::mat4 & m);   // Andreas: I've included both a mat and a float* version here,
+void ofLoadMatrix (const float *m);     // ideally we would always use mat4, but in a lot of temporary
+void ofMultMatrix (const glm::mat4 & m);  // mat objects when interacting with non-OF code
 void ofMultMatrix (const float *m);
 void ofSetMatrixMode(ofMatrixMode matrixMode);
-void ofLoadViewMatrix(const ofMatrix4x4 & m);
-void ofMultViewMatrix(const ofMatrix4x4 & m);
-ofMatrix4x4 ofGetCurrentViewMatrix();
+void ofLoadViewMatrix(const glm::mat4 & m);
+void ofMultViewMatrix(const glm::mat4 & m);
+glm::mat4 ofGetCurrentViewMatrix();
 
 
 /// \}
@@ -1104,8 +1236,14 @@ void ofEndSaveScreenAsSVG();
 
 //--------------------------------------------------
 template<typename T>
-void ofDrawBitmapString(const T & textString, const ofPoint & p){
+void ofDrawBitmapString(const T & textString, const glm::vec3 & p){
 	ofDrawBitmapString(textString, p.x, p.y, p.z);
+}
+
+//--------------------------------------------------
+template<typename T>
+void ofDrawBitmapString(const T & textString, const glm::vec2 & p){
+	ofDrawBitmapString(textString, p.x, p.y);
 }
 
 //--------------------------------------------------

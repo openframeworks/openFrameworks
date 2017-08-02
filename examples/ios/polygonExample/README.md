@@ -1,9 +1,9 @@
-#About polygonExample
+# About polygonExample
 
 ![Screenshot of polygonExample](polygonExample.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This Example demonstrates various methods of working with polygon shapes and vertices.
 
@@ -30,10 +30,10 @@ When launching this app, you should see a screen with
 * 9 differently colored polygon shapes labeled (a) through (i)
 * Some bitmap text underneath each polygon shape
 
-###Instructions for use:
+### Instructions for use:
 
 * Move the vertex points of the ofCurveVertex polygon (f) to adjust its size.
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no other classes.

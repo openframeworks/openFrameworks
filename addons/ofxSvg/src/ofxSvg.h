@@ -1,7 +1,6 @@
 #pragma once
 
 //#include "ofMain.h"
-#include "svgtiny.h"
 #include "ofPath.h"
 #include "ofTypes.h"
 

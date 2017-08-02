@@ -32,7 +32,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef BUILD_AUDIO
 
 static void dump_bl_cmd(freenect_context* ctx, bootloader_command cmd) {
 	int i;
@@ -181,8 +180,9 @@ FN_INTERNAL int upload_firmware(fnusb_dev* dev, char * filename) {
 				break;
 			case 3:
 				//fwfile = "/usr/local/share/libfreenect/audios.bin";
+                fwfile = (char *)malloc(2048);
+                needs_free = 1;
                 sprintf(fwfile, "/usr/local/share/libfreenect%s", fw_filename);
-
 				break;
 			case 4:
 				//fwfile = "/usr/share/libfreenect/audios.bin";
@@ -418,6 +418,3 @@ FN_INTERNAL int upload_cemd_data(fnusb_dev* dev) {
 	FN_INFO("CEMD data uploaded successfully.\n");
 	return 0;
 }
-
-#endif
-

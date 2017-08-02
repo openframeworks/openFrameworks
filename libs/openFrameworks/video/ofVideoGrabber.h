@@ -22,6 +22,11 @@
 	#define OF_VID_GRABBER_TYPE ofQTKitGrabber
 #endif
 
+#ifdef OF_VIDEO_CAPTURE_AVF
+	#include "ofAVFoundationGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofAVFoundationGrabber
+#endif
+
 #ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	#include "ofDirectShowGrabber.h"
 	#define OF_VID_GRABBER_TYPE ofDirectShowGrabber
@@ -53,7 +58,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		bool				isFrameNew() const;
 		void				update();
 		void				close();	
-		bool				setup(int w, int h){return setup(w,h,true);}
+		bool				setup(int w, int h){return setup(w,h,bUseTexture);}
 		bool				setup(int w, int h, bool bTexture);
 		OF_DEPRECATED_MSG("Use setup instead",bool initGrabber(int w, int h){return setup(w,h);})
 		OF_DEPRECATED_MSG("Use setup instead",bool initGrabber(int w, int h, bool bTexture));

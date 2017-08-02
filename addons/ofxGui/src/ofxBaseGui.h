@@ -16,10 +16,15 @@ class ofxBaseGui {
 		void saveToFile(const std::string& filename);
 		void loadFromFile(const std::string& filename);
 
-		void setDefaultSerializer(std::shared_ptr <ofBaseFileSerializer> serializer);
+		template<class T>
+		void saveTo(T & serializer){
+			ofSerialize(serializer, getParameter());
+		}
 
-		virtual void saveTo(ofBaseSerializer & serializer);
-		virtual void loadFrom(ofBaseSerializer & serializer);
+		template<class T>
+		void loadFrom(T & serializer){
+			ofDeserialize(serializer, getParameter());
+		}
 
 		std::string getName();
 		void setName(const std::string& name);
@@ -57,31 +62,36 @@ class ofxBaseGui {
 		static void setDefaultWidth(int width);
 		static void setDefaultHeight(int height);
 
-		virtual ofAbstractParameter & getParameter() = 0;
+		static void setDefaultEventsPriority(ofEventOrder eventsPriority);
+
 		static void loadFont(const std::string& filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, int dpi = 0);
+		static void loadFont(const ofTrueTypeFont::Settings & fontSettings);
 		static void setUseTTF(bool bUseTTF);
 
 		void registerMouseEvents();
 		void unregisterMouseEvents();
 
 		virtual void sizeChangedCB();
-		void setParent(ofxBaseGui * parent);
+		virtual void setParent(ofxBaseGui * parent);
 		ofxBaseGui * getParent();
 
+		virtual ofAbstractParameter & getParameter() = 0;
 		virtual bool mouseMoved(ofMouseEventArgs & args) = 0;
 		virtual bool mousePressed(ofMouseEventArgs & args) = 0;
 		virtual bool mouseDragged(ofMouseEventArgs & args) = 0;
 		virtual bool mouseReleased(ofMouseEventArgs & args) = 0;
 		virtual bool mouseScrolled(ofMouseEventArgs & args) = 0;
-		virtual void mouseEntered(ofMouseEventArgs & args){
+		virtual void mouseEntered(ofMouseEventArgs &){
 		}
-		virtual void mouseExited(ofMouseEventArgs & args){
+		virtual void mouseExited(ofMouseEventArgs &){
 		}
 
 	protected:
 		virtual void render() = 0;
-		bool isGuiDrawing();
 		virtual bool setValue(float mx, float my, bool bCheckBounds) = 0;
+		virtual void generateDraw() = 0;
+
+		bool isGuiDrawing();
 		void bindFontTexture();
 		void unbindFontTexture();
 		ofMesh getTextMesh(const std::string & text, float x, float y);
@@ -94,7 +104,6 @@ class ofxBaseGui {
 		static bool fontLoaded;
 		static bool useTTF;
 		static ofBitmapFont bitmapFont;
-		std::shared_ptr <ofBaseFileSerializer> serializer;
 
 		static ofColor headerBackgroundColor;
 		static ofColor backgroundColor;
@@ -111,15 +120,16 @@ class ofxBaseGui {
 		static int textPadding;
 		static int defaultWidth;
 		static int defaultHeight;
+		static ofEventOrder defaultEventsPriority;
 
 		static std::string saveStencilToHex(const ofImage & img);
 		static void loadStencilFromHex(ofImage & img, unsigned char * data);
 
 		void setNeedsRedraw();
-		virtual void generateDraw() = 0;
 
 	private:
 		bool needsRedraw;
 		unsigned long currentFrame;
 		bool bRegisteredForMouseEvents;
+		//std::vector<ofEventListener> coreListeners;
 };

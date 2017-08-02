@@ -37,6 +37,7 @@ class ofxCvBlob {
 
         //----------------------------------------
         void draw(float x = 0, float y = 0){
+            ofPushStyle();
             ofNoFill();
             ofSetHexColor(0x00FFFF);
             ofBeginShape();
@@ -46,5 +47,6 @@ class ofxCvBlob {
             ofEndShape(true);
             ofSetHexColor(0xff0099);
             ofDrawRectangle(x + boundingRect.x, y + boundingRect.y, boundingRect.width, boundingRect.height);
+            ofPopStyle();
         }
 };
