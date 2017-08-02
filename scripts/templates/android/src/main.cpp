@@ -13,14 +13,14 @@ int main(){
 
 
 #ifdef TARGET_ANDROID
-void OFAndroidInit()
+void ofAndroidApplicationInit()
 {
     //application scope init
 }
 
-void OFAndroidCreate()
+void ofAndroidActivityInit()
 {
-	//activity scope init
-	main();
+    //activity scope init
+    main();
 }
 #endif

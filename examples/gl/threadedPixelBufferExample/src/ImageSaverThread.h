@@ -19,5 +19,4 @@ private:
 	ofPixels pixels;
 	ofThreadChannel<unsigned char *> channel;
 	ofThreadChannel<bool> channelReady;
-	bool firstFrame;
 };

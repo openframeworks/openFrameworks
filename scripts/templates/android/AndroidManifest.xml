@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cc.openframeworks.TEMPLATE_APP_NAME"
-    android:versionCode="1"
-    android:versionName="1.0" 
+    package="cc.openframeworks.TEMPLATE_PACKAGE_NAME"
     android:installLocation="preferExternal">
 
-    <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="22" />
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <!-- Add custom permissions here, for example -->
+    <!--<uses-permission android:name="android.permission.CAMERA"/>-->
+    <!--<uses-permission android:name="android.permission.INTERNET"/>-->
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.AppCompat" >
+        android:theme="@style/AppTheme"
+        >
+
+        <!-- If you want to use a custom android activity, then change the name here -->
         <activity
-            android:name=".OFActivity"
+            android:name="cc.openframeworks.TEMPLATE_PACKAGE_NAME.OFActivity"
             android:label="@string/app_name"  android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -1,8 +1,8 @@
-#About ofBoxExample
+# About ofBoxExample
 
 ![Screenshot of ofBoxExample](ofBoxExample.jpg)
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates the use of the 3D primitive the ofBox. After studying this example, you'll observe some basic information involved in:
 
@@ -18,7 +18,7 @@ In the example, pay attention to:
 	* Try commenting out ````ofEnableNormalizedTexCoords()```` and see what the difference is
 * The importance of having a light in your 3D scene
 
-###Expected Behavior
+### Expected Behavior
 
 When launching this app, you should see a screen with:
 
@@ -30,7 +30,7 @@ Instructions for using the app:
 * Click and drag (or scroll) in the window to move the 3D Scene. Double click to reset the camera.
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 * ofEasycam
 * ofLight

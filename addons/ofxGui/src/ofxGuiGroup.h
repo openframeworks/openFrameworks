@@ -22,6 +22,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		typename std::enable_if<std::is_arithmetic<T>::value, void>::type add(ofParameter<T> & p){
 			add(new ofxSlider<T>(p));
 		}
+		void add(ofParameter <void> & parameter);
 		void add(ofParameter <bool> & parameter);
 		void add(ofParameter <std::string> & parameter);
 		void add(ofParameter <ofVec2f> & parameter);
@@ -38,6 +39,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		void maximize();
 		void minimizeAll();
 		void maximizeAll();
+		bool isMinimized() const;
 
 		void setWidthElements(float w);
 
@@ -71,6 +73,8 @@ class ofxGuiGroup : public ofxBaseGui {
 	protected:
 		virtual void render();
 		virtual bool setValue(float mx, float my, bool bCheck);
+		virtual void onMinimize();
+		virtual void onMaximize();
 
 		float spacing, spacingNextElement;
 		float header;

@@ -21,17 +21,17 @@
 #   This is a platform defined section to create internal flags to enable or disable
 #   the addition of various features within this makefile.  For instance, on Linux,
 #   we check to see if there GTK+-2.0 is defined, allowing us to include that library
-#   and generate DEFINES that are interpreted as ifdefs within the openFrameworks 
+#   and generate DEFINES that are interpreted as ifdefs within the openFrameworks
 #   core source code.
 ##########################################################################################
 
 PLATFORM_PROJECT_DEBUG_BIN_NAME=$(APPNAME)_debug
 PLATFORM_PROJECT_RELEASE_BIN_NAME=$(APPNAME)
-PLATFORM_RUN_COMMAND = 
+PLATFORM_RUN_COMMAND =
 #ifneq (,$(findstring MINMGW64_NT,$(PLATFORM_OS)))
 MSYS2_ROOT = /mingw32
-PLATFORM_CFLAGS += -std=gnu++14 -DUNICODE -D_UNICODE 
-#PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER 
+PLATFORM_CFLAGS += -std=gnu++14 -DUNICODE -D_UNICODE
+#PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER
 PLATFORM_LDFLAGS += -lpthread
 #ifeq ($(PLATFORM_ARCH),x86_64)
 CC = $(MSYS2_ROOT)/bin/gcc
@@ -52,26 +52,28 @@ PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 
 ##########################################################################################
 # PLATFORM DEFINES
-#   Create a list of DEFINES for this platform.  The list will be converted into 
+#   Create a list of DEFINES for this platform.  The list will be converted into
 #   CFLAGS with the "-D" flag later in the makefile.  An example of fully qualified flag
 #   might look something like this: -DTARGET_OPENGLES2
 #
 #   DEFINES are used throughout the openFrameworks code, especially when making
-#   #ifdef decisions for cross-platform compatibility.  For instance, when chosing a 
+#   #ifdef decisions for cross-platform compatibility.  For instance, when chosing a
 #   video playback framework, the openFrameworks base classes look at the DEFINES
 #   to determine what source files to include or what default player to use.
 #
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_DEFINES = POCO_STATIC
+ifeq ($(OF_USE_POCO),1)
+	PLATFORM_DEFINES = POCO_STATIC
+endif
 
 ##########################################################################################
 # PLATFORM REQUIRED ADDON
 #   This is a list of addons required for this platform.  This list is used to EXCLUDE
 #   addon source files when compiling projects, while INCLUDING their header files.
 #   During core library compilation, this is used to include required addon header files
-#   as needed within the core. 
+#   as needed within the core.
 #
 #   For instance, if you are compiling for Android, you would add ofxAndroid here.
 #   If you are compiling for Raspberry Pi, you would add ofxRaspberryPi here.
@@ -85,7 +87,7 @@ PLATFORM_REQUIRED_ADDONS =
 # PLATFORM CFLAGS
 #   This is a list of fully qualified CFLAGS required when compiling for this platform.
 #   These flags will always be added when compiling a project or the core library.  These
-#   Flags are presented to the compiler AFTER the PLATFORM_OPTIMIZATION_CFLAGS below. 
+#   Flags are presented to the compiler AFTER the PLATFORM_OPTIMIZATION_CFLAGS below.
 #
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
@@ -108,7 +110,7 @@ endif
 
 ################################################################################
 # PLATFORM LDFLAGS
-#   This is a list of fully qualified LDFLAGS required when linking for this 
+#   This is a list of fully qualified LDFLAGS required when linking for this
 #   platform. These flags will always be added when linking a project.
 #
 #   Note: Leave a leading space when adding list items with the += operator
@@ -119,7 +121,7 @@ endif
 
 ##########################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
-#   These are lists of CFLAGS that are target-specific.  While any flags could be 
+#   These are lists of CFLAGS that are target-specific.  While any flags could be
 #   conditionally added, they are usually limited to optimization flags.  These flags are
 #   added BEFORE the PLATFORM_CFLAGS.
 #
@@ -131,14 +133,14 @@ endif
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os -DNDEBUG
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 #-D_GLIBCXX_DEBUG
 
 ##########################################################################################
 # PLATFORM CORE EXCLUSIONS
-#   During compilation, these makefiles will generate lists of sources, headers and 
+#   During compilation, these makefiles will generate lists of sources, headers and
 #   third party libraries to be compiled and linked into a program or core library.
 #   The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file paths that will be used
 #   to exclude matching paths and files during list generation.
@@ -166,22 +168,19 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlaye
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 
 # third party
-
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/cairo/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
+
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS
-#   These are header search paths that are platform specific and are specified 
+#   These are header search paths that are platform specific and are specified
 #   using fully-qualified paths.  The include flag (i.e. -I) is prefixed automatically.
 #   These are usually not required, but may be required by some experimental platforms
 #   such as the raspberry pi or other other embedded architectures.
@@ -189,11 +188,11 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/%
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_HEADER_SEARCH_PATHS = 
+# PLATFORM_HEADER_SEARCH_PATHS =
 
 ##########################################################################################
 # PLATFORM LIBRARIES
-#   These are library names/paths that are platform specific and are specified 
+#   These are library names/paths that are platform specific and are specified
 #   using names or paths.  The library flag (i.e. -l) is prefixed automatically.
 #
 #   PLATFORM_LIBRARIES are libraries that can be found in the library search paths.
@@ -209,8 +208,7 @@ PLATFORM_HEADER_SEARCH_PATHS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_LIBRARIES += PocoNetSSL PocoNet PocoCrypto PocoUtil PocoXML PocoFoundation PocoZip PocoJSON PocoData PocoDataSQLite
-PLATFORM_LIBRARIES += ksuser opengl32 gdi32 msimg32 glu32 dsound winmm strmiids #dxguid  
+PLATFORM_LIBRARIES += ksuser opengl32 gdi32 msimg32 glu32 dsound winmm strmiids #dxguid
 PLATFORM_LIBRARIES += uuid ole32 oleaut32 setupapi wsock32 ws2_32 Iphlpapi Comdlg32
 PLATFORM_LIBRARIES += freeimage boost_filesystem-mt boost_system-mt freetype cairo
 #PLATFORM_LIBRARIES += gstapp-1.0 gstvideo-1.0 gstbase-1.0 gstreamer-1.0 gobject-2.0 glib-2.0 intl
@@ -225,30 +223,31 @@ PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += glew
 PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
 #PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-1.0
+PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
 
-# shared libraries 
+# shared libraries
 PLATFORM_SHARED_LIBRARIES =
 
 
 ##########################################################################################
 # PLATFORM LIBRARY SEARCH PATHS
-#   These are library search paths that are platform specific and are specified 
+#   These are library search paths that are platform specific and are specified
 #   using fully-qualified paths.  The lib search flag (i.e. -L) is prefixed automatically.
 #   The -L paths are used to find libraries defined above with the -l flag.
 #
 #   See the the following link for more information on the -L flag:
-#       http://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html 
+#       http://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html
 #
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_LIBRARY_SEARCH_PATHS = 
+PLATFORM_LIBRARY_SEARCH_PATHS =
 
 ##########################################################################################
 # LOW LEVEL CONFIGURATION BELOW
 #   The following sections should only rarely be modified.  They are meant for developers
 #   why need fine control when, for instance, creating a platform specific makefile for
-#   a new openFrameworks platform, such as raspberry pi. 
+#   a new openFrameworks platform, such as raspberry pi.
 ##########################################################################################
 
 ##########################################################################################
@@ -266,7 +265,7 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 
 
 # PLATFORM_CXX = clang
-# PLATFORM_CC = clang 
+# PLATFORM_CC = clang
 
 
 ################################################################################
@@ -330,9 +329,11 @@ copy_dlls:
 	@cp $(MSYS2_ROOT)/bin/tbb.dll bin/
 	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
 	@cp $(MSYS2_ROOT)/bin/libassimp.dll bin/
-	
+	@cp $(MSYS2_ROOT)/bin/libgraphite2.dll bin/
+	@cp $(MSYS2_ROOT)/bin/libgomp-1.dll bin/
+
 afterplatform: $(TARGET_NAME)
-	@if [ -d $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH) ]; then cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/; fi
+	@if [ -e $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) ]; then cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/; fi
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"

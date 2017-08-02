@@ -192,7 +192,7 @@ public:
 #endif
 	void unbind(const ofFbo & fbo);
 
-	void begin(const ofFbo & fbo, bool setupPerspective);
+    void begin(const ofFbo & fbo, ofFboBeginMode mode);
 	void end(const ofFbo & fbo);
 
 	ofStyle getStyle() const;

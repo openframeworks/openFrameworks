@@ -97,9 +97,15 @@ freenect_raw_tilt_state* freenect_get_tilt_state(freenect_device *dev)
 	return &dev->raw_state;
 }
 
-#ifdef BUILD_AUDIO
-int update_tilt_state_alt(freenect_device *dev){
+int update_tilt_state_alt(freenect_device *dev)
+{
 	freenect_context *ctx = dev->parent;
+
+	if (dev->usb_audio.dev == NULL)
+	{
+		FN_WARNING("Motor control failed: audio device missing");
+		return -1;
+	}
 
 	int transferred = 0;
 	int res = 0;
@@ -113,55 +119,47 @@ int update_tilt_state_alt(freenect_device *dev){
 	memcpy(buffer, &cmd, 16);
     
 	res = libusb_bulk_transfer(dev->usb_audio.dev, 0x01, buffer, 16, &transferred, 250);
-	if (res != 0) {
+	if (res != 0)
+	{
 		return res;
 	}
     
 	res = libusb_bulk_transfer(dev->usb_audio.dev, 0x81, buffer, 256, &transferred, 250); // 104 bytes
-	if (res != 0) {
+	if (res != 0)
+	{
 		return res;
-	} else {
-//		int i;
-//		for(i = 0 ; i < transferred ; i += 4) {
-//			int32_t j;
-//			memcpy(&j, buffer + i, 4);
-//			printf("\t%d\n", j);
-//		}
-//		printf("\n");
-		struct {
-			int32_t x;
-			int32_t y;
-			int32_t z;
-            int32_t tilt;
-		} accel_and_tilt;
-        
-		memcpy(&accel_and_tilt, buffer + 16, sizeof(accel_and_tilt));
-		//printf("\tX: %d  Y: %d  Z:%d - tilt is %d\n", accel_and_tilt.x, accel_and_tilt.y, accel_and_tilt.z, accel_and_tilt.tilt);
-        
-    	dev->raw_state.accelerometer_x  = (int16_t)accel_and_tilt.x;
-        dev->raw_state.accelerometer_y  = (int16_t)accel_and_tilt.y;
-        dev->raw_state.accelerometer_z  = (int16_t)accel_and_tilt.z;
-        
-        //this is multiplied by 2 as the older 1414 device reports angles doubled and freenect takes this into account
-        dev->raw_state.tilt_angle       = (int8_t)accel_and_tilt.tilt * 2;
-
 	}
+
+	struct {
+		int32_t x;
+		int32_t y;
+		int32_t z;
+		int32_t tilt;
+	} accel_and_tilt;
+
+	memcpy(&accel_and_tilt, buffer + 16, sizeof(accel_and_tilt));
+	FN_SPEW("Accelerometer state: X == %d \t Y == %d \t Z == %d \t Tilt == %d\n", accel_and_tilt.x, accel_and_tilt.y, accel_and_tilt.z, accel_and_tilt.tilt);
+
+	dev->raw_state.accelerometer_x  = (int16_t)accel_and_tilt.x;
+	dev->raw_state.accelerometer_y  = (int16_t)accel_and_tilt.y;
+	dev->raw_state.accelerometer_z  = (int16_t)accel_and_tilt.z;
+
+	// this is multiplied by 2 as the older 1414 device reports angles doubled and freenect takes this into account
+	dev->raw_state.tilt_angle       = (int8_t)accel_and_tilt.tilt * 2;
+
 	// Reply: skip four uint32_t, then you have three int32_t that give you acceleration in that direction, it seems.
 	// Units still to be worked out.
 	return get_reply(dev->usb_audio.dev, ctx);
 }
-#endif 
 
 int freenect_update_tilt_state(freenect_device *dev)
 {
 	freenect_context *ctx = dev->parent;
 	
-    #ifdef BUILD_AUDIO
     //if we have motor control via audio and fw is uploaded - call the alt function
     if( dev->motor_control_with_audio_enabled ){
         return update_tilt_state_alt(dev);
     }
-    #endif
     
     if(!(ctx->enabled_subdevices & FREENECT_DEVICE_MOTOR))
 		return 0;
@@ -188,7 +186,6 @@ int freenect_update_tilt_state(freenect_device *dev)
 	return ret;
 }
 
-#ifdef BUILD_AUDIO
 int freenect_set_tilt_degs_alt(freenect_device *dev, int tilt_degrees)
 {
 	freenect_context *ctx = dev->parent;
@@ -197,7 +194,13 @@ int freenect_set_tilt_degs_alt(freenect_device *dev, int tilt_degrees)
 		FN_WARNING("set_tilt(): degrees %d out of safe range [-31, 31]\n", tilt_degrees);
 		return -1;
 	}
-    
+
+	if (dev->usb_audio.dev == NULL)
+	{
+		FN_WARNING("Motor control failed: audio device missing");
+		return -1;
+	}
+
 	fn_alt_motor_command cmd;
 	cmd.magic = fn_le32(0x06022009);
 	cmd.tag = fn_le32(tag_seq++);
@@ -217,18 +220,15 @@ int freenect_set_tilt_degs_alt(freenect_device *dev, int tilt_degrees)
     
 	return get_reply(dev->usb_audio.dev, ctx);
 }
-#endif
 
 int freenect_set_tilt_degs(freenect_device *dev, double angle)
 {
 	freenect_context *ctx = dev->parent;
     
-    #ifdef BUILD_AUDIO
     //if we have motor control via audio and fw is uploaded - call the alt function
     if( dev->motor_control_with_audio_enabled ){
         return freenect_set_tilt_degs_alt(dev, angle);
     }
-    #endif
     
 	if(!(ctx->enabled_subdevices & FREENECT_DEVICE_MOTOR))
 		return 0;
@@ -239,37 +239,34 @@ int freenect_set_tilt_degs(freenect_device *dev, double angle)
 	angle = (angle<MIN_TILT_ANGLE) ? MIN_TILT_ANGLE : ((angle>MAX_TILT_ANGLE) ? MAX_TILT_ANGLE : angle);
 	angle = angle * 2;
 
-	ret = fnusb_control(&dev->usb_motor, 0x40, 0x31, (uint16_t)angle, 0x0, empty, 0x0);
+	ret = fnusb_control(&dev->usb_motor, 0x40, 0x31, (int16_t)angle, 0x0, empty, 0x0);
 	return ret;
 }
 
-
 FN_INTERNAL int fnusb_set_led_alt(libusb_device_handle * dev, freenect_context * ctx, freenect_led_options state)
 {
-    typedef enum {
-        LED_ALT_OFF = 1,
-        LED_ALT_BLINK_GREEN = 2,
-        LED_ALT_SOLID_GREEN = 3,
-        LED_ALT_SOLID_RED = 4,
-    }led_alt_state;
+	enum
+	{
+			LED_ALT_OFF = 1,
+			LED_ALT_BLINK_GREEN = 2,
+			LED_ALT_SOLID_GREEN = 3,
+			LED_ALT_SOLID_RED = 4,
+	};
 
-	int transferred = 0;
-	int res = 0;
-    
-    //The LED states are different between K4W/1473 and older 1414 
-    if( state == LED_GREEN ){
-        state = (freenect_led_options)LED_ALT_SOLID_GREEN;
-    }else if( state == LED_RED ){
-        state = (freenect_led_options)LED_ALT_SOLID_RED;
-    }else if( state == LED_YELLOW ){
-        state = (freenect_led_options)LED_ALT_SOLID_GREEN;
-    }else if( state == LED_OFF ){
-        state = (freenect_led_options)LED_ALT_OFF;
-    }else if( state == LED_BLINK_GREEN ){
-        state = (freenect_led_options)LED_ALT_BLINK_GREEN;
-    }else{
-        state = LED_GREEN;
-    }
+	//The LED states are different between K4W/1473 and older 1414
+	if( state == LED_GREEN ){
+			state = (freenect_led_options)LED_ALT_SOLID_GREEN;
+	}else if( state == LED_RED ){
+			state = (freenect_led_options)LED_ALT_SOLID_RED;
+	}else if( state == LED_YELLOW ){
+			state = (freenect_led_options)LED_ALT_SOLID_GREEN;
+	}else if( state == LED_OFF ){
+			state = (freenect_led_options)LED_ALT_OFF;
+	}else if( state == LED_BLINK_GREEN ){
+			state = (freenect_led_options)LED_ALT_BLINK_GREEN;
+	}else{
+			state = LED_GREEN;
+	}
     
 	fn_alt_motor_command cmd;
 	cmd.magic = fn_le32(0x06022009);
@@ -280,8 +277,9 @@ FN_INTERNAL int fnusb_set_led_alt(libusb_device_handle * dev, freenect_context *
     
 	unsigned char buffer[20];
 	memcpy(buffer, &cmd, 20);
-    
-	res = libusb_bulk_transfer(dev, 0x01, buffer, 20, &transferred, 100);
+
+	int transferred = 0;
+	int res = libusb_bulk_transfer(dev, 0x01, buffer, 20, &transferred, 100);
 	if (res != 0) {
 		FN_WARNING("fnusb_set_led_alt(): libusb_bulk_transfer failed: %d (transferred = %d)\n", res, transferred);
 		return res;
@@ -289,24 +287,27 @@ FN_INTERNAL int fnusb_set_led_alt(libusb_device_handle * dev, freenect_context *
 	return get_reply(dev, ctx);
 }
 
-#ifdef BUILD_AUDIO
 int freenect_set_led_alt(freenect_device *dev, freenect_led_options state)
 {
 	freenect_context *ctx = dev->parent;
-    return fnusb_set_led_alt(dev->usb_audio.dev, ctx, state);
+
+	if (dev->usb_audio.dev == NULL)
+	{
+		FN_WARNING("Motor control failed: audio device missing");
+		return -1;
+	}
+
+	return fnusb_set_led_alt(dev->usb_audio.dev, ctx, state);
 }
-#endif
 
 int freenect_set_led(freenect_device *dev, freenect_led_options option)
 {
 	freenect_context *ctx = dev->parent;
 
     //if we have motor control via audio and fw is uploaded - call the alt function
-    #ifdef BUILD_AUDIO
     if( dev->motor_control_with_audio_enabled ){
         return freenect_set_led_alt(dev, option);
     }
-    #endif
     
 	if(!(ctx->enabled_subdevices & FREENECT_DEVICE_MOTOR))
 		return 0;

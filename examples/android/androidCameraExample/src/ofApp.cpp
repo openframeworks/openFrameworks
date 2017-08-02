@@ -47,7 +47,7 @@ void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){    
+void ofApp::draw(){
 	// Calculate aspect ratio of grabber image
 	float grabberAspectRatio = grabber.getWidth() / grabber.getHeight();
 
@@ -61,14 +61,14 @@ void ofApp::draw(){
 
 	if(cameraFacingFront) {
 		// If the camera is front, then rotate clockwise
-		ofRotate(appOrientation);
+		ofRotateDeg(appOrientation);
 	} else {
 		// If the camera is backfacing, then rotate counter clockwise
-		ofRotate(-appOrientation);
+		ofRotateDeg(-appOrientation);
 	}
 
 	// Rotate the cameras orientation offset
-	ofRotate(cameraOrientation);
+	ofRotateDeg(cameraOrientation);
 
 	int width = ofGetWidth();
 	int height = ofGetHeight();
@@ -115,13 +115,13 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){ 
-	
+void ofApp::keyPressed  (int key){
+
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){ 
-	
+void ofApp::keyReleased(int key){
+
 }
 
 //--------------------------------------------------------------

@@ -16,32 +16,27 @@ namespace std {
 
 /// \class ofBuffer
 ///
-/// \brief A buffer of data which can be accessed as simple bytes or text.
+/// A buffer of data which can be accessed as simple bytes or text.
 ///
 class ofBuffer{
 	
 public:
 	ofBuffer();
 	
-	/// \brief Create a buffer and set its contents from a raw byte pointer.
+	/// Create a buffer and set its contents from a raw byte pointer.
 	///
 	/// \param buffer pointer to the raw byte buffer to copy data from
 	/// \param _size the number of bytes to read
 	/// \warning buffer *must* not be NULL
 	/// \warning _size *must* be <= the number of bytes allocated in _buffer
-	ofBuffer(const char * buffer, std::size_t size);
+    ofBuffer(const char * buffer, std::size_t size);
 	
-	/// \brief Create a buffer and set its contents from a string.
-	///
-	/// \param text string to copy data from
-	ofBuffer(const string & text);
-	
-	/// \brief Create a buffer and set its contents from an input stream.
+	/// Create a buffer and set its contents from an input stream.
 	///
 	/// \param ioBlockSize the number of bytes to read from the stream in chunks
 	ofBuffer(istream & stream, size_t ioBlockSize = 1024);
 
-	/// \brief Set the contents of the buffer from a raw byte pointer.
+	/// Set the contents of the buffer from a raw byte pointer.
 	///
 	/// \warning buffer *must* not be NULL
 	/// \warning _size *must* be <= the number of bytes allocated in _buffer
@@ -49,28 +44,28 @@ public:
 	/// \param _size the number of bytes to read
 	void set(const char * _buffer, std::size_t _size);
 	
-	/// \brief Set contents of the buffer from a string.
+	/// Set contents of the buffer from a string.
 	///
 	/// \param text string to copy data from
 	void set(const string & text);
 	
-	/// \brief Set contents of the buffer from an input stream.
+	/// Set contents of the buffer from an input stream.
 	///
 	/// \param stream input stream to copy data from
 	/// \param ioBlockSize the number of bytes to read from the stream in chunks
 	bool set(istream & stream, size_t ioBlockSize = 1024);
 	
-	/// \brief Set all bytes in the buffer to a given value.
+	/// Set all bytes in the buffer to a given value.
 	///
 	/// \param mem byte value to set
 	void setall(char mem);
 	
-	/// \brief Append bytes to the end of buffer from a string.
+	/// Append bytes to the end of buffer from a string.
 	///
 	/// \param _buffer string to copy bytes from
 	void append(const string& _buffer);
 	
-	/// \brief Append bytes to the end of the buffer from a raw byte pointer.
+	/// Append bytes to the end of the buffer from a raw byte pointer.
 	///
 	/// \warning buffer *must* not be NULL
 	/// \warning _size *must* be <= the number of bytes allocated in _buffer
@@ -78,25 +73,25 @@ public:
 	/// \param _size the number of bytes to read
 	void append(const char * _buffer, std::size_t _size);
 	
-	/// \brief Request that the buffer capacity be at least enough to contain a
+	/// Request that the buffer capacity be at least enough to contain a
 	/// specified number of bytes.
 	///
 	/// \param size number of bytes to reserve space for
 	void reserve(size_t size);
 
-	/// \brief Write contents of the buffer to an output stream.
+	/// Write contents of the buffer to an output stream.
 	bool writeTo(ostream & stream) const;
 
-	/// \brief Remove all bytes from the buffer, leaving a size of 0.
+	/// Remove all bytes from the buffer, leaving a size of 0.
 	void clear();
 
-	/// \brief Request that the buffer capacity be at least enough to contain a
+	/// Request that the buffer capacity be at least enough to contain a
 	/// specified number of bytes.
 	///
 	/// \param _size number of bytes to reserve space for
 	void allocate(std::size_t _size);
 	
-	/// \brief Resize the buffer to contain a specified number of bytes.
+	/// Resize the buffer to contain a specified number of bytes.
 	///
 	/// If _size is < the current buffer size, the contents are reduced to _size
 	/// bytes & remaining bytes are removed. If _size is > the current buffer
@@ -105,13 +100,13 @@ public:
 	/// \param _size number of bytes to resize the buffer to
 	void resize(std::size_t _size);
 
-	/// \brief Access the buffer's contents using a raw byte pointer.
+	/// Access the buffer's contents using a raw byte pointer.
 	///
 	/// \warning Do not access bytes at indices beyond size()!
 	/// \returns pointer to internal raw bytes
 	char * getData();
 	
-	/// \brief Access the buffer's contents using a const raw byte pointer.
+	/// access the buffer's contents using a const raw byte pointer.
 	///
 	/// \warning Do not access bytes at indices beyond size()!
 	/// \returns const pointer to internal raw bytes
@@ -119,20 +114,20 @@ public:
 	OF_DEPRECATED_MSG("Use getData instead",char * getBinaryBuffer());
 	OF_DEPRECATED_MSG("Use getData instead",const char * getBinaryBuffer() const);
 
-	/// \brief Get the contents of the buffer as a string.
+	/// get the contents of the buffer as a string.
 	///
 	/// \returns buffer contents as a string
 	string getText() const;
 	
-	/// \brief Use buffer as a string via cast.
+	/// Use buffer as a string via cast.
 	///
 	/// \returns buffer contents as a string
 	operator string() const;
 	
-	/// \brief set contents of the buffer from a string
+	/// set contents of the buffer from a string
 	ofBuffer & operator=(const string & text);
 
-	/// \brief Check the buffer's size.
+	/// Check the buffer's size.
 	///
 	/// \returns the size of the buffer's content in bytes
 	std::size_t size() const;
@@ -154,9 +149,7 @@ public:
 	vector<char>::const_reverse_iterator rbegin() const;
 	vector<char>::const_reverse_iterator rend() const;
 
-	/// \class Line
-	///
-	/// \brief A line of text in the buffer.
+	/// A line of text in the buffer.
 	///
 	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
 		Line(vector<char>::iterator _begin, vector<char>::iterator _end);
@@ -164,16 +157,16 @@ public:
 		const string * operator->() const;
 		const string & asString() const;
 		
-		/// \brief Increment to the next line.
+		/// Increment to the next line.
 		Line& operator++();
 		
-		/// \brief Increment to a number of lines.
+		/// Increment to a number of lines.
 		Line operator++(int);
 		
 		bool operator!=(Line const& rhs) const;
 		bool operator==(Line const& rhs) const;
 		
-		 /// \brief Is this line empty? (aka an empty string "")
+		 /// Is this line empty? (aka an empty string "")
 		bool empty() const;
 
 	private:
@@ -181,24 +174,66 @@ public:
 		vector<char>::iterator _current, _begin, _end;
 	};
 
-	/// \class Lines
+	/// A line of text in the buffer.
 	///
-	/// \brief A series of text lines in the buffer.
+	struct RLine: public std::iterator<std::forward_iterator_tag,Line>{
+		RLine(vector<char>::reverse_iterator _begin, vector<char>::reverse_iterator _end);
+		const string & operator*() const;
+		const string * operator->() const;
+		const string & asString() const;
+
+		/// Increment to the next line.
+		RLine& operator++();
+
+		/// Increment to a number of lines.
+		RLine operator++(int);
+
+		bool operator!=(RLine const& rhs) const;
+		bool operator==(RLine const& rhs) const;
+
+		 /// Is this line empty? (aka an empty string "")
+		bool empty() const;
+
+	private:
+		string line;
+		vector<char>::reverse_iterator _current, _rbegin, _rend;
+	};
+
+	/// A series of text lines in the buffer.
 	///
 	struct Lines{
 		Lines(vector<char>::iterator begin, vector<char>::iterator end);
 		
-		/// \brief Get the first line in the buffer.
+		/// Get the first line in the buffer.
 		Line begin();
 		
-		/// \brief Get the last line in the buffer.
+		/// Get the last line in the buffer.
 		Line end();
+
+		RLine rbegin();
+		RLine rend();
 
 	private:
 		vector<char>::iterator _begin, _end;
 	};
 
-	/// \brief Access the contents of the buffer as a series of text lines.
+
+	/// A series of text lines in the buffer.
+	///
+	struct RLines{
+		RLines(vector<char>::reverse_iterator rbegin, vector<char>::reverse_iterator rend);
+
+		/// Get the first line in the buffer.
+		RLine begin();
+
+		/// Get the last line in the buffer.
+		RLine end();
+
+	private:
+		vector<char>::reverse_iterator _rbegin, _rend;
+	};
+
+	/// Access the contents of the buffer as a series of text lines.
 	///
 	/// If the buffer loads a text file with lines separated by an endline
 	/// char '\n', you can access each line individually using Line structs.
@@ -206,23 +241,32 @@ public:
 	/// \returns buffer text lines
 	Lines getLines();
 
+	/// Access the contents of the buffer as a series of text lines in reverse
+	/// order
+	///
+	/// If the buffer loads a text file with lines separated by an endline
+	/// char '\n' or '\r\n', you can access each line individually using Line structs.
+	///
+	/// \returns buffer text lines
+	RLines getReverseLines();
+
 private:
 	vector<char> 	buffer;
 	Line			currentLine;
 };
 
 //--------------------------------------------------
-/// \brief Read the contents of a file at path into a buffer.
+/// Read the contents of a file at path into a buffer.
 ///
 /// Opens as a text file by default.
 ///
 /// \param path file to open
 /// \param binary set to false if you are reading a text file & want lines
 /// split at endline characters automatically
-ofBuffer ofBufferFromFile(const string & path, bool binary=true);
+ofBuffer ofBufferFromFile(const std::filesystem::path & path, bool binary=true);
 
 //--------------------------------------------------
-/// \brief Write the contents of a buffer to a file at path.
+/// Write the contents of a buffer to a file at path.
 ///
 /// Saves as a text file by default.
 ///
@@ -230,57 +274,57 @@ ofBuffer ofBufferFromFile(const string & path, bool binary=true);
 /// \param buffer data source to write from
 /// \param binary set to false if you are writing a text file & want lines
 /// split at endline characters automatically
-bool ofBufferToFile(const string & path, const ofBuffer& buffer, bool binary=true);
+bool ofBufferToFile(const std::filesystem::path & path, const ofBuffer& buffer, bool binary=true);
 
 //--------------------------------------------------
 /// \class ofFilePath
 ///
-/// \brief Static class for working with file path strings.
+/// Static class for working with file path strings.
 ///
 class ofFilePath{
 public:
 	
-	/// \brief Get the extension of a filename, ie. "duck.jpg" -> "jpg".
+	/// Get the extension of a filename, ie. "duck.jpg" -> "jpg".
 	///
 	/// \param filename file path
 	/// \returns filename extension only
-	static string getFileExt(const std::string& filename);
+    static string getFileExt(const std::filesystem::path& filename);
 	
-	/// \brief Remove extension from a filename, ie. "duck.jpg" ->"duck".
+	/// Remove extension from a filename, ie. "duck.jpg" ->"duck".
 	///
 	/// \param filename file path
 	/// \returns filename without extension
-	static string removeExt(const std::string& filename);
+    static string removeExt(const std::filesystem::path& filename);
 	
-	/// \brief Prepend path with a slash, ie. "images" -> "/images".
+	/// Prepend path with a slash, ie. "images" -> "/images".
 	///
 	/// \param path file or directory path
 	/// \returns slah + path
-	static string addLeadingSlash(const std::string& path);
+    static string addLeadingSlash(const std::filesystem::path& path);
 	
-	/// \brief Append path with a slash, ie. "images" -> "images/".
+	/// Append path with a slash, ie. "images" -> "images/".
 	///
 	/// \param path directory path
 	/// \returns path + slash
-	static string addTrailingSlash(const std::string& path);
+    static string addTrailingSlash(const std::filesystem::path& path);
 	
-	/// \brief Remove a path's trailing slash (if found),
+	/// Remove a path's trailing slash (if found),
 	/// ie. "images/" -> "images".
 	///
 	/// \param path directory path
 	/// \returns path minus trailing slash
-	static string removeTrailingSlash(const std::string& path);
+    static string removeTrailingSlash(const std::filesystem::path& path);
 	
-	/// \brief Cleaned up a directory path by adding a trailing slash if needed.
+	/// Cleaned up a directory path by adding a trailing slash if needed.
 	///
 	/// For Windows-style path strings using "\", a "\" will be added.
 	/// For Unix-style path strings using "/", a "/" will be added.
 	///
 	/// \param path directory path
 	/// \returns cleaned path + trailing slash (if needed)
-	static string getPathForDirectory(const std::string& path);
+    static string getPathForDirectory(const std::filesystem::path& path);
 	
-	/// \brief Get the absolute, full path for a given path,
+	/// Get the absolute, full path for a given path,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \param path file or directory path
@@ -288,17 +332,17 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns absolute path
-	static string getAbsolutePath(const std::string& path, bool bRelativeToData = true);
+    static string getAbsolutePath(const std::filesystem::path& path, bool bRelativeToData = true);
 
-	/// \brief Check if a path is an absolute (aka a full path),
+	/// Check if a path is an absolute (aka a full path),
 	/// ie. "images" -> false,
 	/// "/Users/mickey/of/apps/myApps/Donald/bin/data/images" -> true.
 	///
 	/// \param path file or directory path
 	/// \returns true if the path is an absolute path
-	static bool isAbsolute(const std::string& path);
+    static bool isAbsolute(const std::filesystem::path& path);
 	
-	/// \brief Get the filename of a given path by stripping the parent
+	/// Get the filename of a given path by stripping the parent
 	/// directories ie. "images/duck.jpg" -> "duck.jpg", assumes the path is in
 	/// the data folder.
 	///
@@ -307,17 +351,17 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns filename
-	static string getFileName(const std::string& filePath, bool bRelativeToData = true);
+    static string getFileName(const std::filesystem::path& filePath, bool bRelativeToData = true);
 	
-	/// \brief Get a file path without its last component,
-	/// ie. "images/duck.jpg" -> "images" and
-	/// "images/some/folder" -> "images/some"
+	/// Get a file name without its extension,
+	/// ie. "images/duck.jpg" -> "duck" and
+	/// "images/some/folder" -> "folder"
 	///
 	/// \param filePath file path
 	/// \returns basename
-	static string getBaseName(const std::string& filePath);
+    static string getBaseName(const std::filesystem::path& filePath);
 
-	/// \brief Get the enclosing parent directory of a path,
+	/// Get the enclosing parent directory of a path,
 	/// ie. "images/duck.jpg" -> "images", assumes the path is in the data
 	/// directory.
 	///
@@ -326,9 +370,9 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	///\returns enclosing directory
-	static string getEnclosingDirectory(const std::string& filePath, bool bRelativeToData = true);
+    static string getEnclosingDirectory(const std::filesystem::path& filePath, bool bRelativeToData = true);
 	
-	/// \brief Create the enclosing parent directory of a path, ie.
+	/// Create the enclosing parent directory of a path, ie.
 	/// "images" is the enclosing directory of "duck.jpg" = "images/duck.jpg".
 	///
 	/// Assumes the path is in the data folder & automatically creates nested
@@ -340,9 +384,9 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns true if the enclosing directory was created
-	static bool createEnclosingDirectory(const std::string& filePath, bool bRelativeToData = true, bool bRecursive = true);
+    static bool createEnclosingDirectory(const std::filesystem::path& filePath, bool bRelativeToData = true, bool bRecursive = true);
 	
-	/// \brief Get the full path to the app's current working directory.
+	/// Get the full path to the app's current working directory.
 	///
 	/// This may be the app's parent directory or the location the app was
 	/// launched from (aka on the commandline).
@@ -352,15 +396,15 @@ public:
 	/// \returns current working directory
 	static string getCurrentWorkingDirectory();
 	
-	/// \brief Create a single path by joining path1 & path2 using a slash,
+	/// Create a single path by joining path1 & path2 using a slash,
 	/// ie. "/hello/world" + "foo/bar" -> "/hello/world/foo/bar".
 	///
 	/// \param path1 left half of the path to join
 	/// \param path2 right half of the path to join
 	/// \returns joined path
-	static string join(const std::string& path1, const std::string& path2);
+    static string join(const std::filesystem::path& path1, const std::filesystem::path& path2);
 	
-	/// \brief Get the full path to the application's executable file.
+	/// Get the full path to the application's executable file.
 	///
 	/// Mac: the binary within the application's .app bundle Contents/MacOS dir
 	/// Windows: the .exe
@@ -369,7 +413,7 @@ public:
 	/// \returns current executable path
 	static string getCurrentExePath();
 	
-	/// \brief Get the full path to the application's parent directory.
+	/// Get the full path to the application's parent directory.
 	///
 	/// Windows & Linux: the application's parent directory
 	/// Mac: the Contents/MacOS folder within the application's .app bundle
@@ -377,7 +421,7 @@ public:
 	/// \returns current executable directory
 	static string getCurrentExeDir();
 
-	/// \brief Get the absolute path to the user's home directory.
+	/// Get the absolute path to the user's home directory.
 	///
 	/// Mac OSX: /Users/<username>
 	/// Windows: <root>\Users\<username>
@@ -386,19 +430,19 @@ public:
 	/// \returns home directory path
 	static string getUserHomeDir();
 
-	/// \brief Make one path relative to another,
+	/// Make one path relative to another,
 	/// ie. the relative path of "images/felines/lions" to
 	/// "images/felines/tigers" is "../tigers".
 	///
 	/// \param from starting path
 	/// \param to destination path
 	/// \returns relative path
-	static string makeRelative(const std::string & from, const std::string & to);
+    static string makeRelative(const std::filesystem::path & from, const std::filesystem::path & to);
 };
 
 /// \class ofFile
 ///
-/// \brief path to a file or directory
+/// path to a file or directory
 ///
 /// inherits from an fstream so you can read/write using the stream operators
 /// once a file path has been opened
@@ -415,13 +459,13 @@ public:
 		Append     //< append data to the end of the file, do not overwrite
 	};
 
-	/// \brief Create an ofFile instance.
+	/// Create an ofFile instance.
 	///
 	/// Does not refer to a specific file until you either open a file or create
 	/// a file or directory path.
 	ofFile();
 	
-	/// \brief Create a new ofFile instance and attempt to open the path as a
+	/// Create a new ofFile instance and attempt to open the path as a
 	/// file.
 	///
 	/// Opens as a binary file with read only access by default.
@@ -433,20 +477,20 @@ public:
 	/// lines split at endline characters automatically
 	ofFile(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 	
-	/// \brief Create a new file path using the same path & settings of another
+	/// Create a new file path using the same path & settings of another
 	/// file.
 	///
 	/// \param mom ofFile instance source
 	ofFile(const ofFile & mom);
 	
-	/// \brief Copy the path and settings of an ofFile into this instance.
+	/// Copy the path and settings of an ofFile into this instance.
 	///
 	/// \param mom ofFile instance source
 	ofFile & operator= (const ofFile & mom);
 	
 	~ofFile();
 
-	/// \brief Open the path as a file.
+	/// Open the path as a file.
 	///
 	/// Opens as a text file with read only access by default.
 	///
@@ -457,8 +501,20 @@ public:
 	/// split at endline characters automatically
 	/// \returns true if the path was opened
 	bool open(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
+
+	/// Open the path as a file.
+	///
+	/// Opens as a text file with read only access by default from the current working directory without internally calling ofToDataPath.
+	///
+	/// \param path file path
+	/// \param mode file access mode depending on how you plan to use the file
+	/// (read only, read write, etc)
+	/// \param binary set to false if you are reading a text file & want lines
+	/// split at endline characters automatically
+	/// \returns true if the path was opened
+	bool openFromCWD(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 	
-	/// \brief Reopen the current file path with a different access mode.
+	/// Reopen the current file path with a different access mode.
 	///
 	/// \param mode file access mode depending on how you plan to use the file
 	/// (read only, read write, etc)
@@ -467,17 +523,17 @@ public:
 	/// \returns true if the file was reopened with the new access mode(s).
 	bool changeMode(Mode mode, bool binary=true);
 	
-	/// \brief Close a currently open file.
+	/// Close a currently open file.
 	void close();
 	
-	/// \brief Create a file at the current path.
+	/// Create a file at the current path.
 	///
 	/// Creates as a write only binary file by default.
 	///
 	/// \returns true if the file was created
 	bool create();
 	
-	/// \brief Create a file at a given path.
+	/// Create a file at a given path.
 	///
 	/// Creates as a write only binary file by default.
 	///
@@ -485,23 +541,23 @@ public:
 	/// \returns true if the file was created
 	bool create(const std::filesystem::path & path);
 	
-	/// \brief Check if a file exists at the current path.
+	/// Check if a file exists at the current path.
 	///
 	/// \returns true if the file exists
 	bool exists() const;
 	
-	/// \brief Get the current path.
+	/// Get the current path.
 	///
 	/// \returns current path
 	string path() const;
 	
-	/// \brief Get the current path without its extension,
+	/// Get the current path without its extension,
 	/// ie. "duck.jpg" ->"duck".
 	///
 	/// \returns current path file extension
 	string getExtension() const;
 	
-	/// \brief Get the filename of the current path by stripping the parent
+	/// Get the filename of the current path by stripping the parent
 	/// directories, ie. "images/duck.jpg"  -> "duck.jpg".
 	///
 	/// \returns current path filename
@@ -514,7 +570,7 @@ public:
 	/// \returns current path basename
 	string getBaseName() const;
 	
-	/// \brief Get the enclosing parent directory of a path,
+	/// Get the enclosing parent directory of a path,
 	/// ie. "images/duck.jpg" -> "images", assumes the path is in the data
 	/// directory.
 	///
@@ -527,38 +583,38 @@ public:
 	/// \returns current path as an absolute path
 	string getAbsolutePath() const;
 
-	/// \brief Check if the current path is readable.
+	/// Check if the current path is readable.
 	///
 	/// \returns true if readable
 	bool canRead() const;
 	
-	/// \brief Check if the current path is writable.
+	/// Check if the current path is writable.
 	///
 	/// \returns true if writable
 	bool canWrite() const;
 	
-	/// \brief Check if the current path is executable.
+	/// Check if the current path is executable.
 	///
 	/// \returns true if executable
 	bool canExecute() const;
 
-	/// \brief Check if the current path is a file and not a directory.
+	/// Check if the current path is a file and not a directory.
 	///
 	/// \returns true if a file
 	bool isFile() const;
 	
-	/// \brief Check if the current path is a system link to another file or
+	/// Check if the current path is a system link to another file or
 	/// directory.
 	///
 	/// \returns true if a system link
 	bool isLink() const;
 	
-	/// \brief Check if the current path is a directory and not a file.
+	/// Check if the current path is a directory and not a file.
 	///
 	/// \returns true if a directory
 	bool isDirectory() const;
 	
-	/// \brief Check if the current path is a device file.
+	/// Check if the current path is a device file.
 	///
 	/// Works on Mac & Linux which can represent devices as files, however
 	/// always returns false on Windows.
@@ -566,7 +622,7 @@ public:
 	/// \returns true if a device file
 	bool isDevice() const;
 	
-	/// \brief Check if the current path is hidden.
+	/// Check if the current path is hidden.
 	///
 	/// Works on Mac & Linux which denote hidden files by prepending a period
 	/// to the filename -> ".hello", however always returns false on Windows.
@@ -574,18 +630,18 @@ public:
 	/// \returns true if hidden
 	bool isHidden() const;
 
-	/// \brief Set the writable flag of the current path.
+	/// Set the writable flag of the current path.
 	void setWriteable(bool writeable=true);
 
 	OF_DEPRECATED_MSG("Use ofFile::setWriteable(!flag).", void setReadOnly(bool flag));
 	
-	/// \brief Set the readable flag of the current path.
+	/// Set the readable flag of the current path.
 	void setReadable(bool readable=true);
 	
-	/// \brief Set the executable flag of the current path.
+	/// Set the executable flag of the current path.
 	void setExecutable(bool executable=true);
 	
-	/// \brief Copy the current file or directory path to a new path.
+	/// Copy the current file or directory path to a new path.
 	///
 	/// Copies relative to the data path & does *not* overwrite by default
 	/// does not change the current path & assumes the new path is in the data
@@ -597,9 +653,9 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool copyTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false) const;
+	bool copyTo(const std::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false) const;
 	
-	/// \brief Move the current file or directory path to a new path.
+	/// Move the current file or directory path to a new path.
 	///
 	/// Moves relative to the data path & does *not* overwrite by default
 	/// does not change the current path & assumes the new path is in the data
@@ -611,9 +667,9 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool moveTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool moveTo(const std::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
-	/// \brief Rename the current file or directory path to a new path.
+	/// Rename the current file or directory path to a new path.
 	///
 	/// Renames relative to the data path & does *not* overwrite by default
 	/// does not change the current path & assumes the new path is in the data
@@ -625,9 +681,9 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool renameTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool renameTo(const std::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
-	/// \brief Removes the file or directory at the current path.
+	/// Removes the file or directory at the current path.
 	///
 	/// Does not remove non-empty directories by default.
 	///
@@ -637,7 +693,7 @@ public:
 	/// \returns true if the path was removed successfully
 	bool remove(bool recursive=false);
 
-	/// \brief get the size of the file at the current file path
+	/// get the size of the file at the current file path
 	///
 	/// \returns size in bytes
 	uint64_t getSize() const;
@@ -658,18 +714,18 @@ public:
 	// since this class inherits from fstream it can be used as a r/w stream:
 	// http://www.cplusplus.com/reference/iostream/fstream/
 	
-	/// \brief Read the contents of a file at the current path into a buffer.
+	/// Read the contents of a file at the current path into a buffer.
 	///
 	/// \returns buffer with file contents
 	ofBuffer readToBuffer();
 	
-	/// \brief Write the contents of a buffer into a file at the current path.
+	/// Write the contents of a buffer into a file at the current path.
 	///
 	/// \param buffer source byte buffer
 	/// \returns true if buffer's contents written successfully
 	bool writeFromBuffer(const ofBuffer & buffer);
 	
-	/// \brief Read the entire contents of the currently opened file into an
+	/// Read the entire contents of the currently opened file into an
 	/// output stream.
 	///
 	/// This is basically an easy to use equivalent to rdbuf():
@@ -691,7 +747,7 @@ public:
 	//static helpers
 	//-------
 
-	/// \brief Copy source path to destination path.
+	/// Copy source path to destination path.
 	///
 	/// Copies relative to the data path & does *not* overwrite by default
 	/// assumes the source & destination path is in the data directory.
@@ -703,9 +759,9 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	static bool copyFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData = true,  bool overwrite = false);
+	static bool copyFromTo(const std::filesystem::path& pathSrc, const std::filesystem::path& pathDst, bool bRelativeToData = true,  bool overwrite = false);
 
-	/// \brief Move source path to destination path.
+	/// Move source path to destination path.
 	///
 	/// Moves relative to the data path & does *not* overwrite by default
 	/// assumes the source & destination path is in the data directory.
@@ -719,24 +775,24 @@ public:
 	/// \warning be careful with slashes here, appending a slash when moving a
 	/// folder may cause mad headaches in OSX
 	/// \returns true if the move was successful
-	static bool moveFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData = true, bool overwrite = false);
+	static bool moveFromTo(const std::filesystem::path& pathSrc, const std::filesystem::path& pathDst, bool bRelativeToData = true, bool overwrite = false);
 	
-	/// \brief Check if a file or directory exists at a given path.
+	/// Check if a file or directory exists at a given path.
 	///
 	/// \param fPath file path
 	/// \param bRelativeToData set to false if you are working with paths that
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns true if a file or directory exists
-	static bool doesFileExist(const std::string& fPath,  bool bRelativeToData = true);
+	static bool doesFileExist(const std::filesystem::path& fPath,  bool bRelativeToData = true);
 	
-	/// \brief Remove a file or directory at a given path.
+	/// Remove a file or directory at a given path.
 	///
 	/// \param bRelativeToData set to false if you are working with paths that
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns true if the path was removed successfully
-	static bool removeFile(const std::string& path, bool bRelativeToData = true);
+	static bool removeFile(const std::filesystem::path& path, bool bRelativeToData = true);
 
 private:
 	bool isWriteMode();
@@ -749,75 +805,80 @@ private:
 
 /// \class ofDirectory
 ///
-/// \brief Path to a directory. Can be used to query file and directory
+/// Path to a directory. Can be used to query file and directory
 /// contents.
 ///
 class ofDirectory{
 
 public:
 
-	/// \brief Create an ofDirectory instance
+	/// Create an ofDirectory instance
 	///
 	/// Does not refer to a specific directory until you either open or create
 	/// a directory path.
 	ofDirectory();
 	
-	/// \brief Create an ofDirectory instance and attempt to open the path.
+	/// Create an ofDirectory instance and attempt to open the path.
 	///
 	/// \param path directory path
 	ofDirectory(const std::filesystem::path & path);
 
-	/// \brief Open a directory path, clears the current file list.
+	/// Open a directory path, clears the current file list.
 	///
 	/// \param path directory path
 	void open(const std::filesystem::path & path);
 	
-	/// \brief Close the currently open path.
+	/// Open a directory path relative to the current working directory without calling ofToDataPath internally, clears the current file list.
+	///
+	/// \param path directory path
+	void openFromCWD(const std::filesystem::path & path);
+	
+	/// Close the currently open path.
 	void close();
 	
-	/// \brief Create a directory at the current path.
+	/// Create a directory at the current path.
 	///
 	/// \param bRecursive set to true to automatically create nested directories
 	/// as required
 	bool create(bool recursive = false);
 
-	/// \brief Check if a directory exists at the current path.
+	/// Check if a directory exists at the current path.
 	///
 	/// \returns true if exists
 	bool exists() const;
 	
-	/// \brief Get the current path.
+	/// Get the current path.
 	///
 	/// \returns current path
 	string path() const;
 	
-	/// \brief Get the absolute, full path of the directory,
+	/// Get the absolute, full path of the directory,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \return current path as an absolute path
 	string getAbsolutePath() const;
 
-	/// \brief Check if the current path is readable.
+	/// Check if the current path is readable.
 	///
 	/// \returns true if readable
 	bool canRead() const;
 	
-	/// \brief Check if the current path is writeable.
+	/// Check if the current path is writeable.
 	///
 	/// \returns true if writable
 	bool canWrite() const;
 	
-	/// \brief Check if the current path is executable.
+	/// Check if the current path is executable.
 	///
 	/// \returns true if executable
 	bool canExecute() const;
 	
-	/// \brief Check if the current path is indeed a directory and not a file.
+	/// Check if the current path is indeed a directory and not a file.
 	///
 	/// \returns true if a directory
 	bool isDirectory() const;
 	
-	/// \brief Check if the current path is hidden.
+	/// Check if the current path is hidden.
 	///
 	/// Works on Mac & Linux which denote hidden directories by prepending
 	/// a period -> ".hello", however always returns false on Windows.
@@ -825,24 +886,24 @@ public:
 	/// \returns true if hidden
 	bool isHidden() const;
 
-	/// \brief Set the writable flag of the current path.
+	/// Set the writable flag of the current path.
 	///
 	/// \param writable set to true to make path writable
 	void setWriteable(bool writeable=true);
 
 	OF_DEPRECATED_MSG("Use ofDirectory::setWriteable(!flag).", void setReadOnly(bool flag));
 	
-	/// \brief Set the readable flag of the current path.
+	/// Set the readable flag of the current path.
 	///
 	/// \param readable set to true to make path readable
 	void setReadable(bool readable=true);
 	
-	/// \brief Set the executable flag of the current path.
+	/// Set the executable flag of the current path.
 	///
 	/// \param executable set to true to make path executable
 	void setExecutable(bool executable=true);
 	
-	/// \brief Show hidden files & directories when listing files?
+	/// Show hidden files & directories when listing files?
 	///
 	/// Mac & Linux denote hidden directories by prepending a period
 	/// -> ".hello".
@@ -850,7 +911,7 @@ public:
 	/// \param showHidden set to true to show hidden files
 	void setShowHidden(bool showHidden);
 
-	/// \brief Copy the current file or directory path to a new path.
+	/// Copy the current file or directory path to a new path.
 	///
 	/// Copies relative to the data path & does *not* overwrite by default
 	/// does not change the current path & assumes the new path is in the data
@@ -862,9 +923,9 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool copyTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool copyTo(const filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
-	/// \brief Move the current file or directory path to a new path.
+	/// Move the current file or directory path to a new path.
 	///
 	/// Moves relative to the data path & does *not* overwrite by default
 	/// does not change the current path & assumes the new path is in the data
@@ -876,9 +937,9 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool moveTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool moveTo(const filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
-	/// \brief Rename the current file or directory path to a new path.
+	/// Rename the current file or directory path to a new path.
 	///
 	/// Renames relative to the data path & does *not* overwrite by default
 	/// does not change the current path & assumes the new path is in the data
@@ -890,9 +951,9 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool renameTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool renameTo(const filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
-	/// \brief Removes the file or directory at the current path.
+	/// Removes the file or directory at the current path.
 	///
 	/// Does not remove non-empty directories by default.
 	///
@@ -906,7 +967,7 @@ public:
 	// dirList operations
 	//-------------------
 	
-	/// \brief Allow a file extension when listing the contents the current
+	/// Allow a file extension when listing the contents the current
 	/// directory path.
 	///
 	/// Setting an allowed extension enables a whitelist mode which only lists
@@ -915,7 +976,7 @@ public:
 	/// \param extension file type extension ie. "jpg", "png", "txt", etc
 	void allowExt(const string& extension);
 	
-	/// \brief Open and read the contents of a directory.
+	/// Open and read the contents of a directory.
 	///
 	/// Uses allowed extension whitelist to ignore unwanted file types if
 	/// allowExt() has been called.
@@ -924,7 +985,7 @@ public:
 	/// \returns number of paths found
 	std::size_t listDir(const string& path);
 	
-	/// \brief Open and read the contents of the current directory.
+	/// Open and read the contents of the current directory.
 	///
 	/// Uses allowed extension whitelist to ignore unwanted file types if
 	/// allowExt() has been called.
@@ -935,7 +996,7 @@ public:
 	/// \returns the current path
 	string getOriginalDirectory() const;
 	
-	/// \brief Get the filename at a given position in the directory contents
+	/// Get the filename at a given position in the directory contents
 	/// list, ie. "duck.jpg".
 	///
 	/// \warning Call listDir() before using this function or the directory
@@ -946,7 +1007,7 @@ public:
 	/// \returns file or directory name
 	string getName(std::size_t position) const;
 	
-	/// \brief Get the full path of the file or directory at a given position in
+	/// Get the full path of the file or directory at a given position in
 	/// the directory contents list.
 	///
 	/// \warning Call listDir() before using this function or the directory
@@ -957,7 +1018,7 @@ public:
 	/// \returns file or directory name including the current path
 	string getPath(std::size_t position) const;
 	
-	/// \brief Open an ofFile instance using the path a given position in the
+	/// Open an ofFile instance using the path a given position in the
 	/// directory contents list.
 	///
 	/// Opens as a binary file with readonly access by default.
@@ -974,14 +1035,14 @@ public:
 	/// \returns ofFile instance
 	ofFile getFile(std::size_t position, ofFile::Mode mode=ofFile::Reference, bool binary=true) const;
 	
-	/// \brief Get files and directories in the directory contents list.
+	/// Get files and directories in the directory contents list.
 	///
 	/// Directory contents are automatically listed.
 	///
 	/// \returns vector of files in the directory
 	const vector<ofFile> & getFiles() const;
 
-	/// \brief Access directory contents via th array operator.
+	/// Access directory contents via th array operator.
 	///
 	/// \warning Call listDir() before using this function or the directory
 	/// contents list will be empty.
@@ -991,7 +1052,7 @@ public:
 	/// \returns opened ofFile instance
 	ofFile operator[](std::size_t position) const;
 
-	/// \brief Check whether hidden files & directories are included when
+	/// Check whether hidden files & directories are included when
 	/// listing files.
 	///
 	/// Mac & Linux denote hidden directories by prepending a period
@@ -1000,23 +1061,29 @@ public:
 	/// \returns true if hidden files are shown
 	bool getShowHidden() const;
 
-	/// \brief Closes the directory.
+	/// Closes the directory.
 	///
 	/// This is for backwards compatibility with ofxDirList.
 	void reset();
 	
-	/// \brief Sort the directory contents list alphabetically.
+	/// Sort the directory contents list alphabetically.
 	///
 	/// \warning Call listDir() before using this function or there will be
 	/// nothing to sort.
 	void sort();
 	
-	/// \brief Get a sorted ofDirectory instance using the current path.
+	/// Sort the directory contents list by date.
+	///
+	/// \warning Call listDir() before using this function or there will be
+	/// nothing to sort.
+	void sortByDate();
+
+	/// Get a sorted ofDirectory instance using the current path.
 	///
 	/// \returns sorted ofDirectory instance
 	ofDirectory getSorted();
 
-	/// \brief Get the number of paths in the current directory list.
+	/// Get the number of paths in the current directory list.
 	///
 	/// \warning Call listDir() before using this function or it will return 0
 	/// since the directory list will be empty.
@@ -1046,7 +1113,7 @@ public:
 	// static helpers
 	//-------
 
-	/// \brief Create a directory at a given path.
+	/// Create a directory at a given path.
 	///
 	/// Creates relative to the data path by default.
 	///
@@ -1056,9 +1123,9 @@ public:
 	/// \param bRecursive set to true to automatically create nested directories
 	/// as required
 	/// \returns true if directory was created successfully
-	static bool createDirectory(const std::string& dirPath, bool bRelativeToData = true, bool recursive = false);
+	static bool createDirectory(const std::filesystem::path& dirPath, bool bRelativeToData = true, bool recursive = false);
 	
-	/// \brief Check if a directory at a given path is empty.
+	/// Check if a directory at a given path is empty.
 	///
 	/// Assumes directory path is relative to the data path by default.
 	///
@@ -1067,9 +1134,9 @@ public:
 	/// are *not* in the data directory
 	/// \returns true if the directory is empty aka contains no files or
 	/// directories
-	static bool isDirectoryEmpty(const std::string& dirPath, bool bRelativeToData = true );
+	static bool isDirectoryEmpty(const std::filesystem::path& dirPath, bool bRelativeToData = true );
 	
-	/// \brief Check if a directory exists at a given path.
+	/// Check if a directory exists at a given path.
 	///
 	/// Assumes directory path is relative to the data path by default.
 	///
@@ -1077,17 +1144,17 @@ public:
 	/// \param bRelativeToData set to false if you are working with paths that
 	/// are *not* in the data directory
 	/// \returns true if the directory exists
-	static bool doesDirectoryExist(const std::string& dirPath, bool bRelativeToData = true);
+	static bool doesDirectoryExist(const std::filesystem::path& dirPath, bool bRelativeToData = true);
 	
 	
-	/// \brief remove a directory at a given path
+	/// remove a directory at a given path
 	///
 	/// \param deleteIfNotEmpty set to true if you want to recursively delete
 	/// the directory *and* its contents
 	/// \param bRelativeToData set to false if you are working with paths that
 	/// are *not* in the data directory
 	/// \returns true if the path was removed successfully
-	static bool removeDirectory(const std::string& path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
+	static bool removeDirectory(const std::filesystem::path& path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
 
 	vector<ofFile>::const_iterator begin() const;
 	vector<ofFile>::const_iterator end() const;

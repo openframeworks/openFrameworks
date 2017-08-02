@@ -1,20 +1,22 @@
 #include "ofUtils.h"
 #include "ofImage.h"
 #include "ofFileUtils.h"
+#include "ofLog.h"
 
 #include <chrono>
 #include <numeric>
 #include <locale>
+#include "uriparser/Uri.h"
 
-#if !defined(TARGET_EMSCRIPTEN)
-#include "Poco/URI.h"
+#ifdef TARGET_WIN32	 // For ofLaunchBrowser.
+	#include <shellapi.h>
 #endif
 
 
 #ifdef TARGET_WIN32
     #ifndef _MSC_VER
         #include <unistd.h> // this if for MINGW / _getcwd
-	#include <sys/param.h> // for MAXPATHLEN
+		#include <sys/param.h> // for MAXPATHLEN
     #endif
 #endif
 
@@ -53,12 +55,7 @@
 #endif
 
 namespace{
-    bool enableDataPath = true;
-    uint64_t startTimeSeconds;   //  better at the first frame ?? (currently, there is some delay from static init, to running.
-    uint64_t startTimeNanos;
-#ifdef TARGET_OSX
-    clock_serv_t cs;
-#endif
+	bool enableDataPath = true;
 
     //--------------------------------------------------
     string defaultDataPath(){
@@ -94,97 +91,278 @@ namespace{
 
 namespace of{
 namespace priv{
-    void initutils(){
-#ifdef TARGET_OSX
-        host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cs);
-#endif
+	void initutils(){
         defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
         ofResetElapsedTimeCounter();
         ofSeedRandom();
     }
 
-    void endutils(){
-#ifdef TARGET_OSX
-        mach_port_deallocate(mach_task_self(), cs);
-#endif
+	void endutils(){
+//#ifdef TARGET_OSX
+//        mach_port_deallocate(mach_task_self(), cs);
+//#endif
     }
+
+	class Clock{
+	public:
+		Clock(){
+		#ifdef TARGET_OSX
+			host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cs);
+		#endif
+		}
+
+		//--------------------------------------
+		void setTimeModeSystem(){
+			mode = ofTime::System;
+			loopListener.unsubscribe();
+		}
+
+		//--------------------------------------
+		void setTimeModeFixedRate(uint64_t stepNanos, ofMainLoop & mainLoop){
+			fixedRateTime = getMonotonicTimeForMode(ofTime::System);
+			mode = ofTime::FixedRate;
+			fixedRateStep = stepNanos;
+			loopListener = mainLoop.loopEvent.newListener([this]{
+				fixedRateTime.nanoseconds += fixedRateStep;
+				while(fixedRateTime.nanoseconds>1000000000){
+					fixedRateTime.nanoseconds -= 1000000000;
+					fixedRateTime.seconds += 1;
+				}
+			});
+		}
+
+		//--------------------------------------
+		ofTime getCurrentTime(){
+			return getMonotonicTimeForMode(mode);
+		}
+
+		//--------------------------------------
+		std::chrono::nanoseconds getElapsedTime(){
+			return getCurrentTime() - startTime;
+		}
+
+		//--------------------------------------
+		void resetElapsedTimeCounter(){
+			startTime = getMonotonicTimeForMode(ofTime::System);
+		}
+
+	private:
+
+		//--------------------------------------
+		ofTime getMonotonicTimeForMode(ofTime::Mode mode){
+			ofTime t;
+			t.mode = mode;
+			if(mode == ofTime::System){
+			#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)) || defined(TARGET_EMSCRIPTEN)
+				struct timespec now;
+				clock_gettime(CLOCK_MONOTONIC, &now);
+				t.seconds = now.tv_sec;
+				t.nanoseconds = now.tv_nsec;
+			#elif defined(TARGET_OSX)
+				mach_timespec_t now;
+				clock_get_time(cs, &now);
+				t.seconds = now.tv_sec;
+				t.nanoseconds = now.tv_nsec;
+			#elif defined( TARGET_WIN32 )
+				LARGE_INTEGER freq;
+				LARGE_INTEGER counter;
+				QueryPerformanceFrequency(&freq);
+				QueryPerformanceCounter(&counter);
+				t.seconds = counter.QuadPart/freq.QuadPart;
+				t.nanoseconds = (counter.QuadPart % freq.QuadPart)*1000000000/freq.QuadPart;
+			#else
+				struct timeval now;
+				gettimeofday( &now, nullptr );
+				t.seconds = now.tv_sec;
+				t.nanoseconds = now.tv_usec * 1000;
+			#endif
+			}else{
+				t = fixedRateTime;
+			}
+			return t;
+		}
+		uint64_t fixedRateStep = 1666667;
+		ofTime fixedRateTime;
+		ofTime startTime;
+		ofTime::Mode mode = ofTime::System;
+		ofEventListener loopListener;
+	#ifdef TARGET_OSX
+		clock_serv_t cs;
+	#endif
+	};
+
+	Clock & getClock(){
+		static Clock * clock = new Clock;
+		return *clock;
+	}
 }
 }
 
+
 //--------------------------------------
-void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds){
-#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)) || defined(TARGET_EMSCRIPTEN)
-	struct timespec now;
-	clock_gettime(CLOCK_MONOTONIC, &now);
-	seconds = now.tv_sec;
-	nanoseconds = now.tv_nsec;
-#elif defined(TARGET_OSX)
-        mach_timespec_t now;
-        clock_get_time(cs, &now);
-	seconds = now.tv_sec;
-	nanoseconds = now.tv_nsec;
-#elif defined( TARGET_WIN32 )
-	LARGE_INTEGER freq;
-	LARGE_INTEGER counter;
-	QueryPerformanceFrequency(&freq);
-	QueryPerformanceCounter(&counter);
-	seconds = counter.QuadPart/freq.QuadPart;
-	nanoseconds = (counter.QuadPart % freq.QuadPart)*1000000000/freq.QuadPart;
-#else
-	struct timeval now;
-	gettimeofday( &now, nullptr );
-	seconds = now.tv_sec;
-	nanoseconds = now.tv_usec * 1000;
+uint64_t ofTime::getAsMilliseconds() const{
+	auto seconds = std::chrono::seconds(this->seconds);
+	auto nanoseconds = std::chrono::nanoseconds(this->nanoseconds);
+	return (std::chrono::duration_cast<std::chrono::milliseconds>(seconds) +
+			std::chrono::duration_cast<std::chrono::milliseconds>(nanoseconds)).count();
+}
+
+//--------------------------------------
+uint64_t ofTime::getAsMicroseconds() const{
+	auto seconds = std::chrono::seconds(this->seconds);
+	auto nanoseconds = std::chrono::nanoseconds(this->nanoseconds);
+	return (std::chrono::duration_cast<std::chrono::microseconds>(seconds) +
+			std::chrono::duration_cast<std::chrono::microseconds>(nanoseconds)).count();
+}
+
+//--------------------------------------
+uint64_t ofTime::getAsNanoseconds() const{
+	auto seconds = std::chrono::seconds(this->seconds);
+	auto nanoseconds = std::chrono::nanoseconds(this->nanoseconds);
+	return (std::chrono::duration_cast<std::chrono::nanoseconds>(seconds) + nanoseconds).count();
+}
+
+//--------------------------------------
+double ofTime::getAsSeconds() const{
+	return seconds + nanoseconds / 1000000000.;
+}
+
+#ifndef TARGET_WIN32
+timespec ofTime::getAsTimespec() const{
+	timespec ret;
+	ret.tv_sec = seconds;
+	ret.tv_nsec = nanoseconds;
+	return ret;
+}
 #endif
+
+//--------------------------------------
+std::chrono::time_point<std::chrono::nanoseconds> ofTime::getAsTimePoint() const{
+	auto seconds = std::chrono::seconds(this->seconds);
+	auto nanoseconds = std::chrono::nanoseconds(this->nanoseconds);
+	return std::chrono::time_point<std::chrono::nanoseconds>(
+				std::chrono::duration_cast<std::chrono::nanoseconds>(seconds) + nanoseconds);
+}
+
+//--------------------------------------
+std::chrono::nanoseconds ofTime::operator-(const ofTime& other) const{
+	auto seconds = std::chrono::seconds(this->seconds) - std::chrono::seconds(other.seconds);
+	auto nanoseconds = std::chrono::nanoseconds(this->nanoseconds) - std::chrono::nanoseconds(other.nanoseconds);
+	return std::chrono::duration_cast<std::chrono::nanoseconds>(seconds) + nanoseconds;
+}
+
+//--------------------------------------
+bool ofTime::operator<(const ofTime & other) const{
+	return seconds < other.seconds || (seconds == other.seconds && nanoseconds < other.nanoseconds);
+}
+
+//--------------------------------------
+bool ofTime::operator>(const ofTime & other) const{
+	return seconds > other.seconds || (seconds == other.seconds && nanoseconds > other.nanoseconds);
+}
+
+//--------------------------------------
+bool ofTime::operator<=(const ofTime & other) const{
+	return seconds <= other.seconds || (seconds == other.seconds && nanoseconds <= other.nanoseconds);
+}
+
+//--------------------------------------
+bool ofTime::operator>=(const ofTime & other) const{
+	return seconds >= other.seconds || (seconds == other.seconds && nanoseconds >= other.nanoseconds);
+}
+
+//--------------------------------------
+uint64_t ofGetFixedStepForFps(double fps){
+	return 1000000000 / fps;
+}
+
+//--------------------------------------
+void ofSetTimeModeSystem(){
+	auto mainLoop = ofGetMainLoop();
+	if(!mainLoop){
+		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
+		return;
+	}
+	auto window = mainLoop->getCurrentWindow();
+	if(!window){
+		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
+		return;
+	}
+	window->events().setTimeModeSystem();
+	of::priv::getClock().setTimeModeSystem();
+}
+
+//--------------------------------------
+void ofSetTimeModeFixedRate(uint64_t stepNanos){
+	auto mainLoop = ofGetMainLoop();
+	if(!mainLoop){
+		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
+		return;
+	}
+	auto window = mainLoop->getCurrentWindow();
+	if(!window){
+		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
+		return;
+	}
+	window->events().setTimeModeFixedRate(stepNanos);
+	of::priv::getClock().setTimeModeFixedRate(stepNanos, *mainLoop);
+}
+
+//--------------------------------------
+void ofSetTimeModeFiltered(float alpha){
+	auto mainLoop = ofGetMainLoop();
+	if(!mainLoop){
+		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
+		return;
+	}
+	auto window = mainLoop->getCurrentWindow();
+	if(!window){
+		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
+		return;
+	}
+	window->events().setTimeModeFiltered(alpha);
+	of::priv::getClock().setTimeModeSystem();
+}
+
+//--------------------------------------
+ofTime ofGetCurrentTime(){
+	return of::priv::getClock().getCurrentTime();
 }
 
 
 //--------------------------------------
 uint64_t ofGetElapsedTimeMillis(){
-    uint64_t seconds;
-    uint64_t nanos;
-	ofGetMonotonicTime(seconds,nanos);
-	return (seconds - startTimeSeconds)*1000 + ((long long)(nanos - startTimeNanos))/1000000;
+	return std::chrono::duration_cast<std::chrono::milliseconds>(of::priv::getClock().getElapsedTime()).count();
 }
 
 //--------------------------------------
 uint64_t ofGetElapsedTimeMicros(){
-    uint64_t seconds;
-    uint64_t nanos;
-	ofGetMonotonicTime(seconds,nanos);
-	return (seconds - startTimeSeconds)*1000000 + ((long long)(nanos - startTimeNanos))/1000;
+	return std::chrono::duration_cast<std::chrono::microseconds>(of::priv::getClock().getElapsedTime()).count();
 }
 
 //--------------------------------------
 float ofGetElapsedTimef(){
-    uint64_t seconds;
-    uint64_t nanos;
-	ofGetMonotonicTime(seconds,nanos);
-	return (seconds - startTimeSeconds) + ((long long)(nanos - startTimeNanos))/1000000000.;
+	return std::chrono::duration<double>(of::priv::getClock().getElapsedTime()).count();
 }
 
 //--------------------------------------
 void ofResetElapsedTimeCounter(){
-	ofGetMonotonicTime(startTimeSeconds,startTimeNanos);
+	of::priv::getClock().resetElapsedTimeCounter();
 }
 
-//=======================================
-// this is from freeglut, and used internally:
-/* Platform-dependent time in milliseconds, as an unsigned 32-bit integer.
- * This value wraps every 49.7 days, but integer overflows cancel
- * when subtracting an initial start time, unless the total time exceeds
- * 32-bit, where the GLUT API return value is also overflowed.
- */
+//--------------------------------------
 uint64_t ofGetSystemTime( ) {
-	uint64_t seconds, nanoseconds;
-	ofGetMonotonicTime(seconds,nanoseconds);
-	return seconds * 1000 + nanoseconds / 1000000;
+	return of::priv::getClock().getCurrentTime().getAsMilliseconds();
 }
 
+//--------------------------------------
+uint64_t ofGetSystemTimeMillis( ) {
+	return of::priv::getClock().getCurrentTime().getAsMilliseconds();
+}
+
+//--------------------------------------
 uint64_t ofGetSystemTimeMicros( ) {
-    uint64_t seconds, nanoseconds;
-	ofGetMonotonicTime(seconds,nanoseconds);
-	return seconds * 1000000 + nanoseconds / 1000;
+	return of::priv::getClock().getCurrentTime().getAsMicroseconds();
 }
 
 //--------------------------------------------------
@@ -270,40 +448,40 @@ int ofGetHours(){
 
 //--------------------------------------------------
 int ofGetYear(){
-  time_t    curr;
-  tm       local;
-  time(&curr);
-  local   =*(localtime(&curr));
-  int year = local.tm_year + 1900;
-  return year;
+	time_t    curr;
+	tm       local;
+	time(&curr);
+	local   =*(localtime(&curr));
+	int year = local.tm_year + 1900;
+	return year;
 }
 
 //--------------------------------------------------
 int ofGetMonth(){
-  time_t    curr;
-  tm       local;
-  time(&curr);
-  local   =*(localtime(&curr));
-  int month = local.tm_mon + 1;
-  return month;
+	time_t    curr;
+	tm       local;
+	time(&curr);
+	local   =*(localtime(&curr));
+	int month = local.tm_mon + 1;
+	return month;
 }
 
 //--------------------------------------------------
 int ofGetDay(){
-  time_t    curr;
-  tm       local;
-  time(&curr);
-  local   =*(localtime(&curr));
-  return local.tm_mday;
+	time_t    curr;
+	tm       local;
+	time(&curr);
+	local   =*(localtime(&curr));
+	return local.tm_mday;
 }
 
 //--------------------------------------------------
 int ofGetWeekday(){
-  time_t    curr;
-  tm       local;
-  time(&curr);
-  local   =*(localtime(&curr));
-  return local.tm_wday;
+	time_t    curr;
+	tm       local;
+	time(&curr);
+	local   =*(localtime(&curr));
+	return local.tm_wday;
 }
 
 //--------------------------------------------------
@@ -327,16 +505,16 @@ bool ofRestoreWorkingDirectoryToDefault(){
 }
 
 //--------------------------------------------------
-void ofSetDataPathRoot(const string& newRoot){
+void ofSetDataPathRoot(const std::filesystem::path& newRoot){
 	dataPathRoot() = newRoot;
 }
 
 //--------------------------------------------------
-string ofToDataPath(const string& path, bool makeAbsolute){
+string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
 	if (!enableDataPath)
-		return path;
+        return path.string();
 
-    bool hasTrailingSlash = !path.empty() && std::filesystem::path(path).generic_string().back()=='/';
+    bool hasTrailingSlash = !path.empty() && path.generic_string().back()=='/';
 
 	// if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
@@ -432,7 +610,7 @@ string ofToHex(const string& value) {
 	std::size_t numBytes = value.size();
 	for(std::size_t i = 0; i < numBytes; i++) {
 		// print each byte as a 2-character wide hex value
-		out << setfill('0') << setw(2) << hex << (unsigned int) ((unsigned char)value[i]);
+		out << setfill('0') << std::setw(2) << std::hex << (unsigned int) ((unsigned char)value[i]);
 	}
 	return out.str();
 }
@@ -453,7 +631,7 @@ int ofToInt(const string& intString) {
 int ofHexToInt(const string& intHexString) {
 	int x = 0;
 	istringstream cur(intHexString);
-	cur >> hex >> x;
+	cur >> std::hex >> x;
 	return x;
 }
 
@@ -461,19 +639,19 @@ int ofHexToInt(const string& intHexString) {
 char ofHexToChar(const string& charHexString) {
 	int x = 0;
 	istringstream cur(charHexString);
-	cur >> hex >> x;
+	cur >> std::hex >> x;
 	return (char) x;
 }
 
 //----------------------------------------
 float ofHexToFloat(const string& floatHexString) {
 	union intFloatUnion {
-		int x;
+		uint32_t i;
 		float f;
 	} myUnion;
-	myUnion.x = 0;
+	myUnion.i = 0;
 	istringstream cur(floatHexString);
-	cur >> hex >> myUnion.x;
+	cur >> std::hex >> myUnion.i;
 	return myUnion.f;
 }
 
@@ -491,7 +669,7 @@ string ofHexToString(const string& stringHexString) {
 		stringstream curByteStream(curByte);
 		int cur = 0;
 		// parse the two characters as a hex-encoded int
-		curByteStream >> hex >> cur;
+		curByteStream >> std::hex >> cur;
 		// add the int as a char to our output stream
 		out << (char) cur;
 	}
@@ -782,89 +960,152 @@ void ofAppendUTF8(string & str, uint32_t utf8){
 }
 
 //--------------------------------------------------
-string ofVAArgsToString(const char * format, ...){
-	// variadic args to string:
-	// http://www.codeproject.com/KB/string/string_format.aspx
-	char aux_buffer[10000];
-	string retStr("");
-	if (nullptr != format){
+void ofUTF8Append(string & str, uint32_t utf8){
+	try{
+		utf8::append(utf8, back_inserter(str));
+	}catch(...){}
+}
 
-		va_list marker;
-
-		// initialize variable arguments
-		va_start(marker, format);
-
-		// Get formatted string length adding one for nullptr
-		size_t len = vsprintf(aux_buffer, format, marker) + 1;
-
-		// Reset variable arguments
-		va_end(marker);
-
-		if (len > 0)
-		{
-			va_list args;
-
-			// initialize variable arguments
-			va_start(args, format);
-
-			// Create a char vector to hold the formatted string.
-			vector<char> buffer(len, '\0');
-			vsprintf(&buffer[0], format, args);
-			retStr = &buffer[0];
-			va_end(args);
+//--------------------------------------------------
+void ofUTF8Insert(string & str, size_t pos, uint32_t utf8){
+	std::string newText;
+	size_t i = 0;
+	for(auto c: ofUTF8Iterator(str)){
+		if(i==pos){
+			ofUTF8Append(newText, utf8);
 		}
-
+		ofUTF8Append(newText, c);
+		i+=1;
 	}
-	return retStr;
+	if(i==pos){
+		ofUTF8Append(newText, utf8);
+	}
+	str = newText;
+}
+
+//--------------------------------------------------
+void ofUTF8Erase(string & str, size_t start, size_t len){
+	std::string newText;
+	size_t i = 0;
+	for(auto c: ofUTF8Iterator(str)){
+		if(i<start || i>=start + len){
+			ofUTF8Append(newText, c);
+		}
+		i+=1;
+	}
+	str = newText;
+}
+
+//--------------------------------------------------
+std::string ofUTF8Substring(const string & str, size_t start, size_t len){
+	size_t i=0;
+	std::string newText;
+	for(auto c: ofUTF8Iterator(str)){
+		if(i>=start){
+			ofUTF8Append(newText, c);
+		}
+		i += 1;
+		if(i==start + len){
+			break;
+		}
+	}
+	return newText;
+}
+
+//--------------------------------------------------
+std::string ofUTF8ToString(uint32_t utf8){
+	std::string str;
+	ofUTF8Append(str, utf8);
+	return str;
+}
+
+//--------------------------------------------------
+size_t ofUTF8Length(const std::string & str){
+	try{
+		return utf8::distance(str.begin(), str.end());
+	}catch(...){
+		return 0;
+	}
+}
+
+//--------------------------------------------------
+string ofVAArgsToString(const char * format, ...){
+	va_list args;
+	va_start(args, format);
+	char buf[256];
+	size_t n = std::vsnprintf(buf, sizeof(buf), format, args);
+	va_end(args);
+
+	// Static buffer large enough?
+	if (n < sizeof(buf)) {
+		return{ buf, n };
+	}
+
+	// Static buffer too small
+	std::string s(n + 1, 0);
+	va_start(args, format);
+	std::vsnprintf(const_cast<char*>(s.data()), s.size(), format, args);
+	va_end(args);
+
+	return s;
 }
 
 string ofVAArgsToString(const char * format, va_list args){
-	// variadic args to string:
-	// http://www.codeproject.com/KB/string/string_format.aspx
-	char aux_buffer[10000];
-	string retStr("");
-	if (nullptr != format){
+	char buf[256];
+	size_t n = std::vsnprintf(buf, sizeof(buf), format, args);
 
-		// Get formatted string length adding one for nullptr
-		vsprintf(aux_buffer, format, args);
-		retStr = aux_buffer;
-
+	// Static buffer large enough?
+	if (n < sizeof(buf)) {
+		return{ buf, n };
 	}
-	return retStr;
+
+	// Static buffer too small
+	std::string s(n + 1, 0);
+	std::vsnprintf(const_cast<char*>(s.data()), s.size(), format, args);
+
+	return s;
 }
 
-#ifndef TARGET_EMSCRIPTEN
 //--------------------------------------------------
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
-	Poco::URI uri;
-	try {
-		uri = Poco::URI(url);
-	} catch(const std::exception & exc) {
-		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.what();
+	UriParserStateA state;
+	UriUriA uri;
+	state.uri = &uri;
+	if(uriParseUriA(&state, url.c_str())!=URI_SUCCESS){
+		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\"";
+		uriFreeUriMembersA(&uri);
 		return;
 	}
-
 	if(uriEncodeQuery) {
-		uri.setQuery(uri.getRawQuery()); // URI encodes during set
+		uriNormalizeSyntaxA(&uri); // URI encodes during set
 	}
+	std::string scheme(uri.scheme.first, uri.scheme.afterLast);
+	int size;
+	uriToStringCharsRequiredA(&uri, &size);
+	std::vector<char> buffer(size+1, 0);
+	int written;
+	uriToStringA(buffer.data(), &uri, url.size()*2, &written);
+	std::string uriStr(buffer.data(), written-1);
+	uriFreeUriMembersA(&uri);
+
 
 	// http://support.microsoft.com/kb/224816
 	// make sure it is a properly formatted url:
 	//   some platforms, like Android, require urls to start with lower-case http/https
 	//   Poco::URI automatically converts the scheme to lower case
-	if(uri.getScheme() != "http" && uri.getScheme() != "https"){
-		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uri.toString() << "\"";
+	if(scheme != "http" && scheme != "https"){
+		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uriStr << "\"";
 		return;
 	}
 
 	#ifdef TARGET_WIN32
-		ShellExecuteA(nullptr, "open", uri.toString().c_str(),
+		ShellExecuteA(nullptr, "open", uriStr.c_str(),
                 nullptr, nullptr, SW_SHOWNORMAL);
 	#endif
 
 	#ifdef TARGET_OSX
         // could also do with LSOpenCFURLRef
-		string commandStr = "open \"" + uri.toString() + "\"";
+		string commandStr = "open \"" + uriStr + "\"";
 		int ret = system(commandStr.c_str());
         if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -872,7 +1113,7 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#endif
 
 	#ifdef TARGET_LINUX
-		string commandStr = "xdg-open \"" + uri.toString() + "\"";
+		string commandStr = "xdg-open \"" + uriStr + "\"";
 		int ret = system(commandStr.c_str());
 		if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -880,14 +1121,17 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#endif
 
 	#ifdef TARGET_OF_IOS
-		ofxiOSLaunchBrowser(uri.toString());
+		ofxiOSLaunchBrowser(uriStr);
 	#endif
 
 	#ifdef TARGET_ANDROID
-		ofxAndroidLaunchBrowser(uri.toString());
+		ofxAndroidLaunchBrowser(uriStr);
+	#endif
+
+	#ifdef TARGET_EMSCRIPTEN
+		ofLogError("ofUtils") << "ofLaunchBrowser() not implementeed in emscripten";
 	#endif
 }
-#endif
 
 //--------------------------------------------------
 string ofGetVersionInfo(){

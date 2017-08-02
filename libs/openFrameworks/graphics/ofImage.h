@@ -73,18 +73,53 @@ enum ofImageFormat {
     OF_IMAGE_FORMAT_RAW     = 34
 };
 
+inline std::string ofImageFormatExtension(ofImageFormat format){
+    switch(format){
+    case OF_IMAGE_FORMAT_BMP: return "bmp";
+    case OF_IMAGE_FORMAT_ICO: return "ico";
+    case OF_IMAGE_FORMAT_JPEG: return "jpg";
+    case OF_IMAGE_FORMAT_JNG: return "jng";
+    case OF_IMAGE_FORMAT_KOALA: return "koala";
+    case OF_IMAGE_FORMAT_LBM: return "lbm";
+    case OF_IMAGE_FORMAT_MNG: return "mng";
+    case OF_IMAGE_FORMAT_PBM: return "pbm";
+    case OF_IMAGE_FORMAT_PBMRAW: return "pbm";
+    case OF_IMAGE_FORMAT_PCD: return "pcd";
+    case OF_IMAGE_FORMAT_PCX: return "pcx";
+    case OF_IMAGE_FORMAT_PGM: return "pgm";
+    case OF_IMAGE_FORMAT_PGMRAW: return "pgm";
+    case OF_IMAGE_FORMAT_PNG: return "png";
+    case OF_IMAGE_FORMAT_PPM: return "ppm";
+    case OF_IMAGE_FORMAT_PPMRAW: return "ppm";
+    case OF_IMAGE_FORMAT_RAS: return "ras";
+    case OF_IMAGE_FORMAT_TARGA: return "tga";
+    case OF_IMAGE_FORMAT_TIFF: return "tif";
+    case OF_IMAGE_FORMAT_WBMP: return "wbmp";
+    case OF_IMAGE_FORMAT_PSD: return "psd";
+    case OF_IMAGE_FORMAT_CUT: return "cut";
+    case OF_IMAGE_FORMAT_XBM: return "xbm";
+    case OF_IMAGE_FORMAT_XPM: return "xpm";
+    case OF_IMAGE_FORMAT_DDS: return "dds";
+    case OF_IMAGE_FORMAT_GIF: return "gif";
+    case OF_IMAGE_FORMAT_HDR: return "hdr";
+    case OF_IMAGE_FORMAT_FAXG3: return "faxg3";
+    case OF_IMAGE_FORMAT_SGI: return "sgi";
+    case OF_IMAGE_FORMAT_EXR: return "exr";
+    case OF_IMAGE_FORMAT_J2K: return "j2k";
+    case OF_IMAGE_FORMAT_JP2: return "jp2";
+    case OF_IMAGE_FORMAT_PFM: return "pfm";
+    case OF_IMAGE_FORMAT_PICT: return "pict";
+    case OF_IMAGE_FORMAT_RAW: return "raw";
+	default: return "unkown";
+    }
+}
+
 /// \todo Needs documentation.
 struct ofImageLoadSettings {
-    ofImageLoadSettings(bool accurate = false, bool exifRotate = false, bool grayscale = false, bool separateCMYK = false)
-    : accurate(accurate)
-    , exifRotate(exifRotate)
-    , grayscale(grayscale)
-    , separateCMYK(separateCMYK) {}
-    bool accurate;
-    bool exifRotate;
-    bool grayscale;
-    bool separateCMYK;
-    static ofImageLoadSettings defaultSetting;
+	bool accurate = false;
+	bool exifRotate = false;
+	bool grayscale = false;
+	bool separateCMYK = false;
 };
 
 //----------------------------------------------------
@@ -92,27 +127,27 @@ struct ofImageLoadSettings {
 
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofPixels & pix, const std::string& path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofFloatPixels & pix, const std::string& path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofShortPixels & pix, const std::string& path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofFloatPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofShortPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofTexture & tex, const std::string& path, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+bool ofLoadImage(ofTexture & tex, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
-void ofSaveImage(const ofPixels & pix, const std::string& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(const ofPixels & pix, const std::filesystem::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(const ofPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 /// \todo Needs documentation.
-void ofSaveImage(const ofFloatPixels & pix, const std::string& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(const ofFloatPixels & pix, const std::filesystem::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(const ofFloatPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 /// \todo Needs documentation.
-void ofSaveImage(const ofShortPixels & pix, const std::string& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(const ofShortPixels & pix, const std::filesystem::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(const ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 /// \brief Deallocates FreeImage resources.
@@ -131,8 +166,7 @@ public:
     ofImage_();
     
     ofImage_(const ofPixels_<PixelType> & pix);
-    ofImage_(const ofFile & file, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-    ofImage_(const std::string & fileName, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+	ofImage_(const std::filesystem::path & fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
     ofImage_(const ofImage_<PixelType>& mom);
     ofImage_(ofImage_<PixelType>&& mom);
     
@@ -169,35 +203,21 @@ public:
     OF_DEPRECATED_MSG("Use isAllocated()", bool bAllocated());
     
     /// \brief This clears the texture and pixels contained within the ofImage.
-    void clear();
-    
-    /// \brief Create an ofImage from another ofImage instance.
-    ///
-    /// This allows you to create an ofImage from another ofImage instance,
-    /// copying all the pixels and the texture data while creating a new textureID.
-    template<typename SrcType>
-    void clone(const ofImage_<SrcType> &mom);
+	void clear();
     
     /// \brief Loads an image given by fileName.
     /// \param fileName Program looks for image given by fileName, relative to
     /// the data folder.
     /// \param settings Load options
     /// \returns true if image loaded correctly.
-    bool load(const std::string& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+	bool load(const std::filesystem::path& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
     
     /// \brief Loads an image from an ofBuffer instance created by, for
     /// instance, ofFile::readToBuffer().
     ///
     /// This actually loads the image data into an ofPixels object and then
     /// into the texture.
-    bool load(const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
-    
-    /// \brief Loads an image from an ofFile instance created by, for
-    /// instance, ofDirectory::getFiles().
-    ///
-    /// This actually loads the image data into an ofPixels object and then
-    /// into the texture.
-    bool load(const ofFile & file, const ofImageLoadSettings &settings = ofImageLoadSettings::defaultSetting);
+	bool load(const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
     
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(const std::string& fileName));
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(const ofBuffer & buffer));
@@ -223,6 +243,8 @@ public:
     /// \param y Draw position on the y axis.
     /// \param z Draw position on the z axis.
     void draw(float x, float y, float z) const;
+
+	void draw(const glm::vec3 & pos) const;
     
     /// \brief Draw the image at a given size.
     ///
@@ -240,6 +262,8 @@ public:
     /// \param w Draw width.
     /// \param h Draw height.
     void draw(float x, float y, float z, float w, float h) const;
+
+	void draw(const glm::vec3 & pos, float w, float h) const;
     
     /// \brief Draws a subsection of the image.
     ///
@@ -568,20 +592,14 @@ public:
     ///
     /// \param fileName Saves image to this path, relative to the data folder.
     /// \param compressionLevel The ofImageQualityType.
-    void save(const std::string & fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
+    void save(const std::filesystem::path & fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
     
     /// \brief This saves the image to the ofBuffer passed with the image
     /// quality specified by compressionLevel.
     ///
     /// \param buffer ofBuffer to save image to.
     /// \param compressionLevel The ofImageQualityType.
-    void save(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
-    
-    /// \brief This saves the image to the ofFile passed with the image quality specified by compressionLevel.
-    /// \param file ofFile to save image to.
-    /// \param compressionLevel The different compression levels are: `OF_IMAGE_QUALITY_BEST`, `OF_IMAGE_QUALITY_HIGH`,
-    /// `OF_IMAGE_QUALITY_MEDIUM`, `OF_IMAGE_QUALITY_LOW`, `OF_IMAGE_QUALITY_WORST`
-    void save(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
+    void save(ofBuffer & buffer, ofImageFormat imageFormat = OF_IMAGE_FORMAT_PNG, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
     
     OF_DEPRECATED_MSG("Use save instead",void saveImage(const std::string& fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const);
     OF_DEPRECATED_MSG("Use save instead",void saveImage(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const);
@@ -619,6 +637,9 @@ protected:
     int height; ///< \brief Image Height in pixels.
     int bpp;    ///< \brief Bits per image pixel.
     ofImageType type;   ///< \brief Image type.
+
+	template<typename SrcType>
+	void clone(const ofImage_<SrcType> &mom);
     /// \endcond
 };
 
@@ -635,8 +656,7 @@ typedef ofImage_<unsigned short> ofShortImage;
 template<typename PixelType>
 template<typename SrcType>
 ofImage_<PixelType>& ofImage_<PixelType>::operator=(const ofImage_<SrcType>& mom) {
-    clone(mom);
-    update();
+	clone(mom);
     return *this;
 }
 
@@ -645,8 +665,7 @@ template<typename PixelType>
 template<typename SrcType>
 ofImage_<PixelType>::ofImage_(const ofImage_<SrcType>& mom) {
     clear();
-    clone(mom);
-    update();
+	clone(mom);
 }
 
 //------------------------------------

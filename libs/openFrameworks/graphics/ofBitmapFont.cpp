@@ -333,13 +333,13 @@ void ofBitmapFont::init(){
 	if(pixels.isAllocated()) return;
 	pixels.allocate(16*16, 16*16, OF_PIXELS_GRAY_ALPHA); // letter size:8x14pixels, texture size:16x8letters, gl_r: 1bytes/1pixel
 	pixels.set(0);
-	for (int i = 0; i < 256; i++) {
+	for (size_t i = 0; i < 256; i++) {
 		const unsigned char * face = bmpChar_8x13_Map[i];
-		for (int j = 1; j < 15; j++){
-			for (int k = 0; k < 8; k++){
+		for (size_t j = 1; j < 15; j++){
+			for (size_t k = 0; k < 8; k++){
 				if ( ((face[15-j] << k) & (128)) > 0 ){
-					pixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
-					pixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
+					pixels[(((i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
+					pixels[(((i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
 				}
 			}
 		}
@@ -418,11 +418,11 @@ ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofDrawBitmapMode
 		if(text[c] == '\n'){
 
 			sy += lineHeight*newLineDirection;
-			if(mode == OF_BITMAPMODE_SIMPLE) {
+//			if(mode == OF_BITMAPMODE_SIMPLE) {
 				sx = x;
-			} else {
-				sx = 0;
-			}
+//			} else {
+//				sx = 0;
+//			}
 
 			column = 0;
 		} else if (text[c] == '\t'){
@@ -474,20 +474,19 @@ const ofTexture & ofBitmapFont::getTexture() const{
 }
 
 
-ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y) const{
+ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y, ofDrawBitmapMode mode, bool vFlipped) const{
     if(text.empty()){
         return ofRectangle(x,y,0,0);
     }
 
-	const ofMesh & mesh = getMesh(text,x,y);
-	glm::vec2 max(numeric_limits<float>::min(),numeric_limits<float>::min());
+	const ofMesh & mesh = getMesh(text,x,y, mode, vFlipped);
+	glm::vec2 max(numeric_limits<float>::lowest(),numeric_limits<float>::lowest());
 	glm::vec2 min(numeric_limits<float>::max(),numeric_limits<float>::max());
-	for(std::size_t i=0;i< mesh.getNumVertices(); i++){
-		const auto & p = mesh.getVertex(i);
+	for(const auto & p : mesh.getVertices()){
 		if(p.x<min.x) min.x = p.x;
 		if(p.y<min.y) min.y = p.y;
 		if(p.x>max.x) max.x = p.x;
 		if(p.y>max.y) max.y = p.y;
 	}
-	return ofRectangle(min.x,min.y,max.x-min.x,max.y-min.y);
+	return ofRectangle(min,max);
 }

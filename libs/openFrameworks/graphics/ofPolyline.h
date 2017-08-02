@@ -501,10 +501,10 @@ private:
     
     // cache
     mutable vector<float> lengths;    // cumulative lengths, stored per point (lengths[n] is the distance to the n'th point, zero based)
-	mutable vector<T> tangents;   // tangent at vertex, stored per point
-	mutable vector<T> normals;    //
-	mutable vector<T> rotations;   // rotation between adjacent segments, stored per point (cross product)
-    mutable vector<float> angles;    // angle (degrees) between adjacent segments, stored per point (asin(cross product))
+	mutable vector<T> tangents;       // tangent at vertex, stored per point
+	mutable vector<T> normals;        //
+	mutable vector<T> rotations;      // rotation axes between adjacent segments, stored per point (cross product)
+    mutable vector<float> angles;     // angle (rad) between adjacent segments, stored per point (asin(cross product))
 	mutable T centroid2D;
     mutable float area;
     
