@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    
+
 #ifdef TARGET_OPENGLES
 	shader.load("shadersES2/shader");
 #else
@@ -16,15 +16,15 @@ void ofApp::setup(){
     img.allocate(80, 60, OF_IMAGE_GRAYSCALE);
 
     plane.set(800, 600, 80, 60);
-    plane.mapTexCoordsFromTexture(img.getTextureReference());
+    plane.mapTexCoordsFromTexture(img.getTexture());
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     float noiseScale = ofMap(mouseX, 0, ofGetWidth(), 0, 0.1);
     float noiseVel = ofGetElapsedTimef();
-    
-    unsigned char * pixels = img.getPixels();
+
+    ofPixels & pixels = img.getPixels();
     int w = img.getWidth();
     int h = img.getHeight();
     for(int y=0; y<h; y++) {
@@ -39,15 +39,15 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
+
     // bind our texture. in our shader this will now be tex0 by default
     // so we can just go ahead and access it there.
-    img.getTextureReference().bind();
-    
+    img.getTexture().bind();
+
     shader.begin();
 
     ofPushMatrix();
-    
+
     // translate plane into center screen.
     float tx = ofGetWidth() / 2;
     float ty = ofGetHeight() / 2;
@@ -56,12 +56,12 @@ void ofApp::draw(){
     // the mouse/touch Y position changes the rotation of the plane.
     float percentY = mouseY / (float)ofGetHeight();
     float rotation = ofMap(percentY, 0, 1, -60, 60, true) + 60;
-    ofRotate(rotation, 1, 0, 0);
+    ofRotateDeg(rotation, 1, 0, 0);
 
     plane.drawWireframe();
-    
+
     ofPopMatrix();
-    
+
     shader.end();
 
     ofSetColor(ofColor::white);
@@ -70,7 +70,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    
+
 }
 
 //--------------------------------------------------------------
@@ -80,7 +80,7 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-    
+
 }
 
 //--------------------------------------------------------------
@@ -109,6 +109,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

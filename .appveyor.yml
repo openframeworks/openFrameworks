@@ -1,19 +1,64 @@
 version: 1.0.{build}
 os: Visual Studio 2015 RC
+
+environment:
+  global:
+    APPVEYOR_OS_NAME: windows
+  matrix:
+  #MSYS2 Building
+    - platform: x86
+      BUILDER: MSYS2
+
+  #VisualStudio Building
+    - platform: x86
+      BUILDER : VS
+      BITS: 32
+    - platform: x64
+      BUILDER : VS
+      BITS: 64
+
 configuration: Debug
-platform:
-- x86
-- x64
 shallow_clone: true
 clone_depth: 10
-environment:
-  PATH: C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
-build:
-  project: libs/openFrameworksCompiled/project/vs/openframeworksLib.vcxproj
-  parallel: true
-  verbosity: minimal
+
+init:
+- set MSYS2_PATH=c:\msys64
+- set CHERE_INVOKING=1
+#- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Sy pacman"'
+#- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syuu"'
+- if "%BUILDER%_%PLATFORM%"=="MSYS2_x86" set MSYSTEM=MINGW32
+- if "%BUILDER%_%PLATFORM%"=="MSYS2_x64" set MSYSTEM=MINGW64
+
+#- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syuu")
+- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync"'
+
+- IF "%BUILDER%"=="VS" set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
+
+install:
+#- ps: |
+#    if ($env:BUILDER -eq "VS") {
+#        .\scripts\vs\download_libs.ps1
+#    }
+- if "%BUILDER%"=="VS" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/vs/download_libs.sh --silent")
+- if "%BUILDER%"=="VS" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/vs/install.sh")
+
+- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/msys2/install_dependencies.sh --noconfirm")
+- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/msys2/download_libs.sh --silent")
+
+build_script:
+- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/msys2/build.sh")
+
+- ps: |
+    if ($env:BUILDER -eq "VS") {
+      msbuild libs/openFrameworksCompiled/project/vs/openframeworksLib.vcxproj  /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+      msbuild examples/templates/emptyExample/emptyExample.vcxproj  /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+      msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj  /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    }
+
 test_script:
-- cmd: >-
-    cd scripts/ci/vs
-    
-    run_tests.bat
+- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/msys2/run_tests.sh")
+- ps: |
+    if ($env:BUILDER -eq "VS") {
+      cd scripts/ci/vs
+      .\run_tests.bat
+    }

@@ -1,9 +1,9 @@
-#About multiWindowOneAppExample
+# About multiWindowOneAppExample
 
 ![Screenshot of multiWindowOneAppExample](multiWindowOneAppExample.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates how an eventListener added to a GUI window uses the values of the parameters displayed to update the appearance of a circle in the main window.
 
@@ -26,6 +26,6 @@ Instructions for use:
 * drag the sliders of the parameters radius, r, g, b, a, to modify the appearance of the circle.
  
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no other classes.

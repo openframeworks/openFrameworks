@@ -6,6 +6,7 @@
 #include "ofShader.h"
 #include "ofBaseTypes.h"
 #include "ofRendererCollection.h"
+#include "ofLog.h"
 
 //---------------------------------
 int ofGetGlInternalFormat(const ofPixels& pix) {
@@ -113,7 +114,11 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 			case GL_RGBA8:
 			case GL_RGBA16:
 			case GL_RGBA16F:
-			case GL_RGBA32F_ARB:
+		    case GL_RGBA16I:
+		    case GL_RGBA16UI:
+		    case GL_RGBA32F:
+		    case GL_RGBA32I:
+		    case GL_RGBA32UI:
 	#endif
 				 return GL_RGBA;
 
@@ -122,7 +127,12 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 	#ifndef TARGET_OPENGLES
 			case GL_RGB8:
 			case GL_RGB16:
-			case GL_RGB32F_ARB:
+		    case GL_RGB16F:
+		    case GL_RGB16I:
+		    case GL_RGB16UI:
+		    case GL_RGB32F:
+		    case GL_RGB32I:
+		    case GL_RGB32UI:
 	#endif
 				return GL_RGB;
 
@@ -161,14 +171,22 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 #ifndef TARGET_OPENGLES
 			case GL_R8:
 			case GL_R16:
+		    case GL_R16I:
+		    case GL_R16UI:
 			case GL_R16F:
 			case GL_R32F:
+		    case GL_R32I:
+		    case GL_R32UI:
 				return GL_RED;
 
 			case GL_RG8:
 			case GL_RG16:
+		    case GL_RG16I:
+		    case GL_RG16UI:
 			case GL_RG16F:
 			case GL_RG32F:
+		    case GL_RG32I:
+		    case GL_RG32UI:
 				return GL_RG;
 #endif
 
@@ -205,16 +223,6 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 			 return GL_UNSIGNED_BYTE;
 
 
-#ifndef TARGET_OPENGLES
-		case GL_LUMINANCE16:
-		case GL_LUMINANCE16_ALPHA16:
-		case GL_R16:
-		case GL_RG16:
-		case GL_RGB16:
-		case GL_RGBA16:
-#endif
-			return GL_UNSIGNED_SHORT;
-
 #if !defined(TARGET_OPENGLES) && defined(GL_RGB565)
 		case GL_RGB565:
 			return GL_UNSIGNED_SHORT_5_6_5;
@@ -224,17 +232,24 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 #ifndef TARGET_OPENGLES
 		case GL_LUMINANCE32F_ARB:
 		case GL_LUMINANCE_ALPHA32F_ARB:
-		case GL_R16F:
-		case GL_RG16F:
-		case GL_RGB16F:
-		case GL_RGBA16F:
 		case GL_R32F:
 		case GL_RG32F:
 		case GL_RGB32F:
 		case GL_RGBA32F:
-#endif
 			return GL_FLOAT;
 
+		case GL_R16F:
+		case GL_RG16F:
+		case GL_RGB16F:
+		case GL_RGBA16F:
+		case GL_LUMINANCE16:
+		case GL_LUMINANCE16_ALPHA16:
+		case GL_R16:
+		case GL_RG16:
+		case GL_RGB16:
+		case GL_RGBA16:
+			return GL_HALF_FLOAT;
+#endif
 
 		case GL_DEPTH_STENCIL:
 			 return GL_UNSIGNED_INT_24_8;
@@ -242,13 +257,37 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 		case GL_DEPTH_COMPONENT:
 #ifndef TARGET_OPENGLES
 		case GL_DEPTH_COMPONENT16:
+		case GL_R16UI:
+		case GL_RG16UI:
+		case GL_RGB16UI:
+		case GL_RGBA16UI:
 #endif
 			return GL_UNSIGNED_SHORT;
 
 #ifndef TARGET_OPENGLES
+		case GL_R16I:
+		case GL_RG16I:
+		case GL_RGB16I:
+		case GL_RGBA16I:
+		    return GL_SHORT;
+#endif
+
+#ifndef TARGET_OPENGLES
 		case GL_DEPTH_COMPONENT24:
 		case GL_DEPTH_COMPONENT32:
+		case GL_R32UI:
+		case GL_RG32UI:
+		case GL_RGB32UI:
+		case GL_RGBA32UI:
 			return GL_UNSIGNED_INT;
+#endif
+
+#ifndef TARGET_OPENGLES
+		case GL_R32I:
+		case GL_RG32I:
+		case GL_RGB32I:
+		case GL_RGBA32I:
+		    return GL_INT;
 #endif
 
 		case GL_STENCIL_INDEX:
@@ -589,12 +628,13 @@ int ofGetGLFormatFromPixelFormat(ofPixelFormat pixelFormat){
 		}
 #endif
 	default:
-		ofLogError("ofGLUtils") << "ofGetGLFormatFromPixelFormat(): unknown OF pixel format" << pixelFormat << ", returning GL_LUMINANCE";
 #ifndef TARGET_OPENGLES
 		if(ofIsGLProgrammableRenderer()){
+			ofLogError("ofGLUtils") << "ofGetGLFormatFromPixelFormat(): unknown OF pixel format" << pixelFormat << ", returning GL_RED";
 			return GL_RED;
 		}else{
 #endif
+			ofLogError("ofGLUtils") << "ofGetGLFormatFromPixelFormat(): unknown OF pixel format" << pixelFormat << ", returning GL_LUMINANCE";
 			return GL_LUMINANCE;
 #ifndef TARGET_OPENGLES
 		}
@@ -680,8 +720,6 @@ void ofSetPixelStoreiAlignment(GLenum pname, int stride){
     }
 }
 
-
-
 vector<string> ofGLSupportedExtensions(){
 #ifdef TARGET_OPENGLES
 	char* extensions = (char*)glGetString(GL_EXTENSIONS);
@@ -712,7 +750,7 @@ bool ofGLCheckExtension(string searchName){
 	extensionsSet.insert(extensionsList.begin(),extensionsList.end());
 	return extensionsSet.find(searchName)!=extensionsSet.end();
 #else
-	return glewGetExtension(searchName.c_str());
+	return glewIsSupported(searchName.c_str());
 #endif
 }
 
@@ -800,3 +838,70 @@ void ofReloadGLResources(){
 }
 #endif
 
+#ifndef TARGET_OPENGLES
+namespace{
+	void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, void * user){
+		ostringstream oss;
+		oss << "GL Debug: ";
+		
+		ofLogLevel level;
+		switch (type) {
+		case GL_DEBUG_TYPE_ERROR:
+			level = OF_LOG_ERROR;
+			oss << "ERROR";
+			break;
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+			level = OF_LOG_WARNING;
+			oss << "DEPRECATED_BEHAVIOR";
+			break;
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+			level = OF_LOG_WARNING;
+			oss << "UNDEFINED_BEHAVIOR";
+			break;
+		case GL_DEBUG_TYPE_PORTABILITY:
+			level = OF_LOG_NOTICE;
+			oss << "PORTABILITY";
+			break;
+		case GL_DEBUG_TYPE_PERFORMANCE:
+			level = OF_LOG_NOTICE;
+			oss << "PERFORMANCE";
+			break;
+		case GL_DEBUG_TYPE_OTHER:
+		default:
+			level = OF_LOG_VERBOSE;
+			oss << "OTHER";
+			break;
+		}
+
+		switch (severity) {
+		case GL_DEBUG_SEVERITY_LOW:
+			oss << " (LOW)";
+			break;
+		case GL_DEBUG_SEVERITY_MEDIUM:
+			oss << " (MEDIUM)";
+			break;
+		case GL_DEBUG_SEVERITY_HIGH:
+			oss << " (HIGH)";
+			break;
+		}
+
+		oss << ", " << id << ": " << message;
+		
+		ofLog(level, oss.str());
+	}
+}
+
+void ofEnableGLDebugLog(){
+	if(ofGLCheckExtension("GL_KHR_debug") && ofGLCheckExtension("GL_ARB_debug_output")){
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); 
+		glDebugMessageCallback((GLDEBUGPROC)gl_debug_callback, nullptr);
+	}
+}
+
+void ofDisableGLDebugLog(){
+	if(ofGLCheckExtension("GL_KHR_debug") && ofGLCheckExtension("GL_ARB_debug_output")){
+		glDisable(GL_DEBUG_OUTPUT);
+	}
+}
+#endif

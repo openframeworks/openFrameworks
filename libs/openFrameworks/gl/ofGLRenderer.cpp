@@ -26,7 +26,7 @@ ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 	triPoints.resize(3);
 	normalsEnabled = false;
 	lightingEnabled = false;
-    materialBound = false;
+	materialBound = false;
 	alphaMaskTextureTarget = GL_TEXTURE_2D;
 	window = _window;
 	currentFramebufferId = 0;
@@ -54,16 +54,16 @@ void ofGLRenderer::setup(){
 void ofGLRenderer::startRender(){
 	currentFramebufferId = defaultFramebufferId;
 	framebufferIdStack.push_back(defaultFramebufferId);
-    matrixStack.setRenderSurface(*window);
+	matrixStack.setRenderSurface(*window);
 	viewport();
-    // to do non auto clear on PC for now - we do something like "single" buffering --
-    // it's not that pretty but it work for the most part
+	// to do non auto clear on PC for now - we do something like "single" buffering --
+	// it's not that pretty but it work for the most part
 
-    #ifdef TARGET_WIN32
-    if (getBackgroundAuto() == false){
-        glDrawBuffer (GL_FRONT);
-    }
-    #endif
+	#ifdef TARGET_WIN32
+	if (getBackgroundAuto() == false){
+		glDrawBuffer (GL_FRONT);
+	}
+	#endif
 
 	if ( getBackgroundAuto() ){// || ofGetFrameNum() < 3){
 		background(currentStyle.bgColor);
@@ -82,11 +82,11 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
 		if(vertexData.getNumVertices()){
 			glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData.getVerticesPointer()->x);
+			glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), &vertexData.getVerticesPointer()->x);
 		}
 		if(vertexData.getNumNormals() && useNormals){
 			glEnableClientState(GL_NORMAL_ARRAY);
-			glNormalPointer(GL_FLOAT, sizeof(ofVec3f), &vertexData.getNormalsPointer()->x);
+			glNormalPointer(GL_FLOAT, sizeof(glm::vec3), &vertexData.getNormalsPointer()->x);
 		}
 		if(vertexData.getNumColors() && useColors){
 			glEnableClientState(GL_COLOR_ARRAY);
@@ -94,20 +94,20 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 		}
 
 		if(vertexData.getNumTexCoords() && useTextures){
-            if(textureLocationsEnabled.size() == 0){
-                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                    glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
-            }else{
-                set<int>::iterator textureLocation = textureLocationsEnabled.begin();
-                for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
-                    glActiveTexture(GL_TEXTURE0+*textureLocation);
-                    glClientActiveTexture(GL_TEXTURE0+*textureLocation);
-                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                    glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
-                }
-                glActiveTexture(GL_TEXTURE0);
-                glClientActiveTexture(GL_TEXTURE0);
-            }
+			if(textureLocationsEnabled.size() == 0){
+					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+					glTexCoordPointer(2, GL_FLOAT, sizeof(glm::vec2), &vertexData.getTexCoordsPointer()->x);
+			}else{
+				set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+				for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
+					glActiveTexture(GL_TEXTURE0+*textureLocation);
+					glClientActiveTexture(GL_TEXTURE0+*textureLocation);
+					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+					glTexCoordPointer(2, GL_FLOAT, sizeof(glm::vec2), &vertexData.getTexCoordsPointer()->x);
+				}
+				glActiveTexture(GL_TEXTURE0);
+				glClientActiveTexture(GL_TEXTURE0);
+			}
 		}
 
 		if(vertexData.getNumIndices()){
@@ -146,20 +146,20 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 		}
 
 		if(vertexData.getNumTexCoords() && useTextures){
-            if(textureLocationsEnabled.size() == 0){
-                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                    glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
-            }else{
-                set<int>::iterator textureLocation = textureLocationsEnabled.begin();
-                for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
-                    glActiveTexture(GL_TEXTURE0+*textureLocation);
-                    glClientActiveTexture(GL_TEXTURE0+*textureLocation);
-                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                    glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
-                }
-                glActiveTexture(GL_TEXTURE0);
-                glClientActiveTexture(GL_TEXTURE0);
-            }
+			if(textureLocationsEnabled.size() == 0){
+					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+					glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+			}else{
+				set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+				for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
+					glActiveTexture(GL_TEXTURE0+*textureLocation);
+					glClientActiveTexture(GL_TEXTURE0+*textureLocation);
+					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+					glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+				}
+				glActiveTexture(GL_TEXTURE0);
+				glClientActiveTexture(GL_TEXTURE0);
+			}
 		}
 
 		GLenum drawMode;
@@ -267,7 +267,7 @@ void ofGLRenderer::draw(const ofPolyline & poly) const{
 		if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &poly.getVertices()[0].x);
+		glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), &poly.getVertices()[0].x);
 		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
 
 		// use smoothness, if requested:
@@ -381,9 +381,9 @@ void ofGLRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int
 	if(vbo.getUsingVerts()) {
 		vbo.bind();
 #ifdef TARGET_OPENGLES
-        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void*)(sizeof(ofIndexType) * offsetelements));
+		glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void*)(sizeof(ofIndexType) * offsetelements));
 #else
-        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, (void*)(sizeof(ofIndexType) * offsetelements));
+		glDrawElements(drawMode, amt, GL_UNSIGNED_INT, (void*)(sizeof(ofIndexType) * offsetelements));
 #endif
 		vbo.unbind();
 	}
@@ -411,13 +411,13 @@ void ofGLRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int
 	if(vbo.getUsingVerts()) {
 		vbo.bind();
 #ifdef TARGET_OPENGLES
-        // todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
-        // unfortunately there is currently no easy way within oF to query the current OpenGL version.
-        // https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-        ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
-        // glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, nullptr, primCount);
+		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
+		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
+		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
+		ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
+		// glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, nullptr, primCount);
 #else
-        glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, nullptr, primCount);
+		glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, nullptr, primCount);
 #endif
 		vbo.unbind();
 	}
@@ -454,22 +454,26 @@ void ofGLRenderer::unbind(const ofShader & shader){
 
 
 //----------------------------------------------------------
-void ofGLRenderer::begin(const ofFbo & fbo, bool setupPerspective){
+void ofGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode){
 	pushView();
 	pushStyle();
-	matrixStack.setRenderSurface(fbo);
+    if(mode & ofFboBeginMode::MatrixFlip){
+        matrixStack.setRenderSurface(fbo);
+    }else{
+        matrixStack.setRenderSurfaceNoMatrixFlip(fbo);
+    }
 	viewport();
-	if(setupPerspective){
+    if(mode & ofFboBeginMode::Perspective){
 		setupScreenPerspective();
 	}else{
-		ofMatrix4x4 m;
-		glGetFloatv(GL_PROJECTION_MATRIX,m.getPtr());
-		m =  m*matrixStack.getOrientationMatrixInverse();
+		glm::mat4 m;
+		glGetFloatv(GL_PROJECTION_MATRIX, glm::value_ptr(m));
+		m =  matrixStack.getOrientationMatrixInverse() * m;
 		ofMatrixMode currentMode = matrixStack.getCurrentMatrixMode();
 		matrixStack.matrixMode(OF_MATRIX_PROJECTION);
-		matrixStack.loadMatrix(m.getPtr());
+		matrixStack.loadMatrix(m);
 		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(matrixStack.getProjectionMatrix().getPtr());
+		glLoadMatrixf(glm::value_ptr(matrixStack.getProjectionMatrix()));
 		matrixMode(currentMode);
 	}
 	bind(fbo);
@@ -541,14 +545,14 @@ void ofGLRenderer::bind(const ofBaseMaterial & material){
 	ofFloatColor specular = material.getSpecularColor();
 	ofFloatColor ambient = material.getAmbientColor();
 	ofFloatColor emissive = material.getEmissiveColor();
-    float shininess = material.getShininess();
+	float shininess = material.getShininess();
 	glDisable(GL_COLOR_MATERIAL);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &diffuse.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &specular.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &ambient.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &emissive.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
-    materialBound = true;
+	materialBound = true;
 }
 
 //----------------------------------------------------------
@@ -560,11 +564,11 @@ void ofGLRenderer::unbind(const ofBaseMaterial &){
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &defaultData.ambient.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &defaultData.emissive.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &defaultData.shininess);
-    // Re-enable global color as material ambient and diffuse
-    materialBound = false;
-    if(lightingEnabled){
-        setColor(currentStyle.color);
-    }
+	// Re-enable global color as material ambient and diffuse
+	materialBound = false;
+	if(lightingEnabled){
+		setColor(currentStyle.color);
+	}
 }
 
 //----------------------------------------------------------
@@ -579,14 +583,14 @@ void ofGLRenderer::bind(const ofTexture & texture, int location){
 	if(ofGetUsingNormalizedTexCoords()) {
 		matrixMode(OF_MATRIX_TEXTURE);
 		pushMatrix();
-		ofMatrix4x4 m;
+		glm::mat4 m;
 
 #ifndef TARGET_OPENGLES
 		if(texture.texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB)
-			m.makeScaleMatrix(texture.texData.width, texture.texData.height, 1.0f);
+			m = glm::scale(m, glm::vec3(texture.texData.width, texture.texData.height, 1.0f));
 		else
 #endif
-			m.makeScaleMatrix(texture.texData.width / texture.texData.tex_w, texture.texData.height / texture.texData.tex_h, 1.0f);
+			m = glm::scale(m, glm::vec3(texture.texData.width / texture.texData.tex_w, texture.texData.height / texture.texData.tex_h, 1.0f));
 
 		loadMatrix(m);
 		matrixMode(OF_MATRIX_MODELVIEW);
@@ -633,14 +637,14 @@ void ofGLRenderer::unbind(const ofCamera & camera){
 void ofGLRenderer::pushView() {
 	getCurrentViewport();
 
-	ofMatrix4x4 m;
+	glm::mat4 m;
 	ofMatrixMode matrixMode = matrixStack.getCurrentMatrixMode();
-	glGetFloatv(GL_PROJECTION_MATRIX,m.getPtr());
+	glGetFloatv(GL_PROJECTION_MATRIX,glm::value_ptr(m));
 	matrixStack.matrixMode(OF_MATRIX_PROJECTION);
-	matrixStack.loadMatrix(m.getPtr());
-	glGetFloatv(GL_MODELVIEW_MATRIX,m.getPtr());
+	matrixStack.loadMatrix(m);
+	glGetFloatv(GL_MODELVIEW_MATRIX,glm::value_ptr(m));
 	matrixStack.matrixMode(OF_MATRIX_MODELVIEW);
-	matrixStack.loadMatrix(m.getPtr());
+	matrixStack.loadMatrix(m);
 
 	matrixStack.matrixMode(matrixMode);
 
@@ -652,7 +656,6 @@ void ofGLRenderer::pushView() {
 void ofGLRenderer::popView() {
 	matrixStack.popView();
 
-	ofMatrix4x4 m;
 	ofMatrixMode currentMode = matrixStack.getCurrentMatrixMode();
 
 	matrixMode(OF_MATRIX_PROJECTION);
@@ -693,7 +696,7 @@ ofRectangle ofGLRenderer::getNativeViewport() const{
 	ofGLRenderer * mutRenderer = const_cast<ofGLRenderer*>(this);
 	ofRectangle nativeViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 	mutRenderer->matrixStack.nativeViewport(nativeViewport);
-    return nativeViewport;
+	return nativeViewport;
 }
 
 //----------------------------------------------------------
@@ -756,14 +759,12 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, float fov, 
 
 
 	matrixMode(OF_MATRIX_PROJECTION);
-	ofMatrix4x4 persp;
-	persp.makePerspectiveMatrix(fov, aspect, nearDist, farDist);
+	glm::mat4 persp = glm::perspective(ofDegToRad(fov), aspect, nearDist, farDist);
 	loadMatrix( persp );
 
 	matrixMode(OF_MATRIX_MODELVIEW);
-	ofMatrix4x4 lookAt;
-	lookAt.makeLookAtViewMatrix( ofVec3f(eyeX, eyeY, dist),  ofVec3f(eyeX, eyeY, 0),  ofVec3f(0, 1, 0) );
-	loadViewMatrix(lookAt);
+	glm::mat4 lookAtMat = glm::lookAt( glm::vec3(eyeX, eyeY, dist),  glm::vec3(eyeX, eyeY, 0),  glm::vec3(0, 1, 0) );
+	loadViewMatrix(lookAtMat);
 }
 
 //----------------------------------------------------------
@@ -779,15 +780,13 @@ void ofGLRenderer::setupScreenOrtho(float width, float height, float nearDist, f
 		viewH = height;
 	}
 
-	ofMatrix4x4 ortho;
-
-	ortho = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
+	glm::mat4 orthoMat = glm::ortho(0.f, viewW, 0.f, viewH, nearDist, farDist);
 
 	matrixMode(OF_MATRIX_PROJECTION);
-	loadMatrix(ortho); // make ortho our new projection matrix.
+	loadMatrix(orthoMat); // make ortho our new projection matrix.
 
 	matrixMode(OF_MATRIX_MODELVIEW);
-	loadViewMatrix(ofMatrix4x4::newIdentityMatrix());
+	loadViewMatrix(glm::mat4(1.0));
 
 }
 
@@ -816,7 +815,7 @@ void ofGLRenderer::setCircleResolution(int res){
 		circlePoints.resize(circlePolyline.size());
 		path.setCircleResolution(res);
 	}
-	currentStyle.circleResolution = res; 
+	currentStyle.circleResolution = res;
 }
 
 void ofGLRenderer::setPolyMode(ofPolyWindingMode mode){
@@ -836,7 +835,7 @@ void ofGLRenderer::popMatrix(){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::translate(const ofPoint& p){
+void ofGLRenderer::translate(const glm::vec3& p){
 	glTranslatef(p.x, p.y, p.z);
 }
 
@@ -851,29 +850,55 @@ void ofGLRenderer::scale(float xAmnt, float yAmnt, float zAmnt){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
+void ofGLRenderer::rotateDeg(float degrees, float vecX, float vecY, float vecZ){
 	glRotatef(degrees, vecX, vecY, vecZ);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::rotateX(float degrees){
+void ofGLRenderer::rotateXDeg(float degrees){
 	glRotatef(degrees, 1, 0, 0);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::rotateY(float degrees){
+void ofGLRenderer::rotateYDeg(float degrees){
 	glRotatef(degrees, 0, 1, 0);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::rotateZ(float degrees){
+void ofGLRenderer::rotateZDeg(float degrees){
 	glRotatef(degrees, 0, 0, 1);
 }
 
 //same as ofRotateZ
 //----------------------------------------------------------
-void ofGLRenderer::rotate(float degrees){
+void ofGLRenderer::rotateDeg(float degrees){
 	glRotatef(degrees, 0, 0, 1);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::rotateRad(float radians, float vecX, float vecY, float vecZ){
+	glRotatef(ofRadToDeg(radians), vecX, vecY, vecZ);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::rotateXRad(float radians){
+	glRotatef(ofRadToDeg(radians), 1, 0, 0);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::rotateYRad(float radians){
+	glRotatef(ofRadToDeg(radians), 0, 1, 0);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::rotateZRad(float radians){
+	glRotatef(ofRadToDeg(radians), 0, 0, 1);
+}
+
+//same as ofRotateZ
+//----------------------------------------------------------
+void ofGLRenderer::rotateRad(float radians){
+	glRotatef(ofRadToDeg(radians), 0, 0, 1);
 }
 
 //----------------------------------------------------------
@@ -884,22 +909,22 @@ void ofGLRenderer::matrixMode(ofMatrixMode mode){
 
 //----------------------------------------------------------
 void ofGLRenderer::loadIdentityMatrix (void){
-	loadMatrix(ofMatrix4x4::newIdentityMatrix());
+	loadMatrix(glm::mat4(1.0));
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::loadMatrix (const ofMatrix4x4 & m){
-	loadMatrix( m.getPtr() );
+void ofGLRenderer::loadMatrix (const glm::mat4 & m){
+	if(matrixStack.getCurrentMatrixMode()==OF_MATRIX_PROJECTION){
+		matrixStack.loadMatrix(m);
+		glLoadMatrixf(glm::value_ptr(matrixStack.getProjectionMatrix()));
+	}else{
+		glLoadMatrixf(glm::value_ptr(m));
+	}
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::loadMatrix (const float *m){
-	if(matrixStack.getCurrentMatrixMode()==OF_MATRIX_PROJECTION){
-		matrixStack.loadMatrix(m);
-		glLoadMatrixf(matrixStack.getProjectionMatrix().getPtr());
-	}else{
-		glLoadMatrixf(m);
-	}
+	loadMatrix( glm::make_mat4(m) );
 }
 
 //----------------------------------------------------------
@@ -916,59 +941,58 @@ void ofGLRenderer::loadMatrix (const float *m){
  *
  *	@param	matrixMode_  Which matrix mode to query
  */
-ofMatrix4x4 ofGLRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
-	ofMatrix4x4 mat;
+glm::mat4 ofGLRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
+	glm::mat4 mat;
 	switch (matrixMode_) {
 		case OF_MATRIX_MODELVIEW:
-			glGetFloatv(GL_MODELVIEW_MATRIX, mat.getPtr());
+			glGetFloatv(GL_MODELVIEW_MATRIX, glm::value_ptr(mat));
 			break;
 		case OF_MATRIX_PROJECTION:
-			glGetFloatv(GL_PROJECTION_MATRIX, mat.getPtr());
+			glGetFloatv(GL_PROJECTION_MATRIX, glm::value_ptr(mat));
 			break;
 		case OF_MATRIX_TEXTURE:
-			glGetFloatv(GL_TEXTURE_MATRIX, mat.getPtr());
+			glGetFloatv(GL_TEXTURE_MATRIX, glm::value_ptr(mat));
 			break;
 		default:
 			ofLogWarning() << "Invalid getCurrentMatrix query";
-			mat = ofMatrix4x4();
 			break;
 	}
 	return mat;
 }
 
 //----------------------------------------------------------
-ofMatrix4x4 ofGLRenderer::getCurrentOrientationMatrix() const {
+glm::mat4 ofGLRenderer::getCurrentOrientationMatrix() const {
 	return matrixStack.getOrientationMatrix();
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::multMatrix (const ofMatrix4x4 & m){
-	multMatrix( m.getPtr() );
-}
-
-//----------------------------------------------------------
-void ofGLRenderer::multMatrix (const float *m){
+void ofGLRenderer::multMatrix (const glm::mat4 & m){
 	if(matrixStack.getCurrentMatrixMode()==OF_MATRIX_PROJECTION){
-		ofMatrix4x4 current;
-		glGetFloatv(GL_PROJECTION_MATRIX,current.getPtr());
+		glm::mat4 current;
+		glGetFloatv(GL_PROJECTION_MATRIX, glm::value_ptr(current));
 		if(matrixStack.customMatrixNeedsFlip()){
-			current.scale(1,-1,1);
+			current = glm::scale(current, glm::vec3(1,-1,1));
 		}
-		matrixStack.loadMatrix(current.getPtr());
+		matrixStack.loadMatrix(current);
 		matrixStack.multMatrix(m);
-		glLoadMatrixf(matrixStack.getProjectionMatrix().getPtr());
+		glLoadMatrixf(glm::value_ptr(matrixStack.getProjectionMatrix()));
 	}else{
-		glMultMatrixf(m);
+		glMultMatrixf(glm::value_ptr(m));
 	}
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::loadViewMatrix(const ofMatrix4x4 & m){
+void ofGLRenderer::multMatrix (const float *m){
+	multMatrix( glm::make_mat4(m) );
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::loadViewMatrix(const glm::mat4 & m){
 	int matrixMode;
 	glGetIntegerv(GL_MATRIX_MODE,&matrixMode);
 	matrixStack.loadViewMatrix(m);
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(m.getPtr());
+	glLoadMatrixf(glm::value_ptr(m));
 	glMatrixMode(matrixMode);
 
 	if(lightingEnabled){
@@ -985,18 +1009,18 @@ void ofGLRenderer::loadViewMatrix(const ofMatrix4x4 & m){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::multViewMatrix(const ofMatrix4x4 & m){
+void ofGLRenderer::multViewMatrix(const glm::mat4 & m){
 	ofLogError() << "mutlViewMatrix not implemented on fixed GL renderer";
 }
 
 //----------------------------------------------------------
-ofMatrix4x4 ofGLRenderer::getCurrentViewMatrix() const{
+glm::mat4 ofGLRenderer::getCurrentViewMatrix() const{
 	return matrixStack.getViewMatrix();
 }
 
 //----------------------------------------------------------
-ofMatrix4x4 ofGLRenderer::getCurrentNormalMatrix() const{
-	return ofMatrix4x4::getTransposedOf(getCurrentMatrix(OF_MATRIX_MODELVIEW).getInverse());
+glm::mat4 ofGLRenderer::getCurrentNormalMatrix() const{
+	return glm::transpose(glm::inverse(getCurrentMatrix(OF_MATRIX_MODELVIEW)));
 }
 
 //----------------------------------------------------------
@@ -1011,27 +1035,27 @@ void ofGLRenderer::setColor(const ofColor & color, int _a){
 
 //----------------------------------------------------------
 void ofGLRenderer::setColor(int r, int g, int b){
-    currentStyle.color.set(r,g,b);
-    glColor4f(r/255.f,g/255.f,b/255.f,1.f);
+	currentStyle.color.set(r,g,b);
+	glColor4f(r/255.f,g/255.f,b/255.f,1.f);
 	if(lightingEnabled && !materialBound){
 #ifndef TARGET_OPENGLES
 		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 #endif
 		glEnable(GL_COLOR_MATERIAL);
-    }
+	}
 }
 
 
 //----------------------------------------------------------
 void ofGLRenderer::setColor(int r, int g, int b, int a){
-    currentStyle.color.set(r,g,b,a);
-    glColor4f(r/255.f,g/255.f,b/255.f,a/255.f);
+	currentStyle.color.set(r,g,b,a);
+	glColor4f(r/255.f,g/255.f,b/255.f,a/255.f);
 	if(lightingEnabled && !materialBound){
 #ifndef TARGET_OPENGLES
 		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 #endif
 		glEnable(GL_COLOR_MATERIAL);
-    }
+	}
 }
 
 //----------------------------------------------------------
@@ -1089,7 +1113,7 @@ ofColor ofGLRenderer::getBackgroundColor(){
 //----------------------------------------------------------
 void ofGLRenderer::setBackgroundColor(const ofColor & color){
 	currentStyle.bgColor = color;
- 	glClearColor(currentStyle.bgColor[0]/255.,currentStyle.bgColor[1]/255.,currentStyle.bgColor[2]/255., currentStyle.bgColor[3]/255.);
+	glClearColor(currentStyle.bgColor[0]/255.,currentStyle.bgColor[1]/255.,currentStyle.bgColor[2]/255., currentStyle.bgColor[3]/255.);
 }
 
 //----------------------------------------------------------
@@ -1100,7 +1124,7 @@ void ofGLRenderer::background(const ofColor & c){
 
 //----------------------------------------------------------
 void ofGLRenderer::background(float brightness) {
-	background(brightness);
+	background(ofColor(brightness));
 }
 
 //----------------------------------------------------------
@@ -1377,14 +1401,14 @@ void ofGLRenderer::disableAntiAliasing(){
 
 //----------------------------------------------------------
 void ofGLRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const{
-	linePoints[0].set(x1,y1,z1);
-	linePoints[1].set(x2,y2,z2);
+	linePoints[0] = {x1,y1,z1};
+	linePoints[1] = {x2,y2,z2};
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &linePoints[0].x);
+	glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), linePoints.data());
 	glDrawArrays(GL_LINES, 0, 2);
 
 	// use smoothness, if requested:
@@ -1396,22 +1420,22 @@ void ofGLRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, fl
 void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h) const{
 
 	if (currentStyle.rectMode == OF_RECTMODE_CORNER){
-		rectPoints[0].set(x,y,z);
-		rectPoints[1].set(x+w, y, z);
-		rectPoints[2].set(x+w, y+h, z);
-		rectPoints[3].set(x, y+h, z);
+		rectPoints[0] = {x,y,z};
+		rectPoints[1] = {x+w, y, z};
+		rectPoints[2] = {x+w, y+h, z};
+		rectPoints[3] = {x, y+h, z};
 	}else{
-		rectPoints[0].set(x-w/2.0f, y-h/2.0f, z);
-		rectPoints[1].set(x+w/2.0f, y-h/2.0f, z);
-		rectPoints[2].set(x+w/2.0f, y+h/2.0f, z);
-		rectPoints[3].set(x-w/2.0f, y+h/2.0f, z);
+		rectPoints[0] = {x-w/2.0f, y-h/2.0f, z};
+		rectPoints[1] = {x+w/2.0f, y-h/2.0f, z};
+		rectPoints[2] = {x+w/2.0f, y+h/2.0f, z};
+		rectPoints[3] = {x-w/2.0f, y+h/2.0f, z};
 	}
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &rectPoints[0].x);
+	glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), &rectPoints[0].x);
 	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
 
 	// use smoothness, if requested:
@@ -1421,15 +1445,15 @@ void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h) con
 
 //----------------------------------------------------------
 void ofGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const{
-	triPoints[0].set(x1,y1,z1);
-	triPoints[1].set(x2,y2,z2);
-	triPoints[2].set(x3,y3,z3);
+	triPoints[0] = {x1,y1,z1};
+	triPoints[1] = {x2,y2,z2};
+	triPoints[2] = {x3,y3,z3};
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &triPoints[0].x);
+	glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), &triPoints[0].x);
 	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
 
 	// use smoothness, if requested:
@@ -1439,16 +1463,16 @@ void ofGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2
 
 //----------------------------------------------------------
 void ofGLRenderer::drawCircle(float x, float y, float z,  float radius) const{
-	const vector<ofPoint> & circleCache = circlePolyline.getVertices();
-	for(int i=0;i<(int)circleCache.size();i++){
-		circlePoints[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
+	const auto & circleCache = circlePolyline.getVertices();
+	for(size_t i=0;i<circleCache.size();i++){
+		circlePoints[i] = {radius*circleCache[i].x+x,radius*circleCache[i].y+y,z};
 	}
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
+	glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), &circlePoints[0].x);
 	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
 
 	// use smoothness, if requested:
@@ -1460,16 +1484,16 @@ void ofGLRenderer::drawCircle(float x, float y, float z,  float radius) const{
 void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float height) const{
 	float radiusX = width*0.5;
 	float radiusY = height*0.5;
-	const vector<ofPoint> & circleCache = circlePolyline.getVertices();
-	for(int i=0;i<(int)circleCache.size();i++){
-		circlePoints[i].set(radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z);
+	const auto & circleCache = circlePolyline.getVertices();
+	for(size_t i=0;i<circleCache.size();i++){
+		circlePoints[i] = {radiusX*circlePolyline[i].x+x, radiusY*circlePolyline[i].y+y, z};
 	}
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
+	glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), &circlePoints[0].x);
 	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
 
 	// use smoothness, if requested:
@@ -1495,6 +1519,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 	bool hasViewport = false;
 
 	ofRectangle rViewport;
+	bool vflipped = isVFlipped();
 
 	switch (currentStyle.drawBitmapMode) {
 
@@ -1519,8 +1544,8 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 
 			mutThis->translate(-1, 1, 0);
 			mutThis->scale(2/rViewport.width, -2/rViewport.height, 1);
-
-			mutThis->translate(x, y, 0);
+			mutThis->translate(x, rViewport.height - y, 0);
+			vflipped = false;
 			break;
 
 		case OF_BITMAPMODE_VIEWPORT:
@@ -1539,8 +1564,8 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 
 			mutThis->translate(-1, 1, 0);
 			mutThis->scale(2/rViewport.width, -2/rViewport.height, 1);
-
-			mutThis->translate(x, y, 0);
+			mutThis->translate(x, rViewport.height - y, 0);
+			vflipped = false;
 			break;
 
 		case OF_BITMAPMODE_MODEL:
@@ -1570,21 +1595,24 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 
 			rViewport = getCurrentViewport();
 
-			ofMatrix4x4 modelview, projection;
-			glGetFloatv(GL_MODELVIEW_MATRIX, modelview.getPtr());
-			glGetFloatv(GL_PROJECTION_MATRIX, projection.getPtr());
-
-			ofVec3f dScreen = ofVec3f(x,y,z) * modelview * projection * matrixStack.getOrientationMatrixInverse();
-			dScreen += ofVec3f(1.0) ;
+			glm::mat4 modelview, projection;
+			glGetFloatv(GL_MODELVIEW_MATRIX, glm::value_ptr(modelview));
+			glGetFloatv(GL_PROJECTION_MATRIX, glm::value_ptr(projection));
+			auto mat = matrixStack.getOrientationMatrixInverse() * projection * modelview;
+			auto dScreen4 = mat * glm::vec4(x,y,z,1.0);
+			auto dScreen = dScreen4.xyz() / dScreen4.w;
+			dScreen += glm::vec3(1.0) ;
 			dScreen *= 0.5;
 
-			dScreen.x += rViewport.x;
 			dScreen.x *= rViewport.width;
+			dScreen.x += rViewport.x;
 
-			dScreen.y += rViewport.y;
 			dScreen.y *= rViewport.height;
+			dScreen.y += rViewport.y;
 
-			if (dScreen.z >= 1) return;
+			if (dScreen.z >= 1){
+				return;
+			}
 
 
 			hasProjection = true;
@@ -1623,7 +1651,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 	glAlphaFunc(GL_GREATER, 0);
 #endif
 
-	ofMesh charMesh = bitmapFont.getMesh(textString,sx,sy,currentStyle.drawBitmapMode,isVFlipped());
+	ofMesh charMesh = bitmapFont.getMesh(textString,sx,sy,currentStyle.drawBitmapMode,vflipped);
 	mutThis->bind(bitmapFont.getTexture(),0);
 	draw(charMesh,OF_MESH_FILL,false,true,false);
 	mutThis->unbind(bitmapFont.getTexture(),0);
@@ -1657,7 +1685,7 @@ void ofGLRenderer::drawString(const ofTrueTypeFont & font, string text, float x,
 	glGetIntegerv( GL_BLEND_SRC, &blend_src );
 	glGetIntegerv( GL_BLEND_DST, &blend_dst );
 
-    glEnable(GL_BLEND);
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	mutThis->bind(font.getFontTexture(),0);
@@ -1706,23 +1734,23 @@ void ofGLRenderer::disableAlphaMask(){
 
 //----------------------------------------------------------
 void ofGLRenderer::enableLighting(){
-    glEnable(GL_LIGHTING);
-    lightingEnabled = true;
-    setColor(currentStyle.color);
+	glEnable(GL_LIGHTING);
+	lightingEnabled = true;
+	setColor(currentStyle.color);
 	// FIXME: we do this so the 3d ofDraw* functions work with lighting
 	// but if someone enables it between ofEnableLighting it'll be disabled
 	// on ofDisableLighting. by now it seems the best option to not loose
 	// performance when drawing lots of primitives
 	normalsEnabled = glIsEnabled( GL_NORMALIZE );
-    glEnable(GL_NORMALIZE);
+	glEnable(GL_NORMALIZE);
 
 	int matrixMode;
 	glGetIntegerv(GL_MATRIX_MODE,&matrixMode);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glLoadMatrixf(matrixStack.getViewMatrix().getPtr());
+	glLoadMatrixf(glm::value_ptr(matrixStack.getViewMatrix()));
 	for(size_t i=0;i<ofLightsData().size();i++){
-		shared_ptr<ofLight::Data> lightData = ofLightsData()[i].lock();
+		std::shared_ptr<ofLight::Data> lightData = ofLightsData()[i].lock();
 		if(lightData && lightData->isEnabled){
 			glLightfv(GL_LIGHT0 + lightData->glIndex, GL_POSITION, &lightData->position.x);
 			if(lightData->lightType == OF_LIGHT_SPOT || lightData->lightType == OF_LIGHT_AREA) {
@@ -1799,7 +1827,7 @@ void ofGLRenderer::setLightSpotConcentration(int lightIndex, float exponent){
 
 //----------------------------------------------------------
 void ofGLRenderer::setLightAttenuation(int lightIndex, float constant, float linear, float quadratic ){
-    if(lightIndex==-1) return;
+	if(lightIndex==-1) return;
 	glLightf(GL_LIGHT0 + lightIndex, GL_CONSTANT_ATTENUATION, constant);
 	glLightf(GL_LIGHT0 + lightIndex, GL_LINEAR_ATTENUATION, linear);
 	glLightf(GL_LIGHT0 + lightIndex, GL_QUADRATIC_ATTENUATION, quadratic);
@@ -1807,44 +1835,44 @@ void ofGLRenderer::setLightAttenuation(int lightIndex, float constant, float lin
 
 //----------------------------------------------------------
 void ofGLRenderer::setLightAmbientColor(int lightIndex, const ofFloatColor& c){
-    if(lightIndex==-1) return;
+	if(lightIndex==-1) return;
 	glLightfv(GL_LIGHT0 + lightIndex, GL_AMBIENT, &c.r);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::setLightDiffuseColor(int lightIndex, const ofFloatColor& c){
-    if(lightIndex==-1) return;
+	if(lightIndex==-1) return;
 	glLightfv(GL_LIGHT0 + lightIndex, GL_DIFFUSE, &c.r);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::setLightSpecularColor(int lightIndex, const ofFloatColor& c){
-    if(lightIndex==-1) return;
+	if(lightIndex==-1) return;
 	glLightfv(GL_LIGHT0 + lightIndex, GL_SPECULAR, &c.r);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setLightPosition(int lightIndex, const ofVec4f & position){
+void ofGLRenderer::setLightPosition(int lightIndex, const glm::vec4 & position){
 	if(lightIndex==-1) return;
 	int matrixMode;
 	glGetIntegerv(GL_MATRIX_MODE,&matrixMode);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glLoadMatrixf(matrixStack.getViewMatrix().getPtr());
-	glLightfv(GL_LIGHT0 + lightIndex, GL_POSITION, &position.x);
+	glLoadMatrixf(glm::value_ptr(matrixStack.getViewMatrix()));
+	glLightfv(GL_LIGHT0 + lightIndex, GL_POSITION, glm::value_ptr(position));
 	glPopMatrix();
 	glMatrixMode(matrixMode);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setLightSpotDirection(int lightIndex, const ofVec4f & direction){
+void ofGLRenderer::setLightSpotDirection(int lightIndex, const glm::vec4 & direction){
 	if(lightIndex==-1) return;
 	int matrixMode;
 	glGetIntegerv(GL_MATRIX_MODE,&matrixMode);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glLoadMatrixf(matrixStack.getViewMatrix().getPtr());
-	glLightfv(GL_LIGHT0 + lightIndex, GL_SPOT_DIRECTION, &direction.x);
+	glLoadMatrixf(glm::value_ptr(matrixStack.getViewMatrix()));
+	glLightfv(GL_LIGHT0 + lightIndex, GL_SPOT_DIRECTION, glm::value_ptr(direction));
 	glPopMatrix();
 	glMatrixMode(matrixMode);
 }
@@ -1876,7 +1904,7 @@ void ofGLRenderer::saveFullViewport(ofPixels & pixels){
 //----------------------------------------------------------
 void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 
-    int sh = getViewportHeight();
+	int sh = getViewportHeight();
 
 
 	#ifndef TARGET_OPENGLES

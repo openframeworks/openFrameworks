@@ -56,8 +56,7 @@ void ofApp::calculateText(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 	if(key == 's'){
-		ofFile file("drawing.json", ofFile::WriteOnly);
-		file << js;
+		ofSaveJson("drawing.json", js);
 	}
 }
 

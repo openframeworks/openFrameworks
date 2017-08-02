@@ -16,7 +16,7 @@ void ofApp::setup(){
 	}
 #endif
 
-    image.loadImage("img.jpg");
+    image.load("img.jpg");
     
     fboBlurOnePass.allocate(image.getWidth(), image.getHeight());
     fboBlurTwoPass.allocate(image.getWidth(), image.getHeight());

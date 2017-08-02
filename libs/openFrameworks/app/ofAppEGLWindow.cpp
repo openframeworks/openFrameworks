@@ -276,6 +276,7 @@ ofAppEGLWindow::ofAppEGLWindow() {
 
 //------------------------------------------------------------
 ofAppEGLWindow::~ofAppEGLWindow() {
+	close();
 }
 
 //------------------------------------------------------------
@@ -406,7 +407,7 @@ void ofAppEGLWindow::setup(const Settings & _settings) {
 	eglSurface = NULL;
 	eglContext = NULL;
 	eglConfig  = NULL;
-	eglVersionMinor = -1;
+	eglVersionMajor = -1;
 	eglVersionMinor = -1;
 	glesVersion = 1;
 
@@ -1081,17 +1082,17 @@ void ofAppEGLWindow::setWindowTitle(string title) {
 }
 
 //------------------------------------------------------------
-ofPoint ofAppEGLWindow::getWindowSize(){
-	return ofPoint(currentWindowRect.width, currentWindowRect.height,0);
+glm::vec2 ofAppEGLWindow::getWindowSize(){
+	return {currentWindowRect.width, currentWindowRect.height};
 }
 
 //------------------------------------------------------------
-ofPoint ofAppEGLWindow::getWindowPosition(){
-	return currentWindowRect.getPosition();
+glm::vec2 ofAppEGLWindow::getWindowPosition(){
+	return currentWindowRect.getPosition().xy();
 }
 
 //------------------------------------------------------------
-ofPoint ofAppEGLWindow::getScreenSize(){
+glm::vec2 ofAppEGLWindow::getScreenSize(){
 	unsigned int screenWidth = 0;
 	unsigned int screenHeight = 0;
 
@@ -1117,7 +1118,7 @@ ofPoint ofAppEGLWindow::getScreenSize(){
 
 	}
 
-	return ofPoint(screenWidth, screenHeight,0);
+	return {screenWidth, screenHeight};
 }
 
 //------------------------------------------------------------
@@ -1176,7 +1177,7 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
 #ifdef TARGET_RASPBERRY_PI
 
 		// keep it in bounds
-		ofPoint screenSize = getScreenSize();
+		auto screenSize = getScreenSize();
 		x = ofClamp(x, 0, screenSize.x - currentWindowRect.width);
 		y = ofClamp(y, 0, screenSize.y - currentWindowRect.height);
 
@@ -1285,7 +1286,7 @@ void ofAppEGLWindow::disableSetupScreen(){
 
 //------------------------------------------------------------
 ofRectangle ofAppEGLWindow::getScreenRect(){
-	ofPoint screenSize = getScreenSize();
+	auto screenSize = getScreenSize();
 	return ofRectangle(0,0,screenSize.x,screenSize.y);
 }
 
@@ -1349,7 +1350,7 @@ void ofAppEGLWindow::setupNativeMouse() {
 	// fallback to /dev/input/eventX since some vnc servers use uinput to handle mouse & keyboard
 	typedef int (*filter_ptr)(const struct dirent *d);
 	filter_ptr mouse_filters[2] = { filter_mouse, filter_event };
-	string devicePathBuffers[2] = { "/dev/input/by-path", "/dev/input/" };
+	string devicePathBuffers[2] = { "/dev/input/by-path/", "/dev/input/" };
 
 	for(int i=0; i<2; i++){
 		int n = scandir(devicePathBuffers[i].c_str(), &eps, mouse_filters[i], dummy_sort);
@@ -1389,7 +1390,7 @@ void ofAppEGLWindow::setupNativeKeyboard() {
 	struct dirent **eps;
 	typedef int (*filter_ptr)(const struct dirent *d);
 	filter_ptr kbd_filters[2] = { filter_kbd, filter_event };
-	string devicePathBuffers[2] = { "/dev/input/by-path", "/dev/input/" };
+	string devicePathBuffers[2] = { "/dev/input/by-path/", "/dev/input/" };
 
 	for(int i=0; i<2; i++){
 		int n = scandir(devicePathBuffers[i].c_str(), &eps, kbd_filters[i], dummy_sort);
@@ -1629,6 +1630,11 @@ void ofAppEGLWindow::readNativeKeyboardEvents() {
 			case KEY_INSERT:
 				pushKeyEvent = true;
 				keyEvent.key = OF_KEY_INSERT;
+				break;
+			case KEY_ENTER:
+			case KEY_KPENTER:
+				pushKeyEvent = true;
+				keyEvent.key = OF_KEY_RETURN;
 				break;
 
 			default:

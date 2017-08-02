@@ -1,11 +1,6 @@
 #include "ofApp.h"
 
-
-// we need to include the RegularExpression
-// header file and say that we are using that
-// name space
-#include "Poco/RegularExpression.h"
-using Poco::RegularExpression;
+#include <regex>
 
 // Some explanation on regular expressions
 // http://gnosis.cx/publish/programming/regular_expressions.html
@@ -45,9 +40,10 @@ void ofApp::searchGoogleImages() {
 		// in the webpage there is a table for all the images. we
 		// want to get the content in the table using
 		// the <table> (.*?) </table> expression
-		RegularExpression regEx("<table class=\"images_table\" style=\"table-layout:fixed\" [^>]+>(.*?)</table>");
-		RegularExpression::Match match;
-		int found = regEx.match(rawData, match);
+		std::regex regEx("<table class=\"images_table\" style=\"table-layout:fixed\" [^>]+>(.*?)</table>");
+		std::smatch match;
+		std::regex_search(rawData, match, regEx);
+		int found = match.size();
 
 
 		// did we find the table tag with all the images
@@ -55,32 +51,33 @@ void ofApp::searchGoogleImages() {
 		if(found != 0) {
 
 			// this is just the table content
-			string contents = rawData.substr(match.offset, match.length);
+			string contents = match[0];
 
 			// setup the regex for img tags
-			RegularExpression regEx("<img[^>]*src=\"([^\"]*)");
-			RegularExpression::Match imgMatch;
+			std::regex imgRegEx("<img[^>]*src=\"([^\"]*)");
+			std::smatch imgMatch;
+			std::regex_search(contents, imgMatch, imgRegEx);
 
 			// now lets search for img tags in the content
 			// we keep search till we run out of img tags
-			while(regEx.match(contents, imgMatch) != 0) {
+			for (size_t i = 0; i < imgMatch.size(); ++i){
 
 				// we get the sub string from the content
 				// and then trim the content so that we
 				// can continue to search
-				string foundStr = contents.substr(imgMatch.offset, imgMatch.length);
-				contents = contents.substr(imgMatch.offset + imgMatch.length);
+				string contents = imgMatch[i];
 
 				// setup the regex for src attribute in the img tag
-				RegularExpression regImgEx("src=\"(.*?).$");
-				RegularExpression::Match srcMatch;
+				std::regex srcRegEx("src=\"(.*?).$");
+				std::smatch srcMatch;
+				std::regex_search(contents, srcMatch, srcRegEx);
 
 				// if we found the src tag lets grab just
 				// the url from the src attribute
-				if (regImgEx.match(foundStr, srcMatch)!=0) {
+				if (srcMatch.size()!=0) {
 
 					// save the img url
-					string url = foundStr.substr(srcMatch.offset+5, srcMatch.length);
+					string url = srcMatch[0];
 					urls.push_back(url);
 
 				}

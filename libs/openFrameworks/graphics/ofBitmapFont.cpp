@@ -333,13 +333,13 @@ void ofBitmapFont::init(){
 	if(pixels.isAllocated()) return;
 	pixels.allocate(16*16, 16*16, OF_PIXELS_GRAY_ALPHA); // letter size:8x14pixels, texture size:16x8letters, gl_r: 1bytes/1pixel
 	pixels.set(0);
-	for (int i = 0; i < 256; i++) {
+	for (size_t i = 0; i < 256; i++) {
 		const unsigned char * face = bmpChar_8x13_Map[i];
-		for (int j = 1; j < 15; j++){
-			for (int k = 0; k < 8; k++){
+		for (size_t j = 1; j < 15; j++){
+			for (size_t k = 0; k < 8; k++){
 				if ( ((face[15-j] << k) & (128)) > 0 ){
-					pixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
-					pixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
+					pixels[(((i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
+					pixels[(((i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
 				}
 			}
 		}
@@ -369,22 +369,22 @@ static void addBitmapCharacter(ofMesh & charMesh, int & vertexCount, int charact
 			y -= 3;
 		}
 
-		int vC = vertexCount;
-		charMesh.getTexCoords()[vC].set(posTexW,texY1);
-		charMesh.getTexCoords()[vC+1].set(posTexW + widthTex,texY1);
-		charMesh.getTexCoords()[vC+2].set(posTexW+widthTex,texY2);
+		size_t vC = vertexCount;
+		charMesh.getTexCoords()[vC] = {posTexW,texY1};
+		charMesh.getTexCoords()[vC+1] = {posTexW + widthTex,texY1};
+		charMesh.getTexCoords()[vC+2] = {posTexW+widthTex,texY2};
 
-		charMesh.getTexCoords()[vC+3].set(posTexW + widthTex,texY2);
-		charMesh.getTexCoords()[vC+4].set(posTexW,texY2);
-		charMesh.getTexCoords()[vC+5].set(posTexW,texY1);
+		charMesh.getTexCoords()[vC+3] = {posTexW + widthTex,texY2};
+		charMesh.getTexCoords()[vC+4] = {posTexW,texY2};
+		charMesh.getTexCoords()[vC+5] = {posTexW,texY1};
 
-		charMesh.getVertices()[vC].set(x,y);
-		charMesh.getVertices()[vC+1].set(x+8,y);
-		charMesh.getVertices()[vC+2].set(x+8,y+yOffset);
+		charMesh.getVertices()[vC] = glm::vec3(x,y,0.f);
+		charMesh.getVertices()[vC+1] = glm::vec3(x+8,y,0.f);
+		charMesh.getVertices()[vC+2] = glm::vec3(x+8,y+yOffset,0.f);
 
-		charMesh.getVertices()[vC+3].set(x+8,y+yOffset);
-		charMesh.getVertices()[vC+4].set(x,y+yOffset);
-		charMesh.getVertices()[vC+5].set(x,y);
+		charMesh.getVertices()[vC+3] = glm::vec3(x+8,y+yOffset,0.f);
+		charMesh.getVertices()[vC+4] = glm::vec3(x,y+yOffset,0.f);
+		charMesh.getVertices()[vC+5] = glm::vec3(x,y,0.f);
 
 		vertexCount += 6;
 	}	
@@ -418,11 +418,11 @@ ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofDrawBitmapMode
 		if(text[c] == '\n'){
 
 			sy += lineHeight*newLineDirection;
-			if(mode == OF_BITMAPMODE_SIMPLE) {
+//			if(mode == OF_BITMAPMODE_SIMPLE) {
 				sx = x;
-			} else {
-				sx = 0;
-			}
+//			} else {
+//				sx = 0;
+//			}
 
 			column = 0;
 		} else if (text[c] == '\t'){
@@ -474,20 +474,19 @@ const ofTexture & ofBitmapFont::getTexture() const{
 }
 
 
-ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y) const{
+ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y, ofDrawBitmapMode mode, bool vFlipped) const{
     if(text.empty()){
         return ofRectangle(x,y,0,0);
     }
 
-	const ofMesh & mesh = getMesh(text,x,y);
-	ofVec2f max(numeric_limits<float>::min(),numeric_limits<float>::min());
-	ofVec2f min(numeric_limits<float>::max(),numeric_limits<float>::max());
-	for(std::size_t i=0;i< mesh.getNumVertices(); i++){
-		const ofVec3f & p = mesh.getVertex(i);
+	const ofMesh & mesh = getMesh(text,x,y, mode, vFlipped);
+	glm::vec2 max(numeric_limits<float>::lowest(),numeric_limits<float>::lowest());
+	glm::vec2 min(numeric_limits<float>::max(),numeric_limits<float>::max());
+	for(const auto & p : mesh.getVertices()){
 		if(p.x<min.x) min.x = p.x;
 		if(p.y<min.y) min.y = p.y;
 		if(p.x>max.x) max.x = p.x;
 		if(p.y>max.y) max.y = p.y;
 	}
-	return ofRectangle(min.x,min.y,max.x-min.x,max.y-min.y);
+	return ofRectangle(min,max);
 }

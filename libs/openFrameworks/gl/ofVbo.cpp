@@ -322,13 +322,23 @@ void ofVbo::setMesh(const ofMesh & mesh, int usage, bool useColors, bool useText
 }
 
 //--------------------------------------------------------------
+void ofVbo::setVertexData(const glm::vec3 * verts, int total, int usage) {
+	setVertexData(&verts[0].x,3,total,usage,sizeof(glm::vec3));
+}
+
+//--------------------------------------------------------------
 void ofVbo::setVertexData(const ofVec3f * verts, int total, int usage) {
-	setVertexData(&verts[0].x,3,total,usage,sizeof(ofVec3f));
+	setVertexData(&verts[0].x,3,total,usage,sizeof(glm::vec3));
+}
+
+//--------------------------------------------------------------
+void ofVbo::setVertexData(const glm::vec2 * verts, int total, int usage) {
+	setVertexData(&verts[0].x,2,total,usage,sizeof(glm::vec2));
 }
 
 //--------------------------------------------------------------
 void ofVbo::setVertexData(const ofVec2f * verts, int total, int usage) {
-	setVertexData(&verts[0].x,2,total,usage,sizeof(ofVec2f));
+	setVertexData(&verts[0].x,2,total,usage,sizeof(glm::vec2));
 }
 
 //--------------------------------------------------------------
@@ -350,27 +360,29 @@ void ofVbo::setColorData(const float * color0r, int total, int usage, int stride
 }
 
 //--------------------------------------------------------------
+void ofVbo::setNormalData(const glm::vec3 * normals, int total, int usage) {
+	setNormalData(&normals[0].x,total,usage,sizeof(glm::vec3));
+}
+
+//--------------------------------------------------------------
 void ofVbo::setNormalData(const ofVec3f * normals, int total, int usage) {
-	setNormalData(&normals[0].x,total,usage,sizeof(ofVec3f));
+	setNormalData(&normals[0].x,total,usage,sizeof(glm::vec3));
 }
 
 //--------------------------------------------------------------
 void ofVbo::setNormalData(const float * normal0x, int total, int usage, int stride) {
-	// tig: note that we set the 'Normalize' flag to true here, assuming that mesh normals need to be
-	// normalized while being uploaded to GPU memory.
-	// http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
-	// Normalizing the normals on the shader is probably faster, but sending non-normalized normals is
-	// more prone to lead to artifacts difficult to diagnose, especially with the built-in 3D primitives.
-	// If you need to optimise this, and you've dug this far through the code, you are most probably
-	// able to roll your own client code for binding & rendering vbos anyway...
 	normalAttribute.setData(normal0x, 3, total, usage, stride);
-	normalAttribute.normalize = true;
 	enableNormals();
 }
 
 //--------------------------------------------------------------
+void ofVbo::setTexCoordData(const glm::vec2 * texCoords, int total, int usage) {
+	setTexCoordData(&texCoords[0].x,total, usage, sizeof(glm::vec2));
+}
+
+//--------------------------------------------------------------
 void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
-	setTexCoordData(&texCoords[0].x,total, usage, sizeof(ofVec2f));
+	setTexCoordData(&texCoords[0].x,total, usage, sizeof(glm::vec2));
 }
 
 //--------------------------------------------------------------
@@ -434,7 +446,6 @@ void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords
 		bUsingColors |= (location == ofShader::COLOR_ATTRIBUTE);
 		bUsingNormals |= (location == ofShader::NORMAL_ATTRIBUTE);
 		bUsingTexCoords |= (location == ofShader::TEXCOORD_ATTRIBUTE);
-		normalize = (location == ofShader::NORMAL_ATTRIBUTE);
 	}
 
 	getOrCreateAttr(location).setData(attrib0x,numCoords,total,usage,stride,normalize);
@@ -457,7 +468,17 @@ void ofVbo::updateMesh(const ofMesh & mesh){
 }
 
 //--------------------------------------------------------------
+void ofVbo::updateVertexData(const glm::vec3 * verts, int total) {
+	updateVertexData(&verts[0].x,total);
+}
+
+//--------------------------------------------------------------
 void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
+	updateVertexData(&verts[0].x,total);
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateVertexData(const glm::vec2 * verts, int total) {
 	updateVertexData(&verts[0].x,total);
 }
 
@@ -482,6 +503,11 @@ void ofVbo::updateColorData(const float * color0r, int total) {
 }
 
 //--------------------------------------------------------------
+void ofVbo::updateNormalData(const glm::vec3 * normals, int total) {
+	updateNormalData(&normals[0].x,total);
+}
+
+//--------------------------------------------------------------
 void ofVbo::updateNormalData(const ofVec3f * normals, int total) {
 	updateNormalData(&normals[0].x,total);
 }
@@ -489,6 +515,11 @@ void ofVbo::updateNormalData(const ofVec3f * normals, int total) {
 //--------------------------------------------------------------
 void ofVbo::updateNormalData(const float * normal0x, int total) {
 	normalAttribute.updateData(0, total * normalAttribute.stride, normal0x);
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateTexCoordData(const glm::vec2 * texCoords, int total) {
+	updateTexCoordData(&texCoords[0].x,total);
 }
 
 //--------------------------------------------------------------

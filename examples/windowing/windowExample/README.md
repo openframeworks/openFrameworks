@@ -1,9 +1,9 @@
-#About windowExample
+# About windowExample
 
 ![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](windowExample.gif)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates how to set and get window properties such as the position, and toggle between playback modes of fullscreen and windowed. 
 
@@ -34,6 +34,6 @@ Instructions for use:
 * Running the application will result in the window slightly moving position as the ball hits an interior wall.
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no other classes.

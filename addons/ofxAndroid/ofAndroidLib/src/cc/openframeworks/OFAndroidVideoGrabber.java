@@ -25,6 +25,10 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		return instanceId;
 	}
 
+	public Camera getCamera(){
+		return camera;
+	}
+
 	public static boolean supportsTextureRendering(){
 		return Build.VERSION.SDK_INT >= 11;
 	}
@@ -197,10 +201,11 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 			camera.setPreviewCallback(null);
 			try {
 				if (Build.VERSION.SDK_INT >= 11) {
-					camera.setPreviewTexture(surfaceTexture);
+					camera.setPreviewTexture(null);
 				}
 			} catch (Exception e) {
 			}
+			surfaceTexture.release();
 			camera.release();
 			//orientationListener.disable();
 			initialized = false;

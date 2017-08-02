@@ -75,7 +75,7 @@ void ofAppNoWindow::setup(const ofWindowSettings & settings){
 	width = settings.width;
 	height = settings.height;
 
-	currentRenderer = shared_ptr<ofBaseRenderer>(new ofNoopRenderer);
+	currentRenderer = std::make_shared<ofNoopRenderer>();
 }
 
 //----------------------------------------------------------
@@ -130,18 +130,18 @@ void ofAppNoWindow::exitApp(){
 }
 
 //----------------------------------------------------------
-ofPoint	ofAppNoWindow::getWindowPosition(){
-	return ofPoint(0,0);
+glm::vec2 ofAppNoWindow::getWindowPosition(){
+	return {0.f, 0.f};
 }
 
 //----------------------------------------------------------
-ofPoint	ofAppNoWindow::getWindowSize(){
-	return ofPoint(width,height);
+glm::vec2 ofAppNoWindow::getWindowSize(){
+	return {width, height};
 }
 
 //----------------------------------------------------------
-ofPoint	ofAppNoWindow::getScreenSize(){
-	return ofPoint(width,height);
+glm::vec2 ofAppNoWindow::getScreenSize(){
+	return {width, height};
 }
 
 

@@ -13,26 +13,21 @@ void ofApp::setup(){
 	}
 #endif
 
-    backgroundImage.loadImage("A.jpg");
-    foregroundImage.loadImage("B.jpg");
-    brushImage.loadImage("brush.png");
+    backgroundImage.load("A.jpg");
+    foregroundImage.load("B.jpg");
+    brushImage.load("brush.png");
     
     int width = backgroundImage.getWidth();
     int height = backgroundImage.getHeight();
     
     maskFbo.allocate(width, height);
-    fbo.allocate(width, height);
     
     // Clear the FBO's
     // otherwise it will bring some junk with it from the memory
     maskFbo.begin();
     ofClear(0,0,0,255);
     maskFbo.end();
-    
-    fbo.begin();
-    ofClear(0,0,0,255);
-    fbo.end();
-    
+	
     bBrushDown = false;
 }
 
@@ -61,26 +56,17 @@ void ofApp::draw(){
     
     //----------------------------------------------------------
     // HERE the shader-masking happends
-    fbo.begin();
-    // Cleaning everthing with alpha mask on 0 in order to make it transparent by default
-    ofClear(0, 0, 0, 0);
-    
+	
     shader.begin();
     // here is where the fbo is passed to the shader
-    shader.setUniformTexture("maskTex", maskFbo.getTextureReference(), 1 );
-    
-    backgroundImage.draw(0, 0);
+    shader.setUniformTexture("maskTex", maskFbo.getTexture(), 1 );
+    shader.setUniformTexture("foregroundTex", foregroundImage.getTexture(), 2 );
+
+	backgroundImage.draw(0, 0);
     
     shader.end();
-    fbo.end();
-    
-    //----------------------------------------------------------
-    // FIRST draw the background image
-    foregroundImage.draw(0,0);
-    
-    // THEN draw the masked fbo on top
-    fbo.draw(0,0);
-    
+	
+	
     //----------------------------------------------------------
     ofDrawBitmapString("Drag the Mouse to draw", 15,15);
     ofDrawBitmapString("Press spacebar to clear", 15, 30);
