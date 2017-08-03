@@ -64,7 +64,7 @@ void ofApp::draw(){
 		ofCircle(center->x-radius*.5, center->y, radius );
 		ofCircle(center->x+radius*.5, center->y, radius );
 	}else{
-		ofCircle((ofVec2f)center, radius );
+		ofCircle(center->x, center->y, radius );
 	}
 	
 	if( bHide ){
