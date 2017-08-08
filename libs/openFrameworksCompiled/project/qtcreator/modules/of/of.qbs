@@ -242,12 +242,14 @@ Module{
                     libslist.push("rtaudio");
                 }
 
-                if(cpp.compilerName=='gcc' && cpp.compilerVersionMajor>=6){
-                    libslist.push('stdc++fs');
-                }else{
-                    libslist.push("boost_filesystem");
-                    libslist.push("boost_system");
-                }
+//                if(cpp.compilerName=='gcc' && cpp.compilerVersionMajor>=6){
+//                    libslist.push('stdc++fs');
+//                }else{
+//                    libslist.push("boost_filesystem");
+//                    libslist.push("boost_system");
+//                }
+                libslist.push("boost_filesystem");
+                libslist.push("boost_system");
 
                 libs = libslist;
             }else if(platform === "msys2"){
