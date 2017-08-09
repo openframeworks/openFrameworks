@@ -4,6 +4,8 @@ def ofRoot(){ return '../../../' }
 apply from: ofRoot()+"libs/openFrameworksCompiled/project/android/common-functions.gradle"
 
 buildscript {
+    apply from: "../../../libs/openFrameworksCompiled/project/android/ndk-verify.gradle"
+
     repositories {
         jcenter()
     }
