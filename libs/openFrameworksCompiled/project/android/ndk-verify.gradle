@@ -1,9 +1,14 @@
 println "Verifying NDK version"
 
-Properties localProperties = new Properties()
-localProperties.load(new File(rootDir.absolutePath + "/local.properties").newDataInputStream())
-
-def ndkPath = localProperties.getProperty('ndk.dir',null)
+def ndkPath = ''
+def propertiesFile = new File(rootDir.absolutePath + "/local.properties")
+if(propertiesFile.exists()) {
+    Properties localProperties = new Properties()
+    localProperties.load(propertiesFile.newDataInputStream())
+    ndkPath = localProperties.getProperty('ndk.dir', null)
+} else if (System.env.ANDROID_NDK_HOME != null) {
+    ndkPath = new File(System.env.ANDROID_NDK_HOME).getAbsolutePath()
+}
 
 if (ndkPath == null || ndkPath.length() == 0) {
     throw new GradleException("You havent set the path to the NDK library." +
