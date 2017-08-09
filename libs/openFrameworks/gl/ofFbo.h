@@ -97,7 +97,7 @@ public:
     ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
 	///           method instead.
     /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
-    OF_DEPRECATED_MSG("Use begin(ofFboBeginMode::NoDefauls) instead", void begin(bool setupScreen) const);
+    OF_DEPRECATED_MSG("Use begin(ofFboBeginMode::NoDefaults) instead", void begin(bool setupScreen) const);
 
 
     /// Sets up the framebuffer and binds it for rendering.
