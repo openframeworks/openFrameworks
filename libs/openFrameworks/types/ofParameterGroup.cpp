@@ -45,6 +45,10 @@ void ofParameterGroup::clear(){
 	obj.reset(new Value);
 }
 
+string ofParameterGroup::valueType() const{
+	return typeid(*this).name();
+}
+
 const ofParameter<void> & ofParameterGroup::getVoid(const string& name) const	{
 	return get<void>(name);
 }

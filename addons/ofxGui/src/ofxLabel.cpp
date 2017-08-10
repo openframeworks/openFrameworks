@@ -15,8 +15,8 @@ ofxLabel* ofxLabel::setup(ofParameter<string> _label, float width, float height)
     b.width  = width;
     b.height = height;
     setNeedsRedraw();
-    label.addListener(this,&ofxLabel::valueChanged);
-	label.setSerializable(false);
+	_label.addListener(this,&ofxLabel::valueChanged);
+	_label.setSerializable(false);
     return this;
 }
 
@@ -77,5 +77,6 @@ ofAbstractParameter & ofxLabel::getParameter(){
 }
 
 void ofxLabel::valueChanged(string & value){
+	cout << "label value changed " << value << endl;
     setNeedsRedraw();
 }
