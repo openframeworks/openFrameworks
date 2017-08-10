@@ -3,6 +3,7 @@
 
 #include "ofxSlider.h"
 #include "ofxButton.h"
+#include "ofxLabel.h"
 #include "ofParameterGroup.h"
 #include "ofParameter.h"
 
@@ -25,6 +26,11 @@ class ofxGuiGroup : public ofxBaseGui {
 		void add(ofParameter <void> & parameter);
 		void add(ofParameter <bool> & parameter);
 		void add(ofParameter <std::string> & parameter);
+
+		template<typename F>
+		void add(ofReadOnlyParameter <std::string, F> & parameter){
+			add(new ofxLabel(parameter));
+		}
 		void add(ofParameter <ofVec2f> & parameter);
 		void add(ofParameter <ofVec3f> & parameter);
 		void add(ofParameter <ofVec4f> & parameter);
