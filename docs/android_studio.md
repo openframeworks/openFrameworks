@@ -9,14 +9,14 @@ The Android distribution of openFrameworks is setup to work with Android Studio 
 
 Setting up openFrameworks with Android Studio is fairly straightforward. The basic steps are:
 
-- Install latest version of [Android Studio](https://developer.android.com/studio/index.html) (Tested on version 2.2)
+- Install latest version of [Android Studio](https://developer.android.com/studio/index.html) (Tested with version 3.0)
 - Download openFrameworks 0.10.0 or later from the [download page](http://openframeworks.cc/download/) or from [github](https://github.com/openframeworks/openFrameworks/)
-- Download and unzip the Android NDK version r12b: [Windows](https://dl.google.com/android/repository/android-ndk-r12b-windows-x86_64.zip), [Linux](https://dl.google.com/android/repository/android-ndk-r12b-linux-x86_64.zip), [OSX](https://dl.google.com/android/repository/android-ndk-r12b-darwin-x86_64.zip)
+- Download and unzip the Android NDK version r12b: [Windows](https://dl.google.com/android/repository/android-ndk-r12b-windows-x86_64.zip), [Linux](https://dl.google.com/android/repository/android-ndk-r12b-linux-x86_64.zip), [OSX](https://dl.google.com/android/repository/android-ndk-r12b-darwin-x86_64.zip). It doesn't matter where you store the library, you will point Android Studio to this location later. *Notice that openFrameworks only works with version r12b!* 
 - If you got openFrameworks from git: 
 	- run `scripts/android/download_libs.sh` to download libraries.
 	- Use project generator to generate Android Studio project files for android examples.
 - In Android Studio, use **Open an existing Android Studio project** and select an openFrameworks example from the `examples/android` folder
-- It will ask you for NDK location, input the location of NDK you downloaded. Notice: Do not select to automatically download the NDK, since the latest version might not work with openFrameworks. If you by accident select to download it automatically, click the *Project Structure* button in the toolbar in the top, and manually change the location.
+- It will ask you for NDK location, either put the path in local.properties or click *Project Structure* and select the NDK location.
 - Let Android Studio download all other dependencies missing automatically
 - Build and run
 
