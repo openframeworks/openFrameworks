@@ -67,6 +67,9 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 		}else if(type == typeid(ofParameter <uint16_t> ).name()){
 			auto p = _parameters.get<uint16_t>(i);
 			add(p);
+		}else if(type == typeid(ofParameter <size_t> ).name()){
+			auto p = _parameters.get<size_t>(i);
+			add(p);
 		}else if(type == typeid(ofParameter <float> ).name()){
 			auto p = _parameters.getFloat(i);
 			add(p);
