@@ -24,7 +24,6 @@ public:
 		b.height = height;
 		setNeedsRedraw();
 		_label.addListener(this,&ofxLabel::valueChanged);
-		label.setSerializable(false);
 		return this;
 	}
     ofxLabel * setup(const std::string& labelName, std::string label, float width = defaultWidth, float height = defaultHeight);
