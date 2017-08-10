@@ -408,56 +408,93 @@ namespace priv{
 
 
 	// detection of stream operators
-	typedef char yes;
-	typedef char (&no)[2];
+//	typedef char yes;
+//	typedef char (&no)[2];
 
-	struct anyx { template <class T> anyx(const T &); };
+//	struct anyx { template <class T> anyx(const T &); };
 
-	no operator << (const anyx &, const anyx &);
-	no operator >> (const anyx &, const anyx &);
+//	no operator << (const anyx &, const anyx &);
+//	no operator >> (const anyx &, const anyx &);
 
 	
-	template <class T> yes check_op(T const&);
-	no check_op(no);
+//	template <class T> yes check_op(T const&);
+//	no check_op(no);
 
-	template <typename T>
-	struct has_loading_support {
-		static istream & stream;
-		static T & x;
-		static constexpr bool value = sizeof(check_op(stream >> x)) == sizeof(yes);
-	};
+//	template <typename T>
+//	struct has_loading_support {
+//		static istream & stream;
+//		static T & x;
+//		static constexpr bool value = sizeof(check_op(stream >> x)) == sizeof(yes);
+//	};
 
-	template <typename T>
-	struct has_saving_support {
-		static ostream & stream;
-		static T & x;
-		static constexpr bool value = sizeof(check_op(stream << x)) == sizeof(yes);
-	};
+//	template <typename T>
+//	struct has_saving_support {
+//		static ostream & stream;
+//		static T & x;
+//		static constexpr bool value = sizeof(check_op(stream << x)) == sizeof(yes);
+//	};
+
+	//	// detection of stream operators
+	template<typename T,
+			 typename = decltype(
+			   std::declval<std::ostream&>() << std::declval<T const&>()
+			 )
+	>
+	constexpr bool has_saving_support()
+	{
+		return true;
+	}
+
+	template<typename T,
+			 typename... Ignored
+	>
+	constexpr bool has_saving_support(Ignored const&..., ...)
+	{
+		return false;
+	}
+
+	template<typename T,
+			 typename = decltype(
+			   std::declval<std::istream&>() >> std::declval<T&>()
+			 )
+	>
+	constexpr bool has_loading_support()
+	{
+		return true;
+	}
+
+	template<typename T,
+			 typename... Ignored
+	>
+	constexpr bool has_sloading_support(Ignored const&..., ...)
+	{
+		return false;
+	}
 
 	template <typename T>
 	struct has_stream_operators {
-		static constexpr bool can_load = has_loading_support<T>::value;
-		static constexpr bool can_save = has_saving_support<T>::value;
+		static constexpr bool can_load = has_loading_support<T>();
+		static constexpr bool can_save = has_saving_support<T>();
 		static constexpr bool value = can_load && can_save;
 	};
 
 	template<typename ParameterType>
-	typename std::enable_if<of::priv::has_saving_support<ParameterType>::value, std::string>::type toStringImpl(const ParameterType & value){
+	typename std::enable_if<of::priv::has_saving_support<ParameterType>(), std::string>::type toStringImpl(const ParameterType & value){
 		return ofToString(value);
 	}
 
 	template<typename ParameterType>
-	typename std::enable_if<!of::priv::has_saving_support<ParameterType>::value, std::string>::type toStringImpl(const ParameterType &){
+	typename std::enable_if<!of::priv::has_saving_support<ParameterType>(), std::string>::type toStringImpl(const ParameterType &){
 		throw std::exception();
 	}
 
 	template<typename ParameterType>
-	typename std::enable_if<of::priv::has_loading_support<ParameterType>::value, ParameterType>::type fromStringImpl(const std::string & str){
+	typename std::enable_if<of::priv::has_loading_support<ParameterType>(), ParameterType>::type fromStringImpl(const std::string & str){
 		return ofFromString<ParameterType>(str);
 	}
 
 	template<typename ParameterType>
-	typename std::enable_if<!of::priv::has_loading_support<ParameterType>::value, ParameterType>::type fromStringImpl(const std::string &){
+	typename std::enable_if<!of::priv::has_loading_support<ParameterType>(), ParameterType>::type fromStringImpl(const std::string &){
 		throw std::exception();
 
 	}
