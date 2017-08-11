@@ -353,6 +353,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		NSOpenPanel * loadDialog = [NSOpenPanel openPanel];
 		[loadDialog setAllowsMultipleSelection:NO];
 		[loadDialog setCanChooseDirectories:bFolderSelection];
+		[loadDialog setCanChooseFiles:!bFolderSelection];
 		[loadDialog setResolvesAliases:YES];
 
 		if(!windowTitle.empty()) {
