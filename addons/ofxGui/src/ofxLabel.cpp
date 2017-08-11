@@ -76,6 +76,5 @@ ofAbstractParameter & ofxLabel::getParameter(){
 }
 
 void ofxLabel::valueChanged(string & value){
-	cout << "label value changed " << value << endl;
     setNeedsRedraw();
 }
