@@ -1098,6 +1098,9 @@ public:
 	template<class ListenerClass, typename ListenerMethod>
 	void removeListener(ListenerClass * listener, ListenerMethod method, int prio=OF_EVENT_ORDER_AFTER_APP);
 
+	template<typename... Args>
+	ofEventListener newListener(Args...args);
+
 	shared_ptr<ofAbstractParameter> newReference() const;
 	bool isSerializable() const;
 	bool isReadOnly() const;
@@ -1258,6 +1261,12 @@ inline void ofReadOnlyParameter<ParameterType,Friend>::removeListener(ListenerCl
 	parameter.removeListener(listener,method,prio);
 }
 
+
+template<typename ParameterType,typename Friend>
+template<typename... Args>
+inline ofEventListener ofReadOnlyParameter<ParameterType,Friend>::newListener(Args...args) {
+	return parameter.newListener(args...);
+}
 
 template<typename ParameterType,typename Friend>
 inline void ofReadOnlyParameter<ParameterType,Friend>::setName(const string & name){
