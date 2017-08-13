@@ -2,6 +2,8 @@
 #include "ofAppRunner.h"
 #include "ofxNetworkUtils.h"
 
+using namespace std;
+
 //--------------------------
 ofxTCPClient::ofxTCPClient(){
 
