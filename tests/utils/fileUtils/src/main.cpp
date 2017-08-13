@@ -2,6 +2,8 @@
 #include "ofUtils.h"
 #include "ofxUnitTests.h"
 
+using namespace std;
+
 std::filesystem::path initial_cwd;
 
 class ofApp: public ofxUnitTestsApp{

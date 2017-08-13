@@ -12,6 +12,8 @@
 #include "ofUtils.h"
 #include "ofVideoGrabber.h"
 
+using namespace std;
+
 struct ofxAndroidVideoGrabber::Data{
 	bool bIsFrameNew;
 	bool bGrabberInited;

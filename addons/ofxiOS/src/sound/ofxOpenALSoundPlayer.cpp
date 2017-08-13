@@ -25,6 +25,8 @@
 #import "ofxOpenALSoundPlayer.h"
 #include "ofUtils.h"
 
+using namespace std;
+
 bool SoundEngineInitialized = false;
 
 UInt32	numSounds;

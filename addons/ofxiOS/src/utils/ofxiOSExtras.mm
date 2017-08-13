@@ -45,6 +45,8 @@
 #include "ofImage.h"
 #include <sys/sysctl.h>
 
+using namespace std;
+
 //--------------------------------------------------------------
 ofxiOSDeviceType ofxiOSGetDeviceType() {
     NSString * dev = [[[UIDevice currentDevice] model] lowercaseString];

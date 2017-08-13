@@ -150,7 +150,7 @@ public:
     
     void run(ofBaseApp * appPtr);
     OF_DEPRECATED_MSG("Use setup(const ofiOSWindowSettings & settings); instead.", virtual void setupOpenGL(int w, int h, ofWindowMode screenMode) );
-    static void startAppWithDelegate(string appDelegateClassName);
+    static void startAppWithDelegate(std::string appDelegateClassName);
     void update();
     void draw();
    
@@ -183,9 +183,9 @@ public:
     
     ofiOSWindowSettings & getSettings();
     ofCoreEvents & events();
-    shared_ptr<ofBaseRenderer> & renderer();
+    std::shared_ptr<ofBaseRenderer> & renderer();
 	
-	virtual void setWindowTitle(string title);
+	virtual void setWindowTitle(std::string title);
 	
 	virtual ofWindowMode getWindowMode();
 	
@@ -223,7 +223,7 @@ public:
 protected:
     
     ofCoreEvents coreEvents;
-    shared_ptr<ofBaseRenderer> currentRenderer;
+    std::shared_ptr<ofBaseRenderer> currentRenderer;
     ofiOSWindowSettings settings;
 
 	ofOrientation orientation;

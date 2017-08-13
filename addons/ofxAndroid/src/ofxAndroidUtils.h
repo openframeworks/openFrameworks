@@ -59,16 +59,16 @@ bool ofxJavaCallBoolMethod(jobject object, jclass classID, std::string methodNam
 bool ofxJavaCallBoolMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, ...);
 bool ofxJavaCallBoolMethod(jobject object, std::string className, std::string methodName, std::string methodSignature, ...);
 
-void ofxAndroidAlertBox(string msg);
-int ofxAndroidProgressBox(string msg);
+void ofxAndroidAlertBox(std::string msg);
+int ofxAndroidProgressBox(std::string msg);
 void ofxAndroidDismissProgressBox(int id);
-void ofxAndroidOkCancelBox(string msg);
-void ofxAndroidYesNoBox(string msg);
-void ofxAndroidAlertTextBox(string question, string text);
-string ofxAndroidGetTextBoxResult();
-bool ofxAndroidAlertListBox(string title, const vector<string> & list);
+void ofxAndroidOkCancelBox(std::string msg);
+void ofxAndroidYesNoBox(std::string msg);
+void ofxAndroidAlertTextBox(std::string question, std::string text);
+std::string ofxAndroidGetTextBoxResult();
+bool ofxAndroidAlertListBox(std::string title, const std::vector<std::string> & list);
 
-void ofxAndroidToast(string msg);
+void ofxAndroidToast(std::string msg);
 
 void ofxAndroidLockScreenSleep();
 void ofxAndroidUnlockScreenSleep();
@@ -77,13 +77,13 @@ bool ofxAndroidIsOnline();
 bool ofxAndroidIsWifiOnline();
 bool ofxAndroidIsMobileOnline();
 
-string ofxAndroidGetStringRes(string id);
+std::string ofxAndroidGetStringRes(std::string id);
 
-string ofxAndroidRandomUUID();
+std::string ofxAndroidRandomUUID();
 
 void ofxAndroidMonitorNetworkState();
 
-void ofxAndroidLaunchBrowser(string url);
+void ofxAndroidLaunchBrowser(std::string url);
 
 void ofxAndroidNotifyLoadPercent(float percent);
 
@@ -92,7 +92,7 @@ bool ofxAndroidCheckSDCardMounted();
 void ofxAndroidEnableMulticast();
 void ofxAndroidDisableMulticast();
 
-void ofxAndroidSetViewItemChecked(string item_name, bool checked);
+void ofxAndroidSetViewItemChecked(std::string item_name, bool checked);
 
 enum ofxAndroidSwipeDir{
 	OFX_ANDROID_SWIPE_UP    = 1,

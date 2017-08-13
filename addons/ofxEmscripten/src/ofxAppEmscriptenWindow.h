@@ -47,7 +47,7 @@ public:
 	int		getWidth();
 	int		getHeight();
 
-	void	setWindowTitle(string title);
+	void	setWindowTitle(std::string title);
 
 	ofWindowMode 	getWindowMode();
 
@@ -64,7 +64,7 @@ public:
 	EGLSurface getEGLSurface();
 
 	ofCoreEvents & events();
-	shared_ptr<ofBaseRenderer> & renderer();
+	std::shared_ptr<ofBaseRenderer> & renderer();
 
 
 private:
@@ -83,7 +83,7 @@ private:
     static ofxAppEmscriptenWindow * instance;
     bool bEnableSetupScreen;
     ofCoreEvents _events;
-    shared_ptr<ofBaseRenderer> _renderer;
+    std::shared_ptr<ofBaseRenderer> _renderer;
 };
 
 #endif /* OFAPPEMSCRIPTENWINDOW_H_ */
