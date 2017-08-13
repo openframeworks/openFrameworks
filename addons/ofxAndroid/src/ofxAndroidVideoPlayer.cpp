@@ -9,6 +9,7 @@
 #include "ofxAndroidUtils.h"
 #include "ofLog.h"
 
+using namespace std;
 
 //---------------------------------------------------------------------------
 void ofxAndroidVideoPlayer::reloadTexture(){

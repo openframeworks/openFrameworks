@@ -30,6 +30,7 @@
 
 #include "ofxiOSMapKit.h"
 #include <TargetConditionals.h>
+
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #include "ofxiOSMapKitDelegate.h"
@@ -259,7 +260,7 @@ void ofxiOSMapKit::didFinishLoadingMap() {
 }
 
 
-void ofxiOSMapKit::errorLoadingMap(string errorDescription) {
+void ofxiOSMapKit::errorLoadingMap(std::string errorDescription) {
 	for(std::list<ofxiOSMapKitListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
 		ofxiOSMapKitListener* o = *it;
 		o->errorLoadingMap(errorDescription);

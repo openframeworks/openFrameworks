@@ -8,6 +8,8 @@
 #include "ofGLRenderer.h"
 #include <assert.h>
 
+using namespace std;
+
 // native events
 struct udev* udev;
 struct udev_device* dev;

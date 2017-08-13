@@ -42,7 +42,8 @@ CppApplication{
     cpp.cFlags: of.coreCFlags
     cpp.warningLevel: of.coreWarningLevel
     // TODO: system libs should go as dynamic?
-    cpp.staticLibraries: of.coreStaticLibs.concat(of.coreSystemLibs)
+    cpp.staticLibraries: of.staticLibraries.concat(of.coreStaticLibs.concat(of.coreSystemLibs))
+    cpp.dynamicLibraries: of.dynamicLibraries
 
     Properties{
         condition: of.platform === "osx"

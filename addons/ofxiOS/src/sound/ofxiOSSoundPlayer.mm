@@ -8,6 +8,8 @@
 #include "ofUtils.h"
 #import "AVSoundPlayer.h"
 
+using namespace std;
+
 ofxiOSSoundPlayer::ofxiOSSoundPlayer() {
     soundPlayer = NULL;
 }

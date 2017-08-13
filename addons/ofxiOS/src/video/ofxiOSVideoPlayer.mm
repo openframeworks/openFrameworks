@@ -3,6 +3,8 @@
 #include "ofxiOSEAGLView.h"
 #import "AVFoundationVideoPlayer.h"
 
+using namespace std;
+
 CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
 CVOpenGLESTextureRef _videoTextureRef = NULL;
 

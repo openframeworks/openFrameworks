@@ -103,6 +103,7 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 			}
 			mediaPlayer.setDataSource(fileName);
 			mediaPlayer.prepare();
+			bIsLoaded = true;
 			//setVolume(volume);
 			this.fileName = fileName;
 		} catch (Exception e) {

@@ -102,9 +102,9 @@ private:
 		char			tmpBuff[TCP_MAX_MSG_SIZE+1];
 		ofBuffer 		tmpBuffReceive;
 		ofBuffer 		tmpBuffSend;
-		std::string			str, tmpStr, ipAddr;
+		std::string		str, tmpStr, ipAddr;
 		int				index, messageSize, port;
 		bool			connected;
-		std::string 			partialPrevMsg;
-		std::string			messageDelimiter;
+		std::string 	partialPrevMsg;
+		std::string		messageDelimiter;
 };

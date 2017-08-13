@@ -10,6 +10,8 @@
 #include "ofBaseApp.h"
 #include "ofBaseTypes.h"
 
+using namespace std;
+
 int ofxEmscriptenAudioContext();
 
 ofxEmscriptenSoundStream::ofxEmscriptenSoundStream()
