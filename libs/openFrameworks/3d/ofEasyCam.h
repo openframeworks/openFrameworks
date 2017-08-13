@@ -271,5 +271,5 @@ private:
 		int key;
 		TransformType transformType;
 	};
-	vector<interaction> interactions;
+	std::vector<interaction> interactions;
 };
