@@ -232,7 +232,7 @@ void ofLogToDebugView();
 void ofSetLoggerChannel(std::shared_ptr<ofBaseLoggerChannel> loggerChannel);
 
 /// \brief Get the current logger channel.
-shared_ptr<ofBaseLoggerChannel> ofGetLoggerChannel();
+std::shared_ptr<ofBaseLoggerChannel> ofGetLoggerChannel();
 
 /// \}
 
@@ -426,7 +426,7 @@ class ofLog{
 		static void setChannel(std::shared_ptr<ofBaseLoggerChannel> channel);
 	
 		/// \brief Get the current logging channel.
-		static shared_ptr<ofBaseLoggerChannel> getChannel();
+		static std::shared_ptr<ofBaseLoggerChannel> getChannel();
 	
 		/// \}
 
