@@ -47,8 +47,8 @@ class ofApp: public ofxUnitTestsApp{
 				ofFile fr("noread");
 				std::string str;
 				fr >> str;
-				cout << "testing if file can be really read" << endl;
-				cout << str << endl;
+				std::cout << "testing if file can be really read" << std::endl;
+				std::cout << str << std::endl;
 			}
 		}
 
