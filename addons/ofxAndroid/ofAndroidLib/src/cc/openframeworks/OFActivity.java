@@ -1,6 +1,8 @@
 package cc.openframeworks;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -93,4 +95,27 @@ public abstract class OFActivity extends Activity{
 		    return super.onKeyUp(keyCode, event);
 		}
     }
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode,
+										   String permissions[], int[] grantResults) {
+		if(permissions.length > 0){
+			if(permissions[0].equals(Manifest.permission.CAMERA)) {
+
+				if (grantResults.length > 0
+						&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					Log.d("OF", "Camera permission granted");
+//					OFAndroidVideoGrabber.camera_instances.get(requestCode).openCamera();
+				} else {
+					Log.e("OF", "Camera permission denied");
+
+				}
+				return;
+			}
+		}
+
+			// other 'case' lines to check for other
+			// permissions this app might request
+
+	}
 }

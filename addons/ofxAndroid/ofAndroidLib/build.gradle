@@ -40,6 +40,6 @@ model {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:19.+'
+    compile 'com.android.support:support-v4:24.+'
 }
 
