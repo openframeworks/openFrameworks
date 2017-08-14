@@ -160,7 +160,9 @@ void ofxAndroidVideoGrabber::Data::onAppPause(){
 }
 
 void ofxAndroidVideoGrabber::Data::onAppResume(){
-	ofLogVerbose("ofxAndroidVideoGrabber") << "ofResumeVideoGrabbers(): trying to allocate textures";
+    if(!ofxAndroidCheckCameraPermission()) return;
+
+    ofLogVerbose("ofxAndroidVideoGrabber") << "ofResumeVideoGrabbers(): trying to allocate textures";
 	JNIEnv *env = ofGetJNIEnv();
 	if(!env){
 		ofLogError("ofxAndroidVideoGrabber") << "init grabber failed : couldn't get environment using GetEnv()";
@@ -171,8 +173,8 @@ void ofxAndroidVideoGrabber::Data::onAppResume(){
 	loadTexture();
 
 	int texID= texture.texData.textureID;
-	int w=texture.texData.width;
-	int h=texture.texData.height;
+	int w=width;
+	int h=height;
 	env->CallVoidMethod(javaVideoGrabber,javaInitGrabber,w,h,attemptFramerate,texID);
 	ofLogVerbose("ofxAndroidVideoGrabber") << "ofResumeVideoGrabbers(): textures allocated";
 	appPaused = false;
@@ -269,11 +271,15 @@ bool ofxAndroidVideoGrabber::setup(int w, int h){
 		return false;
 	}
 
+    // Load opengl texture
+    data->width = w;
+    data->height = h;
+
+    ofxAndroidRequestCameraPermission();
+    if(!ofxAndroidCheckCameraPermission()) return false;
+
 	ofLogNotice() << "initializing camera with external texture";
 
-	// Load opengl texture
-	data->width = w;
-	data->height = h;
 	data->loadTexture();
 
 	bool bInit = initCamera();
@@ -285,7 +291,9 @@ bool ofxAndroidVideoGrabber::setup(int w, int h){
 }
 
 bool ofxAndroidVideoGrabber::initCamera(){
-	JNIEnv *env = ofGetJNIEnv();
+    if(!ofxAndroidCheckCameraPermission()) return false;
+
+    JNIEnv *env = ofGetJNIEnv();
 	if(!env) return false;
 
 	jclass javaClass = getJavaClass();

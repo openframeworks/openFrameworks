@@ -442,20 +442,25 @@ void ofxAndroidNotifyLoadPercent(float percent){
 	ofGetJNIEnv()->CallVoidMethod(activity,onLoadPercent,(jfloat)percent);
 }
 
+void ofxAndroidRequestCameraPermission(){
+    jobject activity = ofGetOFActivityObject();
+    jclass activityClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFActivity");
+    jmethodID requestCameraPermission = ofGetJNIEnv()->GetMethodID(activityClass,"requestCameraPermission","()V");
+    return ofGetJNIEnv()->CallVoidMethod(activity,requestCameraPermission);
+}
+
 bool ofxAndroidCheckCameraPermission(){
-	jclass javaClass = ofGetJavaOFAndroid();
+    jobject activity = ofGetOFActivityObject();
+    jclass activityClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFActivity");
+    jmethodID checkCameraPermission = ofGetJNIEnv()->GetMethodID(activityClass,"checkCameraPermission","()Z");
+    return ofGetJNIEnv()->CallBooleanMethod(activity,checkCameraPermission);
+}
 
-	if(javaClass==0){
-		ofLogError("ofxAndroidUtils") << "ofxAndroidCheckCameraPermission(): couldn't find OFAndroid java class";
-		return false;
-	}
-
-	jmethodID unlockScreenSleep = ofGetJNIEnv()->GetStaticMethodID(javaClass,"checkCameraPermission","()Z");
-	if(!unlockScreenSleep){
-		ofLogError("ofxAndroidUtils") << "ofxAndroidCheckCameraPermission(): couldn't find OFAndroid checkSDCardMounted method";
-		return false;
-	}
-	return ofGetJNIEnv()->CallStaticBooleanMethod(javaClass,unlockScreenSleep);
+bool ofxAndroidWaitingForCameraPermission(){
+    jobject activity = ofGetOFActivityObject();
+    jclass activityClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFActivity");
+    jmethodID method = ofGetJNIEnv()->GetMethodID(activityClass,"waitingForCameraPermission","()Z");
+    return ofGetJNIEnv()->CallBooleanMethod(activity,method);
 }
 
 ofxAndroidEventsClass & ofxAndroidEvents(){

@@ -4,12 +4,13 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.content.Context;
 
 public abstract class OFActivity extends Activity{
 	public void onGLSurfaceCreated(){}
@@ -96,26 +97,20 @@ public abstract class OFActivity extends Activity{
 		}
     }
 
-	@Override
-	public void onRequestPermissionsResult(int requestCode,
-										   String permissions[], int[] grantResults) {
-		if(permissions.length > 0){
-			if(permissions[0].equals(Manifest.permission.CAMERA)) {
+	public boolean checkCameraPermission(){
+		return ContextCompat.checkSelfPermission(this,
+				Manifest.permission.CAMERA)
+				== PackageManager.PERMISSION_GRANTED;
+	}
 
-				if (grantResults.length > 0
-						&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					Log.d("OF", "Camera permission granted");
-//					OFAndroidVideoGrabber.camera_instances.get(requestCode).openCamera();
-				} else {
-					Log.e("OF", "Camera permission denied");
+	public void requestCameraPermission(){
+		if (ContextCompat.checkSelfPermission(this,
+				Manifest.permission.CAMERA)
+				!= PackageManager.PERMISSION_GRANTED) {
 
-				}
-				return;
-			}
+			ActivityCompat.requestPermissions(this,
+					new String[]{Manifest.permission.CAMERA},
+					0);
 		}
-
-			// other 'case' lines to check for other
-			// permissions this app might request
-
 	}
 }
