@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -15,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -23,6 +25,8 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Build;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ScaleGestureDetector;
@@ -373,6 +377,22 @@ public class OFAndroid {
 			canSaveExternal = false;
 		
 		return canSaveExternal;
+	}
+
+
+	public static boolean checkCameraPermission(){
+		if (ContextCompat.checkSelfPermission(OFAndroidLifeCycle.getActivity(),
+				Manifest.permission.CAMERA)
+				!= PackageManager.PERMISSION_GRANTED) {
+
+			ActivityCompat.requestPermissions(OFAndroidLifeCycle.getActivity(),
+					new String[]{Manifest.permission.READ_CONTACTS},
+					0);
+			Log.i("OF", "Requesting camera access");
+			return false
+		} else {
+			return true;
+		}
 	}
 	
 	public static void onActivityResult(int requestCode, int resultCode,Intent intent){
@@ -839,5 +859,7 @@ public class OFAndroid {
 		int unicodeChar = event.getUnicodeChar();
 		return onKeyUp(keyCode, unicodeChar);
 	}
+
+
 }
 

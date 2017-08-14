@@ -442,6 +442,22 @@ void ofxAndroidNotifyLoadPercent(float percent){
 	ofGetJNIEnv()->CallVoidMethod(activity,onLoadPercent,(jfloat)percent);
 }
 
+bool ofxAndroidCheckCameraPermission(){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidCheckCameraPermission(): couldn't find OFAndroid java class";
+		return false;
+	}
+
+	jmethodID unlockScreenSleep = ofGetJNIEnv()->GetStaticMethodID(javaClass,"checkCameraPermission","()Z");
+	if(!unlockScreenSleep){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidCheckCameraPermission(): couldn't find OFAndroid checkSDCardMounted method";
+		return false;
+	}
+	return ofGetJNIEnv()->CallStaticBooleanMethod(javaClass,unlockScreenSleep);
+}
+
 ofxAndroidEventsClass & ofxAndroidEvents(){
 	static ofxAndroidEventsClass * events = new ofxAndroidEventsClass;
 	return *events;
