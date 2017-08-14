@@ -90,6 +90,7 @@ void ofxAndroidNotifyLoadPercent(float percent);
 bool ofxAndroidCheckSDCardMounted();
 
 bool ofxAndroidCheckCameraPermission();
+void ofxAndroidRequestCameraPermission();
 
 void ofxAndroidEnableMulticast();
 void ofxAndroidDisableMulticast();
