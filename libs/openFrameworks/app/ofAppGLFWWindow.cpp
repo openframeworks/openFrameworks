@@ -1025,7 +1025,7 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 	XkbGetState(window->getX11Display(), XkbUseCoreKbd, &xkb_state);
 	XEvent ev = {0};
 	ev.xkey.keycode = scancode;
-	ev.xkey.state = xkb_state.mods;
+	ev.xkey.state = xkb_state.mods & !ControlMask;
 	ev.xkey.display = window->getX11Display();
 	ev.xkey.type = KeyPress;
 	KeySym keysym = NoSymbol;
