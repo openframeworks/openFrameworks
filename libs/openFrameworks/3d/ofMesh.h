@@ -353,6 +353,9 @@ public:
 	virtual bool usingNormals() const;
 
 	void smoothNormals( float angle );
+        
+        /// \brief Duplicates vertices and updates normals to get a low-poly look.
+        void flatNormals();
 
 	/// \}
 	/// \name Faces
@@ -639,7 +642,7 @@ public:
 	///
 	/// It expects that the file will be in the [PLY Format](http://en.wikipedia.org/wiki/PLY_(file_format)).
 	/// It will only load meshes saved in the PLY ASCII format; the binary format is not supported.
-    void load(std::filesystem::path path);
+    void load(const std::filesystem::path& path);
 
 	///  \brief Saves the mesh at the passed path in the [PLY Format](http://en.wikipedia.org/wiki/PLY_(file_format)).
 	///
@@ -650,7 +653,7 @@ public:
 	///  If you're planning on reloading the mesh into ofMesh, ofMesh currently only supports loading the ASCII format.
 	///
 	///  For more information, see the [PLY format specification](http://paulbourke.net/dataformats/ply/).
-    void save(std::filesystem::path path, bool useBinary = false) const;
+    void save(const std::filesystem::path& path, bool useBinary = false) const;
 
 	/// \}
 

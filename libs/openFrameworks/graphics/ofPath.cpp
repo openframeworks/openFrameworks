@@ -292,6 +292,7 @@ void ofPath::circle(float x, float y, float radius){
 
 //----------------------------------------------------------
 void ofPath::circle(float x, float y, float z, float radius){
+	moveTo(x + radius, y, z);
 	arc(x,y,z,radius,radius,0,360);
 }
 

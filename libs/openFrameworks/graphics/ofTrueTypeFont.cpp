@@ -444,8 +444,9 @@ static std::string linuxFontPathByName(const std::string& fontname){
 #endif
 
 //-----------------------------------------------------------
-static bool loadFontFace(std::filesystem::path fontname, FT_Face & face, std::filesystem::path & filename){
-	filename = ofToDataPath(fontname,true);
+static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face, std::filesystem::path & filename){
+	std::filesystem::path fontname;
+	filename = ofToDataPath(_fontname,true);
 	ofFile fontFile(filename,ofFile::Reference);
 	int fontID = 0;
 	if(!fontFile.exists()){
@@ -762,8 +763,8 @@ ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::load(std::filesystem::path filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
-	ofTtfSettings settings(filename,fontSize);
+bool ofTrueTypeFont::load(const std::filesystem::path& filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+	ofTrueTypeFont::Settings settings(filename,fontSize);
 	settings.antialiased = antialiased;
 	settings.contours = makeContours;
 	settings.simplifyAmt = simplifyAmt;
@@ -776,7 +777,7 @@ bool ofTrueTypeFont::load(std::filesystem::path filename, int fontSize, bool ant
 	return load(settings);
 }
 
-bool ofTrueTypeFont::load(const ofTtfSettings & _settings){
+bool ofTrueTypeFont::load(const ofTrueTypeFont::Settings & _settings){
 	#if defined(TARGET_ANDROID)
 	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
@@ -1113,7 +1114,7 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 		newLineDirection = -1;
 	}
 
-	int directionX = settings.direction == ofTtfSettings::LeftToRight?1:-1;
+	int directionX = settings.direction == Settings::Direction::LeftToRight?1:-1;
 
 	uint32_t prevC = 0;
 	for(auto c: ofUTF8Iterator(str)){
@@ -1123,7 +1124,7 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 				pos.x = x ; //reset X Pos back to zero
 				prevC = 0;
 			} else if (c == '\t') {
-				if ( settings.direction == ofTtfSettings::LeftToRight ){
+				if ( settings.direction == Settings::Direction::LeftToRight ){
 					f( c, pos );
 					pos.x += getGlyphProperties( ' ' ).advance * TAB_WIDTH * letterSpacing  * directionX;
 				} else{
@@ -1136,7 +1137,7 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 				if(prevC>0){
 					pos.x += getKerning(c,prevC);// * directionX;
 				}
-				if(settings.direction == ofTtfSettings::LeftToRight){
+				if(settings.direction == Settings::Direction::LeftToRight){
 				    f(c,pos);
 				    pos.x += props.advance * letterSpacing * directionX;
 				}else{
@@ -1152,7 +1153,7 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::setDirection(ofTtfSettings::Direction direction){
+void ofTrueTypeFont::setDirection(ofTrueTypeFont::Settings::Direction direction){
 	settings.direction = direction;
 }
 
@@ -1287,7 +1288,7 @@ glm::vec2 ofTrueTypeFont::getFirstGlyphPosForTexture(const std::string & str, bo
 	if(!str.empty()){
 		try{
 			auto c = *ofUTF8Iterator(str).begin();
-			if(settings.direction == ofTtfSettings::LeftToRight){
+			if(settings.direction == ofTrueTypeFont::Settings::Direction::LeftToRight){
 				if (c != '\n') {
 					auto g = loadGlyph(c);
 					return {-float(g.props.xmin), getLineHeight() + g.props.ymin + getDescenderHeight()};
@@ -1353,7 +1354,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 	totalPixels.set(1,0);
 	size_t i = 0;
 	for(auto & g: glyphs){
-		if(settings.direction == ofTtfSettings::LeftToRight){
+		if(settings.direction == Settings::Direction::LeftToRight){
 			g.pixels.blendInto(totalPixels, glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );
 		}else{
 			g.pixels.blendInto(totalPixels, width-glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );

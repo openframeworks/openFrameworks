@@ -7,7 +7,7 @@ age () { stat=$(stat --printf="%Y %F\n" "$1"); echo $((($(date +%s) - ${stat%% *
 
 
 SUDO=
-ROOT=$( cd "$(dirname "$0")" ; pwd -P )
+export ROOT=$( cd "$(dirname "$0")" ; pwd -P )
 
 trapError() {
 	echo
@@ -17,30 +17,46 @@ trapError() {
 
 createArchImg(){
     #sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libasound2-dev
-    
+
     #sudo apt-get -y update
     #sudo apt-get -f -y --force-yes dist-upgrade
     #sudo apt-get install -y libgssapi-krb5-2 libkrb5-3 libidn11
     #sudo ./arch-bootstrap.sh archlinux
-    
+
     if [ ! "$(ls -A ~/archlinux)" ] || [ $(age ~/archlinux/timestamp) -gt 7 ]; then
-        $ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
-        touch ~/archlinux/timestamp
+        #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
+		junest -u << EOF
+			cd ~
+			wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+			mkdir archlinux
+		    tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C archlinux/ 2> /dev/null
+			sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g archlinux/etc/pacman.conf
+			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -Syu
+			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -S make pkg-config gcc raspberrypi-firmware openal glew freeglut freeimage freetype2 cairo poco gstreamer gst-plugins-base gst-plugins-good assimp boost libxcursor opencv assimp glfw-x11 uriparser curl pugixml
+        	touch ~/archlinux/timestamp
+EOF
     else
         echo "Using cached archlinux image"
     fi
 }
 
 downloadToolchain(){
-    #wget http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
-    #tar xf x-tools7h.tar.xz
-    #rm x-tools7h.tar.xz
-    if [ "$(ls -A ~/rpi2_toolchain)" ]; then
+    if [ "$(ls -A ~/x-tools7h)" ]; then
         echo "Using cached RPI2 toolchain"
     else
-        wget http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
-        tar xjf rpi2_toolchain.tar.bz2 -C ~/
-        rm rpi2_toolchain.tar.bz2
+		#xz -dc x-tools7h.tar.xz | tar x -C ~/;
+		junest -u << EOF
+		cd /tmp
+		if [ -f x-tools7h.tar.xz ]; then
+			rm x-tools7h.tar.xz
+		fi
+		wget http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
+	    tar -x --delay-directory-restore --no-same-owner -f x-tools7h.tar.xz -C ~/
+	    rm x-tools7h.tar.xz
+EOF
+        #wget http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
+        #tar xjf rpi2_toolchain.tar.bz2 -C ~/
+        #rm rpi2_toolchain.tar.bz2
     fi
 }
 
@@ -59,17 +75,17 @@ downloadFirmware(){
 relativeSoftLinks(){
     rel_link=$1
     escaped_rel_link=$2
-    for link in $(ls -la | grep "\-> /" | sed "s/.* \([^ ]*\) \-> \/\(.*\)/\1->\/\2/g"); do 
-        lib=$(echo $link | sed "s/\(.*\)\->\(.*\)/\1/g"); 
-        link=$(echo $link | sed "s/\(.*\)\->\(.*\)/\2/g"); 
+    for link in $(ls -la | grep "\-> /" | sed "s/.* \([^ ]*\) \-> \/\(.*\)/\1->\/\2/g"); do
+        lib=$(echo $link | sed "s/\(.*\)\->\(.*\)/\1/g");
+        link=$(echo $link | sed "s/\(.*\)\->\(.*\)/\2/g");
         ${SUDO} rm $lib
-        ${SUDO} ln -s ${rel_link}/${link} $lib 
+        ${SUDO} ln -s ${rel_link}/${link} $lib
     done
 
-    for f in *; do 
-        error_lib=$(grep " \/lib/" $f > /dev/null 2>&1; echo $?) 
-        error_usr=$(grep " \/usr/" $f > /dev/null 2>&1; echo $?) 
-        if [ $error_lib -eq 0 ] || [ $error_usr -eq 0 ]; then 
+    for f in *; do
+        error_lib=$(grep " \/lib/" $f > /dev/null 2>&1; echo $?)
+        error_usr=$(grep " \/usr/" $f > /dev/null 2>&1; echo $?)
+        if [ $error_lib -eq 0 ] || [ $error_usr -eq 0 ]; then
             ${SUDO} sed -i "s/ \/lib/ $escaped_rel_link\/lib/g" $f
             ${SUDO} sed -i "s/ \/usr/ $escaped_rel_link\/usr/g" $f
         fi
@@ -82,7 +98,7 @@ installRtAudio(){
     #tar xzf rtaudio-4.1.1.tar.gz
     #cd rtaudio-4.1.1
     #./configure --host=${GCC_PREFIX}
-    #sed -i "s|CFLAGS[ ]*=\(.*\)|CFLAGS = ${CFLAGS} \1|g" Makefile 
+    #sed -i "s|CFLAGS[ ]*=\(.*\)|CFLAGS = ${CFLAGS} \1|g" Makefile
     #perl -p -i -e 's|\$\(CC\) (?!\$\(CFLAGS\))|\$(CC) \$(CFLAGS) |g' Makefile
 
     #make
@@ -97,7 +113,19 @@ installRtAudio(){
     rm rtaudio-armv7hf.tar.bz2
 }
 
+installJunest(){
+	if [ ! -d ~/.local/share/junest ]; then
+		git clone git://github.com/fsquillace/junest ~/.local/share/junest
+	fi
+	export PATH=~/.local/share/junest/bin:$PATH
+	junest -u << EOF
+		pacman -Syy --noconfirm
+		pacman -S --noconfirm git flex grep gcc pkg-config make wget
+EOF
+}
+
 echo $ROOT
+installJunest
 createArchImg
 downloadToolchain
 downloadFirmware

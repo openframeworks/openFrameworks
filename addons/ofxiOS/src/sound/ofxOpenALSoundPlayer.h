@@ -61,7 +61,7 @@ public:
 	ofxOpenALSoundPlayer();
 	~ofxOpenALSoundPlayer();
 	
-	bool	load(std::filesystem::path fileName, bool stream=false);
+	bool	load(const std::filesystem::path& fileName, bool stream=false);
 	void	unload();
 
 	void	play();

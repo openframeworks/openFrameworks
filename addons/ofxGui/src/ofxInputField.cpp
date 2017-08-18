@@ -140,7 +140,7 @@ ofxInputField<Type>::ofxInputField(ofParameter<Type> _val, float width, float he
 template<typename Type>
 ofxInputField<Type>* ofxInputField<Type>::setup(ofParameter<Type> _val, float width, float height){
 	value.makeReferenceTo(_val);
-	input = toString(value.get());
+	visibleInput = input = toString(value.get());
 	b.x = 0;
 	b.y = 0;
 	b.width = width;
@@ -772,7 +772,7 @@ void ofxInputField<string>::parseInput(){
 //-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::valueChanged(Type & value){
-	input = toString(value);
+	visibleInput = input = toString(value);
 	if(bGuiActive){
 		moveCursor(ofUTF8Length(input));
 	}
@@ -806,3 +806,4 @@ template class ofxInputField<uint64_t>;
 template class ofxInputField<float>;
 template class ofxInputField<double>;
 template class ofxInputField<std::string>;
+template class ofxInputField<typename std::conditional<std::is_same<uint32_t, size_t>::value || std::is_same<uint64_t, size_t>::value, bool, size_t>::type>;

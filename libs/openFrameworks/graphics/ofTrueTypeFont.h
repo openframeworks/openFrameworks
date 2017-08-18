@@ -112,45 +112,38 @@ public:
 	static const std::initializer_list<ofUnicode::range> Cyrillic;
 };
 
-
-
-
-class ofTtfSettings{
-	friend class ofTrueTypeFont;
-	vector<ofUnicode::range> ranges;
-
-public:
-    ofTtfSettings(const std::filesystem::path & name, int size)
-	:fontName(name)
-	,fontSize(size){}
-
-    std::filesystem::path fontName;
-	int fontSize;
-	bool antialiased = true;
-	bool contours = false;
-	float simplifyAmt = 0.3f;
-	int dpi = 0;
-
-	enum Direction{
-		LeftToRight,
-		RightToLeft
-	};
-	Direction direction = LeftToRight;
-
-	void addRanges(std::initializer_list<ofUnicode::range> alphabet){
-		ranges.insert(ranges.end(), alphabet);
-	}
-
-	void addRange(const ofUnicode::range & range){
-		ranges.push_back(range);
-	}
-};
-
-
 class ofTrueTypeFont{
 
 public:
 
+	struct Settings{
+
+		enum class Direction : uint32_t {
+			LeftToRight,
+			RightToLeft
+		};
+
+		std::filesystem::path    fontName;
+		int                      fontSize = 0;
+		bool                     antialiased = true;
+		bool                     contours = false;
+		float                    simplifyAmt = 0.3f;
+		int                      dpi = 0;
+		Direction                direction = Direction::LeftToRight;
+		vector<ofUnicode::range> ranges;
+
+		Settings(const std::filesystem::path & name, int size)
+		:fontName(name)
+		,fontSize(size){}
+
+		void addRanges(std::initializer_list<ofUnicode::range> alphabet){
+			ranges.insert(ranges.end(), alphabet);
+		}
+
+		void addRange(const ofUnicode::range & range){
+			ranges.push_back(range);
+		}
+	};
 
 	/// \brief Construct a default ofTrueTypeFont.
 	ofTrueTypeFont();
@@ -183,7 +176,7 @@ public:
     /// \param simplifyAmt the amount to simplify the vector contours.  Larger number means more simplified.
     /// \param dpi the dots per inch used to specify rendering size.
 	/// \returns true if the font was loaded correctly.
-    bool load(std::filesystem::path filename,
+    bool load(const std::filesystem::path& filename,
                   int fontsize,
                   bool _bAntiAliased=true,
                   bool _bFullCharacterSet=true,
@@ -199,7 +192,7 @@ public:
                   float simplifyAmt=0.3f,
 				  int dpi=0));
 	
-	bool load(const ofTtfSettings & settings);
+	bool load(const Settings & settings);
 
 	/// \brief Has the font been loaded successfully?
 	/// \returns true if the font was loaded.
@@ -355,7 +348,7 @@ public:
 	bool isValidGlyph(uint32_t) const;
 	/// \}
 
-	void setDirection(ofTtfSettings::Direction direction);
+	void setDirection(Settings::Direction direction);
 protected:
 	/// \cond INTERNAL
 	
@@ -394,7 +387,7 @@ protected:
 
 	vector<glyphProps> cps; // properties for each character
 
-	ofTtfSettings settings;
+	Settings settings;
 	unordered_map<uint32_t,size_t> glyphIndexMap;
 
 

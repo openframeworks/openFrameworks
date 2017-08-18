@@ -1024,7 +1024,7 @@ void ofMesh_<V,N,C,T>::append(const ofMesh_<V,N,C,T> & mesh){
 
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
-void ofMesh_<V,N,C,T>::load(std::filesystem::path path){
+void ofMesh_<V,N,C,T>::load(const std::filesystem::path& path){
 	ofFile is(path, ofFile::ReadOnly);
 	auto & data = *this;
 
@@ -1264,7 +1264,7 @@ void ofMesh_<V,N,C,T>::load(std::filesystem::path path){
 
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
-void ofMesh_<V,N,C,T>::save(std::filesystem::path path, bool useBinary) const{
+void ofMesh_<V,N,C,T>::save(const std::filesystem::path& path, bool useBinary) const{
 	ofFile os(path, ofFile::WriteOnly);
 	const auto & data = *this;
 
@@ -1797,6 +1797,51 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 	}
 }
 
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::flatNormals() {
+    if( getMode() == OF_PRIMITIVE_TRIANGLES) {
+        
+        // get copy original mesh data
+        auto numIndices = getIndices().size();
+        auto verts = getVertices();
+        auto texCoords = getTexCoords();
+        auto colors = getColors();
+        
+        // remove all data to start from scratch
+        clear();
+        
+        // add mesh data back, duplicating vertices and recalculating normals
+        N normal;
+        for(ofIndexType i = 0; i < numIndices; i++) {
+            ofIndexType indexCurr = getIndex(i);
+    
+            if(i % 3 == 0) {
+                ofIndexType indexNext1 = getIndex(i + 1);
+                ofIndexType indexNext2 = getIndex(i + 2);
+                auto e1 = verts[indexCurr] - verts[indexNext1];
+                auto e2 = verts[indexNext2] - verts[indexNext1];
+                normal = glm::normalize(glm::cross(e1, e2));
+            }
+    
+            addIndex(i);
+            addNormal(normal);
+    
+            if(indexCurr < texCoords.size()) {
+                addTexCoord(texCoords[indexCurr]);
+            }
+    
+            if(indexCurr < verts.size()) {
+                addVertex(verts[indexCurr]);
+            }
+    
+            if(indexCurr < colors.size()) {
+                addColor(colors[indexCurr]);
+            }
+        }
+    }
+}
+
 // PLANE MESH //
 
 
@@ -1989,34 +2034,43 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::sphere( float radius, int res, ofPrimitiveMod
  */
 // http://code.google.com/p/ogre-procedural/source/browse/library/src/ProceduralIcoSphereGenerator.cpp
 
-// NO texture coords or normals
-// use ofGetIcoSphere(radius, 0) // 0 iterations will return Icosahedron //
 
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
 ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosahedron(float radius) {
-	ofMesh_<V,N,C,T> mesh;
+        auto mesh = icosphere(radius, 0);
+        mesh.flatNormals();
+	return mesh;
+}
 
-	const float sqrt5 = sqrt(5.0f);
-	const float phi = (1.0f + sqrt5) * 0.5f;
+// based on code by Michael Broutin for the ogre-procedural library //
+// http://code.google.com/p/ogre-procedural/source/browse/library/src/ProceduralIcoSphereGenerator.cpp
+// For the latest info, see http://code.google.com/p/ogre-procedural/ //
+
+//--------------------------------------------------------------
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iterations) {
+	ofMesh_<V,N,C,T> sphere;
 
 	/// Step 1 : Generate icosahedron
-	float invnorm = 1/sqrt(phi*phi+1);
+	const float sqrt5 = sqrt(5.0f);
+	const float phi = (1.0f + sqrt5) * 0.5f;
+	const float invnorm = 1/sqrt(phi*phi+1);
 
-	mesh.addVertex(invnorm * V(-1,  phi, 0));//0
-	mesh.addVertex(invnorm * V( 1,  phi, 0));//1
-	mesh.addVertex(invnorm * V(0,   1,  -phi));//2
-	mesh.addVertex(invnorm * V(0,   1,   phi));//3
-	mesh.addVertex(invnorm * V(-phi,0,  -1));//4
-	mesh.addVertex(invnorm * V(-phi,0,   1));//5
-	mesh.addVertex(invnorm * V( phi,0,  -1));//6
-	mesh.addVertex(invnorm * V( phi,0,   1));//7
-	mesh.addVertex(invnorm * V(0,   -1, -phi));//8
-	mesh.addVertex(invnorm * V(0,   -1,  phi));//9
-	mesh.addVertex(invnorm * V(-1,  -phi,0));//10
-	mesh.addVertex(invnorm * V( 1,  -phi,0));//11
-
-	ofIndexType firstFaces[] = {
+        sphere.addVertex(invnorm * V(-1,  phi, 0));//0
+	sphere.addVertex(invnorm * V( 1,  phi, 0));//1
+	sphere.addVertex(invnorm * V(0,   1,  -phi));//2
+	sphere.addVertex(invnorm * V(0,   1,   phi));//3
+	sphere.addVertex(invnorm * V(-phi,0,  -1));//4
+	sphere.addVertex(invnorm * V(-phi,0,   1));//5
+	sphere.addVertex(invnorm * V( phi,0,  -1));//6
+	sphere.addVertex(invnorm * V( phi,0,   1));//7
+	sphere.addVertex(invnorm * V(0,   -1, -phi));//8
+	sphere.addVertex(invnorm * V(0,   -1,  phi));//9
+	sphere.addVertex(invnorm * V(-1,  -phi,0));//10
+	sphere.addVertex(invnorm * V( 1,  -phi,0));//11
+       
+        ofIndexType firstFaces[] = {
 		0,1,2,
 		0,3,1,
 		0,4,5,
@@ -2039,31 +2093,12 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosahedron(float radius) {
 		10,11,9
 	};
 
-	for(ofIndexType i = 0; i < mesh.getNumVertices(); i++) {
-		mesh.setVertex(i, mesh.getVertex(i) * radius);
+        for(ofIndexType i = 0; i < 60; i+=3) {
+		sphere.addTriangle(firstFaces[i], firstFaces[i+1], firstFaces[i+2]);
 	}
-
-	for(ofIndexType i = 0; i < 60; i+=3) {
-		mesh.addTriangle(firstFaces[i], firstFaces[i+1], firstFaces[i+2]);
-	}
-
-	return mesh;
-}
-
-
-
-// based on code by Michael Broutin for the ogre-procedural library //
-// http://code.google.com/p/ogre-procedural/source/browse/library/src/ProceduralIcoSphereGenerator.cpp
-// For the latest info, see http://code.google.com/p/ogre-procedural/ //
-
-//--------------------------------------------------------------
-template<class V, class N, class C, class T>
-ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iterations) {
-
-	//ofMesh icosahedron = ofGetIcosahedronMesh( 1.f );
-	auto icosahedron = ofMesh_<V,N,C,T>::icosahedron( 1.f );
-	auto vertices = icosahedron.getVertices();
-	auto faces = icosahedron.getIndices();
+        
+	auto& vertices = sphere.getVertices();
+	auto& faces = sphere.getIndices();
 
 	ofIndexType size = faces.size();
 
@@ -2186,16 +2221,12 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 		std::swap(faces[i+1], faces[i+2]);
 	}
 
-	ofMesh_<V,N,C,T> sphere;
-
-	sphere.addIndices( faces );
 	sphere.addNormals( vertices );
 	sphere.addTexCoords( texCoords );
 
 	for(ofIndexType i = 0; i < vertices.size(); i++ ) {
 		vertices[i] *= radius;
 	}
-	sphere.addVertices( vertices );
 
 	return  sphere;
 }
