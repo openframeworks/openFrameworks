@@ -47,7 +47,7 @@ CppApplication{
 
     Properties{
         condition: of.platform === "osx"
-        cpp.minimumOsxVersion: 10.8
+        cpp.minimumMacosVersion: "10.9"
     }
 
     Probe{
