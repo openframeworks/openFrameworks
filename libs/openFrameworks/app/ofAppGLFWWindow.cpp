@@ -70,6 +70,7 @@ void ofAppGLFWWindow::close(){
 		glfwSetCursorEnterCallback( windowP, nullptr );
 		glfwSetKeyCallback( windowP, nullptr );
 		glfwSetWindowSizeCallback( windowP, nullptr );
+		glfwSetFramebufferSizeCallback( windowP, nullptr);
 		glfwSetWindowCloseCallback( windowP, nullptr );
 		glfwSetScrollCallback( windowP, nullptr );
 #if GLFW_VERSION_MAJOR>3 || GLFW_VERSION_MINOR>=1
@@ -320,6 +321,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwSetKeyCallback(windowP, keyboard_cb);	
 	glfwSetCharCallback(windowP, char_cb);
 	glfwSetWindowSizeCallback(windowP, resize_cb);
+	glfwSetFramebufferSizeCallback( windowP, framebuffer_size_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
 #if GLFW_VERSION_MAJOR>3 || GLFW_VERSION_MINOR>=1
@@ -1025,7 +1027,7 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 	XkbGetState(window->getX11Display(), XkbUseCoreKbd, &xkb_state);
 	XEvent ev = {0};
 	ev.xkey.keycode = scancode;
-	ev.xkey.state = xkb_state.mods;
+	ev.xkey.state = xkb_state.mods & !ControlMask;
 	ev.xkey.display = window->getX11Display();
 	ev.xkey.type = KeyPress;
 	KeySym keysym = NoSymbol;
@@ -1477,6 +1479,12 @@ void ofAppGLFWWindow::char_cb(GLFWwindow* windowP_, uint32_t key){
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
+
+    //detect if the window is running in a retina mode
+    int framebufferW, framebufferH;
+    glfwGetFramebufferSize(windowP_, &framebufferW, &framebufferH);
+    instance->pixelScreenCoordScale = framebufferW / w;
+
 	if(instance->windowMode == OF_WINDOW){
 		instance->windowW = w * instance->pixelScreenCoordScale;
 		instance->windowH = h * instance->pixelScreenCoordScale;
@@ -1485,6 +1493,10 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 	instance->currentH = h;
 	instance->events().notifyWindowResized(w*instance->pixelScreenCoordScale, h*instance->pixelScreenCoordScale);
 	instance->nFramesSinceWindowResized = 0;
+}
+
+void ofAppGLFWWindow::framebuffer_size_cb(GLFWwindow* windowP_, int w, int h){
+	resize_cb(windowP_, w,h);
 }
 
 //--------------------------------------------

@@ -178,7 +178,7 @@ void ofEasyCam::setEvents(ofCoreEvents & _events){
 
 	// we need a temporary copy of bMouseInputEnabled, since it will 
 	// get changed by disableMouseInput as a side-effect.
-	bool wasMouseInputEnabled = bMouseInputEnabled || !events;
+	bool wasMouseInputEnabled = bMouseInputEnabled;// || !events;
 	disableMouseInput();
 	events = &_events;
 	if (wasMouseInputEnabled) {
