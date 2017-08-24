@@ -37,7 +37,7 @@ download(){
 trap 'trapError ${LINENO}' ERR
 trap "trapError" SIGINT SIGTERM
 
-trapError() { 
+trapError() {
     local parent_lineno="$1"
     if [[ "$#" = "3" ]] ; then
         local message="$2"
@@ -47,7 +47,7 @@ trapError() {
         local code="${2:-1}"
         echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
     fi
-    
+
     if [ -e openFrameworksLibs* ]; then
         echo "removing packages"
     	rm openFrameworksLibs*
@@ -110,16 +110,16 @@ if [ "$ARCH" == "" ]; then
             GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
             if [ $GCC_VERSION -eq 4 ]; then
                 ARCH=64
-            elif [ $GCC_VERSION -eq 5]; then
+            elif [ $GCC_VERSION -eq 5 ]; then
                 ARCH=64gcc5
             else
                 ARCH=64gcc6
             fi
-        elif [ "$ARCH" == "armv7l" ]; then 
+        elif [ "$ARCH" == "armv7l" ]; then
             # Check for Raspberry Pi
-            if [ -f /opt/vc/include/bcm_host.h ]; then 
+            if [ -f /opt/vc/include/bcm_host.h ]; then
                 ARCH=armv6l
-            fi 
+            fi
         elif [ "$ARCH" == "i686" ] || [ "$ARCH" == "i386" ]; then
             cat << EOF
 32bit linux is not officially supported anymore but compiling
@@ -181,7 +181,13 @@ for PKG in $PKGS; do
     fi
 done
 
-if [[ "$PLATFORM" == "osx" || "$PLATFORM" == "ios" || "$PLATFORM" == "tvos" ]]; then
+if [ "$PLATFORM" == "osx" ]; then
+    addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco" "openssl")
+    addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco" "ofxPoco")
+elif [ "$PLATFORM" == "vs2015" ] || [ "$PLATFORM" == "vs2017" ]; then
+    addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco")
+    addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+elif [ "$PLATFORM" == "ios" ] || [ "$PLATFORM" == "tvos" ]; then
     addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny" "poco" "openssl")
     addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco" "ofxPoco")
 else
@@ -201,4 +207,3 @@ for ((i=0;i<${#addonslibs[@]};++i)); do
         rm -rf ${addonslibs[i]}
     fi
 done
-
