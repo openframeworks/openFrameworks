@@ -249,9 +249,6 @@ enum ofTargetPlatform{
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
-#include "tesselator.h"
-typedef TESSindex ofIndexType;
-
 
 #ifndef __MWERKS__
 #include <cstdlib>
@@ -259,7 +256,13 @@ typedef TESSindex ofIndexType;
 
 #define OF_EXIT_APP(val)		std::exit(val);
 
+#if TARGET_OS_IPHONE || ANDROID || __ARMEL__ || EMSCRIPTEN
+	typedef unsigned short TESSindex;
+#else
+	using TESSindex = unsigned int;
+#endif
 
+using ofIndexType = TESSindex;
 
 
 //------------------------------------------------ capture
