@@ -715,10 +715,10 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 
 			i2creply.address = *++it | (*++it << 7);
 			i2creply.reg = *++it | (*++it << 7);
-			
+
 			it++;
 			while (it != data.end()) {
-					str += *it | (*++it << 7);
+				str += *it | (*++it << 7);
 				it++;
 			}
 			i2creply.data = str;
@@ -828,16 +828,16 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 
 		int pin = 1;
 
-		firmataInputSupported,
-			firmataOutputSupported,
-			firmataAnalogSupported,
-			firmataPwmSupported,
-			firmataServoSupported,
-			firmataI2cSupported,
-			firmataSerialSupported,
-			firmataOnewireSupported,
-			firmataStepperSupported,
-			firmataEncoderSupported = false;
+		firmataInputSupported = false;
+		firmataOutputSupported = false;
+		firmataAnalogSupported = false;
+		firmataPwmSupported = false;
+		firmataServoSupported = false;
+		firmataI2cSupported = false;
+		firmataSerialSupported = false;
+		firmataOnewireSupported = false;
+		firmataStepperSupported = false;
+		firmataEncoderSupported = false;
 
 		while (it != data.end()) {
 			switch (*it) {
@@ -989,7 +989,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 			it++;
 			shift += 7;
 		} //clear whatever is left
-		int pinVal[2] = { pin, val };
+		//int pinVal[2] = { pin, val }; //I think this was supposed to be the return value
 		pair<int, Firmata_Pin_Modes> reply(pin, mode);
 		ofNotifyEvent(EPinStateResponseReceived, reply, this);
 	}
@@ -1012,10 +1012,9 @@ void ofArduino::processDigitalPort(int port, unsigned char value) {
 		return;
 	unsigned char mask;
 	int previous;
-	int i;
 	int pin;
 
-	for (int i = 0; i<8; ++i) {
+	for (int i = 0; i < 8; ++i) {
 		pin = i + (port * 8);
 		if (pin <= _totalDigitalPins && (_digitalPinMode[pin] == ARD_INPUT || _digitalPinMode[pin] == ARD_INPUT_PULLUP)) {
 			if (!_digitalHistory[pin].empty())
@@ -1025,7 +1024,7 @@ void ofArduino::processDigitalPort(int port, unsigned char value) {
 			mask = 1 << i;
 			_digitalHistory[pin].push_front((value & mask) >> i);
 
-			if ((int)_digitalHistory[pin].size()>_digitalHistoryLength)
+			if ((int)_digitalHistory[pin].size() > _digitalHistoryLength)
 				_digitalHistory[pin].pop_back();
 
 			// trigger an event if the pin has changed value
@@ -1286,7 +1285,6 @@ void ofArduino::sendStepperMove(int stepperID, int direction, int numSteps, int 
 ********************************************/
 
 void  ofArduino::sendI2CConfig(int delay) {
-	delay = delay || 0;
 	sendByte(START_SYSEX);
 	sendByte(I2C_CONFIG);
 	sendByte(delay & 0xFF);
@@ -1674,8 +1672,6 @@ void ofArduino::sendSerialConfig(Firmata_Serial_Ports portID, int baud, int rxPi
 		ofLogError("ofArduino") << "Both RX and TX pins must be defined when using Software Serial.";
 		return;
 	}
-
-	baud = baud || 57600;
 
 	sendByte(START_SYSEX);
 	sendByte(SERIAL_MESSAGE);
