@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "glm/fwd.hpp" // for glm::vec*
 #include "ofMesh.h"
-#include "ofTypes.h"
 #include "ofPolyline.h"
 #include "tesselator.h"
 

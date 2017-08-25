@@ -3,7 +3,7 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 #include "ofRectangle.h"
-#include "ofTypes.h"
+#include "glm/fwd.hpp" // for glm::vec*
 
 /// \cond INTERNAL
 #define  	CIRC_RESOLUTION		    22

@@ -1,10 +1,11 @@
 #pragma once
 
+#include "ofConstants.h"
+#include "glm/fwd.hpp" // for glm::vec*
 #include "ofFileUtils.h"
 #include "ofTexture.h"
 #include "ofPixels.h"
 #include "ofBaseTypes.h"
-#include "ofConstants.h"
 
 /// \file
 /// ofImage is used for loading, saving and drawing images in openFrameworks.

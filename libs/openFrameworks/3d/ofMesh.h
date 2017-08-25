@@ -5,7 +5,7 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofGlmIncludes.h"
+#include "ofTypes.h"
 #include "ofGLUtils.h"
 
 template<class V, class N, class C, class T>
