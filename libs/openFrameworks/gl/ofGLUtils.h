@@ -1,14 +1,7 @@
-/*
- * ofGLUtils.h
- *
- *  Created on: 02/03/2011
- *      Author: arturo
- */
-
-#ifndef OFGLUTILS_H_
-#define OFGLUTILS_H_
+#pragma once
 
 #include "ofConstants.h"
+#include "ofGLIncludes.h"
 #include "ofTypes.h"
 #include "ofPixels.h"
 
@@ -153,5 +146,3 @@ void ofDisableGLDebugLog();
         #endif
     #endif
 #endif
-
-#endif /* OFGLUTILS_H_ */

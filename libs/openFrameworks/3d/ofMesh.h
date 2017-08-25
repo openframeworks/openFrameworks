@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "ofGLUtils.h"
 #include "ofConstants.h"
+#include "ofGLUtils.h"
 
 template<class V, class N, class C, class T>
 class ofMeshFace_;
