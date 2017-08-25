@@ -10,6 +10,7 @@
 
 #pragma once
 #include "ofConstants.h"
+#include "ofGlmIncludes.h"
 #include "ofVec3f.h"
 #include "ofVec4f.h"
 #include <cmath>

@@ -3,6 +3,7 @@
 #include "ofVec2f.h"
 #include "ofVec4f.h"
 #include "ofConstants.h"
+#include "ofGlmIncludes.h"
 
 #include <cmath>
 #include <iostream>

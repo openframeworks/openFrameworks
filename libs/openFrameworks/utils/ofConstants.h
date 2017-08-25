@@ -70,8 +70,6 @@ enum ofTargetPlatform{
 #define GLM_META_PROG_HELPERS
 #define GLM_FORCE_SWIZZLE
 #define GLM_FORCE_SIZE_FUNC
-#include "glm/glm.hpp"
-#include "glm/ext.hpp"
 
 #ifndef OF_TARGET_IPHONE
     #define OF_TARGET_IPHONE OF_TARGET_IOS
@@ -887,7 +885,6 @@ enum ofDrawBitmapMode{
 	OF_BITMAPMODE_MODEL_BILLBOARD
 };
 
-//#define OF_USE_LEGACY_MESH
 template<class V, class N, class C, class T>
 class ofMesh_;
 class ofVec2f;
@@ -897,18 +894,8 @@ class ofVec4f;
 template<typename T>
 class ofColor_;
 typedef ofColor_<float> ofFloatColor;
-
-#ifdef OF_USE_LEGACY_MESH
-using ofDefaultVec2 = ofVec2f;
-using ofDefaultVec3 = ofVec3f;
-using ofDefaultVec4 = ofVec4f;
-#else
-using ofDefaultVec2 = glm::vec2;
-using ofDefaultVec3 = glm::vec3;
-using ofDefaultVec4 = glm::vec4;
-#endif
-using ofDefaultVertexType = ofDefaultVec3;
-using ofDefaultNormalType = ofDefaultVec3;
 using ofDefaultColorType = ofFloatColor;
-using ofDefaultTexCoordType = ofDefaultVec2;
 
+// Uncomment this line if you prefer using ofVec*f 
+// instead of glm::vec* for default vector types
+// #define OF_USE_LEGACY_MESH

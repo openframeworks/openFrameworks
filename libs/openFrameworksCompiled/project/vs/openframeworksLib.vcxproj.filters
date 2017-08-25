@@ -285,6 +285,12 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofJson.h">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofGLIncludes.h">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\math\ofGlmIncludes.h">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp">

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "ofGlmIncludes.h"
 #include "ofGLUtils.h"
 
 template<class V, class N, class C, class T>
@@ -740,6 +741,7 @@ private:
 };
 
 #include "ofMesh.inl"
+#include "ofBaseTypes.h"
 
 using ofMesh = ofMesh_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorType, ofDefaultTexCoordType>;
 using ofMeshFace = ofMeshFace_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorType, ofDefaultTexCoordType>;

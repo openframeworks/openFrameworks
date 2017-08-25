@@ -195,7 +195,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face face){
 					if(printVectorInfo){
 						ofLogNotice("ofTrueTypeFont") << "flag[" << j << "] is set to 1 - regular point - " << lastPoint.x <<  lastPoint.y;
 					}
-					charOutlines.lineTo(lastPoint/64);
+					charOutlines.lineTo(lastPoint/64.f);
 
 				}else{
 					if(printVectorInfo){
@@ -246,7 +246,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face face){
 
 							if( prevIsConnic ){
 								glm::vec3 lastConnic((float)vec[endPos - 1].x, (float)-vec[endPos - 1].y, 0.f);
-								lastPoint = (conicPoint + lastConnic) / 2;
+								lastPoint = (conicPoint + lastConnic) * 0.5f;
 
 								if(printVectorInfo){
 									ofLogNotice("ofTrueTypeFont") << "NEED TO MIX WITH LAST";
@@ -272,7 +272,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face face){
 
 						//create a 'virtual on point' if we have two connic points
 						if( nextIsConnic ){
-							nextPoint = (conicPoint + nextPoint) / 2;
+							nextPoint = (conicPoint + nextPoint) * 0.5f;
 							if(printVectorInfo){
 								ofLogNotice("ofTrueTypeFont") << "|_______ double connic!";
 							}
