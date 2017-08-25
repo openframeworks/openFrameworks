@@ -156,8 +156,20 @@ enum ofTargetPlatform{
 		#define _CRT_SECURE_NO_WARNINGS
 		#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
-		#include <stdint.h>
 		#include <functional>
+
+#if !defined(WINAPI)
+#	ifndef WIN32_LEAN_AND_MEAN
+#		define WIN32_LEAN_AND_MEAN 1
+#		define WIN32_LEAN_AND_MEAN_CHANGED_GUARD 1
+#	endif
+#	include <windows.h>
+#	if defined(WIN32_LEAN_AND_MEAN_CHANGED_GUARD)
+#		undef WIN32_LEAN_AND_MEAN_CHANGED_GUARD
+#		undef WIN32_LEAN_AND_MEAN
+#	endif
+#endif
+
 		#pragma warning(disable : 4068)		// unknown pragmas
 		#pragma warning(disable : 4756)		// overflow in constant arithmetic
 		#pragma warning(disable : 4800)		// 'Boolean' : forcing value to bool 'true' or 'false'
@@ -175,9 +187,6 @@ enum ofTargetPlatform{
 
 	#define TARGET_LITTLE_ENDIAN			// intel cpu
 
-
-	#define WIN32_HIGH_RES_TIMING
-
 	// note: this is experimental!
 	// uncomment to turn this on (only for windows machines)
 	// if you want to try setting the timer to be high resolution
@@ -188,6 +197,8 @@ enum ofTargetPlatform{
 	// to normal (since the high res timer might give the OS
 	// problems)
 	// info: http://www.geisswerks.com/ryan/FAQS/timing.html
+	//
+	#define WIN32_HIGH_RES_TIMING
 
 #endif
 
