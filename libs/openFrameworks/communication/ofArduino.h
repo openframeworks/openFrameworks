@@ -127,9 +127,11 @@
 #define I2C_STOP_READING				B00011000
 #define I2C_READ_WRITE_MODE_MASK		B00011000
 #define I2C_10BIT_ADDRESS_MODE_MASK		B00100000
-
-#define MAX_QUERIES						8
-#define REGISTER_NOT_SPECIFIED			-1
+#define I2C_END_TX_MASK					B01000000
+#define I2C_STOP_TX						1
+#define I2C_RESTART_TX					0
+#define I2C_MAX_QUERIES					8
+#define I2C_REGISTER_NOT_SPECIFIED		-1
 
 //Encoder Subcommands
 #define MAX_ENCODERS					5 // arbitrary value, may need to adjust
@@ -457,6 +459,8 @@ public:
 	/// \brief Useful for parsing SysEx messages
 	int getValueFromTwo7bitBytes(unsigned char lsb, unsigned char msb);
 
+	int getInvertedValueFromTwo7bitBytes(unsigned char lsb, unsigned char msb);
+
 	/// \}
 	/// \name Events
 	/// \{
@@ -553,54 +557,24 @@ public:
 	///
 	/// \param {number} slaveAddress The address of the I2C device
 	/// \param {Array} bytes The bytes to send to the device
-	void sendI2CWriteRequest(char slaveAddress, unsigned char * bytes, int numOfBytes);
-	void sendI2CWriteRequest(char slaveAddress, vector<char> bytes);
-
-	/// \brief Write data to a register
-	///
-	/// \param {number} address      The address of the I2C device.
-	/// \param {array} cmdRegOrData  An array of bytes
-	///
-	/// Write a command to a register
-	///
-	/// \param {number} address      The address of the I2C device.
-	/// \param {number} cmdRegOrData The register
-	/// \param {array} inBytes       An array of bytes
-	///
-	void i2cWrite(char address, unsigned char * bytes, int numOfBytes);
-
-	/// \brief Write data to a register
-	///
-	/// \param {number} address    The address of the I2C device.
-	/// \param {number} register   The register.
-	/// \param {number} byte       The byte value to write.
-	///
-	void i2cWriteReg(char address, int reg, int byte);
+	void sendI2CWriteRequest(char slaveAddress, unsigned char * bytes, int numOfBytes, int reg = -1);
+	void sendI2CWriteRequest(char slaveAddress, const char * bytes, int numOfBytes, int reg = -1);
+	void sendI2CWriteRequest(char slaveAddress, char * bytes, int numOfBytes, int reg = -1);
+	void sendI2CWriteRequest(char slaveAddress, vector<char> bytes, int reg = -1);
 
 	/// \brief Asks the arduino to request bytes from an I2C device
 	///
 	/// \param {number} slaveAddress The address of the I2C device
 	/// \param {number} numBytes The number of bytes to receive.
 	/// \param {function} callback A function to call when we have received the bytes.
-	void sendI2CReadRequest(char address, unsigned char numBytes);
+	void sendI2CReadRequest(char address, int numBytes, int reg = -1);
 
 	/// \brief Initialize a continuous I2C read.
 	///
 	/// \param {number} address    The address of the I2C device
 	/// \param {number} register   Optionally set the register to read from.
 	/// \param {number} numBytes   The number of bytes to receive.
-	void i2cRead(char address, unsigned char reg, int bytesToRead);
-
-	/// \brief Perform a single I2C read
-	///
-	/// Supersedes sendI2CReadRequest
-	///
-	/// Read bytes from address
-	///
-	/// \param {number} address    The address of the I2C device
-	/// \param {number} register   Optionally set the register to read from.
-	/// \param {number} numBytes   The number of bytes to receive.
-	void i2cReadOnce(char address, unsigned char reg, int bytesToRead);
+	void sendI2ContinuousReadRequest(char address, int numBytes, int reg = -1);
 
 	/// \}
 	/// \name OneWire

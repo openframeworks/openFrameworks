@@ -545,7 +545,7 @@ bool ofArduino::isInitialized() const {
 
 bool ofArduino::isAttached() {
 	//should return false if there is a serial error thus the arduino is not attached
-	return _port.writeByte(END_SYSEX) >= 0 ? true : false;
+	return _port.writeByte(static_cast<unsigned char>(END_SYSEX)) >= 0 ? true : false;
 }
 
 // ------------------------------ private functions
@@ -712,20 +712,16 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 		if (data.size() > 7 && (data.size() - 5) % 2 == 0) {
 			Firmata_I2C_Data i2creply;
 			it = data.begin();
-			it++; // skip the first byte, which is the string command
 
-			i2creply.address = (*it & 0x7F) | ((*++it & 0x7F) << 7);
-			i2creply.reg = (*++it & 0x7F) | ((*++it & 0x7F) << 7);
-
+			i2creply.address = *++it | (*++it << 7);
+			i2creply.reg = *++it | (*++it << 7);
+			
+			it++;
 			while (it != data.end()) {
-				buffer = *it;
+					str += *it | (*++it << 7);
 				it++;
-				if (it != data.end()) {
-					buffer += *it << 7;
-					it++;
-				}
-				i2creply.data += buffer;
 			}
+			i2creply.data = str;
 			ofNotifyEvent(EI2CDataRecieved, i2creply, this);
 		}
 		else {
@@ -1047,7 +1043,7 @@ void ofArduino::sendDigitalPortReporting(int port, int mode) {
 }
 
 void ofArduino::sendDigitalPinReporting(int pin, int mode) {
-	
+
 	int port = floor(pin / 8);
 	if (mode == ARD_OFF || mode == ARD_ON) {
 		_digitalPinReporting[pin] = mode;
@@ -1069,6 +1065,10 @@ void ofArduino::sendValueAsTwo7bitBytes(int value) {
 // SysEx data is sent as 8-bit bytes split into two 7-bit bytes, this function merges two 7-bit bytes back into one 8-bit byte.
 int ofArduino::getValueFromTwo7bitBytes(unsigned char lsb, unsigned char msb) {
 	return (msb << 7) | lsb;
+}
+
+int ofArduino::getInvertedValueFromTwo7bitBytes(unsigned char lsb, unsigned char msb) {
+	return msb | (lsb << 7);
 }
 
 /********************************************
@@ -1296,14 +1296,16 @@ void  ofArduino::sendI2CConfig(int delay) {
 	_i2cConfigured = true;
 }
 
-void  ofArduino::sendI2CWriteRequest(char slaveAddress, unsigned char * bytes, int numOfBytes) {
+void  ofArduino::sendI2CWriteRequest(char slaveAddress, unsigned char * bytes, int numOfBytes, int reg) {
 
 	if (_i2cConfigured) {
 		sendByte(START_SYSEX);
 		sendByte(I2C_REQUEST);
 		sendByte(slaveAddress);
 		sendByte(FIRMATA_I2C_WRITE << 3);
-
+		if (reg >= 0) {
+			sendValueAsTwo7bitBytes(reg);
+		}
 		for (int i = 0, length = numOfBytes; i < length; i++) {
 			sendValueAsTwo7bitBytes(bytes[i]);
 		}
@@ -1315,14 +1317,56 @@ void  ofArduino::sendI2CWriteRequest(char slaveAddress, unsigned char * bytes, i
 	}
 }
 
-void  ofArduino::sendI2CWriteRequest(char slaveAddress, vector<char> bytes) {
+void  ofArduino::sendI2CWriteRequest(char slaveAddress, char * bytes, int numOfBytes, int reg) {
+	if (_i2cConfigured) {
+		sendByte(START_SYSEX);
+		sendByte(I2C_REQUEST);
+		sendByte(slaveAddress);
+		sendByte(FIRMATA_I2C_WRITE << 3);
+		if (reg >= 0) {
+			sendValueAsTwo7bitBytes(reg);
+		}
+		for (int i = 0, length = numOfBytes; i < length; i++) {
+			sendValueAsTwo7bitBytes(bytes[i]);
+		}
+
+		sendByte(END_SYSEX);
+	}
+	else {
+		ofLogError("Arduino") << "I2C was not configured, did you send an I2C config request?";
+	}
+}
+
+void  ofArduino::sendI2CWriteRequest(char slaveAddress, const char * bytes, int numOfBytes, int reg) {
+	if (_i2cConfigured) {
+		sendByte(START_SYSEX);
+		sendByte(I2C_REQUEST);
+		sendByte(slaveAddress);
+		sendByte(FIRMATA_I2C_WRITE << 3);
+		if (reg >= 0) {
+			sendValueAsTwo7bitBytes(reg);
+		}
+		for (int i = 0, length = numOfBytes; i < length; i++) {
+			sendValueAsTwo7bitBytes(bytes[i]);
+		}
+
+		sendByte(END_SYSEX);
+	}
+	else {
+		ofLogError("Arduino") << "I2C was not configured, did you send an I2C config request?";
+	}
+}
+
+void  ofArduino::sendI2CWriteRequest(char slaveAddress, vector<char> bytes, int reg) {
 
 	if (_i2cConfigured) {
 		sendByte(START_SYSEX);
 		sendByte(I2C_REQUEST);
 		sendByte(slaveAddress);
 		sendByte(FIRMATA_I2C_WRITE << 3);
-
+		if (reg >= 0) {
+			sendValueAsTwo7bitBytes(reg);
+		}
 		for (int i = 0, length = bytes.size(); i < length; i++) {
 			sendValueAsTwo7bitBytes(bytes[i]);
 		}
@@ -1334,57 +1378,16 @@ void  ofArduino::sendI2CWriteRequest(char slaveAddress, vector<char> bytes) {
 	}
 }
 
-void  ofArduino::i2cWrite(char address, unsigned char * bytes, int numOfBytes) {
-	/**
-	* registerOrData:
-	* [... arbitrary bytes]
-	*
-	* or
-	*
-	* registerOrData, inBytes:
-	* command [, ...]
-	*
-	*/
-	if (_i2cConfigured) {
-		sendByte(START_SYSEX);
-		sendByte(I2C_REQUEST);
-		sendByte(address);
-		sendByte(FIRMATA_I2C_WRITE << 3);
-
-		for (int i = 0, length = numOfBytes; i < length; i++) {
-			sendValueAsTwo7bitBytes(bytes[i]);
-		}
-
-		sendByte(END_SYSEX);
-	}
-	else {
-		ofLogError("Arduino") << "I2C was not configured, did you send an I2C config request?";
-	}
-}
-
-void  ofArduino::i2cWriteReg(char address, int reg, int byte) {
-
-	if (_i2cConfigured) {
-		sendByte(START_SYSEX);
-		sendByte(I2C_REQUEST);
-		sendByte(address);
-		sendByte(FIRMATA_I2C_WRITE << 3);
-		sendValueAsTwo7bitBytes(reg);
-		sendValueAsTwo7bitBytes(byte);
-		sendByte(END_SYSEX);
-	}
-	else {
-		ofLogError("Arduino") << "I2C was not configured, did you send an I2C config request?";
-	}
-}
-
-void  ofArduino::sendI2CReadRequest(char address, unsigned char numBytes) {
+void  ofArduino::sendI2CReadRequest(char address, int numBytes, int reg) {
 
 	if (_i2cConfigured) {
 		sendByte(START_SYSEX);
 		sendByte(I2C_REQUEST);
 		sendByte(address);
 		sendByte(FIRMATA_I2C_READ << 3);
+		if (reg >= 0) {
+			sendValueAsTwo7bitBytes(reg);
+		}
 		sendValueAsTwo7bitBytes(numBytes);
 		sendByte(END_SYSEX);
 	}
@@ -1393,34 +1396,17 @@ void  ofArduino::sendI2CReadRequest(char address, unsigned char numBytes) {
 	}
 }
 
-void  ofArduino::i2cRead(char address, unsigned char reg, int bytesToRead) {
-
+void  ofArduino::sendI2ContinuousReadRequest(char address, int numBytes, int reg) {
 	if (_i2cConfigured) {
 		sendByte(START_SYSEX);
 		sendByte(I2C_REQUEST);
 		sendByte(address);
 		sendByte(FIRMATA_I2C_CONTINUOUS_READ << 3);
-		sendValueAsTwo7bitBytes(reg);
-		sendValueAsTwo7bitBytes(bytesToRead);
+		if (reg >= 0) {
+			sendValueAsTwo7bitBytes(reg);
+		}
+		sendValueAsTwo7bitBytes(numBytes);
 		sendByte(END_SYSEX);
-
-	}
-	else {
-		ofLogError("Arduino") << "I2C was not configured, did you send an I2C config request?";
-	}
-}
-
-void  ofArduino::i2cReadOnce(char address, unsigned char reg, int bytesToRead) {
-
-	if (_i2cConfigured) {
-		sendByte(START_SYSEX);
-		sendByte(I2C_REQUEST);
-		sendByte(address);
-		sendByte(FIRMATA_I2C_READ << 3);
-		sendValueAsTwo7bitBytes(reg);
-		sendValueAsTwo7bitBytes(bytesToRead);
-		sendByte(END_SYSEX);
-
 	}
 	else {
 		ofLogError("Arduino") << "I2C was not configured, did you send an I2C config request?";
