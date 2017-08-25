@@ -1,5 +1,4 @@
 #pragma once
-#include <stdint.h>
 
 //-------------------------------
 #define OF_VERSION_MAJOR 0
@@ -48,6 +47,7 @@ enum ofTargetPlatform{
 };
 
 // core: ---------------------------
+#include <stdint.h>
 #include <cstdio>
 #include <cstdarg>
 #include <cmath>
