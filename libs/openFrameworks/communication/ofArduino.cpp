@@ -545,7 +545,7 @@ bool ofArduino::isInitialized() const {
 
 bool ofArduino::isAttached() {
 	//should return false if there is a serial error thus the arduino is not attached
-	return _port.writeByte(static_cast<unsigned char>(END_SYSEX)) >= 0 ? true : false;
+	return _port.writeByte(static_cast<unsigned char>(END_SYSEX));
 }
 
 // ------------------------------ private functions
