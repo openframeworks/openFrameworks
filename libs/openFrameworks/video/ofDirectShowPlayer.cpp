@@ -426,7 +426,7 @@ class DirectShowVideo : public ISampleGrabberCB{
         return E_NOTIMPL;
     }
 
-    bool loadMovie(string path, ofPixelFormat format){
+    bool loadMovie(std::string path, ofPixelFormat format){
         tearDown();
 		this->pixelFormat = format;
 
@@ -1118,7 +1118,7 @@ ofDirectShowPlayer & ofDirectShowPlayer::operator=(ofDirectShowPlayer&& other) {
 	return *this;
 }
 
-bool ofDirectShowPlayer::load(string path){
+bool ofDirectShowPlayer::load(std::string path){
     path = ofToDataPath(path); 
 
     close();
