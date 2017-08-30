@@ -104,7 +104,7 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 
 	// now, we have cvSeqBlobs.size() contours, sorted by size in the array
     // cvSeqBlobs let's get the data out and into our structures that we like
-	for( int i = 0; i < MIN(nConsidered, (int)cvSeqBlobs.size()); i++ ) {
+    for( int i = 0; i < std::min(nConsidered, (int)cvSeqBlobs.size()); i++ ) {
 		blobs.push_back( ofxCvBlob() );
 		float area = cvContourArea( cvSeqBlobs[i], CV_WHOLE_SEQ, bFindHoles ); // oriented=true for holes
 		CvRect rect	= cvBoundingRect( cvSeqBlobs[i], 0 );

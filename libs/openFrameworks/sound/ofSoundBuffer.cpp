@@ -597,7 +597,7 @@ void ofSoundBuffer::fillWithNoise(float amplitude){
 }
 
 float ofSoundBuffer::fillWithTone( float pitchHz, float phase ){
-	float step = TWO_PI*(pitchHz/samplerate);
+	float step = glm::two_pi<float>()*(pitchHz/samplerate);
 	for (std::size_t i=0; i<size()/channels; i++ ) {
 		std::size_t base = i*channels;
 		for (std::size_t j=0; j<channels; j++)

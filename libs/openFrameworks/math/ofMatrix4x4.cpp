@@ -889,7 +889,7 @@ void ofMatrix4x4::makePerspectiveMatrix(double fovy,double aspectRatio,
                                             double zNear, double zFar)
 {
     // calculate the appropriate left, right etc.
-    double tan_fovy = tan(fovy*0.5*DEG_TO_RAD);
+    double tan_fovy = tan(ofDegToRad(fovy*0.5));
     double right  =  tan_fovy * aspectRatio * zNear;
     double left   = -right;
     double top    =  tan_fovy * zNear;
@@ -906,7 +906,7 @@ bool ofMatrix4x4::getPerspective(double& fovy,double& aspectRatio,
     double bottom =  0.0;
     if (getFrustum(left,right,bottom,top,zNear,zFar))
     {
-        fovy = (atan(top/zNear)-atan(bottom/zNear))*RAD_TO_DEG;
+        fovy = ofRadToDeg(atan(top/zNear)-atan(bottom/zNear));
         aspectRatio = (right-left)/(top-bottom);
         return true;
     }
@@ -964,9 +964,8 @@ typedef struct
 
 enum QuatPart {X, Y, Z, W};
 
-#define SQRTHALF (0.7071067811865475244)
-static ofQuaternion qxtoz(0,SQRTHALF,0,SQRTHALF);
-static ofQuaternion qytoz(SQRTHALF,0,0,SQRTHALF);
+static ofQuaternion qxtoz(0,glm::one_over_root_two<float>(),0,glm::one_over_root_two<float>());
+static ofQuaternion qytoz(glm::one_over_root_two<float>(),0,0,glm::one_over_root_two<float>());
 static ofQuaternion qppmm( 0.5, 0.5,-0.5,-0.5);
 static ofQuaternion qpppp( 0.5, 0.5, 0.5, 0.5);
 static ofQuaternion qmpmm(-0.5, 0.5,-0.5,-0.5);
@@ -1432,7 +1431,7 @@ ofQuaternion snuggle(ofQuaternion q, HVect *k)
 		}
 
 		all = (qa[0]+qa[1]+qa[2]+qa[3])*0.5;
-		two = (qa[hi]+qa[lo])*SQRTHALF;
+		two = (qa[hi]+qa[lo]) * glm::one_over_root_two<float>();
 		big = qa[hi];
 		if (all>two) {
 			if (all>big) {/*all*/
@@ -1442,8 +1441,8 @@ ofQuaternion snuggle(ofQuaternion q, HVect *k)
 			else {/*big*/ pa[hi] = sgn(neg[hi],1.0);}
 		} else {
 			if (two>big) { /*two*/
-				pa[hi] = sgn(neg[hi],SQRTHALF);
-				pa[lo] = sgn(neg[lo], SQRTHALF);
+				pa[hi] = sgn(neg[hi], glm::one_over_root_two<float>());
+				pa[lo] = sgn(neg[lo], glm::one_over_root_two<float>());
 				if (lo>hi) {
 					hi ^= lo; lo ^= hi; hi ^= lo;
 				}

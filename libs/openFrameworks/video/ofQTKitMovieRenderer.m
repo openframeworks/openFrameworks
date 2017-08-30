@@ -456,7 +456,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 //					unsigned char *dst = outbuf;
 //					unsigned char *src = (unsigned char*)CVPixelBufferGetBaseAddress(_latestPixelFrame);
 //					size_t srcBytesPerRow = CVPixelBufferGetBytesPerRow(_latestPixelFrame);
-//					size_t copyBytesPerRow = MIN(dstBytesPerRow, srcBytesPerRow); // should always be dstBytesPerRow but be safe
+//					size_t copyBytesPerRow = std::min(dstBytesPerRow, srcBytesPerRow); // should always be dstBytesPerRow but be safe
 //					int y;
 //					for(y = 0; y < movieSize.height; y++){
 //						memcpy(dst, src, copyBytesPerRow);

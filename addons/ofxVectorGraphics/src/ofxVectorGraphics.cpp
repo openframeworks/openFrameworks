@@ -208,9 +208,9 @@ void ofxVectorGraphics::setLineWidth(float lineWidth){
 
 //----------------------------------------------------------
 void ofxVectorGraphics::setColor(int _r, int _g, int _b){
-	float r = (float)_r / 255.0f; r = MAX(0,MIN(r,1.0f));
-	float g = (float)_g / 255.0f; g = MAX(0,MIN(g,1.0f));
-	float b = (float)_b / 255.0f; b = MAX(0,MIN(b,1.0f));
+	float r = (float)_r / 255.0f; r = std::max(0,std::min(r,1));
+	float g = (float)_g / 255.0f; g = std::max(0,std::min(g,1));
+	float b = (float)_b / 255.0f; b = std::max(0,std::min(b,1));
 	changeColor(r, g, b);
 }
 
@@ -303,9 +303,9 @@ void ofxVectorGraphics::arc(float x, float y, float radius, float offsetAngleDeg
 	if(bDraw){
 		//no openFrameworks arc command so we make a ghetto gl one
 		int		arcResolution = 20;
-		float	step  = ( DEG_TO_RAD * internalAngleDegrees) / (arcResolution - 1);
-		float	angle = DEG_TO_RAD * offsetAngleDegrees;
-			
+		float	step  = ofDegToRad(internalAngleDegrees) / (arcResolution - 1);
+		float	angle = ofDegToRad(offsetAngleDegrees);
+
 		float	xpos, ypos;
 
 		if(!bFill){

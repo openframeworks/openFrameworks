@@ -384,7 +384,7 @@ void ofxKinect::update() {
             if( videoPixels.getHeight() == videoPixelsIntra.getHeight() ){
                 swap(videoPixels,videoPixelsIntra);
             }else{
-				int minimumSize = MIN(videoPixels.size(), videoPixelsIntra.size());
+                int minimumSize = std::min(videoPixels.size(), videoPixelsIntra.size());
 				memcpy(videoPixels.getData(), videoPixelsIntra.getData(), minimumSize);
             }
 			bNeedsUpdateVideo = false;

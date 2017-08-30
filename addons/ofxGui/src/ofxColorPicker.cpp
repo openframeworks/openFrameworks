@@ -25,7 +25,7 @@ PolCord getPolarCoordinate(const glm::vec2 & p, float radius){
 	float pl = sqrt(px * px + py * py);     // point length from center.
 	float pa = atan2(px, py);				// point angle around center.
 
-	pa *= RAD_TO_DEG;
+	pa = ofRadToDeg(pa);
 	pa -= 90;
 	pl /= radius;
 
@@ -38,8 +38,8 @@ PolCord getPolarCoordinate(const glm::vec2 & p, float radius){
 
 glm::vec2 getPoint(float a, float r){
 	glm::vec2 p;
-	p.x = r * cos(-a * DEG_TO_RAD);
-	p.y = r * sin(-a * DEG_TO_RAD);
+	p.x = r * cos(ofDegToRad(-a));
+	p.y = r * sin(ofDegToRad(-a));
 
 	return p;
 }
@@ -247,9 +247,9 @@ ofMesh ofxColorPicker_<ColorType>::getColorWheel() {
 
 		int j = i % COLOR_WHEEL_RES;
 		float p = j / (float)COLOR_WHEEL_RES;
-		float a = p * TWO_PI;
+        float a = p * glm::two_pi<float>();
 
-		ofFloatColor c0 = getCircularColor<float>(a * RAD_TO_DEG, 1.0, colorScale);
+		ofFloatColor c0 = getCircularColor<float>(ofRadToDeg(a), 1.0, colorScale);
 		meshColorWheel.addColor(ofFloatColor::white);
 		meshColorWheel.addColor(c0);
 		meshColorWheel.addColor(c0);

@@ -202,8 +202,8 @@ ofRectangle ofxiOSMapKit::getScreenRectForRegionWithMeters(double latitude, doub
 
 CLLocationCoordinate2D ofxiOSMapKit::makeCLLocation(double latitude, double longitude) {
 	CLLocationCoordinate2D center = { 
-		CLAMP(latitude, -MAX_LATITUDE, MAX_LATITUDE),
-		CLAMP(longitude, -MAX_LONGITUDE, MAX_LONGITUDE)		
+		ofClamp(latitude, -MAX_LATITUDE, MAX_LATITUDE),
+		ofClamp(longitude, -MAX_LONGITUDE, MAX_LONGITUDE)		
 	};
 	return center;
 }

@@ -468,11 +468,11 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 		gradientMesh.addVertex(glm::vec3(center, 0.f));
 		gradientMesh.addColor(start);
 		int n = 32; // circular gradient resolution
-		float angleBisector = TWO_PI / (n * 2);
+		float angleBisector = glm::two_pi<float>() / (n * 2);
 		float smallRadius = ofDist(0, 0, w / 2, h / 2);
 		float bigRadius = smallRadius / cos(angleBisector);
 		for(int i = 0; i <= n; i++) {
-			float theta = i * TWO_PI / n;
+			float theta = i * glm::two_pi<float>() / n;
 			gradientMesh.addVertex(glm::vec3(center + glm::vec2(sin(theta), cos(theta)) * bigRadius, 0));
 			gradientMesh.addColor(end);
 		}
@@ -1262,18 +1262,18 @@ void ofDrawBitmapStringHighlight(string text, const glm::vec2& position, const o
 void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background, const ofColor& foreground) {
 	vector<string> lines = ofSplitString(text, "\n");
 	int maxLineLength = 0;
-	for(int i = 0; i < (int)lines.size(); i++) {
+	for(std::size_t i = 0; i < lines.size(); i++) {
 		// tabs are not rendered
 		const string & line(lines[i]);
 		int currentLineLength = 0;
-		for(int j = 0; j < (int)line.size(); j++) {
+		for(std::size_t j = 0; j < line.size(); j++) {
 			if (line[j] == '\t') {
 				currentLineLength += 8 - (currentLineLength % 8);
 			} else {
 				currentLineLength++;
 			}
 		}
-		maxLineLength = MAX(maxLineLength, currentLineLength);
+		maxLineLength = std::max(maxLineLength, currentLineLength);
 	}
 	
 	int padding = 4;

@@ -51,9 +51,9 @@ void ofCamera::setForceAspectRatio(bool forceAspectRatio){
 //----------------------------------------
 void ofCamera::setupPerspective(bool _vFlip, float fov, float nearDist, float farDist, const glm::vec2 & lensOffset){
 	ofRectangle orientedViewport = getRenderer()->getNativeViewport();
-	float eyeX = orientedViewport.width / 2;
-	float eyeY = orientedViewport.height / 2;
-	float halfFov = PI * fov / 360;
+	float eyeX = orientedViewport.width / 2.0f;
+	float eyeY = orientedViewport.height / 2.0f;
+	float halfFov = glm::pi<float>() * fov / 360.0f;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
 
@@ -91,7 +91,7 @@ void ofCamera::setupOffAxisViewPortal(const glm::vec3 & topLeft, const glm::vec3
 	setLensOffset(lensOffset);
 	setAspectRatio( glm::length(bottomEdge) / glm::length(leftEdge) );
 	auto distanceAlongOpticalAxis = fabs(glm::dot(bottomLeftToCam, cameraLookVector));
-	setFov(2.0f * RAD_TO_DEG * atan( (glm::length(leftEdge) / 2.0f) / distanceAlongOpticalAxis));
+	setFov(2.0f * ofRadToDeg(atan( (glm::length(leftEdge) / 2.0f) / distanceAlongOpticalAxis)));
 }
 
 
@@ -122,7 +122,7 @@ bool ofCamera::getOrtho() const {
 
 //----------------------------------------
 float ofCamera::getImagePlaneDistance(ofRectangle viewport) const {
-	return getViewport(viewport).height / (2.0f * tanf(PI * fov / 360.0f));
+	return getViewport(viewport).height / (2.0f * tanf(glm::pi<float>() * fov / 360.0f));
 }
 
 //----------------------------------------
@@ -144,10 +144,10 @@ glm::mat4 ofCamera::getProjectionMatrix(ofRectangle viewport) const {
 
 	if(isOrtho) {
 		return glm::ortho(
-			viewport.x - viewport.width/2,
-			viewport.x + viewport.width/2,
-			viewport.y - viewport.height/2,
-			viewport.y + viewport.height/2,
+			viewport.x - viewport.width/2.f,
+			viewport.x + viewport.width/2.f,
+			viewport.y - viewport.height/2.f,
+			viewport.y + viewport.height/2.f,
 			nearClip,
 			farClip
 		);

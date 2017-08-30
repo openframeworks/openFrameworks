@@ -522,8 +522,8 @@ void of3dGraphics::drawRotationAxes(float radius, float stripWidth, int circleRe
 	axisZMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
 
 	for (int j = 0; j<=circleRes; j++) {
-		float x = cos(TWO_PI * j/circleRes);
-		float y = sin(TWO_PI * j/circleRes);
+		float x = cos(glm::two_pi<float>() * j/circleRes);
+		float y = sin(glm::two_pi<float>() * j/circleRes);
 		axisXMesh.addColor(ofFloatColor(ofFloatColor::red));
 		axisXMesh.addVertex({-stripWidth, x*radius, y*radius});
 		axisXMesh.addColor(ofFloatColor(ofFloatColor::red));

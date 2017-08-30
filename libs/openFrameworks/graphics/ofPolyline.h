@@ -17,7 +17,7 @@
 /// 	float x = ofGetWidth()/2 + cos(i) * r;
 /// 	float y = ofGetHeight()/2 + sin(i) * r;
 /// 	line.addVertex(ofVec2f(x,y));
-/// 	i+=0.005*HALF_PI*0.5;
+/// 	i+=0.005*glm::half_pi<float>()*0.5;
 /// }
 /// line.close(); // close the shape
 /// ~~~~
