@@ -218,6 +218,7 @@ void ofSerial::buildDeviceList(){
 //----------------------------------------------------------------
 void ofSerial::listDevices(){
 	buildDeviceList();
+
 	for(auto & device: devices){
 		ofLogNotice("ofSerial") << "[" << device.getDeviceID() << "] = "<< device.getDeviceName().c_str();
 	}
