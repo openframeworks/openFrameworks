@@ -37,7 +37,7 @@ void ofApp::update() {
 		target.set(mouseX, mouseY);
 
 		for(unsigned int i = 0; i < contourFinder.blobs.size(); i++) {
-			ofPolyline cur;
+			ofPolyline_<ofPoint> cur;
 			// add all the current vertices to cur polyline
 			cur.addVertices(contourFinder.blobs[i].pts);
 			cur.setClosed(true);
@@ -57,7 +57,7 @@ void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void drawWithNormals(const ofPolyline& polyline) {
+void drawWithNormals(const ofPolyline_<ofPoint>& polyline) {
 	for(int i=0; i< (int) polyline.size(); i++ ) {
 		bool repeatNext = i == (int)polyline.size() - 1;
 
