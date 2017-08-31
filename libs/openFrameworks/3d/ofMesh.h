@@ -739,7 +739,9 @@ private:
 	T texCoords[3];
 };
 
-#include "ofMesh.inl"
-
 using ofMesh = ofMesh_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorType, ofDefaultTexCoordType>;
 using ofMeshFace = ofMeshFace_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorType, ofDefaultTexCoordType>;
+
+
+extern template class ofMesh_<ofVec3f, ofVec3f, ofFloatColor, ofVec2f>;
+extern template class ofMesh_<glm::vec3, glm::vec3, ofFloatColor, glm::vec2>;

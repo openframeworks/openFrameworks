@@ -111,7 +111,23 @@ void ofGLProgrammableRenderer::finishRender() {
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{
+void ofGLProgrammableRenderer::draw(const ofMesh_<ofVec3f,ofVec3f,ofFloatColor,ofVec2f> & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{
+	draw_(vertexData, renderType, useColors, useTextures, useNormals);
+}
+
+void ofGLProgrammableRenderer::draw(const ofMesh_<glm::vec3, glm::vec3, ofFloatColor, glm::vec2> & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{
+	draw_(vertexData, renderType, useColors, useTextures, useNormals);
+}
+
+//----------------------------------------------------------
+template<typename V, typename N, typename C, typename T>
+void ofGLProgrammableRenderer::draw_(
+		const ofMesh_<V,N,C,T>& vertexData,
+		ofPolyRenderMode renderType,
+		bool useColors,
+		bool useTextures,
+		bool useNormals) const
+{
 	if (vertexData.getVertices().empty()) return;
 	
 	
@@ -293,7 +309,8 @@ void ofGLProgrammableRenderer::draw(const ofNode& node) const{
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const{
+template<typename V>
+void ofGLProgrammableRenderer::draw_(const ofPolyline_<V> & poly, int coords) const{
 	if(poly.getVertices().empty()) return;
 
 	// use smoothness, if requested:
@@ -302,7 +319,7 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const{
 #if defined( TARGET_OPENGLES ) && !defined(TARGET_EMSCRIPTEN)
 
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
-	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), &poly[0]);
+	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, coords, GL_FLOAT, GL_FALSE, sizeof(V), &poly[0]);
 
 	const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,false,false);
 
@@ -318,6 +335,26 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const{
 #endif
 	// use smoothness, if requested:
 	//if (bSmoothHinted) endSmoothing();
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::draw(const ofPolyline_<ofVec3f> & poly) const{
+	draw_(poly,3);
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::draw(const ofPolyline_<ofVec2f> & poly) const{
+	draw_(poly,2);
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::draw(const ofPolyline_<glm::vec3> & poly) const{
+	draw_(poly,3);
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::draw(const ofPolyline_<glm::vec2> & poly) const{
+	draw_(poly,2);
 }
 
 //----------------------------------------------------------

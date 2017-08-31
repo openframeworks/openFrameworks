@@ -1,5 +1,7 @@
 #pragma once
 #include "ofConstants.h"
+#include "ofGLUtils.h"
+#include "ofVectorMath.h"
 #include <deque>
 
 /// \file 
@@ -59,6 +61,13 @@ public:
 	/// \brief Creates an ofPolyline from a vector of ofVec2f or T objects.
 	ofPolyline_(const std::vector<T>& verts);
 
+
+	template<typename U>
+	constexpr static auto is3d = std::is_same<U, ofVec3f>::value || std::is_same<U, glm::vec3>::value;
+
+	template<typename U>
+	constexpr static auto is2d = std::is_same<U, ofVec2f>::value || std::is_same<U, glm::vec2>::value;
+
 	static ofPolyline_ fromRectangle(const ofRectangle& rect);
 
     /// \}
@@ -72,7 +81,16 @@ public:
 	void addVertex( const T& p );
 
     /// \brief Adds a point using floats at the end of the ofPolyline.
-	void addVertex( float x, float y, float z=0 );
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type addVertex( float x, float y, float z=0 ){
+		addVertex(T(x,y,z));
+	}
+
+	/// \brief Adds a point using floats at the end of the ofPolyline.
+	template<typename U=T>
+	typename std::enable_if<is2d<U>, void>::type addVertex( float x, float y ){
+		addVertex(T(x,y));
+	}
 
 	/// \brief Add multiple points at the end of the ofPolyline using a vector of
 	/// T objects
@@ -101,7 +119,16 @@ public:
 	void addVertices(const T* verts, int numverts);
 
 	void insertVertex(const T &p, int index);
-    void insertVertex(float x, float y, float z, int index);
+
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type insertVertex(float x, float y, float z, int index){
+		insertVertex(T(x,y,z), index);
+	}
+
+	template<typename U=T>
+	typename std::enable_if<is2d<U>, void>::type insertVertex(float x, float y, int index){
+		insertVertex(T(x,y), index);
+	}
 
 	/// \brief Resize the number of points in the ofPolyline to the value 
 	/// passed in.
@@ -113,7 +140,9 @@ public:
 
 	/// \brief The number of points in the ofPolyline.
 	size_t size() const;
-		
+
+	void draw(const ofMesh_<ofVec2f,ofVec3f,ofFloatColor,ofVec2f> & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{}
+	void draw(const ofMesh_<glm::vec2, glm::vec3, ofFloatColor, glm::vec2> & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{}
 	/// Allows you to access the points of the ofPolyline just like you would
 	/// in an array, so to make the points of a line follow the mouse
 	/// movement, you could do:
@@ -153,8 +182,16 @@ public:
 	
 	/// \brief Add a straight line from the last point added, or from 0,0 if no point
 	/// is set, to the point indicated by the floats x,y,z passesd in.
-	void lineTo(float x, float y, float z=0){
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type lineTo(float x, float y, float z=0){
 		addVertex(x,y,z);
+	}
+
+	/// \brief Add a straight line from the last point added, or from 0,0 if no point
+	/// is set, to the point indicated by the floats x,y passesd in.
+	template<typename U=T>
+	typename std::enable_if<is2d<U>, void>::type lineTo(float x, float y){
+		addVertex(x,y);
 	}
     
 	/// \brief Adds an arc around the T `center` with the width of `radiusX`
@@ -200,7 +237,8 @@ public:
 	/// ~~~~
 	/// 
 	/// ![Arc Example](graphics/ofpolyline_arc.jpg)
-	void arc(const T & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type arc(const T & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
         arc(center, radiusX,  radiusY,  angleBegin,  angleEnd, true,  circleResolution);
     }
 
@@ -212,7 +250,8 @@ public:
 	/// 
 	/// Optionally, you can specify `circleResolution`, which is the number
 	/// of line segments a circle would be drawn with.
-	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
 		arc(T(x, y, 0.f), radiusX, radiusY, angleBegin, angleEnd, true, circleResolution);
 	}
 
@@ -224,16 +263,23 @@ public:
 	/// 
 	/// Optionally, you can specify `circleResolution`, which is the number of
 	/// line segments a circle would be drawn with.
-	void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
 		arc(T(x, y, z), radiusX, radiusY, angleBegin, angleEnd, true, circleResolution);
 	}
 	void arcNegative(const T & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
         arc(center, radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
     }
-	void arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
 		arc(T(x,y,0.f), radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
     }
-	void arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
+	template<typename U=T>
+	typename std::enable_if<is2d<U>, void>::type arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
+		arc(T(x,y), radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
+	}
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
 		arc(T(x, y, z), radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
     }
     
@@ -255,8 +301,16 @@ public:
 	void curveTo( const T & to, int curveResolution = 20 );
 
 	/// \brief Adds a curve to the x,y,z points passed in with the optional
+	/// resolution.
+	template<typename U=T>
+	typename std::enable_if<is2d<U>, void>::type curveTo(float x, float y,  int curveResolution = 20 ){
+		curveTo({x,y},curveResolution);
+	}
+
+	/// \brief Adds a curve to the x,y,z points passed in with the optional
 	/// resolution.	
-	void curveTo(float x, float y, float z = 0,  int curveResolution = 20 ){
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type curveTo(float x, float y, float z = 0,  int curveResolution = 20 ){
 		curveTo({x,y,z},curveResolution);
 	}
 
@@ -275,14 +329,24 @@ public:
 	/// \brief Adds a cubic bezier line from the current drawing point with the 2
 	/// control points indicated by the coordinates cx1, cy1 and cx2, cy2,
 	/// that ends at the coordinates x, y.
-	void bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution = 20){
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution = 20){
 		bezierTo({cx1,cy1,0.f}, {cx2,cy2,0.f}, {x,y,0.f}, curveResolution);
+	}
+
+	/// \brief Adds a cubic bezier line from the current drawing point with the 2
+	/// control points indicated by the coordinates cx1, cy1 and cx2, cy2,
+	/// that ends at the coordinates x, y.
+	template<typename U=T>
+	typename std::enable_if<is2d<U>, void>::type bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution = 20){
+		bezierTo({cx1,cy1}, {cx2,cy2}, {x,y}, curveResolution);
 	}
 
 	/// \brief Adds a cubic bezier line in 3D space from the current drawing point
 	/// with the 2 control points indicated by the coordinates cx1, cy1, cz1
 	/// and cx2, cy2, cz2, that ends at the coordinates x, y, z.
-	void bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution = 20){
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution = 20){
 		bezierTo({cx1,cy1,cz1}, {cx2,cy2,cz2}, {x,y,z}, curveResolution);
 	}
 
@@ -292,21 +356,31 @@ public:
 	/// x, y, z.
 	///
 	/// ![polyline curves](graphics/curves.png)
-	void quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution = 20);
-
-	/// \brief Adds a quadratic bezier line in 2D space from the current drawing
-	/// point with the beginning indicated by the point p1, the control point
-	/// at p2, and that ends at the point p3.
-	void quadBezierTo(  const T & p1, const T & p2, const T & p3,  int curveResolution = 20 ){
-		quadBezierTo(p1.x,p1.y,p1.z,p2.x,p2.y,p2.z,p3.x,p3.y,p3.z,curveResolution);
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution = 20){
+		quadBezierTo({cx1,cy1,cz1}, {cx2,cy2,cz2}, {x,y,z}, curveResolution);
 	}
 
 	/// \brief Adds a quadratic bezier line in 2D space from the current drawing
 	/// point with the beginning indicated by the coordinates cx1, cy1, the
 	/// control point at cx2, cy2, and that ends at the coordinates x, y.
-	void quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution = 20){
-		quadBezierTo(cx1,cy1,0,cx2,cy2,0,x,y,0,curveResolution);
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution = 20){
+		quadBezierTo({cx1,cy1,0},{cx2,cy2,0},{x,y,0},curveResolution);
 	}
+
+	/// \brief Adds a quadratic bezier line in 2D space from the current drawing
+	/// point with the beginning indicated by the coordinates cx1, cy1, the
+	/// control point at cx2, cy2, and that ends at the coordinates x, y.
+	template<typename U=T>
+	typename std::enable_if<is2d<U>, void>::type quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution = 20){
+		quadBezierTo({cx1,cy1},{cx2,cy2},{x,y},curveResolution);
+	}
+
+	/// \brief Adds a quadratic bezier line in 2D space from the current drawing
+	/// point with the beginning indicated by the point p1, the control point
+	/// at p2, and that ends at the point p3.
+	void quadBezierTo(  const T & p1, const T & p2, const T & p3,  int curveResolution = 20 );
 
 	/// \}
 	/// \name Smoothing and Resampling
@@ -441,11 +515,23 @@ public:
 	OF_DEPRECATED_MSG("Use the Deg/Rad versions", float getAngleAtIndexInterpolated(float findex) const);
     
     /// \brief Get rotation vector at index (magnitude is sin of angle)
-	T getRotationAtIndex(int index) const;
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, T>::type getRotationAtIndex(int index) const{
+		if(points.size() < 2) return T();
+		updateCache();
+		return rotations[getWrappedIndex(index)];
+	}
     
     /// \brief Get rotation vector at interpolated index 
     /// (interpolated between neighboring indices) (magnitude is sin of angle)
-	T getRotationAtIndexInterpolated(float findex) const;
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, T>::type getRotationAtIndexInterpolated(float findex) const{
+		if(points.size() < 2) return T();
+		int i1, i2;
+		float t;
+		getInterpolationParams(findex, i1, i2, t);
+		return glm::lerp(toGlm(getRotationAtIndex(i1)), toGlm(getRotationAtIndex(i2)), t);
+	}
 
 	/// \brief Get angle (degrees) of the path at index
 	float getDegreesAtIndex(int index) const;
@@ -479,7 +565,18 @@ public:
     int getWrappedIndex(int index) const;
 
     // used for calculating the normals
-	void setRightVector(T v = T(0, 0, -1));
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type setRightVector(T v = T(0, 0, -1)){
+		rightVector = v;
+		flagHasChanged();
+	}
+
+	template<typename U=T>
+	typename std::enable_if<is2d<U>, void>::type setRightVector(T v = T(1, 0)){
+		rightVector = v;
+		flagHasChanged();
+	}
+
 	T getRightVector() const;
 
     /// \}
@@ -510,7 +607,7 @@ private:
     
     
 	std::deque<T> curveVertices;
-	std::vector<T> circlePoints;
+	std::vector<glm::vec2> circlePoints;
 
 	bool bClosed;
 	bool bHasChanged;   // public API has access to this
@@ -521,10 +618,72 @@ private:
     // given an interpolated index (e.g. 5.75) return neighboring indices and interolation factor (e.g. 5, 6, 0.75)
     void getInterpolationParams(float findex, int &i1, int &i2, float &t) const;
     
-	void calcData(int index, T &tangent, float &angle, T &rotation, T &normal) const;
-};
+	template<typename U=T>
+	typename std::enable_if<is3d<U>, void>::type calcData(int index, T &tangent, float &angle, T &rotation, T &normal) const{
 
-#include "ofPolyline.inl"
+		int i1 = getWrappedIndex( index - 1 );
+		int i2 = getWrappedIndex( index     );
+		int i3 = getWrappedIndex( index + 1 );
+
+		const auto &p1 = points[i1];
+		const auto &p2 = points[i2];
+		const auto &p3 = points[i3];
+
+		auto v1 = toGlm(p1 - p2); // vector to previous point
+		auto v2 = toGlm(p3 - p2); // vector to next point
+
+		v1 = glm::normalize(v1);
+		v2 = glm::normalize(v2);
+
+		// If just one of p1, p2, or p3 was identical, further calculations
+		// are (almost literally) pointless, as v1 or v2 will then contain
+		// NaN values instead of floats.
+
+		bool noSegmentHasZeroLength = (v1 == v1 && v2 == v2);
+
+		if ( noSegmentHasZeroLength ){
+			tangent  = glm::length2(v2 - v1) > 0 ? glm::normalize(v2 - v1) : toGlm(-v1);
+			normal   = glm::normalize( glm::cross( toGlm(rightVector), toGlm(tangent) ) );
+			rotation = glm::cross( v1, v2 );
+			angle    = glm::pi<float>() - acosf( ofClamp( glm::dot( v1, v2 ), -1.f, 1.f ) );
+		} else{
+			rotation = tangent = normal = T( 0.f );
+			angle    = 0.f;
+		}
+	}
+
+	template<typename U=T>
+	typename std::enable_if<is2d<U>, void>::type calcData(int index, T &tangent, float &angle, T &rotation, T &normal) const{
+
+		int i1 = getWrappedIndex( index - 1 );
+		int i2 = getWrappedIndex( index     );
+		int i3 = getWrappedIndex( index + 1 );
+
+		const auto &p1 = points[i1];
+		const auto &p2 = points[i2];
+		const auto &p3 = points[i3];
+
+		auto v1 = toGlm(p1 - p2); // vector to previous point
+		auto v2 = toGlm(p3 - p2); // vector to next point
+
+		v1 = glm::normalize(v1);
+		v2 = glm::normalize(v2);
+
+		// If just one of p1, p2, or p3 was identical, further calculations
+		// are (almost literally) pointless, as v1 or v2 will then contain
+		// NaN values instead of floats.
+
+		bool noSegmentHasZeroLength = (v1 == v1 && v2 == v2);
+
+		if ( noSegmentHasZeroLength ){
+			tangent  = glm::length2(v2 - v1) > 0 ? glm::normalize(v2 - v1) : -v1;
+			normal   = T(tangent.y, -tangent.x);
+			angle    = glm::pi<float>() - acosf( ofClamp( glm::dot( v1, v2 ), -1.f, 1.f ) );
+		} else{
+			angle    = 0.f;
+		}
+	}
+};
 
 using ofPolyline = ofPolyline_<ofDefaultVertexType>;
 
@@ -547,3 +706,8 @@ template<class T>
 bool ofInsidePoly(const T& p, const std::vector<T>& poly){
 	return ofPolyline_<T>::inside(p.x,p.y, ofPolyline_<T>(poly));
 }
+
+extern template class ofPolyline_<ofVec3f>;
+extern template class ofPolyline_<ofVec2f>;
+extern template class ofPolyline_<glm::vec3>;
+extern template class ofPolyline_<glm::vec2>;

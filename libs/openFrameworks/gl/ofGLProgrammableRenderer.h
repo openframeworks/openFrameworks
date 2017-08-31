@@ -29,10 +29,14 @@ public:
 
 	using ofBaseRenderer::draw;
 	using ofBaseGLRenderer::draw;
-	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
+	void draw(const ofMesh_<ofVec3f,ofVec3f,ofFloatColor,ofVec2f> & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
+	void draw(const ofMesh_<glm::vec3, glm::vec3, ofFloatColor, glm::vec2> & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
-    void draw(const ofNode& node) const;
-	void draw(const ofPolyline & poly) const;
+	void draw(const ofNode& node) const;
+	void draw(const ofPolyline_<ofVec3f> & poly) const;
+	void draw(const ofPolyline_<ofVec2f> & poly) const;
+	void draw(const ofPolyline_<glm::vec3> & poly) const;
+	void draw(const ofPolyline_<glm::vec2> & poly) const;
 	void draw(const ofPath & path) const;
 	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
@@ -320,4 +324,15 @@ private:
 	std::deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
 	GLuint defaultFramebufferId;		///< default GL_FRAMEBUFFER_BINDING, windowing frameworks might want to set this to their MSAA framebuffer, defaults to 0
     GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
+
+	template<typename V, typename N, typename C, typename T>
+	void draw_(
+			const ofMesh_<V,N,C,T>& vertexData,
+			ofPolyRenderMode renderType,
+			bool useColors,
+			bool useTextures,
+			bool useNormals) const;
+
+	template<typename V>
+	void draw_(const ofPolyline_<V> & poly, int coords) const;
 };

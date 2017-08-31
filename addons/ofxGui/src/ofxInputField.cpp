@@ -9,6 +9,7 @@
 #include "ofxInputField.h"
 
 #include "ofGraphics.h"
+#include "ofAppRunner.h"
 
 using namespace std;
 

@@ -646,7 +646,10 @@ public:
 
 	/// \brief Draw a polyline with this renderer.
 	/// \param poly The polyline to draw with this renderer.
-	virtual void draw(const ofPolyline & poly) const=0;
+	virtual void draw(const ofPolyline_<ofVec3f> & poly) const=0;
+	virtual void draw(const ofPolyline_<ofVec2f> & poly) const=0;
+	virtual void draw(const ofPolyline_<glm::vec3> & poly) const=0;
+	virtual void draw(const ofPolyline_<glm::vec2> & poly) const=0;
 	/// \brief Draw a path with this renderer.
 	/// \param shape The path to draw with this renderer.
 	virtual void draw(const ofPath & shape) const=0;
@@ -671,7 +674,8 @@ public:
 	/// \param renderType The render mode to use to draw \p mesh with this
 	/// renderer.
 	/// \sa ofPolyRenderMode
-	virtual void draw(const ofMesh & mesh, ofPolyRenderMode renderType) const;
+	virtual void draw(const ofMesh_<ofVec3f,ofVec3f,ofFloatColor,ofVec2f> & mesh, ofPolyRenderMode renderType) const;
+	virtual void draw(const ofMesh_<glm::vec3, glm::vec3, ofFloatColor, glm::vec2> & mesh, ofPolyRenderMode renderType) const;
 
 	/// \brief Draw a mesh with this renderer.
 	///
@@ -689,7 +693,8 @@ public:
 	/// vertexData.
 	/// \param useNormals True to use normals to draw the \p vertexData.
 	/// \sa ofPolyRenderMode
-	virtual void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const=0;
+	virtual void draw(const ofMesh_<ofVec3f,ofVec3f,ofFloatColor,ofVec2f> & mesh, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const=0;
+	virtual void draw(const ofMesh_<glm::vec3, glm::vec3, ofFloatColor, glm::vec2> & mesh, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const=0;
 
 	/// \brief Draw a \p model with this renderer using the \p renderType.
 	///

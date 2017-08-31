@@ -239,7 +239,8 @@ void ofCairoRenderer::draw(const ofPath & shape) const{
 	}
 }
 
-void ofCairoRenderer::draw(const ofPolyline & poly) const{
+template<typename V>
+void ofCairoRenderer::draw_(const ofPolyline_<V> & poly) const{
 	cairo_new_path(cr);
 	for(int i=0;i<(int)poly.size();i++){
 		cairo_line_to(cr,poly.getVertices()[i].x,poly.getVertices()[i].y);
@@ -247,6 +248,22 @@ void ofCairoRenderer::draw(const ofPolyline & poly) const{
 	if(poly.isClosed())
 		cairo_close_path(cr);
 	cairo_stroke( cr );
+}
+
+void ofCairoRenderer::draw(const ofPolyline_<ofVec3f> & poly) const{
+	draw_(poly);
+}
+
+void ofCairoRenderer::draw(const ofPolyline_<ofVec2f> & poly) const{
+	draw_(poly);
+}
+
+void ofCairoRenderer::draw(const ofPolyline_<glm::vec3> & poly) const{
+	draw_(poly);
+}
+
+void ofCairoRenderer::draw(const ofPolyline_<glm::vec2> & poly) const{
+	draw_(poly);
 }
 
 void ofCairoRenderer::draw(const vector<glm::vec3> & vertexData, ofPrimitiveMode drawMode) const{
@@ -311,7 +328,6 @@ void ofCairoRenderer::draw(const vector<glm::vec3> & vertexData, ofPrimitiveMode
 	mut_this->popMatrix();
 }
 
-
 glm::vec3 ofCairoRenderer::transform(glm::vec3 vec) const{
 	if(!b3D) return vec;
 	auto vec4 = projection * modelView * glm::vec4(vec, 1.0);
@@ -322,7 +338,22 @@ glm::vec3 ofCairoRenderer::transform(glm::vec3 vec) const{
 	return vec;
 }
 
-void ofCairoRenderer::draw(const ofMesh & primitive, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
+void ofCairoRenderer::draw(const ofMesh_<ofVec3f,ofVec3f,ofFloatColor,ofVec2f> & primitive, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
+	draw_(primitive, mode, useColors, useTextures, useNormals);
+}
+
+void ofCairoRenderer::draw(const ofMesh_<glm::vec3, glm::vec3, ofFloatColor, glm::vec2> & primitive, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
+	draw_(primitive, mode, useColors, useTextures, useNormals);
+}
+
+//----------------------------------------------------------
+template<typename V, typename N, typename C, typename T>
+void ofCairoRenderer::draw_(
+		const ofMesh_<V,N,C,T> & primitive,
+		ofPolyRenderMode mode,
+		bool useColors,
+		bool useTextures,
+		bool useNormals) const{
     if(useColors || useTextures || useNormals){
         ofLogWarning("ofCairoRenderer") << "draw(): cairo mesh rendering doesn't support colors, textures, or normals. drawing wireframe ...";
     }
@@ -330,7 +361,7 @@ void ofCairoRenderer::draw(const ofMesh & primitive, ofPolyRenderMode mode, bool
 		return;
 	}
 	if(primitive.getNumIndices() == 0){
-		ofMesh indexedMesh = primitive;
+		ofMesh_<V,N,C,T> indexedMesh = primitive;
 		indexedMesh.setupIndicesAuto();
 		draw(indexedMesh, mode, useColors, useTextures, useNormals);
 		return;
@@ -343,7 +374,7 @@ void ofCairoRenderer::draw(const ofMesh & primitive, ofPolyRenderMode mode, bool
 
 	std::size_t i = 1;
 	auto v = transform(primitive.getVertex(primitive.getIndex(0)));
-	glm::vec3 v2;
+	V v2;
 	cairo_move_to(cr,v.x,v.y);
 	if(primitive.getMode()==OF_PRIMITIVE_TRIANGLE_STRIP){
 		v = transform(primitive.getVertex(primitive.getIndex(1)));

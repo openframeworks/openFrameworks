@@ -149,7 +149,11 @@ glm::mat4 ofBaseRenderer::getCurrentOrientationMatrix() const {
 	return glm::mat4(1.0);
 }
 
-void ofBaseRenderer::draw(const ofMesh & mesh, ofPolyRenderMode renderType) const{
+void ofBaseRenderer::draw(const ofMesh_<ofVec3f,ofVec3f,ofFloatColor,ofVec2f> & mesh, ofPolyRenderMode renderType) const{
+	draw(mesh,renderType,mesh.usingColors(),mesh.usingTextures(),mesh.usingNormals());
+}
+
+void ofBaseRenderer::draw(const ofMesh_<glm::vec3, glm::vec3, ofFloatColor, glm::vec2> & mesh, ofPolyRenderMode renderType) const{
 	draw(mesh,renderType,mesh.usingColors(),mesh.usingTextures(),mesh.usingNormals());
 }
 

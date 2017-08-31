@@ -2,6 +2,8 @@
 #include "ofImage.h"
 #include "ofFileUtils.h"
 #include "ofLog.h"
+#include "ofMainLoop.h"
+#include "ofAppRunner.h"
 
 #include <chrono>
 #include <numeric>

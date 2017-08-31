@@ -44,18 +44,43 @@ public:
 
 	 using ofBaseRenderer::draw;
 
-	 void draw(const ofPolyline & poly) const{
+	 void draw(const ofPolyline_<ofVec3f> & poly) const{
 		 for(auto renderer: renderers){
 			 renderer->draw(poly);
 		 }
 	 }
+
+	 void draw(const ofPolyline_<ofVec2f> & poly) const{
+		 for(auto renderer: renderers){
+			 renderer->draw(poly);
+		 }
+	 }
+
+	 void draw(const ofPolyline_<glm::vec3> & poly) const{
+		 for(auto renderer: renderers){
+			 renderer->draw(poly);
+		 }
+	 }
+
+	 void draw(const ofPolyline_<glm::vec2> & poly) const{
+		 for(auto renderer: renderers){
+			 renderer->draw(poly);
+		 }
+	 }
+
 	 void draw(const ofPath & shape) const{
 		 for(auto renderer: renderers){
 			 renderer->draw(shape);
 		 }
 	 }
 
-	 void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
+	 void draw(const ofMesh_<ofVec3f,ofVec3f,ofFloatColor,ofVec2f> & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
+		 for(auto renderer: renderers){
+			 renderer->draw(vertexData,mode,useColors,useTextures,useNormals);
+		 }
+	 }
+
+	 void draw(const ofMesh_<glm::vec3, glm::vec3, ofFloatColor, glm::vec2> & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
 		 for(auto renderer: renderers){
 			 renderer->draw(vertexData,mode,useColors,useTextures,useNormals);
 		 }

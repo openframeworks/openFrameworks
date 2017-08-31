@@ -18,8 +18,10 @@ public:
 	ofVbo & operator=(const ofVbo& mom);
 	~ofVbo();
 
-	void setMesh(const ofMesh & mesh, int usage);
-	void setMesh(const ofMesh & mesh, int usage, bool useColors, bool useTextures, bool useNormals);
+	template<typename V, typename N, typename C, typename T>
+	void setMesh(const ofMesh_<V,N,C,T> & mesh, int usage);
+	template<typename V, typename N, typename C, typename T>
+	void setMesh(const ofMesh_<V,N,C,T> & mesh, int usage, bool useColors, bool useTextures, bool useNormals);
 	
 	void setVertexData(const glm::vec3 * verts, int total, int usage);
 	void setVertexData(const glm::vec2 * verts, int total, int usage);
@@ -204,3 +206,44 @@ private:
 
 	VertexAttribute & getOrCreateAttr(int location);
 };
+
+
+//--------------------------------------------------------------
+template<typename V, typename N, typename C, typename T>
+void ofVbo::setMesh(const ofMesh_<V,N,C,T> & mesh, int usage){
+	setMesh(mesh,usage,mesh.hasColors(),mesh.hasTexCoords(),mesh.hasNormals());
+}
+
+//--------------------------------------------------------------
+template<typename V, typename N, typename C, typename T>
+void ofVbo::setMesh(const ofMesh_<V,N,C,T> & mesh, int usage, bool useColors, bool useTextures, bool useNormals){
+	if(mesh.getVertices().empty()){
+		ofLogWarning("ofVbo") << "setMesh(): ignoring mesh with no vertices";
+		return;
+	}
+	setVertexData(mesh.getVerticesPointer(),mesh.getNumVertices(),usage);
+	if(mesh.hasColors() && useColors){
+		setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage);
+		enableColors();
+	}else{
+		disableColors();
+	}
+	if(mesh.hasNormals() && useNormals){
+		setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage);
+		enableNormals();
+	}else{
+		disableNormals();
+	}
+	if(mesh.hasTexCoords() && useTextures){
+		setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage);
+		enableTexCoords();
+	}else{
+		disableTexCoords();
+	}
+	if(mesh.hasIndices()){
+		setIndexData(mesh.getIndexPointer(), mesh.getNumIndices(), usage);
+		enableIndices();
+	}else{
+		disableIndices();
+	}
+}

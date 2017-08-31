@@ -36,8 +36,12 @@ public:
 	using ofBaseRenderer::draw;
 	void draw(const ofPath & shape) const;
 	void draw(const ofPath::Command & path) const;
-	void draw(const ofPolyline & poly) const;
-	void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const;
+	void draw(const ofPolyline_<ofVec3f> & poly) const;
+	void draw(const ofPolyline_<ofVec2f> & poly) const;
+	void draw(const ofPolyline_<glm::vec3> & poly) const;
+	void draw(const ofPolyline_<glm::vec2> & poly) const;
+	void draw(const ofMesh_<ofVec3f,ofVec3f,ofFloatColor,ofVec2f> & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
+	void draw(const ofMesh_<glm::vec3, glm::vec3, ofFloatColor, glm::vec2> & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType ) const;
     void draw(const ofNode& node) const;
 	void draw(const std::vector<glm::vec3> & vertexData, ofPrimitiveMode drawMode) const;
@@ -206,4 +210,15 @@ private:
 	std::deque <ofStyle> styleHistory;
 	of3dGraphics graphics3d;
 	ofPath path;
+
+	template<typename V, typename N, typename C, typename T>
+	void draw_(
+			const ofMesh_<V,N,C,T> & primitive,
+			ofPolyRenderMode mode,
+			bool useColors,
+			bool useTextures,
+			bool useNormals) const;
+
+	template<typename V>
+	void draw_(const ofPolyline_<V> & poly) const;
 };

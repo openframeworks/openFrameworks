@@ -1821,7 +1821,7 @@ void ofMesh_<V,N,C,T>::flatNormals() {
                 ofIndexType indexNext2 = getIndex(i + 2);
                 auto e1 = verts[indexCurr] - verts[indexNext1];
                 auto e2 = verts[indexNext2] - verts[indexNext1];
-                normal = glm::normalize(glm::cross(e1, e2));
+				normal = glm::normalize(glm::cross(glm::vec3(e1), glm::vec3(e2)));
             }
     
             addIndex(i);
@@ -2989,3 +2989,6 @@ template<class V, class N, class C, class T>
 bool ofMeshFace_<V,N,C,T>::hasTexcoords() const{
 	return bHasTexcoords;
 }
+
+template class ofMesh_<ofVec3f, ofVec3f, ofFloatColor, ofVec2f>;
+template class ofMesh_<glm::vec3, glm::vec3, ofFloatColor, glm::vec2>;
