@@ -298,7 +298,7 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	if (nOutputChannels > 0) {
 		if (rtStreamPtr->settings.outCallback) {
 
-			if (rtStreamPtr->outputBuffer.size() != nFramesPerBuffer*nOutputChannels || rtStreamPtr->outputBuffer.getNumChannels() != nOutputChannels) {
+			if (rtStreamPtr->outputBuffer.size() != nFramesPerBuffer*nOutputChannels || rtStreamPtr->outputBuffer.getNumChannels() != size_t(nOutputChannels)) {
 				rtStreamPtr->outputBuffer.setNumChannels(nOutputChannels);
 				rtStreamPtr->outputBuffer.resize(nFramesPerBuffer*nOutputChannels);
 			}
