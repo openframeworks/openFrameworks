@@ -8,6 +8,7 @@
 #include "ofxAndroidVideoPlayer.h"
 #include "ofxAndroidUtils.h"
 #include "ofLog.h"
+#include "ofVectorMath.h"
 
 using namespace std;
 
