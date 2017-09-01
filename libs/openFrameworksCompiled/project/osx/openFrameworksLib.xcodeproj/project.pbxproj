@@ -176,8 +176,8 @@
 		2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dPrimitives.h; sourceTree = "<group>"; };
 		2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dPrimitives.cpp; sourceTree = "<group>"; };
 		53EEEF49130766EF0027C199 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
-		6448E6FB1CAD7679000877BC /* ofMesh.inl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ofMesh.inl; sourceTree = "<group>"; };
-		6448E6FC1CAD771D000877BC /* ofPolyline.inl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ofPolyline.inl; sourceTree = "<group>"; };
+		6448E6FB1CAD7679000877BC /* ofMesh.cpp */ = {isa = PBXFileReference; lastKnownFileType = text; path = ofMesh.cpp; sourceTree = "<group>"; };
+		6448E6FC1CAD771D000877BC /* ofPolyline.cpp */ = {isa = PBXFileReference; lastKnownFileType = text; path = ofPolyline.cpp; sourceTree = "<group>"; };
 		6678E96B19FEAE1900C00581 /* ofBaseSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseSoundStream.cpp; sourceTree = "<group>"; };
 		6678E96D19FEAFA900C00581 /* ofSoundBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundBuffer.cpp; sourceTree = "<group>"; };
 		6678E96E19FEAFA900C00581 /* ofSoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBuffer.h; sourceTree = "<group>"; };
@@ -485,7 +485,7 @@
 				E4F3BA5612F4C4BF002D19BB /* ofCamera.h */,
 				E4F3BA5712F4C4BF002D19BB /* ofEasyCam.cpp */,
 				E4F3BA5812F4C4BF002D19BB /* ofEasyCam.h */,
-				6448E6FB1CAD7679000877BC /* ofMesh.inl */,
+				6448E6FB1CAD7679000877BC /* ofMesh.cpp */,
 				53EEEF49130766EF0027C199 /* ofMesh.h */,
 				E4F3BA5F12F4C4BF002D19BB /* ofNode.cpp */,
 				E4F3BA6012F4C4BF002D19BB /* ofNode.h */,
@@ -597,7 +597,7 @@
 			children = (
 				92C55F86132DA7DD00EC2631 /* ofPath.cpp */,
 				92C55F87132DA7DD00EC2631 /* ofPath.h */,
-				6448E6FC1CAD771D000877BC /* ofPolyline.inl */,
+				6448E6FC1CAD771D000877BC /* ofPolyline.cpp */,
 				DA48FE74131D85A6000062BC /* ofPolyline.h */,
 				DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */,
 				22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */,
