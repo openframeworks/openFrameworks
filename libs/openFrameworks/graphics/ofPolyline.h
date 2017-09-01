@@ -63,10 +63,10 @@ public:
 
 
 	template<typename U>
-	constexpr static auto is3d = std::is_same<U, ofVec3f>::value || std::is_same<U, glm::vec3>::value;
+	constexpr static bool is3d = std::is_same<U, ofVec3f>::value || std::is_same<U, glm::vec3>::value;
 
 	template<typename U>
-	constexpr static auto is2d = std::is_same<U, ofVec2f>::value || std::is_same<U, glm::vec2>::value;
+	constexpr static bool is2d = std::is_same<U, ofVec2f>::value || std::is_same<U, glm::vec2>::value;
 
 	static ofPolyline_ fromRectangle(const ofRectangle& rect);
 
