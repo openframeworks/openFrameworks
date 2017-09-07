@@ -205,7 +205,7 @@ PLATFORM_STATIC_LIBRARIES =
 
 # shared libraries
 PLATFORM_SHARED_LIBRARIES =
-PLATFORM_SHARED_LIBRARIES += $(OF_LIBS_PATH)/freetype/lib/$(ABI_LIB_SUBPATH)/libfreetype.bc
+#PLATFORM_SHARED_LIBRARIES += $(OF_LIBS_PATH)/freetype/lib/$(ABI_LIB_SUBPATH)/libfreetype.bc
 
 
 ################################################################################

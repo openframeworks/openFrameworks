@@ -6,6 +6,8 @@
 #include "ofSoundBuffer.h"
 #include "ofMesh.h"
 
+using namespace std;
+
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){
 	

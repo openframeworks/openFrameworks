@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cc.openframeworks.cc">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="20" />
+        android:minSdkVersion="19"
+        android:targetSdkVersion="22" />
 </manifest>

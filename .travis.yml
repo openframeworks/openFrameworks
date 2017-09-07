@@ -35,9 +35,9 @@ matrix:
     env: TARGET="linuxarmv7l"
     cache:
       directories:
-        - ~/rpi2_toolchain
+        #- ~/rpi2_toolchain
         - ~/firmware-master
-        - ~/archlinux
+        #- ~/archlinux
 
 
   - os: linux
@@ -55,6 +55,10 @@ matrix:
     compiler: clang
     env: TARGET="osx"
 
+  - os: osx
+    osx_image: xcode8
+    compiler: clang
+    env: TARGET="osx" OPT="makefiles"
 
   - os: osx
     osx_image: xcode8
@@ -67,18 +71,15 @@ matrix:
     compiler: clang
     env: TARGET="tvos"
 
-
   - os: linux
-    sudo: false
-    env: TARGET="android" OPT="armv7"
-    cache:
-      directories:
-        - ~/android-ndk-r12b
-
-
-  - os: linux
-    sudo: false
-    env: TARGET="android" OPT="x86"
+    language: android
+    dist: trusty
+    sudo: required
+    env: TARGET="android" NDK_DIR="android-ndk-r12b"
+    android:
+      components:
+        - build-tools-25.0.2
+        - android-19
     cache:
       directories:
         - ~/android-ndk-r12b
@@ -107,11 +108,17 @@ install:
 
 
 script:
-  - scripts/ci/$TARGET/build.sh $OPT
-  - if [ "$TARGET" == "osx" ] || [ "$TARGET" == "linux64" ]; then
+  - if [ "$TARGET" == "osx" ] && [ $OPT == "makefiles" ]; then
+      scripts/ci/$TARGET/run_tests.sh;
+    else
+      scripts/ci/$TARGET/build.sh $OPT;
+    fi
+  - if [ "$TARGET" == "linux64" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     fi
-  - scripts/ci/upload_of_lib.sh
+  - if [ "$TARGET" != "osx" ] || [ $OPT != "makefiles" ]; then
+      scripts/ci/upload_of_lib.sh;
+    fi
 
 git:
   depth: 10

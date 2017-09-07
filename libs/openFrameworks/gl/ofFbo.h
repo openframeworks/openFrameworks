@@ -97,7 +97,7 @@ public:
     ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
 	///           method instead.
     /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
-    OF_DEPRECATED_MSG("Use begin(ofFboBeginMode::NoDefauls) instead", void begin(bool setupScreen) const);
+    OF_DEPRECATED_MSG("Use begin(ofFboBeginMode::NoDefaults) instead", void begin(bool setupScreen) const);
 
 
     /// Sets up the framebuffer and binds it for rendering.
@@ -185,7 +185,7 @@ public:
 	int	getNumTextures() const;
 
 	void setActiveDrawBuffer(int i);
-	void setActiveDrawBuffers(const vector<int>& i);
+	void setActiveDrawBuffers(const std::vector<int>& i);
 	void activateAllDrawBuffers();
 
 	OF_DEPRECATED_MSG("Use getId()", GLuint getFbo() const);
@@ -209,7 +209,7 @@ public:
 		int		width;					// width of images attached to fbo
 		int		height;					// height of images attached to fbo
 		int		numColorbuffers;		// how many color buffers to create
-		vector<GLint> colorFormats;		// format of the color attachments for MRT.
+		std::vector<GLint> colorFormats;		// format of the color attachments for MRT.
 		bool	useDepth;				// whether to use depth buffer or not
 		bool	useStencil;				// whether to use stencil buffer or not
 		bool	depthStencilAsTexture;			// use a texture instead of a renderbuffer for depth (useful to draw it or use it in a shader later)
@@ -235,8 +235,8 @@ private:
 	GLuint				depthBuffer;
 	GLuint				stencilBuffer;
 
-	vector<GLuint>		colorBuffers;
-	vector<ofTexture>	textures;			
+	std::vector<GLuint>		colorBuffers;
+	std::vector<ofTexture>	textures;			
 
 	ofTexture			depthBufferTex;
 
@@ -244,7 +244,7 @@ private:
 	static int			_maxDrawBuffers;
 	static int			_maxSamples;
 
-	vector<GLenum>		activeDrawBuffers;  ///< table of currently active color draw buffers, allocate() defaults it to size(textures), with GL_COLOR_ATTACHMENT0..n as members, in order of allocation
+	std::vector<GLenum>		activeDrawBuffers;  ///< table of currently active color draw buffers, allocate() defaults it to size(textures), with GL_COLOR_ATTACHMENT0..n as members, in order of allocation
 
 	/// \brief  Flags used internally to keep track of MSAA renderbuffers / textures
 	/// \note   The dirty flags are only used when dealing if the framebuffer has MSAA 
@@ -254,7 +254,7 @@ private:
 	///         The flags are read whenever an attached texture is accessed. If the texture
 	///         is dirty, i.e. it has not yet been resolved from its associated renderbuffer
 	///         the texture will be resolved through blitting the renderbuffer into it.
-	mutable vector<bool> dirty;
+	mutable std::vector<bool> dirty;
 
 	int 				defaultTextureIndex; //used for getTextureReference
 	bool				bIsAllocated;

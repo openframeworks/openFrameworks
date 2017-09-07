@@ -2,6 +2,8 @@
 #include "ofMath.h"
 #include <algorithm>
 
+using namespace std;
+
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
 	case 1:

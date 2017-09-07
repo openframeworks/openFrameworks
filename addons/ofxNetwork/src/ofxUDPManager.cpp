@@ -3,6 +3,8 @@
 #include "ofxUDPManager.h"
 #include "ofxNetworkUtils.h"
 
+using namespace std;
+
 //--------------------------------------------------------------------------------
 bool ofxUDPManager::m_bWinsockInit= false;
 

@@ -19,7 +19,7 @@ int	ofGetPreviousMouseY();
 //-----------------------------------------------
 class ofDragInfo{
 	public:
-		vector <string> files;
+		std::vector <std::string> files;
 		glm::vec2 position;
 };
 
@@ -223,10 +223,10 @@ public:
 
 class ofMessage : public ofEventArgs{
 	public:
-		ofMessage( string msg ){
+		ofMessage( std::string msg ){
 			message = msg;
 		}
-		string message;
+		std::string message;
 };
 		
 enum ofTimeMode{
@@ -328,8 +328,8 @@ private:
 	int	currentMouseX, currentMouseY;
 	int	previousMouseX, previousMouseY;
 	bool bPreMouseNotSet;
-	set<int> pressedMouseButtons;
-	set<int> pressedKeys;
+	std::set<int> pressedMouseButtons;
+	std::set<int> pressedKeys;
 	int modifiers = 0;
 
 	enum TimeMode{
@@ -341,7 +341,7 @@ private:
 };
 
 bool ofSendMessage(ofMessage msg);
-bool ofSendMessage(string messageString);
+bool ofSendMessage(std::string messageString);
 
 ofCoreEvents & ofEvents();
 

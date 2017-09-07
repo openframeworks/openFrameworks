@@ -103,8 +103,9 @@ void ofApp::draw() {
 
     // Plane //
     plane.setPosition(ofGetWidth()*.2, ofGetHeight()*.25, 0);
-    plane.rotate(spinX, 1.0, 0.0, 0.0);
-    plane.rotate(spinY, 0, 1.0, 0.0);
+    plane.rotateDeg(spinX, 1.0, 0.0, 0.0);
+    plane.rotateDeg(spinY, 0, 1.0, 0.0);
+
 
 
     if(mode == 3) {
@@ -155,8 +156,8 @@ void ofApp::draw() {
 
     // Box //
     box.setPosition(ofGetWidth()*.5, ofGetHeight()*.25, 0);
-    box.rotate(spinX, 1.0, 0.0, 0.0);
-    box.rotate(spinY, 0, 1.0, 0.0);
+    box.rotateDeg(spinX, 1.0, 0.0, 0.0);
+    box.rotateDeg(spinY, 0, 1.0, 0.0);
 
     if(bFill) {
         material.begin();
@@ -187,8 +188,8 @@ void ofApp::draw() {
 
     // Sphere //
     sphere.setPosition(ofGetWidth()*.8f, ofGetHeight()*.25, 0);
-    sphere.rotate(spinX, 1.0, 0.0, 0.0);
-    sphere.rotate(spinY, 0, 1.0, 0.0);
+    sphere.rotateDeg(spinX, 1.0, 0.0, 0.0);
+    sphere.rotateDeg(spinY, 0, 1.0, 0.0);
 
     if(mode == 3) {
         sphere.setMode( OF_PRIMITIVE_TRIANGLES );
@@ -228,8 +229,8 @@ void ofApp::draw() {
 
     // ICO Sphere //
     icoSphere.setPosition(ofGetWidth()*.2, ofGetHeight()*.75, 0);
-    icoSphere.rotate(spinX, 1.0, 0.0, 0.0);
-    icoSphere.rotate(spinY, 0, 1.0, 0.0);
+    icoSphere.rotateDeg(spinX, 1.0, 0.0, 0.0);
+    icoSphere.rotateDeg(spinY, 0, 1.0, 0.0);
 
     if(mode == 3) {
         triangles = icoSphere.getMesh().getUniqueFaces();
@@ -273,8 +274,8 @@ void ofApp::draw() {
     }
 
     cylinder.setPosition(ofGetWidth()*.5, ofGetHeight()*.75, 0);
-    cylinder.rotate(spinX, 1.0, 0.0, 0.0);
-    cylinder.rotate(spinY, 0, 1.0, 0.0);
+    cylinder.rotateDeg(spinX, 1.0, 0.0, 0.0);
+    cylinder.rotateDeg(spinY, 0, 1.0, 0.0);
     if(bFill) {
         material.begin();
         ofFill();
@@ -315,8 +316,8 @@ void ofApp::draw() {
 
     // Cone //
     cone.setPosition(ofGetWidth()*.8, ofGetHeight()*.75, 0);
-    cone.rotate(spinX, 1.0, 0.0, 0.0);
-    cone.rotate(spinY, 0, 1.0, 0.0);
+    cone.rotateDeg(spinX, 1.0, 0.0, 0.0);
+    cone.rotateDeg(spinY, 0, 1.0, 0.0);
 
     if(mode == 3) {
         bottomCap   = cone.getCapMesh();

@@ -14,6 +14,8 @@ int atexit (void (*func)(void)){
 #endif
 #include "ofLog.h"
 
+using namespace std;
+
 bool ofxAndroidIsOnline(){
 	jclass javaClass = ofGetJavaOFAndroid();
 

@@ -451,8 +451,8 @@ public:
     ofVec3f& operator/=( const float f );
 	
     /// \cond INTERNAL
-	friend ostream& operator<<(ostream& os, const ofVec3f& vec);
-	friend istream& operator>>(istream& is, ofVec3f& vec);
+	friend std::ostream& operator<<(std::ostream& os, const ofVec3f& vec);
+	friend std::istream& operator>>(std::istream& is, ofVec3f& vec);
 	/// \endcond
 
     /// \}
@@ -1141,12 +1141,12 @@ inline bool ofVec3f::alignRad( const ofVec3f& vec, float tolerance ) const {
 //
 //
 
-inline ostream& operator<<(ostream& os, const ofVec3f& vec) {
+inline std::ostream& operator<<(std::ostream& os, const ofVec3f& vec) {
 	os << vec.x << ", " << vec.y << ", " << vec.z;
 	return os;
 }
 
-inline istream& operator>>(istream& is, ofVec3f& vec) {
+inline std::istream& operator>>(std::istream& is, ofVec3f& vec) {
 	is >> vec.x;
 	is.ignore(2);
 	is >> vec.y;

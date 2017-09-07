@@ -16,7 +16,7 @@ public:
 	~ofxEmscriptenVideoPlayer();
 
 	//needs implementing
-	bool				load(string name);
+	bool				load(std::string name);
 	void				close();
 	void				update();
 

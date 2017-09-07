@@ -152,8 +152,8 @@ public:
 	
 	void operator/=(float scalar);
 	
-	friend ostream& operator<<(ostream& os, const ofMatrix3x3& M);
-	friend istream& operator>>(istream& is, ofMatrix3x3& M);
+	friend std::ostream& operator<<(std::ostream& os, const ofMatrix3x3& M);
+	friend std::istream& operator>>(std::istream& is, ofMatrix3x3& M);
 	
 	/// \}
 };

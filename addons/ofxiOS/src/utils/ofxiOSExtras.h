@@ -58,7 +58,7 @@ class ofAppiOSWindow;
 class ofxiOSDeviceInfo{
 public:
     ofxiOSDeviceType deviceType;
-    string deviceString;
+    std::string deviceString;
     int versionMajor;
     int versionMinor;
 };
@@ -75,7 +75,7 @@ float ofxiOSGetMicAverageLevel();
 ofxiOSDeviceType ofxiOSGetDeviceType();
 
 // return device revision
-string ofxiOSGetDeviceRevision();
+std::string ofxiOSGetDeviceRevision();
 
 // return device revision and type parsd from string
 ofxiOSDeviceInfo ofxiOSGetDeviceInfo();
@@ -183,17 +183,17 @@ void ofxiOSScreenGrab(id delegate);
 
 
 // utility fuctions for converting strings and NSStrings back and forth
-string ofxiOSNSStringToString(NSString * s);
-NSString * ofxiOSStringToNSString(string s);
+std::string ofxiOSNSStringToString(NSString * s);
+NSString * ofxiOSStringToNSString(std::string s);
 
 // It returns the path to the folder which your app has read/write access to.
-string ofxiOSGetDocumentsDirectory();
+std::string ofxiOSGetDocumentsDirectory();
 
 // opens url in safari.
-void ofxiOSLaunchBrowser(string url);
+void ofxiOSLaunchBrowser(std::string url);
 
-void ofxiOSSetClipboardString(string clipboardString);
-string ofxiOSGetClipboardString();
+void ofxiOSSetClipboardString(std::string clipboardString);
+std::string ofxiOSGetClipboardString();
 
 // backwards compatibility < 0.8.0
 #define ofxiPhoneHasAudioIn ofxiOSHasAudioIn

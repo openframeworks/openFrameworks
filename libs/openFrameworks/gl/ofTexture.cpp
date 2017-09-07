@@ -10,6 +10,8 @@
 #include "ofAppAndroidWindow.h"
 #endif
 
+using namespace std;
+
 //----------------------------------------------------------
 // static
 static bool bTexHackEnabled = true;
@@ -842,7 +844,7 @@ void ofTexture::setAlphaMask(ofTexture & mask){
 	if(mask.texData.textureTarget!=this->texData.textureTarget){
 		ofLogError("ofTexture") << "Cannot set alpha mask with different texture target";
 	}else{
-		texData.alphaMask = shared_ptr<ofTexture>(new ofTexture(mask));
+		texData.alphaMask = std::make_shared<ofTexture>(mask);
 	}
 }
 

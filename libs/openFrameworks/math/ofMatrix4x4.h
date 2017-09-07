@@ -339,8 +339,8 @@ public:
 	}
 	
 	/// \cond INTERNAL
-	friend ostream& operator<<(ostream& os, const ofMatrix4x4& M);
-	friend istream& operator>>(istream& is, ofMatrix4x4& M);
+	friend std::ostream& operator<<(std::ostream& os, const ofMatrix4x4& M);
+	friend std::istream& operator>>(std::istream& is, ofMatrix4x4& M);
 	/// \endcond
 	
 	/// \brief Access the internal data in `float*` format
@@ -679,36 +679,36 @@ inline bool ofMatrix4x4::isNaN() const {
 
 
 
-inline ostream& operator<<(ostream& os, const ofMatrix4x4& M) {
+inline std::ostream& operator<<(std::ostream& os, const ofMatrix4x4& M) {
 	int w = 8;
-	os	<< setw(w)
-		<< M._mat[0][0] << ", " << setw(w)
-		<< M._mat[0][1] << ", " << setw(w)
-		<< M._mat[0][2] << ", " << setw(w) 
+	os	<< std::setw(w)
+		<< M._mat[0][0] << ", " << std::setw(w)
+		<< M._mat[0][1] << ", " << std::setw(w)
+		<< M._mat[0][2] << ", " << std::setw(w) 
 		<< M._mat[0][3] << std::endl;
 		
-	os	<< setw(w)
-		<< M._mat[1][0] << ", " << setw(w) 
-		<< M._mat[1][1] << ", " << setw(w)
-		<< M._mat[1][2] << ", " << setw(w) 
+	os	<< std::setw(w)
+		<< M._mat[1][0] << ", " << std::setw(w) 
+		<< M._mat[1][1] << ", " << std::setw(w)
+		<< M._mat[1][2] << ", " << std::setw(w) 
 		<< M._mat[1][3] << std::endl;
 	
-	os	<< setw(w)
-		<< M._mat[2][0] << ", " << setw(w) 
-		<< M._mat[2][1] << ", " << setw(w)
-		<< M._mat[2][2] << ", " << setw(w) 
+	os	<< std::setw(w)
+		<< M._mat[2][0] << ", " << std::setw(w) 
+		<< M._mat[2][1] << ", " << std::setw(w)
+		<< M._mat[2][2] << ", " << std::setw(w) 
 		<< M._mat[2][3] << std::endl;
 	
-	os	<< setw(w)
-		<< M._mat[3][0] << ", " << setw(w) 
-		<< M._mat[3][1] << ", " << setw(w)
-		<< M._mat[3][2] << ", " << setw(w) 
+	os	<< std::setw(w)
+		<< M._mat[3][0] << ", " << std::setw(w) 
+		<< M._mat[3][1] << ", " << std::setw(w)
+		<< M._mat[3][2] << ", " << std::setw(w) 
 		<< M._mat[3][3];
 	
 	return os;
 }
 
-inline istream& operator>>(istream& is, ofMatrix4x4& M) {
+inline std::istream& operator>>(std::istream& is, ofMatrix4x4& M) {
 	is >> M._mat[0][0]; is.ignore(2); 
 	is >> M._mat[0][1]; is.ignore(2);
 	is >> M._mat[0][2]; is.ignore(2);

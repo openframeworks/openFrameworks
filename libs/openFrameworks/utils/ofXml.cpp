@@ -1,6 +1,8 @@
 #include "ofXml.h"
 #include "ofUtils.h"
 
+using namespace std;
+
 ofXml::ofXml()
 :doc(new pugi::xml_document){
 	xml = doc->root();
@@ -153,16 +155,10 @@ ofXml::Attribute ofXml::getLastAttribute() const{
 }
 
 ofXml::Attribute ofXml::appendAttribute(const std::string & name){
-	if(xml==doc->document_element()){
-		xml = doc->append_child(pugi::node_element);
-	}
 	return this->xml.append_attribute(name.c_str());
 }
 
 ofXml::Attribute ofXml::prependAttribute(const std::string & name){
-	if(xml==doc->document_element()){
-		xml = doc->append_child(pugi::node_element);
-	}
 	return this->xml.prepend_attribute(name.c_str());
 }
 

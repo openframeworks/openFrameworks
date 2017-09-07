@@ -9,6 +9,8 @@
 #include <condition_variable>
 #include <mutex>
 
+using namespace std;
+
 #ifdef TARGET_WIN32
 #include <winuser.h>
 #include <commdlg.h>
@@ -92,6 +94,8 @@ static void restoreAppWindowFocus(){
 #define SAVE_BUTTON GTK_STOCK_SAVE
 #define CANCEL_BUTTON GTK_STOCK_CANCEL
 #endif
+
+using namespace std;
 
 gboolean init_gtk(gpointer userdata){
 	int argc=0; char **argv = nullptr;
@@ -222,9 +226,23 @@ static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,strin
 		std::unique_lock<std::mutex> lck(dialogData.mutex);
 		dialogData.condition.wait(lck);
 	}
+
 	return dialogData.results;
 }
 
+void resetLocale(std::locale locale){
+	try{
+		std::locale::global(locale);
+	}catch(...){
+		if(ofToLower(std::locale("").name()).find("utf-8")==std::string::npos){
+			ofLogWarning("ofSystemUtils") << "GTK changes the locale when opening a dialog which can "
+				 "break number parsing. We tried to change back to " <<
+				 locale.name() <<
+				 "but failed some string parsing functions might behave differently "
+				 "after this";
+		}
+	}
+}
 #endif
 
 #ifdef TARGET_ANDROID
@@ -280,6 +298,7 @@ void ofSystemAlertDialog(string errorMessage){
 	#endif
 
 	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+		auto locale = std::locale();
 		initGTK();
 		TextDialogData dialogData;
 		dialogData.text = errorMessage;
@@ -289,6 +308,7 @@ void ofSystemAlertDialog(string errorMessage){
 			std::unique_lock<std::mutex> lock(dialogData.mutex);
 			dialogData.condition.wait(lock);
 		}
+		resetLocale(locale);
 	#endif
 
 	#ifdef TARGET_ANDROID
@@ -337,6 +357,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		NSOpenPanel * loadDialog = [NSOpenPanel openPanel];
 		[loadDialog setAllowsMultipleSelection:NO];
 		[loadDialog setCanChooseDirectories:bFolderSelection];
+		[loadDialog setCanChooseFiles:!bFolderSelection];
 		[loadDialog setResolvesAliases:YES];
 
 		if(!windowTitle.empty()) {
@@ -465,8 +486,10 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	//------------------------------------------------------------------------------   linux
 	//----------------------------------------------------------------------------------------
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
-		if(bFolderSelection) results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,windowTitle,defaultPath);
-		else results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN,windowTitle,defaultPath);
+		auto locale = std::locale();
+		if(bFolderSelection) results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,windowTitle,ofToDataPath(defaultPath));
+		else results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN,windowTitle,ofToDataPath(defaultPath));
+		resetLocale(locale);
 #endif
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
@@ -546,9 +569,9 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	//------------------------------------------------------------------------------   linux
 	//----------------------------------------------------------------------------------------
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
-
-	results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SAVE, messageName,defaultName);
-
+	auto locale = std::locale();
+	results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SAVE, messageName, ofToDataPath(defaultName));
+	resetLocale(locale);
 #endif
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
@@ -582,6 +605,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 string ofSystemTextBoxDialog(string question, string text){
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+	auto locale = std::locale();
 	initGTK();
 	TextDialogData dialogData;
 	dialogData.text = text;
@@ -592,6 +616,7 @@ string ofSystemTextBoxDialog(string question, string text){
 		std::unique_lock<std::mutex> lock(dialogData.mutex);
 		dialogData.condition.wait(lock);
 	}
+	resetLocale(locale);
 	text = dialogData.text;
 #endif
 

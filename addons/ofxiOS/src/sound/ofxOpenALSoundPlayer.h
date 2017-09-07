@@ -61,7 +61,7 @@ public:
 	ofxOpenALSoundPlayer();
 	~ofxOpenALSoundPlayer();
 	
-	bool	load(std::filesystem::path fileName, bool stream=false);
+	bool	load(const std::filesystem::path& fileName, bool stream=false);
 	void	unload();
 
 	void	play();
@@ -124,7 +124,7 @@ protected: //internal
 	
 	bool    prime();
 	void	updateInternalsForNewPrime();
-	bool	loadBackgroundMusic(string fileName, bool queue, bool loadAtOnce);
+	bool	loadBackgroundMusic(std::string fileName, bool queue, bool loadAtOnce);
 	void	unloadAllBackgroundMusic();
 	void	startBackgroundMusic();
 	void	stopBackgroundMusic(bool stopNow);
@@ -134,7 +134,7 @@ protected: //internal
 	ALuint  myPrimedId;
 	bool	stopped; 	
 	bool	iAmAnMp3;
-	vector <multiPlaySource *> retainedBuffers;
+	std::vector <multiPlaySource *> retainedBuffers;
 };
 
 #endif

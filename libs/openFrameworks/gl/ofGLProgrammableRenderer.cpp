@@ -14,6 +14,8 @@
 #include "ofTrueTypeFont.h"
 #include "ofNode.h"
 
+using namespace std;
+
 
 static const string VIEW_MATRIX_UNIFORM="viewMatrix";
 static const string MODELVIEW_MATRIX_UNIFORM="modelViewMatrix";

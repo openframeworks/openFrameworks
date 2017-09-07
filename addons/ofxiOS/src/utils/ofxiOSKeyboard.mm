@@ -12,6 +12,8 @@
 #include "ofAppiOSWindow.h"
 #include "ofAppRunner.h"
 
+using namespace std;
+
 //C++ class implementations
 
 //--------------------------------------------------------------

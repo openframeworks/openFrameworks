@@ -19,7 +19,7 @@ class ofBufferObject;
 class ofShader {
 
 	struct Source{
-		Source(GLuint type, const std::string & source, const std::string & directoryPath)
+		Source(GLuint type, const std::string & source, const std::filesystem::path & directoryPath)
 			:type(type)
 			,source(source)
 			,directoryPath(directoryPath){}
@@ -29,7 +29,7 @@ class ofShader {
 		GLuint type;
 		std::string source;
 		std::string expandedSource;
-		std::string directoryPath;
+		std::filesystem::path directoryPath;
 		std::map<std::string, int>   intDefines;
 		std::map<std::string, float> floatDefines;
 	};
@@ -42,10 +42,10 @@ public:
 	ofShader(ofShader && shader);
 	ofShader & operator=(ofShader && shader);
 
-	bool load(std::filesystem::path shaderName);
-	bool load(std::filesystem::path vertName, std::filesystem::path fragName, std::filesystem::path geomName="");
+	bool load(const std::filesystem::path& shaderName);
+	bool load(const std::filesystem::path& vertName, const std::filesystem::path& fragName, const std::filesystem::path& geomName="");
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
-	bool loadCompute(std::filesystem::path shaderName);
+	bool loadCompute(const std::filesystem::path& shaderName);
 #endif
 
 	struct Settings {
@@ -53,7 +53,7 @@ public:
 		std::map<GLuint, std::string> shaderSources;
 		std::map<std::string, int> intDefines;
 		std::map<std::string, float> floatDefines;
-		std::string sourceDirectoryPath;
+		std::filesystem::path sourceDirectoryPath;
 		bool bindDefaults = true;
 	};
 
@@ -64,7 +64,7 @@ public:
 		std::vector<std::string> varyingsToCapture;
 		std::map<std::string, int> intDefines;
 		std::map<std::string, float> floatDefines;
-		std::string sourceDirectoryPath;
+		std::filesystem::path sourceDirectoryPath;
 		bool bindDefaults = true;
 		GLuint bufferMode = GL_INTERLEAVED_ATTRIBS; // GL_INTERLEAVED_ATTRIBS or GL_SEPARATE_ATTRIBS
 	};
@@ -134,53 +134,53 @@ public:
 #endif
 
 	// set a texture reference
-	void setUniformTexture(const string & name, const ofBaseHasTexture& img, int textureLocation) const;
-	void setUniformTexture(const string & name, const ofTexture& img, int textureLocation) const;
-	void setUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation) const;
+	void setUniformTexture(const std::string & name, const ofBaseHasTexture& img, int textureLocation) const;
+	void setUniformTexture(const std::string & name, const ofTexture& img, int textureLocation) const;
+	void setUniformTexture(const std::string & name, int textureTarget, GLint textureID, int textureLocation) const;
 
 	// set a single uniform value
-	void setUniform1i(const string & name, int v1) const;
-	void setUniform2i(const string & name, int v1, int v2) const;
-	void setUniform3i(const string & name, int v1, int v2, int v3) const;
-	void setUniform4i(const string & name, int v1, int v2, int v3, int v4) const;
+	void setUniform1i(const std::string & name, int v1) const;
+	void setUniform2i(const std::string & name, int v1, int v2) const;
+	void setUniform3i(const std::string & name, int v1, int v2, int v3) const;
+	void setUniform4i(const std::string & name, int v1, int v2, int v3, int v4) const;
 
-	void setUniform1f(const string & name, float v1) const;
-	void setUniform2f(const string & name, float v1, float v2) const;
-	void setUniform3f(const string & name, float v1, float v2, float v3) const;
-	void setUniform4f(const string & name, float v1, float v2, float v3, float v4) const;
+	void setUniform1f(const std::string & name, float v1) const;
+	void setUniform2f(const std::string & name, float v1, float v2) const;
+	void setUniform3f(const std::string & name, float v1, float v2, float v3) const;
+	void setUniform4f(const std::string & name, float v1, float v2, float v3, float v4) const;
 
-	void setUniform2f(const string & name, const glm::vec2 & v) const;
-	void setUniform3f(const string & name, const glm::vec3 & v) const;
-	void setUniform4f(const string & name, const glm::vec4 & v) const;
-	void setUniform4f(const string & name, const ofFloatColor & v) const;
+	void setUniform2f(const std::string & name, const glm::vec2 & v) const;
+	void setUniform3f(const std::string & name, const glm::vec3 & v) const;
+	void setUniform4f(const std::string & name, const glm::vec4 & v) const;
+	void setUniform4f(const std::string & name, const ofFloatColor & v) const;
 
 	// set an array of uniform values
-	void setUniform1iv(const string & name, const int* v, int count = 1) const;
-	void setUniform2iv(const string & name, const int* v, int count = 1) const;
-	void setUniform3iv(const string & name, const int* v, int count = 1) const;
-	void setUniform4iv(const string & name, const int* v, int count = 1) const;
+	void setUniform1iv(const std::string & name, const int* v, int count = 1) const;
+	void setUniform2iv(const std::string & name, const int* v, int count = 1) const;
+	void setUniform3iv(const std::string & name, const int* v, int count = 1) const;
+	void setUniform4iv(const std::string & name, const int* v, int count = 1) const;
 
-	void setUniform1fv(const string & name, const float* v, int count = 1) const;
-	void setUniform2fv(const string & name, const float* v, int count = 1) const;
-	void setUniform3fv(const string & name, const float* v, int count = 1) const;
-	void setUniform4fv(const string & name, const float* v, int count = 1) const;
+	void setUniform1fv(const std::string & name, const float* v, int count = 1) const;
+	void setUniform2fv(const std::string & name, const float* v, int count = 1) const;
+	void setUniform3fv(const std::string & name, const float* v, int count = 1) const;
+	void setUniform4fv(const std::string & name, const float* v, int count = 1) const;
 
 	void setUniforms(const ofParameterGroup & parameters) const;
 
 	// note: it may be more optimal to use a 4x4 matrix than a 3x3 matrix, if possible
-	void setUniformMatrix3f(const string & name, const glm::mat3 & m, int count = 1) const;
-	void setUniformMatrix4f(const string & name, const glm::mat4 & m, int count = 1) const;
+	void setUniformMatrix3f(const std::string & name, const glm::mat3 & m, int count = 1) const;
+	void setUniformMatrix4f(const std::string & name, const glm::mat4 & m, int count = 1) const;
 
-	GLint getUniformLocation(const string & name) const;
+	GLint getUniformLocation(const std::string & name) const;
 
 	// set attributes that vary per vertex (look up the location before glBegin)
-	GLint getAttributeLocation(const string & name) const;
+	GLint getAttributeLocation(const std::string & name) const;
 
 #ifndef TARGET_OPENGLES
 #ifdef GLEW_ARB_uniform_buffer_object
-	GLint getUniformBlockIndex(const string & name) const;
-	GLint getUniformBlockBinding(const string & name) const;
-	void bindUniformBlock(GLuint bindind, const string & name) const;
+	GLint getUniformBlockIndex(const std::string & name) const;
+	GLint getUniformBlockBinding(const std::string & name) const;
+	void bindUniformBlock(GLuint bindind, const std::string & name) const;
 	void printActiveUniformBlocks() const;
 #endif
 #endif
@@ -204,12 +204,12 @@ public:
 	void setAttribute4d(GLint location, double v1, double v2, double v3, double v4) const;
 #endif
 
-	void setAttribute1fv(const string & name, const float* v, GLsizei stride=sizeof(float)) const;
-	void setAttribute2fv(const string & name, const float* v, GLsizei stride=sizeof(float)*2) const;
-	void setAttribute3fv(const string & name, const float* v, GLsizei stride=sizeof(float)*3) const;
-	void setAttribute4fv(const string & name, const float* v, GLsizei stride=sizeof(float)*4) const;
+	void setAttribute1fv(const std::string & name, const float* v, GLsizei stride=sizeof(float)) const;
+	void setAttribute2fv(const std::string & name, const float* v, GLsizei stride=sizeof(float)*2) const;
+	void setAttribute3fv(const std::string & name, const float* v, GLsizei stride=sizeof(float)*3) const;
+	void setAttribute4fv(const std::string & name, const float* v, GLsizei stride=sizeof(float)*4) const;
 
-	void bindAttribute(GLuint location, const string & name) const;
+	void bindAttribute(GLuint location, const std::string & name) const;
 
 	void printActiveUniforms() const;
 	void printActiveAttributes() const;
@@ -219,8 +219,8 @@ public:
 
 	// these methods create and compile a shader from source or file
 	// type: GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER_EXT etc.
-	bool setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath = "");
-	bool setupShaderFromFile(GLenum type, std::filesystem::path filename);
+	bool setupShaderFromSource(GLenum type, std::string source, std::string sourceDirectoryPath = "");
+	bool setupShaderFromFile(GLenum type, const std::filesystem::path& filename);
 
 	// links program with all compiled shaders
 	bool linkProgram();
@@ -248,7 +248,7 @@ public:
 
 	/// @brief returns the shader source as it was passed to the GLSL compiler
 	/// @param type (GL_VERTEX_SHADER | GL_FRAGMENT_SHADER | GL_GEOMETRY_SHADER_EXT) the shader source you'd like to inspect.
-	string getShaderSource(GLenum type) const;
+	std::string getShaderSource(GLenum type) const;
 
 
 private:
@@ -260,25 +260,25 @@ private:
 		Source source;
 	};
 
-	unordered_map<GLenum, Shader> shaders;
-	unordered_map<string, GLint> uniformsCache;
-	mutable unordered_map<string, GLint> attributesBindingsCache;
+	std::unordered_map<GLenum, Shader> shaders;
+	std::unordered_map<std::string, GLint> uniformsCache;
+	mutable std::unordered_map<std::string, GLint> attributesBindingsCache;
 
 #ifndef TARGET_OPENGLES
-	unordered_map<string, GLint> uniformBlocksCache;
+	std::unordered_map<std::string, GLint> uniformBlocksCache;
 #endif
 
 	bool setupShaderFromSource(Source && source);
-	ofShader::Source sourceFromFile(GLenum type, std::filesystem::path filename);
+	ofShader::Source sourceFromFile(GLenum type, const std::filesystem::path& filename);
 	void checkProgramInfoLog();
 	bool checkProgramLinkStatus();
 	void checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLevel);
 	template<typename T>
-	void setDefineConstantTemp(const string & name, T value);
+	void setDefineConstantTemp(const std::string & name, T value);
 	template<typename T>
-	void setConstantTemp(const string & name, const std::string & type, T value);
+	void setConstantTemp(const std::string & name, const std::string & type, T value);
 	
-	static string nameForType(GLenum type);
+	static std::string nameForType(GLenum type);
 
 	/// @brief			Mimics the #include behaviour of the c preprocessor
 	/// @description	Includes files specified using the
@@ -286,8 +286,8 @@ private:
 	/// @note			Include paths are always specified _relative to the including file's current path_
 	///	@note			Recursive #pragma include statements are possible
 	/// @note			Includes will be processed up to 32 levels deep
-	static string parseForIncludes( const string& source, const string& sourceDirectoryPath = "");
-	static string parseForIncludes( const string& source, vector<string>& included, int level = 0, const string& sourceDirectoryPath = "");
+	static std::string parseForIncludes( const std::string& source, const std::filesystem::path& sourceDirectoryPath = "");
+	static std::string parseForIncludes( const std::string& source, std::vector<std::string>& included, int level = 0, const std::filesystem::path& sourceDirectoryPath = "");
 
 	void checkAndCreateProgram();
 #ifdef TARGET_ANDROID

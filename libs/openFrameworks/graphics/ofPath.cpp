@@ -3,6 +3,8 @@
 #include "ofTessellator.h"
 #include "ofVectorMath.h"
 
+using namespace std;
+
 #if defined(TARGET_EMSCRIPTEN)
 	ofTessellator ofPath::tessellator;
 #elif HAS_TLS
@@ -292,6 +294,7 @@ void ofPath::circle(float x, float y, float radius){
 
 //----------------------------------------------------------
 void ofPath::circle(float x, float y, float z, float radius){
+	moveTo(x + radius, y, z);
 	arc(x,y,z,radius,radius,0,360);
 }
 

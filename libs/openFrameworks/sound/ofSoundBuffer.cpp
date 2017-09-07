@@ -10,6 +10,8 @@
 #include "ofLog.h"
 #include <limits>
 
+using namespace std;
+
 #if !defined(TARGET_ANDROID) && !defined(TARGET_IPHONE) && !defined(TARGET_LINUX_ARM)
 ofSoundBuffer::InterpolationAlgorithm ofSoundBuffer::defaultAlgorithm = ofSoundBuffer::Hermite;
 #else

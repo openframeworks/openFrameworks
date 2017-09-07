@@ -8,6 +8,8 @@
 #include "ofGLRenderer.h"
 #include <assert.h>
 
+using namespace std;
+
 // native events
 struct udev* udev;
 struct udev_device* dev;
@@ -407,7 +409,7 @@ void ofAppEGLWindow::setup(const Settings & _settings) {
 	eglSurface = NULL;
 	eglContext = NULL;
 	eglConfig  = NULL;
-	eglVersionMinor = -1;
+	eglVersionMajor = -1;
 	eglVersionMinor = -1;
 	glesVersion = 1;
 

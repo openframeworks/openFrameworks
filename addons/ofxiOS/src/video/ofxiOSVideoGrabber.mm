@@ -2,6 +2,9 @@
 #include "AVFoundationVideoGrabber.h"
 
 #include <TargetConditionals.h>
+
+using namespace std;
+
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 ofxiOSVideoGrabber::ofxiOSVideoGrabber() {

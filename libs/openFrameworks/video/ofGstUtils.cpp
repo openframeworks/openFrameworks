@@ -27,6 +27,7 @@
 #include <winbase.h>	// to use SetEnvironmentVariableA
 #endif
 
+using namespace std;
 
 ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop = nullptr;
 
@@ -715,7 +716,7 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 			break;
 		}
 		
-#if GST_VERSION_MAJOR==1
+#if GST_VERSION_MAJOR==1 && GST_VERSION_MINOR>=2
 		case GST_MESSAGE_HAVE_CONTEXT:{
 			GstContext *context;
 			const gchar *context_type;

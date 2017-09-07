@@ -15,6 +15,8 @@
 #include <set>
 #include <jni.h>
 
+using namespace std;
+
 // Global pointer used to implement the singletomn pattern for ofxAndroidSoundStream class
 static ofxAndroidSoundStream* instance = NULL;
 static bool headphonesConnected = false;

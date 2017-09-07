@@ -51,7 +51,7 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		ofOpenALSoundPlayer();
 		virtual ~ofOpenALSoundPlayer();
 
-        bool load(std::filesystem::path fileName, bool stream = false);
+        bool load(const std::filesystem::path& fileName, bool stream = false);
 		void unload();
 		void play();
 		void stop();
@@ -92,18 +92,18 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		float * getCurrentBufferSum(int size);
 
 		static void createWindow(int size);
-		static void runWindow(vector<float> & signal);
+		static void runWindow(std::vector<float> & signal);
 		static void initSystemFFT(int bands);
 
-        bool sfReadFile(std::filesystem::path path,vector<short> & buffer,vector<float> & fftAuxBuffer);
-        bool sfStream(std::filesystem::path path,vector<short> & buffer,vector<float> & fftAuxBuffer);
+        bool sfReadFile(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
+        bool sfStream(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
 #ifdef OF_USING_MPG123
-        bool mpg123ReadFile(std::filesystem::path path,vector<short> & buffer,vector<float> & fftAuxBuffer);
-        bool mpg123Stream(std::filesystem::path path,vector<short> & buffer,vector<float> & fftAuxBuffer);
+        bool mpg123ReadFile(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
+        bool mpg123Stream(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
 #endif
 
-        bool readFile(std::filesystem::path fileName,vector<short> & buffer);
-        bool stream(std::filesystem::path fileName, vector<short> & buffer);
+        bool readFile(const std::filesystem::path& fileName,std::vector<short> & buffer);
+        bool stream(const std::filesystem::path& fileName, std::vector<short> & buffer);
 
 		bool isStreaming;
 		bool bMultiPlay;
@@ -118,27 +118,27 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 
 		static ALCdevice * alDevice;
 		static ALCcontext * alContext;
-		static vector<float> window;
+		static std::vector<float> window;
 		static float windowSum;
 
 		int channels;
 		float duration; //in secs
 		int samplerate;
-		vector<ALuint> buffers;
-		vector<ALuint> sources;
+		std::vector<ALuint> buffers;
+		std::vector<ALuint> sources;
 
 		// fft structures
-		vector<vector<float> > fftBuffers;
+		std::vector<std::vector<float> > fftBuffers;
 		kiss_fftr_cfg fftCfg;
-		vector<float> windowedSignal;
-		vector<float> bins;
-		vector<kiss_fft_cpx> cx_out;
+		std::vector<float> windowedSignal;
+		std::vector<float> bins;
+		std::vector<kiss_fft_cpx> cx_out;
 
 
 		static kiss_fftr_cfg systemFftCfg;
-		static vector<float> systemWindowedSignal;
-		static vector<float> systemBins;
-		static vector<kiss_fft_cpx> systemCx_out;
+		static std::vector<float> systemWindowedSignal;
+		static std::vector<float> systemBins;
+		static std::vector<kiss_fft_cpx> systemCx_out;
 
 		SNDFILE* streamf;
 		size_t stream_samples_read;
@@ -149,8 +149,8 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		int mp3_buffer_size;
 		int stream_subformat;
 		double stream_scale;
-		vector<short> buffer;
-		vector<float> fftAuxBuffer;
+		std::vector<short> buffer;
+		std::vector<float> fftAuxBuffer;
 
 		bool stream_end;
 };

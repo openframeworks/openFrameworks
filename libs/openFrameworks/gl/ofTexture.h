@@ -207,7 +207,7 @@ public:
 	
 	unsigned int bufferId; ///< Optionally if the texture is backed by a buffer so we can bind it
 private:
-	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
+	std::shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
 	glm::mat4 textureMatrix; ///< For required transformations.
 	bool useTextureMatrix; ///< Apply the transformation matrix?

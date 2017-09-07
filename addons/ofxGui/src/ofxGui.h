@@ -11,8 +11,8 @@
 #include "ofxColorPicker.h"
 #include "ofEvents.h"
 
-void ofxGuiSetFont(const string & fontPath,int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=true, int dpi=0);
-void ofxGuiSetFont(const ofTtfSettings & fontSettings);
+void ofxGuiSetFont(const std::string & fontPath,int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=true, int dpi=0);
+void ofxGuiSetFont(const ofTrueTypeFont::Settings & fontSettings);
 void ofxGuiSetBitmapFont();
 
 void ofxGuiSetHeaderColor(const ofColor & color);

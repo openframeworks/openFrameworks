@@ -90,6 +90,10 @@ std::string ofParameter<void>::toString() const{
 	return "";
 }
 
+string ofParameter<void>::valueType() const{
+	return typeid(void).name();
+}
+
 void ofParameter<void>::fromString(const std::string & name){
 
 }

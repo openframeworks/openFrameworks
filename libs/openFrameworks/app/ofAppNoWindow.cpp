@@ -1,6 +1,7 @@
 #include "ofAppNoWindow.h"
 #include "ofBaseApp.h"
 #include "ofGraphics.h"
+#include <memory>
 
 
 #if defined TARGET_OSX || defined TARGET_LINUX
@@ -60,6 +61,8 @@ int getch()
 
 #endif
 
+using namespace std;
+
 const string ofNoopRenderer::TYPE="NOOP";
 
 //----------------------------------------------------------
@@ -75,7 +78,7 @@ void ofAppNoWindow::setup(const ofWindowSettings & settings){
 	width = settings.width;
 	height = settings.height;
 
-	currentRenderer = shared_ptr<ofBaseRenderer>(new ofNoopRenderer);
+	currentRenderer = std::make_shared<ofNoopRenderer>();
 }
 
 //----------------------------------------------------------

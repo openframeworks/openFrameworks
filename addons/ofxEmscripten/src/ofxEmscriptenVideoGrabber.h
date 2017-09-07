@@ -15,7 +15,7 @@ public:
 	ofxEmscriptenVideoGrabber();
 	~ofxEmscriptenVideoGrabber();
 
-	vector<ofVideoDevice>	listDevices() const;
+	std::vector<ofVideoDevice>	listDevices() const;
 	bool	setup(int w, int h);
 	bool	isInitialized() const;
 	void	update();

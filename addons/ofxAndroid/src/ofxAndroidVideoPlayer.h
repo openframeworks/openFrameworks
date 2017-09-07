@@ -20,7 +20,7 @@ class ofxAndroidVideoPlayer: public ofBaseVideoPlayer{
 		ofxAndroidVideoPlayer();
 		virtual ~ofxAndroidVideoPlayer();
 
-		bool load(string fileName);
+		bool load(std::string fileName);
 		void close(); // empty!
 		void update();
 

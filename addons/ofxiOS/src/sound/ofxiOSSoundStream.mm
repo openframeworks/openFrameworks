@@ -14,6 +14,8 @@
 #import "SoundOutputStream.h"
 #import <AVFoundation/AVFoundation.h>
 
+using namespace std;
+
 //------------------------------------------------------------------------------
 ofxiOSSoundStream::ofxiOSSoundStream() {
     soundInputStream = NULL;

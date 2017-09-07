@@ -23,7 +23,7 @@ public:
 	}
 
 private:
-	vector<Content> buffer;
+	std::vector<Content> buffer;
 	int readIndex;
 	int writeIndex;
 	int buffer_size;

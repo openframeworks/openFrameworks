@@ -43,7 +43,7 @@ OF_CORE_LIBS_THAT_DONT_NEED_ORDER = $(filter-out $(OF_CORE_LIBS_THAT_NEED_ORDER)
 # 2> /dev/null consumes file not found errors from find searches
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 # TODO: create a varaible for core specific static lib suffix
-OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell $(FIND) $(addsuffix /lib/$(ABI_LIB_SUBPATH),$(OF_CORE_LIBS_THAT_DONT_NEED_ORDER)) -name *.a 2> /dev/null | grep -v "/\.[^\.]" )
+OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell $(FIND) $(addsuffix /lib/$(ABI_LIB_SUBPATH),$(OF_CORE_LIBS_THAT_DONT_NEED_ORDER)) -name *.a -o -name *.bc 2> /dev/null | grep -v "/\.[^\.]" )
 # create a list of all static lib files for the libs that need order
 # NOTE. this is the most unintuitive line of make script magic in here
 # How does it work?

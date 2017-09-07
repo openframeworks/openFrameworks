@@ -5,6 +5,8 @@
 
 #include "ofConstants.h"
 
+using namespace std;
+
 #if !defined(TARGET_IMPLEMENTS_URL_LOADER)
 	#include <curl/curl.h>
 	#include "ofThreadChannel.h"

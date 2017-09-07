@@ -597,8 +597,8 @@ void ofPixels_<PixelType>::copyFrom(const ofPixels_<SrcType> & mom){
 	if(mom.isAllocated()){
 		allocate(mom.getWidth(),mom.getHeight(),mom.getNumChannels());
 
-		const float srcMax = ( (sizeof(SrcType) == sizeof(float) ) ? 1.f : numeric_limits<SrcType>::max() );
-		const float dstMax = ( (sizeof(PixelType) == sizeof(float) ) ? 1.f : numeric_limits<PixelType>::max() );
+		const float srcMax = ( (sizeof(SrcType) == sizeof(float) ) ? 1.f : std::numeric_limits<SrcType>::max() );
+		const float dstMax = ( (sizeof(PixelType) == sizeof(float) ) ? 1.f : std::numeric_limits<PixelType>::max() );
 		const float factor = dstMax / srcMax;
 
 		if(sizeof(SrcType) == sizeof(float)) {

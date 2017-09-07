@@ -28,6 +28,7 @@
 	#include <GL/glx.h>
 #endif
 
+using namespace std;
 
 // glut works with static callbacks UGH, so we need static variables here:
 

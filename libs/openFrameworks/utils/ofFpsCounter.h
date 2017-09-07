@@ -32,5 +32,5 @@ private:
 	std::chrono::nanoseconds lastFrameTime;
 	std::chrono::nanoseconds filteredTime;
 	double filterAlpha;
-	queue<double> timestamps;
+	std::queue<double> timestamps;
 };

@@ -65,10 +65,10 @@ protected:
 
 	glm::vec4 texCoords;
     bool usingVbo;
-    shared_ptr<ofMesh>  mesh;
+    std::shared_ptr<ofMesh>  mesh;
     mutable ofMesh normalsMesh;
 
-    vector<ofIndexType> getIndices( int startIndex, int endIndex ) const;
+    std::vector<ofIndexType> getIndices( int startIndex, int endIndex ) const;
 
 };
 
@@ -337,11 +337,11 @@ public:
     void setCylinderColor( ofColor color );
     void setBottomCapColor( ofColor color );
 
-    vector<ofIndexType> getTopCapIndices() const;
+    std::vector<ofIndexType> getTopCapIndices() const;
     ofMesh getTopCapMesh() const;
-    vector<ofIndexType> getCylinderIndices() const;
+    std::vector<ofIndexType> getCylinderIndices() const;
     ofMesh getCylinderMesh() const;
-    vector<ofIndexType> getBottomCapIndices() const;
+    std::vector<ofIndexType> getBottomCapIndices() const;
     ofMesh getBottomCapMesh() const;
 
     int getResolutionRadius() const;
@@ -428,13 +428,13 @@ public:
     void setCapColor( ofColor color );
 
     /// \return a vector of the indices of vertices that make up the cone (as opposed to the cap indices).
-    vector<ofIndexType> getConeIndices() const;
+    std::vector<ofIndexType> getConeIndices() const;
 
     /// \return This returns an ofMesh made up of the cone (as opposed to the cap).
     ofMesh getConeMesh() const;
 
     /// \return a vector of the indices of vertices that make up the cap (as opposed to the cone indices).
-    vector<ofIndexType> getCapIndices() const;
+    std::vector<ofIndexType> getCapIndices() const;
 
     /// \return an ofMesh made up of the cap (as opposed to the cone).
     ofMesh getCapMesh() const;
@@ -534,7 +534,7 @@ public:
 
     void resizeToTexture( ofTexture& inTexture );
 
-    vector<ofIndexType> getSideIndices( int sideIndex ) const;
+    std::vector<ofIndexType> getSideIndices( int sideIndex ) const;
     ofMesh getSideMesh( int sideIndex ) const;
 
     void setResolution( int res ); // same resolution for all sides //

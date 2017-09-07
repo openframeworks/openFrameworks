@@ -35,78 +35,79 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class OFAndroid {
-	
+
+	public static String packageName;
 	// List based on http://bit.ly/NpkL4Q
-	private static final String[] mExternalStorageDirectories = new String[] { 
-			"/mnt/sdcard-ext", 
-			"/mnt/sdcard/external_sd", 
-			"/sdcard/sd", 
-			"/mnt/external_sd", 
-			"/emmc",  
-			"/mnt/sdcard/bpemmctest", 
-			"/mnt/sdcard/_ExternalSD",  
+	private static final String[] mExternalStorageDirectories = new String[] {
+			"/mnt/sdcard-ext",
+			"/mnt/sdcard/external_sd",
+			"/sdcard/sd",
+			"/mnt/external_sd",
+			"/emmc",
+			"/mnt/sdcard/bpemmctest",
+			"/mnt/sdcard/_ExternalSD",
 			"/mnt/Removable/MicroSD",
 			"/Removable/MicroSD",
 			"/sdcard"};
-		
+
 	private static String getPackageName(){
 		return OFAndroidLifeCycle.getActivity().getPackageName();
 	}
-	
+
 	public static String getRealExternalStorageDirectory(Context context)
-	{				
+	{
 		// Standard way to get the external storage directory
-		String externalPath = context.getExternalFilesDir(null).getPath();	
-		File SDCardDir = new File(externalPath);		
-    	if(SDCardDir.exists() && SDCardDir.canWrite()) {		
+		String externalPath = context.getExternalFilesDir(null).getPath();
+		File SDCardDir = new File(externalPath);
+    	if(SDCardDir.exists() && SDCardDir.canWrite()) {
     		return externalPath;
     	}
-		
+
 		// This checks if any of the directories from mExternalStorageDirectories exist, if it does, it uses that one instead
 		for(int i = 0; i < mExternalStorageDirectories.length; i++)
 		{
-			//Log.i("OF", "Checking: " + mExternalStorageDirectories[i]);	
-			SDCardDir = new File(mExternalStorageDirectories[i]);		
-	    	if(SDCardDir.exists() && SDCardDir.canWrite()) {				
+			//Log.i("OF", "Checking: " + mExternalStorageDirectories[i]);
+			SDCardDir = new File(mExternalStorageDirectories[i]);
+	    	if(SDCardDir.exists() && SDCardDir.canWrite()) {
 	    		externalPath = mExternalStorageDirectories[i];	// Found writable location
 				break;
-	    	}	    	
+	    	}
 		}
-		
+
 		Log.i("OF", "Using storage location: " + externalPath);
-		return externalPath;		
+		return externalPath;
 	}
-	
+
 	public static String getOldExternalStorageDirectory(String packageName)
-	{				
+	{
 		// Standard way to get the external storage directory
-		String externalPath = Environment.getExternalStorageDirectory().getPath();	
-		File SDCardDir = new File(externalPath);		
-    	if(SDCardDir.exists() && SDCardDir.canWrite()) {		
+		String externalPath = Environment.getExternalStorageDirectory().getPath();
+		File SDCardDir = new File(externalPath);
+    	if(SDCardDir.exists() && SDCardDir.canWrite()) {
     		return externalPath + "/Android/data/"+packageName;
     	}
-		
+
 		// This checks if any of the directories from mExternalStorageDirectories exist, if it does, it uses that one instead
 		for(int i = 0; i < mExternalStorageDirectories.length; i++)
 		{
-			//Log.i("OF", "Checking: " + mExternalStorageDirectories[i]);	
-			SDCardDir = new File(mExternalStorageDirectories[i]);		
-	    	if(SDCardDir.exists() && SDCardDir.canWrite()) {				
+			//Log.i("OF", "Checking: " + mExternalStorageDirectories[i]);
+			SDCardDir = new File(mExternalStorageDirectories[i]);
+	    	if(SDCardDir.exists() && SDCardDir.canWrite()) {
 	    		externalPath = mExternalStorageDirectories[i];	// Found writable location
 				break;
-	    	}	    	
+	    	}
 		}
-		
+
 		Log.i("OF", "Using storage location: " + externalPath);
 		return externalPath + "/Android/data/"+packageName;
 	}
-	
+
 	public static void moveOldData(String src, String dst){
 		File srcFile = new File(src);
 		File dstFile = new File(dst);
-		
+
 		if(srcFile.equals(dstFile)) return;
-		
+
 		if(srcFile.isDirectory() && srcFile.listFiles().length>1){
 			for(File f: srcFile.listFiles()){
 				if(f.equals(dstFile)){
@@ -116,6 +117,10 @@ public class OFAndroid {
 				f.renameTo(new File(dst+"/"+f.getName()));
 			}
 		}
+	}
+
+	public static Context getContext(){
+		return OFAndroidLifeCycle.getActivity();
 	}
 	
 	public static String getAppDataDirectory(){

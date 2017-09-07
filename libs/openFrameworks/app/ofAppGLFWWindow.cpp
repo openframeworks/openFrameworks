@@ -33,6 +33,8 @@
 	#include <GLFW/glfw3native.h>
 #endif
 
+using namespace std;
+
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow(){
 	bEnableSetupScreen	= true;
@@ -68,6 +70,7 @@ void ofAppGLFWWindow::close(){
 		glfwSetCursorEnterCallback( windowP, nullptr );
 		glfwSetKeyCallback( windowP, nullptr );
 		glfwSetWindowSizeCallback( windowP, nullptr );
+		glfwSetFramebufferSizeCallback( windowP, nullptr);
 		glfwSetWindowCloseCallback( windowP, nullptr );
 		glfwSetScrollCallback( windowP, nullptr );
 #if GLFW_VERSION_MAJOR>3 || GLFW_VERSION_MINOR>=1
@@ -169,9 +172,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
 		if(settings.glesVersion>=2){
-			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
+			currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 		}else{
-			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
+			currentRenderer = std::make_shared<ofGLRenderer>(this);
 		}
 	#else
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
@@ -182,9 +185,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		}
 		if(settings.glVersionMajor>=3){
 			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
+			currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 		}else{
-			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
+			currentRenderer = std::make_shared<ofGLRenderer>(this);
 		}
 	#endif
 
@@ -318,6 +321,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwSetKeyCallback(windowP, keyboard_cb);	
 	glfwSetCharCallback(windowP, char_cb);
 	glfwSetWindowSizeCallback(windowP, resize_cb);
+	glfwSetFramebufferSizeCallback( windowP, framebuffer_size_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
 #if GLFW_VERSION_MAJOR>3 || GLFW_VERSION_MINOR>=1
@@ -1023,7 +1027,7 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 	XkbGetState(window->getX11Display(), XkbUseCoreKbd, &xkb_state);
 	XEvent ev = {0};
 	ev.xkey.keycode = scancode;
-	ev.xkey.state = xkb_state.mods;
+	ev.xkey.state = xkb_state.mods & !ControlMask;
 	ev.xkey.display = window->getX11Display();
 	ev.xkey.type = KeyPress;
 	KeySym keysym = NoSymbol;
@@ -1204,7 +1208,7 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int 
 	if (state == GLFW_PRESS) {
 		action = ofMouseEventArgs::Pressed;
 		instance->buttonPressed=true;
-	} else if (state == GLFW_RELEASE) {
+	} else {
 		action = ofMouseEventArgs::Released;
 		instance->buttonPressed=false;
 	}
@@ -1475,6 +1479,12 @@ void ofAppGLFWWindow::char_cb(GLFWwindow* windowP_, uint32_t key){
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
+
+    //detect if the window is running in a retina mode
+    int framebufferW, framebufferH;
+    glfwGetFramebufferSize(windowP_, &framebufferW, &framebufferH);
+    instance->pixelScreenCoordScale = framebufferW / w;
+
 	if(instance->windowMode == OF_WINDOW){
 		instance->windowW = w * instance->pixelScreenCoordScale;
 		instance->windowH = h * instance->pixelScreenCoordScale;
@@ -1483,6 +1493,10 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 	instance->currentH = h;
 	instance->events().notifyWindowResized(w*instance->pixelScreenCoordScale, h*instance->pixelScreenCoordScale);
 	instance->nFramesSinceWindowResized = 0;
+}
+
+void ofAppGLFWWindow::framebuffer_size_cb(GLFWwindow* windowP_, int w, int h){
+	resize_cb(windowP_, w,h);
 }
 
 //--------------------------------------------

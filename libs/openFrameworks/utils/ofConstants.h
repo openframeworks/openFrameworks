@@ -68,7 +68,7 @@ enum ofTargetPlatform{
 #include <memory>
 
 #define GLM_META_PROG_HELPERS
-#define GLM_SWIZZLE
+#define GLM_FORCE_SWIZZLE
 #define GLM_FORCE_SIZE_FUNC
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
@@ -431,8 +431,6 @@ typedef ofBaseApp ofSimpleApp;
 #define OF_SERIAL_ERROR		-1
 
 
-
-using namespace std;
 
 #ifndef PI
 	#define PI       3.14159265358979323846

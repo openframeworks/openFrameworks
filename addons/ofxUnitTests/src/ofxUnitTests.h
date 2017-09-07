@@ -282,9 +282,9 @@ private:
             if(res.status<200 || res.status>=300){
                 ofLogError() << "sending to " << req.url;
                 ofLogError() << res.status << ", " << res.error;
-                cout << res.data.getText() << endl;
+                std::cout << res.data.getText() << std::endl;
                 ofLogError() << "for body:";
-                cout << req.body << endl;
+                std::cout << req.body << std::endl;
                 return false;
             }else{
                 ofLogNotice() << "Test results sent correctly";

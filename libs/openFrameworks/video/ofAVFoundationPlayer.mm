@@ -50,17 +50,17 @@ ofAVFoundationPlayer& ofAVFoundationPlayer::operator=(ofAVFoundationPlayer other
 }
 
 //--------------------------------------------------------------
-void ofAVFoundationPlayer::loadAsync(string name){
+void ofAVFoundationPlayer::loadAsync(std::string name){
     loadPlayer(name, true);
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::load(string name) {
+bool ofAVFoundationPlayer::load(std::string name) {
     return loadPlayer(name, false);
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
+bool ofAVFoundationPlayer::loadPlayer(std::string name, bool bAsync) {
 	if( ofGetUsingArbTex() == false ){
         killTextureCache();
 		bUseTextureCache = false;
@@ -770,7 +770,7 @@ void * ofAVFoundationPlayer::getAVFoundationVideoPlayer() {
 #endif
 
 //-------------------------------------------------------------- DEPRECATED.
-bool ofAVFoundationPlayer::loadMovie(string name) {
+bool ofAVFoundationPlayer::loadMovie(std::string name) {
     return load(name);
 }
 

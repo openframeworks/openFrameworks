@@ -25,6 +25,8 @@
 #import "ofxOpenALSoundPlayer.h"
 #include "ofUtils.h"
 
+using namespace std;
+
 bool SoundEngineInitialized = false;
 
 UInt32	numSounds;
@@ -85,7 +87,7 @@ ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() {
 
 //--------------------------------------------------------------
 
-bool ofxOpenALSoundPlayer::load(std::filesystem::path filePath, bool stream) {
+bool ofxOpenALSoundPlayer::load(const std::filesystem::path& filePath, bool stream) {
 	
 	if(!SoundEngineInitialized) {
 		ofxOpenALSoundPlayer::initializeSoundEngine();

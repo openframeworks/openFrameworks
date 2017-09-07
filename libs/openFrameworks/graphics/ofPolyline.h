@@ -57,7 +57,7 @@ public:
 	ofPolyline_();
 
 	/// \brief Creates an ofPolyline from a vector of ofVec2f or T objects.
-	ofPolyline_(const vector<T>& verts);
+	ofPolyline_(const std::vector<T>& verts);
 
 	static ofPolyline_ fromRectangle(const ofRectangle& rect);
 
@@ -94,7 +94,7 @@ public:
 	/// 	ofPolyline p;
 	/// 	p.addVertices(verts);
 	/// ~~~~
-	void addVertices( const vector<T>& verts );
+	void addVertices( const std::vector<T>& verts );
 
 	/// \brief Adds multiple points at the end of the ofPolyline using a pointer to
 	/// an array of T objects.
@@ -131,17 +131,17 @@ public:
 	T& operator[] (int index);
     
 	/// \brief Gets a vector of vertices that the line contains
-	vector<T> & getVertices();
-	const vector<T> & getVertices() const;
+	std::vector<T> & getVertices();
+	const std::vector<T> & getVertices() const;
 
-	typename vector<T>::iterator begin();
-	typename vector<T>::const_iterator begin() const;
-	typename vector<T>::reverse_iterator rbegin();
-	typename vector<T>::const_reverse_iterator rbegin() const;
-	typename vector<T>::iterator end();
-	typename vector<T>::const_iterator end() const;
-	typename vector<T>::reverse_iterator rend();
-	typename vector<T>::const_reverse_iterator rend() const;
+	typename std::vector<T>::iterator begin();
+	typename std::vector<T>::const_iterator begin() const;
+	typename std::vector<T>::reverse_iterator rbegin();
+	typename std::vector<T>::const_reverse_iterator rbegin() const;
+	typename std::vector<T>::iterator end();
+	typename std::vector<T>::const_iterator end() const;
+	typename std::vector<T>::reverse_iterator rend();
+	typename std::vector<T>::const_reverse_iterator rend() const;
 
 	/// \}
     /// \name Lines and Curves
@@ -496,21 +496,21 @@ private:
 	void setCircleResolution(int res);
     float wrapAngle(float angleRad);
 
-	vector<T> points;
+	std::vector<T> points;
 	T rightVector;
     
     // cache
-    mutable vector<float> lengths;    // cumulative lengths, stored per point (lengths[n] is the distance to the n'th point, zero based)
-	mutable vector<T> tangents;       // tangent at vertex, stored per point
-	mutable vector<T> normals;        //
-	mutable vector<T> rotations;      // rotation axes between adjacent segments, stored per point (cross product)
-    mutable vector<float> angles;     // angle (rad) between adjacent segments, stored per point (asin(cross product))
+	mutable std::vector<float> lengths;    // cumulative lengths, stored per point (lengths[n] is the distance to the n'th point, zero based)
+	mutable std::vector<T> tangents;       // tangent at vertex, stored per point
+	mutable std::vector<T> normals;        //
+	mutable std::vector<T> rotations;      // rotation axes between adjacent segments, stored per point (cross product)
+	mutable std::vector<float> angles;     // angle (rad) between adjacent segments, stored per point (asin(cross product))
 	mutable T centroid2D;
     mutable float area;
     
     
-	deque<T> curveVertices;
-	vector<T> circlePoints;
+	std::deque<T> curveVertices;
+	std::vector<T> circlePoints;
 
 	bool bClosed;
 	bool bHasChanged;   // public API has access to this
@@ -534,7 +534,7 @@ using ofPolyline = ofPolyline_<ofDefaultVertexType>;
 /// \param poly a vector of glm::vec3s defining a polygon.
 /// \returns True if the point defined by the coordinates is enclosed, false otherwise.
 template<class T>
-bool ofInsidePoly(float x, float y, const vector<T>& polygon){
+bool ofInsidePoly(float x, float y, const std::vector<T>& polygon){
 	return ofPolyline_<T>::inside(x,y, ofPolyline_<T>(polygon));
 }
 
@@ -544,6 +544,6 @@ bool ofInsidePoly(float x, float y, const vector<T>& polygon){
 /// \param poly A vector of glm::vec3s defining a polygon.
 /// \returns True if the glm::vec3 is enclosed, false otherwise.
 template<class T>
-bool ofInsidePoly(const T& p, const vector<T>& poly){
+bool ofInsidePoly(const T& p, const std::vector<T>& poly){
 	return ofPolyline_<T>::inside(p.x,p.y, ofPolyline_<T>(poly));
 }

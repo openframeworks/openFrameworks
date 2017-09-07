@@ -20,7 +20,7 @@ public:
 	void allocate(GLsizeiptr bytes, const void * data, GLenum usage);
 
 	template<typename T>
-	void allocate(const vector<T> & data, GLenum usage){
+	void allocate(const std::vector<T> & data, GLenum usage){
 		allocate(data.size()*sizeof(T),&data[0],usage);
 	}
 
@@ -70,7 +70,7 @@ public:
 	/// typed version of setData, same functionality but guesses the size from the size
 	/// of the passed vector and size of the type
 	template<typename T>
-	void setData(const vector<T> & data, GLenum usage){
+	void setData(const std::vector<T> & data, GLenum usage){
 		setData(data.size()*sizeof(T),&data[0],usage);
 	}
 
@@ -82,14 +82,14 @@ public:
 	/// typed version of updateData, same functionality but guesses the size from the size
 	/// of the passed vector and size of the type
 	template<typename T>
-	void updateData(GLintptr offset, const vector<T> & data){
+	void updateData(GLintptr offset, const std::vector<T> & data){
 		updateData(offset,data.size()*sizeof(T),&data[0]);
 	}
 
     /// typed version of updateData, same functionality but guesses the size from the size
     /// of the passed vector and size of the type
     template<typename T>
-    void updateData(const vector<T> & data){
+    void updateData(const std::vector<T> & data){
         updateData(0,data.size()*sizeof(T),&data[0]);
     }
 
@@ -143,5 +143,5 @@ private:
 		GLenum lastTarget;
 		bool isBound;
 	};
-	shared_ptr<Data> data;
+	std::shared_ptr<Data> data;
 };

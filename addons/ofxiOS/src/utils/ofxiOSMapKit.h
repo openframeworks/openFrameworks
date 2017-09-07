@@ -131,7 +131,7 @@ public:
 	void regionDidChange(bool animated);
 	void willStartLoadingMap();
 	void didFinishLoadingMap();
-	void errorLoadingMap(string errorDescription);
+	void errorLoadingMap(std::string errorDescription);
 	
 
 	// return instance to MKMapView

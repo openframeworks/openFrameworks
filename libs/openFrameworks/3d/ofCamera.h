@@ -207,12 +207,18 @@ public:
 	/// \name Renderer
 	/// \{
     
-    void setRenderer(shared_ptr<ofBaseRenderer> renderer);
+    void setRenderer(std::shared_ptr<ofBaseRenderer> renderer);
 	
 	/// \}
+
+	/// \brief Draw a visual representation of the camera's frustum
+	/// \note  This will only be visible when the camera drawing its 
+	///        frustum is viewed through another camera.
+	void drawFrustum();
+
 protected:
 	ofRectangle getViewport(const ofRectangle & _viewport) const;
-	shared_ptr<ofBaseRenderer> getRenderer() const;
+	std::shared_ptr<ofBaseRenderer> getRenderer() const;
 	void calcClipPlanes(const ofRectangle & viewport);
 	
 private:
@@ -224,6 +230,6 @@ private:
 	bool forceAspectRatio;
 	float aspectRatio; // only used when forceAspect=true, = w / h
 	bool vFlip;
-	shared_ptr<ofBaseRenderer> renderer;
+	std::shared_ptr<ofBaseRenderer> renderer;
 };
 

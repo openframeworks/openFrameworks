@@ -21,7 +21,7 @@ public:
 
     /// \brief Reset the camera position and orientation.
 	void reset();
-
+	
 	/// \}
 	/// \name Camera Target
 	/// \{
@@ -39,7 +39,7 @@ public:
 	const ofNode& getTarget() const;
 
 	/// \}
-	/// \name Getters
+	/// \name Getters and Setters
 	/// \{
 
     /// \brief Set the camera's distance to the target.
@@ -62,10 +62,6 @@ public:
     /// \returns the camera's drag coefficient.
 	float getDrag() const;
 
-	/// \}
-	/// \name Setters
-	/// \{
-
 	/// \brief Enable or disable camera autodistance.
     ///
     /// Allow the camera to attempt to set the distance based on the camera's
@@ -83,11 +79,12 @@ public:
 	/// degrees.
 	/// \param value Scales the xyz axes rotation factor by these values.
 	void setRotationSensitivity(float x, float y, float z);
-    
+	void setRotationSensitivity(const glm::vec3& sensitivity);
+	
     /// \brief Set the input sensitivity of the translation.
     /// \param value Scales the xyz axes translation factor by these values.
     void setTranslationSensitivity(float x, float y, float z);
-		
+	void setTranslationSensitivity(const glm::vec3& sensitivity);
     /// \brief Set the key used to switch between camera rotation and translation.
     ///
     /// Translation will only happen when the translation key is pressed.
@@ -163,6 +160,20 @@ public:
 	/// Returns the area bounds used for mouse control.
 	ofRectangle getControlArea() const;
 	
+	/// Transformation types available for mouse interaction.
+	enum TransformType{
+		TRANSFORM_NONE,
+		TRANSFORM_ROTATE,
+		TRANSFORM_TRANSLATE_XY,
+		TRANSFORM_TRANSLATE_Z,
+		TRANSFORM_SCALE
+	};
+
+	void addInteraction(TransformType type, int mouseButton, int key = -1);
+	void removeInteraction(TransformType type, int mouseButton, int key = -1);
+	bool hasInteraction(TransformType type, int mouseButton, int key = -1);
+	bool hasInteraction(int mouseButton, int key);
+	void removeAllInteractions();
 private:
 	void setDistance(float distance, bool save);
 
@@ -170,35 +181,35 @@ private:
 
 	bool bEnableMouseMiddleButton = true;
 	bool bApplyInertia = false;
-	bool bDoTranslate = false;
-	bool bDoRotate = false;
-	bool bDoScrollZoom = false;
-	bool bIsBeingScrolled = false;
+	
 	bool bInsideArcball = false;
-	bool bMouseInputEnabled = false;
+	bool bMouseInputEnabled = true;
 	bool bDistanceSet = false;
 	bool bAutoDistance = true;
 	bool bEventsSet = false;
+	bool bIsScrolling = false;
 	float lastDistance = 0.f;
 
+	
 	float drag = 0.9f;
 	
-	float xRot = 0.0f;
-	float yRot = 0.0f;
-	float zRot = 0.0f;
+	/// rot and translated are used as a temporary values shared between the mouse callbacks and the update method.
+	/// How much the camera needs to be rotated.
+	glm::vec3 rot;
+	/// How much the camera needs to be translated.
+	glm::vec3 translate;
 	
-	float moveX = 0.0f;
-	float moveY = 0.0f;
-	float moveZ = 0.0f;
-	
-	float sensitivityX = 1.0f;
-	float sensitivityY = 1.0f;
-	float sensitivityZ = 1.0f;
-	float sensitivityRotX = 1.0f;
-	float sensitivityRotY = 1.0f;
-	float sensitivityRotZ = 1.0f;
+	/// \brief Sensitivity
+	/// These varibles determine how sensitive is the interaction.
+	/// High values mean faster and bigger movements/rotations.
+	/// Low Values mean more presicion.
+	glm::vec3 sensitivityTranslate;
+	glm::vec3 sensitivityRot;
+	float     sensitivityScroll = 1.0f;
 
-	glm::vec2 lastMouse, prevMouse;
+	/// \brief The previous mouse position.
+	glm::vec2 prevMouse;
+	/// \brief The mouse velocity (mouse position delta).
 	glm::vec2 mouseVel;
 	
 	void updateRotation();
@@ -206,9 +217,9 @@ private:
 	void update(ofEventArgs & args);
 	void mousePressed(ofMouseEventArgs & mouse);
 	void mouseReleased(ofMouseEventArgs & mouse);
-	void mouseDragged(ofMouseEventArgs & mouse);
 	void mouseScrolled(ofMouseEventArgs & mouse);
-	void updateMouse(const ofMouseEventArgs & mouse);
+	void updateMouse(const glm::vec2 & mouse);
+	/// \brief Returns the up axis vector;
 	glm::vec3 up() const;
 
     /// \brief The key used to differentiate between translation and rotation.
@@ -219,22 +230,21 @@ private:
 
     /// \brief The current rotation quaternion.
 	glm::quat curRot;
+	
+	/// \name On Press cache
+	/// \{
+	/// \brief camera properties when the mouse is pressed.
 
-    /// \brief The previous X axis.
-	glm::vec3 prevAxisX;
-
-    /// \brief The previous Y axis.
-	glm::vec3 prevAxisY;
-
-    /// \brief The previous Z axis.
-	glm::vec3 prevAxisZ;
-
-    /// \brief the previous camera position.
-	glm::vec3 prevPosition;
-
-    /// \brief The previous camera orientation.
-	glm::quat prevOrientation;
-
+	glm::vec3 lastPressAxisX;
+	glm::vec3 lastPressAxisY;
+	glm::vec3 lastPressAxisZ;
+	glm::vec3 lastPressPosition;
+	glm::quat lastPressOrientation;
+	glm::vec2 lastPressMouse;
+	
+	/// \}
+	
+	/// \brief the current viewport.
 	ofRectangle viewport;
 
 	/// \brief If set, the area mouse control is bound to.
@@ -243,7 +253,23 @@ private:
 	std::vector<ofEventListener> listeners;
 	ofCoreEvents * events = nullptr;
 
-	bool relativeYAxis = false;
+	bool bRelativeYAxis = false;
 	bool doInertia = false;
 	glm::vec3 upAxis{0,1,0};
+	
+	glm::vec2 mouseAtScroll;
+	
+	/// \brief previous far and near clip.
+	float prevFarClip, prevNearClip;
+	
+	TransformType currentTransformType;
+	/// \brief This struct holds the combination of mouse button and key press that will trigger a specific interaction.
+	struct interaction{
+		interaction():mouseButton(0), key(-1), transformType(TRANSFORM_NONE){}
+		interaction(TransformType type, int _mouseButton, int _key = -1):mouseButton(_mouseButton), key(_key), transformType(type){}
+		int mouseButton;
+		int key;
+		TransformType transformType;
+	};
+	std::vector<interaction> interactions;
 };

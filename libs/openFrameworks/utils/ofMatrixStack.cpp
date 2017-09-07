@@ -9,6 +9,8 @@
 #include "ofAppBaseWindow.h"
 #include "ofBaseTypes.h"
 
+using namespace std;
+
 ofMatrixStack::ofMatrixStack(const ofAppBaseWindow * window)
 :vFlipped(true)
 ,orientation(OF_ORIENTATION_DEFAULT)

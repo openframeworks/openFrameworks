@@ -12,7 +12,7 @@ ofPolyline_<T>::ofPolyline_(){
 
 //----------------------------------------------------------
 template<class T>
-ofPolyline_<T>::ofPolyline_(const vector<T>& verts){
+ofPolyline_<T>::ofPolyline_(const std::vector<T>& verts){
     setRightVector();
 	clear();
 	addVertices(verts);
@@ -57,7 +57,7 @@ void ofPolyline_<T>::addVertex(float x, float y, float z) {
 
 //----------------------------------------------------------
 template<class T>
-void ofPolyline_<T>::addVertices(const vector<T>& verts) {
+void ofPolyline_<T>::addVertices(const std::vector<T>& verts) {
 	curveVertices.clear();
 	points.insert( points.end(), verts.begin(), verts.end() );
     flagHasChanged();
@@ -151,14 +151,14 @@ void ofPolyline_<T>::flagHasChanged() {
 
 //----------------------------------------------------------
 template<class T>
-vector<T> & ofPolyline_<T>::getVertices(){
+std::vector<T> & ofPolyline_<T>::getVertices(){
     flagHasChanged();
 	return points;
 }
 
 //----------------------------------------------------------
 template<class T>
-const vector<T> & ofPolyline_<T>::getVertices() const {
+const std::vector<T> & ofPolyline_<T>::getVertices() const {
 	return points;
 }
 
@@ -335,7 +335,7 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
     
     // if the delta angle is in the CCW direction OR the start and stop angles are
     // effectively the same adjust the remaining angle to be a be a full rotation
-    if(deltaAngle < 0 || abs(deltaAngle) < epsilon) remainingAngle += M_TWO_PI;
+    if(deltaAngle < 0 || std::abs(deltaAngle) < epsilon) remainingAngle += M_TWO_PI;
     
 	T radii(radiusX, radiusY, 0.f);
 	T point;
@@ -361,7 +361,7 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
             float firstPointDelta = atan2(sin(d),cos(d)); // negative is in the clockwise direction
             
             // if the are "equal", get the next one CCW
-            if(abs(firstPointDelta) < epsilon) {
+            if(std::abs(firstPointDelta) < epsilon) {
                 currentLUTIndex = clockwise ? (currentLUTIndex + 1) : (currentLUTIndex - 1);
                 firstPointDelta = segmentArcSize; // we start at the next lut point
             }
@@ -453,7 +453,7 @@ ofPolyline_<T> ofPolyline_<T>::getSmoothed(int smoothingSize, float smoothingSha
 	smoothingShape = ofClamp(smoothingShape, 0, 1);
 	
 	// precompute weights and normalization
-	vector<float> weights;
+	std::vector<float> weights;
 	weights.resize(smoothingSize);
 	// side weights
 	for(int i = 1; i < smoothingSize; i++) {
@@ -739,13 +739,13 @@ void ofPolyline_<T>::simplify(float tol){
 		return;
 	}
 
-	vector <T> sV;
+	std::vector <T> sV;
 	sV.resize(n);
     
     int    i, k, m, pv;            // misc counters
     float  tol2 = tol * tol;       // tolerance squared
-	vector<T> vt;
-    vector<int> mk;
+    std::vector<T> vt;
+    std::vector<int> mk;
     vt.resize(n);
 	mk.resize(n,0);
     
@@ -1119,49 +1119,49 @@ void ofPolyline_<T>::updateCache(bool bForceUpdate) const {
 
 //--------------------------------------------------
 template<class T>
-typename vector<T>::iterator ofPolyline_<T>::begin(){
+typename std::vector<T>::iterator ofPolyline_<T>::begin(){
 	return points.begin();
 }
 
 //--------------------------------------------------
 template<class T>
-typename vector<T>::iterator ofPolyline_<T>::end(){
+typename std::vector<T>::iterator ofPolyline_<T>::end(){
 	return points.end();
 }
 
 //--------------------------------------------------
 template<class T>
-typename vector<T>::const_iterator ofPolyline_<T>::begin() const{
+typename std::vector<T>::const_iterator ofPolyline_<T>::begin() const{
 	return points.begin();
 }
 
 //--------------------------------------------------
 template<class T>
-typename vector<T>::const_iterator ofPolyline_<T>::end() const{
+typename std::vector<T>::const_iterator ofPolyline_<T>::end() const{
 	return points.end();
 }
 
 //--------------------------------------------------
 template<class T>
-typename vector<T>::reverse_iterator ofPolyline_<T>::rbegin(){
+typename std::vector<T>::reverse_iterator ofPolyline_<T>::rbegin(){
 	return points.rbegin();
 }
 
 //--------------------------------------------------
 template<class T>
-typename vector<T>::reverse_iterator ofPolyline_<T>::rend(){
+typename std::vector<T>::reverse_iterator ofPolyline_<T>::rend(){
 	return points.rend();
 }
 
 //--------------------------------------------------
 template<class T>
-typename vector<T>::const_reverse_iterator ofPolyline_<T>::rbegin() const{
+typename std::vector<T>::const_reverse_iterator ofPolyline_<T>::rbegin() const{
 	return points.rbegin();
 }
 
 //--------------------------------------------------
 template<class T>
-typename vector<T>::const_reverse_iterator ofPolyline_<T>::rend() const{
+typename std::vector<T>::const_reverse_iterator ofPolyline_<T>::rend() const{
 	return points.rend();
 }
 

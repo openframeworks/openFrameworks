@@ -78,8 +78,8 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 public:
     ofSoundPlayer();
 
-    void setPlayer(shared_ptr<ofBaseSoundPlayer> newPlayer);
-    shared_ptr<ofBaseSoundPlayer> getPlayer();
+    void setPlayer(std::shared_ptr<ofBaseSoundPlayer> newPlayer);
+    std::shared_ptr<ofBaseSoundPlayer> getPlayer();
 
     /// \brief Tells the sound player which file to play.
     ///
@@ -87,8 +87,8 @@ public:
     ///
     /// \param fileName Path to the sound file, relative to your app's data folder.
     /// \param stream set "true" to enable streaming from disk (for large files).
-    bool load(std::filesystem::path fileName, bool stream = false);
-    OF_DEPRECATED_MSG("Use load",bool loadSound(string fileName, bool stream = false));
+    bool load(const std::filesystem::path& fileName, bool stream = false);
+    OF_DEPRECATED_MSG("Use load",bool loadSound(std::string fileName, bool stream = false));
 
     /// \brief Stops and unloads the current sound.
     void unload();
@@ -162,6 +162,6 @@ public:
     bool isLoaded() const;
 
 protected:
-    shared_ptr<ofBaseSoundPlayer> player;
+    std::shared_ptr<ofBaseSoundPlayer> player;
 
 };

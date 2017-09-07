@@ -101,15 +101,19 @@ linuxarmv7l:
 	ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoFoundation.a
 
 android/armeabi-v7a:
-	ADDON_LIBS = libs/poco/lib/android/armv7/libPocoNetSSL.a
-	ADDON_LIBS += libs/poco/lib/android/armv7/libPocoNet.a
-	ADDON_LIBS += libs/poco/lib/android/armv7/libPocoCrypto.a
-	ADDON_LIBS += libs/poco/lib/android/armv7/libPocoUtil.a
-	ADDON_LIBS += libs/poco/lib/android/armv7/libPocoJSON.a
-	ADDON_LIBS += libs/poco/lib/android/armv7/libPocoXML.a
-	ADDON_LIBS += libs/poco/lib/android/armv7/libPocoFoundation.a
+	ADDON_INCLUDES = libs/poco/include/%
+	ADDON_INCLUDES += src
+	ADDON_LIBS = libs/poco/lib/android/armeabi-v7a/libPocoNetSSL.a
+	ADDON_LIBS += libs/poco/lib/android/armeabi-v7a/libPocoNet.a
+	ADDON_LIBS += libs/poco/lib/android/armeabi-v7a/libPocoCrypto.a
+	ADDON_LIBS += libs/poco/lib/android/armeabi-v7a/libPocoUtil.a
+	ADDON_LIBS += libs/poco/lib/android/armeabi-v7a/libPocoJSON.a
+	ADDON_LIBS += libs/poco/lib/android/armeabi-v7a/libPocoXML.a
+	ADDON_LIBS += libs/poco/lib/android/armeabi-v7a/libPocoFoundation.a
 
 android/x86:
+	ADDON_INCLUDES = libs/poco/include/%
+	ADDON_INCLUDES += src
 	ADDON_LIBS = libs/poco/lib/android/x86/libPocoNetSSL.a
 	ADDON_LIBS += libs/poco/lib/android/x86/libPocoNet.a
 	ADDON_LIBS += libs/poco/lib/android/x86/libPocoCrypto.a

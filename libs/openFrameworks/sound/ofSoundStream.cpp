@@ -23,6 +23,8 @@ namespace{
     ofSoundStream systemSoundStream;
 }
 
+using namespace std;
+
 //------------------------------------------------------------
 bool ofSoundStreamSettings::setInDevice(const ofSoundDevice & device){
 	if(api!=ofSoundDevice::UNSPECIFIED && device.api!=api){
@@ -142,7 +144,7 @@ vector<ofSoundDevice> ofSoundStreamListDevices(){
 //------------------------------------------------------------
 ofSoundStream::ofSoundStream(){
 	#ifdef OF_SOUND_STREAM_TYPE
-		setSoundStream( shared_ptr<OF_SOUND_STREAM_TYPE>(new OF_SOUND_STREAM_TYPE) );
+		setSoundStream(std::make_shared<OF_SOUND_STREAM_TYPE>());
 	#endif
 }
 
