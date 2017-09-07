@@ -9,7 +9,7 @@ if "%BUILDER%"=="VS" (
     set PG_OF_PATH=%APPVEYOR_BUILD_FOLDER%\..\openFrameworks
     %MSYS2_PATH%\usr\bin\bash -lc "scripts/vs/download_libs.sh --silent"
     echo "Downloading projectGenerator from ci server"
-    %MSYS2_PATH%\usr\bin\bash -lc "wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip -nv"
+    %MSYS2_PATH%\usr\bin\bash -lc "curl -L --retry 20 -O --progress http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip -nv"
     %MSYS2_PATH%\usr\bin\bash -lc "unzip -qq projectGenerator-vs.zip"
     rm projectGenerator-vs.zip
     if exist addons\%APPVEYOR_PROJECT_NAME%\scripts\ci\vs\install.sh call %MSYS2_PATH%\usr\bin\bash -lc "source addons/%APPVEYOR_PROJECT_NAME%/scripts/ci/vs/install.sh"
@@ -27,7 +27,7 @@ if "%BUILDER%"=="MSYS2" (
         copy scripts\templates\msys2\Makefile %%e\Makefile
         copy scripts\templates\msys2\config.make %%e\config.make
     )
-    if exist addons\%APPVEYOR_PROJECT_NAME%\scripts\ci\msys2\install.sh ( 
-        %MSYS2_PATH%\usr\bin\bash -lc "addons/%APPVEYOR_PROJECT_NAME%/scripts/ci/msys2/install.sh" 
-    ) 
+    if exist addons\%APPVEYOR_PROJECT_NAME%\scripts\ci\msys2\install.sh (
+        %MSYS2_PATH%\usr\bin\bash -lc "addons/%APPVEYOR_PROJECT_NAME%/scripts/ci/msys2/install.sh"
+    )
 )

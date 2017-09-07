@@ -70,7 +70,7 @@ mv /var/www/versions/nightly/of_v${lastversion}_android_release.tar.gz /var/www/
 mv /var/www/versions/nightly/of_v${lastversion}_linuxarmv6l_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linuxarmv6l_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linuxarmv7l_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linuxarmv7l_nightly.tar.gz
 
-echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'> /var/www/nightlybuilds.html
 echo '<html>' >> /var/www/nightlybuilds.html
 echo '<head>' >> /var/www/nightlybuilds.html
@@ -91,9 +91,9 @@ done
 echo '</body>' >> /var/www/nightlybuilds.html
 echo '</html>' >> /var/www/nightlybuilds.html
 
-#wget http://openframeworks.cc/nightly_hook.php?version=${lastversion} -O /dev/null
+#curl -L --retry 20 -O --progress http://openframeworks.cc/nightly_hook.php?version=${lastversion} -O /dev/null
 
-echo 
+echo
 echo
 echo "Successfully created nightly builds for ${lastversion}"
 echo

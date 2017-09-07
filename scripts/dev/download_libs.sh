@@ -30,7 +30,7 @@ EOF
 
 download(){
     echo "Downloading $1"
-    wget ci.openframeworks.cc/libs/$1 $SILENT_ARGS
+    curl -L --retry 20 -O --progress ci.openframeworks.cc/libs/$1 $SILENT_ARGS
 }
 
 # trap any script errors and exit
