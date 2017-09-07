@@ -55,7 +55,7 @@ mkdir -p /var/www/versions/v${version}
 mv *.tar.gz /var/www/versions/v${version}
 mv *.zip /var/www/versions/v${version}
 
-wget http://openframeworks.cc/release_hook.php?version=${version} -O /dev/null
+curl -L --retry 20 -O --progress http://openframeworks.cc/release_hook.php?version=${version} -O /dev/null
 
 cd $(cat ~/.ofprojectgenerator/config)
 git checkout master

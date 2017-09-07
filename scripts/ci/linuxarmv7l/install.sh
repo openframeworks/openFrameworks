@@ -27,7 +27,7 @@ createArchImg(){
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
 		junest -u << EOF
 			cd ~
-			wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+			curl -L --retry 20 -O --progress http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
 			mkdir archlinux
 		    tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C archlinux/ 2> /dev/null
 			sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g archlinux/etc/pacman.conf
@@ -50,11 +50,11 @@ downloadToolchain(){
 		if [ -f x-tools7h.tar.xz ]; then
 			rm x-tools7h.tar.xz
 		fi
-		wget http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
+		curl -L --retry 20 -O --progress http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
 	    tar -x --delay-directory-restore --no-same-owner -f x-tools7h.tar.xz -C ~/
 	    rm x-tools7h.tar.xz
 EOF
-        #wget http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
+        #curl -L --retry 20 -O --progress http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
         #tar xjf rpi2_toolchain.tar.bz2 -C ~/
         #rm rpi2_toolchain.tar.bz2
     fi
@@ -65,7 +65,7 @@ downloadFirmware(){
         echo "Using cached RPI2 firmware-master"
     else
         cd ~
-        wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+        curl -L --retry 20 -O --progress https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
         unzip firmware.zip
     fi
     ${SUDO} cp -r ~/firmware-master/opt archlinux/
@@ -94,7 +94,7 @@ relativeSoftLinks(){
 
 installRtAudio(){
     #cd $ROOT
-    #wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-4.1.1.tar.gz
+    #curl -L --retry 20 -O --progress http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-4.1.1.tar.gz
     #tar xzf rtaudio-4.1.1.tar.gz
     #cd rtaudio-4.1.1
     #./configure --host=${GCC_PREFIX}
@@ -108,7 +108,7 @@ installRtAudio(){
     #rm rtaudio-4.1.1.tar.gz
     #rm -r rtaudio-4.1.1
     cd ~/archlinux
-    wget http://ci.openframeworks.cc/rtaudio-armv7hf.tar.bz2
+    curl -L --retry 20 -O --progress http://ci.openframeworks.cc/rtaudio-armv7hf.tar.bz2
     tar xjf rtaudio-armv7hf.tar.bz2
     rm rtaudio-armv7hf.tar.bz2
 }

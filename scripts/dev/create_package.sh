@@ -2,7 +2,7 @@
 # $1 -> platform: msys2, linux, linux64, vs, osx, ios, all
 # $2 -> version number: 006
 #
-# This script removes folders clones the openFrameworks repo 
+# This script removes folders clones the openFrameworks repo
 # and deletes parts of it to create the final package.
 # Do not try to modify it to run over your local install of
 # openFrameworks or it'll remove it along with any projects it
@@ -35,7 +35,7 @@ PG_BRANCH=$branch
 hostArch=`uname`
 
 if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ]; then
-    echo usage: 
+    echo usage:
     echo ./create_package.sh platform version
     echo platform:
     echo msys2, linux, linux64, linuxarmv6l, linuxarmv7l, vs, osx, android, ios, all
@@ -43,11 +43,11 @@ if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != 
 fi
 
 if [ "$version" == "" ]; then
-    echo usage: 
+    echo usage:
     echo ./create_package.sh platform version [branch]
     echo platform:
     echo msys2, linux, linux64, vs, osx, android, ios, all
-    echo 
+    echo
     echo branch:
     echo master, stable
     exit 1
@@ -61,7 +61,7 @@ echo "Creating package $version for $platform $libs_abi"
 echo --------------------------------------------------------------------------
 echo
 
-# This script removes folders clones the openFrameworks repo 
+# This script removes folders clones the openFrameworks repo
 # and deletes parts of it to create the final package.
 # Do not try to modify it to run over your local install of
 # openFrameworks or it'll remove it along with any projects it
@@ -71,7 +71,7 @@ echo
 pkgfolder=openFrameworks_pkg_creation
 
 rm -rf ${pkgfolder}
-echo "Cloning OF from $REPO $BRANCH" 
+echo "Cloning OF from $REPO $BRANCH"
 git clone $REPO --depth=1 --branch=$BRANCH ${pkgfolder} 2> /dev/null
 gitfinishedok=$?
 if [ $gitfinishedok -ne 0 ]; then
@@ -83,7 +83,7 @@ cd ${pkgfolder}
 packageroot=$PWD
 
 cd apps
-echo "Cloning project generator from $PG_REPO $PG_BRANCH" 
+echo "Cloning project generator from $PG_REPO $PG_BRANCH"
 git clone $PG_REPO --depth=1 --branch=$PG_BRANCH 2> /dev/null
 gitfinishedok=$?
 if [ $gitfinishedok -ne 0 ]; then
@@ -155,16 +155,16 @@ function createPackage {
     pkg_version=$2
     pkg_ofroot=$3
     main_ofroot=$4
-    
-    #remove previously created package 
+
+    #remove previously created package
     cd $pkg_ofroot/..
 	rm -Rf of_v${pkg_version}_${pkg_platform}${libs_abi}.*
 	rm -Rf of_v${pkg_version}_${pkg_platform}${libs_abi}_*
     echo "Creating package $pkg_platform $version in $pkg_ofroot"
-    
+
     #remove devApps folder
     rm -r $pkg_ofroot/apps/devApps
-    
+
     #remove projectGenerator folder
     if [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "msys2" ]; then
     	rm -rf $pkg_ofroot/apps/projectGenerator
@@ -173,18 +173,18 @@ function createPackage {
 	cd $pkg_ofroot/examples
 
 	#delete ios examples in other platforms
-	if [ "$pkg_platform" != "ios" ]; then 
+	if [ "$pkg_platform" != "ios" ]; then
 		rm -Rf ios
 		rm -Rf tvOS
 	fi
 
 	#delete android examples in other platforms
-	if [ "$pkg_platform" != "android" ]; then 
+	if [ "$pkg_platform" != "android" ]; then
 		rm -Rf android
 	fi
 
 	#delete desktop examples in mobile packages
-	if [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "ios" ]; then 
+	if [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "ios" ]; then
 		rm -Rf 3d
 		rm -Rf communication
 		rm -Rf computer_vision
@@ -201,25 +201,25 @@ function createPackage {
 		rm -Rf templates
 		rm -Rf threads
 		rm -Rf video
-	fi 
-	
+	fi
+
 	#delete osx examples in linux
 	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ] || [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
 	    rm -Rf video/osxHighPerformanceVideoPlayerExample
 	    rm -Rf video/osxVideoRecorderExample
 	fi
-	
+
 	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ]; then
 	    rm -Rf gles
 	fi
-	
+
 	if [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
 	    rm -Rf addons/3DModelLoaderExample
         rm -Rf addons/allAddonsExample
         rm -Rf addons/assimpExample
         rm -Rf addons/kinectExample
         rm -Rf addons/vectorGraphicsExample
-        
+
 	    rm -Rf gl/glInfoExample
         rm -Rf gl/alphaMaskingShaderExample
         rm -Rf gl/billboardExample
@@ -235,40 +235,40 @@ function createPackage {
         rm -Rf gl/pixelBufferExample
         rm -Rf gl/textureBufferInstancedExample
         rm -Rf gl/threadedPixelBufferExample
-  
+
         rm -Rf utils/systemSpeakExample
         rm -Rf utils/fileBufferLoadingCSVExample
-        
+
         rm -Rf 3d/modelNoiseExample
     fi
-    
+
     if [ "$pkg_platform" == "linuxarmv6l" ]; then
         rm -Rf utils/dragDropExample
         rm -Rf utils/fileOpenSaveDialogExample
 	fi
-	
+
 	if [ "$pkg_platform" == "msys2" ] || [ "$pkg_platform" == "vs" ]; then
 	    rm -Rf video/osxHighPerformanceVideoPlayerExample
 	    rm -Rf video/osxVideoRecorderExample
 	    rm -Rf gles
 	fi
-	
+
 	if [ "$pkg_platform" == "osx" ]; then
 	    rm -Rf gles
 	    rm -Rf gl/computeShaderParticlesExample
 	    rm -Rf gl/computeShaderTextureExample
 	fi
-	
-	
-	
+
+
+
 	#delete tutorials by now
 	rm -Rf $pkg_ofroot/tutorials
-    
-	
-	
+
+
+
     #create project files for platform
     createProjectFiles $pkg_platform $pkg_ofroot
-	
+
 
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
@@ -282,11 +282,11 @@ function createPackage {
     if [ "$pkg_platform" = "linuxarmv6l" ]; then
         otherplatforms="linux64 linux linuxarmv7l osx msys2 vs ios tvos android"
     fi
-    
+
     if [ "$pkg_platform" = "linuxarmv7l" ]; then
         otherplatforms="linux64 linux linuxarmv6l osx msys2 vs ios tvos android"
     fi
-    
+
     if [ "$pkg_platform" = "osx" ]; then
         otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs ios tvos android"
     fi
@@ -306,8 +306,8 @@ function createPackage {
     if [ "$pkg_platform" = "android" ]; then
         otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 vs ios tvos"
     fi
-    
-    
+
+
 	#download and uncompress PG
 	echo "Creating projectGenerator"
 	mkdir -p $HOME/.tmp
@@ -320,7 +320,7 @@ function createPackage {
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
 		cd ${pkg_ofroot}/projectGenerator-vs/resources/app/app/
-		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip 2> /dev/null
+		curl -L --retry 20 -O --progress http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip 2> /dev/null
 		unzip projectGenerator-vs.zip 2> /dev/null
 		rm projectGenerator-vs.zip
 		cd ${pkg_ofroot}
@@ -333,7 +333,7 @@ function createPackage {
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-osx
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
-		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
+		curl -L --retry 20 -O --progress http://ci.openframeworks.cc/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
 		sed -i "s/osx/osx/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
     if [ "$pkg_platform" = "ios" ]; then
@@ -343,10 +343,10 @@ function createPackage {
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-ios
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
-		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator_osx -O projectGenerator-ios/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
+		curl -L --retry 20 -O --progress http://ci.openframeworks.cc/projectGenerator/projectGenerator_osx -O projectGenerator-ios/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
 		sed -i "s/osx/ios/g" projectGenerator-ios/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
-	
+
 	if [ "$pkg_platform" = "linux" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
 		npm install > /dev/null
@@ -355,7 +355,7 @@ function createPackage {
 		cd ${pkg_ofroot}
 		sed -i "s/osx/linux/g" projectGenerator-linux/resources/app/settings.json
 	fi
-	
+
 	if [ "$pkg_platform" = "linux64" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
 		npm install > /dev/null
@@ -364,7 +364,7 @@ function createPackage {
 		cd ${pkg_ofroot}
 		sed -i "s/osx/linux64/g" projectGenerator-linux64/resources/app/settings.json
 	fi
-	
+
 	# linux remove other platform projects from PG source and copy ofxGui
 	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
 	    cd ${pkg_ofroot}
@@ -401,7 +401,7 @@ function createPackage {
     elif [ "$pkg_platform" = "ios" ]; then
         scripts/ios/download_libs.sh
     fi
-    
+
 	#delete ofxAndroid in non android
 	if [ "$pkg_platform" != "android" ]; then
 		rm -Rf ofxAndroid
@@ -413,20 +413,20 @@ function createPackage {
 		rm -Rf ofxiOS
 		rm -Rf ofxUnitTests
 	fi
-	
+
 	#delete ofxMultiTouch & ofxAccelerometer in non mobile
 	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "ios" ]; then
 		rm -Rf ofxMultiTouch
 		rm -Rf ofxAccelerometer
 		rm -Rf ofxUnitTests
 	fi
-	
+
 	if [ "$pkg_platform" == "ios" ] || [ "$pkg_platform" == "android" ]; then
 	    rm -Rf ofxVectorGraphics
    	    rm -Rf ofxKinect
 		rm -Rf ofxUnitTests
 	fi
-	
+
 	#delete unit tests by now
 	rm -Rf ${pkg_ofroot}/tests
 
@@ -438,7 +438,7 @@ function createPackage {
     		rm -R libs/openFrameworks/.settings
     	fi
 	fi
-	
+
 	#android, move paths.default.make to paths.make
 	if [ "$pkg_platform" == "android" ]; then
 	    cd ${pkg_ofroot}
@@ -458,12 +458,12 @@ function createPackage {
 	else
     	rm -Rf msys2 vs osx ios
 	fi
-	
+
     #delete omap4 scripts for non armv7l
 	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv6l" ]; then
 	    rm -Rf linux/ubuntu-omap4
 	fi
-	
+
 	if [ "$pkg_platform" == "ios" ]; then
 		rm -Rf osx
 	fi
@@ -471,8 +471,8 @@ function createPackage {
     #delete .svn dirs
     cd $pkg_ofroot
     rm -Rf $(find . -type d -name .svn)
-    
-    #delete .gitignore 
+
+    #delete .gitignore
     cd $pkg_ofroot
     rm -Rf $(find . -name .gitignore -not -path "scripts/templates/*")
     
@@ -489,21 +489,21 @@ function createPackage {
     echo ----------------------------------------------------------------------
     echo
     echo
-    
+
     #choose readme
     cd $pkg_ofroot
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarmv6l" ] || [ "$platform" = "linuxarmv7l" ]; then
         cp docs/linux.md INSTALL.md
     fi
-    
+
     if [ "$platform" = "vs" ]; then
         cp docs/visualstudio.md INSTALL.md
     fi
-    
+
     if [ "$platform" = "msys2" ]; then
         cp docs/msys2.md INSTALL.md
     fi
-    
+
     if [ "$platform" = "osx" ] || [ "$platform" = "ios" ]; then
         cp docs/osx.md INSTALL.md
     fi
@@ -512,12 +512,12 @@ function createPackage {
         cp docs/android_eclipse.md INSTALL_ECLIPSE.md
         cp docs/android_studio.md INSTALL_ANDROID_STUDIO.md
     fi
-    
+
     rm CONTRIBUTING.md
 
     #copy empty example
     cd $pkg_ofroot
-    mkdir -p apps/myApps 
+    mkdir -p apps/myApps
     if [ "$pkg_platform" = "android" ]; then
         cp -r examples/android/androidEmptyExample apps/myApps/
     elif [ "$pkg_platform" = "ios" ]; then
@@ -525,7 +525,7 @@ function createPackage {
     else
         cp -r examples/templates/emptyExample apps/myApps/
     fi
-    
+
     #create compressed package
     if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
         echo "compressing package to of_v${pkg_version}_${pkg_platform}${libs_abi}_release.tar.gz"
@@ -550,8 +550,8 @@ set -o nounset   # set -u : exit the script if you try to use an uninitialized v
 set -o errexit   # set -e : exit the script if any statement returns a non-true return value
 
 cleanup() {
-    cd $packageroot/..  
-    rm -rf ${pkgfolder} 
+    cd $packageroot/..
+    rm -rf ${pkgfolder}
     rm -rf $HOME/.tmp/npm*
 }
 trap cleanup 0
@@ -570,6 +570,6 @@ error() {
 }
 trap 'error ${LINENO}' ERR
 
-createPackage $platform $version $packageroot $of_root    
+createPackage $platform $version $packageroot $of_root
 
- 
+
