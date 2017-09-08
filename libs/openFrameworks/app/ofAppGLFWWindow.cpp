@@ -1477,26 +1477,35 @@ void ofAppGLFWWindow::char_cb(GLFWwindow* windowP_, uint32_t key){
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
+void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_, int w, int h) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
 
-    //detect if the window is running in a retina mode
-    int framebufferW, framebufferH;
+    // Detect if the window is running in a retina mode
+	
+    int framebufferW, framebufferH; // <- physical pixel extents
     glfwGetFramebufferSize(windowP_, &framebufferW, &framebufferH);
-    instance->pixelScreenCoordScale = framebufferW / w;
-
+	
+	int windowW, windowH; // <- screen coordinates, which may be scaled
+	glfwGetWindowSize(windowP_, &windowW, &windowH);
+	
+	// Find scale factor needed to transform from screen coordinates
+	// to physical pixel coordinates
+	instance->pixelScreenCoordScale = (float)framebufferW / (float)windowW;
+	
 	if(instance->windowMode == OF_WINDOW){
-		instance->windowW = w * instance->pixelScreenCoordScale;
-		instance->windowH = h * instance->pixelScreenCoordScale;
+		instance->windowW = framebufferW;
+		instance->windowH = framebufferH;
 	}
-	instance->currentW = w;
-	instance->currentH = h;
-	instance->events().notifyWindowResized(w*instance->pixelScreenCoordScale, h*instance->pixelScreenCoordScale);
+	
+	instance->currentW = windowW;
+	instance->currentH = windowH;
+	instance->events().notifyWindowResized(framebufferW, framebufferH);
 	instance->nFramesSinceWindowResized = 0;
 }
 
+//------------------------------------------------------------
 void ofAppGLFWWindow::framebuffer_size_cb(GLFWwindow* windowP_, int w, int h){
-	resize_cb(windowP_, w,h);
+	resize_cb(windowP_, w, h);
 }
 
 //--------------------------------------------
