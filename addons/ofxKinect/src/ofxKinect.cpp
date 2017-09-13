@@ -1143,7 +1143,7 @@ int ofxKinectContext::getDeviceIndex(string serial) {
 }
 
 
-int ofxKinectContext::getDeviceId(int index) {
+int ofxKinectContext::getDeviceId(unsigned int index) {
     if( index >= 0 && index < deviceList.size() ){
         return deviceList[index].id;
     }
