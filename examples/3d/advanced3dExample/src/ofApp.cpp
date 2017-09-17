@@ -56,12 +56,12 @@ void ofApp::setup(){
 
 	// top
 	camTop.scale = 20;
-	camTop.tilt(-90);
+	camTop.tiltDeg(-90);
 	cameras[2] = &camTop;
 
 	// left
 	camLeft.scale = 20;
-	camLeft.pan(-90);
+	camLeft.panDeg(-90);
 	cameras[3] = &camLeft;
 
 	//
