@@ -156,7 +156,7 @@ glm::mat4 ofCamera::getProjectionMatrix(ofRectangle viewport) const {
 	}else{
 		float aspect = forceAspectRatio ? aspectRatio : viewport.width/viewport.height;
 		auto projection = glm::perspective(ofDegToRad(fov), aspect, nearClip, farClip);
-		projection = glm::translate(projection, {-lensOffset.x, -lensOffset.y, 0.f});
+		projection = glm::translate(glm::mat4(), {-lensOffset.x, -lensOffset.y, 0.f}) * projection;
 		return projection;
 	}
 }
