@@ -8,7 +8,7 @@ void ofApp::setup(){
     //get back a list of devices.
     vector<ofVideoDevice> devices = vidGrabber.listDevices();
 
-    for(int i = 0; i < devices.size(); i++){
+    for(size_t i = 0; i < devices.size(); i++){
         if(devices[i].bAvailable){
             //log the device
             ofLogNotice() << devices[i].id << ": " << devices[i].deviceName;
@@ -35,7 +35,7 @@ void ofApp::update(){
 
     if(vidGrabber.isFrameNew()){
         ofPixels & pixels = vidGrabber.getPixels();
-        for(int i = 0; i < pixels.size(); i++){
+        for(size_t i = 0; i < pixels.size(); i++){
             //invert the color of the pixel
             videoInverted[i] = 255 - pixels[i];
         }

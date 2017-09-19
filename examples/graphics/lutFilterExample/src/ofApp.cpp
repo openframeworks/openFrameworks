@@ -84,8 +84,8 @@ void ofApp::loadLUT(string path){
 void ofApp::applyLUT(ofPixelsRef pix){
 	if (LUTloaded) {
 		
-		for(int y = 0; y < pix.getHeight(); y++){
-			for(int x = 0; x < pix.getWidth(); x++){
+		for(size_t y = 0; y < pix.getHeight(); y++){
+			for(size_t x = 0; x < pix.getWidth(); x++){
 				
 				ofColor color = pix.getColor(x, y);
 				
