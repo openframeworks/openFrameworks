@@ -253,7 +253,7 @@ void ofxAssimpModelLoader::loadGLResources(){
             
             ofxAssimpTexture assimpTexture;
             bool bTextureAlreadyExists = false;
-            for(int j=0; j<textures.size(); j++) {
+            for(unsigned int j=0; j<textures.size(); j++) {
                 assimpTexture = textures[j];
                 if(assimpTexture.getTexturePath() == realPath) {
                     bTextureAlreadyExists = true;
@@ -513,7 +513,7 @@ unsigned int ofxAssimpModelLoader::getAnimationCount(){
     return animations.size();
 }
 
-ofxAssimpAnimation & ofxAssimpModelLoader::getAnimation(int animationIndex) {
+ofxAssimpAnimation & ofxAssimpModelLoader::getAnimation(unsigned int animationIndex) {
     animationIndex = ofClamp(animationIndex, 0, animations.size()-1);
     return animations[animationIndex];
 }
@@ -585,7 +585,7 @@ void ofxAssimpModelLoader::setTime(float time) {
 }
 
 // DEPRECATED.
-float ofxAssimpModelLoader::getDuration(int animationIndex) {
+float ofxAssimpModelLoader::getDuration(unsigned int animationIndex) {
     if(!hasAnimations()) {
         return 0;
     }
@@ -603,7 +603,7 @@ unsigned int ofxAssimpModelLoader::getMeshCount() {
     return modelMeshes.size();
 }
 
-ofxAssimpMeshHelper & ofxAssimpModelLoader::getMeshHelper(int meshIndex) {
+ofxAssimpMeshHelper & ofxAssimpModelLoader::getMeshHelper(unsigned int meshIndex) {
     meshIndex = ofClamp(meshIndex, 0, modelMeshes.size()-1);
     return modelMeshes[meshIndex];
 }
@@ -830,9 +830,9 @@ ofMesh ofxAssimpModelLoader::getMesh(string name){
 }
 
 //-------------------------------------------
-ofMesh ofxAssimpModelLoader::getMesh(int num){
+ofMesh ofxAssimpModelLoader::getMesh(unsigned int num){
 	ofMesh ofm;
-	if((int)scene->mNumMeshes<=num){
+	if(scene->mNumMeshes<=num){
 		ofLogError("ofxAssimpModelLoader") << "getMesh(): mesh id " << num
 		<< " out of range for total num meshes: " << scene->mNumMeshes;
 		return ofm;
@@ -865,8 +865,8 @@ ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(string name){
 }
 
 //-------------------------------------------
-ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(int num){
-	if((int)modelMeshes.size()<=num){
+ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(unsigned int num){
+	if(modelMeshes.size()<=num){
 		ofLogError("ofxAssimpModelLoader") << "getCurrentAnimatedMesh(): mesh id: " << num
 			<< "out of range for total num meshes: " << scene->mNumMeshes;
 		return ofMesh();
@@ -893,8 +893,8 @@ ofMaterial ofxAssimpModelLoader::getMaterialForMesh(string name){
 }
 
 //-------------------------------------------
-ofMaterial ofxAssimpModelLoader::getMaterialForMesh(int num){
-	if((int)modelMeshes.size()<=num){
+ofMaterial ofxAssimpModelLoader::getMaterialForMesh(unsigned int num){
+	if(modelMeshes.size()<=num){
 		ofLogError("ofxAssimpModelLoader") << "getMaterialForMesh(): mesh id: " << num
 			<< "out of range for total num meshes: " << scene->mNumMeshes;
 		return ofMaterial();
@@ -916,7 +916,7 @@ ofTexture ofxAssimpModelLoader::getTextureForMesh(string name){
 }
 
 //-------------------------------------------
-ofTexture ofxAssimpModelLoader::getTextureForMesh(int i){
+ofTexture ofxAssimpModelLoader::getTextureForMesh(unsigned int i){
 	if(i < modelMeshes.size()){
         if(modelMeshes[i].hasTexture()) {
         	return modelMeshes[i].getTextureRef();
@@ -978,8 +978,8 @@ int ofxAssimpModelLoader::getNumRotations(){
 }
 
 //-------------------------------------------
-ofPoint ofxAssimpModelLoader::getRotationAxis(int which){
-	if((int)rotAxis.size() > which){
+ofPoint ofxAssimpModelLoader::getRotationAxis(unsigned int which){
+	if(rotAxis.size() > which){
 		return rotAxis[which];
 	}else{
 		return ofPoint();
@@ -987,8 +987,8 @@ ofPoint ofxAssimpModelLoader::getRotationAxis(int which){
 }
 
 //-------------------------------------------
-float ofxAssimpModelLoader::getRotationAngle(int which){
-	if((int)rotAngle.size() > which){
+float ofxAssimpModelLoader::getRotationAngle(unsigned int which){
+	if(rotAngle.size() > which){
 		return rotAngle[which];
 	}else{
 		return 0.0;

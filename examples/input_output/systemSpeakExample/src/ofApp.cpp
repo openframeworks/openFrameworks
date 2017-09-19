@@ -31,17 +31,17 @@ void ofApp::threadedFunction() {
 
 		#ifdef TARGET_OSX
 			string cmd = "say -v "+voice+" "+words[step]+" ";   // create the command
-			system(cmd.c_str());
+			if(system(cmd.c_str())) {};
 		#endif
 		#ifdef TARGET_WIN32
 			string cmd = "data\\SayStatic.exe "+words[step];   // create the command
 			cout << cmd << endl;
-			system(cmd.c_str());
+			if(system(cmd.c_str())) {};
 		#endif
 		#ifdef TARGET_LINUX
 			string cmd = "echo "+words[step]+"|espeak";   // create the command
 			cout << cmd << endl;
-			system(cmd.c_str());
+			if(system(cmd.c_str())) {};
 		#endif
 
 		// step to the next word

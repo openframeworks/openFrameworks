@@ -38,7 +38,7 @@ class ofxAssimpModelLoader{
     
         bool hasAnimations();
         unsigned int getAnimationCount();
-        ofxAssimpAnimation & getAnimation(int animationIndex);
+        ofxAssimpAnimation & getAnimation(unsigned int animationIndex);
         void playAllAnimations();
         void stopAllAnimations();
         void resetAllAnimations();
@@ -48,11 +48,11 @@ class ofxAssimpModelLoader{
         OF_DEPRECATED_MSG("Use ofxAssimpAnimation instead", void setAnimation(int animationIndex));
         OF_DEPRECATED_MSG("Use ofxAssimpAnimation instead", void setNormalizedTime(float time));
         OF_DEPRECATED_MSG("Use ofxAssimpAnimation instead", void setTime(float time));
-        OF_DEPRECATED_MSG("Use ofxAssimpAnimation instead", float getDuration(int animationIndex));
+        OF_DEPRECATED_MSG("Use ofxAssimpAnimation instead", float getDuration(unsigned int animationIndex));
 
         bool hasMeshes();
         unsigned int getMeshCount();
-        ofxAssimpMeshHelper & getMeshHelper(int meshIndex);
+        ofxAssimpMeshHelper & getMeshHelper(unsigned int meshIndex);
     
         void clear();
     
@@ -68,16 +68,16 @@ class ofxAssimpModelLoader{
         int getNumMeshes();
 
         ofMesh getMesh(string name);
-        ofMesh getMesh(int num);
+        ofMesh getMesh(unsigned int num);
 
         ofMesh getCurrentAnimatedMesh(string name);
-        ofMesh getCurrentAnimatedMesh(int num);
+        ofMesh getCurrentAnimatedMesh(unsigned int num);
 
         ofMaterial getMaterialForMesh(string name);
-        ofMaterial getMaterialForMesh(int num);
+        ofMaterial getMaterialForMesh(unsigned int num);
 
         ofTexture getTextureForMesh(string name);
-        ofTexture getTextureForMesh(int num);
+        ofTexture getTextureForMesh(unsigned int num);
 
 
     	void drawWireframe();
@@ -105,8 +105,8 @@ class ofxAssimpModelLoader{
 		ofPoint	getSceneMax(bool bScaled = false);
 						
 		int	getNumRotations();	// returns the no. of applied rotations
-		ofPoint	getRotationAxis(int which); // gets each rotation axis
-		float getRotationAngle(int which); //gets each rotation angle
+		ofPoint	getRotationAxis(unsigned int which); // gets each rotation axis
+		float getRotationAngle(unsigned int which); //gets each rotation angle
 
         void calculateDimensions();
 
