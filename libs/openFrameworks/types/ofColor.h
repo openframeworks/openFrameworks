@@ -776,6 +776,7 @@ private:
 
 };
 
+
 /// \name Variants
 /// \{
 
