@@ -317,15 +317,17 @@ public:
 	///     range of 0 - plimit().
     void getHsb(float& hue, float& saturation, float& brightness) const;
 
-    /// \brief Get the maximum value of a color component.
-    ///
-    /// \returns The value associated with a fully saturated color component.
-	constexpr static float limit();
 
 	/// \brief Get the maximum value of a color component.
 	///
 	/// \returns The value associated with a fully saturated color component.
-	constexpr static PixelType plimit();
+	constexpr static float limit() {
+		return std::numeric_limits<PixelType>::max();
+	}
+
+	constexpr static PixelType plimit() {
+		return std::numeric_limits<PixelType>::max();
+	}
 
 	/// \brief Cast a float to this color type PixelType.
 	constexpr static PixelType fromFloat(float v){
@@ -830,11 +832,6 @@ ofColor_<PixelType> operator*(float val, const ofColor_<PixelType> &color) {
 	return color * val;
 }
 
-template<typename PixelType>
-constexpr float ofColor_<PixelType>::limit() {
-	return std::numeric_limits<PixelType>::max();
-}
-
 template<>
 constexpr float ofColor_<float>::limit() {
 	return 1.f;
@@ -843,11 +840,6 @@ constexpr float ofColor_<float>::limit() {
 template<>
 constexpr float ofColor_<double>::limit() {
 	return 1.;
-}
-
-template<typename PixelType>
-constexpr PixelType ofColor_<PixelType>::plimit() {
-	return std::numeric_limits<PixelType>::max();
 }
 
 template<>
