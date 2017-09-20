@@ -488,7 +488,7 @@ class ofLog{
 		/// \returns true if the given module is active at the given log level.
 		bool checkLog(ofLogLevel level, const std::string & module);
 	
-		static std::shared_ptr<ofBaseLoggerChannel> channel;	///< The target channel.
+		static std::shared_ptr<ofBaseLoggerChannel> & channel();	///< The target channel.
 	
 		/// \endcond
 	
