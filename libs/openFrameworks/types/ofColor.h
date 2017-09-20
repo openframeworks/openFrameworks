@@ -21,7 +21,7 @@ public:
     /// \{
 
     /// \brief Construct a default white color.
-    ofColor_():
+	constexpr ofColor_():
         r(limit()),
         g(limit()),
         b(limit()),
@@ -33,13 +33,23 @@ public:
     /// \param green The green component.
     /// \param blue The blue component.
     /// \param alpha The alpha component.
-    ofColor_(float red, float green, float blue, float alpha = limit());
+	constexpr ofColor_(PixelType red, PixelType green, PixelType blue, PixelType alpha = limit()):
+		r(red),
+		g(green),
+		b(blue),
+		a(alpha){
+	}
 
     /// \brief Construct a grayscale ofColor_ by specifying a single number.
     /// 
     /// \param gray A grayscale value.
     /// \param alpha The opacity of the color.
-    ofColor_(float gray, float alpha = limit());
+	constexpr ofColor_(PixelType gray, PixelType alpha = limit()):
+		r(gray),
+		g(gray),
+		b(gray),
+		a(alpha){
+	}
 
     /// \brief Construct an ofColor_ from an existing ofColor_.
     ///
@@ -49,13 +59,18 @@ public:
     ///
     /// \param color The ofColor_ to copy.
     template<typename SrcType>
-    ofColor_(const ofColor_<SrcType>& color);
+	ofColor_(const ofColor_<SrcType>& color);
 
     /// \brief Construct an ofColor_ from an existing ofColor_.
     ///
     /// \param color The ofColor_ to copy.
     /// \param alpha The new alpha value to replace the alpha value in color.
-    ofColor_(const ofColor_<PixelType>& color, float alpha);
+	constexpr ofColor_(const ofColor_<PixelType>& color, PixelType alpha):
+		r(color.r),
+		g(color.g),
+		b(color.b),
+		a(alpha){
+	}
 
     /// \brief Create an ofColor_ from an HSB representation.
     ///
@@ -66,13 +81,13 @@ public:
     static ofColor_<PixelType> fromHsb(float hue,
                                        float saturation,
                                        float brightness,
-                                       float alpha = limit());
+									   PixelType alpha = limit());
 
     /// \brief Create an ofColor_ from a hexadecimal value.
     ///
     /// \param hexColor A color in hexadecimal form.
     /// \param alpha The alpha value of the color.
-    static ofColor_<PixelType> fromHex(int hexColor, float alpha = limit());
+	static ofColor_<PixelType> fromHex(int hexColor, PixelType alpha = limit());
 
     /// \}
 
@@ -103,13 +118,13 @@ public:
     /// \param green The green component.
     /// \param blue The blue component.
     /// \param alpha The alpha component.
-    void set(float red, float green, float blue, float alpha = limit());
+	void set(PixelType red, PixelType green, PixelType blue, PixelType alpha = limit());
 
     /// \brief Set a grayscale ofColor_ by specifying a single number.
     ///
     /// \param gray A grayscale value.
     /// \param alpha The opacity of the color.
-    void set(float gray, float alpha = limit());
+	void set(PixelType gray, PixelType alpha = limit());
 
     /// \brief Set an ofColor_ from an existing ofColor_.
     ///
@@ -125,7 +140,7 @@ public:
     ///
     /// \param hexColor An RGB color in hexadecimal form.
     /// \param alpha The alpha value of the color.
-    void setHex(int hexColor, float alpha = limit());
+	void setHex(int hexColor, PixelType alpha = limit());
 
     /// \brief Set the hue of this color.
     ///
@@ -156,10 +171,10 @@ public:
     /// \param saturation A saturation value to set in the range of 0 - limit().
     /// \param brightness A brightness value to set in the range of 0 - limit().
     /// \param alpha An alpha value to set in the range of 0 - limit().
-    void setHsb(float hue,
+	void setHsb(float hue,
                 float saturation,
                 float brightness,
-                float alpha = limit());
+				PixelType alpha = limit());
 
     /// \}
 
@@ -305,7 +320,17 @@ public:
     /// \brief Get the maximum value of a color component.
     ///
     /// \returns The value associated with a fully saturated color component.
-    static float limit();
+	constexpr static float flimit();
+
+	/// \brief Get the maximum value of a color component.
+	///
+	/// \returns The value associated with a fully saturated color component.
+	constexpr static PixelType limit();
+
+	/// \brief Cast a float to this color type PixelType.
+	constexpr static PixelType fromFloat(float v){
+		return PixelType(float(std::numeric_limits<PixelType>::max()) * v);
+	}
 
     /// \}
 
@@ -330,7 +355,7 @@ public:
     ///
     /// \param value The grayscale value.
     /// \returns A reference to itself.
-    ofColor_<PixelType>& operator = (float value);
+	ofColor_<PixelType>& operator = (PixelType value);
 
     /// \brief Test two colors for equality.
 	///
@@ -498,6 +523,10 @@ public:
     ///
     /// \param value The divisor value.
     /// \returns A reference to itself, the new clamped color.
+
+	/// \brief Get the maximum value of a color component.
+	///
+	/// \returns The value associated with a fully saturated color component.
     ofColor_<PixelType>& operator /= (float value);
 
     /// \brief Array subscript operator.
@@ -588,28 +617,154 @@ public:
     /// [here](http://www.w3schools.com/cssref/css_colornames.asp).
     ///
     /// \{
-
-    static const ofColor_<PixelType> white, gray, black, red, green, blue, cyan, magenta,
-    yellow,aliceBlue,antiqueWhite,aqua,aquamarine,azure,beige,bisque,blanchedAlmond,
-    blueViolet,brown,burlyWood,cadetBlue,chartreuse,chocolate,coral,cornflowerBlue,cornsilk,
-    crimson,darkBlue,darkCyan,darkGoldenRod,darkGray,darkGrey,darkGreen,darkKhaki,
-    darkMagenta,darkOliveGreen,darkorange,darkOrchid,darkRed,darkSalmon,darkSeaGreen,
-    darkSlateBlue,darkSlateGray,darkSlateGrey,darkTurquoise,darkViolet,deepPink,
-    deepSkyBlue,dimGray,dimGrey,dodgerBlue,fireBrick,floralWhite,forestGreen,fuchsia,
-    gainsboro,ghostWhite,gold,goldenRod,grey,greenYellow,honeyDew,hotPink,indianRed,indigo,
-    ivory,khaki,lavender,lavenderBlush,lawnGreen,lemonChiffon,lightBlue,lightCoral,
-    lightCyan,lightGoldenRodYellow,lightGray,lightGrey,lightGreen,lightPink,lightSalmon,
-    lightSeaGreen,lightSkyBlue,lightSlateGray,lightSlateGrey,lightSteelBlue,lightYellow,
-    lime,limeGreen,linen,maroon,mediumAquaMarine,mediumBlue,mediumOrchid,mediumPurple,
-    mediumSeaGreen,mediumSlateBlue,mediumSpringGreen,mediumTurquoise,mediumVioletRed,
-    midnightBlue,mintCream,mistyRose,moccasin,navajoWhite,navy,oldLace,olive,oliveDrab,
-    orange,orangeRed,orchid,paleGoldenRod,paleGreen,paleTurquoise,paleVioletRed,papayaWhip,
-    peachPuff,peru,pink,plum,powderBlue,purple,rosyBrown,royalBlue,saddleBrown,salmon,
-    sandyBrown,seaGreen,seaShell,sienna,silver,skyBlue,slateBlue,slateGray,slateGrey,snow,
-    springGreen,steelBlue,blueSteel,tan,teal,thistle,tomato,turquoise,violet,wheat,whiteSmoke,
-    yellowGreen;
-
-
+	static constexpr ofColor_<PixelType> gray{fromFloat(0.5f), fromFloat(0.5f), fromFloat(0.5f)};
+	static constexpr ofColor_<PixelType> white{limit(), limit(), limit()};
+	static constexpr ofColor_<PixelType> black{0,0,0};
+	static constexpr ofColor_<PixelType> red{limit(),0,0};
+	static constexpr ofColor_<PixelType> green{0,limit(),0};
+	static constexpr ofColor_<PixelType> blue{0,0,limit()};
+	static constexpr ofColor_<PixelType> cyan{0, limit(), limit()};
+	static constexpr ofColor_<PixelType> magenta{limit(), 0, limit()};
+	static constexpr ofColor_<PixelType> yellow{limit(), limit(), 0};
+	static constexpr ofColor_<PixelType> aliceBlue{fromFloat(0.941176f),fromFloat(0.972549f),limit()};
+	static constexpr ofColor_<PixelType> antiqueWhite{fromFloat(0.980392f),fromFloat(0.921569f),fromFloat(0.843137f)};
+	static constexpr ofColor_<PixelType> aqua{0,limit(),limit()};
+	static constexpr ofColor_<PixelType> aquamarine{fromFloat(0.498039f),limit(),fromFloat(0.831373f)};
+	static constexpr ofColor_<PixelType> azure{fromFloat(0.941176f),limit(),limit()};
+	static constexpr ofColor_<PixelType> beige{fromFloat(0.960784f),fromFloat(0.960784f),fromFloat(0.862745f)};
+	static constexpr ofColor_<PixelType> bisque{limit(),fromFloat(0.894118f),fromFloat(0.768627f)};
+	static constexpr ofColor_<PixelType> blanchedAlmond{limit(),fromFloat(0.921569f),fromFloat(0.803922f)};
+	static constexpr ofColor_<PixelType> blueViolet{fromFloat(0.541176f),fromFloat(0.168627f),fromFloat(0.886275f)};
+	static constexpr ofColor_<PixelType> brown{fromFloat(0.647059f),fromFloat(0.164706f),fromFloat(0.164706f)};
+	static constexpr ofColor_<PixelType> burlyWood{fromFloat(0.870588f),fromFloat(0.721569f),fromFloat(0.529412f)};
+	static constexpr ofColor_<PixelType> cadetBlue{fromFloat(0.372549f),fromFloat(0.619608f),fromFloat(0.627451f)};
+	static constexpr ofColor_<PixelType> chartreuse{fromFloat(0.498039f),limit(),0};
+	static constexpr ofColor_<PixelType> chocolate{fromFloat(0.823529f),fromFloat(0.411765f),fromFloat(0.117647f)};
+	static constexpr ofColor_<PixelType> coral{limit(),fromFloat(0.498039f),fromFloat(0.313726f)};
+	static constexpr ofColor_<PixelType> cornflowerBlue{fromFloat(0.392157f),fromFloat(0.584314f),fromFloat(0.929412f)};
+	static constexpr ofColor_<PixelType> cornsilk{limit(),fromFloat(0.972549f),fromFloat(0.862745f)};
+	static constexpr ofColor_<PixelType> crimson{fromFloat(0.862745f),fromFloat(0.0784314f),fromFloat(0.235294f)};
+	static constexpr ofColor_<PixelType> darkBlue{0,0,fromFloat(0.545098f)};
+	static constexpr ofColor_<PixelType> darkCyan{0,fromFloat(0.545098f),fromFloat(0.545098f)};
+	static constexpr ofColor_<PixelType> darkGoldenRod{fromFloat(0.721569f),fromFloat(0.52549f),fromFloat(0.0431373f)};
+	static constexpr ofColor_<PixelType> darkGray{fromFloat(0.662745f),fromFloat(0.662745f),fromFloat(0.662745f)};
+	static constexpr ofColor_<PixelType> darkGrey{fromFloat(0.662745f),fromFloat(0.662745f),fromFloat(0.662745f)};
+	static constexpr ofColor_<PixelType> darkGreen{0,fromFloat(0.392157f),0};
+	static constexpr ofColor_<PixelType> darkKhaki{fromFloat(0.741176f),fromFloat(0.717647f),fromFloat(0.419608f)};
+	static constexpr ofColor_<PixelType> darkMagenta{fromFloat(0.545098f),0,fromFloat(0.545098f)};
+	static constexpr ofColor_<PixelType> darkOliveGreen{fromFloat(0.333333f),fromFloat(0.419608f),fromFloat(0.184314f)};
+	static constexpr ofColor_<PixelType> darkorange{limit(),fromFloat(0.54902f),0};
+	static constexpr ofColor_<PixelType> darkOrchid{fromFloat(0.6f),fromFloat(0.196078f),fromFloat(0.8f)};
+	static constexpr ofColor_<PixelType> darkRed{fromFloat(0.545098f),0,0};
+	static constexpr ofColor_<PixelType> darkSalmon{fromFloat(0.913725f),fromFloat(0.588235f),fromFloat(0.478431f)};
+	static constexpr ofColor_<PixelType> darkSeaGreen{fromFloat(0.560784f),fromFloat(0.737255f),fromFloat(0.560784f)};
+	static constexpr ofColor_<PixelType> darkSlateBlue{fromFloat(0.282353f),fromFloat(0.239216f),fromFloat(0.545098f)};
+	static constexpr ofColor_<PixelType> darkSlateGray{fromFloat(0.184314f),fromFloat(0.309804f),fromFloat(0.309804f)};
+	static constexpr ofColor_<PixelType> darkSlateGrey{fromFloat(0.184314f),fromFloat(0.309804f),fromFloat(0.309804f)};
+	static constexpr ofColor_<PixelType> darkTurquoise{0,fromFloat(0.807843f),fromFloat(0.819608f)};
+	static constexpr ofColor_<PixelType> darkViolet{fromFloat(0.580392f),0,fromFloat(0.827451f)};
+	static constexpr ofColor_<PixelType> deepPink{limit(),fromFloat(0.0784314f),fromFloat(0.576471f)};
+	static constexpr ofColor_<PixelType> deepSkyBlue{0,fromFloat(0.74902f),limit()};
+	static constexpr ofColor_<PixelType> dimGray{fromFloat(0.411765f),fromFloat(0.411765f),fromFloat(0.411765f)};
+	static constexpr ofColor_<PixelType> dimGrey{fromFloat(0.411765f),fromFloat(0.411765f),fromFloat(0.411765f)};
+	static constexpr ofColor_<PixelType> dodgerBlue{fromFloat(0.117647f),fromFloat(0.564706f),limit()};
+	static constexpr ofColor_<PixelType> fireBrick{fromFloat(0.698039f),fromFloat(0.133333f),fromFloat(0.133333f)};
+	static constexpr ofColor_<PixelType> floralWhite{limit(),fromFloat(0.980392f),fromFloat(0.941176f)};
+	static constexpr ofColor_<PixelType> forestGreen{fromFloat(0.133333f),fromFloat(0.545098f),fromFloat(0.133333f)};
+	static constexpr ofColor_<PixelType> fuchsia{limit(),0,limit()};
+	static constexpr ofColor_<PixelType> gainsboro{fromFloat(0.862745f),fromFloat(0.862745f),fromFloat(0.862745f)};
+	static constexpr ofColor_<PixelType> ghostWhite{fromFloat(0.972549f),fromFloat(0.972549f),limit()};
+	static constexpr ofColor_<PixelType> gold{limit(),fromFloat(0.843137f),0};
+	static constexpr ofColor_<PixelType> goldenRod{fromFloat(0.854902f),fromFloat(0.647059f),fromFloat(0.12549f)};
+	static constexpr ofColor_<PixelType> grey{fromFloat(0.501961f),fromFloat(0.501961f),fromFloat(0.501961f)};
+	static constexpr ofColor_<PixelType> greenYellow{fromFloat(0.678431f),limit(),fromFloat(0.184314f)};
+	static constexpr ofColor_<PixelType> honeyDew{fromFloat(0.941176f),limit(),fromFloat(0.941176f)};
+	static constexpr ofColor_<PixelType> hotPink{limit(),fromFloat(0.411765f),fromFloat(0.705882f)};
+	static constexpr ofColor_<PixelType> indianRed {fromFloat(0.803922f),fromFloat(0.360784f),fromFloat(0.360784f)};
+	static constexpr ofColor_<PixelType> indigo {fromFloat(0.294118f),0,fromFloat(0.509804f)};
+	static constexpr ofColor_<PixelType> ivory{limit(),limit(),fromFloat(0.941176f)};
+	static constexpr ofColor_<PixelType> khaki{fromFloat(0.941176f),fromFloat(0.901961f),fromFloat(0.54902f)};
+	static constexpr ofColor_<PixelType> lavender{fromFloat(0.901961f),fromFloat(0.901961f),fromFloat(0.980392f)};
+	static constexpr ofColor_<PixelType> lavenderBlush{limit(),fromFloat(0.941176f),fromFloat(0.960784f)};
+	static constexpr ofColor_<PixelType> lawnGreen{fromFloat(0.486275f),fromFloat(0.988235f),0};
+	static constexpr ofColor_<PixelType> lemonChiffon{limit(),fromFloat(0.980392f),fromFloat(0.803922f)};
+	static constexpr ofColor_<PixelType> lightBlue{fromFloat(0.678431f),fromFloat(0.847059f),fromFloat(0.901961f)};
+	static constexpr ofColor_<PixelType> lightCoral{fromFloat(0.941176f),fromFloat(0.501961f),fromFloat(0.501961f)};
+	static constexpr ofColor_<PixelType> lightCyan{fromFloat(0.878431f),limit(),limit()};
+	static constexpr ofColor_<PixelType> lightGoldenRodYellow{fromFloat(0.980392f),fromFloat(0.980392f),fromFloat(0.823529f)};
+	static constexpr ofColor_<PixelType> lightGray{fromFloat(0.827451f),fromFloat(0.827451f),fromFloat(0.827451f)};
+	static constexpr ofColor_<PixelType> lightGrey{fromFloat(0.827451f),fromFloat(0.827451f),fromFloat(0.827451f)};
+	static constexpr ofColor_<PixelType> lightGreen{fromFloat(0.564706f),fromFloat(0.933333f),fromFloat(0.564706f)};
+	static constexpr ofColor_<PixelType> lightPink{limit(),fromFloat(0.713726f),fromFloat(0.756863f)};
+	static constexpr ofColor_<PixelType> lightSalmon{limit(),fromFloat(0.627451f),fromFloat(0.478431f)};
+	static constexpr ofColor_<PixelType> lightSeaGreen{fromFloat(0.12549f),fromFloat(0.698039f),fromFloat(0.666667f)};
+	static constexpr ofColor_<PixelType> lightSkyBlue{fromFloat(0.529412f),fromFloat(0.807843f),fromFloat(0.980392f)};
+	static constexpr ofColor_<PixelType> lightSlateGray{fromFloat(0.466667f),fromFloat(0.533333f),fromFloat(0.6f)};
+	static constexpr ofColor_<PixelType> lightSlateGrey{fromFloat(0.466667f),fromFloat(0.533333f),fromFloat(0.6f)};
+	static constexpr ofColor_<PixelType> lightSteelBlue{fromFloat(0.690196f),fromFloat(0.768627f),fromFloat(0.870588f)};
+	static constexpr ofColor_<PixelType> lightYellow{limit(),limit(),fromFloat(0.878431f)};
+	static constexpr ofColor_<PixelType> lime{0,limit(),0};
+	static constexpr ofColor_<PixelType> limeGreen{fromFloat(0.196078f),fromFloat(0.803922f),fromFloat(0.196078f)};
+	static constexpr ofColor_<PixelType> linen{fromFloat(0.980392f),fromFloat(0.941176f),fromFloat(0.901961f)};
+	static constexpr ofColor_<PixelType> maroon{fromFloat(0.501961f),0,0};
+	static constexpr ofColor_<PixelType> mediumAquaMarine{fromFloat(0.4f),fromFloat(0.803922f),fromFloat(0.666667f)};
+	static constexpr ofColor_<PixelType> mediumBlue{0,0,fromFloat(0.803922f)};
+	static constexpr ofColor_<PixelType> mediumOrchid{fromFloat(0.729412f),fromFloat(0.333333f),fromFloat(0.827451f)};
+	static constexpr ofColor_<PixelType> mediumPurple{fromFloat(0.576471f),fromFloat(0.439216f),fromFloat(0.858824f)};
+	static constexpr ofColor_<PixelType> mediumSeaGreen{fromFloat(0.235294f),fromFloat(0.701961f),fromFloat(0.443137f)};
+	static constexpr ofColor_<PixelType> mediumSlateBlue{fromFloat(0.482353f),fromFloat(0.407843f),fromFloat(0.933333f)};
+	static constexpr ofColor_<PixelType> mediumSpringGreen{0,fromFloat(0.980392f),fromFloat(0.603922f)};
+	static constexpr ofColor_<PixelType> mediumTurquoise{fromFloat(0.282353f),fromFloat(0.819608f),fromFloat(0.8f)};
+	static constexpr ofColor_<PixelType> mediumVioletRed{fromFloat(0.780392f),fromFloat(0.0823529f),fromFloat(0.521569f)};
+	static constexpr ofColor_<PixelType> midnightBlue{fromFloat(0.0980392f),fromFloat(0.0980392f),fromFloat(0.439216f)};
+	static constexpr ofColor_<PixelType> mintCream{fromFloat(0.960784f),limit(),fromFloat(0.980392f)};
+	static constexpr ofColor_<PixelType> mistyRose{limit(),fromFloat(0.894118f),fromFloat(0.882353f)};
+	static constexpr ofColor_<PixelType> moccasin{limit(),fromFloat(0.894118f),fromFloat(0.709804f)};
+	static constexpr ofColor_<PixelType> navajoWhite{limit(),fromFloat(0.870588f),fromFloat(0.678431f)};
+	static constexpr ofColor_<PixelType> navy{0,0,fromFloat(0.501961f)};
+	static constexpr ofColor_<PixelType> oldLace{fromFloat(0.992157f),fromFloat(0.960784f),fromFloat(0.901961f)};
+	static constexpr ofColor_<PixelType> olive{fromFloat(0.501961f),fromFloat(0.501961f),0};
+	static constexpr ofColor_<PixelType> oliveDrab{fromFloat(0.419608f),fromFloat(0.556863f),fromFloat(0.137255f)};
+	static constexpr ofColor_<PixelType> orange{limit(),fromFloat(0.647059f),0};
+	static constexpr ofColor_<PixelType> orangeRed{limit(),fromFloat(0.270588f),0};
+	static constexpr ofColor_<PixelType> orchid{fromFloat(0.854902f),fromFloat(0.439216f),fromFloat(0.839216f)};
+	static constexpr ofColor_<PixelType> paleGoldenRod{fromFloat(0.933333f),fromFloat(0.909804f),fromFloat(0.666667f)};
+	static constexpr ofColor_<PixelType> paleGreen{fromFloat(0.596078f),fromFloat(0.984314f),fromFloat(0.596078f)};
+	static constexpr ofColor_<PixelType> paleTurquoise{fromFloat(0.686275f),fromFloat(0.933333f),fromFloat(0.933333f)};
+	static constexpr ofColor_<PixelType> paleVioletRed{fromFloat(0.858824f),fromFloat(0.439216f),fromFloat(0.576471f)};
+	static constexpr ofColor_<PixelType> papayaWhip{limit(),fromFloat(0.937255f),fromFloat(0.835294f)};
+	static constexpr ofColor_<PixelType> peachPuff{limit(),fromFloat(0.854902f),fromFloat(0.72549f)};
+	static constexpr ofColor_<PixelType> peru{fromFloat(0.803922f),fromFloat(0.521569f),fromFloat(0.247059f)};
+	static constexpr ofColor_<PixelType> pink{limit(),fromFloat(0.752941f),fromFloat(0.796078f)};
+	static constexpr ofColor_<PixelType> plum{fromFloat(0.866667f),fromFloat(0.627451f),fromFloat(0.866667f)};
+	static constexpr ofColor_<PixelType> powderBlue{fromFloat(0.690196f),fromFloat(0.878431f),fromFloat(0.901961f)};
+	static constexpr ofColor_<PixelType> purple{fromFloat(0.501961f),0,fromFloat(0.501961f)};
+	static constexpr ofColor_<PixelType> rosyBrown{fromFloat(0.737255f),fromFloat(0.560784f),fromFloat(0.560784f)};
+	static constexpr ofColor_<PixelType> royalBlue{fromFloat(0.254902f),fromFloat(0.411765f),fromFloat(0.882353f)};
+	static constexpr ofColor_<PixelType> saddleBrown{fromFloat(0.545098f),fromFloat(0.270588f),fromFloat(0.0745098f)};
+	static constexpr ofColor_<PixelType> salmon{fromFloat(0.980392f),fromFloat(0.501961f),fromFloat(0.447059f)};
+	static constexpr ofColor_<PixelType> sandyBrown{fromFloat(0.956863f),fromFloat(0.643137f),fromFloat(0.376471f)};
+	static constexpr ofColor_<PixelType> seaGreen{fromFloat(0.180392f),fromFloat(0.545098f),fromFloat(0.341176f)};
+	static constexpr ofColor_<PixelType> seaShell{limit(),fromFloat(0.960784f),fromFloat(0.933333f)};
+	static constexpr ofColor_<PixelType> sienna{fromFloat(0.627451f),fromFloat(0.321569f),fromFloat(0.176471f)};
+	static constexpr ofColor_<PixelType> silver{fromFloat(0.752941f),fromFloat(0.752941f),fromFloat(0.752941f)};
+	static constexpr ofColor_<PixelType> skyBlue{fromFloat(0.529412f),fromFloat(0.807843f),fromFloat(0.921569f)};
+	static constexpr ofColor_<PixelType> slateBlue{fromFloat(0.415686f),fromFloat(0.352941f),fromFloat(0.803922f)};
+	static constexpr ofColor_<PixelType> slateGray{fromFloat(0.439216f),fromFloat(0.501961f),fromFloat(0.564706f)};
+	static constexpr ofColor_<PixelType> slateGrey{fromFloat(0.439216f),fromFloat(0.501961f),fromFloat(0.564706f)};
+	static constexpr ofColor_<PixelType> snow{limit(),fromFloat(0.980392f),fromFloat(0.980392f)};
+	static constexpr ofColor_<PixelType> springGreen{0,limit(),fromFloat(0.498039f)};
+	static constexpr ofColor_<PixelType> steelBlue{fromFloat(0.27451f),fromFloat(0.509804f),fromFloat(0.705882f)};
+	static constexpr ofColor_<PixelType> blueSteel{fromFloat(0.27451f),fromFloat(0.509804f),fromFloat(0.705882f)};
+	static constexpr ofColor_<PixelType> tan{fromFloat(0.823529f),fromFloat(0.705882f),fromFloat(0.54902f)};
+	static constexpr ofColor_<PixelType> teal{0,fromFloat(0.501961f),fromFloat(0.501961f)};
+	static constexpr ofColor_<PixelType> thistle{fromFloat(0.847059f),fromFloat(0.74902f),fromFloat(0.847059f)};
+	static constexpr ofColor_<PixelType> tomato{limit(),fromFloat(0.388235f),fromFloat(0.278431f)};
+	static constexpr ofColor_<PixelType> turquoise{fromFloat(0.25098f),fromFloat(0.878431f),fromFloat(0.815686f)};
+	static constexpr ofColor_<PixelType> violet{fromFloat(0.933333f),fromFloat(0.509804f),fromFloat(0.933333f)};
+	static constexpr ofColor_<PixelType> wheat{fromFloat(0.960784f),fromFloat(0.870588f),fromFloat(0.701961f)};
+	static constexpr ofColor_<PixelType> whiteSmoke{fromFloat(0.960784f),fromFloat(0.960784f),fromFloat(0.960784f)};
+	static constexpr ofColor_<PixelType> yellowGreen{fromFloat(0.603922f),fromFloat(0.803922f),fromFloat(0.196078f)};
     /// \}
 
 
@@ -676,13 +831,33 @@ ofColor_<PixelType> operator*(float val, const ofColor_<PixelType> &color) {
 }
 
 template<typename PixelType>
-inline float ofColor_<PixelType>::limit() {
+constexpr float ofColor_<PixelType>::flimit() {
 	return std::numeric_limits<PixelType>::max();
 }
 
 template<>
-inline float ofColor_<float>::limit() {
+constexpr float ofColor_<float>::flimit() {
 	return 1.f;
+}
+
+template<>
+constexpr float ofColor_<double>::flimit() {
+	return 1.;
+}
+
+template<typename PixelType>
+constexpr PixelType ofColor_<PixelType>::limit() {
+	return std::numeric_limits<PixelType>::max();
+}
+
+template<>
+constexpr float ofColor_<float>::limit() {
+	return 1.f;
+}
+
+template<>
+constexpr double ofColor_<double>::limit() {
+	return 1.;
 }
 
 template<>
@@ -699,7 +874,7 @@ inline int ofColor_<PixelType>::getHex() const {
 }
 
 template<>
-inline void ofColor_<unsigned char>::setHex(int hexColor, float alpha){
+inline void ofColor_<unsigned char>::setHex(int hexColor, unsigned char alpha){
 	r = (hexColor >> 16) & 0xff;
 	g = (hexColor >> 8) & 0xff;
 	b = (hexColor >> 0) & 0xff;
@@ -707,7 +882,7 @@ inline void ofColor_<unsigned char>::setHex(int hexColor, float alpha){
 }
 
 template<typename PixelType>
-inline void ofColor_<PixelType>::setHex (int hexColor, float alpha){
+inline void ofColor_<PixelType>::setHex (int hexColor, PixelType alpha){
 	ofColor c = ofColor::fromHex(hexColor);
 	*this = c;
 	a = alpha;
