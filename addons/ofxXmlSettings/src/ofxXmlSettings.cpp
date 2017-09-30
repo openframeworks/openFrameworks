@@ -694,7 +694,7 @@ void ofSerialize(ofxXmlSettings & xml, const ofAbstractParameter & parameter){
 		const ofParameterGroup & group = static_cast<const ofParameterGroup&>(parameter);
 		if(!xml.tagExists(name)) xml.addTag(name);
 		xml.pushTag(name);
-		for(int i=0;i<group.size();i++){
+		for(size_t i = 0;i < group.size(); i++){
 			ofSerialize(xml, group.get(i));
 		}
 		xml.popTag();
@@ -715,7 +715,7 @@ void ofDeserialize(const ofxXmlSettings & xml, ofAbstractParameter & parameter){
 		ofParameterGroup & group = static_cast<ofParameterGroup&>(parameter);
 		if(xml.tagExists(name)){
 			const_cast<ofxXmlSettings&>(xml).pushTag(name);
-			for(int i=0;i<group.size();i++){
+			for(size_t i = 0;i < group.size(); i++){
 				ofDeserialize(xml, group.get(i));
 			}
 			const_cast<ofxXmlSettings&>(xml).popTag();

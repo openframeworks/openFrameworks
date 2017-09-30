@@ -65,19 +65,19 @@ class ofxAssimpModelLoader{
         void setNormalizationFactor(float factor);
 
         vector<string> getMeshNames();
-        int getNumMeshes();
+        unsigned int getNumMeshes();
 
         ofMesh getMesh(string name);
-        ofMesh getMesh(int num);
+        ofMesh getMesh(unsigned int num);
 
         ofMesh getCurrentAnimatedMesh(string name);
-        ofMesh getCurrentAnimatedMesh(int num);
+        ofMesh getCurrentAnimatedMesh(unsigned int num);
 
         ofMaterial getMaterialForMesh(string name);
-        ofMaterial getMaterialForMesh(int num);
+        ofMaterial getMaterialForMesh(unsigned int num);
 
         ofTexture getTextureForMesh(string name);
-        ofTexture getTextureForMesh(int num);
+        ofTexture getTextureForMesh(unsigned int num);
 
 
     	void drawWireframe();
