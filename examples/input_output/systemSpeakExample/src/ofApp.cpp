@@ -26,24 +26,21 @@ void ofApp::threadedFunction() {
 
 	while (isThreadRunning()) {
 
-
 		// call the system command say
-
 		#ifdef TARGET_OSX
-			string cmd = "say -v "+voice+" "+words[step]+" ";   // create the command
-			system(cmd.c_str());
+			string cmd = "say -v " + voice + " " + words[step] + " "; // create the command
 		#endif
 		#ifdef TARGET_WIN32
-			string cmd = "data\\SayStatic.exe "+words[step];   // create the command
-			cout << cmd << endl;
-			system(cmd.c_str());
+			string cmd = "data\\SayStatic.exe " + words[step];        // create the command
 		#endif
 		#ifdef TARGET_LINUX
-			string cmd = "echo "+words[step]+"|espeak";   // create the command
-			cout << cmd << endl;
-			system(cmd.c_str());
+			string cmd = "echo " + words[step] + "|espeak";           // create the command
 		#endif
 
+                // print command and execute it
+                cout << cmd << endl;
+                ofSystem(cmd.c_str());
+                  
 		// step to the next word
 		step ++;
 		step %= words.size();
