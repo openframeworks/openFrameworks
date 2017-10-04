@@ -1,8 +1,8 @@
-var Process = loadExtension("qbs.Process");
-var File = loadExtension("qbs.File");
-var TextFile = loadExtension("qbs.TextFile");
-var Environment = loadExtension("qbs.Environment");
-var FileInfo = loadExtension("qbs.FileInfo");
+var Process = require("qbs.Process");
+var File = require("qbs.File");
+var TextFile = require("qbs.TextFile");
+var Environment = require("qbs.Environment");
+var FileInfo = require("qbs.FileInfo");
 
 function findCommand(){
     // check if it's unix

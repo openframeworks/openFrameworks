@@ -21,19 +21,29 @@ Module{
         if(qbs.targetOS.contains("android")){
             return "android";
         }else if(qbs.targetOS.contains("linux")){
-            if(qbs.architecture==="x86_64"){
+            // For now, we hard-code linux64 as our architecture of choice, since
+            // qbs doesn't appear to set the architecture property autimatically
+            // anymore starting with qt 4.4.
+            //
+            // If you wanted to compile for 386, uncomment these lines, and
+            // add this property in Build Settings: "qbs.architecture:x86"
+            //
+//            if(qbs.architecture==="x86_64"){
                 return "linux64";
-            }else if(qbs.architecture==="x86"){
-                return "linux";
-            }else{
-                throw(qbs.architecture + " not supported yet on " + qbs.targetOS);
-            }
+//            }else if(qbs.architecture==="x86"){
+//                return "linux";
+//            }else{
+//                throw("qbs error: Target architecture: '" + qbs.architecture + "' not supported yet on target OS: '" + qbs.targetOS + "'" +
+//                      "Check if the project's build settings ");
+//            }
         }else if(qbs.targetOS.contains("windows")){
             return "msys2";
         }else if(qbs.targetOS.contains("osx")){
             return "osx";
+        }else if(qbs.targetOS.contains("macos")){
+            return "osx";
         }else{
-            throw(qbs.targetOS + " not supported yet");
+            throw("Target architecture: '" + qbs.targetOS + "' not supported yet");
         }
     }
 
