@@ -2,6 +2,9 @@
 #include "ofConstants.h"
 #include <ofUtils.h>
 #include <map>
+#ifdef TARGET_ANDROID
+	#include "ofxAndroidLogChannel.h"
+#endif
 
 using namespace std;
 
@@ -22,8 +25,7 @@ static void noopDeleter(ofBaseLoggerChannel*){}
 
 shared_ptr<ofBaseLoggerChannel> & ofLog::channel(){
 #ifdef TARGET_ANDROID
-	#include "ofxAndroidLogChannel.h"
-	static shared_ptr<ofBaseLoggerChannel> channel = shared_ptr<ofxAndroidLogChannel>(new ofxAndroidLogChannel,std::ptr_fun(noopDeleter));
+	static shared_ptr<ofBaseLoggerChannel> channel = shared_ptr<ofxAndroidLogChannel>(new ofxAndroidLogChannel, std::ptr_fun(noopDeleter));
 #elif defined(TARGET_WIN32)
 	static shared_ptr<ofBaseLoggerChannel> channel = IsDebuggerPresent() ? shared_ptr<ofBaseLoggerChannel>(new ofDebugViewLoggerChannel, std::ptr_fun(noopDeleter)) : shared_ptr<ofBaseLoggerChannel>(new ofConsoleLoggerChannel, std::ptr_fun(noopDeleter));
 #else
