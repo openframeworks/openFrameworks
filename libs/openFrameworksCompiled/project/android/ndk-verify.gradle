@@ -22,7 +22,7 @@ println "Using NDK from "+ndkPath
 Properties ndkProperties = new Properties()
 ndkProperties.load(new File(ndkPath+ "/source.properties").newDataInputStream())
 
-if(!ndkProperties.getProperty("Pkg.Revision").startsWith("12.1")) {
+if(!ndkProperties.getProperty("Pkg.Revision").startsWith("15")) {
     throw new GradleException("Wrong version of NDK library found. Found version " + ndkProperties.getProperty("Pkg.Revision") +
-            ", but openFrameworks requires version r12b")
+            ", but openFrameworks requires version r15")
 }
