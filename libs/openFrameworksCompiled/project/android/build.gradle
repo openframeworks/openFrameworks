@@ -10,11 +10,11 @@ apply plugin: "com.android.model.native"
 
 model {
     android {
-        compileSdkVersion 19
+        compileSdkVersion 24
 
         defaultConfig.with {
             minSdkVersion.apiLevel 19
-            targetSdkVersion.apiLevel 19
+            targetSdkVersion.apiLevel 24
         }
 
         ndk {
