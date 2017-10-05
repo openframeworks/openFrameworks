@@ -11,7 +11,7 @@ Setting up openFrameworks with Android Studio is fairly straightforward. The bas
 
 - Install latest version of [Android Studio](https://developer.android.com/studio/index.html) (Tested with version 3.0)
 - Download openFrameworks 0.10.0 or later from the [download page](http://openframeworks.cc/download/) or from [github](https://github.com/openframeworks/openFrameworks/)
-- Download and unzip the Android NDK version r12b: [Windows](https://dl.google.com/android/repository/android-ndk-r12b-windows-x86_64.zip), [Linux](https://dl.google.com/android/repository/android-ndk-r12b-linux-x86_64.zip), [OSX](https://dl.google.com/android/repository/android-ndk-r12b-darwin-x86_64.zip). It doesn't matter where you store the library, you will point Android Studio to this location later. *Notice that openFrameworks only works with version r12b!* 
+- Download and unzip the Android NDK version r15c: [Windows](https://dl.google.com/android/repository/android-ndk-r15c-windows-x86_64.zip), [Linux](https://dl.google.com/android/repository/android-ndk-r15c-linux-x86_64.zip), [OSX](https://dl.google.com/android/repository/android-ndk-r15c-darwin-x86_64.zip). It doesn't matter where you store the library, you will point Android Studio to this location later. *Notice that openFrameworks only works with version r15c!* 
 - If you got openFrameworks from git: 
 	- run `scripts/android/download_libs.sh` to download libraries.
 	- Use project generator to generate Android Studio project files for android examples.
@@ -37,7 +37,7 @@ Press the Play button next to the `androidEmptyExample` shown in the toolbar. Wi
     - The `compileSdkVersion`, `buildToolsVersion`, `minSdkVersion`, `targetSdkVersion` values
         in `/addons/ofxAndroid/ofAndroidLib/build.gradle` and `/apps/myApps/androidEmptyExample/build.gradle`
 
-- If you get strange linker errors, check that you are using the 12b version of the NDK. Newer NDKs might work but usually there's some always some fixes that need to be done when moving to a new NDK version.
+- If you get strange linker errors, check that you are using the r15c version of the NDK. Newer NDKs might work but usually there's some always some fixes that need to be done when moving to a new NDK version.
 
 - If your connected device is not recognized by Android Studio, restart adb
   with `adb kill-server && adb start-server`
