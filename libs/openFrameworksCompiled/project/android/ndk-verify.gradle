@@ -14,7 +14,7 @@ if (ndkPath == null || ndkPath.length() == 0) {
     throw new GradleException("You havent set the path to the NDK library." +
             "Please set the property 'ndk.dir' in "+  new File(rootDir.absolutePath + "/local.properties").getAbsolutePath() +
             " to the root of the NDK library, or go to Project Structure and select the folder."+
-            "\n\nMake sure to download NDK r12b, as that is the only version supported by openFrameworks")
+            "\n\nMake sure to download NDK r15c, as that is the only version supported by openFrameworks")
 }
 
 println "Using NDK from "+ndkPath
