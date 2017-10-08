@@ -142,17 +142,21 @@ downloadToolchain(){
 	        tar -x --delay-directory-restore --no-same-owner -f ~/x-tools7h.tar.xz -C ~/
 	        rm ~/x-tools7h.tar.xz
 EOF
-        #wget http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
+        #downloader http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
         #tar xjf rpi2_toolchain.tar.bz2 -C ~/
         #rm rpi2_toolchain.tar.bz2
     fi
 }
 
 downloadFirmware(){
-    cd ~
-    downloader https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
-    unzip firmware.zip
-    cp -r ~/firmware-master/opt archlinux/
+    if [ "$(ls -A ~/firmware-master)" ]; then
+        echo "Using cached RPI2 firmware-master"
+    else
+        cd ~
+        downloader --progress https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+        unzip firmware.zip
+    fi
+    ${SUDO} cp -r ~/firmware-master/opt archlinux/
 }
 
 

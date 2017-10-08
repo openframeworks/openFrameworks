@@ -70,7 +70,7 @@ extract_href() {
 downloader() { if command -v wget 2>/dev/null; then wget $1 $2 $3; else curl -LO --retry 20 -O --progress $1 $2 $3; fi; }
 
 fetch() {
-  curl -L -s "$@"
+  downloader "$@"
 }
 
 uncompress() {

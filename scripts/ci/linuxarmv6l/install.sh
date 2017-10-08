@@ -25,9 +25,9 @@ createRaspbianImg(){
 downloader() { if command -v wget 2>/dev/null; then wget $1 $2 $3; else curl -LO --retry 20 -O --progress $1 $2 $3; fi; }
 
 downloadToolchain(){
-    downloader http://ci.openframeworks.cc/rpi_toolchain_gcc6.tar.bz2
-    tar xjf rpi_toolchain_gcc6.tar.bz2
-    rm rpi_toolchain_gcc6.tar.bz2
+    downloader http://ci.openframeworks.cc/rpi_toolchain.tar.bz2
+    tar xjf rpi_toolchain.tar.bz2
+    rm rpi_toolchain.tar.bz2
 }
 
 downloadFirmware(){
