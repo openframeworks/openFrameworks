@@ -29,7 +29,8 @@ createArchImg(){
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
 		junest -u << EOF
 			cd ~
-			downloader http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+			downloader() { if command -v curl 2>/dev/null; then curl -L --retry 20 -O --progress $1 $2 $3; else wget $1 $2 $3; fi; }
+			downloader "http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz"
 			mkdir archlinux
 		    tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C archlinux/ 2> /dev/null
 			sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g archlinux/etc/pacman.conf
@@ -52,7 +53,8 @@ downloadToolchain(){
 		if [ -f x-tools7h.tar.xz ]; then
 			rm x-tools7h.tar.xz
 		fi
-		downloader http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
+		downloader() { if command -v curl 2>/dev/null; then curl -L --retry 20 -O --progress $1 $2 $3; else wget $1 $2 $3; fi; }
+		downloader "http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz"
 	    tar -x --delay-directory-restore --no-same-owner -f x-tools7h.tar.xz -C ~/
 	    rm x-tools7h.tar.xz
 EOF
@@ -67,7 +69,7 @@ downloadFirmware(){
         echo "Using cached RPI2 firmware-master"
     else
         cd ~
-        downloader --progress https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+        downloader "https://github.com/raspberrypi/firmware/archive/master.zip" firmware.zip
         unzip firmware.zip
     fi
     ${SUDO} cp -r ~/firmware-master/opt archlinux/
