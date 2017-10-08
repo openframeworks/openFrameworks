@@ -10,6 +10,8 @@ set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   # set -u : exit the script if you try to use an uninitialized variable
 set -o errexit   # set -e : exit the script if any statement returns a non-true return value
 
+downloader() { if command -v curl 2>/dev/null; then curl -L --retry 20 -O --progress $1 $2 $3 2> /dev/null; else wget $1 $2 $3 2> /dev/null; fi; }
+
 error() {
   local parent_lineno="$1"
   if [[ "$#" = "3" ]] ; then
@@ -91,7 +93,7 @@ done
 echo '</body>' >> /var/www/nightlybuilds.html
 echo '</html>' >> /var/www/nightlybuilds.html
 
-#curl -L --retry 20 -O --progress http://openframeworks.cc/nightly_hook.php?version=${lastversion} -O /dev/null
+#downloader http://openframeworks.cc/nightly_hook.php?version=${lastversion} -O 
 
 echo
 echo

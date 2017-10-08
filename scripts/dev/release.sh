@@ -7,6 +7,8 @@ set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   # set -u : exit the script if you try to use an uninitialized variable
 set -o errexit   # set -e : exit the script if any statement returns a non-true return value
 
+downloader() { if command -v curl 2>/dev/null; then curl -L --retry 20 -O --progress $1 $2 $3 2> /dev/null; else wget $1 $2 $3 2> /dev/null; fi; }
+
 error() {
   local parent_lineno="$1"
   if [[ "$#" = "3" ]] ; then
@@ -55,7 +57,7 @@ mkdir -p /var/www/versions/v${version}
 mv *.tar.gz /var/www/versions/v${version}
 mv *.zip /var/www/versions/v${version}
 
-curl -L --retry 20 -O --progress http://openframeworks.cc/release_hook.php?version=${version} -O /dev/null
+downloader http://openframeworks.cc/release_hook.php?version=${version}
 
 cd $(cat ~/.ofprojectgenerator/config)
 git checkout master
