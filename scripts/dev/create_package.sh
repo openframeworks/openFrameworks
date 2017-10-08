@@ -401,7 +401,7 @@ function createPackage {
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
 		cd ${pkg_ofroot}/projectGenerator-vs/resources/app/app/
-		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip 2> /dev/null
+		downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip 2> /dev/null
 		unzip projectGenerator-vs.zip 2> /dev/null
 		rm projectGenerator-vs.zip
 		cd ${pkg_ofroot}
@@ -409,7 +409,7 @@ function createPackage {
 	fi
 
     if [ "$pkg_platform" = "osx" ]; then
-		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip 2> /dev/null
+		downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip 2> /dev/null
         unzip projectGenerator-osx.zip
         mv projectGenerator-osx projectGenerator
         rm projectGenerator-osx.zip
@@ -418,7 +418,7 @@ function createPackage {
 	fi
 
     if [ "$pkg_platform" = "ios" ]; then
-		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-ios.zip 2> /dev/null
+		downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator-ios.zip 2> /dev/null
         unzip projectGenerator-ios.zip
         mv projectGenerator-ios projectGenerator
         rm projectGenerator-ios.zip
@@ -455,7 +455,7 @@ function createPackage {
 		cd ${pkg_ofroot}
 		sed -i "s/osx/android/g" projectGenerator-windows/resources/app/settings.json
 
-		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-android.zip 2> /dev/null
+		downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator-android.zip 2> /dev/null
         unzip projectGenerator-android.zip
 		mv projectGenerator-android projectGenerator-osx
         rm projectGenerator-android.zip
