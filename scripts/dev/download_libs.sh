@@ -28,7 +28,7 @@ cat << EOF
 EOF
 }
 
-function downloader() { if command -v curl 2>/dev/null; then curl -L --retry 20 -O --progress $1; else wget $1; fi; }
+function downloader() { if command -v curl 2>/dev/null; then curl -LO --retry 20 -O --progress $1; else wget $1; fi; }
 
 download(){
     echo "Downloading $1"

@@ -9,7 +9,7 @@ if "%BUILDER%"=="VS" (
     set PG_OF_PATH=%APPVEYOR_BUILD_FOLDER%\..\openFrameworks
     %MSYS2_PATH%\usr\bin\bash -lc "scripts/vs/download_libs.sh --silent"
     echo "Downloading projectGenerator from ci server"
-    %MSYS2_PATH%\usr\bin\bash -lc "downloader() { if command -v curl 2>/dev/null; then curl -L --retry 20 -O --progress $1 $2 $3; else wget $1 $2 $3; fi; }"
+    %MSYS2_PATH%\usr\bin\bash -lc "downloader() { if command -v curl 2>/dev/null; then curl -LO --retry 20 -O --progress $1 $2 $3; else wget $1 $2 $3; fi; }"
     %MSYS2_PATH%\usr\bin\bash -lc "downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip -nv"
     %MSYS2_PATH%\usr\bin\bash -lc "unzip -qq projectGenerator-vs.zip"
     rm projectGenerator-vs.zip

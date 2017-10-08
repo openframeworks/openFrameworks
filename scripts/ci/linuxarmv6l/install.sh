@@ -22,7 +22,7 @@ createRaspbianImg(){
     multistrap -a armhf -d raspbian -f multistrap.conf
 }
 
-downloader() { if command -v curl 2>/dev/null; then curl -L --retry 20 -O --progress $1 $2 $3; else wget $1 $2 $3; fi; }
+downloader() { if command -v curl 2>/dev/null; then curl -LO --retry 20 -O --progress $1 $2 $3; else wget $1 $2 $3; fi; }
 
 downloadToolchain(){
     downloader http://ci.openframeworks.cc/rpi_toolchain.tar.bz2
