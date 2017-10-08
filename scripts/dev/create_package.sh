@@ -93,7 +93,7 @@ fi
 
 cd $packageroot
 
-downloader() { if command -v curl 2>/dev/null; then curl -L --retry 20 -O --progress $1 $2 $3 2> /dev/null; else wget $1 $2 $3 2> /dev/null; fi; }
+downloader() { if command -v curl 2>/dev/null; then curl -LO --retry 20 -O --progress $1 $2 $3 2> /dev/null; else wget $1 $2 $3 2> /dev/null; fi; }
 
 function deleteCodeblocks {
     #delete codeblock files
