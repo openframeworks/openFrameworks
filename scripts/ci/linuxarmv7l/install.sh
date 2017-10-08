@@ -15,6 +15,8 @@ trapError() {
 	exit 1
 }
 
+downloader() { if command -v curl 2>/dev/null; then curl -L --retry 20 -O --progress $1 $2 $3; else wget $1 $2 $3; fi; }
+
 createArchImg(){
     #sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libasound2-dev
 
@@ -27,7 +29,7 @@ createArchImg(){
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
 		junest -u << EOF
 			cd ~
-			curl -L --retry 20 -O --progress http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+			downloader http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
 			mkdir archlinux
 		    tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C archlinux/ 2> /dev/null
 			sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g archlinux/etc/pacman.conf
@@ -50,11 +52,11 @@ downloadToolchain(){
 		if [ -f x-tools7h.tar.xz ]; then
 			rm x-tools7h.tar.xz
 		fi
-		curl -L --retry 20 -O --progress http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
+		downloader http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
 	    tar -x --delay-directory-restore --no-same-owner -f x-tools7h.tar.xz -C ~/
 	    rm x-tools7h.tar.xz
 EOF
-        #curl -L --retry 20 -O --progress http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
+        #downloader http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
         #tar xjf rpi2_toolchain.tar.bz2 -C ~/
         #rm rpi2_toolchain.tar.bz2
     fi
@@ -65,7 +67,7 @@ downloadFirmware(){
         echo "Using cached RPI2 firmware-master"
     else
         cd ~
-        curl -L --retry 20 -O --progress https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+        downloader --progress https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
         unzip firmware.zip
     fi
     ${SUDO} cp -r ~/firmware-master/opt archlinux/
@@ -94,7 +96,7 @@ relativeSoftLinks(){
 
 installRtAudio(){
     #cd $ROOT
-    #curl -L --retry 20 -O --progress http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-4.1.1.tar.gz
+    #downloader http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-4.1.1.tar.gz
     #tar xzf rtaudio-4.1.1.tar.gz
     #cd rtaudio-4.1.1
     #./configure --host=${GCC_PREFIX}
@@ -108,7 +110,7 @@ installRtAudio(){
     #rm rtaudio-4.1.1.tar.gz
     #rm -r rtaudio-4.1.1
     cd ~/archlinux
-    curl -L --retry 20 -O --progress http://ci.openframeworks.cc/rtaudio-armv7hf.tar.bz2
+    downloader http://ci.openframeworks.cc/rtaudio-armv7hf.tar.bz2
     tar xjf rtaudio-armv7hf.tar.bz2
     rm rtaudio-armv7hf.tar.bz2
 }

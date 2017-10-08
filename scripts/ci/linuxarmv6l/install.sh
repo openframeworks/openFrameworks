@@ -22,14 +22,16 @@ createRaspbianImg(){
     multistrap -a armhf -d raspbian -f multistrap.conf
 }
 
+downloader() { if command -v curl 2>/dev/null; then curl -L --retry 20 -O --progress $1 $2 $3; else wget $1 $2 $3; fi; }
+
 downloadToolchain(){
-    curl -L --retry 20 -O --progress http://ci.openframeworks.cc/rpi_toolchain.tar.bz2
+    downloader http://ci.openframeworks.cc/rpi_toolchain.tar.bz2
     tar xjf rpi_toolchain.tar.bz2
     rm rpi_toolchain.tar.bz2
 }
 
 downloadFirmware(){
-    curl -L --retry 20 -O --progress https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+    downloader https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
     unzip firmware.zip
     cp -r firmware-master/opt raspbian/
     rm -r firmware-master
