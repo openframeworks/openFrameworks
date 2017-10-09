@@ -179,8 +179,16 @@ void ofMatrixStack::nativeViewport(ofRectangle viewport){
 	currentViewport=viewport;
 }
 
+const glm::mat4 & ofMatrixStack::getModelMatrix() const{
+	return modelMatrix;
+}
+
 const glm::mat4 & ofMatrixStack::getViewMatrix() const{
 	return viewMatrix;
+}
+
+const glm::mat4 & ofMatrixStack::getViewInverse() const{
+	return viewInverse;
 }
 
 const glm::mat4 & ofMatrixStack::getProjectionMatrix() const{
@@ -236,6 +244,7 @@ void ofMatrixStack::pushView(){
 void ofMatrixStack::popView(){
 	if(!viewMatrixStack.empty()){
 		viewMatrix = viewMatrixStack.top();
+		viewInverse = glm::inverse(viewMatrix);
 		viewMatrixStack.pop();
 	}
 
@@ -259,6 +268,7 @@ void ofMatrixStack::popView(){
 	popMatrix();
 
 	matrixMode(currentMode);
+	modelMatrix = viewInverse * modelViewMatrix;
 }
 
 void ofMatrixStack::pushMatrix(){
@@ -279,6 +289,7 @@ void ofMatrixStack::popMatrix(){
 	if (currentMatrixMode == OF_MATRIX_MODELVIEW && !modelViewMatrixStack.empty()){
 		modelViewMatrix = modelViewMatrixStack.top();
 		modelViewMatrixStack.pop();
+		modelMatrix = viewInverse * modelViewMatrix;
 	} else if (currentMatrixMode == OF_MATRIX_PROJECTION && !projectionMatrixStack.empty()){
 		projectionMatrix = projectionMatrixStack.top();
 		projectionMatrixStack.pop();
@@ -396,6 +407,7 @@ void ofMatrixStack::loadViewMatrix(const glm::mat4 & matrix){
 	auto lastMatrixMode = currentMatrixMode;
 	currentMatrixMode = OF_MATRIX_MODELVIEW;
 	viewMatrix = matrix;
+	viewInverse = glm::inverse(viewMatrix);
 	loadMatrix(matrix);
 	currentMatrixMode = lastMatrixMode;
 }
@@ -404,6 +416,7 @@ void ofMatrixStack::multViewMatrix(const glm::mat4 & matrix){
 	ofMatrixMode lastMatrixMode = currentMatrixMode;
 	currentMatrixMode = OF_MATRIX_MODELVIEW;
 	viewMatrix = viewMatrix * matrix;
+	viewInverse = glm::inverse(viewMatrix);
 	multMatrix(matrix);
 	currentMatrixMode = lastMatrixMode;
 }
@@ -413,6 +426,7 @@ void ofMatrixStack::updatedRelatedMatrices(){
 	switch(currentMatrixMode){
 	case OF_MATRIX_MODELVIEW:
 		modelViewProjectionMatrix = orientedProjectionMatrix * modelViewMatrix;
+		modelMatrix = viewInverse * modelViewMatrix;
 		break;
 	case OF_MATRIX_PROJECTION:
 		orientedProjectionMatrix = orientationMatrix * projectionMatrix;
