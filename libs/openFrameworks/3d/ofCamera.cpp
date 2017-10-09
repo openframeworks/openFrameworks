@@ -253,7 +253,7 @@ void ofCamera::setRenderer(shared_ptr<ofBaseRenderer> _renderer){
 	renderer = _renderer;
 }
 
-void ofCamera::drawFrustum() {
+void ofCamera::drawFrustum(const ofRectangle viewport) const {
 	ofPushMatrix(); // we assume we are currently in world space.
 	ofMultMatrix( getGlobalTransformMatrix() ); 
 	// Move origin to camera origin == global transform of camera == inverse (view matrix)
@@ -282,7 +282,7 @@ void ofCamera::drawFrustum() {
 
 	// calculate projection matrix using frustum: 
 
-	ofMatrix4x4 projectionMatrixInverse = glm::inverse( getProjectionMatrix() );
+	ofMatrix4x4 projectionMatrixInverse = glm::inverse( getProjectionMatrix(viewport) );
 
 	for ( int i = 0; i < 8; i++ ) {
 		clipCube[i] = clipCube[i] * projectionMatrixInverse;
@@ -297,6 +297,7 @@ void ofCamera::drawFrustum() {
 	}
 
 	ofPushStyle();
+	ofSetRectMode(OF_RECTMODE_CORNER);
 	ofNoFill();
 	//// draw the clip cube cap
 	ofDrawRectangle( clipCube[0], clipCube[3].x - clipCube[0].x, clipCube[3].y - clipCube[0].y );

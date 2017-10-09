@@ -214,7 +214,7 @@ public:
 	/// \brief Draw a visual representation of the camera's frustum
 	/// \note  This will only be visible when the camera drawing its 
 	///        frustum is viewed through another camera.
-	void drawFrustum();
+	void drawFrustum(const ofRectangle viewport = ofRectangle()) const;
 
 protected:
 	ofRectangle getViewport(const ofRectangle & _viewport) const;
