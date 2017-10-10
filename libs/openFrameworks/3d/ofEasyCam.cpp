@@ -327,8 +327,8 @@ void ofEasyCam::updateRotation(){
 	}else{
 		curRot = glm::angleAxis(rot.z, lastPressAxisZ) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, lastPressAxisX);
 	}
-	rotateAround(curRot, target.getGlobalPosition());
-	rotate(curRot);
+	setPosition(curRot * (lastPressPosition-target.getGlobalPosition()) + target.getGlobalPosition());
+	setOrientation(curRot * lastPressOrientation);
 }
 
 //----------------------------------------
@@ -463,7 +463,6 @@ void ofEasyCam::updateMouse(const glm::vec2 & mouse){
         default:
 			break;
 	}
-	prevMouse = mouse;
 }
 //----------------------------------------
 void ofEasyCam::addInteraction(TransformType type, int mouseButton, int key){
