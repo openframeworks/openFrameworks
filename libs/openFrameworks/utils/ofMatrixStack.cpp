@@ -268,7 +268,6 @@ void ofMatrixStack::popView(){
 	popMatrix();
 
 	matrixMode(currentMode);
-	modelMatrix = viewInverse * modelViewMatrix;
 }
 
 void ofMatrixStack::pushMatrix(){
