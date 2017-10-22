@@ -60,6 +60,7 @@ void ofxEmscriptenSoundPlayer::play(){
 		html5audio_sound_set_rate(sound,speed);
 		html5audio_sound_set_gain(sound,volume);
 		playing = true;
+		paused = false;
 	}
 }
 
@@ -91,6 +92,7 @@ void ofxEmscriptenSoundPlayer::setSpeed(float spd){
 
 void ofxEmscriptenSoundPlayer::setPaused(bool bP){
 	if(sound!=-1){
+		paused = bP;
 		if(bP) html5audio_sound_pause(sound);
 		else html5audio_sound_play(context,sound,0);
 	}
@@ -127,6 +129,7 @@ void ofxEmscriptenSoundPlayer::setPositionSecs(double s){
 		html5audio_sound_play(context,sound,s);
 		html5audio_sound_set_rate(sound,speed);
 		playing = true;
+		paused = true;
 	}
 
 }
@@ -151,6 +154,10 @@ int ofxEmscriptenSoundPlayer::getPositionMS() const{
 
 bool ofxEmscriptenSoundPlayer::isPlaying() const{
 	return playing && !html5audio_sound_done(sound);
+}
+
+bool ofxEmscriptenSoundPlayer::isPaused() const{
+	return paused;
 }
 
 float ofxEmscriptenSoundPlayer::getSpeed() const{

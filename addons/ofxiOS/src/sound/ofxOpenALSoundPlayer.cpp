@@ -323,7 +323,7 @@ int ofxOpenALSoundPlayer::getPositionMS()  const{
 
 //--------------------------------------------------------------
 
-bool ofxOpenALSoundPlayer::isPlaying() {
+bool ofxOpenALSoundPlayer::isPlaying() const{
 	if ( !bLoadedOk ) 
 		return false;
 
@@ -337,6 +337,10 @@ bool ofxOpenALSoundPlayer::isPlaying() {
 		return false;
 	else
 		return true;
+}
+
+bool ofxOpenALSoundPlayer::isPaused() const{
+	return bPaused;
 }
 
 //--------------------------------------------------------------

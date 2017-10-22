@@ -25,6 +25,7 @@ public:
 	float getPosition() const;
 	int getPositionMS() const;
 	bool isPlaying() const;
+	bool isPaused() const;
 	float getSpeed() const;
 	float getPan() const;
 	bool isLoaded() const;
@@ -43,4 +44,5 @@ private:
 	float speed;
 	float volume;
 	bool playing;
+	bool paused;
 };

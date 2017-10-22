@@ -58,6 +58,7 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 		float getPosition() const;
 		int getPositionMS() const;
 		bool isPlaying() const;
+		bool isPaused() const;
 		float getSpeed() const;
 		float getPan() const;
 		float getVolume() const;
@@ -65,7 +66,7 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 
 		static void initializeFmod();
 		static void closeFmod();
-	
+
 
 		bool isStreaming;
 		bool bMultiPlay;
