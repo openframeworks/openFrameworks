@@ -338,15 +338,30 @@ PLATFORM_PKG_CONFIG_LIBRARIES += openal
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
 
-ifeq "$(shell pkg-config --exists glfw3 && echo 1)" "1"
-	PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
-	PLATFORM_LIBRARIES += Xinerama
+ifeq ($(CROSS_COMPILING),1)
+	ifeq "$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists glfw3 && echo 1)" "1"
+		PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
+		PLATFORM_LIBRARIES += Xinerama
+	endif
+else
+	ifeq "$(shell pkg-config --exists glfw3 && echo 1)" "1"
+		PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
+		PLATFORM_LIBRARIES += Xinerama
+	endif	
 endif
 
-ifeq "$(shell pkg-config --exists rtaudio && echo 1)" "1"
-	PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
+ifeq ($(CROSS_COMPILING),1)
+	ifeq "$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists rtaudio && echo 1)" "1"
+		PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
+	else
+		PLATFORM_LIBRARIES += rtaudio
+	endif
 else
-	PLATFORM_LIBRARIES += rtaudio
+	ifeq "$(shell pkg-config --exists rtaudio && echo 1)" "1"
+		PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
+	else
+		PLATFORM_LIBRARIES += rtaudio
+	endif
 endif
 
 
