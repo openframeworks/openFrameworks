@@ -40,6 +40,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		void add(ofParameter <ofColor> & parameter);
 		void add(ofParameter <ofShortColor> & parameter);
 		void add(ofParameter <ofFloatColor> & parameter);
+		void add(ofParameter <ofRectangle> & parameter);
 
 		void minimize();
 		void maximize();
@@ -68,7 +69,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		ofxToggle & getToggle(const std::string& name);
 		ofxButton & getButton(const std::string& name);
 		ofxGuiGroup & getGroup(const std::string& name);
-
+	
 		ofxBaseGui * getControl(const std::string& name);
 		ofxBaseGui * getControl(std::size_t num);
 
