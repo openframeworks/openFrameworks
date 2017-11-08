@@ -787,9 +787,9 @@ public:
 	/// height.
 	/// \param x The x coordinate of the viewport. Defaults to 0.
 	/// \param y The y coordinate of the viewport. Defaults to 0.
-	/// \param w The width of the viewport. Defaults to -1 setting its width
+	/// \param width The width of the viewport. Defaults to -1 setting its width
 	/// according to the rendering surface's width.
-	/// \param h The height of the viewport. Defaults to -1 setting its height
+	/// \param height The height of the viewport. Defaults to -1 setting its height
 	/// according to the rendering surface's height.
 	virtual void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=true)=0;
 
@@ -1964,7 +1964,7 @@ public:
 	virtual int saveAsync(const std::string& url, const std::filesystem::path& path)=0;
 
 	/// \brief remove an active HTTP request from the queue
-	/// \param unique HTTP request id
+	/// \param id HTTP request id
 	virtual void remove(int id)=0;
 
 	/// \brief clear all active HTTP requests from the queue
