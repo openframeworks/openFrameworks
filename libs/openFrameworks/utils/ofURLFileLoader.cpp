@@ -220,7 +220,7 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 
 	// start request and receive response
 	ofHttpResponse response(request, 0, "");
-	auto err = 0;
+	CURLcode err = CURLE_OK;
 	if(request.saveTo){
 		ofFile saveTo(request.name, ofFile::WriteOnly, true);
 		curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, &saveTo);
@@ -231,11 +231,12 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, saveToMemory_cb);
 		err = curl_easy_perform(curl.get());
 	}
-	if(err==0){
+	if(err==CURLE_OK){
 		long http_code = 0;
 		curl_easy_getinfo (curl.get(), CURLINFO_RESPONSE_CODE, &http_code);
 		response.status = http_code;
 	}else{
+		response.error = curl_easy_strerror(err);
 		response.status = -1;
 	}
 
