@@ -75,7 +75,6 @@ void ofApp::draw(){
 
 
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
-    ofDrawBitmapString("keys 1-5 load models, spacebar to trigger animation", 10, 30);
     ofDrawBitmapString("drag to control animation with mouseY", 10, 45);
     ofDrawBitmapString("num animations for this model: " + ofToString(model.getAnimationCount()), 10, 60);
 }
@@ -115,7 +114,9 @@ void ofApp::touchUp(int x, int y, int id){
 }
 
 void ofApp::touchDoubleTap(int x, int y, int id){
-
+    if(bAnimate){
+        model.playAllAnimations();
+    }
 }
 
 void ofApp::touchCancelled(int x, int y, int id){
@@ -138,6 +139,11 @@ void ofApp::resume(){
 }
 
 void ofApp::reloadTextures(){
+    bAnimate = false;
+    bAnimateMouse = false;
+    animationPosition = 0;
+    currentModel = 0;
+
     model.loadModel("astroBoy_walk.dae", true);
     model.setPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75 , 0);
     model.setLoopStateForAllAnimations(OF_LOOP_NORMAL);
@@ -145,6 +151,15 @@ void ofApp::reloadTextures(){
     if(!bAnimate) {
         model.setPausedForAllAnimations(true);
     }
+
+    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+    ofDisableAlphaBlending();
+
+    ofEnableDepthTest();
+
+    glShadeModel(GL_SMOOTH); //some model / light stuff
+    light.enable();
+    ofEnableSeparateSpecularLight();
 }
 
 

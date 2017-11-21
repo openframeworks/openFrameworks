@@ -31,7 +31,7 @@ void ofApp::update(){
 			bg = gray;
 			captureBg = false;
 		}
-		
+
 		gray.threshold(80);
 		contourFinder.findContours(gray,grabber.getWidth()*grabber.getHeight()/20,grabber.getWidth()*grabber.getHeight()/3,10,true,true);
 	}

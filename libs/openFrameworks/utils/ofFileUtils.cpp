@@ -139,7 +139,7 @@ string ofBuffer::getText() const {
 }
 
 //--------------------------------------------------
-ofBuffer::operator string() const {
+ofBuffer::operator std::string() const {
 	return getText();
 }
 

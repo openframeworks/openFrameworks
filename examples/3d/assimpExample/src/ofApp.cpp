@@ -57,7 +57,7 @@ void ofApp::draw(){
     glEnable(GL_NORMALIZE);
 #endif
     ofPushMatrix();
-    ofTranslate(model.getPosition().x-300, model.getPosition().y, 0);
+    ofTranslate(model.getPosition().x-200, model.getPosition().y, 0);
     ofRotateDeg(-mouseX, 0, 1, 0);
     ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
 

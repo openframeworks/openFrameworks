@@ -299,7 +299,6 @@ def coreCppFlags(abi, ofRoot){
             "-fno-short-enums",
             "-ffunction-sections",
             "-fdata-sections",
-
             "-I${file(ofSource)}".toString(),
             "-I${file(ofSource+"/3d")}".toString(),
             "-I${file(ofSource+"/app")}".toString(),

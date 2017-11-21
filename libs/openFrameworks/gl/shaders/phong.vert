@@ -15,6 +15,8 @@ IN vec2 texcoord;
 
 // these are passed in from OF programmable renderer
 uniform mat4 modelViewMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 textureMatrix;
 uniform mat4 modelViewProjectionMatrix;
@@ -27,7 +29,8 @@ void main (void){
     v_transformedNormal = normalize(tempNormal);
     v_normal = normal.xyz;
     v_eyePosition = (eyePosition.xyz) / eyePosition.w;
-    v_worldPosition = position.xyz;
+    //v_worldPosition = (inverse(viewMatrix) * modelViewMatrix * position).xyz;
+    v_worldPosition = (modelMatrix * position).xyz;
 
     v_texcoord = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
     #if HAS_COLOR

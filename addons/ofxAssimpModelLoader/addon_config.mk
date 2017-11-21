@@ -59,6 +59,17 @@ common:
 	# when parsing the file system looking for libraries exclude this for all or
 	# a specific platform
 	# ADDON_LIBS_EXCLUDE =
+
+android/x86:	
+	ADDON_LIBS =
+	ADDON_LIBS += libs/assimp/lib/android/x86/libassimp.a
+	ADDON_LIBS += libs/assimp/lib/android/x86/libIrrXML.a
+
+	
+android/armeabi-v7a:
+	ADDON_LIBS =
+	ADDON_LIBS += libs/assimp/lib/android/armeabi-v7a/libassimp.a
+	ADDON_LIBS += libs/assimp/lib/android/armeabi-v7a/libIrrXML.a
 	
 linuxarmv6l:
 	ADDON_PKG_CONFIG_LIBRARIES = assimp
