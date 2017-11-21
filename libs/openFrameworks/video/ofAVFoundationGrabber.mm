@@ -317,7 +317,9 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 					
 					}
 				}
-				
+			
+			// Unlock the image buffer
+			CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);	
 				
 			}
 		}
