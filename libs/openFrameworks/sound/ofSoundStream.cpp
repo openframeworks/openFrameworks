@@ -337,8 +337,8 @@ int ofSoundStream::getBufferSize() const{
 }
 
 //------------------------------------------------------------
-vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name, unsigned int inChannels, unsigned int outChannels) const {
-	vector<ofSoundDevice> devs = getDeviceList();
+vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name, unsigned int inChannels, unsigned int outChannels, ofSoundDevice::Api api) const {
+	vector<ofSoundDevice> devs = getDeviceList(api);
 	vector<ofSoundDevice> hits;
 	
 	for(size_t i = 0; i < devs.size(); i++) {
