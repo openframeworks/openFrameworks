@@ -96,7 +96,7 @@ public:
 	std::vector<ofSoundDevice> getDeviceList(ofSoundDevice::Api api = ofSoundDevice::Api::DEFAULT) const;
 
 	/// \brief Get all devices which match the arguments (name can be a partial match)
-	std::vector<ofSoundDevice> getMatchingDevices(const std::string& name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX) const;
+	std::vector<ofSoundDevice> getMatchingDevices(const std::string& name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX, ofSoundDevice::Api api = ofSoundDevice::Api::DEFAULT) const;
 
 	/// \brief sets the device represented by the stream, see ofSoundStream::getDeviceList().
 	OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
