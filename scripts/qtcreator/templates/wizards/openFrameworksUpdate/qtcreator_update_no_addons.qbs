@@ -9,7 +9,7 @@ Project{
     property string of_root: %{JS: %{CorrectInitialOFPath}?'\'../../..\'':'\'%{OFPath}\''}
 
     ofApp {
-        name: { return FileInfo.baseName(path) }
+        name: { return FileInfo.baseName(sourceDirectory) }
 
         files: [
             'src/main.cpp',
