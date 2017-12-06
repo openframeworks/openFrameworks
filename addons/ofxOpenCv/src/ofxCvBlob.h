@@ -24,7 +24,7 @@ class ofxCvBlob {
         ofPoint             centroid;
         bool                hole;
 
-        vector <ofPoint>    pts;    // the contour of the blob
+        std::vector <ofPoint> pts;    // the contour of the blob
         int                 nPts;   // number of pts;
 
         //----------------------------------------
