@@ -8,8 +8,8 @@ void ofApp::setup(){
 	// this makes the camera directly return grayscale image, faster!
 	grabber.setPixelFormat(OF_PIXELS_MONO);
 	grabber.setup(1280, 720);
-	gray.allocate(grabber.getWidth(),grabber.getHeight());
-	bg.allocate(grabber.getWidth(),grabber.getHeight());
+	gray.allocate((int) grabber.getWidth(), (int) grabber.getHeight());
+	bg.allocate((int) grabber.getWidth(), (int) grabber.getHeight());
 	one_second_time =0;
 	camera_fps = 0;
 	frames_one_sec = 0;

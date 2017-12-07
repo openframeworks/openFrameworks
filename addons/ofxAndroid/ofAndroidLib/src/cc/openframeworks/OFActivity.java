@@ -1,15 +1,22 @@
 package cc.openframeworks;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.content.Context;
+@SuppressLint("NewApi")
 
 public abstract class OFActivity extends Activity{
+	private static final int CAMERA_PERMISSION = 0;
+
 	public void onGLSurfaceCreated(){}
 	public void onLoadPercent(float percent){}
 	public void onUnpackingResourcesDone(){}
@@ -45,7 +52,7 @@ public abstract class OFActivity extends Activity{
 	}
 
 
-	
+
 	@Override
 	protected void onCreate(Bundle arg0) {
 		// TODO Auto-generated method stub
