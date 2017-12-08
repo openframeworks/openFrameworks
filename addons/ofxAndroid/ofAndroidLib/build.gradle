@@ -2,11 +2,11 @@ apply plugin: 'com.android.model.library'
 
 model {
     android {
-        compileSdkVersion = 19
+        compileSdkVersion = 24
         buildToolsVersion = "25.0.3"
         defaultConfig.with {
-            minSdkVersion.apiLevel 19
-            targetSdkVersion.apiLevel 19
+            minSdkVersion.apiLevel 24
+            targetSdkVersion.apiLevel 24
             versionCode 1
             versionName "1.0"
         }
@@ -40,7 +40,7 @@ model {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:19.1.0'
-    compile 'com.android.support:appcompat-v7:19.1.0'
+    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.android.support:appcompat-v7:24.2.1'
 }
 
