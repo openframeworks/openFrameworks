@@ -2,7 +2,7 @@
 
 export LC_ALL=C
 
-OF_ROOT=../..
+OF_ROOT=$(cd $(dirname $0)/../..; pwd -P)
 
 make Release -C ${OF_ROOT}/apps/projectGenerator/commandLine
 ret=$?
