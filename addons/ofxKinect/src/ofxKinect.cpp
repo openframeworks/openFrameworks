@@ -1089,7 +1089,7 @@ void ofxKinectContext::listDevices(bool verbose) {
 	}
 	stream.str("");
 	
-	for(unsigned int i = 0; i < deviceList.size(); ++i) {
+	for(size_t i = 0; i < deviceList.size(); ++i) {
 		stream << "    id: " << deviceList[i].id << " serial: " << deviceList[i].serial;
 		if(verbose) {
 			ofLogVerbose("ofxKinect") << stream.str();
@@ -1127,7 +1127,7 @@ ofxKinect* ofxKinectContext::getKinect(freenect_device* dev) {
 }
 
 int ofxKinectContext::getDeviceIndex(int id) {
-	for(unsigned int i = 0; i < deviceList.size(); ++i) {
+	for(size_t i = 0; i < deviceList.size(); ++i) {
 		if(deviceList[i].id == id)
 			return i;
 	}
@@ -1135,7 +1135,7 @@ int ofxKinectContext::getDeviceIndex(int id) {
 }
 
 int ofxKinectContext::getDeviceIndex(string serial) {
-	for(unsigned int i = 0; i < deviceList.size(); ++i) {
+	for(size_t i = 0; i < deviceList.size(); ++i) {
 		if(deviceList[i].serial == serial)
 			return i;
 	}
@@ -1143,7 +1143,7 @@ int ofxKinectContext::getDeviceIndex(string serial) {
 }
 
 
-int ofxKinectContext::getDeviceId(int index) {
+int ofxKinectContext::getDeviceId(unsigned int index) {
     if( index >= 0 && index < deviceList.size() ){
         return deviceList[index].id;
     }
@@ -1151,7 +1151,7 @@ int ofxKinectContext::getDeviceId(int index) {
 }
 
 int ofxKinectContext::getDeviceId(string serial){
-	for(unsigned int i = 0; i < deviceList.size(); ++i) {
+	for(size_t i = 0; i < deviceList.size(); ++i) {
 		if(deviceList[i].serial == serial){
 			return deviceList[i].id;
         }
@@ -1179,7 +1179,7 @@ int ofxKinectContext::nextAvailableId() {
 	
 	// a brute force free index finder :D
 	std::map<int,ofxKinect*>::iterator iter;
-	for(unsigned int i = 0; i < deviceList.size(); ++i) {
+	for(size_t i = 0; i < deviceList.size(); ++i) {
 		iter = kinects.find(deviceList[i].id);
 		if(iter == kinects.end())
 			return deviceList[i].id;

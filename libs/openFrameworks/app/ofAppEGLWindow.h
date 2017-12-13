@@ -180,6 +180,13 @@ protected:
 	// void setMouseScaleX(float x);
 	// float getMouseScaleY() const;
 	// void setMouseScaleY(float y);
+
+	// For absolute input devices that send ABS_X and ABS_Y events, we want to store
+	// information about the min and max axis values.
+	int mouseAbsXMin;
+	int mouseAbsXMax;
+	int mouseAbsYMin;
+	int mouseAbsYMax;
 	
 	bool hasMouse() { return mouseDetected; }
 	bool hasKeyboard() { return keyboardDetected; }

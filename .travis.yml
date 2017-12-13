@@ -75,14 +75,14 @@ matrix:
     language: android
     dist: trusty
     sudo: required
-    env: TARGET="android" NDK_DIR="android-ndk-r12b"
+    env: TARGET="android" NDK_DIR="android-ndk-r15c"
     android:
       components:
         - build-tools-25.0.2
         - android-19
     cache:
       directories:
-        - ~/android-ndk-r12b
+        - ~/android-ndk-r15c
 
 
   # Exclude the default build that would otherwise be generated

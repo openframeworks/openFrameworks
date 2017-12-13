@@ -731,8 +731,7 @@ void ofOpenALSoundPlayer::setPositionMS(int ms){
 	}else
 #endif
 	if(streamf){
-		sf_seek(streamf,float(ms)/1000.f*samplerate*channels,SEEK_SET);
-		stream_samples_read = 0;
+        stream_samples_read = sf_seek(streamf,float(ms)/1000.f*samplerate,SEEK_SET) * channels;
 	}else{
 		for(int i=0;i<(int)channels;i++){
 			alSourcef(sources[sources.size()-channels+i],AL_SEC_OFFSET,float(ms)/1000.f);

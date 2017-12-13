@@ -1384,7 +1384,30 @@ void ofAppEGLWindow::setupNativeMouse() {
 		mouseDetected = true;
 	}
 
+	// Detect min and max values for absolute axes. Useful for trackpads and touchscreens.
+	// More info on input_absinfo https://github.com/torvalds/linux/blob/master/include/uapi/linux/input.h
+	if(mouseDetected){
 
+		// Do this for the x axis. EVIOCGABS(0): 0 stands for x axis.
+		struct input_absinfo mabsx;
+		if (ioctl(mouse_fd, EVIOCGABS(0), &mabsx) < 0){
+			ofLogError("ofAppEGLWindow") << "ioctl GABS failed";
+		} else {
+			mouseAbsXMin = mabsx.minimum;
+			mouseAbsXMax = mabsx.maximum;
+			ofLogNotice("ofAppEGLWindow") << "mouse x axis min, max: " << mouseAbsXMin << ", " << mouseAbsXMax;
+		}
+		
+		// Do that for the y axis. EVIOCGABS(1): 1 stands for y axis.
+		struct input_absinfo mabsy;
+		if (ioctl(mouse_fd, EVIOCGABS(1), &mabsy) < 0){
+			ofLogError("ofAppEGLWindow") << "ioctl GABS failed";
+		} else {
+			mouseAbsYMin = mabsy.minimum;
+			mouseAbsYMax = mabsy.maximum;
+			ofLogNotice("ofAppEGLWindow") << "mouse y axis min, max: " << mouseAbsYMin << ", " << mouseAbsYMax;
+		}
+	}
 }
 
 //------------------------------------------------------------
@@ -1705,7 +1728,7 @@ void ofAppEGLWindow::readNativeMouseEvents() {
 				if(ev.type == EV_REL) {
 					mouseEvent.x += amount * mouseScaleX;
 				} else {
-					mouseEvent.x = amount * mouseScaleX;
+					mouseEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
 				}
 
 				mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
@@ -1715,7 +1738,7 @@ void ofAppEGLWindow::readNativeMouseEvents() {
 				if(ev.type == EV_REL) {
 					mouseEvent.y += amount * mouseScaleY;
 				} else {
-					mouseEvent.y = amount * mouseScaleY;
+					mouseEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
 				}
 
 				mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);

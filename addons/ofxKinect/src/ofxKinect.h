@@ -479,11 +479,11 @@ public:
 
 	/// get the deviceList id from an index
 	/// returns -1 if not found
-    int getDeviceId(int index);
+        int getDeviceId(unsigned int index);
 
 	/// get the deviceList id from a serial
 	/// returns -1 if not found
-    int getDeviceId(string serial);
+        int getDeviceId(string serial);
 
 	/// is a device with this id already connected?
 	bool isConnected(int id);
