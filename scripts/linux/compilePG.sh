@@ -49,7 +49,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
             echo "Command line project generator was correctly installed"
             echo "To get started run: projectGenerator --help"
         else
-            echo "The command line project generator was correctly installed, but the PG_OF_PATH invironment variable has not been set yet."
+            echo "The command line project generator was correctly installed, but the PG_OF_PATH environment variable has not been set yet."
             echo "You can create this variable by adding the following line to ~/.profile."
             echo "    export PG_OF_PATH=${PG_OF_PATH}"
             read -p "Do you want to add this line to ~/.profile now?? [Y/n] " -r
