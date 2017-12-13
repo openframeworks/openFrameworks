@@ -327,8 +327,8 @@ void ofEasyCam::updateRotation(){
 	}else{
 		curRot = glm::angleAxis(rot.z, lastPressAxisZ) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, lastPressAxisX);
 	}
-	rotateAround(curRot, target.getGlobalPosition());
-	rotate(curRot);
+	setPosition(curRot * (lastPressPosition-target.getGlobalPosition()) + target.getGlobalPosition());
+	setOrientation(curRot * lastPressOrientation);
 }
 
 //----------------------------------------
@@ -429,22 +429,22 @@ void ofEasyCam::updateMouse(const glm::vec2 & mouse){
 	ofRectangle area = getControlArea();
 	int vFlip =(isVFlipped()?-1:1);
 
-	mouseVel = mouse  - prevMouse;
-
 	rot = {0,0,0};
 	translate = {0,0,0};
 	switch (currentTransformType) {
 	    case TRANSFORM_ROTATE:
+			mouseVel = mouse  - lastPressMouse;
 			if(bInsideArcball){
 				rot.x = vFlip * -mouseVel.y * sensitivityRot.x * glm::pi<float>() / std::min(area.width, area.height);
 				rot.y = -mouseVel.x * sensitivityRot.y * glm::pi<float>() / std::min(area.width, area.height);
 			}else{
 				glm::vec3 center = area.getCenter();
 				rot.z = sensitivityRot.z * -vFlip * glm::orientedAngle(glm::normalize(mouse - center),
-																	   glm::normalize(prevMouse - center));
+																	   glm::normalize(lastPressMouse - center));
 			}
 			break;
 		case TRANSFORM_TRANSLATE_XY:
+			mouseVel = mouse  - prevMouse;
 			if (getOrtho()) {
 				translate.x = -mouseVel.x * getScale().z;
 				translate.y = vFlip * mouseVel.y * getScale().z;
@@ -454,6 +454,7 @@ void ofEasyCam::updateMouse(const glm::vec2 & mouse){
 			}
 			break;
 		case TRANSFORM_TRANSLATE_Z:
+			mouseVel = mouse  - prevMouse;
 			if (getOrtho()) {
 				translate.z = mouseVel.y * sensitivityScroll / area.height;
 			}else{
