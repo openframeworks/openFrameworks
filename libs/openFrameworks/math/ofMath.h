@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "ofGlmIncludes.h"
 
 /// \file
 /// ofMath provides a collection of mathematical utilities and functions.

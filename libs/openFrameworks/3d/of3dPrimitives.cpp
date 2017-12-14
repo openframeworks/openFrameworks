@@ -229,11 +229,11 @@ void of3dPrimitive::drawNormals(float length, bool bFaceNormals) const{
         if(bFaceNormals) {
 			for(size_t i = 0; i < normals.size(); i++ ) {
                 if(i % 3 == 0) {
-                    vert = (vertices[i]+vertices[i+1]+vertices[i+2]) / 3;
+                    vert = (vertices[i]+vertices[i+1]+vertices[i+2]) / 3.f;
                 } else if(i % 3 == 1) {
-                    vert = (vertices[i-1]+vertices[i]+vertices[i+1]) / 3;
+                    vert = (vertices[i-1]+vertices[i]+vertices[i+1]) / 3.f;
                 } else if ( i % 3 == 2) {
-                    vert = (vertices[i-2]+vertices[i-1]+vertices[i]) / 3;
+                    vert = (vertices[i-2]+vertices[i-1]+vertices[i]) / 3.f;
                 }
                 normalsMesh.setVertex(i*2, vert);
 				normal = glm::normalize(toGlm(normals[i]));

@@ -1,5 +1,4 @@
 #pragma once
-#include <stdint.h>
 
 //-------------------------------
 #define OF_VERSION_MAJOR 0
@@ -48,6 +47,7 @@ enum ofTargetPlatform{
 };
 
 // core: ---------------------------
+#include <stdint.h>
 #include <cstdio>
 #include <cstdarg>
 #include <cmath>
@@ -70,8 +70,6 @@ enum ofTargetPlatform{
 #define GLM_META_PROG_HELPERS
 #define GLM_FORCE_SWIZZLE
 #define GLM_FORCE_SIZE_FUNC
-#include "glm/glm.hpp"
-#include "glm/ext.hpp"
 
 #ifndef OF_TARGET_IPHONE
     #define OF_TARGET_IPHONE OF_TARGET_IOS
@@ -149,10 +147,6 @@ enum ofTargetPlatform{
 
 // then the the platform specific includes:
 #ifdef TARGET_WIN32
-	#define GLEW_STATIC
-	#define GLEW_NO_GLU
-	#include "GL/glew.h"
-    #include "GL/wglew.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
@@ -160,8 +154,20 @@ enum ofTargetPlatform{
 		#define _CRT_SECURE_NO_WARNINGS
 		#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
-		#include <stdint.h>
 		#include <functional>
+
+#if !defined(WINAPI)
+#	ifndef WIN32_LEAN_AND_MEAN
+#		define WIN32_LEAN_AND_MEAN 1
+#		define WIN32_LEAN_AND_MEAN_CHANGED_GUARD 1
+#	endif
+#	include <windows.h>
+#	if defined(WIN32_LEAN_AND_MEAN_CHANGED_GUARD)
+#		undef WIN32_LEAN_AND_MEAN_CHANGED_GUARD
+#		undef WIN32_LEAN_AND_MEAN
+#	endif
+#endif
+
 		#pragma warning(disable : 4068)		// unknown pragmas
 		#pragma warning(disable : 4756)		// overflow in constant arithmetic
 		#pragma warning(disable : 4800)		// 'Boolean' : forcing value to bool 'true' or 'false'
@@ -179,13 +185,6 @@ enum ofTargetPlatform{
 
 	#define TARGET_LITTLE_ENDIAN			// intel cpu
 
-	// some gl.h files, like dev-c++, are old - this is pretty universal
-	#ifndef GL_BGR_EXT
-	#define GL_BGR_EXT 0x80E0
-	#endif
-
-	#define WIN32_HIGH_RES_TIMING
-
 	// note: this is experimental!
 	// uncomment to turn this on (only for windows machines)
 	// if you want to try setting the timer to be high resolution
@@ -196,6 +195,8 @@ enum ofTargetPlatform{
 	// to normal (since the high res timer might give the OS
 	// problems)
 	// info: http://www.geisswerks.com/ryan/FAQS/timing.html
+	//
+	#define WIN32_HIGH_RES_TIMING
 
 #endif
 
@@ -204,8 +205,6 @@ enum ofTargetPlatform{
 		#define __MACOSX_CORE__
 	#endif
 	#include <unistd.h>
-	#include "GL/glew.h"
-	#include <OpenGL/gl.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
 	#if defined(__LITTLE_ENDIAN__)
@@ -221,20 +220,6 @@ enum ofTargetPlatform{
 		#ifdef TARGET_RASPBERRY_PI
 			#include "bcm_host.h"
 		#endif
-
-		#include "GLES/gl.h"
-		#include "GLES/glext.h"
-		#include "GLES2/gl2.h"
-		#include "GLES2/gl2ext.h"
-
-		#define EGL_EGLEXT_PROTOTYPES
-		#include "EGL/egl.h"
-		#include "EGL/eglext.h"
-	#else // normal linux
-		#define GL_GLEXT_PROTOTYPES
-		#include <GL/glew.h>
-		#include <GL/gl.h>
-		#include <GL/glext.h>
 	#endif
 
 	// for some reason, this isn't defined at compile time,
@@ -243,7 +228,6 @@ enum ofTargetPlatform{
 	// everyone one else will have RGB / BGR issues.
 	//#if defined(__LITTLE_ENDIAN__)
 	#define TARGET_LITTLE_ENDIAN		// intel cpu
-	//#endif
 
 	// some things for serial compilation:
 	#define B14400	14400
@@ -251,42 +235,19 @@ enum ofTargetPlatform{
 
 #endif
 
-
 #ifdef TARGET_OF_IOS
-	#import <OpenGLES/ES1/gl.h>
-	#import <OpenGLES/ES1/glext.h>
-
-	#import <OpenGLES/ES2/gl.h>
-	#import <OpenGLES/ES2/glext.h>
-
-	
 	#define TARGET_LITTLE_ENDIAN		// arm cpu	
 #endif
 
 #ifdef TARGET_ANDROID
 	#include <typeinfo>
 	#include <unistd.h>
-	#include <GLES/gl.h>
-	#define GL_GLEXT_PROTOTYPES
-	#include <GLES/glext.h>
-
-	#include <GLES2/gl2.h>
-	#include <GLES2/gl2ext.h>
-
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
 #ifdef TARGET_EMSCRIPTEN
-	#include <GLES2/gl2.h>
-	#include <GLES2/gl2ext.h>
-	#include "EGL/egl.h"
-	#include "EGL/eglext.h"
-
 	#define TARGET_LITTLE_ENDIAN
 #endif
-
-#include "tesselator.h"
-typedef TESSindex ofIndexType;
 
 
 #ifndef __MWERKS__
@@ -295,7 +256,13 @@ typedef TESSindex ofIndexType;
 
 #define OF_EXIT_APP(val)		std::exit(val);
 
+#if TARGET_OS_IPHONE || ANDROID || __ARMEL__ || EMSCRIPTEN
+	typedef unsigned short TESSindex;
+#else
+	using TESSindex = unsigned int;
+#endif
 
+using ofIndexType = TESSindex;
 
 
 //------------------------------------------------ capture
@@ -919,7 +886,6 @@ enum ofDrawBitmapMode{
 	OF_BITMAPMODE_MODEL_BILLBOARD
 };
 
-//#define OF_USE_LEGACY_MESH
 template<class V, class N, class C, class T>
 class ofMesh_;
 class ofVec2f;
@@ -929,18 +895,8 @@ class ofVec4f;
 template<typename T>
 class ofColor_;
 typedef ofColor_<float> ofFloatColor;
-
-#ifdef OF_USE_LEGACY_MESH
-using ofDefaultVec2 = ofVec2f;
-using ofDefaultVec3 = ofVec3f;
-using ofDefaultVec4 = ofVec4f;
-#else
-using ofDefaultVec2 = glm::vec2;
-using ofDefaultVec3 = glm::vec3;
-using ofDefaultVec4 = glm::vec4;
-#endif
-using ofDefaultVertexType = ofDefaultVec3;
-using ofDefaultNormalType = ofDefaultVec3;
 using ofDefaultColorType = ofFloatColor;
-using ofDefaultTexCoordType = ofDefaultVec2;
 
+// Uncomment this line if you prefer using ofVec*f 
+// instead of glm::vec* for default vector types
+// #define OF_USE_LEGACY_MESH

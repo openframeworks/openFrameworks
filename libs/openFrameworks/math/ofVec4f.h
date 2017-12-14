@@ -3,6 +3,7 @@
 class ofVec2f;
 class ofVec3f;
 #include "ofConstants.h"
+#include "ofGlmIncludes.h"
 
 class ofVec4f {
 public:

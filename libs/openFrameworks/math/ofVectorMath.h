@@ -1,5 +1,8 @@
 #pragma once
 
+#include "ofConstants.h"
+#include "ofGlmIncludes.h"
+
 #include "ofVec2f.h"
 #include "ofVec3f.h"
 #include "ofVec4f.h"

@@ -762,11 +762,19 @@ void ofFile::setReadable(bool flag){
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setExecutable(bool flag){
 	try{
+#if defined (OF_USING_BOOST_FILESYSTEM)
 		if(flag){
 			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::add_perms);
 		} else{
 			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::remove_perms);
 		}
+#else 
+		if ( flag ) {
+			std::filesystem::permissions( myFile, std::filesystem::perms::owner_exec | std::filesystem::perms::add_perms );
+		} else {
+			std::filesystem::permissions( myFile, std::filesystem::perms::owner_exec | std::filesystem::perms::remove_perms );
+		}
+#endif
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set executable permission on " << myFile << ": " << e.what();
 	}

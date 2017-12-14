@@ -44,6 +44,7 @@
 
 //--------------------------
 // gl
+#include "ofGLIncludes.h"
 #include "ofFbo.h"
 #include "ofGLRenderer.h"
 #include "ofGLUtils.h"

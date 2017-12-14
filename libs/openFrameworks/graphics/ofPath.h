@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "glm/fwd.hpp" // for glm::vec*
 #include "ofColor.h"
 #include "ofPolyline.h"
 #include "ofBaseTypes.h"

@@ -1,8 +1,9 @@
 #pragma once
 
+#include "ofConstants.h"
+#include "glm/fwd.hpp"
 #include <vector>
 #include "ofRectangle.h"
-#include "ofConstants.h"
 #include "ofPath.h"
 #include "ofTexture.h"
 #include "ofMesh.h"

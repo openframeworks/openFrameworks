@@ -1,9 +1,10 @@
 #pragma once
 
+#include "ofConstants.h"
 #include "ofEvents.h"
 #include "ofTypes.h"
+#include "ofBaseTypes.h"
 #include "ofUtils.h"
-#include "ofConstants.h"
 #include "ofVectorMath.h"
 #include "ofPoint.h"
 #include <map>

@@ -22,6 +22,20 @@ typedef ofPixels_<float> ofFloatPixels;
 typedef ofPixels_<unsigned short> ofShortPixels;
 typedef ofPixels& ofPixelsRef;
 
+#ifdef OF_USE_LEGACY_MESH
+using ofDefaultVec2 = ofVec2f;
+using ofDefaultVec3 = ofVec3f;
+using ofDefaultVec4 = ofVec4f;
+#else
+using ofDefaultVec2 = glm::vec2;
+using ofDefaultVec3 = glm::vec3;
+using ofDefaultVec4 = glm::vec4;
+#endif
+
+using ofDefaultVertexType = ofDefaultVec3;
+using ofDefaultNormalType = ofDefaultVec3;
+using ofDefaultTexCoordType = ofDefaultVec2;
+
 template<typename T>
 class ofColor_;
 

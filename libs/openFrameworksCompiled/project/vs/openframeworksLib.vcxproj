@@ -103,9 +103,10 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level1</WarningLevel>
       <BrowseInformation>false</BrowseInformation>
       <CompileAs>CompileAsCpp</CompileAs>
+      <AdditionalOptions>/Bt+ %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -144,6 +145,7 @@
     <ClInclude Include="..\..\..\openFrameworks\events\ofEvent.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofBufferObject.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofFbo.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofGLIncludes.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLRenderer.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofLight.h" />
@@ -164,6 +166,7 @@
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofRendererCollection.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofTessellator.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofTrueTypeFont.h" />
+    <ClInclude Include="..\..\..\openFrameworks\math\ofGlmIncludes.h" />
     <ClInclude Include="..\..\..\openFrameworks\math\ofMath.h" />
     <ClInclude Include="..\..\..\openFrameworks\math\ofMatrix3x3.h" />
     <ClInclude Include="..\..\..\openFrameworks\math\ofMatrix4x4.h" />

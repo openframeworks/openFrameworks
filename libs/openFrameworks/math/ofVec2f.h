@@ -2,7 +2,9 @@
 
 class ofVec3f;
 class ofVec4f;
+
 #include "ofConstants.h"
+#include "ofGlmIncludes.h"
 
 /// \brief
 /// ofVec2f is a class for storing a two dimensional vector. 
