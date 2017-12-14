@@ -2,6 +2,68 @@
 #include "ofGraphicsBaseTypes.h"
 #include "ofGLBaseTypes.h"
 
+
+/// \brief Used to represent the available video looping modes.
+///
+/// \sa ofVideoPlayer::setLoopState()
+/// \sa ofVideoPlayer::getLoopState()
+enum ofLoopType : short{
+	/// \brief Plays the video once without looping.
+	OF_LOOP_NONE=0x01,
+	/// \brief Plays the video forwards then backwards repeatedly.
+	OF_LOOP_PALINDROME=0x02,
+	/// \brief Repeats the video over and over.
+	OF_LOOP_NORMAL=0x03
+};
+
+
+
+/// \brief A structure describing attributes of a video format.
+///
+/// An ofVideoFormat is used to describe the size, pixel format and frame rates
+/// offered by a video device.
+///
+/// \sa ofVideoDevice
+class ofVideoFormat{
+public:
+	/// \brief The pixel format of the video format.
+	ofPixelFormat pixelFormat;
+
+	/// \brief The width of the video format in pixels.
+	int width;
+
+	/// \brief The height of the video format in pixels.
+	int height;
+
+	/// \brief A list of framerates for this video format in frames per second.
+	std::vector<float> framerates;
+};
+
+/// \brief A structure describing attributes of a video device.
+///
+/// An ofVideoDevice can represent a camera, grabber or other frame source.
+class ofVideoDevice{
+public:
+	/// \brief The video device ID.
+	int id;
+
+	/// \brief The video device name.
+	std::string deviceName;
+
+	/// \brief The video device hardware name.
+	std::string hardwareName;
+
+	/// \brief Unique identifier for the device if it has one.
+	std::string serialID;
+
+	/// \brief A list of video device formats provided by the device.
+	/// \sa ofVideoFormat
+	std::vector<ofVideoFormat> formats;
+
+	/// \brief Is true if this video device is available.
+	bool bAvailable;
+};
+
 /// \brief A base class representing a video source.
 class ofBaseVideo: virtual public ofBaseHasPixels, public ofBaseUpdates{
 public:

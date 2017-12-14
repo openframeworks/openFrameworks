@@ -1,8 +1,6 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
-#include "
-ofGraphicsBaseTypes.h"
 #include "ofPath.h"
 #include "ofRendererCollection.h"
 #if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)

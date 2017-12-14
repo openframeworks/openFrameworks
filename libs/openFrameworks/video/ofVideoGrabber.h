@@ -2,8 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-#include "
-ofGraphicsBaseTypes.h"
+#include "ofVideoBaseTypes.h"
 #include "ofPixels.h"
 #include "ofTypes.h"
 
