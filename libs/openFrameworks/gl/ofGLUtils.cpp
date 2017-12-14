@@ -4,7 +4,7 @@
 #include "ofGLProgrammableRenderer.h"
 #include "ofGraphics.h"
 #include "ofShader.h"
-#include "ofBaseTypes.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofRendererCollection.h"
 #include "ofLog.h"
 

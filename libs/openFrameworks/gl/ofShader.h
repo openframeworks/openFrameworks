@@ -8,13 +8,15 @@
  */
 
 #include "ofConstants.h"
-#include "ofBaseTypes.h"
 #include "ofLog.h"
+#include <unordered_map>
+#include <map>
+
 class ofTexture;
 class ofMatrix3x3;
 class ofParameterGroup;
 class ofBufferObject;
-
+class ofBaseHasTexture;
 
 class ofShader {
 

@@ -2,6 +2,8 @@
 #include "ofEvents.h"
 #include "ofFileUtils.h"
 #include "ofTypes.h"
+#include <map>
+
 class ofHttpResponse;
 
 /// \class ofHttpRequest

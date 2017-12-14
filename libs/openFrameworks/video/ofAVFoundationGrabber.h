@@ -8,7 +8,8 @@
 #ifdef OF_VIDEO_CAPTURE_AVF 
 
 //------
-#include "ofBaseTypes.h"
+#include "
+ofGraphicsBaseTypes.h"
 #include "ofPixels.h"
 #include "ofTexture.h"
 #include "ofThread.h"

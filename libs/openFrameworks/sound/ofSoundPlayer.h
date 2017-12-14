@@ -28,7 +28,8 @@ void ofSoundUpdate();
 /// \return pointer to an FFT sample, sample size is equal to the nBands parameter.
 float * ofSoundGetSpectrum(int nBands);
 
-#include "ofBaseTypes.h"
+#include "
+ofGraphicsBaseTypes.h"
 #include "ofBaseSoundPlayer.h"
 
 

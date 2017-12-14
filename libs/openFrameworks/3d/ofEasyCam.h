@@ -2,7 +2,7 @@
 
 #include "ofCamera.h"
 #include "ofEvents.h"
-
+#include "ofRectangle.h"
 
 /// \brief A super simple camera for interacting with objects in 3D space.
 class ofEasyCam : public ofCamera {
@@ -17,7 +17,10 @@ public:
 	/// \name Rendering
 	/// \{
 
-	virtual void begin(ofRectangle viewport = ofRectangle());
+	virtual void begin(const ofRectangle & viewport);
+	virtual void begin(){
+		begin(getViewport());
+	}
 
     /// \brief Reset the camera position and orientation.
 	void reset();

@@ -9,7 +9,6 @@
 #include <atomic>
 #include <stddef.h>
 #include <functional>
-#include "ofTypes.h"
 
 
 /*! \cond PRIVATE */

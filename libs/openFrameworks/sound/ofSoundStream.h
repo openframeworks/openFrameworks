@@ -1,11 +1,11 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofBaseTypes.h"
 #include "ofBaseApp.h"
 #include "ofTypes.h"
 #include "ofBaseSoundStream.h"
 #include <climits>
+#include <functional>
 
 
 class ofSoundStreamSettings;

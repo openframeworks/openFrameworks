@@ -2,6 +2,7 @@
 #include "ofAppRunner.h"
 #include "ofPolyline.h"
 #include "ofVectorMath.h"
+#include "ofGraphicsBaseTypes.h"
 
 //----------------------------------------------------------
 template<class T>

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofRectangle.h"
-#include "ofBaseTypes.h"
 #include "ofConstants.h"
 #include "ofVboMesh.h"
 

@@ -3,7 +3,8 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 #include "ofRectangle.h"
-#include "ofTypes.h"
+#include "ofGraphicsBaseTypes.h"
+#include "ofVec3f.h"
 
 /// \cond INTERNAL
 #define  	CIRC_RESOLUTION		    22

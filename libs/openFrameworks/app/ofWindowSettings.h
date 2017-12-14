@@ -1,10 +1,6 @@
 #pragma once
 #include "ofConstants.h"
-#include "ofVec2f.h"
-
-#include "ofConstants.h"
-#include "ofVec2f.h"
-#include "ofVec3f.h"
+#include "glm/vec2.hpp"
 
 class ofWindowSettings{
 public:

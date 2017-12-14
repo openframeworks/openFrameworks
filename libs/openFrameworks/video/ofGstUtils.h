@@ -3,7 +3,8 @@
 #include "ofConstants.h"
 #ifndef TARGET_ANDROID
 #include "ofConstants.h"
-#include "ofBaseTypes.h"
+#include "
+ofGraphicsBaseTypes.h"
 #include "ofPixels.h"
 #include "ofTypes.h"
 #include "ofEvents.h"

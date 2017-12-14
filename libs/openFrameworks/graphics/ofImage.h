@@ -3,7 +3,8 @@
 #include "ofFileUtils.h"
 #include "ofTexture.h"
 #include "ofPixels.h"
-#include "ofBaseTypes.h"
+#include "
+ofGraphicsBaseTypes.h"
 #include "ofConstants.h"
 
 /// \file

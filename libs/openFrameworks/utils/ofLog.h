@@ -3,6 +3,7 @@
 #include "ofConstants.h"
 #include "ofFileUtils.h"
 #include "ofTypes.h"
+#include <sstream>
 
 /// \file
 /// ofLog provides an interface for writing text output from your app.

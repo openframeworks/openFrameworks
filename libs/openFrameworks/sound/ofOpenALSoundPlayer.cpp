@@ -2,6 +2,8 @@
 
 #ifdef OF_SOUND_PLAYER_OPENAL
 
+#include "ofConstants.h"
+#include "glm/gtc/constants.hpp"
 #include "ofUtils.h"
 #include "ofMath.h"
 #include "ofFileUtils.h"
@@ -153,7 +155,7 @@ void ofOpenALSoundPlayer::createWindow(int size){
 		window.resize(size);
 		// hanning window
 		for(int i = 0; i < size; i++){
-			window[i] = .54 - .46 * cos((TWO_PI * i) / (size - 1));
+			window[i] = .54 - .46 * cos((glm::two_pi<float>() * i) / (size - 1));
 			windowSum += window[i];
 		}
 	}

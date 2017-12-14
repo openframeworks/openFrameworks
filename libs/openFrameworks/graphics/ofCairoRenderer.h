@@ -7,7 +7,8 @@
 #include "cairo.h"
 #include <deque>
 #include <stack>
-#include "ofBaseTypes.h"
+#include "
+ofGraphicsBaseTypes.h"
 #include "ofPath.h"
 #include "of3dGraphics.h"
 

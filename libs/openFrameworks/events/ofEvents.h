@@ -5,6 +5,7 @@
 #include "ofTimer.h"
 #include "ofFpsCounter.h"
 #include <set>
+#include "glm/vec2.hpp"
 
 //-------------------------- mouse/key query
 bool ofGetMousePressed(int button=-1); //by default any button

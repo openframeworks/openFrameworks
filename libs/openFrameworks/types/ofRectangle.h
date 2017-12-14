@@ -3,7 +3,7 @@
 
 #include "ofConstants.h"
 #include "ofLog.h"
-
+#include <glm/vec3.hpp>
 
 /// \brief A class representing a 2D rectangle.
 ///

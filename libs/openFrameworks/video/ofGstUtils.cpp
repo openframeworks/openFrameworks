@@ -17,6 +17,8 @@
 #include <glib.h>
 #include <algorithm>
 #include "ofAppRunner.h"
+#include "ofVideoPlayer.h"
+
 #ifdef OF_USE_GST_GL
 #ifndef TARGET_OPENGLES
 #include <gst/gl/x11/gstgldisplay_x11.h>

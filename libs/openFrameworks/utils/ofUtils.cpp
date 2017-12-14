@@ -2,6 +2,7 @@
 #include "ofImage.h"
 #include "ofFileUtils.h"
 #include "ofLog.h"
+#include "ofAppBaseWindow.h"
 
 #include <chrono>
 #include <numeric>
