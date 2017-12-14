@@ -1,5 +1,6 @@
 #include "ofEvents.h"
 #include "ofAppRunner.h"
+#include "ofAppBaseWindow.h"
 
 using namespace std;
 

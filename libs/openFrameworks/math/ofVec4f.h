@@ -2,7 +2,11 @@
 
 class ofVec2f;
 class ofVec3f;
+
 #include "ofConstants.h"
+#include <cmath>
+#include "glm/vec4.hpp"
+#include "glm/fwd.hpp"
 
 class ofVec4f {
 public:
@@ -299,9 +303,6 @@ inline ofVec4f::ofVec4f( float _x,
 						float _z,
 						float _w ):x(_x), y(_y), z(_z), w(_w) {}
 
-inline ofVec4f::ofVec4f( const glm::vec2& v):x(v.x), y(v.y), z(0.0), w(0.0) {}
-inline ofVec4f::ofVec4f( const glm::vec3& v):x(v.x), y(v.y), z(v.z), w(0.0) {}
-inline ofVec4f::ofVec4f( const glm::vec4& v):x(v.x), y(v.y), z(v.z), w(v.w) {}
 
 inline ofVec4f::operator glm::vec4() const{
 	return glm::vec4(x,y,z,w);

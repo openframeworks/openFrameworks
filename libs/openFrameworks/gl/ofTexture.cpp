@@ -4,6 +4,7 @@
 #include "ofGraphics.h"
 #include "ofPixels.h"
 #include "ofGLUtils.h"
+#include "ofGLBaseTypes.h"
 #include <map>
 
 #ifdef TARGET_ANDROID

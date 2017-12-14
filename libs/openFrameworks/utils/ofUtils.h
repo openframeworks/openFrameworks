@@ -4,6 +4,7 @@
 #include "utf8.h"
 #include <bitset> // For ofToBinary.
 #include <chrono>
+#include <iomanip>  //for setprecision
 
 #include "ofLog.h"
 

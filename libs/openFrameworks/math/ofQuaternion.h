@@ -222,14 +222,6 @@ ofQuaternion::ofQuaternion(float angle1, const ofVec3f& axis1, float angle2, con
 }
 
 //----------------------------------------
-ofQuaternion::ofQuaternion(const glm::quat & q):_v(q.x, q.y, q.z, q.w){}
-
-//----------------------------------------
-ofQuaternion::operator glm::quat() const{
-	return glm::quat(_v.w, glm::vec3(_v.x, _v.y, _v.z));
-}
-
-//----------------------------------------
 ofQuaternion& ofQuaternion::operator =(const ofQuaternion& q) {
     _v = q._v;
     return *this;

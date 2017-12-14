@@ -12,6 +12,7 @@
 #include "ofConstants.h"
 #include "ofRectangle.h"
 #include "ofGraphics.h"
+#include "glm/mat4x4.hpp"
 
 class ofBaseDraws;
 class ofAppBaseWindow;

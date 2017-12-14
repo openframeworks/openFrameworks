@@ -1,5 +1,9 @@
 #include "ofCamera.h"
 #include "ofLog.h"
+#include "ofRectangle.h"
+#include "ofGraphics.h"
+#include "ofAppRunner.h"
+#include "ofGraphicsBaseTypes.h"
 
 using namespace std;
 
@@ -123,13 +127,13 @@ bool ofCamera::getOrtho() const {
 }
 
 //----------------------------------------
-float ofCamera::getImagePlaneDistance(ofRectangle viewport) const {
-	return getViewport(viewport).height / (2.0f * tanf(PI * fov / 360.0f));
+float ofCamera::getImagePlaneDistance(const ofRectangle & viewport) const {
+	return viewport.height / (2.0f * tanf(PI * fov / 360.0f));
 }
 
 //----------------------------------------
-void ofCamera::begin(ofRectangle viewport) {
-	ofGetCurrentRenderer()->bind(*this,getViewport(viewport));
+void ofCamera::begin(const ofRectangle & viewport) {
+	ofGetCurrentRenderer()->bind(*this,viewport);
 }
 
 // if begin(); pushes first, then we need an end to pop
@@ -139,8 +143,7 @@ void ofCamera::end() {
 }
 
 //----------------------------------------
-glm::mat4 ofCamera::getProjectionMatrix(ofRectangle viewport) const {
-	viewport = getViewport(viewport);
+glm::mat4 ofCamera::getProjectionMatrix(const ofRectangle & viewport) const {
 	// autocalculate near/far clip planes if not set by user
 	const_cast<ofCamera*>(this)->calcClipPlanes(viewport);
 
@@ -167,15 +170,12 @@ glm::mat4 ofCamera::getModelViewMatrix() const {
 }
 
 //----------------------------------------
-glm::mat4 ofCamera::getModelViewProjectionMatrix(ofRectangle viewport) const {
-	viewport = getViewport(viewport);
+glm::mat4 ofCamera::getModelViewProjectionMatrix(const ofRectangle & viewport) const {
 	return getProjectionMatrix(viewport) * getModelViewMatrix();
 }
 
 //----------------------------------------
-glm::vec3 ofCamera::worldToScreen(glm::vec3 WorldXYZ, ofRectangle viewport) const {
-	viewport = getViewport(viewport);
-
+glm::vec3 ofCamera::worldToScreen(glm::vec3 WorldXYZ, const ofRectangle & viewport) const {
 	auto CameraXYZ = worldToCamera(WorldXYZ, viewport);
 	
 	glm::vec3 ScreenXYZ;
@@ -187,9 +187,7 @@ glm::vec3 ofCamera::worldToScreen(glm::vec3 WorldXYZ, ofRectangle viewport) cons
 }
 
 //----------------------------------------
-glm::vec3 ofCamera::screenToWorld(glm::vec3 ScreenXYZ, ofRectangle viewport) const {
-	viewport = getViewport(viewport);
-
+glm::vec3 ofCamera::screenToWorld(glm::vec3 ScreenXYZ, const ofRectangle & viewport) const {
 	//convert from screen to camera
 	glm::vec3 CameraXYZ;
 	CameraXYZ.x = 2.0f * (ScreenXYZ.x - viewport.x) / viewport.width - 1.0f;
@@ -200,8 +198,8 @@ glm::vec3 ofCamera::screenToWorld(glm::vec3 ScreenXYZ, ofRectangle viewport) con
 }
 
 //----------------------------------------
-glm::vec3 ofCamera::worldToCamera(glm::vec3 WorldXYZ, ofRectangle viewport) const {
-	auto MVPmatrix = getModelViewProjectionMatrix(getViewport(viewport));
+glm::vec3 ofCamera::worldToCamera(glm::vec3 WorldXYZ, const ofRectangle & viewport) const {
+	auto MVPmatrix = getModelViewProjectionMatrix(viewport);
 	if(vFlip){
 		MVPmatrix = glm::scale(glm::mat4(1.0), glm::vec3(1.f,-1.f,1.f)) * MVPmatrix;
 	}
@@ -211,8 +209,8 @@ glm::vec3 ofCamera::worldToCamera(glm::vec3 WorldXYZ, ofRectangle viewport) cons
 }
 
 //----------------------------------------
-glm::vec3 ofCamera::cameraToWorld(glm::vec3 CameraXYZ, ofRectangle viewport) const {
-	auto MVPmatrix = getModelViewProjectionMatrix(getViewport(viewport));
+glm::vec3 ofCamera::cameraToWorld(glm::vec3 CameraXYZ, const ofRectangle & viewport) const {
+	auto MVPmatrix = getModelViewProjectionMatrix(viewport);
 	if(vFlip){
 		MVPmatrix = glm::scale(glm::mat4(1.0), glm::vec3(1.f,-1.f,1.f)) * MVPmatrix;
 	}
@@ -224,18 +222,14 @@ glm::vec3 ofCamera::cameraToWorld(glm::vec3 CameraXYZ, ofRectangle viewport) con
 void ofCamera::calcClipPlanes(const ofRectangle & viewport) {
 	// autocalculate near/far clip planes if not set by user
 	if(nearClip == 0 || farClip == 0) {
-		float dist = getImagePlaneDistance(getViewport(viewport));
+		float dist = getImagePlaneDistance(viewport);
 		nearClip = (nearClip == 0) ? dist / 100.0f : nearClip;
 		farClip = (farClip == 0) ? dist * 10.0f : farClip;
 	}
 }
 
-ofRectangle ofCamera::getViewport(const ofRectangle & viewport) const{
-	if(viewport.isZero()){
-		return getRenderer()->getCurrentViewport();
-	}else{
-		return viewport;
-	}
+ofRectangle ofCamera::getViewport() const{
+	return getRenderer()->getCurrentViewport();
 }
 
 shared_ptr<ofBaseRenderer> ofCamera::getRenderer() const{
@@ -250,7 +244,8 @@ void ofCamera::setRenderer(shared_ptr<ofBaseRenderer> _renderer){
 	renderer = _renderer;
 }
 
-void ofCamera::drawFrustum(const ofRectangle viewport) const {
+void ofCamera::drawFrustum(const ofRectangle & viewport) const {
+	//FIXME: this is not using the viewport?
 	ofPushMatrix(); // we assume we are currently in world space.
 	ofMultMatrix( getGlobalTransformMatrix() ); 
 	// Move origin to camera origin == global transform of camera == inverse (view matrix)

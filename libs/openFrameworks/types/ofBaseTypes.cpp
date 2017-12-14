@@ -5,6 +5,7 @@
 #include "of3dGraphics.h"
 #include "ofSoundBuffer.h"
 #include "ofMesh.h"
+#include "ofVideoPlayer.h"
 
 using namespace std;
 

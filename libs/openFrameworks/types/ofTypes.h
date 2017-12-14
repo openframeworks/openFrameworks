@@ -10,7 +10,7 @@ class ofSerialDeviceInfo{
 	friend class ofSerial;
 
 	public:
-		/// \brief Construct an ofSerialDeviceInfo with parameters.
+		/// \brief Construct an ofSerialDeviceInfo with parameters.
 		/// \param devicePathIn The path to the device.
 		/// \param deviceNameIn The name of the device.
 		/// \param deviceIDIn The ID of the device.
@@ -20,7 +20,7 @@ class ofSerialDeviceInfo{
 			deviceID = deviceIDIn;
 		}
 
-		/// \brief Construct an undefined serial device.
+		/// \brief Construct an undefined serial device.
 		ofSerialDeviceInfo(){
 			deviceName = "device undefined";
 			deviceID   = -1;
@@ -145,96 +145,11 @@ typedef std::mutex ofMutex;
 /// \sa ofMutex
 typedef std::unique_lock<std::mutex> ofScopedLock;
 
-/// \brief Contains general information about the style of ofGraphics
-/// elements such as color, line width and others.
-class ofStyle{
-	public:
-		/// \brief Create a default ofStyle.
-		ofStyle(){
-			bFill				= true;
-			blendingMode		= OF_BLENDMODE_ALPHA;
-			smoothing			= false;
-			circleResolution	= 20;
-			sphereResolution	= 20;
-			curveResolution		= 20;
-			lineWidth			= 1.0;
-			polyMode			= OF_POLY_WINDING_ODD;
-			rectMode			= OF_RECTMODE_CORNER;
-			#ifdef TARGET_OPENGLES
-				drawBitmapMode		= OF_BITMAPMODE_SIMPLE;
-			#else
-				drawBitmapMode		= OF_BITMAPMODE_MODEL_BILLBOARD;
-			#endif
-			bgColor.set(200,200,200);
-			//depthTest = false;
-		}
-
-		/// \brief Destroy the ofStyle.
-		virtual ~ofStyle(){}
-
-		/// \brief The color used when rendering.
-		///
-		/// This style depends on the state of the ofStyle::bFill.
-		ofColor color;
-
-		/// \brief The background color used when rendering.
-		ofColor bgColor;
-
-		/// \brief The current rendering mode for polygons.
-		///
-		/// ofPolyWindingMode determines how ovelapping parts of the same
-		/// polygon are rendered.
-		///
-		/// \sa ofPolyWindingMode
-		ofPolyWindingMode polyMode;
-
-		/// \brief Determine how some shapes are anchored (e.g. ofDrawEllipse).
-		///
-		/// The rectMode applies to several shapes, including ofDrawRectangle
-		/// and ofDrawEllipse.  If the current rectMode is `OF_RECTMODE_CENTER`,
-		/// the rendered shape will be drawn with x, y in the center of the
-		/// shape. If the current rectMode is `OF_RECTMODE_CORNER`, the
-		/// rendered shape will be drawn with the x, y in the upper-left-hand
-		/// corner of the shape.
-		ofRectMode rectMode;
-
-		/// \brief True if the renderer should fill a rendered shape.
-		///
-		/// If true, the renderer will fill the rendered shape.  If false, the
-		/// renderer will draw the outline of the rendered shape.
-		bool bFill;
-
-		/// \brief The render mode for bitmaps (e.g. ofDrawBitmapString).
-		///
-		/// \sa ofDrawBitmapString(const T& textString, float x, float y)
-		ofDrawBitmapMode drawBitmapMode;
-
-		/// \brief The blending mode.
-		ofBlendMode blendingMode;
-
-		/// \brief True if anti-aliasing is enabled.
-		bool smoothing;
-
-		// \brief The resolution of rendered circles and arcs (e.g. ofCircle).
-		int circleResolution;
-
-		// \brief The resolution of rendered spheres (e.g. ofSphere).
-		int sphereResolution;
-
-		// \brief The resolution of rendered curves.
-		int curveResolution;
-
-		/// \brief The width of rendered lines.
-		/// \warning This is not currently implemented in modern OF renderers.
-		float lineWidth;
-
-		//bool depthTest; removed since it'll break old projects setting depth test through glEnable
-};
 
 
 /// \brief A structure describing attributes of a video format.
 ///
-/// An ofVideoFormat is used to describe the size, pixel format and frame rates
+/// An ofVideoFormat is used to describe the size, pixel format and frame rates
 /// offered by a video device.
 ///
 /// \sa ofVideoDevice

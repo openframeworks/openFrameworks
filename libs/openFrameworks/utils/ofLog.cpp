@@ -2,6 +2,7 @@
 #include "ofConstants.h"
 #include <ofUtils.h>
 #include <map>
+#include <cstdarg>
 #ifdef TARGET_ANDROID
 	#include "ofxAndroidLogChannel.h"
 #endif

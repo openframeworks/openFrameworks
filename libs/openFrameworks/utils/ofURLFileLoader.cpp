@@ -1,5 +1,6 @@
 #include "ofURLFileLoader.h"
-#include "ofBaseTypes.h"
+#include "
+ofGraphicsBaseTypes.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 

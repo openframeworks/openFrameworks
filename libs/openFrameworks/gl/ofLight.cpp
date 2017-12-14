@@ -12,6 +12,7 @@
 #include "ofConstants.h"
 #include "ofLog.h"
 #include "ofUtils.h"
+#include "of3dUtils.h"
 #include <map>
 
 using namespace std;

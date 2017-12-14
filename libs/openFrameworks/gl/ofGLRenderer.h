@@ -1,5 +1,5 @@
 #pragma once
-#include "ofBaseTypes.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofPolyline.h"
 #include <stack>
 #include "of3dGraphics.h"

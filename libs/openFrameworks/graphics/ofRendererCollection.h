@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofBaseTypes.h"
+#include "ofGLBaseTypes.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
 #include "of3dGraphics.h"

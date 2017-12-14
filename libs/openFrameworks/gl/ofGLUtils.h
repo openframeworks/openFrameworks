@@ -9,6 +9,7 @@
 #define OFGLUTILS_H_
 
 #include "ofConstants.h"
+#include "ofGraphicsConstants.h"
 #include "ofTypes.h"
 #include "ofPixels.h"
 
@@ -34,11 +35,6 @@ enum ofPrimitiveMode{
 #endif
 };
 
-enum ofPolyRenderMode{
-	OF_MESH_POINTS,
-	OF_MESH_WIREFRAME,
-	OF_MESH_FILL
-};
 
 int ofGetGlInternalFormat(const ofPixels& pix);
 int ofGetGlInternalFormat(const ofShortPixels& pix);

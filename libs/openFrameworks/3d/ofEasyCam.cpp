@@ -1,6 +1,7 @@
 #include "ofEasyCam.h"
 #include "ofMath.h"
 #include "ofUtils.h"
+#include "ofGraphicsBaseTypes.h"
 
 using namespace std;
 
@@ -25,7 +26,9 @@ ofEasyCam::ofEasyCam(){
 }
 //----------------------------------------
 void ofEasyCam::update(ofEventArgs & args){
-	viewport = getViewport(this->viewport);
+	if(this->viewport.isZero()){
+		viewport = getViewport();
+	}
 	if(!bDistanceSet && bAutoDistance){
 		setDistance(getImagePlaneDistance(viewport), true);
 	}
@@ -44,11 +47,11 @@ void ofEasyCam::update(ofEventArgs & args){
 }
 
 //----------------------------------------
-void ofEasyCam::begin(ofRectangle _viewport){
+void ofEasyCam::begin(const ofRectangle & _viewport){
 	if(!bEventsSet){
 		setEvents(ofEvents());
 	}
-	viewport = getViewport(_viewport);
+	viewport = _viewport;
 	ofCamera::begin(viewport);
 }
 
@@ -414,7 +417,7 @@ void ofEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
 		lastPressPosition = ofCamera::getGlobalPosition();
 		lastPressAxisZ = getZAxis();
 		if (getOrtho()) {
-			translate.z = sensitivityScroll * mouse.scrollY / ofGetHeight();
+			translate.z = sensitivityScroll * mouse.scrollY / viewport.height;
 			mouseAtScroll = mouse;
 		}else{
 			translate.z = mouse.scrollY * 30 * sensitivityTranslate.z * (getDistance() + FLT_EPSILON)/ area.height;

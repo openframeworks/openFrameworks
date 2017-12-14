@@ -1,5 +1,5 @@
 #include "ofAppRunner.h"
-#include "ofBaseTypes.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofMesh.h"
 #include "ofVectorMath.h"
 #include <map>

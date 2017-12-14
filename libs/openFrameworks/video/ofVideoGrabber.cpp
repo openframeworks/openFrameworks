@@ -1,6 +1,7 @@
 #include "ofVideoGrabber.h"
 #include "ofUtils.h"
-#include "ofBaseTypes.h"
+#include "
+ofGraphicsBaseTypes.h"
 #include "ofConstants.h"
 #include "ofAppRunner.h"
 

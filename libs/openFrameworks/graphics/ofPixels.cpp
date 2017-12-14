@@ -1,6 +1,7 @@
 #include "ofPixels.h"
 #include "ofMath.h"
 #include <algorithm>
+#include "glm/common.hpp"
 
 using namespace std;
 
@@ -1390,7 +1391,7 @@ bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, size_t xTo, size
 
 template<typename A, typename B>
 inline A clampedAdd(const A& a, const B& b) {
-	return CLAMP((float) a + (float) b, 0, ofColor_<A>::limit());
+	return glm::clamp((float) a + (float) b, 0.f, ofColor_<A>::limit());
 }
 
 
