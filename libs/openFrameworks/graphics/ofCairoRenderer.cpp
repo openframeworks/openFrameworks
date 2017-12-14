@@ -7,6 +7,7 @@
 #include "ofTrueTypeFont.h"
 #include "ofNode.h"
 #include "ofGraphics.h"
+#include "ofVideoBaseTypes.h"
 
 using namespace std;
 

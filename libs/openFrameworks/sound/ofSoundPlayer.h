@@ -1,10 +1,8 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofTypes.h"
-
-/// \todo: FIX THIS!!!!!!
-/// #warning FIX THIS.
+#include "ofSoundBaseTypes.h"
+#include "ofBaseSoundPlayer.h"
 
 /// \brief Stops all active sound players on FMOD-based systems (windows, osx).
 void ofSoundStopAll();
@@ -28,9 +26,6 @@ void ofSoundUpdate();
 /// \return pointer to an FFT sample, sample size is equal to the nBands parameter.
 float * ofSoundGetSpectrum(int nBands);
 
-#include "
-ofGraphicsBaseTypes.h"
-#include "ofBaseSoundPlayer.h"
 
 
 #ifdef OF_SOUND_PLAYER_QUICKTIME

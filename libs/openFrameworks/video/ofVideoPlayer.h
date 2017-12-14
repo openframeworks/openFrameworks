@@ -2,9 +2,8 @@
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-#include "
-ofGraphicsBaseTypes.h"
 #include "ofTypes.h"
+#include "ofVideoBaseTypes.h"
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
 	#include "ofGstVideoPlayer.h"
@@ -45,19 +44,6 @@ ofGraphicsBaseTypes.h"
 	#include "ofxEmscriptenVideoPlayer.h"
 	#define OF_VID_PLAYER_TYPE ofxEmscriptenVideoPlayer
 #endif
-
-/// \brief Used to represent the available video looping modes.
-///
-/// \sa ofVideoPlayer::setLoopState()
-/// \sa ofVideoPlayer::getLoopState()
-enum ofLoopType : short{
-	/// \brief Plays the video once without looping.
-	OF_LOOP_NONE=0x01,
-	/// \brief Plays the video forwards then backwards repeatedly.
-	OF_LOOP_PALINDROME=0x02,
-	/// \brief Repeats the video over and over.
-	OF_LOOP_NORMAL=0x03
-};
 
 //---------------------------------------------
 class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{

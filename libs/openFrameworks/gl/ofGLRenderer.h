@@ -6,7 +6,7 @@
 #include "ofBitmapFont.h"
 #include "ofMatrixStack.h"
 #include "ofPath.h"
-#include <set>
+#include "ofGLBaseTypes.h"
 
 class ofShapeTessellation;
 class ofFbo;

@@ -13,6 +13,7 @@
 #include "ofLog.h"
 #include "ofUtils.h"
 #include "of3dUtils.h"
+#include "ofGLBaseTypes.h"
 #include <map>
 
 using namespace std;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofTexture.h"
+#include "ofGLBaseTypes.h"
 
 enum class ofFboBeginMode : short{
     NoDefaults = 0,

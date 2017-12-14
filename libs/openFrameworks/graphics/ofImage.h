@@ -3,9 +3,8 @@
 #include "ofFileUtils.h"
 #include "ofTexture.h"
 #include "ofPixels.h"
-#include "
-ofGraphicsBaseTypes.h"
 #include "ofConstants.h"
+#include "ofGLBaseTypes.h"
 
 /// \file
 /// ofImage is used for loading, saving and drawing images in openFrameworks.
