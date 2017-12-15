@@ -206,7 +206,6 @@ enum ofTargetPlatform{
 		#define EGL_EGLEXT_PROTOTYPES
 		#include "EGL/egl.h"
 		#include "EGL/eglext.h"
-		#define _GLIBCXX_USE_C99_MATH 1
 	#else // normal linux
 		#define GL_GLEXT_PROTOTYPES
 		#include <GL/glew.h>
