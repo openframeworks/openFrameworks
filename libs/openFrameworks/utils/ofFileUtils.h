@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+#include <fstream>
 
 #if OF_USING_STD_FS
 #	if __cplusplus < 201703L
@@ -11,7 +12,6 @@
 #	else
 #		include <filesystem>
 #	endif
-#	include <fstream>
 #else
 #	if !_MSC_VER
 #		define BOOST_NO_CXX11_SCOPED_ENUMS
