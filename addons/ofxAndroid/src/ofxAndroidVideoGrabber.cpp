@@ -11,6 +11,7 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofVideoGrabber.h"
+#include "ofGLUtils.h"
 
 using namespace std;
 
