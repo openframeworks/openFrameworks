@@ -66,7 +66,7 @@ FIBITMAP* getBmpFromPixels(const ofPixels_<PixelType> &pix){
 	unsigned int width = pix.getWidth();
 	unsigned int height = pix.getHeight();
     unsigned int bpp = pix.getBitsPerPixel();
-	
+
 	FREE_IMAGE_TYPE freeImageType = getFreeImageType(pix);
 	FIBITMAP* bmp = FreeImage_AllocateT(freeImageType, width, height, bpp);
 	unsigned char* bmpBits = FreeImage_GetBits(bmp);
@@ -87,7 +87,7 @@ FIBITMAP* getBmpFromPixels(const ofPixels_<PixelType> &pix){
 	} else {
 		ofLogError("ofImage") << "getBmpFromPixels(): unable to get FIBITMAP from ofPixels";
 	}
-	
+
 	// ofPixels are top left, FIBITMAP is bottom left
 	FreeImage_FlipVertical(bmp);
 
@@ -150,14 +150,14 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType>& pix, bool swapOnLitt
 
 	// ofPixels are top left, FIBITMAP is bottom left
 	FreeImage_FlipVertical(bmp);
-	
+
 	unsigned char* bmpBits = FreeImage_GetBits(bmp);
 	if(bmpBits != nullptr) {
 		pix.setFromAlignedPixels((PixelType*) bmpBits, width, height, pixFormat, pitch);
 	} else {
 		ofLogError("ofImage") << "putBmpIntoPixels(): unable to set ofPixels from FIBITMAP";
 	}
-	
+
 	if(bmpConverted != nullptr) {
 		FreeImage_Unload(bmpConverted);
 	}
@@ -205,7 +205,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _
 	if(scheme == "http" || scheme == "https"){
 		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
 	}
-	
+
 	std::string fileName = ofToDataPath(_fileName);
 	bool bLoaded = false;
 	FIBITMAP * bmp = nullptr;
@@ -228,7 +228,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _
 			bLoaded = true;
 		}
 	}
-	
+
 	//-----------------------------
 
 	if ( bLoaded ){
@@ -248,7 +248,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 	bool bLoaded = false;
 	FIBITMAP* bmp = nullptr;
 	FIMEMORY* hmem = nullptr;
-	
+
 	hmem = FreeImage_OpenMemory((unsigned char*) buffer.getData(), buffer.size());
 	if (hmem == nullptr){
 		ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer, opening FreeImage memory failed";
@@ -271,13 +271,13 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 	} else {
 		bmp = FreeImage_LoadFromMemory(fif, hmem, 0);
 	}
-	
+
 	if( bmp != nullptr ){
 		bLoaded = true;
 	}
-	
+
 	//-----------------------------
-	
+
 	if (bLoaded){
 		putBmpIntoPixels(bmp,pix);
 	}
@@ -285,7 +285,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 	if (bmp != nullptr){
 		FreeImage_Unload(bmp);
 	}
-	
+
 	if( hmem != nullptr ){
 		FreeImage_CloseMemory(hmem);
 	}
@@ -401,7 +401,7 @@ static void saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::
 				ofLogWarning("ofImage") << "saveImage(): ofImageCompressionType only applies to JPEGs,"
 					<< " ignoring value for \" "<< fileName << "\"";
 			}
-			
+
 			if (fif == FIF_GIF) {
 				FIBITMAP* convertedBmp;
 				if(_pix.getImageType() == OF_IMAGE_COLOR_ALPHA) {
@@ -844,7 +844,7 @@ void ofImage_<PixelType>::drawSubsection(float x, float y, float z, float w, flo
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
-	
+
 	if (width == w && height == h && newType == type){
 		return;
 	}
@@ -858,7 +858,7 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 	if (pixels.isAllocated() && bUseTexture){
 		tex.allocate(pixels);
 	}
-	
+
 	width	= pixels.getWidth();
 	height	= pixels.getHeight();
 	bpp		= pixels.getBitsPerPixel();
@@ -1167,7 +1167,7 @@ void ofImage_<PixelType>::resizePixels(ofPixels_<PixelType> &pix, int newWidth, 
 template<typename PixelType>
 void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageType newType){
 	int oldType = pix.getImageType();
-		
+
 	if (oldType == newType) {
 		return; // no need to reallocate
 	}
@@ -1186,10 +1186,11 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 			convertedBmp = FreeImage_ConvertTo32Bits(bmp);
 			break;
 		default:
-			ofLogError("ofImage") << "changeTypeOfPixels(): unknown image type: " << newType;
+			ofLogError("ofImage") << "changeTypeOfPixels(): unknown image type: "
+				<< ofToString(newType);
 			break;
 	}
-	
+
     putBmpIntoPixels(convertedBmp, pix, false);
 
 	if (bmp != nullptr) {
@@ -1234,4 +1235,20 @@ template class ofImage_<unsigned char>;
 template class ofImage_<float>;
 template class ofImage_<unsigned short>;
 
-
+template<>
+std::string ofToString(const ofImageType & imgType){
+	switch(imgType) {
+		case OF_IMAGE_GRAYSCALE:
+			return "OF_IMAGE_GRAYSCALE";
+		break;
+		case OF_IMAGE_COLOR:
+			return "OF_IMAGE_COLOR";
+		break;
+		case  OF_IMAGE_COLOR_ALPHA:
+			return "OF_IMAGE_COLOR_ALPHA";
+		break;
+		case OF_IMAGE_UNDEFINED:
+			return "OF_IMAGE_UNDEFINED";
+		break;
+	}
+}
