@@ -1,5 +1,7 @@
 #include "ofxAssimpModelLoader.h"
 #include "ofxAssimpUtils.h"
+#include "ofLight.h"
+#include "ofImage.h"
 
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
