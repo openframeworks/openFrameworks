@@ -11,7 +11,6 @@
 #include "ofEvents.h"
 #include "ofConstants.h"
 #include "ofTypes.h"
-#include "ofBaseTypes.h"
 
 class ofAppAndroidWindow: public ofAppBaseGLESWindow {
 public:
