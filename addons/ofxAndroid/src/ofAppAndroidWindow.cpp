@@ -19,7 +19,6 @@
 #include "ofFileUtils.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
-#include "ofBaseTypes.h"
 using namespace std;
 
 static bool paused=true;
