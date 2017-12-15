@@ -579,7 +579,8 @@ void ofCairoRenderer::draw(const ofPixels & raw, float x, float y, float z, floa
 		break;
 	case OF_IMAGE_UNDEFINED:
 	default:
-		ofLogError("ofCairoRenderer") << "draw(): trying to draw undefined image type " << pix.getImageType();
+		ofLogError("ofCairoRenderer") << "draw(): trying to draw undefined image type "
+			<< ofToString(pix.getImageType());
 		mut_this->popMatrix();
 		return;
 		break;

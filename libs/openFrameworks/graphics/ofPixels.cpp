@@ -57,6 +57,75 @@ size_t ofPixels_<PixelType>::pixelBitsFromPixelFormat(ofPixelFormat format){
 
 }
 
+template<>
+std::string ofToString(const ofPixelFormat & p) {
+	switch (p){
+		case OF_PIXELS_GRAY:
+			return "OF_PIXELS_GRAY";
+		break;
+		case OF_PIXELS_GRAY_ALPHA:
+			return "OF_PIXELS_GRAY_ALPHA";
+		break;
+		case OF_PIXELS_RGB:
+			return "OF_PIXELS_RGB";
+		break;
+		case OF_PIXELS_BGR:
+			return "OF_PIXELS_BGR";
+		break;
+		case OF_PIXELS_RGBA:
+			return "OF_PIXELS_RGBA";
+		break;
+		case OF_PIXELS_BGRA:
+			return "OF_PIXELS_BGRA";
+		break;
+		case OF_PIXELS_RGB565:
+			return "OF_PIXELS_RGB565";
+		break;
+		case OF_PIXELS_NV12:
+			return "OF_PIXELS_NV12";
+		break;
+		case OF_PIXELS_NV21:
+			return "OF_PIXELS_NV21";
+		break;
+		case OF_PIXELS_YV12:
+			return "OF_PIXELS_YV12";
+		break;
+		case OF_PIXELS_I420:
+			return "OF_PIXELS_I420";
+		break;
+		case OF_PIXELS_YUY2:
+			return "OF_PIXELS_YUY2";
+		break;
+		case OF_PIXELS_UYVY:
+			return "OF_PIXELS_UYVY";
+		break;
+		case OF_PIXELS_Y:
+			return "OF_PIXELS_Y";
+		break;
+		case OF_PIXELS_U:
+			return "OF_PIXELS_U";
+		break;
+		case OF_PIXELS_V:
+			return "OF_PIXELS_V";
+		break;
+		case OF_PIXELS_UV:
+			return "OF_PIXELS_UV";
+		break;
+		case OF_PIXELS_VU:
+			return "OF_PIXELS_VU";
+		break;
+		case OF_PIXELS_NUM_FORMATS:
+			return "OF_PIXELS_NUM_FORMATS";
+		break;
+		case OF_PIXELS_UNKNOWN:
+			return "OF_PIXELS_UNKNOWN";
+		break;
+		case OF_PIXELS_NATIVE:
+			return "OF_PIXELS_NATIVE";
+		break;
+	}
+}
+
 template<typename PixelType>
 size_t ofPixels_<PixelType>::bytesFromPixelFormat(size_t w, size_t h, ofPixelFormat format){
 	return w * h * pixelBitsFromPixelFormat(format) / 8;

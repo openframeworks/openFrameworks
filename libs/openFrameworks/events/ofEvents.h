@@ -155,7 +155,7 @@ public:
 
 	Type type;
 	/// For special keys, one of OF_KEY_* (@see ofConstants.h). For all other keys, the Unicode code point you'd expect if this key combo (including modifier keys that may be down) was pressed in a text editor (same as codepoint).
-	int key; 
+	int key;
 	/// The keycode returned by the windowing system, independent of any modifier keys or keyboard layout settings. For ofAppGLFWWindow this value is one of GLFW_KEY_* (@see glfw3.h) - typically, ASCII representation of the symbol on the physical key, so A key always returns 0x41 even if shift, alt, ctrl are down.
 	int keycode;
 	/// The raw scan code returned by the keyboard, OS and hardware specific.
@@ -315,7 +315,7 @@ class ofMessage : public ofEventArgs{
 		}
 		std::string message;
 };
-		
+
 enum ofTimeMode{
 	System,
 	FixedRate,
@@ -392,7 +392,7 @@ class ofCoreEvents {
 	bool notifyMouseEntered(int x, int y);
 	bool notifyMouseExited(int x, int y);
 	bool notifyMouseEvent(ofMouseEventArgs & mouseEvent);
-	
+
 	void notifyTouchDown(int x, int y, int touchID);
 	void notifyTouchUp(int x, int y, int touchID);
 	void notifyTouchMoved(int x, int y, int touchID);
