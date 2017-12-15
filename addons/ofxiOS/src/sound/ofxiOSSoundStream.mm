@@ -8,6 +8,7 @@
 #include "ofxiOSSoundStreamDelegate.h"
 #include "ofSoundStream.h"
 #include "ofBaseApp.h"
+#include "ofLog.h"
 #include <functional>
 
 #import "SoundInputStream.h"

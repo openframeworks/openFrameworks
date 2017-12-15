@@ -34,9 +34,11 @@
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import <MapKit/MapKit.h>
-#include "ofBaseTypes.h"
 #include "ofConstants.h"
 #include "ofxiOSMapKitListener.h"
+#include "glm/vec2.hpp"
+#include "ofRectangle.h"
+#include <list>
 
 // these are the types you can set for the map
 enum ofxiOSMapKitType {
