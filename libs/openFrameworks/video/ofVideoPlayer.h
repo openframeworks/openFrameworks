@@ -2,7 +2,6 @@
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-#include "ofTypes.h"
 #include "ofVideoBaseTypes.h"
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER

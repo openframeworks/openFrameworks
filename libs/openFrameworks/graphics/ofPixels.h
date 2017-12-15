@@ -3,7 +3,6 @@
 #include "ofConstants.h"
 #include "ofUtils.h"
 #include "ofColor.h"
-#include "ofMath.h"
 #include "ofLog.h"
 #include <limits>
 
@@ -55,6 +54,104 @@ enum ofInterpolationMethod {
 	OF_INTERPOLATE_BICUBIC			=3
 };
 
+
+/// \brief Used to represent the available pixel formats.
+///
+/// \sa ofPixels
+enum ofPixelFormat: short{
+	/// \brief A single-channel pixel, typically used for greyscale images.
+	///
+	/// This has 1 channel and a type-dependent number of bits per-pixel.
+	OF_PIXELS_GRAY = 0,
+	/// \brief A single-channel pixel with an alpha channel.
+	///
+	/// This has 2 channels and a type-dependent number of bits per-pixel.
+	OF_PIXELS_GRAY_ALPHA = 1,
+
+	/// \brief An RGB pixel with no alpha channel.
+	///
+	/// This has 3 channels and a type-dependent number of bits per-pixel.
+	///
+	/// \sa http://www.fourcc.org/rgb.php#BI_RGB
+	OF_PIXELS_RGB=2,
+	/// \brief A pixel used for color data with a blue/green/red channel order.
+	///
+	/// This has 3 channels and a type-dependent number of bits per-pixel.
+	OF_PIXELS_BGR=3,
+	/// \brief An RGBA pixel. This is typically used for color with transparency.
+	///
+	/// This has 4 channels and a type-dependent number of bits per-pixel.
+	///
+	/// \sa http://www.fourcc.org/rgb.php#RGBA
+	OF_PIXELS_RGBA=4,
+	/// \brief A pixel used for color/transparency with a blue/green/red/alpha channel order.
+	///
+	/// This has 4 channels and a type-dependent number of bits per-pixel.
+	OF_PIXELS_BGRA=5,
+
+	// \brief A 16-bit color pixel with 5-bit red and blue channels and a 6-bit green channel.
+	OF_PIXELS_RGB565=6,
+
+	/// \brief A 12-bit YUV 4:2:0 pixel with an interleaved U/V plane.
+	///
+	/// YUV 4:2:0 image with a plane of 8-bit Y samples followed by an
+	/// interleaved U/V plane containing 8-bit 2x2 subsampled color difference
+	/// samples.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#NV12
+	OF_PIXELS_NV12=7,
+	/// \brief A 12-bit YUV 4:2:0 pixel with an interleaved V/U plane.
+	///
+	/// YUV 4:2:0 image with a plane of 8-bit Y samples followed by an
+	/// interleaved V/U plane containing 8-bit 2x2 subsampled chroma samples.
+	/// The same as NV12 except the interleave order of U and V is reversed.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#NV21
+	OF_PIXELS_NV21=8,
+	/// \brief A 12-bit YUV NxM Y plane followed by (N/2)x(M/2) V and U planes.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#YV12
+	OF_PIXELS_YV12=9,
+	/// \brief A 12-bit YUV format similar to ::OF_PIXELS_YV12, but with U & V reversed.
+	///
+	/// Note that IYUV and I420 appear to be identical.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#IYUV
+	OF_PIXELS_I420=10,
+	/// \brief A 16-bit YUV 4:2:2 format.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#YUY2
+	OF_PIXELS_YUY2=11,
+	/// \brief A 16-bit YUV 4:2:2 format.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#UYVY
+	OF_PIXELS_UYVY=12,
+
+	/// \brief A single channel pixel, typically used for the luma component of YUV.
+	OF_PIXELS_Y,
+	/// \brief A single channel pixel, typically used (with V) for the chroma component of YUV.
+	OF_PIXELS_U,
+	/// \brief A single channel pixel, typically used (with U) for the chroma component of YUV.
+	OF_PIXELS_V,
+	/// \brief A two channel pixel, with U first, representing both chroma components of YUV.
+	OF_PIXELS_UV,
+	/// \brief A two channel pixel, with V first, representing both chroma components of YUV.
+	OF_PIXELS_VU,
+
+	/// \brief This is a placeholder to indicate the last valid enum.
+	OF_PIXELS_NUM_FORMATS,
+
+	/// \brief This indicates an unknown pixel type.
+	OF_PIXELS_UNKNOWN=-1,
+	/// \brief This indicates an unknown, native pixel type.
+	OF_PIXELS_NATIVE=-2
+};
+
+#define OF_PIXELS_MONO OF_PIXELS_GRAY
+#define OF_PIXELS_R OF_PIXELS_GRAY
+#define OF_PIXELS_RG OF_PIXELS_GRAY_ALPHA
+
+enum ofImageType: short;
 
 /// \brief A class representing a collection of pixels.
 template <typename PixelType>

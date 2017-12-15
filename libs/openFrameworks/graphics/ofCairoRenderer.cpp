@@ -1,13 +1,13 @@
 #include "ofCairoRenderer.h"
 #include "ofConstants.h"
-#include "ofUtils.h"
 #include "ofMesh.h"
 #include "ofImage.h"
-#include "of3dPrimitives.h"
 #include "ofTrueTypeFont.h"
-#include "ofNode.h"
 #include "ofGraphics.h"
 #include "ofVideoBaseTypes.h"
+#include "cairo-features.h"
+#include "cairo-pdf.h"
+#include "cairo-svg.h"
 
 using namespace std;
 

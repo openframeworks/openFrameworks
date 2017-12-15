@@ -1,9 +1,8 @@
 #include "ofImage.h"
-#include "ofAppRunner.h"
-#include "ofTypes.h"
-#include "ofGraphics.h"
-#include "FreeImage.h"
 #include "ofConstants.h"
+#include "ofAppRunner.h"
+#include "FreeImage.h"
+#include "ofGLUtils.h"
 
 #include "ofURLFileLoader.h"
 #include "uriparser/Uri.h"
@@ -1108,8 +1107,8 @@ void ofImage_<PixelType>::resize(int newWidth, int newHeight){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::crop(int x, int y, int w, int h){
-	w = ofClamp(w,1,getWidth());
-	h = ofClamp(h,1,getHeight());
+	w = glm::clamp(w,1,int(getWidth()));
+	h = glm::clamp(h,1,int(getHeight()));
 
 	pixels.crop(x,y,w,h);
 	update();
@@ -1118,8 +1117,8 @@ void ofImage_<PixelType>::crop(int x, int y, int w, int h){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::cropFrom(const ofImage_<PixelType> & otherImage, int x, int y, int w, int h){
-	w = ofClamp(w,1,otherImage.getWidth());
-	h = ofClamp(h,1,otherImage.getHeight());
+	w = glm::clamp(w,1,int(otherImage.getWidth()));
+	h = glm::clamp(h,1,int(otherImage.getHeight()));
 
 	otherImage.pixels.cropTo(pixels, x, y, w, h);
 	update();

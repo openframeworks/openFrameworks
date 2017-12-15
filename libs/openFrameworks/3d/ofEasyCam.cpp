@@ -2,6 +2,8 @@
 #include "ofMath.h"
 #include "ofUtils.h"
 #include "ofGraphicsBaseTypes.h"
+#include <limits>
+#include "glm/gtx/vector_angle.hpp"
 
 using namespace std;
 
@@ -377,7 +379,7 @@ void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 			}
 		}
 		if(currentTransformType == TRANSFORM_ROTATE){
-			bInsideArcball = glm::length(mouse - area.getCenter()) < std::min(area.width/2, area.height/2);
+			bInsideArcball = glm::length(mouse - area.getCenter().xy()) < std::min(area.width/2, area.height/2);
 		}
 		bApplyInertia = false;
 	}
@@ -420,7 +422,7 @@ void ofEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
 			translate.z = sensitivityScroll * mouse.scrollY / viewport.height;
 			mouseAtScroll = mouse;
 		}else{
-			translate.z = mouse.scrollY * 30 * sensitivityTranslate.z * (getDistance() + FLT_EPSILON)/ area.height;
+			translate.z = mouse.scrollY * 30 * sensitivityTranslate.z * (getDistance() + std::numeric_limits<float>::epsilon())/ area.height;
 		}
 		currentTransformType = TRANSFORM_SCALE;
 		bIsScrolling = true;
@@ -441,7 +443,7 @@ void ofEasyCam::updateMouse(const glm::vec2 & mouse){
 				rot.x = vFlip * -mouseVel.y * sensitivityRot.x * glm::pi<float>() / std::min(area.width, area.height);
 				rot.y = -mouseVel.x * sensitivityRot.y * glm::pi<float>() / std::min(area.width, area.height);
 			}else{
-				glm::vec3 center = area.getCenter();
+				glm::vec2 center = area.getCenter().xy();
 				rot.z = sensitivityRot.z * -vFlip * glm::orientedAngle(glm::normalize(mouse - center),
 																	   glm::normalize(lastPressMouse - center));
 			}
@@ -452,8 +454,8 @@ void ofEasyCam::updateMouse(const glm::vec2 & mouse){
 				translate.x = -mouseVel.x * getScale().z;
 				translate.y = vFlip * mouseVel.y * getScale().z;
 			}else{
-				translate.x = -mouseVel.x * sensitivityTranslate.x * 0.5f * (getDistance() + FLT_EPSILON)/ area.width;
-				translate.y = vFlip * mouseVel.y * sensitivityTranslate.y* 0.5f * (getDistance() + FLT_EPSILON)/ area.height;
+				translate.x = -mouseVel.x * sensitivityTranslate.x * 0.5f * (getDistance() + std::numeric_limits<float>::epsilon())/ area.width;
+				translate.y = vFlip * mouseVel.y * sensitivityTranslate.y* 0.5f * (getDistance() + std::numeric_limits<float>::epsilon())/ area.height;
 			}
 			break;
 		case TRANSFORM_TRANSLATE_Z:
@@ -461,7 +463,7 @@ void ofEasyCam::updateMouse(const glm::vec2 & mouse){
 			if (getOrtho()) {
 				translate.z = mouseVel.y * sensitivityScroll / area.height;
 			}else{
-				translate.z = mouseVel.y * (sensitivityTranslate.z * 0.7f) * (getDistance() + FLT_EPSILON)/ area.height;
+				translate.z = mouseVel.y * (sensitivityTranslate.z * 0.7f) * (getDistance() + std::numeric_limits<float>::epsilon())/ area.height;
 			}
 			break;
         default:

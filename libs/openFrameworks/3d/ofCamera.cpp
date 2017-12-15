@@ -4,6 +4,7 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "ofGraphicsBaseTypes.h"
+#include "glm/gtx/transform.hpp"
 
 using namespace std;
 
@@ -158,7 +159,7 @@ glm::mat4 ofCamera::getProjectionMatrix(const ofRectangle & viewport) const {
 		);
 	}else{
 		float aspect = forceAspectRatio ? aspectRatio : viewport.width/viewport.height;
-		auto projection = glm::perspective(ofDegToRad(fov), aspect, nearClip, farClip);
+		auto projection = glm::perspective(glm::radians(fov), aspect, nearClip, farClip);
 		projection = glm::translate(glm::mat4(), {-lensOffset.x, -lensOffset.y, 0.f}) * projection;
 		return projection;
 	}
@@ -263,9 +264,9 @@ void ofCamera::drawFrustum(const ofRectangle & viewport) const {
 
 	// the edges of our unit cube in clip space:
 
-	ofVec3f clipCube[8] = {
-		ofVec3f( -1,-1,-1 ), ofVec3f( -1, 1,-1 ), ofVec3f( 1,-1,-1 ), ofVec3f( 1, 1,-1 ),
-		ofVec3f( -1,-1, 1 ), ofVec3f( -1, 1, 1 ), ofVec3f( 1,-1, 1 ), ofVec3f( 1, 1, 1 ),
+	glm::vec3 clipCube[8] = {
+		{ -1,-1,-1 }, { -1, 1,-1 }, { 1,-1,-1 }, { 1, 1,-1 },
+		{ -1,-1, 1 }, { -1, 1, 1 }, { 1,-1, 1 }, { 1, 1, 1 },
 	};
 	// since the clip cube is expressed in clip (=projection) space, we want this 
 	// transformed back into our current space, view space, i.e. apply the inverse 
@@ -274,10 +275,10 @@ void ofCamera::drawFrustum(const ofRectangle & viewport) const {
 
 	// calculate projection matrix using frustum: 
 
-	ofMatrix4x4 projectionMatrixInverse = glm::inverse( getProjectionMatrix(viewport) );
+	glm::mat4x4 projectionMatrixInverse = glm::inverse( getProjectionMatrix(viewport) );
 
 	for ( int i = 0; i < 8; i++ ) {
-		clipCube[i] = clipCube[i] * projectionMatrixInverse;
+		clipCube[i] = projectionMatrixInverse * glm::vec4(clipCube[i], 1.f);
 	}
 
 

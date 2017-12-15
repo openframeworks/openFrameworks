@@ -15,6 +15,12 @@
 	#define GLM_FORCE_SWIZZLE
 	#define GLM_FORCE_SIZE_FUNC
 #endif
+
+// Set to 1 to use std filesystem instead of boost's
+#ifndef OF_USING_STD_FS
+#define OF_USING_STD_FS 0
+#endif
+
 //-------------------------------
 
 /// \brief This enumerates the targeted operating systems or platforms.
@@ -46,10 +52,11 @@ enum ofTargetPlatform{
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+#include <cstring>
 #include <iostream>
 #include <vector>
 #include <memory>
-
+#include <functional>
 
 #ifndef OF_TARGET_IPHONE
     #define OF_TARGET_IPHONE OF_TARGET_IOS
@@ -400,447 +407,45 @@ typedef TESSindex ofIndexType;
 #endif
 
 
-/// \brief Used to represent the available fill modes.
-/// 
-/// \sa ofBaseRenderer
-enum ofFillFlag{
-	/// \brief Draw shapes as outlines, unfilled.
-	OF_OUTLINE=	0,
-	/// \brief Draw shapes filled with the current draw color.
-	OF_FILLED = 1,
-};
 
-/// \brief Used to represent the available windowing modes for the application.
-enum ofWindowMode{
-	/// \brief A floating application window.
-	OF_WINDOW 		= 0,
-	/// \brief A fullscreen application window.
-	OF_FULLSCREEN 	= 1,
-	/// \brief A fullscreen application window with a custom width and height.
- 	OF_GAME_MODE	= 2
-};
+//------------------------------------------------ forward declaration for std::filesystem::path
+// Remove from here once everything is using std::filesystem::path
+#if OF_USING_STD_FS
+#	if __cplusplus < 201703L
 
-/// \brief Used to represent the available rectangle aspect ratio scaling modes.
-/// 
-/// \sa ofRectangle
-enum ofAspectRatioMode {
-	/// \brief Set the rectangle's width and height to match the target.
-    OF_ASPECT_RATIO_IGNORE            = 0,
-    /// \brief Resizes the rectangle to completely fit within the target.
-    OF_ASPECT_RATIO_KEEP              = 1,
-    /// \brief Resizes the rectangle to completely enclose the target.
-    OF_ASPECT_RATIO_KEEP_BY_EXPANDING = 2,
-};
+		namespace std {
+			namespace experimental{
+				namespace filesystem {
+					namespace v1 {
+						namespace __cxx11 {
+							class path;
+						}
+					}
 
-/// \brief Used to represent the available vertical rectangle alignment modes.
-/// 
-/// \sa ofRectangle
-enum ofAlignVert {
-	/// \brief Do not perform any vertical alignment.
-    OF_ALIGN_VERT_IGNORE   = 0x0000,
-	/// \brief Use the upper edge of the rectangle to vertically anchor the alignment.
-    OF_ALIGN_VERT_TOP      = 0x0010,
-	/// \brief Use the bottom edge of the rectangle to vertically anchor the alignment.
-    OF_ALIGN_VERT_BOTTOM   = 0x0020,
-	/// \brief Use the center of the rectangle to vertically anchor the alignment.
-    OF_ALIGN_VERT_CENTER   = 0x0040,
-};
+					using v1::__cxx11::path;
+				}
+			}
+			namespace filesystem = experimental::filesystem;
+		}
+#	else
 
-
-/// \brief Used to represent the available horizontal rectangle alignment modes.
-/// 
-/// \sa ofRectangle
-enum ofAlignHorz {
-    /// \brief Do not perform any horizontal alignment.
-    OF_ALIGN_HORZ_IGNORE   = 0x0000,
-    /// \brief Use the left edge of the rectangle to horizontally anchor the alignment.
-    OF_ALIGN_HORZ_LEFT     = 0x0001,
-    /// \brief Use the right edge of the rectangle to horizontally anchor the alignment.
-    OF_ALIGN_HORZ_RIGHT    = 0x0002,
-    /// \brief Use the center of the rectangle to horizontally anchor the alignment.
-    OF_ALIGN_HORZ_CENTER   = 0x0004,
-};
-
-/// \brief Used to represent the available rectangle drawing modes.
-///
-/// \sa ofRectangle
-/// \sa ofTexture
-/// \sa ofImage
-enum ofRectMode{
-	/// \brief Represents the mode where rectangles draw from the top left.
-	OF_RECTMODE_CORNER=0,
-	/// \brief Represents the mode where rectangles draw from the center.
- 	OF_RECTMODE_CENTER=1
-};
-
-/// \brief Used to represent the available rectangle scaling modes.
-///
-/// ofScaleMode can usually be interpreted as a concise combination of
-/// an ::ofAspectRatioMode, an ::ofAlignVert and an ::ofAlignHorz.
-enum ofScaleMode{
-
-    /// \brief Center and scale the rectangle to fit inside the target.
-	/// 
-	/// This centers the subject rectangle within the target rectangle and
-	/// resizes the subject rectangle to completely fit within the target
-	/// rectangle.
-    OF_SCALEMODE_FIT     = 0,
-
-    /// \brief Move and scale the rectangle to completely enclose the target.
-    ///
-    /// This centers the subject rectangle within the target rectangle and
-    /// resizes the subject rectangle to completely encompass the target
-    /// rectangle.
-    OF_SCALEMODE_FILL    = 1,
-
-    /// \brief Move the rectangle to be centered on the target.
-    /// 
-    /// This centers the subject rectangle within the target rectangle and
-    /// does not modify the Subject's size or aspect ratio.
-    OF_SCALEMODE_CENTER  = 2, // centers the subject
-
- 	/// \brief Match the target rectangle's position and dimensions.
- 	OF_SCALEMODE_STRETCH_TO_FILL = 3
-};
-
-/// \brief Used to represent the available channel types in ofImage.
-/// 
-/// These represent an abstraction of both CPU pixels (ofPixels) and GPU pixels
-/// (ofTexture). In most cases, developers should prefer ::ofPixelFormat over
-/// ::ofImageType for a more precise description of channel types.
-/// 
-/// \sa ofImage
-enum ofImageType{
-	/// \brief A single channel (or monochrome) image.
-	/// 
-	/// \sa OF_PIXELS_GRAY
-	OF_IMAGE_GRAYSCALE		= 0x00,
-	/// \brief A three channel (or RGB) image.
-	/// 
-	/// \sa OF_PIXELS_RGB
- 	OF_IMAGE_COLOR			= 0x01,
-	/// \brief A four channel (or RGBA) image.
-	/// 
-	/// \sa OF_PIXELS_RGBA
- 	OF_IMAGE_COLOR_ALPHA	= 0x02,
- 	/// \brief An unknown and unsupported image type.
-	/// 
-	/// \sa OF_PIXELS_UNKNOWN
- 	OF_IMAGE_UNDEFINED		= 0x03
-};
-
-#define		OF_MAX_STYLE_HISTORY	32
-
-/// \deprecated Not currently used in the OF codebase.
-#define		OF_MAX_VIEWPORT_HISTORY	32
-
-/// \deprecated Not currently used in the OF codebase.
-#define		OF_MAX_CIRCLE_PTS 1024
-
-/// \brief Used to represent the available blending modes for drawing.
-enum ofBlendMode{
-	/// \brief Blend mode is disabled.
-	OF_BLENDMODE_DISABLED = 0,
-	/// \brief Blend mode used for alpha blending. 
-	OF_BLENDMODE_ALPHA 	  = 1,
-	/// \brief Blend mode used for additive blending. 
-	OF_BLENDMODE_ADD 	  = 2,
-	/// \brief Blend mode used for subtractive blending. 
-	OF_BLENDMODE_SUBTRACT = 3,
-	/// \brief Blend mode used for multiplicative blending. 
-	OF_BLENDMODE_MULTIPLY = 4,
-	/// \brief Blend mode used for screen blending. 
-	OF_BLENDMODE_SCREEN   = 5
-};
-
-/// \brief Used to represent the available screen orientations.
-///
-/// These don't use "landscape" or "portrait", because phones typically default 
-/// to portrait while desktop screens are typically landscape by default.
-/// 
-/// \sa ::ofSetOrientation
-/// \sa ::ofGetOrientation
-enum ofOrientation{
-	/// \brief Represents the default screen orientation.
-	OF_ORIENTATION_DEFAULT = 1,	
-	/// \brief Represents a screen rotated 180 degrees, also known as upside-down.	
-	OF_ORIENTATION_180 = 2,
-	/// \brief Represents a screen rotated 90 degrees clockwise.	
-    OF_ORIENTATION_90_LEFT = 3,
-	/// \brief Represents a screen rotated 90 degrees counter-clockwise.	
-	OF_ORIENTATION_90_RIGHT = 4,
-	/// \brief Represents an unknown orientation.	
-	OF_ORIENTATION_UNKNOWN = 5
-};
-
-/// \brief Represents the gradient types available to ofBackgroundGradient(). 
-enum ofGradientMode {
-	/// \brief Represents a top-to-bottom linear gradient.
-	OF_GRADIENT_LINEAR = 0,
-	/// \brief Represents a circular gradient beginning at the screen's center.
-	OF_GRADIENT_CIRCULAR,
-	/// \brief Represents a horizontal bar gradient.
-	/// 
-	///  This is a horizontal gradient starting across the screen's center,
-	///  and extending both to the top and bottom of the screen.
-	OF_GRADIENT_BAR
-};
-
-/// \brief represents the available polygon winding modes.
-/// 
-/// These are straight out of glu, but renamed and included here
-/// for convenience.  We don't mean to wrap the whole glu library
-/// (or any other library for that matter), but these defines are useful
-/// to give people flexibility over the polygonizer.
-/// 
-/// \sa ofPath::tessellate()
-/// \sa ofTessellator::performTessellation()
-/// \sa http://glprogramming.com/red/images/Image128.gif
-/// \sa http://glprogramming.com/red/chapter11.html
-enum ofPolyWindingMode{
-	/// \brief Fill odd winding numbers.
-	OF_POLY_WINDING_ODD 	        ,
-	/// \brief Fill all non-zero winding numbers.
-	OF_POLY_WINDING_NONZERO         ,
-	/// \brief Fill all winding numbers greater than zero.
-	OF_POLY_WINDING_POSITIVE        ,
-	/// \brief Fill all winding numbers less than zero.
-	OF_POLY_WINDING_NEGATIVE        ,
-	/// \brief Fill all winding numbers greater than 1 or less than -1.
-	/// 
-	/// This stands for "Fill ABSolute values Greater than EQual to TWO".
-	OF_POLY_WINDING_ABS_GEQ_TWO
-};
-
-/// \deprecated Not currently used in the OF codebase.
-#define 	OF_CLOSE						  (true)
-
-/// \brief represents the available matrix coordinate system handednesses.
-///
-/// \sa ofMatrixStack
-/// \sa http://seanmiddleditch.com/matrices-handedness-pre-and-post-multiplication-row-vs-column-major-and-notations/ 
-enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
-
-/// \brief represents the available matrix types used internally in ::ofMatrixStack.
-enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTURE};
-
-//--------------------------------------------
-//
-// 	Keyboard definitions
-//
-// 	ok -- why this?
-// 	glut key commands have some annoying features,
-// 	in that some normal keys have the same value as special keys,
-// 	but we want ONE key routine, so we need to redefine several,
-// 	so that we get some normalacy across keys routines
-//
-// 	(everything that comes through "glutSpecialKeyFunc" will get 256 added to it,
-// 	to avoid conflicts, before, values like "left, right up down" (ie, 104, 105, 106) were conflicting with
-// 	letters.. now they will be 256 + 104, 256 + 105....)
-
-
-	#define OF_KEY_RETURN		13
-	#define OF_KEY_ESC			27
-	#define OF_KEY_TAB          9
-
-
-	#define OF_KEY_BACKSPACE	8
-	#define OF_KEY_DEL			127
-
-
-	// For legacy reasons we are mixing up control keys
-	// and unicode codepoints when sending key events,
-	// for the modifiers that need to be usable as bitmask
-	// we are using some control codes that have nothing to do
-	// with the keys being represented and then 0x0ee0.. and 0x0e60...
-	// which are free in the unicode table
-
-	#define OF_KEY_SHIFT		 0x1
-	#define OF_KEY_CONTROL		 0x2
-	#define OF_KEY_ALT			 0x4
-	#define OF_KEY_SUPER		 0x16
-	#define OF_KEY_COMMAND       OF_KEY_SUPER
-	#define OF_KEY_LEFT_SHIFT	 0xe60
-	#define OF_KEY_RIGHT_SHIFT	 0xe61
-	#define OF_KEY_LEFT_CONTROL	 0xe62
-	#define OF_KEY_RIGHT_CONTROL 0xe63
-	#define OF_KEY_LEFT_ALT		 0xe64
-	#define OF_KEY_RIGHT_ALT	 0xe65
-	#define OF_KEY_LEFT_SUPER	 0xe66
-	#define OF_KEY_RIGHT_SUPER	 0xe67
-	#define OF_KEY_LEFT_COMMAND  OF_KEY_LEFT_SUPER
-	#define OF_KEY_RIGHT_COMMAND OF_KEY_RIGHT_SUPER
-
-	#define OF_KEY_MODIFIER 	0x0EE0
-	#define OF_KEY_F1			(1 | OF_KEY_MODIFIER)
-	#define OF_KEY_F2			(2 | OF_KEY_MODIFIER)
-	#define OF_KEY_F3			(3 | OF_KEY_MODIFIER)
-	#define OF_KEY_F4			(4 | OF_KEY_MODIFIER)
-	#define OF_KEY_F5			(5 | OF_KEY_MODIFIER)
-	#define OF_KEY_F6			(6 | OF_KEY_MODIFIER)
-	#define OF_KEY_F7			(7 | OF_KEY_MODIFIER)
-	#define OF_KEY_F8			(8 | OF_KEY_MODIFIER)
-	#define OF_KEY_F9			(9 | OF_KEY_MODIFIER)
-	#define OF_KEY_F10			(10 | OF_KEY_MODIFIER)
-	#define OF_KEY_F11			(11 | OF_KEY_MODIFIER)
-	#define OF_KEY_F12			(12 | OF_KEY_MODIFIER)
-	#define OF_KEY_LEFT			(100 | OF_KEY_MODIFIER)
-	#define OF_KEY_UP			(101 | OF_KEY_MODIFIER)
-	#define OF_KEY_RIGHT		(102 | OF_KEY_MODIFIER)
-	#define OF_KEY_DOWN			(103 | OF_KEY_MODIFIER)
-	#define OF_KEY_PAGE_UP		(104 | OF_KEY_MODIFIER)
-	#define OF_KEY_PAGE_DOWN	(105 | OF_KEY_MODIFIER)
-	#define OF_KEY_HOME			(106 | OF_KEY_MODIFIER)
-	#define OF_KEY_END			(107 | OF_KEY_MODIFIER)
-	#define OF_KEY_INSERT		(108 | OF_KEY_MODIFIER)
-
-    #define OF_MOUSE_BUTTON_1      0
-    #define OF_MOUSE_BUTTON_2      1
-    #define OF_MOUSE_BUTTON_3      2
-    #define OF_MOUSE_BUTTON_4      3
-    #define OF_MOUSE_BUTTON_5      4
-    #define OF_MOUSE_BUTTON_6      5
-    #define OF_MOUSE_BUTTON_7      6
-    #define OF_MOUSE_BUTTON_8      7
-    #define OF_MOUSE_BUTTON_LAST   OF_MOUSE_BUTTON_8
-    #define OF_MOUSE_BUTTON_LEFT   OF_MOUSE_BUTTON_1
-    #define OF_MOUSE_BUTTON_MIDDLE OF_MOUSE_BUTTON_2
-    #define OF_MOUSE_BUTTON_RIGHT  OF_MOUSE_BUTTON_3
-
-//--------------------------------------------
-//console colors for our logger - shame this doesn't work with the xcode console
-
-#ifdef TARGET_WIN32
-
-	#define OF_CONSOLE_COLOR_RESTORE (0 | (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE) )
-	#define OF_CONSOLE_COLOR_BLACK (0)
-	#define OF_CONSOLE_COLOR_RED (FOREGROUND_RED)
-	#define OF_CONSOLE_COLOR_GREEN (FOREGROUND_GREEN)
-	#define OF_CONSOLE_COLOR_YELLOW (FOREGROUND_RED|FOREGROUND_GREEN)
-	#define OF_CONSOLE_COLOR_BLUE (FOREGROUND_BLUE)
-	#define OF_CONSOLE_COLOR_PURPLE (FOREGROUND_RED | FOREGROUND_BLUE )
-	#define OF_CONSOLE_COLOR_CYAN (FOREGROUND_GREEN | FOREGROUND_BLUE)
-	#define OF_CONSOLE_COLOR_WHITE (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE)
-
+	namespace std {
+		namespace filesystem {
+			class path;
+		}
+	}
+#	endif
 #else
-
-	#define OF_CONSOLE_COLOR_RESTORE (0)
-	#define OF_CONSOLE_COLOR_BLACK (30)
-	#define OF_CONSOLE_COLOR_RED (31)
-	#define OF_CONSOLE_COLOR_GREEN (32)
-	#define OF_CONSOLE_COLOR_YELLOW (33)
-	#define OF_CONSOLE_COLOR_BLUE (34)
-	#define OF_CONSOLE_COLOR_PURPLE (35)
-	#define OF_CONSOLE_COLOR_CYAN (36)
-	#define OF_CONSOLE_COLOR_WHITE (37)
-
+#	if !_MSC_VER
+#		define BOOST_NO_CXX11_SCOPED_ENUMS
+#		define BOOST_NO_SCOPED_ENUMS
+#	endif
+	namespace boost {
+		namespace filesystem {
+			class path;
+		}
+	}
+	namespace std {
+		namespace filesystem = boost::filesystem;
+	}
 #endif
-
-/// \brief Used to represent the available pixel formats.
-///
-/// \sa ofPixels
-enum ofPixelFormat{
-	/// \brief A single-channel pixel, typically used for greyscale images.
-	///
-	/// This has 1 channel and a type-dependent number of bits per-pixel.
-	OF_PIXELS_GRAY = 0,
-	/// \brief A single-channel pixel with an alpha channel.
-	///
-	/// This has 2 channels and a type-dependent number of bits per-pixel.
-	OF_PIXELS_GRAY_ALPHA = 1,
-
-	/// \brief An RGB pixel with no alpha channel.
-	///
-	/// This has 3 channels and a type-dependent number of bits per-pixel.
-	///
-	/// \sa http://www.fourcc.org/rgb.php#BI_RGB
-	OF_PIXELS_RGB=2,
-	/// \brief A pixel used for color data with a blue/green/red channel order.
-	///
-	/// This has 3 channels and a type-dependent number of bits per-pixel.
-	OF_PIXELS_BGR=3,
-	/// \brief An RGBA pixel. This is typically used for color with transparency.
-	///
-	/// This has 4 channels and a type-dependent number of bits per-pixel.
-	///
-	/// \sa http://www.fourcc.org/rgb.php#RGBA
-	OF_PIXELS_RGBA=4,
-	/// \brief A pixel used for color/transparency with a blue/green/red/alpha channel order.
-	///
-	/// This has 4 channels and a type-dependent number of bits per-pixel.
-	OF_PIXELS_BGRA=5,
-
-	// \brief A 16-bit color pixel with 5-bit red and blue channels and a 6-bit green channel.
-	OF_PIXELS_RGB565=6,
-
-	/// \brief A 12-bit YUV 4:2:0 pixel with an interleaved U/V plane.
-	///
-	/// YUV 4:2:0 image with a plane of 8-bit Y samples followed by an
-	/// interleaved U/V plane containing 8-bit 2x2 subsampled color difference
-	/// samples.
-	///
-	/// \sa http://www.fourcc.org/yuv.php#NV12
-	OF_PIXELS_NV12=7,
-	/// \brief A 12-bit YUV 4:2:0 pixel with an interleaved V/U plane.
-	/// 
-	/// YUV 4:2:0 image with a plane of 8-bit Y samples followed by an
-	/// interleaved V/U plane containing 8-bit 2x2 subsampled chroma samples.
-	/// The same as NV12 except the interleave order of U and V is reversed.
-	///
-	/// \sa http://www.fourcc.org/yuv.php#NV21
-	OF_PIXELS_NV21=8,
-	/// \brief A 12-bit YUV NxM Y plane followed by (N/2)x(M/2) V and U planes.
-	///
-	/// \sa http://www.fourcc.org/yuv.php#YV12
-	OF_PIXELS_YV12=9,
-	/// \brief A 12-bit YUV format similar to ::OF_PIXELS_YV12, but with U & V reversed.
-	/// 
-	/// Note that IYUV and I420 appear to be identical.
-	///
-	/// \sa http://www.fourcc.org/yuv.php#IYUV
-	OF_PIXELS_I420=10,
-	/// \brief A 16-bit YUV 4:2:2 format.
-	///
-	/// \sa http://www.fourcc.org/yuv.php#YUY2
-	OF_PIXELS_YUY2=11,
-	/// \brief A 16-bit YUV 4:2:2 format.
-	///
-	/// \sa http://www.fourcc.org/yuv.php#UYVY
-	OF_PIXELS_UYVY=12,
-
-	/// \brief A single channel pixel, typically used for the luma component of YUV.
-	OF_PIXELS_Y,
-	/// \brief A single channel pixel, typically used (with V) for the chroma component of YUV.
-	OF_PIXELS_U,
-	/// \brief A single channel pixel, typically used (with U) for the chroma component of YUV.
-	OF_PIXELS_V,
-	/// \brief A two channel pixel, with U first, representing both chroma components of YUV.
-	OF_PIXELS_UV,
-	/// \brief A two channel pixel, with V first, representing both chroma components of YUV.
-	OF_PIXELS_VU,
-
-	/// \brief This is a placeholder to indicate the last valid enum.
-	OF_PIXELS_NUM_FORMATS,
-
-	/// \brief This indicates an unknown pixel type.
-	OF_PIXELS_UNKNOWN=-1,
-	/// \brief This indicates an unknown, native pixel type.
-	OF_PIXELS_NATIVE=-2
-};
-
-#define OF_PIXELS_MONO OF_PIXELS_GRAY
-#define OF_PIXELS_R OF_PIXELS_GRAY
-#define OF_PIXELS_RG OF_PIXELS_GRAY_ALPHA
-
-
-/// \brief Sets the bitmap drawing mode for text.
-/// \sa ofSetDrawBitmapMode()
-enum ofDrawBitmapMode{
-	OF_BITMAPMODE_SIMPLE = 0,
-	OF_BITMAPMODE_SCREEN,
-	OF_BITMAPMODE_VIEWPORT,
-	OF_BITMAPMODE_MODEL,
-	OF_BITMAPMODE_MODEL_BILLBOARD
-};
-
-

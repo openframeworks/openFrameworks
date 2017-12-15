@@ -1,10 +1,14 @@
 #pragma once
 
-#include "ofFileUtils.h"
+#include "ofConstants.h"
 #include "ofTexture.h"
 #include "ofPixels.h"
-#include "ofConstants.h"
 #include "ofGLBaseTypes.h"
+#include "ofGraphicsConstants.h"
+
+class ofFile;
+class ofBuffer;
+
 
 /// \file
 /// ofImage is used for loading, saving and drawing images in openFrameworks.
@@ -48,7 +52,7 @@ enum ofImageFormat {
     OF_IMAGE_FORMAT_PCD     = 9,
     OF_IMAGE_FORMAT_PCX     = 10,
     OF_IMAGE_FORMAT_PGM     = 11,
-    OF_IMAGE_FORMAT_PGMRAW  = 12,
+	OF_IMAGE_FORMAT_PGMRAW  = 12,
     OF_IMAGE_FORMAT_PNG     = 13,
     OF_IMAGE_FORMAT_PPM     = 14,
     OF_IMAGE_FORMAT_PPMRAW  = 15,
@@ -113,6 +117,7 @@ inline std::string ofImageFormatExtension(ofImageFormat format){
 	default: return "unkown";
     }
 }
+
 
 /// \todo Needs documentation.
 struct ofImageLoadSettings {

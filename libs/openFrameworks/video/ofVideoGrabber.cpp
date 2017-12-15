@@ -2,6 +2,7 @@
 #include "ofUtils.h"
 #include "ofVideoBaseTypes.h"
 #include "ofConstants.h"
+#include "ofGLUtils.h"
 #include "ofAppRunner.h"
 
 using namespace std;

@@ -1,6 +1,7 @@
 #include "ofEvents.h"
 #include "ofAppRunner.h"
 #include "ofAppBaseWindow.h"
+#include "ofLog.h"
 
 using namespace std;
 

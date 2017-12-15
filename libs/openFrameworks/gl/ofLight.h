@@ -14,8 +14,8 @@
 
 #include "ofNode.h"
 #include "ofColor.h"
-#include "of3dGraphics.h"
-#include "ofTypes.h"
+
+class ofBaseGLRenderer;
 
 enum ofLightType {
 	OF_LIGHT_POINT=0,

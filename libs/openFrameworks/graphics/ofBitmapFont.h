@@ -4,9 +4,8 @@
 #include "ofRectangle.h"
 #include "ofPixels.h"
 #include "ofTexture.h"
-#include "ofMesh.h"
 #include "ofGraphics.h"
-class ofRectangle;
+
 
 /*
  

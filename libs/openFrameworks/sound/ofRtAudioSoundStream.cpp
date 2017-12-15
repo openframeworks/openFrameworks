@@ -2,6 +2,7 @@
 #include "ofMath.h"
 #include "ofUtils.h"
 #include "ofAppRunner.h"
+#include "ofLog.h"
 #include "RtAudio.h"
 
 using namespace std;

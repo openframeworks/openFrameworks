@@ -17,6 +17,92 @@ int	ofGetMouseY();
 int	ofGetPreviousMouseX();
 int	ofGetPreviousMouseY();
 
+
+
+//--------------------------------------------
+//
+// 	Keyboard definitions
+//
+// 	ok -- why this?
+// 	glut key commands have some annoying features,
+// 	in that some normal keys have the same value as special keys,
+// 	but we want ONE key routine, so we need to redefine several,
+// 	so that we get some normalacy across keys routines
+//
+// 	(everything that comes through "glutSpecialKeyFunc" will get 256 added to it,
+// 	to avoid conflicts, before, values like "left, right up down" (ie, 104, 105, 106) were conflicting with
+// 	letters.. now they will be 256 + 104, 256 + 105....)
+
+enum ofKey{
+	OF_KEY_RETURN	=	13,
+	OF_KEY_ESC		=	27,
+	OF_KEY_TAB      =    9,
+
+
+	OF_KEY_BACKSPACE =	8,
+	OF_KEY_DEL		 =	127,
+
+
+	// For legacy reasons we are mixing up control keys
+	// and unicode codepoints when sending key events,
+	// for the modifiers that need to be usable as bitmask
+	// we are using some control codes that have nothing to do
+	// with the keys being represented and then 0x0ee0.. and 0x0e60...
+	// which are free in the unicode table
+
+	OF_KEY_SHIFT	=	 0x1,
+	OF_KEY_CONTROL	=	 0x2,
+	OF_KEY_ALT		=	 0x4,
+	OF_KEY_SUPER	=	 0x16,
+	OF_KEY_COMMAND  =    OF_KEY_SUPER,
+	OF_KEY_LEFT_SHIFT    =	 0xe60,
+	OF_KEY_RIGHT_SHIFT   =	 0xe61,
+	OF_KEY_LEFT_CONTROL  =	 0xe62,
+	OF_KEY_RIGHT_CONTROL = 0xe63,
+	OF_KEY_LEFT_ALT		= 0xe64,
+	OF_KEY_RIGHT_ALT	= 0xe65,
+	OF_KEY_LEFT_SUPER	= 0xe66,
+	OF_KEY_RIGHT_SUPER	= 0xe67,
+	OF_KEY_LEFT_COMMAND = OF_KEY_LEFT_SUPER,
+	OF_KEY_RIGHT_COMMAND = OF_KEY_RIGHT_SUPER,
+
+	OF_KEY_MODIFIER =	0x0EE0,
+	OF_KEY_F1	=		(1 | OF_KEY_MODIFIER),
+	OF_KEY_F2	=		(2 | OF_KEY_MODIFIER),
+	OF_KEY_F3	=		(3 | OF_KEY_MODIFIER),
+	OF_KEY_F4	=		(4 | OF_KEY_MODIFIER),
+	OF_KEY_F5	=		(5 | OF_KEY_MODIFIER),
+	OF_KEY_F6	=		(6 | OF_KEY_MODIFIER),
+	OF_KEY_F7	=		(7 | OF_KEY_MODIFIER),
+	OF_KEY_F8	=		(8 | OF_KEY_MODIFIER),
+	OF_KEY_F9	=		(9 | OF_KEY_MODIFIER),
+	OF_KEY_F10	=		(10 | OF_KEY_MODIFIER),
+	OF_KEY_F11	=		(11 | OF_KEY_MODIFIER),
+	OF_KEY_F12	=		(12 | OF_KEY_MODIFIER),
+	OF_KEY_LEFT	=		(100 | OF_KEY_MODIFIER),
+	OF_KEY_UP	=		(101 | OF_KEY_MODIFIER),
+	OF_KEY_RIGHT	 =	(102 | OF_KEY_MODIFIER),
+	OF_KEY_DOWN		 =	(103 | OF_KEY_MODIFIER),
+	OF_KEY_PAGE_UP	 =	(104 | OF_KEY_MODIFIER),
+	OF_KEY_PAGE_DOWN =	(105 | OF_KEY_MODIFIER),
+	OF_KEY_HOME		 =	(106 | OF_KEY_MODIFIER),
+	OF_KEY_END		 =	(107 | OF_KEY_MODIFIER),
+	OF_KEY_INSERT	 =	(108 | OF_KEY_MODIFIER),
+
+	OF_MOUSE_BUTTON_1 =    0,
+	OF_MOUSE_BUTTON_2 =    1,
+	OF_MOUSE_BUTTON_3 =    2,
+	OF_MOUSE_BUTTON_4 =    3,
+	OF_MOUSE_BUTTON_5 =    4,
+	OF_MOUSE_BUTTON_6 =    5,
+	OF_MOUSE_BUTTON_7 =    6,
+	OF_MOUSE_BUTTON_8 =    7,
+	OF_MOUSE_BUTTON_LAST   = OF_MOUSE_BUTTON_8,
+	OF_MOUSE_BUTTON_LEFT   = OF_MOUSE_BUTTON_1,
+	OF_MOUSE_BUTTON_MIDDLE = OF_MOUSE_BUTTON_2,
+	OF_MOUSE_BUTTON_RIGHT  = OF_MOUSE_BUTTON_3,
+};
+
 //-----------------------------------------------
 class ofDragInfo{
 	public:

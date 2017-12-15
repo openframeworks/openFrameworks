@@ -1,7 +1,7 @@
 #pragma once
+#include "ofConstants.h"
 #include "ofEvents.h"
 #include "ofFileUtils.h"
-#include "ofTypes.h"
 #include <map>
 
 class ofHttpResponse;

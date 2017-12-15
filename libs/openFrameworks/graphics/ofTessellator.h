@@ -1,10 +1,11 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofMesh.h"
-#include "ofTypes.h"
-#include "ofPolyline.h"
-#include "tesselator.h"
+#include "ofGraphicsBaseTypes.h"
+
+
+typedef struct TESStesselator TESStesselator;
+typedef struct TESSalloc TESSalloc;
 
 /// \brief
 /// ofTessellator exists for one purpose: to turn ofPolylines into ofMeshes so
