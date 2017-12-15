@@ -1,72 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofColor.h"
 
-class ofSerial;
-
-/// \brief Describes a Serial device, including ID, name and path.
-class ofSerialDeviceInfo{
-	friend class ofSerial;
-
-	public:
-		/// \brief Construct an ofSerialDeviceInfo with parameters.
-		/// \param devicePathIn The path to the device.
-		/// \param deviceNameIn The name of the device.
-		/// \param deviceIDIn The ID of the device.
-		ofSerialDeviceInfo(std::string devicePathIn, std::string deviceNameIn, int deviceIDIn){
-			devicePath = devicePathIn;
-			deviceName = deviceNameIn;
-			deviceID = deviceIDIn;
-		}
-
-		/// \brief Construct an undefined serial device.
-		ofSerialDeviceInfo(){
-			deviceName = "device undefined";
-			deviceID   = -1;
-		}
-
-		/// \brief Gets the path to the device
-		///
-		/// Example: `/dev/tty.cu/usbdevice-a440`.
-		///
-		/// \returns the device path.
-		std::string getDevicePath(){
-			return devicePath;
-		}
-
-		/// \brief Gets the name of the device
-		///
-		/// Example: `usbdevice-a440` or `COM4`.
-		///
-		/// \returns the device name.
-		std::string getDeviceName(){
-			return deviceName;
-		}
-
-		/// \brief Gets the ID of the device
-		///
-		/// Example: `0`,`1`,`2`,`3` etc.
-		///
-		/// \returns the device ID.
-		int getDeviceID(){
-			return deviceID;
-		}
-
-	protected:
-		/// \cond INTERNAL
-
-		/// \brief The device path (e.g /dev/tty.cu/usbdevice-a440).
-		std::string devicePath;
-
-		/// \brief The device name (e.g. usbdevice-a440 / COM4).
-		std::string deviceName;
-
-		/// \brief The device ID (e.g. 0, 1, 2, 3, etc).
-		int deviceID;
-
-		/// \endcond
-};
 
 //----------------------------------------------------------
 // ofMutex

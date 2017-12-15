@@ -1,4 +1,3 @@
-#include "ofBaseTypes.h"
 #include "ofUtils.h"
 #include "ofGLUtils.h"
 #include "ofGLProgrammableRenderer.h"

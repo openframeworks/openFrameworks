@@ -2,6 +2,7 @@
 #include "ofGraphicsBaseTypes.h"
 #include "ofGLBaseTypes.h"
 
+enum ofPixelFormat: short;
 
 /// \brief Used to represent the available video looping modes.
 ///

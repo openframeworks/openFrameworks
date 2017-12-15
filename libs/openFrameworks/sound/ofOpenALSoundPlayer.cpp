@@ -4,11 +4,22 @@
 
 #include "ofConstants.h"
 #include "glm/gtc/constants.hpp"
-#include "ofUtils.h"
-#include "ofMath.h"
-#include "ofFileUtils.h"
-#include "ofAppRunner.h"
-#include <set>
+#include "glm/common.hpp"
+#include "ofLog.h"
+#include "ofEvents.h"
+#include <sndfile.h>
+
+#if defined (TARGET_OF_IOS) || defined (TARGET_OSX)
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
+#else
+#include <AL/al.h>
+#include <AL/alc.h>
+#endif
+
+#ifdef OF_USING_MPG123
+#include <mpg123.h>
+#endif
 
 using namespace std;
 
@@ -769,7 +780,7 @@ int ofOpenALSoundPlayer::getPositionMS() const{
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::setPan(float p){
 	if(sources.empty()) return;
-	p = ofClamp(p, -1, 1);
+	p = glm::clamp(p, -1.f, 1.f);
 	pan = p;
 	if(channels==1){
 		float pos[3] = {p,0,0};

@@ -231,6 +231,7 @@ Module{
 
     Probe {
         id: ADDITIONAL_LIBS
+        property bool useStdFs: project.useStdFs
         property stringList libs
         configure: {
             if(platform === "linux"  || platform === "linux64"){
@@ -252,14 +253,14 @@ Module{
                     libslist.push("rtaudio");
                 }
 
-//                if(cpp.compilerName=='gcc' && cpp.compilerVersionMajor>=6){
-//                    libslist.push('stdc++fs');
-//                }else{
-//                    libslist.push("boost_filesystem");
-//                    libslist.push("boost_system");
-//                }
-                libslist.push("boost_filesystem");
-                libslist.push("boost_system");
+                if(useStdFs && cpp.compilerName=='gcc' && cpp.compilerVersionMajor>=6){
+                    libslist.push('stdc++fs');
+                }else{
+                    libslist.push("boost_filesystem");
+                    libslist.push("boost_system");
+                }
+//                libslist.push("boost_filesystem");
+//                libslist.push("boost_system");
 
                 libs = libslist;
             }else if(platform === "msys2"){
@@ -534,6 +535,7 @@ Module{
     Probe{
         id: DEFINES_LINUX
         property stringList list
+        property bool useStdFs: project.useStdFs
         configure:{
             list = ['GCC_HAS_REGEX'];
             if(Helpers.pkgExists("gtk+-3.0")){
@@ -542,7 +544,7 @@ Module{
             if(Helpers.pkgExists("libmpg123")){
                 list.push("OF_USING_MPG123=1");
             }
-            if(cpp.compilerName=='gcc' && cpp.compilerVersionMajor>=6){
+            if(useStdFs && cpp.compilerName=='gcc' && cpp.compilerVersionMajor>=6){
                 list.push('OF_USING_STD_FS=1');
             }
             found = true;

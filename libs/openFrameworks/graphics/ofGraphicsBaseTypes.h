@@ -47,6 +47,7 @@ using ofMesh = ofMesh_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorT
 
 enum class ofFboBeginMode : short;
 enum ofLoopType: short;
+enum ofOrientation: short;
 
 
 /// \brief Contains general information about the style of ofGraphics

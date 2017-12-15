@@ -2,9 +2,6 @@
 #include "ofColor.h"
 #include "ofShader.h"
 #include "ofConstants.h"
-#include "glm/vec2.hpp"
-#include "glm/vec3.hpp"
-#include "glm/vec4.hpp"
 #include "glm/fwd.hpp"
 
 // Material concept: "Anything graphical applied to the polygons"
@@ -224,9 +221,9 @@ public:
 	void setCustomUniformMatrix3f(const std::string & name, glm::mat3 value);
 
 	void setCustomUniform1i(const std::string & name, int value);
-	void setCustomUniform2i(const std::string & name, glm::tvec2<int> value);
-	void setCustomUniform3i(const std::string & name, glm::tvec3<int> value);
-	void setCustomUniform4i(const std::string & name, glm::tvec4<int> value);
+	void setCustomUniform2i(const std::string & name, glm::tvec2<int, glm::precision::defaultp> value);
+	void setCustomUniform3i(const std::string & name, glm::tvec3<int, glm::precision::defaultp> value);
+	void setCustomUniform4i(const std::string & name, glm::tvec4<int, glm::precision::defaultp> value);
 	void setCustomUniformTexture(const std::string & name, const ofTexture & value, int textureLocation);
 	void setCustomUniformTexture(const std::string & name, int textureTarget, GLint textureID, int textureLocation);
 
@@ -264,9 +261,9 @@ private:
 	std::map<std::string, glm::vec3> uniforms3f;
 	std::map<std::string, glm::vec4> uniforms4f;
 	std::map<std::string, float> uniforms1i;
-	std::map<std::string, glm::tvec2<int>> uniforms2i;
-	std::map<std::string, glm::tvec3<int>> uniforms3i;
-	std::map<std::string, glm::tvec4<int>> uniforms4i;
+	std::map<std::string, glm::tvec2<int, glm::precision::defaultp>> uniforms2i;
+	std::map<std::string, glm::tvec3<int, glm::precision::defaultp>> uniforms3i;
+	std::map<std::string, glm::tvec4<int, glm::precision::defaultp>> uniforms4i;
 	std::map<std::string, glm::mat4> uniforms4m;
 	std::map<std::string, glm::mat3> uniforms3m;
 	std::map<std::string, TextureUnifom> uniformstex;

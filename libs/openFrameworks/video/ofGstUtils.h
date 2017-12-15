@@ -2,9 +2,7 @@
 
 #include "ofConstants.h"
 #ifndef TARGET_ANDROID
-#include "ofConstants.h"
 #include "ofPixels.h"
-#include "ofTypes.h"
 #include "ofEvents.h"
 #include "ofThread.h"
 #include "ofVideoBaseTypes.h"
@@ -12,7 +10,6 @@
 #include <gst/gst.h>
 #include <gst/gstpad.h>
 #include <gst/video/video.h>
-#include "ofTexture.h"
 #include <queue>
 #include <condition_variable>
 #include <mutex>
@@ -24,6 +21,7 @@
 #endif
 
 class ofGstAppSink;
+class ofTexture;
 typedef struct _GstElement GstElement;
 typedef struct _GstBuffer GstBuffer;
 typedef struct _GstMessage GstMessage;
@@ -119,7 +117,7 @@ private:
 		{
 		}
 
-		~ofGstMainLoopThread(){};
+		virtual ~ofGstMainLoopThread(){};
 
 		void start(){
 			main_loop = g_main_loop_new (NULL, FALSE);

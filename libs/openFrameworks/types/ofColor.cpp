@@ -1,6 +1,5 @@
 #include "ofColor.h"
 #include "ofConstants.h"
-#include "glm/common.hpp"
 
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::gray(limit() / 2, limit() / 2, limit() / 2);
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::white(limit(), limit(), limit());
@@ -419,8 +418,8 @@ void ofColor_<PixelType>::setBrightness(float brightness) {
 
 template<typename PixelType>
 void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, float alpha) {
-	saturation = ofClamp(saturation, 0, limit());
-	brightness = ofClamp(brightness, 0, limit());
+	saturation = glm::clamp(saturation, 0.f, limit());
+	brightness = glm::clamp(brightness, 0.f, limit());
 	if(brightness == 0) { // black
 		set(0);
 	} else if(saturation == 0) { // grays

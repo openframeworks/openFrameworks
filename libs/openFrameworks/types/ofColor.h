@@ -1,8 +1,9 @@
 #pragma once
 
 
+#include "ofConstants.h"
 #include <limits>
-#include "ofMath.h"
+#include "glm/common.hpp"
 
 /// \class ofColor_
 ///
@@ -526,14 +527,14 @@ public:
     /// \param os An output stream reference.
     /// \param color The color to write to the output stream.
     /// \returns The passed output stream reference, useful for method chaining.
-    friend std::ostream& operator << (std::ostream& os, const ofColor_<PixelType>& color) {
-        if(sizeof(PixelType) == 1) {
-            os << (int) color.r << ", " << (int) color.g << ", " << (int) color.b << ", " << (int) color.a;
-        } else {
-            os << color.r << ", " << color.g << ", " << color.b << ", " << color.a;
-        }
-        return os;
-    }
+	friend std::ostream& operator << (std::ostream& os, const ofColor_<PixelType>& color) {
+		if(sizeof(PixelType) == 1) {
+			os << (int) color.r << ", " << (int) color.g << ", " << (int) color.b << ", " << (int) color.a;
+		} else {
+			os << color.r << ", " << color.g << ", " << color.b << ", " << color.a;
+		}
+		return os;
+	}
 
     /// \brief An input stream operator.
     ///
@@ -543,31 +544,31 @@ public:
     /// \param is An input stream reference.
     /// \param color The color to fill with the input stream.
     /// \returns The passed input stream reference, useful for method chaining.
-    friend std::istream& operator >> (std::istream& is, ofColor_<PixelType>& color) {
-        if(sizeof(PixelType) == 1) {
-            int component;
-            is >> std::skipws >> component;
-            color.r = component;
-            is.ignore(1);
-            is >> std::skipws >> component;
-            color.g = component;
-            is.ignore(1);
-            is >> std::skipws >> component;
-            color.b = component;
-            is.ignore(1);
-            is >> std::skipws >> component;
-            color.a = component;
-        }else{
-            is >> std::skipws >> color.r;
-            is.ignore(1);
-            is >> std::skipws >> color.g;
-            is.ignore(1);
-            is >> std::skipws >> color.b;
-            is.ignore(1);
-            is >> std::skipws >> color.a;
-        }
-        return is;
-    }
+	friend std::istream& operator >> (std::istream& is, ofColor_<PixelType>& color) {
+		if(sizeof(PixelType) == 1) {
+			int component;
+			is >> std::skipws >> component;
+			color.r = component;
+			is.ignore(1);
+			is >> std::skipws >> component;
+			color.g = component;
+			is.ignore(1);
+			is >> std::skipws >> component;
+			color.b = component;
+			is.ignore(1);
+			is >> std::skipws >> component;
+			color.a = component;
+		}else{
+			is >> std::skipws >> color.r;
+			is.ignore(1);
+			is >> std::skipws >> color.g;
+			is.ignore(1);
+			is >> std::skipws >> color.b;
+			is.ignore(1);
+			is >> std::skipws >> color.a;
+		}
+		return is;
+	}
 
 
     /// \}
@@ -660,7 +661,7 @@ void ofColor_<PixelType>::copyFrom(const ofColor_<SrcType> & mom){
 	if(sizeof(SrcType) == sizeof(float)) {
 		// coming from float we need a special case to clamp the values
 		for(int i = 0; i < 4; i++){
-			v[i] = ofClamp(mom[i], 0, 1) * factor;
+			v[i] = glm::clamp(float(mom[i]), 0.f, 1.f) * factor;
 		}
 	} else{
 		// everything else is a straight scaling

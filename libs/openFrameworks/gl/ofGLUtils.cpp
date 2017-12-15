@@ -6,7 +6,9 @@
 #include "ofShader.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofRendererCollection.h"
+#include "ofGLRenderer.h"
 #include "ofLog.h"
+#include "ofGraphicsConstants.h"
 
 using namespace std;
 

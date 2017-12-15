@@ -2,7 +2,6 @@
 
 #include "ofConstants.h"
 #include "ofSoundBaseTypes.h"
-#include "ofBaseSoundPlayer.h"
 
 /// \brief Stops all active sound players on FMOD-based systems (windows, osx).
 void ofSoundStopAll();

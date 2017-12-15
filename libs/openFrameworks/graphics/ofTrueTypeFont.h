@@ -1,12 +1,12 @@
 #pragma once
 
 #include "ofConstants.h"
-#include <vector>
 #include <unordered_map>
 #include "ofRectangle.h"
 #include "ofPath.h"
 #include "ofTexture.h"
 #include "ofMesh.h"
+#include "ofPixels.h"
 
 /// \file
 /// The ofTrueTypeFont class provides an interface to load fonts into
