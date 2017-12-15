@@ -1,5 +1,7 @@
 
+
 #include "ofxAndroidUtils.h"
+
 #ifndef __clang__
 // fix for undefined symbols from ndk r8c
 extern "C" {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofBaseSoundPlayer.h"
+#include "ofSoundBaseTypes.h"
 #include <jni.h>
 
 class ofxAndroidSoundPlayer: public ofBaseSoundPlayer{
