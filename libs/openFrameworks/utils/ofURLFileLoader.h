@@ -105,6 +105,7 @@ void ofUnregisterURLNotification(T * obj){
 	ofRemoveListener(ofURLResponseEvent(),obj,&T::urlResponse);
 }
 
+class ofBaseURLFileLoader;
 
 /// \class ofURLFileLoader
 /// \brief loads a file from a URL using an HTTP request
