@@ -3,7 +3,6 @@
 #include "ofConstants.h"
 #include "ofParameter.h"
 #include "ofParameterGroup.h"
-#include "ofBaseTypes.h"
 
 #include <numeric>
 
