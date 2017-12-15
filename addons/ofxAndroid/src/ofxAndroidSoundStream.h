@@ -3,7 +3,7 @@
 #include <jni.h>
 
 #include "ofConstants.h"
-#include "ofBaseSoundStream.h"
+#include "ofSoundBaseTypes.h"
 #include "ofxAndroidCircBuffer.h"
 #include "ofSoundBuffer.h"
 
