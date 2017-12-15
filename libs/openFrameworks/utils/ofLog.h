@@ -476,7 +476,7 @@ class ofLog{
 		/// \param value the data to be streamed.
 		/// \returns A reference to itself.
 		template <class T> 
-			ofLog& operator<<(const T& value){
+		ofLog& operator<<(const T& value){
 			message << value << getPadding();
 			return *this;
 		}
@@ -522,7 +522,7 @@ class ofLog{
 		/// \endcond
 	
 	private:
-		std::ostringstream message;	///< Temporary buffer.
+		std::stringstream message;	///< Temporary buffer.
 		
 		static bool bAutoSpace; ///< Should space be added between messages?
 		

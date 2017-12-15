@@ -39,8 +39,17 @@
 #import <UIKit/UIKit.h>
 #include <TargetConditionals.h>
 
-#include "ofBaseTypes.h"
 #include "ofxiOSConstants.h"
+#include "ofConstants.h"
+
+enum ofOrientation: short;
+
+class ofTexture;
+
+template<typename T>
+class ofImage_;
+
+typedef ofImage_<unsigned char> ofImage;
 
 class ofAppiOSWindow;
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
