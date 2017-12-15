@@ -48,15 +48,6 @@ enum ofTargetPlatform{
 	OF_TARGET_EMSCRIPTEN
 };
 
-// core: ---------------------------
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-#include <cstring>
-#include <iostream>
-#include <vector>
-#include <memory>
-#include <functional>
 
 #ifndef OF_TARGET_IPHONE
     #define OF_TARGET_IPHONE OF_TARGET_IOS
@@ -215,6 +206,7 @@ enum ofTargetPlatform{
 		#define EGL_EGLEXT_PROTOTYPES
 		#include "EGL/egl.h"
 		#include "EGL/eglext.h"
+		#define _GLIBCXX_USE_C99_MATH 1
 	#else // normal linux
 		#define GL_GLEXT_PROTOTYPES
 		#include <GL/glew.h>
@@ -274,13 +266,19 @@ enum ofTargetPlatform{
 typedef TESSindex ofIndexType;
 
 
-#ifndef __MWERKS__
-#include <cstdlib>
-#endif
 
 #define OF_EXIT_APP(val)		std::exit(val);
 
 
+// core: ---------------------------
+#include <cstdio>
+#include <cstdlib>
+#include <string>
+#include <cstring>
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <functional>
 
 
 //------------------------------------------------ capture
