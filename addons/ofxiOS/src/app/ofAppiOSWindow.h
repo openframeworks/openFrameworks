@@ -33,6 +33,7 @@
 #include <TargetConditionals.h>
 #include "ofAppBaseWindow.h"
 #include "ofxiOSConstants.h"
+#include "ofEvents.h"
 
 class ofiOSWindowSettings: public ofGLESWindowSettings{
 public:

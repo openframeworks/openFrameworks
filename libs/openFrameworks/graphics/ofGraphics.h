@@ -600,6 +600,11 @@ void ofBezierVertex(const glm::vec2 & p1, const glm::vec2 & p2, const glm::vec2 
 void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 
 
+enum ofCloseShape{
+	OF_OPEN = 0,
+	OF_CLOSE = 1,
+};
+
 /// \brief This tells the program that your shape is finished and that it should now
 /// draw it to the screen.
 ///
