@@ -196,6 +196,9 @@ enum ofTargetPlatform{
 	#ifdef TARGET_LINUX_ARM
 		#ifdef TARGET_RASPBERRY_PI
 			#include "bcm_host.h"
+			// rpi firmware headers define countof
+			// which messes up other libraries like glm
+			#undef countof
 		#endif
 
 		#include "GLES/gl.h"
