@@ -48,15 +48,6 @@ enum ofTargetPlatform{
 	OF_TARGET_EMSCRIPTEN
 };
 
-// core: ---------------------------
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-#include <cstring>
-#include <iostream>
-#include <vector>
-#include <memory>
-#include <functional>
 
 #ifndef OF_TARGET_IPHONE
     #define OF_TARGET_IPHONE OF_TARGET_IOS
@@ -274,13 +265,19 @@ enum ofTargetPlatform{
 typedef TESSindex ofIndexType;
 
 
-#ifndef __MWERKS__
-#include <cstdlib>
-#endif
 
 #define OF_EXIT_APP(val)		std::exit(val);
 
 
+// core: ---------------------------
+#include <cstdio>
+#include <cstdlib>
+#include <string>
+#include <cstring>
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <functional>
 
 
 //------------------------------------------------ capture

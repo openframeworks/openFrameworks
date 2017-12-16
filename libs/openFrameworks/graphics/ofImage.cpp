@@ -1251,4 +1251,5 @@ std::string ofToString(const ofImageType & imgType){
 			return "OF_IMAGE_UNDEFINED";
 		break;
 	}
+	return "OF_IMAGE_UNDEFINED";
 }
