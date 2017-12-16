@@ -1,5 +1,7 @@
 
 #include "ofQTKitGrabber.h"
+#include "ofLog.h"
+#include "ofVideoBaseTypes.h
 
 #ifdef OF_VIDEO_CAPTURE_QTKIT
 
@@ -11,6 +13,8 @@
 #import <QTKit/QTKit.h>
 #import <QuickTime/QuickTime.h>
 #import <Accelerate/Accelerate.h>
+
+using namespace std;
 
 //This Objective-C class contains all the OS specific
 //Stuff we need for pulling images from a video camera feed
@@ -845,7 +849,8 @@ bool ofQTKitGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	if( pixelFormat == OF_PIXELS_RGB ){
 		return true;
 	}
-	ofLogWarning("ofQTKitGrabber") << "setPixelFormat(): requested pixel format " << pixelFormat << " not supported";
+	ofLogWarning("ofQTKitGrabber") << "setPixelFormat(): requested pixel format "
+		<< ofToString(pixelFormat) << " not supported";
 	return false;
 }
 
