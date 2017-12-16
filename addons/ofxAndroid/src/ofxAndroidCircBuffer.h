@@ -1,4 +1,5 @@
 #pragma once
+#include "ofConstants.h"
 
 template<class Content>
 class ofxAndroidCircBuffer {

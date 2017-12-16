@@ -6,6 +6,7 @@
 #include "ofSoundBaseTypes.h"
 #include "ofxAndroidCircBuffer.h"
 #include "ofSoundBuffer.h"
+#include "ofEvents.h"
 
 class ofxAndroidSoundStream : public ofBaseSoundStream{
 	public:
