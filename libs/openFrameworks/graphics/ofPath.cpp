@@ -60,6 +60,12 @@ ofPath::ofPath(){
 }
 
 //----------------------------------------------------------
+ofPath::ofPath(ofPolyline &polyline) : ofPath::ofPath() {
+	mode = POLYLINES;
+	polylines.push_back(polyline);
+}
+
+//----------------------------------------------------------
 void ofPath::clear(){
 	commands.clear();
 	// for performance, instead of clearing the whole vector

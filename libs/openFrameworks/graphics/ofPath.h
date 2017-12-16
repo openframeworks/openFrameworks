@@ -39,6 +39,8 @@ public:
 	/// \brief Create a new ofPath instance.
 	ofPath();
 
+	ofPath(ofPolyline &polyline);
+
 	/// \brief Remove all subpaths from the ofPath instance
 	void clear();
 
