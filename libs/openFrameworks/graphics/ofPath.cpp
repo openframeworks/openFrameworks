@@ -60,7 +60,7 @@ ofPath::ofPath(){
 }
 
 //----------------------------------------------------------
-ofPath::ofPath(ofPolyline &polyline) : ofPath::ofPath() {
+ofPath::ofPath(const ofPolyline &polyline) : ofPath::ofPath() {
 	mode = POLYLINES;
 	polylines.push_back(polyline);
 }

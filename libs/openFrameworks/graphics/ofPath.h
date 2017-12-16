@@ -39,7 +39,12 @@ public:
 	/// \brief Create a new ofPath instance.
 	ofPath();
 
-	ofPath(ofPolyline &polyline);
+	/// \brief Construct a new ofPath from the given ofPolyline.
+	///
+	/// A single polyline will be constructed from the given polyline and the ofPath mode will be set to `POLYLINES`.
+	///
+	/// \param polyline The polyline to that defines the new ofPath.
+	ofPath(const ofPolyline &polyline);
 
 	/// \brief Remove all subpaths from the ofPath instance
 	void clear();
