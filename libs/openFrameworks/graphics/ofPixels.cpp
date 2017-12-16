@@ -124,6 +124,7 @@ std::string ofToString(const ofPixelFormat & p) {
 			return "OF_PIXELS_NATIVE";
 		break;
 	}
+	return "OF_PIXELS_UNKNOWN";
 }
 
 template<typename PixelType>

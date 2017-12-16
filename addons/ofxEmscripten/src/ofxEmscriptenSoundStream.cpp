@@ -8,7 +8,7 @@
 #include "ofxEmscriptenSoundStream.h"
 #include "html5audio.h"
 #include "ofBaseApp.h"
-#include "ofBaseTypes.h"
+#include "ofLog.h"
 
 using namespace std;
 
