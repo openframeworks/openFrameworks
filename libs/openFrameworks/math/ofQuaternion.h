@@ -44,8 +44,8 @@ public:
     // rotation order is axis3,axis2,axis1
     inline ofQuaternion(float angle1, const ofVec3f& axis1, float angle2, const ofVec3f& axis2, float angle3, const ofVec3f& axis3);
     
-	inline ofQuaternion(const glm::quat & q);
-	inline operator glm::quat() const;
+	ofQuaternion(const glm::quat & q);
+	operator glm::quat() const;
 
     /// \}
     
