@@ -10,6 +10,7 @@
 
 #include <queue>
 #include <map>
+#include <X11/Xlib.h>
 
 
 // TODO: this shold be passed in with the other window settings, like window alpha, etc.
@@ -29,7 +30,7 @@ struct _XDisplay;
 typedef struct _XDisplay Display;
 
 
-typedef int EGLBoolean;
+typedef unsigned int EGLBoolean;
 typedef int32_t EGLint;
 typedef void *EGLDisplay;
 typedef void *EGLConfig;
