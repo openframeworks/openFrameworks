@@ -183,8 +183,8 @@ protected:
 		}else{
 			ofLogError() << testName << " failed " << msg;
 			ofLogError() << "test_eq(" << v1 << ", " << v2 << ")";
-			ofLogError() << "value1: " << v1 << " is " << t1;
-			ofLogError() << "value2: " << v2 << " is " << t2;
+			ofLogError() << "value1: " << v1 << " is " << ofToString(t1);
+			ofLogError() << "value2: " << v2 << " is " << ofToString(t2);
 			ofLogError() << file << ": " << line;
 			numTestsFailed++;
 			return false;
@@ -206,8 +206,8 @@ protected:
 		}else{
 			ofLogError() << testName << " failed " << msg;
 			ofLogError() << "test_gt(" << v1 << ", " << v2 << ")";
-			ofLogError() << "value1: " << v1 << " is " << t1;
-			ofLogError() << "value2: " << v2 << " is " << t2;
+			ofLogError() << "value1: " << v1 << " is " << ofToString(t1);
+			ofLogError() << "value2: " << v2 << " is " << ofToString(t2);
 			ofLogError() << file << ": " << line;
 			numTestsFailed++;
 			return false;
@@ -229,8 +229,8 @@ protected:
 		}else{
 			ofLogError() << testName << " failed " << msg;
 			ofLogError() << "test_lt(" << v1 << ", " << v2 << ")";
-			ofLogError() << "value1: " << v1 << " is " << t1;
-			ofLogError() << "value2: " << v2 << " is " << t2;
+			ofLogError() << "value1: " << v1 << " is " << ofToString(t1);
+			ofLogError() << "value2: " << v2 << " is " << ofToString(t2);
 			ofLogError() << file << ": " << line;
 			numTestsFailed++;
 			return false;
