@@ -9,7 +9,6 @@
 #include "ofVectorMath.h"
 #include <assert.h>
 // x11
-#include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <EGL/egl.h>
 
