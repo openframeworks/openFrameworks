@@ -14,6 +14,7 @@
 #include "ofAppiOSWindow.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
+#include "ofFileUtils.h"
 
 @implementation ofxtvOSAppDelegate
 
