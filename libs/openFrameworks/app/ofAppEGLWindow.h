@@ -1,39 +1,16 @@
 #pragma once
 
-#include "ofBaseApp.h"
-
+#include "ofConstants.h"
 #include "ofAppBaseWindow.h"
 #include "ofThread.h"
 #include "ofImage.h"
 #include "ofEvents.h"
-#include "ofConstants.h"
-#include "ofTypes.h"
+#include "ofRectangle.h"
 
-// include includes for both native and X11 possibilities
-#include <libudev.h>
-#include <stdbool.h>
-#include <stdio.h> // sprintf
-#include <stdlib.h>  // malloc
-#include <math.h>
-#include <fcntl.h>  // open fcntl
-#include <unistd.h> // read close
-#include <linux/joystick.h>
-
-#include "linux/kd.h"	// keyboard stuff...
-#include "termios.h"
-#include "sys/ioctl.h"
-
-#include <dirent.h>  // scandir
-#include <string.h> // strlen
-
-// x11
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
 
 #include <queue>
 #include <map>
 
-#include <EGL/egl.h>
 
 // TODO: this shold be passed in with the other window settings, like window alpha, etc.
 enum ofAppEGLWindowType {
@@ -44,6 +21,21 @@ enum ofAppEGLWindowType {
 
 typedef std::map<EGLint,EGLint> ofEGLAttributeList;
 typedef std::map<EGLint,EGLint>::iterator ofEGLAttributeListIterator;
+
+typedef struct _XIM * XIM;
+typedef struct _XIC * XIC;
+typedef unsigned long Window;
+struct _XDisplay;
+typedef struct _XDisplay Display;
+
+
+typedef int EGLBoolean;
+typedef int32_t EGLint;
+typedef void *EGLDisplay;
+typedef void *EGLConfig;
+typedef void *EGLSurface;
+typedef void *EGLContext;
+
 
 class ofAppEGLWindow : public ofAppBaseGLESWindow, public ofThread {
 public:
