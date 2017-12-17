@@ -126,11 +126,10 @@ public:
 	
 	/// \}
 
-	ofVec2f(const glm::vec2 & v);
-	ofVec2f(const glm::vec3 & v);
-	ofVec2f(const glm::vec4 & v);
-
-	operator glm::vec2() const;
+	OF_DEPRECATED_MSG("Use glm::vec2.", ofVec2f(const glm::vec2 & v));
+	OF_DEPRECATED_MSG("Use glm::vec2.", ofVec2f(const glm::vec3 & v));
+	OF_DEPRECATED_MSG("Use glm::vec2.", ofVec2f(const glm::vec4 & v));
+	OF_DEPRECATED_MSG("Use glm::vec2.", operator glm::vec2() const);
 
 	//---------------------
 	/// \name Access components

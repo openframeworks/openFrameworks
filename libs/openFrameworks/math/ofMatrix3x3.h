@@ -42,11 +42,11 @@ public:
 				float _g=0.0, float _h=0.0, float _i=0.0 );
 
 
-	ofMatrix3x3( const glm::mat3 & mat) {
+	OF_DEPRECATED_MSG("Use glm::mat3.", ofMatrix3x3( const glm::mat3 & mat)) {
 		*this = reinterpret_cast<const ofMatrix3x3&>(mat);
 	}
 
-	operator glm::mat3(){
+	OF_DEPRECATED_MSG("Use glm::mat3.", operator glm::mat3()) {
 		return *reinterpret_cast<glm::mat3*>(this);
 	}
 	

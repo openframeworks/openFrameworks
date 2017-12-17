@@ -255,88 +255,88 @@ namespace glm {
 
 //--------------------------------------------------------------
 inline glm::vec3 operator+(const glm::vec3 & v1, const ofVec3f & v2){
-	return v1 + glm::vec3(v2);
+	return v1 + glm::vec3(v2.x, v2.y, v2.z);
 }
 
 //--------------------------------------------------------------
 inline glm::vec3 operator-(const glm::vec3 & v1, const ofVec3f & v2){
-	return v1 - glm::vec3(v2);
+	return v1 - glm::vec3(v2.x, v2.y, v2.z);
 }
 
 //--------------------------------------------------------------
 inline glm::vec3 operator*(const glm::vec3 & v1, const ofVec3f & v2){
-	return v1 * glm::vec3(v2);
+	return v1 * glm::vec3(v2.x, v2.y, v2.z);
 }
 
 //--------------------------------------------------------------
 inline glm::vec3 operator/(const glm::vec3 & v1, const ofVec3f & v2){
-	return v1 / glm::vec3(v2);
+	return v1 / glm::vec3(v2.x, v2.y, v2.z);
 }
 
 //--------------------------------------------------------------
 inline glm::vec3 & operator+=(glm::vec3 & v1, const ofVec3f & v2){
-	v1 += glm::vec3(v2);
+	v1 += glm::vec3(v2.x, v2.y, v2.z);
 	return v1;
 }
 
 //--------------------------------------------------------------
 inline glm::vec3 & operator-=(glm::vec3 & v1, const ofVec3f & v2){
-	v1 -= glm::vec3(v2);
+	v1 -= glm::vec3(v2.x, v2.y, v2.z);
 	return v1;
 }
 
 //--------------------------------------------------------------
 inline glm::vec3 & operator*=(glm::vec3 & v1, const ofVec3f & v2){
-	v1 *= glm::vec3(v2);
+	v1 *= glm::vec3(v2.x, v2.y, v2.z);
 	return v1;
 }
 
 //--------------------------------------------------------------
 inline glm::vec3 & operator/=(glm::vec3 & v1, const ofVec3f & v2){
-	v1 /= glm::vec3(v2);
+	v1 /= glm::vec3(v2.x, v2.y, v2.z);
 	return v1;
 }
 
 //--------------------------------------------------------------
 inline glm::vec2 operator+(const glm::vec2 & v1, const ofVec2f & v2){
-	return v1 + glm::vec2(v2);
+	return v1 + glm::vec2(v2.x, v2.y);
 }
 
 //--------------------------------------------------------------
 inline glm::vec2 operator-(const glm::vec2 & v1, const ofVec2f & v2){
-	return v1 - glm::vec2(v2);
+	return v1 - glm::vec2(v2.x, v2.y);
 }
 
 //--------------------------------------------------------------
 inline glm::vec2 operator*(const glm::vec2 & v1, const ofVec2f & v2){
-	return v1 * glm::vec2(v2);
+	return v1 * glm::vec2(v2.x, v2.y);
 }
 
 //--------------------------------------------------------------
 inline glm::vec2 operator/(const glm::vec2 & v1, const ofVec2f & v2){
-	return v1 / glm::vec2(v2);
+	return v1 / glm::vec2(v2.x, v2.y);
 }
 
 //--------------------------------------------------------------
 inline glm::vec2 & operator+=(glm::vec2 & v1, const ofVec2f & v2){
-	v1 += glm::vec2(v2);
+	v1 += glm::vec2(v2.x, v2.y);
 	return v1;
 }
 
 //--------------------------------------------------------------
 inline glm::vec2 & operator-=(glm::vec2 & v1, const ofVec2f & v2){
-	v1 -= glm::vec2(v2);
+	v1 -= glm::vec2(v2.x, v2.y);
 	return v1;
 }
 
 //--------------------------------------------------------------
 inline glm::vec2 & operator*=(glm::vec2 & v1, const ofVec2f & v2){
-	v1 *= glm::vec2(v2);
+	v1 *= glm::vec2(v2.x, v2.y);
 	return v1;
 }
 
 //--------------------------------------------------------------
 inline glm::vec2 & operator/=(glm::vec2 & v1, const ofVec2f & v2){
-	v1 /= glm::vec2(v2);
+	v1 /= glm::vec2(v2.x, v2.y);
 	return v1;
 }

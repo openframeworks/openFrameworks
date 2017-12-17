@@ -24,10 +24,10 @@ public:
 	ofVec4f( float _x, float _y, float _z, float _w );
 	ofVec4f( const ofVec2f& vec);
 	ofVec4f( const ofVec3f& vec);
-	ofVec4f( const glm::vec2& vec);
-	ofVec4f( const glm::vec3& vec);
-	ofVec4f( const glm::vec4& vec);
-	operator glm::vec4() const;
+	OF_DEPRECATED_MSG("Use glm::vec4.", ofVec4f( const glm::vec2& vec));
+	OF_DEPRECATED_MSG("Use glm::vec4.", ofVec4f( const glm::vec3& vec));
+	OF_DEPRECATED_MSG("Use glm::vec4.", ofVec4f( const glm::vec4& vec));
+	OF_DEPRECATED_MSG("Use glm::vec4.", operator glm::vec4() const);
 
     /// \}
 

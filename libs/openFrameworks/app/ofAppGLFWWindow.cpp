@@ -760,7 +760,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
         GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
  
 		int currentMonitor = getCurrentMonitor();
-		ofVec3f screenSize = getScreenSize();
+		auto screenSize = getScreenSize();
 		
 		if( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ){
 			std::swap(screenSize.x, screenSize.y);
@@ -815,8 +815,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		
 		// make sure to save current pos if not specified in settings
 		if( settings.isPositionSet() ) {
-			ofVec3f pos = getWindowPosition();
-			settings.setPosition(ofVec2f(pos.x, pos.y));
+			settings.setPosition(getWindowPosition());
 		}
  
         //make sure the window is getting the mouse/key events
