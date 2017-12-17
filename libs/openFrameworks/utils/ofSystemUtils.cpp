@@ -3,6 +3,7 @@
 #include "ofSystemUtils.h"
 #include "ofFileUtils.h"
 #include "ofLog.h"
+#include "ofUtils.h"
 #include <condition_variable>
 #include <mutex>
 
