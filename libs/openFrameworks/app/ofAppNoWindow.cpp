@@ -215,7 +215,9 @@ private:
 const string ofNoopRenderer::TYPE="NOOP";
 
 //----------------------------------------------------------
-ofAppNoWindow::ofAppNoWindow(){
+ofAppNoWindow::ofAppNoWindow()
+:coreEvents(new ofCoreEvents)
+,currentRenderer(new ofNoopRenderer){
 	ofAppPtr = nullptr;
 	width = 0;
 	height = 0;
@@ -226,8 +228,6 @@ ofAppNoWindow::ofAppNoWindow(){
 void ofAppNoWindow::setup(const ofWindowSettings & settings){
 	width = settings.width;
 	height = settings.height;
-
-	currentRenderer = std::make_shared<ofNoopRenderer>();
 }
 
 //----------------------------------------------------------

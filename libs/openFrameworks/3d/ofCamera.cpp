@@ -5,6 +5,7 @@
 #include "ofAppRunner.h"
 #include "ofGraphicsBaseTypes.h"
 #include "glm/gtx/transform.hpp"
+#include "glm/gtc/quaternion.hpp"
 
 using namespace std;
 
