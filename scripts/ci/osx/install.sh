@@ -2,3 +2,4 @@
 set -ev
 brew update
 brew install gdb
+brew install coreutils
