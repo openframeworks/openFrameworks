@@ -9,8 +9,7 @@ CUSTOMFLAGS="-ftrack-macro-expansion=0"
 
 if [ "$OPT" == "qbs" ]; then
     echo "building with qbs"
-    export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
-    export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+    export PATH="$TRAVIS_BUILD_DIR/linuxbrew/.linuxbrew/bin:$HOME/linuxbrew/.linuxbrew/sbin:$PATH"
 
     echo "**** Building emptyExample ****"
     cd $ROOT/scripts/templates/linux64
