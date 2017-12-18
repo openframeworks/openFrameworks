@@ -1,6 +1,9 @@
 #pragma once
 
 #include "ofConstants.h"
+#include <cmath>
+#include <glm/gtc/constants.hpp>
+#include <glm/fwd.hpp>
 
 /// \file
 /// ofMath provides a collection of mathematical utilities and functions.
@@ -166,7 +169,7 @@ float ofMap(float value, float inputMin, float inputMax, float outputMin, float 
 /// \returns a floating point number in the range [min, max].
 float ofClamp(float value, float min, float max);
 
-/// \brief Determine if a number is inside of a given range.
+/// \brief Determine if a number is inside of a giv(float)(en range.
 /// \param t The value to test.
 /// \param min The lower bound of the range.
 /// \param max The upper bound of the range.
@@ -361,7 +364,7 @@ float ofAngleDifferenceRadians(float currentAngle, float targetAngle);
 float ofWrap(float value, float from, float to);
 
 // \brief Convenience function for ofWrap(), constrained between -PI...PI
-float ofWrapRadians(float angle, float from = static_cast<float>(-PI), float to=static_cast<float>(PI));
+float ofWrapRadians(float angle, float from = -glm::pi<float>(), float to=glm::pi<float>());
 
 // \brief Convenience function for ofWrap(), constrained between -180...180
 float ofWrapDegrees(float angle, float from = -180, float to=+180);
@@ -516,8 +519,8 @@ vectype ofBezierTangent(const vectype& a, const vectype& b, const vectype& c, co
 /// \returns A glm::vec3 on the curve.
 template <class vectype>
 vectype ofCurveTangent(const vectype& a, const vectype& b, const vectype& c, const vectype& d, float t){
-	glm::vec3 v0 = ( c - a )*0.5;
-	glm::vec3 v1 = ( d - b )*0.5;
+	auto v0 = ( c - a )*0.5;
+	auto v1 = ( d - b )*0.5;
 	return ( b*2 -c*2 + v0 + v1)*(3*t*t) + ( c*3 - b*3 - v1 - v0*2 )*( 2*t) + v0;
 
 }
@@ -593,7 +596,7 @@ template<typename Type>
 Type ofInterpolateCosine(const Type& y1, const Type& y2, float pct){
 	float pct2;
 
-	pct2 = (1-cos(pct*static_cast<float>(PI)))/2;
+	pct2 = (1-cos(pct*glm::pi<float>()))/2;
 	return(y1*(1-pct2)+y2*pct2);
 }
 

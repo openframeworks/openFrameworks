@@ -1,5 +1,6 @@
 #include "ofSoundStream.h"
 #include "ofAppRunner.h"
+#include "ofLog.h"
 
 #if defined(OF_SOUND_PLAYER_FMOD)
 #include "ofSoundPlayer.h"

@@ -1,11 +1,12 @@
 
 #pragma once
 
-#include "ofVectorMath.h"
-#include "of3dUtils.h"
-#include "ofAppRunner.h"
+#include "ofConstants.h"
 #include "ofParameter.h"
 #include <array>
+#include "glm/mat4x4.hpp"
+
+class ofBaseRenderer;
 
 
 /// \brief A generic 3d object in space with transformation (position, rotation, scale).

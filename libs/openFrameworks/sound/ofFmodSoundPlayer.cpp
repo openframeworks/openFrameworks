@@ -2,6 +2,8 @@
 
 
 #include "ofUtils.h"
+#include "ofMath.h"
+#include "ofLog.h"
 
 
 static bool bFmodInitialized_ = false;

@@ -1,5 +1,7 @@
 #include "ofxAssimpModelLoader.h"
 #include "ofxAssimpUtils.h"
+#include "ofLight.h"
+#include "ofImage.h"
 
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
@@ -567,19 +569,20 @@ void ofxAssimpModelLoader::setAnimation(int animationIndex) {
 void ofxAssimpModelLoader::setNormalizedTime(float time) {
     if(!hasAnimations()) {
         return;
-    }
-    setAnimation(currentAnimation); // call this again to clamp animation index, in case the model is reloaded.
+	}
+	currentAnimation = ofClamp(currentAnimation, 0, getAnimationCount() - 1);
     ofxAssimpAnimation & animation = animations[currentAnimation];
-    float realT = ofMap(time, 0.0, 1.0, 0.0, animation.getDurationInSeconds(), false);
-    setTime(realT);
+	float realT = ofMap(time, 0.0, 1.0, 0.0, animation.getDurationInSeconds(), false);
+	animation.setPosition(realT);
+	update();
 }
 
 // DEPRECATED.
 void ofxAssimpModelLoader::setTime(float time) {
     if(!hasAnimations()) {
         return;
-    }
-    setAnimation(currentAnimation); // call this again to clamp animation index, in case the model is reloaded.
+	}
+	currentAnimation = ofClamp(currentAnimation, 0, getAnimationCount() - 1);
     ofxAssimpAnimation & animation = animations[currentAnimation];
     animation.setPosition(time);
     update();

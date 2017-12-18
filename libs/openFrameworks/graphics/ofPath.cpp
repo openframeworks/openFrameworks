@@ -1,7 +1,4 @@
 #include "ofPath.h"
-#include "ofAppRunner.h"
-#include "ofTessellator.h"
-#include "ofVectorMath.h"
 
 using namespace std;
 

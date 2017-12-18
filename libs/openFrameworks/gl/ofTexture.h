@@ -1,9 +1,20 @@
 #pragma once
 
-#include "ofRectangle.h"
-#include "ofBaseTypes.h"
 #include "ofConstants.h"
-#include "ofVboMesh.h"
+#include "glm/mat4x4.hpp"
+#include "ofGraphicsBaseTypes.h"
+
+class ofRectangle;
+
+template<typename T>
+class ofPixels_;
+
+typedef ofPixels_<unsigned char> ofPixels;
+typedef ofPixels_<unsigned short> ofShortPixels;
+typedef ofPixels_<float> ofFloatPixels;
+
+class ofTexture;
+class ofBufferObject;
 
 /// \file
 /// ofTexture is used to create OpenGL textures that live on your graphics card

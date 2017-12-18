@@ -1,11 +1,12 @@
 #pragma once
 
-#include <vector>
-#include "ofRectangle.h"
 #include "ofConstants.h"
+#include <unordered_map>
+#include "ofRectangle.h"
 #include "ofPath.h"
 #include "ofTexture.h"
 #include "ofMesh.h"
+#include "ofPixels.h"
 
 /// \file
 /// The ofTrueTypeFont class provides an interface to load fonts into
@@ -387,7 +388,7 @@ protected:
 
 	std::vector<glyphProps> cps; // properties for each character
 
-  Settings settings;
+	Settings settings;
 	std::unordered_map<uint32_t,size_t> glyphIndexMap;
 
 

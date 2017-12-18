@@ -51,7 +51,7 @@
  * header file. The header file is made for use by external code only.
  */
 
-#define FASTFLOOR(x) ( ((x)>0) ? ((int)x) : (((int)x)-1) )
+#define OFNOISE_FASTFLOOR(x) ( ((x)>0) ? ((int)x) : (((int)x)-1) )
 
 /*
  * ---------------------------------------------------------------------
@@ -168,7 +168,7 @@ namespace{
 /* 1D simplex noise */
 inline float _slang_library_noise1 (float x)
 {
-  int i0 = FASTFLOOR(x);
+  int i0 = OFNOISE_FASTFLOOR(x);
   int i1 = i0 + 1;
   float x0 = x - i0;
   float x1 = x0 - 1.0f;
@@ -192,8 +192,8 @@ inline float _slang_library_noise1 (float x)
 /* 2D simplex noise */
 inline float _slang_library_noise2 (float x, float y)
 {
-#define F2 0.366025403f /* F2 = 0.5*(sqrt(3.0)-1.0) */
-#define G2 0.211324865f /* G2 = (3.0-Math.sqrt(3.0))/6.0 */
+	constexpr float F2 = 0.366025403f; /* F2 = 0.5*(sqrt(3.0)-1.0) */
+	constexpr float G2 = 0.211324865f; /* G2 = (3.0-Math.sqrt(3.0))/6.0 */
 
 	float n0, n1, n2; /* Noise contributions from the three corners */
 
@@ -201,8 +201,8 @@ inline float _slang_library_noise2 (float x, float y)
 	float s = (x+y)*F2; /* Hairy factor for 2D */
 	float xs = x + s;
 	float ys = y + s;
-    int i = FASTFLOOR(xs);
-    int j = FASTFLOOR(ys);
+	int i = OFNOISE_FASTFLOOR(xs);
+	int j = OFNOISE_FASTFLOOR(ys);
 
 	float t = (float)(i+j)*G2;
 	float X0 = i-t; /* Unskew the cell origin back to (x,y) space */
@@ -263,9 +263,9 @@ inline float _slang_library_noise2 (float x, float y)
 /* 3D simplex noise */
 inline float _slang_library_noise3 (float x, float y, float z)
 {
-/* Simple skewing factors for the 3D case */
-#define F3 0.333333333f
-#define G3 0.166666667f
+	/* Simple skewing factors for the 3D case */
+	constexpr float F3 = 0.333333333f;
+	constexpr float G3 = 0.166666667f;
 
 	float n0, n1, n2, n3; /* Noise contributions from the four corners */
 
@@ -274,9 +274,9 @@ inline float _slang_library_noise3 (float x, float y, float z)
 	float xs = x+s;
 	float ys = y+s;
 	float zs = z+s;
-    int i = FASTFLOOR(xs);
-    int j = FASTFLOOR(ys);
-    int k = FASTFLOOR(zs);
+	int i = OFNOISE_FASTFLOOR(xs);
+	int j = OFNOISE_FASTFLOOR(ys);
+	int k = OFNOISE_FASTFLOOR(zs);
 
 	float t = (float)(i+j+k)*G3;
 	float X0 = i-t; /* Unskew the cell origin back to (x,y,z) space */
@@ -365,9 +365,9 @@ inline float _slang_library_noise3 (float x, float y, float z)
 /* 4D simplex noise */
 inline float _slang_library_noise4 (float x, float y, float z, float w)
 {
-  /* The skewing and unskewing factors are hairy again for the 4D case */
-#define F4 0.309016994f /* F4 = (Math.sqrt(5.0)-1.0)/4.0 */
-#define G4 0.138196601f /* G4 = (5.0-Math.sqrt(5.0))/20.0 */
+	/* The skewing and unskewing factors are hairy again for the 4D case */
+	constexpr float F4 = 0.309016994f; /* F4 = (Math.sqrt(5.0)-1.0)/4.0 */
+	constexpr float G4 = 0.138196601f; /* G4 = (5.0-Math.sqrt(5.0))/20.0 */
 
 	float n0, n1, n2, n3, n4; /* Noise contributions from the five corners */
 
@@ -377,10 +377,10 @@ inline float _slang_library_noise4 (float x, float y, float z, float w)
 	float ys = y + s;
 	float zs = z + s;
 	float ws = w + s;
-    int i = FASTFLOOR(xs);
-    int j = FASTFLOOR(ys);
-    int k = FASTFLOOR(zs);
-    int l = FASTFLOOR(ws);
+	int i = OFNOISE_FASTFLOOR(xs);
+	int j = OFNOISE_FASTFLOOR(ys);
+	int k = OFNOISE_FASTFLOOR(zs);
+	int l = OFNOISE_FASTFLOOR(ws);
 
 	float t = (i + j + k + l) * G4; /* Factor for 4D unskewing */
 	float X0 = i - t; /* Unskew the cell origin back to (x,y,z,w) space */
