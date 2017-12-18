@@ -418,6 +418,8 @@ void ofColor_<PixelType>::setBrightness(float brightness) {
 
 template<typename PixelType>
 void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, float alpha) {
+	// hue needs to be limited! otherwise none of the switch statements are executed and the function won't have any affect
+	hue = ofWrap(hue, 0, limit()); // wrapping makes more sense then clipping since hue is circular.
 	saturation = ofClamp(saturation, 0, limit());
 	brightness = ofClamp(brightness, 0, limit());
 	if(brightness == 0) { // black
