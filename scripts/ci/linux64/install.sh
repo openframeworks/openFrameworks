@@ -23,7 +23,7 @@ if [ "$OPT" = "qbs" ] && [ ! -d "$TRAVIS_BUILD_DIR/linuxbrew/.linuxbrew" ]; then
     export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
     export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
     brew install qbs
-    mv /home/linuxbrew $TRAVIS_BUILD_DIR/linuxbrew
+    cp -rf /home/linuxbrew $TRAVIS_BUILD_DIR/
 
     # sudo apt-get install -y qt5-qmake
     # wget https://download.qt.io/official_releases/qbs/1.10.0/qbs-src-1.10.0.tar.gz
