@@ -26,7 +26,10 @@ matrix:
   - os: linux
     dist: trusty
     sudo: required
-    env: TARGET="linux64" OPT="qbs"
+    env: TARGET="linux64" OPT="qbs"cache:
+    directories:
+      - /home/linuxbrew
+      - ~/.linuxbrew
     addons:
       apt:
         sources:
