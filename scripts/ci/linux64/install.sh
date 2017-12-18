@@ -26,7 +26,7 @@ if [ "$OPT" = "qbs" ] && [ ! -f "/$HOME/qbs/bin/qbs" ]; then
     # brew install qbs
     wget https://download.qt.io/official_releases/qbs/1.10.0/qbs-src-1.10.0.tar.gz
     tar xzf qbs-src-1.10.0.tar.gz
-    rmdir -p qbs
+    rm -rf qbs
     mv qbs-src-1.10.0 qbs
     cd qbs
     qmake qbs.pro
