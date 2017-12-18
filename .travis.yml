@@ -29,7 +29,8 @@ matrix:
     env: TARGET="linux64" OPT="qbs"
     cache:
       directories:
-        - $HOME/qbs
+        - /home/linuxbrew
+        - $HOME/.linuxbrew
     addons:
       apt:
         sources:

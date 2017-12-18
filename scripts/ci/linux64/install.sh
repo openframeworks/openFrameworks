@@ -18,7 +18,7 @@ fi
 sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 
 
-if [ "$OPT" = "qbs" ] && [ ! -f "/$HOME/qbs/bin/qbs" ]; then
+if [ "$OPT" = "qbs" ] && [ ! -d "$HOME/.linuxbrew" ] && [ ! -d "/home/linuxbrew" ]; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
     export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
     export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
