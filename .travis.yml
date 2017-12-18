@@ -133,9 +133,9 @@ script:
   - if [ "$TARGET" == "linux64" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     fi
-  - if [ "$TARGET" != "osx" ] || [ $OPT != "makefiles" ]; then
-      scripts/ci/upload_of_lib.sh;
-    fi
+  # - if [ "$TARGET" != "osx" ] || [ $OPT != "makefiles" ]; then
+  #     scripts/ci/upload_of_lib.sh;
+  #   fi
 
 git:
   depth: 10
