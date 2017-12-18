@@ -248,6 +248,7 @@ private:
     }
 
 #if defined(TARGET_WIN32)
+#include "ofURLFileLoader.h"
     bool reportAppVeyor(bool passed, uint64_t durationMs){
         const std::string APPVEYOR_API_URL = "APPVEYOR_API_URL";
         if(ofGetEnv(APPVEYOR_API_URL)!=""){
