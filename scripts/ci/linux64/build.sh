@@ -8,7 +8,8 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 CUSTOMFLAGS="-ftrack-macro-expansion=0"
 
 if [ "$OPT" = "qbs"]; then
-    test -d ~/.linuxbrew && export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
+    export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
+    export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 
     echo "**** Building emptyExample ****"
     cd $ROOT/scripts/templates/linux64
