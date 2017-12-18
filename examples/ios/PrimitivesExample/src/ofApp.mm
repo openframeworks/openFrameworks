@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){	
 	// initialize the accelerometer
-	ofxAccelerometer.setup();
+	ofxiOSAccelerometerHandler().setup();
 	
 	//If you want a landscape oreintation
     ofSetOrientation(OF_ORIENTATION_90_RIGHT);

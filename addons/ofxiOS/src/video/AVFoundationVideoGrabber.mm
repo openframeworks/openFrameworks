@@ -27,7 +27,6 @@
 
 @implementation iOSVideoGrabber
 
-@synthesize captureSession;
 
 #pragma mark -
 #pragma mark Initialization
@@ -107,7 +106,7 @@
 		dispatch_queue_t queue;
 		queue = dispatch_queue_create("cameraQueue", NULL);
 		[captureOutput setSampleBufferDelegate:self queue:queue];
-		dispatch_release(queue);
+		//dispatch_release(queue);
 		
 		// Set the video output to store frame in BGRA (It is supposed to be faster)
 		NSString* key = (NSString*)kCVPixelBufferPixelFormatTypeKey; 
@@ -120,7 +119,7 @@
 		if(self.captureSession) {
 			self.captureSession = nil;
 		}
-		self.captureSession = [[[AVCaptureSession alloc] init] autorelease];
+		self.captureSession = [[AVCaptureSession alloc] init];
 		
 		[self.captureSession beginConfiguration]; 
 		
@@ -328,7 +327,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		if(captureOutput.sampleBufferDelegate != nil) {
 			[captureOutput setSampleBufferDelegate:nil queue:NULL];
 		}
-		[captureOutput release];
 		captureOutput = nil;
 	}
 	
@@ -344,7 +342,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		CGImageRelease(currentFrame);
 		currentFrame = nil;
 	}
-    [super dealloc];
 }
 
 - (void)eraseGrabberPtr {
@@ -374,7 +371,6 @@ AVFoundationVideoGrabber::~AVFoundationVideoGrabber(){
 		// Stop and release the the iOSVideoGrabber
 		[grabber stopCapture];
 		[grabber eraseGrabberPtr];
-		[grabber release];
 		grabber = nil;
 	}
 	clear();

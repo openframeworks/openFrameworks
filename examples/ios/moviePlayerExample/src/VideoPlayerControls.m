@@ -40,8 +40,6 @@ static NSString * kMuteOffButtonLabelText = @"MUTE OFF";
 
 @implementation VideoPlayerControls
 
-@synthesize delegate;
-
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
@@ -50,22 +48,6 @@ static NSString * kMuteOffButtonLabelText = @"MUTE OFF";
     return self;
 }
 
-- (void)dealloc {
-    [cover release];
-    [controls release];
-    [playPauseButton release];
-    [loadButton release];
-    [loopButton release];
-    [nativeButton release];
-    [muteButton release];
-    [slider release];
-    [timeLabel release];
-    [topLabel release];
-    [bottomLabel release];
-    [newFrameLabel release];
-    
-    [super dealloc];
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -86,7 +68,7 @@ static NSString * kMuteOffButtonLabelText = @"MUTE OFF";
     }
     
     UITapGestureRecognizer * tapGesture;
-    tapGesture = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognised:)] autorelease];
+    tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognised:)];
     tapGesture.numberOfTapsRequired = 1;
     tapGesture.delegate = self;
     [cover addGestureRecognizer:tapGesture];

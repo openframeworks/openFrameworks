@@ -22,7 +22,6 @@
 
 @implementation ofxiOSViewController
 
-@synthesize glView;
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
     currentInterfaceOrientation = pendingInterfaceOrientation = UIInterfaceOrientationPortrait;
@@ -36,7 +35,7 @@
         bFirstUpdate    = NO;
 		bAnimated		= NO;
         
-        self.glView = [[[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app] autorelease];
+        self.glView = [[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app];
         self.glView.delegate = self;
     }
     
@@ -48,8 +47,6 @@
     [self.glView removeFromSuperview];
     self.glView.delegate = nil;
     self.glView = nil;
-    
-    [super dealloc];
 }
 
 - (void)viewDidLoad {

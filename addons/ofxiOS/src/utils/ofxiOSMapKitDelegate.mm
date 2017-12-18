@@ -45,10 +45,6 @@
 	return self;
 }
 
--(void)dealloc {
-	ofLogVerbose("ofxiOSMapKitDelegate") << "dealloc";
-	[super dealloc];
-}
 
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {

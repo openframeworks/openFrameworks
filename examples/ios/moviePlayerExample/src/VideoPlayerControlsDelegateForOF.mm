@@ -19,9 +19,6 @@
     return self;
 }
 
-- (void)dealloc {
-    [super dealloc];
-}
 
 - (void)playPressed {
     app->playPressed();

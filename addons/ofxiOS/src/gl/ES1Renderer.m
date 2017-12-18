@@ -24,7 +24,6 @@
         
         if(!context || ![EAGLContext setCurrentContext:context]) {
 			NSLog(@"OpenGL ES1 failed");
-            [self release];
             return nil;
         }
         
@@ -176,10 +175,7 @@
         [EAGLContext setCurrentContext:nil];
     }
 
-    [context release];
     context = nil;
-
-    [super dealloc];
 }
 
 - (NSInteger)getWidth {

@@ -33,7 +33,7 @@ ofxiOSKeyboard::ofxiOSKeyboard(int _x, int _y, int _w, int _h)
 //--------------------------------------------------------------
 ofxiOSKeyboard::~ofxiOSKeyboard()
 {
-	[keyboard release];
+	keyboard = nil;
 }
 
 
@@ -286,12 +286,6 @@ UITextField * ofxiOSKeyboard::getKeyboardTextField() {
 }
 
 //--------------------------------------------------------------
-- (void)dealloc {
-	[_textField release];
-	[super dealloc];
-}
-
-//--------------------------------------------------------------
 - (const char *) getText {
     return [[_textField text] UTF8String];
 }
@@ -420,7 +414,7 @@ UITextField * ofxiOSKeyboard::getKeyboardTextField() {
 //--------------------------------------------------------------
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    NSMutableString *newValue = [[textField.text mutableCopy] autorelease];
+    NSMutableString *newValue = [textField.text mutableCopy];
     [newValue replaceCharactersInRange:range withString:string];
 	
 	ofLogVerbose("ofxiOSKeyboard") << "shouldChangeCharactersInRange: " << [newValue length] << " " << fieldLength;

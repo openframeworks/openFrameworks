@@ -1,13 +1,17 @@
 #include "ofApp.h"
 
+ofApp::ofApp()
+{
+    coreLocation = new ofxiOSCoreLocation();
+
+}
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofBackground(225, 225, 225);
 
 	// initialize the accelerometer
-	ofxAccelerometer.setup();
+	ofxiOSAccelerometerHandler().setup();
 	
-	coreLocation = new ofxiOSCoreLocation();
 	hasCompass = coreLocation->startHeading();
 	hasGPS = coreLocation->startLocation();
 	

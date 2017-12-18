@@ -37,6 +37,7 @@
 #include "ofBaseTypes.h"
 #include "ofConstants.h"
 #include "ofxiOSMapKitListener.h"
+#include "ofxiOSMapKitDelegate.h"
 
 // these are the types you can set for the map
 enum ofxiOSMapKitType {
@@ -146,6 +147,8 @@ protected:
 	MKCoordinateSpan makeMKCoordinateSpan(double latitudeDelta, double longitudeDelta);
 	
 	void _setRegion(CLLocationCoordinate2D center, MKCoordinateSpan span, bool animated);
+	
+	ofxiOSMapKitDelegate* mapKitDelegate;
 };
 
 //-------------------------------------------------------------------------------

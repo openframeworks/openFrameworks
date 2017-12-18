@@ -33,7 +33,6 @@
 - (void)dealloc {
     inCallback = nullptr;
     outCallback = nullptr;
-    [super dealloc];
 }
 
 - (id)initWithSoundInputFn:(std::function<void(ofSoundBuffer &)>)fn {

@@ -37,11 +37,10 @@ public:
     bool isLoaded() const;
     float getVolume() const;
     
-    void * getAVSoundPlayer();
     
 protected:
     
-    void * soundPlayer;
+    //AVSoundPlayer * soundPlayer;
     
 };
 

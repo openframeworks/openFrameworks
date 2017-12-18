@@ -29,7 +29,7 @@
     self.navigationController = [[UINavigationController alloc] init];
     [self.window setRootViewController:self.navigationController];
     
-    [self.navigationController pushViewController:[[[MyAppViewController alloc] init] autorelease]
+    [self.navigationController pushViewController:[[MyAppViewController alloc] init]
                                          animated:YES];
     
     //--- style the UINavigationController
@@ -41,7 +41,6 @@
 
 - (void) dealloc {
     self.navigationController = nil;
-    [super dealloc];
 }
 
 @end

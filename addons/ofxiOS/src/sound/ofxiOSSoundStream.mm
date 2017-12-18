@@ -10,8 +10,7 @@
 #include "ofBaseApp.h"
 #include <functional>
 
-#import "SoundInputStream.h"
-#import "SoundOutputStream.h"
+
 #import <AVFoundation/AVFoundation.h>
 
 using namespace std;
@@ -46,13 +45,13 @@ int ofxiOSSoundStream::getDeviceID()  const{
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::setInput(ofBaseSoundInput * soundInput) {
 	settings.setInListener(soundInput);
-	[(ofxiOSSoundStreamDelegate *)[(id)soundInputStream delegate] setInput: settings.inCallback];
+	[(ofxiOSSoundStreamDelegate *)[soundInputStream delegate] setInput: settings.inCallback];
 }
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::setOutput(ofBaseSoundOutput * soundOutput) {
 	settings.setOutListener(soundOutput);
-	[(ofxiOSSoundStreamDelegate *)[(id)soundOutputStream delegate] setOutput: settings.outCallback];
+	[(ofxiOSSoundStreamDelegate *)[soundOutputStream delegate] setOutput: settings.outCallback];
 }
 
 //------------------------------------------------------------------------------
@@ -66,8 +65,8 @@ bool ofxiOSSoundStream::setup(const ofSoundStreamSettings & settings) {
                                                             withSampleRate:settings.sampleRate
                                                             withBufferSize:settings.bufferSize];
         ofxiOSSoundStreamDelegate * delegate = [[ofxiOSSoundStreamDelegate alloc] initWithSoundInputFn:settings.inCallback];
-        ((SoundInputStream *)soundInputStream).delegate = delegate;
-        [(SoundInputStream *)soundInputStream start];
+        soundInputStream.delegate = delegate;
+        [soundInputStream start];
     }
     
     if(settings.numOutputChannels > 0) {
@@ -75,8 +74,8 @@ bool ofxiOSSoundStream::setup(const ofSoundStreamSettings & settings) {
                                                               withSampleRate:settings.sampleRate
                                                               withBufferSize:settings.bufferSize];
         ofxiOSSoundStreamDelegate * delegate = [[ofxiOSSoundStreamDelegate alloc] initWithSoundOutputFn:settings.outCallback];
-        ((SoundInputStream *)soundOutputStream).delegate = delegate;
-        [(SoundInputStream *)soundOutputStream start];
+        soundOutputStream.delegate = delegate;
+        [soundOutputStream start];
     }
     
     bool bOk = (soundInputStream != NULL) || (soundOutputStream != NULL);
@@ -86,40 +85,36 @@ bool ofxiOSSoundStream::setup(const ofSoundStreamSettings & settings) {
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::start(){
     if(soundInputStream != NULL) {
-        [(SoundInputStream *)soundInputStream start];
+        [soundInputStream start];
     }
     
     if(soundOutputStream != NULL) {
-        [(SoundOutputStream *)soundOutputStream start];
+        [soundOutputStream start];
     }
 }
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::stop(){
     if(soundInputStream != NULL) {
-        [(SoundInputStream *)soundInputStream stop];
+        [soundInputStream stop];
     }
     
     if(soundOutputStream != NULL) {
-        [(SoundOutputStream *)soundOutputStream stop];
+        [soundOutputStream stop];
     }
 }
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::close(){
     if(soundInputStream != NULL) {
-        [((SoundInputStream *)soundInputStream).delegate release];
-        [(SoundInputStream *)soundInputStream setDelegate:nil];
-        [(SoundInputStream *)soundInputStream stop];
-        [(SoundInputStream *)soundInputStream release];
+        [soundInputStream setDelegate:nil];
+        [soundInputStream stop];
         soundInputStream = NULL;
     }
     
     if(soundOutputStream != NULL) {
-        [((SoundOutputStream *)soundInputStream).delegate release];
-        [(SoundOutputStream *)soundInputStream setDelegate:nil];
-        [(SoundOutputStream *)soundOutputStream stop];
-        [(SoundOutputStream *)soundOutputStream release];
+        [soundInputStream setDelegate:nil];
+        [soundOutputStream stop];
         soundOutputStream = NULL;
     }
 	

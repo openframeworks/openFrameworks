@@ -15,7 +15,7 @@
     font = [UIFont fontWithName:@"Georgia" size:30];
     
     UILabel *label;
-    label = [[[ UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)] autorelease];
+    label = [[ UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
     label.backgroundColor = [UIColor colorWithWhite:1 alpha:0.95];
     label.textColor = [UIColor colorWithWhite:0 alpha:1];
     label.text = text;
@@ -24,7 +24,7 @@
     label.userInteractionEnabled = NO;
     label.exclusiveTouch = NO;
     
-    UIButton* button = [[[UIButton alloc] initWithFrame:frame] autorelease];
+    UIButton* button = [[UIButton alloc] initWithFrame:frame];
     [button setBackgroundColor:[UIColor clearColor]];
     [button addSubview:label];
     
@@ -37,7 +37,7 @@
     self.view.backgroundColor = [UIColor clearColor];
     
     UIImageView* backgroundView;
-    backgroundView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Default.png"]] autorelease];
+    backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Default.png"]];
     [self.view addSubview: backgroundView];
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -47,7 +47,7 @@
                                         screenRect.size.width,
                                         screenRect.size.height);
     
-    UIScrollView* containerView = [[[UIScrollView alloc] initWithFrame:scrollViewFrame] autorelease];
+    UIScrollView* containerView = [[UIScrollView alloc] initWithFrame:scrollViewFrame];
     containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     containerView.showsHorizontalScrollIndicator = NO;
     containerView.showsVerticalScrollIndicator = YES;
@@ -113,8 +113,8 @@
          andTitle:(NSString *)title
 {
     ofxiOSViewController *viewController;
-    viewController = [[[ofxiOSViewController alloc] initWithFrame:frame
-                                                                 app:app] autorelease];
+    viewController = [[ofxiOSViewController alloc] initWithFrame:frame
+                                                                 app:app];
     
     [self.navigationController pushViewController:viewController animated:YES];
     self.navigationController.navigationBar.topItem.title = title;

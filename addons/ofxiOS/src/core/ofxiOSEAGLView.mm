@@ -25,9 +25,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 @implementation ofxiOSEAGLView
 
-@synthesize screenSize;
-@synthesize windowSize;
-@synthesize windowPos;
+
 
 + (ofxiOSEAGLView *) getInstance {
     return _instanceRef;
@@ -119,7 +117,6 @@ static ofxiOSEAGLView * _instanceRef = nil;
 	app = NULL;
 	window = NULL;
 	
-	[activeTouches release];
 	
 	delete screenSize;
 	screenSize = NULL;
@@ -137,7 +134,6 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 - (void)dealloc {
     [self destroy];
-    [super dealloc];
 }
 
 - (void)layoutSubviews {
@@ -253,7 +249,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 			touchIndex++;
 		}
 		
-		[activeTouches setObject:[NSNumber numberWithInt:touchIndex] forKey:[NSValue valueWithPointer:touch]];
+		[activeTouches setObject:[NSNumber numberWithInt:touchIndex] forKey:[NSValue valueWithNonretainedObject:touch]];
 		
 		CGPoint touchPoint = [touch locationInView:self];
 		
@@ -290,7 +286,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     }
 	
 	for(UITouch *touch in touches){
-		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
+		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithNonretainedObject:touch]] intValue];
 		
 		CGPoint touchPoint = [touch locationInView:self];
 		
@@ -322,9 +318,9 @@ static ofxiOSEAGLView * _instanceRef = nil;
     }
     
 	for(UITouch *touch in touches){
-		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
+		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithNonretainedObject:touch]] intValue];
 		
-		[activeTouches removeObjectForKey:[NSValue valueWithPointer:touch]];
+		[activeTouches removeObjectForKey:[NSValue valueWithNonretainedObject:touch]];
 		
 		CGPoint touchPoint = [touch locationInView:self];
 		
@@ -357,7 +353,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     }
 	
 	for(UITouch *touch in touches){
-		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
+		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithNonretainedObject:touch]] intValue];
 		
 		CGPoint touchPoint = [touch locationInView:self];
 		
@@ -377,6 +373,19 @@ static ofxiOSEAGLView * _instanceRef = nil;
 	[self touchesEnded:touches withEvent:event];
 }
 
+-(glm::vec2*)getScreenSize;
+{
+	return self->screenSize;
+}
 
+-(glm::vec2*)getWindowSize
+{
+	return self->windowSize;
+}
+
+-(glm::vec2*)getWindowPosition;
+{
+	return self->windowPos;
+}
 
 @end

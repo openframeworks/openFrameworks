@@ -25,7 +25,7 @@
     font = [UIFont fontWithName:@"Georgia" size:30];
     
     UILabel *label;
-    label = [[[ UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)] autorelease];
+    label = [[ UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
     label.backgroundColor = [UIColor colorWithWhite:1 alpha:0.95];
     label.textColor = [UIColor colorWithWhite:0 alpha:1];
     label.text = [text uppercaseString];
@@ -34,7 +34,7 @@
     label.userInteractionEnabled = NO;
     label.exclusiveTouch = NO;
     
-    UIButton* button = [[[UIButton alloc] initWithFrame:frame] autorelease];
+    UIButton* button = [[UIButton alloc] initWithFrame:frame];
     [button setBackgroundColor:[UIColor clearColor]];
     [button addSubview:label];
     
@@ -47,7 +47,7 @@
     self.view.backgroundColor = [UIColor clearColor];
     
     UIImageView* backgroundView;
-    backgroundView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Default.png"]] autorelease];
+    backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Default.png"]];
     [self.view addSubview: backgroundView];
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -57,7 +57,7 @@
                                         screenRect.size.width,
                                         screenRect.size.height);
     
-    UIScrollView* containerView = [[[UIScrollView alloc] initWithFrame:scrollViewFrame] autorelease];
+    UIScrollView* containerView = [[UIScrollView alloc] initWithFrame:scrollViewFrame];
     containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     containerView.showsHorizontalScrollIndicator = NO;
     containerView.showsVerticalScrollIndicator = YES;
@@ -96,8 +96,8 @@
 
 - (void)button1Pressed:(id)sender {
     SquareAppViewController *viewController;
-    viewController = [[[SquareAppViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds]
-                                                                 app:new SquareApp()] autorelease];
+    viewController = [[SquareAppViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds]
+                                                                 app:new SquareApp()];
     
     [self.navigationController pushViewController:viewController animated:YES];
     self.navigationController.navigationBar.topItem.title = @"SquareApp";
@@ -105,8 +105,8 @@
 
 - (void)button2Pressed:(id)sender {
     CircleAppViewController *viewController;
-    viewController = [[[CircleAppViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds]
-                                                                 app:new CircleApp()] autorelease];
+    viewController = [[CircleAppViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds]
+                                                                 app:new CircleApp()];
     
     [self.navigationController pushViewController:viewController animated:YES];
     self.navigationController.navigationBar.topItem.title = @"CircleApp";
@@ -114,8 +114,8 @@
 
 - (void)button3Pressed:(id)sender {
     TriangleAppViewController *viewController;
-    viewController = [[[TriangleAppViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds]
-                                                                   app:new TriangleApp()] autorelease];
+    viewController = [[TriangleAppViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds]
+                                                                   app:new TriangleApp()];
     
     [self.navigationController pushViewController:viewController animated:YES];
     self.navigationController.navigationBar.topItem.title = @"TriangleApp";
@@ -123,8 +123,8 @@
 
 - (void)button4Pressed:(id)sender {
     ImageAppViewController *viewController;
-    viewController = [[[ImageAppViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds]
-                                                                app:new ImageApp()] autorelease];
+    viewController = [[ImageAppViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds]
+                                                                app:new ImageApp()];
     
     [self.navigationController pushViewController:viewController animated:YES];
     self.navigationController.navigationBar.topItem.title = @"ImageApp";

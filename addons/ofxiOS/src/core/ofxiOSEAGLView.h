@@ -23,9 +23,6 @@ class ofAppiOSWindow;
 	glm::vec2 * windowPos;
 }
 
-@property (readonly, nonatomic, getter=getScreenSize) glm::vec2 * screenSize;
-@property (readonly, nonatomic, getter=getWindowSize) glm::vec2 * windowSize;
-@property (readonly, nonatomic, getter=getWindowPosition) glm::vec2 * windowPos;
 
 + (ofxiOSEAGLView *) getInstance;
 
@@ -35,6 +32,9 @@ class ofAppiOSWindow;
 - (void)destroy;
 - (CGPoint)orientateTouchPoint:(CGPoint)touchPoint;
 - (void) resetTouches;
+-(glm::vec2*)getScreenSize;
+-(glm::vec2*)getWindowSize;
+-(glm::vec2*)getWindowPosition;
 
 @end
 

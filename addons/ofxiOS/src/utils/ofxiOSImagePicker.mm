@@ -31,7 +31,7 @@ ofxiOSImagePicker::ofxiOSImagePicker()
 //--------------------------------------------------------------
 ofxiOSImagePicker::~ofxiOSImagePicker(){
 	close(); 
-    [imagePicker release];
+	imagePicker = nil;
 }
 
 //--------------------------------------------------------------
@@ -218,22 +218,17 @@ bool ofxiOSImagePicker::getImageUpdated(){
 
     _imagePicker.delegate = nil;
 	[_imagePicker.view removeFromSuperview];
-	[_imagePicker release];
 	
     if(_image) {
-        [_image release];
         _image = nil;
     }
     
     if(overlay) {
         overlay.delegate = nil;
-        [overlay release];
         overlay = nil;
     }
     
     cppPixelLoader = NULL;
-	
-	[super dealloc];
 }
 
 //----------------------------------------------------------------
@@ -241,14 +236,14 @@ bool ofxiOSImagePicker::getImageUpdated(){
          didFinishPickingImage:(UIImage *)image 
                    editingInfo:(NSDictionary *)editingInfo {
     
-    _image = [[self scaleAndRotateImage:image] retain];
+    _image = [self scaleAndRotateImage:image];
 	cppPixelLoader->loadPixels();
 }
 
 - (void) imagePickerController:(UIImagePickerController *)picker 
  didFinishPickingMediaWithInfo:(NSDictionary *)info {
 
-    _image = [[self scaleAndRotateImage:[info objectForKey:UIImagePickerControllerOriginalImage]] retain];
+    _image = [self scaleAndRotateImage:[info objectForKey:UIImagePickerControllerOriginalImage]];
 	cppPixelLoader->loadPixels();
 }
 
@@ -368,7 +363,6 @@ bool ofxiOSImagePicker::getImageUpdated(){
     
     if(overlay) {
         overlay.delegate = nil;
-        [overlay release];
         overlay = nil;
     }
 }
@@ -525,7 +519,6 @@ bool ofxiOSImagePicker::getImageUpdated(){
 //----------------------------------------------------------- overlay.
 @implementation OverlayView
 
-@synthesize delegate;
 
 - (id)initWithFrame:(CGRect)frame{
     if (self = [super initWithFrame:frame]) {
@@ -559,8 +552,8 @@ bool ofxiOSImagePicker::getImageUpdated(){
 }
 
 - (void)takePhoto:(id)sender {
-    if([delegate respondsToSelector:@selector(takePicture)]) {
-        [delegate takePicture];
+    if([self.delegate respondsToSelector:@selector(takePicture)]) {
+        [self.delegate takePicture];
     }	
 }
 
