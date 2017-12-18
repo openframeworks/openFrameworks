@@ -18,11 +18,12 @@ fi
 sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 
 
-if [ "$OPT" = "qbs" ] && [ ! -d "$HOME/.linuxbrew" ] && [ ! -d "/home/linuxbrew" ]; then
+if [ "$OPT" = "qbs" ] && [ ! -d "$TRAVIS_BUILD_DIR/linuxbrew" ]; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
     export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
     export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
     brew install qbs
+    mv /home/linuxbrew $TRAVIS_BUILD_DIR/linuxbrew
 
     # sudo apt-get install -y qt5-qmake
     # wget https://download.qt.io/official_releases/qbs/1.10.0/qbs-src-1.10.0.tar.gz
