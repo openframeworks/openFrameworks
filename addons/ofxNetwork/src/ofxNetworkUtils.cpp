@@ -2,6 +2,8 @@
 #include "ofLog.h"
 #include "ofUtils.h"
 
+
+
 int ofxNetworkCheckErrno(const char* file, int line) {
 	#ifdef TARGET_WIN32
 		int	err	= WSAGetLastError();

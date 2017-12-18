@@ -222,6 +222,7 @@
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGLFWWindow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppNoWindow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\app\ofBaseApp.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofMainLoop.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\events\ofEvents.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofBufferObject.cpp" />
