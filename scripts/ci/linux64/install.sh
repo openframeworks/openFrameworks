@@ -16,3 +16,10 @@ fi
 # sudo service postgresql stop
 
 sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
+
+
+if [ "$OPT" = "qbs" ]; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+    test -d ~/.linuxbrew && export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
+    ~/.linuxbrew/bin/brew install qbs
+fi
