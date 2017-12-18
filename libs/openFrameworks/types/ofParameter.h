@@ -1,11 +1,10 @@
 #pragma once
 
 #include "ofEvents.h"
-#include "ofTypes.h"
-#include "ofUtils.h"
 #include "ofConstants.h"
-#include "ofVectorMath.h"
 #include "ofPoint.h"
+#include "ofColor.h"
+#include "ofLog.h"
 #include <map>
 
 template<typename ParameterType>

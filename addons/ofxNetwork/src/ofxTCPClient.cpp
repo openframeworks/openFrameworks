@@ -1,6 +1,7 @@
 #include "ofxTCPClient.h"
 #include "ofAppRunner.h"
 #include "ofxNetworkUtils.h"
+#include "ofLog.h"
 
 using namespace std;
 

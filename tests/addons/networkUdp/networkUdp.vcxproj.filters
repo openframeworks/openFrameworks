@@ -1,69 +1,69 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<ItemGroup>
-		<ClCompile Include="src\main.cpp">
-			<Filter>src</Filter>
-		</ClCompile>
-		<ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.cpp">
-			<Filter>addons\ofxNetwork\src</Filter>
-		</ClCompile>
-		<ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.cpp">
-			<Filter>addons\ofxNetwork\src</Filter>
-		</ClCompile>
-		<ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.cpp">
-			<Filter>addons\ofxNetwork\src</Filter>
-		</ClCompile>
-		<ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.cpp">
-			<Filter>addons\ofxNetwork\src</Filter>
-		</ClCompile>
-	</ItemGroup>
-	<ItemGroup>
-		<Filter Include="src">
-			<UniqueIdentifier>{d8376475-7454-4a24-b08a-aac121d3ad6f}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="addons">
-			<UniqueIdentifier>{71834F65-F3A9-211E-73B8-DC85}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="addons\ofxNetwork">
-			<UniqueIdentifier>{01A15744-29A6-108D-08E9-83A7}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="addons\ofxNetwork\src">
-			<UniqueIdentifier>{3D1C10C7-8F35-E796-9C70-F5F3}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="addons\ofxUnitTests">
-			<UniqueIdentifier>{99AF7102-9423-91D4-8CD7-6602}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="addons\ofxUnitTests\src">
-			<UniqueIdentifier>{6DB6A1EA-29BB-7859-928B-898A}</UniqueIdentifier>
-		</Filter>
-	</ItemGroup>
-	<ItemGroup>
-		<ClInclude Include="src\ofApp.h">
-			<Filter>src</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.h">
-			<Filter>addons\ofxNetwork\src</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetworkUtils.h">
-			<Filter>addons\ofxNetwork\src</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.h">
-			<Filter>addons\ofxNetwork\src</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.h">
-			<Filter>addons\ofxNetwork\src</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetwork.h">
-			<Filter>addons\ofxNetwork\src</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.h">
-			<Filter>addons\ofxNetwork\src</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxUnitTests\src\ofxUnitTests.h">
-			<Filter>addons\ofxUnitTests\src</Filter>
-		</ClInclude>
-	</ItemGroup>
-	<ItemGroup>
-		<ResourceCompile Include="icon.rc" />
-	</ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.cpp">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.cpp">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.cpp">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.cpp">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxNetworkUtils.cpp">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{d8376475-7454-4a24-b08a-aac121d3ad6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons">
+      <UniqueIdentifier>{71834F65-F3A9-211E-73B8-DC85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxNetwork">
+      <UniqueIdentifier>{01A15744-29A6-108D-08E9-83A7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxNetwork\src">
+      <UniqueIdentifier>{3D1C10C7-8F35-E796-9C70-F5F3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxUnitTests">
+      <UniqueIdentifier>{99AF7102-9423-91D4-8CD7-6602}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxUnitTests\src">
+      <UniqueIdentifier>{6DB6A1EA-29BB-7859-928B-898A}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.h">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetworkUtils.h">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.h">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.h">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetwork.h">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.h">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxUnitTests\src\ofxUnitTests.h">
+      <Filter>addons\ofxUnitTests\src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="icon.rc" />
+  </ItemGroup>
 </Project>

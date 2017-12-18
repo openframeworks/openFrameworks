@@ -1,6 +1,16 @@
 #include "ofQuaternion.h"
 #include "ofMatrix4x4.h"
 #include "ofMath.h"
+#include "ofMathConstants.h"
+#include "glm/gtc/quaternion.hpp"
+
+//----------------------------------------
+ofQuaternion::ofQuaternion(const glm::quat & q):_v(q.x, q.y, q.z, q.w){}
+
+//----------------------------------------
+ofQuaternion::operator glm::quat() const{
+	return glm::quat(_v.w, glm::vec3(_v.x, _v.y, _v.z));
+}
 
 void ofQuaternion::set(const ofMatrix4x4& matrix) {
 	*this = matrix.getRotate();

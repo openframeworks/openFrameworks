@@ -2,7 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofFileUtils.h"
-#include "ofTypes.h"
+#include <sstream>
 
 /// \file
 /// ofLog provides an interface for writing text output from your app.
@@ -112,7 +112,7 @@
 /// \{
 
 /// \brief The supported logging levels. Default is `OF_LOG_NOTICE`.
-enum ofLogLevel{
+enum ofLogLevel: short{
 	OF_LOG_VERBOSE,
 	OF_LOG_NOTICE,
 	OF_LOG_WARNING,
@@ -122,6 +122,35 @@ enum ofLogLevel{
 					// All logging can be disabled by calling
 					/// ofSetLogLevel(OF_LOG_SILENT).
 };
+
+//--------------------------------------------
+//console colors for our logger - shame this doesn't work with the xcode console
+#ifdef TARGET_WIN32
+
+	#define OF_CONSOLE_COLOR_RESTORE (0 | (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE) )
+	#define OF_CONSOLE_COLOR_BLACK (0)
+	#define OF_CONSOLE_COLOR_RED (FOREGROUND_RED)
+	#define OF_CONSOLE_COLOR_GREEN (FOREGROUND_GREEN)
+	#define OF_CONSOLE_COLOR_YELLOW (FOREGROUND_RED|FOREGROUND_GREEN)
+	#define OF_CONSOLE_COLOR_BLUE (FOREGROUND_BLUE)
+	#define OF_CONSOLE_COLOR_PURPLE (FOREGROUND_RED | FOREGROUND_BLUE )
+	#define OF_CONSOLE_COLOR_CYAN (FOREGROUND_GREEN | FOREGROUND_BLUE)
+	#define OF_CONSOLE_COLOR_WHITE (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE)
+
+#else
+
+	#define OF_CONSOLE_COLOR_RESTORE (0)
+	#define OF_CONSOLE_COLOR_BLACK (30)
+	#define OF_CONSOLE_COLOR_RED (31)
+	#define OF_CONSOLE_COLOR_GREEN (32)
+	#define OF_CONSOLE_COLOR_YELLOW (33)
+	#define OF_CONSOLE_COLOR_BLUE (34)
+	#define OF_CONSOLE_COLOR_PURPLE (35)
+	#define OF_CONSOLE_COLOR_CYAN (36)
+	#define OF_CONSOLE_COLOR_WHITE (37)
+
+#endif
+
 
 /// \brief Sets the logging level to selectively show log messages.
 ///
@@ -447,7 +476,7 @@ class ofLog{
 		/// \param value the data to be streamed.
 		/// \returns A reference to itself.
 		template <class T> 
-			ofLog& operator<<(const T& value){
+		ofLog& operator<<(const T& value){
 			message << value << getPadding();
 			return *this;
 		}
@@ -493,7 +522,7 @@ class ofLog{
 		/// \endcond
 	
 	private:
-		std::ostringstream message;	///< Temporary buffer.
+		std::stringstream message;	///< Temporary buffer.
 		
 		static bool bAutoSpace; ///< Should space be added between messages?
 		

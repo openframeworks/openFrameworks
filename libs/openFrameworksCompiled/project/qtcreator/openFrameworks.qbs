@@ -166,6 +166,9 @@ Product{
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
             qbsCmd.highlight = 'compiler';
+            if(project.useStdFs){
+                qbsCmd.environment = ['OF_USING_STD_FS=1']
+            }
             return [qbsCmd];
         }
     }
@@ -186,6 +189,9 @@ Product{
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
             qbsCmd.highlight = 'compiler';
+            if(project.useStdFs){
+                qbsCmd.environment = ['OF_USING_STD_FS=1']
+            }
             return [qbsCmd];
         }
     }

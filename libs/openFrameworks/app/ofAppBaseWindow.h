@@ -1,16 +1,18 @@
 #pragma once
 
-#include "ofPoint.h"
-#include "ofTypes.h"
-#include "ofEvents.h"
+#include "ofConstants.h"
 #include "ofWindowSettings.h"
 
 class ofBaseApp;
 class ofBaseRenderer;
+class ofCoreEvents;
 
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+#if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
 struct __GLXcontextRec;
 typedef __GLXcontextRec * GLXContext;
+#endif
+
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 typedef unsigned long Window;
 struct _XDisplay;
 typedef struct _XDisplay Display;

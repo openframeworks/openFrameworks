@@ -1,12 +1,48 @@
 #pragma once
 
+
+#include "ofConstants.h"
+//#include "glm/glm.hpp"
+
+//#include "glm/detail/setup.hpp"
+//#include "glm/detail/_swizzle.hpp"
+//#include "glm/detail/_swizzle_func.hpp"
+
+#include "glm/vec2.hpp"
+#include "glm/vec3.hpp"
+#include "glm/vec4.hpp"
+#include "glm/mat3x3.hpp"
+#include "glm/mat4x4.hpp"
+#include "glm/geometric.hpp"
+#include "glm/common.hpp"
+#include "glm/trigonometric.hpp"
+#include "glm/exponential.hpp"
+#include "glm/vector_relational.hpp"
+#include "glm/ext.hpp"
+
+#include "glm/gtc/constants.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/matrix_inverse.hpp"
+#include "glm/gtc/quaternion.hpp"
+#include "glm/gtc/epsilon.hpp"
+#include "glm/gtx/norm.hpp"
+#include "glm/gtx/perpendicular.hpp"
+#include "glm/gtx/quaternion.hpp"
+#include "glm/gtx/rotate_vector.hpp"
+#include "glm/gtx/spline.hpp"
+#include "glm/gtx/transform.hpp"
+#include "glm/gtx/vector_angle.hpp"
+#include "glm/gtx/scalar_multiplication.hpp"
+#include <glm/gtc/type_ptr.hpp>
+
+#include <iomanip>
+#include "ofMathConstants.h"
 #include "ofVec2f.h"
 #include "ofVec3f.h"
 #include "ofVec4f.h"
 #include "ofMatrix3x3.h"
 #include "ofMatrix4x4.h"
 #include "ofQuaternion.h"
-
 
 //--------------------------------------------------------------
 inline const ofVec2f & toOf(const glm::vec2 & v){
@@ -340,3 +376,5 @@ inline glm::vec2 & operator/=(glm::vec2 & v1, const ofVec2f & v2){
 	v1 /= glm::vec2(v2);
 	return v1;
 }
+
+

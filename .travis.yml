@@ -23,6 +23,23 @@ matrix:
           - g++-4.9
           - gdb
 
+  # - os: linux
+  #   dist: trusty
+  #   sudo: required
+  #   env: TARGET="linux64" OPT="qbs"
+  #   cache:
+  #     directories:
+  #       - linuxbrew
+  #     timeout: 1800
+  #   addons:
+  #     apt:
+  #       sources:
+  #         - ubuntu-toolchain-r-test
+  #       packages:
+  #         - gcc-4.9
+  #         - g++-4.9
+  #         - gdb
+
 
   - os: linux
     sudo: required

@@ -1,10 +1,12 @@
 #pragma once
 
-#include "ofVboMesh.h"
-#include "ofRectangle.h"
+#include "ofMesh.h"
 #include "ofNode.h"
-#include "ofTexture.h"
 #include <map>
+
+class ofTexture;
+class ofVboMesh;
+class ofRectangle;
 
 /// \brief A class representing a 3d primitive.
 class of3dPrimitive : public ofNode {

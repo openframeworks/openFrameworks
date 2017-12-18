@@ -6,7 +6,28 @@
 #include "ofFileUtils.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
+#include "ofVectorMath.h"
 #include <assert.h>
+// x11
+#include <X11/Xutil.h>
+#include <EGL/egl.h>
+
+// include includes for both native and X11 possibilities
+#include <libudev.h>
+#include <stdbool.h>
+#include <stdio.h> // sprintf
+#include <stdlib.h>  // malloc
+#include <math.h>
+#include <fcntl.h>  // open fcntl
+#include <unistd.h> // read close
+#include <linux/joystick.h>
+
+#include "linux/kd.h"	// keyboard stuff...
+#include "termios.h"
+#include "sys/ioctl.h"
+
+#include <dirent.h>  // scandir
+#include <string.h> // strlen
 
 using namespace std;
 
@@ -1397,7 +1418,7 @@ void ofAppEGLWindow::setupNativeMouse() {
 			mouseAbsXMax = mabsx.maximum;
 			ofLogNotice("ofAppEGLWindow") << "mouse x axis min, max: " << mouseAbsXMin << ", " << mouseAbsXMax;
 		}
-		
+
 		// Do that for the y axis. EVIOCGABS(1): 1 stands for y axis.
 		struct input_absinfo mabsy;
 		if (ioctl(mouse_fd, EVIOCGABS(1), &mabsy) < 0){
