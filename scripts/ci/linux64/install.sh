@@ -18,9 +18,16 @@ fi
 sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 
 
-if [ "$OPT" = "qbs" ] && [ ! -d "/home/linuxbrew" ] && [ ! -d "~/.linuxbrew" ]; then
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-    export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
-    export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
-    brew install qbs
+if [ "$OPT" = "qbs" ] && [ ! -d "/$HOME/qbs" ]; then
+    sudo apt-get install -y qt5-qmake
+    # sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+    # export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
+    # export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+    # brew install qbs
+    wget https://download.qt.io/official_releases/qbs/1.10.0/qbs-src-1.10.0.tar.gz
+    tar xzf qbs-src-1.10.0.tar.gz
+    mv qbs-src-1.10.0 qbs
+    cd qbs
+    qmake qbs.pro
+    make
 fi
