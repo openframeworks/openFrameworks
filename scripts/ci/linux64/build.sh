@@ -7,7 +7,8 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 #export CXXFLAGS="$(CXXFLAGS) --param ftrack-macro-expansion=0"
 CUSTOMFLAGS="-ftrack-macro-expansion=0"
 
-if [ "$OPT" = "qbs" ]; then
+if [ "$OPT" == "qbs" ]; then
+    echo "building with qbs"
     exit 0
     export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
     export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
@@ -17,6 +18,8 @@ if [ "$OPT" = "qbs" ]; then
     sed -i "s/property bool makeOF: true/property bool makeOF: false/g" qtcreator.qbs
     qbs
 else
+    echo "building with makefiles"
+    exit 0
     echo "**** Building OF core ****"
     cd $ROOT
     # this carries over to subsequent compilations of examples

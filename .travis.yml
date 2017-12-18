@@ -30,7 +30,7 @@ matrix:
     cache:
       directories:
         - /home/linuxbrew
-        - ~/.linuxbrew
+        - $HOME/.linuxbrew
     addons:
       apt:
         sources:
