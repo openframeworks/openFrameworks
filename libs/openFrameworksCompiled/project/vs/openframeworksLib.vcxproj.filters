@@ -491,6 +491,9 @@
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundBaseTypes.cpp">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\app\ofBaseApp.cpp">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\openFrameworks\3d\ofMesh.inl">
