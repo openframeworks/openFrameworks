@@ -7,7 +7,8 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 #export CXXFLAGS="$(CXXFLAGS) --param ftrack-macro-expansion=0"
 CUSTOMFLAGS="-ftrack-macro-expansion=0"
 
-if [ "$OPT" = "qbs"]; then
+if [ "$OPT" = "qbs" ]; then
+    exit 0
     export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
     export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 
