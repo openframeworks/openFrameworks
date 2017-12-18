@@ -5,7 +5,6 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 if [ "$OPT" == "qbs" ]; then
 	exit 0
 else
-	exit 0
 	echo "**** Running unit tests ****"
 	cd $ROOT/tests
 	for group in *; do

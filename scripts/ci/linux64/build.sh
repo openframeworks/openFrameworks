@@ -9,7 +9,6 @@ CUSTOMFLAGS="-ftrack-macro-expansion=0"
 
 if [ "$OPT" == "qbs" ]; then
     echo "building with qbs"
-    exit 0
     export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
     export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 
@@ -19,7 +18,6 @@ if [ "$OPT" == "qbs" ]; then
     qbs
 else
     echo "building with makefiles"
-    exit 0
     echo "**** Building OF core ****"
     cd $ROOT
     # this carries over to subsequent compilations of examples
