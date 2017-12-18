@@ -30,6 +30,7 @@ matrix:
     cache:
       directories:
         - linuxbrew
+      timeout: 1800
     addons:
       apt:
         sources:
