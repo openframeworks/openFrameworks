@@ -3,25 +3,32 @@
 #include "ofConstants.h"
 
 #ifdef OF_SOUND_PLAYER_OPENAL
-#include "ofBaseSoundPlayer.h"
-#include "ofEvents.h"
+#include "ofSoundBaseTypes.h"
 #include "ofThread.h"
-#include "ofFileUtils.h"
 
-#if defined (TARGET_OF_IOS) || defined (TARGET_OSX)
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
-#else
-#include <AL/al.h>
-#include <AL/alc.h>
-#endif
+
+
+typedef unsigned int ALuint;
+/** Opaque device handle */
+typedef struct ALCdevice_struct ALCdevice;
+/** Opaque context handle */
+typedef struct ALCcontext_struct ALCcontext;
+
+
 
 #include "kiss_fft.h"
 #include "kiss_fftr.h"
-#include <sndfile.h>
+
+
+
+typedef	struct SNDFILE_tag	SNDFILE ;
+
+
 #ifdef OF_USING_MPG123
-	#include <mpg123.h>
+	typedef struct mpg123_handle_struct mpg123_handle;
 #endif
+
+class ofEventArgs;
 
 //		TO DO :
 //		---------------------------

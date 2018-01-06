@@ -61,7 +61,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 {
     return [NSDictionary dictionaryWithObjectsAndKeys:
             //if we have a texture, make the pixel buffer OpenGL compatible
-            [NSNumber numberWithBool:self.useTexture], (NSString*)kCVPixelBufferOpenGLCompatibilityKey, 
+            [NSNumber numberWithBool:self.useTexture], (NSString*)kCVPixelBufferOpenGLCompatibilityKey,
             [NSNumber numberWithInt:kCVPixelFormatType_32ARGB], (NSString*)kCVPixelBufferPixelFormatTypeKey,
             nil];
 }
@@ -74,12 +74,12 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		NSLog(@"No movie file found at %@", moviePath);
 		return NO;
 	}
-	
+
 	//create visual context
 	useTexture = doUseTexture;
 	usePixels = doUsePixels;
 	useAlpha = doUseAlpha;
-    
+
 
     // build the movie URL
     NSURL *movieURL;
@@ -96,9 +96,9 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
                                         [NSNumber numberWithBool:NO], QTMovieOpenAsyncOKAttribute,
                                         nil];
 
-	_movie = [[QTMovie alloc] initWithAttributes:movieAttributes 
+	_movie = [[QTMovie alloc] initWithAttributes:movieAttributes
 										   error: &error];
-	
+
 	if(error || _movie == NULL){
 		NSLog(@"Error Loading Movie: %@", error);
 		return NO;
@@ -106,17 +106,17 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     lastMovieTime = QTMakeTime(0,1);
 	movieSize = [[_movie attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
     //	NSLog(@"movie size %f %f", movieSize.width, movieSize.height);
-	
+
 	movieDuration = [_movie duration];
-    
+
 	[_movie gotoBeginning];
-    
+
     [_movie gotoEnd];
     QTTime endTime = [_movie currentTime];
-    
+
     [_movie gotoBeginning];
     QTTime curTime = [_movie currentTime];
-    
+
     long numFrames = 0;
 	NSMutableArray* timeValues = [NSMutableArray array];
     while(true) {
@@ -132,34 +132,34 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
             break;
         }
     }
-    
+
 	if(frameTimeValues != NULL){
 		[frameTimeValues release];
 	}
 	frameTimeValues = [[NSArray arrayWithArray:timeValues] retain];
-	
+
 	frameCount = numFrames;
 //	frameStep = round((double)(movieDuration.timeValue/(double)(numFrames)));
 	//NSLog(@" movie has %d frames and frame step %d", frameCount, frameStep);
-	
+
 	//if we are using pixels, make the visual context
 	//a pixel buffer context with ARGB textures
 	if(self.usePixels){
-		
+
 		NSMutableDictionary *ctxAttributes = [NSMutableDictionary dictionaryWithObject:[self pixelBufferAttributes]
 																				forKey:(NSString*)kQTVisualContextPixelBufferAttributesKey];
-		
+
 		OSStatus err = QTPixelBufferContextCreate(kCFAllocatorDefault, (CFDictionaryRef)ctxAttributes, &_visualContext);
 		if(err){
 			NSLog(@"error %ld creating OpenPixelBufferContext", err);
 			return NO;
 		}
-        
+
 		// if we also have a texture, create a texture cache for it
 		if(self.useTexture){
-			//create a texture cache			
-			err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault, NULL, 
-											 CGLGetCurrentContext(), CGLGetPixelFormat(CGLGetCurrentContext()), 
+			//create a texture cache
+			err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault, NULL,
+											 CGLGetCurrentContext(), CGLGetPixelFormat(CGLGetCurrentContext()),
 											 (CFDictionaryRef)ctxAttributes, &_textureCache);
 			if(err){
 				NSLog(@"error %ld creating CVOpenGLTextureCacheCreate", err);
@@ -167,11 +167,11 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 			}
 		}
 	}
-	//if we are using a texture, just create an OpenGL visual context 
+	//if we are using a texture, just create an OpenGL visual context
 	else if(self.useTexture){
 		OSStatus err = QTOpenGLTextureContextCreate(kCFAllocatorDefault,
 													CGLGetCurrentContext(), CGLGetPixelFormat(CGLGetCurrentContext()),
-													(CFDictionaryRef)NULL, &_visualContext);	
+													(CFDictionaryRef)NULL, &_visualContext);
 		if(err){
 			NSLog(@"error %ld creating QTOpenGLTextureContextCreate", err);
 			return NO;
@@ -181,12 +181,12 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		NSLog(@"Error - QTKitMovieRenderer - Must specify either Pixels or Texture as rendering strategy");
 		return NO;
 	}
-	
+
 	[_movie setVisualContext:_visualContext];
-	
+
 	QTVisualContextSetImageAvailableCallback(_visualContext, frameAvailable, self);
 	synchronousSeekLock = [[NSCondition alloc] init];
-	
+
 	//borrowed from WebCore:
 	// http://opensource.apple.com/source/WebCore/WebCore-1298/platform/graphics/win/QTMovie.cpp
 	hasVideo = (NULL != GetMovieIndTrackType([_movie quickTimeMovie], 1, VisualMediaCharacteristic, movieTrackCharacteristic | movieTrackEnabledOnly));
@@ -203,7 +203,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 - (void) dealloc
 {
 	@synchronized(self){
-		
+
 		if(_visualContext != NULL){
 			QTVisualContextSetImageAvailableCallback(_visualContext, NULL, NULL);
 		}
@@ -212,32 +212,32 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 			CVOpenGLTextureRelease(_latestTextureFrame);
 			_latestTextureFrame = NULL;
 		}
-		
+
 		if(_latestPixelFrame != NULL){
 			CVPixelBufferRelease(_latestPixelFrame);
 			_latestPixelFrame = NULL;
 		}
-		
+
 		if(_movie != NULL){
 			[_movie release];
 			_movie = NULL;
 		}
-		
+
 		if(_visualContext != NULL){
 			QTVisualContextRelease(_visualContext);
 			_visualContext = NULL;
 		}
-		
+
 		if(_textureCache != NULL){
 			CVOpenGLTextureCacheRelease(_textureCache);
 			_textureCache = NULL;
 		}
-		
+
 		if(frameTimeValues != NULL){
 			[frameTimeValues release];
 			frameTimeValues = NULL;
 		}
-		
+
 		if(synchronousSeekLock != nil){
 			[synchronousSeekLock release];
 			synchronousSeekLock = nil;
@@ -249,47 +249,47 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 //JG Note, in the OF wrapper this does not get used since we have a modified ofTexture that we use to draw
 //this is here in case you want to use this renderer outside of openFrameworks
 - (void) draw:(NSRect)drawRect
-{   
-	
+{
+
 	if(!self.useTexture || _latestTextureFrame == NULL){
 		return;
 	}
-	
-	OpenGLTextureCoordinates texCoords;	
-	
-	CVOpenGLTextureGetCleanTexCoords(_latestTextureFrame, 
-									 texCoords.bottomLeft, 
-									 texCoords.bottomRight, 
-									 texCoords.topRight, 
-									 texCoords.topLeft);        
-	
+
+	OpenGLTextureCoordinates texCoords;
+
+	CVOpenGLTextureGetCleanTexCoords(_latestTextureFrame,
+									 texCoords.bottomLeft,
+									 texCoords.bottomRight,
+									 texCoords.topRight,
+									 texCoords.topLeft);
+
 	[self bindTexture];
-	
+
 	glBegin(GL_QUADS);
-	
+
 	glTexCoord2fv(texCoords.topLeft);
 	glVertex2f(NSMinX(drawRect), NSMinY(drawRect));
-	
+
 	glTexCoord2fv(texCoords.topRight);
 	glVertex2f(NSMaxX(drawRect), NSMinY(drawRect));
-	
+
 	glTexCoord2fv(texCoords.bottomRight);
 	glVertex2f(NSMaxX(drawRect), NSMaxY(drawRect));
-	
+
 	glTexCoord2fv(texCoords.bottomLeft);
 	glVertex2f(NSMinX(drawRect), NSMaxY(drawRect));
-	
+
 	glEnd();
-	
+
 	[self unbindTexture];
-	
+
 }
 
 - (void)frameAvailable:(CVImageBufferRef)image
 {
 
 	@synchronized(self){
-		
+
 		if(_visualContext == NULL){
 			return;
 		}
@@ -300,7 +300,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 				_latestPixelFrame = NULL;
 			}
 			_latestPixelFrame = image;
-			
+
 			//if we are using a texture, create one from the texture cache
 			if(self.useTexture){
 				if(_latestTextureFrame != NULL){
@@ -308,9 +308,9 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 					_latestTextureFrame = NULL;
 					CVOpenGLTextureCacheFlush(_textureCache, 0);
 				}
-				
+
 				OSErr err = CVOpenGLTextureCacheCreateTextureFromImage(NULL, _textureCache, _latestPixelFrame, NULL, &_latestTextureFrame);
-				
+
 				if(err != noErr){
 					NSLog(@"Error creating OpenGL texture %d", err);
 				}
@@ -324,7 +324,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 			}
 			_latestTextureFrame = image;
 		}
-		frameIsNew = YES;	
+		frameIsNew = YES;
 	}
 
 //	NSLog(@"incoming frame time: %lld/%ld and movie time is %lld", correctedFrameTime.timeValue, correctedFrameTime.timeScale, self.timeValue);
@@ -401,10 +401,10 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		if(!self.usePixels || _latestPixelFrame == NULL){
 			return;
 		}
-		
+
 	//    NSLog(@"pixel buffer width is %ld height %ld and bpr %ld, movie size is %d x %d ",
 	//          CVPixelBufferGetWidth(_latestPixelFrame),
-	//          CVPixelBufferGetHeight(_latestPixelFrame), 
+	//          CVPixelBufferGetHeight(_latestPixelFrame),
 	//          CVPixelBufferGetBytesPerRow(_latestPixelFrame),
 	//          (NSInteger)movieSize.width, (NSInteger)movieSize.height);
 		if((NSInteger)movieSize.width != CVPixelBufferGetWidth(_latestPixelFrame) ||
@@ -413,12 +413,12 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 				  CVPixelBufferGetWidth(_latestPixelFrame), CVPixelBufferGetHeight(_latestPixelFrame), (NSInteger)movieSize.width, (NSInteger)movieSize.height);
 			return;
 		}
-		
+
 		if(CVPixelBufferGetPixelFormatType(_latestPixelFrame) != kCVPixelFormatType_32ARGB){
 			NSLog(@"QTKitMovieRenderer - Frame pixelformat not kCVPixelFormatType_32ARGB: %d, instead %ld",kCVPixelFormatType_32ARGB,CVPixelBufferGetPixelFormatType(_latestPixelFrame));
 			return;
 		}
-		
+
 		CVPixelBufferLockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
 		//If we are using alpha, the ofQTKitPlayer class will have allocated a buffer of size
 		//movieSize.width * movieSize.height * 4
@@ -466,13 +466,13 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 //				}
 //			}
 		}
-		
+
 		CVPixelBufferUnlockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
-		
+
 		if(err != kvImageNoError){
 			NSLog(@"Error in Pixel Copy vImage_error %ld", err);
 		}
-		
+
 	}
 }
 
@@ -496,25 +496,25 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 - (void) bindTexture
 {
 	if(!self.textureAllocated) return;
-    
+
 	GLuint texID = 0;
 	texID = CVOpenGLTextureGetName(_latestTextureFrame);
-	
+
 	GLenum target = GL_TEXTURE_RECTANGLE_ARB;
 	target = CVOpenGLTextureGetTarget(_latestTextureFrame);
-	
+
 	glEnable(target);
 	glBindTexture(target, texID);
-	
+
 }
 
 - (void) unbindTexture
 {
 	if(!self.textureAllocated) return;
-	
+
 	GLenum target = GL_TEXTURE_RECTANGLE_ARB;
 	target = CVOpenGLTextureGetTarget(_latestTextureFrame);
-	glDisable(target);	
+	glDisable(target);
 }
 
 - (void) setRate:(float) rate
@@ -563,11 +563,11 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		_movie.currentTime = startTime;
 		[self synchronizeSeek];
 	}
-	
+
 	if(oldRate != 0){
 		self.rate = oldRate;
 	}
-	
+
 }
 
 - (void) setFrame:(NSInteger) frame
@@ -624,7 +624,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		self.justSetFrame = NO;
 		return;
 	}
-	
+
 //	NSLog(@" current time %lld vs duration %lld", _movie.currentTime.timeValue, movieDuration.timeValue);
 	//if requesting the last frame, don't synchronize update
 	if(_movie.currentTime.timeValue == movieDuration.timeValue){
@@ -636,21 +636,21 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	//except on the first frame.
 	if(self.frameCount < 2 && loadedFirstFrame){
 		self.justSetFrame = NO;
-		return;		
+		return;
 	}
 
 	int numTries = 0;
 	while(self.justSetFrame && numTries++ < 10){
 		[synchronousSeekLock lock];
-		
+
 		QTVisualContextTask(_visualContext);
 		MoviesTask([_movie quickTimeMovie], 0);
-		
+
 		if(![synchronousSeekLock waitUntilDate:[NSDate dateWithTimeIntervalSinceNow:2.0]]){
 			NSLog(@"synchronizeUpdate timed out in QTMovieRenderer");
 			self.justSetFrame = NO;
 		}
-		
+
 		[synchronousSeekLock unlock];
 	}
 	loadedFirstFrame = true;
@@ -680,7 +680,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
 - (void) setLoops:(BOOL)loops
 {
-	[_movie setAttribute:[NSNumber numberWithBool:loops] 
+	[_movie setAttribute:[NSNumber numberWithBool:loops]
 				  forKey:QTMovieLoopsAttribute];
 }
 

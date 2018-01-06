@@ -1,40 +1,17 @@
 #pragma once
 
-#include "ofBaseApp.h"
-
+#include "ofConstants.h"
 #include "ofAppBaseWindow.h"
 #include "ofThread.h"
 #include "ofImage.h"
-#include "ofBaseTypes.h"
 #include "ofEvents.h"
-#include "ofConstants.h"
-#include "ofTypes.h"
+#include "ofRectangle.h"
 
-// include includes for both native and X11 possibilities
-#include <libudev.h>
-#include <stdbool.h>
-#include <stdio.h> // sprintf
-#include <stdlib.h>  // malloc
-#include <math.h>
-#include <fcntl.h>  // open fcntl
-#include <unistd.h> // read close 
-#include <linux/joystick.h>
-
-#include "linux/kd.h"	// keyboard stuff...
-#include "termios.h"
-#include "sys/ioctl.h"
-
-#include <dirent.h>  // scandir
-#include <string.h> // strlen
-
-// x11
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
 
 #include <queue>
 #include <map>
+#include <X11/Xlib.h>
 
-#include <EGL/egl.h>
 
 // TODO: this shold be passed in with the other window settings, like window alpha, etc.
 enum ofAppEGLWindowType {
@@ -45,6 +22,21 @@ enum ofAppEGLWindowType {
 
 typedef std::map<EGLint,EGLint> ofEGLAttributeList;
 typedef std::map<EGLint,EGLint>::iterator ofEGLAttributeListIterator;
+
+typedef struct _XIM * XIM;
+typedef struct _XIC * XIC;
+typedef unsigned long Window;
+struct _XDisplay;
+typedef struct _XDisplay Display;
+
+
+typedef unsigned int EGLBoolean;
+typedef int32_t EGLint;
+typedef void *EGLDisplay;
+typedef void *EGLConfig;
+typedef void *EGLSurface;
+typedef void *EGLContext;
+
 
 class ofAppEGLWindow : public ofAppBaseGLESWindow, public ofThread {
 public:
@@ -106,7 +98,7 @@ public:
 	virtual void disableSetupScreen();
 
 	virtual void setVerticalSync(bool enabled);
-	
+
 	struct Settings: public ofGLESWindowSettings {
 		public:
 		ofAppEGLWindowType eglWindowPreference;  // what window type is preferred?
@@ -170,7 +162,7 @@ protected:
 	void checkEvents();
 	ofImage mouseCursor;
 
-	// TODO: getters and setters?  OR automatically set based on 
+	// TODO: getters and setters?  OR automatically set based on
 	// OS or screen size?  Should be changed when screen is resized?
 	float mouseScaleX;  ///< \brief Amount by which to mouse movements along the X axis.
 	float mouseScaleY;  ///< \brief Amount by which to mouse movements along the Y axis.
@@ -187,10 +179,10 @@ protected:
 	int mouseAbsXMax;
 	int mouseAbsYMin;
 	int mouseAbsYMax;
-	
+
 	bool hasMouse() { return mouseDetected; }
 	bool hasKeyboard() { return keyboardDetected; }
-	
+
 
 //------------------------------------------------------------
 // EGL
@@ -213,7 +205,7 @@ protected:
 //------------------------------------------------------------
 // PLATFORM SPECIFIC WINDOWING
 //------------------------------------------------------------
-	
+
 //------------------------------------------------------------
 // WINDOWING
 //------------------------------------------------------------
@@ -248,7 +240,7 @@ protected:
 	DISPMANX_CLAMP_T  dispman_clamp;
 	DISPMANX_TRANSFORM_T dispman_transform;
 	VC_DISPMANX_ALPHA_T	dispman_alpha;
-	
+
 	bool createRPiNativeWindow(const ofRectangle& requestedWindowRect);
 
 #else
@@ -261,7 +253,7 @@ protected:
 	Window x11Window;
 	long x11ScreenNum;  ///< \brief The number of the X11 screen is in use (currently).
 	bool createX11NativeWindow(const ofRectangle& requestedWindowRect);
-	 
+
 //------------------------------------------------------------
 // EVENTS
 //------------------------------------------------------------
@@ -270,7 +262,7 @@ protected:
 
 	void setupNativeUDev();
 	void destroyNativeUDev();
-	
+
 	void setupNativeMouse();
 	void setupNativeKeyboard();
 

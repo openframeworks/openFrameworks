@@ -9,6 +9,7 @@
 
 #include "ofxiOSImagePicker.h"
 #include <TargetConditionals.h>
+#include "ofMathConstants.h"
 
 using namespace std;
 

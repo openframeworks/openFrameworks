@@ -1,10 +1,14 @@
 #pragma once
 
-#include "ofFileUtils.h"
+#include "ofConstants.h"
 #include "ofTexture.h"
 #include "ofPixels.h"
-#include "ofBaseTypes.h"
-#include "ofConstants.h"
+#include "ofGLBaseTypes.h"
+#include "ofGraphicsConstants.h"
+
+class ofFile;
+class ofBuffer;
+
 
 /// \file
 /// ofImage is used for loading, saving and drawing images in openFrameworks.
@@ -21,9 +25,9 @@
 /// These values are directly mapped to FreeImage's JPEG quality flags.
 /// \sa http://freeimage.sourceforge.net/fnet/html/E77CD483.htm
 enum ofImageQualityType {
-    /// \brief Equivalent to FreeImage's JPEG_QUALITYSUPERB (100:1 ratio) 
+    /// \brief Equivalent to FreeImage's JPEG_QUALITYSUPERB (100:1 ratio)
     OF_IMAGE_QUALITY_BEST,
-    /// \brief Equivalent to FreeImage's JPEG_QUALITYGOOD (75:1 ratio) 
+    /// \brief Equivalent to FreeImage's JPEG_QUALITYGOOD (75:1 ratio)
     OF_IMAGE_QUALITY_HIGH,
     /// \brief Equivalent to FreeImage's JPEG_QUALITYNORMAL (50:1 ratio)
     OF_IMAGE_QUALITY_MEDIUM,
@@ -48,7 +52,7 @@ enum ofImageFormat {
     OF_IMAGE_FORMAT_PCD     = 9,
     OF_IMAGE_FORMAT_PCX     = 10,
     OF_IMAGE_FORMAT_PGM     = 11,
-    OF_IMAGE_FORMAT_PGMRAW  = 12,
+	OF_IMAGE_FORMAT_PGMRAW  = 12,
     OF_IMAGE_FORMAT_PNG     = 13,
     OF_IMAGE_FORMAT_PPM     = 14,
     OF_IMAGE_FORMAT_PPMRAW  = 15,
@@ -114,6 +118,7 @@ inline std::string ofImageFormatExtension(ofImageFormat format){
     }
 }
 
+
 /// \todo Needs documentation.
 struct ofImageLoadSettings {
 	bool accurate = false;
@@ -162,18 +167,18 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 public:
     /// \name Image Construction
     /// \{
-    
+
     ofImage_();
-    
+
     ofImage_(const ofPixels_<PixelType> & pix);
 	ofImage_(const std::filesystem::path & fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
     ofImage_(const ofImage_<PixelType>& mom);
     ofImage_(ofImage_<PixelType>&& mom);
-    
+
     template<typename SrcType>
     ofImage_(const ofImage_<SrcType>& mom);
-    
-    
+
+
     /// This allocates space in the ofImage, both the ofPixels and the
     /// ofTexture that the ofImage contains.
     ///
@@ -190,53 +195,53 @@ public:
     /// \param h Height of image to allocate.
     /// \param type The ofImageType.
     void allocate(int w, int h, ofImageType type);
-    
+
     /// \brief Whether the image has been allocated either by a call to
     /// allocate or by loading pixel data into the image.
     /// \returns true if the image has been allocated.
     bool isAllocated() const {return pixels.isAllocated();}
-    
+
     /// \brief Whether the image has been allocated either by a call to
     /// allocate or by loading pixel data into the image.
     /// \deprecated Use isAllocated() instead
     /// \returns true if the image has been allocated.
     OF_DEPRECATED_MSG("Use isAllocated()", bool bAllocated());
-    
+
     /// \brief This clears the texture and pixels contained within the ofImage.
 	void clear();
-    
+
     /// \brief Loads an image given by fileName.
     /// \param fileName Program looks for image given by fileName, relative to
     /// the data folder.
     /// \param settings Load options
     /// \returns true if image loaded correctly.
 	bool load(const std::filesystem::path& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
-    
+
     /// \brief Loads an image from an ofBuffer instance created by, for
     /// instance, ofFile::readToBuffer().
     ///
     /// This actually loads the image data into an ofPixels object and then
     /// into the texture.
 	bool load(const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
-    
+
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(const std::string& fileName));
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(const ofBuffer & buffer));
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(const ofFile & file));
-    
+
     virtual ~ofImage_();
-    
+
     /// \}
     /// \name Drawing
     /// \{
-    
+
     using ofBaseDraws::draw;
-    
+
     /// \brief Draw the image at it's normal size.
     ///
     /// \param x Draw position on the x axis.
     /// \param y Draw position on the y axis.
     void draw(float x, float y) const;
-    
+
     /// \brief Draw the texture at it's normal size with depth.
     ///
     /// \param x Draw position on the x axis.
@@ -245,7 +250,7 @@ public:
     void draw(float x, float y, float z) const;
 
 	void draw(const glm::vec3 & pos) const;
-    
+
     /// \brief Draw the image at a given size.
     ///
     /// \param x Draw position on the x axis.
@@ -253,7 +258,7 @@ public:
     /// \param w Draw width.
     /// \param h Draw height.
     void draw(float x, float y, float w, float h) const;
-    
+
     /// \brief Draw the image at a given size with depth.
     ///
     /// \param x Draw position on the x axis.
@@ -264,7 +269,7 @@ public:
     void draw(float x, float y, float z, float w, float h) const;
 
 	void draw(const glm::vec3 & pos, float w, float h) const;
-    
+
     /// \brief Draws a subsection of the image.
     ///
     /// This functions like a clipping mask. Does not altering any pixel
@@ -277,7 +282,7 @@ public:
     /// \param sx X position in image to begin cropping from.
     /// \param sy Y position in image to begin cropping from.
     void drawSubsection(float x, float y, float w, float h, float sx, float sy) const;
-    
+
     /// \brief Draws a subsection of the image.
     ///
     /// This functions like a clipping mask. Does not altering any pixel
@@ -291,7 +296,7 @@ public:
     /// \param sx X position in image to begin cropping from.
     /// \param sy Y position in image to begin cropping from.
     void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy) const;
-    
+
     /// \brief Draws a subsection of the image.
     ///
     /// This functions like a clipping mask. Does not altering any pixel
@@ -306,7 +311,7 @@ public:
     /// \param sw Source width of cropped area.
     /// \param sh Source height of cropped area.
     void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh) const;
-    
+
     /// \brief Draws a subsection of the image.
     ///
     /// This functions like a clipping mask. Does not altering any pixel
@@ -322,11 +327,11 @@ public:
     /// \param sw Source width of cropped area.
     /// \param sh Source height of cropped area.
     void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
-    
+
     /// \}
     /// \name Texture
     /// \{
-    
+
     /// \brief Call to ensure that changes to pixels are reflected in the ofTexture of the image.
     ///
     /// Many of the ofImage methods call this after they change the pixels,
@@ -334,18 +339,18 @@ public:
     /// should make sure to call update() before trying to draw the  texture
     /// of the image to the screen.
     void update();
-    
+
     /// \brief Turns on or off the allocation and use of a texture.
     ///
     /// \param bUse Allocate and use a texture or not.
     void setUseTexture(bool bUse);
-    
+
     /// \brief Returns whether the ofImage has a texture or not.
     ///
     /// If the ofImage doesn't have a texture, nothing will be drawn to the screen.
     /// \returns true if the ofImage is using a texture.
     bool isUsingTexture() const;
-    
+
     /// \brief Returns a reference to the texture that the ofImage contains.
     ///
     /// You can use this to directly manipulate the texture itself, but keep in
@@ -361,26 +366,26 @@ public:
 
     OF_DEPRECATED_MSG("Use getTexture",ofTexture & getTextureReference());
     OF_DEPRECATED_MSG("Use getTexture",const ofTexture & getTextureReference() const);
-    
+
     /// \brief Binds the oftexture instance that the ofImage contains so that
     /// it can be used for advanced drawing.
     void bind(int textureLocation=0) const;
-    
+
     /// \brief Unbinds the ofTexture instance that the ofImage contains.
     ///
     /// Call this after you call bind().
     void unbind(int textureLocation=0) const;
-    
+
     /// \brief This sets the compression level used when creating mipmaps for
     /// the ofTexture contained by the ofImage.
     /// \param compression The ofTexCompression to set.
     void setCompression(ofTexCompression compression);
-    
-    
+
+
     /// \}
     /// \name Pixel Getters
     /// \{
-    
+
     /// \brief Returns a raw pointer to the pixel data.
     ///
     /// This function will give you access to a continuous block of pixels.
@@ -395,7 +400,7 @@ public:
     /// \returns A raw pointer to the pixel data.
     ofPixels_<PixelType> & getPixels();
     const ofPixels_<PixelType> & getPixels() const;
-    
+
     /// \brief This returns an ofPixels reference that you can use to
     /// manipulate the raw pixel data of the ofImage.
     ///
@@ -404,9 +409,9 @@ public:
     /// \returns An ofPixels reference that you can use to manipulate the raw pixel data of the ofImage.
     OF_DEPRECATED_MSG("Use getPixels() instead ", ofPixels_<PixelType> & getPixelsRef());
     OF_DEPRECATED_MSG("Use getPixels() instead ", const ofPixels_<PixelType> & getPixelsRef() const);
-    
+
     operator ofPixels_<PixelType>&();
-    
+
     /// \brief This returns the ofColor representing the pixels at the x and y
     /// position passed in.
     /// \param x x position of pixel
@@ -419,19 +424,19 @@ public:
 	/// \param index index into pixel data
 	/// \returns The ofColor representing the pixels at the index position passed in.
 	ofColor_<PixelType> getColor(int index) const;
-   
+
     /// \brief Get height of image as a float.
     /// \returns Height of image as float.
     float getHeight() const;
-    
+
     /// \brief Get width of image as a float.
     /// \returns Width of image as float.
     float getWidth() const;
-    
+
     /// \}
     /// \name Pixel Setters
     /// \{
-    
+
     /// \brief Sets the pixel at the x,y position passed in.
     ///
     /// The ofColor type needs to match the ofImage type, i.e. ofFloatImage
@@ -441,17 +446,17 @@ public:
     /// \param y y position of pixel.
     /// \param color Color to set pixel to.
     void setColor(int x, int y, const ofColor_<PixelType>& color);
-    
+
     /// \brief Sets the pixel at the given pixel buffer index
     ///
     /// \param index Index of pixel to set.
     /// \param color Color to set pixel to.
     void setColor(int index, const ofColor_<PixelType>& color);
-    
+
     /// \brief Sets all pixels to a color.
     /// \param color Color to set pixel to.
     void setColor(const ofColor_<PixelType>& color);
-    
+
     /// \brief Sets the pixels of the image from an array of values.
     ///
     /// Set the pixels of the image from an array of values, for an
@@ -468,14 +473,14 @@ public:
     /// \param type The image type can be OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, or OF_IMAGE_COLOR_ALPHA.
     /// \param bOrderIsRGB Pass in pixel data that is BGR by setting bOrderIsRGB=false.
     void setFromPixels(const PixelType * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
-    
+
     /// \brief Set the pixels of the image from an ofPixels instance.
     ///
     /// Set the pixels of the image from an ofPixels instance, for an
     /// ofFloatImage these need to be ofFloatPixels, for an ofImage these need
     /// to be unsigned chars.
     void setFromPixels(const ofPixels_<PixelType> & pixels);
-    
+
     /// \brief Grabs pixels from the opengl window specified by the region
     /// (x, y, w, h) and turns them into an image.
     ///
@@ -488,7 +493,7 @@ public:
     /// \param w Width of region.
     /// \param h Height of region.
     void grabScreen(int x, int y, int w, int h);
-    
+
     /// \brief Set type of image to one of the following: OF_IMAGE_GRAYSCALE,
     /// OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
     ///
@@ -501,18 +506,18 @@ public:
     /// `OF_IMAGE_GRAYSCALE`, `OF_IMAGE_COLOR`, `OF_IMAGE_COLOR_ALPHA`
     void setImageType(ofImageType type);
     ofImageType getImageType() const;
-    
+
     /// \}
     /// \name Modifiers
     /// \{
-    
+
     /// \brief Resizes the image to a new size (w, h); Can be used to scale up
     /// or down an image.
     ///
     /// \param newWidth New width of image.
     /// \param newHeight New height of image.
     void resize(int newWidth, int newHeight);
-    
+
     /// \brief This crops the image to the w,h passed in from the x,y position.
     ///
     /// This does an in place crop and **allocates memory**.
@@ -522,7 +527,7 @@ public:
     /// \param w Width of region to crop.
     /// \param h Height of region to crop.
     void crop(int x, int y, int w, int h);
-    
+
     /// \brief Replaces region in caller image specified by w,h,x,y with pixels from otherImage.
     ///
     /// The w,h are measured from the x,y, so passing 100, 100, 300, 300 will grab
@@ -534,21 +539,21 @@ public:
     /// \param w Width of region to crop.
     /// \param h Height of region to crop.
     void cropFrom(const ofImage_<PixelType>& otherImage, int x, int y, int w, int h);
-    
+
     /// \brief Rotates the image by a multiple of 90 degrees.
     /// \param rotation Amount to rotate in multiples of 90. For instance, if you pass
     /// in 2, then the image will be rotated 180 degrees.
     void rotate90(int rotation);
-    
+
     /// \brief This reflects the pixels of the image across the vertical and/or horizontal axis.
     /// \param vertical Set to true to reflect image across vertical axis.
     /// \param horizontal Set to true to reflect image across horizontal axis.
     void mirror(bool vertical, bool horizontal);
-    
+
     /// \}
     /// \name Anchor
     /// \{
-    
+
     /// \brief Change the drawing anchor from top-left corner to a position
     /// specified by xPct and yPct.
     ///
@@ -563,7 +568,7 @@ public:
     /// \param xPct X position of the new anchor, specified as a percent of the width of the image.
     /// \param yPct Y position of the new anchor, specified as a percent of the height of the image.
     void setAnchorPercent(float xPct, float yPct);
-    
+
     /// \brief Changes drawing position from top-left corner to position specified by x,y.
     ///
     /// Changes the drawing position specified by draw() from the normal top-
@@ -574,61 +579,61 @@ public:
     /// \param x X position of the new anchor.
     /// \param y Y position of the new anchor.
     void setAnchorPoint(float x, float y);
-    
+
     /// \brief Removes anchor positioning.
     ///
     /// Resets the anchor to (0, 0) so the image will be drawn from its
     /// upper left hand corner.
     void resetAnchor();
-    
+
     /// \}
-    
+
     /// \name Saving
     /// \{
-    
-    
+
+
     /// \brief Saves the image to the file path in fileName with the image
     /// quality specified by compressionLevel.
     ///
     /// \param fileName Saves image to this path, relative to the data folder.
     /// \param compressionLevel The ofImageQualityType.
     void save(const std::filesystem::path & fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
-    
+
     /// \brief This saves the image to the ofBuffer passed with the image
     /// quality specified by compressionLevel.
     ///
     /// \param buffer ofBuffer to save image to.
     /// \param compressionLevel The ofImageQualityType.
     void save(ofBuffer & buffer, ofImageFormat imageFormat = OF_IMAGE_FORMAT_PNG, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
-    
+
     OF_DEPRECATED_MSG("Use save instead",void saveImage(const std::string& fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const);
     OF_DEPRECATED_MSG("Use save instead",void saveImage(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const);
     OF_DEPRECATED_MSG("Use save instead",void saveImage(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const);
-    
+
     /// \}
     /// \name Operators
     /// \{
-    
+
     ofImage_<PixelType> & operator=(ofPixels_<PixelType> & pixels);
-    
+
     // default copy overwriting (for = or std::vector)
     ofImage_<PixelType>& operator= (const ofImage_<PixelType>& mom);
-    
+
     template<typename SrcType>
     ofImage_<PixelType>& operator= (const ofImage_<SrcType>& mom);
-    
+
     //move assignment
     ofImage_<PixelType>& operator=(ofImage_<PixelType>&& mom);
 
     /// \}
     ///< \sa ofImageType
-    
+
 protected:
     /// \cond INTERNAL
     void changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageType type);
     void resizePixels(ofPixels_<PixelType> &pix, int newWidth, int newHeight);
     void unloadTexture();
-    
+
     ofPixels_<PixelType> pixels;
     bool bUseTexture;
     ofTexture tex;
@@ -673,12 +678,18 @@ template<typename PixelType>
 template<typename SrcType>
 void ofImage_<PixelType>::clone(const ofImage_<SrcType> &mom){
     pixels = mom.getPixels();
-    
+
     tex.clear();
     bUseTexture = mom.isUsingTexture();
     if (bUseTexture == true && mom.getTexture().isAllocated()){
         tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
     }
-    
+
     update();
 }
+
+
+template<typename T>
+std::string ofToString(const T & v);
+template<>
+std::string ofToString(const ofImageType & imgType);

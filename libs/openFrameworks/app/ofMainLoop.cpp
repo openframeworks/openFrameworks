@@ -8,6 +8,8 @@
 #include <ofMainLoop.h>
 #include "ofWindowSettings.h"
 #include "ofConstants.h"
+#include "ofAppBaseWindow.h"
+#include "ofBaseApp.h"
 
 //========================================================================
 // default windowing
