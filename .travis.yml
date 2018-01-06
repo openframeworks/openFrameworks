@@ -125,12 +125,12 @@ install:
 
 
 script:
-  - if [ "$TARGET" == "osx" ] && [ $OPT == "makefiles" ]; then
+  - if [ "$TARGET" = "osx" ] && [ $OPT = "makefiles" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     else
       scripts/ci/$TARGET/build.sh $OPT;
     fi
-  - if [ "$TARGET" == "linux64" ]; then
+  - if [ "$TARGET" = "linux64" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     fi
   - if [ "$TARGET" != "osx" ] || [ "$OPT" != "makefiles" ]; then
