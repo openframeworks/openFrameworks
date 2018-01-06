@@ -70,7 +70,7 @@ matrix:
   - os: osx
     osx_image: xcode8
     compiler: clang
-    env: TARGET="osx"
+    env: TARGET="osx" OPT="xcode"
 
   - os: osx
     osx_image: xcode8
@@ -133,7 +133,7 @@ script:
   - if [ "$TARGET" == "linux64" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     fi
-  - if [ "$TARGET" != "osx" ] || [ $OPT != "makefiles" ]; then
+  - if [ "$TARGET" != "osx" ] || [ "$OPT" != "makefiles" ]; then
       scripts/ci/upload_of_lib.sh;
     fi
 
