@@ -135,6 +135,8 @@ script:
     fi
   - if [ "$TARGET" != "osx" ] || [ "$OPT" != "makefiles" ]; then
       scripts/ci/upload_of_lib.sh;
+    else
+      echo "OSX makefiles, not uploading libraries"
     fi
 
 git:
