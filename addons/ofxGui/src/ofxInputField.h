@@ -9,7 +9,7 @@
 #pragma once
 
 #include "ofxBaseGui.h"
-
+#include "ofImage.h"
 template<typename Type>
 class ofxInputField : public ofxBaseGui{
 	template<typename T>
@@ -39,6 +39,12 @@ public:
 	virtual bool keyPressed(ofKeyEventArgs & args);
 	virtual bool charPressed(uint32_t & key);
 
+	virtual void setPosition(const ofPoint & p);
+	virtual void setPosition(float x, float y);
+	virtual void setSize(float w, float h);
+	virtual void setShape(ofRectangle r);
+	virtual void setShape(float x, float y, float w, float h);
+
 	bool containsValidValue() const;
 
 	template<class ListenerClass, typename ListenerMethod>
@@ -57,6 +63,7 @@ public:
 	ofAbstractParameter & getParameter();
 
 protected:
+
 	static ofxInputField createInsideSlider();
 	virtual void render();
 	ofParameter<Type> value;
@@ -99,6 +106,33 @@ protected:
 
 	ofEvent<void> leftFocus;
 	std::vector<ofEventListener> listeners;
+	
+	
+	enum InputState { INPUT_STATE_MIN =0, INPUT_STATE_VAL, INPUT_STATE_MAX, INPUT_STATE_TOTAL } inputState = INPUT_STATE_VAL;
+    //SimpleButton class just to make code cleaner for the input state buttons
+	struct SimpleButton{
+		void setup(std::string name, bool bSetActive, const std::vector<unsigned char>& imgData);
+		void draw();
+		bool mouseMoved(ofMouseEventArgs & args);
+		bool mousePressed(ofMouseEventArgs & args);
+		bool mouseDragged(ofMouseEventArgs & args);
+		bool mouseReleased(ofMouseEventArgs & args);
+		ofEvent<void> clickedEvent;
+		ofRectangle rect, textRect;
+		std::string name;
+		
+		bool bInside = false;
+		bool bPressed = false;
+		bool bActive = false;
+		
+		ofImage img;
+	};
+    SimpleButton inputStateButtons[INPUT_STATE_TOTAL];
+
+	void setInputState(InputState i);
+    void setInputStateButtonsShape();
+	
+
 };
 
 typedef ofxInputField<float> ofxFloatField;

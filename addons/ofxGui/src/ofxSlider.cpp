@@ -91,6 +91,9 @@ Type ofxSlider<Type>::getMax(){
 template<typename Type>
 bool ofxSlider<Type>::mouseMoved(ofMouseEventArgs & mouse){
 	bool mouseInside = isGuiDrawing() && b.inside(mouse);
+	if(state == Input){
+		input.mouseMoved(mouse);
+	}
 	if(mouseInside != this->mouseInside && overlappingLabel){
 		setNeedsRedraw();
 	}

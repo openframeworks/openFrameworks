@@ -148,6 +148,13 @@ ofxInputField<Type>* ofxInputField<Type>::setup(ofParameter<Type> _val, float wi
 	b.width = width;
 	b.height = height;
 	bGuiActive = false;
+	if(!std::is_same<Type, std::string>::value && insideSlider){
+		//the following are the hard coded images with the minimal size font
+		inputStateButtons[INPUT_STATE_MIN].setup("MIN", false, {0xa2,0x4b,0x6c,0xb2,0xa8,0xa4,0x11,0x49,0x22,0xba,0x4,0x0});
+		inputStateButtons[INPUT_STATE_MAX].setup("MAX", false, {0x22,0x93,0x6c,0x29,0xa9,0x9e,0x11,0xa5,0x24,0x4a,0x9,0x0});
+		inputStateButtons[INPUT_STATE_VAL].setup("VAL", true, {0xca,0x4,0x54,0xa,0xa8,0x17,0x50,0x29,0x40,0xd2,0x3,0x0});
+		setInputStateButtonsShape();
+	}
 	setNeedsRedraw();
 
 	if(!insideSlider){
@@ -156,6 +163,17 @@ ofxInputField<Type>* ofxInputField<Type>::setup(ofParameter<Type> _val, float wi
 	listeners.push_back(value.newListener(this,&ofxInputField::valueChanged));
 	listeners.push_back(ofEvents().charEvent.newListener(this, &ofxInputField<Type>::charPressed, OF_EVENT_ORDER_BEFORE_APP));
 	listeners.push_back(ofEvents().keyPressed.newListener(this, &ofxInputField<Type>::keyPressed, OF_EVENT_ORDER_BEFORE_APP));
+	if(!std::is_same<Type, std::string>::value && insideSlider){
+		listeners.push_back(inputStateButtons[INPUT_STATE_MIN].clickedEvent.newListener([this](){
+			setInputState(INPUT_STATE_MIN);
+		}) );
+		listeners.push_back(inputStateButtons[INPUT_STATE_VAL].clickedEvent.newListener([this](){
+			setInputState(INPUT_STATE_VAL);
+		}) );
+		listeners.push_back(inputStateButtons[INPUT_STATE_MAX].clickedEvent.newListener([this](){
+			setInputState(INPUT_STATE_MAX);
+		}) );
+	}
 	return this;
 }
 
@@ -173,6 +191,66 @@ ofxInputField<Type>* ofxInputField<Type>::setup(const std::string& _name, Type _
 	return setup(value);
 }
 
+//-----------------------------------------------------------
+template<typename Type>
+void ofxInputField<Type>::setInputStateButtonsShape(){
+	if(!std::is_same<Type, std::string>::value && insideSlider){
+		float h = b.height/3;
+		float w = 0;
+		bool bUseFont = (useTTF && h >= font.getAscenderHeight());
+		
+		for(int i =0; i < INPUT_STATE_TOTAL; i++){
+			if(bUseFont){
+				inputStateButtons[i].textRect = font.getStringBoundingBox(inputStateButtons[i].name, 0, 0);
+			}else if(h >= 14.f){//Use ofBitmapFont
+				inputStateButtons[i].textRect = bitmapFont.getBoundingBox(inputStateButtons[i].name, 0, 0);
+			}else{// Use bitmap buttons
+				inputStateButtons[i].textRect.set(0,0,17, 6);
+			}
+		}
+		if(bUseFont){
+			//font might not be mono width so we find out the max width of the three buttons so these align nicely.
+			for(int i =0; i < INPUT_STATE_TOTAL; i++){
+				w = std::max(w, inputStateButtons[i].textRect.width);
+			}
+		}else{
+			//the other options all have the same width so lets just take it from the first one..
+			//This is just to avoid the for loop above
+			w = inputStateButtons[0].textRect.width;
+		}
+		w += 2; //just add a 1 pixel margin on each side of the text.
+		for(int i =0; i < INPUT_STATE_TOTAL; i++){
+			inputStateButtons[i].rect.set(b.getMaxX() - w, b.y + h*i, w, h);
+			inputStateButtons[i].textRect.alignTo(inputStateButtons[i].rect);
+		}
+	}
+}
+//-----------------------------------------------------------
+template<typename Type>
+void ofxInputField<Type>::setInputState(InputState i){
+	if(!std::is_same<Type, std::string>::value && insideSlider){
+		inputState = i;
+		switch(inputState){
+			case INPUT_STATE_MIN:
+				input = toString(value.getMin());
+				break;
+			case INPUT_STATE_MAX:
+				input = toString(value.getMax());
+				break;
+			case INPUT_STATE_VAL:
+				input = toString(value.get());
+				break;
+			case INPUT_STATE_TOTAL://Just so the complainer doesnt complain with a warning. :)
+				break;
+		}
+		for(int j = 0; j < INPUT_STATE_TOTAL; j++){
+			inputStateButtons[j].bActive = (j == (int)inputState);
+		}
+		visibleInput = input;
+		moveCursor(ofUTF8Length(input));
+		setNeedsRedraw();
+	}
+}
 //-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::setMin(Type min){
@@ -347,12 +425,20 @@ void ofxInputField<Type>::moveCursor(int cursorPos){
 //-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::mouseMoved(ofMouseEventArgs & mouse){
+	if(!isGuiDrawing() && !insideSlider){
+		return false;
+	}
 	bool mouseOver = b.inside(mouse);
+	if(!std::is_same<Type, std::string>::value && insideSlider){
+		for(int i =0; i < INPUT_STATE_TOTAL; i++){
+			inputStateButtons[i].mouseMoved(mouse);
+		}
+	}
 	if(mouseOver != bMouseOver && !bGuiActive && overlappingLabel){
 		setNeedsRedraw();
 	}
 	bMouseOver = mouseOver;
-	return (isGuiDrawing() || insideSlider) && bMouseOver;
+	return bMouseOver;
 }
 
 //-----------------------------------------------------------
@@ -362,6 +448,13 @@ bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & mouse){
 		return false;
 	}
 	if(b.inside(mouse)){
+		if(isGuiDrawing() && !(std::is_same<Type, std::string>::value) && insideSlider){
+			for(int i =0; i < INPUT_STATE_TOTAL; i++){
+				if(inputStateButtons[i].mousePressed(mouse)){
+					return true;
+				}
+			}
+		}
 		if(!insideSlider || mouse.button == OF_MOUSE_BUTTON_LEFT){
 			bMousePressed = true;
 			if(bGuiActive){
@@ -400,7 +493,13 @@ bool ofxInputField<Type>::mouseDragged(ofMouseEventArgs & mouse){
 	if(!bGuiActive){
 		return false;
 	}
-
+	if(!std::is_same<Type, std::string>::value && insideSlider){
+		for(int i =0; i < INPUT_STATE_TOTAL; i++){
+			if(inputStateButtons[i].mouseDragged(mouse)){
+				return true;
+			}
+		}
+	}
 	if(!insideSlider || mouse.button == OF_MOUSE_BUTTON_LEFT){
 		auto inputWidth = getTextBoundingBox(visibleInput,0,0).width;
 		float cursorX;
@@ -419,8 +518,15 @@ bool ofxInputField<Type>::mouseDragged(ofMouseEventArgs & mouse){
 
 //-----------------------------------------------------------
 template<typename Type>
-bool ofxInputField<Type>::mouseReleased(ofMouseEventArgs &){
+bool ofxInputField<Type>::mouseReleased(ofMouseEventArgs & mouse){
 	bMousePressed = false;
+	if(bGuiActive && !(std::is_same<Type, std::string>::value)&& insideSlider){
+		for(int i =0; i < INPUT_STATE_TOTAL; i++){
+			if(inputStateButtons[i].mouseReleased(mouse)){
+				return true;
+			}
+		}
+	}
 	return bGuiActive;
 }
 
@@ -452,6 +558,31 @@ bool ofxInputField<string>::mouseScrolled(ofMouseEventArgs & mouse){
 	}
 }
 
+template<typename Type>
+void ofxInputField<Type>::setPosition(const ofPoint & p){
+	ofxBaseGui::setPosition(p);
+	setInputStateButtonsShape();
+}
+template<typename Type>
+void ofxInputField<Type>::setPosition(float x, float y){
+	ofxBaseGui::setPosition(x,y);
+	setInputStateButtonsShape();
+}
+template<typename Type>
+void ofxInputField<Type>::setSize(float w, float h){
+	ofxBaseGui::setSize(w, h);
+	setInputStateButtonsShape();
+}
+template<typename Type>
+void ofxInputField<Type>::setShape(ofRectangle r){
+	ofxBaseGui::setShape(r);
+	setInputStateButtonsShape();
+}
+template<typename Type>
+void ofxInputField<Type>::setShape(float x, float y, float w, float h){
+	ofxBaseGui::setShape(x, y, w, h);
+	setInputStateButtonsShape();
+}
 //-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::charPressed(uint32_t & key){
@@ -666,6 +797,9 @@ void ofxInputField<Type>::generateDraw(){
 		textMesh.append(getTextMesh(input, b.x + textPadding, b.y + b.height / 2 + 4));
 	}
 	textMesh.getColors().assign(textMesh.getVertices().size(), thisTextColor);
+	
+	
+	setInputStateButtonsShape();
 }
 
 //-----------------------------------------------------------
@@ -689,7 +823,11 @@ void ofxInputField<Type>::render(){
 	if(bGuiActive && !hasSelectedText() && blinkingCursor){
 		drawCursor();
 	}
-
+	if(!std::is_same<Type, std::string>::value && insideSlider){
+		for(int i =0; i < INPUT_STATE_TOTAL; i++){
+			inputStateButtons[i].draw();
+		}
+	}
 	ofBlendMode blendMode = ofGetStyle().blendingMode;
 	if(blendMode!=OF_BLENDMODE_ALPHA){
 		ofEnableAlphaBlending();
@@ -749,12 +887,18 @@ template<typename Type>
 void ofxInputField<Type>::parseInput(){
 	try{
 		Type tmpVal = fromString<Type>(input);
-		if(tmpVal < getMin()){
-			tmpVal = getMin();
-		}else if(tmpVal > getMax()){
-			tmpVal = getMax();
-		}
+		if(inputState == INPUT_STATE_VAL){
+			if(tmpVal < getMin()){
+				tmpVal = getMin();
+			}else if(tmpVal > getMax()){
+				tmpVal = getMax();
+			}
 		value = tmpVal;
+		}else if(inputState == INPUT_STATE_MIN){
+			setMin(tmpVal);
+		}else if(inputState == INPUT_STATE_MAX){
+			setMax(tmpVal);
+		}
 		validValue = true;
 	}catch(...){
 		if(!insideSlider){
@@ -786,6 +930,10 @@ template<typename Type>
 void ofxInputField<Type>::leaveFocus(){
 	bGuiActive = false;
 	parseInput();
+	if(!std::is_same<Type, std::string>::value && insideSlider){
+		setInputState(INPUT_STATE_VAL);
+		value = value.get();//hack to trigger the value change event so the gui redraws
+	}
 	setNeedsRedraw();
 	leftFocus.notify(this);
 }
@@ -796,6 +944,62 @@ bool ofxInputField<Type>::containsValidValue() const{
 	return validValue;
 }
 
+//-----------------------------------------------------------
+//   Simple button implementation
+//-----------------------------------------------------------
+template<typename Type>
+void ofxInputField<Type>::SimpleButton::setup(std::string name, bool bSetActive, const std::vector<unsigned char>& imgData){
+    this->name = name;
+    this->bActive = bSetActive;
+    if(imgData.size()){
+        this->img.allocate(17, 6, OF_IMAGE_COLOR_ALPHA);
+        ofxBaseGui::loadStencilFromHex(this->img, const_cast<unsigned char*>(&imgData[0]));
+        this->img.getTexture().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+    }
+}
+template<typename Type>
+void ofxInputField<Type>::SimpleButton::draw(){
+    ofPushStyle();
+    ofFill();
+    ofSetColor((bActive?ofColor::red:(bInside?ofxBaseGui::fillColor:ofxBaseGui::backgroundColor)));
+    ofDrawRectangle(rect);
+    ofSetColor(bActive?ofxBaseGui::textColor:ofxBaseGui::headerBackgroundColor);
+    if(ofxBaseGui::useTTF && rect.height >= font.getAscenderHeight()){
+        ofxBaseGui::font.drawString(name, textRect.x, textRect.getMaxY());
+    }else
+        if(rect.height >= 14.f){ //height equal or greater than the bitmap font size.
+            ofDrawBitmapString(name, textRect.x, textRect.getMaxY() -3);
+        }else{
+            img.draw(textRect);
+        }
+    ofPopStyle();
+}
+template<typename Type>
+bool ofxInputField<Type>::SimpleButton::mouseMoved(ofMouseEventArgs & args){
+    bInside = rect.inside(args);
+    return false;
+}
+template<typename Type>
+bool ofxInputField<Type>::SimpleButton::mousePressed(ofMouseEventArgs & args){
+    bInside = rect.inside(args);
+    bPressed = bInside;
+    return bInside;
+}
+template<typename Type>
+bool ofxInputField<Type>::SimpleButton::mouseDragged(ofMouseEventArgs & args){
+    bInside = rect.inside(args);
+    if(bPressed && !bInside){bPressed = false;}
+    return bPressed && bInside;
+}
+template<typename Type>
+bool ofxInputField<Type>::SimpleButton::mouseReleased(ofMouseEventArgs & args){
+    bInside = rect.inside(args);
+    if(bInside && bPressed){
+        ofNotifyEvent(clickedEvent);
+    }
+    bPressed = false;
+    return bInside;
+}
 //-----------------------------------------------------------
 template class ofxInputField<int8_t>;
 template class ofxInputField<uint8_t>;
