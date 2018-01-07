@@ -5,15 +5,13 @@ openFrameworks is a C++ toolkit for creative coding.  If you are new to OF, welc
 
 [![Slack Status](https://ofslack.herokuapp.com/badge.svg)](https://ofslack.herokuapp.com)
 
-Build status
---------
+## Build status
 
 Linux, OSX, iOS and Android     [![Build Status](https://travis-ci.org/openframeworks/openFrameworks.svg?branch=master)](https://travis-ci.org/openframeworks/openFrameworks)
 
 Visual studio [![Build status](https://ci.appveyor.com/api/projects/status/sm9jxy0u56bl8syi/branch/master?svg=true)](https://ci.appveyor.com/project/arturoc/openframeworks/branch/master)
 
-folder structure
---------
+## folder structure
 
 This release of OF comes with several folders:
 
@@ -32,9 +30,7 @@ This release of OF comes with several folders:
 
 One idea that's important is that OF releases are designed to be self-contained.  You can put them anywhere on your hard drive, but it's not possible to mix different releases of OF together, so please keep each release (0.8.0, 0.8.1) separate.  Projects may generally work from release to release, but this is not guaranteed.  Because OF is self-contained, there's extensive use of local file paths (ie, ../../../) throughout OF.  It's important to be aware of how directories are structured.  A common error is to take a project and move it so that it's a level below or above where it used to be compared to the root of OF.  This means that links such as ../../../libs will break.  
 
-
-Get involved
---------
+## Get involved
 
 The openframeworks forum:
 
@@ -53,9 +49,7 @@ if you have bugs or feature requests, consider opening an issue.  If you are a d
 
 We also have a developer's mailing list, which is useful for discussing issues around the development and future of OF.
 
-
-Developers
-------
+## Developers
 
 To grab a copy of openFrameworks for your platform, check the [download page](http://openframeworks.cc/download) on the main site.  
 
@@ -72,6 +66,6 @@ To set up the project generator submodule within the OF repo, use the command `g
 
 For more info on working with the Project Generator, for per-platform readmes, and more information, see the [documentation](docs/table_of_contents.md).
 
-Versioning
-----------
+## Versioning
+
 openFrameworks uses [Semantic Versioning](http://semver.org/), although strict adherence will only come into effect at version 1.0.0.
