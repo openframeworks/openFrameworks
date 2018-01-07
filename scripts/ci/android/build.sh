@@ -2,6 +2,7 @@
 set -ev
 ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 export ANDROID_NDK_HOME=$(cd ~/$NDK_DIR && pwd)
+source $ROOT/scripts/ci/ccache.sh
 
 gradle wrapper --gradle-version 3.3
 
