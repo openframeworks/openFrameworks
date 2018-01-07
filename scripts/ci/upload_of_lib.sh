@@ -16,7 +16,7 @@ if [ "${TRAVIS_REPO_SLUG}/${TRAVIS_BRANCH}" = "openframeworks/openFrameworks/mas
     elif [ "$TARGET" = "ios" ]; then
         scp -i $CI_ROOT/id_rsa $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/libofxiOS_iphonesimulator_Debug.a tests@ci.openframeworks.cc:openFrameworks_libs/$TARGET/libofxiOS_iphonesimulator_Debug.a_new
         ssh -i $CI_ROOT/id_rsa tests@ci.openframeworks.cc "mv openFrameworks_libs/$TARGET/libofxiOS_iphonesimulator_Debug.a_new openFrameworks_libs/$TARGET/libofxiOS_iphonesimulator_Debug.a"
-    elif [ "$TARGET" = "osx" ]; then
+    elif [ "$TARGET" = "tvos" ]; then
         scp -i $CI_ROOT/id_rsa $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/libtvOS+OFLib_Release.a tests@ci.openframeworks.cc:openFrameworks_libs/$TARGET/libtvOS+OFLib_Release.a_new
         ssh -i $CI_ROOT/id_rsa tests@ci.openframeworks.cc "mv openFrameworks_libs/$TARGET/libtvOS+OFLib_Release.a_new openFrameworks_libs/$TARGET/libtvOS+OFLib_Release.a"
     else
