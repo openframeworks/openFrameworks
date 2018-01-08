@@ -138,6 +138,7 @@ script:
   - if [ "$TARGET" != "osx" ] || [ "$OPT" != "makefiles" ]; then
       scripts/ci/upload_of_lib.sh;
     fi
+  - ccache -s
 
 git:
   depth: 10
