@@ -14,6 +14,7 @@ matrix:
     dist: trusty
     sudo: required
     env: TARGET="linux64"
+    cache: ccache
     addons:
       apt:
         sources:
@@ -45,6 +46,7 @@ matrix:
     sudo: required
     dist: trusty
     env: TARGET="linuxarmv6l"
+    cache: ccache
 
 
   - os: linux
@@ -61,6 +63,7 @@ matrix:
   - os: linux
     sudo: false
     env: TARGET="emscripten"
+    cache: ccache
     addons:
       apt:
         sources:
@@ -72,22 +75,26 @@ matrix:
     osx_image: xcode8
     compiler: clang
     env: TARGET="osx"
+    cache: ccache
 
   - os: osx
     osx_image: xcode8
     compiler: clang
     env: TARGET="osx" OPT="makefiles"
+    cache: ccache
 
   - os: osx
     osx_image: xcode8
     compiler: clang
     env: TARGET="ios"
+    cache: ccache
 
 
   - os: osx
     osx_image: xcode8
     compiler: clang
     env: TARGET="tvos"
+    cache: ccache
 
   - os: linux
     language: android
@@ -127,15 +134,15 @@ install:
 
 
 script:
-  - if [ "$TARGET" == "osx" ] && [ $OPT == "makefiles" ]; then
+  - if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     else
       scripts/ci/$TARGET/build.sh $OPT;
     fi
-  - if [ "$TARGET" == "linux64" ]; then
+  - if [ "$TARGET" = "linux64" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     fi
-  - if [ "$TARGET" != "osx" ] || [ $OPT != "makefiles" ]; then
+  - if [ "$TARGET" != "osx" ] || [ "$OPT" != "makefiles" ]; then
       scripts/ci/upload_of_lib.sh;
     fi
 
