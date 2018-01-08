@@ -5,9 +5,9 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 cat >$PWD/clang++ <<< EOF
     $(which ccache) $(xcodebuild -find clang++)
 EOF
-cat >$PWD/clang <<< EOF
+cat >$PWD/clang <<< EOF2
     $(which ccache) $(xcodebuild -find clang)
-EOF
+EOF2
 
 chmod 755 clang++
 chmod 755 clang
