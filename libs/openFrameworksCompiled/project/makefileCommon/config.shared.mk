@@ -265,6 +265,7 @@ OF_CORE_HEADER_PATHS = $(OF_LIBS_OPENFRAMEWORKS_PATH) $(OF_CORE_SOURCE_PATHS)
 # add folders or single files to exclude fromt he compiled lib
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 ALL_OF_CORE_THIRDPARTY_HEADER_PATHS = $(shell $(FIND) $(OF_LIBS_PATH)/*/include -maxdepth 0 -mindepth 0 -type d | grep -v "/\.[^\.]")
+ALL_OF_CORE_THIRDPARTY_HEADER_PATHS += $(OF_LIBS_PATH)/freetype/include/freetype2
 
 # filter out all excluded files / folders that were defined above
 OF_CORE_THIRDPARTY_HEADER_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_HEADER_PATHS))
