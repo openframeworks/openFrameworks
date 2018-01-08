@@ -101,7 +101,7 @@ matrix:
     cache:
       directories:
         - ~/.gradle
-        - ~/.ccache
+        # - ~/.ccache
         - ~/android-ndk-r15c
 
 
