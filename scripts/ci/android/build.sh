@@ -13,6 +13,7 @@ gradle wrapper --gradle-version 3.3
 echo "ANDROID_NDK_HOME: $ANDROID_NDK_HOME"
 echo "org.gradle.caching=true" > $ROOT/examples/android/androidEmptyExample/gradle.properties
 echo "ccache.path=/usr/local/bin/ccache" >> $ROOT/examples/android/androidEmptyExample/local.properties
+echo "ndk.dir=~/${NDK_DIR}" >> $ROOT/examples/android/androidEmptyExample/local.properties
 ./gradlew -b $ROOT/examples/android/androidEmptyExample/build.gradle compileArm7DebugSources
 #./gradlew -b $ROOT/examples/android/androidOpenCVExample/build.gradle compileArm7DebugSources
 #./gradlew -b $ROOT/examples/android/androidImageExample/build.gradle compileArm7DebugSources
