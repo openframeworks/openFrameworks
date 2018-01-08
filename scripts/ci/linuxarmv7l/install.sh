@@ -63,7 +63,7 @@ createArchImg(){
 				pugixml
         	touch ~/archlinux/timestamp
 			echo checking ccache installed
-			which ccache
+			ls /usr/bin/ccache
 EOF
     else
         echo "Using cached archlinux image"
