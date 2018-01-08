@@ -2,8 +2,8 @@
 set -ev
 ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 # source $ROOT/scripts/ci/ccache.sh
-export CXX="ccache $(which clang++)"
-export CC="ccache $(which clang)"
+export CXX="$(which ccache) $(xcodebuild -find clang++)"
+export CC="$(which ccache) $(xcodebuild -find clang)"
 echo "**** Building oF + emptyExample - OSX Template Project ****"
 xcodebuild -configuration Release -target emptyExample -project "$ROOT/scripts/templates/osx/emptyExample.xcodeproj"
 echo "**** Done building emptyExample ****"
