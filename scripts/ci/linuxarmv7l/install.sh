@@ -36,7 +36,9 @@ createArchImg(){
 			echo
 			echo
 			echo "installing ccache"
-			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -S ccache
+			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -S ccache pkgfile
+			echo checking ccache installed
+			pkgfile -svid ccache
 			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -S \
 				make \
 				pkg-config \
@@ -62,8 +64,6 @@ createArchImg(){
 				curl \
 				pugixml
         	touch ~/archlinux/timestamp
-			echo checking ccache installed
-			ls /usr/bin/ccache
 EOF
     else
         echo "Using cached archlinux image"
