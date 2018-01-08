@@ -107,7 +107,7 @@ matrix:
         - android-19
     cache:
       directories:
-        - ~/.ccache
+        - ~/.gradle
         - ~/android-ndk-r15c
 
 
