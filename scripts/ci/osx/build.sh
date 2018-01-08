@@ -2,11 +2,14 @@
 set -ev
 ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 # source $ROOT/scripts/ci/ccache.sh
+CCACHE=$(which ccache)
+CLANGXX=$(xcodebuild -find clang++)
+CLANG=$(xcodebuild -find clang)
 cat >$PWD/clang++ <<< EOF
-    $(which ccache) $(xcodebuild -find clang++)
+     $CCACHE $CLANGXX
 EOF
 cat >$PWD/clang <<< EOF2
-    $(which ccache) $(xcodebuild -find clang)
+    $CCACHE $CLANG
 EOF2
 
 chmod 755 clang++
