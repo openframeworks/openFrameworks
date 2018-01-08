@@ -36,7 +36,7 @@ createArchImg(){
 			echo
 			echo
 			echo "installing ccache"
-			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -S ccache pkgfile
+			pacman --noconfirm -S ccache pkgfile
 			echo checking ccache installed
 			pkgfile -svid ccache
 			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -S \
