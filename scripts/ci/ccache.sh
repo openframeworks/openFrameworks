@@ -8,10 +8,10 @@ if [ "$TARGET" == "osx" ] || [ "$TARGET" == "ios" ] || [ "$TARGET" == "tvos" ]; 
     CLANGXX=$(xcodebuild -find clang++)
     CLANG=$(xcodebuild -find clang)
     cat << EOF > $PWD/clang++.sh
-         $CCACHE $CLANGXX
+         $CCACHE $CLANGXX $@
 EOF
     cat << EOF2 > $PWD/clang.sh
-        $CCACHE $CLANG
+        $CCACHE $CLANG $@
 EOF2
 
     chmod 755 clang++.sh
