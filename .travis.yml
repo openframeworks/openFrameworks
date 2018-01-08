@@ -1,6 +1,7 @@
 language: c++
 compiler: gcc
 sudo: true
+cache: ccache
 env:
   global:
     secure: LBTN8d1hS7ocrqDwxLQqU0tfK3FMCXBI8q1yASEjtkp/v5HEyFkbj22H4jXZ20SkpCTlIG2L6i/fU3d6KzJUzTFuxkQEWsnjkj4jAhxGEWRsT1RV6VcUPQDGLHapXwTy+ZYgMNxE7aAdQaBskPHdVzAhjrzlTwVuKp6KjFn+kMU=
@@ -14,7 +15,6 @@ matrix:
     dist: trusty
     sudo: required
     env: TARGET="linux64"
-    cache: ccache
     addons:
       apt:
         sources:
@@ -46,7 +46,6 @@ matrix:
     sudo: required
     dist: trusty
     env: TARGET="linuxarmv6l"
-    cache: ccache
 
 
   - os: linux
@@ -54,7 +53,6 @@ matrix:
     env: TARGET="linuxarmv7l"
     cache:
       directories:
-        - ~/.ccache
         #- ~/rpi2_toolchain
         - ~/firmware-master
         #- ~/archlinux
@@ -63,7 +61,6 @@ matrix:
   - os: linux
     sudo: false
     env: TARGET="emscripten"
-    cache: ccache
     addons:
       apt:
         sources:
@@ -75,26 +72,21 @@ matrix:
     osx_image: xcode8
     compiler: clang
     env: TARGET="osx"
-    cache: ccache
 
   - os: osx
     osx_image: xcode8
     compiler: clang
     env: TARGET="osx" OPT="makefiles"
-    cache: ccache
 
   - os: osx
     osx_image: xcode8
     compiler: clang
     env: TARGET="ios"
-    cache: ccache
-
 
   - os: osx
     osx_image: xcode8
     compiler: clang
     env: TARGET="tvos"
-    cache: ccache
 
   - os: linux
     language: android
@@ -108,6 +100,7 @@ matrix:
     cache:
       directories:
         - ~/.gradle
+        - ~/.ccache
         - ~/android-ndk-r15c
 
 
