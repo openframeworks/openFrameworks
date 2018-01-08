@@ -23,7 +23,7 @@ OF_ROOT ?=  $(realpath ../../..)
 PLATFORM_VARIANT ?= default
 
 # ifeq ($(CC),$(EMSCRIPTEN)/emcc)
-ifeq ($(findstring emcc, $(CC)),)
+ifeq ($(findstring emcc, $(CC)),emcc)
 	PLATFORM_OS=emscripten
 endif
 PLATFORM_OS ?= $(shell uname -s)

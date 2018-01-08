@@ -316,8 +316,10 @@ Module{
                     var addonsmake = new TextFile(sourceDirectory + "/addons.make");
                     while(!addonsmake.atEof()){
                         var line = addonsmake.readLine().trim();
-                        allAddons.push(line);
-                        var addonPath = ofRoot + '/addons/' + line;
+                        if(line){
+                            allAddons.push(line);
+//                            var addonPath = ofRoot + '/addons/' + line;
+                        }
                     }
                 }catch(e){}
             }else{
