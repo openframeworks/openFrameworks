@@ -7,18 +7,18 @@ if [ "$TARGET" == "osx" ] || [ "$TARGET" == "ios" ] || [ "$TARGET" == "tvos" ]; 
     CCACHE=$(which ccache)
     CLANGXX=$(xcodebuild -find clang++)
     CLANG=$(xcodebuild -find clang)
-    cat >$PWD/clang++ <<< EOF
+    cat << EOF > $PWD/clang++.sh
          $CCACHE $CLANGXX
 EOF
-    cat >$PWD/clang <<< EOF2
+    cat << EOF2 > $PWD/clang.sh
         $CCACHE $CLANG
 EOF2
 
-    chmod 755 clang++
-    chmod 755 clang
+    chmod 755 clang++.sh
+    chmod 755 clang.sh
 
-    export CXX="$PWD/clang++"
-    export CC="$PWD/clang"
+    export CXX="$PWD/clang++.sh"
+    export CC="$PWD/clang.sh"
 else
 	export PATH="/usr/lib/ccache:$PATH"
 fi
