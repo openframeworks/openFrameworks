@@ -3,7 +3,7 @@ set -ev
 ROOT=$(cd $(dirname $0); pwd -P)
 OF_ROOT=$(cd $ROOT/../../..; pwd -P)
 PROJECTS=$OF_ROOT/libs/openFrameworksCompiled/project
-source $OF_ROOT/scripts/ci/ccache.sh
+# source $OF_ROOT/scripts/ci/ccache.sh
 export GCC_PREFIX=arm-unknown-linux-gnueabihf
 export TOOLCHAIN_PREFIX=arm-unknown-linux-gnueabihf
 export GST_VERSION=1.0
