@@ -32,7 +32,11 @@ createArchImg(){
 		    tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C archlinux/ 2> /dev/null
 			sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g archlinux/etc/pacman.conf
 			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -Syu
-			echo "installing with ccache"
+			echo
+			echo
+			echo
+			echo "installing ccache"
+			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -S ccache
 			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -S \
 				make \
 				pkg-config \
@@ -56,9 +60,10 @@ createArchImg(){
 				glfw-x11 \
 				uriparser \
 				curl \
-				pugixml \
-				ccache
+				pugixml
         	touch ~/archlinux/timestamp
+			echo checking ccache installed
+			which ccache
 EOF
     else
         echo "Using cached archlinux image"
