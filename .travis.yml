@@ -1,7 +1,6 @@
 language: c++
 compiler: gcc
 sudo: true
-cache: ccache
 env:
   global:
     secure: LBTN8d1hS7ocrqDwxLQqU0tfK3FMCXBI8q1yASEjtkp/v5HEyFkbj22H4jXZ20SkpCTlIG2L6i/fU3d6KzJUzTFuxkQEWsnjkj4jAhxGEWRsT1RV6VcUPQDGLHapXwTy+ZYgMNxE7aAdQaBskPHdVzAhjrzlTwVuKp6KjFn+kMU=
@@ -53,6 +52,7 @@ matrix:
     env: TARGET="linuxarmv7l"
     cache:
       directories:
+        - ~/.ccache
         #- ~/rpi2_toolchain
         - ~/firmware-master
         #- ~/archlinux
@@ -71,7 +71,7 @@ matrix:
   - os: osx
     osx_image: xcode8
     compiler: clang
-    env: TARGET="osx" OPT="xcode"
+    env: TARGET="osx"
 
   - os: osx
     osx_image: xcode8
@@ -100,6 +100,7 @@ matrix:
         - android-19
     cache:
       directories:
+        - ~/.ccache
         - ~/android-ndk-r15c
 
 
@@ -126,18 +127,16 @@ install:
 
 
 script:
-  - if [ "$TARGET" = "osx" ] && [ $OPT = "makefiles" ]; then
+  - if [ "$TARGET" == "osx" ] && [ $OPT == "makefiles" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     else
       scripts/ci/$TARGET/build.sh $OPT;
     fi
-  - if [ "$TARGET" = "linux64" ]; then
+  - if [ "$TARGET" == "linux64" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     fi
-  - if [ "$TARGET" != "osx" ] || [ "$OPT" != "makefiles" ]; then
+  - if [ "$TARGET" != "osx" ] || [ $OPT != "makefiles" ]; then
       scripts/ci/upload_of_lib.sh;
-    else
-      echo "OSX makefiles, not uploading libraries";
     fi
 
 git:
