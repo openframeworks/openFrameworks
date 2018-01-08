@@ -22,7 +22,8 @@ SHELL ?= /bin/sh
 OF_ROOT ?=  $(realpath ../../..)
 PLATFORM_VARIANT ?= default
 
-ifeq ($(CC),$(EMSCRIPTEN)/emcc)
+# ifeq ($(CC),$(EMSCRIPTEN)/emcc)
+ifeq ($(findstring emcc, $(CC)),)
 	PLATFORM_OS=emscripten
 endif
 PLATFORM_OS ?= $(shell uname -s)
@@ -263,7 +264,7 @@ OF_CORE_HEADER_PATHS = $(OF_LIBS_OPENFRAMEWORKS_PATH) $(OF_CORE_SOURCE_PATHS)
 
 # add folders or single files to exclude fromt he compiled lib
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_THIRDPARTY_HEADER_PATHS = $(shell $(FIND) $(OF_LIBS_PATH)/*/include -type d | grep -v "/\.[^\.]")
+ALL_OF_CORE_THIRDPARTY_HEADER_PATHS = $(shell $(FIND) $(OF_LIBS_PATH)/*/include -maxdepth 0 -mindepth 0 -type d | grep -v "/\.[^\.]")
 
 # filter out all excluded files / folders that were defined above
 OF_CORE_THIRDPARTY_HEADER_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_HEADER_PATHS))
@@ -353,5 +354,3 @@ ifdef MAKEFILE_DEBUG
 	$(info ---PLATFORM_CORE_EXCLUSIONS---)
 	$(foreach v, $(PLATFORM_CORE_EXCLUSIONS),$(info $(v)))
 endif
-
-

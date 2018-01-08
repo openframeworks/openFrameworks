@@ -11,6 +11,7 @@ gradle wrapper --gradle-version 3.3
 #~/projectGenerator/projectGenerator_linux -p"android" -o"$ROOT" $ROOT/examples/android/androidImageExample
 
 echo "ANDROID_NDK_HOME: $ANDROID_NDK_HOME"
-./gradlew --build-cache -b $ROOT/examples/android/androidEmptyExample/build.gradle compileArm7DebugSources
+echo org.gradle.caching=true > $ROOT/examples/android/androidEmptyExample/gradle.properties
+./gradlew -b $ROOT/examples/android/androidEmptyExample/build.gradle compileArm7DebugSources
 #./gradlew -b $ROOT/examples/android/androidOpenCVExample/build.gradle compileArm7DebugSources
 #./gradlew -b $ROOT/examples/android/androidImageExample/build.gradle compileArm7DebugSources
