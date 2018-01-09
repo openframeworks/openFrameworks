@@ -153,6 +153,7 @@ EOF
 }
 
 echo $ROOT
+sudo su -c 'echo 1> /proc/sys/kernel/unprivileged_userns_clone'
 installJunest
 createArchImg
 downloadToolchain
