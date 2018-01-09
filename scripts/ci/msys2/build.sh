@@ -1,6 +1,7 @@
 #!/bin/bash
 set -ev
 ROOT="$PWD"
+source $ROOT/scripts/ci/ccache.sh
 
 echo "**** Building OF core ****"
 cd $ROOT/libs/openFrameworksCompiled/project
