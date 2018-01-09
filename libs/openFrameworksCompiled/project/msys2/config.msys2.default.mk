@@ -34,8 +34,8 @@ PLATFORM_CFLAGS += -std=gnu++14 -DUNICODE -D_UNICODE
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER
 PLATFORM_LDFLAGS += -lpthread
 #ifeq ($(PLATFORM_ARCH),x86_64)
-CC = $(MSYS2_ROOT)/bin/gcc
-CXX = $(MSYS2_ROOT)/bin/g++
+PLATFORM_CC = $(MSYS2_ROOT)/bin/gcc
+PLATFORM_CXX = $(MSYS2_ROOT)/bin/g++
 FIND = /usr/bin/find
 PLATFORM_AR = $(MSYS2_ROOT)/bin/ar
 PLATFORM_LD = $(MSYS2_ROOT)/bin/ld
