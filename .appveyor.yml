@@ -69,5 +69,5 @@ test_script:
     }
 
 after_test:
-  - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "ls $HOME/.ccache"
+  # - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "ls $HOME/.ccache"
   - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "ccache -s"
