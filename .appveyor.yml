@@ -35,7 +35,7 @@ init:
 - IF "%BUILDER%"=="VS" set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
 
 cache:
-    - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\home\appveyor")
+    - '%MSYS2_PATH%\home\appveyor\.ccache'
 
 install:
 #- ps: |
