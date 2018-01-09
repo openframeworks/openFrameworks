@@ -18,6 +18,3 @@ cd ~/
 git clone https://github.com/urho3d/emscripten-sdk
 cd emscripten-sdk
 ./emsdk activate latest
-
-wget http://mirrors.kernel.org/ubuntu/pool/main/c/ccache/ccache_3.3.4-1_amd64.deb
-sudo dpkg -i ccache_3.3.4-1_amd64.deb

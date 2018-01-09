@@ -129,6 +129,10 @@ install:
 
 
 script:
+  - if [ "$TARGET" = "emscripten" ]; then
+      wget http://mirrors.kernel.org/ubuntu/pool/main/c/ccache/ccache_3.3.4-1_amd64.deb;
+      sudo dpkg -i ccache_3.3.4-1_amd64.deb;
+    fi
   - if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     else
