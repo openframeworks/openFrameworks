@@ -19,7 +19,7 @@ EOF2
 
     export CXX="$PWD/clang++.sh"
     export CC="$PWD/clang.sh"
-elif [ "$TARGET" == "msys2" ]; then
+elif [ "$BUILDER" == "msys2" ]; then
     export CC="ccache /mingw32/bin/gcc"
     export CXX="ccache /mingw32/bin/g++"
 else
