@@ -17,3 +17,5 @@ cp scripts/templates/linux64/Makefile examples/templates/allAddonsExample/
 cp scripts/templates/linux64/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
 make -j4 Debug
+
+ccache -s
