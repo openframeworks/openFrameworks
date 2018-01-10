@@ -10,9 +10,9 @@ source ~/emscripten-sdk/emsdk_env.sh
 # source $ROOT/scripts/ci/ccache.sh
 
 echo "*** Testing cache ***"
-ls -l $TRAVIS_BUILD_DIR/libs/openFrameworksComplied/obj/Debug/libs/openFrameworks/3d/ofCamera.o
-ls -l $TRAVIS_BUILD_DIR/libs/openFrameworksComplied/obj/Debug/libs/openFrameworks/3d/ofCamera.d
-ls -l $TRAVIS_BUILD_DIR/libs/openFrameworks/3d/ofCamera.cpp
+ls -l ${ROOT}/libs/openFrameworksComplied/obj/Debug/libs/openFrameworks/3d/ofCamera.o
+ls -l ${ROOT}/libs/openFrameworksComplied/obj/Debug/libs/openFrameworks/3d/ofCamera.d
+ls -l ${ROOT}/libs/openFrameworks/3d/ofCamera.cpp
 
 echo "**** Building OF core ****"
 cd $ROOT
