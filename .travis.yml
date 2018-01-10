@@ -63,6 +63,11 @@ matrix:
   - os: linux
     sudo: false
     env: TARGET="emscripten"
+    cache:
+      directories:
+        - $TRAVIS_BUILD_DIR/libs/openFrameworksCompiled/lib/emscripten/obj
+        - $TRAVIS_BUILD_DIR/examples/template/emptyExample/obj
+        - $TRAVIS_BUILD_DIR/examples/template/allAddonsExample/obj
     addons:
       apt:
         sources:
@@ -130,10 +135,10 @@ install:
 
 script:
   - ccache -z
-  - if [ "$TARGET" = "emscripten" ]; then
-      wget http://mirrors.kernel.org/ubuntu/pool/main/c/ccache/ccache_3.3.4-1_amd64.deb;
-      sudo dpkg -i ccache_3.3.4-1_amd64.deb;
-    fi
+  # - if [ "$TARGET" = "emscripten" ]; then
+  #     wget http://mirrors.kernel.org/ubuntu/pool/main/c/ccache/ccache_3.3.4-1_amd64.deb;
+  #     sudo dpkg -i ccache_3.3.4-1_amd64.deb;
+  #   fi
   - if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     else
