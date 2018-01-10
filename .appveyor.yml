@@ -8,6 +8,7 @@ environment:
   #MSYS2 Building
     - platform: x86
       BUILDER: MSYS2
+      CCACHE_DIR: "%APPVEYOR_BUILD_FOLDER%\\.ccache"
 
   #VisualStudio Building
     - platform: x86
@@ -35,7 +36,7 @@ init:
 - IF "%BUILDER%"=="VS" set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
 
 cache:
-    - 'c:\msys64\home\appveyor\.ccache'
+    - .ccache
 
 install:
 #- ps: |
