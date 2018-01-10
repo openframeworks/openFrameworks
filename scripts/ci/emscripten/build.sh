@@ -12,13 +12,13 @@ source ~/emscripten-sdk/emsdk_env.sh
 echo "*** Testing cache ***"
 ls -d ${ROOT}
 ls -d ${ROOT}/libs
-ls -d ${ROOT}/libs/openFrameworksComplied
-ls -d ${ROOT}/libs/openFrameworksComplied/lib
-ls -d ${ROOT}/libs/openFrameworksComplied/lib/emscripten
-ls -d ${ROOT}/libs/openFrameworksComplied/lib/emscripten/obj
-ls -d ${ROOT}/libs/openFrameworksComplied/lib/emscripten/obj/Debug
-ls -l ${ROOT}/libs/openFrameworksComplied/lib/emscripten/obj/Debug/libs/openFrameworks/3d/ofCamera.o
-ls -l ${ROOT}/libs/openFrameworksComplied/lib/emscripten/obj/Debug/libs/openFrameworks/3d/ofCamera.d
+ls -d ${ROOT}/libs/openFrameworksCompiled
+ls -d ${ROOT}/libs/openFrameworksCompiled/lib
+ls -d ${ROOT}/libs/openFrameworksCompiled/lib/emscripten
+ls -d ${ROOT}/libs/openFrameworksCompiled/lib/emscripten/obj
+ls -d ${ROOT}/libs/openFrameworksCompiled/lib/emscripten/obj/Debug
+ls -l ${ROOT}/libs/openFrameworksCompiled/lib/emscripten/obj/Debug/libs/openFrameworks/3d/ofCamera.o
+ls -l ${ROOT}/libs/openFrameworksCompiled/lib/emscripten/obj/Debug/libs/openFrameworks/3d/ofCamera.d
 ls -l ${ROOT}/libs/openFrameworks/3d/ofCamera.cpp
 
 echo "**** Building OF core ****"
