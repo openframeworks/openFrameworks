@@ -61,13 +61,9 @@ matrix:
 
 
   - os: linux
-    sudo: false
+    sudo: required
+    dist: trusty
     env: TARGET="emscripten"
-    cache:
-      directories:
-        - $TRAVIS_BUILD_DIR/libs/openFrameworksCompiled/lib/emscripten/obj
-        - $TRAVIS_BUILD_DIR/examples/template/emptyExample/obj
-        - $TRAVIS_BUILD_DIR/examples/template/allAddonsExample/obj
     addons:
       apt:
         sources:
