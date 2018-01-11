@@ -15,11 +15,11 @@ cd $ROOT
 #echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/emscripten/config.emscripten.default.mk
 sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" libs/openFrameworksCompiled/project/emscripten/config.emscripten.default.mk
 cd libs/openFrameworksCompiled/project
-emmake make Debug USE_CCACHE=1
+emmake make Debug # USE_CCACHE=1
 
 echo "**** Building emptyExample ****"
 cd $ROOT/scripts/templates/linux64
-emmake make Debug USE_CCACHE=1
+emmake make Debug # USE_CCACHE=1
 
 echo "**** Building allAddonsExample ****"
 cd $ROOT
@@ -57,4 +57,4 @@ sed -i "s/ofxThreadedImageLoader .*;//" src/ofApp.h
 #sed -i "s/ofxXmlSettings .*;//" src/ofApp.h
 #sed -i "s/ofxCv.* .*;//" src/ofApp.h
 
-emmake make Debug USE_CCACHE=1
+emmake make Debug # USE_CCACHE=1
