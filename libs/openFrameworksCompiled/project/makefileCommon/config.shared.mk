@@ -354,4 +354,7 @@ ifdef MAKEFILE_DEBUG
 	$(foreach v, $(PLATFORM_CORE_EXCLUSIONS),$(info $(v)))
 endif
 
+ifdef RPI_ROOT
+	OF_CORE_INCLUDES_CFLAGS += $(addprefix -I,$(RPI_ROOT)/usr/include/arm-linux-gnueabihf)
+endif
 
