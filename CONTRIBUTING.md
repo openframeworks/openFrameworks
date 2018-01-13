@@ -1,6 +1,6 @@
 # Contribute to openFrameworks
 
-Thank you for contributing! openFrameworks is community-built, maintained and operated a project that welcomes contributions from all members of the openFrameworks community in its broadest sense. 
+Thank you for contributing! openFrameworks is a community-built, maintained and operated project that welcomes contributions from all members of the openFrameworks community in its broadest sense. 
 
 This document outlines the procedures and what to expect when contributing a bug report, a feature request, or new code via a pull request.
 If you want to contribute documentation have a look at the [ofSite git repository](https://github.com/openframeworks/ofSite). 
