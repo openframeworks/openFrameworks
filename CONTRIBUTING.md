@@ -43,7 +43,7 @@ We're simply a busy group of people, but you will hear back eventually.
 
 At the moment we don't have a formal roadmap for the project, rather we are a community of people who each contributes to sections that we feel are important for the project.
 Feature requests are therefore mostly a way of us discussing/feeling out together where we'd like the project to go. 
-This can sometimes involve a lot of discussions, as everyone uses openFrameworks differently.
+This can sometimes involves a lot of discussion, as everyone uses openFrameworks differently.
 
 Feature requests are created as Github Issues, just like bugs. 
 Feature requests are also where code that you or anyone else would like to include in a future pull request is **discussed before being implemented!**
