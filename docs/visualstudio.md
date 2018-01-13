@@ -33,14 +33,14 @@ clicking on it in Explorer, or selecting File>Open>Project/Solution... inside Vi
 Compile and Run
 ---------------
 Open your solution file `[project].sln`, and hit **F5**. This should compile and run your project. You should see a blank OpenGL window appear.  
-_If Visual Studio complains that your project cannot be started, try right clicking on your project in the 'Solution Explorer' and select 'Set as startup project' and then try F5 again._
+_If Visual Studio complains that your project cannot be started, try right-clicking on your project in the 'Solution Explorer' and select 'Set as startup project' and then try F5 again._
 
 The difference between Debug and Release mode
 ---------------------------------------------
 These are two build configurations, **"Debug"** and **"Release"**:
 
 * **Debug** is useful when developing your project, as it will _provide the most information_ about where and why something crashed.
-* **Release** is useful when you're done developing your project. Release will create a _smaller_, _faster_ app, but it _won't give you much information_ if it crashes.
+* **Release** is useful when you're done developing your project. The release will create a _smaller_, _faster_ app, but it _won't give you much information_ if it crashes.
 
 Change the world
 ----------------
