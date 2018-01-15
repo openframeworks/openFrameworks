@@ -15,7 +15,7 @@ trapError() {
 	exit 1
 }
 
-downloader() { if command -v curl 2>/dev/null; then curl -LO --retry 20 -O --progress $1 $2 $3; else wget $1 $2 $3; fi; }
+downloader() { if command -v wget 2>/dev/null; then wget $1 $2 $3; else curl -LO --retry 20 -O --progress $1 $2 $3; fi; }
 
 createArchImg(){
     #sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libasound2-dev
@@ -29,7 +29,7 @@ createArchImg(){
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
 		junest -u << EOF
 			cd ~
-			downloader() { if command -v curl 2>/dev/null; then curl -LO --retry 20 -O --progress $1 $2 $3; else wget $1 $2 $3; fi; }
+			downloader() { if command -v wget 2>/dev/null; then wget $1 $2 $3; else curl -LO --retry 20 -O --progress $1 $2 $3; fi; }
 			downloader http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
 			mkdir archlinux
 		    tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C archlinux/ 2> /dev/null
@@ -53,7 +53,7 @@ downloadToolchain(){
 		if [ -f x-tools7h.tar.xz ]; then
 			rm x-tools7h.tar.xz
 		fi
-		downloader() { if command -v curl 2>/dev/null; then curl -LO --retry 20 -O --progress $1 $2 $3; else wget $1 $2 $3; fi; }
+		downloader() { if command -v wget 2>/dev/null; then wget $1 $2 $3; else curl -LO --retry 20 -O --progress $1 $2 $3; fi; }
 		downloader http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
 	    tar -x --delay-directory-restore --no-same-owner -f x-tools7h.tar.xz -C ~/
 	    rm x-tools7h.tar.xz
