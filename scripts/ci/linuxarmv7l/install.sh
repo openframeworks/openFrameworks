@@ -61,6 +61,8 @@ trapError() {
 	exit 1
 }
 
+downloader() { if command -v wget 2>/dev/null; then wget $1 $2 $3; else curl -LO --retry 20 -O --progress $1 $2 $3; fi; }
+
 createArchImg(){
     #sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libasound2-dev
 
