@@ -144,6 +144,7 @@
     <ClInclude Include="..\..\..\openFrameworks\events\ofEvent.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofBufferObject.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofFbo.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofGLBaseTypes.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLRenderer.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofLight.h" />
@@ -157,6 +158,8 @@
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofBitmapFont.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofCairoRenderer.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphics.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphicsBaseTypes.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphicsConstants.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofImage.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofPath.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofPixels.h" />
@@ -165,6 +168,7 @@
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofTessellator.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofTrueTypeFont.h" />
     <ClInclude Include="..\..\..\openFrameworks\math\ofMath.h" />
+    <ClInclude Include="..\..\..\openFrameworks\math\ofMathConstants.h" />
     <ClInclude Include="..\..\..\openFrameworks\math\ofMatrix3x3.h" />
     <ClInclude Include="..\..\..\openFrameworks\math\ofMatrix4x4.h" />
     <ClInclude Include="..\..\..\openFrameworks\math\ofQuaternion.h" />
@@ -174,13 +178,11 @@
     <ClInclude Include="..\..\..\openFrameworks\math\ofVectorMath.h" />
     <ClInclude Include="..\..\..\openFrameworks\ofMain.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppRunner.h" />
-    <ClInclude Include="..\..\..\openFrameworks\sound\ofBaseSoundPlayer.h" />
-    <ClInclude Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.h" />
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundBaseTypes.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundStream.h" />
-    <ClInclude Include="..\..\..\openFrameworks\types\ofBaseTypes.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofParameter.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofParameterGroup.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofColor.h" />
@@ -203,6 +205,7 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofXml.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofDirectShowGrabber.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofDirectShowPlayer.h" />
+    <ClInclude Include="..\..\..\openFrameworks\video\ofVideoBaseTypes.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofVideoGrabber.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofVideoPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\communication\ofArduino.h" />
@@ -219,6 +222,7 @@
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGLFWWindow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppNoWindow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\app\ofBaseApp.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofMainLoop.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\events\ofEvents.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofBufferObject.cpp" />
@@ -236,6 +240,7 @@
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofBitmapFont.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofCairoRenderer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofGraphics.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofGraphicsBaseTypes.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofImage.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofPath.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofPixels.cpp" />
@@ -248,9 +253,9 @@
     <ClCompile Include="..\..\..\openFrameworks\math\ofQuaternion.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofVec2f.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofVec4f.cpp" />
-    <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundBaseTypes.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundBuffer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundStream.cpp" />

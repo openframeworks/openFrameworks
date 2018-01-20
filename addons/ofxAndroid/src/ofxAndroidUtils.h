@@ -12,6 +12,7 @@
 #include "ofEvent.h"
 
 
+
 enum ANDROID_PERMISSION{
     READ_CALENDAR = 0,
     WRITE_CALENDAR,
@@ -38,6 +39,9 @@ enum ANDROID_PERMISSION{
     READ_EXTERNAL_STORAGE,
     WRITE_EXTERNAL_STORAGE
 };
+
+enum ofOrientation: short;
+
 
 JavaVM * ofGetJavaVMPtr();
 JNIEnv * ofGetJNIEnv();

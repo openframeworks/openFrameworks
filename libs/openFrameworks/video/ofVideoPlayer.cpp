@@ -1,6 +1,8 @@
 #include "ofVideoPlayer.h"
 #include "ofUtils.h"
 #include "ofAppRunner.h"
+#include "ofGLUtils.h"
+#include "ofPixels.h"
 #include <algorithm>
 
 using namespace std;

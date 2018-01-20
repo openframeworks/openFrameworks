@@ -6,7 +6,6 @@
  */
 #pragma once
 #include "ofURLFileLoader.h"
-#include "ofBaseTypes.h"
 
 class ofxEmscriptenURLFileLoader: public ofBaseURLFileLoader {
 public:

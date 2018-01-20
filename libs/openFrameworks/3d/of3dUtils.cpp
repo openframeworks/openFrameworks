@@ -1,5 +1,6 @@
 #include "of3dUtils.h"
 #include "ofAppRunner.h"
+#include "ofGraphicsBaseTypes.h"
 
 //--------------------------------------------------------------
 void ofDrawAxis(float size) {

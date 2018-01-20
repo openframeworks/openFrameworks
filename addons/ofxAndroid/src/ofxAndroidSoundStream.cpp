@@ -11,6 +11,7 @@
 #include "ofUtils.h"
 #include "ofxAndroidUtils.h"
 #include "ofAppRunner.h"
+#include "ofLog.h"
 #include <deque>
 #include <set>
 #include <jni.h>

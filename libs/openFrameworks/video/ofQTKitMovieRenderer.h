@@ -15,11 +15,11 @@
 {
 	QTMovie * _movie;
 	QTVisualContextRef _visualContext;
-    
+
 	CVOpenGLTextureCacheRef _textureCache;
 	CVOpenGLTextureRef _latestTextureFrame;
 	CVPixelBufferRef _latestPixelFrame;
-    
+
 	NSSize movieSize;
 	QTTime movieDuration;
 	NSInteger frameCount;

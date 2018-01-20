@@ -23,6 +23,23 @@ matrix:
           - g++-4.9
           - gdb
 
+  # - os: linux
+  #   dist: trusty
+  #   sudo: required
+  #   env: TARGET="linux64" OPT="qbs"
+  #   cache:
+  #     directories:
+  #       - linuxbrew
+  #     timeout: 1800
+  #   addons:
+  #     apt:
+  #       sources:
+  #         - ubuntu-toolchain-r-test
+  #       packages:
+  #         - gcc-4.9
+  #         - g++-4.9
+  #         - gdb
+
 
   - os: linux
     sudo: required
@@ -53,7 +70,7 @@ matrix:
   - os: osx
     osx_image: xcode8
     compiler: clang
-    env: TARGET="osx"
+    env: TARGET="osx" OPT="xcode"
 
   - os: osx
     osx_image: xcode8
@@ -108,16 +125,18 @@ install:
 
 
 script:
-  - if [ "$TARGET" == "osx" ] && [ $OPT == "makefiles" ]; then
+  - if [ "$TARGET" = "osx" ] && [ $OPT = "makefiles" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     else
       scripts/ci/$TARGET/build.sh $OPT;
     fi
-  - if [ "$TARGET" == "linux64" ]; then
+  - if [ "$TARGET" = "linux64" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     fi
-  - if [ "$TARGET" != "osx" ] || [ $OPT != "makefiles" ]; then
+  - if [ "$TARGET" != "osx" ] || [ "$OPT" != "makefiles" ]; then
       scripts/ci/upload_of_lib.sh;
+    else
+      echo "OSX makefiles, not uploading libraries";
     fi
 
 git:

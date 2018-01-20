@@ -1,7 +1,14 @@
-#include "ofRectangle.h"
-#include "ofAppRunner.h"
+#ifndef OF_POLYLINE_H
 #include "ofPolyline.h"
+#endif
+
+#include "ofConstants.h"
+#include "ofRectangle.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofVectorMath.h"
+#include "ofAppRunner.h"
+#include "ofMath.h"
+#include "ofLog.h"
 
 //----------------------------------------------------------
 template<class T>

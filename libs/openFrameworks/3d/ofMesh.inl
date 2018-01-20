@@ -1,7 +1,12 @@
-#include "ofAppRunner.h"
-#include "ofBaseTypes.h"
+#ifndef OF_MESH_H
 #include "ofMesh.h"
+#endif
+
+#include "ofAppRunner.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofVectorMath.h"
+#include "ofMath.h"
+#include "ofLog.h"
 #include <map>
 
 //--------------------------------------------------------------

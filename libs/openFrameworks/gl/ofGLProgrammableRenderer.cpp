@@ -13,6 +13,7 @@
 #include "ofCamera.h"
 #include "ofTrueTypeFont.h"
 #include "ofNode.h"
+#include "ofVideoBaseTypes.h"
 
 using namespace std;
 
