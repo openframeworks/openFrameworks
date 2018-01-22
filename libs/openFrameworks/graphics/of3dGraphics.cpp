@@ -7,10 +7,6 @@
 //
 
 #include "of3dGraphics.h"
-#include "ofAppRunner.h"
-#include "ofVboMesh.h"
-#include <map>
-
 
 
 enum of3dPrimitiveType {

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "ofBaseTypes.h"
+#include "ofVideoBaseTypes.h"
 #include "ofPixels.h"
 #include "ofEvents.h"
 #include "ofTypes.h"

@@ -32,7 +32,35 @@ createArchImg(){
 		    tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C archlinux/ 2> /dev/null
 			sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g archlinux/etc/pacman.conf
 			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -Syu
-			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -S make pkg-config gcc raspberrypi-firmware openal glew freeglut freeimage freetype2 cairo poco gstreamer gst-plugins-base gst-plugins-good assimp boost libxcursor opencv assimp glfw-x11 uriparser curl pugixml
+			echo
+			echo
+			echo
+			echo "installing ccache"
+			pacman --noconfirm -S ccache
+			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -S \
+				make \
+				pkg-config \
+				gcc \
+				raspberrypi-firmware \
+				openal \
+				glew \
+				freeglut \
+				freeimage \
+				freetype2 \
+				cairo \
+				poco \
+				gstreamer \
+				gst-plugins-base \
+				gst-plugins-good \
+				assimp \
+				boost \
+				libxcursor \
+				opencv \
+				assimp \
+				glfw-x11 \
+				uriparser \
+				curl \
+				pugixml
         	touch ~/archlinux/timestamp
 EOF
     else
@@ -125,6 +153,7 @@ EOF
 }
 
 echo $ROOT
+sudo su -c 'echo 1 > /proc/sys/kernel/unprivileged_userns_clone'
 installJunest
 createArchImg
 downloadToolchain

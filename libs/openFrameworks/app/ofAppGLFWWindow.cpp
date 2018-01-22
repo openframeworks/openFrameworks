@@ -6,6 +6,11 @@
 #include "ofGLProgrammableRenderer.h"
 #include "ofAppRunner.h"
 #include "ofFileUtils.h"
+#include "ofEvents.h"
+#include "ofPixels.h"
+
+#define GLFW_INCLUDE_NONE
+#include "GLFW/glfw3.h"
 
 #ifdef TARGET_LINUX
 	#include "ofIcon.h"
@@ -36,7 +41,8 @@
 using namespace std;
 
 //-------------------------------------------------------
-ofAppGLFWWindow::ofAppGLFWWindow(){
+ofAppGLFWWindow::ofAppGLFWWindow()
+:coreEvents(new ofCoreEvents) {
 	bEnableSetupScreen	= true;
 	buttonInUse			= 0;
 	buttonPressed		= false;
@@ -375,7 +381,7 @@ void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 
 //--------------------------------------------
 ofCoreEvents & ofAppGLFWWindow::events(){
-	return coreEvents;
+	return *coreEvents;
 }
 
 //--------------------------------------------
@@ -395,6 +401,11 @@ void ofAppGLFWWindow::update(){
 			setFullscreen(true);
 		}
 	}
+}
+
+//--------------------------------------------
+void ofAppGLFWWindow::pollEvents(){
+	glfwPollEvents();
 }
 
 //--------------------------------------------

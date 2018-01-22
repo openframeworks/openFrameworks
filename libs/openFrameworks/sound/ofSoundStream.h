@@ -1,11 +1,10 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofBaseTypes.h"
 #include "ofBaseApp.h"
-#include "ofTypes.h"
-#include "ofBaseSoundStream.h"
+#include "ofSoundBaseTypes.h"
 #include <climits>
+#include <functional>
 
 
 class ofSoundStreamSettings;
@@ -189,38 +188,5 @@ protected:
 	std::shared_ptr<ofBaseSoundStream> soundStream;
 	int tmpDeviceId = -1;
 
-};
-
-class ofSoundStreamSettings {
-public:
-	virtual ~ofSoundStreamSettings() {}
-	size_t sampleRate = 44100;
-	size_t bufferSize = 256;
-	size_t numBuffers = 4;
-	size_t numInputChannels = 0;
-	size_t numOutputChannels = 0;
-	virtual bool setInDevice(const ofSoundDevice & device);
-	virtual bool setOutDevice(const ofSoundDevice & device);
-	virtual bool setApi(ofSoundDevice::Api api);
-	virtual const ofSoundDevice * getInDevice() const;
-	virtual const ofSoundDevice * getOutDevice() const;
-	virtual ofSoundDevice::Api getApi() const;
-
-	template<typename Listener>
-	void setInListener(Listener * inListener){
-		inCallback = std::bind(static_cast<void(Listener::*)(ofSoundBuffer &)>(&Listener::audioIn), inListener, std::placeholders::_1);
-	}
-
-	template<typename Listener>
-	void setOutListener(Listener * outListener){
-		outCallback = std::bind(static_cast<void(Listener::*)(ofSoundBuffer &)>(&Listener::audioOut), outListener, std::placeholders::_1);
-	}
-
-	std::function<void(ofSoundBuffer &)> inCallback;
-	std::function<void(ofSoundBuffer &)> outCallback;
-private:
-	ofSoundDevice inDevice;
-	ofSoundDevice outDevice;
-	ofSoundDevice::Api api = ofSoundDevice::Api::UNSPECIFIED;
 };
 

@@ -1,6 +1,7 @@
 #include "ofFileUtils.h"
 #include "ofUtils.h"
 #include "ofxUnitTests.h"
+#include "ofMath.h"
 
 class ofApp: public ofxUnitTestsApp{
 	void run(){

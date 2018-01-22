@@ -4,8 +4,9 @@
 #include "utf8.h"
 #include <bitset> // For ofToBinary.
 #include <chrono>
-
-#include "ofLog.h"
+#include <iomanip>  //for setprecision
+#include <algorithm>
+#include <sstream>
 
 
 /// \section Elapsed Time
@@ -428,7 +429,7 @@ std::string ofJoinString(const std::vector<std::string>& stringElements, const s
 void ofStringReplace(std::string& input, const std::string& searchStr, const std::string& replaceStr);
 
 /// \brief Check if string contains another string.
-/// 
+///
 /// Example:
 /// ~~~{.cpp}
 ///     std::string haystack = "foobar";
@@ -922,7 +923,7 @@ void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery=false);
 
 /// \brief Executes a system command. Similar to run a command in terminal.
 /// \note Will block until the executed program/command has finished.
-/// \returns the system command output as string. 
+/// \returns the system command output as string.
 std::string ofSystem(const std::string& command);
 
 /// \brief Get the target platform of the current system.

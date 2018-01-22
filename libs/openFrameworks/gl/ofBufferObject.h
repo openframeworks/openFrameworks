@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofTypes.h"
-#include "ofPixels.h"
+
+template<typename T>
+class ofPixels_;
 
 class ofBufferObject {
 public:

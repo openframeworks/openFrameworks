@@ -1,5 +1,6 @@
 
 #include "ofBitmapFont.h"
+#include "ofMesh.h"
 
 #ifdef TARGET_ANDROID
 #include "ofxAndroidUtils.h"

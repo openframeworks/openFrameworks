@@ -15,11 +15,8 @@
 #include <algorithm>
 #include <numeric>
 
-#include "ofUtils.h"
 #include "ofGraphics.h"
-#include "ofAppRunner.h"
 #include "utf8.h"
-#include "ofVectorMath.h"
 
 using namespace std;
 

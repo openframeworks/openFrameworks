@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofGstUtils.h"
-#include "ofTypes.h"
 
 
 struct ofGstFramerate{

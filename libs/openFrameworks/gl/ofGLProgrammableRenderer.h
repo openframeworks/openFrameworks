@@ -1,5 +1,5 @@
 #pragma once
-#include "ofBaseTypes.h"
+#include "ofGLBaseTypes.h"
 #include "ofPolyline.h"
 #include "ofShader.h"
 #include "ofMatrixStack.h"

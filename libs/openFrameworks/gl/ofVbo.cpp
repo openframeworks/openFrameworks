@@ -8,14 +8,14 @@
 #include "ofUtils.h"
 #include "ofVbo.h"
 #include "ofShader.h"
-#include "ofGLProgrammableRenderer.h"
+#include "ofGLUtils.h"
+#include "ofMesh.h"
+#include "ofGLBaseTypes.h"
 
 #ifdef TARGET_ANDROID
 #include "ofAppAndroidWindow.h"
 #endif
 
-#include <map>
-#include <set>
 
 bool ofVbo::vaoSupported=true;
 bool ofVbo::vaoChecked=false;

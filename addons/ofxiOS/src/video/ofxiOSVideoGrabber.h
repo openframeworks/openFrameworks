@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "ofBaseTypes.h"
+#include "ofVideoBaseTypes.h"
+#include "ofPixels.h"
 
 class AVFoundationVideoGrabber;
 
