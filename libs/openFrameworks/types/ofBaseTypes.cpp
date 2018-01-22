@@ -1,10 +1,15 @@
-#include "ofBaseTypes.h"
 #include "ofUtils.h"
 #include "ofGLUtils.h"
 #include "ofGLProgrammableRenderer.h"
 #include "of3dGraphics.h"
 #include "ofSoundBuffer.h"
 #include "ofMesh.h"
+#include "ofVideoPlayer.h"
+#include "ofSoundBaseTypes.h"
+#include "ofVideoBaseTypes.h"
+#include "ofGraphicsBaseTypes.h"
+
+using namespace std;
 
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){

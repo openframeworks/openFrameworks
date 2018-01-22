@@ -24,7 +24,7 @@ static NSString * const kRateKey = @"rate";
 @synthesize assetReader = _assetReader;
 @synthesize assetReaderVideoTrackOutput = _assetReaderVideoTrackOutput;
 @synthesize assetReaderAudioTrackOutput = _assetReaderAudioTrackOutput;
-#if USE_VIDEO_OUTPUT
+#if defined(USE_VIDEO_OUTPUT)
 @synthesize videoOutput = _videoOutput;
 #endif
 
@@ -43,7 +43,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		asyncLock = [[NSLock alloc] init];
 		deallocCond = nil;
 		
-#if USE_VIDEO_OUTPUT
+#if defined(USE_VIDEO_OUTPUT)
 		// create videooutput
 		_videoOutput = nil;
 		_videoInfo = nil;
@@ -90,7 +90,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	return self;
 }
 
-#if USE_VIDEO_OUTPUT
+#if defined(USE_VIDEO_OUTPUT)
 - (void)createVideoOutput
 {
 #ifdef TARGET_IOS
@@ -328,7 +328,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 									 object:self.playerItem];
 #endif
 			
-#if USE_VIDEO_OUTPUT
+#if defined(USE_VIDEO_OUTPUT)
 			// safety
 			if (self.videoOutput == nil) {
 				[self createVideoOutput];
@@ -418,7 +418,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	__block CMSampleBufferRef currentVideoSampleBuffer = videoSampleBuffer;
 	__block CMSampleBufferRef currentAudioSampleBuffer = audioSampleBuffer;
 	
-#if USE_VIDEO_OUTPUT
+#if defined(USE_VIDEO_OUTPUT)
 	__block AVPlayerItemVideoOutput* currentVideoOutput = _videoOutput;
 	__block CMVideoFormatDescriptionRef currentVideoInfo = _videoInfo;
 	
@@ -501,7 +501,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 											object:currentItem];
 #endif
 				
-#if USE_VIDEO_OUTPUT
+#if defined(USE_VIDEO_OUTPUT)
 				// remove output
 				[currentItem removeOutput:currentVideoOutput];
 				
@@ -826,7 +826,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 	
 
-#if !USE_VIDEO_OUTPUT
+#if !defined(USE_VIDEO_OUTPUT)
 	[self updateFromAssetReader];
 #else
 	// get new sample
@@ -845,7 +845,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 #endif
 }
 
-#if USE_VIDEO_OUTPUT
+#if defined(USE_VIDEO_OUTPUT)
 - (void)updateFromVideoOutput {
 	OSStatus err = noErr;
 	
@@ -1137,7 +1137,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		return;
 	}
 	
-#if USE_VIDEO_OUTPUT
+#if defined(USE_VIDEO_OUTPUT)
 	[_player.currentItem stepByCount:frames];
 #else
 	if (frames < 0) {
@@ -1382,7 +1382,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 	if (!bWasPlayingBackwards && value < 0.0) {
 		
-#if !USE_VIDEO_OUTPUT
+#if !defined(USE_VIDEO_OUTPUT)
 		// not supported
 		NSLog(@"ERROR: Backwards playback is not supported. Minimum requirement is OSX 10.8 or iOS 6.0");
 		value = 0.0;

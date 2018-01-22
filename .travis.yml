@@ -23,6 +23,23 @@ matrix:
           - g++-4.9
           - gdb
 
+  # - os: linux
+  #   dist: trusty
+  #   sudo: required
+  #   env: TARGET="linux64" OPT="qbs"
+  #   cache:
+  #     directories:
+  #       - linuxbrew
+  #     timeout: 1800
+  #   addons:
+  #     apt:
+  #       sources:
+  #         - ubuntu-toolchain-r-test
+  #       packages:
+  #         - gcc-4.9
+  #         - g++-4.9
+  #         - gdb
+
 
   - os: linux
     sudo: required
@@ -35,9 +52,9 @@ matrix:
     env: TARGET="linuxarmv7l"
     cache:
       directories:
-        - ~/rpi2_toolchain
+        #- ~/rpi2_toolchain
         - ~/firmware-master
-        - ~/archlinux
+        #- ~/archlinux
 
 
   - os: linux
@@ -53,8 +70,12 @@ matrix:
   - os: osx
     osx_image: xcode8
     compiler: clang
-    env: TARGET="osx"
+    env: TARGET="osx" OPT="xcode"
 
+  - os: osx
+    osx_image: xcode8
+    compiler: clang
+    env: TARGET="osx" OPT="makefiles"
 
   - os: osx
     osx_image: xcode8
@@ -67,21 +88,18 @@ matrix:
     compiler: clang
     env: TARGET="tvos"
 
-
   - os: linux
-    sudo: false
-    env: TARGET="android" OPT="armv7"
+    language: android
+    dist: trusty
+    sudo: required
+    env: TARGET="android" NDK_DIR="android-ndk-r15c"
+    android:
+      components:
+        - build-tools-25.0.2
+        - android-19
     cache:
       directories:
-        - ~/android-ndk-r12b
-
-
-  - os: linux
-    sudo: false
-    env: TARGET="android" OPT="x86"
-    cache:
-      directories:
-        - ~/android-ndk-r12b
+        - ~/android-ndk-r15c
 
 
   # Exclude the default build that would otherwise be generated
@@ -107,11 +125,19 @@ install:
 
 
 script:
-  - scripts/ci/$TARGET/build.sh $OPT
-  - if [ "$TARGET" == "osx" ] || [ "$TARGET" == "linux64" ]; then
+  - if [ "$TARGET" = "osx" ] && [ $OPT = "makefiles" ]; then
+      scripts/ci/$TARGET/run_tests.sh;
+    else
+      scripts/ci/$TARGET/build.sh $OPT;
+    fi
+  - if [ "$TARGET" = "linux64" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     fi
-  - scripts/ci/upload_of_lib.sh
+  - if [ "$TARGET" != "osx" ] || [ "$OPT" != "makefiles" ]; then
+      scripts/ci/upload_of_lib.sh;
+    else
+      echo "OSX makefiles, not uploading libraries";
+    fi
 
 git:
   depth: 10

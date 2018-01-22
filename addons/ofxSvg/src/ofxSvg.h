@@ -14,7 +14,7 @@ class ofxSVG {
 		float getHeight() const {
 			return height;
 		}
-		void load(string path);
+		void load(std::string path);
 		void draw();
 
 		int getNumPath(){
@@ -24,13 +24,13 @@ class ofxSVG {
 			return paths[n];
 		}
 
-		const vector <ofPath> & getPaths() const;
+		const std::vector <ofPath> & getPaths() const;
 
 	private:
 
 		float width, height;
 
-		vector <ofPath> paths;
+		std::vector <ofPath> paths;
 
 		void setupDiagram(struct svgtiny_diagram * diagram);
 		void setupShape(struct svgtiny_shape * shape, ofPath & path);

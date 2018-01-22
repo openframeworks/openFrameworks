@@ -21,19 +21,29 @@ Module{
         if(qbs.targetOS.contains("android")){
             return "android";
         }else if(qbs.targetOS.contains("linux")){
-            if(qbs.architecture==="x86_64"){
+            // For now, we hard-code linux64 as our architecture of choice, since
+            // qbs doesn't appear to set the architecture property autimatically
+            // anymore starting with qt 4.4.
+            //
+            // If you wanted to compile for 386, uncomment these lines, and
+            // add this property in Build Settings: "qbs.architecture:x86"
+            //
+//            if(qbs.architecture==="x86_64"){
                 return "linux64";
-            }else if(qbs.architecture==="x86"){
-                return "linux";
-            }else{
-                throw(qbs.architecture + " not supported yet on " + qbs.targetOS);
-            }
+//            }else if(qbs.architecture==="x86"){
+//                return "linux";
+//            }else{
+//                throw("qbs error: Target architecture: '" + qbs.architecture + "' not supported yet on target OS: '" + qbs.targetOS + "'" +
+//                      "Check if the project's build settings ");
+//            }
         }else if(qbs.targetOS.contains("windows")){
             return "msys2";
         }else if(qbs.targetOS.contains("osx")){
             return "osx";
+        }else if(qbs.targetOS.contains("macos")){
+            return "osx";
         }else{
-            throw(qbs.targetOS + " not supported yet");
+            throw("Target architecture: '" + qbs.targetOS + "' not supported yet");
         }
     }
 
@@ -54,6 +64,13 @@ Module{
         property stringList system_libs
         property stringList static_libs
         configure: {
+            includes = [];
+            cflags = [];
+            ldflags = [];
+            system_libs = [];
+            static_libs = [];
+
+            // pkgconfig packages
             var configs = [];
             if(platform === "linux"  || platform === "linux64"){
                 var pkgs = [
@@ -109,6 +126,7 @@ Module{
                 configs = pkgs;
             }
 
+            // library exceptions
             var libsexceptions = [];
             if(platform === "linux"  || platform === "linux64"){
                 libsexceptions = [
@@ -156,6 +174,7 @@ Module{
                 ];
             }
 
+            // parse include search paths from core libraries
             var coreincludes = Helpers.listDirsRecursive(ofRoot + "/libs/openFrameworks");
             var corelibs = Helpers.listDir(ofRoot + '/libs/');
             for(var lib in corelibs){
@@ -166,19 +185,23 @@ Module{
                     coreincludes = coreincludes.concat(include_paths);
                 }
             }
+            includes = coreincludes;
 
+            // add search paths from pkgconfigs;
             if(platform === "linux"  || platform === "linux64" || platform === "msys2"){
-                includes = coreincludes.concat(Helpers.pkgconfig(configs, ["--cflags-only-I"]).map(function(element){
+                includes = includes.concat(Helpers.pkgconfig(configs, ["--cflags-only-I"]).map(function(element){
                     return element.substr(2).trim()
                 }));
             }
 
+            // cflags from pkgconfigs
             if(platform === "linux"  || platform === "linux64" || platform === "msys2"){
                 cflags = Helpers.pkgconfig(configs, ["--cflags-only-other"]);
             }else{
                 cflags = [];
             }
 
+            // ldflags from pkgconfigs
             if(platform === "linux"  || platform === "linux64" || platform === "msys2"){
                 ldflags = Helpers.pkgconfig(configs, ["--libs-only-L"]);
                 if(platform === "msys2"){
@@ -189,6 +212,7 @@ Module{
                 ldflags = [];
             }
 
+            // libraries from pkgconfigs
             if(platform === "linux"  || platform === "linux64" || platform === "msys2"){
                 var pkgconfiglibs = Helpers.pkgconfig(configs, ["--libs-only-l"]);
                 system_libs = pkgconfiglibs.map(function(lib){
@@ -198,6 +222,7 @@ Module{
                 system_libs = [];
             }
 
+            // add static libraries from core directories
             static_libs = Helpers.findLibsRecursive(ofRoot + "/libs", platform, libsexceptions);
 
             found = true;
@@ -206,6 +231,7 @@ Module{
 
     Probe {
         id: ADDITIONAL_LIBS
+        property bool useStdFs: project.useStdFs
         property stringList libs
         configure: {
             if(platform === "linux"  || platform === "linux64"){
@@ -220,14 +246,21 @@ Module{
                     "dl",
                     "pthread",
                     "freeimage",
-                    "boost_filesystem",
-                    "boost_system",
                     "pugixml",
                 ];
 
                 if(!Helpers.pkgExists("rtaudio")){
                     libslist.push("rtaudio");
                 }
+
+                if(useStdFs && cpp.compilerName=='gcc' && cpp.compilerVersionMajor>=6){
+                    libslist.push('stdc++fs');
+                }else{
+                    libslist.push("boost_filesystem");
+                    libslist.push("boost_system");
+                }
+//                libslist.push("boost_filesystem");
+//                libslist.push("boost_system");
 
                 libs = libslist;
             }else if(platform === "msys2"){
@@ -258,6 +291,7 @@ Module{
         property stringList frameworks
         property stringList cflags
         property stringList ldflags
+        property stringList defines;
 
         configure: {
             includes = [];
@@ -267,6 +301,7 @@ Module{
             frameworks = [];
             cflags = [];
             ldflags = [];
+            defines = [];
 
             if(isCoreLibrary){
                 found = false;
@@ -458,6 +493,12 @@ Module{
                 pkgconfigs = pkgconfigs.concat(Helpers.parseAddonConfig(addonPath, "ADDON_PKG_CONFIG_LIBRARIES", [], platform))
             }
 
+            // addon defines
+            for(var addon in allAddons){
+                var addonPath = allAddons[addon];
+                defines = defines.concat(Helpers.parseAddonConfig(addonPath, "ADDON_DEFINES", [], platform))
+            }
+
             // pkg includes
             includes = includes.concat(Helpers.pkgconfig(pkgconfigs, ["--cflags-only-I"]).map(function(element){
                 return element.substr(2).trim()
@@ -486,18 +527,27 @@ Module{
         property stringList ADDONS_SOURCES: ADDONS.sources
     }
 
+    Properties{
+        condition: !of.isCoreLibrary
+        property stringList ADDONS_DEFINES: ADDONS.defines
+    }
+
     Probe{
         id: DEFINES_LINUX
         property stringList list
+        property bool useStdFs: project.useStdFs
         configure:{
             list = ['GCC_HAS_REGEX'];
             if(Helpers.pkgExists("gtk+-3.0")){
-                list.push("OF_USING_GTK")
+                list.push("OF_USING_GTK=1")
             }
             if(Helpers.pkgExists("libmpg123")){
-                list.push("OF_USING_MPG123");
+                list.push("OF_USING_MPG123=1");
             }
-            found = true
+            if(useStdFs && cpp.compilerName=='gcc' && cpp.compilerVersionMajor>=6){
+                list.push('OF_USING_STD_FS=1');
+            }
+            found = true;
         }
     }
     Properties{
@@ -595,6 +645,8 @@ Module{
                 'IOKit',
                 'OpenGL',
                 'QuartzCore',
+                'Security',
+                'LDAP',
             ].concat(frameworks);
 
             if(of.isCoreLibrary){
@@ -668,6 +720,8 @@ Module{
     property stringList linkerFlags: []
     property stringList defines: []
     property stringList frameworks: []
+    property stringList staticLibraries: []
+    property stringList dynamicLibraries: []
     property stringList addons
 
     coreIncludePaths: {

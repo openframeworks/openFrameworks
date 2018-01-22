@@ -1,6 +1,6 @@
 #include "ofSerial.h"
 #include "ofUtils.h"
-#include "ofTypes.h"
+#include "ofLog.h"
 
 #if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	#include <sys/ioctl.h>
@@ -13,6 +13,9 @@
 #include <errno.h>
 #include <ctype.h>
 #include <algorithm>
+#include <cstring>
+
+using namespace std;
 
 #ifdef TARGET_LINUX
 	#include <linux/serial.h>
@@ -138,11 +141,13 @@ ofSerial::~ofSerial(){
 }
 
 //----------------------------------------------------------------
+#if defined( TARGET_OSX )
 static bool isDeviceArduino( ofSerialDeviceInfo & A ){
 	//TODO - this should be ofStringInString
 	return (strstr(A.getDeviceName().c_str(), "usbserial") != nullptr
 			|| strstr(A.getDeviceName().c_str(), "usbmodem") != nullptr);
 }
+#endif
 
 //----------------------------------------------------------------
 void ofSerial::buildDeviceList(){
@@ -194,7 +199,7 @@ void ofSerial::buildDeviceList(){
 		ofLogNotice("ofSerial") << "found " << nPorts << " devices";
 		for(int i = 0; i < nPorts; i++){
 			//NOTE: we give the short port name for both as that is what the user should pass and the short name is more friendly
-			devices.push_back(ofSerialDeviceInfo(string(portNamesShort[i]), string(portNamesShort[i]), i));
+			devices.push_back(ofSerialDeviceInfo(string(portNamesShort[i]), string(portNamesFriendly[i]), i));
 		}
 
 	#endif
@@ -216,6 +221,7 @@ void ofSerial::buildDeviceList(){
 //----------------------------------------------------------------
 void ofSerial::listDevices(){
 	buildDeviceList();
+
 	for(auto & device: devices){
 		ofLogNotice("ofSerial") << "[" << device.getDeviceID() << "] = "<< device.getDeviceName().c_str();
 	}

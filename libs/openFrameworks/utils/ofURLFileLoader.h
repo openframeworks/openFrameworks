@@ -1,7 +1,9 @@
 #pragma once
+#include "ofConstants.h"
 #include "ofEvents.h"
 #include "ofFileUtils.h"
-#include "ofTypes.h"
+#include <map>
+
 class ofHttpResponse;
 
 /// \class ofHttpRequest
@@ -9,20 +11,20 @@ class ofHttpResponse;
 class ofHttpRequest{
 public:
 	ofHttpRequest();
-	ofHttpRequest(const string& url, const string& name,bool saveTo=false);
+	ofHttpRequest(const std::string& url, const std::string& name,bool saveTo=false);
 
-	string				url; //< request url
-	string				name; //< optional name key for sorting
+	std::string				url; //< request url
+	std::string				name; //< optional name key for sorting
 	bool				saveTo; //< save to a file once the request is finised?
-	map<string,string>	headers; //< HTTP header keys & values
-	string				body; //< POST body data
-	string				contentType; //< POST data mime type
+	std::map<std::string,std::string>	headers; //< HTTP header keys & values
+	std::string				body; //< POST body data
+	std::string				contentType; //< POST data mime type
 	std::function<void(const ofHttpResponse&)> done;
     size_t              timeoutSeconds = 0;
 
 	/// \return the unique id for this request
 	int getId() const;
-	OF_DEPRECATED_MSG("Use ofGetId().", int getID());
+	OF_DEPRECATED_MSG("Use getId().", int getID());
 
 	/// HTTP request type
 	enum Method{
@@ -40,36 +42,36 @@ private:
 class ofHttpResponse{
 public:
 	ofHttpResponse();
-	ofHttpResponse(const ofHttpRequest& request, const ofBuffer& data, int status, const string& error);
-	ofHttpResponse(const ofHttpRequest& request, int status, const string& error);
+	ofHttpResponse(const ofHttpRequest& request, const ofBuffer& data, int status, const std::string& error);
+	ofHttpResponse(const ofHttpRequest& request, int status, const std::string& error);
 
 	operator ofBuffer&();
 
 	ofHttpRequest	    request; //< matching HTTP request for this response
 	ofBuffer		    data; //< response raw data
 	int					status; //< HTTP response status (200: OK, 404: Not Found, etc)
-	string				error; //< HTTP error string, if any (OK, Not Found, etc)
+	std::string				error; //< HTTP error string, if any (OK, Not Found, etc)
 };
 
 /// \brief make an HTTP GET request
 /// blocks until a response is returned or the request times out
 /// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 /// \returns HTTP response
-ofHttpResponse ofLoadURL(const string& url);
+ofHttpResponse ofLoadURL(const std::string& url);
 
 /// \brief make an asynchronous HTTP GET request
 /// will not block, placed in a queue and run using a background thread
 /// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 /// \param name optional key to use when sorting requests
 /// \return unique id for the active HTTP request
-int ofLoadURLAsync(const string& url, const string& name=""); // returns id
+int ofLoadURLAsync(const std::string& url, const std::string& name=""); // returns id
 
 /// \brief make an HTTP GET request and save the response data to a file
 /// blocks until a response is returned or the request times out
 /// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 /// \param path file path to save to
 /// \return HTTP response on success or failure
-ofHttpResponse ofSaveURLTo(const string& url, const std::filesystem::path& path);
+ofHttpResponse ofSaveURLTo(const std::string& url, const std::filesystem::path& path);
 
 /// make an asynchronous HTTP request for a url and save the response to a file at path
 /// \returns unique request id for the active HTTP request
@@ -79,7 +81,7 @@ ofHttpResponse ofSaveURLTo(const string& url, const std::filesystem::path& path)
 /// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 /// \param path file path to save to
 /// \returns unique id for the active HTTP request
-int ofSaveURLAsync(const string& url, const std::filesystem::path& path);
+int ofSaveURLAsync(const std::string& url, const std::filesystem::path& path);
 
 /// \brief remove an active HTTP request from the queue
 /// \param unique HTTP request id
@@ -116,28 +118,28 @@ class ofURLFileLoader  {
 		/// blocks until a response is returned or the request times out
 		/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 		/// \return HTTP response on success or failure
-		ofHttpResponse get(const string& url);
+		ofHttpResponse get(const std::string& url);
 	
 		/// \brief make an asynchronous HTTP request
 		/// will not block, placed in a queue and run using a background thread
 		/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 		/// \param name optional key to use when sorting requests
 		/// \return unique id for the active HTTP request
-        int getAsync(const string& url, const string& name="");
+        int getAsync(const std::string& url, const std::string& name="");
 	
 		/// \brief make an HTTP request and save the response data to a file
 		/// blocks until a response is returned or the request times out
 		/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 		/// \param path file path to save to
 		/// \return HTTP response on success or failure
-        ofHttpResponse saveTo(const string& url, const std::filesystem::path& path);
+        ofHttpResponse saveTo(const std::string& url, const std::filesystem::path& path);
 	
 		/// \brief make an asynchronous HTTP request and save the response data to a file
 		/// will not block, placed in a queue and run using a background thread
 		/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
 		/// \param path file path to save to
 		/// \returns unique id for the active HTTP request
-        int saveAsync(const string& url, const std::filesystem::path& path);
+        int saveAsync(const std::string& url, const std::filesystem::path& path);
 	
 		/// \brief remove an active HTTP request from the queue
 		/// \param unique HTTP request id
@@ -160,5 +162,58 @@ class ofURLFileLoader  {
         int handleRequestAsync(const ofHttpRequest& request);
 
     private:
-        shared_ptr<ofBaseURLFileLoader> impl;
+	std::shared_ptr<ofBaseURLFileLoader> impl;
+};
+
+
+/// \class ofBaseURLFileLoader
+/// \brief loads a file from a URL using an HTTP request
+class ofBaseURLFileLoader{
+public:
+
+	virtual ~ofBaseURLFileLoader(){};
+
+	/// \brief make an HTTP request
+	/// blocks until a response is returned or the request times out
+	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+	/// \return HTTP response on success or failure
+	virtual ofHttpResponse get(const std::string& url)=0;
+
+	/// \brief make an asynchronous HTTP request
+	/// will not block, placed in a queue and run using a background thread
+	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+	/// \param name optional key to use when sorting requests
+	/// \return unique id for the active HTTP request
+	virtual int getAsync(const std::string& url, const std::string& name="")=0;
+
+	/// \brief make an HTTP request and save the response data to a file
+	/// blocks until a response is returned or the request times out
+	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+	/// \param path file path to save to
+	/// \return HTTP response on success or failure
+	virtual ofHttpResponse saveTo(const std::string& url, const std::filesystem::path& path)=0;
+
+	/// \brief make an asynchronous HTTP request and save the response data to a file
+	/// will not block, placed in a queue and run using a background thread
+	/// \param url HTTP url to request, ie. "http://somewebsite.com/someapi/someimage.jpg"
+	/// \param path file path to save to
+	/// \returns unique id for the active HTTP request
+	virtual int saveAsync(const std::string& url, const std::filesystem::path& path)=0;
+
+	/// \brief remove an active HTTP request from the queue
+	/// \param unique HTTP request id
+	virtual void remove(int id)=0;
+
+	/// \brief clear all active HTTP requests from the queue
+	virtual void clear()=0;
+
+	/// \brief stop & remove all active and waiting HTTP requests
+	virtual void stop()=0;
+
+	/// \brief low level HTTP request implementation
+	/// blocks until a response is returned or the request times out
+	/// \return HTTP response on success or failure
+	virtual ofHttpResponse handleRequest(const ofHttpRequest & request) = 0;
+	virtual int handleRequestAsync(const ofHttpRequest& request)=0; // returns id
+
 };

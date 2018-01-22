@@ -68,7 +68,7 @@ namespace priv{
 
 	// -------------------------------------
 	inline std::unique_ptr<StdFunctionId> make_function_id(){
-		return std::unique_ptr<StdFunctionId>(new StdFunctionId());
+		return std::make_unique<StdFunctionId>();
 	}
 
 	// -------------------------------------
@@ -241,7 +241,7 @@ namespace priv{
 		};
 
 		std::unique_ptr<EventToken> make_token(const Function & f){
-			return std::unique_ptr<EventToken>(new EventToken(self,*f.id));
+			return std::make_unique<EventToken>(self,*f.id);
 		}
 
 		template<typename TFunction>
@@ -425,7 +425,7 @@ protected:
 
 	template<class TObj, typename TMethod>
 	std::unique_ptr<FunctionId<TObj,TMethod>> make_function_id(TObj * listener, TMethod method){
-		return std::unique_ptr<FunctionId<TObj,TMethod>>(new FunctionId<TObj,TMethod>(listener,method));
+		return std::make_unique<FunctionId<TObj,TMethod>>(listener,method);
 	}
 
 	template<class TObj>

@@ -138,8 +138,8 @@ public:
 	void SetTimeoutReceive(int timeoutInSeconds);
 	int  GetTimeoutSend();
 	int  GetTimeoutReceive();
-	bool GetRemoteAddr(string& address,int& port) const;	//	gets the IP and port of last received packet
-	bool GetListenAddr(string& address,int& port) const;	//	get our bound IP and port
+	bool GetRemoteAddr(std::string& address,int& port) const;	//	gets the IP and port of last received packet
+	bool GetListenAddr(std::string& address,int& port) const;	//	get our bound IP and port
 	bool SetReceiveBufferSize(int sizeInByte);
 	bool SetSendBufferSize(int sizeInByte);
 	int  GetReceiveBufferSize();

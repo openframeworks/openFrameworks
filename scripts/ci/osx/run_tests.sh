@@ -4,6 +4,20 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 
 trap 'for f in ~/Library/Logs/DiagnosticReports/*; do cat $f; done' 11
 
+echo "**** Building emptyExample ****"
+cd $ROOT
+cp scripts/templates/osx/Makefile examples/templates/emptyExample/
+cp scripts/templates/osx/config.make examples/templates/emptyExample/
+cd examples/templates/emptyExample/
+make Debug
+
+echo "**** Building allAddonsExample ****"
+cd $ROOT
+cp scripts/templates/osx/Makefile examples/templates/allAddonsExample/
+cp scripts/templates/osx/config.make examples/templates/allAddonsExample/
+cd examples/templates/allAddonsExample/
+make Debug
+
 echo "**** Running unit tests ****"
 cd $ROOT/tests
 for group in *; do
@@ -16,12 +30,13 @@ for group in *; do
                 make Debug
                 binname=$(basename ${test})
 
-                if [ "${test}" == "networkTcp" ] || [ "${test}" == "networkUdp" ]; then
+                if [ "${binname}" == "networkTcp" ] || [ "${binname}" == "networkUdp" ]; then
                     counter=0
                     errorcode=1
+                    cd bin/${binname}_debug.app/Contents/MacOS/
                     while [ $counter -lt 5 ] && [ $errorcode -ne 0 ]
                     do
-                        cd bin/${binname}_debug.app/Contents/MacOS/
+                        echo "Running ${text} $counter"
                         #sudo gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
                         ./${binname}_debug
                         errorcode=$?

@@ -3,7 +3,6 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 #include "ofPolyline.h"
-#include "ofBaseTypes.h"
 #include "ofVboMesh.h"
 #include "ofTessellator.h"
 
@@ -316,7 +315,7 @@ public:
 	/// \{
 
 	/// \brief Get an ofPolyline representing the outline of the ofPath.
-	const vector<ofPolyline> & getOutline() const;
+	const std::vector<ofPolyline> & getOutline() const;
 
 	void tessellate();
 
@@ -383,8 +382,8 @@ public:
 		float radiusX, radiusY, angleBegin, angleEnd;
 	};
 
-	vector<Command> & getCommands();
-	const vector<Command> & getCommands() const;
+	std::vector<Command> & getCommands();
+	const std::vector<Command> & getCommands() const;
 
 	/// \}
 	
@@ -400,7 +399,7 @@ private:
 
 	// path description
 	//vector<ofSubPath>		paths;
-	vector<Command> 	commands;
+	std::vector<Command> 	commands;
 	ofPolyWindingMode 	windingMode;
 	ofColor 			fillColor;
 	ofColor				strokeColor;
@@ -409,8 +408,8 @@ private:
 	bool				bUseShapeColor;
 
 	// polyline / tessellation
-	vector<ofPolyline>  polylines;
-	vector<ofPolyline>  tessellatedContour; // if winding mode != ODD
+	std::vector<ofPolyline>  polylines;
+	std::vector<ofPolyline>  tessellatedContour; // if winding mode != ODD
 
 #ifdef TARGET_OPENGLES
 	ofMesh				cachedTessellation;

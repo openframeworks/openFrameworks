@@ -1,4 +1,12 @@
-param([String]$ver="master")
+# You may override default parameters for this script by specifying 
+#       -paramName paramValue
+# When calling this script. For example: 
+#       download_libs.ps1 -platform vs2017
+# Which will load the visual studio 2017 libraries
+param(
+    [String]$ver="master",
+    [String]$platform="vs2015"
+    )
 $currentPath = $pwd
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 $libsDir = $scriptPath + "\..\..\libs"
@@ -7,7 +15,7 @@ function DownloadLibs{
     cd $scriptPath
     $client = new-object System.Net.WebClient
     $arch = $args[0]
-    $pkg = "openFrameworksLibs_"+$ver+"_vs"+$arch+".zip"
+    $pkg = "openFrameworksLibs_"+$ver+"_"+$platform+"_"+$arch+".zip"
     $url = "http://ci.openframeworks.cc/libs/$pkg"
     If(Test-Path "$pkg") {
         echo "Deleting old package"

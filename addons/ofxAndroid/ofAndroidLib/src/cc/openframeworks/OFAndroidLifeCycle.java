@@ -50,7 +50,7 @@ public class OFAndroidLifeCycle
 	private static AtomicBoolean m_isWorkerDone = new AtomicBoolean(true);
 	private static AtomicBoolean m_isInit = new AtomicBoolean(false);
 
-	private static Activity m_activity = null;
+	private static OFActivity m_activity = null;
 	
 	private static int m_countActivities = 0;
 	private static ArrayList<Runnable> m_initializers = new ArrayList<Runnable>();
@@ -209,7 +209,7 @@ public class OFAndroidLifeCycle
 		});
 	}
 	
-	static Activity getActivity(){
+	static OFActivity getActivity(){
 		return OFAndroidLifeCycle.m_activity;
 	}
 	
@@ -221,7 +221,7 @@ public class OFAndroidLifeCycle
 		mGLView = null;
 	}
 	
-	public static void setActivity(Activity activity){
+	public static void setActivity(OFActivity activity){
 		m_activity = activity;
 		activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		OFAndroidObject.setActivity(activity);

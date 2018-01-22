@@ -1,7 +1,6 @@
 #pragma once
 
 #include "json.hpp"
-#include "ofFileUtils.h"
 #include "ofParameter.h"
 
 // for convenience
@@ -68,7 +67,7 @@ inline void ofSerialize(ofJson & js, ofAbstractParameter & parameter){
 	if(!parameter.isSerializable()){
 		return;
 	}
-	string name = parameter.getEscapedName();
+	std::string name = parameter.getEscapedName();
 	if(name == ""){
 		name = "UnknownName";
 	}
@@ -80,7 +79,7 @@ inline void ofSerialize(ofJson & js, ofAbstractParameter & parameter){
 		}
 		js[name] = jsonGroup;
 	}else{
-		string value = parameter.toString();
+		std::string value = parameter.toString();
 		js[name] = value;
 	}
 }
@@ -89,7 +88,7 @@ inline void ofDeserialize(const ofJson & json, ofAbstractParameter & parameter){
 	if(!parameter.isSerializable()){
 		return;
 	}
-	string name = parameter.getEscapedName();
+	std::string name = parameter.getEscapedName();
 	if(json.find(name) != json.end()){
 		if(parameter.type() == typeid(ofParameterGroup).name()){
 			ofParameterGroup & group = static_cast <ofParameterGroup &>(parameter);
@@ -105,7 +104,7 @@ inline void ofDeserialize(const ofJson & json, ofAbstractParameter & parameter){
 				parameter.cast <bool>() = json[name].get<bool>();
 			}else if(parameter.type() == typeid(ofParameter <int64_t> ).name() && json[name].is_number_integer()){
 				parameter.cast <int64_t>() = json[name].get<int64_t>();
-			}else if(parameter.type() == typeid(ofParameter <string> ).name()){
+			}else if(parameter.type() == typeid(ofParameter <std::string> ).name()){
 				parameter.cast <std::string>() = json[name].get<std::string>();
 			}else{
 				parameter.fromString(json[name]);

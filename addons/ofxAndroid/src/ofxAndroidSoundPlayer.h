@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofBaseSoundPlayer.h"
+#include "ofSoundBaseTypes.h"
 #include <jni.h>
 
 class ofxAndroidSoundPlayer: public ofBaseSoundPlayer{
@@ -8,7 +8,7 @@ public:
 	ofxAndroidSoundPlayer();
 	virtual ~ofxAndroidSoundPlayer();
 
-	bool load(std::filesystem::path fileName, bool stream = false);
+	bool load(const std::filesystem::path& fileName, bool stream = false);
 	void unload();
 	void play();
 	void stop();

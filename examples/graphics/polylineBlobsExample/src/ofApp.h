@@ -25,7 +25,7 @@ class ofApp : public ofBaseApp {
 		ofxCvColorImage cvImgColor;
 		ofxCvGrayscaleImage cvImgGrayscale;
 		ofxCvContourFinder contourFinder;
-		vector<ofPolyline> polylines, smoothed, resampled;
+		vector<ofPolyline_<ofPoint>> polylines, smoothed, resampled;
 		vector<ofRectangle> boundingBoxes;
 		vector<ofPoint> closestPoints;
 		vector<unsigned int> closestIndices;

@@ -1,8 +1,4 @@
 #include "ofGraphics.h"
-#include "ofAppRunner.h"
-#include "ofUtils.h"
-#include "ofBaseTypes.h"
-#include "ofPath.h"
 #include "ofRendererCollection.h"
 #if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
 #include "ofCairoRenderer.h"
@@ -14,6 +10,7 @@
     #define CALLBACK
 #endif
 
+using namespace std;
 
 //style stuff - new in 006
 static ofVboMesh gradientMesh;
@@ -57,7 +54,7 @@ static void ofBeginSaveScreen(string filename, ofCairoRenderer::Type type, bool 
 	
 	storedRenderer = ofGetCurrentRenderer();
 	
-	cairoScreenshot = shared_ptr<ofCairoRenderer>(new ofCairoRenderer);
+	cairoScreenshot = std::make_unique<ofCairoRenderer>();
 	cairoScreenshot->setup(filename, type, bMultipage, b3D, outputsize);
 
 	rendererCollection = make_shared<ofRendererCollection>();
@@ -1246,6 +1243,16 @@ void ofEndShape(bool bClose){
 template<>
 void ofDrawBitmapString(const string & textString, float x, float y, float z){
 	ofGetCurrentRenderer()->drawString(textString,x,y,z);
+}
+
+template<>
+void ofDrawBitmapString(const std::string & textString, const glm::vec3 & p){
+	ofGetCurrentRenderer()->drawString(textString, p.x, p.y, p.z);
+}
+
+template<>
+void ofDrawBitmapString(const std::string & textString, const glm::vec2 & p){
+	ofGetCurrentRenderer()->drawString(textString, p.x, p.y, 0.f);
 }
 
 //--------------------------------------------------

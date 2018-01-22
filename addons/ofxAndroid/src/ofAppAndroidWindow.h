@@ -11,7 +11,6 @@
 #include "ofEvents.h"
 #include "ofConstants.h"
 #include "ofTypes.h"
-#include "ofBaseTypes.h"
 
 class ofAppAndroidWindow: public ofAppBaseGLESWindow {
 public:
@@ -45,7 +44,7 @@ public:
 
 	bool	doesHWOrientation(){return true;}
 
-	void	setWindowTitle(string title){}
+	void	setWindowTitle(std::string title){}
 
 	ofWindowMode	getWindowMode() {return OF_WINDOW;}
 
@@ -59,13 +58,13 @@ public:
 	ofOrientation	getOrientation();
 
 	ofCoreEvents & events();
-	shared_ptr<ofBaseRenderer> & renderer();
+	std::shared_ptr<ofBaseRenderer> & renderer();
 
 	void	setThreadedEvents(bool threadedEvents);
 	void 	setAccumulateTouchEvents(bool accumEvents);
 
 private:
 	ofCoreEvents coreEvents;
-	shared_ptr<ofBaseRenderer> currentRenderer;
+	std::shared_ptr<ofBaseRenderer> currentRenderer;
 	int glesVersion;
 };

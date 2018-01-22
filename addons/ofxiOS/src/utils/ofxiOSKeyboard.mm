@@ -11,6 +11,9 @@
 #include "ofxiOSExtras.h"
 #include "ofAppiOSWindow.h"
 #include "ofAppRunner.h"
+#include "ofLog.h"
+
+using namespace std;
 
 //C++ class implementations
 

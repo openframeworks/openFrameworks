@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "ofBaseSoundPlayer.h"
+#include "ofSoundBaseTypes.h"
 
 class ofxiOSSoundPlayer : public ofBaseSoundPlayer {
     
@@ -15,7 +15,7 @@ public:
     ofxiOSSoundPlayer();
     ~ofxiOSSoundPlayer();
     
-    bool load(std::filesystem::path fileName, bool stream = false);
+    bool load(const std::filesystem::path& fileName, bool stream = false);
     void unload();
     void play();
     void stop();

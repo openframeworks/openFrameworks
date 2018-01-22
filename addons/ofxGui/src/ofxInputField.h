@@ -67,8 +67,10 @@ protected:
 	ofVboMesh bg;
 	ofVboMesh textMesh;
 
-	std::string input;
-	std::string substr;
+	std::string input;        // input text
+	std::string visibleInput; // input text currently visible, i.e. not obscured by gui
+	int visibleInputStart = 0, visibleInputEnd = 0; // boundaries for visible input text
+
 	void parseInput();
 	int insertKeystroke(uint32_t character);
 	int insertAlphabetic(uint32_t character);
@@ -78,7 +80,6 @@ protected:
 	int mousePressedPos = -1; //set by mouse interaction
 	float selectStartX = -1, selectionWidth = 0; //calculated from select indices
 	int selectStartPos = -1, selectEndPos = -1;
-	int substrStart = 0, substrEnd = 0;
 	void calculateSelectionArea(int selectIdx1, int selectIdx2);
 	void moveCursor(int cursorPos);
 
@@ -89,7 +90,8 @@ protected:
 	bool validValue = true;
 	bool showLabelWhileEditing = false;
 	bool overlappingLabel = false;
-	float errorTime = 0;
+	uint64_t errorTime = 0;  // time last input error occured, used for animations
+	uint64_t lastCursorMoveTime = 0; // last time cursor was moved, used to calculate whether to blink
 
 	void leaveFocus();
 
@@ -101,4 +103,4 @@ protected:
 
 typedef ofxInputField<float> ofxFloatField;
 typedef ofxInputField<int> ofxIntField;
-typedef ofxInputField<string> ofxTextField;
+typedef ofxInputField<std::string> ofxTextField;

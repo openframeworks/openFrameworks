@@ -54,6 +54,8 @@ private :
 	bool mouseReleased(ofMouseEventArgs & args);
 	bool mouseScrolled(ofMouseEventArgs & args);
 
+	bool mouseUpdate(ofMouseEventArgs& args);
+	
 	glm::vec2 colorPoint;
     float colorScale;
     float colorRadius;

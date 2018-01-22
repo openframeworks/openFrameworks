@@ -4,10 +4,13 @@
 
 #include "AVFoundationVideoGrabber.h"
 #include <TargetConditionals.h>
+
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #include "ofxiOSExtras.h"
 #include "ofAppRunner.h"
+#include "ofLog.h"
+#include "ofPixels.h"
 
 #define IS_IOS_7_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
 #define IS_IOS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
@@ -240,8 +243,8 @@
 	return currentFrame;
 }
 
--(vector <string>)listDevices{
-    vector <string> deviceNames;
+-(std::vector <std::string>)listDevices{
+    std::vector <std::string> deviceNames;
 	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
 	int i=0;
 	for (AVCaptureDevice * captureDevice in devices){
@@ -510,10 +513,10 @@ bool AVFoundationVideoGrabber::isFrameNew() {
 	return newFrame;
 }
 
-vector <ofVideoDevice> AVFoundationVideoGrabber::listDevices() {
-	vector <string> devList = [grabber listDevices];
+std::vector <ofVideoDevice> AVFoundationVideoGrabber::listDevices() {
+	std::vector <std::string> devList = [grabber listDevices];
     
-    vector <ofVideoDevice> devices; 
+    std::vector <ofVideoDevice> devices; 
     for(int i = 0; i < devList.size(); i++){
         ofVideoDevice vd; 
         vd.deviceName = devList[i]; 

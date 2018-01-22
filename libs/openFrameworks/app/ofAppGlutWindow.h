@@ -31,7 +31,7 @@ public:
 	void setDoubleBuffering(bool _bDoubleBuffered); 
 	
 	//note if you fail to set a compatible string the app will not launch
-	void setGlutDisplayString(string str);
+	void setGlutDisplayString(std::string str);
 
 	void hideCursor();
 	void showCursor();
@@ -39,7 +39,7 @@ public:
 	void setFullscreen(bool fullScreen);
 	void toggleFullscreen();
 
-	void setWindowTitle(string title);
+	void setWindowTitle(std::string title);
 	void setWindowPosition(int x, int y);
 	void setWindowShape(int w, int h);
 
@@ -64,7 +64,7 @@ public:
 	void finishRender();
 
 	ofCoreEvents & events();
-	shared_ptr<ofBaseRenderer> & renderer();
+	std::shared_ptr<ofBaseRenderer> & renderer();
 
 private:
 	static void display(void);
@@ -80,16 +80,16 @@ private:
 	static void entry_cb(int state);
 	static void exit_cb();
 	static void dragEvent(char ** fileNames, int howManyFiles, int dragX, int dragY);
-	string displayString;
+	std::string displayString;
 
 	bool iconSet;
 #ifdef TARGET_LINUX
-	void setWindowIcon(const string & path);
+	void setWindowIcon(const std::string & path);
 	void setWindowIcon(const ofPixels & iconPixels);
 #endif
 	
 	ofCoreEvents coreEvents;
-	shared_ptr<ofBaseRenderer> currentRenderer;
+	std::shared_ptr<ofBaseRenderer> currentRenderer;
 	int windowId;
 };
 

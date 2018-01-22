@@ -8,7 +8,7 @@ void ofApp::setup(){
     light.setPosition(-100, 200,0);
     // we set up a plane on which the car will move
     plane.set(10000, 10000);
-    plane.rotate(270, 1, 0 , 0);
+    plane.rotateDeg(270, 1, 0 , 0);
     plane.move(0, -49, 0);
     roadMaterial.setDiffuseColor(ofFloatColor::gray);
     roadMaterial.setShininess(0.01);

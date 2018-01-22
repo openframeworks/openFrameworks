@@ -10,6 +10,8 @@
 
 #include "ofGraphics.h"
 
+using namespace std;
+
 namespace{
 	template<typename Type>
 	typename std::enable_if<std::is_integral<Type>::value, Type>::type
@@ -117,6 +119,7 @@ namespace{
 	}
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofxInputField<Type> ofxInputField<Type>::createInsideSlider(){
 	ofxInputField<Type> input;
@@ -124,19 +127,22 @@ ofxInputField<Type> ofxInputField<Type>::createInsideSlider(){
 	return input;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofxInputField<Type>::ofxInputField(){
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofxInputField<Type>::ofxInputField(ofParameter<Type> _val, float width, float height){
 	setup(_val,width,height);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofxInputField<Type>* ofxInputField<Type>::setup(ofParameter<Type> _val, float width, float height){
 	value.makeReferenceTo(_val);
-	input = toString(value.get());
+	visibleInput = input = toString(value.get());
 	b.x = 0;
 	b.y = 0;
 	b.width = width;
@@ -153,91 +159,98 @@ ofxInputField<Type>* ofxInputField<Type>::setup(ofParameter<Type> _val, float wi
 	return this;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofxInputField<Type>* ofxInputField<Type>::setup(const std::string& _name, Type _val, Type _min, Type _max, float width, float height){
 	value.set(_name,_val,_min,_max);
 	return setup(value,width,height);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofxInputField<Type>* ofxInputField<Type>::setup(const std::string& _name, Type _val){
 	value.set(_name,_val);
 	return setup(value);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::setMin(Type min){
     value.setMin(min);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 Type ofxInputField<Type>::getMin(){
     return value.getMin();
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::setMax(Type max){
     value.setMax(max);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 Type ofxInputField<Type>::getMax(){
     return value.getMax();
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::calculateSelectionArea(int selectIdx1, int selectIdx2){
 	selectStartPos = selectIdx1;
 	selectEndPos = selectIdx2;
 
-	if(selectEndPos>substrEnd){
-		substrEnd = selectEndPos;
-	}else if(std::max(selectEndPos-1,0)<substrStart){
-		substrStart = std::max(selectEndPos-1,0);
+	if(selectEndPos>visibleInputEnd){
+		visibleInputEnd = selectEndPos;
+	}else if(std::max(selectEndPos-1,0)<visibleInputStart){
+		visibleInputStart = std::max(selectEndPos-1,0);
 	}
 
-	substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
-	auto substrWidth = getTextBoundingBox(substr,0,0).width;
+	visibleInput = ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart);
+	auto substrWidth = getTextBoundingBox(visibleInput,0,0).width;
 	auto totalTextWidth = b.width - textPadding * 2;
 
 	if(substrWidth > totalTextWidth){
 		substrWidth = 0;
-		substr = "";
+		visibleInput = "";
 		auto substrLen = 0;
 		while(substrWidth < totalTextWidth){
 			substrLen += 1;
-			substr = ofUTF8Substring(input, substrStart, substrLen);
-			substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrLen),0,0).width;
+			visibleInput = ofUTF8Substring(input, visibleInputStart, substrLen);
+			substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, substrLen),0,0).width;
 		}
 		substrLen -= 1;
-		substr = ofUTF8Substring(input, substrStart, substrLen);
-		substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrLen),0,0).width;
-		substrEnd = substrStart + substrLen;
+		visibleInput = ofUTF8Substring(input, visibleInputStart, substrLen);
+		substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, substrLen),0,0).width;
+		visibleInputEnd = visibleInputStart + substrLen;
 
-		if(selectEndPos > substrEnd){
+		if(selectEndPos > visibleInputEnd){
 			substrWidth = 0;
-			substr = "";
-			substrEnd = selectEndPos;
-			substrStart = selectEndPos;
+			visibleInput = "";
+			visibleInputEnd = selectEndPos;
+			visibleInputStart = selectEndPos;
 			while(substrWidth < totalTextWidth){
-				substrStart -= 1;
-				substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
-				substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrEnd - substrStart),0,0).width;
+				visibleInputStart -= 1;
+				visibleInput = ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart);
+				substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart),0,0).width;
 			}
-			substrStart += 1;
-			substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
-			substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrEnd - substrStart),0,0).width;
+			visibleInputStart += 1;
+			visibleInput = ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart);
+			substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart),0,0).width;
 		}
 	}
 
 	auto first = std::min(selectStartPos, selectEndPos);
 	auto last = std::max(selectStartPos, selectEndPos);
-	auto substrLength = ofUTF8Length(substr);
+	auto substrLength = ofUTF8Length(visibleInput);
 	float preSelectWidth = 0;
-	auto substrFirst = ofClamp(first-substrStart, 0, substrLength);
-	auto substrLast = ofClamp(last-substrStart, 0, substrLength);
-	if(first > substrStart){
-		std::string preSelectStr = ofUTF8Substring(substr, 0, substrFirst);
+	auto substrFirst = ofClamp(first-visibleInputStart, 0, substrLength);
+	auto substrLast = ofClamp(last-visibleInputStart, 0, substrLength);
+	if(first > visibleInputStart){
+		std::string preSelectStr = ofUTF8Substring(visibleInput, 0, substrFirst);
 		preSelectWidth = getTextBoundingBox(preSelectStr,0,0).width;
 	}
 
@@ -248,61 +261,77 @@ void ofxInputField<Type>::calculateSelectionArea(int selectIdx1, int selectIdx2)
 	}
 
 	if(hasSelectedText()){
-		std::string selectStr = ofUTF8Substring(substr, substrFirst, substrLast - substrFirst);
+		std::string selectStr = ofUTF8Substring(visibleInput, substrFirst, substrLast - substrFirst);
 		selectionWidth = getTextBoundingBox(selectStr,0,0).width;
 	}
 
 	setNeedsRedraw();
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::moveCursor(int cursorPos){
-	selectStartPos = selectEndPos = cursorPos;
-	selectionWidth = 0;
-	if(cursorPos>substrEnd){
-		substrEnd = cursorPos;
-	}else if(cursorPos<substrStart){
-		substrStart = cursorPos;
+	
+	if ( cursorPos < 0 ){
+		return;
 	}
 
-	substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
-	auto substrWidth = getTextBoundingBox(substr,0,0).width;
+	lastCursorMoveTime = ofGetElapsedTimeMillis();
+
+	selectStartPos = selectEndPos = cursorPos;
+	selectionWidth = 0;
+	
+	if ( visibleInputEnd < ofUTF8Length( input ) ){
+		// Attempt to extend visible input range. If a character was being entered 
+		// somewhere inside the text, there might be enough space to the right to 
+		// show the newly extended input.
+		visibleInputEnd += 1;
+	}
+
+	if(cursorPos>visibleInputEnd){
+		visibleInputEnd = cursorPos;
+	}else if(cursorPos<visibleInputStart){
+		visibleInputStart = cursorPos;
+	}
+
+	visibleInput = ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart);
+	auto substrWidth = getTextBoundingBox(visibleInput,0,0).width;
 	auto totalTextWidth = b.width - textPadding * 2;
 
 	if(substrWidth > totalTextWidth){
 		substrWidth = 0;
-		substr = "";
+		visibleInput = "";
 		auto substrLen = 0;
 		while(substrWidth < totalTextWidth){
 			substrLen += 1;
-			substr = ofUTF8Substring(input, substrStart, substrLen);
-			substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrLen),0,0).width;
+			visibleInput = ofUTF8Substring(input, visibleInputStart, substrLen);
+			substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, substrLen),0,0).width;
 		}
 		substrLen -= 1;
-		substr = ofUTF8Substring(input, substrStart, substrLen);
-		substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrLen),0,0).width;
-		substrEnd = substrStart + substrLen;
+		visibleInput = ofUTF8Substring(input, visibleInputStart, substrLen);
+		substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, substrLen),0,0).width;
+		visibleInputEnd = visibleInputStart + substrLen;
 
-		if(cursorPos > substrEnd){
+		if(cursorPos > visibleInputEnd){
 			substrWidth = 0;
-			substr = "";
-			substrEnd = cursorPos;
-			substrStart = cursorPos;
+			visibleInput = "";
+			visibleInputEnd = cursorPos;
+			visibleInputStart = cursorPos;
 			while(substrWidth < totalTextWidth){
-				substrStart -= 1;
-				substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
-				substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrEnd - substrStart),0,0).width;
+				visibleInputStart -= 1;
+				visibleInput = ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart);
+				substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart),0,0).width;
 			}
-			substrStart += 1;
-			substr = ofUTF8Substring(input, substrStart, substrEnd - substrStart);
-			substrWidth = getTextBoundingBox(ofUTF8Substring(input, substrStart, substrEnd - substrStart),0,0).width;
+			visibleInputStart += 1;
+			visibleInput = ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart);
+			substrWidth = getTextBoundingBox(ofUTF8Substring(input, visibleInputStart, visibleInputEnd - visibleInputStart),0,0).width;
 		}
 	}
 
 
 	float beforeCursorWidth = 0;
-	if(selectStartPos > substrStart){
-		auto beforeCursorStr = ofUTF8Substring(substr, 0, selectStartPos - substrStart);
+	if(selectStartPos > visibleInputStart){
+		auto beforeCursorStr = ofUTF8Substring(visibleInput, 0, selectStartPos - visibleInputStart);
 		beforeCursorWidth = getTextBoundingBox(beforeCursorStr,0,0).width;
 	}
 
@@ -315,6 +344,7 @@ void ofxInputField<Type>::moveCursor(int cursorPos){
 	setNeedsRedraw();
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::mouseMoved(ofMouseEventArgs & mouse){
 	bool mouseOver = b.inside(mouse);
@@ -325,6 +355,7 @@ bool ofxInputField<Type>::mouseMoved(ofMouseEventArgs & mouse){
 	return (isGuiDrawing() || insideSlider) && bMouseOver;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & mouse){
 	if(!isGuiDrawing() && !insideSlider){
@@ -334,14 +365,14 @@ bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & mouse){
 		if(!insideSlider || mouse.button == OF_MOUSE_BUTTON_LEFT){
 			bMousePressed = true;
 			if(bGuiActive){
-				auto inputWidth = getTextBoundingBox(substr,0,0).width;
+				auto inputWidth = getTextBoundingBox(visibleInput,0,0).width;
 				float cursorX;
 				if(showLabelWhileEditing){
 					cursorX = mouse.x - (b.x + b.width - textPadding - inputWidth);
 				}else{
 					cursorX = mouse.x - (b.x + textPadding);
 				}
-				mousePressedPos =  round(substrStart + ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(substr), true));
+				mousePressedPos =  round(visibleInputStart + ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(visibleInput), true));
 				moveCursor(mousePressedPos);
 			}else{
 				calculateSelectionArea(0, ofUTF8Length(input));
@@ -360,6 +391,7 @@ bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & mouse){
 	return false;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::mouseDragged(ofMouseEventArgs & mouse){
 	if(!isGuiDrawing() && !insideSlider){
@@ -370,14 +402,14 @@ bool ofxInputField<Type>::mouseDragged(ofMouseEventArgs & mouse){
 	}
 
 	if(!insideSlider || mouse.button == OF_MOUSE_BUTTON_LEFT){
-		auto inputWidth = getTextBoundingBox(substr,0,0).width;
+		auto inputWidth = getTextBoundingBox(visibleInput,0,0).width;
 		float cursorX;
 		if(showLabelWhileEditing){
 			cursorX = mouse.x - (b.x + b.width - textPadding - inputWidth);
 		}else{
 			cursorX = mouse.x - (b.x + textPadding);
 		}
-		auto cursorPos = round(substrStart + ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(substr)));
+		auto cursorPos = round(visibleInputStart + ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(visibleInput)));
 		cursorPos = ofClamp(cursorPos, 0, ofUTF8Length(input));
 		calculateSelectionArea(mousePressedPos, cursorPos);
 		setNeedsRedraw();
@@ -385,12 +417,14 @@ bool ofxInputField<Type>::mouseDragged(ofMouseEventArgs & mouse){
 	return true;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::mouseReleased(ofMouseEventArgs &){
 	bMousePressed = false;
 	return bGuiActive;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::mouseScrolled(ofMouseEventArgs & mouse){
 	if(b.inside(mouse)){
@@ -408,6 +442,7 @@ bool ofxInputField<Type>::mouseScrolled(ofMouseEventArgs & mouse){
 	}
 }
 
+//-----------------------------------------------------------
 template<>
 bool ofxInputField<string>::mouseScrolled(ofMouseEventArgs & mouse){
 	if(b.inside(mouse)){
@@ -417,6 +452,7 @@ bool ofxInputField<string>::mouseScrolled(ofMouseEventArgs & mouse){
 	}
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::charPressed(uint32_t & key){
 	if(!isGuiDrawing() && !insideSlider){
@@ -435,6 +471,7 @@ bool ofxInputField<Type>::charPressed(uint32_t & key){
 	return false;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 	if(!isGuiDrawing()){
@@ -539,6 +576,7 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 }
 
 
+//-----------------------------------------------------------
 template<typename Type>
 int ofxInputField<Type>::insertKeystroke(uint32_t character){
 	auto first = std::min(selectStartPos, selectEndPos);
@@ -554,6 +592,7 @@ int ofxInputField<Type>::insertKeystroke(uint32_t character){
 	return cursorPos;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 int ofxInputField<Type>::insertAlphabetic(uint32_t character){
 	if(character == 'x' || character == 'a' || character == 'b' || character=='c' || character=='d' || character=='e' || character=='f'){
@@ -563,27 +602,32 @@ int ofxInputField<Type>::insertAlphabetic(uint32_t character){
 	}
 }
 
+//-----------------------------------------------------------
 template<>
 int ofxInputField<string>::insertAlphabetic(uint32_t character){
 	return insertKeystroke(character);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 Type ofxInputField<Type>::operator=(Type v){
 	value = v;
 	return v;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofxInputField<Type>::operator const Type & (){
 	return value;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::hasSelectedText(){
 	return selectStartPos != selectEndPos;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::generateDraw(){
 	bg.clear();
@@ -600,7 +644,7 @@ void ofxInputField<Type>::generateDraw(){
 		}
 	}
 
-	auto input = substr;
+	auto input = visibleInput;
 	if(!bGuiActive && !containsValidValue()){
 		input = toString(value);
 	}
@@ -624,13 +668,14 @@ void ofxInputField<Type>::generateDraw(){
 	textMesh.getColors().assign(textMesh.getVertices().size(), thisTextColor);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::render(){
 	bg.draw();
 
-	if(!insideSlider && errorTime>0 && !containsValidValue()){
-		auto now = ofGetElapsedTimef();
-		auto pct = (now - errorTime) / 0.5;
+	if(!insideSlider && errorTime > 0 && !containsValidValue()){
+		auto now = ofGetElapsedTimeMillis();
+		auto pct = (now - errorTime) * 0.5f;
 		if(pct<1){
 			for(size_t i=0;i<originalColors.size();i++){
 				bg.getColors()[i] = ofFloatColor::darkRed.getLerped(originalColors[i], pct);
@@ -659,9 +704,13 @@ void ofxInputField<Type>::render(){
 	}
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::drawCursor(){
-	if(!blinkingCursor || (int(ofGetElapsedTimef()*2) % 2) == 0){
+	auto now = ofGetElapsedTimeMillis();
+	auto timeSinceLastCursorMove = now - lastCursorMoveTime;
+
+	if(!blinkingCursor || ((now % 2000) >= 1000) || (timeSinceLastCursorMove < 500)){
 		ofPushStyle();
 		ofSetColor(thisTextColor);
 		ofDrawLine( selectStartX, b.y, selectStartX, b.y+b.height );
@@ -669,28 +718,33 @@ void ofxInputField<Type>::drawCursor(){
 	}
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::setBlinkingCursor(bool blink){
 	blinkingCursor = blink;
 	setNeedsRedraw();
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::setShowLabelWhileEditing(bool show){
 	showLabelWhileEditing = show;
 	setNeedsRedraw();
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::setValue(float mx, float my, bool bCheck){
 	return false;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 ofAbstractParameter & ofxInputField<Type>::getParameter(){
 	return value;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::parseInput(){
 	try{
@@ -705,26 +759,29 @@ void ofxInputField<Type>::parseInput(){
 	}catch(...){
 		if(!insideSlider){
 			originalColors = bg.getColors();
-			errorTime = ofGetElapsedTimef();
+			errorTime = ofGetElapsedTimeMillis();
 		}
 		validValue = false;
 	}
 }
 
+//-----------------------------------------------------------
 template<>
 void ofxInputField<string>::parseInput(){
 	value = input;
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::valueChanged(Type & value){
-	input = toString(value);
+	visibleInput = input = toString(value);
 	if(bGuiActive){
 		moveCursor(ofUTF8Length(input));
 	}
     setNeedsRedraw();
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 void ofxInputField<Type>::leaveFocus(){
 	bGuiActive = false;
@@ -733,11 +790,13 @@ void ofxInputField<Type>::leaveFocus(){
 	leftFocus.notify(this);
 }
 
+//-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::containsValidValue() const{
 	return validValue;
 }
 
+//-----------------------------------------------------------
 template class ofxInputField<int8_t>;
 template class ofxInputField<uint8_t>;
 template class ofxInputField<int16_t>;
@@ -749,3 +808,4 @@ template class ofxInputField<uint64_t>;
 template class ofxInputField<float>;
 template class ofxInputField<double>;
 template class ofxInputField<std::string>;
+template class ofxInputField<typename std::conditional<std::is_same<uint32_t, size_t>::value || std::is_same<uint64_t, size_t>::value, bool, size_t>::type>;

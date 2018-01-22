@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "ofBaseTypes.h"
+#include "ofVideoBaseTypes.h"
 #include "ofPixels.h"
 #include "ofEvents.h"
 #include "ofTypes.h"
@@ -19,7 +19,7 @@ public:
 	ofxAndroidVideoGrabber();
 	~ofxAndroidVideoGrabber();
 
-	vector<ofVideoDevice>	listDevices() const;
+	std::vector<ofVideoDevice>	listDevices() const;
 	bool setup(int w, int h);
 	bool isInitialized() const;
 
@@ -90,5 +90,5 @@ private:
 
 	// only to be used internally to resize;
 	ofPixelsRef getAuxBuffer();
-	shared_ptr<Data> data;
+	std::shared_ptr<Data> data;
 };

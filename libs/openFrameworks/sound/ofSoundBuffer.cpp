@@ -9,6 +9,9 @@
 #include "ofSoundUtils.h"
 #include "ofLog.h"
 #include <limits>
+#include "glm/trigonometric.hpp"
+
+using namespace std;
 
 #if !defined(TARGET_ANDROID) && !defined(TARGET_IPHONE) && !defined(TARGET_LINUX_ARM)
 ofSoundBuffer::InterpolationAlgorithm ofSoundBuffer::defaultAlgorithm = ofSoundBuffer::Hermite;
@@ -33,7 +36,7 @@ ofSoundBuffer::ofSoundBuffer(short * shortBuffer, std::size_t numFrames, std::si
 
 void ofSoundBuffer::copyFrom(const short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
 	this->channels = numChannels;
-	this->samplerate = sampleRate;
+	setSampleRate(samplerate);
 	buffer.resize(numFrames * numChannels);
 	for(std::size_t i = 0; i < size(); i++){
 		buffer[i] = shortBuffer[i]/float(numeric_limits<short>::max());
@@ -43,7 +46,7 @@ void ofSoundBuffer::copyFrom(const short * shortBuffer, std::size_t numFrames, s
 
 void ofSoundBuffer::copyFrom(const float * floatBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
 	this->channels = numChannels;
-	this->samplerate = sampleRate;
+	setSampleRate(samplerate);
 	buffer.assign(floatBuffer, floatBuffer + (numFrames * numChannels));
 	checkSizeAndChannelsConsistency("copyFrom");
 }
@@ -354,8 +357,8 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 	for(std::size_t i=0;i<to;i++){
 		intPosition *= inChannels;
 		for(std::size_t j=0;j<inChannels;j++){
-			a = buffer[intPosition];
-			b = buffer[intPosition+inChannels];
+			a = buffer[intPosition+j];
+			b = buffer[intPosition+inChannels+j];
 			*resBufferPtr++ = ofLerp(a,b,remainder);
 		}
 		position += increment;
@@ -369,9 +372,9 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 			for(std::size_t i=0;i<to;i++){
 				intPosition *= inChannels;
 				for(std::size_t j=0;j<inChannels;j++){
-					a = buffer[intPosition];
-					b = buffer[intPosition+inChannels];
-					*resBufferPtr++ = (b-a)*remainder+a;
+					a = buffer[intPosition+j];
+					b = buffer[intPosition+inChannels+j];
+					*resBufferPtr++ = ofLerp(a,b,remainder);
 				}
 				resBufferPtr+=inChannels;
 				position += increment;
@@ -597,7 +600,7 @@ void ofSoundBuffer::fillWithNoise(float amplitude){
 }
 
 float ofSoundBuffer::fillWithTone( float pitchHz, float phase ){
-	float step = TWO_PI*(pitchHz/samplerate);
+	float step = glm::two_pi<float>()*(pitchHz/samplerate);
 	for (std::size_t i=0; i<size()/channels; i++ ) {
 		std::size_t base = i*channels;
 		for (std::size_t j=0; j<channels; j++)

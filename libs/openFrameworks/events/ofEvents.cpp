@@ -1,6 +1,9 @@
 #include "ofEvents.h"
 #include "ofAppRunner.h"
+#include "ofAppBaseWindow.h"
+#include "ofLog.h"
 
+using namespace std;
 
 static ofEventArgs voidEventArgs;
 
@@ -267,6 +270,11 @@ int ofCoreEvents::getPreviousMouseY() const{
 	return previousMouseY;
 }
 
+//--------------------------------------
+int ofCoreEvents::getModifiers() const{
+	return modifiers;
+}
+
 //------------------------------------------
 bool ofCoreEvents::notifySetup(){
 	return ofNotifyEvent( setup, voidEventArgs );
@@ -316,6 +324,7 @@ bool ofCoreEvents::notifyKeyReleased(int key, int keycode, int scancode, uint32_
 //------------------------------------------
 bool ofCoreEvents::notifyKeyEvent(ofKeyEventArgs & e){
 	bool attended = false;
+	modifiers = e.modifiers;
 	switch(e.type){
 		case ofKeyEventArgs::Pressed:
 			// FIXME: modifiers are being reported twice, for generic and for left/right
@@ -396,7 +405,7 @@ void ofCoreEvents::notifyTouchDown(int x, int y, int touchID){
 	touchArgs.x = x;
 	touchArgs.y = y;
 	touchArgs.type = ofTouchEventArgs::down;
-	ofNotifyEvent( touchDown, touchArgs );
+	notifyTouchEvent(touchArgs);
 }
 
 //------------------------------------------
@@ -406,7 +415,7 @@ void ofCoreEvents::notifyTouchUp(int x, int y, int touchID){
 	touchArgs.x = x;
 	touchArgs.y = y;
 	touchArgs.type = ofTouchEventArgs::up;
-	ofNotifyEvent( touchUp, touchArgs );
+	notifyTouchEvent(touchArgs);
 }
 
 //------------------------------------------
@@ -416,7 +425,7 @@ void ofCoreEvents::notifyTouchMoved(int x, int y, int touchID){
 	touchArgs.x = x;
 	touchArgs.y = y;
 	touchArgs.type = ofTouchEventArgs::move;
-	ofNotifyEvent( touchMoved, touchArgs );
+	notifyTouchEvent(touchArgs);
 }
 
 //------------------------------------------
@@ -426,7 +435,7 @@ void ofCoreEvents::notifyTouchCancelled(int x, int y, int touchID){
 	touchArgs.x = x;
 	touchArgs.y = y;
 	touchArgs.type = ofTouchEventArgs::cancel;
-	ofNotifyEvent( touchCancelled, touchArgs );
+	notifyTouchEvent(touchArgs);
 }
 
 
@@ -437,126 +446,128 @@ void ofCoreEvents::notifyTouchDoubleTap(int x, int y, int touchID){
 	touchArgs.x = x;
 	touchArgs.y = y;
 	touchArgs.type = ofTouchEventArgs::doubleTap;
-	ofNotifyEvent( touchDoubleTap, touchArgs );
+	notifyTouchEvent(touchArgs);
 }
 
 
 //------------------------------------------
-void ofCoreEvents::notifyTouchEvent(const ofTouchEventArgs & touchEvent){
-	switch(touchEvent.type){
+void ofCoreEvents::notifyTouchEvent(ofTouchEventArgs & touchArgs){
+	switch(touchArgs.type){
 		case ofTouchEventArgs::move:
-			notifyTouchMoved(touchEvent.x,touchEvent.y,touchEvent.id);
+			ofNotifyEvent( touchMoved, touchArgs );
 			break;
 		case ofTouchEventArgs::down:
-			notifyTouchDown(touchEvent.x,touchEvent.y,touchEvent.id);
+			ofNotifyEvent( touchDown, touchArgs );
 			break;
 		case ofTouchEventArgs::up:
-			notifyTouchUp(touchEvent.x,touchEvent.y,touchEvent.id);
+			ofNotifyEvent( touchUp, touchArgs );
 			break;
 		case ofTouchEventArgs::cancel:
-			notifyTouchCancelled(touchEvent.x,touchEvent.y,touchEvent.id);
+			ofNotifyEvent( touchCancelled, touchArgs );
 			break;
 		case ofTouchEventArgs::doubleTap:
-			notifyTouchDoubleTap(touchEvent.x,touchEvent.y,touchEvent.id);
+			ofNotifyEvent( touchDoubleTap, touchArgs );
 			break;
 	}
 }
 
 
 //------------------------------------------
-bool  ofCoreEvents::notifyMouseEvent(const ofMouseEventArgs & mouseEvent){
-	switch(mouseEvent.type){
+bool  ofCoreEvents::notifyMouseEvent(ofMouseEventArgs & e){
+	modifiers = e.modifiers;
+	switch(e.type){
 		case ofMouseEventArgs::Moved:
-			return notifyMouseMoved(mouseEvent.x,mouseEvent.y);
+			if( bPreMouseNotSet ){
+				previousMouseX	= e.x;
+				previousMouseY	= e.y;
+				bPreMouseNotSet	= false;
+			}else{
+				previousMouseX = currentMouseX;
+				previousMouseY = currentMouseY;
+			}
+
+			currentMouseX = e.x;
+			currentMouseY = e.y;
+
+			return ofNotifyEvent( mouseMoved, e );
 		case ofMouseEventArgs::Dragged:
-			return notifyMouseDragged(mouseEvent.x,mouseEvent.y,mouseEvent.button);
-		case ofMouseEventArgs::Pressed:
-			return notifyMousePressed(mouseEvent.x,mouseEvent.y,mouseEvent.button);
+			if( bPreMouseNotSet ){
+				previousMouseX	= e.x;
+				previousMouseY	= e.y;
+				bPreMouseNotSet	= false;
+			}else{
+				previousMouseX = currentMouseX;
+				previousMouseY = currentMouseY;
+			}
+
+			currentMouseX = e.x;
+			currentMouseY = e.y;
+
+			return ofNotifyEvent( mouseDragged, e );
+		case ofMouseEventArgs::Pressed:{
+			if( bPreMouseNotSet ){
+				previousMouseX	= e.x;
+				previousMouseY	= e.y;
+				bPreMouseNotSet	= false;
+			}else{
+				previousMouseX = currentMouseX;
+				previousMouseY = currentMouseY;
+			}
+
+			currentMouseX = e.x;
+			currentMouseY = e.y;
+			pressedMouseButtons.insert(e.button);
+
+
+			return ofNotifyEvent( mousePressed, e );
+		}
 		case ofMouseEventArgs::Released:
-			return notifyMouseReleased(mouseEvent.x,mouseEvent.y,mouseEvent.button);
+			if( bPreMouseNotSet ){
+				previousMouseX	= e.x;
+				previousMouseY	= e.y;
+				bPreMouseNotSet	= false;
+			}else{
+				previousMouseX = currentMouseX;
+				previousMouseY = currentMouseY;
+			}
+
+			currentMouseX = e.x;
+			currentMouseY = e.y;
+			pressedMouseButtons.erase(e.button);
+
+			return ofNotifyEvent( mouseReleased, e );
 		case ofMouseEventArgs::Scrolled:
-			return notifyMouseScrolled(mouseEvent.x,mouseEvent.y,mouseEvent.scrollX,mouseEvent.scrollY);
+			return ofNotifyEvent( mouseScrolled, e );
 		case ofMouseEventArgs::Entered:
-			return notifyMouseEntered(mouseEvent.x,mouseEvent.y);
+			return ofNotifyEvent( mouseEntered, e );
 		case ofMouseEventArgs::Exited:
-			return notifyMouseExited(mouseEvent.x,mouseEvent.y);
+			return ofNotifyEvent( mouseExited, e );
 	}
 	return false;
 }
 
 //------------------------------------------
 bool ofCoreEvents::notifyMousePressed(int x, int y, int button){
-    if( bPreMouseNotSet ){
-		previousMouseX	= x;
-		previousMouseY	= y;
-		bPreMouseNotSet	= false;
-	}else{
-		previousMouseX = currentMouseX;
-		previousMouseY = currentMouseY;
-	}
-    
-	currentMouseX = x;
-	currentMouseY = y;
-	pressedMouseButtons.insert(button);
-
-
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Pressed,x,y,button);
-	return ofNotifyEvent( mousePressed, mouseEventArgs );
+	return notifyMouseEvent(mouseEventArgs);
 }
 
 //------------------------------------------
 bool ofCoreEvents::notifyMouseReleased(int x, int y, int button){
-	if( bPreMouseNotSet ){
-		previousMouseX	= x;
-		previousMouseY	= y;
-		bPreMouseNotSet	= false;
-	}else{
-		previousMouseX = currentMouseX;
-		previousMouseY = currentMouseY;
-	}
-
-	currentMouseX = x;
-	currentMouseY = y;
-	pressedMouseButtons.erase(button);
-
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Released,x,y,button);
-	return ofNotifyEvent( mouseReleased, mouseEventArgs );
+	return notifyMouseEvent(mouseEventArgs);
 }
 
 //------------------------------------------
 bool ofCoreEvents::notifyMouseDragged(int x, int y, int button){
-	if( bPreMouseNotSet ){
-		previousMouseX	= x;
-		previousMouseY	= y;
-		bPreMouseNotSet	= false;
-	}else{
-		previousMouseX = currentMouseX;
-		previousMouseY = currentMouseY;
-	}
-
-	currentMouseX = x;
-	currentMouseY = y;
-
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Dragged,x,y,button);
-	return ofNotifyEvent( mouseDragged, mouseEventArgs );
+	return notifyMouseEvent(mouseEventArgs);
 }
 
 //------------------------------------------
 bool ofCoreEvents::notifyMouseMoved(int x, int y){
-	if( bPreMouseNotSet ){
-		previousMouseX	= x;
-		previousMouseY	= y;
-		bPreMouseNotSet	= false;
-	}else{
-		previousMouseX = currentMouseX;
-		previousMouseY = currentMouseY;
-	}
-
-	currentMouseX = x;
-	currentMouseY = y;
-
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Moved,x,y,0);
-	return ofNotifyEvent( mouseMoved, mouseEventArgs );
+	return notifyMouseEvent(mouseEventArgs);
 }
 
 //------------------------------------------
@@ -564,19 +575,19 @@ bool ofCoreEvents::notifyMouseScrolled(int x, int y, float scrollX, float scroll
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Scrolled,x,y);
 	mouseEventArgs.scrollX = scrollX;
 	mouseEventArgs.scrollY = scrollY;
-	return ofNotifyEvent( mouseScrolled, mouseEventArgs );
+	return notifyMouseEvent(mouseEventArgs);
 }
 
 //------------------------------------------
 bool ofCoreEvents::notifyMouseEntered(int x, int y){
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Entered,x,y);
-	return ofNotifyEvent( mouseEntered, mouseEventArgs );
+	return notifyMouseEvent(mouseEventArgs);
 }
 
 //------------------------------------------
 bool ofCoreEvents::notifyMouseExited(int x, int y){
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Exited,x,y);
-	return ofNotifyEvent( mouseExited, mouseEventArgs );
+	return notifyMouseEvent(mouseEventArgs);
 }
 
 //------------------------------------------

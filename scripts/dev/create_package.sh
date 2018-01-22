@@ -474,7 +474,7 @@ function createPackage {
     
     #delete .gitignore 
     cd $pkg_ofroot
-    rm -Rf $(find . -name .gitignore)
+    rm -Rf $(find . -name .gitignore -not -path "scripts/templates/*")
     
     #delete dev folders
     cd ${pkg_ofroot}/scripts

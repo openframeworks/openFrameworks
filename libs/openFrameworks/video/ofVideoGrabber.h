@@ -2,9 +2,8 @@
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-#include "ofBaseTypes.h"
+#include "ofVideoBaseTypes.h"
 #include "ofPixels.h"
-#include "ofTypes.h"
 
 
 #ifdef OF_VIDEO_CAPTURE_IOS
@@ -54,7 +53,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		ofVideoGrabber();
 		virtual ~ofVideoGrabber();
 
-		vector<ofVideoDevice> listDevices() const;
+		std::vector<ofVideoDevice> listDevices() const;
 		bool				isFrameNew() const;
 		void				update();
 		void				close();	
@@ -75,8 +74,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		const ofTexture &	getTexture() const;
 		OF_DEPRECATED_MSG("Use getTexture",ofTexture &			getTextureReference());
 		OF_DEPRECATED_MSG("Use getTexture",const ofTexture &	getTextureReference() const);
-		vector<ofTexture> & getTexturePlanes();
-		const vector<ofTexture> & getTexturePlanes() const;
+		std::vector<ofTexture> & getTexturePlanes();
+		const std::vector<ofTexture> & getTexturePlanes() const;
 		void				setVerbose(bool bTalkToMe);
 		void				setDeviceID(int _deviceID);
 		void				setDesiredFrameRate(int framerate);
@@ -100,25 +99,25 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 
 		bool				isInitialized() const;
 
-		void					setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber);
-		shared_ptr<ofBaseVideoGrabber> getGrabber();
-		const shared_ptr<ofBaseVideoGrabber> getGrabber() const;
+		void					setGrabber(std::shared_ptr<ofBaseVideoGrabber> newGrabber);
+		std::shared_ptr<ofBaseVideoGrabber> getGrabber();
+		const std::shared_ptr<ofBaseVideoGrabber> getGrabber() const;
 
 		template<typename GrabberType>
-		shared_ptr<GrabberType> getGrabber(){
-			return dynamic_pointer_cast<GrabberType>(getGrabber());
+		std::shared_ptr<GrabberType> getGrabber(){
+			return std::dynamic_pointer_cast<GrabberType>(getGrabber());
 		}
 
 		template<typename GrabberType>
-		const shared_ptr<GrabberType> getGrabber() const{
-			return dynamic_pointer_cast<GrabberType>(getGrabber());
+		const std::shared_ptr<GrabberType> getGrabber() const{
+			return std::dynamic_pointer_cast<GrabberType>(getGrabber());
 		}
 
 	private:
 		
-		vector<ofTexture> tex;
+		std::vector<ofTexture> tex;
 		bool bUseTexture;
-		shared_ptr<ofBaseVideoGrabber> grabber;
+		std::shared_ptr<ofBaseVideoGrabber> grabber;
 		int requestedDeviceID;
 
 		mutable ofPixelFormat internalPixelFormat;

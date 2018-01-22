@@ -8,6 +8,12 @@
 
 #include "of3dPrimitives.h"
 #include "ofGraphics.h"
+#include "ofRectangle.h"
+#include "ofVboMesh.h"
+#include "ofTexture.h"
+#include "of3dUtils.h"
+
+using namespace std;
 
 of3dPrimitive::of3dPrimitive()
 :usingVbo(true)
@@ -26,9 +32,9 @@ of3dPrimitive::of3dPrimitive(const of3dPrimitive & mom):ofNode(mom){
     texCoords = mom.texCoords;
     usingVbo = mom.usingVbo;
 	if(usingVbo){
-		mesh = shared_ptr<ofMesh>(new ofVboMesh);
+		mesh = std::make_shared<ofVboMesh>();
 	}else{
-		mesh = shared_ptr<ofMesh>(new ofMesh);
+		mesh = std::make_shared<ofMesh>();
 	}
 	*mesh = *mom.mesh;
 }
@@ -164,13 +170,14 @@ void of3dPrimitive::mapTexCoordsFromTexture( ofTexture& inTexture ) {
 #endif
     
     ofTextureData& tdata = inTexture.getTextureData();
-    if(bNormalized)
+	if(bNormalized){
         mapTexCoords( 0, 0, tdata.tex_t, tdata.tex_u );
-    else
+	}else{
         mapTexCoords(0, 0, inTexture.getWidth(), inTexture.getHeight());
+	}
     
 	auto tcoords = getTexCoords();
-    mapTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
+	mapTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
 }
 
 //----------------------------------------------------------
@@ -267,9 +274,9 @@ void of3dPrimitive::setUseVbo(bool useVbo){
 	if(useVbo!=usingVbo){
 		shared_ptr<ofMesh> newMesh;
 		if(useVbo){
-			newMesh = shared_ptr<ofMesh>(new ofVboMesh);
+			newMesh = std::make_shared<ofVboMesh>();
 		}else{
-			newMesh = shared_ptr<ofMesh>(new ofMesh);
+			newMesh = std::make_shared<ofMesh>();
 		}
 		*newMesh = *mesh;
 		mesh = newMesh;

@@ -10,6 +10,8 @@
 #include "ofEvents.h"
 #include "ofGLProgrammableRenderer.h"
 
+using namespace std;
+
 ofxAppEmscriptenWindow * ofxAppEmscriptenWindow::instance = NULL;
 
 // from http://cantuna.googlecode.com/svn-history/r16/trunk/src/screen.cpp

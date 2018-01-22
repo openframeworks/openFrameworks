@@ -75,7 +75,7 @@ void ofxThreadedImageLoader::urlResponse(ofHttpResponse & response) {
 	}else{
 		// log error.
 		ofLogError("ofxThreadedImageLoader") << "couldn't load url, response status: " << response.status;
-		ofRemoveURLRequest(response.request.getID());
+		ofRemoveURLRequest(response.request.getId());
 	}
 
 	// remove the entry from the queue

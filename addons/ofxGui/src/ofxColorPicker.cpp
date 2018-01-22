@@ -153,24 +153,23 @@ ofxColorPicker_<ColorType>::ofxColorPicker_(ofParameter<ofColor_<ColorType>> par
 template<class ColorType>
 ofxColorPicker_<ColorType> * ofxColorPicker_<ColorType>::setup(ofParameter<ofColor_<ColorType>> parameter, float w, float h){
 	this->color.makeReferenceTo(parameter);
-
-	listener = color.newListener([this](ofColor_<ColorType> & c){
-		if(bSettingColor){
-			return;
-		}
-
-		ofFloatColor cf = c;
-		float hue, saturation, brightness;
-		cf.getHsb(hue,saturation,brightness);
-		colorScale = brightness;
-		colorRadius = saturation;
-		colorAngle = 360.f * hue;
-		setNeedsRedraw();
-	});
+    auto colorChanged = [this](const ofColor_<ColorType> & c){
+        if(bSettingColor){
+            return;
+        }
+        ofFloatColor cf = c;
+        float hue, saturation, brightness;
+        cf.getHsb(hue,saturation,brightness);
+        colorScale = brightness;
+        colorRadius = saturation;
+        colorAngle = 360.f * hue;
+        setNeedsRedraw();
+    };
+    listener = color.newListener(colorChanged);
 	setShape(b.x, b.y, w, h);
+	colorChanged(color.get());//needs this so the color wheel shows the correct color once setup.
 	return this;
 }
-
 template<class ColorType>
 void ofxColorPicker_<ColorType>::setShape(float x, float y, float w, float h) {
 	b.x = x;
@@ -384,57 +383,62 @@ bool ofxColorPicker_<ColorType>::mousePressed(ofMouseEventArgs & mouse){
 		state = ChangingWheel;
 	}
 
-	return rectBackground.inside(mouse);
+	return mouseUpdate(mouse);
 }
 
 template<class ColorType>
 bool ofxColorPicker_<ColorType>::mouseDragged(ofMouseEventArgs & mouse){
 	if(!isGuiDrawing()){
-		return false;
+        return false;
 	}
-	switch (state) {
-		case ChangingScale:{
-			int relY = mouse.y - rectColorScaleBar.y;
-			float scale = 1.f - saturate(relY / rectColorScaleBar.height);
-			setColorScale(scale);
-
-			setNeedsRedraw();
-			return true;
-		}
-		case ChangingWheel:{
-			auto p = mouse - rectColorWheel.position.xy();
-			auto pc = getPolarCoordinate(p, colorWheelRadius);
-
-			colorAngle	= pc.angle;
-			colorRadius	= saturate(pc.radius);
-
-			bSettingColor = true;
-			color = getCircularColor<ColorType>(colorAngle, colorRadius, colorScale);
-			bSettingColor = false;
-			setNeedsRedraw();
-			return true;
-		}
-		default: return false;
-	}
+	return mouseUpdate(mouse);
 }
 
 template<class ColorType>
-bool ofxColorPicker_<ColorType>::mouseReleased(ofMouseEventArgs &){
-	switch (state) {
-		case ChangingScale:
-		case ChangingWheel:
-			state = Waiting;
-			return true;
-		default:
-			return false;
+bool ofxColorPicker_<ColorType>::mouseReleased(ofMouseEventArgs & mouse){
+	if(!isGuiDrawing()){
+		return false;
 	}
+	bool bReturn = mouseUpdate(mouse);
+	state = Waiting;
+	return bReturn;
+}
+template<class ColorType>
+bool ofxColorPicker_<ColorType>::mouseUpdate(ofMouseEventArgs& mouse){
+	if(rectBackground.inside(mouse)){
+		switch (state) {
+			case ChangingScale:{
+				int relY = mouse.y - rectColorScaleBar.y;
+				float scale = 1.f - saturate(relY / rectColorScaleBar.height);
+				setColorScale(scale);
+				
+				setNeedsRedraw();
+				break;
+			}
+			case ChangingWheel:{
+				auto p = mouse - rectColorWheel.position.xy();
+				auto pc = getPolarCoordinate(p, colorWheelRadius);
+				
+				colorAngle	= pc.angle;
+				colorRadius	= saturate(pc.radius);
+				
+				bSettingColor = true;
+				color = getCircularColor<ColorType>(colorAngle, colorRadius, colorScale);
+				bSettingColor = false;
+				setNeedsRedraw();
+				break;
+			}
+			default: return true;
+		}
+		return true;
+	}
+	return false;
 }
 
 template<class ColorType>
 bool ofxColorPicker_<ColorType>::mouseScrolled(ofMouseEventArgs & mouse){
 	if(rectColorScaleBar.inside(mouse)){
-		colorScale += mouse.scrollY * 0.001;
-		colorScale = saturate(colorScale);
+		setColorScale(saturate(colorScale + mouse.scrollY * 0.001));
 		setNeedsRedraw();
 		return true;
 	}else{

@@ -1,4 +1,7 @@
 #include "ofMatrix3x3.h"
+#include <iomanip>
+
+using namespace std;
 
 ofMatrix3x3::ofMatrix3x3( float _a, float _b, float _c,
 			  float _d, float _e, float _f,
