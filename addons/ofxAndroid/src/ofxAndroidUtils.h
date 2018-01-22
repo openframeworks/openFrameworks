@@ -11,6 +11,8 @@
 #include "ofConstants.h"
 #include "ofEvent.h"
 
+enum ofOrientation: short;
+
 JavaVM * ofGetJavaVMPtr();
 JNIEnv * ofGetJNIEnv();
 jclass ofGetJavaOFAndroid();

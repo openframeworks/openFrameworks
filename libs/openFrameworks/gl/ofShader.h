@@ -8,13 +8,22 @@
  */
 
 #include "ofConstants.h"
-#include "ofBaseTypes.h"
-#include "ofLog.h"
+#include "ofFileUtils.h"
+#include "glm/fwd.hpp"
+#include <unordered_map>
+#include <map>
+
 class ofTexture;
 class ofMatrix3x3;
 class ofParameterGroup;
 class ofBufferObject;
+class ofBaseHasTexture;
 
+template<typename T>
+class ofColor_;
+typedef ofColor_<float> ofFloatColor;
+
+enum ofLogLevel: short;
 
 class ofShader {
 

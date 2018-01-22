@@ -38,8 +38,9 @@
 
 
 #include "SoundEngine.h"
-#include "ofBaseSoundPlayer.h"
+#include "ofSoundBaseTypes.h"
 #include "ofTypes.h"
+#include "glm/vec3.hpp"
 
 //globals
 

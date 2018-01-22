@@ -2,7 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-#include "ofBaseTypes.h"
+#include "ofVideoBaseTypes.h"
 #include "ofPixels.h"
 
 #ifdef OF_VIDEO_CAPTURE_DIRECTSHOW

@@ -1,7 +1,8 @@
 #pragma once
 #include "ofColor.h"
 #include "ofShader.h"
-#include "ofBaseTypes.h"
+#include "ofConstants.h"
+#include "glm/fwd.hpp"
 
 // Material concept: "Anything graphical applied to the polygons"
 //
@@ -11,6 +12,60 @@
 //   * Wavefront material file spec: http://people.sc.fsu.edu/~jburkardt/data/mtl/mtl.html
 //   * Ogre3D: http://www.ogre3d.org/docs/manual/manual_11.html#SEC14
 //   * assim material: http://assimp.sourceforge.net/lib_html/ai_material_8h.html#7dd415ff703a2cc53d1c22ddbbd7dde0
+
+class ofGLProgrammableRenderer;
+
+/// \class ofBaseMaterial
+/// \brief material parameter properties that can be applied to vertices in the OpenGL lighting model
+/// used in determining both the intensity and color of reflected light based on the lighting model in use
+/// and if the vertices are on a front or back sided face
+class ofBaseMaterial{
+public:
+
+	virtual ~ofBaseMaterial(){};
+
+	/// \return the diffuse reflectance
+	virtual ofFloatColor getDiffuseColor() const=0;
+
+	/// \return the ambient reflectance
+	virtual ofFloatColor getAmbientColor() const=0;
+
+	/// \return the specular reflectance
+	virtual ofFloatColor getSpecularColor() const=0;
+
+	/// \return the emitted light intensity
+	virtual ofFloatColor getEmissiveColor() const=0;
+
+	/// \return the specular exponent
+	virtual float getShininess() const=0;
+
+	/// \brief begin using this material's properties
+	virtual void begin() const=0;
+
+	/// \brief end using this material's properties
+	virtual void end() const=0;
+
+	/// \brief create and return a shader used to implement the materials effect for a given renderer
+	/// \param textureTarget an implementation-specific value to specify the type of shader to use
+	/// \param renderer programmable renderer instance to create the material shader for
+	virtual const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const=0;
+
+	/// \brief upload the given renderer's normal matrix to the material shader
+	/// \param shader the material shader, created by getShader()
+	/// \param renderer programmable renderer instance that uses the material shader
+	virtual void uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
+
+	/// \brief update the material properties to the material shader
+	/// \param shader the material shader, created by getShader()
+	/// \param renderer programmable renderer instance that uses the material shader
+	virtual void updateMaterial(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
+
+	/// \brief update the given renderer's lights to the material shader
+	/// \param shader the material shader, created by getShader()
+	/// \param renderer programmable renderer instance that uses the material shader
+	virtual void updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
+};
+
 
 /// \class ofMaterial
 /// \brief material parameter properties that can be applied to vertices in the OpenGL lighting model
@@ -166,9 +221,9 @@ public:
 	void setCustomUniformMatrix3f(const std::string & name, glm::mat3 value);
 
 	void setCustomUniform1i(const std::string & name, int value);
-	void setCustomUniform2i(const std::string & name, glm::tvec2<int> value);
-	void setCustomUniform3i(const std::string & name, glm::tvec3<int> value);
-	void setCustomUniform4i(const std::string & name, glm::tvec4<int> value);
+	void setCustomUniform2i(const std::string & name, glm::tvec2<int, glm::precision::defaultp> value);
+	void setCustomUniform3i(const std::string & name, glm::tvec3<int, glm::precision::defaultp> value);
+	void setCustomUniform4i(const std::string & name, glm::tvec4<int, glm::precision::defaultp> value);
 	void setCustomUniformTexture(const std::string & name, const ofTexture & value, int textureLocation);
 	void setCustomUniformTexture(const std::string & name, int textureTarget, GLint textureID, int textureLocation);
 
@@ -206,9 +261,9 @@ private:
 	std::map<std::string, glm::vec3> uniforms3f;
 	std::map<std::string, glm::vec4> uniforms4f;
 	std::map<std::string, float> uniforms1i;
-	std::map<std::string, glm::tvec2<int>> uniforms2i;
-	std::map<std::string, glm::tvec3<int>> uniforms3i;
-	std::map<std::string, glm::tvec4<int>> uniforms4i;
+	std::map<std::string, glm::tvec2<int, glm::precision::defaultp>> uniforms2i;
+	std::map<std::string, glm::tvec3<int, glm::precision::defaultp>> uniforms3i;
+	std::map<std::string, glm::tvec4<int, glm::precision::defaultp>> uniforms4i;
 	std::map<std::string, glm::mat4> uniforms4m;
 	std::map<std::string, glm::mat3> uniforms3m;
 	std::map<std::string, TextureUnifom> uniformstex;

@@ -1,12 +1,11 @@
 #pragma once
-#include "ofBaseTypes.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofPolyline.h"
-#include <stack>
 #include "of3dGraphics.h"
 #include "ofBitmapFont.h"
 #include "ofMatrixStack.h"
 #include "ofPath.h"
-#include <set>
+#include "ofGLBaseTypes.h"
 
 class ofShapeTessellation;
 class ofFbo;

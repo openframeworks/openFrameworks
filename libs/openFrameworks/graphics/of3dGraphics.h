@@ -9,9 +9,6 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofColor.h"
-#include "ofRectangle.h"
-#include "ofTypes.h"
 #include "of3dPrimitives.h"
 
 

@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "ofBaseTypes.h"
+#include "ofVideoBaseTypes.h"
 #include "ofPixels.h"
 #include "ofTexture.h"
 #include "ofThread.h"

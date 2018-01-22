@@ -1,4 +1,8 @@
-#pragma once
+// This include guard is not a pragma once on purpose
+// so some IDEs are happy include this file back form the corresponding inl
+#ifndef OF_POLYLINE_H
+#define OF_POLYLINE_H
+
 #include "ofConstants.h"
 #include <deque>
 
@@ -547,3 +551,5 @@ template<class T>
 bool ofInsidePoly(const T& p, const std::vector<T>& poly){
 	return ofPolyline_<T>::inside(p.x,p.y, ofPolyline_<T>(poly));
 }
+
+#endif

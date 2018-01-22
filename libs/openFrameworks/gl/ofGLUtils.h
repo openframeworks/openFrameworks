@@ -9,36 +9,24 @@
 #define OFGLUTILS_H_
 
 #include "ofConstants.h"
-#include "ofTypes.h"
-#include "ofPixels.h"
+#include "ofGraphicsConstants.h"
 
 class ofShader;
 class ofGLProgrammableRenderer;
 class ofBaseGLRenderer;
 class ofTexture;
 
-enum ofPrimitiveMode{
-	OF_PRIMITIVE_TRIANGLES,
-	OF_PRIMITIVE_TRIANGLE_STRIP,
-	OF_PRIMITIVE_TRIANGLE_FAN,
-	OF_PRIMITIVE_LINES,
-	OF_PRIMITIVE_LINE_STRIP,
-	OF_PRIMITIVE_LINE_LOOP,
-	OF_PRIMITIVE_POINTS,
-#ifndef TARGET_OPENGLES
-    OF_PRIMITIVE_LINES_ADJACENCY,
-    OF_PRIMITIVE_LINE_STRIP_ADJACENCY,
-    OF_PRIMITIVE_TRIANGLES_ADJACENCY,
-    OF_PRIMITIVE_TRIANGLE_STRIP_ADJACENCY,
-    OF_PRIMITIVE_PATCHES
-#endif
-};
+template<typename T>
+class ofPixels_;
 
-enum ofPolyRenderMode{
-	OF_MESH_POINTS,
-	OF_MESH_WIREFRAME,
-	OF_MESH_FILL
-};
+typedef ofPixels_<unsigned char> ofPixels;
+typedef ofPixels_<float> ofFloatPixels;
+typedef ofPixels_<unsigned short> ofShortPixels;
+typedef ofPixels& ofPixelsRef;
+
+enum ofImageType: short;
+enum ofPixelFormat: short;
+
 
 int ofGetGlInternalFormat(const ofPixels& pix);
 int ofGetGlInternalFormat(const ofShortPixels& pix);

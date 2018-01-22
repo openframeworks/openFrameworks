@@ -1,11 +1,10 @@
-// TODO:
-// get face info properly
-// use edge flags
+// This include guard is not a pragma once on purpose
+// so some IDEs are happy include this file back form the corresponding inl
+#ifndef OF_MESH_H
+#define OF_MESH_H
 
-#pragma once
-
-#include "ofGLUtils.h"
 #include "ofConstants.h"
+#include "ofGLUtils.h"
 
 template<class V, class N, class C, class T>
 class ofMeshFace_;
@@ -743,3 +742,5 @@ private:
 
 using ofMesh = ofMesh_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorType, ofDefaultTexCoordType>;
 using ofMeshFace = ofMeshFace_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorType, ofDefaultTexCoordType>;
+
+#endif

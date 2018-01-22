@@ -3,7 +3,6 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 #include "ofPolyline.h"
-#include "ofBaseTypes.h"
 #include "ofVboMesh.h"
 #include "ofTessellator.h"
 

@@ -25,6 +25,7 @@
 #pragma once
 
 #include <list>
+#include <map>
 #include "ofConstants.h"
 #include "ofEvents.h"
 #include "ofSerial.h"

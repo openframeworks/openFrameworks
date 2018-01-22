@@ -1,15 +1,14 @@
 #pragma once
 
 
-#include "cairo-features.h"
-#include "cairo-pdf.h"
-#include "cairo-svg.h"
 #include "cairo.h"
+
 #include <deque>
 #include <stack>
-#include "ofBaseTypes.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofPath.h"
 #include "of3dGraphics.h"
+#include "ofPixels.h"
 
 class ofCairoRenderer: public ofBaseRenderer{
 public:

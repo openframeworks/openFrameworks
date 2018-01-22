@@ -1,5 +1,4 @@
 #include "ofURLFileLoader.h"
-#include "ofBaseTypes.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 
@@ -20,6 +19,9 @@ ofEvent<ofHttpResponse> & ofURLResponseEvent(){
 	static ofEvent<ofHttpResponse> * event = new ofEvent<ofHttpResponse>;
 	return *event;
 }
+
+
+
 
 #if !defined(TARGET_IMPLEMENTS_URL_LOADER)
 class ofURLFileLoaderImpl: public ofThread, public ofBaseURLFileLoader{
