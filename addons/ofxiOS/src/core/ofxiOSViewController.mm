@@ -383,6 +383,12 @@
 }
 #endif
 
+#ifdef __IPHONE_11_0
+- (BOOL) prefersHomeIndicatorAutoHidden {
+	return YES;
+}
+#endif
+
 @end
 
 #endif
