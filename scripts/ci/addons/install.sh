@@ -39,18 +39,20 @@ cd ~
 mv $TRAVIS_BUILD_DIR $OF_ROOT/addons/
 mkdir -p $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/
 
+downloader() { if command -v wget 2>/dev/null; then wget $1 $2 $3; else curl -LO --retry 20 -O --progress $1 $2 $3; fi; }
+
 cd $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/
 if [ "$TARGET" == "android" ]; then
     mkdir armv7;
     mkdir x86;
 
     cd armv7;
-    wget http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/armv7/libopenFrameworksDebug.a;
+        downloader http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/armv7/libopenFrameworksDebug.a;
     cd ../x86;
-    wget http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/x86/libopenFrameworksDebug.a;
+        downloader http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/x86/libopenFrameworksDebug.a;
     cd ..;
-elif [ "$TARGET" == "emscripten" ]; then
-    wget http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/libopenFrameworksDebug.bc;
-else
-    wget http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/libopenFrameworksDebug.a;
-fi
+    elif [ "$TARGET" == "emscripten" ]; then
+        downloader http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/libopenFrameworksDebug.bc;
+    else
+        downloader http://ci.openframeworks.cc/openFrameworks_libs/$TARGET/libopenFrameworksDebug.a;
+    fi

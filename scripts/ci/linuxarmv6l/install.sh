@@ -22,14 +22,16 @@ createRaspbianImg(){
     multistrap -a armhf -d raspbian -f multistrap.conf
 }
 
+downloader() { if command -v wget 2>/dev/null; then wget $1 $2 $3; else curl -LO --retry 20 -O --progress $1 $2 $3; fi; }
+
 downloadToolchain(){
-    wget http://ci.openframeworks.cc/rpi_toolchain.tar.bz2
+    downloader http://ci.openframeworks.cc/rpi_toolchain.tar.bz2
     tar xjf rpi_toolchain.tar.bz2
     rm rpi_toolchain.tar.bz2
 }
 
 downloadFirmware(){
-    wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+    downloader https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
     unzip firmware.zip
     cp -r firmware-master/opt raspbian/
     rm -r firmware-master
@@ -37,16 +39,16 @@ downloadFirmware(){
 }
 
 relativeSoftLinks(){
-    for link in $(ls -la | grep "\-> /" | sed "s/.* \([^ ]*\) \-> \/\(.*\)/\1->\/\2/g"); do 
-        lib=$(echo $link | sed "s/\(.*\)\->\(.*\)/\1/g"); 
-        link=$(echo $link | sed "s/\(.*\)\->\(.*\)/\2/g"); 
+    for link in $(ls -la | grep "\-> /" | sed "s/.* \([^ ]*\) \-> \/\(.*\)/\1->\/\2/g"); do
+        lib=$(echo $link | sed "s/\(.*\)\->\(.*\)/\1/g");
+        link=$(echo $link | sed "s/\(.*\)\->\(.*\)/\2/g");
         rm $lib
-        ln -s ../../..$link $lib 
+        ln -s ../../..$link $lib
     done
 
-    for f in *; do 
-        error=$(grep " \/lib/" $f > /dev/null 2>&1; echo $?) 
-        if [ $error -eq 0 ]; then 
+    for f in *; do
+        error=$(grep " \/lib/" $f > /dev/null 2>&1; echo $?)
+        if [ $error -eq 0 ]; then
             sed -i "s/ \/lib/ ..\/..\/..\/lib/g" $f
             sed -i "s/ \/usr/ ..\/..\/..\/usr/g" $f
         fi

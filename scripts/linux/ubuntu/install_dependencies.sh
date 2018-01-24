@@ -155,7 +155,7 @@ else
     # tools for git use
     GLFW_GIT_TAG=$GLFW_VER
     apt-get install -y -qq libxrandr-dev libxinerama-dev libxcursor-dev cmake
-    wget https://github.com/glfw/glfw/archive/$GLFW_GIT_TAG.tar.gz -O glfw-$GLFW_GIT_TAG.tar.gz
+    curl -LO --retry 20 -O --progress https://github.com/glfw/glfw/archive/$GLFW_GIT_TAG.tar.gz -O glfw-$GLFW_GIT_TAG.tar.gz
     tar -xf glfw-$GLFW_GIT_TAG.tar.gz
 	mv glfw-$GLFW_GIT_TAG glfw
 	rm glfw-$GLFW_GIT_TAG.tar.gz

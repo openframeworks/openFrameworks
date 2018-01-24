@@ -10,6 +10,8 @@ set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   # set -u : exit the script if you try to use an uninitialized variable
 set -o errexit   # set -e : exit the script if any statement returns a non-true return value
 
+downloader() { if command -v curl 2>/dev/null; then curl -LO --retry 20 -O --progress $1 $2 $3 2> /dev/null; else wget $1 $2 $3 2> /dev/null; fi; }
+
 error() {
   local parent_lineno="$1"
   if [[ "$#" = "3" ]] ; then
@@ -70,7 +72,7 @@ mv /var/www/versions/nightly/of_v${lastversion}_android_release.tar.gz /var/www/
 mv /var/www/versions/nightly/of_v${lastversion}_linuxarmv6l_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linuxarmv6l_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linuxarmv7l_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linuxarmv7l_nightly.tar.gz
 
-echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'> /var/www/nightlybuilds.html
 echo '<html>' >> /var/www/nightlybuilds.html
 echo '<head>' >> /var/www/nightlybuilds.html
@@ -91,9 +93,9 @@ done
 echo '</body>' >> /var/www/nightlybuilds.html
 echo '</html>' >> /var/www/nightlybuilds.html
 
-#wget http://openframeworks.cc/nightly_hook.php?version=${lastversion} -O /dev/null
+#downloader http://openframeworks.cc/nightly_hook.php?version=${lastversion} -O 
 
-echo 
+echo
 echo
 echo "Successfully created nightly builds for ${lastversion}"
 echo
