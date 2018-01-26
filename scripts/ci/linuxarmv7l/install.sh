@@ -3,7 +3,13 @@ set -e
 set -o pipefail
 # trap any script errors and exit
 trap "trapError" ERR
-age () { stat=$(stat --printf="%Y %F\n" "$1"); echo $((($(date +%s) - ${stat%% *})/86400)); }
+age () { 
+    stat=$(stat -c %Z $1); 
+    current=$(date +%s); 
+    diff=$(expr $current - $stat); 
+    days=$(expr $diff / 86400); 
+    echo $days 
+}
 
 
 SUDO=
@@ -23,7 +29,7 @@ createArchImg(){
     #sudo apt-get install -y libgssapi-krb5-2 libkrb5-3 libidn11
     #sudo ./arch-bootstrap.sh archlinux
 
-    #if [ ! -d ~/archlinux ] || [ -f ~/archlinux/timestamp ] && [ $(age ~/archlinux/timestamp) -gt 7 ]; then
+    if [ ! -d ~/archlinux ] || [ -f ~/archlinux/timestamp ] && [ $(age ~/archlinux/timestamp) -gt 7 ]; then
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
 		cd ~
 		wget --quiet http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
@@ -59,9 +65,9 @@ createArchImg(){
 				pugixml
 EOF
     	touch ~/archlinux/timestamp
-    #else
-    #    echo "Using cached archlinux image"
-    #fi
+    else
+        echo "Using cached archlinux image"
+    fi
 }
 
 downloadToolchain(){
