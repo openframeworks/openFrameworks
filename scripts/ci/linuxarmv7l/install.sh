@@ -23,7 +23,7 @@ createArchImg(){
     #sudo apt-get install -y libgssapi-krb5-2 libkrb5-3 libidn11
     #sudo ./arch-bootstrap.sh archlinux
 
-    if [ ! "$(ls -A ~/archlinux)" ] || [ $(age ~/archlinux/timestamp) -gt 7 ]; then
+    if [ ! -d ~/archlinux ] || [ $(age ~/archlinux/timestamp) -gt 7 ]; then
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
 		cd ~
 		wget --quiet http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
