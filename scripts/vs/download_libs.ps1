@@ -11,11 +11,8 @@ $currentPath = $pwd
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 $libsDir = $scriptPath + "\..\..\libs"
 
-function DownloadLibs{
-    cd $scriptPath
-    $client = new-object System.Net.WebClient
-    $arch = $args[0]
-    $pkg = "openFrameworksLibs_"+$ver+"_"+$platform+"_"+$arch+".zip"
+function DownloadPackage{
+    $pkg = $args[0]
     $url = "http://ci.openframeworks.cc/libs/$pkg"
     If(Test-Path "$pkg") {
         echo "Deleting old package"
@@ -35,6 +32,20 @@ function DownloadLibs{
     [IO.Compression.ZipFile]::ExtractToDirectory("$scriptPath\$pkg", "$libsDir\$arch")
 
     Remove-Item $pkg
+}
+
+function DownloadLibs{
+    cd $scriptPath
+    $client = new-object System.Net.WebClient
+    $arch = $args[0]
+    $pkg1 = "openFrameworksLibs_"+$ver+"_"+$platform+"_"+$arch+"_1.zip"
+    $pkg2 = "openFrameworksLibs_"+$ver+"_"+$platform+"_"+$arch+"_2.zip"
+    $pkg3 = "openFrameworksLibs_"+$ver+"_"+$platform+"_"+$arch+"_3.zip"
+    $pkg4 = "openFrameworksLibs_"+$ver+"_"+$platform+"_"+$arch+"_4.zip"
+    DownloadPackage $pkg1
+    DownloadPackage $pkg2
+    DownloadPackage $pkg3
+    DownloadPackage $pkg4
 }
 
 
