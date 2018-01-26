@@ -4,11 +4,15 @@ set -o pipefail
 # trap any script errors and exit
 trap "trapError" ERR
 age () { 
-    stat=$(stat -c %Z $1); 
-    current=$(date +%s); 
-    diff=$(expr $current - $stat); 
-    days=$(expr $diff / 86400); 
-    echo $days 
+    if [ -f $1 ]; then
+        stat=$(stat -c %Z $1); 
+        current=$(date +%s); 
+        diff=$(expr $current - $stat); 
+        days=$(expr $diff / 86400); 
+        echo $days
+    else
+        echo 1000
+    fi 
 }
 
 
