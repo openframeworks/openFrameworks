@@ -32,18 +32,28 @@ createArchImg(){
     #sudo apt-get -f -y --force-yes dist-upgrade
     #sudo apt-get install -y libgssapi-krb5-2 libkrb5-3 libidn11
     #sudo ./arch-bootstrap.sh archlinux
+    
+    download=0
+    if [ ! -d ~/archlinux ]; then
+        download=1
+    elif [ -f ~/archlinux/timestamp ]; then
+        if [ $(age ~/archlinux/timestamp) -gt 7 ]; then
+            download=1
+        fi
+    fi
 
-    if [ ! -d ~/archlinux ] || [ -f ~/archlinux/timestamp ] && [ $(age ~/archlinux/timestamp) -gt 7 ]; then
+    if [ "$download" = "1" ]; then
+        echo "Downloading archlinux image"
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
 		cd ~
 		wget --quiet http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
-		mkdir archlinux
-	    tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C archlinux/ 2> /dev/null
-		sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g archlinux/etc/pacman.conf
+		mkdir ~/archlinux
 		junest -u << EOF
+	        tar xzf ~/ArchLinuxARM-rpi-2-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
+            sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
 			pacman --noconfirm -S ccache
-			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -Syu
-			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -S \
+			pacman --noconfirm -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -Syu
+			pacman --noconfirm -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -S \
 				make \
 				pkg-config \
 				gcc \
@@ -78,16 +88,17 @@ downloadToolchain(){
     if [ -d ~/x-tools7h ]; then
         echo "Using cached RPI2 toolchain"
     else
+        echo "Downloading RPI2 toolchain"
 		#xz -dc x-tools7h.tar.xz | tar x -C ~/;
-		#junest -u << EOF
-		cd /tmp
-		if [ -f x-tools7h.tar.xz ]; then
-			rm x-tools7h.tar.xz
+		if [ -f ~/x-tools7h.tar.xz ]; then
+			rm ~/x-tools7h.tar.xz
 		fi
+        cd ~
 		wget --quiet http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
-	    sudo tar -x --delay-directory-restore --no-same-owner -f x-tools7h.tar.xz -C ~/
-	    rm x-tools7h.tar.xz
-#EOF
+		junest -u << EOF
+	        tar -x --delay-directory-restore --no-same-owner -f ~/x-tools7h.tar.xz -C ~/
+	        rm ~/x-tools7h.tar.xz
+EOF
         #wget http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
         #tar xjf rpi2_toolchain.tar.bz2 -C ~/
         #rm rpi2_toolchain.tar.bz2
