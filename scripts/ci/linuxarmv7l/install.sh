@@ -23,7 +23,7 @@ createArchImg(){
     #sudo apt-get install -y libgssapi-krb5-2 libkrb5-3 libidn11
     #sudo ./arch-bootstrap.sh archlinux
 
-    if [ ! -d ~/archlinux ] || [ -f ~/archlinux/timestamp ] && [ $(age ~/archlinux/timestamp) -gt 7 ]; then
+    #if [ ! -d ~/archlinux ] || [ -f ~/archlinux/timestamp ] && [ $(age ~/archlinux/timestamp) -gt 7 ]; then
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
 		cd ~
 		wget --quiet http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
@@ -59,9 +59,9 @@ createArchImg(){
 				pugixml
 EOF
     	touch ~/archlinux/timestamp
-    else
-        echo "Using cached archlinux image"
-    fi
+    #else
+    #    echo "Using cached archlinux image"
+    #fi
 }
 
 downloadToolchain(){
@@ -74,7 +74,7 @@ downloadToolchain(){
 		if [ -f x-tools7h.tar.xz ]; then
 			rm x-tools7h.tar.xz
 		fi
-		wget http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
+		wget --quiet http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
 	    sudo tar -x --delay-directory-restore --no-same-owner -f x-tools7h.tar.xz -C ~/
 	    rm x-tools7h.tar.xz
 #EOF
