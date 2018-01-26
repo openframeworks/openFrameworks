@@ -25,18 +25,14 @@ createArchImg(){
 
     if [ ! "$(ls -A ~/archlinux)" ] || [ $(age ~/archlinux/timestamp) -gt 7 ]; then
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
+		cd ~
+		wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+		mkdir archlinux
+	    tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C archlinux/ 2> /dev/null
+		sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g archlinux/etc/pacman.conf
 		junest -u << EOF
-			cd ~
-			wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
-			mkdir archlinux
-		    tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C archlinux/ 2> /dev/null
-			sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g archlinux/etc/pacman.conf
-			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -Syu
-			echo
-			echo
-			echo
-			echo "installing ccache"
 			pacman --noconfirm -S ccache
+			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -Syu
 			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -S \
 				make \
 				pkg-config \
@@ -61,8 +57,8 @@ createArchImg(){
 				uriparser \
 				curl \
 				pugixml
-        	touch ~/archlinux/timestamp
 EOF
+    	touch ~/archlinux/timestamp
     else
         echo "Using cached archlinux image"
     fi
