@@ -23,7 +23,7 @@ createArchImg(){
     #sudo apt-get install -y libgssapi-krb5-2 libkrb5-3 libidn11
     #sudo ./arch-bootstrap.sh archlinux
 
-    if [ ! -d ~/archlinux ] || [ $(age ~/archlinux/timestamp) -gt 7 ]; then
+    if [ ! -d ~/archlinux ] || [ -f ~/archlinux/timestamp ] && [ $(age ~/archlinux/timestamp) -gt 7 ]; then
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
 		cd ~
 		wget --quiet http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
@@ -65,19 +65,19 @@ EOF
 }
 
 downloadToolchain(){
-    if [ "$(ls -A ~/x-tools7h)" ]; then
+    if [ -d ~/x-tools7h ]; then
         echo "Using cached RPI2 toolchain"
     else
 		#xz -dc x-tools7h.tar.xz | tar x -C ~/;
-		junest -u << EOF
+		#junest -u << EOF
 		cd /tmp
 		if [ -f x-tools7h.tar.xz ]; then
 			rm x-tools7h.tar.xz
 		fi
 		wget http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
-	    tar -x --delay-directory-restore --no-same-owner -f x-tools7h.tar.xz -C ~/
+	    sudo tar -x --delay-directory-restore --no-same-owner -f x-tools7h.tar.xz -C ~/
 	    rm x-tools7h.tar.xz
-EOF
+#EOF
         #wget http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
         #tar xjf rpi2_toolchain.tar.bz2 -C ~/
         #rm rpi2_toolchain.tar.bz2
@@ -85,7 +85,7 @@ EOF
 }
 
 downloadFirmware(){
-    if [ "$(ls -A ~/firmware-master)" ]; then
+    if [ -d ~/firmware-master ]; then
         echo "Using cached RPI2 firmware-master"
     else
         cd ~
@@ -146,6 +146,7 @@ installJunest(){
 		pacman -Syy --noconfirm
 		pacman -S --noconfirm git flex grep gcc pkg-config make wget
 EOF
+    echo "Done installing junest"
 }
 
 echo $ROOT
