@@ -20,7 +20,7 @@ if [ "${TRAVIS_REPO_SLUG}/${TRAVIS_BRANCH}" = "openframeworks/openFrameworks/mas
         scp -i $CI_ROOT/id_rsa $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/libtvOS+OFLib_Release.a tests@ci.openframeworks.cc:openFrameworks_libs/$TARGET/libtvOS+OFLib_Release.a_new
         ssh -i $CI_ROOT/id_rsa tests@ci.openframeworks.cc "mv openFrameworks_libs/$TARGET/libtvOS+OFLib_Release.a_new openFrameworks_libs/$TARGET/libtvOS+OFLib_Release.a"
     elif [ "$TARGET" = "osx" ]; then
-        scp -i $CI_ROOT/id_rsa $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/openFrameworksDebug.a tests@ci.openframeworks.cc:openFrameworks_libs/$TARGET/libopenFrameworksDebug.a_new
+        scp -i $CI_ROOT/id_rsa $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/openFrameworks.a tests@ci.openframeworks.cc:openFrameworks_libs/$TARGET/libopenFrameworksDebug.a_new
         ssh -i $CI_ROOT/id_rsa tests@ci.openframeworks.cc "mv openFrameworks_libs/$TARGET/libopenFrameworksDebug.a_new openFrameworks_libs/$TARGET/libopenFrameworksDebug.a"
     else
         scp -i $CI_ROOT/id_rsa $OF_ROOT/libs/openFrameworksCompiled/lib/$TARGET/libopenFrameworksDebug.a tests@ci.openframeworks.cc:openFrameworks_libs/$TARGET/libopenFrameworksDebug.a_new
