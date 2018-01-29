@@ -164,11 +164,15 @@ function deleteEclipse {
 
 function createProjectFiles {
     if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
+        mkdir -p ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
+        cd ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
+        wget http://ci.openframeworks.cc/openFrameworks_libs/linux64/libopenFrameworksDebug.a
+
         cd ${main_ofroot}/apps/projectGenerator
         git pull origin $PG_BRANCH
         cd commandLine
         echo "Recompiling command line PG"
-        PROJECT_OPTIMIZATION_CFLAGS_RELEASE=-O0 CXXFLAGS=-ftrack-macro-expansion=0 make > /dev/null 2>&1 &
+        PROJECT_OPTIMIZATION_CFLAGS_RELEASE=-O0 CXXFLAGS=-ftrack-macro-expansion=0 make DebugNoOF > /dev/null 2>&1 &
 
         makePGPID=$!
         echoDots $makePGPID
