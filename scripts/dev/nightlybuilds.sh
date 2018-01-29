@@ -78,7 +78,7 @@ cat head.template >> /var/www/nightlybuilds.html
 echo '</head>' >> /var/www/nightlybuilds.html
 echo '<body id="nightlybuilds" style="background-color:#ffffff;text-align:left">' >> /var/www/nightlybuilds.html
 cat nightlybuilds.template >> /var/www/nightlybuilds.html
-# echo '<p>This download corresponds to commit: <a href="https://github.com/openframeworks/openFrameworks/commit/'${currenthash}'">'${currenthash}'</a></p>' >> /var/www/nightlybuilds.html
+echo '<p>This download corresponds to commit: <a href="https://github.com/openframeworks/openFrameworks/commit/'${currenthash}'">'${currenthash}'</a></p>' >> /var/www/nightlybuilds.html
 prev_version=0
 for pkg in $(ls -r /var/www/versions/nightly/ | grep -v latest); do
     version=$(echo $pkg | cut -c4-12)
