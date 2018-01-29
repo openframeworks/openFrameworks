@@ -172,10 +172,14 @@ function createProjectFiles {
         git pull origin $PG_BRANCH
         cd commandLine
         echo "Recompiling command line PG"
-        PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make DebugNoOF # > /dev/null 2>&1 &
-        # makePGPID=$!
-        # echoDots $makePGPID
-        # wait $makePGPID
+        if [ -d ~/logs ]; then
+            PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make DebugNoOF > ~/logs/compilePG.log 2>&1 &
+            makePGPID=$!
+            echoDots $makePGPID
+            wait $makePGPID
+        else
+            PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make DebugNoOF
+        fi
 
         cd ${pkg_ofroot}
         echo "Creating project files for $pkg_platform"
