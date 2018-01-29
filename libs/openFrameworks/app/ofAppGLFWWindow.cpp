@@ -49,7 +49,7 @@ ofAppGLFWWindow::ofAppGLFWWindow()
 	bWindowNeedsShowing	= true;
 
 	orientation 		= OF_ORIENTATION_DEFAULT;
-
+	windowMode		= OF_WINDOW;
 	ofAppPtr			= nullptr;
 
     pixelScreenCoordScale = 1;
@@ -150,10 +150,12 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	}
 	settings = _settings;
 
-	if(!glfwInit( )){
+	if(!glfwInit()){
 		ofLogError("ofAppGLFWWindow") << "couldn't init GLFW";
 		return;
 	}
+
+	windowMode = settings.windowMode;
 
 //	ofLogNotice("ofAppGLFWWindow") << "WINDOW MODE IS " << screenMode;
 
@@ -201,7 +203,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		sharedContext = (GLFWwindow*)settings.shareContextWith->getWindowContext();
 	}
 
-	if(settings.windowMode==OF_GAME_MODE){
+	if(settings.windowMode == OF_GAME_MODE){
 		int count;
 		GLFWmonitor** monitors = glfwGetMonitors(&count);
 		if(count>settings.monitor){
