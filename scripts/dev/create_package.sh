@@ -166,16 +166,16 @@ function createProjectFiles {
     if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
         mkdir -p ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
         cd ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
-        wget http://ci.openframeworks.cc/openFrameworks_libs/linux64/libopenFrameworksDebug.a
+        wget --unlink http://ci.openframeworks.cc/openFrameworks_libs/linux64/libopenFrameworksDebug.a
 
         cd ${main_ofroot}/apps/projectGenerator
         git pull origin $PG_BRANCH
         cd commandLine
         echo "Recompiling command line PG"
-        PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make DebugNoOF > /dev/null 2>&1 &
-        makePGPID=$!
-        echoDots $makePGPID
-        wait $makePGPID
+        PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make DebugNoOF # > /dev/null 2>&1 &
+        # makePGPID=$!
+        # echoDots $makePGPID
+        # wait $makePGPID
 
         cd ${pkg_ofroot}
         echo "Creating project files for $pkg_platform"
