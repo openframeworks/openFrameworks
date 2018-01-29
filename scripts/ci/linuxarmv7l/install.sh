@@ -3,18 +3,54 @@ set -e
 set -o pipefail
 # trap any script errors and exit
 trap "trapError" ERR
-age () { 
+age () {
     if [ -f $1 ]; then
-        stat=$(stat -c %Z $1); 
-        current=$(date +%s); 
-        diff=$(expr $current - $stat); 
-        days=$(expr $diff / 86400); 
+        stat=$(stat -c %Z $1);
+        current=$(date +%s);
+        diff=$(expr $current - $stat);
+        days=$(expr $diff / 86400);
         echo $days
     else
         echo 1000
-    fi 
+    fi
 }
 
+hostArch=`uname`
+
+
+isRunning(){
+    if [ “$hostArch” == “Linux” ]; then
+		if [ -d /proc/$1 ]; then
+	    	return 0
+        else
+            return 1
+        fi
+    else
+        number=$(ps aux | sed -E "s/[^ ]* +([^ ]*).*/\1/g" | grep ^$1$ | wc -l)
+
+        if [ $number -gt 0 ]; then
+            return 0;
+        else
+            return 1;
+        fi
+    fi
+}
+
+echoDots(){
+    sleep 0.1 # Waiting for a brief period first, allowing jobs returning immediatly to finish
+    while isRunning $1; do
+        for i in $(seq 1 10); do
+            echo -ne .
+            if ! isRunning $1; then
+                printf "\r"
+                return;
+            fi
+            sleep 5
+        done
+        printf "\r                    "
+        printf "\r"
+    done
+}
 
 SUDO=
 export ROOT=$( cd "$(dirname "$0")" ; pwd -P )
@@ -32,7 +68,7 @@ createArchImg(){
     #sudo apt-get -f -y --force-yes dist-upgrade
     #sudo apt-get install -y libgssapi-krb5-2 libkrb5-3 libidn11
     #sudo ./arch-bootstrap.sh archlinux
-    
+
     download=0
     if [ ! -d ~/archlinux ]; then
         download=1
@@ -46,7 +82,11 @@ createArchImg(){
         echo "Downloading archlinux image"
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
 		cd ~
-		wget --quiet http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+		wget --quiet http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz &
+        download=$!
+        echoDots $download
+        wait $download
+
 		mkdir ~/archlinux
 		junest -u << EOF
 	        tar xzf ~/ArchLinuxARM-rpi-2-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
