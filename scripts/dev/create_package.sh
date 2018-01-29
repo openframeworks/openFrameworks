@@ -69,11 +69,11 @@ echoDots(){
     done
 }
 
-if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ]; then
+if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs2015" ] && [ "$platform" != "vs2017" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ]; then
     echo usage:
     echo ./create_package.sh platform version
     echo platform:
-    echo msys2, linux, linux64, linuxarmv6l, linuxarmv7l, vs, osx, android, ios, all
+    echo msys2, linux, linux64, linuxarmv6l, linuxarmv7l, vs2015, vs2017, osx, android, ios, all
     exit 1
 fi
 
@@ -81,7 +81,7 @@ if [ "$version" == "" ]; then
     echo usage:
     echo ./create_package.sh platform version [branch]
     echo platform:
-    echo msys2, linux, linux64, vs, osx, android, ios, all
+    echo msys2, linux, linux64, vs2015, vs2017, osx, android, ios, all
     echo
     echo branch:
     echo master, stable
@@ -295,7 +295,7 @@ function createPackage {
         rm -Rf utils/fileOpenSaveDialogExample
 	fi
 
-	if [ "$pkg_platform" == "msys2" ] || [ "$pkg_platform" == "vs" ]; then
+	if [ "$pkg_platform" == "msys2" ] || [ "$pkg_platform" == "vs2015" ] || [ "$pkg_platform" == "vs2017" ]; then
 	    rm -Rf video/osxHighPerformanceVideoPlayerExample
 	    rm -Rf video/osxVideoRecorderExample
 	    rm -Rf gles
@@ -320,39 +320,39 @@ function createPackage {
 
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 linuxarmv6l linuxarmv7l osx msys2 vs ios tvos android"
+        otherplatforms="linux64 linuxarmv6l linuxarmv7l osx msys2 vs2015 vs2017 ios tvos android"
     fi
 
     if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux linuxarmv6l linuxarmv7l osx msys2 vs ios tvos android"
+        otherplatforms="linux linuxarmv6l linuxarmv7l osx msys2 vs2015 vs2017 ios tvos android"
     fi
 
     if [ "$pkg_platform" = "linuxarmv6l" ]; then
-        otherplatforms="linux64 linux linuxarmv7l osx msys2 vs ios tvos android"
+        otherplatforms="linux64 linux linuxarmv7l osx msys2 vs2015 vs2017 ios tvos android"
     fi
 
     if [ "$pkg_platform" = "linuxarmv7l" ]; then
-        otherplatforms="linux64 linux linuxarmv6l osx msys2 vs ios tvos android"
+        otherplatforms="linux64 linux linuxarmv6l osx msys2 vs2015 vs2017 ios tvos android"
     fi
 
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs ios tvos android"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs2015 vs2017 ios tvos android"
     fi
 
     if [ "$pkg_platform" = "msys2" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs ios tvos android"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs2015 vs2017 ios tvos android"
     fi
 
-    if [ "$pkg_platform" = "vs" ]; then
+    if [ "$pkg_platform" = "vs2015" ] || [ "$pkg_platform" = "vs2017" ]; then
         otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 ios tvos android"
     fi
 
     if [ "$pkg_platform" = "ios" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs android osx"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs2015 vs2017 android osx"
     fi
 
     if [ "$pkg_platform" = "android" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 vs ios tvos"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 vs2015 vs2017 ios tvos"
     fi
 
 
@@ -360,7 +360,7 @@ function createPackage {
 	echo "Creating projectGenerator"
 	mkdir -p $HOME/.tmp
 	export TMPDIR=$HOME/.tmp
-    if [ "$pkg_platform" = "vs" ]; then
+    if [ "$pkg_platform" = "vs2015" ] || [ "$pkg_platform" = "vs2017" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
 		npm install > /dev/null
 		npm run build:vs > /dev/null
@@ -442,8 +442,10 @@ function createPackage {
         scripts/linux/download_libs.sh -a armv7l
     elif [ "$pkg_platform" = "msys2" ]; then
         scripts/msys2/download_libs.sh
-    elif [ "$pkg_platform" = "vs" ]; then
-        scripts/vs/download_libs.sh
+    elif [ "$pkg_platform" = "vs2015" ]; then
+        scripts/vs/download_libs.sh -pvs2015
+    elif [ "$pkg_platform" = "vs2017" ]; then
+        scripts/vs/download_libs.sh -pvs2017
     elif [ "$pkg_platform" = "android" ]; then
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
@@ -544,7 +546,7 @@ function createPackage {
         cp docs/linux.md INSTALL.md
     fi
 
-    if [ "$platform" = "vs" ]; then
+    if [ "$platform" = "vs2015" ] || [ "$platform" = "vs2017" ]; then
         cp docs/visualstudio.md INSTALL.md
     fi
 
