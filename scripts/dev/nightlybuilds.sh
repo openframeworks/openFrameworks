@@ -70,7 +70,7 @@ mv /var/www/versions/nightly/of_v${lastversion}_android_release.tar.gz /var/www/
 mv /var/www/versions/nightly/of_v${lastversion}_linuxarmv6l_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linuxarmv6l_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linuxarmv7l_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linuxarmv7l_nightly.tar.gz
 
-echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'> /var/www/nightlybuilds.html
 echo '<html>' >> /var/www/nightlybuilds.html
 echo '<head>' >> /var/www/nightlybuilds.html
@@ -78,7 +78,7 @@ cat head.template >> /var/www/nightlybuilds.html
 echo '</head>' >> /var/www/nightlybuilds.html
 echo '<body id="nightlybuilds" style="background-color:#ffffff;text-align:left">' >> /var/www/nightlybuilds.html
 cat nightlybuilds.template >> /var/www/nightlybuilds.html
-echo '<p>This download corresponds to commit: <a href="https://github.com/openframeworks/openFrameworks/commit/'${currenthash}'">'${currenthash}'</a></p>' >> /var/www/nightlybuilds.html
+# echo '<p>This download corresponds to commit: <a href="https://github.com/openframeworks/openFrameworks/commit/'${currenthash}'">'${currenthash}'</a></p>' >> /var/www/nightlybuilds.html
 prev_version=0
 for pkg in $(ls -r /var/www/versions/nightly/ | grep -v latest); do
     version=$(echo $pkg | cut -c4-12)
@@ -93,7 +93,7 @@ echo '</html>' >> /var/www/nightlybuilds.html
 
 #wget http://openframeworks.cc/nightly_hook.php?version=${lastversion} -O /dev/null
 
-echo 
+echo
 echo
 echo "Successfully created nightly builds for ${lastversion}"
 echo
