@@ -443,9 +443,9 @@ function createPackage {
     elif [ "$pkg_platform" = "msys2" ]; then
         scripts/msys2/download_libs.sh
     elif [ "$pkg_platform" = "vs2015" ]; then
-        scripts/vs/download_libs.sh -pvs2015
+        scripts/dev/download_libs.sh -p vs2015
     elif [ "$pkg_platform" = "vs2017" ]; then
-        scripts/vs/download_libs.sh -pvs2017
+        scripts/dev/download_libs.sh -p vs2017
     elif [ "$pkg_platform" = "android" ]; then
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
