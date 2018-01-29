@@ -559,7 +559,7 @@ function createPackage {
     fi
 
     if [ "$platform" = "android" ]; then
-        cp docs/android_eclipse.md INSTALL_ECLIPSE.md
+        # cp docs/android_eclipse.md INSTALL_ECLIPSE.md
         cp docs/android_studio.md INSTALL_ANDROID_STUDIO.md
     fi
 
