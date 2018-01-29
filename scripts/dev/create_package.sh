@@ -490,7 +490,7 @@ function createPackage {
 	#android, move paths.default.make to paths.make
 	if [ "$pkg_platform" == "android" ]; then
 	    cd ${pkg_ofroot}
-	    mv libs/openFrameworksCompiled/project/android/paths.default.make libs/openFrameworksCompiled/project/android/paths.make
+	    #mv libs/openFrameworksCompiled/project/android/paths.default.make libs/openFrameworksCompiled/project/android/paths.make
 	fi
 
     #delete other platforms OF project files
