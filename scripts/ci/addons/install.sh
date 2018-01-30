@@ -15,7 +15,7 @@ if [ "$OF_BRANCH" == "master" ]; then
         # sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 1 --force
         # sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 1 --force
         gcc --version
-        scripts/dev/download_libs.sh -a 64;
+        scripts/dev/download_libs.sh -a 64gcc4;
     elif [ "$TARGET" == "linuxarmv6l" ]; then
         scripts/linux/download_libs.sh -a armv6l;
     elif [ "$TARGET" == "linuxarmv7l" ]; then
