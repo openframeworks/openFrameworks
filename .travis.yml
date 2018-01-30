@@ -117,7 +117,7 @@ install:
         scripts/ci/$TARGET/install.sh;
     fi
   - if [ "$TARGET" == "linux64" ]; then
-        scripts/linux/download_libs.sh -a 64;
+        scripts/linux/download_libs.sh -a 64gcc4;
     elif [ "$TARGET" == "linuxarmv6l" ]; then
         scripts/linux/download_libs.sh -a armv6l;
     elif [ "$TARGET" == "linuxarmv7l" ]; then
