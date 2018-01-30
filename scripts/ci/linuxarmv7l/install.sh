@@ -82,10 +82,10 @@ createArchImg(){
         echo "Downloading archlinux image"
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
 		cd ~
-		wget --quiet http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz &
-        download=$!
-        echoDots $download
-        wait $download
+		wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+        # download=$!
+        # echoDots $download
+        # wait $download
 
 		mkdir ~/archlinux
 		junest -u << EOF
