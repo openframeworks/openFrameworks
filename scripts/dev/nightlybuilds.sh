@@ -42,7 +42,7 @@ if [ "$currenthash" = "$lasthash" ]; then
 fi
 
 echo $currenthash>lasthash.txt
-./create_package.sh linux64 $lastversion master
+./create_package.sh linux64 $lastversion master gcc4
 ./create_package.sh linux64 $lastversion master gcc5
 ./create_package.sh linux64 $lastversion master gcc6
 ./create_package.sh msys2 $lastversion master
@@ -60,7 +60,7 @@ rm -f /var/www/versions/nightly/of_v*_nightly.*
 mv *.tar.gz /var/www/versions/nightly
 mv *.zip /var/www/versions/nightly
 
-mv /var/www/versions/nightly/of_v${lastversion}_linux64_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_nightly.tar.gz
+mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc4_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc4_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc6_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc6_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_nightly.zip

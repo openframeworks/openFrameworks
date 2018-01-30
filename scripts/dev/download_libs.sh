@@ -20,7 +20,7 @@ cat << EOF
                                     vs2017: 32 or 64
                                     msys2: 32
                                     android: armv7 or x86 (if not specified will download both)
-                                    linux: 64, 64gcc5, 64gcc6, armv6l or armv7l
+                                    linux: 64gcc4, 64gcc5, 64gcc6 / 64, armv6l or armv7l
     -n, --no-overwrite          Merge new libraries with exisiting ones, use only to download same version for different platforms
                                 If not set deletes any existing libraries
     -s, --silent                Silent download progress
@@ -109,7 +109,7 @@ if [ "$ARCH" == "" ]; then
         if [ "$ARCH" == "x86_64" ]; then
             GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
             if [ $GCC_VERSION -eq 4 ]; then
-                ARCH=64
+                ARCH=64gcc4
             elif [ $GCC_VERSION -eq 5 ]; then
                 ARCH=64gcc5
             else
@@ -131,6 +131,10 @@ EOF
     elif [ "$PLATFORM" == "msys2" ]; then
         ARCH=32
     fi
+fi
+
+if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
+    ARCH=64gcc6
 fi
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
