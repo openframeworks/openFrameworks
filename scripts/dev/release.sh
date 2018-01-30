@@ -41,7 +41,7 @@ scripts/dev/download_libs.sh
 
 cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 
-./create_package.sh linux64 $version $branch
+./create_package.sh linux64 $version $branch gcc4
 ./create_package.sh linux64 $version $branch gcc5
 ./create_package.sh linux64 $version $branch gcc6
 ./create_package.sh linuxarmv6l $version $branch
