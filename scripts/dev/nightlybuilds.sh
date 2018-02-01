@@ -1,6 +1,8 @@
 #!/bin/bash
 
 lastversion=$(date +%Y%m%d)
+REPORT_MAIL=arturo@openframeworks.cc
+
 echo "Building nightly builds $lastversion"
 
 . $HOME/.profile
