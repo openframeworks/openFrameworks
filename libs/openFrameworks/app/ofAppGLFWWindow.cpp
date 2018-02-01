@@ -618,7 +618,11 @@ void ofAppGLFWWindow::setWindowShape(int w, int h){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::hideCursor(){
-	glfwSetInputMode(windowP,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
+	if(settings.windowMode == OF_FULLSCREEN || settings.windowMode == OF_GAME_MODE){
+		glfwSetInputMode(windowP,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
+	}else{
+		glfwSetInputMode(windowP,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
+	}
 };
 
 //------------------------------------------------------------
