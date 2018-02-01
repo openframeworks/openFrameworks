@@ -49,8 +49,7 @@ ofAppGLFWWindow::ofAppGLFWWindow()
 	bWindowNeedsShowing	= true;
 
 	orientation 		= OF_ORIENTATION_DEFAULT;
-	windowMode			= OF_WINDOW;
-
+	windowMode		= OF_WINDOW;
 	ofAppPtr			= nullptr;
 
     pixelScreenCoordScale = 1;
@@ -151,10 +150,12 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	}
 	settings = _settings;
 
-	if(!glfwInit( )){
+	if(!glfwInit()){
 		ofLogError("ofAppGLFWWindow") << "couldn't init GLFW";
 		return;
 	}
+
+	windowMode = settings.windowMode;
 
 //	ofLogNotice("ofAppGLFWWindow") << "WINDOW MODE IS " << screenMode;
 
@@ -202,7 +203,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		sharedContext = (GLFWwindow*)settings.shareContextWith->getWindowContext();
 	}
 
-	if(settings.windowMode==OF_GAME_MODE){
+	if(settings.windowMode == OF_GAME_MODE){
 		int count;
 		GLFWmonitor** monitors = glfwGetMonitors(&count);
 		if(count>settings.monitor){
@@ -493,7 +494,7 @@ int ofAppGLFWWindow::getPixelScreenCoordScale(){
 
 //------------------------------------------------------------
 glm::vec2 ofAppGLFWWindow::getWindowSize(){
-	if(windowMode == OF_GAME_MODE)
+	if(settings.windowMode == OF_GAME_MODE)
 	{
 		const GLFWvidmode * desktopMode = glfwGetVideoMode(glfwGetWindowMonitor(windowP));
 		if(desktopMode){
@@ -588,7 +589,7 @@ GLFWwindow* ofAppGLFWWindow::getGLFWWindow(){
 
 //------------------------------------------------------------
 ofWindowMode ofAppGLFWWindow::getWindowMode(){
-	return windowMode;
+	return settings.windowMode;
 }
 
 //------------------------------------------------------------
@@ -598,7 +599,7 @@ void ofAppGLFWWindow::setWindowPosition(int x, int y){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowShape(int w, int h){
-	if(windowMode == OF_WINDOW){
+	if(settings.windowMode == OF_WINDOW){
 		windowW = w;
 		windowH = h;
 	}
@@ -643,16 +644,16 @@ void ofAppGLFWWindow::disableSetupScreen(){
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen){
  
-	ofWindowMode curWindowMode = windowMode;
+	ofWindowMode curWindowMode = settings.windowMode;
  
 	if (fullscreen){
-		windowMode = OF_FULLSCREEN;
+		settings.windowMode = OF_FULLSCREEN;
 	}else{
-		windowMode = OF_WINDOW;
+		settings.windowMode = OF_WINDOW;
     }
 
     //we only want to change window mode if the requested window is different to the current one.
-    bool bChanged = windowMode != curWindowMode;
+    bool bChanged = settings.windowMode != curWindowMode;
     if( !bChanged ){
         return;
 	}
@@ -662,7 +663,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
  
     Window nativeWin = glfwGetX11Window(windowP);
 	Display* display = glfwGetX11Display();
-	if(windowMode==OF_FULLSCREEN){
+	if(settings.windowMode==OF_FULLSCREEN){
 		int monitorCount;
 		GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
 		if( settings.multiMonitorFullScreen && monitorCount > 1 ){
@@ -764,7 +765,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	setWindowShape(windowW, windowH);
  
 #elif defined(TARGET_OSX)
-	if( windowMode == OF_FULLSCREEN){
+	if( settings.windowMode == OF_FULLSCREEN){
 		//----------------------------------------------------
 		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
@@ -837,7 +838,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
         //make sure the window is getting the mouse/key events
         [cocoaWindow makeFirstResponder:cocoaWindow.contentView];
  
-	}else if( windowMode == OF_WINDOW ){
+	}else if( settings.windowMode == OF_WINDOW ){
 		
 		// set window shape if started in fullscreen
 		if(windowRect.width == 0 && windowRect.height == 0) {
@@ -866,7 +867,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
         [cocoaWindow makeFirstResponder:cocoaWindow.contentView];
 	}
 #elif defined(TARGET_WIN32)
-    if( windowMode == OF_FULLSCREEN){
+    if( settings.windowMode == OF_FULLSCREEN){
 		// save window shape before going fullscreen
 		auto pos = getWindowPosition();
 		windowRect.x = pos.x;
@@ -930,7 +931,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		currentW = fullscreenW;
 		currentH = fullscreenH;
  
-	}else if( windowMode == OF_WINDOW ){
+	}else if( settings.windowMode == OF_WINDOW ){
 		// set window shape if started in fullscreen
 		if(windowRect.width == 0 && windowRect.height == 0) {
 			windowRect.x = getWindowPosition().x;
@@ -959,10 +960,10 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::toggleFullscreen(){
-	if (windowMode == OF_GAME_MODE) return;
+	if (settings.windowMode == OF_GAME_MODE) return;
 
 
-	if (windowMode == OF_WINDOW){
+	if (settings.windowMode == OF_WINDOW){
 		setFullscreen(true);
 	} else {
 		setFullscreen(false);

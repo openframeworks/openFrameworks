@@ -111,6 +111,8 @@ public:
 	void			setOrientation(ofOrientation orientation);
 	ofOrientation	getOrientation();
 
+	ofWindowMode	windowMode;
+
 	ofWindowMode	getWindowMode();
 
 	void		setFullscreen(bool fullscreen);
@@ -198,8 +200,6 @@ private:
 	std::unique_ptr<ofCoreEvents> coreEvents;
 	std::shared_ptr<ofBaseRenderer> currentRenderer;
 	ofGLFWWindowSettings settings;
-
-	ofWindowMode	windowMode;
 
 	bool			bEnableSetupScreen;
 	int				windowW, windowH;		/// Physical framebuffer pixels extents
