@@ -99,7 +99,7 @@ matrix:
     android:
       components:
         - build-tools-25.0.2
-        - android-24
+        - android-19
     cache:
       directories:
         - ~/.gradle
