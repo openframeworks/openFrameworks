@@ -226,8 +226,8 @@ ofAppNoWindow::ofAppNoWindow()
 
 //----------------------------------------------------------
 void ofAppNoWindow::setup(const ofWindowSettings & settings){
-	width = settings.width;
-	height = settings.height;
+	width = settings.getWidth();
+	height = settings.getHeight();
 }
 
 //----------------------------------------------------------

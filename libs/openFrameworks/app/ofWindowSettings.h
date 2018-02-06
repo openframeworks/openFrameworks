@@ -37,22 +37,39 @@ enum ofOrientation: short{
 class ofWindowSettings{
 public:
 	ofWindowSettings()
-	:width(1024)
+	:windowMode(OF_WINDOW)
+	,width(1024)
 	,height(768)
-	,windowMode(OF_WINDOW)
+	,sizeSet(false)
 	,position(0,0)
 	,positionSet(false){}
 
 	virtual ~ofWindowSettings(){};
 
-	int width;
-	int height;
 	std::string title;
 	ofWindowMode windowMode;
 
 	void setPosition(const glm::vec2 & position) {
 		this->position = position;
 		this->positionSet = true;
+	}
+
+	void setSize(int width, int height) {
+		this->width = width;
+		this->height = height;
+		this->sizeSet = true;
+	}
+
+	bool isSizeSet() const {
+		return sizeSet;
+	}
+
+	int getWidth() const {
+		return width;
+	}
+
+	int getHeight() const {
+		return height;
 	}
 
 	const glm::vec2 & getPosition() const {
@@ -64,6 +81,9 @@ public:
 	}
 
 protected:
+	int width;
+	int height;
+	bool sizeSet;
 	glm::vec2 position;
 	bool positionSet;
 };
