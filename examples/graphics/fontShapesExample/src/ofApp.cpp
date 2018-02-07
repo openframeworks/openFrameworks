@@ -57,10 +57,10 @@ void ofApp::draw(){
 	ofPushMatrix();
 		ofTranslate(550, 250, 0);
 		ofBeginShape();
-			for(int k = 0; k <(int)testChar.getOutline().size(); k++){
+			for(int k = 0; k <(int)testCharContour.getOutline().size(); k++){
 				if( k!= 0)ofNextContour(true) ;
-				for(int i = 0; i < (int)testChar.getOutline()[k].size(); i++){
-					ofVertex(testChar.getOutline()[k].getVertices()[i].x, testChar.getOutline()[k].getVertices()[i].y);
+				for(int i = 0; i < (int)testCharContour.getOutline()[k].size(); i++){
+					ofVertex(testCharContour.getOutline()[k].getVertices()[i].x, testCharContour.getOutline()[k].getVertices()[i].y);
 				}
 			}
 		ofEndShape( true );
@@ -70,10 +70,10 @@ void ofApp::draw(){
 	ofPushMatrix();
 		ofTranslate(700, 250, 0);
 		ofBeginShape();
-			for(int k = 0; k <(int)testChar.getOutline().size(); k++){
+			for(int k = 0; k <(int)testCharContour.getOutline().size(); k++){
 				if( k!= 0)ofNextContour(true) ;
-				for(int i = 0; i < (int)testChar.getOutline()[k].size(); i++){
-					ofVertex(testChar.getOutline()[k].getVertices()[i].x, testChar.getOutline()[k].getVertices()[i].y);
+				for(int i = 0; i < (int)testCharContour.getOutline()[k].size(); i++){
+					ofVertex(testCharContour.getOutline()[k].getVertices()[i].x, testCharContour.getOutline()[k].getVertices()[i].y);
 				}
 			}
 		ofEndShape( true );
