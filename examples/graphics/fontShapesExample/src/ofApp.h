@@ -25,7 +25,7 @@ class ofApp : public ofBaseApp{
 		
 		ofTrueTypeFont testFont;
 		ofTrueTypeFont testFont2;
-		ofTTFCharacter testChar;
-		char letter;
+		ofTTFCharacter testChar, testCharContour;
+		uint32_t letter;
 };
 
