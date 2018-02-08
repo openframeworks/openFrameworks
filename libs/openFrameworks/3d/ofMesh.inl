@@ -2625,10 +2625,10 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 
 			// normalized tex coords //
 			texcoord.x = ((float)ix/((float)resX-1.f));
-			texcoord.y = ((float)iy/((float)resY-1.f));
+			texcoord.y = 1.f - ((float)iy/((float)resY-1.f));
 
 			vert.x = texcoord.x * width - halfW;
-			vert.y = texcoord.y * height - halfH;
+			vert.y = -(texcoord.y-1.f) * height - halfH;
 			vert.z = halfD;
 
 			mesh.addVertex(vert);
@@ -2662,11 +2662,11 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 
 			// normalized tex coords //
 			texcoord.x = ((float)ix/((float)resZ-1.f));
-			texcoord.y = ((float)iy/((float)resY-1.f));
+			texcoord.y = 1.f - ((float)iy/((float)resY-1.f));
 
 			//vert.x = texcoord.x * width - halfW;
 			vert.x = halfW;
-			vert.y = texcoord.y * height - halfH;
+			vert.y = -(texcoord.y-1.f) * height - halfH;
 			vert.z = texcoord.x * -depth + halfD;
 
 			mesh.addVertex(vert);
@@ -2699,11 +2699,11 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 
 			// normalized tex coords //
 			texcoord.x = ((float)ix/((float)resZ-1.f));
-			texcoord.y = ((float)iy/((float)resY-1.f));
+			texcoord.y = 1.f-((float)iy/((float)resY-1.f));
 
 			//vert.x = texcoord.x * width - halfW;
 			vert.x = -halfW;
-			vert.y = texcoord.y * height - halfH;
+			vert.y = -(texcoord.y-1.f) * height - halfH;
 			vert.z = texcoord.x * depth - halfD;
 
 			mesh.addVertex(vert);
@@ -2737,10 +2737,10 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 
 			// normalized tex coords //
 			texcoord.x = ((float)ix/((float)resX-1.f));
-			texcoord.y = ((float)iy/((float)resY-1.f));
+			texcoord.y = 1.f-((float)iy/((float)resY-1.f));
 
 			vert.x = texcoord.x * -width + halfW;
-			vert.y = texcoord.y * height - halfH;
+			vert.y = -(texcoord.y-1.f) * height - halfH;
 			vert.z = -halfD;
 
 			mesh.addVertex(vert);
@@ -2774,10 +2774,10 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 
 			// normalized tex coords //
 			texcoord.x = ((float)ix/((float)resX-1.f));
-			texcoord.y = ((float)iy/((float)resZ-1.f));
+			texcoord.y = 1.f-((float)iy/((float)resZ-1.f));
 
 			vert.x = texcoord.x * width - halfW;
-			//vert.y = texcoord.y * height - halfH;
+			//vert.y = -(texcoord.y-1.f) * height - halfH;
 			vert.y = -halfH;
 			vert.z = texcoord.y * depth - halfD;
 
@@ -2812,10 +2812,10 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 
 			// normalized tex coords //
 			texcoord.x = ((float)ix/((float)resX-1.f));
-			texcoord.y = ((float)iy/((float)resZ-1.f));
+			texcoord.y = 1.f-((float)iy/((float)resZ-1.f));
 
 			vert.x = texcoord.x * width - halfW;
-			//vert.y = texcoord.y * height - halfH;
+			//vert.y = -(texcoord.y-1.f) * height - halfH;
 			vert.y = halfH;
 			vert.z = texcoord.y * -depth + halfD;
 
