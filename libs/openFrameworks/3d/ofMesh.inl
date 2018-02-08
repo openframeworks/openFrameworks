@@ -2293,7 +2293,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cylinder( float radius, float height, int rad
 				vert.y = -halfH;
 
 				tcoord.x = (float)ix/((float)radiusSegments-1.f);
-				tcoord.y = ofMap(iy, 0, capSegs-1, 0, maxTexYNormalized);
+				tcoord.y = 1.f - ofMap(iy, 0, capSegs-1, 0, maxTexYNormalized);
 
 				mesh.addTexCoord( tcoord );
 				mesh.addVertex( vert );
@@ -2347,7 +2347,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cylinder( float radius, float height, int rad
 			vert.z = sin(ix*angleIncRadius) * radius;
 
 			tcoord.x = float(ix)/(float(radiusSegments)-1.f);
-			tcoord.y = ofMap(iy, 0, heightSegments-1, minTexYNormalized, maxTexYNormalized );
+			tcoord.y = 1.f - ofMap(iy, 0, heightSegments-1, minTexYNormalized, maxTexYNormalized );
 
 			mesh.addTexCoord( tcoord );
 			mesh.addVertex( vert );
@@ -2397,7 +2397,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cylinder( float radius, float height, int rad
 				vert.y = halfH;
 
 				tcoord.x = (float)ix/((float)radiusSegments-1.f);
-				tcoord.y = ofMap(iy, 0, capSegs-1, minTexYNormalized, maxTexYNormalized);
+				tcoord.y = 1.f - ofMap(iy, 0, capSegs-1, minTexYNormalized, maxTexYNormalized);
 
 				mesh.addTexCoord( tcoord );
 				mesh.addVertex( vert );
