@@ -22,10 +22,9 @@ function DownloadPackage{
     echo "Downloading $url to $scriptPath\$pkg"
     $client.DownloadFile($url, "$scriptPath\$pkg")
 
-    If(Test-Path "$libsDir\$arch") {
-        Remove-Item "$libsDir\$arch" -Force -Recurse
+    If(-Not (Test-Path "$libsDir\$arch")){
+        new-item "$libsDir\$arch" -itemtype directory
     }
-    new-item "$libsDir\$arch" -itemtype directory
 
     echo "Uncompressing downloaded libs to $libsDir\$arch"
     Add-Type -A System.IO.Compression.FileSystem
@@ -48,12 +47,17 @@ function DownloadLibs{
     DownloadPackage $pkg4
 }
 
+echo "Installing libs for platform $platform."
+
+if (-Not ($platform -eq "vs2017")){
+   echo "You may want to call this script with parameters: 'download_libs.ps1 -platform vs2017' to install libs for Visual Studio 2017." 
+}
 
 $libsExists = Test-Path $libsDir
 If(-Not $libsExists) {
     echo "Creating libs directory"
     new-item $libsDir -itemtype directory
-}
+} 
 
 $libs = @(
     "32", 
@@ -92,6 +96,8 @@ $addon_libs = @(
     "ofxSvg\libs\svgtiny",
     "ofxPoco\libs\poco"
     )
+
+
 
 echo "Deleting existing libs"
 ForEach ($lib in $libs){
@@ -145,3 +151,5 @@ if(Test-Path "..\..\libs\README.md"){
 }
 
 cd $currentPath
+
+echo "Success."
