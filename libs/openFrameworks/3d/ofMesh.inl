@@ -2488,7 +2488,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cone( float radius, float height, int radiusS
 			vert.z = sin((float)ix*angleIncRadius) * newRad;
 
 			tcoord.x = (float)ix/((float)radiusSegments-1.f);
-			tcoord.y = (float)iy/((float)maxTexY);
+			tcoord.y = 1.f - (float)iy/((float)maxTexY);
 
 			mesh.addTexCoord( tcoord );
 			mesh.addVertex( vert );
@@ -2546,7 +2546,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cone( float radius, float height, int radiusS
 			vert.y = halfH;
 
 			tcoord.x = (float)ix/((float)radiusSegments-1.f);
-			tcoord.y = ofMap(iy, 0, capSegs-1, maxTexYNormalized, 1.f);
+			tcoord.y = 1.f - ofMap(iy, 0, capSegs-1, maxTexYNormalized, 1.f);
 
 			mesh.addTexCoord( tcoord );
 			mesh.addVertex( vert );
