@@ -2063,7 +2063,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 	const float phi = (1.0f + sqrt5) * 0.5f;
 	const float invnorm = 1/sqrt(phi*phi+1);
 
-        sphere.addVertex(invnorm * V(-1,  phi, 0));//0
+    sphere.addVertex(invnorm * V(-1,  phi, 0));//0
 	sphere.addVertex(invnorm * V( 1,  phi, 0));//1
 	sphere.addVertex(invnorm * V(0,   1,  -phi));//2
 	sphere.addVertex(invnorm * V(0,   1,   phi));//3
@@ -2157,8 +2157,9 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 		u = alpha/TWO_PI+.5f;
 		v = atan2f(vec.y, r0)/PI + .5f;
 		// reverse the u coord, so the default is texture mapped left to
-		// right on the outside of a sphere //
-		texCoords.push_back(T(1.0-u,v));
+		// right on the outside of a sphere 
+		// reverse the v coord, so that texture origin is at top left
+		texCoords.push_back(T(1.0-u,1.f-v));
 	}
 
 	/// Step 4 : fix texcoords
