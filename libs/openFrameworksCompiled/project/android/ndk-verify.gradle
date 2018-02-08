@@ -14,7 +14,7 @@ if (ndkPath == null || ndkPath.length() == 0) {
     throw new GradleException("You havent set the path to the NDK library." +
             "Please set the property 'ndk.dir' in "+  new File(rootDir.absolutePath + "/local.properties").getAbsolutePath() +
             " to the root of the NDK library, or go to Project Structure and select the folder."+
-            "\n\nMake sure to download NDK r12b, as that is the only version supported by openFrameworks")
+            "\n\nMake sure to download NDK r15c, as that is the only version supported by openFrameworks")
 }
 
 println "Using NDK from "+ndkPath
@@ -22,7 +22,7 @@ println "Using NDK from "+ndkPath
 Properties ndkProperties = new Properties()
 ndkProperties.load(new File(ndkPath+ "/source.properties").newDataInputStream())
 
-if(!ndkProperties.getProperty("Pkg.Revision").startsWith("12.1")) {
+if(!ndkProperties.getProperty("Pkg.Revision").startsWith("15")) {
     throw new GradleException("Wrong version of NDK library found. Found version " + ndkProperties.getProperty("Pkg.Revision") +
-            ", but openFrameworks requires version r12b")
+            ", but openFrameworks requires version r15")
 }

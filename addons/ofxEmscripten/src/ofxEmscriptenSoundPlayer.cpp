@@ -9,6 +9,8 @@
 #include "html5audio.h"
 #include "ofUtils.h"
 
+using namespace std;
+
 vector<float> ofxEmscriptenSoundPlayer::systemSpectrum;
 
 int ofxEmscriptenAudioContext(){

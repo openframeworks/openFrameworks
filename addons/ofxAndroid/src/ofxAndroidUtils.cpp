@@ -1,5 +1,7 @@
 
+
 #include "ofxAndroidUtils.h"
+
 #ifndef __clang__
 // fix for undefined symbols from ndk r8c
 extern "C" {
@@ -13,6 +15,8 @@ int atexit (void (*func)(void)){
 }
 #endif
 #include "ofLog.h"
+
+using namespace std;
 
 bool ofxAndroidIsOnline(){
 	jclass javaClass = ofGetJavaOFAndroid();

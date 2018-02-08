@@ -46,6 +46,10 @@
 
 #include "ofArduino.h"
 #include "ofUtils.h"
+#include "ofMath.h"
+#include "ofLog.h"
+
+using namespace std;
 
  // TODO thread it?
  // TODO throw event or exception if the serial port goes down...
@@ -777,7 +781,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 		Firmata_Serial_Data reply;
 
 		it = data.begin();
-		unsigned char command = *it & 0xF0;
+		//unsigned char command = *it & 0xF0;
 		unsigned char portId = *it & 0x0F;
 		it++;    // skip the first byte, which is the command and port
 
@@ -982,10 +986,10 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 			mode = Firmata_Pin_Modes::MODE_ENCODER;
 			break;
 		}
-		int val;
+//		int val;
 		int shift = 0;
 		while (it != data.end()) {
-			val = *it << shift;
+//			val = *it << shift;
 			it++;
 			shift += 7;
 		} //clear whatever is left
@@ -1507,7 +1511,7 @@ void  ofArduino::sendOneWireRequest(int pin, unsigned char subcommand, vector<un
 	}
 
 	if (devices.size() > 0) {
-		for (int i = 0; i < devices.size(); i++) {
+		for (size_t i = 0; i < devices.size(); i++) {
 			bytes[i] = devices[i];
 		}
 	}
@@ -1530,7 +1534,7 @@ void  ofArduino::sendOneWireRequest(int pin, unsigned char subcommand, vector<un
 	}
 
 	if (dataToWrite.size() > 0) {
-		for (int i = 0; i < dataToWrite.size(); i++) {
+		for (size_t i = 0; i < dataToWrite.size(); i++) {
 			bytes.push_back(dataToWrite[i]);
 		}
 	}
@@ -1542,7 +1546,7 @@ void  ofArduino::sendOneWireRequest(int pin, unsigned char subcommand, vector<un
 	int shift = 0;
 	int previous = 0;
 	//i dont think this is safe
-	for (int i = 0; i < bytes.size(); i++) {
+	for (size_t i = 0; i < bytes.size(); i++) {
 		if (shift == 0) {
 			sendByte(bytes[i] & 0x7f);
 			shift++;
@@ -1795,7 +1799,7 @@ bool ofArduino::isPin(int pin) const
 
 //this returns the pin if its already not within the analog pin map
 //we need this to check between digital and analog pin mappings
-int ofArduino::convertAnalogPinToDigital(int pin) const
+int ofArduino::convertAnalogPinToDigital(size_t pin) const
 {
 	if (pin < analogPinMap.size()) {
 		if (analogPinMap.count(pin) > 0) {
@@ -1811,11 +1815,11 @@ int ofArduino::convertAnalogPinToDigital(int pin) const
 
 //this returns the pin if its already within the analog pin map
 //we need this to check between digital and analog pin mappings
-int ofArduino::convertDigitalPinToAnalog(int pin) const
+int ofArduino::convertDigitalPinToAnalog(size_t pin) const
 {
 	if (pin > analogPinMap.size()) {
 		for (auto aPin : analogPinMap)
-			if (aPin.second == pin) {
+			if (aPin.second == (int)pin) {
 				return aPin.first;
 			}
 		ofLogError("ofArduino") << "Pin " + ofToString(pin) + " is not an Analog Pin";

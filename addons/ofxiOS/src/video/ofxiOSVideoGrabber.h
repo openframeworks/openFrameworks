@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "ofBaseTypes.h"
+#include "ofVideoBaseTypes.h"
+#include "ofPixels.h"
 
 class AVFoundationVideoGrabber;
 
@@ -17,7 +18,7 @@ public:
     // inherited from ofBaseVideoGrabber
     //---------------------------------------
     
-	vector<ofVideoDevice> listDevices() const;
+	std::vector<ofVideoDevice> listDevices() const;
     bool setup(int w, int h);
 
 	float getHeight() const;
@@ -65,7 +66,7 @@ public:
     
 protected:
     
-	shared_ptr<AVFoundationVideoGrabber> grabber;
+    std::shared_ptr<AVFoundationVideoGrabber> grabber;
     
     ofPixels pixels;
     

@@ -1,6 +1,8 @@
 #include "ofUtils.h"
 #include "ofParameter.h"
 
+using namespace std;
+
 ofParameterGroup::ofParameterGroup()
 :obj(new Value)
 {

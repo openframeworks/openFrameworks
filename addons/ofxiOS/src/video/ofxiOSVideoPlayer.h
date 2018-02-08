@@ -1,7 +1,8 @@
 #pragma once
 
-#include "ofBaseTypes.h"
+#include "ofVideoBaseTypes.h"
 #include "ofTexture.h"
+#include "ofPixels.h"
 
 class ofxiOSVideoPlayer : public ofBaseVideoPlayer {
 	
@@ -13,7 +14,7 @@ public:
     void enableTextureCache();
     void disableTextureCache();
     
-    bool load(string name);
+    bool load(std::string name);
     void close();
     void update();
 	
@@ -59,7 +60,7 @@ public:
     
 	void * getAVFoundationVideoPlayer();
     
-    OF_DEPRECATED_MSG("ofxiOSVideoPlayer::loadMovie() is deprecated, use load() instead.", bool loadMovie(string name));
+    OF_DEPRECATED_MSG("ofxiOSVideoPlayer::loadMovie() is deprecated, use load() instead.", bool loadMovie(std::string name));
     OF_DEPRECATED_MSG("ofxiOSVideoPlayer::getPixelsRef() is deprecated, use getPixels() instead.", ofPixels & getPixelsRef());
     OF_DEPRECATED_MSG("ofxiOSVideoPlayer::getPixelsRef() is deprecated, use getPixels() instead.", const ofPixels & getPixelsRef() const);
     OF_DEPRECATED_MSG("ofxiOSVideoPlayer::getTexture() is deprecated, use getTexturePtr() instead.", ofTexture * getTexture());

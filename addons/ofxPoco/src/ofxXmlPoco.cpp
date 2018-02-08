@@ -2,6 +2,8 @@
 #include "ofxXmlPoco.h"
 #include "Poco/AutoPtr.h"
 
+using namespace std;
+
 ofxXmlPoco::~ofxXmlPoco(){
 	releaseAll();
 }

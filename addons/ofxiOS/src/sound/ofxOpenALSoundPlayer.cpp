@@ -24,12 +24,17 @@
 
 #import "ofxOpenALSoundPlayer.h"
 #include "ofUtils.h"
+#include "ofFileUtils.h"
+#include "ofMath.h"
 
-bool SoundEngineInitialized = false;
+using namespace std;
 
-UInt32	numSounds;
-bool	mp3Loaded;
+namespace{
+	bool SoundEngineInitialized = false;
 
+	UInt32	numSounds;
+	bool	mp3Loaded;
+}
 
 static std::mutex& soundPlayerLock() {
   static std::mutex* m = new std::mutex;

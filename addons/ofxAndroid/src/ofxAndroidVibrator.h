@@ -19,5 +19,5 @@ public:
 	static void stop();
 private:
 	static jobject getVibratorService();
-	static jmethodID getVibratorMethodID(string name, string signature);
+	static jmethodID getVibratorMethodID(std::string name, std::string signature);
 };

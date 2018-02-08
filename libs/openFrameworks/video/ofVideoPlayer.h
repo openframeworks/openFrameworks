@@ -2,8 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-#include "ofBaseTypes.h"
-#include "ofTypes.h"
+#include "ofVideoBaseTypes.h"
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
 	#include "ofGstVideoPlayer.h"
@@ -53,9 +52,9 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		ofVideoPlayer ();
 
 
-		bool 				load(string name);
-		void				loadAsync(string name);
-		OF_DEPRECATED_MSG("Use load instead",bool loadMovie(string name));
+		bool 				load(std::string name);
+		void				loadAsync(std::string name);
+		OF_DEPRECATED_MSG("Use load instead",bool loadMovie(std::string name));
 
 
 		/// \brief Get the path to the loaded video file.
@@ -63,7 +62,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		/// If no video file is loaded this returns an empty string.
 		///
 		/// \returns A path to the loaded video or an empty string if not loaded.
-		string				getMoviePath() const;
+		std::string				getMoviePath() const;
 
 		bool				setPixelFormat(ofPixelFormat pixelFormat);
 		ofPixelFormat		getPixelFormat() const;
@@ -112,8 +111,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		const ofTexture &	getTexture() const;
 		OF_DEPRECATED_MSG("Use getTexture",ofTexture &			getTextureReference());
 		OF_DEPRECATED_MSG("Use getTexture",const ofTexture &	getTextureReference() const);
-		vector<ofTexture> & getTexturePlanes();
-		const vector<ofTexture> & getTexturePlanes() const;
+		std::vector<ofTexture> & getTexturePlanes();
+		const std::vector<ofTexture> & getTexturePlanes() const;
 		void 				draw(float x, float y, float w, float h) const;
 		void 				draw(float x, float y) const;
 		using ofBaseDraws::draw;
@@ -162,7 +161,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		///
 		/// \param newPlayer Shared pointer to the new video player that extends
 		/// from ofBaseVideoPlayer.
-		void				setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer);
+		void				setPlayer(std::shared_ptr<ofBaseVideoPlayer> newPlayer);
 		/// \brief Get a pointer to the internal video player implementation.
 		///
 		/// This returns a pointer to the ofBaseVideoPlayer interface. For
@@ -171,7 +170,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		/// templated getPlayer<MyVideoPlayerImplementation>() method.
 		///
 		/// \returns A pointer to the internal video player implementation.
-		shared_ptr<ofBaseVideoPlayer>	getPlayer();
+		std::shared_ptr<ofBaseVideoPlayer>	getPlayer();
 		/// \brief Get a const pointer to the internal video player implementation.
 		///
 		/// This returns a pointer to the ofBaseVideoPlayer interface. For
@@ -180,7 +179,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		/// or the templated getPlayer<MyVideoPlayerImplementation>() method.
 		///
 		/// \returns A const pointer to the internal video player implementation.
-		const shared_ptr<ofBaseVideoPlayer>	getPlayer() const;
+		const std::shared_ptr<ofBaseVideoPlayer>	getPlayer() const;
 
 		/// \brief Get a pointer to the internal video player implementation.
 		///
@@ -190,8 +189,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		/// \returns A pointer to the internal video player implementation or
 		///			 nullptr if the cast fails.
 		template<typename PlayerType>
-		shared_ptr<PlayerType> getPlayer(){
-			return dynamic_pointer_cast<PlayerType>(getPlayer());
+		std::shared_ptr<PlayerType> getPlayer(){
+			return std::dynamic_pointer_cast<PlayerType>(getPlayer());
 		}
 
 		/// \brief Get a const pointer to the internal video player implementation.
@@ -202,17 +201,17 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		/// \returns A const pointer to the internal video player implementation
 		///			 or nullptr if the cast fails.
 		template<typename PlayerType>
-		const shared_ptr<PlayerType> getPlayer() const{
-			return dynamic_pointer_cast<PlayerType>(getPlayer());
+		const std::shared_ptr<PlayerType> getPlayer() const{
+			return std::dynamic_pointer_cast<PlayerType>(getPlayer());
 		}
 
 	private:
 		/// \brief Initialize the default player implementations.
 		void initDefaultPlayer();
 		/// \brief A pointer to the internal video player implementation.
-		shared_ptr<ofBaseVideoPlayer>		player;
+		std::shared_ptr<ofBaseVideoPlayer>		player;
 		/// \brief A collection of texture planes used by the video player.
-		vector<ofTexture> tex;
+		std::vector<ofTexture> tex;
 		/// \brief A pointer to the internal player's texture if available.
 		///
 		/// Video players that implement ofBaseVideoPlayer::getTexturePtr()
@@ -225,5 +224,5 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		/// \brief The internal pixel format.
 		mutable ofPixelFormat internalPixelFormat;
 		/// \brief The stored path to the video's path.
-	    string moviePath;
+		std::string moviePath;
 };

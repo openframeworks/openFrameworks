@@ -21,19 +21,29 @@ Module{
         if(qbs.targetOS.contains("android")){
             return "android";
         }else if(qbs.targetOS.contains("linux")){
-            if(qbs.architecture==="x86_64"){
+            // For now, we hard-code linux64 as our architecture of choice, since
+            // qbs doesn't appear to set the architecture property autimatically
+            // anymore starting with qt 4.4.
+            //
+            // If you wanted to compile for 386, uncomment these lines, and
+            // add this property in Build Settings: "qbs.architecture:x86"
+            //
+//            if(qbs.architecture==="x86_64"){
                 return "linux64";
-            }else if(qbs.architecture==="x86"){
-                return "linux";
-            }else{
-                throw(qbs.architecture + " not supported yet on " + qbs.targetOS);
-            }
+//            }else if(qbs.architecture==="x86"){
+//                return "linux";
+//            }else{
+//                throw("qbs error: Target architecture: '" + qbs.architecture + "' not supported yet on target OS: '" + qbs.targetOS + "'" +
+//                      "Check if the project's build settings ");
+//            }
         }else if(qbs.targetOS.contains("windows")){
             return "msys2";
         }else if(qbs.targetOS.contains("osx")){
             return "osx";
+        }else if(qbs.targetOS.contains("macos")){
+            return "osx";
         }else{
-            throw(qbs.targetOS + " not supported yet");
+            throw("Target architecture: '" + qbs.targetOS + "' not supported yet");
         }
     }
 
@@ -221,6 +231,7 @@ Module{
 
     Probe {
         id: ADDITIONAL_LIBS
+        property bool useStdFs: project.useStdFs
         property stringList libs
         configure: {
             if(platform === "linux"  || platform === "linux64"){
@@ -242,14 +253,14 @@ Module{
                     libslist.push("rtaudio");
                 }
 
-//                if(cpp.compilerName=='gcc' && cpp.compilerVersionMajor>=6){
-//                    libslist.push('stdc++fs');
-//                }else{
-//                    libslist.push("boost_filesystem");
-//                    libslist.push("boost_system");
-//                }
-                libslist.push("boost_filesystem");
-                libslist.push("boost_system");
+                if(useStdFs && cpp.compilerName=='gcc' && cpp.compilerVersionMajor>=6){
+                    libslist.push('stdc++fs');
+                }else{
+                    libslist.push("boost_filesystem");
+                    libslist.push("boost_system");
+                }
+//                libslist.push("boost_filesystem");
+//                libslist.push("boost_system");
 
                 libs = libslist;
             }else if(platform === "msys2"){
@@ -305,8 +316,10 @@ Module{
                     var addonsmake = new TextFile(sourceDirectory + "/addons.make");
                     while(!addonsmake.atEof()){
                         var line = addonsmake.readLine().trim();
-                        allAddons.push(line);
-                        var addonPath = ofRoot + '/addons/' + line;
+                        if(line){
+                            allAddons.push(line);
+//                            var addonPath = ofRoot + '/addons/' + line;
+                        }
                     }
                 }catch(e){}
             }else{
@@ -524,6 +537,7 @@ Module{
     Probe{
         id: DEFINES_LINUX
         property stringList list
+        property bool useStdFs: project.useStdFs
         configure:{
             list = ['GCC_HAS_REGEX'];
             if(Helpers.pkgExists("gtk+-3.0")){
@@ -532,7 +546,7 @@ Module{
             if(Helpers.pkgExists("libmpg123")){
                 list.push("OF_USING_MPG123=1");
             }
-            if(cpp.compilerName=='gcc' && cpp.compilerVersionMajor>=6){
+            if(useStdFs && cpp.compilerName=='gcc' && cpp.compilerVersionMajor>=6){
                 list.push('OF_USING_STD_FS=1');
             }
             found = true;
@@ -633,6 +647,8 @@ Module{
                 'IOKit',
                 'OpenGL',
                 'QuartzCore',
+                'Security',
+                'LDAP',
             ].concat(frameworks);
 
             if(of.isCoreLibrary){

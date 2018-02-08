@@ -12,6 +12,9 @@
 #include "ofCamera.h"
 #include "ofTrueTypeFont.h"
 #include "ofNode.h"
+#include "ofVideoBaseTypes.h"
+
+using namespace std;
 
 const string ofGLRenderer::TYPE="GL";
 

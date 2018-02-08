@@ -11,11 +11,13 @@
 #include <stack>
 #include "ofConstants.h"
 #include "ofRectangle.h"
-#include "ofGraphics.h"
+#include "glm/mat4x4.hpp"
+#include "ofGraphicsConstants.h"
 
 class ofBaseDraws;
 class ofAppBaseWindow;
 class ofFbo;
+enum ofOrientation: short;
 
 class ofMatrixStack {
 public:
@@ -35,7 +37,9 @@ public:
 	ofRectangle getFullSurfaceViewport() const;
 
 	const glm::mat4 & getProjectionMatrix() const;
+	const glm::mat4 & getViewInverse() const;
 	const glm::mat4 & getViewMatrix() const;
+	const glm::mat4 & getModelMatrix() const;
 	const glm::mat4 & getModelViewMatrix() const;
 	const glm::mat4 & getModelViewProjectionMatrix() const;
 	const glm::mat4 & getTextureMatrix() const;
@@ -81,7 +85,9 @@ private:
 
     ofMatrixMode currentMatrixMode;
 
+	glm::mat4 modelMatrix;
 	glm::mat4 viewMatrix;
+	glm::mat4 viewInverse;
 	glm::mat4 modelViewMatrix;
 	glm::mat4 projectionMatrix;
 	glm::mat4 textureMatrix;

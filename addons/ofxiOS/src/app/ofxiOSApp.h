@@ -11,6 +11,7 @@
 
 #include "ofBaseApp.h"
 #include "ofxiOSAlerts.h"
+#include "ofEvents.h"
 
 class ofxiOSApp : public ofBaseApp, public ofxiOSAlertsListener {
 	

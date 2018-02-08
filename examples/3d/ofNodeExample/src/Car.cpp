@@ -15,8 +15,8 @@ void Car::setup(){
     
     lightL.move(-45,20,-51);
     lightR.move(45,20,-51);
-    lightL.tilt(-20);
-    lightR.tilt(-20);
+    lightL.tiltDeg(-20);
+    lightR.tiltDeg(-20);
 	lightL.setSpotlight();
 	lightR.setSpotlight();
 	lightL.setDiffuseColor(ofFloatColor::yellow);
@@ -53,5 +53,9 @@ void Car::accelerate(){
 }
 
 void Car::steer(float dir){
-    geometry.rotate(dir, 0, 1, 0); // the rotation happens on the y axis
+    geometry.rotateDeg(dir, 0, 1, 0); // the rotation happens on the y axis
+}
+
+const ofNode & Car::getNode() const{
+	return geometry;
 }

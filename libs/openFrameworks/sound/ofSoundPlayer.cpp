@@ -1,5 +1,8 @@
 #include "ofSoundPlayer.h"
-#include "ofUtils.h"
+#include "ofLog.h"
+#include "glm/common.hpp"
+
+using namespace std;
 
 // these are global functions, that affect every sound / channel:
 // ------------------------------------------------------------
@@ -123,7 +126,7 @@ void ofSoundPlayer::setVolume(float vol){
 //--------------------------------------------------------------------
 void ofSoundPlayer::setPan(float pan){
 	if( player ){
-		player->setPan(CLAMP(pan,-1.0f,1.0f));
+		player->setPan(glm::clamp(pan,-1.0f,1.0f));
 	}
 }
 

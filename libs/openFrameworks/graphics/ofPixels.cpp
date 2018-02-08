@@ -1,6 +1,9 @@
 #include "ofPixels.h"
-#include "ofMath.h"
-#include <algorithm>
+#include "ofGraphicsConstants.h"
+#include "glm/common.hpp"
+#include <cstring>
+
+using namespace std;
 
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
@@ -52,6 +55,76 @@ size_t ofPixels_<PixelType>::pixelBitsFromPixelFormat(ofPixelFormat format){
 			return 0;
 	}
 
+}
+
+template<>
+std::string ofToString(const ofPixelFormat & p) {
+	switch (p){
+		case OF_PIXELS_GRAY:
+			return "OF_PIXELS_GRAY";
+		break;
+		case OF_PIXELS_GRAY_ALPHA:
+			return "OF_PIXELS_GRAY_ALPHA";
+		break;
+		case OF_PIXELS_RGB:
+			return "OF_PIXELS_RGB";
+		break;
+		case OF_PIXELS_BGR:
+			return "OF_PIXELS_BGR";
+		break;
+		case OF_PIXELS_RGBA:
+			return "OF_PIXELS_RGBA";
+		break;
+		case OF_PIXELS_BGRA:
+			return "OF_PIXELS_BGRA";
+		break;
+		case OF_PIXELS_RGB565:
+			return "OF_PIXELS_RGB565";
+		break;
+		case OF_PIXELS_NV12:
+			return "OF_PIXELS_NV12";
+		break;
+		case OF_PIXELS_NV21:
+			return "OF_PIXELS_NV21";
+		break;
+		case OF_PIXELS_YV12:
+			return "OF_PIXELS_YV12";
+		break;
+		case OF_PIXELS_I420:
+			return "OF_PIXELS_I420";
+		break;
+		case OF_PIXELS_YUY2:
+			return "OF_PIXELS_YUY2";
+		break;
+		case OF_PIXELS_UYVY:
+			return "OF_PIXELS_UYVY";
+		break;
+		case OF_PIXELS_Y:
+			return "OF_PIXELS_Y";
+		break;
+		case OF_PIXELS_U:
+			return "OF_PIXELS_U";
+		break;
+		case OF_PIXELS_V:
+			return "OF_PIXELS_V";
+		break;
+		case OF_PIXELS_UV:
+			return "OF_PIXELS_UV";
+		break;
+		case OF_PIXELS_VU:
+			return "OF_PIXELS_VU";
+		break;
+		case OF_PIXELS_NUM_FORMATS:
+			return "OF_PIXELS_NUM_FORMATS";
+		break;
+		case OF_PIXELS_UNKNOWN:
+			return "OF_PIXELS_UNKNOWN";
+		break;
+		case OF_PIXELS_NATIVE:
+			return "OF_PIXELS_NATIVE";
+		break;
+	}
+	return "OF_PIXELS_UNKNOWN";
 }
 
 template<typename PixelType>
@@ -801,7 +874,7 @@ size_t ofPixels_<PixelType>::getNumPlanes() const{
 
 template<typename PixelType>
 ofPixels_<PixelType> ofPixels_<PixelType>::getPlane(size_t planeIdx){
-	planeIdx = ofClamp(planeIdx,0,getNumPlanes());
+	planeIdx = glm::clamp(planeIdx, size_t(0), getNumPlanes());
 	ofPixels_<PixelType> plane;
 	switch(pixelFormat){
 		case OF_PIXELS_RGB:
@@ -931,7 +1004,7 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getChannel(size_t channel) const{
 	if(channels==0) return channelPixels;
 
 	channelPixels.allocate(width,height,1);
-	channel = ofClamp(channel,0,channels-1);
+	channel = glm::clamp(channel, size_t(0), channels-1);
 	iterator channelPixel = channelPixels.begin();
 	for(auto p: getConstPixelsIter()){
 		*channelPixel++ = p[channel];
@@ -944,7 +1017,7 @@ void ofPixels_<PixelType>::setChannel(size_t channel, const ofPixels_<PixelType>
 	size_t channels = channelsFromPixelFormat(pixelFormat);
 	if(channels==0) return;
 
-	channel = ofClamp(channel,0,channels-1);
+	channel = glm::clamp(channel, size_t(0), channels-1);
 	const_iterator channelPixel = channelPixels.begin();
 	for(auto p: getPixelsIter()){
 		p[channel] = *channelPixel++;
@@ -973,8 +1046,8 @@ void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, size_t x, size_t 
 			return;
 		}
 
-		_width = ofClamp(_width,1,getWidth());
-		_height = ofClamp(_height,1,getHeight());
+		_width = glm::clamp(_width, size_t(1), getWidth());
+		_height = glm::clamp(_height, size_t(1), getHeight());
 
 		if ((toPix.width != _width) || (toPix.height != _height) || (toPix.pixelFormat != pixelFormat)){
 			toPix.allocate(_width, _height, pixelFormat);
@@ -1388,7 +1461,7 @@ bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, size_t xTo, size
 
 template<typename A, typename B>
 inline A clampedAdd(const A& a, const B& b) {
-	return CLAMP((float) a + (float) b, 0, ofColor_<A>::limit());
+	return glm::clamp((float) a + (float) b, 0.f, ofColor_<A>::limit());
 }
 
 

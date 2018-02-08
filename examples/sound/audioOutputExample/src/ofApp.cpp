@@ -219,13 +219,13 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
 
 	if ( bNoise == true){
 		// ---------------------- noise --------------
-		for (int i = 0; i < buffer.getNumFrames(); i++){
+		for (size_t i = 0; i < buffer.getNumFrames(); i++){
 			lAudio[i] = buffer[i*buffer.getNumChannels()    ] = ofRandom(0, 1) * volume * leftScale;
 			rAudio[i] = buffer[i*buffer.getNumChannels() + 1] = ofRandom(0, 1) * volume * rightScale;
 		}
 	} else {
 		phaseAdder = 0.95f * phaseAdder + 0.05f * phaseAdderTarget;
-		for (int i = 0; i < buffer.getNumFrames(); i++){
+		for (size_t i = 0; i < buffer.getNumFrames(); i++){
 			phase += phaseAdder;
 			float sample = sin(phase);
 			lAudio[i] = buffer[i*buffer.getNumChannels()    ] = sample * volume * leftScale;

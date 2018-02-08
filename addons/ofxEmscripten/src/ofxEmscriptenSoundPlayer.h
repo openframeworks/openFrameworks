@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ofBaseSoundPlayer.h"
+#include "ofSoundBaseTypes.h"
+#include "ofConstants.h"
 
 class ofxEmscriptenSoundPlayer: public ofBaseSoundPlayer {
 public:
@@ -36,7 +37,7 @@ public:
 
 private:
 	void setPositionSecs(double s);
-	static vector<float> systemSpectrum;
+	static std::vector<float> systemSpectrum;
 	int context;
 	int sound;
 	bool multiplay;

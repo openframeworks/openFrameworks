@@ -10,9 +10,13 @@
 
 #include "ofLight.h"
 #include "ofConstants.h"
-#include "ofLog.h"
-#include "ofUtils.h"
+#include "of3dUtils.h"
+#include "ofGLBaseTypes.h"
+#include "ofGLUtils.h"
 #include <map>
+#include <glm/gtc/quaternion.hpp>
+
+using namespace std;
 
 static ofFloatColor globalAmbient(0.2, 0.2, 0.2, 1.0);
 

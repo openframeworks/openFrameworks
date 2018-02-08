@@ -10,6 +10,8 @@
 
 #include "ofGraphics.h"
 
+using namespace std;
+
 namespace{
 	template<typename Type>
 	typename std::enable_if<std::is_integral<Type>::value, Type>::type

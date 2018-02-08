@@ -25,6 +25,7 @@
 #pragma once
 
 #include <list>
+#include <map>
 #include "ofConstants.h"
 #include "ofEvents.h"
 #include "ofSerial.h"
@@ -213,7 +214,7 @@ enum Firmata_I2C_Modes {
 struct Firmata_I2C_Data {
 	int		address;
 	int		reg;
-	string	data;
+	std::string	data;
 };
 
 struct Firmata_Encoder_Data {
@@ -247,7 +248,7 @@ enum Firmata_Serial_Ports {
 
 struct Firmata_Serial_Data {
 	Firmata_Serial_Ports	portID;
-	string			data;
+	std::string			data;
 };
 
 /// \brief This is a way to control an Arduino that has had the firmata library
@@ -335,7 +336,7 @@ public:
 
 	void sendPwm(int pin, int value, bool force = false);
 
-	void sendSysEx(int command, vector <unsigned char> data);
+	void sendSysEx(int command, std::vector <unsigned char> data);
 
 	bool isAttached();
 
@@ -343,7 +344,7 @@ public:
 
 	/// \brief Send a string to the Arduino
 	/// \note Firmata can not handle strings longer than 12 characters.
-	void sendString(string str);
+	void sendString(std::string str);
 
 	void sendProtocolVersionRequest();
 
@@ -417,10 +418,10 @@ public:
 	int getAnalog(int pin) const;
 
 	/// \returns the last received SysEx message.
-	vector <unsigned char> getSysEx() const;
+	std::vector <unsigned char> getSysEx() const;
 
 	/// \returns the last received string.
-	string getString() const;
+	std::string getString() const;
 
 	/// \returns the major firmware version.
 	int getMajorFirmwareVersion() const;
@@ -429,24 +430,24 @@ public:
 	int getMinorFirmwareVersion() const;
 
 	/// \returns the name of the firmware.
-	string getFirmwareName() const;
+	std::string getFirmwareName() const;
 
 	/// \brief Returns a pointer to the digital data history list for the
 	/// given pin
 	/// \note Pin 16-21 can also be used if analog inputs 0-5 are used as
 	/// digital pins
 	/// \param pin The pin number (2-13)
-	list <int> * getDigitalHistory(int pin);
+	std::list <int> * getDigitalHistory(int pin);
 
 	/// \brief Returns a pointer to the analog data history list for the given pin.
 	/// \param pin The Arduino Uno pin: 0-5
-	list <int> * getAnalogHistory(int pin);
+	std::list <int> * getAnalogHistory(int pin);
 
 	/// \returns a pointer to the SysEx history.
-	list <vector <unsigned char> > * getSysExHistory();
+	std::list <std::vector <unsigned char> > * getSysExHistory();
 
 	/// \returns a pointer to the string history.
-	list <string> * getStringHistory();
+	std::list <std::string> * getStringHistory();
 
 	/// \brief Get the pin mode of the given pin
 	///
@@ -475,7 +476,7 @@ public:
 
 	/// \brief Triggered when a SysEx message that isn't in the extended
 	/// command set is received, the SysEx message is passed as an argument
-	ofEvent <const vector <unsigned char> > ESysExReceived;
+	ofEvent <const std::vector <unsigned char> > ESysExReceived;
 
 	/// \brief Triggered when a firmware version is received, the major version
 	/// is passed as an argument.
@@ -488,7 +489,7 @@ public:
 
 	/// \brief Triggered when a string is received, the string is passed as an
 	/// argument
-	ofEvent <const string> EStringReceived;
+	ofEvent <const std::string> EStringReceived;
 
 	/// \brief triggered when a stepper has finished rotating. Returns which 
 	/// stepper has complted its rotation
@@ -498,13 +499,13 @@ public:
 	ofEvent<const Firmata_I2C_Data> EI2CDataRecieved;
 
 	/// \brief triggered when the encoder returns data after a read request
-	ofEvent<const vector<Firmata_Encoder_Data> > EEncoderDataReceived;
+	ofEvent<const std::vector<Firmata_Encoder_Data> > EEncoderDataReceived;
 
 	/// \brief triggered when a Serial message is received. Returns which 
 	/// port and its data
 	ofEvent<const Firmata_Serial_Data> ESerialDataReceived;
 
-	ofEvent<const pair<int, Firmata_Pin_Modes> > EPinStateResponseReceived;
+	ofEvent<const std::pair<int, Firmata_Pin_Modes> > EPinStateResponseReceived;
 
 	/// \}
 	/// \name Servos
@@ -560,7 +561,7 @@ public:
 	void sendI2CWriteRequest(char slaveAddress, unsigned char * bytes, int numOfBytes, int reg = -1);
 	void sendI2CWriteRequest(char slaveAddress, const char * bytes, int numOfBytes, int reg = -1);
 	void sendI2CWriteRequest(char slaveAddress, char * bytes, int numOfBytes, int reg = -1);
-	void sendI2CWriteRequest(char slaveAddress, vector<char> bytes, int reg = -1);
+	void sendI2CWriteRequest(char slaveAddress, std::vector<char> bytes, int reg = -1);
 
 	/// \brief Asks the arduino to request bytes from an I2C device
 	///
@@ -606,7 +607,7 @@ public:
 	/// \param device
 	/// \param numBytesToRead
 	/// \param callback
-	void sendOneWireRead(int pin, vector<unsigned char> devices, int numBytesToRead);
+	void sendOneWireRead(int pin, std::vector<unsigned char> devices, int numBytesToRead);
 	
 	/// \brief Resets all devices on the bus.
 	/// \param pin
@@ -618,7 +619,7 @@ public:
 	/// \param pin
 	/// \param device
 	/// \param data
-	void sendOneWireWrite(int pin, vector<unsigned char> devices, vector<unsigned char> data);
+	void sendOneWireWrite(int pin, std::vector<unsigned char> devices, std::vector<unsigned char> data);
 
 	/// \brief Tells firmata to not do anything for the passed amount of ms.
 	/// 
@@ -634,8 +635,8 @@ public:
 	/// \param data
 	/// \param numBytesToRead
 	/// \param callback
-	void sendOneWireWriteAndRead(int pin, vector<unsigned char> devices, vector<unsigned char> data, int numBytesToRead);
-	void sendOneWireRequest(int pin, unsigned char subcommand, vector<unsigned char> devices, int numBytesToRead, unsigned char correlationId, unsigned int delay, vector<unsigned char> dataToWrite);
+	void sendOneWireWriteAndRead(int pin, std::vector<unsigned char> devices, std::vector<unsigned char> data, int numBytesToRead);
+	void sendOneWireRequest(int pin, unsigned char subcommand, std::vector<unsigned char> devices, int numBytesToRead, unsigned char correlationId, unsigned int delay, std::vector<unsigned char> dataToWrite);
 
 	/// \}
 	/// \name Encoder
@@ -700,7 +701,7 @@ public:
 	void serialListen(Firmata_Serial_Ports portID);
 
 
-	map<int, supportedPinTypes> getPinCapabilities() { return pinCapabilities; }
+	std::map<int, supportedPinTypes> getPinCapabilities() { return pinCapabilities; }
 
 	int getTotalPins() { return _totalDigitalPins; }
 
@@ -721,7 +722,7 @@ private:
 
 	void processData(unsigned char inputData);
 	void processDigitalPort(int port, unsigned char value);
-	virtual void processSysExData(vector <unsigned char> data);
+	virtual void processSysExData(std::vector <unsigned char> data);
 
 	ofSerial _port;
 	int _portStatus;
@@ -739,28 +740,28 @@ private:
 
 	// --- data holders
 	unsigned char _storedInputData[FIRMATA_MAX_DATA_BYTES];
-	vector <unsigned char> _sysExData;
+	std::vector <unsigned char> _sysExData;
 	int _majorFirmwareVersion;
 	int _minorFirmwareVersion;
-	string _firmwareName;
+	std::string _firmwareName;
 
-	list <vector <unsigned char> > _sysExHistory;
+	std::list <std::vector <unsigned char> > _sysExHistory;
 	// maintains a history of received sysEx messages (excluding SysEx messages in the extended command set)
 
-	list <string> _stringHistory;
+	std::list <std::string> _stringHistory;
 	// maintains a history of received strings
 
 	//we dont know the number of pintypes until we do a configuration request so just a placeholder for now
-	mutable vector<list <int> > _analogHistory;
+	mutable std::vector<std::list <int> > _analogHistory;
 	// a history of received data for each analog pin
 
-	mutable vector<list <int> > _digitalHistory;
+	mutable std::vector<std::list <int> > _digitalHistory;
 	// a history of received data for each digital pin
 
-	mutable vector<int> _digitalPinMode;
+	mutable std::vector<int> _digitalPinMode;
 	// the modes for all digital pins
 
-	mutable vector<int> _digitalPinValue;
+	mutable std::vector<int> _digitalPinValue;
 	// the last set values (DIGITAL/PWM) on all digital pins
 
 	mutable int _digitalPortValue[ARD_TOTAL_PORTS];
@@ -769,10 +770,10 @@ private:
 	mutable int _digitalPortReporting[ARD_TOTAL_PORTS];
 	// whether pin reporting is enabled / disabled
 
-	mutable vector<int> _digitalPinReporting;
+	mutable std::vector<int> _digitalPinReporting;
 	// whether pin reporting is enabled / disabled
 
-	mutable vector<int> _analogPinReporting;
+	mutable std::vector<int> _analogPinReporting;
 	// whether pin reporting is enabled / disabled
 
 	bool bUseDelay;
@@ -781,7 +782,7 @@ private:
 
 	float connectTime; ///< \brief This represents the (running) time of establishing a serial connection.
 
-	mutable vector<int> _servoValue;
+	mutable std::vector<int> _servoValue;
 	// the last set servo values
 
 	bool _i2cConfigured;
@@ -805,15 +806,15 @@ private:
 		firmataEncoderSupported,
 		firmataSerialSupported;
 
-	mutable map<int, supportedPinTypes> pinCapabilities;
-	mutable map<int, int> analogPinMap;
+	mutable std::map<int, supportedPinTypes> pinCapabilities;
+	mutable std::map<int, int> analogPinMap;
 
 
 	bool isAnalogPin(int pin) const;
 	bool isPin(int pin) const;
 
-	int convertAnalogPinToDigital(int pin) const;
-	int convertDigitalPinToAnalog(int pin) const;
+	int convertAnalogPinToDigital(size_t pin) const;
+	int convertDigitalPinToAnalog(size_t pin) const;
 };
 
 typedef ofArduino ofStandardFirmata;
