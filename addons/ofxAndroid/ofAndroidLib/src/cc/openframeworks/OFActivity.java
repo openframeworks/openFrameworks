@@ -96,21 +96,4 @@ public abstract class OFActivity extends Activity{
 		    return super.onKeyUp(keyCode, event);
 		}
     }
-
-	public boolean checkCameraPermission(){
-		return ContextCompat.checkSelfPermission(this,
-				Manifest.permission.CAMERA)
-				== PackageManager.PERMISSION_GRANTED;
-	}
-
-	public void requestCameraPermission(){
-		if (ContextCompat.checkSelfPermission(this,
-				Manifest.permission.CAMERA)
-				!= PackageManager.PERMISSION_GRANTED) {
-
-			ActivityCompat.requestPermissions(this,
-					new String[]{Manifest.permission.CAMERA},
-					0);
-		}
-	}
 }
