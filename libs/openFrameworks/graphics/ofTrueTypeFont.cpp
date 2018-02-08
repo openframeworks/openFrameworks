@@ -453,7 +453,11 @@ static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face,
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
 			fontname = "Helvetica Neue";
-			fontID = 4;
+			#if MAC_OS_X_VERSION_10_13 && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
+				fontID = 0;
+			#else
+				fontID = 4;
+			#endif
 		}else if(fontname==OF_TTF_SERIF){
 			fontname = "Times New Roman";
 		}else if(fontname==OF_TTF_MONO){
