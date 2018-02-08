@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -15,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -23,6 +25,8 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Build;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ScaleGestureDetector;
@@ -52,6 +56,105 @@ public class OFAndroid {
 
 	private static String getPackageName(){
 		return OFAndroidLifeCycle.getActivity().getPackageName();
+	}
+
+	public static String parsePermission(int permission){
+		String PERMISSION = "";
+		switch(permission){
+			case 0:
+				PERMISSION = Manifest.permission.READ_CALENDAR;
+				break;
+			case 1:
+				PERMISSION = Manifest.permission.WRITE_CALENDAR;
+				break;
+			case 2:
+				PERMISSION = Manifest.permission.CAMERA;
+				break;
+			case 3:
+				PERMISSION = Manifest.permission.READ_CONTACTS;
+				break;
+			case 4:
+				PERMISSION = Manifest.permission.WRITE_CONTACTS;
+				break;
+			case 5:
+				PERMISSION = Manifest.permission.GET_ACCOUNTS;
+				break;
+			case 6:
+				PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION;
+				break;
+			case 7:
+				PERMISSION = Manifest.permission.ACCESS_COARSE_LOCATION;
+				break;
+			case 8:
+				PERMISSION = Manifest.permission.RECORD_AUDIO;
+				break;
+			case 9:
+				PERMISSION = Manifest.permission.READ_PHONE_STATE;
+				break;
+			case 10:
+				PERMISSION = Manifest.permission.CALL_PHONE;
+				break;
+			case 11:
+				PERMISSION = Manifest.permission.READ_CALL_LOG;
+				break;
+			case 12:
+				PERMISSION = Manifest.permission.WRITE_CALL_LOG;
+				break;
+			case 13:
+				PERMISSION = Manifest.permission.ADD_VOICEMAIL;
+				break;
+			case 14:
+				PERMISSION = Manifest.permission.USE_SIP;
+				break;
+			case 15:
+				PERMISSION = Manifest.permission.PROCESS_OUTGOING_CALLS;
+				break;
+			case 16:
+				PERMISSION = Manifest.permission.BODY_SENSORS;
+				break;
+			case 17:
+				PERMISSION = Manifest.permission.SEND_SMS;
+				break;
+			case 18:
+				PERMISSION = Manifest.permission.RECEIVE_SMS;
+				break;
+			case 19:
+				PERMISSION = Manifest.permission.READ_SMS;
+				break;
+			case 20:
+				PERMISSION = Manifest.permission.RECEIVE_WAP_PUSH;
+				break;
+			case 21:
+				PERMISSION = Manifest.permission.RECEIVE_MMS;
+				break;
+			case 22:
+				PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE;
+				break;
+			case 23:
+				PERMISSION = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+				break;
+		}
+		return PERMISSION;
+	}
+
+	public static boolean checkPermission(int permission){
+		String PERMISSION = parsePermission(permission);
+		if (ContextCompat.checkSelfPermission(OFAndroidLifeCycle.getActivity(), PERMISSION)
+				== PackageManager.PERMISSION_GRANTED) {
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	public static void requestPermission(int permission){
+		String PERMISSION = parsePermission(permission);
+		if (ContextCompat.checkSelfPermission(OFAndroidLifeCycle.getActivity(), PERMISSION)
+				!= PackageManager.PERMISSION_GRANTED) {
+
+			ActivityCompat.requestPermissions(OFAndroidLifeCycle.getActivity(),
+					new String[]{PERMISSION}, 0);
+		}
 	}
 
 	public static String getRealExternalStorageDirectory(Context context)

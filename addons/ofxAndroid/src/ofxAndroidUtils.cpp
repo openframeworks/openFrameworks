@@ -161,6 +161,40 @@ void ofxAndroidDismissProgressBox(int id){
 }
 
 
+void ofxAndroidRequestPermission(int permission){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidRequestPermission(): couldn't find OFAndroid java class";
+		return;
+	}
+
+	jmethodID requestPermission = ofGetJNIEnv()->GetStaticMethodID(javaClass,"requestPermission","(I)V");
+	if(!requestPermission){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidRequestPermission(): couldn't find OFAndroid requestPermission method";
+		return;
+	}
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,requestPermission,permission);
+}
+
+
+bool ofxAndroidCheckPermission(int permission){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidCheckPermission(): couldn't find OFAndroid java class";
+		return false;
+	}
+
+	jmethodID checkPermission = ofGetJNIEnv()->GetStaticMethodID(javaClass,"checkPermission","(I)Z");
+	if(!checkPermission){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidCheckPermission(): couldn't find OFAndroid requestPermission method";
+		return false;
+	}
+	return ofGetJNIEnv()->CallStaticBooleanMethod(javaClass,checkPermission,permission);
+}
+
+
 
 void ofxAndroidOkCancelBox(string msg){
 	jclass javaClass = ofGetJavaOFAndroid();

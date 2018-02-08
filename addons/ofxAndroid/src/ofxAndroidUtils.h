@@ -11,7 +11,37 @@
 #include "ofConstants.h"
 #include "ofEvent.h"
 
+
+
+enum ANDROID_PERMISSION{
+    READ_CALENDAR = 0,
+    WRITE_CALENDAR,
+    CAMERA,
+    READ_CONTACTS,
+    WRITE_CONTACTS,
+    GET_ACCOUNTS,
+    ACCESS_FINE_LOCATION,
+    ACCESS_COARSE_LOCATION,
+    RECORD_AUDIO,
+    READ_PHONE_STATE,
+    CALL_PHONE,
+    READ_CALL_LOG,
+    WRITE_CALL_LOG,
+    ADD_VOICEMAIL,
+    USE_SIP,
+    PROCESS_OUTGOING_CALLS,
+    BODY_SENSORS,
+    SEND_SMS,
+    RECEIVE_SMS,
+    READ_SMS,
+    RECEIVE_WAP_PUSH,
+    RECEIVE_MMS,
+    READ_EXTERNAL_STORAGE,
+    WRITE_EXTERNAL_STORAGE
+};
+
 enum ofOrientation: short;
+
 
 JavaVM * ofGetJavaVMPtr();
 JNIEnv * ofGetJNIEnv();
@@ -78,6 +108,8 @@ void ofxAndroidUnlockScreenSleep();
 bool ofxAndroidIsOnline();
 bool ofxAndroidIsWifiOnline();
 bool ofxAndroidIsMobileOnline();
+void ofxAndroidRequestPermission(int permission);
+bool ofxAndroidCheckPermission(int permission);
 
 std::string ofxAndroidGetStringRes(std::string id);
 
