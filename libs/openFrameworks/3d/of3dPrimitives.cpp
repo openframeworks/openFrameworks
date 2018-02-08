@@ -8,6 +8,12 @@
 
 #include "of3dPrimitives.h"
 #include "ofGraphics.h"
+#include "ofRectangle.h"
+#include "ofVboMesh.h"
+#include "ofTexture.h"
+#include "of3dUtils.h"
+
+using namespace std;
 
 of3dPrimitive::of3dPrimitive()
 :usingVbo(true)

@@ -5,7 +5,7 @@
 //
 
 #include "ofxiOSSoundStreamDelegate.h"
-#include "ofBaseTypes.h"
+#include "ofLog.h"
 #include "ofSoundBuffer.h"
 
 @interface ofxiOSSoundStreamDelegate() {

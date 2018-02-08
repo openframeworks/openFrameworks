@@ -13,8 +13,12 @@
 #include "ofCamera.h"
 #include "ofTrueTypeFont.h"
 #include "ofNode.h"
+#include "ofVideoBaseTypes.h"
+
+using namespace std;
 
 
+static const string MODEL_MATRIX_UNIFORM="modelMatrix";
 static const string VIEW_MATRIX_UNIFORM="viewMatrix";
 static const string MODELVIEW_MATRIX_UNIFORM="modelViewMatrix";
 static const string PROJECTION_MATRIX_UNIFORM="projectionMatrix";
@@ -783,6 +787,7 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 	// uploads the current matrix to the current shader.
 	switch(matrixStack.getCurrentMatrixMode()){
 	case OF_MATRIX_MODELVIEW:
+		currentShader->setUniformMatrix4f(MODEL_MATRIX_UNIFORM, matrixStack.getModelMatrix());
 		currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
 		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
 		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
@@ -1491,6 +1496,8 @@ void ofGLProgrammableRenderer::unbind(const ofCamera & camera){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::uploadMatrices(){
 	if(!currentShader) return;
+	currentShader->setUniformMatrix4f(MODEL_MATRIX_UNIFORM, matrixStack.getModelMatrix());
+	currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
 	currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
 	currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, matrixStack.getProjectionMatrix());
 	currentShader->setUniformMatrix4f(TEXTURE_MATRIX_UNIFORM, matrixStack.getTextureMatrix());

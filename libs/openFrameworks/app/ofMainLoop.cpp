@@ -8,6 +8,8 @@
 #include <ofMainLoop.h>
 #include "ofWindowSettings.h"
 #include "ofConstants.h"
+#include "ofAppBaseWindow.h"
+#include "ofBaseApp.h"
 
 //========================================================================
 // default windowing
@@ -27,6 +29,7 @@
 	#include "ofAppGLFWWindow.h"
 #endif
 
+using namespace std;
 
 ofMainLoop::ofMainLoop()
 :bShouldClose(false)

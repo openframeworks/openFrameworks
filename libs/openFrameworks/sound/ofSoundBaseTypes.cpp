@@ -1,6 +1,4 @@
-
-#include "ofSoundStream.h"
-#include "ofBaseSoundStream.h"
+#include "ofSoundBaseTypes.h"
 #include "ofSoundBuffer.h"
 #include "ofLog.h"
 

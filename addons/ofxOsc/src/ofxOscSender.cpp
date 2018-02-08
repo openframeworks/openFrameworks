@@ -6,6 +6,8 @@
 
 #include "UdpSocket.h"
 
+using namespace std;
+
 //--------------------------------------------------------------
 ofxOscSender::~ofxOscSender() {
 	clear();
@@ -186,7 +188,7 @@ void ofxOscSender::appendBundle(const ofxOscBundle &bundle, osc::OutboundPacketS
 //--------------------------------------------------------------
 void ofxOscSender::appendMessage(const ofxOscMessage &message, osc::OutboundPacketStream &p){
 	p << osc::BeginMessage(message.getAddress().c_str());
-	for(int i = 0; i < message.getNumArgs(); ++i) {
+	for(size_t i = 0; i < message.getNumArgs(); ++i) {
 		switch(message.getArgType(i)){
 			case OFXOSC_TYPE_INT32:
 				p << message.getArgAsInt32(i);

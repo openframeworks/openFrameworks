@@ -227,7 +227,7 @@ string ofApp::getOscMsgAsString(ofxOscMessage m){
 	string msg_string;
 	msg_string = m.getAddress();
 	msg_string += ":";
-	for(int i = 0; i < m.getNumArgs(); i++){
+	for(size_t i = 0; i < m.getNumArgs(); i++){
 		// get the argument type
 		msg_string += " " + m.getArgTypeName(i);
 		msg_string += ":";

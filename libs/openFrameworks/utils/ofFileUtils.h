@@ -1,14 +1,27 @@
 #pragma once
 
 #include "ofConstants.h"
-#if !_MSC_VER
-#define BOOST_NO_CXX11_SCOPED_ENUMS
-#define BOOST_NO_SCOPED_ENUMS
+#include <fstream>
+
+#if OF_USING_STD_FS
+#	if __cplusplus < 201703L
+#		include <experimental/filesystem>
+		namespace std {
+			namespace filesystem = experimental::filesystem;
+		}
+#	else
+#		include <filesystem>
+#	endif
+#else
+#	if !_MSC_VER
+#		define BOOST_NO_CXX11_SCOPED_ENUMS
+#		define BOOST_NO_SCOPED_ENUMS
+#	endif
+#	include <boost/filesystem.hpp>
+	namespace std {
+		namespace filesystem = boost::filesystem;
+	}
 #endif
-#include <boost/filesystem.hpp>
-namespace std {
-	namespace filesystem = boost::filesystem;
-}
 
 //----------------------------------------------------------
 // ofBuffer
@@ -34,7 +47,7 @@ public:
 	/// Create a buffer and set its contents from an input stream.
 	///
 	/// \param ioBlockSize the number of bytes to read from the stream in chunks
-	ofBuffer(istream & stream, size_t ioBlockSize = 1024);
+	ofBuffer(std::istream & stream, size_t ioBlockSize = 1024);
 
 	/// Set the contents of the buffer from a raw byte pointer.
 	///
@@ -47,13 +60,13 @@ public:
 	/// Set contents of the buffer from a string.
 	///
 	/// \param text string to copy data from
-	void set(const string & text);
+	void set(const std::string & text);
 	
 	/// Set contents of the buffer from an input stream.
 	///
 	/// \param stream input stream to copy data from
 	/// \param ioBlockSize the number of bytes to read from the stream in chunks
-	bool set(istream & stream, size_t ioBlockSize = 1024);
+	bool set(std::istream & stream, size_t ioBlockSize = 1024);
 	
 	/// Set all bytes in the buffer to a given value.
 	///
@@ -63,7 +76,7 @@ public:
 	/// Append bytes to the end of buffer from a string.
 	///
 	/// \param _buffer string to copy bytes from
-	void append(const string& _buffer);
+	void append(const std::string& _buffer);
 	
 	/// Append bytes to the end of the buffer from a raw byte pointer.
 	///
@@ -80,7 +93,7 @@ public:
 	void reserve(size_t size);
 
 	/// Write contents of the buffer to an output stream.
-	bool writeTo(ostream & stream) const;
+	bool writeTo(std::ostream & stream) const;
 
 	/// Remove all bytes from the buffer, leaving a size of 0.
 	void clear();
@@ -117,45 +130,45 @@ public:
 	/// get the contents of the buffer as a string.
 	///
 	/// \returns buffer contents as a string
-	string getText() const;
+	std::string getText() const;
 	
 	/// Use buffer as a string via cast.
 	///
 	/// \returns buffer contents as a string
-	operator string() const;
+	operator std::string() const;
 	
 	/// set contents of the buffer from a string
-	ofBuffer & operator=(const string & text);
+	ofBuffer & operator=(const std::string & text);
 
 	/// Check the buffer's size.
 	///
 	/// \returns the size of the buffer's content in bytes
 	std::size_t size() const;
 
-	OF_DEPRECATED_MSG("use a lines iterator instead",string getNextLine());
-	OF_DEPRECATED_MSG("use a lines iterator instead",string getFirstLine());
+	OF_DEPRECATED_MSG("use a lines iterator instead",std::string getNextLine());
+	OF_DEPRECATED_MSG("use a lines iterator instead",std::string getFirstLine());
 	OF_DEPRECATED_MSG("use a lines iterator instead",bool isLastLine());
 	OF_DEPRECATED_MSG("use a lines iterator instead",void resetLineReader());
 	
-	friend ostream & operator<<(ostream & ostr, const ofBuffer & buf);
-	friend istream & operator>>(istream & istr, ofBuffer & buf);
+	friend std::ostream & operator<<(std::ostream & ostr, const ofBuffer & buf);
+	friend std::istream & operator>>(std::istream & istr, ofBuffer & buf);
 
-	vector<char>::iterator begin();
-	vector<char>::iterator end();
-	vector<char>::const_iterator begin() const;
-	vector<char>::const_iterator end() const;
-	vector<char>::reverse_iterator rbegin();
-	vector<char>::reverse_iterator rend();
-	vector<char>::const_reverse_iterator rbegin() const;
-	vector<char>::const_reverse_iterator rend() const;
+	std::vector<char>::iterator begin();
+	std::vector<char>::iterator end();
+	std::vector<char>::const_iterator begin() const;
+	std::vector<char>::const_iterator end() const;
+	std::vector<char>::reverse_iterator rbegin();
+	std::vector<char>::reverse_iterator rend();
+	std::vector<char>::const_reverse_iterator rbegin() const;
+	std::vector<char>::const_reverse_iterator rend() const;
 
 	/// A line of text in the buffer.
 	///
 	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
-		Line(vector<char>::iterator _begin, vector<char>::iterator _end);
-		const string & operator*() const;
-		const string * operator->() const;
-		const string & asString() const;
+		Line(std::vector<char>::iterator _begin, std::vector<char>::iterator _end);
+		const std::string & operator*() const;
+		const std::string * operator->() const;
+		const std::string & asString() const;
 		
 		/// Increment to the next line.
 		Line& operator++();
@@ -170,17 +183,17 @@ public:
 		bool empty() const;
 
 	private:
-		string line;
-		vector<char>::iterator _current, _begin, _end;
+		std::string line;
+		std::vector<char>::iterator _current, _begin, _end;
 	};
 
 	/// A line of text in the buffer.
 	///
 	struct RLine: public std::iterator<std::forward_iterator_tag,Line>{
-		RLine(vector<char>::reverse_iterator _begin, vector<char>::reverse_iterator _end);
-		const string & operator*() const;
-		const string * operator->() const;
-		const string & asString() const;
+		RLine(std::vector<char>::reverse_iterator _begin, std::vector<char>::reverse_iterator _end);
+		const std::string & operator*() const;
+		const std::string * operator->() const;
+		const std::string & asString() const;
 
 		/// Increment to the next line.
 		RLine& operator++();
@@ -195,14 +208,14 @@ public:
 		bool empty() const;
 
 	private:
-		string line;
-		vector<char>::reverse_iterator _current, _rbegin, _rend;
+		std::string line;
+		std::vector<char>::reverse_iterator _current, _rbegin, _rend;
 	};
 
 	/// A series of text lines in the buffer.
 	///
 	struct Lines{
-		Lines(vector<char>::iterator begin, vector<char>::iterator end);
+		Lines(std::vector<char>::iterator begin, std::vector<char>::iterator end);
 		
 		/// Get the first line in the buffer.
 		Line begin();
@@ -214,14 +227,14 @@ public:
 		RLine rend();
 
 	private:
-		vector<char>::iterator _begin, _end;
+		std::vector<char>::iterator _begin, _end;
 	};
 
 
 	/// A series of text lines in the buffer.
 	///
 	struct RLines{
-		RLines(vector<char>::reverse_iterator rbegin, vector<char>::reverse_iterator rend);
+		RLines(std::vector<char>::reverse_iterator rbegin, std::vector<char>::reverse_iterator rend);
 
 		/// Get the first line in the buffer.
 		RLine begin();
@@ -230,7 +243,7 @@ public:
 		RLine end();
 
 	private:
-		vector<char>::reverse_iterator _rbegin, _rend;
+		std::vector<char>::reverse_iterator _rbegin, _rend;
 	};
 
 	/// Access the contents of the buffer as a series of text lines.
@@ -251,7 +264,7 @@ public:
 	RLines getReverseLines();
 
 private:
-	vector<char> 	buffer;
+	std::vector<char> 	buffer;
 	Line			currentLine;
 };
 
@@ -288,32 +301,32 @@ public:
 	///
 	/// \param filename file path
 	/// \returns filename extension only
-    static string getFileExt(const std::filesystem::path& filename);
+    static std::string getFileExt(const std::filesystem::path& filename);
 	
 	/// Remove extension from a filename, ie. "duck.jpg" ->"duck".
 	///
 	/// \param filename file path
 	/// \returns filename without extension
-    static string removeExt(const std::filesystem::path& filename);
+    static std::string removeExt(const std::filesystem::path& filename);
 	
 	/// Prepend path with a slash, ie. "images" -> "/images".
 	///
 	/// \param path file or directory path
 	/// \returns slah + path
-    static string addLeadingSlash(const std::filesystem::path& path);
+    static std::string addLeadingSlash(const std::filesystem::path& path);
 	
 	/// Append path with a slash, ie. "images" -> "images/".
 	///
 	/// \param path directory path
 	/// \returns path + slash
-    static string addTrailingSlash(const std::filesystem::path& path);
+    static std::string addTrailingSlash(const std::filesystem::path& path);
 	
 	/// Remove a path's trailing slash (if found),
 	/// ie. "images/" -> "images".
 	///
 	/// \param path directory path
 	/// \returns path minus trailing slash
-    static string removeTrailingSlash(const std::filesystem::path& path);
+    static std::string removeTrailingSlash(const std::filesystem::path& path);
 	
 	/// Cleaned up a directory path by adding a trailing slash if needed.
 	///
@@ -322,7 +335,7 @@ public:
 	///
 	/// \param path directory path
 	/// \returns cleaned path + trailing slash (if needed)
-    static string getPathForDirectory(const std::filesystem::path& path);
+    static std::string getPathForDirectory(const std::filesystem::path& path);
 	
 	/// Get the absolute, full path for a given path,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
@@ -332,7 +345,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns absolute path
-    static string getAbsolutePath(const std::filesystem::path& path, bool bRelativeToData = true);
+    static std::string getAbsolutePath(const std::filesystem::path& path, bool bRelativeToData = true);
 
 	/// Check if a path is an absolute (aka a full path),
 	/// ie. "images" -> false,
@@ -351,7 +364,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns filename
-    static string getFileName(const std::filesystem::path& filePath, bool bRelativeToData = true);
+    static std::string getFileName(const std::filesystem::path& filePath, bool bRelativeToData = true);
 	
 	/// Get a file name without its extension,
 	/// ie. "images/duck.jpg" -> "duck" and
@@ -359,7 +372,7 @@ public:
 	///
 	/// \param filePath file path
 	/// \returns basename
-    static string getBaseName(const std::filesystem::path& filePath);
+    static std::string getBaseName(const std::filesystem::path& filePath);
 
 	/// Get the enclosing parent directory of a path,
 	/// ie. "images/duck.jpg" -> "images", assumes the path is in the data
@@ -370,7 +383,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	///\returns enclosing directory
-    static string getEnclosingDirectory(const std::filesystem::path& filePath, bool bRelativeToData = true);
+    static std::string getEnclosingDirectory(const std::filesystem::path& filePath, bool bRelativeToData = true);
 	
 	/// Create the enclosing parent directory of a path, ie.
 	/// "images" is the enclosing directory of "duck.jpg" = "images/duck.jpg".
@@ -394,7 +407,7 @@ public:
 	/// \warning This location *may* change if you or a library calls the cd()
 	/// std C function.
 	/// \returns current working directory
-	static string getCurrentWorkingDirectory();
+	static std::string getCurrentWorkingDirectory();
 	
 	/// Create a single path by joining path1 & path2 using a slash,
 	/// ie. "/hello/world" + "foo/bar" -> "/hello/world/foo/bar".
@@ -402,7 +415,7 @@ public:
 	/// \param path1 left half of the path to join
 	/// \param path2 right half of the path to join
 	/// \returns joined path
-    static string join(const std::filesystem::path& path1, const std::filesystem::path& path2);
+    static std::string join(const std::filesystem::path& path1, const std::filesystem::path& path2);
 	
 	/// Get the full path to the application's executable file.
 	///
@@ -411,7 +424,7 @@ public:
 	/// Linux: the binary file itself
 	///
 	/// \returns current executable path
-	static string getCurrentExePath();
+	static std::string getCurrentExePath();
 	
 	/// Get the full path to the application's parent directory.
 	///
@@ -419,7 +432,7 @@ public:
 	/// Mac: the Contents/MacOS folder within the application's .app bundle
 	///
 	/// \returns current executable directory
-	static string getCurrentExeDir();
+	static std::string getCurrentExeDir();
 
 	/// Get the absolute path to the user's home directory.
 	///
@@ -428,7 +441,7 @@ public:
 	/// Linux: /home/<username>
 	///
 	/// \returns home directory path
-	static string getUserHomeDir();
+	static std::string getUserHomeDir();
 
 	/// Make one path relative to another,
 	/// ie. the relative path of "images/felines/lions" to
@@ -437,7 +450,7 @@ public:
 	/// \param from starting path
 	/// \param to destination path
 	/// \returns relative path
-    static string makeRelative(const std::filesystem::path & from, const std::filesystem::path & to);
+    static std::string makeRelative(const std::filesystem::path & from, const std::filesystem::path & to);
 };
 
 /// \class ofFile
@@ -446,7 +459,7 @@ public:
 ///
 /// inherits from an fstream so you can read/write using the stream operators
 /// once a file path has been opened
-class ofFile: public fstream{
+class ofFile: public std::fstream{
 
 public:
 	
@@ -549,39 +562,39 @@ public:
 	/// Get the current path.
 	///
 	/// \returns current path
-	string path() const;
+	std::string path() const;
 	
 	/// Get the current path without its extension,
 	/// ie. "duck.jpg" ->"duck".
 	///
 	/// \returns current path file extension
-	string getExtension() const;
+	std::string getExtension() const;
 	
 	/// Get the filename of the current path by stripping the parent
 	/// directories, ie. "images/duck.jpg"  -> "duck.jpg".
 	///
 	/// \returns current path filename
-	string getFileName() const;
+	std::string getFileName() const;
 	
 	/// \biref Get the current path without its last component,
 	/// ie. "images/duck.jpg" -> "images" and
 	/// "images/some/folder" -> "images/some".
 	///
 	/// \returns current path basename
-	string getBaseName() const;
+	std::string getBaseName() const;
 	
 	/// Get the enclosing parent directory of a path,
 	/// ie. "images/duck.jpg" -> "images", assumes the path is in the data
 	/// directory.
 	///
 	/// \returns current path's enclosing directory
-	string getEnclosingDirectory() const;
+	std::string getEnclosingDirectory() const;
 	
 	/// \biref Get the absolute, full path of the file,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \returns current path as an absolute path
-	string getAbsolutePath() const;
+	std::string getAbsolutePath() const;
 
 	/// Check if the current path is readable.
 	///
@@ -733,7 +746,7 @@ public:
 	///     write_file << file.getFileBuffer();
 	///
 	/// \return output stream
-	filebuf * getFileBuffer() const;
+	std::filebuf * getFileBuffer() const;
 	
 	operator std::filesystem::path(){
 		return myFile;
@@ -850,13 +863,13 @@ public:
 	/// Get the current path.
 	///
 	/// \returns current path
-	string path() const;
+	std::string path() const;
 	
 	/// Get the absolute, full path of the directory,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \return current path as an absolute path
-	string getAbsolutePath() const;
+	std::string getAbsolutePath() const;
 
 	/// Check if the current path is readable.
 	///
@@ -923,7 +936,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool copyTo(const filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
+	bool copyTo(const std::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Move the current file or directory path to a new path.
 	///
@@ -937,7 +950,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool moveTo(const filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
+	bool moveTo(const std::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Rename the current file or directory path to a new path.
 	///
@@ -951,7 +964,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool renameTo(const filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
+	bool renameTo(const std::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Removes the file or directory at the current path.
 	///
@@ -974,7 +987,7 @@ public:
 	/// extensions which have been explicitly allowed.
 	///
 	/// \param extension file type extension ie. "jpg", "png", "txt", etc
-	void allowExt(const string& extension);
+	void allowExt(const std::string& extension);
 	
 	/// Open and read the contents of a directory.
 	///
@@ -983,7 +996,7 @@ public:
 	///
 	/// \param path directory path
 	/// \returns number of paths found
-	std::size_t listDir(const string& path);
+	std::size_t listDir(const std::string& path);
 	
 	/// Open and read the contents of the current directory.
 	///
@@ -994,7 +1007,7 @@ public:
 	std::size_t listDir();
 
 	/// \returns the current path
-	string getOriginalDirectory() const;
+	std::string getOriginalDirectory() const;
 	
 	/// Get the filename at a given position in the directory contents
 	/// list, ie. "duck.jpg".
@@ -1005,7 +1018,7 @@ public:
 	/// listed directory contents.
 	/// \param position array index in the directory contents list
 	/// \returns file or directory name
-	string getName(std::size_t position) const;
+	std::string getName(std::size_t position) const;
 	
 	/// Get the full path of the file or directory at a given position in
 	/// the directory contents list.
@@ -1016,7 +1029,7 @@ public:
 	/// listed directory contents.
 	/// \param position array index in the directory contents list
 	/// \returns file or directory name including the current path
-	string getPath(std::size_t position) const;
+	std::string getPath(std::size_t position) const;
 	
 	/// Open an ofFile instance using the path a given position in the
 	/// directory contents list.
@@ -1040,7 +1053,7 @@ public:
 	/// Directory contents are automatically listed.
 	///
 	/// \returns vector of files in the directory
-	const vector<ofFile> & getFiles() const;
+	const std::vector<ofFile> & getFiles() const;
 
 	/// Access directory contents via th array operator.
 	///
@@ -1156,16 +1169,16 @@ public:
 	/// \returns true if the path was removed successfully
 	static bool removeDirectory(const std::filesystem::path& path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
 
-	vector<ofFile>::const_iterator begin() const;
-	vector<ofFile>::const_iterator end() const;
-	vector<ofFile>::const_reverse_iterator rbegin() const;
-	vector<ofFile>::const_reverse_iterator rend() const;
+	std::vector<ofFile>::const_iterator begin() const;
+	std::vector<ofFile>::const_iterator end() const;
+	std::vector<ofFile>::const_reverse_iterator rbegin() const;
+	std::vector<ofFile>::const_reverse_iterator rend() const;
 
 private:
 	std::filesystem::path myDir;
-	string originalDirectory;
-	vector <string> extensions;
-	vector <ofFile> files;
+	std::string originalDirectory;
+	std::vector <std::string> extensions;
+	std::vector <ofFile> files;
 	bool showHidden;
 
 };

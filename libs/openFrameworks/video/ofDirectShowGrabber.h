@@ -2,7 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-#include "ofBaseTypes.h"
+#include "ofVideoBaseTypes.h"
 #include "ofPixels.h"
 
 #ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
@@ -17,7 +17,7 @@ class ofDirectShowGrabber : public ofBaseVideoGrabber{
 		ofDirectShowGrabber();
 		virtual ~ofDirectShowGrabber();
 
-		vector<ofVideoDevice>	listDevices() const;
+		std::vector<ofVideoDevice>	listDevices() const;
 		bool					setup(int w, int h);
 		void					update();
 		bool					isFrameNew() const;

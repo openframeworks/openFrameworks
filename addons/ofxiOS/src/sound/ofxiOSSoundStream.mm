@@ -8,11 +8,14 @@
 #include "ofxiOSSoundStreamDelegate.h"
 #include "ofSoundStream.h"
 #include "ofBaseApp.h"
+#include "ofLog.h"
 #include <functional>
 
 #import "SoundInputStream.h"
 #import "SoundOutputStream.h"
 #import <AVFoundation/AVFoundation.h>
+
+using namespace std;
 
 //------------------------------------------------------------------------------
 ofxiOSSoundStream::ofxiOSSoundStream() {

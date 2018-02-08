@@ -2,7 +2,12 @@
 
 class ofVec3f;
 class ofVec4f;
+
 #include "ofConstants.h"
+#include "ofMathConstants.h"
+#include "glm/vec2.hpp"
+#include "glm/fwd.hpp"
+#include <cmath>
 
 /// \brief
 /// ofVec2f is a class for storing a two dimensional vector. 
@@ -181,7 +186,8 @@ public:
 	/// \brief Set x and y components of this vector with just one function call.
 	/// 
 	/// ~~~~{.cpp}
-	/// ofVec2f v1;
+	/// ofVec2f v1;//#include "ofConstants.h"
+	//#include "glm/fwd.hpp"
 	/// v1.set(40, 20);
 	/// ~~~~
 	/// 
@@ -452,8 +458,8 @@ public:
 
 	
 	/// \cond INTERNAL
-	friend ostream& operator<<(ostream& os, const ofVec2f& vec);
-	friend istream& operator>>(istream& is, const ofVec2f& vec);
+	friend std::ostream& operator<<(std::ostream& os, const ofVec2f& vec);
+	friend std::istream& operator>>(std::istream& is, const ofVec2f& vec);
 	/// \endcond
 	
 	/// \}
@@ -1000,8 +1006,6 @@ inline ofVec2f::ofVec2f(): x(0), y(0) {}
 inline ofVec2f::ofVec2f( float _scalar ): x(_scalar), y(_scalar) {}
 inline ofVec2f::ofVec2f( float _x, float _y ):x(_x), y(_y) {}
 inline ofVec2f::ofVec2f(const glm::vec2 & v): x(v.x), y(v.y) {}
-inline ofVec2f::ofVec2f(const glm::vec3 & v): x(v.x), y(v.y) {}
-inline ofVec2f::ofVec2f(const glm::vec4 & v): x(v.x), y(v.y) {}
 
 // Getters and Setters.
 //
@@ -1104,12 +1108,12 @@ inline ofVec2f& ofVec2f::operator/=( const ofVec2f& vec ) {
 	return *this;
 }
 
-inline ostream& operator<<(ostream& os, const ofVec2f& vec) {
+inline std::ostream& operator<<(std::ostream& os, const ofVec2f& vec) {
 	os << vec.x << ", " << vec.y;
 	return os;
 }
 
-inline istream& operator>>(istream& is, ofVec2f& vec) {
+inline std::istream& operator>>(std::istream& is, ofVec2f& vec) {
 	is >> vec.x;
 	is.ignore(2);
 	is >> vec.y;

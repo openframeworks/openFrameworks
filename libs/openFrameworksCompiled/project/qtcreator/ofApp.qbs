@@ -47,12 +47,12 @@ CppApplication{
 
     Properties{
         condition: of.platform === "osx"
-        cpp.minimumOsxVersion: 10.8
+        cpp.minimumOsxVersion: "10.9"
     }
 
     Probe{
         id: targetDebug
-        property string name
+        property string name: appname+"_debug"
         configure: {
             name = Helpers.parseConfig(sourceDirectory + "/config.make", "APPNAME", appname, "all") + "_debug";
             found = true;
@@ -61,7 +61,7 @@ CppApplication{
 
     Probe{
         id: targetRelease
-        property string name
+        property string name: appname
         configure: {
             name = Helpers.parseConfig(sourceDirectory + "/config.make", "APPNAME", appname, "all");
             found = true;
@@ -89,7 +89,7 @@ CppApplication{
         prefix: {
             var srcDir = project.of_root;
             if(FileInfo.isAbsolutePath(project.of_root) == false){
-                srcDir = FileInfo.joinPaths(project.path, srcDir);
+                srcDir = FileInfo.joinPaths(project.sourceDirectory, srcDir);
             }
             srcDir = FileInfo.joinPaths(srcDir, "libs/*/lib/", product.platform, "/");
             return srcDir;

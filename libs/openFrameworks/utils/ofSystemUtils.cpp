@@ -4,10 +4,10 @@
 #include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofUtils.h"
-#include "ofAppRunner.h"
-#include "ofParameter.h"
 #include <condition_variable>
 #include <mutex>
+
+using namespace std;
 
 #ifdef TARGET_WIN32
 #include <winuser.h>
@@ -29,6 +29,7 @@
 	// http://www.yakyak.org/viewtopic.php?p=1475838&sid=1e9dcb5c9fd652a6695ac00c5e957822#p1475838
 
 	#include <Cocoa/Cocoa.h>
+	#include "ofAppRunner.h"
 #endif
 
 #ifdef TARGET_WIN32
@@ -92,6 +93,8 @@ static void restoreAppWindowFocus(){
 #define SAVE_BUTTON GTK_STOCK_SAVE
 #define CANCEL_BUTTON GTK_STOCK_CANCEL
 #endif
+
+using namespace std;
 
 gboolean init_gtk(gpointer userdata){
 	int argc=0; char **argv = nullptr;
@@ -198,7 +201,7 @@ gboolean text_dialog_gtk(gpointer userdata){
 static void initGTK(){
 	static bool initialized = false;
 	if(!initialized){
-		#if !defined(TARGET_RASPBERRY_PI) 
+		#if !defined(TARGET_RASPBERRY_PI)
 		XInitThreads();
 		#endif
 		int argc=0; char **argv = nullptr;
@@ -683,11 +686,11 @@ string ofSystemTextBoxDialog(string question, string text){
 
 		if(dialog == nullptr)
 		{
-			
+
 			MessageBox(nullptr,L"Window Creation Failed!\0", L"Error!\0",
 				MB_ICONEXCLAMATION | MB_OK);
 			return text;
-			
+
 		}
 
 		EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);

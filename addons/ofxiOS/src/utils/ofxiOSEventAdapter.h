@@ -8,6 +8,10 @@
 #pragma once
 
 #import "ofxiOSExtras.h"
+#include "ofEvents.h"
+#include "ofConstants.h"
+#include <map>
+#include <list>
 
 class ofEventAdapterBase{
     

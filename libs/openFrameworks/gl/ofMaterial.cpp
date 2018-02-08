@@ -1,9 +1,9 @@
 #include "ofMaterial.h"
 #include "ofConstants.h"
-#include "ofGLUtils.h"
 #include "ofLight.h"
 #include "ofGLProgrammableRenderer.h"
-#include "ofAppRunner.h"
+
+using namespace std;
 
 std::map<ofGLProgrammableRenderer*, std::map<std::string, std::weak_ptr<ofMaterial::Shaders>>> ofMaterial::shadersMap;
 

@@ -11,6 +11,7 @@ public:
     void brake();
     void accelerate();
     void steer(float dir);
+	const ofNode & getNode() const;
     
 private:
     float acceleration;

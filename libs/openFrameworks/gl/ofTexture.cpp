@@ -1,14 +1,17 @@
 #include "ofTexture.h"
-#include "ofUtils.h"		// for nextPow2()
-#include "ofAppRunner.h"	// for getWidth()
 #include "ofGraphics.h"
 #include "ofPixels.h"
 #include "ofGLUtils.h"
+#include "ofGLBaseTypes.h"
+#include "ofBufferObject.h"
+#include "ofMesh.h"
 #include <map>
 
 #ifdef TARGET_ANDROID
 #include "ofAppAndroidWindow.h"
 #endif
+
+using namespace std;
 
 //----------------------------------------------------------
 // static
