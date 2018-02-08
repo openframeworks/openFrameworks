@@ -1948,7 +1948,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::sphere( float radius, int res, ofPrimitiveMod
 		float tr = sin( PI-i * polarInc );
 		float ny = cos( PI-i * polarInc );
 
-		tcoord.y = i / res;
+		tcoord.y = 1.f - (i / res);
 
 		for(float j = 0; j <= doubleRes; j++) {
 
