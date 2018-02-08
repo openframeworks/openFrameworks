@@ -1,11 +1,11 @@
 # You may override default parameters for this script by specifying 
 #       -paramName paramValue
 # When calling this script. For example: 
-#       download_libs.ps1 -platform vs2017
-# Which will load the visual studio 2017 libraries
+#       download_libs.ps1 -platform vs2015
+# Which will load the visual studio 2015 libraries
 param(
     [String]$ver="master",
-    [String]$platform="vs2015"
+    [String]$platform="vs2017"
     )
 $currentPath = $pwd
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
@@ -49,8 +49,8 @@ function DownloadLibs{
 
 echo "Installing libs for platform $platform."
 
-if (-Not ($platform -eq "vs2017")){
-   echo "You may want to call this script with parameters: 'download_libs.ps1 -platform vs2017' to install libs for Visual Studio 2017." 
+if (-Not ($platform -eq "vs2015")){
+   echo "You may want to call this script with parameters: 'download_libs.ps1 -platform vs2015' to install libs for Visual Studio 2015." 
 }
 
 $libsExists = Test-Path $libsDir
