@@ -1866,19 +1866,20 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::plane(float width, float height, int columns,
 	N normal(0, 0, 1); // always facing forward //
 	T texcoord;
 
-	// the origin of the plane is the center //
-	float halfW = width/2.f;
-	float halfH = height/2.f;
+	// the origin of the plane is at the center //
+	float halfW = width  * 0.5f;
+	float halfH = height * 0.5f;
+	
 	// add the vertexes //
-	for(int iy = 0; iy < rows; iy++) {
-		for(int ix = 0; ix < columns; ix++) {
+	for(int iy = 0; iy != rows; iy++) {
+		for(int ix = 0; ix != columns; ix++) {
 
 			// normalized tex coords //
-			texcoord.x = ((float)ix/((float)columns-1.f));
-			texcoord.y = ((float)iy/((float)rows-1.f));
+			texcoord.x =       ((float)ix/((float)columns-1));
+			texcoord.y = 1.f - ((float)iy/((float)rows-1));
 
 			vert.x = texcoord.x * width - halfW;
-			vert.y = texcoord.y * height - halfH;
+			vert.y = -(texcoord.y-1) * height - halfH;
 
 			mesh.addVertex(vert);
 			mesh.addTexCoord(texcoord);
