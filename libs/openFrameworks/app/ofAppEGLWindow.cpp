@@ -475,7 +475,7 @@ void ofAppEGLWindow::setup(const Settings & _settings) {
 	windowMode = settings.windowMode;
 	bShowCursor = true;
 
-	nonFullscreenWindowRect.set(0,0,settings.width,settings.height);
+	nonFullscreenWindowRect.set(0,0,settings.getWidth(),settings.getHeight());
 	nonFullscreenWindowRect.standardize();
 
 	ofRectangle startRect = nonFullscreenWindowRect;

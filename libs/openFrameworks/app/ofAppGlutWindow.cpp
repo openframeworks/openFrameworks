@@ -5,7 +5,7 @@
 #include "ofGLRenderer.h"
 
 #ifdef TARGET_WIN32
-	#if (_MSC_VER) 
+	#if (_MSC_VER)
 		#define GLUT_BUILDING_LIB
 		#include "glut.h"
 	#else
@@ -36,7 +36,7 @@ static ofWindowMode windowMode;
 static bool			bNewScreenMode;
 static int			buttonInUse;
 static bool			bEnableSetupScreen;
-static bool			bDoubleBuffered; 
+static bool			bDoubleBuffered;
 
 static int			requestedWidth;
 static int			requestedHeight;
@@ -194,7 +194,7 @@ ofAppGlutWindow::ofAppGlutWindow(){
  }
 
  //------------------------------------------------------------
-void ofAppGlutWindow::setDoubleBuffering(bool _bDoubleBuffered){ 
+void ofAppGlutWindow::setDoubleBuffering(bool _bDoubleBuffered){
 	bDoubleBuffered = _bDoubleBuffered;
 }
 
@@ -209,7 +209,7 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 	if( displayString != ""){
 		glutInitDisplayString( displayString.c_str() );
 	}else{
-		if(bDoubleBuffered){  
+		if(bDoubleBuffered){
 			glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
 		}else{
 			glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE | GLUT_DEPTH | GLUT_ALPHA );
@@ -222,11 +222,11 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 	if (windowMode == OF_FULLSCREEN){
 		glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT));
 		windowId = glutCreateWindow("");
-		
-		requestedWidth  = settings.width;
-		requestedHeight = settings.height;
+
+		requestedWidth  = settings.getWidth();
+		requestedHeight = settings.getHeight();
 	} else if (windowMode != OF_GAME_MODE){
-		glutInitWindowSize(settings.width, settings.height);
+		glutInitWindowSize(settings.getWidth(), settings.getHeight());
 		glutCreateWindow("");
 
 		/*
@@ -250,7 +250,7 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 
     	// w x h, 32bit pixel depth, 60Hz refresh rate
 		char gameStr[64];
-		sprintf( gameStr, "%dx%d:%d@%d", settings.width, settings.height, 32, 60 );
+		sprintf( gameStr, "%dx%d:%d@%d", settings.getWidth(), settings.getHeight(), 32, 60 );
 
     	glutGameModeString(gameStr);
 
@@ -727,7 +727,7 @@ static void rotateMouseXY(ofOrientation orientation, int w, int h, int &x, int &
 //------------------------------------------------------------
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 	rotateMouseXY(orientation, instance->getWidth(), instance->getHeight(), x, y);
-    
+
 
 	switch(button){
 	case GLUT_LEFT_BUTTON:
@@ -740,7 +740,7 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 		button = OF_MOUSE_BUTTON_MIDDLE;
 		break;
 	}
-    
+
 	if (instance->events().getFrameNum() > 0){
 		if (state == GLUT_DOWN) {
 			instance->events().notifyMousePressed(x, y, button);

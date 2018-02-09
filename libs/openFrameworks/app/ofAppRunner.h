@@ -24,8 +24,7 @@ template<typename Window>
 void ofSetupOpenGL(std::shared_ptr<Window> windowPtr, int w, int h, ofWindowMode screenMode){
 	ofInit();
 	ofWindowSettings settings;
-	settings.width = w;
-	settings.height = h;
+	settings.setSize(w, h);
 	settings.windowMode = screenMode;
 	ofGetMainLoop()->addWindow(windowPtr);
 	windowPtr->setup(settings);

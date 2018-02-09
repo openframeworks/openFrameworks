@@ -1,6 +1,8 @@
 #!/bin/bash
 
 lastversion=$(date +%Y%m%d)
+REPORT_MAIL=arturo@openframeworks.cc
+
 echo "Building nightly builds $lastversion"
 
 . $HOME/.profile
@@ -15,11 +17,17 @@ error() {
   if [[ "$#" = "3" ]] ; then
     local message="$2"
     local code="${3:-1}"
-    echo "Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
+    msg="Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
   else
     local code="${2:-1}"
-    echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
+    msg="Error on or near line ${parent_lineno}; exiting with status ${code}"
   fi
+  echo $msg
+  mail -s "Error creating nightly builds at $(date)." $REPORT_MAIL <<EOF
+$msg
+$(if [ -f /home/ofadmin/logs/nightlybuilds.log ]; then cat /home/ofadmin/logs/nightlybuilds.log fi)
+$(if [ -f /home/ofadmin/logs/compilePG.log ]; then echo; echo; echo "PG compile log: "; cat /home/ofadmin/logs/compilePG.log fi)
+EOF
   rm -f *.tar.gz
   rm -f *.zip
   exit "${code}"
@@ -99,3 +107,10 @@ echo
 echo
 echo "Successfully created nightly builds for ${lastversion}"
 echo
+
+mail -s "Nightly builds $lastversion OK." $REPORT_MAIL <<EOF
+Successfully created nightly builds for ${lastversion}
+
+$(if [ -f /home/ofadmin/logs/nightlybuilds.log ]; then cat /home/ofadmin/logs/nightlybuilds.log fi)
+EOF
+
