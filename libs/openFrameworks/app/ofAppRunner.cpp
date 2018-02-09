@@ -31,8 +31,7 @@ using namespace std;
 	void ofSetupOpenGL(shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode){
 		ofInit();
 		auto settings = windowPtr->getSettings();
-		settings.width = w;
-		settings.height = h;
+		settings.setSize(w,h);
 		settings.windowMode = screenMode;
 		ofGetMainLoop()->addWindow(windowPtr);
 		windowPtr->setup(settings);
@@ -208,8 +207,7 @@ void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
 	settings.glVersionMinor = 1;
 #endif
 
-	settings.width = w;
-	settings.height = h;
+	settings.setSize(w, h);
 	settings.windowMode = screenMode;
 	ofCreateWindow(settings);
 }

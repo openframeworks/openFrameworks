@@ -199,7 +199,7 @@ private:
 	std::shared_ptr<ofBaseRenderer> currentRenderer;
 	ofGLFWWindowSettings settings;
 
-	ofWindowMode	windowMode;
+	ofWindowMode	targetWindowMode;
 
 	bool			bEnableSetupScreen;
 	int				windowW, windowH;		/// Physical framebuffer pixels extents

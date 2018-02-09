@@ -160,7 +160,7 @@ void ofTrueTypeShutdown(){
 }
 
 //--------------------------------------------------------
-static ofTTFCharacter makeContoursForCharacter(FT_Face face){
+static ofPath makeContoursForCharacter(FT_Face face){
 
 		//int num			= face->glyph->outline.n_points;
 		int nContours	= face->glyph->outline.n_contours;
@@ -169,7 +169,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face face){
 		char * tags		= face->glyph->outline.tags;
 		FT_Vector * vec = face->glyph->outline.points;
 
-		ofTTFCharacter charOutlines;
+		ofPath charOutlines;
 		charOutlines.setUseShapeColor(false);
 		charOutlines.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
 
@@ -453,7 +453,11 @@ static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face,
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
 			fontname = "Helvetica Neue";
-			fontID = 4;
+			#if MAC_OS_X_VERSION_10_13 && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
+				fontID = 0;
+			#else
+				fontID = 4;
+			#endif
 		}else if(fontname==OF_TTF_SERIF){
 			fontname = "Times New Roman";
 		}else if(fontname==OF_TTF_MONO){
@@ -1016,13 +1020,13 @@ float ofTrueTypeFont::getSpaceSize() const{
 }
 
 //------------------------------------------------------------------
-ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(uint32_t character, bool vflip, bool filled) const{
+ofPath ofTrueTypeFont::getCharacterAsPoints(uint32_t character, bool vflip, bool filled) const{
 	if( settings.contours == false ){
 		ofLogError("ofxTrueTypeFont") << "getCharacterAsPoints(): contours not created, call loadFont() with makeContours set to true";
-		return ofTTFCharacter();
+		return ofPath();
 	}
 	if (!isValidGlyph(character)){
-		return ofTTFCharacter();
+		return ofPath();
 	}
 
 	if(vflip){
@@ -1156,8 +1160,8 @@ void ofTrueTypeFont::setDirection(ofTrueTypeFont::Settings::Direction direction)
 }
 
 //-----------------------------------------------------------
-vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(const string &  str, bool vflip, bool filled) const{
-	vector<ofTTFCharacter> shapes;
+vector<ofPath> ofTrueTypeFont::getStringAsPoints(const string &  str, bool vflip, bool filled) const{
+	vector<ofPath> shapes;
 
 	if (!bLoadedOk){
 		ofLogError("ofxTrueTypeFont") << "getStringAsPoints(): font not allocated: line " << __LINE__ << " in " << __FILE__;
