@@ -39,8 +39,8 @@ class ofApp : public ofxAndroidApp{
 
 		bool captureBg;
 
-		int one_second_time;
-		int camera_fps;
-		int frames_one_sec;
+		float one_second_time;
+		float camera_fps;
+		float frames_one_sec;
 
 };
