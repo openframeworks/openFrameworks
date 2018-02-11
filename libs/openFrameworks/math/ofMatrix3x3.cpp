@@ -65,17 +65,20 @@ void ofMatrix3x3::setRow(int row, const ofVec3f& rowValues)
 
 ofVec3f ofMatrix3x3::getRow(int row)
 {
+	ofVec3f output;
 	switch(row){
 		case 1:
-			return(ofVec3f(a, b, c));
+			output = ofVec3f(a, b, c);
 			break;
 		case 2:
-			return(ofVec3f(d, e, f));
+			output = ofVec3f(d, e, f);
 			break;
 		case 3:
-			return(ofVec3f(g, h, i));
+			output = ofVec3f(g, h, i);
 			break;
 	}
+	
+	return output;
 }
 
 
