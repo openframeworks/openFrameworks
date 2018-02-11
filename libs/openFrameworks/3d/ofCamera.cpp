@@ -152,10 +152,10 @@ glm::mat4 ofCamera::getProjectionMatrix(const ofRectangle & viewport) const {
 
 	if(isOrtho) {
 		return glm::ortho(
-			viewport.x - viewport.width/2,
-			viewport.x + viewport.width/2,
-			viewport.y - viewport.height/2,
-			viewport.y + viewport.height/2,
+			- viewport.width/2,
+			+ viewport.width/2,
+			- viewport.height/2,
+			+ viewport.height/2,
 			nearClip,
 			farClip
 		);
