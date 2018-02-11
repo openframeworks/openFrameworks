@@ -1906,28 +1906,21 @@ void ofGLRenderer::saveFullViewport(ofPixels & pixels){
 
 //----------------------------------------------------------
 void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
-
 	int sh = getViewportHeight();
 
 
 	#ifndef TARGET_OPENGLES
-	ofBufferObject buffer;
-	pixels.allocate(w, h, OF_PIXELS_RGB);
-	buffer.allocate(pixels.size(),GL_STATIC_READ);
 	if(isVFlipped()){
 		y = sh - y;
 		y -= h; // top, bottom issues
 	}
+	auto pixelFormat = OF_PIXELS_BGRA;
+	pixels.allocate(w, h, pixelFormat);
+	auto glFormat = ofGetGlFormat(pixels);
 
-	buffer.bind(GL_PIXEL_PACK_BUFFER);
-	glReadPixels(x, y, w, h, ofGetGlFormat(pixels), GL_UNSIGNED_BYTE, 0); // read the memory....
-	buffer.unbind(GL_PIXEL_PACK_BUFFER);
-	unsigned char * p = buffer.map<unsigned char>(GL_READ_ONLY);
-	ofPixels src;
-	src.setFromExternalPixels(p,w,h,OF_PIXELS_RGB);
-	src.mirrorTo(pixels,true,false);
-	buffer.unmap();
 
+	glReadPixels(x, y, w, h, glFormat, GL_UNSIGNED_BYTE, pixels.begin()); // read the memory....
+	pixels.mirror(true, false);
 	#else
 
 	int sw = getViewportWidth();
