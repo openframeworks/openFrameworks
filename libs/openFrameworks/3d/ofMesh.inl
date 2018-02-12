@@ -2641,13 +2641,13 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 		for(int x = 0; x < resX-1; x++) {
 			// first triangle //
 			mesh.addIndex((y)*resX + x + vertOffset);
-			mesh.addIndex((y)*resX + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resX + x + vertOffset);
+			mesh.addIndex((y)*resX + x+1 + vertOffset);
 
 			// second triangle //
 			mesh.addIndex((y)*resX + x+1 + vertOffset);
-			mesh.addIndex((y+1)*resX + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resX + x + vertOffset);
+			mesh.addIndex((y+1)*resX + x+1 + vertOffset);
 		}
 	}
 
@@ -2679,13 +2679,13 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 		for(int x = 0; x < resZ-1; x++) {
 			// first triangle //
 			mesh.addIndex((y)*resZ + x + vertOffset);
-			mesh.addIndex((y)*resZ + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resZ + x + vertOffset);
+			mesh.addIndex((y)*resZ + x+1 + vertOffset);
 
 			// second triangle //
 			mesh.addIndex((y)*resZ + x+1 + vertOffset);
-			mesh.addIndex((y+1)*resZ + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resZ + x + vertOffset);
+			mesh.addIndex((y+1)*resZ + x+1 + vertOffset);
 		}
 	}
 
@@ -2716,13 +2716,13 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 		for(int x = 0; x < resZ-1; x++) {
 			// first triangle //
 			mesh.addIndex((y)*resZ + x + vertOffset);
-			mesh.addIndex((y)*resZ + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resZ + x + vertOffset);
+			mesh.addIndex((y)*resZ + x+1 + vertOffset);
 
 			// second triangle //
 			mesh.addIndex((y)*resZ + x+1 + vertOffset);
-			mesh.addIndex((y+1)*resZ + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resZ + x + vertOffset);
+			mesh.addIndex((y+1)*resZ + x+1 + vertOffset);
 		}
 	}
 
@@ -2753,13 +2753,13 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 		for(int x = 0; x < resX-1; x++) {
 			// first triangle //
 			mesh.addIndex((y)*resX + x + vertOffset);
-			mesh.addIndex((y)*resX + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resX + x + vertOffset);
+			mesh.addIndex((y)*resX + x+1 + vertOffset);
 
 			// second triangle //
 			mesh.addIndex((y)*resX + x+1 + vertOffset);
-			mesh.addIndex((y+1)*resX + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resX + x + vertOffset);
+			mesh.addIndex((y+1)*resX + x+1 + vertOffset);
 		}
 	}
 
