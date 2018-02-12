@@ -15,7 +15,6 @@
 // Custom objects for this example
 #include "Swarm.h"
 #include "Grid.h"
-#include "OrthoCamera.h"
 
 #define N_CAMERAS 4
 
