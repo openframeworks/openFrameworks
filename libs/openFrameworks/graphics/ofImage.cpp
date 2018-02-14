@@ -365,8 +365,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::
 	if(fif==FIF_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
 		ofPixels pix3 = _pix;
 		pix3.setNumChannels(3);
-		saveImage(pix3,_fileName,qualityLevel);
-		return false;
+		return saveImage(pix3,_fileName,qualityLevel);
 	}
 
 	FIBITMAP * bmp = nullptr;
@@ -459,8 +458,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, ofBuffer & buffer, ofIm
 	if(format==OF_IMAGE_FORMAT_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
 		ofPixels pix3 = _pix;
 		pix3.setNumChannels(3);
-		saveImage(pix3,buffer,format,qualityLevel);
-		return false;
+		return saveImage(pix3,buffer,format,qualityLevel);
 	}
 
 
