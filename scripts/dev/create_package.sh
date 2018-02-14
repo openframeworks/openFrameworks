@@ -283,6 +283,7 @@ function createPackage {
         rm -Rf gl/pixelBufferExample
         rm -Rf gl/textureBufferInstancedExample
         rm -Rf gl/threadedPixelBufferExample
+        rm -Rf gl/transformFeedbackExample
 
         rm -Rf utils/systemSpeakExample
         rm -Rf utils/fileBufferLoadingCSVExample
@@ -305,6 +306,7 @@ function createPackage {
 	    rm -Rf gles
 	    rm -Rf gl/computeShaderParticlesExample
 	    rm -Rf gl/computeShaderTextureExample
+        rm -Rf gl/transformFeedbackExample
 	fi
 
 

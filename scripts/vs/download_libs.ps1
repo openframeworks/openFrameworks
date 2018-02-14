@@ -1,11 +1,11 @@
 # You may override default parameters for this script by specifying 
 #       -paramName paramValue
 # When calling this script. For example: 
-#       download_libs.ps1 -platform vs2017
-# Which will load the visual studio 2017 libraries
+#       download_libs.ps1 -platform vs2015
+# Which will load the visual studio 2015 libraries
 param(
     [String]$ver="master",
-    [String]$platform="vs2015"
+    [String]$platform="vs2017"
     )
 $currentPath = $pwd
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
@@ -22,10 +22,9 @@ function DownloadPackage{
     echo "Downloading $url to $scriptPath\$pkg"
     $client.DownloadFile($url, "$scriptPath\$pkg")
 
-    If(Test-Path "$libsDir\$arch") {
-        Remove-Item "$libsDir\$arch" -Force -Recurse
+    If(-Not (Test-Path "$libsDir\$arch")){
+        new-item "$libsDir\$arch" -itemtype directory
     }
-    new-item "$libsDir\$arch" -itemtype directory
 
     echo "Uncompressing downloaded libs to $libsDir\$arch"
     Add-Type -A System.IO.Compression.FileSystem
@@ -48,12 +47,17 @@ function DownloadLibs{
     DownloadPackage $pkg4
 }
 
+echo "Installing libs for platform $platform."
+
+if (-Not ($platform -eq "vs2015")){
+   echo "You may want to call this script with parameters: 'download_libs.ps1 -platform vs2015' to install libs for Visual Studio 2015." 
+}
 
 $libsExists = Test-Path $libsDir
 If(-Not $libsExists) {
     echo "Creating libs directory"
     new-item $libsDir -itemtype directory
-}
+} 
 
 $libs = @(
     "32", 
@@ -92,6 +96,8 @@ $addon_libs = @(
     "ofxSvg\libs\svgtiny",
     "ofxPoco\libs\poco"
     )
+
+
 
 echo "Deleting existing libs"
 ForEach ($lib in $libs){
@@ -145,3 +151,5 @@ if(Test-Path "..\..\libs\README.md"){
 }
 
 cd $currentPath
+
+echo "Success."
