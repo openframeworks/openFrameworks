@@ -182,6 +182,19 @@ void ofRegenerateAllTextures(){
 		tex->clear();
 	}
 }
+
+void ofRegenerateAllVbos() {
+
+}
+
+void ofReloadAllImageTextures() {
+
+}
+
+void ofReloadAllFontTextures() {
+
+}
+
 #endif
 
 //----------------------------------------------------------
