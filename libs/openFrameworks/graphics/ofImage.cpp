@@ -194,7 +194,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _
 	UriUriA uri;
 	UriParserStateA state;
 	state.uri = &uri;
-	if(uriParseUriA(&state, absUri.data())!=URI_SUCCESS){
+	if(uriParseUriA(&state, uriStr.c_str())!=URI_SUCCESS){
 		ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri " << _fileName;
 		uriFreeUriMembersA(&uri);
 		return false;
