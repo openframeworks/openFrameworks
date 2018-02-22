@@ -183,18 +183,6 @@ void ofRegenerateAllTextures(){
 	}
 }
 
-void ofRegenerateAllVbos() {
-
-}
-
-void ofReloadAllImageTextures() {
-
-}
-
-void ofReloadAllFontTextures() {
-
-}
-
 #endif
 
 //----------------------------------------------------------
