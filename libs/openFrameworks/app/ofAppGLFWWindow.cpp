@@ -287,7 +287,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 
 	windowW = settings.getWidth();
 	windowH = settings.getHeight();
-//	glfwGetWindowSize( windowP, &windowW, &windowH );
 
     glfwMakeContextCurrent(windowP);
 
@@ -295,12 +294,14 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
     glfwGetFramebufferSize(windowP, &framebufferW, &framebufferH);
     
     //this lets us detect if the window is running in a retina mode
-	if( framebufferW != windowW && targetWindowMode != OF_FULLSCREEN){
+	if( framebufferW != windowW){
         pixelScreenCoordScale = framebufferW / windowW;
 		
-		auto position = getWindowPosition();
-		setWindowShape(windowW, windowH);
-		setWindowPosition(position.x, position.y);
+		if(targetWindowMode != OF_FULLSCREEN){
+			auto position = getWindowPosition();
+			setWindowShape(windowW, windowH);
+			setWindowPosition(position.x, position.y);
+		}
 	}
 
 #ifndef TARGET_OPENGLES
