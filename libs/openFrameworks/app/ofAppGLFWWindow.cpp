@@ -297,7 +297,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	if( framebufferW != windowW){
         pixelScreenCoordScale = framebufferW / windowW;
 		
-		if(targetWindowMode != OF_FULLSCREEN){
+		if(targetWindowMode == OF_WINDOW){
 			auto position = getWindowPosition();
 			setWindowShape(windowW, windowH);
 			setWindowPosition(position.x, position.y);
