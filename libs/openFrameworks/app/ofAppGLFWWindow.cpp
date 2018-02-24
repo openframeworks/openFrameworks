@@ -205,17 +205,16 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	if(settings.windowMode==OF_GAME_MODE){
 		int count;
 		GLFWmonitor** monitors = glfwGetMonitors(&count);
-		int width, height;
 		if(settings.isSizeSet()){
-			width = settings.getWidth();
-			height = settings.getHeight();
+			currentW = settings.getWidth();
+			currentH = settings.getHeight();
 		}else{
 			auto mode = glfwGetVideoMode(monitors[settings.monitor]);
-			width = mode->width;
-			height = mode->height;
+			currentW = mode->width;
+			currentH = mode->height;
 		}
 		if(count>settings.monitor){
-			windowP = glfwCreateWindow(width, height, settings.title.c_str(), monitors[settings.monitor], sharedContext);
+			windowP = glfwCreateWindow(currentW, currentH, settings.title.c_str(), monitors[settings.monitor], sharedContext);
 		}else{
 			ofLogError("ofAppGLFWWindow") << "couldn't find any monitors";
 			return;
@@ -227,9 +226,12 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 			return;
 		}
 		if(settings.windowMode==OF_FULLSCREEN){
+			int count = 0;
+			auto monitors = glfwGetMonitors(&count);
+			auto mode = glfwGetVideoMode(monitors[settings.monitor]);
+			currentW = mode->width;
+			currentH = mode->height;
 			if(!settings.isPositionSet()){
-				int count = 0;
-				auto monitors = glfwGetMonitors(&count);
 				if(count > 0){
 					int x = 0, y = 0;
 					settings.monitor = ofClamp(settings.monitor,0,count-1);
@@ -258,6 +260,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 			if (settings.isPositionSet()) {
 				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 			}
+			glfwGetWindowSize( windowP, &currentW, &currentH );
 		}
 		#ifdef TARGET_LINUX
 			if(!iconSet){
@@ -284,17 +287,15 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 
 	windowW = settings.getWidth();
 	windowH = settings.getHeight();
-	glfwGetWindowSize( windowP, &windowW, &windowH );
+//	glfwGetWindowSize( windowP, &windowW, &windowH );
 
     glfwMakeContextCurrent(windowP);
-
-	glfwGetWindowSize(windowP, &currentW, &currentH );
 
     int framebufferW, framebufferH;
     glfwGetFramebufferSize(windowP, &framebufferW, &framebufferH);
     
     //this lets us detect if the window is running in a retina mode
-    if( framebufferW != windowW ){
+	if( framebufferW != windowW && targetWindowMode != OF_FULLSCREEN){
         pixelScreenCoordScale = framebufferW / windowW;
 		
 		auto position = getWindowPosition();
