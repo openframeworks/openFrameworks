@@ -17,9 +17,25 @@ ofxAssimpModelLoader::~ofxAssimpModelLoader(){
 }
 
 //------------------------------------------
+bool ofxAssimpModelLoader::preLoadModel(string modelName, bool optimize){
+    modelURI = modelName;
+    ofFile file2 = ofFile(modelName);
+    modelDirectory = file2.getEnclosingDirectory();
+    importModelFromAssimp(file2.getAbsolutePath().c_str(), optimize);
+
+    if (!scene) {
+        ofLogError("ofxAssimpModelLoader") << "loadModel(): " + (string) aiGetErrorString();
+        clear();
+        return false;
+    }
+
+    return true;
+}
+
+//------------------------------------------
 bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
-    
-    file.open(modelName, ofFile::ReadOnly, true); // Since it may be a binary file we should read it in binary -Ed
+    file.open(modelName, ofFile::ReadOnly, true); // Since it may be a binary file we should read it in binary -E
+
     if(!file.exists()) {
         ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): model does not exist: \"" << modelName << "\"";
         return false;
@@ -27,48 +43,44 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
 
     ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): loading \"" << file.getFileName()
 		<< "\" from \"" << file.getEnclosingDirectory() << "\"";
-    
-    if(scene.get() != nullptr){
-        clear();
-		// we reset the shared_ptr explicitly here, to force the old 
-		// aiScene to be deleted **before** a new aiScene is created.
-		scene.reset();
-    }
-    
-    // sets various properties & flags to a default preference
-    unsigned int flags = initImportProperties(optimize);
-    
+
     // loads scene from file
-	std::string path = file.getAbsolutePath();
-	scene = shared_ptr<const aiScene>(aiImportFileExWithProperties(path.c_str(), flags, NULL, store.get()), aiReleaseImport);
-    
-    bool bOk = processScene();
-    return bOk;
+    std::string path = file.getAbsolutePath();
+    importModelFromAssimp(path.c_str(), optimize);
+    return processScene();
 }
 
+void ofxAssimpModelLoader::importModelFromAssimp(const char *filename, bool optimize) {
+    resetScene();
+    // sets various properties & flags to a default preference
+    unsigned int flags = initImportProperties(optimize);
+    scene = shared_ptr<const aiScene>(aiImportFileExWithProperties(filename, flags, NULL, store.get()), aiReleaseImport);
+}
 
 bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const char * extension){
-    
     ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): loading from memory buffer \"." << extension << "\"";
-    
-    if(scene.get() != nullptr){
-        clear();
-		// we reset the shared_ptr explicitly here, to force the old 
-		// aiScene to be deleted **before** a new aiScene is created.
-		scene.reset();
-    }
-    
-    // sets various properties & flags to a default preference
-    unsigned int flags = initImportProperties(optimize);
-    
-    // loads scene from memory buffer - note this will not work for multipart files (obj, md3, etc)
-    scene = shared_ptr<const aiScene>(aiImportFileFromMemoryWithProperties(buffer.getData(), buffer.size(), flags, extension, store.get()), aiReleaseImport);
-    
-    bool bOk = processScene();
-    return bOk;
+    importModelFromAssimp(buffer, optimize, extension);
+    return processScene();
 }
 
-unsigned int ofxAssimpModelLoader::initImportProperties(bool optimize) {    
+void ofxAssimpModelLoader::importModelFromAssimp(ofBuffer & buffer, bool optimize, const char *extension) {
+    resetScene();
+    // sets various properties & flags to a default preference
+    unsigned int flags = initImportProperties(optimize);
+    // loads scene from memory buffer - note this will not work for multipart files (obj, md3, etc)
+    scene = shared_ptr<const aiScene>(aiImportFileFromMemoryWithProperties(buffer.getData(), buffer.size(), flags, extension, store.get()), aiReleaseImport);
+}
+
+void ofxAssimpModelLoader::resetScene() {
+    if(scene.get() != nullptr){
+        clear();
+        // we reset the shared_ptr explicitly here, to force the old
+        // aiScene to be deleted **before** a new aiScene is created.
+        scene.reset();
+    }
+}
+
+unsigned int ofxAssimpModelLoader::initImportProperties(bool optimize) {
     store.reset(aiCreatePropertyStore(), aiReleasePropertyStore);
     
     // only ever give us triangles.
@@ -108,7 +120,6 @@ bool ofxAssimpModelLoader::processScene() {
     
     return false;
 }
-
 
 //-------------------------------------------
 void ofxAssimpModelLoader::createEmptyModel(){
@@ -180,6 +191,8 @@ void ofxAssimpModelLoader::loadGLResources(){
 
 	ofLogVerbose("ofxAssimpModelLoader") << "loadGLResources(): starting";
 
+    preloadTextures();
+
     // create new mesh helpers for each mesh, will populate their data later.
     modelMeshes.resize(scene->mNumMeshes,ofxAssimpMeshHelper());
 
@@ -197,6 +210,14 @@ void ofxAssimpModelLoader::loadGLResources(){
 
         // Handle material info
         aiMaterial* mtl = scene->mMaterials[mesh->mMaterialIndex];
+
+        // Loads material properties into meshHelper
+        this->loadMaterialProperties(mtl, meshHelper);
+        // Loads textures for this material
+        this->loadTexturesForMaterial(mtl, meshHelper);
+        this->setupMesh(mesh, meshHelper);
+        this->loadVBOs(mesh, meshHelper);
+
         aiColor4D dcolor, scolor, acolor, ecolor;
 
         if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &dcolor)){
@@ -348,6 +369,147 @@ void ofxAssimpModelLoader::loadGLResources(){
     ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): finished";
 }
 
+void ofxAssimpModelLoader::loadMaterialProperties(aiMaterial* mtl, ofxAssimpMeshHelper &meshHelper) {
+    aiColor4D dcolor, scolor, acolor, ecolor;
+
+    if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &dcolor)){
+        meshHelper.material.setDiffuseColor(aiColorToOfColor(dcolor));
+    }
+
+    if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &scolor)){
+        meshHelper.material.setSpecularColor(aiColorToOfColor(scolor));
+    }
+
+    if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &acolor)){
+        meshHelper.material.setAmbientColor(aiColorToOfColor(acolor));
+    }
+
+    if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &ecolor)){
+        meshHelper.material.setEmissiveColor(aiColorToOfColor(ecolor));
+    }
+
+    float shininess;
+
+    if(AI_SUCCESS == aiGetMaterialFloat(mtl, AI_MATKEY_SHININESS, &shininess)){
+        meshHelper.material.setShininess(shininess);
+    }
+
+    int blendMode;
+
+    if(AI_SUCCESS == aiGetMaterialInteger(mtl, AI_MATKEY_BLEND_FUNC, &blendMode)){
+        if(blendMode==aiBlendMode_Default){
+            meshHelper.blendMode=OF_BLENDMODE_ALPHA;
+        }else{
+            meshHelper.blendMode=OF_BLENDMODE_ADD;
+        }
+    }
+
+    // Culling
+    unsigned int max = 1;
+    int two_sided;
+
+    if((AI_SUCCESS == aiGetMaterialIntegerArray(mtl, AI_MATKEY_TWOSIDED, &two_sided, &max)) && two_sided) {
+        meshHelper.twoSided = true;
+    } else {
+        meshHelper.twoSided = false;
+    }
+}
+
+void ofxAssimpModelLoader::setupMesh(aiMesh* mesh, ofxAssimpMeshHelper& meshHelper) {
+    meshHelper.mesh = mesh;
+    aiMeshToOfMesh(mesh, meshHelper.cachedMesh, &meshHelper);
+    meshHelper.cachedMesh.setMode(OF_PRIMITIVE_TRIANGLES);
+    meshHelper.validCache = true;
+    meshHelper.hasChanged = false;
+
+    meshHelper.animatedPos.resize(mesh->mNumVertices);
+    if(mesh->HasNormals()){
+        meshHelper.animatedNorm.resize(mesh->mNumVertices);
+    }
+
+    meshHelper.indices.resize(mesh->mNumFaces * 3);
+    int j=0;
+    for (unsigned int x = 0; x < mesh->mNumFaces; ++x){
+        for (unsigned int a = 0; a < mesh->mFaces[x].mNumIndices; ++a){
+            meshHelper.indices[j++]=mesh->mFaces[x].mIndices[a];
+        }
+    }
+}
+
+void ofxAssimpModelLoader::loadVBOs(aiMesh* mesh, ofxAssimpMeshHelper& meshHelper) {
+    int usage = this->getVBOUsage();
+    meshHelper.vbo.setVertexData(&mesh->mVertices[0].x,3,mesh->mNumVertices,usage,sizeof(aiVector3D));
+
+    if(mesh->HasVertexColors(0)){
+        meshHelper.vbo.setColorData(&mesh->mColors[0][0].r,mesh->mNumVertices,GL_STATIC_DRAW,sizeof(aiColor4D));
+    }
+
+    if(mesh->HasNormals()){
+        meshHelper.vbo.setNormalData(&mesh->mNormals[0].x,mesh->mNumVertices,usage,sizeof(aiVector3D));
+    }
+
+    if (meshHelper.cachedMesh.hasTexCoords()){
+//        meshHelper.vbo.setTexCoordData(&meshHelper.cachedMesh.getTexCoordsPointer()[0].getPtr(),mesh->mNumVertices,GL_STATIC_DRAW,sizeof(ofVec2f));
+        meshHelper.vbo.setTexCoordData(&meshHelper.cachedMesh.getTexCoords()[0].x,mesh->mNumVertices,GL_STATIC_DRAW,sizeof(ofVec2f));
+    }
+
+    meshHelper.vbo.setIndexData(&meshHelper.indices[0],meshHelper.indices.size(),GL_STATIC_DRAW);
+}
+
+int ofxAssimpModelLoader::getVBOUsage() {
+    int usage;
+    if(getAnimationCount()){
+#ifndef TARGET_OPENGLES
+        if(!ofIsGLProgrammableRenderer()){
+    		usage = GL_STATIC_DRAW;
+    	}else{
+    		usage = GL_STREAM_DRAW;
+    	}
+#else
+        usage = GL_DYNAMIC_DRAW;
+#endif
+    }else{
+        usage = GL_STATIC_DRAW;
+
+    }
+    return usage;
+}
+
+void ofxAssimpModelLoader::loadTexturesForMaterial(aiMaterial* mtl, ofxAssimpMeshHelper &meshHelper) {
+    // Load Textures
+    int texIndex = 0;
+    aiString texPath;
+
+    // TODO: handle other aiTextureTypes
+    if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)){
+        ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): loading image from \"" << texPath.data << "\"";
+        ofxAssimpTexture assimpTexture;
+
+        for(int j=0; j<textures.size(); j++) {
+            assimpTexture = textures[j];
+            if(assimpTexture.getTexturePath() == texPath.data) {
+                break;
+            }
+        }
+
+        if (!assimpTexture.isLoaded()) {
+            ofLogError("ofxAssimpModelLoader") << "loadGLResource(): Fatal error, texture not loaded for model: \""
+                                               << modelURI + "\" from \"" << string(texPath.data) << "\"";
+            return;
+        } else {
+            meshHelper.assimpTexture = assimpTexture;
+            if (!assimpTexture.isLoaded()) {
+                bool loaded = assimpTexture.loadTextureFromTextureData();
+                if (!loaded) {
+                    ofLogError("ofxAssimpModelLoader") << "loadGLResource(): couldn't load pre-loaded texture: \""
+                                                       << modelURI + "\" from \"" << string(texPath.data) << "\"";
+                    return;
+                }
+            }
+        }
+    }
+}
+
 //-------------------------------------------
 void ofxAssimpModelLoader::clear(){
 
@@ -374,6 +536,7 @@ void ofxAssimpModelLoader::clear(){
     textures.clear();
 
     updateModelMatrix();
+    ofRemoveListener(ofEvents().exit,this,&ofxAssimpModelLoader::onAppExit);
 }
 
 //------------------------------------------- update.
@@ -820,6 +983,7 @@ ofMesh ofxAssimpModelLoader::getMesh(string name){
 	for(unsigned int i=0; i < scene->mNumMeshes; i++){
 		if(string(scene->mMeshes[i]->mName.data)==name){
 			aim = scene->mMeshes[i];
+			aim = scene->mMeshes[i];
 			break;
 		}
 	}
@@ -1042,4 +1206,112 @@ void ofxAssimpModelLoader::disableColors(){
 //--------------------------------------------------------------
 void ofxAssimpModelLoader::disableMaterials(){
 	bUsingMaterials = false;
+}
+
+//-------------------------------------------
+void ofxAssimpModelLoader::preloadTextures(){
+    for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+        ofLogVerbose("ofxAssimpModelLoader") << "preloadTextures(): textures for mesh mesh " << i;
+        // current mesh
+        aiMesh* mesh = scene->mMeshes[i];
+        aiMaterial* mtl = scene->mMaterials[mesh->mMaterialIndex];
+
+        // Load Textures
+        int texIndex = 0;
+        aiString texPath;
+
+        // TODO: handle other aiTextureTypes
+        if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)) {
+            ofLogVerbose("ofxAssimpModelLoader") << "preloadTextures(): loading image from \"" << texPath.data << "\"";
+            string realPath;
+            if (ofFile::isPathURL(texPath.data)) {
+                realPath = texPath.data;
+            } else {
+                string relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
+                string texFile = ofFilePath::getFileName(texPath.data);
+                realPath = modelDirectory + relTexPath  + texFile;
+            }
+
+            bool bTextureAlreadyExists = false;
+            for(int j=0; j<textures.size(); j++) {
+                if( textures[j].getTexturePath() == texPath.data) {
+                    ofLogVerbose("ofxAssimpModelLoader") << "preloadTextures(): Strings are equal!";
+                    bTextureAlreadyExists = true;
+                    ofLogVerbose("ofxAssimpModelLoader") << "preloadTextures(): texture \"" << texPath.data << "\" already loaded, skipping..";
+                    break;
+                }
+            }
+
+            if(!bTextureAlreadyExists) {
+                if(ofFile::doesFileExist(realPath) == false && !ofFile::isPathURL(texPath.data)) {
+                    ofLogError("ofxAssimpModelLoader") << "preloadTextures(): texture doesn't exist: \""
+                                                       << modelURI + "\" in \"" << realPath << "\"";
+                }
+                this->preloadTexture(realPath, string(texPath.data));
+            }
+        }
+    }
+}
+
+//-------------------------------------------
+void ofxAssimpModelLoader::preloadTexture(string texURL, string texPathString){
+    ofBuffer textureData;
+
+    if (ofFile::isPathURL(aiString(texURL).data)) {
+        textureData = ofLoadURL(texURL).data;
+    } else {
+        ofFile file;
+        file.open(texURL);
+
+        if(!file.exists()) {
+            ofLogError("ofxAssimpModelLoader") << "preloadTexturedModel(): failed to load texture file: \"" << texURL << "\"";
+            return;
+        }
+
+        textureData = file.readToBuffer();
+    }
+
+    textures.push_back(ofxAssimpTexture(textureData, texPathString));
+}
+
+//------------------------------------------
+bool ofxAssimpModelLoader::loadModelGLResources() {
+    return processScene();
+}
+
+//-------------------------------------------
+bool ofxAssimpModelLoader::reloadModelGLResources() {
+    bool ok = this->reloadModelTextures();
+    ok = ok  && this->reloadModelVBOs();
+    return ok;
+}
+
+bool ofxAssimpModelLoader::reloadModelTextures() {
+    bool success = true;
+    for (unsigned int i =0; i < textures.size(); i++) {
+        success = success && textures[i].reloadTextureFromTextureData();
+    }
+    return success;
+}
+
+bool ofxAssimpModelLoader::reloadModelVBOs() {
+    for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
+        ofLogVerbose("ofxAssimpModelLoader") << "reloadModelVBOs(): reloading mesh " << i << " VBOs";
+
+        aiMesh* mesh = scene->mMeshes[i];
+        ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
+
+        meshHelper.vbo.clear();
+        this->loadVBOs(mesh, meshHelper);
+
+    }
+    return true;
+}
+
+// automatic destruction on app exit makes the app crash because of some bug in assimp
+// this is a hack to clear every object on the exit callback of the application
+// FIXME: review when there's an update of assimp
+//-------------------------------------------
+void ofxAssimpModelLoader::onAppExit(ofEventArgs & args){
+    clear();
 }
