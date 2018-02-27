@@ -126,6 +126,10 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 		    case GL_RGBA32UI:
 	#endif
 				 return GL_RGBA;
+#ifdef TARGET_OF_IOS
+			case GL_BGRA:
+			return GL_BGRA;
+#endif
 
 
 			case GL_RGB:
@@ -655,6 +659,7 @@ int ofGetNumChannelsFromGLFormat(int glFormat){
 	switch(glFormat){
 	case GL_RGB:
 		return 3;
+	case GL_BGRA:
 	case GL_RGBA:
 		return 4;
 	case GL_LUMINANCE:
