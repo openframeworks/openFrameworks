@@ -832,20 +832,6 @@ shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 }
 #endif
 
-#if defined(TARGET_ANDROID)
-void ofRegenerateAllVbos();
-void ofRegenerateAllTextures();
-void ofReloadAllImageTextures();
-void ofReloadAllFontTextures();
-
-void ofReloadGLResources(){
-	ofRegenerateAllTextures();
-	ofRegenerateAllVbos();
-	ofReloadAllImageTextures();
-	ofReloadAllFontTextures();
-}
-#endif
-
 #ifndef TARGET_OPENGLES
 namespace{
 	void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, void * user){

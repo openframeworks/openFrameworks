@@ -2652,28 +2652,34 @@ void ofGLProgrammableRenderer::saveFullViewport(ofPixels & pixels){
 }
 
 void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
-
     int sh = getViewportHeight();
 
 
-	#ifndef TARGET_OPENGLES
-	ofBufferObject buffer;
-	pixels.allocate(w, h, OF_PIXELS_RGB);
-	buffer.allocate(pixels.size(),GL_STATIC_READ);
+    #ifndef TARGET_OPENGLES
 	if(isVFlipped()){
 		y = sh - y;
 		y -= h; // top, bottom issues
 	}
+	auto pixelFormat = OF_PIXELS_BGRA;
+	pixels.allocate(w, h, pixelFormat);
+	auto glFormat = ofGetGlFormat(pixels);
+
+
+	ofBufferObject buffer;
+	buffer.allocate(pixels.size(), GL_STATIC_READ);
 
 	buffer.bind(GL_PIXEL_PACK_BUFFER);
-	glReadPixels(x, y, w, h, ofGetGlFormat(pixels), GL_UNSIGNED_BYTE, 0); // read the memory....
+	glReadPixels(x, y, w, h, glFormat, GL_UNSIGNED_BYTE, 0); // read the memory....
 	buffer.unbind(GL_PIXEL_PACK_BUFFER);
-	unsigned char * p = buffer.map<unsigned char>(GL_READ_ONLY);
-	ofPixels src;
-	src.setFromExternalPixels(p,w,h,OF_PIXELS_RGB);
-	src.mirrorTo(pixels,true,false);
-	buffer.unmap();
 
+	if(unsigned char * p = buffer.map<unsigned char>(GL_READ_ONLY)){
+		ofPixels src;
+		src.setFromExternalPixels(p,w,h,pixelFormat);
+		src.mirrorTo(pixels,true,false);
+		buffer.unmap();
+	}else{
+		ofLogError("ofGLProgrammableRenderer") << "Error saving screen";
+	}
 
 	#else
 
