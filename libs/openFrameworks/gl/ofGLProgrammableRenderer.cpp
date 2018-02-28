@@ -1203,23 +1203,25 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 		if(currentShader) currentShader->setUniform1f(USE_COLORS_UNIFORM,color);
 	}
 #if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
-	if(vertices){
-		glEnableClientState(GL_VERTEX_ARRAY);
-	}
-	if(color){
-		glEnableClientState(GL_COLOR_ARRAY);
-	}else{
-		glDisableClientState(GL_COLOR_ARRAY);
-	}
-	if(tex){
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	}else{
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	}
-	if(normals){
-		glEnableClientState(GL_NORMAL_ARRAY);
-	}else{
-		glDisableClientState(GL_NORMAL_ARRAY);
+	if(getGLVersionMajor() == 1) {
+		if(vertices){
+			glEnableClientState(GL_VERTEX_ARRAY);
+		}
+		if(color){
+			glEnableClientState(GL_COLOR_ARRAY);
+		}else{
+			glDisableClientState(GL_COLOR_ARRAY);
+		}
+		if(tex){
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		}else{
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		}
+		if(normals){
+			glEnableClientState(GL_NORMAL_ARRAY);
+		}else{
+			glDisableClientState(GL_NORMAL_ARRAY);
+		}
 	}
 
 #endif
@@ -1865,14 +1867,14 @@ void ofGLProgrammableRenderer::drawString(const ofTrueTypeFont & font, string te
 #ifdef TARGET_OPENGLES
 static const string vertex_shader_header =
 		"%extensions%\n"
-		"precision mediump float;\n"
+		"precision highp float;\n"
 		"#define IN attribute\n"
 		"#define OUT varying\n"
 		"#define TEXTURE texture2D\n"
 		"#define TARGET_OPENGLES\n";
 static const string fragment_shader_header =
 		"%extensions%\n"
-		"precision mediump float;\n"
+		"precision highp float;\n"
 		"#define IN varying\n"
 		"#define OUT\n"
 		"#define TEXTURE texture2D\n"
