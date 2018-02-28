@@ -211,13 +211,6 @@ void ofxAssimpModelLoader::loadGLResources(){
         // Handle material info
         aiMaterial* mtl = scene->mMaterials[mesh->mMaterialIndex];
 
-        // Loads material properties into meshHelper
-        this->loadMaterialProperties(mtl, meshHelper);
-        // Loads textures for this material
-        this->loadTexturesForMaterial(mtl, meshHelper);
-        this->setupMesh(mesh, meshHelper);
-        this->loadVBOs(mesh, meshHelper);
-
         aiColor4D dcolor, scolor, acolor, ecolor;
 
         if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &dcolor)){
@@ -269,30 +262,39 @@ void ofxAssimpModelLoader::loadGLResources(){
             string relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
             string texFile = ofFilePath::getFileName(texPath.data);
             string realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile);
-            
+
             if(ofFile::doesFileExist(realPath) == false) {
                 ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
 					<< file.getFileName() + "\" in \"" << realPath << "\"";
             }
-            
+
             ofxAssimpTexture assimpTexture;
             bool bTextureAlreadyExists = false;
             for(size_t j = 0; j < textures.size(); j++) {
                 assimpTexture = textures[j];
-                if(assimpTexture.getTexturePath() == realPath) {
+                if(assimpTexture.getTexturePath() == texPath.data) {
                     bTextureAlreadyExists = true;
                     break;
                 }
             }
             if(bTextureAlreadyExists) {
+                if (!assimpTexture.isLoaded()) {
+                    bool loaded = assimpTexture.loadTextureFromTextureData();
+                    if (!loaded) {
+                        ofLogError("ofxAssimpModelLoader") << "loadGLResource(): couldn't load pre-loaded texture: \""
+                                                           << modelURI + "\" from \"" << string(texPath.data) << "\"";
+                        return;
+                    }
+                }
+
                 meshHelper.assimpTexture = assimpTexture;
                 ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture already loaded: \""
 					<< file.getFileName() + "\" from \"" << realPath << "\"";
             } else {
                 ofTexture texture;
-                bool bTextureLoadedOk = ofLoadImage(texture, realPath);
+                bool bTextureLoadedOk = ofLoadImage(texture, texFile);
                 if(bTextureLoadedOk) {
-                    textures.push_back(ofxAssimpTexture(texture, realPath));
+                    textures.push_back(ofxAssimpTexture(texture, texFile));
                     assimpTexture = textures.back();
                     meshHelper.assimpTexture = assimpTexture;
                     ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture loaded, dimensions: "
@@ -323,121 +325,29 @@ void ofxAssimpModelLoader::loadGLResources(){
 			}
         }
 
+        this->loadVBOs(mesh, meshHelper);
+    }
+    
+    ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): finished";
+}
 
-        int usage;
-        if(getAnimationCount()){
+void ofxAssimpModelLoader::loadVBOs(aiMesh* mesh, ofxAssimpMeshHelper& meshHelper) {
+    int usage;
+
+    if (getAnimationCount()) {
 #ifndef TARGET_OPENGLES
-        	if(!ofIsGLProgrammableRenderer()){
+        if(!ofIsGLProgrammableRenderer()){
         		usage = GL_STATIC_DRAW;
         	}else{
         		usage = GL_STREAM_DRAW;
         	}
 #else
-        	usage = GL_DYNAMIC_DRAW;
+        usage = GL_DYNAMIC_DRAW;
 #endif
-        }else{
-        	usage = GL_STATIC_DRAW;
-
-        }
-
-        meshHelper.vbo.setVertexData(&mesh->mVertices[0].x,3,mesh->mNumVertices,usage,sizeof(aiVector3D));
-        if(mesh->HasVertexColors(0)){
-        	meshHelper.vbo.setColorData(&mesh->mColors[0][0].r,mesh->mNumVertices,GL_STATIC_DRAW,sizeof(aiColor4D));
-        }
-        if(mesh->HasNormals()){
-        	meshHelper.vbo.setNormalData(&mesh->mNormals[0].x,mesh->mNumVertices,usage,sizeof(aiVector3D));
-        }
-        if (meshHelper.cachedMesh.hasTexCoords()){			
-			meshHelper.vbo.setTexCoordData(&meshHelper.cachedMesh.getTexCoords()[0].x, mesh->mNumVertices,GL_STATIC_DRAW,sizeof(ofVec2f));
-        }
-
-        meshHelper.indices.resize(mesh->mNumFaces * 3);
-        int j=0;
-        for (unsigned int x = 0; x < mesh->mNumFaces; ++x){
-			for (unsigned int a = 0; a < mesh->mFaces[x].mNumIndices; ++a){
-				meshHelper.indices[j++]=mesh->mFaces[x].mIndices[a];
-			}
-		}
-
-        meshHelper.vbo.setIndexData(&meshHelper.indices[0],meshHelper.indices.size(),GL_STATIC_DRAW);
-
-        //modelMeshes.push_back(meshHelper);
-    }
-    
-
-
-    ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): finished";
-}
-
-void ofxAssimpModelLoader::loadMaterialProperties(aiMaterial* mtl, ofxAssimpMeshHelper &meshHelper) {
-    aiColor4D dcolor, scolor, acolor, ecolor;
-
-    if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &dcolor)){
-        meshHelper.material.setDiffuseColor(aiColorToOfColor(dcolor));
-    }
-
-    if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &scolor)){
-        meshHelper.material.setSpecularColor(aiColorToOfColor(scolor));
-    }
-
-    if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &acolor)){
-        meshHelper.material.setAmbientColor(aiColorToOfColor(acolor));
-    }
-
-    if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &ecolor)){
-        meshHelper.material.setEmissiveColor(aiColorToOfColor(ecolor));
-    }
-
-    float shininess;
-
-    if(AI_SUCCESS == aiGetMaterialFloat(mtl, AI_MATKEY_SHININESS, &shininess)){
-        meshHelper.material.setShininess(shininess);
-    }
-
-    int blendMode;
-
-    if(AI_SUCCESS == aiGetMaterialInteger(mtl, AI_MATKEY_BLEND_FUNC, &blendMode)){
-        if(blendMode==aiBlendMode_Default){
-            meshHelper.blendMode=OF_BLENDMODE_ALPHA;
-        }else{
-            meshHelper.blendMode=OF_BLENDMODE_ADD;
-        }
-    }
-
-    // Culling
-    unsigned int max = 1;
-    int two_sided;
-
-    if((AI_SUCCESS == aiGetMaterialIntegerArray(mtl, AI_MATKEY_TWOSIDED, &two_sided, &max)) && two_sided) {
-        meshHelper.twoSided = true;
     } else {
-        meshHelper.twoSided = false;
-    }
-}
-
-void ofxAssimpModelLoader::setupMesh(aiMesh* mesh, ofxAssimpMeshHelper& meshHelper) {
-    meshHelper.mesh = mesh;
-    aiMeshToOfMesh(mesh, meshHelper.cachedMesh, &meshHelper);
-    meshHelper.cachedMesh.setMode(OF_PRIMITIVE_TRIANGLES);
-    meshHelper.validCache = true;
-    meshHelper.hasChanged = false;
-
-    meshHelper.animatedPos.resize(mesh->mNumVertices);
-    if(mesh->HasNormals()){
-        meshHelper.animatedNorm.resize(mesh->mNumVertices);
+        usage = GL_STATIC_DRAW;
     }
 
-    meshHelper.indices.resize(mesh->mNumFaces * 3);
-    int j=0;
-    for (unsigned int x = 0; x < mesh->mNumFaces; ++x){
-        for (unsigned int a = 0; a < mesh->mFaces[x].mNumIndices; ++a){
-            meshHelper.indices[j++]=mesh->mFaces[x].mIndices[a];
-        }
-    }
-}
-
-void ofxAssimpModelLoader::loadVBOs(aiMesh* mesh, ofxAssimpMeshHelper& meshHelper) {
-    int usage = this->getVBOUsage();
     meshHelper.vbo.setVertexData(&mesh->mVertices[0].x,3,mesh->mNumVertices,usage,sizeof(aiVector3D));
 
     if(mesh->HasVertexColors(0)){
@@ -449,65 +359,19 @@ void ofxAssimpModelLoader::loadVBOs(aiMesh* mesh, ofxAssimpMeshHelper& meshHelpe
     }
 
     if (meshHelper.cachedMesh.hasTexCoords()){
-//        meshHelper.vbo.setTexCoordData(&meshHelper.cachedMesh.getTexCoordsPointer()[0].getPtr(),mesh->mNumVertices,GL_STATIC_DRAW,sizeof(ofVec2f));
-        meshHelper.vbo.setTexCoordData(&meshHelper.cachedMesh.getTexCoords()[0].x,mesh->mNumVertices,GL_STATIC_DRAW,sizeof(ofVec2f));
+        meshHelper.vbo.setTexCoordData(&meshHelper.cachedMesh.getTexCoords()[0].x, mesh->mNumVertices,GL_STATIC_DRAW,sizeof(ofVec2f));
+    }
+
+    meshHelper.indices.resize(mesh->mNumFaces * 3);
+    int j=0;
+
+    for (unsigned int x = 0; x < mesh->mNumFaces; ++x) {
+        for (unsigned int a = 0; a < mesh->mFaces[x].mNumIndices; ++a) {
+            meshHelper.indices[j++]=mesh->mFaces[x].mIndices[a];
+        }
     }
 
     meshHelper.vbo.setIndexData(&meshHelper.indices[0],meshHelper.indices.size(),GL_STATIC_DRAW);
-}
-
-int ofxAssimpModelLoader::getVBOUsage() {
-    int usage;
-    if(getAnimationCount()){
-#ifndef TARGET_OPENGLES
-        if(!ofIsGLProgrammableRenderer()){
-    		usage = GL_STATIC_DRAW;
-    	}else{
-    		usage = GL_STREAM_DRAW;
-    	}
-#else
-        usage = GL_DYNAMIC_DRAW;
-#endif
-    }else{
-        usage = GL_STATIC_DRAW;
-
-    }
-    return usage;
-}
-
-void ofxAssimpModelLoader::loadTexturesForMaterial(aiMaterial* mtl, ofxAssimpMeshHelper &meshHelper) {
-    // Load Textures
-    int texIndex = 0;
-    aiString texPath;
-
-    // TODO: handle other aiTextureTypes
-    if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)){
-        ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): loading image from \"" << texPath.data << "\"";
-        ofxAssimpTexture assimpTexture;
-
-        for(int j=0; j<textures.size(); j++) {
-            assimpTexture = textures[j];
-            if(assimpTexture.getTexturePath() == texPath.data) {
-                break;
-            }
-        }
-
-        if (!assimpTexture.isLoaded()) {
-            ofLogError("ofxAssimpModelLoader") << "loadGLResource(): Fatal error, texture not loaded for model: \""
-                                               << modelURI + "\" from \"" << string(texPath.data) << "\"";
-            return;
-        } else {
-            meshHelper.assimpTexture = assimpTexture;
-            if (!assimpTexture.isLoaded()) {
-                bool loaded = assimpTexture.loadTextureFromTextureData();
-                if (!loaded) {
-                    ofLogError("ofxAssimpModelLoader") << "loadGLResource(): couldn't load pre-loaded texture: \""
-                                                       << modelURI + "\" from \"" << string(texPath.data) << "\"";
-                    return;
-                }
-            }
-        }
-    }
 }
 
 //-------------------------------------------

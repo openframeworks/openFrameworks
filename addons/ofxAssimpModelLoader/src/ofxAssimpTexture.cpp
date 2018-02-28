@@ -16,18 +16,6 @@ ofxAssimpTexture::ofxAssimpTexture() {
     this->textureData = NULL;
 }
 
-//ofxAssimpTexture::ofxAssimpTexture(ofxAssimpTexture &assimpTexture) {
-//    if(!assimpTexture.hasTexture()) {
-//        this->texturePath = "";
-//        this->loaded = false;
-//        this->textureData = NULL;
-//        return;
-//    }
-//
-//    this->texture = assimpTexture.getTextureRef();
-//    this->texturePath = assimpTexture.getTexturePath();
-//}
-
 ofxAssimpTexture::ofxAssimpTexture(ofTexture texture, string texturePath) {
     this->texture = texture;
     this->texturePath = texturePath;
@@ -39,13 +27,6 @@ ofxAssimpTexture::ofxAssimpTexture(const ofBuffer &texData, string texturePath) 
     this->loaded = false;
     this->textureData = new ofPixels();
     this->bTextureDataLoaded = ofLoadImage(*(this->textureData), texData);
-}
-
-ofxAssimpTexture::~ofxAssimpTexture(){
-    if (this->textureData != NULL && this->textureData->isAllocated()) {
-        this->textureData->clear();
-        delete this->textureData;
-    }
 }
 
 ofTexture & ofxAssimpTexture::getTextureRef() {

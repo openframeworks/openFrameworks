@@ -16,10 +16,8 @@ class ofxAssimpTexture {
 public:
     
     ofxAssimpTexture();
-//    ofxAssimpTexture(ofxAssimpTexture &assimpTexture);
 	ofxAssimpTexture(ofTexture texture, std::string texturePath);
 	ofxAssimpTexture(const ofBuffer &texData, std::string texturePath);
-    ~ofxAssimpTexture();
 
     ofTexture & getTextureRef();
 	std::string getTexturePath();

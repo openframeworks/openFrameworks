@@ -147,15 +147,6 @@ class ofxAssimpModelLoader{
         // updates the *actual GL resources* for the current animation
         void updateGLResources();
 
-        // Load textures for a material, currently only loads diffuse texture
-        void loadTexturesForMaterial(aiMaterial* mtl, ofxAssimpMeshHelper &meshHelper);
-
-        // Load material properties into meshHelper
-        void loadMaterialProperties(aiMaterial* mtl, ofxAssimpMeshHelper &meshHelper);
-
-        // Set up mesh attributes
-        void setupMesh(aiMesh* mesh, ofxAssimpMeshHelper& meshHelper);
-
 		// Imports the model from a file path
 		void importModelFromAssimp(const char * filename, bool optimize);
 		// Imports the model from a buffer
@@ -166,9 +157,6 @@ class ofxAssimpModelLoader{
 
         void getBoundingBoxWithMinVector( aiVector3D* min, aiVector3D* max);
         void getBoundingBoxForNode(const ofxAssimpMeshHelper & mesh,  aiVector3D* min, aiVector3D* max);
-
-        // Get the usage attribute for VBO setup
-        int getVBOUsage();
 
         ofFile file;
 
