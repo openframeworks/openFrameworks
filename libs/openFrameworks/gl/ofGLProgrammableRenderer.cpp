@@ -1202,29 +1202,6 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 	if(wasColorsEnabled!=color){
 		if(currentShader) currentShader->setUniform1f(USE_COLORS_UNIFORM,color);
 	}
-#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
-	if(getGLVersionMajor() == 1) {
-		if(vertices){
-			glEnableClientState(GL_VERTEX_ARRAY);
-		}
-		if(color){
-			glEnableClientState(GL_COLOR_ARRAY);
-		}else{
-			glDisableClientState(GL_COLOR_ARRAY);
-		}
-		if(tex){
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		}else{
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		}
-		if(normals){
-			glEnableClientState(GL_NORMAL_ARRAY);
-		}else{
-			glDisableClientState(GL_NORMAL_ARRAY);
-		}
-	}
-
-#endif
 }
 
 //----------------------------------------------------------
