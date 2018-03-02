@@ -48,7 +48,7 @@ public class OFAndroidAccelerometer extends OFAndroidObject {
 	
 	private final SensorEventListener sensorListener = new SensorEventListener() {
 		public void onSensorChanged(SensorEvent event) {
-	    	WindowManager windowManager = (WindowManager)OFAndroid.getContext().getSystemService(Context.WINDOW_SERVICE);
+	    	WindowManager windowManager = (WindowManager)OFAndroidLifeCycle.getActivity().getSystemService(Context.WINDOW_SERVICE);
 	    	Display display = windowManager.getDefaultDisplay();
 	    	
 	    	float x, y;

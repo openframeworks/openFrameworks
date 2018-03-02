@@ -1,6 +1,5 @@
 #include "ofThread.h"
 #include "ofLog.h"
-#include "ofUtils.h"
 
 #ifdef TARGET_ANDROID
 #include <jni.h>
@@ -106,11 +105,10 @@ void ofThread::waitForThread(bool callStopThread, long milliseconds){
 		}
 
         if (INFINITE_JOIN_TIMEOUT == milliseconds){
-			if(thread.joinable()){
-				try{
-					thread.join();
-				}catch(...){}
-			}
+            std::unique_lock<std::mutex> lck(mutex);
+            if(!threadDone){
+                condition.wait(lck);
+            }
         }else{
             // Wait for "joinWaitMillis" milliseconds for thread to finish
             std::unique_lock<std::mutex> lck(mutex);
@@ -170,7 +168,9 @@ void ofThread::run(){
 	}catch(...){
 		ofLogFatalError("ofThreadErrorLogger::exception") << "Unknown exception.";
 	}
-	thread.detach();
+	try{
+		thread.detach();
+	}catch(...){}
 #ifdef TARGET_ANDROID
 	attachResult = ofGetJavaVMPtr()->DetachCurrentThread();
 #endif

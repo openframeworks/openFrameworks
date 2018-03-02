@@ -1,9 +1,9 @@
-#About imageCompressionExample
+# About imageCompressionExample
 
 ![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](imageCompressionExample.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates how to set the image quality when saving an image, and how to affect the quality by resizing the image through multiples passes. 
 
@@ -39,6 +39,6 @@ Instructions for use:
 * Click on the image to reset the image and restart the resampling process
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no other classes.

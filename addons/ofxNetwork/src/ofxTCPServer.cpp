@@ -1,6 +1,7 @@
 #include "ofxTCPServer.h"
 #include "ofxTCPClient.h"
 #include "ofUtils.h"
+#include "ofLog.h"
 
 //--------------------------
 ofxTCPServer::ofxTCPServer(){

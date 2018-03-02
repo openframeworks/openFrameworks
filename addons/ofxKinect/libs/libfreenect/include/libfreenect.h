@@ -32,7 +32,6 @@
 #ifdef _WIN32
 #include <winsock.h>
 #else
-#define BUILD_AUDIO
 #include <sys/time.h>
 #endif
 
@@ -65,10 +64,10 @@ typedef enum {
 /// A struct used in enumeration to give access to serial numbers, so you can
 /// open a particular device by serial rather than depending on index.  This
 /// is most useful if you have more than one Kinect.
-struct freenect_device_attributes;
-struct freenect_device_attributes {
-	struct freenect_device_attributes *next; /**< Next device in the linked list */
-	const char* camera_serial; /**< Serial number of this device's camera subdevice */
+struct freenect_device_attributes
+{
+	struct freenect_device_attributes *next; // Next device in the linked list
+	const char* camera_serial;               // Serial number of camera or audio subdevice
 };
 
 /// Enumeration of available resolutions.
@@ -116,6 +115,7 @@ typedef enum {
 	// arbitrary bitfields to support flag combination
 	FREENECT_MIRROR_DEPTH       = 1 << 16,
 	FREENECT_MIRROR_VIDEO       = 1 << 17,
+	FREENECT_NEAR_MODE          = 1 << 18, // K4W only
 } freenect_flag;
 
 /// Possible values for setting each `freenect_flag`
@@ -670,6 +670,25 @@ FREENECTAPI int freenect_set_depth_mode(freenect_device* dev, const freenect_fra
  */
 FREENECTAPI int freenect_set_flag(freenect_device *dev, freenect_flag flag, freenect_flag_value value);
 
+/**
+ * Returns the brightness of the IR sensor.
+ *
+ * @param dev Device to get IR brightness
+ *
+ * @return IR brightness value in the range 1 - 50, < 0 if error
+ */
+FREENECTAPI int freenect_get_ir_brightness(freenect_device *dev);
+
+/**
+ * Sets the brightness of the IR sensor.
+ * Note that this does not change the intensity of the IR projector.
+ *
+ * @param dev Device to set IR brightness
+ * @param brighness Brightness value in range 1 - 50
+ *
+ * @return 0 on success, < 0 if error
+ */
+FREENECTAPI int freenect_set_ir_brightness(freenect_device *dev, uint16_t brightness);
 
 /**
  * Allows the user to specify a pointer to the audio firmware in memory for the Xbox 360 Kinect

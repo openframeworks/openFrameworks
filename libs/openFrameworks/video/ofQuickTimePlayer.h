@@ -1,8 +1,10 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofBaseTypes.h"
+#include "ofVideoBaseTypes.h"
 #include "ofPixels.h"
+
+#if !defined(TARGET_LINUX) && (!defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12)
 
 #ifdef OF_VIDEO_PLAYER_QUICKTIME
 	#include "ofQtUtils.h"
@@ -15,29 +17,29 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		~ofQuickTimePlayer();
 
 		 bool			load(string name);
-		 void			closeMovie();	
+		 void			closeMovie();
 		 void			close();
 		 void			update();
 
 		 void			play();
 		 void			stop();
-		 
+
 		 void			clearMemory();
-		 
+
 		bool            setPixelFormat(ofPixelFormat pixelFormat);
-		ofPixelFormat   getPixelFormat() const;		 
-	
+		ofPixelFormat   getPixelFormat() const;
+
 		 bool 			isFrameNew() const;
 
 		 ofPixels&			getPixels();
 		 const ofPixels&	getPixels() const;
-		
+
 		 float 			getWidth() const;
 		 float 			getHeight() const;
 
 		 bool			isPaused() const;
 		 bool			isLoaded() const;
-		 bool			isPlaying() const;		 
+		 bool			isPlaying() const;
 
 		 float 			getPosition() const;
 		 float 			getDuration() const;
@@ -58,11 +60,11 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		 void			firstFrame();
 		 void			nextFrame();
 		 void			previousFrame();
-		 
+
 		 mutable bool	bHavePixelsChanged;
-		 
-		 
-		
+
+
+
 	protected:
 		void createImgMemAndGWorld();
 		void start();
@@ -82,8 +84,8 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		bool 				bPlaying;
 		bool 				bPaused;
 		bool 				bIsFrameNew;			// if we are new
-		float				speed;		
-		
+		float				speed;
+
 		MovieDrawingCompleteUPP myDrawCompleteProc;
 		MovieController  	thePlayer;
 		GWorldPtr 			offscreenGWorld;
@@ -95,7 +97,4 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 
 #endif
 
-
-
-
-
+#endif

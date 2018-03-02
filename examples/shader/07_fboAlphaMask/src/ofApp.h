@@ -26,7 +26,6 @@ class ofApp : public ofBaseApp{
     ofImage brushImage;
     
     ofFbo maskFbo;
-    ofFbo fbo;
     
     bool bBrushDown;
 };

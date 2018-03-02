@@ -1,4 +1,9 @@
 #include "ofTessellator.h"
+#include "tesselator.h"
+#include "ofPolyline.h"
+#include "ofMesh.h"
+
+using namespace std;
 
 
 
@@ -99,7 +104,7 @@ void ofTessellator::init(){
 void ofTessellator::tessellateToMesh( const ofPolyline& src,  ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D){
 
 	ofPolyline& polyline = const_cast<ofPolyline&>(src);
-	tessAddContour( cacheTess, bIs2D?2:3, &polyline.getVertices()[0], sizeof(ofPoint), polyline.size());
+	tessAddContour( cacheTess, bIs2D?2:3, &polyline.getVertices()[0], sizeof(glm::vec3), polyline.size());
 
 	performTessellation( polyWindingMode, dstmesh, bIs2D );
 }
@@ -114,7 +119,7 @@ void ofTessellator::tessellateToMesh( const vector<ofPolyline>& src, ofPolyWindi
 		if (src[i].size() > 0) {
 			ofPolyline& polyline = const_cast<ofPolyline&>(src[i]);
 
-			tessAddContour(cacheTess, bIs2D ? 2 : 3, &polyline.getVertices()[0].x, sizeof(ofPoint), polyline.size());
+			tessAddContour(cacheTess, bIs2D ? 2 : 3, &polyline.getVertices()[0].x, sizeof(glm::vec3), polyline.size());
 		}
 	}
 
@@ -126,7 +131,7 @@ void ofTessellator::tessellateToPolylines( const ofPolyline& src,  ofPolyWinding
 
 	if (src.size() > 0) {
 		ofPolyline& polyline = const_cast<ofPolyline&>(src);
-		tessAddContour(cacheTess, bIs2D ? 2 : 3, &polyline.getVertices()[0], sizeof(ofPoint), polyline.size());
+		tessAddContour(cacheTess, bIs2D ? 2 : 3, &polyline.getVertices()[0], sizeof(glm::vec3), polyline.size());
 	}
 	performTessellation( polyWindingMode, dstpoly, bIs2D );
 }
@@ -140,7 +145,7 @@ void ofTessellator::tessellateToPolylines( const vector<ofPolyline>& src, ofPoly
 		if (src[i].size() > 0) {
 			ofPolyline& polyline = const_cast<ofPolyline&>(src[i]);
 
-			tessAddContour(cacheTess, bIs2D ? 2 : 3, &polyline.getVertices()[0].x, sizeof(ofPoint), polyline.size());
+			tessAddContour(cacheTess, bIs2D ? 2 : 3, &polyline.getVertices()[0].x, sizeof(glm::vec3), polyline.size());
 		}
 	}
 
@@ -160,7 +165,7 @@ void ofTessellator::performTessellation(ofPolyWindingMode polyWindingMode, ofMes
 	int numIndices = tessGetElementCount( cacheTess )*3;
 
 	dstmesh.clear();
-	dstmesh.addVertices((ofVec3f*)tessGetVertices(cacheTess),numVertices);
+	dstmesh.addVertices((ofDefaultVertexType*)tessGetVertices(cacheTess),numVertices);
 	dstmesh.addIndices((ofIndexType*)tessGetElements(cacheTess),numIndices);
 	/*ofIndexType * tessElements = (ofIndexType *)tessGetElements(cacheTess);
 	for(int i=0;i<numIndices;i++){
@@ -179,7 +184,7 @@ void ofTessellator::performTessellation(ofPolyWindingMode polyWindingMode, vecto
 		return;
 	}
 
-	const ofPoint* verts = (ofPoint*)tessGetVertices(cacheTess);
+	const ofDefaultVertexType* verts = (ofDefaultVertexType*)tessGetVertices(cacheTess);
 	const TESSindex* elems = tessGetElements(cacheTess);
 	const int nelems = tessGetElementCount(cacheTess);
 	dstpoly.resize(nelems);

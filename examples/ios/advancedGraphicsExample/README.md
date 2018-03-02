@@ -1,8 +1,8 @@
-#About advancedGraphicsExample
+# About advancedGraphicsExample
 
 ![Screenshot of advancedGraphicsExample](advancedGraphics.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This Example demonstrates advanced graphics capabilities of openFrameworks in an iOS application.
 
@@ -26,7 +26,7 @@ Instructions for use:
 
 * Tap and drag to interact with the curve and ellipse shapes.
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses the following classes:
 

@@ -283,6 +283,8 @@ andPreferedRenderer:(ESRendererVersion)version
         
         [self notifyAnimationStarted];
 	}
+	
+	[self drawView:self];
 }
 
 - (void)stopAnimation {

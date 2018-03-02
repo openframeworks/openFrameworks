@@ -1,9 +1,9 @@
-#About firmataExample
+# About firmataExample
 
 ![Screenshot of firmataExample](firmataExample.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This Example demonstrates communication with Arduino using the Firmata protocol.
 
@@ -15,7 +15,7 @@ This example covers the following functions:
 * Sending and receiving digital and analog signals
 * Adding and removing event listeners on the Arduino port
 
-In the code, pay attention to: 
+In the code, pay attention to:
 
 * Arguments for connecting to a board, specifying serial port and baud rate: ```ard.connect("/dev/tty.usbmodemfd121", 57600)```
 * ```ofAddListener()``` and ```ofRemoveListener()``` on the setupArduino() function to listen for connection
@@ -29,15 +29,15 @@ In the code, pay attention to:
 
 ### Expected Behavior
 
-When launching this app, you should see a screen with an image of an Arduino and a breadboard. 
+When launching this app, you should see a screen with an image of an Arduino and a breadboard.
 
-While the Arduino is not connected, 
+While the Arduino is not connected,
 
-###Instructions for use:
+### Instructions for use:
 
 * Click the mouse to turn an LED on and off
 * Left and right keys control rotation of a servo motor
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no other classes.

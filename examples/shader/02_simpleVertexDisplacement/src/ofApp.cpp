@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    
+
 #ifdef TARGET_OPENGLES
 	shader.load("shadersES2/shader");
 #else
@@ -19,7 +19,7 @@ void ofApp::setup(){
     int planeGridSize = 20;
     int planeColums = planeWidth / planeGridSize;
     int planeRows = planeHeight / planeGridSize;
-    
+
     plane.set(planeWidth, planeHeight, planeColums, planeRows, OF_PRIMITIVE_TRIANGLES);
 }
 
@@ -30,7 +30,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
+
     float percentX = mouseX / (float)ofGetWidth();
     percentX = ofClamp(percentX, 0, 1);
 
@@ -41,13 +41,13 @@ void ofApp::draw(){
     ofColor colorRight = ofColor::cyan;
     ofColor colorMix = colorLeft.getLerped(colorRight, percentX);
     ofSetColor(colorMix);
-    
+
     shader.begin();
 
     // a lot of the time you have to pass in variables into the shader.
     // in this case we need to pass it the elapsed time for the sine wave animation.
     shader.setUniform1f("time", ofGetElapsedTimef());
-    
+
     // translate plane into center screen.
     float tx = ofGetWidth() / 2;
     float ty = ofGetHeight() / 2;
@@ -56,16 +56,16 @@ void ofApp::draw(){
     // the mouse/touch Y position changes the rotation of the plane.
     float percentY = mouseY / (float)ofGetHeight();
     float rotation = ofMap(percentY, 0, 1, -60, 60, true) + 60;
-    ofRotate(rotation, 1, 0, 0);
+    ofRotateDeg(rotation, 1, 0, 0);
 
     plane.drawWireframe();
-    
+
     shader.end();
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    
+
 }
 
 //--------------------------------------------------------------
@@ -75,7 +75,7 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-    
+
 }
 
 //--------------------------------------------------------------
@@ -104,6 +104,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

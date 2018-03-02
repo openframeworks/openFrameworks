@@ -1,4 +1,4 @@
-#About advancedGraphicsExample
+# About advancedGraphicsExample
 
 ![Screenshot of advancedGraphicsExample](advancedGraphics.png)
 
@@ -18,7 +18,7 @@ Instructions for use:
 
 * Tap the device to show the next image in the list
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses the following classes:
 

@@ -2,13 +2,20 @@
 
 #pragma once
 #include "ofConstants.h"
-#include "ofVec3f.h"
-#include "ofColor.h"
-#include "ofUtils.h"
-#include "ofMesh.h"
-#include "ofGLUtils.h"
+#include "ofGraphicsConstants.h"
 #include "ofBufferObject.h"
 #include <map>
+
+template<typename T>
+class ofColor_;
+typedef ofColor_<float> ofFloatColor;
+
+class ofVec2f;
+class ofVec3f;
+
+template<class V, class N, class C, class T>
+class ofMesh_;
+using ofMesh = ofMesh_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorType, ofDefaultTexCoordType>;
 
 class ofVbo {
 public:
@@ -21,11 +28,15 @@ public:
 	void setMesh(const ofMesh & mesh, int usage);
 	void setMesh(const ofMesh & mesh, int usage, bool useColors, bool useTextures, bool useNormals);
 	
+	void setVertexData(const glm::vec3 * verts, int total, int usage);
+	void setVertexData(const glm::vec2 * verts, int total, int usage);
 	void setVertexData(const ofVec3f * verts, int total, int usage);
 	void setVertexData(const ofVec2f * verts, int total, int usage);
 
 	void setColorData(const ofFloatColor * colors, int total, int usage);
-	void setNormalData(const ofVec3f * normals, int total, int usage);	
+	void setNormalData(const glm::vec3 * normals, int total, int usage);
+	void setNormalData(const ofVec3f * normals, int total, int usage);
+	void setTexCoordData(const glm::vec2 * texCoords, int total, int usage);
 	void setTexCoordData(const ofVec2f * texCoords, int total, int usage);
 	void setIndexData(const ofIndexType * indices, int total, int usage);
 
@@ -70,10 +81,14 @@ public:
 
 	void updateMesh(const ofMesh & mesh);
 
+	void updateVertexData(const glm::vec3 * verts, int total);
+	void updateVertexData(const glm::vec2 * verts, int total);
 	void updateVertexData(const ofVec3f * verts, int total);
 	void updateVertexData(const ofVec2f * verts, int total);
 	void updateColorData(const ofFloatColor * colors, int total);
-	void updateNormalData(const ofVec3f * normals, int total);	
+	void updateNormalData(const glm::vec3 * normals, int total);
+	void updateNormalData(const ofVec3f * normals, int total);
+	void updateTexCoordData(const glm::vec2 * texCoords, int total);
 	void updateTexCoordData(const ofVec2f * texCoords, int total);
 	void updateIndexData(const ofIndexType * indices, int total);
 	
@@ -189,7 +204,7 @@ private:
 	VertexAttribute colorAttribute;
 	VertexAttribute texCoordAttribute;
 	VertexAttribute normalAttribute;
-	map<int,VertexAttribute> customAttributes;
+	std::map<int,VertexAttribute> customAttributes;
 	
 	static bool vaoChecked;
 	static bool vaoSupported;

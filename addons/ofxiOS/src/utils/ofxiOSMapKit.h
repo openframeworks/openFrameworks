@@ -34,8 +34,11 @@
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import <MapKit/MapKit.h>
-#include "ofBaseTypes.h"
+#include "ofConstants.h"
 #include "ofxiOSMapKitListener.h"
+#include "glm/vec2.hpp"
+#include "ofRectangle.h"
+#include <list>
 
 // these are the types you can set for the map
 enum ofxiOSMapKitType {
@@ -105,7 +108,7 @@ public:
 	
 	
 	// convert location (latitude, longitude) to screen coordinates (i.e. pixels)
-	ofPoint getScreenCoordinatesForLocation(double latitude, double longitude);
+	glm::vec2 getScreenCoordinatesForLocation(double latitude, double longitude);
 	
 	// convert screen coordinates (i.e. pixels) to location (latitude, longitude)
 	ofxMapKitLocation getLocationForScreenCoordinates(float x, float y);
@@ -130,7 +133,7 @@ public:
 	void regionDidChange(bool animated);
 	void willStartLoadingMap();
 	void didFinishLoadingMap();
-	void errorLoadingMap(string errorDescription);
+	void errorLoadingMap(std::string errorDescription);
 	
 
 	// return instance to MKMapView

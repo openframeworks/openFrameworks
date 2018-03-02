@@ -11,9 +11,12 @@
 #include "ofUtils.h"
 #include "ofxAndroidUtils.h"
 #include "ofAppRunner.h"
+#include "ofLog.h"
 #include <deque>
 #include <set>
 #include <jni.h>
+
+using namespace std;
 
 // Global pointer used to implement the singletomn pattern for ofxAndroidSoundStream class
 static ofxAndroidSoundStream* instance = NULL;

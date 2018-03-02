@@ -40,6 +40,8 @@
 #include "ofxiOSEAGLView.h"
 #include "ofAppiOSWindow.h"
 #include "ofAppRunner.h"
+#include "ofUtils.h"
+#include "ofLog.h"
 
 @implementation ofxiOSAppDelegate
 
@@ -88,7 +90,7 @@
     
     [center addObserver:self
                selector:@selector(handleScreenModeDidChangeNotification:)
-                   name:UIScreenDidDisconnectNotification object:nil];
+                   name:UIScreenModeDidChangeNotification object:nil];
     
     
     bool bDoesHWOrientation = ofxiOSGetOFWindow()->doesHWOrientation();

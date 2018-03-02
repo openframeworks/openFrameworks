@@ -1,9 +1,9 @@
-#About 03_simpleShaderInteraction
+# About 03_simpleShaderInteraction
 
 
 ![Screenshot of 03_simpleShaderInteraction](03_simpleShaderInteraction.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This series of shader examples is designed to work along with the Intro to Shaders chapter of ofBook, which is available in the "Learning" page of the OF website under *ofBook / Graphics / Introducing Shaders*.
 
@@ -26,10 +26,10 @@ In the code, pay attention to:
 
 When launching this app, you should see a triangulated mesh plane across the window surface, with a displaced circle of vertices around the mouse.
 
-###Instructions for use:
+### Instructions for use:
 
 Moving the mouse will change the section of displaced vertices, following the mouse around the window. Moving the mouse will also change the uniform color of the plane mesh.
 
-###Other classes used in this file
+### Other classes used in this file
 
 This example uses no other classes.

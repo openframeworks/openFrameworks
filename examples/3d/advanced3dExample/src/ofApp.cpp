@@ -47,38 +47,28 @@ void ofApp::setup(){
 	// user camera
 	camEasyCam.setTarget(nodeSwarm);
 	camEasyCam.setDistance(100);
+	camEasyCam.setNearClip(10);
+	camEasyCam.setFarClip(10000);
+
+	camTop.tiltDeg(-90);
+	camLeft.panDeg(-90);
+
 	cameras[0] = &camEasyCam;
-
-
-	// front
-	camFront.scale = 20;
 	cameras[1] = &camFront;
-
-	// top
-	camTop.scale = 20;
-	camTop.tilt(-90);
 	cameras[2] = &camTop;
-
-	// left
-	camLeft.scale = 20;
-	camLeft.pan(-90);
 	cameras[3] = &camLeft;
 
-	//
-	//--
 
 
+	for (size_t i = 1; i != N_CAMERAS; ++i) {
+		cameras[i]->enableOrtho();
+		cameras[i]->setNearClip(0.1);
+		cameras[i]->setFarClip(100000);
+	}
 
 	//--
 	// Define viewports
-
 	setupViewports();
-
-	//
-	//--
-
-
-
 
 	//--
 	// Setup swarm
@@ -86,8 +76,6 @@ void ofApp::setup(){
 	// swarm is a custom ofNode in this example (see Swarm.h / Swarm.cpp)
 	nodeSwarm.init(100, 50, 10);
 
-	//
-	//--
 }
 
 //--------------------------------------------------------------
@@ -120,7 +108,7 @@ void ofApp::setupViewports(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+   
 }
 
 
@@ -129,12 +117,13 @@ void ofApp::draw(){
 	//--
 	// Highlight background of selected camera
 
-	ofDisableDepthTest();
 	ofPushStyle();
+	ofDisableDepthTest();
 	ofSetColor(100, 100, 100);
 	ofDrawRectangle(viewGrid[iMainCamera]);
-	ofPopStyle();
 	ofEnableDepthTest();
+
+	ofSetColor(ofColor::white);
 
 	//
 	//--
@@ -163,13 +152,14 @@ void ofApp::draw(){
 	//
 	//--
 
+	ofPopStyle();
 
 
 	//--
 	// Draw annotations (text, gui, etc)
 
 	ofPushStyle();
-	glDepthFunc(GL_ALWAYS); // draw on top of everything
+	ofDisableDepthTest();
 
 	// draw some labels
 	ofSetColor(255, 255, 255);
@@ -195,14 +185,14 @@ void ofApp::draw(){
 	ofDrawRectangle(viewMain);
 
 	// restore the GL depth function
-	glDepthFunc(GL_LESS);
+	
 	ofPopStyle();
-
+	
 	//
 	//--
 }
 
-void ofApp::drawScene(int iCameraDraw){
+void ofApp::drawScene(int cameraIndex){
 
 	nodeSwarm.draw();
 	nodeGrid.draw();
@@ -224,7 +214,7 @@ void ofApp::drawScene(int iCameraDraw){
 
 	// First check if we're already drawing the view through the easycam
 	// If so, don't draw the frustum preview.
-	if(iCameraDraw != 0){
+	if(cameraIndex != 0){
 
 		ofPushStyle();
 		ofPushMatrix();
@@ -305,8 +295,14 @@ void ofApp::drawScene(int iCameraDraw){
 		//
 		//--
 
-		ofPopStyle();
 		ofPopMatrix();
+
+		// Alternatively to the above, you may call the built-in method of 
+		// ofCamera to draw its frustum:
+		// 
+		// camEasyCam.drawFrustum(boundsToUse);
+
+		ofPopStyle();
 	}
 
 	//
@@ -319,7 +315,7 @@ void ofApp::drawScene(int iCameraDraw){
 
 	// Draw the ray if ofEasyCam is in main view,
 	//  and we're not currently drawing in that view
-	if(iMainCamera == 0 && iCameraDraw != 0){
+	if(iMainCamera == 0 && cameraIndex != 0){
 		ofPushStyle();
 		ofSetColor(100, 100, 255);
 		ofDrawLine(ray[0], ray[1]);

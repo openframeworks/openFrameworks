@@ -332,6 +332,9 @@ public:
 	/// returns an empty string "" if nothing found
 	static string nextAvailableSerial();
 
+	/// set the time to wait when not getting data before attempting to re-open device.
+    static void setReconnectWaitTime(float waitTime);
+
 protected:
 
 	int deviceId;	///< -1 when not connected
@@ -362,8 +365,11 @@ protected:
 	
 	// for auto connect tries
 	float timeSinceOpen;
-	int lastDeviceId;
-	bool bGotData;
+    static float reconnectWaitTime;
+	int lastDeviceIndex;
+	bool bGotDataDepth;
+    bool bGotDataVideo;
+    bool bFirstUpdate;
 	int tryCount;
 
 private:
@@ -473,11 +479,11 @@ public:
 
 	/// get the deviceList id from an index
 	/// returns -1 if not found
-    int getDeviceId(int index);
+        int getDeviceId(unsigned int index);
 
 	/// get the deviceList id from a serial
 	/// returns -1 if not found
-    int getDeviceId(string serial);
+        int getDeviceId(string serial);
 
 	/// is a device with this id already connected?
 	bool isConnected(int id);

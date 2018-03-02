@@ -9,6 +9,8 @@
 #include "html5audio.h"
 #include "ofUtils.h"
 
+using namespace std;
+
 vector<float> ofxEmscriptenSoundPlayer::systemSpectrum;
 
 int ofxEmscriptenAudioContext(){
@@ -37,7 +39,7 @@ ofxEmscriptenSoundPlayer::~ofxEmscriptenSoundPlayer(){
 }
 
 
-bool ofxEmscriptenSoundPlayer::load(string fileName, bool stream){
+bool ofxEmscriptenSoundPlayer::load(const std::filesystem::path& fileName, bool stream){
 	if(context!=-1){
 		sound = html5audio_sound_load(context,ofToDataPath(fileName).c_str());
 	}

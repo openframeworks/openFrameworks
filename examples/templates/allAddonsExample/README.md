@@ -1,8 +1,8 @@
-#About allAddonsExample
+# About allAddonsExample
 
 ![Screenshot of allAddonsExample](allAddonsExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This example is designed as a test-program: to make sure that all of the various extension libraries which come with openFrameworks (the "core addons") are compiling properly, and without conflicts. 
 
@@ -48,7 +48,7 @@ There's nothing else to see or do. In this sense, this program behaves similarly
 
 Because of all the additional libraries that have been compiled into this app, the size of the compiled *allAddonsExample* binary may be larger than usual. 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This example links against the following nine core addons:
 

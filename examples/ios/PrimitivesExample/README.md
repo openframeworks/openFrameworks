@@ -1,8 +1,8 @@
-#About PrimitivesExample
+# About PrimitivesExample
 --
 ![Screenshot of Example](PrimitivesExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks Example is designed to demonstrate how to draw basic 3D shapes. 
 

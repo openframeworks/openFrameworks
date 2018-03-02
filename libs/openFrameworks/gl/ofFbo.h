@@ -1,11 +1,26 @@
 #pragma once
 
 #include "ofTexture.h"
-#include <stack>
+#include "ofGLBaseTypes.h"
+
+enum class ofFboBeginMode : short{
+    NoDefaults = 0,
+    Perspective = 1,
+    MatrixFlip = 2,
+};
+
+inline ofFboBeginMode operator | (ofFboBeginMode m1, ofFboBeginMode m2){
+    return static_cast<ofFboBeginMode>(int(m1) | int(m2));
+}
+
+inline bool operator & (ofFboBeginMode m1, ofFboBeginMode m2){
+    return static_cast<bool>(int(m1) & int(m2));
+}
 
 class ofFbo : public ofBaseDraws, public ofBaseHasTexture {
 public:
 	struct Settings;
+
 
 	ofFbo();
 	ofFbo(const ofFbo & mom);
@@ -21,6 +36,33 @@ public:
 
 	OF_DEPRECATED_MSG("Use clear instead",void destroy());
 	void clear();
+
+#ifndef TARGET_OPENGLES
+	/// glClearBufferfv(GL_COLOR, 0...)
+	///
+	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
+	void clearColorBuffer(const ofFloatColor & color);
+
+	/// glClearBufferfv(GL_COLOR, buffer_idx...)
+	///
+	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
+	void clearColorBuffer(size_t buffer_idx, const ofFloatColor & color);
+
+	/// glClearBufferfv(GL_DEPTH...)
+	///
+	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
+	void clearDepthBuffer(float value);
+
+	/// glClearBufferiv(GL_STENCIL...)
+	///
+	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
+	void clearStencilBuffer(int value);
+
+	/// glClearBufferfi(GL_DEPTH_STENCIL...)
+	///
+	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
+	void clearDepthStencilBuffer(float depth, int stencil);
+#endif
 
 	using ofBaseDraws::draw;
 	void draw(float x, float y) const;
@@ -46,14 +88,45 @@ public:
 	void setUseTexture(bool){ /*irrelevant*/ };
 	bool isUsingTexture() const {return true;}
 
-	/// \brief    Sets up the framebuffer and binds it for rendering.
+
+    /// Sets up the framebuffer and binds it for rendering.
+    ///
 	/// \warning  This is a convenience method, and is considered unsafe 
 	///           in multi-window and/or multi-renderer scenarios.
 	///           If you use more than one renderer, use each renderer's
-	///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, bool setupPerspective) 
+    ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
 	///           method instead.
-	/// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, bool setupPerspective) 
-	void begin(bool setupScreen=true) const;
+    /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
+    OF_DEPRECATED_MSG("Use begin(ofFboBeginMode::NoDefaults) instead", void begin(bool setupScreen) const);
+
+
+    /// Sets up the framebuffer and binds it for rendering.
+    ///
+    /// The mode parameter indicates which defaults are set when binding
+    /// the fbo.
+    ///
+    /// The default ofFboBeginMode::Perspective | ofFboBeginMode::MatrixFlip
+    /// will set the screen perspective to the OF default for the fbo size, the
+    /// correct viewport to cover the full fbo and will flip the orientation
+    /// matrix in y so when drawing the fbo later or accesing it from a shader
+    /// it's correctly oriented
+    ///
+    /// Passing ofFboBeginMode::Perspetive will only set perspective and viewport
+    ///
+    /// Passing ofFboBeginMode::MatrixFlip won't set the perspective but will flip
+    /// the matrix.
+    ///
+    /// Passing ofFboBeginMode::NoDefaults won't change anything and just bind the fbo
+    /// and set it as current rendering surface in OF
+    ///
+    /// \warning  This is a convenience method, and is considered unsafe
+    ///           in multi-window and/or multi-renderer scenarios.
+    ///           If you use more than one renderer, use each renderer's
+    ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
+    ///           method instead.
+    /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
+    void begin(ofFboBeginMode mode = ofFboBeginMode::Perspective | ofFboBeginMode::MatrixFlip);
+
 
 	/// \brief    Ends the current framebuffer render context.
 	/// \sa       void begin(bool setupScreen=true) const;
@@ -112,7 +185,7 @@ public:
 	int	getNumTextures() const;
 
 	void setActiveDrawBuffer(int i);
-	void setActiveDrawBuffers(const vector<int>& i);
+	void setActiveDrawBuffers(const std::vector<int>& i);
 	void activateAllDrawBuffers();
 
 	OF_DEPRECATED_MSG("Use getId()", GLuint getFbo() const);
@@ -136,7 +209,7 @@ public:
 		int		width;					// width of images attached to fbo
 		int		height;					// height of images attached to fbo
 		int		numColorbuffers;		// how many color buffers to create
-		vector<GLint> colorFormats;		// format of the color attachments for MRT.
+		std::vector<GLint> colorFormats;		// format of the color attachments for MRT.
 		bool	useDepth;				// whether to use depth buffer or not
 		bool	useStencil;				// whether to use stencil buffer or not
 		bool	depthStencilAsTexture;			// use a texture instead of a renderbuffer for depth (useful to draw it or use it in a shader later)
@@ -162,8 +235,8 @@ private:
 	GLuint				depthBuffer;
 	GLuint				stencilBuffer;
 
-	vector<GLuint>		colorBuffers;
-	vector<ofTexture>	textures;			
+	std::vector<GLuint>		colorBuffers;
+	std::vector<ofTexture>	textures;			
 
 	ofTexture			depthBufferTex;
 
@@ -171,7 +244,7 @@ private:
 	static int			_maxDrawBuffers;
 	static int			_maxSamples;
 
-	vector<GLenum>		activeDrawBuffers;  ///< table of currently active color draw buffers, allocate() defaults it to size(textures), with GL_COLOR_ATTACHMENT0..n as members, in order of allocation
+	std::vector<GLenum>		activeDrawBuffers;  ///< table of currently active color draw buffers, allocate() defaults it to size(textures), with GL_COLOR_ATTACHMENT0..n as members, in order of allocation
 
 	/// \brief  Flags used internally to keep track of MSAA renderbuffers / textures
 	/// \note   The dirty flags are only used when dealing if the framebuffer has MSAA 
@@ -181,7 +254,7 @@ private:
 	///         The flags are read whenever an attached texture is accessed. If the texture
 	///         is dirty, i.e. it has not yet been resolved from its associated renderbuffer
 	///         the texture will be resolved through blitting the renderbuffer into it.
-	mutable vector<bool> dirty;
+	mutable std::vector<bool> dirty;
 
 	int 				defaultTextureIndex; //used for getTextureReference
 	bool				bIsAllocated;
@@ -191,4 +264,5 @@ private:
 #endif
 
 };
+
 

@@ -3,6 +3,7 @@
 
 #include "ofxSlider.h"
 #include "ofxButton.h"
+#include "ofxLabel.h"
 #include "ofParameterGroup.h"
 #include "ofParameter.h"
 
@@ -22,11 +23,20 @@ class ofxGuiGroup : public ofxBaseGui {
 		typename std::enable_if<std::is_arithmetic<T>::value, void>::type add(ofParameter<T> & p){
 			add(new ofxSlider<T>(p));
 		}
+		void add(ofParameter <void> & parameter);
 		void add(ofParameter <bool> & parameter);
 		void add(ofParameter <std::string> & parameter);
+
+		template<typename F>
+		void add(ofReadOnlyParameter <std::string, F> & parameter){
+			add(new ofxLabel(parameter));
+		}
 		void add(ofParameter <ofVec2f> & parameter);
 		void add(ofParameter <ofVec3f> & parameter);
 		void add(ofParameter <ofVec4f> & parameter);
+		void add(ofParameter <glm::vec2> & parameter);
+		void add(ofParameter <glm::vec3> & parameter);
+		void add(ofParameter <glm::vec4> & parameter);
 		void add(ofParameter <ofColor> & parameter);
 		void add(ofParameter <ofShortColor> & parameter);
 		void add(ofParameter <ofFloatColor> & parameter);
@@ -35,6 +45,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		void maximize();
 		void minimizeAll();
 		void maximizeAll();
+		bool isMinimized() const;
 
 		void setWidthElements(float w);
 
@@ -68,6 +79,8 @@ class ofxGuiGroup : public ofxBaseGui {
 	protected:
 		virtual void render();
 		virtual bool setValue(float mx, float my, bool bCheck);
+		virtual void onMinimize();
+		virtual void onMaximize();
 
 		float spacing, spacingNextElement;
 		float header;

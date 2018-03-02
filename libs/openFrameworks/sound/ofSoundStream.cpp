@@ -1,5 +1,6 @@
 #include "ofSoundStream.h"
 #include "ofAppRunner.h"
+#include "ofLog.h"
 
 #if defined(OF_SOUND_PLAYER_FMOD)
 #include "ofSoundPlayer.h"
@@ -22,6 +23,8 @@
 namespace{
     ofSoundStream systemSoundStream;
 }
+
+using namespace std;
 
 //------------------------------------------------------------
 bool ofSoundStreamSettings::setInDevice(const ofSoundDevice & device){
@@ -78,17 +81,38 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * app
 	if( appPtr == nullptr ){
 		appPtr = ofGetAppPtr();
 	}
-	ofSoundStreamSetup(nOutputChannels, nInputChannels, appPtr, 44100, 256, 4);
+	ofSoundStreamSettings settings;
+	settings.numOutputChannels = nOutputChannels;
+	settings.numInputChannels = nInputChannels;
+	settings.setOutListener(appPtr);
+	settings.setInListener(appPtr);
+	ofSoundStreamSetup(settings);
 }
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers){
-	ofSoundStreamSetup(nOutputChannels, nInputChannels, ofGetAppPtr(), sampleRate, bufferSize, nBuffers);
+	ofSoundStreamSettings settings;
+	settings.numOutputChannels = nOutputChannels;
+	settings.numInputChannels = nInputChannels;
+	settings.setOutListener(ofGetAppPtr());
+	settings.setInListener(ofGetAppPtr());
+	settings.numBuffers = nBuffers;
+	settings.sampleRate = sampleRate;
+	settings.bufferSize = bufferSize;
+	ofSoundStreamSetup(settings);
 }
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers){
-	systemSoundStream.setup(appPtr, nOutputChannels, nInputChannels, sampleRate, bufferSize, nBuffers);
+	ofSoundStreamSettings settings;
+	settings.numOutputChannels = nOutputChannels;
+	settings.numInputChannels = nInputChannels;
+	settings.setOutListener(appPtr);
+	settings.setInListener(appPtr);
+	settings.numBuffers = nBuffers;
+	settings.sampleRate = sampleRate;
+	settings.bufferSize = bufferSize;
+	ofSoundStreamSetup(settings);
 }
 
 //------------------------------------------------------------
@@ -121,7 +145,7 @@ vector<ofSoundDevice> ofSoundStreamListDevices(){
 //------------------------------------------------------------
 ofSoundStream::ofSoundStream(){
 	#ifdef OF_SOUND_STREAM_TYPE
-		setSoundStream( shared_ptr<OF_SOUND_STREAM_TYPE>(new OF_SOUND_STREAM_TYPE) );
+		setSoundStream(std::make_shared<OF_SOUND_STREAM_TYPE>());
 	#endif
 }
 
@@ -167,7 +191,9 @@ void ofSoundStream::setDeviceID(int deviceID){
 
 //------------------------------------------------------------
 void ofSoundStream::setDevice(const ofSoundDevice &device) {
-	setDeviceID(device.deviceID);
+    if( soundStream ){
+        tmpDeviceId = device.deviceID;
+    }
 }
 
 //------------------------------------------------------------
@@ -312,8 +338,8 @@ int ofSoundStream::getBufferSize() const{
 }
 
 //------------------------------------------------------------
-vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name, unsigned int inChannels, unsigned int outChannels) const {
-	vector<ofSoundDevice> devs = getDeviceList();
+vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name, unsigned int inChannels, unsigned int outChannels, ofSoundDevice::Api api) const {
+	vector<ofSoundDevice> devs = getDeviceList(api);
 	vector<ofSoundDevice> hits;
 	
 	for(size_t i = 0; i < devs.size(); i++) {

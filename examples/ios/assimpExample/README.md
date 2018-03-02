@@ -1,8 +1,8 @@
-#About assimpExample
+# About assimpExample
 
 ![Screenshot of assimpExample](assimpExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This Example demonstrates using the ofxAssimpModelLoader addon to import an animating 3D model in an iOS application, and will demonstrate how to load in 3D animated models and control their animation.
 
@@ -27,7 +27,7 @@ Instructions for use:
 * Tapping and dragging will rotate the model in the 3D space.
 * Double-tapping will replace the model with another model in the queue.
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses the following classes:
 

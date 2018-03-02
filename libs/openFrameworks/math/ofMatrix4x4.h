@@ -10,11 +10,14 @@
 
 #pragma once
 
-#include "ofVec3f.h"
+#include "ofConstants.h"
 #include "ofVec4f.h"
 #include "ofQuaternion.h"
-#include "ofConstants.h"
 #include <cmath>
+#include "glm/mat4x4.hpp"
+#include "ofMathConstants.h"
+
+class ofVec3f;
 
 /// \brief The ofMatrix4x4 is the big class of the math part of openFrameworks.
 /// 
@@ -70,9 +73,12 @@ public:
 		makeIdentityMatrix();
 	}
 
-	/// \brief You can pass another ofMatrix4x4 to create a copy.
-	ofMatrix4x4( const ofMatrix4x4& mat) {
-		set(mat.getPtr());
+	ofMatrix4x4( const glm::mat4 & mat) {
+		*this = reinterpret_cast<const ofMatrix4x4&>(mat);
+	}
+
+	operator glm::mat4(){
+		return *reinterpret_cast<glm::mat4*>(this);
 	}
 
 	/// \brief Construct with a pointer.
@@ -336,8 +342,8 @@ public:
 	}
 	
 	/// \cond INTERNAL
-	friend ostream& operator<<(ostream& os, const ofMatrix4x4& M);
-	friend istream& operator>>(istream& is, ofMatrix4x4& M);
+	friend std::ostream& operator<<(std::ostream& os, const ofMatrix4x4& M);
+	friend std::istream& operator>>(std::istream& is, ofMatrix4x4& M);
 	/// \endcond
 	
 	/// \brief Access the internal data in `float*` format
@@ -668,80 +674,17 @@ public:
 // implementation of inline methods
 
 inline bool ofMatrix4x4::isNaN() const {
-	
-#if (_MSC_VER) || defined (TARGET_ANDROID)
-#ifndef isnan
-#define isnan(a) ((a) != (a))
-#endif
-
-return isnan(_mat[0][0]) || isnan(_mat[0][1]) || isnan(_mat[0][2]) || isnan(_mat[0][3]) ||
-	       isnan(_mat[1][0]) || isnan(_mat[1][1]) || isnan(_mat[1][2]) || isnan(_mat[1][3]) ||
-	       isnan(_mat[2][0]) || isnan(_mat[2][1]) || isnan(_mat[2][2]) || isnan(_mat[2][3]) ||
-	       isnan(_mat[3][0]) || isnan(_mat[3][1]) || isnan(_mat[3][2]) || isnan(_mat[3][3]);
-
-#else
-return std::isnan(_mat[0][0]) || std::isnan(_mat[0][1]) || std::isnan(_mat[0][2]) || std::isnan(_mat[0][3]) ||
+	return std::isnan(_mat[0][0]) || std::isnan(_mat[0][1]) || std::isnan(_mat[0][2]) || std::isnan(_mat[0][3]) ||
 	       std::isnan(_mat[1][0]) || std::isnan(_mat[1][1]) || std::isnan(_mat[1][2]) || std::isnan(_mat[1][3]) ||
 	       std::isnan(_mat[2][0]) || std::isnan(_mat[2][1]) || std::isnan(_mat[2][2]) || std::isnan(_mat[2][3]) ||
-	       std::isnan(_mat[3][0]) || std::isnan(_mat[3][1]) || std::isnan(_mat[3][2]) || std::isnan(_mat[3][3]);
-
-#endif
-	
+		   std::isnan(_mat[3][0]) || std::isnan(_mat[3][1]) || std::isnan(_mat[3][2]) || std::isnan(_mat[3][3]);
 }
 
 
 
-inline ostream& operator<<(ostream& os, const ofMatrix4x4& M) {
-	int w = 8;
-	os	<< setw(w)
-		<< M._mat[0][0] << ", " << setw(w)
-		<< M._mat[0][1] << ", " << setw(w)
-		<< M._mat[0][2] << ", " << setw(w) 
-		<< M._mat[0][3] << std::endl;
-		
-	os	<< setw(w)
-		<< M._mat[1][0] << ", " << setw(w) 
-		<< M._mat[1][1] << ", " << setw(w)
-		<< M._mat[1][2] << ", " << setw(w) 
-		<< M._mat[1][3] << std::endl;
-	
-	os	<< setw(w)
-		<< M._mat[2][0] << ", " << setw(w) 
-		<< M._mat[2][1] << ", " << setw(w)
-		<< M._mat[2][2] << ", " << setw(w) 
-		<< M._mat[2][3] << std::endl;
-	
-	os	<< setw(w)
-		<< M._mat[3][0] << ", " << setw(w) 
-		<< M._mat[3][1] << ", " << setw(w)
-		<< M._mat[3][2] << ", " << setw(w) 
-		<< M._mat[3][3];
-	
-	return os;
-}
+std::ostream& operator<<(std::ostream& os, const ofMatrix4x4& M);
 
-inline istream& operator>>(istream& is, ofMatrix4x4& M) {
-	is >> M._mat[0][0]; is.ignore(2); 
-	is >> M._mat[0][1]; is.ignore(2);
-	is >> M._mat[0][2]; is.ignore(2);
-	is >> M._mat[0][3]; is.ignore(1);
-	
-	is >> M._mat[1][0]; is.ignore(2); 
-	is >> M._mat[1][1]; is.ignore(2);
-	is >> M._mat[1][2]; is.ignore(2);
-	is >> M._mat[1][3]; is.ignore(1);
-	
-	is >> M._mat[2][0]; is.ignore(2); 
-	is >> M._mat[2][1]; is.ignore(2);
-	is >> M._mat[2][2]; is.ignore(2);
-	is >> M._mat[2][3]; is.ignore(1);
-	
-	is >> M._mat[3][0]; is.ignore(2); 
-	is >> M._mat[3][1]; is.ignore(2);
-	is >> M._mat[3][2]; is.ignore(2);
-	is >> M._mat[3][3];
-	return is;
-}
+std::istream& operator>>(std::istream& is, ofMatrix4x4& M);
 
 
 inline ofMatrix4x4& ofMatrix4x4::operator = (const ofMatrix4x4& rhs) {

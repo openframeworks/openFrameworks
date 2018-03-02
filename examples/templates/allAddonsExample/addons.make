@@ -7,3 +7,5 @@ ofxThreadedImageLoader
 ofxGui
 ofxKinect
 ofxSvg
+ofxPoco
+

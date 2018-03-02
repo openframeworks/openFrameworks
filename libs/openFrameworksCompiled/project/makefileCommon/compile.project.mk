@@ -7,13 +7,12 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
 
 # if APPNAME is not defined, set it to the project dir name
 ifndef APPNAME
-    APPNAME = $(shell basename `pwd`)
+	APPNAME = $(shell basename `pwd`)
 endif
 
 # Name TARGET
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
-	CFLAGS += -DDEBUG
 
 	ifndef RUN_TARGET
 		RUN_TARGET = RunDebug
@@ -102,8 +101,8 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 endif
 
 ifeq ($(MAKECMDGOALS),clean)
-    TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
-    TARGET_NAME = Release
+	TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
+	TARGET_NAME = Release
 endif
 
 # we only get a CLEAN_TARGET if a TARGET_NAME has been defined
@@ -153,8 +152,30 @@ ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
 	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
 endif
 
+ReleaseNoOF:
+	@echo Compiling $(APPNAME) for Release
+ifndef ABIS_TO_COMPILE_RELEASE
+	@$(MAKE) ReleaseABI
+else
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) ReleaseABI ABI=$(abi) &&) echo
+endif
+ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
+	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
+endif
+
+DebugNoOF:
+	@echo Compiling $(APPNAME) for Debug
+ifndef ABIS_TO_COMPILE_DEBUG
+	@$(MAKE) DebugABI
+else
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) DebugABI ABI=$(abi) &&) echo
+endif
+ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
+	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
+endif
+
 ReleaseABI: $(TARGET)
-	@$(MAKE) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
+	@$(MAKE) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_RELEASE)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 	@$(PROJECT_AFTER)
 
 DebugABI: $(TARGET)
@@ -230,11 +251,11 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_ROOT)/%.S $(OF_PROJECT_OBJ_OUTPUT_PA
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS)  $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
-	
-	
-	
-	
-	
+
+
+
+
+
 
 
 # Rules to compile the project external sources
@@ -276,62 +297,63 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.S $(OF_PROJ
 
 
 
-# Rules to compile the addons sources when the addon path is specified explicitly
-PROJECT_ADDONS_CPPS=$(addsuffix %.cpp,$(PROJECT_ADDON_PATHS))
+#Rules to compile the addons sources when the addon path is specified explicitly
 PROJECT_ADDONS_OBJ_PATH=$(realpath .)/$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/
-$(PROJECT_ADDONS_OBJ_PATH)%.o: $(PROJECT_ADDONS_CPPS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
+$(PROJECT_ADDONS_OBJ_PATH)%.o: %.cpp $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
 endif
 
-PROJECT_ADDONS_CXXS=$(addsuffix %.cxx,$(PROJECT_ADDON_PATHS))
-$(PROJECT_ADDONS_OBJ_PATH)%.o: $(PROJECT_ADDONS_CXXS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
+$(PROJECT_ADDONS_OBJ_PATH)%.o: %.cxx $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	@$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
 endif
 
-PROJECT_ADDONS_MS=$(addsuffix %.m,$(PROJECT_ADDON_PATHS))
-$(PROJECT_ADDONS_OBJ_PATH)%.o: $(PROJECT_ADDONS_MS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
+$(PROJECT_ADDONS_OBJ_PATH)%.o: %.m $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
 endif
 
-PROJECT_ADDONS_MMS=$(addsuffix %.mm,$(PROJECT_ADDON_PATHS))
-$(PROJECT_ADDONS_OBJ_PATH)%.o: $(PROJECT_ADDONS_MMS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
+$(PROJECT_ADDONS_OBJ_PATH)%.o: %.mm $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
 endif
 
-PROJECT_ADDONS_CCS=$(addsuffix %.cc,$(PROJECT_ADDON_PATHS))
-$(PROJECT_ADDONS_OBJ_PATH)%.o: $(PROJECT_ADDONS_CCS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
+$(PROJECT_ADDONS_OBJ_PATH)%.o: %.cc $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
 endif
 
-PROJECT_ADDONS_SS=$(addsuffix %.S,$(PROJECT_ADDON_PATHS))
-$(PROJECT_ADDONS_OBJ_PATH)%.o: $(PROJECT_ADDONS_SS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
+$(PROJECT_ADDONS_OBJ_PATH)%.o: %.c $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
 endif
-	
-	
-	
+
+$(PROJECT_ADDONS_OBJ_PATH)%.o: %.S $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
+ifdef PROJECT_ADDON_PATHS
+	@echo "Compiling" $<
+	@mkdir -p $(@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
+endif
 
 
 
-# Rules to compile the standard addons sources
+
+
+
+#Rules to compile the standard addons sources
 $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(OF_ADDONS_PATH)/%.cpp $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
@@ -373,8 +395,7 @@ $(OF_ADDONS_PATH)/addons/$(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(OF_ADDONS_PATH)/%.S
 $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/%.o: $(OF_ROOT)/libs/openFrameworks/%.cpp $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(OF_CORE_INCLUDES_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/$*.o -o $@ -c $<
-
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(OF_CORE_INCLUDES_CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/$*.o -o $@ -c $<
 
 
 # Rules to link the project
@@ -409,7 +430,7 @@ endif
 	@rm -rf bin/libs
 
 after: $(TARGET_NAME)
-	@if [ -d $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH) ]; then cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/; fi
+	@if [ -e $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) ]; then cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/; fi
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"

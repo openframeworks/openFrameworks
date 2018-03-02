@@ -1,7 +1,6 @@
 #pragma once
-#include "ofBaseTypes.h"
+#include "ofGLBaseTypes.h"
 #include "ofPolyline.h"
-#include "ofMatrix4x4.h"
 #include "ofShader.h"
 #include "ofMatrixStack.h"
 #include "ofVboMesh.h"
@@ -12,7 +11,6 @@
 
 
 class ofShapeTessellation;
-class ofMesh;
 class ofFbo;
 class ofVbo;
 static const int OF_NO_TEXTURE=-1;
@@ -23,8 +21,8 @@ public:
 
 	void setup(int glVersionMajor, int glVersionMinor);
 
-    static const string TYPE;
-	const string & getType(){ return TYPE; }
+    static const std::string TYPE;
+	const std::string & getType(){ return TYPE; }
     
     void startRender();
     void finishRender();
@@ -77,21 +75,21 @@ public:
 	void pushMatrix();
 	void popMatrix();
 	void translate(float x, float y, float z = 0);
-	void translate(const ofVec3f & p);
+	void translate(const glm::vec3 & p);
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1);
-	void rotate(float degrees, float vecX, float vecY, float vecZ);
-	void rotateX(float degrees);
-	void rotateY(float degrees);
-	void rotateZ(float degrees);
-	void rotate(float degrees);
+	void rotateRad(float radians, float vecX, float vecY, float vecZ);
+	void rotateXRad(float radians);
+	void rotateYRad(float radians);
+	void rotateZRad(float radians);
+	void rotateRad(float radians);
 	void matrixMode(ofMatrixMode mode);
 	void loadIdentityMatrix (void);
-	void loadMatrix (const ofMatrix4x4 & m);
+	void loadMatrix (const glm::mat4 & m);
 	void loadMatrix (const float * m);
-	void multMatrix (const ofMatrix4x4 & m);
+	void multMatrix (const glm::mat4 & m);
 	void multMatrix (const float * m);
-	void loadViewMatrix(const ofMatrix4x4 & m);
-	void multViewMatrix(const ofMatrix4x4 & m);
+	void loadViewMatrix(const glm::mat4 & m);
+	void multViewMatrix(const glm::mat4 & m);
 
     /// \brief Queries the current OpenGL matrix state
     ///
@@ -108,10 +106,10 @@ public:
     /// \param	matrixMode_ Which matrix mode to query
     /// \note   If an invalid matrixMode is queried, this method will return the
     ///         identity matrix, and print an error message.
-	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
-	ofMatrix4x4 getCurrentOrientationMatrix() const;
-	ofMatrix4x4 getCurrentViewMatrix() const;
-	ofMatrix4x4 getCurrentNormalMatrix() const;
+	glm::mat4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
+	glm::mat4 getCurrentOrientationMatrix() const;
+	glm::mat4 getCurrentViewMatrix() const;
+	glm::mat4 getCurrentNormalMatrix() const;
 	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
@@ -165,8 +163,8 @@ public:
 	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const;
 	void drawCircle(float x, float y, float z, float radius) const;
 	void drawEllipse(float x, float y, float z, float width, float height) const;
-	void drawString(string text, float x, float y, float z) const;
-	void drawString(const ofTrueTypeFont & font, string text, float x, float y) const;
+	void drawString(std::string text, float x, float y, float z) const;
+	void drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const;
 
 
 	void enableTextureTarget(const ofTexture & tex, int textureLocation);
@@ -194,7 +192,7 @@ public:
 #endif
 	void unbind(const ofFbo & fbo);
 
-	void begin(const ofFbo & fbo, bool setupPerspective);
+    void begin(const ofFbo & fbo, ofFboBeginMode mode);
 	void end(const ofFbo & fbo);
 
 	ofStyle getStyle() const;
@@ -222,11 +220,11 @@ public:
 	void setLightAmbientColor(int lightIndex, const ofFloatColor& c){}
 	void setLightDiffuseColor(int lightIndex, const ofFloatColor& c){}
 	void setLightSpecularColor(int lightIndex, const ofFloatColor& c){}
-	void setLightPosition(int lightIndex, const ofVec4f & position){}
-	void setLightSpotDirection(int lightIndex, const ofVec4f & direction){}
+	void setLightPosition(int lightIndex, const glm::vec4 & position){}
+	void setLightSpotDirection(int lightIndex, const glm::vec4 & direction){}
 
-	string defaultVertexShaderHeader(GLenum textureTarget);
-	string defaultFragmentShaderHeader(GLenum textureTarget);
+	std::string defaultVertexShaderHeader(GLenum textureTarget);
+	std::string defaultFragmentShaderHeader(GLenum textureTarget);
 
 	int getGLVersionMajor();
 	int getGLVersionMinor();
@@ -279,7 +277,7 @@ private:
 	int alphaMaskTextureTarget;
 
 	ofStyle currentStyle;
-	deque <ofStyle> styleHistory;
+	std::deque <ofStyle> styleHistory;
 	of3dGraphics graphics3d;
 	ofBitmapFont bitmapFont;
 	ofPath path;
@@ -319,7 +317,7 @@ private:
 	//void setFramebufferId(const GLuint& fboId_); // sets the current framebuffer id
 
 	// framebuffer binding state
-	deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
+	std::deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
 	GLuint defaultFramebufferId;		///< default GL_FRAMEBUFFER_BINDING, windowing frameworks might want to set this to their MSAA framebuffer, defaults to 0
     GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
 };

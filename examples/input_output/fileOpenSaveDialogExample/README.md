@@ -1,9 +1,9 @@
-#About fileOpenSaveDialogExample
+# About fileOpenSaveDialogExample
 
 ![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](fileOpenSaveDialog.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates how to use the file dialog to select and save files from and to directories of your choosing. It also illustrates how to manipulate the pixels of the loaded image. 
 
@@ -36,6 +36,6 @@ Instructions for use:
 * Save the loaded image by pressing ```s``` and selecting the destination to write that file, which will be a manipulated version of the original. 
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no other classes.

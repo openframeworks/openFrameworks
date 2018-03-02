@@ -13,8 +13,8 @@ public:
 	bool 	setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat	getPixelFormat() const;
 	
-	void	loadAsync(string name);
-	bool 	load(string uri);
+	void	loadAsync(std::string name);
+	bool 	load(std::string uri);
 
 	void 	update();
 
@@ -65,7 +65,7 @@ public:
 
 protected:
 	bool allocate();
-	bool createPipeline(string uri);
+	bool createPipeline(std::string uri);
 	void on_stream_prepared();
 
 	// return true to set the message as attended so upstream doesn't try to process it

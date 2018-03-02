@@ -65,107 +65,17 @@ Also, you can add a set of udev rules which allow you to run a Kinect app withou
 
 ### Windows
 
-Precompiled libfreenect drivers and libusb-win32 libs are included for Windows.
+Precompiled libusb libs are included for Windows.
 
-New install instructions: 
-However on some new Windows OS it might be a struggle to install 
+Install instructions: 
 
-The easiest way to add the drivers is to use the Free USB Driver tool: http://zadig.akeo.ie/
-Select your Xbox Camera, Xbox Audio and Xbox Motor in the drop down and then select the libusb-win32( v1.2.6.0 ) driver from the driver menu and click install. ( you will need to do this three times, once for the camera, then motor, then audio ).  This advice comes from the https://github.com/OpenKinect/libfreenect#windows ReadMe. 
+The easiest way to add the correct usb drivers to a Kinect device is to use the Free USB Driver tool: http://zadig.akeo.ie/
+Select your Xbox Camera, Xbox Audio and Xbox Motor in the drop down and then select the libusbk driver from the driver menu and click install. ( you will need to do this three times, once for the camera, then motor, then audio ).  This advice comes from the https://github.com/OpenKinect/libfreenect#windows ReadMe. 
 
-Old install instructions: 
-Make sure to install or update the libfreenect Kinect camera, motor, and audio drivers through Windows Device Manager by pointing it to the driver folder:
-<pre>
-ofxKinect/libs/libfreenect/platform/windows/inf
-</pre>
-
-You may need to manually update each driver individually if you've plugged it in before. ofxKinect will not work if the drivers are not installed.
+ofxKinect will not work if the drivers are not installed.
 
 **NOTE**: You cannot use the OpenNI drivers and the libfreenect drivers included with ofxKinect at the same time. You must manually uninstall one and reinstall the other in the Device Manager. Sorry, that's just how it is. :P 
 
-How to Create a New ofxKinect Project
--------------------------------------
-
-To develop your own project based on ofxKinect, simply copy the example project and rename it. You probably want to put it in your apps folder, for example, after copying:
-
-`openFrameworks/examples/addons/kinectExample/ => openFrameworks/apps/myApps/kinectProject/`
-
-Then after renaming:
-
-`openFrameworks/apps/myApps/myKinectProject/`
-
-As of OF 0.8.0, you can also create a new ofxKinect project using the ProjectGenerator, found in `openFrameworks/apps/projectGenerator`.
-
-### Mac (Xcode):
-
-Rename the project in Xcode (do not rename the .xcodeproj file in Finder!): Slow double click the project name and rename
-
-### Codeblocks (Win & Linux):
-
-Close Codeblocks and rename the *.cbp and *.workspace files to the same name as the project folder. Open the workspace and readd the renamed project file.
-
-### Windows (Visual Studio):
-
-Close Visual Studio and rename the *.sln file. Open the solution, right click on the project in the project browser and select "Rename ...".
-
-Adding ofxKinect to an Existing Project
----------------------------------------
-
-**As of OF 0.8.0, you can use the OF ProjectGenerator to create ofxKinect projects. The following instructions are for setting up the project files manually.**
-
-If you want to add ofxKinect to another project, you need to make sure you include the src folder and the :
-<pre>
-openFrameworks/addons/ofxKinect/src
-</pre>
-as well as search paths for the addons (ofxOpenCv) and libs (freenect, libusb) required by ofxKinect.
-
-Don't forget to include the ofxOpenCv addon sources and opencv libraries.
-
-### Mac (Xcode):
-
-In the Xcode project browser:
-
-* add the ofxKinect sources to the project:
-  * create a new group "ofxKinect"
-  * drag these directories from ofxKinect into this new group: ofxKinect/src & ofxKinect/libs
-* add a search path to the libusb headers: `../../../addons/ofxKinect/libs/libusb/include/libusb-1.0` to your project Target build settings
-  * add the lib path to your Project.xconfig, see the example
-* add the path to the libusb precompiled library: `../../../addons/ofxKinect/libs/libusb-1.0/lib/osx/usb-1.0.a`
-  * add the lib path to your Project.xconfig, see the example
-  
-### Linux (Makefiles & Codeblocks):
-
-Edit the Makefile config files:
- 
-* edit addons.make in your project folder and add the following line to the end of the file: 
-	<pre>ofxKinect</pre>
-* edit config.make in your project folder and change the lines for USER_LIBS to:
-	<pre>
-	USER_LIBS = -lusb-1.0
-	</pre>
-
-#### Windows (Visual Studio):
-
-* add the ofxPd sources to the project:
-	* right click on the addons folder in your project tree and create a new filter named "ofxKinect"
-	* drag the src directory from the ofxKinect addon folder in Explorer into the ofxKinect folder in your project tree
-* add header and library search paths:
-	* right lick on your project and select "Properties"
-	* choose "Debug" from the "Configurations" drop down box
-	* under C/C++->General, add the following to the "Additional Include Directories":
-	<pre>
-	..\\..\\..\addons\ofxKinect\src
-	..\\..\\..\addons\ofxKinect\libs\libfreenect\src
-	..\\..\\..\addons\ofxKinect\libs\libfreenect\include
-	..\\..\\..\addons\ofxKinect\libs\libfreenect\platform\windows
-	..\\..\\..\addons\ofxKinect\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0
-	..\\..\\..\addons\ofxKinect\libs\libusb-win32\include
-	</pre>
-	* under Linker->General, add the following to the "Additional Library Directories":
-	<pre>
-	..\..\..\addons\ofxKinect\libs\libusb-win32\lib\vs
-	</pre>
-	* repeat for the "Release" configuration
 	
 #### Windows (Msys2):
 
@@ -174,6 +84,17 @@ Install libusb using
     pacman --needed -Sy mingw-w64-i686-libusb
 
 	
+
+How to Create a New ofxKinect Project
+-------------------------------------
+
+As of OF 0.8.0, you can also create a new ofxKinect project using the ProjectGenerator, found in `openFrameworks/apps/projectGenerator`.
+
+Adding ofxKinect to an Existing Project
+---------------------------------------
+
+**As of OF 0.8.0, you can use the OF ProjectGenerator to create ofxKinect projects**
+
 Notes
 -----
 

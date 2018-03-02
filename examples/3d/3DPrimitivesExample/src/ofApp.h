@@ -52,5 +52,5 @@ public:
     ofVboMesh topCap, bottomCap, body;
     vector<ofMeshFace> triangles;
     
-
+	ofCamera cam;
 };

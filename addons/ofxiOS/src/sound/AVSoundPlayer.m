@@ -33,12 +33,16 @@
 	if(audioSessionSetup) {
 		return;
 	}
-	[[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error: nil];
+	NSString * playbackCategory = AVAudioSessionCategoryPlayAndRecord;
+#ifdef TARGET_OF_TVOS
+	playbackCategory = AVAudioSessionCategoryPlayback;
+#endif
+	[[AVAudioSession sharedInstance] setCategory:playbackCategory error: nil];
     AVAudioSession * audioSession = [AVAudioSession sharedInstance];
     NSError * err = nil;
     // need to configure set the audio category, and override to it route the audio to the speaker
     if([audioSession respondsToSelector:@selector(setCategory:withOptions:error:)]) {
-        if(![audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
+        if(![audioSession setCategory:playbackCategory
              						  withOptions:AVAudioSessionCategoryOptionMixWithOthers
                                         error:&err]) { err = nil; }
     }

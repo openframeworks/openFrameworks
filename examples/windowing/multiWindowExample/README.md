@@ -1,9 +1,9 @@
-#About multiWindowExample
+# About multiWindowExample
 
 ![Screenshot of multiWindowExample](multiWindowExample.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates how to create an additional app in a separate window to hold a GUI with parameters. Changing the GUI's parameters's values update the appearance of a circle in the main window.
 
@@ -25,7 +25,7 @@ Instructions for use:
 
  
 
-###Other classes used in this file
+### Other classes used in this file
 
 * ```GuiApp```
 

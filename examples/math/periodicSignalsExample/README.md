@@ -2,7 +2,7 @@
 --
 ![Screenshot of Example](periodicSignalsExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks Example is designed to demonstrate how to draw a variety of [periodic signals](periodicSignalsExample), a signal that completes a pattern within a measurable timeframe using one of the following: trig functions, modulo, ofRandomn, or a varient of the noise function. 
 
@@ -29,7 +29,7 @@ Instructions for use:
 * Use the bottom slider to adjust the [frequency](https://en.wikipedia.org/wiki/Frequency) of each periodic signal
 * Note that ```ofRandom(value1, value2)``` cannot be dependent on time or frequency
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses ofxSimpleSlider class, so that the "y amnt", "x speed", and "frequency" can be adjusted once the app is running. 
 

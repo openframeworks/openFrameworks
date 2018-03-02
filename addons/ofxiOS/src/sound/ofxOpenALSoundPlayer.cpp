@@ -24,12 +24,17 @@
 
 #import "ofxOpenALSoundPlayer.h"
 #include "ofUtils.h"
+#include "ofFileUtils.h"
+#include "ofMath.h"
 
-bool SoundEngineInitialized = false;
+using namespace std;
 
-UInt32	numSounds;
-bool	mp3Loaded;
+namespace{
+	bool SoundEngineInitialized = false;
 
+	UInt32	numSounds;
+	bool	mp3Loaded;
+}
 
 static std::mutex& soundPlayerLock() {
   static std::mutex* m = new std::mutex;
@@ -85,12 +90,13 @@ ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() {
 
 //--------------------------------------------------------------
 
-bool ofxOpenALSoundPlayer::load(string fileName, bool stream) {
+bool ofxOpenALSoundPlayer::load(const std::filesystem::path& filePath, bool stream) {
 	
 	if(!SoundEngineInitialized) {
 		ofxOpenALSoundPlayer::initializeSoundEngine();
 	}
 	
+    auto fileName = filePath.string();
 	if( fileName.length()-3 == fileName.rfind("mp3") )
 		iAmAnMp3=true;
 	
@@ -556,7 +562,7 @@ void ofxOpenALSoundPlayer::setLocation(float x, float y, float z) {
 		cerr<<"error, cannot set location on mp3s in openAL"<<endl;
 	else
 	{
-		location.set(x,y,z);
+		location = {x,y,z};
 		pan = ofClamp(x,-1,1); // assuming x clamp pan to -1..1
 		SoundEngine_SetEffectLocation(myPrimedId, x, y, z);
 	}

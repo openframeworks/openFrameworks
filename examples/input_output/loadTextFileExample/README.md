@@ -1,9 +1,9 @@
-#About loadTextFileExample
+# About loadTextFileExample
 
 ![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](loadTextFileExample.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates how to load in a text file and then read it line by line easily utilizing a typewriter effect. 
 
@@ -25,6 +25,6 @@ Instructions for use:
 * Running the application will start the animation of the text being revealed
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no other classes.

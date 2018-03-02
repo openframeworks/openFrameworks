@@ -1,9 +1,9 @@
-#About Image Loader Web Example
+# About Image Loader Web Example
 
 --
 ![Screenshot of Example](imageLoaderWebExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks example demonstrates how to load an image from the web and then apply a pointillism effect to the image.  
 
@@ -31,6 +31,6 @@ Instructions for use:
 When the image is loaded, the pointillism effect will be created on the left hand side. Moving your mouse around will affect the size of the circles used to create the effect.
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no other classes.

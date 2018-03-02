@@ -7,7 +7,7 @@ void ofApp::setup(){
 	ofRegisterURLNotification(this);
 	
 	//to load synchronously
-	//image.load("http://blah.com/img.jpg");
+	img.load("http://images.wildmadagascar.org/pictures/bemaraha/tsingy_forest.JPG");
 }
 
 //--------------------------------------------------------------
@@ -16,7 +16,7 @@ void ofApp::urlResponse(ofHttpResponse & response){
 		img.load(response.data);
 		loading=false;
 	}else{
-		cout << response.status << " " << response.error << endl;
+		cout << response.status << " " << response.error << " for request " << response.request.name << endl;
 		if(response.status!=-1) loading=false;
 	}
 }
@@ -30,7 +30,7 @@ void ofApp::update(){
 void ofApp::draw(){
 	
 	ofSetColor(0, 0, 0);
-	ofDrawBitmapString("hit spacebar to load image from web", 10, ofGetHeight()/2);
+	ofDrawBitmapString("hit spacebar to load image from web", 10, ofGetHeight()-20);
 	if(loading)
 		ofDrawBitmapString("loading...", 10, ofGetHeight()+20);
 	float divider = ofMap( mouseX, 0, ofGetWidth(), 1, 48, true );

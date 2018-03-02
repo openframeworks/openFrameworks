@@ -1,6 +1,7 @@
 #include "ofxTCPManager.h"
 #include <stdio.h>
 #include "ofxNetworkUtils.h"
+#include "ofUtils.h"
 
 //--------------------------------------------------------------------------------
 bool ofxTCPManager::m_bWinsockInit= false;

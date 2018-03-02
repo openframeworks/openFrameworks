@@ -2,7 +2,7 @@
 --
 ![Screenshot of Example](floatingPointImageExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks Example is designed to demonstrate how to draw a mesh using floating points.
 
@@ -23,6 +23,6 @@ When launching this app, you should see:
 * a 3D mesh drawn from the image
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example does not use any other classes. 

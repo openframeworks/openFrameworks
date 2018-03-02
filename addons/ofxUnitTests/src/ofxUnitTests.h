@@ -10,7 +10,9 @@
 #include "ofLog.h"
 #include "ofBaseApp.h"
 #include "ofAppRunner.h"
+#include "ofURLFileLoader.h"
 #include <string>
+#include <cstdarg>
 
 class ofColorsLoggerChannel: public ofBaseLoggerChannel{
 	std::string CON_DEFAULT="\033[0m";
@@ -141,10 +143,12 @@ class ofxUnitTestsApp: public ofBaseApp{
 			ofLogError() <<  numTestsFailed << "/" << numTestsTotal << " tests failed";
 		}
 
-        ofLogNotice() << "took " << ofToString(durationMs) << "ms";
+		ofLogNotice() << "took " << ofToString(durationMs) << "ms";
+#if defined(TARGET_WIN32)
         if(!reportAppVeyor(passed, durationMs)){
             ++numTestsFailed;
         }
+#endif
         ofExit(numTestsFailed);
     }
 
@@ -180,8 +184,8 @@ protected:
 		}else{
 			ofLogError() << testName << " failed " << msg;
 			ofLogError() << "test_eq(" << v1 << ", " << v2 << ")";
-			ofLogError() << "value1: " << v1 << " is " << t1;
-			ofLogError() << "value2: " << v2 << " is " << t2;
+			ofLogError() << "value1: " << v1 << " is " << ofToString(t1);
+			ofLogError() << "value2: " << v2 << " is " << ofToString(t2);
 			ofLogError() << file << ": " << line;
 			numTestsFailed++;
 			return false;
@@ -203,8 +207,8 @@ protected:
 		}else{
 			ofLogError() << testName << " failed " << msg;
 			ofLogError() << "test_gt(" << v1 << ", " << v2 << ")";
-			ofLogError() << "value1: " << v1 << " is " << t1;
-			ofLogError() << "value2: " << v2 << " is " << t2;
+			ofLogError() << "value1: " << v1 << " is " << ofToString(t1);
+			ofLogError() << "value2: " << v2 << " is " << ofToString(t2);
 			ofLogError() << file << ": " << line;
 			numTestsFailed++;
 			return false;
@@ -226,8 +230,8 @@ protected:
 		}else{
 			ofLogError() << testName << " failed " << msg;
 			ofLogError() << "test_lt(" << v1 << ", " << v2 << ")";
-			ofLogError() << "value1: " << v1 << " is " << t1;
-			ofLogError() << "value2: " << v2 << " is " << t2;
+			ofLogError() << "value1: " << v1 << " is " << ofToString(t1);
+			ofLogError() << "value2: " << v2 << " is " << ofToString(t2);
 			ofLogError() << file << ": " << line;
 			numTestsFailed++;
 			return false;
@@ -244,6 +248,7 @@ private:
         return "\"" + var + "\": \"" + value + "\"";
     }
 
+#if defined(TARGET_WIN32)
     bool reportAppVeyor(bool passed, uint64_t durationMs){
         const std::string APPVEYOR_API_URL = "APPVEYOR_API_URL";
         if(ofGetEnv(APPVEYOR_API_URL)!=""){
@@ -272,22 +277,26 @@ private:
                         json_var_value("StdOut", stdOut) + ", " +
                         json_var_value("StdErr", stdErr) +
                     "}";
+            req.timeoutSeconds = 20;
+            ofLogNotice() << "Sending appveyor test results to " << req.url;
             ofURLFileLoader http;
             auto res = http.handleRequest(req);
             if(res.status<200 || res.status>=300){
                 ofLogError() << "sending to " << req.url;
                 ofLogError() << res.status << ", " << res.error;
-                cout << res.data.getText() << endl;
+                std::cout << res.data.getText() << std::endl;
                 ofLogError() << "for body:";
-                cout << req.body << endl;
+                std::cout << req.body << std::endl;
                 return false;
             }else{
+                ofLogNotice() << "Test results sent correctly";
                 return true;
             }
         }else{
             return true;
         }
     }
+#endif
 
 	int numTestsTotal = 0;
 	int numTestsPassed = 0;

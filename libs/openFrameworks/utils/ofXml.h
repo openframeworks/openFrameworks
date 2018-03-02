@@ -1,231 +1,292 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "pugixml.hpp"
 #include "ofParameter.h"
-#include "ofParameterGroup.h"
-#include "ofBaseTypes.h"
 
-#include <numeric>
+template<class It>
+class ofXmlIterator;
+class ofXmlSearchIterator;
 
-#include <Poco/DOM/Document.h>
-#include <Poco/DOM/DocumentFragment.h>
-#include <Poco/DOM/Element.h>
-#include <Poco/DOM/DOMParser.h>
-
-#include <Poco/DOM/DOMException.h>
-#include <Poco/SAX/SAXException.h>
-#include <Poco/XML/XMLString.h>
-#include <Poco/XML/XMLWriter.h>
-#include <Poco/DOM/DOMParser.h>
-#include <Poco/DOM/DOMWriter.h>
-#include <Poco/DOM/Document.h>
-#include <Poco/DOM/Attr.h>
-#include <Poco/DOM/Node.h>
-#include <Poco/DOM/Text.h>
-#include <Poco/DOM/NodeIterator.h>
-#include <Poco/DOM/NodeFilter.h>
-#include <Poco/DOM/NamedNodeMap.h>
-#include <Poco/DOM/ChildNodesList.h>
-
-class ofXml: public ofBaseFileSerializer {
-    
+class ofXml{
 public:
-    
-    ofXml();
-    ~ofXml();
+	class Search{
+	public:
+		Search(){}
 
-    ofXml( const string & path );
-    ofXml( const ofXml& rhs );
-    const ofXml& operator =( const ofXml& rhs );
+		// Get collection type
+		pugi::xpath_node_set::type_t type() const;
 
-	bool load(const string & path);
-	bool save(const string & path);
+		// Get collection size
+		size_t size() const;
 
-    bool            addChild( const string& path );
-    void            addXml( ofXml& xml, bool copyAll = false);
+		// Indexing operator
+		ofXml operator[](size_t index) const;
 
-    string          getValue() const;
-    string          getValue(const string & path) const;
-    int				getIntValue() const;
-    int				getIntValue(const string & path) const;
-    int64_t getInt64Value() const;
-    int64_t getInt64Value(const string& path) const;
-    float			getFloatValue() const;
-    float			getFloatValue(const string & path) const;
-    bool			getBoolValue() const;
-    bool			getBoolValue(const string & path) const;
+		// Collection iterators
+		ofXmlSearchIterator begin() const;
+		ofXmlSearchIterator end() const;
 
-    bool            setValue(const string& path, const string& value);
-    
-    string          getAttribute(const string& path) const;
-    bool            setAttribute(const string& path, const string& value);
-    map<string, string> getAttributes() const;
-    int             getNumChildren() const;
-    int             getNumChildren(const string& path) const;
+		// Sort the collection in ascending/descending order by document order
+		void sort(bool reverse = false);
 
-    bool            removeAttribute(const string& path);
-    bool            removeAttributes(const string& path); // removes attributes for the passed path
-    bool            removeAttributes(); // removes attributes for the element ofXml is pointing to
-    bool            removeContents(const string& path); // removes the path passed as parameter
-    bool            removeContents(); // removes the childs of the current element
-    bool            remove(const string& path); // removes both attributes and tags for the passed path
-    void            remove(); // removes the current element and all its children,
-    						  // the current element will point to it's parent afterwards
-    						  // if the current element is the document root this will act as clear()
+		// Get first node in the collection by document order
+		ofXml getFirst() const;
 
-    bool            exists(const string& path) const; // works for both attributes and tags
-    
-    void			clear();  // clears the full document and points the current element to the root
+		// Check if collection is empty
+		bool empty() const;
+	private:
+		Search(std::shared_ptr<pugi::xml_document> doc, pugi::xpath_node_set set);
+		std::shared_ptr<pugi::xml_document> doc;
+		pugi::xpath_node_set search;
+		friend class ofXml;
+	};
 
-    string          getName() const;
-    bool            reset();
+	class Attribute{
+	public:
+		Attribute(){}
+		std::string getValue() const;
 
-    bool            setToChild(unsigned long index);
-    bool            setTo(const string& path);
-    bool            setToParent();
-    bool            setToParent(int numLevelsUp);
-    bool            setToSibling();
-    bool            setToPrevSibling();
-    
-    bool            loadFromBuffer( const string& buffer );
-    
-    string          toString() const;
-    
-    // serializer
-	void serialize(const ofAbstractParameter & parameter);
-	void deserialize(ofAbstractParameter & parameter);
+		void setName(const std::string & name);
 
-    //////////////////////////////////////////////////////////////////
-    // please excuse our mess: templated get/set
-    //////////////////////////////////////////////////////////////////
-    
-    // a pretty useful tokenization system:
-    static vector<string> tokenize(const string & str, const string & delim){
-        vector<string> tokens;
+		int getIntValue() const;
+		unsigned int getUintValue() const;
+		float getFloatValue() const;
+		double getDoubleValue() const;
+		bool getBoolValue() const;
+		operator bool() const;
 
-        size_t p0 = 0, p1 = string::npos;
-        while(p0 != string::npos){
-            p1 = str.find_first_of(delim, p0);
-            if(p1 != p0){
-                string token = str.substr(p0, p1 - p0);
-                tokens.push_back(token);
-            }
-            p0 = str.find_first_not_of(delim, p1);
-        }
-        return tokens;
-    }
-    
-    // templated to be anything
-    template <class T> bool addValue(const string& path, T data=T(), bool createEntirePath = false){
-        string value = ofToString(data);
-        vector<string> tokens;
-        
-        if(path.find('/') != string::npos){
-            tokens = tokenize(path, "/");
-        }
+		Attribute getNextAttribute() const;
+		Attribute getPreviousAttribute() const;
 
-        // is this a tokenized tag?
-        if(tokens.size() > 1){
-            // don't 'push' down into the new nodes
-            Poco::XML::Element* firstElement=nullptr, *lastElement=nullptr;
-            if(element){
-                lastElement = element;
-            }
+		template<typename T>
+		ofXml::Attribute & operator=(const T & value){
+			this->attr = ofToString(value);
+			return *this;
+		}
 
-            if(!firstElement){
-                firstElement = lastElement;
-            }
-            
-			for(std::size_t i = 0; i < tokens.size(); i++){
-                Poco::XML::Element* newElement = getPocoDocument()->createElement(tokens.at(i));
+		template<typename T>
+		Attribute & set(const T & value){
+			this->attr.set_value(ofToString(value).c_str());
+			return *this;
+		}
+	private:
+		Attribute(const pugi::xml_attribute & attr);
+		pugi::xml_attribute attr;
+		friend class ofXml;
+	};
 
-                //ofLogVerbose("ofxXml") << "addValue(): creating " << newElement->nodeName();
+	template<class It>
+	class Range{
+	public:
+		It begin() const { return It(ofXml(doc, *range.begin())); }
+		It end() const { return It(ofXml(doc, pugi::xml_node())); }
 
-                if(lastElement){
-                    lastElement->appendChild(newElement);
-                }
+	private:
+		Range(std::shared_ptr<pugi::xml_document> doc, pugi::xml_object_range<typename It::Base> range)
+			:doc(doc), range(range){}
+		std::shared_ptr<pugi::xml_document> doc;
+		pugi::xml_object_range<typename It::Base> range;
+		friend class ofXml;
+	};
 
-                lastElement = newElement;
-            }
-            
-            if(value != ""){
-                Poco::XML::Text *text = getPocoDocument()->createTextNode(value);
-                try {
-                    lastElement->appendChild( text );
-                } catch ( Poco::XML::DOMException &e ){
-                    ofLogError("ofxXml") << "addValue(): couldn't set node value: " << DOMErrorMessage(e.code());
-                    return false;
-                }
-            }
+	ofXml();
 
-            if(!element){
-                element = firstElement;
-                document->appendChild(element);
-            }
-            
-            return true;
-            
-        }else{
-            Poco::XML::Element *newElement = getPocoDocument()->createElement(path);
+	bool load(const std::filesystem::path & file);
+	bool load(const ofBuffer & buffer);
+	bool parse(const std::string & xmlStr);
+	bool save(const std::filesystem::path & file) const;
+	std::string toString(const std::string & indent = "\t") const;
 
-            if(value != ""){
-                Poco::XML::Text *text = getPocoDocument()->createTextNode(value);
-                try {
-                    newElement->appendChild(text);
-                    text->release();
-                    
-                } catch ( Poco::XML::DOMException &e ){
-                    ofLogError("ofxXml") << "addValue(): couldn't set node value: " << DOMErrorMessage(e.code());
-                    return false;
-                }
-            }
-            
-            if(element){
-                element->appendChild(newElement);
-            }else{
-                element = newElement;
-            }
-        }
-        return true;
-    }
+	ofXml getChild(const std::string & name) const;
+	Range<ofXmlIterator<pugi::xml_node_iterator>> getChildren() const;
+	Range<ofXmlIterator<pugi::xml_named_node_iterator>> getChildren(const std::string & name) const;
 
-    
-    // templated to be anything
-    template <class T> T getValue(const string& path, T returnVal=T()) const{
-    	if(element){
-			if(path == ""){
-				if(element->firstChild() && element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
-					return ofFromString<T>(element->innerText());
-				}else{
-					ofLogWarning("ofXml") << "getValue(): path \"" << path<< "\" not found when getting value";
-					return returnVal; // hmm. this could be a problem
-				}
-			}else{
-				Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
-				if(e){
-					return ofFromString<T>(e->innerText());
-				}
-			}
-    	}
+	ofXml appendChild(const ofXml & xml);
+	ofXml prependChild(const ofXml & xml);
 
-        return T();
-    }
-    
-    // these are advanced, you probably don't want to use them
-    
-    Poco::XML::Element*        getPocoElement();
-    Poco::XML::Element*        getPocoElement(const string& path);
-    const Poco::XML::Element*  getPocoElement() const;
-    const Poco::XML::Element*  getPocoElement(const string& path) const;
+#if PUGIXML_VERSION>=170
+	ofXml appendChild(ofXml && xml);
+	ofXml prependChild(ofXml && xml);
+#endif
 
-    Poco::XML::Document*       getPocoDocument();
-    const Poco::XML::Document* getPocoDocument() const;
+	ofXml appendChild(const std::string & name);
+	ofXml prependChild(const std::string & name);
+	bool removeChild(const std::string & name);
+
+	ofXml insertChildAfter(const std::string & name, const ofXml & after);
+	ofXml insertChildBefore(const std::string & name, const ofXml & after);
+
+	ofXml getNextSibling() const;
+	ofXml getPreviousSibling() const;
+	ofXml getNextSibling(const std::string & name) const;
+	ofXml getPreviousSibling(const std::string & name) const;
+
+	ofXml getFirstChild() const;
+	ofXml getLastChild() const;
 
 
-protected:
-    void releaseAll();
-    string DOMErrorMessage(short msg);
+	Attribute getAttribute(const std::string & name) const;
+	Range<ofXmlIterator<pugi::xml_attribute_iterator>> getAttributes() const;
+	Attribute getFirstAttribute() const;
+	Attribute getLastAttribute() const;
+	Attribute appendAttribute(const std::string & name);
+	Attribute prependAttribute(const std::string & name);
 
-    Poco::XML::Document *document;
-    Poco::XML::Element *element;
+	template<typename T>
+	Attribute setAttribute(const std::string & name, const T & value){
+		auto attr = getAttribute(name);
+		if(!attr){
+			attr = appendAttribute(name);
+		}
+		attr.set(value);
+		return attr;
+	}
+
+	ofXml findFirst(const std::string & path) const;
+	Search find(const std::string & path) const;
+
+	template<typename T>
+	T getValue() const{
+		return ofFromString<T>(this->xml.text().as_string());
+	}
+
+	std::string getValue() const;
+	std::string getName() const;
+
+	template<typename T>
+	void set(const T & value){
+		if(!xml){
+			xml = doc->append_child(pugi::node_element);
+		}
+		auto child = this->xml.first_child();
+		if(!child){
+			child = this->xml.append_child(pugi::node_pcdata);
+		}
+		if(child.type() == pugi::node_pcdata || child.type() == pugi::node_cdata){
+			child.set_value(ofToString(value).c_str());
+		}
+	}
+
+	void set(const unsigned char & value){
+		if(!xml){
+			xml = doc->append_child(pugi::node_element);
+		}
+		auto child = this->xml.first_child();
+		if(!child){
+			child = this->xml.append_child(pugi::node_pcdata);
+		}
+		if(child.type() == pugi::node_pcdata || child.type() == pugi::node_cdata){
+			child.set_value(ofToString(int(value)).c_str());
+		}
+	}
+
+
+	void setName(const std::string & name);
+
+	int getIntValue() const;
+	unsigned int getUintValue() const;
+	float getFloatValue() const;
+	double getDoubleValue() const;
+	bool getBoolValue() const;
+
+	operator bool() const;
+
+private:
+	ofXml(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node & xml);
+	std::shared_ptr<pugi::xml_document> doc;
+	pugi::xml_node xml;
+
+	template<class It>
+	friend class ofXmlIterator;
+	friend class ofXmlSearchIterator;
 };
+
+template<class It>
+class ofXmlIterator{
+public:
+	ofXmlIterator(){}
+
+	// Iterator operators
+	bool operator==(const ofXmlIterator& rhs) const{
+		return this->xml.xml == rhs.xml.xml;
+	}
+
+	bool operator!=(const ofXmlIterator& rhs) const{
+		return this->xml.xml != rhs.xml.xml;
+	}
+
+	ofXml& operator*() const{
+		return this->xml;
+	}
+
+	ofXml* operator->() const{
+		return &this->xml;
+	}
+
+	const ofXmlIterator& operator++(){
+		this->xml = xml.getNextSibling();
+		return *this;
+	}
+
+	ofXmlIterator operator++(int){
+		auto now = xml;
+		this->xml = xml.getNextSibling();
+		return now;
+	}
+
+	const ofXmlIterator& operator--(){
+		this->xml = xml.getPreviousSibling();
+		return *this;
+	}
+
+	ofXmlIterator operator--(int){
+		auto now = xml;
+		this->xml = xml.getPreviousSibling();
+		return now;
+	}
+	typedef It Base;
+private:
+
+	// Construct an iterator which points to the specified node
+	ofXmlIterator(ofXml xml)
+	:xml(xml){
+
+	}
+	mutable ofXml xml;
+	friend class ofXml;
+};
+
+
+class ofXmlSearchIterator{
+public:
+	ofXmlSearchIterator();
+
+	// Iterator operators
+	bool operator==(const ofXmlSearchIterator& rhs) const;
+	bool operator!=(const ofXmlSearchIterator& rhs) const;
+
+	ofXml & operator*() const;
+	ofXml * operator->() const;
+
+	const ofXmlSearchIterator& operator++();
+	ofXmlSearchIterator operator++(int);
+
+	const ofXmlSearchIterator& operator--();
+	ofXmlSearchIterator operator--(int);
+
+private:
+	ofXmlSearchIterator(std::shared_ptr<pugi::xml_document> doc, const pugi::xpath_node * node)
+		:node(node)
+	{
+		if(node){
+			xml = ofXml(doc, node->node());
+		}
+	}
+	const pugi::xpath_node * node = nullptr;
+	mutable ofXml xml;
+	friend ofXml::Search;
+};
+// serializer
+void ofSerialize(ofXml & xml, const ofAbstractParameter & parameter);
+void ofDeserialize(const ofXml & xml, ofAbstractParameter & parameter);

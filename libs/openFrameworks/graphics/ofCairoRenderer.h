@@ -1,24 +1,22 @@
 #pragma once
 
 
-#include "cairo-features.h"
-#include "cairo-pdf.h"
-#include "cairo-svg.h"
 #include "cairo.h"
+
 #include <deque>
 #include <stack>
-#include "ofMatrix4x4.h"
-#include "ofBaseTypes.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofPath.h"
 #include "of3dGraphics.h"
+#include "ofPixels.h"
 
 class ofCairoRenderer: public ofBaseRenderer{
 public:
 	ofCairoRenderer();
 	~ofCairoRenderer();
 
-	static const string TYPE;
-	const string & getType(){ return TYPE; }
+	static const std::string TYPE;
+	const std::string & getType(){ return TYPE; }
 
 	enum Type{
 		PDF,
@@ -26,7 +24,7 @@ public:
 		IMAGE,
 		FROM_FILE_EXTENSION
 	};
-	void setup(string filename, Type type=ofCairoRenderer::FROM_FILE_EXTENSION, bool multiPage=true, bool b3D=false, ofRectangle outputsize = ofRectangle(0,0,0,0));
+	void setup(std::string filename, Type type=ofCairoRenderer::FROM_FILE_EXTENSION, bool multiPage=true, bool b3D=false, ofRectangle outputsize = ofRectangle(0,0,0,0));
 	void setupMemoryOnly(Type _type, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
 	void close();
 	void flush();
@@ -41,7 +39,7 @@ public:
 	void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType ) const;
     void draw(const ofNode& node) const;
-	void draw(const vector<ofPoint> & vertexData, ofPrimitiveMode drawMode) const;
+	void draw(const std::vector<glm::vec3> & vertexData, ofPrimitiveMode drawMode) const;
 	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
@@ -67,11 +65,11 @@ public:
 
 	void setOrientation(ofOrientation orientation, bool vFlip);
 	bool isVFlipped() const;
-	void loadViewMatrix(const ofMatrix4x4 & m);
-	void multViewMatrix(const ofMatrix4x4 & m);
-	ofMatrix4x4 getCurrentViewMatrix() const;
-	ofMatrix4x4 getCurrentNormalMatrix() const;
-	ofMatrix4x4 getCurrentOrientationMatrix() const;
+	void loadViewMatrix(const glm::mat4 & m);
+	void multViewMatrix(const glm::mat4 & m);
+	glm::mat4 getCurrentViewMatrix() const;
+	glm::mat4 getCurrentNormalMatrix() const;
+	glm::mat4 getCurrentOrientationMatrix() const;
 	void setCircleResolution(int);
 
 
@@ -93,20 +91,20 @@ public:
 	//our openGL wrappers
 	void pushMatrix();
 	void popMatrix();
-	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
+	glm::mat4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
 	void translate(float x, float y, float z = 0);
-	void translate(const ofPoint & p);
+	void translate(const glm::vec3 & p);
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1);
-	void rotate(float degrees, float vecX, float vecY, float vecZ);
-	void rotateX(float degrees);
-	void rotateY(float degrees);
-	void rotateZ(float degrees);
-	void rotate(float degrees);
+	void rotateRad(float radians, float vecX, float vecY, float vecZ);
+	void rotateXRad(float radians);
+	void rotateYRad(float radians);
+	void rotateZRad(float radians);
+	void rotateRad(float radians);
 	void matrixMode(ofMatrixMode mode);
 	void loadIdentityMatrix (void);
-	void loadMatrix (const ofMatrix4x4 & m);
+	void loadMatrix (const glm::mat4 & m);
 	void loadMatrix (const float * m);
-	void multMatrix (const ofMatrix4x4 & m);
+	void multMatrix (const glm::mat4 & m);
 	void multMatrix (const float * m);
 
 	// screen coordinate things / default gl values
@@ -152,8 +150,8 @@ public:
 	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const;
 	void drawCircle(float x, float y, float z, float radius) const;
 	void drawEllipse(float x, float y, float z, float width, float height) const;
-	void drawString(string text, float x, float y, float z) const;
-	void drawString(const ofTrueTypeFont & font, string text, float x, float y) const;
+	void drawString(std::string text, float x, float y, float z) const;
+	void drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const;
 
 	// cairo specifics
 	cairo_t * getCairoContext();
@@ -169,16 +167,16 @@ public:
 	of3dGraphics & get3dGraphics();
 
 private:
-	ofVec3f transform(ofVec3f vec) const;
+	glm::vec3 transform(glm::vec3 vec) const;
 	static _cairo_status stream_function(void *closure,const unsigned char *data, unsigned int length);
 	void draw(const ofPixels & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
-	mutable deque<ofPoint> curvePoints;
+	mutable std::deque<glm::vec3> curvePoints;
 	cairo_t * cr;
 	cairo_surface_t * surface;
 	bool bBackgroundAuto;
 
-	stack<cairo_matrix_t> matrixStack;
+	std::stack<cairo_matrix_t> matrixStack;
 
 	Type type;
 	int page;
@@ -186,25 +184,25 @@ private:
 
 	// 3d transformation
 	bool b3D;
-	ofMatrix4x4 projection;
-	ofMatrix4x4 modelView;
+	glm::mat4 projection;
+	glm::mat4 modelView;
 	ofRectangle viewportRect, originalViewport;
 
-	stack<ofMatrix4x4> projectionStack;
-	stack<ofMatrix4x4> modelViewStack;
-	stack<ofRectangle> viewportStack;
+	std::stack<glm::mat4> projectionStack;
+	std::stack<glm::mat4> modelViewStack;
+	std::stack<ofRectangle> viewportStack;
 	
 	ofMatrixMode currentMatrixMode;
 
-	vector<ofPoint> sphereVerts;
-	vector<ofPoint> spherePoints;
+	std::vector<glm::vec3> sphereVerts;
+	std::vector<glm::vec3> spherePoints;
 
-	string filename;
+	std::string filename;
 	ofBuffer streamBuffer;
 	ofPixels imageBuffer;
 
 	ofStyle currentStyle;
-	deque <ofStyle> styleHistory;
+	std::deque <ofStyle> styleHistory;
 	of3dGraphics graphics3d;
 	ofPath path;
 };

@@ -1,16 +1,18 @@
 #pragma once
 
-#include "ofPoint.h"
-#include "ofTypes.h"
-#include "ofEvents.h"
+#include "ofConstants.h"
 #include "ofWindowSettings.h"
 
 class ofBaseApp;
 class ofBaseRenderer;
+class ofCoreEvents;
 
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+#if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
 struct __GLXcontextRec;
 typedef __GLXcontextRec * GLXContext;
+#endif
+
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 typedef unsigned long Window;
 struct _XDisplay;
 typedef struct _XDisplay Display;
@@ -30,14 +32,11 @@ public:
 		return false;
 	}
 	virtual void setWindowShouldClose(){
-		close();
 	}
 	virtual void close(){
-		events().notifyExit();
-		events().disable();
 	}
 	virtual ofCoreEvents & events() = 0;
-	virtual shared_ptr<ofBaseRenderer> & renderer() = 0;
+	virtual std::shared_ptr<ofBaseRenderer> & renderer() = 0;
 
 	virtual void hideCursor() {}
 	virtual void showCursor() {}
@@ -45,9 +44,9 @@ public:
 	virtual void	setWindowPosition(int x, int y) {}
 	virtual void	setWindowShape(int w, int h) {}
 
-	virtual ofPoint	getWindowPosition() {return ofPoint(); }
-	virtual ofPoint	getWindowSize(){return ofPoint(); }
-	virtual ofPoint	getScreenSize(){return ofPoint(); }
+	virtual glm::vec2	getWindowPosition() {return glm::vec2(); }
+	virtual glm::vec2	getWindowSize(){return glm::vec2(); }
+	virtual glm::vec2	getScreenSize(){return glm::vec2(); }
 
 	virtual void			setOrientation(ofOrientation orientation){ }
 	virtual ofOrientation	getOrientation(){ return OF_ORIENTATION_DEFAULT; }
@@ -57,7 +56,7 @@ public:
 	virtual int		getWidth(){ return 0; }
 	virtual int		getHeight(){ return 0; }
 
-	virtual void	setWindowTitle(string title){}
+	virtual void	setWindowTitle(std::string title){}
 
 	virtual ofWindowMode	getWindowMode() {return OF_WINDOW ;}
 
@@ -68,8 +67,8 @@ public:
 	virtual void	disableSetupScreen(){}
 	
 	virtual void	setVerticalSync(bool enabled){};
-    virtual void    setClipboardString(const string& text) {}
-    virtual string  getClipboardString() { return ""; }
+    virtual void    setClipboardString(const std::string& text) {}
+    virtual std::string  getClipboardString() { return ""; }
 
     virtual void makeCurrent(){};
 	virtual void swapBuffers() {}

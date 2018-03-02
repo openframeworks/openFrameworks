@@ -4,7 +4,6 @@
 #include <mutex>
 #include <queue>
 #include <condition_variable>
-#include "ofUtils.h"
 
 
 /// \brief Safely send data between threads without additional synchronization.
@@ -71,7 +70,7 @@ public:
 		if(closed){
 			return false;
 		}
-		if(queue.empty()){
+        while(queue.empty() && !closed){
 			condition.wait(lock);
 		}
 		if(!closed){
@@ -118,7 +117,7 @@ public:
 		if(closed){
 			return false;
 		}
-		if(!queue.empty()){
+        if(!queue.empty()){
 			std::swap(sentValue,queue.front());
 			queue.pop();
 			return true;
@@ -212,7 +211,7 @@ public:
 			return false;
 		}
 		queue.push(value);
-		condition.notify_all();
+        condition.notify_one();
 		return true;
 	}
 
@@ -253,7 +252,7 @@ public:
 			return false;
 		}
 		queue.push(std::move(value));
-		condition.notify_all();
+        condition.notify_one();
 		return true;
 	}
 

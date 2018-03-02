@@ -2,6 +2,8 @@
 #include "ofUtils.h"
 #include "ofxUnitTests.h"
 
+using namespace std;
+
 std::filesystem::path initial_cwd;
 
 class ofApp: public ofxUnitTestsApp{
@@ -47,8 +49,8 @@ class ofApp: public ofxUnitTestsApp{
 				ofFile fr("noread");
 				std::string str;
 				fr >> str;
-				cout << "testing if file can be really read" << endl;
-				cout << str << endl;
+				std::cout << "testing if file can be really read" << std::endl;
+				std::cout << str << std::endl;
 			}
 		}
 

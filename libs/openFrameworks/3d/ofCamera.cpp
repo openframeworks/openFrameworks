@@ -1,5 +1,14 @@
 #include "ofCamera.h"
 #include "ofLog.h"
+#include "ofRectangle.h"
+#include "ofGraphics.h"
+#include "ofAppRunner.h"
+#include "ofGraphicsBaseTypes.h"
+#include "glm/gtx/transform.hpp"
+#include "glm/gtc/quaternion.hpp"
+#include "of3dGraphics.h"
+
+using namespace std;
 
 //----------------------------------------
 ofCamera::ofCamera() :
@@ -33,7 +42,7 @@ void ofCamera::setFarClip(float f) {
 }
 
 //----------------------------------------
-void ofCamera::setLensOffset(const ofVec2f & lensOffset){
+void ofCamera::setLensOffset(const glm::vec2 & lensOffset){
 	this->lensOffset = lensOffset;
 }
 
@@ -49,7 +58,7 @@ void ofCamera::setForceAspectRatio(bool forceAspectRatio){
 }
 
 //----------------------------------------
-void ofCamera::setupPerspective(bool _vFlip, float fov, float nearDist, float farDist, const ofVec2f & lensOffset){
+void ofCamera::setupPerspective(bool _vFlip, float fov, float nearDist, float farDist, const glm::vec2 & lensOffset){
 	ofRectangle orientedViewport = getRenderer()->getNativeViewport();
 	float eyeX = orientedViewport.width / 2;
 	float eyeY = orientedViewport.height / 2;
@@ -67,32 +76,31 @@ void ofCamera::setupPerspective(bool _vFlip, float fov, float nearDist, float fa
 	setForceAspectRatio(false);
 
 	setPosition(eyeX,eyeY,dist);
-	lookAt(ofVec3f(eyeX,eyeY,0),ofVec3f(0,1,0));
+	lookAt({eyeX,eyeY,0.f}, {0.f,1.f,0.f});
 	vFlip = _vFlip;
 }
 
 //----------------------------------------
-void ofCamera::setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & bottomLeft, const ofVec3f & bottomRight){
-	ofVec3f bottomEdge = bottomRight - bottomLeft; // plane x axis
-	ofVec3f leftEdge = topLeft - bottomLeft; // plane y axis
-	ofVec3f bottomEdgeNorm = bottomEdge.getNormalized();
-	ofVec3f leftEdgeNorm = leftEdge.getNormalized();
-	ofVec3f bottomLeftToCam = this->getPosition() - bottomLeft;
+void ofCamera::setupOffAxisViewPortal(const glm::vec3 & topLeft, const glm::vec3 & bottomLeft, const glm::vec3 & bottomRight){
+	auto bottomEdge = bottomRight - bottomLeft; // plane x axis
+	auto leftEdge = topLeft - bottomLeft; // plane y axis
+	auto bottomEdgeNorm = glm::normalize(bottomEdge);
+	auto leftEdgeNorm = glm::normalize(leftEdge);
+	auto bottomLeftToCam = this->getPosition() - bottomLeft;
 	
-	ofVec3f cameraLookVector = leftEdgeNorm.getCrossed(bottomEdgeNorm);
-	
-	ofVec3f cameraUpVector = bottomEdgeNorm.getCrossed(cameraLookVector);
+	auto cameraLookVector = glm::cross(leftEdgeNorm, bottomEdgeNorm);
+	auto cameraUpVector = glm::cross(bottomEdgeNorm, cameraLookVector);
 	
 	lookAt(cameraLookVector + this->getPosition(), cameraUpVector);
 
 	//lensoffset
-	ofVec2f lensOffset;
-	lensOffset.x = -bottomLeftToCam.dot(bottomEdgeNorm) * 2.0f / bottomEdge.length() + 1.0f;
-	lensOffset.y = -bottomLeftToCam.dot(leftEdgeNorm) * 2.0f / leftEdge.length() + 1.0f;
+	glm::vec2 lensOffset;
+	lensOffset.x = -glm::dot(bottomLeftToCam, bottomEdgeNorm) * 2.0f / glm::length(bottomEdge) + 1.0f;
+	lensOffset.y = -glm::dot(bottomLeftToCam, leftEdgeNorm) * 2.0f / glm::length(leftEdge) + 1.0f;
 	setLensOffset(lensOffset);
-	setAspectRatio( bottomEdge.length() / leftEdge.length() );
-	float distanceAlongOpticalAxis = abs(bottomLeftToCam.dot(cameraLookVector));
-	setFov(2.0f * RAD_TO_DEG * atan( (leftEdge.length() / 2.0f) / distanceAlongOpticalAxis));
+	setAspectRatio( glm::length(bottomEdge) / glm::length(leftEdge) );
+	auto distanceAlongOpticalAxis = fabs(glm::dot(bottomLeftToCam, cameraLookVector));
+	setFov(2.0f * RAD_TO_DEG * atan( (glm::length(leftEdge) / 2.0f) / distanceAlongOpticalAxis));
 }
 
 
@@ -122,13 +130,13 @@ bool ofCamera::getOrtho() const {
 }
 
 //----------------------------------------
-float ofCamera::getImagePlaneDistance(ofRectangle viewport) const {
-	return getViewport(viewport).height / (2.0f * tanf(PI * fov / 360.0f));
+float ofCamera::getImagePlaneDistance(const ofRectangle & viewport) const {
+	return viewport.height / (2.0f * tanf(PI * fov / 360.0f));
 }
 
 //----------------------------------------
-void ofCamera::begin(ofRectangle viewport) {
-	ofGetCurrentRenderer()->bind(*this,getViewport(viewport));
+void ofCamera::begin(const ofRectangle & viewport) {
+	ofGetCurrentRenderer()->bind(*this,viewport);
 }
 
 // if begin(); pushes first, then we need an end to pop
@@ -138,104 +146,93 @@ void ofCamera::end() {
 }
 
 //----------------------------------------
-ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) const {
-	viewport = getViewport(viewport);
+glm::mat4 ofCamera::getProjectionMatrix(const ofRectangle & viewport) const {
 	// autocalculate near/far clip planes if not set by user
 	const_cast<ofCamera*>(this)->calcClipPlanes(viewport);
 
 	if(isOrtho) {
-		return ofMatrix4x4::newOrthoMatrix(
-			viewport.x - viewport.width/2,
-			viewport.x + viewport.width/2,
-			viewport.y - viewport.height/2,
-			viewport.y + viewport.height/2,
+		return glm::ortho(
+			- viewport.width/2,
+			+ viewport.width/2,
+			- viewport.height/2,
+			+ viewport.height/2,
 			nearClip,
 			farClip
 		);
 	}else{
 		float aspect = forceAspectRatio ? aspectRatio : viewport.width/viewport.height;
-		ofMatrix4x4 matProjection;
-		matProjection.makePerspectiveMatrix(fov, aspect, nearClip, farClip);
-		matProjection.translate(-lensOffset.x, -lensOffset.y, 0);
-		return matProjection;
+		auto projection = glm::perspective(glm::radians(fov), aspect, nearClip, farClip);
+		projection = glm::translate(glm::mat4(), {-lensOffset.x, -lensOffset.y, 0.f}) * projection;
+		return projection;
 	}
 }
 
 //----------------------------------------
-ofMatrix4x4 ofCamera::getModelViewMatrix() const {
-	return getGlobalTransformMatrix().getInverse();
+glm::mat4 ofCamera::getModelViewMatrix() const {
+	return glm::inverse(getGlobalTransformMatrix());
 }
 
 //----------------------------------------
-ofMatrix4x4 ofCamera::getModelViewProjectionMatrix(ofRectangle viewport) const {
-	viewport = getViewport(viewport);
-	return getModelViewMatrix() * getProjectionMatrix(viewport);
+glm::mat4 ofCamera::getModelViewProjectionMatrix(const ofRectangle & viewport) const {
+	return getProjectionMatrix(viewport) * getModelViewMatrix();
 }
 
 //----------------------------------------
-ofVec3f ofCamera::worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport) const {
-	viewport = getViewport(viewport);
-
-	ofVec3f CameraXYZ = WorldXYZ * getModelViewProjectionMatrix(viewport);
-	ofVec3f ScreenXYZ;
-
+glm::vec3 ofCamera::worldToScreen(glm::vec3 WorldXYZ, const ofRectangle & viewport) const {
+	auto CameraXYZ = worldToCamera(WorldXYZ, viewport);
+	
+	glm::vec3 ScreenXYZ;
 	ScreenXYZ.x = (CameraXYZ.x + 1.0f) / 2.0f * viewport.width + viewport.x;
 	ScreenXYZ.y = (1.0f - CameraXYZ.y) / 2.0f * viewport.height + viewport.y;
-
 	ScreenXYZ.z = CameraXYZ.z;
 
 	return ScreenXYZ;
-
 }
 
 //----------------------------------------
-ofVec3f ofCamera::screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport) const {
-	viewport = getViewport(viewport);
-
+glm::vec3 ofCamera::screenToWorld(glm::vec3 ScreenXYZ, const ofRectangle & viewport) const {
 	//convert from screen to camera
-	ofVec3f CameraXYZ;
+	glm::vec3 CameraXYZ;
 	CameraXYZ.x = 2.0f * (ScreenXYZ.x - viewport.x) / viewport.width - 1.0f;
 	CameraXYZ.y = 1.0f - 2.0f *(ScreenXYZ.y - viewport.y) / viewport.height;
 	CameraXYZ.z = ScreenXYZ.z;
 
-	//get inverse camera matrix
-	ofMatrix4x4 inverseCamera;
-	inverseCamera.makeInvertOf(getModelViewProjectionMatrix(viewport));
-
-	//convert camera to world
-	return CameraXYZ * inverseCamera;
-
+	return cameraToWorld(CameraXYZ, viewport);
 }
 
 //----------------------------------------
-ofVec3f ofCamera::worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport) const {
-	return WorldXYZ * getModelViewProjectionMatrix(getViewport(viewport));
+glm::vec3 ofCamera::worldToCamera(glm::vec3 WorldXYZ, const ofRectangle & viewport) const {
+	auto MVPmatrix = getModelViewProjectionMatrix(viewport);
+	if(vFlip){
+		MVPmatrix = glm::scale(glm::mat4(1.0), glm::vec3(1.f,-1.f,1.f)) * MVPmatrix;
+	}
+	auto camera = MVPmatrix * glm::vec4(WorldXYZ, 1.0);
+	return camera.xyz() / camera.w;
+	
 }
 
 //----------------------------------------
-ofVec3f ofCamera::cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport) const {
-	ofMatrix4x4 inverseCamera;
-	inverseCamera.makeInvertOf(getModelViewProjectionMatrix(getViewport(viewport)));
-
-	return CameraXYZ * inverseCamera;
+glm::vec3 ofCamera::cameraToWorld(glm::vec3 CameraXYZ, const ofRectangle & viewport) const {
+	auto MVPmatrix = getModelViewProjectionMatrix(viewport);
+	if(vFlip){
+		MVPmatrix = glm::scale(glm::mat4(1.0), glm::vec3(1.f,-1.f,1.f)) * MVPmatrix;
+	}
+	auto world = glm::inverse(MVPmatrix) * glm::vec4(CameraXYZ, 1.0);
+	return world.xyz() / world.w;
 }
 
 //----------------------------------------
 void ofCamera::calcClipPlanes(const ofRectangle & viewport) {
 	// autocalculate near/far clip planes if not set by user
 	if(nearClip == 0 || farClip == 0) {
-		float dist = getImagePlaneDistance(getViewport(viewport));
+		float dist = getImagePlaneDistance(viewport);
 		nearClip = (nearClip == 0) ? dist / 100.0f : nearClip;
 		farClip = (farClip == 0) ? dist * 10.0f : farClip;
 	}
 }
 
-ofRectangle ofCamera::getViewport(const ofRectangle & viewport) const{
-	if(viewport.isZero()){
-		return getRenderer()->getCurrentViewport();
-	}else{
-		return viewport;
-	}
+ofRectangle ofCamera::getViewport() const{
+	return getRenderer()->getCurrentViewport();
 }
 
 shared_ptr<ofBaseRenderer> ofCamera::getRenderer() const{
@@ -248,4 +245,36 @@ shared_ptr<ofBaseRenderer> ofCamera::getRenderer() const{
 
 void ofCamera::setRenderer(shared_ptr<ofBaseRenderer> _renderer){
 	renderer = _renderer;
+}
+
+void ofCamera::drawFrustum(const ofRectangle & viewport) const {
+	ofPushMatrix();
+
+	// In World Space, the camera frustum is the "capped pyramid" which 
+	// contains everything which can be seen from a camera. 
+	//
+	// In Clip Space, the frustum is defined as a box with dimensions: -1, -1, -1 to +1, +1, +1.
+	//
+	// Much simpler. 
+	//
+	// We therefore want to draw our frustum as if in Clip Space. 
+	// For this, we must find a matrix which will transform Clip Space 
+	// back to World Space. 
+
+
+	// Note: globalTransformMatrix == inverse(modelViewMatrix)
+	glm::mat4 clipSpaceToWorld = getGlobalTransformMatrix() * glm::inverse(getProjectionMatrix(viewport));
+
+	// Move into Clip Space - this matrix will transform anything we 
+	// draw from Clip Space to World Space
+	ofMultMatrix(clipSpaceToWorld);
+
+	// Anything we draw now is transformed from Clip Space back to World Space
+
+	ofPushStyle();
+	ofNoFill();
+	ofDrawBox(0, 0, 0, 2.f, 2.f, 2.f); // In Clip Space, the frustum is standardised to be a box of dimensions -1,1 in each axis
+	ofPopStyle();
+
+	ofPopMatrix();
 }

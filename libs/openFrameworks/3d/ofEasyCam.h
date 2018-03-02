@@ -2,7 +2,8 @@
 
 #include "ofCamera.h"
 #include "ofEvents.h"
-
+#include "ofRectangle.h"
+#include "glm/gtc/quaternion.hpp"
 
 /// \brief A super simple camera for interacting with objects in 3D space.
 class ofEasyCam : public ofCamera {
@@ -13,25 +14,25 @@ public:
     /// \brief Create a default camera.
 	ofEasyCam();
 
-    /// \brief Destroy the camera.
-	~ofEasyCam();
-
-	/// \}
+	/// \}
 	/// \name Rendering
 	/// \{
 
-	virtual void begin(ofRectangle viewport = ofRectangle());
+	virtual void begin(const ofRectangle & viewport);
+	virtual void begin(){
+		begin(getViewport());
+	}
 
     /// \brief Reset the camera position and orientation.
 	void reset();
-
+	
 	/// \}
-	/// \name Camera Target
-	/// \{
+	/// \name Camera Target
+	/// \{
 
     /// \brief Set the camera's target.
     /// \param target The position of the target.
-	void setTarget(const ofVec3f& target);
+	void setTarget(const glm::vec3& target);
 
     /// \brief Set the camera's target.
     /// \param target The position of the target.
@@ -39,10 +40,10 @@ public:
 
     /// \brief Get the camera's target node reference.
     /// \returns a reference the the camera's target node.
-	ofNode& getTarget();
+	const ofNode& getTarget() const;
 
 	/// \}
-	/// \name Getters
+	/// \name Getters and Setters
 	/// \{
 
     /// \brief Set the camera's distance to the target.
@@ -65,10 +66,6 @@ public:
     /// \returns the camera's drag coefficient.
 	float getDrag() const;
 
-	/// \}
-	/// \name Setters
-	/// \{
-
 	/// \brief Enable or disable camera autodistance.
     ///
     /// Allow the camera to attempt to set the distance based on the camera's
@@ -86,11 +83,12 @@ public:
 	/// degrees.
 	/// \param value Scales the xyz axes rotation factor by these values.
 	void setRotationSensitivity(float x, float y, float z);
-    
+	void setRotationSensitivity(const glm::vec3& sensitivity);
+	
     /// \brief Set the input sensitivity of the translation.
     /// \param value Scales the xyz axes translation factor by these values.
     void setTranslationSensitivity(float x, float y, float z);
-		
+	void setTranslationSensitivity(const glm::vec3& sensitivity);
     /// \brief Set the key used to switch between camera rotation and translation.
     ///
     /// Translation will only happen when the translation key is pressed.
@@ -101,7 +99,7 @@ public:
 
     /// \brief Get the current translation key code.
     /// \returns the current translation key code.
-    char getTranslationKey();
+    char getTranslationKey() const;
 
     /// \}
     /// \name Mouse Input
@@ -116,7 +114,7 @@ public:
     /// \brief Determine if mouse camera control is enabled.
     /// \todo Rename to isMouseInputEnabled().
     /// \returns true iff mouse camera control is enabled.
-	bool getMouseInputEnabled();
+	bool getMouseInputEnabled() const;
 
     /// \brief Enable the mouse's middle button for camera control.
 	void enableMouseMiddleButton();
@@ -127,83 +125,155 @@ public:
     /// \brief Determine if the middle mouse button is enabled.
     /// \todo Rename to isMouseMiddleButtonEnabled().
     /// \returns true iff the mouse's middle button is enabled.
-	bool getMouseMiddleButtonEnabled();
+	bool getMouseMiddleButtonEnabled() const;
 
 	/// \}
 
+	/// Uses Y axis relative to the camera orientation
+	///
+	/// By default the Y axis used for interactive rotation
+	/// is vec3(0,1,0) or whatever is set as up axis using
+	/// setUpAxis
+	void setRelativeYAxis(bool relative=true);
 
+	/// Determine if the Y axis is set to be relative to the 
+	/// camera orientation
+	bool getRelativeYAxis() const;
+
+	/// Set the camera fixed up axis for interactive
+	/// manipulation.
+	void setUpAxis(const glm::vec3 & up);
+
+	/// Get the up axis.
+	const glm::vec3 & getUpAxis() const;
+
+	void enableInertia();
+	void disableInertia();
+
+	/// Determine if intertia is enabled.
+	bool getInertiaEnabled() const;
+
+	/// Set the area bounds for mouse control.
+	/// Uses the full viewport by default.
+	void setControlArea(const ofRectangle & controlArea);
+
+	/// Clears the area bounds for mouse control so that 
+	/// the full viewport is used.
+	void clearControlArea();
+
+	/// Returns the area bounds used for mouse control.
+	ofRectangle getControlArea() const;
 	
+	/// Transformation types available for mouse interaction.
+	enum TransformType{
+		TRANSFORM_NONE,
+		TRANSFORM_ROTATE,
+		TRANSFORM_TRANSLATE_XY,
+		TRANSFORM_TRANSLATE_Z,
+		TRANSFORM_SCALE
+	};
+
+	void addInteraction(TransformType type, int mouseButton, int key = -1);
+	void removeInteraction(TransformType type, int mouseButton, int key = -1);
+	bool hasInteraction(TransformType type, int mouseButton, int key = -1);
+	bool hasInteraction(int mouseButton, int key);
+	void removeAllInteractions();
 private:
 	void setDistance(float distance, bool save);
 
 	ofNode target;
 
-	bool bEnableMouseMiddleButton;
-	bool bApplyInertia;
-	bool bDoTranslate;
-	bool bDoRotate;
-	bool bDoScrollZoom;
-	bool bInsideArcball;
-	bool bMouseInputEnabled;
-	bool bDistanceSet;
-    bool bAutoDistance;
-    bool bEventsSet;
-	float lastDistance;
+	bool bEnableMouseMiddleButton = true;
+	bool bApplyInertia = false;
+	
+	bool bInsideArcball = false;
+	bool bMouseInputEnabled = true;
+	bool bDistanceSet = false;
+	bool bAutoDistance = true;
+	bool bEventsSet = false;
+	bool bIsScrolling = false;
+	float lastDistance = 0.f;
 
-	float drag;
 	
-	float xRot;
-	float yRot;
-	float zRot;
+	float drag = 0.9f;
 	
-	float moveX;
-	float moveY;
-	float moveZ;
+	/// rot and translated are used as a temporary values shared between the mouse callbacks and the update method.
+	/// How much the camera needs to be rotated.
+	glm::vec3 rot;
+	/// How much the camera needs to be translated.
+	glm::vec3 translate;
 	
-	float sensitivityX;
-	float sensitivityY;
-	float sensitivityZ;
-	float sensitivityRotX;
-	float sensitivityRotY;
-	float sensitivityRotZ;
+	/// \brief Sensitivity
+	/// These varibles determine how sensitive is the interaction.
+	/// High values mean faster and bigger movements/rotations.
+	/// Low Values mean more presicion.
+	glm::vec3 sensitivityTranslate;
+	glm::vec3 sensitivityRot;
+	float     sensitivityScroll = 1.0f;
 
-	ofVec2f lastMouse, prevMouse;
-	ofVec2f mouseVel;
+	/// \brief The previous mouse position.
+	glm::vec2 prevMouse;
+	/// \brief The mouse velocity (mouse position delta).
+	glm::vec2 mouseVel;
 	
 	void updateRotation();
 	void updateTranslation();
 	void update(ofEventArgs & args);
 	void mousePressed(ofMouseEventArgs & mouse);
 	void mouseReleased(ofMouseEventArgs & mouse);
-	void mouseDragged(ofMouseEventArgs & mouse);
 	void mouseScrolled(ofMouseEventArgs & mouse);
-	void updateMouse(const ofMouseEventArgs & mouse);
+	void updateMouse(const glm::vec2 & mouse);
+	/// \brief Returns the up axis vector;
+	glm::vec3 up() const;
 
     /// \brief The key used to differentiate between translation and rotation.
-	char doTranslationKey;
+	char doTranslationKey = 'm';
 
     /// \brief The time of the last pointer down event.
-	unsigned long lastTap;
+	unsigned long lastTap = 0;
 
     /// \brief The current rotation quaternion.
-	ofQuaternion curRot;
+	glm::quat curRot;
+	
+	/// \name On Press cache
+	/// \{
+	/// \brief camera properties when the mouse is pressed.
 
-    /// \brief The previous X axis.
-    ofVec3f prevAxisX;
-
-    /// \brief The previous Y axis.
-    ofVec3f prevAxisY;
-
-    /// \brief The previous Z axis.
-    ofVec3f prevAxisZ;
-
-    /// \brief the previous camera position.
-	ofVec3f prevPosition;
-
-    /// \brief The previous camera orientation.
-	ofQuaternion prevOrientation;
-
+	glm::vec3 lastPressAxisX;
+	glm::vec3 lastPressAxisY;
+	glm::vec3 lastPressAxisZ;
+	glm::vec3 lastPressPosition;
+	glm::quat lastPressOrientation;
+	glm::vec2 lastPressMouse;
+	
+	/// \}
+	
+	/// \brief the current viewport.
 	ofRectangle viewport;
 
-	ofCoreEvents * events;
+	/// \brief If set, the area mouse control is bound to.
+	ofRectangle controlArea;
+
+	std::vector<ofEventListener> listeners;
+	ofCoreEvents * events = nullptr;
+
+	bool bRelativeYAxis = false;
+	bool doInertia = false;
+	glm::vec3 upAxis{0,1,0};
+	
+	glm::vec2 mouseAtScroll;
+	
+	/// \brief previous far and near clip.
+	float prevFarClip, prevNearClip;
+	
+	TransformType currentTransformType;
+	/// \brief This struct holds the combination of mouse button and key press that will trigger a specific interaction.
+	struct interaction{
+		interaction():mouseButton(0), key(-1), transformType(TRANSFORM_NONE){}
+		interaction(TransformType type, int _mouseButton, int _key = -1):mouseButton(_mouseButton), key(_key), transformType(type){}
+		int mouseButton;
+		int key;
+		TransformType transformType;
+	};
+	std::vector<interaction> interactions;
 };

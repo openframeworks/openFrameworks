@@ -9,7 +9,7 @@ void ofApp::setup(){
 	// add the newFloat method to listen for eventsAddon newFloatEvent
 	ofAddListener(evObject.newFloatEvent,this,&ofApp::newFloat);
 
-	// add the newFloat method to listen for eventsAddon newFloatEvent
+	// add the newInt method to listen for eventsAddon newIntEvent
 	ofAddListener(evObject.newIntEvent,this,&ofApp::newInt);
 }
 

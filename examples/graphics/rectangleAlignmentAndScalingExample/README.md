@@ -2,7 +2,7 @@
 --
 ![Screenshot of Example](rectangleAlignmentAndScaling.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks Example is designed to demonstrate all of the different aligning and scaling functions available in ofRectangle.  The basic premise is to define a subject and target rectangle. The "subject" (on the left) rectangle will be aligned-to and scaled-to the "target" (on the right) rectangle based on the user's input. The resulting rectangle (workingSubjectRect in this case), displayed in the center, is the result of the operations.
 
@@ -46,6 +46,6 @@ Instructions for use:
  * Use "s" to shuffle through the scale modes
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example does not use any other classes. 

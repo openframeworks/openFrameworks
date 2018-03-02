@@ -11,13 +11,12 @@ CLANG_CXX_LANGUAGE_STANDARD[arch=i386] = c++11
 CLANG_CXX_LIBRARY[arch=x86_64] = libc++
 CLANG_CXX_LANGUAGE_STANDARD[arch=x86_64] = c++11
 
-MACOSX_DEPLOYMENT_TARGET = 10.7		// libstdc++ is only available in 10.7+
+MACOSX_DEPLOYMENT_TARGET = 10.9
 
 
 HEADER_OF = "$(OF_PATH)/libs/openFrameworks/**"
 HEADER_FREETYPE = "$(OF_PATH)/libs/freetype/include"
 HEADER_FREETYPE2 = "$(OF_PATH)/libs/freetype/include/freetype2"
-HEADER_POCO = "$(OF_PATH)/libs/poco/include"
 HEADER_FMODEX = "$(OF_PATH)/libs/fmodex/include"
 HEADER_GLEW = "$(OF_PATH)/libs/glew/include"
 HEADER_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/include"
@@ -26,44 +25,34 @@ HEADER_CAIRO = "$(OF_PATH)/libs/cairo/include/cairo"
 HEADER_RTAUDIO = "$(OF_PATH)/libs/rtAudio/include"
 HEADER_GLFW = "$(OF_PATH)/libs/glfw/include"
 HEADER_BOOST = "$(OF_PATH)/libs/boost/include"
-HEADER_SSL = "$(OF_PATH)/libs/openssl/include"
-HEADER_UTF8 = "$(OF_PATH)/libs/utf8cpp/include"
+HEADER_UTF8 = "$(OF_PATH)/libs/utf8/include"
 HEADER_JSON = "$(OF_PATH)/libs/json/include"
+HEADER_GLM = "$(OF_PATH)/libs/glm/include"
+HEADER_CURL = "$(OF_PATH)/libs/curl/include"
+HEADER_URIPARSER = "$(OF_PATH)/libs/uriparser/include"
+HEADER_PUGIXML = "$(OF_PATH)/libs/pugixml/include"
 
 LIB_FMODEX = "$(OF_PATH)/libs/fmodex/lib/osx/libfmodex.dylib"
-LIB_GLUT = "$(OF_PATH)/libs/glut/lib/osx/GLUT.framework/Versions/A/GLUT"
 LIB_GLFW = "$(OF_PATH)/libs/glfw/lib/osx/glfw3.a"
 LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/osx/freeimage.a"
 LIB_FREETYPE = "$(OF_PATH)/libs/freetype/lib/osx/freetype.a"
 LIB_GLEW = "$(OF_PATH)/libs/glew/lib/osx/glew.a"
-
-LIB_POCO_0 = "$(OF_PATH)/libs/poco/lib/osx/PocoCrypto.a"
-LIB_POCO_1 = "$(OF_PATH)/libs/poco/lib/osx/PocoData.a"
-LIB_POCO_2 = "$(OF_PATH)/libs/poco/lib/osx/PocoDataSQLite.a"
-LIB_POCO_3 = "$(OF_PATH)/libs/poco/lib/osx/PocoJSON.a"
-LIB_POCO_4 = "$(OF_PATH)/libs/poco/lib/osx/PocoUtil.a"
-LIB_POCO_5 = "$(OF_PATH)/libs/poco/lib/osx/PocoXML.a"
-LIB_POCO_6 = "$(OF_PATH)/libs/poco/lib/osx/PocoNet.a"
-LIB_POCO_7 = "$(OF_PATH)/libs/poco/lib/osx/PocoNetSSL.a"
-LIB_POCO_8 = "$(OF_PATH)/libs/poco/lib/osx/PocoZip.a"
-LIB_POCO_9 = "$(OF_PATH)/libs/poco/lib/osx/PocoFoundation.a"
-LIB_POCO = $(LIB_POCO_0) $(LIB_POCO_1) $(LIB_POCO_2) $(LIB_POCO_3) $(LIB_POCO_4) $(LIB_POCO_5) $(LIB_POCO_6) $(LIB_POCO_7) $(LIB_POCO_8) $(LIB_POCO_9)
-
 LIB_RTAUDIO = "$(OF_PATH)/libs/rtAudio/lib/osx/rtAudio.a"
 LIB_TESS = "$(OF_PATH)/libs/tess2/lib/osx/tess2.a"
 LIB_CAIRO1 = "$(OF_PATH)/libs/cairo/lib/osx/cairo-script-interpreter.a"
 LIB_CAIRO2 = "$(OF_PATH)/libs/cairo/lib/osx/cairo.a"
 LIB_CAIRO3 = "$(OF_PATH)/libs/cairo/lib/osx/pixman-1.a"
-LIB_OPENSSL1 = "$(OF_PATH)/libs/openssl/lib/osx/crypto.a"
-LIB_OPENSSL2 = "$(OF_PATH)/libs/openssl/lib/osx/ssl.a"
 LIB_BOOST_SYSTEM = "$(OF_PATH)/libs/boost/lib/osx/boost_system.a"
 LIB_BOOST_FS = "$(OF_PATH)/libs/boost/lib/osx/boost_filesystem.a"
+LIB_CURL = "$(OF_PATH)/libs/curl/lib/osx/curl.a"
+LIB_URIPARSER = "$(OF_PATH)/libs/uriparser/lib/osx/uriparser.a"
+LIB_PUGIXML = "$(OF_PATH)/libs/pugixml/lib/osx/pugixml.a"
 
 
-OF_CORE_LIBS = $(LIB_POCO) $(LIB_TESS) $(LIB_GLEW) $(LIB_CAIRO1) $(LIB_CAIRO2) $(LIB_CAIRO3) $(LIB_FMODEX) $(LIB_RTAUDIO) $(LIB_OPENSSL1) $(LIB_OPENSSL2) $(LIB_GLFW) $(LIB_FREEIMAGE) $(LIB_FREETYPE) $(LIB_BOOST_FS) $(LIB_BOOST_SYSTEM)
-
-OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_POCO) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMODEX) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW) $(HEADER_BOOST) $(HEADER_UTF8) $(HEADER_SSL) $(HEADER_JSON)
-
-OF_CORE_FRAMEWORKS = -framework Accelerate -framework AGL -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework IOKit -framework OpenGL -framework QuartzCore -framework QuickTime -framework QTKit -framework GLUT
+OF_CORE_LIBS = $(LIB_TESS) $(LIB_GLEW) $(LIB_CAIRO1) $(LIB_CAIRO2) $(LIB_CAIRO3) $(LIB_FMODEX) $(LIB_RTAUDIO) $(LIB_GLFW) $(LIB_FREEIMAGE) $(LIB_FREETYPE) $(LIB_BOOST_FS) $(LIB_BOOST_SYSTEM) $(LIB_CURL) $(LIB_URIPARSER) $(LIB_PUGIXML)
 
 
+OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMODEX) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW) $(HEADER_BOOST) $(HEADER_UTF8) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML)
+
+
+OF_CORE_FRAMEWORKS = -framework Accelerate -framework AGL -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework IOKit -framework OpenGL -framework QuartzCore -framework QuickTime -framework QTKit -framework Security -framework LDAP

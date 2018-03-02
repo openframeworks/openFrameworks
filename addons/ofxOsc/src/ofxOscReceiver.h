@@ -1,101 +1,104 @@
-/*
- 
- Copyright (c) 2007-2009, Damian Stewart
- All rights reserved.
- 
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met:
- * Redistributions of source code must retain the above copyright
- notice, this list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright
- notice, this list of conditions and the following disclaimer in the
- documentation and/or other materials provided with the distribution.
- * Neither the name of the developer nor the
- names of its contributors may be used to endorse or promote products
- derived from this software without specific prior written permission.
- 
- THIS SOFTWARE IS PROVIDED BY DAMIAN STEWART ''AS IS'' AND ANY
- EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL DAMIAN STEWART BE LIABLE FOR ANY
- DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
+// copyright (c) openFrameworks team 2010-2017
+// copyright (c) Damian Stewart 2007-2009
 #pragma once
 
-#include <deque>
-#include "ofMain.h"
+#include "ofxOscMessage.h"
+#include "ofParameter.h"
+#include "ofThreadChannel.h"
 
-#ifdef TARGET_WIN32
-// threads
-#include <windows.h>
-#else
-// threads
-#include <pthread.h>
-#endif
-
-// osc
 #include "OscTypes.h"
 #include "OscPacketListener.h"
 #include "UdpSocket.h"
 
-// ofxOsc
-#include "ofxOscMessage.h"
+/// \struct ofxOscSenderSettings
+/// \brief OSC message sender settings
+struct ofxOscReceiverSettings {
+	int port = 0;        //< port to listen on
+	bool reuse = true;   //< should the port be reused by other receivers?
+	bool start = true;   //< start listening after setup?
+};
 
-class ofxOscReceiver : public osc::OscPacketListener
-{
+/// \class ofxOscReceiver
+/// \brief OSC message receiver which listens on a network port
+class ofxOscReceiver : public osc::OscPacketListener {
 public:
-	ofxOscReceiver();
-	ofxOscReceiver(const ofxOscReceiver & mom);
-	ofxOscReceiver & operator=(const ofxOscReceiver & mom);
 
-	/// listen_port is the port to listen for messages on
-	bool setup( int listen_port );
+	ofxOscReceiver() {};
+	~ofxOscReceiver();
+	ofxOscReceiver(const ofxOscReceiver &mom);
+	ofxOscReceiver& operator=(const ofxOscReceiver &mom);
+	/// for operator= and copy constructor
+	ofxOscReceiver& copy(const ofxOscReceiver &other);
 
-	/// returns true if there are any messages waiting for collection
-	bool hasWaitingMessages();
-	/// take the next message on the queue of received messages, copy its details into message, and
-	/// remove it from the queue. return false if there are no more messages to be got, otherwise
-	/// return true
-	OF_DEPRECATED_MSG("Pass a reference instead of a pointer", bool getNextMessage( ofxOscMessage* msg));
-	bool getNextMessage( ofxOscMessage& msg );
+	/// set up the receiver with the port to listen for messages on
+	/// and start listening
+	///
+	/// multiple receivers can share the same port if port reuse is
+	/// enabled (true by default)
+	///
+	/// \return true if listening started
+	bool setup(int port);
+	
+	/// set up the receiver with the given settings
+	///
+	/// starts listening if start is true (true by default)
+	///
+	/// multiple receivers can share the same port if port reuse is
+	/// enabled (true by default)
+	///
+	/// \return true if listening was started or start was not required
+	bool setup(const ofxOscReceiverSettings &settings);
+	
+	/// start listening manually using the current settings
+	///
+	/// this is not required if you called setup(port)
+	/// or setup(settings) with start set to true
+	///
+	/// \return true if listening started or was already running
+	bool start();
+	
+	/// stop listening, does not clear port value
+	void stop();
+	
+	/// \return true if the receiver is listening
+	bool isListening() const;
 
-	bool getParameter(ofAbstractParameter & parameter);
+	/// \return true if there are any messages waiting for collection
+	bool hasWaitingMessages() const;
 
-	/// disables port reuse reuse which allows to use the same port by several sockets
-	void disableReuse();
+	/// take the next message on the queue of received messages, copy its
+	/// details into message, and remove it from the queue
+	/// \return false if there are no more messages to be got, otherwise return true
+	bool getNextMessage(ofxOscMessage& msg);
+	OF_DEPRECATED_MSG("Pass a reference instead of a pointer", bool getNextMessage(ofxOscMessage *msg));
+	
+	/// try to get waiting message an ofParameter
+	/// \return true if message was handled by the given parameter
+	bool getParameter(ofAbstractParameter &parameter);
 
-	/// enabled broadcast capabilities (usually no need to call this, enabled by default)
-	void enableReuse();
+	/// \return listening port
+	int getPort() const;
+	
+	/// \return the current receiver settings
+	const ofxOscReceiverSettings &getSettings() const;
+	
+	/// output stream operator for string conversion and printing
+	/// \return current port value and "listening" if receiver is listening
+	friend std::ostream& operator<<(std::ostream &os, const ofxOscReceiver &receiver);
 
 protected:
+
 	/// process an incoming osc message and add it to the queue
-	virtual void ProcessMessage( const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint );
+	virtual void ProcessMessage(const osc::ReceivedMessage &m, const osc::IpEndpointName &remoteEndpoint);
 
 private:
-	void setup(osc::UdpListeningReceiveSocket * socket);
-	// shutdown the listener
-	void shutdown();
 
-	// start the listening thread
-#ifdef TARGET_WIN32
-	static DWORD WINAPI startThread( void* ofxOscReceiverInstance );
-#else
-	static void* startThread( void* ofxOscReceiverInstance );
-#endif
+	/// socket to listen on, unique for each port
+	/// shared between objects if allowReuse is true
+	std::unique_ptr<osc::UdpListeningReceiveSocket, std::function<void(osc::UdpListeningReceiveSocket*)>> listenSocket;
 
-	// socket to listen on
-	std::unique_ptr<osc::UdpListeningReceiveSocket, std::function<void(osc::UdpListeningReceiveSocket*)>> listen_socket;
+	std::thread listenThread; //< listener thread
+	ofThreadChannel<ofxOscMessage> messagesChannel; //< message passing thread channel
 
-	std::thread listen_thread;
-	ofThreadChannel<ofxOscMessage> messagesChannel;
-
-	bool allowReuse;
-	int listen_port;
-
+	ofxOscReceiverSettings settings; //< current settings
 };

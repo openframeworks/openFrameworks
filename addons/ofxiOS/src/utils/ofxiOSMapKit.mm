@@ -30,11 +30,14 @@
 
 #include "ofxiOSMapKit.h"
 #include <TargetConditionals.h>
+
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #include "ofxiOSMapKitDelegate.h"
 #include "ofxiOSExtras.h"
 #include "ofAppRunner.h"
+#include "ofLog.h"
+#include "glm/common.hpp"
 
 ofxiOSMapKit::ofxiOSMapKit() {
 	mapView = nil;
@@ -159,12 +162,12 @@ CLLocationCoordinate2D ofxiOSMapKit::getCenterLocation() {
 
 
 // convert location (latitude, longitude) to screen coordinates (i.e. pixels)
-ofPoint ofxiOSMapKit::getScreenCoordinatesForLocation(double latitude, double longitude) {
+glm::vec2 ofxiOSMapKit::getScreenCoordinatesForLocation(double latitude, double longitude) {
     if(isOpen()) {
         CGPoint cgPoint = [mapView convertCoordinate:makeCLLocation(latitude, longitude) toPointToView:nil];
-        return ofPoint(cgPoint.x, cgPoint.y);
+        return glm::vec2(cgPoint.x, cgPoint.y);
     } else {
-        return ofPoint();
+        return glm::vec2();
     }
 }
 
@@ -202,8 +205,8 @@ ofRectangle ofxiOSMapKit::getScreenRectForRegionWithMeters(double latitude, doub
 
 CLLocationCoordinate2D ofxiOSMapKit::makeCLLocation(double latitude, double longitude) {
 	CLLocationCoordinate2D center = { 
-		CLAMP(latitude, -MAX_LATITUDE, MAX_LATITUDE),
-		CLAMP(longitude, -MAX_LONGITUDE, MAX_LONGITUDE)		
+		glm::clamp(latitude, -MAX_LATITUDE, MAX_LATITUDE),
+		glm::clamp(longitude, -MAX_LONGITUDE, MAX_LONGITUDE)
 	};
 	return center;
 }
@@ -259,7 +262,7 @@ void ofxiOSMapKit::didFinishLoadingMap() {
 }
 
 
-void ofxiOSMapKit::errorLoadingMap(string errorDescription) {
+void ofxiOSMapKit::errorLoadingMap(std::string errorDescription) {
 	for(std::list<ofxiOSMapKitListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
 		ofxiOSMapKitListener* o = *it;
 		o->errorLoadingMap(errorDescription);

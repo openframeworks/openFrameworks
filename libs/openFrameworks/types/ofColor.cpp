@@ -153,29 +153,19 @@ template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::yell
 
 template<typename A, typename B>
 A clampedSubtract(const A& a, const B& b) {
-	return CLAMP((float) a - (float) b, 0, ofColor_<A>::limit());
+	return glm::clamp((float) a - (float) b, 0.f, ofColor_<A>::limit());
 }
 template<typename A, typename B>
 A clampedAdd(const A& a, const B& b) {
-	return CLAMP((float) a + (float) b, 0, ofColor_<A>::limit());
+	return glm::clamp((float) a + (float) b, 0.f, ofColor_<A>::limit());
 }
 template<typename A, typename B>
 A clampedDivide(const A& a, const B& b) {
-	return CLAMP((float) a / (float) b, 0, ofColor_<A>::limit());
+	return glm::clamp((float) a / (float) b, 0.f, ofColor_<A>::limit());
 }
 template<typename A, typename B>
 A clampedMultiply(const A& a, const B& b) {
-	return CLAMP((float) a * (float) b, 0, ofColor_<A>::limit());
-}
-
-template<typename PixelType>
-float ofColor_<PixelType>::limit() {
-	return numeric_limits<PixelType>::max();
-}
-
-template<>
-float ofColor_<float>::limit() {
-	return 1.f;
+	return glm::clamp((float) a * (float) b, 0.f, ofColor_<A>::limit());
 }
 
 template<typename PixelType>
@@ -247,29 +237,12 @@ void ofColor_<PixelType>::set(const ofColor_<PixelType>& color){
 	a = color.a;
 }
 
-
-template<>
-void ofColor_<unsigned char>::setHex(int hexColor, float alpha){
-	r = (hexColor >> 16) & 0xff;
-	g = (hexColor >> 8) & 0xff;
-	b = (hexColor >> 0) & 0xff;
-	a = alpha;
-}
-
-template<typename PixelType>
-void ofColor_<PixelType>::setHex (int hexColor, float alpha){
-	ofColor c = ofColor::fromHex(hexColor);
-	*this = c;
-	a = alpha;
-}
-
-
 template<typename PixelType>
 ofColor_<PixelType>& ofColor_<PixelType>::clamp(){
-	r = CLAMP(r, 0.0f, limit());
-	g = CLAMP(g, 0.0f, limit());
-	b = CLAMP(b, 0.0f, limit());
-	a = CLAMP(a, 0.0f, limit());
+	r = glm::clamp(float(r), 0.0f, limit());
+	g = glm::clamp(float(g), 0.0f, limit());
+	b = glm::clamp(float(b), 0.0f, limit());
+	a = glm::clamp(float(a), 0.0f, limit());
 	return *this;
 }
 
@@ -445,8 +418,8 @@ void ofColor_<PixelType>::setBrightness(float brightness) {
 
 template<typename PixelType>
 void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, float alpha) {
-	saturation = ofClamp(saturation, 0, limit());
-	brightness = ofClamp(brightness, 0, limit());
+	saturation = glm::clamp(saturation, 0.f, limit());
+	brightness = glm::clamp(brightness, 0.f, limit());
 	if(brightness == 0) { // black
 		set(0);
 	} else if(saturation == 0) { // grays
@@ -497,22 +470,8 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, 
     a = alpha;
 }
 
-template<>
-int ofColor_<unsigned char>::getHex() const {
-	return
-		((0xff & (unsigned char) r) << 16) |
-		((0xff & (unsigned char) g) << 8) |
-		((0xff & (unsigned char) b));
-}
-
 template<typename PixelType>
-int ofColor_<PixelType>::getHex() const {
-	return ((ofColor) *this).getHex();
-}
-
-
-template<typename PixelType>
-ofColor_<PixelType> & ofColor_<PixelType>::operator = (const float& val){
+ofColor_<PixelType> & ofColor_<PixelType>::operator = (float val){
 	r = val;
 	g = val;
 	b = val;
@@ -542,7 +501,7 @@ ofColor_<PixelType> ofColor_<PixelType>::operator + (const ofColor_<PixelType>& 
 
 
 template<typename PixelType>
-ofColor_<PixelType> ofColor_<PixelType>::operator + (const float& val) const{
+ofColor_<PixelType> ofColor_<PixelType>::operator + (float val) const{
 	ofColor_<PixelType> result(*this);
 	result += val;
 	return result;
@@ -559,7 +518,7 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator += (const ofColor_<PixelType
 
 
 template<typename PixelType>
-ofColor_<PixelType> & ofColor_<PixelType>::operator += (const float& val){
+ofColor_<PixelType> & ofColor_<PixelType>::operator += (float val){
 	r = clampedAdd(r, val);
 	g = clampedAdd(g, val);
 	b = clampedAdd(b, val);
@@ -575,7 +534,7 @@ ofColor_<PixelType> ofColor_<PixelType>::operator - (const ofColor_<PixelType>& 
 
 
 template<typename PixelType>
-ofColor_<PixelType> ofColor_<PixelType>::operator - (const float& val) const{
+ofColor_<PixelType> ofColor_<PixelType>::operator - (float val) const{
 	ofColor_<PixelType> result(*this);
 	result -= val;
 	return result;
@@ -592,7 +551,7 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator -= (const ofColor_<PixelType
 
 
 template<typename PixelType>
-ofColor_<PixelType> & ofColor_<PixelType>::operator -= (const float& val){
+ofColor_<PixelType> & ofColor_<PixelType>::operator -= (float val){
 	r = clampedSubtract(r, val);
 	g = clampedSubtract(g, val);
 	b = clampedSubtract(b, val);
@@ -608,7 +567,7 @@ ofColor_<PixelType> ofColor_<PixelType>::operator * (const ofColor_<PixelType>& 
 
 
 template<typename PixelType>
-ofColor_<PixelType> ofColor_<PixelType>::operator * (const float& val) const{
+ofColor_<PixelType> ofColor_<PixelType>::operator * (float val) const{
 	ofColor_<PixelType> result(*this);
 	result *= val;
 	return result;
@@ -625,7 +584,7 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator *= (const ofColor_<PixelType
 
 
 template<typename PixelType>
-ofColor_<PixelType> & ofColor_<PixelType>::operator *= (const float& val){
+ofColor_<PixelType> & ofColor_<PixelType>::operator *= (float val){
 	r = clampedMultiply(r, val);
 	g = clampedMultiply(g, val);
 	b = clampedMultiply(b, val);
@@ -642,7 +601,7 @@ ofColor_<PixelType> ofColor_<PixelType>::operator / (const ofColor_<PixelType>& 
 
 
 template<typename PixelType>
-ofColor_<PixelType> ofColor_<PixelType>::operator / (const float& val) const{
+ofColor_<PixelType> ofColor_<PixelType>::operator / (float val) const{
 	ofColor_<PixelType> result(*this);
 	result /= val;
 	return result;
@@ -659,7 +618,7 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator /= (const ofColor_<PixelType
 
 
 template<typename PixelType>
-ofColor_<PixelType> & ofColor_<PixelType>::operator /= (const float& val){
+ofColor_<PixelType> & ofColor_<PixelType>::operator /= (float val){
 	r = clampedDivide(r, val);
 	g = clampedDivide(g, val);
 	b = clampedDivide(b, val);

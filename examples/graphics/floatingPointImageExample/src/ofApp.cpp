@@ -26,14 +26,14 @@ ofVec3f ofApp::getVertexFromImg(ofFloatImage& img, int x, int y) {
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-	//note: you can get nicer anti-aliased rendering ( with slower fps ) 
+	//note: you can get nicer anti-aliased rendering ( with slower fps )
 	//if you uncomment the appropriate line in main.cpp
 
 	img.load("nyc-small.exr");
-	
+
 	light.enable();
 	light.setPosition(+500, 0, 0);
-	
+
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
 	int skip = 1;
 	int width = img.getWidth();
@@ -44,7 +44,7 @@ void ofApp::setup(){
 			ofVec3f ne = getVertexFromImg(img, x + skip, y);
 			ofVec3f sw = getVertexFromImg(img, x, y + skip);
 			ofVec3f se = getVertexFromImg(img, x + skip, y + skip);
-			
+
 			addFace(mesh, nw, ne, se, sw);
 		}
 	}
@@ -58,10 +58,10 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	ofBackground(0);
-	
+
 	easyCam.begin();
 		ofScale(1, -1, 1);
-		ofRotateX(60);
+		ofRotateXDeg(60);
 		ofTranslate(-img.getWidth() / 2, -img.getHeight() / 2, 0);
 		ofSetColor(255);
 		ofEnableDepthTest();
@@ -121,6 +121,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

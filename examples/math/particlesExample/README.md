@@ -1,8 +1,8 @@
-#About Particles Example
+# About Particles Example
 --
 ![Screenshot of Example](particlesExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks example is designed to illustrate and explore particle systems and some of their behaviours for interactivity such as attraction and repulsion. 
 
@@ -32,7 +32,7 @@ Instructions for use:
 * Press the ```4``` key to change the particle system mode to ```PARTICLE_MODE_NOISE```
 * Press the ```spacebar``` to reset the particle systems and mode to its original state
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses "demoParticle" for the particle system. 
 

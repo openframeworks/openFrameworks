@@ -1,9 +1,9 @@
-#About XMLExample
+# About XMLExample
 
 ![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](xmlExample.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates how to read and write an xml file to the file system leveraging ```ofXML```. 
 
@@ -42,6 +42,6 @@ Instructions for use:
 * Restart the application to see the saved settings of the last drawn recording restored. 
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no other classes.

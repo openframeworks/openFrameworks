@@ -25,12 +25,10 @@
  */
 
 #include <string.h> // for memcpy
+#include <unistd.h> // for usleep
 #include "freenect_internal.h"
 #include "flags.h"
 
-
-// freenect_set_flag is the only function exposed in libfreenect.h
-// The rest are available internally via #include flags.h
 
 FN_INTERNAL int register_for_flag(int flag)
 {
@@ -47,6 +45,34 @@ FN_INTERNAL int register_for_flag(int flag)
 
 int freenect_set_flag(freenect_device *dev, freenect_flag flag, freenect_flag_value value)
 {
+	freenect_context *ctx = dev->parent;
+
+	if (flag == FREENECT_NEAR_MODE)
+	{
+		if (dev->usb_cam.PID != PID_K4W_CAMERA)
+		{
+			FN_WARNING("Near mode is only supported by K4W");
+			return -1;
+		}
+
+		if (value == FREENECT_ON)
+		{
+			int ret = write_register(dev, 0x0015, 0x0007);
+			if (ret < 0)
+				return ret;
+			usleep(100000);
+			return write_register(dev, 0x02EF, 0x0000);
+		}
+		else
+		{
+			int ret = write_register(dev, 0x0015, 0x001E);
+			if (ret < 0)
+				return ret;
+			usleep(100000);
+			return write_register(dev, 0x02EF, 0x0190);
+		}
+	}
+
     if (flag >= (1 << 16))
     {
         int reg = register_for_flag(flag);
@@ -65,6 +91,42 @@ int freenect_set_flag(freenect_device *dev, freenect_flag flag, freenect_flag_va
 	else
 		cmos_value &= ~flag;
 	return write_cmos_register(dev, 0x0106, cmos_value);
+}
+
+int freenect_get_ir_brightness(freenect_device *dev)
+{
+	freenect_context *ctx = dev->parent;
+
+	const uint16_t brightness = read_register(dev, 0x15);
+	if (brightness == UINT16_MAX)
+	{
+		FN_WARNING("Failed to get IR brightness!");
+		return -1;
+	}
+
+	return brightness;
+}
+
+int freenect_set_ir_brightness(freenect_device *dev, uint16_t brightness)
+{
+	freenect_context *ctx = dev->parent;
+
+	if (brightness < 1)
+	{
+		brightness = 1;
+	}
+	if (brightness > 50)
+	{
+		brightness = 50;
+	}
+
+	const int ret = write_register(dev, 0x15, brightness);
+	if (ret < 0)
+	{
+		FN_WARNING("Failed to set IR brightness");
+	}
+
+	return ret;
 }
 
 typedef struct {
