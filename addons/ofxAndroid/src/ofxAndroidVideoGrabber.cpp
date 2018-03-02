@@ -37,6 +37,7 @@ struct ofxAndroidVideoGrabber::Data{
 	void onAppPause();
 	void onAppResume();
 	void loadTexture();
+	void update();
 };
 
 map<int,weak_ptr<ofxAndroidVideoGrabber::Data>> & instances(){
@@ -98,6 +99,15 @@ ofxAndroidVideoGrabber::Data::Data()
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofxAndroidVideoGrabber::Data::onAppResume);
 }
 
+void ofxAndroidVideoGrabber::Data::update(){
+	JNIEnv *env = ofGetJNIEnv();
+	jmethodID getTextureMatrix = env->GetMethodID(getJavaClass(), "getTextureMatrix", "([F)V");
+	env->CallVoidMethod(javaVideoGrabber, getTextureMatrix, matrixJava);
+	jfloat* cfloats = env->GetFloatArrayElements(matrixJava, 0);
+	ofMatrix4x4 mat(cfloats);
+	texture.setTextureMatrix(mat);
+}
+
 ofxAndroidVideoGrabber::Data::~Data(){
 	JNIEnv *env = ofGetJNIEnv();
 	jclass javaClass = getJavaClass();
@@ -140,6 +150,7 @@ void ofxAndroidVideoGrabber::Data::loadTexture(){
 	texture.texData.tex_u = 1;
 	texture.texData.textureTarget = GL_TEXTURE_EXTERNAL_OES;
 	texture.texData.glInternalFormat = GL_RGBA;
+	texture.texData.bFlipTexture = true;
 
 
 }
@@ -222,6 +233,7 @@ void ofxAndroidVideoGrabber::update(){
 		// This will tell the camera api that we are ready for a new frame
 		jmethodID update = ofGetJNIEnv()->GetMethodID(getJavaClass(), "update", "()V");
 		ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber, update);
+		data->update();
 	} else {
 		data->bIsFrameNew = false;
 	}
