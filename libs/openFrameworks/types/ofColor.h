@@ -1,8 +1,9 @@
 #pragma once
 
 
+#include "ofConstants.h"
 #include <limits>
-#include "ofMath.h"
+#include "glm/common.hpp"
 
 /// \class ofColor_
 ///
@@ -74,7 +75,7 @@ public:
     /// \param alpha The alpha value of the color.
     static ofColor_<PixelType> fromHex(int hexColor, float alpha = limit());
 
-    /// \}
+    /// \}
 
     /// \name Data Accessors
     /// \{
@@ -92,7 +93,7 @@ public:
         PixelType v[4]; ///< \brief The pixel values as an array.
     };
 
-    /// \}
+    /// \}
 
     /// \name Setters
     /// \{
@@ -251,7 +252,7 @@ public:
     /// \brief Get the Hue of this color.
     ///
     /// The color is converted from the default RGB to an HSB color space and
-    /// the resulting Hue value is returned.  The resulting hue value will
+    /// the resulting Hue value is returned.  The resulting hue value will
     /// always be returned in the range 0 - limit().
     ///
     /// \returns The Hue value in the range 0 - limit().
@@ -260,7 +261,7 @@ public:
     /// \brief Get the Hue angle of this color.
     ///
     /// The color is converted from the default RGB to an HSB color space and
-    /// the resulting Hue angle is returned.  The resulting hue value will
+    /// the resulting Hue angle is returned.  The resulting hue value will
     /// always be returned in degrees in the range 0 - 360.
     ///
     /// \returns The Hue angle in the range 0 - 360.
@@ -269,8 +270,8 @@ public:
     /// \brief Get the Saturation of this color.
     ///
     /// The color is converted from the default RGB to an HSB color space and
-    /// the resulting saturation is returned.  The resulting saturation value
-    /// will always be returned in the range 0 - limit().
+    /// the resulting saturation is returned.  The resulting saturation value
+    /// will always be returned in the range 0 - limit().
     ///
     /// \returns The saturation in the range 0 - limit().
     float getSaturation() const;
@@ -309,7 +310,7 @@ public:
 
     /// \}
 
-    /// \name Operators
+    /// \name Operators
     /// \{
 
     /// \brief Assign a color using an existing color.
@@ -526,14 +527,14 @@ public:
     /// \param os An output stream reference.
     /// \param color The color to write to the output stream.
     /// \returns The passed output stream reference, useful for method chaining.
-    friend ostream& operator << (ostream& os, const ofColor_<PixelType>& color) {
-        if(sizeof(PixelType) == 1) {
-            os << (int) color.r << ", " << (int) color.g << ", " << (int) color.b << ", " << (int) color.a;
-        } else {
-            os << color.r << ", " << color.g << ", " << color.b << ", " << color.a;
-        }
-        return os;
-    }
+	friend std::ostream& operator << (std::ostream& os, const ofColor_<PixelType>& color) {
+		if(sizeof(PixelType) == 1) {
+			os << (int) color.r << ", " << (int) color.g << ", " << (int) color.b << ", " << (int) color.a;
+		} else {
+			os << color.r << ", " << color.g << ", " << color.b << ", " << color.a;
+		}
+		return os;
+	}
 
     /// \brief An input stream operator.
     ///
@@ -543,36 +544,36 @@ public:
     /// \param is An input stream reference.
     /// \param color The color to fill with the input stream.
     /// \returns The passed input stream reference, useful for method chaining.
-    friend istream& operator >> (istream& is, ofColor_<PixelType>& color) {
-        if(sizeof(PixelType) == 1) {
-            int component;
-            is >> std::skipws >> component;
-            color.r = component;
-            is.ignore(1);
-            is >> std::skipws >> component;
-            color.g = component;
-            is.ignore(1);
-            is >> std::skipws >> component;
-            color.b = component;
-            is.ignore(1);
-            is >> std::skipws >> component;
-            color.a = component;
-        }else{
-            is >> std::skipws >> color.r;
-            is.ignore(1);
-            is >> std::skipws >> color.g;
-            is.ignore(1);
-            is >> std::skipws >> color.b;
-            is.ignore(1);
-            is >> std::skipws >> color.a;
-        }
-        return is;
-    }
+	friend std::istream& operator >> (std::istream& is, ofColor_<PixelType>& color) {
+		if(sizeof(PixelType) == 1) {
+			int component;
+			is >> std::skipws >> component;
+			color.r = component;
+			is.ignore(1);
+			is >> std::skipws >> component;
+			color.g = component;
+			is.ignore(1);
+			is >> std::skipws >> component;
+			color.b = component;
+			is.ignore(1);
+			is >> std::skipws >> component;
+			color.a = component;
+		}else{
+			is >> std::skipws >> color.r;
+			is.ignore(1);
+			is >> std::skipws >> color.g;
+			is.ignore(1);
+			is >> std::skipws >> color.b;
+			is.ignore(1);
+			is >> std::skipws >> color.a;
+		}
+		return is;
+	}
 
 
     /// \}
 
-    /// \name Predefined Colors
+    /// \name Predefined Colors
 	///
 	/// \brief A collection of static colors defined by name.
     ///
@@ -608,6 +609,7 @@ public:
     sandyBrown,seaGreen,seaShell,sienna,silver,skyBlue,slateBlue,slateGray,slateGrey,snow,
     springGreen,steelBlue,blueSteel,tan,teal,thistle,tomato,turquoise,violet,wheat,whiteSmoke,
     yellowGreen;
+
 
     /// \}
 
@@ -659,7 +661,7 @@ void ofColor_<PixelType>::copyFrom(const ofColor_<SrcType> & mom){
 	if(sizeof(SrcType) == sizeof(float)) {
 		// coming from float we need a special case to clamp the values
 		for(int i = 0; i < 4; i++){
-			v[i] = ofClamp(mom[i], 0, 1) * factor;
+			v[i] = glm::clamp(float(mom[i]), 0.f, 1.f) * factor;
 		}
 	} else{
 		// everything else is a straight scaling
@@ -673,3 +675,53 @@ template <typename PixelType>
 ofColor_<PixelType> operator*(float val, const ofColor_<PixelType> &color) {
 	return color * val;
 }
+
+template<typename PixelType>
+inline float ofColor_<PixelType>::limit() {
+	return std::numeric_limits<PixelType>::max();
+}
+
+template<>
+inline float ofColor_<float>::limit() {
+	return 1.f;
+}
+
+template<>
+inline int ofColor_<unsigned char>::getHex() const {
+	return
+		((0xff & (unsigned char) r) << 16) |
+		((0xff & (unsigned char) g) << 8) |
+		((0xff & (unsigned char) b));
+}
+
+template<typename PixelType>
+inline int ofColor_<PixelType>::getHex() const {
+	return ((ofColor) *this).getHex();
+}
+
+template<>
+inline void ofColor_<unsigned char>::setHex(int hexColor, float alpha){
+	r = (hexColor >> 16) & 0xff;
+	g = (hexColor >> 8) & 0xff;
+	b = (hexColor >> 0) & 0xff;
+	a = alpha;
+}
+
+template<typename PixelType>
+inline void ofColor_<PixelType>::setHex (int hexColor, float alpha){
+	ofColor c = ofColor::fromHex(hexColor);
+	*this = c;
+	a = alpha;
+}
+
+
+extern template class ofColor_<char>;
+extern template class ofColor_<unsigned char>;
+extern template class ofColor_<short>;
+extern template class ofColor_<unsigned short>;
+extern template class ofColor_<int>;
+extern template class ofColor_<unsigned int>;
+extern template class ofColor_<long>;
+extern template class ofColor_<unsigned long>;
+extern template class ofColor_<float>;
+extern template class ofColor_<double>;

@@ -25,7 +25,6 @@ class ofApp : public ofBaseApp{
 		ofFbo fbo;
 		ofBufferObject pixelBufferBack, pixelBufferFront;
 		ofBoxPrimitive box;
-		ofPixels pixels;
 		bool record;
 		bool firstFrame;
 		ImageSaverThread saverThread;

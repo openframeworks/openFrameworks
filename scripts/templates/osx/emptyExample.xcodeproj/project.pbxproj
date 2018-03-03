@@ -658,7 +658,7 @@ fi
 		<key>E4B69E1D0A3A1BDC003C02F2</key>
 		<dict>
 			<key>fileEncoding</key>
-			<string>30</string>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
@@ -675,7 +675,7 @@ fi
 			<key>explicitFileType</key>
 			<string>sourcecode.cpp.cpp</string>
 			<key>fileEncoding</key>
-			<string>30</string>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>name</key>
@@ -688,7 +688,7 @@ fi
 		<key>E4B69E1F0A3A1BDC003C02F2</key>
 		<dict>
 			<key>fileEncoding</key>
-			<string>30</string>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
@@ -717,7 +717,7 @@ fi
 		<key>E4B6FCAD0C3E899E008CF71C</key>
 		<dict>
 			<key>fileEncoding</key>
-			<string>30</string>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
@@ -748,7 +748,7 @@ fi
 # Copy default icon file into App/Resources
 rsync -aved "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 # Copy libfmod and change install directory for fmod to run
-rsync -aved ../../../libs/fmodex/lib/osx/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
+rsync -aved "$OF_PATH/libs/fmodex/lib/osx/libfmodex.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 install_name_tool -change @executable_path/libfmodex.dylib @executable_path/../Frameworks/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";
 
 echo "$GCC_PREPROCESSOR_DEFINITIONS";

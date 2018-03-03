@@ -1,10 +1,10 @@
-#About Point Picker Example
+# About Point Picker Example
 --
 ![Screenshot of Example](pointPickerExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
-This openFrameworks example demonstrates how to load a .ply file ( [Polygon File Format](https://en.wikipedia.org/wiki/PLY_(file_format)) ) into a mesh. Each of the points are identifible with their index exposed by mousing near it. 
+This openFrameworks example demonstrates how to load a .ply file ( [Polygon File Format](https://en.wikipedia.org/wiki/PLY_(file_format)) ) into a mesh. Each of the points are identifible with their index exposed by mousing near it.
 
 
 In the code, pay attention to:
@@ -17,16 +17,14 @@ In the code, pay attention to:
 * Use of a camera to render the scene with ```cam.begin()``` and ```cam.end()```
 * Conversion of the vertex from the mesh to screen coordinates to evaluate distance from the mouse with ```cam.worldToScreen(mesh.getVertex(i))```
 * Using ```cur.distance(mouse)``` to determine distance between the mouse coordinates and that of the vertex. Lowest distance is identified as the nearest vertex to the mouse.
-* Drawing of line from the nearest vertex to the mouse using ```ofDrawLine(nearestVertex,mouse)``` 
+* Drawing of line from the nearest vertex to the mouse using ```ofDrawLine(nearestVertex,mouse)```
 
 ### Expected Behavior
 
-When launching this app, you should see 
+When launching this app, you should see
 
-* A mesh that reflects a low polygon bunny model with points and flat polygons drawn. 
+* A mesh that reflects a low polygon bunny model with points and flat polygons drawn.
 
 Instructions for use:
 
 * Move the mouse near the points in the mesh to see their index number
-
-

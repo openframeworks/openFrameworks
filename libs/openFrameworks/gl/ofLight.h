@@ -14,8 +14,8 @@
 
 #include "ofNode.h"
 #include "ofColor.h"
-#include "of3dGraphics.h"
-#include "ofTypes.h"
+
+class ofBaseGLRenderer;
 
 enum ofLightType {
 	OF_LIGHT_POINT=0,
@@ -102,11 +102,13 @@ public:
 	    float height;
 		glm::vec3 up;
 		glm::vec3 right;
+		/// weak link back to renderer for which this light was created/setup
+		std::weak_ptr<ofBaseGLRenderer> rendererP;
 	};
 	
 private:
 	void customDraw(const ofBaseRenderer * renderer) const;
-	shared_ptr<Data> data;
+	std::shared_ptr<Data> data;
 	// update opengl light 
 	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
 	virtual void onPositionChanged();
@@ -114,4 +116,4 @@ private:
 };
 
 
-vector<weak_ptr<ofLight::Data> > & ofLightsData();
+std::vector<std::weak_ptr<ofLight::Data> > & ofLightsData();

@@ -43,7 +43,7 @@ void ofxCvHaarFinder::setNeighbors(unsigned neighbors) {
 	this->neighbors = neighbors;
 }
 
-void ofxCvHaarFinder::setup(string haarFile) {
+void ofxCvHaarFinder::setup(std::string haarFile) {
 	if(cascade != NULL)
 		cvReleaseHaarClassifierCascade(&cascade);
 

@@ -1,6 +1,7 @@
 package cc.openframeworks;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +16,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.StatFs;
 import android.util.Log;
@@ -24,52 +26,49 @@ public class OFAndroidLifeCycleHelper
 	private static final String TAG = OFAndroidLifeCycleHelper.class.getSimpleName();
 	private static boolean appInitFlag = false;
 	private static boolean resumed;
-	
+
 	public static void appInit(Activity activity)
 	{
 		if(appInitFlag)
 			return;
 		appInitFlag = true;
-		
-		String packageName = activity.getPackageName();
-		
+
+		OFAndroid.packageName = activity.getPackageName();
+
 		Log.i(TAG,"starting resources extractor");
-		Class<?> raw = null;
-        boolean copydata = false;
-        Field[] files = null;
-        try {
-        	
-			// try to find if R.raw class exists will throw
-        	// an exception if not
-        	raw = Class.forName(packageName+".R$raw");
-        	// if it exists copy all the raw resources
-        	// to a folder in the sdcard
-	        files = raw.getDeclaredFields(); 
+		boolean copydata = false;
+		String[] files = new String[0];
+		AssetManager am = activity.getApplicationContext().getAssets();
 
-	        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
-	        long lastInstalled = preferences.getLong("installed", 0);
-	        
-	        PackageManager pm = activity.getPackageManager();
+		try {
+			SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
 
-			ApplicationInfo appInfo = pm.getApplicationInfo(packageName, 0);
+			long lastInstalled = preferences.getLong("installed", 0);
 
-	        String appFile = appInfo.sourceDir;
-	        long installed = new File(appFile).lastModified();
-	        if(installed>lastInstalled){
-	        	Editor editor = preferences.edit();
-	        	editor.putLong("installed", installed);
-	        	editor.commit();
-	        	copydata = true;
-	        }
+			PackageManager pm = activity.getPackageManager();
+
+			ApplicationInfo appInfo = pm.getApplicationInfo(OFAndroid.packageName, 0);
+
+			String appFile = appInfo.sourceDir;
+			long installed = new File(appFile).lastModified();
+			if(installed>lastInstalled){
+				Editor editor = preferences.edit();
+				editor.putLong("installed", installed);
+				editor.apply();
+				copydata = true;
+			}
+			files = am.list("");
+
 		} catch (NameNotFoundException e1) {
 			copydata = false;
-        } catch (ClassNotFoundException e1) { 
-        } 
-    	
-        
-        OFAndroid.reportPrecentage(.05f);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-        String dataPath="";
+
+		OFAndroid.reportPrecentage(.05f);
+
+		String dataPath="";
 		try{
 			Log.i(TAG, "sd mounted: " + OFAndroid.checkSDCardMounted());
 			OFAndroid.initAppDataDirectory(activity);
@@ -78,116 +77,101 @@ public class OFAndroidLifeCycleHelper
 			Log.i(TAG,"creating app directory: " + dataPath);
 			try{
 				File dir = new File(dataPath);
-				if(!(dir.mkdirs() || dir.isDirectory())){
-					if(copydata){
+				if(!dir.isDirectory()){
+					copydata = true;
+					if(!dir.mkdirs()){
 						OFAndroid.fatalErrorDialog(activity, "Error while copying resources to sdcard:\nCouldn't create directory " + dataPath);
 						Log.e(TAG,"error creating dir " + dataPath);
 						return;
-					}else{
-						throw new Exception();
 					}
 				}
-			}catch(Exception e){
+			} catch(Exception e){
 				OFAndroid.fatalErrorDialog(activity, "Error while copying resources to sdcard:\nCouldn't create directory " + dataPath + "\n"+e.getMessage());
 				Log.e(TAG,"error creating dir " + dataPath,e);
 			}
-			OFAndroid.moveOldData(OFAndroid.getOldExternalStorageDirectory(packageName), dataPath);
+			OFAndroid.moveOldData(OFAndroid.getOldExternalStorageDirectory(OFAndroid.packageName), dataPath);
 			OFAndroid.setAppDataDir(dataPath);
-	        OFAndroid.reportPrecentage(.10f);
-		}catch(Exception e){
+			OFAndroid.reportPrecentage(.10f);
+		} catch(Exception e){
 			Log.e(TAG,"couldn't move app resources to data directory " + dataPath,e);
 		}
-		
-		
-		String app_name="";
+
+
 		try {
-			int app_name_id = Class.forName(packageName+".R$string").getField("app_name").getInt(null);
-			app_name = activity.getResources().getText(app_name_id).toString().toLowerCase(Locale.US);
-			Log.i(TAG,"app name: " + app_name);
-			
 			if(copydata){
-				StatFs stat = new StatFs(dataPath);
-				double sdAvailSize = (double)stat.getAvailableBlocks()
-		                   * (double)stat.getBlockSize();
-				for(int i=0; i<files.length; i++){
-    	        	int fileId;
-    	        	String fileName="";
-    				
-    				InputStream from=null;
-    				FileOutputStream to=null;
-    	        	try {
-    					fileId = files[i].getInt(null);
-    					String resName = activity.getResources().getText(fileId).toString();
-    					fileName = resName.substring(resName.lastIndexOf("/"));
-    					Log.i(TAG,"checking " + fileName);
-    					if(fileName.equals("/ofdataresources.zip")){
-    						
-	    					from = activity.getResources().openRawResource(fileId);
-							try{
-								ZipInputStream resourceszip = new ZipInputStream(from);
-								int totalZipSize = 0;
-								ZipEntry entry;
-								File outdir = new File(dataPath);
-								while ((entry = resourceszip.getNextEntry()) != null){
-									totalZipSize+=entry.getSize();
-								}
-								resourceszip.close();
-								Log.i(TAG,"size of uncompressed resources: " + totalZipSize + " avaliable space:" + sdAvailSize);
-								if(totalZipSize>=sdAvailSize){
-									final int mbsize = totalZipSize/1024/1024;
-									OFAndroid.fatalErrorDialog(activity, "Error while copying resources to sdcard:\nNot enough space available.("+mbsize+"Mb)\nMake more space by deleting some file in your sdcard");
-								}else{
-									from = activity.getResources().openRawResource(fileId);
-									resourceszip = new ZipInputStream(from);
-									
+				for (String file : files) {
+					try {
+						copyAssetFolder(am, file, dataPath+"/"+file);
+					} catch (Exception e) {
+						Log.e("OF", "error copying file", e);
+					}
 
-									while ((entry = resourceszip.getNextEntry()) != null){
-										String name = entry.getName();
-								        if( entry.isDirectory() )
-								        {
-								        	OFZipUtil.mkdirs(outdir,name);
-								          continue;
-								        }
-								        String dir = OFZipUtil.dirpart(name);
-								        if( dir != null )
-								        	OFZipUtil.mkdirs(outdir,dir);
-
-								        OFZipUtil.extractFile(resourceszip, outdir, name);
-								        OFAndroid.reportPrecentage((float)(.10+i*.01));
-									}
-
-									resourceszip.close();
-							        OFAndroid.reportPrecentage(.80f);
-								}
-							}catch(Exception e){
-								OFAndroid.fatalErrorDialog(activity, "Error while copying resources to sdcard:\nCheck that you have enough space available.\n");
-							}
-    					}else{
-							Log.i(TAG, "Resources file not found");
-						}
-    	        	}catch (Exception e) {
-    					Log.e(TAG,"error copying file",e);
-    				} finally {
-    					if (from != null)
-    					  try {
-    					    from.close();
-    					  } catch (IOException e) { }
-    					  
-    			        if (to != null)
-    			          try {
-    			            to.close();
-    			          } catch (IOException e) { }
-    				}
 				}
+
 			}else{
-		        OFAndroid.reportPrecentage(.80f);
+				OFAndroid.reportPrecentage(.80f);
 			}
 		} catch (Exception e) {
 			Log.e(TAG,"error retrieving app name",e);
-		} 	
+		}
 		OFAndroid.init();
 
 	}
+
+	private static void copyAssetFolder(AssetManager am, String src, String dest) throws IOException {
+
+		Log.i("Copy ",src);
+		InputStream srcIS = null;
+		File destfh;
+
+		// this is the only way we can tell if this is a file or a
+		// folder - we have to open the asset, and if the open fails,
+		// it's a folder...
+		boolean isDir = false;
+		try {
+			srcIS = am.open(src);
+		} catch (FileNotFoundException e) {
+			isDir = true;
+		}
+
+		// either way, we'll use the dest as a File
+		destfh = new File(dest);
+
+		// and now, depending on ..
+		if(isDir) {
+
+			// If the directory doesn't yet exist, create it
+			if( !destfh.exists() ){
+				destfh.mkdir();
+			}
+
+			// list the assets in the directory...
+			String assets[] = am.list(src);
+
+			// and copy them all using same.
+			for(String asset : assets) {
+				copyAssetFolder(am, src + "/" + asset, dest + "/" + asset);
+			}
+
+		} else {
+			int count, buffer_len = 2048;
+			byte[] data = new byte[buffer_len];
+
+			// copy the file from the assets subsystem to the filesystem
+			FileOutputStream destOS = new FileOutputStream(destfh);
+
+			//copy the file content in bytes
+			while( (count = srcIS.read(data, 0, buffer_len)) != -1) {
+				destOS.write(data, 0, count);
+			}
+
+			// and close the two files
+			srcIS.close();
+			destOS.close();
+		}
+	}
+
+
 	
 	public static void onCreate()
 	{
@@ -233,7 +217,6 @@ public class OFAndroidLifeCycleHelper
 			public void run() {
 				OFAndroid.enableTouchEvents();
 				OFAndroid.enableOrientationChangeEvents();
-				glView.onResume();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
 						object.onResume();
@@ -267,7 +250,6 @@ public class OFAndroidLifeCycleHelper
 						object.onPause();
 					}
 				}
-				OFAndroidLifeCycle.getGLView().onPause();
 			}
 		});
 		
@@ -277,7 +259,7 @@ public class OFAndroidLifeCycleHelper
 		OFAndroid.sleepLocked=false;
 		resumed = false;
 	}
-	
+
 	public static void onStop(){
 		resumed = false;
 		Log.i(TAG,"onStop");

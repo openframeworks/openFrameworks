@@ -73,361 +73,353 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
+
+	float spinX = sin(ofGetElapsedTimef()*.35f);
+	float spinY = cos(ofGetElapsedTimef()*.075f);
+
+	if (bMousePressed) {
+		spinX = spinY = 0.0f;
+	}
+
+	cam.setGlobalPosition({ 0,0,cam.getImagePlaneDistance(ofGetCurrentViewport()) });
+	cam.begin();
+
+	ofEnableDepthTest();
+
+	ofEnableLighting();
+	pointLight.enable();
+	pointLight2.enable();
+	pointLight3.enable();
+
+
+
+	// draw the outer sphere
+	material.begin();
+	ofNoFill();
+	ofDrawSphere(0, 0, max(ofGetWidth(),ofGetHeight()));
+	material.end();
+
+	if (mode == 1 || mode == 3) texture.getTexture().bind();
+	if (mode == 2) vidGrabber.getTexture().bind();
+
+	float screenWidth = ofGetWidth();
+	float screenHeight = ofGetHeight();
+
+	plane.setPosition(     -screenWidth * .5 + screenWidth *  1/4.f, screenHeight *  1.1/6.f, 0);
+	box.setPosition(       -screenWidth * .5 + screenWidth *  2/4.f, screenHeight *  1.1/6.f, 0);
+	sphere.setPosition(    -screenWidth * .5 + screenWidth *  3/4.f, screenHeight *  1.1/6.f, 0);
+	icoSphere.setPosition( -screenWidth * .5 + screenWidth *  1/4.f, screenHeight * -1.1/6.f, 0);
+	cylinder.setPosition(  -screenWidth * .5 + screenWidth *  2/4.f, screenHeight * -1.1/6.f, 0);
+	cone.setPosition(      -screenWidth * .5 + screenWidth *  3/4.f, screenHeight * -1.1/6.f, 0);
+
+	// Plane //
+
+	plane.rotateDeg(spinX, 1.0, 0.0, 0.0);
+	plane.rotateDeg(spinY, 0, 1.0, 0.0);
+
+
+
+	if (mode == 3) {
+		deformPlane = plane.getMesh();
+		// x = columns, y = rows //
+		ofVec3f planeDims = plane.getResolution();
+		float planeAngleX = ofGetElapsedTimef()*3.6;
+		float planeAngleInc = 3.f / (float)planeDims.x;
+		ofVec3f vert;
+		for (size_t i = 0; i < deformPlane.getNumIndices(); i++) {
+			planeAngleX += planeAngleInc;
+			int ii = deformPlane.getIndex(i);
+			vert = deformPlane.getVertex(ii);
+			vert.z += cos(planeAngleX) * 50;
+			deformPlane.setVertex(ii, vert);
+		}
+	}
+
+	if (!bFill && bWireframe) {
+		// if we are only drawing the wireframe, use
+		// the material to draw it, otherwise the material
+		// will be bound and unbound for every geometry
+		// and the wireframe will be drawn in black
+		material.begin();
+	}
+
+	if (bFill) {
+		material.begin();
+		ofFill();
+		if (mode == 3) {
+			plane.transformGL();
+			deformPlane.draw();
+			plane.restoreTransformGL();
+		}
+		else {
+			plane.draw();
+		}
+		material.end();
+	}
+
+	if (bWireframe) {
+		ofNoFill();
+		ofSetColor(0, 0, 0);
+		plane.setPosition(plane.getPosition().x, plane.getPosition().y, plane.getPosition().z + 1);
+		plane.drawWireframe();
+		plane.setPosition(plane.getPosition().x, plane.getPosition().y, plane.getPosition().z - 1);
+
+	}
+
+	// Box //
+
+	box.rotateDeg(spinX, 1.0, 0.0, 0.0);
+	box.rotateDeg(spinY, 0, 1.0, 0.0);
+
+	if (bFill) {
+		material.begin();
+		ofFill();
+		if (mode == 3) {
+			box.transformGL();
+			for (int i = 0; i < ofBoxPrimitive::SIDES_TOTAL; i++) {
+				ofPushMatrix();
+				ofTranslate(boxSides[i].getNormal(0) * sin(ofGetElapsedTimef()) * 50);
+				boxSides[i].draw();
+				ofPopMatrix();
+			}
+			box.restoreTransformGL();
+		}
+		else {
+			box.draw();
+		}
+		material.end();
+	}
+
+	if (bWireframe) {
+		ofNoFill();
+		ofSetColor(0, 0, 0);
+		box.setScale(1.01f);
+		box.drawWireframe();
+		box.setScale(1.f);
+	}
+
+
+	// Sphere //
+	sphere.rotateDeg(spinX, 1.0, 0.0, 0.0);
+	sphere.rotateDeg(spinY, 0, 1.0, 0.0);
+
+	if (mode == 3) {
+		sphere.setMode(OF_PRIMITIVE_TRIANGLES);
+		triangles = sphere.getMesh().getUniqueFaces();
+	}
+
+	if (bFill) {
+		material.begin();
+		ofFill();
+		if (mode == 3) {
+			float angle = ofGetElapsedTimef()*3.2;
+			float strength = (sin(angle + .25)) * .5f * 5.f;
+			ofVec3f faceNormal;
+			for (size_t i = 0; i < triangles.size(); i++) {
+				// store the face normal here.
+				// we change the vertices, which makes the face normal change
+				// every time that we call getFaceNormal //
+				faceNormal = triangles[i].getFaceNormal();
+				for (int j = 0; j < 3; j++) {
+					triangles[i].setVertex(j, triangles[i].getVertex(j) + faceNormal * strength);
+				}
+			}
+			sphere.getMesh().setFromTriangles(triangles);
+		}
+		sphere.draw();
+		material.end();
+	}
+
+	if (bWireframe) {
+		ofNoFill();
+		ofSetColor(0, 0, 0);
+		sphere.setScale(1.01f);
+		sphere.drawWireframe();
+		sphere.setScale(1.f);
+	}
+
+
+	// ICO Sphere //
+	
+	icoSphere.rotateDeg(spinX, 1.0, 0.0, 0.0);
+	icoSphere.rotateDeg(spinY, 0, 1.0, 0.0);
+
+	if (mode == 3) {
+		triangles = icoSphere.getMesh().getUniqueFaces();
+	}
+
+	if (bFill) {
+		material.begin();
+		ofFill();
+
+		if (mode == 3) {
+			float angle = (ofGetElapsedTimef() * 1.4);
+			ofVec3f faceNormal;
+			for (size_t i = 0; i < triangles.size(); i++) {
+				float frc = ofSignedNoise(angle* (float)i * .1, angle*.05) * 4;
+				faceNormal = triangles[i].getFaceNormal();
+				for (int j = 0; j < 3; j++) {
+					triangles[i].setVertex(j, triangles[i].getVertex(j) + faceNormal * frc);
+				}
+			}
+			icoSphere.getMesh().setFromTriangles(triangles);
+		}
+
+		icoSphere.draw();
+		material.end();
+	}
+
+	if (bWireframe) {
+		ofNoFill();
+		ofSetColor(0, 0, 0);
+		icoSphere.setScale(1.01f);
+		icoSphere.drawWireframe();
+		icoSphere.setScale(1.f);
+	}
+
+
+	// Cylinder //
+	if (mode == 3) {
+		topCap = cylinder.getTopCapMesh();
+		bottomCap = cylinder.getBottomCapMesh();
+		body = cylinder.getCylinderMesh();
+	}
+
+	cylinder.rotateDeg(spinX, 1.0, 0.0, 0.0);
+	cylinder.rotateDeg(spinY, 0, 1.0, 0.0);
+	if (bFill) {
+		material.begin();
+		ofFill();
+		if (mode == 3) {
+			cylinder.transformGL();
+			ofPushMatrix(); {
+				if (topCap.getNumNormals() > 0) {
+					ofTranslate(topCap.getNormal(0) * (cos(ofGetElapsedTimef() * 5) + 1)*.5f * 100);
+					topCap.draw();
+				}
+			} ofPopMatrix();
+			ofPushMatrix(); {
+				if (bottomCap.getNumNormals() > 0) {
+					ofTranslate(bottomCap.getNormal(0) * (cos(ofGetElapsedTimef() * 4) + 1)*.5f * 100);
+					bottomCap.draw();
+				}
+			} ofPopMatrix();
+			ofPushMatrix(); {
+				float scale = (cos(ofGetElapsedTimef() * 3) + 1)*.5f + .2;
+				ofScale(scale, scale, scale);
+				body.draw();
+			} ofPopMatrix();
+			cylinder.restoreTransformGL();
+		}
+		else {
+			cylinder.draw();
+		}
+		material.end();
+	}
+
+	if (bWireframe) {
+		ofNoFill();
+		ofSetColor(0, 0, 0);
+		cylinder.setScale(1.01f);
+		cylinder.drawWireframe();
+		cylinder.setScale(1.0f);
+	}
+
+
+	// Cone //
+	cone.rotateDeg(spinX, 1.0, 0.0, 0.0);
+	cone.rotateDeg(spinY, 0, 1.0, 0.0);
+
+	if (mode == 3) {
+		bottomCap = cone.getCapMesh();
+		body = cone.getConeMesh();
+	}
+	if (bFill) {
+		material.begin();
+		ofFill();
+		if (mode == 3) {
+			cone.transformGL();
+			ofPushMatrix();
+			if (bottomCap.getNumNormals() > 0) {
+				ofTranslate(bottomCap.getNormal(0) * cone.getHeight()*.5);
+				ofRotateDeg(sin(ofGetElapsedTimef() * 5) * RAD_TO_DEG, 1, 0, 0);
+				bottomCap.draw();
+			}
+			ofPopMatrix();
+
+			ofPushMatrix();
+			ofRotateDeg(90, 1, 0, 0);
+			ofRotateDeg((cos(ofGetElapsedTimef() * 6) + 1)*.5 * 360, 1, 0, 0);
+			body.draw();
+			ofPopMatrix();
+			cone.restoreTransformGL();
+		}
+		else {
+			cone.draw();
+		}
+		material.end();
+	}
+
+	if (bWireframe) {
+		ofNoFill();
+		ofSetColor(0, 0, 0);
+		cone.setScale(1.01f);
+		cone.drawWireframe();
+		cone.setScale(1.0f);
+	}
+
+	if (!bFill && bWireframe) {
+		material.end();
+	}
+
+	if (mode == 1 || mode == 3) texture.getTexture().unbind();
+	if (mode == 2) vidGrabber.getTexture().unbind();
+
+	material.end();
+	ofDisableLighting();
+
+	if (bDrawLights) {
+		ofFill();
+		ofSetColor(pointLight.getDiffuseColor());
+		pointLight.draw();
+		ofSetColor(pointLight2.getDiffuseColor());
+		pointLight2.draw();
+		ofSetColor(pointLight3.getDiffuseColor());
+		pointLight3.draw();
+	}
+
+	if (bDrawNormals) {
+		ofSetColor(225, 0, 255);
+		plane.drawNormals(20, bSplitFaces);
+		box.drawNormals(20, bSplitFaces);
+		sphere.drawNormals(20, bSplitFaces);
+		icoSphere.drawNormals(20, bSplitFaces);
+		cylinder.drawNormals(20, bSplitFaces);
+		cone.drawNormals(20, bSplitFaces);
+	}
+	if (bDrawAxes) {
+		plane.drawAxes(plane.getWidth()*.5 + 30);
+		box.drawAxes(box.getWidth() + 30);
+		sphere.drawAxes(sphere.getRadius() + 30);
+		icoSphere.drawAxes(icoSphere.getRadius() + 30);
+		cylinder.drawAxes(cylinder.getHeight() + 30);
+		cone.drawAxes(cone.getHeight() + 30);
+	}
+
+	ofDisableDepthTest();
+
+	ofFill();
+
+	cam.end();
+	
 	ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
 
-    float spinX = sin(ofGetElapsedTimef()*.35f);
-    float spinY = cos(ofGetElapsedTimef()*.075f);
-
-    if(bMousePressed) {
-        spinX = spinY = 0.0f;
-    }
-
-    ofEnableDepthTest();
-
-    ofEnableLighting();
-    pointLight.enable();
-    pointLight2.enable();
-    pointLight3.enable();
-
-
-
-    // draw the outer sphere
-    material.begin();
-    ofNoFill();
-    ofDrawSphere(ofGetWidth()/2, ofGetHeight()/2, ofGetWidth());
-    material.end();
-
-    if(mode == 1 || mode == 3) texture.getTexture().bind();
-    if(mode == 2) vidGrabber.getTexture().bind();
-
-
-    // Plane //
-    plane.setPosition(ofGetWidth()*.2, ofGetHeight()*.25, 0);
-    plane.rotate(spinX, 1.0, 0.0, 0.0);
-    plane.rotate(spinY, 0, 1.0, 0.0);
-
-
-    if(mode == 3) {
-        deformPlane = plane.getMesh();
-        // x = columns, y = rows //
-        ofVec3f planeDims = plane.getResolution();
-        float planeAngleX = ofGetElapsedTimef()*3.6;
-        float planeAngleInc = 3.f/(float)planeDims.x;
-        ofVec3f vert;
-        for(size_t i = 0; i < deformPlane.getNumIndices(); i++ ) {
-            planeAngleX += planeAngleInc;
-            int ii = deformPlane.getIndex( i );
-            vert = deformPlane.getVertex( ii );
-            vert.z += cos(planeAngleX) * 50;
-            deformPlane.setVertex( ii, vert );
-        }
-    }
-
-    if(!bFill && bWireframe){
-        // if we are only drawing the wireframe, use
-        // the material to draw it, otherwise the material
-        // will be bound and unbound for every geometry
-        // and the wireframe will be drawn in black
-        material.begin();
-    }
-
-    if(bFill) {
-        material.begin();
-        ofFill();
-        if(mode == 3) {
-            plane.transformGL();
-            deformPlane.draw();
-            plane.restoreTransformGL();
-        } else {
-            plane.draw();
-        }
-        material.end();
-    }
-
-    if(bWireframe) {
-        ofNoFill();
-        ofSetColor(0, 0, 0);
-		plane.setPosition(plane.getPosition().x, plane.getPosition().y, plane.getPosition().z+1);
-        plane.drawWireframe();
-		plane.setPosition(plane.getPosition().x, plane.getPosition().y, plane.getPosition().z-1);
-
-    }
-
-    // Box //
-    box.setPosition(ofGetWidth()*.5, ofGetHeight()*.25, 0);
-    box.rotate(spinX, 1.0, 0.0, 0.0);
-    box.rotate(spinY, 0, 1.0, 0.0);
-
-    if(bFill) {
-        material.begin();
-        ofFill();
-        if(mode == 3) {
-            box.transformGL();
-            for(int i = 0; i < ofBoxPrimitive::SIDES_TOTAL; i++ ) {
-                ofPushMatrix();
-                ofTranslate( boxSides[i].getNormal(0) * sin(ofGetElapsedTimef()) * 50  );
-                boxSides[i].draw();
-                ofPopMatrix();
-            }
-            box.restoreTransformGL();
-        } else {
-            box.draw();
-        }
-        material.end();
-    }
-
-    if(bWireframe) {
-        ofNoFill();
-        ofSetColor(0, 0, 0);
-        box.setScale(1.01f);
-        box.drawWireframe();
-        box.setScale(1.f);
-    }
-
-
-    // Sphere //
-    sphere.setPosition(ofGetWidth()*.8f, ofGetHeight()*.25, 0);
-    sphere.rotate(spinX, 1.0, 0.0, 0.0);
-    sphere.rotate(spinY, 0, 1.0, 0.0);
-
-    if(mode == 3) {
-        sphere.setMode( OF_PRIMITIVE_TRIANGLES );
-        triangles = sphere.getMesh().getUniqueFaces();
-    }
-
-    if(bFill) {
-        material.begin();
-        ofFill();
-        if(mode == 3) {
-            float angle = ofGetElapsedTimef()*3.2;
-            float strength = (sin( angle+.25 )) * .5f * 5.f;
-            ofVec3f faceNormal;
-            for(size_t i = 0; i < triangles.size(); i++ ) {
-                // store the face normal here.
-                // we change the vertices, which makes the face normal change
-                // every time that we call getFaceNormal //
-                faceNormal = triangles[i].getFaceNormal();
-                for(int j = 0; j < 3; j++ ) {
-                    triangles[i].setVertex( j, triangles[i].getVertex(j) + faceNormal * strength);
-                }
-            }
-            sphere.getMesh().setFromTriangles( triangles );
-        }
-        sphere.draw();
-        material.end();
-    }
-
-    if(bWireframe) {
-        ofNoFill();
-        ofSetColor(0, 0, 0);
-        sphere.setScale(1.01f);
-        sphere.drawWireframe();
-        sphere.setScale(1.f);
-    }
-
-
-    // ICO Sphere //
-    icoSphere.setPosition(ofGetWidth()*.2, ofGetHeight()*.75, 0);
-    icoSphere.rotate(spinX, 1.0, 0.0, 0.0);
-    icoSphere.rotate(spinY, 0, 1.0, 0.0);
-
-    if(mode == 3) {
-        triangles = icoSphere.getMesh().getUniqueFaces();
-    }
-
-    if(bFill) {
-        material.begin();
-        ofFill();
-
-        if(mode == 3) {
-            float angle = (ofGetElapsedTimef() * 1.4);
-            ofVec3f faceNormal;
-            for(size_t i = 0; i < triangles.size(); i++ ) {
-                float frc = ofSignedNoise(angle* (float)i * .1, angle*.05) * 4;
-                faceNormal = triangles[i].getFaceNormal();
-                for(int j = 0; j < 3; j++ ) {
-                    triangles[i].setVertex(j, triangles[i].getVertex(j) + faceNormal * frc );
-                }
-            }
-            icoSphere.getMesh().setFromTriangles( triangles );
-        }
-
-        icoSphere.draw();
-        material.end();
-    }
-
-    if(bWireframe) {
-        ofNoFill();
-        ofSetColor(0, 0, 0);
-        icoSphere.setScale(1.01f);
-        icoSphere.drawWireframe();
-        icoSphere.setScale(1.f);
-    }
-
-
-    // Cylinder //
-    if(mode == 3) {
-        topCap      = cylinder.getTopCapMesh();
-        bottomCap   = cylinder.getBottomCapMesh();
-        body        = cylinder.getCylinderMesh();
-    }
-
-    cylinder.setPosition(ofGetWidth()*.5, ofGetHeight()*.75, 0);
-    cylinder.rotate(spinX, 1.0, 0.0, 0.0);
-    cylinder.rotate(spinY, 0, 1.0, 0.0);
-    if(bFill) {
-        material.begin();
-        ofFill();
-        if(mode == 3) {
-            cylinder.transformGL();
-            ofPushMatrix(); {
-                if(topCap.getNumNormals() > 0) {
-                    ofTranslate( topCap.getNormal(0) * (cos(ofGetElapsedTimef()*5)+1)*.5f * 100 );
-                    topCap.draw();
-                }
-            } ofPopMatrix();
-            ofPushMatrix(); {
-                if(bottomCap.getNumNormals() > 0) {
-                    ofTranslate( bottomCap.getNormal(0) * (cos(ofGetElapsedTimef()*4)+1)*.5f * 100 );
-                    bottomCap.draw();
-                }
-            } ofPopMatrix();
-            ofPushMatrix(); {
-                float scale = (cos(ofGetElapsedTimef()*3)+1)*.5f + .2;
-                ofScale( scale, scale, scale );
-                body.draw();
-            } ofPopMatrix();
-            cylinder.restoreTransformGL();
-        } else {
-            cylinder.draw();
-        }
-        material.end();
-    }
-
-    if(bWireframe) {
-        ofNoFill();
-        ofSetColor(0, 0, 0);
-        cylinder.setScale(1.01f);
-        cylinder.drawWireframe();
-        cylinder.setScale(1.0f);
-    }
-
-
-    // Cone //
-    cone.setPosition(ofGetWidth()*.8, ofGetHeight()*.75, 0);
-    cone.rotate(spinX, 1.0, 0.0, 0.0);
-    cone.rotate(spinY, 0, 1.0, 0.0);
-
-    if(mode == 3) {
-        bottomCap   = cone.getCapMesh();
-        body        = cone.getConeMesh();
-    }
-    if(bFill) {
-        material.begin();
-        ofFill();
-        if(mode == 3) {
-            cone.transformGL();
-            ofPushMatrix();
-            if(bottomCap.getNumNormals() > 0 ) {
-                ofTranslate( bottomCap.getNormal(0) * cone.getHeight()*.5 );
-                ofRotateDeg( sin(ofGetElapsedTimef()*5) * RAD_TO_DEG, 1, 0, 0);
-                bottomCap.draw();
-            }
-            ofPopMatrix();
-
-            ofPushMatrix();
-            ofRotateDeg(90, 1, 0, 0);
-            ofRotateDeg( (cos(ofGetElapsedTimef()*6) +1)*.5 * 360 , 1, 0, 0 );
-            body.draw();
-            ofPopMatrix();
-            cone.restoreTransformGL();
-        } else {
-            cone.draw();
-        }
-        material.end();
-    }
-
-    if(bWireframe) {
-        ofNoFill();
-        ofSetColor(0, 0, 0);
-        cone.setScale(1.01f);
-        cone.drawWireframe();
-        cone.setScale(1.0f);
-    }
-
-    if(!bFill && bWireframe){
-        material.end();
-    }
-
-    if(mode == 1 || mode == 3) texture.getTexture().unbind();
-    if(mode == 2) vidGrabber.getTexture().unbind();
-
-    material.end();
-    ofDisableLighting();
-
-    if(bDrawLights) {
-        ofFill();
-        ofSetColor(pointLight.getDiffuseColor());
-        pointLight.draw();
-        ofSetColor(pointLight2.getDiffuseColor());
-        pointLight2.draw();
-        ofSetColor(pointLight3.getDiffuseColor());
-        pointLight3.draw();
-    }
-
-    if(bDrawNormals) {
-        ofSetColor(225, 0, 255);
-        plane.drawNormals(20, bSplitFaces);
-        box.drawNormals(20, bSplitFaces);
-        sphere.drawNormals(20, bSplitFaces);
-        icoSphere.drawNormals(20, bSplitFaces);
-        cylinder.drawNormals(20, bSplitFaces);
-        cone.drawNormals(20, bSplitFaces);
-    }
-    if(bDrawAxes) {
-        plane.drawAxes(plane.getWidth()*.5+30);
-        box.drawAxes(box.getWidth()+30);
-        sphere.drawAxes(sphere.getRadius()+30);
-        icoSphere.drawAxes(icoSphere.getRadius()+30);
-        cylinder.drawAxes(cylinder.getHeight()+30);
-        cone.drawAxes(cone.getHeight()+30);
-    }
-
-    ofDisableDepthTest();
-
-    ofFill();
-
-    ofSetColor(0);
-    ofDrawRectangle(plane.getPosition().x-154, plane.getPosition().y + 120, 140, 24);
-    ofSetColor(255);
-    ofDrawBitmapString("ofPlanePrimitive", plane.getPosition().x-150, plane.getPosition().y+136 );
-
-    ofSetColor(0);
-    ofDrawRectangle(box.getPosition().x-154, box.getPosition().y + 120, 126, 24);
-    ofSetColor(255);
-    ofDrawBitmapString("ofBoxPrimitive", box.getPosition().x-150, box.getPosition().y+136 );
-
-    ofSetColor(0);
-    ofDrawRectangle(sphere.getPosition().x-154, sphere.getPosition().y + 120, 148, 24);
-    ofSetColor(255);
-    ofDrawBitmapString("ofSpherePrimitive", sphere.getPosition().x-150, sphere.getPosition().y+136 );
-
-    ofSetColor(0);
-    ofDrawRectangle(icoSphere.getPosition().x-154, icoSphere.getPosition().y + 120, 168, 24);
-    ofSetColor(255);
-    ofDrawBitmapString("ofIcoSpherePrimitive", icoSphere.getPosition().x-150, icoSphere.getPosition().y+136 );
-
-    ofSetColor(0);
-    ofDrawRectangle(cylinder.getPosition().x-154, cylinder.getPosition().y + 120, 160, 24);
-    ofSetColor(255);
-    ofDrawBitmapString("ofCylinderPrimitive", cylinder.getPosition().x-150, cylinder.getPosition().y+136 );
-
-    ofSetColor(0);
-    ofDrawRectangle(cone.getPosition().x-154, cone.getPosition().y + 120, 136, 24);
-    ofSetColor(255);
-    ofDrawBitmapString("ofConePrimitive", cone.getPosition().x-150, cone.getPosition().y+136 );
-
-
+	ofDrawBitmapStringHighlight("ofPlanePrimitive"    , glm::vec3(-90,-160,0) + cam.worldToScreen(plane.getGlobalPosition()) );
+	ofDrawBitmapStringHighlight("ofBoxPrimitive"      , glm::vec3(-90,-160,0) + cam.worldToScreen( box.getPosition()));
+    ofDrawBitmapStringHighlight("ofSpherePrimitive"   , glm::vec3(-90,-160,0) + cam.worldToScreen( sphere.getPosition()));
+	ofDrawBitmapStringHighlight("ofIcoSpherePrimitive", glm::vec3(-90,+160,0) + cam.worldToScreen( icoSphere.getPosition()));
+	ofDrawBitmapStringHighlight("ofCylinderPrimitive" , glm::vec3(-90,+160,0) + cam.worldToScreen( cylinder.getPosition()));
+	ofDrawBitmapStringHighlight("ofConePrimitive"     , glm::vec3(-90,+160,0) + cam.worldToScreen( cone.getPosition()));
 
     if(bHelpText) {
         stringstream ss;
@@ -436,11 +428,8 @@ void ofApp::draw() {
         ss <<"(1/2/3/4): Set Resolutions" <<endl<<"(n): Draw Normals"<<"\n(LEFT/RIGHT): Set Mode "<<ofToString(mode,0)<<endl;
         ss <<"(z): Split Faces " <<bSplitFaces<<endl;
         ss <<"(a): Draw Axes"<<endl<<"(l): Render lights" << endl <<"(h): Toggle help."<<endl;
-        ofDrawBitmapString(ss.str().c_str(), 20, 20);
+        ofDrawBitmapStringHighlight(ss.str().c_str(), 20, 20);
     }
-
-
-
 
 
 }

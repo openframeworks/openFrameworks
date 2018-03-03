@@ -2,7 +2,7 @@
 --
 ![Screenshot of Example](lutFilterExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks Example is designed to demonstrate how to create LUT filters. LUT stands for "Look Up Table". Final Image = Source Image + LUT where LUT is the difference bewtween your desired outcome and your source. 
 
@@ -24,6 +24,6 @@ Instructions for use:
 * Use the up and down keys to filter through the list
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example does not use any other classes. 

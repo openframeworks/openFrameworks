@@ -31,12 +31,12 @@ void ofApp::draw(){
     ofSetColor(100);
     ofDrawRectangle((ofGetWidth()-barWidth)/2, ofGetHeight()/2, barWidth, 30);
     
-    // get the percantage of the timer
+    // get the percentage of the timer
     float pct = ofMap(timer, 0.0, endTime, 0.0, 1.0, true);
     ofSetHexColor(0xf02589);
     ofDrawRectangle((ofGetWidth()-barWidth)/2, ofGetHeight()/2, barWidth*pct, 30);
 
-    // draw the percantage
+    // draw the percentage
     ofSetColor(20);
     ofDrawBitmapString(ofToString(pct*100, 0)+"%", ((ofGetWidth()-barWidth)/2)+barWidth+10, (ofGetHeight()/2)+20);
     

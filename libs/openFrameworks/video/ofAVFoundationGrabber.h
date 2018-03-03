@@ -5,13 +5,14 @@
 #pragma once
 #include "ofConstants.h"
 
-#ifdef OF_VIDEO_CAPTURE_AVF 
+#ifdef OF_VIDEO_CAPTURE_AVF
 
 //------
-#include "ofBaseTypes.h"
+#include "ofVideoBaseTypes.h"
 #include "ofPixels.h"
 #include "ofTexture.h"
 #include "ofThread.h"
+#include <mutex>
 
 #ifdef __OBJC__
 
@@ -26,15 +27,15 @@ class ofAVFoundationGrabber;
 @interface OSXVideoGrabber : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate> {
 
 	@public
-	CGImageRef currentFrame;	
-	
+	CGImageRef currentFrame;
+
 	int width;
 	int height;
-	
+
 	BOOL bInitCalled;
 	int deviceID;
-	
-	AVCaptureDeviceInput		*captureInput;	
+
+	AVCaptureDeviceInput		*captureInput;
 	AVCaptureVideoDataOutput    *captureOutput;
 	AVCaptureDevice				*device;
 	AVCaptureSession			*captureSession;
@@ -46,7 +47,7 @@ class ofAVFoundationGrabber;
 -(void)startCapture;
 -(void)stopCapture;
 -(void)lockExposureAndFocus;
--(vector <string>)listDevices;
+-(std::vector <std::string>)listDevices;
 -(void)setDevice:(int)_device;
 -(void)eraseGrabberPtr;
 
@@ -61,10 +62,10 @@ class ofAVFoundationGrabber;
 
 class ofAVFoundationGrabber : virtual public ofBaseVideoGrabber{
 
-	public:		
+	public:
 		ofAVFoundationGrabber();
 		~ofAVFoundationGrabber();
-	
+
 		void setDeviceID(int deviceID);
 		void setDesiredFrameRate(int capRate);
 		bool setPixelFormat(ofPixelFormat PixelFormat);
@@ -73,7 +74,7 @@ class ofAVFoundationGrabber : virtual public ofBaseVideoGrabber{
 		void update();
 		bool isFrameNew() const;
 		void close();
-	
+
 		ofPixels&		 		getPixels();
         const ofPixels&		    getPixels() const;
 
@@ -85,20 +86,20 @@ class ofAVFoundationGrabber : virtual public ofBaseVideoGrabber{
 		}
 
         bool isInitialized() const;
-	
+
 		void updatePixelsCB();
-		vector <ofVideoDevice> listDevices() const;
+		std::vector <ofVideoDevice> listDevices() const;
 		ofPixelFormat getPixelFormat() const;
-	
+
 	protected:
 		bool newFrame = false;
-		bool bHavePixelsChanged = false; 
+		bool bHavePixelsChanged = false;
 		void clear();
 		int width, height;
-	
+
 		int device = 0;
         bool bIsInit = false;
-	
+
 		int fps  = -1;
 		ofTexture tex;
 		ofPixels pixels;
@@ -108,14 +109,13 @@ class ofAVFoundationGrabber : virtual public ofBaseVideoGrabber{
 		#else
 			void * grabber;
 		#endif
-	
+
 	public:
 		ofPixelFormat pixelFormat;
 		ofPixels pixelsTmp;
 		bool bLock = false;
-		ofMutex capMutex;
+		std::mutex capMutex;
 
 };
 
 #endif
-

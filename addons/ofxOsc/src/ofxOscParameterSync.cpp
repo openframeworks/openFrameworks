@@ -1,28 +1,25 @@
-/*
- * ofxOscParameterSync.cpp
- *
- *  Created on: 13/07/2012
- *      Author: arturo
- */
-
+// copyright (c) openFrameworks team 2012-2017
 #include "ofxOscParameterSync.h"
 
-ofxOscParameterSync::ofxOscParameterSync() {
+//--------------------------------------------------------------
+ofxOscParameterSync::ofxOscParameterSync(){
 	updatingParameter = false;
 }
 
+//--------------------------------------------------------------
 ofxOscParameterSync::~ofxOscParameterSync(){
-	ofRemoveListener(syncGroup.parameterChangedE(),this,&ofxOscParameterSync::parameterChanged);
+	ofRemoveListener(syncGroup.parameterChangedE(), this, &ofxOscParameterSync::parameterChanged);
 }
 
-
-void ofxOscParameterSync::setup(ofParameterGroup & group, int localPort, const std::string& host, int remotePort){
+//--------------------------------------------------------------
+void ofxOscParameterSync::setup(ofParameterGroup &group, int localPort, const std::string &host, int remotePort){
 	syncGroup = group;
-	ofAddListener(syncGroup.parameterChangedE(),this,&ofxOscParameterSync::parameterChanged);
-	sender.setup(host,remotePort);
+	ofAddListener(syncGroup.parameterChangedE(), this, &ofxOscParameterSync::parameterChanged);
+	sender.setup(host, remotePort);
 	receiver.setup(localPort);
 }
 
+//--------------------------------------------------------------
 void ofxOscParameterSync::update(){
 	if(receiver.hasWaitingMessages()){
 		updatingParameter = true;
@@ -31,7 +28,8 @@ void ofxOscParameterSync::update(){
 	}
 }
 
-void ofxOscParameterSync::parameterChanged( ofAbstractParameter & parameter ){
+//--------------------------------------------------------------
+void ofxOscParameterSync::parameterChanged(ofAbstractParameter &parameter){
 	if(updatingParameter) return;
 	sender.sendParameter(parameter);
 }

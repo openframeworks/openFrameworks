@@ -10,6 +10,10 @@ void ofxGuiSetFont(const string & fontPath, int fontsize, bool _bAntiAliased, bo
 	ofxBaseGui::loadFont(fontPath, fontsize, _bAntiAliased, _bFullCharacterSet, dpi);
 }
 
+void ofxGuiSetFont(const ofTrueTypeFont::Settings & fontSettings){
+	ofxBaseGui::loadFont(fontSettings);
+}
+
 void ofxGuiSetBitmapFont(){
 	ofxBaseGui::setUseTTF(false);
 }
@@ -47,6 +51,10 @@ void ofxGuiSetDefaultHeight(int height){
 	ofxBaseGui::setDefaultHeight(height);
 }
 
+void ofxGuiSetDefaultEventsPriority(ofEventOrder eventsPriority){
+	ofxBaseGui::setDefaultEventsPriority(eventsPriority);
+}
+
 ofColor
 ofxBaseGui::headerBackgroundColor(64),
 ofxBaseGui::backgroundColor(0),
@@ -62,6 +70,7 @@ ofTrueTypeFont ofxBaseGui::font;
 bool ofxBaseGui::fontLoaded = false;
 bool ofxBaseGui::useTTF = false;
 ofBitmapFont ofxBaseGui::bitmapFont;
+ofEventOrder ofxBaseGui::defaultEventsPriority = OF_EVENT_ORDER_BEFORE_APP;
 
 ofxBaseGui::ofxBaseGui(){
 	parent = nullptr;
@@ -88,6 +97,12 @@ void ofxBaseGui::loadFont(const std::string& filename, int fontsize, bool _bAnti
 	useTTF = true;
 }
 
+void ofxBaseGui::loadFont(const ofTrueTypeFont::Settings & fontSettings){
+	font.load(fontSettings);
+	fontLoaded = true;
+	useTTF = true;
+}
+
 void ofxBaseGui::setUseTTF(bool bUseTTF){
 	if(bUseTTF && !fontLoaded){
 		loadFont(OF_TTF_MONO, 10, true, true);
@@ -104,14 +119,14 @@ void ofxBaseGui::registerMouseEvents(){
 		return; // already registered.
 	}
 	bRegisteredForMouseEvents = true;
-	ofRegisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+	ofRegisterMouseEvents(this, defaultEventsPriority);
 }
 
 void ofxBaseGui::unregisterMouseEvents(){
 	if(bRegisteredForMouseEvents == false){
 		return; // not registered.
 	}
-	ofUnregisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+	ofUnregisterMouseEvents(this, defaultEventsPriority);
 	bRegisteredForMouseEvents = false;
 }
 
@@ -192,9 +207,8 @@ void ofxBaseGui::loadFromFile(const std::string& filename){
 		loadFrom(xml);
     }else
     if(extension == "json"){
-		ofJson json;
 		ofFile jsonFile(filename);
-		jsonFile >> json;
+		ofJson json = ofLoadJson(jsonFile);
 		loadFrom(json);
 	}else{
 		ofLogError("ofxGui") << extension << " not recognized, only .xml and .json supported by now";
@@ -207,6 +221,7 @@ string ofxBaseGui::getName(){
 
 void ofxBaseGui::setName(const std::string& _name){
 	getParameter().setName(_name);
+	setNeedsRedraw();
 }
 
 void ofxBaseGui::setPosition(const ofPoint & p){
@@ -326,6 +341,10 @@ void ofxBaseGui::setDefaultWidth(int width){
 
 void ofxBaseGui::setDefaultHeight(int height){
 	defaultHeight = height;
+}
+
+void ofxBaseGui::setDefaultEventsPriority(ofEventOrder eventsPriority){
+	defaultEventsPriority = eventsPriority;
 }
 
 void ofxBaseGui::sizeChangedCB(){

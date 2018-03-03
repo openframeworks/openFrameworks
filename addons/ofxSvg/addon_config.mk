@@ -61,17 +61,17 @@ common:
 	# ADDON_LIBS_EXCLUDE =
 
 linux64:
-    ADDON_LIBS = libs/svgtiny/lib/linux64/libsvgtiny.a
+	ADDON_LIBS = libs/svgtiny/lib/linux64/libsvgtiny.a
 	ADDON_LIBS += libs/libxml2/lib/linux64/libxml2.a
 
 linuxarmv6l:
-    ADDON_LIBS = libs/svgtiny/lib/linuxarmv6l/libsvgtiny.a
+	ADDON_LIBS = libs/svgtiny/lib/linuxarmv6l/libsvgtiny.a
 	ADDON_LIBS += libs/libxml2/lib/linuxarmv6l/libxml2.a
 
 linuxarmv7l:
-    ADDON_LIBS = libs/svgtiny/lib/linuxarmv7l/libsvgtiny.a
+	ADDON_LIBS = libs/svgtiny/lib/linuxarmv7l/libsvgtiny.a
 	ADDON_LIBS += libs/libxml2/lib/linuxarmv7l/libxml2.a
 
 msys2:
-    ADDON_LIBS = libs/svgtiny/lib/msys2/libsvgtiny.a
+	ADDON_LIBS = libs/svgtiny/lib/msys2/libsvgtiny.a
 	ADDON_LIBS += libs/libxml2/lib/msys2/libxml2.a

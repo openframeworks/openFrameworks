@@ -1,9 +1,10 @@
 #include "ofURLFileLoader.h"
-#include "ofBaseTypes.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 
 #include "ofConstants.h"
+
+using namespace std;
 
 #if !defined(TARGET_IMPLEMENTS_URL_LOADER)
 	#include <curl/curl.h>
@@ -18,6 +19,9 @@ ofEvent<ofHttpResponse> & ofURLResponseEvent(){
 	static ofEvent<ofHttpResponse> * event = new ofEvent<ofHttpResponse>;
 	return *event;
 }
+
+
+
 
 #if !defined(TARGET_IMPLEMENTS_URL_LOADER)
 class ofURLFileLoaderImpl: public ofThread, public ofBaseURLFileLoader{
@@ -175,6 +179,8 @@ namespace{
 
 ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request) {
 	curl_slist *headers = nullptr;
+	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 0);
+	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 0);
 	curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
 
 	// always follow redirections
@@ -218,7 +224,7 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 
 	// start request and receive response
 	ofHttpResponse response(request, 0, "");
-	auto err = 0;
+	CURLcode err = CURLE_OK;
 	if(request.saveTo){
 		ofFile saveTo(request.name, ofFile::WriteOnly, true);
 		curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, &saveTo);
@@ -229,11 +235,12 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, saveToMemory_cb);
 		err = curl_easy_perform(curl.get());
 	}
-	if(err==0){
+	if(err==CURLE_OK){
 		long http_code = 0;
 		curl_easy_getinfo (curl.get(), CURLINFO_RESPONSE_CODE, &http_code);
 		response.status = http_code;
 	}else{
+		response.error = curl_easy_strerror(err);
 		response.status = -1;
 	}
 
@@ -372,11 +379,11 @@ int ofLoadURLAsync(const string&  url, const string&  name){
 	return getFileLoader().getAsync(url,name);
 }
 
-ofHttpResponse ofSaveURLTo(const string& url, const string& path){
+ofHttpResponse ofSaveURLTo(const string& url, const std::filesystem::path& path){
 	return getFileLoader().saveTo(url,path);
 }
 
-int ofSaveURLAsync(const string& url, const string& path){
+int ofSaveURLAsync(const string& url, const std::filesystem::path& path){
 	return getFileLoader().saveAsync(url,path);
 }
 

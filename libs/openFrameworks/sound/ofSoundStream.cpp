@@ -1,5 +1,6 @@
 #include "ofSoundStream.h"
 #include "ofAppRunner.h"
+#include "ofLog.h"
 
 #if defined(OF_SOUND_PLAYER_FMOD)
 #include "ofSoundPlayer.h"
@@ -22,6 +23,8 @@
 namespace{
     ofSoundStream systemSoundStream;
 }
+
+using namespace std;
 
 //------------------------------------------------------------
 bool ofSoundStreamSettings::setInDevice(const ofSoundDevice & device){
@@ -142,7 +145,7 @@ vector<ofSoundDevice> ofSoundStreamListDevices(){
 //------------------------------------------------------------
 ofSoundStream::ofSoundStream(){
 	#ifdef OF_SOUND_STREAM_TYPE
-		setSoundStream( shared_ptr<OF_SOUND_STREAM_TYPE>(new OF_SOUND_STREAM_TYPE) );
+		setSoundStream(std::make_shared<OF_SOUND_STREAM_TYPE>());
 	#endif
 }
 
@@ -335,8 +338,8 @@ int ofSoundStream::getBufferSize() const{
 }
 
 //------------------------------------------------------------
-vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name, unsigned int inChannels, unsigned int outChannels) const {
-	vector<ofSoundDevice> devs = getDeviceList();
+vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name, unsigned int inChannels, unsigned int outChannels, ofSoundDevice::Api api) const {
+	vector<ofSoundDevice> devs = getDeviceList(api);
 	vector<ofSoundDevice> hits;
 	
 	for(size_t i = 0; i < devs.size(); i++) {

@@ -2,7 +2,12 @@
 
 class ofVec3f;
 class ofVec4f;
+
 #include "ofConstants.h"
+#include "ofMathConstants.h"
+#include "glm/vec2.hpp"
+#include "glm/fwd.hpp"
+#include <cmath>
 
 /// \brief
 /// ofVec2f is a class for storing a two dimensional vector. 
@@ -181,7 +186,8 @@ public:
 	/// \brief Set x and y components of this vector with just one function call.
 	/// 
 	/// ~~~~{.cpp}
-	/// ofVec2f v1;
+	/// ofVec2f v1;//#include "ofConstants.h"
+	//#include "glm/fwd.hpp"
 	/// v1.set(40, 20);
 	/// ~~~~
 	/// 
@@ -452,8 +458,8 @@ public:
 
 	
 	/// \cond INTERNAL
-	friend ostream& operator<<(ostream& os, const ofVec2f& vec);
-	friend istream& operator>>(istream& is, const ofVec2f& vec);
+	friend std::ostream& operator<<(std::ostream& os, const ofVec2f& vec);
+	friend std::istream& operator>>(std::istream& is, const ofVec2f& vec);
 	/// \endcond
 	
 	/// \}
@@ -484,63 +490,63 @@ public:
     ofVec2f& scale( const float length );
 	
 	
-	/// \brief Return a new ofVec2f that is the result of rotating this vector by angle
-	/// degrees around the origin.
+	/// \brief Returns a new vector that is the result of rotating this vector 
+	/// by 'angle' degrees about the origin.
 	/// 
 	/// ~~~~{.cpp}
 	/// ofVec2f v1(1, 0);
-	/// ofVec2f v2 = v1.getRotated( 45 ); // v2 is (√2, √2)
-	/// ofVec3f v3 = v2.getRotated( 45 ); // v3 is (0, 1)
+	/// ofVec2f v2 = v1.getRotated(45); // v2 is (0.707, 0.707)
 	/// ~~~~
 	/// 
 	/// \sa getRotatedRad()
 	/// \sa rotate()
     ofVec2f  getRotated( float angle ) const;
 
-    /// \brief Like getRotated() but rotates around `pivot` rather than around the origin
+	/// \brief Returns a new vector that is the result of rotating this vector
+	/// by 'angle' degrees about the point 'pivot'.
+	///
     ofVec2f  getRotated( float angle, const ofVec2f& pivot ) const;
     
-	/// \brief Return a new ofVec2f that is the result of rotating this vector by angle
-	/// radians around the origin.
+	/// \brief Returns a new vector that is the result of rotating this vector 
+	/// by 'angle' radians about the origin.
 	/// 
 	/// ~~~~{.cpp}
 	/// ofVec2f v1(1, 0);
-	/// ofVec2f v2 = v1.getRotatedRad( PI/4 ); // v2 is (√2, √2)
-	/// ofVec3f v3 = v2.getRotatedRad( PI/4 ); // v3 is (0, 1)
+	/// ofVec2f v2 = v1.getRotatedRad(PI / 4); // v2 is (0.707, 0.707)
 	/// ~~~~
 	///     
     ofVec2f  getRotatedRad( float angle ) const;
 
-    /// \brief Like getRotatedRad() but rotates around `pivot` rather than around the origin
+	/// \brief Returns a new vector that is the result of rotating this vector
+	/// by 'angle' radians about the origin. 
+	///
     ofVec2f  getRotatedRad( float angle, const ofVec2f& pivot ) const;
 
 
-	/// \brief Rotate this vector by angle degrees around the origin.
+	/// \brief Rotates this vector by 'angle' degrees about the origin.
 	/// 
 	/// ~~~~{.cpp}
 	/// ofVec2f v1(1, 0);
-	/// v1.rotate( 45 ); // (√2, √2)
-	/// v1.rotate( 45 ); // (0, 1)
+	/// v1.rotate(45); // v1 is now (0.707, 0.707)
 	/// ~~~~
 	///
 	/// \sa getRotated()
     ofVec2f& rotate( float angle );
 
-    /// \brief Like rotate() but rotates around `pivot` rather than around the origin
+	/// \brief Rotates this vector by 'angle' degrees about the point 'pivot'.
     ofVec2f& rotate( float angle, const ofVec2f& pivot );
     
-	/// \brief Rotate this vector by angle radians around the origin.
+	/// \brief Rotates this vector by 'angle' radians about the origin.
 	/// 
 	/// ~~~~{.cpp}
 	/// ofVec2f v1(1, 0);
-	/// v1.rotate( PI/4 ); // (√2, √2)
-	/// v1.rotate( PI/4 ); // (0, 1)
+	/// v1.rotateRad(PI / 4); // v1 is now (0.707, 0.707)
 	/// ~~~~
 	///
 	/// \sa getRotatedRad()
     ofVec2f& rotateRad( float angle );
 	
-    /// \brief Like rotateRad() but rotates around `pivot` rather than around the origin
+	/// \brief Rotates this vector by 'angle' radians about the point 'pivot'.
 	ofVec2f& rotateRad( float angle, const ofVec2f& pivot );
 	
 	
@@ -890,34 +896,36 @@ public:
 	/// \sa getPerpendicular()
 	ofVec2f& perpendicular();
 	
-	/// \brief Calculate and return the dot product of this vector with vec.
-	/// 
-	/// *Dot product* (less commonly known as *Euclidean inner product*) expresses 
-	/// the angular relationship between two vectors. In other words it is a measure 
-	/// of how *parallel* two vectors are. If they are completely perpendicular the dot 
-	/// product is 0; if they are completely parallel their dot product is either 1 if 
-	/// they are pointing in the same direction, or -1 if they are pointing in 
-	/// opposite directions.
+	/// \brief Returns the dot product of this vector with 'vec'.
 	///
-	/// ![DOT](math/dotproduct.png)
-	/// Image courtesy of Wikipedia
+	/// The *dot product* of two vectors, also known as the *scalar product*, is
+	/// the product of the magnitude of the two vectors and the cosine of the
+	/// angle between them.
+	///
+	/// One interpretation of the dot product is as a measure of how closely two
+	/// vectors align with each other. If they point in exactly the same
+	/// direction, their dot product will simply be the product of their
+	/// magnitudes, if they are perpendicular, their dot product will be 0, and
+	/// if they point in opposite directions, their dot product will be
+	/// negative.
+	///
+	/// The dot product is in contrast to the *cross product*, which returns a
+	/// vector rather than a scalar.
 	/// 
 	/// ~~~~{.cpp}
-	/// ofvec2f a1(1, 0);
-	/// ofVec2f b1(0, 1); // 90 degree angle to a1
-	/// dot = a1.dot(b1); // dot is 0, ie cos(90)
-	/// 
-	/// ofVec2f a2(1, 0); 
-	/// ofVec2f b2(1, 1); // 45 degree angle to a2
-	/// b2.normalize(); // vectors should to be unit vectors (normalized)
-	/// float dot = a2.dot(b2); // dot is 0.707, ie cos(45)
-	/// 
-	/// ofVec2f a3(1, 0);
-	/// ofVec2f b3(-1, 0); // 180 degree angle to a3
-	/// dot = a3.dot(b3); // dot is -1, ie cos(180)
+	/// ofVec2f a1(2, 0); // magnitude 2, parallel to x-axis
+	/// ofVec2f b1(3, 4); // magnitude 5, 53.13 degree angle to a1
+	/// float dot = a1.dot(b1); // dot is 2 * 5 * cos(53.13) = 6.0
+	///
+	/// ofVec2f a2(1, 0); // magnitude 1, parallel to x-axis
+	/// ofVec2f b2(0, 1); // magnitude 1, 90 degree angle to a2
+	/// dot = a2.dot(b2); // dot is 1 * 1 * cos(90) = 0.0
+	///
+	/// ofVec2f a3(0, 1); // magnitude 1, parallel to y-axis
+	/// ofVec2f b3(0, -1); // magnitude 1, 180 degree angle to a3
+	/// dot = a3.dot(b3); // dot is 1 * 1 * cos(180) = -1.0
 	/// ~~~~
 	/// 
-	/// \param vec The vector to dotproduct
     float dot( const ofVec2f& vec ) const;
 	
 	
@@ -998,8 +1006,6 @@ inline ofVec2f::ofVec2f(): x(0), y(0) {}
 inline ofVec2f::ofVec2f( float _scalar ): x(_scalar), y(_scalar) {}
 inline ofVec2f::ofVec2f( float _x, float _y ):x(_x), y(_y) {}
 inline ofVec2f::ofVec2f(const glm::vec2 & v): x(v.x), y(v.y) {}
-inline ofVec2f::ofVec2f(const glm::vec3 & v): x(v.x), y(v.y) {}
-inline ofVec2f::ofVec2f(const glm::vec4 & v): x(v.x), y(v.y) {}
 
 // Getters and Setters.
 //
@@ -1102,12 +1108,12 @@ inline ofVec2f& ofVec2f::operator/=( const ofVec2f& vec ) {
 	return *this;
 }
 
-inline ostream& operator<<(ostream& os, const ofVec2f& vec) {
+inline std::ostream& operator<<(std::ostream& os, const ofVec2f& vec) {
 	os << vec.x << ", " << vec.y;
 	return os;
 }
 
-inline istream& operator>>(istream& is, ofVec2f& vec) {
+inline std::istream& operator>>(std::istream& is, ofVec2f& vec) {
 	is >> vec.x;
 	is.ignore(2);
 	is >> vec.y;

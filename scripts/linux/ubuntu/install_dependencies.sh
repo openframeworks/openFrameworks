@@ -11,7 +11,7 @@ fi
 
 if [ "$1" == "-y" ]; then
     FORCE_YES=-y
-else 
+else
     FORCE_YES=""
 fi
 
@@ -19,7 +19,7 @@ function installPackages {
     for pkg in $@; do
         echo "Installing ${pkg}"
         dpkg-query -W -f=' ' ${pkg} 2> /dev/null
-        if [ $? -eq 0 ]; then 
+        if [ $? -eq 0 ]; then
             echo "Already installed"
         else
             error="$(apt-get install -y --dry-run ${pkg})"
@@ -55,21 +55,33 @@ function installPackages {
     echo
 }
 
-MAJOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f1 -d. | sed "s/\t//g")
-MINOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f2 -d.)
+# Ubuntu derivatives supported: ElementaryOS
+# Loads: NAME, VERSION, ID, ID_LIKE, PRETTY_NAME,
+# 	VERSION_ID, HOME_URL, SUPPORT_URL, BUG_REPORT_URL, VERSION_CODENAME, UBUNTU_CODENAME
+source /etc/os-release
+
+if [ "$ID" = "elementary" ]; then
+	# Gets ubuntu base version
+	RELEASE=$(lsb_release -r -u)
+else
+	RELEASE=$(lsb_release -r)
+fi
+
+MAJOR_VERSION=$(echo $RELEASE | cut -f2 -d: | cut -f1 -d. | sed "s/\t//g")
+MINOR_VERSION=$(echo $RELEASE | cut -f2 -d: | cut -f2 -d.)
 
 echo "Running on ubuntu ${MAJOR_VERSION}.${MINOR_VERSION}"
 
-if [ $(expr $MAJOR_VERSION \< 12 ) -eq 1 ]; then
+if [ $MAJOR_VERSION -lt 12 ]; then
     echo "Your ubuntu version is too old try using an older version of openFrameworks or updating your system"
     exit 1
-elif [ $(expr $MAJOR_VERSION \< 13 ) -eq 1 ]; then
+elif [ $MAJOR_VERSION -lt 13 ]; then
     add-apt-repository ppa:ubuntu-toolchain-r/test --yes
     add-apt-repository ppa:gstreamer-developers/ppa --yes
     add-apt-repository ppa:boost-latest/ppa --yes
     CXX_VER=-4.9
     BOOST_VER=1.55
-elif [ $(expr $MAJOR_VERSION \< 14 ) -eq 1 ]; then
+elif [[ $MAJOR_VERSION -lt 14 || ($MAJOR_VERSION -eq 14 && $MINOR_VERSION -eq 4) ]]; then
     add-apt-repository ppa:ubuntu-toolchain-r/test --yes
     add-apt-repository ppa:boost-latest/ppa --yes
     CXX_VER=-4.9
@@ -127,7 +139,7 @@ then
 		echo
 		echo "installation of OF dependencies with "${XTAG}" packages confirmed"
 	else
-		XTAG="" 
+		XTAG=""
 	fi
 fi
 
@@ -148,7 +160,7 @@ else
 	mv glfw-$GLFW_GIT_TAG glfw
 	rm glfw-$GLFW_GIT_TAG.tar.gz
 	cd glfw
-    mkdir -p build 
+    mkdir -p build
     cd build
     cmake .. -DGLFW_BUILD_DOCS=OFF \
 	-DGLFW_BUILD_TESTS=OFF \
@@ -173,21 +185,24 @@ if [ "$1" != "-y" ]; then
     if [[ $REPLY =~ ^[Nn]$ ]]; then
         exit 0
     fi
-    
+
     echo
     echo "Installing..."
     echo
-    installPackages ${PACKAGES}
-else
-    installPackages ${PACKAGES}
 fi
+installPackages ${PACKAGES}
 
-if [ $(expr $MAJOR_VERSION \< 13 ) -eq 1 ]; then
-    echo "detected ubuntu 12.xx setting gcc-${CXX_VER} as default compiler" 
-    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 20
-    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc${CXX_VER} 50
-    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.6 20
-    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++${CXX_VER} 50
+if [[ $MAJOR_VERSION -lt 14 || ($MAJOR_VERSION -eq 14 && $MINOR_VERSION -eq 4) ]]; then
+    echo "detected ubuntu default gcc to old for compatibility with c++11"
+	echo "OF needs at least ${CXX_VER} as default compiler, we can install this now"
+	echo "or you will need to setup this manually before compiling"
+	if [ "$1" != "-y" ]; then
+	    read -p "Do you want to set gcc/g++ ${CXX_VER} as default now? [Y/n] "
+	    if [[ $REPLY =~ ^[Nn]$ ]]; then
+	        exit 0
+	    fi
+	fi
+	echo "setting gcc-${CXX_VER} as default compiler"
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc${CXX_VER} 1 --force
+    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++${CXX_VER} 1 --force
 fi
-
-

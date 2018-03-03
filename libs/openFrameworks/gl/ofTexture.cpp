@@ -1,14 +1,17 @@
 #include "ofTexture.h"
-#include "ofUtils.h"		// for nextPow2()
-#include "ofAppRunner.h"	// for getWidth()
 #include "ofGraphics.h"
 #include "ofPixels.h"
 #include "ofGLUtils.h"
+#include "ofGLBaseTypes.h"
+#include "ofBufferObject.h"
+#include "ofMesh.h"
 #include <map>
 
 #ifdef TARGET_ANDROID
 #include "ofAppAndroidWindow.h"
 #endif
+
+using namespace std;
 
 //----------------------------------------------------------
 // static
@@ -179,6 +182,7 @@ void ofRegenerateAllTextures(){
 		tex->clear();
 	}
 }
+
 #endif
 
 //----------------------------------------------------------
@@ -842,7 +846,7 @@ void ofTexture::setAlphaMask(ofTexture & mask){
 	if(mask.texData.textureTarget!=this->texData.textureTarget){
 		ofLogError("ofTexture") << "Cannot set alpha mask with different texture target";
 	}else{
-		texData.alphaMask = shared_ptr<ofTexture>(new ofTexture(mask));
+		texData.alphaMask = std::make_shared<ofTexture>(mask);
 	}
 }
 
@@ -1022,8 +1026,17 @@ void ofTexture::draw(float x, float y, float z) const{
 }
 
 //------------------------------------
+void ofTexture::draw(const glm::vec3 & pos) const{
+	draw(pos.x,pos.y,pos.z,getWidth(),getHeight());
+}
+
+//------------------------------------
 void ofTexture::draw(float x, float y, float w, float h) const{
 	draw(x,y,0,w,h);
+}
+
+void ofTexture::draw(const glm::vec3 & pos, float w, float h) const{
+	draw(pos.x,pos.y,pos.z,w,h);
 }
 
 //------------------------------------

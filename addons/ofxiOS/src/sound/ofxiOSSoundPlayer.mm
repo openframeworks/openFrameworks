@@ -6,7 +6,10 @@
 
 #include "ofxiOSSoundPlayer.h"
 #include "ofUtils.h"
+#include "ofLog.h"
 #import "AVSoundPlayer.h"
+
+using namespace std;
 
 ofxiOSSoundPlayer::ofxiOSSoundPlayer() {
     soundPlayer = NULL;
@@ -16,7 +19,7 @@ ofxiOSSoundPlayer::~ofxiOSSoundPlayer() {
     unload();
 }
 
-bool ofxiOSSoundPlayer::load(std::filesystem::path fileName, bool stream) {
+bool ofxiOSSoundPlayer::load(const std::filesystem::path& fileName, bool stream) {
     if(soundPlayer != NULL) {
         unload();
     }

@@ -1,6 +1,5 @@
 #include "ofGstUtils.h"
 #ifndef TARGET_ANDROID
-#include "ofUtils.h"
 #include <gst/app/gstappsink.h>
 #include <gst/video/video.h>
 
@@ -16,7 +15,8 @@
 #include <glib-object.h>
 #include <glib.h>
 #include <algorithm>
-#include "ofAppRunner.h"
+#include "ofVideoPlayer.h"
+
 #ifdef OF_USE_GST_GL
 #ifndef TARGET_OPENGLES
 #include <gst/gl/x11/gstgldisplay_x11.h>
@@ -27,6 +27,7 @@
 #include <winbase.h>	// to use SetEnvironmentVariableA
 #endif
 
+using namespace std;
 
 ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop = nullptr;
 
@@ -715,7 +716,7 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 			break;
 		}
 		
-#if GST_VERSION_MAJOR==1
+#if GST_VERSION_MAJOR==1 && GST_VERSION_MINOR>=2
 		case GST_MESSAGE_HAVE_CONTEXT:{
 			GstContext *context;
 			const gchar *context_type;

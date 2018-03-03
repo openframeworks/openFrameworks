@@ -2,6 +2,10 @@
 #include "ofxiOSExtras.h"
 #include "ofxiOSEAGLView.h"
 #import "AVFoundationVideoPlayer.h"
+#include "ofGLUtils.h"
+#include "ofMath.h"
+
+using namespace std;
 
 CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
 CVOpenGLESTextureRef _videoTextureRef = NULL;
@@ -102,7 +106,7 @@ bool ofxiOSVideoPlayer::setPixelFormat(ofPixelFormat value) {
     bValid = bValid || (value == OF_PIXELS_RGBA);
     
     if(bValid == false) {
-        ofLogWarning("ofxiOSVideoPlayer::setPixelFormat()") << "unsupported ofPixelFormat " << value;
+        ofLogWarning("ofxiOSVideoPlayer::setPixelFormat()") << "unsupported ofPixelFormat " << ofToString(value);
         return false;
     }
     

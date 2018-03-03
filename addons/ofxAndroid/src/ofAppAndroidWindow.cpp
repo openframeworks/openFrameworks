@@ -19,7 +19,6 @@
 #include "ofFileUtils.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
-#include "ofBaseTypes.h"
 using namespace std;
 
 static bool paused=true;
@@ -84,20 +83,24 @@ jclass ofGetJavaOFAndroid(){
 	return ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 }
 
+jclass ofGetOFLifeCycle(){
+	return ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroidLifeCycle");
+}
+
 jobject ofGetOFActivityObject(){
 	JNIEnv * env = ofGetJNIEnv();
 	if(!env) return NULL;
 
-	jclass OFAndroid = ofGetJavaOFAndroid();
-	if(!OFAndroid) return NULL;
+	jclass OFLifeCycle = ofGetOFLifeCycle();
+	if(!OFLifeCycle) return NULL;
 
-	jfieldID ofActivityID = env->GetStaticFieldID(OFAndroid,"ofActivity","Lcc/openframeworks/OFActivity;");
+	jfieldID ofActivityID = env->GetStaticFieldID(OFLifeCycle,"m_activity","Lcc/openframeworks/OFActivity;");
 	if(!ofActivityID){
 		ofLogError("ofAppAndroidWindow") << "couldn't get field ID for ofActivity";
 		return NULL;
 	}
 
-	return env->GetStaticObjectField(OFAndroid,ofActivityID);
+	return env->GetStaticObjectField(OFLifeCycle,ofActivityID);
 }
 
 

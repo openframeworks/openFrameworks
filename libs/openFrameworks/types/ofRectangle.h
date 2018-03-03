@@ -2,7 +2,80 @@
 
 
 #include "ofConstants.h"
-#include "ofLog.h"
+#include <glm/vec3.hpp>
+
+
+
+/// \brief Used to represent the available rectangle aspect ratio scaling modes.
+///
+/// \sa ofRectangle
+enum ofAspectRatioMode {
+	/// \brief Set the rectangle's width and height to match the target.
+	OF_ASPECT_RATIO_IGNORE            = 0,
+	/// \brief Resizes the rectangle to completely fit within the target.
+	OF_ASPECT_RATIO_KEEP              = 1,
+	/// \brief Resizes the rectangle to completely enclose the target.
+	OF_ASPECT_RATIO_KEEP_BY_EXPANDING = 2,
+};
+
+/// \brief Used to represent the available vertical rectangle alignment modes.
+///
+/// \sa ofRectangle
+enum ofAlignVert {
+	/// \brief Do not perform any vertical alignment.
+	OF_ALIGN_VERT_IGNORE   = 0x0000,
+	/// \brief Use the upper edge of the rectangle to vertically anchor the alignment.
+	OF_ALIGN_VERT_TOP      = 0x0010,
+	/// \brief Use the bottom edge of the rectangle to vertically anchor the alignment.
+	OF_ALIGN_VERT_BOTTOM   = 0x0020,
+	/// \brief Use the center of the rectangle to vertically anchor the alignment.
+	OF_ALIGN_VERT_CENTER   = 0x0040,
+};
+
+
+/// \brief Used to represent the available horizontal rectangle alignment modes.
+///
+/// \sa ofRectangle
+enum ofAlignHorz {
+	/// \brief Do not perform any horizontal alignment.
+	OF_ALIGN_HORZ_IGNORE   = 0x0000,
+	/// \brief Use the left edge of the rectangle to horizontally anchor the alignment.
+	OF_ALIGN_HORZ_LEFT     = 0x0001,
+	/// \brief Use the right edge of the rectangle to horizontally anchor the alignment.
+	OF_ALIGN_HORZ_RIGHT    = 0x0002,
+	/// \brief Use the center of the rectangle to horizontally anchor the alignment.
+	OF_ALIGN_HORZ_CENTER   = 0x0004,
+};
+
+/// \brief Used to represent the available rectangle scaling modes.
+///
+/// ofScaleMode can usually be interpreted as a concise combination of
+/// an ::ofAspectRatioMode, an ::ofAlignVert and an ::ofAlignHorz.
+enum ofScaleMode{
+
+	/// \brief Center and scale the rectangle to fit inside the target.
+	///
+	/// This centers the subject rectangle within the target rectangle and
+	/// resizes the subject rectangle to completely fit within the target
+	/// rectangle.
+	OF_SCALEMODE_FIT     = 0,
+
+	/// \brief Move and scale the rectangle to completely enclose the target.
+	///
+	/// This centers the subject rectangle within the target rectangle and
+	/// resizes the subject rectangle to completely encompass the target
+	/// rectangle.
+	OF_SCALEMODE_FILL    = 1,
+
+	/// \brief Move the rectangle to be centered on the target.
+	///
+	/// This centers the subject rectangle within the target rectangle and
+	/// does not modify the Subject's size or aspect ratio.
+	OF_SCALEMODE_CENTER  = 2, // centers the subject
+
+	/// \brief Match the target rectangle's position and dimensions.
+	OF_SCALEMODE_STRETCH_TO_FILL = 3
+};
 
 
 /// \brief A class representing a 2D rectangle.
@@ -754,6 +827,52 @@ public:
     /// \returns The height of the rectangle.
     float getHeight() const;
 
+    
+    /// \brief Maps a normalized coordinate into this rectangle
+    /// 
+    /// Normalized coordinates range from [0,1] inclusive. It is used to define a ratio
+    /// between the coordinates and a unitary rectangle. This ratio is mapped into
+    /// this rectangle to scale to real values. If normalized coordinates are out of bounds,
+    /// output will be scaled accordingly.
+    ///
+    /// \param coeff Normalized coordinate to map to this rectangle
+    /// \returns The mapped coordinate
+    glm::vec2 map(const glm::vec2 & coeff) const;
+    
+    /// \brief Maps a normalized coordinate into this rectangle
+    /// 
+    /// Normalized rectangles' position, width and height range from [0,1] inclusive.
+    /// It is used to define a ratio between the rectangle and a unitary rectangle.
+    /// This ratio is mapped into this rectangle to scale to real values. 
+    /// If normalized rectangle is out of bounds, output will be scaled accordingly.
+    /// 
+    /// \param coeff Normalized rectangle to map to this rectangle
+    /// \returns The mapped coordinate
+    ofRectangle map(const ofRectangle & coeff) const;
+    
+    /// \brief Maps a normalized coordinate into this rectangle, clamping if out of bounds
+    /// 
+    /// Normalized coordinates range from [0,1] inclusive. It is used to define a ratio
+    /// between the coordinates and a unitary rectangle. This ratio is mapped into
+    /// this rectangle to scale to real values. If normalized coordinates are out of bounds,
+    /// output will be clamped to this rectangle's position, width and height.
+    /// 
+    /// \param coeff Normalized coordinate to map to this rectangle
+    /// \returns The mapped coordinate, clamped
+    glm::vec2 mapClamp(const glm::vec2 & coeff) const;
+    
+    /// \brief Maps a normalized rectangle to this rectangle, clamping if out of bounds
+    /// 
+    /// Normalized rectangles' position, width and height range from [0,1] inclusive.
+    /// It is used to define a ratio between the rectangle and a unitary rectangle.
+    /// This ratio is mapped into this rectangle to scale to real values. 
+    /// If normalized rectangle is out of bounds, output will be clamped to this 
+    /// rectangle's position, width and height.
+    /// 
+    /// \param coeff Normalized rectangle to map to this rectangle
+    /// \returns The mapped rectangle
+    ofRectangle mapClamp(const ofRectangle & coeff) const;
+    
     /// \}
 
     /// \name Operators
@@ -823,8 +942,8 @@ public:
 /// \cond INTERNAL
 /// \warning The internal z component of the glm::vec3 is preserved even though it
 /// is not used.
-ostream& operator<<(ostream& os, const ofRectangle& rect);
+std::ostream& operator<<(std::ostream& os, const ofRectangle& rect);
 /// \warning The internal z component of the glm::vec3 is preserved even though it
 /// is not used.
-istream& operator>>(istream& is, ofRectangle& rect);
+std::istream& operator>>(std::istream& is, ofRectangle& rect);
 /// \endcond

@@ -2,7 +2,7 @@
 --
 ![Screenshot of Example](pdfExample.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks Example is designed to demonstrate how to save PDF versions of an OF app output.  
 
@@ -32,6 +32,6 @@ Instructions for use:
 * Drag and drop images into the recetangles with "drop images here" command 
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example does not use any other classes. 

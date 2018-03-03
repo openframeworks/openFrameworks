@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofGstUtils.h"
-#include "ofTypes.h"
 
 
 struct ofGstFramerate{
@@ -10,25 +9,25 @@ struct ofGstFramerate{
 };
 
 struct ofGstVideoFormat{
-  string mimetype;
-  string format_name;
+  std::string mimetype;
+  std::string format_name;
   int    width;
   int    height;
-  vector<ofGstFramerate> framerates;
+  std::vector<ofGstFramerate> framerates;
   ofGstFramerate choosen_framerate;
 };
 
 struct ofGstDevice{
-  string video_device;
-  string gstreamer_src;
-  string product_name;
-  string serial_id;
-  vector<ofGstVideoFormat> video_formats;
+  std::string video_device;
+  std::string gstreamer_src;
+  std::string product_name;
+  std::string serial_id;
+  std::vector<ofGstVideoFormat> video_formats;
   int current_format;
 };
 
 struct ofGstCamData{
-  vector<ofGstDevice> webcam_devices;
+    std::vector<ofGstDevice> webcam_devices;
   bool bInited;
 };
 
@@ -43,7 +42,7 @@ public:
 	
 	void videoSettings(){};//TODO: what is this??
 
-	vector<ofVideoDevice> listDevices() const;
+	std::vector<ofVideoDevice> listDevices() const;
 	void setDeviceID(int id);
 	void setDesiredFrameRate(int framerate);
 	bool setup(int w, int h);

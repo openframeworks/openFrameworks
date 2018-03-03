@@ -1,8 +1,8 @@
-#About <This Section>
+# About <This Section>
 
 --
 
-###Learning Objectives
+### Learning Objectives
 
 This section of examples aims to provide understanding around the topic of <insert topic> and some examples of use...
 

@@ -2,7 +2,7 @@
 --
 ![Screenshot of Example](audioInputExample.gif)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks example is designed to demonstrate how to access, extract, and draw from your audio input's raw data.
 

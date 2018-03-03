@@ -1,9 +1,9 @@
-#About fontShapesExample
+# About fontShapesExample
 
 ![Screenshot of fontShapesExample](fontShapesExample.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates several methods of drawing strings and characters using TrueType font. In this demonstration, text is drawn in the following ways:
 
@@ -39,10 +39,10 @@ In the code, pay attention to:
 
 When launching this app, you should see a white screen with green text displaying a variety of characters and text. The large individual characters should update on key press, and the bottom rows of text should display strings in bitmap and vector.
 
-###Instructions for use:
+### Instructions for use:
 
 * Type any key to update the displayed character
 
-###Other classes used in this file
+### Other classes used in this file
 
 This example uses no other classes.

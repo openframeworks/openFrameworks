@@ -1,6 +1,5 @@
 #include "ofThread.h"
 #include "ofLog.h"
-#include "ofUtils.h"
 
 #ifdef TARGET_ANDROID
 #include <jni.h>

@@ -19,18 +19,44 @@
 #   # chroot destination
 
 set -e -u -o pipefail
+error() {
+  local parent_lineno="$1"
+  local message="$2"
+  local code="${3:-1}"
+  if [[ -n "$message" ]] ; then
+    echo "Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
+  else
+    echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
+  fi
+  exit "${code}"
+}
+trap 'error ${LINENO}' ERR
+
 
 # Packages needed by pacman (see get-pacman-dependencies.sh)
+# PACMAN_PACKAGES=(
+# acl archlinux-keyring attr bzip2 curl expat glibc gpgme libarchive  libassuan libgpg-error libssh2 lzo openssl pacman pacman-mirrorlist xz zlib linux-raspberrypi linux-raspberrypi-headers libutil-linux linux-api-headers linux-firmware krb5 e2fsprogs keyutils libidn gcc-libs gcc glibc coreutils systemd  make pkg-config openal glew freeimage freetype2 libsndfile openssl mesa fontconfig gstreamer gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-libav assimp boost cairo pixman libpng harfbuzz graphite libdrm libx11 xproto kbproto libxcb libxau libxdmcp libxext xextproto libxdamage damageproto libxfixes fixesproto libxxf86vm xf86vidmodeproto libxrender renderproto alsa-lib flex libxrandr libxi libxcursor libxshmfence wayland opencv glib2 pcre libsystemd filesystem libcap libffi libx11 xorg-server libsm libice libxinerama libxrandr libxext randrproto libxi inputproto glfw-x11 xineramaproto uriparser curl libxml2 pugixml orc libpsl icu
+# )
 PACMAN_PACKAGES=(
-acl archlinux-keyring attr bzip2 curl expat glibc gpgme libarchive  libassuan libgpg-error libssh2 lzo openssl pacman pacman-mirrorlist xz zlib linux-raspberrypi linux-raspberrypi-headers libutil-linux linux-api-headers linux-firmware krb5 e2fsprogs keyutils libidn gcc-libs gcc glibc coreutils systemd  make pkg-config openal glew freeimage freetype2 libsndfile openssl mesa mesa-libgl fontconfig gstreamer gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-libav assimp boost cairo pixman libpng harfbuzz graphite libdrm libx11 xproto kbproto libxcb libxau libxdmcp libxext xextproto libxdamage damageproto libxfixes fixesproto libxxf86vm xf86vidmodeproto libxrender renderproto alsa-lib flex libxrandr libxi libxcursor libxshmfence wayland opencv glib2 pcre libsystemd filesystem libcap libffi libx11 xorg-server libsm libice libxinerama libxrandr libxext randrproto libxi inputproto glfw-x11 xineramaproto uriparser curl libxml2 pugixml orc libpsl icu
+make pkg-config gcc raspberrypi-firmware linux-raspberrypi linux-raspberrypi-headers linux-firmware krb5 openal glew freeglut freeimage freetype2 cairo poco gstreamer gst-plugins-base gst-plugins-good assimp boost libxcursor opencv assimp glfw-x11 uriparser curl pugixml
 )
 BASIC_PACKAGES=(${PACMAN_PACKAGES[*]} )
 EXTRA_PACKAGES=()
+declare -A DEPENDENCIES_PACKAGES
+INSTALLED=()
 DEFAULT_REPO_URL="http://mirrors.kernel.org/archlinux"
 DEFAULT_ARM_REPO_URL="http://mirror.archlinuxarm.org"
+declare -A ALIASES
+ALIASES["sh"]="bash"
+ALIASES["libltdl"]="libtool"
+ALIASES["libjpeg"]="libjpeg-turbo"
+ALIASES["libusbx"]="libusb"
+ALIASES["libgl"]="libglvnd"
+ALIASES["opengl-driver"]="libglvnd"
+ALIASES["awk"]="gawk"
 
-stderr() { 
-  echo "$@" >&2 
+stderr() {
+  echo "$@" >&2
 }
 
 debug() {
@@ -47,14 +73,14 @@ fetch() {
 
 uncompress() {
   local FILEPATH=$1 DEST=$2
-  
+
   case "$FILEPATH" in
-    *.gz) tar xzf "$FILEPATH" -C "$DEST";;
-    *.xz) xz -dc "$FILEPATH" | tar x -C "$DEST";;
+    *.gz) tar xzf "$FILEPATH" -C "$DEST" > /dev/null;;
+    *.xz) xz -dc "$FILEPATH" | tar x -C "$DEST" 2> /dev/null;;
     *) debug "Error: unknown package format: $FILEPATH"
        return 1;;
   esac
-}  
+}
 
 ###
 get_default_repo() {
@@ -95,43 +121,66 @@ configure_pacman() {
 
 configure_minimal_system() {
   local DEST=$1
-  
+
   mkdir -p "$DEST/dev"
-  echo "root:x:0:0:root:/root:/bin/bash" > "$DEST/etc/passwd" 
+  echo "root:x:0:0:root:/root:/bin/bash" > "$DEST/etc/passwd"
   echo 'root:$1$GT9AUpJe$oXANVIjIzcnmOpY07iaGi/:14657::::::' > "$DEST/etc/shadow"
   touch "$DEST/etc/group"
   echo "bootstrap" > "$DEST/etc/hostname"
-  
+
   test -e "$DEST/etc/mtab" || echo "rootfs / rootfs rw 0 0" > "$DEST/etc/mtab"
   #test -e "$DEST/dev/null" || mknod "$DEST/dev/null" c 1 3
   #test -e "$DEST/dev/random" || mknod -m 0644 "$DEST/dev/random" c 1 8
   #test -e "$DEST/dev/urandom" || mknod -m 0644 "$DEST/dev/urandom" c 1 9
-  
+
   sed -i "s/^[[:space:]]*\(CheckSpace\)/# \1/" "$DEST/etc/pacman.conf"
   sed -i "s/^[[:space:]]*SigLevel[[:space:]]*=.*$/SigLevel = Never/" "$DEST/etc/pacman.conf"
 }
 
 fetch_packages_list() {
-  local REPO=$1 
-  
+  local REPO=$1
+
   debug "fetch packages list: $REPO/"
   fetch "$REPO/" | extract_href | awk -F"/" '{print $NF}' | sort -rn ||
     { debug "Error: cannot fetch packages list: $REPO"; return 1; }
 }
 
+parse_dependencies() {
+    local DEST=$1
+    if grep -q ^depend $DEST/.PKGINFO; then
+        DEPS=`cat $DEST/.PKGINFO | grep ^depend | sed "s/^depend = \([^=<>:]*\)\(.*\)/\1/g"`
+        for DEP in $DEPS; do
+            if [[ ${ALIASES[$DEP]+foobar} ]]; then
+                echo "Adding aliased dependency $DEP to ${ALIASES[$DEP]}"
+                DEP=${ALIASES[$DEP]}
+            fi
+            if echo $DEP | grep -qv lib[^.]*\.so; then
+                echo $DEP
+                DEPENDENCIES_PACKAGES["${DEP##*::}"]=1
+            fi
+        done
+    fi
+}
+
 install_pacman_packages() {
   local BASIC_PACKAGES=$1 DEST=$2 DOWNLOAD_DIR=$3
   debug "pacman package and dependencies: $BASIC_PACKAGES"
-  
+
   for PACKAGE in $BASIC_PACKAGES; do
     local FILE=$(echo "$LIST" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
     local FILE_EXTRA=$(echo "$LIST_EXTRA" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
     local FILE_COMMUNITY=$(echo "$LIST_COMMUNITY" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
+    local FILE_ALARM=$(echo "$LIST_ALARM" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
     DOWNLOAD_REPO=$REPO
     if [ ! "$FILE" ]; then
         if [ ! "$FILE_EXTRA" ]; then
             if [ ! "$FILE_COMMUNITY" ]; then
-                debug "Error: cannot find package: $PACKAGE"; return 1;
+                if [ ! "$FILE_ALARM" ]; then
+                    debug "Error: cannot find package: $PACKAGE"; return 1;
+                else
+                    DOWNLOAD_REPO=$REPO_ALARM
+                    FILE=$FILE_ALARM
+                fi
             else
                 DOWNLOAD_REPO=$REPO_COMMUNITY
                 FILE=$FILE_COMMUNITY
@@ -141,13 +190,15 @@ install_pacman_packages() {
             FILE=$FILE_EXTRA
         fi
     fi
-    
+
     local FILEPATH="$DOWNLOAD_DIR/$FILE"
-    
+
     debug "download package: $DOWNLOAD_REPO/$FILE"
     fetch -o "$FILEPATH" "$DOWNLOAD_REPO/$FILE"
     debug "uncompress package: $FILEPATH"
     uncompress "$FILEPATH" "$DEST"
+    debug "parse dependencies package: $FILEPATH"
+    parse_dependencies "$DEST"
   done
 }
 
@@ -178,7 +229,7 @@ main() {
   local REPO_URL=
   local USE_QEMU=
   local DOWNLOAD_DIR=
-  
+
   while getopts "qa:r:d:h" ARG; do
     case "$ARG" in
       a) ARCH=$OPTARG;;
@@ -190,36 +241,58 @@ main() {
   done
   shift $(($OPTIND-1))
   test $# -eq 1 || { show_usage; return 1; }
-  
+
   [[ -z "$ARCH" ]] && ARCH=$(uname -m)
   [[ -z "$REPO_URL" ]] &&REPO_URL=$(get_default_repo "$ARCH")
-  
+
   local DEST=$1
   local REPO=$(get_repo_url "$REPO_URL" "$ARCH" "core")
   local REPO_EXTRA=$(get_repo_url "$REPO_URL" "$ARCH" "extra")
   local REPO_COMMUNITY=$(get_repo_url "$REPO_URL" "$ARCH" "community")
+  local REPO_ALARM=$(get_repo_url "$REPO_URL" "$ARCH" "alarm")
   [[ -z "$DOWNLOAD_DIR" ]] && DOWNLOAD_DIR=$(mktemp -d)
   mkdir -p "$DOWNLOAD_DIR"
   [[ "$DOWNLOAD_DIR" ]] && trap "rm -rf '$DOWNLOAD_DIR'" KILL TERM EXIT
   debug "destination directory: $DEST"
   debug "core repository: $REPO"
   debug "temporary directory: $DOWNLOAD_DIR"
-  
+
   # Fetch packages, install system and do a minimal configuration
   mkdir -p "$DEST"
   local LIST=$(fetch_packages_list $REPO)
   local LIST_EXTRA=$(fetch_packages_list $REPO_EXTRA)
   local LIST_COMMUNITY=$(fetch_packages_list $REPO_COMMUNITY)
+  local LIST_ALARM=$(fetch_packages_list $REPO_ALARM)
   install_pacman_packages "${BASIC_PACKAGES[*]}" "$DEST" "$DOWNLOAD_DIR"
+  for DEP in ${BASIC_PACKAGES[*]}; do
+      INSTALLED+=($DEP)
+  done
+  while [ ${#DEPENDENCIES_PACKAGES[@]} -ne 0 ]; do
+      for DEP in ${INSTALLED[*]}; do
+          unset -v DEPENDENCIES_PACKAGES[\$DEP]
+      done
+      # unique values
+      NEW_DEPENDENCIES=()
+      for DEP in ${!DEPENDENCIES_PACKAGES[@]}; do
+          NEW_DEPENDENCIES+=($DEP)
+      done
+      DEPENDENCIES_PACKAGES=()
+
+      if [ ${#NEW_DEPENDENCIES[@]} -ne 0 ]; then
+          install_pacman_packages "${NEW_DEPENDENCIES[*]}" "$DEST" "$DOWNLOAD_DIR"
+          for DEP in ${NEW_DEPENDENCIES[*]}; do
+              INSTALLED+=($DEP)
+          done
+      fi
+  done
   #configure_pacman "$DEST" "$ARCH"
   #configure_minimal_system "$DEST"
   #[[ -n "$USE_QEMU" ]] && configure_static_qemu "$ARCH" "$DEST"
   #install_packages "$ARCH" "$DEST" "${BASIC_PACKAGES[*]}"
   #configure_pacman "$DEST" "$ARCH" # Pacman must be re-configured
   #[[ "$DOWNLOAD_DIR" ]] && rm -rf "$DOWNLOAD_DIR"
-  
+
   debug "done"
 }
 
 main "$@"
-

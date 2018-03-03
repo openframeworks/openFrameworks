@@ -14,6 +14,7 @@ Product{
 
     readonly property string projectDir: of.ofRoot + "/libs/openFrameworksCompiled/project"
     readonly property string libDir: of.ofRoot + "/libs/openFrameworksCompiled/lib/" + of.platform
+    readonly property bool isCoreLibrary: true
 
     // setting this variable to true will build OF using
     // qbs instead of makefiles which helps catching errors...
@@ -47,7 +48,7 @@ Product{
 
     Properties{
         condition: of.platform === "osx"
-        cpp.minimumOsxVersion: 10.9
+        cpp.minimumOsxVersion: "10.9"
     }
 
     property stringList FILES_EXCLUDE: {
@@ -98,10 +99,10 @@ Product{
         return excludes;
     }
 
-    Group {
-        condition: !product.qbsBuild
-        name: "src"
-        files: {
+    Probe {
+        id: core_source
+        property stringList files
+        configure: {
             var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
             var filteredSource = source.filter(function filterExcludes(path){
                 for(exclude in FILES_EXCLUDE){
@@ -113,8 +114,15 @@ Product{
                 }
                 return true;
             });
-            return filteredSource;
+            files = filteredSource;
+            found = true;
         }
+    }
+
+    Group {
+        condition: !product.qbsBuild
+        name: "src"
+        files: core_source.files
         fileTags: ["filtered_sources"]
     }
 
@@ -158,6 +166,9 @@ Product{
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
             qbsCmd.highlight = 'compiler';
+            if(project.useStdFs){
+                qbsCmd.environment = ['OF_USING_STD_FS=1']
+            }
             return [qbsCmd];
         }
     }
@@ -178,6 +189,9 @@ Product{
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
             qbsCmd.highlight = 'compiler';
+            if(project.useStdFs){
+                qbsCmd.environment = ['OF_USING_STD_FS=1']
+            }
             return [qbsCmd];
         }
     }

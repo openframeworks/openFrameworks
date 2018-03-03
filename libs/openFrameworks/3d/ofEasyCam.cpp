@@ -1,6 +1,11 @@
 #include "ofEasyCam.h"
 #include "ofMath.h"
 #include "ofUtils.h"
+#include "ofGraphicsBaseTypes.h"
+#include <limits>
+#include "glm/gtx/vector_angle.hpp"
+
+using namespace std;
 
 // when an ofEasyCam is moving due to momentum, this keeps it
 // from moving forever by assuming small values are zero.
@@ -12,38 +17,43 @@ static const unsigned long doubleclickTime = 200;
 //----------------------------------------
 ofEasyCam::ofEasyCam(){
 	reset();
-}
+	sensitivityTranslate = {1,1,1};
+	sensitivityRot = {1,1,1};
 
-//----------------------------------------
-ofEasyCam::~ofEasyCam(){
-	disableMouseInput();
+	addInteraction(TRANSFORM_ROTATE, OF_MOUSE_BUTTON_LEFT);
+	addInteraction(TRANSFORM_TRANSLATE_XY, OF_MOUSE_BUTTON_LEFT,doTranslationKey);
+	addInteraction(TRANSFORM_TRANSLATE_Z, OF_MOUSE_BUTTON_RIGHT);
+	addInteraction(TRANSFORM_TRANSLATE_XY, OF_MOUSE_BUTTON_MIDDLE);
+	
 }
-
 //----------------------------------------
 void ofEasyCam::update(ofEventArgs & args){
-	viewport = getViewport(this->viewport);
+	if(this->viewport.isZero()){
+		viewport = getViewport();
+	}
 	if(!bDistanceSet && bAutoDistance){
 		setDistance(getImagePlaneDistance(viewport), true);
 	}
-	if(bMouseInputEnabled){
-
-		if(events->getMousePressed()) prevMouse = glm::vec2(events->getMouseX(),events->getMouseY());
-
-		if (bDoRotate) {
+	if(bMouseInputEnabled && events){
+		if(events->getMousePressed()) {
+			updateMouse(glm::vec2(events->getMouseX(),events->getMouseY()));
+		}
+		if (currentTransformType == TRANSFORM_ROTATE) {
 			updateRotation();
-		}else if (bDoTranslate || bDoScrollZoom || bIsBeingScrolled) {
-			updateTranslation(); 
-			bDoScrollZoom = false;
+		}else if (currentTransformType == TRANSFORM_TRANSLATE_XY ||
+				  currentTransformType == TRANSFORM_TRANSLATE_Z  ||
+				  currentTransformType == TRANSFORM_SCALE) {
+			updateTranslation();
 		}
 	}	
 }
 
 //----------------------------------------
-void ofEasyCam::begin(ofRectangle _viewport){
+void ofEasyCam::begin(const ofRectangle & _viewport){
 	if(!bEventsSet){
 		setEvents(ofEvents());
 	}
-	viewport = getViewport(_viewport);
+	viewport = _viewport;
 	ofCamera::begin(viewport);
 }
 
@@ -57,17 +67,11 @@ void ofEasyCam::reset(){
 	resetTransform();
 	setPosition(0, 0, lastDistance);
 
-	xRot = 0;
-	yRot = 0;
-	zRot = 0;
-
-	moveX = 0;
-	moveY = 0;
-	moveZ = 0;
+	rot = {0,0,0};
+	translate = {0,0,0};
 
 	bApplyInertia = false;
-	bDoTranslate = false;
-	bDoRotate = false;
+	currentTransformType = TRANSFORM_NONE;
 }
 
 //----------------------------------------
@@ -139,11 +143,10 @@ char ofEasyCam::getTranslationKey() const{
 //----------------------------------------
 void ofEasyCam::enableMouseInput(){
 	if(!bMouseInputEnabled && events){
-		ofAddListener(events->update, this, &ofEasyCam::update);
-		ofAddListener(events->mouseDragged , this, &ofEasyCam::mouseDragged);
-		ofAddListener(events->mousePressed, this, &ofEasyCam::mousePressed);
-		ofAddListener(events->mouseReleased, this, &ofEasyCam::mouseReleased);
-		ofAddListener(events->mouseScrolled, this, &ofEasyCam::mouseScrolled);
+		listeners.push_back(events->update.newListener(this, &ofEasyCam::update));
+		listeners.push_back(events->mousePressed.newListener(this, &ofEasyCam::mousePressed));
+		listeners.push_back(events->mouseReleased.newListener(this, &ofEasyCam::mouseReleased));
+		listeners.push_back(events->mouseScrolled.newListener(this, &ofEasyCam::mouseScrolled));
 	}
 	// if enableMouseInput was called within ofApp::setup()
 	// `events` will still carry a null pointer, and bad things
@@ -156,11 +159,7 @@ void ofEasyCam::enableMouseInput(){
 //----------------------------------------
 void ofEasyCam::disableMouseInput(){
 	if(bMouseInputEnabled && events){
-		ofRemoveListener(events->update, this, &ofEasyCam::update);
-		ofRemoveListener(events->mouseDragged, this, &ofEasyCam::mouseDragged);
-		ofRemoveListener(events->mousePressed, this, &ofEasyCam::mousePressed);
-		ofRemoveListener(events->mouseReleased, this, &ofEasyCam::mouseReleased);
-		ofRemoveListener(events->mouseScrolled, this, &ofEasyCam::mouseScrolled);
+		listeners.clear();
 	}
 	// if disableMouseInput was called within ofApp::setup()
 	// `events` will still carry a null pointer, and bad things
@@ -168,6 +167,10 @@ void ofEasyCam::disableMouseInput(){
 	bMouseInputEnabled = false;
 	// setEvents() is called upon first load, and will make sure 
 	// to enable the mouse input once the camera is fully loaded.
+}
+//----------------------------------------
+bool ofEasyCam::getMouseInputEnabled() const{
+	return bMouseInputEnabled;
 }
 
 //----------------------------------------
@@ -180,7 +183,7 @@ void ofEasyCam::setEvents(ofCoreEvents & _events){
 
 	// we need a temporary copy of bMouseInputEnabled, since it will 
 	// get changed by disableMouseInput as a side-effect.
-	bool wasMouseInputEnabled = bMouseInputEnabled || !events;
+	bool wasMouseInputEnabled = bMouseInputEnabled;// || !events;
 	disableMouseInput();
 	events = &_events;
 	if (wasMouseInputEnabled) {
@@ -191,22 +194,20 @@ void ofEasyCam::setEvents(ofCoreEvents & _events){
 }
 
 //----------------------------------------
-void ofEasyCam::setRotationSensitivity(float x, float y, float z){
-    sensitivityRotX = x;
-    sensitivityRotY = y;
-    sensitivityRotZ = z;
+void ofEasyCam::setRotationSensitivity(const glm::vec3& sensitivity){
+	sensitivityRot = sensitivity;
 }
-
+//----------------------------------------
+void ofEasyCam::setRotationSensitivity(float x, float y, float z){
+	setRotationSensitivity({x,y,z});
+}
+//----------------------------------------
+void ofEasyCam::setTranslationSensitivity(const glm::vec3& sensitivity){
+	sensitivityTranslate = sensitivity;
+}
 //----------------------------------------
 void ofEasyCam::setTranslationSensitivity(float x, float y, float z){
-    sensitivityX = x;
-    sensitivityY = y;
-    sensitivityZ = z;
-}
-
-//----------------------------------------
-bool ofEasyCam::getMouseInputEnabled() const{
-	return bMouseInputEnabled;
+	sensitivityTranslate = {x,y,z};
 }
 
 //----------------------------------------
@@ -226,11 +227,11 @@ bool ofEasyCam::getMouseMiddleButtonEnabled() const{
 
 //----------------------------------------
 glm::vec3 ofEasyCam::up() const{
-	if(relativeYAxis){
+	if(bRelativeYAxis){
 		if(bApplyInertia){
 			return getYAxis();
 		}else{
-			return prevAxisY;
+			return lastPressAxisY;
 		}
 	}else{
 		return upAxis;
@@ -239,12 +240,12 @@ glm::vec3 ofEasyCam::up() const{
 
 //----------------------------------------
 void ofEasyCam::setRelativeYAxis(bool relative){
-	relativeYAxis = relative;
+	bRelativeYAxis = relative;
 }
 
 //----------------------------------------
 bool ofEasyCam::getRelativeYAxis() const{
-	return relativeYAxis;
+	return bRelativeYAxis;
 }
 
 //----------------------------------------
@@ -275,49 +276,64 @@ bool ofEasyCam::getInertiaEnabled() const{
 //----------------------------------------
 void ofEasyCam::updateTranslation(){
 	if(bApplyInertia){
-		moveX *= drag;
-		moveY *= drag;
-		moveZ *= drag;
-
-		if(ABS(moveZ) >= minDifference){
-			bIsBeingScrolled = true;
-		} else {
-			bIsBeingScrolled = false;
-		}
-
-		if(ABS(moveX) <= minDifference && ABS(moveY) <= minDifference && ABS(moveZ) <= minDifference){
+		translate *= drag;
+		if(std::abs(translate.x) <= minDifference && std::abs(translate.y) <= minDifference && std::abs(translate.z) <= minDifference){
+			translate = {0,0,0};
 			bApplyInertia = false;
-			bDoTranslate = false;
+			currentTransformType = TRANSFORM_NONE;
+
+			bIsScrolling = false;
+			return;
 		}
-		move((getXAxis() * moveX) + (getYAxis() * moveY) + (getZAxis() * moveZ));
-	}else if(bDoTranslate || bIsBeingScrolled){
-		setPosition(prevPosition + glm::vec3(prevAxisX * moveX) + (prevAxisY * moveY) + (prevAxisZ * moveZ));
-		bIsBeingScrolled = false;
+		move((getXAxis() * translate.x) + (getYAxis() * translate.y) + (getZAxis() * translate.z));
 	}
-}	
+	if(currentTransformType == TRANSFORM_TRANSLATE_XY ||
+	   currentTransformType == TRANSFORM_TRANSLATE_Z  ||
+	   currentTransformType == TRANSFORM_SCALE) {
+		if(getOrtho()){
+			//In ortho mode moving along the z axis has no effect besides clipping.
+			// Instead, scale is applied to achieve the effect of getting near or far from the target.
+			glm::vec3 mousePre ;
+			bool bDoScale = (currentTransformType == TRANSFORM_SCALE || currentTransformType == TRANSFORM_TRANSLATE_Z);
+			if (bDoScale) {
+				mousePre = screenToWorld(glm::vec3((bIsScrolling?mouseAtScroll:lastPressMouse),0));
+			}
+			move(glm::vec3(lastPressAxisX * translate.x) + (lastPressAxisY * translate.y));
+			if (bDoScale) {
+				setScale(getScale() + translate.z);
+				// this move call is to keep the scaling centered below the mouse.
+				move(mousePre - screenToWorld(glm::vec3((bIsScrolling?mouseAtScroll:lastPressMouse),0)));
+			}
+		}else{
+			move(glm::vec3(lastPressAxisX * translate.x) + (lastPressAxisY * translate.y) + (lastPressAxisZ * translate.z));
+		}
+	}
+	if (bIsScrolling) {
+		//this it to avoid the transformation to keep on after scrolling ended.
+		currentTransformType = TRANSFORM_NONE;
+		bIsScrolling = false;
+	}
+}
 
 //----------------------------------------
 void ofEasyCam::updateRotation(){
 	if(bApplyInertia){
-		xRot *=drag; 
-		yRot *=drag;
-		zRot *=drag;
-
-		if(ABS(xRot) <= minDifference && ABS(yRot) <= minDifference && ABS(zRot) <= minDifference){
-			xRot = 0;
-			yRot = 0;
-			zRot = 0;
+		rot *=drag;
+		if(std::abs(rot.x) <= minDifference && std::abs(rot.y) <= minDifference && std::abs(rot.z) <= minDifference){
+			rot = {0,0,0};
 			bApplyInertia = false;
-			bDoRotate = false;
+			currentTransformType = TRANSFORM_NONE;
+			return;
 		}
-		curRot = glm::angleAxis(zRot, getZAxis()) * glm::angleAxis(yRot, up()) * glm::angleAxis(xRot, getXAxis());
-		setPosition(curRot * (getGlobalPosition()-target.getGlobalPosition()) + target.getGlobalPosition());
-		rotate(curRot);
-	}else if(bDoRotate){
-		curRot = glm::angleAxis(zRot, prevAxisZ) * glm::angleAxis(yRot, up()) * glm::angleAxis(xRot, prevAxisX);
-		setPosition(curRot * (prevPosition-target.getGlobalPosition()) + target.getGlobalPosition());
-		setOrientation(curRot * prevOrientation);
+		
 	}
+	if (bApplyInertia) {
+		curRot = glm::angleAxis(rot.z, getZAxis()) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, getXAxis());
+	}else{
+		curRot = glm::angleAxis(rot.z, lastPressAxisZ) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, lastPressAxisX);
+	}
+	setPosition(curRot * (lastPressPosition-target.getGlobalPosition()) + target.getGlobalPosition());
+	setOrientation(curRot * lastPressOrientation);
 }
 
 //----------------------------------------
@@ -345,25 +361,25 @@ ofRectangle ofEasyCam::getControlArea() const {
 void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 	ofRectangle area = getControlArea();
 	if(area.inside(mouse.x, mouse.y)){
-		lastMouse = mouse;
+		lastPressMouse = mouse;
 		prevMouse = mouse;
-		prevAxisX = getXAxis();
-		prevAxisY = getYAxis();
-		prevAxisZ = getZAxis();
-		prevPosition = ofCamera::getGlobalPosition();
-		prevOrientation = ofCamera::getGlobalOrientation();
+		lastPressAxisX = getXAxis();
+		lastPressAxisY = getYAxis();
+		lastPressAxisZ = getZAxis();
+		lastPressPosition = ofCamera::getGlobalPosition();
+		lastPressOrientation = ofCamera::getGlobalOrientation();
 
-		if((bEnableMouseMiddleButton && mouse.button == OF_MOUSE_BUTTON_MIDDLE) || events->getKeyPressed(doTranslationKey)  || mouse.button == OF_MOUSE_BUTTON_RIGHT){
-			bDoTranslate = true;
-			bDoRotate = false;
-		}else if(mouse.button == OF_MOUSE_BUTTON_LEFT){
-			bDoTranslate = false;
-			bDoRotate = true;
-			if(glm::length(glm::vec2(mouse.x - area.x - (area.width/2), mouse.y - area.y - (area.height/2))) < std::min(area.width/2, area.height/2)){
-				bInsideArcball = true;
-			}else{
-				bInsideArcball = false;
+		currentTransformType = TRANSFORM_NONE;
+		if (events) {
+			for (const auto& i: interactions) {
+				if (i.mouseButton == mouse.button && ((i.key == -1) ^ events->getKeyPressed(i.key))) {
+					currentTransformType = i.transformType;
+					break;
+				}
 			}
+		}
+		if(currentTransformType == TRANSFORM_ROTATE){
+			bInsideArcball = glm::length(mouse - area.getCenter().xy()) < std::min(area.width/2, area.height/2);
 		}
 		bApplyInertia = false;
 	}
@@ -385,83 +401,107 @@ void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
 
 	if(doInertia){
 		bApplyInertia = true;
-		mouseVel = mouse  - prevMouse;
-
-		updateMouse(mouse);
-		glm::vec2 center(area.width/2, area.height/2);
-		int vFlip;
-		if(isVFlipped()){
-			vFlip = -1;
-		}else{
-			vFlip =  1;
-		}
-		zRot = -vFlip * glm::orientedAngle(
-			glm::normalize(glm::vec2(mouse.x - area.x - center.x, mouse.y - area.y - center.y)),
-			glm::normalize(prevMouse - glm::vec2(area.x, area.y) - center));
 	}else{
-		bDoRotate = false;
-		xRot = 0;
-		yRot = 0;
-		zRot = 0;
-
-		bDoTranslate = false;
-		moveX = 0;
-		moveY = 0;
-		moveZ = 0;
+		currentTransformType = TRANSFORM_NONE;
+		rot = {0,0,0};
+		translate = {0,0,0};
 	}
 }
-
-//----------------------------------------
-void ofEasyCam::mouseDragged(ofMouseEventArgs & mouse){
-	mouseVel = mouse  - lastMouse;
-
-	updateMouse(mouse);
-}
-
 //----------------------------------------
 void ofEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
-	if (doInertia) {
-		bApplyInertia = true;
-	}
 	ofRectangle area = getControlArea();
-	prevPosition = ofCamera::getGlobalPosition();
-	prevAxisZ = getZAxis();
-	moveZ = mouse.scrollY * 30 * sensitivityZ * (getDistance() + FLT_EPSILON)/ area.height;
-	bDoScrollZoom = true;
-	bIsBeingScrolled = true;
+	if(area.inside(mouse)){
+		mouseVel = mouse  - prevMouse;
+		prevMouse = mouse;
+		if (doInertia) {
+			bApplyInertia = true;
+		}
+		lastPressPosition = ofCamera::getGlobalPosition();
+		lastPressAxisZ = getZAxis();
+		if (getOrtho()) {
+			translate.z = sensitivityScroll * mouse.scrollY / viewport.height;
+			mouseAtScroll = mouse;
+		}else{
+			translate.z = mouse.scrollY * 30 * sensitivityTranslate.z * (getDistance() + std::numeric_limits<float>::epsilon())/ area.height;
+		}
+		currentTransformType = TRANSFORM_SCALE;
+		bIsScrolling = true;
+	}
 }
 
 //----------------------------------------
-void ofEasyCam::updateMouse(const ofMouseEventArgs & mouse){
+void ofEasyCam::updateMouse(const glm::vec2 & mouse){
 	ofRectangle area = getControlArea();
-	int vFlip;
-	if(isVFlipped()){
-		vFlip = -1;
+	int vFlip =(isVFlipped()?-1:1);
+
+	rot = {0,0,0};
+	translate = {0,0,0};
+	switch (currentTransformType) {
+	    case TRANSFORM_ROTATE:
+			mouseVel = mouse  - lastPressMouse;
+			if(bInsideArcball){
+				rot.x = vFlip * -mouseVel.y * sensitivityRot.x * glm::pi<float>() / std::min(area.width, area.height);
+				rot.y = -mouseVel.x * sensitivityRot.y * glm::pi<float>() / std::min(area.width, area.height);
+			}else{
+				glm::vec2 center = area.getCenter().xy();
+				rot.z = sensitivityRot.z * -vFlip * glm::orientedAngle(glm::normalize(mouse - center),
+																	   glm::normalize(lastPressMouse - center));
+			}
+			break;
+		case TRANSFORM_TRANSLATE_XY:
+			mouseVel = mouse  - prevMouse;
+			if (getOrtho()) {
+				translate.x = -mouseVel.x * getScale().z;
+				translate.y = vFlip * mouseVel.y * getScale().z;
+			}else{
+				translate.x = -mouseVel.x * sensitivityTranslate.x * 0.5f * (getDistance() + std::numeric_limits<float>::epsilon())/ area.width;
+				translate.y = vFlip * mouseVel.y * sensitivityTranslate.y* 0.5f * (getDistance() + std::numeric_limits<float>::epsilon())/ area.height;
+			}
+			break;
+		case TRANSFORM_TRANSLATE_Z:
+			mouseVel = mouse  - prevMouse;
+			if (getOrtho()) {
+				translate.z = mouseVel.y * sensitivityScroll / area.height;
+			}else{
+				translate.z = mouseVel.y * (sensitivityTranslate.z * 0.7f) * (getDistance() + std::numeric_limits<float>::epsilon())/ area.height;
+			}
+			break;
+        default:
+			break;
+	}
+	prevMouse = mouse;
+}
+//----------------------------------------
+void ofEasyCam::addInteraction(TransformType type, int mouseButton, int key){
+	if(!hasInteraction(mouseButton, key)){
+		interactions.push_back(interaction(type, mouseButton, key));
 	}else{
-		vFlip =  1;
+		ofLogNotice("ofEasyCam") << "Can not add interaction. It already exists";
 	}
-	if(bDoTranslate){
-		moveX = 0;
-		moveY = 0;
-		moveZ = 0;
-		if(mouse.button == OF_MOUSE_BUTTON_RIGHT){
-			moveZ = mouseVel.y * (sensitivityZ * 0.7f) * (getDistance() + FLT_EPSILON)/ area.height;
-		}else{
-			moveX = -mouseVel.x * (sensitivityX * 0.5f) * (getDistance() + FLT_EPSILON)/ area.width;
-			moveY = vFlip * mouseVel.y * (sensitivityY* 0.5f) * (getDistance() + FLT_EPSILON)/ area.height;
-		}
-	}else if(bDoRotate){
-		xRot = 0;
-		yRot = 0;
-		zRot = 0;
-		if(bInsideArcball){
-			xRot = vFlip * -mouseVel.y * sensitivityRotX * glm::pi<float>() / std::min(area.width, area.height);
-			yRot = -mouseVel.x * sensitivityRotY * glm::pi<float>() / std::min(area.width, area.height);
-		}else{
-			glm::vec2 center(area.width/2, area.height/2);
-			zRot = -vFlip * glm::orientedAngle(glm::normalize(glm::vec2(mouse.x - area.x - center.x, mouse.y - area.y - center.y)),
-														 glm::normalize(lastMouse - glm::vec2(area.x, area.y) - center));
-			zRot *=  sensitivityRotZ;
+}
+//----------------------------------------
+void ofEasyCam::removeInteraction(TransformType type, int mouseButton, int key){
+	ofRemove(interactions, [&](interaction & i){ return i.transformType == type && i.mouseButton == mouseButton && i.key ==key;});
+}
+//----------------------------------------
+bool ofEasyCam:: hasInteraction(int mouseButton, int key){
+	for(const auto& i : interactions){
+		if(i.mouseButton == mouseButton && i.key == key){
+			return true;
 		}
 	}
+	return false;
+}
+//----------------------------------------
+bool ofEasyCam:: hasInteraction(TransformType type, int mouseButton, int key){
+	for(const auto& i : interactions){
+		if(i.transformType == type && i.mouseButton == mouseButton && i.key == key){
+			return true;
+		}
+	}
+	return false;
+}
+//----------------------------------------
+void ofEasyCam::removeAllInteractions(){
+	interactions.clear();
 }

@@ -1,9 +1,9 @@
-#About serialExample
+# About serialExample
 
 ![Screenshot of serialExample](serialExample.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates communication with external devices over the serial port. In this example, you will connect to a serial device, read incoming byte packets from the connected device, and send response messages over serial.
 
@@ -14,7 +14,7 @@ This example covers the following functions:
 * Sending response messages over serial
 * Updating graphics based on the incoming byte information
 
-In the code, pay attention to: 
+In the code, pay attention to:
 
 * Listing all serial devices with ```serial.listDevices()```, which logs a list to the console. Make sure the port ID you specify is the same that your Arduino or other device is connected on.
 * When a device is connected, check the console logs to ensure that you're not getting any Serial connection errors and have successfully connected to the specified port
@@ -32,10 +32,10 @@ When launching this app, you should see a white screen with gray text showing th
 * read byte
 * time of reading
 
-###Instructions for use:
+### Instructions for use:
 
 * Click the mouse to send a communication trigger to Arduino and receive a serial packet in return. The displayed values onscreen should change to reflect sent and received data.
 
-###Other classes used in this file
+### Other classes used in this file
 
 This example uses no other classes.

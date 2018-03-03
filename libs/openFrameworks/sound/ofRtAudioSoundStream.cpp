@@ -2,7 +2,10 @@
 #include "ofMath.h"
 #include "ofUtils.h"
 #include "ofAppRunner.h"
+#include "ofLog.h"
 #include "RtAudio.h"
+
+using namespace std;
 
 //------------------------------------------------------------------------------
 RtAudio::Api toRtAudio(ofSoundDevice::Api api){
@@ -170,6 +173,8 @@ bool ofRtAudioSoundStream::setup(const ofSoundStreamSettings & settings_)
 	options.priority = 1;
 	outputBuffer.setDeviceID(outputParameters.deviceId);
 	inputBuffer.setDeviceID(inputParameters.deviceId);
+	outputBuffer.setSampleRate(settings.sampleRate);
+	inputBuffer.setSampleRate(settings.sampleRate);
 	unsigned int bufferSize = settings.bufferSize;
 	try {
 		audio->openStream((settings.numOutputChannels > 0) ? &outputParameters : nullptr, (settings.numInputChannels > 0) ? &inputParameters : nullptr, RTAUDIO_FLOAT32,
@@ -278,8 +283,8 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	// you need to cut in the middle. if the simpleApp
 	// doesn't produce audio, we pass silence instead of duplex...
 
-	auto nInputChannels = rtStreamPtr->getNumInputChannels();
-	auto nOutputChannels = rtStreamPtr->getNumOutputChannels();
+	size_t nInputChannels  = rtStreamPtr->getNumInputChannels();
+	size_t nOutputChannels = rtStreamPtr->getNumOutputChannels();
 
 	if (nInputChannels > 0) {
 		if (rtStreamPtr->settings.inCallback) {

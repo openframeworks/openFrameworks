@@ -1,15 +1,15 @@
-#About simpleTimer
+# About simpleTimer
 
 ![Screenshot of simpleTimer](simpleTimer.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates how to use the built-in OF event ```gotMessage```
 
 
 
-In the code, pay attention to: 
+In the code, pay attention to:
 
 * ```ofSendMessage``` To send a message that will get caught by ```gotMessage```
 * ```void gotMessage``` OF event
@@ -27,9 +27,8 @@ In the code, pay attention to:
 Instructions for use:
 
 * Press spacebar or click on mouse button to start progress bar with a random timing.
- 
 
-###Other classes used in this file
+
+### Other classes used in this file
 
 This Example uses no other classes.
-

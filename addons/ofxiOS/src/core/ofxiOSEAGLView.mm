@@ -19,6 +19,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     BOOL bInit;
 	shared_ptr<ofAppiOSWindow> window;
 	shared_ptr<ofxiOSApp> app;
+	BOOL bSetup;
 }
 - (void)updateDimensions;
 @end
@@ -52,6 +53,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
                      andRetina:window->isRetinaEnabled()
                 andRetinaScale:window->getRetinaScale()];
     
+	bSetup = NO;
     if(self) {
         
         _instanceRef = self;
@@ -102,6 +104,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 	ofDisableTextureEdgeHack();
 	
 	window->events().notifySetup();
+	bSetup = YES;
 	window->renderer()->clear();
 }
 
@@ -165,6 +168,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (void)drawView {
+	if(bSetup == NO) return;
     window->events().notifyUpdate();
 
     //------------------------------------------
@@ -241,7 +245,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 - (void)touchesBegan:(NSSet *)touches 
            withEvent:(UIEvent *)event{
     
-    if(!bInit) {
+    if(!bInit || !bSetup) {
         // if the glView is destroyed which also includes the OF app,
         // we no longer need to pass on these touch events.
         return; 
@@ -283,7 +287,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 - (void)touchesMoved:(NSSet *)touches 
            withEvent:(UIEvent *)event{
     
-    if(!bInit) {
+    if(!bInit || !bSetup) {
         // if the glView is destroyed which also includes the OF app,
         // we no longer need to pass on these touch events.
         return; 
@@ -315,7 +319,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 - (void)touchesEnded:(NSSet *)touches 
            withEvent:(UIEvent *)event{
     
-    if(!bInit) {
+    if(!bInit || !bSetup) {
         // if the glView is destroyed which also includes the OF app,
         // we no longer need to pass on these touch events.
         return; 
@@ -350,7 +354,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 - (void)touchesCancelled:(NSSet *)touches 
                withEvent:(UIEvent *)event{
     
-    if(!bInit) {
+    if(!bInit || !bSetup) {
         // if the glView is destroyed which also includes the OF app,
         // we no longer need to pass on these touch events.
         return; 

@@ -93,6 +93,10 @@ ifdef USE_GST_GL
 	PLATFORM_DEFINES += OF_USE_GST_GL
 endif
 
+ifdef OF_USING_STD_FS
+	PLATFORM_DEFINES += "OF_USING_STD_FS=1"
+endif
+
 
 ################################################################################
 # PLATFORM REQUIRED ADDON
@@ -133,29 +137,29 @@ ifeq ($(CXX),g++)
 	GCC_MINOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 9)
 	ifeq ("$(GCC_MAJOR_EQ_4)","1")
 		ifeq ("$(GCC_MINOR_GTEQ_7)","1")
-			PLATFORM_CFLAGS = -Wall -std=c++0x -DHAS_TLS=0
+			PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++0x -DHAS_TLS=0
 		else
 			ifeq ("$(GCC_MINOR_GTEQ_9)","1")
-				PLATFORM_CFLAGS = -Wall -std=c++14 -DGCC_HAS_REGEX
+				PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
 			else
-				PLATFORM_CFLAGS = -Wall -std=c++11
+				PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++11
 			endif
 		endif
 	endif
 	ifeq ("$(GCC_MAJOR_GT_4)","1")
-		PLATFORM_CFLAGS = -Wall -std=c++14 -DGCC_HAS_REGEX
+		PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
 	endif
 else
 	ifeq ($(CXX),g++-5)
-		PLATFORM_CFLAGS = -Wall -std=c++14 -DGCC_HAS_REGEX
+		PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
 	else
 		ifeq ($(CXX),g++-4.9)
-			PLATFORM_CFLAGS = -Wall -std=c++14 -DGCC_HAS_REGEX
+			PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
 		else
 			ifeq ($(CXX),g++-4.8)
-				PLATFORM_CFLAGS = -Wall -std=c++11
+				PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++11
 			else
-				PLATFORM_CFLAGS = -Wall -std=c++11
+				PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++11
 			endif
 		endif
 	endif
@@ -310,8 +314,12 @@ ifneq ($(PLATFORM_ARCH),armv6l)
 endif
 
 PLATFORM_LIBRARIES += freeimage
+ifeq ($(OF_USING_STD_FS),1)
+PLATFORM_LIBRARIES += stdc++fs
+else
 PLATFORM_LIBRARIES += boost_filesystem
 PLATFORM_LIBRARIES += boost_system
+endif
 PLATFORM_LIBRARIES += pugixml
 PLATFORM_LIBRARIES += uriparser
 
@@ -338,15 +346,30 @@ PLATFORM_PKG_CONFIG_LIBRARIES += openal
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
 
-ifeq "$(shell pkg-config --exists glfw3 && echo 1)" "1"
-	PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
-	PLATFORM_LIBRARIES += Xinerama
+ifeq ($(CROSS_COMPILING),1)
+	ifeq "$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists glfw3 && echo 1)" "1"
+		PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
+		PLATFORM_LIBRARIES += Xinerama
+	endif
+else
+	ifeq "$(shell pkg-config --exists glfw3 && echo 1)" "1"
+		PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
+		PLATFORM_LIBRARIES += Xinerama
+	endif
 endif
 
-ifeq "$(shell pkg-config --exists rtaudio && echo 1)" "1"
-	PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
+ifeq ($(CROSS_COMPILING),1)
+	ifeq "$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists rtaudio && echo 1)" "1"
+		PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
+	else
+		PLATFORM_LIBRARIES += rtaudio
+	endif
 else
-	PLATFORM_LIBRARIES += rtaudio
+	ifeq "$(shell pkg-config --exists rtaudio && echo 1)" "1"
+		PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
+	else
+		PLATFORM_LIBRARIES += rtaudio
+	endif
 endif
 
 

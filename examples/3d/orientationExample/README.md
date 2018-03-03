@@ -1,10 +1,10 @@
-#About orientationExample
+# About orientationExample
 
 ![Screenshot of orientationExample](orientationExample.jpg)
 
-###Learning Objectives
+### Learning Objectives
 
-This example demonstrates the concept of using the normal of a line to orient a box in 3D space. 
+This example demonstrates the concept of using the normal of a line to orient a box in 3D space.
 
 This is helpful if you want to have a shape follow the correct direction of a line (have an arrow always point correctly forward when a user draws a line, for example)
 
@@ -16,7 +16,7 @@ The points are then passed to the `rotateToNormal(ofVec3f normal)` function that
 
 Pay close attention to how rotateToNormal takes in the difference between the current and previous point on the line - this creates our normal vector. The function then calculates the rotation that would correctly rotate the white cube to the normal of the blue line. Normals are a very deep concept that are used in everything from orientation to calculating lighting.
 
-###Expected Behavior
+### Expected Behavior
 
 When launching this app, you should see a screen with:
 
@@ -28,7 +28,7 @@ Instructions for using the app:
 * Click and drag (or scroll) in the window to move the 3D Scene. Double click to reset the camera.
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 * ofEasyCam
 * ofMesh

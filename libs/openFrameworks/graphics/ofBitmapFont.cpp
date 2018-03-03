@@ -1,5 +1,6 @@
 
 #include "ofBitmapFont.h"
+#include "ofMesh.h"
 
 #ifdef TARGET_ANDROID
 #include "ofxAndroidUtils.h"
@@ -329,6 +330,8 @@ static const float widthTex = 8.0f/256.0f;
 static const float heightTex = 14.0f/256.0f;
 ofPixels ofBitmapFont::pixels;
 
+using namespace std;
+
 void ofBitmapFont::init(){
 	if(pixels.isAllocated()) return;
 	pixels.allocate(16*16, 16*16, OF_PIXELS_GRAY_ALPHA); // letter size:8x14pixels, texture size:16x8letters, gl_r: 1bytes/1pixel
@@ -418,11 +421,11 @@ ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofDrawBitmapMode
 		if(text[c] == '\n'){
 
 			sy += lineHeight*newLineDirection;
-			if(mode == OF_BITMAPMODE_SIMPLE) {
+//			if(mode == OF_BITMAPMODE_SIMPLE) {
 				sx = x;
-			} else {
-				sx = 0;
-			}
+//			} else {
+//				sx = 0;
+//			}
 
 			column = 0;
 		} else if (text[c] == '\t'){
@@ -474,20 +477,19 @@ const ofTexture & ofBitmapFont::getTexture() const{
 }
 
 
-ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y) const{
+ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y, ofDrawBitmapMode mode, bool vFlipped) const{
     if(text.empty()){
         return ofRectangle(x,y,0,0);
     }
 
-	const ofMesh & mesh = getMesh(text,x,y);
-	glm::vec2 max(numeric_limits<float>::min(),numeric_limits<float>::min());
+	const ofMesh & mesh = getMesh(text,x,y, mode, vFlipped);
+	glm::vec2 max(numeric_limits<float>::lowest(),numeric_limits<float>::lowest());
 	glm::vec2 min(numeric_limits<float>::max(),numeric_limits<float>::max());
-	for(std::size_t i=0;i< mesh.getNumVertices(); i++){
-		const auto & p = mesh.getVertex(i);
+	for(const auto & p : mesh.getVertices()){
 		if(p.x<min.x) min.x = p.x;
 		if(p.y<min.y) min.y = p.y;
 		if(p.x>max.x) max.x = p.x;
 		if(p.y>max.y) max.y = p.y;
 	}
-	return ofRectangle(min.x,min.y,max.x-min.x,max.y-min.y);
+	return ofRectangle(min,max);
 }

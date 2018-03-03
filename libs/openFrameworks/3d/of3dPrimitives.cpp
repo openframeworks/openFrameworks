@@ -8,6 +8,12 @@
 
 #include "of3dPrimitives.h"
 #include "ofGraphics.h"
+#include "ofRectangle.h"
+#include "ofVboMesh.h"
+#include "ofTexture.h"
+#include "of3dUtils.h"
+
+using namespace std;
 
 of3dPrimitive::of3dPrimitive()
 :usingVbo(true)
@@ -26,9 +32,9 @@ of3dPrimitive::of3dPrimitive(const of3dPrimitive & mom):ofNode(mom){
     texCoords = mom.texCoords;
     usingVbo = mom.usingVbo;
 	if(usingVbo){
-		mesh = shared_ptr<ofMesh>(new ofVboMesh);
+		mesh = std::make_shared<ofVboMesh>();
 	}else{
-		mesh = shared_ptr<ofMesh>(new ofMesh);
+		mesh = std::make_shared<ofMesh>();
 	}
 	*mesh = *mom.mesh;
 }
@@ -135,14 +141,11 @@ void of3dPrimitive::disableColors() {
     getMesh().disableColors();
 }
 
-
-
-
 // SETTERS //
 
 //----------------------------------------------------------
 void of3dPrimitive::mapTexCoords( float u1, float v1, float u2, float v2 ) {
-    //setTexCoords( u1, v1, u2, v2 );
+	
 	auto prevTcoord = getTexCoords();
     
 	for(std::size_t j = 0; j < getMesh().getNumTexCoords(); j++ ) {
@@ -157,20 +160,21 @@ void of3dPrimitive::mapTexCoords( float u1, float v1, float u2, float v2 ) {
 }
 
 //----------------------------------------------------------
-void of3dPrimitive::mapTexCoordsFromTexture( ofTexture& inTexture ) {
+void of3dPrimitive::mapTexCoordsFromTexture( const ofTexture& inTexture ) {
     bool bNormalized = true;
 #ifndef TARGET_OPENGLES
     bNormalized = (inTexture.getTextureData().textureTarget!=GL_TEXTURE_RECTANGLE_ARB);
 #endif
     
-    ofTextureData& tdata = inTexture.getTextureData();
-    if(bNormalized)
+    const ofTextureData& tdata = inTexture.getTextureData();
+	if(bNormalized){
         mapTexCoords( 0, 0, tdata.tex_t, tdata.tex_u );
-    else
+	}else{
         mapTexCoords(0, 0, inTexture.getWidth(), inTexture.getHeight());
+	}
     
 	auto tcoords = getTexCoords();
-    mapTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
+	mapTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
 }
 
 //----------------------------------------------------------
@@ -181,9 +185,6 @@ void of3dPrimitive::normalizeAndApplySavedTexCoords() {
 	texCoords = {0.f, 0.f, 1.f, 1.f};
     mapTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
 }
-
-
-
 
 //--------------------------------------------------------------
 void of3dPrimitive::drawVertices()  const{
@@ -267,9 +268,9 @@ void of3dPrimitive::setUseVbo(bool useVbo){
 	if(useVbo!=usingVbo){
 		shared_ptr<ofMesh> newMesh;
 		if(useVbo){
-			newMesh = shared_ptr<ofMesh>(new ofVboMesh);
+			newMesh = std::make_shared<ofVboMesh>();
 		}else{
-			newMesh = shared_ptr<ofMesh>(new ofMesh);
+			newMesh = std::make_shared<ofMesh>();
 		}
 		*newMesh = *mesh;
 		mesh = newMesh;

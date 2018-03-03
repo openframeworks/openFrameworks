@@ -1,9 +1,20 @@
 #pragma once
 
-#include "ofRectangle.h"
-#include "ofBaseTypes.h"
 #include "ofConstants.h"
-#include "ofVboMesh.h"
+#include "glm/mat4x4.hpp"
+#include "ofGraphicsBaseTypes.h"
+
+class ofRectangle;
+
+template<typename T>
+class ofPixels_;
+
+typedef ofPixels_<unsigned char> ofPixels;
+typedef ofPixels_<unsigned short> ofShortPixels;
+typedef ofPixels_<float> ofFloatPixels;
+
+class ofTexture;
+class ofBufferObject;
 
 /// \file
 /// ofTexture is used to create OpenGL textures that live on your graphics card
@@ -207,7 +218,7 @@ public:
 	
 	unsigned int bufferId; ///< Optionally if the texture is backed by a buffer so we can bind it
 private:
-	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
+	std::shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
 	glm::mat4 textureMatrix; ///< For required transformations.
 	bool useTextureMatrix; ///< Apply the transformation matrix?
@@ -575,6 +586,7 @@ class ofTexture : public ofBaseDraws {
 	/// \section Drawing
 	void draw(float x, float y) const;
 	void draw(float x, float y, float z) const;
+	void draw(const glm::vec3 & pos) const;
 
 	void draw(float x, float y, float w, float h) const;
 
@@ -586,6 +598,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param w Draw width.
 	/// \param h Draw height.
 	void draw(float x, float y, float z, float w, float h) const;
+	void draw(const glm::vec3 & pos, float w, float h) const;
 	
 	/// \brief Draws the texture at 4 points passed in as if you created 4 glVertices.
 	///

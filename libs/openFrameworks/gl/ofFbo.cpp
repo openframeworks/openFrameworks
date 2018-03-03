@@ -13,6 +13,7 @@
 #include "ofxAndroidUtils.h"
 #endif
 
+using namespace std;
 
 /*
 

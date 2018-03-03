@@ -1,11 +1,10 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofBaseTypes.h"
 #include "ofBaseApp.h"
-#include "ofTypes.h"
-#include "ofBaseSoundStream.h"
+#include "ofSoundBaseTypes.h"
 #include <climits>
+#include <functional>
 
 
 class ofSoundStreamSettings;
@@ -86,8 +85,8 @@ class ofSoundStream {
 public:
 	ofSoundStream();
 
-	void setSoundStream(shared_ptr<ofBaseSoundStream> soundStreamPtr);
-	shared_ptr<ofBaseSoundStream> getSoundStream();
+	void setSoundStream(std::shared_ptr<ofBaseSoundStream> soundStreamPtr);
+	std::shared_ptr<ofBaseSoundStream> getSoundStream();
 
 	/// \brief Prints a list of available audio devices to the console
 	void printDeviceList() const;
@@ -96,7 +95,7 @@ public:
 	std::vector<ofSoundDevice> getDeviceList(ofSoundDevice::Api api = ofSoundDevice::Api::DEFAULT) const;
 
 	/// \brief Get all devices which match the arguments (name can be a partial match)
-	std::vector<ofSoundDevice> getMatchingDevices(const std::string& name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX) const;
+	std::vector<ofSoundDevice> getMatchingDevices(const std::string& name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX, ofSoundDevice::Api api = ofSoundDevice::Api::DEFAULT) const;
 
 	/// \brief sets the device represented by the stream, see ofSoundStream::getDeviceList().
 	OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
@@ -186,41 +185,8 @@ public:
 	OF_DEPRECATED_MSG("Use printDeviceList instead", std::vector<ofSoundDevice> listDevices() const);
 
 protected:
-	shared_ptr<ofBaseSoundStream> soundStream;
+	std::shared_ptr<ofBaseSoundStream> soundStream;
 	int tmpDeviceId = -1;
 
-};
-
-class ofSoundStreamSettings {
-public:
-	virtual ~ofSoundStreamSettings() {}
-	size_t sampleRate = 44100;
-	size_t bufferSize = 256;
-	size_t numBuffers = 4;
-	size_t numInputChannels = 0;
-	size_t numOutputChannels = 0;
-	virtual bool setInDevice(const ofSoundDevice & device);
-	virtual bool setOutDevice(const ofSoundDevice & device);
-	virtual bool setApi(ofSoundDevice::Api api);
-	virtual const ofSoundDevice * getInDevice() const;
-	virtual const ofSoundDevice * getOutDevice() const;
-	virtual ofSoundDevice::Api getApi() const;
-
-	template<typename Listener>
-	void setInListener(Listener * inListener){
-		inCallback = std::bind(static_cast<void(Listener::*)(ofSoundBuffer &)>(&Listener::audioIn), inListener, std::placeholders::_1);
-	}
-
-	template<typename Listener>
-	void setOutListener(Listener * outListener){
-		outCallback = std::bind(static_cast<void(Listener::*)(ofSoundBuffer &)>(&Listener::audioOut), outListener, std::placeholders::_1);
-	}
-
-	std::function<void(ofSoundBuffer &)> inCallback;
-	std::function<void(ofSoundBuffer &)> outCallback;
-private:
-	ofSoundDevice inDevice;
-	ofSoundDevice outDevice;
-	ofSoundDevice::Api api = ofSoundDevice::Api::UNSPECIFIED;
 };
 

@@ -1,9 +1,9 @@
-#About colorsExtended
+# About colorsExtended
 
 ![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](colorsExtended.png)
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates advanced usage of working with colors including brightness, hue and saturation. 
 
@@ -34,6 +34,6 @@ Instructions for use:
 * Press ```3``` to sort the color grid by brightness
 * Press ```4``` to sort the color grid by saturation
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no other classes.

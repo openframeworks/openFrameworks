@@ -1,9 +1,9 @@
 /*
- *  summary:Example of how to use GPU for data processing. The data it«s going to be stored
- *          on the color channels of the FBO«s textures. In this case we are going to use just
+ *  summary:Example of how to use GPU for data processing. The data itÂ«s going to be stored
+ *          on the color channels of the FBOÂ«s textures. In this case we are going to use just
  *          RED and GREEN channels on two textures. One for the position and the other one for
  *          the velocity. For updating the information of those textures we are going to use
- *          two FBO«s for each type of information. This pair of FBO will pass the information
+ *          two FBOÂ«s for each type of information. This pair of FBO will pass the information
  *          from one to other in a technique called PingPong.
  *          After updating this information, we are going to use the textures allocated on GPU memory
  *          for moving some vertex and then multiplied them in order to make little frames that hold
@@ -16,7 +16,7 @@
 
 // Struct for doing PingPong quickly and easy
 //
-// Because on GPU you can«t write over the texture that you are reading we are
+// Because on GPU you can't write over the texture that you are reading we are
 // using to pair of ofFbo attached together on what we call pingPongBuffer
 // Learn more about Ping-Pong at:
 //
@@ -24,75 +24,79 @@
 //
 struct pingPongBuffer {
 public:
-    void allocate( int _width, int _height, int _internalformat = GL_RGBA){
-        // Allocate
-        for(int i = 0; i < 2; i++){
-            FBOs[i].allocate(_width,_height, _internalformat );
-            FBOs[i].getTexture().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-        }
+	void allocate( int _width, int _height, int _internalformat = GL_RGBA){
+		// Allocate
+		for(int i = 0; i < 2; i++){
+			FBOs[i].allocate(_width,_height, _internalformat );
+			FBOs[i].getTexture().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+		}
 
-        // Clean
-        clear();
-    }
+		//Assign
+		src = &FBOs[0];
+		dst = &FBOs[1];
 
-    void swap(){
-        std::swap(src,dst);
-    }
+		// Clean
+		clear();
+	}
 
-    void clear(){
-        for(int i = 0; i < 2; i++){
-            FBOs[i].begin();
-            ofClear(0,255);
-            FBOs[i].end();
-        }
-    }
+	void swap(){
+		std::swap(src,dst);
+	}
 
-    ofFbo& operator[]( int n ){ return FBOs[n];}
-    ofFbo   *src;       // Source       ->  Ping
-    ofFbo   *dst;       // Destination  ->  Pong
+	void clear(){
+		for(int i = 0; i < 2; i++){
+			FBOs[i].begin();
+			ofClear(0,255);
+			FBOs[i].end();
+		}
+	}
+
+	ofFbo& operator[]( int n ){ return FBOs[n];}
+	ofFbo   *src;       // Source       ->  Ping
+	ofFbo   *dst;       // Destination  ->  Pong
 
 private:
-    ofFbo   FBOs[2];    // Real addresses of ping/pong FBO«s
+	ofFbo   FBOs[2];    // Real addresses of ping/pong FBOÂ«s
 };
 
 
 class ofApp : public ofBaseApp{
 public:
-    void setup();
-    void update();
-    void draw();
+	void setup();
+	void update();
+	void draw();
 
-    void keyPressed  (int key);
-    void keyReleased(int key);
-    void mouseMoved(int x, int y );
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void mouseEntered(int x, int y);
-    void mouseExited(int x, int y);
-    void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
+	void keyPressed  (int key);
+	void keyReleased(int key);
+	void mouseMoved(int x, int y );
+	void mouseDragged(int x, int y, int button);
+	void mousePressed(int x, int y, int button);
+	void mouseReleased(int x, int y, int button);
+	void mouseEntered(int x, int y);
+	void mouseExited(int x, int y);
+	void windowResized(int w, int h);
+	void dragEvent(ofDragInfo dragInfo);
+	void gotMessage(ofMessage msg);
 
-    ofShader    updatePos;
-    ofShader    updateVel;
-    ofShader    updateRender;
+	ofShader    updatePos;
+	ofShader    updateVel;
+	ofShader    updateRender;
 
-    pingPongBuffer posPingPong;
-    pingPongBuffer velPingPong;
+	pingPongBuffer posPingPong;
+	pingPongBuffer velPingPong;
 
-    ofFbo   renderFBO;
+	ofFbo   renderFBO;
 
-    ofImage sparkImg;
+	ofImage sparkImg;
 
-    float   timeStep;
-    float   particleSize;
+	float   timeStep;
+	float   particleSize;
 
-    int     width, height;
-    int     imgWidth, imgHeight;
-    int     numParticles;
-    int     textureRes;
+	int     width, height;
+	int     imgWidth, imgHeight;
+	int     numParticles;
+	int     textureRes;
 
 
-    ofVboMesh mesh;
+	ofVboMesh mesh;
 };

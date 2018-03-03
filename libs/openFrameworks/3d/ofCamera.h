@@ -1,9 +1,10 @@
 #pragma once
 
 
-#include "ofRectangle.h"
-#include "ofGraphics.h"
 #include "ofNode.h"
+#include "ofRectangle.h"
+
+class ofRectangle;
 
 // \todo Use the public API of ofNode for all transformations
 // \todo add set projection matrix
@@ -130,7 +131,7 @@ public:
 
     bool getOrtho() const;
 	
-	float getImagePlaneDistance(ofRectangle viewport = ofRectangle()) const;
+	float getImagePlaneDistance(const ofRectangle & viewport = ofRectangle()) const;
 
 	/// \}
 	/// \name Rendering
@@ -151,7 +152,10 @@ public:
     /// }
     /// ~~~~
     /// \param viewport The camera's rendering viewport.
-	virtual void begin(ofRectangle viewport = ofRectangle());
+	virtual void begin(){
+		begin(getViewport());
+	}
+	virtual void begin(const ofRectangle & viewport);
 
     /// \brief Ends rendering with the camera.
 	virtual void end();
@@ -162,14 +166,20 @@ public:
 
 	/// \brief Access the projection matrix.
     /// \returns the current 4x4 projection matrix.
-	glm::mat4 getProjectionMatrix(ofRectangle viewport = ofRectangle()) const;
+	glm::mat4 getProjectionMatrix() const{
+		return getProjectionMatrix(getViewport());
+	}
+	glm::mat4 getProjectionMatrix(const ofRectangle & viewport) const;
 
     /// \brief Access the model view matrix.
     /// \returns the current 4x4 model view matrix.
 	glm::mat4 getModelViewMatrix() const;
 
     /// \todo getModelViewProjectionMatrix()
-	glm::mat4 getModelViewProjectionMatrix(ofRectangle viewport = ofRectangle()) const;
+	glm::mat4 getModelViewProjectionMatrix(const ofRectangle & viewport) const;
+	glm::mat4 getModelViewProjectionMatrix() const{
+		return getModelViewProjectionMatrix(getViewport());
+	}
 
     /// \}
     /// \name Coordinate Conversion
@@ -185,7 +195,10 @@ public:
 	/// \param WorldXYZ A 3D point in the world, whose screen coordinates you wish to know. 
 	/// \param viewport (Optional) A viewport. The default is ofGetCurrentViewport(). 
 	/// \returns An ofVec3f containing the screen coordinates of your 3D point of interest. 
-	glm::vec3 worldToScreen(glm::vec3 WorldXYZ, ofRectangle viewport = ofRectangle()) const;
+	glm::vec3 worldToScreen(glm::vec3 WorldXYZ, const ofRectangle & viewport) const;
+	glm::vec3 worldToScreen(glm::vec3 WorldXYZ) const{
+		return worldToScreen(WorldXYZ, getViewport());
+	}
 	
 	/// \brief Obtain the coordinates, in the 3D world, of a 2D point presumed to be on your screen.
 	///
@@ -195,24 +208,42 @@ public:
 	/// This Z value is interpreted as a distance into or away from the screen. 
 	///
 	/// \param ScreenXYZ A point on your screen, whose 3D world coordinates you wish to know.
-	glm::vec3 screenToWorld(glm::vec3 ScreenXYZ, ofRectangle viewport = ofRectangle()) const;
+	glm::vec3 screenToWorld(glm::vec3 ScreenXYZ, const ofRectangle & viewport) const;
+	glm::vec3 screenToWorld(glm::vec3 ScreenXYZ) const{
+		return screenToWorld(ScreenXYZ, getViewport());
+	}
 	
 	/// \todo worldToCamera()
-	glm::vec3 worldToCamera(glm::vec3 WorldXYZ, ofRectangle viewport = ofRectangle()) const;
+	glm::vec3 worldToCamera(glm::vec3 WorldXYZ, const ofRectangle & viewport) const;
+	glm::vec3 worldToCamera(glm::vec3 WorldXYZ) const{
+		return worldToCamera(WorldXYZ, getViewport());
+	}
 
 	/// \todo cameraToWorld()
-	glm::vec3 cameraToWorld(glm::vec3 CameraXYZ, ofRectangle viewport = ofRectangle()) const;
+	glm::vec3 cameraToWorld(glm::vec3 CameraXYZ, const ofRectangle & viewport) const;
+	glm::vec3 cameraToWorld(glm::vec3 CameraXYZ) const{
+		return cameraToWorld(CameraXYZ, getViewport());
+	}
 
 	/// \}
 	/// \name Renderer
 	/// \{
     
-    void setRenderer(shared_ptr<ofBaseRenderer> renderer);
+    void setRenderer(std::shared_ptr<ofBaseRenderer> renderer);
 	
 	/// \}
+
+	/// \brief Draw a visual representation of the camera's frustum
+	/// \note  This will only be visible when the camera drawing its 
+	///        frustum is viewed through another camera.
+	void drawFrustum(const ofRectangle & viewport) const;
+	void drawFrustum() const{
+		drawFrustum(getViewport());
+	}
+
 protected:
-	ofRectangle getViewport(const ofRectangle & _viewport) const;
-	shared_ptr<ofBaseRenderer> getRenderer() const;
+	ofRectangle getViewport() const;
+	std::shared_ptr<ofBaseRenderer> getRenderer() const;
 	void calcClipPlanes(const ofRectangle & viewport);
 	
 private:
@@ -224,6 +255,6 @@ private:
 	bool forceAspectRatio;
 	float aspectRatio; // only used when forceAspect=true, = w / h
 	bool vFlip;
-	shared_ptr<ofBaseRenderer> renderer;
+	std::shared_ptr<ofBaseRenderer> renderer;
 };
 

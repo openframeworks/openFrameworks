@@ -2,7 +2,7 @@
 --
 ![Screenshot of Example, stored in the Level1_ExampleName/readme_assets/ folder](color.png)
 
-###Learning Objectives
+### Learning Objectives
 
 This openFrameworks Example is designed to demonstrate setting colors using HSB (Hue/Saturation/Brightness) rather than the more well-known RGB (Read/Green/Blue).
 
@@ -34,7 +34,7 @@ Instructions for use:
 * Move your mouse to see the different colors across the grid. 
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 This Example uses no additional classes.
 

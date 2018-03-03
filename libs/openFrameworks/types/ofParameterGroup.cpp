@@ -1,6 +1,8 @@
 #include "ofUtils.h"
 #include "ofParameter.h"
 
+using namespace std;
+
 ofParameterGroup::ofParameterGroup()
 :obj(new Value)
 {
@@ -42,7 +44,17 @@ void ofParameterGroup::remove(const string &name){
 }
 
 void ofParameterGroup::clear(){
+	auto name = this->getName();
 	obj.reset(new Value);
+	setName(name);
+}
+
+string ofParameterGroup::valueType() const{
+	return typeid(*this).name();
+}
+
+const ofParameter<void> & ofParameterGroup::getVoid(const string& name) const	{
+	return get<void>(name);
 }
 
 const ofParameter<bool> & ofParameterGroup::getBool(const string& name) const	{
@@ -95,6 +107,10 @@ const ofParameter<ofFloatColor> & ofParameterGroup::getFloatColor(const string& 
 
 const ofParameterGroup & ofParameterGroup::getGroup(const string& name) const{
 	return static_cast<const ofParameterGroup&>(get(name));
+}
+
+const ofParameter<void> & ofParameterGroup::getVoid(std::size_t pos) const{
+	return get<void>(pos);
 }
 
 const ofParameter<bool> & ofParameterGroup::getBool(std::size_t pos) const{
@@ -158,6 +174,10 @@ const ofParameterGroup & ofParameterGroup::getGroup(std::size_t pos) const{
 	}
 }
 
+ofParameter<void> & ofParameterGroup::getVoid(const string& name){
+	return get<void>(name);
+}
+
 ofParameter<bool> & ofParameterGroup::getBool(const string& name){
 	return get<bool>(name);
 }
@@ -208,6 +228,10 @@ ofParameter<ofFloatColor> & ofParameterGroup::getFloatColor(const string& name){
 
 ofParameterGroup & ofParameterGroup::getGroup(const string& name){
 	return static_cast<ofParameterGroup& >(get(name));
+}
+
+ofParameter<void> & ofParameterGroup::getVoid(std::size_t pos){
+	return get<void>(pos);
 }
 
 ofParameter<bool> & ofParameterGroup::getBool(std::size_t pos){

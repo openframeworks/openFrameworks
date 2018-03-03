@@ -44,8 +44,8 @@ public:
     // rotation order is axis3,axis2,axis1
     inline ofQuaternion(float angle1, const ofVec3f& axis1, float angle2, const ofVec3f& axis2, float angle3, const ofVec3f& axis3);
     
-	inline ofQuaternion(const glm::quat & q);
-	inline operator glm::quat() const;
+	ofQuaternion(const glm::quat & q);
+	operator glm::quat() const;
 
     /// \}
     
@@ -180,8 +180,8 @@ public:
     inline const ofQuaternion operator -(const ofQuaternion& rhs) const;    ///< Binary subtraction
     inline const ofQuaternion operator -() const;                           ///< returns the negative of the quaternion. calls operator -() on the Vec4
     
-    friend ostream& operator<<(ostream& os, const ofQuaternion &q);
-    friend istream& operator>>(istream& is, ofQuaternion &q);
+    friend std::ostream& operator<<(std::ostream& os, const ofQuaternion &q);
+    friend std::istream& operator>>(std::istream& is, ofQuaternion &q);
     
     /// \}
 };
@@ -219,14 +219,6 @@ ofQuaternion::ofQuaternion(float angle, const ofVec3f& axis) {
 //----------------------------------------
 ofQuaternion::ofQuaternion(float angle1, const ofVec3f& axis1, float angle2, const ofVec3f& axis2, float angle3, const ofVec3f& axis3) {
     makeRotate(angle1, axis1, angle2, axis2, angle3, axis3);
-}
-
-//----------------------------------------
-ofQuaternion::ofQuaternion(const glm::quat & q):_v(q.x, q.y, q.z, q.w){}
-
-//----------------------------------------
-ofQuaternion::operator glm::quat() const{
-	return glm::quat(_v.w, glm::vec3(_v.x, _v.y, _v.z));
 }
 
 //----------------------------------------

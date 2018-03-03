@@ -1,7 +1,7 @@
-#About noWindowExample
+# About noWindowExample
 
 
-###Learning Objectives
+### Learning Objectives
 
 This example demonstrates how to use openframeworks to run processes without a window. 
 
@@ -34,6 +34,6 @@ Instructions for use:
 * Close the program by pressing ````ESC````
 
 
-###Other classes used in this file
+### Other classes used in this file
 
 ofAppNoWindow.

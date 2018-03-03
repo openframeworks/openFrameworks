@@ -11,17 +11,20 @@
 #include <stack>
 #include "ofConstants.h"
 #include "ofRectangle.h"
-#include "ofGraphics.h"
+#include "glm/mat4x4.hpp"
+#include "ofGraphicsConstants.h"
 
+class ofBaseDraws;
 class ofAppBaseWindow;
 class ofFbo;
+enum ofOrientation: short;
 
 class ofMatrixStack {
 public:
 	ofMatrixStack(const ofAppBaseWindow * window);
 
-	void setRenderSurface(const ofFbo & fbo);
-	void setRenderSurfaceNoMatrixFlip(const ofFbo & fbo);
+	void setRenderSurface(const ofBaseDraws & fbo);
+	void setRenderSurfaceNoMatrixFlip(const ofBaseDraws & fbo);
 	void setRenderSurface(const ofAppBaseWindow & window);
 
 	void setOrientation(ofOrientation orientation, bool vFlip);
@@ -34,7 +37,9 @@ public:
 	ofRectangle getFullSurfaceViewport() const;
 
 	const glm::mat4 & getProjectionMatrix() const;
+	const glm::mat4 & getViewInverse() const;
 	const glm::mat4 & getViewMatrix() const;
+	const glm::mat4 & getModelMatrix() const;
 	const glm::mat4 & getModelViewMatrix() const;
 	const glm::mat4 & getModelViewProjectionMatrix() const;
 	const glm::mat4 & getTextureMatrix() const;
@@ -75,12 +80,14 @@ private:
     ofOrientation orientation;
 	ofRectangle currentViewport;
 	ofHandednessType handedness;
-	ofFbo * currentFbo;
+	ofBaseDraws * currentRenderSurface;
 	ofAppBaseWindow * currentWindow;
 
     ofMatrixMode currentMatrixMode;
 
+	glm::mat4 modelMatrix;
 	glm::mat4 viewMatrix;
+	glm::mat4 viewInverse;
 	glm::mat4 modelViewMatrix;
 	glm::mat4 projectionMatrix;
 	glm::mat4 textureMatrix;
@@ -97,7 +104,7 @@ private:
 	std::stack <glm::mat4> projectionMatrixStack;
 	std::stack <glm::mat4> textureMatrixStack;
 	std::stack <std::pair<ofOrientation,bool> > orientationStack;
-	bool flipFboMatrix;
+	bool flipRenderSurfaceMatrix;
 
 	int getRenderSurfaceWidth() const;
 	int getRenderSurfaceHeight() const;
