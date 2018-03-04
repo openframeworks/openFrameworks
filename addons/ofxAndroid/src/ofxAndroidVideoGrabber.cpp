@@ -180,6 +180,7 @@ void ofxAndroidVideoGrabber::Data::onAppResume(){
 	int h=height;
 	env->CallVoidMethod(javaVideoGrabber,javaInitGrabber,w,h,attemptFramerate,texID);
 	ofLogVerbose("ofxAndroidVideoGrabber") << "ofResumeVideoGrabbers(): textures allocated";
+	bGrabberInited = true;
 	appPaused = false;
 }
 vector<ofVideoDevice> ofxAndroidVideoGrabber::listDevices() const{
