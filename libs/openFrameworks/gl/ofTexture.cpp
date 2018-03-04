@@ -182,6 +182,7 @@ void ofRegenerateAllTextures(){
 		tex->clear();
 	}
 }
+
 #endif
 
 //----------------------------------------------------------
