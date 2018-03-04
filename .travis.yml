@@ -95,7 +95,7 @@ matrix:
     language: android
     dist: trusty
     sudo: required
-    env: TARGET="android" NDK_DIR="android-ndk-r15c"
+    env: TARGET="android" NDK_DIR="android-ndk-r15c" GRADLE_TARGET="compileArm7DebugSources"
     android:
       components:
         - build-tools-25.0.2
@@ -103,7 +103,20 @@ matrix:
     cache:
       directories:
         - ~/.gradle
-        # - ~/.ccache
+        - ~/android-ndk-r15c
+
+  - os: linux
+    language: android
+    dist: trusty
+    sudo: required
+    env: TARGET="android" NDK_DIR="android-ndk-r15c" GRADLE_TARGET="compileX86DebugSources"
+    android:
+      components:
+        - build-tools-25.0.2
+        - android-19
+    cache:
+      directories:
+        - ~/.gradle
         - ~/android-ndk-r15c
 
 
