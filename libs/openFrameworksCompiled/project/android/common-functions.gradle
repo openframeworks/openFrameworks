@@ -131,6 +131,9 @@ def addonSourcesExclude(String root, String abi=""){
 def addonLdFlags(abi, ofRoot){
     def ret = []
     addonPaths(ofRoot).each { String addon ->
+        fileTree(dir: addon + "/libs", include: "**/lib/android/" + abi + "/*.a")
+            .each{ lib -> ret += lib.getAbsolutePath(); }
+
         def config = parseAddonConfig(
                 addon,
                 "ADDON_LIBS",
