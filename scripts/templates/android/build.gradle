@@ -31,7 +31,7 @@ model {
 
         defaultConfig.with {
             minSdkVersion.apiLevel    = 19
-            targetSdkVersion.apiLevel = 19
+            targetSdkVersion.apiLevel = 25
             versionCode     =  1
             versionName     = "1.0"
         }
@@ -41,6 +41,7 @@ model {
         moduleName = ofAppModuleName()
         toolchain  = buildToolchain()
         stl        = compilerStl()
+        platformVersion = "19"
     }
 
     android.sources {
