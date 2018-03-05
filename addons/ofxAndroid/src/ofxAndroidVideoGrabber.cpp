@@ -12,6 +12,7 @@
 #include "ofUtils.h"
 #include "ofVideoGrabber.h"
 #include "ofGLUtils.h"
+#include "ofMatrix4x4.h"
 
 using namespace std;
 
