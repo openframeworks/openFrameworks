@@ -162,7 +162,16 @@ ofxiOSAppDelegate * ofxiOSGetAppDelegate() {
 
 //--------------------------------------------------------------
 ofxiOSViewController * ofxiOSGetViewController() {
-	return [ofxiOSGetAppDelegate() glViewController];
+	if([[ofxiOSGetAppDelegate() uiViewController] isKindOfClass:[ofxiOSViewController class]] == YES)
+		return (ofxiOSViewController*)[ofxiOSGetAppDelegate() uiViewController];
+	else
+		return nil;
+}
+ofxiOSGLKViewController * ofxiOSGetGLKViewController() {
+	if([[ofxiOSGetAppDelegate() uiViewController] isKindOfClass:[ofxiOSGLKViewController class]] == YES)
+		return (ofxiOSGLKViewController*)[ofxiOSGetAppDelegate() uiViewController];
+	else
+		return nil;
 }
 #elif TARGET_OS_TV
 //--------------------------------------------------------------

@@ -41,6 +41,7 @@
     #include "ofxtvOSViewController.h"
     const std::string appDelegateName = "ofxtvOSAppDelegate";
 #endif
+#include "ofxiOSGLKView.h"
 #include "ofxiOSEAGLView.h"
 
 //----------------------------------------------------------------------------------- instance.
@@ -165,11 +166,17 @@ void ofAppiOSWindow::setWindowShape(int w, int h) {
 }
 
 glm::vec2	ofAppiOSWindow::getWindowPosition() {
-	return *[[ofxiOSEAGLView getInstance] getWindowPosition];
+	if(settings.engineType == OFXIOS_METALKIT || settings.engineType == OFXIOS_GLKIT)
+		return *[[ofxiOSGLKView getInstance] getWindowPosition];
+	else
+		return *[[ofxiOSEAGLView getInstance] getWindowPosition];
 }
 
 glm::vec2	ofAppiOSWindow::getWindowSize() {
-	return *[[ofxiOSEAGLView getInstance] getWindowSize];
+	if(settings.engineType == OFXIOS_METALKIT || settings.engineType == OFXIOS_GLKIT)
+		return *[[ofxiOSGLKView getInstance] getWindowSize];
+	else
+		return *[[ofxiOSEAGLView getInstance] getWindowSize];
 }
 
 glm::vec2	ofAppiOSWindow::getScreenSize() {
@@ -233,17 +240,21 @@ void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
         // otherwise calling glViewController will cause a crash.
         return;
     }
-    ofxiOSViewController * glViewController = ((ofxiOSAppDelegate *)appDelegate).glViewController;
-    ofxiOSEAGLView * glView = glViewController.glView;
-	
-    if(settings.enableHardwareOrientation == true) {
-        [glViewController rotateToInterfaceOrientation:interfaceOrientation animated:settings.enableHardwareOrientationAnimation];
-    } else {
-        [[UIApplication sharedApplication] setStatusBarOrientation:interfaceOrientation animated:settings.enableHardwareOrientationAnimation];
-        if(bResized == true) {
-            [glView layoutSubviews]; // calling layoutSubviews so window resize notification is fired.
-        }
-    }
+    UIViewController * uiViewController = ((ofxiOSAppDelegate *)appDelegate).uiViewController;
+	if([uiViewController isKindOfClass:[ofxiOSViewController class]] == YES) {
+		ofxiOSViewController * glViewController = (ofxiOSViewController*)uiViewController;
+		if(glViewController) {
+			ofxiOSEAGLView * glView = glViewController.glView;
+			if(settings.enableHardwareOrientation == true) {
+				[glViewController rotateToInterfaceOrientation:interfaceOrientation animated:settings.enableHardwareOrientationAnimation];
+			} else {
+				[[UIApplication sharedApplication] setStatusBarOrientation:interfaceOrientation animated:settings.enableHardwareOrientationAnimation];
+				if(bResized == true) {
+					[glView layoutSubviews]; // calling layoutSubviews so window resize notification is fired.
+				}
+			}
+		}
+	}
 #endif
 }
 
@@ -421,6 +432,10 @@ bool ofAppiOSWindow::isAntiAliasingEnabled() {
 
 int	ofAppiOSWindow::getAntiAliasingSampleCount() {
     return settings.numOfAntiAliasingSamples;
+}
+
+ofxiOSEngineType ofAppiOSWindow::getEngineType() {
+	return settings.engineType;
 }
 
 //-----------------------------------------------------------------------------------

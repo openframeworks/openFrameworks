@@ -60,7 +60,7 @@
 - (id)initWithFrame:(CGRect)frame
 andPreferedRenderer:(ESRendererVersion)version
            andDepth:(bool)depth
-              andAA:(bool)fsaaEnabled
+              andAA:(bool)msaaEnabled
       andNumSamples:(int)samples
           andRetina:(bool)retinaEnabled
      andRetinaScale:(CGFloat)retinaScale {
@@ -69,9 +69,9 @@ andPreferedRenderer:(ESRendererVersion)version
         
         rendererVersion = version;
         bUseDepth = depth;
-        bUseFSAA = fsaaEnabled;
+        bUseMSAA = msaaEnabled;
         bUseRetina = retinaEnabled;
-        fsaaSamples = samples;
+        msaaSamples = samples;
 
         //------------------------------------------------------
         CAEAGLLayer * eaglLayer = (CAEAGLLayer *)super.layer;
@@ -106,17 +106,21 @@ andPreferedRenderer:(ESRendererVersion)version
         
         if(rendererVersion == ESRendererVersion_20) {
             renderer = [[ES2Renderer alloc] initWithDepth:bUseDepth
-                                                    andAA:bUseFSAA
-                                           andFSAASamples:fsaaSamples
-                                                andRetina:bUseRetina];
+                                                    andAA:bUseMSAA
+                                           andMSAASamples:msaaSamples
+                                                andRetina:bUseRetina
+												 andGLKit:false
+											   sharegroup:nil];
         }
 		
         if(!renderer){ // if OpenGLES 2.0 fails to load try OpenGLES 1.1
             rendererVersion = ESRendererVersion_11;
             renderer = [[ES1Renderer alloc] initWithDepth:bUseDepth 
-                                                    andAA:bUseFSAA 
-                                           andFSAASamples:fsaaSamples 
-                                                andRetina:bUseRetina];
+                                                    andAA:bUseMSAA 
+                                           andMSAASamples:msaaSamples 
+                                                andRetina:bUseRetina
+												 andGLKit:false
+											   sharegroup:nil];
 			
             if(!renderer){
                 NSLog(@"Critical Error - ofiOS EAGLView.m could not start any type of OpenGLES renderer");

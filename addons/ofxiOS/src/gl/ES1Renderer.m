@@ -6,16 +6,16 @@
 
 // Create an OpenGL ES 1.1 context
 - (id)init {
-	return [self initWithDepth:false andAA:false  andFSAASamples:0 andRetina:false];
+	return [self initWithDepth:false andAA:false  andMSAASamples:0 andRetina:false];
 }
 
-- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andFSAASamples:(int)samples andRetina:(bool)retina {
+- (id)initWithDepth:(bool)depth andAA:(bool)msaa andMSAASamples:(int)samples andRetina:(bool)retina andGLKit:(bool)glkit sharegroup:(EAGLSharegroup*)sharegroup{
 
     if((self = [super init])) {
 		
 		depthEnabled = depth;
-		fsaaEnabled = fsaa;
-		fsaaSamples = samples;
+		msaaEnabled = msaa;
+		msaaSamples = samples;
 		retinaEnabled = retina;
         bResize = false;
 				
@@ -29,14 +29,14 @@
         }
         
         const GLubyte * extensions = glGetString(GL_EXTENSIONS);
-        if(extensions != NULL && fsaaEnabled) {
+        if(extensions != NULL && msaaEnabled) {
             if(strstr((const char*)extensions, "GL_APPLE_framebuffer_multisample")) {
-                fsaaEnabled = true;
+                msaaEnabled = true;
             } else {
-                fsaaEnabled = false;
+                msaaEnabled = false;
             }
         } else {
-            fsaaEnabled = false;
+            msaaEnabled = false;
         }
 	}
 
@@ -53,7 +53,7 @@
 
 - (void)finishRender {
 	
-	if(fsaaEnabled) {
+	if(msaaEnabled) {
 		if(depthEnabled) {
 			GLenum attachments[] = {GL_COLOR_ATTACHMENT0_OES, GL_DEPTH_ATTACHMENT_OES};
 			glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 2, attachments);
@@ -62,7 +62,7 @@
 			glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 1, attachments);
 		}
         
-		glBindFramebufferOES(GL_READ_FRAMEBUFFER_APPLE, fsaaFrameBuffer);
+		glBindFramebufferOES(GL_READ_FRAMEBUFFER_APPLE, msaaFrameBuffer);
 		glBindFramebufferOES(GL_DRAW_FRAMEBUFFER_APPLE, defaultFramebuffer);
 		glResolveMultisampleFramebufferAPPLE();
 	}
@@ -79,8 +79,8 @@
     }
     [context presentRenderbuffer:GL_RENDERBUFFER_OES];
 	
-	if(fsaaEnabled) {
-		glBindFramebufferOES(GL_FRAMEBUFFER_OES, fsaaFrameBuffer);
+	if(msaaEnabled) {
+		glBindFramebufferOES(GL_FRAMEBUFFER_OES, msaaFrameBuffer);
     }
 }
 
@@ -101,19 +101,19 @@
     [context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:layer];
 	glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, colorRenderbuffer);
     
-    if(fsaaEnabled) {
-        glGenFramebuffersOES(1, &fsaaFrameBuffer);
-        glGenRenderbuffersOES(1, &fsaaColorRenderBuffer);
+    if(msaaEnabled) {
+        glGenFramebuffersOES(1, &msaaFrameBuffer);
+        glGenRenderbuffersOES(1, &msaaColorRenderBuffer);
     }
 	
 	glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &backingWidth);
 	glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &backingHeight);
 	
-	if(fsaaEnabled) {
-		glBindFramebufferOES(GL_FRAMEBUFFER_OES, fsaaFrameBuffer);
-		glBindRenderbufferOES(GL_RENDERBUFFER_OES, fsaaColorRenderBuffer);
-		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER_OES, fsaaSamples, GL_RGB5_A1_OES, backingWidth, backingHeight);
-		glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, fsaaColorRenderBuffer);
+	if(msaaEnabled) {
+		glBindFramebufferOES(GL_FRAMEBUFFER_OES, msaaFrameBuffer);
+		glBindRenderbufferOES(GL_RENDERBUFFER_OES, msaaColorRenderBuffer);
+		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER_OES, msaaSamples, GL_RGB5_A1_OES, backingWidth, backingHeight);
+		glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, msaaColorRenderBuffer);
 	}
 	
 	if(depthEnabled) {
@@ -123,8 +123,8 @@
 		
 		glBindRenderbufferOES(GL_RENDERBUFFER_OES, depthRenderbuffer);
 		
-		if(fsaaEnabled) {
-			glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER_OES, fsaaSamples, GL_DEPTH_COMPONENT16_OES, backingWidth, backingHeight);
+		if(msaaEnabled) {
+			glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER_OES, msaaSamples, GL_DEPTH_COMPONENT16_OES, backingWidth, backingHeight);
 			glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_DEPTH_ATTACHMENT_OES, GL_RENDERBUFFER_OES, depthRenderbuffer);
 		} else {
 			glRenderbufferStorageOES(GL_RENDERBUFFER_OES, GL_DEPTH_COMPONENT16_OES, backingWidth, backingHeight); // GL DEPTH COMPONENT ON THIS LINE ISNT CORRECT POTENTIALLY
@@ -157,14 +157,14 @@
 		depthRenderbuffer = 0;
 	}
 	
-	if(fsaaFrameBuffer) {
-		glDeleteRenderbuffersOES(1, &fsaaFrameBuffer);
-		fsaaFrameBuffer = 0;
+	if(msaaFrameBuffer) {
+		glDeleteRenderbuffersOES(1, &msaaFrameBuffer);
+		msaaFrameBuffer = 0;
 	}
 	
-	if(fsaaColorRenderBuffer) {
-		glDeleteRenderbuffersOES(1, &fsaaColorRenderBuffer);
-		fsaaColorRenderBuffer = 0;
+	if(msaaColorRenderBuffer) {
+		glDeleteRenderbuffersOES(1, &msaaColorRenderBuffer);
+		msaaColorRenderBuffer = 0;
 	}
 }
 

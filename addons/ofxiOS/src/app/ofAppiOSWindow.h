@@ -38,34 +38,36 @@
 class ofiOSWindowSettings: public ofGLESWindowSettings{
 public:
     ofiOSWindowSettings()
-    :enableRetina(false)
+    :enableRetina(true)
     ,retinaScale(0)
     ,enableDepth(false)
     ,enableAntiAliasing(false)
     ,numOfAntiAliasingSamples(0)
     ,enableHardwareOrientation(false)
     ,enableHardwareOrientationAnimation(false)
-    ,enableSetupScreen(true) {
+    ,enableSetupScreen(true)
+	,engineType(ofxiOSEngineType::OFXIOS_CORE_ANIMATION) {
         windowMode = OF_FULLSCREEN;
 		setupOrientation = OF_ORIENTATION_DEFAULT;
-        glesVersion = 1;
-    }
+        glesVersion = 2;
+	}
     
     ofiOSWindowSettings(const ofWindowSettings & settings)
     :ofGLESWindowSettings(settings)
-    ,enableRetina(false)
+    ,enableRetina(true)
     ,retinaScale(0)
     ,enableDepth(false)
     ,enableAntiAliasing(false)
     ,numOfAntiAliasingSamples(0)
     ,enableHardwareOrientation(false)
     ,enableHardwareOrientationAnimation(false)
-    ,enableSetupScreen(true) {
+    ,enableSetupScreen(true)
+	,engineType(ofxiOSEngineType::OFXIOS_CORE_ANIMATION) {
         const ofGLESWindowSettings * glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
         if(glesSettings){
             glesVersion = glesSettings->glesVersion;
         } else {
-            glesVersion = 1;
+            glesVersion = 2;
         }
         const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
         if(iosSettings){
@@ -78,8 +80,9 @@ public:
             enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
             enableSetupScreen = iosSettings->enableSetupScreen;
 			setupOrientation = iosSettings->setupOrientation;
+			engineType = iosSettings->engineType;
         } else {
-            enableRetina = false;
+            enableRetina = true;
             retinaScale = 0;
             enableDepth = false;
             enableAntiAliasing = false;
@@ -88,19 +91,21 @@ public:
             enableHardwareOrientationAnimation = false;
             enableSetupScreen = true;
 			setupOrientation = OF_ORIENTATION_DEFAULT;
+			engineType = iosSettings->engineType;
         }
     }
 
     ofiOSWindowSettings(const ofGLESWindowSettings & settings)
     :ofGLESWindowSettings(settings)
-    ,enableRetina(false)
+    ,enableRetina(true)
     ,retinaScale(0)
     ,enableDepth(false)
     ,enableAntiAliasing(false)
     ,numOfAntiAliasingSamples(0)
     ,enableHardwareOrientation(false)
     ,enableHardwareOrientationAnimation(false)
-    ,enableSetupScreen(true) {
+    ,enableSetupScreen(true)
+	,engineType(ofxiOSEngineType::OFXIOS_CORE_ANIMATION) {
         const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
         if(iosSettings){
             enableRetina = iosSettings->enableRetina;
@@ -112,6 +117,7 @@ public:
             enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
             enableSetupScreen = iosSettings->enableSetupScreen;
 			setupOrientation = iosSettings->setupOrientation;
+			engineType = iosSettings->engineType;
         }
     }
 
@@ -125,6 +131,7 @@ public:
     bool enableHardwareOrientation;
     bool enableHardwareOrientationAnimation;
     bool enableSetupScreen;
+	ofxiOSEngineType engineType;
 	ofOrientation setupOrientation;
 	
 };
@@ -220,6 +227,8 @@ public:
     bool disableAntiAliasing();
     bool isAntiAliasingEnabled();
     int getAntiAliasingSampleCount();
+	
+	ofxiOSEngineType getEngineType();
     
 protected:
     

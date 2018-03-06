@@ -23,7 +23,7 @@ typedef enum {
 
 - (void) startRender;
 - (void) finishRender;
-- (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
+- (BOOL) resizeFromLayer:(CAEAGLLayer *)layer;
 - (EAGLContext*) context;
 
 - (NSInteger)getWidth;

@@ -56,9 +56,9 @@
     CGFloat scaleFactorPref;
     
     BOOL bUseDepth;
-    BOOL bUseFSAA;
+    BOOL bUseMSAA;
     BOOL bUseRetina;
-    NSInteger fsaaSamples;
+    NSInteger msaaSamples;
     ESRendererVersion rendererVersion;
     
 	BOOL animating;
@@ -82,7 +82,7 @@
 - (id)initWithFrame:(CGRect)frame
 andPreferedRenderer:(ESRendererVersion)rendererVersion
            andDepth:(bool)depth
-              andAA:(bool)fsaaEnabled
+              andAA:(bool)msaaEnabled
       andNumSamples:(int)samples
           andRetina:(bool)retinaEnabled
      andRetinaScale:(CGFloat)retinaScale;
