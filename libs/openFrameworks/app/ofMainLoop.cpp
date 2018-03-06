@@ -135,8 +135,9 @@ void ofMainLoop::loopOnce(){
 	if(bShouldClose) return;
 	for(auto i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end();){
 		if(i->first->getWindowShouldClose()){
-			i->first->close();
+			auto window = i->first;
 			windowsApps.erase(i++); ///< i now points at the window after the one which was just erased
+			window->close();
 		}else{
 			currentWindow = i->first;
 			i->first->makeCurrent();
