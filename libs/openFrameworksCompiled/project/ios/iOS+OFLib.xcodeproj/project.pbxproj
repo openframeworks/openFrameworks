@@ -96,6 +96,12 @@
 		69433CD11FE45BF2004D5B73 /* ofSoundBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 69433CCF1FE45BF2004D5B73 /* ofSoundBaseTypes.h */; };
 		69433CD31FE45E41004D5B73 /* ofMathConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 69433CD21FE45E41004D5B73 /* ofMathConstants.h */; };
 		860B024D17A96D840032B827 /* ofxiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 860B024C17A96D840032B827 /* ofxiOS.h */; };
+		90080014204EDA1300DC786A /* ofxiOSGLKViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 90080013204EDA1300DC786A /* ofxiOSGLKViewController.mm */; };
+		90080016204EDA4B00DC786A /* ofxiOSGLKViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 90080015204EDA4600DC786A /* ofxiOSGLKViewController.h */; };
+		90080019204EDB5500DC786A /* ofxiOSGLKView.h in Headers */ = {isa = PBXBuildFile; fileRef = 90080017204EDB5500DC786A /* ofxiOSGLKView.h */; };
+		9008001A204EDB5500DC786A /* ofxiOSGLKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 90080018204EDB5500DC786A /* ofxiOSGLKView.mm */; };
+		9008001D204EDC0F00DC786A /* EAGLKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9008001B204EDC0E00DC786A /* EAGLKView.m */; };
+		9008001E204EDC0F00DC786A /* EAGLKView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9008001C204EDC0F00DC786A /* EAGLKView.h */; };
 		9252B7F11CDA2A6100A8032B /* ofxiOSEventAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9252B7EF1CDA2A6100A8032B /* ofxiOSEventAdapter.h */; };
 		9252B7F21CDA2A6100A8032B /* ofxiOSEventAdapter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9252B7F01CDA2A6100A8032B /* ofxiOSEventAdapter.mm */; };
 		9957D8701BDDCD440002D53C /* ofEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9957D86F1BDDCD440002D53C /* ofEvent.h */; };
@@ -319,6 +325,12 @@
 		69433CCF1FE45BF2004D5B73 /* ofSoundBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBaseTypes.h; sourceTree = "<group>"; };
 		69433CD21FE45E41004D5B73 /* ofMathConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMathConstants.h; sourceTree = "<group>"; };
 		860B024C17A96D840032B827 /* ofxiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOS.h; sourceTree = "<group>"; };
+		90080013204EDA1300DC786A /* ofxiOSGLKViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSGLKViewController.mm; sourceTree = "<group>"; };
+		90080015204EDA4600DC786A /* ofxiOSGLKViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxiOSGLKViewController.h; sourceTree = "<group>"; };
+		90080017204EDB5500DC786A /* ofxiOSGLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSGLKView.h; sourceTree = "<group>"; };
+		90080018204EDB5500DC786A /* ofxiOSGLKView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSGLKView.mm; sourceTree = "<group>"; };
+		9008001B204EDC0E00DC786A /* EAGLKView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLKView.m; sourceTree = "<group>"; };
+		9008001C204EDC0F00DC786A /* EAGLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLKView.h; sourceTree = "<group>"; };
 		9252B7EF1CDA2A6100A8032B /* ofxiOSEventAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSEventAdapter.h; sourceTree = "<group>"; };
 		9252B7F01CDA2A6100A8032B /* ofxiOSEventAdapter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSEventAdapter.mm; sourceTree = "<group>"; };
 		9957D86F1BDDCD440002D53C /* ofEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofEvent.h; sourceTree = "<group>"; };
@@ -492,6 +504,8 @@
 		15594F0015C55A5700727FF2 /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				9008001C204EDC0F00DC786A /* EAGLKView.h */,
+				9008001B204EDC0E00DC786A /* EAGLKView.m */,
 				15594F0815C55AC900727FF2 /* EAGLView.h */,
 				15594F0515C55AC900727FF2 /* EAGLView.m */,
 				15594F0B15C55AC900727FF2 /* ESRenderer.h */,
@@ -572,9 +586,13 @@
 		15594F8A15C56A4E00727FF2 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				90080017204EDB5500DC786A /* ofxiOSGLKView.h */,
+				90080018204EDB5500DC786A /* ofxiOSGLKView.mm */,
 				15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */,
 				15594F8C15C56A8A00727FF2 /* ofxiOSAppDelegate.mm */,
 				15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */,
+				90080013204EDA1300DC786A /* ofxiOSGLKViewController.mm */,
+				90080015204EDA4600DC786A /* ofxiOSGLKViewController.h */,
 				15594F8D15C56A8A00727FF2 /* ofxiOSViewController.mm */,
 				15594F8E15C56A8A00727FF2 /* ofxiOSEAGLView.h */,
 				15594F8B15C56A8A00727FF2 /* ofxiOSEAGLView.mm */,
@@ -924,6 +942,7 @@
 				E4F76E24176CB27200798745 /* ofNode.h in Headers */,
 				67833F8419F8990D00DBE7AA /* ofFpsCounter.h in Headers */,
 				E4F76E25176CB27200798745 /* ofAppBaseWindow.h in Headers */,
+				90080019204EDB5500DC786A /* ofxiOSGLKView.h in Headers */,
 				E4F76E2F176CB27200798745 /* ofAppRunner.h in Headers */,
 				E4F76E30176CB27200798745 /* ofBaseApp.h in Headers */,
 				E4F76E37176CB27200798745 /* ofEvents.h in Headers */,
@@ -963,6 +982,7 @@
 				E4F76E6F176CB27200798745 /* ofVec3f.h in Headers */,
 				E4F76E71176CB27200798745 /* ofVec4f.h in Headers */,
 				E4F76E72176CB27200798745 /* ofVectorMath.h in Headers */,
+				9008001E204EDC0F00DC786A /* EAGLKView.h in Headers */,
 				67833F8519F8990D00DBE7AA /* ofThreadChannel.h in Headers */,
 				E4F76E73176CB27200798745 /* ofMain.h in Headers */,
 				E4F76E81176CB27200798745 /* ofSoundPlayer.h in Headers */,
@@ -1010,6 +1030,7 @@
 				15594FCA15C56D1E00727FF2 /* ofxiOSMapKit.h in Headers */,
 				69433CD11FE45BF2004D5B73 /* ofSoundBaseTypes.h in Headers */,
 				15594FCB15C56D1E00727FF2 /* ofxiOSMapKitDelegate.h in Headers */,
+				90080016204EDA4B00DC786A /* ofxiOSGLKViewController.h in Headers */,
 				15594FCC15C56D1E00727FF2 /* ofxiOSMapKitListener.h in Headers */,
 				1594366615CF5F420087B684 /* ofxiOSVideoGrabber.h in Headers */,
 				1594366715CF5F420087B684 /* ofxiOSVideoPlayer.h in Headers */,
@@ -1097,6 +1118,7 @@
 				E4F76E45176CB27200798745 /* ofShader.cpp in Sources */,
 				E4F76E49176CB27200798745 /* ofTexture.cpp in Sources */,
 				E4F76E4B176CB27200798745 /* ofVbo.cpp in Sources */,
+				90080014204EDA1300DC786A /* ofxiOSGLKViewController.mm in Sources */,
 				E4F76E4D176CB27200798745 /* ofVboMesh.cpp in Sources */,
 				E4F76E4F176CB27200798745 /* of3dGraphics.cpp in Sources */,
 				E4F76E51176CB27200798745 /* ofBitmapFont.cpp in Sources */,
@@ -1142,6 +1164,7 @@
 				15594F9215C56A8A00727FF2 /* ofxiOSAppDelegate.mm in Sources */,
 				69433CCA1FE45BCD004D5B73 /* ofGraphicsBaseTypes.cpp in Sources */,
 				15594F9315C56A8A00727FF2 /* ofxiOSViewController.mm in Sources */,
+				9008001D204EDC0F00DC786A /* EAGLKView.m in Sources */,
 				15594FA315C56BB700727FF2 /* AVFoundationVideoGrabber.mm in Sources */,
 				15594FA415C56BB700727FF2 /* AVFoundationVideoPlayer.m in Sources */,
 				15594FAC15C56C9500727FF2 /* ofxiOSAlerts.mm in Sources */,
@@ -1166,6 +1189,7 @@
 				67509ABC17979781003A3A29 /* ofXml.cpp in Sources */,
 				66EA462B17A6D396009BB12A /* ofxOpenALSoundPlayer.cpp in Sources */,
 				67D48ED41C103BAE00F719BC /* ofxiOSCoreMotion.mm in Sources */,
+				9008001A204EDB5500DC786A /* ofxiOSGLKView.mm in Sources */,
 				66EA462D17A6D396009BB12A /* SoundEngine.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

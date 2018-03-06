@@ -24,7 +24,14 @@ enum ofxiOSDeviceType {
 enum ofxiOSRendererType {
     OFXIOS_RENDERER_ES1 = 1,
     OFXIOS_RENDERER_ES2 = 2,
-    OFXIOS_RENDERER_ES3 = 3
+    OFXIOS_RENDERER_ES3 = 3,
+	OFXIOS_RENDERER_METAL = 4
+};
+
+enum ofxiOSEngineType{
+	OFXIOS_CORE_ANIMATION = 1,
+	OFXIOS_GLKIT = 2,
+	OFXIOS_METALKIT = 3
 };
 
 
