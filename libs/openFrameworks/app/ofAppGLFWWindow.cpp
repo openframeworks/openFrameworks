@@ -71,6 +71,8 @@ ofAppGLFWWindow::~ofAppGLFWWindow(){
 
 void ofAppGLFWWindow::close(){
 	if(windowP){
+		
+
 		glfwSetMouseButtonCallback( windowP, nullptr );
 		glfwSetCursorPosCallback( windowP, nullptr );
 		glfwSetCursorEnterCallback( windowP, nullptr );
@@ -84,6 +86,12 @@ void ofAppGLFWWindow::close(){
 #endif
 		//hide the window before we destroy it stops a flicker on OS X on exit.
 		glfwHideWindow(windowP);
+
+		// We must ensure renderer is destroyed *before* glfw destroys the window in glfwDestroyWindow, 
+		// as `glfwDestroyWindow` at least on Windows has the effect of unloading OpenGL, making all 
+		// calls to OpenGL illegal.
+		currentRenderer.reset();
+
 		glfwDestroyWindow(windowP);
 		windowP = nullptr;
 		events().disable();
