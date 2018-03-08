@@ -1,3 +1,3 @@
-rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stable.noarch.rpm http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-stable.noarch.rpm
+dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
-yum install ffmpeg-devel libmpg123-devel mpg123 gstreamer-plugins-ugly gstreamer-ffmpeg
+dnf install ffmpeg-devel libmpg123-devel mpg123 gstreamer-plugins-ugly gstreamer-ffmpeg
