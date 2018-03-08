@@ -81,7 +81,7 @@
                    name:UIDeviceOrientationDidChangeNotification
                  object:nil];
 	
-	if(ofxiOSGetOFWindow()->getEngineType() == OFXIOS_CORE_ANIMATION) {
+	if(ofxiOSGetOFWindow()->getWindowControllerType() == CORE_ANIMATION) {
 		[center addObserver:self
 				   selector:@selector(handleScreenConnectNotification:)
 					   name:UIScreenDidConnectNotification object:nil];
@@ -141,13 +141,13 @@
     NSString * appDelegateClassName = [[self class] description];
     if ([appDelegateClassName isEqualToString:@"ofxiOSAppDelegate"]) { // app delegate is not being extended.
 		
-		switch(ofxiOSGetOFWindow()->getEngineType()) {
-			case OFXIOS_METALKIT:
+		switch(ofxiOSGetOFWindow()->getWindowControllerType()) {
+			case METAL_KIT:
 				NSLog(@"No MetalKit yet supported for openFrameworks: Falling back to GLKit");
-			case OFXIOS_GLKIT:
+			case GL_KIT:
 				self.uiViewController = (UIViewController*)[[[ofxiOSGLKViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()] autorelease];
 				break;
-			case OFXIOS_CORE_ANIMATION:
+			case CORE_ANIMATION:
 			default:
 				self.uiViewController = [[[ofxiOSViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()] autorelease];
 				break;
@@ -188,7 +188,7 @@
 
 //------------------------------------------------------------------------------------------- application delegate callbacks.
 - (void)applicationWillResignActive:(UIApplication *)application {
-	if(ofxiOSGetOFWindow()->getEngineType() == OFXIOS_CORE_ANIMATION)
+	if(ofxiOSGetOFWindow()->getWindowControllerType() == CORE_ANIMATION)
     	[ofxiOSGetGLView() stopAnimation];
 	ofxiOSAlerts.lostFocus();
 	glFinish();
@@ -199,14 +199,14 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-	if(ofxiOSGetOFWindow()->getEngineType() == OFXIOS_CORE_ANIMATION)
+	if(ofxiOSGetOFWindow()->getWindowControllerType() == CORE_ANIMATION)
     	[ofxiOSGetGLView() startAnimation];
 	
 	ofxiOSAlerts.gotFocus();
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-	if(ofxiOSGetOFWindow()->getEngineType() == OFXIOS_CORE_ANIMATION)
+	if(ofxiOSGetOFWindow()->getWindowControllerType() == CORE_ANIMATION)
     	[ofxiOSGetGLView() stopAnimation];
 	
     // stop listening for orientation change notifications

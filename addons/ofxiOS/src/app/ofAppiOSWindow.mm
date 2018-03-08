@@ -166,14 +166,14 @@ void ofAppiOSWindow::setWindowShape(int w, int h) {
 }
 
 glm::vec2	ofAppiOSWindow::getWindowPosition() {
-	if(settings.engineType == OFXIOS_METALKIT || settings.engineType == OFXIOS_GLKIT)
+	if(settings.windowControllerType == METAL_KIT || settings.windowControllerType == GL_KIT)
 		return *[[ofxiOSGLKView getInstance] getWindowPosition];
 	else
 		return *[[ofxiOSEAGLView getInstance] getWindowPosition];
 }
 
 glm::vec2	ofAppiOSWindow::getWindowSize() {
-	if(settings.engineType == OFXIOS_METALKIT || settings.engineType == OFXIOS_GLKIT)
+	if(settings.windowControllerType == METAL_KIT || settings.windowControllerType == GL_KIT)
 		return *[[ofxiOSGLKView getInstance] getWindowSize];
 	else
 		return *[[ofxiOSEAGLView getInstance] getWindowSize];
@@ -434,8 +434,8 @@ int	ofAppiOSWindow::getAntiAliasingSampleCount() {
     return settings.numOfAntiAliasingSamples;
 }
 
-ofxiOSEngineType ofAppiOSWindow::getEngineType() {
-	return settings.engineType;
+ofxiOSWindowControllerType ofAppiOSWindow::getWindowControllerType() {
+	return settings.windowControllerType;
 }
 
 //-----------------------------------------------------------------------------------

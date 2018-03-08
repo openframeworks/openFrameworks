@@ -28,10 +28,10 @@ enum ofxiOSRendererType {
 	OFXIOS_RENDERER_METAL = 4
 };
 
-enum ofxiOSEngineType{
-	OFXIOS_CORE_ANIMATION = 1,
-	OFXIOS_GLKIT = 2,
-	OFXIOS_METALKIT = 3
+enum ofxiOSWindowControllerType{
+	CORE_ANIMATION = 1,
+	GL_KIT = 2,
+	METAL_KIT = 3
 };
 
 
