@@ -180,25 +180,17 @@ static int getJpegOptionFromImageLoadSetting(const ofImageLoadSettings &settings
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _fileName, const ofImageLoadSettings& settings){
 	ofInitFreeImage();
-
 	auto uriStr = _fileName.string();
-	const int bytesNeeded = 8 + 3 * strlen(uriStr.c_str()) + 1;
-	std::vector<char> absUri(bytesNeeded);
-
-#ifdef TARGET_WIN32
-	uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri.data());
-#else
-	uriUnixFilenameToUriStringA(uriStr.c_str(), absUri.data());
-#endif
-
 	UriUriA uri;
 	UriParserStateA state;
 	state.uri = &uri;
+
 	if(uriParseUriA(&state, uriStr.c_str())!=URI_SUCCESS){
 		ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri " << _fileName;
 		uriFreeUriMembersA(&uri);
 		return false;
 	}
+
 	std::string scheme(uri.scheme.first, uri.scheme.afterLast);
 	uriFreeUriMembersA(&uri);
 
@@ -206,16 +198,25 @@ static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _
 		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
 	}
 
-	std::string fileName = ofToDataPath(_fileName);
+    std::string fileName;
+
+    if(scheme != "") {
+        fileName = ofToDataPath(uri.hostText.first);
+    } else {
+        fileName = ofToDataPath(_fileName);
+    }
+
 	bool bLoaded = false;
 	FIBITMAP * bmp = nullptr;
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
+
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
 		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 	}
+
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		if(fif == FIF_JPEG) {
 			int option = getJpegOptionFromImageLoadSetting(settings);
