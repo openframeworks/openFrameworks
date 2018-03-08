@@ -46,7 +46,7 @@ public:
     ,enableHardwareOrientation(false)
     ,enableHardwareOrientationAnimation(false)
     ,enableSetupScreen(true)
-	,engineType(ofxiOSEngineType::OFXIOS_CORE_ANIMATION) {
+	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION) {
         windowMode = OF_FULLSCREEN;
 		setupOrientation = OF_ORIENTATION_DEFAULT;
         glesVersion = 2;
@@ -62,7 +62,7 @@ public:
     ,enableHardwareOrientation(false)
     ,enableHardwareOrientationAnimation(false)
     ,enableSetupScreen(true)
-	,engineType(ofxiOSEngineType::OFXIOS_CORE_ANIMATION) {
+	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION) {
         const ofGLESWindowSettings * glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
         if(glesSettings){
             glesVersion = glesSettings->glesVersion;
@@ -80,7 +80,7 @@ public:
             enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
             enableSetupScreen = iosSettings->enableSetupScreen;
 			setupOrientation = iosSettings->setupOrientation;
-			engineType = iosSettings->engineType;
+			windowControllerType = iosSettings->windowControllerType;
         } else {
             enableRetina = true;
             retinaScale = 0;
@@ -91,7 +91,7 @@ public:
             enableHardwareOrientationAnimation = false;
             enableSetupScreen = true;
 			setupOrientation = OF_ORIENTATION_DEFAULT;
-			engineType = iosSettings->engineType;
+			windowControllerType = iosSettings->windowControllerType;
         }
     }
 
@@ -105,7 +105,7 @@ public:
     ,enableHardwareOrientation(false)
     ,enableHardwareOrientationAnimation(false)
     ,enableSetupScreen(true)
-	,engineType(ofxiOSEngineType::OFXIOS_CORE_ANIMATION) {
+	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION) {
         const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
         if(iosSettings){
             enableRetina = iosSettings->enableRetina;
@@ -117,7 +117,7 @@ public:
             enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
             enableSetupScreen = iosSettings->enableSetupScreen;
 			setupOrientation = iosSettings->setupOrientation;
-			engineType = iosSettings->engineType;
+			windowControllerType = iosSettings->windowControllerType;
         }
     }
 
@@ -131,7 +131,7 @@ public:
     bool enableHardwareOrientation;
     bool enableHardwareOrientationAnimation;
     bool enableSetupScreen;
-	ofxiOSEngineType engineType;
+	ofxiOSWindowControllerType windowControllerType;
 	ofOrientation setupOrientation;
 	
 };
@@ -228,7 +228,7 @@ public:
     bool isAntiAliasingEnabled();
     int getAntiAliasingSampleCount();
 	
-	ofxiOSEngineType getEngineType();
+	ofxiOSWindowControllerType getWindowControllerType();
     
 protected:
     
