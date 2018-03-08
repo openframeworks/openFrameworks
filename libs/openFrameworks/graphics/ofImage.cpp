@@ -179,68 +179,68 @@ static int getJpegOptionFromImageLoadSetting(const ofImageLoadSettings &settings
 
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _fileName, const ofImageLoadSettings& settings){
-	ofInitFreeImage();
-	auto uriStr = _fileName.string();
-	UriUriA uri;
-	UriParserStateA state;
-	state.uri = &uri;
+    ofInitFreeImage();
 
-	if(uriParseUriA(&state, uriStr.c_str())!=URI_SUCCESS){
-		ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri " << _fileName;
-		uriFreeUriMembersA(&uri);
-		return false;
-	}
+    auto uriStr = _fileName.string();
+    UriUriA uri;
+    UriParserStateA state;
+    state.uri = &uri;
 
-	std::string scheme(uri.scheme.first, uri.scheme.afterLast);
-	uriFreeUriMembersA(&uri);
+    if(uriParseUriA(&state, uriStr.c_str())!=URI_SUCCESS){
+        const int bytesNeeded = 8 + 3 * strlen(uriStr.c_str()) + 1;
+        std::vector<char> absUri(bytesNeeded);
+#ifdef TARGET_WIN32
+        uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri.data());
+#else
+        uriUnixFilenameToUriStringA(uriStr.c_str(), absUri.data());
+#endif
+        if(uriParseUriA(&state, absUri.data())!=URI_SUCCESS){
+            ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri " << _fileName;
+            uriFreeUriMembersA(&uri);
+            return false;
+        }
+    }
+    std::string scheme(uri.scheme.first, uri.scheme.afterLast);
+    uriFreeUriMembersA(&uri);
 
-	if(scheme == "http" || scheme == "https"){
-		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
-	}
-
-    std::string fileName;
-
-    if(scheme != "") {
-        fileName = ofToDataPath(uri.hostText.first);
-    } else {
-        fileName = ofToDataPath(_fileName);
+    if(scheme == "http" || scheme == "https"){
+        return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
     }
 
-	bool bLoaded = false;
-	FIBITMAP * bmp = nullptr;
+    std::string fileName = ofToDataPath(_fileName);
+    bool bLoaded = false;
+    FIBITMAP * bmp = nullptr;
 
-	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
-	fif = FreeImage_GetFileType(fileName.c_str(), 0);
+    FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
+    fif = FreeImage_GetFileType(fileName.c_str(), 0);
+    if(fif == FIF_UNKNOWN) {
+        // or guess via filename
+        fif = FreeImage_GetFIFFromFilename(fileName.c_str());
+    }
+    if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
+        if(fif == FIF_JPEG) {
+            int option = getJpegOptionFromImageLoadSetting(settings);
+            bmp = FreeImage_Load(fif, fileName.c_str(), option);
+        } else {
+            bmp = FreeImage_Load(fif, fileName.c_str(), 0);
+        }
 
-	if(fif == FIF_UNKNOWN) {
-		// or guess via filename
-		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
-	}
+        if (bmp != nullptr){
+            bLoaded = true;
+        }
+    }
 
-	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
-		if(fif == FIF_JPEG) {
-			int option = getJpegOptionFromImageLoadSetting(settings);
-			bmp = FreeImage_Load(fif, fileName.c_str(), option);
-		} else {
-			bmp = FreeImage_Load(fif, fileName.c_str(), 0);
-		}
+    //-----------------------------
 
-		if (bmp != nullptr){
-			bLoaded = true;
-		}
-	}
+    if ( bLoaded ){
+        putBmpIntoPixels(bmp,pix);
+    }
 
-	//-----------------------------
+    if (bmp != nullptr){
+        FreeImage_Unload(bmp);
+    }
 
-	if ( bLoaded ){
-		putBmpIntoPixels(bmp,pix);
-	}
-
-	if (bmp != nullptr){
-		FreeImage_Unload(bmp);
-	}
-
-	return bLoaded;
+    return bLoaded;
 }
 
 template<typename PixelType>
