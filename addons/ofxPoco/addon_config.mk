@@ -170,3 +170,4 @@ msys2:
 
 vs:
 	ADDON_CFLAGS = -DPOCO_STATIC
+	ADDON_LIBS += iphlpapi.lib
