@@ -148,6 +148,15 @@
 }
 #endif
 
+- (EAGLSharegroup *)getSharegroup {
+	if(self.glView != nil) {
+		EAGLContext * context = [self.glView context];
+		if(context)
+			return [context sharegroup];
+	}
+	return nil;
+}
+
 
 //-------------------------------------------------------------- glView callbacks.
 - (void)glViewAnimationStarted {
