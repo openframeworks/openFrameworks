@@ -31,6 +31,7 @@ class ofxiOSApp;
 							animated:(BOOL)animated;
 - (BOOL)isReadyToRotate;
 - (void)setPreferredFPS:(int)fps;
+- (EAGLSharegroup *)getSharegroup;
 
 @end
 
