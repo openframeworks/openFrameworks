@@ -6,10 +6,10 @@
 
 // Create an OpenGL ES 1.1 context
 - (id)init {
-	return [self initWithDepth:false andAA:false  andMSAASamples:0 andRetina:false];
+	return [self initWithDepth:false andAA:false  andMSAASamples:0 andRetina:false sharegroup:nil];
 }
 
-- (id)initWithDepth:(bool)depth andAA:(bool)msaa andMSAASamples:(int)samples andRetina:(bool)retina andGLKit:(bool)glkit sharegroup:(EAGLSharegroup*)sharegroup{
+- (id)initWithDepth:(bool)depth andAA:(bool)msaa andMSAASamples:(int)samples andRetina:(bool)retina sharegroup:(EAGLSharegroup*)sharegroup{
 
     if((self = [super init])) {
 		

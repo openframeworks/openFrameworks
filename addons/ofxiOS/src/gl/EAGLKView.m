@@ -27,26 +27,19 @@
 
 - (id)initWithFrame:(CGRect)frame
 andPreferedRenderer:(ESRendererVersion)version
-           andDepth:(bool)depth
               andAA:(bool)msaaEnabled
-      andNumSamples:(int)samples
           andRetina:(bool)retinaEnabled
-     andRetinaScale:(CGFloat)retinaScale {
+     andRetinaScale:(CGFloat)retinaScale
+ sharegroup:(EAGLSharegroup*)sharegroup
+		colorFormat:(GLKViewDrawableColorFormat)colorFormat
+		depthFormat:(GLKViewDrawableDepthFormat)depthFormat
+	  stencilFormat:(GLKViewDrawableStencilFormat)stencilFormat {
 
 	if((self = [super initWithFrame:frame])) {
         
         rendererVersion = version;
-        bUseDepth = depth;
         bUseMSAA = msaaEnabled;
         bUseRetina = retinaEnabled;
-        msaaSamples = samples;
-
-        //------------------------------------------------------
-//        CAEAGLLayer * eaglLayer = (CAEAGLLayer *)super.layer;
-//        eaglLayer.opaque = true;
-//		eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-//										[NSNumber numberWithBool:YES], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
-//
         //------------------------------------------------------
         scaleFactorPref = retinaScale;
         
@@ -73,41 +66,41 @@ andPreferedRenderer:(ESRendererVersion)version
         }
         
         if(rendererVersion == ESRendererVersion_20) {
-            renderer = [[ES2Renderer alloc] initWithDepth:bUseDepth
-                                                    andAA:bUseMSAA
-                                           andMSAASamples:msaaSamples
-                                                andRetina:bUseRetina
-												 andGLKit:true
-											   sharegroup:nil];
+			self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2 sharegroup:sharegroup];
+			NSLog(@"Creating OpenGL ES2 Renderer");
+			if(!self.context) {
+				NSLog(@"OpenGL ES2 failed");
+				rendererVersion = ESRendererVersion_11;
+			}
         }
 		
-        if(!renderer){ // if OpenGLES 2.0 fails to load try OpenGLES 1.1
-            rendererVersion = ESRendererVersion_11;
-            renderer = [[ES1Renderer alloc] initWithDepth:bUseDepth 
-                                                    andAA:bUseMSAA 
-                                           andMSAASamples:msaaSamples 
-                                                andRetina:bUseRetina
-												 andGLKit:true
-											   sharegroup:nil];
+        if(rendererVersion == ESRendererVersion_11) {
+			NSLog(@"Creating OpenGL ES1.1 Renderer");
+            self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1 sharegroup:sharegroup];
 			
-            if(!renderer){
-                NSLog(@"Critical Error - ofiOS EAGLView.m could not start any type of OpenGLES renderer");
+            if(!self.context){
+                NSLog(@"Critical Error - ofiOS GLKView.m could not start any type of OpenGLES renderer");
 				[self release];
 				return nil;
 			}
-            
-            
         }
 		
-		self.context = renderer;
-
+		self.drawableColorFormat = colorFormat;
+		self.drawableDepthFormat = depthFormat;
+		self.drawableStencilFormat = stencilFormat;
+		
+		if(msaaEnabled)
+			self.drawableMultisample = GLKViewDrawableMultisample4X;
+		else
+			self.drawableMultisample = GLKViewDrawableMultisampleNone;
+		
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 		self.multipleTouchEnabled = true;
 #endif
 		self.opaque = true;
-
-        glLock = [[NSLock alloc] init];
-
+		
+		[self bindDrawable];
+		
         bInit = YES;
 	}
 	
@@ -118,9 +111,6 @@ andPreferedRenderer:(ESRendererVersion)version
     if(!bInit) {
         return;
     }
-    [renderer release];
-    [glLock release];
-    
     bInit = NO;
 }
 
@@ -140,14 +130,6 @@ andPreferedRenderer:(ESRendererVersion)version
 
 }
 
-- (void)startRender {
-    [renderer startRender];
-}
-	
-- (void)finishRender {
-    [renderer finishRender];
-}
-
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event { }
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event { }
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event { }
@@ -155,49 +137,16 @@ andPreferedRenderer:(ESRendererVersion)version
 #ifdef __IPHONE_9_1
 - (void)touchesEstimatedPropertiesUpdated:(NSSet<UITouch *> *)touches { }
 #endif
-	
-- (void)layoutSubviews{
-    [self updateScaleFactor];
 
-    [renderer startRender];
-    [renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
-    [renderer finishRender];
-    
-    [self notifyResized];
-}
 
 //-------------------------------------------------------------------
 - (void)updateScaleFactor {
-	
-    
     GLKView *view = (GLKView *)self;
 	
     scaleFactor = MIN(scaleFactorPref, [view contentScaleFactor]);
     if(scaleFactor != self.contentScaleFactor) {
         self.contentScaleFactor = scaleFactor;
     }
-}
-
-//------------------------------------------------------------------- lock/unlock GL context.
-- (void)lockGL {
-	[glLock lock];
-}
-
-- (void)unlockGL {
-	[glLock unlock];
-}
-
-//------------------------------------------------------------------- getters.
--(EAGLContext*) context{
-	return [renderer context];
-}
-
-- (GLint)getWidth {
-    return [renderer getWidth];
-} 
-
-- (GLint)getHeight {
-    return [renderer getHeight];
 }
 
 //------------------------------------------------------------------- notify.

@@ -34,6 +34,22 @@ enum ofxiOSWindowControllerType{
 	METAL_KIT = 3
 };
 
+enum ofxiOSRendererColorFormat{
+	RGBA8888 = 0,
+	RGB565,
+	SRGBA8888,
+};
+
+enum ofxiOSRendererDepthFormat{
+	DEPTH_NONE = 0,
+	DEPTH_16,
+	DEPTH_24,
+};
+
+enum ofxiOSRendererStencilFormat{
+	STENCIL_NONE = 0,
+	STENCIL_8,
+};
 
 // Orientation.
 //-------------------------------------------------------------------------------

@@ -17,6 +17,7 @@
     BOOL bReadyToRotate;
     BOOL bFirstUpdate;
 	BOOL bAnimated;
+	EAGLSharegroup * sharegroup;
 }
 @end
 
@@ -24,7 +25,7 @@
 
 @synthesize glView;
 
-- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
+- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup{
     currentInterfaceOrientation = pendingInterfaceOrientation = UIInterfaceOrientationPortrait;
     if((self = [super init])) {
         currentInterfaceOrientation = pendingInterfaceOrientation = self.interfaceOrientation;
@@ -35,8 +36,7 @@
 		}
         bFirstUpdate    = NO;
 		bAnimated		= NO;
-        
-        self.glView = [[[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app] autorelease];
+        self.glView = [[[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup] autorelease];
         self.glView.delegate = self;
     }
     

@@ -30,15 +30,18 @@ class ofAppiOSWindow;
 
 + (ofxiOSGLKView *) getInstance;
 
-- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)app;
-- (void) setup;
-- (void) update;
-- (void) draw;
+- (id)initWithFrame:(CGRect)frame
+			 andApp:(ofxiOSApp *)app
+		 sharegroup:(EAGLSharegroup *)sharegroup;
+- (void)setup;
+- (void)update;
+- (void)draw;
 
 - (void)updateDimensions;
 - (void)destroy;
 - (CGPoint)orientateTouchPoint:(CGPoint)touchPoint;
-- (void) resetTouches;
+- (void)resetTouches;
+- (UIImage*)getSnapshot;
 
 @end
 

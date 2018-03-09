@@ -34,7 +34,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     return _instanceRef;
 }
 
-- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr {
+- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr sharegroup:(EAGLSharegroup *)sharegroup {
 	
 	window = dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
 	
@@ -51,7 +51,8 @@ static ofxiOSEAGLView * _instanceRef = nil;
                          andAA:window->isAntiAliasingEnabled()
                  andNumSamples:window->getAntiAliasingSampleCount()
                      andRetina:window->isRetinaEnabled()
-                andRetinaScale:window->getRetinaScale()];
+                andRetinaScale:window->getRetinaScale()
+					sharegroup:sharegroup];
     
 	bSetup = NO;
     if(self) {

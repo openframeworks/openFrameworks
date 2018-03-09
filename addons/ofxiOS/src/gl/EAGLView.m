@@ -63,7 +63,8 @@ andPreferedRenderer:(ESRendererVersion)version
               andAA:(bool)msaaEnabled
       andNumSamples:(int)samples
           andRetina:(bool)retinaEnabled
-     andRetinaScale:(CGFloat)retinaScale {
+     andRetinaScale:(CGFloat)retinaScale
+		 sharegroup:(EAGLSharegroup*)sharegroup {
 
 	if((self = [super initWithFrame:frame])) {
         
@@ -109,8 +110,7 @@ andPreferedRenderer:(ESRendererVersion)version
                                                     andAA:bUseMSAA
                                            andMSAASamples:msaaSamples
                                                 andRetina:bUseRetina
-												 andGLKit:false
-											   sharegroup:nil];
+											   sharegroup:sharegroup];
         }
 		
         if(!renderer){ // if OpenGLES 2.0 fails to load try OpenGLES 1.1
@@ -119,8 +119,7 @@ andPreferedRenderer:(ESRendererVersion)version
                                                     andAA:bUseMSAA 
                                            andMSAASamples:msaaSamples 
                                                 andRetina:bUseRetina
-												 andGLKit:false
-											   sharegroup:nil];
+											   sharegroup:sharegroup];
 			
             if(!renderer){
                 NSLog(@"Critical Error - ofiOS EAGLView.m could not start any type of OpenGLES renderer");
