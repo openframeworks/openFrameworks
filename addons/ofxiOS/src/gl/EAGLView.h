@@ -85,28 +85,29 @@ andPreferedRenderer:(ESRendererVersion)rendererVersion
               andAA:(bool)msaaEnabled
       andNumSamples:(int)samples
           andRetina:(bool)retinaEnabled
-     andRetinaScale:(CGFloat)retinaScale;
+     andRetinaScale:(CGFloat)retinaScale
+		 sharegroup:(EAGLSharegroup*)sharegroup;
 
-- (void) startAnimation;
-- (void) stopAnimation;
-- (void) drawView;
+- (void)startAnimation;
+- (void)stopAnimation;
+- (void)drawView;
 
-- (void) lockGL;
-- (void) unlockGL;
+- (void)lockGL;
+- (void)unlockGL;
 
-- (void) startRender;
-- (void) finishRender;
+- (void)startRender;
+- (void)finishRender;
 
-- (void) destroy;
+- (void)destroy;
 
-- (EAGLContext *) context;
+- (EAGLContext *)context;
 
-- (GLint) getWidth;
-- (GLint) getHeight;
+- (GLint)getWidth;
+- (GLint)getHeight;
 
-- (void) notifyAnimationStarted;
-- (void) notifyAnimationStopped;
-- (void) notifyDraw;
-- (void) notifyResized;
+- (void)notifyAnimationStarted;
+- (void)notifyAnimationStopped;
+- (void)notifyDraw;
+- (void)notifyResized;
 
 @end

@@ -145,11 +145,11 @@
 			case METAL_KIT:
 				NSLog(@"No MetalKit yet supported for openFrameworks: Falling back to GLKit");
 			case GL_KIT:
-				self.uiViewController = (UIViewController*)[[[ofxiOSGLKViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()] autorelease];
+				self.uiViewController = (UIViewController*)[[[ofxiOSGLKViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr() sharegroup:nil] autorelease];
 				break;
 			case CORE_ANIMATION:
 			default:
-				self.uiViewController = [[[ofxiOSViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()] autorelease];
+				self.uiViewController = [[[ofxiOSViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr() sharegroup:nil] autorelease];
 				break;
 				
 		}

@@ -34,7 +34,7 @@ static ofxiOSGLKView * _instanceRef = nil;
     return _instanceRef;
 }
 
-- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr {
+- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr sharegroup:(EAGLSharegroup *)sharegroup{
 	
 	window = dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
 	
@@ -47,11 +47,13 @@ static ofxiOSGLKView * _instanceRef = nil;
     
     self = [self initWithFrame:frame
            andPreferedRenderer:preferedRendererVersion
-                      andDepth:window->isDepthBufferEnabled()
                          andAA:window->isAntiAliasingEnabled()
-                 andNumSamples:window->getAntiAliasingSampleCount()
                      andRetina:window->isRetinaEnabled()
-                andRetinaScale:window->getRetinaScale()];
+                andRetinaScale:window->getRetinaScale()
+					sharegroup:sharegroup
+				   colorFormat:(GLKViewDrawableColorFormat)window->getRendererColorType()
+				   depthFormat:(GLKViewDrawableDepthFormat)window->getRendererDepthType()
+				 stencilFormat:(GLKViewDrawableStencilFormat)window->getRendererStencilType()];
     
 	bSetup = NO;
     if(self) {
@@ -177,9 +179,6 @@ static ofxiOSGLKView * _instanceRef = nil;
 - (void)draw {
 	if(bSetup == NO) return;
 	
-	[self lockGL];
-	[self startRender];
-	
 	window->renderer()->startRender();
 	
 	if(window->isSetupScreenEnabled()) {
@@ -194,11 +193,9 @@ static ofxiOSGLKView * _instanceRef = nil;
 	
 	window->renderer()->finishRender();
 	
-	[self finishRender];
-	[self unlockGL];
-	
 	[super notifyDraw];   // alerts delegate that a new frame has been drawn.
 }
+
 
 - (void)notifyDraw {
     // blank this.
@@ -383,6 +380,10 @@ static ofxiOSGLKView * _instanceRef = nil;
 	}
 	
 	[self touchesEnded:touches withEvent:event];
+}
+
+- (UIImage*)getSnapshot {
+	return self.snapshot;
 }
 
 

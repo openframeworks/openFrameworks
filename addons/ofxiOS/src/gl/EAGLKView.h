@@ -22,11 +22,9 @@
 
 @interface EAGLKView : GLKView
 {
-@public
-    id<EAGLViewDelegate> delegate;
-    
+
 @protected
-    id <ESRenderer> renderer;
+	
     CGFloat scaleFactor;
     CGFloat scaleFactorPref;
     
@@ -35,35 +33,26 @@
     BOOL bUseRetina;
     NSInteger msaaSamples;
     ESRendererVersion rendererVersion;
-    
-	BOOL animating;
-	BOOL displayLinkSupported;
-    NSTimer * animationTimer;
-    
-    NSLock * glLock;
 }
 
 @property (nonatomic, assign) id delegate;
 
 - (id)initWithFrame:(CGRect)frame
 andPreferedRenderer:(ESRendererVersion)rendererVersion
-           andDepth:(bool)depth
               andAA:(bool)msaaEnabled
-      andNumSamples:(int)samples
           andRetina:(bool)retinaEnabled
-     andRetinaScale:(CGFloat)retinaScale;
+     andRetinaScale:(CGFloat)retinaScale
+		 sharegroup:(EAGLSharegroup*)sharegroup
+		colorFormat:(GLKViewDrawableColorFormat)colorFormat
+		depthFormat:(GLKViewDrawableDepthFormat)depthFormat
+	  stencilFormat:(GLKViewDrawableStencilFormat)stencilFormat;
 
-- (void) setup;
-- (void) update;
-- (void) draw;
 
-- (void) lockGL;
-- (void) unlockGL;
 
-- (void) startRender;
-- (void) finishRender;
-
-- (void) destroy;
+- (void)setup;
+- (void)update;
+- (void)draw;
+- (void)destroy;
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
@@ -72,15 +61,9 @@ andPreferedRenderer:(ESRendererVersion)rendererVersion
 #ifdef __IPHONE_9_1
 - (void)touchesEstimatedPropertiesUpdated:(NSSet<UITouch *> *)touches NS_AVAILABLE_IOS(9_1);
 #endif
-
-- (EAGLContext *) context;
-
-- (GLint) getWidth;
-- (GLint) getHeight;
-
-- (void) notifyAnimationStarted;
-- (void) notifyAnimationStopped;
-- (void) notifyDraw;
-- (void) notifyResized;
+- (void)notifyAnimationStarted;
+- (void)notifyAnimationStopped;
+- (void)notifyDraw;
+- (void)notifyResized;
 
 @end

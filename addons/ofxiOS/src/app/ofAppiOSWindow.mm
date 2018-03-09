@@ -405,10 +405,12 @@ float ofAppiOSWindow::getRetinaScale() {
 
 //----------------------------------------------------------------------------------- depth buffer.
 bool ofAppiOSWindow::enableDepthBuffer() {
+	settings.depthType = ofxiOSRendererDepthFormat::DEPTH_24;
     return (settings.enableDepth = true);
 }
 
 bool ofAppiOSWindow::disableDepthBuffer() {
+	settings.depthType = ofxiOSRendererDepthFormat::DEPTH_NONE;
     return (settings.enableDepth = false);
 }
 
@@ -436,6 +438,18 @@ int	ofAppiOSWindow::getAntiAliasingSampleCount() {
 
 ofxiOSWindowControllerType ofAppiOSWindow::getWindowControllerType() {
 	return settings.windowControllerType;
+}
+
+ofxiOSRendererColorFormat ofAppiOSWindow::getRendererColorType() {
+	return settings.colorType;
+}
+
+ofxiOSRendererDepthFormat ofAppiOSWindow::getRendererDepthType() {
+	return settings.depthType;
+}
+
+ofxiOSRendererStencilFormat ofAppiOSWindow::getRendererStencilType() {
+	return settings.stencilType;
 }
 
 //-----------------------------------------------------------------------------------

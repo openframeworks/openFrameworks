@@ -26,12 +26,16 @@
     bool bResize;
 }
 
-- (void) startRender;
-- (void) finishRender;
+- (id)initWithDepth:(bool)depth
+			  andAA:(bool)msaa
+	 andMSAASamples:(int)samples
+		  andRetina:(bool)retina
+		 sharegroup:(EAGLSharegroup*)sharegroup;
+- (void)startRender;
+- (void)finishRender;
 - (void)destroyFramebuffer;
 - (BOOL)createFramebuffer:(CAEAGLLayer *)layer;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
-- (id)initWithDepth:(bool)depth andAA:(bool)msaa andMSAASamples:(int)samples andRetina:(bool)retina andGLKit:(bool)glkit sharegroup:(EAGLSharegroup*)sharegroup;
 - (EAGLContext*) context;
 
 - (NSInteger)getWidth;

@@ -26,7 +26,11 @@
     bool bResize;
 }
 
-- (id)initWithDepth:(bool)depth andAA:(bool)msaa andMSAASamples:(int)samples andRetina:(bool)retina andGLKit:(bool)glkit sharegroup:(EAGLSharegroup*)sharegroup;
+- (id)initWithDepth:(bool)depth
+			  andAA:(bool)msaa
+	 andMSAASamples:(int)samples
+		  andRetina:(bool)retina
+		 sharegroup:(EAGLSharegroup*)sharegroup;
 - (void)startRender;
 - (void)finishRender;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;

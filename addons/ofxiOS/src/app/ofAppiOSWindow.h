@@ -46,7 +46,10 @@ public:
     ,enableHardwareOrientation(false)
     ,enableHardwareOrientationAnimation(false)
     ,enableSetupScreen(true)
-	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION) {
+	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
+	,colorType(ofxiOSRendererColorFormat::RGBA8888)
+	,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
+	,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE) {
         windowMode = OF_FULLSCREEN;
 		setupOrientation = OF_ORIENTATION_DEFAULT;
         glesVersion = 2;
@@ -62,7 +65,10 @@ public:
     ,enableHardwareOrientation(false)
     ,enableHardwareOrientationAnimation(false)
     ,enableSetupScreen(true)
-	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION) {
+	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
+	,colorType(ofxiOSRendererColorFormat::RGBA8888)
+	,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
+	,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE) {
         const ofGLESWindowSettings * glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
         if(glesSettings){
             glesVersion = glesSettings->glesVersion;
@@ -81,6 +87,9 @@ public:
             enableSetupScreen = iosSettings->enableSetupScreen;
 			setupOrientation = iosSettings->setupOrientation;
 			windowControllerType = iosSettings->windowControllerType;
+			colorType = iosSettings->colorType;
+			depthType = iosSettings->depthType;
+			stencilType = iosSettings->stencilType;
         } else {
             enableRetina = true;
             retinaScale = 0;
@@ -91,7 +100,10 @@ public:
             enableHardwareOrientationAnimation = false;
             enableSetupScreen = true;
 			setupOrientation = OF_ORIENTATION_DEFAULT;
-			windowControllerType = iosSettings->windowControllerType;
+			windowControllerType = windowControllerType;
+			colorType = ofxiOSRendererColorFormat::RGBA8888;
+			depthType = ofxiOSRendererDepthFormat::DEPTH_NONE;
+			stencilType = ofxiOSRendererStencilFormat::STENCIL_NONE;
         }
     }
 
@@ -105,7 +117,10 @@ public:
     ,enableHardwareOrientation(false)
     ,enableHardwareOrientationAnimation(false)
     ,enableSetupScreen(true)
-	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION) {
+	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
+	,colorType(ofxiOSRendererColorFormat::RGBA8888)
+	,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
+	,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE) {
         const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
         if(iosSettings){
             enableRetina = iosSettings->enableRetina;
@@ -118,6 +133,9 @@ public:
             enableSetupScreen = iosSettings->enableSetupScreen;
 			setupOrientation = iosSettings->setupOrientation;
 			windowControllerType = iosSettings->windowControllerType;
+			colorType = iosSettings->colorType;
+			depthType = iosSettings->depthType;
+			stencilType = iosSettings->stencilType;
         }
     }
 
@@ -132,6 +150,9 @@ public:
     bool enableHardwareOrientationAnimation;
     bool enableSetupScreen;
 	ofxiOSWindowControllerType windowControllerType;
+	ofxiOSRendererColorFormat colorType;
+	ofxiOSRendererDepthFormat depthType;
+	ofxiOSRendererStencilFormat stencilType;
 	ofOrientation setupOrientation;
 	
 };
@@ -229,6 +250,9 @@ public:
     int getAntiAliasingSampleCount();
 	
 	ofxiOSWindowControllerType getWindowControllerType();
+	ofxiOSRendererColorFormat getRendererColorType();
+	ofxiOSRendererDepthFormat getRendererDepthType();
+	ofxiOSRendererStencilFormat getRendererStencilType();
     
 protected:
     

@@ -508,11 +508,11 @@
 				9008001B204EDC0E00DC786A /* EAGLKView.m */,
 				15594F0815C55AC900727FF2 /* EAGLView.h */,
 				15594F0515C55AC900727FF2 /* EAGLView.m */,
-				15594F0B15C55AC900727FF2 /* ESRenderer.h */,
 				15594F0915C55AC900727FF2 /* ES1Renderer.h */,
 				15594F0615C55AC900727FF2 /* ES1Renderer.m */,
 				15594F0A15C55AC900727FF2 /* ES2Renderer.h */,
 				15594F0715C55AC900727FF2 /* ES2Renderer.m */,
+				15594F0B15C55AC900727FF2 /* ESRenderer.h */,
 			);
 			path = gl;
 			sourceTree = "<group>";
@@ -586,16 +586,16 @@
 		15594F8A15C56A4E00727FF2 /* core */ = {
 			isa = PBXGroup;
 			children = (
-				90080017204EDB5500DC786A /* ofxiOSGLKView.h */,
-				90080018204EDB5500DC786A /* ofxiOSGLKView.mm */,
 				15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */,
 				15594F8C15C56A8A00727FF2 /* ofxiOSAppDelegate.mm */,
-				15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */,
-				90080013204EDA1300DC786A /* ofxiOSGLKViewController.mm */,
-				90080015204EDA4600DC786A /* ofxiOSGLKViewController.h */,
-				15594F8D15C56A8A00727FF2 /* ofxiOSViewController.mm */,
 				15594F8E15C56A8A00727FF2 /* ofxiOSEAGLView.h */,
 				15594F8B15C56A8A00727FF2 /* ofxiOSEAGLView.mm */,
+				90080017204EDB5500DC786A /* ofxiOSGLKView.h */,
+				90080018204EDB5500DC786A /* ofxiOSGLKView.mm */,
+				90080015204EDA4600DC786A /* ofxiOSGLKViewController.h */,
+				90080013204EDA1300DC786A /* ofxiOSGLKViewController.mm */,
+				15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */,
+				15594F8D15C56A8A00727FF2 /* ofxiOSViewController.mm */,
 			);
 			path = core;
 			sourceTree = "<group>";

@@ -25,7 +25,7 @@
 
 @synthesize glView;
 
-- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
+- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup{
 	currentInterfaceOrientation = pendingInterfaceOrientation = UIInterfaceOrientationPortrait;
 	if((self = [super init])) {
 		currentInterfaceOrientation = pendingInterfaceOrientation = self.interfaceOrientation;
@@ -37,7 +37,7 @@
 		bFirstUpdate    = NO;
 		bAnimated		= NO;
 		
-		self.glView = [[[ofxiOSGLKView alloc] initWithFrame:frame andApp:app] autorelease];
+		self.glView = [[[ofxiOSGLKView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup] autorelease];
 		self.glView.delegate = self;
 	}
 	
@@ -55,11 +55,33 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	
-	[self.glView setup];
 	GLKView *view = (GLKView *)self.view;
 	view.context = [self.glView context];
 	self.delegate = self;
 	self.preferredFramesPerSecond = 60; //default
+	[self.glView setup];
+}
+
+
+-(void) checkError
+{
+	GLenum error = glGetError();
+	
+	if (error == GL_NO_ERROR)
+		return;
+	
+	switch (error)
+	{
+		case GL_INVALID_ENUM:
+			NSLog(@"Invalid Enum");
+			break;
+	}
+}
+
+
+- (void)viewDidUnload
+{
+	[super viewDidUnload];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -77,6 +99,7 @@
 
 - (void) glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
+	[view bindDrawable];
 	[self.glView draw];
 }
 
