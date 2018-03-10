@@ -180,7 +180,10 @@ glm::vec2	ofAppiOSWindow::getWindowSize() {
 }
 
 glm::vec2	ofAppiOSWindow::getScreenSize() {
-	return *[[ofxiOSEAGLView getInstance] getScreenSize];
+	if(settings.windowControllerType == METAL_KIT || settings.windowControllerType == GL_KIT)
+		return *[[ofxiOSGLKView getInstance] getScreenSize];
+	else
+		return *[[ofxiOSEAGLView getInstance] getScreenSize];
 }
 
 int ofAppiOSWindow::getWidth(){
