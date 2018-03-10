@@ -58,88 +58,8 @@ public class OFAndroid {
 		return OFAndroidLifeCycle.getActivity().getPackageName();
 	}
 
-	public static String parsePermission(int permission){
-		String PERMISSION = "";
-		switch(permission){
-			case 0:
-				PERMISSION = Manifest.permission.READ_CALENDAR;
-				break;
-			case 1:
-				PERMISSION = Manifest.permission.WRITE_CALENDAR;
-				break;
-			case 2:
-				PERMISSION = Manifest.permission.CAMERA;
-				break;
-			case 3:
-				PERMISSION = Manifest.permission.READ_CONTACTS;
-				break;
-			case 4:
-				PERMISSION = Manifest.permission.WRITE_CONTACTS;
-				break;
-			case 5:
-				PERMISSION = Manifest.permission.GET_ACCOUNTS;
-				break;
-			case 6:
-				PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION;
-				break;
-			case 7:
-				PERMISSION = Manifest.permission.ACCESS_COARSE_LOCATION;
-				break;
-			case 8:
-				PERMISSION = Manifest.permission.RECORD_AUDIO;
-				break;
-			case 9:
-				PERMISSION = Manifest.permission.READ_PHONE_STATE;
-				break;
-			case 10:
-				PERMISSION = Manifest.permission.CALL_PHONE;
-				break;
-			case 11:
-				PERMISSION = Manifest.permission.READ_CALL_LOG;
-				break;
-			case 12:
-				PERMISSION = Manifest.permission.WRITE_CALL_LOG;
-				break;
-			case 13:
-				PERMISSION = Manifest.permission.ADD_VOICEMAIL;
-				break;
-			case 14:
-				PERMISSION = Manifest.permission.USE_SIP;
-				break;
-			case 15:
-				PERMISSION = Manifest.permission.PROCESS_OUTGOING_CALLS;
-				break;
-			case 16:
-				PERMISSION = Manifest.permission.BODY_SENSORS;
-				break;
-			case 17:
-				PERMISSION = Manifest.permission.SEND_SMS;
-				break;
-			case 18:
-				PERMISSION = Manifest.permission.RECEIVE_SMS;
-				break;
-			case 19:
-				PERMISSION = Manifest.permission.READ_SMS;
-				break;
-			case 20:
-				PERMISSION = Manifest.permission.RECEIVE_WAP_PUSH;
-				break;
-			case 21:
-				PERMISSION = Manifest.permission.RECEIVE_MMS;
-				break;
-			case 22:
-				PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE;
-				break;
-			case 23:
-				PERMISSION = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-				break;
-		}
-		return PERMISSION;
-	}
-
-	public static boolean checkPermission(int permission){
-		String PERMISSION = parsePermission(permission);
-		if (ContextCompat.checkSelfPermission(OFAndroidLifeCycle.getActivity(), PERMISSION)
+	public static boolean checkPermission(String permission){
+		if (ContextCompat.checkSelfPermission(OFAndroidLifeCycle.getActivity(), permission)
 				== PackageManager.PERMISSION_GRANTED) {
 			return true;
 		}else{
@@ -147,13 +67,12 @@ public class OFAndroid {
 		}
 	}
 
-	public static void requestPermission(int permission){
-		String PERMISSION = parsePermission(permission);
-		if (ContextCompat.checkSelfPermission(OFAndroidLifeCycle.getActivity(), PERMISSION)
+	public static void requestPermission(String permission){
+		if (ContextCompat.checkSelfPermission(OFAndroidLifeCycle.getActivity(), permission)
 				!= PackageManager.PERMISSION_GRANTED) {
 
 			ActivityCompat.requestPermissions(OFAndroidLifeCycle.getActivity(),
-					new String[]{PERMISSION}, 0);
+					new String[]{permission}, 0);
 		}
 	}
 
