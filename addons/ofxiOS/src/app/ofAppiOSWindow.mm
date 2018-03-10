@@ -427,6 +427,22 @@ bool ofAppiOSWindow::enableAntiAliasing(int samples) {
     return (settings.enableAntiAliasing = true);
 }
 
+void ofAppiOSWindow::enableMultiTouch(bool isOn) {
+	settings.enableMultiTouch = isOn;
+	if(settings.windowControllerType == METAL_KIT || settings.windowControllerType == GL_KIT) {
+		if([ofxiOSGLKView getInstance]) {
+			[[ofxiOSGLKView getInstance] setMultipleTouchEnabled:isOn];
+		}
+	} else {
+		if([ofxiOSEAGLView getInstance])
+			[[ofxiOSEAGLView getInstance] setMultipleTouchEnabled:isOn];
+	}
+}
+
+bool ofAppiOSWindow::isMultiTouch() {
+	return settings.enableMultiTouch;
+}
+
 bool ofAppiOSWindow::disableAntiAliasing() {
     return (settings.enableAntiAliasing = false);
 }

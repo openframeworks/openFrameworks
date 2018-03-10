@@ -49,7 +49,8 @@ public:
 	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
 	,colorType(ofxiOSRendererColorFormat::RGBA8888)
 	,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
-	,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE) {
+	,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE)
+	,enableMultiTouch(false) {
         windowMode = OF_FULLSCREEN;
 		setupOrientation = OF_ORIENTATION_DEFAULT;
         glesVersion = 2;
@@ -68,7 +69,8 @@ public:
 	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
 	,colorType(ofxiOSRendererColorFormat::RGBA8888)
 	,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
-	,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE) {
+	,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE)
+	,enableMultiTouch(false) {
         const ofGLESWindowSettings * glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
         if(glesSettings){
             glesVersion = glesSettings->glesVersion;
@@ -90,6 +92,7 @@ public:
 			colorType = iosSettings->colorType;
 			depthType = iosSettings->depthType;
 			stencilType = iosSettings->stencilType;
+			enableMultiTouch = iosSettings->enableMultiTouch;
         } else {
             enableRetina = true;
             retinaScale = 0;
@@ -104,6 +107,7 @@ public:
 			colorType = ofxiOSRendererColorFormat::RGBA8888;
 			depthType = ofxiOSRendererDepthFormat::DEPTH_NONE;
 			stencilType = ofxiOSRendererStencilFormat::STENCIL_NONE;
+			enableMultiTouch = false;
         }
     }
 
@@ -120,7 +124,8 @@ public:
 	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
 	,colorType(ofxiOSRendererColorFormat::RGBA8888)
 	,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
-	,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE) {
+	,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE)
+	,enableMultiTouch(false){
         const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
         if(iosSettings){
             enableRetina = iosSettings->enableRetina;
@@ -136,6 +141,7 @@ public:
 			colorType = iosSettings->colorType;
 			depthType = iosSettings->depthType;
 			stencilType = iosSettings->stencilType;
+			enableMultiTouch = iosSettings->enableMultiTouch;
         }
     }
 
@@ -149,6 +155,7 @@ public:
     bool enableHardwareOrientation;
     bool enableHardwareOrientationAnimation;
     bool enableSetupScreen;
+	bool enableMultiTouch;
 	ofxiOSWindowControllerType windowControllerType;
 	ofxiOSRendererColorFormat colorType;
 	ofxiOSRendererDepthFormat depthType;
@@ -249,6 +256,8 @@ public:
     bool isAntiAliasingEnabled();
     int getAntiAliasingSampleCount();
 	
+	void enableMultiTouch(bool isOn);
+	bool isMultiTouch();
 	ofxiOSWindowControllerType getWindowControllerType();
 	ofxiOSRendererColorFormat getRendererColorType();
 	ofxiOSRendererDepthFormat getRendererDepthType();
