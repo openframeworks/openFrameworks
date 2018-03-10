@@ -10,6 +10,7 @@
 
 #include "ofxiOSViewController.h"
 #include "ofxiOSEAGLView.h"
+#import "ofxiOSExtras.h"
 
 @interface ofxiOSViewController() <EAGLViewDelegate> {
     UIInterfaceOrientation currentInterfaceOrientation;
@@ -37,6 +38,8 @@
         bFirstUpdate    = NO;
 		bAnimated		= NO;
         self.glView = [[[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup] autorelease];
+		
+		[self.glView setMultipleTouchEnabled:ofxiOSGetOFWindow()->isMultiTouch()];
         self.glView.delegate = self;
     }
     

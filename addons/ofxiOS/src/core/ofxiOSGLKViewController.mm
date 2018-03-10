@@ -11,6 +11,8 @@
 #import "ofxiOSGLKViewController.h"
 
 #include "ofxiOSGLKView.h"
+#import "ofxiOSExtras.h"
+#include "ofAppiOSWindow.h"
 
 @interface ofxiOSGLKViewController() <EAGLViewDelegate, GLKViewControllerDelegate> {
 	UIInterfaceOrientation currentInterfaceOrientation;
@@ -59,6 +61,7 @@
 	view.context = [self.glView context];
 	self.delegate = self;
 	self.preferredFramesPerSecond = 60; //default
+	[view setMultipleTouchEnabled:ofxiOSGetOFWindow()->isMultiTouch()];
 	[self.glView setup];
 }
 
