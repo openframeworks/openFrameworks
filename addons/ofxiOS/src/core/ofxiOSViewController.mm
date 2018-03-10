@@ -10,6 +10,7 @@
 
 #include "ofxiOSViewController.h"
 #include "ofxiOSEAGLView.h"
+#include "ofAppiOSWindow.h"
 #import "ofxiOSExtras.h"
 
 @interface ofxiOSViewController() <EAGLViewDelegate> {
