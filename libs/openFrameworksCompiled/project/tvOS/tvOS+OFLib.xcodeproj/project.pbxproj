@@ -50,6 +50,11 @@
 		84463AB61BC3452400F24926 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84463AAC1BC3452400F24926 /* OpenGLES.framework */; };
 		84463AB71BC3452400F24926 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84463AAD1BC3452400F24926 /* QuartzCore.framework */; };
 		84463AB81BC3452400F24926 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84463AAE1BC3452400F24926 /* UIKit.framework */; };
+		901808962053554C004A7774 /* ofxtvOSGLKViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 901808942053554C004A7774 /* ofxtvOSGLKViewController.mm */; };
+		90180899205355B5004A7774 /* EAGLKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 90180897205355B5004A7774 /* EAGLKView.m */; };
+		9018089E20535AA8004A7774 /* ofxiOSGLKViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9018089C20535AA8004A7774 /* ofxiOSGLKViewController.mm */; };
+		9018089F20535AA8004A7774 /* ofxiOSGLKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9018089D20535AA8004A7774 /* ofxiOSGLKView.mm */; };
+		901808A720535D54004A7774 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 901808A520535D35004A7774 /* GLKit.framework */; };
 		9957D5371BDDB9BA0002D53C /* ofxtvOSAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9957D5351BDDB9BA0002D53C /* ofxtvOSAppDelegate.mm */; };
 		9957D53A1BDDBB1E0002D53C /* ofxtvOSViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9957D5381BDDBB1E0002D53C /* ofxtvOSViewController.mm */; };
 		9957D8FE1BDDDC9B0002D53C /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9957D8721BDDDC9B0002D53C /* of3dPrimitives.cpp */; };
@@ -216,6 +221,15 @@
 		84463AAC1BC3452400F24926 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		84463AAD1BC3452400F24926 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		84463AAE1BC3452400F24926 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		901808942053554C004A7774 /* ofxtvOSGLKViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxtvOSGLKViewController.mm; sourceTree = "<group>"; };
+		901808952053554C004A7774 /* ofxtvOSGLKViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxtvOSGLKViewController.h; sourceTree = "<group>"; };
+		90180897205355B5004A7774 /* EAGLKView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLKView.m; sourceTree = "<group>"; };
+		90180898205355B5004A7774 /* EAGLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLKView.h; sourceTree = "<group>"; };
+		9018089A20535AA7004A7774 /* ofxiOSGLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSGLKView.h; sourceTree = "<group>"; };
+		9018089B20535AA8004A7774 /* ofxiOSGLKViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSGLKViewController.h; sourceTree = "<group>"; };
+		9018089C20535AA8004A7774 /* ofxiOSGLKViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSGLKViewController.mm; sourceTree = "<group>"; };
+		9018089D20535AA8004A7774 /* ofxiOSGLKView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSGLKView.mm; sourceTree = "<group>"; };
+		901808A520535D35004A7774 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		9957D5331BDDB8370002D53C /* ofxtvOS.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = ofxtvOS.h; sourceTree = "<group>"; };
 		9957D5351BDDB9BA0002D53C /* ofxtvOSAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxtvOSAppDelegate.mm; sourceTree = "<group>"; };
 		9957D5361BDDB9BA0002D53C /* ofxtvOSAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxtvOSAppDelegate.h; sourceTree = "<group>"; };
@@ -352,6 +366,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				901808A720535D54004A7774 /* GLKit.framework in Frameworks */,
 				99752D301BF20A4C0026316A /* GameController.framework in Frameworks */,
 				84463AAF1BC3452400F24926 /* AudioToolbox.framework in Frameworks */,
 				84463AB01BC3452400F24926 /* AVFoundation.framework in Frameworks */,
@@ -424,6 +439,10 @@
 		844639841BC3443E00F24926 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				9018089A20535AA7004A7774 /* ofxiOSGLKView.h */,
+				9018089D20535AA8004A7774 /* ofxiOSGLKView.mm */,
+				9018089B20535AA8004A7774 /* ofxiOSGLKViewController.h */,
+				9018089C20535AA8004A7774 /* ofxiOSGLKViewController.mm */,
 				8446397E1BC3443E00F24926 /* ofxiOSAppDelegate.h */,
 				8446397F1BC3443E00F24926 /* ofxiOSAppDelegate.mm */,
 				844639801BC3443E00F24926 /* ofxiOSViewController.h */,
@@ -437,6 +456,8 @@
 		8446398C1BC3443E00F24926 /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				90180898205355B5004A7774 /* EAGLKView.h */,
+				90180897205355B5004A7774 /* EAGLKView.m */,
 				844639851BC3443E00F24926 /* EAGLView.h */,
 				844639861BC3443E00F24926 /* EAGLView.m */,
 				844639871BC3443E00F24926 /* ESRenderer.h */,
@@ -578,6 +599,7 @@
 		84463ABB1BC3453B00F24926 /* core frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				901808A520535D35004A7774 /* GLKit.framework */,
 				99752D2F1BF20A4C0026316A /* GameController.framework */,
 				84463AA51BC3452400F24926 /* AudioToolbox.framework */,
 				84463AA61BC3452400F24926 /* AVFoundation.framework */,
@@ -596,8 +618,10 @@
 		9957D5341BDDB98E0002D53C /* tvOS */ = {
 			isa = PBXGroup;
 			children = (
-				9957D5351BDDB9BA0002D53C /* ofxtvOSAppDelegate.mm */,
 				9957D5361BDDB9BA0002D53C /* ofxtvOSAppDelegate.h */,
+				9957D5351BDDB9BA0002D53C /* ofxtvOSAppDelegate.mm */,
+				901808952053554C004A7774 /* ofxtvOSGLKViewController.h */,
+				901808942053554C004A7774 /* ofxtvOSGLKViewController.mm */,
 				9957D5381BDDBB1E0002D53C /* ofxtvOSViewController.mm */,
 				9957D5391BDDBB1E0002D53C /* ofxtvOSViewController.h */,
 			);
@@ -914,6 +938,7 @@
 				844639DA1BC3443E00F24926 /* ofxiOSExternalDisplay.mm in Sources */,
 				9957D9111BDDDC9B0002D53C /* ofVboMesh.cpp in Sources */,
 				9957D9231BDDDC9B0002D53C /* ofSoundBuffer.cpp in Sources */,
+				90180899205355B5004A7774 /* EAGLKView.m in Sources */,
 				9957D9341BDDDC9B0002D53C /* ofXml.cpp in Sources */,
 				844639D21BC3443E00F24926 /* SoundStream.m in Sources */,
 				9957D9101BDDDC9B0002D53C /* ofVbo.cpp in Sources */,
@@ -944,6 +969,7 @@
 				844639DB1BC3443E00F24926 /* ofxiOSCoreLocation.mm in Sources */,
 				9957D9291BDDDC9B0002D53C /* ofParameterGroup.cpp in Sources */,
 				9957D90A1BDDDC9B0002D53C /* ofGLRenderer.cpp in Sources */,
+				9018089F20535AA8004A7774 /* ofxiOSGLKView.mm in Sources */,
 				9957D9141BDDDC9B0002D53C /* ofGraphics.cpp in Sources */,
 				9957D9361BDDDC9B0002D53C /* ofVideoPlayer.cpp in Sources */,
 				9957D92D1BDDDC9B0002D53C /* ofLog.cpp in Sources */,
@@ -952,6 +978,7 @@
 				9957D91D1BDDDC9B0002D53C /* ofMatrix3x3.cpp in Sources */,
 				9957D91E1BDDDC9B0002D53C /* ofMatrix4x4.cpp in Sources */,
 				9957D9131BDDDC9B0002D53C /* ofBitmapFont.cpp in Sources */,
+				9018089E20535AA8004A7774 /* ofxiOSGLKViewController.mm in Sources */,
 				9957D9241BDDDC9B0002D53C /* ofSoundPlayer.cpp in Sources */,
 				9957D90F1BDDDC9B0002D53C /* ofTexture.cpp in Sources */,
 				9957D92F1BDDDC9B0002D53C /* ofSystemUtils.cpp in Sources */,
@@ -959,6 +986,7 @@
 				844639CC1BC3443E00F24926 /* ofxiOSSoundStream.mm in Sources */,
 				844639D91BC3443E00F24926 /* ofxiOSExtras.mm in Sources */,
 				691108B11FE53CA800BDBA78 /* ofGraphicsBaseTypes.cpp in Sources */,
+				901808962053554C004A7774 /* ofxtvOSGLKViewController.mm in Sources */,
 				9957D53A1BDDBB1E0002D53C /* ofxtvOSViewController.mm in Sources */,
 				9957D91B1BDDDC9B0002D53C /* ofTrueTypeFont.cpp in Sources */,
 				9957D9061BDDDC9B0002D53C /* ofEvents.cpp in Sources */,
@@ -1078,6 +1106,10 @@
 		844639661BC343E000F24926 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)_Debug";
@@ -1088,6 +1120,10 @@
 		844639671BC343E000F24926 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)_Release";
 				SKIP_INSTALL = YES;

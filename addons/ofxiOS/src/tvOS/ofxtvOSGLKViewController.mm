@@ -1,25 +1,23 @@
-//
-//  ofxtvOSViewController.cpp
+//  ofxtvOSGLKViewController.mm
 //  tvOS+OFLib
 //
-//  Created by Daniel Rosser on 26/10/2015.
+//  Created by Dan Rosser on 10/3/18.
 
-#include "ofxtvOSViewController.h"
-#import <QuartzCore/QuartzCore.h>
-#include "ofxiOSEAGLView.h"
+#include "ofxtvOSGLKViewController.h"
+#include "ofxiOSGLKView.h"
 
-@interface ofxtvOSViewController() <EAGLViewDelegate> {
+@interface ofxtvOSGLKViewController() <EAGLViewDelegate, GLKViewControllerDelegate> {
     UITapGestureRecognizer *tapRecognizer;
 }
 @end
 
-@implementation ofxtvOSViewController
+@implementation ofxtvOSGLKViewController
 
 @synthesize glView;
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup {
     if((self = [super init])) {
-        self.glView = [[[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup] autorelease];
+        self.glView = [[[ofxiOSGLKView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup] autorelease];
         self.glView.delegate = self;
     }
     
@@ -27,7 +25,6 @@
 }
 
 - (void) dealloc {
-    [self.glView stopAnimation];
     [self.glView removeFromSuperview];
     self.glView.delegate = nil;
     self.glView = nil;
@@ -38,13 +35,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // glView is added here because if it is added inside initWithFrame,
-    // it automatically triggers viewDidLoad, before initWithFrame has had a chance to return.
-    // so now when we call setup in our OF app, a reference to ofxtvOSViewController will exists.
-    
-    [self.view addSubview:self.glView];
-    [self.glView performSelector:@selector(setup) withObject:nil afterDelay:0];
-    [self.glView startAnimation];
+    GLKView *view = (GLKView *)self.view;
+    view.context = [self.glView context];
+    self.delegate = self;
+    self.preferredFramesPerSecond = 60; //default
+    [self.glView setup];
     
     tapRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleTap:)];
     tapRecognizer.allowedPressTypes = @[[NSNumber numberWithInteger:UIPressTypeMenu]];
@@ -53,7 +48,6 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.glView startAnimation];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -66,7 +60,35 @@
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
-    [self.glView stopAnimation];
+}
+
+- (void)glkViewControllerUpdate:(GLKViewController *)controller {
+    [self.glView update];
+}
+
+- (void)glkViewController:(GLKViewController *)controller willPause:(BOOL)pause {
+    
+}
+
+- (void) glkView:(GLKView *)view drawInRect:(CGRect)rect
+{
+    [view bindDrawable];
+    [self.glView draw];
+}
+
+-(void) checkError
+{
+    GLenum error = glGetError();
+    
+    if (error == GL_NO_ERROR)
+        return;
+    
+    switch (error)
+    {
+        case GL_INVALID_ENUM:
+            NSLog(@"Invalid Enum");
+            break;
+    }
 }
 
 //-------------------------------------------------------------- glView callbacks.
@@ -84,6 +106,22 @@
 
 - (void)glViewResized {
     //
+}
+
+- (EAGLSharegroup *)getSharegroup {
+    if(self.glView != nil) {
+        EAGLContext * context = [self.glView context];
+        if(context)
+            return [context sharegroup];
+    }
+    return nil;
+}
+
+
+- (void)setPreferredFPS:(int)fps {
+    if(self.glView != nil) {
+        self.preferredFramesPerSecond = fps;
+    }
 }
 
 - (void)viewWillLayoutSubviews {

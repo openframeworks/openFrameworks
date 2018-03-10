@@ -38,7 +38,7 @@
 
 @class ofxiOSViewController;
 @class ofxiOSGLKViewController;
-@class ofxiOSMTKViewController;
+//@class ofxiOSMTKViewController;
 
 @interface ofxiOSAppDelegate : NSObject <UIApplicationDelegate> {
     NSInteger currentScreenIndex;
