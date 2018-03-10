@@ -163,7 +163,7 @@ void ofxAndroidVideoGrabber::Data::onAppPause(){
 }
 
 void ofxAndroidVideoGrabber::Data::onAppResume(){
-    if(!ofxAndroidCheckPermission(CAMERA)) return;
+    if(!ofxAndroidCheckPermission(OFX_ANDROID_PERMISSION_CAMERA)) return;
 
     ofLogVerbose("ofxAndroidVideoGrabber") << "ofResumeVideoGrabbers(): trying to allocate textures";
 	JNIEnv *env = ofGetJNIEnv();
@@ -279,8 +279,8 @@ bool ofxAndroidVideoGrabber::setup(int w, int h){
     data->width = w;
     data->height = h;
 
-    ofxAndroidRequestPermission(CAMERA);
-    if(!ofxAndroidCheckPermission(CAMERA)) return false;
+    ofxAndroidRequestPermission(OFX_ANDROID_PERMISSION_CAMERA);
+    if(!ofxAndroidCheckPermission(OFX_ANDROID_PERMISSION_CAMERA)) return false;
 
 	ofLogNotice() << "initializing camera with external texture";
 
@@ -295,7 +295,7 @@ bool ofxAndroidVideoGrabber::setup(int w, int h){
 }
 
 bool ofxAndroidVideoGrabber::initCamera(){
-    if(!ofxAndroidCheckPermission(CAMERA)) return false;
+    if(!ofxAndroidCheckPermission(OFX_ANDROID_PERMISSION_CAMERA)) return false;
 
     JNIEnv *env = ofGetJNIEnv();
 	if(!env) return false;
