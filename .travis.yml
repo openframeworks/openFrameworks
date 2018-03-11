@@ -98,8 +98,8 @@ matrix:
     env: TARGET="android" NDK_DIR="android-ndk-r15c" GRADLE_TARGET="compileArm7DebugSources"
     android:
       components:
-        - build-tools-25.0.2
-        - android-19
+        - build-tools-25.0.3
+        - android-25
     cache:
       directories:
         - ~/.gradle
@@ -112,8 +112,8 @@ matrix:
     env: TARGET="android" NDK_DIR="android-ndk-r15c" GRADLE_TARGET="compileX86DebugSources"
     android:
       components:
-        - build-tools-25.0.2
-        - android-19
+        - build-tools-25.0.3
+        - android-25
     cache:
       directories:
         - ~/.gradle
