@@ -2878,6 +2878,99 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::axis( float size ) {
 }
 
 
+#ifndef OF_USE_LEGACY_MESH
+
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T>::ofMesh_(ofPrimitiveMode mode, const vector<ofVec2f>& verts): ofMesh_(mode, {})
+{
+	addVertices(verts);
+}
+
+template<class V, class N, class C, class T>
+ofMesh_<V,N,C,T>::ofMesh_(ofPrimitiveMode mode, const vector<glm::vec2>& verts): ofMesh_(mode, {})
+{
+	addVertices(verts);
+}
+
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addVertex(const glm::vec2& v)
+{
+	addVertex(V(v.x, v.y, 0));
+}
+
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addVertices(const vector<glm::vec2>& verts)
+{
+	std::vector<V> _verts;
+	for (auto& v: verts) _verts.push_back(V(v.x, v.y, 0));
+	addVertices(_verts);
+}
+
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addVertices(const vector<ofVec2f>& verts)
+{
+	std::vector<V> _verts;
+	for (auto& v: verts) _verts.push_back(V(v.x, v.y, 0));
+	addVertices(_verts);
+}
+
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addVertices(const vector<ofVec3f>& verts)
+{
+	std::vector<V> _verts;
+	for (auto& v: verts) _verts.push_back(v);
+	addVertices(_verts);
+}
+
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addVertices(const glm::vec2* verts, std::size_t amt)
+{
+	std::vector<V> _verts;
+	for (std::size_t i = 0; i < amt; ++i) _verts.push_back(V(verts[i].x, verts[i].y, 0));
+	addVertices(_verts);
+}
+
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addVertices(const ofVec2f* verts, std::size_t amt)
+{
+	std::vector<V> _verts;
+	for (std::size_t i = 0; i < amt; ++i) _verts.push_back(V(verts[i].x, verts[i].y, 0));
+	addVertices(_verts);
+}
+
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addVertices(const ofVec3f* verts, std::size_t amt)
+{
+	std::vector<V> _verts;
+	for (std::size_t i = 0; i < amt; ++i) _verts.push_back(verts[i]);
+	addVertices(_verts);
+}
+
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::setVertex(ofIndexType index, const glm::vec2& v)
+{
+	setVertex(index, V(v.x, v.y, 0));
+}
+
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addNormals(const vector<ofVec3f>& verts)
+{
+	std::vector<N> _verts;
+	for (auto& v: verts) _verts.push_back(v);
+	addNormals(_verts);
+}
+
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::addNormals(const ofVec3f* verts, std::size_t amt)
+{
+	std::vector<N> _verts;
+	for (std::size_t i = 0; i < amt; ++i) _verts.push_back(N(verts[i].x, verts[i].y, 0));
+	addNormals(_verts);
+}
+
+#endif
+
+
 
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>

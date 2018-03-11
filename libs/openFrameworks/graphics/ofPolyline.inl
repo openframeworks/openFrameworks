@@ -1172,3 +1172,141 @@ typename std::vector<T>::const_reverse_iterator ofPolyline_<T>::rend() const{
 	return points.rend();
 }
 
+
+#ifndef OF_USE_LEGACY_MESH
+
+template<class T>
+ofPolyline_<T>::ofPolyline_(const vector<glm::vec2>& verts): ofPolyline_()
+{
+	addVertices(verts);
+}
+
+template<class T>
+ofPolyline_<T>::ofPolyline_(const vector<ofVec2f>& verts): ofPolyline_()
+{
+	addVertices(verts);
+}
+
+template<class T>
+void ofPolyline_<T>::addVertex(const glm::vec2& p)
+{
+	addVertex(p.x, p.y);
+}
+
+template<class T>
+void ofPolyline_<T>::addVertices(const vector<glm::vec2>& verts)
+{
+    std::vector<T> _verts;
+    for (auto& v: verts) _verts.push_back(T(v.x, v.y, 0));
+    addVertices(_verts);
+}
+
+template<class T>
+void ofPolyline_<T>::addVertices(const vector<ofVec2f>& verts)
+{
+    std::vector<T> _verts;
+    for (auto& v: verts) _verts.push_back(T(v.x, v.y, 0));
+    addVertices(_verts);
+}
+
+
+template<class T>
+void ofPolyline_<T>::addVertices(const vector<ofVec3f>& verts)
+{
+	std::vector<T> _verts;
+	for (auto& v: verts) _verts.push_back(v);
+	addVertices(_verts);
+}
+
+
+template<class T>
+void ofPolyline_<T>::addVertices(const glm::vec2* verts, int numverts)
+{
+    std::vector<T> _verts;
+    for (int i = 0; i < numverts; ++i) _verts.push_back(T(verts[i].x, verts[i].y, 0));
+    addVertices(_verts);
+}
+
+template<class T>
+void ofPolyline_<T>::addVertices(const ofVec2f* verts, int numverts)
+{
+    std::vector<T> _verts;
+    for (int i = 0; i < numverts; ++i) _verts.push_back(T(verts[i].x, verts[i].y, 0));
+    addVertices(_verts);
+}
+
+template<class T>
+void ofPolyline_<T>::addVertices(const ofVec3f* verts, int numverts)
+{
+	std::vector<T> _verts;
+	for (int i = 0; i < numverts; ++i) _verts.push_back(verts[i]);
+	addVertices(_verts);
+}
+
+template<class T>
+void ofPolyline_<T>::insertVertex(const glm::vec2 &p, int index)
+{
+	insertVertex(p.x, p.y, 0, index);
+}
+
+template<class T>
+void ofPolyline_<T>::lineTo(const glm::vec2& to)
+{
+	lineTo(to.x, to.y, 0);
+}
+
+template<class T>
+void ofPolyline_<T>::arc(const glm::vec2& center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int circleResolution)
+{
+    arc(T(center.x, center.y, 0), radiusX, radiusY, angleBegin, angleEnd, clockwise, circleResolution);
+}
+
+template<class T>
+void ofPolyline_<T>::arc(const glm::vec2& center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution)
+{
+    arc(center, radiusX, radiusY, angleBegin, angleEnd, true, circleResolution);
+}
+
+template<class T>
+void ofPolyline_<T>::arcNegative(const glm::vec2& center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution)
+{
+    arc(center, radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
+}
+
+template<class T>
+void ofPolyline_<T>::curveTo( const glm::vec2& to, int curveResolution)
+{
+	curveTo(T(to.x, to.y, 0), curveResolution);
+}
+
+template<class T>
+void ofPolyline_<T>::bezierTo( const glm::vec2& cp1, const glm::vec2& cp2, const glm::vec2& to, int curveResolution)
+{
+	curveTo(T(cp1.x, cp1.y, 0), T(cp2.x, cp2.y, 0), T(to.x, to.y, 0), curveResolution);
+}
+
+template<class T>
+void ofPolyline_<T>::quadBezierTo( const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3,  int curveResolution)
+{
+	quadBezierTo(T(p1.x, p1.y, 0), T(p2.x, p2.y, 0), T(p3.x, p3.y, 0), curveResolution);
+}
+
+template<class T>
+bool ofPolyline_<T>::inside(const glm::vec2& p, const ofPolyline_ & polyline)
+{
+	return inside(T(p.x, p.y, 0), polyline);
+}
+
+template<class T>
+bool ofPolyline_<T>::inside(const glm::vec2& p) const
+{
+	return inside(T(p.x, p.y, 0));
+}
+
+template<class T>
+T ofPolyline_<T>::getClosestPoint(const glm::vec2& target, unsigned int* nearestIndex) const
+{
+	return getClosestPoint(T(target.x, target.y, 0), nearestIndex);
+}
+
+#endif

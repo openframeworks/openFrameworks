@@ -656,6 +656,21 @@ public:
 
 	/// \}
 
+#ifndef OF_USE_LEGACY_MESH
+	OF_DEPRECATED_MSG("Use glm::vec2.", ofMesh_(ofPrimitiveMode mode, const vector<ofVec2f>& verts));
+	ofMesh_(ofPrimitiveMode mode, const vector<glm::vec2>& verts);
+	void addVertex(const glm::vec2& v);
+	void addVertices(const vector<glm::vec2>& verts);
+	OF_DEPRECATED_MSG("Use glm::vec2.", void addVertices(const vector<ofVec2f>& verts));
+	OF_DEPRECATED_MSG("Use glm::vec3.", void addVertices(const vector<ofVec3f>& verts));
+	void addVertices(const glm::vec2* verts, std::size_t amt);
+	OF_DEPRECATED_MSG("Use glm::vec2.", void addVertices(const ofVec2f* verts, std::size_t amt));
+	OF_DEPRECATED_MSG("Use glm::vec3.", void addVertices(const ofVec3f* verts, std::size_t amt));
+	void setVertex(ofIndexType index, const glm::vec2& v);
+	OF_DEPRECATED_MSG("Use glm::vec3.",void addNormals(const vector<ofVec3f>& norms));
+	OF_DEPRECATED_MSG("Use glm::vec3.",void addNormals(const ofVec3f* norms, std::size_t amt));
+#endif
+
 private:
 
 	std::vector<V> vertices;

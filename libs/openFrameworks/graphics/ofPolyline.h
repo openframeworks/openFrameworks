@@ -495,7 +495,31 @@ public:
 	
 	/// \}
    
-    
+
+// Functions for backward compatibility.
+#ifndef OF_USE_LEGACY_MESH
+    ofPolyline_(const vector<glm::vec2>& verts);
+	OF_DEPRECATED_MSG("Use glm::vec2.", ofPolyline_(const vector<ofVec2f>& verts));
+    void addVertex(const glm::vec2& p);
+    void addVertices(const vector<glm::vec2>& verts);
+	OF_DEPRECATED_MSG("Use glm::vec2.", void addVertices(const vector<ofVec2f>& verts));
+	OF_DEPRECATED_MSG("Use glm::vec3.", void addVertices(const vector<ofVec3f>& verts));
+    void addVertices(const glm::vec2* verts, int numverts);
+    OF_DEPRECATED_MSG("Use glm::vec2.", void addVertices(const ofVec2f* verts, int numverts));
+	OF_DEPRECATED_MSG("Use glm::vec3.", void addVertices(const ofVec3f* verts, int numverts));
+    void insertVertex(const glm::vec2 &p, int index);
+    void lineTo(const glm::vec2& to);
+    void arc(const glm::vec2& center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int circleResolution = 20);
+    void arc(const glm::vec2& center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20);
+    void arcNegative(const glm::vec2& center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20);
+    void curveTo( const glm::vec2& to, int curveResolution = 20 );
+    void bezierTo( const glm::vec2& cp1, const glm::vec2& cp2, const glm::vec2& to, int curveResolution = 20);
+    void quadBezierTo( const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3,  int curveResolution = 20 );
+    static bool inside(const glm::vec2& p, const ofPolyline_ & polyline);
+    bool inside(const glm::vec2& p) const;
+    T getClosestPoint(const glm::vec2& target, unsigned int* nearestIndex = nullptr) const;
+#endif
+
 private:
 	void setCircleResolution(int res);
     float wrapAngle(float angleRad);
