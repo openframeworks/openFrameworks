@@ -103,6 +103,7 @@ public:
 	}
 
 	void add(ofAbstractParameter & param);
+	void addAt(ofAbstractParameter & param, unsigned long index);
 	std::string valueType() const;
 
 	void remove(ofAbstractParameter & param);

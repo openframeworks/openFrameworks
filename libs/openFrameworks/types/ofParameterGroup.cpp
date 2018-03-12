@@ -20,6 +20,20 @@ void ofParameterGroup::add(ofAbstractParameter & parameter){
 	param->setParent(*this);
 }
 
+void ofParameterGroup::addAt(ofAbstractParameter & parameter, unsigned long index){
+	shared_ptr<ofAbstractParameter> param = parameter.newReference();
+	const std::string name = param->getEscapedName();
+	if(obj->parametersIndex.find(name) != obj->parametersIndex.end()){
+		ofLogWarning() << "Adding another parameter with same name '" << param->getName() << "' to group '" << getName() << "'";
+	}
+	if(index > obj->parameters.size()){
+		index = obj->parameters.size();
+	}
+	obj->parameters.insert(obj->parameters.begin() + index, param);
+	obj->parametersIndex[name] = obj->parameters.size()-1;
+	param->setParent(*this);
+}
+
 void ofParameterGroup::remove(ofAbstractParameter &param){
 	std::for_each(obj->parameters.begin(), obj->parameters.end(), [&](shared_ptr<ofAbstractParameter>& p){
 		if(p->isReferenceTo(param)){
