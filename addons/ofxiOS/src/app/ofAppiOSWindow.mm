@@ -429,6 +429,7 @@ bool ofAppiOSWindow::enableAntiAliasing(int samples) {
 
 void ofAppiOSWindow::enableMultiTouch(bool isOn) {
 	settings.enableMultiTouch = isOn;
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 	if(settings.windowControllerType == METAL_KIT || settings.windowControllerType == GL_KIT) {
 		if([ofxiOSGLKView getInstance]) {
 			[[ofxiOSGLKView getInstance] setMultipleTouchEnabled:isOn];
@@ -437,6 +438,7 @@ void ofAppiOSWindow::enableMultiTouch(bool isOn) {
 		if([ofxiOSEAGLView getInstance])
 			[[ofxiOSEAGLView getInstance] setMultipleTouchEnabled:isOn];
 	}
+#endif
 }
 
 bool ofAppiOSWindow::isMultiTouch() {
