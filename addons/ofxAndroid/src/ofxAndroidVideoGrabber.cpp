@@ -106,6 +106,14 @@ void ofxAndroidVideoGrabber::Data::update(){
 	env->CallVoidMethod(javaVideoGrabber, getTextureMatrix, matrixJava);
 	jfloat* cfloats = env->GetFloatArrayElements(matrixJava, 0);
 	ofMatrix4x4 mat(cfloats);
+	if(mat(0,0) == -1){
+		mat.scale(-1,1,1);
+		mat.translate(1,0,0);
+	}
+	if(mat(1,1) == -1){
+		mat.scale(1,-1,1);
+		mat.translate(0,1,0);
+	}
 	texture.setTextureMatrix(mat);
 }
 
@@ -151,7 +159,6 @@ void ofxAndroidVideoGrabber::Data::loadTexture(){
 	texture.texData.tex_u = 1;
 	texture.texData.textureTarget = GL_TEXTURE_EXTERNAL_OES;
 	texture.texData.glInternalFormat = GL_RGBA;
-	texture.texData.bFlipTexture = true;
 
 
 }
