@@ -21,19 +21,52 @@ void ofParameterGroup::add(ofAbstractParameter & parameter){
 }
 
 void ofParameterGroup::addAt(ofAbstractParameter & parameter, unsigned long index){
-	shared_ptr<ofAbstractParameter> param = parameter.newReference();
-	const std::string name = param->getEscapedName();
-	if(obj->parametersIndex.find(name) != obj->parametersIndex.end()){
-		ofLogWarning() << "Adding another parameter with same name '" << param->getName() << "' to group '" << getName() << "'";
-	}
-	if(index > obj->parameters.size()){
-		index = obj->parameters.size();
-	}
-	obj->parameters.insert(obj->parameters.begin() + index, param);
-	obj->parametersIndex[name] = obj->parameters.size()-1;
-	param->setParent(*this);
+//	shared_ptr<ofAbstractParameter> param = parameter.newReference();
+//	const std::string name = param->getEscapedName();
+//	if(obj->parametersIndex.find(name) != obj->parametersIndex.end()){
+//		ofLogWarning() << "Adding another parameter with same name '" << param->getName() << "' to group '" << getName() << "'";
+//	}
+//	if(index > obj->parameters.size()){
+//		index = obj->parameters.size();
+//	}
+//	auto paramToReindex = obj->parameters.at(index);
+//	obj->parameters.insert(obj->parameters.begin() + index, param);
+//	obj->parametersIndex[param->getName()] = index;
+//	obj->parametersIndex[paramToReindex->getName()] = index + 1;
+//
+//	param->setParent(*this);
+	add(parameter);
+	swapPositions(index, obj->parameters.size()-1);
 }
 
+void ofParameterGroup::swapPositions(unsigned long index1, unsigned long index2){
+	if (index1 == index2) return;
+
+	if (index1 >= obj->parameters.size()){
+		index1 = obj->parameters.size()-1;
+	}
+	if (index2 >= obj->parameters.size()){
+		index2 = obj->parameters.size()-1;
+	}
+
+	auto param1 = obj->parameters.at(index1);
+	auto param2 = obj->parameters.at(index2);
+	std::swap(obj->parameters.at(index1), obj->parameters.at(index2));
+	obj->parametersIndex[param1->getName()] = index2;
+	obj->parametersIndex[param2->getName()] = index1;
+}
+
+void ofParameterGroup::swapPositions(ofAbstractParameter & param1, ofAbstractParameter & param2){
+	auto iter = obj->parametersIndex.find(param1.getName());
+	if (iter != obj->parametersIndex.end()){
+		auto iter2 = obj->parametersIndex.find(param2.getName());
+		if(iter != obj->parametersIndex.end())
+		{
+			swapPositions(obj->parametersIndex[param1.getName()], obj->parametersIndex[param2.getName()]);
+		}
+	}
+
+}
 void ofParameterGroup::remove(ofAbstractParameter &param){
 	std::for_each(obj->parameters.begin(), obj->parameters.end(), [&](shared_ptr<ofAbstractParameter>& p){
 		if(p->isReferenceTo(param)){
