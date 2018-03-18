@@ -1400,6 +1400,7 @@ void ofShader::printActiveUniforms()  const{
 		line << " @ index " << location;
 		ofLogNotice("ofShader") << line.str();
 	}
+	delete[] uniformName;
 }
 
 //--------------------------------------------------------------
