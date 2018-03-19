@@ -659,7 +659,9 @@ int ofGetNumChannelsFromGLFormat(int glFormat){
 	switch(glFormat){
 	case GL_RGB:
 		return 3;
+#ifdef TARGET_OF_IOS
 	case GL_BGRA:
+#endif
 	case GL_RGBA:
 		return 4;
 	case GL_LUMINANCE:
