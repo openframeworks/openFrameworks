@@ -12,6 +12,7 @@
 #include "ofUtils.h"
 #include "ofVideoGrabber.h"
 #include "ofGLUtils.h"
+#include "ofMatrix4x4.h"
 
 using namespace std;
 
@@ -37,6 +38,7 @@ struct ofxAndroidVideoGrabber::Data{
 	void onAppPause();
 	void onAppResume();
 	void loadTexture();
+	void update();
 };
 
 map<int,weak_ptr<ofxAndroidVideoGrabber::Data>> & instances(){
@@ -96,6 +98,23 @@ ofxAndroidVideoGrabber::Data::Data()
 	matrixJava = (jfloatArray) ofGetJNIEnv()->NewGlobalRef(localMatrixJava);
 	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofxAndroidVideoGrabber::Data::onAppPause);
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofxAndroidVideoGrabber::Data::onAppResume);
+}
+
+void ofxAndroidVideoGrabber::Data::update(){
+	JNIEnv *env = ofGetJNIEnv();
+	jmethodID getTextureMatrix = env->GetMethodID(getJavaClass(), "getTextureMatrix", "([F)V");
+	env->CallVoidMethod(javaVideoGrabber, getTextureMatrix, matrixJava);
+	jfloat* cfloats = env->GetFloatArrayElements(matrixJava, 0);
+	ofMatrix4x4 mat(cfloats);
+	if(mat(0,0) == -1){
+		mat.scale(-1,1,1);
+		mat.translate(1,0,0);
+	}
+	if(mat(1,1) == -1){
+		mat.scale(1,-1,1);
+		mat.translate(0,1,0);
+	}
+	texture.setTextureMatrix(mat);
 }
 
 ofxAndroidVideoGrabber::Data::~Data(){
@@ -225,6 +244,7 @@ void ofxAndroidVideoGrabber::update(){
 		// This will tell the camera api that we are ready for a new frame
 		jmethodID update = ofGetJNIEnv()->GetMethodID(getJavaClass(), "update", "()V");
 		ofGetJNIEnv()->CallVoidMethod(data->javaVideoGrabber, update);
+		data->update();
 	} else {
 		data->bIsFrameNew = false;
 	}
