@@ -329,11 +329,13 @@ void ofEasyCam::updateRotation(){
 	}
 	if (bApplyInertia) {
 		curRot = glm::angleAxis(rot.z, getZAxis()) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, getXAxis());
+		rotateAround(curRot, target.getGlobalPosition());
+		rotate(curRot);
 	}else{
 		curRot = glm::angleAxis(rot.z, lastPressAxisZ) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, lastPressAxisX);
+		setOrientation(curRot * lastPressOrientation);
+		setPosition(curRot * (lastPressPosition-target.getGlobalPosition()) + target.getGlobalPosition());
 	}
-	setPosition(curRot * (lastPressPosition-target.getGlobalPosition()) + target.getGlobalPosition());
-	setOrientation(curRot * lastPressOrientation);
 }
 
 //----------------------------------------
