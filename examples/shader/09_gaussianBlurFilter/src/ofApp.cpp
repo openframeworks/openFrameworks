@@ -30,13 +30,13 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    float blur = ofMap(mouseX, 0, ofGetWidth(), 0, 10, true);
+	float blur = ofMap(mouseX, 0, ofGetWidth(), 0, 4, true);
     
     //----------------------------------------------------------
     fboBlurOnePass.begin();
     
-    shaderBlurX.begin();
-    shaderBlurX.setUniform1f("blurAmnt", blur);
+	shaderBlurX.begin();
+	shaderBlurX.setUniform1f("blurAmnt", blur);
 
     image.draw(0, 0);
     
@@ -47,8 +47,8 @@ void ofApp::draw(){
     //----------------------------------------------------------
     fboBlurTwoPass.begin();
     
-    shaderBlurY.begin();
-    shaderBlurY.setUniform1f("blurAmnt", blur);
+	shaderBlurY.begin();
+	shaderBlurY.setUniform1f("blurAmnt", blur);
     
     fboBlurOnePass.draw(0, 0);
     
