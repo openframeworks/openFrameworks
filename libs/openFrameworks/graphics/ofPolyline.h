@@ -349,6 +349,20 @@ public:
     /// points removed.
 	void simplify(float tolerance=0.3f);
 
+        /// \}
+	/// \name Transform polyline
+	/// \{
+
+        void translate(const glm::vec3 & p);
+	void rotate(float az, const glm::vec3& axis );
+	void translate(const glm::vec2 & p);
+	void rotate(float az, const glm::vec2& axis );
+
+	/// \brief Change the size of the ofPolyline
+	/// These changes are non-reversible, so for instance
+	/// scaling by 0,0 zeros out all data.
+	void scale(float x, float y);
+
 	/// \}
 	/// \name Polyline State
 	/// \{
