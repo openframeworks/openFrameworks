@@ -11,6 +11,7 @@
 using namespace std;
 
 ofxAssimpTexture::ofxAssimpTexture() {
+    this->texture.clear();
     this->texturePath = "";
     this->loaded = false;
     this->textureData = NULL;
@@ -23,6 +24,7 @@ ofxAssimpTexture::ofxAssimpTexture(ofTexture texture, string texturePath) {
 }
 
 ofxAssimpTexture::ofxAssimpTexture(const ofBuffer &texData, string texturePath) {
+    this->texture.clear();
     this->texturePath = texturePath;
     this->loaded = false;
     this->textureData = new ofPixels();
@@ -52,6 +54,8 @@ bool ofxAssimpTexture::loadTextureFromTextureData() {
 
     this->texture.allocate(*(this->textureData));
     this->texture.loadData(*(this->textureData));
+    this->loaded = true;
+
     return true;
 }
 
@@ -59,10 +63,13 @@ bool ofxAssimpTexture::reloadTextureFromTextureData() {
     if (loaded) {
         this->texture.clear();
     }
+
     if (!bTextureDataLoaded) {
         return false;
     }
+
     this->texture.allocate(*(this->textureData));
     this->texture.loadData(*(this->textureData));
+
     return true;
 }

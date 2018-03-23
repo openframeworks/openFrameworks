@@ -44,6 +44,7 @@ class ofxAssimpModelLoader{
 
 		bool loadModel(std::string modelName, bool optimize=false);
         bool loadModel(ofBuffer & buffer, bool optimize=false, const char * extension="");
+		bool loadTexturesForMaterial(aiMaterial* mtl, ofxAssimpMeshHelper &meshHelper);
         void createEmptyModel();
         void createLightsFromAiModel();
         void optimizeScene();

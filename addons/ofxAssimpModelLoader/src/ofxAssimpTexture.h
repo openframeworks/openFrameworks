@@ -21,6 +21,7 @@ public:
 
     ofTexture & getTextureRef();
 	std::string getTexturePath();
+
     bool hasTexture();
 	bool isLoaded();
 
