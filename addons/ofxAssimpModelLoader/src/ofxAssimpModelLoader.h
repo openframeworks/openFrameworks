@@ -19,6 +19,7 @@
 #include "ofxAssimpTexture.h"
 #include "ofMesh.h"
 #include "ofPoint.h"
+#include "ofMain.h"
 
 struct aiScene;
 struct aiNode;
@@ -114,6 +115,7 @@ class ofxAssimpModelLoader{
 		const aiScene * getAssimpScene();
          
     protected:
+        void onAppExit(ofEventArgs & args);
         void updateAnimations();
         void updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix);
         void updateBones();

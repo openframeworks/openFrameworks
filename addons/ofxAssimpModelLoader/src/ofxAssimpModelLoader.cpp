@@ -99,6 +99,7 @@ bool ofxAssimpModelLoader::processScene() {
             ofLogVerbose("ofxAssimpModelLoader") << "loadMode(): no animations";
         }       
         
+        ofAddListener(ofEvents().exit,this,&ofxAssimpModelLoader::onAppExit);
         return true;
     }else{
         ofLogError("ofxAssimpModelLoader") << "loadModel(): " + (string) aiGetErrorString();
@@ -374,6 +375,7 @@ void ofxAssimpModelLoader::clear(){
     textures.clear();
 
     updateModelMatrix();
+    ofRemoveListener(ofEvents().exit,this,&ofxAssimpModelLoader::onAppExit);
 }
 
 //------------------------------------------- update.
@@ -1042,4 +1044,12 @@ void ofxAssimpModelLoader::disableColors(){
 //--------------------------------------------------------------
 void ofxAssimpModelLoader::disableMaterials(){
 	bUsingMaterials = false;
+}
+
+// automatic destruction on app exit makes the app crash because of some bug in assimp
+// this is a hack to clear every object on the exit callback of the application
+// FIXME: review when there's an update of assimp
+//-------------------------------------------
+void ofxAssimpModelLoader::onAppExit(ofEventArgs & args){
+    clear();
 }
