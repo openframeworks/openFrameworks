@@ -11,12 +11,24 @@
 using namespace std;
 
 ofxAssimpTexture::ofxAssimpTexture() {
-    texturePath = "";
+    this->texture.clear();
+    this->texturePath = "";
+    this->loaded = false;
+    this->textureData = NULL;
 }
 
 ofxAssimpTexture::ofxAssimpTexture(ofTexture texture, string texturePath) {
     this->texture = texture;
     this->texturePath = texturePath;
+    this->loaded = true;
+}
+
+ofxAssimpTexture::ofxAssimpTexture(const ofBuffer &texData, string texturePath) {
+    this->texture.clear();
+    this->texturePath = texturePath;
+    this->loaded = false;
+    this->textureData = new ofPixels();
+    this->bTextureDataLoaded = ofLoadImage(*(this->textureData), texData);
 }
 
 ofTexture & ofxAssimpTexture::getTextureRef() {
@@ -29,4 +41,35 @@ string ofxAssimpTexture::getTexturePath() {
 
 bool ofxAssimpTexture::hasTexture() {
     return texture.isAllocated();
+}
+
+bool ofxAssimpTexture::isLoaded() {
+    return loaded;
+}
+
+bool ofxAssimpTexture::loadTextureFromTextureData() {
+    if (loaded || !bTextureDataLoaded) {
+        return false;
+    }
+
+    this->texture.allocate(*(this->textureData));
+    this->texture.loadData(*(this->textureData));
+    this->loaded = true;
+
+    return true;
+}
+
+bool ofxAssimpTexture::reloadTextureFromTextureData() {
+    if (loaded) {
+        this->texture.clear();
+    }
+
+    if (!bTextureDataLoaded) {
+        return false;
+    }
+
+    this->texture.allocate(*(this->textureData));
+    this->texture.loadData(*(this->textureData));
+
+    return true;
 }

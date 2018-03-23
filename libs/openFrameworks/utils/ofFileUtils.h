@@ -807,6 +807,8 @@ public:
 	/// \returns true if the path was removed successfully
 	static bool removeFile(const std::filesystem::path& path, bool bRelativeToData = true);
 
+	static bool isPathURL(std::string path);
+
 private:
 	bool isWriteMode();
 	bool openStream(Mode _mode, bool binary);
