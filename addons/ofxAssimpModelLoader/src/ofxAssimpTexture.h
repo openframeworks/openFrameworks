@@ -9,6 +9,7 @@
 
 #include "ofConstants.h"
 #include "ofTexture.h"
+#include "ofImage.h"
 
 class ofxAssimpTexture {
 
@@ -16,14 +17,23 @@ public:
     
     ofxAssimpTexture();
 	ofxAssimpTexture(ofTexture texture, std::string texturePath);
+	ofxAssimpTexture(const ofBuffer &texData, std::string texturePath);
 
     ofTexture & getTextureRef();
 	std::string getTexturePath();
     bool hasTexture();
     
+	bool isLoaded();
+
+	bool loadTextureFromTextureData();
+	bool reloadTextureFromTextureData();
+
 private:
     
     ofTexture texture;
 	std::string texturePath;
-    
+	ofPixels *textureData;
+	bool loaded;
+	bool bTextureDataLoaded;
+
 };
