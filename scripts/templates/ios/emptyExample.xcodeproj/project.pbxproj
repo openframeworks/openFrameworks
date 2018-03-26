@@ -746,7 +746,7 @@
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
 				<string>7.0</string>
 				<key>ONLY_ACTIVE_ARCH</key>
-				<string>NO</string>
+				<string>YES</string>
 				<key>PROVISIONING_PROFILE[sdk=iphoneos*]</key>
 				<string></string>
 				<key>SDKROOT</key>
