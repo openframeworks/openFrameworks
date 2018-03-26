@@ -15,6 +15,10 @@
 
 @synthesize glView;
 
+- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
+    return [self initWithFrame:frame app:app sharegroup:nil];
+}
+
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup {
     if((self = [super init])) {
         self.glView = [[[ofxiOSGLKView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup] autorelease];
