@@ -34,6 +34,11 @@ static ofxiOSEAGLView * _instanceRef = nil;
     return _instanceRef;
 }
 
+- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr {
+	[self initWithFrame:frame andApp:appPtr sharegroup:nil];
+	return self;
+}
+
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr sharegroup:(EAGLSharegroup *)sharegroup {
 	
 	window = dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());

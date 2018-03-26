@@ -27,6 +27,11 @@
 
 @synthesize glView;
 
+- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
+	[self initWithFrame:frame app:app sharegroup:nil];
+	return self;
+}
+
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup{
     currentInterfaceOrientation = pendingInterfaceOrientation = UIInterfaceOrientationPortrait;
     if((self = [super init])) {
