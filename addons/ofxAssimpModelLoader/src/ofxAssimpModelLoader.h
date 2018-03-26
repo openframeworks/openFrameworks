@@ -30,11 +30,11 @@ class ofxAssimpModelLoader{
         ofxAssimpModelLoader();
 
         // Pre-loads model from file or url into a buffer but does not initialize OpenGL resources (for load in background thread)
-        bool preLoadModel(string modelName, bool optimize=false);
+        bool preLoadModel(std::string modelName, bool optimize=false);
         // Pre-loads all model's textures without creating any GL resource
         void preloadTextures();
         // Pre-loads texture from texURL (file or URL) with texPath identifier inside the model.
-        void preloadTexture(string texURL, string texPath);
+        void preloadTexture(std::string texURL, std::string texPath);
 
         // Loads model's OpenGL resoruces
         bool loadModelGLResources();
