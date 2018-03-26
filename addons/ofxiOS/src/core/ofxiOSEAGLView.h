@@ -29,6 +29,7 @@ class ofAppiOSWindow;
 
 + (ofxiOSEAGLView *) getInstance;
 
+- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)app;
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup;
 - (void)setup;
 - (void)updateDimensions;
