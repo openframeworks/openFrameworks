@@ -2398,8 +2398,8 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor){
 #endif
 
 	if(uniqueShader){
-		defaultUniqueShader.setupShaderFromSource(GL_VERTEX_SHADER,uniqueVertexShader);
-		defaultUniqueShader.setupShaderFromSource(GL_FRAGMENT_SHADER,uniqueFragmentShader);
+		defaultUniqueShader.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(uniqueVertexShader, major, minor));
+		defaultUniqueShader.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(uniqueFragmentShader, major, minor));
 		defaultUniqueShader.bindDefaults();
 		defaultUniqueShader.linkProgram();
 		beginDefaultShader();
