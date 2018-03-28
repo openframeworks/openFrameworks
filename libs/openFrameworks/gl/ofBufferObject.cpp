@@ -29,7 +29,7 @@ ofBufferObject::Data::Data()
 	//      when we pin data to it using setData()
 	// 
 	//      see also: https://www.opengl.org/registry/specs/ARB/direct_state_access.txt
-
+#ifdef GLEW_VERSION_4_5
 	if(isDSA) {
 		// the above condition is only true if GLEW can provide us
 		// with direct state access methods. we use this to test
@@ -37,6 +37,7 @@ ofBufferObject::Data::Data()
 		glCreateBuffers(1,&id);
 		return;
 	}
+#endif
 
 	glGenBuffers(1,&id);
 }
