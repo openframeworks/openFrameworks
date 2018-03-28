@@ -121,10 +121,12 @@ void ofBufferObject::setData(GLsizeiptr bytes, const void * data, GLenum usage){
 	if(!this->data) return;
 	this->data->size = bytes;
 
+#ifdef GLEW_VERSION_4_5
 	if(this->data->isDSA) {
 		glNamedBufferData(this->data->id, bytes, data, usage);
 		return;
 	}
+#endif
 
 	/// --------| invariant: direct state access is not available
 	bind(this->data->lastTarget);
@@ -135,10 +137,12 @@ void ofBufferObject::setData(GLsizeiptr bytes, const void * data, GLenum usage){
 void ofBufferObject::updateData(GLintptr offset, GLsizeiptr bytes, const void * data){
 	if(!this->data) return;
 
+#ifdef GLEW_VERSION_4_5
 	if(this->data->isDSA){
 		glNamedBufferSubData(this->data->id,offset,bytes,data);
 		return;
 	}
+#endif
 
 	/// --------| invariant: direct state access is not available
 
@@ -155,9 +159,11 @@ void ofBufferObject::updateData(GLsizeiptr bytes, const void * data){
 void * ofBufferObject::map(GLenum access){
 	if(!this->data) return nullptr;
 
+#ifdef GLEW_VERSION_4_5
 	if(this->data->isDSA) {
 		return glMapNamedBuffer(data->id,access);
 	}
+#endif
 
 	/// --------| invariant: direct state access is not available
 	if(!data->isBound){
@@ -187,10 +193,12 @@ void * ofBufferObject::map(GLenum access){
 void ofBufferObject::unmap(){
 	if(!this->data) return;
 
+#ifdef GLEW_VERSION_4_5
 	if(this->data->isDSA) {
 		glUnmapNamedBuffer(data->id);
 		return;
 	}
+#endif
 
 	/// --------| invariant: direct state access is not available
 	if(!data->isBound){
@@ -207,9 +215,11 @@ void ofBufferObject::unmap(){
 void * ofBufferObject::mapRange(GLintptr offset, GLsizeiptr length, GLenum access){
 	if(!this->data) return nullptr;
 
+#ifdef GLEW_VERSION_4_5
 	if(this->data->isDSA) {
 		return glMapNamedBufferRange(data->id,offset,length,access);
 	}
+#endif
 
 	/// --------| invariant: direct state access is not available
 
@@ -222,10 +232,13 @@ void ofBufferObject::unmapRange(){
 }
 
 void ofBufferObject::copyTo(ofBufferObject & dstBuffer) const{
+#ifdef GLEW_VERSION_4_5
 	if(this->data->isDSA) {
 		glCopyNamedBufferSubData(data->id,dstBuffer.getId(),0,0,size());
 		return;
 	}
+#endif
+
 	bind(GL_COPY_READ_BUFFER);
 	dstBuffer.bind(GL_COPY_WRITE_BUFFER);
 	glCopyBufferSubData(GL_COPY_READ_BUFFER,GL_COPY_WRITE_BUFFER,0,0,size());
@@ -234,10 +247,13 @@ void ofBufferObject::copyTo(ofBufferObject & dstBuffer) const{
 }
 
 void ofBufferObject::copyTo(ofBufferObject & dstBuffer, int readOffset, int writeOffset, size_t size) const{
+#ifdef GLEW_VERSION_4_5
 	if(this->data->isDSA) {
 		glCopyNamedBufferSubData(data->id,dstBuffer.getId(),readOffset,writeOffset,size);
 		return;
 	}
+#endif
+
 	bind(GL_COPY_READ_BUFFER);
 	dstBuffer.bind(GL_COPY_WRITE_BUFFER);
 	glCopyBufferSubData(GL_COPY_READ_BUFFER,GL_COPY_WRITE_BUFFER,readOffset,writeOffset,size);
