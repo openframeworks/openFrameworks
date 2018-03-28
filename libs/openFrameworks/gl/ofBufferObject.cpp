@@ -2,13 +2,22 @@
 #include "ofConstants.h"
 #include "ofAppRunner.h"
 #include "ofPixels.h"
+#include "ofGLUtils.h"
 
 using namespace std;
 
 ofBufferObject::Data::Data()
 :id(0)
 ,size(0)
-,lastTarget(GL_ARRAY_BUFFER){
+,lastTarget(GL_ARRAY_BUFFER)
+
+#ifdef GLEW_VERSION_4_5
+,isDSA(ofIsGLProgrammableRenderer() && GLEW_ARB_direct_state_access)
+#else
+,isDSA(false)
+#endif
+
+{
 	
 	// tig: glGenBuffers does not actually create a buffer, it just 
 	//      returns the next available name, and only a subsequent 
@@ -21,15 +30,13 @@ ofBufferObject::Data::Data()
 	// 
 	//      see also: https://www.opengl.org/registry/specs/ARB/direct_state_access.txt
 
-#ifdef GLEW_VERSION_4_5
-	if (GLEW_ARB_direct_state_access) {
+	if(isDSA) {
 		// the above condition is only true if GLEW can provide us
 		// with direct state access methods. we use this to test
 		// whether the driver is OpenGL 4.5 ready.
 		glCreateBuffers(1,&id);
 		return;
 	}
-#endif
 
 	glGenBuffers(1,&id);
 }
@@ -114,12 +121,10 @@ void ofBufferObject::setData(GLsizeiptr bytes, const void * data, GLenum usage){
 	if(!this->data) return;
 	this->data->size = bytes;
 
-#ifdef GLEW_VERSION_4_5
-	if (GLEW_ARB_direct_state_access) {
+	if(this->data->isDSA) {
 		glNamedBufferData(this->data->id, bytes, data, usage);
 		return;
 	}
-#endif
 
 	/// --------| invariant: direct state access is not available
 	bind(this->data->lastTarget);
@@ -130,12 +135,10 @@ void ofBufferObject::setData(GLsizeiptr bytes, const void * data, GLenum usage){
 void ofBufferObject::updateData(GLintptr offset, GLsizeiptr bytes, const void * data){
 	if(!this->data) return;
 
-#ifdef GLEW_VERSION_4_5
-	if(GLEW_ARB_direct_state_access){
+	if(this->data->isDSA){
 		glNamedBufferSubData(this->data->id,offset,bytes,data);
 		return;
 	}
-#endif
 
 	/// --------| invariant: direct state access is not available
 
@@ -152,11 +155,9 @@ void ofBufferObject::updateData(GLsizeiptr bytes, const void * data){
 void * ofBufferObject::map(GLenum access){
 	if(!this->data) return nullptr;
 
-#ifdef GLEW_VERSION_4_5
-	if (GLEW_ARB_direct_state_access) {
+	if(this->data->isDSA) {
 		return glMapNamedBuffer(data->id,access);
 	}
-#endif
 
 	/// --------| invariant: direct state access is not available
 	if(!data->isBound){
@@ -186,12 +187,10 @@ void * ofBufferObject::map(GLenum access){
 void ofBufferObject::unmap(){
 	if(!this->data) return;
 
-#ifdef GLEW_VERSION_4_5
-	if (GLEW_ARB_direct_state_access) {
+	if(this->data->isDSA) {
 		glUnmapNamedBuffer(data->id);
 		return;
 	}
-#endif
 
 	/// --------| invariant: direct state access is not available
 	if(!data->isBound){
@@ -208,11 +207,9 @@ void ofBufferObject::unmap(){
 void * ofBufferObject::mapRange(GLintptr offset, GLsizeiptr length, GLenum access){
 	if(!this->data) return nullptr;
 
-#ifdef GLEW_VERSION_4_5
-	if (GLEW_ARB_direct_state_access) {
+	if(this->data->isDSA) {
 		return glMapNamedBufferRange(data->id,offset,length,access);
 	}
-#endif
 
 	/// --------| invariant: direct state access is not available
 
@@ -225,12 +222,10 @@ void ofBufferObject::unmapRange(){
 }
 
 void ofBufferObject::copyTo(ofBufferObject & dstBuffer) const{
-#ifdef GLEW_VERSION_4_5
-	if (GLEW_ARB_direct_state_access) {
+	if(this->data->isDSA) {
 		glCopyNamedBufferSubData(data->id,dstBuffer.getId(),0,0,size());
 		return;
 	}
-#endif
 	bind(GL_COPY_READ_BUFFER);
 	dstBuffer.bind(GL_COPY_WRITE_BUFFER);
 	glCopyBufferSubData(GL_COPY_READ_BUFFER,GL_COPY_WRITE_BUFFER,0,0,size());
@@ -239,12 +234,10 @@ void ofBufferObject::copyTo(ofBufferObject & dstBuffer) const{
 }
 
 void ofBufferObject::copyTo(ofBufferObject & dstBuffer, int readOffset, int writeOffset, size_t size) const{
-#ifdef GLEW_VERSION_4_5
-	if (GLEW_ARB_direct_state_access) {
+	if(this->data->isDSA) {
 		glCopyNamedBufferSubData(data->id,dstBuffer.getId(),readOffset,writeOffset,size);
 		return;
 	}
-#endif
 	bind(GL_COPY_READ_BUFFER);
 	dstBuffer.bind(GL_COPY_WRITE_BUFFER);
 	glCopyBufferSubData(GL_COPY_READ_BUFFER,GL_COPY_WRITE_BUFFER,readOffset,writeOffset,size);
