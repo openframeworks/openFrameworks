@@ -97,9 +97,6 @@ unsigned int ofxAssimpModelLoader::initImportProperties(bool optimize) {
 }
 
 bool ofxAssimpModelLoader::processScene() {
-    
-    normalizeFactor = ofGetWidth() / 2.0;
-    
     if(scene){
         loadGLResources();
         update();
@@ -369,6 +366,7 @@ void ofxAssimpModelLoader::clear(){
     rotAxis.clear();
     lights.clear();
 
+    normalizeFactor = ofGetWidth() / 2.0;
     scale = ofPoint(1, 1, 1);
     normalizeScale = true;
     bUsingMaterials = true;
