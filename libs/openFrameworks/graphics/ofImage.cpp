@@ -385,7 +385,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::
 	}
 	#endif
 
-	bool retValue;
+	bool retValue = false;
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		if(fif == FIF_JPEG) {
 			int quality = JPEG_QUALITYSUPERB;
