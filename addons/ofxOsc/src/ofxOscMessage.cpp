@@ -652,9 +652,6 @@ std::ostream& operator<<(std::ostream &os, const ofxOscMessage &message) {
 			case OFXOSC_TYPE_BLOB:
 				os << "BLOB";
 				break;
-			case OFXOSC_TYPE_BUNDLE:
-				os << "BUNDLE";
-				break;
 			case OFXOSC_TYPE_RGBA_COLOR:
 				os << ofToHex(message.getArgAsRgbaColor(i));
 				break;

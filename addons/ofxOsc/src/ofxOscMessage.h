@@ -40,7 +40,7 @@ public:
 	///
 	/// some types can be automatically converted to a requested type,
 	/// (ie. int to float) however it is best to ensure that the type matches
-	/// what you're requesting:
+	/// what you are requesting:
 	///
 	///     int i = 0;
 	///     if(message.getArgType(index) == OFXOSC_TYPE_INT32) {
@@ -232,13 +232,12 @@ public:
 	/// converts argument contents to strings with following caveats per type:
 	///   * true: printed as T
 	///   * false: printed as F
-	///   * midi message:  printed as 4-byte hex
+	///   * midi message: printed as 4 byte hex
 	///   * none/nil: printed as NONE (has no value)
 	///   * trigger impulse: printed as TRIGGER (has no value)
 	///   * timetag: printed as TIMETAG (does not show value)
 	///   * blob: printed as BLOB (does not show value)
-	///   * bundle: printed as BLOB (does not show value)
-	///   * rgba color: printed as 4-byte hex
+	///   * rgba color: printed as 4 byte hex
 	/// \return message address & arguments separated by spaces
 	friend std::ostream& operator<<(std::ostream &os, const ofxOscMessage &message);
 

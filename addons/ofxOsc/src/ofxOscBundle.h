@@ -5,7 +5,7 @@
 #include "ofxOscMessage.h"
 
 /// \class ofxOscBundle
-/// \brief an OSC bundle of ofxMessages and/or other ofxOscBundles
+/// \brief an OSC bundle of ofxOscMessages and/or other ofxOscBundles
 class ofxOscBundle{
 public:
 
