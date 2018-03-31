@@ -37,7 +37,7 @@ typedef enum _ofxOscArgType{
 	OFXOSC_TYPE_BLOB             = 'b',
 	OFXOSC_TYPE_BUNDLE           = 'B',
 	OFXOSC_TYPE_RGBA_COLOR       = 'r',
-	OFXOSC_TYPE_INDEXOUTOFBOUNDS = 0 //< bad index value
+	OFXOSC_TYPE_INDEXOUTOFBOUNDS = 0 ///< bad index value
 } ofxOscArgType;
 
 /// \class ofxOscArg

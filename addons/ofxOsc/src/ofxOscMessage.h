@@ -244,9 +244,9 @@ public:
 
 private:
 
-	std::string address; //< OSC address, must start with a /
-	std::vector<ofxOscArg*> args; //< current arguments
+	std::string address; ///< OSC address, must start with a /
+	std::vector<ofxOscArg*> args; ///< current arguments
 
-	std::string remoteHost; //< host name/ip the message was sent from
-	int remotePort; //< port the message was sent from
+	std::string remoteHost; ///< host name/ip the message was sent from
+	int remotePort; ///< port the message was sent from
 };

@@ -13,9 +13,9 @@
 /// \struct ofxOscSenderSettings
 /// \brief OSC message sender settings
 struct ofxOscSenderSettings {
-	std::string host = "localhost"; //< destination host name/ip
-	int port = 0;                   //< destination port
-	bool broadcast = true;          //< allow multicast (broadcasting) ip range?
+	std::string host = "localhost"; ///< destination host name/ip
+	int port = 0;                   ///< destination port
+	bool broadcast = true;          ///< broadcast (aka multicast) ip range support?
 };
 
 /// \class ofxOscSender
@@ -73,6 +73,6 @@ private:
 	void appendParameter(ofxOscBundle &bundle, const ofAbstractParameter &parameter, const std::string &address);
 	void appendParameter(ofxOscMessage &msg, const ofAbstractParameter &parameter, const std::string &address);
 
-	ofxOscSenderSettings settings; //< current settings
-	std::unique_ptr<osc::UdpTransmitSocket> sendSocket; //< sender socket
+	ofxOscSenderSettings settings; ///< current settings
+	std::unique_ptr<osc::UdpTransmitSocket> sendSocket; ///< sender socket
 };
