@@ -300,7 +300,7 @@ public:
 
 	/// \return argument type character as a string
 	std::string getTypeName() {return "t";}
-	
+
 	/// return value
 	std::uint64_t get() const {return value;}
 
