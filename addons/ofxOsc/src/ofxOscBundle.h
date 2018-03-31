@@ -48,6 +48,6 @@ public:
 	
 private:
 		
-	std::vector<ofxOscMessage> messages; //< bundled messages
-	std::vector<ofxOscBundle> bundles; //< bundled bundles
+	std::vector<ofxOscMessage> messages; ///< bundled messages
+	std::vector<ofxOscBundle> bundles; ///< bundled bundles
 };
