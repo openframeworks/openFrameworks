@@ -13,9 +13,9 @@
 /// \struct ofxOscSenderSettings
 /// \brief OSC message sender settings
 struct ofxOscReceiverSettings {
-	int port = 0;        ///< port to listen on
-	bool reuse = true;   ///< should the port be reused by other receivers?
-	bool start = true;   ///< start listening after setup?
+	int port = 0;            ///< port to listen on
+	bool reuse = true;       ///< should the port be reused by other receivers?
+	bool start = true;       ///< start listening after setup?
 };
 
 /// \class ofxOscReceiver
