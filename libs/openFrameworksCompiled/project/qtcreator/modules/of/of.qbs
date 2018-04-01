@@ -298,6 +298,9 @@ Module{
         property stringList defines;
         property bool isCoreLibrary: parent.isCoreLibrary
         property stringList addons: parent.addons
+        property string sourceDirectory: parent.sourceDirectory
+        property string ofRoot: parent.ofRoot;
+        property string platform: parent.platform;
 
         configure: {
             includes = [];
