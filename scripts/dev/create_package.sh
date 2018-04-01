@@ -184,7 +184,12 @@ function createProjectFiles {
 
         cd ${pkg_ofroot}
         echo "Creating project files for $pkg_platform"
-        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pkg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
+        if [ "$pkg_platform" == "vs2015" ] || [ "$pkg_platform" == "vs2017" ]; then
+            pg_platform="vs"
+        else
+            pg_platform=$pkg_platform
+        fi
+        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
     elif [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
         for example_group in $pkg_ofroot/examples/*; do
             for example in $example_group/*; do
