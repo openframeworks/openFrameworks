@@ -102,8 +102,10 @@ Product{
     Probe {
         id: core_source
         property stringList files
+        property string ofRoot: of.ofRoot
+        property stringList FILES_EXCLUDE: of.FILES_EXCLUDE
         configure: {
-            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
+            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(ofRoot, '/libs/openFrameworks'));
             var filteredSource = source.filter(function filterExcludes(path){
                 for(exclude in FILES_EXCLUDE){
                     var patt = new RegExp(FILES_EXCLUDE[exclude]);

@@ -7,7 +7,7 @@ import qbs.Probes
 import "helpers.js" as Helpers
 
 Module{
-    name: "ofCore"
+    name: "of"
 
     property string ofRoot: {
         if(FileInfo.isAbsolutePath(project.of_root)){
@@ -63,6 +63,9 @@ Module{
         property stringList ldflags
         property stringList system_libs
         property stringList static_libs
+        property string platform: parent.platform;
+        property string ofRoot: parent.ofRoot;
+        property stringList pkgConfigs: parent.pkgConfigs
         configure: {
             includes = [];
             cflags = [];
@@ -233,6 +236,7 @@ Module{
         id: ADDITIONAL_LIBS
         property bool useStdFs: project.useStdFs
         property stringList libs
+        property string platform: parent.platform;
         configure: {
             if(platform === "linux"  || platform === "linux64"){
                 var libslist = [
@@ -282,7 +286,7 @@ Module{
     }
 
     Probe{
-        condition: !isCoreLibrary
+        condition: !of.isCoreLibrary
         id: ADDONS
         property stringList includes
         property pathList sources
@@ -292,6 +296,8 @@ Module{
         property stringList cflags
         property stringList ldflags
         property stringList defines;
+        property bool isCoreLibrary: parent.isCoreLibrary
+        property stringList addons: parent.addons
 
         configure: {
             includes = [];
@@ -574,8 +580,8 @@ Module{
 
     //cpp.cxxLanguageVersion: "c++14"
 
-    coreWarningLevel: 'default'
-    coreCFlags: {
+    property string coreWarningLevel: 'default'
+    property stringList coreCFlags: {
         var flags = CORE.cflags
             .concat(['-Wno-unused-parameter','-Werror=return-type'])
             .concat(cFlags);
@@ -726,7 +732,7 @@ Module{
     property stringList dynamicLibraries: []
     property stringList addons
 
-    coreIncludePaths: {
+    property stringList coreIncludePaths: {
         var flags = CORE.includes
             .concat(includePaths);
         if(of.isCoreLibrary){
@@ -736,7 +742,7 @@ Module{
         }
     }
 
-    coreStaticLibs: {
+    property stringList coreStaticLibs: {
         if(of.isCoreLibrary){
             return CORE.static_libs;
         }else{
@@ -744,7 +750,7 @@ Module{
         }
     }
 
-    coreSystemLibs: {
+    property stringList coreSystemLibs: {
         if(of.isCoreLibrary){
             return CORE.system_libs
                 .concat(ADDITIONAL_LIBS.libs);
