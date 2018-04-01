@@ -314,7 +314,29 @@ function createPackage {
 	#delete tutorials by now
 	rm -Rf $pkg_ofroot/tutorials
 
-
+    #download external dependencies
+    cd $pkg_ofroot/
+    if [ "$pkg_platform" = "osx" ]; then
+        scripts/osx/download_libs.sh
+        scripts/emscripten/download_libs.sh -n
+    elif [ "$pkg_platform" = "linux64" ]; then
+        scripts/linux/download_libs.sh -a 64$libs_abi
+        scripts/emscripten/download_libs.sh -n
+    elif [ "$pkg_platform" = "linuxarmv6l" ]; then
+        scripts/linux/download_libs.sh -a armv6l
+    elif [ "$pkg_platform" = "linuxarmv7l" ]; then
+        scripts/linux/download_libs.sh -a armv7l
+    elif [ "$pkg_platform" = "msys2" ]; then
+        scripts/msys2/download_libs.sh
+    elif [ "$pkg_platform" = "vs2015" ]; then
+        scripts/dev/download_libs.sh -p vs2015
+    elif [ "$pkg_platform" = "vs2017" ]; then
+        scripts/dev/download_libs.sh -p vs2017
+    elif [ "$pkg_platform" = "android" ]; then
+        scripts/android/download_libs.sh
+    elif [ "$pkg_platform" = "ios" ]; then
+        scripts/ios/download_libs.sh
+    fi
 
     #create project files for platform
     createProjectFiles $pkg_platform $pkg_ofroot
@@ -429,30 +451,6 @@ function createPackage {
 		deleteVS
 		deleteXcode
 	fi
-
-    #download external dependencies
-    cd $pkg_ofroot/
-    if [ "$pkg_platform" = "osx" ]; then
-        scripts/osx/download_libs.sh
-        scripts/emscripten/download_libs.sh -n
-    elif [ "$pkg_platform" = "linux64" ]; then
-        scripts/linux/download_libs.sh -a 64$libs_abi
-        scripts/emscripten/download_libs.sh -n
-    elif [ "$pkg_platform" = "linuxarmv6l" ]; then
-        scripts/linux/download_libs.sh -a armv6l
-    elif [ "$pkg_platform" = "linuxarmv7l" ]; then
-        scripts/linux/download_libs.sh -a armv7l
-    elif [ "$pkg_platform" = "msys2" ]; then
-        scripts/msys2/download_libs.sh
-    elif [ "$pkg_platform" = "vs2015" ]; then
-        scripts/dev/download_libs.sh -p vs2015
-    elif [ "$pkg_platform" = "vs2017" ]; then
-        scripts/dev/download_libs.sh -p vs2017
-    elif [ "$pkg_platform" = "android" ]; then
-        scripts/android/download_libs.sh
-    elif [ "$pkg_platform" = "ios" ]; then
-        scripts/ios/download_libs.sh
-    fi
 
 	#delete ofxAndroid in non android
 	if [ "$pkg_platform" != "android" ]; then
