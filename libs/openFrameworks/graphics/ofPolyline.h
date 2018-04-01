@@ -4,6 +4,7 @@
 #define OF_POLYLINE_H
 
 #include "ofConstants.h"
+#include "glm/fwd.hpp"
 #include <deque>
 
 /// \file 
@@ -349,13 +350,13 @@ public:
     /// points removed.
 	void simplify(float tolerance=0.3f);
 
-        /// \}
+	/// \}
 	/// \name Transform polyline
 	/// \{
 
-        void translate(const glm::vec3 & p);
+	void translate(const glm::vec3& p);
 	void rotate(float az, const glm::vec3& axis );
-	void translate(const glm::vec2 & p);
+	void translate(const glm::vec2& p);
 	void rotate(float az, const glm::vec2& axis );
 
 	/// \brief Change the size of the ofPolyline
