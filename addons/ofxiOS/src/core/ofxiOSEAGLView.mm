@@ -103,7 +103,10 @@ static ofxiOSEAGLView * _instanceRef = nil;
 	
 	ofDisableTextureEdgeHack();
 	
+    window->renderer()->startRender();
 	window->events().notifySetup();
+    window->renderer()->finishRender();
+
 	bSetup = YES;
 	window->renderer()->clear();
 }
