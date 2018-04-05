@@ -48,6 +48,7 @@ void ofGLRenderer::setup(){
 	GLint currentFrameBuffer;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFrameBuffer);
 	defaultFramebufferId = currentFrameBuffer;
+    currentFramebufferId = defaultFramebufferId;
 #endif
 	setupGraphicDefaults();
 	viewport();
