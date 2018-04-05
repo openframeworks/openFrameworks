@@ -201,14 +201,10 @@
 		}
 		//borg
 		//NSLog(@"w %f h %f",[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height);
-		//assumes Portrait orientation
-		if(screenSize.width>screenSize.height){
-			center.x = screenSize.height * 0.5;
-			center.y = screenSize.width * 0.5;
-		}else{
-			center.x = screenSize.width * 0.5;
-			center.y = screenSize.height * 0.5;
-		}
+
+        center.x = screenSize.width * 0.5;
+        center.y = screenSize.height * 0.5;
+        
 		//NSLog(@"rotating to portrait %i, is portrait %i, currentInterfaceOrientation %i, bound: w %f h %f",UIInterfaceOrientationIsPortrait(interfaceOrientation),UIInterfaceOrientationIsPortrait(self.interfaceOrientation),UIInterfaceOrientationIsPortrait(currentInterfaceOrientation),bounds.size.width,bounds.size.height);
 	}
 	
