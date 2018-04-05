@@ -2387,6 +2387,7 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor){
 	GLint currentFrameBuffer;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFrameBuffer);
 	defaultFramebufferId = currentFrameBuffer;
+    currentFramebufferId = defaultFramebufferId;
 #endif
 
 	major = _major;
