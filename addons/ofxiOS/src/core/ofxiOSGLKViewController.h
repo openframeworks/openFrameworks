@@ -28,7 +28,7 @@ class ofxiOSApp;
 - (UIInterfaceOrientation)currentInterfaceOrientation;
 - (void)setCurrentInterfaceOrientation:(UIInterfaceOrientation) orient;
 - (void)rotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-							animated:(BOOL)animated;
+                            animated:(BOOL)animated;
 - (BOOL)isReadyToRotate;
 - (void)setPreferredFPS:(int)fps;
 - (EAGLSharegroup *)getSharegroup;

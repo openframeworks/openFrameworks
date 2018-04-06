@@ -17,9 +17,9 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 @interface ofxiOSEAGLView() {
     BOOL bInit;
-	shared_ptr<ofAppiOSWindow> window;
-	shared_ptr<ofxiOSApp> app;
-	BOOL bSetup;
+    shared_ptr<ofAppiOSWindow> window;
+    shared_ptr<ofxiOSApp> app;
+    BOOL bSetup;
 }
 - (void)updateDimensions;
 @end
@@ -35,19 +35,19 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr {
-	[self initWithFrame:frame andApp:appPtr sharegroup:nil];
-	return self;
+    [self initWithFrame:frame andApp:appPtr sharegroup:nil];
+    return self;
 }
 
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr sharegroup:(EAGLSharegroup *)sharegroup {
-	
-	window = dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
-	
+    
+    window = dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
+    
     if(window.get() == NULL) {
         ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView::initWithFrame - window is NULL");
         return nil;
     }
-	
+    
     ESRendererVersion preferedRendererVersion = (ESRendererVersion)window->getSettings().glesVersion;
     
     self = [self initWithFrame:frame
@@ -57,9 +57,9 @@ static ofxiOSEAGLView * _instanceRef = nil;
                  andNumSamples:window->getAntiAliasingSampleCount()
                      andRetina:window->isRetinaEnabled()
                 andRetinaScale:window->getRetinaScale()
-					sharegroup:sharegroup];
+                    sharegroup:sharegroup];
     
-	bSetup = NO;
+    bSetup = NO;
     if(self) {
         
         _instanceRef = self;
@@ -70,9 +70,9 @@ static ofxiOSEAGLView * _instanceRef = nil;
         screenSize = new glm::vec2();
         windowSize = new glm::vec2();
         windowPos = new glm::vec2();
-		ofSetOrientation(window->getOrientation());
+        ofSetOrientation(window->getOrientation());
         [self updateDimensions];
-		
+        
         bInit = YES;
     }
     
@@ -80,38 +80,38 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (void)setup {
-	if(window.get() == NULL) {
-		ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView setup. Failed setup. window is NULL");
-		return;
-	}
-	
-	if(app.get() != ofGetAppPtr()) { // check if already running.
-		
-		ofSetMainLoop(shared_ptr<ofMainLoop>(NULL)); // destroy old main loop.
-		auto mainLoop = std::make_shared<ofMainLoop>(); // make new main loop.
-		ofSetMainLoop(mainLoop);
-		
-		ofiOSWindowSettings windowSettings = window->getSettings();
-		window = NULL;
+    if(window.get() == NULL) {
+        ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView setup. Failed setup. window is NULL");
+        return;
+    }
+    
+    if(app.get() != ofGetAppPtr()) { // check if already running.
+        
+        ofSetMainLoop(shared_ptr<ofMainLoop>(NULL)); // destroy old main loop.
+        auto mainLoop = std::make_shared<ofMainLoop>(); // make new main loop.
+        ofSetMainLoop(mainLoop);
+        
+        ofiOSWindowSettings windowSettings = window->getSettings();
+        window = NULL;
 
-		window = dynamic_pointer_cast<ofAppiOSWindow>(ofCreateWindow(windowSettings));
+        window = dynamic_pointer_cast<ofAppiOSWindow>(ofCreateWindow(windowSettings));
 
-		ofRunApp(app);
-	}
-	
-	if(window->isProgrammableRenderer() == true) {
-		static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(window->getSettings().glesVersion, 0);
-	} else{
-		static_cast<ofGLRenderer*>(window->renderer().get())->setup();
-	}
-	
-	ofxiOSAlerts.addListener(app.get());
-	
-	ofDisableTextureEdgeHack();
-	
-	window->events().notifySetup();
-	bSetup = YES;
-	window->renderer()->clear();
+        ofRunApp(app);
+    }
+    
+    if(window->isProgrammableRenderer() == true) {
+        static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(window->getSettings().glesVersion, 0);
+    } else{
+        static_cast<ofGLRenderer*>(window->renderer().get())->setup();
+    }
+    
+    ofxiOSAlerts.addListener(app.get());
+    
+    ofDisableTextureEdgeHack();
+    
+    window->events().notifySetup();
+    bSetup = YES;
+    window->renderer()->clear();
 }
 
 - (void)destroy {
@@ -119,24 +119,24 @@ static ofxiOSEAGLView * _instanceRef = nil;
         return;
     }
 
-	window->events().notifyExit();
-	
+    window->events().notifyExit();
+    
     ofxiOSAlerts.removeListener(app.get());
 
-	ofGetMainLoop()->exit();
-	
-	app = NULL;
-	window = NULL;
-	
-	[activeTouches release];
-	
-	delete screenSize;
-	screenSize = NULL;
-	delete windowSize;
-	windowSize = NULL;
-	delete windowPos;
-	windowPos = NULL;
-	
+    ofGetMainLoop()->exit();
+    
+    app = NULL;
+    window = NULL;
+    
+    [activeTouches release];
+    
+    delete screenSize;
+    screenSize = NULL;
+    delete windowSize;
+    windowSize = NULL;
+    delete windowPos;
+    windowPos = NULL;
+    
     _instanceRef = nil;
     
     bInit = NO;
@@ -174,7 +174,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (void)drawView {
-	if(bSetup == NO) return;
+    if(bSetup == NO) return;
     window->events().notifyUpdate();
 
     //------------------------------------------
@@ -217,27 +217,27 @@ static ofxiOSEAGLView * _instanceRef = nil;
     ofOrientation orientation = ofGetOrientation();
     CGPoint touchPointOriented = CGPointZero;
     
-	switch(orientation) {
-		case OF_ORIENTATION_180:
-			touchPointOriented.x = ofGetWidth() - touchPoint.x;
-			touchPointOriented.y = ofGetHeight() - touchPoint.y;
-			break;
-			
-		case OF_ORIENTATION_90_LEFT:
-			touchPointOriented.x = touchPoint.y;
-			touchPointOriented.y = ofGetHeight() - touchPoint.x;
-			break;
-			
-		case OF_ORIENTATION_90_RIGHT:
-			touchPointOriented.x = ofGetWidth() - touchPoint.y;
-			touchPointOriented.y = touchPoint.x;
-			break;
-			
-		case OF_ORIENTATION_DEFAULT:
-		default:
+    switch(orientation) {
+        case OF_ORIENTATION_180:
+            touchPointOriented.x = ofGetWidth() - touchPoint.x;
+            touchPointOriented.y = ofGetHeight() - touchPoint.y;
+            break;
+            
+        case OF_ORIENTATION_90_LEFT:
+            touchPointOriented.x = touchPoint.y;
+            touchPointOriented.y = ofGetHeight() - touchPoint.x;
+            break;
+            
+        case OF_ORIENTATION_90_RIGHT:
+            touchPointOriented.x = ofGetWidth() - touchPoint.y;
+            touchPointOriented.y = touchPoint.x;
+            break;
+            
+        case OF_ORIENTATION_DEFAULT:
+        default:
             touchPointOriented = touchPoint;
-			break;
-	}
+            break;
+    }
     return touchPointOriented;
 }
 
@@ -245,7 +245,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 -(void) resetTouches {
 
-	[activeTouches removeAllObjects];
+    [activeTouches removeAllObjects];
 }
 
 - (void)touchesBegan:(NSSet *)touches 
@@ -256,37 +256,37 @@ static ofxiOSEAGLView * _instanceRef = nil;
         // we no longer need to pass on these touch events.
         return; 
     }
-	
-	for(UITouch *touch in touches) {
-		int touchIndex = 0;
-		while([[activeTouches allValues] containsObject:[NSNumber numberWithInt:touchIndex]]){
-			touchIndex++;
-		}
-		
-		[activeTouches setObject:[NSNumber numberWithInt:touchIndex] forKey:[NSValue valueWithPointer:touch]];
-		
-		CGPoint touchPoint = [touch locationInView:self];
-		
-		touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
-		touchPoint.y *= scaleFactor;
-		touchPoint = [self orientateTouchPoint:touchPoint];
-		
-		if( touchIndex==0 ){
-            window->events().notifyMousePressed(touchPoint.x, touchPoint.y, 0);
-		}
-		
-		ofTouchEventArgs touchArgs;
-        touchArgs.numTouches = [[event touchesForView:self] count];
-		touchArgs.x = touchPoint.x;
-		touchArgs.y = touchPoint.y;
-		touchArgs.id = touchIndex;
-        if([touch tapCount] == 2){
-			touchArgs.type = ofTouchEventArgs::doubleTap;
-			ofNotifyEvent(window->events().touchDoubleTap,touchArgs);	// send doubletap
+    
+    for(UITouch *touch in touches) {
+        int touchIndex = 0;
+        while([[activeTouches allValues] containsObject:[NSNumber numberWithInt:touchIndex]]){
+            touchIndex++;
         }
-		touchArgs.type = ofTouchEventArgs::down;
-		ofNotifyEvent(window->events().touchDown,touchArgs);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
-	}	
+        
+        [activeTouches setObject:[NSNumber numberWithInt:touchIndex] forKey:[NSValue valueWithPointer:touch]];
+        
+        CGPoint touchPoint = [touch locationInView:self];
+        
+        touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+        touchPoint.y *= scaleFactor;
+        touchPoint = [self orientateTouchPoint:touchPoint];
+        
+        if( touchIndex==0 ){
+            window->events().notifyMousePressed(touchPoint.x, touchPoint.y, 0);
+        }
+        
+        ofTouchEventArgs touchArgs;
+        touchArgs.numTouches = [[event touchesForView:self] count];
+        touchArgs.x = touchPoint.x;
+        touchArgs.y = touchPoint.y;
+        touchArgs.id = touchIndex;
+        if([touch tapCount] == 2){
+            touchArgs.type = ofTouchEventArgs::doubleTap;
+            ofNotifyEvent(window->events().touchDoubleTap,touchArgs);   // send doubletap
+        }
+        touchArgs.type = ofTouchEventArgs::down;
+        ofNotifyEvent(window->events().touchDown,touchArgs);    // but also send tap (upto app programmer to ignore this if doubletap came that frame)
+    }   
 }
 
 //------------------------------------------------------
@@ -298,27 +298,27 @@ static ofxiOSEAGLView * _instanceRef = nil;
         // we no longer need to pass on these touch events.
         return; 
     }
-	
-	for(UITouch *touch in touches){
-		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
-		
-		CGPoint touchPoint = [touch locationInView:self];
-		
-		touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
-		touchPoint.y *= scaleFactor;
-		touchPoint = [self orientateTouchPoint:touchPoint];
-		
-		if( touchIndex==0 ){
+    
+    for(UITouch *touch in touches){
+        int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
+        
+        CGPoint touchPoint = [touch locationInView:self];
+        
+        touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+        touchPoint.y *= scaleFactor;
+        touchPoint = [self orientateTouchPoint:touchPoint];
+        
+        if( touchIndex==0 ){
             window->events().notifyMouseDragged(touchPoint.x, touchPoint.y, 0);
-		}		
-		ofTouchEventArgs touchArgs;
-		touchArgs.numTouches = [[event touchesForView:self] count];
-		touchArgs.x = touchPoint.x;
-		touchArgs.y = touchPoint.y;
-		touchArgs.id = touchIndex;
-		touchArgs.type = ofTouchEventArgs::move;
-		ofNotifyEvent(window->events().touchMoved, touchArgs);
-	}
+        }       
+        ofTouchEventArgs touchArgs;
+        touchArgs.numTouches = [[event touchesForView:self] count];
+        touchArgs.x = touchPoint.x;
+        touchArgs.y = touchPoint.y;
+        touchArgs.id = touchIndex;
+        touchArgs.type = ofTouchEventArgs::move;
+        ofNotifyEvent(window->events().touchMoved, touchArgs);
+    }
 }
 
 //------------------------------------------------------
@@ -331,29 +331,29 @@ static ofxiOSEAGLView * _instanceRef = nil;
         return; 
     }
     
-	for(UITouch *touch in touches){
-		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
-		
-		[activeTouches removeObjectForKey:[NSValue valueWithPointer:touch]];
-		
-		CGPoint touchPoint = [touch locationInView:self];
-		
-		touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
-		touchPoint.y *= scaleFactor;
-		touchPoint = [self orientateTouchPoint:touchPoint];
-		
-		if( touchIndex==0 ){
-			window->events().notifyMouseReleased(touchPoint.x, touchPoint.y, 0);
-		}
-		
-		ofTouchEventArgs touchArgs;
-		touchArgs.numTouches = [[event touchesForView:self] count] - [touches count];
-		touchArgs.x = touchPoint.x;
-		touchArgs.y = touchPoint.y;
-		touchArgs.id = touchIndex;
-		touchArgs.type = ofTouchEventArgs::up;
-		ofNotifyEvent(window->events().touchUp, touchArgs);
-	}
+    for(UITouch *touch in touches){
+        int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
+        
+        [activeTouches removeObjectForKey:[NSValue valueWithPointer:touch]];
+        
+        CGPoint touchPoint = [touch locationInView:self];
+        
+        touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+        touchPoint.y *= scaleFactor;
+        touchPoint = [self orientateTouchPoint:touchPoint];
+        
+        if( touchIndex==0 ){
+            window->events().notifyMouseReleased(touchPoint.x, touchPoint.y, 0);
+        }
+        
+        ofTouchEventArgs touchArgs;
+        touchArgs.numTouches = [[event touchesForView:self] count] - [touches count];
+        touchArgs.x = touchPoint.x;
+        touchArgs.y = touchPoint.y;
+        touchArgs.id = touchIndex;
+        touchArgs.type = ofTouchEventArgs::up;
+        ofNotifyEvent(window->events().touchUp, touchArgs);
+    }
 }
 
 //------------------------------------------------------
@@ -365,26 +365,26 @@ static ofxiOSEAGLView * _instanceRef = nil;
         // we no longer need to pass on these touch events.
         return; 
     }
-	
-	for(UITouch *touch in touches){
-		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
-		
-		CGPoint touchPoint = [touch locationInView:self];
-		
-		touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
-		touchPoint.y *= scaleFactor;
-		touchPoint = [self orientateTouchPoint:touchPoint];
-		
-		ofTouchEventArgs touchArgs;
-		touchArgs.numTouches = [[event touchesForView:self] count];
-		touchArgs.x = touchPoint.x;
-		touchArgs.y = touchPoint.y;
-		touchArgs.id = touchIndex;
-		touchArgs.type = ofTouchEventArgs::cancel;
-		ofNotifyEvent(window->events().touchCancelled, touchArgs);
-	}
-	
-	[self touchesEnded:touches withEvent:event];
+    
+    for(UITouch *touch in touches){
+        int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
+        
+        CGPoint touchPoint = [touch locationInView:self];
+        
+        touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+        touchPoint.y *= scaleFactor;
+        touchPoint = [self orientateTouchPoint:touchPoint];
+        
+        ofTouchEventArgs touchArgs;
+        touchArgs.numTouches = [[event touchesForView:self] count];
+        touchArgs.x = touchPoint.x;
+        touchArgs.y = touchPoint.y;
+        touchArgs.id = touchIndex;
+        touchArgs.type = ofTouchEventArgs::cancel;
+        ofNotifyEvent(window->events().touchCancelled, touchArgs);
+    }
+    
+    [self touchesEnded:touches withEvent:event];
 }
 
 

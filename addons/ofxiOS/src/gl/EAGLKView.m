@@ -22,7 +22,7 @@
 @synthesize delegate;
 // You must implement this method
 + (Class) layerClass {
-	return [CAEAGLLayer class];
+    return [CAEAGLLayer class];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -31,11 +31,11 @@ andPreferedRenderer:(ESRendererVersion)version
           andRetina:(bool)retinaEnabled
      andRetinaScale:(CGFloat)retinaScale
  sharegroup:(EAGLSharegroup*)sharegroup
-		colorFormat:(GLKViewDrawableColorFormat)colorFormat
-		depthFormat:(GLKViewDrawableDepthFormat)depthFormat
-	  stencilFormat:(GLKViewDrawableStencilFormat)stencilFormat {
+        colorFormat:(GLKViewDrawableColorFormat)colorFormat
+        depthFormat:(GLKViewDrawableDepthFormat)depthFormat
+      stencilFormat:(GLKViewDrawableStencilFormat)stencilFormat {
 
-	if((self = [super initWithFrame:frame])) {
+    if((self = [super initWithFrame:frame])) {
         
         rendererVersion = version;
         bUseMSAA = msaaEnabled;
@@ -66,45 +66,45 @@ andPreferedRenderer:(ESRendererVersion)version
         }
         
         if(rendererVersion == ESRendererVersion_20) {
-			self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2 sharegroup:sharegroup];
-			NSLog(@"Creating OpenGL ES2 Renderer");
-			if(!self.context) {
-				NSLog(@"OpenGL ES2 failed");
-				rendererVersion = ESRendererVersion_11;
-			}
+            self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2 sharegroup:sharegroup];
+            NSLog(@"Creating OpenGL ES2 Renderer");
+            if(!self.context) {
+                NSLog(@"OpenGL ES2 failed");
+                rendererVersion = ESRendererVersion_11;
+            }
         }
-		
+        
         if(rendererVersion == ESRendererVersion_11) {
-			NSLog(@"Creating OpenGL ES1.1 Renderer");
+            NSLog(@"Creating OpenGL ES1.1 Renderer");
             self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1 sharegroup:sharegroup];
-			
+            
             if(!self.context){
                 NSLog(@"Critical Error - ofiOS GLKView.m could not start any type of OpenGLES renderer");
-				[self release];
-				return nil;
-			}
+                [self release];
+                return nil;
+            }
         }
-		
-		self.drawableColorFormat = colorFormat;
-		self.drawableDepthFormat = depthFormat;
-		self.drawableStencilFormat = stencilFormat;
-		
-		if(msaaEnabled)
-			self.drawableMultisample = GLKViewDrawableMultisample4X;
-		else
-			self.drawableMultisample = GLKViewDrawableMultisampleNone;
-		
+        
+        self.drawableColorFormat = colorFormat;
+        self.drawableDepthFormat = depthFormat;
+        self.drawableStencilFormat = stencilFormat;
+        
+        if(msaaEnabled)
+            self.drawableMultisample = GLKViewDrawableMultisample4X;
+        else
+            self.drawableMultisample = GLKViewDrawableMultisampleNone;
+        
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
-		self.multipleTouchEnabled = true;
+        self.multipleTouchEnabled = true;
 #endif
-		self.opaque = true;
-		
-		[self bindDrawable];
-		
+        self.opaque = true;
+        
+        [self bindDrawable];
+        
         bInit = YES;
-	}
-	
-	return self;
+    }
+    
+    return self;
 }
 
 - (void) destroy {
@@ -116,14 +116,14 @@ andPreferedRenderer:(ESRendererVersion)version
 
 - (void) dealloc{
     [self destroy];
-	[super dealloc];
+    [super dealloc];
 }
 
 - (void) setup {
-	
+    
 }
 - (void) update{
-	
+    
 }
 
 - (void) draw{
@@ -142,7 +142,7 @@ andPreferedRenderer:(ESRendererVersion)version
 //-------------------------------------------------------------------
 - (void)updateScaleFactor {
     GLKView *view = (GLKView *)self;
-	
+    
     scaleFactor = MIN(scaleFactorPref, [view contentScaleFactor]);
     if(scaleFactor != self.contentScaleFactor) {
         self.contentScaleFactor = scaleFactor;

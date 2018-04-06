@@ -6,22 +6,22 @@
 
 // Create an OpenGL ES 2.0 context
 - (id)init {
-	return [self initWithDepth:false andAA:false andMSAASamples:0 andRetina:false sharegroup:nil];
+    return [self initWithDepth:false andAA:false andMSAASamples:0 andRetina:false sharegroup:nil];
 }
 
 - (id)initWithDepth:(bool)depth andAA:(bool)msaa andMSAASamples:(int)samples andRetina:(bool)retina sharegroup:(EAGLSharegroup*)sharegroup{
     if((self = [super init])) {
-		depthEnabled = depth;
-		msaaEnabled = msaa;
-		msaaSamples = samples;
-		retinaEnabled = retina;
+        depthEnabled = depth;
+        msaaEnabled = msaa;
+        msaaSamples = samples;
+        retinaEnabled = retina;
         bResize = false;
-		
+        
         context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2 sharegroup:sharegroup];
-		NSLog(@"Creating OpenGL ES2 Renderer");
+        NSLog(@"Creating OpenGL ES2 Renderer");
 
         if(!context || ![EAGLContext setCurrentContext:context]) {
-			NSLog(@"OpenGL ES2 failed");
+            NSLog(@"OpenGL ES2 failed");
             [self release];
             return nil;
         }
@@ -42,7 +42,7 @@
 }
 
 -(EAGLContext*) context {
-	return context;
+    return context;
 }
 
 - (void)startRender {
@@ -50,20 +50,20 @@
 }
 
 - (void)finishRender {
-	if(msaaEnabled) {
-		if(depthEnabled) {
-			GLenum attachments[] = {GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT};
-			glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 2, attachments);
-		} else {
-			GLenum attachments[] = {GL_COLOR_ATTACHMENT0};
-			glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 1, attachments);
-		}
+    if(msaaEnabled) {
+        if(depthEnabled) {
+            GLenum attachments[] = {GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT};
+            glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 2, attachments);
+        } else {
+            GLenum attachments[] = {GL_COLOR_ATTACHMENT0};
+            glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 1, attachments);
+        }
         
-		glBindFramebuffer(GL_READ_FRAMEBUFFER_APPLE, msaaFrameBuffer);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER_APPLE, defaultFramebuffer);
-		glResolveMultisampleFramebufferAPPLE();
-	}
-	
+        glBindFramebuffer(GL_READ_FRAMEBUFFER_APPLE, msaaFrameBuffer);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER_APPLE, defaultFramebuffer);
+        glResolveMultisampleFramebufferAPPLE();
+    }
+    
     glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
     if(bResize) {
         /**
@@ -75,9 +75,9 @@
         bResize = false;
     }
     [context presentRenderbuffer:GL_RENDERBUFFER];
-	
-	if(msaaEnabled) {
-		glBindFramebuffer(GL_FRAMEBUFFER, msaaFrameBuffer);
+    
+    if(msaaEnabled) {
+        glBindFramebuffer(GL_FRAMEBUFFER, msaaFrameBuffer);
     }
 }
 
@@ -103,32 +103,32 @@
         glGenFramebuffers(1, &msaaFrameBuffer);
         glGenRenderbuffers(1, &msaaColorRenderBuffer);
     }
-	
+    
     glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &backingWidth);
     glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &backingHeight);
-	
-	if(msaaEnabled) {
-		glBindFramebuffer(GL_FRAMEBUFFER, msaaFrameBuffer);
-		glBindRenderbuffer(GL_RENDERBUFFER, msaaColorRenderBuffer);
-		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, msaaSamples, GL_RGB5_A1, backingWidth, backingHeight);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, msaaColorRenderBuffer);
-	}
-	
-	if(depthEnabled) {
-		if(!depthRenderbuffer) {
-			glGenRenderbuffers(1, &depthRenderbuffer);
+    
+    if(msaaEnabled) {
+        glBindFramebuffer(GL_FRAMEBUFFER, msaaFrameBuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, msaaColorRenderBuffer);
+        glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, msaaSamples, GL_RGB5_A1, backingWidth, backingHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, msaaColorRenderBuffer);
+    }
+    
+    if(depthEnabled) {
+        if(!depthRenderbuffer) {
+            glGenRenderbuffers(1, &depthRenderbuffer);
         }
-		
-		glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
-		
-		if(msaaEnabled) {
-			glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, msaaSamples, GL_DEPTH_COMPONENT16, backingWidth, backingHeight);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
-		} else {
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, backingWidth, backingHeight); // GL DEPTH COMPONENT ON THIS LINE ISNT CORRECT POTENTIALLY
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
-		}
-	}
+        
+        glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+        
+        if(msaaEnabled) {
+            glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, msaaSamples, GL_DEPTH_COMPONENT16, backingWidth, backingHeight);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+        } else {
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, backingWidth, backingHeight); // GL DEPTH COMPONENT ON THIS LINE ISNT CORRECT POTENTIALLY
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+        }
+    }
     
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         NSLog(@"Failed to make complete framebuffer object %x %ix%i", glCheckFramebufferStatus(GL_FRAMEBUFFER), backingWidth, backingHeight);
@@ -149,20 +149,20 @@
         colorRenderbuffer = 0;
     }
     
-	if(depthRenderbuffer) {
-		glDeleteRenderbuffers(1, &depthRenderbuffer);
-		depthRenderbuffer = 0;
-	}
-	
-	if(msaaFrameBuffer) {
-		glDeleteRenderbuffers(1, &msaaFrameBuffer);
-		msaaFrameBuffer = 0;
-	}
-	
-	if(msaaColorRenderBuffer) {
-		glDeleteRenderbuffers(1, &msaaColorRenderBuffer);
-		msaaColorRenderBuffer = 0;
-	}
+    if(depthRenderbuffer) {
+        glDeleteRenderbuffers(1, &depthRenderbuffer);
+        depthRenderbuffer = 0;
+    }
+    
+    if(msaaFrameBuffer) {
+        glDeleteRenderbuffers(1, &msaaFrameBuffer);
+        msaaFrameBuffer = 0;
+    }
+    
+    if(msaaColorRenderBuffer) {
+        glDeleteRenderbuffers(1, &msaaColorRenderBuffer);
+        msaaColorRenderBuffer = 0;
+    }
 }
 
 - (void)dealloc {

@@ -24,7 +24,7 @@
 {
 
 @protected
-	
+  
     CGFloat scaleFactor;
     CGFloat scaleFactorPref;
     
@@ -42,10 +42,10 @@ andPreferedRenderer:(ESRendererVersion)rendererVersion
               andAA:(bool)msaaEnabled
           andRetina:(bool)retinaEnabled
      andRetinaScale:(CGFloat)retinaScale
-		 sharegroup:(EAGLSharegroup*)sharegroup
-		colorFormat:(GLKViewDrawableColorFormat)colorFormat
-		depthFormat:(GLKViewDrawableDepthFormat)depthFormat
-	  stencilFormat:(GLKViewDrawableStencilFormat)stencilFormat;
+     sharegroup:(EAGLSharegroup*)sharegroup
+    colorFormat:(GLKViewDrawableColorFormat)colorFormat
+    depthFormat:(GLKViewDrawableDepthFormat)depthFormat
+    stencilFormat:(GLKViewDrawableStencilFormat)stencilFormat;
 
 
 

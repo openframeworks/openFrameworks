@@ -18,10 +18,10 @@ class ofAppiOSWindow;
 @interface ofxiOSGLKView : EAGLKView {
 
 @protected
-    NSMutableDictionary	* activeTouches;
-	glm::vec2 * screenSize;   // because glm::vec2 is forward declared,
-	glm::vec2 * windowSize;   // these values have to be pointers.
-	glm::vec2 * windowPos;
+    NSMutableDictionary * activeTouches;
+    glm::vec2 * screenSize;   // because glm::vec2 is forward declared,
+    glm::vec2 * windowSize;   // these values have to be pointers.
+    glm::vec2 * windowPos;
 }
 
 @property (readonly, nonatomic, getter=getScreenSize) glm::vec2 * screenSize;
@@ -31,8 +31,8 @@ class ofAppiOSWindow;
 + (ofxiOSGLKView *) getInstance;
 
 - (id)initWithFrame:(CGRect)frame
-			 andApp:(ofxiOSApp *)app
-		 sharegroup:(EAGLSharegroup *)sharegroup;
+             andApp:(ofxiOSApp *)app
+         sharegroup:(EAGLSharegroup *)sharegroup;
 - (void)setup;
 - (void)update;
 - (void)draw;
