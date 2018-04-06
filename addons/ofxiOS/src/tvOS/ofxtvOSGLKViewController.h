@@ -1,8 +1,7 @@
-//
-//  ofxtvOSViewController.h
+//  ofxtvOSGLKViewController.mm
 //  tvOS+OFLib
 //
-//  Created by Daniel Rosser on 26/10/2015.
+//  Created by Dan Rosser on 10/3/18.
 
 #pragma once
 
@@ -10,16 +9,20 @@
 #define ofxtvOSViewController_h
 
 #import <UIKit/UIKit.h>
+#import <GLKit/GLKit.h>
 
 class ofxiOSApp;
-@class ofxiOSEAGLView;
+@class ofxiOSGLKView;
 
-@interface ofxtvOSViewController : UIViewController
+@interface ofxtvOSGLKViewController : GLKViewController
 
-@property (nonatomic, retain) ofxiOSEAGLView * glView;
+@property (nonatomic, retain) ofxiOSGLKView * glView;
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app;
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup;
+
+- (void)setPreferredFPS:(int)fps;
+- (EAGLSharegroup *)getSharegroup;
 
 @end
 

@@ -72,6 +72,7 @@
 			<array>
 				<string>9969E7561C782C4500DEF0F6</string>
 				<string>E41D421413B3A95300A75A5D</string>
+				<string>901808C12053638E004A7774</string>
 				<string>1D60589F0D05DD5A006BFB54</string>
 				<string>1DF5F4E00D08C38300B7A737</string>
 				<string>288765FD0DF74451002DB57D</string>
@@ -142,6 +143,11 @@
 				<string>AppIcon</string>
 				<key>ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME</key>
 				<string>Brand Assets</string>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>$(PROJECT_DIR)</string>
+				</array>
 				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
 				<string>YES</string>
 				<key>GCC_PREFIX_HEADER</key>
@@ -172,6 +178,11 @@
 				<string>AppIcon</string>
 				<key>ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME</key>
 				<string>Brand Assets</string>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>$(PROJECT_DIR)</string>
+				</array>
 				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
 				<string>YES</string>
 				<key>GCC_PREFIX_HEADER</key>
@@ -309,6 +320,7 @@
 				<string>BB16F26B0F2B646B00518274</string>
 				<string>BB16E9930F2B1E5900518274</string>
 				<string>19C28FACFE9D520D11CA2CBB</string>
+				<string>901808C02053638E004A7774</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -322,6 +334,7 @@
 			<key>children</key>
 			<array>
 				<string>67DFA53419F92A5E003B3434</string>
+				<string>901808BF2053636F004A7774</string>
 				<string>BBE5EAB70F49AD8400F28951</string>
 				<string>E41D400613B39D2100A75A5D</string>
 				<string>E4A823A312561BE3002F86A2</string>
@@ -427,6 +440,37 @@
 			<string>local_addons</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
+		</dict>
+		<key>901808BF2053636F004A7774</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>GLKit.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/GLKit.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>901808C02053638E004A7774</key>
+		<dict>
+			<key>children</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Frameworks</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>901808C12053638E004A7774</key>
+		<dict>
+			<key>fileRef</key>
+			<string>901808BF2053636F004A7774</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
 		</dict>
 		<key>9255DD331112741900D6945E</key>
 		<dict>
@@ -702,7 +746,7 @@
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
 				<string>7.0</string>
 				<key>ONLY_ACTIVE_ARCH</key>
-				<string>NO</string>
+				<string>YES</string>
 				<key>PROVISIONING_PROFILE[sdk=iphoneos*]</key>
 				<string></string>
 				<key>SDKROOT</key>

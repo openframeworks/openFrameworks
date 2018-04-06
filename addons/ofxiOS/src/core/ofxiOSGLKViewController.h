@@ -1,7 +1,12 @@
 //
-//  ofxiOSViewController.h
-//  Created by lukasz karluk on 12/12/11.
+//  ofxiOSGLKViewController.h
+//  iOS+OFLib
 //
+//  Created by Dan R on 7/3/18.
+//
+
+#ifndef ofxiOSGLKViewController_h
+#define ofxiOSGLKViewController_h
 
 #pragma once
 
@@ -9,15 +14,15 @@
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import <UIKit/UIKit.h>
+#import <GLKit/GLKit.h>
 
 class ofxiOSApp;
-@class ofxiOSEAGLView;
+@class ofxiOSGLKView;
 
-@interface ofxiOSViewController : UIViewController
+@interface ofxiOSGLKViewController : GLKViewController
 
-@property (nonatomic, retain) ofxiOSEAGLView * glView;
+@property (nonatomic, retain) ofxiOSGLKView * glView;
 
-- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app;
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup;
 
 - (UIInterfaceOrientation)currentInterfaceOrientation;
@@ -25,9 +30,12 @@ class ofxiOSApp;
 - (void)rotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
                             animated:(BOOL)animated;
 - (BOOL)isReadyToRotate;
+- (void)setPreferredFPS:(int)fps;
+- (EAGLSharegroup *)getSharegroup;
 
 @end
 
-#define ofxPhoneViewController ofxiOSViewController
-
 #endif
+
+
+#endif /* ofxiOSGLKViewController_h */

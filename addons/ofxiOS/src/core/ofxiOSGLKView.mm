@@ -1,11 +1,11 @@
 //
-//  ofxiOSEAGLView.m
-//  iOS+OFLib
+//  ofxiOSGLKView.mm
+//  iPhone+OF Static Library
 //
-//  Created by lukasz karluk on 5/07/12.
+//  Created by Dan Rosser on 7/3/18.
 //
 
-#include "ofxiOSEAGLView.h"
+#include "ofxiOSGLKView.h"
 #include "ofxiOSApp.h"
 #include "ofAppiOSWindow.h"
 #include "ofGLRenderer.h"
@@ -13,9 +13,9 @@
 #include <TargetConditionals.h>
 #import <GameController/GameController.h>
 
-static ofxiOSEAGLView * _instanceRef = nil;
+static ofxiOSGLKView * _instanceRef = nil;
 
-@interface ofxiOSEAGLView() {
+@interface ofxiOSGLKView() {
     BOOL bInit;
     shared_ptr<ofAppiOSWindow> window;
     shared_ptr<ofxiOSApp> app;
@@ -24,22 +24,17 @@ static ofxiOSEAGLView * _instanceRef = nil;
 - (void)updateDimensions;
 @end
 
-@implementation ofxiOSEAGLView
+@implementation ofxiOSGLKView
 
 @synthesize screenSize;
 @synthesize windowSize;
 @synthesize windowPos;
 
-+ (ofxiOSEAGLView *) getInstance {
++ (ofxiOSGLKView *) getInstance {
     return _instanceRef;
 }
 
-- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr {
-    [self initWithFrame:frame andApp:appPtr sharegroup:nil];
-    return self;
-}
-
-- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr sharegroup:(EAGLSharegroup *)sharegroup {
+- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr sharegroup:(EAGLSharegroup *)sharegroup{
     
     window = dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
     
@@ -52,12 +47,13 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     self = [self initWithFrame:frame
            andPreferedRenderer:preferedRendererVersion
-                      andDepth:window->isDepthBufferEnabled()
                          andAA:window->isAntiAliasingEnabled()
-                 andNumSamples:window->getAntiAliasingSampleCount()
                      andRetina:window->isRetinaEnabled()
                 andRetinaScale:window->getRetinaScale()
-                    sharegroup:sharegroup];
+                    sharegroup:sharegroup
+                   colorFormat:(GLKViewDrawableColorFormat)window->getRendererColorType()
+                   depthFormat:(GLKViewDrawableDepthFormat)window->getRendererDepthType()
+                 stencilFormat:(GLKViewDrawableStencilFormat)window->getRendererStencilType()];
     
     bSetup = NO;
     if(self) {
@@ -173,14 +169,15 @@ static ofxiOSEAGLView * _instanceRef = nil;
     // we want to notifyResized at the end of layoutSubviews.
 }
 
-- (void)drawView {
+- (void)update {
     if(bSetup == NO) return;
-    window->events().notifyUpdate();
-
-    //------------------------------------------
     
-    [self lockGL];
-    [self startRender];
+    window->events().notifyUpdate();
+}
+
+
+- (void)draw {
+    if(bSetup == NO) return;
     
     window->renderer()->startRender();
     
@@ -196,11 +193,9 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     window->renderer()->finishRender();
     
-    [self finishRender];
-    [self unlockGL];
-    
     [super notifyDraw];   // alerts delegate that a new frame has been drawn.
 }
+
 
 - (void)notifyDraw {
     // blank this.
@@ -385,6 +380,10 @@ static ofxiOSEAGLView * _instanceRef = nil;
     }
     
     [self touchesEnded:touches withEvent:event];
+}
+
+- (UIImage*)getSnapshot {
+    return self.snapshot;
 }
 
 
