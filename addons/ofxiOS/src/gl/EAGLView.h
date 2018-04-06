@@ -61,14 +61,14 @@
     NSInteger msaaSamples;
     ESRendererVersion rendererVersion;
     
-	BOOL animating;
-	BOOL displayLinkSupported;
-	float animationFrameInterval;
-	// Use of the CADisplayLink class is the preferred method for controlling your animation timing.
-	// CADisplayLink will link to the main display and fire every vsync when added to a given run-loop.
-	// The NSTimer class is used only as fallback when running on a pre 3.1 device where CADisplayLink
-	// isn't available.
-	id displayLink;
+  BOOL animating;
+  BOOL displayLinkSupported;
+  float animationFrameInterval;
+  // Use of the CADisplayLink class is the preferred method for controlling your animation timing.
+  // CADisplayLink will link to the main display and fire every vsync when added to a given run-loop.
+  // The NSTimer class is used only as fallback when running on a pre 3.1 device where CADisplayLink
+  // isn't available.
+  id displayLink;
     NSTimer * animationTimer;
     
     NSLock * glLock;
@@ -86,7 +86,7 @@ andPreferedRenderer:(ESRendererVersion)rendererVersion
       andNumSamples:(int)samples
           andRetina:(bool)retinaEnabled
      andRetinaScale:(CGFloat)retinaScale
-		 sharegroup:(EAGLSharegroup*)sharegroup;
+     sharegroup:(EAGLSharegroup*)sharegroup;
 
 - (void)startAnimation;
 - (void)stopAnimation;
