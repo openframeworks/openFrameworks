@@ -28,19 +28,19 @@ ofBuffer::ofBuffer()
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(const char * _buffer, std::size_t size)
-:buffer(_buffer,_buffer+size)
+ofBuffer::ofBuffer(const char * _buffer, std::size_t _size)
+:buffer(_buffer,_buffer+_size)
 ,currentLine(end(),end()){
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(istream & stream, size_t ioBlockSize)
+ofBuffer::ofBuffer(istream & stream, std::size_t ioBlockSize)
 :currentLine(end(),end()){
 	set(stream, ioBlockSize);
 }
 
 //--------------------------------------------------
-bool ofBuffer::set(istream & stream, size_t ioBlockSize){
+bool ofBuffer::set(istream & stream, std::size_t ioBlockSize){
 	if(stream.bad()){
 		clear();
 		return false;
@@ -76,12 +76,12 @@ void ofBuffer::set(const char * _buffer, std::size_t _size){
 }
 
 //--------------------------------------------------
-void ofBuffer::set(const string & text){
+void ofBuffer::set(const std::string & text){
 	set(text.c_str(), text.size());
 }
 
 //--------------------------------------------------
-void ofBuffer::append(const string& _buffer){
+void ofBuffer::append(const std::string& _buffer){
 	append(_buffer.c_str(), _buffer.size());
 }
 
@@ -91,8 +91,8 @@ void ofBuffer::append(const char * _buffer, std::size_t _size){
 }
 
 //--------------------------------------------------
-void ofBuffer::reserve(size_t size){
-	buffer.reserve(size);
+void ofBuffer::reserve(std::size_t _size){
+	buffer.reserve(_size);
 }
 
 //--------------------------------------------------
@@ -145,7 +145,7 @@ ofBuffer::operator std::string() const {
 }
 
 //--------------------------------------------------
-ofBuffer & ofBuffer::operator=(const string & text){
+ofBuffer & ofBuffer::operator=(const std::string & text){
 	set(text);
 	return *this;
 }
@@ -244,17 +244,17 @@ ofBuffer::Line::Line(vector<char>::iterator _begin, vector<char>::iterator _end)
 }
 
 //--------------------------------------------------
-const string & ofBuffer::Line::operator*() const{
+const std::string & ofBuffer::Line::operator*() const{
 	return line;
 }
 
 //--------------------------------------------------
-const string * ofBuffer::Line::operator->() const{
+const std::string * ofBuffer::Line::operator->() const{
 	return &line;
 }
 
 //--------------------------------------------------
-const string & ofBuffer::Line::asString() const{
+const std::string & ofBuffer::Line::asString() const{
 	return line;
 }
 
@@ -305,17 +305,17 @@ ofBuffer::RLine::RLine(vector<char>::reverse_iterator _rbegin, vector<char>::rev
 }
 
 //--------------------------------------------------
-const string & ofBuffer::RLine::operator*() const{
+const std::string & ofBuffer::RLine::operator*() const{
 	return line;
 }
 
 //--------------------------------------------------
-const string * ofBuffer::RLine::operator->() const{
+const std::string * ofBuffer::RLine::operator->() const{
 	return &line;
 }
 
 //--------------------------------------------------
-const string & ofBuffer::RLine::asString() const{
+const std::string & ofBuffer::RLine::asString() const{
 	return line;
 }
 

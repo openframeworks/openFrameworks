@@ -40,20 +40,20 @@ public:
 	///
 	/// \param buffer pointer to the raw byte buffer to copy data from
 	/// \param _size the number of bytes to read
-	/// \warning buffer *must* not be NULL
+	/// \warning _buffer *must* not be NULL
 	/// \warning _size *must* be <= the number of bytes allocated in _buffer
-    ofBuffer(const char * buffer, std::size_t size);
+    ofBuffer(const char * _buffer, std::size_t _size);
 	
 	/// Create a buffer and set its contents from an input stream.
 	///
 	/// \param ioBlockSize the number of bytes to read from the stream in chunks
-	ofBuffer(std::istream & stream, size_t ioBlockSize = 1024);
+	ofBuffer(std::istream & stream, std::size_t ioBlockSize = 1024);
 
 	/// Set the contents of the buffer from a raw byte pointer.
 	///
 	/// \warning buffer *must* not be NULL
 	/// \warning _size *must* be <= the number of bytes allocated in _buffer
-	/// \param buffer pointer to the raw byte buffer to copy data from
+	/// \param _buffer pointer to the raw byte buffer to copy data from
 	/// \param _size the number of bytes to read
 	void set(const char * _buffer, std::size_t _size);
 	
@@ -66,7 +66,7 @@ public:
 	///
 	/// \param stream input stream to copy data from
 	/// \param ioBlockSize the number of bytes to read from the stream in chunks
-	bool set(std::istream & stream, size_t ioBlockSize = 1024);
+	bool set(std::istream & stream, std::size_t ioBlockSize = 1024);
 	
 	/// Set all bytes in the buffer to a given value.
 	///
@@ -82,15 +82,15 @@ public:
 	///
 	/// \warning buffer *must* not be NULL
 	/// \warning _size *must* be <= the number of bytes allocated in _buffer
-	/// \param buffer pointer to the raw byte buffer to copy data from
+	/// \param _buffer pointer to the raw byte buffer to copy data from
 	/// \param _size the number of bytes to read
 	void append(const char * _buffer, std::size_t _size);
 	
 	/// Request that the buffer capacity be at least enough to contain a
 	/// specified number of bytes.
 	///
-	/// \param size number of bytes to reserve space for
-	void reserve(size_t size);
+	/// \param _size number of bytes to reserve space for
+	void reserve(std::size_t _size);
 
 	/// Write contents of the buffer to an output stream.
 	bool writeTo(std::ostream & stream) const;
