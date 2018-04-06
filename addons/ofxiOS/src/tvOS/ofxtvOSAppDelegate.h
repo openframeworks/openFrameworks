@@ -14,15 +14,16 @@
 #import <UIKit/UIKit.h>
 
 @class ofxtvOSViewController;
+@class ofxtvOSGLKViewController;
 
 @interface ofxtvOSAppDelegate : NSObject <UIApplicationDelegate> {
 }
 
 @property (nonatomic, retain) UIWindow * window;
-@property (nonatomic, retain) ofxtvOSViewController * glViewController;
+@property (nonatomic, retain) UIViewController * uiViewController;
 
 - (BOOL)application:(UIApplication*)application
-handleOpenURL:(NSURL*)url;
+      handleOpenURL:(NSURL*)url;
 
 
 @end
