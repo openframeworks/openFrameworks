@@ -1126,7 +1126,7 @@
 			<key>tabWidth</key>
 			<string>4</string>
 			<key>usesTabs</key>
-			<string>1</string>
+			<string>0</string>
 		</dict>
 		<key>29B97323FDCFA39411CA2CEA</key>
 		<dict>
