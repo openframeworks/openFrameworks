@@ -120,7 +120,7 @@ PLATFORM_CFLAGS += -pipe
 ################################################################################
 
 # raspberry pi specific
-ifeq (,$(wildcard $(RPI_ROOT)/opt/vc/libGLESv2.so))
+ifneq (,$(wildcard $(RPI_ROOT)/opt/vc/libGLESv2.so))
 	PLATFORM_LIBRARIES += GLESv2
 	PLATFORM_LIBRARIES += GLESv1_CM
 	PLATFORM_LIBRARIES += EGL
