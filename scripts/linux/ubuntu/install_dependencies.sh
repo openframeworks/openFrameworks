@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-downloader() { if command -v wget 2>/dev/null; then wget $1 $2 $3; else curl -LO --retry 20 -O --progress $1 $2 $3; fi; }
-
 if [ $EUID != 0 ]; then
 	echo "this script must be run using sudo"
 	echo ""
@@ -18,6 +16,9 @@ else
 fi
 
 ROOT=$(cd $(dirname $0); pwd -P)
+SCRIPT_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+. "$SCRIPT_DIR/../../dev/downloader.sh"
 
 function installPackages {
     for pkg in $@; do

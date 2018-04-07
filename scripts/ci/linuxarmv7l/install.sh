@@ -61,7 +61,9 @@ trapError() {
 	exit 1
 }
 
-downloader() { if command -v wget 2>/dev/null; then wget $1 $2 $3; else curl -LO --retry 20 -O --progress $1 $2 $3; fi; }
+SCRIPT_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+. "$SCRIPT_DIR/../../dev/downloader.sh"
 
 createArchImg(){
     #sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libasound2-dev
@@ -153,7 +155,11 @@ downloadFirmware(){
         echo "Using cached RPI2 firmware-master"
     else
         cd ~
+<<<<<<< HEAD
         downloader --progress https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+=======
+        downloader https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+>>>>>>> Downloader scripts
         unzip firmware.zip
     fi
     ${SUDO} cp -r ~/firmware-master/opt archlinux/

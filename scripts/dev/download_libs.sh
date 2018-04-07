@@ -28,11 +28,13 @@ cat << EOF
 EOF
 }
 
-downloader() { if command -v wget 2>/dev/null; then wget $1 $2 $3; else curl -LO --retry 20 -O --progress $1 $2 $3; fi; }
+SCRIPT_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+. "$SCRIPT_DIR/../../dev/downloader.sh"
 
 download(){
     echo "Downloading $1"
-    downloader "ci.openframeworks.cc/libs/$1 $SILENT_ARGS"
+    downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
 }
 
 # trap any script errors and exit

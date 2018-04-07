@@ -6,7 +6,11 @@ cd ~/
 rm -rf projectGenerator
 mkdir -p ~/projectGenerator
 cd ~/projectGenerator
-downloader() { if command -v wget 2>/dev/null; then wget $1 $2 $3; else curl -LO --retry 20 -O --progress $1 $2 $3; fi; }
+
+SCRIPT_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+. "$SCRIPT_DIR/../../dev/downloader.sh"
+
 echo "Downloading projectGenerator from ci server"
 downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip 2> /dev/null
 unzip projectGenerator-vs.zip 2> /dev/null

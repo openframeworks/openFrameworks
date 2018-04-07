@@ -11,7 +11,9 @@ fi
 # Install linux dependencies (for project generator to work)
 sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 
-downloader() { if command -v wget 2>/dev/null; then wget $1 $2 $3; else curl -LO --retry 20 -O --progress $1 $2 $3; fi; }
+SCRIPT_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+. "$SCRIPT_DIR/../../dev/downloader.sh"
 
 # Download NDK
 cd ~
@@ -21,7 +23,7 @@ if [ "$(ls -A ${NDK_DIR})" ]; then
     ls -A ${NDK_DIR}
 else
     echo "Downloading NDK"
-    downloader -q "https://dl.google.com/android/repository/$NDK_DIR-linux-x86_64.zip"
+    downloader "https://dl.google.com/android/repository/$NDK_DIR-linux-x86_64.zip" -q
     echo "Uncompressing NDK"
     unzip "$NDK_DIR-linux-x86_64.zip" > /dev/null 2>&1
 fi
