@@ -881,6 +881,9 @@ int ofAppGlutWindow::special_key_to_of(int key) {
 
 	case GLUT_KEY_INSERT:
 		return OF_KEY_INSERT;
+
+	default:
+		return 0;
 	}
 }
 
