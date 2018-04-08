@@ -54,7 +54,7 @@ OF_DEPRECATED_MSG("Use ofGetGLType() instead", int ofGetGlType(const ofPixels & 
 OF_DEPRECATED_MSG("Use ofGetGLType() instead", int ofGetGlType(const ofShortPixels & pixels));
 OF_DEPRECATED_MSG("Use ofGetGLType() instead", int ofGetGlType(const ofFloatPixels & pixels));
 
-ofImageType ofGetImageTypeFromGLType(int type);
+ofImageType ofGetImageTypeFromGLType(int glType);
 
 GLuint ofGetGLPolyMode(ofPolyRenderMode m);
 ofPolyRenderMode ofGetOFPolyMode(GLuint m);
