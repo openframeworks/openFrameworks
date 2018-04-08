@@ -3,24 +3,24 @@
 #include "ofTexture.h"
 #include "ofGLBaseTypes.h"
 
-enum class ofFboBeginMode : short{
-    NoDefaults = 0,
-    Perspective = 1,
-    MatrixFlip = 2,
+/// ofFbo mode(s) when binding
+enum ofFboMode : short {
+    OF_FBOMODE_NODEFAULTS  = 0, ///< base GL fbo, no OF defaults
+    OF_FBOMODE_PERSPECTIVE = 1, ///< set OF perspective and viewport
+    OF_FBOMODE_MATRIXFLIP  = 2  ///< flip vertically
 };
 
-inline ofFboBeginMode operator | (ofFboBeginMode m1, ofFboBeginMode m2){
-    return static_cast<ofFboBeginMode>(int(m1) | int(m2));
+inline ofFboMode operator | (ofFboMode m1, ofFboMode m2){
+    return static_cast<ofFboMode>(short(m1) | short(m2));
 }
 
-inline bool operator & (ofFboBeginMode m1, ofFboBeginMode m2){
-    return static_cast<bool>(int(m1) & int(m2));
+inline bool operator & (ofFboMode m1, ofFboMode m2){
+    return static_cast<bool>(short(m1) & short(m2));
 }
 
 class ofFbo : public ofBaseDraws, public ofBaseHasTexture {
 public:
 	struct Settings;
-
 
 	ofFbo();
 	ofFbo(const ofFbo & mom);
@@ -88,45 +88,42 @@ public:
 	void setUseTexture(bool){ /*irrelevant*/ };
 	bool isUsingTexture() const {return true;}
 
-
     /// Sets up the framebuffer and binds it for rendering.
     ///
 	/// \warning  This is a convenience method, and is considered unsafe 
 	///           in multi-window and/or multi-renderer scenarios.
 	///           If you use more than one renderer, use each renderer's
-    ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
+    ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
 	///           method instead.
-    /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
-    OF_DEPRECATED_MSG("Use begin(ofFboBeginMode::NoDefaults) instead", void begin(bool setupScreen) const);
-
+    /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
+    OF_DEPRECATED_MSG("Use begin(OF_FBOMODE_NODEFAULTS) instead", void begin(bool setupScreen) const);
 
     /// Sets up the framebuffer and binds it for rendering.
     ///
     /// The mode parameter indicates which defaults are set when binding
     /// the fbo.
     ///
-    /// The default ofFboBeginMode::Perspective | ofFboBeginMode::MatrixFlip
+    /// The default OF_FBOMODE_PERSPECTIVE | OF_FBOMODE_MATRIXFLIP
     /// will set the screen perspective to the OF default for the fbo size, the
     /// correct viewport to cover the full fbo and will flip the orientation
     /// matrix in y so when drawing the fbo later or accesing it from a shader
     /// it's correctly oriented
     ///
-    /// Passing ofFboBeginMode::Perspetive will only set perspective and viewport
+    /// Passing OF_FBOMODE_PERSPECTIVE will only set perspective and viewport
     ///
-    /// Passing ofFboBeginMode::MatrixFlip won't set the perspective but will flip
+    /// Passing OF_FBOMODE_MATRIXFLIP won't set the perspective but will flip
     /// the matrix.
     ///
-    /// Passing ofFboBeginMode::NoDefaults won't change anything and just bind the fbo
+    /// Passing OF_FBOMODE_NODEFAULTS won't change anything and just bind the fbo
     /// and set it as current rendering surface in OF
     ///
     /// \warning  This is a convenience method, and is considered unsafe
     ///           in multi-window and/or multi-renderer scenarios.
     ///           If you use more than one renderer, use each renderer's
-    ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
+    ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
     ///           method instead.
-    /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
-    void begin(ofFboBeginMode mode = ofFboBeginMode::Perspective | ofFboBeginMode::MatrixFlip);
-
+    /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
+    void begin(ofFboMode mode = OF_FBOMODE_PERSPECTIVE | OF_FBOMODE_MATRIXFLIP);
 
 	/// \brief    Ends the current framebuffer render context.
 	/// \sa       void begin(bool setupScreen=true) const;

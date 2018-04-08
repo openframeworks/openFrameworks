@@ -456,18 +456,17 @@ void ofGLRenderer::unbind(const ofShader & shader){
 	glUseProgram(0);
 }
 
-
 //----------------------------------------------------------
-void ofGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode){
+void ofGLRenderer::begin(const ofFbo & fbo, ofFboMode mode){
 	pushView();
 	pushStyle();
-    if(mode & ofFboBeginMode::MatrixFlip){
+    if(mode & OF_FBOMODE_MATRIXFLIP){
         matrixStack.setRenderSurface(fbo);
     }else{
         matrixStack.setRenderSurfaceNoMatrixFlip(fbo);
     }
 	viewport();
-    if(mode & ofFboBeginMode::Perspective){
+    if(mode & OF_FBOMODE_PERSPECTIVE){
 		setupScreenPerspective();
 	}else{
 		glm::mat4 m;

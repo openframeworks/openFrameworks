@@ -835,15 +835,15 @@ void ofFbo::begin(bool setupScreen) const{
 	auto renderer = settings.renderer.lock();
 	if(renderer){
         if(setupScreen){
-            renderer->begin(*this, ofFboBeginMode::Perspective | ofFboBeginMode::MatrixFlip);
+            renderer->begin(*this, OF_FBOMODE_PERSPECTIVE | OF_FBOMODE_MATRIXFLIP);
         }else{
-            renderer->begin(*this, ofFboBeginMode::NoDefaults);
+            renderer->begin(*this, OF_FBOMODE_NODEFAULTS);
         }
 	}
 }
 
 
-void ofFbo::begin(ofFboBeginMode mode){
+void ofFbo::begin(ofFboMode mode){
     auto renderer = settings.renderer.lock();
     if(renderer){
         renderer->begin(*this, mode);
