@@ -18,9 +18,32 @@ inline bool operator & (ofFboMode m1, ofFboMode m2){
     return static_cast<bool>(short(m1) & short(m2));
 }
 
+/// ofFbo internal settings
+struct ofFboSettings {
+    int width;                        ///< width of images attached to fbo
+    int height;                       ///< height of images attached to fbo
+    int numColorbuffers;              ///< how many color buffers to create
+    std::vector<GLint> colorFormats;  ///< format of the color attachments for MRT.
+    bool useDepth;                    ///< whether to use depth buffer or not
+    bool useStencil;                  ///< whether to use stencil buffer or not
+    bool depthStencilAsTexture;       ///< use a texture instead of a renderbuffer for depth (useful to draw it or use it in a shader later)
+    GLenum textureTarget;             ///< GL_TEXTURE_2D or GL_TEXTURE_RECTANGLE_ARB
+    GLint internalformat;             ///< GL_RGBA, GL_RGBA16F_ARB, GL_RGBA32F_ARB, GL_LUMINANCE32F_ARB etc.
+    GLint depthStencilInternalFormat; ///< GL_DEPTH_COMPONENT(16/24/32)
+    int wrapModeHorizontal;           ///< GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER etc.
+    int wrapModeVertical;             ///< GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER etc.
+    int minFilter;                    ///< GL_NEAREST, GL_LINEAR etc.
+    int maxFilter;                    ///< GL_NEAREST, GL_LINEAR etc.
+    int numSamples;                   ///< number of samples for multisampling (set 0 to disable)
+    ofFboSettings(std::shared_ptr<ofBaseGLRenderer> renderer=nullptr);
+    bool operator!=(const ofFboSettings & other);
+private:
+    std::weak_ptr<ofBaseGLRenderer> renderer;
+    friend class ofFbo;
+};
+
 class ofFbo : public ofBaseDraws, public ofBaseHasTexture {
 public:
-	struct Settings;
 
 	ofFbo();
 	ofFbo(const ofFbo & mom);
@@ -29,12 +52,15 @@ public:
     ofFbo & operator=(ofFbo && fbo);
 	virtual ~ofFbo();
 
+	/// ofFbo::Settings is currently deprecated in favor of the ofFboSettings struct
+	typedef ofFboSettings Settings;
+
 	void allocate(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
-	//void allocateForShadow( int width, int height );
-	void allocate(Settings settings = Settings(nullptr));
+	//void allocateForShadow(int width, int height);
+	void allocate(ofFboSettings settings = ofFboSettings(nullptr));
 	bool isAllocated() const;
 
-	OF_DEPRECATED_MSG("Use clear instead",void destroy());
+	OF_DEPRECATED_MSG("Use clear() instead",void destroy());
 	void clear();
 
 #ifndef TARGET_OPENGLES
@@ -75,13 +101,13 @@ public:
 	void setDefaultTextureIndex(int defaultTexture);
 	int getDefaultTextureIndex() const;
 
-	OF_DEPRECATED_MSG("Use getTexture",ofTexture & getTextureReference());
-	OF_DEPRECATED_MSG("Use getTexture",ofTexture & getTextureReference(int attachmentPoint));
+	OF_DEPRECATED_MSG("Use getTexture()",ofTexture & getTextureReference());
+	OF_DEPRECATED_MSG("Use getTexture()",ofTexture & getTextureReference(int attachmentPoint));
 	ofTexture & getTexture();
 	ofTexture & getTexture(int attachmentPoint);
 	ofTexture & getDepthTexture();
-	OF_DEPRECATED_MSG("Use getTexture",const ofTexture & getTextureReference() const);
-	OF_DEPRECATED_MSG("Use getTexture",const ofTexture & getTextureReference(int attachmentPoint) const);
+	OF_DEPRECATED_MSG("Use getTexture()",const ofTexture & getTextureReference() const);
+	OF_DEPRECATED_MSG("Use getTexture()",const ofTexture & getTextureReference(int attachmentPoint) const);
 	const ofTexture & getTexture() const ;
 	const ofTexture & getTexture(int attachmentPoint) const;
 	const ofTexture & getDepthTexture() const;
@@ -171,7 +197,6 @@ public:
 	/// \note     This will get called implicitly upon getTexture();
 	void updateTexture(int attachmentPoint);
 
-
 	bool checkStatus() const;
 	void createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint);
     void attachTexture(ofTexture & texture, GLenum internalFormat, GLenum attachmentPoint);
@@ -202,30 +227,8 @@ public:
 	GLuint getDepthBuffer() const { return depthBuffer; }
 	GLuint getStencilBuffer() const { return stencilBuffer; }
 
-	struct Settings {
-		int		width;					// width of images attached to fbo
-		int		height;					// height of images attached to fbo
-		int		numColorbuffers;		// how many color buffers to create
-		std::vector<GLint> colorFormats;		// format of the color attachments for MRT.
-		bool	useDepth;				// whether to use depth buffer or not
-		bool	useStencil;				// whether to use stencil buffer or not
-		bool	depthStencilAsTexture;			// use a texture instead of a renderbuffer for depth (useful to draw it or use it in a shader later)
-		GLenum	textureTarget;			// GL_TEXTURE_2D or GL_TEXTURE_RECTANGLE_ARB
-		GLint	internalformat;			// GL_RGBA, GL_RGBA16F_ARB, GL_RGBA32F_ARB, GL_LUMINANCE32F_ARB etc.
-		GLint	depthStencilInternalFormat; 	// GL_DEPTH_COMPONENT(16/24/32)
-		int		wrapModeHorizontal;		// GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER etc.
-		int		wrapModeVertical;		// GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER etc.
-		int		minFilter;				// GL_NEAREST, GL_LINEAR etc.
-		int		maxFilter;				// GL_NEAREST, GL_LINEAR etc.
-		int		numSamples;				// number of samples for multisampling (set 0 to disable)
-		Settings(std::shared_ptr<ofBaseGLRenderer> renderer=nullptr);
-		bool operator!=(const Settings & other);
-	private:
-		std::weak_ptr<ofBaseGLRenderer> renderer;
-		friend class ofFbo;
-	};
 private:
-	Settings 			settings;
+	ofFboSettings settings;
 
 	GLuint				fbo;			// main fbo which we bind for drawing into, all renderbuffers are attached to this
 	GLuint				fboTextures;	// textures are attached to this (if MSAA is disabled, this is equal to fbo, otherwise it's a new fbo)

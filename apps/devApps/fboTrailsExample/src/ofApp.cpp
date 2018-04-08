@@ -11,9 +11,9 @@ void ofApp::setup(){
 	
 	// one way to define the fbo: setting the width (400), the height (200) and the internal format like this
 	/*
-	 ofFbo::Settings s;
-	 s.width				= 400;
-	 s.height			= 200;
+	 ofFboSettings s;
+	 s.width			 = 400;
+	 s.height			 = 200;
 	 s.internalformat    = GL_RGBA;
 	 // and assigning this values to the fbo like this:
 	 nonFloatingPointFbo_GL_RGB.allocate(s);

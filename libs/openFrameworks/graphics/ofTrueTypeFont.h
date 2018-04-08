@@ -112,38 +112,38 @@ public:
 	static const std::initializer_list<ofUnicode::range> Cyrillic;
 };
 
+struct ofTrueTypeFontSettings{
+
+    enum class Direction : uint32_t {
+        LeftToRight,
+        RightToLeft
+    };
+
+    std::filesystem::path    fontName;
+    int                      fontSize = 0;
+    bool                     antialiased = true;
+    bool                     contours = false;
+    float                    simplifyAmt = 0.3f;
+    int                      dpi = 0;
+    Direction                direction = Direction::LeftToRight;
+    std::vector<ofUnicode::range> ranges;
+
+    ofTrueTypeFontSettings(const std::filesystem::path & name, int size)
+    :fontName(name)
+    ,fontSize(size){}
+
+    void addRanges(std::initializer_list<ofUnicode::range> alphabet){
+        ranges.insert(ranges.end(), alphabet);
+    }
+
+    void addRange(const ofUnicode::range & range){
+        ranges.push_back(range);
+    }
+};
+
 class ofTrueTypeFont{
 
 public:
-
-	struct Settings{
-
-		enum class Direction : uint32_t {
-			LeftToRight,
-			RightToLeft
-		};
-
-		std::filesystem::path    fontName;
-		int                      fontSize = 0;
-		bool                     antialiased = true;
-		bool                     contours = false;
-		float                    simplifyAmt = 0.3f;
-		int                      dpi = 0;
-		Direction                direction = Direction::LeftToRight;
-		std::vector<ofUnicode::range> ranges;
-
-		Settings(const std::filesystem::path & name, int size)
-		:fontName(name)
-		,fontSize(size){}
-
-		void addRanges(std::initializer_list<ofUnicode::range> alphabet){
-			ranges.insert(ranges.end(), alphabet);
-		}
-
-		void addRange(const ofUnicode::range & range){
-			ranges.push_back(range);
-		}
-	};
 
 	/// \brief Construct a default ofTrueTypeFont.
 	ofTrueTypeFont();
@@ -192,7 +192,7 @@ public:
                   float simplifyAmt=0.3f,
 				  int dpi=0));
 	
-	bool load(const Settings & settings);
+	bool load(const ofTrueTypeFontSettings & settings);
 
 	/// \brief Has the font been loaded successfully?
 	/// \returns true if the font was loaded.
@@ -348,7 +348,7 @@ public:
 	bool isValidGlyph(uint32_t) const;
 	/// \}
 
-	void setDirection(Settings::Direction direction);
+	void setDirection(ofTrueTypeFontSettings::Direction direction);
 protected:
 	/// \cond INTERNAL
 	
@@ -387,7 +387,7 @@ protected:
 
 	std::vector<glyphProps> cps; // properties for each character
 
-	Settings settings;
+	ofTrueTypeFontSettings settings;
 	std::unordered_map<uint32_t,size_t> glyphIndexMap;
 
 
