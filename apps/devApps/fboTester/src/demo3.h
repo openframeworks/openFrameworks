@@ -10,7 +10,7 @@ void ofApp::demo3_setup() {
 	ofLog(OF_LOG_NOTICE, "demo3_setup | useMSAA: " + useMSAA);
 	demoMode = 3;
 	
-	ofFbo::Settings s;
+	ofFboSettings s;
 	s.width				= kFBOWidth;
 	s.height			= kFBOHeight;
 	s.numColorbuffers	= 4;

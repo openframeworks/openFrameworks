@@ -72,7 +72,7 @@ using namespace std;
 
 
 //-------------------------------------------------------------------------------------
-ofFbo::Settings::Settings(std::shared_ptr<ofBaseGLRenderer> renderer) {
+ofFboSettings::ofFboSettings(std::shared_ptr<ofBaseGLRenderer> renderer) {
 	width					= 0;
 	height					= 0;
 	numColorbuffers			= 1;
@@ -85,7 +85,7 @@ ofFbo::Settings::Settings(std::shared_ptr<ofBaseGLRenderer> renderer) {
 	textureTarget			= GL_TEXTURE_2D;
 #endif
 	internalformat			= GL_RGBA;
-	depthStencilInternalFormat		= GL_DEPTH_COMPONENT24;
+	depthStencilInternalFormat = GL_DEPTH_COMPONENT24;
 	wrapModeHorizontal		= GL_CLAMP_TO_EDGE;
 	wrapModeVertical		= GL_CLAMP_TO_EDGE;
 	minFilter				= GL_LINEAR;
@@ -95,7 +95,7 @@ ofFbo::Settings::Settings(std::shared_ptr<ofBaseGLRenderer> renderer) {
 }
 
 //--------------------------------------------------------------
-bool ofFbo::Settings::operator!=(const Settings & other){
+bool ofFboSettings::operator!=(const ofFboSettings & other){
 	if(width != other.width){
 		ofLogError() << "settings width differs from source";
 		return true;
@@ -544,7 +544,7 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 }
 
 //--------------------------------------------------------------
-void ofFbo::allocate(Settings _settings) {
+void ofFbo::allocate(ofFboSettings _settings) {
 	if(!checkGLSupport()) return;
 
 	clear();
