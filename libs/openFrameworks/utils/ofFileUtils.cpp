@@ -28,8 +28,8 @@ ofBuffer::ofBuffer()
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(const char * _buffer, std::size_t _size)
-:buffer(_buffer,_buffer+_size)
+ofBuffer::ofBuffer(const char * buffer, std::size_t size)
+:buffer(buffer,buffer+size)
 ,currentLine(end(),end()){
 }
 
@@ -71,8 +71,8 @@ bool ofBuffer::writeTo(ostream & stream) const {
 }
 
 //--------------------------------------------------
-void ofBuffer::set(const char * _buffer, std::size_t _size){
-	buffer.assign(_buffer, _buffer+_size);
+void ofBuffer::set(const char * buffer, std::size_t size){
+	this->buffer.assign(buffer, buffer+size);
 }
 
 //--------------------------------------------------
@@ -81,18 +81,18 @@ void ofBuffer::set(const std::string & text){
 }
 
 //--------------------------------------------------
-void ofBuffer::append(const std::string& _buffer){
-	append(_buffer.c_str(), _buffer.size());
+void ofBuffer::append(const std::string& buffer){
+	append(buffer.c_str(), buffer.size());
 }
 
 //--------------------------------------------------
-void ofBuffer::append(const char * _buffer, std::size_t _size){
-	buffer.insert(buffer.end(), _buffer, _buffer + _size);
+void ofBuffer::append(const char * buffer, std::size_t size){
+	this->buffer.insert(this->buffer.end(), buffer, buffer + size);
 }
 
 //--------------------------------------------------
-void ofBuffer::reserve(std::size_t _size){
-	buffer.reserve(_size);
+void ofBuffer::reserve(std::size_t size){
+	buffer.reserve(size);
 }
 
 //--------------------------------------------------
@@ -101,13 +101,13 @@ void ofBuffer::clear(){
 }
 
 //--------------------------------------------------
-void ofBuffer::allocate(std::size_t _size){
-	resize(_size);
+void ofBuffer::allocate(std::size_t size){
+	resize(size);
 }
 
 //--------------------------------------------------
-void ofBuffer::resize(std::size_t _size){
-	buffer.resize(_size);
+void ofBuffer::resize(std::size_t size){
+	buffer.resize(size);
 }
 
 
