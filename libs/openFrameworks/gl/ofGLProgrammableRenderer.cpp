@@ -2641,7 +2641,7 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 	}
 	auto pixelFormat = OF_PIXELS_BGRA;
 	pixels.allocate(w, h, pixelFormat);
-	auto glFormat = ofGetGlFormat(pixels);
+	auto glFormat = ofGetGLFormat(pixels);
 
 
 	ofBufferObject buffer;

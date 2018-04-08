@@ -1916,7 +1916,7 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 	}
 	auto pixelFormat = OF_PIXELS_BGRA;
 	pixels.allocate(w, h, pixelFormat);
-	auto glFormat = ofGetGlFormat(pixels);
+	auto glFormat = ofGetGLFormat(pixels);
 
 
 	glReadPixels(x, y, w, h, glFormat, GL_UNSIGNED_BYTE, pixels.begin()); // read the memory....
