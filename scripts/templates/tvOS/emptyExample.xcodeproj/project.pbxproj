@@ -17,7 +17,7 @@
 				<string>9998920A1BF4D40400DCECB0</string>
 				<string>84C8DB8E1BC37378001606C1</string>
 				<string>84C8DB8B1BC3733E001606C1</string>
-				<string>84463AC81BC370DF00F24926</string>
+				<string>84C8DBA81BC37F72001606C1</string>
 				<string>84C8DB611BC37247001606C1</string>
 				<string>84463AC71BC370DF00F24926</string>
 			</array>
@@ -199,19 +199,6 @@
 			<string>PBXGroup</string>
 			<key>name</key>
 			<string>Products</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>84463AC81BC370DF00F24926</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>84C8DBA81BC37F72001606C1</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>path</key>
-			<string>emptyExample</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>

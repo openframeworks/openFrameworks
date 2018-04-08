@@ -1,20 +1,21 @@
 //
-//  ofxiOSEAGLView.h
-//  iOS+OFLib
+//  ofxiOSGLKView.mm
+//  iPhone+OF Static Library
 //
-//  Created by lukasz karluk on 5/07/12.
+//  Created by Dan Rosser on 7/3/18.
 //
+
 
 #pragma once
 #include <TargetConditionals.h>
 #import <UIKit/UIKit.h>
-#import "EAGLView.h"
+#import "EAGLKView.h"
 #include <glm/glm.hpp>
 
 class ofxiOSApp;
 class ofAppiOSWindow;
 
-@interface ofxiOSEAGLView : EAGLView {
+@interface ofxiOSGLKView : EAGLKView {
 
 @protected
     NSMutableDictionary * activeTouches;
@@ -27,15 +28,20 @@ class ofAppiOSWindow;
 @property (readonly, nonatomic, getter=getWindowSize) glm::vec2 * windowSize;
 @property (readonly, nonatomic, getter=getWindowPosition) glm::vec2 * windowPos;
 
-+ (ofxiOSEAGLView *) getInstance;
++ (ofxiOSGLKView *) getInstance;
 
-- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)app;
-- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup;
+- (id)initWithFrame:(CGRect)frame
+             andApp:(ofxiOSApp *)app
+         sharegroup:(EAGLSharegroup *)sharegroup;
 - (void)setup;
+- (void)update;
+- (void)draw;
+
 - (void)updateDimensions;
 - (void)destroy;
 - (CGPoint)orientateTouchPoint:(CGPoint)touchPoint;
 - (void)resetTouches;
+- (UIImage*)getSnapshot;
 
 @end
 
