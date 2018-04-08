@@ -904,12 +904,16 @@ utf8::iterator<std::string::const_reverse_iterator> ofUTF8Iterator::rend() const
 //--------------------------------------------------
 // helper method to get locale from name
 static std::locale getLocale(const string & locale) {
-	std::locale loc;
+    std::locale loc;
+#if defined(TARGET_WIN32)
+    std::string current(setlocale(LC_ALL,locale.c_str()));
+#endif
 	try {
-		loc = std::locale(locale.c_str());
+        loc = std::locale("fr_FR.UTF-8");
 	}
 	catch (...) {
 		ofLogWarning("ofUtils") << "Couldn't create locale " << locale << " using default, " << loc.name();
+        ofLogWarning("ofUtils") << "Couldn't create locale " << locale << " using default, " << current;
 	}
 	return loc;
 }
