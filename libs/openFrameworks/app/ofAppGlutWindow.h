@@ -74,8 +74,9 @@ private:
 	static void idle_cb(void);
 	static void keyboard_cb(unsigned char key, int x, int y);
 	static void keyboard_up_cb(unsigned char key, int x, int y);
-	static void special_key_cb(int key, int x, int y) ;
-	static void special_key_up_cb(int key, int x, int y) ;
+	static void special_key_cb(int key, int x, int y);
+	static void special_key_up_cb(int key, int x, int y);
+	static int  special_key_to_of(int key);
 	static void resize_cb(int w, int h);
 	static void entry_cb(int state);
 	static void exit_cb();
