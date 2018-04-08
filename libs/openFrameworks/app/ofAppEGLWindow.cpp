@@ -406,7 +406,7 @@ void ofAppEGLWindow::setup(const ofGLESWindowSettings & settings){
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setup(const ofAppEGLWindow & _settings) {
+void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 	settings = _settings;
 	windowMode = OF_WINDOW;
 	bNewScreenMode = true;
