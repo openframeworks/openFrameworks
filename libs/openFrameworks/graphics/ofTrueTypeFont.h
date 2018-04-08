@@ -112,20 +112,20 @@ public:
 	static const std::initializer_list<ofUnicode::range> Cyrillic;
 };
 
+enum ofTrueTypeFontDirection : uint32_t {
+    OF_TTF_LEFT_TO_RIGHT,
+    OF_TTF_RIGHT_TO_LEFT
+};
+
 struct ofTrueTypeFontSettings{
 
-    enum class Direction : uint32_t {
-        LeftToRight,
-        RightToLeft
-    };
-
-    std::filesystem::path    fontName;
-    int                      fontSize = 0;
-    bool                     antialiased = true;
-    bool                     contours = false;
-    float                    simplifyAmt = 0.3f;
-    int                      dpi = 0;
-    Direction                direction = Direction::LeftToRight;
+    std::filesystem::path     fontName;
+    int                       fontSize = 0;
+    bool                      antialiased = true;
+    bool                      contours = false;
+    float                     simplifyAmt = 0.3f;
+    int                       dpi = 0;
+    ofTrueTypeFontDirection direction = OF_TTF_LEFT_TO_RIGHT;
     std::vector<ofUnicode::range> ranges;
 
     ofTrueTypeFontSettings(const std::filesystem::path & name, int size)
@@ -348,7 +348,9 @@ public:
 	bool isValidGlyph(uint32_t) const;
 	/// \}
 
-	void setDirection(ofTrueTypeFontSettings::Direction direction);
+    /// \returns current font direction
+	void setDirection(ofTrueTypeFontDirection direction);
+
 protected:
 	/// \cond INTERNAL
 	
@@ -366,7 +368,6 @@ protected:
 	float letterSpacing;
 	float spaceSize;
 	float fontUnitScale;
-
 
 	struct glyphProps{
 		std::size_t characterIndex;
@@ -389,7 +390,6 @@ protected:
 
 	ofTrueTypeFontSettings settings;
 	std::unordered_map<uint32_t,size_t> glyphIndexMap;
-
 
     int getKerning(uint32_t c, uint32_t prevC) const;
 	void drawChar(uint32_t c, float x, float y, bool vFlipped) const;
@@ -418,5 +418,4 @@ private:
 	static void finishLibraries();
 
 	friend void ofExitCallback();
-
 };

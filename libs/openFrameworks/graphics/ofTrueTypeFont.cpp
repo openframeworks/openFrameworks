@@ -1116,7 +1116,7 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 		newLineDirection = -1;
 	}
 
-	int directionX = settings.direction == ofTrueTypeFontSettings::Direction::LeftToRight?1:-1;
+	int directionX = settings.direction == OF_TTF_LEFT_TO_RIGHT?1:-1;
 
 	uint32_t prevC = 0;
 	for(auto c: ofUTF8Iterator(str)){
@@ -1126,12 +1126,12 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 				pos.x = x ; //reset X Pos back to zero
 				prevC = 0;
 			} else if (c == '\t') {
-				if ( settings.direction == ofTrueTypeFontSettings::Direction::LeftToRight ){
-					f( c, pos );
-					pos.x += getGlyphProperties( ' ' ).advance * TAB_WIDTH * letterSpacing  * directionX;
+				if (settings.direction == OF_TTF_LEFT_TO_RIGHT){
+					f(c, pos);
+					pos.x += getGlyphProperties(' ').advance * TAB_WIDTH * letterSpacing  * directionX;
 				} else{
-					pos.x += getGlyphProperties( ' ' ).advance * TAB_WIDTH * letterSpacing  * directionX;
-					f( c, pos );
+					pos.x += getGlyphProperties(' ').advance * TAB_WIDTH * letterSpacing  * directionX;
+					f(c, pos);
 				}
 				prevC = c;
 			} else if(isValidGlyph(c)) {
@@ -1139,7 +1139,7 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 				if(prevC>0){
 					pos.x += getKerning(c,prevC);// * directionX;
 				}
-				if(settings.direction == ofTrueTypeFontSettings::Direction::LeftToRight){
+				if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
 				    f(c,pos);
 				    pos.x += props.advance * letterSpacing * directionX;
 				}else{
@@ -1155,7 +1155,7 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::setDirection(ofTrueTypeFontSettings::Direction direction){
+void ofTrueTypeFont::setDirection(ofTrueTypeFontDirection direction){
 	settings.direction = direction;
 }
 
@@ -1290,7 +1290,7 @@ glm::vec2 ofTrueTypeFont::getFirstGlyphPosForTexture(const std::string & str, bo
 	if(!str.empty()){
 		try{
 			auto c = *ofUTF8Iterator(str).begin();
-			if(settings.direction == ofTrueTypeFontSettings::Direction::LeftToRight){
+			if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
 				if (c != '\n') {
 					auto g = loadGlyph(c);
 					return {-float(g.props.xmin), getLineHeight() + g.props.ymin + getDescenderHeight()};
@@ -1356,7 +1356,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 	totalPixels.set(1,0);
 	size_t i = 0;
 	for(auto & g: glyphs){
-		if(settings.direction == ofTrueTypeFontSettings::Direction::LeftToRight){
+		if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
 			g.pixels.blendInto(totalPixels, glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );
 		}else{
 			g.pixels.blendInto(totalPixels, width-glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );
