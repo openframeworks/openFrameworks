@@ -1,36 +1,31 @@
 //
-//  ofxiOSViewController.m
-//  Created by lukasz karluk on 12/12/11.
+//  ofxiOSGLKViewController.mm
+//  iPhone+OF Static Library
+//
+//  Created by Dan Rosser on 7/3/18.
 //
 
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
-#import <QuartzCore/QuartzCore.h>
+#import "ofxiOSGLKViewController.h"
 
-#include "ofxiOSViewController.h"
-#include "ofxiOSEAGLView.h"
-#include "ofAppiOSWindow.h"
+#include "ofxiOSGLKView.h"
 #import "ofxiOSExtras.h"
+#include "ofAppiOSWindow.h"
 
-@interface ofxiOSViewController() <EAGLViewDelegate> {
+@interface ofxiOSGLKViewController() <EAGLViewDelegate, GLKViewControllerDelegate> {
     UIInterfaceOrientation currentInterfaceOrientation;
     UIInterfaceOrientation pendingInterfaceOrientation;
     BOOL bReadyToRotate;
     BOOL bFirstUpdate;
     BOOL bAnimated;
-    EAGLSharegroup * sharegroup;
 }
 @end
 
-@implementation ofxiOSViewController
+@implementation ofxiOSGLKViewController
 
 @synthesize glView;
-
-- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
-    [self initWithFrame:frame app:app sharegroup:nil];
-    return self;
-}
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup{
     currentInterfaceOrientation = pendingInterfaceOrientation = UIInterfaceOrientationPortrait;
@@ -43,9 +38,8 @@
         }
         bFirstUpdate    = NO;
         bAnimated       = NO;
-        self.glView = [[[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup] autorelease];
         
-        [self.glView setMultipleTouchEnabled:ofxiOSGetOFWindow()->isMultiTouch()];
+        self.glView = [[[ofxiOSGLKView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup] autorelease];
         self.glView.delegate = self;
     }
     
@@ -53,7 +47,6 @@
 }
 
 - (void) dealloc {
-    [self.glView stopAnimation];
     [self.glView removeFromSuperview];
     self.glView.delegate = nil;
     self.glView = nil;
@@ -64,19 +57,53 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // glView is added here because if it is added inside initWithFrame,
-    // it automatically triggers viewDidLoad, before initWithFrame has had a chance to return.
-    // so now when we call setup in our OF app, a reference to ofxiOSViewController will exists.
+    GLKView *view = (GLKView *)self.view;
+    view.context = [self.glView context];
+    self.delegate = self;
+    self.preferredFramesPerSecond = 60; //default
+    [view setMultipleTouchEnabled:ofxiOSGetOFWindow()->isMultiTouch()];
+    [self.glView setup];
+}
+
+
+-(void) checkError
+{
+    GLenum error = glGetError();
     
-    [self.view addSubview:self.glView];
-    [self.glView performSelector:@selector(setup) withObject:nil afterDelay:0];
-    [self.glView startAnimation];
+    if (error == GL_NO_ERROR)
+        return;
+    
+    switch (error)
+    {
+        case GL_INVALID_ENUM:
+            NSLog(@"Invalid Enum");
+            break;
+    }
+}
+
+
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.glView startAnimation];
     [self.glView resetTouches];
+}
+
+- (void)glkViewControllerUpdate:(GLKViewController *)controller {
+    [self.glView update];
+}
+
+- (void)glkViewController:(GLKViewController *)controller willPause:(BOOL)pause {
+    
+}
+
+- (void) glkView:(GLKView *)view drawInRect:(CGRect)rect
+{
+    [view bindDrawable];
+    [self.glView draw];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -98,8 +125,41 @@
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
-    [self.glView stopAnimation];
 }
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    if(self.glView != nil)
+        [self.glView touchesBegan:touches withEvent:event];
+}
+
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    if(self.glView != nil)
+        [self.glView touchesMoved:touches withEvent:event];
+}
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    if(self.glView != nil)
+        [self.glView touchesEnded:touches withEvent:event];
+}
+- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    if(self.glView != nil)
+        [self.glView touchesCancelled:touches withEvent:event];
+}
+#ifdef __IPHONE_9_1
+- (void)touchesEstimatedPropertiesUpdated:(NSSet<UITouch *> *)touches {
+    if(self.glView != nil)
+        [self.glView touchesEstimatedPropertiesUpdated:touches];
+}
+#endif
+
+- (EAGLSharegroup *)getSharegroup {
+    if(self.glView != nil) {
+        EAGLContext * context = [self.glView context];
+        if(context)
+            return [context sharegroup];
+    }
+    return nil;
+}
+
 
 //-------------------------------------------------------------- glView callbacks.
 - (void)glViewAnimationStarted {
@@ -145,7 +205,7 @@
 - (void)rotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
                             animated:(BOOL)animated {
     bAnimated = animated;
-
+    
     
     if(bReadyToRotate == NO) {
         pendingInterfaceOrientation = interfaceOrientation;
@@ -163,7 +223,7 @@
         
         return;
     }
- 
+    
     
     if(currentInterfaceOrientation == interfaceOrientation && !bFirstUpdate) {
         return;
@@ -210,10 +270,14 @@
         }
         //borg
         //NSLog(@"w %f h %f",[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height);
-
-        center.x = screenSize.width * 0.5;
-        center.y = screenSize.height * 0.5;
-        
+        //assumes Portrait orientation
+        if(screenSize.width>screenSize.height){
+            center.x = screenSize.height * 0.5;
+            center.y = screenSize.width * 0.5;
+        }else{
+            center.x = screenSize.width * 0.5;
+            center.y = screenSize.height * 0.5;
+        }
         //NSLog(@"rotating to portrait %i, is portrait %i, currentInterfaceOrientation %i, bound: w %f h %f",UIInterfaceOrientationIsPortrait(interfaceOrientation),UIInterfaceOrientationIsPortrait(self.interfaceOrientation),UIInterfaceOrientationIsPortrait(currentInterfaceOrientation),bounds.size.width,bounds.size.height);
     }
     
@@ -227,8 +291,8 @@
         NSTimeInterval duration = 0.3;
         if((UIInterfaceOrientationIsLandscape(currentInterfaceOrientation) && UIInterfaceOrientationIsLandscape(interfaceOrientation)) ||
            (UIInterfaceOrientationIsPortrait(currentInterfaceOrientation) && UIInterfaceOrientationIsPortrait(interfaceOrientation))) {
-               duration = 0.6;
-           }
+            duration = 0.6;
+        }
         [self.glView.layer removeAllAnimations];
         [UIView animateWithDuration:duration animations:^{
             self.glView.center = center;
@@ -253,7 +317,7 @@
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
                                 duration:(NSTimeInterval)duration {
-
+    
     // CALLBACK 1.
     // The window calls the root view controller’s willRotateToInterfaceOrientation:duration: method.
     // Container view controllers forward this message on to the currently displayed content view controllers.
@@ -279,7 +343,7 @@
     // Deprecated in iOS 8. See viewWillTransitionToSize below.
     
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
-
+    
     CGPoint center;
     // Is the iOS version less than 8?
     if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
@@ -315,12 +379,12 @@
 //borg
 #ifdef __IPHONE_8_0
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-
+    
     CGPoint center;
     
     center.x = size.width * 0.5;
     center.y = size.height * 0.5;
-
+    
     
     if(bAnimated) {
         NSTimeInterval duration = 0.3;
@@ -340,7 +404,7 @@
 
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-
+    
     // CALLBACK 4.
     // This action marks the end of the rotation process.
     // You can use this method to show views, change the layout of views, or make other changes to your app.
@@ -371,7 +435,7 @@
             break;
     }
     // defaults to orientations selected in the .plist file ('Supported Interface Orientations' in the XCode Project)
-    return -1; 
+    return -1;
 }
 - (BOOL)shouldAutorotate {
     return YES;
@@ -387,6 +451,12 @@
     return YES;
 }
 #endif
+
+- (void)setPreferredFPS:(int)fps {
+    if(self.glView != nil) {
+        self.preferredFramesPerSecond = fps;
+    }
+}
 
 @end
 
