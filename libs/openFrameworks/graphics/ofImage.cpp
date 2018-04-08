@@ -329,7 +329,7 @@ bool ofLoadImage(ofTexture & tex, const std::filesystem::path& path, const ofIma
 	ofPixels pixels;
 	bool loaded = ofLoadImage(pixels, path, settings);
 	if(loaded){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGLInternalFormat(pixels));
 		tex.loadData(pixels);
 	}
 	return loaded;
@@ -340,7 +340,7 @@ bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSett
 	ofPixels pixels;
 	bool loaded = ofLoadImage(pixels, buffer, settings);
 	if(loaded){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGLInternalFormat(pixels));
 		tex.loadData(pixels);
 	}
 	return loaded;
@@ -1031,7 +1031,7 @@ void ofImage_<PixelType>::update(){
 	bpp = pixels.getBitsPerPixel();
 	type = pixels.getImageType();
 	if (pixels.isAllocated() && bUseTexture){
-		int glInternalFormat = ofGetGlInternalFormat(pixels);
+		int glInternalFormat = ofGetGLInternalFormat(pixels);
 		if(!tex.isAllocated() || tex.getWidth() != width || tex.getHeight() != height || tex.getTextureData().glInternalFormat != glInternalFormat){
 			tex.allocate(pixels);
 		}else{

@@ -1092,7 +1092,7 @@ void ofFbo::copyTo(ofBufferObject & buffer) const{
 	if(!bIsAllocated) return;
 	bind();
 	buffer.bind(GL_PIXEL_PACK_BUFFER);
-	glReadPixels(0, 0, settings.width, settings.height, ofGetGLFormatFromInternal(settings.internalformat), ofGetGlTypeFromInternal(settings.internalformat), NULL);
+	glReadPixels(0, 0, settings.width, settings.height, ofGetGLFormatFromInternal(settings.internalformat), ofGetGLTypeFromInternal(settings.internalformat), NULL);
 	buffer.unbind(GL_PIXEL_PACK_BUFFER);
 	unbind();
 }
