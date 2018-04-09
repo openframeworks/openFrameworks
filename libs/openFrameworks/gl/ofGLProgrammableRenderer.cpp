@@ -1289,18 +1289,17 @@ void ofGLProgrammableRenderer::unbind(const ofShader & shader){
 	beginDefaultShader();
 }
 
-
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode){
+void ofGLProgrammableRenderer::begin(const ofFbo & fbo, ofFboMode mode){
 	pushView();
     pushStyle();
-    if(mode & ofFboBeginMode::MatrixFlip){
+    if(mode & OF_FBOMODE_MATRIXFLIP){
         matrixStack.setRenderSurface(fbo);
     }else{
         matrixStack.setRenderSurfaceNoMatrixFlip(fbo);
     }
 	viewport();
-    if(mode & ofFboBeginMode::Perspective){
+    if(mode & OF_FBOMODE_PERSPECTIVE){
 		setupScreenPerspective();
 	}else{
 		uploadMatrices();
@@ -2642,7 +2641,7 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 	}
 	auto pixelFormat = OF_PIXELS_BGRA;
 	pixels.allocate(w, h, pixelFormat);
-	auto glFormat = ofGetGlFormat(pixels);
+	auto glFormat = ofGetGLFormat(pixels);
 
 
 	ofBufferObject buffer;

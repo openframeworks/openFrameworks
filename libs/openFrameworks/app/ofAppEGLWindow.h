@@ -12,8 +12,6 @@
 #include <map>
 #include <X11/Xlib.h>
 
-
-// TODO: this shold be passed in with the other window settings, like window alpha, etc.
 enum ofAppEGLWindowType {
 	OF_APP_WINDOW_AUTO,
 	OF_APP_WINDOW_NATIVE,
@@ -29,7 +27,6 @@ typedef unsigned long Window;
 struct _XDisplay;
 typedef struct _XDisplay Display;
 
-
 typedef unsigned int EGLBoolean;
 typedef int32_t EGLint;
 typedef void *EGLDisplay;
@@ -37,11 +34,30 @@ typedef void *EGLConfig;
 typedef void *EGLSurface;
 typedef void *EGLContext;
 
+struct ofAppEGLWindowSettings: public ofGLESWindowSettings {
+public:
+	ofAppEGLWindowType eglWindowPreference; ///< what window type is preferred?
+	EGLint eglWindowOpacity; ///< 0-255 window alpha value
+
+	ofEGLAttributeList frameBufferAttributes;
+	// surface creation
+	ofEGLAttributeList windowSurfaceAttributes;
+
+	ofColor initialClearColor;
+
+	int screenNum;
+	int layer;
+
+	ofAppEGLWindowSettings();
+	ofAppEGLWindowSettings(const ofGLESWindowSettings & settings);
+};
 
 class ofAppEGLWindow : public ofAppBaseGLESWindow, public ofThread {
 public:
 
-	struct Settings;
+	/// ofAppEGLWindow::Settings is currently deprecated in favor of
+	/// the ofAppEGLWindowSettings struct
+	typedef ofAppEGLWindowSettings Settings;
 
 	ofAppEGLWindow();
 	virtual ~ofAppEGLWindow();
@@ -53,7 +69,7 @@ public:
 	static void pollEvents();
 
 	using ofAppBaseGLESWindow::setup;
-	void setup(const Settings & settings);
+	void setup(const ofAppEGLWindowSettings & settings);
 	void setup(const ofGLESWindowSettings & settings);
 
 	void update();
@@ -98,24 +114,6 @@ public:
 	virtual void disableSetupScreen();
 
 	virtual void setVerticalSync(bool enabled);
-
-	struct Settings: public ofGLESWindowSettings {
-		public:
-		ofAppEGLWindowType eglWindowPreference;  // what window type is preferred?
-		EGLint eglWindowOpacity; // 0-255 window alpha value
-
-		ofEGLAttributeList frameBufferAttributes;
-		// surface creation
-		ofEGLAttributeList windowSurfaceAttributes;
-
-		ofColor initialClearColor;
-
-		int screenNum;
-		int layer;
-
-		Settings();
-		Settings(const ofGLESWindowSettings & settings);
-	};
 
 	EGLDisplay getEglDisplay() const;
 	EGLSurface getEglSurface() const;
@@ -276,7 +274,7 @@ protected:
 	static void handleX11Event(const XEvent& event);
 
 private:
-	Settings settings;
+	ofAppEGLWindowSettings settings;
 	int glesVersion;  ///< \brief Indicate the version of OpenGL for Embedded Systems.
 	bool keyboardDetected;
 	bool mouseDetected;

@@ -152,7 +152,7 @@ public:
 #ifndef TARGET_OPENGLES
 	virtual void bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint=0)=0;
 #endif
-	virtual void begin(const ofFbo & fbo, ofFboBeginMode mode)=0;
+	virtual void begin(const ofFbo & fbo, ofFboMode mode)=0;
 	virtual void end(const ofFbo & fbo)=0;
 
 };

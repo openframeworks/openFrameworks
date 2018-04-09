@@ -682,7 +682,7 @@ void ofImage_<PixelType>::clone(const ofImage_<SrcType> &mom){
     tex.clear();
     bUseTexture = mom.isUsingTexture();
     if (bUseTexture == true && mom.getTexture().isAllocated()){
-        tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+        tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGLInternalFormat(pixels));
     }
 
     update();
