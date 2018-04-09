@@ -57,7 +57,7 @@ public:
 
 	/// ofAppEGLWindow::Settings is currently deprecated in favor of
 	/// the ofAppEGLWindowSettings struct
-	typedef Settings ofAppEGLWindowSettings;
+	typedef ofAppEGLWindowSettings Settings;
 
 	ofAppEGLWindow();
 	virtual ~ofAppEGLWindow();
