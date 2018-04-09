@@ -184,7 +184,7 @@ std::int32_t ofxOscMessage::getArgAsInt32(std::size_t index) const{
 				<< index;
 			return (std::int32_t)((ofxOscArgDouble*)args[index])->get();
 		}
-		else if(getArgType(index)  == OFXOSC_TYPE_TRUE || 
+		else if(getArgType(index) == OFXOSC_TYPE_TRUE || 
 			    getArgType(index) == OFXOSC_TYPE_FALSE){
 			return (std::int32_t)((ofxOscArgBool*)args[index])->get();
 		}
@@ -211,7 +211,7 @@ std::int64_t ofxOscMessage::getArgAsInt64(std::size_t index) const{
 		else if(getArgType(index) == OFXOSC_TYPE_DOUBLE){
 			return (std::int64_t)((ofxOscArgDouble*)args[index])->get();
 		}
-		else if(getArgType(index)  == OFXOSC_TYPE_TRUE ||
+		else if(getArgType(index) == OFXOSC_TYPE_TRUE ||
 			    getArgType(index) == OFXOSC_TYPE_FALSE){
 			return (std::int64_t)((ofxOscArgBool*)args[index])->get();
 		}
@@ -246,7 +246,7 @@ float ofxOscMessage::getArgAsFloat(std::size_t index) const{
 				<< index;
 			return (float)((ofxOscArgDouble*)args[index])->get();
 		}
-		else if(getArgType(index)  == OFXOSC_TYPE_TRUE ||
+		else if(getArgType(index) == OFXOSC_TYPE_TRUE ||
 			    getArgType(index) == OFXOSC_TYPE_FALSE){
 			return (float)((ofxOscArgBool*)args[index])->get();
 		}
@@ -273,7 +273,7 @@ double ofxOscMessage::getArgAsDouble(std::size_t index) const{
 		else if(getArgType(index) == OFXOSC_TYPE_FLOAT){
 			return (double)((ofxOscArgFloat*)args[index])->get();
 		}
-		else if( getArgType(index)  == OFXOSC_TYPE_TRUE ||
+		else if( getArgType(index) == OFXOSC_TYPE_TRUE ||
 			     getArgType(index) == OFXOSC_TYPE_FALSE){
 			return (double)((ofxOscArgBool*)args[index])->get();
 		}
@@ -651,9 +651,6 @@ std::ostream& operator<<(std::ostream &os, const ofxOscMessage &message) {
 				break;
 			case OFXOSC_TYPE_BLOB:
 				os << "BLOB";
-				break;
-			case OFXOSC_TYPE_BUNDLE:
-				os << "BUNDLE";
 				break;
 			case OFXOSC_TYPE_RGBA_COLOR:
 				os << ofToHex(message.getArgAsRgbaColor(i));
