@@ -83,22 +83,21 @@ linux64:
 	ADDON_LIBS += libs/poco/lib/linux64/libPocoFoundation.a
 
 linuxarmv6l:
-	ADDON_LIBS = libs/poco/lib/linuxarmv6l/libPocoNetSSL.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv6l/libPocoNet.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv6l/libPocoCrypto.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv6l/libPocoUtil.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv6l/libPocoJSON.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv6l/libPocoXML.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv6l/libPocoFoundation.a
+	ADDON_LDFLAGS = -lPocoNetSSL
+	ADDON_LDFLAGS += -lPocoNet
+	ADDON_LDFLAGS += -lPocoCrypto
+	ADDON_LDFLAGS += -lPocoUtil
+	ADDON_LDFLAGS += -lPocoXML
+	ADDON_LDFLAGS += -lPocoFoundation
 
 linuxarmv7l:
-	ADDON_LIBS = libs/poco/lib/linuxarmv7l/libPocoNetSSL.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoNet.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoCrypto.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoUtil.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoJSON.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoXML.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoFoundation.a
+	ADDON_LDFLAGS = -lPocoNetSSL
+	ADDON_LDFLAGS += -lPocoNet
+	ADDON_LDFLAGS += -lPocoCrypto
+	ADDON_LDFLAGS += -lPocoUtil
+	ADDON_LDFLAGS += -lPocoJSON
+	ADDON_LDFLAGS += -lPocoXML
+	ADDON_LDFLAGS += -lPocoFoundation
 
 android/armeabi-v7a:
 	ADDON_INCLUDES = libs/poco/include/%
