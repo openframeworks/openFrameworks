@@ -14,7 +14,7 @@
 #import "ofxiOSExtras.h"
 #include "ofAppiOSWindow.h"
 
-@interface ofxiOSGLKViewController() <EAGLViewDelegate, GLKViewControllerDelegate> {
+@interface ofxiOSGLKViewController() <EAGLKViewDelegate, GLKViewControllerDelegate> {
     UIInterfaceOrientation currentInterfaceOrientation;
     UIInterfaceOrientation pendingInterfaceOrientation;
     BOOL bReadyToRotate;
@@ -26,6 +26,10 @@
 @implementation ofxiOSGLKViewController
 
 @synthesize glView;
+
+- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
+    return [self initWithFrame:frame app:app sharegroup:nil];
+}
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup{
     currentInterfaceOrientation = pendingInterfaceOrientation = UIInterfaceOrientationPortrait;

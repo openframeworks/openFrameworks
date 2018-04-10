@@ -12,7 +12,7 @@
 #import <GLKit/GLKit.h>
 #import "ESRenderer.h"
 
-@protocol EAGLViewDelegate <NSObject>
+@protocol EAGLKViewDelegate <NSObject>
 @optional
 - (void)glViewAnimationStarted;
 - (void)glViewAnimationStopped;
