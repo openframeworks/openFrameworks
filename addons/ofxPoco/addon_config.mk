@@ -87,7 +87,6 @@ linuxarmv6l:
 	ADDON_LDFLAGS += -lPocoNet
 	ADDON_LDFLAGS += -lPocoCrypto
 	ADDON_LDFLAGS += -lPocoUtil
-	ADDON_LDFLAGS += -lPocoJSON
 	ADDON_LDFLAGS += -lPocoXML
 	ADDON_LDFLAGS += -lPocoFoundation
 
