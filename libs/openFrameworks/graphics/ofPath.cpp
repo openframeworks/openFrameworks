@@ -56,6 +56,22 @@ ofPath::ofPath(){
 }
 
 //----------------------------------------------------------
+ofPath::ofPath(const ofPolyline &polyline) : ofPath(){
+	addPolyline(polyline);
+}
+
+//----------------------------------------------------------
+void ofPath::addPolyline(const ofPolyline &polyline){
+	if (mode == COMMANDS) {
+		for (ofVec3f vertex : polyline) {
+			lineTo(vertex.x, vertex.y, vertex.z);
+		}
+	} else if (mode == POLYLINES) {
+		polylines.push_back(polyline);
+	}
+}
+
+//----------------------------------------------------------
 void ofPath::clear(){
 	commands.clear();
 	// for performance, instead of clearing the whole vector

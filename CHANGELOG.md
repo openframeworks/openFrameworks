@@ -20,7 +20,11 @@
  - removed
  / modified
 
- ------------------------------------------------------------------------------                             
+### graphics
+    + ofPath has a polyline constructor and an addPolyline method for faster
+      ofPolyline -> ofPath conversions
+
+ ------------------------------------------------------------------------------
 
    ___         ___        ______
   / _ \       / _ \      |____  |

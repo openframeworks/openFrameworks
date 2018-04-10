@@ -38,6 +38,18 @@ public:
 	/// \brief Create a new ofPath instance.
 	ofPath();
 
+	/// \brief Construct a new ofPath from the given ofPolyline.
+	///
+	/// \param polyline The polyline to that defines the new ofPath.
+	ofPath(const ofPolyline &polyline);
+
+	/// \brief Add a new polyline to the path. If the path mode is `COMMANDS`,
+	/// this will add each vertex of the polyline to the path. Otherwise if the path
+	/// mode is `POLYLINES`, a new polyline will be appended to the end of the polylines
+	/// array
+    /// \param polyline The polyline to add to this path.
+	void addPolyline(const ofPolyline &polyline);
+
 	/// \brief Remove all subpaths from the ofPath instance
 	void clear();
 
