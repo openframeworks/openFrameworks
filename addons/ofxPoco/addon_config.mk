@@ -72,6 +72,8 @@ linux:
 	ADDON_LIBS += libs/poco/lib/linux/libPocoJSON.a
 	ADDON_LIBS += libs/poco/lib/linux/libPocoXML.a
 	ADDON_LIBS += libs/poco/lib/linux/libPocoFoundation.a
+	ADDON_LDFLAGS = -lcrypto
+	ADDON_LDFLAGS += -lssl
 
 linux64:
 	ADDON_LIBS = libs/poco/lib/linux64/libPocoNetSSL.a
@@ -81,6 +83,8 @@ linux64:
 	ADDON_LIBS += libs/poco/lib/linux64/libPocoJSON.a
 	ADDON_LIBS += libs/poco/lib/linux64/libPocoXML.a
 	ADDON_LIBS += libs/poco/lib/linux64/libPocoFoundation.a
+	ADDON_LDFLAGS = -lcrypto
+	ADDON_LDFLAGS += -lssl
 
 linuxarmv6l:
 	ADDON_LDFLAGS = -lPocoNetSSL
@@ -89,6 +93,8 @@ linuxarmv6l:
 	ADDON_LDFLAGS += -lPocoUtil
 	ADDON_LDFLAGS += -lPocoXML
 	ADDON_LDFLAGS += -lPocoFoundation
+	ADDON_LDFLAGS = -lcrypto
+	ADDON_LDFLAGS += -lssl
 
 linuxarmv7l:
 	ADDON_LDFLAGS = -lPocoNetSSL
@@ -98,6 +104,8 @@ linuxarmv7l:
 	ADDON_LDFLAGS += -lPocoJSON
 	ADDON_LDFLAGS += -lPocoXML
 	ADDON_LDFLAGS += -lPocoFoundation
+	ADDON_LDFLAGS = -lcrypto
+	ADDON_LDFLAGS += -lssl
 
 android/armeabi-v7a:
 	ADDON_INCLUDES = libs/poco/include/%
@@ -165,6 +173,8 @@ msys2:
 	ADDON_LDFLAGS += -lPocoJSON
 	ADDON_LDFLAGS += -lPocoXML
 	ADDON_LDFLAGS += -lPocoFoundation
+	ADDON_LDFLAGS += -lcrypto
+	ADDON_LDFLAGS += -lssl
 	ADDON_CFLAGS = -DPOCO_STATIC
 
 vs:
