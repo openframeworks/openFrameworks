@@ -459,11 +459,11 @@ public:
     /// neighboring indices)
 	OF_DEPRECATED_MSG("Use the Deg/Rad versions", float getAngleAtIndexInterpolated(float findex) const);
     
-    /// \brief Get rotation vector at index (magnitude is sin of angle)
+    /// \brief Get rotation vector at index (magnitude is sine of angle)
 	T getRotationAtIndex(int index) const;
     
     /// \brief Get rotation vector at interpolated index 
-    /// (interpolated between neighboring indices) (magnitude is sin of angle)
+    /// (interpolated between neighboring indices) (magnitude is sine of angle)
 	T getRotationAtIndexInterpolated(float findex) const;
 
 	/// \brief Get angle (degrees) of the path at index

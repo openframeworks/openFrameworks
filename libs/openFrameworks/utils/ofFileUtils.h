@@ -39,23 +39,23 @@ public:
 	/// Create a buffer and set its contents from a raw byte pointer.
 	///
 	/// \param buffer pointer to the raw byte buffer to copy data from
-	/// \param _size the number of bytes to read
+	/// \param size the number of bytes to read
 	/// \warning buffer *must* not be NULL
-	/// \warning _size *must* be <= the number of bytes allocated in _buffer
+	/// \warning size *must* be <= the number of bytes allocated in buffer
     ofBuffer(const char * buffer, std::size_t size);
 	
 	/// Create a buffer and set its contents from an input stream.
 	///
 	/// \param ioBlockSize the number of bytes to read from the stream in chunks
-	ofBuffer(std::istream & stream, size_t ioBlockSize = 1024);
+	ofBuffer(std::istream & stream, std::size_t ioBlockSize = 1024);
 
 	/// Set the contents of the buffer from a raw byte pointer.
 	///
 	/// \warning buffer *must* not be NULL
-	/// \warning _size *must* be <= the number of bytes allocated in _buffer
+	/// \warning size *must* be <= the number of bytes allocated in buffer
 	/// \param buffer pointer to the raw byte buffer to copy data from
-	/// \param _size the number of bytes to read
-	void set(const char * _buffer, std::size_t _size);
+	/// \param size the number of bytes to read
+	void set(const char * buffer, std::size_t size);
 	
 	/// Set contents of the buffer from a string.
 	///
@@ -66,7 +66,7 @@ public:
 	///
 	/// \param stream input stream to copy data from
 	/// \param ioBlockSize the number of bytes to read from the stream in chunks
-	bool set(std::istream & stream, size_t ioBlockSize = 1024);
+	bool set(std::istream & stream, std::size_t ioBlockSize = 1024);
 	
 	/// Set all bytes in the buffer to a given value.
 	///
@@ -75,22 +75,22 @@ public:
 	
 	/// Append bytes to the end of buffer from a string.
 	///
-	/// \param _buffer string to copy bytes from
-	void append(const std::string& _buffer);
+	/// \param buffer string to copy bytes from
+	void append(const std::string& buffer);
 	
 	/// Append bytes to the end of the buffer from a raw byte pointer.
 	///
 	/// \warning buffer *must* not be NULL
-	/// \warning _size *must* be <= the number of bytes allocated in _buffer
+	/// \warning size *must* be <= the number of bytes allocated in buffer
 	/// \param buffer pointer to the raw byte buffer to copy data from
-	/// \param _size the number of bytes to read
-	void append(const char * _buffer, std::size_t _size);
+	/// \param size the number of bytes to read
+	void append(const char * buffer, std::size_t size);
 	
 	/// Request that the buffer capacity be at least enough to contain a
 	/// specified number of bytes.
 	///
 	/// \param size number of bytes to reserve space for
-	void reserve(size_t size);
+	void reserve(std::size_t size);
 
 	/// Write contents of the buffer to an output stream.
 	bool writeTo(std::ostream & stream) const;
@@ -101,17 +101,17 @@ public:
 	/// Request that the buffer capacity be at least enough to contain a
 	/// specified number of bytes.
 	///
-	/// \param _size number of bytes to reserve space for
-	void allocate(std::size_t _size);
+	/// \param size number of bytes to reserve space for
+	void allocate(std::size_t size);
 	
 	/// Resize the buffer to contain a specified number of bytes.
 	///
-	/// If _size is < the current buffer size, the contents are reduced to _size
-	/// bytes & remaining bytes are removed. If _size is > the current buffer
-	/// size, the buffer's size is increased to _size_ bytes.
+	/// If size is < the current buffer size, the contents are reduced to size
+	/// bytes & remaining bytes are removed. If size is > the current buffer
+	/// size, the buffer's size is increased to size_ bytes.
 	///
-	/// \param _size number of bytes to resize the buffer to
-	void resize(std::size_t _size);
+	/// \param size number of bytes to resize the buffer to
+	void resize(std::size_t size);
 
 	/// Access the buffer's contents using a raw byte pointer.
 	///

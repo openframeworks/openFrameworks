@@ -30,8 +30,6 @@ void ofSoundSetVolume(float vol){
 void ofSoundUpdate(){
 	#ifdef OF_SOUND_PLAYER_FMOD
 		ofFmodSoundUpdate();
-	#else
-		ofLogWarning("ofSoundPlayer") << "ofSoundUpdate() not implemented on this platform";
 	#endif
 }
 

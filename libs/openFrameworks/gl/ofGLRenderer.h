@@ -201,7 +201,7 @@ public:
 	void unbind(const ofTexture & texture, int location);
 	void unbind(const ofCamera & camera);
 
-    void begin(const ofFbo & fbo, ofFboBeginMode mode);
+    void begin(const ofFbo & fbo, ofFboMode mode);
 	void end(const ofFbo & fbo);
 
 	void bind(const ofFbo & fbo);
