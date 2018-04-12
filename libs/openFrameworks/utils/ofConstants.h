@@ -8,7 +8,9 @@
 #define OF_VERSION_PRE_RELEASE "master"
 
 // Set to 1 for compatibility with old projects using ofVec instead of glm
-#define OF_USE_LEGACY_VECTOR_MATH 0
+#ifndef OF_USE_LEGACY_VECTOR_MATH
+	#define OF_USE_LEGACY_VECTOR_MATH 0
+#endif
 
 #if !OF_USE_LEGACY_VECTOR_MATH
 	#define GLM_META_PROG_HELPERS
