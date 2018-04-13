@@ -1,5 +1,5 @@
-version: 1.0.{build}
-os: Visual Studio 2017 RC
+version: 2.0.{build}
+os: Visual Studio 2017
 
 environment:
   global:
