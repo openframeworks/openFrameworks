@@ -1,6 +1,6 @@
 OF_ROOT=$PWD
 
-${OF_ROOT}/scripts/vs/download_libs.sh --silent
+${OF_ROOT}/scripts/vs/download_libs.sh -p vs2017 --silent
 
 cd ~/
 rm -rf projectGenerator
