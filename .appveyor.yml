@@ -45,7 +45,7 @@ install:
 #    }
 # - if "%BUILDER%"=="VS" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/vs/download_libs.sh --silent")
 - if "%BUILDER%"=="VS" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/vs/install.sh")
-- ps: Install-Package clcache -Scope CurrentUser -Force
+# - ps: Install-Package clcache -Scope CurrentUser -Force
 # - clcache -z
 
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/msys2/install.sh --noconfirm")
