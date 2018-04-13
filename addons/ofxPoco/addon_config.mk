@@ -93,7 +93,7 @@ linuxarmv6l:
 	ADDON_LDFLAGS += -lPocoUtil
 	ADDON_LDFLAGS += -lPocoXML
 	ADDON_LDFLAGS += -lPocoFoundation
-	ADDON_LDFLAGS = -lcrypto
+	ADDON_LDFLAGS += -lcrypto
 	ADDON_LDFLAGS += -lssl
 
 linuxarmv7l:
@@ -104,7 +104,7 @@ linuxarmv7l:
 	ADDON_LDFLAGS += -lPocoJSON
 	ADDON_LDFLAGS += -lPocoXML
 	ADDON_LDFLAGS += -lPocoFoundation
-	ADDON_LDFLAGS = -lcrypto
+	ADDON_LDFLAGS += -lcrypto
 	ADDON_LDFLAGS += -lssl
 
 android/armeabi-v7a:
