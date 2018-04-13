@@ -6,15 +6,18 @@ environment:
     APPVEYOR_OS_NAME: windows
   matrix:
   #MSYS2 Building
-    - platform: x86
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      platform: x86
       BUILDER: MSYS2
       CCACHE_DIR: "%APPVEYOR_BUILD_FOLDER%\\.ccache"
 
   #VisualStudio Building
-    - platform: x86
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      platform: x86
       BUILDER : VS
       BITS: 32
-    - platform: x64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      platform: x64
       BUILDER : VS
       BITS: 64
 
