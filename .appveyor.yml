@@ -1,5 +1,5 @@
 version: 1.0.{build}
-os: Visual Studio 2015 RC
+os: Visual Studio 2017 RC
 
 environment:
   global:
@@ -33,7 +33,7 @@ init:
 #- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syuu")
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync"'
 
-- IF "%BUILDER%"=="VS" set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
+# - IF "%BUILDER%"=="VS" set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
 
 cache:
     - .ccache
