@@ -1,5 +1,5 @@
-version: 2.0.{build}
-os: Visual Studio 2017
+version: 1.0.{build}
+image: Visual Studio 2017
 
 environment:
   global:
@@ -25,12 +25,8 @@ clone_depth: 10
 init:
 - set MSYS2_PATH=c:\msys64
 - set CHERE_INVOKING=1
-#- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Sy pacman"'
-#- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syuu"'
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x86" set MSYSTEM=MINGW32
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x64" set MSYSTEM=MINGW64
-
-#- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syuu")
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync"'
 
 # - IF "%BUILDER%"=="VS" set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
@@ -39,20 +35,12 @@ cache:
     - .ccache
 
 install:
-#- ps: |
-#    if ($env:BUILDER -eq "VS") {
-#        .\scripts\vs\download_libs.ps1
-#    }
-# - if "%BUILDER%"=="VS" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/vs/download_libs.sh --silent")
 - if "%BUILDER%"=="VS" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/vs/install.sh")
-# - ps: Install-Package clcache -Scope CurrentUser -Force
-# - clcache -z
-
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/msys2/install.sh --noconfirm")
 
 before_build:
-    - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "ccache -z")
-    - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "ccache -s")
+- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "ccache -z")
+- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "ccache -s")
 
 build_script:
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/msys2/build.sh")
