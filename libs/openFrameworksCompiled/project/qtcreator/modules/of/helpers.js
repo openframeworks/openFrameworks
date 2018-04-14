@@ -28,7 +28,14 @@ function findCommand(){
             break;
         }
     }
+    log.error("couldn't find gnu find, returning find, you probably need to set a correct path");
     return "find";
+}
+
+function windowsToUnix(path){
+    var cygpath = new Process();
+    cygpath.exec("cygpath.exe", [path], true);
+    return cygpath.readLine();
 }
 
 function getSystemPath(){
