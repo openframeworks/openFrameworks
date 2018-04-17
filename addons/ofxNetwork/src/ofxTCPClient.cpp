@@ -241,32 +241,38 @@ bool ofxTCPClient::isClosingCondition(int messageSize, int errorCode){
 //--------------------------
 string ofxTCPClient::receive(){
 	str    = "";
-	int length=0;
-	//only get data from the buffer if we don't have already some complete message
-	if(tmpStr.find(messageDelimiter)==string::npos){
-		memset(tmpBuff,  0, TCP_MAX_MSG_SIZE+1); //one more so there's always a \0 at the end for string concat
-		length = TCPClient.Receive(tmpBuff, TCP_MAX_MSG_SIZE);
-		if(length>0){ // don't copy the data if there was an error or disconnection
-			removeZeros(tmpBuff,length);
-			tmpStr += tmpBuff;
+	char byte;
+	while(peekReceiveRawBytes(&byte, 1)>0){
+		int length=0;
+		//only get data from the buffer if we don't have already some complete message
+		if(tmpStr.find(messageDelimiter)==string::npos){
+			memset(tmpBuff,  0, TCP_MAX_MSG_SIZE+1); //one more so there's always a \0 at the end for string concat
+			length = TCPClient.Receive(tmpBuff, TCP_MAX_MSG_SIZE);
+			if(length>0){ // don't copy the data if there was an error or disconnection
+				removeZeros(tmpBuff,length);
+				tmpStr += tmpBuff;
+			}
+		}
+
+		// check for connection reset or disconnection
+		int errorCode = 0;
+		if(length<0) errorCode = ofxNetworkCheckError();
+		if(isClosingCondition(length,errorCode)){
+			close();
+			if(tmpStr.length()==0) {
+				// return if there's no more data left in the buffer
+				return "";
+			}
+		}
+
+		// process any available data
+		if(tmpStr.find(messageDelimiter)!=string::npos){
+			str=tmpStr.substr(0,tmpStr.find(messageDelimiter));
+			tmpStr=tmpStr.substr(tmpStr.find(messageDelimiter)+messageDelimiter.size());
+			return str;
 		}
 	}
-
-    // check for connection reset or disconnection
-    int errorCode = 0;
-    if(length<0) errorCode = ofxNetworkCheckError();
-	if(isClosingCondition(length,errorCode)){
-		close();
-		if(tmpStr.length()==0) // return if there's no more data left in the buffer
-			return "";
-	}
-
-	// process any available data
-	if(tmpStr.find(messageDelimiter)!=string::npos){
-		str=tmpStr.substr(0,tmpStr.find(messageDelimiter));
-		tmpStr=tmpStr.substr(tmpStr.find(messageDelimiter)+messageDelimiter.size());
-	}
-	return str;
+	return "";
 }
 
 //--------------------------
