@@ -1060,7 +1060,7 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 	XkbGetState(window->getX11Display(), XkbUseCoreKbd, &xkb_state);
 	XEvent ev = {0};
 	ev.xkey.keycode = scancode;
-	ev.xkey.state = xkb_state.mods & !ControlMask;
+	ev.xkey.state = xkb_state.mods & ~ControlMask;
 	ev.xkey.display = window->getX11Display();
 	ev.xkey.type = KeyPress;
 	KeySym keysym = NoSymbol;
@@ -1427,12 +1427,15 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 			break;
 		case GLFW_KEY_ENTER:
 			key = OF_KEY_RETURN;
+			codepoint = '\n';
 			break;
 		case GLFW_KEY_KP_ENTER:
 			key = OF_KEY_RETURN;
+			codepoint = '\n';
 			break;   
 		case GLFW_KEY_TAB:
 			key = OF_KEY_TAB;
+			codepoint = '\t';
 			break;   
 		case GLFW_KEY_KP_0:
 			key = codepoint = '0';
