@@ -143,7 +143,7 @@ void ofInit(){
 #ifdef TARGET_LINUX
 	if(std::locale().name() == "C"){
 		try{
-			std::locale::global(std::locale("C.UTF-8"));
+            std::locale::global(std::locale("C.UTF-8"));
 		}catch(...){
 			if(ofToLower(std::locale("").name()).find("utf-8")==std::string::npos){
 				ofLogWarning("ofInit") << "Couldn't set UTF-8 locale, string manipulation functions\n"
@@ -153,6 +153,11 @@ void ofInit(){
 			}
 		}
 	}
+#endif
+
+#if defined(TARGET_WIN32) && !_MSC_VER //MSYS2 UTF-8 limited support
+    setlocale(LC_ALL,"");
+    ofLogWarning("ofInit") << "MSYS2 has limited support for UTF-8. using "<< string( setlocale(LC_ALL,NULL) );
 #endif
 }
 
