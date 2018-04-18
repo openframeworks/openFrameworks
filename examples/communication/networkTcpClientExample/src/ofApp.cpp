@@ -82,9 +82,9 @@ void ofApp::keyPressed(int key){
 		}else{
 			msgTx += (char) key;
 		}
-		tcpClient.send(msgTx);
 		if (!msgTx.empty() && msgTx.back() == '\n') {
-			msgTx.clear();
+            tcpClient.send(msgTx);
+            msgTx.clear();
 		}
 	}
 }
