@@ -59,7 +59,6 @@ bool ofxJavaCallBoolMethod(jobject object, jclass classID, std::string methodNam
 bool ofxJavaCallBoolMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, ...);
 bool ofxJavaCallBoolMethod(jobject object, std::string className, std::string methodName, std::string methodSignature, ...);
 
-void ofxAndroidPauseApp();
 void ofxAndroidAlertBox(std::string msg);
 int ofxAndroidProgressBox(std::string msg);
 void ofxAndroidDismissProgressBox(int id);
