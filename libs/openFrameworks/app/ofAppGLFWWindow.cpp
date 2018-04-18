@@ -300,11 +300,15 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 
     int framebufferW, framebufferH;
     glfwGetFramebufferSize(windowP, &framebufferW, &framebufferH);
-    
+    glfwGetWindowSize( windowP, &currentW, &currentH );
+
     //this lets us detect if the window is running in a retina mode
-	if( framebufferW != windowW){
+	if( framebufferW != currentW){
         pixelScreenCoordScale = framebufferW / windowW;
-		
+		if( pixelScreenCoordScale < 1 ){
+            pixelScreenCoordScale = 1;
+        }
+        
 		if(targetWindowMode == OF_WINDOW){
 			auto position = getWindowPosition();
 			setWindowShape(windowW, windowH);
