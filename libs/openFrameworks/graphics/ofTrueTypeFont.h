@@ -96,7 +96,11 @@ public:
 	static const range MiscSymbolsAndPictographs;
 	static const range Emoticons;
 	static const range TransportAndMap;
-
+	static const range EnclosedCharacters;
+	static const range Uncategorized;
+	static const range AdditionalEmoticons;
+	static const range AdditionalTransportAndMap;
+	static const range OtherAdditionalSymbols;
 };
 
 class ofAlphabet{

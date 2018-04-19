@@ -64,16 +64,23 @@ const ofUnicode::range ofUnicode::KanaSupplement {0x1B000, 0x1B0FF};
 const ofUnicode::range ofUnicode::RumiNumericalSymbols {0x10E60, 0x10E7F};
 const ofUnicode::range ofUnicode::ArabicMath {0x1EE00, 0x1EEFF};
 const ofUnicode::range ofUnicode::MiscSymbolsAndPictographs {0x1F300, 0x1F5FF};
-const ofUnicode::range ofUnicode::Emoticons {0x1F600, 0x1F64F};
+const ofUnicode::range ofUnicode::Emoticons {0x1F601, 0x1F64F};
 const ofUnicode::range ofUnicode::TransportAndMap {0x1F680, 0x1F6FF};
+const ofUnicode::range ofUnicode::EnclosedCharacters {0x24C2, 0x1F251};
+const ofUnicode::range ofUnicode::Uncategorized {0x00A9, 0x1F5FF};
+const ofUnicode::range ofUnicode::AdditionalEmoticons {0x1F600, 0x1F636};
+const ofUnicode::range ofUnicode::AdditionalTransportAndMap {0x1F681, 0x1F6C5};
+const ofUnicode::range ofUnicode::OtherAdditionalSymbols {0x1F30D, 0x1F567};
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Emoji {
 	ofUnicode::Space,
-	ofUnicode::Hiragana,
-	ofUnicode::Katakana,
-	ofUnicode::KatakanaPhoneticExtensions,
-	ofUnicode::CJKLettersAndMonths,
-	ofUnicode::CJKUnified
+	ofUnicode::Emoticons,
+	ofUnicode::Dingbats,
+	ofUnicode::Uncategorized,
+	ofUnicode::TransportAndMap,
+	ofUnicode::EnclosedCharacters,
+	ofUnicode::OtherAdditionalSymbols,
+
 };
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Japanese {
