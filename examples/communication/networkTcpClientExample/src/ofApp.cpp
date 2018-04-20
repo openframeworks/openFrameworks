@@ -42,6 +42,7 @@ void ofApp::update(){
 
 		if( deltaTime > 5000 ){
 			tcpClient.setup("127.0.0.1", 11999);
+			tcpClient.setMessageDelimiter("\n");
 			connectTime = ofGetElapsedTimeMillis();
 		}
 
