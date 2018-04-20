@@ -51,6 +51,7 @@ public:
 	};
 
 	static const range Space;
+	static const range IdeographicSpace;
 	static const range Latin;
 	static const range Latin1Supplement;
 	static const range Greek;
