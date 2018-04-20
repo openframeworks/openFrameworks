@@ -168,6 +168,14 @@ static ofxiOSGLKView * _instanceRef = nil;
     *screenSize = glm::vec2(currentScreen.bounds.size.width * scaleFactor, currentScreen.bounds.size.height * scaleFactor);
 }
 
+- (void) setMSAA:(bool)on
+{
+    if(on)
+        self.drawableMultisample = GLKViewDrawableMultisample4X;
+    else
+        self.drawableMultisample = GLKViewDrawableMultisampleNone;
+}
+
 - (void)notifyResized {
     // blank this.
     // we want to notifyResized at the end of layoutSubviews.
