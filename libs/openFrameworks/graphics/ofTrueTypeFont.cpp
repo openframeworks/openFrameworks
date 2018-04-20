@@ -21,6 +21,7 @@
 using namespace std;
 
 const ofUnicode::range ofUnicode::Space {32, 32};
+const ofUnicode::range ofUnicode::IdeographicSpace {0x3000, 0x3000};
 const ofUnicode::range ofUnicode::Latin {32, 0x007F};
 const ofUnicode::range ofUnicode::Latin1Supplement {32,0x00FF};
 const ofUnicode::range ofUnicode::Greek {0x0370, 0x03FF};
@@ -85,6 +86,7 @@ const std::initializer_list<ofUnicode::range> ofAlphabet::Emoji {
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Japanese {
 	ofUnicode::Space,
+	ofUnicode::IdeographicSpace,
 	ofUnicode::Hiragana,
 	ofUnicode::Katakana,
 	ofUnicode::KatakanaPhoneticExtensions,
@@ -94,12 +96,14 @@ const std::initializer_list<ofUnicode::range> ofAlphabet::Japanese {
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Chinese {
 	ofUnicode::Space,
+	ofUnicode::IdeographicSpace,
 	ofUnicode::CJKLettersAndMonths,
 	ofUnicode::CJKUnified
 };
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Korean {
 	ofUnicode::Space,
+	ofUnicode::IdeographicSpace,
 	ofUnicode::HangulJamo,
 	ofUnicode::HangulCompatJamo,
 	ofUnicode::HangulExtendedA,
