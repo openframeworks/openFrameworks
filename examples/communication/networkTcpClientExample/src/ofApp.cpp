@@ -82,9 +82,9 @@ void ofApp::keyPressed(ofKeyEventArgs & key){
 		}else if (key.codepoint != 0){
 			ofUTF8Append(msgTx, key.codepoint);
 		}
-		tcpClient.send(msgTx);
 		if (!msgTx.empty() && msgTx.back() == '\n') {
-			msgTx.clear();
+            tcpClient.send(msgTx);
+            msgTx.clear();
 		}
 	}
 }
