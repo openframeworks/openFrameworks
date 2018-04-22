@@ -34,6 +34,10 @@ static ofxiOSGLKView * _instanceRef = nil;
     return _instanceRef;
 }
 
+- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr {
+    return [self initWithFrame:frame andApp:appPtr sharegroup:nil];
+}
+
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr sharegroup:(EAGLSharegroup *)sharegroup{
     
     window = dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
@@ -162,6 +166,14 @@ static ofxiOSGLKView * _instanceRef = nil;
         currentScreen = [UIScreen mainScreen];
     }
     *screenSize = glm::vec2(currentScreen.bounds.size.width * scaleFactor, currentScreen.bounds.size.height * scaleFactor);
+}
+
+- (void) setMSAA:(bool)on
+{
+    if(on)
+        self.drawableMultisample = GLKViewDrawableMultisample4X;
+    else
+        self.drawableMultisample = GLKViewDrawableMultisampleNone;
 }
 
 - (void)notifyResized {

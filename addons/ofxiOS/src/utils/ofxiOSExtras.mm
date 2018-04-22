@@ -40,6 +40,7 @@
 #include "ofxtvOSViewController.h"
 #endif
 #include "ofxiOSEAGLView.h"
+#include "ofxiOSGLKView.h"
 #include "ofAppiOSWindow.h"
 #include "ofAppRunner.h"
 #include "ofImage.h"
@@ -142,6 +143,11 @@ UIWindow * ofxiOSGetUIWindow() {
 //--------------------------------------------------------------
 ofxiOSEAGLView * ofxiOSGetGLView() {
     return [ofxiOSEAGLView getInstance];
+}
+
+//--------------------------------------------------------------
+ofxiOSGLKView * ofxiOSGetGLKView() {
+    return [ofxiOSGLKView getInstance];
 }
 
 //--------------------------------------------------------------

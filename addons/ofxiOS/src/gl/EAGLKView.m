@@ -149,6 +149,14 @@ andPreferedRenderer:(ESRendererVersion)version
     }
 }
 
+- (void) setMSAA:(bool)on
+{
+    if(on)
+        self.drawableMultisample = GLKViewDrawableMultisample4X;
+    else
+        self.drawableMultisample = GLKViewDrawableMultisampleNone;
+}
+
 //------------------------------------------------------------------- notify.
 - (void) notifyAnimationStarted {
     if([self.delegate respondsToSelector:@selector(glViewAnimationStarted)]) {
