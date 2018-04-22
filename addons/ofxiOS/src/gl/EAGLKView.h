@@ -12,7 +12,7 @@
 #import <GLKit/GLKit.h>
 #import "ESRenderer.h"
 
-@protocol EAGLViewDelegate <NSObject>
+@protocol EAGLKViewDelegate <NSObject>
 @optional
 - (void)glViewAnimationStarted;
 - (void)glViewAnimationStopped;
@@ -61,6 +61,7 @@ andPreferedRenderer:(ESRendererVersion)rendererVersion
 #ifdef __IPHONE_9_1
 - (void)touchesEstimatedPropertiesUpdated:(NSSet<UITouch *> *)touches NS_AVAILABLE_IOS(9_1);
 #endif
+- (void)setMSAA:(bool)on;
 - (void)notifyAnimationStarted;
 - (void)notifyAnimationStopped;
 - (void)notifyDraw;
