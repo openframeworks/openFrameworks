@@ -56,11 +56,11 @@ class ofApp: public ofxUnitTestsApp{
 			ofEvent<const int> intEvent;
 			ofAddListener(intEvent, this, &ofApp::intListener);
 			ofAddListener(intEvent, intFunctListener);
-			auto listenerLambda = intEvent.newListener([&](const int & i){
+			ofEventListener listenerLambda(intEvent.newListener([&](const int & i){
 				lastIntFromLambda = i;
-			}, 0);
-			auto listenerMember = intEvent.newListener(this, &ofApp::intListenerWithToken);
-			auto listenerFunc = intEvent.newListener(intFunctListenerWithToken);
+			}, 0));
+			ofEventListener listenerMember(intEvent.newListener(this, &ofApp::intListenerWithToken));
+			ofEventListener listenerFunc(intEvent.newListener(intFunctListenerWithToken));
 
 			ofNotifyEvent(intEvent, 5);
 			test_eq(lastInt, 5, "Testing int event to member function");
@@ -121,11 +121,11 @@ class ofApp: public ofxUnitTestsApp{
 		{
 			ofEvent<void> voidEvent;
 			ofAddListener(voidEvent, this, &ofApp::voidListener);
-			auto listenerVoidLambda = voidEvent.newListener([&]{
+			ofEventListener listenerVoidLambda(voidEvent.newListener([&]{
 				toggleForVoidLambdaListener = !toggleForVoidLambdaListener;
-			});
-			auto listenerVoidMember = voidEvent.newListener(this, &ofApp::voidListenerWithToken);
-			auto listenerVoidFunc = voidEvent.newListener(voidFunc);
+			}));
+			ofEventListener listenerVoidMember(voidEvent.newListener(this, &ofApp::voidListenerWithToken));
+			ofEventListener listenerVoidFunc(voidEvent.newListener(voidFunc));
 
 			voidEvent.notify();
 			test_eq(toggleForVoidListener, true, "Void event with member function");
