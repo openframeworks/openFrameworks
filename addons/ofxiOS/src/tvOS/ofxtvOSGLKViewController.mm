@@ -6,7 +6,7 @@
 #include "ofxtvOSGLKViewController.h"
 #include "ofxiOSGLKView.h"
 
-@interface ofxtvOSGLKViewController() <EAGLViewDelegate, GLKViewControllerDelegate> {
+@interface ofxtvOSGLKViewController() <EAGLKViewDelegate, GLKViewControllerDelegate> {
     UITapGestureRecognizer *tapRecognizer;
 }
 @end
