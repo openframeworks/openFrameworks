@@ -161,7 +161,7 @@ public:
 	int keycode;
 	/// The raw scan code returned by the keyboard, OS and hardware specific.
 	int scancode;
-	/// The Unicode code point you'd expect if this key combo (including modifier keys) was pressed in a text editor, or -1 for non-printable characters.
+	/// The Unicode code point you'd expect if this key combo (including modifier keys) was pressed in a text editor, or 0 for non-printable characters.
 	uint32_t codepoint;
 	/// If this is a repeat event
 	bool isRepeat;

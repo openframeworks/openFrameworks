@@ -143,10 +143,10 @@ char ofEasyCam::getTranslationKey() const{
 //----------------------------------------
 void ofEasyCam::enableMouseInput(){
 	if(!bMouseInputEnabled && events){
-		listeners.push_back(events->update.newListener(this, &ofEasyCam::update));
-		listeners.push_back(events->mousePressed.newListener(this, &ofEasyCam::mousePressed));
-		listeners.push_back(events->mouseReleased.newListener(this, &ofEasyCam::mouseReleased));
-		listeners.push_back(events->mouseScrolled.newListener(this, &ofEasyCam::mouseScrolled));
+		listeners.push(events->update.newListener(this, &ofEasyCam::update));
+		listeners.push(events->mousePressed.newListener(this, &ofEasyCam::mousePressed));
+		listeners.push(events->mouseReleased.newListener(this, &ofEasyCam::mouseReleased));
+		listeners.push(events->mouseScrolled.newListener(this, &ofEasyCam::mouseScrolled));
 	}
 	// if enableMouseInput was called within ofApp::setup()
 	// `events` will still carry a null pointer, and bad things
@@ -159,7 +159,7 @@ void ofEasyCam::enableMouseInput(){
 //----------------------------------------
 void ofEasyCam::disableMouseInput(){
 	if(bMouseInputEnabled && events){
-		listeners.clear();
+		listeners.unsubscribeAll();
 	}
 	// if disableMouseInput was called within ofApp::setup()
 	// `events` will still carry a null pointer, and bad things
