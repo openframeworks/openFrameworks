@@ -1,13 +1,8 @@
 #include "ofApp.h"
 
-#ifndef OF_VIDEO_CAPTURE_QTKIT
-    #error This example requires OF_VIDEO_PLAYER_QTKIT to be defined.  
-    #error For OS X versions > 10.6 and < 10.12 #define OF_VIDEO_PLAYER_QTKIT before including ofMain.h in main.cpp
-#endif
-
 //--------------------------------------------------------------
 void ofApp::setup(){
-
+#ifdef OF_VIDEO_CAPTURE_QTKIT
     // This example shows how to use the OS X specific
     // video grabber to record synced video and audio to disk.
     
@@ -62,13 +57,13 @@ void ofApp::setup(){
     // 7. If you'd like to launch the newly created video in Quicktime
     // you can enable it here.
     bLaunchInQuicktime = true;
-    
+#endif
 }
 
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	
+#ifdef OF_VIDEO_CAPTURE_QTKIT
 	ofBackground(60, 60, 60);
 	
 	vidGrabber.update();
@@ -76,10 +71,12 @@ void ofApp::update(){
     if(recordedVideoPlayback.isLoaded()){
         recordedVideoPlayback.update();
     }
+#endif
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    #ifdef OF_VIDEO_CAPTURE_QTKIT
     ofRectangle previewWindow(20, 20, 640, 480);
     ofRectangle playbackWindow(20+640, 20, 640, 480);
 
@@ -174,12 +171,16 @@ void ofApp::draw(){
         ofDrawBitmapString(audioDevices[i], 20, startY+i*20);
     }
     ofPopStyle();
+#else
+    ofDrawBitmapStringHighlight("This example will not work on your computer as it uses QTKit\nwhich was deprecated introduced on macos 10.7 and removed on 10.11.", 100,100);
+    
+#endif
 }
 
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+#ifdef OF_VIDEO_CAPTURE_QTKIT
 	if(key == ' '){
         
         //if it is recording, stop
@@ -197,10 +198,12 @@ void ofApp::keyPressed(int key){
 	        vidRecorder->startRecording("MyMovieFile.mov");
         }
     }
+#endif
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){ 
+void ofApp::keyReleased(int key){
+    #ifdef OF_VIDEO_CAPTURE_QTKIT
 	if(key == 'v'){
         //switch video device
 		vidRecorder->setVideoDeviceID( (vidRecorder->getVideoDeviceID()+1) % videoDevices.size() );
@@ -209,9 +212,11 @@ void ofApp::keyReleased(int key){
         //switch audio device
         vidRecorder->setAudioDeviceID( (vidRecorder->getAudioDeviceID()+1) % audioDevices.size() );
     }
+#endif
 }
 
 //--------------------------------------------------------------
+#ifdef OF_VIDEO_CAPTURE_QTKIT
 void ofApp::videoSaved(ofVideoSavedEventArgs& e){
 	// the ofQTKitGrabber sends a message with the file name and any errors when the video is done recording
 	if(e.error.empty()){
@@ -226,7 +231,7 @@ void ofApp::videoSaved(ofVideoSavedEventArgs& e){
 		ofLogError("videoSavedEvent") << "Video save error: " << e.error;
 	}
 }
-
+#endif
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){}
 
@@ -240,14 +245,10 @@ void ofApp::mousePressed(int x, int y, int button){}
 void ofApp::mouseReleased(int x, int y, int button){}
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
-}
+void ofApp::mouseEntered(int x, int y){}
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
-}
+void ofApp::mouseExited(int x, int y){}
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){}

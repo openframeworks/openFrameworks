@@ -5,7 +5,7 @@
 
 // This openFrameworks example demonstrates how to use the OS X specific
 // video grabber to record synced video and audio to disk.
-//
+// 
 // For more information regarding this example take a look at the README.md.
 
 
@@ -29,6 +29,8 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
 		
+    
+#ifdef OF_VIDEO_CAPTURE_QTKIT
 		ofVideoGrabber 			vidGrabber;
 		ofPtr<ofQTKitGrabber>	vidRecorder;
     
@@ -40,4 +42,5 @@ class ofApp : public ofBaseApp{
 	    vector<string> audioDevices;
     
         bool bLaunchInQuicktime;
+#endif
 };
