@@ -33,11 +33,10 @@ void ofApp::update() {
 		closestPoints.clear();
 		closestIndices.clear();
 
-		ofPoint target;
-		target.set(mouseX, mouseY);
+        glm::vec3 target (mouseX, mouseY,0);
 
 		for(unsigned int i = 0; i < contourFinder.blobs.size(); i++) {
-			ofPolyline_<ofPoint> cur;
+			ofPolyline cur;
 			// add all the current vertices to cur polyline
 			cur.addVertices(contourFinder.blobs[i].pts);
 			cur.setClosed(true);
@@ -57,15 +56,15 @@ void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void drawWithNormals(const ofPolyline_<ofPoint>& polyline) {
+void drawWithNormals(const ofPolyline& polyline) {
 	for(int i=0; i< (int) polyline.size(); i++ ) {
 		bool repeatNext = i == (int)polyline.size() - 1;
 
-		const ofPoint& cur = polyline[i];
-		const ofPoint& next = repeatNext ? polyline[0] : polyline[i + 1];
+		const glm::vec3& cur = polyline[i];
+		const glm::vec3& next = repeatNext ? polyline[0] : polyline[i + 1];
 
-		float angle = atan2f(next.y - cur.y, next.x - cur.x) * RAD_TO_DEG;
-		float distance = cur.distance(next);
+        float angle = ofRadToDeg(atan2f(next.y - cur.y, next.x - cur.x));
+        float distance = glm::distance(cur, next);
 
 		if(repeatNext) {
 			ofSetColor(255, 0, 255);
@@ -102,9 +101,9 @@ void ofApp::draw() {
 		ofDrawRectangle(boundingBoxes[i]);
 
 		ofSetColor(255, 0, 0);
-		ofDrawLine(closestPoints[i], ofPoint(mouseX, mouseY));
+        ofDrawLine(closestPoints[i], glm::vec3(mouseX, mouseY,0));
 		ofSetColor(0, 0, 255);
-		ofDrawLine(resampled[i][closestIndices[i]], ofPoint(mouseX, mouseY));
+		ofDrawLine(resampled[i][closestIndices[i]], glm::vec3(mouseX, mouseY,0));
 	}
 
 	ofSetColor(255, 0, 0);
