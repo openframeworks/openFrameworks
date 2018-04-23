@@ -67,7 +67,7 @@ protected:
 	void valueChanged(Type & value);
 	ofPath bg, bar;
 	ofVboMesh textMesh;
-	ofxInputField<Type> input{ofxInputField<Type>::createInsideSlider()};
+	ofxInputField<Type> input{ofxInputField<Type>::InsideSlider};
 
 	enum State{
 		Slider,
