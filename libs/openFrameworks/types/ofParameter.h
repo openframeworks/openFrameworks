@@ -3,6 +3,9 @@
 #include "ofEvents.h"
 #include "ofConstants.h"
 #include "ofPoint.h"
+#include "ofVec2f.h"
+#include "ofVec3f.h"
+#include "ofVec4f.h"
 #include "ofColor.h"
 #include "ofLog.h"
 #include <map>
