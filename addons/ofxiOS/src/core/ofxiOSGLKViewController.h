@@ -23,6 +23,7 @@ class ofxiOSApp;
 
 @property (nonatomic, retain) ofxiOSGLKView * glView;
 
+- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app;
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup;
 
 - (UIInterfaceOrientation)currentInterfaceOrientation;
@@ -31,6 +32,7 @@ class ofxiOSApp;
                             animated:(BOOL)animated;
 - (BOOL)isReadyToRotate;
 - (void)setPreferredFPS:(int)fps;
+- (void)setMSAA:(bool)value;
 - (EAGLSharegroup *)getSharegroup;
 
 @end

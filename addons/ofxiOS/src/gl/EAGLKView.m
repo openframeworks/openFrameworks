@@ -45,12 +45,12 @@ andPreferedRenderer:(ESRendererVersion)version
         
         if(bUseRetina == YES) {
             if(scaleFactorPref == 0.0) {
-                scaleFactorPref = [[UIScreen mainScreen] scale]; // no scale preference, default to max scale.
+                scaleFactorPref = [[UIScreen mainScreen] nativeScale]; // no scale preference, default to max scale.
             } else {
                 if(scaleFactorPref < 1.0) {
                     scaleFactorPref = 1.0; // invalid negative value, default scale to 1.
-                } else if(scaleFactorPref > [[UIScreen mainScreen] scale]) {
-                    scaleFactorPref = [[UIScreen mainScreen] scale];
+                } else if(scaleFactorPref > [[UIScreen mainScreen] nativeScale]) {
+                    scaleFactorPref = [[UIScreen mainScreen] nativeScale];
                 }
             }
         } else {
@@ -147,6 +147,14 @@ andPreferedRenderer:(ESRendererVersion)version
     if(scaleFactor != self.contentScaleFactor) {
         self.contentScaleFactor = scaleFactor;
     }
+}
+
+- (void) setMSAA:(bool)on
+{
+    if(on)
+        self.drawableMultisample = GLKViewDrawableMultisample4X;
+    else
+        self.drawableMultisample = GLKViewDrawableMultisampleNone;
 }
 
 //------------------------------------------------------------------- notify.
