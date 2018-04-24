@@ -918,7 +918,7 @@ void ofCairoRenderer::viewport(ofRectangle v){
 void ofCairoRenderer::viewport(float x, float y, float width, float height, bool invertY){
 	if(width < 0) width = originalViewport.width;
 	if(height < 0) height = originalViewport.height;
-	cout << "setting viewport to:" << width << ", " << height << endl;
+    ofLogVerbose("ofCairoRenderer::viewport") << "Setting viewport to:" << width << ", " << height;
 
 	if (invertY){
 		y = -y;
