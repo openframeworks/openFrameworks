@@ -324,10 +324,17 @@ public:
 	void simplify(float tolerance=0.3f);
 
 	void translate(const glm::vec3 & p);
-	void rotate(float az, const glm::vec3& axis );
+    
+    void rotateDeg(float degrees, const glm::vec3& axis);
+    void rotateRad(float radians, const glm::vec3& axis);
+    OF_DEPRECATED_MSG("Use Deg/Rad versions.", void rotate(float degrees, const glm::vec3& axis ));
+
 	void translate(const glm::vec2 & p);
-	void rotate(float az, const glm::vec2& axis );
-	
+
+    void rotateDeg(float degrees, const glm::vec2& axis);
+    void rotateRad(float radians, const glm::vec2& axis);
+    OF_DEPRECATED_MSG("Use Deg/Rad versions.", void rotate(float degrees, const glm::vec2& axis ));
+    
 	/// \brief Change the size of either the ofPolyline or ofSubPath instances that
 	/// the ofPath contains. These changes are non-reversible, so for instance
 	/// scaling by 0,0 zeros out all data.

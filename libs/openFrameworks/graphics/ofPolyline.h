@@ -354,10 +354,17 @@ public:
 	/// \name Transform polyline
 	/// \{
 
-	void translate(const glm::vec3& p);
-	void rotate(float az, const glm::vec3& axis );
-	void translate(const glm::vec2& p);
-	void rotate(float az, const glm::vec2& axis );
+    void rotateDeg(float degrees, const glm::vec3& axis);
+    void rotateRad(float radians, const glm::vec3& axis);
+    OF_DEPRECATED_MSG("Use Deg/Rad versions.", void rotate(float degrees, const glm::vec3& axis));
+    
+    void translate(const glm::vec3 & p);
+    
+    void rotateDeg(float degrees, const glm::vec2& axis);
+    void rotateRad(float radians, const glm::vec2& axis);
+    OF_DEPRECATED_MSG("Use Deg/Rad versions.", void rotate(float degrees, const glm::vec2& axis));
+
+    void translate(const glm::vec2 & p);
 
 	/// \brief Change the size of the ofPolyline
 	/// These changes are non-reversible, so for instance
@@ -453,11 +460,11 @@ public:
 	T getPointAtIndexInterpolated(float findex) const;
 
     /// \brief Get angle (degrees) of the path at index
-	OF_DEPRECATED_MSG("Use the Deg/Rad versions", float getAngleAtIndex(int index) const);
+	OF_DEPRECATED_MSG("Use Deg/Rad versions.", float getAngleAtIndex(int index) const);
     
     /// \brief Get angle (degrees) at interpolated index (interpolated between
     /// neighboring indices)
-	OF_DEPRECATED_MSG("Use the Deg/Rad versions", float getAngleAtIndexInterpolated(float findex) const);
+	OF_DEPRECATED_MSG("Use Deg/Rad versions.", float getAngleAtIndexInterpolated(float findex) const);
     
     /// \brief Get rotation vector at index (magnitude is sine of angle)
 	T getRotationAtIndex(int index) const;
