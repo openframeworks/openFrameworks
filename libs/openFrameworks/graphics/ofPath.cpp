@@ -840,7 +840,7 @@ void ofPath::rotateRad(float radians, const glm::vec2& axis){
 //----------------------------------------------------------
 void ofPath::scale(float x, float y){
 	if(mode==COMMANDS){
-		for(int j=0;j<(int)commands.size();j++){
+        for(std::size_t j=0;j<commands.size();j++){
 			commands[j].to.x*=x;
 			commands[j].to.y*=y;
 			if(commands[j].type==Command::bezierTo || commands[j].type==Command::quadBezierTo){
@@ -855,8 +855,8 @@ void ofPath::scale(float x, float y){
 			}
 		}
 	}else{
-		for(int i=0;i<(int)polylines.size();i++){
-			for(int j=0;j<(int)polylines[i].size();j++){
+		for(std::size_t i=0;i<polylines.size();i++){
+			for(std::size_t j=0;j<polylines[i].size();j++){
 				polylines[i][j].x*=x;
 				polylines[i][j].y*=y;
 			}
