@@ -153,19 +153,19 @@ template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::yell
 
 template<typename A, typename B>
 A clampedSubtract(const A& a, const B& b) {
-	return CLAMP((float) a - (float) b, 0, ofColor_<A>::limit());
+	return glm::clamp((float) a - (float) b, 0.f, ofColor_<A>::limit());
 }
 template<typename A, typename B>
 A clampedAdd(const A& a, const B& b) {
-	return CLAMP((float) a + (float) b, 0, ofColor_<A>::limit());
+	return glm::clamp((float) a + (float) b, 0.f, ofColor_<A>::limit());
 }
 template<typename A, typename B>
 A clampedDivide(const A& a, const B& b) {
-	return CLAMP((float) a / (float) b, 0, ofColor_<A>::limit());
+	return glm::clamp((float) a / (float) b, 0.f, ofColor_<A>::limit());
 }
 template<typename A, typename B>
 A clampedMultiply(const A& a, const B& b) {
-	return CLAMP((float) a * (float) b, 0, ofColor_<A>::limit());
+	return glm::clamp((float) a * (float) b, 0.f, ofColor_<A>::limit());
 }
 
 template<typename PixelType>
@@ -239,10 +239,10 @@ void ofColor_<PixelType>::set(const ofColor_<PixelType>& color){
 
 template<typename PixelType>
 ofColor_<PixelType>& ofColor_<PixelType>::clamp(){
-	r = CLAMP(r, 0.0f, limit());
-	g = CLAMP(g, 0.0f, limit());
-	b = CLAMP(b, 0.0f, limit());
-	a = CLAMP(a, 0.0f, limit());
+	r = glm::clamp(float(r), 0.0f, limit());
+	g = glm::clamp(float(g), 0.0f, limit());
+	b = glm::clamp(float(b), 0.0f, limit());
+	a = glm::clamp(float(a), 0.0f, limit());
 	return *this;
 }
 
@@ -418,8 +418,8 @@ void ofColor_<PixelType>::setBrightness(float brightness) {
 
 template<typename PixelType>
 void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, float alpha) {
-	saturation = ofClamp(saturation, 0, limit());
-	brightness = ofClamp(brightness, 0, limit());
+	saturation = glm::clamp(saturation, 0.f, limit());
+	brightness = glm::clamp(brightness, 0.f, limit());
 	if(brightness == 0) { // black
 		set(0);
 	} else if(saturation == 0) { // grays

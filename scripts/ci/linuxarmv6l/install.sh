@@ -23,9 +23,9 @@ createRaspbianImg(){
 }
 
 downloadToolchain(){
-    wget http://ci.openframeworks.cc/rpi_toolchain.tar.bz2
-    tar xjf rpi_toolchain.tar.bz2
-    rm rpi_toolchain.tar.bz2
+    wget http://ci.openframeworks.cc/rpi_toolchain_gcc6.tar.bz2
+    tar xjf rpi_toolchain_gcc6.tar.bz2
+    rm rpi_toolchain_gcc6.tar.bz2
 }
 
 downloadFirmware(){
@@ -37,16 +37,16 @@ downloadFirmware(){
 }
 
 relativeSoftLinks(){
-    for link in $(ls -la | grep "\-> /" | sed "s/.* \([^ ]*\) \-> \/\(.*\)/\1->\/\2/g"); do 
-        lib=$(echo $link | sed "s/\(.*\)\->\(.*\)/\1/g"); 
-        link=$(echo $link | sed "s/\(.*\)\->\(.*\)/\2/g"); 
+    for link in $(ls -la | grep "\-> /" | sed "s/.* \([^ ]*\) \-> \/\(.*\)/\1->\/\2/g"); do
+        lib=$(echo $link | sed "s/\(.*\)\->\(.*\)/\1/g");
+        link=$(echo $link | sed "s/\(.*\)\->\(.*\)/\2/g");
         rm $lib
-        ln -s ../../..$link $lib 
+        ln -s ../../..$link $lib
     done
 
-    for f in *; do 
-        error=$(grep " \/lib/" $f > /dev/null 2>&1; echo $?) 
-        if [ $error -eq 0 ]; then 
+    for f in *; do
+        error=$(grep " \/lib/" $f > /dev/null 2>&1; echo $?)
+        if [ $error -eq 0 ]; then
             sed -i "s/ \/lib/ ..\/..\/..\/lib/g" $f
             sed -i "s/ \/usr/ ..\/..\/..\/usr/g" $f
         fi

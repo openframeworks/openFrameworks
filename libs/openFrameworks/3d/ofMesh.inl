@@ -1,7 +1,12 @@
-#include "ofAppRunner.h"
-#include "ofBaseTypes.h"
+#ifndef OF_MESH_H
 #include "ofMesh.h"
+#endif
+
+#include "ofAppRunner.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofVectorMath.h"
+#include "ofMath.h"
+#include "ofLog.h"
 #include <map>
 
 //--------------------------------------------------------------
@@ -1861,19 +1866,20 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::plane(float width, float height, int columns,
 	N normal(0, 0, 1); // always facing forward //
 	T texcoord;
 
-	// the origin of the plane is the center //
-	float halfW = width/2.f;
-	float halfH = height/2.f;
+	// the origin of the plane is at the center //
+	float halfW = width  * 0.5f;
+	float halfH = height * 0.5f;
+	
 	// add the vertexes //
-	for(int iy = 0; iy < rows; iy++) {
-		for(int ix = 0; ix < columns; ix++) {
+	for(int iy = 0; iy != rows; iy++) {
+		for(int ix = 0; ix != columns; ix++) {
 
 			// normalized tex coords //
-			texcoord.x = ((float)ix/((float)columns-1.f));
-			texcoord.y = ((float)iy/((float)rows-1.f));
+			texcoord.x =       ((float)ix/((float)columns-1));
+			texcoord.y = 1.f - ((float)iy/((float)rows-1));
 
 			vert.x = texcoord.x * width - halfW;
-			vert.y = texcoord.y * height - halfH;
+			vert.y = -(texcoord.y-1) * height - halfH;
 
 			mesh.addVertex(vert);
 			mesh.addTexCoord(texcoord);
@@ -1942,7 +1948,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::sphere( float radius, int res, ofPrimitiveMod
 		float tr = sin( PI-i * polarInc );
 		float ny = cos( PI-i * polarInc );
 
-		tcoord.y = i / res;
+		tcoord.y = 1.f - (i / res);
 
 		for(float j = 0; j <= doubleRes; j++) {
 
@@ -2057,7 +2063,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 	const float phi = (1.0f + sqrt5) * 0.5f;
 	const float invnorm = 1/sqrt(phi*phi+1);
 
-        sphere.addVertex(invnorm * V(-1,  phi, 0));//0
+    sphere.addVertex(invnorm * V(-1,  phi, 0));//0
 	sphere.addVertex(invnorm * V( 1,  phi, 0));//1
 	sphere.addVertex(invnorm * V(0,   1,  -phi));//2
 	sphere.addVertex(invnorm * V(0,   1,   phi));//3
@@ -2151,8 +2157,9 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 		u = alpha/TWO_PI+.5f;
 		v = atan2f(vec.y, r0)/PI + .5f;
 		// reverse the u coord, so the default is texture mapped left to
-		// right on the outside of a sphere //
-		texCoords.push_back(T(1.0-u,v));
+		// right on the outside of a sphere 
+		// reverse the v coord, so that texture origin is at top left
+		texCoords.push_back(T(1.0-u,1.f-v));
 	}
 
 	/// Step 4 : fix texcoords
@@ -2286,7 +2293,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cylinder( float radius, float height, int rad
 				vert.y = -halfH;
 
 				tcoord.x = (float)ix/((float)radiusSegments-1.f);
-				tcoord.y = ofMap(iy, 0, capSegs-1, 0, maxTexYNormalized);
+				tcoord.y = 1.f - ofMap(iy, 0, capSegs-1, 0, maxTexYNormalized);
 
 				mesh.addTexCoord( tcoord );
 				mesh.addVertex( vert );
@@ -2340,7 +2347,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cylinder( float radius, float height, int rad
 			vert.z = sin(ix*angleIncRadius) * radius;
 
 			tcoord.x = float(ix)/(float(radiusSegments)-1.f);
-			tcoord.y = ofMap(iy, 0, heightSegments-1, minTexYNormalized, maxTexYNormalized );
+			tcoord.y = 1.f - ofMap(iy, 0, heightSegments-1, minTexYNormalized, maxTexYNormalized );
 
 			mesh.addTexCoord( tcoord );
 			mesh.addVertex( vert );
@@ -2390,7 +2397,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cylinder( float radius, float height, int rad
 				vert.y = halfH;
 
 				tcoord.x = (float)ix/((float)radiusSegments-1.f);
-				tcoord.y = ofMap(iy, 0, capSegs-1, minTexYNormalized, maxTexYNormalized);
+				tcoord.y = 1.f - ofMap(iy, 0, capSegs-1, minTexYNormalized, maxTexYNormalized);
 
 				mesh.addTexCoord( tcoord );
 				mesh.addVertex( vert );
@@ -2481,7 +2488,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cone( float radius, float height, int radiusS
 			vert.z = sin((float)ix*angleIncRadius) * newRad;
 
 			tcoord.x = (float)ix/((float)radiusSegments-1.f);
-			tcoord.y = (float)iy/((float)maxTexY);
+			tcoord.y = 1.f - (float)iy/((float)maxTexY);
 
 			mesh.addTexCoord( tcoord );
 			mesh.addVertex( vert );
@@ -2539,7 +2546,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cone( float radius, float height, int radiusS
 			vert.y = halfH;
 
 			tcoord.x = (float)ix/((float)radiusSegments-1.f);
-			tcoord.y = ofMap(iy, 0, capSegs-1, maxTexYNormalized, 1.f);
+			tcoord.y = 1.f - ofMap(iy, 0, capSegs-1, maxTexYNormalized, 1.f);
 
 			mesh.addTexCoord( tcoord );
 			mesh.addVertex( vert );
@@ -2618,10 +2625,10 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 
 			// normalized tex coords //
 			texcoord.x = ((float)ix/((float)resX-1.f));
-			texcoord.y = ((float)iy/((float)resY-1.f));
+			texcoord.y = 1.f - ((float)iy/((float)resY-1.f));
 
 			vert.x = texcoord.x * width - halfW;
-			vert.y = texcoord.y * height - halfH;
+			vert.y = -(texcoord.y-1.f) * height - halfH;
 			vert.z = halfD;
 
 			mesh.addVertex(vert);
@@ -2634,13 +2641,13 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 		for(int x = 0; x < resX-1; x++) {
 			// first triangle //
 			mesh.addIndex((y)*resX + x + vertOffset);
-			mesh.addIndex((y)*resX + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resX + x + vertOffset);
+			mesh.addIndex((y)*resX + x+1 + vertOffset);
 
 			// second triangle //
 			mesh.addIndex((y)*resX + x+1 + vertOffset);
-			mesh.addIndex((y+1)*resX + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resX + x + vertOffset);
+			mesh.addIndex((y+1)*resX + x+1 + vertOffset);
 		}
 	}
 
@@ -2655,11 +2662,11 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 
 			// normalized tex coords //
 			texcoord.x = ((float)ix/((float)resZ-1.f));
-			texcoord.y = ((float)iy/((float)resY-1.f));
+			texcoord.y = 1.f - ((float)iy/((float)resY-1.f));
 
 			//vert.x = texcoord.x * width - halfW;
 			vert.x = halfW;
-			vert.y = texcoord.y * height - halfH;
+			vert.y = -(texcoord.y-1.f) * height - halfH;
 			vert.z = texcoord.x * -depth + halfD;
 
 			mesh.addVertex(vert);
@@ -2672,13 +2679,13 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 		for(int x = 0; x < resZ-1; x++) {
 			// first triangle //
 			mesh.addIndex((y)*resZ + x + vertOffset);
-			mesh.addIndex((y)*resZ + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resZ + x + vertOffset);
+			mesh.addIndex((y)*resZ + x+1 + vertOffset);
 
 			// second triangle //
 			mesh.addIndex((y)*resZ + x+1 + vertOffset);
-			mesh.addIndex((y+1)*resZ + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resZ + x + vertOffset);
+			mesh.addIndex((y+1)*resZ + x+1 + vertOffset);
 		}
 	}
 
@@ -2692,11 +2699,11 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 
 			// normalized tex coords //
 			texcoord.x = ((float)ix/((float)resZ-1.f));
-			texcoord.y = ((float)iy/((float)resY-1.f));
+			texcoord.y = 1.f-((float)iy/((float)resY-1.f));
 
 			//vert.x = texcoord.x * width - halfW;
 			vert.x = -halfW;
-			vert.y = texcoord.y * height - halfH;
+			vert.y = -(texcoord.y-1.f) * height - halfH;
 			vert.z = texcoord.x * depth - halfD;
 
 			mesh.addVertex(vert);
@@ -2709,13 +2716,13 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 		for(int x = 0; x < resZ-1; x++) {
 			// first triangle //
 			mesh.addIndex((y)*resZ + x + vertOffset);
-			mesh.addIndex((y)*resZ + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resZ + x + vertOffset);
+			mesh.addIndex((y)*resZ + x+1 + vertOffset);
 
 			// second triangle //
 			mesh.addIndex((y)*resZ + x+1 + vertOffset);
-			mesh.addIndex((y+1)*resZ + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resZ + x + vertOffset);
+			mesh.addIndex((y+1)*resZ + x+1 + vertOffset);
 		}
 	}
 
@@ -2730,10 +2737,10 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 
 			// normalized tex coords //
 			texcoord.x = ((float)ix/((float)resX-1.f));
-			texcoord.y = ((float)iy/((float)resY-1.f));
+			texcoord.y = 1.f-((float)iy/((float)resY-1.f));
 
 			vert.x = texcoord.x * -width + halfW;
-			vert.y = texcoord.y * height - halfH;
+			vert.y = -(texcoord.y-1.f) * height - halfH;
 			vert.z = -halfD;
 
 			mesh.addVertex(vert);
@@ -2746,13 +2753,13 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 		for(int x = 0; x < resX-1; x++) {
 			// first triangle //
 			mesh.addIndex((y)*resX + x + vertOffset);
-			mesh.addIndex((y)*resX + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resX + x + vertOffset);
+			mesh.addIndex((y)*resX + x+1 + vertOffset);
 
 			// second triangle //
 			mesh.addIndex((y)*resX + x+1 + vertOffset);
-			mesh.addIndex((y+1)*resX + x+1 + vertOffset);
 			mesh.addIndex((y+1)*resX + x + vertOffset);
+			mesh.addIndex((y+1)*resX + x+1 + vertOffset);
 		}
 	}
 
@@ -2767,10 +2774,10 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 
 			// normalized tex coords //
 			texcoord.x = ((float)ix/((float)resX-1.f));
-			texcoord.y = ((float)iy/((float)resZ-1.f));
+			texcoord.y = 1.f-((float)iy/((float)resZ-1.f));
 
 			vert.x = texcoord.x * width - halfW;
-			//vert.y = texcoord.y * height - halfH;
+			//vert.y = -(texcoord.y-1.f) * height - halfH;
 			vert.y = -halfH;
 			vert.z = texcoord.y * depth - halfD;
 
@@ -2805,10 +2812,10 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::box( float width, float height, float depth, 
 
 			// normalized tex coords //
 			texcoord.x = ((float)ix/((float)resX-1.f));
-			texcoord.y = ((float)iy/((float)resZ-1.f));
+			texcoord.y = 1.f-((float)iy/((float)resZ-1.f));
 
 			vert.x = texcoord.x * width - halfW;
-			//vert.y = texcoord.y * height - halfH;
+			//vert.y = -(texcoord.y-1.f) * height - halfH;
 			vert.y = halfH;
 			vert.z = texcoord.y * -depth + halfD;
 

@@ -1,6 +1,16 @@
 #include "ofQuaternion.h"
 #include "ofMatrix4x4.h"
 #include "ofMath.h"
+#include "ofMathConstants.h"
+#include "glm/gtc/quaternion.hpp"
+
+//----------------------------------------
+ofQuaternion::ofQuaternion(const glm::quat & q):_v(q.x, q.y, q.z, q.w){}
+
+//----------------------------------------
+ofQuaternion::operator glm::quat() const{
+	return glm::quat(_v.w, glm::vec3(_v.x, _v.y, _v.z));
+}
 
 void ofQuaternion::set(const ofMatrix4x4& matrix) {
 	*this = matrix.getRotate();
@@ -180,10 +190,10 @@ void ofQuaternion::makeRotate_original( const ofVec3f& from, const ofVec3f& to )
 			ofVec3f axis(fromd.getCrossed(tmp));
 			axis.normalize();
 
-			_v.x = axis[0]; // sin of half angle of PI is 1.0.
-			_v.y = axis[1]; // sin of half angle of PI is 1.0.
-			_v.z = axis[2]; // sin of half angle of PI is 1.0.
-			_v.w = 0; // cos of half angle of PI is zero.
+			_v.x = axis[0]; // sine of half angle of PI is 1.0.
+			_v.y = axis[1]; // sine of half angle of PI is 1.0.
+			_v.z = axis[2]; // sine of half angle of PI is 1.0.
+			_v.w = 0; // cosine of half angle of PI is zero.
 
 		} else {
 			// This is the usual situation - take a cross-product of vec1 and vec2

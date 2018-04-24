@@ -2,9 +2,8 @@
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-#include "ofBaseTypes.h"
+#include "ofVideoBaseTypes.h"
 #include "ofPixels.h"
-#include "ofTypes.h"
 
 
 #ifdef OF_VIDEO_CAPTURE_IOS

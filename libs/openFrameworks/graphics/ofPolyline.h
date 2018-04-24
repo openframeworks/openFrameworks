@@ -1,5 +1,10 @@
-#pragma once
+// This include guard is not a pragma once on purpose
+// so some IDEs are happy include this file back form the corresponding inl
+#ifndef OF_POLYLINE_H
+#define OF_POLYLINE_H
+
 #include "ofConstants.h"
+#include "glm/fwd.hpp"
 #include <deque>
 
 /// \file 
@@ -346,6 +351,20 @@ public:
 	void simplify(float tolerance=0.3f);
 
 	/// \}
+	/// \name Transform polyline
+	/// \{
+
+	void translate(const glm::vec3& p);
+	void rotate(float az, const glm::vec3& axis );
+	void translate(const glm::vec2& p);
+	void rotate(float az, const glm::vec2& axis );
+
+	/// \brief Change the size of the ofPolyline
+	/// These changes are non-reversible, so for instance
+	/// scaling by 0,0 zeros out all data.
+	void scale(float x, float y);
+
+	/// \}
 	/// \name Polyline State
 	/// \{
 	
@@ -440,11 +459,11 @@ public:
     /// neighboring indices)
 	OF_DEPRECATED_MSG("Use the Deg/Rad versions", float getAngleAtIndexInterpolated(float findex) const);
     
-    /// \brief Get rotation vector at index (magnitude is sin of angle)
+    /// \brief Get rotation vector at index (magnitude is sine of angle)
 	T getRotationAtIndex(int index) const;
     
     /// \brief Get rotation vector at interpolated index 
-    /// (interpolated between neighboring indices) (magnitude is sin of angle)
+    /// (interpolated between neighboring indices) (magnitude is sine of angle)
 	T getRotationAtIndexInterpolated(float findex) const;
 
 	/// \brief Get angle (degrees) of the path at index
@@ -547,3 +566,5 @@ template<class T>
 bool ofInsidePoly(const T& p, const std::vector<T>& poly){
 	return ofPolyline_<T>::inside(p.x,p.y, ofPolyline_<T>(poly));
 }
+
+#endif

@@ -26,8 +26,8 @@ private:
 	/// parameter change callaback
 	void parameterChanged(ofAbstractParameter &parameter);
 	
-	ofxOscSender sender; //< sync sender
-	ofxOscReceiver receiver; //< sync receiver
-	ofParameterGroup syncGroup; //< target parameter group
-	bool updatingParameter; //< is a parameter being updated?
+	ofxOscSender sender; ///< sync sender
+	ofxOscReceiver receiver; ///< sync receiver
+	ofParameterGroup syncGroup; ///< target parameter group
+	bool updatingParameter; ///< is a parameter being updated?
 };

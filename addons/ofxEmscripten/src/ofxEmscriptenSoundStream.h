@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "ofBaseSoundStream.h"
-#include "ofSoundStream.h"
+#include "ofSoundBaseTypes.h"
+#include "ofConstants.h"
 #include "ofSoundBuffer.h"
 
 class ofxEmscriptenSoundStream: public ofBaseSoundStream {

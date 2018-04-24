@@ -3,11 +3,15 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 
+// send host (aka ip address)
 #define HOST "localhost"
+
+/// send port
 #define PORT 12345
 
-//--------------------------------------------------------
-class ofApp : public ofBaseApp {
+// demonstrates sending OSC messages with an ofxOscSender,
+// use in conjunction with the oscReceiveExample
+class ofApp : public ofBaseApp{
 
 	public:
 
@@ -32,4 +36,3 @@ class ofApp : public ofBaseApp {
 		ofBuffer imgAsBuffer;
 		ofImage img; 
 };
-

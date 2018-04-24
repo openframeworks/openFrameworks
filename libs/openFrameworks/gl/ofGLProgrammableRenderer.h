@@ -1,5 +1,5 @@
 #pragma once
-#include "ofBaseTypes.h"
+#include "ofGLBaseTypes.h"
 #include "ofPolyline.h"
 #include "ofShader.h"
 #include "ofMatrixStack.h"
@@ -192,7 +192,7 @@ public:
 #endif
 	void unbind(const ofFbo & fbo);
 
-    void begin(const ofFbo & fbo, ofFboBeginMode mode);
+    void begin(const ofFbo & fbo, ofFboMode mode);
 	void end(const ofFbo & fbo);
 
 	ofStyle getStyle() const;

@@ -11,6 +11,7 @@
 #include "ofxiOSExtras.h"
 #include "ofAppiOSWindow.h"
 #include "ofAppRunner.h"
+#include "ofLog.h"
 
 using namespace std;
 
@@ -226,7 +227,7 @@ UITextField * ofxiOSKeyboard::getKeyboardTextField() {
                     
                 case OF_ORIENTATION_DEFAULT:
                     _x = _xOriginal;
-                    _y = _h;
+                    _y = _yOriginal;
                     break;
             }
         }
@@ -270,7 +271,7 @@ UITextField * ofxiOSKeyboard::getKeyboardTextField() {
                 
             case OF_ORIENTATION_DEFAULT:
                 _x = _xOriginal;
-                _y = _h;
+                _y = _yOriginal;
                 break;
         }
     }

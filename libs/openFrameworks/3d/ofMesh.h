@@ -1,11 +1,10 @@
-// TODO:
-// get face info properly
-// use edge flags
+// This include guard is not a pragma once on purpose
+// so some IDEs are happy include this file back form the corresponding inl
+#ifndef OF_MESH_H
+#define OF_MESH_H
 
-#pragma once
-
-#include "ofGLUtils.h"
 #include "ofConstants.h"
+#include "ofGLUtils.h"
 
 template<class V, class N, class C, class T>
 class ofMeshFace_;
@@ -260,9 +259,6 @@ public:
 	/// \returns the vector that contains all of the vertices of the mesh.
 	const std::vector<V> & getVertices() const;
 
-	/// \returns If the vertices of the mesh have changed, been added or removed.
-	bool haveVertsChanged();
-
 	/// \returns Whether the mesh has any vertices.
 	bool hasVertices() const;
 
@@ -336,9 +332,6 @@ public:
 	/// \returns the vector that contains all of the normals of the mesh, if
 	/// it has any. (read only)
 	const std::vector<N> & getNormals() const;
-
-	/// \returns If the normals of the mesh have changed, been added or removed.
-	bool haveNormalsChanged();
 
 	/// /returnsWhether the mesh has any normals.
 	bool hasNormals() const;
@@ -421,9 +414,6 @@ public:
 	/// \returns the vector that contains all of the colors of the mesh, if it has any. (read only)
 	const std::vector<C> & getColors() const;
 
-	/// \returns If the colors of the mesh have changed, been added or removed.
-	bool haveColorsChanged();
-
 	/// /returns Whether the mesh has any colors.
 	bool hasColors() const;
 
@@ -493,9 +483,6 @@ public:
 	/// Because OF uses ARB textures these are in pixels rather than 0-1 normalized coordinates.
 	/// \returns a vector of Vec2f representing the texture coordinates for the whole mesh. (read only)
 	const std::vector<T> & getTexCoords() const;
-
-	/// \returns If the texture coords of the mesh have changed, been added or removed.
-	bool haveTexCoordsChanged();
 
 	/// /returns Whether the mesh has any textures assigned to it.
 	bool hasTexCoords() const;
@@ -584,9 +571,6 @@ public:
 	/// \returns the vector that contains all of the indices of the mesh, if it has any. (read only)
 	const std::vector<ofIndexType> & getIndices() const;
 
-	/// \returns If the indices of the mesh have changed, been added or removed.
-	bool haveIndicesChanged();
-
 	/// /returns Whether the mesh has any indices assigned to it.
 	bool hasIndices() const;
 
@@ -656,6 +640,23 @@ public:
     void save(const std::filesystem::path& path, bool useBinary = false) const;
 
 	/// \}
+
+protected:
+
+	/// \returns If the vertices of the mesh have changed, been added or removed.
+	bool haveVertsChanged();
+
+	/// \returns If the normals of the mesh have changed, been added or removed.
+	bool haveNormalsChanged();
+
+	/// \returns If the colors of the mesh have changed, been added or removed.
+	bool haveColorsChanged();
+
+	/// \returns If the texture coords of the mesh have changed, been added or removed.
+	bool haveTexCoordsChanged();
+
+	/// \returns If the indices of the mesh have changed, been added or removed.
+	bool haveIndicesChanged();
 
 private:
 
@@ -743,3 +744,5 @@ private:
 
 using ofMesh = ofMesh_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorType, ofDefaultTexCoordType>;
 using ofMeshFace = ofMeshFace_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorType, ofDefaultTexCoordType>;
+
+#endif

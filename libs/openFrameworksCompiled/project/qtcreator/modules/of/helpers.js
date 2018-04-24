@@ -28,7 +28,14 @@ function findCommand(){
             break;
         }
     }
+    log.error("couldn't find gnu find, returning find, you probably need to set a correct path");
     return "find";
+}
+
+function windowsToUnix(path){
+    var cygpath = new Process();
+    cygpath.exec("cygpath.exe", [path], true);
+    return cygpath.readLine();
 }
 
 function getSystemPath(){
@@ -65,8 +72,11 @@ function msys2root(){
 
 	
     //console.error("PATH=>"+systemPath);
-    var usrPos = systemPath.indexOf(msys2 + "usr\\bin");
-    var mingw32Pos = systemPath.indexOf(msys2 + "mingw32\\bin");
+    msys2 = FileInfo.fromWindowsSeparators(msys2);
+    var usrBin = FileInfo.toWindowsSeparators(FileInfo.joinPaths(msys2, "usr/bin"));
+    var mingw32Bin = FileInfo.toWindowsSeparators(FileInfo.joinPaths(msys2, "mingw32/bin"));
+    var usrPos = systemPath.indexOf(usrBin);
+    var mingw32Pos = systemPath.indexOf(mingw32Bin);
 	
     if( (usrPos === -1) || (mingw32Pos === -1) || (mingw32Pos > usrPos) ){
         console.error("PATH="+systemPath);

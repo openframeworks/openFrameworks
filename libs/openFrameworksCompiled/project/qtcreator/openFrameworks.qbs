@@ -15,6 +15,7 @@ Product{
     readonly property string projectDir: of.ofRoot + "/libs/openFrameworksCompiled/project"
     readonly property string libDir: of.ofRoot + "/libs/openFrameworksCompiled/lib/" + of.platform
     readonly property bool isCoreLibrary: true
+    readonly property string platform: of.platform
 
     // setting this variable to true will build OF using
     // qbs instead of makefiles which helps catching errors...
@@ -48,7 +49,7 @@ Product{
 
     Properties{
         condition: of.platform === "osx"
-        cpp.minimumOsxVersion: 10.9
+        cpp.minimumOsxVersion: "10.9"
     }
 
     property stringList FILES_EXCLUDE: {
@@ -102,8 +103,10 @@ Product{
     Probe {
         id: core_source
         property stringList files
+        property string ofRoot: of.ofRoot
+        property stringList FILES_EXCLUDE: of.FILES_EXCLUDE
         configure: {
-            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
+            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(ofRoot, '/libs/openFrameworks'));
             var filteredSource = source.filter(function filterExcludes(path){
                 for(exclude in FILES_EXCLUDE){
                     var patt = new RegExp(FILES_EXCLUDE[exclude]);
@@ -161,11 +164,17 @@ Product{
         }
         prepare: {
             var parameters = ['-j4', 'Debug'];
+            if(product.platform==="msys2"){
+                parameters.push('FIND='+Helpers.windowsToUnix(Helpers.findCommand()));
+            }
             var qbsCmd = new Command(product.make, parameters);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
             qbsCmd.highlight = 'compiler';
+            if(project.useStdFs){
+                qbsCmd.environment = ['OF_USING_STD_FS=1']
+            }
             return [qbsCmd];
         }
     }
@@ -180,12 +189,18 @@ Product{
              fileTags: "staticlibrary"
         }
         prepare: {
-            var parameters = ['-j4', 'Release'];
+            var parameters = ['-j4', 'Release']
+            if(product.platform==="msys2"){
+                parameters.push('FIND='+Helpers.windowsToUnix(Helpers.findCommand()));
+            }
             var qbsCmd = new Command(product.make, parameters);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
             qbsCmd.silent = false;
             qbsCmd.highlight = 'compiler';
+            if(project.useStdFs){
+                qbsCmd.environment = ['OF_USING_STD_FS=1']
+            }
             return [qbsCmd];
         }
     }

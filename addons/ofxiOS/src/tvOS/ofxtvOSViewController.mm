@@ -18,8 +18,12 @@
 @synthesize glView;
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
+    return [self initWithFrame:frame app:app sharegroup:nil];
+}
+
+- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup {
     if((self = [super init])) {
-        self.glView = [[[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app] autorelease];
+        self.glView = [[[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup] autorelease];
         self.glView.delegate = self;
     }
     
@@ -96,7 +100,9 @@
 }
 
 - (void)handleTap:(UITapGestureRecognizer *)sender {
-    [self.glView handleTap:sender];
+    if([self.view respondsToSelector:@selector(handleTap:)]) {
+        [self.glView handleTap:sender];
+    }
 }
 
 @end

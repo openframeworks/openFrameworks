@@ -1,9 +1,12 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofAppBaseWindow.h"
-#include "ofBaseApp.h"
 #include "ofEvents.h"
+#include <map>
+
+class ofBaseApp;
+class ofAppBaseWindow;
+class ofWindowSettings;
 
 class ofMainLoop {
 public:

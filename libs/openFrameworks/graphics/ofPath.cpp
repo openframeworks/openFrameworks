@@ -1,7 +1,4 @@
 #include "ofPath.h"
-#include "ofAppRunner.h"
-#include "ofTessellator.h"
-#include "ofVectorMath.h"
 
 using namespace std;
 
@@ -55,7 +52,6 @@ ofPath::ofPath(){
 	bHasChanged = false;
 	bUseShapeColor = true;
 	bNeedsPolylinesGeneration = false;
-	cachedTessellationValid = true;
 	clear();
 }
 
@@ -509,7 +505,7 @@ void ofPath::setPolyWindingMode(ofPolyWindingMode newMode){
 void ofPath::setFilled(bool hasFill){
 	if(bFill != hasFill){
 		bFill = hasFill;
-		if(!cachedTessellationValid) bNeedsTessellation = true;
+		bNeedsTessellation = true;
 	}
 }
 
@@ -611,17 +607,15 @@ void ofPath::generatePolylinesFromCommands(){
 
 		bNeedsPolylinesGeneration = false;
 		bNeedsTessellation = true;
-		cachedTessellationValid=false;
 	}
 }
 
 //----------------------------------------------------------
 void ofPath::tessellate(){
 	generatePolylinesFromCommands();
-	if(!bNeedsTessellation) return;
+	if(!bNeedsTessellation || polylines.empty() || std::all_of(polylines.begin(), polylines.end(), [](const ofPolyline & p) {return p.getVertices().empty();})) return;
 	if(bFill){
 		tessellator.tessellateToMesh( polylines, windingMode, cachedTessellation);
-		cachedTessellationValid=true;
 	}
 	if(hasOutline() && windingMode!=OF_POLY_WINDING_ODD){
 		tessellator.tessellateToPolylines( polylines, windingMode, tessellatedContour);

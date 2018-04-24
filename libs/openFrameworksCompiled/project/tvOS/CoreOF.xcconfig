@@ -35,7 +35,7 @@ OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_BOOST) $(LIB_FREEIMAGE) $(LIB_FREETYPE) $(LIB
 
 OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_OFXACCELEROMETER) $(HEADER_BOOST) $(HEADER_UTF8) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMODEX) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_RTAUDIO) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML)
 
-OF_CORE_FRAMEWORKS = -framework Security
+OF_CORE_FRAMEWORKS = -framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore
 
 // once all libraries are compiled for libc++ / all architectures
 CLANG_CXX_LIBRARY = libc++

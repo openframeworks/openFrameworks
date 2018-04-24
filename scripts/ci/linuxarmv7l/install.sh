@@ -3,8 +3,54 @@ set -e
 set -o pipefail
 # trap any script errors and exit
 trap "trapError" ERR
-age () { stat=$(stat --printf="%Y %F\n" "$1"); echo $((($(date +%s) - ${stat%% *})/86400)); }
+age () {
+    if [ -f $1 ]; then
+        stat=$(stat -c %Z $1);
+        current=$(date +%s);
+        diff=$(expr $current - $stat);
+        days=$(expr $diff / 86400);
+        echo $days
+    else
+        echo 1000
+    fi
+}
 
+hostArch=`uname`
+
+
+isRunning(){
+    if [ “$hostArch” == “Linux” ]; then
+		if [ -d /proc/$1 ]; then
+	    	return 0
+        else
+            return 1
+        fi
+    else
+        number=$(ps aux | sed -E "s/[^ ]* +([^ ]*).*/\1/g" | grep ^$1$ | wc -l)
+
+        if [ $number -gt 0 ]; then
+            return 0;
+        else
+            return 1;
+        fi
+    fi
+}
+
+echoDots(){
+    sleep 0.1 # Waiting for a brief period first, allowing jobs returning immediatly to finish
+    while isRunning $1; do
+        for i in $(seq 1 10); do
+            echo -ne .
+            if ! isRunning $1; then
+                printf "\r"
+                return;
+            fi
+            sleep 5
+        done
+        printf "\r                    "
+        printf "\r"
+    done
+}
 
 SUDO=
 export ROOT=$( cd "$(dirname "$0")" ; pwd -P )
@@ -23,36 +69,75 @@ createArchImg(){
     #sudo apt-get install -y libgssapi-krb5-2 libkrb5-3 libidn11
     #sudo ./arch-bootstrap.sh archlinux
 
-    if [ ! "$(ls -A ~/archlinux)" ] || [ $(age ~/archlinux/timestamp) -gt 7 ]; then
+    download=0
+    if [ ! -d ~/archlinux ]; then
+        download=1
+    elif [ -f ~/archlinux/timestamp ]; then
+        if [ $(age ~/archlinux/timestamp) -gt 7 ]; then
+            download=1
+        fi
+    fi
+
+    if [ "$download" = "1" ]; then
+        echo "Downloading archlinux image"
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
+		cd ~
+		wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+        # download=$!
+        # echoDots $download
+        # wait $download
+
+		mkdir ~/archlinux
 		junest -u << EOF
-			cd ~
-			wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
-			mkdir archlinux
-		    tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C archlinux/ 2> /dev/null
-			sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g archlinux/etc/pacman.conf
-			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -Syu
-			pacman --noconfirm -r archlinux/ --config archlinux/etc/pacman.conf --arch=armv7h -S make pkg-config gcc raspberrypi-firmware openal glew freeglut freeimage freetype2 cairo poco gstreamer gst-plugins-base gst-plugins-good assimp boost libxcursor opencv assimp glfw-x11 uriparser curl pugixml
-        	touch ~/archlinux/timestamp
+	        tar xzf ~/ArchLinuxARM-rpi-2-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
+            sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
+			pacman --noconfirm -S ccache
+			pacman --noconfirm -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -Syu
+			pacman --noconfirm -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -S \
+				make \
+				pkg-config \
+				gcc \
+				raspberrypi-firmware \
+				openal \
+				glew \
+				freeglut \
+				freeimage \
+				freetype2 \
+				cairo \
+				poco \
+				gstreamer \
+				gst-plugins-base \
+				gst-plugins-good \
+				assimp \
+				boost \
+				libxcursor \
+				opencv \
+				assimp \
+				glfw-x11 \
+				uriparser \
+				curl \
+				pugixml
 EOF
+    	touch ~/archlinux/timestamp
     else
         echo "Using cached archlinux image"
     fi
 }
 
 downloadToolchain(){
-    if [ "$(ls -A ~/x-tools7h)" ]; then
+    if [ -d ~/x-tools7h ]; then
         echo "Using cached RPI2 toolchain"
     else
+        echo "Downloading RPI2 toolchain"
 		#xz -dc x-tools7h.tar.xz | tar x -C ~/;
-		junest -u << EOF
-		cd /tmp
-		if [ -f x-tools7h.tar.xz ]; then
-			rm x-tools7h.tar.xz
+		if [ -f ~/x-tools7h.tar.xz ]; then
+			rm ~/x-tools7h.tar.xz
 		fi
-		wget http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
-	    tar -x --delay-directory-restore --no-same-owner -f x-tools7h.tar.xz -C ~/
-	    rm x-tools7h.tar.xz
+        cd ~
+		wget --quiet http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
+		junest -u << EOF
+	        tar -x --delay-directory-restore --no-same-owner -f ~/x-tools7h.tar.xz -C ~/
+	        rm ~/x-tools7h.tar.xz
 EOF
         #wget http://ci.openframeworks.cc/rpi2_toolchain.tar.bz2
         #tar xjf rpi2_toolchain.tar.bz2 -C ~/
@@ -61,7 +146,7 @@ EOF
 }
 
 downloadFirmware(){
-    if [ "$(ls -A ~/firmware-master)" ]; then
+    if [ -d ~/firmware-master ]; then
         echo "Using cached RPI2 firmware-master"
     else
         cd ~
@@ -122,9 +207,11 @@ installJunest(){
 		pacman -Syy --noconfirm
 		pacman -S --noconfirm git flex grep gcc pkg-config make wget
 EOF
+    echo "Done installing junest"
 }
 
 echo $ROOT
+sudo su -c 'echo 1 > /proc/sys/kernel/unprivileged_userns_clone'
 installJunest
 createArchImg
 downloadToolchain

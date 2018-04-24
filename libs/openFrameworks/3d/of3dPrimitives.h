@@ -1,10 +1,12 @@
 #pragma once
 
-#include "ofVboMesh.h"
-#include "ofRectangle.h"
+#include "ofMesh.h"
 #include "ofNode.h"
-#include "ofTexture.h"
 #include <map>
+
+class ofTexture;
+class ofVboMesh;
+class ofRectangle;
 
 /// \brief A class representing a 3d primitive.
 class of3dPrimitive : public ofNode {
@@ -21,7 +23,7 @@ public:
     // does not store texture. Creates tex coords from texture, if texture is
     // non-arb, then it will create normalized tex coords //
     // defaults to index 0
-    void mapTexCoordsFromTexture( ofTexture& inTexture );
+    void mapTexCoordsFromTexture( const ofTexture& inTexture );
 
 
     ofMesh* getMeshPtr();
