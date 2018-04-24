@@ -6,6 +6,7 @@
 #pragma once
 
 #include "ofConstants.h"
+#include <glm/mat3x3.hpp>
 
 
 /// \brief A 3x3 Matrix

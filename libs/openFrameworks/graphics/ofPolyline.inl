@@ -1,7 +1,14 @@
-#include "ofRectangle.h"
-#include "ofAppRunner.h"
+#ifndef OF_POLYLINE_H
 #include "ofPolyline.h"
+#endif
+
+#include "ofConstants.h"
+#include "ofRectangle.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofVectorMath.h"
+#include "ofAppRunner.h"
+#include "ofMath.h"
+#include "ofLog.h"
 
 //----------------------------------------------------------
 template<class T>
@@ -776,6 +783,47 @@ void ofPolyline_<T>::simplify(float tol){
 		points = sV;
 	}
     
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::translate(const glm::vec3 & p){
+    for(auto & point : points){
+        point += p;
+    }
+    flagHasChanged();
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::translate(const glm::vec2 &p){
+    translate(glm::vec3(p, 0.0));
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::rotate(float az, const glm::vec3 &axis){
+    auto radians = ofDegToRad(az);
+    for(auto & point : points){
+        point = glm::rotate(toGlm(point), radians, axis);
+    }
+    flagHasChanged();
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::rotate(float az, const glm::vec2 &axis){
+    rotate(az, glm::vec3(axis, 0.0));
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::scale(float x, float y){
+    for(auto & point : points){
+        point.x *= x;
+        point.y *= y;
+    }
+    flagHasChanged();
 }
 
 //--------------------------------------------------

@@ -1,10 +1,9 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofRectangle.h"
-#include "ofTypes.h"
 #include "ofWindowSettings.h"
 #include "ofMainLoop.h"
+#include "ofRectangle.h"
 
 class ofAppBaseWindow;
 class ofAppBaseGLWindow;
@@ -25,8 +24,7 @@ template<typename Window>
 void ofSetupOpenGL(std::shared_ptr<Window> windowPtr, int w, int h, ofWindowMode screenMode){
 	ofInit();
 	ofWindowSettings settings;
-	settings.width = w;
-	settings.height = h;
+	settings.setSize(w, h);
 	settings.windowMode = screenMode;
 	ofGetMainLoop()->addWindow(windowPtr);
 	windowPtr->setup(settings);
@@ -115,11 +113,16 @@ void ofSetEscapeQuitsApp(bool bQuitOnEsc);
 
 //-------------------------- native window handles
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+typedef unsigned long Window;
+struct _XDisplay;
+typedef struct _XDisplay Display;
 Display* ofGetX11Display();
 Window  ofGetX11Window();
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
+struct __GLXcontextRec;
+typedef __GLXcontextRec * GLXContext;
 GLXContext ofGetGLXContext();
 #endif
 

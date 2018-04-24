@@ -6,6 +6,11 @@
  \___/  (_)   /_/   (_)  \___/
 
 
+  PLATFORM SPECIFIC
+  -----------------
+
+  ### linux
+      + add EL6 build support of install_dependencies.sh and install_codecs.sh
 
  OF 0.9.8
  ========                          

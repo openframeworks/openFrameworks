@@ -1,5 +1,6 @@
-#include <cfloat>
 #include "ofRectangle.h"
+#include "ofMath.h"
+#include "ofLog.h"
 #include "ofVectorMath.h"
 
 using namespace std;
@@ -74,10 +75,10 @@ void ofRectangle::set(const glm::vec3& p0, const glm::vec3& p1) {
 void ofRectangle::set(const glm::vec2& p0, const glm::vec2& p1) {
 	float x0,y0,x1,y1;
 
-  float x0 = std::min(p0.x, p1.x);
-  float x1 = std::max(p0.x, p1.x);
-  float y0 = std::min(p0.y, p1.y);
-  float y1 = std::max(p0.y, p1.y);
+	x0 = std::min(p0.x, p1.x);
+	x1 = std::max(p0.x, p1.x);
+	y0 = std::min(p0.y, p1.y);
+	y1 = std::max(p0.y, p1.y);
 
 	float w = x1 - x0;
 	float h = y1 - y0;
@@ -293,7 +294,7 @@ void ofRectangle::scaleTo(const ofRectangle& targetRect,
             if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING) {
 				scale(std::max(wRatio,hRatio));
             } else if(aspectRatioMode == OF_ASPECT_RATIO_KEEP) {
-                scale(std::min(wRatio,hRatio));
+				scale(std::min(wRatio,hRatio));
             }
         } else {
             ofLogWarning("ofRectangle") << "scaleTo(): no scaling applied to avoid divide by zero, rectangle has 0 width and/or height: " << sw << "x" << sh;
@@ -505,10 +506,10 @@ void ofRectangle::growToInclude(const glm::vec3& p) {
 
 //----------------------------------------------------------
 void ofRectangle::growToInclude(const glm::vec2& p) {
-  float x0 = std::min(getMinX(),p.x);
-  float x1 = std::max(getMaxX(),p.x);
-  float y0 = std::min(getMinY(),p.y);
-  float y1 = std::max(getMaxY(),p.y);
+	float x0 = std::min(getMinX(),p.x);
+	float x1 = std::max(getMaxX(),p.x);
+	float y0 = std::min(getMinY(),p.y);
+	float y1 = std::max(getMaxY(),p.y);
 	float w = x1 - x0;
 	float h = y1 - y0;
 	set(x0,y0,w,h);
@@ -516,10 +517,10 @@ void ofRectangle::growToInclude(const glm::vec2& p) {
 
 //----------------------------------------------------------
 void ofRectangle::growToInclude(const ofRectangle& rect) {
-    float x0 = std::min(getMinX(),rect.getMinX());
-    float x1 = std::max(getMaxX(),rect.getMaxX());
-    float y0 = std::min(getMinY(),rect.getMinY());
-    float y1 = std::max(getMaxY(),rect.getMaxY());
+	float x0 = std::min(getMinX(),rect.getMinX());
+	float x1 = std::max(getMaxX(),rect.getMaxX());
+	float y0 = std::min(getMinY(),rect.getMinY());
+	float y1 = std::max(getMaxY(),rect.getMaxY());
     float w = x1 - x0;
     float h = y1 - y0;
     set(x0,y0,w,h);
@@ -539,14 +540,14 @@ void ofRectangle::growToInclude(const glm::vec2& p0, const glm::vec2& p1) {
 //----------------------------------------------------------
 ofRectangle ofRectangle::getIntersection(const ofRectangle& rect) const {
 
-    float x0 = std::max(getMinX(),rect.getMinX());
-    float x1 = std::min(getMaxX(),rect.getMaxX());
+	float x0 = std::max(getMinX(),rect.getMinX());
+	float x1 = std::min(getMaxX(),rect.getMaxX());
 
     float w = x1 - x0;
     if(w < 0.0f) return ofRectangle(0,0,0,0); // short circuit if needed
 
 	float y0 = std::max(getMinY(),rect.getMinY());
-    float y1 = std::min(getMaxY(),rect.getMaxY());
+	float y1 = std::min(getMaxY(),rect.getMaxY());
 
     float h = y1 - y0;
     if(h < 0.0f) return ofRectangle(0,0,0,0);  // short circuit if needed
@@ -622,7 +623,7 @@ glm::vec3 ofRectangle::getMax() const {
 
 //----------------------------------------------------------
 float ofRectangle::getMinX() const {
-    return std::min(x, x + width);  // - width
+	return std::min(x, x + width);  // - width
 }
 
 //----------------------------------------------------------
@@ -632,12 +633,12 @@ float ofRectangle::getMaxX() const {
 
 //----------------------------------------------------------
 float ofRectangle::getMinY() const{
-    return std::min(y, y + height);  // - height
+	return std::min(y, y + height);  // - height
 }
 
 //----------------------------------------------------------
 float ofRectangle::getMaxY() const {
-    return std::max(y, y + height);  // - height
+	return std::max(y, y + height);  // - height
 }
 
 //----------------------------------------------------------

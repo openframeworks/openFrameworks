@@ -1,13 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
-
-#define GLFW_INCLUDE_NONE
-#include "GLFW/glfw3.h"
-
 #include "ofAppBaseWindow.h"
-#include "ofEvents.h"
-#include "ofPixels.h"
 #include "ofRectangle.h"
 
 #ifdef TARGET_LINUX
@@ -16,6 +10,11 @@ typedef struct _XIC * XIC;
 #endif
 
 class ofBaseApp;
+struct GLFWwindow;
+class ofCoreEvents;
+template<typename T>
+class ofPixels_;
+typedef ofPixels_<unsigned char> ofPixels;
 
 #ifdef TARGET_OPENGLES
 class ofGLFWWindowSettings: public ofGLESWindowSettings{
@@ -70,7 +69,7 @@ public:
 	static bool doesLoop(){ return false; }
 	static bool allowsMultiWindow(){ return true; }
 	static bool needsPolling(){ return true; }
-	static void pollEvents(){ glfwPollEvents(); }
+	static void pollEvents();
 
 
     // this functions are only meant to be called from inside OF don't call them from your code
@@ -196,15 +195,16 @@ private:
 	XIC xic;
 #endif
 
-	ofCoreEvents coreEvents;
+	std::unique_ptr<ofCoreEvents> coreEvents;
 	std::shared_ptr<ofBaseRenderer> currentRenderer;
 	ofGLFWWindowSettings settings;
 
-	ofWindowMode	windowMode;
+	ofWindowMode	targetWindowMode;
 
 	bool			bEnableSetupScreen;
-	int				windowW, windowH;		// physical pixels width
-	int				currentW, currentH;		// scaled pixels width
+	int				windowW, windowH;		/// Physical framebuffer pixels extents
+	int				currentW, currentH;		/// Extents of the window client area, which may be scaled by pixelsScreenCoordScale to map to physical framebuffer pixels.
+	float           pixelScreenCoordScale;  /// Scale factor from virtual operating-system defined client area extents (as seen in currentW, currentH) to physical framebuffer pixel coordinates (as seen in windowW, windowH).
 
 	ofRectangle windowRect;
 
@@ -220,7 +220,6 @@ private:
 
 	ofBaseApp *	ofAppPtr;
 
-    int pixelScreenCoordScale; 
 
 	ofOrientation orientation;
 

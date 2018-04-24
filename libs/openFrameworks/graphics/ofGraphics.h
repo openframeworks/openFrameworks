@@ -1,9 +1,23 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofColor.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofRectangle.h"
-#include "ofTypes.h"
+#include "glm/fwd.hpp"
+//#include "ofUtils.h"
+
+class ofVec3f;
+class ofVec2f;
+
+template<typename T>
+class ofColor_;
+
+typedef ofColor_<unsigned char> ofColor;
+typedef ofColor_<float> ofFloatColor;
+typedef ofColor_<unsigned short> ofShortColor;
+
+template<typename T>
+std::string ofToString(const T&);
 
 /// \cond INTERNAL
 #define  	CIRC_RESOLUTION		    22
@@ -586,6 +600,11 @@ void ofBezierVertex(const glm::vec2 & p1, const glm::vec2 & p2, const glm::vec2 
 void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 
 
+enum ofCloseShape{
+	OF_OPEN = 0,
+	OF_CLOSE = 1,
+};
+
 /// \brief This tells the program that your shape is finished and that it should now
 /// draw it to the screen.
 ///
@@ -662,7 +681,13 @@ void ofDrawBitmapString(const T & textString, float x, float y);
 template<typename T>
 void ofDrawBitmapString(const T & textString, const glm::vec3 & p);
 template<typename T>
+void ofDrawBitmapString(const T & textString, const glm::vec2 & p);
+template<typename T>
 void ofDrawBitmapString(const T & textString, float x, float y, float z);
+template<>
+void ofDrawBitmapString(const std::string & textString, const glm::vec3 & p);
+template<>
+void ofDrawBitmapString(const std::string & textString, const glm::vec2 & p);
 template<>
 void ofDrawBitmapString(const std::string & textString, float x, float y, float z);
 void ofDrawBitmapStringHighlight(std::string text, const glm::vec3& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
@@ -1237,23 +1262,23 @@ void ofEndSaveScreenAsSVG();
 //--------------------------------------------------
 template<typename T>
 void ofDrawBitmapString(const T & textString, const glm::vec3 & p){
-	ofDrawBitmapString(textString, p.x, p.y, p.z);
+	ofDrawBitmapString(ofToString(textString), p);
 }
 
 //--------------------------------------------------
 template<typename T>
 void ofDrawBitmapString(const T & textString, const glm::vec2 & p){
-	ofDrawBitmapString(textString, p.x, p.y);
+	ofDrawBitmapString(ofToString(textString), p);
 }
 
 //--------------------------------------------------
 template<typename T>
 void ofDrawBitmapString(const T & textString, float x, float y){
-	ofDrawBitmapString(textString, x, y, 0.0f);
+	ofDrawBitmapString(ofToString(textString), x, y, 0.f);
 }
 
 //--------------------------------------------------
 template<typename T>
 void ofDrawBitmapString(const T & textString, float x, float y, float z){
-	ofDrawBitmapString(ofToString(textString),x,y,z);
+	ofDrawBitmapString(ofToString(textString), x, y, z);
 }

@@ -2,13 +2,20 @@
 
 #pragma once
 #include "ofConstants.h"
-#include "ofVec3f.h"
-#include "ofColor.h"
-#include "ofUtils.h"
-#include "ofMesh.h"
-#include "ofGLUtils.h"
+#include "ofGraphicsConstants.h"
 #include "ofBufferObject.h"
 #include <map>
+
+template<typename T>
+class ofColor_;
+typedef ofColor_<float> ofFloatColor;
+
+class ofVec2f;
+class ofVec3f;
+
+template<class V, class N, class C, class T>
+class ofMesh_;
+using ofMesh = ofMesh_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorType, ofDefaultTexCoordType>;
 
 class ofVbo {
 public:

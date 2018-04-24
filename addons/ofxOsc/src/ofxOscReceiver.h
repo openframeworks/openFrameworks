@@ -13,9 +13,9 @@
 /// \struct ofxOscSenderSettings
 /// \brief OSC message sender settings
 struct ofxOscReceiverSettings {
-	int port = 0;        //< port to listen on
-	bool reuse = true;   //< should the port be reused by other receivers?
-	bool start = true;   //< start listening after setup?
+	int port = 0;            ///< port to listen on
+	bool reuse = true;       ///< should the port be reused by other receivers?
+	bool start = true;       ///< start listening after setup?
 };
 
 /// \class ofxOscReceiver
@@ -66,9 +66,8 @@ public:
 	/// \return true if there are any messages waiting for collection
 	bool hasWaitingMessages() const;
 
-	/// take the next message on the queue of received messages, copy its
-	/// details into message, and remove it from the queue
-	/// \return false if there are no more messages to be got, otherwise return true
+	/// remove a message from the queue and copy it's data into msg
+	/// \return false if there are no waiting messages, otherwise return true
 	bool getNextMessage(ofxOscMessage& msg);
 	OF_DEPRECATED_MSG("Pass a reference instead of a pointer", bool getNextMessage(ofxOscMessage *msg));
 	
@@ -97,8 +96,8 @@ private:
 	/// shared between objects if allowReuse is true
 	std::unique_ptr<osc::UdpListeningReceiveSocket, std::function<void(osc::UdpListeningReceiveSocket*)>> listenSocket;
 
-	std::thread listenThread; //< listener thread
-	ofThreadChannel<ofxOscMessage> messagesChannel; //< message passing thread channel
+	std::thread listenThread; ///< listener thread
+	ofThreadChannel<ofxOscMessage> messagesChannel; ///< message passing thread channel
 
-	ofxOscReceiverSettings settings; //< current settings
+	ofxOscReceiverSettings settings; ///< current settings
 };

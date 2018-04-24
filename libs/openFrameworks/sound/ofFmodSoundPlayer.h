@@ -3,8 +3,7 @@
 #include "ofConstants.h"
 
 
-#include "ofBaseSoundPlayer.h"
-#include "ofFileUtils.h"
+#include "ofSoundBaseTypes.h"
 
 
 extern "C" {

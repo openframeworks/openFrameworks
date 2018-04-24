@@ -54,8 +54,8 @@ fi
 
 if [ -f /opt/vc/include/bcm_host.h ]; then
     echo "detected Raspberry Pi"
-    echo "installing gstreamer omx"
-    apt-get install  gstreamer${GSTREAMER_VERSION}-omx
+    echo "installing gstreamer omx and poco"
+    apt-get install  gstreamer${GSTREAMER_VERSION}-omx libpoco-dev
 fi
 
 OS_CODENAME=$(cat /etc/os-release | grep VERSION= | sed "s/VERSION\=\"\(.*\)\"/\1/")

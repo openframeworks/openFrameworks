@@ -2,10 +2,17 @@
 #include "ofImage.h"
 #include "ofFileUtils.h"
 #include "ofLog.h"
+#include "ofAppBaseWindow.h"
+#include "ofMainLoop.h"
+#include "ofAppRunner.h"
+#include "ofEvents.h"
+#include "ofGLUtils.h"
+#include "ofMath.h"
 
 #include <chrono>
 #include <numeric>
 #include <locale>
+#include <cstdarg>
 #include "uriparser/Uri.h"
 
 #ifdef TARGET_WIN32	 // For ofLaunchBrowser.
@@ -68,13 +75,13 @@ namespace{
             return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
         }
     #elif defined TARGET_ANDROID
-            return string("sdcard/");
+        return string("sdcard/");
     #else
-            try{
-                return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).string();
-            }catch(...){
-                return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
-            }
+        try{
+            return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).make_preferred().string();
+        }catch(...){
+            return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
+        }
     #endif
     }
 
@@ -537,7 +544,7 @@ string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
 	// if path is already absolute, just return it
 	if (inputPath.is_absolute()) {
 		try {
-            auto outpath = std::filesystem::canonical(inputPath);
+            auto outpath = std::filesystem::canonical(inputPath).make_preferred();
             if(std::filesystem::is_directory(outpath) && hasTrailingSlash){
                 return ofFilePath::addTrailingSlash(outpath.string());
             }else{
@@ -575,7 +582,7 @@ string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
 	if(makeAbsolute){
 	    // then we return the absolute form of the path
 	    try {
-            auto outpath = std::filesystem::canonical(std::filesystem::absolute(outputPath));
+            auto outpath = std::filesystem::canonical(std::filesystem::absolute(outputPath)).make_preferred();
             if(std::filesystem::is_directory(outpath) && hasTrailingSlash){
                 return ofFilePath::addTrailingSlash(outpath.string());
             }else{
@@ -897,13 +904,23 @@ utf8::iterator<std::string::const_reverse_iterator> ofUTF8Iterator::rend() const
 //--------------------------------------------------
 // helper method to get locale from name
 static std::locale getLocale(const string & locale) {
-	std::locale loc;
+std::locale loc;
+#if defined(TARGET_WIN32) && !_MSC_VER
+	static bool printonce = true;
+	if( printonce ){
+		std::string current( setlocale(LC_ALL,NULL) );
+		setlocale (LC_ALL,"");
+		ofLogWarning("ofUtils") << "std::locale not supported. Using C locale  :" << current ;
+		printonce = false;
+	}
+#else
 	try {
 		loc = std::locale(locale.c_str());
 	}
 	catch (...) {
 		ofLogWarning("ofUtils") << "Couldn't create locale " << locale << " using default, " << loc.name();
 	}
+#endif
 	return loc;
 }
 

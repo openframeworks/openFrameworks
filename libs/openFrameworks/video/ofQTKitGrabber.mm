@@ -1,5 +1,8 @@
 
 #include "ofQTKitGrabber.h"
+#include "ofLog.h"
+#include "ofVideoBaseTypes.h"
+#include "ofSystemUtils.h"
 
 #ifdef OF_VIDEO_CAPTURE_QTKIT
 
@@ -11,6 +14,8 @@
 #import <QTKit/QTKit.h>
 #import <QuickTime/QuickTime.h>
 #import <Accelerate/Accelerate.h>
+
+using namespace std;
 
 //This Objective-C class contains all the OS specific
 //Stuff we need for pulling images from a video camera feed
@@ -37,7 +42,7 @@
     CVImageBufferRef cvFrame;
     ofPixels* pixels;
 	ofQTKitGrabber* grabber;
-	
+
     BOOL hasNewFrame;
     BOOL isFrameNew;
     BOOL isRecording;
@@ -90,8 +95,8 @@
 - (void) stop;
 
 //delegate method for getting pixels
-- (void) outputVideoFrame:(CVImageBufferRef)videoFrame 
-		 withSampleBuffer:(QTSampleBuffer *)sampleBuffer 
+- (void) outputVideoFrame:(CVImageBufferRef)videoFrame
+		 withSampleBuffer:(QTSampleBuffer *)sampleBuffer
 		   fromConnection:(QTCaptureConnection *)connection;
 
 //Recording
@@ -102,7 +107,7 @@
 - (void) stopRecording;
 - (void) captureOutput:(QTCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL forConnections:(NSArray *)connections dueToError:(NSError *)error;
 
-//internal methods 
+//internal methods
 - (BOOL) setSelectedVideoDevice:(QTCaptureDevice *)selectedVideoDevice;
 - (BOOL) setSelectedAudioDevice:(QTCaptureDevice *)selectedAudioDevice;
 
@@ -135,7 +140,7 @@
 + (NSInteger) getIndexofStringInArray:(NSArray*)someArray stringToFind:(NSString*)someStringDescription
 {
 	NSInteger index = -1;
-	
+
 	for (id object in someArray) {
 		if ([[object description] isEqualToString:someStringDescription]) {
 			return index;
@@ -149,22 +154,22 @@
     //create a session for enumerating devices
 	NSArray* videoDevices = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo]
 							 arrayByAddingObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed]];
-	
+
     ofLogVerbose("ofQTKitGrabber") << "listing video devices:";
 	[self enumerateArray:videoDevices];
-	
+
 	return videoDevices;
-	
+
 }
 
 + (NSArray*) listAudioDevices
 {
     //create a session for enumerating devices
 	NSArray* audioDevices = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeSound];
-	
+
     ofLogVerbose("ofQTKitGrabber") << "listing audio devices:";
 	[self enumerateArray:audioDevices];
-	
+
 	return audioDevices;
 }
 
@@ -180,14 +185,14 @@
 		//configure self
 		width = _width;
 		height = _height;
-		
+
 		//instance variables
 		cvFrame = NULL;
 		hasNewFrame = NO;
 		self.useAudio = _useAudio;
 		isRecordReady = NO;
 		isRecording = NO;
-		
+
         NSMutableDictionary* pixelBufferAttributes = [NSMutableDictionary dictionary];
         //we can turn capture pixels off if we just want to use this object for recording
         if(_shouldCapturePixels){
@@ -202,19 +207,19 @@
             [pixelBufferAttributes setValue:[NSNumber numberWithInt:height]
                                      forKey:(NSString*)kCVPixelBufferHeightKey];
         }
-        
+
         if(pixelBufferAttributes.count > 0){
 			[self setPixelBufferAttributes: pixelBufferAttributes ];
         }
 		//init the session
 		self.session = [[[QTCaptureSession alloc] init] autorelease];
-        
+
 		if(_shouldCapturePixels){
             pixels = &_pixels;
             if(width != -1 && height != -1){
                 pixels->allocate(width, height, OF_IMAGE_COLOR);
             }
-            
+
             NSError* error;
             bool success = [self.session addOutput:self error:&error];
             if( !success ){
@@ -222,16 +227,16 @@
                 return nil;
             }
     	}
-        
-		videoDeviceID = -1;		
+
+		videoDeviceID = -1;
 		[self setVideoDeviceID:_videoDeviceID];
-		
+
 		// if we're using audio add an audio device
 		if (self.useAudio) {
 			audioDeviceID = -1;
 			[self setAudioDeviceID:_audioDeviceID];
 		}
-         
+
 		[self startSession];
 	}
 	return self;
@@ -243,22 +248,22 @@
 	//start the session
 	ofLogVerbose("ofQTKitGrabber") << "starting video session";
 	[session startRunning];
-	
+
 }
 
 - (void) setVideoDeviceID:(NSInteger)_videoDeviceID
-{	
+{
 	if(videoDeviceID != _videoDeviceID){
-		
+
 		//get video device
-		NSArray* videoDevices = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo] 
+		NSArray* videoDevices = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo]
 								 arrayByAddingObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed]];
-		
+
 		// Try to open the new device
 		if(_videoDeviceID < 0 || _videoDeviceID >= videoDevices.count){
 			ofLogError("ofQTKitGrabber") << "selected video device id " << _videoDeviceID << " out of range for number of devices: " << videoDevices.count;
 			return;
-		}		
+		}
 		selectedVideoDevice = [videoDevices objectAtIndex:_videoDeviceID];
 		if([self setSelectedVideoDevice:selectedVideoDevice]){
 			videoDeviceID = _videoDeviceID;
@@ -267,18 +272,18 @@
 }
 
 - (void) setAudioDeviceID:(NSInteger)_audioDeviceID
-{	
+{
 	if(audioDeviceID != _audioDeviceID){
-		
+
 		//get audio device
 		NSArray* audioDevices = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeSound];
-		
+
 		// Try to open the new device
 		if(_audioDeviceID < 0 || _audioDeviceID >= audioDevices.count){
 			ofLogError("ofQTKitGrabber") << "selected video device id " << _audioDeviceID << " is out of range for number of devices: " << audioDevices.count;
 			return;
 		}
-        
+
 		selectedAudioDevice = [audioDevices objectAtIndex:_audioDeviceID];
         if(selectedAudioDevice == nil){
             ofLogError("ofQTKitGrabber") << "audio device is NULL for id " << _audioDeviceID << endl;
@@ -291,7 +296,7 @@
 
 - (BOOL) setSelectedVideoDevice:(QTCaptureDevice *)_selectedVideoDevice
 {
-	BOOL success = YES;	
+	BOOL success = YES;
 	if (self.videoDeviceInput != nil) {
         ofLogVerbose("ofQTKitGrabber") << "removing existing video device " << [self.videoDeviceInput.description UTF8String];
 		// Remove the old device input from the session and close the device
@@ -299,16 +304,16 @@
 		[[self.videoDeviceInput device] close];
 		self.videoDeviceInput = nil;
 	}
-	
+
 	if (_selectedVideoDevice != nil) {
 		NSError *error = nil;
-		
+
 		// Try to open the new device
 		success = [_selectedVideoDevice open:&error];
 		if(success){
 			// Create a device input for the device and add it to the session
 			self.videoDeviceInput = [QTCaptureDeviceInput deviceInputWithDevice:_selectedVideoDevice];
-			
+
 			success = [self.session addInput:self.videoDeviceInput error:&error];
 			if(!success || error != nil){
 				ofLogError("ofQTKitGrabber") << "failed to add the video device input: " << [[error localizedDescription] UTF8String];
@@ -321,13 +326,13 @@
 			ofLogError("ofQTKitGrabber") << "failed to open the video device input: " << [[error localizedDescription] UTF8String];
 		}
 	}
-	
+
 	return success;
 }
 
 - (BOOL) setSelectedAudioDevice:(QTCaptureDevice *)_selectedAudioDevice
 {
-	BOOL success = YES;	
+	BOOL success = YES;
 	if (self.audioDeviceInput != nil) {
         ofLogVerbose("ofQTKitGrabber") << "removing existing audio device " << [self.audioDeviceInput.description UTF8String];
 		// Remove the old device input from the session and close the device
@@ -335,16 +340,16 @@
 		[[self.audioDeviceInput device] close];
 		self.audioDeviceInput = nil;
 	}
-	
+
 	if (_selectedAudioDevice != nil) {
 		NSError *error = nil;
-		
+
 		// Try to open the new device
 		success = [_selectedAudioDevice open:&error];
 		if(success){
 			// Create a device input for the device and add it to the session
 			self.audioDeviceInput = [QTCaptureDeviceInput deviceInputWithDevice:_selectedAudioDevice];
-			
+
 			success = [self.session addInput:self.audioDeviceInput error:&error];
 			if(!success && error != nil){
 				ofLogError("ofQTKitGrabber") << "failed to add the audio device input: " << [[error localizedDescription] UTF8String];
@@ -357,24 +362,24 @@
 			ofLogError("ofQTKitGrabber") << "failed to open the audio device: " << [[error localizedDescription] UTF8String];
 		}
 	}
-	
+
 	return success;
 }
 
 - (BOOL) initRecording:(NSString*)_selectedVideoCodec audioCodec:(NSString*)_selectedAudioCodec
 {
-	BOOL success = YES;	
+	BOOL success = YES;
 	NSError *error = nil;
-	
+
 	// Create the movie file output and add it to the session
 	self.captureMovieFileOutput = [[[QTCaptureMovieFileOutput alloc] init] autorelease];
     [self.captureMovieFileOutput setDelegate:self];
-    
+
 	success = [self.session addOutput:captureMovieFileOutput error:&error];
 	if (!success) {
 		ofLogError("ofQTKitGrabber") << "failed to initialize recording: " << [[error localizedDescription] UTF8String];
         isRecordReady = NO;
-	} 
+	}
     else {
 		[self setVideoCodec:_selectedVideoCodec];
 		[self setAudioCodec:_selectedAudioCodec];
@@ -388,20 +393,20 @@
 + (NSArray*) listVideoCodecs
 {
 	NSArray* videoCodecs = [QTCompressionOptions compressionOptionsIdentifiersForMediaType:QTMediaTypeVideo];
-	
+
 	ofLogVerbose("ofQTKitGrabber") << "listing available video codecs:";
 	[self enumerateArray:videoCodecs];
-	
+
 	return videoCodecs;
 }
 
 + (NSArray*) listAudioCodecs
 {
 	NSArray* audioCodecs = [QTCompressionOptions compressionOptionsIdentifiersForMediaType:QTMediaTypeSound];
-	
+
 	ofLogVerbose("ofQTKitGrabber") << "listing available audio codecs:";
 	[self enumerateArray:audioCodecs];
-	
+
 	return audioCodecs;
 }
 
@@ -434,19 +439,19 @@
 - (void) startRecording:(NSString*)filePath
 {
 	if (isRecordReady) {
-		
+
         // make sure last movie has stopped
 		if (isRecording){
             [self stopRecording];
         }
-		
+
 		// set url for recording
 		[self.captureMovieFileOutput recordToOutputFileURL:[NSURL fileURLWithPath:filePath]];
-		
+
 		ofLogVerbose("ofQTKitGrabber") << "started recording movie to: \"" << [filePath UTF8String] << "\"";
-		
+
 		isRecording = YES;
-		
+
 	}
     else {
 		ofLogError("ofQTKitGrabber") << "not set up to record, call initRecording() first";
@@ -456,14 +461,14 @@
 - (void) stopRecording
 {
 	if (isRecordReady && isRecording){
-		
+
 		// set url to nil to stop recording
 		[self.captureMovieFileOutput recordToOutputFileURL:nil];
-		
+
 		ofLogVerbose("ofQTKitGrabber") << "stopped recording movie";
-		
+
 		isRecording = NO;
-		
+
 	}
     else {
         ofLogError("ofQTKitGrabber") << "cannot stop recording, call initRecording() then record() first";
@@ -475,7 +480,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
          			 forConnections:(NSArray *)connections
               		     dueToError:(NSError *)error
 {
-	
+
 	ofVideoSavedEventArgs savedEvent;
 	savedEvent.grabber = grabber;
 	savedEvent.videoPath = [[outputFileURL path] UTF8String];
@@ -488,8 +493,8 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 //Frame from the camera
 //this tends to be fired on a different thread, so keep the work really minimal and don't perform copies here
 //That way if the frames are really big we will appropriately drop frames rather than lagging behind
-- (void) outputVideoFrame:(CVImageBufferRef)videoFrame 
-		 withSampleBuffer:(QTSampleBuffer *)sampleBuffer 
+- (void) outputVideoFrame:(CVImageBufferRef)videoFrame
+		 withSampleBuffer:(QTSampleBuffer *)sampleBuffer
 		   fromConnection:(QTCaptureConnection *)connection
 {
 	@autoreleasepool {
@@ -512,7 +517,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
                 ofLogError("ofQTKitGrabber") << "pixels not set on Obj-C Class from C++ wrapper";
                 return;
             }
-            
+
             //pixels won't be allocated if we didn't force the video width and height
             //allocate upon receving the first frame
             if(!pixels->isAllocated()){
@@ -530,7 +535,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
             src.width = CVPixelBufferGetWidth(cvFrame);
             src.data = CVPixelBufferGetBaseAddress(cvFrame);
             src.rowBytes = CVPixelBufferGetBytesPerRow(cvFrame);
-            
+
             vImage_Buffer dest;
             dest.height = height;
             dest.width = width;
@@ -556,7 +561,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
                     dst[2] = src[0];
                     dst+=dstBpp;
                     src+=srcBpp;
-                }                    
+                }
             }
 #endif
             CVPixelBufferUnlockBaseAddress(cvFrame, kCVPixelBufferLock_ReadOnly);
@@ -573,14 +578,14 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 - (void) stop
 {
     if (isRecording){
-		[self stopRecording];   
+		[self stopRecording];
     }
     if(self.isRunning){
 	    [self.session stopRunning];
     }
     if ([[self.videoDeviceInput device] isOpen]) [[videoDeviceInput device] close];
     if ([[self.audioDeviceInput device] isOpen]) [[audioDeviceInput device] close];
-    
+
     //setting NIL releases memory because these properties are synthesized as retain
 	self.videoDeviceInput = nil;
     self.audioDeviceInput = nil;
@@ -598,7 +603,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 	if(self.isRunning){
 		[self stop];
 	}
-	
+
 	if(cvFrame != NULL){
 		CVPixelBufferRelease(cvFrame);
 		cvFrame = NULL;
@@ -654,9 +659,9 @@ void ofQTKitGrabber::setDeviceID(string _videoDeviceIDString){
 }
 
 void ofQTKitGrabber::setVideoDeviceID(string _videoDeviceIDString){
-	@autoreleasepool {	
+	@autoreleasepool {
 		// set array filled with devices
-		NSArray* deviceArray = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo] 
+		NSArray* deviceArray = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo]
 								arrayByAddingObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed]];
 
 		// convert device string to NSString
@@ -797,7 +802,7 @@ void ofQTKitGrabber::update(){
 		@autoreleasepool {
 			[grabber update];
 		}
-	} 
+	}
 }
 
 bool ofQTKitGrabber::isFrameNew() const {
@@ -826,17 +831,17 @@ bool ofQTKitGrabber::hasPreview() const {
 
 vector <ofVideoDevice> ofQTKitGrabber::listDevices() const {
     vector <string> devList = listVideoDevices();
-    
-    vector <ofVideoDevice> devices; 
+
+    vector <ofVideoDevice> devices;
     for(int i = 0; i < devList.size(); i++){
-        ofVideoDevice vd; 
-        vd.deviceName = devList[i]; 
-        vd.id = i;  
-        vd.bAvailable = true; 
-        devices.push_back(vd); 
+        ofVideoDevice vd;
+        vd.deviceName = devList[i];
+        vd.id = i;
+        vd.bAvailable = true;
+        devices.push_back(vd);
     }
-    
-    return devices; 
+
+    return devices;
 }
 
 //---------------------------------------------------------------------------
@@ -845,13 +850,14 @@ bool ofQTKitGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	if( pixelFormat == OF_PIXELS_RGB ){
 		return true;
 	}
-	ofLogWarning("ofQTKitGrabber") << "setPixelFormat(): requested pixel format " << pixelFormat << " not supported";
+	ofLogWarning("ofQTKitGrabber") << "setPixelFormat(): requested pixel format "
+		<< ofToString(pixelFormat) << " not supported";
 	return false;
 }
 
 //---------------------------------------------------------------------------
 ofPixelFormat ofQTKitGrabber::getPixelFormat() const{
-	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
+	//note if you support more than one pixel format you will need to return a ofPixelFormat variable.
 	return OF_PIXELS_RGB;
 }
 
@@ -953,7 +959,7 @@ float ofQTKitGrabber::getWidth() const {
 	}
 	return 0;
 }
-		  
+
 bool ofQTKitGrabber::confirmInit() const {
 	if(!isInited){
 		ofLogError("ofQTKitGrabber") << "confirmInit(): calling method on unintialized video grabber";
@@ -969,4 +975,3 @@ void ofQTKitGrabber::setDesiredFrameRate(int framerate){
 
 #endif
 #endif
-

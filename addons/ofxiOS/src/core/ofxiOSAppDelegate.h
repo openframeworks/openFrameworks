@@ -37,6 +37,8 @@
 #import <UIKit/UIKit.h>
 
 @class ofxiOSViewController;
+@class ofxiOSGLKViewController;
+//@class ofxiOSMTKViewController;
 
 @interface ofxiOSAppDelegate : NSObject <UIApplicationDelegate> {
     NSInteger currentScreenIndex;
@@ -44,7 +46,7 @@
 
 @property (nonatomic, retain) UIWindow * window;
 @property (nonatomic, retain) UIWindow * externalWindow;
-@property (nonatomic, retain) ofxiOSViewController * glViewController;
+@property (nonatomic, retain) UIViewController * uiViewController;
 @property (readonly,  assign) NSInteger currentScreenIndex;
 
 - (BOOL)application:(UIApplication*)application

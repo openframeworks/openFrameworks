@@ -2,6 +2,7 @@
 #include "ofMath.h"
 #include "ofUtils.h"
 #include "ofAppRunner.h"
+#include "ofLog.h"
 #include "RtAudio.h"
 
 using namespace std;
@@ -282,8 +283,8 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	// you need to cut in the middle. if the simpleApp
 	// doesn't produce audio, we pass silence instead of duplex...
 
-	auto nInputChannels = rtStreamPtr->getNumInputChannels();
-	auto nOutputChannels = rtStreamPtr->getNumOutputChannels();
+	size_t nInputChannels  = rtStreamPtr->getNumInputChannels();
+	size_t nOutputChannels = rtStreamPtr->getNumOutputChannels();
 
 	if (nInputChannels > 0) {
 		if (rtStreamPtr->settings.inCallback) {

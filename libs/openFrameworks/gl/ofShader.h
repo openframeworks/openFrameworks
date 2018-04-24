@@ -8,13 +8,31 @@
  */
 
 #include "ofConstants.h"
-#include "ofBaseTypes.h"
-#include "ofLog.h"
+#include "ofFileUtils.h"
+#include "glm/fwd.hpp"
+#include <unordered_map>
+#include <map>
+
 class ofTexture;
 class ofMatrix3x3;
 class ofParameterGroup;
 class ofBufferObject;
+class ofBaseHasTexture;
 
+template<typename T>
+class ofColor_;
+typedef ofColor_<float> ofFloatColor;
+
+enum ofLogLevel: short;
+
+struct ofShaderSettings {
+    std::map<GLuint, std::filesystem::path> shaderFiles;
+    std::map<GLuint, std::string> shaderSources;
+    std::map<std::string, int> intDefines;
+    std::map<std::string, float> floatDefines;
+    std::filesystem::path sourceDirectoryPath;
+    bool bindDefaults = true;
+};
 
 class ofShader {
 
@@ -47,15 +65,6 @@ public:
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
 	bool loadCompute(const std::filesystem::path& shaderName);
 #endif
-
-	struct Settings {
-		std::map<GLuint, std::filesystem::path> shaderFiles;
-		std::map<GLuint, std::string> shaderSources;
-		std::map<std::string, int> intDefines;
-		std::map<std::string, float> floatDefines;
-		std::filesystem::path sourceDirectoryPath;
-		bool bindDefaults = true;
-	};
 
 #if !defined(TARGET_OPENGLES)
 	struct TransformFeedbackSettings {
@@ -96,7 +105,7 @@ public:
 	};
 #endif
 
-	bool setup(const Settings & settings);
+	bool setup(const ofShaderSettings & settings);
 #if !defined(TARGET_OPENGLES)
 	bool setup(const TransformFeedbackSettings & settings);
 #endif

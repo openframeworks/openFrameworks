@@ -2,7 +2,10 @@
 // openFrameworks is released under the MIT License. See libs/_Licence.txt
 #pragma once
 
-#include "ofMain.h"
+#include "ofConstants.h"
+#include "ofEvents.h"
+#include "ofVideoBaseTypes.h"
+#include "ofPixels.h"
 
 #ifdef OF_VIDEO_CAPTURE_QTKIT
 
@@ -80,7 +83,7 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		bool confirmInit() const;
 		ofPixelFormat pixelFormat;
 	    ofPixels pixels;
-    
+
 		mutable std::vector <std::string>  videoDeviceVec;
 		mutable std::vector <std::string>  audioDeviceVec;
 		mutable std::vector <std::string>  videoCodecsVec;

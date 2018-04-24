@@ -1,6 +1,6 @@
 #include "ofSerial.h"
 #include "ofUtils.h"
-#include "ofTypes.h"
+#include "ofLog.h"
 
 #if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	#include <sys/ioctl.h>
@@ -13,6 +13,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <algorithm>
+#include <cstring>
 
 using namespace std;
 

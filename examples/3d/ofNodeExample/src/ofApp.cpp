@@ -8,7 +8,7 @@ void ofApp::setup(){
     light.setPosition(-100, 200,0);
     // we set up a plane on which the car will move
     plane.set(10000, 10000);
-    plane.rotate(270, 1, 0 , 0);
+    plane.rotateDeg(270, 1, 0 , 0);
     plane.move(0, -49, 0);
     roadMaterial.setDiffuseColor(ofFloatColor::gray);
     roadMaterial.setShininess(0.01);
@@ -18,14 +18,15 @@ void ofApp::setup(){
     ofEnableDepthTest();
     
     //Set our camera up in a nice location to view our awesome car
-    cam.setPosition(-384,233,-431);
-    cam.setOrientation(ofVec3f(-25,-130,0));
+	cam.setPosition(-965, 586, -1084);
+	cam.lookAt(car.getNode(), {0.f, 1.f, 0.f});
+	cam.setFarClip(10000);
    
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    car.update();
+	car.update();
 }
 
 //--------------------------------------------------------------
@@ -46,7 +47,7 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     
-    if(key == OF_KEY_UP){
+	if(key == OF_KEY_UP){
         car.accelerate();
     }else if(key == OF_KEY_DOWN){
         car.brake();

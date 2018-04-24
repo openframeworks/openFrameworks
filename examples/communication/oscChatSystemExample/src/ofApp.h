@@ -7,17 +7,15 @@
 
  oscChatSystemExample
 
- - this app demonstrates using the ofxOsc addon to create a
- simple chat room
- - it sends chat messages to a server running in the same app
- - optionally, it can talk to another instance of this app on another IP.
- - get the IP address of the second computer
- - in ofApp.cpp inside the setup() function, change the value of
- clientDestination to the other IP as shown in the comment.
+ This app demonstrates using the ofxOsc addon to create a simple chat room and
+ sends chat messages to a server running in the same app. Optionally, it can
+ talk to another instance of this app on another host IP address. To enable
+ this, get the IP address of the second computer and set it as the value of the
+ clientDesintation in the ofApp.cpp setup() function, as shown in the comment.
 
  ***************************************************************/
 
-class ofApp : public ofBaseApp {
+class ofApp : public ofBaseApp{
 
 	public:
 		void setup();
@@ -40,9 +38,9 @@ class ofApp : public ofBaseApp {
 		ofTrueTypeFont titleFont; // font for some info in the title line
 
 		//----------------------------------------
-		// Client side:
+		// client side:
 
-		ofxOscSender clientSender; // all-important ofxOscSender object
+		ofxOscSender clientSender; // client sender object
 		string clientDestination; // IP address we're sending to
 		int clientSendPort; // port we're sending to
 		string clientTyping; // what we're going to send: some stuff you typed
@@ -52,22 +50,22 @@ class ofApp : public ofBaseApp {
 		string clientMessages; // string containing the received messages for display
 
 		//----------------------------------------
-		// Server side:
+		// server side:
+
 		ofxOscReceiver serverReceiver; // OSC receiver
 		int serverRecvPort; // port we're listening on: must match port from sender!
-		string serverTyping; //messages you've received from the clientes
+		string serverTyping; // messages you've received from the clientes
 
-		// Message display variables
-		vector<string>serverMessages; //vector containing the received messages for display
-		unsigned int maxServerMessages; //nr of messages fitting on the screen
+		// message display variables
+		vector<string>serverMessages; // vector containing the received messages for display
+		unsigned int maxServerMessages; // nr of messages fitting on the screen
 
-		vector<string>knownClients; //collected IP's of chat participants
-		ofxOscSender serverSender;
+		vector<string>knownClients; // collected IP's of chat participants
+		ofxOscSender serverSender; // server sender object
 
-		//Distribute a received message among the known hosts
+		// distribute a received message among the known hosts
 		void broadcastReceivedMessage(string chatmessage);
 
-		// Parse an OscMessage into a string for easy logging
+		// parse an OscMessage into a string for easy logging
 		string getOscMsgAsString(ofxOscMessage m);
-
 };

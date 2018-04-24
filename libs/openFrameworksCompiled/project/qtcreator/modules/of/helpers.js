@@ -1,8 +1,8 @@
-var Process = loadExtension("qbs.Process");
-var File = loadExtension("qbs.File");
-var TextFile = loadExtension("qbs.TextFile");
-var Environment = loadExtension("qbs.Environment");
-var FileInfo = loadExtension("qbs.FileInfo");
+var Process = require("qbs.Process");
+var File = require("qbs.File");
+var TextFile = require("qbs.TextFile");
+var Environment = require("qbs.Environment");
+var FileInfo = require("qbs.FileInfo");
 
 function findCommand(){
     // check if it's unix
@@ -28,7 +28,14 @@ function findCommand(){
             break;
         }
     }
+    log.error("couldn't find gnu find, returning find, you probably need to set a correct path");
     return "find";
+}
+
+function windowsToUnix(path){
+    var cygpath = new Process();
+    cygpath.exec("cygpath.exe", [path], true);
+    return cygpath.readLine();
 }
 
 function getSystemPath(){
@@ -65,8 +72,11 @@ function msys2root(){
 
 	
     //console.error("PATH=>"+systemPath);
-    var usrPos = systemPath.indexOf(msys2 + "usr\\bin");
-    var mingw32Pos = systemPath.indexOf(msys2 + "mingw32\\bin");
+    msys2 = FileInfo.fromWindowsSeparators(msys2);
+    var usrBin = FileInfo.toWindowsSeparators(FileInfo.joinPaths(msys2, "usr/bin"));
+    var mingw32Bin = FileInfo.toWindowsSeparators(FileInfo.joinPaths(msys2, "mingw32/bin"));
+    var usrPos = systemPath.indexOf(usrBin);
+    var mingw32Pos = systemPath.indexOf(mingw32Bin);
 	
     if( (usrPos === -1) || (mingw32Pos === -1) || (mingw32Pos > usrPos) ){
         console.error("PATH="+systemPath);

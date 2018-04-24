@@ -1,5 +1,6 @@
 #include "ofSoundPlayer.h"
-#include "ofUtils.h"
+#include "ofLog.h"
+#include "glm/common.hpp"
 
 using namespace std;
 
@@ -29,8 +30,6 @@ void ofSoundSetVolume(float vol){
 void ofSoundUpdate(){
 	#ifdef OF_SOUND_PLAYER_FMOD
 		ofFmodSoundUpdate();
-	#else
-		ofLogWarning("ofSoundPlayer") << "ofSoundUpdate() not implemented on this platform";
 	#endif
 }
 
@@ -125,7 +124,7 @@ void ofSoundPlayer::setVolume(float vol){
 //--------------------------------------------------------------------
 void ofSoundPlayer::setPan(float pan){
 	if( player ){
-		player->setPan(CLAMP(pan,-1.0f,1.0f));
+		player->setPan(glm::clamp(pan,-1.0f,1.0f));
 	}
 }
 

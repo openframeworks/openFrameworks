@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	ofSetWindowTitle("oscChatSystemExample");
 	ofSetFrameRate(60); // run at 60 fps
 	ofSetVerticalSync(true);
 
@@ -12,18 +13,18 @@ void ofApp::setup(){
 	font.load("futura_book.otf", 12);
 	titleFont.load("futura_book.otf", 20);
 
-	// Enable some logging information
+	// enable some logging information
 	ofSetLogLevel(OF_LOG_VERBOSE);
 
-	//Server side
-	//listen for incoming messages on a port; setup OSC receiver with usage:
+	// server side
+	// listen for incoming messages on a port, setup OSC receiver with usage:
 	serverRecvPort = 9000;
 	serverReceiver.setup(serverRecvPort);
 	maxServerMessages = 38;
 
-	//Client side
+	// client side
 	clientDestination = "localhost";
-	//	clientDestination	= "192.168.0.115"; // if you send to another instance enter IP here
+	//clientDestination	= "192.168.0.115"; // if you send to another instance enter IP here
 	clientSendPort = 9000;
 	clientSender.setup(clientDestination, clientSendPort);
 
@@ -42,41 +43,37 @@ void ofApp::update(){
 		// get the next message
 		ofxOscMessage m;
 		serverReceiver.getNextMessage(m);
-		//Log received message for easier debugging of participants' messages:
-		ofLogVerbose("Server recvd msg " + getOscMsgAsString(m) + " from " + m.getRemoteHost());
+		// log received message for easier debugging of participants' messages:
+		ofLogVerbose() << "Server received msg " + getOscMsgAsString(m) + " from " + m.getRemoteHost();
 
 		// check the address of the incoming message
 		if(m.getAddress() == "/typing"){
-			//Identify host of incoming msg
+			// identify host of incoming msg
 			string incomingHost = m.getRemoteHost();
-			//See if incoming host is a new one:
-			if(std::find(knownClients.begin(), knownClients.end(), incomingHost)
-			   == knownClients.end()){
-				knownClients.push_back(incomingHost); //add new host to list
+			// see if incoming host is a new one:
+			if(std::find(knownClients.begin(), knownClients.end(), incomingHost) == knownClients.end()){
+				knownClients.push_back(incomingHost); // add new host to list
 			}
 			// get the first argument (we're only sending one) as a string
-			if(m.getNumArgs() > 0){
-				if(m.getArgType(0) == OFXOSC_TYPE_STRING){
-					//reimplemented message display:
-					//If vector has reached max size, delete the first/oldest element
-					if(serverMessages.size() == maxServerMessages){
-						serverMessages.erase(serverMessages.begin());
-					}
-					//Add message text at the end of the vector
-					serverMessages.push_back(m.getArgAsString(0));
-
-					//Broadcast message to other chat participants
-					broadcastReceivedMessage(m.getArgAsString(0));
+			if(m.getNumArgs() > 0 && m.getArgType(0) == OFXOSC_TYPE_STRING){
+				// reimplemented message display:
+				// if vector has reached max size, delete the first/oldest element
+				if(serverMessages.size() == maxServerMessages){
+					serverMessages.erase(serverMessages.begin());
 				}
+				// add message text at the end of the vector
+				serverMessages.push_back(m.getArgAsString(0));
+				// broadcast message to other chat participants
+				broadcastReceivedMessage(m.getArgAsString(0));
 			}
 		}
 		// handle getting random OSC messages here
 		else{
-			ofLogWarning("Server got weird message: " + m.getAddress());
+			ofLogWarning( ) << "Server got weird message: " + m.getAddress();
 		}
 	}
 
-	// Client side:
+	// client side:
 
 	// OSC receiver queues up new messages, so you need to iterate
 	// through waiting messages to get each incoming message
@@ -86,7 +83,7 @@ void ofApp::update(){
 		// get the next message
 		ofxOscMessage m;
 		clientReceiver.getNextMessage(m);
-		ofLogNotice("Client just received a message");
+		ofLogNotice() << "Client just received a message";
 		// check the address of the incoming message
 		if(m.getAddress() == "/chatlog"){
 			// get the first argument (we're only sending one) as a string
@@ -99,9 +96,9 @@ void ofApp::update(){
 		}
 	}
 
-	//this is purely workaround for a mysterious OSCpack bug on 64bit linux
+	// this is purely workaround for a mysterious oscpack bug on 64bit linux
 	// after startup, reinit the receivers
-	// must be a timing problem, though - in debug, stepping through, it works.
+	// must be a timing problem, though - in debug, stepping through, it works
 	if(ofGetFrameNum() == 60){
 		clientReceiver.setup(clientRecvPort);
 		serverReceiver.setup(serverRecvPort);
@@ -111,36 +108,35 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	//Display some information about the client on the screen with the font you loaded
-
-	string debug = "Chat client\nSending messages to " + string(clientDestination) + ":"
-				   + ofToString(clientSendPort);
-	string instructions = "type to create a new message.\nhit RETURN to send!";
-
-	titleFont.drawString(debug, 10, 37);
-	titleFont.drawString(instructions, 10, 93);
+	// display some information about the client on the screen with the font you loaded
+	string instructions =
+		"Chat client\nSending messages to " + string(clientDestination) + ":" +
+		ofToString(clientSendPort) + "\n" +
+		"Type to create a new message.\n" +
+		"Hit RETURN to send!";
+	titleFont.drawString(instructions, 10, 37);
 
 	// what have we typed so far?
 	titleFont.drawString(clientTyping, 10, 160);
 
-	//received messages:
+	// received messages:
 	font.drawString(clientMessages, 10, 180);
 
-	//Display some information about the server
+	// display some information about the server
 	string title = "Chat server";
 	titleFont.drawString(title, 542, 37);
-	title = "Listening for messages on port " + ofToString(serverRecvPort) + ".\nKnown chatters: "
-			+ ofToString(knownClients.size());
+	title = "Listening for messages on port " + ofToString(serverRecvPort) + ".\n" +
+	        "Known chatters: " + ofToString(knownClients.size());
 	titleFont.drawString(title, 542, 65);
 
-	//Display received messages:
+	// display received messages:
 	serverTyping = "";
-	// Concatenate a nice multiline string to display
+	// concatenate a nice multiline string to display
 	for(unsigned int i = 0; i < serverMessages.size(); i++){
 		string oldTyping = serverTyping;
 		serverTyping = oldTyping + "\n" + serverMessages[i];
 	}
-	//Display the messages
+	// display the messages
 	font.drawString(serverTyping, 542, 100);
 }
 
@@ -158,7 +154,7 @@ void ofApp::keyPressed(int key){
 			}
 		}
 	}
-	// hit Return, time to send the osc message
+	// hit Return, time to send the osc message if it's not empty
 	else{
 		// to send a string, create an ofxOscMessage object, give it an address
 		// and add a string argument to the object
@@ -227,7 +223,7 @@ string ofApp::getOscMsgAsString(ofxOscMessage m){
 	string msg_string;
 	msg_string = m.getAddress();
 	msg_string += ":";
-	for(int i = 0; i < m.getNumArgs(); i++){
+	for(size_t i = 0; i < m.getNumArgs(); i++){
 		// get the argument type
 		msg_string += " " + m.getArgTypeName(i);
 		msg_string += ":";
@@ -242,26 +238,28 @@ string ofApp::getOscMsgAsString(ofxOscMessage m){
 			msg_string += m.getArgAsString(i);
 		}
 		else{
-			msg_string += "unknown";
+			msg_string += "unhandled argument type " + m.getArgTypeName(i);
 		}
 	}
 	return msg_string;
 }
 
+//--------------------------------------------------------------
 void ofApp::broadcastReceivedMessage(string chatmessage){
 
-	//create a new OSC message
+	// create a new OSC message
 	ofxOscMessage m;
 	m.setAddress("/chatlog");
 	m.addStringArg(chatmessage);
 
-	//Send message to all known hosts
+	// send message to all known hosts,
 	// use another port to avoid a localhost loop
 	for(unsigned int i = 0; i < knownClients.size(); i++){
 		serverSender.setup(knownClients[i], serverRecvPort + 1);
 		m.setRemoteEndpoint(knownClients[i], serverRecvPort + 1);
 		serverSender.sendMessage(m, false);
-		ofLogVerbose("Server broadcast message " + m.getArgAsString(0) + " to " + m.getRemoteHost()
-					 + ":" + ofToString(m.getRemotePort()));
+		ofLogVerbose() << "Server broadcast message " + m.getArgAsString(0) +
+		                  " to " + m.getRemoteHost() +
+		                  ":" + ofToString(m.getRemotePort());
 	}
 }

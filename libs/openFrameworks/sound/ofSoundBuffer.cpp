@@ -9,6 +9,7 @@
 #include "ofSoundUtils.h"
 #include "ofLog.h"
 #include <limits>
+#include "glm/trigonometric.hpp"
 
 using namespace std;
 
@@ -356,8 +357,8 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 	for(std::size_t i=0;i<to;i++){
 		intPosition *= inChannels;
 		for(std::size_t j=0;j<inChannels;j++){
-			a = buffer[intPosition];
-			b = buffer[intPosition+inChannels];
+			a = buffer[intPosition+j];
+			b = buffer[intPosition+inChannels+j];
 			*resBufferPtr++ = ofLerp(a,b,remainder);
 		}
 		position += increment;
@@ -371,9 +372,9 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 			for(std::size_t i=0;i<to;i++){
 				intPosition *= inChannels;
 				for(std::size_t j=0;j<inChannels;j++){
-					a = buffer[intPosition];
-					b = buffer[intPosition+inChannels];
-					*resBufferPtr++ = (b-a)*remainder+a;
+					a = buffer[intPosition+j];
+					b = buffer[intPosition+inChannels+j];
+					*resBufferPtr++ = ofLerp(a,b,remainder);
 				}
 				resBufferPtr+=inChannels;
 				position += increment;
@@ -599,7 +600,7 @@ void ofSoundBuffer::fillWithNoise(float amplitude){
 }
 
 float ofSoundBuffer::fillWithTone( float pitchHz, float phase ){
-	float step = TWO_PI*(pitchHz/samplerate);
+	float step = glm::two_pi<float>()*(pitchHz/samplerate);
 	for (std::size_t i=0; i<size()/channels; i++ ) {
 		std::size_t base = i*channels;
 		for (std::size_t j=0; j<channels; j++)

@@ -18,6 +18,7 @@ class ofxiOSApp;
 @property (nonatomic, retain) ofxiOSEAGLView * glView;
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app;
+- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup;
 
 - (UIInterfaceOrientation)currentInterfaceOrientation;
 - (void)setCurrentInterfaceOrientation:(UIInterfaceOrientation) orient;

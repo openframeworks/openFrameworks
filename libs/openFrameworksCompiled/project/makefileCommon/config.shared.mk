@@ -22,7 +22,8 @@ SHELL ?= /bin/sh
 OF_ROOT ?=  $(realpath ../../..)
 PLATFORM_VARIANT ?= default
 
-ifeq ($(CC),$(EMSCRIPTEN)/emcc)
+# ifeq ($(CC),$(EMSCRIPTEN)/emcc)
+ifeq ($(findstring emcc, $(CC)),emcc)
 	PLATFORM_OS=emscripten
 endif
 PLATFORM_OS ?= $(shell uname -s)
@@ -353,5 +354,3 @@ ifdef MAKEFILE_DEBUG
 	$(info ---PLATFORM_CORE_EXCLUSIONS---)
 	$(foreach v, $(PLATFORM_CORE_EXCLUSIONS),$(info $(v)))
 endif
-
-

@@ -1,6 +1,7 @@
 #include "ofxTCPClient.h"
 #include "ofAppRunner.h"
 #include "ofxNetworkUtils.h"
+#include "ofLog.h"
 
 using namespace std;
 
@@ -240,32 +241,38 @@ bool ofxTCPClient::isClosingCondition(int messageSize, int errorCode){
 //--------------------------
 string ofxTCPClient::receive(){
 	str    = "";
-	int length=0;
-	//only get data from the buffer if we don't have already some complete message
-	if(tmpStr.find(messageDelimiter)==string::npos){
-		memset(tmpBuff,  0, TCP_MAX_MSG_SIZE+1); //one more so there's always a \0 at the end for string concat
-		length = TCPClient.Receive(tmpBuff, TCP_MAX_MSG_SIZE);
-		if(length>0){ // don't copy the data if there was an error or disconnection
-			removeZeros(tmpBuff,length);
-			tmpStr += tmpBuff;
+	char byte;
+	while(peekReceiveRawBytes(&byte, 1)>0){
+		int length=0;
+		//only get data from the buffer if we don't have already some complete message
+		if(tmpStr.find(messageDelimiter)==string::npos){
+			memset(tmpBuff,  0, TCP_MAX_MSG_SIZE+1); //one more so there's always a \0 at the end for string concat
+			length = TCPClient.Receive(tmpBuff, TCP_MAX_MSG_SIZE);
+			if(length>0){ // don't copy the data if there was an error or disconnection
+				removeZeros(tmpBuff,length);
+				tmpStr += tmpBuff;
+			}
+		}
+
+		// check for connection reset or disconnection
+		int errorCode = 0;
+		if(length<0) errorCode = ofxNetworkCheckError();
+		if(isClosingCondition(length,errorCode)){
+			close();
+			if(tmpStr.length()==0) {
+				// return if there's no more data left in the buffer
+				return "";
+			}
+		}
+
+		// process any available data
+		if(tmpStr.find(messageDelimiter)!=string::npos){
+			str=tmpStr.substr(0,tmpStr.find(messageDelimiter));
+			tmpStr=tmpStr.substr(tmpStr.find(messageDelimiter)+messageDelimiter.size());
+			return str;
 		}
 	}
-
-    // check for connection reset or disconnection
-    int errorCode = 0;
-    if(length<0) errorCode = ofxNetworkCheckError();
-	if(isClosingCondition(length,errorCode)){
-		close();
-		if(tmpStr.length()==0) // return if there's no more data left in the buffer
-			return "";
-	}
-
-	// process any available data
-	if(tmpStr.find(messageDelimiter)!=string::npos){
-		str=tmpStr.substr(0,tmpStr.find(messageDelimiter));
-		tmpStr=tmpStr.substr(tmpStr.find(messageDelimiter)+messageDelimiter.size());
-	}
-	return str;
+	return "";
 }
 
 //--------------------------
@@ -298,7 +305,7 @@ int ofxTCPClient::receiveRawMsg(char * receiveBuffer, int numBytes){
 	int posDelimiter = findDelimiter(tmpBuffReceive.getData(),tmpBuffReceive.size(),messageDelimiter);
 	if(posDelimiter>0){
 		memcpy(receiveBuffer,tmpBuffReceive.getData(),posDelimiter);
-		if(tmpBuffReceive.size() > posDelimiter + (int)messageDelimiter.size()){
+		if(tmpBuffReceive.size() > (unsigned int) posDelimiter + messageDelimiter.size()){
 			memcpy(tmpBuff,tmpBuffReceive.getData()+posDelimiter+messageDelimiter.size(),tmpBuffReceive.size()-(posDelimiter+messageDelimiter.size()));
 			tmpBuffReceive.set(tmpBuff,tmpBuffReceive.size()-(posDelimiter+messageDelimiter.size()));
 		}else{

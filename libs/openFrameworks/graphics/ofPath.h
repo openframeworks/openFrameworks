@@ -3,7 +3,6 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 #include "ofPolyline.h"
-#include "ofBaseTypes.h"
 #include "ofVboMesh.h"
 #include "ofTessellator.h"
 
@@ -417,7 +416,6 @@ private:
 #else
 	ofVboMesh			cachedTessellation;
 #endif
-	bool				cachedTessellationValid;
 #if defined(TARGET_EMSCRIPTEN)
 	static ofTessellator tessellator;
 #elif HAS_TLS

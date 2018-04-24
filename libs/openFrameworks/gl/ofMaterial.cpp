@@ -1,9 +1,7 @@
 #include "ofMaterial.h"
 #include "ofConstants.h"
-#include "ofGLUtils.h"
 #include "ofLight.h"
 #include "ofGLProgrammableRenderer.h"
-#include "ofAppRunner.h"
 
 using namespace std;
 
@@ -26,7 +24,7 @@ void ofMaterial::setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloat
 }
 
 
-void ofMaterial::setup(const ofMaterial::Settings & settings){
+void ofMaterial::setup(const ofMaterialSettings & settings){
 	if(settings.customUniforms != data.customUniforms || settings.postFragment != data.postFragment){
 		shaders.clear();
 		uniforms1f.clear();
@@ -85,7 +83,7 @@ ofFloatColor ofMaterial::getEmissiveColor()const {
 	return data.emissive;
 }
 
-ofMaterial::Settings ofMaterial::getSettings() const{
+ofMaterialSettings ofMaterial::getSettings() const{
     return data;
 }
 

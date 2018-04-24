@@ -2,11 +2,24 @@
 
 #ifdef OF_SOUND_PLAYER_OPENAL
 
-#include "ofUtils.h"
-#include "ofMath.h"
-#include "ofFileUtils.h"
-#include "ofAppRunner.h"
-#include <set>
+#include "ofConstants.h"
+#include "glm/gtc/constants.hpp"
+#include "glm/common.hpp"
+#include "ofLog.h"
+#include "ofEvents.h"
+#include <sndfile.h>
+
+#if defined (TARGET_OF_IOS) || defined (TARGET_OSX)
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
+#else
+#include <AL/al.h>
+#include <AL/alc.h>
+#endif
+
+#ifdef OF_USING_MPG123
+#include <mpg123.h>
+#endif
 
 using namespace std;
 
@@ -153,7 +166,7 @@ void ofOpenALSoundPlayer::createWindow(int size){
 		window.resize(size);
 		// hanning window
 		for(int i = 0; i < size; i++){
-			window[i] = .54 - .46 * cos((TWO_PI * i) / (size - 1));
+			window[i] = .54 - .46 * cos((glm::two_pi<float>() * i) / (size - 1));
 			windowSum += window[i];
 		}
 	}
@@ -731,8 +744,7 @@ void ofOpenALSoundPlayer::setPositionMS(int ms){
 	}else
 #endif
 	if(streamf){
-		sf_seek(streamf,float(ms)/1000.f*samplerate*channels,SEEK_SET);
-		stream_samples_read = 0;
+        stream_samples_read = sf_seek(streamf,float(ms)/1000.f*samplerate,SEEK_SET) * channels;
 	}else{
 		for(int i=0;i<(int)channels;i++){
 			alSourcef(sources[sources.size()-channels+i],AL_SEC_OFFSET,float(ms)/1000.f);
@@ -768,7 +780,7 @@ int ofOpenALSoundPlayer::getPositionMS() const{
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::setPan(float p){
 	if(sources.empty()) return;
-	p = ofClamp(p, -1, 1);
+	p = glm::clamp(p, -1.f, 1.f);
 	pan = p;
 	if(channels==1){
 		float pos[3] = {p,0,0};
