@@ -75,7 +75,7 @@ void ofApp::keyPressed  (int key){
     }else if( key == OF_KEY_RIGHT_SUPER){
         eventString += "RIGHT SUPER";
     }else{
-        eventString += (char)key;
+        ofUTF8Append(eventString,  (char)key);
     }
 }
 
@@ -121,7 +121,7 @@ void ofApp::keyReleased(int key){
     }else if( key == OF_KEY_RIGHT_SUPER){
         eventString += "RIGHT SUPER";
     }else{
-        eventString += (char)key;
+        ofUTF8Append(eventString,  (char)key);
     }
 }
 
