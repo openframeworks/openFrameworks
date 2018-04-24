@@ -814,17 +814,17 @@ void ofPath::rotateDeg(float degrees, const glm::vec3& axis ){
 
 //----------------------------------------------------------
 void ofPath::rotateRad(float radians, const glm::vec3& axis ){
-    rotateRad(ofRadToDeg(radians), axis);
+    rotateDeg(ofRadToDeg(radians), axis);
 }
-    
+
 //----------------------------------------------------------
 void ofPath::rotate(float degrees, const glm::vec3& axis ){
-    rotateRad(ofDegToRad(degrees), axis);
+    rotateDeg(degrees, axis);
 }
 
 //----------------------------------------------------------
 void ofPath::rotate(float degrees, const glm::vec2& axis ){
-	rotateDeg(degrees, glm::vec3(axis, 0.0));
+    rotateDeg(degrees, glm::vec3(axis, 0.0));
 }
 
 //----------------------------------------------------------
