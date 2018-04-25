@@ -219,7 +219,7 @@ function createPackage {
     rm -r $pkg_ofroot/apps/devApps
 
     #remove projectGenerator folder
-    if [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "msys2" ]; then
+    if [ "$pkg_platform" = "msys2" ]; then
     	rm -rf $pkg_ofroot/apps/projectGenerator
     fi
 
