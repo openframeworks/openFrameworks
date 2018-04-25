@@ -802,8 +802,13 @@ void ofPolyline_<T>::translate(const glm::vec2 &p){
 
 //--------------------------------------------------
 template<class T>
-void ofPolyline_<T>::rotate(float az, const glm::vec3 &axis){
-    auto radians = ofDegToRad(az);
+void ofPolyline_<T>::rotateDeg(float degrees, const glm::vec3& axis){
+    rotateRad(ofDegToRad(degrees), axis);
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::rotateRad(float radians, const glm::vec3& axis){
     for(auto & point : points){
         point = glm::rotate(toGlm(point), radians, axis);
     }
@@ -812,8 +817,26 @@ void ofPolyline_<T>::rotate(float az, const glm::vec3 &axis){
 
 //--------------------------------------------------
 template<class T>
-void ofPolyline_<T>::rotate(float az, const glm::vec2 &axis){
-    rotate(az, glm::vec3(axis, 0.0));
+void ofPolyline_<T>::rotate(float degrees, const glm::vec3 &axis){
+    rotateDeg(degrees, axis);
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::rotateDeg(float degrees, const glm::vec2& axis){
+    rotateRad(ofDegToRad(degrees), glm::vec3(axis, 0.0));
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::rotateRad(float radians, const glm::vec2& axis){
+    rotateRad(radians, glm::vec3(axis, 0.0));
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::rotate(float degrees, const glm::vec2 &axis){
+    rotateRad(ofDegToRad(degrees), glm::vec3(axis, 0.0));
 }
 
 //--------------------------------------------------
@@ -844,7 +867,6 @@ template<class T>
 T ofPolyline_<T>::getRightVector() const {
     return rightVector;
 }
-
 
 //--------------------------------------------------
 template<class T>
