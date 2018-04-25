@@ -9,7 +9,6 @@ In this section of examples, you will find examples of different ways to work wi
 * [videoPlayerExample](videoPlayerExample/) - Loading a video from your disk
 * [videoGrabberExample](videoGrabberExample/) - Grabbing and displaying the webcam image
 * [asciiVideoExample](asciiVideoExample/) - Displaying the webcam image as ASCII art
-* [osxVideoRecorderExample](osxVideoRecorderExample/) - Using the OS X specific video grabber to record synced video and audio.
 
 
 ### At a Glance
@@ -27,7 +26,3 @@ In this section of examples, you will find examples of different ways to work wi
 ![Screenshot of asciiVideoExample](asciiVideoExample/asciiVideoExample.png)
 [asciiVideoExample](asciiVideoExample/)
 
---
-
-![Screenshot of osxVideoRecorderExample](osxVideoRecorderExample/osxVideoRecorderExample.png)
-[osxVideoRecorderExample](osxVideoRecorderExample/)
