@@ -163,7 +163,7 @@ function deleteEclipse {
 
 
 function createProjectFiles {
-    if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
+    if [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
         mkdir -p ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
         cd ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
         rm -f ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a
@@ -254,6 +254,7 @@ function createPackage {
 		rm -Rf templates
 		rm -Rf threads
 		rm -Rf video
+        rm -Rf windowing
 	fi
 
 	#delete osx examples in linux
@@ -294,6 +295,8 @@ function createPackage {
         rm -Rf utils/fileBufferLoadingCSVExample
 
         rm -Rf 3d/modelNoiseExample
+
+        rm -Rf windowing
     fi
 
     if [ "$pkg_platform" == "linuxarmv6l" ]; then
@@ -403,29 +406,13 @@ function createPackage {
 		cd ${pkg_ofroot}
 		sed -i "s/osx/vs/g" projectGenerator-vs/resources/app/settings.json
 	fi
+
     if [ "$pkg_platform" = "osx" ] || [ "$pkg_platform" = "ios" ]; then
-		# cd ${pkg_ofroot}/apps/projectGenerator/frontend
-		# npm install > /dev/null
-		# npm run build:osx > /dev/null
-		# mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-osx
-		# cd ${pkg_ofroot}
-		# rm -rf apps/projectGenerator
 		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip 2> /dev/null
-		# sed -i "s/osx/osx/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
         unzip projectGenerator-osx.zip
         mv projectGenerator-osx projectGenerator
         rm projectGenerator-osx.zip
 	fi
-    # if [ "$pkg_platform" = "ios" ]; then
-	# 	cd ${pkg_ofroot}/apps/projectGenerator/frontend
-	# 	npm install > /dev/null
-	# 	npm run build:osx > /dev/null
-	# 	mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-ios
-	# 	cd ${pkg_ofroot}
-	# 	rm -rf apps/projectGenerator
-	# 	wget http://ci.openframeworks.cc/projectGenerator/projectGenerator_osx -O projectGenerator-ios/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
-	# 	sed -i "s/osx/ios/g" projectGenerator-ios/projectGenerator.app/Contents/Resources/app/settings.json
-	# fi
 
 	if [ "$pkg_platform" = "linux" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
