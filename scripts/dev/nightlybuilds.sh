@@ -24,7 +24,9 @@ error() {
   fi
   echo $msg
   mail -s "Error creating nightly builds at $(date)." $REPORT_MAIL <<EOF
-$msg
+Error creating nightly builds
+
+${msg}
 $(if [ -f /home/ofadmin/logs/nightlybuilds.log ]; then cat /home/ofadmin/logs/nightlybuilds.log fi)
 $(if [ -f /home/ofadmin/logs/compilePG.log ]; then echo; echo; echo "PG compile log: "; cat /home/ofadmin/logs/compilePG.log fi)
 EOF
