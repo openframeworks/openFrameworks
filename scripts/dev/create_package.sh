@@ -432,6 +432,32 @@ function createPackage {
 		sed -i "s/osx/linux64/g" projectGenerator-linux64/resources/app/settings.json
 	fi
 
+    if [ "$pkg_platform" = "android" ]; then
+		cd ${pkg_ofroot}/apps/projectGenerator/frontend
+		npm install > /dev/null
+		npm run build:vs > /dev/null
+		mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-windows
+		cd ${pkg_ofroot}
+		rm -rf apps/projectGenerator
+		cd ${pkg_ofroot}/projectGenerator-windows/resources/app/app/
+		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip 2> /dev/null
+		unzip projectGenerator-vs.zip 2> /dev/null
+		rm projectGenerator-vs.zip
+		cd ${pkg_ofroot}
+		sed -i "s/osx/android/g" projectGenerator-windows/resources/app/settings.json
+
+		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip 2> /dev/null
+        unzip projectGenerator-osx.zip
+		sed -i "s/osx/android/g" projectGenerator-osx/resources/app/settings.json
+
+		cd ${pkg_ofroot}/apps/projectGenerator/frontend
+		npm install > /dev/null
+		npm run build:linux64 > /dev/null
+		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
+		cd ${pkg_ofroot}
+		sed -i "s/osx/android/g" projectGenerator-linux64/resources/app/settings.json
+	fi
+
 	# linux remove other platform projects from PG source and copy ofxGui
 	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
 	    cd ${pkg_ofroot}
