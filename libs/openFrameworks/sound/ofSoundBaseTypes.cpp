@@ -33,8 +33,8 @@ void ofBaseSoundStream::printDeviceList() const {
 		ofSoundDevice::Api api = (ofSoundDevice::Api)i;
 		auto devices = getDeviceList(api);
 		if(!devices.empty()){
-			std::cout << "Api: " << toString(api) << std::endl;
-			std::cout << devices << std::endl;
+				ofLogNotice("ofBaseSoundStream::printDeviceList") << "Api: " << toString(api);
+				ofLogNotice("ofBaseSoundStream::printDeviceList") << devices;
 		}
 	}
 }
