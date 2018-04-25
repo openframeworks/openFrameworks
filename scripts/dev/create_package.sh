@@ -413,7 +413,7 @@ function createPackage {
 		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip 2> /dev/null
 		# sed -i "s/osx/osx/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
         unzip projectGenerator-osx.zip
-        mv projectGenerator_osx projectGenerator
+        mv projectGenerator-osx projectGenerator
         rm projectGenerator-osx.zip
 	fi
     # if [ "$pkg_platform" = "ios" ]; then
