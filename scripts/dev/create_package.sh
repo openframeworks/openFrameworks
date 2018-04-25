@@ -448,7 +448,7 @@ function createPackage {
 
 		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip 2> /dev/null
         unzip projectGenerator-osx.zip
-		sed -i "s/osx/android/g" projectGenerator-osx/resources/app/settings.json
+		sed -i -e "s/osx/android/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
 
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
 		npm install > /dev/null
