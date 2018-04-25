@@ -38,134 +38,91 @@ void ofApp::keyPressed  (int key){
 
 	eventString = "keyPressed = (" + ofToString(key) + ") ";
 
-	if(key & OF_KEY_MODIFIER){
-		if(key >= OF_KEY_F1 && key <= OF_KEY_F12){
-			eventString += "F" +  ofToString(key+1-OF_KEY_F1);
-		}else{
-			switch(key){
-			case OF_KEY_LEFT:
-				eventString += "LEFT";
-				break;
-			case OF_KEY_UP:
-				eventString += "UP";
-				break;
-			case OF_KEY_RIGHT:
-				eventString += "RIGHT";
-				break;
-			case OF_KEY_DOWN:
-				eventString += "DOWN";
-				break;
-			case OF_KEY_PAGE_UP:
-				eventString += "PAGE UP";
-				break;
-			case OF_KEY_PAGE_DOWN:
-				eventString += "PAGE DOWN";
-				break;
-			case OF_KEY_HOME:
-				eventString += "HOME";
-				break;
-			case OF_KEY_END:
-				eventString += "END";
-				break;
-			case OF_KEY_INSERT:
-				eventString += "INSERT";
-				break;
-			case OF_KEY_LEFT_SHIFT:
-				eventString += "LEFT SHIFT";
-				break;
-			case OF_KEY_LEFT_CONTROL:
-				eventString += "LEFT CONTROL";
-				break;
-			case OF_KEY_LEFT_SUPER:
-				eventString += "LEFT SUPER";
-				break;
-			case OF_KEY_RIGHT_SHIFT:
-				eventString += "RIGHT SHIFT";
-				break;
-			case OF_KEY_RIGHT_CONTROL:
-				eventString += "RIGHT CONTROL";
-				break;
-			case OF_KEY_LEFT_ALT:
-				eventString += "LEFT ALT";
-				break;
-            case OF_KEY_RIGHT_ALT:
-				eventString += "RIGHT ALT";
-				break;
-			case OF_KEY_RIGHT_SUPER:
-				eventString += "RIGHT SUPER";
-				break;
-			}
-		}
-	}else{
-		eventString += (char)key;
-	}
+    if(key >= OF_KEY_F1 && key <= OF_KEY_F12){
+        eventString += "F" +  ofToString(key+1-OF_KEY_F1);
+    }else if( key == OF_KEY_LEFT){
+        eventString += "LEFT";
+    }else if( key == OF_KEY_UP){
+        eventString += "UP";
+    }else if( key == OF_KEY_RIGHT){
+        eventString += "RIGHT";
+    }else if( key == OF_KEY_DOWN){
+        eventString += "DOWN";
+    }else if( key == OF_KEY_PAGE_UP){
+        eventString += "PAGE UP";
+    }else if( key == OF_KEY_PAGE_DOWN){
+        eventString += "PAGE DOWN";
+    }else if( key == OF_KEY_HOME){
+        eventString += "HOME";
+    }else if( key == OF_KEY_END){
+        eventString += "END";
+    }else if( key == OF_KEY_INSERT){
+        eventString += "INSERT";
+    }else if( key == OF_KEY_LEFT_SHIFT){
+        eventString += "LEFT SHIFT";
+    }else if( key == OF_KEY_LEFT_CONTROL){
+        eventString += "LEFT CONTROL";
+    }else if( key == OF_KEY_LEFT_SUPER){
+        eventString += "LEFT SUPER";
+    }else if( key == OF_KEY_RIGHT_SHIFT){
+        eventString += "RIGHT SHIFT";
+    }else if( key == OF_KEY_RIGHT_CONTROL){
+        eventString += "RIGHT CONTROL";
+    }else if( key == OF_KEY_LEFT_ALT){
+        eventString += "LEFT ALT";
+    }else if( key == OF_KEY_RIGHT_ALT){
+        eventString += "RIGHT ALT";
+    }else if( key == OF_KEY_RIGHT_SUPER){
+        eventString += "RIGHT SUPER";
+    }else{
+        ofUTF8Append(eventString,  (char)key);
+    }
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){ 
-	eventString = "keyReleased = (" + ofToString(key) + ") ";
-
-	if(key & OF_KEY_MODIFIER){
-		if(key >= OF_KEY_F1 && key <= OF_KEY_F12){
-			eventString += "F" +  ofToString(key+1-OF_KEY_F1);
-		}else{
-			switch(key){
-			case OF_KEY_LEFT:
-				eventString += "LEFT";
-				break;
-			case OF_KEY_UP:
-				eventString += "UP";
-				break;
-			case OF_KEY_RIGHT:
-				eventString += "RIGHT";
-				break;
-			case OF_KEY_DOWN:
-				eventString += "DOWN";
-				break;
-			case OF_KEY_PAGE_UP:
-				eventString += "PAGE UP";
-				break;
-			case OF_KEY_PAGE_DOWN:
-				eventString += "PAGE DOWN";
-				break;
-			case OF_KEY_HOME:
-				eventString += "HOME";
-				break;
-			case OF_KEY_END:
-				eventString += "END";
-				break;
-			case OF_KEY_INSERT:
-				eventString += "INSERT";
-				break;
-			case OF_KEY_LEFT_SHIFT:
-				eventString += "LEFT SHIFT";
-				break;
-			case OF_KEY_LEFT_CONTROL:
-				eventString += "LEFT CONTROL";
-				break;
-			case OF_KEY_LEFT_SUPER:
-				eventString += "LEFT SUPER";
-				break;
-			case OF_KEY_RIGHT_SHIFT:
-				eventString += "RIGHT SHIFT";
-				break;
-			case OF_KEY_RIGHT_CONTROL:
-				eventString += "RIGHT CONTROL";
-				break;
-			case OF_KEY_LEFT_ALT:
-				eventString += "LEFT ALT";
-				break;
-            case OF_KEY_RIGHT_ALT:
-				eventString += "RIGHT ALT";
-				break;
-			case OF_KEY_RIGHT_SUPER:
-				eventString += "RIGHT SUPER";
-				break;
-			}
-		}
-	}else{
-		eventString += (char)key;
-	}
+void ofApp::keyReleased(int key){
+    
+    eventString = "keyReleased = (" + ofToString(key) + ") ";
+    
+    if(key >= OF_KEY_F1 && key <= OF_KEY_F12){
+        eventString += "F" +  ofToString(key+1-OF_KEY_F1);
+    }else if( key == OF_KEY_LEFT){
+        eventString += "LEFT";
+    }else if( key == OF_KEY_UP){
+        eventString += "UP";
+    }else if( key == OF_KEY_RIGHT){
+        eventString += "RIGHT";
+    }else if( key == OF_KEY_DOWN){
+        eventString += "DOWN";
+    }else if( key == OF_KEY_PAGE_UP){
+        eventString += "PAGE UP";
+    }else if( key == OF_KEY_PAGE_DOWN){
+        eventString += "PAGE DOWN";
+    }else if( key == OF_KEY_HOME){
+        eventString += "HOME";
+    }else if( key == OF_KEY_END){
+        eventString += "END";
+    }else if( key == OF_KEY_INSERT){
+        eventString += "INSERT";
+    }else if( key == OF_KEY_LEFT_SHIFT){
+        eventString += "LEFT SHIFT";
+    }else if( key == OF_KEY_LEFT_CONTROL){
+        eventString += "LEFT CONTROL";
+    }else if( key == OF_KEY_LEFT_SUPER){
+        eventString += "LEFT SUPER";
+    }else if( key == OF_KEY_RIGHT_SHIFT){
+        eventString += "RIGHT SHIFT";
+    }else if( key == OF_KEY_RIGHT_CONTROL){
+        eventString += "RIGHT CONTROL";
+    }else if( key == OF_KEY_LEFT_ALT){
+        eventString += "LEFT ALT";
+    }else if( key == OF_KEY_RIGHT_ALT){
+        eventString += "RIGHT ALT";
+    }else if( key == OF_KEY_RIGHT_SUPER){
+        eventString += "RIGHT SUPER";
+    }else{
+        ofUTF8Append(eventString,  (char)key);
+    }
 }
 
 //--------------------------------------------------------------
@@ -210,6 +167,6 @@ void ofApp::gotMessage(ofMessage msg){
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
-	eventString = ofToString((int)dragInfo.files.size()) + " files dragged into the window at (" + ofToString((int)dragInfo.position.x) + ", " + ofToString((int)dragInfo.position.y) + ")";
+    eventString = ofToString((int)dragInfo.files.size()) + " files dragged into the window at (" + ofToString((int)dragInfo.position.x) + ", " + ofToString((int)dragInfo.position.y) + ")";
 	
 }
