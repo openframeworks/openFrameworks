@@ -516,7 +516,7 @@ public class OFAndroid {
 	
 	static MulticastLock mcLock;
 	public static void enableMulticast(){
-		WifiManager wifi = (WifiManager)OFAndroidLifeCycle.getActivity().getSystemService( Context.WIFI_SERVICE );
+		WifiManager wifi = (WifiManager)OFAndroidLifeCycle.getActivity().getApplicationContext().getSystemService( Context.WIFI_SERVICE );
 		if(wifi != null)
 		{
 		    mcLock = wifi.createMulticastLock("mylock");
