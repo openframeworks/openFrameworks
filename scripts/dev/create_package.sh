@@ -437,8 +437,6 @@ function createPackage {
 		npm install > /dev/null
 		npm run build:vs > /dev/null
 		mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-windows
-		cd ${pkg_ofroot}
-		rm -rf apps/projectGenerator
 		cd ${pkg_ofroot}/projectGenerator-windows/resources/app/app/
 		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip 2> /dev/null
 		unzip projectGenerator-vs.zip 2> /dev/null
