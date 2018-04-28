@@ -103,6 +103,9 @@ public:
 	}
 
 	void add(ofAbstractParameter & param);
+	void addAt(ofAbstractParameter & param, unsigned long index);
+	void swapPositions(unsigned long index1, unsigned long index2);
+	void swapPositions(ofAbstractParameter & param1, ofAbstractParameter & param2);
 	std::string valueType() const;
 
 	void remove(ofAbstractParameter & param);

@@ -400,10 +400,12 @@ private:
 	void addCommand(const Command & command);
 	void generatePolylinesFromCommands();
 
+public:
 	// only needs to be called when path is modified externally
 	void flagShapeChanged();
 	bool hasChanged();
 
+private:
 	// path description
 	//vector<ofSubPath>		paths;
 	std::vector<Command> 	commands;
