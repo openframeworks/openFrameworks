@@ -46,7 +46,7 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 		return android.media.AudioRecord.getMinBufferSize(samplerate, inChannels, AudioFormat.ENCODING_PCM_16BIT)/2;
 	}
 	
-	private void setupOut(int nOutputChannels, int sampleRate, int bufferSize){
+	private void setupOut(int nOutputChannels, int sampleRate){
 		int outChannels = AudioFormat.CHANNEL_OUT_STEREO;
 		numOuts = 2;
 		if(nOutputChannels==1){
@@ -70,7 +70,7 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 		Log.i("OF","sound output setup with buffersize: " + minBufferSize);
 	}
 	
-	private void setupIn(int nInputChannels, int sampleRate, int bufferSize){
+	private void setupIn(int nInputChannels, int sampleRate){
 		int inChannels = AudioFormat.CHANNEL_IN_STEREO;
 		numIns = 2;
 		if(nInputChannels==1){
@@ -99,11 +99,11 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 		this.requestedBuffers = nBuffers;
 		
 		if(nOutputChannels>0){
-			setupOut(nOutputChannels,sampleRate,bufferSize);
+			setupOut(nOutputChannels,sampleRate);
 		}
 		
 		if(nInputChannels>0){
-			setupIn(nInputChannels,sampleRate,bufferSize);
+			setupIn(nInputChannels,sampleRate);
 		}else{
 			Log.i("OF","no input channels");
 		}
