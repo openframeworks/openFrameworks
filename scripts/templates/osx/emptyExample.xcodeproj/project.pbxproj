@@ -197,7 +197,9 @@ fi
 				<key>COPY_PHASE_STRIP</key>
 				<string>YES</string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
-				<string>$(inherited)</string>
+				<array>
+					<string>$(inherited)</string>
+				</array>
 				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
 				<string>YES</string>
 				<key>GCC_MODEL_TUNING</key>
@@ -575,7 +577,9 @@ fi
 				<key>COPY_PHASE_STRIP</key>
 				<string>NO</string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
-				<string>$(inherited)</string>
+				<array>
+					<string>$(inherited)</string>
+				</array>
 				<key>GCC_DYNAMIC_NO_PIC</key>
 				<string>NO</string>
 				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
@@ -613,7 +617,9 @@ fi
 				<key>COPY_PHASE_STRIP</key>
 				<string>YES</string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
-				<string>$(inherited)</string>
+				<array>
+					<string>$(inherited)</string>
+				</array>
 				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
 				<string>YES</string>
 				<key>GCC_MODEL_TUNING</key>
