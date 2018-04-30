@@ -41,10 +41,10 @@ scripts/dev/download_libs.sh
 
 
 cd $(cat ~/.ofprojectgenerator/config)/apps/projectGenerator
-git pull upstreamhttps/master
+git pull origin/master
 
 cd $(cat ~/.ofprojectgenerator/config)/scripts/apotehcary
-git pull upstreamhttps/master
+git pull origin/master
 
 cd $(cat ~/.ofprojectgenerator/config)
 git commit scripts/apothecary apps/projectGenerator -m"update submodules to latest commit"
