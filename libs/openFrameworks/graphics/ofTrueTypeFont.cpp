@@ -956,7 +956,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 	int maxSize;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
 	if(w > maxSize || h > maxSize){
-		ofLogError("ofTruetypeFont") << "Trying to allocate texture of " << w "x" << h << " which is bigger than supported in current platform: " << maxSize;
+		ofLogError("ofTruetypeFont") << "Trying to allocate texture of " << w << "x" << h << " which is bigger than supported in current platform: " << maxSize;
 		return false;
 	}else{
 		texAtlas.allocate(atlasPixelsLuminanceAlpha,false);
