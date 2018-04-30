@@ -94,8 +94,9 @@ if [ $ret -eq 0 ]; then
   mkdir -p $OF_LIBS_ROOT/projectGenerator_builds/$version
   cp -f $OF_LIBS_ROOT/projectGenerator_builds/projectGenerator-osx.zip $OF_LIBS_ROOT/projectGenerator_builds/$version/
   cp -f $OF_LIBS_ROOT/projectGenerator_builds/projectGenerator-vs.zip $OF_LIBS_ROOT/projectGenerator_builds/$version/
-  cp -f $OF_LIBS_ROOT/projectGenerator_builds/projectGenerator-linux $OF_LIBS_ROOT/projectGenerator_builds/$version/
+  cp -f $OF_LIBS_ROOT/projectGenerator_builds/projectGenerator_linux $OF_LIBS_ROOT/projectGenerator_builds/$version/
 fi
 
 git tag $version
 git push -u origin $version
+git push origin master
