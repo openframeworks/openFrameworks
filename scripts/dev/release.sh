@@ -75,7 +75,7 @@ ip addr | grep $ip
 ret=$?
 if [ $ret -eq 0 ]; then
   # We are running on ci server, create snapshots of binary libraries and PG
-  mkdir -p /var/www/openFrameworks_libs/$version
+  mkdir -p $OF_LIBS_ROOT/openFrameworks_libs/$version
   cp -rf $OF_LIBS_ROOT/openFrameworks_libs/android $OF_LIBS_ROOT/openFrameworks_libs/$version/
   cp -rf $OF_LIBS_ROOT/openFrameworks_libs/emscripten $OF_LIBS_ROOT/openFrameworks_libs/$version/
   cp -rf $OF_LIBS_ROOT/openFrameworks_libs/ios $OF_LIBS_ROOT/openFrameworks_libs/$version/
@@ -91,10 +91,10 @@ if [ $ret -eq 0 ]; then
   cp -f $OF_LIBS_ROOT/libs/*.tar.bz2 $OF_LIBS_ROOT/libs/$version/
   cp -f $OF_LIBS_ROOT/libs/*.zip $OF_LIBS_ROOT/libs/$version/
 
-  mkdir -p $OF_LIBS_ROOT/projectGenerator/$version
-  cp -f $OF_LIBS_ROOT/projectGenerator/projectGenerator-osx.zip $OF_LIBS_ROOT/projectGenerator/$version/
-  cp -f $OF_LIBS_ROOT/projectGenerator/projectGenerator-vs.zip $OF_LIBS_ROOT/projectGenerator/$version/
-  cp -f $OF_LIBS_ROOT/projectGenerator/projectGenerator-linux $OF_LIBS_ROOT/projectGenerator/$version/
+  mkdir -p $OF_LIBS_ROOT/projectGenerator_builds/$version
+  cp -f $OF_LIBS_ROOT/projectGenerator_builds/projectGenerator-osx.zip $OF_LIBS_ROOT/projectGenerator_builds/$version/
+  cp -f $OF_LIBS_ROOT/projectGenerator_builds/projectGenerator-vs.zip $OF_LIBS_ROOT/projectGenerator_builds/$version/
+  cp -f $OF_LIBS_ROOT/projectGenerator_builds/projectGenerator-linux $OF_LIBS_ROOT/projectGenerator_builds/$version/
 fi
 
 git tag $version
