@@ -66,25 +66,25 @@ ret=$?
 if [ $ret -eq 0 ]; then
   # We are running on ci server, create snapshots of binary libraries and PG
   mkdir -p /var/www/openFrameworks_libs/$version
-  cp -r /var/www/openFrameworks_libs/android /var/www/openFrameworks_libs/$version/
-  cp -r /var/www/openFrameworks_libs/emscripten /var/www/openFrameworks_libs/$version/
-  cp -r /var/www/openFrameworks_libs/ios /var/www/openFrameworks_libs/$version/
-  cp -r /var/www/openFrameworks_libs/linux64 /var/www/openFrameworks_libs/$version/
-  cp -r /var/www/openFrameworks_libs/linuxarmv6l /var/www/openFrameworks_libs/$version/
-  cp -r /var/www/openFrameworks_libs/linuxarmv7l /var/www/openFrameworks_libs/$version/
-  cp -r /var/www/openFrameworks_libs/msys2 /var/www/openFrameworks_libs/$version/
-  cp -r /var/www/openFrameworks_libs/osx /var/www/openFrameworks_libs/$version/
-  cp -r /var/www/openFrameworks_libs/tvos /var/www/openFrameworks_libs/$version/
-  cp -r /var/www/openFrameworks_libs/vs /var/www/openFrameworks_libs/$version/
+  cp -r $OF_LIBS_ROOT/openFrameworks_libs/android $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -r $OF_LIBS_ROOT/openFrameworks_libs/emscripten $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -r $OF_LIBS_ROOT/openFrameworks_libs/ios $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -r $OF_LIBS_ROOT/openFrameworks_libs/linux64 $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -r $OF_LIBS_ROOT/openFrameworks_libs/linuxarmv6l $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -r $OF_LIBS_ROOT/openFrameworks_libs/linuxarmv7l $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -r $OF_LIBS_ROOT/openFrameworks_libs/msys2 $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -r $OF_LIBS_ROOT/openFrameworks_libs/osx $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -r $OF_LIBS_ROOT/openFrameworks_libs/tvos $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -r $OF_LIBS_ROOT/openFrameworks_libs/vs $OF_LIBS_ROOT/openFrameworks_libs/$version/
 
-  mkdir -p /var/www/libs/$version
-  cp /var/www/libs/*.tar.bz2 /var/www/libs/$version/
-  cp /var/www/libs/*.zip /var/www/libs/$version/
+  mkdir -p $OF_LIBS_ROOT/libs/$version
+  cp $OF_LIBS_ROOT/libs/*.tar.bz2 $OF_LIBS_ROOT/libs/$version/
+  cp $OF_LIBS_ROOT/libs/*.zip $OF_LIBS_ROOT/libs/$version/
 
-  mkdir -p /var/www/projectGenerator/$version
-  cp /var/www/projectGenerator/projectGenerator-osx.zip /var/www/projectGenerator/$version/
-  cp /var/www/projectGenerator/projectGenerator-vs.zip /var/www/projectGenerator/$version/
-  cp /var/www/projectGenerator/projectGenerator-linux /var/www/projectGenerator/$version/
+  mkdir -p $OF_LIBS_ROOT/projectGenerator/$version
+  cp $OF_LIBS_ROOT/projectGenerator/projectGenerator-osx.zip $OF_LIBS_ROOT/projectGenerator/$version/
+  cp $OF_LIBS_ROOT/projectGenerator/projectGenerator-vs.zip $OF_LIBS_ROOT/projectGenerator/$version/
+  cp $OF_LIBS_ROOT/projectGenerator/projectGenerator-linux $OF_LIBS_ROOT/projectGenerator/$version/
 fi
 
 git tag $version
