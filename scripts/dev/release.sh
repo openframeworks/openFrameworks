@@ -43,7 +43,7 @@ scripts/dev/download_libs.sh
 cd $(cat ~/.ofprojectgenerator/config)/apps/projectGenerator
 git pull origin master
 
-cd $(cat ~/.ofprojectgenerator/config)/scripts/apotehcary
+cd $(cat ~/.ofprojectgenerator/config)/scripts/apothecary
 git pull origin master
 
 cd $(cat ~/.ofprojectgenerator/config)
