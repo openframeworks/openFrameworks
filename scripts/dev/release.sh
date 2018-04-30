@@ -39,6 +39,16 @@ git fetch upstreamhttps
 git reset --hard upstreamhttps/$branch
 scripts/dev/download_libs.sh
 
+
+cd $(cat ~/.ofprojectgenerator/config)/apps/projectGenerator
+git pull upstreamhttps/master
+
+cd $(cat ~/.ofprojectgenerator/config)/scripts/apotehcary
+git pull upstreamhttps/master
+
+cd $(cat ~/.ofprojectgenerator/config)
+git commit scripts/apothecary apps/projectGenerator -m"update submodules to latest commit"
+
 cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 
 ./create_package.sh linux64 $version $branch gcc4
@@ -66,25 +76,25 @@ ret=$?
 if [ $ret -eq 0 ]; then
   # We are running on ci server, create snapshots of binary libraries and PG
   mkdir -p /var/www/openFrameworks_libs/$version
-  cp -r $OF_LIBS_ROOT/openFrameworks_libs/android $OF_LIBS_ROOT/openFrameworks_libs/$version/
-  cp -r $OF_LIBS_ROOT/openFrameworks_libs/emscripten $OF_LIBS_ROOT/openFrameworks_libs/$version/
-  cp -r $OF_LIBS_ROOT/openFrameworks_libs/ios $OF_LIBS_ROOT/openFrameworks_libs/$version/
-  cp -r $OF_LIBS_ROOT/openFrameworks_libs/linux64 $OF_LIBS_ROOT/openFrameworks_libs/$version/
-  cp -r $OF_LIBS_ROOT/openFrameworks_libs/linuxarmv6l $OF_LIBS_ROOT/openFrameworks_libs/$version/
-  cp -r $OF_LIBS_ROOT/openFrameworks_libs/linuxarmv7l $OF_LIBS_ROOT/openFrameworks_libs/$version/
-  cp -r $OF_LIBS_ROOT/openFrameworks_libs/msys2 $OF_LIBS_ROOT/openFrameworks_libs/$version/
-  cp -r $OF_LIBS_ROOT/openFrameworks_libs/osx $OF_LIBS_ROOT/openFrameworks_libs/$version/
-  cp -r $OF_LIBS_ROOT/openFrameworks_libs/tvos $OF_LIBS_ROOT/openFrameworks_libs/$version/
-  cp -r $OF_LIBS_ROOT/openFrameworks_libs/vs $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -rf $OF_LIBS_ROOT/openFrameworks_libs/android $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -rf $OF_LIBS_ROOT/openFrameworks_libs/emscripten $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -rf $OF_LIBS_ROOT/openFrameworks_libs/ios $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -rf $OF_LIBS_ROOT/openFrameworks_libs/linux64 $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -rf $OF_LIBS_ROOT/openFrameworks_libs/linuxarmv6l $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -rf $OF_LIBS_ROOT/openFrameworks_libs/linuxarmv7l $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -rf $OF_LIBS_ROOT/openFrameworks_libs/msys2 $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -rf $OF_LIBS_ROOT/openFrameworks_libs/osx $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -rf $OF_LIBS_ROOT/openFrameworks_libs/tvos $OF_LIBS_ROOT/openFrameworks_libs/$version/
+  cp -rf $OF_LIBS_ROOT/openFrameworks_libs/vs $OF_LIBS_ROOT/openFrameworks_libs/$version/
 
   mkdir -p $OF_LIBS_ROOT/libs/$version
-  cp $OF_LIBS_ROOT/libs/*.tar.bz2 $OF_LIBS_ROOT/libs/$version/
-  cp $OF_LIBS_ROOT/libs/*.zip $OF_LIBS_ROOT/libs/$version/
+  cp -f $OF_LIBS_ROOT/libs/*.tar.bz2 $OF_LIBS_ROOT/libs/$version/
+  cp -f $OF_LIBS_ROOT/libs/*.zip $OF_LIBS_ROOT/libs/$version/
 
   mkdir -p $OF_LIBS_ROOT/projectGenerator/$version
-  cp $OF_LIBS_ROOT/projectGenerator/projectGenerator-osx.zip $OF_LIBS_ROOT/projectGenerator/$version/
-  cp $OF_LIBS_ROOT/projectGenerator/projectGenerator-vs.zip $OF_LIBS_ROOT/projectGenerator/$version/
-  cp $OF_LIBS_ROOT/projectGenerator/projectGenerator-linux $OF_LIBS_ROOT/projectGenerator/$version/
+  cp -f $OF_LIBS_ROOT/projectGenerator/projectGenerator-osx.zip $OF_LIBS_ROOT/projectGenerator/$version/
+  cp -f $OF_LIBS_ROOT/projectGenerator/projectGenerator-vs.zip $OF_LIBS_ROOT/projectGenerator/$version/
+  cp -f $OF_LIBS_ROOT/projectGenerator/projectGenerator-linux $OF_LIBS_ROOT/projectGenerator/$version/
 fi
 
 git tag $version
