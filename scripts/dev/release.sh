@@ -59,3 +59,33 @@ wget http://openframeworks.cc/release_hook.php?version=${version} -O /dev/null
 
 cd $(cat ~/.ofprojectgenerator/config)
 git checkout master
+
+ip=$(ping -c 1 ci.openframeworks.cc | gawk -F'[()]' '/PING/{print $2}')
+ip addr | grep $ip
+ret=$?
+if [ $ret -eq 0 ]; then
+  # We are running on ci server, create snapshots of binary libraries and PG
+  mkdir -p /var/www/openFrameworks_libs/$version
+  cp -r /var/www/openFrameworks_libs/android /var/www/openFrameworks_libs/$version/
+  cp -r /var/www/openFrameworks_libs/emscripten /var/www/openFrameworks_libs/$version/
+  cp -r /var/www/openFrameworks_libs/ios /var/www/openFrameworks_libs/$version/
+  cp -r /var/www/openFrameworks_libs/linux64 /var/www/openFrameworks_libs/$version/
+  cp -r /var/www/openFrameworks_libs/linuxarmv6l /var/www/openFrameworks_libs/$version/
+  cp -r /var/www/openFrameworks_libs/linuxarmv7l /var/www/openFrameworks_libs/$version/
+  cp -r /var/www/openFrameworks_libs/msys2 /var/www/openFrameworks_libs/$version/
+  cp -r /var/www/openFrameworks_libs/osx /var/www/openFrameworks_libs/$version/
+  cp -r /var/www/openFrameworks_libs/tvos /var/www/openFrameworks_libs/$version/
+  cp -r /var/www/openFrameworks_libs/vs /var/www/openFrameworks_libs/$version/
+
+  mkdir -p /var/www/libs/$version
+  cp /var/www/libs/*.tar.bz2 /var/www/libs/$version/
+  cp /var/www/libs/*.zip /var/www/libs/$version/
+
+  mkdir -p /var/www/projectGenerator/$version
+  cp /var/www/projectGenerator/projectGenerator-osx.zip /var/www/projectGenerator/$version/
+  cp /var/www/projectGenerator/projectGenerator-vs.zip /var/www/projectGenerator/$version/
+  cp /var/www/projectGenerator/projectGenerator-linux /var/www/projectGenerator/$version/
+fi
+
+git tag $version
+git push -u origin $version
