@@ -28,10 +28,8 @@ function findCommand(){
             break;
         }
     }
-    if (log !== undefined) {
-        log.error("couldn't find gnu find, returning find, you probably need to set a correct path");
-    }
-    return "find";
+
+    throw("Couldn't find gnu find, you probably need to set a correct path as explained in the openFrameworks setup guide: http://openframeworks.cc/setup/msys2/");
 }
 
 function windowsToUnix(path){
