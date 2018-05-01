@@ -9,44 +9,6 @@
 template<class V, class N, class C, class T>
 class ofMeshFace_;
 
-template<typename T>
-struct ofArrayView{
-		const T * data;
-		std::size_t size;
-};
-
-class ofMeshData{
-	public:
-		virtual ~ofMeshData();
-		virtual ofArrayView<void> getVerticesData() const = 0;
-		virtual ofArrayView<void> getNormalsData() const = 0;
-		virtual ofArrayView<void> getTextureCoordsData() const = 0;
-		virtual ofArrayView<void> getColorsData() const = 0;
-		virtual ofArrayView<ofIndexType> getIndicesData() const = 0;
-
-		virtual int getVerticesDim() const = 0;
-		virtual int getNormalsDim() const = 0;
-		virtual int getTextureCoordsDim() const = 0;
-		virtual int getColorsDim() const = 0;
-		virtual int getIndicesDim() const = 0;
-
-		virtual std::size_t getNumVertices() const = 0;
-		virtual std::size_t getNumNormals() const = 0;
-		virtual std::size_t getNumTextureCoords() const = 0;
-		virtual std::size_t getNumColors() const = 0;
-		virtual std::size_t getNumIndices() const = 0;
-
-		virtual bool usingVertices() const = 0;
-		virtual bool usingNormals() const = 0;
-		virtual bool usingColors() const = 0;
-		virtual bool usingTextures() const = 0;
-
-		virtual bool hasNormals() const = 0;
-		virtual bool hasColors() const = 0;
-		virtual bool hasTexCoords() const = 0;
-
-};
-
 /// \brief Represents a set of vertices in 3D spaces with normals, colors,
 /// and texture coordinates at those points.
 ///
