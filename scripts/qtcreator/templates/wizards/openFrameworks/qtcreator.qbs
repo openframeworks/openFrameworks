@@ -27,7 +27,6 @@ Project{
                 .concat(%{ofxOpenCv}                ? ['\'ofxOpenCv\'']              : [])
                 .concat(%{ofxOsc}                   ? ['\'ofxOsc\'']                 : [])
                 .concat(%{ofxSvg}                   ? ['\'ofxSvg\'']                 : [])
-                .concat(%{ofxTween}                 ? ['\'ofxTween\'']               : [])
                 .concat(%{ofxVectorGraphics}        ? ['\'ofxVectorGraphics\'']      : [])
                 .concat(%{ofxXmlSettings}           ? ['\'ofxXmlSettings\'']         : []).toString()
             }
