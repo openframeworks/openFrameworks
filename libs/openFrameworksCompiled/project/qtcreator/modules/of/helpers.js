@@ -28,7 +28,9 @@ function findCommand(){
             break;
         }
     }
-    log.error("couldn't find gnu find, returning find, you probably need to set a correct path");
+    if (log !== undefined) {
+        log.error("couldn't find gnu find, returning find, you probably need to set a correct path");
+    }
     return "find";
 }
 
