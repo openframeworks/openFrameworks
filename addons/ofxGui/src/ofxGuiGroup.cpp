@@ -484,7 +484,6 @@ void ofxGuiGroup::sizeChangedCB(){
 	setNeedsRedraw();
 }
 
-
 std::size_t ofxGuiGroup::getNumControls() const {
 	return collection.size();
 }
