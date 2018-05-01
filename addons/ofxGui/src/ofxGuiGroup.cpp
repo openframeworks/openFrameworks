@@ -394,7 +394,7 @@ bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 		if(b.inside(mx, my)){
 			bGuiActive = true;
 
-			ofRectangle minButton(b.x + b.width - textPadding * 3, b.y, textPadding * 3, header);
+			ofRectangle minButton(b.x, b.y, b.width, header);
 			if(minButton.inside(mx, my)){
 				minimized = !minimized;
 				if(minimized){
@@ -483,7 +483,6 @@ void ofxGuiGroup::sizeChangedCB(){
 	}
 	setNeedsRedraw();
 }
-
 
 std::size_t ofxGuiGroup::getNumControls() const {
 	return collection.size();
