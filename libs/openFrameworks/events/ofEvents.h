@@ -168,7 +168,7 @@ public:
 	/// Key modifiers
 	int modifiers = 0;
 
-	bool hasModifier(int modifier){
+	bool hasModifier(int modifier) const {
 		return modifiers & modifier;
 	}
 };
