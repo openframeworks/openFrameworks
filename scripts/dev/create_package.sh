@@ -352,27 +352,27 @@ function createPackage {
 
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 linuxarmv6l linuxarmv7l osx msys2 vs2015 vs2017 ios tvos android"
+        otherplatforms="linux64 linuxarmv6l linuxarmv7l osx msys2 vs ios tvos android"
     fi
 
     if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux linuxarmv6l linuxarmv7l osx msys2 vs2015 vs2017 ios tvos android"
+        otherplatforms="linux linuxarmv6l linuxarmv7l osx msys2 vs ios tvos android"
     fi
 
     if [ "$pkg_platform" = "linuxarmv6l" ]; then
-        otherplatforms="linux64 linux linuxarmv7l osx msys2 vs2015 vs2017 ios tvos android"
+        otherplatforms="linux64 linux linuxarmv7l osx msys2 vs ios tvos android"
     fi
 
     if [ "$pkg_platform" = "linuxarmv7l" ]; then
-        otherplatforms="linux64 linux linuxarmv6l osx msys2 vs2015 vs2017 ios tvos android"
+        otherplatforms="linux64 linux linuxarmv6l osx msys2 vs ios tvos android"
     fi
 
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs2015 vs2017 ios tvos android"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs ios tvos android"
     fi
 
     if [ "$pkg_platform" = "msys2" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs2015 vs2017 ios tvos android"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs ios tvos android"
     fi
 
     if [ "$pkg_platform" = "vs2015" ] || [ "$pkg_platform" = "vs2017" ]; then
@@ -380,11 +380,11 @@ function createPackage {
     fi
 
     if [ "$pkg_platform" = "ios" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs2015 vs2017 android osx"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs android osx"
     fi
 
     if [ "$pkg_platform" = "android" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 vs2015 vs2017 ios tvos"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 vs ios tvos"
     fi
 
 
@@ -524,9 +524,18 @@ function createPackage {
     cd $pkg_ofroot/scripts
 	if [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
     	rm -Rf $otherplatforms
+        rm -Rf ci dev apothecary
 	else
-    	rm -Rf msys2 vs osx ios
+    	rm -Rf msys2 vs osx ios android ci dev apothecary
 	fi
+
+    if [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "ios" ] || [ "$pkg_platform" = "vs" ]; then
+        rm -Rf qtcreator emscripten
+    fi
+
+    if [ "$pkg_platform" = "msys2" ]; then
+        rm -Rf emscripten
+    fi
 
     #delete omap4 scripts for non armv7l
 	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv6l" ]; then
