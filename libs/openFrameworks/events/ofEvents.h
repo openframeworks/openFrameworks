@@ -53,7 +53,7 @@ enum ofKey{
 	OF_KEY_SHIFT	=	 0x1,
 	OF_KEY_CONTROL	=	 0x2,
 	OF_KEY_ALT		=	 0x4,
-	OF_KEY_SUPER	=	 0x16,
+	OF_KEY_SUPER	=	 0x10,
 	OF_KEY_COMMAND  =    OF_KEY_SUPER,
 	OF_KEY_LEFT_SHIFT    =	 0xe60,
 	OF_KEY_RIGHT_SHIFT   =	 0xe61,
@@ -168,7 +168,7 @@ public:
 	/// Key modifiers
 	int modifiers = 0;
 
-	bool hasModifier(int modifier){
+	bool hasModifier(int modifier) const {
 		return modifiers & modifier;
 	}
 };
