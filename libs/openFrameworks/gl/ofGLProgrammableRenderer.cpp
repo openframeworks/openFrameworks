@@ -1751,9 +1751,9 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 			
 			rViewport = getCurrentViewport();
 			
-			auto mat = matrixStack.getProjectionMatrixNoOrientation()  * matrixStack.getModelViewMatrix();
-			auto dScreen4 = mat * glm::vec4(x,y,z,1.0);
-			auto dScreen = dScreen4.xyz() / dScreen4.w;
+			glm::mat4 mat = matrixStack.getProjectionMatrixNoOrientation()  * matrixStack.getModelViewMatrix();
+			glm::vec4 dScreen4 = mat * glm::vec4(x,y,z,1.0);
+			glm::vec3 dScreen = glm::vec3(dScreen4) / dScreen4.w;
 			dScreen += glm::vec3(1.0) ;
 			dScreen *= 0.5;
 			
