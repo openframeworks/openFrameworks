@@ -174,7 +174,7 @@ endif
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-sections
+PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-sections -fuse-ld=gold
 
 
 
