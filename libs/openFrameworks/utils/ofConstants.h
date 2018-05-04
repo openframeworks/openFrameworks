@@ -14,8 +14,6 @@
 
 #if !OF_USE_LEGACY_VECTOR_MATH
 	#define GLM_META_PROG_HELPERS
-	#define GLM_FORCE_SWIZZLE
-	#define GLM_FORCE_SIZE_FUNC
 #endif
 
 // Set to 1 to use std filesystem instead of boost's

@@ -1111,7 +1111,7 @@ glm::vec2 ofAppEGLWindow::getWindowSize(){
 
 //------------------------------------------------------------
 glm::vec2 ofAppEGLWindow::getWindowPosition(){
-	return currentWindowRect.getPosition().xy();
+	return glm::vec2(currentWindowRect.getPosition());
 }
 
 //------------------------------------------------------------
