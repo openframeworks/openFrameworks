@@ -1,9 +1,9 @@
 ###############################################################################
 # CONFIGURE CORE PLATFORM MAKEFILE
-#   This file is where we make platform and architecture specific 
+#   This file is where we make platform and architecture specific
 #   configurations. This file can be specified for a generic architecture or can
-#   be defined as variants. For instance, normally this file will be located in 
-#   a platform specific subpath such as 
+#   be defined as variants. For instance, normally this file will be located in
+#   a platform specific subpath such as
 #
 #        $(OF_ROOT)/libs/openFrameworksComplied/linux64
 #
@@ -26,3 +26,5 @@
 ################################################################################
 
 include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
+
+PLATFORM_LDFLAGS += -fuse-ld=gold
