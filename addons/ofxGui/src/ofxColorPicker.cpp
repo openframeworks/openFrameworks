@@ -416,7 +416,7 @@ bool ofxColorPicker_<ColorType>::mouseUpdate(ofMouseEventArgs& mouse){
 				break;
 			}
 			case ChangingWheel:{
-				auto p = mouse - rectColorWheel.position.xy();
+				auto p = mouse - glm::vec2(rectColorWheel.position);
 				auto pc = getPolarCoordinate(p, colorWheelRadius);
 				
 				colorAngle	= pc.angle;
