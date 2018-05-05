@@ -122,21 +122,67 @@ Product{
         }
     }
 
-    Group {
-        condition: !product.qbsBuild
-        name: "src"
-        files: core_source.files
-        fileTags: ["filtered_sources"]
-    }
+    files: core_source.files
 
-    files: {
-        if(qbsBuild){
-            return core_source.files;
-        }else{
-            return [];
+    FileTagger {
+        patterns: "*.c"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["c"];
+            }
         }
     }
 
+    FileTagger {
+        patterns: "*.cpp"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["cpp"];
+            }
+        }
+    }
+
+    FileTagger {
+        patterns: "*.h"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["hpp"];
+            }
+        }
+    }
+
+    FileTagger {
+        patterns: "*.mm"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["objcpp"];
+            }
+        }
+    }
+
+    FileTagger {
+        patterns: "*.m"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["objc"];
+            }
+        }
+    }
 
     readonly property string make: {
         return "make";
