@@ -12,10 +12,6 @@
 	#define OF_USE_LEGACY_VECTOR_MATH 0
 #endif
 
-#if !OF_USE_LEGACY_VECTOR_MATH
-	#define GLM_META_PROG_HELPERS
-#endif
-
 // Set to 1 to use std filesystem instead of boost's
 #ifndef OF_USING_STD_FS
 #define OF_USING_STD_FS 0
