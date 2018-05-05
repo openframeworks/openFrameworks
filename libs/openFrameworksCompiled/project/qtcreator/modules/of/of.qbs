@@ -260,7 +260,7 @@ Module{
                     libslist.push("rtaudio");
                 }
 
-                if(useStdFs && compilerName=='gcc' && compilerVersionMajor>=6){
+                if(useStdFs && compilerName=='g++' && compilerVersionMajor>=6){
                     libslist.push('stdc++fs');
                 }else{
                     libslist.push("boost_filesystem");
@@ -560,7 +560,7 @@ Module{
             if(Helpers.pkgExists("libmpg123")){
                 list.push("OF_USING_MPG123=1");
             }
-            if(useStdFs && compilerName=='gcc' && compilerVersionMajor>=6){
+            if(useStdFs && compilerName=='g++' && compilerVersionMajor>=6){
                 list.push('OF_USING_STD_FS=1');
             }
             found = true;

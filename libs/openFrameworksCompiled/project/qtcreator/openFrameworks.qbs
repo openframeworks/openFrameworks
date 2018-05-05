@@ -104,7 +104,7 @@ Product{
         id: core_source
         property stringList files
         property string ofRoot: of.ofRoot
-        property stringList FILES_EXCLUDE: of.FILES_EXCLUDE
+        property stringList FILES_EXCLUDE: parent.FILES_EXCLUDE
         configure: {
             var source = Helpers.findSourceRecursive(FileInfo.joinPaths(ofRoot, '/libs/openFrameworks'));
             var filteredSource = source.filter(function filterExcludes(path){
@@ -131,18 +131,7 @@ Product{
 
     files: {
         if(qbsBuild){
-            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
-            var filteredSource = source.filter(function filterExcludes(path){
-                for(exclude in FILES_EXCLUDE){
-                    var patt = new RegExp(FILES_EXCLUDE[exclude]);
-                    var match = patt.exec(path);
-                    if(match!=null){
-                        return false;
-                    }
-                }
-                return true;
-            });
-            return filteredSource;
+            return core_source.files;
         }else{
             return [];
         }
