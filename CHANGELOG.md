@@ -1,4 +1,342 @@
-  ___         ___         ___  
+  .----.        .---.   .----.         .----.
+ /  ..  \      /_   |  /  ..  \       /  ..  \
+.  /  \  .      |   | .  /  \  .     .  /  \  .
+|  |  '  |      |   | |  |  '  |     |  |  '  |
+'  \  /  '      |   | '  \  /  '     '  \  /  '
+ \  `'  /  .-.  |   |  \  `'  /  .-.  \  `'  /
+  `---''   `-'  `---'   `---''   `-'   `---''
+
+CORE
+----
+
+### general
+    / load* std::string -> std::fs::path
+    / no return is an error instead of warning
+    - external dependencies moved out of git repositiory
+    + added download_libs scripts to download external dependencies
+    / optimized includes for faster compilation & autocomplete
+    - export folder with shared libs is gone, now live in libs
+    / many functions and classes ported to use size_t instead of int for indices and sizes
+    - completely removed Poco from core into it's own addon
+    / Const corrections
+    + implemented move constructor for classes that needed them
+    + Add Rad/Deg versions for everything accepting angles
+    - Deprecated all functions that accept angles without Deg/Rad suffix
+    / remove some unnecessary casts, convert some casts to c++ style, convert some MAX & MIN to std::max & std::min
+    / makefiles: filter repeated flags when parsing addons
+    / makefiles: better addons parsing
+    / qtcreator updated to work with at least 4.6.1
+    / qtcreator uses probes to parse filesystem to avoid warnings and increase compile speed
+    / qtcreator: option to precompile ofMain.h
+
+### app
+    / fixed teardown order
+    + added some facilities to create new windows when the app is running
+    / several fixes for glfw and main loop
+    / main loop: fix logic for destroying app and windows in that order
+    / Unregister GLFW callbacks before closing
+    / handle negative framerate requests
+    + ofMainLoop: notify exit before destroying applications
+    + Global time modes (ofSetTimeModeFiltered, ofSetTimeModeSystem, ofSetTimeModeFixedRate)
+    / ofAppGLFWWindow: the size reported on setup was wrong in some cases
+    / ofAppGLFWWindow: calculate pixel scale even in fullscreen
+    / ofAppGLFWWindow: don't reposition window if in fullscren or gamemode
+    - ofWindowSettings width and height made private now settable through setSize
+
+### communication
+    / Update to newest firmata protocol
+    / ofSerial: fixes for firmata servos in linux + better type handling
+    + Add 12mb/s communication over ofSerial.cpp
+    / ofSerial: only check filenames, not full paths, in buildDeviceList()
+    / ofSerial: fix port name vs. path parsing on Windows
+
+### utils
+    / moved using std from ofConstants into ofMain so including it is optional
+    + ofTime to work with unit independent time
+    / ofXml ported to use pugixml instead of poco, old version lives as ofxPocoXml in the ofxPoco addon
+    + utf8 utility functions
+    / fix for crash on close due to ofThread::waitForThread - fixed by specifying a timeout value
+    / several fixes for ofThreadChannel
+    + ofThreadChannel: allow multiple consumers (not broadcasting)
+    / catch exceptions in ofJsonLoad/Save
+    / ofThread uses std::thread instead of Poco::Thread
+    + ofURLFileLoader: add basic post support
+    / ofURLFileLoader uses curl instead of Poco
+    / ofBuffer: faster + reserve, resize and setall
+    / ofBuffer: better implementation of ofBuffer without insert
+    + templated ofTo that converts string to anything that implements >>
+    + add ofGetLogLevel for specific module
+    / ofThread: check if joinable before trying to join
+    / ofFileUtils: set all binary defaults to true
+    / ofFileUtils: setReadOnly deprecated
+    + ofFileUtils added setReadable
+    + ofFileUtils: added ofFile::create(path)
+    / url loader: uniformize api for request handling
+    / bugfix for static ofFile and ofDirectory calls not working if data path is set false
+    + ofBuffer: add getReversedLines
+    + ofURLFileLoader: done callback per request
+    + ofURLFileLoader: add timeout to request
+    / ofSystemUtils: allow to set the current forlder in linux
+    / ofSystemUtils: fix locale changed when opening gtk dialog
+    / ofSystemUtils: fix exclusive folder/files selection on osx
+    / ofLog: use a function for static channel so it can be used from static variables
+
+### 3d
+    + ofCamera::drawFrustum
+    / fix box primitive winding order
+    / fix ofNode destructor when parented
+    / fixed a regression issue in ofNode orbit
+    / implement more robust loading of ply meshes
+    / ofEasyCam: FIX. fixed drift when moving mouse
+    / ofEasyCam: fix y axis for interative rotation for more stable movement
+    + ofEasyCam: enable/disable inertia
+    + ofEasyCam: up axis setter
+    / ofEasyCam: fix unitialized values
+    / ofEasyCam: disable inertia by default
+    + ofEasyCam: Added custom control area. Defaults to viewport if not set.
+    / ofEasyCam Ortho zoom via scroll
+    / ofEasyCam: When ortho is enabled the far and near clip are set to -10000 and 10000
+    / ofEasyCam: Added code that allows to set  different mouse and key interactions.
+    / ofCamera: fixed coordinate system transform functions so these take into account the cameras V flip
+
+### gl
+    / fix issue with ofLight segfaulting during app exit
+    + added support for transform feedback in ofShader
+    + added support for custom behaviour to ofMaterial
+    + GL debug logs
+    / Make ofTexture::loadData with different glFormat/glType public
+    + Added uniform block support to ofShader.
+    / Swappd glewGetExtension() by glewIsSupported()
+    - ofGLProgrammableRenderer: in GLES remove enable/disable client state
+    + ofGLUtils: support for more GL formats and internals
+    + ofTexture: load methods for more types
+    + ofBufferObject: invalidate method
+    / ofFbo: use enum to set begin mode
+    + ofShaderSettings
+    / ofMaterial: allow diffuse color from color coordinates in mesh
+    / ofMaterial: better shader cache handling
+    / ofMaterial: shader cache per renderer to allow multiwindow
+    + ofShader: add methods to change constant and defines values
+    / ofShader: report absolute path when not able to load
+    +`ofFbo: add methods to clear the different buffers + allow no color
+    + ofTexture: set r->rgb swizzles for depth formats
+    + ofBufferObject: add copyTo with offset and size
+    / ofBufferObject: fix DSA check
+    + ofGLUtils: support for half floats
+    / fix issue with ofLight segfaulting during app exit
+    / Medium P to High P for Shader Floating Point Precision in default shaders
+
+### graphics
+    + ttf full support for utf8 glyphs and right to left text orientation
+    / fix save screen
+    / fix ortho projection matrix calc
+    / fix ofPolyLine::calcData returning invalid values
+    / fixes to ofBackgroundGradient
+    + ofImageLoadSettings
+    / Bug Fix for "ofPixels mirrorTo horizontal"
+    / Return bounding box of size 0 at coordinates (x,y) when attempting to draw an empty text at (x,y)
+    / Corrected the initial value of maxX/maxY in getStringBoundingBox()
+    / ofPixels: make some utility functions public
+    + ofTexture: Added convenience method to draw subsection using ofRectangle parameters.
+    / ofTTF: fix winding mode.
+    - deprecated ofSetBackground
+    + ofSetBackgroundColor
+    / Fixes for ofBitmapFont getBoundingBox()
+    / ofPath: stroked circle started from center so it had a line
+    - deprecated ofTtfCharacter and just use ofPath instead
+    / ofImage: fix save image returning false after some correct cases
+    / Added translate, scale and rotate to ofPolyline
+    / ofMesh: have*Changed made private
+    / ofTTF: check max supported texture size and report if bigger than needed
+
+### events
+    + key events with utf8 codepoints + modifiers
+    + mouse events with modifiers
+    + ofEventListener
+    + ofEventListeners
+    + ofEvent::newListener
+    + ofParameter::newListener
+    + lambda support as listener when using ofEventListener
+    + events: return true in notify if event is attended
+    + ofFastEvent
+
+### types
+    / fixed some problems with read only parameters
+    + added ofParameterGroup::remove and ofParameter::isReferenceTo
+    / compare Parameters by their internal objects
+    + ofParameter: implement castGroup
+    / ofParameterGroup_: preserve name on clear
+    / ofParameter: escape # to _
+
+### sound
+    + ofSoundStreamSettings
+    + ofSoundStream: ability to specify API
+    / ofSoundStream: fix fmod buffer setting
+    / rtaudio stream: fix problem with old linux versions
+    / ofSoundBuffer: getChannel, setChannel weren't correct
+    / ofSoundBuffer: fixed wrong interpolation that was only iterpolating the first channel
+
+### video
+    / ofGstUtils: don't use SKIP on setSpeed seems to slow down some videos a lot
+    / ofAVFoundationGrabber was not unlocking image buffer causing logging issue.
+
+
+LIBS
+----
+    + added glm and ported whole core to work with it
+    + added https://github.com/nlohmann/json as default OF json
+    / most libraries updated to their most recent versions
+
+EXAMPLES
+--------
+    / reorganized
+    + added readme explaining the example for a lot of them
+    + json example
+    + remove ofxVectorGraphics from all addons example, won't compile in GLES
+    + threadExample: use locks and shared memory in a way that shows the effects of not doing so
+    + threadExample: adds keyboard shortcuts to set or remove lock
+    / advanced3dExample: fix Swarm so it works with programmable renderer too
+    / cameraParenting  example: explicit up vector on lookAt
+    / 3dprimitiveexample: fix wireframe offset
+    + added an example using the regular expression library from std
+    + transformFeedbackExample
+    / fboAlphaMask example fix. -Fixed issue where blending gave darker edges. -Moved all the masking into the shader. -Removed one fbo so it is easier to understand.
+    / glParticleSystemExample: fixed segfault at startup
+    / regularExpressionExample: change from Poco::RegularExpression to std::regex
+    / Updated ofEasyCam example. -Now it shows the ortho mode interaction
+    / Fixed polylineBlobExample type mismatch
+    / fonstShapesExample: remove deprecated ofTtfCharacter and just use ofPath instead
+    / soundBufferExample: use a sound stream object instead of global
+    / ofNodeExample: fix starting pov
+    / openCV Example and common-functions cleanup
+    / removed osxRecordingVideoExample not working anymore cause AVFoundation
+    / modernise advanced3DExample
+    / fix systemSpeakExample and add linux version
+    / shader/gaussianBlueExample: fix gaussian kernel
+    / fftExample: used fixed array instead of over allocating to 8192
+    / networkTcpExample: use proper utf8 append + full key events to create the string to send
+    / svgExample: some syntax fixes
+
+ADDONS
+------
+### ofxGui
+    + color picker
+    + text field
+    + sliders text field on right click
+    + support for any numeric type on sliders
+    + `ofParameterReadOnly<string>` adds a label
+    + `ofParameter<void>` adds a button
+    + ofxPanel: load save/load icons locally (wouldn't work on multiwindow)
+    + ofxGui/ofxPanel: capture save/load events to allow to customize behaviour
+    / ofxGui: refresh render on name change
+    + ofxGui: allow to load fonts with ofTtfSettings
+    / ofxGui: cut overflowing text
+    + ofxGui: custom events priority
+
+### ofxPoco
+    / poco and ofXml moved from core to addon with ofXml becomming ofxXmlPoco
+
+### ofxKinect
+    / fix for tilting triggering reconnect.
+    / bugfix for ofxKinect fixes reconnection timing issues and reopening wrong kinect id
+
+### ofxNetwork
+    + ofxTCPSettings
+    + ofxUDPSettings
+    / ofxTCPClient::receive: try to receive untill buffer is empty
+
+### ofxOsc
+    / catch unknown osc parameter addresses
+    / ofxOscMessage: fix return value warning
+    / ofxOscMessage: cleaned up argument getters with consistent type conversion
+    + ofxOscSender & ofxOscReceiver: added hostname & port getters
+    + ofxOscSender & ofxOscReceiver: added clear() functions
+    / standardized host/port member function naming
+    + added ofxOscArgNone for N nil type tag
+    / ofxOscSender: sending message arguments to oscpack requires specific types or wrong typetags may be set
+    + ofxOscReceiver: added isListening() and ability to restart with current port value;
+    / sender & receiver no longer clear port & host when cleared
+    / ofxOscReceiver: slightly improved setup error print
+    + ofxOscMessage: added getTypeString()
+    / changed midi message, timetag, and rgba color types to use unsigned values
+    / fixed signed/unsigned conversion issues when passing between oscpack
+    - ofxOsc: removed bad arg type asserts in favor of better error messages
+    + ofxOscReceiverSettings
+    + ofxOscSenderSettings
+    + ofxOscSender: added setHost() & setPort()
+    + added ostream operators for sender, receiver, & bundle
+    + ofxOscSender: handle socket creation exceptions
+
+### ofxSvg
+    / use original svgtiny instead of patched poco version
+
+
+PLATFORM SPECIFIC
+-----------------
+
+### linux
+    - removed linux 32bits
+    + added support for gcc4, 5 and 6 or greater
+    + ubuntu install script: added support for ubuntu based OSes like Elementary.
+    / use gold linker for faster linking
+
+### android
+    - removed support for eclipse
+    + added full support for android studio
+    + fixed ofxandroidsoundstream
+    + ofxGPS - GPS addon for iOS & Android
+    + full refactor of android lifecycle handling
+    + refactor video grabber texture handling
+    + Add support for OF_PIXELS_NV21 in android video grabber
+    + Android orientation event
+    + Update android to SDK 25 and NDK 15c
+    + now includes project generator
+
+### ios
+    + added experimental and optional support for GLKit
+    + ofxGPS - GPS addon for iOS & Android
+    + support for tvOS
+    + GameController Support for iOS / tvOS
+    / added ofxiOSCoreMotion and removed ofxiOSAccelerometer
+    / ofxiOS - reset touches map before becoming visible (to clean junk that may be there from last time)
+    + ofxiOSEventAdapter
+    / iOS EAGLView - prevent flicker by synchronously drawing the first frame when starting animation
+    / Fixes Update and Draw being called before Setup
+
+### vs
+    - removed support for vs2015
+    + added support for vs2017
+
+### macos
+    / fix for OS X OF_TTF_SANS default on 10.13 closes
+    / macos PG is now signed
+    / fix framebuffer/screen mouse mapping on HiDPi
+    / fix dual-monitor-resolution issue and HiDpi
+    / Fixes for OS X Template project with AppStore and Legacy Project Build Cycle.
+    / Fix Xcode IEEE Fast Math Release Fast Math Error
+    / MacOS: restore window title when restoring window
+    / fix to make the post-compile script on Xcode not fail when copying libfmodex.dylib when the project is not in the standard path depth
+
+### msys2
+    / install_dependencies fix to add path to environment variables correctly
+
+### emscripten
+    / fix emscripten sound stream for the latest api changes
+
+### linux arm
+    / Fallback to /dev/input/event* for uinput mouse and keyboard
+    / Fixed opening of mouse and keyboard on RPi
+    / Settings for EGLWindow were getting lost.
+
+CI TESTS
+--------
+    + added ccache on platforms that support it
+    + all libraries / platforms building on ci servers through apothecary
+    + testing all platforms
+    + PG bulding on CI servers
+    + added unit tests for certain functionalities
+
+  ___         ___         ___
  / _ \       / _ \       / _ \
 | | | |     | (_) |     | (_) |
 | | | |      \__, |      > _ <
@@ -13,21 +351,21 @@
       + add EL6 build support of install_dependencies.sh and install_codecs.sh
 
  OF 0.9.8
- ========                          
+ ========
 
  #### change key
  + added
  - removed
  / modified
 
- ------------------------------------------------------------------------------                             
+ ------------------------------------------------------------------------------
 
    ___         ___        ______
   / _ \       / _ \      |____  |
  | | | |     | (_) |         / /
- | | | |      \__, |        / /  
- | |_| |  _     / /   _    / /   
-  \___/  (_)   /_/   (_)  /_/    
+ | | | |      \__, |        / /
+ | |_| |  _     / /   _    / /
+  \___/  (_)   /_/   (_)  /_/
 
   PLATFORM SPECIFIC
   -----------------
@@ -36,11 +374,11 @@
       / fixes for debian alpha testing install_dependencies.sh
 
   ### qtcreator
-      / fix some problems in msys2         
+      / fix some problems in msys2
 
 
 OF 0.9.7
-========                          
+========
 
 #### change key
           + added
@@ -72,9 +410,9 @@ PLATFORM SPECIFIC
     / better detection for some libraries
 
 
-   ___         ___          __  
-  / _ \       / _ \        / /  
- | | | |     | (_) |      / /_  
+   ___         ___          __
+  / _ \       / _ \        / /
+ | | | |     | (_) |      / /_
  | | | |      \__, |     | '_ \
  | |_| |  _     / /   _  | (_) |
   \___/  (_)   /_/   (_)  \___/
@@ -82,7 +420,7 @@ PLATFORM SPECIFIC
 
 
 OF 0.9.6
-========                          
+========
 
 #### change key
           + added
@@ -109,7 +447,7 @@ PLATFORM SPECIFIC
 
    ___         ___        _____
   / _ \       / _ \      | ____|
- | | | |     | (_) |     | |__  
+ | | | |     | (_) |     | |__
  | | | |      \__, |     |___ \
  | |_| |  _     / /   _   ___) |
   \___/  (_)   /_/   (_) |____/
@@ -117,7 +455,7 @@ PLATFORM SPECIFIC
 
 
 OF 0.9.5
-========                          
+========
 
 #### change key
           + added
@@ -152,17 +490,17 @@ PLATFORM SPECIFIC
 
 
 
-   ___         ___        _  _   
-  / _ \       / _ \      | || |  
+   ___         ___        _  _
+  / _ \       / _ \      | || |
  | | | |     | (_) |     | || |_
  | | | |      \__, |     |__   _|
- | |_| |  _     / /   _     | |  
-  \___/  (_)   /_/   (_)    |_|  
+ | |_| |  _     / /   _     | |
+  \___/  (_)   /_/   (_)    |_|
 
 
 
 OF 0.9.4
-========                          
+========
 
 #### change key
           + added
@@ -197,11 +535,11 @@ PLATFORM SPECIFIC
     / fixes for serial in msys2 and linux
 
 ### ios
-    / Fix to iOS examples which had missing Icon and Splash screen files.  
+    / Fix to iOS examples which had missing Icon and Splash screen files.
 
 
 
-   ___         ___        ____  
+   ___         ___        ____
   / _ \       / _ \      |___ \
  | | | |     | (_) |       __) |
  | | | |      \__, |      |__ <
@@ -210,7 +548,7 @@ PLATFORM SPECIFIC
 
 
 OF 0.9.3
-========                          
+========
 
 #### change key
           + added
@@ -250,13 +588,13 @@ PLATFORM SPECIFIC
  _____     _____     _____
 |  _  |   |  _  |   / __  \
 | |/' |   | |_| |   `' / /'
-|  /| |   \____ |     / /  
+|  /| |   \____ |     / /
 \ |_/ / _ .___/ / _ ./ /___
  \___/ (_)\____/ (_)\_____/
 
 
 OF 0.9.2
-========                          
+========
 
 #### change key
           + added
@@ -282,15 +620,15 @@ PLATFORM SPECIFIC
 ### msys2
    / use poco from repositories to fix DNS error problem
 
-          _              _             _              
-        / /\           / /\           / /\            
-       / /  \         / /  \         / /  \           
-      / / /\ \       / / /\ \       /_/ /\ \          
-     / / /\ \ \     /_/ /\ \ \      \_\/\ \ \         
-    /_/ /  \ \ \    \ \ \_\ \ \          \ \ \        
-    \ \ \   \ \ \    \ \/__\ \ \          \ \ \       
-     \ \ \   \ \ \    \_____\ \ \          \ \ \      
-      \ \ \___\ \ \   _      \ \ \   _    __\ \ \___  
+          _              _             _
+        / /\           / /\           / /\
+       / /  \         / /  \         / /  \
+      / / /\ \       / / /\ \       /_/ /\ \
+     / / /\ \ \     /_/ /\ \ \      \_\/\ \ \
+    /_/ /  \ \ \    \ \ \_\ \ \          \ \ \
+    \ \ \   \ \ \    \ \/__\ \ \          \ \ \
+     \ \ \   \ \ \    \_____\ \ \          \ \ \
+      \ \ \___\ \ \   _      \ \ \   _    __\ \ \___
        \ \/____\ \ \ /\_\     \ \ \ /\_\ /___\_\/__/\
         \_________\/ \/_/      \_\/ \/_/ \_________\/
 
@@ -426,19 +764,19 @@ PROJECT GENERATOR
 
 ------------------------------------------------------------------------------
 
-                                 .----.                      
-                               .   _   \                     
-                              /  .' )   |                    
-                             |   (_.    /                    
-        .-''` ''-.            \     ,  /      .-''` ''-.     
-      .'          '.           `'-'/  /     .'          '.   
-     /              `      .-.    /  /     /              `  
+                                 .----.
+                               .   _   \
+                              /  .' )   |
+                             |   (_.    /
+        .-''` ''-.            \     ,  /      .-''` ''-.
+      .'          '.           `'-'/  /     .'          '.
+     /              `      .-.    /  /     /              `
     '                '     \  '--'  /     '                '
     |         .-.    | ,.--.'-....-',.--. |         .-.    |
     .        |   |   .//    \      //    \.        |   |   .
-     .       '._.'  / \\    /      \\    / .       '._.'  /  
-      '._         .'   `'--'        `'--'   '._         .'   
-         '-....-'`                             '-....-'`  
+     .       '._.'  / \\    /      \\    / .       '._.'  /
+      '._         .'   `'--'        `'--'   '._         .'
+         '-....-'`                             '-....-'`
 
 OF 0.9.0
 ========
@@ -694,13 +1032,13 @@ PROJECT GENERATOR
 
 ------------------------------------------------------------------------------
 
-      .oooo.        .ooooo.             .o   
-     d8P'`Y8b      d88'   `8.         .d88   
-    888    888     Y88..  .8'       .d'888   
-    888    888      `88888b.      .d'  888   
+      .oooo.        .ooooo.             .o
+     d8P'`Y8b      d88'   `8.         .d88
+    888    888     Y88..  .8'       .d'888
+    888    888      `88888b.      .d'  888
     888    888     .8'  ``88b     88ooo888oo
-    `88b  d88' .o. `8.   .88P .o.      888   
-     `Y8bd8P'  Y8P  `boood8'  Y8P     o888o  
+    `88b  d88' .o. `8.   .88P .o.      888
+     `Y8bd8P'  Y8P  `boood8'  Y8P     o888o
 
 OF 0.8.4
 ========
@@ -723,13 +1061,13 @@ PLATFORM SPECIFIC
 
 ------------------------------------------------------------------------------
 
-      .oooo.        .ooooo.         .oooo.   
-     d8P'`Y8b      d88'   `8.     .dP""Y88b  
+      .oooo.        .ooooo.         .oooo.
+     d8P'`Y8b      d88'   `8.     .dP""Y88b
     888    888     Y88..  .8'           ]8P'
-    888    888      `88888b.          <88b.  
+    888    888      `88888b.          <88b.
     888    888     .8'  ``88b          `88b.
-    `88b  d88' .o. `8.   .88P .o. o.   .88P  
-     `Y8bd8P'  Y8P  `boood8'  Y8P `8bd88P'   
+    `88b  d88' .o. `8.   .88P .o. o.   .88P
+     `Y8bd8P'  Y8P  `boood8'  Y8P `8bd88P'
 
 OF 0.8.3
 ========
@@ -756,11 +1094,11 @@ CORE ADDONS
 
 ------------------------------------------------------------------------------
 
-      .oooo.        .ooooo.         .oooo.   
-     d8P'`Y8b      d88'   `8.     .dP""Y88b  
+      .oooo.        .ooooo.         .oooo.
+     d8P'`Y8b      d88'   `8.     .dP""Y88b
     888    888     Y88..  .8'           ]8P'
-    888    888      `88888b.          .d8P'  
-    888    888     .8'  ``88b       .dP'     
+    888    888      `88888b.          .d8P'
+    888    888     .8'  ``88b       .dP'
     `88b  d88' .o. `8.   .88P .o. .oP     .o
      `Y8bd8P'  Y8P  `boood8'  Y8P 8888888888
 
@@ -1021,21 +1359,21 @@ EXAMPLES
 --------
 
 ------------------------------------------------------------------------------
-                       ,---.-,                     
-                      '   ,'  '.                   
-        ,----..      /   /      \       ,----..    
-       /   /   \    .   ;  ,/.  :      /   /   \   
-      /   .     :   '   |  | :  ;     /   .     :  
+                       ,---.-,
+                      '   ,'  '.
+        ,----..      /   /      \       ,----..
+       /   /   \    .   ;  ,/.  :      /   /   \
+      /   .     :   '   |  | :  ;     /   .     :
      .   /   ;.  \  '   |  ./   :    .   /   ;.  \
     .   ;   /  ` ;  |   :       ,   .   ;   /  ` ;
     ;   |  ; \ ; |   \   \     /    ;   |  ; \ ; |
     |   :  | ; | '    ;   ,   '\    |   :  | ; | '
     .   |  ' ' ' :   /   /      \   .   |  ' ' ' :
     '   ;  \; /  |  .   ;  ,/.  :   '   ;  \; /  |
-     \   \  ',  /__ '   |  | :  ; ___\   \  ',  /  
-      ;   :    /  .\'   |  ./   :/  .\;   :    /   
-       \   \ .'\  ; |   :      / \  ; |\   \ .'    
-        `---`   `--" \   \   .'   `--"  `---`   
+     \   \  ',  /__ '   |  | :  ; ___\   \  ',  /
+      ;   :    /  .\'   |  ./   :/  .\;   :    /
+       \   \ .'\  ; |   :      / \  ; |\   \ .'
+        `---`   `--" \   \   .'   `--"  `---`
 
 OF 0.8.0
 ========
