@@ -209,7 +209,8 @@ Module{
                 ldflags = Helpers.pkgconfig(configs, ["--libs-only-L"]);
                 if(platform === "msys2"){
                     ldflags.push("-L"+FileInfo.joinPaths(Helpers.msys2root(),"mingw32/lib"));
-                    //ldflags.push("-fuse-ld=gold");
+                }else{
+                    ldflags.push("-fuse-ld=gold");
                 }
             }else{
                 ldflags = [];
@@ -236,7 +237,9 @@ Module{
         id: ADDITIONAL_LIBS
         property bool useStdFs: project.useStdFs
         property stringList libs
-        property string platform: parent.platform;
+        property string platform: parent.platform
+        property string compilerName: cpp.compilerName
+        property int compilerVersionMajor: cpp.compilerVersionMajor
         configure: {
             if(platform === "linux"  || platform === "linux64"){
                 var libslist = [
@@ -257,7 +260,7 @@ Module{
                     libslist.push("rtaudio");
                 }
 
-                if(useStdFs && cpp.compilerName=='gcc' && cpp.compilerVersionMajor>=6){
+                if(useStdFs && compilerName=='g++' && compilerVersionMajor>=6){
                     libslist.push('stdc++fs');
                 }else{
                     libslist.push("boost_filesystem");
@@ -547,6 +550,8 @@ Module{
         id: DEFINES_LINUX
         property stringList list
         property bool useStdFs: project.useStdFs
+        property string compilerName: cpp.compilerName
+        property int compilerVersionMajor: cpp.compilerVersionMajor
         configure:{
             list = ['GCC_HAS_REGEX'];
             if(Helpers.pkgExists("gtk+-3.0")){
@@ -555,7 +560,7 @@ Module{
             if(Helpers.pkgExists("libmpg123")){
                 list.push("OF_USING_MPG123=1");
             }
-            if(useStdFs && cpp.compilerName=='gcc' && cpp.compilerVersionMajor>=6){
+            if(useStdFs && compilerName=='g++' && compilerVersionMajor>=6){
                 list.push('OF_USING_STD_FS=1');
             }
             found = true;

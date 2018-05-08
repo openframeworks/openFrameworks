@@ -3,19 +3,13 @@
 
 //-------------------------------
 #define OF_VERSION_MAJOR 0
-#define OF_VERSION_MINOR 10
+#define OF_VERSION_MINOR 11
 #define OF_VERSION_PATCH 0
 #define OF_VERSION_PRE_RELEASE "master"
 
 // Set to 1 for compatibility with old projects using ofVec instead of glm
 #ifndef OF_USE_LEGACY_VECTOR_MATH
 	#define OF_USE_LEGACY_VECTOR_MATH 0
-#endif
-
-#if !OF_USE_LEGACY_VECTOR_MATH
-	#define GLM_META_PROG_HELPERS
-	#define GLM_FORCE_SWIZZLE
-	#define GLM_FORCE_SIZE_FUNC
 #endif
 
 // Set to 1 to use std filesystem instead of boost's

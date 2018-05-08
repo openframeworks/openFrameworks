@@ -952,17 +952,25 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 		charPixels.pasteInto(atlasPixelsLuminanceAlpha,x+border,y+border);
 		x+= glyph.tW + border*2;
 	}
-	texAtlas.allocate(atlasPixelsLuminanceAlpha,false);
-	texAtlas.setRGToRGBASwizzles(true);
 
-	if(settings.antialiased && settings.fontSize>20){
-		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
+	int maxSize;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+	if(w > maxSize || h > maxSize){
+		ofLogError("ofTruetypeFont") << "Trying to allocate texture of " << w << "x" << h << " which is bigger than supported in current platform: " << maxSize;
+		return false;
 	}else{
-		texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+		texAtlas.allocate(atlasPixelsLuminanceAlpha,false);
+		texAtlas.setRGToRGBASwizzles(true);
+
+		if(settings.antialiased && settings.fontSize>20){
+			texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
+		}else{
+			texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+		}
+		texAtlas.loadData(atlasPixelsLuminanceAlpha);
+		bLoadedOk = true;
+		return true;
 	}
-	texAtlas.loadData(atlasPixelsLuminanceAlpha);
-	bLoadedOk = true;
-	return true;
 }
 
 //-----------------------------------------------------------

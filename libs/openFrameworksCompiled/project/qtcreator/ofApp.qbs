@@ -170,6 +170,14 @@ CppApplication{
         fileTags: ["icons"]
     }
 
+    Group {
+        name: "precompiled headers"
+        condition: project.precompileOfMain === true
+        files: [
+            FileInfo.joinPaths(parent.of_root, '/openFrameworks/ofMain.h'),
+        ]
+        fileTags: ["cpp_pch_src"]
+    }
 
 
     Rule {

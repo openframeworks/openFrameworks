@@ -8,13 +8,12 @@ void ofApp::setup(){
 	ofSetColor(255);
 
 	svg.load("tiger.svg");
-	for (int i = 0; i < svg.getNumPath(); i++){
-		ofPath p = svg.getPathAt(i);
+	for (ofPath p: svg.getPaths()){
 		// svg defaults to non zero winding which doesn't look so good as contours
 		p.setPolyWindingMode(OF_POLY_WINDING_ODD);
-		vector<ofPolyline>& lines = const_cast<vector<ofPolyline>&>(p.getOutline());
-		for(int j=0;j<(int)lines.size();j++){
-			outlines.push_back(lines[j].getResampledBySpacing(1));
+		const vector<ofPolyline>& lines = p.getOutline();
+		for(const ofPolyline & line: lines){
+			outlines.push_back(line.getResampledBySpacing(1));
 		}
 	}
 }
@@ -39,9 +38,7 @@ void ofApp::draw(){
 	ofTranslate(-250, -250);
 	if(ofGetMousePressed()) {
 		ofNoFill();
-		for (int i = 0; i < (int)outlines.size(); i++){
-			ofPolyline & line = outlines[i];
-
+		for (ofPolyline & line: outlines){
 			int num = step * line.size();
 
 			ofBeginShape();

@@ -104,7 +104,7 @@ Product{
         id: core_source
         property stringList files
         property string ofRoot: of.ofRoot
-        property stringList FILES_EXCLUDE: of.FILES_EXCLUDE
+        property stringList FILES_EXCLUDE: parent.FILES_EXCLUDE
         configure: {
             var source = Helpers.findSourceRecursive(FileInfo.joinPaths(ofRoot, '/libs/openFrameworks'));
             var filteredSource = source.filter(function filterExcludes(path){
@@ -122,32 +122,67 @@ Product{
         }
     }
 
-    Group {
-        condition: !product.qbsBuild
-        name: "src"
-        files: core_source.files
-        fileTags: ["filtered_sources"]
-    }
+    files: core_source.files
 
-    files: {
-        if(qbsBuild){
-            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
-            var filteredSource = source.filter(function filterExcludes(path){
-                for(exclude in FILES_EXCLUDE){
-                    var patt = new RegExp(FILES_EXCLUDE[exclude]);
-                    var match = patt.exec(path);
-                    if(match!=null){
-                        return false;
-                    }
-                }
-                return true;
-            });
-            return filteredSource;
-        }else{
-            return [];
+    FileTagger {
+        patterns: "*.c"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["c"];
+            }
         }
     }
 
+    FileTagger {
+        patterns: "*.cpp"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["cpp"];
+            }
+        }
+    }
+
+    FileTagger {
+        patterns: "*.h"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["hpp"];
+            }
+        }
+    }
+
+    FileTagger {
+        patterns: "*.mm"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["objcpp"];
+            }
+        }
+    }
+
+    FileTagger {
+        patterns: "*.m"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["objc"];
+            }
+        }
+    }
 
     readonly property string make: {
         return "make";
