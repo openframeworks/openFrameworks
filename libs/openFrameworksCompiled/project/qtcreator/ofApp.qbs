@@ -68,7 +68,7 @@ CppApplication{
         property string sourceDirectory: project.sourceDirectory;
         property string appname: parent.name
         configure: {
-            name = Helpers.parseConfig(sourceDirectory + "/config.make", "APPNAME", appname, "all");
+            name = Helpers.parseConfig(sourceDirectory + "/config.make", "APPNAME", appname, "all") + ""; // NOTE: we must add an empty String so that the result will be converted to String
             found = true;
         }
     }
