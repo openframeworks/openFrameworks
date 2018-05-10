@@ -24,6 +24,7 @@ const ofUnicode::range ofUnicode::Space {32, 32};
 const ofUnicode::range ofUnicode::IdeographicSpace {0x3000, 0x3000};
 const ofUnicode::range ofUnicode::Latin {32, 0x007F};
 const ofUnicode::range ofUnicode::Latin1Supplement {32,0x00FF};
+const ofUnicode::range ofUnicode::LatinA {0x0100,0x017F};
 const ofUnicode::range ofUnicode::Greek {0x0370, 0x03FF};
 const ofUnicode::range ofUnicode::Cyrillic {0x0400, 0x04FF};
 const ofUnicode::range ofUnicode::Arabic {0x0600, 0x077F};
@@ -128,7 +129,9 @@ const std::initializer_list<ofUnicode::range> ofAlphabet::Devanagari {
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Latin {
 	ofUnicode::Latin1Supplement,
-	ofUnicode::LatinExtendedAdditional
+	ofUnicode::LatinExtendedAdditional,
+	ofUnicode::Latin,
+	ofUnicode::LatinA,
 };
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Greek {

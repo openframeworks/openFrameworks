@@ -235,7 +235,7 @@ void ofNode::setGlobalOrientation(const glm::quat& q) {
 		setOrientation(q);
 	} else {
 		auto invParent = glm::inverse(parent->getGlobalTransformMatrix());
-		auto m44 = q * glm::toQuat(invParent);
+		auto m44 = glm::toQuat(invParent) * q;
 		setOrientation(m44);
 	}
 }

@@ -54,6 +54,7 @@ public:
 	static const range IdeographicSpace;
 	static const range Latin;
 	static const range Latin1Supplement;
+	static const range LatinA;
 	static const range Greek;
 	static const range Cyrillic;
 	static const range Arabic;
