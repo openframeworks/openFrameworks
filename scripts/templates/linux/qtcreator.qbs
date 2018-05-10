@@ -3,10 +3,10 @@ import qbs.Process
 import qbs.File
 import qbs.FileInfo
 import qbs.TextFile
-import "%{JS: %{CorrectInitialOFPath}?'../../..':'%{OFPath}'}/libs/openFrameworksCompiled/project/qtcreator/ofApp.qbs" as ofApp
+import "../../../libs/openFrameworksCompiled/project/qtcreator/ofApp.qbs" as ofApp
 
 Project{
-    property string of_root: %{JS: %{CorrectInitialOFPath}?'\'../../..\'':'\'%{OFPath}\''}
+    property string of_root: "../../.."
 
     ofApp {
         name: { return FileInfo.baseName(sourceDirectory) }
@@ -18,18 +18,6 @@ Project{
         ]
 
         of.addons: [
-            %{JS:
-                [].concat(%{ofx3DModelLoader}       ? ['\'ofx3DModelLoader\'']       : [])
-                .concat(%{ofxAssimpModelLoader}     ? ['\'ofxAssimpModelLoader\'']   : [])
-                .concat(%{ofxGui}                   ? ['\'ofxGui\'']                 : [])
-                .concat(%{ofxKinect}                ? ['\'ofxKinect\'']              : [])
-                .concat(%{ofxNetwork}               ? ['\'ofxNetwork\'']             : [])
-                .concat(%{ofxOpenCv}                ? ['\'ofxOpenCv\'']              : [])
-                .concat(%{ofxOsc}                   ? ['\'ofxOsc\'']                 : [])
-                .concat(%{ofxSvg}                   ? ['\'ofxSvg\'']                 : [])
-                .concat(%{ofxVectorGraphics}        ? ['\'ofxVectorGraphics\'']      : [])
-                .concat(%{ofxXmlSettings}           ? ['\'ofxXmlSettings\'']         : []).toString()
-            }
         ]
 
         // additional flags for the project. the of module sets some
