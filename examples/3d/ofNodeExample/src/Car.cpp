@@ -55,3 +55,7 @@ void Car::accelerate(){
 void Car::steer(float dir){
     geometry.rotateDeg(dir, 0, 1, 0); // the rotation happens on the y axis
 }
+
+const ofNode & Car::getNode() const{
+	return geometry;
+}

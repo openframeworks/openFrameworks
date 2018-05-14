@@ -182,22 +182,23 @@ static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _
 	ofInitFreeImage();
 
 	auto uriStr = _fileName.string();
-	const int bytesNeeded = 8 + 3 * strlen(uriStr.c_str()) + 1;
-	std::vector<char> absUri(bytesNeeded);
-
-#ifdef TARGET_WIN32
-	uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri.data());
-#else
-	uriUnixFilenameToUriStringA(uriStr.c_str(), absUri.data());
-#endif
-
 	UriUriA uri;
 	UriParserStateA state;
 	state.uri = &uri;
-	if(uriParseUriA(&state, absUri.data())!=URI_SUCCESS){
-		ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri " << _fileName;
-		uriFreeUriMembersA(&uri);
-		return false;
+
+	if(uriParseUriA(&state, uriStr.c_str())!=URI_SUCCESS){
+		const int bytesNeeded = 8 + 3 * strlen(uriStr.c_str()) + 1;
+		std::vector<char> absUri(bytesNeeded);
+	#ifdef TARGET_WIN32
+		uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri.data());
+	#else
+		uriUnixFilenameToUriStringA(uriStr.c_str(), absUri.data());
+	#endif
+		if(uriParseUriA(&state, absUri.data())!=URI_SUCCESS){
+			ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri " << _fileName;
+			uriFreeUriMembersA(&uri);
+			return false;
+		}
 	}
 	std::string scheme(uri.scheme.first, uri.scheme.afterLast);
 	uriFreeUriMembersA(&uri);
@@ -328,7 +329,7 @@ bool ofLoadImage(ofTexture & tex, const std::filesystem::path& path, const ofIma
 	ofPixels pixels;
 	bool loaded = ofLoadImage(pixels, path, settings);
 	if(loaded){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGLInternalFormat(pixels));
 		tex.loadData(pixels);
 	}
 	return loaded;
@@ -339,7 +340,7 @@ bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSett
 	ofPixels pixels;
 	bool loaded = ofLoadImage(pixels, buffer, settings);
 	if(loaded){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGLInternalFormat(pixels));
 		tex.loadData(pixels);
 	}
 	return loaded;
@@ -347,11 +348,11 @@ bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSett
 
 //----------------------------------------------------------------
 template<typename PixelType>
-static void saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::path& _fileName, ofImageQualityType qualityLevel) {
+static bool saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::path& _fileName, ofImageQualityType qualityLevel) {
 	ofInitFreeImage();
 	if (_pix.isAllocated() == false){
 		ofLogError("ofImage") << "saveImage(): couldn't save \"" << _fileName << "\", pixels are not allocated";
-		return;
+		return false;
 	}
 
 	ofFilePath::createEnclosingDirectory(_fileName);
@@ -365,8 +366,7 @@ static void saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::
 	if(fif==FIF_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
 		ofPixels pix3 = _pix;
 		pix3.setNumChannels(3);
-		saveImage(pix3,_fileName,qualityLevel);
-		return;
+		return saveImage(pix3,_fileName,qualityLevel);
 	}
 
 	FIBITMAP * bmp = nullptr;
@@ -385,6 +385,7 @@ static void saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::
 	}
 	#endif
 
+	bool retValue = false;
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		if(fif == FIF_JPEG) {
 			int quality = JPEG_QUALITYSUPERB;
@@ -395,7 +396,7 @@ static void saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::
 				case OF_IMAGE_QUALITY_HIGH: quality = JPEG_QUALITYGOOD; break;
 				case OF_IMAGE_QUALITY_BEST: quality = JPEG_QUALITYSUPERB; break;
 			}
-			FreeImage_Save(fif, bmp, fileName.c_str(), quality);
+			retValue = FreeImage_Save(fif, bmp, fileName.c_str(), quality);
 		} else {
 			if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
 				ofLogWarning("ofImage") << "saveImage(): ofImageCompressionType only applies to JPEGs,"
@@ -411,12 +412,12 @@ static void saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::
 					// this will create a 256-color palette from the image
 					convertedBmp = FreeImage_ColorQuantize(bmp, FIQ_NNQUANT);
 				}
-				FreeImage_Save(fif, convertedBmp, fileName.c_str());
+				retValue = FreeImage_Save(fif, convertedBmp, fileName.c_str());
 				if (convertedBmp != nullptr){
 					FreeImage_Unload(convertedBmp);
 				}
 			} else {
-				FreeImage_Save(fif, bmp, fileName.c_str());
+				retValue = FreeImage_Save(fif, bmp, fileName.c_str());
 			}
 		}
 	}
@@ -424,40 +425,41 @@ static void saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::
 	if (bmp != nullptr){
 		FreeImage_Unload(bmp);
 	}
+
+	return retValue;
 }
 
 //----------------------------------------------------------------
-void ofSaveImage(const ofPixels & pix, const std::filesystem::path& fileName, ofImageQualityType qualityLevel){
-	saveImage(pix,fileName,qualityLevel);
+bool ofSaveImage(const ofPixels & pix, const std::filesystem::path& fileName, ofImageQualityType qualityLevel){
+	return saveImage(pix,fileName,qualityLevel);
 }
 
 //----------------------------------------------------------------
-void ofSaveImage(const ofFloatPixels & pix, const std::filesystem::path& fileName, ofImageQualityType qualityLevel) {
-	saveImage(pix,fileName,qualityLevel);
+bool ofSaveImage(const ofFloatPixels & pix, const std::filesystem::path& fileName, ofImageQualityType qualityLevel) {
+	return saveImage(pix,fileName,qualityLevel);
 }
 
 //----------------------------------------------------------------
-void ofSaveImage(const ofShortPixels & pix, const std::filesystem::path& fileName, ofImageQualityType qualityLevel) {
-	saveImage(pix,fileName,qualityLevel);
+bool ofSaveImage(const ofShortPixels & pix, const std::filesystem::path& fileName, ofImageQualityType qualityLevel) {
+	return saveImage(pix,fileName,qualityLevel);
 }
 
 //----------------------------------------------------------------
 template<typename PixelType>
-static void saveImage(const ofPixels_<PixelType> & _pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+static bool saveImage(const ofPixels_<PixelType> & _pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
 	// thanks to alvaro casinelli for the implementation
 
 	ofInitFreeImage();
 
 	if (_pix.isAllocated() == false){
 		ofLogError("ofImage","saveImage(): couldn't save to ofBuffer, pixels are not allocated");
-		return;
+		return false;
 	}
 
 	if(format==OF_IMAGE_FORMAT_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
 		ofPixels pix3 = _pix;
 		pix3.setNumChannels(3);
-		saveImage(pix3,buffer,format,qualityLevel);
-		return;
+		return saveImage(pix3,buffer,format,qualityLevel);
 	}
 
 
@@ -479,71 +481,77 @@ static void saveImage(const ofPixels_<PixelType> & _pix, ofBuffer & buffer, ofIm
 
 	if (bmp)  // bitmap successfully created
 	{
-		   // (b) open a memory stream to compress the image onto mem_buffer:
-		   //
-		   FIMEMORY *hmem = FreeImage_OpenMemory();
-		   // (c) encode and save the image to the memory (on dib FIBITMAP image):
-		   //
-		   if(FREE_IMAGE_FORMAT(format) == FIF_JPEG) {
-				int quality = JPEG_QUALITYSUPERB;
-				switch(qualityLevel) {
-					case OF_IMAGE_QUALITY_WORST: quality = JPEG_QUALITYBAD; break;
-					case OF_IMAGE_QUALITY_LOW: quality = JPEG_QUALITYAVERAGE; break;
-					case OF_IMAGE_QUALITY_MEDIUM: quality = JPEG_QUALITYNORMAL; break;
-					case OF_IMAGE_QUALITY_HIGH: quality = JPEG_QUALITYGOOD; break;
-					case OF_IMAGE_QUALITY_BEST: quality = JPEG_QUALITYSUPERB; break;
-				}
-				FreeImage_SaveToMemory(FIF_JPEG, bmp, hmem, quality);
-		   }else{
-				FreeImage_SaveToMemory((FREE_IMAGE_FORMAT)format, bmp, hmem);
-		   }
+		bool returnValue;
+		// (b) open a memory stream to compress the image onto mem_buffer:
+		//
+		FIMEMORY *hmem = FreeImage_OpenMemory();
+		// (c) encode and save the image to the memory (on dib FIBITMAP image):
+		//
+		if(FREE_IMAGE_FORMAT(format) == FIF_JPEG) {
+			int quality = JPEG_QUALITYSUPERB;
+			switch(qualityLevel) {
+				case OF_IMAGE_QUALITY_WORST: quality = JPEG_QUALITYBAD; break;
+				case OF_IMAGE_QUALITY_LOW: quality = JPEG_QUALITYAVERAGE; break;
+				case OF_IMAGE_QUALITY_MEDIUM: quality = JPEG_QUALITYNORMAL; break;
+				case OF_IMAGE_QUALITY_HIGH: quality = JPEG_QUALITYGOOD; break;
+				case OF_IMAGE_QUALITY_BEST: quality = JPEG_QUALITYSUPERB; break;
+			}
+			returnValue = FreeImage_SaveToMemory(FIF_JPEG, bmp, hmem, quality);
+		}else{
+			returnValue = FreeImage_SaveToMemory((FREE_IMAGE_FORMAT)format, bmp, hmem);
+		}
 
-		   /*
+		/*
 
-		  NOTE: at this point, hmem contains the entire data in memory stored in fif format. the
-		  amount of space used by the memory is equal to file_size:
-		  long file_size = FreeImage_TellMemory(hmem);
-		  but can also be retrieved by FreeImage_AcquireMemory that retrieves both the
-		  length of the buffer, and the buffer memory address.
-		  */
-			#ifdef TARGET_WIN32
-		   	   DWORD size_in_bytes = 0;
-			#else
-		   	   std::uint32_t size_in_bytes = 0;
-			#endif
-		   // Save compressed data on mem_buffer
-		   // note: FreeImage_AquireMemory allocates space for aux_mem_buffer):
-		   //
-		   unsigned char *mem_buffer = nullptr;
-		   if (!FreeImage_AcquireMemory(hmem, &mem_buffer, &size_in_bytes))
-				   ofLogError("ofImage") << "saveImage(): couldn't save to ofBuffer, aquiring compressed image from memory failed";
+		NOTE: at this point, hmem contains the entire data in memory stored in fif format. the
+		amount of space used by the memory is equal to file_size:
+		long file_size = FreeImage_TellMemory(hmem);
+		but can also be retrieved by FreeImage_AcquireMemory that retrieves both the
+		length of the buffer, and the buffer memory address.
+		*/
+		#ifdef TARGET_WIN32
+		   DWORD size_in_bytes = 0;
+		#else
+		   std::uint32_t size_in_bytes = 0;
+		#endif
+		// Save compressed data on mem_buffer
+		// note: FreeImage_AquireMemory allocates space for aux_mem_buffer):
+		//
+		unsigned char *mem_buffer = nullptr;
+		if (!FreeImage_AcquireMemory(hmem, &mem_buffer, &size_in_bytes)){
+			ofLogError("ofImage") << "saveImage(): couldn't save to ofBuffer, aquiring compressed image from memory failed";
+			return false;
+		}
 
-		   /*
-			  Now, before closing the memory stream, copy the content of mem_buffer
-			  to an auxiliary buffer
-		    */
+		/*
+		  Now, before closing the memory stream, copy the content of mem_buffer
+		  to an auxiliary buffer
+		*/
 
-		   buffer.set((char*)mem_buffer,size_in_bytes);
+		buffer.set((char*)mem_buffer,size_in_bytes);
 
-		   // Finally, close the FIBITMAP object, or we will get a memory leak:
-		   FreeImage_Unload(bmp);
+		// Finally, close the FIBITMAP object, or we will get a memory leak:
+		FreeImage_Unload(bmp);
 
-		   // Close the memory stream (otherwise we may get a memory leak).
-		   FreeImage_CloseMemory(hmem);
+		// Close the memory stream (otherwise we may get a memory leak).
+		FreeImage_CloseMemory(hmem);
+		return returnValue;
+	}else{
+		return false;
 	}
 }
 
 //----------------------------------------------------------------
-void ofSaveImage(const ofPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
-	saveImage(pix,buffer,format,qualityLevel);
+bool ofSaveImage(const ofPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+	return saveImage(pix,buffer,format,qualityLevel);
 }
 
-void ofSaveImage(const ofFloatPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
-	saveImage(pix,buffer,format,qualityLevel);
+bool ofSaveImage(const ofFloatPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+	return saveImage(pix,buffer,format,qualityLevel);
 }
 
-void ofSaveImage(const ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
-	saveImage(pix,buffer,format,qualityLevel);
+bool ofSaveImage(const ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+	return saveImage(pix,buffer,format,qualityLevel);
 }
 
 
@@ -730,14 +738,14 @@ bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::save(const std::filesystem::path& fileName, ofImageQualityType qualityLevel) const {
-	ofSaveImage(pixels, fileName, qualityLevel);
+bool ofImage_<PixelType>::save(const std::filesystem::path& fileName, ofImageQualityType qualityLevel) const {
+	return ofSaveImage(pixels, fileName, qualityLevel);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::save(ofBuffer & buffer, ofImageFormat imageFormat, ofImageQualityType qualityLevel) const {
-    ofSaveImage(pixels, buffer, imageFormat, qualityLevel);
+bool ofImage_<PixelType>::save(ofBuffer & buffer, ofImageFormat imageFormat, ofImageQualityType qualityLevel) const {
+	return ofSaveImage(pixels, buffer, imageFormat, qualityLevel);
 }
 
 //----------------------------------------------------------
@@ -1023,7 +1031,7 @@ void ofImage_<PixelType>::update(){
 	bpp = pixels.getBitsPerPixel();
 	type = pixels.getImageType();
 	if (pixels.isAllocated() && bUseTexture){
-		int glInternalFormat = ofGetGlInternalFormat(pixels);
+		int glInternalFormat = ofGetGLInternalFormat(pixels);
 		if(!tex.isAllocated() || tex.getWidth() != width || tex.getHeight() != height || tex.getTextureData().glInternalFormat != glInternalFormat){
 			tex.allocate(pixels);
 		}else{

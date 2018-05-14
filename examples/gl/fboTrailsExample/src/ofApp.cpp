@@ -17,16 +17,16 @@ void ofApp::setup(){
         rgbaFboFloat.allocate(400, 400, GL_RGBA32F_ARB); // with alpha, 32 bits red, 32 bits green, 32 bits blue, 32 bits alpha, from 0 to 1 in 'infinite' steps
 	#endif
 
-	// we can also define the fbo with ofFbo::Settings.
+	// we can also define the fbo with ofFboSettings.
 	// this allows us so set more advanced options the width (400), the height (200) and the internal format like this
 	/*
-	 ofFbo::Settings s;
+	 ofFboSettings s;
 	 s.width			= 400;
 	 s.height			= 200;
 	 s.internalformat   = GL_RGBA;
 	 s.useDepth			= true;
 	 // and assigning this values to the fbo like this:
-	 rgbFbo.allocate(s);
+	 rgbaFbo.allocate(s);
 	 */
 
 

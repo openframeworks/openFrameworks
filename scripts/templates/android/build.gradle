@@ -26,12 +26,12 @@ apply plugin: 'com.android.model.application'
 model {
     android {
         // openFrameworks currently only supports compiling against SDK 19
-        compileSdkVersion = 19
-        buildToolsVersion = "25.0.2"
+        compileSdkVersion = 25
+        buildToolsVersion = "25.0.3"
 
         defaultConfig.with {
             minSdkVersion.apiLevel    = 19
-            targetSdkVersion.apiLevel = 19
+            targetSdkVersion.apiLevel = 25
             versionCode     =  1
             versionName     = "1.0"
         }
@@ -41,6 +41,7 @@ model {
         moduleName = ofAppModuleName()
         toolchain  = buildToolchain()
         stl        = compilerStl()
+        platformVersion = "19"
     }
 
     android.sources {

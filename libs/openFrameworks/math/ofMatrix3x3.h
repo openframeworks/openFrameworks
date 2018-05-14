@@ -47,8 +47,8 @@ public:
 		*this = reinterpret_cast<const ofMatrix3x3&>(mat);
 	}
 
-	operator glm::mat3(){
-		return *reinterpret_cast<glm::mat3*>(this);
+	operator glm::mat3() const{
+		return *reinterpret_cast<const glm::mat3*>(this);
 	}
 	
 	/// \}

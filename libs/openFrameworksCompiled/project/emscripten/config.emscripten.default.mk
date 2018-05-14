@@ -81,6 +81,15 @@ else
 	PLATFORM_EMSCRIPTEN_TOTAL_MEMORY=134217728
 endif
 
+ifdef USE_CCACHE
+	ifeq ($(findstring ccache, $(CC)),)
+		ORIGINAL_CC = $(CC)
+		CC := ccache $(ORIGINAL_CC)
+		ORIGINAL_CXX = $(CXX)
+		CXX := ccache $(ORIGINAL_CXX)
+	endif
+endif
+
 PLATFORM_LDFLAGS = -Wl,--as-needed -Wl,--gc-sections --preload-file bin/data@data --emrun
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js

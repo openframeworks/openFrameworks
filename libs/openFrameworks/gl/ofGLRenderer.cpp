@@ -48,6 +48,7 @@ void ofGLRenderer::setup(){
 	GLint currentFrameBuffer;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFrameBuffer);
 	defaultFramebufferId = currentFrameBuffer;
+    currentFramebufferId = defaultFramebufferId;
 #endif
 	setupGraphicDefaults();
 	viewport();
@@ -455,18 +456,17 @@ void ofGLRenderer::unbind(const ofShader & shader){
 	glUseProgram(0);
 }
 
-
 //----------------------------------------------------------
-void ofGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode){
+void ofGLRenderer::begin(const ofFbo & fbo, ofFboMode mode){
 	pushView();
 	pushStyle();
-    if(mode & ofFboBeginMode::MatrixFlip){
+    if(mode & OF_FBOMODE_MATRIXFLIP){
         matrixStack.setRenderSurface(fbo);
     }else{
         matrixStack.setRenderSurfaceNoMatrixFlip(fbo);
     }
 	viewport();
-    if(mode & ofFboBeginMode::Perspective){
+    if(mode & OF_FBOMODE_PERSPECTIVE){
 		setupScreenPerspective();
 	}else{
 		glm::mat4 m;
@@ -1601,9 +1601,9 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 			glm::mat4 modelview, projection;
 			glGetFloatv(GL_MODELVIEW_MATRIX, glm::value_ptr(modelview));
 			glGetFloatv(GL_PROJECTION_MATRIX, glm::value_ptr(projection));
-			auto mat = matrixStack.getOrientationMatrixInverse() * projection * modelview;
-			auto dScreen4 = mat * glm::vec4(x,y,z,1.0);
-			auto dScreen = dScreen4.xyz() / dScreen4.w;
+			glm::mat4 mat = matrixStack.getOrientationMatrixInverse() * projection * modelview;
+			glm::vec4 dScreen4 = mat * glm::vec4(x,y,z,1.0);
+			glm::vec3 dScreen = glm::vec3(dScreen4) / dScreen4.w;
 			dScreen += glm::vec3(1.0) ;
 			dScreen *= 0.5;
 
@@ -1906,28 +1906,21 @@ void ofGLRenderer::saveFullViewport(ofPixels & pixels){
 
 //----------------------------------------------------------
 void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
-
 	int sh = getViewportHeight();
 
 
 	#ifndef TARGET_OPENGLES
-	ofBufferObject buffer;
-	pixels.allocate(w, h, OF_PIXELS_RGB);
-	buffer.allocate(pixels.size(),GL_STATIC_READ);
 	if(isVFlipped()){
 		y = sh - y;
 		y -= h; // top, bottom issues
 	}
+	auto pixelFormat = OF_PIXELS_BGRA;
+	pixels.allocate(w, h, pixelFormat);
+	auto glFormat = ofGetGLFormat(pixels);
 
-	buffer.bind(GL_PIXEL_PACK_BUFFER);
-	glReadPixels(x, y, w, h, ofGetGlFormat(pixels), GL_UNSIGNED_BYTE, 0); // read the memory....
-	buffer.unbind(GL_PIXEL_PACK_BUFFER);
-	unsigned char * p = buffer.map<unsigned char>(GL_READ_ONLY);
-	ofPixels src;
-	src.setFromExternalPixels(p,w,h,OF_PIXELS_RGB);
-	src.mirrorTo(pixels,true,false);
-	buffer.unmap();
 
+	glReadPixels(x, y, w, h, glFormat, GL_UNSIGNED_BYTE, pixels.begin()); // read the memory....
+	pixels.mirror(true, false);
 	#else
 
 	int sw = getViewportWidth();

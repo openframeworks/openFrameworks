@@ -4,15 +4,16 @@
 #define OF_POLYLINE_H
 
 #include "ofConstants.h"
+#include "glm/fwd.hpp"
 #include <deque>
 
-/// \file 
+/// \file
 /// ofPolyLine allows you to combine multiple points into a single vector data
 /// object that can be drawn to the screen, manipulated point by point, and
 /// combined with other ofPolyline instances. It is less complex than the ofPath
 /// and generally represents a single line or vector shape rather than multiple
 /// lines or shapes.
-/// 
+///
 /// You can add points to an ofPolyline by adding vertices:
 /// ~~~~{.cpp}
 /// float i = 0;
@@ -35,12 +36,12 @@
 /// 	angle += TWO_PI / 30;
 /// }
 /// ~~~~
-/// 
+///
 /// ofPolyline also includes methods to get the closest point, determine whether a
 /// point is inside shape, and resample shapes. Along with the ofPath class, it's
 /// the best way to draw and manipulate 2D and 3D vector graphics that you'll need
 /// to update and manipulate frequently.
-/// 
+///
 /// If you use the lineTo() or curveTo() or bezierTo() functions, you move the
 /// drawing point, so that drawing a line to 100,100 means a line from 0,0 to
 /// 100, 100. The next line would be a line from 100,100 to wherever you go
@@ -80,7 +81,7 @@ public:
 
 	/// \brief Add multiple points at the end of the ofPolyline using a vector of
 	/// T objects
-	/// 
+	///
 	/// ~~~~{.cpp}
 	/// 	// make a pentagon
 	/// 	float size = 80.f;
@@ -105,19 +106,19 @@ public:
 	void addVertices(const T* verts, int numverts);
 
 	void insertVertex(const T &p, int index);
-    void insertVertex(float x, float y, float z, int index);
+	void insertVertex(float x, float y, float z, int index);
 
-	/// \brief Resize the number of points in the ofPolyline to the value 
+	/// \brief Resize the number of points in the ofPolyline to the value
 	/// passed in.
 	void resize(size_t size);
 
-    /// \}
-    /// \name Access Vertices
+	/// \}
+	/// \name Access Vertices
 	/// \{
 
 	/// \brief The number of points in the ofPolyline.
 	size_t size() const;
-		
+
 	/// Allows you to access the points of the ofPolyline just like you would
 	/// in an array, so to make the points of a line follow the mouse
 	/// movement, you could do:
@@ -126,14 +127,14 @@ public:
 	/// line[0].set(mouseX, mouseY);
 	/// int i = 1;
 	/// while ( i<bounds.size()) {
-	/// 	float angle = atan2(line[i-1].y - line[i].y, line[i-1].x - line[i].x);  
+	/// 	float angle = atan2(line[i-1].y - line[i].y, line[i-1].x - line[i].x);
 	/// 	bounds[i].set(bounds[i-1].x - cos(angle) * 20, bounds[i-1].y - sin(angle) * 20);
 	/// 	i++;
 	/// }
 	/// ~~~~
 	const T& operator[] (int index) const;
 	T& operator[] (int index);
-    
+
 	/// \brief Gets a vector of vertices that the line contains
 	std::vector<T> & getVertices();
 	const std::vector<T> & getVertices() const;
@@ -148,53 +149,53 @@ public:
 	typename std::vector<T>::const_reverse_iterator rend() const;
 
 	/// \}
-    /// \name Lines and Curves
-    /// \{
+	/// \name Lines and Curves
+	/// \{
 
 	/// \brief Add a straight line from the last point added, or from 0,0 if no point
 	/// is set, to the point indicated by the T passesd in.
 	void lineTo(const T & to ){ addVertex(to); }
-	
+
 	/// \brief Add a straight line from the last point added, or from 0,0 if no point
 	/// is set, to the point indicated by the floats x,y,z passesd in.
 	void lineTo(float x, float y, float z=0){
 		addVertex(x,y,z);
 	}
-    
+
 	/// \brief Adds an arc around the T `center` with the width of `radiusX`
-    /// and the height of `radiusY` to the polyline.
-	/// 
+	/// and the height of `radiusY` to the polyline.
+	///
 	/// The `angleBegin` and `angleEnd` indicate the start and end angles of
 	/// the arc in degrees measured clockwise from the x-axis.
-	/// 
+	///
 	/// The `clockwise` boolean sets the drawing direction.  Passing 'false' to
 	/// it will draw the arc counter-clockwise.
-	/// 
+	///
 	/// Optionally, you can specify `circleResolution`, which is the number of
 	/// line segments a circle would be drawn with.
 	///
 	/// If the arc doesn't start at the same point the last vertex finished a
 	/// straight line will be created to join both
 	void arc(const T & center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int circleResolution = 20);
-    
+
 	/// \brief Adds an arc around the T `center` with the width of
 	/// `radiusX` and the height of `radiusY`.
 	///
 	/// The `angleBegin` and `angleEnd` indicate the start and end angles
 	/// of the arc in degrees measured clockwise from the x-axis.
-	///  
+	///
 	/// Optionally, you can specify `circleResolution`, which is the number of
 	/// line segments a circle would be drawn with. A partial arc will be
 	/// drawn with the same resolution: if circleResolution == 20, a half-
-	/// circle will be drawn with 10 segments.	
-	/// 
+	/// circle will be drawn with 10 segments.
+	///
 	/// If there are already vertexes in the ofPolyline the arc will extend
 	/// them; a line will be created from the endmost point on the ofPolyline
-	/// to the beginning point of the arc.	
-	/// 
+	/// to the beginning point of the arc.
+	///
 	/// ~~~~{.cpp}
 	/// ofPolyline polyline1, polyline2;
-	/// 
+	///
 	/// // draw an line, then an semi-circle in red
 	/// polyline2.lineTo(300, 50);
 	/// T point2(450,120);
@@ -202,18 +203,18 @@ public:
 	/// ofSetColor(ofColor::red);
 	/// polyline2.draw();
 	/// ~~~~
-	/// 
+	///
 	/// ![Arc Example](graphics/ofpolyline_arc.jpg)
 	void arc(const T & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
-        arc(center, radiusX,  radiusY,  angleBegin,  angleEnd, true,  circleResolution);
-    }
+		arc(center, radiusX,  radiusY,  angleBegin,  angleEnd, true,  circleResolution);
+	}
 
 	/// \brief Adds an arc around the coordinates (`x`,`y`) with the width of
 	/// `radiusX` and the height of `radiusY`.
 	///
 	/// The `angleBegin` and `angleEnd` indicate the start and end angles
 	/// of the arc in degrees measured clockwise from the x-axis.
-	/// 
+	///
 	/// Optionally, you can specify `circleResolution`, which is the number
 	/// of line segments a circle would be drawn with.
 	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
@@ -222,29 +223,29 @@ public:
 
 	/// \brief Adds an arc around the coordinates (`x`,`y`,`z`) with the width of
 	/// `radiusX` and the height of `radiusY`.
-	/// 
+	///
 	/// The `angleBegin` and `angleEnd` indicate the start and end angles of
 	/// the arc in degrees measured clockwise from the x-axis.
-	/// 
+	///
 	/// Optionally, you can specify `circleResolution`, which is the number of
 	/// line segments a circle would be drawn with.
 	void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
 		arc(T(x, y, z), radiusX, radiusY, angleBegin, angleEnd, true, circleResolution);
 	}
 	void arcNegative(const T & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
-        arc(center, radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
-    }
+		arc(center, radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
+	}
 	void arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
 		arc(T(x,y,0.f), radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
-    }
+	}
 	void arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
 		arc(T(x, y, z), radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
-    }
-    
-    
-	
+	}
+
+
+
 	/// \brief Adds a curve to an T object passed in
-	/// 
+	///
 	/// ~~~~{.cpp}
 	/// float angle = 0;
 	/// while (angle < TWO_PI ) {
@@ -253,20 +254,20 @@ public:
 	/// 	angle += TWO_PI / 30;
 	/// }
 	/// ~~~~
-	/// 
+	///
 	/// \note You need at least 4 points to be able to use curveTo()
 	/// \sa [Catmull-Rom splines wiki](http://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline)
 	void curveTo( const T & to, int curveResolution = 20 );
 
 	/// \brief Adds a curve to the x,y,z points passed in with the optional
-	/// resolution.	
+	/// resolution.
 	void curveTo(float x, float y, float z = 0,  int curveResolution = 20 ){
 		curveTo({x,y,z},curveResolution);
 	}
 
 	/// \brief Adds a cubic bezier line from the current drawing point with the 2
 	/// control points indicated by T cp1 and cp2, that ends at T
-	/// to. 
+	/// to.
 	///
 	/// ~~~~{.cpp}
 	/// line.addVertex(T(200, 400));
@@ -316,8 +317,8 @@ public:
 	/// \name Smoothing and Resampling
 	/// \{
 
-	/// \brief Gets a smoothed version of the ofPolyline. 
-	/// 
+	/// \brief Gets a smoothed version of the ofPolyline.
+	///
 	/// `smoothingSize` is the size of the smoothing window. So if
 	/// `smoothingSize` is 2, then 2 points from the left, 1 in the center,
 	/// and 2 on the right (5 total) will be used for smoothing each point.
@@ -327,7 +328,7 @@ public:
 
 	/// \brief Resamples the line based on the spacing passed in. The larger the
 	/// spacing, the more points will be eliminated.
-	/// 
+	///
 	/// ~~~~{.cpp}
 	/// line.draw();
 	/// ofTranslate(400, 0);
@@ -337,24 +338,45 @@ public:
 	ofPolyline_ getResampledBySpacing(float spacing) const;
 
 	/// \brief Resamples the line based on the count passed in. The lower the
-	/// count passed in, the more points will be eliminated. 
+	/// count passed in, the more points will be eliminated.
 	///
 	/// This doesn't add new points to the line.
 	ofPolyline_ getResampledByCount(int count) const;
 
-    /// \brief Simplifies the polyline, removing un-necessary vertices. 
-    ///
-    /// \param tolerance determines how dis-similar points need to be to stay in the line.
-    /// Higher tolerance means more points removed, lower tolerance means less
-    /// points removed.
+	/// \brief Simplifies the polyline, removing un-necessary vertices.
+	///
+	/// \param tolerance determines how dis-similar points need to be to stay in the line.
+	/// Higher tolerance means more points removed, lower tolerance means less
+	/// points removed.
 	void simplify(float tolerance=0.3f);
+
+	/// \}
+	/// \name Transform polyline
+	/// \{
+
+	void rotateDeg(float degrees, const glm::vec3& axis);
+	void rotateRad(float radians, const glm::vec3& axis);
+	OF_DEPRECATED_MSG("Use Deg/Rad versions.", void rotate(float degrees, const glm::vec3& axis));
+
+	void translate(const glm::vec3 & p);
+
+	void rotateDeg(float degrees, const glm::vec2& axis);
+	void rotateRad(float radians, const glm::vec2& axis);
+	OF_DEPRECATED_MSG("Use Deg/Rad versions.", void rotate(float degrees, const glm::vec2& axis));
+
+	void translate(const glm::vec2 & p);
+
+	/// \brief Change the size of the ofPolyline
+	/// These changes are non-reversible, so for instance
+	/// scaling by 0,0 zeros out all data.
+	void scale(float x, float y);
 
 	/// \}
 	/// \name Polyline State
 	/// \{
-	
+
 	/// \brief Closes the ofPolyline, meaning that all the vertices will be linked
-	/// and can be "walked".	
+	/// and can be "walked".
 	void close();
 
 	/// \brief Closes the ofPolyline, meaning that all the vertices will be linked
@@ -365,31 +387,31 @@ public:
 
 	/// \brief Returns whether the vertices within the line have changed.
 	bool hasChanged();
-    void flagHasChanged();
+	void flagHasChanged();
 
-    /// \}
+	/// \}
 	/// \name Geometric Functions
 	/// \{
 
 	/// \brief Tests whether the x,y coordinates are within a closed ofPolyline.
 	static bool inside(float x, float y, const ofPolyline_ & polyline);
-    /// \brief Tests whether the x,y coordinates are within a closed ofPolyline.
+	/// \brief Tests whether the x,y coordinates are within a closed ofPolyline.
 	bool inside(float x, float y) const;
 
 	/// \brief Tests whether the T is within a closed ofPolyline.
 	static bool inside(const T & p, const ofPolyline_ & polyline);
 	/// \brief Tests whether the T is within a closed ofPolyline.
 	bool inside(const T & p) const;
-    
-	/// \brief Get the bounding box of the polyline , taking into account 
+
+	/// \brief Get the bounding box of the polyline , taking into account
 	/// all the points to determine the extents of the polyline.
 	ofRectangle getBoundingBox() const;
-	
+
 	/// \brief Gets the size of the perimeter of the polyline, good for
 	/// determining length of the line, rather than just the bounding box
 	/// shape.
 	float getPerimeter() const;
-	
+
 	/// \brief Gets the precise area bounded by the line
 	float getArea() const;
 
@@ -398,57 +420,57 @@ public:
 
 	/// \brief Gets the point on the line closest to the target. You can also
 	/// optionally pass a pointer to/address of an unsigned int to get the
-	/// index of the closest vertex	
+	/// index of the closest vertex
 	T getClosestPoint(const T& target, unsigned int* nearestIndex = nullptr) const;
-	
+
 
 	/// \}
-    /// \name Other Functions
-    /// \{
+	/// \name Other Functions
+	/// \{
 
-    /// \brief Get (interpolated) index at given length along the path
-    ///
-    /// Includes info on percentage along segment, e.g. `ret=5.75` => 
-    /// 75% along the path between 5th and 6th points
-    float getIndexAtLength(float f) const;
-    
-    /// \brief Get (interpolated) index at given percentage along the path
-    ///
-    /// Includes info on percentage along segment, e.g. `ret=5.75` 
-    /// => 75% along the path between 5th and 6th points
-    float getIndexAtPercent(float f) const;
+	/// \brief Get (interpolated) index at given length along the path
+	///
+	/// Includes info on percentage along segment, e.g. `ret=5.75` =>
+	/// 75% along the path between 5th and 6th points
+	float getIndexAtLength(float f) const;
 
-    /// \brief Get length along path at index
-    float getLengthAtIndex(int index) const;
-    
-    /// \brief Get length along path at interpolated index (e.g. `f=5.75` => 75% along
-    /// the path between 5th and 6th points)
-    float getLengthAtIndexInterpolated(float findex) const;
-    
-    /// \brief Get point long the path at a given length (e.g. `f=150` => 150
-    /// units along the path)    
+	/// \brief Get (interpolated) index at given percentage along the path
+	///
+	/// Includes info on percentage along segment, e.g. `ret=5.75`
+	/// => 75% along the path between 5th and 6th points
+	float getIndexAtPercent(float f) const;
+
+	/// \brief Get length along path at index
+	float getLengthAtIndex(int index) const;
+
+	/// \brief Get length along path at interpolated index (e.g. `f=5.75` => 75% along
+	/// the path between 5th and 6th points)
+	float getLengthAtIndexInterpolated(float findex) const;
+
+	/// \brief Get point long the path at a given length (e.g. `f=150` => 150
+	/// units along the path)
 	T getPointAtLength(float f) const;
-    
-    /// \brief Get point along the path at a given percentage (e.g. `f=0.25`
-    /// => 25% along the path)
+
+	/// \brief Get point along the path at a given percentage (e.g. `f=0.25`
+	/// => 25% along the path)
 	T getPointAtPercent(float f) const;
-    
-    /// \brief Get point along the path at interpolated index (e.g. `f=5.75` =>
-    /// 75% along the path between 5th and 6th points)
+
+	/// \brief Get point along the path at interpolated index (e.g. `f=5.75` =>
+	/// 75% along the path between 5th and 6th points)
 	T getPointAtIndexInterpolated(float findex) const;
 
-    /// \brief Get angle (degrees) of the path at index
-	OF_DEPRECATED_MSG("Use the Deg/Rad versions", float getAngleAtIndex(int index) const);
-    
-    /// \brief Get angle (degrees) at interpolated index (interpolated between
-    /// neighboring indices)
-	OF_DEPRECATED_MSG("Use the Deg/Rad versions", float getAngleAtIndexInterpolated(float findex) const);
-    
-    /// \brief Get rotation vector at index (magnitude is sin of angle)
+	/// \brief Get angle (degrees) of the path at index
+	OF_DEPRECATED_MSG("Use Deg/Rad versions.", float getAngleAtIndex(int index) const);
+
+	/// \brief Get angle (degrees) at interpolated index (interpolated between
+	/// neighboring indices)
+	OF_DEPRECATED_MSG("Use Deg/Rad versions.", float getAngleAtIndexInterpolated(float findex) const);
+
+	/// \brief Get rotation vector at index (magnitude is sine of angle)
 	T getRotationAtIndex(int index) const;
-    
-    /// \brief Get rotation vector at interpolated index 
-    /// (interpolated between neighboring indices) (magnitude is sin of angle)
+
+	/// \brief Get rotation vector at interpolated index
+	/// (interpolated between neighboring indices) (magnitude is sine of angle)
 	T getRotationAtIndexInterpolated(float findex) const;
 
 	/// \brief Get angle (degrees) of the path at index
@@ -464,67 +486,67 @@ public:
 	/// \brief Get angle (degrees) at interpolated index (interpolated between
 	/// neighboring indices)
 	float getRadiansAtIndexInterpolated(float findex) const;
-    
-    /// \brief Get tangent vector at index
+
+	/// \brief Get tangent vector at index
 	T getTangentAtIndex(int index) const;
-    
-    /// \brief Get tangent vector at interpolated index 
-   	/// (interpolated between neighboring indices)
+
+	/// \brief Get tangent vector at interpolated index
+	/// (interpolated between neighboring indices)
 	T getTangentAtIndexInterpolated(float findex) const;
 
-    /// \brief Get normal vector at index
+	/// \brief Get normal vector at index
 	T getNormalAtIndex(int index) const;
-    
-    /// \brief Get normal vector at interpolated index 
-    /// (interpolated between neighboring indices)
-	T getNormalAtIndexInterpolated(float findex) const;
-    
-    /// \brief Get wrapped index depending on whether poly is closed or not
-    int getWrappedIndex(int index) const;
 
-    // used for calculating the normals
+	/// \brief Get normal vector at interpolated index
+	/// (interpolated between neighboring indices)
+	T getNormalAtIndexInterpolated(float findex) const;
+
+	/// \brief Get wrapped index depending on whether poly is closed or not
+	int getWrappedIndex(int index) const;
+
+	// used for calculating the normals
 	void setRightVector(T v = T(0, 0, -1));
 	T getRightVector() const;
 
-    /// \}
-    /// \name Drawing
-    /// \{
-	
+	/// \}
+	/// \name Drawing
+	/// \{
+
 	/// \brief Draw the line using the current renderer
 	void draw() const;
-	
+
 	/// \}
-   
-    
+
+
 private:
 	void setCircleResolution(int res);
-    float wrapAngle(float angleRad);
+	float wrapAngle(float angleRad);
 
 	std::vector<T> points;
 	T rightVector;
-    
-    // cache
+
+	// cache
 	mutable std::vector<float> lengths;    // cumulative lengths, stored per point (lengths[n] is the distance to the n'th point, zero based)
 	mutable std::vector<T> tangents;       // tangent at vertex, stored per point
 	mutable std::vector<T> normals;        //
 	mutable std::vector<T> rotations;      // rotation axes between adjacent segments, stored per point (cross product)
 	mutable std::vector<float> angles;     // angle (rad) between adjacent segments, stored per point (asin(cross product))
 	mutable T centroid2D;
-    mutable float area;
-    
-    
+	mutable float area;
+
+
 	std::deque<T> curveVertices;
 	std::vector<T> circlePoints;
 
 	bool bClosed;
 	bool bHasChanged;   // public API has access to this
-    mutable bool bCacheIsDirty;   // used only internally, no public API to read
-    
-    void updateCache(bool bForceUpdate = false) const;
-    
-    // given an interpolated index (e.g. 5.75) return neighboring indices and interolation factor (e.g. 5, 6, 0.75)
-    void getInterpolationParams(float findex, int &i1, int &i2, float &t) const;
-    
+	mutable bool bCacheIsDirty;   // used only internally, no public API to read
+
+	void updateCache(bool bForceUpdate = false) const;
+
+	// given an interpolated index (e.g. 5.75) return neighboring indices and interolation factor (e.g. 5, 6, 0.75)
+	void getInterpolationParams(float findex, int &i1, int &i2, float &t) const;
+
 	void calcData(int index, T &tangent, float &angle, T &rotation, T &normal) const;
 };
 

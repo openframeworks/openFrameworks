@@ -14,8 +14,10 @@ function findCommand(){
     var where = new Process();
     where.exec("where.exe", ['find'], true);
     if(where.exitCode()!==0){
-        throw("error: There is a problem to detect the 'find' command."+where.exitCode());
+        console.info("PATH: " + where.getEnv("PATH"));
+        throw("error: There is a problem to detect the 'find' command:\n" + where.readStdOut() + "\n" + where.readStdErr());
     }
+
 
     while(true){
         var line = where.readLine();
@@ -28,7 +30,15 @@ function findCommand(){
             break;
         }
     }
-    return "find";
+
+    console.info("PATH: " + where.getEnv("PATH"));
+    throw("Couldn't find gnu find, you probably need to set a correct path as explained in the openFrameworks setup guide: http://openframeworks.cc/setup/msys2/");
+}
+
+function windowsToUnix(path){
+    var cygpath = new Process();
+    cygpath.exec("cygpath.exe", [path], true);
+    return cygpath.readLine();
 }
 
 function getSystemPath(){
@@ -65,8 +75,11 @@ function msys2root(){
 
 	
     //console.error("PATH=>"+systemPath);
-    var usrPos = systemPath.indexOf(msys2 + "usr\\bin");
-    var mingw32Pos = systemPath.indexOf(msys2 + "mingw32\\bin");
+    msys2 = FileInfo.fromWindowsSeparators(msys2);
+    var usrBin = FileInfo.toWindowsSeparators(FileInfo.joinPaths(msys2, "usr/bin"));
+    var mingw32Bin = FileInfo.toWindowsSeparators(FileInfo.joinPaths(msys2, "mingw32/bin"));
+    var usrPos = systemPath.indexOf(usrBin);
+    var mingw32Pos = systemPath.indexOf(mingw32Bin);
 	
     if( (usrPos === -1) || (mingw32Pos === -1) || (mingw32Pos > usrPos) ){
         console.error("PATH="+systemPath);

@@ -254,7 +254,7 @@ private:
 	/// \brief If set, the area mouse control is bound to.
 	ofRectangle controlArea;
 
-	std::vector<ofEventListener> listeners;
+	ofEventListeners listeners;
 	ofCoreEvents * events = nullptr;
 
 	bool bRelativeYAxis = false;

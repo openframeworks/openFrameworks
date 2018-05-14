@@ -143,10 +143,10 @@ char ofEasyCam::getTranslationKey() const{
 //----------------------------------------
 void ofEasyCam::enableMouseInput(){
 	if(!bMouseInputEnabled && events){
-		listeners.push_back(events->update.newListener(this, &ofEasyCam::update));
-		listeners.push_back(events->mousePressed.newListener(this, &ofEasyCam::mousePressed));
-		listeners.push_back(events->mouseReleased.newListener(this, &ofEasyCam::mouseReleased));
-		listeners.push_back(events->mouseScrolled.newListener(this, &ofEasyCam::mouseScrolled));
+		listeners.push(events->update.newListener(this, &ofEasyCam::update));
+		listeners.push(events->mousePressed.newListener(this, &ofEasyCam::mousePressed));
+		listeners.push(events->mouseReleased.newListener(this, &ofEasyCam::mouseReleased));
+		listeners.push(events->mouseScrolled.newListener(this, &ofEasyCam::mouseScrolled));
 	}
 	// if enableMouseInput was called within ofApp::setup()
 	// `events` will still carry a null pointer, and bad things
@@ -159,7 +159,7 @@ void ofEasyCam::enableMouseInput(){
 //----------------------------------------
 void ofEasyCam::disableMouseInput(){
 	if(bMouseInputEnabled && events){
-		listeners.clear();
+		listeners.unsubscribeAll();
 	}
 	// if disableMouseInput was called within ofApp::setup()
 	// `events` will still carry a null pointer, and bad things
@@ -329,11 +329,13 @@ void ofEasyCam::updateRotation(){
 	}
 	if (bApplyInertia) {
 		curRot = glm::angleAxis(rot.z, getZAxis()) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, getXAxis());
+		rotateAround(curRot, target.getGlobalPosition());
+		rotate(curRot);
 	}else{
 		curRot = glm::angleAxis(rot.z, lastPressAxisZ) * glm::angleAxis(rot.y, up()) * glm::angleAxis(rot.x, lastPressAxisX);
+		setOrientation(curRot * lastPressOrientation);
+		setPosition(curRot * (lastPressPosition-target.getGlobalPosition()) + target.getGlobalPosition());
 	}
-	setPosition(curRot * (lastPressPosition-target.getGlobalPosition()) + target.getGlobalPosition());
-	setOrientation(curRot * lastPressOrientation);
 }
 
 //----------------------------------------
@@ -379,7 +381,7 @@ void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 			}
 		}
 		if(currentTransformType == TRANSFORM_ROTATE){
-			bInsideArcball = glm::length(mouse - area.getCenter().xy()) < std::min(area.width/2, area.height/2);
+			bInsideArcball = glm::length(mouse - glm::vec2(area.getCenter())) < std::min(area.width/2, area.height/2);
 		}
 		bApplyInertia = false;
 	}
@@ -443,7 +445,7 @@ void ofEasyCam::updateMouse(const glm::vec2 & mouse){
 				rot.x = vFlip * -mouseVel.y * sensitivityRot.x * glm::pi<float>() / std::min(area.width, area.height);
 				rot.y = -mouseVel.x * sensitivityRot.y * glm::pi<float>() / std::min(area.width, area.height);
 			}else{
-				glm::vec2 center = area.getCenter().xy();
+				glm::vec2 center(area.getCenter());
 				rot.z = sensitivityRot.z * -vFlip * glm::orientedAngle(glm::normalize(mouse - center),
 																	   glm::normalize(lastPressMouse - center));
 			}

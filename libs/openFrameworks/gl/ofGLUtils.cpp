@@ -14,14 +14,49 @@
 using namespace std;
 
 //---------------------------------
-int ofGetGlInternalFormat(const ofPixels& pix) {
-	return ofGetGLInternalFormatFromPixelFormat(pix.getPixelFormat());
+// deprecations
+
+int ofGetGlInternalFormat(const ofPixels& pixels) {
+    return ofGetGLInternalFormat(pixels);
+}
+
+int ofGetGlInternalFormat(const ofShortPixels& pixels) {
+    return ofGetGLInternalFormat(pixels);
+}
+
+int ofGetGlInternalFormat(const ofFloatPixels& pixels) {
+    return ofGetGLInternalFormat(pixels);
+}
+
+std::string ofGetGlInternalFormatName(int glInternalFormat) {
+    return ofGetGLInternalFormatName(glInternalFormat);
+}
+
+int ofGetGlTypeFromInternal(int glInternalFormat) {
+    return ofGetGLTypeFromInternal(glInternalFormat);
+}
+
+int ofGetGlType(const ofPixels & pixels) {
+    return ofGetGLType(pixels);
+}
+
+int ofGetGlType(const ofShortPixels & pixels) {
+    return ofGetGLType(pixels);
+}
+
+int ofGetGlType(const ofFloatPixels & pixels) {
+    return ofGetGLType(pixels);
 }
 
 //---------------------------------
-int ofGetGlInternalFormat(const ofShortPixels& pix) {
+int ofGetGLInternalFormat(const ofPixels& pixels) {
+	return ofGetGLInternalFormatFromPixelFormat(pixels.getPixelFormat());
+}
+
+//---------------------------------
+int ofGetGLInternalFormat(const ofShortPixels& pixels) {
 #ifndef TARGET_OPENGLES
-	switch(pix.getNumChannels()) {
+	switch(pixels.getNumChannels()) {
 		case 3: return GL_RGB16;
 		case 4: return GL_RGBA16;
 		case 2:
@@ -38,8 +73,8 @@ int ofGetGlInternalFormat(const ofShortPixels& pix) {
 			}
 	}
 #else
-	ofLogWarning("ofGLUtils") << "ofGetGlInternalFormat(): 16bit textures are not supported in OpenGL ES";
-	switch(pix.getNumChannels()) {
+	ofLogWarning("ofGLUtils") << "ofGetGLInternalFormat(): 16bit textures are not supported in OpenGL ES";
+	switch(pixels.getNumChannels()) {
 		case 3: return GL_RGB;
 		case 4: return GL_RGBA;
 		case 2:
@@ -51,9 +86,9 @@ int ofGetGlInternalFormat(const ofShortPixels& pix) {
 }
 
 //---------------------------------
-int ofGetGlInternalFormat(const ofFloatPixels& pix) {
+int ofGetGLInternalFormat(const ofFloatPixels& pixels) {
 #ifndef TARGET_OPENGLES
-	switch(pix.getNumChannels()) {
+	switch(pixels.getNumChannels()) {
 		case 3: return GL_RGB32F;
 		case 4: return GL_RGBA32F;
 		case 2:
@@ -70,8 +105,8 @@ int ofGetGlInternalFormat(const ofFloatPixels& pix) {
 			}
 	}
 #else
-	ofLogWarning("ofGLUtils") << "ofGetGlInternalFormat(): float textures not supported in OpenGL ES";
-	switch(pix.getNumChannels()) {
+	ofLogWarning("ofGLUtils") << "ofGetGLInternalFormat(): float textures not supported in OpenGL ES";
+	switch(pixels.getNumChannels()) {
 		case 3: return GL_RGB;
 		case 4: return GL_RGBA;
 		case 2:
@@ -84,7 +119,7 @@ int ofGetGlInternalFormat(const ofFloatPixels& pix) {
 
 //---------------------------------
 // this is helpful for debugging ofTexture
-string ofGetGlInternalFormatName(int glInternalFormat) {
+string ofGetGLInternalFormatName(int glInternalFormat) {
 	switch(glInternalFormat) {
 		case GL_RGBA: return "GL_RGBA";
 #ifndef TARGET_OPENGLES
@@ -208,7 +243,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 		}
 }
 
-int ofGetGlTypeFromInternal(int glInternalFormat){
+int ofGetGLTypeFromInternal(int glInternalFormat){
 
 	switch(glInternalFormat) {
 		case GL_RGB:
@@ -299,16 +334,16 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 			return GL_UNSIGNED_BYTE;
 
 		default:
-			ofLogError("ofGLUtils") << "ofGetGlTypeFromInternal(): unknown internal format " << glInternalFormat << ", returning GL_UNSIGNED_BYTE";
+			ofLogError("ofGLUtils") << "ofGetGLTypeFromInternal(): unknown internal format " << glInternalFormat << ", returning GL_UNSIGNED_BYTE";
 			return GL_UNSIGNED_BYTE;
 
 	}
 }
 
 //---------------------------------
-int ofGetGlType(const ofPixels & pixels) {
+int ofGetGLType(const ofPixels & pixels) {
 #ifndef TARGET_OPENGLES
-	if(pixels.getPixelFormat()==OF_PIXELS_RGB565){
+	if(pixels.getPixelFormat() == OF_PIXELS_RGB565){
 		return GL_UNSIGNED_SHORT_5_6_5;
 	}else{
 #endif
@@ -319,12 +354,12 @@ int ofGetGlType(const ofPixels & pixels) {
 }
 
 //---------------------------------
-int ofGetGlType(const ofShortPixels & pixels) {
+int ofGetGLType(const ofShortPixels & pixels) {
 	return GL_UNSIGNED_SHORT;
 }
 
 //---------------------------------
-int ofGetGlType(const ofFloatPixels & pixels) {
+int ofGetGLType(const ofFloatPixels & pixels) {
 	return GL_FLOAT;
 }
 
@@ -382,9 +417,9 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 	return OF_IMAGE_UNDEFINED;
 }
 
-GLuint ofGetGLPolyMode(ofPolyRenderMode m){
+GLuint ofGetGLPolyMode(ofPolyRenderMode mode){
 #ifndef TARGET_OPENGLES
-	switch(m){
+	switch(mode){
 		case(OF_MESH_POINTS):
 			return GL_POINT;
 			break;
@@ -395,7 +430,7 @@ GLuint ofGetGLPolyMode(ofPolyRenderMode m){
 			return GL_FILL;
 			break;
 		default:
-			ofLogError("ofGLUtils") << "ofGetGLPolyMode(): unknown OF poly mode " << ofToString(m) << ", returning GL_FILL";
+			ofLogError("ofGLUtils") << "ofGetGLPolyMode(): unknown OF poly mode " << ofToString(mode) << ", returning GL_FILL";
 			return GL_FILL;
 			break;
 	}
@@ -404,9 +439,9 @@ GLuint ofGetGLPolyMode(ofPolyRenderMode m){
 #endif
 }
 
-ofPolyRenderMode ofGetOFPolyMode(GLuint m){
+ofPolyRenderMode ofGetOFPolyMode(GLuint mode){
 #ifndef TARGET_OPENGLES
-	switch(m){
+	switch(mode){
 		case(GL_POINT):
 			return OF_MESH_POINTS;
 			break;
@@ -417,7 +452,7 @@ ofPolyRenderMode ofGetOFPolyMode(GLuint m){
 			return OF_MESH_FILL;
 			break;
 		default:
-			ofLogError("ofGLUtils") << "ofGetOFPolyMode(): unknown GL poly mode " << ofToString(m) << ", returning OF_MESH_FILL";
+			ofLogError("ofGLUtils") << "ofGetOFPolyMode(): unknown GL poly mode " << ofToString(mode) << ", returning OF_MESH_FILL";
 			return OF_MESH_FILL;
 			break;
 	}
@@ -829,20 +864,6 @@ shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 	}else{
 		return shared_ptr<ofGLProgrammableRenderer>();
 	}
-}
-#endif
-
-#if defined(TARGET_ANDROID)
-void ofRegenerateAllVbos();
-void ofRegenerateAllTextures();
-void ofReloadAllImageTextures();
-void ofReloadAllFontTextures();
-
-void ofReloadGLResources(){
-	ofRegenerateAllTextures();
-	ofRegenerateAllVbos();
-	ofReloadAllImageTextures();
-	ofReloadAllFontTextures();
 }
 #endif
 

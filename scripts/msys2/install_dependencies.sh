@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function usage {
-	echo usage:
+    echo usage:
     echo ./install_dependencies.sh [--help] [--noconfirm]
     echo --help:
     echo display this message
@@ -27,19 +27,20 @@ while [[ $# > 0 ]] ; do
 	exit 1
 done
 
-NOT_HAS_PATH=$(echo $PATH | grep /mingw32/bin > /dev/null; echo $?)
+NOT_HAS_PATH=$(cmd /c "echo %PATH%" | grep mingw32\\bin > /dev/null; echo $?)
 if [ "$NOT_HAS_PATH" -ne "0" ]; then
 	cd /
 	MSYS2_ROOT=$(pwd)
 	MSYS2_ROOT=$(cygpath -w $MSYS2_ROOT)
 	setx PATH "%PATH%;${MSYS2_ROOT}mingw32\\bin;${MSYS2_ROOT}usr\\bin\\"
+	echo "set path to ${MSYS2_ROOT}mingw32\\bin;${MSYS2_ROOT}usr\\bin\\"
 fi
 
 arch=i686
 if [ -z ${confirm+x} ]; then
 	pacman -S $confirm --needed ca-certificates
 	if [ -z ${APPVEYOR+x} ]; then
-		pacman -S $confirm --needed wget rsync unzip make mingw-w64-$arch-gcc
+		pacman -S $confirm --needed wget rsync unzip make mingw-w64-$arch-gcc mingw-w64-$arch-ntldd-git
 	fi
 	pacman -S $confirm --needed mingw-w64-$arch-glew \
 		mingw-w64-$arch-freeglut \
@@ -69,6 +70,7 @@ else
 		pacman -S $confirm --needed unzip
 		pacman -S $confirm --needed make
 		pacman -S $confirm --needed mingw-w64-$arch-gcc
+		pacman -S $confirm --needed mingw-w64-$arch-ntldd-git
 	fi
 	pacman -S $confirm --needed mingw-w64-$arch-glew
 	pacman -S $confirm --needed mingw-w64-$arch-freeglut

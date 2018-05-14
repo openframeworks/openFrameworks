@@ -10,9 +10,6 @@ void ofApp::setup(){
 		
 	ofSetVerticalSync(true);
     
-    // so the model isn't see through.
-    ofEnableDepthTest();
-    
     // load the first model
     model.loadModel("penguin.dae", 20);
     // model info
@@ -22,45 +19,52 @@ void ofApp::setup(){
     // ofMesh can only read in .plys that are in the ascii and not in the binary format.
     bUsingMesh = false;
     mesh.load("penguin.ply");
+	meshNode.setOrientation(glm::angleAxis(ofDegToRad(-90.f), glm::vec3{1.f, 0.f, 0.f}));
     
-    //you can create as many rotations as you want
-    //choose which axis you want it to effect
-    //you can update these rotations later on
-    // these rotation set the model so it is oriented correctly
-    model.setRotation(0, 90, 1, 0, 0);
-    model.setRotation(0, 90, 0, 1, 0);
-    model.setScale(0.9, 0.9, 0.9);
-    model.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
+	// you can create as many rotations as you want
+	// choose which axis you want it to effect
+	// you can update these rotations later on
+	// these rotation set the model so it is oriented correctly
+	model.setRotation(0, 180, 1, 0, 0);
+	model.setScale(0.9, 0.9, 0.9);
     light.setPosition(0, 0, 500);
     
+	cameraOrbit = 0;
+	cam.setDistance(700);
+
     //set help text to display by default
     bHelpText  = true;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    // rotates the model in a circle
-    model.setRotation(1, 270 + ofGetElapsedTimef() * 60, 0, 1, 0);    
+	cameraOrbit += ofGetLastFrameTime() * 20.; // 20 degrees per second;
+	cam.orbitDeg(cameraOrbit, 0., cam.getDistance(), {0., 0., 0.});
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	// so the model isn't see through.
+	ofEnableDepthTest();
 	
     light.enable();
-    
-    // draws the ply file loaded into the mesh is you pressed 6
-    if (bUsingMesh){
-        cam.begin();
-        mesh.draw();
-        cam.end();
+
+	cam.begin();
+	ofColor(255,255);
+	if (bUsingMesh){
+		// draws the ply file loaded into the mesh is you pressed 6
+		meshNode.transformGL();
+		mesh.draw();
+		meshNode.restoreTransformGL();
+	} else {
+		// draws all the other file types which are loaded into model.
+		model.drawFaces();
     }
-    // draws all the other file types which are loaded into model.
-    else{
-        ofColor(255,255);
-        model.drawFaces();
-    }
+	cam.end();
     
     light.disable();
+
+	ofDisableDepthTest();
     
     // display help text if it is enable
     if(bHelpText) {
@@ -81,40 +85,47 @@ void ofApp::keyPressed(int key){
     switch (key){
             case '1':
                 bUsingMesh = false;
-                model.loadModel("penguin.dae");
-                model.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
+				model.loadModel("penguin.dae");
+				model.setRotation(0, 180, 1, 0, 0);
+				model.setScale(0.9, 0.9, 0.9);
+				cam.setDistance(700);
                 curFileInfo = ".dae";
                 break;
             case '2':
                 bUsingMesh = false;
-                model.loadModel("penguin.3ds");
-                model.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
-                curFileInfo = ".3ds";
-                glShadeModel(GL_SMOOTH);
+				model.loadModel("penguin.3ds");
+				model.setRotation(0, 180, 1, 0, 0);
+				model.setScale(0.9, 0.9, 0.9);
+				cam.setDistance(700);
+				curFileInfo = ".3ds";
                 break;
             case '3':
                 bUsingMesh = false;
-                model.loadModel("penguin.ply");
-                model.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
+				model.loadModel("penguin.ply");
+				model.setRotation(0, 90, 1, 0, 0);
+				model.setScale(0.9, 0.9, 0.9);
+				cam.setDistance(700);
                 curFileInfo = ".ply";
                 break;
             case '4':
                 bUsingMesh = false;
-                model.loadModel("penguin.obj");
-                model.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
+				model.loadModel("penguin.obj");
+				model.setRotation(0, 90, 1, 0, 0);
+				model.setScale(0.9, 0.9, 0.9);
+				cam.setDistance(700);
                 curFileInfo = ".obj";
                 break;
             case '5':
                 bUsingMesh = false;
-            
-                model.loadModel("penguin.stl");
-                model.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
+				model.loadModel("penguin.stl");
+				model.setRotation(0, 90, 1, 0, 0);
+				model.setScale(0.9, 0.9, 0.9);
+				cam.setDistance(700);
                 curFileInfo = ".stl";
                 break;
             case '6':
-                bUsingMesh = true;
-                cam.setTarget(mesh.getCentroid());
-                cam.setPosition(mesh.getCentroid().x, mesh.getCentroid().y, 300);
+				bUsingMesh = true;
+				cam.setDistance(40);
                 curFileInfo = ".ply loaded directly into ofmesh";
                 break;
             case 'h':

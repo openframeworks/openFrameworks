@@ -930,7 +930,9 @@ std::string ofSystem(const std::string& command);
 /// \returns the current ofTargetPlatform.
 ofTargetPlatform ofGetTargetPlatform();
 
-
+/// \brief Get the value of a given environment variable.
+/// \note The available environment variables differ between operating systems.
+/// \returns the environmnt variable's value or an empty string if not found.
 std::string ofGetEnv(const std::string & var);
 
 /// Allows to iterate over a string's utf8 codepoints.

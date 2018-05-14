@@ -5,28 +5,28 @@ ifdef MAKEFILE_DEBUG
 	$(info ===================compile.core.make================================)
 endif
 
-ifdef PLATFORM_CXX
-	CXX = $(PLATFORM_CXX)
-endif
-
 ifdef PROJECT_CXX
-	CXX = $(PROJECT_CXX)
+	CXX ?= $(PROJECT_CXX)
 endif
 
-ifdef PLATFORM_CC
-	CC = $(PLATFORM_CC)
+ifdef PLATFORM_CXX
+	CXX ?= $(PLATFORM_CXX)
 endif
 
 ifdef PROJECT_CC
-	CC = $(PROJECT_CC)
+	CC ?= $(PROJECT_CC)
 endif
 
-ifdef PLATFORM_AR
-	AR = $(PLATFORM_AR)
+ifdef PLATFORM_CC
+	CC ?= $(PLATFORM_CC)
 endif
 
 ifdef PROJECT_AR
-	AR = $(PROJECT_AR)
+	AR ?= $(PROJECT_AR)
+endif
+
+ifdef PLATFORM_AR
+	AR ?= $(PLATFORM_AR)
 endif
 
 ifdef PLATFORM_ARFLAGS

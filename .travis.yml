@@ -1,6 +1,7 @@
 language: c++
 compiler: gcc
 sudo: true
+cache: ccache
 env:
   global:
     secure: LBTN8d1hS7ocrqDwxLQqU0tfK3FMCXBI8q1yASEjtkp/v5HEyFkbj22H4jXZ20SkpCTlIG2L6i/fU3d6KzJUzTFuxkQEWsnjkj4jAhxGEWRsT1RV6VcUPQDGLHapXwTy+ZYgMNxE7aAdQaBskPHdVzAhjrzlTwVuKp6KjFn+kMU=
@@ -48,17 +49,20 @@ matrix:
 
 
   - os: linux
-    sudo: false
+    sudo: required
+    dist: trusty
     env: TARGET="linuxarmv7l"
     cache:
       directories:
+        - ~/.ccache
         #- ~/rpi2_toolchain
         - ~/firmware-master
         #- ~/archlinux
 
 
   - os: linux
-    sudo: false
+    sudo: required
+    dist: trusty
     env: TARGET="emscripten"
     addons:
       apt:
@@ -82,7 +86,6 @@ matrix:
     compiler: clang
     env: TARGET="ios"
 
-
   - os: osx
     osx_image: xcode8
     compiler: clang
@@ -92,13 +95,28 @@ matrix:
     language: android
     dist: trusty
     sudo: required
-    env: TARGET="android" NDK_DIR="android-ndk-r15c"
+    env: TARGET="android" NDK_DIR="android-ndk-r15c" GRADLE_TARGET="compileArm7DebugSources"
     android:
       components:
-        - build-tools-25.0.2
-        - android-19
+        - build-tools-25.0.3
+        - android-25
     cache:
       directories:
+        - ~/.gradle
+        - ~/android-ndk-r15c
+
+  - os: linux
+    language: android
+    dist: trusty
+    sudo: required
+    env: TARGET="android" NDK_DIR="android-ndk-r15c" GRADLE_TARGET="compileX86DebugSources"
+    android:
+      components:
+        - build-tools-25.0.3
+        - android-25
+    cache:
+      directories:
+        - ~/.gradle
         - ~/android-ndk-r15c
 
 
@@ -112,7 +130,7 @@ install:
         scripts/ci/$TARGET/install.sh;
     fi
   - if [ "$TARGET" == "linux64" ]; then
-        scripts/linux/download_libs.sh -a 64;
+        scripts/linux/download_libs.sh -a 64gcc4;
     elif [ "$TARGET" == "linuxarmv6l" ]; then
         scripts/linux/download_libs.sh -a armv6l;
     elif [ "$TARGET" == "linuxarmv7l" ]; then
@@ -125,17 +143,24 @@ install:
 
 
 script:
-  - if [ "$TARGET" == "osx" ] && [ $OPT == "makefiles" ]; then
+  - ccache -z
+  - ccache -s
+  - if [ "$TARGET" = "linux64" ] || [ "$TARGET" = "linuxarmv6l" ] || [ "$TARGET" = "linuxarmv7l" ]; then
+      wget http://mirrors.kernel.org/ubuntu/pool/main/c/ccache/ccache_3.3.4-1_amd64.deb;
+      sudo dpkg -i ccache_3.3.4-1_amd64.deb;
+    fi
+  - if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     else
       scripts/ci/$TARGET/build.sh $OPT;
     fi
-  - if [ "$TARGET" == "linux64" ]; then
+  - if [ "$TARGET" = "linux64" ]; then
       scripts/ci/$TARGET/run_tests.sh;
     fi
-  - if [ "$TARGET" != "osx" ] || [ $OPT != "makefiles" ]; then
+  - if [ "$TARGET" != "osx" ] || [ "$OPT" != "makefiles" ]; then
       scripts/ci/upload_of_lib.sh;
     fi
+  - ccache -s
 
 git:
   depth: 10

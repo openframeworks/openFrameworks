@@ -17,10 +17,10 @@ class ofAppiOSWindow;
 @interface ofxiOSEAGLView : EAGLView {
 
 @protected
-    NSMutableDictionary	* activeTouches;
-	glm::vec2 * screenSize;   // because glm::vec2 is forward declared,
-	glm::vec2 * windowSize;   // these values have to be pointers.
-	glm::vec2 * windowPos;
+    NSMutableDictionary * activeTouches;
+    glm::vec2 * screenSize;   // because glm::vec2 is forward declared,
+    glm::vec2 * windowSize;   // these values have to be pointers.
+    glm::vec2 * windowPos;
 }
 
 @property (readonly, nonatomic, getter=getScreenSize) glm::vec2 * screenSize;
@@ -30,11 +30,12 @@ class ofAppiOSWindow;
 + (ofxiOSEAGLView *) getInstance;
 
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)app;
+- (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup;
 - (void)setup;
 - (void)updateDimensions;
 - (void)destroy;
 - (CGPoint)orientateTouchPoint:(CGPoint)touchPoint;
-- (void) resetTouches;
+- (void)resetTouches;
 
 @end
 

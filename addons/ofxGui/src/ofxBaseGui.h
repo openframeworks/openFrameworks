@@ -64,7 +64,7 @@ class ofxBaseGui {
 		static void setDefaultEventsPriority(ofEventOrder eventsPriority);
 
 		static void loadFont(const std::string& filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, int dpi = 0);
-		static void loadFont(const ofTrueTypeFont::Settings & fontSettings);
+		static void loadFont(const ofTrueTypeFontSettings & fontSettings);
 		static void setUseTTF(bool bUseTTF);
 
 		void registerMouseEvents();

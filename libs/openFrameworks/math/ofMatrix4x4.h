@@ -77,8 +77,8 @@ public:
 		*this = reinterpret_cast<const ofMatrix4x4&>(mat);
 	}
 
-	operator glm::mat4(){
-		return *reinterpret_cast<glm::mat4*>(this);
+	operator glm::mat4() const{
+		return *reinterpret_cast<const glm::mat4*>(this);
 	}
 
 	/// \brief Construct with a pointer.

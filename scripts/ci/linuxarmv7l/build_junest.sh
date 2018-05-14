@@ -3,6 +3,7 @@ set -ev
 ROOT=$(cd $(dirname $0); pwd -P)
 OF_ROOT=$(cd $ROOT/../../..; pwd -P)
 PROJECTS=$OF_ROOT/libs/openFrameworksCompiled/project
+# source $OF_ROOT/scripts/ci/ccache.sh
 export GCC_PREFIX=arm-unknown-linux-gnueabihf
 export TOOLCHAIN_PREFIX=arm-unknown-linux-gnueabihf
 export GST_VERSION=1.0
@@ -15,8 +16,8 @@ export PLATFORM_ARCH=armv7l
 export PKG_CONFIG_DIR=
 export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
 export PKG_CONFIG_SYSROOT_DIR=${RPI_ROOT}
-export CXX=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++
-export CC=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc
+export CXX="ccache ${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++"
+export CC="ccache ${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc"
 export AR=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ar
 export LD=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ld
 export CFLAGS="$CFLAGS --sysroot=${RPI_ROOT}"

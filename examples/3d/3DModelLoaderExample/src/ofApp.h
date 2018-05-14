@@ -35,6 +35,9 @@ class ofApp : public ofBaseApp{
         // for demonstrating loading in models directly into a mesh without using ofxAssimpModelLoader
         ofVboMesh mesh;
         bool bUsingMesh;
+		ofNode meshNode;
+
         ofEasyCam cam;
+		float cameraOrbit;
 };
 

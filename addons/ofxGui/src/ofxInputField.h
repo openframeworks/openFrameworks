@@ -64,7 +64,13 @@ public:
 
 protected:
 
-	static ofxInputField createInsideSlider();
+	enum Inside{
+		InsideSlider,
+	};
+	void ofxSlider(Inside){
+		insideSlider = true;
+	}
+
 	virtual void render();
 	ofParameter<Type> value;
 	bool bGuiActive=false, bMousePressed=false, bMouseOver=false;
@@ -105,7 +111,8 @@ protected:
 	std::vector<ofFloatColor> originalColors;
 
 	ofEvent<void> leftFocus;
-	std::vector<ofEventListener> listeners;
+
+	ofEventListeners listeners;
 	
 	
 	enum InputState { INPUT_STATE_MIN =0, INPUT_STATE_VAL, INPUT_STATE_MAX, INPUT_STATE_TOTAL } inputState = INPUT_STATE_VAL;
@@ -132,7 +139,6 @@ protected:
 	void setInputState(InputState i);
     void setInputStateButtonsShape();
 	
-
 };
 
 typedef ofxInputField<float> ofxFloatField;

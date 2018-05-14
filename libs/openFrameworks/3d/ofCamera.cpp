@@ -6,6 +6,7 @@
 #include "ofGraphicsBaseTypes.h"
 #include "glm/gtx/transform.hpp"
 #include "glm/gtc/quaternion.hpp"
+#include "of3dGraphics.h"
 
 using namespace std;
 
@@ -151,10 +152,10 @@ glm::mat4 ofCamera::getProjectionMatrix(const ofRectangle & viewport) const {
 
 	if(isOrtho) {
 		return glm::ortho(
-			viewport.x - viewport.width/2,
-			viewport.x + viewport.width/2,
-			viewport.y - viewport.height/2,
-			viewport.y + viewport.height/2,
+			- viewport.width/2,
+			+ viewport.width/2,
+			- viewport.height/2,
+			+ viewport.height/2,
 			nearClip,
 			farClip
 		);
@@ -206,7 +207,7 @@ glm::vec3 ofCamera::worldToCamera(glm::vec3 WorldXYZ, const ofRectangle & viewpo
 		MVPmatrix = glm::scale(glm::mat4(1.0), glm::vec3(1.f,-1.f,1.f)) * MVPmatrix;
 	}
 	auto camera = MVPmatrix * glm::vec4(WorldXYZ, 1.0);
-	return camera.xyz() / camera.w;
+	return glm::vec3(camera) / camera.w;
 	
 }
 
@@ -217,7 +218,7 @@ glm::vec3 ofCamera::cameraToWorld(glm::vec3 CameraXYZ, const ofRectangle & viewp
 		MVPmatrix = glm::scale(glm::mat4(1.0), glm::vec3(1.f,-1.f,1.f)) * MVPmatrix;
 	}
 	auto world = glm::inverse(MVPmatrix) * glm::vec4(CameraXYZ, 1.0);
-	return world.xyz() / world.w;
+	return glm::vec3(world) / world.w;
 }
 
 //----------------------------------------
@@ -247,55 +248,32 @@ void ofCamera::setRenderer(shared_ptr<ofBaseRenderer> _renderer){
 }
 
 void ofCamera::drawFrustum(const ofRectangle & viewport) const {
-	//FIXME: this is not using the viewport?
-	ofPushMatrix(); // we assume we are currently in world space.
-	ofMultMatrix( getGlobalTransformMatrix() ); 
-	// Move origin to camera origin == global transform of camera == inverse (view matrix)
-	// Which brings us into view space
+	ofPushMatrix();
+
+	// In World Space, the camera frustum is the "capped pyramid" which 
+	// contains everything which can be seen from a camera. 
+	//
+	// In Clip Space, the frustum is defined as a box with dimensions: -1, -1, -1 to +1, +1, +1.
+	//
+	// Much simpler. 
+	//
+	// We therefore want to draw our frustum as if in Clip Space. 
+	// For this, we must find a matrix which will transform Clip Space 
+	// back to World Space. 
 
 
-	// We want to draw the frustum of camera 0. To this end, we grab the matrix which transforms
-	// from view space into clip space (i.e. the projection matrix),
-	// then we take our unit clip cube (i.e. the cube that delimits clip space,
-	// and is defined to be +-1 onto each x, y , z),and transform this clip cube back 
-	// into view space. We transform it back into
-	// viewspace by applying the inverse transform viewspace -> clipspace
-	// which is the inverse of applying the projection matrix, which is applying
-	// the inverse projection matrix.
+	// Note: globalTransformMatrix == inverse(modelViewMatrix)
+	glm::mat4 clipSpaceToWorld = getGlobalTransformMatrix() * glm::inverse(getProjectionMatrix(viewport));
 
-	// the edges of our unit cube in clip space:
+	// Move into Clip Space - this matrix will transform anything we 
+	// draw from Clip Space to World Space
+	ofMultMatrix(clipSpaceToWorld);
 
-	glm::vec3 clipCube[8] = {
-		{ -1,-1,-1 }, { -1, 1,-1 }, { 1,-1,-1 }, { 1, 1,-1 },
-		{ -1,-1, 1 }, { -1, 1, 1 }, { 1,-1, 1 }, { 1, 1, 1 },
-	};
-	// since the clip cube is expressed in clip (=projection) space, we want this 
-	// transformed back into our current space, view space, i.e. apply the inverse 
-	// projection matrix to it.
-
-
-	// calculate projection matrix using frustum: 
-
-	glm::mat4x4 projectionMatrixInverse = glm::inverse( getProjectionMatrix(viewport) );
-
-	for ( int i = 0; i < 8; i++ ) {
-		clipCube[i] = projectionMatrixInverse * glm::vec4(clipCube[i], 1.f);
-	}
-
-
-	// now draw our clip cube side edge rays - note that since the coordinates are
-	// now in world space, we can draw them without applying any additional trans-
-	// formations.
-	for ( int i = 0; i < 4; i++ ) {
-		ofDrawLine( clipCube[i], clipCube[i + 4] );
-	}
+	// Anything we draw now is transformed from Clip Space back to World Space
 
 	ofPushStyle();
-	ofSetRectMode(OF_RECTMODE_CORNER);
 	ofNoFill();
-	//// draw the clip cube cap
-	ofDrawRectangle( clipCube[0], clipCube[3].x - clipCube[0].x, clipCube[3].y - clipCube[0].y );
-	ofDrawRectangle( clipCube[4], clipCube[7].x - clipCube[4].x, clipCube[7].y - clipCube[4].y );
+	ofDrawBox(0, 0, 0, 2.f, 2.f, 2.f); // In Clip Space, the frustum is standardised to be a box of dimensions -1,1 in each axis
 	ofPopStyle();
 
 	ofPopMatrix();

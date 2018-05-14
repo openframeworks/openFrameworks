@@ -229,7 +229,7 @@ static const char* eglErrorString(EGLint err) {
 
 
 //-------------------------------------------------------------------------------------
-ofAppEGLWindow::Settings::Settings()
+ofAppEGLWindowSettings::ofAppEGLWindowSettings()
 :ofGLESWindowSettings(){
 	eglWindowPreference = OF_APP_WINDOW_AUTO;
 	eglWindowOpacity = 255;
@@ -250,7 +250,7 @@ ofAppEGLWindow::Settings::Settings()
 	layer = 0;
 }
 
-ofAppEGLWindow::Settings::Settings(const ofGLESWindowSettings & settings)
+ofAppEGLWindowSettings::ofAppEGLWindowSettings(const ofGLESWindowSettings & settings)
 :ofGLESWindowSettings(settings){
 	eglWindowPreference = OF_APP_WINDOW_AUTO;
 	eglWindowOpacity = 255;
@@ -406,7 +406,7 @@ void ofAppEGLWindow::setup(const ofGLESWindowSettings & settings){
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setup(const Settings & _settings) {
+void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 	settings = _settings;
 	windowMode = OF_WINDOW;
 	bNewScreenMode = true;
@@ -475,7 +475,7 @@ void ofAppEGLWindow::setup(const Settings & _settings) {
 	windowMode = settings.windowMode;
 	bShowCursor = true;
 
-	nonFullscreenWindowRect.set(0,0,settings.width,settings.height);
+	nonFullscreenWindowRect.set(0,0,settings.getWidth(),settings.getHeight());
 	nonFullscreenWindowRect.standardize();
 
 	ofRectangle startRect = nonFullscreenWindowRect;
@@ -724,7 +724,7 @@ bool ofAppEGLWindow::createSurface() {
 			eglSurface, // read surface
 			eglContext);
 
-	if(eglContext == EGL_FALSE) {
+	if(eglContext == nullptr) {
 		EGLint error = eglGetError();
 		ofLogError("ofAppEGLWindow") << "createSurface(): couldn't making current surface: " << eglErrorString(error);
 		return false;
@@ -1111,7 +1111,7 @@ glm::vec2 ofAppEGLWindow::getWindowSize(){
 
 //------------------------------------------------------------
 glm::vec2 ofAppEGLWindow::getWindowPosition(){
-	return currentWindowRect.getPosition().xy();
+	return glm::vec2(currentWindowRect.getPosition());
 }
 
 //------------------------------------------------------------
