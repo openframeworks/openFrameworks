@@ -143,13 +143,10 @@ ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(ofParameter<ofCol
         add(new ofxSlider<ColorType>(p, width, height));
         p.addListener(this, & ofxColorSlider_::changeSlider);
 		collection[i]->setFillColor(value.get());
-
         float range = p.getMax()-p.getMin();
         if(range == 0){
             collection[i]->setTextColor( ofFloatColor(0.));
         }else{
-            int v = p.getMax();
-            int a = p.getMin();
             collection[i]->setTextColor( p/range > 0.75 ? ofFloatColor(0.) : ofFloatColor(1.));
         }
     }
@@ -182,13 +179,10 @@ void ofxColorSlider_<ColorType>::changeSlider(const void * parameter, ColorType 
     for (int i=0; i<4; i++){
 		collection[i]->setFillColor(data);
 		auto p = parameters[i].template cast<ColorType>();
-		
         float range = p.getMax()-p.getMin();
         if(range == 0){
             collection[i]->setTextColor( ofFloatColor(0.));
         }else{
-            int v = p.getMax();
-            int a = p.getMin();
             collection[i]->setTextColor( p/range > 0.75 ? ofFloatColor(0.) : ofFloatColor(1.));
         }
 	}
@@ -204,13 +198,10 @@ void ofxColorSlider_<ColorType>::changeValue(ofColor_<ColorType> & value){
         parameters[i].template cast<ColorType>() = value[i];
     	collection[i]->setFillColor(value);
 		auto p = parameters[i].template cast<ColorType>();
-		
         float range = p.getMax()-p.getMin();
         if(range == 0){
             collection[i]->setTextColor( ofFloatColor(0.));
         }else{
-            int v = p.getMax();
-            int a = p.getMin();
             collection[i]->setTextColor( p/range > 0.75 ? ofFloatColor(0.) : ofFloatColor(1.));
         }
 	}
