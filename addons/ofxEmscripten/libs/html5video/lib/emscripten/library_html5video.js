@@ -223,7 +223,7 @@ var LibraryHTML5Video = {
 	        var grabber_id = VIDEO.getNewGrabberId();
 	        VIDEO.grabbers[grabber_id] = video;
 	        return grabber_id;
-    	}
+    	
     },
 
     html5video_grabber_init__deps: ['$GL'],
@@ -281,7 +281,7 @@ var LibraryHTML5Video = {
         .catch(function(err) {
           console.log(e);
         });
-        
+
     	}
     },
 
