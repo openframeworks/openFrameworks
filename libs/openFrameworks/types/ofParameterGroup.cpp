@@ -39,8 +39,10 @@ void ofParameterGroup::remove(const string &name){
 	if(!contains(name)){
 		return;
 	}
-	obj->parameters.erase(obj->parameters.begin() + obj->parametersIndex[name]);
+    int removedParameterIndex = obj->parametersIndex[name];
+	obj->parameters.erase(obj->parameters.begin() + removedParameterIndex);
 	obj->parametersIndex.erase(name);
+    rebuildParameterIndexMap(removedParameterIndex);
 }
 
 void ofParameterGroup::rebuildParameterIndexMap(std::size_t fromIndex){
