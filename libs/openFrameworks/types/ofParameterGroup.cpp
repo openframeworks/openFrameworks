@@ -43,6 +43,12 @@ void ofParameterGroup::remove(const string &name){
 	obj->parametersIndex.erase(name);
 }
 
+void ofParameterGroup::rebuildParameterIndexMap(std::size_t fromIndex){
+    for(size_t i = fromIndex; i < obj->parameters.size(); i++){
+        obj->parametersIndex[obj->parameters[i]->getName()] = i;
+    }
+}
+
 void ofParameterGroup::clear(){
 	auto name = this->getName();
 	obj.reset(new Value);

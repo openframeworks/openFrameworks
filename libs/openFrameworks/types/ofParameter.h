@@ -108,6 +108,8 @@ public:
 	void remove(ofAbstractParameter & param);
 	void remove(std::size_t index);
 	void remove(const std::string& name);
+    
+    void rebuildParameterIndexMap(std::size_t fromIndex = 0);
 
 	void clear();
 
