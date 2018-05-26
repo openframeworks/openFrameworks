@@ -23,4 +23,5 @@ extern "C"{
 
 	extern int html5audio_stream_create(int context_id, int bufferSize, int inputChannels, int outputChannels, float * inbuffer, float * outbuffer, html5audio_stream_callback callback, void * userData);
 	extern int html5audio_stream_free(int stream);
+	extern bool html5audio_sound_is_loaded(int sound);
 }

@@ -3,17 +3,17 @@ var LibraryHTML5Audio = {
     	contexts: [],
     	ffts: [],
     	lastContextID: 0,
-    	
+
     	soundBuffers: [],
     	soundSources: [],
     	soundStartTimes: [],
     	soundGains: [],
     	lastSoundID: 0,
-    	
+
     	streams: [],
     	mediaElements: [],
     	lastStreamID: 0,
-    	
+
     	soundPosition: function(sound_id){
     		var source = AUDIO.soundSources[sound_id];
         	if(source!=undefined){
@@ -23,10 +23,10 @@ var LibraryHTML5Audio = {
         		return Math.min(duration,playTime);
         	}else{
         		return 0;
-        	}	
+        	}
     	}
     },
-    
+
     html5audio_context_create: function(){
     	try {
 			// Fix up for prefixing
@@ -46,32 +46,32 @@ var LibraryHTML5Audio = {
     		return -1;
     	}
     },
-	
+
 	html5audio_context_spectrum: function(context_id, bands, spectrum){
 		AUDIO.ffts[context_id].fftSize = bands*2;
 		var spectrumArray = Module.HEAPF32.subarray(spectrum>>2, (spectrum>>2)+bands);
 		AUDIO.ffts[context_id].getFloatFrequencyData(spectrumArray);
 	},
-    
+
     html5audio_context_samplerate: function(context){
     	return AUDIO.contexts[context_id].sampleRate.value;
     },
-    
+
     html5audio_sound_load: function(context_id, url){
 		var request = new XMLHttpRequest();
 		request.open('GET', Pointer_stringify(url), true);
 		request.responseType = 'arraybuffer';
-		
+
 		var id = AUDIO.lastSoundID++;
 		AUDIO.soundGains[id] = AUDIO.contexts[context_id].createGain();
 		AUDIO.soundGains[id].connect(AUDIO.ffts[context_id]);
-		 
+
 		// Decode asynchronously
 		request.onload = function() {
-			AUDIO.contexts[context_id].decodeAudioData(request.response, 
+			AUDIO.contexts[context_id].decodeAudioData(request.response,
 				function(buffer) {
 					AUDIO.soundBuffers[id] = buffer;
-				}, 
+				},
 				function(e){
 					console.log("couldn't decode sound " + id, e);
 				}
@@ -80,7 +80,7 @@ var LibraryHTML5Audio = {
     	request.send();
     	return id;
     },
-    
+
     html5audio_sound_play: function(context_id, sound_id, offset){
     	if(AUDIO.soundBuffers[sound_id]!=undefined){
     		if(AUDIO.contexts[context_id]!=undefined && AUDIO.contexts[context_id].paused){
@@ -95,7 +95,7 @@ var LibraryHTML5Audio = {
 		    	source.paused = false;
 		    	source.onended = function(event){
 		    		event.target.done = true;
-		    	} 
+		    	}
 		    	AUDIO.soundSources[sound_id] = source;
 		    	source.startTime = AUDIO.contexts[context_id].currentTime - offset;
 	    		source.start(offset);
@@ -111,13 +111,13 @@ var LibraryHTML5Audio = {
     	AUDIO.soundSources[sound_id].stop();
     	AUDIO.soundSources[sound_id].paused = true;
     },
-    
+
     html5audio_sound_rate: function(sound_id){
     	if(AUDIO.soundSources[sound_id]!=undefined){
     		return AUDIO.soundSources[sound_id].playbackRate.value;
     	}
     },
-    
+
     html5audio_sound_set_rate: function(sound_id,rate){
     	var source = AUDIO.soundSources[sound_id];
     	if(source!=undefined){
@@ -126,7 +126,7 @@ var LibraryHTML5Audio = {
     		AUDIO.soundSources[sound_id].playbackRate.value = rate;
     	}
     },
-    
+
     html5audio_sound_done: function(sound_id){
     	if(AUDIO.soundSources[sound_id]!=undefined){
     		return AUDIO.soundSources[sound_id].done;
@@ -134,7 +134,7 @@ var LibraryHTML5Audio = {
     		return false;
     	}
     },
-    
+
     html5audio_sound_duration: function(sound_id){
     	if(AUDIO.soundBuffers[sound_id]!=undefined){
     		return AUDIO.soundBuffers[sound_id].duration;
@@ -146,33 +146,33 @@ var LibraryHTML5Audio = {
 	html5audio_sound_position: function(sound_id){
 		return AUDIO.soundPosition(sound_id);
 	},
-    
+
 	html5audio_sound_set_loop: function(sound_id, loop){
 		AUDIO.soundSources[sound_id].loop = loop;
 	},
-    
+
 	html5audio_sound_set_gain: function(sound_id, gain){
 		AUDIO.soundGains[sound_id].gain = gain;
 	},
-    
+
 	html5audio_sound_gain: function(sound_id){
 		return AUDIO.soundGains[sound_id].gain;
 	},
-    
+
 	html5audio_sound_free: function(sound_id){
 		return AUDIO.soundBuffers[sound_id] = null;
 		return AUDIO.soundSources[sound_id] = null;
 		return AUDIO.soundStartTimes[sound_id] = 0;
 		return AUDIO.soundGains[sound_id] = null;
 	},
-	
+
 	html5audio_stream_create: function(context_id, bufferSize, inputChannels, outputChannels, inbuffer, outbuffer, callback, userData){
 		var stream = AUDIO.contexts[context_id].createScriptProcessor(bufferSize,inputChannels,outputChannels);
 		var inbufferArray = Module.HEAPF32.subarray(inbuffer>>2,(inbuffer>>2)+bufferSize*inputChannels);
 		var outbufferArray = Module.HEAPF32.subarray(outbuffer>>2,(outbuffer>>2)+bufferSize*outputChannels);
-		
+
 		var id = AUDIO.lastStreamID++;
-		
+
 		stream.onaudioprocess = function(event){
 			var i,j,c;
 			if(inputChannels>0){
@@ -183,9 +183,9 @@ var LibraryHTML5Audio = {
 					}
 				}
 			}
-			
+
 			Runtime.dynCall('viiii',callback, [bufferSize,inputChannels,outputChannels,userData]);
-			
+
 			if(outputChannels>0){
 				for(c=0;c<outputChannels;++c){
 					var outChannel = event.outputBuffer.getChannelData(c);
@@ -195,16 +195,16 @@ var LibraryHTML5Audio = {
 				}
 			}
 		};
-		
+
 		if(inputChannels>0){
 			navigator.getUserMedia = navigator.getUserMedia ||
 							    	    navigator.webkitGetUserMedia ||
 							    	    navigator.mozGetUserMedia ||
 							    	    navigator.msGetUserMedia;
-			
+
 			if(navigator.getUserMedia){
 				navigator.getUserMedia(
-					{audio: true}, 
+					{audio: true},
 					function(audioIn) {
 						var mediaElement = AUDIO.contexts[context_id].createMediaStreamSource(audioIn);
 						mediaElement.connect(stream);
@@ -216,15 +216,22 @@ var LibraryHTML5Audio = {
 				);
 			}
 		}
-		
+
 		stream.connect(AUDIO.ffts[context_id]);
 		AUDIO.streams[id] = stream;
 		return id;
 	},
-    
+
 	html5audio_stream_free: function(stream_id){
 		return AUDIO.streams[stream_id] = null;
 		return AUDIO.mediaElements[stream_id] = null;
+	},
+
+  html5audio_sound_is_loaded: function(sound){
+    if(sound!=-1 && AUDIO.soundBuffers[sound] != undefined){
+		  return true;
+    }
+    return false;
 	}
 }
 
