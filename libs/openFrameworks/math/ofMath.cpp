@@ -32,7 +32,7 @@ void ofSeedRandom() {
 		struct timeval tv;
 		gettimeofday(&tv, 0);
 		long int n = (tv.tv_sec ^ tv.tv_usec) ^ getpid();
-		srand(n);
+		::std::srand(n);
 	#else
 		struct timeval tv;
 		gettimeofday(&tv, 0);

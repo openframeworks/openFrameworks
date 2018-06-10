@@ -22,15 +22,13 @@ static map<string,ofLogLevel> & getModules(){
 	return *modules;
 }
 
-static void noopDeleter(ofBaseLoggerChannel*){}
-
 shared_ptr<ofBaseLoggerChannel> & ofLog::channel(){
 #ifdef TARGET_ANDROID
-	static shared_ptr<ofBaseLoggerChannel> channel = shared_ptr<ofxAndroidLogChannel>(new ofxAndroidLogChannel, std::ptr_fun(noopDeleter));
+	static shared_ptr<ofBaseLoggerChannel> channel = shared_ptr<ofxAndroidLogChannel>(new ofxAndroidLogChannel, [](ofBaseLoggerChannel*){} );
 #elif defined(TARGET_WIN32)
-	static shared_ptr<ofBaseLoggerChannel> channel = IsDebuggerPresent() ? shared_ptr<ofBaseLoggerChannel>(new ofDebugViewLoggerChannel, std::ptr_fun(noopDeleter)) : shared_ptr<ofBaseLoggerChannel>(new ofConsoleLoggerChannel, std::ptr_fun(noopDeleter));
+	static shared_ptr<ofBaseLoggerChannel> channel = IsDebuggerPresent() ? shared_ptr<ofBaseLoggerChannel>(new ofDebugViewLoggerChannel, [](ofBaseLoggerChannel*){}) : shared_ptr<ofBaseLoggerChannel>(new ofConsoleLoggerChannel, [](ofBaseLoggerChannel*){});
 #else
-	static shared_ptr<ofBaseLoggerChannel> channel = shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,std::ptr_fun(noopDeleter));
+	static shared_ptr<ofBaseLoggerChannel> channel = shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,[](ofBaseLoggerChannel*){});
 #endif
 
 	return channel;
@@ -67,12 +65,12 @@ void ofLogToFile(const std::filesystem::path & path, bool append){
 
 //--------------------------------------------------
 void ofLogToConsole(){
-	ofLog::setChannel(shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,std::ptr_fun(noopDeleter)));
+	ofLog::setChannel(shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,[](ofBaseLoggerChannel*){}));
 }
 
 #ifdef TARGET_WIN32
 void ofLogToDebugView() {
-	ofLog::setChannel(shared_ptr<ofDebugViewLoggerChannel>(new ofDebugViewLoggerChannel, std::ptr_fun(noopDeleter)));
+	ofLog::setChannel(shared_ptr<ofDebugViewLoggerChannel>(new ofDebugViewLoggerChannel, [](ofBaseLoggerChannel*){}));
 }
 #endif
 
