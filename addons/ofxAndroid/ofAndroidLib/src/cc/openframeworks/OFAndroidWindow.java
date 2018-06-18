@@ -25,12 +25,14 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
     }
     
     public static void setGLESVersion(int version){
+		GLES_VERSION = version; 
+		
     	if(version==1) EGL_OPENGL_ES_BIT=1;
     	else EGL_OPENGL_ES_BIT=4;
     }
     
     public static int getGLESVersion(){
-    	return EGL_OPENGL_ES_BIT==1?1:2;
+    	return GLES_VERSION;
     }
 
     /* This EGL config specification is used to specify 1.x rendering.
@@ -39,6 +41,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
      */
     private static boolean DEBUG = false;
     private static int EGL_OPENGL_ES_BIT = 1;
+    private static int GLES_VERSION = 1;
     private static int[] s_configAttribs2 =
     {
         EGL10.EGL_RED_SIZE, 4,
@@ -220,8 +223,8 @@ class OFGLSurfaceView extends GLSurfaceView{
 	public OFGLSurfaceView(Context context) {
         super(context);
         mRenderer = new OFAndroidWindow(getWidth(),getHeight());
-        if(OFEGLConfigChooser.getGLESVersion()==2){
-        	setEGLContextClientVersion(2);
+        if(OFEGLConfigChooser.getGLESVersion()>=2){
+        	setEGLContextClientVersion(OFEGLConfigChooser.getGLESVersion());
         }
         getHolder().setFormat( PixelFormat.OPAQUE );
         OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,0,16,0);
@@ -233,8 +236,8 @@ class OFGLSurfaceView extends GLSurfaceView{
 	public OFGLSurfaceView(Context context,AttributeSet attributes) {
         super(context,attributes);
         mRenderer = new OFAndroidWindow(getWidth(),getHeight());
-        if(OFEGLConfigChooser.getGLESVersion()==2){
-        	setEGLContextClientVersion(2);
+        if(OFEGLConfigChooser.getGLESVersion()>=2){
+        	setEGLContextClientVersion(OFEGLConfigChooser.getGLESVersion());
         }
         getHolder().setFormat( PixelFormat.OPAQUE );
         OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,0,16,0);
