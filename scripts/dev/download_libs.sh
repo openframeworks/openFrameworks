@@ -28,9 +28,12 @@ cat << EOF
 EOF
 }
 
+
+downloader() { if command -v curl 2>/dev/null; then curl -LO --retry 20 -O --progress $1; else wget $1; fi; }
+
 download(){
     echo "Downloading $1"
-    wget ci.openframeworks.cc/libs/$1 $SILENT_ARGS
+    downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
 }
 
 # trap any script errors and exit

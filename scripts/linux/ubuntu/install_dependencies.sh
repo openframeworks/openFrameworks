@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+downloader() { if command -v wget 2>/dev/null; then wget $1 $2 $3; else curl -LO --retry 20 -O --progress $1 $2 $3; fi; }
+
 if [ $EUID != 0 ]; then
 	echo "this script must be run using sudo"
 	echo ""
@@ -157,7 +159,7 @@ else
     # tools for git use
     GLFW_GIT_TAG=$GLFW_VER
     apt-get install -y -qq libxrandr-dev libxinerama-dev libxcursor-dev cmake
-    wget https://github.com/glfw/glfw/archive/$GLFW_GIT_TAG.tar.gz -O glfw-$GLFW_GIT_TAG.tar.gz
+    downloader https://github.com/glfw/glfw/archive/$GLFW_GIT_TAG.tar.gz -O glfw-$GLFW_GIT_TAG.tar.gz
     tar -xf glfw-$GLFW_GIT_TAG.tar.gz
 	mv glfw-$GLFW_GIT_TAG glfw
 	rm glfw-$GLFW_GIT_TAG.tar.gz

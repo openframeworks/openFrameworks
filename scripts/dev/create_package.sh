@@ -167,7 +167,7 @@ function createProjectFiles {
         mkdir -p ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
         cd ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
         rm -f ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a
-        wget http://ci.openframeworks.cc/openFrameworks_libs/linux64/libopenFrameworksDebug.a
+        downloader http://ci.openframeworks.cc/openFrameworks_libs/linux64/libopenFrameworksDebug.a
 
         cd ${main_ofroot}/apps/projectGenerator
         git pull origin $PG_BRANCH
