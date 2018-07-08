@@ -675,7 +675,6 @@ void ofNode::createMatrix() {
 	localTransformMatrix = glm::translate(glm::mat4(1.0), toGlm(position));
 	localTransformMatrix = localTransformMatrix * glm::toMat4((const glm::quat&)orientation);
 	localTransformMatrix = glm::scale(localTransformMatrix, toGlm(scale));
-
 	updateAxis();
 }
 
