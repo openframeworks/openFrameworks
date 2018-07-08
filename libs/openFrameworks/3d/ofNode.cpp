@@ -430,7 +430,6 @@ void ofNode::lookAt(const glm::vec3& lookAtPosition){
 		glm::quat q = glm::angleAxis(0.f, glm::vec3(0,0,1)) * glm::angleAxis(longitude, glm::vec3(0,1,0)) * glm::angleAxis(latitude, glm::vec3(1,0,0));
         setGlobalOrientation(q);
     }
-    
 }
 
 //----------------------------------------
