@@ -30,7 +30,7 @@ class ofApp: public ofxUnitTestsApp{
 			case OF_PIXELS_UNKNOWN:
 				return false;
 		}
-		test(false,"asked for non checked pixel format");
+		ofxTest(false,"asked for non checked pixel format");
 		return false;
 	}
 
@@ -60,7 +60,7 @@ class ofApp: public ofxUnitTestsApp{
 			case OF_PIXELS_NATIVE:
 			case OF_PIXELS_NUM_FORMATS:
 			case OF_PIXELS_UNKNOWN:
-				test(false,"asked for image format for pixel format with no correspondence");
+				ofxTest(false,"asked for image format for pixel format with no correspondence");
 				return OF_IMAGE_UNDEFINED;
 		}
 		return OF_IMAGE_UNDEFINED;
@@ -110,7 +110,7 @@ class ofApp: public ofxUnitTestsApp{
 			case OF_PIXELS_UNKNOWN:
 				return "UNKOWN";
 		}
-		test(false,"asked for format name for pixel format with no correspondence");
+		ofxTest(false,"asked for format name for pixel format with no correspondence");
 		return "UNKOWN";
 	}
 
@@ -145,7 +145,7 @@ class ofApp: public ofxUnitTestsApp{
 			case OF_PIXELS_UNKNOWN:
 				return 0;
 		}
-		test(false,"asked for bits per pixel for pixel format with no correspondence");
+		ofxTest(false,"asked for bits per pixel for pixel format with no correspondence");
 		return 0;
 	}
 
@@ -175,7 +175,7 @@ class ofApp: public ofxUnitTestsApp{
 			case OF_PIXELS_UNKNOWN:
 				return false;
 		}
-		test(false,"asked for working iterators for pixel format with no correspondence");
+		ofxTest(false,"asked for working iterators for pixel format with no correspondence");
 		return 0;
 	}
 
@@ -207,7 +207,7 @@ class ofApp: public ofxUnitTestsApp{
 			case OF_PIXELS_UNKNOWN:
 				return 0;
 		}
-		test(false,"asked for num planes for pixel format with no correspondence");
+		ofxTest(false,"asked for num planes for pixel format with no correspondence");
 		return 0;
 	}
 
@@ -237,7 +237,7 @@ class ofApp: public ofxUnitTestsApp{
 			case OF_PIXELS_UNKNOWN:
 				return false;
 		}
-		test(false,"asked for num channels for pixel format with no correspondence");
+		ofxTest(false,"asked for num channels for pixel format with no correspondence");
 		return false;
 	}
 
@@ -270,7 +270,7 @@ class ofApp: public ofxUnitTestsApp{
 			case OF_PIXELS_UNKNOWN:
 				return 0;
 		}
-		test(false,"asked for num channels for pixel format with no correspondence");
+		ofxTest(false,"asked for num channels for pixel format with no correspondence");
 		return 0;
 	}
 
@@ -283,30 +283,30 @@ class ofApp: public ofxUnitTestsApp{
 			pixels.allocate(w,h,pixelFormat);
 			int bpp = bitsPerPixel(pixelFormat);
 			string format = formatName(pixelFormat);
-			test_eq(pixels.getBitsPerChannel(),8,"getBitsPerChannel() " + format);
-			test_eq(pixels.getBitsPerPixel(),bpp,"getBitsPerPixel() " + format);
-			test_eq(pixels.getBytesPerChannel(),1,"getBytesPerChannel() " + format);
-			test_eq(pixels.getBytesPerPixel(),bpp/8,"getBytesPerPixel() " + format);
-			test_eq(pixels.getBytesStride(),w*bpp/8,"getBytesStride() " + format);
-			test_eq(pixels.getWidth(),w,"getWidth() " + format);
-			test_eq(pixels.getHeight(),h,"getHeight() " + format);
+			ofxTestEq(pixels.getBitsPerChannel(),8,"getBitsPerChannel() " + format);
+			ofxTestEq(pixels.getBitsPerPixel(),bpp,"getBitsPerPixel() " + format);
+			ofxTestEq(pixels.getBytesPerChannel(),1,"getBytesPerChannel() " + format);
+			ofxTestEq(pixels.getBytesPerPixel(),bpp/8,"getBytesPerPixel() " + format);
+			ofxTestEq(pixels.getBytesStride(),w*bpp/8,"getBytesStride() " + format);
+			ofxTestEq(pixels.getWidth(),w,"getWidth() " + format);
+			ofxTestEq(pixels.getHeight(),h,"getHeight() " + format);
 			if(hasImageFormat(pixelFormat)){
-				test_eq(pixels.getImageType(),imageType(pixelFormat),"getImageType() " + format);
+				ofxTestEq(pixels.getImageType(),imageType(pixelFormat),"getImageType() " + format);
 			}
 			if(hasChannels(pixelFormat)){
-				test_eq(pixels.getNumChannels(),numChannels(pixelFormat),"getNumChannels() " + format);
+				ofxTestEq(pixels.getNumChannels(),numChannels(pixelFormat),"getNumChannels() " + format);
 			}
-			test_eq(pixels.getNumPlanes(),getNumPlanes(pixelFormat),"getNumPlanes() " + format);
-			test_eq(pixels.getPixelFormat(),pixelFormat,"getPixelFormat() " + format);
-            test_eq((uint64_t)pixels.getPlane(0).getData(), (uint64_t)pixels.getData(),"getPlane(0)==getData() " + format);
-			test_eq(pixels.getTotalBytes(),w*h*bpp/8,"getTotalBytes() " + format);
+			ofxTestEq(pixels.getNumPlanes(),getNumPlanes(pixelFormat),"getNumPlanes() " + format);
+			ofxTestEq(pixels.getPixelFormat(),pixelFormat,"getPixelFormat() " + format);
+            ofxTestEq((uint64_t)pixels.getPlane(0).getData(), (uint64_t)pixels.getData(),"getPlane(0)==getData() " + format);
+			ofxTestEq(pixels.getTotalBytes(),w*h*bpp/8,"getTotalBytes() " + format);
 
 			if(hasWorkingIterators(pixelFormat)){
-                test_eq((uint64_t)pixels.getLine(0).begin(), (uint64_t)pixels.getData(),"getLine(0).begin()==getData() " + format);
-                test_eq((uint64_t)pixels.getLine(0).end(), (uint64_t)pixels.getData()+(w*bpp/8),"getLine(0).end()==getData()+(w*3) " + format);
-                test_eq((uint64_t)pixels.getLine(h-1).begin(), (uint64_t)pixels.getData()+(w*bpp/8*(h-1)),"getLine(h-1).begin()==getData()+(w*bpp/8*(h-1)) " + format);
-                test_eq((uint64_t)pixels.getLine(h-1).end(), (uint64_t)pixels.end(),"getLine(h-1).end()==end() " + format);
-                test_eq((uint64_t)&pixels.getLine(0).getPixel(10)[0], (uint64_t)pixels.getData()+(10*bpp/8),"getLine(0).getPixel(10)[0]==pixels.getData()+(10*bpp/8)");
+                ofxTestEq((uint64_t)pixels.getLine(0).begin(), (uint64_t)pixels.getData(),"getLine(0).begin()==getData() " + format);
+                ofxTestEq((uint64_t)pixels.getLine(0).end(), (uint64_t)pixels.getData()+(w*bpp/8),"getLine(0).end()==getData()+(w*3) " + format);
+                ofxTestEq((uint64_t)pixels.getLine(h-1).begin(), (uint64_t)pixels.getData()+(w*bpp/8*(h-1)),"getLine(h-1).begin()==getData()+(w*bpp/8*(h-1)) " + format);
+                ofxTestEq((uint64_t)pixels.getLine(h-1).end(), (uint64_t)pixels.end(),"getLine(h-1).end()==end() " + format);
+                ofxTestEq((uint64_t)&pixels.getLine(0).getPixel(10)[0], (uint64_t)pixels.getData()+(10*bpp/8),"getLine(0).getPixel(10)[0]==pixels.getData()+(10*bpp/8)");
 			}
 		}
 	}
