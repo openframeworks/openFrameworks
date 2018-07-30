@@ -412,6 +412,7 @@ function createPackage {
         unzip projectGenerator-osx.zip
         mv projectGenerator-osx projectGenerator
         rm projectGenerator-osx.zip
+        sed -i "s/osx/$pkg_platform/g" projectGenerator/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
 
 	if [ "$pkg_platform" = "linux" ]; then
