@@ -36,11 +36,19 @@ void ofParameterGroup::remove(size_t index){
 }
 
 void ofParameterGroup::remove(const string &name){
-	if(!contains(name)){
+	if(!contains(escape(name))){
 		return;
 	}
-	obj->parameters.erase(obj->parameters.begin() + obj->parametersIndex[name]);
-	obj->parametersIndex.erase(name);
+    int removedParameterIndex = obj->parametersIndex[escape(name)];
+	obj->parameters.erase(obj->parameters.begin() + removedParameterIndex);
+	obj->parametersIndex.erase(escape(name));
+    rebuildParameterIndexMap(removedParameterIndex);
+}
+
+void ofParameterGroup::rebuildParameterIndexMap(std::size_t fromIndex){
+    for(size_t i = fromIndex; i < obj->parameters.size(); i++){
+        obj->parametersIndex[obj->parameters[i]->getEscapedName()] = i;
+    }
 }
 
 void ofParameterGroup::clear(){
