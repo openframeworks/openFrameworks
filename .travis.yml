@@ -56,7 +56,7 @@ matrix:
       directories:
         - ~/.ccache
         #- ~/rpi2_toolchain
-        - ~/firmware-master
+        # - ~/firmware-master
         #- ~/archlinux
 
 
