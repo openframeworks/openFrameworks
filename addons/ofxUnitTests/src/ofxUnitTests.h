@@ -304,7 +304,7 @@ private:
     std::shared_ptr<ofColorsLoggerChannel> logger{new ofColorsLoggerChannel};
 };
 
-#define test(x, ...) this->do_test(x,__VA_ARGS__,__FILE__,__LINE__)
-#define test_eq(x,y, ...) this->do_test_eq(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
-#define test_gt(x,y, ...) this->do_test_gt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
-#define test_lt(x,y, ...) this->do_test_lt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define ofxTest(x, ...) this->do_test(x,__VA_ARGS__,__FILE__,__LINE__)
+#define ofxTestEq(x,y, ...) this->do_test_eq(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define ofxTestGt(x,y, ...) this->do_test_gt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define ofxTestLt(x,y, ...) this->do_test_lt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
