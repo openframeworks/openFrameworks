@@ -91,6 +91,7 @@ createArchImg(){
 		junest -u << EOF
 	        tar xzf ~/ArchLinuxARM-rpi-2-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
+            sed -i "s_^keyserver .*_keyserver hkps://hkps.pool.sks-keyservers.net:443_g" ~/archlinux/etc/pacman.d/gnupg/gpg.conf
 			pacman --noconfirm -S ccache
 			pacman --noconfirm -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -Syu
 			pacman --noconfirm -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -S \
