@@ -304,7 +304,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 
     //this lets us detect if the window is running in a retina mode
 	if( framebufferW != currentW){
-        pixelScreenCoordScale = framebufferW / windowW;
+        pixelScreenCoordScale = (float)framebufferW / (float)windowW;
 		if( pixelScreenCoordScale < 1 ){
             pixelScreenCoordScale = 1;
         }
