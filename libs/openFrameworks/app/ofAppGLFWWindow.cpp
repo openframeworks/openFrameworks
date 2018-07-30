@@ -1171,21 +1171,19 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 		// so that SHIFT, CONTROL, etc can be taken into account when
 		// calculating the unicode codepoint.
 
+		// UCKeyTranslate expects the Carbon-era modifier mask values,
+		// so use these instead of the NSEventModifierFlag enums
 		if (modifier & GLFW_MOD_SHIFT)
-			mod_OSX |= NSShiftKeyMask;
+			mod_OSX |= 512; // Carbon shiftKey value
 		if (modifier & GLFW_MOD_CONTROL)
-			mod_OSX |= NSControlKeyMask;
+			mod_OSX |= 4096; // Carbon controlKey value
 		if (modifier & GLFW_MOD_ALT)
-			mod_OSX |= NSAlternateKeyMask;
+			mod_OSX |= 2048; // Carbon optionKey value
 		if (modifier & GLFW_MOD_SUPER)
-			mod_OSX |= NSCommandKeyMask;
+			mod_OSX |= 256; // Carbon cmdKey
 
-		// This is really weird, but although OSX documentation says to do to the following:
-		//		modifierKeyState = ((EventRecord.modifiers) >> 8) & 0xFF;
-		// Bit-shifting by 16 bit seems to be necessary...
-		//
-		// (Tested using an Austrian Mac Keyboard).
-		mod_OSX = (mod_OSX >> 16) & 0xFF;
+		// shift into 1 byte as per the Apple docs
+		mod_OSX = (mod_OSX >> 8) & 0xFF;
 	}
 
 	// All this yak shaving was necessary to feed this diva of a function call:
