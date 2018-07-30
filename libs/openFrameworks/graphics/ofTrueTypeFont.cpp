@@ -546,7 +546,7 @@ bool ofTrueTypeFont::initLibraries(){
 ofTrueTypeFont::ofTrueTypeFont()
 :settings("",0){
 	bLoadedOk		= false;
-	letterSpacing = 1;
+	letterSpacing = 0;
 	spaceSize = 1;
 	fontUnitScale = 1;
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
@@ -1150,7 +1150,8 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 			} else if (c == '\t') {
 				if (settings.direction == OF_TTF_LEFT_TO_RIGHT){
 					f(c, pos);
-					pos.x += getGlyphProperties(' ').advance * TAB_WIDTH * letterSpacing  * directionX;
+					pos.x += getGlyphProperties(' ').advance * TAB_WIDTH;
+					pos.x += letterSpacing  * directionX;
 				} else{
 					pos.x += getGlyphProperties(' ').advance * TAB_WIDTH * letterSpacing  * directionX;
 					f(c, pos);
@@ -1162,10 +1163,12 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 					pos.x += getKerning(c,prevC);// * directionX;
 				}
 				if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
-				    f(c,pos);
-				    pos.x += props.advance * letterSpacing * directionX;
+					f(c,pos);
+					pos.x += props.advance  * directionX;
+					pos.x += letterSpacing  * directionX;
 				}else{
-				    pos.x += props.advance * letterSpacing * directionX;
+					pos.x += props.advance  * directionX;
+					pos.x += letterSpacing  * directionX;
 				    f(c,pos);
 				}
 				prevC = c;
