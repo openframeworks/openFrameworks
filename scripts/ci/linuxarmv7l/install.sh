@@ -147,18 +147,18 @@ EOF
 }
 
 downloadFirmware(){
-    if [ -d ~/firmware-master ]; then
-        echo "Using cached RPI2 firmware-master"
-    else
+    # if [ -d ~/firmware-master ]; then
+    #     echo "Using cached RPI2 firmware-master"
+    # else
         cd ~
         wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
         unzip firmware.zip
-    fi
+    # fi
     echo home
     ls ~
     echo
     echo firmware-master
-    ls ~/firmware-master
+    ls ~/firmware-master -la
     cp -r ~/firmware-master/opt archlinux/
 }
 
