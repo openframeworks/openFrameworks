@@ -32,6 +32,7 @@ ofxOpenCv/libs
 ofxAssimpModelLoader/libs
 ofxSvg/libs
 ofxPoco/libs
+ofxKinect/libs
 
 # don't ignore the .gitignore file
 !.gitignore

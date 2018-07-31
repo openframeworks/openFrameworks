@@ -82,14 +82,23 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 		}else if(type == typeid(ofParameter <void> ).name()){
 			auto p = _parameters.getVoid(i);
 			add(p);
-		}else if(type == typeid(ofParameter <ofDefaultVec2> ).name()){
-			auto p = _parameters.getVec2f(i);
+		}else if(type == typeid(ofParameter <ofVec2f> ).name()){
+			auto p = _parameters.get<ofVec2f>(i);
 			add(p);
-		}else if(type == typeid(ofParameter <ofDefaultVec3> ).name()){
-			auto p = _parameters.getVec3f(i);
+		}else if(type == typeid(ofParameter <ofVec3f> ).name()){
+			auto p = _parameters.get<ofVec3f>(i);
 			add(p);
-		}else if(type == typeid(ofParameter <ofDefaultVec4> ).name()){
-			auto p = _parameters.getVec4f(i);
+		}else if(type == typeid(ofParameter <ofVec4f> ).name()){
+			auto p = _parameters.get<ofVec4f>(i);
+			add(p);
+		}else if(type == typeid(ofParameter <glm::vec2> ).name()){
+			auto p = _parameters.get<glm::vec2>(i);
+			add(p);
+		}else if(type == typeid(ofParameter <glm::vec3> ).name()){
+			auto p = _parameters.get<glm::vec3>(i);
+			add(p);
+		}else if(type == typeid(ofParameter <glm::vec4> ).name()){
+			auto p = _parameters.get<glm::vec4>(i);
 			add(p);
 		}else if(type == typeid(ofParameter <ofColor> ).name()){
 			auto p = _parameters.getColor(i);

@@ -273,7 +273,7 @@ OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/build/%
 
 # create a list of all dirs in the project root that might be valid project
 # source directories
-ALL_OF_PROJECT_SOURCE_PATHS = $(shell $(FIND) $(PROJECT_ROOT) -mindepth 1 \
+ALL_OF_PROJECT_SOURCE_PATHS = $(shell $(FIND) $(PROJECT_ROOT)/src \
 														   -type d \
 														   -not -path "./bin/*" \
 														   -not -path "./obj/*" \

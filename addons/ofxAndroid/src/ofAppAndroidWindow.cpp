@@ -236,6 +236,11 @@ shared_ptr<ofBaseRenderer> & ofAppAndroidWindow::renderer(){
 	return currentRenderer;
 }
 
+int ofAppAndroidWindow::getGlesVersion()
+{
+	return glesVersion;
+}
+
 extern "C"{
 
 jint JNI_OnLoad(JavaVM* vm, void* reserved)
@@ -323,15 +328,15 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		window->renderer()->popStyle();
 
 	}else{
-
-	    if(window->renderer()->getType()==ofGLProgrammableRenderer::TYPE)
-	    {
-	    	static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(2,0);
-	    }
-	    else
-	    {
-	    	static_cast<ofGLRenderer*>(window->renderer().get())->setup();
-	    }
+		int glesVersion = window->getGlesVersion();
+		if( glesVersion < 2 )
+		{
+			static_cast<ofGLRenderer*>(window->renderer().get())->setup();
+		}
+		else
+		{
+			static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(glesVersion,0);
+		}
 	}
 
 	surfaceDestroyed = false;
