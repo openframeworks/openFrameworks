@@ -236,7 +236,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		if(settings.windowMode==OF_FULLSCREEN){
 			int count = 0;
 			auto monitors = glfwGetMonitors(&count);
-			auto mode = glfwGetVideoMode(monitors[settings.monitor]);
 			if(!settings.isPositionSet()){
 				if(count > 0){
 					int x = 0, y = 0;
@@ -244,15 +243,15 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 					glfwGetMonitorPos(monitors[settings.monitor],&x,&y);
 					settings.setPosition(glm::vec2(x,y));
 					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
+					auto mode = glfwGetVideoMode(monitors[settings.monitor]);
                     #ifdef TARGET_OSX
 					    //for OS X we need to set this first as the window size affects the window positon
-					    auto mode = glfwGetVideoMode(monitors[settings.monitor]);
-						settings.setSize(mode->width, mode->height);
+					    settings.setSize(mode->width, mode->height);
 						setWindowShape(settings.getWidth(), settings.getHeight());
                     #endif
 					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
-					currentW = glfwGetVideoMode(monitors[settings.monitor])->width;
-					currentH = glfwGetVideoMode(monitors[settings.monitor])->height;
+					currentW = mode->width;
+					currentH = mode->height;
 				}
 			}else{
 				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
@@ -266,12 +265,13 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 					for(int i = 0; i < count; i++){
 						int x = 0, y = 0;
 						glfwGetMonitorPos(monitors[i],&x,&y);
-						int w = glfwGetVideoMode(monitors[settings.monitor])->width;
-						int h = glfwGetVideoMode(monitors[settings.monitor])->height;
+						auto mode = glfwGetVideoMode(monitors[i]);
+						int w = mode->width;
+						int h = mode->height;
 						ofRectangle rect(x-1,y-1,w+1,h+1);
 						if(rect.inside(settings.getPosition())){
-							currentW = glfwGetVideoMode(monitors[settings.monitor])->width;
-							currentH = glfwGetVideoMode(monitors[settings.monitor])->height;
+							currentW = mode->width;
+							currentH = mode->height;
 							break;
 						}
 					}
