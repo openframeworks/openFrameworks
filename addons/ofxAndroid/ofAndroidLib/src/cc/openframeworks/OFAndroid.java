@@ -37,6 +37,7 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+import java.util.concurrent.Semaphore;
 
 public class OFAndroid {
 
@@ -822,13 +823,22 @@ public class OFAndroid {
 	
 	public static void setupGL(int version){	
 		final int finalversion = version;
+		final Semaphore mutex = new Semaphore( 0 );
+		
 		runOnMainThread(new Runnable() {
-			
 			@Override
 			public void run() {
 		        OFEGLConfigChooser.setGLESVersion(finalversion);
+		        OFAndroidLifeCycle.glCreateSurface();
+		        mutex.release();
 			}
 		});
+		
+		try{
+			mutex.acquire();
+		} catch( Exception ex ){
+			Log.w( "OF", "setupGL mutex acquire failed" );
+		}
 	}
 	
 	/**
