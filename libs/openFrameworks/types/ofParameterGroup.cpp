@@ -42,11 +42,10 @@ void ofParameterGroup::remove(const string &name){
 		return;
 	}
 	size_t paramIndex = obj->parametersIndex[escaped];
-	auto it = obj->parameters.begin() + paramIndex;
-	obj->parameters.erase(it);
+	obj->parameters.erase(obj->parameters.begin() + paramIndex);
 	obj->parametersIndex.erase(escaped);
-	std::for_each(it, obj->parameters.end(), [&](shared_ptr<ofAbstractParameter>& p){
-		obj->parametersIndex[p->getName()] -= 1;
+	std::for_each(obj->parameters.begin() + paramIndex, obj->parameters.end(), [&](shared_ptr<ofAbstractParameter>& p){
+		obj->parametersIndex[p->getEscapedName()] -= 1;
 	});
 }
 
