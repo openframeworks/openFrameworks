@@ -427,10 +427,9 @@ void ofNode::lookAt(const glm::vec3& lookAtPosition){
     if(radius>0){
 		float latitude = acos(relPosition.y / radius) - glm::half_pi<float>();
 		float longitude = atan2(relPosition.x , relPosition.z);
-		glm::quat q = glm::angleAxis(latitude, glm::vec3(1,0,0)) * glm::angleAxis(longitude, glm::vec3(0,1,0)) * glm::angleAxis(0.f, glm::vec3(0,0,1));
+		glm::quat q = glm::angleAxis(0.f, glm::vec3(0,0,1)) * glm::angleAxis(longitude, glm::vec3(0,1,0)) * glm::angleAxis(latitude, glm::vec3(1,0,0));
         setGlobalOrientation(q);
     }
-
 }
 
 //----------------------------------------
@@ -676,7 +675,7 @@ void ofNode::createMatrix() {
 	localTransformMatrix = glm::translate(glm::mat4(1.0), toGlm(position));
 	localTransformMatrix = localTransformMatrix * glm::toMat4((const glm::quat&)orientation);
 	localTransformMatrix = glm::scale(localTransformMatrix, toGlm(scale));
-	
+
 	updateAxis();
 }
 

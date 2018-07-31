@@ -91,7 +91,8 @@ createArchImg(){
 		junest -u << EOF
 	        tar xzf ~/ArchLinuxARM-rpi-2-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
-			pacman --noconfirm -S ccache
+            sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
+            pacman --noconfirm -S ccache
 			pacman --noconfirm -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -Syu
 			pacman --noconfirm -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -S \
 				make \
@@ -146,14 +147,10 @@ EOF
 }
 
 downloadFirmware(){
-    if [ -d ~/firmware-master ]; then
-        echo "Using cached RPI2 firmware-master"
-    else
-        cd ~
-        wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
-        unzip firmware.zip
-    fi
-    ${SUDO} cp -r ~/firmware-master/opt archlinux/
+    cd ~
+    wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+    unzip firmware.zip
+    cp -r ~/firmware-master/opt archlinux/
 }
 
 

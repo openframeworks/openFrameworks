@@ -27,12 +27,12 @@ public:
         auto q31 = q3 * q1;
         auto q32 = q3 * q2;
         ofLogNotice() << "testing #4461";
-        test(aprox_eq(v*q12,(v*q1)*q2),"v*q12 == (v*q1)*q2");
-        test(aprox_eq(v*q13,(v*q1)*q3),"v*q13 == (v*q1)*q3");
-        test(aprox_eq(v*q23,(v*q2)*q3),"v*q23 == (v*q2)*q3");
-        test(aprox_eq(v*q21,(v*q2)*q1),"v*q21 == (v*q2)*q1");
-        test(aprox_eq(v*q31,(v*q3)*q1),"v*q31 == (v*q3)*q1");
-        test(aprox_eq(v*q32,(v*q3)*q2),"v*q32 == (v*q3)*q2");
+        ofxTest(aprox_eq(v*q12,(v*q1)*q2),"v*q12 == (v*q1)*q2");
+        ofxTest(aprox_eq(v*q13,(v*q1)*q3),"v*q13 == (v*q1)*q3");
+        ofxTest(aprox_eq(v*q23,(v*q2)*q3),"v*q23 == (v*q2)*q3");
+        ofxTest(aprox_eq(v*q21,(v*q2)*q1),"v*q21 == (v*q2)*q1");
+        ofxTest(aprox_eq(v*q31,(v*q3)*q1),"v*q31 == (v*q3)*q1");
+        ofxTest(aprox_eq(v*q32,(v*q3)*q2),"v*q32 == (v*q3)*q2");
         ofLogNotice() << "end testing #4461";
     }
 };
