@@ -21,9 +21,7 @@ void ofParameterGroup::add(ofAbstractParameter & parameter){
 }
 
 void ofParameterGroup::remove(ofAbstractParameter &param){
-//	std::for_each(obj->parameters.begin(), obj->parameters.end(), [&](shared_ptr<ofAbstractParameter>& p){
 	for(auto & p: obj->parameters){
-		cout << p->getName() << endl;
 		if(p->isReferenceTo(param)){
 			remove(param.getName());
 			return;
@@ -39,13 +37,15 @@ void ofParameterGroup::remove(size_t index){
 }
 
 void ofParameterGroup::remove(const string &name){
-	if(!contains(name)){
+	auto escaped = escape(name);
+	if(!contains(escaped)){
 		return;
 	}
-	size_t paramIndex = obj->parametersIndex[name];
-	obj->parameters.erase(obj->parameters.begin() + paramIndex);
-	obj->parametersIndex.erase(name);
-	std::for_each(obj->parameters.begin() + paramIndex, obj->parameters.end(), [&](shared_ptr<ofAbstractParameter>& p){
+	size_t paramIndex = obj->parametersIndex[escaped];
+	auto it = obj->parameters.begin() + paramIndex;
+	obj->parameters.erase(it);
+	obj->parametersIndex.erase(escaped);
+	std::for_each(it, obj->parameters.end(), [&](shared_ptr<ofAbstractParameter>& p){
 		obj->parametersIndex[p->getName()] -= 1;
 	});
 }
