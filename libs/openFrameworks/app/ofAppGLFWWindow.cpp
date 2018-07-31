@@ -819,10 +819,11 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 
 		// save window shape before going fullscreen
 		auto pos = getWindowPosition();
+		auto size = getWindowSize();
 		windowRect.x = pos.x;
 		windowRect.y = pos.y;
-		windowRect.width = windowW;
-		windowRect.height = windowH;
+		windowRect.width = size.x;
+		windowRect.height = size.y;
 
 		if( settings.multiMonitorFullScreen && monitorCount > 1 ){
 
@@ -889,7 +890,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		setWindowTitle(settings.title);
 
 		//----------------------------------------------------
-		// if we have recorded the screen posion, put it there
+		// if we have recorded the screen position, put it there
 		// if not, better to let the system do it (and put it where it wants)
 		if (ofGetFrameNum() > 0){
 			setWindowPosition(windowRect.x, windowRect.y);
@@ -903,10 +904,11 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	if( targetWindowMode == OF_FULLSCREEN){
 		// save window shape before going fullscreen
 		auto pos = getWindowPosition();
+		auto size = getWindowSize();
 		windowRect.x = pos.x;
 		windowRect.y = pos.y;
-		windowRect.width = windowW;
-		windowRect.height = windowH;
+		windowRect.width = size.x;
+		windowRect.height = size.y;
 
 		//----------------------------------------------------
 		HWND hwnd = glfwGetWin32Window(windowP);
