@@ -36,10 +36,7 @@ class ofApp : public ofxAndroidApp{
 
 		// Image storing a clone of the grabber image
 		ofImage grabberImage;
-
-		int one_second_time;
-		int camera_fps;
-		int frames_one_sec;
+		ofFpsCounter cameraFps;
 
 		bool cameraFacingFront;
 		int cameraOrientation;
