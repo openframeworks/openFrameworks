@@ -432,6 +432,12 @@ int ofxAndroidVideoGrabber::getFacingOfCamera(int device)const{
 }
 
 void ofxAndroidVideoGrabber::setDeviceID(int _deviceID){
+	bool wasInited = data->bGrabberInited;
+	int w = this->getWidth();
+	int h = this->getHeight();
+	if(data->bGrabberInited){
+		close();
+	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	if(!env) return;
@@ -444,6 +450,10 @@ void ofxAndroidVideoGrabber::setDeviceID(int _deviceID){
 	} else {
 		ofLogError("ofxAndroidVideoGrabber") << "setDeviceID(): couldn't get OFAndroidVideoGrabber setDeviceID method";
 		return;
+	}
+
+	if(wasInited){
+		setup(w, h);
 	}
 }
 
@@ -746,11 +756,12 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
             		pixels.setFromPixels(currentFrame, width, height, OF_PIXELS_NV21);
         	}
 
+		env->ReleaseByteArrayElements(array, (jbyte*)currentFrame, 0);
+
 		if (needsResize) {
 			pixels.resize(data->width, data->height, OF_INTERPOLATE_NEAREST_NEIGHBOR);
 		}
 
-		env->ReleaseByteArrayElements(array, (jbyte*)currentFrame, 0);
 
 		data->bNewBackFrame=true;
 	}
