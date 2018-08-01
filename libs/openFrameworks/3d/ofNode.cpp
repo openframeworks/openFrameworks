@@ -561,8 +561,8 @@ glm::vec3 ofNode::getGlobalPosition() const {
 
 //----------------------------------------
 glm::quat ofNode::getGlobalOrientation() const {
-	auto rot = glm::scale(getGlobalTransformMatrix(), 1.f/getGlobalScale());
-	return glm::toQuat(rot);
+	if (parent) return parent->getGlobalOrientation() * getOrientationQuat();
+	return getOrientationQuat();
 }
 
 //----------------------------------------
