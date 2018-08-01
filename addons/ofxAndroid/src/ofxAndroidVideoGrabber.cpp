@@ -295,12 +295,13 @@ bool ofxAndroidVideoGrabber::setup(int w, int h){
 		return false;
 	}
 
-    // Load opengl texture
-    data->width = w;
-    data->height = h;
-
     ofxAndroidRequestPermission(OFX_ANDROID_PERMISSION_CAMERA);
     if(!ofxAndroidCheckPermission(OFX_ANDROID_PERMISSION_CAMERA)) return false;
+
+    data->width = w;
+    data->height = h;
+    data->frontBuffer.allocate(w, h, data->internalPixelFormat);
+    data->backBuffer.allocate(w, h, data->internalPixelFormat);
 
 	ofLogNotice() << "initializing camera with external texture";
 

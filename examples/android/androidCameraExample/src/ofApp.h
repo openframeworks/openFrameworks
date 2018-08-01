@@ -35,7 +35,7 @@ class ofApp : public ofxAndroidApp{
 		ofVideoGrabber grabber;
 
 		// Image storing a clone of the grabber image
-		ofImage grabberImage;
+		ofTexture grabberImage;
 		ofFpsCounter cameraFps;
 
 		bool cameraFacingFront;
