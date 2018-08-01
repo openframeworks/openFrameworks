@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofConstants.h"
+#include "ofMathConstants.h"
 #include "ofUtils.h"
 #include "ofColor.h"
 #include "ofLog.h"
