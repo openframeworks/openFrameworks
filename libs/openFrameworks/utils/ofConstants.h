@@ -3,8 +3,8 @@
 
 //-------------------------------
 #define OF_VERSION_MAJOR 0
-#define OF_VERSION_MINOR 10
-#define OF_VERSION_PATCH 1
+#define OF_VERSION_MINOR 11
+#define OF_VERSION_PATCH 0
 #define OF_VERSION_PRE_RELEASE "master"
 
 // Set to 1 for compatibility with old projects using ofVec instead of glm

@@ -236,6 +236,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		if(settings.windowMode==OF_FULLSCREEN){
 			int count = 0;
 			auto monitors = glfwGetMonitors(&count);
+			auto mode = glfwGetVideoMode(monitors[settings.monitor]);
+			currentW = mode->width;
+			currentH = mode->height;
 			if(!settings.isPositionSet()){
 				if(count > 0){
 					int x = 0, y = 0;
@@ -525,7 +528,7 @@ void ofAppGLFWWindow::setWindowTitle(string title){
 
 //------------------------------------------------------------
 int ofAppGLFWWindow::getPixelScreenCoordScale(){
-	return pixelScreenCoordScale;
+    return pixelScreenCoordScale;
 }
 
 //------------------------------------------------------------
@@ -547,9 +550,9 @@ glm::vec2 ofAppGLFWWindow::getWindowSize(){
 glm::vec2 ofAppGLFWWindow::getWindowPosition(){
 	int x, y;
 	glfwGetWindowPos(windowP, &x, &y);
-
-	x *= pixelScreenCoordScale;
-	y *= pixelScreenCoordScale;
+    
+    x *= pixelScreenCoordScale;
+    y *= pixelScreenCoordScale;
 
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return glm::vec2{x,y};
