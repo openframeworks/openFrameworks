@@ -48,6 +48,7 @@ public:
 		std::string getValue() const;
 
 		void setName(const std::string & name);
+		std::string getName() const;
 
 		int getIntValue() const;
 		unsigned int getUintValue() const;
