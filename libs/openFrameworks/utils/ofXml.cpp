@@ -170,6 +170,23 @@ ofXml::Attribute ofXml::prependAttribute(const std::string & name){
 	return this->xml.prepend_attribute(name.c_str());
 }
 
+bool ofXml::removeAttribute(const std::string & name){
+	auto attr = getAttribute(name);
+	if(attr){
+		return xml.remove_attribute(attr.attr);
+	}else{
+		return false;
+	}
+}
+
+bool ofXml::removeAttribute(const ofXml::Attribute & attr){
+	return xml.remove_attribute(attr.attr);
+}
+
+bool ofXml::removeAttribute(ofXml::Attribute && attr){
+	return xml.remove_attribute(attr.attr);
+}
+
 ofXml ofXml::findFirst(const std::string & path) const{
 	try{
 		return ofXml(doc, this->xml.select_single_node(path.c_str()).node());

@@ -134,6 +134,9 @@ public:
 	Attribute getLastAttribute() const;
 	Attribute appendAttribute(const std::string & name);
 	Attribute prependAttribute(const std::string & name);
+	bool removeAttribute(const std::string & name);
+	bool removeAttribute(const Attribute & attr);
+	bool removeAttribute(Attribute && attr);
 
 	template<typename T>
 	Attribute setAttribute(const std::string & name, const T & value){
