@@ -4,8 +4,9 @@
 #include "pugixml.hpp"
 #include "ofParameter.h"
 
-template<class It>
+template<typename It>
 class ofXmlIterator;
+class ofXmlAttributeIterator;
 class ofXmlSearchIterator;
 
 class ofXml{
@@ -80,8 +81,14 @@ public:
 	template<class It>
 	class Range{
 	public:
-		It begin() const { return It(ofXml(doc, *range.begin())); }
-		It end() const { return It(ofXml(doc, pugi::xml_node())); }
+		It begin() const {
+			if(range.begin() != range.end()){
+				return It(doc, *range.begin());
+			}else{
+				return It(doc, typename It::Node());
+			}
+		}
+		It end() const { return It(doc, typename It::Node()); }
 
 	private:
 		Range(std::shared_ptr<pugi::xml_document> doc, pugi::xml_object_range<typename It::Base> range)
@@ -130,7 +137,7 @@ public:
 
 
 	Attribute getAttribute(const std::string & name) const;
-	Range<ofXmlIterator<pugi::xml_attribute_iterator>> getAttributes() const;
+	Range<ofXmlAttributeIterator> getAttributes() const;
 	Attribute getFirstAttribute() const;
 	Attribute getLastAttribute() const;
 	Attribute appendAttribute(const std::string & name);
@@ -203,12 +210,13 @@ private:
 	std::shared_ptr<pugi::xml_document> doc;
 	pugi::xml_node xml;
 
-	template<class It>
+	template<typename It>
 	friend class ofXmlIterator;
+	friend class ofXmlAttributeIterator;
 	friend class ofXmlSearchIterator;
 };
 
-template<class It>
+template<typename It>
 class ofXmlIterator{
 public:
 	ofXmlIterator(){}
@@ -222,11 +230,19 @@ public:
 		return this->xml.xml != rhs.xml.xml;
 	}
 
-	ofXml& operator*() const{
+	const ofXml& operator*() const{
 		return this->xml;
 	}
 
-	ofXml* operator->() const{
+	const ofXml* operator->() const{
+		return &this->xml;
+	}
+
+	ofXml& operator*(){
+		return this->xml;
+	}
+
+	ofXml* operator->(){
 		return &this->xml;
 	}
 
@@ -252,14 +268,90 @@ public:
 		return now;
 	}
 	typedef It Base;
+	typedef pugi::xml_node Node;
 private:
 
 	// Construct an iterator which points to the specified node
-	ofXmlIterator(ofXml xml)
+	ofXmlIterator(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node & xml)
+	:xml(doc, xml){
+
+	}
+
+	// Construct an iterator which points to the specified node
+	ofXmlIterator(ofXml && xml)
 	:xml(xml){
 
 	}
 	mutable ofXml xml;
+	friend class ofXml;
+};
+
+class ofXmlAttributeIterator{
+public:
+	ofXmlAttributeIterator(){}
+
+	// Iterator operators
+	bool operator==(const ofXmlAttributeIterator& rhs) const{
+		return this->attr == rhs.attr;
+	}
+
+	bool operator!=(const ofXmlAttributeIterator& rhs) const{
+		return this->attr != rhs.attr;
+	}
+
+	const ofXml::Attribute & operator*() const{
+		return this->attr;
+	}
+
+	const ofXml::Attribute* operator->() const{
+		return &this->attr;
+	}
+
+	ofXml::Attribute & operator*(){
+		return this->attr;
+	}
+
+	ofXml::Attribute* operator->(){
+		return &this->attr;
+	}
+
+	const ofXmlAttributeIterator& operator++(){
+		this->attr = attr.getNextAttribute();
+		return *this;
+	}
+
+	ofXmlAttributeIterator operator++(int){
+		auto now = attr;
+		this->attr = attr.getNextAttribute();
+		return now;
+	}
+
+	const ofXmlAttributeIterator& operator--(){
+		this->attr = attr.getPreviousAttribute();
+		return *this;
+	}
+
+	ofXmlAttributeIterator operator--(int){
+		auto now = attr;
+		this->attr = attr.getPreviousAttribute();
+		return now;
+	}
+
+	typedef pugi::xml_attribute_iterator Base;
+	typedef pugi::xml_attribute Node;
+private:
+
+	// Construct an iterator which points to the specified node
+	ofXmlAttributeIterator(std::shared_ptr<pugi::xml_document>, const ofXml::Attribute & attr)
+	:attr(attr){
+
+	}
+
+	ofXmlAttributeIterator(const ofXml::Attribute & attr)
+	:attr(attr){
+
+	}
+	ofXml::Attribute attr;
 	friend class ofXml;
 };
 
