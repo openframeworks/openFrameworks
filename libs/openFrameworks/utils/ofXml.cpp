@@ -150,8 +150,8 @@ ofXml::Attribute ofXml::getAttribute(const std::string & name) const{
 	return this->xml.attribute(name.c_str());
 }
 
-ofXml::Range<ofXmlIterator<pugi::xml_attribute_iterator>> ofXml::getAttributes() const{
-	return ofXml::Range<ofXmlIterator<pugi::xml_attribute_iterator>>(doc, this->xml.attributes());
+ofXml::Range<ofXmlAttributeIterator> ofXml::getAttributes() const{
+	return ofXml::Range<ofXmlAttributeIterator>(doc, this->xml.attributes());
 }
 
 ofXml::Attribute ofXml::getFirstAttribute() const{
