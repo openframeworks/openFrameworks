@@ -234,8 +234,8 @@ void ofNode::setGlobalOrientation(const glm::quat& q) {
 	if(parent == nullptr) {
 		setOrientation(q);
 	} else {
-		auto invParent = glm::inverse(parent->getGlobalTransformMatrix());
-		auto m44 = glm::toQuat(invParent) * q;
+		auto invParent = glm::inverse(parent->getGlobalOrientation());
+		auto m44 = invParent * q;
 		setOrientation(m44);
 	}
 }
@@ -561,8 +561,8 @@ glm::vec3 ofNode::getGlobalPosition() const {
 
 //----------------------------------------
 glm::quat ofNode::getGlobalOrientation() const {
-	auto rot = glm::scale(getGlobalTransformMatrix(), 1.f/getGlobalScale());
-	return glm::toQuat(rot);
+	if (parent) return parent->getGlobalOrientation() * getOrientationQuat();
+	return getOrientationQuat();
 }
 
 //----------------------------------------
