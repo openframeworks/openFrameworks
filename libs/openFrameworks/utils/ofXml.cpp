@@ -91,6 +91,10 @@ ofXml ofXml::appendChild(ofXml && xml){
 ofXml ofXml::prependChild(ofXml && xml){
 	return ofXml(doc, this->xml.prepend_move(xml.xml));
 }
+
+bool ofXml::removeChild(ofXml && node){
+	return xml.remove_child(node.xml);
+}
 #endif
 
 ofXml ofXml::appendChild(const std::string & name){
@@ -111,6 +115,10 @@ ofXml ofXml::insertChildBefore(const std::string & name, const ofXml & before){
 
 bool ofXml::removeChild(const std::string & name){
 	return xml.remove_child(name.c_str());
+}
+
+bool ofXml::removeChild(const ofXml & node){
+	return xml.remove_child(node.xml);
 }
 
 ofXml ofXml::getNextSibling() const{
