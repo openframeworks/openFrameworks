@@ -104,10 +104,12 @@ public:
 
 	ofXml appendChild(const ofXml & xml);
 	ofXml prependChild(const ofXml & xml);
+	bool removeChild(const ofXml & node);
 
 #if PUGIXML_VERSION>=170
 	ofXml appendChild(ofXml && xml);
 	ofXml prependChild(ofXml && xml);
+	bool removeChild(ofXml && node);
 #endif
 
 	ofXml appendChild(const std::string & name);
