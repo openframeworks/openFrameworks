@@ -259,6 +259,10 @@ void ofXml::Attribute::setName(const std::string & name){
 	this->attr.set_name(name.c_str());
 }
 
+std::string ofXml::Attribute::getName() const{
+	return this->attr.name();
+}
+
 int ofXml::Attribute::getIntValue() const{
 	return this->attr.as_int();
 }
