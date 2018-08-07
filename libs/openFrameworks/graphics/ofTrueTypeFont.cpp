@@ -175,137 +175,41 @@ void ofTrueTypeShutdown(){
 
 //--------------------------------------------------------
 static ofPath makeContoursForCharacter(FT_Face face){
+	ofPath charOutlines;
+	charOutlines.setUseShapeColor(false);
+	charOutlines.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
+	auto moveTo = [](const FT_Vector*to, void * userData){
+		ofPath * charOutlines = static_cast<ofPath*>(userData);
+		charOutlines->moveTo(to->x/64, -to->y/64);
+		return 0;
+	};
+	auto lineTo = [](const FT_Vector*to, void * userData){
+		ofPath * charOutlines = static_cast<ofPath*>(userData);
+		charOutlines->lineTo(to->x/64, -to->y/64);
+		return 0;
+	};
+	auto conicTo = [](const FT_Vector*cp, const FT_Vector*to, void * userData){
+		ofPath * charOutlines = static_cast<ofPath*>(userData);
+		auto lastP = charOutlines->getCommands().back().to;
+		charOutlines->quadBezierTo(lastP, {cp->x/64, -cp->y/64}, {to->x/64, -to->y/64});
+		return 0;
+	};
+	auto cubicTo = [](const FT_Vector*cp1, const FT_Vector*cp2, const FT_Vector*to, void * userData){
+		ofPath * charOutlines = static_cast<ofPath*>(userData);
+		charOutlines->bezierTo({cp1->x/64, -cp1->y/64}, {cp2->x/64, -cp2->y/64}, {to->x/64, -to->y/64});
+		return 0;
+	};
+	FT_Outline_Funcs funcs{
+		moveTo,
+		lineTo,
+		conicTo,
+		cubicTo,
+		0,
+		0,
+	};
 
-		//int num			= face->glyph->outline.n_points;
-		int nContours	= face->glyph->outline.n_contours;
-		int startPos	= 0;
-
-		char * tags		= face->glyph->outline.tags;
-		FT_Vector * vec = face->glyph->outline.points;
-
-		ofPath charOutlines;
-		charOutlines.setUseShapeColor(false);
-		charOutlines.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
-
-		for(int k = 0; k < nContours; k++){
-			if( k > 0 ){
-				startPos = face->glyph->outline.contours[k-1]+1;
-			}
-			int endPos = face->glyph->outline.contours[k]+1;
-
-			if(printVectorInfo){
-				ofLogNotice("ofTrueTypeFont") << "--NEW CONTOUR";
-			}
-
-			//vector <ofPoint> testOutline;
-			glm::vec3 lastPoint;
-
-			for(int j = startPos; j < endPos; j++){
-
-				if( FT_CURVE_TAG(tags[j]) == FT_CURVE_TAG_ON ){
-					lastPoint = {(float)vec[j].x, (float)-vec[j].y, 0.f};
-					if(printVectorInfo){
-						ofLogNotice("ofTrueTypeFont") << "flag[" << j << "] is set to 1 - regular point - " << lastPoint.x <<  lastPoint.y;
-					}
-					charOutlines.lineTo(lastPoint/64);
-
-				}else{
-					if(printVectorInfo){
-						ofLogNotice("ofTrueTypeFont") << "flag[" << j << "] is set to 0 - control point";
-					}
-
-					if( FT_CURVE_TAG(tags[j]) == FT_CURVE_TAG_CUBIC ){
-						if(printVectorInfo){
-							ofLogNotice("ofTrueTypeFont") << "- bit 2 is set to 2 - CUBIC";
-						}
-
-						int prevPoint = j-1;
-						if( j == 0){
-							prevPoint = endPos-1;
-						}
-
-						int nextIndex = j+1;
-						if( nextIndex >= endPos){
-							nextIndex = startPos;
-						}
-
-						glm::vec3 nextPoint( (float)vec[nextIndex].x,  -(float)vec[nextIndex].y, 0.f );
-
-						//we need two control points to draw a cubic bezier
-						bool lastPointCubic =  ( FT_CURVE_TAG(tags[prevPoint]) != FT_CURVE_TAG_ON ) && ( FT_CURVE_TAG(tags[prevPoint]) == FT_CURVE_TAG_CUBIC);
-
-						if( lastPointCubic ){
-							glm::vec3 controlPoint1((float)vec[prevPoint].x,	(float)-vec[prevPoint].y, 0.f);
-							glm::vec3 controlPoint2((float)vec[j].x, (float)-vec[j].y, 0.f);
-							glm::vec3 nextPoint((float) vec[nextIndex].x,	-(float) vec[nextIndex].y, 0.f);
-
-							//cubic_bezier(testOutline, lastPoint.x, lastPoint.y, controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, nextPoint.x, nextPoint.y, 8);
-							charOutlines.bezierTo(controlPoint1.x/64, controlPoint1.y/64, controlPoint2.x/64, controlPoint2.y/64, nextPoint.x/64, nextPoint.y/64);
-						}
-
-					}else{
-
-						glm::vec3 conicPoint( (float)vec[j].x,  -(float)vec[j].y, 0.f );
-
-						if(printVectorInfo){
-							ofLogNotice("ofTrueTypeFont") << "- bit 2 is set to 0 - conic- ";
-							ofLogNotice("ofTrueTypeFont") << "--- conicPoint point is " << conicPoint.x << conicPoint.y;
-						}
-
-						//If the first point is connic and the last point is connic then we need to create a virutal point which acts as a wrap around
-						if( j == startPos ){
-							bool prevIsConnic = (  FT_CURVE_TAG( tags[endPos-1] ) != FT_CURVE_TAG_ON ) && ( FT_CURVE_TAG( tags[endPos-1]) != FT_CURVE_TAG_CUBIC );
-
-							if( prevIsConnic ){
-								glm::vec3 lastConnic((float)vec[endPos - 1].x, (float)-vec[endPos - 1].y, 0.f);
-								lastPoint = (conicPoint + lastConnic) / 2;
-
-								if(printVectorInfo){
-									ofLogNotice("ofTrueTypeFont") << "NEED TO MIX WITH LAST";
-									ofLogNotice("ofTrueTypeFont") << "last is " << lastPoint.x << " " << lastPoint.y;
-								}
-							}
-						}
-
-						//bool doubleConic = false;
-
-						int nextIndex = j+1;
-						if( nextIndex >= endPos){
-							nextIndex = startPos;
-						}
-
-						glm::vec3 nextPoint( (float)vec[nextIndex].x,  -(float)vec[nextIndex].y, 0.f );
-
-						if(printVectorInfo){
-							ofLogNotice("ofTrueTypeFont") << "--- last point is " << lastPoint.x << " " <<  lastPoint.y;
-						}
-
-						bool nextIsConnic = (  FT_CURVE_TAG( tags[nextIndex] ) != FT_CURVE_TAG_ON ) && ( FT_CURVE_TAG( tags[nextIndex]) != FT_CURVE_TAG_CUBIC );
-
-						//create a 'virtual on point' if we have two connic points
-						if( nextIsConnic ){
-							nextPoint = (conicPoint + nextPoint) / 2;
-							if(printVectorInfo){
-								ofLogNotice("ofTrueTypeFont") << "|_______ double connic!";
-							}
-						}
-						if(printVectorInfo){
-							ofLogNotice("ofTrueTypeFont") << "--- next point is " << nextPoint.x << " " << nextPoint.y;
-						}
-
-						//quad_bezier(testOutline, lastPoint.x, lastPoint.y, conicPoint.x, conicPoint.y, nextPoint.x, nextPoint.y, 8);
-						charOutlines.quadBezierTo(lastPoint.x/64, lastPoint.y/64, conicPoint.x/64, conicPoint.y/64, nextPoint.x/64, nextPoint.y/64);
-
-						if( nextIsConnic ){
-							lastPoint = nextPoint;
-						}
-					}
-				}
-
-			//end for
-			}
-			charOutlines.close();
-		}
+	FT_Outline_Decompose(&face->glyph->outline, &funcs, &charOutlines);
+	charOutlines.close();
 
 	return charOutlines;
 }
