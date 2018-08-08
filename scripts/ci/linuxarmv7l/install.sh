@@ -155,11 +155,7 @@ downloadFirmware(){
         echo "Using cached RPI2 firmware-master"
     else
         cd ~
-<<<<<<< HEAD
-        downloader --progress https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
-=======
         downloader https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
->>>>>>> Downloader scripts
         unzip firmware.zip
     fi
     ${SUDO} cp -r ~/firmware-master/opt archlinux/
