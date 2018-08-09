@@ -106,6 +106,24 @@
             ]
         },
         {
+            "trDisplayName": "Console windows",
+            "trShortTitle": "Console",
+            "typeId": "Fields",
+            "data" :
+            [
+                {
+                    "name": "ConsoleWindow",
+                    "trDisplayName": "Create a console window when application start",
+                    "type": "CheckBox",
+                    "data": {
+                        "checkedValue": "true",
+                        "uncheckedValue": "false",
+                        "checked": "false"
+                    }
+                }
+            ]
+        },
+        {
             "trDisplayName": "Addons",
             "trShortTitle": "Addons",
             "typeId": "Fields",
