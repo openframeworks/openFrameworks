@@ -412,24 +412,21 @@ function createPackage {
 
     if [ "$pkg_platform" = "osx" ]; then
 		downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip 2> /dev/null
-        unzip projectGenerator-osx.zip
-        mv projectGenerator-osx projectGenerator
-        rm projectGenerator-osx.zip
-        sed -i "s/osx/$pkg_platform/g" projectGenerator/projectGenerator.app/Contents/Resources/app/settings.json
+        	unzip projectGenerator-osx.zip
+        	mv projectGenerator-osx projectGenerator
+        	rm projectGenerator-osx.zip
+        	sed -i "s/osx/$pkg_platform/g" projectGenerator/projectGenerator.app/Contents/Resources/app/settings.json
 		rm -rf apps/projectGenerator
-		downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator
-		sed -i "s/osx/osx/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
+
 
 	fi
 
     if [ "$pkg_platform" = "ios" ]; then
 		downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator-ios.zip 2> /dev/null
-        unzip projectGenerator-ios.zip
-        mv projectGenerator-ios projectGenerator
-        rm projectGenerator-ios.zip
+        	unzip projectGenerator-ios.zip
+        	mv projectGenerator-ios projectGenerator
+        	rm projectGenerator-ios.zip
 		rm -rf apps/projectGenerator
-
-		downloader progress http://ci.openframeworks.cc/projectGenerator/projectGenerator_osx -O projectGenerator-ios/projectGenerator.app/Contents/Resources/app/app/projectGenerator
 		sed -i "s/osx/ios/g" projectGenerator-ios/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
 
