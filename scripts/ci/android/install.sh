@@ -11,6 +11,10 @@ fi
 # Install linux dependencies (for project generator to work)
 sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 
+SCRIPT_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+. "$SCRIPT_DIR/../../dev/downloader.sh"
+
 # Download NDK
 cd ~
 # check if cached directory exists
@@ -19,7 +23,7 @@ if [ "$(ls -A ${NDK_DIR})" ]; then
     ls -A ${NDK_DIR}
 else
     echo "Downloading NDK"
-    wget -q "https://dl.google.com/android/repository/$NDK_DIR-linux-x86_64.zip"
+    downloader -q "https://dl.google.com/android/repository/$NDK_DIR-linux-x86_64.zip"
     echo "Uncompressing NDK"
     unzip "$NDK_DIR-linux-x86_64.zip" > /dev/null 2>&1
 fi
@@ -30,5 +34,5 @@ rm -rf projectGenerator
 mkdir -p ~/projectGenerator
 cd ~/projectGenerator
 echo "Downloading projectGenerator from ci server"
-wget http://ci.openframeworks.cc/projectGenerator/projectGenerator_linux
+downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator_linux
 chmod +x projectGenerator_linux

@@ -48,6 +48,10 @@ extract_href() {
   sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p'
 }
 
+SCRIPT_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+. "$SCRIPT_DIR/../../dev/downloader.sh"
+
 fetch() {
   curl -L -s "$@"
 }
@@ -121,7 +125,7 @@ configure_minimal_system() {
 
 install_rpi_image(){
   mkdir -p $DEST/root/archlinux_arm
-  wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+  downloader http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
   tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C $DEST/root/archlinux_arm
   echo "Server = http://eu.mirror.archlinuxarm.org/\$arch/\$repo" > $DEST/etc/pacman.d/mirrorlist
   sed -i "s/Architecture = auto/Architecture = armv7h/g" $DEST/etc/pacman.conf
