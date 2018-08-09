@@ -9,7 +9,7 @@ set -o errexit   # set -e : exit the script if any statement returns a non-true 
 
 SCRIPT_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
-. "$SCRIPT_DIR/../../dev/downloader.sh"
+. "$SCRIPT_DIR/downloader.sh"
 
 error() {
   local parent_lineno="$1"

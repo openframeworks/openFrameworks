@@ -30,7 +30,7 @@ EOF
 
 SCRIPT_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
-. "$SCRIPT_DIR/../../dev/downloader.sh"
+. "$SCRIPT_DIR/downloader.sh"
 
 download(){
     echo "Downloading $1"
