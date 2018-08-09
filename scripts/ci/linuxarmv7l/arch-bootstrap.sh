@@ -20,6 +20,10 @@
 
 #set -e -u -o pipefail
 
+SCRIPT_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+. "$SCRIPT_DIR/../../dev/downloader.sh"
+
 # Packages needed by pacman (see get-pacman-dependencies.sh)
 PACMAN_PACKAGES=(
   acl archlinux-keyring attr bzip2 curl expat glibc gpgme libarchive
@@ -48,12 +52,8 @@ extract_href() {
   sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p'
 }
 
-SCRIPT_DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
-. "$SCRIPT_DIR/../../dev/downloader.sh"
-
 fetch() {
-  downloader "$@"
+    curl -L -s "$@"
 }
 
 uncompress() {
