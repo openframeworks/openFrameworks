@@ -1162,7 +1162,6 @@ string ofGetVersionInfo(){
 		sstr << "-" << OF_VERSION_PRE_RELEASE;
 	}
 
-	sstr << std::endl;
 	return sstr.str();
 }
 
