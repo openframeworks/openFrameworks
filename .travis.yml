@@ -72,22 +72,22 @@ matrix:
           - libstdc++6
 
   - os: osx
-    osx_image: xcode8
+    osx_image: xcode9.4
     compiler: clang
     env: TARGET="osx"
 
   - os: osx
-    osx_image: xcode8
+    osx_image: xcode9.4
     compiler: clang
     env: TARGET="osx" OPT="makefiles"
 
   - os: osx
-    osx_image: xcode8
+    osx_image: xcode9.4
     compiler: clang
     env: TARGET="ios"
 
   - os: osx
-    osx_image: xcode8
+    osx_image: xcode9.4
     compiler: clang
     env: TARGET="tvos"
 
