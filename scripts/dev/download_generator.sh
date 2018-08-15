@@ -24,6 +24,8 @@ SCRIPT_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/downloader.sh"
 
+PLATFORM=$1;
+
 if [ "$PLATFORM" == "" ]; then
     echo "Error: invalid argument: $key"
     printHelp
