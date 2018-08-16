@@ -450,7 +450,7 @@ bool ofTrueTypeFont::initLibraries(){
 ofTrueTypeFont::ofTrueTypeFont()
 :settings("",0){
 	bLoadedOk		= false;
-	letterSpacing = 0;
+	letterSpacing = 1;
 	spaceSize = 1;
 	fontUnitScale = 1;
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
