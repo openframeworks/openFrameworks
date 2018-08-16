@@ -277,14 +277,14 @@ public:
 	/// \brief Returns letter spacing of font object.
 	///
 	/// You can control this by the ofTrueTypeFont::setLetterSpacing() function. 1.0 = default spacing, 
-	/// less then 1.0 would be tighter spacing, greater then 1.0 would be wider spacing.
+	/// less than 1.0 would be tighter spacing, greater than 1.0 means wider spacing.
 	///
 	/// \returns the letter spacing of font object.
 	float getLetterSpacing() const;
 
 	/// \brief Sets the letter spacing of the font object.
 	/// 
-	/// 1.0 = default spacing, less then 1.0 would be tighter spacing, greater then 1.0 would be wider spacing.
+	/// 1.0 = default spacing, less than 1.0 would be tighter spacing, greater than 1.0 would be wider spacing.
 	/// \param spacing Spacing of font object. 
 	void setLetterSpacing(float spacing);
 
