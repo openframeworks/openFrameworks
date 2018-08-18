@@ -450,7 +450,7 @@ bool ofTrueTypeFont::initLibraries(){
 ofTrueTypeFont::ofTrueTypeFont()
 :settings("",0){
 	bLoadedOk		= false;
-	letterSpacing = 0;
+	letterSpacing = 1;
 	spaceSize = 1;
 	fontUnitScale = 1;
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
@@ -1054,25 +1054,24 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 			} else if (c == '\t') {
 				if (settings.direction == OF_TTF_LEFT_TO_RIGHT){
 					f(c, pos);
-					pos.x += getGlyphProperties(' ').advance * TAB_WIDTH;
-					pos.x += letterSpacing  * directionX;
+					pos.x += (getGlyphProperties(' ').advance * spaceSize * letterSpacing) * TAB_WIDTH * directionX;
 				} else{
-					pos.x += getGlyphProperties(' ').advance * TAB_WIDTH * letterSpacing  * directionX;
+					pos.x += (getGlyphProperties(' ').advance * spaceSize * letterSpacing) * TAB_WIDTH * directionX;
 					f(c, pos);
 				}
 				prevC = c;
 			} else if(isValidGlyph(c)) {
 				const auto & props = getGlyphProperties(c);
 				if(prevC>0){
-					pos.x += getKerning(c,prevC);// * directionX;
+					pos.x += getKerning(c,prevC);
 				}
 				if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
 					f(c,pos);
 					pos.x += props.advance  * directionX;
-					pos.x += letterSpacing  * directionX;
+					pos.x += getGlyphProperties(' ').advance * spaceSize * (letterSpacing - 1.f) * directionX;
 				}else{
 					pos.x += props.advance  * directionX;
-					pos.x += letterSpacing  * directionX;
+					pos.x += getGlyphProperties(' ').advance * spaceSize * (letterSpacing - 1.f) * directionX;
 				    f(c,pos);
 				}
 				prevC = c;
@@ -1169,10 +1168,11 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 
 	iterateString( c, x, y, vflip, [&]( uint32_t c, glm::vec2 pos ){
 		auto  props = getGlyphProperties( c );
+
 		if ( c == '\t' ){
-			props.advance = getGlyphProperties( ' ' ).advance * letterSpacing * TAB_WIDTH;
+			props.advance = (getGlyphProperties(' ').advance * spaceSize * letterSpacing) * TAB_WIDTH;
 		}
-		maxX = max( maxX, pos.x + props.advance * letterSpacing );
+		maxX = max( maxX, pos.x + props.xmin + props.width  );
 		minX = min( minX, pos.x );
 		if ( vflip ){
 			minY = min( minY, pos.y - ( props.ymax - props.ymin ) );
@@ -1231,7 +1231,7 @@ glm::vec2 ofTrueTypeFont::getFirstGlyphPosForTexture(const std::string & str, bo
 					try{
 						if (c != '\n') {
 							auto g = loadGlyph(c);
-							lineWidth += g.props.advance * letterSpacing;
+							lineWidth += g.props.advance + getGlyphProperties(' ').advance * spaceSize * (letterSpacing - 1.f);
 							width = max(width, lineWidth);
 						}else{
 							lineWidth = 0;
@@ -1267,7 +1267,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 				int x = pos.x + g.props.xmin;
 				int y = g.props.ymax + pos.y;
 				glyphPositions.emplace_back(x, y);
-				lineWidth += g.props.advance * letterSpacing;
+				lineWidth += g.props.advance + getGlyphProperties(' ').advance * spaceSize * (letterSpacing - 1.f);
 				width = max(width, lineWidth);
 				height = max(height, y + long(getLineHeight()));
 			}else{
