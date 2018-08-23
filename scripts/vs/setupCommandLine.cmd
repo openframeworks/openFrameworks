@@ -152,6 +152,7 @@ for /d %%X in (..\..\examples\*) do (
 			) else (
 				if not "%CONFIGURATION%"=="release" (%BUILD_TOOL% "%CD%\%%X\%%Z" /%ACTION% "Debug|%PLATFORM%" /nologo)
 				if not "%CONFIGURATION%"=="debug" (%BUILD_TOOL% "%CD%\%%X\%%Z" /%ACTION% "Release|%PLATFORM%" /nologo)
+			)
 		)
 		cd ../
 	)
