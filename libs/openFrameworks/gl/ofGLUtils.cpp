@@ -371,6 +371,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 	case GL_LUMINANCE8:
 	case GL_LUMINANCE16:
 	case GL_LUMINANCE32F_ARB:
+	case GL_R8:
 	case GL_R16:
 	case GL_R16F:
 	case GL_R16I:
