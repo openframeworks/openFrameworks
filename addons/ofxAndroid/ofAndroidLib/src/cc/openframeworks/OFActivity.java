@@ -20,6 +20,10 @@ public abstract class OFActivity extends Activity{
 	//gesture handler member
 	private ViewGroup mOFGlSurfaceContainer;
 	
+	public ViewGroup getSurfaceContainer(){
+		return mOFGlSurfaceContainer;
+	}
+	
 	public void initView(){  
 		String packageName = this.getPackageName();
         try {

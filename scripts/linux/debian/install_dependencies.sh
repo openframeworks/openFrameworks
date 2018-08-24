@@ -9,6 +9,8 @@ if [ $EUID != 0 ]; then
    exit 1
 fi
 
+ROOT=$(cd $(dirname $0); pwd -P)
+
 apt-get update
 
 GSTREAMER_VERSION=0.10
@@ -67,4 +69,8 @@ if [ "$OS_CODENAME" = "7 (wheezy)" ]; then
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 1 --force
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 1 --force
 fi
+
+echo "If you are running a version of debian greated than 8 OF needs to install poco libraries in the system with the following packages:"
+apt-get install libpoco-dev
+cp $ROOT/../extra/poco_config.mk $ROOT/../../../addons/ofxPoco/addon_config.mk
 

@@ -234,8 +234,8 @@ void ofNode::setGlobalOrientation(const glm::quat& q) {
 	if(parent == nullptr) {
 		setOrientation(q);
 	} else {
-		auto invParent = glm::inverse(parent->getGlobalTransformMatrix());
-		auto m44 = glm::toQuat(invParent) * q;
+		auto invParent = glm::inverse(parent->getGlobalOrientation());
+		auto m44 = invParent * q;
 		setOrientation(m44);
 	}
 }
@@ -427,10 +427,9 @@ void ofNode::lookAt(const glm::vec3& lookAtPosition){
     if(radius>0){
 		float latitude = acos(relPosition.y / radius) - glm::half_pi<float>();
 		float longitude = atan2(relPosition.x , relPosition.z);
-		glm::quat q = glm::angleAxis(latitude, glm::vec3(1,0,0)) * glm::angleAxis(longitude, glm::vec3(0,1,0)) * glm::angleAxis(0.f, glm::vec3(0,0,1));
+		glm::quat q = glm::angleAxis(0.f, glm::vec3(0,0,1)) * glm::angleAxis(longitude, glm::vec3(0,1,0)) * glm::angleAxis(latitude, glm::vec3(1,0,0));
         setGlobalOrientation(q);
     }
-
 }
 
 //----------------------------------------
@@ -562,8 +561,8 @@ glm::vec3 ofNode::getGlobalPosition() const {
 
 //----------------------------------------
 glm::quat ofNode::getGlobalOrientation() const {
-	auto rot = glm::scale(getGlobalTransformMatrix(), 1.f/getGlobalScale());
-	return glm::toQuat(rot);
+	if (parent) return parent->getGlobalOrientation() * getOrientationQuat();
+	return getOrientationQuat();
 }
 
 //----------------------------------------
@@ -676,7 +675,7 @@ void ofNode::createMatrix() {
 	localTransformMatrix = glm::translate(glm::mat4(1.0), toGlm(position));
 	localTransformMatrix = localTransformMatrix * glm::toMat4((const glm::quat&)orientation);
 	localTransformMatrix = glm::scale(localTransformMatrix, toGlm(scale));
-	
+
 	updateAxis();
 }
 

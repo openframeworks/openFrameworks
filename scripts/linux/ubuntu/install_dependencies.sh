@@ -15,6 +15,8 @@ else
     FORCE_YES=""
 fi
 
+ROOT=$(cd $(dirname $0); pwd -P)
+
 function installPackages {
     for pkg in $@; do
         echo "Installing ${pkg}"
@@ -192,8 +194,28 @@ if [ "$1" != "-y" ]; then
 fi
 installPackages ${PACKAGES}
 
+if [[ $MAJOR_VERSION -gt 18 || $MAJOR_VERSION -eq 18 ]]; then
+    PACKAGES="libpoco-dev"
+    echo "detected ubuntu 18.04 or greater"
+    echo "OF needs to install poco libraries in the system with the following packages:"
+    echo ${PACKAGES}
+    if [ "$1" != "-y" ]; then
+        read -p "Do you want to continue? [Y/n] "
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            exit 0
+        fi
+
+        echo
+        echo "Installing..."
+        echo
+    fi
+    installPackages ${PACKAGES}
+    cp $ROOT/../extra/poco_config.mk $ROOT/../../../addons/ofxPoco/addon_config.mk
+fi
+
+
 if [[ $MAJOR_VERSION -lt 14 || ($MAJOR_VERSION -eq 14 && $MINOR_VERSION -eq 4) ]]; then
-    echo "detected ubuntu default gcc to old for compatibility with c++11"
+    echo "detected ubuntu default gcc too old for compatibility with c++11"
 	echo "OF needs at least ${CXX_VER} as default compiler, we can install this now"
 	echo "or you will need to setup this manually before compiling"
 	if [ "$1" != "-y" ]; then
