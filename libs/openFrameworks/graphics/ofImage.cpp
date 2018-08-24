@@ -207,7 +207,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _
 		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
 	}
 
-	std::string fileName = ofToDataPath(_fileName);
+	std::string fileName = ofToDataPath(_fileName, true);
 	bool bLoaded = false;
 	FIBITMAP * bmp = nullptr;
 

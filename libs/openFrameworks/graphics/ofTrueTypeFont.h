@@ -276,31 +276,37 @@ public:
 
 	/// \brief Returns letter spacing of font object.
 	///
-	/// You can control this by the ofTrueTypeFont::setLetterSpacing() function. 1.0 = default spacing, 
-	/// less then 1.0 would be tighter spacing, greater then 1.0 would be wider spacing.
+	/// You can control this by the ofTrueTypeFont::setLetterSpacing() function. 1.f = default spacing,
+	/// less than 1.0 means tighter spacing, greater than 1.0 means wider spacing.
 	///
 	/// \returns the letter spacing of font object.
 	float getLetterSpacing() const;
 
 	/// \brief Sets the letter spacing of the font object.
 	/// 
-	/// 1.0 = default spacing, less then 1.0 would be tighter spacing, greater then 1.0 would be wider spacing.
-	/// \param spacing Spacing of font object. 
+	/// 1.f = default spacing, less than 1.f would be tighter spacing, greater than 1.f would be wider spacing.
+	///
+	/// \param spacing Scale for spacing between letters for this font.
 	void setLetterSpacing(float spacing);
 
 	/// \brief Returns a variable that represents how wide spaces are.
 	///
-	/// It's a scalar for the width of the letter 'p', so 1.0 means that a space will be the size of the lower 
-	/// case 'p' of that font. 2.0 means that it's 2 times the size of the lower case 'p', etc.
+	/// The value returned is a scalar for the advance (=width) of the whitespace glyph, so 1.0 means
+	/// that a space will be the default width of a whitespace glyph of this font, 2.0 means that
+	/// it's 2 times the default width, etc.
 	///
 	/// \returns the width of the space.
 	float getSpaceSize() const;
 
-	/// \brief Sets the size of the space ' ' character. 
+	/// \brief Sets the width for the whitespace character for this font
 	/// 
-	/// This number, which defaults to 1.0, scales the width of the letter 'p' for the space.
+	/// This number, which defaults to 1.0, scales the width of a whitespace, based on the
+	/// width of the whitespace glyph of this font.
 	///
-	/// \param size Scales the width of the letter 'p' for the space. 
+	/// Setting spaceSize to 2.f will make whitespaces twice as wide, 0.5f will make whitespaces
+	/// half as wide, etc.
+	///
+	/// \param size Scales the width of the whitespace glyph for this font.
 	void setSpaceSize(float size);
 
 	/// \brief Returns the string width.
