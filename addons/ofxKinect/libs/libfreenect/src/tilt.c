@@ -64,7 +64,7 @@ int get_reply(libusb_device_handle* dev, freenect_context *ctx){
 	int res = 0;
 	res = libusb_bulk_transfer(dev, 0x81, buffer, 512, &transferred, 100);
 	if (res != 0) {
-		FN_ERROR("get_reply(): libusb_bulk_transfer failed: %d (transferred = %d)\n", res, transferred);
+		FN_ERROR("get_reply(): libusb_bulk_transfer failed: %s (transferred = %d)\n", libusb_error_name(res), transferred);
 	} else if (transferred != 12) {
 		FN_ERROR("get_reply(): weird - got %d bytes (expected 12)\n", transferred);
 	} else {
@@ -214,7 +214,7 @@ int freenect_set_tilt_degs_alt(freenect_device *dev, int tilt_degrees)
 
 	res = libusb_bulk_transfer(dev->usb_audio.dev, 0x01, buffer, 20, &transferred, 250);
 	if (res != 0) {
-		FN_ERROR("freenect_set_tilt_alt(): libusb_bulk_transfer failed: %d (transferred = %d)\n", res, transferred);
+		FN_ERROR("freenect_set_tilt_alt(): libusb_bulk_transfer failed: %s (transferred = %d)\n", libusb_error_name(res), transferred);
 		return res;
 	}
     
@@ -281,7 +281,7 @@ FN_INTERNAL int fnusb_set_led_alt(libusb_device_handle * dev, freenect_context *
 	int transferred = 0;
 	int res = libusb_bulk_transfer(dev, 0x01, buffer, 20, &transferred, 100);
 	if (res != 0) {
-		FN_WARNING("fnusb_set_led_alt(): libusb_bulk_transfer failed: %d (transferred = %d)\n", res, transferred);
+		FN_WARNING("fnusb_set_led_alt(): libusb_bulk_transfer failed: %s (transferred = %d)\n", libusb_error_name(res), transferred);
 		return res;
 	}
 	return get_reply(dev, ctx);
