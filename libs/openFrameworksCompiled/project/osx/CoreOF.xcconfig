@@ -1,5 +1,5 @@
 ARCHS = $(ARCHS_STANDARD_32_64_BIT)	// this allows you to select target architecture in dropdown menu
-VALID_ARCHS = x86_64 i386
+VALID_ARCHS = x86_64
 
 ONLY_ACTIVE_ARCH = YES      // this makes sure not to build an universal binary
 
