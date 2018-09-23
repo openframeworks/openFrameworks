@@ -29,7 +29,7 @@ public:
 	ofParameterGroup parameters;
 	ofParameter<float> size;
 	ofParameter<int> number;
-	ofParameter<ofVec2f> position;
+	ofParameter<glm::vec2> position;
 
 	ofParameter<ofColor> color;
 

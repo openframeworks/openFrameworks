@@ -371,6 +371,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 	case GL_LUMINANCE8:
 	case GL_LUMINANCE16:
 	case GL_LUMINANCE32F_ARB:
+	case GL_R8:
 	case GL_R16:
 	case GL_R16F:
 	case GL_R16I:
@@ -612,7 +613,7 @@ int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 		}
 #endif
 	default:
-		ofLogError("ofGLUtils") << "ofGetGLInternalFormatFromPixelFormat(): unknown OF pixel format"
+		ofLogError("ofGLUtils") << "ofGetGLInternalFormatFromPixelFormat(): unknown OF pixel format "
 						<< ofToString(pixelFormat) << ", returning GL_RGBA";
 		return GL_RGBA;
 	}
@@ -671,12 +672,12 @@ int ofGetGLFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	default:
 #ifndef TARGET_OPENGLES
 		if(ofIsGLProgrammableRenderer()){
-			ofLogError("ofGLUtils") << "ofGetGLFormatFromPixelFormat(): unknown OF pixel format"
+			ofLogError("ofGLUtils") << "ofGetGLFormatFromPixelFormat(): unknown OF pixel format "
 				<< ofToString(pixelFormat) << ", returning GL_RED";
 			return GL_RED;
 		}else{
 #endif
-			ofLogError("ofGLUtils") << "ofGetGLFormatFromPixelFormat(): unknown OF pixel format"
+			ofLogError("ofGLUtils") << "ofGetGLFormatFromPixelFormat(): unknown OF pixel format "
 				<< ofToString(pixelFormat) << ", returning GL_LUMINANCE";
 			return GL_LUMINANCE;
 #ifndef TARGET_OPENGLES
