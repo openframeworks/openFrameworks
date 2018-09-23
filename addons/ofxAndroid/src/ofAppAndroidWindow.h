@@ -63,6 +63,8 @@ public:
 	void	setThreadedEvents(bool threadedEvents);
 	void 	setAccumulateTouchEvents(bool accumEvents);
 
+	int 	getGlesVersion();
+
 private:
 	ofCoreEvents coreEvents;
 	std::shared_ptr<ofBaseRenderer> currentRenderer;

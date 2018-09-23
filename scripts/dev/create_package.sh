@@ -407,11 +407,21 @@ function createPackage {
 		sed -i "s/osx/vs/g" projectGenerator-vs/resources/app/settings.json
 	fi
 
-    if [ "$pkg_platform" = "osx" ] || [ "$pkg_platform" = "ios" ]; then
+    if [ "$pkg_platform" = "osx" ]; then
 		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip 2> /dev/null
         unzip projectGenerator-osx.zip
         mv projectGenerator-osx projectGenerator
         rm projectGenerator-osx.zip
+        sed -i "s/osx/$pkg_platform/g" projectGenerator/projectGenerator.app/Contents/Resources/app/settings.json
+		rm -rf apps/projectGenerator
+	fi
+
+    if [ "$pkg_platform" = "ios" ]; then
+		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-ios.zip 2> /dev/null
+        unzip projectGenerator-ios.zip
+        mv projectGenerator-ios projectGenerator
+        rm projectGenerator-ios.zip
+		rm -rf apps/projectGenerator
 	fi
 
 	if [ "$pkg_platform" = "linux" ]; then
@@ -444,9 +454,10 @@ function createPackage {
 		cd ${pkg_ofroot}
 		sed -i "s/osx/android/g" projectGenerator-windows/resources/app/settings.json
 
-		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip 2> /dev/null
-        unzip projectGenerator-osx.zip
-		sed -i -e "s/osx/android/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
+		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-android.zip 2> /dev/null
+        unzip projectGenerator-android.zip
+		mv projectGenerator-android projectGenerator-osx
+        rm projectGenerator-android.zip
 
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
 		npm install > /dev/null
@@ -457,7 +468,7 @@ function createPackage {
 	fi
 
 	# linux remove other platform projects from PG source and copy ofxGui
-	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
+	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ] || [ "$pkg_platform" = "android" ]; then
 	    cd ${pkg_ofroot}
 		mv apps/projectGenerator/commandLine .
 		mv apps/projectGenerator/ofxProjectGenerator .

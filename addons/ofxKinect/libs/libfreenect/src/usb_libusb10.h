@@ -74,8 +74,8 @@ typedef struct {
 	int dead_xfers;
 } fnusb_isoc_stream;
 
-int fnusb_num_devices(fnusb_ctx *ctx);
-int fnusb_list_device_attributes(fnusb_ctx *ctx, struct freenect_device_attributes** attribute_list);
+int fnusb_num_devices(freenect_context *ctx);
+int fnusb_list_device_attributes(freenect_context *ctx, struct freenect_device_attributes** attribute_list);
 
 int fnusb_init(fnusb_ctx *ctx, freenect_usb_context *usb_ctx);
 int fnusb_shutdown(fnusb_ctx *ctx);

@@ -85,8 +85,6 @@ public:
 	bool getWindowShouldClose();
 	void setWindowShouldClose();
 
-	void close();
-
 	void hideCursor();
 	void showCursor();
 
@@ -187,6 +185,8 @@ private:
 	static void		scroll_cb(GLFWwindow* windowP_, double x, double y);
 	static void 	drop_cb(GLFWwindow* windowP_, int numFiles, const char** dropString);
 	static void		error_cb(int errorCode, const char* errorDescription);
+
+	void close();
 
 #ifdef TARGET_LINUX
 	void setWindowIcon(const std::string & path);

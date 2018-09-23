@@ -1,5 +1,3 @@
 **/.gitignore
-**/AndroidManifest.xml
 **/res/
 **/*.gradle
-**/srcJava

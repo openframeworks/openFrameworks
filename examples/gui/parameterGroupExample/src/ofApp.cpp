@@ -7,6 +7,7 @@ void ofApp::setup(){
 
 	parameters.setName("settings");
 	parameters.add(vSync.set("vSync",true));
+	vSync.addListener(this, &ofApp::vSyncChanged);
 	parameters.add(renderer1.parameters);
 	parameters.add(renderer2.parameters);
 
@@ -20,6 +21,7 @@ void ofApp::setup(){
 
 void ofApp::vSyncChanged(bool & vSync){
 	ofSetVerticalSync(vSync);
+	ofLogNotice() << "vSync changed: " << vSync;
 }
 
 
