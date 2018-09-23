@@ -197,7 +197,7 @@ protected:
 /// 
 /// ~~~~
 /// 
-/// The sphere can look a little weird if you don't do ofEnabledDepthTesting() 
+/// The sphere can look a little weird if you don't do ofEnableDepthTest() 
 /// and ofDisableAlphaBlending().
 /// 
 

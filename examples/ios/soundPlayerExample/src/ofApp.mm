@@ -1,159 +1,187 @@
 #include "ofApp.h"
 
-
 //--------------------------------------------------------------
-void ofApp::setup(){	
-	//ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
+void ofApp::setup(){
 
-	capW = 320;
-	capH = 240;
+    ofBackground(255);
+	ofSetOrientation(OF_ORIENTATION_90_RIGHT);
 
-	#ifdef _USE_LIVE_VIDEO
-		vidGrabber.setup(capW, capH);
-		capW = vidGrabber.getWidth();
-		capH = vidGrabber.getHeight();
-    #else	
-        vidPlayer.load("fingers.m4v");
-        vidPlayer.setLoopState(OF_LOOP_NORMAL);
-		vidPlayer.play();
-	#endif
+	synth.load("sounds/synth.mp3"); // compressed mp3 format.
+    synth.setVolume(0.75);
 
-    colorImg.allocate(capW,capH);
-    grayImage.allocate(capW,capH);
-    grayBg.allocate(capW,capH);
-    grayDiff.allocate(capW,capH);	
+	beats.load("sounds/1085.caf"); // uncompressed caf format.
+    beats.setVolume(0.75);
 
-	bLearnBakground = true;
-	threshold = 80;
-	
-	ofSetFrameRate(20);
+    // in iOS, openFrameworks uses ofxiOSSoundPlayer to play sound.
+    // ofxiOSSoundPlayer is a wrapper for AVSoundPlayer which uses AVFoundation to play sound.
+    // you can use AVSoundPlayer directly using objective-c in the same way you use ofxiOSSoundPlayer,
+    // and many of the function names are the same or similar.
+    // the below code demonstrates how the AVSoundPlayer can be used inside your app.
+
+    vocals = [[AVSoundPlayer alloc] init];
+    [vocals loadWithFile:@"sounds/Violet.wav"]; // uncompressed wav format.
+    [vocals volume:0.5];
+
+    font.load("fonts/Sudbury_Basin_3D.ttf", 18);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	ofBackground(100,100,100);
-
-    bool bNewFrame = false;
-
-	#ifdef _USE_LIVE_VIDEO
-       vidGrabber.update();
-	   bNewFrame = vidGrabber.isFrameNew();
-    #else
-        vidPlayer.update();
-        bNewFrame = vidPlayer.isFrameNew();    
-    #endif
-
-
-    
-	if (bNewFrame){
-	
-		#ifdef _USE_LIVE_VIDEO
-			if( vidGrabber.getPixels().getData() != NULL ){
-		#else
-			if( vidPlayer.getPixels().getData() != NULL && vidPlayer.getWidth() > 0 ){
-		#endif
-
-			#ifdef _USE_LIVE_VIDEO
-				colorImg.setFromPixels(vidGrabber.getPixels().getData(), capW, capH);
-			#else
-				colorImg.setFromPixels(vidPlayer.getPixels().getData(), capW, capH);
-			#endif
-
-			grayImage = colorImg;
-			if (bLearnBakground == true){
-				grayBg = grayImage;		// the = sign copys the pixels from grayImage into grayBg (operator overloading)
-				bLearnBakground = false;
-			}
-
-			// take the abs value of the difference between background and incoming and then threshold:
-			grayDiff.absDiff(grayBg, grayImage);
-			grayDiff.threshold(threshold);
-
-			// find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
-			// also, find holes is set to true so we will get interior contours as well....
-			contourFinder.findContours(grayDiff, 20, (capW*capH)/3, 10, true);	// find holes
-		
-		}
-	}
+	//
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){	
-	
-	ofSetColor(255);
-	ofDrawBitmapString(ofToString(ofGetFrameRate()), 20, 20);
-	
-	ofPushMatrix();
-	ofScale(0.5, 0.5, 1);
+void ofApp::draw(){
 
-	// draw the incoming, the grayscale, the bg and the thresholded difference
+    string tempStr;
+
+	float sectionWidth = ofGetWidth() / 3.0f;
+
+    // draw the background colors:
+	ofSetHexColor(0xeeeeee);
+	ofDrawRectangle(0, 0, sectionWidth, ofGetHeight());
 	ofSetHexColor(0xffffff);
-	grayImage.draw(0,0);
-	grayBg.draw(capW+4, 0);
-	grayDiff.draw(0, capH + 4);
+	ofDrawRectangle(sectionWidth, 0, sectionWidth, ofGetHeight());
+	ofSetHexColor(0xdddddd);
+	ofDrawRectangle(sectionWidth * 2, 0, sectionWidth, ofGetHeight());
 
-	// lets draw the contours. 
-	// this is how to get access to them:
-    for (int i = 0; i < contourFinder.nBlobs; i++){
-        contourFinder.blobs[i].draw(0, capH + 4);
+	//---------------------------------- synth:
+	if(synth.isPlaying()) {
+        ofSetHexColor(0xFF0000);
+    } else {
+        ofSetHexColor(0x000000);
     }
+	font.drawString("synth !!", 10,50);
 
-	ofPopMatrix();
-	// finally, a report:
+	ofSetColor(0);
+    tempStr = "click to play\nposition: " + ofToString(synth.getPosition()) + "\nspeed: " + ofToString(synth.getSpeed()) + "\npan:" + ofToString(synth.getPan());
+	ofDrawBitmapString(tempStr, 10, ofGetHeight() - 50);
 
-	ofSetHexColor(0xffffff);
-	stringstream reportStr;
-    reportStr << "bg subtraction and blob detection\ntap to capture bg\n";
-    reportStr << "threshold "<< threshold << "\nnum blobs found " << contourFinder.nBlobs << " fps: " << ofGetFrameRate();
-	ofDrawBitmapString(reportStr.str(), 4, 380);
+	//---------------------------------- beats:
+	if (beats.isPlaying()) {
+        ofSetHexColor(0xFF0000);
+    } else {
+        ofSetHexColor(0x000000);
+    }
+	font.drawString("beats !!", sectionWidth + 10, 50);
+
+	ofSetHexColor(0x000000);
+    tempStr = "click to play\nposition: " + ofToString(beats.getPosition()) + "\nspeed: " + ofToString(beats.getSpeed()) + "\npan: " + ofToString(beats.getPan());
+	ofDrawBitmapString(tempStr, sectionWidth + 10, ofGetHeight() - 50);
+
+	//---------------------------------- vocals:
+	if ([vocals isPlaying]) {
+        ofSetHexColor(0xFF0000);
+    } else {
+        ofSetHexColor(0x000000);
+    }
+	font.drawString("vocals !!", sectionWidth * 2 + 10, 50);
+
+	ofSetHexColor(0x000000);
+    tempStr = "click to play\nposition: " + ofToString(vocals.position) + "\nspeed: " + ofToString(vocals.speed) + "\npan: " + ofToString(vocals.pan);
+	ofDrawBitmapString(tempStr, sectionWidth * 2 + 10, ofGetHeight() - 50);
 }
-    
+
 //--------------------------------------------------------------
 void ofApp::exit(){
-        
+    [vocals release];
+    vocals = nil;
 }
 
 //--------------------------------------------------------------
 void ofApp::touchDown(ofTouchEventArgs & touch){
-	bLearnBakground = true;
+	if( touch.id != 0 ){
+        return;
+    }
+
+    float sectionWidth = ofGetWidth() / 3.0f;
+    float speed = ofMap(touch.y, ofGetHeight(), 0, 0.5, 2.0, true);
+    float pan = 0;
+
+    if (touch.x < sectionWidth){
+        pan = ofMap(touch.x, 0, sectionWidth, -1.0, 1.0, true);
+
+        synth.play();
+        synth.setSpeed(speed);
+        synth.setPan(pan);
+
+    } else if(touch.x < sectionWidth * 2) {
+        pan = ofMap(touch.x, sectionWidth, sectionWidth * 2, -1.0, 1.0, true);
+
+        beats.play();
+        beats.setSpeed(speed);
+        beats.setPan(pan);
+
+    } else if(touch.x < sectionWidth * 3) {
+        pan = ofMap(touch.x, sectionWidth * 2, sectionWidth * 3, -1.0, 1.0, true);
+
+        [vocals play];
+        [vocals speed:speed];
+        [vocals pan:pan];
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::touchMoved(ofTouchEventArgs & touch){
-        
+	if( touch.id != 0 ){
+        return;
+    }
+
+    float sectionWidth = ofGetWidth() / 3.0f;
+    float speed = ofMap(touch.y, ofGetHeight(), 0, 0.5, 2.0, true);
+    float pan = 0;
+
+    if (touch.x < sectionWidth){
+        pan = ofMap(touch.x, 0, sectionWidth, -1.0, 1.0, true);
+
+        synth.setSpeed(speed);
+        synth.setPan(pan);
+
+    } else if(touch.x < sectionWidth * 2) {
+        pan = ofMap(touch.x, sectionWidth, sectionWidth * 2, -1.0, 1.0, true);
+
+        beats.setSpeed(speed);
+        beats.setPan(pan);
+
+    } else if(touch.x < sectionWidth * 3) {
+        pan = ofMap(touch.x, sectionWidth * 2, sectionWidth * 3, -1.0, 1.0, true);
+
+        [vocals speed:speed];
+        [vocals pan:pan];
+    }
 }
-    
+
 //--------------------------------------------------------------
 void ofApp::touchUp(ofTouchEventArgs & touch){
-        
+
 }
-    
+
 //--------------------------------------------------------------
 void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
-        
+
 }
-    
+
 //--------------------------------------------------------------
 void ofApp::touchCancelled(ofTouchEventArgs & touch){
-        
+
 }
-    
+
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-        
+
 }
-    
+
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-        
+
 }
-    
+
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-        
+
 }
-    
+
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-        
+
 }
