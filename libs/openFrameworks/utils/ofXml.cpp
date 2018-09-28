@@ -52,6 +52,11 @@ bool ofXml::save(const std::filesystem::path & file) const{
 	return false;
 }
 
+void ofXml::clear(){
+	doc.reset(new pugi::xml_document);
+	xml = doc->root();
+}
+
 std::string ofXml::toString(const std::string & indent) const{
 	ostringstream stream;
 	if(xml == doc->root()){
