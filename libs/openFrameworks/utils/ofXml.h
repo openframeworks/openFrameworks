@@ -104,6 +104,7 @@ public:
 	bool load(const ofBuffer & buffer);
 	bool parse(const std::string & xmlStr);
 	bool save(const std::filesystem::path & file) const;
+	void clear();
 	std::string toString(const std::string & indent = "\t") const;
 
 	ofXml getChild(const std::string & name) const;
