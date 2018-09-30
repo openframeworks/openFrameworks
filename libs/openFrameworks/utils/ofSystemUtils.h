@@ -35,6 +35,12 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle="", bool bFolderSe
 /// \return dialog result with selection (if any)
 ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messageName);
 
+/// \brief show a confirmation dialog box (Ok and Cancel)
+/// \param message message text shown in the dialog box
+/// \param bYesNo set to true to use Yes/No instead of Ok/Cancel
+/// \return true if affirmative selection was selected (OK or Yes)
+bool ofSystemConfirmDialog(std::string message, bool bYesNo=false);
+
 /// \brief show a text entry dialog box
 /// \param question descriptive text for the text entry, ie. "What's your favorite color?"
 /// \param text optional default text entry string, ie. "blue"

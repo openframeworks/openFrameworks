@@ -156,6 +156,30 @@ gboolean file_dialog_gtk(gpointer userdata){
 	return G_SOURCE_REMOVE;
 }
 
+struct ConfirmDialogData{
+	string message;
+	bool yesno;
+	bool done;
+	bool result;
+	std::condition_variable condition;
+	std::mutex mutex;
+};
+
+gboolean confirm_dialog_gtk(gpointer userdata){
+	ConfirmDialogData * dialogData = (ConfirmDialogData*)userdata;
+	GtkWidget* dialog = gtk_message_dialog_new (nullptr, (GtkDialogFlags) 0, GTK_MESSAGE_INFO, dialogData->yesno ? GTK_BUTTONS_YES_NO : GTK_BUTTONS_OK_CANCEL, "%s", dialogData->message.c_str());
+	gtk_widget_grab_focus(gtk_dialog_get_widget_for_response(GTK_DIALOG(dialog), dialogData->yesno ? GTK_RESPONSE_YES : GTK_RESPONSE_OK));
+	gint response = gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+	dialogData->mutex.lock();
+	dialogData->result = response == GTK_RESPONSE_OK || response == GTK_RESPONSE_YES;
+	dialogData->condition.notify_all();
+	dialogData->done = true;
+	dialogData->mutex.unlock();
+
+	return G_SOURCE_REMOVE;
+}
+
 struct TextDialogData{
 	string text;
 	string question;
@@ -601,6 +625,55 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 #endif
 
+bool ofSystemConfirmDialog(string message, bool bYesNo){
+#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+	auto locale = std::locale();
+	initGTK();
+	ConfirmDialogData dialogData;
+	dialogData.message = message;
+	dialogData.yesno = bYesNo;
+	dialogData.done = false;
+	g_main_context_invoke(g_main_loop_get_context(ofGstUtils::getGstMainLoop()), &confirm_dialog_gtk, &dialogData);
+	if(!dialogData.done){
+		std::unique_lock<std::mutex> lock(dialogData.mutex);
+		dialogData.condition.wait(lock);
+	}
+	resetLocale(locale);
+	return dialogData.result;
+#endif
+
+#ifdef TARGET_OSX
+	@autoreleasepool {
+		NSAlert *alert = [[[NSAlert alloc] init] autorelease];
+		if (bYesNo) {
+			[alert addButtonWithTitle:@"Yes"];
+			[alert addButtonWithTitle:@"No"];
+		} else {
+			[alert addButtonWithTitle:@"OK"];
+			[alert addButtonWithTitle:@"Cancel"];
+		}
+		[alert setMessageText:[NSString stringWithCString:message.c_str()
+												 encoding:NSUTF8StringEncoding]];
+		NSInteger returnCode = [alert runModal];
+		restoreAppWindowFocus();
+		return returnCode == NSAlertFirstButtonReturn;
+	}
+#endif
+
+#ifdef TARGET_WIN32
+	int result = MessageBoxW(
+	  NULL,
+	  convertNarrowToWide(message).c_str(),
+	  NULL,
+	  bYesNo ? MB_YESNO : MB_OKCANCEL
+	);
+	return result == 1;
+#endif
+
+	ofSystemAlertDialog(message);
+	ofLogError() << "ofSystemConfirmDialog is not implemented on this platform and will always return true!";
+	return true;
+}
 
 string ofSystemTextBoxDialog(string question, string text){
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
