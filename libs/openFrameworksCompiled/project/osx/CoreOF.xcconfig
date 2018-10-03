@@ -48,6 +48,8 @@ LIB_CURL = "$(OF_PATH)/libs/curl/lib/osx/curl.a"
 LIB_URIPARSER = "$(OF_PATH)/libs/uriparser/lib/osx/uriparser.a"
 LIB_PUGIXML = "$(OF_PATH)/libs/pugixml/lib/osx/pugixml.a"
 
+LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworks.a"
+LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworksDebug.a"
 
 OF_CORE_LIBS = $(LIB_TESS) $(LIB_GLEW) $(LIB_CAIRO1) $(LIB_CAIRO2) $(LIB_CAIRO3) $(LIB_FMODEX) $(LIB_RTAUDIO) $(LIB_GLFW) $(LIB_FREEIMAGE) $(LIB_FREETYPE) $(LIB_BOOST_FS) $(LIB_BOOST_SYSTEM) $(LIB_CURL) $(LIB_URIPARSER) $(LIB_PUGIXML)
 
