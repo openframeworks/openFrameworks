@@ -725,7 +725,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 
 
 	FT_Set_Char_Size( face.get(), settings.fontSize << 6, settings.fontSize << 6, settings.dpi, settings.dpi);
-	fontUnitScale = (float(settings.fontSize * settings.dpi)) / (72 * face->units_per_EM);
+	fontUnitScale = 1.0 / 64;// (float(settings.fontSize * settings.dpi)) / (72 * face->units_per_EM);
 	lineHeight = face->height * fontUnitScale;
 	ascenderHeight = face->ascender * fontUnitScale;
 	descenderHeight = face->descender * fontUnitScale;
@@ -1024,8 +1024,8 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 int ofTrueTypeFont::getKerning(uint32_t c, uint32_t prevC) const{
 	if(FT_HAS_KERNING( face )){
 		FT_Vector kerning;
-		FT_Get_Kerning(face.get(), FT_Get_Char_Index(face.get(), c), FT_Get_Char_Index(face.get(), prevC), FT_KERNING_UNFITTED, &kerning);
-		return kerning.x / 64;// *fontUnitScale;
+		FT_Get_Kerning(face.get(), FT_Get_Char_Index(face.get(), prevC), FT_Get_Char_Index(face.get(), c), FT_KERNING_UNFITTED, &kerning);
+		return kerning.x * fontUnitScale;
 	}else{
 		return 0;
 	}
