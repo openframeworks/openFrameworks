@@ -147,11 +147,12 @@ for /d %%X in (..\..\examples\*) do (
 			echo.
 
 			if "%BUILD_TOOL%"=="msbuild" (
-				if not "%CONFIGURATION%"=="release" (msbuild /nologo /noautoresponse %%Z /p:Configuration=Debug)
-				if not "%CONFIGURATION%"=="debug" (msbuild /nologo /noautoresponse %%Z /p:Configuration=Release)
+				if not "%CONFIGURATION%"=="release" (msbuild %%Z /t:%ACTION% /nologo /noautoresponse /maxcpucount /p:Configuration=Debug)
+				if not "%CONFIGURATION%"=="debug" (msbuild %%Z /t:%ACTION% /nologo /noautoresponse /maxcpucount /p:Configuration=Release)
 			) else (
-				if not "%CONFIGURATION%"=="release" (%BUILD_TOOL% "%CD%\%%X\%%Y\%%Z" /%ACTION% Debug /nologo)
-				if not "%CONFIGURATION%"=="debug" (%BUILD_TOOL% "%CD%\%%X\%%Y\%%Z" /%ACTION% Release /nologo))
+				if not "%CONFIGURATION%"=="release" (%BUILD_TOOL% "%CD%\%%X\%%Z" /%ACTION% "Debug|%PLATFORM%" /nologo)
+				if not "%CONFIGURATION%"=="debug" (%BUILD_TOOL% "%CD%\%%X\%%Z" /%ACTION% "Release|%PLATFORM%" /nologo)
+			)
 		)
 		cd ../
 	)
