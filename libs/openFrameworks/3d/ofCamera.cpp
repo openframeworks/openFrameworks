@@ -151,7 +151,7 @@ glm::mat4 ofCamera::getProjectionMatrix(const ofRectangle & viewport) const {
 	const_cast<ofCamera*>(this)->calcClipPlanes(viewport);
 
 	if(isOrtho) {
-		return glm::ortho(
+		return glm::translate(glm::mat4(), {-lensOffset.x, -lensOffset.y, 0.f}) * glm::ortho(
 			- viewport.width/2,
 			+ viewport.width/2,
 			- viewport.height/2,
