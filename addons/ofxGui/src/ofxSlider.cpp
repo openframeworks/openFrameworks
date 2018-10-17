@@ -192,11 +192,9 @@ bool ofxSlider<Type>::mouseScrolled(ofMouseEventArgs & args){
 		}else{
 			// the following will always return false as it is inside the slider.
 //			return input.mouseScrolled(args);
-		
 		}
-	}else{
-		return false;
 	}
+	return false;
 }
 
 
