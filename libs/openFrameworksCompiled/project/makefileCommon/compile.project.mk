@@ -3,12 +3,12 @@
 # define the OF_SHARED_MAKEFILES location
 OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon
 
-include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
-
 # if APPNAME is not defined, set it to the project dir name
 ifndef APPNAME
 	APPNAME = $(shell basename `pwd`)
 endif
+
+include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
 
 # Name TARGET
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
