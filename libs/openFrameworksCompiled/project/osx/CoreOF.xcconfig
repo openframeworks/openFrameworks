@@ -5,9 +5,6 @@ ONLY_ACTIVE_ARCH = YES      // this makes sure not to build an universal binary
 
 //// define which C++ library is required to build, based on target architecture
 
-CLANG_CXX_LIBRARY[arch=i386] = libc++
-CLANG_CXX_LANGUAGE_STANDARD[arch=i386] = c++11
-
 CLANG_CXX_LIBRARY[arch=x86_64] = libc++
 CLANG_CXX_LANGUAGE_STANDARD[arch=x86_64] = c++11
 
