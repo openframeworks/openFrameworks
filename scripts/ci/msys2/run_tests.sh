@@ -16,7 +16,6 @@ for group in *; do
 				cd bin
 				binname=$(basename ${test})
                 #gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
-				ntldd -R ${binname}_debug.exe
 				./${binname}_debug.exe
 				errorcode=$?
 				if [[ $errorcode -ne 0 ]]; then
