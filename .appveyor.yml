@@ -32,6 +32,7 @@ init:
 - set CHERE_INVOKING=1
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x86" set MSYSTEM=MINGW32
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x64" set MSYSTEM=MINGW64
+- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy bash pacman pacman-mirrors msys2-runtime msys2-runtime-devel"'
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync mingw-w64-i686-ntldd-git"'
 # fix missing ssl
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed libopenssl mingw-w64-i686-openssl"'
