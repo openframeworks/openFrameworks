@@ -32,7 +32,7 @@ init:
 - set CHERE_INVOKING=1
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x86" set MSYSTEM=MINGW32
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x64" set MSYSTEM=MINGW64
-- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync"'
+- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync mingw-w64-i686-ntldd-git"'
 # fix missing ssl
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed libopenssl mingw-w64-i686-openssl"'
 - if "%BUILDER%"=="VS" set PATH=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;%PATH%
