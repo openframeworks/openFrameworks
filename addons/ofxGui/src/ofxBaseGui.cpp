@@ -114,19 +114,19 @@ ofxBaseGui::~ofxBaseGui(){
 	unregisterMouseEvents();
 }
 
-void ofxBaseGui::registerMouseEvents(){
+void ofxBaseGui::registerMouseEvents(int eventsPriority){
 	if(bRegisteredForMouseEvents == true){
 		return; // already registered.
 	}
 	bRegisteredForMouseEvents = true;
-	ofRegisterMouseEvents(this, defaultEventsPriority);
+	ofRegisterMouseEvents(this, eventsPriority);
 }
 
-void ofxBaseGui::unregisterMouseEvents(){
+void ofxBaseGui::unregisterMouseEvents(int eventsPriority){
 	if(bRegisteredForMouseEvents == false){
 		return; // not registered.
 	}
-	ofUnregisterMouseEvents(this, defaultEventsPriority);
+	ofUnregisterMouseEvents(this, eventsPriority);
 	bRegisteredForMouseEvents = false;
 }
 
@@ -285,7 +285,9 @@ ofColor ofxBaseGui::getTextColor() const {
 ofColor ofxBaseGui::getFillColor() const {
 	return thisFillColor;
 }
-
+int ofxBaseGui::getDefaultEventsPriority(){
+	return (int)defaultEventsPriority;
+}
 void ofxBaseGui::setHeaderBackgroundColor(const ofColor & color){
 	setNeedsRedraw();
 	thisHeaderBackgroundColor = color;

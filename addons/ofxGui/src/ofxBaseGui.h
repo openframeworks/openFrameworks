@@ -62,13 +62,15 @@ class ofxBaseGui {
 		static void setDefaultHeight(int height);
 
 		static void setDefaultEventsPriority(ofEventOrder eventsPriority);
+		static int  getDefaultEventsPriority();
 
 		static void loadFont(const std::string& filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, int dpi = 0);
 		static void loadFont(const ofTrueTypeFontSettings & fontSettings);
 		static void setUseTTF(bool bUseTTF);
 
-		void registerMouseEvents();
-		void unregisterMouseEvents();
+		// RM > In the following,does it mean that the 'default parameter' for eventsPriority will change when defaultEventsPriority changes?
+		virtual void registerMouseEvents(int eventsPriority = getDefaultEventsPriority()); 
+		virtual void unregisterMouseEvents(int eventsPriority = getDefaultEventsPriority());
 
 		virtual void sizeChangedCB();
 		virtual void setParent(ofxBaseGui * parent);
@@ -119,7 +121,7 @@ class ofxBaseGui {
 		static int textPadding;
 		static int defaultWidth;
 		static int defaultHeight;
-		static ofEventOrder defaultEventsPriority;
+		static ofEventOrder defaultEventsPriority;//this should be in and not ofEventOrder. It makes it a lot more flexible and actually useful.
 
 		static std::string saveStencilToHex(const ofImage & img);
 		static void loadStencilFromHex(ofImage & img, unsigned char * data);
