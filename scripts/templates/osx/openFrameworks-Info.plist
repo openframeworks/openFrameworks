@@ -18,5 +18,9 @@
 	<string>1.0</string>
 	<key>CFBundleIconFile</key>
 	<string>${ICON}</string>
+	<key>NSCameraUsageDescription</key>    
+	<string>This app needs to access the camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs to access the microphone</string>
 </dict>
 </plist>
