@@ -414,72 +414,83 @@ void ofTexture::allocate(const ofTextureData & textureData){
 
 void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pixelType){
 #ifndef TARGET_OPENGLES
-	if(texData.textureTarget == GL_TEXTURE_2D || texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
+    if(texData.textureTarget == GL_TEXTURE_2D || texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 #else
-	if(texData.textureTarget == GL_TEXTURE_2D){
+    if(texData.textureTarget == GL_TEXTURE_2D){
 #endif
-		if( textureData.width <= 0.0 || textureData.height <= 0.0 ){
-			ofLogError("ofTexture") << "allocate(): ofTextureData has 0 width and/or height: " << textureData.width << "x" << textureData.height;
-			return;
-		}
-	}
-
-	texData = textureData;
-	//our graphics card might not support arb so we have to see if it is supported.
+        if( textureData.width <= 0.0 || textureData.height <= 0.0 ){
+            ofLogError("ofTexture") << "allocate(): ofTextureData has 0 width and/or height: " << textureData.width << "x" << textureData.height;
+            return;
+        }
+    }
+    
+    texData = textureData;
+    //our graphics card might not support arb so we have to see if it is supported.
 #ifndef TARGET_OPENGLES
-	if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && ofGLSupportsNPOTTextures() ){
-		texData.tex_w = texData.width;
-		texData.tex_h = texData.height;
-		texData.tex_t = texData.width;
-		texData.tex_u = texData.height;
-	}else if(texData.textureTarget == GL_TEXTURE_2D)
+    if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && ofGLSupportsNPOTTextures() ){
+        texData.tex_w = texData.width;
+        texData.tex_h = texData.height;
+        texData.tex_t = texData.width;
+        texData.tex_u = texData.height;
+    }else if(texData.textureTarget == GL_TEXTURE_2D || texData.textureTarget == GL_TEXTURE_2D_ARRAY)
 #endif
-	{
-		if(ofGLSupportsNPOTTextures()){
-			texData.tex_w = texData.width;
-			texData.tex_h = texData.height;
-		}else{
-			//otherwise we need to calculate the next power of 2 for the requested dimensions
-			//ie (320x240) becomes (512x256)
-			texData.tex_w = ofNextPow2(texData.width);
-			texData.tex_h = ofNextPow2(texData.height);
-		}
-
-		texData.tex_t = texData.width / texData.tex_w;
-		texData.tex_u = texData.height / texData.tex_h;
-	}
-
-	// attempt to free the previous bound texture, if we can:
-	clear();
-
-	glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
-	retain(texData.textureID);
-
+    {
+        if(ofGLSupportsNPOTTextures()){
+            texData.tex_w = texData.width;
+            texData.tex_h = texData.height;
+        }else{
+            //otherwise we need to calculate the next power of 2 for the requested dimensions
+            //ie (320x240) becomes (512x256)
+            texData.tex_w = ofNextPow2(texData.width);
+            texData.tex_h = ofNextPow2(texData.height);
+        }
+        
+        texData.tex_t = texData.width / texData.tex_w;
+        texData.tex_u = texData.height / texData.tex_h;
+    }
+    
+    // attempt to free the previous bound texture, if we can:
+    clear();
+    
+    glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
+    retain(texData.textureID);
+    
 #ifndef TARGET_OPENGLES
-	if(texData.textureTarget == GL_TEXTURE_2D || texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
+	if(texData.textureTarget == GL_TEXTURE_2D || texData.textureTarget == GL_TEXTURE_2D_ARRAY || texData.textureTarget == GL_TEXTURE_3D || texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 #else
-	if(texData.textureTarget == GL_TEXTURE_2D){
+	if(texData.textureTarget == GL_TEXTURE_2D || texData.textureTarget == GL_TEXTURE_2D_ARRAY || texData.textureTarget == GL_TEXTURE_3D){
 #endif
-		glBindTexture(texData.textureTarget,texData.textureID);
-		glTexImage2D(texData.textureTarget, 0, texData.glInternalFormat, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, glFormat, pixelType, 0);  // init to black...
-
-		glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, texData.magFilter);
-		glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, texData.minFilter);
-		glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, texData.wrapModeHorizontal);
-		glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, texData.wrapModeVertical);
-
-		#ifndef TARGET_PROGRAMMABLE_GL
-			if (!ofIsGLProgrammableRenderer()){
-				glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-			}
-		#endif
-		glBindTexture(texData.textureTarget,0);
+        glBindTexture(texData.textureTarget,texData.textureID);
+        
+        if (texData.textureTarget == GL_TEXTURE_2D_ARRAY || texData.textureTarget == GL_TEXTURE_3D) {
+            // make sure we have the 3D data in there
+            texData.depth = textureData.depth;
+            texData.tex_v = textureData.tex_v;
+            texData.tex_d = textureData.tex_d;
+            
+            glTexImage3D(texData.textureTarget, 0, texData.glInternalFormat, (GLint)texData.tex_w, (GLint)texData.tex_h, (GLint)texData.depth, 0, glFormat, pixelType, 0);  // init to black...
+        }
+        else {
+            glTexImage2D(texData.textureTarget, 0, texData.glInternalFormat, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, glFormat, pixelType, 0);  // init to black...
+        }
+        
+        glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, texData.magFilter);
+        glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, texData.minFilter);
+        glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, texData.wrapModeHorizontal);
+        glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, texData.wrapModeVertical);
+    
+#ifndef TARGET_PROGRAMMABLE_GL
+        if (!ofIsGLProgrammableRenderer()){
+            glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        }
+#endif
+        glBindTexture(texData.textureTarget,0);
 	}
-
-	texData.bAllocated = true;
-
+    
+    texData.bAllocated = true;
+    
 #ifdef TARGET_ANDROID
-	registerTexture(this);
+    registerTexture(this);
 #endif
 }
 
@@ -686,6 +697,67 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 		generateMipmap();
 	}
 	
+}
+        
+//----------------------------------------------------------
+template<typename PixelType>
+void ofTexture::loadData(const std::vector<ofPixels_<PixelType>> &texArray){
+    
+    int w = (int) texArray[0].getWidth();
+    int h = (int) texArray[0].getHeight();
+    int d = (int) texArray.size();
+    
+    texData.width = w;
+    texData.height = h;
+    texData.depth = d;
+    
+    texData.tex_d = texData.depth;
+    texData.textureTarget = GL_TEXTURE_2D_ARRAY;
+    texData.wrapModeHorizontal = GL_REPEAT;
+    texData.wrapModeVertical = GL_REPEAT;
+    texData.glInternalFormat = ofGetGlInternalFormat(texArray[0]);
+    
+    int glFormat = ofGetGlFormat(texArray[0]);
+    int glType = ofGetGlType(texArray[0]);
+    allocate(texData, glFormat, glType);
+    
+    glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
+    glTexParameteri(texData.textureTarget, GL_TEXTURE_WRAP_R, GL_REPEAT);
+    for ( int i = 0; i < d; i++ ) {
+        ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT, texArray[i].getBytesStride());
+        glTexSubImage3D(texData.textureTarget, 0, 0, 0, i, texArray[i].getWidth(), texArray[i].getHeight(), 1, glFormat, glType, texArray[i].getData() );
+    }
+    glBindTexture(texData.textureTarget, 0);
+}
+        
+//----------------------------------------------------------
+template void ofTexture::loadData(const std::vector<ofPixels> &texArray);
+        
+//----------------------------------------------------------
+template void ofTexture::loadData(const std::vector<ofFloatPixels> &texArray);
+        
+//----------------------------------------------------------
+template void ofTexture::loadData(const std::vector<ofShortPixels> &texArray);
+        
+//----------------------------------------------------------
+void ofTexture::loadData(const void * data, int w, int h, int d, int glFormat, int glType){
+    
+    if(w > texData.tex_w || h > texData.tex_h) {
+        texData.width = w;
+        texData.height = h;
+        texData.tex_d = texData.depth = d;
+        texData.textureTarget = GL_TEXTURE_3D;
+        allocate(texData, glFormat, glType);
+    }
+    
+    glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
+    
+    glTexParameteri(texData.textureTarget, GL_TEXTURE_WRAP_R, GL_REPEAT);
+    
+    glTexImage3D(texData.textureTarget, 0, texData.glInternalFormat, w, h, d, 0, glFormat, glType, data );
+    
+    glBindTexture(texData.textureTarget, 0);
+    
 }
 
 //----------------------------------------------------------
@@ -1266,4 +1338,9 @@ float ofTexture::getHeight() const {
 //----------------------------------------------------------
 float ofTexture::getWidth() const {
 	return texData.width;
+}
+
+//----------------------------------------------------------
+float ofTexture::getDepth() const {
+    return texData.depth;
 }

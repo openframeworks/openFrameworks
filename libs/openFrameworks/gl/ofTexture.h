@@ -161,70 +161,75 @@ enum ofTexCompression {
 /// Used by ofTexture internally. You won't need to work with this in most cases.
 class ofTextureData {
 public:
-	ofTextureData() {
-		textureID = 0;
+    ofTextureData() {
+        textureID = 0;
 #ifndef TARGET_OPENGLES
-		glInternalFormat = GL_RGB8;
-		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
+        glInternalFormat = GL_RGB8;
+        textureTarget = GL_TEXTURE_RECTANGLE_ARB;
 #else
-		glInternalFormat = GL_RGB;
-		textureTarget = GL_TEXTURE_2D;
+        glInternalFormat = GL_RGB;
+        textureTarget = GL_TEXTURE_2D;
 #endif
-
-		tex_t = 0;
-		tex_u = 0;
-		tex_w = 0;
-		tex_h = 0;
-		width = 0;
-		height = 0;
-		
-		bFlipTexture = false;
-		compressionType = OF_COMPRESS_NONE;
-		bAllocated = false;
-		bUseExternalTextureID = false;
-		useTextureMatrix = false;
-		
-		minFilter = GL_LINEAR;
-		magFilter = GL_LINEAR;
-		
-		wrapModeHorizontal = GL_CLAMP_TO_EDGE;
-		wrapModeVertical = GL_CLAMP_TO_EDGE;
-		hasMipmap = false;
-		bufferId = 0;
-
-	}
-
-	unsigned int textureID; ///< GL internal texture ID.
-	int textureTarget; ///< GL texture type, either GL_TEXTURE_2D or
-	                   ///< GL_TEXTURE_RECTANGLE_ARB.
-	int glInternalFormat; ///< GL internal format, e.g. GL_RGB8.
-                        ///< \sa http://www.opengl.org/wiki/Image_Format
-	
-	float tex_t; ///< Texture horizontal coordinate, ratio of width to display width.
-	float tex_u; ///< Texture vertical coordinate, ratio of height to display height.
-	float tex_w; ///< Texture width (in pixels).
-	float tex_h; ///< Texture height (in pixels).
-	float width, height; ///< Texture display size.
-	
-	bool bFlipTexture; ///< Should the texture be flipped vertically?
-	ofTexCompression compressionType; ///< Texture compression type.
-	bool bAllocated; ///< Has the texture been allocated?
-
-	GLint minFilter; ///< Filter to use for minification (reduction).
-	GLint magFilter; ///< Filter to use for magnification (enlargement).
-
-	GLint wrapModeHorizontal; ///< How will the texture wrap around horizontally?
-	GLint wrapModeVertical; ///< How will the texture wrap around vertically?
-	
-	unsigned int bufferId; ///< Optionally if the texture is backed by a buffer so we can bind it
+        
+        tex_t = 0;
+        tex_u = 0;
+        tex_v = 0;
+        tex_w = 0;
+        tex_h = 0;
+        tex_d = 0;
+        width = 0;
+        height = 0;
+        depth = 0;
+        
+        bFlipTexture = false;
+        compressionType = OF_COMPRESS_NONE;
+        bAllocated = false;
+        bUseExternalTextureID = false;
+        useTextureMatrix = false;
+        
+        minFilter = GL_LINEAR;
+        magFilter = GL_LINEAR;
+        
+        wrapModeHorizontal = GL_CLAMP_TO_EDGE;
+        wrapModeVertical = GL_CLAMP_TO_EDGE;
+        hasMipmap = false;
+        bufferId = 0;
+        
+    }
+    
+    unsigned int textureID; ///< GL internal texture ID.
+    int textureTarget; ///< GL texture type, either GL_TEXTURE_2D or
+    ///< GL_TEXTURE_RECTANGLE_ARB.
+    int glInternalFormat; ///< GL internal format, e.g. GL_RGB8.
+    ///< \sa http://www.opengl.org/wiki/Image_Format
+    
+    float tex_t; ///< Texture horizontal coordinate, ratio of width to display width.
+    float tex_u; ///< Texture vertical coordinate, ratio of height to display height.
+    float tex_v;
+    float tex_w; ///< Texture width (in pixels).
+    float tex_h; ///< Texture height (in pixels).
+    float tex_d;
+    float width, height, depth; ///< Texture display size.
+    
+    bool bFlipTexture; ///< Should the texture be flipped vertically?
+    ofTexCompression compressionType; ///< Texture compression type.
+    bool bAllocated; ///< Has the texture been allocated?
+    
+    GLint minFilter; ///< Filter to use for minification (reduction).
+    GLint magFilter; ///< Filter to use for magnification (enlargement).
+    
+    GLint wrapModeHorizontal; ///< How will the texture wrap around horizontally?
+    GLint wrapModeVertical; ///< How will the texture wrap around vertically?
+    
+    unsigned int bufferId; ///< Optionally if the texture is backed by a buffer so we can bind it
 private:
 	std::shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
-	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
+    bool bUseExternalTextureID; ///< Are we using an external texture ID?
 	glm::mat4 textureMatrix; ///< For required transformations.
-	bool useTextureMatrix; ///< Apply the transformation matrix?
-	bool hasMipmap; ///< True if mipmap has been generated for this texture, false by default.
-
-	friend class ofTexture;
+    bool useTextureMatrix; ///< Apply the transformation matrix?
+    bool hasMipmap; ///< True if mipmap has been generated for this texture, false by default.
+    
+    friend class ofTexture;
 
 };
 
@@ -548,6 +553,12 @@ class ofTexture : public ofBaseDraws {
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
 	/// \param glType the OpenGL type of the data.
     void loadData(const void * data, int w, int h, int glFormat, int glType);
+    
+    // these are for 3D
+    void loadData(const void * data, int w, int h, int d, int glFormat, int glType);
+    
+    template<typename PixelType>
+    void loadData(const std::vector<ofPixels_<PixelType>> &texArray);
 	
 #ifndef TARGET_OPENGLES
 	/// \brief Load pixels from an ofBufferObject
@@ -735,6 +746,8 @@ class ofTexture : public ofBaseDraws {
 	///
 	/// \returns Display width of texture in pixels.
 	float getWidth() const;
+    
+    float getDepth() const;
 
 	/// \brief Set the anchor point the texture is drawn around as a percentage.
 	///
