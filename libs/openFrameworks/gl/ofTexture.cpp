@@ -414,47 +414,47 @@ void ofTexture::allocate(const ofTextureData & textureData){
 
 void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pixelType){
 #ifndef TARGET_OPENGLES
-    if(texData.textureTarget == GL_TEXTURE_2D || texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
+	if(texData.textureTarget == GL_TEXTURE_2D || texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 #else
-    if(texData.textureTarget == GL_TEXTURE_2D){
+	if(texData.textureTarget == GL_TEXTURE_2D){
 #endif
-        if( textureData.width <= 0.0 || textureData.height <= 0.0 ){
-            ofLogError("ofTexture") << "allocate(): ofTextureData has 0 width and/or height: " << textureData.width << "x" << textureData.height;
-            return;
-        }
-    }
-    
-    texData = textureData;
-    //our graphics card might not support arb so we have to see if it is supported.
+		if( textureData.width <= 0.0 || textureData.height <= 0.0 ){
+			ofLogError("ofTexture") << "allocate(): ofTextureData has 0 width and/or height: " << textureData.width << "x" << textureData.height;
+			return;
+		}
+	}
+
+	texData = textureData;
+	//our graphics card might not support arb so we have to see if it is supported.
 #ifndef TARGET_OPENGLES
-    if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && ofGLSupportsNPOTTextures() ){
-        texData.tex_w = texData.width;
-        texData.tex_h = texData.height;
-        texData.tex_t = texData.width;
-        texData.tex_u = texData.height;
+	if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && ofGLSupportsNPOTTextures() ){
+		texData.tex_w = texData.width;
+		texData.tex_h = texData.height;
+		texData.tex_t = texData.width;
+		texData.tex_u = texData.height;
     }else if(texData.textureTarget == GL_TEXTURE_2D || texData.textureTarget == GL_TEXTURE_2D_ARRAY)
 #endif
-    {
-        if(ofGLSupportsNPOTTextures()){
-            texData.tex_w = texData.width;
-            texData.tex_h = texData.height;
-        }else{
-            //otherwise we need to calculate the next power of 2 for the requested dimensions
-            //ie (320x240) becomes (512x256)
-            texData.tex_w = ofNextPow2(texData.width);
-            texData.tex_h = ofNextPow2(texData.height);
-        }
-        
-        texData.tex_t = texData.width / texData.tex_w;
-        texData.tex_u = texData.height / texData.tex_h;
-    }
-    
-    // attempt to free the previous bound texture, if we can:
-    clear();
-    
-    glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
-    retain(texData.textureID);
-    
+	{
+		if(ofGLSupportsNPOTTextures()){
+			texData.tex_w = texData.width;
+			texData.tex_h = texData.height;
+		}else{
+			//otherwise we need to calculate the next power of 2 for the requested dimensions
+			//ie (320x240) becomes (512x256)
+			texData.tex_w = ofNextPow2(texData.width);
+			texData.tex_h = ofNextPow2(texData.height);
+		}
+
+		texData.tex_t = texData.width / texData.tex_w;
+		texData.tex_u = texData.height / texData.tex_h;
+	}
+
+	// attempt to free the previous bound texture, if we can:
+	clear();
+
+	glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
+	retain(texData.textureID);
+
 #ifndef TARGET_OPENGLES
 	if(texData.textureTarget == GL_TEXTURE_2D || texData.textureTarget == GL_TEXTURE_2D_ARRAY || texData.textureTarget == GL_TEXTURE_3D || texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 #else
@@ -486,11 +486,11 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 #endif
         glBindTexture(texData.textureTarget,0);
 	}
-    
-    texData.bAllocated = true;
-    
+
+	texData.bAllocated = true;
+
 #ifdef TARGET_ANDROID
-    registerTexture(this);
+	registerTexture(this);
 #endif
 }
 
