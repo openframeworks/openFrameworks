@@ -176,21 +176,25 @@ getRange(Type min, Type max, float width){
 
 template<typename Type>
 bool ofxSlider<Type>::mouseScrolled(ofMouseEventArgs & args){
-	if(state==Slider){
-		if(mouseInside){
-			if(args.scrollY>0 || args.scrollY<0){
-				double range = getRange(value.getMin(),value.getMax(),b.width);
-				Type newValue = value + ofMap(args.scrollY,-1,1,-range, range);
-				newValue = ofClamp(newValue,value.getMin(),value.getMax());
-				value = newValue;
+	if(isGuiDrawing()){
+		if(state==Slider){
+			if(mouseInside){
+				if(args.scrollY>0 || args.scrollY<0){
+					double range = getRange(value.getMin(),value.getMax(),b.width);
+					Type newValue = value + ofMap(args.scrollY,-1,1,-range, range);
+					newValue = ofClamp(newValue,value.getMin(),value.getMax());
+					value = newValue;
+				}
+				return true;
+			}else{
+				return false;
 			}
-			return true;
 		}else{
-			return false;
+			// the following will always return false as it is inside the slider.
+//			return input.mouseScrolled(args);
 		}
-	}else{
-		return isGuiDrawing() && input.mouseScrolled(args);
 	}
+	return false;
 }
 
 
