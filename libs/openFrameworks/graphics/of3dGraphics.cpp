@@ -496,11 +496,13 @@ void of3dGraphics::drawArrow(const glm::vec3& start, const glm::vec3& end, float
 	//draw line
 	renderer->drawLine(start.x,start.y,start.z, end.x,end.y,end.z);
 
-	//draw cone
-	glm::mat4 m = glm::mat4_cast(glm::rotation(glm::vec3(0.f,1.f,0.f), start-end));
-	m = glm::translate(m, end);
+	// Note that `glm::rotation` requires its parameters to be normalized `glm::vec3`s
+	const glm::mat4 cone_rotation    = glm::mat4_cast(glm::rotation(glm::vec3(0,1,0), glm::normalize(start-end)));
+	const glm::mat4 cone_translation = glm::translate(end);
+	const glm::mat4 cone_transform   = cone_translation * cone_rotation;
+
 	renderer->pushMatrix();
-	renderer->multMatrix(m);
+	renderer->multMatrix(cone_transform);
     drawCone(headSize, headSize*2.);
     renderer->popMatrix();
 }
