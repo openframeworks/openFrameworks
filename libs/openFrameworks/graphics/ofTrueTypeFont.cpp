@@ -1025,7 +1025,7 @@ int ofTrueTypeFont::getKerning(uint32_t c, uint32_t prevC) const{
 	if(FT_HAS_KERNING( face )){
 		FT_Vector kerning;
 		FT_Get_Kerning(face.get(), FT_Get_Char_Index(face.get(), c), FT_Get_Char_Index(face.get(), prevC), FT_KERNING_UNFITTED, &kerning);
-		return kerning.x * fontUnitScale;
+		return kerning.x >> 6;
 	}else{
 		return 0;
 	}
