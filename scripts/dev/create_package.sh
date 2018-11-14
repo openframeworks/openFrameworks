@@ -24,7 +24,7 @@ else
     libs_abi=""
 fi
 
-REPO=../..
+REPO=https://github.com/openframeworks/openFrameworks.git
 REPO_ALIAS=originlocal
 BRANCH=$branch
 
