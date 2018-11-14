@@ -30,7 +30,7 @@ BRANCH=$branch
 
 PG_REPO=https://github.com/openframeworks/projectGenerator.git
 PG_REPO_ALIAS=originhttps
-PG_BRANCH=$branch
+PG_BRANCH=master
 
 hostArch=`uname`
 
