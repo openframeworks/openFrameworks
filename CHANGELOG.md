@@ -1,3 +1,149 @@
+```
+  .----.                  .---.  .----.                  .---.
+ /  ..  \                /_   | /  ..  \                /_   |
+.  /  \  .                |   |.  /  \  .                |   |
+|  |  '  |                |   ||  |  '  |                |   |
+'  \  /  '                |   |'  \  /  '                |   |
+ \  `'  /       .-.       |   | \  `'  /       .-.       |   |
+  `---''        `-'       `---'  `---''        `-'       `---'
+```
+
+CORE
+----
+
+### 3d
+- Fix order of quaternion multiplication in ofNode. [commit](https://github.com/openframeworks/openFrameworks/commit/e4e9bfca751de8960151faa182f070238ebaea5c)
+- Fixing LookAt method on ofNode (#6069). [commit](https://github.com/openframeworks/openFrameworks/commit/62949aeb689b6859185f6318d45fcbff9214ffb3)
+- Bugfix ofnode orientation with scale (#6093). [commit](https://github.com/openframeworks/openFrameworks/commit/17c224684d6395d54fc7c5e0238eee6a9333bc27)
+- More efficient way for ofNode::getGlobalOrientation (3x~ faster) (#6094). [commit](https://github.com/openframeworks/openFrameworks/commit/a0c412aab740cfbd2f2221efe40e3bedd38cf6df)
+- ofCamera with ortho enabled will respect a lensOffset by translating the projection matrix (#6138). [commit](https://github.com/openframeworks/openFrameworks/commit/c1545bc4dd5da0b0327a4c994ca1bc27294dbca8)
+- fix drawArrow internal matrix calculation (#6164). [commit](https://github.com/openframeworks/openFrameworks/commit/cf08ca3857776f6e776fc83233202b2b05575865)
+
+### gl
+- Fix error message legibility. (#6013). [commit](https://github.com/openframeworks/openFrameworks/commit/58e47e329d4a2717b5211755a1cb2e65a1a5e1a9)
+- ofGetImageTypeFromGLType: fix missing GL_R8. [commit](https://github.com/openframeworks/openFrameworks/commit/ec20a865c8d07ec473ff93a96659c2972ee1e5d8)
+
+### types
+- ofParameterGroup: fix some issues with parameter removal. [commit](https://github.com/openframeworks/openFrameworks/commit/bad923d37dc67fc97c47cca07f79d389833aaa35)
+- ofParameterGroup: when removing use escaped name to lookup parameter. [commit](https://github.com/openframeworks/openFrameworks/commit/7a868842bf56730b9f3ff054704ff148523fb4c9)
+- ofParameterGroup: used escaped name to delete. [commit](https://github.com/openframeworks/openFrameworks/commit/6f80d19d1ce563bca4786d14c801bcc02047ad09)
+
+### app
+- ofAppGLFWWindow: close as private. [commit](https://github.com/openframeworks/openFrameworks/commit/bca934a72a962930066f19b5d904ddbc159fc13a)
+- ofAppGLFWWindow: query screen size to set w/h in setup on fullscreen. [commit](https://github.com/openframeworks/openFrameworks/commit/fea8b9a63dde8889a7f4236036777d4199c3f516)
+- ofAppGLFWWindow: use ofGetWindowSize() when storing current window rect as windowW & windowH may already reflect the fullscreen size, fixes #6074 (#6092). [commit](https://github.com/openframeworks/openFrameworks/commit/2e7f9e99dcd97f4df4aa4e709374242395fd8b3f)
+- ofAppGLFWWindow: refactor & fix size on fullscreen + position. [commit](https://github.com/openframeworks/openFrameworks/commit/6b4b68a14fe4bb5fae70ac575eef501eeb8f8def)
+
+### graphics
+- ofTTF: add latin and latinA ranges to latin alphabet. [commit](https://github.com/openframeworks/openFrameworks/commit/707541894ac1437cf73a4f4b5dc943a1e5beac59)
+- ofPixels: Fixed int division that needs to be floating point (#6033). [commit](https://github.com/openframeworks/openFrameworks/commit/9d8bca997f74628c49f9b0170e5537480335d6c8)
+- ofTTF: fix custom letter space. [commit](https://github.com/openframeworks/openFrameworks/commit/d9d7bc58ce6e882b1052b6090c438623c45d625b)
+- ofPixels.h: CLAMP -> ofClamp and include ofMath. [commit](https://github.com/openframeworks/openFrameworks/commit/5b6dc65c851b4b8ca1f72a87206a575bc7954009)
+- ofTtf: Fix some problems with outlines. [commit](https://github.com/openframeworks/openFrameworks/commit/1ddd2a01fd8b5732a3393a1233adf3ae68c8d3b5)
+- Speed up image loading (#6035). [commit](https://github.com/openframeworks/openFrameworks/commit/4b03c1005cd77c0e19d555c41e9e4f364785e351)
+- Fix ttf font bounding box calculations (#6109). [commit](https://github.com/openframeworks/openFrameworks/commit/12c99122a62a52929c10375450ca19332830e0fc)
+- Fix ttf kerning factor (#6136). [commit](https://github.com/openframeworks/openFrameworks/commit/e192b470b5d0e0a929db348f800d5185e7cef9bb)
+
+### sound
+- ofSoundBuffer getChannel fix (#6117). [commit](https://github.com/openframeworks/openFrameworks/commit/d9e3a30715d15af2520d1467c9a4097249c1216b)
+-
+### video
+- Fix for ofAVFoundationGrabber.mm setDevice(...) after close(). [commit](https://github.com/openframeworks/openFrameworks/commit/58ea2b8dd512d77ba15b147c227e24d6bd75aeb4)
+
+### utils
+- fix const about `ofSerialize` in ofJson.h (#6096). [commit](https://github.com/openframeworks/openFrameworks/commit/af3d07cd51a6bd4d647fc552a37f1f3f595d1b09)
+- ofXml: add methods to remove child through a reference or move. [commit](https://github.com/openframeworks/openFrameworks/commit/a7b4b108031aaef09ab058577ca6036aa967a349)
+- ofXml: add missing methods to remove attributes. [commit](https://github.com/openframeworks/openFrameworks/commit/e1cf97c2b8f8c5815c25b93b80044256713a1cbe)
+- ofXml::Attribute: add getName. [commit](https://github.com/openframeworks/openFrameworks/commit/333ce0d359eb9b7f2f0e7c4790c2a2fb421a9c31)
+- ofXml: fix attribute iterator. [commit](https://github.com/openframeworks/openFrameworks/commit/d06e4354dd3daaa3c1535fd72e63c7f9e5eb90b2)
+- ofXml: add clear method which clears the xml doc. [commit](https://github.com/openframeworks/openFrameworks/commit/83dc9c5b495e265928aaed7454eca9826b1d4052)
+- ofConstants: version to 0.10.1 stable
+
+ADDONS
+------
+### ofxOpenCv
+- ofxCvImage: remove old macro not present on some versions.. [commit](https://github.com/openframeworks/openFrameworks/commit/84a8328f1be1387289de6e029fd323ead9b7a445)
+
+### ofxGui
+- Bugfix ofxSliderGroup division by zero (#6034). [commit](https://github.com/openframeworks/openFrameworks/commit/659cc30ef21bc9b183b724214c8168ee1c2f2f7e)
+- ofxGuiGroup: fix ofVec*f / glm::vec*. [commit](https://github.com/openframeworks/openFrameworks/commit/668c62ff2276681147804dd6f2a5b4d279ba2a65)
+- ofxGui: slider scrolling (#6144). [commit](https://github.com/openframeworks/openFrameworks/commit/50faea3f9c0d4163b0b3c5778e2a36b4eee163a4)
+
+### ofxKinect
+- update addons/.gitignore to ignore libs in ofxKinect (#6030). [commit](https://github.com/openframeworks/openFrameworks/commit/678963e345d50dcc1f7a9928afaadde5009bb5b6)
+- update libfreenect to fix ofxKinect on raspberry pi (#6123). [commit](https://github.com/openframeworks/openFrameworks/commit/1b71506ccd26eb91b3ac50f04217e77c50ac7420)
+
+### ofxOsc
+- ofxOsc: add const for getter method returns constant. (#6018). [commit](https://github.com/openframeworks/openFrameworks/commit/c7bb09cfeac2204a6aa1f897a23d7e64afefc28f)
+
+PLATFORM/IDE SPECIFIC
+-----------------
+
+### qtcreator
+- fix qbs project file for commandline PG (#6010). [commit](https://github.com/openframeworks/openFrameworks/commit/b5ee15a7a15e160ed633addebf157147a992b3e5)
+- fix linux project templates for QtCreator (#6011). [commit](https://github.com/openframeworks/openFrameworks/commit/fbcf32bdde6e37da664abb3b482351ffef8c4377)
+- Add option to create console window in QtCreator wizards (#6105). [commit](https://github.com/openframeworks/openFrameworks/commit/6127e9fb81520f27996265aea704255cc17748f8)
+
+### linux
+- linux: if ubuntu 18.04 or more install poco on the system. [commit](https://github.com/openframeworks/openFrameworks/commit/84077013d8a9c482696af18777a4e6976afe970c)
+- Fix Arch Linux install_dependencies.sh (#6051). [commit](https://github.com/openframeworks/openFrameworks/commit/cd4529f1db013b627fa84602c9e274bcb1e98e58)
+
+### makefiles
+- makefiles: only add src as a source folder. [commit](https://github.com/openframeworks/openFrameworks/commit/ce77dae31ef9553f4b61602d5a41985ca1b70417)
+
+### android
+- Fixed selection of GLES version on android. (#6088). [commit](https://github.com/openframeworks/openFrameworks/commit/0f9cdc2b54a8c42f0a16632ca8c0a12aa6b9f880)
+- android multi activity example: add manifest (#6036). [commit](https://github.com/openframeworks/openFrameworks/commit/31ca50677fe466178f92ed335acab8993506c8ba)
+- ofxAndroidGrabber: when changing camera ID close device if it was open. [commit](https://github.com/openframeworks/openFrameworks/commit/347f43765ff37a044c0ec0f3cd1793433cbbba81)
+- Android camera optimizations (#6097). [commit](https://github.com/openframeworks/openFrameworks/commit/4c2322187b646fd49352ca223ee8a249b9e7ec47)
+
+### osx
+- use correct macOS key event modifier masks, fixes #6070 (#6087). [commit](https://github.com/openframeworks/openFrameworks/commit/b3a250a75c446347cf9bf9ab6018c83c55b6ad58)
+- Fix compilation on Xcode 10 (#6131). [commit](https://github.com/openframeworks/openFrameworks/commit/da6929bf6dc529a1082224a7db249e8a073b2361)
+- fixes xcode template to not have OF as a dependcy but as a pre-build script. related to #6139. [commit](https://github.com/openframeworks/openFrameworks/commit/25e91b911cb7b36a57191f96ee717a15207d9c1c)
+- remove i386 architecture from macos projects (#6159). [commit](https://github.com/openframeworks/openFrameworks/commit/647954e3ee4a3c1d75416d50eac5390d8541b51c)
+- added camera and microphone permissions for mojave. [commit](https://github.com/openframeworks/openFrameworks/commit/d8b6287148d929f0c07f067a417596f2a38f0986)
+- workspace files for xcode template to enable legacy build in Xcode 10. [commit](https://github.com/openframeworks/openFrameworks/commit/57f3ea2798057dee286cda89ba37372d8af2d3d5)
+- fix for xcode template file to allow PG to add frameworks and fix broken projects. closes #6172. [commit](https://github.com/openframeworks/openFrameworks/commit/99b80ad9c77f9d1d4426cb96d504f9aaf6dc8c95)
+
+### emscripten
+- Fixes for html5 audio and video with emscripten (#6039). [commit](https://github.com/openframeworks/openFrameworks/commit/f09a37ddf9fbdd137782ec00463e5b8a7bc6fe9a)
+
+### msys2
+- fix copy_dlls make target when there's only a debug build, (#6046). [commit](https://github.com/openframeworks/openFrameworks/commit/861ac3607734461d25d6c9c6d614956fd6ca40ec)
+
+### vs
+- Bugfix VS project template (#6122). [commit](https://github.com/openframeworks/openFrameworks/commit/06bea481039ab244eded2fabc450ad4e30585d03)
+- Bugfix vs project template (pt.2) (#6130). [commit](https://github.com/openframeworks/openFrameworks/commit/1241140f4d399f8e3f670691f4c274fdc814d8b6)
+- Bugfix VS buildscript (#6121). [commit](https://github.com/openframeworks/openFrameworks/commit/e6386bbba4e0aeddacf3ffcdd4982eab6b499ab8)
+
+EXAMPLES
+--------
+- fix gui parameter group example (#6079). [commit](https://github.com/openframeworks/openFrameworks/commit/6e465e149d725844af2a6697fdc82c4e992cb350)
+- fix iOS / tvOS examples broken during docs sprint. [commit](https://github.com/openframeworks/openFrameworks/commit/cec70b09efbf81223e1b5c5d04737b4adaab33f3)
+- parameter examples: binding the listener method to the vSync param (#6098). [commit](https://github.com/openframeworks/openFrameworks/commit/76031feebc9f42d366e6667ab657aa9c10107e3b)
+
+DOCS
+----
+- `ofEnabledDepthTesting()` to `ofEnableDepthTest()` (#6040). [commit](https://github.com/openframeworks/openFrameworks/commit/888d20c70aa8e50bc2bb46bbfb65074e5286c983)
+
+
+CONTINUOUS INTEGRATION
+----------------------
+- create_package: change osx -> ios for PG in the ios download. [commit](https://github.com/openframeworks/openFrameworks/commit/53d92ff8483a009e6352fbda77ebf39baceeace2)
+- rename macros in ofxUnitTests (#6017). [commit](https://github.com/openframeworks/openFrameworks/commit/86c0e5e37537ce40bcd2ceb466b26cf2f7a68af6)
+- parameters: add parameters tests. [commit](https://github.com/openframeworks/openFrameworks/commit/81245d23cdcbb4fba74b8ed16bd06cdc3aa9f239)
+- don't cache firmware-master. [commit](https://github.com/openframeworks/openFrameworks/commit/254a22067ba3967816e3c8ed07bf5c83eaffcf7a)
+- create_pacakge: remove projectGenerator from apps. [commit](https://github.com/openframeworks/openFrameworks/commit/23647c3fa1fc428d005170c43f87c882ee7f4db3)
+- nightlies template: use https for css and fonts. [commit](https://github.com/openframeworks/openFrameworks/commit/66f68819dc7aa74441e5b89d8741ca8daeeb1af2)
+- Xcode 9.4 Default Travis (#6104). [commit](https://github.com/openframeworks/openFrameworks/commit/b9f664cfe22d14dc3696177fa6a5a5ebfbb858f3)
+- appveyor: fix ssl dependencies (#6170). [commit](https://github.com/openframeworks/openFrameworks/commit/e1aebaceac2d2fb2a6f427f274d9bf2c9ccff5c7)
+
+
+--------------------------------------
+
+
+```
   .----.        .---.   .----.         .----.
  /  ..  \      /_   |  /  ..  \       /  ..  \
 .  /  \  .      |   | .  /  \  .     .  /  \  .
@@ -5,6 +151,7 @@
 '  \  /  '      |   | '  \  /  '     '  \  /  '
  \  `'  /  .-.  |   |  \  `'  /  .-.  \  `'  /
   `---''   `-'  `---'   `---''   `-'   `---''
+```
 
 CORE
 ----
