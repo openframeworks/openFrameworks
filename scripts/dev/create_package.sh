@@ -24,13 +24,13 @@ else
     libs_abi=""
 fi
 
-REPO=../..
+REPO=https://github.com/openframeworks/openFrameworks.git
 REPO_ALIAS=originlocal
 BRANCH=$branch
 
 PG_REPO=https://github.com/openframeworks/projectGenerator.git
 PG_REPO_ALIAS=originhttps
-PG_BRANCH=$branch
+PG_BRANCH=master
 
 hostArch=`uname`
 

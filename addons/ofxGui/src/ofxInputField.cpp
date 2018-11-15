@@ -419,11 +419,15 @@ bool ofxInputField<Type>::mouseReleased(ofMouseEventArgs &){
 //-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::mouseScrolled(ofMouseEventArgs & mouse){
+	if(!isGuiDrawing() || insideSlider){
+		//when insideSlider it is the slider object who is in charge of handling the scrolling
+		return false;
+	}
 	if(b.inside(mouse)){
 		if(!bGuiActive){
-			if(mouse.y>0 || mouse.y<0){
+			if(mouse.scrollY>0 || mouse.scrollY<0){
 				double range = getRange(value.getMin(), value.getMax(), b.width);
-				Type newValue = value + ofMap(mouse.y,-1,1,-range, range);
+				Type newValue = value + ofMap(mouse.scrollY,-1,1,-range, range);
 				newValue = ofClamp(newValue,value.getMin(),value.getMax());
 				value = newValue;
 			}
