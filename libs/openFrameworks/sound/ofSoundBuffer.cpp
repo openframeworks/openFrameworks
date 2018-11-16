@@ -327,6 +327,8 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 	
 	std::size_t inChannels = getNumChannels();
 	std::size_t inFrames = getNumFrames();
+	std::size_t outBufLen = inChannels * numFrames;
+	
 	bool bufferReady = prepareBufferForResampling(*this, outBuffer, numFrames);
 	
 	if(!bufferReady) {
@@ -334,56 +336,106 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 		return;
 	}
 	
-	std::size_t start = fromFrame;
-	std::size_t end = start*inChannels + double(numFrames*inChannels)*speed;
-	double position = start;
-	std::size_t intPosition = position;
-	float increment = speed;
+	std::size_t end = fromFrame+numFrames*speed;
+	double position, remainder;
+	std::size_t intPosition, n = 0;
+	float a, b, increment = speed;
 	std::size_t copySize = inChannels*sizeof(float);
-	std::size_t to;
+	std::size_t to, idx;
 	
-	if(end<size()-2*inChannels){
+	if(end<inFrames - 1){
 		to = numFrames;
-	}else if(fromFrame+2>inFrames){
-		to = 0;
 	}else{
-		to = ceil(float(inFrames-2-fromFrame)/speed);
+		to = ceil(float(inFrames-1-fromFrame)/speed) - 1;
 	}
+		
+	for (std::size_t j=0; j<inChannels; j++)
+	{
+		position = fromFrame;
+		n = j;
+		
+		while (n < inChannels*to)
+		{
+			intPosition = position;
+			remainder = position - intPosition;
+			idx = inChannels*intPosition + j;
+			a = buffer[idx];
+			b = buffer[idx+inChannels];
+			outBuffer[n] = (b-a)*remainder+a;
+			n += inChannels;
+			position += increment;
+		}		
+	}	
 	
-	float remainder = position - intPosition;
-	float * resBufferPtr = &outBuffer[0];
-	float a, b;
-	
-	for(std::size_t i=0;i<to;i++){
-		intPosition *= inChannels;
-		for(std::size_t j=0;j<inChannels;j++){
-			a = buffer[intPosition+j];
-			b = buffer[intPosition+inChannels+j];
-			*resBufferPtr++ = ofLerp(a,b,remainder);
-		}
-		position += increment;
-		intPosition = position;
-		remainder = position - intPosition;
-	}
-	if(end>=size()-2*inChannels){
-		to = numFrames-to;
-		if(loop){
-			intPosition %= inFrames;
-			for(std::size_t i=0;i<to;i++){
-				intPosition *= inChannels;
-				for(std::size_t j=0;j<inChannels;j++){
-					a = buffer[intPosition+j];
-					b = buffer[intPosition+inChannels+j];
-					*resBufferPtr++ = ofLerp(a,b,remainder);
-				}
-				resBufferPtr+=inChannels;
-				position += increment;
+	if(end>=inFrames-1)
+	{
+		double startPos = position;
+		std::size_t startN = n - inChannels + 1;
+		
+		for (std::size_t j=0; j<inChannels; j++)
+		{
+			position = startPos;
+			n = startN + j;
+			// Up to end point by a full sample. We always need an additional sample for the linear regression.
+			while ((position < inFrames-1) & (n < inChannels * numFrames))
+			{
 				intPosition = position;
+				remainder = position - intPosition;
+				idx = inChannels*intPosition + j;
+				a = buffer[idx];
+				b = buffer[idx+inChannels];
+				outBuffer[n] = (b-a)*remainder+a;
+				n += inChannels;
+				position += increment;				
 			}
-		}else{
-			memset(resBufferPtr,0,to*copySize);
+				
+			if (n==inChannels*(numFrames+1))
+				continue;
+			
+			if (loop)
+			{				
+				// Handle the wrap If the increment is between 0 and 1
+				while ((position < inFrames) & (n < outBufLen))
+				{
+					intPosition = position;
+					remainder = position - intPosition;
+					idx = inChannels*intPosition + j;
+					a = buffer[idx];
+					b = buffer[j];
+					outBuffer[n] = (b-a)*remainder+a;
+					n += inChannels;
+					position += increment;				
+				}
+				
+				if (n==inChannels*(numFrames+1))
+					continue;
+		
+				// Rewind the input pointer 
+				while (position >= inFrames)
+					position -= inFrames;
+				
+				while (n < outBufLen)
+				{
+					intPosition = position;
+					remainder = position - intPosition;
+					idx = inChannels*intPosition + j;
+					a = buffer[idx];
+					b = buffer[idx+inChannels];
+					outBuffer[n] = (b-a)*remainder+a;
+					n += inChannels;
+					position += increment;
+					
+					if (position >= inFrames)
+						position -= inFrames;
+				}	
+			}	
 		}
-	}
+			
+		if (!loop)
+		{
+			memset(&outBuffer[n-inChannels+1],0,to*copySize);
+		}
+	} // if(end>=inFrames-1)
 }
 
 // based on maximilian optimized for performance.
@@ -518,7 +570,7 @@ void ofSoundBuffer::setChannel(const ofSoundBuffer & inBuffer, std::size_t targe
 	resize(inBuffer.getNumFrames() * channels);
 	// copy from inBuffer to targetChannel
 	float * bufferPtr = &this->buffer[targetChannel];
-	const float * inBufferPtr = &(inBuffer[0]);
+	const float * inBufferPtr = &(inBuffer[targetChannel]);
 	for(std::size_t i = 0; i < getNumFrames(); i++){
 		*bufferPtr = *inBufferPtr;
 		bufferPtr += channels;
@@ -600,7 +652,7 @@ void ofSoundBuffer::fillWithNoise(float amplitude){
 }
 
 float ofSoundBuffer::fillWithTone( float pitchHz, float phase ){
-	float step = glm::two_pi<float>()*(pitchHz/samplerate);
+    float step = glm::two_pi<float>()*(pitchHz/samplerate);
 	for (std::size_t i=0; i<size()/channels; i++ ) {
 		std::size_t base = i*channels;
 		for (std::size_t j=0; j<channels; j++)
