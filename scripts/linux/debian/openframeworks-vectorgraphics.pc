@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib/openframeworks
+includedir=${prefix}/include/openframeworks
+
+Name: openframeworks-vectorgraphics
+Description: OpenFrameworks ofxVectorGraphics addon
+Version: 0.10.0
+
+Requires: openframeworks
+Libs: -lofxVectorGraphics
+Cflags: -I${includedir}/ofxVectorGraphics

@@ -1,0 +1,49 @@
+#!/usr/bin/make -f
+# See debhelper(7) (uncomment to enable)
+# output every command that modifies files on the build system.
+#export DH_VERBOSE = 1
+
+
+# see FEATURE AREAS in dpkg-buildflags(1)
+#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# see ENVIRONMENT in dpkg-buildflags(1)
+# package maintainers to append CFLAGS
+#export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
+# package maintainers to append LDFLAGS
+#export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+
+%:
+	dh $@
+
+
+ADDON_CXXFLAGS=-I../libs \
+             -I../../../libs/glm/include \
+             -I../../../libs/json/include \
+             -I../../../libs/kiss/include \
+             -I../../../libs/openFrameworks \
+             -I../../../libs/openFrameworks/3d \
+             -I../../../libs/openFrameworks/app \
+             -I../../../libs/openFrameworks/communication \
+             -I../../../libs/openFrameworks/events \
+             -I../../../libs/openFrameworks/gl \
+             -I../../../libs/openFrameworks/graphics \
+             -I../../../libs/openFrameworks/math \
+             -I../../../libs/openFrameworks/sound \
+             -I../../../libs/openFrameworks/types \
+             -I../../../libs/openFrameworks/utils \
+             -I../../../libs/openFrameworks/video \
+             -I../../../libs/tess2/include \
+             -I../../../libs/utf8/include \
+	     `pkg-config --cflags cairo gstreamer-1.0`
+
+
+override_dh_auto_build:
+	./download_libs.sh
+	./compileOF.sh
+	make -C ../../addons/ofxVectorGraphics/src ofxVectorGraphics.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxVectorGraphics/libs CreEPS.o
+	(cd ../../addons && ar rcs libofxVectorGraphics.a \
+		ofxVectorGraphics/src/ofxVectorGraphics.o \
+		ofxVectorGraphics/libs/CreEPS.o)

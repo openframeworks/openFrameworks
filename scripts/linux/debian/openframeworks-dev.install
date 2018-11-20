@@ -1,0 +1,35 @@
+../../libs/openFrameworks/ofMain.h usr/include/openframeworks
+../../libs/openFrameworks/3d/of*.h usr/include/openframeworks/3d
+../../libs/openFrameworks/3d/of*.inl usr/include/openframeworks/3d
+../../libs/openFrameworks/app/of*.h usr/include/openframeworks/app
+../../libs/openFrameworks/communication/of*.h usr/include/openframeworks/communication
+../../libs/openFrameworks/events/of*.h usr/include/openframeworks/events
+../../libs/openFrameworks/gl/of*.h usr/include/openframeworks/gl
+../../libs/openFrameworks/graphics/of*.h usr/include/openframeworks/graphics
+../../libs/openFrameworks/graphics/of*.inl usr/include/openframeworks/graphics
+../../libs/openFrameworks/math/of*.h usr/include/openframeworks/math
+../../libs/openFrameworks/sound/of*.h usr/include/openframeworks/sound
+../../libs/openFrameworks/types/of*.h usr/include/openframeworks/types
+../../libs/openFrameworks/utils/of*.h usr/include/openframeworks/utils
+../../libs/openFrameworks/video/of*.h usr/include/openframeworks/video
+
+../../libs/glm/include/glm/*.hpp usr/include/openframeworks/glm
+../../libs/glm/include/glm/detail/*.hpp usr/include/openframeworks/glm/detail
+../../libs/glm/include/glm/detail/*.inl usr/include/openframeworks/glm/detail
+../../libs/glm/include/glm/gtc/*.hpp usr/include/openframeworks/glm/gtc
+../../libs/glm/include/glm/gtc/*.inl usr/include/openframeworks/glm/gtc
+../../libs/glm/include/glm/gtx/*.hpp usr/include/openframeworks/glm/gtx
+../../libs/glm/include/glm/gtx/*.inl usr/include/openframeworks/glm/gtx
+../../libs/glm/include/glm/simd/*.h usr/include/openframeworks/glm/simd
+../../libs/json/include/json.hpp usr/include/openframeworks/json
+../../libs/kiss/include/kiss_*.h usr/include/openframeworks/kiss
+../../libs/tess2/include/tesselator.h usr/include/openframeworks/tess2
+../../libs/utf8/include/utf8.h usr/include/openframeworks
+../../libs/utf8/include/utf8/*.h usr/include/openframeworks/utf8
+
+../../libs/openFrameworksCompiled/lib/linux64/libopenFrameworks.a usr/lib/openframeworks
+../../libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a usr/lib/openframeworks
+../../libs/tess2/lib/linux64/libtess2.a usr/lib/openframeworks
+../../libs/kiss/lib/linux64/libkiss.a usr/lib/openframeworks
+
+debian/openframeworks.pc usr/share/pkgconfig

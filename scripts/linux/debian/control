@@ -1,0 +1,73 @@
+Source: openframeworks
+Priority: optional
+Maintainer: Paul Morelle <paul@scengrafics.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.8
+Section: libs
+Homepage: https://openframeworks.cc/
+Vcs-Git: https://github.com/openframeworks/openFrameworks.git
+Vcs-Browser: https://github.com/openframeworks/openFrameworks
+
+Package: openframeworks-dev
+Section: libdevel
+Architecture: any
+Depends: freeglut3-dev,
+ gstreamer1.0-alsa,
+ gstreamer1.0-libav,
+ gstreamer1.0-plugins-bad,
+ gstreamer1.0-plugins-base,
+ gstreamer1.0-plugins-good,
+ gstreamer1.0-pulseaudio,
+ gstreamer1.0-x,
+ libasound2-dev,
+ libassimp-dev,
+ libboost-filesystem-dev,
+ libcairo2-dev,
+ libcurl4-openssl-dev,
+ libdrm-dev,
+ libegl1-mesa-dev,
+ libfreeimage-dev,
+ libfreetype6-dev,
+ libgl1-mesa-dev,
+ libgles1-mesa-dev,
+ libgles2-mesa-dev,
+ libglew-dev,
+ libglfw3-dev,
+ libglu1-mesa-dev,
+ libgstreamer-plugins-base1.0-dev,
+ libgstreamer1.0-dev,
+ libgtk-3-dev,
+ libmpg123-dev,
+ libopenal-dev,
+ libopencv-dev,
+ libpugixml-dev,
+ libpulse-dev,
+ libraw1394-dev,
+ librtaudio-dev,
+ libsndfile-dev,
+ libssl-dev,
+ libudev-dev,
+ liburiparser-dev,
+ libusb-1.0-0-dev,
+ libxmu-dev,
+ libxxf86vm-dev,
+ ${misc:Depends}
+Description: open-source C++ toolkit for creative experimentation
+ openFrameworks is designed to work as a general purpose glue, and wraps
+ together several commonly used libraries, including:
+ - OpenGL, GLEW, libtess2 and cairo for graphics
+ - rtAudio, PortAudio, OpenAL and Kiss FFT or FMOD for audio input, output
+   and analysis
+ - FreeType for fonts
+ - FreeImage for image saving and loading
+ - Quicktime, GStreamer and videoInput for video playback and grabbing
+ - Poco for a variety of utilities
+ - OpenCV for computer vision
+ - Assimp for 3D model loading
+
+Package: openframeworks-vectorgraphics-dev
+Section: libdevel
+Architecture: any
+Depends: openframeworks-dev,
+ ${misc:Depends}
+Description: OpenFrameworks ofxVectorGraphics addon
