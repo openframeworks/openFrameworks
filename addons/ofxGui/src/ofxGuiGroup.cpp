@@ -239,13 +239,14 @@ void ofxGuiGroup::clear(){
 }
 
 bool ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
+	if(!isGuiDrawing())return false;
 	ofMouseEventArgs a = args;
 	for(std::size_t i = 0; i < collection.size(); i++){
 		if(collection[i]->mouseMoved(a)){
 			return true;
 		}
 	}
-	if(isGuiDrawing() && b.inside(ofPoint(args.x, args.y))){
+	if(b.inside(ofPoint(args.x, args.y))){
 		return true;
 	}else{
 		return false;
@@ -253,6 +254,8 @@ bool ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
 }
 
 bool ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
+	if(!isGuiDrawing())return false;
+	
 	if(setValue(args.x, args.y, true)){
 		return true;
 	}
@@ -267,6 +270,7 @@ bool ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
 }
 
 bool ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
+	if(!isGuiDrawing())return false;
 	if(setValue(args.x, args.y, false)){
 		return true;
 	}
@@ -283,13 +287,14 @@ bool ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
 
 bool ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
 	bGuiActive = false;
+	if(!isGuiDrawing())return false;
 	for(std::size_t k = 0; k < collection.size(); k++){
 		ofMouseEventArgs a = args;
 		if(collection[k]->mouseReleased(a)){
 			return true;
 		}
 	}
-	if(isGuiDrawing() && b.inside(ofPoint(args.x, args.y))){
+	if(b.inside(ofPoint(args.x, args.y))){
 		return true;
 	}else{
 		return false;
@@ -297,13 +302,14 @@ bool ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
 }
 
 bool ofxGuiGroup::mouseScrolled(ofMouseEventArgs & args){
+	if(!isGuiDrawing())return false;
 	ofMouseEventArgs a = args;
 	for(std::size_t i = 0; i < collection.size(); i++){
 		if(collection[i]->mouseScrolled(a)){
 			return true;
 		}
 	}
-	if(isGuiDrawing() && b.inside(ofPoint(args.x, args.y))){
+	if(b.inside(ofPoint(args.x, args.y))){
 		return true;
 	}else{
 		return false;

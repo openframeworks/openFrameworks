@@ -109,7 +109,12 @@ void ofxPanel::render(){
 		ofEnableBlendMode(blendMode);
 	}
 }
-
+bool ofxPanel::mousePressed(ofMouseEventArgs & args){
+	if(!ofxGuiGroup::mousePressed(args)){
+		//this is to avoid keeping dragging when more than one ofxPanel instance is present
+		this->bGrabbed = false;
+	}
+}
 bool ofxPanel::mouseReleased(ofMouseEventArgs & args){
     this->bGrabbed = false;
     if(ofxGuiGroup::mouseReleased(args)) return true;
@@ -131,13 +136,6 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
 
-			if( my > b.y && my <= b.y + headerRect.height ){
-				bGrabbed = true;
-				grabPt.set(mx-b.x, my-b.y);
-			} else{
-				bGrabbed = false;
-			}
-
 			if(loadBox.inside(mx, my)) {
 				if(!ofNotifyEvent(loadPressedE,this)){
 					loadFromFile(filename);
@@ -149,6 +147,14 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 					saveToFile(filename);
 				}
 				return true;
+			}
+			
+			if( headerRect.inside(mx, my)){
+				bGrabbed = true;
+				grabPt.set(mx-b.x, my-b.y);
+				return true;
+			} else{
+				bGrabbed = false;
 			}
 		}
 	} else if( bGrabbed ){
