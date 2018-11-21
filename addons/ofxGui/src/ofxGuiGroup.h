@@ -88,7 +88,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		virtual void onMaximize();
 
 		float spacing, spacingNextElement;
-		float header;
+		ofRectangle headerRect;
 
 		template <class ControlType>
 		ControlType & getControlType(const std::string& name);

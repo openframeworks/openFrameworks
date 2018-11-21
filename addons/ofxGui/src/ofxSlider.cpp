@@ -232,8 +232,9 @@ template<typename Type>
 void ofxSlider<Type>::generateText(){
 	string valStr = toString(value.get());
 	auto inputWidth = getTextBoundingBox(valStr,0,0).width;
-	auto label = getTextBoundingBox(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	auto value = getTextBoundingBox(valStr, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4);
+	auto yPos = getTextVCenteredInRect(b);
+	auto label = getTextBoundingBox(getName(), b.x + textPadding, yPos);
+	auto value = getTextBoundingBox(valStr, b.x + b.width - textPadding - inputWidth, yPos);
 	overlappingLabel = label.getMaxX() > value.x;
 
 	textMesh.clear();
@@ -252,10 +253,10 @@ void ofxSlider<Type>::generateText(){
 		}else{
 			name = getName();
 		}
-		textMesh.append(getTextMesh(name, b.x + textPadding, b.y + b.height / 2 + 4));
+		textMesh.append(getTextMesh(name, b.x + textPadding, yPos));
 	}
 	if(!overlappingLabel || mouseInside){
-		textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
+		textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, yPos));
 	}
 }
 

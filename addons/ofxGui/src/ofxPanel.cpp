@@ -57,23 +57,24 @@ void ofxPanel::generateDraw(){
 	border.rectangle(b.x,b.y,b.width+1,b.height-spacingNextElement);
 
 
+	headerRect.set(b.x,b.y+1,b.width,headerRect.height);
 	headerBg.clear();
 	headerBg.setFillColor(ofColor(thisHeaderBackgroundColor,180));
 	headerBg.setFilled(true);
-	headerBg.rectangle(b.x,b.y+1,b.width,header);
+	headerBg.rectangle(headerRect);
 
-	float iconHeight = header*.5;
+	float iconHeight = headerRect.height*.5;
 	float iconWidth = loadIcon.getWidth()/loadIcon.getHeight()*iconHeight;
 	int iconSpacing = iconWidth*.5;
 
 	loadBox.x = b.getMaxX() - (iconWidth * 2 + iconSpacing + textPadding);
-	loadBox.y = b.y + header / 2. - iconHeight / 2.;
+	loadBox.y = b.y + headerRect.height / 2. - iconHeight / 2.;
 	loadBox.width = iconWidth;
 	loadBox.height = iconHeight;
 	saveBox.set(loadBox);
 	saveBox.x += iconWidth + iconSpacing;
 
-	textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
+	textMesh = getTextMesh(getName(), textPadding + b.x, getTextVCenteredInRect(headerRect));
 }
 
 void ofxPanel::render(){
@@ -130,7 +131,7 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
 
-			if( my > b.y && my <= b.y + header ){
+			if( my > b.y && my <= b.y + headerRect.height ){
 				bGrabbed = true;
 				grabPt.set(mx-b.x, my-b.y);
 			} else{
