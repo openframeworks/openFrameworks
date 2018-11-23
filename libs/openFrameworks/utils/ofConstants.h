@@ -177,7 +177,7 @@ enum ofTargetPlatform{
 	#endif
 	#include <unistd.h>
 	#include "GL/glew.h"
-	#include <OpenGL/gl.h>
+	//#include <OpenGL/gl.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
 	#if defined(__LITTLE_ENDIAN__)
