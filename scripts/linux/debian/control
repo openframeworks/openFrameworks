@@ -20,7 +20,6 @@ Depends: freeglut3-dev,
  gstreamer1.0-pulseaudio,
  gstreamer1.0-x,
  libasound2-dev,
- libassimp-dev,
  libboost-filesystem-dev,
  libcairo2-dev,
  libcurl4-openssl-dev,
@@ -71,6 +70,14 @@ Architecture: any
 Depends: openframeworks-dev,
  ${misc:Depends}
 Description: OpenFrameworks ofxAccelerometer addon
+
+Package: openframeworks-assimp-model-loader-dev
+Section: libdevel
+Architecture: any
+Depends: libassimp-dev,
+ openframeworks-dev,
+ ${misc:Depends}
+Description: OpenFrameworks ofxAssimpModelLoader addon
 
 Package: openframeworks-vectorgraphics-dev
 Section: libdevel

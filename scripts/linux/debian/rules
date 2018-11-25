@@ -46,6 +46,16 @@ override_dh_auto_build:
 	make -C ../../addons/ofxAccelerometer/src ofxAccelerometer.o "CXXFLAGS=${ADDON_CXXFLAGS}"
 	(cd ../../addons && ar rcs libofxAccelerometer.a \
 		ofxAccelerometer/src/ofxAccelerometer.o)
+	# ofxAssimpModelLoader addon
+	make -C ../../addons/ofxAssimpModelLoader/src ofxAssimpAnimation.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxAssimpModelLoader/src ofxAssimpMeshHelper.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxAssimpModelLoader/src ofxAssimpModelLoader.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxAssimpModelLoader/src ofxAssimpTexture.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	(cd ../../addons && ar rcs libofxAssimpModelLoader.a \
+		ofxAssimpModelLoader/src/ofxAssimpAnimation.o \
+		ofxAssimpModelLoader/src/ofxAssimpMeshHelper.o \
+		ofxAssimpModelLoader/src/ofxAssimpModelLoader.o \
+		ofxAssimpModelLoader/src/ofxAssimpTexture.o)
 	# ofxVectorGraphics addon
 	make -C ../../addons/ofxVectorGraphics/src ofxVectorGraphics.o "CXXFLAGS=${ADDON_CXXFLAGS}"
 	make -C ../../addons/ofxVectorGraphics/libs CreEPS.o

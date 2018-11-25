@@ -1,0 +1,8 @@
+../../addons/ofxAssimpModelLoader/src/ofxAssimpAnimation.h usr/include/openframeworks/ofxAssimpModelLoader
+../../addons/ofxAssimpModelLoader/src/ofxAssimpMeshHelper.h usr/include/openframeworks/ofxAssimpModelLoader
+../../addons/ofxAssimpModelLoader/src/ofxAssimpModelLoader.h usr/include/openframeworks/ofxAssimpModelLoader
+../../addons/ofxAssimpModelLoader/src/ofxAssimpTexture.h usr/include/openframeworks/ofxAssimpModelLoader
+../../addons/ofxAssimpModelLoader/src/ofxAssimpUtils.h usr/include/openframeworks/ofxAssimpModelLoader
+
+../../addons/libofxAssimpModelLoader.a usr/lib/openframeworks
+debian/openframeworks-assimp-model-loader.pc usr/share/pkgconfig
