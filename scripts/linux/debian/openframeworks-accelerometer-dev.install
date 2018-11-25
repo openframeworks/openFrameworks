@@ -1,0 +1,4 @@
+../../addons/ofxAccelerometer/src/ofxAccelerometer.h usr/include/openframeworks/ofxAccelerometer
+
+../../addons/libofxAccelerometer.a usr/lib/openframeworks
+debian/openframeworks-accelerometer.pc usr/share/pkgconfig

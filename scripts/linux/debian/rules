@@ -42,6 +42,11 @@ ADDON_CXXFLAGS=-I../libs \
 override_dh_auto_build:
 	./download_libs.sh
 	./compileOF.sh
+	# ofxAccelerometer addon
+	make -C ../../addons/ofxAccelerometer/src ofxAccelerometer.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	(cd ../../addons && ar rcs libofxAccelerometer.a \
+		ofxAccelerometer/src/ofxAccelerometer.o)
+	# ofxVectorGraphics addon
 	make -C ../../addons/ofxVectorGraphics/src ofxVectorGraphics.o "CXXFLAGS=${ADDON_CXXFLAGS}"
 	make -C ../../addons/ofxVectorGraphics/libs CreEPS.o
 	(cd ../../addons && ar rcs libofxVectorGraphics.a \

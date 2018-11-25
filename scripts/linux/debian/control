@@ -65,6 +65,13 @@ Description: open-source C++ toolkit for creative experimentation
  - OpenCV for computer vision
  - Assimp for 3D model loading
 
+Package: openframeworks-accelerometer-dev
+Section: libdevel
+Architecture: any
+Depends: openframeworks-dev,
+ ${misc:Depends}
+Description: OpenFrameworks ofxAccelerometer addon
+
 Package: openframeworks-vectorgraphics-dev
 Section: libdevel
 Architecture: any

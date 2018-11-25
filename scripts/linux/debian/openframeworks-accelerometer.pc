@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib/openframeworks
+includedir=${prefix}/include/openframeworks
+
+Name: openframeworks-accelerometer
+Description: OpenFrameworks ofxAccelerometer addon
+Version: 0.10.0
+
+Requires: openframeworks
+Libs: -lofxAccelerometer
+Cflags: -I${includedir}/ofxAccelerometer
