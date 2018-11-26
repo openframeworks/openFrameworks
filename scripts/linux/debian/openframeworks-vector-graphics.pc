@@ -3,7 +3,7 @@ exec_prefix=${prefix}
 libdir=${prefix}/lib/openframeworks
 includedir=${prefix}/include/openframeworks
 
-Name: openframeworks-vectorgraphics
+Name: openframeworks-vector-graphics
 Description: OpenFrameworks ofxVectorGraphics addon
 Version: 0.10.0
 

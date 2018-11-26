@@ -79,7 +79,7 @@ Depends: libassimp-dev,
  ${misc:Depends}
 Description: OpenFrameworks ofxAssimpModelLoader addon
 
-Package: openframeworks-vectorgraphics-dev
+Package: openframeworks-vector-graphics-dev
 Section: libdevel
 Architecture: any
 Depends: openframeworks-dev,

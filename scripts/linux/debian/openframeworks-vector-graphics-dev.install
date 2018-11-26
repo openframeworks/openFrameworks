@@ -2,4 +2,4 @@
 ../../addons/ofxVectorGraphics/libs/*.hpp usr/include/openframeworks/ofxVectorGraphics
 
 ../../addons/libofxVectorGraphics.a usr/lib/openframeworks
-debian/openframeworks-vectorgraphics.pc usr/share/pkgconfig
+debian/openframeworks-vector-graphics.pc usr/share/pkgconfig
