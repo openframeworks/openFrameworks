@@ -42,7 +42,7 @@ void ofApp::setup(){
 
 	// select all strokes and iterate through them
 	// for each stroke, create a new mesh
-	auto strokesXml = xml.select_nodes("//strokes");
+	auto strokesXml = xml.select_nodes("//stroke");
 	for(auto & stroke: strokesXml){
 		strokes.emplace_back();
 		strokes.back().setMode(OF_PRIMITIVE_LINE_STRIP);
