@@ -63,9 +63,9 @@ class ofxBaseGui {
 
 		static void setDefaultEventsPriority(ofEventOrder eventsPriority);
 
-		static void enableRetina();
-		static void disableRetina();
-		static bool isRetinaEnabled();
+		static void enableHiDpi();
+		static void disableHiDpi();
+		static bool isHiDpiEnabled();
 	
 		static void loadFont(const std::string& filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, int dpi = 0);
 		static void loadFont(const ofTrueTypeFontSettings & fontSettings);
@@ -129,7 +129,7 @@ class ofxBaseGui {
 		static int defaultHeight;
 		static ofEventOrder defaultEventsPriority;
 
-		static float retinaScale;
+		static float hiDpiScale;
 	
 		static std::string saveStencilToHex(const ofImage & img);
 		static void loadStencilFromHex(ofImage & img, unsigned char * data);

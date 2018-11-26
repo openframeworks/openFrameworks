@@ -26,5 +26,5 @@ void ofxGuiSetDefaultWidth(int width);
 void ofxGuiSetDefaultHeight(int height);
 void ofxGuiSetDefaultEventsPriority(ofEventOrder eventsPriority);
 
-void ofxGuiEnableHiResDisplay();//retina display
-void ofxGuiDisableHiResDisplay();//retina display
+void ofxGuiEnableHiResDisplay();//hiDpi display
+void ofxGuiDisableHiResDisplay();//hiDpi display

@@ -55,10 +55,10 @@ void ofxGuiSetDefaultEventsPriority(ofEventOrder eventsPriority){
 	ofxBaseGui::setDefaultEventsPriority(eventsPriority);
 }
 void ofxGuiEnableHiResDisplay(){
-	ofxBaseGui::enableRetina();
+	ofxBaseGui::enableHiDpi();
 }
 void ofxGuiDisableHiResDisplay(){
-	ofxBaseGui::disableRetina();
+	ofxBaseGui::disableHiDpi();
 }
 
 
@@ -79,7 +79,7 @@ bool ofxBaseGui::useTTF = false;
 ofBitmapFont ofxBaseGui::bitmapFont;
 ofEventOrder ofxBaseGui::defaultEventsPriority = OF_EVENT_ORDER_BEFORE_APP;
 
-float ofxBaseGui::retinaScale =1;
+float ofxBaseGui::hiDpiScale =1;
 
 ofxBaseGui::ofxBaseGui(){
 	parent = nullptr;
@@ -178,11 +178,11 @@ ofMesh ofxBaseGui::getTextMesh(const string & text, float x, float y){
 		return font.getStringMesh(text, x, y);
 	}else{
 		auto m = bitmapFont.getMesh(text, x, y);
-		if(isRetinaEnabled()){
+		if(isHiDpiEnabled()){
 			auto bb = getTextBoundingBox(text, x, y);
 			bb.standardize();
 			for(auto& v: m.getVertices()){
-				v = (v - bb.getPosition())*retinaScale + bb.getPosition();
+				v = (v - bb.getPosition())*hiDpiScale + bb.getPosition();
 			}
 		}
 		return m;
@@ -194,9 +194,9 @@ ofRectangle ofxBaseGui::getTextBoundingBox(const string & text, float x, float y
 		return font.getStringBoundingBox(text, x, y);
 	}else{
 		auto r = bitmapFont.getBoundingBox(text, x, y);
-		if(isRetinaEnabled()){
-			r.width *= retinaScale;
-			r.height *= retinaScale;
+		if(isHiDpiEnabled()){
+			r.width *= hiDpiScale;
+			r.height *= hiDpiScale;
 		}
 		return r;
 	}
@@ -446,20 +446,20 @@ void ofxBaseGui::setParent(ofxBaseGui * parent){
 ofxBaseGui * ofxBaseGui::getParent(){
 	return parent;
 }
-void ofxBaseGui::enableRetina(){
+void ofxBaseGui::enableHiDpi(){
 	
-	retinaScale = 2;
+	ofxBaseGui::hiDpiScale = 2;
 	ofxBaseGui::textPadding = 8;
 	ofxBaseGui::defaultWidth = 400;
 	ofxBaseGui::defaultHeight = 36;
 
 }
-void ofxBaseGui::disableRetina(){
-	retinaScale = 1;
+void ofxBaseGui::disableHiDpi(){
+	ofxBaseGui::hiDpiScale = 1;
 	ofxBaseGui::textPadding = 4;
 	ofxBaseGui::defaultWidth = 200;
 	ofxBaseGui::defaultHeight = 18;
 }
-bool ofxBaseGui::isRetinaEnabled(){
-	return retinaScale == 2;
+bool ofxBaseGui::isHiDpiEnabled(){
+	return hiDpiScale == 2;
 }
