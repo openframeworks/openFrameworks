@@ -78,6 +78,13 @@ Depends: libassimp-dev,
  ${misc:Depends}
 Description: OpenFrameworks ofxAssimpModelLoader addon
 
+Package: openframeworks-network-dev
+Section: libdevel
+Architecture: any
+Depends: openframeworks-dev,
+ ${misc:Depends}
+Description: OpenFrameworks ofxNetwork addon
+
 Package: openframeworks-opencv-dev
 Section: libdevel
 Architecture: any

@@ -56,6 +56,18 @@ override_dh_auto_build:
 		ofxAssimpModelLoader/src/ofxAssimpMeshHelper.o \
 		ofxAssimpModelLoader/src/ofxAssimpModelLoader.o \
 		ofxAssimpModelLoader/src/ofxAssimpTexture.o)
+	# ofxNetwork addon
+	make -C ../../addons/ofxNetwork/src ofxNetworkUtils.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxNetwork/src ofxTCPClient.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxNetwork/src ofxTCPManager.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxNetwork/src ofxTCPServer.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxNetwork/src ofxUDPManager.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	(cd ../../addons && ar rcs libofxNetwork.a \
+		ofxNetwork/src/ofxNetworkUtils.o \
+		ofxNetwork/src/ofxTCPClient.o \
+		ofxNetwork/src/ofxTCPManager.o \
+		ofxNetwork/src/ofxTCPServer.o \
+		ofxNetwork/src/ofxUDPManager.o)
 	# ofxOpenCv addon
 	make -C ../../addons/ofxOpenCv/src ofxCvColorImage.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
 	make -C ../../addons/ofxOpenCv/src ofxCvContourFinder.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
