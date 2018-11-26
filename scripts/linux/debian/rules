@@ -154,6 +154,10 @@ override_dh_auto_build:
 		ofxOsc/src/ofxOscParameterSync.o \
 		ofxOsc/src/ofxOscReceiver.o \
 		ofxOsc/src/ofxOscSender.o)
+	# ofxSvg addon
+	make -C ../../addons/ofxSvg/src ofxSvg.o "CXXFLAGS=${ADDON_CXXFLAGS} -I../libs/svgtiny/include"
+	(cd ../../addons && ar rcs libofxSvg.a \
+		ofxSvg/src/ofxSvg.o)
 	# ofxVectorGraphics addon
 	make -C ../../addons/ofxVectorGraphics/src ofxVectorGraphics.o "CXXFLAGS=${ADDON_CXXFLAGS}"
 	make -C ../../addons/ofxVectorGraphics/libs CreEPS.o
