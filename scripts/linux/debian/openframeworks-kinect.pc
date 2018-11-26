@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib/openframeworks
+includedir=${prefix}/include/openframeworks
+
+Name: openframeworks-kinect
+Description: OpenFrameworks ofxKinect addon
+Version: 0.10.0
+
+Requires: libusb-1.0 openframeworks
+Libs: -lofxKinect
+Cflags: -I${includedir}/ofxKinect -I${includedir}/ofxKinect/libfreenect

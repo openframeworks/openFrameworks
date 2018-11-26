@@ -56,6 +56,28 @@ override_dh_auto_build:
 		ofxAssimpModelLoader/src/ofxAssimpMeshHelper.o \
 		ofxAssimpModelLoader/src/ofxAssimpModelLoader.o \
 		ofxAssimpModelLoader/src/ofxAssimpTexture.o)
+	# ofxKinect addon
+	make -C ../../addons/ofxKinect/libs/libfreenect/src audio.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/libs/libfreenect/src cameras.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/libs/libfreenect/src core.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/libs/libfreenect/src flags.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/libs/libfreenect/src loader.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/libs/libfreenect/src registration.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/libs/libfreenect/src tilt.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/libs/libfreenect/src usb_libusb10.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/src ofxKinect.o "CXXFLAGS=${ADDON_CXXFLAGS} -Iextra -I../libs/libfreenect/src -I../libs/libfreenect/include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/src/extra ofxKinectExtras.o "CXXFLAGS=${ADDON_CXXFLAGS} -I../../libs/libfreenect/include `pkg-config --cflags libusb-1.0`"
+	(cd ../../addons && ar rcs libofxKinect.a \
+		ofxKinect/libs/libfreenect/src/audio.o \
+		ofxKinect/libs/libfreenect/src/cameras.o \
+		ofxKinect/libs/libfreenect/src/core.o \
+		ofxKinect/libs/libfreenect/src/flags.o \
+		ofxKinect/libs/libfreenect/src/loader.o \
+		ofxKinect/libs/libfreenect/src/registration.o \
+		ofxKinect/libs/libfreenect/src/tilt.o \
+		ofxKinect/libs/libfreenect/src/usb_libusb10.o \
+		ofxKinect/src/ofxKinect.o \
+		ofxKinect/src/extra/ofxKinectExtras.o)
 	# ofxNetwork addon
 	make -C ../../addons/ofxNetwork/src ofxNetworkUtils.o "CXXFLAGS=${ADDON_CXXFLAGS}"
 	make -C ../../addons/ofxNetwork/src ofxTCPClient.o "CXXFLAGS=${ADDON_CXXFLAGS}"

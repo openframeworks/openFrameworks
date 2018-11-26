@@ -1,0 +1,9 @@
+../../addons/ofxKinect/src/ofxBase3DVideo.h usr/include/openframeworks/ofxKinect
+../../addons/ofxKinect/src/ofxKinect.h usr/include/openframeworks/ofxKinect
+../../addons/ofxKinect/src/extra/ofxKinectExtras.h usr/include/openframeworks/ofxKinect/extra
+../../addons/ofxKinect/libs/libfreenect/include/libfreenect.h usr/include/openframeworks/ofxKinect/libfreenect
+
+../../addons/ofxKinect/libs/libfreenect/platform/linux/udev/51-kinect.rules etc/udev/rules.d
+
+../../addons/libofxKinect.a usr/lib/openframeworks
+debian/openframeworks-kinect.pc usr/share/pkgconfig

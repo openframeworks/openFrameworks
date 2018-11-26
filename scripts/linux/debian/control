@@ -46,7 +46,6 @@ Depends: freeglut3-dev,
  libssl-dev,
  libudev-dev,
  liburiparser-dev,
- libusb-1.0-0-dev,
  libxmu-dev,
  libxxf86vm-dev,
  ${misc:Depends}
@@ -77,6 +76,14 @@ Depends: libassimp-dev,
  openframeworks-dev,
  ${misc:Depends}
 Description: OpenFrameworks ofxAssimpModelLoader addon
+
+Package: openframeworks-kinect-dev
+Section: libdevel
+Architecture: any
+Depends: libusb-1.0-0-dev,
+ openframeworks-dev,
+ ${misc:Depends}
+Description: OpenFrameworks ofxKinect addon
 
 Package: openframeworks-network-dev
 Section: libdevel
