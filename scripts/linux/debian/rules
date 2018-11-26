@@ -56,6 +56,22 @@ override_dh_auto_build:
 		ofxAssimpModelLoader/src/ofxAssimpMeshHelper.o \
 		ofxAssimpModelLoader/src/ofxAssimpModelLoader.o \
 		ofxAssimpModelLoader/src/ofxAssimpTexture.o)
+	# ofxOpenCv addon
+	make -C ../../addons/ofxOpenCv/src ofxCvColorImage.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
+	make -C ../../addons/ofxOpenCv/src ofxCvContourFinder.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
+	make -C ../../addons/ofxOpenCv/src ofxCvFloatImage.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
+	make -C ../../addons/ofxOpenCv/src ofxCvGrayscaleImage.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
+	make -C ../../addons/ofxOpenCv/src ofxCvHaarFinder.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
+	make -C ../../addons/ofxOpenCv/src ofxCvImage.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
+	make -C ../../addons/ofxOpenCv/src ofxCvShortImage.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
+	(cd ../../addons && ar rcs libofxOpenCv.a \
+		ofxOpenCv/src/ofxCvColorImage.o \
+		ofxOpenCv/src/ofxCvContourFinder.o \
+		ofxOpenCv/src/ofxCvFloatImage.o \
+		ofxOpenCv/src/ofxCvGrayscaleImage.o \
+		ofxOpenCv/src/ofxCvHaarFinder.o \
+		ofxOpenCv/src/ofxCvImage.o \
+		ofxOpenCv/src/ofxCvShortImage.o)
 	# ofxVectorGraphics addon
 	make -C ../../addons/ofxVectorGraphics/src ofxVectorGraphics.o "CXXFLAGS=${ADDON_CXXFLAGS}"
 	make -C ../../addons/ofxVectorGraphics/libs CreEPS.o
