@@ -113,7 +113,9 @@ bool ofxPanel::mousePressed(ofMouseEventArgs & args){
 	if(!ofxGuiGroup::mousePressed(args)){
 		//this is to avoid keeping dragging when more than one ofxPanel instance is present
 		this->bGrabbed = false;
+		return false;
 	}
+	return true;
 }
 bool ofxPanel::mouseReleased(ofMouseEventArgs & args){
     this->bGrabbed = false;
