@@ -127,3 +127,10 @@ Architecture: any
 Depends: openframeworks-dev,
  ${misc:Depends}
 Description: OpenFrameworks ofxVectorGraphics addon
+
+Package: openframeworks-xml-settings-dev
+Section: libdevel
+Architecture: any
+Depends: openframeworks-dev,
+ ${misc:Depends}
+Description: OpenFrameworks ofxXmlSettings addon

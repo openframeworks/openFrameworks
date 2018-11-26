@@ -164,3 +164,13 @@ override_dh_auto_build:
 	(cd ../../addons && ar rcs libofxVectorGraphics.a \
 		ofxVectorGraphics/src/ofxVectorGraphics.o \
 		ofxVectorGraphics/libs/CreEPS.o)
+	# ofxVectorGraphics addon
+	make -C ../../addons/ofxXmlSettings/src ofxXmlSettings.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxXmlSettings/libs tinyxml.o
+	make -C ../../addons/ofxXmlSettings/libs tinyxmlerror.o
+	make -C ../../addons/ofxXmlSettings/libs tinyxmlparser.o
+	(cd ../../addons && ar rcs libofxXmlSettings.a \
+		ofxXmlSettings/src/ofxXmlSettings.o \
+		ofxXmlSettings/libs/tinyxml.o \
+		ofxXmlSettings/libs/tinyxmlerror.o \
+		ofxXmlSettings/libs/tinyxmlparser.o)
