@@ -56,6 +56,28 @@ override_dh_auto_build:
 		ofxAssimpModelLoader/src/ofxAssimpMeshHelper.o \
 		ofxAssimpModelLoader/src/ofxAssimpModelLoader.o \
 		ofxAssimpModelLoader/src/ofxAssimpTexture.o)
+	# ofxGui addon
+	make -C ../../addons/ofxGui/src ofxBaseGui.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxButton.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxColorPicker.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxGuiGroup.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxInputField.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxLabel.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxPanel.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxSlider.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxSliderGroup.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxToggle.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	(cd ../../addons && ar rcs libofxGui.a \
+		ofxGui/src/ofxBaseGui.o \
+		ofxGui/src/ofxButton.o \
+		ofxGui/src/ofxColorPicker.o \
+		ofxGui/src/ofxGuiGroup.o \
+		ofxGui/src/ofxInputField.o \
+		ofxGui/src/ofxLabel.o \
+		ofxGui/src/ofxPanel.o \
+		ofxGui/src/ofxSlider.o \
+		ofxGui/src/ofxSliderGroup.o \
+		ofxGui/src/ofxToggle.o)
 	# ofxKinect addon
 	make -C ../../addons/ofxKinect/libs/libfreenect/src audio.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
 	make -C ../../addons/ofxKinect/libs/libfreenect/src cameras.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
