@@ -8,5 +8,5 @@ Description: open-source C++ toolkit for creative experimentation
 Version: 0.10.0
 
 Requires: cairo fontconfig freetype2 glew glfw3 gstreamer-app-1.0 gstreamer-video-1.0 gtk+-3.0 libcurl libmpg123 liburiparser openal sndfile x11
-Libs: -L${libdir} -lpthread -lboost_filesystem -lboost_system -lfreeimage -lopenFrameworks -lkiss -ltess2 -ludev
+Libs: -L${libdir} -lpthread -lboost_filesystem -lboost_system -lfreeimage -lopenFrameworks -lkiss -lpugixml -ltess2 -ludev
 Cflags: -I${includedir} -I${includedir}/3d -I${includedir}/app -I${includedir}/communication -I${includedir}/events -I${includedir}/gl -I${includedir}/graphics -I${includedir}/json -I${includedir}/kiss -I${includedir}/math -I${includedir}/sound -I${includedir}/tess2 -I${includedir}/types -I${includedir}/utf8 -I${includedir}/utils -I${includedir}/video

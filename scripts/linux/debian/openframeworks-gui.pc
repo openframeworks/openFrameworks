@@ -8,5 +8,5 @@ Description: OpenFrameworks ofxGui addon
 Version: 0.10.0
 
 Requires: openframeworks
-Libs: -lofxGui -lpugixml
+Libs: -lofxGui
 Cflags: -I${includedir}/ofxGui
