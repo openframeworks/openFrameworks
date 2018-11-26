@@ -93,6 +93,13 @@ Depends: libopencv-dev,
  ${misc:Depends}
 Description: OpenFrameworks ofxOpenCv addon
 
+Package: openframeworks-osc-dev
+Section: libdevel
+Architecture: any
+Depends: openframeworks-dev,
+ ${misc:Depends}
+Description: OpenFrameworks ofxOsc addon
+
 Package: openframeworks-vector-graphics-dev
 Section: libdevel
 Architecture: any

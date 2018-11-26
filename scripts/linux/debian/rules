@@ -84,6 +84,32 @@ override_dh_auto_build:
 		ofxOpenCv/src/ofxCvHaarFinder.o \
 		ofxOpenCv/src/ofxCvImage.o \
 		ofxOpenCv/src/ofxCvShortImage.o)
+	# ofxOsc addon
+	make -C ../../addons/ofxOsc/libs/oscpack/src/ip IpEndpointName.o
+	make -C ../../addons/ofxOsc/libs/oscpack/src/ip/posix NetworkingUtils.o "CXXFLAGS=-I../.."
+	make -C ../../addons/ofxOsc/libs/oscpack/src/ip/posix UdpSocket.o "CXXFLAGS=-I../.."
+	make -C ../../addons/ofxOsc/libs/oscpack/src/osc OscOutboundPacketStream.o
+	make -C ../../addons/ofxOsc/libs/oscpack/src/osc OscPrintReceivedElements.o
+	make -C ../../addons/ofxOsc/libs/oscpack/src/osc OscReceivedElements.o
+	make -C ../../addons/ofxOsc/libs/oscpack/src/osc OscTypes.o
+	make -C ../../addons/ofxOsc/src ofxOscBundle.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxOsc/src ofxOscMessage.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxOsc/src ofxOscParameterSync.o "CXXFLAGS=${ADDON_CXXFLAGS} -I../libs/oscpack/src/osc -I../libs/oscpack/src/ip"
+	make -C ../../addons/ofxOsc/src ofxOscReceiver.o "CXXFLAGS=${ADDON_CXXFLAGS} -I../libs/oscpack/src/osc -I../libs/oscpack/src/ip"
+	make -C ../../addons/ofxOsc/src ofxOscSender.o "CXXFLAGS=${ADDON_CXXFLAGS} -I../libs/oscpack/src/osc -I../libs/oscpack/src/ip"
+	(cd ../../addons && ar rcs libofxOsc.a \
+		ofxOsc/libs/oscpack/src/ip/IpEndpointName.o \
+		ofxOsc/libs/oscpack/src/ip/posix/NetworkingUtils.o \
+		ofxOsc/libs/oscpack/src/ip/posix/UdpSocket.o \
+		ofxOsc/libs/oscpack/src/osc/OscOutboundPacketStream.o \
+		ofxOsc/libs/oscpack/src/osc/OscPrintReceivedElements.o \
+		ofxOsc/libs/oscpack/src/osc/OscReceivedElements.o \
+		ofxOsc/libs/oscpack/src/osc/OscTypes.o \
+		ofxOsc/src/ofxOscBundle.o \
+		ofxOsc/src/ofxOscMessage.o \
+		ofxOsc/src/ofxOscParameterSync.o \
+		ofxOsc/src/ofxOscReceiver.o \
+		ofxOsc/src/ofxOscSender.o)
 	# ofxVectorGraphics addon
 	make -C ../../addons/ofxVectorGraphics/src ofxVectorGraphics.o "CXXFLAGS=${ADDON_CXXFLAGS}"
 	make -C ../../addons/ofxVectorGraphics/libs CreEPS.o
