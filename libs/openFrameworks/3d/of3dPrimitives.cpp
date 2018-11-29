@@ -211,6 +211,20 @@ void of3dPrimitive::draw() const{
 	draw(OF_MESH_FILL);
 }
 
+ofBoundingBox of3dPrimitive::getBoundingBox() const{
+    ofBoundingBox boundingBox;
+    const vector<glm::vec3>& vertices  = getMesh().getVertices();
+    for(auto v : vertices){
+        if (v.x < boundingBox.min.x) boundingBox.min.x = v.x;
+        if (v.y < boundingBox.min.y) boundingBox.min.y = v.y;
+        if (v.z < boundingBox.min.z) boundingBox.min.z = v.z;
+         if (v.x > boundingBox.max.x) boundingBox.max.x = v.x;
+        if (v.y > boundingBox.max.y) boundingBox.max.y = v.y;
+        if (v.z > boundingBox.max.z) boundingBox.max.z = v.z;
+    }
+    return boundingBox;
+}
+
 //--------------------------------------------------------------
 void of3dPrimitive::drawNormals(float length, bool bFaceNormals) const{
     ofNode::transformGL(ofGetCurrentRenderer().get());
