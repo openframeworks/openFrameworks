@@ -54,6 +54,13 @@ void ofxGuiSetDefaultHeight(int height){
 void ofxGuiSetDefaultEventsPriority(ofEventOrder eventsPriority){
 	ofxBaseGui::setDefaultEventsPriority(eventsPriority);
 }
+void ofxGuiEnableHiResDisplay(){
+	ofxBaseGui::enableHiDpi();
+}
+void ofxGuiDisableHiResDisplay(){
+	ofxBaseGui::disableHiDpi();
+}
+
 
 ofColor
 ofxBaseGui::headerBackgroundColor(64),
@@ -71,6 +78,8 @@ bool ofxBaseGui::fontLoaded = false;
 bool ofxBaseGui::useTTF = false;
 ofBitmapFont ofxBaseGui::bitmapFont;
 ofEventOrder ofxBaseGui::defaultEventsPriority = OF_EVENT_ORDER_BEFORE_APP;
+
+float ofxBaseGui::hiDpiScale =1;
 
 ofxBaseGui::ofxBaseGui(){
 	parent = nullptr;
@@ -168,7 +177,15 @@ ofMesh ofxBaseGui::getTextMesh(const string & text, float x, float y){
 	if(useTTF){
 		return font.getStringMesh(text, x, y);
 	}else{
-		return bitmapFont.getMesh(text, x, y);
+		auto m = bitmapFont.getMesh(text, x, y);
+		if(isHiDpiEnabled()){
+			auto bb = getTextBoundingBox(text, x, y);
+			bb.standardize();
+			for(auto& v: m.getVertices()){
+				v = (v - bb.getPosition())*hiDpiScale + bb.getPosition();
+			}
+		}
+		return m;
 	}
 }
 
@@ -176,9 +193,27 @@ ofRectangle ofxBaseGui::getTextBoundingBox(const string & text, float x, float y
 	if(useTTF){
 		return font.getStringBoundingBox(text, x, y);
 	}else{
-		return bitmapFont.getBoundingBox(text, x, y);
+		auto r = bitmapFont.getBoundingBox(text, x, y);
+		if(isHiDpiEnabled()){
+			r.width *= hiDpiScale;
+			r.height *= hiDpiScale;
+		}
+		return r;
 	}
 }
+float ofxBaseGui::getTextVCenteredInRect(const ofRectangle& container){
+	if(useTTF){
+		return container.getCenter().y + font.getAscenderHeight()*0.5;
+	}else{
+		// The bitmap font does not provide a getAscenderHeight() method.
+		// However,it can be found by calling `getTextBoundingBox(" ",0,0)` 
+		// which returns the ascender value in the rectangle's Y as a negative value. 
+		// It does not matter which string is passed to it, the value will be always the same.
+		return container.getCenter().y - getTextBoundingBox(" ",0,0).y *0.5;
+		
+	}
+}
+
 
 void ofxBaseGui::saveToFile(const std::string& filename){
 	auto extension = ofToLower(ofFilePath::getFileExt(filename));
@@ -410,4 +445,21 @@ void ofxBaseGui::setParent(ofxBaseGui * parent){
 
 ofxBaseGui * ofxBaseGui::getParent(){
 	return parent;
+}
+void ofxBaseGui::enableHiDpi(){
+	
+	ofxBaseGui::hiDpiScale = 2;
+	ofxBaseGui::textPadding = 8;
+	ofxBaseGui::defaultWidth = 400;
+	ofxBaseGui::defaultHeight = 36;
+
+}
+void ofxBaseGui::disableHiDpi(){
+	ofxBaseGui::hiDpiScale = 1;
+	ofxBaseGui::textPadding = 4;
+	ofxBaseGui::defaultWidth = 200;
+	ofxBaseGui::defaultHeight = 18;
+}
+bool ofxBaseGui::isHiDpiEnabled(){
+	return hiDpiScale == 2;
 }

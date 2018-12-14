@@ -63,6 +63,10 @@ class ofxBaseGui {
 
 		static void setDefaultEventsPriority(ofEventOrder eventsPriority);
 
+		static void enableHiDpi();
+		static void disableHiDpi();
+		static bool isHiDpiEnabled();
+	
 		static void loadFont(const std::string& filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, int dpi = 0);
 		static void loadFont(const ofTrueTypeFontSettings & fontSettings);
 		static void setUseTTF(bool bUseTTF);
@@ -95,7 +99,11 @@ class ofxBaseGui {
 		void unbindFontTexture();
 		ofMesh getTextMesh(const std::string & text, float x, float y);
 		ofRectangle getTextBoundingBox(const std::string & text, float x, float y);
-
+		
+	
+		// returns the Y position for a text to be vertically centered in a rectangle.
+		float getTextVCenteredInRect(const ofRectangle& container);
+		
 		ofxBaseGui * parent;
 
 		ofRectangle b;
@@ -121,6 +129,8 @@ class ofxBaseGui {
 		static int defaultHeight;
 		static ofEventOrder defaultEventsPriority;
 
+		static float hiDpiScale;
+	
 		static std::string saveStencilToHex(const ofImage & img);
 		static void loadStencilFromHex(ofImage & img, unsigned char * data);
 
