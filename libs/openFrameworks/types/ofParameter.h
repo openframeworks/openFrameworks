@@ -484,6 +484,7 @@ public:
 	ofParameter(const ParameterType & v);
 	ofParameter(const std::string& name, const ParameterType & v);
 	ofParameter(const std::string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
+    ofParameter(const std::string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max, bool serializable);
 
 	const ParameterType & get() const;
 	const ParameterType * operator->() const;
@@ -616,6 +617,14 @@ private:
 		,bInNotify(false)
 		,serializable(true){}
 
+        Value(std::string name, ParameterType v, ParameterType min, ParameterType max, bool serializable)
+        :name(name)
+        ,value(v)
+        ,min(min)
+        ,max(max)
+        ,bInNotify(false)
+        ,serializable(serializable){}
+        
 		std::string name;
 		ParameterType value;
 		ParameterType min, max;
@@ -661,6 +670,10 @@ ofParameter<ParameterType>::ofParameter(const std::string& name, const Parameter
 :obj(std::make_shared<Value>(name, v, min, max))
 ,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)){}
 
+template<typename ParameterType>
+ofParameter<ParameterType>::ofParameter(const std::string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max, bool serializable)
+:obj(std::make_shared<Value>(name, v, min, max, serializable))
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)){}
 
 template<typename ParameterType>
 inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator=(const ofParameter<ParameterType> & v){
