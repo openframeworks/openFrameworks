@@ -1102,6 +1102,7 @@ public:
 	ofReadOnlyParameter(const ParameterType & v);
 	ofReadOnlyParameter(const std::string& name, const ParameterType & v);
 	ofReadOnlyParameter(const std::string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
+    ofReadOnlyParameter(const std::string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max, bool serializable);
 
 	const ParameterType & get() const;
 	const ParameterType * operator->() const;
@@ -1226,6 +1227,9 @@ template<typename ParameterType,typename Friend>
 inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(const std::string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max)
 :parameter(name,v,min,max){}
 
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(const std::string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max, bool serializable)
+:parameter(name,v,min,max,serializable){}
 
 template<typename ParameterType,typename Friend>
 inline const ParameterType & ofReadOnlyParameter<ParameterType,Friend>::get() const{
