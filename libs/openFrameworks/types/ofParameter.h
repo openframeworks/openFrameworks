@@ -1115,6 +1115,7 @@ public:
 //	ofReadOnlyParameter(ofReadOnlyParameter<ParameterType,Friend> & p);
 	ofReadOnlyParameter(const ParameterType & v);
 	ofReadOnlyParameter(const std::string& name, const ParameterType & v);
+    ofReadOnlyParameter(const std::string& name, const ParameterType & v, bool serializable);
 	ofReadOnlyParameter(const std::string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
     ofReadOnlyParameter(const std::string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max, bool serializable);
 
@@ -1237,6 +1238,10 @@ inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(const Para
 template<typename ParameterType,typename Friend>
 inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(const std::string& name, const ParameterType & v)
 :parameter(name,v){}
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(const std::string& name, const ParameterType & v, bool serializable)
+:parameter(name,v, serializable){}
 
 template<typename ParameterType,typename Friend>
 inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(const std::string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max)
