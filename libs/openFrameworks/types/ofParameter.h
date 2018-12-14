@@ -558,6 +558,7 @@ public:
 	ofParameter<ParameterType> & set(const ParameterType & v);
 	ofParameter<ParameterType> & set(const std::string& name, const ParameterType & v);
 	ofParameter<ParameterType> & set(const std::string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
+    ofParameter<ParameterType> & set(const std::string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max, bool serializable);
 
 	ofParameter<ParameterType> & setWithoutEventNotifications(const ParameterType & v);
 
@@ -700,6 +701,16 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::set(const std::string& 
 	setMin(min);
 	setMax(max);
 	return *this;
+}
+
+template<typename ParameterType>
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(const std::string& name, const ParameterType & value, const ParameterType & min, const ParameterType & max, bool serializable){
+    setName(name);
+    set(value);
+    setMin(min);
+    setMax(max);
+    setSerializable(serializable);
+    return *this;
 }
 
 template<typename ParameterType>
