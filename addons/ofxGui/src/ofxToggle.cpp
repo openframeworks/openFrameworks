@@ -108,7 +108,7 @@ void ofxToggle::generateDraw(){
 		name = getName();
 	}
 
-	textMesh = getTextMesh(name, textX, b.y+b.height / 2 + 4);
+	textMesh = getTextMesh(name, textX, getTextVCenteredInRect(b));
 }
 
 void ofxToggle::render(){

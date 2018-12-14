@@ -11,7 +11,8 @@ ofxGuiGroup::ofxGuiGroup(){
 	minimized = false;
 	spacing = 1;
 	spacingNextElement = 3;
-	header = defaultHeight;
+//	header = defaultHeight;
+	headerRect.height = defaultHeight; 
 	bGuiActive = false;
 }
 
@@ -29,7 +30,8 @@ ofxGuiGroup * ofxGuiGroup::setup(const std::string& collectionName, const std::s
 ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std::string& _filename, float x, float y){
 	b.x = x;
 	b.y = y;
-	header = defaultHeight;
+//	header = defaultHeight;
+	headerRect.height = defaultHeight; 
 	spacing = 1;
 	spacingNextElement = 3;
 	if(parent != nullptr){
@@ -231,18 +233,20 @@ void ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter){
 void ofxGuiGroup::clear(){
 	collection.clear();
 	parameters.clear();
-	b.height = header + spacing + spacingNextElement;
+	
+	b.height = (bHeaderEnabled?headerRect.height:0) + spacing + spacingNextElement;
 	sizeChangedCB();
 }
 
 bool ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
+	if(!isGuiDrawing())return false;
 	ofMouseEventArgs a = args;
 	for(std::size_t i = 0; i < collection.size(); i++){
 		if(collection[i]->mouseMoved(a)){
 			return true;
 		}
 	}
-	if(isGuiDrawing() && b.inside(ofPoint(args.x, args.y))){
+	if(b.inside(ofPoint(args.x, args.y))){
 		return true;
 	}else{
 		return false;
@@ -250,6 +254,8 @@ bool ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
 }
 
 bool ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
+	if(!isGuiDrawing())return false;
+	
 	if(setValue(args.x, args.y, true)){
 		return true;
 	}
@@ -264,6 +270,7 @@ bool ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
 }
 
 bool ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
+	if(!isGuiDrawing())return false;
 	if(setValue(args.x, args.y, false)){
 		return true;
 	}
@@ -280,13 +287,14 @@ bool ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
 
 bool ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
 	bGuiActive = false;
+	if(!isGuiDrawing())return false;
 	for(std::size_t k = 0; k < collection.size(); k++){
 		ofMouseEventArgs a = args;
 		if(collection[k]->mouseReleased(a)){
 			return true;
 		}
 	}
-	if(isGuiDrawing() && b.inside(ofPoint(args.x, args.y))){
+	if(b.inside(ofPoint(args.x, args.y))){
 		return true;
 	}else{
 		return false;
@@ -294,13 +302,14 @@ bool ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
 }
 
 bool ofxGuiGroup::mouseScrolled(ofMouseEventArgs & args){
+	if(!isGuiDrawing())return false;
 	ofMouseEventArgs a = args;
 	for(std::size_t i = 0; i < collection.size(); i++){
 		if(collection[i]->mouseScrolled(a)){
 			return true;
 		}
 	}
-	if(isGuiDrawing() && b.inside(ofPoint(args.x, args.y))){
+	if(b.inside(ofPoint(args.x, args.y))){
 		return true;
 	}else{
 		return false;
@@ -314,41 +323,48 @@ void ofxGuiGroup::generateDraw(){
 	border.rectangle(b.x, b.y + spacingNextElement, b.width + 1, b.height);
 
 
-	headerBg.clear();
-	headerBg.setFillColor(thisHeaderBackgroundColor);
-	headerBg.setFilled(true);
-	headerBg.rectangle(b.x, b.y + 1 + spacingNextElement, b.width, header);
-
-	textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y + spacingNextElement);
-	if(minimized){
-		textMesh.append(getTextMesh("+", b.width - textPadding - 8 + b.x, header / 2 + 4 + b.y + spacingNextElement));
-	}else{
-		textMesh.append(getTextMesh("-", b.width - textPadding - 8 + b.x, header / 2 + 4 + b.y + spacingNextElement));
+	if(bHeaderEnabled){
+		headerRect.set(b.x, b.y + 1 + spacingNextElement, b.width, defaultHeight);
+		headerBg.clear();
+		headerBg.setFillColor(thisHeaderBackgroundColor);
+		headerBg.setFilled(true);
+		headerBg.rectangle(headerRect);
+		auto y = getTextVCenteredInRect(headerRect);
+		
+		textMesh = getTextMesh(getName(), textPadding + b.x, y);
+		if(minimized){
+			textMesh.append(getTextMesh("+", b.width - textPadding - 8 + b.x, y));
+		}else{
+			textMesh.append(getTextMesh("-", b.width - textPadding - 8 + b.x, y));
+		}
 	}
 }
 
 void ofxGuiGroup::render(){
 	border.draw();
-	headerBg.draw();
-
+	if(bHeaderEnabled){
+		headerBg.draw();
+	}
 	ofBlendMode blendMode = ofGetStyle().blendingMode;
 	if(blendMode != OF_BLENDMODE_ALPHA){
 		ofEnableAlphaBlending();
 	}
 	ofColor c = ofGetStyle().color;
-	ofSetColor(thisTextColor);
-
-	bindFontTexture();
-	textMesh.draw();
-	unbindFontTexture();
-
+	if(bHeaderEnabled){
+		ofSetColor(thisTextColor);
+		
+		bindFontTexture();
+		textMesh.draw();
+		unbindFontTexture();
+	}
 	if(!minimized){
 		for(std::size_t i = 0; i < collection.size(); i++){
 			collection[i]->draw();
 		}
 	}
-
-	ofSetColor(c);
+	if(bHeaderEnabled){
+		ofSetColor(c);
+	}
 	if(blendMode != OF_BLENDMODE_ALPHA){
 		ofEnableBlendMode(blendMode);
 	}
@@ -402,16 +418,17 @@ bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 	if(bCheck){
 		if(b.inside(mx, my)){
 			bGuiActive = true;
-
-			ofRectangle minButton(b.x, b.y, b.width, header);
-			if(minButton.inside(mx, my)){
-				minimized = !minimized;
-				if(minimized){
-					minimize();
-				}else{
-					maximize();
+			if(bHeaderEnabled){
+//				ofRectangle minButton(b.x, b.y, b.width, header);
+				if(headerRect.inside(mx, my)){
+					minimized = !minimized;
+					if(minimized){
+						minimize();
+					}else{
+						maximize();
+					}
+					return true;
 				}
-				return true;
 			}
 		}
 	}
@@ -421,7 +438,7 @@ bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 
 void ofxGuiGroup::minimize(){
 	minimized = true;
-	b.height = header + spacing + spacingNextElement + 1 /*border*/;
+	b.height = (bHeaderEnabled?headerRect.height:0) + spacing + spacingNextElement + 1 /*border*/;
 	if(parent){
 		parent->sizeChangedCB();
 	}
@@ -472,18 +489,16 @@ void ofxGuiGroup::onMaximize(){
 }
 
 void ofxGuiGroup::sizeChangedCB(){
-	float y;
+	float y = b.y  + (bHeaderEnabled?headerRect.height:0) + spacing;
 	if(parent){
-		y = b.y  + header + spacing + spacingNextElement;
-	}else{
-		y = b.y  + header + spacing;
+		y += spacingNextElement;
 	}
 	for(std::size_t i = 0; i < collection.size(); i++){
 		collection[i]->setPosition(collection[i]->getPosition().x, y + spacing);
 		y += collection[i]->getHeight() + spacing;
 	}
 	if(minimized){
-		b.height = header + spacing + spacingNextElement + 1 /*border*/;
+		b.height = (bHeaderEnabled?headerRect.height:0) + spacing + spacingNextElement + 1 /*border*/;
 	}else{
 		b.height = y - b.y;
 	}
@@ -522,4 +537,20 @@ void ofxGuiGroup::setPosition(const ofPoint& p){
 
 void ofxGuiGroup::setPosition(float x, float y){
 	setPosition(ofVec2f(x, y));
+}
+
+void ofxGuiGroup::enableHeader(){
+	bHeaderEnabled = true;
+	spacingNextElement = 3;
+	setNeedsRedraw();
+}
+
+void ofxGuiGroup::disableHeader(){
+	bHeaderEnabled = false;
+	spacingNextElement = 2;
+	setNeedsRedraw();
+}
+
+bool ofxGuiGroup::isHeaderEnabled(){
+	return bHeaderEnabled;
 }

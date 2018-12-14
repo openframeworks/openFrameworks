@@ -47,7 +47,7 @@ void ofxLabel::generateDraw(){
         name.resize(max);
     } 
     
-    textMesh = getTextMesh(name, b.x + textPadding, b.y + b.height / 2 + 4);
+    textMesh = getTextMesh(name, b.x + textPadding, getTextVCenteredInRect(b));
 }
 
 void ofxLabel::render() {
