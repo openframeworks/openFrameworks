@@ -1177,6 +1177,7 @@ protected:
 	
 	ofReadOnlyParameter<ParameterType,Friend>& set(const std::string& name, const ParameterType & value);
 	ofReadOnlyParameter<ParameterType,Friend>& set(const std::string& name, const ParameterType & value, const ParameterType & min, const ParameterType & max);
+    ofReadOnlyParameter<ParameterType,Friend>& set(const std::string& name, const ParameterType & value, const ParameterType & min, const ParameterType & max, bool serializable);
 
 	void setMin(const ParameterType & min);
 	void setMax(const ParameterType & max);
@@ -1468,6 +1469,11 @@ inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<Parameter
 	return *this;
 }
 
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(const std::string& name, const ParameterType & value, const ParameterType & min, const ParameterType & max, bool serializable){
+    parameter.set(name,value,min,max,serializable);
+    return *this;
+}
 
 template<typename ParameterType,typename Friend>
 inline void ofReadOnlyParameter<ParameterType,Friend>::setMin(const ParameterType & min){
