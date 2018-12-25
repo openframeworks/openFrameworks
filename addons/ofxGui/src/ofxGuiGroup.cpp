@@ -246,7 +246,7 @@ bool ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
 			return true;
 		}
 	}
-	if(b.inside(ofPoint(args.x, args.y))){
+	if(b.inside(args)){
 		return true;
 	}else{
 		return false;
@@ -294,7 +294,7 @@ bool ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
 			return true;
 		}
 	}
-	if(b.inside(ofPoint(args.x, args.y))){
+	if(b.inside(args)){
 		return true;
 	}else{
 		return false;
@@ -309,7 +309,7 @@ bool ofxGuiGroup::mouseScrolled(ofMouseEventArgs & args){
 			return true;
 		}
 	}
-	if(b.inside(ofPoint(args.x, args.y))){
+	if(b.inside(args)){
 		return true;
 	}else{
 		return false;
@@ -524,8 +524,8 @@ ofAbstractParameter & ofxGuiGroup::getParameter(){
 	return parameters;
 }
 
-void ofxGuiGroup::setPosition(const ofPoint& p){
-	ofVec2f diff = p - b.getPosition();
+void ofxGuiGroup::setPosition(const glm::vec3& p){
+	auto diff = p - b.getPosition();
 
 	for(std::size_t i = 0; i < collection.size(); i++){
 		collection[i]->setPosition(collection[i]->getPosition() + diff);
@@ -536,7 +536,7 @@ void ofxGuiGroup::setPosition(const ofPoint& p){
 }
 
 void ofxGuiGroup::setPosition(float x, float y){
-	setPosition(ofVec2f(x, y));
+	setPosition({x, y, 0});
 }
 
 void ofxGuiGroup::enableHeader(){

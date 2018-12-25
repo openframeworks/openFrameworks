@@ -28,13 +28,13 @@ class ofxBaseGui {
 		std::string getName();
 		void setName(const std::string& name);
 
-		virtual void setPosition(const ofPoint & p);
+		virtual void setPosition(const glm::vec3 & p);
 		virtual void setPosition(float x, float y);
 		virtual void setSize(float w, float h);
 		virtual void setShape(ofRectangle r);
 		virtual void setShape(float x, float y, float w, float h);
 
-		ofPoint getPosition() const;
+		glm::vec3 getPosition() const;
 		ofRectangle getShape() const;
 		float getWidth() const;
 		float getHeight() const;
