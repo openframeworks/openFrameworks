@@ -49,6 +49,11 @@ enum ofFboMode: short;
 enum ofLoopType: short;
 enum ofOrientation: short;
 
+struct ofBoundingBox{
+    glm::vec3 min = glm::vec3(0,0,0);
+    glm::vec3 max = glm::vec3(0,0,0);
+};
+
 /// \brief Contains general information about the style of ofGraphics
 /// elements such as color, line width and others.
 class ofStyle{
