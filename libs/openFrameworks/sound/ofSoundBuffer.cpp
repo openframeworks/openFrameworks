@@ -376,7 +376,6 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 					b = buffer[intPosition+inChannels+j];
 					*resBufferPtr++ = ofLerp(a,b,remainder);
 				}
-				resBufferPtr+=inChannels;
 				position += increment;
 				intPosition = position;
 			}
