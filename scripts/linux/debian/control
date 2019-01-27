@@ -1,7 +1,7 @@
 Source: openframeworks
 Priority: optional
 Maintainer: Paul Morelle <paul@scengrafics.com>
-Build-Depends: debhelper (>= 9)
+Build-Depends: debhelper (>= 9), wget
 Standards-Version: 3.9.8
 Section: libs
 Homepage: https://openframeworks.cc/
