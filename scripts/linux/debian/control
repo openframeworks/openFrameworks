@@ -128,6 +128,13 @@ Depends: openframeworks-dev,
  ${misc:Depends}
 Description: OpenFrameworks ofxSvg addon
 
+Package: openframeworks-threaded-image-loader-dev
+Section: libdevel
+Architecture: any
+Depends: openframeworks-dev,
+ ${misc:Depends}
+Description: OpenFrameworks ofxThreadedImageLoader addon
+
 Package: openframeworks-vector-graphics-dev
 Section: libdevel
 Architecture: any

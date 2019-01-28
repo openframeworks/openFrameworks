@@ -162,6 +162,10 @@ override_dh_auto_build:
 	make -C ../../addons/ofxSvg/src ofxSvg.o "CXXFLAGS=${ADDON_CXXFLAGS} -I../libs/svgtiny/include"
 	(cd ../../addons && ar rcs libofxSvg.a \
 		ofxSvg/src/ofxSvg.o)
+	# ofxThreadedImageLoader addon
+	make -C ../../addons/ofxThreadedImageLoader/src ofxThreadedImageLoader.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	(cd ../../addons && ar rcs libofxThreadedImageLoader.a \
+		ofxThreadedImageLoader/src/ofxThreadedImageLoader.o)
 	# ofxVectorGraphics addon
 	make -C ../../addons/ofxVectorGraphics/src ofxVectorGraphics.o "CXXFLAGS=${ADDON_CXXFLAGS}"
 	make -C ../../addons/ofxVectorGraphics/libs CreEPS.o
