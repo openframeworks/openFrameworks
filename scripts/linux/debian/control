@@ -114,6 +114,13 @@ Depends: openframeworks-dev,
  ${misc:Depends}
 Description: OpenFrameworks ofxOsc addon
 
+Package: openframeworks-poco-dev
+Section: libdevel
+Architecture: any
+Depends: openframeworks-dev,
+ ${misc:Depends}
+Description: OpenFrameworks ofxPoco addon
+
 Package: openframeworks-svg-dev
 Section: libdevel
 Architecture: any

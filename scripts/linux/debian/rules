@@ -154,6 +154,10 @@ override_dh_auto_build:
 		ofxOsc/src/ofxOscParameterSync.o \
 		ofxOsc/src/ofxOscReceiver.o \
 		ofxOsc/src/ofxOscSender.o)
+	# ofxPoco addon
+	make -C ../../addons/ofxPoco/src ofxXmlPoco.o "CXXFLAGS=${ADDON_CXXFLAGS} -I../libs/poco/include"
+	(cd ../../addons && ar rcs libofxPoco.a \
+		ofxPoco/src/ofxXmlPoco.o)
 	# ofxSvg addon
 	make -C ../../addons/ofxSvg/src ofxSvg.o "CXXFLAGS=${ADDON_CXXFLAGS} -I../libs/svgtiny/include"
 	(cd ../../addons && ar rcs libofxSvg.a \
