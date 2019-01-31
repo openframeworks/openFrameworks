@@ -38,15 +38,10 @@ void ofApp::draw() {
     
     // get mouse position relative to center of screen
     float mousePosition = ofMap(mouseX, 0, ofGetWidth(), 1.0, -1.0, true);
-#ifndef TARGET_OPENGLES
-    // when texture coordinates are normalised, they are always between 0 and 1.
-    // in GL2 and GL3 the texture coordinates are not normalised,
-    // so we have to multiply the normalised mouse position by the plane width.
     mousePosition *= plane.getWidth();
-#endif
 
     shader.setUniform1f("mouseX", mousePosition);
-
+    shader.setUniform2f("resolution", ofGetWidth(), ofGetHeight());
     ofPushMatrix();
     ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
     
