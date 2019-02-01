@@ -233,8 +233,6 @@ void ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter){
 void ofxGuiGroup::clear(){
 	collection.clear();
 	parameters.clear();
-//	there is no need for the following line as sizeChangedCB will handle it anyways, and change b.height.
-//	b.height = (bHeaderEnabled?headerRect.height:0) + spacing + spacingNextElement;
 	sizeChangedCB();
 }
 
