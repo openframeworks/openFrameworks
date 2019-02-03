@@ -212,6 +212,11 @@ void ofPath::arc(const glm::vec2 & centre, float radiusX, float radiusY, float a
 //----------------------------------------------------------
 void ofPath::arc(const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	if(mode==COMMANDS){
+		//addCommand adds a moveTo if one hasn't been set, but in this case it is adding a moveTo to the center of the arc and not the beginning of the arc
+		if(commands.empty() || commands.back().type==Command::close){
+			glm::vec3 start = centre + glm::vec3( glm::cos( glm::radians(angleBegin) ) * radiusX, glm::sin( glm::radians(angleBegin) ) * radiusY, 0.0f );
+			commands.push_back(Command(Command::moveTo,start));
+		}
 		addCommand(Command(Command::arc,centre,radiusX,radiusY,angleBegin,angleEnd));
 	}else{
 		lastPolyline().arc(centre,radiusX,radiusY,angleBegin,angleEnd,circleResolution);
@@ -237,6 +242,10 @@ void ofPath::arc(float x, float y, float z, float radiusX, float radiusY, float 
 //----------------------------------------------------------
 void ofPath::arcNegative(const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	if(mode==COMMANDS){
+		if(commands.empty() || commands.back().type==Command::close){
+			glm::vec3 start = centre + glm::vec3( glm::cos( glm::radians(angleBegin) ) * radiusX, glm::sin( glm::radians(angleBegin) ) * radiusY, 0.0f );
+			commands.push_back(Command(Command::moveTo,start));
+		}
 		addCommand(Command(Command::arcNegative,centre,radiusX,radiusY,angleBegin,angleEnd));
 	}else{
 		lastPolyline().arcNegative(centre,radiusX,radiusY,angleBegin,angleEnd,circleResolution);
