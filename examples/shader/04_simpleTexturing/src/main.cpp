@@ -4,7 +4,7 @@
 //========================================================================
 int main( ){
 
-#ifdef TARGET_RASPBERRY_PI
+#ifdef OF_TARGET_OPENGLES
 	ofGLESWindowSettings settings;
 	settings.glesVersion=2;
 #else
