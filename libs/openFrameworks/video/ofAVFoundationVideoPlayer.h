@@ -82,6 +82,8 @@ typedef enum _playerLoopType{
     BOOL bSampleAudio; // default to NO
 	BOOL bIsUnloaded;
 	BOOL bStream;
+	int frameBeforeReady;
+	float positionBeforeReady;
 	
 	NSLock* asyncLock;
 	NSCondition* deallocCond;
