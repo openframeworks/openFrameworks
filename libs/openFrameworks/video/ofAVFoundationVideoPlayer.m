@@ -178,6 +178,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	bReady = NO;
 	bLoaded = NO;
 	bPlayStateBeforeLoad = NO;
+	frameBeforeReady = 0;
+	positionBeforeReady = 0.F;
 	
 	// going to load
 	dispatch_semaphore_t sema = dispatch_semaphore_create(0);
