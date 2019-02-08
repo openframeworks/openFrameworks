@@ -80,6 +80,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		bSeeking = NO;
 		bSampleVideo = YES;
 		bIsUnloaded = NO;
+		frameBeforeReady = 0;
+		positionBeforeReady = 0.F;
 		
 		// do not sample audio by default
 		// we are lacking interfaces for audiodata
@@ -728,12 +730,29 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 				bReady = true;
 				
-				[self setVolume:volume]; // set volume for current video.
+				// set volume for current video
+				[self setVolume:volume];
+				
+				// set speed for current video
+				[self setSpeed:speed];
+				
+				// set start-frame
+				if (frameBeforeReady > 0) {
+					[self setFrame:frameBeforeReady];
+				}
+				
+				// set start-position
+				if (positionBeforeReady > 0.F) {
+					[self setPosition:positionBeforeReady];
+				}
+				
+				// auto-play or play if started before beeing ready
 				if(bAutoPlayOnLoad || bPlayStateBeforeLoad) {
 					[self play];
 				}
 				
-				[self update]; // update as soon is ready so pixels are loaded.
+				// update as soon is ready so pixels are loaded.
+				[self update];
 
 				
 			} else if ([self.playerItem status] == AVPlayerItemStatusUnknown) {
@@ -1323,6 +1342,9 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	if ([self isReady]) {
 		double time = [self getDurationInSec] * position;
 		[self seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC)];
+	} else {
+		positionBeforeReady = position;
+		frameBeforeReady = 0;
 	}
 }
 
@@ -1330,6 +1352,9 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	if ([self isReady]) {
 		float position = frame / (float)[self getDurationInFrames];
 		[self setPosition:position];
+	} else {
+		frameBeforeReady = frame;
+		positionBeforeReady = 0.F;
 	}
 }
 
@@ -1366,6 +1391,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 - (void)setSpeed:(float)value {
 	
+	speed = value;
+
 	if(![self isReady]) {
 		return;
 	}
@@ -1406,8 +1433,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	if (value < 0.0) {
 		bWasPlayingBackwards = YES;
 	}
-	
-	speed = value;
+		
 	[_player setRate:value];
 }
 
