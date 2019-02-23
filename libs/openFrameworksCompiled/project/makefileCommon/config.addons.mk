@@ -261,4 +261,6 @@ ifdef MAKEFILE_DEBUG
 	$(foreach v, $(PROJECT_ADDONS_INCLUDES_CFLAGS),$(info $(v)))
 	$(info ---PROJECT_ADDONS_LDFLAGS---)
 	$(foreach v, $(PROJECT_ADDONS_LDFLAGS),$(info $(v)))
+	$(info ---PROJECT_ADDONS_DATA---)
+	$(foreach v, $(PROJECT_ADDONS_DATA),$(info $(v)))
 endif
