@@ -11,9 +11,9 @@ directly unzipping the archive from their [repository](http://sourceforge.net/pr
 
 If you are going to use QtCreator you should install msys2 in the default install folder, c:\msys64
 
-Open a MSYS2 shell and update the system packages :
+Open a **MINGW32** shell (`C:\msys64\mingw32.exe`) and update the system packages :
 
-    pacman --noconfirm  --needed -Sy bash pacman pacman-mirrors msys2-runtime
+    pacman --noconfirm  --needed -Syu
 	
 Close the shell and open a new one to update the remaining packages :
 
@@ -27,12 +27,12 @@ Installing openFrameworks
 
 Download and unzip the msys2 version of oF.
 
-Open an MSYS shell and install OF dependencies:
+Open an **MINGW32** shell and install OF dependencies :
 
     cd your_oF_directory/scripts/msys2
     ./install_dependencies.sh
 	
-Open an **MINGW32** shell and compile oF libraries:
+Then compile oF libraries with :
 
 	cd your_oF_directory/libs/openFrameworksCompiled/project
     make
@@ -47,7 +47,9 @@ Compile the example (for example the 3DPrimitivesExample)
     cd your_oF_directory/examples/3d/3DPrimitivesExample
     make
 
-At this point, `make run` or  double-click on the exe file to launch. 
+At this point, `make run` to launch. 
+
+In order to be able to run the file by double-clicking on it, you must make sure that mingw32 dlls can be found from your PATH
 
 
 Makefile
