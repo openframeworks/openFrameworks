@@ -66,6 +66,7 @@
     self.delegate = self;
     self.preferredFramesPerSecond = 60; //default
     [view setMultipleTouchEnabled:ofxiOSGetOFWindow()->isMultiTouch()];
+    [view bindDrawable];
     [self.glView setup];
 }
 
