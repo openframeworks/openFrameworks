@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+script_dir="$( dirname "$(readlink -f "$0")" )"
+
 function usage {
     echo usage:
     echo ./install_dependencies.sh [--help] [--noconfirm]
@@ -101,3 +103,14 @@ if [ $exit_code != 0 ]; then
 	echo "error installing packages, there could be an error with your internet connection"
 	exit $exit_code
 fi
+
+
+
+# Update addon_config.mk files to use OpenCV4 if installed
+addons_dir="$(readlink -f "$script_dir/../../addons")"
+$(pkg-config opencv4 --exists)
+if [ $? == 0 ]; then
+	echo "Updating ofxOpenCV to use openCV4"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv(.*)$/ADDON_PKG_CONFIG_LIBRARIES =\1opencv4\2/' "$addons_dir/ofxOpenCv/addon_config.mk"
+fi
+
