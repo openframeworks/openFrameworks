@@ -7,9 +7,10 @@
 	#undef MAX 
 #endif 
 
-#ifdef USE_OLD_CV
+#include "opencv2/core/version.hpp"
+#if CV_MAJOR_VERSION < 4
     #include "cv.h"
-    #include "opencv2/opencv.hpp"
+    #define USE_OLD_CV
 #else
     #include "opencv2/opencv.hpp"
     #include "opencv2/imgproc/imgproc_c.h"
