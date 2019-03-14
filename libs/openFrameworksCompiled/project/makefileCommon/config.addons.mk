@@ -199,7 +199,7 @@ define parse_addon
 	) \
 	$(foreach addon_dep, $(strip $(ADDON_DEPENDENCIES)), \
 		$(if $(filter %$(addon_dep), $(PROJECT_ADDONS)), \
-		, \ #else
+		, \
 			$(eval PROJECT_ADDONS += $(addon_dep)) \
 			$(call parse_addon,$(addon_dep)) \
 		) \
