@@ -104,9 +104,9 @@ android/x86:
 	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_ml.a
 	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_core.a
 	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_flann.a
-	ADDON_LIBS += libs/opencv/lib/emscripten/libquirc.a
-	ADDON_LIBS += libs/opencv/lib/emscripten/libittnotify.a
-	ADDON_LIBS += libs/opencv/lib/emscripten/liblibprotobuf.a
+	ADDON_LIBS += libs/opencv/lib/android/x86/libquirc.a
+	ADDON_LIBS += libs/opencv/lib/android/x86/libittnotify.a
+	ADDON_LIBS += libs/opencv/lib/android/x86/liblibprotobuf.a
 
 android/armeabi-v7a:
 	ADDON_LIBS =
@@ -122,8 +122,8 @@ android/armeabi-v7a:
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_ml.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_core.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_flann.a
-	ADDON_LIBS += libs/opencv/lib/emscripten/libquirc.a
-	ADDON_LIBS += libs/opencv/lib/emscripten/liblibprotobuf.a
+	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libquirc.a
+	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/liblibprotobuf.a
 
 emscripten:
 	ADDON_LIBS =
