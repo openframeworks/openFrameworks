@@ -74,6 +74,7 @@ createArchImg(){
         download=1
     elif [ -f ~/archlinux/timestamp ]; then
         if [ $(age ~/archlinux/timestamp) -gt 7 ]; then
+            rm -rf ~/archlinux
             download=1
         fi
     fi
