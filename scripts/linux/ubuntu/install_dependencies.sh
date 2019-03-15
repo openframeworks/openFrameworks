@@ -228,3 +228,15 @@ if [[ $MAJOR_VERSION -lt 14 || ($MAJOR_VERSION -eq 14 && $MINOR_VERSION -eq 4) ]
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc${CXX_VER} 1 --force
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++${CXX_VER} 1 --force
 fi
+
+# Update addon_config.mk files to use OpenCV 3 or 4 depending on what's installed
+addons_dir="$(readlink -f "$script_dir/../../addons")"
+$(pkg-config opencv4 --exists)
+exit_code=$?
+if [ $exit_code != 0 ]; then
+	echo "Updating ofxOpenCV to use openCV3"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv4(.*)$/ADDON_PKG_CONFIG_LIBRARIES =\1opencv\2/' "$addons_dir/ofxOpenCv/addon_config.mk"
+else
+	echo "Updating ofxOpenCV to use openCV4"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv(?<!4)(.*)$/ADDON_PKG_CONFIG_LIBRARIES =\1opencv4\2/' "$addons_dir/ofxOpenCv/addon_config.mk"
+fi
