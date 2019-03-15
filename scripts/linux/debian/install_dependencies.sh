@@ -75,7 +75,7 @@ apt-get install libpoco-dev
 cp $ROOT/../extra/poco_config.mk $ROOT/../../../addons/ofxPoco/addon_config.mk
 
 # Update addon_config.mk files to use OpenCV 3 or 4 depending on what's installed
-addons_dir="$(readlink -f "$script_dir/../../addons")"
+addons_dir="$(readlink -f "$ROOT/../../../addons")"
 $(pkg-config opencv4 --exists)
 exit_code=$?
 if [ $exit_code != 0 ]; then

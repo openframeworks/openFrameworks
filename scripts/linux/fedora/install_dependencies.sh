@@ -40,7 +40,7 @@ if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
 fi
 
 # Update addon_config.mk files to use OpenCV 3 or 4 depending on what's installed
-addons_dir="$(readlink -f "$script_dir/../../addons")"
+addons_dir="$(readlink -f "$ROOT/../../../addons")"
 $(pkg-config opencv4 --exists)
 exit_code=$?
 if [ $exit_code != 0 ]; then
