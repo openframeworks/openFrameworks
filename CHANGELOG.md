@@ -1,3 +1,10 @@
+ADDONS
+------
+### ofxOpenCv
+- added support for OpenCV4 : deprecated C functions replaced by their C++ counterpart. Also fix issue due to incorrect pkg-config package [commit](https://github.com/openframeworks/openFrameworks/commit/)
+
+--------------------------------------
+
 ```
   .----.                  .---.  .----.                  .---.
  /  ..  \                /_   | /  ..  \                /_   |
