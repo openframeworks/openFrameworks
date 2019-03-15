@@ -46,7 +46,11 @@ public:
 	void draw(float x, float y);
 
 protected:
+#ifdef USE_OLD_CV
 	CvHaarClassifierCascade* cascade;
+#else
+	cv::CascadeClassifier cascade;
+#endif //USE_OLD_CV
 	std::string haarFile;
 	ofxCvGrayscaleImage img;
 	float scaleHaar;

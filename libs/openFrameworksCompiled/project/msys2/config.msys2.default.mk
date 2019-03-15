@@ -33,6 +33,9 @@ MSYS2_ROOT = /mingw32
 PLATFORM_CFLAGS += -std=gnu++14 -DUNICODE -D_UNICODE
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER
 PLATFORM_LDFLAGS += -lpthread
+ifndef DEBUG
+	PLATFORM_LDFLAGS += -mwindows
+endif
 #ifeq ($(PLATFORM_ARCH),x86_64)
 ifdef USE_CCACHE
 	CC = ccache $(MSYS2_ROOT)/bin/gcc
