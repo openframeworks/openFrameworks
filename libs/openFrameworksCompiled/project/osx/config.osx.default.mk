@@ -92,7 +92,17 @@ ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
 	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
 
 	ifndef MAC_OS_SDK
-		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.10.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.10.sdk)
+		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.15.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.15.sdk)
+			MAC_OS_SDK=10.15
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.14.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.14.sdk)
+			MAC_OS_SDK=10.14
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.13.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.13.sdk)
+			MAC_OS_SDK=10.13
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.12.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.12.sdk)
+			MAC_OS_SDK=10.12
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.11.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.11.sdk)
+			MAC_OS_SDK=10.11
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.10.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.10.sdk)
 			MAC_OS_SDK=10.10
 		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.9.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.9.sdk)
 			MAC_OS_SDK=10.9
