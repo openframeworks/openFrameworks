@@ -557,7 +557,7 @@ void ofTexture::loadData(const uint16_t * data, int w, int h, int glFormat){
 //----------------------------------------------------------
 void ofTexture::loadData(const uint32_t * data, int w, int h, int glFormat){
 	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
-	loadData(data, w, h, glFormat, GL_SHORT);
+	loadData(data, w, h, glFormat, GL_UNSIGNED_INT);
 }
 
 //----------------------------------------------------------
@@ -575,7 +575,7 @@ void ofTexture::loadData(const int16_t * data, int w, int h, int glFormat){
 //----------------------------------------------------------
 void ofTexture::loadData(const int32_t * data, int w, int h, int glFormat){
 	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
-	loadData(data, w, h, glFormat, GL_SHORT);
+	loadData(data, w, h, glFormat, GL_INT);
 }
 
 //----------------------------------------------------------
