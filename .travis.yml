@@ -154,6 +154,8 @@ script:
     fi
   - if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
       scripts/ci/$TARGET/run_tests.sh;
+    elif [ "$TARGET" = "emscripten" ]; then
+      docker exec -it emscripten sh -c "scripts/ci/$TARGET/build.sh $OPT";
     else
       scripts/ci/$TARGET/build.sh $OPT;
     fi
