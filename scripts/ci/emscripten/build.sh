@@ -36,7 +36,7 @@ sed -i "s/#include \"ofxOsc.h\"//" src/ofApp.h
 sed -i "s/#include \"ofxNetwork.h\"//" src/ofApp.h
 sed -i "s/#include \"ofxKinect.h\"//" src/ofApp.h
 sed -i "s/#include \"ofxThreadedImageLoader.h\"//" src/ofApp.h
-sed -i "s/#include \"ofxPoco.h\"//" src/ofApp.h
+sed -i "s/#include \"ofxXmlPoco.h\"//" src/ofApp.h
 
 sed -i "s/ofxTCPClient client;//" src/ofApp.h
 sed -i "s/ofxTCPServer server;//" src/ofApp.h
