@@ -30,16 +30,19 @@ sed -i s/ofxOsc// addons.make
 sed -i s/ofxNetwork// addons.make
 sed -i s/ofxKinect// addons.make
 sed -i s/ofxThreadedImageLoader// addons.make
+sed -i s/ofxPoco// addons.make
 
 sed -i "s/#include \"ofxOsc.h\"//" src/ofApp.h
 sed -i "s/#include \"ofxNetwork.h\"//" src/ofApp.h
 sed -i "s/#include \"ofxKinect.h\"//" src/ofApp.h
 sed -i "s/#include \"ofxThreadedImageLoader.h\"//" src/ofApp.h
+sed -i "s/#include \"ofxPoco.h\"//" src/ofApp.h
 
 sed -i "s/ofxTCPClient client;//" src/ofApp.h
 sed -i "s/ofxTCPServer server;//" src/ofApp.h
 sed -i "s/ofxOscSender osc_sender;//" src/ofApp.h
 sed -i "s/ofxKinect kinect;//" src/ofApp.h
 sed -i "s/ofxThreadedImageLoader .*;//" src/ofApp.h
+sed -i "s/ofxXmlPoco .*;//" src/ofApp.h
 
 emmake make Debug # USE_CCACHE=1
