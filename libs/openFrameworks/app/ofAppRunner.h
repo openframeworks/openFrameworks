@@ -39,7 +39,7 @@ static void noopDeleter(Window*){}
 
 template<typename Window>
 void ofSetupOpenGL(Window * windowPtr, int w, int h, ofWindowMode screenMode){
-	std::shared_ptr<Window> window = std::shared_ptr<Window>(windowPtr,std::ptr_fun(noopDeleter<Window>));
+	std::shared_ptr<Window> window = std::shared_ptr<Window>(windowPtr, std::function<void(Window *)>(noopDeleter<Window>));
 	ofSetupOpenGL(window,w,h,screenMode);
 }
 
