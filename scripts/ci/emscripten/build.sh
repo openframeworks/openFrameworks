@@ -6,8 +6,8 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 # the "proper" way does not work currently:
 #export CXXFLAGS="$(CXXFLAGS) --param ftrack-macro-expansion=0"
 #CUSTOMFLAGS="-ftrack-macro-expansion=0"
-source ~/emscripten-sdk/emsdk_env.sh
-source $ROOT/scripts/ci/ccache.sh
+# source ~/emscripten-sdk/emsdk_env.sh
+# source $ROOT/scripts/ci/ccache.sh
 
 echo "**** Building OF core ****"
 cd $ROOT
