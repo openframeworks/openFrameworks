@@ -27,10 +27,10 @@ run "sed -i s/ofxNetwork// $ROOT/examples/templates/allAddonsExample/addons.make
 run "sed -i s/ofxKinect// $ROOT/examples/templates/allAddonsExample/addons.make"
 run "sed -i s/ofxThreadedImageLoader// $ROOT/examples/templates/allAddonsExample/addons.make"
 
-run "sed -i \"s/#include \"ofxOsc.h\"//\" $ROOT/examples/templates/allAddonsExample/src/ofApp.h"
-run "sed -i \"s/#include \"ofxNetwork.h\"//\" $ROOT/examples/templates/allAddonsExample/src/ofApp.h"
-run "sed -i \"s/#include \"ofxKinect.h\"//\" $ROOT/examples/templates/allAddonsExample/src/ofApp.h"
-run "sed -i \"s/#include \"ofxThreadedImageLoader.h\"//\" $ROOT/examples/templates/allAddonsExample/src/ofApp.h"
+run "sed -i 's/#include \"ofxOsc.h\"//' $ROOT/examples/templates/allAddonsExample/src/ofApp.h"
+run "sed -i 's/#include \"ofxNetwork.h\"//' $ROOT/examples/templates/allAddonsExample/src/ofApp.h"
+run "sed -i 's/#include \"ofxKinect.h\"//' $ROOT/examples/templates/allAddonsExample/src/ofApp.h"
+run "sed -i 's/#include \"ofxThreadedImageLoader.h\"//' $ROOT/examples/templates/allAddonsExample/src/ofApp.h"
 
 run "sed -i \"s/ofxTCPClient client;//\" $ROOT/examples/templates/allAddonsExample/src/ofApp.h"
 run "sed -i \"s/ofxTCPServer server;//\" $ROOT/examples/templates/allAddonsExample/src/ofApp.h"
