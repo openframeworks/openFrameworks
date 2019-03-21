@@ -1,6 +1,13 @@
 #!/bin/bash
 set -ev
-ROOT=$(docker exec -i emscripten pwd)
+ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
+# Add compiler flag to reduce memory usage to enable builds to complete
+# see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56746#c7
+# the "proper" way does not work currently:
+#export CXXFLAGS="$(CXXFLAGS) --param ftrack-macro-expansion=0"
+#CUSTOMFLAGS="-ftrack-macro-expansion=0"
+source ~/emscripten-sdk/emsdk_env.sh
+source $ROOT/scripts/ci/ccache.sh
 
 echo "**** Building OF core ****"
 cd $ROOT
