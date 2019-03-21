@@ -98,12 +98,15 @@ android/x86:
 	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_calib3d.a
 	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_features2d.a
 	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_objdetect.a
-	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_videoio.a
 	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_video.a
+	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_videoio.a
 	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_imgproc.a
 	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_ml.a
 	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_core.a
 	ADDON_LIBS += libs/opencv/lib/android/x86/libopencv_flann.a
+	ADDON_LIBS += libs/opencv/lib/android/x86/libquirc.a
+	ADDON_LIBS += libs/opencv/lib/android/x86/libittnotify.a
+	ADDON_LIBS += libs/opencv/lib/android/x86/liblibprotobuf.a
 
 android/armeabi-v7a:
 	ADDON_LIBS =
@@ -113,12 +116,14 @@ android/armeabi-v7a:
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_calib3d.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_features2d.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_objdetect.a
-	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_videoio.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_video.a
+	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_videoio.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_imgproc.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_ml.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_core.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_flann.a
+	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libquirc.a
+	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/liblibprotobuf.a
 
 emscripten:
 	ADDON_LIBS =
