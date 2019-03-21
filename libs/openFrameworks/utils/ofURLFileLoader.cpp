@@ -280,6 +280,7 @@ ofURLFileLoader::ofURLFileLoader()
 #endif
 
 #ifdef TARGET_EMSCRIPTEN
+#include "ofxEmscriptenURLFileLoader.h"
 ofURLFileLoader::ofURLFileLoader()
 :impl(new ofxEmscriptenURLFileLoader){}
 #endif
