@@ -65,6 +65,9 @@ source /etc/os-release
 if [ "$ID" = "elementary" ]; then
 	# Gets ubuntu base version
 	RELEASE=$(lsb_release -r -u)
+elif [ "$ID" = "linuxmint" ]; then
+	# Gets ubuntu base version
+	RELEASE=$(cat /etc/upstream-release/lsb-release | grep DISTRIB_RELEASE | cut -d "=" -f2)
 else
 	RELEASE=$(lsb_release -r)
 fi
