@@ -557,7 +557,7 @@ using ofPolyline = ofPolyline_<ofDefaultVertexType>;
 /// \brief Determine if an (x,y) coordinate is within the polygon defined by a vector of glm::vec3s.
 /// \param x The x dimension of the coordinate.
 /// \param y The y dimension of the coordinate.
-/// \param poly a vector of glm::vec3s defining a polygon.
+/// \param polygon a vector of glm::vec3s defining a polygon.
 /// \returns True if the point defined by the coordinates is enclosed, false otherwise.
 template<class T>
 bool ofInsidePoly(float x, float y, const std::vector<T>& polygon){
