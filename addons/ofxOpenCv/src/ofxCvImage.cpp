@@ -230,7 +230,7 @@ void  ofxCvImage::operator = ( const IplImage* mom ) {
 		return;
 	}
 			
-	if( mom->nChannels == cvImage->nChannels && mom->depth == cvImage->depth ){
+	if( !bAllocated || mom->nChannels == cvImage->nChannels && mom->depth == cvImage->depth ){
 		if( !bAllocated ){ 	//lets allocate if needed
 			allocate(mom->width, mom->height);
 		}else if( mom->width != width || mom->height != height ){
