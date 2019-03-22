@@ -45,7 +45,7 @@ public:
 	operator const Type & ();
 
 
-	virtual void setPosition(const ofPoint & p);
+	virtual void setPosition(const glm::vec3 & p);
 	virtual void setPosition(float x, float y);
 	virtual void setSize(float w, float h);
 	virtual void setShape(ofRectangle r);
