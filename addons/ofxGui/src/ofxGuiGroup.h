@@ -74,7 +74,7 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		virtual ofAbstractParameter & getParameter();
 
-		virtual void setPosition(const ofPoint& p);
+		virtual void setPosition(const glm::vec3& p);
 		virtual void setPosition(float x, float y);
 		
 		void enableHeader();

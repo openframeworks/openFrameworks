@@ -34,6 +34,6 @@ private:
 	ofRectangle loadBox, saveBox;
 	ofImage loadIcon, saveIcon;
     
-    ofPoint grabPt;
+    glm::vec3 grabPt;
 	bool bGrabbed;
 };
