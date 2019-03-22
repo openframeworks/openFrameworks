@@ -43,12 +43,12 @@ int ofxEmscriptenURLFileLoader::saveAsync(const string &  url, const std::filesy
 	return 0;
 }
 
-ofHttpResponse handleRequest(const ofHttpRequest & request){
+ofHttpResponse ofxEmscriptenURLFileLoader::handleRequest(const ofHttpRequest & request){
 	ofLogWarning() << "handleRequest is still not implemented on emscripten";
 	return ofHttpResponse();
 }
 
-int handleRequestAsync(const ofHttpRequest & request){
+int ofxEmscriptenURLFileLoader::handleRequestAsync(const ofHttpRequest & request){
 	ofLogWarning() << "handleRequest is still not implemented on emscripten";
 	return -1;
 }
