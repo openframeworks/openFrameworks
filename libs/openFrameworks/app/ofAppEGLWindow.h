@@ -261,15 +261,16 @@ protected:
 	void setupNativeUDev();
 	void destroyNativeUDev();
 
-	void setupNativeMouse();
-	void setupNativeKeyboard();
+	void setupNativeInput();
+	void destroyNativeInput();
 
-	void destroyNativeMouse();
-	void destroyNativeKeyboard();
-
-	void readNativeMouseEvents();
-	void readNativeKeyboardEvents();
 	void readNativeUDevEvents();
+	void readNativeInputEvents();
+
+	void processInput(int fd, const char * node);	
+	void addInput(const char * node, bool isMouse);
+	void removeInput(const char * node);
+	void printInput();
 
 	static void handleX11Event(const XEvent& event);
 
