@@ -65,6 +65,9 @@ source /etc/os-release
 if [ "$ID" = "elementary" ]; then
 	# Gets ubuntu base version
 	RELEASE=$(lsb_release -r -u)
+elif [ "$ID" = "linuxmint" ]; then
+	# Gets ubuntu base version
+	RELEASE=$(cat /etc/upstream-release/lsb-release | grep DISTRIB_RELEASE | cut -d "=" -f2)
 else
 	RELEASE=$(lsb_release -r)
 fi
@@ -94,8 +97,15 @@ else
 fi
 
 apt-get update
-REGULAR_UPDATES=$(/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 1)
-SECURITY_UPDATES=$(/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 2)
+
+if [ -x "$(command -v /usr/lib/update-notifier/apt-check)" ]; then
+	REGULAR_UPDATES=$(/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 1)
+	SECURITY_UPDATES=$(/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 2)
+else
+	# apt-check is not installed.
+	REGULAR_UPDATES=0
+	SECURITY_UPDATES=0
+fi
 
 if [ "$1" != "-y" ]; then
     if [ $REGULAR_UPDATES -ne 0 ] || [ $SECURITY_UPDATES -ne 0 ]; then
