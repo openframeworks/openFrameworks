@@ -22,7 +22,8 @@ SHELL ?= /bin/sh
 OF_ROOT ?=  $(realpath ../../..)
 PLATFORM_VARIANT ?= default
 
-ifeq ($(CC),$(EMSCRIPTEN)/emcc)
+# ifeq ($(CC),$(EMSCRIPTEN)/emcc)
+ifeq ($(findstring emcc, $(CC)),emcc)
 	PLATFORM_OS=emscripten
 endif
 PLATFORM_OS ?= $(shell uname -s)
@@ -121,11 +122,11 @@ endif
 
 # if desired, print the variables
 ifdef MAKEFILE_DEBUG
-	$(info =================== config.mk platform detection ================)
-	$(info PLATFORM_ARCH=$(PLATFORM_ARCH))
-	$(info PLATFORM_OS=$(PLATFORM_OS))
-	$(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
-	$(info PLATFORM_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH))
+    $(info =================== config.mk platform detection ================)
+    $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
+    $(info PLATFORM_OS=$(PLATFORM_OS))
+    $(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
+    $(info PLATFORM_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH))
 endif
 
 
@@ -188,22 +189,22 @@ endif
 ################################################################################
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
-	$(info =================== config.mk paths =============================)
-	$(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
-	$(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
-	$(info OF_APPS_PATH=$(OF_APPS_PATH))
-	$(info OF_LIBS_PATH=$(OF_LIBS_PATH))
-	$(info OF_LIBS_OPENFRAMEWORKS_PATH=$(OF_LIBS_OPENFRAMEWORKS_PATH))
-	$(info OF_LIBS_OF_COMPILED_PATH=$(OF_LIBS_OF_COMPILED_PATH))
-	$(info OF_LIBS_OF_COMPILED_PROJECT_PATH=$(OF_LIBS_OF_COMPILED_PROJECT_PATH))
-	$(info OF_SHARED_MAKEFILES_PATH=$(OF_SHARED_MAKEFILES_PATH))
-	$(info OF_PLATFORM_MAKEFILES=$(OF_PLATFORM_MAKEFILES))
-	$(info OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH))
+    $(info =================== config.mk paths =============================)
+    $(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
+    $(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
+    $(info OF_APPS_PATH=$(OF_APPS_PATH))
+    $(info OF_LIBS_PATH=$(OF_LIBS_PATH))
+    $(info OF_LIBS_OPENFRAMEWORKS_PATH=$(OF_LIBS_OPENFRAMEWORKS_PATH))
+    $(info OF_LIBS_OF_COMPILED_PATH=$(OF_LIBS_OF_COMPILED_PATH))
+    $(info OF_LIBS_OF_COMPILED_PROJECT_PATH=$(OF_LIBS_OF_COMPILED_PROJECT_PATH))
+    $(info OF_SHARED_MAKEFILES_PATH=$(OF_SHARED_MAKEFILES_PATH))
+    $(info OF_PLATFORM_MAKEFILES=$(OF_PLATFORM_MAKEFILES))
+    $(info OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH))
 endif
 
 
 ifeq ($(wildcard $(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)),)
-$(error This package doesn't support your platform, probably you downloaded the wrong package?)
+$(error This package doesn't support your platform, $(OF_LIBS_OF_COMPILED_PROJECT_PATH) probably you downloaded the wrong package?)
 endif
 
 # generate a list of valid core platform variants from the files in the platform makefiles directory
@@ -334,24 +335,22 @@ OF_CORE_HEADER_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell $(FIND) $(OF_CORE_S
 # DEBUG INFO
 ################################################################################
 ifdef MAKEFILE_DEBUG
-	$(info ========================= config.mk flags ========================)
-	$(info ---OF_CORE_DEFINES_CFLAGS---)
-	$(foreach v, $(OF_CORE_DEFINES_CFLAGS),$(info $(v)))
+    $(info ========================= config.mk flags ========================)
+    $(info ---OF_CORE_DEFINES_CFLAGS---)
+    $(foreach v, $(OF_CORE_DEFINES_CFLAGS),$(info $(v)))
 
-	$(info ---OF_CORE_INCLUDES_CFLAGS---)
-	$(foreach v, $(OF_CORE_INCLUDES_CFLAGS),$(info $(v)))
+    $(info ---OF_CORE_INCLUDES_CFLAGS---)
+    $(foreach v, $(OF_CORE_INCLUDES_CFLAGS),$(info $(v)))
 
-	$(info ---OF_CORE_FRAMEWORKS_CFLAGS---)
-	$(foreach v, $(OF_CORE_FRAMEWORKS_CFLAGS),$(info $(v)))
+    $(info ---OF_CORE_FRAMEWORKS_CFLAGS---)
+    $(foreach v, $(OF_CORE_FRAMEWORKS_CFLAGS),$(info $(v)))
 
-	$(info ---OF_CORE_SOURCE_FILES---)
-	$(foreach v, $(OF_CORE_SOURCE_FILES),$(info $(v)))
+    $(info ---OF_CORE_SOURCE_FILES---)
+    $(foreach v, $(OF_CORE_SOURCE_FILES),$(info $(v)))
 
-	$(info ---OF_CORE_HEADER_FILES---)
-	$(foreach v, $(OF_CORE_HEADER_FILES),$(info $(v)))
+    $(info ---OF_CORE_HEADER_FILES---)
+    $(foreach v, $(OF_CORE_HEADER_FILES),$(info $(v)))
 
-	$(info ---PLATFORM_CORE_EXCLUSIONS---)
-	$(foreach v, $(PLATFORM_CORE_EXCLUSIONS),$(info $(v)))
+    $(info ---PLATFORM_CORE_EXCLUSIONS---)
+    $(foreach v, $(PLATFORM_CORE_EXCLUSIONS),$(info $(v)))
 endif
-
-

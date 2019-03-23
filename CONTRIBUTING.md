@@ -4,7 +4,6 @@ Thank you for contributing! openFrameworks is a community-built, maintained and 
 
 This document outlines the procedures and what to expect when contributing a bug report, a feature request, or new code via a pull request.
 If you want to contribute documentation have a look at the [ofSite git repository](https://github.com/openframeworks/ofSite). 
-To contribute tutorials or help documents, get in touch with one of the _Tutorial leaders_, [Diederick Huijbers](http://www.roxlu.com/) (roxlu) or [Jeff Crouse](http://www.jeffcrouse.info/) (jefftimesten).
 
 **Please read** and **follow these guidelines** before submitting a bug report, feature request or pull request.
 It really helps us efficiently process your contribution!
@@ -24,7 +23,7 @@ We love hearing about bugs! It's how we get them fixed.
   - Make sure you give it a good title! 
   A good title explains the core of the problem in about 5-10 words. (It's sometimes easier to write the title after you've written the description.)
     - Examples of bad titles: _problem with ofRectangle_ or _can't set color_
-    - Examples of good titles: _ofRectangle crashes if width is 0_ or _ofSetColor doesn't work with ofPath objects_.
+    - Examples of good titles: _ofRectangle crashes if the width is 0_ or _ofSetColor doesn't work with ofPath objects_.
   - In the description, include the following details:
     0. **relevant system information** such as which openFrameworks version, operating system, and IDE you are using,
     1. what you were doing when you noticed the bug,
@@ -53,8 +52,8 @@ But please make sure it's been discussed as a feature request _before_ you submi
 Before opening a feature request, please search the issue tracker and confirm an existing request touching the same topic doesn't already exist.
 
 - We are generally a friendly and open collection of people, but communication over the internet can be difficult, so please don't treat a lot of discussion as a negative point against your feature request. 
-Usually a lot of discussion just means that we haven't thought about what you're requesting before, which is a good thing!
-- On the other hand, we are also busy people, often professionally involved in making large scale projects ourselves, using openFrameworks. 
+Usually, a lot of discussions just means that we haven't thought about what you're requesting before, which is a good thing!
+- On the other hand, we are also busy people, often professionally involved in making large-scale projects ourselves, using openFrameworks. 
 If you feel like no-one is paying attention to your feature request, just be patient, it will be considered eventually.
 - And finally, a small reality check: please don't expect that a general agreement in the discussion that a feature request is a good idea means it will get made immediately! 
 As with most open source projects, the fastest way to get a feature made is to make it yourself, or if you are not a programmer, make friends with someone who is, introduce them to openFrameworks, and ask them to make it for you.
@@ -92,4 +91,3 @@ This granularity makes the code easier to deal with in cases where some things h
   - Reference any issues or bugs in the [oF issue tracker](github.com/openframeworks/openFrameworks/issues) that are relevant to your pull request using `#issue number` notation, eg to reference issue __1234__ write `#1234`.
   - Mention if the code has been tested and on what platform.
 - Your pull request will be evaluated via the [Pull Request Review Procedure](https://github.com/openframeworks/openFrameworks/wiki/Pull-Request-Review-Procedure)
-

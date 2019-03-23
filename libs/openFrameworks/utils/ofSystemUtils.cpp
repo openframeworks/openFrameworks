@@ -188,7 +188,9 @@ gboolean text_dialog_gtk(gpointer userdata){
 	gtk_widget_show_all (dialog);
 	if(gtk_dialog_run (GTK_DIALOG (dialog))==GTK_RESPONSE_OK){
 		dialogData->text = gtk_entry_get_text(GTK_ENTRY(textbox));
-	}
+	} else {
+    dialogData->text = "";
+  }
 	gtk_widget_destroy (dialog);
 	dialogData->mutex.lock();
 	dialogData->condition.notify_all();
@@ -638,6 +640,8 @@ string ofSystemTextBoxDialog(string question, string text){
 		// if OK was clicked, assign value to text
 		if ( returnCode == NSAlertFirstButtonReturn )
 			text = [[label stringValue] UTF8String];
+    else
+      text = "";
 	}
 #endif
 
@@ -747,7 +751,7 @@ string ofSystemTextBoxDialog(string question, string text){
 			 }else if((Msg.hwnd == cancelButton && Msg.message==WM_LBUTTONUP) ||  (Msg.message==WM_KEYUP && Msg.wParam==27)){
 				 EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
 				 DestroyWindow(dialog);
-				 return text;
+				 return "";
 			 }
 
 			 if (!IsWindow( dialog )){

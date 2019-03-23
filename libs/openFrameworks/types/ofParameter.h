@@ -522,7 +522,7 @@ public:
 	}
 
 	template<typename... Args>
-	ofEventListener newListener(Args...args) {
+	std::unique_ptr<of::priv::AbstractEventToken> newListener(Args...args) {
 		return obj->changedE.newListener(args...);
 	}
 
@@ -1015,7 +1015,7 @@ public:
 	}
 
 	template<typename... Args>
-	ofEventListener newListener(Args...args) {
+	std::unique_ptr<of::priv::AbstractEventToken> newListener(Args...args) {
 		return obj->changedE.newListener(args...);
 	}
 
@@ -1111,7 +1111,7 @@ public:
 	std::shared_ptr<ofAbstractParameter> newReference() const;
 
 	template<typename... Args>
-	ofEventListener newListener(Args...args);
+	std::unique_ptr<of::priv::AbstractEventToken> newListener(Args...args);
 
 	bool isSerializable() const;
 	bool isReadOnly() const;
@@ -1275,7 +1275,7 @@ inline void ofReadOnlyParameter<ParameterType,Friend>::removeListener(ListenerCl
 
 template<typename ParameterType,typename Friend>
 template<typename... Args>
-inline ofEventListener ofReadOnlyParameter<ParameterType,Friend>::newListener(Args...args) {
+inline std::unique_ptr<of::priv::AbstractEventToken> ofReadOnlyParameter<ParameterType,Friend>::newListener(Args...args) {
 	return parameter.newListener(args...);
 }
 

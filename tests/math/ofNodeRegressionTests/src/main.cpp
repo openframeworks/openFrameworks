@@ -47,8 +47,8 @@ public:
 			auto pos = n1.getGlobalPosition();
 			auto orient = n1.getGlobalOrientation();
 
-			test(aprox_eq(pos, { 50.f, -70.7107f, 50.f }), "\tposition");
-			test(aprox_eq(orient, { 0.853553f, 0.353553f, 0.353553f, -0.146447f }), "\torientation");
+			ofxTest(aprox_eq(pos, { 50.f, -70.7107f, 50.f }), "\tposition");
+			ofxTest(aprox_eq(orient, { 0.853553f, 0.353553f, 0.353553f, -0.146447f }), "\torientation");
 			ofLogNotice() << "end orbit test";
 		}
 
@@ -66,9 +66,9 @@ public:
 			auto orient1 = n1.getGlobalOrientation();
 			auto orient2 = n2.getGlobalOrientation();
 			
-			test(aprox_eq(pos1, { 100.f, 0.f, 0.f }), "\tposition1");
-			test(aprox_eq(orient1, { 0.707107f, 0.f, 0.707107f, 0.f }), "\torientation1");
-			test(aprox_eq(orient2, { 0.f, 0.f, 1.f, 0.f }), "\torientation2");
+			ofxTest(aprox_eq(pos1, { 100.f, 0.f, 0.f }), "\tposition1");
+			ofxTest(aprox_eq(orient1, { 0.707107f, 0.f, 0.707107f, 0.f }), "\torientation1");
+			ofxTest(aprox_eq(orient2, { 0.f, 0.f, 1.f, 0.f }), "\torientation2");
 			
 			ofLogNotice() << "parent pos/orient end";
 
@@ -91,8 +91,8 @@ public:
 			auto pos1 = mNode1.getGlobalPosition();
 			auto pos2 = mNode2.getGlobalPosition();
 
-			test(aprox_eq(pos1, { 73.1354f, 0.f, 68.1998f }), "\tglobal position");
-			test(aprox_eq(pos1, pos2), "\tposition equality");
+			ofxTest(aprox_eq(pos1, { 73.1354f, 0.f, 68.1998f }), "\tglobal position");
+			ofxTest(aprox_eq(pos1, pos2), "\tposition equality");
 
 			ofLogNotice() << "rotateAround vs orbit end";
 
@@ -108,7 +108,7 @@ public:
 			n2.truck(50.f);
 			auto pos = n2.getGlobalPosition();
 
-			test(aprox_eq(pos, { 100.f, -35.3553f, -35.3553f }), "\tposition");
+			ofxTest(aprox_eq(pos, { 100.f, -35.3553f, -35.3553f }), "\tposition");
 			ofLogNotice() << "parent simple pos end";
 
 		}
@@ -127,15 +127,21 @@ public:
 			n2.setParent(n1);
 			n3.setParent(n2);
 			n3.clearParent(true);
-			test(aprox_eq(n3.getPosition(), n2.getGlobalPosition()), "\tposition");
-			test(aprox_eq(n3.getOrientationQuat(), n2.getGlobalOrientation()), "\torientation");
-			test(aprox_eq(n3.getScale(), n2.getGlobalScale()), "\tscale");
-			test(aprox_eq(n3.getLocalTransformMatrix() * zero, n2.getGlobalTransformMatrix() * zero), "\tmatrices");
+			ofxTest(aprox_eq(n3.getPosition(), n2.getGlobalPosition()), "\tposition");
+			ofxTest(aprox_eq(n3.getOrientationQuat(), n2.getGlobalOrientation()), "\torientation");
+			ofxTest(aprox_eq(n3.getScale(), n2.getGlobalScale()), "\tscale");
+			ofxTest(aprox_eq(n3.getLocalTransformMatrix() * zero, n2.getGlobalTransformMatrix() * zero), "\tmatrices");
 			n3.setParent(n2, true);
-			test(aprox_eq(n3.getPosition(), glm::vec3(0,0,0)), "\tposition");
-			test(aprox_eq(n3.getOrientationQuat(), glm::quat()), "\torientation");
-			test(aprox_eq(n3.getScale(), glm::vec3(1,1,1)), "\tscale");
-			test(aprox_eq(n3.getGlobalTransformMatrix() * zero, n2.getGlobalTransformMatrix() * zero), "\tmatrices");
+			ofxTest(aprox_eq(n3.getPosition(), glm::vec3(0,0,0)), "\tposition");
+			ofxTest(aprox_eq(n3.getOrientationQuat(), glm::quat()), "\torientation");
+			ofxTest(aprox_eq(n3.getScale(), glm::vec3(1,1,1)), "\tscale");
+			ofxTest(aprox_eq(n3.getGlobalTransformMatrix() * zero, n2.getGlobalTransformMatrix() * zero), "\tmatrices");
+			n3.setGlobalPosition(n3.getGlobalPosition());
+			n3.setGlobalOrientation(n3.getGlobalOrientation());
+			ofxTest(aprox_eq(n3.getPosition(), glm::vec3(0,0,0)), "\tposition");
+			ofxTest(aprox_eq(n3.getOrientationQuat(), glm::quat()), "\torientation");
+			ofxTest(aprox_eq(n3.getScale(), glm::vec3(1,1,1)), "\tscale");
+			ofxTest(aprox_eq(n3.getGlobalTransformMatrix() * zero, n2.getGlobalTransformMatrix() * zero), "\tmatrices");
 			ofLogNotice() << "end add / clear parent and keep global transform";
 		}
 

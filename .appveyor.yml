@@ -1,19 +1,22 @@
 version: 1.0.{build}
-os: Visual Studio 2015 RC
 
 environment:
   global:
     APPVEYOR_OS_NAME: windows
   matrix:
   #MSYS2 Building
-    - platform: x86
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      platform: x86
       BUILDER: MSYS2
+      CCACHE_DIR: "%APPVEYOR_BUILD_FOLDER%\\.ccache"
 
   #VisualStudio Building
-    - platform: x86
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      platform: x86
       BUILDER : VS
       BITS: 32
-    - platform: x64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      platform: x64
       BUILDER : VS
       BITS: 64
 
@@ -22,28 +25,29 @@ shallow_clone: true
 clone_depth: 10
 
 init:
+# fix for https://github.com/appveyor/ci/issues/2571
+- del C:\Windows\System32\libssl-*.dll C:\Windows\system32\libcrypto-*.dll
+- del C:\Windows\SysWOW64\libssl-*.dll C:\Windows\SysWOW64\libcrypto-*.dll
 - set MSYS2_PATH=c:\msys64
 - set CHERE_INVOKING=1
-#- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Sy pacman"'
-#- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syuu"'
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x86" set MSYSTEM=MINGW32
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x64" set MSYSTEM=MINGW64
+- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy bash pacman pacman-mirrors msys2-runtime msys2-runtime-devel"'
+- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync libopenssl mingw-w64-i686-openssl"'
+- if "%BUILDER%"=="VS" set PATH=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;%PATH%
 
-#- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syuu")
-- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync"'
+# - IF "%BUILDER%"=="VS" set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
 
-- IF "%BUILDER%"=="VS" set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
+cache:
+    - .ccache
 
 install:
-#- ps: |
-#    if ($env:BUILDER -eq "VS") {
-#        .\scripts\vs\download_libs.ps1
-#    }
-- if "%BUILDER%"=="VS" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/vs/download_libs.sh --silent")
 - if "%BUILDER%"=="VS" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/vs/install.sh")
+- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/msys2/install.sh --noconfirm")
 
-- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/msys2/install_dependencies.sh --noconfirm")
-- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/msys2/download_libs.sh --silent")
+before_build:
+- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "ccache -z")
+- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "ccache -s")
 
 build_script:
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/msys2/build.sh")
@@ -62,3 +66,6 @@ test_script:
       cd scripts/ci/vs
       .\run_tests.bat
     }
+
+after_test:
+  - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "ccache -s")

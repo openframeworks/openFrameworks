@@ -33,10 +33,18 @@ MSYS2_ROOT = /mingw32
 PLATFORM_CFLAGS += -std=gnu++14 -DUNICODE -D_UNICODE
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER
 PLATFORM_LDFLAGS += -lpthread
+ifndef DEBUG
+	PLATFORM_LDFLAGS += -mwindows
+endif
 #ifeq ($(PLATFORM_ARCH),x86_64)
-CC = $(MSYS2_ROOT)/bin/gcc
-CXX = $(MSYS2_ROOT)/bin/g++
-FIND = /usr/bin/find
+ifdef USE_CCACHE
+	CC = ccache $(MSYS2_ROOT)/bin/gcc
+	CXX = ccache $(MSYS2_ROOT)/bin/g++
+else
+	CC = $(MSYS2_ROOT)/bin/gcc
+	CXX = $(MSYS2_ROOT)/bin/g++
+endif
+FIND ?= /usr/bin/find
 PLATFORM_AR = $(MSYS2_ROOT)/bin/ar
 PLATFORM_LD = $(MSYS2_ROOT)/bin/ld
 PLATFORM_PKG_CONFIG = $(MSYS2_ROOT)/bin/pkg-config
@@ -46,9 +54,15 @@ PLATFORM_PKG_CONFIG = $(MSYS2_ROOT)/bin/pkg-config
 
 PLATFORM_PROJECT_DEBUG_BIN_NAME=$(APPNAME)_debug.exe
 PLATFORM_PROJECT_RELEASE_BIN_NAME=$(APPNAME).exe
-PLATFORM_PROJECT_RELEASE_TARGET = bin/$(BIN_NAME)
-PLATFORM_PROJECT_DEBUG_TARGET = bin/$(BIN_NAME)
+PLATFORM_PROJECT_RELEASE_TARGET = bin/$(PLATFORM_PROJECT_RELEASE_BIN_NAME)
+PLATFORM_PROJECT_DEBUG_TARGET = bin/$(PLATFORM_PROJECT_DEBUG_BIN_NAME)
 PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
+ifneq ("$(wildcard $(PLATFORM_PROJECT_RELEASE_TARGET))","")
+	PLATFORM_PROJECT_EXISTING_TARGET=$(PLATFORM_PROJECT_RELEASE_TARGET)
+else
+	PLATFORM_PROJECT_EXISTING_TARGET=$(PLATFORM_PROJECT_DEBUG_TARGET)
+endif
+
 
 ##########################################################################################
 # PLATFORM DEFINES
@@ -276,62 +290,14 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 
 copy_dlls:
 	@echo "     copying dlls to bin"
-	@cp $(MSYS2_ROOT)/bin/libwinpthread-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libgcc_s_dw2-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libstdc++-6.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libboost_filesystem-mt.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libboost_system-mt.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libbz2-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libcairo-2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/LIBEAY32.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libfreeimage-3.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libfreetype-6.dll bin/
-	@cp $(MSYS2_ROOT)/bin/glew32.dll bin/
-	@cp $(MSYS2_ROOT)/bin/SSLEAY32.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libfontconfig-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libpixman-1-0.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libpng16-16.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libHalf-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libharfbuzz-0.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libexpat-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libiconv-2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libIex-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libIlmImf-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libImath-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libglib-2.0-0.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libIlmThread-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/liblcms2-2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libintl-8.dll bin/
-	@cp $(MSYS2_ROOT)/bin/liblzma-5.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libminizip-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libjpeg-8.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libjpegxr.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libjxrglue.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopenjp2-7.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libraw*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libtiff-5.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libwebp*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libjasper-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_calib3d*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_core*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_features2d*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_flann*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_imgcodecs*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_imgproc*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_ml*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_objdetect*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_photo*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_video*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_videoio*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libpcre-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libPoco*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/tbb.dll bin/
-	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libassimp.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libgraphite2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libgomp-1.dll bin/
 
+	@ntldd --recursive $(PLATFORM_PROJECT_EXISTING_TARGET) | grep -F "mingw32" | cut -d">" -f2 |cut -d" " -f2 >dlllist
+	@while read -r dll; do \
+		test -e "$$dll" && cp "$$dll" ./bin; \
+    done <dlllist
+	@echo "     `wc -l <dlllist` dlls copied"
+	@rm dlllist
+	
 afterplatform: $(TARGET_NAME)
 	@if [ -e $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) ]; then cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/; fi
 	@echo

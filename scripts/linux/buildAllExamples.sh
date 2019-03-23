@@ -4,7 +4,7 @@ export LC_ALL=C
 
 for category in $( find ../../examples/ -maxdepth 1 -type d )
 do
-    if [ "$category" = "../../examples/android" -o "$category" = "../../examples/ios" -o "$category" = "../../examples/" ]; then
+    if [ "$category" = "../../examples/android" -o "$category" = "../../examples/ios" -o "$category" = "../../examples/" -o "$category" = "../../examples/tvOS" ]; then
         continue
     fi
 

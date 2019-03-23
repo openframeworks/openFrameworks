@@ -12,38 +12,32 @@ void ofApp::setup(){
 		ofLog()<<"Device "<<i<<": "<<devices[i].deviceName;
 	}
 
-	// Set the pixel format for getPixels to monochrome
-	// (other image formats will include heavy pixel conversion)
-	grabber.setPixelFormat(OF_PIXELS_MONO);
+	// Set the pixel format for getPixels to grayscale
+	// (other image formats will include heavy colorspace conversion)
+	grabber.setPixelFormat(OF_PIXELS_GRAY)
 
 	// Hint the grabber if you don't need pixel data for better performance
 	//((ofxAndroidVideoGrabber*)grabber.getGrabber().get())->setUsePixels(false);
 
 	// Start the grabber
-	grabber.setup(1280,960);
+	grabber.setup(1280, 720);
 
-	// Get the orientation and facing of the current camera
-	cameraOrientation = ((ofxAndroidVideoGrabber*)grabber.getGrabber().get())->getCameraOrientation();
-	cameraFacingFront = ((ofxAndroidVideoGrabber*)grabber.getGrabber().get())->getFacingOfCamera();
-
-	one_second_time = ofGetElapsedTimeMillis();
-	camera_fps = 0;
-	frames_one_sec = 0;
+    if(grabber.isInitialized()) {
+        // Get the orientation and facing of the current camera
+        cameraOrientation = ((ofxAndroidVideoGrabber *) grabber.getGrabber().get())->getCameraOrientation();
+        cameraFacingFront = ((ofxAndroidVideoGrabber *) grabber.getGrabber().get())->getFacingOfCamera();
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 	grabber.update();
 	if(grabber.isFrameNew()){
-		frames_one_sec++;
-		if( ofGetElapsedTimeMillis() - one_second_time >= 1000){
-			camera_fps = frames_one_sec;
-			frames_one_sec = 0;
-			one_second_time = ofGetElapsedTimeMillis();
-		}
+		cameraFps.newFrame();
 
-		grabberImage.setFromPixels(grabber.getPixels());
+		grabberImage.loadData(grabber.getPixels());
 	}
+	cameraFps.update();
 }
 
 //--------------------------------------------------------------
@@ -94,7 +88,7 @@ void ofApp::draw(){
 	ofDrawRectangle(0, 0, 300, 120);
 	ofSetColor(0);
 	ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate()),20,20);
-	ofDrawBitmapString("camera fps: " + ofToString(camera_fps),20,40);
+	ofDrawBitmapString("camera fps: " + ofToString(cameraFps.getFps()),20,40);
 
 	if(cameraFacingFront) {
 		ofDrawBitmapString("facing: front (click to swap)", 20, 60);

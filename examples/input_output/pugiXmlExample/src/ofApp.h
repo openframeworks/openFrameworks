@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "pugixml.hpp"
 
 class ofApp : public ofBaseApp{
 

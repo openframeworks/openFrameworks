@@ -18,6 +18,8 @@
 #include "ofxiOSExtensions.h"
 #include "ofxtvOSAppDelegate.h"
 #include "ofxtvOSViewController.h"
+#include "ofxtvOSGLKViewController.h"
+#include "ofxiOSGLKView.h"
 #include "ofxiOSEAGLView.h"
 #include "ofxiOSApp.h"
 #include "ofxiOSExtras.h"

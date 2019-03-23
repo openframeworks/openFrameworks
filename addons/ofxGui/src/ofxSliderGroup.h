@@ -31,7 +31,7 @@ protected:
 typedef ofxVecSlider_<ofDefaultVec3> ofxVec3Slider;
 typedef ofxVecSlider_<ofDefaultVec2> ofxVec2Slider;
 typedef ofxVecSlider_<ofDefaultVec4> ofxVec4Slider;
-typedef ofxVecSlider_<ofVec3f> ofxPointSlider;
+typedef ofxVecSlider_<glm::vec3> ofxPointSlider;
 
 template<typename ColorType>
 class ofxColorSlider_: public ofxGuiGroup{

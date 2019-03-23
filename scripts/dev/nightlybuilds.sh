@@ -1,6 +1,8 @@
 #!/bin/bash
 
 lastversion=$(date +%Y%m%d)
+REPORT_MAIL=arturo@openframeworks.cc
+
 echo "Building nightly builds $lastversion"
 
 . $HOME/.profile
@@ -15,11 +17,17 @@ error() {
   if [[ "$#" = "3" ]] ; then
     local message="$2"
     local code="${3:-1}"
-    echo "Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
+    msg="Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
   else
     local code="${2:-1}"
-    echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
+    msg="Error on or near line ${parent_lineno}; exiting with status ${code}"
   fi
+  echo $msg
+  mail -s "Error creating nightly builds at $(date)." $REPORT_MAIL <<EOF
+Error creating nightly builds
+$(if [ -f /home/ofadmin/logs/nightlybuilds.log ]; then cat /home/ofadmin/logs/nightlybuilds.log fi)
+$(if [ -f /home/ofadmin/logs/compilePG.log ]; then echo; echo; echo "PG compile log: "; cat /home/ofadmin/logs/compilePG.log fi)
+EOF
   rm -f *.tar.gz
   rm -f *.zip
   exit "${code}"
@@ -42,11 +50,11 @@ if [ "$currenthash" = "$lasthash" ]; then
 fi
 
 echo $currenthash>lasthash.txt
-./create_package.sh linux64 $lastversion master
+./create_package.sh linux64 $lastversion master gcc4
 ./create_package.sh linux64 $lastversion master gcc5
 ./create_package.sh linux64 $lastversion master gcc6
 ./create_package.sh msys2 $lastversion master
-./create_package.sh vs $lastversion master
+./create_package.sh vs2017 $lastversion master
 ./create_package.sh ios $lastversion master
 ./create_package.sh osx $lastversion master
 ./create_package.sh android $lastversion master
@@ -59,18 +67,18 @@ rm -f /var/www/versions/nightly/of_v*_nightly.*
 mv *.tar.gz /var/www/versions/nightly
 mv *.zip /var/www/versions/nightly
 
-mv /var/www/versions/nightly/of_v${lastversion}_linux64_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_nightly.tar.gz
+mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc4_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc4_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc6_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc6_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_nightly.zip
-mv /var/www/versions/nightly/of_v${lastversion}_vs_release.zip /var/www/versions/nightly/of_v${lastversion}_vs_nightly.zip
+mv /var/www/versions/nightly/of_v${lastversion}_vs2017_release.zip /var/www/versions/nightly/of_v${lastversion}_vs2017_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_ios_release.zip /var/www/versions/nightly/of_v${lastversion}_ios_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_osx_release.zip /var/www/versions/nightly/of_v${lastversion}_osx_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_android_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_android_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linuxarmv6l_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linuxarmv6l_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linuxarmv7l_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linuxarmv7l_nightly.tar.gz
 
-echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'> /var/www/nightlybuilds.html
 echo '<html>' >> /var/www/nightlybuilds.html
 echo '<head>' >> /var/www/nightlybuilds.html
@@ -93,7 +101,14 @@ echo '</html>' >> /var/www/nightlybuilds.html
 
 #wget http://openframeworks.cc/nightly_hook.php?version=${lastversion} -O /dev/null
 
-echo 
+echo
 echo
 echo "Successfully created nightly builds for ${lastversion}"
 echo
+
+mail -s "Nightly builds $lastversion OK." $REPORT_MAIL <<EOF
+Successfully created nightly builds for ${lastversion}
+
+$(if [ -f /home/ofadmin/logs/nightlybuilds.log ]; then cat /home/ofadmin/logs/nightlybuilds.log; fi)
+EOF
+

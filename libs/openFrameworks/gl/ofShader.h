@@ -25,6 +25,15 @@ typedef ofColor_<float> ofFloatColor;
 
 enum ofLogLevel: short;
 
+struct ofShaderSettings {
+    std::map<GLuint, std::filesystem::path> shaderFiles;
+    std::map<GLuint, std::string> shaderSources;
+    std::map<std::string, int> intDefines;
+    std::map<std::string, float> floatDefines;
+    std::filesystem::path sourceDirectoryPath;
+    bool bindDefaults = true;
+};
+
 class ofShader {
 
 	struct Source{
@@ -56,15 +65,6 @@ public:
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
 	bool loadCompute(const std::filesystem::path& shaderName);
 #endif
-
-	struct Settings {
-		std::map<GLuint, std::filesystem::path> shaderFiles;
-		std::map<GLuint, std::string> shaderSources;
-		std::map<std::string, int> intDefines;
-		std::map<std::string, float> floatDefines;
-		std::filesystem::path sourceDirectoryPath;
-		bool bindDefaults = true;
-	};
 
 #if !defined(TARGET_OPENGLES)
 	struct TransformFeedbackSettings {
@@ -105,7 +105,7 @@ public:
 	};
 #endif
 
-	bool setup(const Settings & settings);
+	bool setup(const ofShaderSettings & settings);
 #if !defined(TARGET_OPENGLES)
 	bool setup(const TransformFeedbackSettings & settings);
 #endif

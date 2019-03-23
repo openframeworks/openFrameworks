@@ -45,7 +45,7 @@ public:
 	operator const Type & ();
 
 
-	virtual void setPosition(const ofPoint & p);
+	virtual void setPosition(const glm::vec3 & p);
 	virtual void setPosition(float x, float y);
 	virtual void setSize(float w, float h);
 	virtual void setShape(ofRectangle r);
@@ -67,7 +67,7 @@ protected:
 	void valueChanged(Type & value);
 	ofPath bg, bar;
 	ofVboMesh textMesh;
-	ofxInputField<Type> input{ofxInputField<Type>::createInsideSlider()};
+	ofxInputField<Type> input{ofxInputField<Type>::InsideSlider};
 
 	enum State{
 		Slider,

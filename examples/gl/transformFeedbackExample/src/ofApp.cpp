@@ -29,6 +29,7 @@ void ofApp::setup(){
 	// bind the full buffer using glBindBaseBuffer to default index 0
 	// and draw the mesh which will end up stored in our buffer
 	shader.beginTransformFeedback(GL_POINTS, buffer);
+	shader.setUniform1i("numVertices", numVertices);
 	mesh.draw();
 	shader.endTransformFeedback(buffer);
 
@@ -54,7 +55,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+	cam.orbit(ofGetElapsedTimef() * 100., 0, 2400, {0,0,0});
 }
 
 //--------------------------------------------------------------

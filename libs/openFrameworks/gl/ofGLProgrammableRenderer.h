@@ -192,7 +192,7 @@ public:
 #endif
 	void unbind(const ofFbo & fbo);
 
-    void begin(const ofFbo & fbo, ofFboBeginMode mode);
+    void begin(const ofFbo & fbo, ofFboMode mode);
 	void end(const ofFbo & fbo);
 
 	ofStyle getStyle() const;

@@ -3,24 +3,47 @@
 #include "ofTexture.h"
 #include "ofGLBaseTypes.h"
 
-enum class ofFboBeginMode : short{
-    NoDefaults = 0,
-    Perspective = 1,
-    MatrixFlip = 2,
+/// ofFbo mode(s) when binding
+enum ofFboMode : short {
+    OF_FBOMODE_NODEFAULTS  = 0, ///< base GL fbo, no OF defaults
+    OF_FBOMODE_PERSPECTIVE = 1, ///< set OF perspective and viewport
+    OF_FBOMODE_MATRIXFLIP  = 2  ///< flip vertically
 };
 
-inline ofFboBeginMode operator | (ofFboBeginMode m1, ofFboBeginMode m2){
-    return static_cast<ofFboBeginMode>(int(m1) | int(m2));
+inline ofFboMode operator | (ofFboMode m1, ofFboMode m2){
+    return static_cast<ofFboMode>(short(m1) | short(m2));
 }
 
-inline bool operator & (ofFboBeginMode m1, ofFboBeginMode m2){
-    return static_cast<bool>(int(m1) & int(m2));
+inline bool operator & (ofFboMode m1, ofFboMode m2){
+    return static_cast<bool>(short(m1) & short(m2));
 }
+
+/// ofFbo internal settings
+struct ofFboSettings {
+    int width;                        ///< width of images attached to fbo
+    int height;                       ///< height of images attached to fbo
+    int numColorbuffers;              ///< how many color buffers to create
+    std::vector<GLint> colorFormats;  ///< format of the color attachments for MRT.
+    bool useDepth;                    ///< whether to use depth buffer or not
+    bool useStencil;                  ///< whether to use stencil buffer or not
+    bool depthStencilAsTexture;       ///< use a texture instead of a renderbuffer for depth (useful to draw it or use it in a shader later)
+    GLenum textureTarget;             ///< GL_TEXTURE_2D or GL_TEXTURE_RECTANGLE_ARB
+    GLint internalformat;             ///< GL_RGBA, GL_RGBA16F_ARB, GL_RGBA32F_ARB, GL_LUMINANCE32F_ARB etc.
+    GLint depthStencilInternalFormat; ///< GL_DEPTH_COMPONENT(16/24/32)
+    int wrapModeHorizontal;           ///< GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER etc.
+    int wrapModeVertical;             ///< GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER etc.
+    int minFilter;                    ///< GL_NEAREST, GL_LINEAR etc.
+    int maxFilter;                    ///< GL_NEAREST, GL_LINEAR etc.
+    int numSamples;                   ///< number of samples for multisampling (set 0 to disable)
+    ofFboSettings(std::shared_ptr<ofBaseGLRenderer> renderer=nullptr);
+    bool operator!=(const ofFboSettings & other);
+private:
+    std::weak_ptr<ofBaseGLRenderer> renderer;
+    friend class ofFbo;
+};
 
 class ofFbo : public ofBaseDraws, public ofBaseHasTexture {
 public:
-	struct Settings;
-
 
 	ofFbo();
 	ofFbo(const ofFbo & mom);
@@ -29,12 +52,15 @@ public:
     ofFbo & operator=(ofFbo && fbo);
 	virtual ~ofFbo();
 
+	/// ofFbo::Settings is currently deprecated in favor of the ofFboSettings struct
+	typedef ofFboSettings Settings;
+
 	void allocate(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
-	//void allocateForShadow( int width, int height );
-	void allocate(Settings settings = Settings(nullptr));
+	//void allocateForShadow(int width, int height);
+	void allocate(ofFboSettings settings = ofFboSettings(nullptr));
 	bool isAllocated() const;
 
-	OF_DEPRECATED_MSG("Use clear instead",void destroy());
+	OF_DEPRECATED_MSG("Use clear() instead",void destroy());
 	void clear();
 
 #ifndef TARGET_OPENGLES
@@ -75,58 +101,55 @@ public:
 	void setDefaultTextureIndex(int defaultTexture);
 	int getDefaultTextureIndex() const;
 
-	OF_DEPRECATED_MSG("Use getTexture",ofTexture & getTextureReference());
-	OF_DEPRECATED_MSG("Use getTexture",ofTexture & getTextureReference(int attachmentPoint));
+	OF_DEPRECATED_MSG("Use getTexture()",ofTexture & getTextureReference());
+	OF_DEPRECATED_MSG("Use getTexture()",ofTexture & getTextureReference(int attachmentPoint));
 	ofTexture & getTexture();
 	ofTexture & getTexture(int attachmentPoint);
 	ofTexture & getDepthTexture();
-	OF_DEPRECATED_MSG("Use getTexture",const ofTexture & getTextureReference() const);
-	OF_DEPRECATED_MSG("Use getTexture",const ofTexture & getTextureReference(int attachmentPoint) const);
+	OF_DEPRECATED_MSG("Use getTexture()",const ofTexture & getTextureReference() const);
+	OF_DEPRECATED_MSG("Use getTexture()",const ofTexture & getTextureReference(int attachmentPoint) const);
 	const ofTexture & getTexture() const ;
 	const ofTexture & getTexture(int attachmentPoint) const;
 	const ofTexture & getDepthTexture() const;
 	void setUseTexture(bool){ /*irrelevant*/ };
 	bool isUsingTexture() const {return true;}
 
-
     /// Sets up the framebuffer and binds it for rendering.
     ///
 	/// \warning  This is a convenience method, and is considered unsafe 
 	///           in multi-window and/or multi-renderer scenarios.
 	///           If you use more than one renderer, use each renderer's
-    ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
+    ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
 	///           method instead.
-    /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
-    OF_DEPRECATED_MSG("Use begin(ofFboBeginMode::NoDefaults) instead", void begin(bool setupScreen) const);
-
+    /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
+    OF_DEPRECATED_MSG("Use begin(OF_FBOMODE_NODEFAULTS) instead", void begin(bool setupScreen) const);
 
     /// Sets up the framebuffer and binds it for rendering.
     ///
     /// The mode parameter indicates which defaults are set when binding
     /// the fbo.
     ///
-    /// The default ofFboBeginMode::Perspective | ofFboBeginMode::MatrixFlip
+    /// The default OF_FBOMODE_PERSPECTIVE | OF_FBOMODE_MATRIXFLIP
     /// will set the screen perspective to the OF default for the fbo size, the
     /// correct viewport to cover the full fbo and will flip the orientation
     /// matrix in y so when drawing the fbo later or accesing it from a shader
     /// it's correctly oriented
     ///
-    /// Passing ofFboBeginMode::Perspetive will only set perspective and viewport
+    /// Passing OF_FBOMODE_PERSPECTIVE will only set perspective and viewport
     ///
-    /// Passing ofFboBeginMode::MatrixFlip won't set the perspective but will flip
+    /// Passing OF_FBOMODE_MATRIXFLIP won't set the perspective but will flip
     /// the matrix.
     ///
-    /// Passing ofFboBeginMode::NoDefaults won't change anything and just bind the fbo
+    /// Passing OF_FBOMODE_NODEFAULTS won't change anything and just bind the fbo
     /// and set it as current rendering surface in OF
     ///
     /// \warning  This is a convenience method, and is considered unsafe
     ///           in multi-window and/or multi-renderer scenarios.
     ///           If you use more than one renderer, use each renderer's
-    ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
+    ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
     ///           method instead.
-    /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboBeginMode mode)
-    void begin(ofFboBeginMode mode = ofFboBeginMode::Perspective | ofFboBeginMode::MatrixFlip);
-
+    /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
+    void begin(ofFboMode mode = OF_FBOMODE_PERSPECTIVE | OF_FBOMODE_MATRIXFLIP);
 
 	/// \brief    Ends the current framebuffer render context.
 	/// \sa       void begin(bool setupScreen=true) const;
@@ -174,7 +197,6 @@ public:
 	/// \note     This will get called implicitly upon getTexture();
 	void updateTexture(int attachmentPoint);
 
-
 	bool checkStatus() const;
 	void createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint);
     void attachTexture(ofTexture & texture, GLenum internalFormat, GLenum attachmentPoint);
@@ -205,30 +227,8 @@ public:
 	GLuint getDepthBuffer() const { return depthBuffer; }
 	GLuint getStencilBuffer() const { return stencilBuffer; }
 
-	struct Settings {
-		int		width;					// width of images attached to fbo
-		int		height;					// height of images attached to fbo
-		int		numColorbuffers;		// how many color buffers to create
-		std::vector<GLint> colorFormats;		// format of the color attachments for MRT.
-		bool	useDepth;				// whether to use depth buffer or not
-		bool	useStencil;				// whether to use stencil buffer or not
-		bool	depthStencilAsTexture;			// use a texture instead of a renderbuffer for depth (useful to draw it or use it in a shader later)
-		GLenum	textureTarget;			// GL_TEXTURE_2D or GL_TEXTURE_RECTANGLE_ARB
-		GLint	internalformat;			// GL_RGBA, GL_RGBA16F_ARB, GL_RGBA32F_ARB, GL_LUMINANCE32F_ARB etc.
-		GLint	depthStencilInternalFormat; 	// GL_DEPTH_COMPONENT(16/24/32)
-		int		wrapModeHorizontal;		// GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER etc.
-		int		wrapModeVertical;		// GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER etc.
-		int		minFilter;				// GL_NEAREST, GL_LINEAR etc.
-		int		maxFilter;				// GL_NEAREST, GL_LINEAR etc.
-		int		numSamples;				// number of samples for multisampling (set 0 to disable)
-		Settings(std::shared_ptr<ofBaseGLRenderer> renderer=nullptr);
-		bool operator!=(const Settings & other);
-	private:
-		std::weak_ptr<ofBaseGLRenderer> renderer;
-		friend class ofFbo;
-	};
 private:
-	Settings 			settings;
+	ofFboSettings settings;
 
 	GLuint				fbo;			// main fbo which we bind for drawing into, all renderbuffers are attached to this
 	GLuint				fboTextures;	// textures are attached to this (if MSAA is disabled, this is equal to fbo, otherwise it's a new fbo)

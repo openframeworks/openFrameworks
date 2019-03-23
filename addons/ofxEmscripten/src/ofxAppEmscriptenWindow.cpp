@@ -89,7 +89,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 		ofLogError() << "couldn't get configs";
 		return;
 	}
-	
+
 	ofLogNotice("ofxAppEmscriptenWindow") << "Got " << numConfigs << " display configs";
 
 	// Choose config
@@ -118,7 +118,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 		return;
 	}
 
-	setWindowShape(settings.width,settings.height);
+	setWindowShape(settings.getWidth(),settings.getHeight());
 
 	_renderer = make_shared<ofGLProgrammableRenderer>(this);
 	((ofGLProgrammableRenderer*)_renderer.get())->setup(2,0);
@@ -128,7 +128,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
     emscripten_set_mousedown_callback(0,this,1,&mousedown_cb);
     emscripten_set_mouseup_callback(0,this,1,&mouseup_cb);
     emscripten_set_mousemove_callback(0,this,1,&mousemoved_cb);
-    
+
     emscripten_set_touchstart_callback(0,this,1,&touch_cb);
     emscripten_set_touchend_callback(0,this,1,&touch_cb);
     emscripten_set_touchmove_callback(0,this,1,&touch_cb);
@@ -213,7 +213,7 @@ int ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMouseEv
 }
 
 int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* e, void* userData) {
-    
+
         ofTouchEventArgs::Type touchArgsType;
         switch (eventType) {
                     case EMSCRIPTEN_EVENT_TOUCHSTART:
@@ -359,4 +359,3 @@ ofCoreEvents & ofxAppEmscriptenWindow::events(){
 shared_ptr<ofBaseRenderer> & ofxAppEmscriptenWindow::renderer(){
 	return _renderer;
 }
-

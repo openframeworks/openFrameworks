@@ -13,12 +13,12 @@ public:
 	ofHttpRequest();
 	ofHttpRequest(const std::string& url, const std::string& name,bool saveTo=false);
 
-	std::string				url; //< request url
-	std::string				name; //< optional name key for sorting
-	bool				saveTo; //< save to a file once the request is finised?
-	std::map<std::string,std::string>	headers; //< HTTP header keys & values
-	std::string				body; //< POST body data
-	std::string				contentType; //< POST data mime type
+	std::string				url; ///< request url
+	std::string				name; ///< optional name key for sorting
+	bool				saveTo; ///< save to a file once the request is finised?
+	std::map<std::string,std::string>	headers; ///< HTTP header keys & values
+	std::string				body; ///< POST body data
+	std::string				contentType; ///< POST data mime type
 	std::function<void(const ofHttpResponse&)> done;
     size_t              timeoutSeconds = 0;
 
@@ -28,13 +28,13 @@ public:
 
 	/// HTTP request type
 	enum Method{
-		GET, //< request data from a specified resource (via url)
-		POST //< submit data to be processed to a specified resource (via url)
+		GET, ///< request data from a specified resource (via url)
+		POST ///< submit data to be processed to a specified resource (via url)
 	} method;
 
 private:
-	int					id; //< unique id for this request
-	static int			nextID; //< global for computing next unique id
+	int					id; ///< unique id for this request
+	static int			nextID; ///< global for computing next unique id
 };
 
 /// \class ofHttpResponse
@@ -47,10 +47,10 @@ public:
 
 	operator ofBuffer&();
 
-	ofHttpRequest	    request; //< matching HTTP request for this response
-	ofBuffer		    data; //< response raw data
-	int					status; //< HTTP response status (200: OK, 404: Not Found, etc)
-	std::string				error; //< HTTP error string, if any (OK, Not Found, etc)
+	ofHttpRequest	    request; ///< matching HTTP request for this response
+	ofBuffer		    data; ///< response raw data
+	int					status; ///< HTTP response status (200: OK, 404: Not Found, etc)
+	std::string				error; ///< HTTP error string, if any (OK, Not Found, etc)
 };
 
 /// \brief make an HTTP GET request
@@ -84,7 +84,7 @@ ofHttpResponse ofSaveURLTo(const std::string& url, const std::filesystem::path& 
 int ofSaveURLAsync(const std::string& url, const std::filesystem::path& path);
 
 /// \brief remove an active HTTP request from the queue
-/// \param unique HTTP request id
+/// \param id HTTP request id
 void ofRemoveURLRequest(int id);
 
 /// \brief remove all active HTTP requests from the queue
@@ -142,7 +142,7 @@ class ofURLFileLoader  {
         int saveAsync(const std::string& url, const std::filesystem::path& path);
 	
 		/// \brief remove an active HTTP request from the queue
-		/// \param unique HTTP request id
+		/// \param id HTTP request id
 		void remove(int id);
 	
 		/// \brief clear all active HTTP requests from the queue

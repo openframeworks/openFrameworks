@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
+script_dir="$( dirname "$(readlink -f "$0")" )"
+
 function usage {
-	echo usage:
+    echo usage:
     echo ./install_dependencies.sh [--help] [--noconfirm]
     echo --help:
     echo display this message
@@ -27,19 +29,20 @@ while [[ $# > 0 ]] ; do
 	exit 1
 done
 
-NOT_HAS_PATH=$(echo $PATH | grep /mingw32/bin > /dev/null; echo $?)
+NOT_HAS_PATH=$(cmd /c "echo %PATH%" | grep mingw32\\bin > /dev/null; echo $?)
 if [ "$NOT_HAS_PATH" -ne "0" ]; then
 	cd /
 	MSYS2_ROOT=$(pwd)
 	MSYS2_ROOT=$(cygpath -w $MSYS2_ROOT)
 	setx PATH "%PATH%;${MSYS2_ROOT}mingw32\\bin;${MSYS2_ROOT}usr\\bin\\"
+	echo "set path to ${MSYS2_ROOT}mingw32\\bin;${MSYS2_ROOT}usr\\bin\\"
 fi
 
 arch=i686
 if [ -z ${confirm+x} ]; then
 	pacman -S $confirm --needed ca-certificates
 	if [ -z ${APPVEYOR+x} ]; then
-		pacman -S $confirm --needed wget rsync unzip make mingw-w64-$arch-gcc
+		pacman -S $confirm --needed wget rsync unzip make mingw-w64-$arch-gcc mingw-w64-$arch-ntldd-git
 	fi
 	pacman -S $confirm --needed mingw-w64-$arch-glew \
 		mingw-w64-$arch-freeglut \
@@ -69,6 +72,7 @@ else
 		pacman -S $confirm --needed unzip
 		pacman -S $confirm --needed make
 		pacman -S $confirm --needed mingw-w64-$arch-gcc
+		pacman -S $confirm --needed mingw-w64-$arch-ntldd-git
 	fi
 	pacman -S $confirm --needed mingw-w64-$arch-glew
 	pacman -S $confirm --needed mingw-w64-$arch-freeglut
@@ -98,4 +102,18 @@ exit_code=$?
 if [ $exit_code != 0 ]; then
 	echo "error installing packages, there could be an error with your internet connection"
 	exit $exit_code
+fi
+
+
+# Update addon_config.mk files to use OpenCV 3 or 4 depending on what's installed
+addons_dir="$(readlink -f "$script_dir/../../addons")"
+$(pkg-config opencv4 --exists)
+exit_code=$?
+if [ $exit_code != 0 ]; then
+	echo "Updating ofxOpenCV to use openCV3"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv4(.*)$/ADDON_PKG_CONFIG_LIBRARIES =\1opencv\2/' "$addons_dir/ofxOpenCv/addon_config.mk"
+else
+	echo "Updating ofxOpenCV to use openCV4"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv\s/ADDON_PKG_CONFIG_LIBRARIES =\1opencv4 /g' "$addons_dir/ofxOpenCv/addon_config.mk"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv$/ADDON_PKG_CONFIG_LIBRARIES =\1opencv4/g' "$addons_dir/ofxOpenCv/addon_config.mk"
 fi

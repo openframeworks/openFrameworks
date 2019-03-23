@@ -4,6 +4,8 @@ extern "C"{
 	typedef void (*html5audio_stream_callback)(int bufferSize, int inputChannels, int outputChannels, void * userData);
 
 	extern int html5audio_context_create();
+	extern int html5audio_context_start(int context);
+	extern int html5audio_context_stop(int context);
 	extern int html5audio_context_samplerate(int context);
 	extern void html5audio_context_spectrum(int context, int bands, float * spectrum);
 
@@ -23,4 +25,5 @@ extern "C"{
 
 	extern int html5audio_stream_create(int context_id, int bufferSize, int inputChannels, int outputChannels, float * inbuffer, float * outbuffer, html5audio_stream_callback callback, void * userData);
 	extern int html5audio_stream_free(int stream);
+	extern bool html5audio_sound_is_loaded(int sound);
 }

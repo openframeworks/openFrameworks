@@ -15,6 +15,7 @@ Product{
     readonly property string projectDir: of.ofRoot + "/libs/openFrameworksCompiled/project"
     readonly property string libDir: of.ofRoot + "/libs/openFrameworksCompiled/lib/" + of.platform
     readonly property bool isCoreLibrary: true
+    readonly property string platform: of.platform
 
     // setting this variable to true will build OF using
     // qbs instead of makefiles which helps catching errors...
@@ -102,8 +103,10 @@ Product{
     Probe {
         id: core_source
         property stringList files
+        property string ofRoot: of.ofRoot
+        property stringList FILES_EXCLUDE: parent.FILES_EXCLUDE
         configure: {
-            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
+            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(ofRoot, '/libs/openFrameworks'));
             var filteredSource = source.filter(function filterExcludes(path){
                 for(exclude in FILES_EXCLUDE){
                     var patt = new RegExp(FILES_EXCLUDE[exclude]);
@@ -119,32 +122,67 @@ Product{
         }
     }
 
-    Group {
-        condition: !product.qbsBuild
-        name: "src"
-        files: core_source.files
-        fileTags: ["filtered_sources"]
-    }
+    files: core_source.files
 
-    files: {
-        if(qbsBuild){
-            var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
-            var filteredSource = source.filter(function filterExcludes(path){
-                for(exclude in FILES_EXCLUDE){
-                    var patt = new RegExp(FILES_EXCLUDE[exclude]);
-                    var match = patt.exec(path);
-                    if(match!=null){
-                        return false;
-                    }
-                }
-                return true;
-            });
-            return filteredSource;
-        }else{
-            return [];
+    FileTagger {
+        patterns: "*.c"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["c"];
+            }
         }
     }
 
+    FileTagger {
+        patterns: "*.cpp"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["cpp"];
+            }
+        }
+    }
+
+    FileTagger {
+        patterns: "*.h"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["hpp"];
+            }
+        }
+    }
+
+    FileTagger {
+        patterns: "*.mm"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["objcpp"];
+            }
+        }
+    }
+
+    FileTagger {
+        patterns: "*.m"
+        priority: 100
+        fileTags: {
+            if(!product.qbsBuild){
+                return ["filtered_sources"];
+            }else{
+                return ["objc"];
+            }
+        }
+    }
 
     readonly property string make: {
         return "make";
@@ -161,6 +199,9 @@ Product{
         }
         prepare: {
             var parameters = ['-j4', 'Debug'];
+            if(product.platform==="msys2"){
+                parameters.push('FIND='+Helpers.windowsToUnix(Helpers.findCommand()));
+            }
             var qbsCmd = new Command(product.make, parameters);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;
@@ -183,7 +224,10 @@ Product{
              fileTags: "staticlibrary"
         }
         prepare: {
-            var parameters = ['-j4', 'Release'];
+            var parameters = ['-j4', 'Release']
+            if(product.platform==="msys2"){
+                parameters.push('FIND='+Helpers.windowsToUnix(Helpers.findCommand()));
+            }
             var qbsCmd = new Command(product.make, parameters);
             qbsCmd.description = "building openFrameworks library";
             qbsCmd.workingDirectory = product.projectDir;

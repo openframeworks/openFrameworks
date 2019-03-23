@@ -9,44 +9,6 @@
 template<class V, class N, class C, class T>
 class ofMeshFace_;
 
-template<typename T>
-struct ofArrayView{
-		const T * data;
-		std::size_t size;
-};
-
-class ofMeshData{
-	public:
-		virtual ~ofMeshData();
-		virtual ofArrayView<void> getVerticesData() const = 0;
-		virtual ofArrayView<void> getNormalsData() const = 0;
-		virtual ofArrayView<void> getTextureCoordsData() const = 0;
-		virtual ofArrayView<void> getColorsData() const = 0;
-		virtual ofArrayView<ofIndexType> getIndicesData() const = 0;
-
-		virtual int getVerticesDim() const = 0;
-		virtual int getNormalsDim() const = 0;
-		virtual int getTextureCoordsDim() const = 0;
-		virtual int getColorsDim() const = 0;
-		virtual int getIndicesDim() const = 0;
-
-		virtual std::size_t getNumVertices() const = 0;
-		virtual std::size_t getNumNormals() const = 0;
-		virtual std::size_t getNumTextureCoords() const = 0;
-		virtual std::size_t getNumColors() const = 0;
-		virtual std::size_t getNumIndices() const = 0;
-
-		virtual bool usingVertices() const = 0;
-		virtual bool usingNormals() const = 0;
-		virtual bool usingColors() const = 0;
-		virtual bool usingTextures() const = 0;
-
-		virtual bool hasNormals() const = 0;
-		virtual bool hasColors() const = 0;
-		virtual bool hasTexCoords() const = 0;
-
-};
-
 /// \brief Represents a set of vertices in 3D spaces with normals, colors,
 /// and texture coordinates at those points.
 ///
@@ -259,9 +221,6 @@ public:
 	/// \returns the vector that contains all of the vertices of the mesh.
 	const std::vector<V> & getVertices() const;
 
-	/// \returns If the vertices of the mesh have changed, been added or removed.
-	bool haveVertsChanged();
-
 	/// \returns Whether the mesh has any vertices.
 	bool hasVertices() const;
 
@@ -335,9 +294,6 @@ public:
 	/// \returns the vector that contains all of the normals of the mesh, if
 	/// it has any. (read only)
 	const std::vector<N> & getNormals() const;
-
-	/// \returns If the normals of the mesh have changed, been added or removed.
-	bool haveNormalsChanged();
 
 	/// /returnsWhether the mesh has any normals.
 	bool hasNormals() const;
@@ -420,9 +376,6 @@ public:
 	/// \returns the vector that contains all of the colors of the mesh, if it has any. (read only)
 	const std::vector<C> & getColors() const;
 
-	/// \returns If the colors of the mesh have changed, been added or removed.
-	bool haveColorsChanged();
-
 	/// /returns Whether the mesh has any colors.
 	bool hasColors() const;
 
@@ -492,9 +445,6 @@ public:
 	/// Because OF uses ARB textures these are in pixels rather than 0-1 normalized coordinates.
 	/// \returns a vector of Vec2f representing the texture coordinates for the whole mesh. (read only)
 	const std::vector<T> & getTexCoords() const;
-
-	/// \returns If the texture coords of the mesh have changed, been added or removed.
-	bool haveTexCoordsChanged();
 
 	/// /returns Whether the mesh has any textures assigned to it.
 	bool hasTexCoords() const;
@@ -583,9 +533,6 @@ public:
 	/// \returns the vector that contains all of the indices of the mesh, if it has any. (read only)
 	const std::vector<ofIndexType> & getIndices() const;
 
-	/// \returns If the indices of the mesh have changed, been added or removed.
-	bool haveIndicesChanged();
-
 	/// /returns Whether the mesh has any indices assigned to it.
 	bool hasIndices() const;
 
@@ -655,6 +602,23 @@ public:
     void save(const std::filesystem::path& path, bool useBinary = false) const;
 
 	/// \}
+
+protected:
+
+	/// \returns If the vertices of the mesh have changed, been added or removed.
+	bool haveVertsChanged();
+
+	/// \returns If the normals of the mesh have changed, been added or removed.
+	bool haveNormalsChanged();
+
+	/// \returns If the colors of the mesh have changed, been added or removed.
+	bool haveColorsChanged();
+
+	/// \returns If the texture coords of the mesh have changed, been added or removed.
+	bool haveTexCoordsChanged();
+
+	/// \returns If the indices of the mesh have changed, been added or removed.
+	bool haveIndicesChanged();
 
 private:
 

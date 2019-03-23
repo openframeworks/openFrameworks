@@ -21,10 +21,10 @@ typedef enum {
 
 @protocol ESRenderer <NSObject>
 
-- (void) startRender;
-- (void) finishRender;
+- (void)startRender;
+- (void)finishRender;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
-- (EAGLContext*) context;
+- (EAGLContext*)context;
 
 - (NSInteger)getWidth;
 - (NSInteger)getHeight;

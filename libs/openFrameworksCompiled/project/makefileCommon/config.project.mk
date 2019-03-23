@@ -273,7 +273,7 @@ OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/build/%
 
 # create a list of all dirs in the project root that might be valid project
 # source directories
-ALL_OF_PROJECT_SOURCE_PATHS = $(shell $(FIND) $(PROJECT_ROOT) -mindepth 1 \
+ALL_OF_PROJECT_SOURCE_PATHS = $(shell $(FIND) $(PROJECT_ROOT)/src \
 														   -type d \
 														   -not -path "./bin/*" \
 														   -not -path "./obj/*" \
@@ -373,20 +373,20 @@ ifdef MAKEFILE_DEBUG
 	$(info ===================compile.project.make=============================)
 endif
 
-ifdef PLATFORM_CXX
-	CXX = $(PLATFORM_CXX)
-endif
-
 ifdef PROJECT_CXX
-	CXX = $(PROJECT_CXX)
+	CXX ?= $(PROJECT_CXX)
 endif
 
-ifdef PLATFORM_CC
-	CC = $(PLATFORM_CC)
+ifdef PLATFORM_CXX
+	CXX ?= $(PLATFORM_CXX)
 endif
 
 ifdef PROJECT_CC
-	CC = $(PROJECT_CC)
+	CC ?= $(PROJECT_CC)
+endif
+
+ifdef PLATFORM_CC
+	CC ?= $(PLATFORM_CC)
 endif
 
 # TODO: what is this for?

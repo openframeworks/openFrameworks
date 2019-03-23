@@ -17,7 +17,7 @@ void CirclesRenderer::setup(string name){
 	parameters.setName(name);
 	parameters.add(size.set("size",10,0,100));
 	parameters.add(number.set("number",2,1,20));
-	parameters.add(position.set("position",ofVec2f(ofGetWidth()*.5,ofGetHeight()*.5),ofVec2f(0,0),ofVec2f(ofGetWidth(),ofGetHeight())));
+	parameters.add(position.set("position",glm::vec2(ofGetWidth()*.5,ofGetHeight()*.5),glm::vec2(0,0),glm::vec2(ofGetWidth(),ofGetHeight())));
 
 	color.set("color",ofColor(127),ofColor(0,0),ofColor(255));
 

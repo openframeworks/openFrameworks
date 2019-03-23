@@ -168,6 +168,7 @@ FN_INTERNAL int send_cmd(freenect_device *dev, uint16_t cmd, void *cmdbuf, unsig
 	do {
 		actual_len = fnusb_control(&dev->usb_cam, 0xc0, 0, 0, 0, ibuf, 0x200);
 		FN_FLOOD("send_cmd: actual length = %d\n", actual_len);
+		usleep(1);
 	} while ((actual_len == 0) || (actual_len == 0x200));
 	FN_SPEW("Control reply: %d\n", res);
 	if (actual_len < (int)sizeof(*rhdr)) {

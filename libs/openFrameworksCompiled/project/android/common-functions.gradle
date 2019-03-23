@@ -42,7 +42,6 @@ def addonPaths(ofRoot){
 
 
 def parseAddonConfig(String addon, String param, String abi, defaultVal = []){
-    println "Parse addonconfig "+addon+"/addon_config.mk"
     def ret = defaultVal
 
     def file = new File(addon+"/addon_config.mk")
@@ -67,7 +66,7 @@ def parseAddonConfig(String addon, String param, String abi, defaultVal = []){
             def group = (stripLine =~ /^(\w+)\s*(\+?=)\s*(.+)$/)
             if(group.hasGroup() && group.size() == 1 && group[0].size() == 4){
                 if(group[0][1] == param) {
-                    def _p = group[0][3].replaceAll("%", "**/*")
+                    def _p = group[0][3].replaceAll("%", "*")
                     if (group[0][2] == '=') {
                         ret = [_p]
                     } else {
@@ -98,7 +97,7 @@ def addonSources(String root, String abi=""){
             ret += addon+'/'+path
         }
     }
-    println "\n\n Addon sources "+ret
+    println "\n\n ADDON_SOURCES "+ret+"\n\n"
 
     return ret
 }
@@ -124,7 +123,7 @@ def addonSourcesExclude(String root, String abi=""){
     }
 
 //    ret += "**/dlib/include/*"
-    println "\n exclude "+ret+"\n\n"
+    println "\n EXCLUDE "+ret+"\n\n"
     return ret
 }
 
@@ -132,21 +131,25 @@ def addonSourcesExclude(String root, String abi=""){
 def addonLdFlags(abi, ofRoot){
     def ret = []
     addonPaths(ofRoot).each { String addon ->
+        def libs = [];
+        fileTree(dir: addon + "/libs", include: "**/lib/android/" + abi + "/*.a")
+            .each{ lib -> libs += lib.getAbsolutePath(); };
+
         def config = parseAddonConfig(
                 addon,
                 "ADDON_LIBS",
-                abi
+                abi,
+                libs
         )
 
         config.each { String path ->
             def f = new File(addon+"/"+path)
             if(f.exists()) {
                 ret += f.toString();
-                println f.toString();
             }
         }
     }
-
+    println "\n ADDON_LIBS "+ret+"\n\n"
     return ret
 }
 
@@ -200,6 +203,7 @@ def addonCppFlags(abi, ofRoot){
             return "-I${folder}".toString()
         }*/
     }
+    println "\n ADDON_CFLAGS "+ret+"\n\n"
     return ret
 }
 
@@ -230,7 +234,7 @@ def addonJavaDependencies(root,abi=""){
             }
         }
     }
-
+    println "\n JAVA_LIBS "+ret+"\n\n"
     return ret
 }
 
@@ -291,7 +295,7 @@ def coreCppFlags(abi, ofRoot){
     def ofSource = ofRoot + 'libs/openFrameworks'
     def libs = ofRoot + 'libs'
 
-    return ["-std=c++14",
+    def ret = ["-std=c++14",
             "-Wall",
             "-frtti",
             "-fexceptions",
@@ -299,7 +303,6 @@ def coreCppFlags(abi, ofRoot){
             "-fno-short-enums",
             "-ffunction-sections",
             "-fdata-sections",
-
             "-I${file(ofSource)}".toString(),
             "-I${file(ofSource+"/3d")}".toString(),
             "-I${file(ofSource+"/app")}".toString(),
@@ -343,6 +346,10 @@ def coreCppFlags(abi, ofRoot){
             "-I${file(libs+'/libs/glu/include_android')}".toString()
 
     ]
+
+    println "\n CPP_FLAGS "+ret+"\n\n"
+
+    return ret;
 }
 
 def addonLdLibs(abi, ofRoot){
