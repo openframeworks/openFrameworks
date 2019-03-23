@@ -72,6 +72,8 @@ linux:
 	ADDON_LIBS += libs/poco/lib/linux/libPocoJSON.a
 	ADDON_LIBS += libs/poco/lib/linux/libPocoXML.a
 	ADDON_LIBS += libs/poco/lib/linux/libPocoFoundation.a
+	ADDON_LDFLAGS = -lcrypto
+	ADDON_LDFLAGS += -lssl
 
 linux64:
 	ADDON_LIBS = libs/poco/lib/linux64/libPocoNetSSL.a
@@ -81,24 +83,29 @@ linux64:
 	ADDON_LIBS += libs/poco/lib/linux64/libPocoJSON.a
 	ADDON_LIBS += libs/poco/lib/linux64/libPocoXML.a
 	ADDON_LIBS += libs/poco/lib/linux64/libPocoFoundation.a
+	ADDON_LDFLAGS = -lcrypto
+	ADDON_LDFLAGS += -lssl
 
 linuxarmv6l:
-	ADDON_LIBS = libs/poco/lib/linuxarmv6l/libPocoNetSSL.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv6l/libPocoNet.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv6l/libPocoCrypto.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv6l/libPocoUtil.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv6l/libPocoJSON.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv6l/libPocoXML.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv6l/libPocoFoundation.a
+	ADDON_LDFLAGS = -lPocoNetSSL
+	ADDON_LDFLAGS += -lPocoNet
+	ADDON_LDFLAGS += -lPocoCrypto
+	ADDON_LDFLAGS += -lPocoUtil
+	ADDON_LDFLAGS += -lPocoXML
+	ADDON_LDFLAGS += -lPocoFoundation
+	ADDON_LDFLAGS += -lcrypto
+	ADDON_LDFLAGS += -lssl
 
 linuxarmv7l:
-	ADDON_LIBS = libs/poco/lib/linuxarmv7l/libPocoNetSSL.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoNet.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoCrypto.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoUtil.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoJSON.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoXML.a
-	ADDON_LIBS += libs/poco/lib/linuxarmv7l/libPocoFoundation.a
+	ADDON_LDFLAGS = -lPocoNetSSL
+	ADDON_LDFLAGS += -lPocoNet
+	ADDON_LDFLAGS += -lPocoCrypto
+	ADDON_LDFLAGS += -lPocoUtil
+	ADDON_LDFLAGS += -lPocoJSON
+	ADDON_LDFLAGS += -lPocoXML
+	ADDON_LDFLAGS += -lPocoFoundation
+	ADDON_LDFLAGS += -lcrypto
+	ADDON_LDFLAGS += -lssl
 
 android/armeabi-v7a:
 	ADDON_INCLUDES = libs/poco/include/%
@@ -166,7 +173,11 @@ msys2:
 	ADDON_LDFLAGS += -lPocoJSON
 	ADDON_LDFLAGS += -lPocoXML
 	ADDON_LDFLAGS += -lPocoFoundation
+	ADDON_LDFLAGS += -lcrypto
+	ADDON_LDFLAGS += -lssl
 	ADDON_CFLAGS = -DPOCO_STATIC
 
 vs:
 	ADDON_CFLAGS = -DPOCO_STATIC
+	ADDON_CFLAGS += -DPOCO_NO_AUTOMATIC_LIBS
+	ADDON_LIBS += iphlpapi.lib

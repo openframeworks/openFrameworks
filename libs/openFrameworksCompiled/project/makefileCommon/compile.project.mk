@@ -3,12 +3,12 @@
 # define the OF_SHARED_MAKEFILES location
 OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon
 
-include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
-
 # if APPNAME is not defined, set it to the project dir name
 ifndef APPNAME
 	APPNAME = $(shell basename `pwd`)
 endif
+
+include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
 
 # Name TARGET
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
@@ -131,9 +131,6 @@ ifndef ABIS_TO_COMPILE_RELEASE
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) ReleaseABI ABI=$(abi) &&) echo
 endif
-ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
-	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
-endif
 
 
 
@@ -148,9 +145,6 @@ ifndef ABIS_TO_COMPILE_DEBUG
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) DebugABI ABI=$(abi) &&) echo
 endif
-ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
-	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
-endif
 
 ReleaseNoOF:
 	@echo Compiling $(APPNAME) for Release
@@ -158,9 +152,6 @@ ifndef ABIS_TO_COMPILE_RELEASE
 	@$(MAKE) ReleaseABI
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) ReleaseABI ABI=$(abi) &&) echo
-endif
-ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
-	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
 endif
 
 DebugNoOF:
@@ -170,15 +161,18 @@ ifndef ABIS_TO_COMPILE_DEBUG
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) DebugABI ABI=$(abi) &&) echo
 endif
-ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
-	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
-endif
 
 ReleaseABI: $(TARGET)
+ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
+	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
+endif
 	@$(MAKE) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_RELEASE)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 	@$(PROJECT_AFTER)
 
 DebugABI: $(TARGET)
+ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
+	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
+endif
 	@$(MAKE) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 	@$(PROJECT_AFTER)
 
@@ -444,6 +438,8 @@ after: $(TARGET_NAME)
 	@echo
 
 copyaddonsdata:
+	@echo 
+	@echo "Copying addons data"
 	@mkdir -p bin/data
 	@cp -rf $(PROJECT_ADDONS_DATA) bin/data/
 

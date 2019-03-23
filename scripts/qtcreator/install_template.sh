@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 # default path for Linux
 QTCREATOR_WIZARDS=${HOME}/.config/QtProject/qtcreator/templates/wizards/

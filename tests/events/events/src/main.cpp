@@ -56,34 +56,34 @@ class ofApp: public ofxUnitTestsApp{
 			ofEvent<const int> intEvent;
 			ofAddListener(intEvent, this, &ofApp::intListener);
 			ofAddListener(intEvent, intFunctListener);
-			auto listenerLambda = intEvent.newListener([&](const int & i){
+			ofEventListener listenerLambda(intEvent.newListener([&](const int & i){
 				lastIntFromLambda = i;
-			}, 0);
-			auto listenerMember = intEvent.newListener(this, &ofApp::intListenerWithToken);
-			auto listenerFunc = intEvent.newListener(intFunctListenerWithToken);
+			}, 0));
+			ofEventListener listenerMember(intEvent.newListener(this, &ofApp::intListenerWithToken));
+			ofEventListener listenerFunc(intEvent.newListener(intFunctListenerWithToken));
 
 			ofNotifyEvent(intEvent, 5);
-			test_eq(lastInt, 5, "Testing int event to member function");
-			test_eq(lastIntWithToken, 5, "Testing int event to member function with release token");
-			test_eq(lastIntFromLambda, 5, "Testing int event to lambda function");
-			test_eq(lastIntFromCFunc, 5, "Testing int event to c function");
-			test_eq(lastIntFromCFuncWithToken, 5, "Testing int event to c function with release token");
+			ofxTestEq(lastInt, 5, "Testing int event to member function");
+			ofxTestEq(lastIntWithToken, 5, "Testing int event to member function with release token");
+			ofxTestEq(lastIntFromLambda, 5, "Testing int event to lambda function");
+			ofxTestEq(lastIntFromCFunc, 5, "Testing int event to c function");
+			ofxTestEq(lastIntFromCFuncWithToken, 5, "Testing int event to c function with release token");
 
 			intEvent.disable();
 			ofNotifyEvent(intEvent, 6);
-			test_eq(lastInt, 5, "Testing disabled int event to member function");
-			test_eq(lastIntWithToken, 5, "Testing disabled int event to member function with release token");
-			test_eq(lastIntFromLambda, 5, "Testing disabled int event to lambda function");
-			test_eq(lastIntFromCFunc, 5, "Testing disabled int event to c function");
-			test_eq(lastIntFromCFuncWithToken, 5, "Testing disabled int event to c function with release token");
+			ofxTestEq(lastInt, 5, "Testing disabled int event to member function");
+			ofxTestEq(lastIntWithToken, 5, "Testing disabled int event to member function with release token");
+			ofxTestEq(lastIntFromLambda, 5, "Testing disabled int event to lambda function");
+			ofxTestEq(lastIntFromCFunc, 5, "Testing disabled int event to c function");
+			ofxTestEq(lastIntFromCFuncWithToken, 5, "Testing disabled int event to c function with release token");
 
 			intEvent.enable();
 			ofNotifyEvent(intEvent, 6);
-			test_eq(lastInt, 6, "Testing re-enabled int event to member function");
-			test_eq(lastIntWithToken, 6, "Testing re-enabled int event to member function with release token");
-			test_eq(lastIntFromLambda, 6, "Testing re-enabled int event to lambda function");
-			test_eq(lastIntFromCFunc, 6, "Testing re-enabled int event to c function");
-			test_eq(lastIntFromCFuncWithToken, 6, "Testing re-enabled int event to c function with release token");
+			ofxTestEq(lastInt, 6, "Testing re-enabled int event to member function");
+			ofxTestEq(lastIntWithToken, 6, "Testing re-enabled int event to member function with release token");
+			ofxTestEq(lastIntFromLambda, 6, "Testing re-enabled int event to lambda function");
+			ofxTestEq(lastIntFromCFunc, 6, "Testing re-enabled int event to c function");
+			ofxTestEq(lastIntFromCFuncWithToken, 6, "Testing re-enabled int event to c function with release token");
 
 			ofRemoveListener(intEvent, this, &ofApp::intListener);
 			ofRemoveListener(intEvent, &intFunctListener);
@@ -91,11 +91,11 @@ class ofApp: public ofxUnitTestsApp{
 			listenerMember.unsubscribe();
 			listenerFunc.unsubscribe();
 			ofNotifyEvent(intEvent, 5);
-			test_eq(lastInt, 6, "Testing remove listener on int event to member function");
-			test_eq(lastIntWithToken, 6, "Testing remove listener on int event to member function with release token");
-			test_eq(lastIntFromLambda, 6, "Testing remove listener on int event to lambda function");
-			test_eq(lastIntFromCFunc, 6, "Testing remove listener on int event to c function");
-			test_eq(lastIntFromCFuncWithToken, 6, "Testing remove listener on int event to c function with release token");
+			ofxTestEq(lastInt, 6, "Testing remove listener on int event to member function");
+			ofxTestEq(lastIntWithToken, 6, "Testing remove listener on int event to member function with release token");
+			ofxTestEq(lastIntFromLambda, 6, "Testing remove listener on int event to lambda function");
+			ofxTestEq(lastIntFromCFunc, 6, "Testing remove listener on int event to c function");
+			ofxTestEq(lastIntFromCFuncWithToken, 6, "Testing remove listener on int event to c function with release token");
 		}
 
 		{
@@ -113,48 +113,48 @@ class ofApp: public ofxUnitTestsApp{
 			lastIntFromCFunc = 0;
 			auto listener = selfUnregisterEvent.newListener(selfUnregister);
 			selfUnregisterEvent.notify(5);
-			test_eq(selfUnregisterValue, 5, "Testing remove listener on event callback, first call");
+			ofxTestEq(selfUnregisterValue, 5, "Testing remove listener on event callback, first call");
 			selfUnregisterEvent.notify(6);
-			test_eq(selfUnregisterValue, 5, "Testing remove listener on event callback, second call");
+			ofxTestEq(selfUnregisterValue, 5, "Testing remove listener on event callback, second call");
 		}
 
 		{
 			ofEvent<void> voidEvent;
 			ofAddListener(voidEvent, this, &ofApp::voidListener);
-			auto listenerVoidLambda = voidEvent.newListener([&]{
+			ofEventListener listenerVoidLambda(voidEvent.newListener([&]{
 				toggleForVoidLambdaListener = !toggleForVoidLambdaListener;
-			});
-			auto listenerVoidMember = voidEvent.newListener(this, &ofApp::voidListenerWithToken);
-			auto listenerVoidFunc = voidEvent.newListener(voidFunc);
+			}));
+			ofEventListener listenerVoidMember(voidEvent.newListener(this, &ofApp::voidListenerWithToken));
+			ofEventListener listenerVoidFunc(voidEvent.newListener(voidFunc));
 
 			voidEvent.notify();
-			test_eq(toggleForVoidListener, true, "Void event with member function");
-			test_eq(toggleForVoidLambdaListener, true, "Void event with lambda function");
-			test_eq(toggleForVoidListenerWithToken, true, "Void event with member function with release token");
-			test_eq(toggleVoidFunc, true, "Void event with c function");
+			ofxTestEq(toggleForVoidListener, true, "Void event with member function");
+			ofxTestEq(toggleForVoidLambdaListener, true, "Void event with lambda function");
+			ofxTestEq(toggleForVoidListenerWithToken, true, "Void event with member function with release token");
+			ofxTestEq(toggleVoidFunc, true, "Void event with c function");
 
 			voidEvent.disable();
 			voidEvent.notify();
-			test_eq(toggleForVoidListener, true, "Disabled void event with member function");
-			test_eq(toggleForVoidLambdaListener, true, "Disabled void event with lambda function");
-			test_eq(toggleForVoidListenerWithToken, true, "Disabled void event with member function with release token");
-			test_eq(toggleVoidFunc, true, "Disabled void event with c function");
+			ofxTestEq(toggleForVoidListener, true, "Disabled void event with member function");
+			ofxTestEq(toggleForVoidLambdaListener, true, "Disabled void event with lambda function");
+			ofxTestEq(toggleForVoidListenerWithToken, true, "Disabled void event with member function with release token");
+			ofxTestEq(toggleVoidFunc, true, "Disabled void event with c function");
 
 			voidEvent.enable();
 			voidEvent.notify();
-			test_eq(toggleForVoidListener, false, "Re-enabled void event with member function");
-			test_eq(toggleForVoidLambdaListener, false, "Re-enabled void event with lambda function");
-			test_eq(toggleForVoidListenerWithToken, false, "Re-enabled void event with member function with release token");
-			test_eq(toggleVoidFunc, false, "Re-enabled void event with c function");
+			ofxTestEq(toggleForVoidListener, false, "Re-enabled void event with member function");
+			ofxTestEq(toggleForVoidLambdaListener, false, "Re-enabled void event with lambda function");
+			ofxTestEq(toggleForVoidListenerWithToken, false, "Re-enabled void event with member function with release token");
+			ofxTestEq(toggleVoidFunc, false, "Re-enabled void event with c function");
 
 			ofRemoveListener(voidEvent, this, &ofApp::voidListener);
 			listenerVoidLambda.unsubscribe();
 			listenerVoidMember.unsubscribe();
 			listenerVoidFunc.unsubscribe();
-			test_eq(toggleForVoidListener, false, "Unregistered void event with member function");
-			test_eq(toggleForVoidLambdaListener, false, "Unregistered void event with lambda function");
-			test_eq(toggleForVoidListenerWithToken, false, "Unregistered void event with member function with release token");
-			test_eq(toggleVoidFunc, false, "Unregistered void event with c function");
+			ofxTestEq(toggleForVoidListener, false, "Unregistered void event with member function");
+			ofxTestEq(toggleForVoidLambdaListener, false, "Unregistered void event with lambda function");
+			ofxTestEq(toggleForVoidListenerWithToken, false, "Unregistered void event with member function with release token");
+			ofxTestEq(toggleVoidFunc, false, "Unregistered void event with c function");
 		}
 
 

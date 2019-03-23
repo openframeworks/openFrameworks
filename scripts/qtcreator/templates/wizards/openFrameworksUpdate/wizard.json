@@ -1,6 +1,7 @@
 {
     "version": 1,
     "kind": "project",
+    "supportedProjectTypes": [ "Qbs.QbsProject" ],
     "id": "R.OF ImportApplication",
     "category": "I.openFrameworks",
     "trDescription": "Updates an existing openFrameworks application using Qbs to build.\nAlso adds any addon from addons.make. Use this to open existing examples, old code...",
@@ -8,6 +9,7 @@
     "trDisplayCategory": "openFrameworks",
     "icon": "of.png",
     "enabled": "%{JS: [ %{Plugins} ].indexOf('QbsProjectManager') >= 0 }",
+    "featuresRequired": [  ],
 
     "options":
     [
@@ -119,6 +121,31 @@
                     }
                 }
             ]
+        },
+        {
+            "trDisplayName": "Console windows",
+            "trShortTitle": "Console",
+            "typeId": "Fields",
+            "data" :
+            [
+                {
+                    "name": "ConsoleWindow",
+                    "trDisplayName": "Create a console window when application start",
+                    "type": "CheckBox",
+                    "data": {
+                        "checkedValue": "true",
+                        "uncheckedValue": "false",
+                        "checked": "false"
+                    }
+                }
+            ]
+        },
+        {
+            "trDisplayName": "Kit Selection",
+            "trShortTitle": "Kits",
+            "typeId": "Kits",
+            "enabled": "%{JS: ! %{IsSubproject}}",
+            "data": { "projectFilePath": "%{ProjectFile}" }
         },
         {
             "trDisplayName": "Project Management",

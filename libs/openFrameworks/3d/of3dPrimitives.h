@@ -23,7 +23,7 @@ public:
     // does not store texture. Creates tex coords from texture, if texture is
     // non-arb, then it will create normalized tex coords //
     // defaults to index 0
-    void mapTexCoordsFromTexture( ofTexture& inTexture );
+    void mapTexCoordsFromTexture( const ofTexture& inTexture );
 
 
     ofMesh* getMeshPtr();
@@ -197,7 +197,7 @@ protected:
 /// 
 /// ~~~~
 /// 
-/// The sphere can look a little weird if you don't do ofEnabledDepthTesting() 
+/// The sphere can look a little weird if you don't do ofEnableDepthTest() 
 /// and ofDisableAlphaBlending().
 /// 
 

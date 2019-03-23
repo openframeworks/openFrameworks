@@ -496,6 +496,9 @@ std::vector <ofVideoDevice> ofAVFoundationGrabber::listDevices() const{
 }
 
 void ofAVFoundationGrabber::setDeviceID(int deviceID) {
+	if( grabber == nil ){
+		grabber = [OSXVideoGrabber alloc];
+	}
 	[grabber setDevice:deviceID];
 	device = deviceID;
 }

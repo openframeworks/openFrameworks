@@ -24,7 +24,7 @@ error() {
   fi
   echo $msg
   mail -s "Error creating nightly builds at $(date)." $REPORT_MAIL <<EOF
-$msg
+Error creating nightly builds
 $(if [ -f /home/ofadmin/logs/nightlybuilds.log ]; then cat /home/ofadmin/logs/nightlybuilds.log fi)
 $(if [ -f /home/ofadmin/logs/compilePG.log ]; then echo; echo; echo "PG compile log: "; cat /home/ofadmin/logs/compilePG.log fi)
 EOF
@@ -54,7 +54,6 @@ echo $currenthash>lasthash.txt
 ./create_package.sh linux64 $lastversion master gcc5
 ./create_package.sh linux64 $lastversion master gcc6
 ./create_package.sh msys2 $lastversion master
-./create_package.sh vs2015 $lastversion master
 ./create_package.sh vs2017 $lastversion master
 ./create_package.sh ios $lastversion master
 ./create_package.sh osx $lastversion master
@@ -72,7 +71,6 @@ mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc4_release.tar.gz /var/
 mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc6_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc6_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_nightly.zip
-mv /var/www/versions/nightly/of_v${lastversion}_vs2015_release.zip /var/www/versions/nightly/of_v${lastversion}_vs2015_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_vs2017_release.zip /var/www/versions/nightly/of_v${lastversion}_vs2017_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_ios_release.zip /var/www/versions/nightly/of_v${lastversion}_ios_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_osx_release.zip /var/www/versions/nightly/of_v${lastversion}_osx_nightly.zip
@@ -111,6 +109,6 @@ echo
 mail -s "Nightly builds $lastversion OK." $REPORT_MAIL <<EOF
 Successfully created nightly builds for ${lastversion}
 
-$(if [ -f /home/ofadmin/logs/nightlybuilds.log ]; then cat /home/ofadmin/logs/nightlybuilds.log fi)
+$(if [ -f /home/ofadmin/logs/nightlybuilds.log ]; then cat /home/ofadmin/logs/nightlybuilds.log; fi)
 EOF
 

@@ -376,7 +376,6 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 					b = buffer[intPosition+inChannels+j];
 					*resBufferPtr++ = ofLerp(a,b,remainder);
 				}
-				resBufferPtr+=inChannels;
 				position += increment;
 				intPosition = position;
 			}
@@ -501,7 +500,7 @@ void ofSoundBuffer::getChannel(ofSoundBuffer & targetBuffer, std::size_t sourceC
 	targetBuffer.setNumChannels(1);
 	targetBuffer.setSampleRate(samplerate);
 	if(channels == 1){
-		copyTo(targetBuffer, getNumFrames(), 0, 0);
+		copyTo(targetBuffer, getNumFrames(), 1, 0);
 	}else{
 		// fetch samples from only one channel
 		targetBuffer.resize(getNumFrames());

@@ -56,19 +56,19 @@
     CGFloat scaleFactorPref;
     
     BOOL bUseDepth;
-    BOOL bUseFSAA;
+    BOOL bUseMSAA;
     BOOL bUseRetina;
-    NSInteger fsaaSamples;
+    NSInteger msaaSamples;
     ESRendererVersion rendererVersion;
     
-	BOOL animating;
-	BOOL displayLinkSupported;
-	float animationFrameInterval;
-	// Use of the CADisplayLink class is the preferred method for controlling your animation timing.
-	// CADisplayLink will link to the main display and fire every vsync when added to a given run-loop.
-	// The NSTimer class is used only as fallback when running on a pre 3.1 device where CADisplayLink
-	// isn't available.
-	id displayLink;
+  BOOL animating;
+  BOOL displayLinkSupported;
+  float animationFrameInterval;
+  // Use of the CADisplayLink class is the preferred method for controlling your animation timing.
+  // CADisplayLink will link to the main display and fire every vsync when added to a given run-loop.
+  // The NSTimer class is used only as fallback when running on a pre 3.1 device where CADisplayLink
+  // isn't available.
+  id displayLink;
     NSTimer * animationTimer;
     
     NSLock * glLock;
@@ -82,31 +82,32 @@
 - (id)initWithFrame:(CGRect)frame
 andPreferedRenderer:(ESRendererVersion)rendererVersion
            andDepth:(bool)depth
-              andAA:(bool)fsaaEnabled
+              andAA:(bool)msaaEnabled
       andNumSamples:(int)samples
           andRetina:(bool)retinaEnabled
-     andRetinaScale:(CGFloat)retinaScale;
+     andRetinaScale:(CGFloat)retinaScale
+     sharegroup:(EAGLSharegroup*)sharegroup;
 
-- (void) startAnimation;
-- (void) stopAnimation;
-- (void) drawView;
+- (void)startAnimation;
+- (void)stopAnimation;
+- (void)drawView;
 
-- (void) lockGL;
-- (void) unlockGL;
+- (void)lockGL;
+- (void)unlockGL;
 
-- (void) startRender;
-- (void) finishRender;
+- (void)startRender;
+- (void)finishRender;
 
-- (void) destroy;
+- (void)destroy;
 
-- (EAGLContext *) context;
+- (EAGLContext *)context;
 
-- (GLint) getWidth;
-- (GLint) getHeight;
+- (GLint)getWidth;
+- (GLint)getHeight;
 
-- (void) notifyAnimationStarted;
-- (void) notifyAnimationStopped;
-- (void) notifyDraw;
-- (void) notifyResized;
+- (void)notifyAnimationStarted;
+- (void)notifyAnimationStopped;
+- (void)notifyDraw;
+- (void)notifyResized;
 
 @end

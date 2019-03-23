@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OF_MAIN_H
+#define OF_MAIN_H
 
 //--------------------------
 // utils
@@ -113,3 +114,5 @@
 
 //--------------------------
 using namespace std;
+
+#endif

@@ -462,11 +462,10 @@ void ofVbo::setAttributeDivisor(int location, int divisor){
 
 //--------------------------------------------------------------
 void ofVbo::updateMesh(const ofMesh & mesh){
-	ofMesh * nonconstMesh = (ofMesh*)&mesh;
-	if(nonconstMesh->haveVertsChanged()) updateVertexData(mesh.getVerticesPointer(),mesh.getNumVertices());
-	if(nonconstMesh->haveColorsChanged()) updateColorData(mesh.getColorsPointer(),mesh.getNumColors());
-	if(nonconstMesh->haveNormalsChanged()) updateNormalData(mesh.getNormalsPointer(),mesh.getNumNormals());
-	if(nonconstMesh->haveTexCoordsChanged()) updateTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords());
+	updateVertexData(mesh.getVerticesPointer(),mesh.getNumVertices());
+	updateColorData(mesh.getColorsPointer(),mesh.getNumColors());
+	updateNormalData(mesh.getNormalsPointer(),mesh.getNumNormals());
+	updateTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords());
 }
 
 //--------------------------------------------------------------

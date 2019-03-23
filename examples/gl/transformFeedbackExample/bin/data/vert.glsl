@@ -3,6 +3,7 @@
 out vec4 v_position;
 out vec4 v_color;
 uniform mat4 modelViewProjectionMatrix;
+uniform int numVertices;
 in vec4  position;
 const float PI = 3.141592;
 
@@ -31,7 +32,7 @@ vec3 hemisphereSample_uniform(uint i, uint N){
 }
 
 void main(){
-	vec3 pos = hemisphereSample_uniform(uint(gl_VertexID), uint(256));
+	vec3 pos = hemisphereSample_uniform(uint(gl_VertexID), uint(numVertices));
 	v_position = vec4(pos * -600, 1.0);
 	v_color = vec4(pos, 1.0);
 }

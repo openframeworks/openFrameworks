@@ -787,6 +787,70 @@ void ofPolyline_<T>::simplify(float tol){
 
 //--------------------------------------------------
 template<class T>
+void ofPolyline_<T>::translate(const glm::vec3 & p){
+    for(auto & point : points){
+        point += p;
+    }
+    flagHasChanged();
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::translate(const glm::vec2 &p){
+    translate(glm::vec3(p, 0.0));
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::rotateDeg(float degrees, const glm::vec3& axis){
+    rotateRad(ofDegToRad(degrees), axis);
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::rotateRad(float radians, const glm::vec3& axis){
+    for(auto & point : points){
+        point = glm::rotate(toGlm(point), radians, axis);
+    }
+    flagHasChanged();
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::rotate(float degrees, const glm::vec3 &axis){
+    rotateDeg(degrees, axis);
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::rotateDeg(float degrees, const glm::vec2& axis){
+    rotateRad(ofDegToRad(degrees), glm::vec3(axis, 0.0));
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::rotateRad(float radians, const glm::vec2& axis){
+    rotateRad(radians, glm::vec3(axis, 0.0));
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::rotate(float degrees, const glm::vec2 &axis){
+    rotateRad(ofDegToRad(degrees), glm::vec3(axis, 0.0));
+}
+
+//--------------------------------------------------
+template<class T>
+void ofPolyline_<T>::scale(float x, float y){
+    for(auto & point : points){
+        point.x *= x;
+        point.y *= y;
+    }
+    flagHasChanged();
+}
+
+//--------------------------------------------------
+template<class T>
 void ofPolyline_<T>::draw() const{
 	ofGetCurrentRenderer()->draw(*this);
 }
@@ -803,7 +867,6 @@ template<class T>
 T ofPolyline_<T>::getRightVector() const {
     return rightVector;
 }
-
 
 //--------------------------------------------------
 template<class T>

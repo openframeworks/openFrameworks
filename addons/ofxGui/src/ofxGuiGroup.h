@@ -74,16 +74,21 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		virtual ofAbstractParameter & getParameter();
 
-		virtual void setPosition(const ofPoint& p);
+		virtual void setPosition(const glm::vec3& p);
 		virtual void setPosition(float x, float y);
+		
+		void enableHeader();
+		void disableHeader();
+		bool isHeaderEnabled();
 	protected:
+		bool bHeaderEnabled = true;
 		virtual void render();
 		virtual bool setValue(float mx, float my, bool bCheck);
 		virtual void onMinimize();
 		virtual void onMaximize();
 
 		float spacing, spacingNextElement;
-		float header;
+		ofRectangle headerRect;
 
 		template <class ControlType>
 		ControlType & getControlType(const std::string& name);

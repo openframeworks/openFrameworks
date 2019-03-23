@@ -23,6 +23,7 @@
 		2E6EA7041603AA7A00B7ADF3 /* of3dGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */; };
 		2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */; };
 		2E6EA7081603AAD600B7ADF3 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */; };
+		30CC5385207A36FD008234AF /* ofMathConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 30CC5384207A36FD008234AF /* ofMathConstants.h */; };
 		53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EEEF49130766EF0027C199 /* ofMesh.h */; };
 		6678E96F19FEAFA900C00581 /* ofSoundBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6678E96D19FEAFA900C00581 /* ofSoundBuffer.cpp */; };
 		6678E97019FEAFA900C00581 /* ofSoundBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6678E96E19FEAFA900C00581 /* ofSoundBuffer.h */; };
@@ -180,6 +181,7 @@
 		2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dGraphics.cpp; sourceTree = "<group>"; };
 		2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dPrimitives.h; sourceTree = "<group>"; };
 		2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dPrimitives.cpp; sourceTree = "<group>"; };
+		30CC5384207A36FD008234AF /* ofMathConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofMathConstants.h; path = ofMathConstants.h; sourceTree = "<group>"; };
 		53EEEF49130766EF0027C199 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
 		6448E6FB1CAD7679000877BC /* ofMesh.inl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ofMesh.inl; sourceTree = "<group>"; };
 		6448E6FC1CAD771D000877BC /* ofPolyline.inl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ofPolyline.inl; sourceTree = "<group>"; };
@@ -488,7 +490,7 @@
 			indentWidth = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		E4F3BA5212F4C4BF002D19BB /* 3d */ = {
 			isa = PBXGroup;
@@ -536,6 +538,7 @@
 		E4F3BAB212F4C72E002D19BB /* math */ = {
 			isa = PBXGroup;
 			children = (
+				30CC5384207A36FD008234AF /* ofMathConstants.h */,
 				E4F3BAB312F4C72E002D19BB /* ofMath.cpp */,
 				E4F3BAB412F4C72E002D19BB /* ofMath.h */,
 				E4F3BAB512F4C72E002D19BB /* ofMatrix3x3.cpp */,
@@ -647,6 +650,7 @@
 				E4B5AE2112D94F9B00BA355D /* ofQuickTimeGrabber.h in Headers */,
 				692C298E19DC5C5500C27C5D /* ofTimer.h in Headers */,
 				E4F3BA6812F4C4BF002D19BB /* of3dUtils.h in Headers */,
+				30CC5385207A36FD008234AF /* ofMathConstants.h in Headers */,
 				E4F3BA6A12F4C4BF002D19BB /* ofCamera.h in Headers */,
 				E4F3BA6C12F4C4BF002D19BB /* ofEasyCam.h in Headers */,
 				E4F3BA7412F4C4BF002D19BB /* ofNode.h in Headers */,

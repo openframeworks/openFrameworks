@@ -29,7 +29,4 @@ public:
     vector <string> words;
     int step;
     
-    bool bRandomVoice;
-    string voice;
-    
 };

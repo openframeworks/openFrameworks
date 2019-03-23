@@ -176,21 +176,25 @@ getRange(Type min, Type max, float width){
 
 template<typename Type>
 bool ofxSlider<Type>::mouseScrolled(ofMouseEventArgs & args){
-	if(state==Slider){
-		if(mouseInside){
-			if(args.scrollY>0 || args.scrollY<0){
-				double range = getRange(value.getMin(),value.getMax(),b.width);
-				Type newValue = value + ofMap(args.scrollY,-1,1,-range, range);
-				newValue = ofClamp(newValue,value.getMin(),value.getMax());
-				value = newValue;
+	if(isGuiDrawing()){
+		if(state==Slider){
+			if(mouseInside){
+				if(args.scrollY>0 || args.scrollY<0){
+					double range = getRange(value.getMin(),value.getMax(),b.width);
+					Type newValue = value + ofMap(args.scrollY,-1,1,-range, range);
+					newValue = ofClamp(newValue,value.getMin(),value.getMax());
+					value = newValue;
+				}
+				return true;
+			}else{
+				return false;
 			}
-			return true;
 		}else{
-			return false;
+			// the following will always return false as it is inside the slider.
+//			return input.mouseScrolled(args);
 		}
-	}else{
-		return isGuiDrawing() && input.mouseScrolled(args);
 	}
+	return false;
 }
 
 
@@ -228,8 +232,9 @@ template<typename Type>
 void ofxSlider<Type>::generateText(){
 	string valStr = toString(value.get());
 	auto inputWidth = getTextBoundingBox(valStr,0,0).width;
-	auto label = getTextBoundingBox(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	auto value = getTextBoundingBox(valStr, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4);
+	auto yPos = getTextVCenteredInRect(b);
+	auto label = getTextBoundingBox(getName(), b.x + textPadding, yPos);
+	auto value = getTextBoundingBox(valStr, b.x + b.width - textPadding - inputWidth, yPos);
 	overlappingLabel = label.getMaxX() > value.x;
 
 	textMesh.clear();
@@ -248,10 +253,10 @@ void ofxSlider<Type>::generateText(){
 		}else{
 			name = getName();
 		}
-		textMesh.append(getTextMesh(name, b.x + textPadding, b.y + b.height / 2 + 4));
+		textMesh.append(getTextMesh(name, b.x + textPadding, yPos));
 	}
 	if(!overlappingLabel || mouseInside){
-		textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
+		textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, yPos));
 	}
 }
 
@@ -332,7 +337,7 @@ void ofxSlider<Type>::valueChanged(Type & value){
 }
 
 template<typename Type>
-void ofxSlider<Type>::setPosition(const ofPoint & p){
+void ofxSlider<Type>::setPosition(const glm::vec3 & p){
 	ofxBaseGui::setPosition(p);
 	input.setPosition(p);
 }

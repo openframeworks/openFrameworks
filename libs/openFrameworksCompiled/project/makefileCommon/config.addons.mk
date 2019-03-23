@@ -199,7 +199,7 @@ define parse_addon
 	) \
 	$(foreach addon_dep, $(strip $(ADDON_DEPENDENCIES)), \
 		$(if $(filter %$(addon_dep), $(PROJECT_ADDONS)), \
-		, \ #else
+		, \
 			$(eval PROJECT_ADDONS += $(addon_dep)) \
 			$(call parse_addon,$(addon_dep)) \
 		) \
@@ -261,4 +261,6 @@ ifdef MAKEFILE_DEBUG
 	$(foreach v, $(PROJECT_ADDONS_INCLUDES_CFLAGS),$(info $(v)))
 	$(info ---PROJECT_ADDONS_LDFLAGS---)
 	$(foreach v, $(PROJECT_ADDONS_LDFLAGS),$(info $(v)))
+	$(info ---PROJECT_ADDONS_DATA---)
+	$(foreach v, $(PROJECT_ADDONS_DATA),$(info $(v)))
 endif

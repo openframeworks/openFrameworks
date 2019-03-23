@@ -212,6 +212,11 @@ void ofPath::arc(const glm::vec2 & centre, float radiusX, float radiusY, float a
 //----------------------------------------------------------
 void ofPath::arc(const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	if(mode==COMMANDS){
+		//addCommand adds a moveTo if one hasn't been set, but in this case it is adding a moveTo to the center of the arc and not the beginning of the arc
+		if(commands.empty() || commands.back().type==Command::close){
+			glm::vec3 start = centre + glm::vec3( glm::cos( glm::radians(angleBegin) ) * radiusX, glm::sin( glm::radians(angleBegin) ) * radiusY, 0.0f );
+			commands.push_back(Command(Command::moveTo,start));
+		}
 		addCommand(Command(Command::arc,centre,radiusX,radiusY,angleBegin,angleEnd));
 	}else{
 		lastPolyline().arc(centre,radiusX,radiusY,angleBegin,angleEnd,circleResolution);
@@ -237,6 +242,10 @@ void ofPath::arc(float x, float y, float z, float radiusX, float radiusY, float 
 //----------------------------------------------------------
 void ofPath::arcNegative(const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	if(mode==COMMANDS){
+		if(commands.empty() || commands.back().type==Command::close){
+			glm::vec3 start = centre + glm::vec3( glm::cos( glm::radians(angleBegin) ) * radiusX, glm::sin( glm::radians(angleBegin) ) * radiusY, 0.0f );
+			commands.push_back(Command(Command::moveTo,start));
+		}
 		addCommand(Command(Command::arcNegative,centre,radiusX,radiusY,angleBegin,angleEnd));
 	}else{
 		lastPolyline().arcNegative(centre,radiusX,radiusY,angleBegin,angleEnd,circleResolution);
@@ -787,40 +796,60 @@ void ofPath::translate(const glm::vec2 & p){
 }
 
 //----------------------------------------------------------
-void ofPath::rotate(float az, const glm::vec3& axis ){
-	auto radians = ofDegToRad(az);
-	if(mode==COMMANDS){
-		for(int j=0;j<(int)commands.size();j++){
-			commands[j].to = glm::rotate(commands[j].to, radians, axis);
-			if(commands[j].type==Command::bezierTo || commands[j].type==Command::quadBezierTo){
-				commands[j].cp1 = glm::rotate(commands[j].cp1, radians, axis);
-				commands[j].cp2 = glm::rotate(commands[j].cp2, radians, axis);
-			}
-			if(commands[j].type==Command::arc || commands[j].type==Command::arcNegative){
-				commands[j].angleBegin += az;
-				commands[j].angleEnd += az;
-			}
-		}
-	}else{
-		for(int i=0;i<(int)polylines.size();i++){
-			for(int j=0;j<(int)polylines[i].size();j++){
-				polylines[i][j] = glm::rotate(toGlm(polylines[i][j]), radians, axis);
-			}
-		}
-	}
-	flagShapeChanged();
+
+void ofPath::rotateDeg(float degrees, const glm::vec3& axis ){
+    auto radians = ofDegToRad(degrees);
+    if(mode==COMMANDS){
+        for(int j=0;j<(int)commands.size();j++){
+            commands[j].to = glm::rotate(commands[j].to, radians, axis);
+            if(commands[j].type==Command::bezierTo || commands[j].type==Command::quadBezierTo){
+                commands[j].cp1 = glm::rotate(commands[j].cp1, radians, axis);
+                commands[j].cp2 = glm::rotate(commands[j].cp2, radians, axis);
+            }
+            if(commands[j].type==Command::arc || commands[j].type==Command::arcNegative){
+                commands[j].angleBegin += degrees;
+                commands[j].angleEnd += degrees;
+            }
+        }
+    }else{
+        for(int i=0;i<(int)polylines.size();i++){
+            for(int j=0;j<(int)polylines[i].size();j++){
+                polylines[i][j] = glm::rotate(toGlm(polylines[i][j]), radians, axis);
+            }
+        }
+    }
+    flagShapeChanged();
 }
 
 //----------------------------------------------------------
-void ofPath::rotate(float az, const glm::vec2& axis ){
-	rotate(az, glm::vec3(axis, 0.0));
+void ofPath::rotateRad(float radians, const glm::vec3& axis ){
+    rotateDeg(ofRadToDeg(radians), axis);
 }
 
+//----------------------------------------------------------
+void ofPath::rotate(float degrees, const glm::vec3& axis ){
+    rotateDeg(degrees, axis);
+}
+
+//----------------------------------------------------------
+void ofPath::rotate(float degrees, const glm::vec2& axis ){
+    rotateDeg(degrees, glm::vec3(axis, 0.0));
+}
+
+//----------------------------------------------------------
+void ofPath::rotateDeg(float degrees, const glm::vec2& axis){
+    rotateDeg(degrees, glm::vec3(axis, 0.0));
+}
+
+//----------------------------------------------------------
+void ofPath::rotateRad(float radians, const glm::vec2& axis){
+    rotateRad(radians, glm::vec3(axis, 0.0));
+}
 
 //----------------------------------------------------------
 void ofPath::scale(float x, float y){
 	if(mode==COMMANDS){
-		for(int j=0;j<(int)commands.size();j++){
+        for(std::size_t j=0;j<commands.size();j++){
 			commands[j].to.x*=x;
 			commands[j].to.y*=y;
 			if(commands[j].type==Command::bezierTo || commands[j].type==Command::quadBezierTo){
@@ -835,8 +864,8 @@ void ofPath::scale(float x, float y){
 			}
 		}
 	}else{
-		for(int i=0;i<(int)polylines.size();i++){
-			for(int j=0;j<(int)polylines[i].size();j++){
+		for(std::size_t i=0;i<polylines.size();i++){
+			for(std::size_t j=0;j<polylines[i].size();j++){
 				polylines[i][j].x*=x;
 				polylines[i][j].y*=y;
 			}

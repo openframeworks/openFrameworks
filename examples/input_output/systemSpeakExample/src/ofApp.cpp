@@ -1,13 +1,10 @@
 #include "ofApp.h"
 
-static string voices[24] = {"Agnes", "Albert", "Alex", "Bad News", "Bahh", "Bells", "Boing", "Bruce", "Bubbles", "Cellos", "Deranged", "Fred", "Good News", "Hysterical", "Junior", "Kathy", "Pipe Organ", "Princess", "Ralph", "Trinoids", "Vicki", "Victoria", "Whisper", "Zarvox"};
 
 //--------------------------------------------------------------
 void ofApp::setup() {
 
 	font.load("verdana.ttf", 34);
-	voice = "Cellos";
-	bRandomVoice = false;
 
 	// load the lyrics from a text file and split them
 	// up in to a vector of strings
@@ -28,7 +25,7 @@ void ofApp::threadedFunction() {
 
 		// call the system command say
 		#ifdef TARGET_OSX
-			string cmd = "say -v " + voice + " " + words[step] + " "; // create the command
+			string cmd = "say -v " + words[step] + " "; // create the command
 		#endif
 		#ifdef TARGET_WIN32
 			string cmd = "data\\SayStatic.exe " + words[step];        // create the command
@@ -53,9 +50,6 @@ void ofApp::threadedFunction() {
 //--------------------------------------------------------------
 void ofApp::update() {
 	// get a random voice
-	if(bRandomVoice) {
-		voice = voices[(int)ofRandom(24)];
-	}
 }
 
 
@@ -78,13 +72,7 @@ void ofApp::exit() {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
-	if(key == 'r') {
-		bRandomVoice = !bRandomVoice;
-	}
 
-	if(key == ' ') {
-		voice = voices[(int)ofRandom(24)];
-	}
 }
 
 //--------------------------------------------------------------

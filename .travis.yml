@@ -1,7 +1,6 @@
 language: c++
 compiler: gcc
 sudo: true
-cache: ccache
 env:
   global:
     secure: LBTN8d1hS7ocrqDwxLQqU0tfK3FMCXBI8q1yASEjtkp/v5HEyFkbj22H4jXZ20SkpCTlIG2L6i/fU3d6KzJUzTFuxkQEWsnjkj4jAhxGEWRsT1RV6VcUPQDGLHapXwTy+ZYgMNxE7aAdQaBskPHdVzAhjrzlTwVuKp6KjFn+kMU=
@@ -15,6 +14,7 @@ matrix:
     dist: trusty
     sudo: required
     env: TARGET="linux64"
+    cache: ccache
     addons:
       apt:
         sources:
@@ -46,6 +46,7 @@ matrix:
     sudo: required
     dist: trusty
     env: TARGET="linuxarmv6l"
+    cache: ccache
 
 
   - os: linux
@@ -56,7 +57,7 @@ matrix:
       directories:
         - ~/.ccache
         #- ~/rpi2_toolchain
-        - ~/firmware-master
+        # - ~/firmware-master
         #- ~/archlinux
 
 
@@ -64,46 +65,61 @@ matrix:
     sudo: required
     dist: trusty
     env: TARGET="emscripten"
-    addons:
-      apt:
-        sources:
-          - ubuntu-toolchain-r-test
-        packages:
-          - libstdc++6
+    services:
+      - docker
+    before_install:
+      - docker run -dit --name emscripten -v $(pwd):/src trzeci/emscripten:sdk-incoming-64bit bash
 
   - os: osx
-    osx_image: xcode8
+    osx_image: xcode9.4
     compiler: clang
     env: TARGET="osx"
+    cache: ccache
 
   - os: osx
-    osx_image: xcode8
+    osx_image: xcode9.4
     compiler: clang
     env: TARGET="osx" OPT="makefiles"
+    cache: ccache
 
   - os: osx
-    osx_image: xcode8
+    osx_image: xcode9.4
     compiler: clang
     env: TARGET="ios"
+    cache: ccache
 
   - os: osx
-    osx_image: xcode8
+    osx_image: xcode9.4
     compiler: clang
     env: TARGET="tvos"
+    cache: ccache
 
   - os: linux
     language: android
     dist: trusty
     sudo: required
-    env: TARGET="android" NDK_DIR="android-ndk-r15c"
+    env: TARGET="android" NDK_DIR="android-ndk-r15c" GRADLE_TARGET="compileArm7DebugSources"
     android:
       components:
-        - build-tools-25.0.2
-        - android-19
+        - build-tools-25.0.3
+        - android-25
     cache:
       directories:
         - ~/.gradle
-        # - ~/.ccache
+        - ~/android-ndk-r15c
+
+  - os: linux
+    language: android
+    dist: trusty
+    sudo: required
+    env: TARGET="android" NDK_DIR="android-ndk-r15c" GRADLE_TARGET="compileX86DebugSources"
+    android:
+      components:
+        - build-tools-25.0.3
+        - android-25
+    cache:
+      directories:
+        - ~/.gradle
         - ~/android-ndk-r15c
 
 
@@ -138,6 +154,8 @@ script:
     fi
   - if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
       scripts/ci/$TARGET/run_tests.sh;
+    elif [ "$TARGET" = "emscripten" ]; then
+      docker exec -it emscripten sh -c "scripts/ci/$TARGET/build.sh $OPT";
     else
       scripts/ci/$TARGET/build.sh $OPT;
     fi

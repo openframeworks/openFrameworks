@@ -143,6 +143,7 @@ private:
 		GLsizeiptr size;
 		GLenum lastTarget;
 		bool isBound;
+		bool isDSA;
 	};
 	std::shared_ptr<Data> data;
 };

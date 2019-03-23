@@ -26,11 +26,11 @@ static void noopDeleter(ofBaseLoggerChannel*){}
 
 shared_ptr<ofBaseLoggerChannel> & ofLog::channel(){
 #ifdef TARGET_ANDROID
-	static shared_ptr<ofBaseLoggerChannel> channel = shared_ptr<ofxAndroidLogChannel>(new ofxAndroidLogChannel, std::ptr_fun(noopDeleter));
+	static shared_ptr<ofBaseLoggerChannel> channel = shared_ptr<ofxAndroidLogChannel>(new ofxAndroidLogChannel, std::function<void(ofBaseLoggerChannel *)>(noopDeleter));
 #elif defined(TARGET_WIN32)
-	static shared_ptr<ofBaseLoggerChannel> channel = IsDebuggerPresent() ? shared_ptr<ofBaseLoggerChannel>(new ofDebugViewLoggerChannel, std::ptr_fun(noopDeleter)) : shared_ptr<ofBaseLoggerChannel>(new ofConsoleLoggerChannel, std::ptr_fun(noopDeleter));
+	static shared_ptr<ofBaseLoggerChannel> channel = IsDebuggerPresent() ? shared_ptr<ofBaseLoggerChannel>(new ofDebugViewLoggerChannel, std::function<void(ofBaseLoggerChannel *)>(noopDeleter)) : shared_ptr<ofBaseLoggerChannel>(new ofConsoleLoggerChannel, std::function<void(ofBaseLoggerChannel *)>(noopDeleter));
 #else
-	static shared_ptr<ofBaseLoggerChannel> channel = shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,std::ptr_fun(noopDeleter));
+	static shared_ptr<ofBaseLoggerChannel> channel = shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel, std::function<void(ofBaseLoggerChannel *)>(noopDeleter));
 #endif
 
 	return channel;
@@ -67,12 +67,12 @@ void ofLogToFile(const std::filesystem::path & path, bool append){
 
 //--------------------------------------------------
 void ofLogToConsole(){
-	ofLog::setChannel(shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,std::ptr_fun(noopDeleter)));
+	ofLog::setChannel(shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel, std::function<void(ofBaseLoggerChannel *)>(noopDeleter)));
 }
 
 #ifdef TARGET_WIN32
 void ofLogToDebugView() {
-	ofLog::setChannel(shared_ptr<ofDebugViewLoggerChannel>(new ofDebugViewLoggerChannel, std::ptr_fun(noopDeleter)));
+	ofLog::setChannel(shared_ptr<ofDebugViewLoggerChannel>(new ofDebugViewLoggerChannel, std::function<void(ofBaseLoggerChannel *)>(noopDeleter)));
 }
 #endif
 

@@ -9,6 +9,8 @@ if [ $EUID != 0 ]; then
    exit 1
 fi
 
+ROOT=$(cd $(dirname $0); pwd -P)
+
 apt-get update
 
 GSTREAMER_VERSION=0.10
@@ -54,8 +56,8 @@ fi
 
 if [ -f /opt/vc/include/bcm_host.h ]; then
     echo "detected Raspberry Pi"
-    echo "installing gstreamer omx"
-    apt-get install  gstreamer${GSTREAMER_VERSION}-omx
+    echo "installing gstreamer omx and poco"
+    apt-get install  gstreamer${GSTREAMER_VERSION}-omx libpoco-dev
 fi
 
 OS_CODENAME=$(cat /etc/os-release | grep VERSION= | sed "s/VERSION\=\"\(.*\)\"/\1/")
@@ -68,3 +70,19 @@ if [ "$OS_CODENAME" = "7 (wheezy)" ]; then
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 1 --force
 fi
 
+echo "If you are running a version of debian greated than 8 OF needs to install poco libraries in the system with the following packages:"
+apt-get install libpoco-dev
+cp $ROOT/../extra/poco_config.mk $ROOT/../../../addons/ofxPoco/addon_config.mk
+
+# Update addon_config.mk files to use OpenCV 3 or 4 depending on what's installed
+addons_dir="$(readlink -f "$ROOT/../../../addons")"
+$(pkg-config opencv4 --exists)
+exit_code=$?
+if [ $exit_code != 0 ]; then
+	echo "Updating ofxOpenCV to use openCV3"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv4(.*)$/ADDON_PKG_CONFIG_LIBRARIES =\1opencv\2/' "$addons_dir/ofxOpenCv/addon_config.mk"
+else
+	echo "Updating ofxOpenCV to use openCV4"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv\s/ADDON_PKG_CONFIG_LIBRARIES =\1opencv4 /g' "$addons_dir/ofxOpenCv/addon_config.mk"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv$/ADDON_PKG_CONFIG_LIBRARIES =\1opencv4/g' "$addons_dir/ofxOpenCv/addon_config.mk"
+fi

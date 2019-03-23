@@ -24,13 +24,13 @@ else
     libs_abi=""
 fi
 
-REPO=../..
+REPO=https://github.com/openframeworks/openFrameworks.git
 REPO_ALIAS=originlocal
 BRANCH=$branch
 
 PG_REPO=https://github.com/openframeworks/projectGenerator.git
 PG_REPO_ALIAS=originhttps
-PG_BRANCH=$branch
+PG_BRANCH=master
 
 hostArch=`uname`
 
@@ -163,7 +163,7 @@ function deleteEclipse {
 
 
 function createProjectFiles {
-    if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
+    if [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
         mkdir -p ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
         cd ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
         rm -f ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a
@@ -184,7 +184,12 @@ function createProjectFiles {
 
         cd ${pkg_ofroot}
         echo "Creating project files for $pkg_platform"
-        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pkg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
+        if [ "$pkg_platform" == "vs2015" ] || [ "$pkg_platform" == "vs2017" ]; then
+            pg_platform="vs"
+        else
+            pg_platform=$pkg_platform
+        fi
+        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
     elif [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
         for example_group in $pkg_ofroot/examples/*; do
             for example in $example_group/*; do
@@ -214,7 +219,7 @@ function createPackage {
     rm -r $pkg_ofroot/apps/devApps
 
     #remove projectGenerator folder
-    if [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "msys2" ]; then
+    if [ "$pkg_platform" = "msys2" ]; then
     	rm -rf $pkg_ofroot/apps/projectGenerator
     fi
 
@@ -249,6 +254,7 @@ function createPackage {
 		rm -Rf templates
 		rm -Rf threads
 		rm -Rf video
+        rm -Rf windowing
 	fi
 
 	#delete osx examples in linux
@@ -283,11 +289,14 @@ function createPackage {
         rm -Rf gl/pixelBufferExample
         rm -Rf gl/textureBufferInstancedExample
         rm -Rf gl/threadedPixelBufferExample
+        rm -Rf gl/transformFeedbackExample
 
         rm -Rf utils/systemSpeakExample
         rm -Rf utils/fileBufferLoadingCSVExample
 
         rm -Rf 3d/modelNoiseExample
+
+        rm -Rf windowing
     fi
 
     if [ "$pkg_platform" == "linuxarmv6l" ]; then
@@ -305,128 +314,13 @@ function createPackage {
 	    rm -Rf gles
 	    rm -Rf gl/computeShaderParticlesExample
 	    rm -Rf gl/computeShaderTextureExample
+        rm -Rf gl/transformFeedbackExample
 	fi
 
 
 
 	#delete tutorials by now
 	rm -Rf $pkg_ofroot/tutorials
-
-
-
-    #create project files for platform
-    createProjectFiles $pkg_platform $pkg_ofroot
-
-
-    #delete other platform libraries
-    if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 linuxarmv6l linuxarmv7l osx msys2 vs2015 vs2017 ios tvos android"
-    fi
-
-    if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux linuxarmv6l linuxarmv7l osx msys2 vs2015 vs2017 ios tvos android"
-    fi
-
-    if [ "$pkg_platform" = "linuxarmv6l" ]; then
-        otherplatforms="linux64 linux linuxarmv7l osx msys2 vs2015 vs2017 ios tvos android"
-    fi
-
-    if [ "$pkg_platform" = "linuxarmv7l" ]; then
-        otherplatforms="linux64 linux linuxarmv6l osx msys2 vs2015 vs2017 ios tvos android"
-    fi
-
-    if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs2015 vs2017 ios tvos android"
-    fi
-
-    if [ "$pkg_platform" = "msys2" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs2015 vs2017 ios tvos android"
-    fi
-
-    if [ "$pkg_platform" = "vs2015" ] || [ "$pkg_platform" = "vs2017" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 ios tvos android"
-    fi
-
-    if [ "$pkg_platform" = "ios" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs2015 vs2017 android osx"
-    fi
-
-    if [ "$pkg_platform" = "android" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 vs2015 vs2017 ios tvos"
-    fi
-
-
-	#download and uncompress PG
-	echo "Creating projectGenerator"
-	mkdir -p $HOME/.tmp
-	export TMPDIR=$HOME/.tmp
-    if [ "$pkg_platform" = "vs2015" ] || [ "$pkg_platform" = "vs2017" ]; then
-		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-		npm install > /dev/null
-		npm run build:vs > /dev/null
-		mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-vs
-		cd ${pkg_ofroot}
-		rm -rf apps/projectGenerator
-		cd ${pkg_ofroot}/projectGenerator-vs/resources/app/app/
-		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip 2> /dev/null
-		unzip projectGenerator-vs.zip 2> /dev/null
-		rm projectGenerator-vs.zip
-		cd ${pkg_ofroot}
-		sed -i "s/osx/vs/g" projectGenerator-vs/resources/app/settings.json
-	fi
-    if [ "$pkg_platform" = "osx" ]; then
-		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-		npm install > /dev/null
-		npm run build:osx > /dev/null
-		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-osx
-		cd ${pkg_ofroot}
-		rm -rf apps/projectGenerator
-		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
-		sed -i "s/osx/osx/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
-	fi
-    if [ "$pkg_platform" = "ios" ]; then
-		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-		npm install > /dev/null
-		npm run build:osx > /dev/null
-		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-ios
-		cd ${pkg_ofroot}
-		rm -rf apps/projectGenerator
-		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator_osx -O projectGenerator-ios/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
-		sed -i "s/osx/ios/g" projectGenerator-ios/projectGenerator.app/Contents/Resources/app/settings.json
-	fi
-
-	if [ "$pkg_platform" = "linux" ]; then
-		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-		npm install > /dev/null
-		npm run build:linux32 > /dev/null
-		mv dist/projectGenerator-linux-ia32 ${pkg_ofroot}/projectGenerator-linux
-		cd ${pkg_ofroot}
-		sed -i "s/osx/linux/g" projectGenerator-linux/resources/app/settings.json
-	fi
-
-	if [ "$pkg_platform" = "linux64" ]; then
-		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-		npm install > /dev/null
-		npm run build:linux64 > /dev/null
-		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
-		cd ${pkg_ofroot}
-		sed -i "s/osx/linux64/g" projectGenerator-linux64/resources/app/settings.json
-	fi
-
-	# linux remove other platform projects from PG source and copy ofxGui
-	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
-	    cd ${pkg_ofroot}
-		mv apps/projectGenerator/commandLine .
-		mv apps/projectGenerator/ofxProjectGenerator .
-		rm -rf apps/projectGenerator
-		mkdir apps/projectGenerator
-		mv commandLine apps/projectGenerator/
-		mv ofxProjectGenerator apps/projectGenerator/
-		cd apps/projectGenerator/commandLine
-		deleteCodeblocks
-		deleteVS
-		deleteXcode
-	fi
 
     #download external dependencies
     cd $pkg_ofroot/
@@ -451,6 +345,142 @@ function createPackage {
     elif [ "$pkg_platform" = "ios" ]; then
         scripts/ios/download_libs.sh
     fi
+
+    #create project files for platform
+    createProjectFiles $pkg_platform $pkg_ofroot
+
+
+    #delete other platform libraries
+    if [ "$pkg_platform" = "linux" ]; then
+        otherplatforms="linux64 linuxarmv6l linuxarmv7l osx msys2 vs ios tvos android"
+    fi
+
+    if [ "$pkg_platform" = "linux64" ]; then
+        otherplatforms="linux linuxarmv6l linuxarmv7l osx msys2 vs ios tvos android"
+    fi
+
+    if [ "$pkg_platform" = "linuxarmv6l" ]; then
+        otherplatforms="linux64 linux linuxarmv7l osx msys2 vs ios tvos android"
+    fi
+
+    if [ "$pkg_platform" = "linuxarmv7l" ]; then
+        otherplatforms="linux64 linux linuxarmv6l osx msys2 vs ios tvos android"
+    fi
+
+    if [ "$pkg_platform" = "osx" ]; then
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs ios tvos android"
+    fi
+
+    if [ "$pkg_platform" = "msys2" ]; then
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs ios tvos android"
+    fi
+
+    if [ "$pkg_platform" = "vs2015" ] || [ "$pkg_platform" = "vs2017" ]; then
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 ios tvos android"
+    fi
+
+    if [ "$pkg_platform" = "ios" ]; then
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l msys2 vs android osx"
+    fi
+
+    if [ "$pkg_platform" = "android" ]; then
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx msys2 vs ios tvos"
+    fi
+
+
+	#download and uncompress PG
+	echo "Creating projectGenerator"
+	mkdir -p $HOME/.tmp
+	export TMPDIR=$HOME/.tmp
+    if [ "$pkg_platform" = "vs2015" ] || [ "$pkg_platform" = "vs2017" ]; then
+		cd ${pkg_ofroot}/apps/projectGenerator/frontend
+		npm install > /dev/null
+		npm run build:vs > /dev/null
+		mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-vs
+		cd ${pkg_ofroot}
+		rm -rf apps/projectGenerator
+		cd ${pkg_ofroot}/projectGenerator-vs/resources/app/app/
+		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip 2> /dev/null
+		unzip projectGenerator-vs.zip 2> /dev/null
+		rm projectGenerator-vs.zip
+		cd ${pkg_ofroot}
+		sed -i "s/osx/vs/g" projectGenerator-vs/resources/app/settings.json
+	fi
+
+    if [ "$pkg_platform" = "osx" ]; then
+		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip 2> /dev/null
+        unzip projectGenerator-osx.zip
+        mv projectGenerator-osx projectGenerator
+        rm projectGenerator-osx.zip
+        sed -i "s/osx/$pkg_platform/g" projectGenerator/projectGenerator.app/Contents/Resources/app/settings.json
+		rm -rf apps/projectGenerator
+	fi
+
+    if [ "$pkg_platform" = "ios" ]; then
+		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-ios.zip 2> /dev/null
+        unzip projectGenerator-ios.zip
+        mv projectGenerator-ios projectGenerator
+        rm projectGenerator-ios.zip
+		rm -rf apps/projectGenerator
+	fi
+
+	if [ "$pkg_platform" = "linux" ]; then
+		cd ${pkg_ofroot}/apps/projectGenerator/frontend
+		npm install > /dev/null
+		npm run build:linux32 > /dev/null
+		mv dist/projectGenerator-linux-ia32 ${pkg_ofroot}/projectGenerator-linux
+		cd ${pkg_ofroot}
+		sed -i "s/osx/linux/g" projectGenerator-linux/resources/app/settings.json
+	fi
+
+	if [ "$pkg_platform" = "linux64" ]; then
+		cd ${pkg_ofroot}/apps/projectGenerator/frontend
+		npm install > /dev/null
+		npm run build:linux64 > /dev/null
+		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
+		cd ${pkg_ofroot}
+		sed -i "s/osx/linux64/g" projectGenerator-linux64/resources/app/settings.json
+	fi
+
+    if [ "$pkg_platform" = "android" ]; then
+		cd ${pkg_ofroot}/apps/projectGenerator/frontend
+		npm install > /dev/null
+		npm run build:vs > /dev/null
+		mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-windows
+		cd ${pkg_ofroot}/projectGenerator-windows/resources/app/app/
+		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip 2> /dev/null
+		unzip projectGenerator-vs.zip 2> /dev/null
+		rm projectGenerator-vs.zip
+		cd ${pkg_ofroot}
+		sed -i "s/osx/android/g" projectGenerator-windows/resources/app/settings.json
+
+		wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-android.zip 2> /dev/null
+        unzip projectGenerator-android.zip
+		mv projectGenerator-android projectGenerator-osx
+        rm projectGenerator-android.zip
+
+		cd ${pkg_ofroot}/apps/projectGenerator/frontend
+		npm install > /dev/null
+		npm run build:linux64 > /dev/null
+		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
+		cd ${pkg_ofroot}
+		sed -i "s/osx/android/g" projectGenerator-linux64/resources/app/settings.json
+	fi
+
+	# linux remove other platform projects from PG source and copy ofxGui
+	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ] || [ "$pkg_platform" = "android" ]; then
+	    cd ${pkg_ofroot}
+		mv apps/projectGenerator/commandLine .
+		mv apps/projectGenerator/ofxProjectGenerator .
+		rm -rf apps/projectGenerator
+		mkdir apps/projectGenerator
+		mv commandLine apps/projectGenerator/
+		mv ofxProjectGenerator apps/projectGenerator/
+		cd apps/projectGenerator/commandLine
+		deleteCodeblocks
+		deleteVS
+		deleteXcode
+	fi
 
 	#delete ofxAndroid in non android
 	if [ "$pkg_platform" != "android" ]; then
@@ -505,9 +535,18 @@ function createPackage {
     cd $pkg_ofroot/scripts
 	if [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
     	rm -Rf $otherplatforms
+        rm -Rf ci dev apothecary
 	else
-    	rm -Rf msys2 vs osx ios
+    	rm -Rf msys2 vs osx ios android ci dev apothecary
 	fi
+
+    if [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "ios" ] || [ "$pkg_platform" = "vs" ]; then
+        rm -Rf qtcreator emscripten
+    fi
+
+    if [ "$pkg_platform" = "msys2" ]; then
+        rm -Rf emscripten
+    fi
 
     #delete omap4 scripts for non armv7l
 	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv6l" ]; then

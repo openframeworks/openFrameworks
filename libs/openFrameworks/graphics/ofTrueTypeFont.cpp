@@ -21,8 +21,10 @@
 using namespace std;
 
 const ofUnicode::range ofUnicode::Space {32, 32};
+const ofUnicode::range ofUnicode::IdeographicSpace {0x3000, 0x3000};
 const ofUnicode::range ofUnicode::Latin {32, 0x007F};
 const ofUnicode::range ofUnicode::Latin1Supplement {32,0x00FF};
+const ofUnicode::range ofUnicode::LatinA {0x0100,0x017F};
 const ofUnicode::range ofUnicode::Greek {0x0370, 0x03FF};
 const ofUnicode::range ofUnicode::Cyrillic {0x0400, 0x04FF};
 const ofUnicode::range ofUnicode::Arabic {0x0600, 0x077F};
@@ -64,20 +66,28 @@ const ofUnicode::range ofUnicode::KanaSupplement {0x1B000, 0x1B0FF};
 const ofUnicode::range ofUnicode::RumiNumericalSymbols {0x10E60, 0x10E7F};
 const ofUnicode::range ofUnicode::ArabicMath {0x1EE00, 0x1EEFF};
 const ofUnicode::range ofUnicode::MiscSymbolsAndPictographs {0x1F300, 0x1F5FF};
-const ofUnicode::range ofUnicode::Emoticons {0x1F600, 0x1F64F};
+const ofUnicode::range ofUnicode::Emoticons {0x1F601, 0x1F64F};
 const ofUnicode::range ofUnicode::TransportAndMap {0x1F680, 0x1F6FF};
+const ofUnicode::range ofUnicode::EnclosedCharacters {0x24C2, 0x1F251};
+const ofUnicode::range ofUnicode::Uncategorized {0x00A9, 0x1F5FF};
+const ofUnicode::range ofUnicode::AdditionalEmoticons {0x1F600, 0x1F636};
+const ofUnicode::range ofUnicode::AdditionalTransportAndMap {0x1F681, 0x1F6C5};
+const ofUnicode::range ofUnicode::OtherAdditionalSymbols {0x1F30D, 0x1F567};
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Emoji {
 	ofUnicode::Space,
-	ofUnicode::Hiragana,
-	ofUnicode::Katakana,
-	ofUnicode::KatakanaPhoneticExtensions,
-	ofUnicode::CJKLettersAndMonths,
-	ofUnicode::CJKUnified
+	ofUnicode::Emoticons,
+	ofUnicode::Dingbats,
+	ofUnicode::Uncategorized,
+	ofUnicode::TransportAndMap,
+	ofUnicode::EnclosedCharacters,
+	ofUnicode::OtherAdditionalSymbols,
+
 };
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Japanese {
 	ofUnicode::Space,
+	ofUnicode::IdeographicSpace,
 	ofUnicode::Hiragana,
 	ofUnicode::Katakana,
 	ofUnicode::KatakanaPhoneticExtensions,
@@ -87,12 +97,14 @@ const std::initializer_list<ofUnicode::range> ofAlphabet::Japanese {
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Chinese {
 	ofUnicode::Space,
+	ofUnicode::IdeographicSpace,
 	ofUnicode::CJKLettersAndMonths,
 	ofUnicode::CJKUnified
 };
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Korean {
 	ofUnicode::Space,
+	ofUnicode::IdeographicSpace,
 	ofUnicode::HangulJamo,
 	ofUnicode::HangulCompatJamo,
 	ofUnicode::HangulExtendedA,
@@ -117,7 +129,9 @@ const std::initializer_list<ofUnicode::range> ofAlphabet::Devanagari {
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Latin {
 	ofUnicode::Latin1Supplement,
-	ofUnicode::LatinExtendedAdditional
+	ofUnicode::LatinExtendedAdditional,
+	ofUnicode::Latin,
+	ofUnicode::LatinA,
 };
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Greek {
@@ -161,137 +175,41 @@ void ofTrueTypeShutdown(){
 
 //--------------------------------------------------------
 static ofPath makeContoursForCharacter(FT_Face face){
+	ofPath charOutlines;
+	charOutlines.setUseShapeColor(false);
+	charOutlines.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
+	auto moveTo = [](const FT_Vector*to, void * userData){
+		ofPath * charOutlines = static_cast<ofPath*>(userData);
+		charOutlines->moveTo(to->x/64, -to->y/64);
+		return 0;
+	};
+	auto lineTo = [](const FT_Vector*to, void * userData){
+		ofPath * charOutlines = static_cast<ofPath*>(userData);
+		charOutlines->lineTo(to->x/64, -to->y/64);
+		return 0;
+	};
+	auto conicTo = [](const FT_Vector*cp, const FT_Vector*to, void * userData){
+		ofPath * charOutlines = static_cast<ofPath*>(userData);
+		auto lastP = charOutlines->getCommands().back().to;
+		charOutlines->quadBezierTo(lastP, {cp->x/64, -cp->y/64}, {to->x/64, -to->y/64});
+		return 0;
+	};
+	auto cubicTo = [](const FT_Vector*cp1, const FT_Vector*cp2, const FT_Vector*to, void * userData){
+		ofPath * charOutlines = static_cast<ofPath*>(userData);
+		charOutlines->bezierTo({cp1->x/64, -cp1->y/64}, {cp2->x/64, -cp2->y/64}, {to->x/64, -to->y/64});
+		return 0;
+	};
+	FT_Outline_Funcs funcs{
+		moveTo,
+		lineTo,
+		conicTo,
+		cubicTo,
+		0,
+		0,
+	};
 
-		//int num			= face->glyph->outline.n_points;
-		int nContours	= face->glyph->outline.n_contours;
-		int startPos	= 0;
-
-		char * tags		= face->glyph->outline.tags;
-		FT_Vector * vec = face->glyph->outline.points;
-
-		ofPath charOutlines;
-		charOutlines.setUseShapeColor(false);
-		charOutlines.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
-
-		for(int k = 0; k < nContours; k++){
-			if( k > 0 ){
-				startPos = face->glyph->outline.contours[k-1]+1;
-			}
-			int endPos = face->glyph->outline.contours[k]+1;
-
-			if(printVectorInfo){
-				ofLogNotice("ofTrueTypeFont") << "--NEW CONTOUR";
-			}
-
-			//vector <ofPoint> testOutline;
-			glm::vec3 lastPoint;
-
-			for(int j = startPos; j < endPos; j++){
-
-				if( FT_CURVE_TAG(tags[j]) == FT_CURVE_TAG_ON ){
-					lastPoint = {(float)vec[j].x, (float)-vec[j].y, 0.f};
-					if(printVectorInfo){
-						ofLogNotice("ofTrueTypeFont") << "flag[" << j << "] is set to 1 - regular point - " << lastPoint.x <<  lastPoint.y;
-					}
-					charOutlines.lineTo(lastPoint/64);
-
-				}else{
-					if(printVectorInfo){
-						ofLogNotice("ofTrueTypeFont") << "flag[" << j << "] is set to 0 - control point";
-					}
-
-					if( FT_CURVE_TAG(tags[j]) == FT_CURVE_TAG_CUBIC ){
-						if(printVectorInfo){
-							ofLogNotice("ofTrueTypeFont") << "- bit 2 is set to 2 - CUBIC";
-						}
-
-						int prevPoint = j-1;
-						if( j == 0){
-							prevPoint = endPos-1;
-						}
-
-						int nextIndex = j+1;
-						if( nextIndex >= endPos){
-							nextIndex = startPos;
-						}
-
-						glm::vec3 nextPoint( (float)vec[nextIndex].x,  -(float)vec[nextIndex].y, 0.f );
-
-						//we need two control points to draw a cubic bezier
-						bool lastPointCubic =  ( FT_CURVE_TAG(tags[prevPoint]) != FT_CURVE_TAG_ON ) && ( FT_CURVE_TAG(tags[prevPoint]) == FT_CURVE_TAG_CUBIC);
-
-						if( lastPointCubic ){
-							glm::vec3 controlPoint1((float)vec[prevPoint].x,	(float)-vec[prevPoint].y, 0.f);
-							glm::vec3 controlPoint2((float)vec[j].x, (float)-vec[j].y, 0.f);
-							glm::vec3 nextPoint((float) vec[nextIndex].x,	-(float) vec[nextIndex].y, 0.f);
-
-							//cubic_bezier(testOutline, lastPoint.x, lastPoint.y, controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, nextPoint.x, nextPoint.y, 8);
-							charOutlines.bezierTo(controlPoint1.x/64, controlPoint1.y/64, controlPoint2.x/64, controlPoint2.y/64, nextPoint.x/64, nextPoint.y/64);
-						}
-
-					}else{
-
-						glm::vec3 conicPoint( (float)vec[j].x,  -(float)vec[j].y, 0.f );
-
-						if(printVectorInfo){
-							ofLogNotice("ofTrueTypeFont") << "- bit 2 is set to 0 - conic- ";
-							ofLogNotice("ofTrueTypeFont") << "--- conicPoint point is " << conicPoint.x << conicPoint.y;
-						}
-
-						//If the first point is connic and the last point is connic then we need to create a virutal point which acts as a wrap around
-						if( j == startPos ){
-							bool prevIsConnic = (  FT_CURVE_TAG( tags[endPos-1] ) != FT_CURVE_TAG_ON ) && ( FT_CURVE_TAG( tags[endPos-1]) != FT_CURVE_TAG_CUBIC );
-
-							if( prevIsConnic ){
-								glm::vec3 lastConnic((float)vec[endPos - 1].x, (float)-vec[endPos - 1].y, 0.f);
-								lastPoint = (conicPoint + lastConnic) / 2;
-
-								if(printVectorInfo){
-									ofLogNotice("ofTrueTypeFont") << "NEED TO MIX WITH LAST";
-									ofLogNotice("ofTrueTypeFont") << "last is " << lastPoint.x << " " << lastPoint.y;
-								}
-							}
-						}
-
-						//bool doubleConic = false;
-
-						int nextIndex = j+1;
-						if( nextIndex >= endPos){
-							nextIndex = startPos;
-						}
-
-						glm::vec3 nextPoint( (float)vec[nextIndex].x,  -(float)vec[nextIndex].y, 0.f );
-
-						if(printVectorInfo){
-							ofLogNotice("ofTrueTypeFont") << "--- last point is " << lastPoint.x << " " <<  lastPoint.y;
-						}
-
-						bool nextIsConnic = (  FT_CURVE_TAG( tags[nextIndex] ) != FT_CURVE_TAG_ON ) && ( FT_CURVE_TAG( tags[nextIndex]) != FT_CURVE_TAG_CUBIC );
-
-						//create a 'virtual on point' if we have two connic points
-						if( nextIsConnic ){
-							nextPoint = (conicPoint + nextPoint) / 2;
-							if(printVectorInfo){
-								ofLogNotice("ofTrueTypeFont") << "|_______ double connic!";
-							}
-						}
-						if(printVectorInfo){
-							ofLogNotice("ofTrueTypeFont") << "--- next point is " << nextPoint.x << " " << nextPoint.y;
-						}
-
-						//quad_bezier(testOutline, lastPoint.x, lastPoint.y, conicPoint.x, conicPoint.y, nextPoint.x, nextPoint.y, 8);
-						charOutlines.quadBezierTo(lastPoint.x/64, lastPoint.y/64, conicPoint.x/64, conicPoint.y/64, nextPoint.x/64, nextPoint.y/64);
-
-						if( nextIsConnic ){
-							lastPoint = nextPoint;
-						}
-					}
-				}
-
-			//end for
-			}
-			charOutlines.close();
-		}
+	FT_Outline_Decompose(&face->glyph->outline, &funcs, &charOutlines);
+	charOutlines.close();
 
 	return charOutlines;
 }
@@ -766,7 +684,7 @@ ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 
 //-----------------------------------------------------------
 bool ofTrueTypeFont::load(const std::filesystem::path& filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
-	ofTrueTypeFont::Settings settings(filename,fontSize);
+	ofTrueTypeFontSettings settings(filename,fontSize);
 	settings.antialiased = antialiased;
 	settings.contours = makeContours;
 	settings.simplifyAmt = simplifyAmt;
@@ -779,7 +697,7 @@ bool ofTrueTypeFont::load(const std::filesystem::path& filename, int fontSize, b
 	return load(settings);
 }
 
-bool ofTrueTypeFont::load(const ofTrueTypeFont::Settings & _settings){
+bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 	#if defined(TARGET_ANDROID)
 	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
@@ -941,17 +859,25 @@ bool ofTrueTypeFont::load(const ofTrueTypeFont::Settings & _settings){
 		charPixels.pasteInto(atlasPixelsLuminanceAlpha,x+border,y+border);
 		x+= glyph.tW + border*2;
 	}
-	texAtlas.allocate(atlasPixelsLuminanceAlpha,false);
-	texAtlas.setRGToRGBASwizzles(true);
 
-	if(settings.antialiased && settings.fontSize>20){
-		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
+	int maxSize;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+	if(w > maxSize || h > maxSize){
+		ofLogError("ofTruetypeFont") << "Trying to allocate texture of " << w << "x" << h << " which is bigger than supported in current platform: " << maxSize;
+		return false;
 	}else{
-		texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+		texAtlas.allocate(atlasPixelsLuminanceAlpha,false);
+		texAtlas.setRGToRGBASwizzles(true);
+
+		if(settings.antialiased && settings.fontSize>20){
+			texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
+		}else{
+			texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+		}
+		texAtlas.loadData(atlasPixelsLuminanceAlpha);
+		bLoadedOk = true;
+		return true;
 	}
-	texAtlas.loadData(atlasPixelsLuminanceAlpha);
-	bLoadedOk = true;
-	return true;
 }
 
 //-----------------------------------------------------------
@@ -1099,7 +1025,7 @@ int ofTrueTypeFont::getKerning(uint32_t c, uint32_t prevC) const{
 	if(FT_HAS_KERNING( face )){
 		FT_Vector kerning;
 		FT_Get_Kerning(face.get(), FT_Get_Char_Index(face.get(), c), FT_Get_Char_Index(face.get(), prevC), FT_KERNING_UNFITTED, &kerning);
-		return kerning.x * fontUnitScale;
+		return kerning.x >> 6;
 	}else{
 		return 0;
 	}
@@ -1116,7 +1042,7 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 		newLineDirection = -1;
 	}
 
-	int directionX = settings.direction == Settings::Direction::LeftToRight?1:-1;
+	int directionX = settings.direction == OF_TTF_LEFT_TO_RIGHT?1:-1;
 
 	uint32_t prevC = 0;
 	for(auto c: ofUTF8Iterator(str)){
@@ -1126,24 +1052,26 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 				pos.x = x ; //reset X Pos back to zero
 				prevC = 0;
 			} else if (c == '\t') {
-				if ( settings.direction == Settings::Direction::LeftToRight ){
-					f( c, pos );
-					pos.x += getGlyphProperties( ' ' ).advance * TAB_WIDTH * letterSpacing  * directionX;
+				if (settings.direction == OF_TTF_LEFT_TO_RIGHT){
+					f(c, pos);
+					pos.x += (getGlyphProperties(' ').advance * spaceSize * letterSpacing) * TAB_WIDTH * directionX;
 				} else{
-					pos.x += getGlyphProperties( ' ' ).advance * TAB_WIDTH * letterSpacing  * directionX;
-					f( c, pos );
+					pos.x += (getGlyphProperties(' ').advance * spaceSize * letterSpacing) * TAB_WIDTH * directionX;
+					f(c, pos);
 				}
 				prevC = c;
 			} else if(isValidGlyph(c)) {
 				const auto & props = getGlyphProperties(c);
 				if(prevC>0){
-					pos.x += getKerning(c,prevC);// * directionX;
+					pos.x += getKerning(c,prevC);
 				}
-				if(settings.direction == Settings::Direction::LeftToRight){
-				    f(c,pos);
-				    pos.x += props.advance * letterSpacing * directionX;
+				if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
+					f(c,pos);
+					pos.x += props.advance  * directionX;
+					pos.x += getGlyphProperties(' ').advance * spaceSize * (letterSpacing - 1.f) * directionX;
 				}else{
-				    pos.x += props.advance * letterSpacing * directionX;
+					pos.x += props.advance  * directionX;
+					pos.x += getGlyphProperties(' ').advance * spaceSize * (letterSpacing - 1.f) * directionX;
 				    f(c,pos);
 				}
 				prevC = c;
@@ -1155,7 +1083,7 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::setDirection(ofTrueTypeFont::Settings::Direction direction){
+void ofTrueTypeFont::setDirection(ofTrueTypeFontDirection direction){
 	settings.direction = direction;
 }
 
@@ -1240,10 +1168,11 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 
 	iterateString( c, x, y, vflip, [&]( uint32_t c, glm::vec2 pos ){
 		auto  props = getGlyphProperties( c );
+
 		if ( c == '\t' ){
-			props.advance = getGlyphProperties( ' ' ).advance * letterSpacing * TAB_WIDTH;
+			props.advance = (getGlyphProperties(' ').advance * spaceSize * letterSpacing) * TAB_WIDTH;
 		}
-		maxX = max( maxX, pos.x + props.advance * letterSpacing );
+		maxX = max( maxX, pos.x + props.xmin + props.width  );
 		minX = min( minX, pos.x );
 		if ( vflip ){
 			minY = min( minY, pos.y - ( props.ymax - props.ymin ) );
@@ -1290,7 +1219,7 @@ glm::vec2 ofTrueTypeFont::getFirstGlyphPosForTexture(const std::string & str, bo
 	if(!str.empty()){
 		try{
 			auto c = *ofUTF8Iterator(str).begin();
-			if(settings.direction == ofTrueTypeFont::Settings::Direction::LeftToRight){
+			if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
 				if (c != '\n') {
 					auto g = loadGlyph(c);
 					return {-float(g.props.xmin), getLineHeight() + g.props.ymin + getDescenderHeight()};
@@ -1302,7 +1231,7 @@ glm::vec2 ofTrueTypeFont::getFirstGlyphPosForTexture(const std::string & str, bo
 					try{
 						if (c != '\n') {
 							auto g = loadGlyph(c);
-							lineWidth += g.props.advance * letterSpacing;
+							lineWidth += g.props.advance + getGlyphProperties(' ').advance * spaceSize * (letterSpacing - 1.f);
 							width = max(width, lineWidth);
 						}else{
 							lineWidth = 0;
@@ -1338,7 +1267,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 				int x = pos.x + g.props.xmin;
 				int y = g.props.ymax + pos.y;
 				glyphPositions.emplace_back(x, y);
-				lineWidth += g.props.advance * letterSpacing;
+				lineWidth += g.props.advance + getGlyphProperties(' ').advance * spaceSize * (letterSpacing - 1.f);
 				width = max(width, lineWidth);
 				height = max(height, y + long(getLineHeight()));
 			}else{
@@ -1356,7 +1285,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 	totalPixels.set(1,0);
 	size_t i = 0;
 	for(auto & g: glyphs){
-		if(settings.direction == Settings::Direction::LeftToRight){
+		if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
 			g.pixels.blendInto(totalPixels, glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );
 		}else{
 			g.pixels.blendInto(totalPixels, width-glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );

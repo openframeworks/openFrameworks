@@ -55,11 +55,14 @@ class ofAppiOSWindow;
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 @class ofxiOSAppDelegate;
 @class ofxiOSViewController;
+@class ofxiOSGLKViewController;
 #elif TARGET_OS_TV
 @class ofxtvOSAppDelegate;
 @class ofxtvOSViewController;
+@class ofxtvOSGLKViewController;
 #endif
 @class ofxiOSEAGLView;
+@class ofxiOSGLKView;
 
 // this is the new way for getting device info.
 // we can add other parameters later.
@@ -94,6 +97,8 @@ UIWindow * ofxiOSGetUIWindow();
 
 // return openglview
 ofxiOSEAGLView * ofxiOSGetGLView();
+
+ofxiOSGLKView * ofxiOSGetGLKView();
 
 // return opengl parent view
 UIView * ofxiOSGetGLParentView();

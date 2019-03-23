@@ -808,12 +808,83 @@ void ofAppGlutWindow::keyboard_up_cb(unsigned char key, int x, int y){
 
 //------------------------------------------------------
 void ofAppGlutWindow::special_key_cb(int key, int x, int y) {
-	instance->events().notifyKeyPressed(key | OF_KEY_MODIFIER);
+	instance->events().notifyKeyPressed(special_key_to_of(key));
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::special_key_up_cb(int key, int x, int y) {
-	instance->events().notifyKeyReleased(key | OF_KEY_MODIFIER);
+	instance->events().notifyKeyReleased(special_key_to_of(key));
+}
+
+//------------------------------------------------------------
+int ofAppGlutWindow::special_key_to_of(int key) {
+	switch (key) {
+	case GLUT_KEY_F1:
+		return OF_KEY_F1;
+
+	case GLUT_KEY_F2:
+		return OF_KEY_F2;
+
+	case GLUT_KEY_F3:
+		return OF_KEY_F3;
+
+	case GLUT_KEY_F4:
+		return OF_KEY_F4;
+
+	case GLUT_KEY_F5:
+		return OF_KEY_F5;
+
+	case GLUT_KEY_F6:
+		return OF_KEY_F6;
+
+	case GLUT_KEY_F7:
+		return OF_KEY_F7;
+
+	case GLUT_KEY_F8:
+		return OF_KEY_F8;
+
+	case GLUT_KEY_F9:
+		return OF_KEY_F9;
+
+	case GLUT_KEY_F10:
+		return OF_KEY_F10;
+
+	case GLUT_KEY_F11:
+		return OF_KEY_F11;
+
+	case GLUT_KEY_F12:
+		return OF_KEY_F12;
+
+	case GLUT_KEY_LEFT:
+		return OF_KEY_LEFT;
+
+	case GLUT_KEY_UP:
+		return OF_KEY_UP;
+
+	case GLUT_KEY_RIGHT:
+		return OF_KEY_RIGHT;
+
+	case GLUT_KEY_DOWN:
+		return OF_KEY_DOWN;
+
+	case GLUT_KEY_PAGE_UP:
+		return OF_KEY_PAGE_UP;
+
+	case GLUT_KEY_PAGE_DOWN:
+		return OF_KEY_PAGE_DOWN;
+
+	case GLUT_KEY_HOME:
+		return OF_KEY_HOME;
+
+	case GLUT_KEY_END:
+		return OF_KEY_END;
+
+	case GLUT_KEY_INSERT:
+		return OF_KEY_INSERT;
+
+	default:
+		return 0;
+	}
 }
 
 //------------------------------------------------------------
