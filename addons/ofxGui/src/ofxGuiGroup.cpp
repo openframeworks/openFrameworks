@@ -229,7 +229,9 @@ void ofxGuiGroup::add(ofParameter <ofShortColor> & parameter){
 void ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter){
 	add(new ofxColorSlider_ <float>(parameter, b.width));
 }
-
+void ofxGuiGroup::add(ofParameter <ofRectangle> & parameter){
+	add(new ofxRectangleSlider(parameter, b.width));
+}
 void ofxGuiGroup::clear(){
 	collection.clear();
 	parameters.clear();
