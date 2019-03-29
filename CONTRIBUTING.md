@@ -4,7 +4,6 @@ Thank you for contributing! openFrameworks is a community-built, maintained and 
 
 This document outlines the procedures and what to expect when contributing a bug report, a feature request, or new code via a pull request.
 If you want to contribute documentation have a look at the [ofSite git repository](https://github.com/openframeworks/ofSite). 
-To contribute tutorials or help documents, get in touch with one of the _Tutorial leaders_, [Diederick Huijbers](http://www.roxlu.com/) (roxlu) or [Jeff Crouse](http://www.jeffcrouse.info/) (jefftimesten).
 
 **Please read** and **follow these guidelines** before submitting a bug report, feature request or pull request.
 It really helps us efficiently process your contribution!
@@ -43,7 +42,7 @@ We're simply a busy group of people, but you will hear back eventually.
 
 At the moment we don't have a formal roadmap for the project, rather we are a community of people who each contributes to sections that we feel are important for the project.
 Feature requests are therefore mostly a way of us discussing/feeling out together where we'd like the project to go. 
-This can sometimes involves a lot of discussion, as everyone uses openFrameworks differently.
+This can sometimes involve a lot of discussion, as everyone uses openFrameworks differently.
 
 Feature requests are created as Github Issues, just like bugs. 
 Feature requests are also where code that you or anyone else would like to include in a future pull request is **discussed before being implemented!**

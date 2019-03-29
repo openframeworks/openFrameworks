@@ -259,7 +259,7 @@ void ofxBaseGui::setName(const std::string& _name){
 	setNeedsRedraw();
 }
 
-void ofxBaseGui::setPosition(const ofPoint & p){
+void ofxBaseGui::setPosition(const glm::vec3 & p){
 	setPosition(p.x, p.y);
 }
 
@@ -285,8 +285,8 @@ void ofxBaseGui::setShape(float x, float y, float w, float h){
 	sizeChangedCB();
 }
 
-ofPoint ofxBaseGui::getPosition() const {
-	return ofPoint(b.x, b.y);
+glm::vec3 ofxBaseGui::getPosition() const {
+	return glm::vec3(b.x, b.y, 0);
 }
 
 ofRectangle ofxBaseGui::getShape() const {
