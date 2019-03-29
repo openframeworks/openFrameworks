@@ -337,7 +337,7 @@ void ofxSlider<Type>::valueChanged(Type & value){
 }
 
 template<typename Type>
-void ofxSlider<Type>::setPosition(const ofPoint & p){
+void ofxSlider<Type>::setPosition(const glm::vec3 & p){
 	ofxBaseGui::setPosition(p);
 	input.setPosition(p);
 }

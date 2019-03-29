@@ -1,3 +1,10 @@
+
+PLATFORM/IDE SPECIFIC
+-----------------
+
+### makefiles
+- makefiles: addon data not being copied(#2903).
+
 ADDONS
 ------
 ### ofxOpenCv
