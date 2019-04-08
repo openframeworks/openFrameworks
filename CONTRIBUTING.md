@@ -17,7 +17,7 @@ We love hearing about bugs! It's how we get them fixed.
 - If you notice something odd happening, try to make it happen again (reproduce it). 
 - If you can reproduce it, try to figure out if it's caused by your code or by openFrameworks. 
 - If it's caused by openFrameworks, make sure it **still occurs in the current development version** (where we continually fix problems) by checking out with git or [downloading](https://github.com/openframeworks/openFrameworks/archive/master.zip) the current `master` branch of OF.
-- If it looks like it's caused by openFrameworks (or if you're not sure) and still occurs on the current `master` branch, submit a bug report to the [issue tracker](github.com/openframeworks/openFrameworks/issues).
+- If it looks like it's caused by openFrameworks (or if you're not sure) and still occurs on the current `master` branch, submit a bug report to the [issue tracker](https://github.com/openframeworks/openFrameworks/issues).
   - **Search the issue tracker** to make sure your problem has not been reported yet. If you find a relevant bug, comment there, even if it's an old or closed one! 
   - Only if you don't find a relevant issue, open a new issue. A new issue does not generate more exposure/visibility than commenting on an existing one.
   - Make sure you give it a good title! 
@@ -88,6 +88,6 @@ This granularity makes the code easier to deal with in cases where some things h
 - All pull requests that contain changes that need to be in the changelog **must include relevant additions to `CHANGELOG.md`**. Use previous entries as a guide for style/indentation/etc.
 - In the comments field on your new pull request, enter a description of everything that the code in the pull request does. 
   - This description is the first contact most of the core team will have with your code, so you should use it to explain why your pull request is awesome and we should accept it. 
-  - Reference any issues or bugs in the [oF issue tracker](github.com/openframeworks/openFrameworks/issues) that are relevant to your pull request using `#issue number` notation, eg to reference issue __1234__ write `#1234`.
+  - Reference any issues or bugs in the [oF issue tracker](https://github.com/openframeworks/openFrameworks/issues) that are relevant to your pull request using `#issue number` notation, eg to reference issue __1234__ write `#1234`.
   - Mention if the code has been tested and on what platform.
 - Your pull request will be evaluated via the [Pull Request Review Procedure](https://github.com/openframeworks/openFrameworks/wiki/Pull-Request-Review-Procedure)
