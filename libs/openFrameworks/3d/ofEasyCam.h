@@ -178,6 +178,8 @@ public:
 	bool hasInteraction(TransformType type, int mouseButton, int key = -1);
 	bool hasInteraction(int mouseButton, int key);
 	void removeAllInteractions();
+protected:
+	virtual void onPositionChanged() ;
 private:
 	void setDistance(float distance, bool save);
 

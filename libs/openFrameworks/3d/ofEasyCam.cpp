@@ -70,6 +70,9 @@ void ofEasyCam::reset(){
 	rot = {0,0,0};
 	translate = {0,0,0};
 
+	if(bAutoDistance){
+		bDistanceSet = false;
+	}
 	bApplyInertia = false;
 	currentTransformType = TRANSFORM_NONE;
 }
@@ -506,4 +509,10 @@ bool ofEasyCam:: hasInteraction(TransformType type, int mouseButton, int key){
 //----------------------------------------
 void ofEasyCam::removeAllInteractions(){
 	interactions.clear();
+}
+//----------------------------------------
+void ofEasyCam::onPositionChanged(){
+	if(!bDistanceSet && bAutoDistance){
+		bDistanceSet = true;
+	}
 }
