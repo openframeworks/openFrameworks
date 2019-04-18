@@ -90,6 +90,10 @@ createArchImg(){
 
 		mkdir ~/archlinux
 		junest -u << EOF
+            echo updating keys
+            pacman -S gnupg --noconfirm
+            pacman-key --populate archlinux
+            pacman-key --refresh-keys
 	        tar xzf ~/ArchLinuxARM-rpi-2-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
