@@ -1054,12 +1054,16 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 			} else if (c == '\t') {
 				if (settings.direction == OF_TTF_LEFT_TO_RIGHT){
 					f(c, pos);
-					pos.x += (getGlyphProperties(' ').advance * spaceSize * letterSpacing) * TAB_WIDTH * directionX;
+					pos.x += getGlyphProperties(' ').advance * letterSpacing * TAB_WIDTH * directionX;
 				} else{
-					pos.x += (getGlyphProperties(' ').advance * spaceSize * letterSpacing) * TAB_WIDTH * directionX;
+					pos.x += getGlyphProperties(' ').advance * letterSpacing * TAB_WIDTH * directionX;
 					f(c, pos);
 				}
 				prevC = c;
+			} else if(c == ' '){
+				pos.x += getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH * directionX;
+                		f(c, pos);
+               			prevC = c;
 			} else if(isValidGlyph(c)) {
 				const auto & props = getGlyphProperties(c);
 				if(prevC>0){
@@ -1068,10 +1072,10 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 				if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
 					f(c,pos);
 					pos.x += props.advance  * directionX;
-					pos.x += getGlyphProperties(' ').advance * spaceSize * (letterSpacing - 1.f) * directionX;
+					pos.x += getGlyphProperties(' ').advance * (letterSpacing - 1.f) * directionX;
 				}else{
 					pos.x += props.advance  * directionX;
-					pos.x += getGlyphProperties(' ').advance * spaceSize * (letterSpacing - 1.f) * directionX;
+					pos.x += getGlyphProperties(' ').advance * (letterSpacing - 1.f) * directionX;
 				    f(c,pos);
 				}
 				prevC = c;
