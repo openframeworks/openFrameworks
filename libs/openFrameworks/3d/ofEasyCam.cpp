@@ -69,7 +69,10 @@ void ofEasyCam::reset(){
 
 	rot = {0,0,0};
 	translate = {0,0,0};
-
+    
+    if(bAutoDistance){
+        bDistanceSet = false;
+    }
 	bApplyInertia = false;
 	currentTransformType = TRANSFORM_NONE;
 }
