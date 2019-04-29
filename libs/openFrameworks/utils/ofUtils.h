@@ -113,8 +113,8 @@ struct ofTime{
 		auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(duration);
 		ofTime t = *this;
 		t.nanoseconds += ns.count();
-		if(this->nanoseconds>NANOS_PER_SEC){
-			uint64_t secs = this->nanoseconds / NANOS_PER_SEC;
+		if(t.nanoseconds>=NANOS_PER_SEC){
+			uint64_t secs = t.nanoseconds / NANOS_PER_SEC;
 			t.nanoseconds -= NANOS_PER_SEC*secs;
 			t.seconds+=secs;
 		}
@@ -126,7 +126,7 @@ struct ofTime{
 		constexpr uint64_t NANOS_PER_SEC = 1000000000ll;
 		auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(duration);
 		this->nanoseconds += ns.count();
-		if(this->nanoseconds>NANOS_PER_SEC){
+		if(this->nanoseconds>=NANOS_PER_SEC){
 			uint64_t secs = this->nanoseconds / NANOS_PER_SEC;
 			this->nanoseconds -= NANOS_PER_SEC*secs;
 			this->seconds+=secs;

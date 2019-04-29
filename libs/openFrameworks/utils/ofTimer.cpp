@@ -36,11 +36,11 @@ void ofTimer::waitNext(){
 	WaitForSingleObject(hTimer, INFINITE);
 #else
 	auto now = ofGetCurrentTime();
-	auto waitNanos = nextWakeTime - now;
-	if(waitNanos > std::chrono::nanoseconds(0)){
+	if(now < nextWakeTime){
+		auto waitNanos = nextWakeTime - now;
 		timespec waittime = (ofTime() + waitNanos).getAsTimespec();
-		timespec remainder;
-		nanosleep(&waittime,&remainder);
+		timespec remainder = {0,0};
+		nanosleep(&waittime, &remainder);
 	}
 #endif
 	calculateNextPeriod();
