@@ -245,11 +245,17 @@ class OFGLSurfaceView extends GLSurfaceView{
         setRenderer(mRenderer);
     }
 
+// NOTE - The following has been removed because it is not a good way to determine that the opengl context was destroyed with its resources.
+//        The Android SurfaceView source code is a bit confusing  - there are many times when some kind of surface is beign destroyed (eg. during window resize),
+//            so it is not that surprising, that not every surfaceDestoyed callback means what we might think it means.
+//        We don't need this callback that much anyways, the renderer does not call render callbacks when gl context is invalid, so the OFAndroidWindow.onSurfaceCreated callback should be enought for us to make things work.
+/*
     @Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
     	super.surfaceDestroyed(holder);
 		OFAndroid.onSurfaceDestroyed();
 	}
+*/
     
     boolean isSetup(){
     	return mRenderer.isSetup();

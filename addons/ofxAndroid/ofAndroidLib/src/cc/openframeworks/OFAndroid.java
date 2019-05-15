@@ -413,6 +413,7 @@ public class OFAndroid {
     public static native void onCreate();
     public static native void onRestart();
     public static native void onPause();
+    public static native void onPauseGameplay();
     public static native void onResume();
     public static native void onStop();
     public static native void onDestroy();
@@ -821,15 +822,16 @@ public class OFAndroid {
 			orientationListener.disable();
 	}
 	
-	public static void setupGL(int version){	
+	public static void setupGL(int version, boolean preserveContextOnPause){
 		final int finalversion = version;
+		final boolean finalPreserveContextOnPause = preserveContextOnPause;
 		final Semaphore mutex = new Semaphore( 0 );
 		
 		runOnMainThread(new Runnable() {
 			@Override
 			public void run() {
 		        OFEGLConfigChooser.setGLESVersion(finalversion);
-		        OFAndroidLifeCycle.glCreateSurface();
+		        OFAndroidLifeCycle.glCreateSurface( finalPreserveContextOnPause );
 		        mutex.release();
 			}
 		});

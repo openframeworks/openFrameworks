@@ -181,7 +181,24 @@ public:
 	ofEvent<void> backPressed;
 	ofEvent<bool> networkConnected;
 	ofEvent<ofOrientation> deviceOrientationChanged;
+	/**
+		This is called when gameplay should be paused because of some windowing event.
+		It is called for example before ofxAndroidEventsClass::pause when minimizing the App (switching to another Activity).
+		It is also called during multiwindow switching and incoming phone calls and few other similar events.
+		This does not have a resume_gameplay counterpart - gameplay should be paused automaticaly when focus is lost, but resuming should be only done manualy by the user.
+		If your app has no gameplay (eg. no progress to be lost during pause), then don't use this.
+	*/
+	ofEvent<void> pause_gameplay;
+	/**
+	   Called when user switches to another Activity or turns the display off.
+	   After this, the application is not visible on screen and openframeworks does not call ofBaseApp::update and ofBaseApp::draw methods.
+	   Use this to pause tasks that are not run from 'draw' or 'update' and need to be paused when the App is minimized.
+	*/
 	ofEvent<void> pause;
+	/**
+		Counterpart to ofxAndroidEventsClass::pause.
+		Resume tasks paused in 'pause'.
+	*/
 	ofEvent<void> resume;
 	ofEvent<void> unloadGL;
 	ofEvent<void> reloadGL;

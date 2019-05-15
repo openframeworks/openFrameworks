@@ -136,13 +136,13 @@ void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings){
 		return;
 	}
 
-	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setupGL","(I)V");
+	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setupGL","(IZ)V");
 	if(!method){
 		ofLogError("ofAppAndroidWindow") << "setupOpenGL(): couldn't find OFAndroid setupGL method";
 		return;
 	}
 
-	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,glesVersion);
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,glesVersion,settings.preserveContextOnPause);
 }
 
 void ofAppAndroidWindow::update(){
@@ -293,6 +293,12 @@ Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jobject  thiz ){
 		ofNotifyEvent(ofxAndroidEvents().resume);
 		paused = false;
 	}
+}
+
+void
+Java_cc_openframeworks_OFAndroid_onPauseGameplay( JNIEnv*  env, jobject  thiz ){
+	paused = true;
+	ofNotifyEvent(ofxAndroidEvents().pause_gameplay);
 }
 
 void
