@@ -102,6 +102,8 @@ public:
 
 	bool load(const std::filesystem::path & file);
 	bool load(const ofBuffer & buffer);
+
+	void setParsingOptions(unsigned int l_parsing_options);
 	bool parse(const std::string & xmlStr);
 	bool save(const std::filesystem::path & file) const;
 	void clear();
@@ -114,6 +116,8 @@ public:
 	ofXml appendChild(const ofXml & xml);
 	ofXml prependChild(const ofXml & xml);
 	bool removeChild(const ofXml & node);
+
+	unsigned int parsing_options;
 
 #if PUGIXML_VERSION>=170
 	ofXml appendChild(ofXml && xml);
