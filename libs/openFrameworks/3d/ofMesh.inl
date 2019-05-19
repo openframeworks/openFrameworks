@@ -1110,7 +1110,8 @@ void ofMesh_<V,N,C,T>::load(const std::filesystem::path& path){
 			continue;
 		}
 
-		if(state==VertexDef && (lineStr.find("property float x")==0 || lineStr.find("property float y")==0 || lineStr.find("property float z")==0)){
+		if(state==VertexDef && (lineStr.find("property float x")==0 || lineStr.find("property float y")==0 || lineStr.find("property float z")==0
+                || lineStr.find("property double x")==0 || lineStr.find("property double y")==0 || lineStr.find("property double z")==0)){
 			meshDefinition.push_back(Position);
 			vertexCoordsFound++;
 			continue;
