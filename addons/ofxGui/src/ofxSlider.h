@@ -54,6 +54,23 @@ public:
 
 	ofAbstractParameter & getParameter();
 
+private:
+
+	class RectShape {
+		ofColor     mColorFill;
+		ofRectangle mRect;
+		ofVboMesh   mMesh;
+		bool        mHasMesh = false;
+	public:
+		void clear();
+		void draw();
+		void setFillColor(ofColor const & color);
+		void setRectangle(float x, float y, float w, float h);
+		void setRectangle(ofRectangle const & rect);
+	};
+
+	RectShape bg, bar;
+
 protected:
 	virtual void render();
 	ofParameter<Type> value;
@@ -65,7 +82,7 @@ protected:
 	virtual void generateDraw();
 	virtual void generateText();
 	void valueChanged(Type & value);
-	ofPath bg, bar;
+
 	ofVboMesh textMesh;
 	ofxInputField<Type> input{ofxInputField<Type>::InsideSlider};
 
