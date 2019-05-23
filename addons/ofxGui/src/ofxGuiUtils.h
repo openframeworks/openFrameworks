@@ -4,8 +4,6 @@
 #include "ofRectangle.h"
 #include "ofVboMesh.h"
 
-namespace ofxGui {
-
 /*
  * Internal helper to generate and cache rectangle meshes for ofxGui.
  */
@@ -80,5 +78,3 @@ class RectMesh {
 		setExtents( {x, y, w, h} );
 	}
 };
-
-} // namespace ofxGui
