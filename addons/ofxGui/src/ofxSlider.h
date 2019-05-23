@@ -56,7 +56,7 @@ public:
 
 private:
 
-	RectMesh bg, bar;
+	ofxGuiRectMesh bg, bar;
 
 protected:
 	virtual void render();

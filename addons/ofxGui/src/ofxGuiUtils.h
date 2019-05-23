@@ -7,7 +7,7 @@
 /*
  * Internal helper to generate and cache rectangle meshes for ofxGui.
  */
-class RectMesh {
+class ofxGuiRectMesh {
 	ofColor     mColorFill = {};
 	ofRectangle mRect      = {};
 	ofVboMesh   mMesh      = {};
