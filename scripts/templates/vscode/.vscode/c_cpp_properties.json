@@ -104,11 +104,7 @@
                 "/usr/include/cairo",
                 "/usr/include/gstreamer-1.0",
                 "/usr/include/glib-2.0",
-                "${workspaceRoot}",
-                "${workspaceRoot}/utils",
-                "${workspaceRoot}/3d",
-                "${workspaceRoot}/math",
-                "${workspaceRoot}/types"
+                "${workspaceRoot}"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
