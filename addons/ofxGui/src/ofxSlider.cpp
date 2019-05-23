@@ -20,66 +20,6 @@ namespace{
 }
 
 template<typename Type>
-void ofxSlider<Type>::ofxSlider::RectShape::clear(){
-	mColorFill    = {};
-	mRect         = {};
-	mMesh.clear();
-	mHasMesh      = false;
-}
-
-template<typename Type>
-void ofxSlider<Type>::ofxSlider::RectShape::draw(){
-
-	if (mRect.width < 1.f || mRect.height < 1.f ){
-		// We will not draw a mesh for rectangles
-		// which are smaller than one pixel for
-		// either w, or height.
-		return;
-	}
-
-	if ( mHasMesh == false ) {
-
-		auto const & r = mRect;
-
-		std::vector<glm::vec3> vertices {
-			r.getBottomLeft(),
-			r.getBottomRight(),
-			r.getTopLeft(),
-			r.getTopRight(),
-		};
-		std::vector<ofIndexType>indices {0,1,2,2,1,3};
-		std::vector<ofFloatColor> colors;
-		colors.resize(4,mColorFill);
-
-		mMesh.addVertices(vertices);
-		mMesh.addIndices(indices);
-		mMesh.addColors(colors);
-
-		mMesh.setMode(ofPrimitiveMode::OF_PRIMITIVE_TRIANGLES);
-		mHasMesh = true;
-	}
-
-	mMesh.draw();
-
-}
-
-template<typename Type>
-void ofxSlider<Type>::ofxSlider::RectShape::setFillColor(ofColor const & color){
-	mColorFill = color;
-}
-
-template<typename Type>
-void ofxSlider<Type>::ofxSlider::RectShape::setRectangle(ofRectangle const & rect){
-	mRect = rect;
-}
-
-template<typename Type>
-void ofxSlider<Type>::ofxSlider::RectShape::setRectangle(float x, float y, float w, float h){
-	setRectangle({x,y,w,h});
-}
-
-
-template<typename Type>
 ofxSlider<Type>::ofxSlider(){
 	bUpdateOnReleaseOnly = false;
 	bGuiActive = false;
@@ -275,11 +215,11 @@ void ofxSlider<Type>::generateDraw(){
 	bar.clear();
 
 	bg.setFillColor(thisBackgroundColor);
-	bg.setRectangle(b);
+	bg.setExtents(b);
 
 	float valAsPct = ofMap( value, value.getMin(), value.getMax(), 0, b.width-2, true );
 	bar.setFillColor(thisFillColor);
-	bar.setRectangle(b.x+1, b.y+1, valAsPct, b.height-2);
+	bar.setExtents(b.x+1, b.y+1, valAsPct, b.height-2);
 
 	generateText();
 	input.generateDraw();

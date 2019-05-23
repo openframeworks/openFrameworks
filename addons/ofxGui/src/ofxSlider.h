@@ -3,6 +3,7 @@
 #include "ofxBaseGui.h"
 #include "ofParameter.h"
 #include "ofxInputField.h"
+#include "ofxGuiUtils.h"
 
 template<typename Type>
 class ofxSlider : public ofxBaseGui{
@@ -51,25 +52,11 @@ public:
 	virtual void setShape(ofRectangle r);
 	virtual void setShape(float x, float y, float w, float h);
 	
-
 	ofAbstractParameter & getParameter();
 
 private:
 
-	class RectShape {
-		ofColor     mColorFill;
-		ofRectangle mRect;
-		ofVboMesh   mMesh;
-		bool        mHasMesh = false;
-	public:
-		void clear();
-		void draw();
-		void setFillColor(ofColor const & color);
-		void setRectangle(float x, float y, float w, float h);
-		void setRectangle(ofRectangle const & rect);
-	};
-
-	RectShape bg, bar;
+	ofxGui::RectMesh bg, bar;
 
 protected:
 	virtual void render();
