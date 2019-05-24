@@ -27,6 +27,7 @@
             },
             "windows": {
                 "MIMode": "gdb",
+                "miDebuggerPath": "gdb.exe",
                 "setupCommands": [
                     {
                         "description": "Enable pretty-printing for gdb",
