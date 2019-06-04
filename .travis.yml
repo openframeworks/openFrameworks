@@ -150,7 +150,7 @@ script:
   - ccache -s
   - if [ "$TARGET" = "linux64" ] || [ "$TARGET" = "linuxarmv6l" ] || [ "$TARGET" = "linuxarmv7l" ]; then
       wget http://archive.ubuntu.com/ubuntu/pool/main/c/ccache/ccache_3.4.1-1_amd64.deb;
-      sudo dpkg -i ccache_3.3.4-1_amd64.deb;
+      sudo dpkg -i ccache_3.4.1-1_amd64.deb;
     fi
   - if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
       scripts/ci/$TARGET/run_tests.sh;
