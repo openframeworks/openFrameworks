@@ -5,6 +5,17 @@
 #include "ofTypes.h"
 #include "ofXml.h"
 
+
+/// \file
+/// ofxSVG is used for loading and rendering SVG files. It's a wrapper
+/// for the open source C library [Libsvgtiny](https://www.netsurf-browser.org/projects/libsvgtiny/ "Libsvgtiny website"),
+/// and it supports files in the [SVG Tiny format](https://www.w3.org/TR/SVGMobile/ "SVG Tiny 1.2
+/// format specification at the W3C").
+///
+/// Libsvgtiny supports a subset of SVG elements, (for a full list, see the Libsvgtiny readme file)
+/// but we have gone some way to improving this by manually implementing some extra features (such as the
+/// SVG "use" element).
+
 class ofxSVG {
 	public: ~ofxSVG();
 
@@ -18,20 +29,12 @@ class ofxSVG {
 	
 		/// \brief Loads an SVG from a text string.
 		///
-		/// As the underlying SVG parsing library requires a url, this method
-		/// gives you the option of providing one.
+		/// Useful for parsing SVG text from sources other than a file. As the
+		/// underlying SVG parsing library requires a url, this method gives
+		/// you the option of providing one.
 		///
 		/// ~~~~
 		void loadFromString(std::string data, std::string url="local");
-	
-		/// \brief Enabled or disable a mode that improves compatibility.
-		///
-		/// Set to true by default, this mode adds a number of improved
-		/// SVG parsing features. Turning it off will increase performance
-		/// but fewer SVG files will work.
-		///
-		/// ~~~~
-		void setImprovedCompatibilityMode(bool enabled);
 	
 		void draw();
 
@@ -42,9 +45,7 @@ class ofxSVG {
 
 	private:
 
-		void fixSvgText(std::string& xmlstring);
-	
-		bool increaseCompatibility = true;
+		void fixSvgString(std::string& xmlstring);
 	
 		float width, height;
 

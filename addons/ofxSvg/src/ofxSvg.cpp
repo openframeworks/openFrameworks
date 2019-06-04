@@ -18,10 +18,6 @@ float ofxSVG::getHeight() const {
 	return height;
 }
 
-void ofxSVG::setImprovedCompatibilityMode(bool mode) {
-	increaseCompatibility = mode;
-}
-
 int ofxSVG::getNumPath(){
 	return paths.size();
 }
@@ -44,9 +40,10 @@ void ofxSVG::load(std::string path){
 }
 
 void ofxSVG::loadFromString(std::string stringdata, std::string urlstring){
-
-	if(increaseCompatibility) fixSvgText(stringdata);
 	
+	// goes some way to improving SVG compatibility
+	fixSvgString(stringdata);
+
 	const char* data = stringdata.c_str();
 	int size = stringdata.size();
 	const char* url = urlstring.c_str();
@@ -85,7 +82,7 @@ void ofxSVG::loadFromString(std::string stringdata, std::string urlstring){
 	svgtiny_free(diagram);
 }
 
-void ofxSVG::fixSvgText(std::string& xmlstring) {
+void ofxSVG::fixSvgString(std::string& xmlstring) {
 	
 	ofXml xml;
 	
