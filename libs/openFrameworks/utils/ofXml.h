@@ -135,6 +135,8 @@ public:
 
 	ofXml getFirstChild() const;
 	ofXml getLastChild() const;
+	
+	ofXml getParent() const;
 
 
 	Attribute getAttribute(const std::string & name) const;

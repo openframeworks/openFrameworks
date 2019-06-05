@@ -1,4 +1,9 @@
 
+CORE
+----
+### utils
+- ofXML - provided access to the underlying pugi::xml_node method "getParent()" 
+
 PLATFORM/IDE SPECIFIC
 -----------------
 
@@ -9,7 +14,10 @@ ADDONS
 ------
 ### ofxOpenCv
 - added support for OpenCV4 : deprecated C functions replaced by their C++ counterpart. Also fix issue due to incorrect pkg-config package [commit](https://github.com/openframeworks/openFrameworks/commit/)
-
+ 
+### ofxSVG
+- added support for the SVG "use" command, a common feature that allows multiple instances of the same graphic elements. Also fixed an issue where line weights less that 1 unit would not render. This increased compatibility can be disabled if required by using the ofxSVG::setImprovedCompatibilityMode(bool mode) method. [commit](https://github.com/openframeworks/openFrameworks/commit/)
+- 
 --------------------------------------
 
 ```
