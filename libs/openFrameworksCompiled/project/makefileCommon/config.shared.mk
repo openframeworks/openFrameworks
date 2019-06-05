@@ -28,9 +28,14 @@ ifeq ($(findstring emcc, $(CC)),emcc)
 endif
 PLATFORM_OS ?= $(shell uname -s)
 
-FIND=find
 HOST_OS=$(shell uname -s)
 $(info HOST_OS=${HOST_OS})
+
+ifneq (,$(findstring MSYS_NT,$(HOST_OS)))
+	FIND=/usr/bin/find
+else
+	FIND=find
+endif
 
 #check for Raspbian as armv7l needs to use armv6l architecture
 ifeq ($(wildcard $(RPI_ROOT)/etc/*-release), /etc/os-release)
