@@ -92,18 +92,18 @@ OF_CORE_LIBRARY_LDFLAGS += $(addprefix -L,$(PLATFORM_LIBRARY_SEARCH_PATHS))
 # DEBUG INFO
 ################################################################################
 ifdef MAKEFILE_DEBUG
-	$(info =============================configure.core.flags.make========================)
-	$(info ---OF_CORE_LIBS_LDFLAGS---)
-	$(foreach v, $(OF_CORE_LIBS_LDFLAGS),$(info $(v)))
+    $(info =============================configure.core.flags.make========================)
+    $(info ---OF_CORE_LIBS_LDFLAGS---)
+    $(foreach v, $(OF_CORE_LIBS_LDFLAGS),$(info $(v)))
 
-	$(info ---OF_CORE_LIBS---)
-	$(foreach v, $(OF_CORE_LIBS),$(info $(v)))
+    $(info ---OF_CORE_LIBS---)
+    $(foreach v, $(OF_CORE_LIBS),$(info $(v)))
 endif
 
 ################################# ADDONS ######################################
 
 ifdef MAKEFILE_DEBUG
-	$(info ===================ADDONS================)
+    $(info ===================ADDONS================)
 endif
 
 # check to make sure OF_ROOT is defined
@@ -194,9 +194,9 @@ ifdef B_PROCESS_ADDONS
 	PROJECT_ADDONS = $(filter-out $(INVALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
 
 	ifdef MAKEFILE_DEBUG
-		$(info ---PROJECT_ADDONS---)
-		$(foreach v, $(PROJECT_ADDONS),$(info $(v)))
-		$(info --------------------)
+        $(info ---PROJECT_ADDONS---)
+        $(foreach v, $(PROJECT_ADDONS),$(info $(v)))
+        $(info --------------------)
 	endif
 
 	############################################################################
@@ -274,11 +274,11 @@ OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/build/%
 # create a list of all dirs in the project root that might be valid project
 # source directories
 ALL_OF_PROJECT_SOURCE_PATHS = $(shell $(FIND) $(PROJECT_ROOT)/src \
-														   -type d \
-														   -not -path "./bin/*" \
-														   -not -path "./obj/*" \
-														   -not -path "./*.xcodeproj/*" \
-														   -not -path "*/\.*")
+															-type d \
+															-not -path "./bin/*" \
+															-not -path "./obj/*" \
+															-not -path "./*.xcodeproj/*" \
+															-not -path "*/\.*")
 ifneq ($(PROJECT_EXTERNAL_SOURCE_PATHS),)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(PROJECT_EXTERNAL_SOURCE_PATHS)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(shell $(FIND) $(PROJECT_EXTERNAL_SOURCE_PATHS) -mindepth 1 -type d | grep -v "/\.[^\.]")
@@ -288,11 +288,11 @@ endif
 OF_PROJECT_SOURCE_PATHS = $(filter-out $(OF_PROJECT_EXCLUSIONS),$(ALL_OF_PROJECT_SOURCE_PATHS))
 
 ifdef MAKEFILE_DEBUG
-	$(info ---OF_PROJECT_SOURCE_PATHS---)
-	$(foreach v, $(OF_PROJECT_SOURCE_PATHS),$(info $(v)))
+    $(info ---OF_PROJECT_SOURCE_PATHS---)
+    $(foreach v, $(OF_PROJECT_SOURCE_PATHS),$(info $(v)))
 
-	$(info ---OF_PROJECT_EXCLUSIONS---)
-	$(foreach v, $(OF_PROJECT_EXCLUSIONS),$(info $(v)))
+    $(info ---OF_PROJECT_EXCLUSIONS---)
+    $(foreach v, $(OF_PROJECT_EXCLUSIONS),$(info $(v)))
 endif
 
 # find all sources inside the project's source directory (recursively)
@@ -307,8 +307,8 @@ OF_PROJECT_INCLUDES_CFLAGS := $(addprefix -I,$(filter-out $(PROJECT_INCLUDE_EXCL
 OF_ADDON_INCLUDES_CFLAGS += $(addprefix -I,$(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(PROJECT_ADDONS_INCLUDES)))
 
 ifdef MAKEFILE_DEBUG
-	$(info ---OF_PROJECT_INCLUDES_CFLAGS---)
-	$(foreach v, $(OF_PROJECT_INCLUDES_CFLAGS),$(info $(v)))
+    $(info ---OF_PROJECT_INCLUDES_CFLAGS---)
+    $(foreach v, $(OF_PROJECT_INCLUDES_CFLAGS),$(info $(v)))
 endif
 
 ################################################################################
@@ -370,7 +370,7 @@ OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PROJECT_ADDONS_FRAMEWORKS))
 
 ################################################################################
 ifdef MAKEFILE_DEBUG
-	$(info ===================compile.project.make=============================)
+    $(info ===================compile.project.make=============================)
 endif
 
 ifdef PROJECT_CXX
@@ -487,12 +487,12 @@ endif
 # define the subdirectory for our target name
 
 ifdef MAKEFILE_DEBUG
-	$(info ---OF_PROJECT_SOURCE_FILES---)
-	$(foreach v, $(OF_PROJECT_SOURCE_FILES),$(info $(v)))
+    $(info ---OF_PROJECT_SOURCE_FILES---)
+    $(foreach v, $(OF_PROJECT_SOURCE_FILES),$(info $(v)))
 endif
 ifdef MAKEFILE_DEBUG
-	$(info ---OF_PROJECT_DEPENDENCY_FILES---)
-	$(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
+    $(info ---OF_PROJECT_DEPENDENCY_FILES---)
+    $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
 endif
 
 
@@ -509,6 +509,6 @@ OF_PROJECT_DEPENDENCY_FILES = $(OF_PROJECT_DEPS) $(OF_PROJECT_ADDONS_DEPS)
 
 
 ifdef MAKEFILE_DEBUG
-	$(info ---OF_PROJECT_DEPENDENCY_FILES---)
-	$(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
+    $(info ---OF_PROJECT_DEPENDENCY_FILES---)
+    $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
 endif
