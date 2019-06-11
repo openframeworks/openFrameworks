@@ -93,7 +93,15 @@ public class OFAndroidLifeCycle
 				isLegal = false;
 			break;
 		case stop:
-			if(!m_currentState.equals(State.start))
+			if(!(m_currentState.equals(State.start)||m_currentState.equals(State.pause)))
+				isLegal = false;
+			break;
+		case resume:
+			if(!(m_currentState.equals(State.pause)||m_currentState.equals(State.start)))
+				isLegal = false;
+			break;
+		case pause:
+			if(!m_currentState.equals(State.resume))
 				isLegal = false;
 			break;
 		case destroy:
@@ -133,9 +141,9 @@ public class OFAndroidLifeCycle
                         {
                             throw new IllegalStateException("Illegal next state! when current state " + m_currentState.toString() + " next state: " + next.toString());
                         }
-
-                        if( next != State.pause_gameplay )
-                            m_currentState = next;
+                        
+                        m_currentState = next;
+                        
                         switch (next) {
                             case init:
                                 OFAndroidLifeCycleHelper.appInit(m_activity);
@@ -150,8 +158,11 @@ public class OFAndroidLifeCycle
                             case stop:
                                 OFAndroidLifeCycleHelper.onStop();
                                 break;
-                            case pause_gameplay:
-                                OFAndroidLifeCycleHelper.onPauseGameplay();
+                            case pause:
+                                OFAndroidLifeCycleHelper.onPause();
+                                break;
+                            case resume:
+                                OFAndroidLifeCycleHelper.onResume();
                                 break;
                             case destroy:
                                 OFAndroidLifeCycleHelper.onDestroy();
@@ -307,12 +318,13 @@ public class OFAndroidLifeCycle
 	public static void glResume(ViewGroup glContainer)
 	{
 		Log.d(TAG, "glResume");
+		pushState(State.resume);
 	}
 	
 	public static void glPause()
 	{
 		Log.d(TAG, "glPause");
-		pushState(State.pause_gameplay);
+		pushState(State.pause);
 	}
 	
 	public static void glDestroy()
@@ -332,6 +344,6 @@ public class OFAndroidLifeCycle
 	
 	public enum State 
 	{
-		init, create, start, stop, destroy, exit, pause_gameplay;
+		init, create, start, stop, destroy, exit, pause, resume;
 	}
 }

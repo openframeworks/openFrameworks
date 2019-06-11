@@ -274,10 +274,19 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 	@Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		Log.i("OF","onSurfaceCreated");
+		// notify that old surface was destroyed
+		if(this.has_surface) {
+			OFAndroid.onSurfaceDestroyed();
+			this.has_surface = false;
+		}
+		
+		// notify that new surface was created
+		this.has_surface = true;
 		OFAndroid.onSurfaceCreated();
 		Activity activity = OFAndroidLifeCycle.getActivity();
 		if(OFActivity.class.isInstance(activity))
 			((OFActivity)activity).onGLSurfaceCreated();
+		
 		return;
     }
 	
@@ -326,4 +335,5 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 
     private static boolean setup;
     private int w,h;
+    private boolean has_surface = false;
 }

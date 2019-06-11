@@ -412,10 +412,10 @@ public class OFAndroid {
     public static native void init();
     public static native void onCreate();
     public static native void onRestart();
-    public static native void onPause();
-    public static native void onPauseGameplay();
-    public static native void onResume();
+    public static native void onStart();
     public static native void onStop();
+    public static native void onResume();
+    public static native void onPause();
     public static native void onDestroy();
     public static native void onSurfaceCreated();
     public static native void onSurfaceDestroyed();

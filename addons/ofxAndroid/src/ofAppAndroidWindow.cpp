@@ -21,7 +21,7 @@
 #include "ofGLRenderer.h"
 using namespace std;
 
-static bool paused=true;
+static bool stopped=true;
 static bool surfaceDestroyed=false;
 
 
@@ -120,7 +120,12 @@ bool ofAppAndroidWindow::isSurfaceDestroyed() {
 	return surfaceDestroyed;
 }
 
-void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings){
+void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings)
+{
+	setup( (const ofxAndroidWindowSettings &)settings );
+}
+
+void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 	glesVersion = settings.glesVersion;
 	ofLogError() << "setup gles" << glesVersion;
 	if(glesVersion<2){
@@ -281,29 +286,29 @@ Java_cc_openframeworks_OFAndroid_onRestart( JNIEnv*  env, jobject  thiz ){
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jobject  thiz ){
-	paused = true;
-	ofNotifyEvent(ofxAndroidEvents().pause);
+Java_cc_openframeworks_OFAndroid_onStart( JNIEnv*  env, jobject  thiz ){
+	ofLogVerbose("ofAppAndroidWindow") << "onStart";
+	stopped = false;
+	ofNotifyEvent(ofxAndroidEvents().start);
+}
+
+void
+Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jobject  thiz ){
+	ofLogVerbose("ofAppAndroidWindow") << "onStop";
+	ofNotifyEvent( ofxAndroidEvents().stop );
+	stopped = true;
 }
 
 void
 Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jobject  thiz ){
 	ofLogVerbose("ofAppAndroidWindow") << "onResume";
-	if(paused){
-		ofNotifyEvent(ofxAndroidEvents().resume);
-		paused = false;
-	}
+	ofNotifyEvent(ofxAndroidEvents().resume);
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onPauseGameplay( JNIEnv*  env, jobject  thiz ){
-	paused = true;
-	ofNotifyEvent(ofxAndroidEvents().pause_gameplay);
-}
-
-void
-Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jobject  thiz ){
-
+Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jobject  thiz ){
+	ofLogVerbose("ofAppAndroidWindow") << "onPause";
+	ofNotifyEvent(ofxAndroidEvents().pause);
 }
 
 
@@ -352,7 +357,7 @@ void
 Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint h  )
 {
 	ofLogVerbose("ofAppAndroidWindow") << "setup " << w << "x" << h;
-	paused = false;
+	stopped = false;
     sWindowWidth  = w;
     sWindowHeight = h;
 	window->renderer()->startRender();
@@ -384,7 +389,7 @@ void
 Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 {
 
-	if(paused || surfaceDestroyed) return;
+	if(stopped || surfaceDestroyed) return;
 
 	if(!threadedTouchEvents){
 		mtx.lock();

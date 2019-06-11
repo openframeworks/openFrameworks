@@ -191,8 +191,12 @@ public class OFAndroidLifeCycleHelper
 		});
 	}
 	
-	public static void onPauseGameplay(){
-		OFAndroid.onPauseGameplay();
+	public static void onResume(){
+		OFAndroid.onResume();
+	}
+	
+	public static void onPause(){
+		OFAndroid.onPause();
 	}
 	
 	public static void onStart(){
@@ -218,7 +222,7 @@ public class OFAndroidLifeCycleHelper
 		
         if(glView.isSetup()){
         	Log.i(TAG,"resume view and native");
-        	OFAndroid.onResume();
+        	OFAndroid.onStart();
         }
         
         if(OFAndroid.getOrientation()!=-1) OFAndroid.setScreenOrientation(OFAndroid.getOrientation());
@@ -243,7 +247,7 @@ public class OFAndroidLifeCycleHelper
 			}
 		});
 		
-		OFAndroid.onPause();
+		OFAndroid.onStop();
 		OFAndroid.unregisterNetworkStateReceiver();
 
 		OFAndroid.sleepLocked=false;

@@ -181,27 +181,27 @@ public:
 	ofEvent<void> backPressed;
 	ofEvent<bool> networkConnected;
 	ofEvent<ofOrientation> deviceOrientationChanged;
+	
 	/**
-		This is called when gameplay should be paused because of some windowing event.
-		It is called for example before ofxAndroidEventsClass::pause when minimizing the App (switching to another Activity).
-		It is also called during multiwindow switching and incoming phone calls and few other similar events.
-		This does not have a resume_gameplay counterpart - gameplay should be paused automaticaly when focus is lost, but resuming should be only done manualy by the user.
-		If your app has no gameplay (eg. no progress to be lost during pause), then don't use this.
+		The names start, stop, resume and pause correspond to Android Activity class lifecycle callbacks.
+		They are described in Android lifecycle guide (https://developer.android.com/guide/components/activities/activity-lifecycle).
+		TLDR:
+			Start and Stop events inform about app going to background and foreground.
+			Resume and Pause events inform about window focus being lost and restored while the app is still in foreground (window is at least partialy visible).
 	*/
-	ofEvent<void> pause_gameplay;
-	/**
-	   Called when user switches to another Activity or turns the display off.
-	   After this, the application is not visible on screen and openframeworks does not call ofBaseApp::update and ofBaseApp::draw methods.
-	   Use this to pause tasks that are not run from 'draw' or 'update' and need to be paused when the App is minimized.
-	*/
-	ofEvent<void> pause;
-	/**
-		Counterpart to ofxAndroidEventsClass::pause.
-		Resume tasks paused in 'pause'.
-	*/
+	ofEvent<void> start;
+	ofEvent<void> stop;
 	ofEvent<void> resume;
+	ofEvent<void> pause;
+	
+	/**
+		GL is loaded when app starts.
+		When unloadGL is called, the original opengl context is already lost (but new, fresh context might be already active).
+		Events unloadGL and reloadGL are called alternately.
+	*/
 	ofEvent<void> unloadGL;
 	ofEvent<void> reloadGL;
+	
 	ofEvent<ofxAndroidSwipeEventArgs> swipe;
 	ofEvent<ofxAndroidScaleEventArgs> scale;
 	ofEvent<ofxAndroidScaleEventArgs> scaleBegin;

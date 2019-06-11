@@ -119,14 +119,13 @@ public:
 class ofGLESWindowSettings: public ofWindowSettings{
 public:
 	ofGLESWindowSettings()
-	:glesVersion(1), preserveContextOnPause(true){}
+	:glesVersion(1){}
 
 	ofGLESWindowSettings(const ofWindowSettings & settings)
-	:ofWindowSettings(settings), glesVersion(1), preserveContextOnPause(true) {
+	:ofWindowSettings(settings), glesVersion(1) {
         const ofGLESWindowSettings * glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
         if(glesSettings){
             glesVersion = glesSettings->glesVersion;
-            preserveContextOnPause = glesSettings->preserveContextOnPause;
         }
     }
 
@@ -135,18 +134,6 @@ public:
 	void setGLESVersion(int version){
 		glesVersion = version;
 	}
-	
-	/**
-		Initialy implemented for Android, this corresponds to GLSurfaceView.setPreserveEGLContextOnPause.
-		If this is false, all opengl resources (textures, shaders, ...) will be destroyed when the App is minimized.
-		I would suggest to have this set to 'true' when releasing the App, but try to run it with this set to 'false'
-			from time to time to make that opengl resources reloading works properly.
-		Use events ofxAndroidEventsClass::unloadGL and ofxAndroidEventsClass::unloadGL to track when the opengl context is lost.
-	*/
-	void setPreserveContextOnPause(bool preserve){
-		preserveContextOnPause = preserve;
-	}
 
 	int glesVersion;
-	bool preserveContextOnPause;
 };
