@@ -5,6 +5,7 @@
 #include "ofPixels.h"
 #include "ofGLBaseTypes.h"
 #include "ofGraphicsConstants.h"
+#include "ofGLUtils.h"
 
 class ofFile;
 class ofBuffer;
