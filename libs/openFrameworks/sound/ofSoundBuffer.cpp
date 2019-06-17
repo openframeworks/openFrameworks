@@ -34,9 +34,9 @@ ofSoundBuffer::ofSoundBuffer(short * shortBuffer, std::size_t numFrames, std::si
 	checkSizeAndChannelsConsistency("constructor");
 }
 
-void ofSoundBuffer::copyFrom(const short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
+void ofSoundBuffer::copyFrom(const short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int _sampleRate) {
 	this->channels = numChannels;
-	setSampleRate(sampleRate);
+	setSampleRate(_sampleRate);
 	buffer.resize(numFrames * numChannels);
 	for(std::size_t i = 0; i < size(); i++){
 		buffer[i] = shortBuffer[i]/float(numeric_limits<short>::max());
@@ -44,9 +44,9 @@ void ofSoundBuffer::copyFrom(const short * shortBuffer, std::size_t numFrames, s
 	checkSizeAndChannelsConsistency("copyFrom");
 }
 
-void ofSoundBuffer::copyFrom(const float * floatBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
+void ofSoundBuffer::copyFrom(const float * floatBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int _sampleRate) {
 	this->channels = numChannels;
-	setSampleRate(sampleRate);
+	setSampleRate(_sampleRate);
 	buffer.assign(floatBuffer, floatBuffer + (numFrames * numChannels));
 	checkSizeAndChannelsConsistency("copyFrom");
 }
