@@ -13,12 +13,12 @@ model {
         compileSdkVersion 25
 
         defaultConfig.with {
-            minSdkVersion.apiLevel 19
+            minSdkVersion.apiLevel 23
             targetSdkVersion.apiLevel 25
         }
 
         ndk {
-            platformVersion = "19"
+            platformVersion = "23"
             moduleName "openFrameworksLib"
             toolchain  = buildToolchain()
             stl        = compilerStl()
