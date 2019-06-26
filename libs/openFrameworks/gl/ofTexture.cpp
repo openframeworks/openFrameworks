@@ -458,7 +458,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 #ifndef TARGET_OPENGLES
 	if(texData.textureTarget == GL_TEXTURE_2D || texData.textureTarget == GL_TEXTURE_2D_ARRAY || texData.textureTarget == GL_TEXTURE_3D || texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 #else
-	if(texData.textureTarget == GL_TEXTURE_2D || texData.textureTarget == GL_TEXTURE_2D_ARRAY || texData.textureTarget == GL_TEXTURE_3D){
+	if(texData.textureTarget == GL_TEXTURE_2D) {
 #endif
         glBindTexture(texData.textureTarget,texData.textureID);
         
