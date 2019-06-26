@@ -462,6 +462,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 #endif
         glBindTexture(texData.textureTarget,texData.textureID);
         
+#ifndef TARGET_OPENGLES
         if (texData.textureTarget == GL_TEXTURE_2D_ARRAY || texData.textureTarget == GL_TEXTURE_3D) {
             // make sure we have the 3D data in there
             texData.depth = textureData.depth;
@@ -471,8 +472,11 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
             glTexImage3D(texData.textureTarget, 0, texData.glInternalFormat, (GLint)texData.tex_w, (GLint)texData.tex_h, (GLint)texData.depth, 0, glFormat, pixelType, 0);  // init to black...
         }
         else {
+#endif
             glTexImage2D(texData.textureTarget, 0, texData.glInternalFormat, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, glFormat, pixelType, 0);  // init to black...
+#ifndef TARGET_OPENGLES
         }
+#endif
         
         glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, texData.magFilter);
         glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, texData.minFilter);
@@ -699,6 +703,7 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 	
 }
         
+#ifndef TARGET_OPENGLES
 //----------------------------------------------------------
 template<typename PixelType>
 void ofTexture::loadData(const std::vector<ofPixels_<PixelType>> &texArray){
@@ -759,6 +764,7 @@ void ofTexture::loadData(const void * data, int w, int h, int d, int glFormat, i
     glBindTexture(texData.textureTarget, 0);
     
 }
+#endif
 
 //----------------------------------------------------------
 void ofTexture::generateMipmap(){

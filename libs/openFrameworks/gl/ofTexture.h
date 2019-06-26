@@ -554,12 +554,6 @@ class ofTexture : public ofBaseDraws {
 	/// \param glType the OpenGL type of the data.
     void loadData(const void * data, int w, int h, int glFormat, int glType);
     
-    // these are for 3D
-    void loadData(const void * data, int w, int h, int d, int glFormat, int glType);
-    
-    template<typename PixelType>
-    void loadData(const std::vector<ofPixels_<PixelType>> &texArray);
-	
 #ifndef TARGET_OPENGLES
 	/// \brief Load pixels from an ofBufferObject
 	///
@@ -574,6 +568,25 @@ class ofTexture : public ofBaseDraws {
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
 	/// \param glType the GL type to load.
 	void loadData(const ofBufferObject & buffer, int glFormat, int glType);
+    
+    /// \brief Load texture array from a vector of ofPixels
+    ///
+    /// Allocates GL_TEXTURE_3D or GL_TEXTURE_2D_ARRAY, which can be
+    /// used in shader as sampler2DArray
+    ///
+    /// \param texArray Vector of ofPixels.
+    template<typename PixelType>
+    void loadData(const std::vector<ofPixels_<PixelType>> &texArray);
+    
+    /// \brief Load byte pixel data into 3D texture.
+    ///
+    /// \param data Pointer to byte pixel data. Must not be nullptr.
+    /// \param w Pixel data width.
+    /// \param h Pixel data height.
+    /// \param d Pixel data depth.
+    /// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
+    /// \param glType the OpenGL type of the data.
+    void loadData(const void * data, int w, int h, int d, int glFormat, int glType);
 #endif
 
 	/// \brief Copy an area of the screen into this texture.
