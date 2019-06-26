@@ -111,6 +111,10 @@ const ofParameter<ofFloatColor> & ofParameterGroup::getFloatColor(const string& 
 	return get<ofFloatColor>(name);
 }
 
+const ofParameter<ofRectangle> & ofParameterGroup::getRectangle(const string& name) const{
+	return get<ofRectangle>(name);
+}
+
 const ofParameterGroup & ofParameterGroup::getGroup(const string& name) const{
 	return static_cast<const ofParameterGroup&>(get(name));
 }
@@ -167,6 +171,9 @@ const ofParameter<ofFloatColor> & ofParameterGroup::getFloatColor(std::size_t po
 	return get<ofFloatColor>(pos);
 }
 
+const ofParameter<ofRectangle> & ofParameterGroup::getRectangle(std::size_t pos) const{
+	return get<ofRectangle>(pos);
+}
 
 const ofParameterGroup & ofParameterGroup::getGroup(std::size_t pos) const{
 	if(pos>=size()){
@@ -231,6 +238,9 @@ ofParameter<ofShortColor> & ofParameterGroup::getShortColor(const string& name){
 ofParameter<ofFloatColor> & ofParameterGroup::getFloatColor(const string& name){
 	return get<ofFloatColor>(name);
 }
+ofParameter<ofRectangle> & ofParameterGroup::getRectangle(const string& name){
+	return get<ofRectangle>(name);
+}
 
 ofParameterGroup & ofParameterGroup::getGroup(const string& name){
 	return static_cast<ofParameterGroup& >(get(name));
@@ -288,6 +298,9 @@ ofParameter<ofFloatColor> & ofParameterGroup::getFloatColor(std::size_t pos){
 	return get<ofFloatColor>(pos);
 }
 
+ofParameter<ofRectangle> & ofParameterGroup::getRectangle(std::size_t pos){
+	return get<ofRectangle>(pos);
+}
 
 ofParameterGroup & ofParameterGroup::getGroup(std::size_t pos){
 	if(pos>=size()){

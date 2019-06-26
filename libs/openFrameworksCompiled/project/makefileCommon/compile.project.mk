@@ -131,9 +131,6 @@ ifndef ABIS_TO_COMPILE_RELEASE
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) ReleaseABI ABI=$(abi) &&) echo
 endif
-ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
-	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
-endif
 
 
 
@@ -148,9 +145,6 @@ ifndef ABIS_TO_COMPILE_DEBUG
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) DebugABI ABI=$(abi) &&) echo
 endif
-ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
-	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
-endif
 
 ReleaseNoOF:
 	@echo Compiling $(APPNAME) for Release
@@ -158,9 +152,6 @@ ifndef ABIS_TO_COMPILE_RELEASE
 	@$(MAKE) ReleaseABI
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) ReleaseABI ABI=$(abi) &&) echo
-endif
-ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
-	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
 endif
 
 DebugNoOF:
@@ -170,15 +161,18 @@ ifndef ABIS_TO_COMPILE_DEBUG
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) DebugABI ABI=$(abi) &&) echo
 endif
-ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
-	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
-endif
 
 ReleaseABI: $(TARGET)
+ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
+	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
+endif
 	@$(MAKE) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_RELEASE)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 	@$(PROJECT_AFTER)
 
 DebugABI: $(TARGET)
+ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
+	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
+endif
 	@$(MAKE) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 	@$(PROJECT_AFTER)
 
@@ -208,12 +202,12 @@ endif
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags: force
 	@mkdir -p $(OF_PROJECT_OBJ_OUTPUT_PATH)
-	@if [ "$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) $(OPTIMIZATION_LDFLAGS) $(LDFLAGS))" != "$(strip $$(cat $@))" ]; then echo $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) $(OPTIMIZATION_LDFLAGS) $(LDFLAGS)) > $@; fi
+	@if [ "$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) $(OPTIMIZATION_LDFLAGS) $(LDFLAGS))" != "$(strip $$(cat $@ 2>/dev/null))" ]; then echo $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) $(OPTIMIZATION_LDFLAGS) $(LDFLAGS)) > $@; fi
 
 $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags: force
 	@mkdir -p $(OF_PROJECT_OBJ_OUTPUT_PATH)
 	@mkdir -p $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)
-	@if [ "$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))" != "$(strip $$(cat $@))" ]; then echo $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)) > $@; fi
+	@if [ "$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))" != "$(strip $$(cat $@ 2>/dev/null))" ]; then echo $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)) > $@; fi
 
 # Rules to compile the project sources
 #$(OBJS): $(SOURCES)
@@ -444,6 +438,8 @@ after: $(TARGET_NAME)
 	@echo
 
 copyaddonsdata:
+	@echo
+	@echo "Copying addons data"
 	@mkdir -p bin/data
 	@cp -rf $(PROJECT_ADDONS_DATA) bin/data/
 

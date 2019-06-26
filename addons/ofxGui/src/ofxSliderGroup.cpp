@@ -242,3 +242,105 @@ void ofxColorSlider_<ColorType>::onMaximize(){
 template class ofxColorSlider_<unsigned char>;
 template class ofxColorSlider_<unsigned short>;
 template class ofxColorSlider_<float>;
+
+
+//--------------------
+ofxRectangleSlider::ofxRectangleSlider(ofParameter<ofRectangle> value, float width, float height){
+	sliderChanging = false;
+    setup(value, width, height);
+}
+
+
+ofxRectangleSlider * ofxRectangleSlider::setup(ofParameter<ofRectangle> value, float width, float height){
+    ofxGuiGroup::setup(value.getName(), "", 0, 0);
+    
+    parameters.clear();
+    
+//    const string names[4] = {"x", "y", "width", "height"};
+	
+    this->value.makeReferenceTo(value);
+    this->value.addListener(this, & ofxRectangleSlider::changeValue);
+
+    ofRectangle val = value;
+    ofRectangle min = value.getMin();
+    ofRectangle max = value.getMax();
+    
+	// adding a [] operator to ofRectangle would be handy for this situation
+//	for (size_t i = 0; i < 4; i++) {
+//    	ofParameter<float> p(names[i], val[i], min[i], max[i]);
+//        add(new ofxSlider<float>(p, width, height));
+//        p.addListener(this, & ofxRectangleSlider::changeSlider);
+//    }
+    	ofParameter<float> x("x", val.x, min.x, max.x);
+        add(new ofxSlider<float>(x, width, height));
+        x.addListener(this, & ofxRectangleSlider::changeSlider);
+	
+		ofParameter<float> y("y", val.y, min.y, max.y);
+        add(new ofxSlider<float>(y, width, height));
+        y.addListener(this, & ofxRectangleSlider::changeSlider);
+
+    	ofParameter<float> w("width", val.width, min.width, max.width);
+        add(new ofxSlider<float>(w, width, height));
+        w.addListener(this, & ofxRectangleSlider::changeSlider);
+
+		ofParameter<float> h("height", val.height, min.height, max.height);
+        add(new ofxSlider<float>(h, width, height));
+        h.addListener(this, & ofxRectangleSlider::changeSlider);
+
+
+    sliderChanging = false;
+    return this;
+
+}
+
+ofxRectangleSlider * ofxRectangleSlider::setup(const std::string& controlName, const ofRectangle & v, const ofRectangle & min, const ofRectangle & max, float width, float height){
+	value.set(controlName,v,min,max);
+	return setup(value,width,height);
+}
+
+
+void ofxRectangleSlider::changeSlider(const void * parameter, float & _value){
+    sliderChanging = true;
+    ofParameter<float> & param = *(ofParameter<float>*)parameter;
+	
+    ofRectangle data = value;
+	auto _name = param.getName();
+	if(_name == "x"){data.x = _value;}
+	else if(_name == "y"){data.y = _value;}
+	else if(_name == "width"){data.width = _value;}
+	else if(_name == "height"){data.height = _value;}
+    value = data;
+    sliderChanging = false;
+}
+
+
+void ofxRectangleSlider::changeValue(ofRectangle & value){
+    if (sliderChanging){
+        return;
+    }
+	parameters[0].template cast<float>() = value.x;
+	parameters[1].template cast<float>() = value.y;
+	parameters[2].template cast<float>() = value.width;
+	parameters[3].template cast<float>() = value.height;
+}
+
+ofAbstractParameter & ofxRectangleSlider::getParameter(){
+	return value;
+}
+
+
+ofRectangle ofxRectangleSlider::operator=(const ofRectangle & v){
+	value = v;
+	return value;
+}
+
+
+ofxRectangleSlider::operator const ofRectangle & (){
+	return value;
+}
+
+
+const ofRectangle * ofxRectangleSlider::operator->(){
+	return &value.get();
+}
+

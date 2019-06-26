@@ -203,7 +203,11 @@ installJunest(){
 	fi
 	export PATH=~/.local/share/junest/bin:$PATH
 	junest -u << EOF
-		pacman -Syy --noconfirm
+        echo updating keys
+        pacman -S gnupg --noconfirm
+        pacman-key --populate archlinux
+        pacman-key --refresh-keys
+		pacman -Syyu --noconfirm
 		pacman -S --noconfirm git flex grep gcc pkg-config make wget
 EOF
     echo "Done installing junest"

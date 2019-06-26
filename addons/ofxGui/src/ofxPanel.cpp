@@ -148,7 +148,7 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 			
 			if( headerRect.inside(mx, my)){
 				bGrabbed = true;
-				grabPt.set(mx-b.x, my-b.y);
+				grabPt = {mx-b.x, my-b.y, 0};
 				return true;
 			} else{
 				bGrabbed = false;

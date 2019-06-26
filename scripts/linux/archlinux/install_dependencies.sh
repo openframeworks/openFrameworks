@@ -10,7 +10,7 @@ if [ $EUID != 0 ]; then
    exit 1
 fi
 
-pacman -Sy --needed make pkgconf gcc openal glew freeglut freeimage gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav opencv libxcursor assimp boost glfw-x11 uriparser curl pugixml rtaudio
+pacman -Sy --needed make pkgconf gcc openal glew freeglut freeimage gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav opencv libxcursor assimp boost glfw-x11 uriparser curl pugixml rtaudio poco
 
 exit_code=$?
 if [ $exit_code != 0 ]; then
