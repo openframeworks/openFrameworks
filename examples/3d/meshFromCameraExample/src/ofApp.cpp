@@ -72,7 +72,7 @@ void ofApp::update(){
 			
 			//now we get the vertex aat this position
 			//we extrude the mesh based on it's brightness
-			ofVec3f tmpVec = mainMesh.getVertex(i);
+			glm::vec3 tmpVec = mainMesh.getVertex(i);
 			tmpVec.z = sampleColor.getBrightness() * extrusionAmount;
 			mainMesh.setVertex(i, tmpVec);
 
@@ -85,10 +85,10 @@ void ofApp::update(){
 
 	
 	//move the camera around the mesh
-	ofVec3f camDirection(0,0,1);
-	ofVec3f centre(vidGrabber.getWidth()/2.f,vidGrabber.getHeight()/2.f, 255/2.f);
-	ofVec3f camDirectionRotated = camDirection.getRotated(rotateAmount, ofVec3f(1,0,0));
-	ofVec3f camPosition = centre + camDirectionRotated * extrusionAmount;
+	glm::vec3 camDirection(0,0,1);
+	glm::vec3 centre(vidGrabber.getWidth()/2.f,vidGrabber.getHeight()/2.f, 255/2.f);
+	glm::vec3 camDirectionRotated = glm::rotate(camDirection, rotateAmount, glm::vec3(1,0,0));
+	glm::vec3 camPosition = centre + camDirectionRotated * extrusionAmount;
 	
 	cam.setPosition(camPosition);
 	cam.lookAt(centre);

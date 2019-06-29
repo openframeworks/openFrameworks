@@ -329,8 +329,8 @@ void ofApp::drawScene(int cameraIndex){
 //--------------------------------------------------------------
 void ofApp::updateMouseRay(){
 	// Define ray in screen space
-	ray[0] = ofVec3f(ofGetMouseX(), ofGetMouseY(), -1);
-	ray[1] = ofVec3f(ofGetMouseX(), ofGetMouseY(), 1);
+	ray[0] = glm::vec3(ofGetMouseX(), ofGetMouseY(), -1);
+	ray[1] = glm::vec3(ofGetMouseX(), ofGetMouseY(), 1);
 
 	// Transform ray into world space
 	ray[0] = cameras[iMainCamera]->screenToWorld(ray[0], viewMain);
