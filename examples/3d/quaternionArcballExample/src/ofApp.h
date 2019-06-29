@@ -33,7 +33,7 @@ class ofApp : public ofBaseApp{
 	void gotMessage(ofMessage msg);
 		
 	//current state of the rotation  
-	glm::quat curRot;  
+	glm::quat curRot;
 	
     //a place to store the mouse position so we can measure incremental change  
     glm::vec2 lastMouse;
