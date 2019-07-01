@@ -7,12 +7,12 @@
 
 /// \class ofColor_
 ///
-/// \brief ofColor represents a color in openFrameworks. 
-/// 
-/// The default ofColor uses unsigned char values [0,255], but use 
-/// ofFloatColor for floating point values [0.0,1.0], or ofShortColor for 
-/// unsigned short ints [0,[65,535]]. ofColor can be represented by an RGB 
-/// value, an HSB value or a hex value. 
+/// \brief ofColor represents a color in openFrameworks.
+///
+/// The default ofColor uses unsigned char values [0,255], but use
+/// ofFloatColor for floating point values [0.0,1.0], or ofShortColor for
+/// unsigned short ints [0,[65,535]]. ofColor can be represented by an RGB
+/// value, an HSB value or a hex value.
 ///
 /// \tparam PixelType The data type used to represent a single pixel value.
 template<typename PixelType>
@@ -37,7 +37,7 @@ public:
     ofColor_(float red, float green, float blue, float alpha = limit());
 
     /// \brief Construct a grayscale ofColor_ by specifying a single number.
-    /// 
+    ///
     /// \param gray A grayscale value.
     /// \param alpha The opacity of the color.
     ofColor_(float gray, float alpha = limit());
@@ -179,7 +179,7 @@ public:
     ///
     /// Performs an inversion operation on the color by replacing the red, green
     /// and blue components with their original value subtracted from the
-    /// limit(). 
+    /// limit().
     ///
     /// \returns A reference to itself.
     ofColor_<PixelType>& invert();
@@ -189,7 +189,7 @@ public:
     /// Performs a normalization operation on the red, green and blue components
     /// by scaling them by brightness of the original color divided by the
     /// limit().  The brightness is calculated by finding the maximum of
-    /// original red, green and blue components. 
+    /// original red, green and blue components.
     /// In short: ofColor / (brightness / limit())
     ///
     /// \returns A reference to itself.
@@ -658,7 +658,7 @@ void ofColor_<PixelType>::copyFrom(const ofColor_<SrcType> & mom){
 	const float dstMax = limit();
 	const float factor = dstMax / srcMax;
 
-	if(sizeof(SrcType) == sizeof(float)) {
+	if(typeid(SrcType) == typeid(float) || typeid(SrcType) == typeid(double)) {
 		// coming from float we need a special case to clamp the values
 		for(int i = 0; i < 4; i++){
 			v[i] = glm::clamp(float(mom[i]), 0.f, 1.f) * factor;
