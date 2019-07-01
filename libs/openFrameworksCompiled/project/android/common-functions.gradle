@@ -260,7 +260,7 @@ def getFlavorName(abi) {
 }
 
 def getAbis(){
-    return ["armeabi-v7a", "x86"]
+    return ["arm64-v8a", "armeabi-v7a", "x86"]
 }
 
 def ofAppModuleName(){
