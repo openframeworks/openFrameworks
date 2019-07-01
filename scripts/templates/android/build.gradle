@@ -30,7 +30,7 @@ model {
         buildToolsVersion = "25.0.3"
 
         defaultConfig.with {
-            minSdkVersion.apiLevel    = 23
+            minSdkVersion.apiLevel    = 19
             targetSdkVersion.apiLevel = 25
             versionCode     =  1
             versionName     = "1.0"
@@ -41,7 +41,7 @@ model {
         moduleName = ofAppModuleName()
         toolchain  = buildToolchain()
         stl        = compilerStl()
-        platformVersion = "23"
+        platformVersion = "21"
     }
 
     android.sources {
