@@ -186,10 +186,14 @@ void ofSoundBuffer::copyTo(ofSoundBuffer & soundBuffer, std::size_t nFrames, std
 	soundBuffer.resize(nFrames*outChannels);
 	soundBuffer.setNumChannels(outChannels);
 	soundBuffer.setSampleRate(samplerate);
+	soundBuffer.setTickCount(this->getTickCount());
+	soundBuffer.setDeviceID(this->getDeviceID());
 	copyTo(&soundBuffer[0], nFrames, outChannels, fromFrame, loop);
 }
 
 void ofSoundBuffer::copyTo(ofSoundBuffer & outBuffer, std::size_t fromFrame, bool loop) const{
+	outBuffer.setTickCount(this->getTickCount());
+	outBuffer.setDeviceID(this->getDeviceID());
 	copyTo(&outBuffer[0], outBuffer.getNumFrames(), outBuffer.getNumChannels(), fromFrame, loop);
 }
 
