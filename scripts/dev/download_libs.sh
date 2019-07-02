@@ -21,7 +21,7 @@ cat << EOF
                                     msys2: 32
                                     android: armv7, arm64, and x86 (if not specified will download all)
                                     linux: 64gcc4, 64gcc5, 64gcc6 / 64, armv6l or armv7l
-    -n, --no-overwrite          Merge new libraries with exisiting ones, use only to download same version for different platforms
+    -n, --no-overwrite          Merge new libraries with existing ones, use only to download same version for different platforms
                                 If not set deletes any existing libraries
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
