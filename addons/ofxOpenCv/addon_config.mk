@@ -61,7 +61,7 @@ common:
 	# ADDON_LIBS_EXCLUDE =
 
 linux64:
-    ADDON_PKG_CONFIG_LIBRARIES = opencv4 harfbuzz
+    ADDON_PKG_CONFIG_LIBRARIES = opencv harfbuzz
 	ADDON_LIBS_EXCLUDE = libs/opencv/%
 	ADDON_INCLUDES_EXCLUDE = libs/opencv
 	ADDON_INCLUDES_EXCLUDE += libs/opencv/%
@@ -79,13 +79,13 @@ linuxarmv6l:
 	ADDON_INCLUDES_EXCLUDE += libs/opencv/%
 
 linuxarmv7l:
-	ADDON_PKG_CONFIG_LIBRARIES = opencv4
+	ADDON_PKG_CONFIG_LIBRARIES = opencv
 	ADDON_LIBS_EXCLUDE = libs/opencv/%
 	ADDON_INCLUDES_EXCLUDE = libs/opencv
 	ADDON_INCLUDES_EXCLUDE += libs/opencv/%
 
 msys2:
-	ADDON_PKG_CONFIG_LIBRARIES = opencv4
+	ADDON_PKG_CONFIG_LIBRARIES = opencv
 	ADDON_LIBS_EXCLUDE = libs/opencv/%
 	ADDON_INCLUDES_EXCLUDE = libs/opencv
 	ADDON_INCLUDES_EXCLUDE += libs/opencv/%

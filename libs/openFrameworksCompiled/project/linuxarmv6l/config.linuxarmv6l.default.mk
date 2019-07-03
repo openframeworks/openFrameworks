@@ -45,6 +45,7 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 
 # defines used inside openFrameworks libs.
 PLATFORM_DEFINES += TARGET_RASPBERRY_PI
+PLATFORM_DEFINES += TARGET_OPENGL
 
 # TODO many of these are not relevant to openFrameworks (were just pasted from hello_pi examples)
 # from raspberry pi examples
@@ -120,14 +121,14 @@ PLATFORM_CFLAGS += -pipe
 ################################################################################
 
 # raspberry pi specific
-ifneq (,$(wildcard $(RPI_ROOT)/opt/vc/lib/libGLESv2.so))
-	PLATFORM_LIBRARIES += GLESv2
-	PLATFORM_LIBRARIES += GLESv1_CM
-	PLATFORM_LIBRARIES += EGL
-else
-	PLATFORM_LIBRARIES += brcmGLESv2
-	PLATFORM_LIBRARIES += brcmEGL
-endif
+#ifneq (,$(wildcard $(RPI_ROOT)/opt/vc/lib/libGLESv2.so))
+#	PLATFORM_LIBRARIES += GLESv2
+#	PLATFORM_LIBRARIES += GLESv1_CM
+#	PLATFORM_LIBRARIES += EGL
+#else
+#	PLATFORM_LIBRARIES += brcmGLESv2
+#	PLATFORM_LIBRARIES += brcmEGL
+#endif
 PLATFORM_LIBRARIES += openmaxil
 PLATFORM_LIBRARIES += bcm_host
 PLATFORM_LIBRARIES += vcos
@@ -139,6 +140,7 @@ PLATFORM_LIBRARIES += dl
 
 
 PLATFORM_LDFLAGS += -pthread
+PLATFORM_LDFLAGS += -latomic
 
 
 ################################################################################

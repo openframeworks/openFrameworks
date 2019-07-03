@@ -195,7 +195,9 @@ enum ofTargetPlatform{
 			// which messes up other libraries like glm
 			#undef countof
 		#endif
+  #endif
 
+  #ifdef TARGET_OPENGLES
 		#include "GLES/gl.h"
 		#include "GLES/glext.h"
 		#include "GLES2/gl2.h"
