@@ -61,7 +61,7 @@ shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & se
 	shared_ptr<ofxAppEmscriptenWindow> window = std::make_shared<ofxAppEmscriptenWindow>();
 	#elif defined(TARGET_OPENGLES)
 	shared_ptr<ofAppGLFWWindow> window = std::make_shared<ofAppGLFWWindow>();
-	#elif defined(TARGET_LINUX)
+	#else
 	shared_ptr<ofAppGLFWWindow> window = std::make_shared<ofAppGLFWWindow>();
 	#endif
 #endif
