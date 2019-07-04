@@ -188,15 +188,13 @@ enum ofTargetPlatform{
 
 	#include <unistd.h>
 
-  #include "bcm_host.h"
-  #undef countof
 	#ifdef TARGET_LINUX_ARM
-		// #ifdef TARGET_RASPBERRY_PI
+		#ifdef TARGET_RASPBERRY_PI
 			#include "bcm_host.h"
 			// rpi firmware headers define countof
 			// which messes up other libraries like glm
 			#undef countof
-		// #endif
+		#endif
   #endif
 
   #ifdef TARGET_OPENGLES
