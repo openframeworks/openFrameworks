@@ -44,8 +44,8 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 ################################################################################
 
 # defines used inside openFrameworks libs.
-#PLATFORM_DEFINES += TARGET_RASPBERRY_PI
-PLATFORM_DEFINES += TARGET_LINUX
+PLATFORM_DEFINES += TARGET_RASPBERRY_PI
+#PLATFORM_DEFINES += TARGET_LINUX
 PLATFORM_DEFINES += TARGET_OPENGL
 
 # TODO many of these are not relevant to openFrameworks (were just pasted from hello_pi examples)
@@ -189,7 +189,7 @@ PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
+#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 
 ifeq ($(CROSS_COMPILING),1)

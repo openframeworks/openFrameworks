@@ -21,9 +21,10 @@
 	#include "ofAppAndroidWindow.h"
 	#include "ofxAndroidUtils.h"
 	#include "ofxAndroidApp.h"
-#elif defined(TARGET_RASPBERRY_PI)
-// #elif defined(TARGET_OPENGLES)
+#elif defined(TARGET_RASPBERRY_PI) && defined(TARGET_OPENGLES)
 	#include "ofAppEGLWindow.h"
+#elif defined(TARGET_RASPBERRY_PI) && defined(TARGET_OPENGL)
+	#include "ofAppGLFWWindow.h"
 #elif defined(TARGET_EMSCRIPTEN)
 	#include "ofxAppEmscriptenWindow.h"
 #else
@@ -58,6 +59,8 @@ shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & se
 	shared_ptr<ofAppGLFWWindow> window = std::make_shared<ofAppGLFWWindow>();
 	#elif defined(TARGET_EMSCRIPTEN)
 	shared_ptr<ofxAppEmscriptenWindow> window = std::make_shared<ofxAppEmscriptenWindow>();
+	#elif defined(TARGET_OPENGLES)
+	shared_ptr<ofAppGLFWWindow> window = std::make_shared<ofAppGLFWWindow>();
 	#elif defined(TARGET_LINUX)
 	shared_ptr<ofAppGLFWWindow> window = std::make_shared<ofAppGLFWWindow>();
 	#endif
