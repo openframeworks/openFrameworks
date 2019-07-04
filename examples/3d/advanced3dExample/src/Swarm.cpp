@@ -145,8 +145,8 @@ void swarm::update(){
 
 
 		// [4] Force a maximum velocity
-		if(particles[i].velocity.length() > MAX_VELOCITY){
-			particles[i].velocity /= particles[i].velocity.length() * MAX_VELOCITY;
+		if(glm::length(particles[i].velocity) > MAX_VELOCITY){
+			particles[i].velocity /= glm::length(particles[i].velocity) * MAX_VELOCITY;
 		}
 
 		//

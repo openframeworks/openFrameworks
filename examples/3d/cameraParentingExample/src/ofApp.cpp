@@ -104,7 +104,7 @@ void ofApp::draw(){
 	glDisable(GL_CULL_FACE);
 	ofSetColor(255);
 	ofDisableLighting();
-	ofDrawBitmapString(s, ofPoint(20, 20));
+	ofDrawBitmapString(s, 20, 20);
 	
 	glEnable(GL_CULL_FACE);
 	ofEnableLighting();
@@ -237,7 +237,7 @@ void ofApp::keyPressed(int key){
 		case 'p':
 			parentIndex[camToConfigure]++ ; 
 			glm::vec3 oldP = cam[camToConfigure].getGlobalPosition();
-			ofQuaternion oldQ = cam[camToConfigure].getGlobalOrientation();
+			glm::quat oldQ = cam[camToConfigure].getGlobalOrientation();
 			if(parentIndex[camToConfigure]>=kNumTestNodes) {
 				parentIndex[camToConfigure] = -1;
 				cam[camToConfigure].clearParent();

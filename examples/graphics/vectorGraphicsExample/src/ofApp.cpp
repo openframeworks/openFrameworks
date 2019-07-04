@@ -342,7 +342,7 @@ void ofApp::mouseMoved(int x, int y ){
 void ofApp::mouseDragged(int x, int y, int button){
 
 	//we add a new point to our line
-	pts.push_back(ofPoint());
+	pts.push_back(glm::vec3());
 	int last = pts.size()-1;
 
 	pts[last].x = x;
@@ -355,7 +355,7 @@ void ofApp::mousePressed(int x, int y, int button){
 	pts.clear();
 
 	//lets store the first point of the line
-	pts.push_back(ofPoint());
+	pts.push_back(glm::vec3());
 	pts[0].x = x;
 	pts[0].y = y;
 

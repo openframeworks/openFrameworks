@@ -140,7 +140,7 @@ void ofApp::drawScene(bool isPreview){
 	ofSetLineWidth(5.0f);
 	ofBeginShape();
 	for (unsigned int i=0; i<headPositionHistory.size(); i++) {
-		ofPoint vertex(headPositionHistory[i].x, headPositionHistory[i].y, -float( headPositionHistory.size() - i ) * 0.05f);
+		glm::vec3 vertex(headPositionHistory[i].x, headPositionHistory[i].y, -float( headPositionHistory.size() - i ) * 0.05f);
 		ofCurveVertex(vertex);
 	}
 	ofEndShape(false);

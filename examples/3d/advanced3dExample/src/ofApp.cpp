@@ -255,8 +255,8 @@ void ofApp::drawScene(int cameraIndex){
 
 		// Now lets get the inverse ViewProjection
 		//  for the camera
-		ofMatrix4x4 inverseCameraMatrix;
-		inverseCameraMatrix.makeInvertOf(camEasyCam.getModelViewProjectionMatrix(boundsToUse));
+		glm::mat4 inverseCameraMatrix;
+		inverseCameraMatrix = glm::inverse(camEasyCam.getModelViewProjectionMatrix(boundsToUse));
 
 		// By default, we can say
 		//	'we are drawing in world space'

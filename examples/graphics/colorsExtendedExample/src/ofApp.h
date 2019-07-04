@@ -33,7 +33,7 @@ class ofApp : public ofBaseApp{
     
         vector < colorNameMapping > colorNames;
     
-        ofPoint mouseSmoothed;
+        glm::vec3 mouseSmoothed;
 
         int sortedType;             // keep track of which sort we've done
     

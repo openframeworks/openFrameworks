@@ -10,15 +10,17 @@ void ofApp::setup(){
 	pixelBufferFront.allocate(ofGetWidth()*ofGetHeight()*3,GL_DYNAMIC_READ);
 	box.set(400);
 	box.setResolution(1);
-	box.setPosition(ofVec3f(ofGetWidth()*0.5, ofGetHeight()*0.5));
+	box.setPosition({ofGetWidth()*0.5, ofGetHeight()*0.5, 0});
 	record = false;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	box.setOrientation(ofQuaternion(45, ofVec3f(1,0,0),
-			45,ofVec3f(0,0,1),
-			ofGetElapsedTimef()*10,	ofVec3f(0,1,0)));
+	box.setOrientation(glm::angleAxis(ofDegToRad(ofGetElapsedTimef()*10),	glm::vec3(0,1,0)) *//y axis rotation
+					   glm::angleAxis(45.0f, glm::vec3(0,0,1))*//z axis rotation
+					   glm::angleAxis(45.0f, glm::vec3(1,0,0)));//x axis rotation
+
+
 
 	ofEnableDepthTest();
 	fbo.begin();

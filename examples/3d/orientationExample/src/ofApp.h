@@ -20,9 +20,9 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		ofVec3f previous, current;
+		glm::vec3 previous, current;
 		ofEasyCam easyCam;
 		
-		deque<ofVec3f> pathVertices;
+		deque<glm::vec3> pathVertices;
 		ofMesh pathLines;
 };

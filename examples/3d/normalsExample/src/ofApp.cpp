@@ -13,7 +13,7 @@ void ofApp::setup(){
     ofEnableAlphaBlending();
     ofEnableSmoothing();
     
-    mesh.addVertex(ofPoint(0,0,0)); // add center vertex
+    mesh.addVertex(glm::vec3(0,0,0)); // add center vertex
     mesh.addColor(ofColor(137,137,140,255)); // center is same as bg
     mesh.addNormal(glm::vec3(0,0,1)); // center normal points up
     
@@ -130,7 +130,7 @@ void ofApp::draw(){
 
     ofSetColor(255);
     ofDrawBitmapString("press any key or mouse button to disable mesh normals", 20,20);
-    ofDrawBitmapString("light", cam.worldToScreen(light.getGlobalPosition()) + ofPoint(10,0));
+    ofDrawBitmapString("light", cam.worldToScreen(light.getGlobalPosition()) + glm::vec3(20,0,0));
 }
 
 //--------------------------------------------------------------

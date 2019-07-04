@@ -30,7 +30,7 @@ void ofApp::setup(){
 	//add one vertex to the mesh for each pixel
 	for (int y = 0; y < height; y++){
 		for (int x = 0; x<width; x++){
-			mainMesh.addVertex(ofPoint(x,y,0));	// mesh index = x + y*width
+			mainMesh.addVertex(glm::vec3(x,y,0));	// mesh index = x + y*width
 												// this replicates the pixel array within the camera bitmap...
 			mainMesh.addColor(ofFloatColor(0,0,0));  // placeholder for colour data, we'll get this from the camera
 		}

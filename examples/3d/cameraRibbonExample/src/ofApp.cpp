@@ -61,7 +61,7 @@ void ofApp::draw(){
 		glm::vec3 direction = (nextPoint - thisPoint);
 
 		//get the distance from one point to the next
-		float distance = direction.length();
+		float distance = glm::length(direction);
 
 		//get the normalized direction. normalized vectors always have a length of one
 		//and are really useful for representing directions as opposed to something with length

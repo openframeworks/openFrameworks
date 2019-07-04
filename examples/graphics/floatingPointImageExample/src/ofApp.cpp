@@ -2,8 +2,8 @@
 
 //Some helper functions
 //--------------------------------------------------------------
-void ofApp::addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c) {
-	ofVec3f normal = ((b - a).cross(c - a)).normalize();
+void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c) {
+	glm::vec3 normal = glm::normalize(glm::cross((b - a),(c - a)));
 	mesh.addNormal(normal);
 	mesh.addVertex(a);
 	mesh.addNormal(normal);
@@ -13,14 +13,14 @@ void ofApp::addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c) {
 }
 
 //--------------------------------------------------------------
-void ofApp::addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c, ofVec3f d) {
+void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d) {
 	addFace(mesh, a, b, c);
 	addFace(mesh, a, c, d);
 }
 
 //--------------------------------------------------------------
-ofVec3f ofApp::getVertexFromImg(ofFloatImage& img, int x, int y) {
-	return ofVec3f(x, y, 100 * img.getColor(x, y).getBrightness());
+glm::vec3 ofApp::getVertexFromImg(ofFloatImage& img, int x, int y) {
+	return glm::vec3(x, y, 100 * img.getColor(x, y).getBrightness());
 }
 
 //--------------------------------------------------------------
@@ -40,10 +40,10 @@ void ofApp::setup(){
 	int height = img.getHeight();
 	for(int y = 0; y < height - skip; y += skip) {
 		for(int x = 0; x < width - skip; x += skip) {
-			ofVec3f nw = getVertexFromImg(img, x, y);
-			ofVec3f ne = getVertexFromImg(img, x + skip, y);
-			ofVec3f sw = getVertexFromImg(img, x, y + skip);
-			ofVec3f se = getVertexFromImg(img, x + skip, y + skip);
+			glm::vec3 nw = getVertexFromImg(img, x, y);
+			glm::vec3 ne = getVertexFromImg(img, x + skip, y);
+			glm::vec3 sw = getVertexFromImg(img, x, y + skip);
+			glm::vec3 se = getVertexFromImg(img, x + skip, y + skip);
 
 			addFace(mesh, nw, ne, se, sw);
 		}
