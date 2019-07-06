@@ -248,6 +248,12 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_ROOT)/%.S $(OF_PROJECT_OBJ_OUTPUT_PA
 
 
 
+#Rules to create and compile resource file to include icon
+$(OF_PROJECT_OBJ_OUTPUT_PATH)%.res: $(ICON)
+	@echo "Compiling Resource" $<
+#Need to build an intermediate .rc file with Windows-like file path (C:/myproject/theIcon.ico)
+	@echo MAINICON ICON \"$(shell cygpath -m $<)\" > $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.rc
+	@$(RESOURCE_COMPILER) $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.rc -O coff -o $@
 
 
 
