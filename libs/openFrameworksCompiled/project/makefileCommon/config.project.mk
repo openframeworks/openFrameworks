@@ -533,6 +533,11 @@ OBJS_WITHOUT_EXTERNAL = $(subst $(strip $(PROJECT_EXTERNAL_SOURCE_PATHS)),,$(OBJ
 OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(OBJS_WITHOUT_EXTERNAL))
 OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
 
+# Compiled resources (icon, ...) - msys2 only?
+OF_PROJECT_RESOURCES =
+ifeq ($(findstring msys2,$(PLATFORM_LIB_SUBPATH)),msys2)
+    OF_PROJECT_RESOURCES += $(addprefix $(OF_PROJECT_OBJ_OUTPUT_PATH), $(notdir $(patsubst %.ico, %.res, $(ICON))))
+endif
 
 OF_PROJECT_DEPENDENCY_FILES = $(OF_PROJECT_DEPS) $(OF_PROJECT_ADDONS_DEPS)
 
