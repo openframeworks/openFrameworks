@@ -303,6 +303,13 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 ################################################################################
 #PLATFORM_CC=
 
+################################################################################
+# PLATFORM ICON
+#    If not set by the project by PROJECT_(RELEASE|DEBUG)_ICON, use OF defaults
+################################################################################
+PLATFORM_RELEASE_ICON = $(OF_PLATFORM_MAKEFILES)/icon.ico
+PLATFORM_DEBUG_ICON = $(OF_PLATFORM_MAKEFILES)/icon-debug.ico
+
 copy_dlls:
 	@echo "     copying dlls to bin"
 
