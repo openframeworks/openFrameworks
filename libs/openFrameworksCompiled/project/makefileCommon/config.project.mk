@@ -452,6 +452,24 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	else
 		OPTIMIZATION_LDFLAGS = $(PROJECT_OPTIMIZATION_LDFLAGS_DEBUG)
 	endif
+
+    # Executable Icon
+    #################
+    # if defined, use the project debug icon.
+    # if no debug icon defined for the project, use the project release icon
+    # if no icon defined for the project, use the OF default debug icon defined for the platform
+    # leave ICON empty for default system icon
+    ifdef PROJECT_DEBUG_ICON
+        ICON = $(PROJECT_DEBUG_ICON)
+    else
+        ifdef PROJECT_RELEASE_ICON
+            ICON = $(PROJECT_RELEASE_ICON)
+        else
+            ifdef PLATFORM_DEBUG_ICON
+                ICON = $(PLATFORM_DEBUG_ICON)
+            endif
+        endif
+    endif
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
@@ -472,6 +490,19 @@ ifeq ($(findstring Release,$(TARGET_NAME)),Release)
 	else
 		OPTIMIZATION_LDFLAGS = $(PROJECT_OPTIMIZATION_LDFLAGS_RELEASE)
 	endif
+
+    # Executable Icon
+    #################
+    # if defined, use the project release icon.
+    # if no icon defined for the project, use the OF default release icon defined for the platform
+    # leave ICON empty for default system icon
+    ifdef PROJECT_RELEASE_ICON
+        ICON = $(PROJECT_RELEASE_ICON)
+    else
+        ifdef PLATFORM_RELEASE_ICON
+            ICON = $(PLATFORM_RELEASE_ICON)
+        endif
+    endif
 endif
 
 
