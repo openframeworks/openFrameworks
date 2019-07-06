@@ -38,6 +38,7 @@ endif
 FIND ?= /usr/bin/find
 PLATFORM_AR = $(MINGW_PREFIX)/bin/ar
 PLATFORM_LD = $(MINGW_PREFIX)/bin/ld
+PLATFORM_RESOURCE_COMPILER = $(MINGW_PREFIX)/bin/windres
 PLATFORM_PKG_CONFIG = $(MINGW_PREFIX)/bin/pkg-config
 
 
