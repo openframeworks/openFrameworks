@@ -51,7 +51,6 @@ if [ -z ${confirm+x} ]; then
 		${MINGW_PACKAGE_PREFIX}-assimp \
 		${MINGW_PACKAGE_PREFIX}-boost \
 		${MINGW_PACKAGE_PREFIX}-cairo \
-		${MINGW_PACKAGE_PREFIX}-clang \
 		${MINGW_PACKAGE_PREFIX}-gdb \
 		${MINGW_PACKAGE_PREFIX}-zlib \
 		${MINGW_PACKAGE_PREFIX}-tools \
@@ -81,7 +80,6 @@ else
 	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-assimp
 	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-boost
 	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-cairo
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-clang
 	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-gdb
 	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-zlib
 	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-tools
