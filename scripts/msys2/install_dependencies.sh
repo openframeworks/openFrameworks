@@ -40,11 +40,12 @@ fi
 
 #Install packages
 if [ -z ${confirm+x} ]; then
-	pacman -S $confirm --needed ca-certificates
+	pacman -Su $confirm --needed ca-certificates
 	if [ -z ${APPVEYOR+x} ]; then
-		pacman -S $confirm --needed wget rsync unzip make ${MINGW_PACKAGE_PREFIX}-gcc ${MINGW_PACKAGE_PREFIX}-ntldd-git
+		pacman -Su $confirm --needed wget rsync unzip make ${MINGW_PACKAGE_PREFIX}-ntldd-git
 	fi
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-glew \
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-gcc \
+		${MINGW_PACKAGE_PREFIX}-glew \
 		${MINGW_PACKAGE_PREFIX}-freeglut \
 		${MINGW_PACKAGE_PREFIX}-FreeImage \
 		${MINGW_PACKAGE_PREFIX}-opencv \
@@ -63,38 +64,38 @@ if [ -z ${confirm+x} ]; then
 		${MINGW_PACKAGE_PREFIX}-curl \
 		${MINGW_PACKAGE_PREFIX}-libxml2
 else
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-harfbuzz
-	pacman -S $confirm --needed ca-certificates
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-harfbuzz
+	pacman -Su $confirm --needed ca-certificates
 	if [ -z ${APPVEYOR+x} ]; then
-		pacman -S $confirm --needed wget
-		pacman -S $confirm --needed rsync
-		pacman -S $confirm --needed unzip
-		pacman -S $confirm --needed make
-		pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-gcc
-		pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-ntldd-git
+		pacman -Su $confirm --needed wget
+		pacman -Su $confirm --needed rsync
+		pacman -Su $confirm --needed unzip
+		pacman -Su $confirm --needed make
+		pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-ntldd-git
 	fi
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-glew
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-freeglut
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-FreeImage
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-opencv
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-assimp
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-boost
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-cairo
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-gdb
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-zlib
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-tools
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-pkg-config
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-poco
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-glfw
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-libusb
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-poco
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-curl
-	pacman -S $confirm --needed ${MINGW_PACKAGE_PREFIX}-libxml2
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-gcc
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-glew
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-freeglut
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-FreeImage
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-opencv
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-assimp
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-boost
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-cairo
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-gdb
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-zlib
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-tools
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-pkg-config
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-poco
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-glfw
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-libusb
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-poco
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-curl
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-libxml2
 fi
 
 
 # this would install gstreamer which can be used in mingw too
-#pacman -Sy ${MINGW_PACKAGE_PREFIX}-gst-libav ${MINGW_PACKAGE_PREFIX}-gst-plugins-bad ${MINGW_PACKAGE_PREFIX}-gst-plugins-base ${MINGW_PACKAGE_PREFIX}-gst-plugins-good ${MINGW_PACKAGE_PREFIX}-gst-plugins-ugly ${MINGW_PACKAGE_PREFIX}-gstreamer
+#pacman -Su ${MINGW_PACKAGE_PREFIX}-gst-libav ${MINGW_PACKAGE_PREFIX}-gst-plugins-bad ${MINGW_PACKAGE_PREFIX}-gst-plugins-base ${MINGW_PACKAGE_PREFIX}-gst-plugins-good ${MINGW_PACKAGE_PREFIX}-gst-plugins-ugly ${MINGW_PACKAGE_PREFIX}-gstreamer
 
 exit_code=$?
 if [ $exit_code != 0 ]; then
