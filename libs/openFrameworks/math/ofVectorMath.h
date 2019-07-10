@@ -122,6 +122,12 @@ inline const glm::quat & toGlm(const glm::quat & q){
 namespace glm {
 	//--------------------------------------------------------------
 	template <typename T, precision P>
+	inline tvec3<T, P> operator*(const tmat4x4<T, P>& mat, const tvec3<T, P>& vec3) {
+		return (tvec3<T, P>) (mat * tvec4<T, P>(vec3, 1.0));
+	}
+
+	//--------------------------------------------------------------
+	template <typename T, precision P>
 	inline std::ostream& operator<<(std::ostream& os, const tvec3<T, P>& vec) {
 		os << vec.x << ", " << vec.y << ", " << vec.z;
 		return os;

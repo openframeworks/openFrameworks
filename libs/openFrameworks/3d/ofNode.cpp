@@ -549,6 +549,11 @@ const glm::mat4& ofNode::getLocalTransformMatrix() const {
 }
 
 //----------------------------------------
+void ofNode::setCachedLocalTransformMatrix(const glm::mat4& matrix) {
+	this->localTransformMatrix = matrix;
+}
+
+//----------------------------------------
 glm::mat4 ofNode::getGlobalTransformMatrix() const {
 	if(parent) return parent->getGlobalTransformMatrix() * getLocalTransformMatrix();
 	else return getLocalTransformMatrix();

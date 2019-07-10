@@ -144,6 +144,8 @@ public:
 	/// \returns A refrence to mat4 containing node's local transformations.
 	/// \sa https://open.gl/transformations
 	const glm::mat4& getLocalTransformMatrix() const;
+
+	void setCachedLocalTransformMatrix(const glm::mat4& matrix);
 	
 	// TODO: optimize and cache these
 	// (parent would need to know about its children so it can inform them 

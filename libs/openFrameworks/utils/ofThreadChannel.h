@@ -278,6 +278,12 @@ public:
 		return queue.empty();
 	}
 
+	/// \brief Queries the size of the channel queue.
+	/// \returns the current size of the queue.
+	std::size_t size() const {
+		return queue.size();
+	}
+
 private:
 	/// \brief The FIFO data queue.
 	std::queue<T> queue;
