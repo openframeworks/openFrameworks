@@ -32,13 +32,13 @@ var LibraryHTML5Audio = {
 			// Fix up for prefixing
 			window.AudioContext = window.AudioContext || window.webkitAudioContext;
 			var context = new AudioContext();
-			
+
 			// Fix issue with chrome autoplay policy
 			document.addEventListener('mousedown', function cb(event) {
 				context.resume();
 				event.currentTarget.removeEventListener(event.type, cb);
 			});
-			
+
 			var id = AUDIO.lastContextID++;
 			AUDIO.contexts[id] = context;
 			var fft = context.createAnalyser();
@@ -74,7 +74,7 @@ var LibraryHTML5Audio = {
 
     html5audio_sound_load: function(context_id, url){
 		var request = new XMLHttpRequest();
-		request.open('GET', Pointer_stringify(url), true);
+		request.open('GET', UTF8ToString(url), true);
 		request.responseType = 'arraybuffer';
 
 		var id = AUDIO.lastSoundID++;
