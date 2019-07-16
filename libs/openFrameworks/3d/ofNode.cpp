@@ -442,7 +442,7 @@ void ofNode::lookAt(const glm::vec3& lookAtPosition, glm::vec3 upVector) {
 	if (glm::length(zaxis) > 0) {
 		auto xaxis = glm::normalize(glm::cross(upVector, zaxis));
 		auto yaxis = glm::cross(zaxis, xaxis);
-		glm::mat3 m(glm::uninitialize);
+		glm::mat3 m;
 		m[0] = xaxis;
 		m[1] = yaxis;
 		m[2] = zaxis;
