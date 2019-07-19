@@ -63,6 +63,24 @@ static string getALErrorString(ALenum error) {
 	return "UNKWOWN_ERROR";
 }
 
+static string getALCErrorString(ALCenum  error) {
+	switch(error) {
+        case ALC_NO_ERROR:
+            return "ALC_NO_ERROR";
+        case ALC_INVALID_DEVICE:
+            return "ALC_INVALID_DEVICE";
+        case ALC_INVALID_CONTEXT:
+            return "ALC_INVALID_CONTEXT";
+        case ALC_INVALID_ENUM:
+            return "ALC_INVALID_ENUM";
+        case ALC_INVALID_VALUE:
+            return "ALC_INVALID_VALUE";
+        case ALC_OUT_OF_MEMORY:
+            return "ALC_OUT_OF_MEMORY";
+    };
+	return "UNKWOWN_ERROR";
+}
+
 #ifdef OF_USING_MPG123
 static string getMpg123EncodingString(int encoding) {
 	switch(encoding) {
@@ -142,21 +160,44 @@ ofOpenALSoundPlayer::~ofOpenALSoundPlayer(){
 	unload();
 	kiss_fftr_free(fftCfg);
 	players().erase(this);
+	if( players().empty() ){
+		close();
+	}
 }
 
 //---------------------------------------
 // this should only be called once
 void ofOpenALSoundPlayer::initialize(){
-	if(!alDevice){
-		alDevice = alcOpenDevice(nullptr);
-		alContext = alcCreateContext(alDevice,nullptr);
-		alcMakeContextCurrent (alContext);
-		alListener3f(AL_POSITION, 0,0,0);
+	if( !alDevice ){
+		alDevice = alcOpenDevice( nullptr );
+		if( !alDevice ){
+			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't open OpenAL default device";
+			return;
+		}else{
+			ofLogVerbose("ofOpenALSoundPlayer") << "initialize(): opening "<< alcGetString( alDevice, ALC_DEVICE_SPECIFIER );
+		}
+		// Create OpenAL context and make it current. If fails, close the OpenAL device that was just opened.
+		alContext = alcCreateContext( alDevice, nullptr );
+		if( !alContext ){
+			ALCenum err = alcGetError( alDevice ); 
+			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't not create OpenAL context : "<< getALCErrorString( err );
+			close();
+			return;
+		}
+
+		if( alcMakeContextCurrent( alContext )==ALC_FALSE ){
+			ALCenum err = alcGetError( alDevice ); 
+			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't not make current the create OpenAL context : "<< getALCErrorString( err );
+			close();
+			return;
+		};
+		alListener3f( AL_POSITION, 0,0,0 );
 #ifdef OF_USING_MPG123
 		mpg123_init();
 #endif
 
 	}
+	ofLogVerbose("ofOpenALSoundPlayer") << "initialize(): Done";
 }
 
 //---------------------------------------
@@ -174,14 +215,20 @@ void ofOpenALSoundPlayer::createWindow(int size){
 
 //---------------------------------------
 void ofOpenALSoundPlayer::close(){
-	if(alDevice){
-		alcCloseDevice(alDevice);
-		alDevice = nullptr;
-		alcDestroyContext(alContext);
-		alContext = 0;
+	// Destroy the OpenAL context (if any) before closing the device
+	if( alDevice ){
+		if( alContext ){
 #ifdef OF_USING_MPG123
-		mpg123_exit();
+			mpg123_exit();
 #endif
+			alcMakeContextCurrent(nullptr);
+			alcDestroyContext(alContext);
+			alContext = nullptr;
+		}
+		if( alcCloseDevice( alDevice )==ALC_FALSE ){
+			ofLogNotice("ofOpenALSoundPlayer") << "initialize(): error closing OpenAL device.";
+		}
+		alDevice = nullptr;
 	}
 }
 
