@@ -685,7 +685,7 @@ void ofPath::setMode(Mode _mode){
 }
 
 //----------------------------------------------------------
-ofPath::Mode ofPath::getMode(){
+ofPath::Mode ofPath::getMode() const {
 	return mode;
 }
 
