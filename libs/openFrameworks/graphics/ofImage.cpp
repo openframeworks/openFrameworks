@@ -2,7 +2,6 @@
 #include "ofConstants.h"
 #include "ofAppRunner.h"
 #include "FreeImage.h"
-#include "ofGLUtils.h"
 
 #include "ofURLFileLoader.h"
 #include "uriparser/Uri.h"
