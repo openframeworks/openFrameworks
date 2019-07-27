@@ -69,7 +69,7 @@ class ofStyle{
 			#else
 				drawBitmapMode		= OF_BITMAPMODE_MODEL_BILLBOARD;
 			#endif
-			bgColor.set(200,200,200);
+			bgColor.set(60, 60, 60);
 			//depthTest = false;
 		}
 
