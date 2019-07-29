@@ -29,14 +29,6 @@ while [[ $# > 0 ]] ; do
 	exit 1
 done
 
-NOT_HAS_PATH=$(cmd /c "echo %PATH%" | grep mingw32\\bin > /dev/null; echo $?)
-if [ "$NOT_HAS_PATH" -ne "0" ]; then
-	cd /
-	MSYS2_ROOT=$(pwd)
-	MSYS2_ROOT=$(cygpath -w $MSYS2_ROOT)
-	setx PATH "%PATH%;${MSYS2_ROOT}mingw32\\bin;${MSYS2_ROOT}usr\\bin\\"
-	echo "set path to ${MSYS2_ROOT}mingw32\\bin;${MSYS2_ROOT}usr\\bin\\"
-fi
 
 #Install packages
 if [ -z ${confirm+x} ]; then
