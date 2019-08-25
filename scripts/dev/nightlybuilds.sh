@@ -107,6 +107,7 @@ echo
 
 mail -s "Nightly builds $lastversion OK." $REPORT_MAIL <<EOF
 Successfully created nightly builds for ${lastversion}
+cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 echo $currenthash>lasthash.txt
 
 $(if [ -f /home/ofadmin/logs/nightlybuilds.log ]; then cat /home/ofadmin/logs/nightlybuilds.log; fi)
