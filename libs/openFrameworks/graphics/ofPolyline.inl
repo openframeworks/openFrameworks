@@ -505,12 +505,15 @@ ofPolyline_<T> ofPolyline_<T>::getResampledBySpacing(float spacing) const {
     if(spacing==0 || size() == 0) return *this;
 	ofPolyline_ poly;
     float totalLength = getPerimeter();
-    for(float f=0; f<totalLength+spacing*0.99; f += spacing) {
+    float f=0;
+    for(f=0; f<=totalLength; f += spacing) {
         poly.lineTo(getPointAtLength(f));
     }
     
     if(!isClosed()) {
-        if(poly.size() > 0) poly.points.back() = points.back();
+        if( f != totalLength ){
+            poly.lineTo(points.back());
+        }
         poly.setClosed(false);
     } else {
         poly.setClosed(true);
