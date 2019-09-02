@@ -223,12 +223,12 @@ static ofxiOSEAGLView * _instanceRef = nil;
             touchPointOriented.y = ofGetHeight() - touchPoint.y;
             break;
             
-        case OF_ORIENTATION_90_LEFT:
+        case OF_ORIENTATION_90_RIGHT:
             touchPointOriented.x = touchPoint.y;
             touchPointOriented.y = ofGetHeight() - touchPoint.x;
             break;
             
-        case OF_ORIENTATION_90_RIGHT:
+        case OF_ORIENTATION_90_LEFT:
             touchPointOriented.x = ofGetWidth() - touchPoint.y;
             touchPointOriented.y = touchPoint.x;
             break;
