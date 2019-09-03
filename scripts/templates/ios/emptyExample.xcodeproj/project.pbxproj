@@ -999,13 +999,6 @@
 			<key>targetProxy</key>
 			<string>E41D410313B3A11300A75A5D</string>
 		</dict>
-		<key>E41D421413B3A95300A75A5D</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E41D410213B3A0D800A75A5D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
 		<key>E4A823A312561BE3002F86A2</key>
 		<dict>
 			<key>isa</key>
