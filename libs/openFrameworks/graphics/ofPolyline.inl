@@ -1027,7 +1027,7 @@ T ofPolyline_<T>::getRotationAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(toGlm(getRotationAtIndex(i1)), toGlm(getRotationAtIndex(i2)), t);
+	return glm::mix(toGlm(getRotationAtIndex(i1)), toGlm(getRotationAtIndex(i2)), t);
 }
 
 //--------------------------------------------------
@@ -1045,7 +1045,7 @@ T ofPolyline_<T>::getTangentAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(toGlm(getTangentAtIndex(i1)), toGlm(getTangentAtIndex(i2)), t);
+	return glm::mix(toGlm(getTangentAtIndex(i1)), toGlm(getTangentAtIndex(i2)), t);
 }
 
 //--------------------------------------------------
@@ -1063,7 +1063,7 @@ T ofPolyline_<T>::getNormalAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(toGlm(getNormalAtIndex(i1)), toGlm(getNormalAtIndex(i2)), t);
+	return glm::mix(toGlm(getNormalAtIndex(i1)), toGlm(getNormalAtIndex(i2)), t);
 }
 
 
