@@ -557,7 +557,7 @@ inline T getClosestPointUtil(const T& p1, const T& p2, const T& p3, float* norma
 	if(normalizedPosition != nullptr) {
 		*normalizedPosition = u;
 	}
-	return glm::lerp(toGlm(p1), toGlm(p2), u);
+	return glm::mix(toGlm(p1), toGlm(p2), u);
 }
 
 //----------------------------------------------------------
@@ -955,7 +955,7 @@ T ofPolyline_<T>::getPointAtIndexInterpolated(float findex) const {
     getInterpolationParams(findex, i1, i2, t);
 	T leftPoint(points[i1]);
 	T rightPoint(points[i2]);
-	return glm::lerp(toGlm(leftPoint), toGlm(rightPoint), t);
+	return glm::mix(toGlm(leftPoint), toGlm(rightPoint), t);
 }
 
 
@@ -1024,7 +1024,7 @@ T ofPolyline_<T>::getRotationAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(toGlm(getRotationAtIndex(i1)), toGlm(getRotationAtIndex(i2)), t);
+	return glm::mix(toGlm(getRotationAtIndex(i1)), toGlm(getRotationAtIndex(i2)), t);
 }
 
 //--------------------------------------------------
@@ -1042,7 +1042,7 @@ T ofPolyline_<T>::getTangentAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(toGlm(getTangentAtIndex(i1)), toGlm(getTangentAtIndex(i2)), t);
+	return glm::mix(toGlm(getTangentAtIndex(i1)), toGlm(getTangentAtIndex(i2)), t);
 }
 
 //--------------------------------------------------
@@ -1060,7 +1060,7 @@ T ofPolyline_<T>::getNormalAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(toGlm(getNormalAtIndex(i1)), toGlm(getNormalAtIndex(i2)), t);
+	return glm::mix(toGlm(getNormalAtIndex(i1)), toGlm(getNormalAtIndex(i2)), t);
 }
 
 
