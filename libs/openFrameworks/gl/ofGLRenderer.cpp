@@ -469,7 +469,7 @@ void ofGLRenderer::begin(const ofFbo & fbo, ofFboMode mode){
     if(mode & OF_FBOMODE_PERSPECTIVE){
 		setupScreenPerspective();
 	}else{
-		glm::mat4 m;
+		glm::mat4 m = glm::mat4(1.0);
 		glGetFloatv(GL_PROJECTION_MATRIX, glm::value_ptr(m));
 		m =  matrixStack.getOrientationMatrixInverse() * m;
 		ofMatrixMode currentMode = matrixStack.getCurrentMatrixMode();
@@ -586,7 +586,7 @@ void ofGLRenderer::bind(const ofTexture & texture, int location){
 	if(ofGetUsingNormalizedTexCoords()) {
 		matrixMode(OF_MATRIX_TEXTURE);
 		pushMatrix();
-		glm::mat4 m;
+		glm::mat4 m = glm::mat4(1.0);
 
 #ifndef TARGET_OPENGLES
 		if(texture.texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB)
@@ -640,7 +640,7 @@ void ofGLRenderer::unbind(const ofCamera & camera){
 void ofGLRenderer::pushView() {
 	getCurrentViewport();
 
-	glm::mat4 m;
+	glm::mat4 m = glm::mat4(1.0);
 	ofMatrixMode matrixMode = matrixStack.getCurrentMatrixMode();
 	glGetFloatv(GL_PROJECTION_MATRIX,glm::value_ptr(m));
 	matrixStack.matrixMode(OF_MATRIX_PROJECTION);
@@ -945,7 +945,7 @@ void ofGLRenderer::loadMatrix (const float *m){
  *	@param	matrixMode_  Which matrix mode to query
  */
 glm::mat4 ofGLRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
-	glm::mat4 mat;
+	glm::mat4 mat = glm::mat4(1.0);
 	switch (matrixMode_) {
 		case OF_MATRIX_MODELVIEW:
 			glGetFloatv(GL_MODELVIEW_MATRIX, glm::value_ptr(mat));
@@ -971,7 +971,7 @@ glm::mat4 ofGLRenderer::getCurrentOrientationMatrix() const {
 //----------------------------------------------------------
 void ofGLRenderer::multMatrix (const glm::mat4 & m){
 	if(matrixStack.getCurrentMatrixMode()==OF_MATRIX_PROJECTION){
-		glm::mat4 current;
+		glm::mat4 current = glm::mat4(1.0);
 		glGetFloatv(GL_PROJECTION_MATRIX, glm::value_ptr(current));
 		if(matrixStack.customMatrixNeedsFlip()){
 			current = glm::scale(current, glm::vec3(1,-1,1));
@@ -1598,7 +1598,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 
 			rViewport = getCurrentViewport();
 
-			glm::mat4 modelview, projection;
+			glm::mat4 modelview = glm::mat4(1.0), projection = glm::mat4(1.0);
 			glGetFloatv(GL_MODELVIEW_MATRIX, glm::value_ptr(modelview));
 			glGetFloatv(GL_PROJECTION_MATRIX, glm::value_ptr(projection));
 			glm::mat4 mat = matrixStack.getOrientationMatrixInverse() * projection * modelview;

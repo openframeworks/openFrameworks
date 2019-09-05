@@ -743,7 +743,7 @@ void ofCairoRenderer::setHexColor( int hexColor ){
 //our openGL wrappers
 glm::mat4 ofCairoRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const{
 	ofLogWarning() << "getCurrentMatrix not yet implemented for Cairo Renderer.";
-	return glm::mat4();
+	return glm::mat4(1.0);
 }
 
 //----------------------------------------------------------
