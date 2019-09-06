@@ -20,6 +20,8 @@ public:
 	void allocate(GLsizeiptr bytes, GLenum usage);
 	void allocate(GLsizeiptr bytes, const void * data, GLenum usage);
 
+        void allocate(GLenum target);
+
 	template<typename T>
 	void allocate(const std::vector<T> & data, GLenum usage){
 		allocate(data.size()*sizeof(T),&data[0],usage);
@@ -137,7 +139,7 @@ public:
 
 private:
 	struct Data{
-		Data();
+                Data(GLenum target);
 		~Data();
 		GLuint id;
 		GLsizeiptr size;

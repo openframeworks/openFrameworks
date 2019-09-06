@@ -6,10 +6,10 @@
 
 using namespace std;
 
-ofBufferObject::Data::Data()
+ofBufferObject::Data::Data(GLenum target = GL_ARRAY_BUFFER)
 :id(0)
 ,size(0)
-,lastTarget(GL_ARRAY_BUFFER)
+,lastTarget(target)
 
 #ifdef GLEW_VERSION_4_5
 ,isDSA(ofIsGLProgrammableRenderer() && GLEW_ARB_direct_state_access)
@@ -53,6 +53,10 @@ ofBufferObject::ofBufferObject()
 
 void ofBufferObject::allocate(){
 	data = std::make_shared<Data>();
+}
+
+void ofBufferObject::allocate(GLenum target){
+	data = std::make_shared<Data>(target);
 }
 
 void ofBufferObject::allocate(GLsizeiptr bytes, GLenum usage){
