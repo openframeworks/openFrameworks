@@ -138,7 +138,7 @@ if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
 fi
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $SCRIPT_DIR
+cd "$SCRIPT_DIR"
 
 if [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs2015" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}_32_1.zip \
