@@ -150,6 +150,9 @@ ofXml ofXml::getLastChild() const{
 	return ofXml(doc, this->xml.last_child());
 }
 
+ofXml ofXml::getParent() const {
+	return ofXml(doc, this->xml.parent());
+}
 
 ofXml::Attribute ofXml::getAttribute(const std::string & name) const{
 	return this->xml.attribute(name.c_str());

@@ -59,6 +59,10 @@ bool ofxOscSender::setup(const ofxOscSenderSettings &settings){
 	osc::UdpTransmitSocket *socket = nullptr;
 	try{
 		osc::IpEndpointName name = osc::IpEndpointName(settings.host.c_str(), settings.port);
+		if (!name.address){
+    			ofLogError("ofxOscSender") << "bad host? " << settings.host;
+    			return false;
+		}
 		socket = new osc::UdpTransmitSocket(name, settings.broadcast);
 		sendSocket.reset(socket);
 	}

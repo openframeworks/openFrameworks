@@ -19,9 +19,9 @@ cat << EOF
                                     vs2015: 32 or 64
                                     vs2017: 32 or 64
                                     msys2: 32
-                                    android: armv7 or x86 (if not specified will download both)
+                                    android: armv7, arm64, and x86 (if not specified will download all)
                                     linux: 64gcc4, 64gcc5, 64gcc6 / 64, armv6l or armv7l
-    -n, --no-overwrite          Merge new libraries with exisiting ones, use only to download same version for different platforms
+    -n, --no-overwrite          Merge new libraries with existing ones, use only to download same version for different platforms
                                 If not set deletes any existing libraries
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
@@ -138,7 +138,7 @@ if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
 fi
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $SCRIPT_DIR
+cd "$SCRIPT_DIR"
 
 if [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs2015" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}_32_1.zip \
@@ -172,6 +172,7 @@ elif [ "$ARCH" == "" ] && [[ "$PLATFORM" == "osx" || "$PLATFORM" == "ios" || "$P
           openFrameworksLibs_${VER}_${PLATFORM}4.tar.bz2"
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "android" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}armv7.tar.bz2 \
+          openFrameworksLibs_${VER}_${PLATFORM}arm64.tar.bz2 \
           openFrameworksLibs_${VER}_${PLATFORM}x86.tar.bz2"
 else # Linux
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"

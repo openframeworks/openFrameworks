@@ -190,7 +190,9 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.c
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 
 ifeq ($(CROSS_COMPILING),1)
-$(info detected cross compiling $(CROSS_COMPILING))
+ifdef MAKEFILE_DEBUG
+    $(info detected cross compiling $(CROSS_COMPILING))
+endif
 	ifdef TOOLCHAIN_ROOT
 		#You have specified TOOLCHAIN_ROOT with an environment variable
 	else
