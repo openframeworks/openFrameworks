@@ -339,15 +339,16 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
     // Define the last output sample in terms of frames
 	std::size_t end = fromFrame+numFrames*speed;
 	double position, remainder;
-	std::size_t intPosition, n = 0;
+	std::size_t intPosition, writeIdx = 0;
+	std::size_t to, readIdx;
 	float a, b, increment = speed;
-	std::size_t copySize = inChannels*sizeof(float);
-	std::size_t to, idx;
+	
 	
     // Since end is defined in terms of frames 
 	if(end<inFrames - 1){
         // end point is within the buffer
 		to = numFrames;
+        
 	}else{
         // end point is beyond the end of the buffer
 		to = ceil(float(inFrames-1-fromFrame)/speed) - 1;
@@ -358,18 +359,18 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 	for (std::size_t j=0; j<inChannels; j++)
 	{
 		position = fromFrame;
-		n = j;
+		writeIdx = j;
 		
         // Iterate through each frame
-		while (n < inChannels*to)
+		while (writeIdx < inChannels*to)
 		{
 			intPosition = position;
 			remainder = position - intPosition;
-			idx = inChannels*intPosition + j;
-			a = buffer[idx];
-			b = buffer[idx+inChannels];
-            outBuffer[n] = ofLerp(a,b,remainder);
-			n += inChannels;
+			readIdx = inChannels*intPosition + j;
+			a = buffer[readIdx];
+			b = buffer[readIdx+inChannels];
+            outBuffer[writeIdx] = ofLerp(a,b,remainder);
+			writeIdx += inChannels;
 			position += increment;
 		}		
 	}	
@@ -378,47 +379,47 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 	if(end>=inFrames-1)
 	{
 		double startPos = position;
-		std::size_t startN = n - inChannels + 1;
+		std::size_t startN = writeIdx - inChannels + 1;
 		
         // Again, iterate through each channel
 		for (std::size_t j=0; j<inChannels; j++)
 		{
 			position = startPos;
-			n = startN + j;
+			writeIdx = startN + j;
 			// Iterate up to end point minus a full sample. We always need an additional sample for the linear regression.
-			while ((position < inFrames-1) & (n < inChannels * numFrames))
+			while ((position < inFrames-1) & (writeIdx < inChannels * numFrames))
 			{
 				intPosition = position;
 				remainder = position - intPosition;
-				idx = inChannels*intPosition + j;
-				a = buffer[idx];
-				b = buffer[idx+inChannels];
-                outBuffer[n] = ofLerp(a,b,remainder);
-				n += inChannels;
+				readIdx = inChannels*intPosition + j;
+				a = buffer[readIdx];
+				b = buffer[readIdx+inChannels];
+                outBuffer[writeIdx] = ofLerp(a,b,remainder);
+				writeIdx += inChannels;
 				position += increment;				
 			}
             
             // We're at the end of the buffer
-			if (n==inChannels*(numFrames+1))
+			if (writeIdx==inChannels*(numFrames+1))
 				continue;
 			
 			if (loop)
 			{				
 				// Handle the wrap if the increment is between 0 and 1
-				while ((position < inFrames) & (n < outBufLen))
+				while ((position < inFrames) & (writeIdx < outBufLen))
 				{
 					intPosition = position;
 					remainder = position - intPosition;
-					idx = inChannels*intPosition + j;
-					a = buffer[idx];
+					readIdx = inChannels*intPosition + j;
+					a = buffer[readIdx];
 					b = buffer[j];
-					outBuffer[n] = ofLerp(a,b,remainder);
-					n += inChannels;
+					outBuffer[writeIdx] = ofLerp(a,b,remainder);
+					writeIdx += inChannels;
 					position += increment;				
 				}
 				
                 // Buffer end
-				if (n==inChannels*(numFrames+1))
+				if (writeIdx==inChannels*(numFrames+1))
 					continue;
 		
 				// Rewind the input pointer back to the start of the frame, accounting for the wrap
@@ -426,15 +427,15 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 					position -= inFrames;
 				
                 // complete the last samples of the buffer
-				while (n < outBufLen)
+				while (writeIdx < outBufLen)
 				{
 					intPosition = position;
 					remainder = position - intPosition;
-					idx = inChannels*intPosition + j;
-					a = buffer[idx];
-					b = buffer[idx+inChannels];
-					outBuffer[n] = ofLerp(a,b,remainder);
-					n += inChannels;
+					readIdx = inChannels*intPosition + j;
+					a = buffer[readIdx];
+					b = buffer[readIdx+inChannels];
+					outBuffer[writeIdx] = ofLerp(a,b,remainder);
+					writeIdx += inChannels;
 					position += increment;
 					
 					if (position >= inFrames)
@@ -446,7 +447,9 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
         // Zero out the end of the buffer.
 		if (!loop)
 		{
-			memset(&outBuffer[n-inChannels+1],0,to*copySize);
+			size_t i = writeIdx-inChannels+1;
+			while (i < outBuffer.size())
+				outBuffer[i++] = 0;
 		}
 	} // if(end>=inFrames-1)
 }
