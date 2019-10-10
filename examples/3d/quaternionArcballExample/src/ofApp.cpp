@@ -26,7 +26,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	
+
 	//translate so that 0,0 is the center of the screen
 	ofPushMatrix();
 	ofTranslate(ofGetWidth()/2, ofGetHeight()/2, 40);
@@ -59,7 +59,7 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-	
+
 	//every time the mouse is dragged, track the change
 	//accumulate the changes inside of curRot through multiplication
 	glm::vec2 mouse(x,y);

@@ -17,8 +17,8 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 	box.setOrientation(glm::angleAxis(ofDegToRad(ofGetElapsedTimef()*10),	glm::vec3(0,1,0)), //y axis rotation
-					   glm::angleAxis(45.0f, glm::vec3(0,0,1)),//z axis rotation
-					   glm::angleAxis(45.0f, glm::vec3(1,0,0)));//x axis rotation
+                       glm::angleAxis(45.0f, glm::vec3(0,0,1)),//z axis rotation
+                       glm::angleAxis(45.0f, glm::vec3(1,0,0)));//x axis rotation
 
 
 
