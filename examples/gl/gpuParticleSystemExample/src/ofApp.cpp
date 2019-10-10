@@ -80,8 +80,8 @@ void ofApp::setup(){
     mesh.setMode(OF_PRIMITIVE_POINTS);
     for(int x = 0; x < textureRes; x++){
         for(int y = 0; y < textureRes; y++){
-			mesh.addVertex({x,y,0});
-			mesh.addTexCoord({x, y});
+	        mesh.addVertex({x,y,0});
+	        mesh.addTexCoord({x, y});
         }
     }
 

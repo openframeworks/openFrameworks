@@ -18,8 +18,8 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 	box.setOrientation(glm::angleAxis(ofDegToRad(ofGetElapsedTimef()*10),	glm::vec3(0,1,0))*
-					   glm::angleAxis(45.0f,glm::vec3(0,0,1))*
-					   glm::angleAxis(45.0f, glm::vec3(1,0,0)));
+	                   glm::angleAxis(45.0f,glm::vec3(0,0,1))*
+	                   glm::angleAxis(45.0f, glm::vec3(1,0,0)));
 
 	ofEnableDepthTest();
 	fbo.begin();

@@ -45,7 +45,7 @@ void ofApp::update() {
 	glm::vec2 mouse(ofGetMouseX(), ofGetMouseY());
 	glm::vec2 mouseVec(ofGetPreviousMouseX()-ofGetMouseX(), ofGetPreviousMouseY()-ofGetMouseY());
 	glm::clamp(mouseVec, 0.0f, 10.0f);
-//	mouseVec.limit(10.0);
+
 	
 	for (int i=0; i<NUM_BILLBOARDS; i++) {
 		ofSeedRandom(i);

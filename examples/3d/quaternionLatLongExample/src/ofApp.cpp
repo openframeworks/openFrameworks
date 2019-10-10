@@ -72,7 +72,6 @@ void ofApp::draw(){
 		glm::quat latRot, longRot, spinQuat;
 		latRot = glm::angleAxis(ofDegToRad(cities[i].latitude), glm::vec3(1, 0, 0));
 		longRot = glm::angleAxis(ofDegToRad(cities[i].longitude), glm::vec3(0, 1, 0));
-//		longRot.makeRotate(cities[i].longitude, 0, 1, 0);
 		
 		spinQuat = glm::angleAxis(ofDegToRad(ofGetFrameNum()), glm::vec3(0, 1, 0));
 

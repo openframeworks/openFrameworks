@@ -58,7 +58,7 @@ void ofApp::touchMoved(int x, int y, int id){
 			found=true;
 			break;
 		}
-	}ss
+	}
 	if((!inside && found) || (inside && !found)){
 		ofxAndroidVibrator::vibrate(50);
 	}else if(!inside && !found){
