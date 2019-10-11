@@ -30,13 +30,16 @@ public:
 	/// \brief Set parent for the node. The node will inherit transformations from parent.
 	/// \param param0 Reference to the ofNode which becomes the parent node.
 	/// \param param1 Boolean if maintain child's global transformations (default = false). 
+	///
 	void setParent(ofNode& parent, bool bMaintainGlobalTransform = false);
 
 	/// \brief Remove parent node linking.
 	/// \param param0 Boolean if maintain child's global transformations (default = false).
+	///
 	void clearParent(bool bMaintainGlobalTransform = false);
 
 	/// \brief Get the parent node of this node.
+	///
 	/// \returns Pointer to parent ofNode.
 	ofNode* getParent() const;
 
@@ -45,54 +48,67 @@ public:
 	/// \{
 	
 	/// \brief Get node's local position as a 3D vector.
+	///
 	/// \returns A 3D vector with the local coordinates.
 	glm::vec3 getPosition() const;
 
 	/// \brief Get node's local x position. 
+	/// 
 	/// \returns Local x coordinate as a float.
 	float getX() const;
 
 	/// \brief Get node's local y position.
+	///
 	/// \returns Local y coordinate as a float.
 	float getY() const;
 
 	/// \brief Get node's local z position.
+	///
 	/// \returns Local z coordinate as a float.
 	float getZ() const;
 	
 	/// \brief Get the node's local x axis as 3d vector.
+	///
 	/// \returns A normalized 3D vector of the node's local x axis direction.
 	glm::vec3 getXAxis() const;
 
 	/// \brief Get the node's local y axis as 3d vector.
+	///
 	/// \returns A normalized 3D vector of the node's local y axis direction.
 	glm::vec3 getYAxis() const;
 
 	/// \brief Get the node's local z axis as 3d vector.
+	///
 	/// \returns A normalized 3D vector of the node's local z axis direction.
 	glm::vec3 getZAxis() const;
 	
 	/// \brief Get direction of node's side aka local x axis, as 3d vector.
+	///
 	/// \returns A normalized 3D vector of the node's local x axis direction.
 	glm::vec3 getSideDir() const;
 	
 	/// \brief Get direction the node looks at aka local -z axis, as 3d vector.
+	///
 	/// \returns A normalized 3D vector of the node's local -z axis direction.
 	glm::vec3 getLookAtDir()const;
 
 	/// \brief Get direction of node's top aka local y axis, as 3d vector.
+	///
 	/// \returns A normalized 3D vector of the node's local y axis direction.
 	glm::vec3 getUpDir() const;
 	
 	/// \brief Get pitch of node, aka the rotation along local x axis.
+	///
 	/// \returns The rotation around the local x axis in degrees, as a float.
 	OF_DEPRECATED_MSG("Use Deg/Rad versions.", float getPitch() const);
 	
 	/// \brief Get heading of node, aka the rotation along local y axis.
+	///
 	/// \returns The rotation around the local y axis in degrees, as a float.
 	OF_DEPRECATED_MSG("Use Deg/Rad versions.", float getHeading() const);
 	
 	/// \brief Get roll of node, aka the rotation along local z axis.
+	///
 	/// \returns The rotation around the local z axis in degrees, as a float.
 	OF_DEPRECATED_MSG("Use Deg/Rad versions.", float getRoll() const);
 
@@ -125,6 +141,7 @@ public:
 	glm::quat getOrientationQuat() const;
 	
 	/// \brief Get local orientation of node in degrees around x, y, and z axes.
+	///
 	/// \returns The local x, y and z axes orientation in degrees, as a 3D vector.
 	OF_DEPRECATED_MSG("Use the Deg/Rad version", glm::vec3 getOrientationEuler() const);
 
@@ -137,10 +154,12 @@ public:
 	glm::vec3 getOrientationEulerRad() const;
 	
 	/// \brief Get local scale of node in xyz axes where 1 is default.
+	///
 	/// \returns The local scale in the xyz axes where 1 = 100% of size.
 	glm::vec3 getScale() const;
 
 	/// \brief Get node's local transformations (position, orientation, scale).
+	/// 
 	/// \returns A refrence to mat4 containing node's local transformations.
 	/// \sa https://open.gl/transformations
 	const glm::mat4& getLocalTransformMatrix() const;
@@ -174,28 +193,34 @@ public:
 	/// \param param0 Desired local x coordinate as a float.
 	/// \param param1 Desired local y coordinate as a float.
 	/// \param param2 Desired local z coordinate as a float.
+	///
 	void setPosition(float px, float py, float pz);
 	
 	/// \brief Set the local position of the node using a 3D vector of coordinates.
 	/// \param param0 Desired local xyz coordinates as ref to 3D vector.	
+	/// 
 	void setPosition(const glm::vec3& p);
 	
 	/// \brief Set the global position of the node using xyz coordinates.
 	/// \param param0 Desired global x coordinate as a float.
 	/// \param param1 Desired global y coordinate as a float.
 	/// \param param2 Desired global z coordinate as a float.	
+	///
 	void setGlobalPosition(float px, float py, float pz);
 
 	/// \brief Set the global position of the node using a 3D vector of coordinates.
 	/// \param param0 Desired global xyz coordinates as ref to 3D vector.		
+	///
 	void setGlobalPosition(const glm::vec3& p);
 
 	/// \brief Set local orientation with a quaternion.
 	/// \param param0 Desired local orientation as ref to an glm::quat.
+	///
 	void setOrientation(const glm::quat& q);
 	
 	/// \brief Set local orientation with xyz euler angles.
 	/// \param param0 Desired local xyz angles in degrees, as ref to 3D vector. 
+	///
 	/// \note Using euler angles can cause gimbal lock.
 	/// \sa https://en.wikipedia.org/wiki/Gimbal_lock
 	void setOrientation(const glm::vec3& eulerAngles);
@@ -206,16 +231,19 @@ public:
 
 	/// \brief Set local uniform scale (x, y, and z are equally scaled).
 	/// \param param0 Desired scale for all axes as a float where 1 = 100%.
+	///
 	void setScale(float s);
 	
 	/// \brief Set local scale for xyz axes individually.
 	/// \param param0 Desired local scale for x axis as a float where 1 = 100%.
 	/// \param param1 Desired local scale for y axis as a float where 1 = 100%.
 	/// \param param2 Desired local scale for z axis as a float where 1 = 100%.
+	///
 	void setScale(float sx, float sy, float sz);
 	
 	/// \brief Set local scale for xyz axes individually with a 3D vector.
 	/// \param param0 Desired local scale for all axes as ref to 3D vector where 1 = 100%.
+	///
 	void setScale(const glm::vec3& s);
 	
 	/// \}
@@ -226,6 +254,7 @@ public:
 	/// \param param0 Desired relative position change along x axis as a float.
 	/// \param param1 Desired relative position change along y axis as a float.
 	/// \param param2 Desired relative position change along z axis as a float.
+	///
 	void move(float x, float y, float z);			
 	
 	/// \brief Move node by relative amount with xyz as ref to 3D vector.
@@ -234,10 +263,12 @@ public:
 
 	/// \brief Move node left+right relative to current position (in local x axis).
 	/// \param param0 Desired relative position change along local x axis as float.
+	///
 	void truck(float amount);
 
 	/// \brief Move node up+down relative to current position (in local y axis).
 	/// \param param0 Desired relative position change along local y axis as float.
+	///
 	void boom(float amount);
 
 	/// \brief Move node backward+forward relative to current position (in local z axis).
@@ -292,6 +323,7 @@ public:
 	/// \brief Rotate relative to current orientation around arbitrary axis.
 	/// \param param0 Desired relative angle change in degrees as float.
 	/// \param param1 Desired axis to rotate around as a ref to cartesian 3D Vector.
+	///
 	void rotateDeg(float degrees, const glm::vec3& v);
 
 	/// \brief Rotate relative to current orientation around arbitrary axis.
