@@ -648,9 +648,9 @@ std::string ofVAArgsToString(const char * format, va_list args);
 ///
 /// Example:
 /// ~~~~{.cpp}
-///		std::string str = "framerate is ";
-///		str += ofToString(ofGetFrameRate()) + " fps";
-///		// The string now containes something like "framerate is 60 fps".
+///    std::string str = "framerate is ";
+///    str += ofToString(ofGetFrameRate()) + " fps";
+///    // The string now contains something like "framerate is 60 fps".
 /// ~~~~
 ///
 /// \tparam T The data type of the value to convert to a string.
@@ -745,9 +745,9 @@ template<class T>
 T ofFromString(const std::string & value){
 	T data;
 	std::stringstream ss;
-    ss << value;
-    ss >> data;
-    return data;
+	ss << value;
+	ss >> data;
+	return data;
 }
 
 /// \brief Convert a string represetnation to another string.
@@ -988,7 +988,7 @@ std::string ofBinaryToString(const std::string& value);
 ///
 /// \sa http://semver.org/
 /// \returns The string representation of the version (e.g. `0.9.0`).
-std::string 	ofGetVersionInfo();
+std::string ofGetVersionInfo();
 
 /// \brief Get the major version number of openFrameworks.
 ///
@@ -1033,7 +1033,7 @@ std::string ofGetVersionPreRelease();
 ///
 /// Example:
 /// ~~~~{.cpp}
-///		ofSaveScreen("screen.png"); // Will save screen.png in the /data folder.
+///    ofSaveScreen("screen.png"); // Will save screen.png in the /data folder.
 /// ~~~~
 ///
 /// The output file type will be deduced from the given file name.
@@ -1058,7 +1058,9 @@ void ofSaveViewport(const std::string& filename);
 
 
 /// \section System
+
 /// \brief Launch the given URL in the default browser.
+///
 /// \param url the URL to open.
 /// \param uriEncodeQuery true if the query parameters in the given URL have
 /// already been URL encoded.
@@ -1067,15 +1069,18 @@ void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery=false);
 #endif
 
 /// \brief Executes a system command. Similar to run a command in terminal.
+///
 /// \note Will block until the executed program/command has finished.
 /// \returns the system command output as string.
 std::string ofSystem(const std::string& command);
 
 /// \brief Get the target platform of the current system.
+///
 /// \returns the current ofTargetPlatform.
 ofTargetPlatform ofGetTargetPlatform();
 
 /// \brief Get the value of a given environment variable.
+///
 /// \note The available environment variables differ between operating systems.
 /// \returns the environmnt variable's value or an empty string if not found.
 std::string ofGetEnv(const std::string & var);
