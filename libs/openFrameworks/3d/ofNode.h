@@ -473,11 +473,11 @@ protected:
 	///        notified when the position changed.
 	virtual void onPositionChanged() {}
 
-	/// \brief classes extending ofNode can override this methods to get notified 
+	/// \brief Classes extending ofNode can override this methods to get notified
 	///        when the orientation changed.
 	virtual void onOrientationChanged() {}
 
-	/// \brief classes extending ofNode can override this methods to get notified 
+	/// \brief Classes extending ofNode can override this methods to get notified 
 	///        when the scale changed.
 	virtual void onScaleChanged() {}
 
