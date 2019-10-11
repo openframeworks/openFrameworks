@@ -238,7 +238,7 @@ void ofDrawCylinder(float x, float y, float z, float radius, float height);
 /// \param position The 3D point to use as a position coordinate when
 /// drawing this cylinder.
 /// \param radius The radius to use when drawing this cylinder's circular
-/// footprint.
+///        footprint.
 /// \param height The height to use when drawing this cylinder.
 void ofDrawCylinder(const glm::vec3& position, float radius, float height);
 
@@ -248,7 +248,7 @@ void ofDrawCylinder(const glm::vec3& position, float radius, float height);
 /// origin (0, 0, 0).
 ///
 /// \param radius The radius to use when drawing this cylinder's circular
-/// footprint.
+///        footprint.
 void ofDrawCylinder(float radius, float height);
 
 /// \section Cones
@@ -289,7 +289,7 @@ glm::vec3 ofGetConeResolution();
 /// \param y The y coordinate to use when drawing this cone.
 /// \param z The z coordinate to use when drawing this cone.
 /// \param radius The radius to use when drawing this cone's circular
-/// footprint.
+///        footprint.
 /// \param height The height to use when drawing this cone.
 void ofDrawCone(float x, float y, float z, float radius, float height);
 
@@ -301,7 +301,7 @@ void ofDrawCone(float x, float y, float z, float radius, float height);
 /// \param x The x coordinate to use when drawing this cone.
 /// \param y The y coordinate to use when drawing this cone.
 /// \param radius The radius to use when drawing this cone's circular
-/// footprint.
+///        footprint.
 /// \param height The height to use when drawing this cone.
 void ofDrawCone(float x, float y, float radius, float height);
 
@@ -322,7 +322,7 @@ void ofDrawCone(const glm::vec3& position, float radius, float height);
 /// origin (0, 0, 0).
 ///
 /// \param radius The radius to use when drawing this cone's circular
-/// footprint.
+///        footprint.
 /// \param height The height to use when drawing this cone.
 void ofDrawCone(float radius, float height);
 
@@ -653,7 +653,7 @@ public:
 	/// \param x The x coordinate to use when drawing this cylinder.
 	/// \param y The y coordinate to use when drawing this cylinder.
 	/// \param radius The radius to use when drawing this cylinder's circular
-	/// footprint.
+	///        footprint.
 	/// \param height The height to use when drawing this cylinder.
 	void drawCylinder(float x, float y, float radius, float height) const;
 
@@ -666,7 +666,7 @@ public:
 	/// \param y The y coordinate to use when drawing this cylinder.
 	/// \param z The z coordinate to use when drawing this cylinder.
 	/// \param radius The radius to use when drawing this cylinder's circular
-	/// footprint.
+	///        footprint.
 	/// \param height The height to use when drawing this cylinder.
 	void drawCylinder(float x, float y, float z, float radius, float height) const;
 
@@ -679,7 +679,7 @@ public:
 	/// drawing this cylinder.
 	///
 	/// \param radius The radius to use when drawing this cylinder's circular
-	/// footprint.
+	///        footprint.
 	/// \param height The height to use when drawing this cylinder.
 	void drawCylinder(const glm::vec3& position, float radius, float height) const;
 
@@ -689,7 +689,7 @@ public:
 	/// origin (0, 0, 0).
 	///
 	/// \param radius The radius to use when drawing this cylinder's circular
-	/// footprint.
+	///        footprint.
 	/// \param height The height to use when drawing this cylinder.
 	void drawCylinder(float radius, float height) const;
 
@@ -730,7 +730,7 @@ public:
 	/// \param y The y coordinate to use when drawing this cone.
 	/// \param z The z coordinate to use when drawing this cone.
 	/// \param radius The radius to use when drawing this cone's circular
-	/// footprint.
+	///        footprint.
 	/// \param height The height to use when drawing this cone.
 	void drawCone(float x, float y, float z, float radius, float height) const;
 
@@ -743,7 +743,7 @@ public:
 	/// \param x The x coordinate to use when drawing this cone.
 	/// \param y The y coordinate to use when drawing this cone.
 	/// \param radius The radius to use when drawing this cone's circular
-	/// footprint.
+	///        footprint.
 	/// \param height The height to use when drawing this cone.
 	void drawCone(float x, float y, float radius, float height) const;
 
@@ -754,7 +754,7 @@ public:
 	///
 	/// \param position The 3D point representing this cone's position.
 	/// \param radius The radius to use when drawing this cone's circular
-	/// footprint.
+	///        footprint.
 	/// \param height The height to use when drawing this cone.
 	void drawCone(const glm::vec3& position, float radius, float height) const;
 
@@ -764,7 +764,7 @@ public:
 	/// origin (0, 0, 0).
 	///
 	/// \param radius The radius to use when drawing this cone's circular
-	/// footprint.
+	///        footprint.
 	/// \param height The height to use when drawing this cone.
 	void drawCone(float radius, float height) const;
 
