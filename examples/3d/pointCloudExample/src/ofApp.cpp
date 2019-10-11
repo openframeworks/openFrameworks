@@ -20,7 +20,7 @@ void ofApp::setup() {
 				float z = ofMap(cur.a, 0, 255, -300, 300);
 				cur.a = 255;
 				mesh.addColor(cur);
-				ofVec3f pos(x, y, z);
+				glm::vec3 pos(x, y, z);
 				mesh.addVertex(pos);
 			}
 		}

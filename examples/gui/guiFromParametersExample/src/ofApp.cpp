@@ -12,7 +12,7 @@ void ofApp::setup(){
 	gui.setup("panel"); // most of the time you don't need a name but don't forget to call setup
 	gui.add(filled.set("bFill", true));
 	gui.add(radius.set( "radius", 140, 10, 300 ));
-	gui.add(center.set("center",ofVec2f(ofGetWidth()*.5,ofGetHeight()*.5),ofVec2f(0,0),ofVec2f(ofGetWidth(),ofGetHeight())));
+	gui.add(center.set("center",glm::vec2(ofGetWidth()*.5,ofGetHeight()*.5),glm::vec2(0,0),glm::vec2(ofGetWidth(),ofGetHeight())));
 	gui.add(color.set("color",ofColor(100,100,140),ofColor(0,0),ofColor(255,255)));
 	gui.add(circleResolution.set("circleRes", 5, 3, 90));
 	gui.add(twoCircles.setup("twoCircles"));
@@ -58,7 +58,7 @@ void ofApp::draw(){
 		ofDrawCircle(center->x-radius*.5, center->y, radius );
 		ofDrawCircle(center->x+radius*.5, center->y, radius );
 	}else{
-		ofDrawCircle((ofVec2f)center, radius );
+		ofDrawCircle((glm::vec2)center, radius );
 	}
 	
 	if( !bHide ){

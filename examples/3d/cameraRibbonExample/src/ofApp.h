@@ -33,9 +33,9 @@ class ofApp : public ofBaseApp{
     void gotMessage(ofMessage msg);
 	
 	//this holds all of our points
-    vector<ofVec3f> points;
+    vector<glm::vec3> points;
     //this keeps track of the center of all the points
-    ofVec3f center;
+    glm::vec3 center;
     
 	//our camera objects for looking at the scene from multiple perspectives
 	ofCamera camera;

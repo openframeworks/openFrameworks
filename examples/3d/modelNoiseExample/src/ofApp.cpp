@@ -32,7 +32,7 @@ void ofApp::setup(){
 	model.setPosition(ofGetWidth()*.5, ofGetHeight() * 0.75, 0);
 
 	light.enable();
-    light.setPosition(model.getPosition() + ofPoint(0, 0, 1600));
+    light.setPosition(model.getPosition() + glm::vec3(0, 0, 1600));
 }
 
 //--------------------------------------------------------------
@@ -55,7 +55,7 @@ void ofApp::draw(){
 void ofApp::drawWithModel(){
 
 	//get the position of the model
-	ofVec3f position = model.getPosition();
+	glm::vec3 position = model.getPosition();
 
 	//save the current view
 	ofPushMatrix();
@@ -77,8 +77,8 @@ void ofApp::drawWithModel(){
 void ofApp::drawWithMesh(){
 
 	//get the model attributes we need
-	ofVec3f scale = model.getScale();
-	ofVec3f position = model.getPosition();
+	glm::vec3 scale = model.getScale();
+	glm::vec3 position = model.getPosition();
 	float normalizedScale = model.getNormalizedScale();
 	ofVboMesh mesh = model.getMesh(0);
 	ofTexture texture;

@@ -76,7 +76,7 @@ void ofApp::setup(){
 					//which tag out of multiple tags you are refering to.
 					int x = XML.getValue("PT:X", 0, i);
 					int y = XML.getValue("PT:Y", 0, i);
-					dragPts[i].set(x, y);
+					dragPts[i] = {x, y};
 					pointCount++;
 				}
 			}
@@ -220,7 +220,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 	//------------
 	//we also record the x y points into an array - so we can draw it
 	if(pointCount < NUM_PTS -1){
-		dragPts[pointCount].set(x, y);
+		dragPts[pointCount]= {x, y};
 		pointCount++;
 	}
 

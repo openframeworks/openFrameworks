@@ -59,7 +59,7 @@ void ofApp::update(){
 		ofNode node;
 
 		float t = (now + i * spacing) * movementSpeed;
-		ofVec3f pos(
+		glm::vec3 pos(
 			ofSignedNoise(t, 0, 0),
 			ofSignedNoise(0, t, 0),
 			ofSignedNoise(0, 0, t));

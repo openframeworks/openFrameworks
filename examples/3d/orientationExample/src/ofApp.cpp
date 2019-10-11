@@ -78,7 +78,7 @@ void ofApp::draw(){
 	ofDrawLine(current.x, current.y, current.z, current.x, 0, current.z);
 
 	ofTranslate(current.x, current.y, current.z);
-    if( (current - previous ).length() > 0.0 ){
+    if( glm::length(current - previous ) > 0.0 ){
         // translate and rotate every 3D object after this line to the current position and orientation of our line, but only if the line is longer than 0 or has a length
         rotateToNormal(current - previous);
     }

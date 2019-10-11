@@ -69,20 +69,21 @@ void ofApp::draw(){
 		//three rotations
 		//two to represent the latitude and lontitude of the city
 		//a third so that it spins along with the spinning sphere
-		ofQuaternion latRot, longRot, spinQuat;
-		latRot.makeRotate(cities[i].latitude, 1, 0, 0);
-		longRot.makeRotate(cities[i].longitude, 0, 1, 0);
-		spinQuat.makeRotate(ofGetFrameNum(), 0, 1, 0);
+		glm::quat latRot, longRot, spinQuat;
+		latRot = glm::angleAxis(ofDegToRad(cities[i].latitude), glm::vec3(1, 0, 0));
+		longRot = glm::angleAxis(ofDegToRad(cities[i].longitude), glm::vec3(0, 1, 0));
+		
+		spinQuat = glm::angleAxis(ofDegToRad(ofGetFrameNum()), glm::vec3(0, 1, 0));
 
 		//our starting point is 0,0, on the surface of our sphere, this is where the meridian and equator meet
-		ofVec3f center = ofVec3f(0,0,300);
+		glm::vec3 center = glm::vec3(0,0,300);
 		//multiplying a quat with another quat combines their rotations into one quat
 		//multiplying a quat to a vector applies the quat's rotation to that vector
 		//so to to generate our point on the sphere, multiply all of our quaternions together then multiple the centery by the combined rotation
-		ofVec3f worldPoint = latRot * longRot * spinQuat * center;
+		glm::vec3 worldPoint =  spinQuat * longRot * latRot * center;
 
 		//draw it and label it
-		ofDrawLine(ofVec3f(0,0,0), worldPoint);
+		ofDrawLine(glm::vec3(0,0,0), worldPoint);
 
 		//set the bitmap text mode billboard so the points show up correctly in 3d
 		ofDrawBitmapString(cities[i].name, worldPoint );
