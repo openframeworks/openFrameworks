@@ -29,74 +29,65 @@ while [[ $# > 0 ]] ; do
 	exit 1
 done
 
-NOT_HAS_PATH=$(cmd /c "echo %PATH%" | grep mingw32\\bin > /dev/null; echo $?)
-if [ "$NOT_HAS_PATH" -ne "0" ]; then
-	cd /
-	MSYS2_ROOT=$(pwd)
-	MSYS2_ROOT=$(cygpath -w $MSYS2_ROOT)
-	setx PATH "%PATH%;${MSYS2_ROOT}mingw32\\bin;${MSYS2_ROOT}usr\\bin\\"
-	echo "set path to ${MSYS2_ROOT}mingw32\\bin;${MSYS2_ROOT}usr\\bin\\"
-fi
 
-arch=i686
+#Install packages
 if [ -z ${confirm+x} ]; then
-	pacman -S $confirm --needed ca-certificates
+	pacman -Su $confirm --needed ca-certificates
 	if [ -z ${APPVEYOR+x} ]; then
-		pacman -S $confirm --needed wget rsync unzip make mingw-w64-$arch-gcc mingw-w64-$arch-ntldd-git
+		pacman -Su $confirm --needed wget rsync unzip make ${MINGW_PACKAGE_PREFIX}-ntldd-git
 	fi
-	pacman -S $confirm --needed mingw-w64-$arch-glew \
-		mingw-w64-$arch-freeglut \
-		mingw-w64-$arch-FreeImage \
-		mingw-w64-$arch-opencv \
-		mingw-w64-$arch-assimp \
-		mingw-w64-$arch-boost \
-		mingw-w64-$arch-cairo \
-		mingw-w64-$arch-clang \
-		mingw-w64-$arch-gdb \
-		mingw-w64-$arch-zlib \
-		mingw-w64-$arch-tools \
-		mingw-w64-$arch-pkg-config \
-		mingw-w64-$arch-poco \
-		mingw-w64-$arch-glfw \
-		mingw-w64-$arch-libusb \
-		mingw-w64-$arch-harfbuzz \
-		mingw-w64-$arch-poco \
-		mingw-w64-$arch-curl \
-		mingw-w64-$arch-libxml2
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-gcc \
+		${MINGW_PACKAGE_PREFIX}-glew \
+		${MINGW_PACKAGE_PREFIX}-freeglut \
+		${MINGW_PACKAGE_PREFIX}-FreeImage \
+		${MINGW_PACKAGE_PREFIX}-opencv \
+		${MINGW_PACKAGE_PREFIX}-assimp \
+		${MINGW_PACKAGE_PREFIX}-boost \
+		${MINGW_PACKAGE_PREFIX}-cairo \
+		${MINGW_PACKAGE_PREFIX}-gdb \
+		${MINGW_PACKAGE_PREFIX}-zlib \
+		${MINGW_PACKAGE_PREFIX}-tools \
+		${MINGW_PACKAGE_PREFIX}-pkg-config \
+		${MINGW_PACKAGE_PREFIX}-poco \
+		${MINGW_PACKAGE_PREFIX}-glfw \
+		${MINGW_PACKAGE_PREFIX}-libusb \
+		${MINGW_PACKAGE_PREFIX}-harfbuzz \
+		${MINGW_PACKAGE_PREFIX}-poco \
+		${MINGW_PACKAGE_PREFIX}-curl \
+		${MINGW_PACKAGE_PREFIX}-libxml2
 else
-	pacman -S $confirm --needed mingw-w64-$arch-harfbuzz
-	pacman -S $confirm --needed ca-certificates
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-harfbuzz
+	pacman -Su $confirm --needed ca-certificates
 	if [ -z ${APPVEYOR+x} ]; then
-		pacman -S $confirm --needed wget
-		pacman -S $confirm --needed rsync
-		pacman -S $confirm --needed unzip
-		pacman -S $confirm --needed make
-		pacman -S $confirm --needed mingw-w64-$arch-gcc
-		pacman -S $confirm --needed mingw-w64-$arch-ntldd-git
+		pacman -Su $confirm --needed wget
+		pacman -Su $confirm --needed rsync
+		pacman -Su $confirm --needed unzip
+		pacman -Su $confirm --needed make
+		pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-ntldd-git
 	fi
-	pacman -S $confirm --needed mingw-w64-$arch-glew
-	pacman -S $confirm --needed mingw-w64-$arch-freeglut
-	pacman -S $confirm --needed mingw-w64-$arch-FreeImage
-	pacman -S $confirm --needed mingw-w64-$arch-opencv
-	pacman -S $confirm --needed mingw-w64-$arch-assimp
-	pacman -S $confirm --needed mingw-w64-$arch-boost
-	pacman -S $confirm --needed mingw-w64-$arch-cairo
-	pacman -S $confirm --needed mingw-w64-$arch-clang
-	pacman -S $confirm --needed mingw-w64-$arch-gdb
-	pacman -S $confirm --needed mingw-w64-$arch-zlib
-	pacman -S $confirm --needed mingw-w64-$arch-tools
-	pacman -S $confirm --needed mingw-w64-$arch-pkg-config
-	pacman -S $confirm --needed mingw-w64-$arch-poco
-	pacman -S $confirm --needed mingw-w64-$arch-glfw
-	pacman -S $confirm --needed mingw-w64-$arch-libusb
-	pacman -S $confirm --needed mingw-w64-$arch-poco
-	pacman -S $confirm --needed mingw-w64-$arch-curl
-	pacman -S $confirm --needed mingw-w64-$arch-libxml2
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-gcc
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-glew
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-freeglut
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-FreeImage
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-opencv
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-assimp
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-boost
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-cairo
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-gdb
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-zlib
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-tools
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-pkg-config
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-poco
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-glfw
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-libusb
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-poco
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-curl
+	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-libxml2
 fi
 
 
 # this would install gstreamer which can be used in mingw too
-#pacman -Sy mingw-w64-$arch-gst-libav mingw-w64-$arch-gst-plugins-bad mingw-w64-$arch-gst-plugins-base mingw-w64-$arch-gst-plugins-good mingw-w64-$arch-gst-plugins-ugly mingw-w64-$arch-gstreamer
+#pacman -Su ${MINGW_PACKAGE_PREFIX}-gst-libav ${MINGW_PACKAGE_PREFIX}-gst-plugins-bad ${MINGW_PACKAGE_PREFIX}-gst-plugins-base ${MINGW_PACKAGE_PREFIX}-gst-plugins-good ${MINGW_PACKAGE_PREFIX}-gst-plugins-ugly ${MINGW_PACKAGE_PREFIX}-gstreamer
 
 exit_code=$?
 if [ $exit_code != 0 ]; then

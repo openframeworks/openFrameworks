@@ -1,5 +1,4 @@
 #include "ofApp.h"
-#include "ofConstants.h"
 
 // this example will probably only work in real time in release mode
 
@@ -16,11 +15,21 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	box.setOrientation(glm::angleAxis(ofDegToRad(ofGetElapsedTimef()*10),	glm::vec3(0,1,0)), //y axis rotation
-                       glm::angleAxis(45.0f, glm::vec3(0,0,1)),//z axis rotation
-                       glm::angleAxis(45.0f, glm::vec3(1,0,0)));//x axis rotation
 
+	// Set the angles of rotation on each axis.
+	float xAngleRad = ofDegToRad(45.0);
+	float yAngleRad = ofDegToRad(ofGetElapsedTimef() * 10);
+	float zAngleRad = ofDegToRad(45.0);
 
+	// Construct a quaternion.
+	glm::quat quat;
+
+	quat *= glm::angleAxis(xAngleRad, glm::vec3(1, 0, 0));
+	quat *= glm::angleAxis(yAngleRad, glm::vec3(0, 1, 0));
+	quat *= glm::angleAxis(zAngleRad, glm::vec3(0, 0, 1));
+
+	// Set the orientation of the box based on the construxcted quaternion.
+	box.setOrientation(quat);
 
 	ofEnableDepthTest();
 	fbo.begin();

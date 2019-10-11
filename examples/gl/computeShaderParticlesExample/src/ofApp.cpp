@@ -55,14 +55,14 @@ void ofApp::update(){
 	compute.setUniform1f("elapsedTime",ofGetElapsedTimef());
 	float size = 4;
 	atractor1 = {ofMap(ofNoise(ofGetElapsedTimef()*0.3),0,1,-ofGetWidth()*size,ofGetWidth()*size),
-	             ofMap(ofNoise(ofGetElapsedTimef()*0.3+0.2),0,1,-ofGetHeight()*size,ofGetHeight()*size),
-                 ofMap(ofNoise(ofGetElapsedTimef()*0.3+0.5),0,1,0,-ofGetHeight()*size)};
+				ofMap(ofNoise(ofGetElapsedTimef()*0.3+0.2),0,1,-ofGetHeight()*size,ofGetHeight()*size),
+				ofMap(ofNoise(ofGetElapsedTimef()*0.3+0.5),0,1,0,-ofGetHeight()*size)};
 	atractor2 = {ofMap(ofNoise(ofGetElapsedTimef()*0.5+0.3),0,1,-ofGetWidth()*size,ofGetWidth()*size),
-	             ofMap(ofNoise(ofGetElapsedTimef()*0.5+0.2),0,1,-ofGetHeight()*size,ofGetHeight()*size),
-	             ofMap(ofNoise(ofGetElapsedTimef()*0.5+0.1),0,1,0,-ofGetHeight()*size)};
+				ofMap(ofNoise(ofGetElapsedTimef()*0.5+0.2),0,1,-ofGetHeight()*size,ofGetHeight()*size),
+				ofMap(ofNoise(ofGetElapsedTimef()*0.5+0.1),0,1,0,-ofGetHeight()*size)};
 	atractor3 = {ofMap(ofNoise(ofGetElapsedTimef()*0.9+0.1),0,1,-ofGetWidth()*size,ofGetWidth()*size),
-	             ofMap(ofNoise(ofGetElapsedTimef()*0.9+0.5),0,1,-ofGetHeight()*size,ofGetHeight()*size),
-	             ofMap(ofNoise(ofGetElapsedTimef()*0.9+0.7),0,1,0,-ofGetHeight()*size)};
+				ofMap(ofNoise(ofGetElapsedTimef()*0.9+0.5),0,1,-ofGetHeight()*size,ofGetHeight()*size),
+				ofMap(ofNoise(ofGetElapsedTimef()*0.9+0.7),0,1,0,-ofGetHeight()*size)};
 
 	compute.setUniform3f("attractor1",atractor1.x,atractor1.y,atractor1.z);
 	compute.setUniform3f("attractor2",atractor2.x,atractor2.y,atractor2.z);

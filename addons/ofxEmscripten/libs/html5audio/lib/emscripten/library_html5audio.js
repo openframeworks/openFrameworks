@@ -199,7 +199,7 @@ var LibraryHTML5Audio = {
 				}
 			}
 
-			Runtime.dynCall('viiii',callback, [bufferSize,inputChannels,outputChannels,userData]);
+			dynCall('viiii',callback, [bufferSize,inputChannels,outputChannels,userData]);
 
 			if(outputChannels>0){
 				for(c=0;c<outputChannels;++c){
