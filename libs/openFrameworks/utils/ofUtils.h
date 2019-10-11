@@ -1080,25 +1080,53 @@ ofTargetPlatform ofGetTargetPlatform();
 /// \returns the environmnt variable's value or an empty string if not found.
 std::string ofGetEnv(const std::string & var);
 
-/// Allows to iterate over a string's utf8 codepoints.
-/// The easiest way to use it is with a c++11 range style
-/// for loop like:
+/// \brief Iterate through each Unicode codepoint in a UTF8-encoded std::string.
 ///
-/// for(auto c: ofUTF8Iterator(str)){
-/// ...
-/// }
+/// For UTF8-encoded strings each Unicode codepoint is comprised of between one
+/// and four bytes. Thus to access individual Unicode codepoints, we must step
+/// through a std::string in a UTF8-aware way.
 ///
-/// which will iterate through all the utf8 codepoints in the
-/// string.
+/// The easiest way to use it is with a C++11 range style for loop like:
+///
+/// ~~~~{.cpp}
+///     for(uint32_t codePoint: ofUTF8Iterator(str)){
+///         // ...
+///     }
+/// ~~~~
+///
+/// which will iterate through all the utf8 codepoints in the string.
+///
+/// If the passed UTF8-encoded std::string is invalid, the iterator yield 0
+/// elements e.g.:
+///
+/// ~~~~{.cpp}
+///     std::string invalidUTF8String = "...";
+///     ofLog() << (ofUTF8Iterator(invalidUTF8String).begin() == ofUTF8Iterator(invalidUTF8String).end()); // Returns true.
+/// ~~~~
 class ofUTF8Iterator{
 public:
+	/// \brief Create a ofUTF8Iterator for a given UTF8-encoded string.
+	///
+	/// \param str A UTF8-encoded string to iterate through.
 	ofUTF8Iterator(const std::string & str);
+
+	/// \returns A forward iterator that points to the first codepoint in the UTF8 string.
 	utf8::iterator<std::string::const_iterator> begin() const;
+
+	/// \returns An forward iterator that points to the end of the UTF8 string.
 	utf8::iterator<std::string::const_iterator> end() const;
+
+	/// \returns An reverse iterator that points to the last codepoint in the UTF8 string.
 	utf8::iterator<std::string::const_reverse_iterator> rbegin() const;
+
+	/// \returns An reverse iterator that points to the reverse end of the UTF8 string.
 	utf8::iterator<std::string::const_reverse_iterator> rend() const;
 
 private:
+	/// \brief A copy of the validated UTF8-encoded std::string for validation.
+	///
+	/// If the UTF8-encoded std::string passed to the constructor
+	/// `ofUTF8Iterator(...)` is invalid, this variable will be empty.
 	std::string src_valid;
 };
 
