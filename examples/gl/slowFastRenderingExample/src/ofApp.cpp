@@ -34,9 +34,9 @@ void ofApp::update() {
         speeds[i]   *= 0.98;
         
         // move from the mouse
-        ofVec2f mouseVec = ofVec2f(ofGetMouseX(), ofGetMouseY()) - points[i];
-        if(mouseVec.length() < 100) {
-            mouseVec.normalize();
+        glm::vec2 mouseVec = glm::vec2(ofGetMouseX(), ofGetMouseY()) - points[i];
+        if(glm::length(mouseVec) < 100) {
+			mouseVec = glm::normalize(mouseVec);
             speeds[i] -= mouseVec;
         }
         

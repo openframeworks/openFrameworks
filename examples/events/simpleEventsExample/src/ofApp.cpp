@@ -44,10 +44,10 @@ void ofApp::draw(){
     ofDrawBitmapStringHighlight(msg, 30,30);    
 }
 //--------------------------------------------------------------
-void ofApp::onMouseInCircle(ofVec2f & e){
-    clickedPoint.set(e); 
+void ofApp::onMouseInCircle(glm::vec2 & e){
+    clickedPoint = e;
 }
 //--------------------------------------------------------------
-void ofApp::onMouseInAnyCircle(ofVec2f & e){
+void ofApp::onMouseInAnyCircle(glm::vec2 & e){
      bg.set(ofRandom(255), ofRandom(255), ofRandom(255));
 }

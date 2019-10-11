@@ -23,8 +23,8 @@ class ofApp : public ofBaseApp {
 		void addPoint(float x, float y, float z);
 		
 		// vector to store all values
-		vector <ofVec3f> points;
-		vector <ofVec3f> sizes;
+		vector <glm::vec3> points;
+		vector <glm::vec3> sizes;
 		
 		ofVbo vbo;
 		ofShader shader;

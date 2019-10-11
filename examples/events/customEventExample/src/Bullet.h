@@ -5,7 +5,7 @@ class Bullet {
 
 public:
     
-    ofVec2f pos, vel;
+    glm::vec2 pos, vel;
     bool    bRemove;
     
     void update() {

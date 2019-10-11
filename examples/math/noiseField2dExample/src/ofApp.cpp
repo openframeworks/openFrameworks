@@ -30,12 +30,12 @@ bool debugMode = false;
  for the v.
  */
 //--------------------------------------------------------------
-ofVec2f ofApp::getField(ofVec2f position) {
+glm::vec2 ofApp::getField(const glm::vec2& position) {
 	float normx = ofNormalize(position.x, 0, ofGetWidth());
 	float normy = ofNormalize(position.y, 0, ofGetHeight());
 	float u = ofNoise(t + phase, normx * complexity + phase, normy * complexity + phase);
 	float v = ofNoise(t - phase, normx * complexity - phase, normy * complexity + phase);
-	return ofVec2f(u, v);
+	return glm::vec2(u, v);
 }
 
 //--------------------------------------------------------------
@@ -46,7 +46,7 @@ void ofApp::setup() {
 	// randomly allocate the points across the screen
   points.resize(nPoints);
   for(int i = 0; i < nPoints; i++) {
-    points[i] = ofVec2f(ofRandom(0, ofGetWidth()), ofRandom(0, ofGetHeight()));
+    points[i] = glm::vec2(ofRandom(0, ofGetWidth()), ofRandom(0, ofGetHeight()));
   }
 	
 	// we'll be drawing the points into an ofMesh that is drawn as bunch of points
@@ -60,7 +60,7 @@ void ofApp::update() {
   t = ofGetFrameNum() * timeSpeed;
   for(int i = 0; i < nPoints; i++) {
 		float x = points[i].x, y = points[i].y;
-		ofVec2f field = getField(points[i]); // get the field at this position
+		glm::vec2 field = getField(points[i]); // get the field at this position
 		// use the strength of the field to determine a speed to move
 		// the speed is changing over time and velocity-space as well
     float speed = (1 + ofNoise(t, field.x, field.y)) / pollenMass;
@@ -88,7 +88,7 @@ void ofApp::draw() {
 		// draw a vector field for the debug screen
     for(int i = 0; i < width; i += step) {
       for(int j = 0; j < height; j += step) {
-				ofVec2f field = getField(ofVec2f(i, j));
+				glm::vec2 field = getField(glm::vec2(i, j));
         ofPushMatrix();
         ofTranslate(i, j);
 				ofSetColor(0);

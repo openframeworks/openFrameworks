@@ -57,7 +57,7 @@ void ofApp::setup() {
     // add some random holes for the bugs to come out
     int nHoldes = 10;
     for(int i=0; i<nHoldes; i++) {
-        ofVec2f p(ofRandomWidth(), ofRandomHeight());
+        glm::vec2 p(ofRandomWidth(), ofRandomHeight());
         holes.push_back(p);
     }
 
@@ -87,7 +87,7 @@ void ofApp::update() {
 
         Bug newBug;
         newBug.pos = holes[randomHole];
-        newBug.vel.set(ofRandom(-1, 1), ofRandom(-1, 1));
+		newBug.vel = glm::vec2(ofRandom(-1, 1), ofRandom(-1, 1));
         bugs.push_back(newBug);
     }
 
@@ -97,7 +97,7 @@ void ofApp::update() {
 
         // bug pos and size
         float   size = bugs[i].size;
-        ofVec2f pos  = bugs[i].pos;
+        glm::vec2 pos  = bugs[i].pos;
 
         // wrap the bugs around the screen
         if(pos.x > ofGetWidth()-size)  bugs[i].pos.x = -size;
@@ -124,11 +124,11 @@ void ofApp::update() {
     for(unsigned int i=0; i<bullets.size(); i++) {
         for(unsigned int j=0; j<bugs.size(); j++) {
 
-            ofVec2f a       = bullets[i].pos;
-            ofVec2f b       = bugs[j].pos;
+            glm::vec2 a       = bullets[i].pos;
+            glm::vec2 b       = bugs[j].pos;
             float   minSize = bugs[j].size;
 
-            if(a.distance(b) < minSize) {
+			if(glm::distance(a,b) < minSize) {
 
                 static GameEvent newEvent;
                 newEvent.message = "BUG HIT";
@@ -172,12 +172,11 @@ void ofApp::draw(){
 
 
     // gun
-    ofVec2f gunPos(ofGetWidth()/2, ofGetHeight()-20);
-    ofVec2f mousePos(ofGetMouseX(), ofGetMouseY());
+    glm::vec2 gunPos(ofGetWidth()/2, ofGetHeight()-20);
+    glm::vec2 mousePos(ofGetMouseX(), ofGetMouseY());
 
     // get the vector from the mouse to gun
-    ofVec2f vec = mousePos - gunPos;
-    vec.normalize();
+    glm::vec2 vec = normalize(mousePos - gunPos);
     vec *= 100;
 
     // get the angle of the vector for rotating the rect
@@ -218,18 +217,15 @@ void ofApp::keyPressed(int key) {
             Bullet b;
 
             // the two points for the mouse and gun
-            ofVec2f gunPt(ofGetWidth()/2, ofGetHeight()-20);
-            ofVec2f mousePt(ofGetMouseX(), ofGetMouseY());
+            glm::vec2 gunPt(ofGetWidth()/2, ofGetHeight()-20);
+            glm::vec2 mousePt(ofGetMouseX(), ofGetMouseY());
 
-            // the vector between the two
-            ofVec2f vec = mousePt - gunPt;
-
-            // normalize = 0.0 - 1.0
-            vec.normalize();
+            // the vector between the two, and normalized = 0.0 - 1.0
+			glm::vec2 vec = glm::normalize(mousePt - gunPt);
 
             // bullet position = the start pos of the gun
             // and the vec scaled by 100
-            ofVec2f bulletPos = gunPt + (vec * 100);
+            glm::vec2 bulletPos = gunPt + (vec * 100);
 
             b.pos     = bulletPos;
             b.vel     = vec * ofRandom(9, 12); // randomly make it faster
