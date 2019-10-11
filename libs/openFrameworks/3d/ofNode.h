@@ -188,7 +188,7 @@ public:
 	/// \returns The global scale in the xyz axes where 1 = 100% of size.
 	glm::vec3 getGlobalScale() const;
 
-	/// \}	
+	/// \}
 	/// \name Setters
 	/// \{
 	
@@ -381,21 +381,21 @@ public:
 	///       it relatively consistant with the original angle.
 	void lookAt(const glm::vec3& lookAtPosition);
 
-    /// \brief Orient node to look at point (-z axis pointing to global position).
-    /// \param lookAtPosition XYZ coordinates of point to look at as ref to 3D vector.
-    /// \param upVector The desired up axis as a cartesian 3D vector.
+	/// \brief Orient node to look at point (-z axis pointing to global position).
+	/// \param lookAtPosition XYZ coordinates of point to look at as ref to 3D vector.
+	/// \param upVector The desired up axis as a cartesian 3D vector.
 	void lookAt(const glm::vec3& lookAtPosition, glm::vec3 upVector);
 
-    /// \brief Orient node to look at another node (-z axis pointing at other node).
-    ///
-    /// \param lookAtNode A reference to the node to look at.
+	/// \brief Orient node to look at another node (-z axis pointing at other node).
+	///
+	// \param lookAtNode A reference to the node to look at.
 	/// \note This version calculates the up vector automatically to try to keep
 	///       it relatively consistant with the original angle.
-    void lookAt(const ofNode& lookAtNode);
+	void lookAt(const ofNode& lookAtNode);
 	
-    /// \brief Orient node to look at another node (-z axis pointing at other node).
-    /// \param lookAtNode A reference to the node to look at.
-    /// \param upVector The desired up axis as a ref to cartesian 3D vector.
+	/// \brief Orient node to look at another node (-z axis pointing at other node).
+	/// \param lookAtNode A reference to the node to look at.
+	/// \param upVector The desired up axis as a ref to cartesian 3D vector.
 	void lookAt(const ofNode& lookAtNode, const glm::vec3& upVector);
 	
 	OF_DEPRECATED_MSG("Use the Deg/Rad version", void orbit(float longitude, float latitude, float radius, const glm::vec3& centerPoint = glm::vec3(0, 0, 0)));
