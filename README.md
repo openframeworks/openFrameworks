@@ -18,9 +18,9 @@ Visual studio [![Build status](https://ci.appveyor.com/api/projects/status/sm9jx
 ## Continous Integration (CI) builds status
 Platform                     | CI Status
 -----------------------------|:---------
-Windows MSYS2 32bits         | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/openframeworks/openFrameworks/branch/master/1)](https://ci.appveyor.com/project/openframeworks/openFrameworks/branch/master)
-Windows Visual Studio 32bits | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/openframeworks/openFrameworks/branch/master/2)](https://ci.appveyor.com/project/openframeworks/openFrameworks/branch/master)
-Windows Visual Studio 64bits | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/openframeworks/openFrameworks/branch/master/3)](https://ci.appveyor.com/project/openframeworks/openFrameworks/branch/master)
+Windows MSYS2 32bits         | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/arturoc/openFrameworks/branch/master/1)](https://ci.appveyor.com/project/arturoc/openFrameworks/branch/master)
+Windows Visual Studio 32bits | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/arturoc/openFrameworks/branch/master/2)](https://ci.appveyor.com/project/arturoc/openFrameworks/branch/master)
+Windows Visual Studio 64bits | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/arturoc/openFrameworks/branch/master/3)](https://ci.appveyor.com/project/arturoc/openFrameworks/branch/master)
 Linux 64                     | [![Linux 64 Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="linux64"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks)
 Linux armv6l                 | [![Linux armv6l Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="linuxarmv6l"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks)
 Linux armv7l                 | [![Linux armv7l Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="linuxarmv7l"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks)
