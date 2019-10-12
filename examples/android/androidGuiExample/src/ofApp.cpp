@@ -27,7 +27,7 @@ void ofApp::setup(){
 	
 	bHide = true;
 
-	ring.loadSound("ring.wav");
+	ring.load("ring.wav");
 }
 
 //--------------------------------------------------------------

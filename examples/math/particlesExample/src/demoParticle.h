@@ -14,15 +14,15 @@ class demoParticle{
 		demoParticle();
 		
 		void setMode(particleMode newMode);	
-		void setAttractPoints( vector <ofPoint> * attract );
+		void setAttractPoints( vector <glm::vec3> * attract );
 
 		void reset();
 		void update();
 		void draw();		
 		
-		ofPoint pos;
-		ofPoint vel;
-		ofPoint frc;
+		glm::vec3 pos;
+		glm::vec3 vel;
+		glm::vec3 frc;
 		
 		float drag; 
 		float uniqueVal;
@@ -30,5 +30,5 @@ class demoParticle{
 		
 		particleMode mode;
 		
-		vector <ofPoint> * attractPoints; 
+		vector <glm::vec3> * attractPoints; 
 };

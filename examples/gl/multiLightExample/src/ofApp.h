@@ -29,7 +29,7 @@ public:
     ofImage ofLogoImage;
 	
 	float radius;
-	ofVec3f center;
+	glm::vec3 center;
 	bool bShiny;
     bool bSmoothLighting;
 	bool bPointLight, bSpotLight, bDirLight;

@@ -21,7 +21,7 @@ void ofApp::setup(){
 
     // radius of the sphere //
 	radius		= 180.f;
-	center.set(ofGetWidth()*.5, ofGetHeight()*.5, 0);
+	center = {ofGetWidth()*.5, ofGetHeight()*.5, 0};
 
     // Point lights emit light in all directions //
     // set the diffuse color, color reflected from the light source //
@@ -55,7 +55,7 @@ void ofApp::setup(){
 
     // set the direction of the light
     // set it pointing from left to right -> //
-	directionalLight.setOrientation( ofVec3f(0, 90, 0) );
+	directionalLight.setOrientation( {0, 90, 0} );
 
 
 	bShiny = true;
@@ -80,7 +80,7 @@ void ofApp::update() {
 						   sin(ofGetElapsedTimef()*.8f) * radius * 2 + center.y,
 						   -cos(ofGetElapsedTimef()*.8f) * radius * 2 + center.z);
 
-    spotLight.setOrientation( ofVec3f( 0, cos(ofGetElapsedTimef()) * RAD_TO_DEG, 0) );
+	spotLight.setOrientation( { 0, cos(ofGetElapsedTimef()) * RAD_TO_DEG, 0 } );
 	spotLight.setPosition( mouseX, mouseY, 200);
 }
 

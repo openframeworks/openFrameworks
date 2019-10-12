@@ -25,9 +25,9 @@ class ofApp : public ofBaseApp {
 		ofVbo vbo;
 		ofShader shader;
 		ofImage texture;
-		ofVec2f pos[NUM_BILLBOARDS];
-		ofVec2f vel[NUM_BILLBOARDS];
-		ofVec2f home[NUM_BILLBOARDS];
+		glm::vec2 pos[NUM_BILLBOARDS];
+		glm::vec2 vel[NUM_BILLBOARDS];
+		glm::vec2 home[NUM_BILLBOARDS];
 		float pointSizes[NUM_BILLBOARDS];
 		float rotations[NUM_BILLBOARDS];
 };
