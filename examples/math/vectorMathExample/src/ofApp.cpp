@@ -53,7 +53,7 @@ void ofApp::update(){
 
      // rotate the points
      for (int i = 0; i < nPts; i++){
-		 pts[i] = glm::rotate(pts[i],speedOfRotation, rotateAmount);
+         pts[i] = glm::rotate(pts[i],speedOfRotation, rotateAmount);
      }
 
      // move them back
