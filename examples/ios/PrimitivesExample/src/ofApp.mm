@@ -100,10 +100,10 @@ void ofApp::draw(){
     if(mode == 2) {
         deformPlane = plane.getMesh();
         // x = columns, y = rows //
-        ofVec3f planeDims = plane.getResolution();
+        glm::vec3 planeDims = plane.getResolution();
         float planeAngleX = ofGetElapsedTimef()*3.6;
         float planeAngleInc = 3.f/(float)planeDims.x;
-        ofVec3f vert;
+        glm::vec3 vert;
         for(int i = 0; i < deformPlane.getNumIndices(); i++ ) {
             planeAngleX += planeAngleInc;
             int ii = deformPlane.getIndex( i );
@@ -193,7 +193,7 @@ void ofApp::draw(){
         if(mode == 2) {
             float angle = ofGetElapsedTimef()*3.2;
             float strength = (sin( angle )) * .25f * 2.f;
-            ofVec3f faceNormal;
+            glm::vec3 faceNormal;
             for(int i = 0; i < triangles.size(); i++ ) {
                 // store the face normal here.
                 // we change the vertices, which makes the face normal change
@@ -233,7 +233,7 @@ void ofApp::draw(){
         
         if(mode == 2) {
             float angle = (ofGetElapsedTimef() * 1.4);
-            ofVec3f faceNormal;
+            glm::vec3 faceNormal;
             for(int i = 0; i < triangles.size(); i++ ) {
                 float frc = ofSignedNoise(angle* (float)i * .1, angle*.05) * 4;
                 faceNormal = triangles[i].getFaceNormal();
