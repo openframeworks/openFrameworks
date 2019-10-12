@@ -38,11 +38,8 @@ void ofApp::update(){
 	if (!ofGetMousePressed()) {//press the mouse to stop the angle from incrementing.
 		angle+=rotationSpeed;//at each update the angle get's incremented 
 	}
-	
-	//if the angle is more than or equal to two PI (a full rotation measured in Radians) then make it zero.
-	if (angle >= TWO_PI) {
-		angle = 0;
-	}
+	 //if the angle is more than or equal to two PI (a full rotation measured in Radians) then make it zero.
+	angle = ofWrap(angle, 0, TWO_PI);
 	
 	//here we get the sine and cosine values for the angle
 	cosine=cos(angle);
