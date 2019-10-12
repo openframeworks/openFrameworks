@@ -180,6 +180,8 @@ fi
 				</array>
 				<key>MACOSX_DEPLOYMENT_TARGET</key>
 				<string>10.9</string>
+				<key>OTHER_CODE_SIGN_FLAGS</key>
+				<string>--deep</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
@@ -3021,6 +3023,8 @@ fi
 				<string>10.9</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>YES</string>
+				<key>OTHER_CODE_SIGN_FLAGS</key>
+				<string>--deep</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
@@ -3079,6 +3083,8 @@ fi
 				</array>
 				<key>MACOSX_DEPLOYMENT_TARGET</key>
 				<string>10.9</string>
+				<key>OTHER_CODE_SIGN_FLAGS</key>
+				<string>--deep</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
