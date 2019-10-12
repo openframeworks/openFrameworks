@@ -7,19 +7,19 @@ void ofApp::setup(){
     max = 60;
     
     ofEnableDepthTest(); //make sure we test depth for 3d
-    
-	ofSetVerticalSync(true);
+
+    ofSetVerticalSync(true);
     ofEnableLighting();
     ofEnableAlphaBlending();
     ofEnableSmoothing();
-    
+
     mesh.addVertex(glm::vec3(0,0,0)); // add center vertex
     mesh.addColor(ofColor(137,137,140,255)); // center is same as bg
     mesh.addNormal(glm::vec3(0,0,1)); // center normal points up
-    
+
     zfreq = 3.;
     zamt = .3;
-    
+
     //loop around and make verts in a circle, with a bit of a z-wave
     for (int i = 0; i < max; i++){
         float step = 2*PI/max; // step size around circle
@@ -38,7 +38,7 @@ void ofApp::setup(){
         glm::vec3 next(radius*cos(nextTheta),radius*sin(nextTheta),radius*zamt*sin(zfreq*nextTheta) );
         
         // our normals for each triangle face is the cross product of the two vectors making up that sliver 
-		glm::vec3 previousFaceNormal = glm::cross(prev,p);
+        glm::vec3 previousFaceNormal = glm::cross(prev,p);
         glm::vec3 nextFaceNormal = glm::cross(p, next);
         
         /* notice here we go in the same direction: previous->current,current->next;
@@ -48,7 +48,7 @@ void ofApp::setup(){
          */
         
         // since we want smooth normals, we'll sum the two adjacent face normals, then normalize (since usually, only the direction and not the magnitude of the normal is what matters)
-		mesh.addNormal(glm::normalize(previousFaceNormal + nextFaceNormal));
+        mesh.addNormal(glm::normalize(previousFaceNormal + nextFaceNormal));
         
         //add a color too
         ofColor c;

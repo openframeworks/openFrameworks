@@ -7,14 +7,14 @@
 	desired normal vector, then apply that rotation.
 */
 //--------------------------------------------------------------
-void rotateToNormal(ofVec3f normal) {
+void rotateToNormal(glm::vec3 normal) {
 	normal.normalize();
 
 	float rotationAmount;
-	ofVec3f rotationAngle;
+	glm::vec3 rotationAngle;
 	ofQuaternion rotation;
 
-	ofVec3f axis(0, 0, 1);
+	glm::vec3 axis(0, 0, 1);
 	rotation.makeRotate(axis, normal);
 	rotation.getRotate(rotationAmount, rotationAngle);
 	ofRotateDeg(rotationAmount, rotationAngle.x, rotationAngle.y, rotationAngle.z);

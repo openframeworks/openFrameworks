@@ -29,14 +29,13 @@ void ofApp::setup(){
 	angleArc.setCircleResolution(360);
 	angleArc.setFilled(true);
 	angleArc.setColor(ofColor(240, 130, 10));
-	
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    
-    if (!ofGetMousePressed()) {//press the mouse to stop the angle from incrementing.
+
+	if (!ofGetMousePressed()) {//press the mouse to stop the angle from incrementing.
 		angle+=rotationSpeed;//at each update the angle get's incremented 
 	}
 	 //if the angle is more than or equal to two PI (a full rotation measured in Radians) then make it zero.
@@ -46,8 +45,6 @@ void ofApp::update(){
 	cosine=cos(angle);
 	sine=sin(angle);
 	tangent=tan(angle);
-    
-	
 	
 	point = { cosine * radius, sine * radius, 0 };//here we set the cyan circle position
 	
@@ -56,8 +53,6 @@ void ofApp::update(){
 	angleArc.arc( 0,  0, radius * 0.5f, radius * 0.5f, 0, ofRadToDeg(angle));
 	angleArc.lineTo(0,0);
 	angleArc.close();
-	
-	
 }
 
 //--------------------------------------------------------------

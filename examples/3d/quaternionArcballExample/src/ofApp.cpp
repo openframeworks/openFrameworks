@@ -35,7 +35,7 @@ void ofApp::draw(){
 	//apply the quaternion's rotation to the viewport and draw the sphere
 	ofRotateDeg(ofRadToDeg(glm::angle(curRot)), axis.x, axis.y, axis.z);
 	/// You can actually use the folling line instead, just showing this other option as example
-///	ofRotateRad(glm::angle(curRot), axis.x, axis.y, axis.z);
+	///	ofRotateRad(glm::angle(curRot), axis.x, axis.y, axis.z);
 	
 	
 	ofDrawSphere(0, 0, 0, 200);
