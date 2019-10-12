@@ -73,7 +73,7 @@ void ofxiOSCoreMotion::disableAccelerometer() {
     
     [motionManager stopAccelerometerUpdates];
     enableAccelerometer = false;
-    accelerometerData.set(0, 0, 0);
+    accelerometerData = { 0, 0, 0 };
 }
 
 void ofxiOSCoreMotion::setupGyroscope() {
