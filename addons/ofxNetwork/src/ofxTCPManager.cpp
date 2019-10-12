@@ -157,7 +157,7 @@ bool ofxTCPManager::Bind(unsigned short usPort, bool bReuse)
 
 	if (bReuse) {
 		int enable = 1;
-		if (setsockopt(m_hSocket,SOL_SOCKET,SO_REUSEADDR,&enable,sizeof(int)) < 0){
+		if (setsockopt(m_hSocket,SOL_SOCKET,SO_REUSEADDR,(char*)&enable,sizeof(int)) < 0){
 			ofxNetworkCheckError();
 			return false;
 		}
