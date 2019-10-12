@@ -7,15 +7,6 @@ openFrameworks is a C++ toolkit for creative coding.  If you are new to OF, welc
 
 ## Build status
 
-Linux, OSX, iOS and Android     [![Build Status](https://travis-ci.org/openframeworks/openFrameworks.svg?branch=master)](https://travis-ci.org/openframeworks/openFrameworks)
-
-Visual studio [![Build status](https://ci.appveyor.com/api/projects/status/sm9jxy0u56bl8syi/branch/master?svg=true)](https://ci.appveyor.com/project/arturoc/openframeworks/branch/master)
-
-
-
-
-
-## Continuous Integration (CI) builds status
 Platform                     | CI Status
 -----------------------------|:---------
 Windows MSYS2 32bits         | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/arturoc/openFrameworks/branch/master/1)](https://ci.appveyor.com/project/arturoc/openFrameworks/branch/master)
