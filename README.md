@@ -11,6 +11,21 @@ Linux, OSX, iOS and Android     [![Build Status](https://travis-ci.org/openframe
 
 Visual studio [![Build status](https://ci.appveyor.com/api/projects/status/sm9jxy0u56bl8syi/branch/master?svg=true)](https://ci.appveyor.com/project/arturoc/openframeworks/branch/master)
 
+
+
+
+
+## Continous Integration (CI) builds status
+Platform                     | CI Status
+-----------------------------|:---------
+OSX                          | [![OSX Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="osx"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks)
+Linux  64bit                 | [![Linux Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="linux64"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks)
+Windows MSYS2 32bits         | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/openframeworks/openFrameworks/branch/master/1)](https://ci.appveyor.com/project/openframeworks/openFrameworks/branch/master)
+Windows Visual Studio 32bits | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/openframeworks/openFrameworks/branch/master/2)](https://ci.appveyor.com/project/openframeworks/openFrameworks/branch/master)
+Windows Visual Studio 64bits | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/openframeworks/openFrameworks/branch/master/3)](https://ci.appveyor.com/project/openframeworks/openFrameworks/branch/master)
+
+
+
 ## folder structure
 
 This release of OF comes with several folders:
