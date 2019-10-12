@@ -8,14 +8,16 @@
 */
 //--------------------------------------------------------------
 void rotateToNormal(glm::vec3 normal) {
-	normal.normalize();
+	normal =  glm::normalize(normal);
 
 	float rotationAmount;
-	glm::vec3 rotationAngle;
+	ofVec3f rotationAngle;
+	
 	ofQuaternion rotation;
 
 	glm::vec3 axis(0, 0, 1);
 	rotation.makeRotate(axis, normal);
+	
 	rotation.getRotate(rotationAmount, rotationAngle);
 	ofRotateDeg(rotationAmount, rotationAngle.x, rotationAngle.y, rotationAngle.z);
 }
