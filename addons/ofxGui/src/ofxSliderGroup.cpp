@@ -40,6 +40,22 @@ ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(const std::string& contro
 }
 
 template<class VecType>
+void ofxVecSlider_<VecType>::setMin(const VecType& min) {
+    value.setMin(min);
+    for (size_t i = 0; i < dim(); i++){
+        parameters[i].template cast<float>().setMin(min[i]);
+    }
+}
+
+template<class VecType>
+void ofxVecSlider_<VecType>::setMax(const VecType& max) {
+    value.setMax(max);
+    for (size_t i = 0; i < dim(); i++){
+        parameters[i].template cast<float>().setMax(max[i]);
+    }
+}
+
+template<class VecType>
 void ofxVecSlider_<VecType>::changeSlider(const void * parameter, float & _value){
     sliderChanging = true;
     ofParameter<float> & param = *(ofParameter<float>*)parameter;
@@ -164,6 +180,22 @@ template<class ColorType>
 ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(const std::string& controlName, const ofColor_<ColorType> & v, const ofColor_<ColorType> & min, const ofColor_<ColorType> & max, float width, float height){
 	ofParameter<ofColor_<ColorType>> color(controlName, v, min, max);
 	return setup(color,width,height);
+}
+
+template<class ColorType>
+void ofxColorSlider_<ColorType>::setMin(const ofColor_<ColorType>& min) {
+    picker.getParameter().template cast<ofColor_<ColorType>>().setMin(min);
+    for (int i = 0; i < 4; i++){
+        parameters[i].template cast<ColorType>().setMin(min[i]);
+    }
+}
+
+template<class ColorType>
+void ofxColorSlider_<ColorType>::setMax(const ofColor_<ColorType>& max) {
+    picker.getParameter().template cast<ofColor_<ColorType>>().setMax(max);
+    for (int i = 0; i < 4; i++){
+        parameters[i].template cast<ColorType>().setMax(max[i]);
+    }
 }
 
 template<class ColorType>
@@ -301,6 +333,28 @@ ofxRectangleSlider * ofxRectangleSlider::setup(ofParameter<ofRectangle> value, f
 ofxRectangleSlider * ofxRectangleSlider::setup(const std::string& controlName, const ofRectangle & v, const ofRectangle & min, const ofRectangle & max, float width, float height){
 	value.set(controlName,v,min,max);
 	return setup(value,width,height);
+}
+
+
+void ofxRectangleSlider::setMin(const ofRectangle& min) {
+    value.setMin(min);
+
+    // Order is the same as in setup().
+    parameters[0].template cast<float>().setMin(min.x);
+    parameters[1].template cast<float>().setMin(min.y);
+    parameters[2].template cast<float>().setMin(min.width);
+    parameters[3].template cast<float>().setMin(min.height);
+}
+
+
+void ofxRectangleSlider::setMax(const ofRectangle& max) {
+    value.setMax(max);
+
+    // Order is the same as in setup().
+    parameters[0].template cast<float>().setMax(max.x);
+    parameters[1].template cast<float>().setMax(max.y);
+    parameters[2].template cast<float>().setMax(max.width);
+    parameters[3].template cast<float>().setMax(max.height);
 }
 
 
