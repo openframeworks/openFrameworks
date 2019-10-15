@@ -8,7 +8,7 @@ openFrameworks is a C++ toolkit for creative coding.  If you are new to OF, welc
 ## Build status
 
 * **Master** branch has the newest, most recently updated code
-* **Stable** branch has the code of the current OF version, the one you can download already packaged in [openframeworks.cc/download](openframeworks.cc/download)
+* **Stable** branch has the code of the current OF release version, the one you can download already packaged in [openframeworks.cc/download](openframeworks.cc/download)
 
 Platform                     | Master branch  | Stable branch
 -----------------------------|:---------|:---------
