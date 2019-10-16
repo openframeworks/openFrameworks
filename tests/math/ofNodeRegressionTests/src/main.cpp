@@ -1,7 +1,7 @@
 #include "ofMain.h"
 #include "ofxUnitTests.h"
 #include "ofAppNoWindow.h"
-
+#include "stdio.h"
 
 bool aprox_eq(const glm::vec3 & v1, const glm::vec3 & v2){
 	bool eq = fabs(v1.x - v2.x) < 0.001 &&
