@@ -186,7 +186,6 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_LINUX
 	#include <unistd.h>
-    #define GLM_HAS_TEMPLATE_ALIASES 1
 
 	#ifdef TARGET_LINUX_ARM
 		#ifdef TARGET_RASPBERRY_PI

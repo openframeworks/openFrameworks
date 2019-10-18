@@ -8,6 +8,7 @@
 //#include "glm/detail/_swizzle.hpp"
 //#include "glm/detail/_swizzle_func.hpp"
 
+#include "glm/detail/type_vec.hpp"
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
