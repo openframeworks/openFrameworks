@@ -185,7 +185,7 @@ enum ofTargetPlatform{
 #endif
 
 #ifdef TARGET_LINUX
-
+    define GLM_HAS_TEMPLATE_ALIASES 1
 	#include <unistd.h>
 
 	#ifdef TARGET_LINUX_ARM
