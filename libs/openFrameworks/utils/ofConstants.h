@@ -185,6 +185,7 @@ enum ofTargetPlatform{
 #endif
 
 #ifdef TARGET_LINUX
+
 	#include <unistd.h>
 
 	#ifdef TARGET_LINUX_ARM
