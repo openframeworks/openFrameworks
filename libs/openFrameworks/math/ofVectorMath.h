@@ -8,6 +8,9 @@
 //#include "glm/detail/_swizzle.hpp"
 //#include "glm/detail/_swizzle_func.hpp"
 
+//needed for tvec tquat tmat
+#include "glm/detail/qualifier.hpp"
+
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
