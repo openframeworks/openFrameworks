@@ -17,6 +17,9 @@
 #define OF_USING_STD_FS 0
 #endif
 
+// Needed for GLM 0.9.9.6 or newer to initialize with sensible values. 
+#define GLM_FORCE_CTOR_INIT 1
+
 //-------------------------------
 
 /// \brief This enumerates the targeted operating systems or platforms.
