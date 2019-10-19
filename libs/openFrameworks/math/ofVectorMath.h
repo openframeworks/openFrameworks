@@ -8,9 +8,6 @@
 //#include "glm/detail/_swizzle.hpp"
 //#include "glm/detail/_swizzle_func.hpp"
 
-//needed for tvec tquat tmat
-#include "glm/detail/qualifier.hpp"
-
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
@@ -125,14 +122,14 @@ inline const glm::quat & toGlm(const glm::quat & q){
 namespace glm {
 	//--------------------------------------------------------------
 	template <typename T, precision P>
-	inline std::ostream& operator<<(std::ostream& os, const tvec3<T, P>& vec) {
+	inline std::ostream& operator<<(std::ostream& os, const vec<3, T, P>& vec) {
 		os << vec.x << ", " << vec.y << ", " << vec.z;
 		return os;
 	}
 
 	//--------------------------------------------------------------
 	template <typename T, precision P>
-	inline std::istream& operator>>(std::istream& is, tvec3<T, P>& vec) {
+	inline std::istream& operator>>(std::istream& is, vec<3, T, P>& vec) {
 		is >> vec.x;
 		is.ignore(2);
 		is >> vec.y;
@@ -143,14 +140,14 @@ namespace glm {
 
 	//--------------------------------------------------------------
 	template <typename T, precision P>
-	inline std::ostream& operator<<(std::ostream& os, const tvec2<T, P>& vec) {
+	inline std::ostream& operator<<(std::ostream& os, const vec<2, T, P>& vec) {
 		os << vec.x << ", " << vec.y;
 		return os;
 	}
 
 	//--------------------------------------------------------------
 	template <typename T, precision P>
-	inline std::istream& operator>>(std::istream& is, tvec2<T, P>& vec) {
+	inline std::istream& operator>>(std::istream& is, vec<2, T, P>& vec) {
 		is >> vec.x;
 		is.ignore(2);
 		is >> vec.y;
@@ -159,14 +156,14 @@ namespace glm {
 
 	//--------------------------------------------------------------
 	template <typename T, precision P>
-	inline std::ostream& operator<<(std::ostream& os, const tvec4<T, P>& vec) {
+	inline std::ostream& operator<<(std::ostream& os, const vec<4, T, P>& vec) {
 		os << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w;
 		return os;
 	}
 
 	//--------------------------------------------------------------
 	template <typename T, precision P>
-	inline std::istream& operator>>(std::istream& is, tvec4<T, P>& vec) {
+	inline std::istream& operator>>(std::istream& is, vec<4, T, P>& vec) {
 		is >> vec.x;
 		is.ignore(2);
 		is >> vec.y;
@@ -179,7 +176,7 @@ namespace glm {
 
 	//--------------------------------------------------------------
 	template <typename T, precision P>
-	inline std::ostream& operator<<(std::ostream& os, const tmat3x3<T, P>& mat) {
+	inline std::ostream& operator<<(std::ostream& os, const mat<3, 3, T, P>& mat) {
 		int w = 8;
 		os << std::setw(w)
 			<< mat[0][0] << ", " << std::setw(w)
@@ -200,7 +197,7 @@ namespace glm {
 
 	//--------------------------------------------------------------
 	template <typename T, precision P>
-	inline std::istream& operator>>(std::istream& is, tmat3x3<T, P>& mat) {
+	inline std::istream& operator>>(std::istream& is, mat<3, 3, T, P>& mat) {
 		is >> mat[0][0]; is.ignore(2);
 		is >> mat[0][1]; is.ignore(2);
 		is >> mat[0][2]; is.ignore(1);
@@ -217,7 +214,7 @@ namespace glm {
 
 	//--------------------------------------------------------------
 	template <typename T, precision P>
-	inline std::ostream& operator<<(std::ostream& os, const tmat4x4<T, P>& mat) {
+	inline std::ostream& operator<<(std::ostream& os, const mat<4, 4, T, P>& mat) {
 		int w = 8;
 		os << std::setw(w)
 			<< mat[0][0] << ", " << std::setw(w)
@@ -247,7 +244,7 @@ namespace glm {
 
 	//--------------------------------------------------------------
 	template <typename T, precision P>
-	inline std::istream& operator>>(std::istream& is, tmat4x4<T, P>& mat) {
+	inline std::istream& operator>>(std::istream& is, mat<4, 4, T, P>& mat) {
 		is >> mat[0][0]; is.ignore(2);
 		is >> mat[0][1]; is.ignore(2);
 		is >> mat[0][2]; is.ignore(2);
@@ -272,7 +269,7 @@ namespace glm {
 
 	//----------------------------------------
 	template <typename T, precision P>
-	inline std::ostream& operator<<(std::ostream& os, const tquat<T, P>& q) {
+	inline std::ostream& operator<<(std::ostream& os, const qua<T, P>& q) {
 		os << q.w << ", " << q.x << ", " << q.y << ", " << q.z;
 		return os;
 	}
@@ -280,7 +277,7 @@ namespace glm {
 
 	//----------------------------------------
 	template <typename T, precision P>
-	inline std::istream& operator>> (std::istream& is, tquat<T, P>& q) {
+	inline std::istream& operator>> (std::istream& is, qua<T, P>& q) {
 		is >> q.w;
 		is.ignore(2);
 		is >> q.x;
