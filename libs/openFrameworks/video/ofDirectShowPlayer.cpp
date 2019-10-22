@@ -700,7 +700,6 @@ class DirectShowVideo : public ISampleGrabberCB{
             long ptrParam1 = 0;
             long ptrParam2 = 0;
 #endif
-            long timeoutMs = 2000;
 
             if( curMovieFrame != frameCount ){
                 bFrameNew = true;
@@ -818,10 +817,10 @@ class DirectShowVideo : public ISampleGrabberCB{
 	}
 
     void processPixels(ofPixels & src, ofPixels & dst){
-		auto format = src.getPixelFormat();
+		auto srcFormat = src.getPixelFormat();
 
-        if(needsRBSwap(src.getPixelFormat(), dst.getPixelFormat())){
-			if (src.getPixelFormat() == OF_PIXELS_BGR) {
+        if(needsRBSwap(srcFormat, dst.getPixelFormat())){
+			if (srcFormat == OF_PIXELS_BGR) {
 				dst.allocate(src.getWidth(), src.getHeight(), OF_PIXELS_RGB);
 				auto dstLine = dst.getLines().begin();
 				auto srcLine = --src.getLines().end();
@@ -837,7 +836,7 @@ class DirectShowVideo : public ISampleGrabberCB{
 					}
 				}
 			}
-			else if (src.getPixelFormat() == OF_PIXELS_BGRA) {
+			else if (srcFormat == OF_PIXELS_BGRA) {
 				dst.allocate(src.getWidth(), src.getHeight(), OF_PIXELS_RGBA);
 				auto dstLine = dst.getLines().begin();
 				auto srcLine = --src.getLines().end();
@@ -1007,7 +1006,10 @@ class DirectShowVideo : public ISampleGrabberCB{
 			bNewPixels = false;
 			LeaveCriticalSection(&critSection);
 			BYTE * ptrBuffer = NULL;
-			HRESULT hr = middleSample->GetPointer(&ptrBuffer);
+            middleSample->GetPointer(&ptrBuffer);
+            //TODO process the error as HRESULT
+			//HRESULT hr = middleSample->GetPointer(&ptrBuffer);
+
 			ofPixels srcBuffer;
 			switch (pixelFormat) {
 			case OF_PIXELS_RGB:

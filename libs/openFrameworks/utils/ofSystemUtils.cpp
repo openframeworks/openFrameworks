@@ -435,7 +435,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		}
 		else {
 			//this should throw an error on failure unless its just the user canceling out
-			DWORD err = CommDlgExtendedError();
+			//DWORD err = CommDlgExtendedError();
 		}
 
 	} else {
