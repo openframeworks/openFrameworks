@@ -201,7 +201,7 @@ bool ofXml::removeAttribute(ofXml::Attribute && attr){
 
 ofXml ofXml::findFirst(const std::string & path) const{
 	try{
-		return ofXml(doc, this->xml.select_single_node(path.c_str()).node());
+		return ofXml(doc, this->xml.select_node(path.c_str()).node());
 	}catch(pugi::xpath_exception & e){
 		return ofXml();
 	}
