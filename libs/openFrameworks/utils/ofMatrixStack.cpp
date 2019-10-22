@@ -24,6 +24,16 @@ ofMatrixStack::ofMatrixStack(const ofAppBaseWindow * window)
 ,currentMatrixMode(OF_MATRIX_MODELVIEW)
 ,currentMatrix(&modelViewMatrix)
 ,flipRenderSurfaceMatrix(true)
+,modelMatrix(1)
+,viewMatrix(1)
+,viewInverse(1)
+,modelViewMatrix(1)
+,projectionMatrix(1)
+,textureMatrix(1)
+,modelViewProjectionMatrix(1)
+,orientedProjectionMatrix(1)
+,orientationMatrix(1)
+,orientationMatrixInverse(1)
 {
 
 }

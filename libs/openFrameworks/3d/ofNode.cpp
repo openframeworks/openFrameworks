@@ -8,6 +8,7 @@
 //----------------------------------------
 ofNode::ofNode()
 :parent(nullptr)
+,localTransformMatrix(1)
 ,legacyCustomDrawOverrided(true){
 	setPosition({0.f, 0.f, 0.f});
 	setOrientation({0.f, 0.f, 0.f});
