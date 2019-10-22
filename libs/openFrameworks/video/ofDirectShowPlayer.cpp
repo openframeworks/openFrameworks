@@ -10,7 +10,9 @@
 
 
 #include <dshow.h>
+#ifdef _MSC_VER
 #pragma include_alias( "dxtrans.h", "qedit.h" )
+#endif
 #define __IDxtCompositor_INTERFACE_DEFINED__
 #define __IDxtAlphaSetter_INTERFACE_DEFINED__
 #define __IDxtJpeg_INTERFACE_DEFINED__
@@ -1019,6 +1021,8 @@ class DirectShowVideo : public ISampleGrabberCB{
 			case OF_PIXELS_BGRA:
 				srcBuffer.setFromExternalPixels(ptrBuffer, width, height, OF_PIXELS_BGRA);
 				break;
+            default:
+                srcBuffer.setFromExternalPixels(ptrBuffer, width, height, pixelFormat);
 			}
 
             processPixels(srcBuffer, pixels);
