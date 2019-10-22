@@ -403,7 +403,7 @@ class DirectShowVideo : public ISampleGrabberCB{
         HRESULT hr = pSample->GetPointer(&ptrBuffer);
 
         if(hr == S_OK){
-            long latestBufferLength = pSample->GetActualDataLength();
+            auto latestBufferLength = size_t( pSample->GetActualDataLength() );
             if(latestBufferLength == pixels.getTotalBytes() ){
                 EnterCriticalSection(&critSection);
 				pSample->AddRef();
@@ -811,9 +811,8 @@ class DirectShowVideo : public ISampleGrabberCB{
     }
 
 	bool needsRBSwap(ofPixelFormat srcFormat, ofPixelFormat dstFormat) {
-		return
-			(srcFormat == OF_PIXELS_BGR || srcFormat == OF_PIXELS_BGRA) && (dstFormat == OF_PIXELS_RGB || dstFormat == OF_PIXELS_RGBA) ||
-			(srcFormat == OF_PIXELS_RGB || srcFormat == OF_PIXELS_RGBA) && (dstFormat == OF_PIXELS_BGR || dstFormat == OF_PIXELS_BGRA);
+		return ((srcFormat == OF_PIXELS_BGR || srcFormat == OF_PIXELS_BGRA) && (dstFormat == OF_PIXELS_RGB || dstFormat == OF_PIXELS_RGBA))
+            || ((srcFormat == OF_PIXELS_RGB || srcFormat == OF_PIXELS_RGBA) && (dstFormat == OF_PIXELS_BGR || dstFormat == OF_PIXELS_BGRA));
 	}
 
     void processPixels(ofPixels & src, ofPixels & dst){
