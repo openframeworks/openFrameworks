@@ -1,6 +1,10 @@
 
 CORE
 ----
+
+### Graphics
+- ofPolyline::removeVertex( ... ) added.
+
 ### utils
 - ofXML - provided access to the underlying pugi::xml_node method "getParent()" 
 

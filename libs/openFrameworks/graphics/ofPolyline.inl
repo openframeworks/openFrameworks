@@ -95,6 +95,19 @@ void ofPolyline_<T>::insertVertex(float x, float y, float z, int index) {
 
 //----------------------------------------------------------
 template<class T>
+void ofPolyline_<T>::removeVertex(int index) {
+	if(index >= points.size()){
+		ofLogError("ofPolyline") << "removeVertex(): ignoring out of range index " << index << ", number of vertices is" << points.size();
+	}else{
+		curveVertices.clear();
+		points.erase(points.begin()+index);
+		flagHasChanged();
+	}
+}
+
+
+//----------------------------------------------------------
+template<class T>
 size_t ofPolyline_<T>::size() const {
 	return points.size();
 }
