@@ -351,7 +351,10 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
         
 	}else{
         // end point is beyond the end of the buffer
-		to = ceil(float(inFrames-1-fromFrame)/speed) - 1;
+        to = ceil(float(inFrames-1-fromFrame)/speed);
+
+		if (to > 0)
+			to -= 1;
 	}
 		
     // Iterate through each channel. 
@@ -432,8 +435,10 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 					intPosition = position;
 					remainder = position - intPosition;
 					readIdx = inChannels*intPosition + j;
-					a = buffer[readIdx];
-					b = buffer[readIdx+inChannels];
+                    a = buffer[readIdx];
+                    if (position == inFrames-1)
+                        readIdx = 0; // Guard against reading outside of buffer boundary.
+                    b = buffer[readIdx+inChannels];
 					outBuffer[writeIdx] = ofLerp(a,b,remainder);
 					writeIdx += inChannels;
 					position += increment;
