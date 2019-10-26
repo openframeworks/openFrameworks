@@ -11,8 +11,8 @@
 
 class ofApp: public ofxUnitTestsApp{
 private:
-    unsigned channels = 2;
-    unsigned numFrames = 10;
+    unsigned channels = 1;
+    unsigned numFrames = 16;
     ofSoundBuffer inBuffer;
     ofSoundBuffer outBuffer;
     ofSoundBuffer reference;
@@ -36,6 +36,68 @@ private:
         }
     }
 
+    void fillRamp(ofSoundBuffer &buf)
+    {
+
+        int nFrames = buf.getNumFrames();
+        int nChans = buf.getNumChannels();
+        float inc = 1.0f / nFrames;
+
+        for (size_t i=0; i<nChans; i++)
+        {
+            float x = 0;
+            for (int j=0; j < nFrames; j++)
+            {
+                buf[j*nChans + i] = x;
+                x += inc;                
+            }
+        }
+    }
+
+    template <typename T> void substract_vector(std::vector<T>& a, const std::vector<T>& b, std::vector<T>& result)                                                     
+    {
+        typename std::vector<T>::iterator       it = a.begin();
+        typename std::vector<T>::const_iterator it2 = b.begin();
+        typename std::vector<T>::iterator       itResult = result.begin();
+
+        while (it < a.end() && it2 < b.end())
+        {
+            *itResult = *it - *it2;
+
+            it++;   
+            it2++;
+            itResult++;
+        }
+    }
+
+    template <typename T> void abs_vector(std::vector<T>& a)
+    {
+        for(typename std::vector<T>::iterator it = a.begin(); it < a.end(); it++)
+        {
+            *it = std::abs(*it);
+        }
+    }
+
+    template <typename T> bool vectorBelowThreshold(std::vector<T>& a, T threshold)
+    {
+        for(typename std::vector<T>::iterator it = a.begin(); it < a.end(); it++)
+        {
+            if (*it > threshold)
+                return false;
+        }
+        return true;
+    }
+
+    template <typename T> bool isResultWithinTolerance(std::vector<T>& a, const std::vector<T>& b,  T threshold)
+    {
+        vector<T> errorVec(a.size(), 0);
+        substract_vector<T>(a, b, errorVec);
+        abs_vector<T>(errorVec);
+
+        ofLogNotice() << "Error Vector: " << ofToString(errorVec);
+        return vectorBelowThreshold(errorVec, threshold);
+    }
+
 public:
     void run(){
         unsigned fromFrame;
@@ -55,7 +117,6 @@ public:
 
         // Test 1b - with looping
         outBuffer.fillWithNoise();        // Initialise out buffer with garbage.
-        fromFrame = 0;
         inBuffer.linearResampleTo(outBuffer, fromFrame, numFrames, 1.0f, true);
         ofxTestEq(reference.getBuffer(), outBuffer.getBuffer(), "Test [1b] Resample rate = 1, looping = true, fromFrame=" + ofToString(fromFrame) + ": Output should equal input.");
 
@@ -115,7 +176,15 @@ public:
         fillSquareWave(reference, numFrames, numFrames/2, -fromFrame);
         inBuffer.linearResampleTo(outBuffer, fromFrame, numFrames, 1.0f, true);
         ofxTestEq(reference.getBuffer(), outBuffer.getBuffer(), "Test [5b] Resample rate = 1, looping = true, fromFrame=" + ofToString(fromFrame) + ": Buffer should be half 0s, half 1s.");
-                
+
+        // Test 5c
+       outBuffer.fillWithNoise();        // Initialise out buffer with garbage.
+       fromFrame = numFrames-1;
+       fillSquareWave(reference, numFrames, numFrames/2, -fromFrame);
+       inBuffer.linearResampleTo(outBuffer, fromFrame, numFrames, 1.0f, true);
+       ofxTestEq(reference.getBuffer(), outBuffer.getBuffer(), "Test [5c] Resample rate = 1, looping = true, fromFrame=" + ofToString(fromFrame) + ": Buffer should be half 0s, half 1s.");
+
+
         // Test 6 - Different input and output buffer lengths
         size_t additionalOutputSamples = 31;
         size_t test6NumFrames = numFrames+additionalOutputSamples;
@@ -164,20 +233,76 @@ public:
         float rate = 0.5f;
         reference.set(1);
         for(size_t i=0; i<channels; i++)
-        {
+        {   // Last frame is interpolated
             reference[channels*(numFrames-1)+i] = 0.5;
         }
         inBuffer.linearResampleTo(outBuffer, fromFrame, numFrames, rate, false);
         ofxTestEq(reference.getBuffer(), outBuffer.getBuffer(), "Test [8] Resample rate = "+ofToString(rate)+", looping = false, fromFrame=" + ofToString(fromFrame));
 
         // Test 8b - with looping
+        outBuffer.allocate(numFrames+1, channels);
+        reference.allocate(numFrames+1, channels);        
         outBuffer.fillWithNoise();
         fromFrame = 0;
-        rate = 0.5f;
-        // reference.set(1.0f);
-        inBuffer.linearResampleTo(outBuffer, fromFrame, numFrames, rate, true);
+        fillSquareWave(reference, numFrames*(1.0f/rate), (numFrames/2)*(1.0f/rate), fromFrame);
+        for(size_t i=0; i<channels; i++)
+        {  // Last non-zero frame is interpolated
+            reference[channels*(numFrames-1)+i] = 0.5;
+        }
+        inBuffer.linearResampleTo(outBuffer, fromFrame, numFrames+1, rate, true);
         ofxTestEq(reference.getBuffer(), outBuffer.getBuffer(), "Test [8b] Resample rate = "+ofToString(rate)+", looping = true, fromFrame=" + ofToString(fromFrame));
-        
+
+        // Test 9 - Resampling at twice rate
+        outBuffer.allocate(numFrames, channels);
+        reference.allocate(numFrames, channels);        
+        outBuffer.fillWithNoise();
+        fromFrame = 0;
+        rate = 2.0f;
+        reference.set(0);
+        // Fill first (numFrames/2)/rate with 1s
+        for (size_t i=0; i<((size_t)((numFrames/2)/rate))*channels; i++)
+        {
+            reference[i] = 1.0;
+        }        
+        inBuffer.linearResampleTo(outBuffer, fromFrame, numFrames, rate, false);
+        ofxTestEq(reference.getBuffer(), outBuffer.getBuffer(), "Test [9] Resample rate = "+ofToString(rate)+", looping = false, fromFrame=" + ofToString(fromFrame));
+
+        // Test 9b - with looping
+        outBuffer.allocate(numFrames+1, channels);
+        reference.allocate(numFrames+1, channels);        
+        outBuffer.fillWithNoise();
+        fromFrame = 0;
+        fillSquareWave(reference, numFrames*(1.0f/rate), (numFrames/2)*(1.0f/rate), fromFrame);
+        inBuffer.linearResampleTo(outBuffer, fromFrame, numFrames+1, rate, true);
+        ofxTestEq(reference.getBuffer(), outBuffer.getBuffer(), "Test [9b] Resample rate = "+ofToString(rate)+", looping = true, fromFrame=" + ofToString(fromFrame));
+
+        // Test 11 - Arbitrary sample rate
+        fillRamp(inBuffer);
+        int outBufLen = numFrames-1;
+        outBuffer.allocate(outBufLen, channels);
+        outBuffer.fillWithNoise();
+        reference.allocate(outBufLen, channels);        
+        fillRamp(reference);
+        fromFrame = 0;
+        rate = (float)numFrames/(float)outBufLen;
+        inBuffer.linearResampleTo(outBuffer, fromFrame, outBufLen, rate, true);
+        bool b = isResultWithinTolerance(outBuffer.getBuffer(), reference.getBuffer(), 1e-5f);
+        ofxTestEq(b, true, "Test [11] Resample rate = "+ofToString(rate)+", looping = true, fromFrame=" + ofToString(fromFrame) + ". \nOutput: " + ofToString(outBuffer.getBuffer()));
+
+        // Test 12 - Arbitrary sample rate
+        fillRamp(inBuffer);
+         outBufLen = numFrames+10;
+        outBuffer.allocate(outBufLen, channels);
+        outBuffer.fillWithNoise();
+        reference.allocate(outBufLen, channels);        
+        fillRamp(reference);
+        reference.getBuffer()[outBufLen-1]=0;
+        fromFrame = 0;
+        rate = (float)numFrames/(float)outBufLen; // Last value is 0 when not looping
+        inBuffer.linearResampleTo(outBuffer, fromFrame, outBufLen, rate, false);
+        b = isResultWithinTolerance(outBuffer.getBuffer(), reference.getBuffer(), 1e-5f);
+        ofxTestEq(b, true, "Test [12] Resample rate = "+ofToString(rate)+", looping = true, fromFrame=" + ofToString(fromFrame) + ". \nOutput: " + ofToString(outBuffer.getBuffer()));
+
         ofLogNotice() << "end testing";
     }
 };
