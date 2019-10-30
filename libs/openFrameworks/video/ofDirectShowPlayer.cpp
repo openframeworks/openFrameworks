@@ -417,7 +417,7 @@ class DirectShowVideo : public ISampleGrabberCB{
 
                 LeaveCriticalSection(&critSection);
             }else{
-                printf("ERROR: SampleCB() - buffer sizes do not match %d %d\n", latestBufferLength, pixels.getTotalBytes());
+                printf("ERROR: SampleCB() - buffer sizes do not match %lld %lld\n", latestBufferLength, pixels.getTotalBytes());
             }
         }
 
