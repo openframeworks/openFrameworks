@@ -19,9 +19,9 @@ _cairo_status ofCairoRenderer::stream_function(void *closure,const unsigned char
 }
 
 ofCairoRenderer::ofCairoRenderer()
-:graphics3d(this)
-,projection(1)
+:projection(1)
 ,modelView(1)
+,graphics3d(this)
 {
 	type = PDF;
 	surface = nullptr;
