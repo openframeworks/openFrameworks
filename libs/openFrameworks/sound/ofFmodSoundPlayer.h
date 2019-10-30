@@ -2,6 +2,7 @@
 
 #include "ofConstants.h"
 
+#ifdef OF_SOUND_PLAYER_FMOD
 
 #include "ofSoundBaseTypes.h"
 
@@ -82,3 +83,4 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 		FMOD_SOUND * sound;
 };
 
+#endif //OF_SOUND_PLAYER_FMOD

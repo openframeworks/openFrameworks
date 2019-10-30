@@ -35,7 +35,7 @@ msyspackages="make rsync unzip wget"
 
 # List of MINGW packages to be installed (without prefix)
 mingwPackages="assimp boost cairo curl freeglut FreeImage gcc gdb glew glfw \
-			  harfbuzz libusb libxml2 ntldd-git opencv \
+			  harfbuzz libsndfile libusb libxml2 mpg123 ntldd-git openal opencv \
 			  pkg-config poco tools zlib"
 
 # Build the full list of packages adding prefix to MINGW packages
