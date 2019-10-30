@@ -13,11 +13,12 @@ function usage {
 }
 
 #Analyse script arguments
+confirm="yes"
 while [[ $# > 0 ]] ; do
 	arg=$1
 	shift
 	if [ "$arg" == "--noconfirm" ]; then
-		confirm=--noconfirm
+		confirm="no"
 		continue
 	fi
 	if [ "$arg" == "--help" ]; then
@@ -29,60 +30,27 @@ while [[ $# > 0 ]] ; do
 	exit 1
 done
 
+# List of MSYS packages to be installed
+msyspackages="make rsync unzip wget"
 
-#Install packages
-if [ -z ${confirm+x} ]; then
-	pacman -Su $confirm --needed ca-certificates
-	if [ -z ${APPVEYOR+x} ]; then
-		pacman -Su $confirm --needed wget rsync unzip make ${MINGW_PACKAGE_PREFIX}-ntldd-git
-	fi
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-gcc \
-		${MINGW_PACKAGE_PREFIX}-glew \
-		${MINGW_PACKAGE_PREFIX}-freeglut \
-		${MINGW_PACKAGE_PREFIX}-FreeImage \
-		${MINGW_PACKAGE_PREFIX}-opencv \
-		${MINGW_PACKAGE_PREFIX}-assimp \
-		${MINGW_PACKAGE_PREFIX}-boost \
-		${MINGW_PACKAGE_PREFIX}-cairo \
-		${MINGW_PACKAGE_PREFIX}-gdb \
-		${MINGW_PACKAGE_PREFIX}-zlib \
-		${MINGW_PACKAGE_PREFIX}-tools \
-		${MINGW_PACKAGE_PREFIX}-pkg-config \
-		${MINGW_PACKAGE_PREFIX}-poco \
-		${MINGW_PACKAGE_PREFIX}-glfw \
-		${MINGW_PACKAGE_PREFIX}-libusb \
-		${MINGW_PACKAGE_PREFIX}-harfbuzz \
-		${MINGW_PACKAGE_PREFIX}-poco \
-		${MINGW_PACKAGE_PREFIX}-curl \
-		${MINGW_PACKAGE_PREFIX}-libxml2
+# List of MINGW packages to be installed (without prefix)
+mingwPackages="assimp boost cairo curl freeglut FreeImage gcc gdb glew glfw \
+			  harfbuzz libsndfile libusb libxml2 mpg123 ntldd-git openal opencv \
+			  pkg-config poco tools zlib"
+
+# Build the full list of packages adding prefix to MINGW packages
+packages=${msyspackages}
+for pkg in ${mingwPackages}; do
+	packages="$packages  $MINGW_PACKAGE_PREFIX-$pkg"
+done
+
+# Install packages
+if [[ "${confirm}" == "yes" ]]; then
+	for pkg in ${packages}; do
+		pacman -Su --confirm --needed ${pkg}
+	done
 else
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-harfbuzz
-	pacman -Su $confirm --needed ca-certificates
-	if [ -z ${APPVEYOR+x} ]; then
-		pacman -Su $confirm --needed wget
-		pacman -Su $confirm --needed rsync
-		pacman -Su $confirm --needed unzip
-		pacman -Su $confirm --needed make
-		pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-ntldd-git
-	fi
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-gcc
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-glew
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-freeglut
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-FreeImage
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-opencv
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-assimp
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-boost
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-cairo
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-gdb
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-zlib
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-tools
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-pkg-config
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-poco
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-glfw
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-libusb
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-poco
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-curl
-	pacman -Su $confirm --needed ${MINGW_PACKAGE_PREFIX}-libxml2
+	pacman -Su --noconfirm --needed ${packages}
 fi
 
 

@@ -25,31 +25,20 @@
 #   core source code.
 ##########################################################################################
 
-PLATFORM_PROJECT_DEBUG_BIN_NAME=$(APPNAME)_debug
-PLATFORM_PROJECT_RELEASE_BIN_NAME=$(APPNAME)
-PLATFORM_RUN_COMMAND =
-#ifneq (,$(findstring MINMGW64_NT,$(PLATFORM_OS)))
-MSYS2_ROOT = /mingw32
+MINGW_PREFIX ?= /mingw32
 PLATFORM_CFLAGS += -std=gnu++14 -DUNICODE -D_UNICODE
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER
-PLATFORM_LDFLAGS += -lpthread
-ifndef DEBUG
-	PLATFORM_LDFLAGS += -mwindows
-endif
-#ifeq ($(PLATFORM_ARCH),x86_64)
 ifdef USE_CCACHE
-	CC = ccache $(MSYS2_ROOT)/bin/gcc
-	CXX = ccache $(MSYS2_ROOT)/bin/g++
+	CC = ccache $(MINGW_PREFIX)/bin/gcc
+	CXX = ccache $(MINGW_PREFIX)/bin/g++
 else
-	CC = $(MSYS2_ROOT)/bin/gcc
-	CXX = $(MSYS2_ROOT)/bin/g++
+	CC = $(MINGW_PREFIX)/bin/gcc
+	CXX = $(MINGW_PREFIX)/bin/g++
 endif
 FIND ?= /usr/bin/find
-PLATFORM_AR = $(MSYS2_ROOT)/bin/ar
-PLATFORM_LD = $(MSYS2_ROOT)/bin/ld
-PLATFORM_PKG_CONFIG = $(MSYS2_ROOT)/bin/pkg-config
-#endif
-#endif
+PLATFORM_AR = $(MINGW_PREFIX)/bin/ar
+PLATFORM_LD = $(MINGW_PREFIX)/bin/ld
+PLATFORM_PKG_CONFIG = $(MINGW_PREFIX)/bin/pkg-config
 
 
 PLATFORM_PROJECT_DEBUG_BIN_NAME=$(APPNAME)_debug.exe
@@ -78,8 +67,14 @@ endif
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
+#PLATFORM_DEFINES = OF_USING_STD_FS
 ifeq ($(OF_USE_POCO),1)
-	PLATFORM_DEFINES = POCO_STATIC
+	PLATFORM_DEFINES += POCO_STATIC
+endif
+
+ifeq ($(MSYSTEM),MINGW64)
+	PLATFORM_DEFINES += OF_SOUND_PLAYER_OPENAL
+	PLATFORM_DEFINES += OF_USING_MPG123
 endif
 
 ##########################################################################################
@@ -132,6 +127,14 @@ endif
 
 
 #PLATFORM_LDFLAGS += -arch i386
+PLATFORM_LDFLAGS += -lpthread
+ifndef DEBUG
+	PLATFORM_LDFLAGS += -mwindows
+endif
+ifeq ($(findstring OF_USING_STD_FS, $(PLATFORM_DEFINES)),OF_USING_STD_FS)
+	PLATFORM_LDFLAGS += -lstdc++fs
+endif
+
 
 ##########################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -190,6 +193,11 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
+# FMOD is not supported on MINGW64
+ifeq ($(MSYSTEM),MINGW64)
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
+endif
+#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glm/%
 
 
 ##########################################################################################
@@ -238,6 +246,13 @@ PLATFORM_PKG_CONFIG_LIBRARIES += glew
 PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
 #PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-1.0
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
+ifeq ($(findstring OF_SOUND_PLAYER_OPENAL, $(PLATFORM_DEFINES)),OF_SOUND_PLAYER_OPENAL)
+	PLATFORM_PKG_CONFIG_LIBRARIES += openal
+endif
+ifeq ($(findstring OF_USING_MPG123, $(PLATFORM_DEFINES)),OF_USING_MPG123)
+	PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
+	PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
+endif
 
 # shared libraries
 PLATFORM_SHARED_LIBRARIES =

@@ -38,12 +38,15 @@ Installing openFrameworks
 
 **IMPORTANT**
 MSYS2 comes in 3 flavors : MSYS (msys2.exe), MINGW32 (mingw32.exe), MINGW64 (mingw64.exe).
-This really important to remember as many problems with running OF with MSYS2 come from using the wrong flavor.
-As of today, only **MINGW32** is supported.
-So you must use the mingw32.exe shell to run oF.
+This is really important to remember as many problems with running OF with MSYS2 come from using the wrong flavor.
+**MINGW32** is the historically supported flavor.
+**MINGW64** is still experimental.
+So, to run oF, you must use the shell that matches your flavor - mingw32.exe for **MINGW32**, mingw64.exe for **MINGW64**.
 
 For the following instructions, it assumed that MSYS2 is installed in `C:\msys64`.
 If it has been installed elsewhere, adapt the instructions to reflect your MSYS2 installation path
+It is also assumed that we are working on the 32 bits version.
+If you are working with the 64 bits version, adapt the instructions to use a **MING64** shell (`C:\msys64\mingw64.exe`) and, if needed,  use `C:\msys64\mingw64\bin` in your PATH instead of `C:\msys64\mingw32\bin`.
 
 Download and unzip the **qt creator / msys2** version of oF. 
 **DO NOT INSTALL** oF in a folder having space or other special character.
@@ -68,7 +71,7 @@ Setting the PATH variable
 
 Setting the PATH variable is an optional step but is also the cause of many trouble.
 
-As of v0.10.1, the install_dependencies.sh script does it in an wrong way!
+~~As of v0.10.1, the install_dependencies.sh script does it in an wrong way!~~
 
 ### Why would you need to set the PATH variable ?
 

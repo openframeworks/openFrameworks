@@ -19,7 +19,10 @@ _cairo_status ofCairoRenderer::stream_function(void *closure,const unsigned char
 }
 
 ofCairoRenderer::ofCairoRenderer()
-:graphics3d(this){
+:graphics3d(this)
+,projection(1)
+,modelView(1)
+{
 	type = PDF;
 	surface = nullptr;
 	cr = nullptr;
@@ -743,7 +746,7 @@ void ofCairoRenderer::setHexColor( int hexColor ){
 //our openGL wrappers
 glm::mat4 ofCairoRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const{
 	ofLogWarning() << "getCurrentMatrix not yet implemented for Cairo Renderer.";
-	return glm::mat4();
+	return glm::mat4(1.0);
 }
 
 //----------------------------------------------------------

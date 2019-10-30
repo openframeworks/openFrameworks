@@ -1682,7 +1682,7 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 	bool hasViewport = false;
 
 	ofRectangle rViewport;
-	glm::mat4 modelView;
+	glm::mat4 modelView = glm::mat4(1.0);
 
 	switch (currentStyle.drawBitmapMode) {
 
