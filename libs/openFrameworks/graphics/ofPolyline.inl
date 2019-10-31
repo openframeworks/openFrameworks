@@ -358,7 +358,7 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
     if(deltaAngle < 0 || std::abs(deltaAngle) < epsilon) remainingAngle += M_TWO_PI;
     
 	T radii(radiusX, radiusY, 0.f);
-	T point;
+	T point(0);
     
     int currentLUTIndex = 0;
     bool isFirstPoint = true; // special case for the first point
@@ -487,7 +487,7 @@ ofPolyline_<T> ofPolyline_<T>::getSmoothed(int smoothingSize, float smoothingSha
 	for(int i = 0; i < n; i++) {
 		float sum = 1; // center weight
 		for(int j = 1; j < smoothingSize; j++) {
-			T cur;
+			T cur(0);
 			int leftPosition = i - j;
 			int rightPosition = i + j;
 			if(leftPosition < 0 && bClosed) {
@@ -591,7 +591,7 @@ T ofPolyline_<T>::getClosestPoint(const T& target, unsigned int* nearestIndex) c
 	}
 	
 	float distance = 0;
-	T nearestPoint;
+	T nearestPoint(0);
 	unsigned int nearest = 0;
 	float normalizedPosition = 0;
 	unsigned int lastPosition = polyline.size() - 1;
