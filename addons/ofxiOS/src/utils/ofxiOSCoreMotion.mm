@@ -54,8 +54,8 @@ void ofxiOSCoreMotion::disableAttitude() {
     [motionManager stopDeviceMotionUpdates];
     enableAttitude = false;
     roll = pitch = yaw = 0;
-    attitudeQuat = glm::quat();
-    rotMatrix = glm::mat4();
+    attitudeQuat = glm::quat(1,0,0,0);
+    rotMatrix = glm::mat4(1);
     gravity = { 0, 0, 0 };
     userAcceleration = { 0, 0, 0 };
     magneticField = { 0, 0, 0 };
