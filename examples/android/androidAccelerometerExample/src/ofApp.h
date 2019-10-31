@@ -34,6 +34,6 @@ class ofApp : public ofxAndroidApp{
 		void cancelPressed();
 
 		ofTrueTypeFont font;
-		ofVec3f accel, normAccel;
+		glm::vec3 accel, normAccel;
 		string messages[3];
 };

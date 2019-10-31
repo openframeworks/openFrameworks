@@ -54,7 +54,7 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-	stroke.push_back(ofPoint(x,y));
+	stroke.push_back(glm::vec3(x,y,0));
 }
 
 //--------------------------------------------------------------

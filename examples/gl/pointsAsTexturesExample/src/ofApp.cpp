@@ -23,7 +23,7 @@ void ofApp::setup() {
 		float theta1 = ofRandom(0, TWO_PI);
 		float theta2 = ofRandom(0, TWO_PI);
 		
-		ofVec3f p;
+		glm::vec3 p;
 		p.x = cos( theta1 ) * cos( theta2 );
 		p.y = sin( theta1 );
 		p.z = cos( theta1 ) * sin( theta2 );
@@ -87,8 +87,8 @@ void ofApp::draw() {
 	camera.begin();
 	for (unsigned int i=0; i<points.size(); i++) {
 		ofSetColor(255, 80);
-		ofVec3f mid = points[i];
-		mid.normalize();
+		glm::vec3 mid = points[i];
+		mid = glm::normalize(mid);
 		mid *= 300;
 		ofDrawLine(points[i], mid);
 	} 
@@ -110,12 +110,12 @@ void ofApp::draw() {
 
 //--------------------------------------------------------------
 void ofApp::addPoint(float x, float y, float z) {
-	ofVec3f p(x, y, z);
+	glm::vec3 p(x, y, z);
 	points.push_back(p);
 	
 	// we are passing the size in as a normal x position
 	float size = ofRandom(5, 50);
-	sizes.push_back(ofVec3f(size));
+	sizes.push_back(glm::vec3(size));
 }
 
 //--------------------------------------------------------------
@@ -139,7 +139,7 @@ void ofApp::keyPressed(int key) {
 	if(key == 'a') {
 		float theta1 = ofRandom(0, TWO_PI);
 		float theta2 = ofRandom(0, TWO_PI);
-		ofVec3f p;
+		glm::vec3 p;
 		p.x = cos( theta1 ) * cos( theta2 );
 		p.y = sin( theta1 );
 		p.z = cos( theta1 ) * sin( theta2 );

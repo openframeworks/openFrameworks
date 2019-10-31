@@ -67,7 +67,7 @@ void ofApp::update(){
 		if(x<prevX){
 			trail[i].clear();
 		}else{
-			trail[i].addVertex(ofPoint(x,y[i]));
+			trail[i].addVertex(x,y[i]);
 		}
 	}
 

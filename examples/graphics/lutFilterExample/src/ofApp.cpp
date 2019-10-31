@@ -19,8 +19,8 @@ void ofApp::setup(){
 	vidGrabber.setup(640,480);
 
 	
-	thumbPos.set(lutImg.getWidth()*0.5f-80, -lutImg.getHeight()*0.5f - 60, 0);
-	lutPos.set(-lutImg.getWidth()*0.5f, -lutImg.getHeight()*0.5f, 0);
+	thumbPos = {lutImg.getWidth()*0.5f-80, -lutImg.getHeight()*0.5f - 60, 0};
+	lutPos = {-lutImg.getWidth()*0.5f, -lutImg.getHeight()*0.5f, 0};
 
 	ofBackground(0);
 	ofSetColor(255);
@@ -71,7 +71,7 @@ void ofApp::loadLUT(string path){
 	for(int z=0; z<32; z++){
 		for(int y=0; y<32; y++){
 			for(int x=0; x<32; x++){
-				ofVec3f cur;
+				glm::vec3 cur;
 				file >> cur.x >> cur.y >> cur.z;
 				lut[x][y][z] = cur;
 			}
@@ -97,8 +97,8 @@ void ofApp::applyLUT(ofPixelsRef pix){
 					}
 				}
 				
-				ofVec3f start = lut[lutPos[0]][lutPos[1]][lutPos[2]];
-				ofVec3f end = lut[lutPos[0]+1][lutPos[1]+1][lutPos[2]+1]; 
+				glm::vec3 start = lut[lutPos[0]][lutPos[1]][lutPos[2]];
+				glm::vec3 end = lut[lutPos[0]+1][lutPos[1]+1][lutPos[2]+1]; 
 				
 				for (int k=0; k<3; k++) {
 					float amount = (color[k] % 8) / 8.0f;

@@ -18,7 +18,7 @@ void ofApp::setup(){
 	// create a bunch of random points
 	float r = ofGetHeight()/2;
 	for(int i=0; i<100; i++) {
-		points.push_back(ofPoint(ofRandomf() * r, ofRandomf() * r, ofRandomf() * r));
+		points.push_back(glm::vec3(ofRandomf() * r, ofRandomf() * r, ofRandomf() * r));
 	}
 
 	doShader = true;
