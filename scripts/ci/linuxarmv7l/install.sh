@@ -89,7 +89,7 @@ createArchImg(){
         # wait $download
 
 		mkdir ~/archlinux
-		junest -u << EOF
+		junest << EOF
 	        tar xzf ~/ArchLinuxARM-rpi-2-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
@@ -138,7 +138,7 @@ downloadToolchain(){
 		fi
         cd ~
 		wget --quiet http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
-		junest -u << EOF
+		junest << EOF
 	        tar -x --delay-directory-restore --no-same-owner -f ~/x-tools7h.tar.xz -C ~/
 	        rm ~/x-tools7h.tar.xz
 EOF
@@ -202,7 +202,7 @@ installJunest(){
 		git clone git://github.com/fsquillace/junest ~/.local/share/junest
 	fi
 	export PATH=~/.local/share/junest/bin:$PATH
-	junest -u << EOF
+	junest << EOF
         echo updating keys
         pacman -S gnupg --noconfirm
         pacman-key --populate archlinux
