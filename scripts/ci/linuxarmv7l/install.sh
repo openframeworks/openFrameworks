@@ -89,7 +89,7 @@ createArchImg(){
         # wait $download
 
 		mkdir ~/archlinux
-        junest << EOF
+		junest -u << EOF
 	        tar xzf ~/ArchLinuxARM-rpi-2-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
@@ -138,7 +138,7 @@ downloadToolchain(){
 		fi
         cd ~
 		wget --quiet http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
-        junest << EOF
+		junest -u << EOF
 	        tar -x --delay-directory-restore --no-same-owner -f ~/x-tools7h.tar.xz -C ~/
 	        rm ~/x-tools7h.tar.xz
 EOF
@@ -199,11 +199,10 @@ installRtAudio(){
 
 installJunest(){
 	if [ ! -d ~/.local/share/junest ]; then
-		git clone git://github.com/fsquillace/junest ~/.local/share/junest
+		git clone --branch 6.0.10 git://github.com/fsquillace/junest ~/.local/share/junest
 	fi
 	export PATH=~/.local/share/junest/bin:$PATH
-    junest setup
-	junest << EOF
+	junest -u << EOF
         echo updating keys
         pacman -S gnupg --noconfirm
         pacman-key --populate archlinux
