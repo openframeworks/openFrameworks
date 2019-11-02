@@ -268,6 +268,7 @@ ofMesh ofxColorPicker_<ColorType>::getColorScaleBar() {
 
 
 	ofMesh meshColorScaleBar;
+	meshColorScaleBar.setMode(OF_PRIMITIVE_TRIANGLES);
 
 	auto borderColor = ofColor(149, 255);
 	meshColorScaleBar.append(rectangle(rectColorScaleBar, borderColor));
