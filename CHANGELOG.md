@@ -27,7 +27,7 @@ ADDONS
 ### ofxSVG
 - added support for the SVG "use" command, a common feature that allows multiple instances of the same graphic elements. Also fixed an issue where line weights less that 1 unit would not render. This increased compatibility can be disabled if required by using the ofxSVG::setImprovedCompatibilityMode(bool mode) method. [commit](https://github.com/openframeworks/openFrameworks/commit/)
 
-###ofxGui
+### ofxGui
 - Added check to update header color when color is changed from external source (fixes #6381)
 --------------------------------------
 
