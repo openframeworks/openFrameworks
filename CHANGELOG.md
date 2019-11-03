@@ -6,7 +6,7 @@ CORE
 - ofPolyline::removeVertex( ... ) added.
 
 ### utils
-- ofXML - provided access to the underlying pugi::xml_node method "getParent()" 
+- ofXML - provided access to the underlying pugi::xml_node method "getParent()"
 
 PLATFORM/IDE SPECIFIC
 -----------------
@@ -17,16 +17,18 @@ PLATFORM/IDE SPECIFIC
 ### msys2
 - add 64 bits support.
 - setup : removed automatic setup of PATH environment variable(#5740). Move instructions to setup PATH to documentation.
-- documentation : fix typo (#6211) and insist on the use of MINGW32 shell. 
+- documentation : fix typo (#6211) and insist on the use of MINGW32 shell.
 
 ADDONS
 ------
 ### ofxOpenCv
 - added support for OpenCV4 : deprecated C functions replaced by their C++ counterpart. Also fix issue due to incorrect pkg-config package [commit](https://github.com/openframeworks/openFrameworks/commit/)
- 
+
 ### ofxSVG
 - added support for the SVG "use" command, a common feature that allows multiple instances of the same graphic elements. Also fixed an issue where line weights less that 1 unit would not render. This increased compatibility can be disabled if required by using the ofxSVG::setImprovedCompatibilityMode(bool mode) method. [commit](https://github.com/openframeworks/openFrameworks/commit/)
-- 
+
+### ofxGui
+- Added check to update header color when color is changed from external source (fixes #6381)
 --------------------------------------
 
 ```
