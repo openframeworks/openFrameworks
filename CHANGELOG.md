@@ -17,7 +17,8 @@ PLATFORM/IDE SPECIFIC
 ### msys2
 - add 64 bits support.
 - setup : removed automatic setup of PATH environment variable(#5740). Move instructions to setup PATH to documentation.
-- documentation : fix typo (#6211) and insist on the use of MINGW32 shell.
+- documentation : fix typo (#6211) and insist on the use of MINGW32 shell. 
+- fixed 'copy_dlls' target to work woth both Debug and Release executables.
 
 ADDONS
 ------
