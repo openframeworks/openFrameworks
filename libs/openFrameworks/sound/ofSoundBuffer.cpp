@@ -321,142 +321,59 @@ static bool prepareBufferForResampling(const ofSoundBuffer &in, ofSoundBuffer &o
 	return true;
 }
 
-// based on maximilian optimized for performance.
-// might lose 1 or 2 samples when it reaches the end of the buffer
-void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromFrame, std::size_t numFrames, float speed, bool loop) const {
-	
-	std::size_t inChannels = getNumChannels();
-	std::size_t inFrames = getNumFrames();
-	std::size_t outBufLen = inChannels * numFrames;
-	
+void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromFrame, std::size_t numFrames, float speed, bool loop) const
+{
 	bool bufferReady = prepareBufferForResampling(*this, outBuffer, numFrames);
 	
 	if(!bufferReady) {
 		outBuffer = *this;
 		return;
 	}
-	
-    // Define the last output sample in terms of frames
-	std::size_t end = fromFrame+numFrames*speed;
-	double position, remainder;
-	std::size_t intPosition, writeIdx = 0;
-	std::size_t to, readIdx;
-	float a, b, increment = speed;
-	
-	
-    // Since end is defined in terms of frames 
-	if(end<inFrames - 1){
-        // end point is within the buffer
-		to = numFrames;
-        
-	}else{
-        // end point is beyond the end of the buffer
-        to = ceil(float(inFrames-1-fromFrame)/speed);
 
-		if (to > 0)
-			to -= 1;
-	}
-		
-    // Iterate through each channel. 
-    // This is much faster than iterating through each channel for every frame (sample).
-	for (std::size_t j=0; j<inChannels; j++)
+	size_t inChannels = getNumChannels();
+	size_t inFrames = getNumFrames();
+
+	for (size_t ch=0; ch<inChannels; ch++)
 	{
-		position = fromFrame;
-		writeIdx = j;
+		double position = fromFrame;
+		unsigned writeIdx = ch;
 		
-        // Iterate through each frame
-		while (writeIdx < inChannels*to)
+		while (writeIdx < numFrames*inChannels)
 		{
-			intPosition = position;
-			remainder = position - intPosition;
-			readIdx = inChannels*intPosition + j;
-			a = buffer[readIdx];
-			b = buffer[readIdx+inChannels];
-            outBuffer[writeIdx] = ofLerp(a,b,remainder);
-			writeIdx += inChannels;
-			position += increment;
-		}		
-	}	
-	
-    // Handle the end of the buffer
-	if(end>=inFrames-1)
-	{
-		double startPos = position;
-		std::size_t startN = writeIdx - inChannels + 1;
-		
-        // Again, iterate through each channel
-		for (std::size_t j=0; j<inChannels; j++)
-		{
-			position = startPos;
-			writeIdx = startN + j;
-			// Iterate up to end point minus a full sample. We always need an additional sample for the linear regression.
-			while ((position < inFrames-1) & (writeIdx < inChannels * numFrames))
-			{
-				intPosition = position;
-				remainder = position - intPosition;
-				readIdx = inChannels*intPosition + j;
-				a = buffer[readIdx];
-				b = buffer[readIdx+inChannels];
-                outBuffer[writeIdx] = ofLerp(a,b,remainder);
-				writeIdx += inChannels;
-				position += increment;				
-			}
-            
-            // We're at the end of the buffer
-			if (writeIdx==inChannels*(numFrames+1))
-				continue;
+			int aReadIdx = (int)position;
+			double remainder = position - aReadIdx;
+
+			// check if aReadIdx is at the end of the buffer
+			int bReadIdx = (aReadIdx == inFrames-1) ? 0 : aReadIdx + 1;
 			
-			if (loop)
-			{				
-				// Handle the wrap if the increment is between 0 and 1
-				while ((position < inFrames) & (writeIdx < outBufLen))
+			float a = buffer[aReadIdx*inChannels+ch];
+			float b = buffer[bReadIdx*inChannels+ch];
+			outBuffer[writeIdx] = ofLerp(a,b,remainder);
+			
+			position += speed;
+
+			if (position >= inFrames) 
+            {
+				if (loop==false && ch == inChannels-1)
 				{
-					intPosition = position;
-					remainder = position - intPosition;
-					readIdx = inChannels*intPosition + j;
-					a = buffer[readIdx];
-					b = buffer[j];
-					outBuffer[writeIdx] = ofLerp(a,b,remainder);
-					writeIdx += inChannels;
-					position += increment;				
+					// End of input buffer, last channel done, no looping so pad zero to complete
+					writeIdx -= ch;
+					while (writeIdx < numFrames*inChannels)
+					{
+						outBuffer[writeIdx] = 0;
+						writeIdx ++;
+					}
+					return;
 				}
-				
-                // Buffer end
-				if (writeIdx==inChannels*(numFrames+1))
-					continue;
-		
-				// Rewind the input pointer back to the start of the frame, accounting for the wrap
-				while (position >= inFrames)
+
+				do {
 					position -= inFrames;
-				
-                // complete the last samples of the buffer
-				while (writeIdx < outBufLen)
-				{
-					intPosition = position;
-					remainder = position - intPosition;
-					readIdx = inChannels*intPosition + j;
-                    a = buffer[readIdx];
-                    if (position == inFrames-1)
-                        readIdx = 0; // Guard against reading outside of buffer boundary.
-                    b = buffer[readIdx+inChannels];
-					outBuffer[writeIdx] = ofLerp(a,b,remainder);
-					writeIdx += inChannels;
-					position += increment;
-					
-					if (position >= inFrames)
-						position -= inFrames;
-				}	
-			}	
-		}
+				} while (position >= inFrames);
+            }
 			
-        // Zero out the end of the buffer.
-		if (!loop)
-		{
-			size_t i = writeIdx-inChannels+1;
-			while (i < outBuffer.size())
-				outBuffer[i++] = 0;
-		}
-	} // if(end>=inFrames-1)
+			writeIdx += inChannels;
+		} 
+	}
 }
 
 // based on maximilian optimized for performance.
