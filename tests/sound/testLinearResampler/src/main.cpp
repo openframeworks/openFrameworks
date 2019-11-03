@@ -11,7 +11,7 @@
 
 class ofApp: public ofxUnitTestsApp{
 private:
-    unsigned channels = 1;
+    unsigned channels = 2;
     unsigned numFrames = 16;
     ofSoundBuffer inBuffer;
     ofSoundBuffer outBuffer;
@@ -291,18 +291,38 @@ public:
 
         // Test 12 - Arbitrary sample rate
         fillRamp(inBuffer);
-         outBufLen = numFrames+10;
+        outBufLen = numFrames+10;
         outBuffer.allocate(outBufLen, channels);
         outBuffer.fillWithNoise();
         reference.allocate(outBufLen, channels);        
         fillRamp(reference);
-        reference.getBuffer()[outBufLen-1]=0;
+
+        for(size_t i=0; i<channels; i++)
+        {  // Last non-zero frame is interpolated
+            reference[channels*(outBufLen-1)+i] = 0;
+        }
+        
         fromFrame = 0;
         rate = (float)numFrames/(float)outBufLen; // Last value is 0 when not looping
         inBuffer.linearResampleTo(outBuffer, fromFrame, outBufLen, rate, false);
         b = isResultWithinTolerance(outBuffer.getBuffer(), reference.getBuffer(), 1e-5f);
         ofxTestEq(b, true, "Test [12] Resample rate = "+ofToString(rate)+", looping = true, fromFrame=" + ofToString(fromFrame) + ". \nOutput: " + ofToString(outBuffer.getBuffer()));
-
+        
+        // Test [13] - Resample sin with phase shift
+        numFrames = 64;
+        rate = 1.5;
+        inBuffer.allocate(numFrames, 1);
+        reference.allocate(numFrames, 1);
+        for(size_t i = 0; i < numFrames; i++) {
+            //x = sin(2*pi*n*f/Fs)
+            inBuffer[i] = 0.5f * sin(TWO_PI*i/(float)numFrames);
+            reference[i] = 0.5f * sin(TWO_PI*i*rate/(float)numFrames + TWO_PI*40/(float)numFrames);
+        }
+        inBuffer.linearResampleTo(outBuffer, 40, numFrames, rate, true);
+        b = isResultWithinTolerance(outBuffer.getBuffer(), reference.getBuffer(), 0.001f);
+        ofxTestEq(b, true, "Test [13] Resample rate = "+ofToString(rate)+", looping = true, fromFrame=" + ofToString(fromFrame));
+    
+        
         ofLogNotice() << "end testing";
     }
 };
