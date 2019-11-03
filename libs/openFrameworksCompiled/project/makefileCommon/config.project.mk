@@ -389,6 +389,14 @@ ifdef PLATFORM_CC
 	CC ?= $(PLATFORM_CC)
 endif
 
+ifdef PROJECT_RESOURCE_COMPILER
+    RESOURCE_COMPILER ?= $(PROJECT_RESOURCE_COMPILER)
+endif
+
+ifdef PLATFORM_RESOURCE_COMPILER
+    RESOURCE_COMPILER ?= $(PLATFORM_RESOURCE_COMPILER)
+endif
+
 # TODO: what is this for?
 NODEPS = clean
 
@@ -452,6 +460,24 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	else
 		OPTIMIZATION_LDFLAGS = $(PROJECT_OPTIMIZATION_LDFLAGS_DEBUG)
 	endif
+
+    # Executable Icon
+    #################
+    # if defined, use the project debug icon.
+    # if no debug icon defined for the project, use the project release icon
+    # if no icon defined for the project, use the OF default debug icon defined for the platform
+    # leave ICON empty for default system icon
+    ifdef PROJECT_DEBUG_ICON
+        ICON = $(PROJECT_DEBUG_ICON)
+    else
+        ifdef PROJECT_RELEASE_ICON
+            ICON = $(PROJECT_RELEASE_ICON)
+        else
+            ifdef PLATFORM_DEBUG_ICON
+                ICON = $(PLATFORM_DEBUG_ICON)
+            endif
+        endif
+    endif
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
@@ -472,6 +498,19 @@ ifeq ($(findstring Release,$(TARGET_NAME)),Release)
 	else
 		OPTIMIZATION_LDFLAGS = $(PROJECT_OPTIMIZATION_LDFLAGS_RELEASE)
 	endif
+
+    # Executable Icon
+    #################
+    # if defined, use the project release icon.
+    # if no icon defined for the project, use the OF default release icon defined for the platform
+    # leave ICON empty for default system icon
+    ifdef PROJECT_RELEASE_ICON
+        ICON = $(PROJECT_RELEASE_ICON)
+    else
+        ifdef PLATFORM_RELEASE_ICON
+            ICON = $(PLATFORM_RELEASE_ICON)
+        endif
+    endif
 endif
 
 
@@ -502,6 +541,11 @@ OBJS_WITHOUT_EXTERNAL = $(subst $(strip $(PROJECT_EXTERNAL_SOURCE_PATHS)),,$(OBJ
 OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(OBJS_WITHOUT_EXTERNAL))
 OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
 
+# Compiled resources (icon, ...) - msys2 only?
+OF_PROJECT_RESOURCES =
+ifeq ($(findstring msys2,$(PLATFORM_LIB_SUBPATH)),msys2)
+    OF_PROJECT_RESOURCES += $(addprefix $(OF_PROJECT_OBJ_OUTPUT_PATH), $(notdir $(patsubst %.ico, %.res, $(ICON))))
+endif
 
 OF_PROJECT_DEPENDENCY_FILES = $(OF_PROJECT_DEPS) $(OF_PROJECT_ADDONS_DEPS)
 
