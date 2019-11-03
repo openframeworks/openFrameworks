@@ -28,7 +28,7 @@ public:
 	float radius;
     float sphereRadius;
     int numSpheres;
-	ofVec3f center;
+	glm::vec3 center;
     bool bDrawWireframe;
     
     ofColor lightColor;

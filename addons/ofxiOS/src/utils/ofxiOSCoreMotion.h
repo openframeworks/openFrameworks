@@ -8,7 +8,8 @@
 #pragma once
 
 #import <CoreMotion/CoreMotion.h>
-#include "ofMatrix4x4.h"
+#include "ofVectorMath.h"
+
 
 class ofxiOSCoreMotion {
 
@@ -30,22 +31,22 @@ public:
     void disableAttitude();
     
     void resetAttitude(bool toCurrentReferenceFrame = true);
-    
-    void setUpdateFrequency(float updateFrequency);    
-    void update();    
-    
-    ofVec3f getAccelerometerData();
-    ofVec3f getGyroscopeData();
-    ofVec3f getMagnetometerData();
+
+    void setUpdateFrequency(float updateFrequency);
+    void update();
+
+    glm::vec3 getAccelerometerData();
+    glm::vec3 getGyroscopeData();
+    glm::vec3 getMagnetometerData();
     float getRoll();
     float getPitch();
     float getYaw();
-    ofQuaternion getQuaternion();
-    ofMatrix4x4 getRotationMatrix();
-    ofVec3f getGravity();
-    ofVec3f getUserAcceleration();
-    ofVec3f getMagneticField();
-    
+    glm::quat getQuaternion();
+    glm::mat4 getRotationMatrix();
+    glm::vec3 getGravity();
+    glm::vec3 getUserAcceleration();
+    glm::vec3 getMagneticField();
+
 protected:
     
     // core motion
@@ -56,15 +57,15 @@ protected:
     float updateFrequency;
     bool enableAttitude, enableGyro, enableAccelerometer, enableMagnetometer;
 
-    ofVec3f accelerometerData;
-    ofVec3f gyroscopeData;
-    ofVec3f magnetometerData;
+    glm::vec3 accelerometerData;
+    glm::vec3 gyroscopeData;
+    glm::vec3 magnetometerData;
     float roll, pitch, yaw;
-    ofQuaternion attitudeQuat;
-    ofMatrix4x4 rotMatrix;
-    ofVec3f gravity;
-    ofVec3f userAcceleration;
-    ofVec3f magneticField;
+    glm::quat attitudeQuat;
+    glm::mat4 rotMatrix;
+    glm::vec3 gravity;
+    glm::vec3 userAcceleration;
+    glm::vec3 magneticField;
 
 };
 

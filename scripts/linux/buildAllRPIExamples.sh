@@ -5,7 +5,7 @@ cd ${DIR}/../../examples
 
 for category in $(ls -1d *)
 do
-        if [ $category != "addons" ] && [ $category != "ios" ] && [ $category != "android" ]; then
+        if [ $category != "addons" ] && [ $category != "ios" ] && [ $category != "android" ] && [[ -d $category ]]; then
  
                 echo "CHANGED TO CATEGORY >"+$category
                 cd $category

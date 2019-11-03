@@ -1,23 +1,29 @@
 #include "ofApp.h"
 
 /*
-	rotateToNormal will rotate everything using ofRotate. the rotation amount
-	and axis are generated using an ofQuaternion. the trick is to use ofQuaternion
-	to determine the rotation that is required from a standard axis (0,0,1) to the
-	desired normal vector, then apply that rotation.
-*/
+	rotateToNormal will rotate everything using a rotation matrix which is generated using a quaternion (glm::quat).
+	for this we use the function glm::rotation(glm::vec3 v1, glm::vec3 v2) which takes in two normalized vectors and returns
+	a quaternion that represents the rotation between these two vectors.
+	We will use the normal which is passed to this function and the standard z axis.
+ */
 //--------------------------------------------------------------
-void rotateToNormal(ofVec3f normal) {
-	normal.normalize();
-
-	float rotationAmount;
-	ofVec3f rotationAngle;
-	ofQuaternion rotation;
-
-	ofVec3f axis(0, 0, 1);
-	rotation.makeRotate(axis, normal);
-	rotation.getRotate(rotationAmount, rotationAngle);
-	ofRotateDeg(rotationAmount, rotationAngle.x, rotationAngle.y, rotationAngle.z);
+void rotateToNormal(glm::vec3 normal) {
+	
+	// the normal must be normalized.
+	normal = glm::normalize(normal);
+	
+	// the standard Z axis.
+	glm::vec3 axis(0, 0, 1);
+	
+	// create the quaternion which represents the rotation between normal and axis
+	glm::quat rotation = glm::rotation(axis, normal);
+	
+	// transform the quaternion to a 4x4 matrix using the glm function for such.
+	glm::mat4 rotationMatrix = glm::toMat4(rotation);
+	
+	// multiply the rotation matrix with the current matrix.
+	// This means that the rotation matrix, thus the transformation it represents, will be applied on over the current transformation matrix.
+	ofMultMatrix( rotationMatrix );
 }
 
 //--------------------------------------------------------------
@@ -78,7 +84,7 @@ void ofApp::draw(){
 	ofDrawLine(current.x, current.y, current.z, current.x, 0, current.z);
 
 	ofTranslate(current.x, current.y, current.z);
-    if( (current - previous ).length() > 0.0 ){
+    if( glm::length(current - previous ) > 0.0 ){
         // translate and rotate every 3D object after this line to the current position and orientation of our line, but only if the line is longer than 0 or has a length
         rotateToNormal(current - previous);
     }

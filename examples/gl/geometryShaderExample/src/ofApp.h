@@ -25,6 +25,6 @@ class ofApp : public ofBaseApp{
 			
 		ofShader shader;
 		bool doShader;
-		vector<ofPoint> points;	
+		vector<glm::vec3> points;	
 };
 

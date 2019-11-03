@@ -26,7 +26,7 @@ void ofApp::draw(){
     // attitude- quaternion
     ofDrawBitmapStringHighlight("Attitude: (quaternion x,y,z,w)", 20, 25);
     ofSetColor(0);
-    ofQuaternion quat = coreMotion.getQuaternion();
+    glm::quat quat = coreMotion.getQuaternion();
     ofDrawBitmapString(ofToString(quat.x(),3), 20, 50);
     ofDrawBitmapString(ofToString(quat.y(),3), 90, 50);
     ofDrawBitmapString(ofToString(quat.z(),3), 160, 50);
@@ -40,7 +40,7 @@ void ofApp::draw(){
     ofDrawBitmapString(ofToString(coreMotion.getYaw(),3), 220, 100);
     
     // accelerometer
-    ofVec3f a = coreMotion.getAccelerometerData();
+    glm::vec3 a = coreMotion.getAccelerometerData();
     ofDrawBitmapStringHighlight("Accelerometer: (x,y,z)", 20, 125);
     ofSetColor(0);
     ofDrawBitmapString(ofToString(a.x,3), 20, 150);
@@ -48,7 +48,7 @@ void ofApp::draw(){
     ofDrawBitmapString(ofToString(a.z,3), 220, 150);
     
     // gyroscope
-    ofVec3f g = coreMotion.getGyroscopeData();
+    glm::vec3 g = coreMotion.getGyroscopeData();
     ofDrawBitmapStringHighlight("Gyroscope: (x,y,z)", 20, 175);
     ofSetColor(0);
     ofDrawBitmapString(ofToString(g.x,3), 20, 200 );
@@ -56,7 +56,7 @@ void ofApp::draw(){
     ofDrawBitmapString(ofToString(g.z,3), 220, 200 );
     
     // magnetometer
-    ofVec3f m = coreMotion.getMagnetometerData();
+    glm::vec3 m = coreMotion.getMagnetometerData();
     ofDrawBitmapStringHighlight("Magnetometer: (x,y,z)", 20, 225);
     ofSetColor(0);
     ofDrawBitmapString(ofToString(m.x,3), 20, 250);
@@ -71,7 +71,7 @@ void ofApp::draw(){
     
     // 1) quaternion rotations
     float angle;
-    ofVec3f axis;//(0,0,1.0f);
+    glm::vec3 axis;//(0,0,1.0f);
     quat.getRotate(angle, axis);
     ofRotate(angle, axis.x, -axis.y, axis.z); // rotate with quaternion
     

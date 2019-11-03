@@ -7,7 +7,7 @@ void ofApp::setup(){
 
 	//our history arrays are initialized with a value of zero for all of it's elements.
 	for (int i=1; i<TAIL_LENGTH; i++) {
-		waveHistory[i] = ofVec3f(0, 0, 0);
+		waveHistory[i] = glm::vec3(0, 0, 0);
 	}
 	for (int i=1; i<WAVEFORM_HISTORY; i++) {
 		horWaveHistory[i] = 0;
@@ -15,8 +15,8 @@ void ofApp::setup(){
 	}
 
 	//our center point is defined here.
-	center= ofPoint((ofGetWidth()-LEFT_MARGIN)*0.5f +LEFT_MARGIN,
-									(ofGetHeight()-TOP_MARGIN)*0.5f + TOP_MARGIN);
+	center.x = (ofGetWidth()-LEFT_MARGIN)*0.5f +LEFT_MARGIN;
+	center.y = (ofGetHeight()-TOP_MARGIN)*0.5f + TOP_MARGIN;
 
 	bScaleMouse=false;
 
@@ -111,7 +111,7 @@ void ofApp::draw(){
 	// here we save into our history
 	horWaveHistory[WAVEFORM_HISTORY-1] = horWave;
 	vertWaveHistory[WAVEFORM_HISTORY-1] = vertWave;
-	waveHistory[TAIL_LENGTH-1] = ofVec3f(horWave, vertWave,0);
+	waveHistory[TAIL_LENGTH-1] = glm::vec3(horWave, vertWave,0);
 
 
 
@@ -129,9 +129,9 @@ void ofApp::draw(){
 	vWave.setMode(OF_PRIMITIVE_LINE_STRIP);
 	for (int i=0; i<WAVEFORM_HISTORY; i++) {
 		hWave.addColor(ofFloatColor(255, 240,10, 255));
-		hWave.addVertex(ofVec3f(i*hWaveMult, horWaveHistory[i]*0.1f*scale, 0));
+		hWave.addVertex(glm::vec3(i*hWaveMult, horWaveHistory[i]*0.1f*scale, 0));
 		vWave.addColor(ofFloatColor(255, 240,10, 255));
-		vWave.addVertex(ofVec3f(vertWaveHistory[i]*0.1f*scale, i*vWaveMult, 0));
+		vWave.addVertex(glm::vec3(vertWaveHistory[i]*0.1f*scale, i*vWaveMult, 0));
 	}
 
 	//draw the vertical and horizontal wave.

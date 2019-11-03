@@ -38,6 +38,7 @@ endif
 FIND ?= /usr/bin/find
 PLATFORM_AR = $(MINGW_PREFIX)/bin/ar
 PLATFORM_LD = $(MINGW_PREFIX)/bin/ld
+PLATFORM_RESOURCE_COMPILER = $(MINGW_PREFIX)/bin/windres
 PLATFORM_PKG_CONFIG = $(MINGW_PREFIX)/bin/pkg-config
 
 
@@ -296,6 +297,13 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 #    Don't want to use a default compiler?
 ################################################################################
 #PLATFORM_CC=
+
+################################################################################
+# PLATFORM ICON
+#    If not set by the project by PROJECT_(RELEASE|DEBUG)_ICON, use OF defaults
+################################################################################
+PLATFORM_RELEASE_ICON = $(OF_PLATFORM_MAKEFILES)/icon.ico
+PLATFORM_DEBUG_ICON = $(OF_PLATFORM_MAKEFILES)/icon-debug.ico
 
 copy_dlls:
 	@echo "     copying dlls to bin"

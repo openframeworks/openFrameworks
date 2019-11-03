@@ -21,7 +21,7 @@ void ofApp::setup(){
 	}
 
 	boundingBox.alignTo(ofGetCurrentViewport(), OF_ALIGN_HORZ_CENTER, OF_ALIGN_VERT_CENTER);
-	ofVec2f textPos(boundingBox.getX(), boundingBox.getMaxY());
+	glm::vec2 textPos(boundingBox.getX(), boundingBox.getMaxY());
 
 	text.translate(textPos);
 	text.setFillColor(ofColor(245, 58, 135));

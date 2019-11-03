@@ -16,7 +16,7 @@ In the code, pay attention to:
 * ```latRot.makeRotate(cities[i].latitude, 1, 0, 0);``` to create a quaternion which will perform a rotation of an angle
 * ```longRot.makeRotate(cities[i].longitude, 0, 1, 0);``` to create a quaternion which will perform a rotation of an angle
 * ```	spinQuat.makeRotate(ofGetFrameNum(), 0, 1, 0);``` to create another quaternion to ensure it spins on the y axis
-* ```ofVec3f worldPoint = latRot * longRot * spinQuat * center;``` to generate the point to map the city by multiplying all of the quaternions and then multipying the center vector to apply the rotation to the center vector
+* ```glm::vec3 worldPoint = latRot * longRot * spinQuat * center;``` to generate the point to map the city by multiplying all of the quaternions and then multipying the center vector to apply the rotation to the center vector
 
 
 ### Expected Behavior

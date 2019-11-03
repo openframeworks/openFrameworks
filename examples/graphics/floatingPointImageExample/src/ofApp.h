@@ -21,9 +21,9 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		
 		// helper functions
-		void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c);
-		void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c, ofVec3f d);
-		ofVec3f getVertexFromImg(ofFloatImage& img, int x, int y);
+		void addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c);
+		void addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d);
+		glm::vec3 getVertexFromImg(ofFloatImage& img, int x, int y);
 
 		ofFloatImage img;
 		ofEasyCam easyCam;

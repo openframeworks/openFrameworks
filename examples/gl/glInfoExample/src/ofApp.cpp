@@ -236,8 +236,8 @@ void ofApp::draw(){
 
 
 
-    ofDrawBitmapStringHighlight(output, ofPoint(20,20));
-    ofDrawBitmapStringHighlight("press ' ' to load full report", ofPoint(20,220), ofColor::magenta, ofColor::white);
+    ofDrawBitmapStringHighlight(output, 20, 20);
+    ofDrawBitmapStringHighlight("press ' ' to load full report", 20, 220, ofColor::magenta, ofColor::white);
 
 }
 

@@ -24,19 +24,19 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
 
-		ofVec3f	pts[MAX_N_PTS];
-		int		nPts;
+		glm::vec3 pts[MAX_N_PTS];
+		int nPts;
 
-		ofVec3f	rotateAmount;  // amount to rotate in x,y,z;
-		float	speedOfRotation; // speed;
+		glm::vec3 rotateAmount;  // amount to rotate in x,y,z;
+		float speedOfRotation; // speed;
 
 		// a grid helpful for seeing the rotation
-		ofVec3f	xAxisMin;
-		ofVec3f	xAxisMax;
-		ofVec3f	yAxisMin;
-		ofVec3f	yAxisMax;
-		ofVec3f	zAxisMin;
-		ofVec3f	zAxisMax;
+		glm::vec3 xAxisMin;
+		glm::vec3 xAxisMax;
+		glm::vec3 yAxisMin;
+		glm::vec3 yAxisMax;
+		glm::vec3 zAxisMin;
+		glm::vec3 zAxisMax;
 
 		bool bDrawnAnything;
 
