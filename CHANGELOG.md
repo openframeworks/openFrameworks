@@ -20,6 +20,10 @@ PLATFORM/IDE SPECIFIC
 - documentation : fix typo (#6211) and insist on the use of MINGW32 shell. 
 - fixed 'copy_dlls' target to work woth both Debug and Release executables.
 
+LIBS
+----
+- glm updated to 0.9.9.6. NOTE: all glm types are not intitialized by default now. Do glm::vec3(0) instead of glm::vec3() or set this define in ofConstants.h to default to the old initializtion method: `#define GLM_FORCE_CTOR_INIT 1`
+
 ADDONS
 ------
 ### ofxOpenCv
