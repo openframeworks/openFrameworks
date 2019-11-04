@@ -1110,7 +1110,8 @@ void ofMesh_<V,N,C,T>::load(const std::filesystem::path& path){
 			continue;
 		}
 
-		if(state==VertexDef && (lineStr.find("property float x")==0 || lineStr.find("property float y")==0 || lineStr.find("property float z")==0)){
+		if(state==VertexDef && (lineStr.find("property float x")==0 || lineStr.find("property float y")==0 || lineStr.find("property float z")==0
+                || lineStr.find("property double x")==0 || lineStr.find("property double y")==0 || lineStr.find("property double z")==0)){
 			meshDefinition.push_back(Position);
 			vertexCoordsFound++;
 			continue;
@@ -1309,6 +1310,9 @@ void ofMesh_<V,N,C,T>::save(const std::filesystem::path& path, bool useBinary) c
 	} else if(data.getMode() == OF_PRIMITIVE_TRIANGLES) {
 		os << "element face " << data.getNumVertices() / faceSize << std::endl;
 		os << "property list uchar int vertex_indices" << std::endl;
+	} else if(data.getMode() == OF_PRIMITIVE_TRIANGLE_STRIP && data.getNumVertices() >= 4) {
+		os << "element face " << data.getNumVertices() - 2 << std::endl;
+		os << "property list uchar int vertex_indices" << std::endl;
 	}
 
 	os << "end_header" << std::endl;
@@ -1364,6 +1368,20 @@ void ofMesh_<V,N,C,T>::save(const std::filesystem::path& path, bool useBinary) c
 				os.write((char*) indices, sizeof(indices));
 			} else {
 				os << (std::size_t) faceSize << " " << indices[0] << " " << indices[1] << " " << indices[2] << std::endl;
+			}
+		}
+	} else if(data.getMode() == OF_PRIMITIVE_TRIANGLE_STRIP && data.getNumVertices() >= 4) {
+		for(uint32_t i = 0; i < data.getNumVertices() - 2; i += 2) {
+			uint32_t indices1[] = {i, i + 1, i + 2};
+			uint32_t indices2[] = {i + 1, i + 3, i + 2};
+			if(useBinary) {
+				os.write((char*) &faceSize, sizeof(unsigned char));
+				os.write((char*) indices1, sizeof(indices1));
+				os.write((char*) &faceSize, sizeof(unsigned char));
+				os.write((char*) indices2, sizeof(indices2));
+			} else {
+				os << (std::size_t) faceSize << " " << indices1[0] << " " << indices1[1] << " " << indices1[2] << std::endl;
+				os << (std::size_t) faceSize << " " << indices2[0] << " " << indices2[1] << " " << indices2[2] << std::endl;
 			}
 		}
 	}

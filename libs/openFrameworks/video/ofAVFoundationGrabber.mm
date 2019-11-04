@@ -104,7 +104,7 @@
 			//only set the framerate if it has been set by the user
 			if( framerate > 0 ){
 
-				AVFrameRateRange * desiredRange = [AVFrameRateRange alloc];
+				AVFrameRateRange * desiredRange = nil;
 				NSArray * supportedFrameRates = device.activeFormat.videoSupportedFrameRateRanges;
 
 				int numMatch = 0;
@@ -370,7 +370,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
 ofAVFoundationGrabber::ofAVFoundationGrabber(){
 	fps		= -1;
-	grabber = [OSXVideoGrabber alloc];
+	grabber = [[OSXVideoGrabber alloc] init];
     width = 0;
     height = 0;
 	bIsInit = false;
@@ -419,7 +419,7 @@ void ofAVFoundationGrabber::setDesiredFrameRate(int capRate){
 bool ofAVFoundationGrabber::setup(int w, int h){
 
 	if( grabber == nil ){
-		grabber = [OSXVideoGrabber alloc];
+		grabber = [[OSXVideoGrabber alloc] init];
 	}
 
 	grabber->grabberPtr = this;
@@ -497,7 +497,7 @@ std::vector <ofVideoDevice> ofAVFoundationGrabber::listDevices() const{
 
 void ofAVFoundationGrabber::setDeviceID(int deviceID) {
 	if( grabber == nil ){
-		grabber = [OSXVideoGrabber alloc];
+		grabber = [[OSXVideoGrabber alloc] init];
 	}
 	[grabber setDevice:deviceID];
 	device = deviceID;

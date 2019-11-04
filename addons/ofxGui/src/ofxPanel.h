@@ -20,6 +20,7 @@ public:
 	ofxPanel * setup(const std::string& collectionName="", const std::string& filename=ofxPanelDefaultFilename, float x = 10, float y = 10);
 	ofxPanel * setup(const ofParameterGroup & parameters, const std::string& filename=ofxPanelDefaultFilename, float x = 10, float y = 10);
 
+	bool mousePressed(ofMouseEventArgs & args);
 	bool mouseReleased(ofMouseEventArgs & args);
 
 	ofEvent<void> loadPressedE;
@@ -33,6 +34,6 @@ private:
 	ofRectangle loadBox, saveBox;
 	ofImage loadIcon, saveIcon;
     
-    ofPoint grabPt;
+    glm::vec3 grabPt;
 	bool bGrabbed;
 };

@@ -279,6 +279,12 @@ ofURLFileLoader::ofURLFileLoader()
 :impl(new ofURLFileLoaderImpl){}
 #endif
 
+#ifdef TARGET_EMSCRIPTEN
+#include "ofxEmscriptenURLFileLoader.h"
+ofURLFileLoader::ofURLFileLoader()
+:impl(new ofxEmscriptenURLFileLoader){}
+#endif
+
 ofHttpResponse ofURLFileLoader::get(const string& url){
 	return impl->get(url);
 }

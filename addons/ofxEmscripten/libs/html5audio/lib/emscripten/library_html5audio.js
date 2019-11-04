@@ -32,6 +32,13 @@ var LibraryHTML5Audio = {
 			// Fix up for prefixing
 			window.AudioContext = window.AudioContext || window.webkitAudioContext;
 			var context = new AudioContext();
+
+			// Fix issue with chrome autoplay policy
+			document.addEventListener('mousedown', function cb(event) {
+				context.resume();
+				event.currentTarget.removeEventListener(event.type, cb);
+			});
+
 			var id = AUDIO.lastContextID++;
 			AUDIO.contexts[id] = context;
 			var fft = context.createAnalyser();
@@ -47,19 +54,27 @@ var LibraryHTML5Audio = {
     	}
     },
 
-	html5audio_context_spectrum: function(context_id, bands, spectrum){
-		AUDIO.ffts[context_id].fftSize = bands*2;
-		var spectrumArray = Module.HEAPF32.subarray(spectrum>>2, (spectrum>>2)+bands);
-		AUDIO.ffts[context_id].getFloatFrequencyData(spectrumArray);
-	},
+    html5audio_context_start: function(context_id){
+    	AUDIO.contexts[context_id].resume();
+    },
 
-    html5audio_context_samplerate: function(context){
+    html5audio_context_stop: function(context_id){
+    	AUDIO.contexts[context_id].suspend();
+    },
+
+    html5audio_context_spectrum: function(context_id, bands, spectrum){
+    	AUDIO.ffts[context_id].fftSize = bands*2;
+    	var spectrumArray = Module.HEAPF32.subarray(spectrum>>2, (spectrum>>2)+bands);
+    	AUDIO.ffts[context_id].getFloatFrequencyData(spectrumArray);
+    },
+
+    html5audio_context_samplerate: function(context_id){
     	return AUDIO.contexts[context_id].sampleRate.value;
     },
 
     html5audio_sound_load: function(context_id, url){
 		var request = new XMLHttpRequest();
-		request.open('GET', Pointer_stringify(url), true);
+		request.open('GET', UTF8ToString(url), true);
 		request.responseType = 'arraybuffer';
 
 		var id = AUDIO.lastSoundID++;
@@ -184,7 +199,7 @@ var LibraryHTML5Audio = {
 				}
 			}
 
-			Runtime.dynCall('viiii',callback, [bufferSize,inputChannels,outputChannels,userData]);
+			dynCall('viiii',callback, [bufferSize,inputChannels,outputChannels,userData]);
 
 			if(outputChannels>0){
 				for(c=0;c<outputChannels;++c){

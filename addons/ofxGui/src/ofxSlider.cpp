@@ -215,13 +215,11 @@ void ofxSlider<Type>::generateDraw(){
 	bar.clear();
 
 	bg.setFillColor(thisBackgroundColor);
-	bg.setFilled(true);
-	bg.rectangle(b);
+	bg.setExtents(b);
 
 	float valAsPct = ofMap( value, value.getMin(), value.getMax(), 0, b.width-2, true );
 	bar.setFillColor(thisFillColor);
-	bar.setFilled(true);
-	bar.rectangle(b.x+1, b.y+1, valAsPct, b.height-2);
+	bar.setExtents(b.x+1, b.y+1, valAsPct, b.height-2);
 
 	generateText();
 	input.generateDraw();
@@ -232,8 +230,9 @@ template<typename Type>
 void ofxSlider<Type>::generateText(){
 	string valStr = toString(value.get());
 	auto inputWidth = getTextBoundingBox(valStr,0,0).width;
-	auto label = getTextBoundingBox(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	auto value = getTextBoundingBox(valStr, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4);
+	auto yPos = getTextVCenteredInRect(b);
+	auto label = getTextBoundingBox(getName(), b.x + textPadding, yPos);
+	auto value = getTextBoundingBox(valStr, b.x + b.width - textPadding - inputWidth, yPos);
 	overlappingLabel = label.getMaxX() > value.x;
 
 	textMesh.clear();
@@ -252,10 +251,10 @@ void ofxSlider<Type>::generateText(){
 		}else{
 			name = getName();
 		}
-		textMesh.append(getTextMesh(name, b.x + textPadding, b.y + b.height / 2 + 4));
+		textMesh.append(getTextMesh(name, b.x + textPadding, yPos));
 	}
 	if(!overlappingLabel || mouseInside){
-		textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
+		textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, yPos));
 	}
 }
 
@@ -336,7 +335,7 @@ void ofxSlider<Type>::valueChanged(Type & value){
 }
 
 template<typename Type>
-void ofxSlider<Type>::setPosition(const ofPoint & p){
+void ofxSlider<Type>::setPosition(const glm::vec3 & p){
 	ofxBaseGui::setPosition(p);
 	input.setPosition(p);
 }

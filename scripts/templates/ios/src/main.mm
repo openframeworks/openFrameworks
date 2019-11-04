@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 int main() {
-    
+
     //  here are the most commonly used iOS window settings.
     //------------------------------------------------------
     ofiOSWindowSettings settings;
@@ -17,7 +17,8 @@ int main() {
     settings.depthType = ofxiOSRendererDepthFormat::DEPTH_NONE; // depth format (16/24) if depth enabled
     settings.stencilType = ofxiOSRendererStencilFormat::STENCIL_NONE; // stencil mode
     settings.windowMode = OF_FULLSCREEN;
+    settings.enableMultiTouch = false; // enables multitouch support and updates touch.id etc.
     ofCreateWindow(settings);
-    
+
 	return ofRunApp(new ofApp);
 }

@@ -26,8 +26,8 @@ class ofApp : public ofxiOSApp{
         void deviceOrientationChanged(int newOrientation);
 	
         ofVbo vbo;
-        ofVec3f pos[GRID_WIDTH*GRID_HEIGHT*LENGTH];
-        ofVec3f center;
+        glm::vec3 pos[GRID_WIDTH*GRID_HEIGHT*LENGTH];
+        glm::vec3 center;
 
         float restLength;
         int total;

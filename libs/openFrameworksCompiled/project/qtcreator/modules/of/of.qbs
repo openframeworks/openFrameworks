@@ -460,6 +460,10 @@ Module{
             for(var addon in allAddons){
                 var addonPath = allAddons[addon];
                 config_ldflags = config_ldflags.concat(Helpers.parseAddonConfig(addonPath, "ADDON_LDFLAGS", [], platform))
+
+                // Remove linker escapes https://doc.qt.io/qbs/qml-qbsmodules-cpp.html#linkerFlags-prop
+                config_ldflags = config_ldflags.map(function(element){ return element.replace("-Wl,","") })
+                config_ldflags = config_ldflags.map(function(element){ return element.replace("-Xlinker,","") })
             }
 
             // libs

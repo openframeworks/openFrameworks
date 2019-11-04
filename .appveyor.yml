@@ -3,11 +3,19 @@ version: 1.0.{build}
 environment:
   global:
     APPVEYOR_OS_NAME: windows
+    CHERE_INVOKING: 1
+    MSYS2_PATH: c:\msys64
   matrix:
   #MSYS2 Building
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       platform: x86
       BUILDER: MSYS2
+      MSYSTEM: MINGW32
+      CCACHE_DIR: "%APPVEYOR_BUILD_FOLDER%\\.ccache"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      platform: x64
+      BUILDER: MSYS2
+      MSYSTEM: MINGW64
       CCACHE_DIR: "%APPVEYOR_BUILD_FOLDER%\\.ccache"
 
   #VisualStudio Building
@@ -28,12 +36,10 @@ init:
 # fix for https://github.com/appveyor/ci/issues/2571
 - del C:\Windows\System32\libssl-*.dll C:\Windows\system32\libcrypto-*.dll
 - del C:\Windows\SysWOW64\libssl-*.dll C:\Windows\SysWOW64\libcrypto-*.dll
-- set MSYS2_PATH=c:\msys64
-- set CHERE_INVOKING=1
-- if "%BUILDER%_%PLATFORM%"=="MSYS2_x86" set MSYSTEM=MINGW32
-- if "%BUILDER%_%PLATFORM%"=="MSYS2_x64" set MSYSTEM=MINGW64
-- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy bash pacman pacman-mirrors msys2-runtime msys2-runtime-devel"'
-- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync libopenssl mingw-w64-i686-openssl"'
+# Upgrade the MSYS2 system and all install packages
+- '%MSYS2_PATH%\usr\bin\pacman --noconfirm -Syu'
+# Install packages need by download_libs.sh scripts (VS and MSYS2)
+- '%MSYS2_PATH%\usr\bin\pacman --noconfirm -S --needed unzip rsync wget libopenssl mingw-w64-i686-openssl'
 - if "%BUILDER%"=="VS" set PATH=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;%PATH%
 
 # - IF "%BUILDER%"=="VS" set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
@@ -43,7 +49,7 @@ cache:
 
 install:
 - if "%BUILDER%"=="VS" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/vs/install.sh")
-- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/msys2/install.sh --noconfirm")
+- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/msys2/install.sh")
 
 before_build:
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "ccache -z")

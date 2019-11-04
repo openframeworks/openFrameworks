@@ -9,7 +9,7 @@
 #include "Circle.h"
 
 // the static event, or any static variable, must be initialized outside of the class definition.
-ofEvent<ofVec2f> Circle::clickedInsideGlobal = ofEvent<ofVec2f>(); 
+ofEvent<glm::vec2> Circle::clickedInsideGlobal = ofEvent<glm::vec2>(); 
 
 Circle::Circle() {
     bRegisteredEvents = false;
@@ -50,7 +50,7 @@ void Circle::mouseReleased(ofMouseEventArgs & args){
     if (inside(args.x, args.y)) {
         // if the mouse is pressed over the circle an event will be notified (broadcasted) 
         // the circleEvent object will contain the mouse position, so this values are accesible to any class that is listening.
-        ofVec2f mousePos = ofVec2f(args.x, args.y);
+        glm::vec2 mousePos = glm::vec2(args.x, args.y);
         ofNotifyEvent(clickedInside, mousePos, this); 
         ofNotifyEvent(clickedInsideGlobal, mousePos);
     }
@@ -61,5 +61,5 @@ void Circle::mouseExited(ofMouseEventArgs & args){}
 
 //this function checks if the passed arguments are inside the circle.
 bool Circle::inside(float _x, float _y ){
-    return (ofVec2f(_x, _y).distance(ofVec2f(x, y)) <radius);
+	return (glm::distance(glm::vec2(_x, _y), glm::vec2(x, y)) < radius);
 }
