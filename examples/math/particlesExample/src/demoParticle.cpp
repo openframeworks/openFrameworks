@@ -22,9 +22,11 @@ void demoParticle::reset(){
 	
 	pos.x = ofRandomWidth();
 	pos.y = ofRandomHeight();
+    pos.z = 0; 
 	
 	vel.x = ofRandom(-3.9, 3.9);
 	vel.y = ofRandom(-3.9, 3.9);
+    vel.z = 0;
 	
 	frc   = glm::vec3(0,0,0);
 	
@@ -46,7 +48,7 @@ void demoParticle::update(){
 	if( mode == PARTICLE_MODE_ATTRACT ){
 		glm::vec3 attractPt(ofGetMouseX(), ofGetMouseY(), 0);
 		frc = attractPt-pos; // we get the attraction force/vector by looking at the mouse pos relative to our pos
-		glm::normalize(frc); //by normalizing we disregard how close the particle is to the attraction point
+		frc = glm::normalize(frc); //by normalizing we disregard how close the particle is to the attraction point
 		
 		vel *= drag; //apply drag
 		vel += frc * 0.6; //apply force
@@ -57,7 +59,7 @@ void demoParticle::update(){
 		
 		//let get the distance and only repel points close to the mouse
 		float dist = glm::length(frc);
-		glm::normalize(frc);
+		frc = glm::normalize(frc);
 		
 		vel *= drag; 
 		if( dist < 150 ){

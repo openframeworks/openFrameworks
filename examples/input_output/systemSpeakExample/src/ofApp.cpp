@@ -25,7 +25,7 @@ void ofApp::threadedFunction() {
 
 		// call the system command say
 		#ifdef TARGET_OSX
-			string cmd = "say -v " + words[step] + " "; // create the command
+			string cmd = "say " + words[step] + " "; // create the command
 		#endif
 		#ifdef TARGET_WIN32
 			string cmd = "data\\SayStatic.exe " + words[step];        // create the command

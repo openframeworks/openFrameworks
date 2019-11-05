@@ -109,7 +109,6 @@ void ofApp::keyPressed(int key){
         case '2':
             model.loadModel("TurbochiFromXSI.dae");
             model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
-            model.setRotation(0, -180, 1, 0, 0);
             ofEnableSeparateSpecularLight();
             break;
         case '3':
