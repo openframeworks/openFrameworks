@@ -31,7 +31,11 @@ bool ofXml::load(const ofBuffer & buffer){
 
 bool ofXml::parse(const std::string & xmlStr){
 	auto auxDoc = std::make_shared<pugi::xml_document>();
-	if(auxDoc->load(xmlStr.c_str())){
+    #if ( defined(PUGIXML_VERSION) && PUGIXML_VERSION >= 150 )
+        if(auxDoc->load_string(xmlStr.c_str())){
+    #else
+        if(auxDoc->load(xmlStr.c_str())){
+    #endif
 		doc = auxDoc;
 		xml = doc->root();
 		return true;
@@ -150,6 +154,9 @@ ofXml ofXml::getLastChild() const{
 	return ofXml(doc, this->xml.last_child());
 }
 
+ofXml ofXml::getParent() const {
+	return ofXml(doc, this->xml.parent());
+}
 
 ofXml::Attribute ofXml::getAttribute(const std::string & name) const{
 	return this->xml.attribute(name.c_str());

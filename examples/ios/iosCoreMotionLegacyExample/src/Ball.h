@@ -34,7 +34,7 @@ class Ball{
         }
 	
         //----------------------------------------------------------------	
-        void update(const ofVec3f & accelerometerData) {
+        void update(const glm::vec3 & accelerometerData) {
             vel.x += ACCELEROMETER_FORCE * accelerometerData.x * ofRandomuf();
             vel.y += -ACCELEROMETER_FORCE * accelerometerData.y * ofRandomuf();        // this one is subtracted cos world Y is opposite to opengl Y
 		

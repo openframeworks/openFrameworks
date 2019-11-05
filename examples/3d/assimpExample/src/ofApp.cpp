@@ -99,7 +99,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    ofPoint modelPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75);
+    glm::vec3 modelPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75, 0);
     switch (key) {
         case '1':
             model.loadModel("astroBoy_walk.dae");

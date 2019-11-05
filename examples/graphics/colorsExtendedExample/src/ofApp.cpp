@@ -200,7 +200,7 @@ void ofApp::update(){
     
     // smoothing the mouse a bit over time
 
-    mouseSmoothed = 0.95 * mouseSmoothed + 0.05 * ofPoint(mouseX, mouseY);
+    mouseSmoothed = 0.95 * mouseSmoothed + 0.05 * glm::vec3(mouseX, mouseY,0);
 
 }
 

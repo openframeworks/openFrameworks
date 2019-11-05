@@ -27,7 +27,7 @@ void ofApp::setup(){
 void ofApp::update(){
 	//don't move the points if we are using the camera
     if(!usecamera){
-        ofVec3f sumOfAllPoints(0,0,0);
+        glm::vec3 sumOfAllPoints(0,0,0);
         for(unsigned int i = 0; i < points.size(); i++){
             points[i].z -= 4;
             sumOfAllPoints += points[i];
@@ -53,23 +53,23 @@ void ofApp::draw(){
 	for(unsigned int i = 1; i < points.size(); i++){
 
 		//find this point and the next point
-		ofVec3f thisPoint = points[i-1];
-		ofVec3f nextPoint = points[i];
+		glm::vec3 thisPoint = points[i-1];
+		glm::vec3 nextPoint = points[i];
 
 		//get the direction from one to the next.
 		//the ribbon should fan out from this direction
-		ofVec3f direction = (nextPoint - thisPoint);
+		glm::vec3 direction = (nextPoint - thisPoint);
 
 		//get the distance from one point to the next
-		float distance = direction.length();
+		float distance = glm::length(direction);
 
 		//get the normalized direction. normalized vectors always have a length of one
 		//and are really useful for representing directions as opposed to something with length
-		ofVec3f unitDirection = direction.getNormalized();
+		glm::vec3 unitDirection = glm::normalize(direction);
 
 		//find both directions to the left and to the right
-		ofVec3f toTheLeft = unitDirection.getRotated(-90, ofVec3f(0,0,1));
-		ofVec3f toTheRight = unitDirection.getRotated(90, ofVec3f(0,0,1));
+		glm::vec3 toTheLeft =  glm::rotate(unitDirection, -90.f, glm::vec3(0,0,1));
+		glm::vec3 toTheRight = glm::rotate(unitDirection, 90.f, glm::vec3(0,0,1));
 
 		//use the map function to determine the distance.
 		//the longer the distance, the narrower the line.
@@ -78,12 +78,12 @@ void ofApp::draw(){
 
 		//calculate the points to the left and to the right
 		//by extending the current point in the direction of left/right by the length
-		ofVec3f leftPoint = thisPoint+toTheLeft*thickness;
-		ofVec3f rightPoint = thisPoint+toTheRight*thickness;
+		glm::vec3 leftPoint = thisPoint+toTheLeft*thickness;
+		glm::vec3 rightPoint = thisPoint+toTheRight*thickness;
 
 		//add these points to the triangle strip
-		mesh.addVertex(ofVec3f(leftPoint.x, leftPoint.y, leftPoint.z));
-		mesh.addVertex(ofVec3f(rightPoint.x, rightPoint.y, rightPoint.z));
+		mesh.addVertex(glm::vec3(leftPoint.x, leftPoint.y, leftPoint.z));
+		mesh.addVertex(glm::vec3(rightPoint.x, rightPoint.y, rightPoint.z));
 	}
 
 	//end the shape
@@ -112,23 +112,23 @@ void ofApp::mouseMoved(int x, int y ){
 	//if we are using the camera, the mouse moving should rotate it around the whole sculpture
     if(usecamera){
         float rotateAmount = ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 360);
-        ofVec3f furthestPoint;
+        glm::vec3 furthestPoint;
         if (points.size() > 0) {
             furthestPoint = points[0];
         }
         else
         {
-            furthestPoint = ofVec3f(x, y, 0);
+            furthestPoint = glm::vec3(x, y, 0);
         }
 
-        ofVec3f directionToFurthestPoint = (furthestPoint - center);
-        ofVec3f directionToFurthestPointRotated = directionToFurthestPoint.getRotated(rotateAmount, ofVec3f(0,1,0));
+        glm::vec3 directionToFurthestPoint = (furthestPoint - center);
+		glm::vec3 directionToFurthestPointRotated = glm::rotate(directionToFurthestPoint, rotateAmount, glm::vec3(0,1,0));
         camera.setPosition(center + directionToFurthestPointRotated);
         camera.lookAt(center);
     }
 	//otherwise add points like before
     else{
-        ofVec3f mousePoint(x,y,0);
+        glm::vec3 mousePoint(x,y,0);
         points.push_back(mousePoint);
     }
 }

@@ -13,7 +13,7 @@ void ofApp::setup(){
 	previewCamera.setNearClip(0.01f);
 	previewCamera.setFarClip(500.0f);
 	previewCamera.setPosition(0.4f, 0.2f, 0.8f);
-	previewCamera.lookAt(ofVec3f(0.0f, 0.0f, 0.0f));
+	previewCamera.lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 	
 	headTrackedCamera.setNearClip(0.01f);
 	headTrackedCamera.setFarClip(1000.0f);
@@ -22,13 +22,13 @@ void ofApp::setup(){
 	windowWidth = 0.3f;
 	windowHeight = 0.2f;
 	
-	windowTopLeft = ofVec3f(-windowWidth / 2.0f,
+	windowTopLeft = glm::vec3(-windowWidth / 2.0f,
 							+windowHeight / 2.0f,
 							0.0f);
-	windowBottomLeft = ofVec3f(-windowWidth / 2.0f,
+	windowBottomLeft = glm::vec3(-windowWidth / 2.0f,
 							   - windowHeight / 2.0f,
 							   0.0f);
-	windowBottomRight = ofVec3f(+windowWidth / 2.0f,
+	windowBottomRight = glm::vec3(+windowWidth / 2.0f,
 								-windowHeight / 2.0f,
 								0.0f);
 	
@@ -42,7 +42,7 @@ void ofApp::update(){
 	video.update();
 	finder.findHaarObjects(video.getPixels());
 	
-	ofVec3f headPosition(0,0,viewerDistance);
+	glm::vec3 headPosition(0,0,viewerDistance);
 	
 	if (finder.blobs.size() > 0) {
 		//get the head position in camera pixel coordinates
@@ -59,11 +59,11 @@ void ofApp::update(){
 		float worldHeadY = ofMap(cameraHeadY, 0, video.getHeight(), windowTopLeft.y, windowBottomLeft.y);
 		
 		//set position in a pretty arbitrary way
-		headPosition = ofVec3f(worldHeadX, worldHeadY, viewerDistance);
+		headPosition = glm::vec3(worldHeadX, worldHeadY, viewerDistance);
 	} else {
 		if (!video.isInitialized()) {
 			//if video isn't working, just make something up
-			headPosition = ofVec3f(0.5f * windowWidth * sin(ofGetElapsedTimef()), 0.5f * windowHeight * cos(ofGetElapsedTimef()), viewerDistance);
+			headPosition = glm::vec3(0.5f * windowWidth * sin(ofGetElapsedTimef()), 0.5f * windowHeight * cos(ofGetElapsedTimef()), viewerDistance);
 		}
 	}
 	
@@ -140,7 +140,7 @@ void ofApp::drawScene(bool isPreview){
 	ofSetLineWidth(5.0f);
 	ofBeginShape();
 	for (unsigned int i=0; i<headPositionHistory.size(); i++) {
-		ofPoint vertex(headPositionHistory[i].x, headPositionHistory[i].y, -float( headPositionHistory.size() - i ) * 0.05f);
+		glm::vec3 vertex(headPositionHistory[i].x, headPositionHistory[i].y, -float( headPositionHistory.size() - i ) * 0.05f);
 		ofCurveVertex(vertex);
 	}
 	ofEndShape(false);

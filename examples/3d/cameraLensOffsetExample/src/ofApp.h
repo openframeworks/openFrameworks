@@ -26,9 +26,9 @@ class ofApp : public ofBaseApp{
 		ofxCvHaarFinder finder;
 	
 		//the view window is defined by 3 corners
-		ofVec3f windowTopLeft;
-		ofVec3f windowBottomLeft;
-		ofVec3f windowBottomRight;
+		glm::vec3 windowTopLeft;
+		glm::vec3 windowBottomLeft;
+		glm::vec3 windowBottomRight;
 		ofCamera headTrackedCamera;
 		ofEasyCam previewCamera;
 	
@@ -37,7 +37,7 @@ class ofApp : public ofBaseApp{
 		float windowHeight;
 		float viewerDistance;
 	
-		deque<ofPoint> headPositionHistory;
+		deque<glm::vec3> headPositionHistory;
 
 		ofVboMesh window;
 };

@@ -17,6 +17,12 @@ ofPath::Command::Command(Type type)
 ofPath::Command::Command(Type type , const glm::vec3 & p)
 :type(type)
 ,to(p)
+,cp1(glm::vec3(0))
+,cp2(glm::vec3(0))
+,radiusX(0)
+,radiusY(0)
+,angleBegin(0)
+,angleEnd(0)
 {}
 
 //----------------------------------------------------------
@@ -25,6 +31,10 @@ ofPath::Command::Command(Type type , const glm::vec3 & p, const glm::vec3 & cp1,
 ,to(p)
 ,cp1(cp1)
 ,cp2(cp2)
+,radiusX(0)
+,radiusY(0)
+,angleBegin(0)
+,angleEnd(0)
 {
 }
 
@@ -32,6 +42,8 @@ ofPath::Command::Command(Type type , const glm::vec3 & p, const glm::vec3 & cp1,
 ofPath::Command::Command(Type type , const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd)
 :type(type)
 ,to(centre)
+,cp1(glm::vec3(0))
+,cp2(glm::vec3(0))
 ,radiusX(radiusX)
 ,radiusY(radiusY)
 ,angleBegin(angleBegin)
@@ -685,7 +697,7 @@ void ofPath::setMode(Mode _mode){
 }
 
 //----------------------------------------------------------
-ofPath::Mode ofPath::getMode(){
+ofPath::Mode ofPath::getMode() const {
 	return mode;
 }
 

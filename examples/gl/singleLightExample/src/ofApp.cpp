@@ -15,7 +15,7 @@ void ofApp::setup(){
     ofSetSphereResolution(32);
 
 	radius		= 300.f;
-	center.set(ofGetWidth()*.5, ofGetHeight()*.5, 0);
+	center = {ofGetWidth()*.5, ofGetHeight()*.5, 0};
 
     // Point lights emit light in all directions //
     // set the diffuse color, color reflected from the light source //

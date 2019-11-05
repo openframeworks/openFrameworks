@@ -17,13 +17,11 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
-    
-    
     // add points all the time
     if(points.size() < 500000) {
         for (int i=0; i<30; i++) {
             addPoint(ofGetWidth()/2, ofGetHeight()/2);
-        }    
+        }
     }
     
     // move all the points around
@@ -34,9 +32,9 @@ void ofApp::update() {
         speeds[i]   *= 0.98;
         
         // move from the mouse
-        ofVec2f mouseVec = ofVec2f(ofGetMouseX(), ofGetMouseY()) - points[i];
-        if(mouseVec.length() < 100) {
-            mouseVec.normalize();
+        glm::vec2 mouseVec = glm::vec2(ofGetMouseX(), ofGetMouseY()) - points[i];
+        if(glm::length(mouseVec) < 100) {
+            mouseVec = glm::normalize(mouseVec);
             speeds[i] -= mouseVec;
         }
         
@@ -113,7 +111,7 @@ void ofApp::keyPressed(int key) {
     if(key == 'z') {
         for (int i=0; i<400000; i++) {
             addPoint(ofRandomWidth(), ofRandomHeight());
-        }    
+        }
     }
     
 }
@@ -130,7 +128,6 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-    
     // add a bunch as you drag
     for (int i=0; i<400; i++) {
         addPoint(x, y);

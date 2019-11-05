@@ -12,27 +12,27 @@
  vertices, or texture coordinates.
  */
 //--------------------------------------------------------------
-void ofApp::addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c) {
+void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c) {
 	mesh.addVertex(a);
 	mesh.addVertex(b);
 	mesh.addVertex(c);
 }
 
 //--------------------------------------------------------------
-void ofApp::addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c, ofVec3f d) {
+void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d) {
 	addFace(mesh, a, b, c);
 	addFace(mesh, a, c, d);
 }
 
 //--------------------------------------------------------------
-void ofApp::addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c) {
+void ofApp::addTexCoords(ofMesh& mesh, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c) {
 	mesh.addTexCoord(a);
 	mesh.addTexCoord(b);
 	mesh.addTexCoord(c);
 }
 
 //--------------------------------------------------------------
-void ofApp::addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c, ofVec2f d) {
+void ofApp::addTexCoords(ofMesh& mesh, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& d) {
 	addTexCoords(mesh, a, b, c);
 	addTexCoords(mesh, a, c, d);
 }
@@ -42,13 +42,13 @@ void ofApp::addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c, ofVec2f 
  a 3d point from the current x,y image position.
  */
 //--------------------------------------------------------------
-ofVec3f ofApp::getVertexFromImg(ofImage& img, int x, int y) {
+glm::vec3 ofApp::getVertexFromImg(ofImage& img, int x, int y) {
 	ofColor color = img.getColor(x, y);
 	if(color.a > 0) {
 		float z = ofMap(color.a, 0, 255, -480, 480);
-		return ofVec3f(x - img.getWidth() / 2, y - img.getHeight() / 2, z);
+		return glm::vec3(x - img.getWidth() / 2, y - img.getHeight() / 2, z);
 	} else {
-		return ofVec3f(0, 0, 0);
+		return glm::vec3(0, 0, 0);
 	}
 }
 
@@ -72,9 +72,9 @@ void ofApp::setup() {
 	int width = img.getWidth();
 	int height = img.getHeight();
 
-	ofVec2f imageSize(width,height);
+	glm::vec2 imageSize(width,height);
 
-	ofVec3f zero(0, 0, 0);
+	glm::vec3 zero(0, 0, 0);
 	for(int y = 0; y < height - skip; y += skip) {
 		for(int x = 0; x < width - skip; x += skip) {
 			/*
@@ -83,14 +83,14 @@ void ofApp::setup() {
 			 beneath. These are called nw, ne, se and sw. To get the texture coords
 			 we need to use the actual image indices.
 			 */
-			ofVec3f nw = getVertexFromImg(img, x, y);
-			ofVec3f ne = getVertexFromImg(img, x + skip, y);
-			ofVec3f sw = getVertexFromImg(img, x, y + skip);
-			ofVec3f se = getVertexFromImg(img, x + skip, y + skip);
-			ofVec2f nwi(x, y);
-			ofVec2f nei(x + skip, y);
-			ofVec2f swi(x, y + skip);
-			ofVec2f sei(x + skip, y + skip);
+			glm::vec3 nw = getVertexFromImg(img, x, y);
+			glm::vec3 ne = getVertexFromImg(img, x + skip, y);
+			glm::vec3 sw = getVertexFromImg(img, x, y + skip);
+			glm::vec3 se = getVertexFromImg(img, x + skip, y + skip);
+			glm::vec2 nwi(x, y);
+			glm::vec2 nei(x + skip, y);
+			glm::vec2 swi(x, y + skip);
+			glm::vec2 sei(x + skip, y + skip);
 
 			// ignore any zero-data (where there is no depth info)
 			if(nw != zero && ne != zero && sw != zero && se != zero) {
@@ -131,7 +131,7 @@ void ofApp::draw() {
 
 	img.bind(); // bind the image to begin texture mapping
 	int n = 5; // make a 5x5 grid
-	ofVec2f spacing(img.getWidth(), img.getHeight()); // spacing between meshes
+	glm::vec2 spacing(img.getWidth(), img.getHeight()); // spacing between meshes
 	ofTranslate(-spacing.x * n / 2, -spacing.y * n / 2, 0); // center the grid
 	for(int i = 0; i < n; i++) { // loop through the rows
 		for(int j = 0; j < n; j++) { // loop through the columns
@@ -159,15 +159,13 @@ void ofApp::draw() {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-	if(key == ' ') {
-		ofToggleFullscreen();
-	}
-}
+void ofApp::keyPressed(int key){}
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
+	if(key == ' ') {
+		ofToggleFullscreen();
+	}
 }
 
 //--------------------------------------------------------------

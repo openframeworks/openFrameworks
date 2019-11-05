@@ -83,20 +83,20 @@ createArchImg(){
         echo "Downloading archlinux image"
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
 		cd ~
-		wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+		wget -v http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
         # download=$!
         # echoDots $download
         # wait $download
 
 		mkdir ~/archlinux
-		junest -u << EOF
+		junest -- << EOF
 	        tar xzf ~/ArchLinuxARM-rpi-2-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
-            pacman --noconfirm -Sy archlinux-keyring
-            pacman --noconfirm -Syu ccache
-			pacman --noconfirm -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -Syu
-			pacman --noconfirm -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -S \
+            pacman --noconfirm -S archlinux-keyring
+            pacman --noconfirm -S ccache
+			pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -Syu
+			pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -S \
 				make \
 				pkg-config \
 				gcc \
@@ -138,7 +138,7 @@ downloadToolchain(){
 		fi
         cd ~
 		wget --quiet http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
-		junest -u << EOF
+		junest -- << EOF
 	        tar -x --delay-directory-restore --no-same-owner -f ~/x-tools7h.tar.xz -C ~/
 	        rm ~/x-tools7h.tar.xz
 EOF
@@ -202,13 +202,14 @@ installJunest(){
 		git clone git://github.com/fsquillace/junest ~/.local/share/junest
 	fi
 	export PATH=~/.local/share/junest/bin:$PATH
-	junest -u << EOF
+	junest setup
+	junest -- << EOF
         echo updating keys
-        pacman -S gnupg --noconfirm
+        pacman -Syy gnupg --noconfirm --needed
         pacman-key --populate archlinux
         pacman-key --refresh-keys
 		pacman -Syyu --noconfirm
-		pacman -S --noconfirm git flex grep gcc pkg-config make wget
+		pacman -S --noconfirm --needed git flex grep gcc pkg-config make wget sed
 EOF
     echo "Done installing junest"
 }

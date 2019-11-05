@@ -28,12 +28,12 @@ void ofApp::draw(){
 	
 	int n = mesh.getNumVertices();
 	float nearestDistance = 0;
-	ofVec2f nearestVertex;
+	glm::vec2 nearestVertex;
 	int nearestIndex = 0;
-	ofVec2f mouse(mouseX, mouseY);
+	glm::vec3 mouse(mouseX, mouseY,0);
 	for(int i = 0; i < n; i++) {
-		ofVec3f cur = cam.worldToScreen(mesh.getVertex(i));
-		float distance = cur.distance(mouse);
+		glm::vec3 cur = cam.worldToScreen(mesh.getVertex(i));
+		float distance = glm::distance(cur, mouse);
 		if(i == 0 || distance < nearestDistance) {
 			nearestDistance = distance;
 			nearestVertex = cur;
@@ -50,7 +50,7 @@ void ofApp::draw(){
 	ofDrawCircle(nearestVertex, 4);
 	ofSetLineWidth(1);
 	
-	ofVec2f offset(10, -10);
+	glm::vec2 offset(10, -10);
 	ofDrawBitmapStringHighlight(ofToString(nearestIndex), mouse + offset);
 }
 

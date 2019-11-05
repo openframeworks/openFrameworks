@@ -104,8 +104,8 @@ var LibraryHTML5Video = {
 
     html5video_player_load__deps: ['$GL'],
     html5video_player_load: function(id,src){
-        console.log(Pointer_stringify(src));
-        VIDEO.players[id].src = Pointer_stringify(src);
+        console.log(UTF8ToString(src));
+        VIDEO.players[id].src = UTF8ToString(src);
         var texId = GL.getNewId(GL.textures);
         var texture = GLctx.createTexture();
         texture.name = texId;
@@ -124,7 +124,7 @@ var LibraryHTML5Video = {
     },
 
     html5video_player_set_pixel_format: function(id, format){
-        VIDEO.players[id].pixelFormat = Pointer_stringify(format);
+        VIDEO.players[id].pixelFormat = UTF8ToString(format);
     },
 
     html5video_player_update__deps: ['$GL'],
@@ -223,7 +223,7 @@ var LibraryHTML5Video = {
 	        var grabber_id = VIDEO.getNewGrabberId();
 	        VIDEO.grabbers[grabber_id] = video;
 	        return grabber_id;
-    	
+
     },
 
     html5video_grabber_init__deps: ['$GL'],
@@ -290,7 +290,7 @@ var LibraryHTML5Video = {
     },
 
     html5video_grabber_set_pixel_format: function(id, format){
-        VIDEO.grabbers[id].pixelFormat = Pointer_stringify(format);
+        VIDEO.grabbers[id].pixelFormat = UTF8ToString(format);
     },
 
     html5video_grabber_update__deps: ['$GL'],

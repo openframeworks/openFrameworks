@@ -5,9 +5,9 @@ class Bug {
 
 public:
 
-    ofVec2f          pos, vel;
+    glm::vec2          pos, vel;
     float            size;
-    vector <ofVec2f> squashPts;
+    vector <glm::vec2> squashPts;
     bool             bSquashed;
     bool             bRemove;
     float            timeBugKilled;
@@ -22,7 +22,7 @@ public:
         // make a squash shape
         int nPts = 10;
         for(int i=0; i<nPts; i++) {
-            squashPts.push_back(ofVec2f(ofRandom(-4, 4), ofRandom(-4, 4)));
+            squashPts.push_back(glm::vec2(ofRandom(-4, 4), ofRandom(-4, 4)));
         }
     }
 

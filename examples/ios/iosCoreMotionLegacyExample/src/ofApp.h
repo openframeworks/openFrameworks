@@ -27,7 +27,7 @@ public:
     void gotMessage(ofMessage msg);
     
     ofxiOSCoreMotion coreMotion;
-    ofVec3f accelerometerData;
+    glm::vec3 accelerometerData;
     vector<Ball> balls;
     ofImage arrow;
 
