@@ -395,6 +395,8 @@ function createPackage {
     if [ "$pkg_platform" = "vs2015" ] || [ "$pkg_platform" = "vs2017" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
 		npm install > /dev/null
+        npm install -g n
+        n 6.11.0
 		npm run build:vs > /dev/null
 		mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-vs
 		cd ${pkg_ofroot}
@@ -426,7 +428,9 @@ function createPackage {
 
 	if [ "$pkg_platform" = "linux" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-		npm install > /dev/null
+        npm install > /dev/null
+        npm install -g n
+        n 6.11.0
 		npm run build:linux32 > /dev/null
 		mv dist/projectGenerator-linux-ia32 ${pkg_ofroot}/projectGenerator-linux
 		cd ${pkg_ofroot}
@@ -435,7 +439,9 @@ function createPackage {
 
 	if [ "$pkg_platform" = "linux64" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-		npm install > /dev/null
+        npm install > /dev/null
+        npm install -g n
+        n 6.11.0
 		npm run build:linux64 > /dev/null
 		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
 		cd ${pkg_ofroot}
@@ -444,7 +450,9 @@ function createPackage {
 
     if [ "$pkg_platform" = "android" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-		npm install > /dev/null
+        npm install > /dev/null
+        npm install -g n
+        n 6.11.0
 		npm run build:vs > /dev/null
 		mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-windows
 		cd ${pkg_ofroot}/projectGenerator-windows/resources/app/app/
@@ -460,7 +468,9 @@ function createPackage {
         rm projectGenerator-android.zip
 
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-		npm install > /dev/null
+        npm install > /dev/null
+        npm install -g n
+        n 6.11.0
 		npm run build:linux64 > /dev/null
 		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
 		cd ${pkg_ofroot}
