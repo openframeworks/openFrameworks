@@ -866,7 +866,7 @@ void ofTexture::disableAlphaMask(){
 //----------------------------------------------------------
 glm::vec2 ofTexture::getCoordFromPoint(float xPos, float yPos) const{
 	
-	glm::vec2 temp;
+	glm::vec2 temp(0);
 	
 	if (!isAllocated()) return temp;
 	
@@ -927,7 +927,7 @@ bool ofTexture::isUsingTextureMatrix() const{
 //----------------------------------------------------------
 glm::vec2 ofTexture::getCoordFromPercent(float xPct, float yPct) const{
 	
-	glm::vec2 temp;
+	glm::vec2 temp(0);
 	
 	if (!isAllocated()) return temp;
 	
