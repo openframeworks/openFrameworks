@@ -22,7 +22,7 @@ void ofApp::update(){
 	float zAngleRad = ofDegToRad(45.0);
 
 	// Construct a quaternion.
-	glm::quat quat;
+	glm::quat quat(1,0,0,0);
 
 	quat *= glm::angleAxis(xAngleRad, glm::vec3(1, 0, 0));
 	quat *= glm::angleAxis(yAngleRad, glm::vec3(0, 1, 0));
