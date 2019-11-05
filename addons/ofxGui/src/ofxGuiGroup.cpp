@@ -229,12 +229,12 @@ void ofxGuiGroup::add(ofParameter <ofShortColor> & parameter){
 void ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter){
 	add(new ofxColorSlider_ <float>(parameter, b.width));
 }
-
+void ofxGuiGroup::add(ofParameter <ofRectangle> & parameter){
+	add(new ofxRectangleSlider(parameter, b.width));
+}
 void ofxGuiGroup::clear(){
 	collection.clear();
 	parameters.clear();
-	
-	b.height = (bHeaderEnabled?headerRect.height:0) + spacing + spacingNextElement;
 	sizeChangedCB();
 }
 
@@ -246,7 +246,7 @@ bool ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
 			return true;
 		}
 	}
-	if(b.inside(ofPoint(args.x, args.y))){
+	if(b.inside(args)){
 		return true;
 	}else{
 		return false;
@@ -263,18 +263,19 @@ bool ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
 	ofMouseEventArgs a = args;
 	for(std::size_t i = 0; i < collection.size(); i++){
 		if(collection[i]->mousePressed(a)){
+//			return true;
 			attended = true;
 		}
 	}
-	return attended;
+	return attended || b.inside(args);
 }
 
 bool ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
 	if(!isGuiDrawing())return false;
-	if(setValue(args.x, args.y, false)){
-		return true;
-	}
 	if(bGuiActive){
+		if(setValue(args.x, args.y, false)){
+			return true;
+		}
 		ofMouseEventArgs a = args;
 		for(std::size_t i = 0; i < collection.size(); i++){
 			if(collection[i]->mouseDragged(a)){
@@ -286,19 +287,25 @@ bool ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
 }
 
 bool ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
-	bGuiActive = false;
-	if(!isGuiDrawing())return false;
-	for(std::size_t k = 0; k < collection.size(); k++){
-		ofMouseEventArgs a = args;
-		if(collection[k]->mouseReleased(a)){
-			return true;
-		}
-	}
-	if(b.inside(ofPoint(args.x, args.y))){
-		return true;
-	}else{
+	if(!isGuiDrawing()){
+		bGuiActive = false;
 		return false;
 	}
+	if(bGuiActive){
+		bGuiActive = false;
+		for(std::size_t k = 0; k < collection.size(); k++){
+			ofMouseEventArgs a = args;
+			if(collection[k]->mouseReleased(a)){
+				return true;
+			}
+		}
+		if(b.inside(ofPoint(args.x, args.y))){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	return false;
 }
 
 bool ofxGuiGroup::mouseScrolled(ofMouseEventArgs & args){
@@ -309,7 +316,7 @@ bool ofxGuiGroup::mouseScrolled(ofMouseEventArgs & args){
 			return true;
 		}
 	}
-	if(b.inside(ofPoint(args.x, args.y))){
+	if(b.inside(args)){
 		return true;
 	}else{
 		return false;
@@ -524,8 +531,8 @@ ofAbstractParameter & ofxGuiGroup::getParameter(){
 	return parameters;
 }
 
-void ofxGuiGroup::setPosition(const ofPoint& p){
-	ofVec2f diff = p - b.getPosition();
+void ofxGuiGroup::setPosition(const glm::vec3& p){
+	auto diff = p - b.getPosition();
 
 	for(std::size_t i = 0; i < collection.size(); i++){
 		collection[i]->setPosition(collection[i]->getPosition() + diff);
@@ -536,7 +543,7 @@ void ofxGuiGroup::setPosition(const ofPoint& p){
 }
 
 void ofxGuiGroup::setPosition(float x, float y){
-	setPosition(ofVec2f(x, y));
+	setPosition({x, y, 0});
 }
 
 void ofxGuiGroup::enableHeader(){

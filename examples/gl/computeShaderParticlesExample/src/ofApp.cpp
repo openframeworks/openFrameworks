@@ -13,14 +13,14 @@ void ofApp::setup(){
 		p.pos.y = ofRandom(-ofGetHeight()*0.5,ofGetHeight()*0.5);
 		p.pos.z = ofRandom(-ofGetHeight()*0.5,ofGetHeight()*0.5);
 		p.pos.w = 1;
-		p.vel.set(0,0,0,0);
+		p.vel = {0,0,0,0};
 		i++;
 	}
 	particlesBuffer.allocate(particles,GL_DYNAMIC_DRAW);
 	particlesBuffer2.allocate(particles,GL_DYNAMIC_DRAW);
 
 	vbo.setVertexBuffer(particlesBuffer,4,sizeof(Particle));
-	vbo.setColorBuffer(particlesBuffer,sizeof(Particle),sizeof(ofVec4f)*2);
+	vbo.setColorBuffer(particlesBuffer,sizeof(Particle),sizeof(glm::vec4)*2);
 	vbo.disableColors();
 	dirAsColor = false;
 
@@ -54,15 +54,15 @@ void ofApp::update(){
 	compute.setUniform1f("timeLastFrame",ofGetLastFrameTime());
 	compute.setUniform1f("elapsedTime",ofGetElapsedTimef());
 	float size = 4;
-	atractor1.set(ofMap(ofNoise(ofGetElapsedTimef()*0.3),0,1,-ofGetWidth()*size,ofGetWidth()*size),
-			ofMap(ofNoise(ofGetElapsedTimef()*0.3+0.2),0,1,-ofGetHeight()*size,ofGetHeight()*size),
-			ofMap(ofNoise(ofGetElapsedTimef()*0.3+0.5),0,1,0,-ofGetHeight()*size));
-	atractor2.set(ofMap(ofNoise(ofGetElapsedTimef()*0.5+0.3),0,1,-ofGetWidth()*size,ofGetWidth()*size),
-			ofMap(ofNoise(ofGetElapsedTimef()*0.5+0.2),0,1,-ofGetHeight()*size,ofGetHeight()*size),
-			ofMap(ofNoise(ofGetElapsedTimef()*0.5+0.1),0,1,0,-ofGetHeight()*size));
-	atractor3.set(ofMap(ofNoise(ofGetElapsedTimef()*0.9+0.1),0,1,-ofGetWidth()*size,ofGetWidth()*size),
-			ofMap(ofNoise(ofGetElapsedTimef()*0.9+0.5),0,1,-ofGetHeight()*size,ofGetHeight()*size),
-			ofMap(ofNoise(ofGetElapsedTimef()*0.9+0.7),0,1,0,-ofGetHeight()*size));
+	atractor1 = {ofMap(ofNoise(ofGetElapsedTimef()*0.3),0,1,-ofGetWidth()*size,ofGetWidth()*size),
+				ofMap(ofNoise(ofGetElapsedTimef()*0.3+0.2),0,1,-ofGetHeight()*size,ofGetHeight()*size),
+				ofMap(ofNoise(ofGetElapsedTimef()*0.3+0.5),0,1,0,-ofGetHeight()*size)};
+	atractor2 = {ofMap(ofNoise(ofGetElapsedTimef()*0.5+0.3),0,1,-ofGetWidth()*size,ofGetWidth()*size),
+				ofMap(ofNoise(ofGetElapsedTimef()*0.5+0.2),0,1,-ofGetHeight()*size,ofGetHeight()*size),
+				ofMap(ofNoise(ofGetElapsedTimef()*0.5+0.1),0,1,0,-ofGetHeight()*size)};
+	atractor3 = {ofMap(ofNoise(ofGetElapsedTimef()*0.9+0.1),0,1,-ofGetWidth()*size,ofGetWidth()*size),
+				ofMap(ofNoise(ofGetElapsedTimef()*0.9+0.5),0,1,-ofGetHeight()*size,ofGetHeight()*size),
+				ofMap(ofNoise(ofGetElapsedTimef()*0.9+0.7),0,1,0,-ofGetHeight()*size)};
 
 	compute.setUniform3f("attractor1",atractor1.x,atractor1.y,atractor1.z);
 	compute.setUniform3f("attractor2",atractor2.x,atractor2.y,atractor2.z);

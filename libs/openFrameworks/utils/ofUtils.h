@@ -113,8 +113,8 @@ struct ofTime{
 		auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(duration);
 		ofTime t = *this;
 		t.nanoseconds += ns.count();
-		if(this->nanoseconds>NANOS_PER_SEC){
-			uint64_t secs = this->nanoseconds / NANOS_PER_SEC;
+		if(t.nanoseconds>=NANOS_PER_SEC){
+			uint64_t secs = t.nanoseconds / NANOS_PER_SEC;
 			t.nanoseconds -= NANOS_PER_SEC*secs;
 			t.seconds+=secs;
 		}
@@ -126,7 +126,7 @@ struct ofTime{
 		constexpr uint64_t NANOS_PER_SEC = 1000000000ll;
 		auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(duration);
 		this->nanoseconds += ns.count();
-		if(this->nanoseconds>NANOS_PER_SEC){
+		if(this->nanoseconds>=NANOS_PER_SEC){
 			uint64_t secs = this->nanoseconds / NANOS_PER_SEC;
 			this->nanoseconds -= NANOS_PER_SEC*secs;
 			this->seconds+=secs;
@@ -476,21 +476,161 @@ std::string ofToLower(const std::string& src, const std::string & locale="");
 /// \returns the UTF-8 encoded string as all uppercase characters.
 std::string ofToUpper(const std::string& src, const std::string & locale="");
 
+/// \brief Remove locale-defined whitespace from the beginning of a string.
+///
+/// With the default locale, the following white spaces will be removed:
+///
+///    space (0x20, ' ')
+///    form feed (0x0c, '\f')
+///    line feed (0x0a, '\n')
+///    carriage return (0x0d, '\r')
+///    horizontal tab (0x09, '\t')
+///    vertical tab (0x0b, '\v')
+///
+/// ~~~~{.cpp}
+///     std::string original = "     Hello, World!";
+///     std::string trimmed = ofTrimFront(original);
+///     ofLog() << trimmed; // Returns "Hello, World"
+/// ~~~~
+///
+/// \sa https://en.cppreference.com/w/cpp/string/byte/isspace
+///
+/// \param src The original un-trimmed string.
+/// \param locale The locale for determining the definition of "spaces".
+/// \returns a front-trimmed std::string.
 std::string ofTrimFront(const std::string & src, const std::string & locale = "");
+
+/// \brief Remove locale-defined whitespace from the end of a string.
+///
+/// With the default locale, the following white spaces will be removed:
+///
+///    space (0x20, ' ')
+///    form feed (0x0c, '\f')
+///    line feed (0x0a, '\n')
+///    carriage return (0x0d, '\r')
+///    horizontal tab (0x09, '\t')
+///    vertical tab (0x0b, '\v')
+///
+/// ~~~~{.cpp}
+///     std::string original = "Hello, World!     ";
+///     std::string trimmed = ofTrimBack(original);
+///     ofLog() << trimmed; // Returns "Hello, World"
+/// ~~~~
+///
+/// \sa https://en.cppreference.com/w/cpp/string/byte/isspace
+///
+/// \param src The original un-trimmed string.
+/// \param locale The locale for determining the definition of "spaces".
+/// \returns a front-trimmed std::string.
 std::string ofTrimBack(const std::string & src, const std::string & locale = "");
+
+/// \brief Remove locale-defined whitespace from the beginning and end of a string.
+///
+/// With the default locale, the following white spaces will be removed:
+///
+///    space (0x20, ' ')
+///    form feed (0x0c, '\f')
+///    line feed (0x0a, '\n')
+///    carriage return (0x0d, '\r')
+///    horizontal tab (0x09, '\t')
+///    vertical tab (0x0b, '\v')
+///
+/// ~~~~{.cpp}
+///     std::string original = "     Hello, World!     ";
+///     std::string trimmed = ofTrim(original);
+///     ofLog() << trimmed; // Returns "Hello, World"
+/// ~~~~
+///
+/// \sa https://en.cppreference.com/w/cpp/string/byte/isspace
+///
+/// \param src The original un-trimmed string.
+/// \param locale The locale for determining the definition of "spaces".
+/// \returns a front-trimmed std::string.
 std::string ofTrim(const std::string & src, const std::string & locale = "");
 
 OF_DEPRECATED_MSG("Use ofUTF8Append instead", void ofAppendUTF8(std::string & str, uint32_t utf8));
 
-void ofUTF8Append(std::string & str, uint32_t utf8);
-void ofUTF8Insert(std::string & str, size_t pos, uint32_t utf8);
-void ofUTF8Erase(std::string & str, size_t start, size_t len);
-std::string ofUTF8Substring(const std::string & str, size_t start, size_t len);
-std::string ofUTF8ToString(uint32_t utf8);
-size_t ofUTF8Length(const std::string & str);
+/// \brief Append a Unicode codepoint to a UTF8-encoded std::string.
+///
+/// ~~~~{.cpp}
+///    uint32_t original = 0x0001F603; // "😃"
+///    std::string utf8String = "Hello ";
+///    ofUTF8Append(utf8String, original);
+///    ofLog() << utf8String; // Prints "Hello 😃".
+/// ~~~~
+///
+/// \param utf8 The UTF8-encoded std::string to be modified.
+/// \param codepoint The Unicode codepoint that will be converted to UTF8 and appended to \p utf8.
+void ofUTF8Append(std::string & utf8, uint32_t codepoint);
+
+/// \brief Insert a Unicode codepoint into a UTF8-encoded string at a position.
+///
+/// ~~~~{.cpp}
+///    std::string utf8String = "Helloworld!";
+///    uint32_t codepoint = 0x0001F603; // "😃"
+///    ofUTF8Insert(utf8String, 5, codepoint); // Insert "Hello😃world!"
+///    ofLog() << utf8String; // Prints "Hello😃world!".
+/// ~~~~
+///
+/// \param utf8 The string to insert a codepoint into.
+/// \param pos The codepoint position in the UTF8-encoded string.
+/// \param codepoint The codepoint to insert.
+void ofUTF8Insert(std::string & utf8, size_t pos, uint32_t codepoint);
+
+/// \brief Erase a range of codepoints from a UTF8-encoded substring.
+///
+/// ~~~~{.cpp}
+///    std::string utf8String = "Hello world! 😃";
+///    ofUTF8Erase(utf8String, 0, 13); // Erase "Hello world! "
+///    ofLog() << utf8String; // Prints "😃".
+/// ~~~~
+///
+/// \param utf8 The string to extract from.
+/// \param pos The codepoint position in the UTF8-encoded string.
+/// \param len The number of codepoints starting at \pos to extract.
+/// \returns a UTF8-encoded substring.
+void ofUTF8Erase(std::string & utf8, size_t pos, size_t len);
+
+/// \brief Extract a range of codepoints from as a std::string.
+///
+/// ~~~~{.cpp}
+///    std::string utf8String = "Hello world! 😃";
+///    ofLog() << ofUTF8Substring(utf8String, 13, 1); // Prints "😃".
+/// ~~~~
+///
+/// \param utf8 The string to extract from.
+/// \param pos The codepoint position in the UTF8-encoded string.
+/// \param len The number of codepoints starting at \pos to extract.
+/// \returns a UTF8-encoded substring.
+std::string ofUTF8Substring(const std::string & utf8, size_t pos, size_t len);
+
+/// \brief Convert a Unicode codepoint to a UTF8-encoded std::string.
+///
+/// ~~~~{.cpp}
+///    uint32_t original = 0x0001F603; // "😃"
+///    std::string utf8String = ofUTF8ToString(original);
+///    ofLog() << utf8String; // Prints 😃.
+/// ~~~~
+///
+/// \param codepoint The Unicode codepoint.
+/// \returns a UTF8-encoded string.
+std::string ofUTF8ToString(uint32_t codepoint);
+
+/// \brief Get the number of Unicode code points in a UTF8-encoded string.
+///
+/// ~~~~{.cpp}
+///    std::string original = "😃";
+///    ofLog() << original.size(); // Returns 4.
+///    ofLog() << ofUTF8Length(original); // Returns 1.
+/// ~~~~
+///
+/// \param utf8 The UTF8-encoded std::string.
+/// \returns the number of Unicode codepoints in the given string, or 0 if the
+///          string is an invalid UTF8 string.
+size_t ofUTF8Length(const std::string & utf8);
 
 /// \brief Convert a variable length argument to a string.
-/// \param format a printf-style format string.
+/// \param format A printf-style format string.
 /// \returns A string representation of the argument list.
 std::string ofVAArgsToString(const char * format, ...);
 
@@ -508,9 +648,9 @@ std::string ofVAArgsToString(const char * format, va_list args);
 ///
 /// Example:
 /// ~~~~{.cpp}
-///		std::string str = "framerate is ";
-///		str += ofToString(ofGetFrameRate()) + " fps";
-///		// The string now containes something like "framerate is 60 fps".
+///    std::string str = "framerate is ";
+///    str += ofToString(ofGetFrameRate()) + " fps";
+///    // The string now contains something like "framerate is 60 fps".
 /// ~~~~
 ///
 /// \tparam T The data type of the value to convert to a string.
@@ -605,9 +745,9 @@ template<class T>
 T ofFromString(const std::string & value){
 	T data;
 	std::stringstream ss;
-    ss << value;
-    ss >> data;
-    return data;
+	ss << value;
+	ss >> data;
+	return data;
 }
 
 /// \brief Convert a string represetnation to another string.
@@ -625,7 +765,12 @@ std::string ofFromString(const std::string & value);
 template<>
 const char * ofFromString(const std::string & value);
 
-template<typename T> T ofTo(const std::string & str){
+/// \brief Convert a string to a given data type.
+/// \tparam T The return type.
+/// \param value The string value to convert to a give type.
+/// \returns the string converted to the type.
+template<typename T>
+T ofTo(const std::string & str){
 	T x;
 	std::istringstream cur(str);
 	cur >> x;
@@ -843,7 +988,7 @@ std::string ofBinaryToString(const std::string& value);
 ///
 /// \sa http://semver.org/
 /// \returns The string representation of the version (e.g. `0.9.0`).
-std::string 	ofGetVersionInfo();
+std::string ofGetVersionInfo();
 
 /// \brief Get the major version number of openFrameworks.
 ///
@@ -888,7 +1033,7 @@ std::string ofGetVersionPreRelease();
 ///
 /// Example:
 /// ~~~~{.cpp}
-///		ofSaveScreen("screen.png"); // Will save screen.png in the /data folder.
+///    ofSaveScreen("screen.png"); // Will save screen.png in the /data folder.
 /// ~~~~
 ///
 /// The output file type will be deduced from the given file name.
@@ -913,7 +1058,9 @@ void ofSaveViewport(const std::string& filename);
 
 
 /// \section System
+
 /// \brief Launch the given URL in the default browser.
+///
 /// \param url the URL to open.
 /// \param uriEncodeQuery true if the query parameters in the given URL have
 /// already been URL encoded.
@@ -922,38 +1069,69 @@ void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery=false);
 #endif
 
 /// \brief Executes a system command. Similar to run a command in terminal.
+///
 /// \note Will block until the executed program/command has finished.
 /// \returns the system command output as string.
 std::string ofSystem(const std::string& command);
 
 /// \brief Get the target platform of the current system.
+///
 /// \returns the current ofTargetPlatform.
 ofTargetPlatform ofGetTargetPlatform();
 
 /// \brief Get the value of a given environment variable.
+///
 /// \note The available environment variables differ between operating systems.
 /// \returns the environmnt variable's value or an empty string if not found.
 std::string ofGetEnv(const std::string & var);
 
-/// Allows to iterate over a string's utf8 codepoints.
-/// The easiest way to use it is with a c++11 range style
-/// for loop like:
+/// \brief Iterate through each Unicode codepoint in a UTF8-encoded std::string.
 ///
-/// for(auto c: ofUTF8Iterator(str)){
-/// ...
-/// }
+/// For UTF8-encoded strings each Unicode codepoint is comprised of between one
+/// and four bytes. Thus to access individual Unicode codepoints, we must step
+/// through a std::string in a UTF8-aware way.
 ///
-/// which will iterate through all the utf8 codepoints in the
-/// string.
+/// The easiest way to use it is with a C++11 range style for loop like:
+///
+/// ~~~~{.cpp}
+///     for(uint32_t codePoint: ofUTF8Iterator(str)){
+///         // ...
+///     }
+/// ~~~~
+///
+/// which will iterate through all the utf8 codepoints in the string.
+///
+/// If the passed UTF8-encoded std::string is invalid, the iterator yield 0
+/// elements e.g.:
+///
+/// ~~~~{.cpp}
+///     std::string invalidUTF8String = "...";
+///     ofLog() << (ofUTF8Iterator(invalidUTF8String).begin() == ofUTF8Iterator(invalidUTF8String).end()); // Returns true.
+/// ~~~~
 class ofUTF8Iterator{
 public:
+	/// \brief Create a ofUTF8Iterator for a given UTF8-encoded string.
+	///
+	/// \param str A UTF8-encoded string to iterate through.
 	ofUTF8Iterator(const std::string & str);
+
+	/// \returns A forward iterator that points to the first codepoint in the UTF8 string.
 	utf8::iterator<std::string::const_iterator> begin() const;
+
+	/// \returns An forward iterator that points to the end of the UTF8 string.
 	utf8::iterator<std::string::const_iterator> end() const;
+
+	/// \returns An reverse iterator that points to the last codepoint in the UTF8 string.
 	utf8::iterator<std::string::const_reverse_iterator> rbegin() const;
+
+	/// \returns An reverse iterator that points to the reverse end of the UTF8 string.
 	utf8::iterator<std::string::const_reverse_iterator> rend() const;
 
 private:
+	/// \brief A copy of the validated UTF8-encoded std::string for validation.
+	///
+	/// If the UTF8-encoded std::string passed to the constructor
+	/// `ofUTF8Iterator(...)` is invalid, this variable will be empty.
 	std::string src_valid;
 };
 

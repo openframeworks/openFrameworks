@@ -5,19 +5,19 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 
 	nPts = 0;
-	rotateAmount.set(0,0,1);
-	speedOfRotation = 0.5f;
+	rotateAmount = {0, 0, 1};
+	speedOfRotation = ofDegToRad(0.5f);
 
 	ofBackground(255,255,255);
 
-	ofVec3f center(ofGetWidth()/2, ofGetHeight()/2, 0);
+	glm::vec3 center(ofGetWidth()/2, ofGetHeight()/2, 0);
 
-	xAxisMin.set(-100,0,0);
-	xAxisMax.set(100,0,0);
-	yAxisMin.set(0,-100,0);
-	yAxisMax.set(0,100,0);
-	zAxisMin.set(0,0,-100);
-	zAxisMax.set(0,0,100);
+	xAxisMin = {-100,   0,    0};
+	xAxisMax = { 100,   0,    0};
+	yAxisMin = {   0,-100,    0};
+	yAxisMax = {   0, 100,    0};
+	zAxisMin = {   0,   0, -100};
+	zAxisMax = {   0,   0,  100};
 
 	xAxisMin += center;
 	xAxisMax += center;
@@ -26,7 +26,7 @@ void ofApp::setup(){
 	zAxisMin += center;
 	zAxisMax += center;
 
-	bDrawnAnything = false;        // added this cause theo saw this example
+	bDrawnAnything = false;     // added this cause theo saw this example
 								// and was like "how do I tell zach that a rotating
 								// cross is not that interesting ??"  before realizing
 								// that one should draw :)
@@ -44,7 +44,7 @@ void ofApp::update(){
      // this could all be one for loop, but broken out here for
      // clarity on the steps:
 
-     ofVec3f center(ofGetWidth()/2, ofGetHeight()/2,0);
+     glm::vec3 center(ofGetWidth()/2, ofGetHeight()/2,0);
 
      // move the points so that their center (ofGetW/2, ofGetH/2) is at 0,0,0
      for (int i = 0; i < nPts; i++){
@@ -53,7 +53,7 @@ void ofApp::update(){
 
      // rotate the points
      for (int i = 0; i < nPts; i++){
-        pts[i] = pts[i].getRotated(speedOfRotation, rotateAmount);
+         pts[i] = glm::rotate(pts[i],speedOfRotation, rotateAmount);
      }
 
      // move them back
@@ -70,12 +70,12 @@ void ofApp::update(){
      zAxisMax -= center;
 
 
-     xAxisMin.rotate(speedOfRotation, rotateAmount);
-     xAxisMax.rotate(speedOfRotation, rotateAmount);
-     yAxisMin.rotate(speedOfRotation, rotateAmount);
-     yAxisMax.rotate(speedOfRotation, rotateAmount);
-     zAxisMin.rotate(speedOfRotation, rotateAmount);
-     zAxisMax.rotate(speedOfRotation, rotateAmount);
+     xAxisMin = glm::rotate(xAxisMin, speedOfRotation, rotateAmount);
+     xAxisMax = glm::rotate(xAxisMax, speedOfRotation, rotateAmount);
+     yAxisMin = glm::rotate(yAxisMin, speedOfRotation, rotateAmount);
+     yAxisMax = glm::rotate(yAxisMax, speedOfRotation, rotateAmount);
+     zAxisMin = glm::rotate(zAxisMin, speedOfRotation, rotateAmount);
+     zAxisMax = glm::rotate(zAxisMax, speedOfRotation, rotateAmount);
 
      xAxisMin += center;
      xAxisMax += center;
@@ -136,10 +136,10 @@ void ofApp::keyPressed  (int key){
 
     switch (key){
         case 'a':
-            speedOfRotation += 0.05f;
+            speedOfRotation += 0.001f;
             break;
         case 'z':
-            speedOfRotation -= 0.05f;
+            speedOfRotation -= 0.001f;
             break;
         case 's':
             rotateAmount.x += 0.05f;

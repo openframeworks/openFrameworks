@@ -151,7 +151,7 @@ glm::mat4 ofCamera::getProjectionMatrix(const ofRectangle & viewport) const {
 	const_cast<ofCamera*>(this)->calcClipPlanes(viewport);
 
 	if(isOrtho) {
-		return glm::translate(glm::mat4(), {-lensOffset.x, -lensOffset.y, 0.f}) * glm::ortho(
+		return glm::translate(glm::mat4(1.0), {-lensOffset.x, -lensOffset.y, 0.f}) * glm::ortho(
 			- viewport.width/2,
 			+ viewport.width/2,
 			- viewport.height/2,
@@ -162,7 +162,7 @@ glm::mat4 ofCamera::getProjectionMatrix(const ofRectangle & viewport) const {
 	}else{
 		float aspect = forceAspectRatio ? aspectRatio : viewport.width/viewport.height;
 		auto projection = glm::perspective(glm::radians(fov), aspect, nearClip, farClip);
-		projection = glm::translate(glm::mat4(), {-lensOffset.x, -lensOffset.y, 0.f}) * projection;
+		projection = glm::translate(glm::mat4(1.0), {-lensOffset.x, -lensOffset.y, 0.f}) * projection;
 		return projection;
 	}
 }

@@ -99,7 +99,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    ofPoint modelPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75);
+    glm::vec3 modelPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75, 0);
     switch (key) {
         case '1':
             model.loadModel("astroBoy_walk.dae");
@@ -109,7 +109,6 @@ void ofApp::keyPressed(int key){
         case '2':
             model.loadModel("TurbochiFromXSI.dae");
             model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
-            model.setRotation(0, -180, 1, 0, 0);
             ofEnableSeparateSpecularLight();
             break;
         case '3':

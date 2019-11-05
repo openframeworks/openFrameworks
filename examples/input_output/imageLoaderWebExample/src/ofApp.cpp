@@ -7,7 +7,7 @@ void ofApp::setup(){
 	ofRegisterURLNotification(this);
 	
 	//to load synchronously
-	img.load("http://images.wildmadagascar.org/pictures/bemaraha/tsingy_forest.JPG");
+	img.load("https://openframeworks.cc/about/0.jpg");
 }
 
 //--------------------------------------------------------------
@@ -29,7 +29,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
-	ofSetColor(0, 0, 0);
+    ofSetColor(220);
 	ofDrawBitmapString("hit spacebar to load image from web", 10, ofGetHeight()-20);
 	if(loading)
 		ofDrawBitmapString("loading...", 10, ofGetHeight()+20);
@@ -58,7 +58,7 @@ void ofApp::exit() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 	img.clear();
-	ofLoadURLAsync("http://images.wildmadagascar.org/pictures/bemaraha/tsingy_forest.JPG","tsingy_forest");
+	ofLoadURLAsync("https://openframeworks.cc/about/0.jpg","about");
 	loading =true;
 }
 

@@ -28,15 +28,16 @@ void ofApp::update(){
 void ofApp::draw(){
 
 	//translate so that 0,0 is the center of the screen
-    ofPushMatrix();
-    ofTranslate(ofGetWidth()/2, ofGetHeight()/2, 40);
-	//Extract the rotation from the current rotation
-    ofVec3f axis;
-    float angle;
-    curRot.getRotate(angle, axis);
+	ofPushMatrix();
+	ofTranslate(ofGetWidth()/2, ofGetHeight()/2, 40);
 
+	auto axis = glm::axis(curRot);
 	//apply the quaternion's rotation to the viewport and draw the sphere
-	ofRotateDeg(angle, axis.x, axis.y, axis.z);  
+	ofRotateDeg(ofRadToDeg(glm::angle(curRot)), axis.x, axis.y, axis.z);
+	/// You can actually use the folling line instead, just showing this other option as example
+	///	ofRotateRad(glm::angle(curRot), axis.x, axis.y, axis.z);
+	
+	
 	ofDrawSphere(0, 0, 0, 200);
 
 	ofPopMatrix();
@@ -61,17 +62,17 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 	//every time the mouse is dragged, track the change
 	//accumulate the changes inside of curRot through multiplication
-    ofVec2f mouse(x,y);
-    ofQuaternion yRot((x-lastMouse.x)*dampen, ofVec3f(0,1,0));
-    ofQuaternion xRot((y-lastMouse.y)*dampen, ofVec3f(-1,0,0));
-    curRot *= yRot*xRot;
+	glm::vec2 mouse(x,y);
+	glm::quat yRot = glm::angleAxis(ofDegToRad(x-lastMouse.x)*dampen, glm::vec3(0,1,0));
+	glm::quat xRot = glm::angleAxis(ofDegToRad(y-lastMouse.y)*dampen, glm::vec3(-1,0,0));
+	curRot = xRot * yRot * curRot;
     lastMouse = mouse;
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
     //store the last mouse point when it's first pressed to prevent popping
-	lastMouse = ofVec2f(x,y);
+	lastMouse = glm::vec2(x,y);
 }
 
 //--------------------------------------------------------------

@@ -119,12 +119,7 @@ bool ofxPanel::mousePressed(ofMouseEventArgs & args){
 }
 bool ofxPanel::mouseReleased(ofMouseEventArgs & args){
     this->bGrabbed = false;
-    if(ofxGuiGroup::mouseReleased(args)) return true;
-    if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
-    	return true;
-    }else{
-    	return false;
-    }
+	return ofxGuiGroup::mouseReleased(args);
 }
 
 bool ofxPanel::setValue(float mx, float my, bool bCheck){
@@ -153,7 +148,7 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 			
 			if( headerRect.inside(mx, my)){
 				bGrabbed = true;
-				grabPt.set(mx-b.x, my-b.y);
+				grabPt = {mx-b.x, my-b.y, 0};
 				return true;
 			} else{
 				bGrabbed = false;

@@ -230,7 +230,7 @@ void  ofxCvImage::operator = ( const IplImage* mom ) {
 		return;
 	}
 			
-	if( mom->nChannels == cvImage->nChannels && mom->depth == cvImage->depth ){
+	if( !bAllocated || mom->nChannels == cvImage->nChannels && mom->depth == cvImage->depth ){
 		if( !bAllocated ){ 	//lets allocate if needed
 			allocate(mom->width, mom->height);
 		}else if( mom->width != width || mom->height != height ){
@@ -651,7 +651,15 @@ void ofxCvImage::undistort( float radialDistX, float radialDistY,
     float distortionCoeffs[] = { radialDistX, radialDistY, tangentDistX, tangentDistY };
 	CvMat _a = cvMat( 3, 3, CV_32F, (void*)camIntrinsics );
     CvMat _k = cvMat( 4, 1, CV_32F, (void*)distortionCoeffs );
+#ifdef USE_OLD_CV
     cvUndistort2( cvImage, cvImageTemp, &_a, &_k, 0 );
+#else
+    cv::Mat src = cv::cvarrToMat(cvImage), dst = cv::cvarrToMat(cvImageTemp);
+    cv::Mat A = cv::cvarrToMat(&_a), distCoeffs = cv::cvarrToMat(&_k);
+
+    CV_Assert( src.size() == dst.size() && src.type() == dst.type() );
+    cv::undistort( src, dst, A, distCoeffs );
+#endif // USE_OLD_CV
 	swapTemp();
     flagImageChanged();
 }

@@ -28,9 +28,17 @@ ifeq ($(findstring emcc, $(CC)),emcc)
 endif
 PLATFORM_OS ?= $(shell uname -s)
 
-FIND=find
 HOST_OS=$(shell uname -s)
-$(info HOST_OS=${HOST_OS})
+
+ifdef MAKEFILE_DEBUG
+    $(info HOST_OS=${HOST_OS})
+endif
+
+ifneq (,$(findstring MSYS_NT,$(HOST_OS)))
+	FIND=/usr/bin/find
+else
+	FIND=find
+endif
 
 #check for Raspbian as armv7l needs to use armv6l architecture
 ifeq ($(wildcard $(RPI_ROOT)/etc/*-release), /etc/os-release)
@@ -60,13 +68,15 @@ else
 	endif
 endif
 
-#$(info PLATFORM_ARCH=$(PLATFORM_ARCH))
-#$(info PLATFORM_OS=$(PLATFORM_OS))
-#$(info HOST_ARCH=$(HOST_ARCH))
-#$(info HOST_OS=$(HOST_OS))
-#$(info CROSS_COMPILING=$(CROSS_COMPILING))
-#$(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
-#$(info IS_RASPBIAN=$(IS_RASPBIAN))
+ifdef MAKEFILE_DEBUG
+    $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
+    $(info PLATFORM_OS=$(PLATFORM_OS))
+    $(info HOST_ARCH=$(HOST_ARCH))
+    $(info HOST_OS=$(HOST_OS))
+    $(info CROSS_COMPILING=$(CROSS_COMPILING))
+    $(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
+    $(info IS_RASPBIAN=$(IS_RASPBIAN))
+endif
 
 # if not defined, construct the default PLATFORM_LIB_SUBPATH
 ifndef PLATFORM_LIB_SUBPATH
@@ -122,11 +132,11 @@ endif
 
 # if desired, print the variables
 ifdef MAKEFILE_DEBUG
-	$(info =================== config.mk platform detection ================)
-	$(info PLATFORM_ARCH=$(PLATFORM_ARCH))
-	$(info PLATFORM_OS=$(PLATFORM_OS))
-	$(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
-	$(info PLATFORM_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH))
+    $(info =================== config.mk platform detection ================)
+    $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
+    $(info PLATFORM_OS=$(PLATFORM_OS))
+    $(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
+    $(info PLATFORM_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH))
 endif
 
 
@@ -189,22 +199,22 @@ endif
 ################################################################################
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
-	$(info =================== config.mk paths =============================)
-	$(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
-	$(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
-	$(info OF_APPS_PATH=$(OF_APPS_PATH))
-	$(info OF_LIBS_PATH=$(OF_LIBS_PATH))
-	$(info OF_LIBS_OPENFRAMEWORKS_PATH=$(OF_LIBS_OPENFRAMEWORKS_PATH))
-	$(info OF_LIBS_OF_COMPILED_PATH=$(OF_LIBS_OF_COMPILED_PATH))
-	$(info OF_LIBS_OF_COMPILED_PROJECT_PATH=$(OF_LIBS_OF_COMPILED_PROJECT_PATH))
-	$(info OF_SHARED_MAKEFILES_PATH=$(OF_SHARED_MAKEFILES_PATH))
-	$(info OF_PLATFORM_MAKEFILES=$(OF_PLATFORM_MAKEFILES))
-	$(info OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH))
+    $(info =================== config.mk paths =============================)
+    $(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
+    $(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
+    $(info OF_APPS_PATH=$(OF_APPS_PATH))
+    $(info OF_LIBS_PATH=$(OF_LIBS_PATH))
+    $(info OF_LIBS_OPENFRAMEWORKS_PATH=$(OF_LIBS_OPENFRAMEWORKS_PATH))
+    $(info OF_LIBS_OF_COMPILED_PATH=$(OF_LIBS_OF_COMPILED_PATH))
+    $(info OF_LIBS_OF_COMPILED_PROJECT_PATH=$(OF_LIBS_OF_COMPILED_PROJECT_PATH))
+    $(info OF_SHARED_MAKEFILES_PATH=$(OF_SHARED_MAKEFILES_PATH))
+    $(info OF_PLATFORM_MAKEFILES=$(OF_PLATFORM_MAKEFILES))
+    $(info OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH))
 endif
 
 
 ifeq ($(wildcard $(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)),)
-$(error This package doesn't support your platform, probably you downloaded the wrong package?)
+$(error This package doesn't support your platform, $(OF_LIBS_OF_COMPILED_PROJECT_PATH) probably you downloaded the wrong package?)
 endif
 
 # generate a list of valid core platform variants from the files in the platform makefiles directory
@@ -279,12 +289,16 @@ CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_PKG_CONFIG_LIBRARIES)
 
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
 ifneq ($(strip $(PKG_CONFIG_LIBDIR)),)
-$(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
-$(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
+ifdef MAKEFILE_DEBUG
+    $(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
+    $(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
+endif
 FAILED_PKG=$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); for pkg in $(CORE_PKG_CONFIG_LIBRARIES); do $(PLATFORM_PKG_CONFIG) $$pkg --cflags > /dev/null; if [ $$? -ne 0 ]; then echo $$pkg; return; fi; done; echo 0)
 else
-$(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
-$(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
+ifdef MAKEFILE_DEBUG
+    $(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
+    $(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
+endif
 FAILED_PKG=$(shell for pkg in $(CORE_PKG_CONFIG_LIBRARIES); do $(PLATFORM_PKG_CONFIG) $$pkg --cflags > /dev/null; if [ $$? -ne 0 ]; then echo $$pkg; return; fi; done; echo 0)
 endif
 	ifneq ($(FAILED_PKG),0)
@@ -335,22 +349,22 @@ OF_CORE_HEADER_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell $(FIND) $(OF_CORE_S
 # DEBUG INFO
 ################################################################################
 ifdef MAKEFILE_DEBUG
-	$(info ========================= config.mk flags ========================)
-	$(info ---OF_CORE_DEFINES_CFLAGS---)
-	$(foreach v, $(OF_CORE_DEFINES_CFLAGS),$(info $(v)))
+    $(info ========================= config.mk flags ========================)
+    $(info ---OF_CORE_DEFINES_CFLAGS---)
+    $(foreach v, $(OF_CORE_DEFINES_CFLAGS),$(info $(v)))
 
-	$(info ---OF_CORE_INCLUDES_CFLAGS---)
-	$(foreach v, $(OF_CORE_INCLUDES_CFLAGS),$(info $(v)))
+    $(info ---OF_CORE_INCLUDES_CFLAGS---)
+    $(foreach v, $(OF_CORE_INCLUDES_CFLAGS),$(info $(v)))
 
-	$(info ---OF_CORE_FRAMEWORKS_CFLAGS---)
-	$(foreach v, $(OF_CORE_FRAMEWORKS_CFLAGS),$(info $(v)))
+    $(info ---OF_CORE_FRAMEWORKS_CFLAGS---)
+    $(foreach v, $(OF_CORE_FRAMEWORKS_CFLAGS),$(info $(v)))
 
-	$(info ---OF_CORE_SOURCE_FILES---)
-	$(foreach v, $(OF_CORE_SOURCE_FILES),$(info $(v)))
+    $(info ---OF_CORE_SOURCE_FILES---)
+    $(foreach v, $(OF_CORE_SOURCE_FILES),$(info $(v)))
 
-	$(info ---OF_CORE_HEADER_FILES---)
-	$(foreach v, $(OF_CORE_HEADER_FILES),$(info $(v)))
+    $(info ---OF_CORE_HEADER_FILES---)
+    $(foreach v, $(OF_CORE_HEADER_FILES),$(info $(v)))
 
-	$(info ---PLATFORM_CORE_EXCLUSIONS---)
-	$(foreach v, $(PLATFORM_CORE_EXCLUSIONS),$(info $(v)))
+    $(info ---PLATFORM_CORE_EXCLUSIONS---)
+    $(foreach v, $(PLATFORM_CORE_EXCLUSIONS),$(info $(v)))
 endif

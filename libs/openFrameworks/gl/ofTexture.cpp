@@ -557,7 +557,7 @@ void ofTexture::loadData(const uint16_t * data, int w, int h, int glFormat){
 //----------------------------------------------------------
 void ofTexture::loadData(const uint32_t * data, int w, int h, int glFormat){
 	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
-	loadData(data, w, h, glFormat, GL_SHORT);
+	loadData(data, w, h, glFormat, GL_UNSIGNED_INT);
 }
 
 //----------------------------------------------------------
@@ -575,7 +575,7 @@ void ofTexture::loadData(const int16_t * data, int w, int h, int glFormat){
 //----------------------------------------------------------
 void ofTexture::loadData(const int32_t * data, int w, int h, int glFormat){
 	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
-	loadData(data, w, h, glFormat, GL_SHORT);
+	loadData(data, w, h, glFormat, GL_INT);
 }
 
 //----------------------------------------------------------
@@ -866,7 +866,7 @@ void ofTexture::disableAlphaMask(){
 //----------------------------------------------------------
 glm::vec2 ofTexture::getCoordFromPoint(float xPos, float yPos) const{
 	
-	glm::vec2 temp;
+	glm::vec2 temp(0);
 	
 	if (!isAllocated()) return temp;
 	
@@ -927,7 +927,7 @@ bool ofTexture::isUsingTextureMatrix() const{
 //----------------------------------------------------------
 glm::vec2 ofTexture::getCoordFromPercent(float xPct, float yPct) const{
 	
-	glm::vec2 temp;
+	glm::vec2 temp(0);
 	
 	if (!isAllocated()) return temp;
 	

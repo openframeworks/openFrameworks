@@ -65,6 +65,9 @@ source /etc/os-release
 if [ "$ID" = "elementary" ]; then
 	# Gets ubuntu base version
 	RELEASE=$(lsb_release -r -u)
+elif [ "$ID" = "linuxmint" ]; then
+	# Gets ubuntu base version
+	RELEASE=$(cat /etc/upstream-release/lsb-release | grep DISTRIB_RELEASE | cut -d "=" -f2)
 else
 	RELEASE=$(lsb_release -r)
 fi
@@ -94,8 +97,15 @@ else
 fi
 
 apt-get update
-REGULAR_UPDATES=$(/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 1)
-SECURITY_UPDATES=$(/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 2)
+
+if [ -x "$(command -v /usr/lib/update-notifier/apt-check)" ]; then
+	REGULAR_UPDATES=$(/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 1)
+	SECURITY_UPDATES=$(/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 2)
+else
+	# apt-check is not installed.
+	REGULAR_UPDATES=0
+	SECURITY_UPDATES=0
+fi
 
 if [ "$1" != "-y" ]; then
     if [ $REGULAR_UPDATES -ne 0 ] || [ $SECURITY_UPDATES -ne 0 ]; then
@@ -177,7 +187,7 @@ else
     GLFW_PKG=
 fi
 
-PACKAGES="curl libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem${BOOST_VER}-dev libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good gdb ${GLFW_PKG} liburiparser-dev libcurl4-openssl-dev libpugixml-dev"
+PACKAGES="curl libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem${BOOST_VER}-dev libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good gdb ${GLFW_PKG} liburiparser-dev libcurl4-openssl-dev libpugixml-dev libgconf2-4 libgtk2.0-0 libpoco-dev"
 
 echo "installing OF dependencies"
 echo "OF needs to install the following packages using apt-get:"
@@ -194,25 +204,9 @@ if [ "$1" != "-y" ]; then
 fi
 installPackages ${PACKAGES}
 
-if [[ $MAJOR_VERSION -gt 18 || $MAJOR_VERSION -eq 18 ]]; then
-    PACKAGES="libpoco-dev"
-    echo "detected ubuntu 18.04 or greater"
-    echo "OF needs to install poco libraries in the system with the following packages:"
-    echo ${PACKAGES}
-    if [ "$1" != "-y" ]; then
-        read -p "Do you want to continue? [Y/n] "
-        if [[ $REPLY =~ ^[Nn]$ ]]; then
-            exit 0
-        fi
-
-        echo
-        echo "Installing..."
-        echo
-    fi
-    installPackages ${PACKAGES}
+if [[ $MAJOR_VERSION -lt 18 ]]; then
     cp $ROOT/../extra/poco_config.mk $ROOT/../../../addons/ofxPoco/addon_config.mk
 fi
-
 
 if [[ $MAJOR_VERSION -lt 14 || ($MAJOR_VERSION -eq 14 && $MINOR_VERSION -eq 4) ]]; then
     echo "detected ubuntu default gcc too old for compatibility with c++11"
@@ -227,4 +221,17 @@ if [[ $MAJOR_VERSION -lt 14 || ($MAJOR_VERSION -eq 14 && $MINOR_VERSION -eq 4) ]
 	echo "setting gcc-${CXX_VER} as default compiler"
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc${CXX_VER} 1 --force
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++${CXX_VER} 1 --force
+fi
+
+# Update addon_config.mk files to use OpenCV 3 or 4 depending on what's installed
+addons_dir="$(readlink -f "$ROOT/../../../addons")"
+$(pkg-config opencv4 --exists)
+exit_code=$?
+if [ $exit_code != 0 ]; then
+	echo "Updating ofxOpenCV to use openCV3"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv4(.*)$/ADDON_PKG_CONFIG_LIBRARIES =\1opencv\2/' "$addons_dir/ofxOpenCv/addon_config.mk"
+else
+	echo "Updating ofxOpenCV to use openCV4"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv\s/ADDON_PKG_CONFIG_LIBRARIES =\1opencv4 /g' "$addons_dir/ofxOpenCv/addon_config.mk"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv$/ADDON_PKG_CONFIG_LIBRARIES =\1opencv4/g' "$addons_dir/ofxOpenCv/addon_config.mk"
 fi

@@ -189,7 +189,7 @@ function createProjectFiles {
         else
             pg_platform=$pkg_platform
         fi
-        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
+        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator_debug --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
     elif [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
         for example_group in $pkg_ofroot/examples/*; do
             for example in $example_group/*; do

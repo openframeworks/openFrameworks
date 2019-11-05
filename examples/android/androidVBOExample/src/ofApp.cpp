@@ -45,7 +45,7 @@ void ofApp::setup(){
 void ofApp::update(){
 
 	if(!bPause) {
-		ofVec3f vec;
+		glm::vec3 vec;
 		float   r = 0.3;
 
 		for (int i=0; i<GRID_WIDTH; i++) {
@@ -62,7 +62,7 @@ void ofApp::update(){
 
 				for (int k=2; k<LENGTH; k++) {
 					vec		 =  pos[index + k] - pos[index + (k-2)];
-					float d  = vec.length();
+					float d  = glm::length(vec);
 					if(d > 0.0) {
 						pos[index + k] = pos[index + k-1] + (vec * restLength) /d;
 					}

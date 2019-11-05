@@ -49,7 +49,6 @@ if [ "$currenthash" = "$lasthash" ]; then
     exit 0
 fi
 
-echo $currenthash>lasthash.txt
 ./create_package.sh linux64 $lastversion master gcc4
 ./create_package.sh linux64 $lastversion master gcc5
 ./create_package.sh linux64 $lastversion master gcc6
@@ -108,6 +107,8 @@ echo
 
 mail -s "Nightly builds $lastversion OK." $REPORT_MAIL <<EOF
 Successfully created nightly builds for ${lastversion}
+cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
+echo $currenthash>lasthash.txt
 
 $(if [ -f /home/ofadmin/logs/nightlybuilds.log ]; then cat /home/ofadmin/logs/nightlybuilds.log; fi)
 EOF

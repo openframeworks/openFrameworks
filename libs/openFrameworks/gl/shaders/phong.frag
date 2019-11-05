@@ -65,7 +65,7 @@ static const string fragmentShader = R"(
         float d;            // distance from surface to light source
         vec3  VP;           // direction from surface to light position
         vec3  halfVector;   // direction of maximum highlights
-        vec3 eye = -v_eyePosition;
+        vec3 eye = -normalize(v_eyePosition);
 
         // Compute vector from surface to light position
         VP = vec3 (light.position.xyz) - ecPosition3;
@@ -124,7 +124,7 @@ static const string fragmentShader = R"(
         float pf;
         float d;            // distance from surface to light source
         vec3  VP;           // direction from surface to light position
-        vec3 eye = -v_eyePosition;
+        vec3 eye = -normalize(v_eyePosition);
         float spotEffect;
         float attenuation=1.0;
         vec3  halfVector;   // direction of maximum highlights
@@ -219,16 +219,18 @@ static const string fragmentShader = R"(
         vec3 diffuse = vec3(0.0,0.0,0.0);
         vec3 specular = vec3(0.0,0.0,0.0);
 
+		vec3 transformedNormal = normalize(v_transformedNormal);
+
         for( int i = 0; i < MAX_LIGHTS; i++ ){
             if(lights[i].enabled<0.5) continue;
             if(lights[i].type<0.5){
-                pointLight(lights[i], v_transformedNormal, v_eyePosition, ambient, diffuse, specular);
+                pointLight(lights[i], transformedNormal, v_eyePosition, ambient, diffuse, specular);
             }else if(lights[i].type<1.5){
-                directionalLight(lights[i], v_transformedNormal, ambient, diffuse, specular);
+                directionalLight(lights[i], transformedNormal, ambient, diffuse, specular);
             }else if(lights[i].type<2.5){
-                spotLight(lights[i], v_transformedNormal, v_eyePosition, ambient, diffuse, specular);
+                spotLight(lights[i], transformedNormal, v_eyePosition, ambient, diffuse, specular);
             }else{
-                areaLight(lights[i], v_transformedNormal, v_eyePosition, ambient, diffuse, specular);
+                areaLight(lights[i], transformedNormal, v_eyePosition, ambient, diffuse, specular);
             }
         }
 

@@ -25,8 +25,8 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		
 		struct Particle{
-			ofVec4f pos;
-			ofVec4f vel;
+			glm::vec4 pos;
+			glm::vec4 vel;
 			ofFloatColor color;
 		};
 
@@ -36,7 +36,7 @@ class ofApp : public ofBaseApp{
 		GLuint vaoID;
 		ofEasyCam camera;
 		ofVbo vbo;
-		ofVec3f atractor1, atractor2, atractor3;
+		glm::vec3 atractor1, atractor2, atractor3;
 		ofxPanel gui;
 		ofParameter<float> attractionCoeff, cohesionCoeff, repulsionCoeff;
 		ofParameter<float> maxSpeed;

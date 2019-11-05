@@ -1,7 +1,6 @@
 language: c++
 compiler: gcc
 sudo: true
-cache: ccache
 env:
   global:
     secure: LBTN8d1hS7ocrqDwxLQqU0tfK3FMCXBI8q1yASEjtkp/v5HEyFkbj22H4jXZ20SkpCTlIG2L6i/fU3d6KzJUzTFuxkQEWsnjkj4jAhxGEWRsT1RV6VcUPQDGLHapXwTy+ZYgMNxE7aAdQaBskPHdVzAhjrzlTwVuKp6KjFn+kMU=
@@ -15,6 +14,7 @@ matrix:
     dist: trusty
     sudo: required
     env: TARGET="linux64"
+    cache: ccache
     addons:
       apt:
         sources:
@@ -46,6 +46,7 @@ matrix:
     sudo: required
     dist: trusty
     env: TARGET="linuxarmv6l"
+    cache: ccache
 
 
   - os: linux
@@ -64,32 +65,34 @@ matrix:
     sudo: required
     dist: trusty
     env: TARGET="emscripten"
-    addons:
-      apt:
-        sources:
-          - ubuntu-toolchain-r-test
-        packages:
-          - libstdc++6
+    services:
+      - docker
+    before_install:
+      - docker run -dit --name emscripten -v $(pwd):/src trzeci/emscripten:sdk-incoming-64bit bash
 
   - os: osx
     osx_image: xcode9.4
     compiler: clang
     env: TARGET="osx"
+    cache: ccache
 
   - os: osx
     osx_image: xcode9.4
     compiler: clang
     env: TARGET="osx" OPT="makefiles"
+    cache: ccache
 
   - os: osx
     osx_image: xcode9.4
     compiler: clang
     env: TARGET="ios"
+    cache: ccache
 
   - os: osx
     osx_image: xcode9.4
     compiler: clang
     env: TARGET="tvos"
+    cache: ccache
 
   - os: linux
     language: android
@@ -146,11 +149,13 @@ script:
   - ccache -z
   - ccache -s
   - if [ "$TARGET" = "linux64" ] || [ "$TARGET" = "linuxarmv6l" ] || [ "$TARGET" = "linuxarmv7l" ]; then
-      wget http://mirrors.kernel.org/ubuntu/pool/main/c/ccache/ccache_3.3.4-1_amd64.deb;
+      wget http://ci.openframeworks.cc/ccache_3.3.4-1_amd64.deb;
       sudo dpkg -i ccache_3.3.4-1_amd64.deb;
     fi
   - if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
       scripts/ci/$TARGET/run_tests.sh;
+    elif [ "$TARGET" = "emscripten" ]; then
+      docker exec -it emscripten sh -c "scripts/ci/$TARGET/build.sh $OPT";
     else
       scripts/ci/$TARGET/build.sh $OPT;
     fi

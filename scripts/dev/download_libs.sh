@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-VER=""
+VER=master
 PLATFORM=""
 ARCH=""
 OVERWRITE=1
@@ -12,16 +12,16 @@ cat << EOF
 
     Options:
 
-    -v, --version VERSION       OF version to download the libraries for. Defaults to current release. (i.e. 0.10.0)
+    -v, --version VERSION       OF version to download the libraries for. Defaults to master
     -p, --platform PLATFORM     Platorm among: android, emscritpen, ios, linux, linux64, linuxarmv6l, linuxarmv7l, msys2, osx, tvos, vs2015, vs2017
                                 If not specified tries to autodetect the platform.
     -a, --arch ARCH             Architecture:
                                     vs2015: 32 or 64
                                     vs2017: 32 or 64
-                                    msys2: 32
-                                    android: armv7 or x86 (if not specified will download both)
+                                    msys2: 32 or 64
+                                    android: armv7, arm64, and x86 (if not specified will download all)
                                     linux: 64gcc4, 64gcc5, 64gcc6 / 64, armv6l or armv7l
-    -n, --no-overwrite          Merge new libraries with exisiting ones, use only to download same version for different platforms
+    -n, --no-overwrite          Merge new libraries with existing ones, use only to download same version for different platforms
                                 If not set deletes any existing libraries
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
@@ -29,8 +29,8 @@ EOF
 }
 
 download(){
-    echo "Downloading ${VER}/$1"
-    wget ci.openframeworks.cc/libs/${VER}/$1 $SILENT_ARGS
+    echo "Downloading $1"
+    wget ci.openframeworks.cc/libs/$1 $SILENT_ARGS
 }
 
 # trap any script errors and exit
@@ -96,10 +96,11 @@ if [ "$PLATFORM" == "" ]; then
         PLATFORM="linux"
     elif [ "$OS" == "Darwin" ]; then
         PLATFORM="osx"
+    elif [ "${OS:0:5}" == "MINGW" ]; then
+        PLATFORM="msys2"
     else
         # otherwise we are on windows and will download 32bit msys2
         PLATFORM="msys2"
-        ARCH=32
     fi
 fi
 
@@ -129,7 +130,18 @@ EOF
             exit 1
         fi
     elif [ "$PLATFORM" == "msys2" ]; then
-        ARCH=32
+        if [ "$MSYSTEM" == "MINGW64" ]; then 
+            ARCH=64
+        elif [ "$MSYSTEM" == "MINGW32" ]; then 
+            ARCH=32
+        else
+            cat << EOF
+This MSYS2 variant ($MSYSTEM) is not recognized.
+Check if you are running a MINGW32 or MINGW64 shell.
+Assuming 32bits version for now...
+EOF
+            ARCH=32
+        fi 
     fi
 fi
 
@@ -138,43 +150,44 @@ if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
 fi
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $SCRIPT_DIR
+cd "$SCRIPT_DIR"
 
 if [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs2015" ]; then
-    PKGS="openFrameworksLibs_master_${PLATFORM}_32_1.zip \
-          openFrameworksLibs_master_${PLATFORM}_32_2.zip \
-          openFrameworksLibs_master_${PLATFORM}_32_3.zip \
-          openFrameworksLibs_master_${PLATFORM}_32_4.zip \
-          openFrameworksLibs_master_${PLATFORM}_64_1.zip \
-          openFrameworksLibs_master_${PLATFORM}_64_2.zip \
-          openFrameworksLibs_master_${PLATFORM}_64_3.zip \
-          openFrameworksLibs_master_${PLATFORM}_64_4.zip"
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_32_1.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_32_2.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_32_3.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_32_4.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs2017" ]; then
-    PKGS="openFrameworksLibs_master_${PLATFORM}_32_1.zip \
-          openFrameworksLibs_master_${PLATFORM}_32_2.zip \
-          openFrameworksLibs_master_${PLATFORM}_32_3.zip \
-          openFrameworksLibs_master_${PLATFORM}_32_4.zip \
-          openFrameworksLibs_master_${PLATFORM}_64_1.zip \
-          openFrameworksLibs_master_${PLATFORM}_64_2.zip \
-          openFrameworksLibs_master_${PLATFORM}_64_3.zip \
-          openFrameworksLibs_master_${PLATFORM}_64_4.zip"
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_32_1.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_32_2.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_32_3.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_32_4.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
 elif [ "$PLATFORM" == "msys2" ]; then
-    PKGS="openFrameworksLibs_master_${PLATFORM}_${ARCH}_.zip"
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_.zip"
 elif [ "$PLATFORM" == "vs2015" ] || [ "$PLATFORM" == "vs2017" ]; then
-    PKGS="openFrameworksLibs_master_${PLATFORM}_${ARCH}_1.zip \
-          openFrameworksLibs_master_${PLATFORM}_${ARCH}_2.zip \
-          openFrameworksLibs_master_${PLATFORM}_${ARCH}_3.zip \
-          openFrameworksLibs_master_${PLATFORM}_${ARCH}_4.zip"
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_3.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_4.zip"
 elif [ "$ARCH" == "" ] && [[ "$PLATFORM" == "osx" || "$PLATFORM" == "ios" || "$PLATFORM" == "tvos" ]]; then
-    PKGS="openFrameworksLibs_master_${PLATFORM}1.tar.bz2 \
-          openFrameworksLibs_master_${PLATFORM}2.tar.bz2 \
-          openFrameworksLibs_master_${PLATFORM}3.tar.bz2 \
-          openFrameworksLibs_master_${PLATFORM}4.tar.bz2"
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}1.tar.bz2 \
+          openFrameworksLibs_${VER}_${PLATFORM}2.tar.bz2 \
+          openFrameworksLibs_${VER}_${PLATFORM}3.tar.bz2 \
+          openFrameworksLibs_${VER}_${PLATFORM}4.tar.bz2"
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "android" ]; then
-    PKGS="openFrameworksLibs_master_${PLATFORM}armv7.tar.bz2 \
-          openFrameworksLibs_master_${PLATFORM}x86.tar.bz2"
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}armv7.tar.bz2 \
+          openFrameworksLibs_${VER}_${PLATFORM}arm64.tar.bz2 \
+          openFrameworksLibs_${VER}_${PLATFORM}x86.tar.bz2"
 else # Linux
-    PKGS="openFrameworksLibs_master_${PLATFORM}${ARCH}.tar.bz2"
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
 fi
 
 for PKG in $PKGS; do
