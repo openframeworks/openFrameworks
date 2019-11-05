@@ -428,7 +428,7 @@ function createPackage {
 
 	if [ "$pkg_platform" = "linux" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-        npm install > /dev/null
+		npm install > /dev/null
         npm install -g n
         n 6.11.0
 		npm run build:linux32 > /dev/null
@@ -439,7 +439,7 @@ function createPackage {
 
 	if [ "$pkg_platform" = "linux64" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-        npm install > /dev/null
+		npm install > /dev/null
         npm install -g n
         n 6.11.0
 		npm run build:linux64 > /dev/null
@@ -450,7 +450,7 @@ function createPackage {
 
     if [ "$pkg_platform" = "android" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-        npm install > /dev/null
+		npm install > /dev/null
         npm install -g n
         n 6.11.0
 		npm run build:vs > /dev/null
@@ -468,7 +468,7 @@ function createPackage {
         rm projectGenerator-android.zip
 
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-        npm install > /dev/null
+		npm install > /dev/null
         npm install -g n
         n 6.11.0
 		npm run build:linux64 > /dev/null
