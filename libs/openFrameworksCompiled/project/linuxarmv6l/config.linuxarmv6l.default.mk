@@ -46,6 +46,23 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 # defines used inside openFrameworks libs.
 PLATFORM_DEFINES += TARGET_RASPBERRY_PI
 
+# this needs to be set for rpi 4 and newer 
+# note this only works with the new GL driver and not the Legacy driver ( set with: sudo raspi-config ) 
+
+# TODO: detect rpi4 or newer by parsing /proc/device-tree/model
+IS_RPI_4_NEWER = 1
+
+# uncomment this for glfw windowing on rpi 4 and newer 
+#USE_GLFW_WINDOW = 1;
+
+ifdef IS_RPI_4_NEWER
+	PLATFORM_DEFINES += TARGET_RASPBERRY_PI_4
+endif
+
+ifdef USE_GLFW_WINDOW
+	PLATFORM_DEFINES += TARGET_GLFW_WINDOW
+endif
+
 # TODO many of these are not relevant to openFrameworks (were just pasted from hello_pi examples)
 # from raspberry pi examples
 PLATFORM_DEFINES += STANDALONE
@@ -119,8 +136,19 @@ PLATFORM_CFLAGS += -pipe
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
+#rpi4 
+ifdef USE_GLFW_WINDOW
+	PLATFORM_PKG_CONFIG_LIBRARIES += gl
+	PLATFORM_PKG_CONFIG_LIBRARIES += glu
+	PLATFORM_PKG_CONFIG_LIBRARIES += glew
+endif
+
 # raspberry pi specific
-ifneq (,$(wildcard $(RPI_ROOT)/opt/vc/lib/libGLESv2.so))
+ifdef IS_RPI_4_NEWER
+	PLATFORM_LIBRARIES += GLESv2
+	PLATFORM_LIBRARIES += GLESv1_CM
+	PLATFORM_LIBRARIES += EGL
+else ifneq (,$(wildcard $(RPI_ROOT)/opt/vc/lib/libGLESv2.so))
 	PLATFORM_LIBRARIES += GLESv2
 	PLATFORM_LIBRARIES += GLESv1_CM
 	PLATFORM_LIBRARIES += EGL
@@ -128,6 +156,7 @@ else
 	PLATFORM_LIBRARIES += brcmGLESv2
 	PLATFORM_LIBRARIES += brcmEGL
 endif
+
 PLATFORM_LIBRARIES += openmaxil
 PLATFORM_LIBRARIES += bcm_host
 PLATFORM_LIBRARIES += vcos
@@ -140,6 +169,10 @@ PLATFORM_LIBRARIES += dl
 
 PLATFORM_LDFLAGS += -pthread
 
+#rpi4
+ifdef IS_RPI_4_NEWER
+	PLATFORM_LDFLAGS += -latomic
+endif 
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -186,7 +219,12 @@ PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
+#rpi4
+ifndef USE_GLFW_WINDOW
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
+else
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
+endif
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 
 ifeq ($(CROSS_COMPILING),1)

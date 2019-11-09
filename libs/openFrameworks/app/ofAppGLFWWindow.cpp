@@ -1651,7 +1651,7 @@ void ofAppGLFWWindow::makeCurrent(){
 	glfwMakeContextCurrent(windowP);
 }
 
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+#if defined(TARGET_LINUX)
 Display* ofAppGLFWWindow::getX11Display(){
 	return glfwGetX11Display();
 }
