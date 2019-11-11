@@ -207,8 +207,8 @@ void ofxColorSlider_<ColorType>::changeValue(ofColor_<ColorType> & value){
 	}
     if(isMinimized()){
         setHeaderBackgroundColor(value);
-        float b = value.getBrightness();
-        setTextColor(b > 175 ? ofFloatColor(0.0) : ofFloatColor(1.0));
+        float b = value.getBrightness() / value.limit();
+        setTextColor(b > 0.75 ? ofFloatColor(0.0) : ofFloatColor(1.0));
     }
 }
 
