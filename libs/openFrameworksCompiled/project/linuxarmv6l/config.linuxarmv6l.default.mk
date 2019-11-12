@@ -43,9 +43,22 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-# We need a detection here for PI versions older than stretch
-# Uncomment the following line to build for older Raspbian releases or older devices
-# USE_PI_LEGACY = 1
+# We detect Raspbian versions Stretch and newer and disable legacy automatically
+# If detection fails comment out USE_PI_LEGACY to use the newer system
+USE_PI_LEGACY = 1
+
+#if we have this file lets see if we are Stretch or Newer
+ifneq (,$(wildcard $(RPI_ROOT)/etc/os-release))
+
+    #grab the Debian version ( 9 = Stretch, 10 = Buster )
+    VER_ID = $(shell grep -oP '(?<=^VERSION_ID=).+' $(RPI_ROOT)/etc/os-release | tr -d '"')
+
+    #check if we are newer than 8 and use the new system
+    ifeq ($(shell test $(VER_ID) -gt 8; echo $$?),0)
+        undefine USE_PI_LEGACY
+    endif
+
+endif
 
 # comment this for older EGL windowing. Has no effect if USE_PI_LEGACY is enabled
 # GLFW seems to provide a more robust window on newer Raspbian releases
