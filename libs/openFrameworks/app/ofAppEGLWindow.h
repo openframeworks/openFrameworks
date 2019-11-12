@@ -119,7 +119,7 @@ public:
 	EGLSurface getEglSurface() const;
 	EGLContext getEglContext() const;
 
-#if (!defined(TARGET_RASPBERRY_PI) || defined(TARGET_RASPBERRY_PI_4))
+#ifndef TARGET_RASPBERRY_PI_LEGACY
 	Display* getX11Display();
 	Window getX11Window();
 #endif
@@ -225,7 +225,7 @@ protected:
 	EGLNativeWindowType getNativeWindow();
 	EGLNativeDisplayType getNativeDisplay();
 
-#if (defined(TARGET_RASPBERRY_PI) && !defined(TARGET_RASPBERRY_PI_4))
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 	void initRPiNative();
 	void exitRPiNative();
 

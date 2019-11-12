@@ -43,20 +43,19 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
+# We need a detection here for PI versions older than stretch
+# Uncomment the following line to build for older Raspbian releases or older devices
+# USE_PI_LEGACY = 1
+
+# comment this for older EGL windowing. Has no effect if USE_PI_LEGACY is enabled
+# GLFW seems to provide a more robust window on newer Raspbian releases
+USE_GLFW_WINDOW = 1;
+
 # defines used inside openFrameworks libs.
 PLATFORM_DEFINES += TARGET_RASPBERRY_PI
 
-# this needs to be set for rpi 4 and newer 
-# note this only works with the new GL driver and not the Legacy driver ( set with: sudo raspi-config ) 
-
-# TODO: detect rpi4 or newer by parsing /proc/device-tree/model
-IS_RPI_4_NEWER = 1
-
-# uncomment this for glfw windowing on rpi 4 and newer 
-#USE_GLFW_WINDOW = 1;
-
-ifdef IS_RPI_4_NEWER
-	PLATFORM_DEFINES += TARGET_RASPBERRY_PI_4
+ifdef USE_PI_LEGACY
+    PLATFORM_DEFINES += TARGET_RASPBERRY_PI_LEGACY
 endif
 
 ifdef USE_GLFW_WINDOW
@@ -144,7 +143,7 @@ ifdef USE_GLFW_WINDOW
 endif
 
 # raspberry pi specific
-ifdef IS_RPI_4_NEWER
+ifndef USE_PI_LEGACY
 	PLATFORM_LIBRARIES += GLESv2
 	PLATFORM_LIBRARIES += GLESv1_CM
 	PLATFORM_LIBRARIES += EGL
@@ -169,8 +168,7 @@ PLATFORM_LIBRARIES += dl
 
 PLATFORM_LDFLAGS += -pthread
 
-#rpi4
-ifdef IS_RPI_4_NEWER
+ifndef USE_PI_LEGACY
 	PLATFORM_LDFLAGS += -latomic
 endif 
 
