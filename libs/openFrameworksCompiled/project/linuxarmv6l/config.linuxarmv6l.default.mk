@@ -55,10 +55,7 @@ ifneq (,$(wildcard $(RPI_ROOT)/etc/os-release))
     VER_ID = $(shell grep -oP '(?<=^VERSION_ID=).+' $(RPI_ROOT)/etc/os-release | tr -d '"')
 endif
 
-#check if we are older than 9 and use the old system
-
-#ifeq ($(shell test $(VER_ID) -lt 9; echo $$?),0)
-
+#check if we are newer than 8 and use the new system
 ifeq ($(shell expr $(VER_ID) \>= 9), 1)
     USE_PI_LEGACY = 0
 endif
@@ -160,7 +157,7 @@ ifdef USE_GLFW_WINDOW
 	PLATFORM_PKG_CONFIG_LIBRARIES += gl
 	PLATFORM_PKG_CONFIG_LIBRARIES += glu
 	PLATFORM_PKG_CONFIG_LIBRARIES += glew
-    PLATFORM_LIBRARIES += glfw3
+	PLATFORM_LIBRARIES += glfw
 endif
 
 # raspberry pi specific
