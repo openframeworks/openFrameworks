@@ -64,6 +64,7 @@ protected:
 	void onMaximize();
     void changeSlider(const void * parameter, ColorType & value);
 	void changeValue(ofColor_<ColorType> & value);
+    void updateSliderColors(ofColor_<ColorType> color);
     bool sliderChanging;
 	ofColor originalHeaderBackground;
 	ofColor originalHeaderText;
