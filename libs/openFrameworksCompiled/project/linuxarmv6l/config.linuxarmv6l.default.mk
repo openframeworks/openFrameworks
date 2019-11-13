@@ -60,16 +60,15 @@ endif
 # If detection fails uncomment USE_PI_LEGACY = 1 to use the older system
 # USE_PI_LEGACY = 1
 
-# comment this for older EGL windowing. Has no effect if USE_PI_LEGACY is enabled
-# GLFW seems to provide a more robust window on newer Raspbian releases
-USE_GLFW_WINDOW = 1;
-
 # defines used inside openFrameworks libs.
 PLATFORM_DEFINES += TARGET_RASPBERRY_PI
 
 ifdef USE_PI_LEGACY
     PLATFORM_DEFINES += TARGET_RASPBERRY_PI_LEGACY
-    undefine USE_GLFW_WINDOW
+else
+    # comment this for older EGL windowing. Has no effect if USE_PI_LEGACY is enabled
+    # GLFW seems to provide a more robust window on newer Raspbian releases
+    USE_GLFW_WINDOW = 1;
 endif
 
 ifdef USE_GLFW_WINDOW
