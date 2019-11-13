@@ -250,7 +250,8 @@ void ofxColorSlider_<ColorType>::updateSliderColors(ofColor_<ColorType> color) {
         if(range == 0){
             collection[i]->setTextColor( ofFloatColor(0.));
         }else{
-            collection[i]->setTextColor( p/range > 0.75 ? ofFloatColor(0.) : ofFloatColor(1.));
+            auto amt = (p - p.getMin()) / range;
+            collection[i]->setTextColor( amt > 0.75 ? ofFloatColor(0.) : ofFloatColor(1.));
         }
     }
 }
