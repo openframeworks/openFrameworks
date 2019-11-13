@@ -63,15 +63,19 @@ ifeq ($(shell expr $(VER_ID) \>= 9), 1)
     USE_PI_LEGACY = 0
 endif
 
+$(info VER ID IS $(VER_ID)) 
+
 # defines used inside openFrameworks libs.
 PLATFORM_DEFINES += TARGET_RASPBERRY_PI
 
 ifeq ($(USE_PI_LEGACY), 1)
     PLATFORM_DEFINES += TARGET_RASPBERRY_PI_LEGACY
+    $(info using legacy build) 
 else
     # comment this for older EGL windowing. Has no effect if USE_PI_LEGACY is enabled
     # GLFW seems to provide a more robust window on newer Raspbian releases
     USE_GLFW_WINDOW = 1
+    $(info using newer build and GLFW window) 
 endif
 
 ifdef USE_GLFW_WINDOW
@@ -156,7 +160,7 @@ ifdef USE_GLFW_WINDOW
 	PLATFORM_PKG_CONFIG_LIBRARIES += gl
 	PLATFORM_PKG_CONFIG_LIBRARIES += glu
 	PLATFORM_PKG_CONFIG_LIBRARIES += glew
-    PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
+    PLATFORM_LIBRARIES += glfw3
 endif
 
 # raspberry pi specific
