@@ -43,6 +43,10 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
+# We detect Raspbian versions Stretch and newer above and enable legacy automatically for older versions
+# If detection fails comment USE_PI_LEGACY = 1 to use the newer system
+USE_PI_LEGACY = 1
+
 VER_ID = 0
 
 #if we have this file lets see if we are Stretch or Newer
@@ -52,18 +56,17 @@ ifneq (,$(wildcard $(RPI_ROOT)/etc/os-release))
 endif
 
 #check if we are older than 9 and use the old system
-ifeq ($(shell test $(VER_ID) -lt 9; echo $$?),0)
-    USE_PI_LEGACY = 1
-endif
 
-# We detect Raspbian versions Stretch and newer above and enable legacy automatically for older versions
-# If detection fails uncomment USE_PI_LEGACY = 1 to use the older system
-# USE_PI_LEGACY = 1
+#ifeq ($(shell test $(VER_ID) -lt 9; echo $$?),0)
+
+ifeq ($(shell expr $(VER_ID) \>= 9), 1)
+    USE_PI_LEGACY = 0
+endif
 
 # defines used inside openFrameworks libs.
 PLATFORM_DEFINES += TARGET_RASPBERRY_PI
 
-ifdef USE_PI_LEGACY
+ifeq ($(USE_PI_LEGACY), 1)
     PLATFORM_DEFINES += TARGET_RASPBERRY_PI_LEGACY
 else
     # comment this for older EGL windowing. Has no effect if USE_PI_LEGACY is enabled
@@ -156,7 +159,7 @@ ifdef USE_GLFW_WINDOW
 endif
 
 # raspberry pi specific
-ifndef USE_PI_LEGACY
+ifeq ($(USE_PI_LEGACY), 0)
 	PLATFORM_LIBRARIES += GLESv2
 	PLATFORM_LIBRARIES += GLESv1_CM
 	PLATFORM_LIBRARIES += EGL
@@ -177,13 +180,10 @@ PLATFORM_LIBRARIES += pcre
 PLATFORM_LIBRARIES += rt
 PLATFORM_LIBRARIES += X11
 PLATFORM_LIBRARIES += dl
-ifdef USE_GLFW_WINDOW
-    PLATFORM_LIBRARIES += glfw
-endif
 
 PLATFORM_LDFLAGS += -pthread
 
-ifndef USE_PI_LEGACY
+ifeq ($(USE_PI_LEGACY), 0)
 	PLATFORM_LDFLAGS += -latomic
 endif 
 
