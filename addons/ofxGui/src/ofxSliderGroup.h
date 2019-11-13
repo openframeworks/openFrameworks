@@ -16,7 +16,9 @@ public:
     ofxVecSlider_ * setup(const std::string& controlName, const VecType & value, const VecType & min, const VecType & max, float width = defaultWidth, float height = defaultHeight);
 
     void setMin(const VecType& min);
+    VecType getMin();
     void setMax(const VecType& max);
+    VecType getMax();
 
     ofAbstractParameter & getParameter();
 
@@ -49,7 +51,9 @@ public:
 	ofxColorSlider_ * setup(const std::string& controlName, const ofColor_<ColorType> & value, const ofColor_<ColorType> & min, const ofColor_<ColorType> & max, float width = defaultWidth, float height = defaultHeight);
 
     void setMin(const ofColor_<ColorType>& min);
+    ofColor_<ColorType> getMin();
     void setMax(const ofColor_<ColorType>& max);
+    ofColor_<ColorType> getMax();
 
 	ofAbstractParameter & getParameter();
 
@@ -81,7 +85,9 @@ public:
 	ofxRectangleSlider * setup(const std::string& controlName, const ofRectangle & value, const ofRectangle & min, const ofRectangle & max, float width = defaultWidth, float height = defaultHeight);
 
     void setMin(const ofRectangle& min);
+    ofRectangle getMin();
     void setMax(const ofRectangle& max);
+    ofRectangle getMax();
 
     ofAbstractParameter & getParameter();
 

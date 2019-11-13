@@ -48,11 +48,21 @@ void ofxVecSlider_<VecType>::setMin(const VecType& min) {
 }
 
 template<class VecType>
+VecType ofxVecSlider_<VecType>::getMin() {
+    return value.getMin();
+}
+
+template<class VecType>
 void ofxVecSlider_<VecType>::setMax(const VecType& max) {
     value.setMax(max);
     for (size_t i = 0; i < dim(); i++){
         parameters[i].template cast<float>().setMax(max[i]);
     }
+}
+
+template<class VecType>
+VecType ofxVecSlider_<VecType>::getMax() {
+    return value.getMax();
 }
 
 template<class VecType>
@@ -191,11 +201,21 @@ void ofxColorSlider_<ColorType>::setMin(const ofColor_<ColorType>& min) {
 }
 
 template<class ColorType>
+ofColor_<ColorType> ofxColorSlider_<ColorType>::getMin() {
+    return picker.getParameter().template cast<ofColor_<ColorType>>().getMin();
+}
+
+template<class ColorType>
 void ofxColorSlider_<ColorType>::setMax(const ofColor_<ColorType>& max) {
     picker.getParameter().template cast<ofColor_<ColorType>>().setMax(max);
     for (int i = 0; i < 4; i++){
         parameters[i].template cast<ColorType>().setMax(max[i]);
     }
+}
+
+template<class ColorType>
+ofColor_<ColorType> ofxColorSlider_<ColorType>::getMax() {
+    return picker.getParameter().template cast<ofColor_<ColorType>>().getMax();
 }
 
 template<class ColorType>
@@ -347,6 +367,11 @@ void ofxRectangleSlider::setMin(const ofRectangle& min) {
 }
 
 
+ofRectangle ofxRectangleSlider::getMin() {
+    return value.getMin();
+}
+
+
 void ofxRectangleSlider::setMax(const ofRectangle& max) {
     value.setMax(max);
 
@@ -355,6 +380,11 @@ void ofxRectangleSlider::setMax(const ofRectangle& max) {
     parameters[1].template cast<float>().setMax(max.y);
     parameters[2].template cast<float>().setMax(max.width);
     parameters[3].template cast<float>().setMax(max.height);
+}
+
+
+ofRectangle ofxRectangleSlider::getMax() {
+    return value.getMax();
 }
 
 
