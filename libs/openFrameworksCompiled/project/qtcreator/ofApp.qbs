@@ -124,7 +124,11 @@ CppApplication{
                     return FileInfo.joinPaths(product.destinationDirectory, input.fileName)
                 }
                 if( product.platform == "osx" ){
-                    return FileInfo.joinPaths(product.destinationDirectory, product.targetName + ".app", "Contents/MacOS", input.fileName);
+                    if( product.consoleApplication ){
+                        return FileInfo.joinPaths(product.destinationDirectory, input.fileName);
+                    }else{
+                        return FileInfo.joinPaths(product.destinationDirectory, product.targetName + ".app", "Contents/MacOS", input.fileName);
+                    }
                 }
 
             }
