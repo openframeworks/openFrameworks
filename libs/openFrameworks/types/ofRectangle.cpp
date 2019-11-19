@@ -6,40 +6,31 @@
 using namespace std;
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle() : x(position.x), y(position.y) {
+ofRectangle::ofRectangle() {
     set(0,0,0,0);
 }
 
-//----------------------------------------------------------
-ofRectangle::~ofRectangle(){}
-
-//----------------------------------------------------------
-ofRectangle::ofRectangle(float px, float py, float w, float h) : x(position.x), y(position.y) {
+ofRectangle::ofRectangle(float px, float py, float w, float h) {
 	set(px,py,w,h);
 }
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(const glm::vec3& p, float w, float h) : x(position.x), y(position.y) {
+ofRectangle::ofRectangle(const glm::vec3& p, float w, float h) {
     set(p,w,h);
 }
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(const glm::vec2& p, float w, float h) : x(position.x), y(position.y) {
+ofRectangle::ofRectangle(const glm::vec2& p, float w, float h) {
 	set(p,w,h);
 }
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(const ofRectangle& rect) : x(position.x), y(position.y) {
-    set(rect);
-}
-
-//----------------------------------------------------------
-ofRectangle::ofRectangle(const glm::vec3& p0, const glm::vec3& p1) : x(position.x), y(position.y) {
+ofRectangle::ofRectangle(const glm::vec3& p0, const glm::vec3& p1) {
     set(p0,p1);
 }
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle(const glm::vec2& p0, const glm::vec2& p1) : x(position.x), y(position.y) {
+ofRectangle::ofRectangle(const glm::vec2& p0, const glm::vec2& p1) {
 	set(p0,p1);
 }
 
@@ -784,12 +775,6 @@ ofRectangle ofRectangle::mapClamp(const ofRectangle & coeff) const {
        );
 }
     
-
-//----------------------------------------------------------
-ofRectangle& ofRectangle::operator = (const ofRectangle& rect) {
-    set(rect);
-	return *this;
-}
 
 //----------------------------------------------------------
 ofRectangle ofRectangle::operator + (const glm::vec3 & point){

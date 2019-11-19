@@ -122,8 +122,12 @@ public:
 
     /// \brief Construct a rectangle by copying another rectangle.
     /// \param rect The rectangle to copy.
-    ofRectangle(const ofRectangle& rect);
+    ofRectangle(const ofRectangle& rect) = default;
 
+    /// \brief Construct a rectangle by copying another rectangle.
+    /// \param rect The rectangle to copy.
+    ofRectangle(ofRectangle&& rect) = default;
+    
     /// \brief Construct a rectangle by defining two corners.
     ///
 	/// \warning The z-components of the passed glm::vec3s are ignored.
@@ -134,7 +138,7 @@ public:
 	ofRectangle(const glm::vec2& p0, const glm::vec2& p1);
 
     /// \brief Destroy the rectangle.
-    virtual ~ofRectangle();
+    ~ofRectangle() = default;
 
     /// \}
 
@@ -882,8 +886,13 @@ public:
     /// \brief Assignment operator.
     /// \param rect The rectangle to assign.
     /// \returns A reference to this rectangle.
-    ofRectangle& operator = (const ofRectangle& rect);
+    ofRectangle& operator = (const ofRectangle& rect) = default;
 
+    /// \brief Assignment operator.
+    /// \param rect The rectangle to assign.
+    /// \returns A reference to this rectangle.
+    ofRectangle& operator = (ofRectangle&& rect) = default;
+    
     /// \brief Returns a new ofRectangle where the x and y positions of the
 	/// rectangle are offset by the (x, y) coordinates of the glm::vec3.
     /// \param p The point to translate.
@@ -923,14 +932,16 @@ public:
     ///
     /// \warning The z-component of this position is preserved and can be used
     /// but all ofRectangle operations will ignore the z-component.
-	glm::vec3 position{};
-
-    /// \brief The x position of the ofRectangle.
-    float& x;
-
-    /// \brief The y position of the ofRectangle.
-    float& y;
-
+    union {
+        glm::vec3 position;
+        struct {
+            /// \brief The x position of the ofRectangle.
+            float x;
+            /// \brief The y position of the ofRectangle.
+            float y;
+        };
+    };
+    
     /// \brief The width of the ofRectangle.
     float width;
 
