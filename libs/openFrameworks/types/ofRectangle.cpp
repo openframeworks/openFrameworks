@@ -6,8 +6,7 @@
 using namespace std;
 
 //----------------------------------------------------------
-ofRectangle::ofRectangle() {
-    set(0,0,0,0);
+ofRectangle::ofRectangle() : position(), width(), height() {
 }
 
 ofRectangle::ofRectangle(float px, float py, float w, float h) {
