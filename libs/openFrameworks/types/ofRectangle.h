@@ -124,10 +124,6 @@ public:
     /// \param rect The rectangle to copy.
     ofRectangle(const ofRectangle& rect) = default;
 
-    /// \brief Construct a rectangle by copying another rectangle.
-    /// \param rect The rectangle to copy.
-    ofRectangle(ofRectangle&& rect) = default;
-    
     /// \brief Construct a rectangle by defining two corners.
     ///
 	/// \warning The z-components of the passed glm::vec3s are ignored.
@@ -888,11 +884,6 @@ public:
     /// \returns A reference to this rectangle.
     ofRectangle& operator = (const ofRectangle& rect) = default;
 
-    /// \brief Assignment operator.
-    /// \param rect The rectangle to assign.
-    /// \returns A reference to this rectangle.
-    ofRectangle& operator = (ofRectangle&& rect) = default;
-    
     /// \brief Returns a new ofRectangle where the x and y positions of the
 	/// rectangle are offset by the (x, y) coordinates of the glm::vec3.
     /// \param p The point to translate.
