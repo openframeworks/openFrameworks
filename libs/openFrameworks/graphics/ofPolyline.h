@@ -7,6 +7,10 @@
 #include "glm/fwd.hpp"
 #include <deque>
 
+#include "ofVec2f.h"
+#include "ofVec3f.h"
+#include "ofVec4f.h"
+
 /// \file
 /// ofPolyLine allows you to combine multiple points into a single vector data
 /// object that can be drawn to the screen, manipulated point by point, and
