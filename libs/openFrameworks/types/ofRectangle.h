@@ -122,7 +122,7 @@ public:
 
     /// \brief Construct a rectangle by copying another rectangle.
     /// \param rect The rectangle to copy.
-    ofRectangle(const ofRectangle& rect) = default;
+    ofRectangle(const ofRectangle& rect);
 
     /// \brief Construct a rectangle by defining two corners.
     ///
@@ -882,7 +882,7 @@ public:
     /// \brief Assignment operator.
     /// \param rect The rectangle to assign.
     /// \returns A reference to this rectangle.
-    ofRectangle& operator = (const ofRectangle& rect) = default;
+    ofRectangle& operator = (const ofRectangle& rect);
 
     /// \brief Returns a new ofRectangle where the x and y positions of the
 	/// rectangle are offset by the (x, y) coordinates of the glm::vec3.

@@ -9,6 +9,12 @@ using namespace std;
 ofRectangle::ofRectangle() : position(), width(), height() {
 }
 
+ofRectangle::ofRectangle(const ofRectangle& rect)
+: position(rect.position)
+, width(rect.width)
+, height(rect.height)
+{}
+
 ofRectangle::ofRectangle(float px, float py, float w, float h) {
 	set(px,py,w,h);
 }
@@ -774,6 +780,13 @@ ofRectangle ofRectangle::mapClamp(const ofRectangle & coeff) const {
        );
 }
     
+//----------------------------------------------------------
+ofRectangle& ofRectangle::operator = (const ofRectangle& rect) {
+    position = rect.position;
+    width = rect.width;
+    height = rect.height;
+}
+
 
 //----------------------------------------------------------
 ofRectangle ofRectangle::operator + (const glm::vec3 & point){
