@@ -785,6 +785,7 @@ ofRectangle& ofRectangle::operator = (const ofRectangle& rect) {
     position = rect.position;
     width = rect.width;
     height = rect.height;
+    return *this;
 }
 
 
