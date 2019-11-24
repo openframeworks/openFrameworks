@@ -134,7 +134,7 @@ public:
 	ofRectangle(const glm::vec2& p0, const glm::vec2& p1);
 
     /// \brief Destroy the rectangle.
-    ~ofRectangle() = default;
+    virtual ~ofRectangle() = default;
 
     /// \}
 
