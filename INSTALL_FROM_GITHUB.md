@@ -1,4 +1,4 @@
-## How to compile openFrameworks from github
+# How to compile openFrameworks from github
 
 Follow these instructions only if you want to submit a pull request or if you want to always use the most recent version of openFrameworks. In other cases you will not need to clone the entire openFrameworks repository.
 
@@ -43,7 +43,27 @@ Once the success message appears you are done.
 #### Option 2 - With the command line Project Generator
 * from the OF root directory, run `projectGenerator -r -o"." examples`
 
-## How to submit your pull requests
+
+
+# How to update openFrameworks from github
+
+It's likely that at some point you will want to update your local openFrameworks to include new changes available in github. To update openFrameworks, run these commands inside the openFrameworks folder:
+
+```bash
+git pull
+
+cd apps/projectGenerator
+git pull
+```
+
+Next, repeat the step **Download dependencies** found above.
+
+Finally, if your setup depends on some of the scripts from the scripts folder, you may need to re-run them. For instance, if you use Qt Creator and have trouble creating new OF projects you may want to run `scripts/qtcreator/install_template.sh` again.
+
+
+
+
+# How to submit your pull requests
 
 If you plan to submit pull requests to openFrameworks, the procedure is almost identical to what we described above, with one little difference: you should clone your own fork of openFrameworks:
 
