@@ -47,16 +47,33 @@ Once the success message appears you are done.
 
 # How to update openFrameworks from github
 
-It's likely that at some point you will want to update your local openFrameworks to include new changes available in github. To update openFrameworks, run these commands inside the openFrameworks folder:
+It's likely that at some point you will want to update your local openFrameworks to include new changes available in github. To update openFrameworks, we first need to figure out if you have several remotes already configured. Run
 
-```bash
-git pull
+    git remote -v
+    
+And study the output. It may look something like this:
 
-cd apps/projectGenerator
-git pull
+```
+origin	git@github.com:your-user-name/openFrameworks.git (fetch)
+origin	git@github.com:your-user-name/openFrameworks.git (push)
+upstream	https://github.com/openframeworks/openFrameworks.git (fetch)
+upstream	https://github.com/openframeworks/openFrameworks.git (push)
 ```
 
-Next, repeat the step **Download dependencies** found above.
+This means that there are two remotes:
+- the first two lines point at your own fork in github
+- the next two lines point at the official openFrameworks repository
+
+It is possible that you only have one or the other. If you are missing the official remotes, please read about how to add an upstream repository in git. You need them to get the official changes. Once you have the URLs that point at the official openframeworks repository, write down that remote's name (in this example `upstream`) and use it in the next commands to update your local copy of openFrameworks:
+
+```bash
+git pull upstream master
+
+cd apps/projectGenerator
+git pull upstream master
+```
+
+Once the changes are downloaded try compile a program. It if fails it is possible that the dependecies are out of date. In that case please repeat the step **Download dependencies** found above.
 
 Finally, if your setup depends on some of the scripts from the scripts folder, you may need to re-run them. For instance, if you use Qt Creator and have trouble creating new OF projects you may want to run `scripts/qtcreator/install_template.sh` again.
 
