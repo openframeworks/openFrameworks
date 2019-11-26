@@ -64,16 +64,18 @@ This means that there are two remotes:
 - the first two lines point at your own fork in github
 - the next two lines point at the official openFrameworks repository
 
-It is possible that you only have one or the other. If you are missing the official remotes, please read about how to add an upstream repository in git. You need them to get the official changes. Once you have the URLs that point at the official openframeworks repository, write down that remote's name (in this example `upstream`) and use it in the next commands to update your local copy of openFrameworks:
+It is possible that you only have one or the other. If you are missing the official remote you can add it like this:
+
+    git remote add upstream git@github.com:openframeworks/openFrameworks.git
+
+Note that `upstream` is a name you choose, and it's how you will refer to the official openframeworks repository. Use that same name in the following command to update your local copy of openFrameworks:
 
 ```bash
 git pull upstream master
-
-cd apps/projectGenerator
-git pull upstream master
+git submodule update --recursive
 ```
 
-Once the changes are downloaded try compile a program. It if fails it is possible that the dependecies are out of date. In that case please repeat the step **Download dependencies** found above.
+Once the changes are downloaded try to compile a program. It if fails it is possible that the dependecies are out of date. In that case please repeat the step **Download dependencies** found above.
 
 Finally, if your setup depends on some of the scripts from the scripts folder, you may need to re-run them. For instance, if you use Qt Creator and have trouble creating new OF projects you may want to run `scripts/qtcreator/install_template.sh` again.
 
