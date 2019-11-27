@@ -209,8 +209,8 @@ float ofxBaseGui::getTextVCenteredInRect(const ofRectangle& container){
 		// However,it can be found by calling `getTextBoundingBox(" ",0,0)` 
 		// which returns the ascender value in the rectangle's Y as a negative value. 
 		// It does not matter which string is passed to it, the value will be always the same.
-		return container.getCenter().y - getTextBoundingBox(" ",0,0).y *0.5;
-		
+		// Fix. It centers the text better with `getTextBoundingBox(" ",0,0).getCenter().y;`
+		return container.getCenter().y - getTextBoundingBox(" ",0,0).getCenter().y;
 	}
 }
 
