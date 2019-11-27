@@ -70,12 +70,21 @@ It is possible that you only have one or the other. If you are missing the offic
 
 Note that `upstream` is a name you choose, and it's how you will refer to the official openframeworks repository. Use that same name in the following command to update your local copy of openFrameworks:
 
-```bash
-git pull upstream master
-git submodule update --recursive
-```
+    git pull upstream master
 
-Once the changes are downloaded try to compile a program. It if fails it is possible that the dependecies are out of date. In that case please repeat the step **Download dependencies** found above.
+### Update the submodules
+
+The openFrameworks git repository has submodules (so far the Project Generator). The submodules rarely change, but if they did, you can update them too. If you never downloaded the submodules, do it now:
+
+    git submodule update --init --recursive
+    
+If you did already download them, this is how you update them:
+
+    git submodule update --recursive
+
+### Try if everything worked
+
+Once all changes are downloaded try to compile a program. It if fails it is possible that the dependecies are out of date. In that case please repeat the step **Download dependencies** found above.
 
 Finally, if your setup depends on some of the scripts from the scripts folder, you may need to re-run them. For instance, if you use Qt Creator and have trouble creating new OF projects you may want to run `scripts/qtcreator/install_template.sh` again.
 
