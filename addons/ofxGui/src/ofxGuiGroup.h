@@ -88,7 +88,9 @@ class ofxGuiGroup : public ofxBaseGui {
 		virtual void onMinimize();
 		virtual void onMaximize();
 
-		float spacing, spacingNextElement;
+		static float elementSpacing;
+		static float groupSpacing;
+	
 		ofRectangle headerRect;
 
 		template <class ControlType>

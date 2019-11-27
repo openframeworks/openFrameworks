@@ -7,12 +7,12 @@
 
 using namespace std;
 
+float ofxGuiGroup::elementSpacing = 1;
+float ofxGuiGroup::groupSpacing = 1;
+
 ofxGuiGroup::ofxGuiGroup(){
 	minimized = false;
-	spacing = 1;
-	spacingNextElement = 3;
-//	header = defaultHeight;
-	headerRect.height = defaultHeight; 
+	headerRect.height = defaultHeight;
 	bGuiActive = false;
 }
 
@@ -30,10 +30,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const std::string& collectionName, const std::s
 ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std::string& _filename, float x, float y){
 	b.x = x;
 	b.y = y;
-//	header = defaultHeight;
 	headerRect.height = defaultHeight; 
-	spacing = 1;
-	spacingNextElement = 3;
 	if(parent != nullptr){
 		b.width = parent->getWidth();
 	}else{
@@ -152,9 +149,9 @@ void ofxGuiGroup::setWidthElements(float w){
 void ofxGuiGroup::add(ofxBaseGui * element){
 	collection.push_back(element);
 
-	element->setPosition(b.x, b.y + b.height  + spacing);
+	element->setPosition(b.x, b.y + b.height  + elementSpacing);
 
-	b.height += element->getHeight() + spacing;
+	b.height += element->getHeight() + elementSpacing;
 
 	//if(b.width<element->getWidth()) b.width = element->getWidth();
 
@@ -229,9 +226,11 @@ void ofxGuiGroup::add(ofParameter <ofShortColor> & parameter){
 void ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter){
 	add(new ofxColorSlider_ <float>(parameter, b.width));
 }
+
 void ofxGuiGroup::add(ofParameter <ofRectangle> & parameter){
 	add(new ofxRectangleSlider(parameter, b.width));
 }
+
 void ofxGuiGroup::clear(){
 	collection.clear();
 	parameters.clear();
@@ -263,7 +262,6 @@ bool ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
 	ofMouseEventArgs a = args;
 	for(std::size_t i = 0; i < collection.size(); i++){
 		if(collection[i]->mousePressed(a)){
-//			return true;
 			attended = true;
 		}
 	}
@@ -327,11 +325,11 @@ void ofxGuiGroup::generateDraw(){
 	border.clear();
 	border.setFillColor(ofColor(thisBorderColor, 180));
 	border.setFilled(true);
-	border.rectangle(b.x, b.y + spacingNextElement, b.width + 1, b.height);
+	border.rectangle(b.x, b.y + groupSpacing, b.width + 1, b.height);
 
 
 	if(bHeaderEnabled){
-		headerRect.set(b.x, b.y + 1 + spacingNextElement, b.width, defaultHeight);
+		headerRect.set(b.x, b.y + 1 + groupSpacing, b.width, defaultHeight);
 		headerBg.clear();
 		headerBg.setFillColor(thisHeaderBackgroundColor);
 		headerBg.setFilled(true);
@@ -426,7 +424,6 @@ bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 		if(b.inside(mx, my)){
 			bGuiActive = true;
 			if(bHeaderEnabled){
-//				ofRectangle minButton(b.x, b.y, b.width, header);
 				if(headerRect.inside(mx, my)){
 					minimized = !minimized;
 					if(minimized){
@@ -445,7 +442,7 @@ bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 
 void ofxGuiGroup::minimize(){
 	minimized = true;
-	b.height = (bHeaderEnabled?headerRect.height:0) + spacing + spacingNextElement + 1 /*border*/;
+	b.height = (bHeaderEnabled?headerRect.height:0) + elementSpacing + groupSpacing + 1 /*border*/;
 	if(parent){
 		parent->sizeChangedCB();
 	}
@@ -456,7 +453,7 @@ void ofxGuiGroup::minimize(){
 void ofxGuiGroup::maximize(){
 	minimized = false;
     for(std::size_t i = 0; i < collection.size(); i++){
-		b.height += collection[i]->getHeight() + spacing;
+		b.height += collection[i]->getHeight() + elementSpacing;
 	}
 	if(parent){
 		parent->sizeChangedCB();
@@ -496,16 +493,16 @@ void ofxGuiGroup::onMaximize(){
 }
 
 void ofxGuiGroup::sizeChangedCB(){
-	float y = b.y  + (bHeaderEnabled?headerRect.height:0) + spacing;
+	float y = b.y  + (bHeaderEnabled?headerRect.height:0) + elementSpacing;
 	if(parent){
-		y += spacingNextElement;
+		y += groupSpacing;
 	}
 	for(std::size_t i = 0; i < collection.size(); i++){
-		collection[i]->setPosition(collection[i]->getPosition().x, y + spacing);
-		y += collection[i]->getHeight() + spacing;
+		collection[i]->setPosition(collection[i]->getPosition().x, y + elementSpacing);
+		y += collection[i]->getHeight() + elementSpacing;
 	}
 	if(minimized){
-		b.height = (bHeaderEnabled?headerRect.height:0) + spacing + spacingNextElement + 1 /*border*/;
+		b.height = (bHeaderEnabled?headerRect.height:0) + elementSpacing + groupSpacing + 1 /*border*/;
 	}else{
 		b.height = y - b.y;
 	}
@@ -548,14 +545,12 @@ void ofxGuiGroup::setPosition(float x, float y){
 
 void ofxGuiGroup::enableHeader(){
 	bHeaderEnabled = true;
-	spacingNextElement = 3;
-	setNeedsRedraw();
+	sizeChangedCB();
 }
 
 void ofxGuiGroup::disableHeader(){
 	bHeaderEnabled = false;
-	spacingNextElement = 2;
-	setNeedsRedraw();
+	sizeChangedCB();
 }
 
 bool ofxGuiGroup::isHeaderEnabled(){
