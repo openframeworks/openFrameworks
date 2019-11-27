@@ -50,63 +50,44 @@ void ofxPanel::loadIcons(){
 }
 
 void ofxPanel::generateDraw(){
-	border.clear();
-	border.setStrokeColor(thisBorderColor);
-	border.setStrokeWidth(1);
-	border.setFilled(false);
-	border.rectangle(b.x,b.y,b.width+1,b.height-spacingNextElement);
-
-
-	headerRect.set(b.x,b.y+1,b.width,headerRect.height);
-	headerBg.clear();
-	headerBg.setFillColor(ofColor(thisHeaderBackgroundColor,180));
-	headerBg.setFilled(true);
-	headerBg.rectangle(headerRect);
-
-	float iconHeight = headerRect.height*.5;
-	float iconWidth = loadIcon.getWidth()/loadIcon.getHeight()*iconHeight;
-	int iconSpacing = iconWidth*.5;
-
-	loadBox.x = b.getMaxX() - (iconWidth * 2 + iconSpacing + textPadding);
-	loadBox.y = b.y + headerRect.height / 2. - iconHeight / 2.;
-	loadBox.width = iconWidth;
-	loadBox.height = iconHeight;
-	saveBox.set(loadBox);
-	saveBox.x += iconWidth + iconSpacing;
-
-	textMesh = getTextMesh(getName(), textPadding + b.x, getTextVCenteredInRect(headerRect));
+	ofxGuiGroup::generateDraw();
+	if(bHeaderEnabled){
+		float iconHeight = headerRect.height*.5;
+		float iconWidth = loadIcon.getWidth()/loadIcon.getHeight()*iconHeight;
+		int iconSpacing = iconWidth*.5;
+	
+		loadBox.x = b.getMaxX() - (iconWidth * 2 + iconSpacing + (textPadding*2) + 8 );
+		loadBox.y = headerRect.y + headerRect.height / 2. - iconHeight / 2.;
+		loadBox.width = iconWidth;
+		loadBox.height = iconHeight;
+		saveBox.set(loadBox);
+		saveBox.x += iconWidth + iconSpacing;
+	}
 }
 
 void ofxPanel::render(){
-	border.draw();
-	headerBg.draw();
-
-	ofBlendMode blendMode = ofGetStyle().blendingMode;
-	if(blendMode!=OF_BLENDMODE_ALPHA){
-		ofEnableAlphaBlending();
-	}
-	ofColor c = ofGetStyle().color;
-	ofSetColor(thisTextColor);
-
-	bindFontTexture();
-	textMesh.draw();
-	unbindFontTexture();
-
-	bool texHackEnabled = ofIsTextureEdgeHackEnabled();
-	ofDisableTextureEdgeHack();
-	loadIcon.draw(loadBox);
-	saveIcon.draw(saveBox);
-	if(texHackEnabled){
-		ofEnableTextureEdgeHack();
-	}
-
-	for(std::size_t i = 0; i < collection.size(); i++){
-		collection[i]->draw();
-	}
-
-	ofSetColor(c);
-	if(blendMode!=OF_BLENDMODE_ALPHA){
-		ofEnableBlendMode(blendMode);
+	ofxGuiGroup::render();
+	
+	if(bHeaderEnabled){
+		ofBlendMode blendMode = ofGetStyle().blendingMode;
+		if(blendMode!=OF_BLENDMODE_ALPHA){
+			ofEnableAlphaBlending();
+		}
+		ofColor c = ofGetStyle().color;
+		ofSetColor(thisTextColor);
+				
+		bool texHackEnabled = ofIsTextureEdgeHackEnabled();
+		ofDisableTextureEdgeHack();
+		loadIcon.draw(loadBox);
+		saveIcon.draw(saveBox);
+		if(texHackEnabled){
+			ofEnableTextureEdgeHack();
+		}
+		ofSetColor(c);
+		
+		if(blendMode!=OF_BLENDMODE_ALPHA){
+			ofEnableBlendMode(blendMode);
+		}
 	}
 }
 bool ofxPanel::mousePressed(ofMouseEventArgs & args){
@@ -146,7 +127,7 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 				return true;
 			}
 			
-			if( headerRect.inside(mx, my)){
+			if( bHeaderEnabled && headerRect.inside(mx, my)){
 				bGrabbed = true;
 				grabPt = {mx-b.x, my-b.y, 0};
 				return true;
