@@ -113,24 +113,33 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 	if( bCheck ){
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
-
-			if(loadBox.inside(mx, my)) {
-				if(!ofNotifyEvent(loadPressedE,this)){
-					loadFromFile(filename);
+			if( bHeaderEnabled){
+				if(loadBox.inside(mx, my)) {
+					if(!ofNotifyEvent(loadPressedE,this)){
+						loadFromFile(filename);
+					}
+					return true;
 				}
-				return true;
-			}
-			if(saveBox.inside(mx, my)) {
-				if(!ofNotifyEvent(savePressedE,this)){
-					saveToFile(filename);
+				if(saveBox.inside(mx, my)) {
+					if(!ofNotifyEvent(savePressedE,this)){
+						saveToFile(filename);
+					}
+					return true;
 				}
-				return true;
-			}
-			
-			if( bHeaderEnabled && headerRect.inside(mx, my)){
-				bGrabbed = true;
-				grabPt = {mx-b.x, my-b.y, 0};
-				return true;
+				if(minimizeRect.inside(mx, my)){
+					if(!minimized){
+						minimize();
+					}else{
+						maximize();
+					}
+					return true;
+				}
+				
+				if(headerRect.inside(mx, my)){
+					bGrabbed = true;
+					grabPt = {mx-b.x, my-b.y, 0};
+					return true;
+				}
 			} else{
 				bGrabbed = false;
 			}
