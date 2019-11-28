@@ -92,7 +92,8 @@ class ofxGuiGroup : public ofxBaseGui {
 		static float groupSpacing;
 	
 		ofRectangle headerRect;
-
+		ofRectangle minimizeRect;
+		
 		template <class ControlType>
 		ControlType & getControlType(const std::string& name);
 

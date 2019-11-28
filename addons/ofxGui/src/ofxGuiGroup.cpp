@@ -337,11 +337,17 @@ void ofxGuiGroup::generateDraw(){
 		auto y = getTextVCenteredInRect(headerRect);
 		
 		textMesh = getTextMesh(getName(), textPadding + b.x, y);
-		if(minimized){
-			textMesh.append(getTextMesh("+", b.width - textPadding - 8 + b.x, y));
-		}else{
-			textMesh.append(getTextMesh("-", b.width - textPadding - 8 + b.x, y));
-		}
+		
+		
+		minimizeRect = getTextBoundingBox("+",0,0);
+		minimizeRect.x = b.width - textPadding - minimizeRect.width + b.x;
+
+		y = minimizeRect.y;
+		minimizeRect.y = headerRect.getCenter().y - minimizeRect.height * 0.5 ;
+		y = minimizeRect.y - y;
+		//Crop the minimizeRect, just in case it is larger than the headerRect
+		minimizeRect = headerRect.getIntersection(minimizeRect);
+		textMesh.append(getTextMesh((minimized?"+":"-"), minimizeRect.x, y));
 	}
 }
 
