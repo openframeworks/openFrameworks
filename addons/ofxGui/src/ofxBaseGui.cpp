@@ -202,15 +202,19 @@ ofRectangle ofxBaseGui::getTextBoundingBox(const string & text, float x, float y
 	}
 }
 float ofxBaseGui::getTextVCenteredInRect(const ofRectangle& container){
+		
 	if(useTTF){
-		return container.getCenter().y + font.getAscenderHeight()*0.5;
+		auto a = font.getAscenderHeight();
+		auto d = font.getDescenderHeight();
+		return container.getCenter().y  - (a  - d) *0.5 + a;
 	}else{
 		// The bitmap font does not provide a getAscenderHeight() method.
 		// However,it can be found by calling `getTextBoundingBox(" ",0,0)` 
 		// which returns the ascender value in the rectangle's Y as a negative value. 
 		// It does not matter which string is passed to it, the value will be always the same.
-		// Fix. It centers the text better with `getTextBoundingBox(" ",0,0).getCenter().y;`
-		return container.getCenter().y - getTextBoundingBox(" ",0,0).getCenter().y;
+		// Fix. It centers the text properly with `getTextBoundingBox(" ",0,0)` as it takes into account the screen pixel scaling.
+		auto bb = getTextBoundingBox(" ",0,0);
+		return container.getCenter().y - bb.height*0.5 - bb.y;
 	}
 }
 
