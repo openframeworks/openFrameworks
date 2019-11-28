@@ -204,9 +204,7 @@ ofRectangle ofxBaseGui::getTextBoundingBox(const string & text, float x, float y
 float ofxBaseGui::getTextVCenteredInRect(const ofRectangle& container){
 		
 	if(useTTF){
-		auto a = font.getAscenderHeight();
-		auto d = font.getDescenderHeight();
-		return container.getCenter().y  - (a  - d) *0.5 + a;
+		return container.getCenter().y  + (font.getAscenderHeight()  + font.getDescenderHeight()) *0.5;
 	}else{
 		// The bitmap font does not provide a getAscenderHeight() method.
 		// However,it can be found by calling `getTextBoundingBox(" ",0,0)` 
