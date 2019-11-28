@@ -56,7 +56,7 @@ void ofxPanel::generateDraw(){
 		float iconWidth = loadIcon.getWidth()/loadIcon.getHeight()*iconHeight;
 		int iconSpacing = iconWidth*.5;
 	
-		loadBox.x = b.getMaxX() - (iconWidth * 2 + iconSpacing + (textPadding*2) + 8 );
+		loadBox.x = minimizeRect.getX() - (iconWidth + iconSpacing) * 2;
 		loadBox.y = headerRect.y + headerRect.height / 2. - iconHeight / 2.;
 		loadBox.width = iconWidth;
 		loadBox.height = iconHeight;
