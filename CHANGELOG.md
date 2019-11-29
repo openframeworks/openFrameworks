@@ -10,7 +10,6 @@
 
 CORE
 ----
-
 ### 3d
 - Add handling of double precision position data in PLY model loader (#6292) [commit](https://github.com/openframeworks/openFrameworks/commit/860f2658cd33edad44d3cfbdb23d344e8912b295)
 - Bugfix ofEasyCam (#6284) [commit](https://github.com/openframeworks/openFrameworks/commit/29b4d63875bb30fe14b51a8afd7a37ad4cabb6a5)
