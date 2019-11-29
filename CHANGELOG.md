@@ -221,6 +221,22 @@ PROJECT GENERATOR
 ----
 - update template.config files (#6368) [commit](https://github.com/openframeworks/openFrameworks/commit/25aa922ca107b912500d3a8a74d1ef24a7770b86)
 - Feature add vscode template (#6298) [commit](https://github.com/openframeworks/openFrameworks/commit/63de87fbbc616a3c549b76d8c0851fbb26a3d0a0)
+- add props support (#196) [commit](https://github.com/openframeworks/projectGenerator/commit/31a0b6fca8807bd7fb4165bf758f6ba4583ed087)
+- ignores comments in addons.make after an addon, [commit](https://github.com/openframeworks/projectGenerator/commit/c8ddfe81542a5d50853b8694adde3c033f36a17d)
+- Typo on string #31? (#200) [commit](https://github.com/openframeworks/projectGenerator/commit/7ed23dccf1d44aa3f90539e49581e3d441aca831)
+- Search Addons for partial match & update semantic.min.js (#201) [commit](https://github.com/openframeworks/projectGenerator/commit/3e6223b4971847cb39e7cdc2800c5297da0ee03f)
+- fix Windows folder drop feature (#207) [commit](https://github.com/openframeworks/projectGenerator/commit/6b36107cd55046478a8cae60d362b6bb0d5d48c8)
+- Support ADDON_DATA in addon_config.mk (#190) [commit](https://github.com/openframeworks/projectGenerator/commit/96d97bbfb38b8b532582f1459ea4762ca7a87ffe)
+- fix verbose logging about defines on xcodeProject (#179) [commit](https://github.com/openframeworks/projectGenerator/commit/e11781ecd6af97f37187a39017587cb01c8280bd)
+- fix: call ofGetElapsedTimef after initutils() (#178) [commit](https://github.com/openframeworks/projectGenerator/commit/f6ba22506d03230e2f3270a431a0262bea968020)
+- Feature show hidden folder (#205) [commit](https://github.com/openframeworks/projectGenerator/commit/50a0ee2aaf70199c80e75c5e3b67501e55579367)
+- Feature add template dropdown to frontend PG (#206) [commit](https://github.com/openframeworks/projectGenerator/commit/550d7467b6391361b30cd549ce5daf1b486c807f)
+- update shrinkwrap from Windows (#219) [commit](https://github.com/openframeworks/projectGenerator/commit/fe3a2b8a26a36718009a6014d7b52e55e312e2d8)
+- adds _runMeFirst.command to macOS packages to escape translocation. closes #220 [commit](https://github.com/openframeworks/projectGenerator/commit/672bb754c352de8b307d0661281d13e140e37e9a)
+- 10.12 translocation message instructions [commit](https://github.com/openframeworks/projectGenerator/commit/6b47f0869e012b19fd1d40c4b8fa1684141541b4)
+- added the -r flag for xattr quarantine closes #220 [commit](https://github.com/openframeworks/projectGenerator/commit/0c4d02f932807639b1b0fd379b87067817304d82)
+- change node version in package.json to 6.11.0 [commit](https://github.com/openframeworks/projectGenerator/commit/efd18d7fe4b7d849331a34b3fbf17c34a982c6d9)
+- fix for linux not finding pg binary. closes #209 (#227) [commit](https://github.com/openframeworks/projectGenerator/commit/5f9f6255e1ef8933ccb213d5f039dc15eb2a937c)
 
 DOCUMENTATION 
 ----
