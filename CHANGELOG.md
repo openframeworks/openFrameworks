@@ -102,6 +102,7 @@ PLATFORM/IDE SPECIFIC
 - Add jack-audio-connection-kit-dbus as Fedora dep (#6213) [commit](https://github.com/openframeworks/openFrameworks/commit/9fb1b833a0a9647c5150c5883c48792fbf3be8d0)
 - Linux: Default to poco from system [commit](https://github.com/openframeworks/openFrameworks/commit/e157173464d79cd604b0edb41764074461734190)
 - Added missing ROOT variable to fedora install_dependencies.sh (#6286) [commit](https://github.com/openframeworks/openFrameworks/commit/e559f15d878ae9e79f19bc52074e2be4c3f008b0)
+- Update install_dependencies.sh Ubuntu libgconf-2-4 (#6477) [commit](https://github.com/openframeworks/openFrameworks/commit/684fb37c6446f02d0289aa91da791c6836286550)
 
 ### linuxarm 
 - ofAppEGLWindow: Add control of udev input device attached/detached (#6215) [commit](https://github.com/openframeworks/openFrameworks/commit/0a834f7163f16a910616db65959805e8d98f895e)
