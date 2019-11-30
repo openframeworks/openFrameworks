@@ -286,7 +286,14 @@ void ofxBaseGui::setShape(float x, float y, float w, float h){
 	b.set(x, y, w, h);
 	sizeChangedCB();
 }
-
+void ofxBaseGui::setShapeNoNotification(const ofRectangle& r){
+	b = r;
+	setNeedsRedraw();
+}
+void ofxBaseGui::setShapeNoNotification(float x, float y, float w, float h){
+	b.set(x, y, w, h);
+	setNeedsRedraw();
+}
 glm::vec3 ofxBaseGui::getPosition() const {
 	return glm::vec3(b.x, b.y, 0);
 }

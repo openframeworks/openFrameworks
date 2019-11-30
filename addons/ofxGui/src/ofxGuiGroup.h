@@ -81,15 +81,23 @@ class ofxGuiGroup : public ofxBaseGui {
 		void enableHeader();
 		void disableHeader();
 		bool isHeaderEnabled();
+		
+		static float elementSpacing;
+		static float groupSpacing;
+		static float childrenLeftIndent;
+		static float childrenRightIndent;
 	protected:
+	
+		void updateChildrenPositions(bool bUpdateWidth = false);
+		void updateChild(ofxBaseGui* child, const float& x, const float& y, bool bUpdateWidth = false);
+		
 		bool bHeaderEnabled = true;
 		virtual void render();
 		virtual bool setValue(float mx, float my, bool bCheck);
 		virtual void onMinimize();
 		virtual void onMaximize();
 
-		static float elementSpacing;
-		static float groupSpacing;
+		
 	
 		ofRectangle headerRect;
 		ofRectangle minimizeRect;

@@ -34,6 +34,11 @@ class ofxBaseGui {
 		virtual void setShape(ofRectangle r);
 		virtual void setShape(float x, float y, float w, float h);
 
+		/// sets the shape but does not notify its parent.
+		/// This is mostly used internally to avoid infinite loops
+		void setShapeNoNotification(const ofRectangle& r);
+		void setShapeNoNotification(float x, float y, float w, float h);
+	
 		glm::vec3 getPosition() const;
 		ofRectangle getShape() const;
 		float getWidth() const;

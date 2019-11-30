@@ -9,7 +9,8 @@ using namespace std;
 
 float ofxGuiGroup::elementSpacing = 1;
 float ofxGuiGroup::groupSpacing = 1;
-
+float ofxGuiGroup::childrenLeftIndent = 4;
+float ofxGuiGroup::childrenRightIndent = 0;
 ofxGuiGroup::ofxGuiGroup(){
 	minimized = false;
 	headerRect.height = defaultHeight;
@@ -124,7 +125,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 			ofLogWarning() << "ofxBaseGroup; no control for parameter of type " << type;
 		}
 	}
-
+	updateChildrenPositions(true);
 	parameters = _parameters;
 	registerMouseEvents();
 
@@ -134,14 +135,8 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 }
 
 void ofxGuiGroup::setWidthElements(float w){
-	for(std::size_t i = 0; i < collection.size(); i++){
-		collection[i]->setSize(w, collection[i]->getHeight());
-		collection[i]->setPosition(b.x + b.width - w, collection[i]->getPosition().y);
-		ofxGuiGroup * subgroup = dynamic_cast<ofxGuiGroup*>(collection[i]);
-		if(subgroup != nullptr){
-			subgroup->setWidthElements(w * .98);
-		}
-	}
+	b.width = w;
+	updateChildrenPositions(true);
 	sizeChangedCB();
 	setNeedsRedraw();
 }
@@ -149,27 +144,12 @@ void ofxGuiGroup::setWidthElements(float w){
 void ofxGuiGroup::add(ofxBaseGui * element){
 	collection.push_back(element);
 
-	element->setPosition(b.x, b.y + b.height  + elementSpacing);
-
-	b.height += element->getHeight() + elementSpacing;
-
-	//if(b.width<element->getWidth()) b.width = element->getWidth();
-
 	element->unregisterMouseEvents();
 
 	element->setParent(this);
 
-	ofxGuiGroup * subgroup = dynamic_cast <ofxGuiGroup *>(element);
-	if(subgroup != nullptr){
-		subgroup->filename = filename;
-		subgroup->setWidthElements(b.width * .98);
-	}else{
-		if(parent != nullptr){
-			element->setSize(b.width * .98, element->getHeight());
-			element->setPosition(b.x + b.width - element->getWidth(), element->getPosition().y);
-		}
-	}
-
+	// updateChild(...) could be called instead of updateChildrenPositions(...), here but the latter ensures that all the elements are placed properly.
+	updateChildrenPositions(true);
 	parameters.add(element->getParameter());
 	setNeedsRedraw();
 }
@@ -323,13 +303,15 @@ bool ofxGuiGroup::mouseScrolled(ofMouseEventArgs & args){
 
 void ofxGuiGroup::generateDraw(){
 	border.clear();
-	border.setFillColor(ofColor(thisBorderColor, 180));
-	border.setFilled(true);
-	border.rectangle(b.x, b.y + groupSpacing, b.width + 1, b.height);
 
+	thisTextColor.setHsb(ofRandom(255), ofRandom(150, 255), ofRandom(150, 255));
+	thisBorderColor = thisTextColor;
+	border.setFillColor(thisBorderColor);
+	border.setFilled(true);
+	border.rectangle(b);
 
 	if(bHeaderEnabled){
-		headerRect.set(b.x, b.y + 1 + groupSpacing, b.width, defaultHeight);
+
 		headerBg.clear();
 		headerBg.setFillColor(thisHeaderBackgroundColor);
 		headerBg.setFilled(true);
@@ -352,6 +334,9 @@ void ofxGuiGroup::generateDraw(){
 }
 
 void ofxGuiGroup::render(){
+	// Avoid any unnecessary rendering
+	if(!bHeaderEnabled && minimized) return;
+
 	border.draw();
 	if(bHeaderEnabled){
 		headerBg.draw();
@@ -448,23 +433,13 @@ bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 
 void ofxGuiGroup::minimize(){
 	minimized = true;
-	b.height = (bHeaderEnabled?headerRect.height:0) + elementSpacing + groupSpacing + 1 /*border*/;
-	if(parent){
-		parent->sizeChangedCB();
-	}
-	setNeedsRedraw();
+	sizeChangedCB();
 	onMinimize();
 }
 
 void ofxGuiGroup::maximize(){
 	minimized = false;
-    for(std::size_t i = 0; i < collection.size(); i++){
-		b.height += collection[i]->getHeight() + elementSpacing;
-	}
-	if(parent){
-		parent->sizeChangedCB();
-	}
-	setNeedsRedraw();
+	sizeChangedCB();
 	onMaximize();
 }
 
@@ -498,20 +473,41 @@ void ofxGuiGroup::onMaximize(){
 
 }
 
-void ofxGuiGroup::sizeChangedCB(){
-	float y = b.y  + (bHeaderEnabled?headerRect.height:0) + elementSpacing;
+void ofxGuiGroup::updateChild(ofxBaseGui* child, const float& x, const float& y, bool bUpdateWidth){
+	if(child){
+		if(bUpdateWidth){
+			child->setShapeNoNotification(x, y, b.width - childrenLeftIndent - childrenRightIndent, child->getHeight());
+		}else{
+			child->setPosition(x, y);
+		}
+		auto c = dynamic_cast<ofxGuiGroup*>(child);
+		if(c){
+			c->updateChildrenPositions(bUpdateWidth);
+		}
+	}
+}
+void ofxGuiGroup::updateChildrenPositions(bool bUpdateWidth){
+	if(!bHeaderEnabled && minimized){
+		b.height = 0;
+		return;
+	}
+	b.height = (bHeaderEnabled?(defaultHeight):0) + elementSpacing + (parent?groupSpacing:0);
+	headerRect.set(b.x, b.y, b.width, defaultHeight);
 	if(parent){
-		y += groupSpacing;
+		headerRect.y += groupSpacing;
 	}
-	for(std::size_t i = 0; i < collection.size(); i++){
-		collection[i]->setPosition(collection[i]->getPosition().x, y + elementSpacing);
-		y += collection[i]->getHeight() + elementSpacing;
-	}
-	if(minimized){
-		b.height = (bHeaderEnabled?headerRect.height:0) + elementSpacing + groupSpacing + 1 /*border*/;
-	}else{
+	if(!minimized){
+		float y = b.getMaxY();
+		float x = b.x + childrenLeftIndent;
+		for(auto c: collection){
+			updateChild(c, x, y, bUpdateWidth);
+			y += c->getHeight() + elementSpacing;
+		}
 		b.height = y - b.y;
 	}
+}
+void ofxGuiGroup::sizeChangedCB(){
+	updateChildrenPositions(true);
 	if(parent){
 		parent->sizeChangedCB();
 	}
@@ -535,13 +531,8 @@ ofAbstractParameter & ofxGuiGroup::getParameter(){
 }
 
 void ofxGuiGroup::setPosition(const glm::vec3& p){
-	auto diff = p - b.getPosition();
-
-	for(std::size_t i = 0; i < collection.size(); i++){
-		collection[i]->setPosition(collection[i]->getPosition() + diff);
-	}
-
 	b.setPosition(p);
+	updateChildrenPositions(false);
 	setNeedsRedraw();
 }
 
