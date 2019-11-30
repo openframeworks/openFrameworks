@@ -112,3 +112,202 @@ inline void ofDeserialize(const ofJson & json, ofAbstractParameter & parameter){
 		}
 	}
 }
+
+namespace of {
+    namespace json_like_utils {
+        inline std::vector<std::uint8_t> loadBinary(const std::filesystem::path &filename) {
+            ofFile file{filename};
+            if(file.exists()) {
+                std::vector<uint8_t> binary{std::istream_iterator<std::uint8_t>(file), std::istream_iterator<std::uint8_t>()};
+                return binary;
+            } else {
+                ofLogError() << "Error loading binary from " << filename.string() << ": file doesn't exist";
+                return {};
+            }
+        }
+    }
+}
+
+#pragma mark BSON
+
+inline ofJson ofParseBson(const std::vector<std::uint8_t> &bson)
+{
+    ofJson json;
+    try {
+        json = ofJson::from_bson(bson);
+    } catch(std::exception &e) {
+        ofLogError("ofParseBson") << "Error can't parse bson to json: " << e.what();
+    } catch(...) {
+        ofLogError("ofParseBson") << "Error can't parse bson to json";
+    }
+    return json;
+}
+
+inline ofJson ofLoadBson(const std::filesystem::path& filename) {
+    return ofParseBson(of::json_like_utils::loadBinary(filename));
+}
+
+inline std::vector<std::uint8_t> ofConvertToBson(const ofJson &json) {
+    std::vector<std::uint8_t> bson;
+    try {
+        bson = ofJson::to_bson(json);
+    } catch(std::exception &e) {
+       ofLogError("ofConvertToBson") << "Error can't parse bson from json: " << e.what();
+    } catch(...) {
+       ofLogError("ofConvertToBson") << "Error can't parse bson from json";
+    }
+    return bson;
+}
+
+inline bool ofSaveJsonAsBson(const std::filesystem::path& filename, const ofJson & json){
+    ofFile bsonFile(filename, ofFile::WriteOnly);
+    try {
+        auto &&bson = ofConvertToBson(json);
+        bsonFile.write((char *)bson.data(), bson.size());
+    } catch(std::exception & e) {
+        ofLogError("ofSaveJsonAsBson") << "Error saving json as bson to " << filename.string() << ": " << e.what();
+        return false;
+    } catch(...) {
+        ofLogError("ofSaveJsonAsBson") << "Error saving json as bson to " << filename.string();
+        return false;
+    }
+    return true;
+}
+
+#pragma mark CBOR
+
+inline ofJson ofParseCbor(const std::vector<std::uint8_t> &cbor)
+{
+    ofJson json;
+    try {
+        json = ofJson::from_cbor(cbor);
+    } catch(std::exception &e) {
+        ofLogError("ofParseCbor") << "Error can't parse cbor to json: " << e.what();
+    } catch(...) {
+        ofLogError("ofParseCbor") << "Error can't parse cbor to json";
+    }
+    return json;
+}
+
+inline ofJson ofLoadCbor(const std::filesystem::path& filename) {
+    return ofParseCbor(of::json_like_utils::loadBinary(filename));
+}
+
+inline std::vector<std::uint8_t> ofConvertToCbor(const ofJson &json) {
+    std::vector<std::uint8_t> bson;
+    try {
+        bson = ofJson::to_cbor(json);
+    } catch(std::exception &e) {
+       ofLogError("ofConvertToCbor") << "Error can't parse cbor from json: " << e.what();
+    } catch(...) {
+       ofLogError("ofConvertToCbor") << "Error can't parse cbor from json";
+    }
+    return bson;
+}
+
+inline bool ofSaveJsonAsCbor(const std::filesystem::path& filename, const ofJson & json){
+    ofFile cborFile(filename, ofFile::WriteOnly);
+    try {
+        auto &&cbor = ofConvertToCbor(json);
+        cborFile.write((char *)cbor.data(), cbor.size());
+    } catch(std::exception & e) {
+        ofLogError("ofSaveJsonAsCbor") << "Error saving json as cbor to " << filename.string() << ": " << e.what();
+        return false;
+    } catch(...) {
+        ofLogError("ofSaveJsonAsCbor") << "Error saving json as cbor to " << filename.string();
+        return false;
+    }
+    return true;
+}
+
+#pragma mark MessagePack
+
+inline ofJson ofParseMessagePack(const std::vector<std::uint8_t> &cbor)
+{
+    ofJson json;
+    try {
+        json = ofJson::from_msgpack(cbor);
+    } catch(std::exception &e) {
+        ofLogError("ofParseMessagePack") << "Error can't parse msgpack to json: " << e.what();
+    } catch(...) {
+        ofLogError("ofParseMessagePack") << "Error can't parse msgpack to json";
+    }
+    return json;
+}
+
+inline ofJson ofLoadMessagePack(const std::filesystem::path& filename) {
+    return ofParseMessagePack(of::json_like_utils::loadBinary(filename));
+}
+
+inline std::vector<std::uint8_t> ofConvertToMessagePack(const ofJson &json) {
+    std::vector<std::uint8_t> bson;
+    try {
+        bson = ofJson::to_msgpack(json);
+    } catch(std::exception &e) {
+       ofLogError("ofConvertToMessagePack") << "Error can't parse msgpack from json: " << e.what();
+    } catch(...) {
+       ofLogError("ofConvertToMessagePack") << "Error can't parse msgpack from json";
+    }
+    return bson;
+}
+
+inline bool ofSaveJsonAsMessagePack(const std::filesystem::path& filename, const ofJson & json){
+    ofFile msgpackFile(filename, ofFile::WriteOnly);
+    try {
+        auto &&msgpack = ofConvertToMessagePack(json);
+        msgpackFile.write((char *)msgpack.data(), msgpack.size());
+    } catch(std::exception & e) {
+        ofLogError("ofSaveJsonAsMessagePack") << "Error saving json as msgpack to " << filename.string() << ": " << e.what();
+        return false;
+    } catch(...) {
+        ofLogError("ofSaveJsonAsMessagePack") << "Error saving json as msgpack to " << filename.string();
+        return false;
+    }
+    return true;
+}
+
+#pragma mark UBJSON
+
+inline ofJson ofParseUBJson(const std::vector<std::uint8_t> &cbor)
+{
+    ofJson json;
+    try {
+        json = ofJson::from_ubjson(cbor);
+    } catch(std::exception &e) {
+        ofLogError("ofParseUBJson") << "Error can't parse ubjson to json: " << e.what();
+    } catch(...) {
+        ofLogError("ofParseUBJson") << "Error can't parse ubjson to json";
+    }
+    return json;
+}
+
+inline ofJson ofLoadUBJson(const std::filesystem::path& filename) {
+    return ofParseMessagePack(of::json_like_utils::loadBinary(filename));
+}
+
+inline std::vector<std::uint8_t> ofConvertToUBJson(const ofJson &json) {
+    std::vector<std::uint8_t> bson;
+    try {
+        bson = ofJson::to_ubjson(json);
+    } catch(std::exception &e) {
+       ofLogError("ofConvertToUBJson") << "Error can't parse ubjson from json: " << e.what();
+    } catch(...) {
+       ofLogError("ofConvertToUBJson") << "Error can't parse ubjson from json";
+    }
+    return bson;
+}
+
+inline bool ofSaveJsonAsUBJson(const std::filesystem::path& filename, const ofJson & json){
+    ofFile ubjsonFile(filename, ofFile::WriteOnly);
+    try {
+        auto &&ubjson = ofConvertToUBJson(json);
+        ubjsonFile.write((char *)ubjson.data(), ubjson.size());
+    } catch(std::exception & e) {
+        ofLogError("ofSaveJsonAsUBJson") << "Error saving json as ubjson to " << filename.string() << ": " << e.what();
+        return false;
+    } catch(...) {
+        ofLogError("ofSaveJsonAsUBJson") << "Error saving json as ubjson to " << filename.string();
+        return false;
+    }
+    return true;
+}
