@@ -46,6 +46,9 @@ else
 # Copy bin/data into App/Resources
 rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/"
 
+# Strip 32bit from fmod dylib
+lipo -remove i386 "${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app/Contents/Frameworks/libfmodex.dylib" -o "${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app/Contents/Frameworks/libfmodex.dylib" 
+
 # ---- Code Sign App Package ----
 
 # WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!

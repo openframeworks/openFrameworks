@@ -1,4 +1,4 @@
-## How to compile openFrameworks from github
+# How to compile openFrameworks from github
 
 Follow these instructions only if you want to submit a pull request or if you want to always use the most recent version of openFrameworks. In other cases you will not need to clone the entire openFrameworks repository.
 
@@ -43,7 +43,55 @@ Once the success message appears you are done.
 #### Option 2 - With the command line Project Generator
 * from the OF root directory, run `projectGenerator -r -o"." examples`
 
-## How to submit your pull requests
+
+
+# How to update openFrameworks from github
+
+It's likely that at some point you will want to update your local openFrameworks to include new changes available in github. To update openFrameworks, we first need to figure out if you have several remotes already configured. Run
+
+    git remote -v
+    
+And study the output. It may look something like this:
+
+```
+origin	git@github.com:your-user-name/openFrameworks.git (fetch)
+origin	git@github.com:your-user-name/openFrameworks.git (push)
+upstream	https://github.com/openframeworks/openFrameworks.git (fetch)
+upstream	https://github.com/openframeworks/openFrameworks.git (push)
+```
+
+This means that there are two remotes:
+- the first two lines point at your own fork in github
+- the next two lines point at the official openFrameworks repository
+
+It is possible that you only have one or the other. If you are missing the official remote you can add it like this:
+
+    git remote add upstream git@github.com:openframeworks/openFrameworks.git
+
+Note that `upstream` is a name you choose, and it's how you will refer to the official openframeworks repository. Use that same name in the following command to update your local copy of openFrameworks:
+
+    git pull upstream master
+
+### Update the submodules
+
+The openFrameworks git repository has submodules (so far the Project Generator). The submodules rarely change, but if they did, you can update them too. If you never downloaded the submodules, do it now:
+
+    git submodule update --init --recursive
+    
+If you did already download them, this is how you update them:
+
+    git submodule update --recursive
+
+### Try if everything worked
+
+Once all changes are downloaded try to compile a program. It if fails it is possible that the dependecies are out of date. In that case please repeat the step **Download dependencies** found above.
+
+Finally, if your setup depends on some of the scripts from the scripts folder, you may need to re-run them. For instance, if you use Qt Creator and have trouble creating new OF projects you may want to run `scripts/qtcreator/install_template.sh` again.
+
+
+
+
+# How to submit your pull requests
 
 If you plan to submit pull requests to openFrameworks, the procedure is almost identical to what we described above, with one little difference: you should clone your own fork of openFrameworks:
 
