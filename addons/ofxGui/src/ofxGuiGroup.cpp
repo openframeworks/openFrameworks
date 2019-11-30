@@ -301,9 +301,6 @@ bool ofxGuiGroup::mouseScrolled(ofMouseEventArgs & args){
 
 void ofxGuiGroup::generateDraw(){
 	border.clear();
-
-	thisTextColor.setHsb(ofRandom(255), ofRandom(150, 255), ofRandom(150, 255));
-	thisBorderColor = thisTextColor;
 	border.setFillColor(thisBorderColor);
 	border.setFilled(true);
 	border.rectangle(b);
@@ -489,18 +486,25 @@ void ofxGuiGroup::updateChildrenPositions(bool bUpdateWidth){
 		b.height = 0;
 		return;
 	}
-	b.height = (bHeaderEnabled?(defaultHeight):0) + elementSpacing + (parent?groupSpacing:0);
-	headerRect.set(b.x, b.y, b.width, defaultHeight);
+	b.height = (bHeaderEnabled?(defaultHeight):0)  ;
+	headerRect.set(b.x, b.y , b.width, defaultHeight);
 	if(parent){
-		headerRect.y += groupSpacing;
+		headerRect.y += elementSpacing;
+		b.height += elementSpacing;
 	}
 	if(!minimized){
+		if(parent){
+			headerRect.y += groupSpacing;
+			b.height += groupSpacing;
+		}
+			
 		float y = b.getMaxY();
 		float x = b.x + childrenLeftIndent;
 		for(auto c: collection){
 			updateChild(c, x, y, bUpdateWidth);
 			y += c->getHeight() + elementSpacing;
 		}
+//		if(parent)y -= elementSpacing;
 		b.height = y - b.y;
 	}
 }
