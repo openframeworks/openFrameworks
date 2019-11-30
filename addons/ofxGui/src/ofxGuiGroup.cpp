@@ -31,7 +31,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const std::string& collectionName, const std::s
 ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std::string& _filename, float x, float y){
 	b.x = x;
 	b.y = y;
-	headerRect.height = defaultHeight; 
+	headerRect.height = defaultHeight;
 	if(parent != nullptr){
 		b.width = parent->getWidth();
 	}else{
@@ -119,8 +119,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 			}
 		}else if(type == typeid(ofParameterGroup).name()){
 			auto p = _parameters.getGroup(i);
-			ofxGuiGroup * panel = new ofxGuiGroup(p);
-			add(panel);
+			add(createGuiGroup(p));
 		}else{
 			ofLogWarning() << "ofxBaseGroup; no control for parameter of type " << type;
 		}
@@ -155,60 +154,59 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 }
 
 void ofxGuiGroup::add(const ofParameterGroup & parameters){
-	ofxGuiGroup * panel = new ofxGuiGroup(parameters);
-	add(panel);
+	add(createGuiGroup(parameters));
 }
 
 void ofxGuiGroup::add(ofParameter <void> & parameter){
-	add(new ofxButton(parameter, b.width));
+	add(createGuiElement<ofxButton>(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter <bool> & parameter){
-	add(new ofxToggle(parameter, b.width));
+	add(createGuiElement<ofxToggle >(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter <string> & parameter){
-	add(new ofxInputField<std::string>(parameter, b.width));
+	add(createGuiElement<ofxInputField<std::string> >(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter <ofVec2f> & parameter){
-	add(new ofxVecSlider_ <ofVec2f>(parameter, b.width));
+	add(createGuiElement<ofxVecSlider_ <ofVec2f> >(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter <ofVec3f> & parameter){
-	add(new ofxVecSlider_ <ofVec3f>(parameter, b.width));
+	add(createGuiElement<ofxVecSlider_ <ofVec3f> >(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter <ofVec4f> & parameter){
-	add(new ofxVecSlider_ <ofVec4f>(parameter, b.width));
+	add(createGuiElement<ofxVecSlider_ <ofVec4f> >(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter <glm::vec2> & parameter){
-	add(new ofxVecSlider_ <glm::vec2>(parameter, b.width));
+	add(createGuiElement<ofxVecSlider_ <glm::vec2> >(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter <glm::vec3> & parameter){
-	add(new ofxVecSlider_ <glm::vec3>(parameter, b.width));
+	add(createGuiElement<ofxVecSlider_ <glm::vec3> >(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter <glm::vec4> & parameter){
-	add(new ofxVecSlider_ <glm::vec4>(parameter, b.width));
+	add(createGuiElement<ofxVecSlider_ <glm::vec4> >(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter <ofColor> & parameter){
-	add(new ofxColorSlider_ <unsigned char>(parameter, b.width));
+	add(createGuiElement<ofxColorSlider_ <unsigned char> >(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter <ofShortColor> & parameter){
-	add(new ofxColorSlider_ <unsigned short>(parameter, b.width));
+	add(createGuiElement<ofxColorSlider_ <unsigned short> >(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter){
-	add(new ofxColorSlider_ <float>(parameter, b.width));
+	add(createGuiElement<ofxColorSlider_ <float> >(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter <ofRectangle> & parameter){
-	add(new ofxRectangleSlider(parameter, b.width));
+	add(createGuiElement<ofxRectangleSlider >(parameter));
 }
 
 void ofxGuiGroup::clear(){
@@ -553,3 +551,4 @@ void ofxGuiGroup::disableHeader(){
 bool ofxGuiGroup::isHeaderEnabled(){
 	return bHeaderEnabled;
 }
+

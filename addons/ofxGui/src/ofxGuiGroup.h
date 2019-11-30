@@ -116,6 +116,22 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		ofPath border, headerBg;
 		ofVboMesh textMesh;
+	
+		template<typename T, typename P>
+	ofxBaseGui* createGuiElement(ofParameter<P>&param){
+		ownedCollection.emplace_back(std::make_unique<T>(param, b.width));
+		return ownedCollection.back().get();
+	}
+	ofxBaseGui* createGuiGroup(const ofParameterGroup & parameters){
+		ownedCollection.emplace_back(std::make_unique<ofxGuiGroup>(parameters));
+		return ownedCollection.back().get();
+	}
+	
+	private:
+	// This array stores the unique pointers for the elements that this gui group creates, thus owns.
+	// This allowes for correct memory management and no leaks
+	std::vector<std::unique_ptr<ofxBaseGui> > ownedCollection;
+	
 };
 
 template <class ControlType>
