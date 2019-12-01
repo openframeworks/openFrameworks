@@ -7,19 +7,19 @@ void ofApp::setup(){
     max = 60;
     
     ofEnableDepthTest(); //make sure we test depth for 3d
-    
-	ofSetVerticalSync(true);
+
+    ofSetVerticalSync(true);
     ofEnableLighting();
     ofEnableAlphaBlending();
     ofEnableSmoothing();
-    
-    mesh.addVertex(ofPoint(0,0,0)); // add center vertex
+
+    mesh.addVertex(glm::vec3(0,0,0)); // add center vertex
     mesh.addColor(ofColor(137,137,140,255)); // center is same as bg
-    mesh.addNormal(ofVec3f(0,0,1)); // center normal points up
-    
+    mesh.addNormal(glm::vec3(0,0,1)); // center normal points up
+
     zfreq = 3.;
     zamt = .3;
-    
+
     //loop around and make verts in a circle, with a bit of a z-wave
     for (int i = 0; i < max; i++){
         float step = 2*PI/max; // step size around circle
@@ -29,17 +29,17 @@ void ofApp::setup(){
         float nextTheta = theta + step; // one step forward
         
         // create vertices in polar coordinates, plus a sine wave for z
-        ofVec3f p(radius*cos(theta),radius*sin(theta), radius*zamt*sin(zfreq*theta) );
+        glm::vec3 p(radius*cos(theta),radius*sin(theta), radius*zamt*sin(zfreq*theta) );
         // add this vertex
         mesh.addVertex(p);
         
         // we need these for calculating normals
-        ofVec3f prev(radius*cos(prevTheta),radius*sin(prevTheta),radius*zamt*sin(zfreq*prevTheta) );        
-        ofVec3f next(radius*cos(nextTheta),radius*sin(nextTheta),radius*zamt*sin(zfreq*nextTheta) );
+        glm::vec3 prev(radius*cos(prevTheta),radius*sin(prevTheta),radius*zamt*sin(zfreq*prevTheta) );        
+        glm::vec3 next(radius*cos(nextTheta),radius*sin(nextTheta),radius*zamt*sin(zfreq*nextTheta) );
         
         // our normals for each triangle face is the cross product of the two vectors making up that sliver 
-        ofVec3f previousFaceNormal = prev.getCrossed(p);
-        ofVec3f nextFaceNormal = p.getCrossed(next);
+        glm::vec3 previousFaceNormal = glm::cross(prev,p);
+        glm::vec3 nextFaceNormal = glm::cross(p, next);
         
         /* notice here we go in the same direction: previous->current,current->next;
            we could similarly go next->current,current-prev, which would flip all of our normals;
@@ -48,7 +48,7 @@ void ofApp::setup(){
          */
         
         // since we want smooth normals, we'll sum the two adjacent face normals, then normalize (since usually, only the direction and not the magnitude of the normal is what matters)
-        mesh.addNormal((previousFaceNormal + nextFaceNormal).normalize());
+        mesh.addNormal(glm::normalize(previousFaceNormal + nextFaceNormal));
         
         //add a color too
         ofColor c;
@@ -130,7 +130,7 @@ void ofApp::draw(){
 
     ofSetColor(255);
     ofDrawBitmapString("press any key or mouse button to disable mesh normals", 20,20);
-    ofDrawBitmapString("light", cam.worldToScreen(light.getGlobalPosition()) + ofPoint(10,0));
+    ofDrawBitmapString("light", cam.worldToScreen(light.getGlobalPosition()) + glm::vec3(20,0,0));
 }
 
 //--------------------------------------------------------------

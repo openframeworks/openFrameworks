@@ -203,7 +203,7 @@ gboolean text_dialog_gtk(gpointer userdata){
 static void initGTK(){
 	static bool initialized = false;
 	if(!initialized){
-		#if !defined(TARGET_RASPBERRY_PI)
+		#if !defined(TARGET_RASPBERRY_PI_LEGACY)
 		XInitThreads();
 		#endif
 		int argc=0; char **argv = nullptr;

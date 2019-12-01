@@ -14,7 +14,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	ofSetColor(gui->color);
-	ofDrawCircle(ofGetWidth()*0.5,ofGetWidth()*0.5,gui->radius);
+	ofDrawCircle(ofGetWidth()*0.5,ofGetHeight()*0.5,gui->radius);
 	ofSetColor(0);
 	ofDrawBitmapString(ofGetFrameRate(),20,20);
 }

@@ -14,7 +14,7 @@ void ofApp::setup(){
 
 	// Set the pixel format for getPixels to grayscale
 	// (other image formats will include heavy colorspace conversion)
-	grabber.setPixelFormat(OF_PIXELS_GRAY)
+	grabber.setPixelFormat(OF_PIXELS_GRAY);
 
 	// Hint the grabber if you don't need pixel data for better performance
 	//((ofxAndroidVideoGrabber*)grabber.getGrabber().get())->setUsePixels(false);

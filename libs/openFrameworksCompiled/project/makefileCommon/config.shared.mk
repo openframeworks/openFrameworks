@@ -28,9 +28,17 @@ ifeq ($(findstring emcc, $(CC)),emcc)
 endif
 PLATFORM_OS ?= $(shell uname -s)
 
-FIND=find
 HOST_OS=$(shell uname -s)
-$(info HOST_OS=${HOST_OS})
+
+ifdef MAKEFILE_DEBUG
+    $(info HOST_OS=${HOST_OS})
+endif
+
+ifneq (,$(findstring MSYS_NT,$(HOST_OS)))
+	FIND=/usr/bin/find
+else
+	FIND=find
+endif
 
 #check for Raspbian as armv7l needs to use armv6l architecture
 ifeq ($(wildcard $(RPI_ROOT)/etc/*-release), /etc/os-release)
@@ -60,13 +68,15 @@ else
 	endif
 endif
 
-#$(info PLATFORM_ARCH=$(PLATFORM_ARCH))
-#$(info PLATFORM_OS=$(PLATFORM_OS))
-#$(info HOST_ARCH=$(HOST_ARCH))
-#$(info HOST_OS=$(HOST_OS))
-#$(info CROSS_COMPILING=$(CROSS_COMPILING))
-#$(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
-#$(info IS_RASPBIAN=$(IS_RASPBIAN))
+ifdef MAKEFILE_DEBUG
+    $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
+    $(info PLATFORM_OS=$(PLATFORM_OS))
+    $(info HOST_ARCH=$(HOST_ARCH))
+    $(info HOST_OS=$(HOST_OS))
+    $(info CROSS_COMPILING=$(CROSS_COMPILING))
+    $(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
+    $(info IS_RASPBIAN=$(IS_RASPBIAN))
+endif
 
 # if not defined, construct the default PLATFORM_LIB_SUBPATH
 ifndef PLATFORM_LIB_SUBPATH
@@ -279,12 +289,16 @@ CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_PKG_CONFIG_LIBRARIES)
 
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
 ifneq ($(strip $(PKG_CONFIG_LIBDIR)),)
-$(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
-$(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
+ifdef MAKEFILE_DEBUG
+    $(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
+    $(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
+endif
 FAILED_PKG=$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); for pkg in $(CORE_PKG_CONFIG_LIBRARIES); do $(PLATFORM_PKG_CONFIG) $$pkg --cflags > /dev/null; if [ $$? -ne 0 ]; then echo $$pkg; return; fi; done; echo 0)
 else
-$(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
-$(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
+ifdef MAKEFILE_DEBUG
+    $(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
+    $(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
+endif
 FAILED_PKG=$(shell for pkg in $(CORE_PKG_CONFIG_LIBRARIES); do $(PLATFORM_PKG_CONFIG) $$pkg --cflags > /dev/null; if [ $$? -ne 0 ]; then echo $$pkg; return; fi; done; echo 0)
 endif
 	ifneq ($(FAILED_PKG),0)

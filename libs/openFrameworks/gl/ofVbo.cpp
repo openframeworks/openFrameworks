@@ -238,7 +238,7 @@ ofVbo::ofVbo(const ofVbo & mom){
 	normalAttribute = mom.normalAttribute;
 
 	customAttributes = mom.customAttributes;
-	
+
 	totalVerts = mom.totalVerts;
 	totalIndices = mom.totalIndices;
 	indexAttribute = mom.indexAttribute;
@@ -636,12 +636,12 @@ bool ofVbo::getIsAllocated() const {
 //--------------------------------------------------------------
 bool ofVbo::getUsingVerts() const  {
 	return bUsingVerts;
-}	
+}
 
 //--------------------------------------------------------------
 bool ofVbo::getUsingColors() const {
 	return bUsingColors;
-}	
+}
 
 //--------------------------------------------------------------
 bool ofVbo::getUsingNormals() const {
@@ -705,7 +705,7 @@ void ofVbo::setVertexBuffer(ofBufferObject & buffer, int numCoords, int stride, 
 	// Calculate the total number of vertices based on what we know:
 	int tmpStride = stride;
 	if (tmpStride == 0) {
-		// if stride is not given through argument, we need to calculate it based on 
+		// if stride is not given through argument, we need to calculate it based on
 		// on the data size and the number of coordinates.
 		tmpStride = (numCoords * sizeof(float));
 		if (tmpStride == 0) {
@@ -821,7 +821,7 @@ void ofVbo::bind() const{
 	bool programmable = ofIsGLProgrammableRenderer();
 	if(programmable && (vaoSupported || !vaoChecked)){
 		if(vaoID==0){
-			#ifdef TARGET_OPENGLES
+			#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 			if(glGenVertexArrays==0 && !vaoChecked){
 				glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArrays");
 				glDeleteVertexArrays = (glDeleteVertexArraysType)dlsym(RTLD_DEFAULT, "glDeleteVertexArrays");
@@ -829,9 +829,12 @@ void ofVbo::bind() const{
 				vaoChecked = true;
 				vaoSupported = glGenVertexArrays;
 			}
+			#elif  defined(TARGET_EMSCRIPTEN)
+				vaoChecked = true;
+				vaoSupported = false;
 			#else
-			vaoChecked = true;
-			vaoSupported = true;
+				vaoChecked = true;
+				vaoSupported = true;
 			#endif
 			if(vaoSupported) glGenVertexArrays(1, &const_cast<ofVbo*>(this)->vaoID);
 			if(vaoID!=0){
@@ -907,7 +910,7 @@ void ofVbo::bind() const{
 		}else if(programmable){
 			texCoordAttribute.disable();
 		}
-        
+
         if (bUsingIndices) {
             indexAttribute.bind();
         }
@@ -967,12 +970,12 @@ void ofVbo::drawElementsInstanced(int drawMode, int amt, int primCount) const{
 void ofVbo::clear(){
 
 	// clear all fixed function attributes
-	
+
 	clearVertices();
 	clearColors();
 	clearNormals();
 	clearTexCoords();
-	
+
 	// we're not using any of these.
 	bUsingVerts = false;
 	bUsingColors = false;
@@ -981,7 +984,7 @@ void ofVbo::clear(){
 
 	// clear all custom attributes.
 	customAttributes.clear();
-	
+
 	clearIndices();
 	if(vaoID!=0){
 		releaseVAO(vaoID);
@@ -1010,7 +1013,7 @@ void ofVbo::clearColors(){
 	colorAttribute = VertexAttribute();
 	colorAttribute.location = ofShader::COLOR_ATTRIBUTE;
 	bUsingColors = false;
-	
+
 }
 
 //--------------------------------------------------------------
@@ -1034,7 +1037,7 @@ void ofVbo::clearIndices(){
 void ofVbo::clearAttribute(int attributePos_){
 
 	if (!hasAttribute(attributePos_)) return;
-	
+
 	if (ofIsGLProgrammableRenderer()) {
 		if(attributePos_>3){
 			customAttributes.erase(attributePos_);

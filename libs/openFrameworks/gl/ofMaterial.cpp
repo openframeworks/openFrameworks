@@ -308,15 +308,15 @@ void ofMaterial::setCustomUniform1i(const std::string & name, int value) {
 	uniforms1i[name] = value;
 }
 
-void ofMaterial::setCustomUniform2i(const std::string & name, glm::tvec2<int> value) {
+void ofMaterial::setCustomUniform2i(const std::string & name, glm::vec<2,int> value) {
 	uniforms2i[name] = value;
 }
 
-void ofMaterial::setCustomUniform3i(const std::string & name, glm::tvec3<int> value) {
+void ofMaterial::setCustomUniform3i(const std::string & name, glm::vec<3, int> value) {
 	uniforms3i[name] = value;
 }
 
-void ofMaterial::setCustomUniform4i(const std::string & name, glm::tvec4<int> value) {
+void ofMaterial::setCustomUniform4i(const std::string & name, glm::vec<4, int> value) {
 	uniforms4i[name] = value;
 }
 

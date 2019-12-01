@@ -5,7 +5,7 @@
 //========================================================================
 int main( ){
 
-#ifdef OF_TARGET_OPENGLES
+#ifdef TARGET_OPENGLES
 	ofGLESWindowSettings settings;
 	settings.glesVersion=2;
 #else

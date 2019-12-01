@@ -32,7 +32,7 @@ class ofApp : public ofBaseApp{
 		
 		vector <Bullet> bullets;
 		vector <Bug> bugs;
-		vector <ofVec2f> holes;
+		vector <glm::vec2> holes;
 		
 		unsigned int maxBullets;
 		int bugsKilled;

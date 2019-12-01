@@ -46,6 +46,9 @@ else
 # Copy bin/data into App/Resources
 rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/"
 
+# Strip 32bit from fmod dylib
+lipo -remove i386 "${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app/Contents/Frameworks/libfmodex.dylib" -o "${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app/Contents/Frameworks/libfmodex.dylib" 
+
 # ---- Code Sign App Package ----
 
 # WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!
@@ -115,6 +118,8 @@ IFS=$(echo -en "\n\b")
 # Loop through all items.
 for ITEM in $ITEMS;
 do
+echo "Stripping invalid archs '${ITEM}'"
+lipo -remove i386 "${ITEM}" -o "${ITEM}"
 echo "Signing '${ITEM}'"
 codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" --entitlements "${CODE_SIGN_ENTITLEMENTS}" "${ITEM}"
 RESULT=$?
@@ -178,6 +183,8 @@ fi
 				</array>
 				<key>MACOSX_DEPLOYMENT_TARGET</key>
 				<string>10.9</string>
+				<key>OTHER_CODE_SIGN_FLAGS</key>
+				<string>--deep</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
@@ -3019,6 +3026,8 @@ fi
 				<string>10.9</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>YES</string>
+				<key>OTHER_CODE_SIGN_FLAGS</key>
+				<string>--deep</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
@@ -3077,6 +3086,8 @@ fi
 				</array>
 				<key>MACOSX_DEPLOYMENT_TARGET</key>
 				<string>10.9</string>
+				<key>OTHER_CODE_SIGN_FLAGS</key>
+				<string>--deep</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>

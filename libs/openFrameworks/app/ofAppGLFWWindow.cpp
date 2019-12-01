@@ -312,6 +312,11 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 
 	windowW = settings.getWidth();
 	windowH = settings.getHeight();
+	
+#ifdef TARGET_RASPBERRY_PI
+	windowRect.width = windowW;
+	windowRect.height = windowH;
+#endif 
 
 	glfwMakeContextCurrent(windowP);
 
@@ -441,6 +446,21 @@ void ofAppGLFWWindow::update(){
 			setFullscreen(true);
 		}
 	}
+
+#ifdef TARGET_RASPBERRY_PI
+    //needed for rpi. as good values don't come into resize_cb when coming out of fullscreen
+    if( needsResizeCheck && windowP ){
+        int winW, winH;
+        glfwGetWindowSize(windowP, &winW, &winH);
+        
+        //wait until the window size is the size it was before going fullscreen
+        //then stop the resize check
+        if( winW == windowRect.getWidth() && winH == windowRect.getHeight() ){
+            resize_cb(windowP, currentW, currentH);
+            needsResizeCheck = false;
+        }
+    }
+#endif
 }
 
 //--------------------------------------------
@@ -700,6 +720,16 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	Window nativeWin = glfwGetX11Window(windowP);
 	Display* display = glfwGetX11Display();
 	if(targetWindowMode==OF_FULLSCREEN){
+		
+#ifdef TARGET_RASPBERRY_PI
+		// save window shape before going fullscreen
+		if( windowP ){
+			int tmpW, tmpH;
+			glfwGetWindowSize(windowP, &tmpW, &tmpH);
+			windowRect.setSize(tmpW, tmpH); 
+		}
+#endif 
+		
 		int monitorCount;
 		GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
 		if( settings.multiMonitorFullScreen && monitorCount > 1 ){
@@ -798,6 +828,13 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	XChangeProperty(display, nativeWin, m_bypass_compositor, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&value, 1);
 
 	XFlush(display);
+	
+#ifdef TARGET_RASPBERRY_PI 
+	if( !fullscreen ){
+		needsResizeCheck = true; 
+	}
+#endif 
+	
 //	setWindowShape(windowW, windowH);
 
 #elif defined(TARGET_OSX)
@@ -1651,7 +1688,7 @@ void ofAppGLFWWindow::makeCurrent(){
 	glfwMakeContextCurrent(windowP);
 }
 
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+#if defined(TARGET_LINUX)
 Display* ofAppGLFWWindow::getX11Display(){
 	return glfwGetX11Display();
 }

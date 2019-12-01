@@ -205,6 +205,11 @@ void ofxColorSlider_<ColorType>::changeValue(ofColor_<ColorType> & value){
             collection[i]->setTextColor( p/range > 0.75 ? ofFloatColor(0.) : ofFloatColor(1.));
         }
 	}
+    if(isMinimized()){
+        setHeaderBackgroundColor(value);
+        float b = value.getBrightness() / value.limit();
+        setTextColor(b > 0.75 ? ofFloatColor(0.0) : ofFloatColor(1.0));
+    }
 }
 
 template<class ColorType>

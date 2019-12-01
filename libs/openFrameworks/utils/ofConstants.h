@@ -12,6 +12,9 @@
 	#define OF_USE_LEGACY_VECTOR_MATH 0
 #endif
 
+// This enables glm's old behavior of initializing with non garbage values
+#define GLM_FORCE_CTOR_INIT
+
 // Set to 1 to use std filesystem instead of boost's
 #ifndef OF_USING_STD_FS
 #define OF_USING_STD_FS 0

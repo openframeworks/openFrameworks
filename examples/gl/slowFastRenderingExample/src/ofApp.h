@@ -22,13 +22,13 @@ public:
     void gotMessage(ofMessage msg);
     
     void addPoint(float x, float y) {
-        points.push_back(ofVec2f(x, y));
-        speeds.push_back(ofVec2f(ofRandom(-1, 1), ofRandom(-1, 1)));
+        points.push_back(glm::vec2(x, y));
+        speeds.push_back(glm::vec2(ofRandom(-1, 1), ofRandom(-1, 1)));
     }
     
     // a simple vector of points
-    vector <ofVec2f> points;
-    vector <ofVec2f> speeds;
+    vector <glm::vec2> points;
+    vector <glm::vec2> speeds;
     
     // in super fast mode we use a vbo
     ofVbo vbo;

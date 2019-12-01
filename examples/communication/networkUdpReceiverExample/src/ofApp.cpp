@@ -33,7 +33,7 @@ void ofApp::update(){
 			if( point.size() == 2 ){
 				x=atof(point[0].c_str());
 				y=atof(point[1].c_str());
-				stroke.push_back(ofPoint(x,y));
+				stroke.push_back(glm::vec3(x,y,0));
 			}
 		}
 	}

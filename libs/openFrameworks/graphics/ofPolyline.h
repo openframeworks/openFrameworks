@@ -7,6 +7,10 @@
 #include "glm/fwd.hpp"
 #include <deque>
 
+#include "ofVec2f.h"
+#include "ofVec3f.h"
+#include "ofVec4f.h"
+
 /// \file
 /// ofPolyLine allows you to combine multiple points into a single vector data
 /// object that can be drawn to the screen, manipulated point by point, and
@@ -107,6 +111,15 @@ public:
 
 	void insertVertex(const T &p, int index);
 	void insertVertex(float x, float y, float z, int index);
+
+
+	/// \brief Remove a vertex at a given index.
+	///
+	/// This function print an error and ignore the input if the index is
+	/// invalid. When a vertex is removed, the internal caches are cleared.
+	///
+	/// \param index The index of the vertex to remove.
+	void removeVertex(int index);
 
 	/// \brief Resize the number of points in the ofPolyline to the value
 	/// passed in.

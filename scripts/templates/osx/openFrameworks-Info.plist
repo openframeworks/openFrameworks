@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>cc.openFrameworks.ofapp</string>
+	<string>cc.openFrameworks.${EXECUTABLE_NAME}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -18,7 +18,7 @@
 	<string>1.0</string>
 	<key>CFBundleIconFile</key>
 	<string>${ICON}</string>
-	<key>NSCameraUsageDescription</key>    
+	<key>NSCameraUsageDescription</key>
 	<string>This app needs to access the camera</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app needs to access the microphone</string>

@@ -1021,10 +1021,10 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 }
 
 //-----------------------------------------------------------
-int ofTrueTypeFont::getKerning(uint32_t c, uint32_t prevC) const{
+int ofTrueTypeFont::getKerning(uint32_t leftC, uint32_t rightC) const{
 	if(FT_HAS_KERNING( face )){
 		FT_Vector kerning;
-		FT_Get_Kerning(face.get(), FT_Get_Char_Index(face.get(), c), FT_Get_Char_Index(face.get(), prevC), FT_KERNING_UNFITTED, &kerning);
+		FT_Get_Kerning(face.get(), FT_Get_Char_Index(face.get(), leftC), FT_Get_Char_Index(face.get(), rightC), FT_KERNING_UNFITTED, &kerning);
 		return kerning.x >> 6;
 	}else{
 		return 0;
@@ -1067,7 +1067,11 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
             }else if(isValidGlyph(c)) {
 				const auto & props = getGlyphProperties(c);
 				if(prevC>0){
-					pos.x += getKerning(c,prevC);
+					if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
+						pos.x += getKerning(prevC, c);
+					}else{
+						pos.x += getKerning(c, prevC);
+					}
 				}
 				if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
 					f(c,pos);

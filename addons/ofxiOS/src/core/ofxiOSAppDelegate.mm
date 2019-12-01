@@ -281,7 +281,9 @@
     
     UIScreen * externalScreen;
     externalScreen = [[UIScreen screens] objectAtIndex:1];
-    
+#ifdef __IPHONE_9_0
+    externalScreen.overscanCompensation = UIScreenOverscanCompensationNone;
+#endif
     externalScreen.currentMode = externalScreen.preferredMode;
     
     NSInteger w = externalScreen.currentMode.size.width;
@@ -308,7 +310,10 @@
     
     UIScreen * externalScreen;
     externalScreen = [[UIScreen screens] objectAtIndex:1];
-    
+#ifdef __IPHONE_9_0
+    externalScreen.overscanCompensation = UIScreenOverscanCompensationNone;
+#endif
+
     if(screenModeIndex < 0){
         screenModeIndex = 0;
     }

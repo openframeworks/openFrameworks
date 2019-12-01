@@ -4,7 +4,7 @@
 #include "ofAppBaseWindow.h"
 #include "ofRectangle.h"
 
-#ifdef TARGET_LINUX
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 typedef struct _XIM * XIM;
 typedef struct _XIC * XIC;
 #endif
@@ -146,7 +146,7 @@ public:
 	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setStencilBits(int stencil));
 	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setMultiDisplayFullscreen(bool bMultiFullscreen)); //note this just enables the mode, you have to toggle fullscreen to activate it.
 
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 	Display* 	getX11Display();
 	Window  	getX11Window();
 	XIC			getX11XIC();
@@ -188,7 +188,7 @@ private:
 
 	void close();
 
-#ifdef TARGET_LINUX
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 	void setWindowIcon(const std::string & path);
 	void setWindowIcon(const ofPixels & iconPixels);
 	XIM xim;
@@ -213,6 +213,7 @@ private:
 
 	int 			nFramesSinceWindowResized;
 	bool			bWindowNeedsShowing;
+	bool			needsResizeCheck = false; /// Just for RPI at this point
 
 	GLFWwindow* 	windowP;
 
