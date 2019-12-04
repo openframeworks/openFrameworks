@@ -65,7 +65,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 		   EGL_GREEN_SIZE, EGL_DONT_CARE,
 		   EGL_BLUE_SIZE, EGL_DONT_CARE,
 		   EGL_ALPHA_SIZE, EGL_DONT_CARE,
-		   EGL_DEPTH_SIZE, EGL_DONT_CARE,
+		   EGL_DEPTH_SIZE, 16, // So we can have depth testing. 16 / 24 or 32bit 
 		   EGL_STENCIL_SIZE, EGL_DONT_CARE,
 		   EGL_SAMPLE_BUFFERS, EGL_DONT_CARE,
 		   EGL_NONE
