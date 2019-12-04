@@ -53,6 +53,7 @@ fi
 ./create_package.sh linux64 $lastversion master gcc5
 ./create_package.sh linux64 $lastversion master gcc6
 ./create_package.sh msys2 $lastversion master
+./create_package.sh msys2 $lastversion master 64
 ./create_package.sh vs2017 $lastversion master
 ./create_package.sh ios $lastversion master
 ./create_package.sh osx $lastversion master
@@ -70,6 +71,7 @@ mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc4_release.tar.gz /var/
 mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc6_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc6_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_nightly.zip
+mv /var/www/versions/nightly/of_v${lastversion}_msys264_release.zip /var/www/versions/nightly/of_v${lastversion}_msys264_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_vs2017_release.zip /var/www/versions/nightly/of_v${lastversion}_vs2017_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_ios_release.zip /var/www/versions/nightly/of_v${lastversion}_ios_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_osx_release.zip /var/www/versions/nightly/of_v${lastversion}_osx_nightly.zip

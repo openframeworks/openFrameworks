@@ -335,7 +335,11 @@ function createPackage {
     elif [ "$pkg_platform" = "linuxarmv7l" ]; then
         scripts/linux/download_libs.sh -a armv7l
     elif [ "$pkg_platform" = "msys2" ]; then
-        scripts/msys2/download_libs.sh
+        if [ "$libs_abi" = "64" ]; then
+            scripts/msys2/download_libs.sh -a 64
+        else
+            scripts/msys2/download_libs.sh
+        fi
     elif [ "$pkg_platform" = "vs2015" ]; then
         scripts/dev/download_libs.sh -p vs2015
     elif [ "$pkg_platform" = "vs2017" ]; then
@@ -624,12 +628,12 @@ function createPackage {
         COPYFILE_DISABLE=true tar czf of_v${pkg_version}_${pkg_platform}${libs_abi}_release.tar.gz of_v${pkg_version}_${pkg_platform}${libs_abi}_release
         rm -Rf of_v${pkg_version}_${pkg_platform}${libs_abi}_release
     else
-        echo "compressing package to of_v${pkg_version}_${pkg_platform}_release.zip"
+        echo "compressing package to of_v${pkg_version}_${pkg_platform}${libs_abi}_release.zip"
         cd $pkg_ofroot/..
-        mkdir of_v${pkg_version}_${pkg_platform}_release
-        mv ${pkgfolder}/* of_v${pkg_version}_${pkg_platform}_release
-        zip --symlinks -r of_v${pkg_version}_${pkg_platform}_release.zip of_v${pkg_version}_${pkg_platform}_release > /dev/null
-        rm -Rf of_v${pkg_version}_${pkg_platform}_release
+        mkdir of_v${pkg_version}_${pkg_platform}${libs_abi}_release
+        mv ${pkgfolder}/* of_v${pkg_version}_${pkg_platform}${libs_abi}_release
+        zip --symlinks -r of_v${pkg_version}_${pkg_platform}${libs_abi}_release.zip of_v${pkg_version}_${pkg_platform}${libs_abi}_release > /dev/null
+        rm -Rf of_v${pkg_version}_${pkg_platform}${libs_abi}_release
     fi
 }
 

@@ -57,6 +57,7 @@ cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 ./create_package.sh linuxarmv6l $version $branch
 ./create_package.sh linuxarmv7l $version $branch
 ./create_package.sh msys2 $version $branch
+./create_package.sh msys2 $version $branch 64
 ./create_package.sh vs2017 $version $branch
 ./create_package.sh ios $version $branch
 ./create_package.sh osx $version $branch
