@@ -10,9 +10,9 @@
 
 typedef unsigned int ALuint;
 /** Opaque device handle */
-typedef struct ALCdevice_struct ALCdevice;
+struct ALCdevice;
 /** Opaque context handle */
-typedef struct ALCcontext_struct ALCcontext;
+struct ALCcontext;
 
 
 
