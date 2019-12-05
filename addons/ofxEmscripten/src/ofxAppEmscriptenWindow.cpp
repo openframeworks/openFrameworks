@@ -65,7 +65,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 		   EGL_GREEN_SIZE, EGL_DONT_CARE,
 		   EGL_BLUE_SIZE, EGL_DONT_CARE,
 		   EGL_ALPHA_SIZE, EGL_DONT_CARE,
-		   EGL_DEPTH_SIZE, 16, // So we can have depth testing. 16 / 24 or 32bit 
+		   EGL_DEPTH_SIZE, 32,
 		   EGL_STENCIL_SIZE, EGL_DONT_CARE,
 		   EGL_SAMPLE_BUFFERS, EGL_DONT_CARE,
 		   EGL_NONE
@@ -94,8 +94,24 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 
 	// Choose config
 	if ( !eglChooseConfig(display, attribList, &config, 1, &numConfigs) ){
-		ofLogError() << "couldn't choose display";
-		return;
+ 
+        // If the above config fails lets try one more time with no preferences
+        EGLint attribListSafe[] =
+       {
+           EGL_RED_SIZE, EGL_DONT_CARE,
+           EGL_GREEN_SIZE, EGL_DONT_CARE,
+           EGL_BLUE_SIZE, EGL_DONT_CARE,
+           EGL_ALPHA_SIZE, EGL_DONT_CARE,
+           EGL_DEPTH_SIZE, EGL_DONT_CARE,
+           EGL_STENCIL_SIZE, EGL_DONT_CARE,
+           EGL_SAMPLE_BUFFERS, EGL_DONT_CARE,
+           EGL_NONE
+       };
+       
+        if( !eglChooseConfig(display, attribListSafe, &config, 1, &numConfigs) ){
+            ofLogError() << "couldn't choose display";
+            return;
+        }
 	}
 
 	// Create a surface
