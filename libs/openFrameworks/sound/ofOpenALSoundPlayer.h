@@ -6,13 +6,14 @@
 #include "ofSoundBaseTypes.h"
 #include "ofThread.h"
 
+#if defined (TARGET_OF_IOS) || defined (TARGET_OSX)
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
+#else
+#include <AL/al.h>
+#include <AL/alc.h>
+#endif
 
-
-typedef unsigned int ALuint;
-/** Opaque device handle */
-struct ALCdevice;
-/** Opaque context handle */
-struct ALCcontext;
 
 
 

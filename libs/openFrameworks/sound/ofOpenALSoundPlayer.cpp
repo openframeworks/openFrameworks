@@ -9,14 +9,6 @@
 #include "ofEvents.h"
 #include <sndfile.h>
 
-#if defined (TARGET_OF_IOS) || defined (TARGET_OSX)
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
-#else
-#include <AL/al.h>
-#include <AL/alc.h>
-#endif
-
 #ifdef OF_USING_MPG123
 #include <mpg123.h>
 #endif
