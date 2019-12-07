@@ -89,7 +89,7 @@ if [ "$version" == "" ]; then
 fi
 
 if [ "$platform" == "msys2" ] && ! ([ "$libs_abi" == "mingw32" ] || [ "$libs_abi" == "mingw64" ]); then
-    echo ./create_package.sh : libs_abi must be 'mingw32' or 'mingw64' for 'msys2' platform
+    echo ./create_package.sh : libs_abi must be \'mingw32\' or \'mingw64\' for \'msys2\' platform
     exit 1
 fi
 
