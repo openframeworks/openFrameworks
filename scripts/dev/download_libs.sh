@@ -171,7 +171,7 @@ elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs2017" ]; then
           openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
 elif [ "$PLATFORM" == "msys2" ]; then
-    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_.zip"
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_mingw${ARCH}.zip"
 elif [ "$PLATFORM" == "vs2015" ] || [ "$PLATFORM" == "vs2017" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip \
