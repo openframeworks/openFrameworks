@@ -423,8 +423,8 @@ public:
 		listeners.clear();
 	}
 
-    size_t size() const {
-        return listeners.size();
+    bool empty() const {
+        return listeners.size() == 0 ;
     }
 private:
 	std::deque<ofEventListener> listeners;
