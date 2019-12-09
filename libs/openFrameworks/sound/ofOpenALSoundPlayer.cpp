@@ -23,10 +23,10 @@
 
 using namespace std;
 
-ALCdevice * ofOpenALSoundPlayer::alDevice = 0;
-ALCcontext * ofOpenALSoundPlayer::alContext = 0;
+static ALCdevice * alDevice = nullptr;
+static ALCcontext * alContext = nullptr;
 vector<float> ofOpenALSoundPlayer::window;
-float ofOpenALSoundPlayer::windowSum=0;
+float ofOpenALSoundPlayer::windowSum = 0.f;
 
 
 kiss_fftr_cfg ofOpenALSoundPlayer::systemFftCfg=0;
@@ -40,7 +40,7 @@ static set<ofOpenALSoundPlayer*> & players(){
 }
 
 void ofOpenALSoundUpdate(){
-	alcProcessContext(ofOpenALSoundPlayer::alContext);
+	alcProcessContext(alContext);
 }
 
 // ----------------------------------------------------------------------------
