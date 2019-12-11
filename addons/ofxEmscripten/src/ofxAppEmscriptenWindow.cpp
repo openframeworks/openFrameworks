@@ -271,7 +271,6 @@ glm::vec2 ofxAppEmscriptenWindow::getWindowSize(){
 	int width;
 	int height;
     emscripten_get_canvas_element_size(NULL, &width, &height);
-    
 	return glm::vec2(width,height);
 }
 
