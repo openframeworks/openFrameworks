@@ -118,7 +118,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
             }
 
         }else{
-            ofLogNotice() << " depth is successfully set to " << depthPreference[i] << endl;
+            // Got a good configuration. Stop searching. 
             break;
         }
     }
