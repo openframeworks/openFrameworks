@@ -59,17 +59,29 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 	EGLint minorVersion;
 	EGLConfig config;
 	EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE, EGL_NONE };
-	EGLint attribList[] =
+	std::vector <EGLint> attribList =
 	   {
 		   EGL_RED_SIZE, EGL_DONT_CARE,
 		   EGL_GREEN_SIZE, EGL_DONT_CARE,
 		   EGL_BLUE_SIZE, EGL_DONT_CARE,
 		   EGL_ALPHA_SIZE, EGL_DONT_CARE,
-		   EGL_DEPTH_SIZE, 32,
+		   EGL_DEPTH_SIZE, EGL_DONT_CARE,
 		   EGL_STENCIL_SIZE, EGL_DONT_CARE,
 		   EGL_SAMPLE_BUFFERS, EGL_DONT_CARE,
 		   EGL_NONE
 	   };
+    
+    // We'll try these depth sizes in order ending with EGL_DONT_CARE if we don't get anything higher.
+    std::vector <EGLint> depthPreference = {24, 16, EGL_DONT_CARE};
+
+    // Find the index for the value EGL_DEPTH_SIZE uses, so we can try a few different values till we get a successful config.
+    int attribListDepthIndex = -1;
+    for(int i = 0; i < attribList.size(); i++){
+        if( attribList[i] == EGL_DEPTH_SIZE ){
+            attribListDepthIndex = i+1;
+            break;
+        }
+    }
 
 	// Get Display
 	display = eglGetDisplay((EGLNativeDisplayType)EGL_DEFAULT_DISPLAY);
@@ -89,30 +101,27 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 		ofLogError() << "couldn't get configs";
 		return;
 	}
+    
+    // Choose the config based on our attribute list
+    // Try higher EGL_DEPTH_SIZE first
+    for(int i = 0; i < depthPreference.size(); i++){
+        // Set EGL_DEPTH_SIZE
+        attribList[attribListDepthIndex] = depthPreference[i];
+        
+        // Try out that depth value
+        if ( !eglChooseConfig(display, &attribList[0], &config, 1, &numConfigs) ){
 
-	ofLogNotice("ofxAppEmscriptenWindow") << "Got " << numConfigs << " display configs";
+            // Finally fail like we did before if no preference works 
+            if( depthPreference[i] == EGL_DONT_CARE ){
+                ofLogError() << "couldn't choose display";
+                return;
+            }
 
-	// Choose config
-	if ( !eglChooseConfig(display, attribList, &config, 1, &numConfigs) ){
- 
-        // If the above config fails lets try one more time with no preferences
-        EGLint attribListSafe[] =
-       {
-           EGL_RED_SIZE, EGL_DONT_CARE,
-           EGL_GREEN_SIZE, EGL_DONT_CARE,
-           EGL_BLUE_SIZE, EGL_DONT_CARE,
-           EGL_ALPHA_SIZE, EGL_DONT_CARE,
-           EGL_DEPTH_SIZE, EGL_DONT_CARE,
-           EGL_STENCIL_SIZE, EGL_DONT_CARE,
-           EGL_SAMPLE_BUFFERS, EGL_DONT_CARE,
-           EGL_NONE
-       };
-       
-        if( !eglChooseConfig(display, attribListSafe, &config, 1, &numConfigs) ){
-            ofLogError() << "couldn't choose display";
-            return;
+        }else{
+            ofLogNotice() << " depth is successfully set to " << depthPreference[i] << endl;
+            break;
         }
-	}
+    }
 
 	// Create a surface
 	surface = eglCreateWindowSurface(display, config, NULL, NULL);
