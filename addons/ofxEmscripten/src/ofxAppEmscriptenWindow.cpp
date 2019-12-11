@@ -257,7 +257,7 @@ void ofxAppEmscriptenWindow::setWindowPosition(int x, int y){
 }
 
 void ofxAppEmscriptenWindow::setWindowShape(int w, int h){
-	emscripten_set_canvas_size(w,h);
+    emscripten_set_canvas_element_size(NULL,w,h);
 }
 
 
@@ -270,8 +270,7 @@ glm::vec2 ofxAppEmscriptenWindow::getWindowPosition(){
 glm::vec2 ofxAppEmscriptenWindow::getWindowSize(){
 	int width;
 	int height;
-	int isFullscreen;
-	emscripten_get_canvas_size( &width, &height, &isFullscreen );
+    emscripten_get_canvas_element_size(NULL, &width, &height);
 	return glm::vec2(width,height);
 }
 
