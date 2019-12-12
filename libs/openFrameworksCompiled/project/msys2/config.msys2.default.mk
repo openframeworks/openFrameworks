@@ -100,7 +100,7 @@ PLATFORM_REQUIRED_ADDONS =
 #PLATFORM_CFLAGS = -stdlib=libstdc++
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
-PLATFORM_CFLAGS += -Wall
+PLATFORM_CFLAGS += -Wall -Wno-class-memaccess
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions

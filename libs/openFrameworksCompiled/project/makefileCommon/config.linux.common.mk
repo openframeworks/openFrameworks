@@ -135,6 +135,7 @@ PLATFORM_REQUIRED_ADDONS =
 # >= 4.9.x c++14
 # other compilers c++11 by now
 ifeq ($(CXX),g++)
+    GCC_MAJOR_GTEQ_8 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \>= 7)
 	GCC_MAJOR_EQ_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \= 4)
 	GCC_MAJOR_GT_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \> 4)
 	GCC_MINOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \<= 7)
@@ -150,9 +151,13 @@ ifeq ($(CXX),g++)
 			endif
 		endif
 	endif
-	ifeq ("$(GCC_MAJOR_GT_4)","1")
-		PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
-	endif
+    ifeq ("$(GCC_MAJOR_GTEQ_8)","1")
+        PLATFORM_CFLAGS = -Wall -Wno-class-memaccess -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
+    else
+        ifeq ("$(GCC_MAJOR_GT_4)","1")
+		    PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
+        endif
+    endif
 else
 	ifeq ($(CXX),g++-5)
 		PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
