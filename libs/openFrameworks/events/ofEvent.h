@@ -427,7 +427,8 @@ public:
 private:
 	std::deque<ofEventListener> listeners;
 };
-void ofEventListeners::unsubscribe(std::size_t pos){
+
+inline void ofEventListeners::unsubscribe(std::size_t pos){
 	listeners[pos].unsubscribe();
 }
 
