@@ -26,14 +26,16 @@
 ##########################################################################################
 
 MINGW_PREFIX ?= /mingw32
-PLATFORM_CFLAGS += -std=gnu++14 -DUNICODE -D_UNICODE
+
+PLATFORM_CXX_STD = -std=gnu++14
+PLATFORM_CFLAGS += -DUNICODE -D_UNICODE
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER
 ifdef USE_CCACHE
-	CC = ccache $(MINGW_PREFIX)/bin/gcc
-	CXX = ccache $(MINGW_PREFIX)/bin/g++
+	PLATFORM_CC = ccache $(MINGW_PREFIX)/bin/gcc
+	PLATFORM_CXX = ccache $(MINGW_PREFIX)/bin/g++
 else
-	CC = $(MINGW_PREFIX)/bin/gcc
-	CXX = $(MINGW_PREFIX)/bin/g++
+	PLATFORM_CC = $(MINGW_PREFIX)/bin/gcc
+	PLATFORM_CXX = $(MINGW_PREFIX)/bin/g++
 endif
 FIND ?= /usr/bin/find
 PLATFORM_AR = $(MINGW_PREFIX)/bin/ar
