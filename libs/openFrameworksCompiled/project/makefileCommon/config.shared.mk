@@ -68,6 +68,33 @@ else
 	endif
 endif
 
+# #####################  SETTINGS  #############################################
+# determine the value to use for various variables for trying to use the value
+# defined for the project. If not present, try to use the value for the platform
+# then use the default value
+# for this we use the macro 'select_setting' that returns the first non empty
+# variable The syntax should be :
+#      VAR = $(call select_settings, $(PROJECT_VAR), $(PLATFORM_VAR), $(DEFAULT_VAR))
+################################################################################
+# macro definition
+select_setting = $(strip $(if $(strip $(1)) ,$(1),$(if $(strip $(2)),$(2),$(3))) )
+
+# CXX_STD : C++ standard setting
+CXX_STD = $(call select_setting, $(PROJECT_CXX_STD), $(PLATFORM_CXX_STD), -std=c++11)
+
+# CXX : C++ Compiler settings (includes -std=... )
+DEFAULT_CXX := $(CXX)
+export OF_CXX ?= $(call select_setting, $(PROJECT_CXX), $(PLATFORM_CXX), $(DEFAULT_CXX)) $(CXX_STD)
+CXX = $(OF_CXX)
+
+# CC : C Compiler settings
+DEFAULT_CC := $(CC)
+export OF_CC ?= $(call select_setting, $(PROJECT_CC), $(PLATFORM_CC), $(DEFAULT_CC))
+CC = $(OF_CC)
+
+$(info Settings : CXX = $(CXX) - CC = $(CC))
+
+
 ifdef MAKEFILE_DEBUG
     $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
     $(info PLATFORM_OS=$(PLATFORM_OS))
