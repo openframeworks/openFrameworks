@@ -79,13 +79,45 @@ endif
 # macro definition
 select_setting = $(strip $(if $(strip $(1)) ,$(1),$(if $(strip $(2)),$(2),$(3))) )
 
-# CXX_STD : C++ standard setting
-CXX_STD = $(call select_setting, $(PROJECT_CXX_STD), $(PLATFORM_CXX_STD), -std=c++11)
 
 # CXX : C++ Compiler settings (includes -std=... )
 DEFAULT_CXX := $(CXX)
-export OF_CXX ?= $(call select_setting, $(PROJECT_CXX), $(PLATFORM_CXX), $(DEFAULT_CXX)) $(CXX_STD)
-CXX = $(OF_CXX)
+export OF_CXX ?= $(call select_setting, $(PROJECT_CXX), $(PLATFORM_CXX), $(DEFAULT_CXX))
+
+# CXX_STD : C++ standard setting
+ifeq (clang,$(findstring clang,$(notdir $(OF_CXX))))
+	# clang setting
+	DEFAULT_CXX_STD=-std=c++1
+else ifeq (g++,$(findstring g++,$(notdir $(OF_CXX))))
+	# gcc settings depends on the version
+	# < 4.7.x  c++0x
+	# >= 4.7.x c++11
+	# >= 4.9.x c++14
+	GCC_MAJOR_EQ_4 := $(shell expr `$(OF_CXX) -dumpversion | cut -f1 -d.` \= 4)
+	GCC_MAJOR_GT_4 := $(shell expr `$(OF_CXX) -dumpversion | cut -f1 -d.` \> 4)
+	GCC_MINOR_LTEQ_7 := $(shell expr `$(OF_CXX) -dumpversion | cut -f2 -d.` \<= 7)
+	GCC_MINOR_GTEQ_9 := $(shell expr `$(OF_CXX) -dumpversion | cut -f2 -d.` \>= 9)
+
+	ifeq ("$(GCC_MAJOR_GT_4)","1")
+		DEFAULT_CXX_STD=-std=c++14
+	else ifeq ("$(GCC_MAJOR_EQ_4)","1")
+		ifeq ("$(GCC_MINOR_GTEQ_9)","1")
+			DEFAULT_CXX_STD=-std=c++14
+		else ifeq ("$(GCC_MINOR_LTEQ_7)","1")
+			DEFAULT_CXX_STD=-std=c++0x
+		else
+			DEFAULT_CXX_STD=-std=c++11
+		endif
+	else
+		DEFAULT_CXX_STD=-std=c++0x
+	endif
+else
+	#other compiler
+	DEFAULT_CXX_STD=-std=c++1
+endif
+CXX_STD = $(call select_setting, $(PROJECT_CXX_STD), $(PLATFORM_CXX_STD), $(DEFAULT_CXX_STD))
+
+CXX = $(OF_CXX) $(CXX_STD)
 
 # CC : C Compiler settings
 DEFAULT_CC := $(CC)
