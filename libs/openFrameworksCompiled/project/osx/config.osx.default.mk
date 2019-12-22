@@ -139,7 +139,7 @@ endif
 PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
 
 PLATFORM_CXXFLAGS += -x objective-c++
-PLATFORM_CXXFLAGS += -std=c++11
+PLATFORM_CXX_STD = -std=c++11
 
 ifeq ($(USE_GST),1)
 	PLATFORM_CFLAGS += -I/Library/Frameworks/Gstreamer.framework/Headers
