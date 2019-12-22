@@ -113,7 +113,7 @@ else ifeq (g++,$(findstring g++,$(notdir $(OF_CXX))))
 	endif
 else
 	#other compiler
-	DEFAULT_CXX_STD=-std=c++1
+	DEFAULT_CXX_STD=-std=c++11
 endif
 CXX_STD = $(call select_setting, $(PROJECT_CXX_STD), $(PLATFORM_CXX_STD), $(DEFAULT_CXX_STD))
 
