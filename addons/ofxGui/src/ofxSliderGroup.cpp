@@ -247,8 +247,8 @@ void ofxColorSlider_<ColorType>::updateSliderColors(ofColor_<ColorType> color) {
         collection[i]->setFillColor(color);
         auto p = parameters[i].template cast<ColorType>();
         float range = p.getMax()-p.getMin();
-        if(range == 0){
-            collection[i]->setTextColor( ofFloatColor(0.));
+        if(range == 0){  // Range of 0 is drawn as an empty bar.
+            collection[i]->setTextColor( ofFloatColor(1.));
         }else{
             auto amt = (p - p.getMin()) / range;
             collection[i]->setTextColor( amt > 0.75 ? ofFloatColor(0.) : ofFloatColor(1.));
