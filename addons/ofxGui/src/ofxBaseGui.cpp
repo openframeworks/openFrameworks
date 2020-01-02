@@ -63,7 +63,7 @@ void ofxGuiDisableHiResDisplay(){
 
 
 ofColor
-ofxBaseGui::headerBackgroundColor(64),
+ofxBaseGui::headerBackgroundColor(80),
 ofxBaseGui::backgroundColor(0),
 ofxBaseGui::borderColor(120, 100),
 ofxBaseGui::textColor(255),

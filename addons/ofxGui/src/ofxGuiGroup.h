@@ -89,7 +89,7 @@ class ofxGuiGroup : public ofxBaseGui {
 	protected:
 	
 		void updateChildrenPositions(bool bUpdateWidth = false);
-		void updateChild(ofxBaseGui* child, const float& x, const float& y, bool bUpdateWidth = false);
+		void updateChild(ofxBaseGui* child, const float& x, const float& y, const float& width, bool bUpdateWidth = false);
 		
 		bool bHeaderEnabled = true;
 		virtual void render();

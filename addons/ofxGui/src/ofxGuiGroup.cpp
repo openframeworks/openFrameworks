@@ -468,10 +468,10 @@ void ofxGuiGroup::onMaximize(){
 
 }
 
-void ofxGuiGroup::updateChild(ofxBaseGui* child, const float& x, const float& y, bool bUpdateWidth){
+void ofxGuiGroup::updateChild(ofxBaseGui* child, const float& x, const float& y, const float& width, bool bUpdateWidth){
 	if(child){
 		if(bUpdateWidth){
-			child->setShapeNoNotification(x, y, b.width - childrenLeftIndent - childrenRightIndent, child->getHeight());
+			child->setShapeNoNotification(x, y, width, child->getHeight());
 		}else{
 			child->setPosition(x, y);
 		}
@@ -492,16 +492,22 @@ void ofxGuiGroup::updateChildrenPositions(bool bUpdateWidth){
 		headerRect.y += elementSpacing;
 		b.height += elementSpacing;
 	}
+	if(parent){
+		headerRect.y += groupSpacing;
+		b.height += groupSpacing;
+	}
 	if(!minimized){
-		if(parent){
-			headerRect.y += groupSpacing;
-			b.height += groupSpacing;
-		}
 			
 		float y = b.getMaxY();
-		float x = b.x + childrenLeftIndent;
+		float x = b.x;
+		float w = b.width;
+		
+		if(parent){//if the group has no parent dont indent the children. it just looks better
+			x += childrenLeftIndent;
+			w -= childrenLeftIndent + childrenRightIndent;
+		}
 		for(auto c: collection){
-			updateChild(c, x, y, bUpdateWidth);
+			updateChild(c, x, y, w, bUpdateWidth);
 			y += c->getHeight() + elementSpacing;
 		}
 //		if(parent)y -= elementSpacing;
