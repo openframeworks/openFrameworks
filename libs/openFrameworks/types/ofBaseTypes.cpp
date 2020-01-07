@@ -172,7 +172,7 @@ void ofBaseRenderer::drawPlane(float x, float y, float z, float width, float hei
 	get3dGraphics().drawPlane(x,y,z,width,height);
 }
 
-void ofBaseRenderer::drawPlane(glm::vec3& position, float width, float height) const{
+void ofBaseRenderer::drawPlane(const glm::vec3& position, float width, float height) const{
 	get3dGraphics().drawPlane(position,width,height);
 }
 
