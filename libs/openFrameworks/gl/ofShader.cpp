@@ -357,7 +357,7 @@ bool ofShader::setupShaderFromSource(ofShader::Source && source){
     for(auto & define: source.intDefines){
         const auto & name = define.first;
         const auto & value = define.second;
-		std::regex re_define("#define[ \t]+" + name + "[ \t]+([0-9]+)");
+		std::regex re_define("#define[ \t]+" + name + "[ \t]+(([1-9][0-9]*)|(0[xX][0-9a-fA-F]+))");
         source.expandedSource = std::regex_replace(source.expandedSource, re_define, "#define " + name + " " + std::to_string(value));
     }
 
