@@ -742,7 +742,7 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 	return true;
 }
 
-GstElement 	* ofGstUtils::getPipeline() const{
+	GstElement 	* ofGstUtils::getPipeline() const{
 	return gstPipeline;
 }
 
@@ -853,6 +853,16 @@ ofTexture * ofGstVideoUtils::getTexture(){
 #endif
 }
 
+	static GstVideoInfo getVideoInfo(GstSample * sample){
+		GstCaps *caps = gst_sample_get_caps(sample);
+		GstVideoInfo vinfo;
+		if(caps){
+			gst_video_info_from_caps (&vinfo, caps);
+		}else{
+			ofLogError() << "couldn't get sample caps";
+		}
+		return vinfo;
+	}
 void ofGstVideoUtils::update(){
 	if (isLoaded()){
 		if(!isFrameByFrame()){
@@ -877,7 +887,7 @@ void ofGstVideoUtils::update(){
 			ofLogError() << "frame by frame doesn't work any more in 0.10";
 #else
 			GstBuffer * buffer;
-			GstSample * sample;
+			GstSample* sample;
 
 			//get the buffer from appsink
 			if(isPaused()){
@@ -888,14 +898,70 @@ void ofGstVideoUtils::update(){
 			buffer = gst_sample_get_buffer(sample);
 
 			if(buffer){
-				if(pixels.isAllocated()){
-					gst_buffer_map (buffer, &mapinfo, GST_MAP_READ);
-					//TODO: stride = mapinfo.size / height;
-					pixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-					backBuffer = shared_ptr<GstSample>(sample,gst_sample_unref);
-					bHavePixelsChanged=true;
-					gst_buffer_unmap(buffer,&mapinfo);
+				
+				
+				// video frame has normal texture
+				gst_buffer_map (buffer, &mapinfo, GST_MAP_READ);
+				guint size = mapinfo.size;
+
+				size_t stride = 0;
+				if(pixels.isAllocated() && (pixels.getTotalBytes() != size_t(size))){
+					GstVideoInfo v_info = getVideoInfo(sample);
+					stride = v_info.stride[0];
+
+					if(stride == (pixels.getWidth() * pixels.getBytesPerPixel())) {
+						ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size << "!= init size: " << pixels.getTotalBytes();
+						return ;
+					}
 				}
+//				mutex.lock();
+				if(!copyPixels){
+					backBuffer = shared_ptr<GstSample>(sample,gst_sample_unref);
+				}
+
+				if(pixels.isAllocated()){
+					if(stride > 0) {
+						if(pixels.getPixelFormat() == OF_PIXELS_I420){
+							GstVideoInfo v_info = getVideoInfo(sample);
+							std::vector<size_t> strides{size_t(v_info.stride[0]),size_t(v_info.stride[1]),size_t(v_info.stride[2])};
+							pixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),strides);
+						} else {
+							pixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
+						}
+					} else if(!copyPixels){
+						pixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+//						eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+					}else{
+						pixels.setFromPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+					}
+
+					bHavePixelsChanged=true;
+//					mutex.unlock();
+//					if(stride == 0) {
+//						ofNotifyEvent(prerollEvent,eventPixels);
+//					}
+//				}else{
+//					mutex.unlock();
+//					if(appsink){
+//						appsink->on_stream_prepared();
+//					}else{
+//						GstVideoInfo v_info = getVideoInfo(sample);
+//						allocate(v_info.width,v_info.height,getOFFormat(v_info.finfo->format));
+//					}
+				}
+				
+				gst_buffer_unmap(buffer, &mapinfo);
+				
+				
+				
+//				if(pixels.isAllocated()){
+//					gst_buffer_map (buffer, &mapinfo, GST_MAP_READ);
+//					//TODO: stride = mapinfo.size / height;
+//					pixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+//					backBuffer = shared_ptr<GstSample>(sample,gst_sample_unref);
+//					bHavePixelsChanged=true;
+//					gst_buffer_unmap(buffer,&mapinfo);
+//				}
 			}
 #endif
 		}
@@ -1244,16 +1310,6 @@ GstFlowReturn ofGstVideoUtils::process_buffer(shared_ptr<GstBuffer> _buffer){
 }
 #else
 
-static GstVideoInfo getVideoInfo(GstSample * sample){
-    GstCaps *caps = gst_sample_get_caps(sample);
-    GstVideoInfo vinfo;
-    if(caps){
-		gst_video_info_from_caps (&vinfo, caps);
-    }else{
-    	ofLogError() << "couldn't get sample caps";
-    }
-    return vinfo;
-}
 
 GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 	GstBuffer * _buffer = gst_sample_get_buffer(sample.get());
