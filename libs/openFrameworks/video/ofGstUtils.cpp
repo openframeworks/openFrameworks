@@ -898,9 +898,6 @@ void ofGstVideoUtils::update(){
 			buffer = gst_sample_get_buffer(sample);
 
 			if(buffer){
-				
-				
-				// video frame has normal texture
 				gst_buffer_map (buffer, &mapinfo, GST_MAP_READ);
 				guint size = mapinfo.size;
 
@@ -914,7 +911,6 @@ void ofGstVideoUtils::update(){
 						return ;
 					}
 				}
-//				mutex.lock();
 				if(!copyPixels){
 					backBuffer = shared_ptr<GstSample>(sample,gst_sample_unref);
 				}
@@ -930,38 +926,12 @@ void ofGstVideoUtils::update(){
 						}
 					} else if(!copyPixels){
 						pixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
-//						eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
 					}else{
 						pixels.setFromPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
 					}
-
 					bHavePixelsChanged=true;
-//					mutex.unlock();
-//					if(stride == 0) {
-//						ofNotifyEvent(prerollEvent,eventPixels);
-//					}
-//				}else{
-//					mutex.unlock();
-//					if(appsink){
-//						appsink->on_stream_prepared();
-//					}else{
-//						GstVideoInfo v_info = getVideoInfo(sample);
-//						allocate(v_info.width,v_info.height,getOFFormat(v_info.finfo->format));
-//					}
 				}
-				
 				gst_buffer_unmap(buffer, &mapinfo);
-				
-				
-				
-//				if(pixels.isAllocated()){
-//					gst_buffer_map (buffer, &mapinfo, GST_MAP_READ);
-//					//TODO: stride = mapinfo.size / height;
-//					pixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-//					backBuffer = shared_ptr<GstSample>(sample,gst_sample_unref);
-//					bHavePixelsChanged=true;
-//					gst_buffer_unmap(buffer,&mapinfo);
-//				}
 			}
 #endif
 		}
