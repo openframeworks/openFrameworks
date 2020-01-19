@@ -415,18 +415,22 @@ public:
 		listeners.emplace_back(std::move(listener));
 	}
 
-	void unsubscribe(std::size_t pos){
-		listeners[pos].unsubscribe();
-	}
+	OF_DEPRECATED_MSG("Don't use this method. If you need granular control over each listener, then use individual ofEventListener instances for each.", void unsubscribe(std::size_t pos));
 
 	void unsubscribeAll(){
 		listeners.clear();
 	}
 
+    bool empty() const {
+        return listeners.size() == 0 ;
+    }
 private:
 	std::deque<ofEventListener> listeners;
 };
 
+inline void ofEventListeners::unsubscribe(std::size_t pos){
+	listeners[pos].unsubscribe();
+}
 
 // -------------------------------------
 // ofEvent main implementation
