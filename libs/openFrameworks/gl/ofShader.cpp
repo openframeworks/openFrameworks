@@ -839,6 +839,7 @@ void ofShader::end()  const{
 //--------------------------------------------------------------
 void ofShader::beginTransformFeedback(GLenum mode) const {
 	begin();
+    glEnable(GL_RASTERIZER_DISCARD);
 	glBeginTransformFeedback(mode);
 }
 
@@ -873,6 +874,7 @@ void ofShader::beginTransformFeedback(GLenum mode, const std::vector<TransformFe
 //--------------------------------------------------------------
 void ofShader::endTransformFeedback() const {
 	glEndTransformFeedback();
+    glDisable(GL_RASTERIZER_DISCARD);
 	end();
 }
 

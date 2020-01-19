@@ -47,7 +47,7 @@ else
 rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/"
 
 # Strip 32bit from fmod dylib
-lipo -remove i386 "${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app/Contents/Frameworks/libfmodex.dylib" -o "${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app/Contents/Frameworks/libfmodex.dylib" 
+lipo -extract x86_64 "${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app/Contents/Frameworks/libfmodex.dylib" -o "${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app/Contents/Frameworks/libfmodex.dylib" 
 
 # ---- Code Sign App Package ----
 
@@ -119,7 +119,7 @@ IFS=$(echo -en "\n\b")
 for ITEM in $ITEMS;
 do
 echo "Stripping invalid archs '${ITEM}'"
-lipo -remove i386 "${ITEM}" -o "${ITEM}"
+lipo -extract x86_64 "${ITEM}" -o "${ITEM}"
 echo "Signing '${ITEM}'"
 codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" --entitlements "${CODE_SIGN_ENTITLEMENTS}" "${ITEM}"
 RESULT=$?
