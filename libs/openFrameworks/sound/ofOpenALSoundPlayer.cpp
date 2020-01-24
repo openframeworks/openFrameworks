@@ -909,7 +909,7 @@ void ofOpenALSoundPlayer::setMultiPlay(bool bMp){
 // ----------------------------------------------------------------------------
 void ofOpenALSoundPlayer::play(){
 	std::unique_lock<std::mutex> lock(mutex);
-	int err = glGetError();
+	int err = alGetError();
 
 	// if the sound is set to multiplay, then create new sources,
 	// do not multiplay on loop or we won't be able to stop it
