@@ -1,3 +1,34 @@
+
+Skip to content
+Pull requests
+Issues
+Marketplace
+Explore
+@Jonathhhan
+Learn Git and GitHub without any code!
+
+Using the Hello World guide, you’ll start a branch, write comments, and open a pull request.
+openframeworks /
+openFrameworks
+
+541
+7.5k
+
+    2.4k
+
+Code
+Issues 820
+Pull requests 89
+Actions
+Projects 0
+Wiki
+Security
+Insights
+openFrameworks/libs/openFrameworksCompiled/project/emscripten/config.emscripten.default.mk
+Arturo Castro emscripten: fix problems with latest versions c070afc on 26 Jun 2019
+@arturoc
+@frauzufall
+284 lines (245 sloc) 13.2 KB
 ################################################################################
 # CONFIGURE CORE PLATFORM MAKEFILE
 #   This file has linux common rules for all the platforms (x86_64, i386,armv6l
@@ -64,7 +95,7 @@ PLATFORM_REQUIRED_ADDONS = ofxEmscripten
 ################################################################################
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CXXFLAGS = -Wall -std=c++14 -Wno-warn-absolute-paths     
+PLATFORM_CFLAGS = -Wall -std=c++14 -Wno-warn-absolute-paths
 
 
 ################################################################################
@@ -90,7 +121,7 @@ ifdef USE_CCACHE
 	endif
 endif
 
-PLATFORM_LDFLAGS = -Wl,--as-needed -Wl,--gc-sections --preload-file bin/data@data --emrun --bind  --profiling-funcs -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s TOTAL_MEMORY=1920MB -s  ASSERTIONS=2 -s SAFE_HEAP=1 -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 -s ERROR_ON_UNDEFINED_SYMBOLS=0  -s DEMANGLE_SUPPORT=1
+PLATFORM_LDFLAGS = -Wl,--as-needed -Wl,--gc-sections --preload-file bin/data@data --emrun -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 
@@ -282,3 +313,18 @@ afterplatform: $(TARGET_NAME)
 	@echo "     "
 	@emrun --list_browsers 2>/dev/null
 	@echo
+
+    © 2020 GitHub, Inc.
+    Terms
+    Privacy
+    Security
+    Status
+    Help
+
+    Contact GitHub
+    Pricing
+    API
+    Training
+    Blog
+    About
+
