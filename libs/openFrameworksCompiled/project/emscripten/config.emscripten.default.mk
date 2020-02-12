@@ -1,34 +1,3 @@
-
-Skip to content
-Pull requests
-Issues
-Marketplace
-Explore
-@Jonathhhan
-Learn Git and GitHub without any code!
-
-Using the Hello World guide, you’ll start a branch, write comments, and open a pull request.
-openframeworks /
-openFrameworks
-
-541
-7.5k
-
-    2.4k
-
-Code
-Issues 820
-Pull requests 89
-Actions
-Projects 0
-Wiki
-Security
-Insights
-openFrameworks/libs/openFrameworksCompiled/project/emscripten/config.emscripten.default.mk
-Arturo Castro emscripten: fix problems with latest versions c070afc on 26 Jun 2019
-@arturoc
-@frauzufall
-284 lines (245 sloc) 13.2 KB
 ################################################################################
 # CONFIGURE CORE PLATFORM MAKEFILE
 #   This file has linux common rules for all the platforms (x86_64, i386,armv6l
@@ -313,18 +282,3 @@ afterplatform: $(TARGET_NAME)
 	@echo "     "
 	@emrun --list_browsers 2>/dev/null
 	@echo
-
-    © 2020 GitHub, Inc.
-    Terms
-    Privacy
-    Security
-    Status
-    Help
-
-    Contact GitHub
-    Pricing
-    API
-    Training
-    Blog
-    About
-
