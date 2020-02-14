@@ -81,16 +81,27 @@ class ofxGuiGroup : public ofxBaseGui {
 		void enableHeader();
 		void disableHeader();
 		bool isHeaderEnabled();
+		
+		static float elementSpacing;
+		static float groupSpacing;
+		static float childrenLeftIndent;
+		static float childrenRightIndent;
 	protected:
+	
+		void updateChildrenPositions(bool bUpdateWidth = false);
+		void updateChild(ofxBaseGui* child, const float& x, const float& y, const float& width, bool bUpdateWidth = false);
+		
 		bool bHeaderEnabled = true;
 		virtual void render();
 		virtual bool setValue(float mx, float my, bool bCheck);
 		virtual void onMinimize();
 		virtual void onMaximize();
 
-		float spacing, spacingNextElement;
+		
+	
 		ofRectangle headerRect;
-
+		ofRectangle minimizeRect;
+		
 		template <class ControlType>
 		ControlType & getControlType(const std::string& name);
 
@@ -105,6 +116,22 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		ofPath border, headerBg;
 		ofVboMesh textMesh;
+	
+		template<typename T, typename P>
+	ofxBaseGui* createGuiElement(ofParameter<P>&param){
+		ownedCollection.emplace_back(std::make_unique<T>(param, b.width));
+		return ownedCollection.back().get();
+	}
+	ofxBaseGui* createGuiGroup(const ofParameterGroup & parameters){
+		ownedCollection.emplace_back(std::make_unique<ofxGuiGroup>(parameters));
+		return ownedCollection.back().get();
+	}
+	
+	private:
+	// This array stores the unique pointers for the elements that this gui group creates, thus owns.
+	// This allowes for correct memory management and no leaks
+	std::vector<std::unique_ptr<ofxBaseGui> > ownedCollection;
+	
 };
 
 template <class ControlType>
