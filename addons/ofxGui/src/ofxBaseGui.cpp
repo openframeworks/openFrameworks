@@ -138,19 +138,8 @@ void ofxBaseGui::unregisterMouseEvents(){
 	ofUnregisterMouseEvents(this, defaultEventsPriority);
 	bRegisteredForMouseEvents = false;
 }
-void ofxBaseGui::setEvents(ofCoreEvents & _events){
-	if(&_events != events){
-		bool wasMouseInputEnabled = bRegisteredForMouseEvents;// || !events;
-		unregisterMouseEvents();
-		events = &_events;
-		if (wasMouseInputEnabled) {
-			// note: this will set bMouseInputEnabled to true as a side-effect.
-			registerMouseEvents();
-		}
-	}
-}
+
 void ofxBaseGui::draw(){
-	setEvents(ofEvents());
 	if(needsRedraw){
 		generateDraw();
 		needsRedraw = false;
