@@ -18,8 +18,12 @@ if [ $exit_code != 0 ]; then
 	exit $exit_code
 fi
 
+# get the root directory of this script
+ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 # Update addon_config.mk files to use OpenCV 3 or 4 depending on what's installed
 addons_dir="$(readlink -f "$ROOT/../../../addons")"
+
 $(pkg-config opencv4 --exists)
 exit_code=$?
 if [ $exit_code != 0 ]; then
