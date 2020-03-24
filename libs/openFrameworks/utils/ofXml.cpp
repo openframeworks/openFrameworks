@@ -39,7 +39,7 @@ bool ofXml::parse(const std::string & xmlStr){
     #if ( defined(PUGIXML_VERSION) && PUGIXML_VERSION >= 150 )
         if(auxDoc->load_string(xmlStr.c_str(), parsing_options)){
     #else
-        if(auxDoc->load(xmlStr.c_str())){
+        if(auxDoc->load(xmlStr.c_str(), parsing_options)){
     #endif
 		doc = auxDoc;
 		xml = doc->root();
