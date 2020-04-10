@@ -23,6 +23,8 @@ elif [ "$BUILDER" == "msys2" ]; then
     echo "detected msys setting ccache as env var"
     export CC="ccache /mingw32/bin/gcc"
     export CXX="ccache /mingw32/bin/g++"
+    USE_CCACHE="USE_CCACHE=1"
+
 else
 	export PATH="/usr/lib/ccache:$PATH"
 fi
