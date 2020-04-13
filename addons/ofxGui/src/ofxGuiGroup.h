@@ -21,7 +21,7 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		template<typename T>
 		typename std::enable_if<std::is_arithmetic<T>::value, void>::type add(ofParameter<T> & p){
-			add(new ofxSlider<T>(p));
+			add(createGuiElement< ofxSlider<T> >(p));
 		}
 		void add(ofParameter <void> & parameter);
 		void add(ofParameter <bool> & parameter);
@@ -29,7 +29,8 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		template<typename F>
 		void add(ofReadOnlyParameter <std::string, F> & parameter){
-			add(new ofxLabel(parameter));
+			ownedCollection.emplace_back(std::make_unique<ofxLabel>(parameter));
+			add(ownedCollection.back().get());
 		}
 		void add(ofParameter <ofVec2f> & parameter);
 		void add(ofParameter <ofVec3f> & parameter);
@@ -117,9 +118,9 @@ class ofxGuiGroup : public ofxBaseGui {
 		ofPath border, headerBg;
 		ofVboMesh textMesh;
 	
-		template<typename T, typename P>
-	ofxBaseGui* createGuiElement(ofParameter<P>&param){
-		ownedCollection.emplace_back(std::make_unique<T>(param, b.width));
+	template<typename T, typename P>
+	ofxBaseGui* createGuiElement(ofParameter<P>&param, float width = 0, float height = defaultHeight){
+		ownedCollection.emplace_back(std::make_unique<T>(param, (ofIsFloatEqual(width, 0.f)? b.width: width), height));
 		return ownedCollection.back().get();
 	}
 	ofxBaseGui* createGuiGroup(const ofParameterGroup & parameters){
@@ -141,7 +142,8 @@ ControlType & ofxGuiGroup::getControlType(const std::string& name){
 		return *control;
 	}else{
 		ofLogWarning() << "getControlType " << name << " not found, creating new";
-		control = new ControlType;
+		ownedCollection.emplace_back(std::make_unique<ControlType>());
+		control =  static_cast<ControlType*> (ownedCollection.back().get());
 		control->setName(name);
 		add(control);
 		return *control;
