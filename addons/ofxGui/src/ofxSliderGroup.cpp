@@ -24,7 +24,7 @@ ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(ofParameter<VecType> valu
     
 	for (size_t i = 0; i < dim(); i++) {
     	ofParameter<float> p(names[i], val[i], min[i], max[i]);
-        add(new ofxSlider<float>(p, width, height));
+        add(createGuiElement<ofxSlider<float>>(p, width, height));
         p.addListener(this, & ofxVecSlider_::changeSlider);
     }
 
@@ -140,7 +140,7 @@ ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(ofParameter<ofCol
 
     for (int i=0; i<4; i++) {
     	ofParameter<ColorType> p(names[i], val[i], min[i], max[i]);
-        add(new ofxSlider<ColorType>(p, width, height));
+        add(createGuiElement<ofxSlider<ColorType>>(p, width, height));
         p.addListener(this, & ofxColorSlider_::changeSlider);
 		collection[i]->setFillColor(value.get());
         float range = p.getMax()-p.getMin();
@@ -273,23 +273,23 @@ ofxRectangleSlider * ofxRectangleSlider::setup(ofParameter<ofRectangle> value, f
 	// adding a [] operator to ofRectangle would be handy for this situation
 //	for (size_t i = 0; i < 4; i++) {
 //    	ofParameter<float> p(names[i], val[i], min[i], max[i]);
-//        add(new ofxSlider<float>(p, width, height));
+//        add(createGuiElement<ofxSlider<float>>(p, width, height));
 //        p.addListener(this, & ofxRectangleSlider::changeSlider);
 //    }
     	ofParameter<float> x("x", val.x, min.x, max.x);
-        add(new ofxSlider<float>(x, width, height));
+        add(createGuiElement< ofxSlider<float> >(x, width, height));
         x.addListener(this, & ofxRectangleSlider::changeSlider);
 	
 		ofParameter<float> y("y", val.y, min.y, max.y);
-        add(new ofxSlider<float>(y, width, height));
+        add(createGuiElement<ofxSlider<float>>(y, width, height));
         y.addListener(this, & ofxRectangleSlider::changeSlider);
 
     	ofParameter<float> w("width", val.width, min.width, max.width);
-        add(new ofxSlider<float>(w, width, height));
+        add(createGuiElement<ofxSlider<float>>(w, width, height));
         w.addListener(this, & ofxRectangleSlider::changeSlider);
 
 		ofParameter<float> h("height", val.height, min.height, max.height);
-        add(new ofxSlider<float>(h, width, height));
+        add(createGuiElement<ofxSlider<float>>(h, width, height));
         h.addListener(this, & ofxRectangleSlider::changeSlider);
 
 
