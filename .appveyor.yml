@@ -11,12 +11,10 @@ environment:
       platform: x86
       BUILDER: MSYS2
       MSYSTEM: MINGW32
-      CCACHE_DIR: "%APPVEYOR_BUILD_FOLDER%\\.ccache"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       platform: x64
       BUILDER: MSYS2
       MSYSTEM: MINGW64
-      CCACHE_DIR: "%APPVEYOR_BUILD_FOLDER%\\.ccache"
 
   #VisualStudio Building
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
@@ -44,16 +42,10 @@ init:
 
 # - IF "%BUILDER%"=="VS" set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
 
-cache:
-    - .ccache
-
 install:
 - if "%BUILDER%"=="VS" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/vs/install.sh")
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/msys2/install.sh")
 
-before_build:
-- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "ccache -z")
-- if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "ccache -s")
 
 build_script:
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/msys2/build.sh")
@@ -72,6 +64,3 @@ test_script:
       cd scripts/ci/vs
       .\run_tests.bat
     }
-
-after_test:
-  - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "ccache -s")
