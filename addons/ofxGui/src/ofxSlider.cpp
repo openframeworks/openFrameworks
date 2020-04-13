@@ -105,6 +105,7 @@ bool ofxSlider<Type>::mousePressed(ofMouseEventArgs & mouse){
 			if(b.inside(mouse)){
 				state = Input;
 				auto mouseLeft = mouse;
+				input.setShape(b);
 				mouseLeft.button = OF_MOUSE_BUTTON_LEFT;
 				input.mousePressed(mouseLeft);
 				return true;
