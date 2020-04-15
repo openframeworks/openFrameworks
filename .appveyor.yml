@@ -5,18 +5,19 @@ environment:
     APPVEYOR_OS_NAME: windows
     CHERE_INVOKING: 1
     MSYS2_PATH: c:\msys64
+    #CCACHE settings : Appveyor cache is limited to 1G so we limit CCACHE to 2G and expect 50% compression...
+    CCACHE_DIR: "%APPVEYOR_BUILD_FOLDER%\\.ccache"
+    CCACHE_MAXSIZE: 2G
   matrix:
   #MSYS2 Building
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       platform: x86
       BUILDER: MSYS2
       MSYSTEM: MINGW32
-      CCACHE_DIR: "%APPVEYOR_BUILD_FOLDER%\\.ccache"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       platform: x64
       BUILDER: MSYS2
       MSYSTEM: MINGW64
-      CCACHE_DIR: "%APPVEYOR_BUILD_FOLDER%\\.ccache"
   #VisualStudio Building
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       platform: x86
