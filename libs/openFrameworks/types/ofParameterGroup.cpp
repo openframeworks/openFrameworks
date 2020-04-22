@@ -11,12 +11,10 @@ ofParameterGroup::ofParameterGroup()
 
 void ofParameterGroup::add(ofAbstractParameter & parameter){
 	shared_ptr<ofAbstractParameter> param = parameter.newReference();
-	const std::string name = param->getEscapedName();
-	if(obj->parametersIndex.find(name) != obj->parametersIndex.end()){
+	if(contains(param->getEscapedName())){
 		ofLogWarning() << "Adding another parameter with same name '" << param->getName() << "' to group '" << getName() << "'";
 	}
 	obj->parameters.push_back(param);
-	obj->parametersIndex[name] = obj->parameters.size()-1;
 	param->setParent(*this);
 }
 
@@ -41,12 +39,9 @@ void ofParameterGroup::remove(const string &name){
 	if(!contains(escaped)){
 		return;
 	}
-	size_t paramIndex = obj->parametersIndex[escaped];
-	obj->parameters.erase(obj->parameters.begin() + paramIndex);
-	obj->parametersIndex.erase(escaped);
-	std::for_each(obj->parameters.begin() + paramIndex, obj->parameters.end(), [&](shared_ptr<ofAbstractParameter>& p){
-		obj->parametersIndex[p->getEscapedName()] -= 1;
-	});
+	obj->parameters.erase(std::find_if(obj->parameters.begin(), obj->parameters.end(), [escaped](std::shared_ptr<ofAbstractParameter> p){
+		return p->getEscapedName() == escaped;
+	}));
 }
 
 void ofParameterGroup::clear(){
@@ -334,8 +329,12 @@ string ofParameterGroup::getType(std::size_t position) const{
 
 
 int ofParameterGroup::getPosition(const string& name) const{
-	if(obj->parametersIndex.find(escape(name))!=obj->parametersIndex.end())
-		return obj->parametersIndex.find(escape(name))->second;
+	string escapedName = escape(name);
+	auto isMatchingName = [escapedName](std::shared_ptr<ofAbstractParameter> p) -> bool{
+		return p->getEscapedName() == escapedName;
+	};
+	if(std::find_if(obj->parameters.begin(), obj->parameters.end(), isMatchingName) != obj->parameters.end())
+		return std::find_if(obj->parameters.begin(), obj->parameters.end(), isMatchingName) - obj->parameters.begin();
 	return -1;
 }
 
@@ -367,9 +366,7 @@ void ofParameterGroup::fromString(const string & name){
 
 
 const ofAbstractParameter & ofParameterGroup::get(const string& name) const{
-	map<string,std::size_t>::const_iterator it = obj->parametersIndex.find(escape(name));
-	std::size_t index = it->second;
-	return get(index);
+	return get(getPosition(name));
 }
 
 const ofAbstractParameter & ofParameterGroup::get(std::size_t pos) const{
@@ -386,9 +383,7 @@ const ofAbstractParameter & ofParameterGroup::operator[](std::size_t pos) const{
 }
 
 ofAbstractParameter & ofParameterGroup::get(const string& name){
-	map<string,std::size_t>::const_iterator it = obj->parametersIndex.find(escape(name));
-	std::size_t index = it->second;
-	return get(index);
+	return get(getPosition(name));
 }
 
 ofAbstractParameter & ofParameterGroup::get(std::size_t pos){
@@ -420,7 +415,11 @@ ostream& operator<<(ostream& os, const ofParameterGroup& group) {
 }
 
 bool ofParameterGroup::contains(const string& name) const{
-	return obj->parametersIndex.find(escape(name))!=obj->parametersIndex.end();
+	string escapedName = escape(name);
+	auto isMatchingName = [escapedName](std::shared_ptr<ofAbstractParameter> p) -> bool{
+		return p->getEscapedName() == escapedName;
+	};
+	return std::find_if(obj->parameters.begin(), obj->parameters.end(), isMatchingName) != obj->parameters.end();
 }
 
 void ofParameterGroup::Value::notifyParameterChanged(ofAbstractParameter & param){

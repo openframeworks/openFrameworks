@@ -266,7 +266,6 @@ private:
 
 		void notifyParameterChanged(ofAbstractParameter & param);
 
-		std::map<std::string,std::size_t> parametersIndex;
 		std::vector<std::shared_ptr<ofAbstractParameter> > parameters;
 		std::string name;
 		bool serializable;
