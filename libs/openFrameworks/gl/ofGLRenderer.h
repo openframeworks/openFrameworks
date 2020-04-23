@@ -249,5 +249,5 @@ private:
 	std::deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
 	GLuint defaultFramebufferId;		///< default GL_FRAMEBUFFER_BINDING, windowing frameworks might want to set this to their MSAA framebuffer, defaults to 0
 	GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
-
+    std::vector<ofBaseDraws*> renderSurfaceStack;   ///render surface stack to restore
 };

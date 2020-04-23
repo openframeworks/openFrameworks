@@ -1293,6 +1293,11 @@ void ofGLProgrammableRenderer::unbind(const ofShader & shader){
 void ofGLProgrammableRenderer::begin(const ofFbo & fbo, ofFboMode mode){
 	pushView();
     pushStyle();
+    ofBaseDraws* currentRenderSurface = const_cast<ofBaseDraws*>(matrixStack.getCurrentRenderSurface());
+    if(currentRenderSurface)
+    {
+        renderSurfaceStack.push_back(currentRenderSurface);
+    }
     if(mode & OF_FBOMODE_MATRIXFLIP){
         matrixStack.setRenderSurface(fbo);
     }else{
@@ -1310,7 +1315,15 @@ void ofGLProgrammableRenderer::begin(const ofFbo & fbo, ofFboMode mode){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::end(const ofFbo & fbo){
 	unbind(fbo);
-	matrixStack.setRenderSurface(*window);
+    if(renderSurfaceStack.size() > 0)
+    {
+        matrixStack.setRenderSurface(*renderSurfaceStack.back());
+        renderSurfaceStack.pop_back();
+    }
+    else
+    {
+        matrixStack.setRenderSurface(*window);
+    }
 	uploadMatrices();
 	popStyle();
 	popView();

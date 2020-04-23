@@ -56,6 +56,16 @@ void ofMatrixStack::setRenderSurface(const ofAppBaseWindow & window){
 	setOrientation(orientation,vFlipped);
 }
 
+const ofBaseDraws* ofMatrixStack::getCurrentRenderSurface()
+{
+    return currentRenderSurface;
+}
+
+const ofAppBaseWindow* ofMatrixStack::getCurrentWindow()
+{
+    return currentWindow;
+}
+
 void ofMatrixStack::setOrientation(ofOrientation _orientation, bool vFlip){
 	vFlipped = vFlip;
 	orientation = _orientation;
