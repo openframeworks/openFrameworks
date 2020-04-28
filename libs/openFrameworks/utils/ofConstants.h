@@ -438,22 +438,24 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 // Remove from here once everything is using std::filesystem::path
 #if OF_USING_STD_FS
 #	if __cplusplus < 201703L
+#       define OF_USE_EXPERIMENTAL_FS 1
 
-		namespace std {
-			namespace experimental{
-				namespace filesystem {
-					namespace v1 {
-						namespace __cxx11 {
-							class path;
-						}
-					}
+    namespace std {
+        namespace experimental{
+            namespace filesystem {
+                namespace v1 {
+                    namespace __cxx11 {
+                        class path;
+                    }
+                }
 
-					using v1::__cxx11::path;
-				}
-			}
-			namespace filesystem = experimental::filesystem;
-		}
+                using v1::__cxx11::path;
+            }
+        }
+        namespace filesystem = experimental::filesystem;
+    }
 #	else
+#       define OF_USE_EXPERIMENTAL_FS 0
 
 	namespace std {
 		namespace filesystem {
