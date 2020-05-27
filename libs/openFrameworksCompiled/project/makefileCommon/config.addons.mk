@@ -96,7 +96,7 @@ define parse_addon
 	$(eval ADDON_SOURCES=$(PARSED_ADDONS_SOURCE_FILES)) \
 	$(eval PROCESS_NEXT=0) \
 	$(if $(wildcard $(addon)/addon_config.mk), \
-		$(foreach var_line, $(subst $(space),?,$(shell cat $(addon)/addon_config.mk | tr '\n' '\t')), \
+		$(foreach var_line, $(shell cat $(addon)/addon_config.mk | tr '\n ' '\t?'), \
 			$(eval unscaped_var_line=$(strip $(subst ?, ,$(var_line)))) \
 			$(if $(filter $(PROCESS_NEXT),1), $(eval $(unscaped_var_line))) \
 			$(if $(filter %:,$(unscaped_var_line)), \

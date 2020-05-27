@@ -90,7 +90,7 @@ ifdef USE_CCACHE
 	endif
 endif
 
-PLATFORM_LDFLAGS = -Wl,--as-needed -Wl,--gc-sections --preload-file bin/data@data --emrun
+PLATFORM_LDFLAGS = -Wl,--as-needed -Wl,--gc-sections --preload-file bin/data@data --emrun -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 
