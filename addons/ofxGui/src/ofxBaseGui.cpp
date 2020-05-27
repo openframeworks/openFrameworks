@@ -63,7 +63,7 @@ void ofxGuiDisableHiResDisplay(){
 
 
 ofColor
-ofxBaseGui::headerBackgroundColor(64),
+ofxBaseGui::headerBackgroundColor(80),
 ofxBaseGui::backgroundColor(0),
 ofxBaseGui::borderColor(120, 100),
 ofxBaseGui::textColor(255),
@@ -138,8 +138,19 @@ void ofxBaseGui::unregisterMouseEvents(){
 	ofUnregisterMouseEvents(this, defaultEventsPriority);
 	bRegisteredForMouseEvents = false;
 }
-
+void ofxBaseGui::setEvents(ofCoreEvents & _events){
+	if(&_events != events){
+		bool wasMouseInputEnabled = bRegisteredForMouseEvents;// || !events;
+		unregisterMouseEvents();
+		events = &_events;
+		if (wasMouseInputEnabled) {
+			// note: this will set bMouseInputEnabled to true as a side-effect.
+			registerMouseEvents();
+		}
+	}
+}
 void ofxBaseGui::draw(){
+	setEvents(ofEvents());
 	if(needsRedraw){
 		generateDraw();
 		needsRedraw = false;
@@ -202,15 +213,17 @@ ofRectangle ofxBaseGui::getTextBoundingBox(const string & text, float x, float y
 	}
 }
 float ofxBaseGui::getTextVCenteredInRect(const ofRectangle& container){
+		
 	if(useTTF){
-		return container.getCenter().y + font.getAscenderHeight()*0.5;
+		return container.getCenter().y  + (font.getAscenderHeight()  + font.getDescenderHeight()) *0.5;
 	}else{
 		// The bitmap font does not provide a getAscenderHeight() method.
 		// However,it can be found by calling `getTextBoundingBox(" ",0,0)` 
 		// which returns the ascender value in the rectangle's Y as a negative value. 
 		// It does not matter which string is passed to it, the value will be always the same.
-		return container.getCenter().y - getTextBoundingBox(" ",0,0).y *0.5;
-		
+		// Fix. It centers the text properly with `getTextBoundingBox(" ",0,0)` as it takes into account the screen pixel scaling.
+		auto bb = getTextBoundingBox(" ",0,0);
+		return container.getCenter().y - bb.height*0.5 - bb.y;
 	}
 }
 
@@ -284,7 +297,14 @@ void ofxBaseGui::setShape(float x, float y, float w, float h){
 	b.set(x, y, w, h);
 	sizeChangedCB();
 }
-
+void ofxBaseGui::setShapeNoNotification(const ofRectangle& r){
+	b = r;
+	setNeedsRedraw();
+}
+void ofxBaseGui::setShapeNoNotification(float x, float y, float w, float h){
+	b.set(x, y, w, h);
+	setNeedsRedraw();
+}
 glm::vec3 ofxBaseGui::getPosition() const {
 	return glm::vec3(b.x, b.y, 0);
 }
