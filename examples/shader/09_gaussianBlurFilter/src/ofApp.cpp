@@ -37,6 +37,9 @@ void ofApp::draw(){
     
 	shaderBlurX.begin();
 	shaderBlurX.setUniform1f("blurAmnt", blur);
+#ifdef TARGET_OPENGLES
+	shaderBlurX.setUniform1f("texwidth", image.getWidth());
+#endif
 
     image.draw(0, 0);
     
@@ -49,6 +52,9 @@ void ofApp::draw(){
     
 	shaderBlurY.begin();
 	shaderBlurY.setUniform1f("blurAmnt", blur);
+#ifdef TARGET_OPENGLES
+    shaderBlurY.setUniform1f("texheight", image.getHeight());
+#endif
     
     fboBlurOnePass.draw(0, 0);
     
