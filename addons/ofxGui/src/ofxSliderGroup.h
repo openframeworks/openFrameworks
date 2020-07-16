@@ -15,6 +15,11 @@ public:
     ofxVecSlider_ * setup(ofParameter<VecType> value, float width = defaultWidth, float height = defaultHeight);
     ofxVecSlider_ * setup(const std::string& controlName, const VecType & value, const VecType & min, const VecType & max, float width = defaultWidth, float height = defaultHeight);
 
+    void setMin(const VecType& min);
+    VecType getMin();
+    void setMax(const VecType& max);
+    VecType getMax();
+
     ofAbstractParameter & getParameter();
 
     VecType operator=(const VecType & v);
@@ -45,6 +50,11 @@ public:
 	ofxColorSlider_ * setup(ofParameter<ofColor_<ColorType> > value, float width = defaultWidth, float height = defaultHeight);
 	ofxColorSlider_ * setup(const std::string& controlName, const ofColor_<ColorType> & value, const ofColor_<ColorType> & min, const ofColor_<ColorType> & max, float width = defaultWidth, float height = defaultHeight);
 
+    void setMin(const ofColor_<ColorType>& min);
+    ofColor_<ColorType> getMin();
+    void setMax(const ofColor_<ColorType>& max);
+    ofColor_<ColorType> getMax();
+
 	ofAbstractParameter & getParameter();
 
 	ofColor_<ColorType> operator=(const ofColor_<ColorType> & v);
@@ -54,6 +64,7 @@ protected:
 	void onMaximize();
     void changeSlider(const void * parameter, ColorType & value);
 	void changeValue(ofColor_<ColorType> & value);
+    void updateSliderColors(ofColor_<ColorType> color);
     bool sliderChanging;
 	ofColor originalHeaderBackground;
 	ofColor originalHeaderText;
@@ -74,7 +85,12 @@ public:
 	ofxRectangleSlider * setup(ofParameter<ofRectangle>, float width = defaultWidth, float height = defaultHeight);
 	ofxRectangleSlider * setup(const std::string& controlName, const ofRectangle & value, const ofRectangle & min, const ofRectangle & max, float width = defaultWidth, float height = defaultHeight);
 
-	ofAbstractParameter & getParameter();
+    void setMin(const ofRectangle& min);
+    ofRectangle getMin();
+    void setMax(const ofRectangle& max);
+    ofRectangle getMax();
+
+    ofAbstractParameter & getParameter();
 
 	ofRectangle operator=(const ofRectangle & v);
 	operator const ofRectangle & ();

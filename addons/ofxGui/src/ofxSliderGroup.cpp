@@ -40,6 +40,32 @@ ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(const std::string& contro
 }
 
 template<class VecType>
+void ofxVecSlider_<VecType>::setMin(const VecType& min) {
+    value.setMin(min);
+    for (size_t i = 0; i < dim(); i++){
+        parameters[i].template cast<float>().setMin(min[i]);
+    }
+}
+
+template<class VecType>
+VecType ofxVecSlider_<VecType>::getMin() {
+    return value.getMin();
+}
+
+template<class VecType>
+void ofxVecSlider_<VecType>::setMax(const VecType& max) {
+    value.setMax(max);
+    for (size_t i = 0; i < dim(); i++){
+        parameters[i].template cast<float>().setMax(max[i]);
+    }
+}
+
+template<class VecType>
+VecType ofxVecSlider_<VecType>::getMax() {
+    return value.getMax();
+}
+
+template<class VecType>
 void ofxVecSlider_<VecType>::changeSlider(const void * parameter, float & _value){
     sliderChanging = true;
     ofParameter<float> & param = *(ofParameter<float>*)parameter;
@@ -142,14 +168,8 @@ ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(ofParameter<ofCol
     	ofParameter<ColorType> p(names[i], val[i], min[i], max[i]);
         add(createGuiElement<ofxSlider<ColorType>>(p, width, height));
         p.addListener(this, & ofxColorSlider_::changeSlider);
-		collection[i]->setFillColor(value.get());
-        float range = p.getMax()-p.getMin();
-        if(range == 0){
-            collection[i]->setTextColor( ofFloatColor(0.));
-        }else{
-            collection[i]->setTextColor( p/range > 0.75 ? ofFloatColor(0.) : ofFloatColor(1.));
-        }
     }
+    updateSliderColors(value.get());
 	add(&picker);
 	picker.getParameter().template cast<ofColor_<ColorType>>().addListener(this, & ofxColorSlider_::changeValue);
 
@@ -167,6 +187,32 @@ ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(const std::string
 }
 
 template<class ColorType>
+void ofxColorSlider_<ColorType>::setMin(const ofColor_<ColorType>& min) {
+    picker.getParameter().template cast<ofColor_<ColorType>>().setMin(min);
+    for (int i = 0; i < 4; i++){
+        parameters[i].template cast<ColorType>().setMin(min[i]);
+    }
+}
+
+template<class ColorType>
+ofColor_<ColorType> ofxColorSlider_<ColorType>::getMin() {
+    return picker.getParameter().template cast<ofColor_<ColorType>>().getMin();
+}
+
+template<class ColorType>
+void ofxColorSlider_<ColorType>::setMax(const ofColor_<ColorType>& max) {
+    picker.getParameter().template cast<ofColor_<ColorType>>().setMax(max);
+    for (int i = 0; i < 4; i++){
+        parameters[i].template cast<ColorType>().setMax(max[i]);
+    }
+}
+
+template<class ColorType>
+ofColor_<ColorType> ofxColorSlider_<ColorType>::getMax() {
+    return picker.getParameter().template cast<ofColor_<ColorType>>().getMax();
+}
+
+template<class ColorType>
 void ofxColorSlider_<ColorType>::changeSlider(const void * parameter, ColorType & _value){
     sliderChanging = true;
     ofParameter<float> & param = *(ofParameter<float>*)parameter;
@@ -175,17 +221,7 @@ void ofxColorSlider_<ColorType>::changeSlider(const void * parameter, ColorType 
     data[i] = _value;
 	picker.getParameter().template cast<ofColor_<ColorType>>() = data;
 
-
-    for (int i=0; i<4; i++){
-		collection[i]->setFillColor(data);
-		auto p = parameters[i].template cast<ColorType>();
-        float range = p.getMax()-p.getMin();
-        if(range == 0){
-            collection[i]->setTextColor( ofFloatColor(0.));
-        }else{
-            collection[i]->setTextColor( p/range > 0.75 ? ofFloatColor(0.) : ofFloatColor(1.));
-        }
-	}
+    updateSliderColors(data);
     sliderChanging = false;
 }
 
@@ -196,19 +232,27 @@ void ofxColorSlider_<ColorType>::changeValue(ofColor_<ColorType> & value){
     }
     for (int i=0; i<4; i++){
         parameters[i].template cast<ColorType>() = value[i];
-    	collection[i]->setFillColor(value);
-		auto p = parameters[i].template cast<ColorType>();
-        float range = p.getMax()-p.getMin();
-        if(range == 0){
-            collection[i]->setTextColor( ofFloatColor(0.));
-        }else{
-            collection[i]->setTextColor( p/range > 0.75 ? ofFloatColor(0.) : ofFloatColor(1.));
-        }
 	}
+    updateSliderColors(value);
     if(isMinimized()){
         setHeaderBackgroundColor(value);
         float b = value.getBrightness() / value.limit();
         setTextColor(b > 0.75 ? ofFloatColor(0.0) : ofFloatColor(1.0));
+    }
+}
+
+template<class ColorType>
+void ofxColorSlider_<ColorType>::updateSliderColors(ofColor_<ColorType> color) {
+    for (int i=0; i<4; i++){
+        collection[i]->setFillColor(color);
+        auto p = parameters[i].template cast<ColorType>();
+        float range = p.getMax()-p.getMin();
+        if(range == 0){  // Range of 0 is drawn as an empty bar.
+            collection[i]->setTextColor( ofFloatColor(1.));
+        }else{
+            auto amt = (p - p.getMin()) / range;
+            collection[i]->setTextColor( amt > 0.75 ? ofFloatColor(0.) : ofFloatColor(1.));
+        }
     }
 }
 
@@ -301,6 +345,38 @@ ofxRectangleSlider * ofxRectangleSlider::setup(ofParameter<ofRectangle> value, f
 ofxRectangleSlider * ofxRectangleSlider::setup(const std::string& controlName, const ofRectangle & v, const ofRectangle & min, const ofRectangle & max, float width, float height){
 	value.set(controlName,v,min,max);
 	return setup(value,width,height);
+}
+
+
+void ofxRectangleSlider::setMin(const ofRectangle& min) {
+    value.setMin(min);
+
+    // Order is the same as in setup().
+    parameters[0].template cast<float>().setMin(min.x);
+    parameters[1].template cast<float>().setMin(min.y);
+    parameters[2].template cast<float>().setMin(min.width);
+    parameters[3].template cast<float>().setMin(min.height);
+}
+
+
+ofRectangle ofxRectangleSlider::getMin() {
+    return value.getMin();
+}
+
+
+void ofxRectangleSlider::setMax(const ofRectangle& max) {
+    value.setMax(max);
+
+    // Order is the same as in setup().
+    parameters[0].template cast<float>().setMax(max.x);
+    parameters[1].template cast<float>().setMax(max.y);
+    parameters[2].template cast<float>().setMax(max.width);
+    parameters[3].template cast<float>().setMax(max.height);
+}
+
+
+ofRectangle ofxRectangleSlider::getMax() {
+    return value.getMax();
 }
 
 
