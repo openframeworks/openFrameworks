@@ -1054,14 +1054,17 @@ private:
 	class Value{
 	public:
 		Value()
-		:serializable(false){}
+		:bInNotify(false)
+        ,serializable(false){}
 
 		Value(std::string name)
 		:name(name)
+        ,bInNotify(false)
 		,serializable(false){}
 
 		std::string name;
 		ofEvent<void> changedE;
+        bool bInNotify;
 		bool serializable;
 		std::vector<std::weak_ptr<ofParameterGroup::Value>> parents;
 	};
