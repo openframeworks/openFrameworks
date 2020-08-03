@@ -39,7 +39,7 @@ for:
         - BUILDER: MSYS2
     
     cache:
-    - .ccache
+        # - .ccache
 
     install:
       - |-
