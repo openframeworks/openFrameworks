@@ -9,9 +9,9 @@ environment:
     APPVEYOR_OS_NAME: windows
     CHERE_INVOKING: 1
     MSYS2_PATH: c:\msys64
-    #CCACHE settings : Appveyor cache is limited to 1G so we limit CCACHE to 2G and expect 50% compression...
+    #CCACHE settings : Appveyor cache is limited to 1G so we limit CCACHE and hope for compression to save the day...
     CCACHE_DIR: "%APPVEYOR_BUILD_FOLDER%\\.ccache"
-    CCACHE_MAXSIZE: 2G
+    CCACHE_MAXSIZE: 3G
   matrix:
   #MSYS2 Building
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
@@ -27,8 +27,8 @@ clone_depth: 10
 
 init:
 # fix for https://github.com/appveyor/ci/issues/2571
-- del C:\Windows\System32\libssl-*.dll C:\Windows\system32\libcrypto-*.dll
-- del C:\Windows\SysWOW64\libssl-*.dll C:\Windows\SysWOW64\libcrypto-*.dll
+# - del C:\Windows\System32\libssl-*.dll C:\Windows\system32\libcrypto-*.dll
+# - del C:\Windows\SysWOW64\libssl-*.dll C:\Windows\SysWOW64\libcrypto-*.dll
 
 
 
@@ -39,7 +39,7 @@ for:
         - BUILDER: MSYS2
     
     cache:
-        # - .ccache
+        - .ccache
 
     install:
       - |-
