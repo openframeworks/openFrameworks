@@ -109,6 +109,9 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 		}else if(type == typeid(ofParameter <ofFloatColor> ).name()){
 			auto p = _parameters.getFloatColor(i);
 			add(p);
+		}else if(type == typeid(ofParameter <ofRectangle> ).name()){
+			auto p = _parameters.getRectangle(i);
+			add(p);
 		}else if(_parameters[i].valueType() == typeid(string).name()){
 			if(_parameters[i].isReadOnly()){
 				auto p = _parameters.get(i).castReadOnly<std::string, void>();
