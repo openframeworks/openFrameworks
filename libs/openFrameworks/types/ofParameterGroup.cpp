@@ -432,6 +432,13 @@ void ofParameterGroup::Value::notifyParameterChanged(ofAbstractParameter & param
 	}),parents.end());
 }
 
+void ofParameterGroup::Value::notifyParameterNameChanged(const std::string oldName, const std::string newName){
+    if(oldName != newName){
+        parametersIndex[newName] = parametersIndex[oldName];
+        parametersIndex.erase(oldName);
+    }
+}
+
 const ofParameterGroup ofParameterGroup::getFirstParent() const{
 	auto first = std::find_if(obj->parents.begin(),obj->parents.end(),[](const weak_ptr<Value> & p){return p.lock()!=nullptr;});
 	if(first!=obj->parents.end()){

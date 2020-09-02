@@ -265,6 +265,7 @@ private:
 		:serializable(true){}
 
 		void notifyParameterChanged(ofAbstractParameter & param);
+        void notifyParameterNameChanged(const std::string oldName, const std::string newName);
 
 		std::map<std::string,std::size_t> parametersIndex;
 		std::vector<std::shared_ptr<ofAbstractParameter> > parameters;
@@ -818,7 +819,29 @@ inline ofParameter<ParameterType>::operator const ParameterType & () const{
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::setName(const std::string & name){
+    std::string oldName = getEscapedName();
 	obj->name = name;
+    
+    // Notify all parents, if there are any.
+    if(!obj->parents.empty())
+    {
+        // Erase each invalid parent
+        obj->parents.erase(std::remove_if(obj->parents.begin(),
+                                          obj->parents.end(),
+                                          [this](const std::weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
+                           obj->parents.end());
+
+        // notify all leftover (valid) parents of this object's changed value.
+        // this can't happen in the same iterator as above, because a notified listener
+        // might perform similar cleanups that would corrupt our iterator
+        // (which appens for example if the listener calls getFirstParent on us)
+        for(auto & parent: obj->parents){
+            auto p = parent.lock();
+            if(p){
+                p->notifyParameterNameChanged(oldName, getEscapedName());
+            }
+        }
+    }
 }
 
 template<typename ParameterType>
