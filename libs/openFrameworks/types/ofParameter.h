@@ -67,11 +67,16 @@ public:
 
 	virtual bool isReferenceTo(const ofAbstractParameter& other) const;
 
+	ofEvent<std::string> nameChangedEvent;
+	
 protected:
 	virtual const ofParameterGroup getFirstParent() const = 0;
 	virtual void setSerializable(bool serializable)=0;
 	virtual std::string escape(const std::string& str) const;
 	virtual const void* getInternalObject() const = 0;
+	
+	
+	
 };
 
 
@@ -255,10 +260,10 @@ public:
 	std::vector<std::shared_ptr<ofAbstractParameter> >::const_reverse_iterator rbegin() const;
 	std::vector<std::shared_ptr<ofAbstractParameter> >::const_reverse_iterator rend() const;
 
-protected:
+//protected:
 	const void* getInternalObject() const;
 
-private:
+//private:
 	class Value{
 	public:
 		Value()
@@ -278,6 +283,31 @@ private:
 	ofParameterGroup(std::shared_ptr<Value> obj)
 	:obj(obj){}
 
+
+	static void checkAndRemoveExpiredParents(std::vector<std::weak_ptr<Value>> & parents);
+//	{
+//		parents.erase(std::remove_if(parents.begin(),
+//					   parents.end(),
+//					   [](const std::weak_ptr<Value> & p){ return p.expired(); }),
+//		parents.end());
+//	}
+	
+	
+	static void changeChildName(ofAbstractParameter* child, std::vector<std::weak_ptr<Value>> & parents, const std::string& oldName, std::string newName);
+//	{
+//
+//		if(oldName.empty()) return;
+//
+//		checkAndRemoveExpiredParents(parents);
+//
+//		for(auto & parent: parents){
+//			auto p = parent.lock();
+//			if(p){
+//				p->notifyParameterNameChanged(oldName, newName);
+//			}
+//		}
+//	}
+	
 	template<typename T>
 	friend class ofParameter;
 
@@ -581,9 +611,11 @@ public:
 	void setParent(ofParameterGroup & _parent);
 
 	const ofParameterGroup getFirstParent() const{
-		obj->parents.erase(std::remove_if(obj->parents.begin(),obj->parents.end(),
-						   [](std::weak_ptr<ofParameterGroup::Value> p){return p.lock()==nullptr;}),
-						obj->parents.end());
+//		obj->parents.erase(std::remove_if(obj->parents.begin(),obj->parents.end(),
+//						   [](std::weak_ptr<ofParameterGroup::Value> p){return p.lock()==nullptr;}),
+//						obj->parents.end());
+//
+		ofParameterGroup::checkAndRemoveExpiredParents(obj->parents);
 		if(!obj->parents.empty()){
 			return obj->parents.front().lock();
 		}else{
@@ -746,10 +778,11 @@ inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType & v){
 		if(!obj->parents.empty())
 		{
 			// Erase each invalid parent
-			obj->parents.erase(std::remove_if(obj->parents.begin(),
-											  obj->parents.end(),
-											  [this](const std::weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
-							   obj->parents.end());
+			ofParameterGroup::checkAndRemoveExpiredParents(obj->parents);
+//			obj->parents.erase(std::remove_if(obj->parents.begin(),
+//											  obj->parents.end(),
+//											  [this](const std::weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
+//							   obj->parents.end());
 
 			// notify all leftover (valid) parents of this object's changed value.
 			// this can't happen in the same iterator as above, because a notified listener
@@ -822,26 +855,21 @@ void ofParameter<ParameterType>::setName(const std::string & name){
     std::string oldName = getEscapedName();
 	obj->name = name;
     
+	ofParameterGroup::changeChildName(this, obj->parents, oldName, getEscapedName());
+	
     // Notify all parents, if there are any.
-    if(!obj->parents.empty())
-    {
-        // Erase each invalid parent
-        obj->parents.erase(std::remove_if(obj->parents.begin(),
-                                          obj->parents.end(),
-                                          [this](const std::weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
-                           obj->parents.end());
-
-        // notify all leftover (valid) parents of this object's changed value.
-        // this can't happen in the same iterator as above, because a notified listener
-        // might perform similar cleanups that would corrupt our iterator
-        // (which appens for example if the listener calls getFirstParent on us)
-        for(auto & parent: obj->parents){
-            auto p = parent.lock();
-            if(p){
-                p->notifyParameterNameChanged(oldName, getEscapedName());
-            }
-        }
-    }
+//    if(!obj->parents.empty() && !oldName.empty())
+//    {
+//
+//		ofParameterGroup::checkAndRemoveExpiredParents(obj->parents);
+//
+//        for(auto & parent: obj->parents){
+//            auto p = parent.lock();
+//            if(p){
+//                p->notifyParameterNameChanged(oldName, getEscapedName());
+//            }
+//        }
+//    }
 }
 
 template<typename ParameterType>

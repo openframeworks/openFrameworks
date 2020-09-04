@@ -344,7 +344,10 @@ string ofParameterGroup::getName() const{
 }
 
 void ofParameterGroup::setName(const string & name){
+	std::string oldName = getEscapedName();
 	obj->name = name;
+    
+	changeChildName(this, obj->parents, oldName, getEscapedName());
 }
 
 string ofParameterGroup::getEscapedName() const{
@@ -529,3 +532,33 @@ vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator ofParameterGrou
 }
 
 
+void ofParameterGroup::checkAndRemoveExpiredParents(std::vector<std::weak_ptr<Value>> & parents)
+{
+	parents.erase(std::remove_if(parents.begin(),
+				   parents.end(),
+				   [](const std::weak_ptr<Value> & p){ return p.expired(); }),
+	parents.end());
+}
+
+
+void ofParameterGroup::changeChildName(ofAbstractParameter* child, std::vector<std::weak_ptr<Value>> & parents, const std::string& oldName, std::string newName)
+{
+	if(!child) return;
+	// Currently it is working with empty names, so I think it is a good idea to allow these
+//	if(oldName.empty()) return;
+	
+	// name has not change, no need to notify anything
+	if(oldName == newName) return;
+	
+	checkAndRemoveExpiredParents(parents);
+	
+	for(auto & parent: parents){
+		auto p = parent.lock();
+		if(p){
+			p->notifyParameterNameChanged(oldName, newName);
+		}
+	}
+	ofNotifyEvent(child->nameChangedEvent, newName, child);
+	
+	
+}
