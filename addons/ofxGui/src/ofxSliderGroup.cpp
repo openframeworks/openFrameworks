@@ -29,6 +29,7 @@ ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(ofParameter<VecType> valu
     }
 
     sliderChanging = false;
+	setNameListener();
     return this;
 
 }
@@ -154,7 +155,7 @@ ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(ofParameter<ofCol
 	add(&picker);
 	listeners.push(picker.getParameter().template cast<ofColor_<ColorType>>().newListener(this, & ofxColorSlider_::changeValue));
 
-
+	setNameListener();
 	sliderChanging = false;
 	minimize();
     return this;
@@ -294,7 +295,7 @@ ofxRectangleSlider * ofxRectangleSlider::setup(ofParameter<ofRectangle> value, f
         add(createGuiElement<ofxSlider<float>>(h, width, height));
         listeners.push(h.newListener(this, & ofxRectangleSlider::changeSlider));
 
-
+	setNameListener();
     sliderChanging = false;
     return this;
 
