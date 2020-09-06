@@ -435,7 +435,17 @@ void ofParameterGroup::Value::notifyParameterChanged(ofAbstractParameter & param
 	}),parents.end());
 }
 
-void ofParameterGroup::Value::notifyParameterNameChanged(const std::string oldName, const std::string newName){
+void ofParameterGroup::Value::notifyParameterNameChanged(ofAbstractParameter & param)
+{
+	ofNotifyEvent(childNameChangedEvent,param);
+	parents.erase(std::remove_if(parents.begin(),parents.end(),[&param](const weak_ptr<Value> & p){
+		auto parent = p.lock();
+		if(parent) parent->notifyParameterNameChanged(param);
+		return !parent;
+	}),parents.end());
+}
+			
+void ofParameterGroup::Value::updateParameterName(const std::string oldName, const std::string newName){
     if(oldName != newName){
         parametersIndex[newName] = parametersIndex[oldName];
         parametersIndex.erase(oldName);
@@ -544,8 +554,6 @@ void ofParameterGroup::checkAndRemoveExpiredParents(std::vector<std::weak_ptr<Va
 void ofParameterGroup::changeChildName(ofAbstractParameter* child, std::vector<std::weak_ptr<Value>> & parents, const std::string& oldName, std::string newName)
 {
 	if(!child) return;
-	// Currently it is working with empty names, so I think it is a good idea to allow these
-//	if(oldName.empty()) return;
 	
 	// name has not change, no need to notify anything
 	if(oldName == newName) return;
@@ -555,10 +563,27 @@ void ofParameterGroup::changeChildName(ofAbstractParameter* child, std::vector<s
 	for(auto & parent: parents){
 		auto p = parent.lock();
 		if(p){
-			p->notifyParameterNameChanged(oldName, newName);
+			p->updateParameterName(oldName, newName);
 		}
 	}
-	ofNotifyEvent(child->nameChangedEvent, newName, child);
+		
+	ofNotifyEvent(child->nameChangedEvent(), newName, child);
 	
-	
+
+	// we notify to the parents after updating the name in order to avoid any possible data race
+	for(auto & parent: parents){
+		auto p = parent.lock();
+		if(p){
+			p->notifyParameterNameChanged(*child);
+		}
+	}
+}
+
+ofEvent<std::string>& ofParameterGroup::nameChangedEvent()
+{
+	return obj->nameChangedEvent;
+}
+ofEvent<ofAbstractParameter>& ofParameterGroup::childNameChangedEvent()
+{
+	return obj->childNameChangedEvent;
 }
