@@ -263,10 +263,10 @@ public:
 	std::vector<std::shared_ptr<ofAbstractParameter> >::const_reverse_iterator rbegin() const;
 	std::vector<std::shared_ptr<ofAbstractParameter> >::const_reverse_iterator rend() const;
 
-//protected:
+protected:
 	const void* getInternalObject() const;
 
-//private:
+private:
 	class Value{
 	public:
 		Value()
