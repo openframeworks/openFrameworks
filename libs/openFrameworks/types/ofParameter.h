@@ -67,11 +67,16 @@ public:
 
 	virtual bool isReferenceTo(const ofAbstractParameter& other) const;
 
+	virtual ofEvent<std::string>& nameChangedEvent() = 0;
+	
 protected:
 	virtual const ofParameterGroup getFirstParent() const = 0;
 	virtual void setSerializable(bool serializable)=0;
 	virtual std::string escape(const std::string& str) const;
 	virtual const void* getInternalObject() const = 0;
+	
+	
+	
 };
 
 
@@ -245,7 +250,10 @@ public:
 	operator bool() const;
 
 	ofEvent<ofAbstractParameter> & parameterChangedE();
-
+	virtual ofEvent<std::string>& nameChangedEvent();
+	ofEvent<ofAbstractParameter>& childNameChangedEvent();
+	
+	
 	std::vector<std::shared_ptr<ofAbstractParameter> >::iterator begin();
 	std::vector<std::shared_ptr<ofAbstractParameter> >::iterator end();
 	std::vector<std::shared_ptr<ofAbstractParameter> >::const_iterator begin() const;
@@ -265,19 +273,27 @@ private:
 		:serializable(true){}
 
 		void notifyParameterChanged(ofAbstractParameter & param);
-        void notifyParameterNameChanged(const std::string oldName, const std::string newName);
-
+        void updateParameterName(const std::string oldName, const std::string newName);
+		void notifyParameterNameChanged(ofAbstractParameter & param);
+		
 		std::map<std::string,std::size_t> parametersIndex;
 		std::vector<std::shared_ptr<ofAbstractParameter> > parameters;
 		std::string name;
 		bool serializable;
 		std::vector<std::weak_ptr<Value>> parents;
 		ofEvent<ofAbstractParameter> parameterChangedE;
+		ofEvent<std::string> nameChangedEvent;
+		ofEvent<ofAbstractParameter> childNameChangedEvent;
 	};
 	std::shared_ptr<Value> obj;
 	ofParameterGroup(std::shared_ptr<Value> obj)
 	:obj(obj){}
 
+
+	static void checkAndRemoveExpiredParents(std::vector<std::weak_ptr<Value>> & parents);
+		
+	static void changeChildName(ofAbstractParameter* child, std::vector<std::weak_ptr<Value>> & parents, const std::string& oldName, std::string newName);
+	
 	template<typename T>
 	friend class ofParameter;
 
@@ -581,9 +597,11 @@ public:
 	void setParent(ofParameterGroup & _parent);
 
 	const ofParameterGroup getFirstParent() const{
-		obj->parents.erase(std::remove_if(obj->parents.begin(),obj->parents.end(),
-						   [](std::weak_ptr<ofParameterGroup::Value> p){return p.lock()==nullptr;}),
-						obj->parents.end());
+//		obj->parents.erase(std::remove_if(obj->parents.begin(),obj->parents.end(),
+//						   [](std::weak_ptr<ofParameterGroup::Value> p){return p.lock()==nullptr;}),
+//						obj->parents.end());
+//
+		ofParameterGroup::checkAndRemoveExpiredParents(obj->parents);
 		if(!obj->parents.empty()){
 			return obj->parents.front().lock();
 		}else{
@@ -591,6 +609,8 @@ public:
 		}
 	}
 
+	virtual ofEvent<std::string>& nameChangedEvent();
+	
 	size_t getNumListeners() const;
 	const void* getInternalObject() const;
 
@@ -632,6 +652,7 @@ private:
 		ParameterType value;
 		ParameterType min, max;
 		ofEvent<ParameterType> changedE;
+		ofEvent<std::string> nameChangedEvent;
 		bool bInNotify;
 		bool serializable;
 		std::vector<std::weak_ptr<ofParameterGroup::Value>> parents;
@@ -746,10 +767,7 @@ inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType & v){
 		if(!obj->parents.empty())
 		{
 			// Erase each invalid parent
-			obj->parents.erase(std::remove_if(obj->parents.begin(),
-											  obj->parents.end(),
-											  [this](const std::weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
-							   obj->parents.end());
+			ofParameterGroup::checkAndRemoveExpiredParents(obj->parents);
 
 			// notify all leftover (valid) parents of this object's changed value.
 			// this can't happen in the same iterator as above, because a notified listener
@@ -822,26 +840,13 @@ void ofParameter<ParameterType>::setName(const std::string & name){
     std::string oldName = getEscapedName();
 	obj->name = name;
     
-    // Notify all parents, if there are any.
-    if(!obj->parents.empty())
-    {
-        // Erase each invalid parent
-        obj->parents.erase(std::remove_if(obj->parents.begin(),
-                                          obj->parents.end(),
-                                          [this](const std::weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
-                           obj->parents.end());
-
-        // notify all leftover (valid) parents of this object's changed value.
-        // this can't happen in the same iterator as above, because a notified listener
-        // might perform similar cleanups that would corrupt our iterator
-        // (which appens for example if the listener calls getFirstParent on us)
-        for(auto & parent: obj->parents){
-            auto p = parent.lock();
-            if(p){
-                p->notifyParameterNameChanged(oldName, getEscapedName());
-            }
-        }
-    }
+	ofParameterGroup::changeChildName(this, obj->parents, oldName, getEscapedName());
+	
+}
+template<typename ParameterType>
+ofEvent<std::string>& ofParameter<ParameterType>::nameChangedEvent()
+{
+	return obj->nameChangedEvent;
 }
 
 template<typename ParameterType>
@@ -1071,6 +1076,9 @@ public:
 	const void* getInternalObject() const{
 		return obj.get();
 	}
+	
+	virtual ofEvent<std::string>& nameChangedEvent();
+	
 protected:
 
 private:
@@ -1085,6 +1093,7 @@ private:
 
 		std::string name;
 		ofEvent<void> changedE;
+		ofEvent<std::string> nameChangedEvent;
 		bool serializable;
 		std::vector<std::weak_ptr<ofParameterGroup::Value>> parents;
 	};
@@ -1141,6 +1150,7 @@ public:
 	std::string valueType() const;
 
 protected:
+	virtual ofEvent<std::string>& nameChangedEvent();
 	void setName(const std::string & name);
 	void enableEvents();
 	void disableEvents();
@@ -1305,6 +1315,11 @@ inline std::unique_ptr<of::priv::AbstractEventToken> ofReadOnlyParameter<Paramet
 template<typename ParameterType,typename Friend>
 inline void ofReadOnlyParameter<ParameterType,Friend>::setName(const std::string & name){
 	parameter.setName(name);
+}
+
+template<typename ParameterType,typename Friend>
+inline ofEvent<std::string>& ofReadOnlyParameter<ParameterType,Friend>::nameChangedEvent(){
+	return parameter.nameChangedEvent();
 }
 
 template<typename ParameterType,typename Friend>

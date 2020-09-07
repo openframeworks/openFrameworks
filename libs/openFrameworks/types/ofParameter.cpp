@@ -83,26 +83,14 @@ void ofParameter<void>::setName(const string & name){
     std::string oldName = getEscapedName();
 	obj->name = name;
     
-    // Notify all parents, if there are any.
-    if(!obj->parents.empty())
-    {
-        // Erase each invalid parent
-        obj->parents.erase(std::remove_if(obj->parents.begin(),
-                                          obj->parents.end(),
-                                          [this](const std::weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
-                           obj->parents.end());
+	ofParameterGroup::changeChildName(this, obj->parents, oldName, getEscapedName());
+	
+}
 
-        // notify all leftover (valid) parents of this object's changed value.
-        // this can't happen in the same iterator as above, because a notified listener
-        // might perform similar cleanups that would corrupt our iterator
-        // (which appens for example if the listener calls getFirstParent on us)
-        for(auto & parent: obj->parents){
-            auto p = parent.lock();
-            if(p){
-                p->notifyParameterNameChanged(oldName, getEscapedName());
-            }
-        }
-    }
+
+ofEvent<std::string>& ofParameter<void>::nameChangedEvent()
+{
+	return obj->nameChangedEvent;
 }
 
 string ofParameter<void>::getName() const{
@@ -131,11 +119,8 @@ void ofParameter<void>::trigger(){
     // Notify all parents, if there are any.
     if(!obj->parents.empty())
     {
-        // Erase each invalid parent
-        obj->parents.erase(std::remove_if(obj->parents.begin(),
-                                          obj->parents.end(),
-                                          [this](const std::weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
-                           obj->parents.end());
+		// Erase each invalid parent
+		ofParameterGroup::checkAndRemoveExpiredParents(obj->parents);
         
         // notify all leftover (valid) parents of this object's changed value.
         // this can't happen in the same iterator as above, because a notified listener
@@ -156,10 +141,7 @@ void ofParameter<void>::trigger(const void * sender){
     if(!obj->parents.empty())
     {
         // Erase each invalid parent
-        obj->parents.erase(std::remove_if(obj->parents.begin(),
-                                          obj->parents.end(),
-                                          [this](const std::weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
-                           obj->parents.end());
+		ofParameterGroup::checkAndRemoveExpiredParents(obj->parents);
         
         // notify all leftover (valid) parents of this object's changed value.
         // this can't happen in the same iterator as above, because a notified listener

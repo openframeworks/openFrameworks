@@ -148,6 +148,7 @@ ofxInputField<Type>* ofxInputField<Type>::setup(ofParameter<Type> _val, float wi
 	listeners.push(value.newListener(this,&ofxInputField::valueChanged));
 	listeners.push(ofEvents().charEvent.newListener(this, &ofxInputField<Type>::charPressed, OF_EVENT_ORDER_BEFORE_APP));
 	listeners.push(ofEvents().keyPressed.newListener(this, &ofxInputField<Type>::keyPressed, OF_EVENT_ORDER_BEFORE_APP));
+	setNameListener();
 	return this;
 }
 

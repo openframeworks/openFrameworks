@@ -22,7 +22,7 @@ ofxToggle * ofxToggle::setup(ofParameter<bool> _bVal, float width, float height)
 	value.addListener(this,&ofxToggle::valueChanged);
 	registerMouseEvents();
 	setNeedsRedraw();
-
+	setNameListener();
 	return this;
 
 }
