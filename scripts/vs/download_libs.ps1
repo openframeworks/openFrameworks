@@ -5,7 +5,8 @@
 # Which will load the visual studio 2015 libraries
 param(
     [String]$ver="master",
-    [String]$platform="vs2017"
+    [String]$platform="vs2017",
+    [String]$tag=""
     )
 $currentPath = $pwd
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
@@ -14,6 +15,10 @@ $libsDir = $scriptPath + "\..\..\libs"
 function DownloadPackage{
     $pkg = $args[0]
     $url = "http://ci.openframeworks.cc/libs/$pkg"
+    if(-Not [string]::IsNullOrEmpty($tag)) {
+      $url = "http://ci.openframeworks.cc/libs/$tag/$pkg"
+    }
+
     If(Test-Path "$pkg") {
         echo "Deleting old package"
         Remove-Item $pkg
