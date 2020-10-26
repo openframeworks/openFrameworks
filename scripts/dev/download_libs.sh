@@ -33,7 +33,7 @@ EOF
 }
 
 download(){
-    if [-z "$VERSION"]
+    if test -z "$VERSION"
     then
         echo "Downloading latest $1"
         wget ci.openframeworks.cc/libs/$1 $SILENT_ARGS
