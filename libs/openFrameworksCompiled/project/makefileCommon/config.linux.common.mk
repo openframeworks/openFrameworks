@@ -141,29 +141,37 @@ ifeq ($(CXX),g++)
 	GCC_MINOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 9)
 	ifeq ("$(GCC_MAJOR_EQ_4)","1")
 		ifeq ("$(GCC_MINOR_GTEQ_7)","1")
-			PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++0x -DHAS_TLS=0
+			PLATFORM_CFLAGS = -Wall -Werror=return-type -DHAS_TLS=0
+			PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++0x -DHAS_TLS=0
 		else
 			ifeq ("$(GCC_MINOR_GTEQ_9)","1")
-				PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
+				PLATFORM_CFLAGS = -Wall -Werror=return-type -DGCC_HAS_REGEX
+				PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
 			else
-				PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++11
+				PLATFORM_CFLAGS = -Wall -Werror=return-type
+				PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++11
 			endif
 		endif
 	endif
 	ifeq ("$(GCC_MAJOR_GT_4)","1")
-		PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
+		PLATFORM_CFLAGS = -Wall -Werror=return-type -DGCC_HAS_REGEX
+		PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
 	endif
 else
 	ifeq ($(CXX),g++-5)
-		PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
+		PLATFORM_CFLAGS = -Wall -Werror=return-type -DGCC_HAS_REGEX
+		PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
 	else
 		ifeq ($(CXX),g++-4.9)
-			PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
+			PLATFORM_CFLAGS = -Wall -Werror=return-type -DGCC_HAS_REGEX
+			PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
 		else
 			ifeq ($(CXX),g++-4.8)
-				PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++11
+				PLATFORM_CFLAGS = -Wall -Werror=return-type
+				PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++11
 			else
-				PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++11
+				PLATFORM_CFLAGS = -Wall -Werror=return-type
+				PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++11
 			endif
 		endif
 	endif
