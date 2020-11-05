@@ -1,4 +1,4 @@
-%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync"
+%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip"
 
 move %APPVEYOR_PROJECT_NAME% openFrameworks\addons\%APPVEYOR_PROJECT_NAME%
 cd openFrameworks
