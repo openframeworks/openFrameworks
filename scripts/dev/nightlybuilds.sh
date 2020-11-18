@@ -1,7 +1,7 @@
 #!/bin/bash
 
 lastversion=$(date +%Y%m%d)
-REPORT_MAIL=arturo@openframeworks.cc
+REPORT_MAIL=of@openframeworks.cc
 
 echo "Building nightly builds $lastversion"
 
@@ -36,9 +36,11 @@ trap 'error ${LINENO}' ERR
 
 touch lasthash.txt
 export PG_OF_PATH=$(cat ~/.ofprojectgenerator/config)
+export target_branch=$(git remote show https://github.com/openframeworks/openFrameworks | grep 'HEAD branch' | cut -d' ' -f5)
+
 cd $(cat ~/.ofprojectgenerator/config)
 git fetch upstreamhttps
-git reset --hard upstreamhttps/master
+git reset --hard upstreamhttps/${target_branch}
 scripts/dev/download_libs.sh
 
 cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
@@ -49,16 +51,16 @@ if [ "$currenthash" = "$lasthash" ]; then
     exit 0
 fi
 
-./create_package.sh linux64 $lastversion master gcc4
-./create_package.sh linux64 $lastversion master gcc5
-./create_package.sh linux64 $lastversion master gcc6
-./create_package.sh msys2 $lastversion master
-./create_package.sh vs2017 $lastversion master
-./create_package.sh ios $lastversion master
-./create_package.sh osx $lastversion master
-./create_package.sh android $lastversion master
-./create_package.sh linuxarmv6l $lastversion master
-./create_package.sh linuxarmv7l $lastversion master
+./create_package.sh linux64 $lastversion ${target_branch} gcc4
+./create_package.sh linux64 $lastversion ${target_branch} gcc5
+./create_package.sh linux64 $lastversion ${target_branch} gcc6
+./create_package.sh msys2 $lastversion ${target_branch}
+./create_package.sh vs2017 $lastversion ${target_branch}
+./create_package.sh ios $lastversion ${target_branch}
+./create_package.sh osx $lastversion ${target_branch}
+./create_package.sh android $lastversion ${target_branch}
+./create_package.sh linuxarmv6l $lastversion ${target_branch}
+./create_package.sh linuxarmv7l $lastversion ${target_branch}
 
 # delete older packages
 rm -f /var/www/versions/nightly/of_v*_nightly.*
@@ -102,7 +104,7 @@ echo '</html>' >> /var/www/nightlybuilds.html
 
 echo
 echo
-echo "Successfully created nightly builds for ${lastversion}"
+echo "Successfully created nightly builds for ${lastversion} for branch ${target_branch}"
 echo
 
 mail -s "Nightly builds $lastversion OK." $REPORT_MAIL <<EOF
