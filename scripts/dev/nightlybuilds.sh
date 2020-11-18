@@ -39,6 +39,7 @@ export PG_OF_PATH=$(cat ~/.ofprojectgenerator/config)
 target_branch=$(git remote show https://github.com/openframeworks/openFrameworks | grep 'HEAD branch' | cut -d' ' -f5)
 
 cd $(cat ~/.ofprojectgenerator/config)
+git reset --hard
 git checkout ${target_branch}
 git fetch upstreamhttps
 git reset --hard upstreamhttps/${target_branch}
