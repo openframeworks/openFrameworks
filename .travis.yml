@@ -122,12 +122,6 @@ matrix:
         - ~/.gradle
         - ~/android-ndk-r15c
 
-
-  # Exclude the default build that would otherwise be generated
-  # see https://github.com/travis-ci/travis-ci/issues/1228
-  exclude:
-    - compiler: gcc
-
 install:
   - if [ -f scripts/ci/$TARGET/install.sh ]; then
         scripts/ci/$TARGET/install.sh;
