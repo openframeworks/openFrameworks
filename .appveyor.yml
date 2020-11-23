@@ -87,8 +87,7 @@ for:
           echo BITS=%BITS%
           msbuild libs/openFrameworksCompiled/project/vs/openframeworksLib.vcxproj  /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
           msbuild examples/templates/emptyExample/emptyExample.vcxproj  /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-          # msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj  /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-
+          
     test_script:
       - |-
         cd scripts/ci/vs
