@@ -65,9 +65,16 @@ float * ofFmodSoundGetSpectrum(int nBands){
 	int nBandsToGet = ofNextPow2(nBands);
 	if (nBandsToGet < 64) nBandsToGet = 64;  // can't seem to get fft of 32, etc from fmodex
 
-	// 	get the fft
-	FMOD_System_GetSpectrum(sys, fftSpectrum_, nBandsToGet, 0, FMOD_DSP_FFT_WINDOW_HANNING);
-
+    //  get the fft
+    FMOD_CHANNELGROUP *channelgroup = NULL;
+    FMOD_System_GetMasterChannelGroup(sys, &channelgroup);
+    if( channelgroup != NULL ){
+        FMOD_ChannelGroup_GetSpectrum(channelgroup, fftSpectrum_, nBandsToGet, 0, FMOD_DSP_FFT_WINDOW_HANNING);
+    }else{
+        ofLogError("ofFmodSoundPlayer") << "ofFmodGetSpectrum(): FMOD_System_GetMasterChannelGroup failed to get master channel group.";
+        return fftInterpValues_;
+    }
+    
 	// 	convert to db scale
 	for(int i = 0; i < nBandsToGet; i++){
         fftValues_[i] = 10.0f * (float)log10(1 + fftSpectrum_[i]) * 2.0f;
