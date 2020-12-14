@@ -22,6 +22,11 @@ ifeq ($(PLATFORM_ARCH),armv7l)
 	LINUX_ARM=1
 endif
 
+ifeq ($(PLATFORM_ARCH),aarch64)
+        # good enough for now
+        LINUX_ARM=1
+endif
+
 #check if gtk exists and add it
 ifeq ($(CROSS_COMPILING),1)
 	HAS_SYSTEM_GTK3 = $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gtk+-3.0 --exists; echo $$?)

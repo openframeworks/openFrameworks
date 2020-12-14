@@ -72,5 +72,9 @@ linuxarmv7l:
 	ADDON_LIBS = libs/svgtiny/lib/linuxarmv7l/libsvgtiny.a
 	ADDON_LIBS += libs/libxml2/lib/linuxarmv7l/libxml2.a
 
+linuxaarch64:
+	ADDON_LIBS = libs/svgtiny/lib/linuxaarch64/libsvgtiny.a
+	ADDON_LIBS += libs/libxml2/lib/linuxaarch64/libxml2.a
+
 msys2:
 	ADDON_PKG_CONFIG_LIBRARIES = libxml-2.0

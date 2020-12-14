@@ -55,8 +55,10 @@ if [ $exit_code != 0 ]; then
 fi
 
 if [ -f /opt/vc/include/bcm_host.h ]; then
-    echo "detected Raspberry Pi"
+    echo "detected Raspberry Pi (32-bits)"
     echo "installing gstreamer omx"
+    # On the 64-bits OS bcm_host.h is elsewhere and the -omx is amrhf only.
+    # So it's OK to skip it.
     apt-get install  gstreamer${GSTREAMER_VERSION}-omx
 fi
 

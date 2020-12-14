@@ -39,6 +39,7 @@ architectures:
   * x86_64
   * ARMv6l
   * ARMv7l
+  * aarch64
 	
 # Microsoft Windows #
 

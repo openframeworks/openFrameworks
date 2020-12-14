@@ -118,6 +118,7 @@ if [ "$ARCH" == "" ]; then
             fi
         elif [ "$ARCH" == "armv7l" ]; then
             # Check for Raspberry Pi
+            # On the 64-bit OS it is in /usr/include, so it's ok.
             if [ -f /opt/vc/include/bcm_host.h ]; then
                 ARCH=armv6l
             fi
