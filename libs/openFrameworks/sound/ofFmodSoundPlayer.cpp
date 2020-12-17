@@ -8,7 +8,7 @@
 
 static bool bFmodInitialized_ = false;
 static float fftInterpValues_[8192];			//
-static float fftSpectrum_[8192];		// maximum #ofFmodSoundPlayer is 8192, in fmodex....
+static float fftSpectrum_[8192];		// maximum #ofFmodSoundPlayer is 8192, in fmod....
 static unsigned int buffersize = 1024;
 static FMOD_DSP* fftDSP = NULL;
 

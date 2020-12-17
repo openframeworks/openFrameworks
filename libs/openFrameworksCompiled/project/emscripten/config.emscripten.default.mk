@@ -171,7 +171,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS

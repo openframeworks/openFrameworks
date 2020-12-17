@@ -3,7 +3,7 @@ HEADER_OFXIOS = "$(OF_PATH)/addons/ofxiOS/**"
 HEADER_OFXACCELEROMETER = "$(OF_PATH)/addons/ofxAccelerometer/**"
 HEADER_FREETYPE = "$(OF_PATH)/libs/freetype/include"
 HEADER_FREETYPE2 = "$(OF_PATH)/libs/freetype/include/freetype2"
-HEADER_FMODEX = "$(OF_PATH)/libs/fmodex/include"
+HEADER_FMOD = "$(OF_PATH)/libs/fmod/include"
 HEADER_GLEW = "$(OF_PATH)/libs/glew/include"
 HEADER_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/include"
 HEADER_TESS2 = "$(OF_PATH)/libs/tess2/include"
@@ -34,7 +34,7 @@ MISC_FLAGS = "-ObjC"
 
 OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_BOOST) $(LIB_FREEIMAGE) $(LIB_FREETYPE) $(LIB_OPENSSL) $(LIB_TESS) $(LIB_CURL) $(LIB_URIPARSER) $(LIB_PUGIXML) $(LIB_OF)
 
-OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_OFXACCELEROMETER) $(HEADER_BOOST) $(HEADER_UTF8) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMODEX) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_RTAUDIO) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML)
+OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_OFXACCELEROMETER) $(HEADER_BOOST) $(HEADER_UTF8) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMOD) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_RTAUDIO) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML)
 
 OF_CORE_FRAMEWORKS = -framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore
 
