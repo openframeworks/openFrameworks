@@ -47,8 +47,6 @@ jobs:
     - uses: actions/checkout@v2
     - name: Download libs
       run: ./scripts/$TARGET/download_libs.sh
-    - name: Install dependencies
-      run: echo "set startup-with-shell off" >> ~/.gdbinit && ./scripts/ci/$TARGET/install.sh
     - name: Build
       run: if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
             scripts/ci/$TARGET/run_tests.sh;
