@@ -78,7 +78,12 @@ for:
       - |-
         set BITS=%platform:86=32%
         set BITS=%BITS:x=%
+        cd C:\
+        ren msys64 msys64_old
+        C:\msys64_old\usr\bin\bash -lc "curl -L http://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz | xz -d | tar -xf -"
+        %MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syu"
         %MSYS2_PATH%\usr\bin\pacman --noconfirm -S --needed unzip rsync wget libopenssl
+        cd "%APPVEYOR_BUILD_FOLDER%"
         set PATH=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;%PATH%
         %MSYS2_PATH%\usr\bin\bash -lc "scripts/ci/vs/install.sh"
 
