@@ -1,0 +1,131 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+
+  build-linux-platforms:
+    runs-on: ubuntu-16.04
+    strategy:
+        matrix:
+          cfg:
+          - {target: linux64, libs: 64gcc4}
+          - {target: linuxarmv6l, libs: armv6l}
+          - {target: linuxarmv7l, libs: armv7l}
+    env:
+     TARGET: ${{matrix.cfg.target}}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Scripts Install
+      run: ./scripts/$TARGET/install.sh
+    - name: Download libs
+      run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
+    - name: build
+      run: ./scripts/ci/$TARGET/build.sh
+      
+#    - name: Upload OF lib
+#      run: ./scripts/ci/upload_of_lib.sh;
+
+#  build-android:
+#    runs-on: ubuntu-16.04
+#    strategy:
+#        matrix:
+#          cfg:
+#          - {target: android, arch: armv7}
+#          - {target: android, arch: arm64}
+#          - {target: android, arch: x86}
+#    env:
+#     TARGET: ${{matrix.cfg.target}}
+#     ARCH: ${{matrix.cfg.arch}}
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Scripts Calc Formula - ${{matrix.cfg.target}} - ${{matrix.cfg.arch}}
+#      run: ./scripts/calculate_formulas.sh
+#    - name: Scripts Install
+#      run: ./scripts/$TARGET/install.sh
+#    - name: build
+#      run: ./scripts/build.sh
+#
+#  build-linux-arm6:
+#        runs-on: ubuntu-16.04
+#        env:
+#         TARGET: "linuxarmv6l"
+#         SYSROOT: "/home/runner/work/apothecary/apothecary/scripts/linuxarmv6l/raspbian"
+#         TOOLCHAIN_ROOT: "/home/runner/work/apothecary/apothecary/scripts/linuxarmv6l/rpi_toolchain"
+#         TOOLCHAIN_PREFIX: "arm-linux-gnueabihf"
+#        steps:
+#        - uses: actions/checkout@v2
+#        - name: Scripts Calc Formula
+#          run: ./scripts/calculate_formulas.sh
+#        - name: Scripts Install
+#          run: ./scripts/$TARGET/install.sh
+#        - name: build
+#          run: ./scripts/build.sh
+#
+#  build-linux-arm7:
+#        runs-on: ubuntu-16.04
+#        env:
+#         TARGET: "linuxarmv7l"
+#         SYSROOT: "/home/runner/archlinux"
+#         TOOLCHAIN_ROOT: "/home/runner/rpi2_toolchain"
+#         TOOLCHAIN_PREFIX: "arm-linux-gnueabihf"
+#        steps:
+#        - uses: actions/checkout@v2
+#        - name: Scripts Calc Formula
+#          run: ./scripts/calculate_formulas.sh
+#        - name: Scripts Install
+#          run: ./scripts/$TARGET/install.sh
+#        - name: build
+#          run: ./scripts/build.sh
+#
+#  build-emscripten:
+#      runs-on: ubuntu-16.04
+#      env:
+#       TARGET: "emscripten"
+#      steps:
+#      - uses: actions/checkout@v2
+#      - name: Docker Step
+#        run:  "docker run -di --name emscripten -v $PWD:/src trzeci/emscripten:sdk-incoming-64bit bash"
+#      - name: Scripts Calc Formula
+#        run: ./scripts/calculate_formulas.sh
+#      - name: Scripts Install
+#        run: ./scripts/$TARGET/install.sh
+#      - name: build
+#        run: ./scripts/build.sh
+#
+#  build-macos-platforms:
+#    runs-on: macos-10.15
+#    strategy:
+#        matrix:
+#            cfg:
+#            - {target: osx, job: 1, cc: "clang", cxx: "clang++"}
+#            - {target: osx, job: 2, cc: "clang", cxx: "clang++"}
+#            - {target: osx, job: 3, cc: "clang", cxx: "clang++"}
+#            - {target: osx, job: 4, cc: "clang", cxx: "clang++"}
+#            - {target: ios, job: 1}
+#            - {target: ios, job: 2}
+#            - {target: ios, job: 3}
+#            - {target: ios, job: 4}
+#            - {target: tvos, job: 1}
+#            - {target: tvos, job: 2}
+#            - {target: tvos, job: 3}
+#            - {target: tvos, job: 4}
+#    env:
+#       TARGET: ${{matrix.cfg.target}}
+#       BUNDLE: ${{matrix.cfg.job}}
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Scripts Calc Formula - ${{matrix.cfg.target}} Bundle ${{matrix.cfg.job}}
+#        run: ./scripts/calculate_formulas.sh
+#      - name: Scripts Install
+#        run: ./scripts/$TARGET/install.sh
+#      - name: rm-dev
+#        run: sudo rm -rf /Library/Developer
+#      - name: build
+#        run: ./scripts/build.sh
+#        env:
+#            DEVELOPER_DIR: "/Applications/Xcode_12.2.app/Contents/Developer"
+#
+#
