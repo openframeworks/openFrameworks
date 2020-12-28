@@ -18,8 +18,6 @@ jobs:
      TARGET: ${{matrix.cfg.target}}
     steps:
     - uses: actions/checkout@v2
-    - name: Scripts Install
-      run:  wget http://ci.openframeworks.cc/ccache_3.3.4-1_amd64.deb && sudo dpkg -i ccache_3.3.4-1_amd64.deb
     - name: Download libs
       run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
     - name: build
