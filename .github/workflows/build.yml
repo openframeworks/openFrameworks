@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: sudo ./scripts/ci/$TARGET/install.sh
     - name: Build
-      run: ./scripts/ci/$TARGET/build.sh
+      run: sudo ./scripts/ci/$TARGET/build.sh
       
 #    - name: Upload OF lib
 #      run: ./scripts/ci/upload_of_lib.sh;
