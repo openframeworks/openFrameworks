@@ -20,6 +20,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: Download libs
       run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
+    - name: Install gstreamer
+      run: apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
     - name: build
       run: ./scripts/ci/$TARGET/build.sh
       
