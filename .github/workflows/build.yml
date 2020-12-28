@@ -31,7 +31,31 @@ jobs:
            else
             scripts/ci/$TARGET/build.sh;
            fi
-      
+
+
+  build-osx:
+    runs-on: macos-10.15
+    strategy:
+        matrix:
+          cfg:
+          - {target: osx, opt: ""}
+          - {target: osx, opt: "makefiles"}
+    env:
+     TARGET: ${{matrix.cfg.target}}
+     OPT: ${{matrix.cfg.opt}}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Download libs
+      run: ./scripts/$TARGET/download_libs.sh
+    - name: Install dependencies
+      run: ./scripts/ci/$TARGET/install.sh
+    - name: Build
+      run: if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
+            scripts/ci/$TARGET/run_tests.sh;
+           else
+            scripts/ci/$TARGET/build.sh $OPT;
+           fi
+
 #    - name: Upload OF lib
 #      run: ./scripts/ci/upload_of_lib.sh;
 
