@@ -49,6 +49,8 @@ jobs:
       run: ./scripts/$TARGET/download_libs.sh
     - name: rm-dev
       run: sudo rm -rf /Library/Developer
+    - name: install
+      run: ./scripts/ci/$TARGET/install.sh
     - name: Build
       run: if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
             scripts/ci/$TARGET/run_tests.sh;
