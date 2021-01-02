@@ -75,10 +75,12 @@ jobs:
 #        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/.gradle/*') }}
 #        path: '~/android-ndk-r15c'
 #        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/android-ndk-r15c/*') }}
-    - name: Download libs
-      run: ./scripts/$TARGET/download_libs.sh
     - name: install
       run: ./scripts/ci/$TARGET/install.sh
+    - name: install glew 1.1
+      run: sudo apt-get install libglew1.10
+    - name: Download libs
+      run: ./scripts/$TARGET/download_libs.sh
     - name: Build
       run: ./scripts/ci/$TARGET/build.sh
 
