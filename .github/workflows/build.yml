@@ -6,182 +6,115 @@ on:
 
 jobs:
 
-#  build-linux-platforms:
-#    runs-on: ubuntu-16.04
-#    strategy:
-#        matrix:
-#          cfg:
-#          - {target: linux64, libs: 64gcc6}
-#          - {target: linuxarmv6l, libs: armv6l}
-#          - {target: linuxarmv7l, libs: armv7l}
-#    env:
-#     TARGET: ${{matrix.cfg.target}}
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Download libs
-#      run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
-#    - name: Install dependencies
-#      run: ./scripts/ci/$TARGET/install.sh
-##    - name: Install GCC
-##      run: sudo add-apt-repository ppa:ubuntu-toolchain-r/test && sudo apt-get update && sudo apt-get install gcc-4.9 g++-4.9 gdb
-#    - name: Build
-#      run: if [ "$TARGET" = "linux64" ]; then
-#            scripts/ci/$TARGET/build.sh
-#            scripts/ci/$TARGET/run_tests.sh;
-#           else
-#            scripts/ci/$TARGET/build.sh;
-#           fi
-
-#
-#  build-emscripten:
-#    runs-on: ubuntu-16.04
-#    strategy:
-#        matrix:
-#          cfg:
-#          - {target: emscripten}
-#    env:
-#     TARGET: ${{matrix.cfg.target}}
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Docker Step
-#      run:  "docker run -di --name emscripten -v $PWD:/src trzeci/emscripten:sdk-incoming-64bit bash"
-#    - name: Download libs
-#      run: ./scripts/$TARGET/download_libs.sh
-#    - name: Install dependencies
-#      run: ./scripts/ci/$TARGET/install.sh
-#    - name: Build
-#      run: docker exec -i emscripten sh -c "scripts/ci/$TARGET/build.sh";
-
-
-  build-android:
+  build-linux-platforms:
     runs-on: ubuntu-16.04
     strategy:
-      matrix:
-        cfg:
-        - {target: android, gradle_target: compileArm7DebugSources}
-        - {target: android, gradle_target: compileX86DebugSources}
-
+        matrix:
+          cfg:
+          - {target: linux64, libs: 64gcc4}
+          - {target: linuxarmv6l, libs: armv6l}
+          - {target: linuxarmv7l, libs: armv7l}
     env:
-      TARGET: ${{matrix.cfg.target}}
-      GRADLE_TARGET: ${{matrix.cfg.gradle_target}}
-      NDK_DIR: android-ndk-r15c
+     TARGET: ${{matrix.cfg.target}}
     steps:
     - uses: actions/checkout@v2
-   
-#    - name: Cache some follders
-#      uses: actions/cache@v2
-#      with:
-#        path: '~/.gradle'
-#        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/.gradle/*') }}
-#        path: '~/android-ndk-r15c'
-#        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/android-ndk-r15c/*') }}
-    - name: install
+    - name: Download libs
+      run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
+    - name: Install dependencies
       run: ./scripts/ci/$TARGET/install.sh
-    - name: install glew 1.1
-      run: sudo apt-get install libglew1.10
+            if [ ${{matrix.cfg.target}} = 64gcc4 ]; then
+                sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test;
+                sudo apt-get update -q;
+                sudo apt-get install gcc-4.9 g++-4.9;
+            fi
+    - name: Build
+      run: if [ "$TARGET" = "linux64" ]; then
+            scripts/ci/$TARGET/build.sh
+            scripts/ci/$TARGET/run_tests.sh;
+           else
+            scripts/ci/$TARGET/build.sh;
+           fi
+
+  build-emscripten:
+    runs-on: ubuntu-16.04
+    strategy:
+        matrix:
+          cfg:
+          - {target: emscripten}
+    env:
+     TARGET: ${{matrix.cfg.target}}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Docker Step
+      run:  "docker run -di --name emscripten -v $PWD:/src trzeci/emscripten:sdk-incoming-64bit bash"
     - name: Download libs
       run: ./scripts/$TARGET/download_libs.sh
+    - name: Install dependencies
+      run: ./scripts/ci/$TARGET/install.sh
     - name: Build
-      run: ./scripts/ci/$TARGET/build.sh
+      run: docker exec -i emscripten sh -c "scripts/ci/$TARGET/build.sh";
 
 
-#  build-osx:
-#    runs-on: macos-10.15
+#  build-android:
+#    runs-on: ubuntu-16.04
 #    strategy:
-#        matrix:
-#          cfg:
-#          - {target: osx, opt: ""}
-#          - {target: osx, opt: "makefiles"}
+#      matrix:
+#        cfg:
+#        - {target: android, gradle_target: compileArm7DebugSources}
+#        - {target: android, gradle_target: compileX86DebugSources}
+#
 #    env:
-#     TARGET: ${{matrix.cfg.target}}
-#     OPT: ${{matrix.cfg.opt}}
+#      TARGET: ${{matrix.cfg.target}}
+#      GRADLE_TARGET: ${{matrix.cfg.gradle_target}}
+#      NDK_DIR: android-ndk-r15c
 #    steps:
 #    - uses: actions/checkout@v2
-#    - name: Download libs
-#      run: ./scripts/$TARGET/download_libs.sh
-#    - name: rm-dev
-#      run: sudo rm -rf /Library/Developer
+#
+##    - name: Cache some follders
+##      uses: actions/cache@v2
+##      with:
+##        path: '~/.gradle'
+##        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/.gradle/*') }}
+##        path: '~/android-ndk-r15c'
+##        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/android-ndk-r15c/*') }}
 #    - name: install
 #      run: ./scripts/ci/$TARGET/install.sh
+#    - name: Download libs
+#      run: ./scripts/$TARGET/download_libs.sh
 #    - name: Build
-#      run:
-#           if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
-#            scripts/ci/$TARGET/run_tests.sh;
-#           else
-#            scripts/ci/$TARGET/build.sh $OPT;
-#           fi
-#      env:
-#        DEVELOPER_DIR: "/Applications/Xcode_12.2.app/Contents/Developer"
-#        SDKROOT: "/Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+#      run: ./scripts/ci/$TARGET/build.sh
+
+
+  build-osx:
+    runs-on: macos-10.15
+    strategy:
+        matrix:
+          cfg:
+          - {target: osx, opt: ""}
+          - {target: osx, opt: "makefiles"}
+    env:
+     TARGET: ${{matrix.cfg.target}}
+     OPT: ${{matrix.cfg.opt}}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Download libs
+      run: ./scripts/$TARGET/download_libs.sh
+    - name: rm-dev
+      run: sudo rm -rf /Library/Developer
+    - name: install
+      run: ./scripts/ci/$TARGET/install.sh
+    - name: Build
+      run:
+           if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
+            scripts/ci/$TARGET/run_tests.sh;
+           else
+            scripts/ci/$TARGET/build.sh $OPT;
+           fi
+      env:
+        DEVELOPER_DIR: "/Applications/Xcode_12.2.app/Contents/Developer"
+        SDKROOT: "/Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
 
 #    - name: Upload OF lib
 #      run: ./scripts/ci/upload_of_lib.sh;
 
-#  build-android:
-#    runs-on: ubuntu-16.04
-#    strategy:
-#        matrix:
-#          cfg:
-#          - {target: android, arch: armv7}
-#          - {target: android, arch: arm64}
-#          - {target: android, arch: x86}
-#    env:
-#     TARGET: ${{matrix.cfg.target}}
-#     ARCH: ${{matrix.cfg.arch}}
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Scripts Calc Formula - ${{matrix.cfg.target}} - ${{matrix.cfg.arch}}
-#      run: ./scripts/calculate_formulas.sh
-#    - name: Scripts Install
-#      run: ./scripts/$TARGET/install.sh
-#    - name: build
-#      run: ./scripts/build.sh
-#
-#  build-linux-arm6:
-#        runs-on: ubuntu-16.04
-#        env:
-#         TARGET: "linuxarmv6l"
-#         SYSROOT: "/home/runner/work/apothecary/apothecary/scripts/linuxarmv6l/raspbian"
-#         TOOLCHAIN_ROOT: "/home/runner/work/apothecary/apothecary/scripts/linuxarmv6l/rpi_toolchain"
-#         TOOLCHAIN_PREFIX: "arm-linux-gnueabihf"
-#        steps:
-#        - uses: actions/checkout@v2
-#        - name: Scripts Calc Formula
-#          run: ./scripts/calculate_formulas.sh
-#        - name: Scripts Install
-#          run: ./scripts/$TARGET/install.sh
-#        - name: build
-#          run: ./scripts/build.sh
-#
-#  build-linux-arm7:
-#        runs-on: ubuntu-16.04
-#        env:
-#         TARGET: "linuxarmv7l"
-#         SYSROOT: "/home/runner/archlinux"
-#         TOOLCHAIN_ROOT: "/home/runner/rpi2_toolchain"
-#         TOOLCHAIN_PREFIX: "arm-linux-gnueabihf"
-#        steps:
-#        - uses: actions/checkout@v2
-#        - name: Scripts Calc Formula
-#          run: ./scripts/calculate_formulas.sh
-#        - name: Scripts Install
-#          run: ./scripts/$TARGET/install.sh
-#        - name: build
-#          run: ./scripts/build.sh
-#
-#  build-emscripten:
-#      runs-on: ubuntu-16.04
-#      env:
-#       TARGET: "emscripten"
-#      steps:
-#      - uses: actions/checkout@v2
-#      - name: Docker Step
-#        run:  "docker run -di --name emscripten -v $PWD:/src trzeci/emscripten:sdk-incoming-64bit bash"
-#      - name: Scripts Calc Formula
-#        run: ./scripts/calculate_formulas.sh
-#      - name: Scripts Install
-#        run: ./scripts/$TARGET/install.sh
-#      - name: build
-#        run: ./scripts/build.sh
-#
