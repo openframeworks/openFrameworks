@@ -77,6 +77,8 @@ ifndef MAC_OS_STD_LIB
 	MAC_OS_STD_LIB = libc++
 endif
 
+export OTHER_CODE_SIGN_FLAGS=--deep
+
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
 PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
@@ -310,7 +312,6 @@ PLATFORM_FRAMEWORKS += AVFoundation
 PLATFORM_FRAMEWORKS += CoreMedia
 PLATFORM_FRAMEWORKS += QuartzCore
 PLATFORM_FRAMEWORKS += Security
-PLATFORM_FRAMEWORKS += LDAP
 
 ifeq ($(USE_GST),1)
 	PLATFORM_FRAMEWORKS += GStreamer
