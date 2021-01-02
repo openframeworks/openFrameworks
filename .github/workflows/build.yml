@@ -38,7 +38,7 @@ jobs:
     strategy:
         matrix:
           cfg:
-          - {target: osx, opt: ""}
+#          - {target: osx, opt: ""}
           - {target: osx, opt: "makefiles"}
     env:
      TARGET: ${{matrix.cfg.target}}
