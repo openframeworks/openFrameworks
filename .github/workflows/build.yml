@@ -82,14 +82,17 @@ jobs:
       run: ./scripts/ci/$TARGET/install.sh
     - name: List lib locations
       run:  ls /usr/lib/x86_64-linux-gnu/ | grep libboost;
-    - name: Symlink for older pg
-      run: sudo ln -f -s /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/libGLEW.so.1.10;
+    - name: Get packages from trusty
+      run: sudo add-apt-repository "deb http://mirrors.kernel.org/ubuntu/ trusty main";
+           sudo apt-get update;
            sudo apt-get install -y libboost-filesystem1.55-dev;
+           sudo apt-get install -y libglew1.10
     - name: Download libs
       run: ./scripts/$TARGET/download_libs.sh
     - name: Build
       run: ./scripts/ci/$TARGET/build.sh
 
+#sudo ln -f -s /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/libGLEW.so.1.10;
 
 #  build-osx:
 #    runs-on: macos-10.15
