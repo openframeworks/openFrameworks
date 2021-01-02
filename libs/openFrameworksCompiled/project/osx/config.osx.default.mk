@@ -77,8 +77,6 @@ ifndef MAC_OS_STD_LIB
 	MAC_OS_STD_LIB = libc++
 endif
 
-export OTHER_CODE_SIGN_FLAGS=--deep
-
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
 PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
@@ -395,6 +393,8 @@ afterplatform: $(TARGET_NAME)
 
 ifneq ($(USE_FMOD),0)
 	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/Frameworks;
+	@chmod 755 bin/$(BIN_NAME).app/Contents/Frameworks/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION)
+	@chmod +x bin/$(BIN_NAME).app/Contents/Frameworks/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION)
 	@install_name_tool -add_rpath "@executable_path/../Frameworks" bin/$(BIN_NAME).app/Contents/MacOS/$(BIN_NAME);
 endif
 
