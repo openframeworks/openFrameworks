@@ -68,9 +68,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: actions/cache@v2
-         with:
-           path: '~/.gradle'
-           path: '~/android-ndk-r15c'
+    with:
+        path: '~/.gradle'
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/.gradle/*') }}
+        path: '~/android-ndk-r15c'
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/android-ndk-r15c/*') }}
     - name: Download libs
     run: ./scripts/$TARGET/download_libs.sh
     - name: install
