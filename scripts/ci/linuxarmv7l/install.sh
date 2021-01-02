@@ -95,8 +95,8 @@ createArchImg(){
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
             sudo pacman --noconfirm -S archlinux-keyring
             sudo pacman --noconfirm -S ccache
-			pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -Syu
-			pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -S \
+			sudo pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -Syu
+			sudo pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -S \
 				make \
 				pkg-config \
 				gcc \
