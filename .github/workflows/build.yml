@@ -80,9 +80,9 @@ jobs:
 #        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/android-ndk-r15c/*') }}
     - name: install
       run: ./scripts/ci/$TARGET/install.sh
-    - name: Symlink for older pg 
-       run: sudo ln -f -s /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/libGLEW.so.1.10 && sudo ln -f -s /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/x86_64-linux-gnu/libGLEW.so.1.10
-#      run: ls /usr/lib/x86_64-linux-gnu/ | grep libGLEW;
+    - name: Symlink for older pg
+      run: sudo ln -f -s /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/libGLEW.so.1.10
+           sudo ln -f -s /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/x86_64-linux-gnu/libGLEW.so.1.10
     - name: Download libs
       run: ./scripts/$TARGET/download_libs.sh
     - name: Build
