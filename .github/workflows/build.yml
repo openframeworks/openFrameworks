@@ -43,7 +43,7 @@ jobs:
      TARGET: ${{matrix.cfg.target}}
     steps:
     - uses: actions/checkout@v2
-	- name: Docker Step
+    - name: Docker Step
       run:  "docker run -di --name emscripten -v $PWD:/src trzeci/emscripten:sdk-incoming-64bit bash"
     - name: Download libs
       run: ./scripts/$TARGET/download_libs.sh
