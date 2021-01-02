@@ -39,7 +39,7 @@ jobs:
         matrix:
           cfg:
           - {target: osx, opt: ""}
-#          - {target: osx, opt: "makefiles"}
+          - {target: osx, opt: "makefiles"}
     env:
      TARGET: ${{matrix.cfg.target}}
      OPT: ${{matrix.cfg.opt}}
@@ -52,7 +52,9 @@ jobs:
     - name: install
       run: ./scripts/ci/$TARGET/install.sh
     - name: Build
-      run: if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
+      run:
+           SDKROOT="${xcrun --sdk macosx --show-sdk-path}"
+           if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
             scripts/ci/$TARGET/run_tests.sh;
            else
             scripts/ci/$TARGET/build.sh $OPT;
