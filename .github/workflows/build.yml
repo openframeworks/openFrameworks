@@ -33,27 +33,27 @@ jobs:
 #           fi
 
 
-  build-emscripten:
-    runs-on: ubuntu-16.04
-    strategy:
-        matrix:
-          cfg:
-          - {target: emscripten}
-    env:
-     TARGET: ${{matrix.cfg.target}}
-    steps:
-    - uses: actions/checkout@v2
-    - name: Docker Step
-      run:  "docker run -di --name emscripten -v $PWD:/src trzeci/emscripten:sdk-incoming-64bit bash"
-    - name: Download libs
-      run: ./scripts/$TARGET/download_libs.sh
-    - name: Install dependencies
-      run: ./scripts/ci/$TARGET/install.sh
-    - name: Build
-      run: docker exec -i emscripten sh -c "scripts/ci/$TARGET/build.sh";
+#  build-emscripten:
+#    runs-on: ubuntu-16.04
+#    strategy:
+#        matrix:
+#          cfg:
+#          - {target: emscripten}
+#    env:
+#     TARGET: ${{matrix.cfg.target}}
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Docker Step
+#      run:  "docker run -di --name emscripten -v $PWD:/src trzeci/emscripten:sdk-incoming-64bit bash"
+#    - name: Download libs
+#      run: ./scripts/$TARGET/download_libs.sh
+#    - name: Install dependencies
+#      run: ./scripts/ci/$TARGET/install.sh
+#    - name: Build
+#      run: docker exec -i emscripten sh -c "scripts/ci/$TARGET/build.sh";
 
 
-  build-android:
+build-android:
     runs-on: ubuntu-16.04
     strategy:
       matrix:
