@@ -206,8 +206,8 @@ installJunest(){
 	junest -- << EOF
         echo updating keys
         pacman -Syy gnupg --noconfirm --needed
-        pacman-key --populate archlinux
-        pacman-key --refresh-keys
+        sudo pacman-key --populate archlinux
+        sudo pacman-key --refresh-keys
 		pacman -Syyu --noconfirm
 		pacman -S --noconfirm --needed git flex grep gcc pkg-config make wget sed
 EOF
