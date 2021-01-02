@@ -67,8 +67,10 @@ jobs:
     NDK_DIR: android-ndk-r15c
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/cache@v2
-    with:
+   
+    - name: Cache some follders
+      uses: actions/cache@v2
+      with:
         path: '~/.gradle'
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/.gradle/*') }}
         path: '~/android-ndk-r15c'
