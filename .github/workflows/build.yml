@@ -62,9 +62,9 @@ jobs:
         - {target: android, gradle_target: compileX86DebugSources}
 
     env:
-    TARGET: ${{matrix.cfg.target}}
-    GRADLE_TARGET: ${{matrix.cfg.gradle_target}}
-    NDK_DIR: android-ndk-r15c
+      TARGET: ${{matrix.cfg.target}}
+      GRADLE_TARGET: ${{matrix.cfg.gradle_target}}
+      NDK_DIR: android-ndk-r15c
     steps:
     - uses: actions/checkout@v2
    
