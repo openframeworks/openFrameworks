@@ -132,37 +132,3 @@ jobs:
 #      - name: build
 #        run: ./scripts/build.sh
 #
-#  build-macos-platforms:
-#    runs-on: macos-10.15
-#    strategy:
-#        matrix:
-#            cfg:
-#            - {target: osx, job: 1, cc: "clang", cxx: "clang++"}
-#            - {target: osx, job: 2, cc: "clang", cxx: "clang++"}
-#            - {target: osx, job: 3, cc: "clang", cxx: "clang++"}
-#            - {target: osx, job: 4, cc: "clang", cxx: "clang++"}
-#            - {target: ios, job: 1}
-#            - {target: ios, job: 2}
-#            - {target: ios, job: 3}
-#            - {target: ios, job: 4}
-#            - {target: tvos, job: 1}
-#            - {target: tvos, job: 2}
-#            - {target: tvos, job: 3}
-#            - {target: tvos, job: 4}
-#    env:
-#       TARGET: ${{matrix.cfg.target}}
-#       BUNDLE: ${{matrix.cfg.job}}
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Scripts Calc Formula - ${{matrix.cfg.target}} Bundle ${{matrix.cfg.job}}
-#        run: ./scripts/calculate_formulas.sh
-#      - name: Scripts Install
-#        run: ./scripts/$TARGET/install.sh
-#      - name: rm-dev
-#        run: sudo rm -rf /Library/Developer
-#      - name: build
-#        run: ./scripts/build.sh
-#        env:
-#            DEVELOPER_DIR: "/Applications/Xcode_12.2.app/Contents/Developer"
-#
-#
