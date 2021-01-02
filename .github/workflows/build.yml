@@ -32,7 +32,7 @@ jobs:
 #            scripts/ci/$TARGET/build.sh;
 #           fi
 
-
+#
 #  build-emscripten:
 #    runs-on: ubuntu-16.04
 #    strategy:
@@ -53,7 +53,7 @@ jobs:
 #      run: docker exec -i emscripten sh -c "scripts/ci/$TARGET/build.sh";
 
 
-build-android:
+  build-android:
     runs-on: ubuntu-16.04
     strategy:
       matrix:
@@ -68,13 +68,13 @@ build-android:
     steps:
     - uses: actions/checkout@v2
    
-    - name: Cache some follders
-      uses: actions/cache@v2
-      with:
-        path: '~/.gradle'
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/.gradle/*') }}
-        path: '~/android-ndk-r15c'
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/android-ndk-r15c/*') }}
+#    - name: Cache some follders
+#      uses: actions/cache@v2
+#      with:
+#        path: '~/.gradle'
+#        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/.gradle/*') }}
+#        path: '~/android-ndk-r15c'
+#        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/android-ndk-r15c/*') }}
     - name: Download libs
       run: ./scripts/$TARGET/download_libs.sh
     - name: install
