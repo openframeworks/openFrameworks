@@ -81,7 +81,8 @@ jobs:
     - name: install
       run: ./scripts/ci/$TARGET/install.sh
     - name: Symlink for older pg
-      run: sudo ln -f -s /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/libGLEW.so.1.10
+      run: sudo ln -f -s /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/libGLEW.so.1.10;
+           sudo ln -f -s /usr/lib/x86_64-linux-gnu/libboost_filesystem.so /usr/lib/libboost_filesystem.so.1.55.0
     - name: Download libs
       run: ./scripts/$TARGET/download_libs.sh
     - name: Build
