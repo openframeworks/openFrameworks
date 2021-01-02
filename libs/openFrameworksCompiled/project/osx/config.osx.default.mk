@@ -393,6 +393,8 @@ afterplatform: $(TARGET_NAME)
 
 ifneq ($(USE_FMOD),0)
 	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/Frameworks;
+	@ls -la bin/$(BIN_NAME).app/Contents
+	@ls -la bin/$(BIN_NAME).app/Contents/Frameworks
 	@chmod 755 bin/$(BIN_NAME).app/Contents/Frameworks/*.$(SHARED_LIB_EXTENSION)
 	@chmod +x bin/$(BIN_NAME).app/Contents/Frameworks/*.$(SHARED_LIB_EXTENSION)
 	@install_name_tool -add_rpath "@executable_path/../Frameworks" bin/$(BIN_NAME).app/Contents/MacOS/$(BIN_NAME);
