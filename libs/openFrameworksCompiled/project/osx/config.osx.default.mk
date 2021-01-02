@@ -393,8 +393,7 @@ afterplatform: $(TARGET_NAME)
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 
 ifneq ($(USE_FMOD),0)
-	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/Frameworks;
-	@install_name_tool -change @rpath/libfmod.dylib ../Frameworks/libfmod.dylib bin/$(BIN_NAME).app/Contents/MacOS/$(BIN_NAME);
+	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/MacOS;
 endif
 
 	@echo
