@@ -83,9 +83,9 @@ jobs:
     - name: List lib locations
       run:  ls /usr/lib/x86_64-linux-gnu/ | grep libboost;
     - name: Get packages from trusty
-      run: sudo add-apt-repository "deb http://mirrors.kernel.org/ubuntu/ trusty main";
+      run: sudo add-apt-repository "deb http://mirrors.us.kernel.org/ubuntu/ trusty main";
            sudo apt-get update;
-           sudo apt-get install -y libboost-filesystem1.55-dev;
+           sudo apt-get install -y libboost1.55-all-dev;
            sudo apt-get install -y libglew1.10
     - name: Download libs
       run: ./scripts/$TARGET/download_libs.sh
