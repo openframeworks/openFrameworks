@@ -7,11 +7,10 @@
 
 
 static bool bFmodInitialized_ = false;
-static float fftValues_[8192];			//
 static float fftInterpValues_[8192];			//
-static float fftSpectrum_[8192];		// maximum #ofFmodSoundPlayer is 8192, in fmodex....
+static float fftSpectrum_[8192];		// maximum #ofFmodSoundPlayer is 8192, in fmod....
 static unsigned int buffersize = 1024;
-
+static FMOD_DSP* fftDSP = NULL;
 
 // ---------------------  static vars
 static FMOD_CHANNELGROUP * channelgroup;
@@ -49,6 +48,7 @@ float * ofFmodSoundGetSpectrum(int nBands){
 	// 	set to 0
 	for (int i = 0; i < 8192; i++){
 		fftInterpValues_[i] = 0;
+        fftSpectrum_[i] = 0;
 	}
 
 	// 	check what the user wants vs. what we can do:
@@ -61,66 +61,56 @@ float * ofFmodSoundGetSpectrum(int nBands){
 		return fftInterpValues_;
 	}
 
-	// 	FMOD needs pow2
-	int nBandsToGet = ofNextPow2(nBands);
-	if (nBandsToGet < 64) nBandsToGet = 64;  // can't seem to get fft of 32, etc from fmodex
-
-	// 	get the fft
-	FMOD_System_GetSpectrum(sys, fftSpectrum_, nBandsToGet, 0, FMOD_DSP_FFT_WINDOW_HANNING);
+    //  get the fft
+    //  useful info here: https://www.parallelcube.com/2018/03/10/frequency-spectrum-using-fmod-and-ue4/
+    if( fftDSP == NULL ){
+        FMOD_System_CreateDSPByType(sys, FMOD_DSP_TYPE_FFT,&fftDSP);
+        FMOD_ChannelGroup_AddDSP(channelgroup,0,fftDSP);
+        FMOD_DSP_SetParameterInt(fftDSP, FMOD_DSP_FFT_WINDOWTYPE, FMOD_DSP_FFT_WINDOW_HANNING);
+    }
+    
+    if( fftDSP != NULL ){
+        FMOD_DSP_PARAMETER_FFT *fft;
+        auto result = FMOD_DSP_GetParameterData(fftDSP, FMOD_DSP_FFT_SPECTRUMDATA, (void **)&fft, 0, 0, 0);
+        if( result == 0 ){
+        
+            // Only read / display half of the buffer typically for analysis
+            // as the 2nd half is usually the same data reversed due to the nature of the way FFT works. ( comment from link above )
+            int length = fft->length/2;
+            if( length > 0 ){
+        
+                std::vector <float> avgValCount;
+                avgValCount.assign(nBands, 0.0); 
+                
+                float normalizedBand = 0;
+                float normStep = 1.0 / (float)length;
+                
+                for (int bin = 0; bin < length; bin++){
+                    //should map 0 to nBands but accounting for lower frequency bands being more important
+                    int logIndexBand = log10(1.0 + normalizedBand*9.0) * nBands;
+                    
+                    //get both channels as that is what the old FMOD call did
+                    for (int channel = 0; channel < fft->numchannels; channel++){
+                        fftSpectrum_[logIndexBand] += fft->spectrum[channel][bin];
+                        avgValCount[logIndexBand] += 1.0;
+                    }
+                    
+                    normalizedBand += normStep;
+                }
+                                
+                //average the remapped bands based on how many times we added to each bin
+                for(int i = 0; i < nBands; i++){
+                    if( avgValCount[i] > 1.0 ){
+                        fftSpectrum_[i] /= avgValCount[i];
+                    }
+                }
+            }
+        }
+    }
 
 	// 	convert to db scale
-	for(int i = 0; i < nBandsToGet; i++){
-        fftValues_[i] = 10.0f * (float)log10(1 + fftSpectrum_[i]) * 2.0f;
-	}
-
-	// 	try to put all of the values (nBandsToGet) into (nBands)
-	//  in a way which is accurate and preserves the data:
-	//
-
-	if (nBandsToGet == nBands){
-
-		for(int i = 0; i < nBandsToGet; i++){
-			fftInterpValues_[i] = fftValues_[i];
-		}
-
-	} else {
-
-		float step 		= (float)nBandsToGet / (float)nBands;
-		//float pos 		= 0;
-		// so for example, if nBands = 33, nBandsToGet = 64, step = 1.93f;
-		int currentBand = 0;
-
-		for(int i = 0; i < nBandsToGet; i++){
-
-			// if I am current band = 0, I care about (0+1) * step, my end pos
-			// if i > endPos, then split i with me and my neighbor
-
-			if (i >= ((currentBand+1)*step)){
-
-				// do some fractional thing here...
-				float fraction = ((currentBand+1)*step) - (i-1);
-				float one_m_fraction = 1 - fraction;
-				fftInterpValues_[currentBand] += fraction * fftValues_[i];
-				currentBand++;
-				// safety check:
-				if (currentBand >= nBands){
-					ofLogWarning("ofFmodSoundPlayer") << "ofFmodGetSpectrum(): currentBand >= nBands";
-				}
-
-				fftInterpValues_[currentBand] += one_m_fraction * fftValues_[i];
-
-			} else {
-				// do normal things
-				fftInterpValues_[currentBand] += fftValues_[i];
-			}
-		}
-
-		// because we added "step" amount per band, divide to get the mean:
-		for (int i = 0; i < nBands; i++){
-			fftInterpValues_[i] /= step;
-			if (fftInterpValues_[i] > 1)fftInterpValues_[i] = 1; 	// this seems "wrong"
-		}
-
+	for(int i = 0; i < nBands; i++){
+        fftInterpValues_[i] = 10.0f * (float)log10(1 + fftSpectrum_[i]) * 2.0f;
 	}
 
 	return fftInterpValues_;
@@ -213,8 +203,8 @@ bool ofFmodSoundPlayer::load(const std::filesystem::path& _fileName, bool stream
 	// [3] load sound
 
 	//choose if we want streaming
-	int fmodFlags =  FMOD_SOFTWARE;
-	if(stream)fmodFlags =  FMOD_SOFTWARE | FMOD_CREATESTREAM;
+	int fmodFlags =  FMOD_DEFAULT;
+	if(stream)fmodFlags =  FMOD_DEFAULT | FMOD_CREATESTREAM;
 
     result = FMOD_System_CreateSound(sys, fileName.data(),  fmodFlags, nullptr, &sound);
 
@@ -377,7 +367,7 @@ void ofFmodSoundPlayer::play(){
 		FMOD_Channel_Stop(channel);
 	}
 
-	FMOD_System_PlaySound(sys, FMOD_CHANNEL_FREE, sound, bPaused, &channel);
+	FMOD_System_PlaySound(sys, sound, channelgroup, bPaused, &channel);
 
 	FMOD_Channel_GetFrequency(channel, &internalFreq);
 	FMOD_Channel_SetVolume(channel,volume);
