@@ -84,11 +84,8 @@ jobs:
             wget https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz/download;
             tar -zxvf boost_1_55_0.tar.gz;
             cd boost_1_55_0;
-            # get the no of cpucores to make faster
-            cpuCores=`cat /proc/cpuinfo | grep "cpu cores" | uniq | awk '{print $NF}'`;
-            echo "Available CPU cores: "$cpuCores;
-            ./bootstrap.sh  # this will generate ./b2;
-            sudo ./b2 --with=all -j $cpuCores install;
+            ./bootstrap.sh;
+            sudo ./b2 --with=all -j 2 install;
             cd ../;
       - name: install
         run: ./scripts/ci/$TARGET/install.sh
