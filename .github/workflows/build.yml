@@ -6,35 +6,35 @@ on:
 
 jobs:
 
-  build-linux-platforms:
-    runs-on: ubuntu-16.04
-    strategy:
-        matrix:
-          cfg:
-          - {target: linux64, libs: 64gcc4}
+#  build-linux-platforms:
+#    runs-on: ubuntu-16.04
+#    strategy:
+#        matrix:
+#          cfg:
+#          - {target: linux64, libs: 64gcc4}
 #          - {target: linuxarmv6l, libs: armv6l}
 #          - {target: linuxarmv7l, libs: armv7l}
-    env:
-     TARGET: ${{matrix.cfg.target}}
-    steps:
-    - uses: actions/checkout@v2
-    - name: Download libs
-      run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
-    - name: Install dependencies
-      run: ./scripts/ci/$TARGET/install.sh;
-    - name: Install gcc4
-      run: if [ ${{matrix.cfg.target}} = "64gcc4" ]; then
-                sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test;
-                sudo apt-get update -q;
-                sudo apt-get install gcc-4.9 g++-4.9;
-            fi
-    - name: Build
-      run: if [ "$TARGET" = "linux64" ]; then
-            scripts/ci/$TARGET/build.sh
-            scripts/ci/$TARGET/run_tests.sh;
-           else
-            scripts/ci/$TARGET/build.sh;
-           fi
+#    env:
+#     TARGET: ${{matrix.cfg.target}}
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Download libs
+#      run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
+#    - name: Install dependencies
+#      run: ./scripts/ci/$TARGET/install.sh;
+#    - name: Install gcc4
+#      run: if [ ${{matrix.cfg.target}} = "64gcc4" ]; then
+#                sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test;
+#                sudo apt-get update -q;
+#                sudo apt-get install gcc-4.9 g++-4.9;
+#            fi
+#    - name: Build
+#      run: if [ "$TARGET" = "linux64" ]; then
+#            scripts/ci/$TARGET/build.sh
+#            scripts/ci/$TARGET/run_tests.sh;
+#           else
+#            scripts/ci/$TARGET/build.sh;
+#           fi
 
 #  build-emscripten:
 #    runs-on: ubuntu-16.04
@@ -84,7 +84,7 @@ jobs:
       run:  ls /usr/lib/x86_64-linux-gnu/ | grep libboost;
     - name: Get packages from trust
       run: sudo ln -f -s /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/libGLEW.so.1.10;
-           sudo apt-get uninstall libboost-filesystem-dev;
+           sudo apt-get remove -y libboost-filesystem-dev;
            curl -sLO http://ftp.us.debian.org/debian/pool/main/b/boost1.55/libboost-system1.55-dev_1.55.0+dfsg-3_amd64.deb && sudo dpkg -i libboost-system1.55-dev_1.55.0+dfsg-3_amd64.deb;
            curl -sLO http://ftp.us.debian.org/debian/pool/main/b/boost1.55/libboost-system1.55.0_1.55.0+dfsg-3_amd64.deb && sudo dpkg -i libboost-system1.55.0_1.55.0+dfsg-3_amd64.deb;
     - name: Download libs
