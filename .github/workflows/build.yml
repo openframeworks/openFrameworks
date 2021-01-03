@@ -85,6 +85,7 @@ jobs:
     - name: Get packages from trust
       run: sudo ln -f -s /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/libGLEW.so.1.10;
            sudo apt-get remove -y libboost-filesystem-dev;
+           sudo apt-get remove -y libboost-system-dev;
            curl -sLO http://ftp.us.debian.org/debian/pool/main/b/boost1.55/libboost-system1.55-dev_1.55.0+dfsg-3_amd64.deb && sudo dpkg -i libboost-system1.55-dev_1.55.0+dfsg-3_amd64.deb;
            curl -sLO http://ftp.us.debian.org/debian/pool/main/b/boost1.55/libboost-system1.55.0_1.55.0+dfsg-3_amd64.deb && sudo dpkg -i libboost-system1.55.0_1.55.0+dfsg-3_amd64.deb;
     - name: Download libs
