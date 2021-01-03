@@ -82,17 +82,14 @@ jobs:
       run: ./scripts/ci/$TARGET/install.sh
     - name: List lib locations
       run:  ls /usr/lib/x86_64-linux-gnu/ | grep libboost;
-    - name: Get packages from trusty
-      run: sudo add-apt-repository "deb http://mirrors.us.kernel.org/ubuntu/ trusty main";
-           sudo apt-get update;
-           sudo apt-get install -y libboost1.55-all-dev;
-           sudo apt-get install -y libglew1.10
+    - name: Get packages from trust
+      run: sudo ln -f -s /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/libGLEW.so.1.10;
+           curl -sLO http://ftp.us.debian.org/debian/pool/main/b/boost1.55/libboost-system1.55-dev_1.55.0+dfsg-3_amd64.deb && sudo dpkg -i libboost-system1.55-dev_1.55.0+dfsg-3_amd64.deb
     - name: Download libs
       run: ./scripts/$TARGET/download_libs.sh
     - name: Build
       run: ./scripts/ci/$TARGET/build.sh
 
-#sudo ln -f -s /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/libGLEW.so.1.10;
 
 #  build-osx:
 #    runs-on: macos-10.15
