@@ -80,19 +80,19 @@ jobs:
   #        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/android-ndk-r15c/*') }}
       - name: install
         run: ./scripts/ci/$TARGET/install.sh
-      - name: build-boost-and-fix-glew
-        run:
-            wget -O boost_1_55_0.tar.gz https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz/download;
-            tar -zxvf boost_1_55_0.tar.gz;
-            cd boost_1_55_0;
-            ./bootstrap.sh --with-libraries=filesystem,system;
-            sudo ./b2 --with=all -j 2 install;
-            cd ../;
-            sudo ln -f -s /usr/local/lib/libboost_filesystem.so /usr/lib/libboost_filesystem.so.1.55.0;
-            sudo ln -f -s /usr/local/lib/libboost_system.so /usr/lib/libboost_system.so.1.55.0;
-            sudo ln -f -s /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/libGLEW.so.1.10;
-      - name: List lib locations
-        run:  ls /usr/local/lib/ | grep libboost;
+#      - name: build-boost-and-fix-glew
+#        run:
+#            wget -O boost_1_55_0.tar.gz https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz/download;
+#            tar -zxvf boost_1_55_0.tar.gz;
+#            cd boost_1_55_0;
+#            ./bootstrap.sh --with-libraries=filesystem,system;
+#            sudo ./b2 --with=all -j 2 install;
+#            cd ../;
+#            sudo ln -f -s /usr/local/lib/libboost_filesystem.so /usr/lib/libboost_filesystem.so.1.55.0;
+#            sudo ln -f -s /usr/local/lib/libboost_system.so /usr/lib/libboost_system.so.1.55.0;
+#            sudo ln -f -s /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/libGLEW.so.1.10;
+#      - name: List lib locations
+#        run:  ls /usr/local/lib/ | grep libboost;
       - name: Download libs
         run: ./scripts/$TARGET/download_libs.sh
       - name: Build

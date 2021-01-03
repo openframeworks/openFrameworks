@@ -24,11 +24,32 @@ else
     unzip "$NDK_DIR-linux-x86_64.zip" > /dev/null 2>&1
 fi
 
-# Get project generator
-cd ~/
-rm -rf projectGenerator
+echo "building PG"
+
+# Build project generator
+CUR_DIR="${pwd}";
+ls -la
+git clone --depth=1 https://github.com/openframeworks/openFrameworks
+mv projectGenerator $OF_ROOT/apps/projectGenerator
+cd $OF_ROOT/apps/projectGenerator/commandLine
+make Release -C .
+ret=$?
+if [ $ret -ne 0 ]; then
+      echo "Failed building Project Generator"
+      exit 1
+fi
+
+ls -la bin
+
 mkdir -p ~/projectGenerator
-cd ~/projectGenerator
-echo "Downloading projectGenerator from ci server"
-wget http://ci.openframeworks.cc/projectGenerator/projectGenerator_linux
+cp bin/projectGenerator ~/projectGenerator/projectGenerator_linux
 chmod +x projectGenerator_linux
+cd CUR_DIR
+
+#cd ~/
+#rm -rf projectGenerator
+#mkdir -p ~/projectGenerator
+#cd ~/projectGenerator
+#echo "Downloading projectGenerator from ci server"
+#wget http://ci.openframeworks.cc/projectGenerator/projectGenerator_linux
+#chmod +x projectGenerator_linux
