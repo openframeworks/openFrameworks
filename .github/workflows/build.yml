@@ -81,7 +81,7 @@ jobs:
       
       - name: build-boost
         run:
-            wget https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz/download;
+            wget -O boost_1_55_0.tar.gz https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz/download;
             tar -zxvf boost_1_55_0.tar.gz;
             cd boost_1_55_0;
             ./bootstrap.sh;
