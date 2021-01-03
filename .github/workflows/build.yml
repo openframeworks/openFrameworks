@@ -80,8 +80,8 @@ jobs:
   #        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/android-ndk-r15c/*') }}
       
       - name: check-versions
-        run: sudo echo "deb http://us.archive.ubuntu.com/ubuntu/ trusty universe" >> /etc/apt/sources.list;
-             sudo echo "deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates universe" >> /etc/apt/sources.list;
+        run: echo "deb http://us.archive.ubuntu.com/ubuntu/ trusty universe" | sudo tee -a /etc/apt/sources.list;
+             echo "deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates universe" | sudo tee -a /etc/apt/sources.list;
              sudo apt-get update;
              sudo apt list -a libboost-filesystem-dev;
              sudo apt list -a libboost-dev;
