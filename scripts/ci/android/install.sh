@@ -29,7 +29,8 @@ echo "building PG"
 # Build project generator
 CUR_DIR="${pwd}";
 ls -la
-git clone --depth=1 https://github.com/openframeworks/openFrameworks
+git clone --depth=1 https://github.com/openframeworks/projectGenerator
+rm -rf $OF_ROOT/apps/projectGenerator 2> /dev/null
 mv projectGenerator $OF_ROOT/apps/projectGenerator
 cd $OF_ROOT/apps/projectGenerator/commandLine
 make Release -C .
