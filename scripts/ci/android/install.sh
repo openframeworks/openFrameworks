@@ -27,7 +27,7 @@ fi
 echo "building PG"
 
 # Build project generator
-CUR_DIR=pwd
+CUR_DIR=$(pwd)
 ls -la
 git clone --depth=1 https://github.com/openframeworks/projectGenerator
 rm -rf $OF_ROOT/apps/projectGenerator 2> /dev/null
@@ -46,7 +46,7 @@ ls -la bin/
 
 mkdir -p ~/projectGenerator
 cp bin/projectGenerator ~/projectGenerator/projectGenerator_linux
-chmod +x projectGenerator_linux
+chmod +x ~/projectGenerator/projectGenerator_linux
 cd CUR_DIR
 
 #cd ~/
