@@ -79,13 +79,17 @@ jobs:
   #        path: '~/android-ndk-r15c'
   #        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/android-ndk-r15c/*') }}
       
-      - name: check-versions
-        run: echo "deb http://us.archive.ubuntu.com/ubuntu/ trusty universe" | sudo tee -a /etc/apt/sources.list;
-             echo "deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates universe" | sudo tee -a /etc/apt/sources.list;
-             sudo apt-get update;
-             sudo apt list -a libboost-filesystem-dev;
-             sudo apt list -a libboost-dev;
-
+      - name: build-boost
+        run:
+            wget https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz/download;
+            tar -zxvf boost_1_55_0.tar.gz;
+            cd boost_1_55_0;
+            # get the no of cpucores to make faster
+            cpuCores=`cat /proc/cpuinfo | grep "cpu cores" | uniq | awk '{print $NF}'`;
+            echo "Available CPU cores: "$cpuCores;
+            ./bootstrap.sh  # this will generate ./b2;
+            sudo ./b2 --with=all -j $cpuCores install;
+            cd ../;
       - name: install
         run: ./scripts/ci/$TARGET/install.sh
       - name: Get packages for trusty
