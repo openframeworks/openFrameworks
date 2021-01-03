@@ -92,7 +92,7 @@ jobs:
             wget -O boost_1_55_0.tar.gz https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz/download;
             tar -zxvf boost_1_55_0.tar.gz;
             cd boost_1_55_0;
-            ./bootstrap.sh --with-filesystem --with-system;
+            ./bootstrap.sh --with-libraries=filesystem,system;
             sudo ./b2 --with=all -j 2 install;
             cd ../;
       - name: List lib locations
