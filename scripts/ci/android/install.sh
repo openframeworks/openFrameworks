@@ -27,11 +27,13 @@ fi
 echo "building PG"
 
 # Build project generator
-CUR_DIR="${pwd}";
+CUR_DIR=pwd
 ls -la
 git clone --depth=1 https://github.com/openframeworks/projectGenerator
 rm -rf $OF_ROOT/apps/projectGenerator 2> /dev/null
 mv projectGenerator $OF_ROOT/apps/projectGenerator
+cd $OF_ROOT/
+scripts/linux/download_libs.sh
 cd $OF_ROOT/apps/projectGenerator/commandLine
 make Release -C .
 ret=$?
@@ -40,7 +42,7 @@ if [ $ret -ne 0 ]; then
       exit 1
 fi
 
-ls -la bin
+ls -la bin/
 
 mkdir -p ~/projectGenerator
 cp bin/projectGenerator ~/projectGenerator/projectGenerator_linux
