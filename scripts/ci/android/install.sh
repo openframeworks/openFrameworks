@@ -27,24 +27,27 @@ fi
 echo "building PG"
 
 # Build project generator
-ls -la
-git clone --depth=1 https://github.com/openframeworks/projectGenerator
-rm -rf $OF_ROOT/apps/projectGenerator 2> /dev/null
-mv projectGenerator $OF_ROOT/apps/projectGenerator
-cd $OF_ROOT/
-scripts/linux/download_libs.sh
-cd $OF_ROOT/apps/projectGenerator/commandLine
-make Release -C .
-ret=$?
-if [ $ret -ne 0 ]; then
-      echo "Failed building Project Generator"
-      exit 1
-fi
+if [ -f "~/projectGenerator/projectGenerator_linux" ]; then
+    echo "project generator is cached not building"
+else
+    git clone --depth=1 https://github.com/openframeworks/projectGenerator
+    rm -rf $OF_ROOT/apps/projectGenerator 2> /dev/null
+    mv projectGenerator $OF_ROOT/apps/projectGenerator
+    cd $OF_ROOT/
+    scripts/linux/download_libs.sh
+    cd $OF_ROOT/apps/projectGenerator/commandLine
+    make Release -C .
+    ret=$?
+    if [ $ret -ne 0 ]; then
+          echo "Failed building Project Generator"
+          exit 1
+    fi
 
-mkdir -p ~/projectGenerator
-cp bin/projectGenerator ~/projectGenerator/projectGenerator_linux
-chmod +x ~/projectGenerator/projectGenerator_linux
-cd $OF_ROOT/
+    mkdir -p ~/projectGenerator
+    cp bin/projectGenerator ~/projectGenerator/projectGenerator_linux
+    chmod +x ~/projectGenerator/projectGenerator_linux
+    cd $OF_ROOT/
+fi
 
 #cd ~/
 #rm -rf projectGenerator

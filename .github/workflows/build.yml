@@ -71,11 +71,11 @@ jobs:
       steps:
       - uses: actions/checkout@v2
 
-  #    - name: Cache some follders
-  #      uses: actions/cache@v2
-  #      with:
-  #        path: '~/.gradle'
-  #        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/.gradle/*') }}
+      - name: Cache projectGenerator folder
+        uses: actions/cache@v2
+        with:
+          path: '~/projectGenerator'
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/projectGenerator/projectGenerator_linux') }}
   #        path: '~/android-ndk-r15c'
   #        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/android-ndk-r15c/*') }}
       - name: install
