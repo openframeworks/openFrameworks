@@ -75,7 +75,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: '~/projectGenerator'
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/projectGenerator/projectGenerator_linux') }}
+          key: ${{ runner.os }}-projectGenerator-${{ hashFiles('~/projectGenerator/*') }}
   #        path: '~/android-ndk-r15c'
   #        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/android-ndk-r15c/*') }}
       - name: install
