@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 OF_ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
+if [[ "$GITHUB_ACTIONS" = true ]]; then
+    OF_ROOT=$GITHUB_WORKSPACE
+fi
+
 CI_ROOT=$OF_ROOT/scripts/ci
 
 DO_UPLOAD="false"

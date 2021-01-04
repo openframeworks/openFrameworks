@@ -125,7 +125,3 @@ jobs:
       env:
         DEVELOPER_DIR: "/Applications/Xcode_12.2.app/Contents/Developer"
         SDKROOT: "/Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
-    - name: Upload Libs
-      run: scripts/ci/upload_of_lib.sh;
-      env:
-        GA_CI_SECRET: ${{ secrets.CI_SECRET }}

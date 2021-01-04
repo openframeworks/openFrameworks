@@ -3,9 +3,12 @@ set -ev
 # capture failing exits in commands obscured behind a pipe
 set -o pipefail
 
-
 if [ -z ${OF_ROOT} ]; then
     OF_ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
+fi
+
+if [[ "$GITHUB_ACTIONS" = true ]]; then
+    OF_ROOT=$GITHUB_WORKSPACE
 fi
 
 # Install linux dependencies (for project generator to work)
