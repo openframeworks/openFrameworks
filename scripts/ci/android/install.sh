@@ -54,7 +54,7 @@ else
     cd $OF_ROOT/
     scripts/linux/download_libs.sh
     cd $OF_ROOT/apps/projectGenerator/commandLine
-    make Release -C .
+    make Debug -C .
     ret=$?
     if [ $ret -ne 0 ]; then
           echo "Failed building Project Generator"
@@ -62,7 +62,7 @@ else
     fi
 
     mkdir -p ~/projectGenerator
-    cp bin/projectGenerator ~/projectGenerator/projectGenerator_linux
+    cp bin/projectGenerator_debug ~/projectGenerator/projectGenerator_linux
 fi
 
 chmod +x ~/projectGenerator/projectGenerator_linux

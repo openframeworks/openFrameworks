@@ -85,7 +85,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: '~/projectGenerator'
-        key: ${{ runner.os }}-projectGenerator-${{matrix.cfg.gradle_target}}
+        key: ${{ runner.os }}-pg-${{matrix.cfg.gradle_target}}
     - name: Cache NDK
       uses: actions/cache@v2
       with:
