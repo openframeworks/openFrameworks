@@ -1,0 +1,39 @@
+name: build-msys2
+
+on:
+  push:
+    paths-ignore:
+    - '**/README.md'
+  pull_request:
+    paths-ignore:
+    - '**/README.md'
+    
+jobs:
+
+  build-msys2:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        mingw: [MINGW64,MINGW32]
+    defaults:
+      run:
+        shell: msys2 {0}
+    env: 
+      MSYSTEM: ${{ matrix.mingw }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: >-
+          git
+          unzip
+          rsync
+          wget
+    - name: Install dependencies
+      run:
+        ./scripts/ci/msys2/install.sh
+    - name: Build
+      run:
+        ./scripts/ci/msys2/build.sh
+
