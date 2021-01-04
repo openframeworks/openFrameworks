@@ -27,6 +27,7 @@ fi
 # Build project generator
 if [ -f ~/projectGenerator/projectGenerator_linux ]; then
     echo "project generator is locally cached not building"
+    chmod +x ~/projectGenerator/projectGenerator_linux
 else
     echo "building project generator"
     git clone --depth=1 https://github.com/openframeworks/projectGenerator
