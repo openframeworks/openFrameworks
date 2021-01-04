@@ -30,6 +30,15 @@ fi
 # Build project generator
 if [ -f ~/projectGenerator/projectGenerator_linux ]; then
     echo "project generator is locally cached not building"
+    echo "home permissions"
+    ls -la ~
+    echo "projectGenerator/ permissions"
+    ls -la ~/projectGenerator/
+    
+    echo "testing pg"
+    ~/projectGenerator/projectGenerator_linux
+    
+    echo "done testing pg"
 else
     echo "building project generator"
     git clone --depth=1 https://github.com/openframeworks/projectGenerator
