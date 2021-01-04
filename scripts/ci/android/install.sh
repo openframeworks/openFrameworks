@@ -38,7 +38,7 @@ if [ -f ~/projectGenerator/projectGenerator_linux ]; then
     echo "testing pg"
     ~/projectGenerator/projectGenerator_linux
     
-    echo "done testing pg"
+    echo "done testing pg "
 else
     echo "building project generator"
     git clone --depth=1 https://github.com/openframeworks/projectGenerator
