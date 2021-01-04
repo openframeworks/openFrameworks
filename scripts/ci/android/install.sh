@@ -16,6 +16,11 @@ sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 
 # Download NDK
 cd ~
+
+echo "Download NDK - listing going to see if the dir is actually there "
+ls -la
+echo "Download NDK - dir we are looking for is ${NDK_DIR}"
+
 # check if cached directory exists
 if [ "$(ls -A ${NDK_DIR})" ]; then
     echo "Using cached NDK"
@@ -25,7 +30,6 @@ else
     wget -q "https://dl.google.com/android/repository/$NDK_DIR-linux-x86_64.zip"
     echo "Uncompressing NDK"
     unzip "$NDK_DIR-linux-x86_64.zip" > /dev/null 2>&1
-    ls -la
 fi
 
 # Build project generator
@@ -35,6 +39,8 @@ if [ -f ~/projectGenerator/projectGenerator_linux ]; then
     ls -la ~
     echo "projectGenerator/ permissions"
     ls -la ~/projectGenerator/
+    
+    sudo apt-get install -y gdb
     
     echo "testing pg"
     gdb -ex run ~/projectGenerator/projectGenerator_linux
