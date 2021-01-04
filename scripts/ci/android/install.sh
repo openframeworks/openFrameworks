@@ -25,7 +25,7 @@ else
 fi
 
 # Build project generator
-if [ -f "~/projectGenerator/projectGenerator_linux" ]; then
+if [ -f ~/projectGenerator/projectGenerator_linux ]; then
     echo "project generator is locally cached not building"
 else
     echo "building project generator"
