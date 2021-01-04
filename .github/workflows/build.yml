@@ -75,12 +75,12 @@ jobs:
         uses: actions/cache@v2
         with:
           path: '~/projectGenerator'
-          key: ${{ runner.os }}-projectGenerator-${{ hashFiles('~/projectGenerator/*') }}
+          key: ${{ runner.os }}-projectGenerator
       - name: Cache NDK
         uses: actions/cache@v2
         with:
           path: '~/$NDK_DIR'
-          key: ${{ runner.os }}-ndk-${{ hashFiles('~/$NDK_DIR/*') }}
+          key: ${{ runner.os }}-ndk-${{matrix.cfg.gradle_target}}
       - name: install
         run: ./scripts/ci/$TARGET/install.sh
       - name: Download libs
