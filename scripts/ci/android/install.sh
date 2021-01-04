@@ -31,10 +31,9 @@ fi
 # Build project generator
 if [ -f ~/projectGenerator/projectGenerator_linux ]; then
     echo "project generator is locally cached not building"
-    sudo apt-get install -y gdb
-    echo "testing pg with gdb"
-    gdb -ex run ~/projectGenerator/projectGenerator_linux
-    echo "done testing pg "
+#    below is if we need to debug any crashes with pg
+#    sudo apt-get install -y gdb
+#    gdb -ex run ~/projectGenerator/projectGenerator_linux
 else
     echo "building project generator"
     git clone --depth=1 https://github.com/openframeworks/projectGenerator
