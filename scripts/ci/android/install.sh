@@ -24,12 +24,11 @@ else
     unzip "$NDK_DIR-linux-x86_64.zip" > /dev/null 2>&1
 fi
 
-echo "building PG"
-
 # Build project generator
 if [ -f "~/projectGenerator/projectGenerator_linux" ]; then
-    echo "project generator is cached not building"
+    echo "project generator is locally cached not building"
 else
+    echo "building project generator"
     git clone --depth=1 https://github.com/openframeworks/projectGenerator
     rm -rf $OF_ROOT/apps/projectGenerator 2> /dev/null
     mv projectGenerator $OF_ROOT/apps/projectGenerator
@@ -49,6 +48,7 @@ else
     cd $OF_ROOT/
 fi
 
+# old approach
 #cd ~/
 #rm -rf projectGenerator
 #mkdir -p ~/projectGenerator
