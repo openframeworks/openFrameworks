@@ -25,6 +25,7 @@ else
     wget -q "https://dl.google.com/android/repository/$NDK_DIR-linux-x86_64.zip"
     echo "Uncompressing NDK"
     unzip "$NDK_DIR-linux-x86_64.zip" > /dev/null 2>&1
+    ls -la
 fi
 
 # Build project generator
@@ -36,7 +37,7 @@ if [ -f ~/projectGenerator/projectGenerator_linux ]; then
     ls -la ~/projectGenerator/
     
     echo "testing pg"
-    ~/projectGenerator/projectGenerator_linux
+    gdb -ex run ~/projectGenerator/projectGenerator_linux
     
     echo "done testing pg "
 else
