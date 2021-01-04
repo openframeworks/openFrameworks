@@ -58,14 +58,14 @@ jobs:
   build-android:
     runs-on: ubuntu-16.04
     strategy:
-    matrix:
-      cfg:
-      - {target: android, gradle_target: compileArm7DebugSources}
-      - {target: android, gradle_target: compileX86DebugSources}
+        matrix:
+          cfg:
+          - {target: android, gradle_target: compileArm7DebugSources}
+          - {target: android, gradle_target: compileX86DebugSources}
     env:
-    TARGET: ${{matrix.cfg.target}}
-    GRADLE_TARGET: ${{matrix.cfg.gradle_target}}
-    NDK_DIR: android-ndk-r15c
+        TARGET: ${{matrix.cfg.target}}
+        GRADLE_TARGET: ${{matrix.cfg.gradle_target}}
+        NDK_DIR: android-ndk-r15c
     steps:
     - uses: actions/checkout@v2
     - name: Cache projectGenerator folder
