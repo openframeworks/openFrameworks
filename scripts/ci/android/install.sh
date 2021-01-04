@@ -17,10 +17,6 @@ sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 # Download NDK
 cd ~
 
-echo "Download NDK - listing going to see if the dir is actually there "
-ls -la
-echo "Download NDK - dir we are looking for is ${NDK_DIR}"
-
 # check if cached directory exists
 if [ "$(ls -A ${NDK_DIR})" ]; then
     echo "Using cached NDK"
@@ -35,16 +31,9 @@ fi
 # Build project generator
 if [ -f ~/projectGenerator/projectGenerator_linux ]; then
     echo "project generator is locally cached not building"
-    echo "home permissions"
-    ls -la ~
-    echo "projectGenerator/ permissions"
-    ls -la ~/projectGenerator/
-    
     sudo apt-get install -y gdb
-    
-    echo "testing pg"
+    echo "testing pg with gdb"
     gdb -ex run ~/projectGenerator/projectGenerator_linux
-    
     echo "done testing pg "
 else
     echo "building project generator"
