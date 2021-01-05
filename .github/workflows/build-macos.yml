@@ -15,17 +15,15 @@ jobs:
     strategy:
         matrix:
           cfg:
-          - {target: osx, libs: osx, opt: ""}
-          - {target: osx, libs: osx, opt: "makefiles"}
-          - {target: ios, libs: ios, opt: ""}
-          - {target: tvos, libs: ios, opt: ""}
+          - {target: osx, opt: ""}
+          - {target: osx, opt: "makefiles"}
     env:
      TARGET: ${{matrix.cfg.target}}
      OPT: ${{matrix.cfg.opt}}
     steps:
     - uses: actions/checkout@v2
     - name: Download libs
-      run: ./scripts/${{matrix.cfg.libs}}/download_libs.sh
+      run: ./scripts/$TARGET/download_libs.sh
     - name: rm-dev
       run: sudo rm -rf /Library/Developer
     - name: install
