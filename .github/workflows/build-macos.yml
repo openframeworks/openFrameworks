@@ -16,6 +16,8 @@ jobs:
         matrix:
           cfg:
           - {target: osx, opt: ""}
+          - {target: ios, opt: ""}
+          - {target: tvos, opt: ""}
           - {target: osx, opt: "makefiles"}
     env:
      TARGET: ${{matrix.cfg.target}}
