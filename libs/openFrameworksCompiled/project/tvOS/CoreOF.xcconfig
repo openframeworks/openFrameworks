@@ -18,7 +18,7 @@ HEADER_URIPARSER = "$(OF_PATH)/libs/uriparser/include"
 HEADER_PUGIXML = "$(OF_PATH)/libs/pugixml/include"
 
 //------- Libraries
-LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/tvos/libofxiOS_${PLATFORM_NAME}_${CONFIGURATION}.a"
+LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/tvos/tvOS+OFLib_${CONFIGURATION}.a"
 LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/tvos/freeimage.a"
 LIB_FREETYPE = "$(OF_PATH)/libs/freetype/lib/tvos/freetype.a"
 LIB_TESS = "$(OF_PATH)/libs/tess2/lib/tvos/tess2.a"
