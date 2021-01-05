@@ -16,7 +16,7 @@ jobs:
         matrix:
           cfg:
           - {target: ios, libs: ios}
-          - {target: tvos, libs: ios}
+#          - {target: tvos, libs: ios}
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
