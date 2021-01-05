@@ -387,6 +387,8 @@
 				<string>Launch Image</string>
 				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
 				<string>c++0x</string>
+				<key>DEBUG_INFORMATION_FORMAT</key>
+				<string>dwarf</string>
 				<key>GCC_PREFIX_HEADER</key>
 				<string>ofxtvOS_Prefix.pch</string>
 				<key>HEADER_SEARCH_PATHS</key>
@@ -415,6 +417,8 @@
 				<string>Launch Image</string>
 				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
 				<string>c++0x</string>
+				<key>DEBUG_INFORMATION_FORMAT</key>
+				<string>dwarf</string>
 				<key>GCC_PREFIX_HEADER</key>
 				<string>ofxtvOS_Prefix.pch</string>
 				<key>HEADER_SEARCH_PATHS</key>
