@@ -317,7 +317,7 @@ copy_dlls:
 	@rm dlllist
 	
 afterplatform: $(TARGET_NAME)
-	@libpath=${OF_LIBS_PATH}/*/lib/${PLATFORM_LIB_SUBPATH}/*.${SHARED_LIB_EXTENSION}; for libfile in ${libpath}; do if [ ! -z "${libfile}" ] && [ "${libfile}" != "${libpath}" ] && [ -e ${libfile} ]; then echo "copying shared file ${libfile}"; cp ${libfile} bin/; fi done;
+	@libpath=${OF_LIBS_PATH}/*/lib/${PLATFORM_LIB_SUBPATH}/*.${SHARED_LIB_EXTENSION}; for libfile in $libpath; do echo "checking ${libfile}"; if [ ! -z "${libfile}" ] && [ "${libfile}" != "${libpath}" ] && [ -e ${libfile} ]; then echo "copying shared file ${libfile}"; cp ${libfile} bin/; fi done;
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"
