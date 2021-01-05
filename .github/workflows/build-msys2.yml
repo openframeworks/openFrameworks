@@ -36,4 +36,7 @@ jobs:
     - name: Build
       run:
         ./scripts/ci/msys2/build.sh
-
+    - name: Upload Libs
+      run: scripts/ci/upload_of_lib.sh;
+      env:
+          GA_CI_SECRET: ${{ secrets.CI_SECRET }}
