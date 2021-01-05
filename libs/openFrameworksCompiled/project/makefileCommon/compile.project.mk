@@ -430,7 +430,7 @@ endif
 	@rm -rf bin/libs
 
 after: $(TARGET_NAME)
-	@if [[ -e $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) ]]; then cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/; fi
+	@for file in $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION); do if [[ -e  $(file) ]]; then cp $(file) bin/; fi done
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"
