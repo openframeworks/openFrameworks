@@ -31,7 +31,7 @@ while [[ $# > 0 ]] ; do
 done
 
 # List of MSYS packages to be installed
-msyspackages="make rsync unzip wget"
+msyspackages="make rsync zip unzip wget"
 
 # List of MINGW packages to be installed (without prefix)
 mingwPackages="assimp boost cairo curl freeglut FreeImage gcc gdb glew glfw \

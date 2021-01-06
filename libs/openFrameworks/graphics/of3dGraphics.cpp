@@ -124,7 +124,7 @@ void of3dGraphics::drawPlane(float x, float y, float z, float width, float heigh
 }
 
 //----------------------------------------------------------
-void of3dGraphics::drawPlane(glm::vec3& position, float width, float height) const{
+void of3dGraphics::drawPlane(const glm::vec3& position, float width, float height) const{
     drawPlane(position.x,position.y,position.z,width, height);
 }
 
@@ -554,7 +554,7 @@ void ofDrawPlane(float x, float y, float z, float width, float height){
 }
 
 //----------------------------------------------------------
-void ofDrawPlane(glm::vec3& position, float width, float height){
+void ofDrawPlane(const glm::vec3& position, float width, float height){
 	ofGetCurrentRenderer()->drawPlane(position,width,height);
 }
 
