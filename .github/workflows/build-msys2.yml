@@ -14,12 +14,14 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        mingw: [MINGW64,MINGW32]
+        cfg:
+        - {target: "MINGW32"}
+        - {target: "MINGW64"}
     defaults:
       run:
         shell: msys2 {0}
     env: 
-      MSYSTEM: ${{ matrix.mingw }}
+      MSYSTEM: ${{matrix.cfg.target}}
     steps:
     - uses: actions/checkout@v2
     - uses: msys2/setup-msys2@v2
