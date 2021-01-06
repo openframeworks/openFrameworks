@@ -40,8 +40,3 @@ jobs:
       run: ./scripts/ci/msys2/run_tests.sh
       env:
         MSYSTEM: ${{ matrix.mingw }}
-    - name: Upload Libs
-      run: scripts/ci/upload_of_lib.sh;
-      env:
-        GA_CI_SECRET: ${{ secrets.CI_SECRET }}
-        MSYSTEM: ${{ matrix.mingw }}
