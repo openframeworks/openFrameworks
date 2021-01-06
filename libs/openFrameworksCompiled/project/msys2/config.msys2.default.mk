@@ -317,7 +317,7 @@ copy_dlls:
 	@rm dlllist
 	
 afterplatform: $(TARGET_NAME)
-	@cp ${OF_LIBS_PATH}/*/lib/${PLATFORM_LIB_SUBPATH}/*.${SHARED_LIB_EXTENSION} bin/ 2>/dev/null;
+	-cp ${OF_LIBS_PATH}/*/lib/${PLATFORM_LIB_SUBPATH}/*.${SHARED_LIB_EXTENSION} bin/ ; true
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"
