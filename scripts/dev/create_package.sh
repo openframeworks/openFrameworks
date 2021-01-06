@@ -88,6 +88,11 @@ if [ "$version" == "" ]; then
     exit 1
 fi
 
+if [ "$platform" == "msys2" ] && ! ([ "$libs_abi" == "mingw32" ] || [ "$libs_abi" == "mingw64" ]); then
+    echo ./create_package.sh : libs_abi must be \'mingw32\' or \'mingw64\' for \'msys2\' platform
+    exit 1
+fi
+
 echo
 echo
 echo
@@ -335,7 +340,11 @@ function createPackage {
     elif [ "$pkg_platform" = "linuxarmv7l" ]; then
         scripts/linux/download_libs.sh -a armv7l
     elif [ "$pkg_platform" = "msys2" ]; then
-        scripts/msys2/download_libs.sh
+        if [ "$libs_abi" = "mingw64" ]; then
+            scripts/msys2/download_libs.sh -a 64
+        else
+            scripts/msys2/download_libs.sh
+        fi
     elif [ "$pkg_platform" = "vs2015" ]; then
         scripts/dev/download_libs.sh -p vs2015
     elif [ "$pkg_platform" = "vs2017" ]; then
@@ -624,12 +633,17 @@ function createPackage {
         COPYFILE_DISABLE=true tar czf of_v${pkg_version}_${pkg_platform}${libs_abi}_release.tar.gz of_v${pkg_version}_${pkg_platform}${libs_abi}_release
         rm -Rf of_v${pkg_version}_${pkg_platform}${libs_abi}_release
     else
-        echo "compressing package to of_v${pkg_version}_${pkg_platform}_release.zip"
+        if [ "$libs_abi" = "" ]; then
+            pkg_name=of_v${pkg_version}_${pkg_platform}_release
+        else
+            pkg_name=of_v${pkg_version}_${pkg_platform}_${libs_abi}_release
+        fi 
+        echo "compressing package to ${pkg_name}.zip"
         cd $pkg_ofroot/..
-        mkdir of_v${pkg_version}_${pkg_platform}_release
-        mv ${pkgfolder}/* of_v${pkg_version}_${pkg_platform}_release
-        zip --symlinks -r of_v${pkg_version}_${pkg_platform}_release.zip of_v${pkg_version}_${pkg_platform}_release > /dev/null
-        rm -Rf of_v${pkg_version}_${pkg_platform}_release
+        mkdir ${pkg_name}
+        mv ${pkgfolder}/* ${pkg_name}
+        zip --symlinks -r ${pkg_name}.zip ${pkg_name} > /dev/null
+        rm -Rf ${pkg_name}
     fi
 }
 

@@ -50,7 +50,3 @@ jobs:
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run:
           msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }}
-      - name: Upload Libs
-        run: scripts/ci/upload_of_lib.sh;
-        env:
-            GA_CI_SECRET: ${{ secrets.CI_SECRET }}

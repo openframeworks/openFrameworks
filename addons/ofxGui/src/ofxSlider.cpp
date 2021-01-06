@@ -105,6 +105,7 @@ bool ofxSlider<Type>::mousePressed(ofMouseEventArgs & mouse){
 			if(b.inside(mouse)){
 				state = Input;
 				auto mouseLeft = mouse;
+				input.setShape(b);
 				mouseLeft.button = OF_MOUSE_BUTTON_LEFT;
 				input.mousePressed(mouseLeft);
 				return true;
@@ -379,3 +380,4 @@ template class ofxSlider<double>;
 #ifdef TARGET_OSX
 template class ofxSlider<typename std::conditional<std::is_same<uint32_t, size_t>::value || std::is_same<uint64_t, size_t>::value, bool, size_t>::type>;
 #endif
+

@@ -50,63 +50,44 @@ void ofxPanel::loadIcons(){
 }
 
 void ofxPanel::generateDraw(){
-	border.clear();
-	border.setStrokeColor(thisBorderColor);
-	border.setStrokeWidth(1);
-	border.setFilled(false);
-	border.rectangle(b.x,b.y,b.width+1,b.height-spacingNextElement);
-
-
-	headerRect.set(b.x,b.y+1,b.width,headerRect.height);
-	headerBg.clear();
-	headerBg.setFillColor(ofColor(thisHeaderBackgroundColor,180));
-	headerBg.setFilled(true);
-	headerBg.rectangle(headerRect);
-
-	float iconHeight = headerRect.height*.5;
-	float iconWidth = loadIcon.getWidth()/loadIcon.getHeight()*iconHeight;
-	int iconSpacing = iconWidth*.5;
-
-	loadBox.x = b.getMaxX() - (iconWidth * 2 + iconSpacing + textPadding);
-	loadBox.y = b.y + headerRect.height / 2. - iconHeight / 2.;
-	loadBox.width = iconWidth;
-	loadBox.height = iconHeight;
-	saveBox.set(loadBox);
-	saveBox.x += iconWidth + iconSpacing;
-
-	textMesh = getTextMesh(getName(), textPadding + b.x, getTextVCenteredInRect(headerRect));
+	ofxGuiGroup::generateDraw();
+	if(bHeaderEnabled){
+		float iconHeight = headerRect.height*.5;
+		float iconWidth = loadIcon.getWidth()/loadIcon.getHeight()*iconHeight;
+		int iconSpacing = iconWidth*.5;
+	
+		loadBox.x = minimizeRect.getX() - (iconWidth + iconSpacing) * 2;
+		loadBox.y = headerRect.y + headerRect.height / 2. - iconHeight / 2.;
+		loadBox.width = iconWidth;
+		loadBox.height = iconHeight;
+		saveBox.set(loadBox);
+		saveBox.x += iconWidth + iconSpacing;
+	}
 }
 
 void ofxPanel::render(){
-	border.draw();
-	headerBg.draw();
-
-	ofBlendMode blendMode = ofGetStyle().blendingMode;
-	if(blendMode!=OF_BLENDMODE_ALPHA){
-		ofEnableAlphaBlending();
-	}
-	ofColor c = ofGetStyle().color;
-	ofSetColor(thisTextColor);
-
-	bindFontTexture();
-	textMesh.draw();
-	unbindFontTexture();
-
-	bool texHackEnabled = ofIsTextureEdgeHackEnabled();
-	ofDisableTextureEdgeHack();
-	loadIcon.draw(loadBox);
-	saveIcon.draw(saveBox);
-	if(texHackEnabled){
-		ofEnableTextureEdgeHack();
-	}
-
-	for(std::size_t i = 0; i < collection.size(); i++){
-		collection[i]->draw();
-	}
-
-	ofSetColor(c);
-	if(blendMode!=OF_BLENDMODE_ALPHA){
-		ofEnableBlendMode(blendMode);
+	ofxGuiGroup::render();
+	
+	if(bHeaderEnabled){
+		ofBlendMode blendMode = ofGetStyle().blendingMode;
+		if(blendMode!=OF_BLENDMODE_ALPHA){
+			ofEnableAlphaBlending();
+		}
+		ofColor c = ofGetStyle().color;
+		ofSetColor(thisTextColor);
+				
+		bool texHackEnabled = ofIsTextureEdgeHackEnabled();
+		ofDisableTextureEdgeHack();
+		loadIcon.draw(loadBox);
+		saveIcon.draw(saveBox);
+		if(texHackEnabled){
+			ofEnableTextureEdgeHack();
+		}
+		ofSetColor(c);
+		
+		if(blendMode!=OF_BLENDMODE_ALPHA){
+			ofEnableBlendMode(blendMode);
+		}
 	}
 }
 bool ofxPanel::mousePressed(ofMouseEventArgs & args){
@@ -132,24 +113,33 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 	if( bCheck ){
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
-
-			if(loadBox.inside(mx, my)) {
-				if(!ofNotifyEvent(loadPressedE,this)){
-					loadFromFile(filename);
+			if( bHeaderEnabled){
+				if(loadBox.inside(mx, my)) {
+					if(!ofNotifyEvent(loadPressedE,this)){
+						loadFromFile(filename);
+					}
+					return true;
 				}
-				return true;
-			}
-			if(saveBox.inside(mx, my)) {
-				if(!ofNotifyEvent(savePressedE,this)){
-					saveToFile(filename);
+				if(saveBox.inside(mx, my)) {
+					if(!ofNotifyEvent(savePressedE,this)){
+						saveToFile(filename);
+					}
+					return true;
 				}
-				return true;
-			}
-			
-			if( headerRect.inside(mx, my)){
-				bGrabbed = true;
-				grabPt = {mx-b.x, my-b.y, 0};
-				return true;
+				if(minimizeRect.inside(mx, my)){
+					if(!minimized){
+						minimize();
+					}else{
+						maximize();
+					}
+					return true;
+				}
+				
+				if(headerRect.inside(mx, my)){
+					bGrabbed = true;
+					grabPt = {mx-b.x, my-b.y, 0};
+					return true;
+				}
 			} else{
 				bGrabbed = false;
 			}

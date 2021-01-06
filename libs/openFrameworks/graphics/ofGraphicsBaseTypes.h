@@ -1134,7 +1134,7 @@ public:
 	/// \param width The width to use when drawing the plane with this renderer.
 	/// \param height The height to use when drawing the plane with this
 	/// renderer.
-	virtual void drawPlane(glm::vec3& position, float width, float height) const;
+	virtual void drawPlane(const glm::vec3& position, float width, float height) const;
 	/// \brief Draw a plane with the renderer at the origin.
 	///
 	/// The number of rows and columns this plane will have is dependent on this
