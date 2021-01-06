@@ -2,6 +2,8 @@
 set -ev #verbose; exit immediatly
 ROOT=$(pwd -P)
 
+echo "Debug - MSYSTEM is ${MSYSTEM}"
+
 $ROOT/scripts/msys2/install_dependencies.sh --noconfirm
 $ROOT/scripts/msys2/download_libs.sh --silent
 if [[ $MINGW_PACKAGE_PREFIX ]]; then 
