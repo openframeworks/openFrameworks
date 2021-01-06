@@ -445,8 +445,9 @@ class BackgroundTrackMgr
 				while (nPackets == 0)
 				{
 					// if loadAtOnce, get all packets in the file, otherwise ~.5 seconds of data
-					nPackets = THIS->GetNumPacketsToRead(CurFileInfo);					
-					result = AudioFileReadPackets(CurFileInfo->mAFID, false, &numBytes, THIS->mPacketDescs, THIS->mCurrentPacket, &nPackets, 
+					nPackets = THIS->GetNumPacketsToRead(CurFileInfo);
+                    numBytes = nPackets * inCompleteAQBuffer->mAudioDataBytesCapacity;
+					result = AudioFileReadPacketData(CurFileInfo->mAFID, false, &numBytes, THIS->mPacketDescs, THIS->mCurrentPacket, &nPackets,
 											inCompleteAQBuffer->mAudioData);
 						AssertNoError("Error reading file data", end);
 					
