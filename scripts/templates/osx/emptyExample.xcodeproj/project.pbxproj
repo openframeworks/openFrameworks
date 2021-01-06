@@ -185,7 +185,6 @@ fi
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
-					<string>-mtune=native</string>
 				</array>
 				<key>SDKROOT</key>
 				<string>macosx</string>
@@ -3028,7 +3027,6 @@ fi
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
-					<string>-mtune=native</string>
 				</array>
 				<key>SDKROOT</key>
 				<string>macosx</string>
@@ -3088,7 +3086,6 @@ fi
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
-					<string>-mtune=native</string>
 				</array>
 				<key>SDKROOT</key>
 				<string>macosx</string>

@@ -1,0 +1,34 @@
+name: build-emscripten
+
+on:
+  push:
+    paths-ignore:
+    - '**/README.md'
+  pull_request:
+    paths-ignore:
+    - '**/README.md'
+    
+jobs:
+
+  build-emscripten:
+    runs-on: ubuntu-16.04
+    strategy:
+        matrix:
+          cfg:
+          - {target: emscripten}
+    env:
+     TARGET: ${{matrix.cfg.target}}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Docker Step
+      run:  "docker run -di --name emscripten -v $PWD:/src trzeci/emscripten:sdk-incoming-64bit bash"
+    - name: Download libs
+      run: ./scripts/$TARGET/download_libs.sh
+    - name: Install dependencies
+      run: ./scripts/ci/$TARGET/install.sh
+    - name: Build
+      run: docker exec -i emscripten sh -c "scripts/ci/$TARGET/build.sh";
+    - name: Upload Libs
+      run: scripts/ci/upload_of_lib.sh;
+      env:
+          GA_CI_SECRET: ${{ secrets.CI_SECRET }}
