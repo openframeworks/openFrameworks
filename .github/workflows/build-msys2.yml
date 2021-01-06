@@ -29,17 +29,19 @@ jobs:
           rsync
           wget
     - name: Install dependencies
-      run:
-        ./scripts/ci/msys2/install.sh
+      run: ./scripts/ci/msys2/install.sh
       env:
         MSYSTEM: ${{ matrix.mingw }}
     - name: Build
-      run:
-        ./scripts/ci/msys2/build.sh
+      run: ./scripts/ci/msys2/build.sh
+      env:
+        MSYSTEM: ${{ matrix.mingw }}
     - name: Run tests
-      run:
-        ./scripts/ci/msys2/run_tests.sh
+      run: ./scripts/ci/msys2/run_tests.sh
+      env:
+        MSYSTEM: ${{ matrix.mingw }}
     - name: Upload Libs
       run: scripts/ci/upload_of_lib.sh;
       env:
-          GA_CI_SECRET: ${{ secrets.CI_SECRET }}
+        GA_CI_SECRET: ${{ secrets.CI_SECRET }}
+        MSYSTEM: ${{ matrix.mingw }}
