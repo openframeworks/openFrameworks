@@ -1,7 +1,7 @@
 ########################################################################
 # PROCESS VALID ADDONS IF AVAILABLE
 ########################################################################
-
+ 
 
 # parses addons includes, in PARSED_ADDON_INCLUDES receives full PATHS to addons
 define parse_addons_includes
