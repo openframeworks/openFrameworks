@@ -49,8 +49,8 @@ if [ "$currenthash" = "$lasthash" ]; then
     exit 0
 fi
 
-./create_package.sh linux64 $lastversion master gcc4
-./create_package.sh linux64 $lastversion master gcc5
+#./create_package.sh linux64 $lastversion master gcc4
+#./create_package.sh linux64 $lastversion master gcc5
 ./create_package.sh linux64 $lastversion master gcc6
 ./create_package.sh msys2 $lastversion master mingw32
 ./create_package.sh msys2 $lastversion master mingw64
@@ -67,8 +67,8 @@ rm -f /var/www/versions/nightly/of_v*_nightly.*
 mv *.tar.gz /var/www/versions/nightly
 mv *.zip /var/www/versions/nightly
 
-mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc4_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc4_nightly.tar.gz
-mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_nightly.tar.gz
+#mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc4_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc4_nightly.tar.gz
+#mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc6_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc6_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_mingw32_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_mingw32_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_mingw64_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_mingw64_nightly.zip
