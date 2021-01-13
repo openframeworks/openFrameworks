@@ -17,8 +17,10 @@ fi
 
 sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 
-sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-sudo apt-get install gcc-4.9 g++-4.9
+#sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+#sudo apt-get install gcc-4.9 g++-4.9
+
+g++ -v
 
 if [ "$OPT" = "qbs" ] && [ ! -d "$TRAVIS_BUILD_DIR/linuxbrew/.linuxbrew" ]; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
