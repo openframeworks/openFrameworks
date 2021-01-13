@@ -14,7 +14,7 @@ if [[ "${TRAVIS_REPO_SLUG}/${TRAVIS_BRANCH}" = "openframeworks/openFrameworks/ma
     DO_UPLOAD="true";
 fi
 
-if [[ "$GITHUB_ACTIONS" = true && "${GITHUB_REF##*/}" == "build-gcc6" && -z "${GITHUB_HEAD_REF}" ]]; then
+if [[ "$GITHUB_ACTIONS" = true && "${GITHUB_REF##*/}" == "master" && -z "${GITHUB_HEAD_REF}" ]]; then
     echo "Github Actions on master branch going to upload libs"
     openssl aes-256-cbc -salt -md md5 -a -d -in $CI_ROOT/githubactions-id_rsa.enc -out $CI_ROOT/id_rsa -pass env:GA_CI_SECRET
     mkdir -p ~/.ssh
