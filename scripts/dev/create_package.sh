@@ -198,13 +198,7 @@ function createProjectFiles {
         
         #fix config.make because the project generator is putting in the full path to the OF_ROOT as it is designed to do.
         #in this case we actually don't want to set it as the default of ../../../ is fine.
-        for example_group in $pkg_ofroot/examples/*; do
-            for example in $example_group/*; do
-                if [ -d $example ]; then
-                    sed -i 's/^OF_ROOT =.*/# OF_ROOT = ..\/..\/..\//' $example/config.make
-                fi
-            done
-        done
+        find $pkg_ofroot/examples -name "config.make" -type f -exec sed -i 's/^OF_ROOT =.*/# OF_ROOT = ..\/..\/..\//' {} \;
     elif [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
         for example_group in $pkg_ofroot/examples/*; do
             for example in $example_group/*; do
