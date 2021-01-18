@@ -1,5 +1,6 @@
 #include "utils/ofXml.h"
 #include "ofxUnitTests.h"
+#include <locale>
 
 using namespace std;
 
@@ -145,6 +146,42 @@ class ofApp: public ofxUnitTestsApp{
 			ofxTestEq(el.getAttribute("id").getValue(), "group1", "\tThe first 'g' found should be 'group1'");
 			ofLogNotice()<<"\n";
 		}
+
+		
+		ofLogNotice() << "Testing issue #6111";
+		{
+			ofXml xml1, xml2;
+
+			std::setlocale(LC_NUMERIC, "C");
+			xml1.parse("<tag float_period='3.5' float_comma='2,5'/>");
+			ofxTestEq(xml1.getFirstChild().getAttribute("float_period").getFloatValue(), 3.5, "\tperiod float ");
+			ofxTestEq(xml1.getFirstChild().getAttribute("float_comma").getFloatValue(), 2.0, "\tcomma float");
+
+			std::locale saved_loc;
+			// Building a locale with comma as decimal point - inspired from https://stackoverflow.com/a/15221403
+			class decimmal_comma: public std::numpunct<char> {
+				protected:
+    			char do_decimal_point() const { return ','; }
+			};
+			std::locale decimal_comma_locale( std::locale("C"), new decimmal_comma() );
+			std::locale decimal_point_locale( std::locale("C") );
+			std::locale current_locale;
+			
+			ofLogNotice()<<" - using locale where ',' is the decimal separator";
+			current_locale.global( decimal_comma_locale );
+			
+			ofxTestEq(xml1.getFirstChild().getAttribute("float_period").getFloatValue(), 3.5, "\tnumbers with period are float");
+			ofxTestEq(xml1.getFirstChild().getAttribute("float_comma").getFloatValue(), 2.0, "\tnumbers with comma are not float");
+
+			ofLogNotice()<<" - using locale where '.' is the decimal separator";
+			current_locale.global( decimal_point_locale );
+			xml2.parse("<tag float_period='3.5' float_comma='2,5'/>");
+			ofxTestEq(xml1.getFirstChild().getAttribute("float_period").getFloatValue(), 3.5, "\tnumbers with period are float");
+			ofxTestEq(xml1.getFirstChild().getAttribute("float_comma").getFloatValue(), 2.0, "\tnumbers with comma are not float");
+			// set back locale
+			current_locale.global( saved_loc );
+		}
+		ofLogNotice()<<"\n";
 	}
 };
 
