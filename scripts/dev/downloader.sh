@@ -27,7 +27,7 @@ downloader() {
 	fi
 
     if command -v curl 2>/dev/null; then 
-    	curl -LO --retry 20 -O --progress $@; 
+    	curl -LO --retry 20 -O --progress-bar $@; 
     else 
         wget $@ 2> /dev/null; fi; 
 }
