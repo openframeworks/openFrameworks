@@ -152,10 +152,7 @@ class ofApp: public ofxUnitTestsApp{
 		{
 			ofXml xml1, xml2;
 
-			std::setlocale(LC_NUMERIC, "C");
 			xml1.parse("<tag float_period='3.5' float_comma='2,5'/>");
-			ofxTestEq(xml1.getFirstChild().getAttribute("float_period").getFloatValue(), 3.5, "\tperiod float ");
-			ofxTestEq(xml1.getFirstChild().getAttribute("float_comma").getFloatValue(), 2.0, "\tcomma float");
 
 			std::locale saved_loc;
 			// Building a locale with comma as decimal point - inspired from https://stackoverflow.com/a/15221403

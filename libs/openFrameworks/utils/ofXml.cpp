@@ -16,11 +16,13 @@ ofXml::ofXml(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node & xml
 
 bool ofXml::load(const std::filesystem::path & file){
 	auto auxDoc = std::make_shared<pugi::xml_document>();
-	if(auxDoc->load_file(ofToDataPath(file).c_str())){
+	auto res = auxDoc->load_file(ofToDataPath(file).c_str());
+	if( res ){
 		doc = auxDoc;
 		xml = doc->root();
 		return true;
 	}else{
+		ofLogWarning()<< res.description();
 		return false;
 	}
 }
@@ -46,7 +48,11 @@ bool ofXml::parse(const std::string & xmlStr){
 
 bool ofXml::save(const std::filesystem::path & file) const{
 	if(xml == doc->root()){
-		return doc->save_file(ofToDataPath(file).c_str());
+		auto res = doc->save_file(ofToDataPath(file).c_str());
+		ofLogNotice()<<"XML Save : "<< res;
+		ofLogNotice()<<this->toString();
+		return res;
+		
 	}else{
 		pugi::xml_document doc;
 		if(doc.append_copy(xml.root())){
