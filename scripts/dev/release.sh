@@ -70,7 +70,7 @@ mkdir -p /var/www/versions/v${version}
 mv *.tar.gz /var/www/versions/v${version}
 mv *.zip /var/www/versions/v${version}
 
-downloader http://openframeworks.cc/release_hook.php?version=${version}
+downloader http://openframeworks.cc/release_hook.php?version=${version} 2> /dev/null
 
 cd $(cat ~/.ofprojectgenerator/config)
 git checkout master
