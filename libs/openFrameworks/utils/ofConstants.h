@@ -82,6 +82,12 @@ enum ofTargetPlatform{
 
 #if defined( __WIN32__ ) || defined( _WIN32 )
 	#define TARGET_WIN32
+	#if defined(_MSC_VER)
+		#define TARGET_WINVS
+	#endif
+	#if defined(__MINGW32__) || defined(__MINGW64__)
+		#define TARGET_MINGW
+	#endif
 #elif defined( __APPLE_CC__)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
@@ -378,6 +384,8 @@ typedef TESSindex ofIndexType;
 	#define OF_SOUND_PLAYER_EMSCRIPTEN
   #elif !defined(TARGET_ANDROID) && (!defined(USE_FMOD) || USE_FMOD)
   	#define OF_SOUND_PLAYER_FMOD
+  #elif defined(TARGET_LINUX)
+  	#define OF_SOUND_PLAYER_OPENAL
   #endif
 #endif
 
